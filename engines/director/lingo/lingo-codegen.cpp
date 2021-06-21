@@ -608,10 +608,10 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 				FuncNode *func = static_cast<FuncNode *>(the->obj);
 				if (func->args->size() == 1) {
 					if (func->name->equalsIgnoreCase("cast")) {
-						return codeTheFieldGet(kTheCast, (*func->args)[0], *the->prop);
+						return codeTheFieldSet(kTheCast, (*func->args)[0], *the->prop);
 					}
 					if (func->name->equalsIgnoreCase("field")) {
-						return codeTheFieldGet(kTheField, (*func->args)[0], *the->prop);
+						return codeTheFieldSet(kTheField, (*func->args)[0], *the->prop);
 					}
 					// window is an object and is handled by that case
 				}
@@ -642,13 +642,13 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 		case kSoundNode:
 			{
 				SoundNode *sound = static_cast<SoundNode *>(the->obj);
-				return codeTheFieldGet(kTheSoundEntity, sound->arg, *the->prop);
+				return codeTheFieldSet(kTheSoundEntity, sound->arg, *the->prop);
 			}
 			break;
 		case kSpriteNode:
 			{
 				SpriteNode *sprite = static_cast<SpriteNode *>(the->obj);
-				return codeTheFieldGet(kTheSprite, sprite->arg, *the->prop);
+				return codeTheFieldSet(kTheSprite, sprite->arg, *the->prop);
 			}
 			break;
 		case kVarNode:
