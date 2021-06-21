@@ -539,12 +539,13 @@ bool ProtaganistSensor::evaluateEvent(const GameEvent &) {
 
 bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	bool                    objIsActor = isActor(getObject());
-	GameObject              *objToTest;
-	bool                    objToTestIsActor = isActor(objToTest);
 	CircularObjectIterator  iter(
 	    getObject()->world(),
 	    getObject()->getLocation(),
 	    getRange() != 0 ? getRange() : kTileUVSize * kPlatformWidth * 8);
+	GameObject              *objToTest;
+	iter.first(&objToTest);
+	bool                    objToTestIsActor = isActor(objToTest);
 
 	for (iter.first(&objToTest);
 	        objToTest != NULL;
