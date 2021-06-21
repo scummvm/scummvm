@@ -35,7 +35,11 @@
 namespace Director {
 
 Channel::Channel(Sprite *sp, int priority) {
-	_sprite = sp;
+	if (!sp)
+		_sprite = nullptr;
+	else
+		_sprite = new Sprite(*sp);
+
 	_widget = nullptr;
 	_currentPoint = sp->_startPoint;
 	_delta = Common::Point(0, 0);
@@ -58,10 +62,9 @@ Channel::Channel(Sprite *sp, int priority) {
 }
 
 Channel::~Channel() {
-	if (_widget)
-		delete _widget;
-	if (_mask)
-		delete _mask;
+	delete _widget;
+	delete _mask;
+	delete _sprite;
 }
 
 DirectorPlotData Channel::getPlotData() {
@@ -355,7 +358,9 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 		return;
 
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
-	_sprite = nextSprite;
+	if (_sprite)
+		delete _sprite;
+	_sprite = new Sprite(*nextSprite);
 
 	// Sprites marked moveable are constrained to the same bounding box until
 	// the moveable is disabled
