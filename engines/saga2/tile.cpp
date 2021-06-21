@@ -2359,8 +2359,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		assert(cacheIndex < platformCacheSize);
 		assert(cacheIndex >= 0);
 
-		if (pce->metaID != NoMetaTile)
-		{
+		if (pce->metaID != NoMetaTile) {
 			MetaTile *oldMeta = metaTileAddress(pce->metaID);
 
 			assert(pce->layerNum < maxPlatforms);
