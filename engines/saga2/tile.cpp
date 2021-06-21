@@ -1433,7 +1433,8 @@ MapHeader::~MapHeader() {
 		delete[] mapData;
 }
 
-MetaTile::MetaTile(int ind, Common::SeekableReadStream *stream) {
+MetaTile::MetaTile(MetaTileList *parent, int ind, Common::SeekableReadStream *stream) {
+	_parent = parent;
 	_index = ind;
 	_highestPixel = stream->readUint16LE();
 	_banksNeeded._b[0] = stream->readUint32LE();
@@ -1449,7 +1450,7 @@ MetaTileList::MetaTileList(int count, Common::SeekableReadStream *stream) {
 	_count = count;
 	_tiles = (MetaTile **)malloc(_count * sizeof(MetaTile *));
 	for (int i = 0; i < _count; ++i) {
-		_tiles[i] = new MetaTile(i, stream);
+		_tiles[i] = new MetaTile(this, i, stream);
 	}
 }
 
@@ -2319,7 +2320,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	PlatformCacheEntry  *pce;
 
 	assert(layer >= 0);
-	assert(_index != -1);
+	assert(_parent == mapList[mapNum].metaList);
 
 	if (plIndex == nullID) {
 		return nullptr;
@@ -2333,7 +2334,10 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 
 		assert(pce->platformNum >= 0);
 		assert(pce->metaID != NoMetaTile);
-		assert(pce->metaID == thisID(mapNum));
+		if (pce->metaID != thisID(mapNum))
+			warning("fetchPlatform: pce->metaID (%d, %d) != thisID(mapNum) (%d, %d)",
+		            pce->metaID.index, pce->metaID.map,
+		            thisID(mapNum).index, thisID(mapNum).map);
 
 			//	Move to the end of the LRU
 		platformLRU.push_back(plIndex);
