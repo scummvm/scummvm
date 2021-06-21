@@ -150,7 +150,9 @@ public:
 	Task(void **buf, TaskID id);
 
 	//  Virtual destructor -- do nothing
-	virtual ~Task(void) {}
+	virtual ~Task(void) {
+		deleteTask(this);
+	}
 
 	//  Fixup any subtask pointers
 	virtual void fixup(void);
