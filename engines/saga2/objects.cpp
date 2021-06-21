@@ -1817,8 +1817,7 @@ bool GameObject::addTimer(TimerID id, int16 frameInterval) {
 		assert((*it)->getObject() == this);
 
 		if (newTimer->thisID() == (*it)->thisID()) {
-			timerList->_timers.remove(*it);
-			delete *it;
+			timerList->_timers.erase(it);
 
 			break;
 		}
@@ -1840,7 +1839,7 @@ void GameObject::removeTimer(TimerID id) {
 	if ((timerList = fetchTimerList(this)) != nullptr) {
 		for (Common::List<Timer *>::iterator it = timerList->_timers.begin(); it != timerList->_timers.end(); ++it) {
 			if ((*it)->thisID() == id) {
-				timerList->_timers.remove(*it);
+				timerList->_timers.erase(it);
 
 				if (timerList->_timers.empty())
 					delete timerList;
