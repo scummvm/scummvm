@@ -201,7 +201,7 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData, bo
 	int bgRunCount;
 	int fgRunCount;
 	const int32 SAGA_ISOTILE_WIDTH = 64;
-	Point16 point(x, y);
+	Point16 point(x - 32, y);
 
 	if (point.x + SAGA_ISOTILE_WIDTH < 0)
 		return;
