@@ -2340,6 +2340,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		            thisID(mapNum).index, thisID(mapNum).map);
 
 			//	Move to the end of the LRU
+		platformLRU.remove(plIndex);
 		platformLRU.push_back(plIndex);
 
 			//	return the address of the platform

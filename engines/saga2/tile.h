@@ -730,7 +730,7 @@ enum platformFlags {
    PlatformCacheEntry struct
  * ======================================================================= */
 
-struct PlatformCacheEntry : public DNode {
+struct PlatformCacheEntry {
 	uint16          platformNum,            // original platform num
 	                layerNum;               // index of this plat in mt.
 	MetaTileID      metaID;                 // pointer to parent metatile
