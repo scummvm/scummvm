@@ -126,8 +126,6 @@ APPFUNC(ErrorWindow::cmdMessageWindow) {
 
 ErrorWindow::ErrorWindow(const char *msg, const char *btnMsg1, const char *btnMsg2)
 	: SimpleWindow(mbWindowRect, 0, msg, cmdMessageWindow) {
-	const int maxBtns = 2;
-
 	numBtns = 0;
 
 	if (btnMsg1) numBtns++;
@@ -205,6 +203,7 @@ GameMode        SimpleMode = {
 	ErrorWindow::ErrorModeCleanup,
 	ErrorWindow::ErrorModeHandleTask,
 	ErrorWindow::ErrorModeHandleKey,
+	nullptr
 };
 
 /* ===================================================================== *
