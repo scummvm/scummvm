@@ -339,9 +339,8 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		// which wants to create a new prog.bwl in the game folder
 		parent_dir = FSLocation(SAVE_FOLDER_PREFIX);
 
-		if (read_only) {
-			alt_path = sc_path;
-		}
+		if (read_only)
+			alt_path = Path::ConcatPaths(_GP(ResPaths).DataDir, sc_path);
 	}
 
 	// Sometimes we have multiple consecutive slashes or backslashes.

@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/savefile.h"
 #include "ags/lib/std/algorithm.h"
 #include "ags/lib/std/set.h"
 #include "ags/lib/allegro.h" // find files
@@ -65,9 +66,25 @@ void ListBox_Clear(GUIListBox *listbox) {
 }
 
 void FillDirList(std::set<String> &files, const String &path) {
-	Common::FSDirectory dir(path);
+	String dirName = Path::GetDirectoryPath(path);
+	String filePattern = Path::get_filename(path);
+
+	if (dirName.CompareLeftNoCase(_GP(ResPaths).DataDir) == 0) {
+		String subDir = dirName.Mid(_GP(ResPaths).DataDir.GetLength());
+		if (!subDir.IsEmpty() && subDir[0u] == '/')
+			subDir.ClipLeft(1);
+		dirName = ConfMan.get("path");
+	} else if (dirName.CompareLeftNoCase(get_save_game_directory()) == 0) {
+		// Save files listing
+		Common::StringArray matches = g_system->getSavefileManager()->listSavefiles(filePattern);
+		for (uint idx = 0; idx < matches.size(); ++idx)
+			files.insert(matches[idx]);
+		return;
+	}
+
+	Common::FSDirectory dir(dirName);
 	Common::ArchiveMemberList fileList;
-	dir.listMatchingMembers(fileList, "*.*");
+	dir.listMatchingMembers(fileList, filePattern);
 	for (Common::ArchiveMemberList::iterator iter = fileList.begin(); iter != fileList.end(); ++iter) {
 		files.insert((*iter)->getName());
 	}
