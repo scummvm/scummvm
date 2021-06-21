@@ -122,7 +122,7 @@ void gPanel::enable(bool abled) {
 	enabled = abled ? 1 : 0;
 }
 
-void gPanel::select(bool sel) {
+void gPanel::select(uint16 sel) {
 	selected = sel ? 1 : 0;
 }
 
@@ -582,7 +582,7 @@ void gWindow::enable(bool abled) {
 	draw();
 }
 
-void gWindow::select(bool sel) {
+void gWindow::select(uint16 sel) {
 	gPanel::select(sel);
 	draw();
 }
@@ -636,7 +636,7 @@ void gControl::enable(bool abled) {
 	}
 }
 
-void gControl::select(bool sel) {
+void gControl::select(uint16 sel) {
 	if (!sel != !isSelected()) {    //  Use '!' to insure boolean-ness
 		gPanel::select(sel);
 		invalidate();

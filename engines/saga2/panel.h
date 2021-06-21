@@ -177,7 +177,7 @@ public:
 	virtual void deactivate(void);       // deactivate the control
 	virtual void draw(void);                 // redraw the panel.
 	virtual void enable(bool abled);
-	virtual void select(bool selected);
+	virtual void select(uint16 selected);
 	virtual void ghost(bool ghosted);
 	virtual void invalidate(Rect16 *area = nullptr);
 	virtual void setMousePoll(bool abled) {
@@ -379,7 +379,7 @@ public:
 //		const Rect16  &r );
 
 	void enable(bool abled);
-	void select(bool sel);               // activate the window
+	void select(uint16 sel);               // activate the window
 
 	virtual bool open(void);
 	virtual void close(void);
@@ -407,7 +407,7 @@ public:
 	gPanel *keyTest(int16 key);
 
 	void enable(bool abled);                 // enable the control
-	void select(bool sel);               // selecte the control
+	void select(uint16 sel);               // selecte the control
 	void ghost(bool ghosted);
 //	virtual void newValue( void );
 
