@@ -51,9 +51,6 @@ bool    interruptableMotionsPaused;
 //  Used to track the next motion task to process
 static MotionTask *nextMT;
 
-const int32 pathFindIQ = 400;
-
-
 /* ===================================================================== *
    Test Functions
  * ===================================================================== */
@@ -230,9 +227,6 @@ bool unstickObject(GameObject *obj) {
 	assert(isObject(obj) || isActor(obj));
 
 	TilePoint       pos;
-	int             height,
-	                dist,
-	                dir;
 	int16           mapNum;
 	bool            outside;
 
@@ -257,7 +251,6 @@ bool unstickObject(GameObject *obj) {
 		int32       dx = rand() % (radius * 2 + 1) - radius,
 		            dy = rand() % (radius * 2 + 1) - radius,
 		            dz = rand() % (radius * 2 + 1) - radius;
-		int32       dist;
 		int16       tHeight;
 
 		//  Compute the actual _data.location of the new point
@@ -458,13 +451,13 @@ void *MotionTaskList::archive(void *buf) {
 
 void MotionTaskList::cleanup(void) {
 	MotionTask      *mt;
-	MotionTask      *nextMT;
+	MotionTask      *nextMT_;
 
 	//  Remove all of the active motion tasks
 	for (mt = (MotionTask *)list.first();
 	        mt;
-	        mt = nextMT) {
-		nextMT = (MotionTask *)mt->next();
+	        mt = nextMT_) {
+		nextMT_ = (MotionTask *)mt->next();
 		mt->remove();
 	}
 }
@@ -2489,7 +2482,7 @@ bool MotionTask::nextWayPoint(void) {
 //	Test to see if actor can walk in a given direction
 
 bool MotionTask::checkWalk(
-    int16           direction,
+    int16           dir,
     int16           speed,
     int16           stepUp,
     TilePoint       &pos) {
@@ -2498,7 +2491,7 @@ bool MotionTask::checkWalk(
 	//  Check the terrain in various directions.
 	//  Check in the forward direction first, at various heights
 
-	newPos      = object->_data.location + (dirTable[direction] * speed) / 2;
+	newPos      = object->_data.location + (dirTable[dir] * speed) / 2;
 	newPos.z    = object->_data.location.z + stepUp;
 
 	if (checkWalkable(object, newPos)) return false;
@@ -2533,7 +2526,6 @@ void MotionTask::walkAction(void) {
 	StandingTileInfo sti;
 	ProtoObj        *proto;
 
-	int16           impact = 0;
 	bool            moveTaskWaiting = false,
 	                moveTaskDone = false;
 	WalkType        walkType = walkNormal;
@@ -2682,9 +2674,10 @@ void MotionTask::walkAction(void) {
 	if (moveTaskDone || moveTaskWaiting) {
 		movementDirection = a->currentFacing;
 	} else if (targetDist == 0 && abs(targetVector.z) > kMaxStepHeight) {
-		if (pathFindTask)
+		if (pathFindTask) {
+			movementDirection = a->currentFacing;
 			moveTaskWaiting = true;
-		else {
+		} else {
 			movementDirection = a->currentFacing;
 			moveBlocked = true;
 		}
@@ -3118,8 +3111,7 @@ void MotionTask::downLadderAction(void) {
 		flags &= ~reset;
 	} else {
 		TilePoint           loc = a->getLocation();
-		uint8               crossSection = a->proto()->crossSection,
-		                    height = a->proto()->height;
+		uint8               crossSection = a->proto()->crossSection;
 		int16               mapNum = a->getMapNum();
 		TileRegion          actorTileReg;
 		TileInfo            *ti;
@@ -4192,9 +4184,7 @@ void MotionTask::updatePositions(void) {
 		GameObject  *obj = mt->object;
 		ProtoObj    *proto = obj->proto();
 		Actor       *a = (Actor *)obj;
-		int16       impact = 0;
-		bool        moveTaskWaiting = false,
-		            moveTaskDone = false;
+		bool        moveTaskDone = false;
 
 		nextMT = (MotionTask *)mt->next();
 
