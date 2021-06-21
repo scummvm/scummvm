@@ -43,6 +43,7 @@
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "common/config-manager.h"
 
 namespace AGS3 {
 
@@ -354,7 +355,11 @@ void apply_config(const ConfigTree &cfg) {
 		_GP(usetup).user_data_dir = INIreadstring(cfg, "misc", "user_data_dir");
 		_GP(usetup).shared_data_dir = INIreadstring(cfg, "misc", "shared_data_dir");
 
-		_GP(usetup).translation = INIreadstring(cfg, "language", "translation");
+		Common::String translation;
+		if (ConfMan.getActiveDomain()->tryGetVal("translation", translation) && !translation.empty())
+			_GP(usetup).translation = translation;
+		else
+			_GP(usetup).translation = INIreadstring(cfg, "language", "translation");
 
 		int cache_size_kb = INIreadint(cfg, "misc", "cachemax", DEFAULTCACHESIZE_KB);
 		if (cache_size_kb > 0)
@@ -455,6 +460,13 @@ void save_config_file() {
 	cfg["mouse"]["control_enabled"] = String::FromFormat("%d", _GP(usetup).mouse_ctrl_enabled ? 1 : 0);
 	cfg["mouse"]["speed"] = String::FromFormat("%f", _GP(mouse).GetSpeed());
 	cfg["language"]["translation"] = _GP(usetup).translation;
+
+	if (_GP(usetup).translation.empty()) {
+		if (ConfMan.getActiveDomain()->contains("translation"))
+			ConfMan.getActiveDomain()->erase("translation");
+	} else
+		ConfMan.getActiveDomain()->setVal("translation", _GP(usetup).translation);
+	ConfMan.flushToDisk();
 
 	String cfg_file = PreparePathForWriting(GetGameUserConfigDir(), DefaultConfigFileName);
 	if (!cfg_file.IsEmpty())
