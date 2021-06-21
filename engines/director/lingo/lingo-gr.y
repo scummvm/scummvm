@@ -330,7 +330,7 @@ ID: tVARID
 	| tNUMBER		{ $$ = new Common::String("number"); }
 	| tOF			{ $$ = new Common::String("of"); }
 	// | tON			{ $$ = new Common::String("on"); }
-	| tOPEN			{ $$ = new Common::String("open"); }
+	// | tOPEN			{ $$ = new Common::String("open"); }
 	| tOR			{ $$ = new Common::String("or"); }
 	// | tPLAY			{ $$ = new Common::String("play"); }
 	| tPREVIOUS		{ $$ = new Common::String("previous"); }
@@ -395,6 +395,12 @@ proc: ID cmdargs '\n'					{ $$ = new CmdNode($ID, $cmdargs); }
 	| tGO frameargs '\n'				{ $$ = new CmdNode(new Common::String("go"), $frameargs); }
 	| tPLAY cmdargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $cmdargs); }
 	| tPLAY frameargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $frameargs); }
+	| tOPEN cmdargs '\n'				{ $$ = new CmdNode(new Common::String("open"), $cmdargs); }
+	| tOPEN expr[arg1] tWITH expr[arg2] '\n' {
+		NodeList *args = new NodeList;
+		args->push_back($arg1);
+		args->push_back($arg2);
+		$$ = new CmdNode(new Common::String("open"), args); }
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
 	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
 	| tEXIT '\n'						{ $$ = new ExitNode(); }
