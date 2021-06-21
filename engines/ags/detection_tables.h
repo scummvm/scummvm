@@ -1811,21 +1811,24 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY("whokilledkennyrogers", "mags.exe", "ed778afb4f46c3f2a70d330532a83a2f", 1240103),
 	UNSUPPORTED_GAME_ENTRY("winfry", "fry.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 4164041),
 
+	// uses unsupported agslua plugin
+	UNSUPPORTED_GAME_ENTRY("allthewaydown", "deepuns3.exe", "6c0b5468657c22d62201e3769cd8d2b3", 29830067),
+	// MMM13 crashes during the intro with an error
+	// Error: unexpected data size for WRITELIT op: 8
+	GAME_ENTRY("mmm13", "traum.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6703140),
+	// Strangeland isn't yet supported becuase the executable is >2Gb.
+	UNSUPPORTED_GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", -1),
+	// Commercial game that likely uses custom extensions. Not only does it seem
+	// to use AGSController plugin built-in, even when I hooked up AGSController for
+	// the stand-alone AGS 3.5 interpreter, it hangs just like in ScummVM
+	UNSUPPORTED_GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773), // Steam
+	UNSUPPORTED_GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1072879555),
 	// Post 2.5 games that aren't currently supported
 	// 2.55 game, but uses a plugin agsflashlight. Also, even with AGS interpreter
 	// hacked to specify plugin, errors on loading room107 saying that
 	// "room animations are no longer supported"
 	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 8686711),
 	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "0b7529a76f38283d6e850b8d56526fc1", 9205143),
-	// uses unsupported agslua plugin
-	UNSUPPORTED_GAME_ENTRY("allthewaydown", "deepuns3.exe", "6c0b5468657c22d62201e3769cd8d2b3", 29830067),
-	// Commercial game that likely uses custom extensions. Not only does it seem
-	// to use AGSController plugin built-in, even when I hooked up AGSController for
-	// the stand-alone AGS 3.5 interpreter, it hangs just like in ScummVM
-	UNSUPPORTED_GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773), // Steam
-	UNSUPPORTED_GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1072879555),
-	// Strangeland isn't yet supported becuase the executable is >2Gb.
-	UNSUPPORTED_GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", -1),
 
 	// AGDI games. They get their own grouping because they're just that awesome
 	GAME_ENTRY("kq1agdi", "kqvga.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 34298679),  // 1.0
@@ -2908,7 +2911,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mmm11", "MMMania 2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7872940),
 	GAME_ENTRY("mmm11", "MMMania.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6123337),
 	GAME_ENTRY("mmm12", "Giga.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4141502),
-	GAME_ENTRY("mmm13", "traum.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6703140),
 	GAME_ENTRY("mmm14", "msytr.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5836799),
 	GAME_ENTRY("mmm14", "msytr.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5863583),
 	GAME_ENTRY("mmm15", "MMM15.exe", "06a03fe35791b0578068ab1873455463", 8503015),
