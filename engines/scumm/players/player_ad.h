@@ -41,7 +41,7 @@ class ScummEngine;
  */
 class Player_AD : public MusicEngine {
 public:
-	Player_AD(ScummEngine *scumm);
+	Player_AD(ScummEngine *scumm, Common::Mutex &mutex);
 	~Player_AD() override;
 
 	// MusicEngine API
@@ -59,7 +59,7 @@ public:
 
 private:
 	ScummEngine *const _vm;
-	Common::Mutex _mutex;
+	Common::Mutex &_mutex;
 
 	void setupVolume();
 	int _musicVolume;

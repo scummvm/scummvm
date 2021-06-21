@@ -2095,7 +2095,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		// EGA/VGA. However, we support multi MIDI for that game and we cannot
 		// support this with the Player_AD code at the moment. The reason here
 		// is that multi MIDI is supported internally by our iMuse output.
-		_musicEngine = new Player_AD(this);
+		_musicEngine = new Player_AD(this, _mixer->mutex());
 #ifdef ENABLE_HE
 	} else if (_game.platform == Common::kPlatformDOS && _sound->_musicType == MDT_ADLIB && _game.heversion >= 60) {
 		_musicEngine = new Player_HE(this);

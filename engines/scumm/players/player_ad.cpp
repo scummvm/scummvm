@@ -35,8 +35,8 @@ namespace Scumm {
 
 #define AD_CALLBACK_FREQUENCY 472
 
-Player_AD::Player_AD(ScummEngine *scumm)
-	: _vm(scumm) {
+Player_AD::Player_AD(ScummEngine *scumm, Common::Mutex &mutex)
+	: _vm(scumm), _mutex(mutex) {
 	_opl2 = OPL::Config::create();
 	if (!_opl2->init()) {
 		error("Could not initialize OPL2 emulator");
