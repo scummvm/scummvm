@@ -3484,9 +3484,9 @@ int16 scriptFindMission(int16 *args) {
 
 int16 scriptSetTileCycleSpeed(int16 *args) {
 	MONOLOG(SetTileCycleSpeed);
-	extern CycleHandle  cycleList;          // list of tile cycling info
+	extern CyclePtr  cycleList;          // list of tile cycling info
 
-	TileCycleData   &tcd = (*cycleList)[args[0]];
+	TileCycleData   &tcd = cycleList[args[0]];
 
 	tcd.cycleSpeed = args[1];
 
@@ -3499,9 +3499,9 @@ int16 scriptSetTileCycleSpeed(int16 *args) {
 
 int16 scriptSetTileCycleState(int16 *args) {
 	MONOLOG(SetTileCycleState);
-	extern CycleHandle  cycleList;          // list of tile cycling info
+	extern CyclePtr  cycleList;          // list of tile cycling info
 
-	TileCycleData   &tcd = (*cycleList)[args[0]];
+	TileCycleData   &tcd = cycleList[args[0]];
 
 	tcd.currentState = args[1];
 	tcd.counter = 0;
