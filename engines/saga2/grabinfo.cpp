@@ -322,8 +322,7 @@ void GrabInfo::replaceObject(void) {
 //  text pointer will simply be saved.
 void GrabInfo::setText(const char *txt) {
 	if ((txt != nullptr) && strlen(txt)) {
-		strncpy(textBuf, txt, bufSize);
-		textBuf[bufSize - 1] = '\0';
+		Common::strlcpy(textBuf, txt, bufSize);
 		if (grabObj == nullptr)
 			setMouseText(textBuf);
 	} else {

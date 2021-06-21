@@ -466,8 +466,7 @@ public:
 
 	//  Return the name of this object (proper noun if it has one)
 	const char *objName(void) {
-		return nameText((int16)(
-		                    _data.nameIndex > 0 ? _data.nameIndex : prototype->nameIndex));
+		return nameText((int16)(_data.nameIndex > 0 ? _data.nameIndex : prototype->nameIndex));
 	}
 
 	// return name of object, and it's quantity if merged
