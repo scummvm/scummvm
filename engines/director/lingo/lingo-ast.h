@@ -41,6 +41,7 @@ struct IfStmtNode;
 struct IfElseStmtNode;
 struct RepeatWhileNode;
 struct RepeatWithToNode;
+struct RepeatWithInNode;
 struct NextRepeatNode;
 struct ExitRepeatNode;
 struct ExitNode;
@@ -103,6 +104,7 @@ enum NodeType {
 	kIfElseStmtNode,
 	kRepeatWhileNode,
 	kRepeatWithToNode,
+	kRepeatWithInNode,
 	kNextRepeatNode,
 	kExitRepeatNode,
 	kExitNode,
@@ -167,6 +169,7 @@ public:
 	virtual bool visitIfElseStmtNode(IfElseStmtNode *node) = 0;
 	virtual bool visitRepeatWhileNode(RepeatWhileNode *node) = 0;
 	virtual bool visitRepeatWithToNode(RepeatWithToNode *node) = 0;
+	virtual bool visitRepeatWithInNode(RepeatWithInNode *node) = 0;
 	virtual bool visitNextRepeatNode(NextRepeatNode *node) = 0;
 	virtual bool visitExitRepeatNode(ExitRepeatNode *node) = 0;
 	virtual bool visitExitNode(ExitNode *node) = 0;
@@ -493,6 +496,25 @@ struct RepeatWithToNode : LoopNode {
 	}
 	virtual bool accept(NodeVisitor *visitor) {
 		return visitor->visitRepeatWithToNode(this);
+	}
+};
+
+/* RepeatWithInNode */
+
+struct RepeatWithInNode : LoopNode {
+	Common::String *var;
+	Node *list;
+	NodeList *stmts;
+
+	RepeatWithInNode(Common::String *varIn, Node *listIn, NodeList *stmtsIn)
+		: LoopNode(kRepeatWithInNode), var(varIn), list(listIn), stmts(stmtsIn) {}
+	virtual ~RepeatWithInNode() {
+		delete var;
+		delete list;
+		deleteList(stmts);
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitRepeatWithInNode(this);
 	}
 };
 

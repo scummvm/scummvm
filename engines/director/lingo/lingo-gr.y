@@ -524,6 +524,8 @@ loop: tREPEAT tWHILE expr '\n' stmtlist tENDREPEAT '\n' {
 		$$ = new RepeatWithToNode($ID, $start, false, $end, $stmtlist); }
 	| tREPEAT tWITH ID tEQ expr[start] tDOWN tTO expr[end] '\n' stmtlist tENDREPEAT '\n' {
 		$$ = new RepeatWithToNode($ID, $start, true, $end, $stmtlist); }
+	| tREPEAT tWITH ID tIN expr '\n' stmtlist tENDREPEAT '\n' {
+		$$ = new RepeatWithInNode($ID, $expr, $stmtlist); }
 	;
 
 tell: tTELL expr tTO stmtoneliner				{

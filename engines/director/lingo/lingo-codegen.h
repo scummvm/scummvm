@@ -90,6 +90,7 @@ public:
 	virtual bool visitIfElseStmtNode(IfElseStmtNode *node);
 	virtual bool visitRepeatWhileNode(RepeatWhileNode *node);
 	virtual bool visitRepeatWithToNode(RepeatWithToNode *node);
+	virtual bool visitRepeatWithInNode(RepeatWithInNode *node);
 	virtual bool visitNextRepeatNode(NextRepeatNode *node);
 	virtual bool visitExitRepeatNode(ExitRepeatNode *node);
 	virtual bool visitExitNode(ExitNode *node);

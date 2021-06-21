@@ -836,6 +836,61 @@ bool LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
 	return true;
 }
 
+/* RepeatWithInNode */
+
+bool LingoCompiler::visitRepeatWithInNode(RepeatWithInNode *node) {
+	LoopNode *prevLoop = _currentLoop;
+	_currentLoop = node;
+
+	COMPILE(node->list);
+	code1(LC::c_stackpeek);
+	codeInt(0);
+	codeFunc("count", 1);
+	code1(LC::c_intpush);	// start counter
+	codeInt(1);
+
+	uint startPos = _currentAssembly->size();
+	code1(LC::c_stackpeek);	// get counter
+	codeInt(0);
+	code1(LC::c_stackpeek);	// get array size
+	codeInt(2);
+	code1(LC::c_le); 
+	uint jzPos = _currentAssembly->size();
+	code2(LC::c_jumpifz, 0);
+
+	code1(LC::c_stackpeek);	// get list
+	codeInt(2);
+	code1(LC::c_stackpeek);	// get counter
+	codeInt(1);
+	codeFunc("getAt", 2);
+	codeVarSet(*node->var);
+	COMPILE_LIST(node->stmts);
+
+	uint incrementPos = _currentAssembly->size();
+	code1(LC::c_intpush);
+	codeInt(1);
+	code1(LC::c_add);	// Increment counter
+
+	uint jmpPos = _currentAssembly->size();
+	code2(LC::c_jump, 0);
+	uint endPos = _currentAssembly->size();
+	code1(LC::c_stackdrop);	// remove list, size, counter
+	codeInt(3);
+
+	inst jzOffset = 0;
+	WRITE_UINT32(&jzOffset, endPos - jzPos);
+	(*_currentAssembly)[jzPos + 1] = jzOffset;
+
+	inst jmpOffset = 0;
+	WRITE_UINT32(&jmpOffset, startPos - jmpPos);
+	(*_currentAssembly)[jmpPos + 1] = jmpOffset;
+
+	updateLoopJumps(incrementPos, endPos);
+	_currentLoop = prevLoop;
+
+	return true;
+}
+
 /* NextRepeatNode */
 
 bool LingoCompiler::visitNextRepeatNode(NextRepeatNode *node) {
