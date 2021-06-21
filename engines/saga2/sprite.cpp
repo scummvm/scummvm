@@ -73,7 +73,7 @@ extern gPort        backPort;
 
 //  Remap table for colors which are not remapped.
 
-extern uint8 fixedColors[] = {
+const uint8 fixedColors[] = {
 	0, 10, 12, 14, 16, 18, 21, 24,
 	101, 104, 130, 132, 197, 199, 228, 230
 };
@@ -142,7 +142,6 @@ void DrawCompositeMaskedSprite(
     int16           effects,                // effects flags
     bool            *obscured) {            // set if object obscured by terrain
 	SpriteComponent *sc;                    // sprite component
-	int             i;
 	int16           xMax,                   // extent of composite
 	                xMin,
 	                yMax,
@@ -158,7 +157,9 @@ void DrawCompositeMaskedSprite(
 	//  First, determine the enclosing rectangle which
 	//  surrounds all of the sprites.
 
-	for (i = 0, sc = scList; i < numParts; i++, sc++) {
+	sc = scList;
+
+	for (int i = 0; i < numParts; i++, sc++) {
 		Sprite      *sp = sc->sp;
 		int16       left,
 		            right,
@@ -218,8 +219,8 @@ void DrawCompositeMaskedSprite(
 
 	//  First, determine the enclosing rectangle which
 	//  surrounds all of the sprites.
-
-	for (i = 0, sc = scList; i < numParts; i++, sc++) {
+	sc = scList;
+	for (int i = 0; i < numParts; i++, sc++) {
 		Sprite      *sp = sc->sp;
 
 		//  Create a temp map for the sprite to unpack in
@@ -262,7 +263,6 @@ void DrawCompositeMaskedSprite(
 		} else {
 			gPixelMap       tempMap;
 			int32           compMapBytes = compMap.bytes(),
-			                i,
 			                visiblePixels;
 			bool            isObscured;
 
@@ -277,7 +277,7 @@ void DrawCompositeMaskedSprite(
 			    loc);
 
 			visiblePixels = 0;
-			for (i = 0; i < compMapBytes; i++) {
+			for (int i = 0; i < compMapBytes; i++) {
 				if (compMap.data[i] != 0) {
 					visiblePixels++;
 					if (visiblePixels > 10) break;
@@ -614,16 +614,6 @@ ActorPose::ActorPose(Common::SeekableReadStream *stream) {
 	rightObjectOffset.load(stream);
 }
 
-static void readColorScheme(hResContext *con, ColorScheme &col) {
-	for (int i = 0; i < 11; ++i)
-		col.bank[i] = con->readByte();
-
-	col.speechColor = con->readByte();
-
-	for (int i = 0; i < 32; ++i)
-		col.name[i] = con->readSByte();
-}
-
 ColorScheme::ColorScheme(Common::SeekableReadStream *stream) {
 	for (int i = 0; i < 11; ++i)
 		bank[i] = stream->readByte();
@@ -644,7 +634,6 @@ ColorSchemeList::ColorSchemeList(int count, Common::SeekableReadStream *stream) 
 
 ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	int16           bank;
-	int poseListSize;
 	int schemeListSize;
 	Common::SeekableReadStream *stream;
 
