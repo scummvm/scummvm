@@ -1788,7 +1788,8 @@ void LB::b_move(int nargs) {
 }
 
 void LB::b_moveableSprite(int nargs) {
-	Frame *frame = g_director->getCurrentMovie()->getScore()->_frames[g_director->getCurrentMovie()->getScore()->getCurrentFrame()];
+	Score *sc = g_director->getCurrentMovie()->getScore();
+	Frame *frame = sc->_frames[g_director->getCurrentMovie()->getScore()->getCurrentFrame()];
 
 	if (g_lingo->_currentChannelId == -1) {
 		warning("b_moveableSprite: channel Id is missing");
@@ -1796,6 +1797,9 @@ void LB::b_moveableSprite(int nargs) {
 		return;
 	}
 
+	// since we are using value copying, in order to make it taking effect immediately. we modify the sprites in channel
+	if (sc->_channels[g_lingo->_currentChannelId])
+		sc->_channels[g_lingo->_currentChannelId]->_sprite->_moveable = true;
 	frame->_sprites[g_lingo->_currentChannelId]->_moveable = true;
 }
 
