@@ -23,6 +23,7 @@
 #ifndef AUDIO_MIXER_H
 #define AUDIO_MIXER_H
 
+#include "common/mutex.h"
 #include "common/types.h"
 #include "common/noncopyable.h"
 
@@ -94,6 +95,10 @@ public:
 	 */
 	virtual bool isReady() const = 0;
 
+	/**
+	 * Return the mixer's internal mutex so that audio players can use it.
+	 */
+	virtual Common::Mutex &mutex() = 0;
 
 	/**
 	 * Start playing the given audio stream.
