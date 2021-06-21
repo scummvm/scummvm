@@ -70,12 +70,12 @@ public:
 	Messager() {
 		enabled = true;
 	}
-	Messager(char *entry) {
+	Messager(const char *entry) {
 		enabled = true;
 	}
 	virtual ~Messager() {}
 
-	size_t operator()(char *format, ...);
+	size_t operator()(const char *format, ...);
 	size_t va(const char *format, va_list argptr);
 
 	void enable() {
@@ -111,7 +111,7 @@ protected:
 
 public:
 	StatusLineMessager(int line, gDisplayPort *mp, int32 x = -1, int32 y = -1, int32 w = -1, int16 color = -1);
-	StatusLineMessager(char *entry, int line, gDisplayPort *mp, int32 x = -1, int32 y = -1, int32 w = -1, int16 color = -1);
+	StatusLineMessager(const char *entry, int line, gDisplayPort *mp, int32 x = -1, int32 y = -1, int32 w = -1, int16 color = -1);
 	~StatusLineMessager();
 };
 

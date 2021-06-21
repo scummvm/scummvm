@@ -52,6 +52,7 @@ GameMode        ModalMode = {
 	ModalModeCleanup,
 	ModalModeHandleTask,
 	ModalModeHandleKey,
+	nullptr
 };
 
 extern void updateWindowSection(const Rect16 &r);

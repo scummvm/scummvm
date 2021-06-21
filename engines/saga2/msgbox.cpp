@@ -61,7 +61,7 @@ extern BackWindow       *mainWindow;
  * ===================================================================== */
 
 APPFUNC(cmdDialogQuit);
-int16 MsgBox(char *msg, char *btnMsg1, char *btnMsg2);
+int16 MsgBox(const char *msg, const char *btnMsg1, const char *btnMsg2);
 void writePlaqText(gPort            &port,
                    const Rect16    &r,
                    gFont           *font,
@@ -84,19 +84,10 @@ int16 userDialog(const char *title, const char *msg, const char *btnMsg1, const 
 // ------------------------------------------------------------------------
 // Wrapper to avoid errors
 
-int16 FTAMessageBox(char *msg,
-                    char *btnMsg1,
-                    char *btnMsg2)
-
-{
+int16 FTAMessageBox(const char *msg, const char *btnMsg1, const char *btnMsg2) {
 	int16 rv = -1;
 	if (userDialogAvailable()) {
-		char *b1 = btnMsg1;
-		char *b2 = btnMsg2;
-		//if (b1[0]=='_') b1++;
-		//if (b2[0]=='_') b2++;
-
-		rv = (0 == userDialog(ERROR_HEADING, msg, b1, b2, NULL));
+		rv = (0 == userDialog(ERROR_HEADING, msg, btnMsg1, btnMsg2, NULL));
 	} else
 		rv = MsgBox(msg, btnMsg1, btnMsg2);
 	return rv;
@@ -105,9 +96,7 @@ int16 FTAMessageBox(char *msg,
 // ------------------------------------------------------------------------
 // Very primitive message box
 
-int16 MsgBox(char *msg,
-             char *btnMsg1,
-             char *btnMsg2) {
+int16 MsgBox(const char *msg, const char *btnMsg1, const char *btnMsg2) {
 	ErrorWindow *win = new ErrorWindow(msg, btnMsg1, btnMsg2);
 	int16 res = win->getResult();
 	delete win;
@@ -135,7 +124,7 @@ APPFUNC(ErrorWindow::cmdMessageWindow) {
 }
 
 
-ErrorWindow::ErrorWindow(char *msg,   char *btnMsg1,   char *btnMsg2)
+ErrorWindow::ErrorWindow(const char *msg, const char *btnMsg1, const char *btnMsg2)
 	: SimpleWindow(mbWindowRect, 0, msg, cmdMessageWindow) {
 	const int maxBtns = 2;
 
@@ -151,7 +140,7 @@ ErrorWindow::ErrorWindow(char *msg,   char *btnMsg1,   char *btnMsg2)
 
 	strcpy(mbChs1Text, "\x13");
 	strcpy(mbChs2Text, "\x1B");
-	char *eq;
+	const char *eq;
 	// button one
 	if (btnMsg1) {
 		new SimpleButton(*this, butBox(numBtns, 0), btnMsg1, 0, cmdMessageWindow);
@@ -225,7 +214,7 @@ GameMode        SimpleMode = {
 
 SimpleWindow::SimpleWindow(const Rect16 &r,
                            uint16 ident,
-                           char *stitle,
+                           const char *stitle,
                            AppFunc *cmd)
 	: gWindow(r, ident, "", cmd) {
 	prevModeStackCtr = GameMode::getStack(prevModeStackPtr);
@@ -359,7 +348,7 @@ void SimpleWindow::DrawOutlineFrame(gPort &port, const Rect16 &r, int16 fillColo
    SimpleButton
  * ===================================================================== */
 
-SimpleButton::SimpleButton(gWindow &win, const Rect16 &box, char *title, uint16 ident,
+SimpleButton::SimpleButton(gWindow &win, const Rect16 &box, const char *title, uint16 ident,
                            AppFunc *cmd)
 	: gControl(win, box, title, ident, cmd) {
 	window = &win;

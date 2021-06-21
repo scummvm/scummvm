@@ -546,7 +546,7 @@ void hResource::readResource(hResEntry &element) {
 	debugC(3, kDebugResources, "%s, offset: %x, size: %d", tag2str(id), element.offset, element.size);
 }
 
-hResource::hResource(char *resname, char *extname, const char desc[]) {
+hResource::hResource(const char *resname, const char *extname, const char desc[]) {
 	hResEntry   origin;
 	int32      tableSize;
 	const int32 resourceSize = 4 + 4 + 4; // id, offset, size

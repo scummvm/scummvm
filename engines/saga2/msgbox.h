@@ -55,7 +55,7 @@ public:
 
 	SimpleWindow(const Rect16 &r,
 	             uint16 ident,
-	             char *title,
+	             const char *title,
 	             AppFunc *cmd);
 	~SimpleWindow();
 
@@ -77,7 +77,7 @@ public:
 class SimpleButton : public gControl {
 	gWindow *window;
 public:
-	SimpleButton(gWindow &, const Rect16 &, char *, uint16, AppFunc *cmd = NULL);
+	SimpleButton(gWindow &, const Rect16 &, const char *, uint16, AppFunc *cmd = NULL);
 
 	void draw(void);                         // redraw the panel.
 	void drawClipped(gPort &port, const Point16 &offset, const Rect16  &r);
@@ -97,9 +97,7 @@ class ErrorWindow : public SimpleWindow {
 public:
 
 	static requestInfo      rInfo;
-	ErrorWindow(char *msg,
-	            char *btnMsg1,
-	            char *btnMsg2);
+	ErrorWindow(const char *msg, const char *btnMsg1, const char *btnMsg2);
 	~ErrorWindow();
 	int16 getResult(void);
 	static APPFUNC(cmdMessageWindow);
@@ -110,31 +108,7 @@ public:
 
 };
 
-
-struct MBErr {
-	int16 errNo;
-	MBErr(int16 e) {
-		errNo = e;
-	}
-};
-
-#define assert_alloc(e,p) if (NULL==p) throw MBErr(e)
-
-
-
-int16 FTAMessageBox(char *msg, char *btnMsg1, char *btnMsg2);
-
-#if 0
-class SystemErrorMessager : public Messager {
-protected:
-	int dumpit(char *s, size_t size) ;
-
-public:
-	SystemErrorMessager() {}
-	~SystemErrorMessager() {}
-	int16 getAnswer(const char *b1, const char *b2, const char fmt[], ...);
-};
-#endif
+int16 FTAMessageBox(const char *msg, const char *btnMsg1, const char *btnMsg2);
 
 } // end of namespace Saga2
 

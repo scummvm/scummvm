@@ -51,8 +51,6 @@ ActiveMission *ActiveMission::newMission(ObjectID genID, uint16 script) {
 
 	if (!ms) return NULL;
 
-	GameObject      *generator = GameObject::objectAddress(genID);
-
 	ms->_data.missionID   = i;
 	ms->_data.generatorID = genID;
 	ms->_data.missionScript = script;
