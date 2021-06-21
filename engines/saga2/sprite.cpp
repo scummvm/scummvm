@@ -679,7 +679,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	//  Dump the sprites being stored
 	for (bank = 0; bank < (long)elementsof(aa->spriteBanks); bank++) {
 		if (aa->spriteBanks[bank])
-			free(aa->spriteBanks[bank]);
+			delete aa->spriteBanks[bank];
 		aa->spriteBanks[bank] = nullptr;
 	}
 
