@@ -351,8 +351,9 @@ void LauncherDialog::updateListing() {
 		}
 
 		// Strip platform language from the title.
-		int extraPos = description.rfind("(");
-		description.replace((char *)(description.c_str())+extraPos, description.end(), Common::String(""));
+		size_t extraPos = description.findFirstOf("(");
+		if (extraPos != Common::String::npos)
+			description = Common::String(description.c_str(), extraPos);
 		// warning("%s",iter->_key.c_str());
 		if (!description.empty())
 			domainList.push_back(LauncherEntry(iter->_key, description, &iter->_value));
@@ -366,10 +367,11 @@ void LauncherDialog::updateListing() {
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
 		Common::String entryid = iter->key;
 		Common::String gameid = iter->domain->getVal("gameid");
-		Common::String engineid = iter->domain->getVal("engineid");
 		Common::String title = iter->description;
+		Common::String engineid = "UNK";
 		Common::String language = "XX";
 		Common::String platform = "UNK";
+		iter->domain->tryGetVal("engineid", engineid);
 		iter->domain->tryGetVal("language",language);
 		iter->domain->tryGetVal("platform", platform);
 		gridList.push_back(GridItemInfo(entryid, engineid, gameid, title, language, platform));
