@@ -258,7 +258,7 @@ nonemptymethodlist: methodlistline[item]			{
 			list->push_back($item);
 		}
 		$$ = list; }
-	| methodlist[prev] '\n' methodlistline[item]	{
+	| nonemptymethodlist[prev] methodlistline[item]	{
 		if ($item) {
 			$prev->push_back($item);
 		}
@@ -549,7 +549,7 @@ nonemptystmtlist:
 			list->push_back($item);
 		}
 		$$ = list; }
-	| stmtlist[prev] stmtlistline[item]	{
+	| nonemptystmtlist[prev] stmtlistline[item]	{
 		if ($item) {
 			$prev->push_back($item);
 		}
