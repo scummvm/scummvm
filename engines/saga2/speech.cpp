@@ -368,7 +368,7 @@ bool Speech::setupActive(void) {
 	//  Blit to temp bitmap
 	speechImage.size.x = bounds.width;
 	speechImage.size.y = bounds.height;
-	speechImage.data = (uint8 *) RNewClearPtr(speechImage.bytes(), NULL, "speech text image");
+	speechImage.data = new uint8[speechImage.bytes()]();
 	tempTextPort.setMap(&speechImage);
 
 	y = outlineWidth;                       // Plus 2 for Outlines
@@ -550,7 +550,7 @@ void Speech::dispose(void) {
 		wakeUpThread(thread, selectedButton);
 
 		//  De-allocate the speech data
-		RDisposePtr(speechImage.data);
+		delete[] speechImage.data;
 		speechImage.data = NULL;
 
 		//  Clear the number of active buttons
@@ -1284,7 +1284,7 @@ void saveSpeechTasks(SaveFileConstructor &saveGame) {
 
 	archiveBufSize = speechList.archiveSize();
 
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate speech task archive buffer");
 
@@ -1295,7 +1295,7 @@ void saveSpeechTasks(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-----------------------------------------------------------------------
@@ -1311,7 +1311,7 @@ void loadSpeechTasks(SaveFileReader &saveGame) {
 	void    *archiveBuffer;
 	void    *bufferPtr;
 
-	archiveBuffer = RNewPtr(saveGame.getChunkSize(), NULL, "archive buffer");
+	archiveBuffer = malloc(saveGame.getChunkSize());
 	if (archiveBuffer == NULL)
 		error("Unable to allocate speech task archive buffer");
 
@@ -1323,7 +1323,7 @@ void loadSpeechTasks(SaveFileReader &saveGame) {
 	//  Reconstruct stackList from archived data
 	new (&speechList) SpeechTaskList(&bufferPtr);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-----------------------------------------------------------------------
