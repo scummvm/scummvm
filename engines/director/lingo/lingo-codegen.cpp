@@ -620,7 +620,7 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 		case kMenuNode:
 			{
 				MenuNode *menu = static_cast<MenuNode *>(the->obj);
-				return codeTheFieldGet(kTheMenu, menu->arg, *the->prop);
+				return codeTheFieldSet(kTheMenu, menu->arg, *the->prop);
 			}
 			break;
 		case kMenuItemNode:
@@ -633,7 +633,7 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 				}
 				COMPILE(menuItem->arg1)
 				COMPILE(menuItem->arg2);
-				code1(LC::c_theentitypush);
+				code1(LC::c_theentityassign);
 				codeInt(kTheMenuItem);
 				codeInt(g_lingo->_theEntityFields[fieldId]->field);
 				return true;
@@ -657,7 +657,7 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 				if (the->prop->equalsIgnoreCase("number") && var->name->equalsIgnoreCase("castMembers")) {
 					code1(LC::c_intpush);
 					codeInt(0); // Put dummy id
-					code1(LC::c_theentitypush);
+					code1(LC::c_theentityassign);
 					codeInt(kTheCastMembers);
 					codeInt(kTheNumber);
 					return true;
@@ -669,8 +669,9 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 		}
 
 		if (g_director->getVersion() >= 400) {
+			COMPILE(node->val);
 			COMPILE(the->obj);
-			code1(LC::c_objectproppush);
+			code1(LC::c_objectpropassign);
 			codeString(the->prop->c_str());
 			return true;
 		}
