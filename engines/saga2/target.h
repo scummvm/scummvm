@@ -57,8 +57,8 @@ class Target;
 void deleteTarget(Target *t);
 
 void *constructTarget(void *mem, void *buf);
-int32 targetArchiveSize(Target *t);
-void *archiveTarget(Target *t, void *buf);
+int32 targetArchiveSize(const Target *t);
+void *archiveTarget(const Target *t, void *buf);
 
 /* ===================================================================== *
    TargetLocationArray structure

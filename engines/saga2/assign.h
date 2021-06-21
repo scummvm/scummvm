@@ -215,8 +215,8 @@ protected:
 
 	Task *getTask(TaskStack *ts);
 
-	Target *getTarget(void) const {
-		return (Target *)targetMem;
+	const Target *getTarget(void) const {
+		return (const Target *)targetMem;
 	}
 };
 
@@ -297,8 +297,8 @@ protected:
 
 	Task *getTask(TaskStack *ts);
 
-	ActorTarget *getTarget(void) const {
-		return (ActorTarget *)targetMem;
+	const ActorTarget *getTarget(void) const {
+		return (const ActorTarget *)targetMem;
 	}
 };
 
@@ -377,8 +377,8 @@ protected:
 
 	Task *getTask(TaskStack *ts);
 
-	ActorTarget *getTarget(void) const {
-		return (ActorTarget *)targetMem;
+	const ActorTarget *getTarget(void) const {
+		return (const ActorTarget *)targetMem;
 	}
 };
 

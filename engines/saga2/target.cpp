@@ -89,11 +89,11 @@ void *constructTarget(void *mem, void *buf) {
 	return buf;
 }
 
-int32 targetArchiveSize(Target *t) {
+int32 targetArchiveSize(const Target *t) {
 	return sizeof(int16) + t->archiveSize();
 }
 
-void *archiveTarget(Target *t, void *buf) {
+void *archiveTarget(const Target *t, void *buf) {
 	*((int16 *)buf) = t->getType();
 	buf = (int16 *)buf + 1;
 
