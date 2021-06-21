@@ -427,6 +427,9 @@ bool LingoCompiler::visitHandlerNode(HandlerNode *node) {
 	VarTypeHash *mainMethodVars = _methodVars;
 	_methodVars = new VarTypeHash;
 
+	if (_inFactory) {
+		registerMethodVar("me", kVarArgument);
+	}
 	for (uint i = 0; i < node->args->size(); i++) {
 		registerMethodVar(*(*node->args)[i], kVarArgument);
 	}
@@ -445,6 +448,9 @@ bool LingoCompiler::visitHandlerNode(HandlerNode *node) {
 		debug("define handler \"%s\" (len: %d)", node->name->c_str(), _currentAssembly->size() - 1);
 
 	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
+	if (_inFactory) {
+		argNames->push_back("me");
+	}
 	for (uint i = 0; i < node->args->size(); i++) {
 		argNames->push_back(Common::String((*node->args)[i]->c_str()));
 	}
@@ -538,7 +544,15 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 		return true;
 	}
 
-	COMPILE_LIST(node->args);
+	if (node->args->size() >= 1 && (*node->args)[0]->type == kVarNode) {
+		// This could be a method call. Code the first arg as a reference.
+		COMPILE_REF((*node->args)[0]);
+		for (uint i = 1; i < node->args->size(); i++) {
+			COMPILE((*node->args)[i]);
+		}
+	} else {
+		COMPILE_LIST(node->args);
+	}
 	codeCmd(*node->name, node->args->size());
 	return true;
 }
@@ -1023,7 +1037,15 @@ bool LingoCompiler::visitPropPairNode(PropPairNode *node) {
 /* FuncNode */
 
 bool LingoCompiler::visitFuncNode(FuncNode *node) {
-	COMPILE_LIST(node->args);
+	if (node->args->size() >= 1 && (*node->args)[0]->type == kVarNode) {
+		// This could be a method call. Code the first arg as a reference.
+		COMPILE_REF((*node->args)[0]);
+		for (uint i = 1; i < node->args->size(); i++) {
+			COMPILE((*node->args)[i]);
+		}
+	} else {
+		COMPILE_LIST(node->args);
+	}
 	codeFunc(*node->name, node->args->size());
 	return true;
 }
