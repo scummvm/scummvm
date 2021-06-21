@@ -547,12 +547,10 @@ bool ActorProto::acceptStrikeAction(
 
 	Actor           *a = (Actor *)GameObject::objectAddress(dObj);
 	ActorAttributes *effStats = a->getStats();
-	WeaponProto     *weaponProto = (WeaponProto *)GameObject::protoAddress(strikingObj);
 	GameObject      *weapon = GameObject::objectAddress(strikingObj);
 
 	assert(weapon->proto()->containmentSet() & ProtoObj::isWeapon);
 
-	WeaponStuff     &ws = getWeapon(weaponProto->getWeaponID());
 	Actor           *enactorPtr = (Actor *)GameObject::objectAddress(enactor);
 	ArmorAttributes armorAttribs;
 
@@ -733,6 +731,9 @@ bool ActorProto::acceptInsertionAtAction(
 
 		case worn:
 			a->wear(item, wornWhere);
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -1966,7 +1967,7 @@ void Actor::getColorTranslation(ColorTable map) {
 //  Each time the nextAnimationFrame() is called, it will increment
 //  to the next frame in the sequence.
 
-int16 Actor::setAction(int16 newState, int16 flags) {
+int16 Actor::setAction(int16 newState, int16 flags_) {
 	ActorAnimation      *anim;
 	int16                numPoses = 0;
 
@@ -1984,11 +1985,11 @@ int16 Actor::setAction(int16 newState, int16 flags) {
 
 	//  Set up the animation
 	currentAnimation = newState;
-	animationFlags = flags;
+	animationFlags = flags_;
 
 	//  If they haven't set the "no reset" flag, then
-	if (!(flags & animateNoRestart)) {
-		if (flags & animateReverse) currentPose = numPoses - 1;
+	if (!(flags_ & animateNoRestart)) {
+		if (flags_ & animateReverse) currentPose = numPoses - 1;
 		else currentPose = 0;
 	} else {
 		currentPose = clamp(0, currentPose, numPoses - 1);
@@ -2298,15 +2299,15 @@ void Actor::updateAppearance(int32) {
 	}// End if (appearance)
 }
 
-bool Actor::SetAvailableAction(int16 flags, ...) {
+bool Actor::SetAvailableAction(int16 flags_, ...) {
 	bool            result = false;
 	va_list Actions;
-	va_start(Actions, flags); //Initialize To First Argument Even Though We Dont Use It In The Loop
+	va_start(Actions, flags_); //Initialize To First Argument Even Though We Dont Use It In The Loop
 
 	for (;;) { //Infinite Loop
 		int thisAction = va_arg(Actions, int);  //Increment To Second Argument Ignoring Flags
 		if (thisAction < 0) break;              //Check If Last Parameter Since Last Always Should Be -1
-		if (setAction(thisAction, flags)) {     //Try To Set This Action
+		if (setAction(thisAction, flags_)) {     //Try To Set This Action
 			result = true;  //If Successful
 			break;
 		}
@@ -2374,7 +2375,7 @@ void Actor::evaluateNeeds(void) {
 			        &&  appearance != NULL
 			        &&  !hasEffect(actorNotDefenseless)) {
 				GameObject              *obj;
-				bool                    foundWeapon;;
+				bool                    foundWeapon = false;
 				ContainerIterator       iter(this);
 
 				while (iter.next(&obj) != Nothing) {
@@ -2673,8 +2674,6 @@ void Actor::handleDamageTaken(uint8 damage) {
 	uint8       combatBehavior = ((ActorProto *)prototype)->combatBehavior;
 
 	if (combatBehavior == behaviorHungry) return;
-
-	GameObject  *weapon = offensiveObject();
 
 	if (offensiveObject() == this
 	        &&  !isActionAvailable(actionSwingHigh)
@@ -3323,8 +3322,6 @@ int16 GetRandomBetween(int start, int end) {
 	else return (rand() % abs(end - start)) + start;
 
 }
-
-static int useLine = 0;
 
 void updateActorStates(void) {
 	if (actorStatesPaused) return;
