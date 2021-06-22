@@ -6,3 +6,5 @@ global foo, bar,
 property baz,
 
 test "foo", "bar", "baz",
+
+put sqrt(4,)
