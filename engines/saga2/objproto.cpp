@@ -490,6 +490,7 @@ bool ProtoObj::eat(ObjectID dObj, ObjectID enactor) {
 	int16           scriptResult;
 
 	//  Handle object script in a standard fashion
+	warning("ProtoObj::eat: Method_GameObject_onEat undefined");
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onEat,
 	                        dObj, enactor, Nothing))
@@ -512,6 +513,7 @@ bool ProtoObj::insert(ObjectID dObj, ObjectID enactor, ObjectID item) {
 	int16   scriptResult;
 
 	//  Handle object script in a standard fashion
+	warning("ProtoObj::insert: Method_GameObject_onInsert undefined");
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onInsert,
 	                        dObj, enactor, item))
@@ -533,6 +535,7 @@ bool ProtoObj::remove(ObjectID dObj, ObjectID enactor) {
 	int16           scriptResult;
 
 	//  Handle object script in a standard fashion
+	warning("ProtoObj::remove: Method_GameObject_onRemove undefined");
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onRemove,
 	                        dObj, enactor, Nothing))
@@ -559,6 +562,7 @@ bool ProtoObj::acceptDrop(
 	int16   scriptResult;
 
 	//  Handle object script in a standard fashion
+	warning("ProtoObj::acceptDrop: Method_GameObject_onAcceptDrop undefined");
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptDrop,
 	                        dObj, enactor, droppedObj, count))
@@ -658,6 +662,7 @@ bool ProtoObj::acceptStrike(
 	int16   scriptResult;
 
 	//  Handle object script in a standard fashion
+	warning("ProtoObj::acceptStrike: Method_GameObject_onAcceptStrike undefined");
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptStrike,
 	                        dObj, enactor, strikingObj))
@@ -719,6 +724,7 @@ bool ProtoObj::acceptMix(ObjectID dObj, ObjectID enactor, ObjectID mixObj) {
 	int16   scriptResult;
 
 	//  Handle object script in a standard fashion
+	warning("ProtoObj::acceptMix: Method_GameObject_onAcceptMix undefined");
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptMix,
 	                        dObj, enactor, mixObj))
