@@ -374,7 +374,6 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	// snap pan
 	// restore x,z
 
-	PXreal xnext, znext;
 	uint32 next_pc, info_pc;
 	PXfloat this_pan_change;
 
@@ -460,8 +459,9 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	// Note, assumes current frame hasn't changed i.e L->info_pc is same
 	currentFrame->markers[ORG_POS].GetXYZ(&x1, &unused, &z1);
 
-	xnext = x2 - x1;
-	znext = z2 - z1;
+	// FIXME: xnext and znext are not used currently...
+	//PXreal xnext = x2 - x1;
+	//PXreal znext = z2 - z1;
 
 	// update pc
 	L->anim_pc = next_pc; // allready computed
@@ -474,11 +474,12 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 
 	L->pan_adjust = pan;
 
+	// FIXME: ang, cang and sang are not used currently...
 	// calculate the new x and z coordinate from this frames motion offset
 	// do the z and x together
-	PXfloat ang = (L->pan - L->pan_adjust) * TWO_PI;
-	PXfloat cang = (PXfloat)PXcos(ang);
-	PXfloat sang = (PXfloat)PXsin(ang);
+	// PXfloat ang = (L->pan - L->pan_adjust) * TWO_PI;
+	//PXfloat cang = (PXfloat)PXcos(ang);
+	//PXfloat sang = (PXfloat)PXsin(ang);
 
 	// FIXME: x and z are not used currently...
 	//PXreal x = M->actor_xyz.x + PXfloat2PXreal(xnext * cang + znext * sang);
