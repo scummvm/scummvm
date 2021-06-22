@@ -1274,8 +1274,6 @@ TangibleContainerWindow::TangibleContainerWindow(
 		                          Point16(app.massRect.x, app.massRect.y),
 		                          weightIndicatorType,
 		                          deathFlag);
-		checkAlloc(massWeightIndicator);
-
 	}
 }
 
@@ -1768,9 +1766,8 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
 void initContainers(void) {
 	if (containerRes == NULL)
 		containerRes = resFile->newContext(MKTAG('C', 'O', 'N', 'T'), "cont.resources");
-	checkAlloc(containerRes);
 
-	checkAlloc(selImage = ImageCache.requestImage(imageRes, MKTAG('A', 'M', 'N', 'T')));
+	selImage = ImageCache.requestImage(imageRes, MKTAG('A', 'M', 'N', 'T'));
 }
 
 void cleanupContainers(void) {

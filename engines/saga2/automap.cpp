@@ -538,21 +538,17 @@ int16 openAutoMap() {
 	decRes = resFile->newContext(MKTAG('A', 'M', 'A', 'P'), "Automap Resources");
 
 	// debug
-	checkAlloc(summaryData = LoadResource(decRes,
-	                                      MKTAG('S', 'U', 'M', currentMapNum),
-	                                      "summary data"));
+	summaryData = LoadResource(decRes, MKTAG('S', 'U', 'M', currentMapNum), "summary data");
 
 	// get the graphics associated with the buttons
-	checkAlloc(closeBtnImage = loadButtonRes(decRes, closeButtonResID, numBtnImages));
-	checkAlloc(scrollBtnImage = loadButtonRes(decRes, scrollButtonResID, 2));
+	closeBtnImage = loadButtonRes(decRes, closeButtonResID, numBtnImages);
+	scrollBtnImage = loadButtonRes(decRes, scrollButtonResID, 2);
 
 	pAutoMap = new CAutoMap(autoMapRect, (uint8 *)summaryData, 0, NULL);
 
-	checkAlloc(closeAutoMap = new gCompButton(*pAutoMap, closeAutoMapBtnRect,
-	                          closeBtnImage, numBtnImages, 0, cmdAutoMapQuit));
+	closeAutoMap = new gCompButton(*pAutoMap, closeAutoMapBtnRect, closeBtnImage, numBtnImages, 0, cmdAutoMapQuit);
 
-	checkAlloc(scrollBtn        = new gCompButton(*pAutoMap, scrollBtnRect,
-	                              scrollBtnImage, numBtnImages, 0, cmdAutoMapScroll));
+	scrollBtn = new gCompButton(*pAutoMap, scrollBtnRect, scrollBtnImage, numBtnImages, 0, cmdAutoMapScroll);
 
 	pAutoMap->setDecorations(autoMapDecorations,
 	                         elementsof(autoMapDecorations),

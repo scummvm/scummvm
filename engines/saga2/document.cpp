@@ -918,18 +918,13 @@ int16 openScroll(uint16 textScript) {
 	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
 
 	// get the graphics associated with the buttons
-	checkAlloc(closeBtnImage = loadButtonRes(decRes, buttonResID, numBtnImages));
+	closeBtnImage = loadButtonRes(decRes, buttonResID, numBtnImages);
 
 	// create the window
-	checkAlloc(win = new CDocument(scrollAppearance,
-	                               bookText,
-	                               &Script10Font,
-	                               0,
-	                               NULL));
+	win = new CDocument(scrollAppearance, bookText, &Script10Font, 0, NULL);
 
 	// make the quit button
-	checkAlloc(closeScroll  = new gCompButton(*win, scrollAppearance.closeRect,
-	        closeBtnImage, numBtnImages, 0, cmdDocumentQuit));
+	closeScroll = new gCompButton(*win, scrollAppearance.closeRect, closeBtnImage, numBtnImages, 0, cmdDocumentQuit);
 
 	closeScroll->accelKey = 0x1B;
 
@@ -973,16 +968,11 @@ int16 openBook(uint16 textScript) {
 	CDocument       *win = NULL;
 
 	// create the window
-	checkAlloc(win = new CDocument(bookAppearance,
-	                               bookText,
-	                               &Script10Font,
-	                               0,
-	                               NULL));
+	win = new CDocument(bookAppearance, bookText, &Script10Font, 0, NULL);
 
 	gCompButton *t;
 	// make the quit button
-	checkAlloc(t = new gCompButton(*win, bookAppearance.closeRect,
-	                               "doc close", 0, cmdDocumentQuit));
+	t = new gCompButton(*win, bookAppearance.closeRect, "doc close", 0, cmdDocumentQuit);
 	t->accelKey = 0x1B;
 
 	// attach the structure to the book, open the book
@@ -1018,15 +1008,10 @@ int16 openParchment(uint16 textScript) {
 	CDocument       *win = NULL;
 
 	// create the window
-	checkAlloc(win = new CDocument(parchAppearance,
-	                               bookText,
-	                               &Script10Font,
-	                               0,
-	                               NULL));
+	win = new CDocument(parchAppearance, bookText, &Script10Font, 0, NULL);
 	gCompButton *t;
 	// make the quit button
-	checkAlloc(t = new gCompButton(*win, parchAppearance.closeRect,
-	                               "doc close", 0, cmdDocumentQuit));
+	t = new gCompButton(*win, parchAppearance.closeRect, "doc close", 0, cmdDocumentQuit);
 
 	t->accelKey = 0x1B;
 	// attach the structure to the book, open the book

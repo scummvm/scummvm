@@ -176,7 +176,6 @@ void *CImageCache::requestImage(hResContext *con, uint32 resID) {
 	// ptr to the new image resource
 	// creates node and loads in the resource
 	imageNode = new CImageNode(con, resID);
-	checkAlloc(imageNode);
 
 	// add this node to the list
 	nodes.addTail(*imageNode);
