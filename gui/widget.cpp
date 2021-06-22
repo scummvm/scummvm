@@ -630,7 +630,7 @@ void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
 	_gfx[statenum].free();
 
 	if (!isVisible() || !_boss->isVisible())
-	return;
+		return;
 
 	if (w == -1)
 		w = _w;
@@ -919,7 +919,7 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 	_gfx.free();
 
 	if (!isVisible() || !_boss->isVisible())
-	return;
+		return;
 
 	if (w == -1)
 		w = _w;
