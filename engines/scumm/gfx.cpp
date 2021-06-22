@@ -1124,9 +1124,6 @@ void ScummEngine::restoreCharsetBg() {
 		_charset->_str.left = -1;
 		_charset->_left = -1;
 
-		if (_macScreen)
-			clearTextSurface();
-
 		// Restore background on the whole text area. This code is based on
 		// restoreBackground(), but was changed to only restore those parts which are
 		// currently covered by the charset mask.
@@ -1153,7 +1150,7 @@ void ScummEngine::restoreCharsetBg() {
 				memset(screenBuf, 0, vs->h * vs->pitch);
 		}
 
-		if (vs->hasTwoBuffers) {
+		if (vs->hasTwoBuffers || _macScreen) {
 			// Clean out the charset mask
 			clearTextSurface();
 		}
