@@ -1312,8 +1312,6 @@ bool TileActivityTask::setWait(ActiveItem *tai, ThreadID script) {
 //	Calls the handling routine for each tile activity task
 
 void moveActiveTerrain(int32 deltaTime) {
-	deltaTime = 0;
-
 	TileActivityTask::updateActiveItems();
 }
 

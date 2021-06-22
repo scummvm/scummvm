@@ -1973,7 +1973,7 @@ TaskResult GoAwayFromTask::evaluate(void) {
 //	Update this task
 
 TaskResult GoAwayFromTask::update(void) {
-	static const TilePoint dirTable[] = {
+	static const TilePoint dirTable_[] = {
 		TilePoint(64,  64, 0),
 		TilePoint(0,  64, 0),
 		TilePoint(-64,  64, 0),
@@ -1996,7 +1996,7 @@ TaskResult GoAwayFromTask::update(void) {
 		dest.v = actorLoc.v + ((int32)repulsionVector.v * 64 / repulsionDist);
 		dest.z = actorLoc.z;
 	} else
-		dest = actorLoc + dirTable[a->currentFacing];
+		dest = actorLoc + dirTable_[a->currentFacing];
 
 	if (goTask != NULL) {
 		if (goTask->getTarget() != dest)
@@ -3950,7 +3950,7 @@ void BandTask::evaluateTarget(void) {
 			int16           j = repulsorCount;
 
 			if (repulsorDist < repulsorDistArray[j - 1]) {
-				if (repulsorCount < elementsof(repulsorVectorArray)) {
+				if (repulsorCount < (long)elementsof(repulsorVectorArray)) {
 					repulsorDistArray[j] = repulsorDistArray[j - 1];
 					repulsorVectorArray[j] = repulsorVectorArray[j - 1];
 					repulsorStrengthArray[j] = repulsorStrengthArray[j - 1];
@@ -3965,8 +3965,8 @@ void BandTask::evaluateTarget(void) {
 				j--;
 			}
 
-			if (j < elementsof(repulsorVectorArray)) {
-				if (repulsorCount < elementsof(repulsorVectorArray))
+			if (j < (long)elementsof(repulsorVectorArray)) {
+				if (repulsorCount < (long)elementsof(repulsorVectorArray))
 					repulsorCount++;
 				repulsorDistArray[j] = repulsorDist;
 				repulsorVectorArray[j] = repulsorVector;

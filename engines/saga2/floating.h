@@ -109,8 +109,8 @@ private:
 class gButton : public gControl {
 public:
 
-	gButton(gPanelList &list, const Rect16 &box, char *title, uint16 ident, AppFunc *cmd = NULL) :
-		gControl(list, box, title, ident, cmd) {}
+	gButton(gPanelList &list, const Rect16 &box, char *title_, uint16 ident, AppFunc *cmd = NULL) :
+		gControl(list, box, title_, ident, cmd) {}
 	gButton(gPanelList &list, const Rect16 &box, gPixelMap &img, uint16 ident, AppFunc *cmd = NULL) :
 		gControl(list, box, img, ident, cmd) {}
 
@@ -150,8 +150,8 @@ public:
 		selImage = &img1;
 		deselImage = &img2;
 	}
-	gImageButton(gPanelList &list, const Rect16 &box, gPixelMap &img1, gPixelMap &img2, char *title, uint16 ident, AppFunc *cmd = NULL) :
-		gButton(list, box, title, ident, cmd) {
+	gImageButton(gPanelList &list, const Rect16 &box, gPixelMap &img1, gPixelMap &img2, char *title_, uint16 ident, AppFunc *cmd = NULL) :
+		gButton(list, box, title_, ident, cmd) {
 		selImage = &img1;
 		deselImage = &img2;
 	}
