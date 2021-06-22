@@ -37,6 +37,7 @@
 #include "saga2/audqueue.h"
 #include "saga2/audiosys.h"
 #include "saga2/config.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 
@@ -122,7 +123,7 @@ static audioAttenuationFunction oldAttenuator;
 #define killIt(p)  if (p) delete p; p=NULL
 bool haveKillerSoundCard(void);
 void writeConfig(void);
-void disableBGLoop(int32 s = -1);
+void disableBGLoop(bool s = true);
 void enableBGLoop(void);
 void audioStressTest(void);
 extern GameObject *getViewCenterObject(void);
@@ -225,7 +226,6 @@ static ATTENUATOR(volumeFromDist) {
 //	after system initialization - startup code
 
 void startAudio(void) {
-	bool disVoice, disMusic, disSound, disLoops;
 	audioInterfaceSettings audioBufferSizes = audioInterfaceSettings(
 	            (int16)  2,       // number of sound buffers
 	            (uint32) 32768,   // voice buffer size   32k
@@ -234,14 +234,18 @@ void startAudio(void) {
 	            (uint32) 400000    // sound buffer size
 	        );
 
+	bool disVoice = false, disMusic= false, disSound= false, disLoops= false;
 	warning("STUB: startAudio, sync sound settings");
 #if 0
+
 	disMusic = !GetPrivateProfileInt("Sound", "Music", 1, iniFile);
 	disVoice = !GetPrivateProfileInt("Sound", "Voice", 1, iniFile);
 	disLoops = !GetPrivateProfileInt("Sound", "Loops", 1, iniFile);
 	disSound = !GetPrivateProfileInt("Sound", "Sound", 1, iniFile);
+#endif
 
-	assert(audio);
+	return;
+
 	if (audio->active()) {
 		voiceDec = new decoderSet();
 		voiceDec->addDecoder(new soundDecoder(&readVoice, &seekVoice, &flushVoice));
@@ -262,9 +266,7 @@ void startAudio(void) {
 		memDec = new decoderSet();
 		memDec->addDecoder(new soundDecoder(&readMemSound, &seekMemSound, &flushMemSound));
 
-		uint32 musicID =
-		    haveKillerSoundCard() ? goodMusicID :
-		    baseMusicID;
+		uint32 musicID = haveKillerSoundCard() ? goodMusicID : baseMusicID;
 
 		if (!disMusic) {
 			musicRes = soundResFile->newContext(musicID, "music resource");
@@ -318,14 +320,6 @@ void startAudio(void) {
 		clickData[2] = (uint8 *) LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
 	}
 
-#if 0
-	disMusic = !GetPrivateProfileInt("Sound", "Music", 1, iniFile);
-	disVoice = !GetPrivateProfileInt("Sound", "Voice", 1, iniFile);
-	disLoops = !GetPrivateProfileInt("Sound", "Loops", 1, iniFile);
-	disSound = !GetPrivateProfileInt("Sound", "Sound", 1, iniFile);
-#endif
-	warning("STUB: startAudio, sync sound settings");
-
 #if DEBUG
 	if (debugStatuses) {
 		WriteStatusF(5, audio->statusMessage());
@@ -341,7 +335,6 @@ void startAudio(void) {
 		audio->disable(volLoops);
 	if (disSound)
 		audio->disable(volSound);
-#endif
 }
 
 //-----------------------------------------------------------------------
@@ -388,13 +381,8 @@ char msg[80];
 //	check for higher quality MIDI card
 
 bool haveKillerSoundCard(void) {
-#ifndef _WIN32
-	if (audio && audio->mid != NULL)
-		return audio->goodMIDICard();
-	return false;
-#else
-	return GetPrivateProfileInt("Sound", "WavetableMIDI", 1, iniFile);
-#endif
+	warning("STUB: haveKillerSoundCard()"); // Check here for sound card type
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -420,7 +408,7 @@ HDIGDRIVER &digitalAudioDriver(void) {
 
 
 void suspendLoops(void) {
-	disableBGLoop(0);
+	disableBGLoop(false);
 }
 
 void resumeLoops(void) {
@@ -540,11 +528,12 @@ void playLongSound(uint32 s) {
 
 void playVoice(uint32 s) {
 #ifndef AUDIO_DISABLED
-	if (hResCheckResID(voiceRes, s))
+	if (hResCheckResID(voiceRes, s)) {
 		if (s)
 			audio->queueVoice(s, voiceDec, Here);
 		else
 			audio->stopVoice();
+	}
 #endif
 }
 
@@ -692,7 +681,7 @@ bool stillDoingVoice(uint32 sampno) {
 
 uint32 parse_res_id(char IDstr[]) {
 	uint32 a[5] = {0, 0, 0, 0, 0};
-	uint32 a2, res = 0;
+	uint32 a2;
 	uint32 i, j;
 	assert(IDstr != NULL);
 	if (strlen(IDstr)) {

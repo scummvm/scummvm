@@ -163,7 +163,7 @@ void killAllAuxThemes(void) {
 //-----------------------------------------------------------------------
 // Hooks to allow other loops to play
 
-void disableBGLoop(int32 s) {
+void disableBGLoop(bool s) {
 	playingExternalLoop = s;
 }
 
@@ -239,7 +239,7 @@ void setAreaSound(const TilePoint &) {
 				loopID = 0;
 			}
 			audioEnvironmentUseSet(loopID, ss, themePos << kPlatShift);
-		} else if (playingExternalLoop != -1) {
+		} else if (!playingExternalLoop) {
 			audioEnvironmentUseSet(playingExternalLoop, 0, Point16(0, 0)); //themePos << kPlatShift);
 		}
 	}
