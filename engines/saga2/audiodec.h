@@ -155,7 +155,8 @@ public:
 	soundDecoder(const soundDecoder &src);
 	bool operator==(const soundDecoder &src2) const;
 	inline operator bool() const {
-		return (bool) readf != NULL;
+		warning("STUB: soundDecoder::bool()");
+		return true;
 	}
 
 	void setNext(soundDecoder *sd) {
