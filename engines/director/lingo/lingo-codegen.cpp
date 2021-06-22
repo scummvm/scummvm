@@ -1285,16 +1285,16 @@ bool LingoCompiler::visitTheNumberOfNode(TheNumberOfNode *node) {
 bool LingoCompiler::visitTheLastNode(TheLastNode *node) {
 	COMPILE(node->arg);
 	switch (node->type) {
-	case kNumberOfChars:
+	case kChunkChar:
 		codeFunc("lastCharOf", 1);
 		break;
-	case kNumberOfWords:
+	case kChunkWord:
 		codeFunc("lastWordOf", 1);
 		break;
-	case kNumberOfItems:
+	case kChunkItem:
 		codeFunc("lastItemOf", 1);
 		break;
-	case kNumberOfLines:
+	case kChunkLine:
 		codeFunc("lastLineOf", 1);
 		break;
 	}
