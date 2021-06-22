@@ -304,9 +304,10 @@ void AudioProcess::stopSFX(int sfxNum, ObjId objId) {
 }
 
 bool AudioProcess::isSFXPlaying(int sfxNum) {
+	AudioMixer *mixer = AudioMixer::get_instance();
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if (it->_sfxNum == sfxNum)
+		if (it->_sfxNum == sfxNum && mixer->isPlaying(it->_channel))
 			return true;
 	}
 
@@ -314,9 +315,10 @@ bool AudioProcess::isSFXPlaying(int sfxNum) {
 }
 
 bool AudioProcess::isSFXPlayingForObject(int sfxNum, ObjId objId) {
+	AudioMixer *mixer = AudioMixer::get_instance();
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if (it->_sfxNum == sfxNum && (objId == it->_objId))
+		if (it->_sfxNum == sfxNum && (objId == it->_objId) && mixer->isPlaying(it->_channel))
 			return true;
 	}
 
