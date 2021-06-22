@@ -293,12 +293,11 @@ public:
 			loadSpriteBanks((int16)(1 << bank));
 	}
 
-	// FIXME: Pointer Arithmetic
 	ActorAnimation *animation(int num) {
 		if (poseList == nullptr)
 			return nullptr;
 
-		if (num >= poseList->numAnimations) {
+		if (num >= (int)poseList->numAnimations) {
 			warning("ActorPose:animation(), animation number is too high, %d >= %d", num, poseList->numAnimations);
 			return nullptr;
 		}
@@ -318,7 +317,7 @@ public:
 
 		num += anim->start[dir];
 
-		if (num >= poseList->numPoses) {
+		if (num >= (int)poseList->numPoses) {
 			warning("ActorPose::pose(), pose number is too high, %d >= %d", num, poseList->numPoses);
 			return nullptr;
 		}

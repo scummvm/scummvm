@@ -482,7 +482,7 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 	int16       i;
 	bool        objIsActor = isActor(getObject());
 
-	for (i = 0; i < elementsof(playerActorIDs); i++) {
+	for (i = 0; i < (long)elementsof(playerActorIDs); i++) {
 		Actor   *protag =
 		    getPlayerActorAddress(playerActorIDs[i])->getActor();
 
@@ -680,12 +680,12 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 //----------------------------------------------------------------------
 //	Determine if an object meets the search criteria
 
-bool SpecificObjectSensor::isObjectSought(GameObject *obj) {
-	assert(isObject(obj) || isActor(obj));
+bool SpecificObjectSensor::isObjectSought(GameObject *obj_) {
+	assert(isObject(obj_) || isActor(obj_));
 	assert(soughtObjID != Nothing);
 	assert(isObject(soughtObjID) || isActor(soughtObjID));
 
-	return obj == GameObject::objectAddress(soughtObjID);
+	return obj_ == GameObject::objectAddress(soughtObjID);
 }
 
 /* ===================================================================== *
@@ -736,10 +736,10 @@ int16 ObjectPropertySensor::getType(void) {
 //----------------------------------------------------------------------
 //	Determine if an object meets the search criteria
 
-bool ObjectPropertySensor::isObjectSought(GameObject *obj) {
-	assert(isObject(obj) || isActor(obj));
+bool ObjectPropertySensor::isObjectSought(GameObject *obj_) {
+	assert(isObject(obj_) || isActor(obj_));
 
-	return obj->hasProperty(*getObjProp(objectProperty));
+	return obj_->hasProperty(*getObjProp(objectProperty));
 }
 
 /* ===================================================================== *
@@ -749,11 +749,11 @@ bool ObjectPropertySensor::isObjectSought(GameObject *obj) {
 //----------------------------------------------------------------------
 //	Determine if an object meets the search criteria
 
-bool ActorSensor::isObjectSought(GameObject *obj) {
-	assert(isObject(obj) || isActor(obj));
+bool ActorSensor::isObjectSought(GameObject *obj_) {
+	assert(isObject(obj_) || isActor(obj_));
 
 	//  Only actors need apply
-	return isActor(obj) && isActorSought((Actor *)obj);
+	return isActor(obj_) && isActorSought((Actor *)obj_);
 }
 
 /* ===================================================================== *

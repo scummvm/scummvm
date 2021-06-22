@@ -269,7 +269,7 @@ bool Speech::append(char *text, int32 sampID) {
 	int16           len = strlen(text);
 
 	//  Check to see if there's enough room in the character buffer
-	if (charCount + len >= sizeof(speechBuffer)
+	if (charCount + len >= (long)sizeof(speechBuffer)
 	        ||  sampleCount >= MAX_SAMPLES) return false;
 
 	//  Copy text to end of text in buffer, including '\0'
@@ -1015,7 +1015,7 @@ bool isVisible(GameObject *obj) {
 SpeechTaskList::SpeechTaskList(void) {
 	lockFlag = false;
 
-	for (int i = 0; i < elementsof(array); i++) {
+	for (int i = 0; i < (long)elementsof(array); i++) {
 		free.addTail(array[i]);
 	}
 }
@@ -1032,7 +1032,7 @@ SpeechTaskList::SpeechTaskList(void **buf) {
 	lockFlag = false;
 
 	//  Initialize the free list
-	for (i = 0; i < elementsof(array); i++) {
+	for (i = 0; i < (long)elementsof(array); i++) {
 		free.addTail(array[i]);
 	}
 
