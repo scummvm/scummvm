@@ -55,7 +55,7 @@ void MacButton::init() {
 		_dims.right += 16;
 		break;
 	case kRound:
-		_dims.right += 2;
+		_dims.right += 4;
 		_dims.bottom += 4;
 		break;
 	case kRadio:

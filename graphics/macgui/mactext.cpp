@@ -95,7 +95,7 @@ uint MacTextLine::getChunkNum(int *col) {
 
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
-	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow),
+	MacWidget(parent, x, y, w, h, wm, true, border, gutter, boxShadow),
 	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = s;
@@ -120,7 +120,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 }
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, Common::CodePage encodeType) :
-	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow),
+	MacWidget(parent, x, y, w, h, wm, true, border, gutter, boxShadow),
 	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = Common::U32String(s, encodeType);
@@ -208,7 +208,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 	_plainByteMode = false;
 
 	if (font) {
-		_defaultFormatting = MacFontRun(_wm, font, 0, font->getFontHeight(), 0, 0, 0);
+		_defaultFormatting = MacFontRun(_wm, font, 0, font->getFontHeight() + 1, 0, 0, 0);
 		_defaultFormatting.font = font;
 	} else {
 		_defaultFormatting.font = NULL;
@@ -712,6 +712,7 @@ void MacText::render(int from, int to) {
 			xOffset = _maxWidth - getLineWidth(i);
 		else if (_textAlignment == kTextAlignCenter)
 			xOffset = (_maxWidth / 2) - (getLineWidth(i) / 2);
+		xOffset++;
 
 		int maxAscentForRow = 0;
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
@@ -791,7 +792,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 			hastext = true;
 		}
 
-		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight());
+		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight() + 1);
 	}
 
 	if (!hastext && _textLines.size() > 1)
@@ -871,7 +872,7 @@ void MacText::setAlignOffset(TextAlign align) {
 }
 
 Common::Point MacText::calculateOffset() {
-	return Common::Point(_border + _gutter + 2, _border + _gutter / 2);
+	return Common::Point(_border + _gutter, _border + _gutter / 2);
 }
 
 void MacText::setActive(bool active) {
@@ -952,7 +953,7 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 void MacText::appendText(const Common::U32String &str, const Font *font, uint16 r, uint16 g, uint16 b, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
-	MacFontRun fontRun = MacFontRun(_wm, font, 0, font->getFontHeight(), r, g, b);
+	MacFontRun fontRun = MacFontRun(_wm, font, 0, font->getFontHeight() + 1, r, g, b);
 
 	_currentFormatting = fontRun;
 
@@ -1107,7 +1108,7 @@ bool MacText::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!draw(forceRedraw))
 		return false;
 
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), _wm->_colorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left, _dims.top), _wm->_colorGreen2);
 
 	return true;
 }
@@ -1189,7 +1190,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 	end = MIN((int)getDimensions().height(), end);
 
 	int numLines = 0;
-	int x1 = 0, x2 = getDimensions().width() - 1;
+	int x1 = 0, x2 = getDimensions().width();
 	int row = s.startRow;
 	int alignOffset = 0;
 
@@ -1210,11 +1211,11 @@ void MacText::drawSelection(int xoff, int yoff) {
 				alignOffset = (_maxWidth / 2) - (getLineWidth(start_row) / 2);
 
 			if (swaped && start_row == s.startRow && s.startCol != 0) {
-				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width() - 1);
-				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width());
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width());
 			} else {
-				x1 = MIN<int>(x1 + xoff, getDimensions().width() - 1);
-				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+				x1 = MIN<int>(x1 + xoff, getDimensions().width());
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width());
 			}
 
 			row = start_row + 1;
@@ -1224,7 +1225,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 	for (int y = start; y < end; y++) {
 		if (!numLines) {
 			x1 = 0;
-			x2 = getDimensions().width() - 1;
+			x2 = getDimensions().width();
 
 			if (_textAlignment == kTextAlignRight)
 				alignOffset = _maxWidth - getLineWidth(row);
@@ -1241,17 +1242,17 @@ void MacText::drawSelection(int xoff, int yoff) {
 			// the reason here is if we are not drawing the single line, then we draw selection from x1 to x2 + offset. i.e. we draw from begin
 			// otherwise, we draw selection from x1 + offset to x2 + offset
 			if (swaped && row == s.startRow && s.startCol != 0) {
-				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width() - 1);
-				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width());
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width());
 			} else {
-				x1 = MIN<int>(x1 + xoff, getDimensions().width() - 1);
-				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+				x1 = MIN<int>(x1 + xoff, getDimensions().width());
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width());
 			}
 			row++;
 		}
 		numLines--;
 
-		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, MIN<int>(y + yoff, getDimensions().height() - 1));
+		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, MIN<int>(y + yoff, getDimensions().height()));
 
 		for (int x = x1; x < x2; x++, ptr++)
 			if (*ptr == _fgcolor)
