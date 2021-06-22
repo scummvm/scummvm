@@ -503,7 +503,7 @@ ifstmt: tIF expr tTHEN stmt {
 		NodeList *stmtlist = new NodeList;
 		stmtlist->push_back($stmt);
 		$$ = new IfStmtNode($expr, stmtlist); }
-	| tIF expr tTHEN '\n' stmtlist_insideif tENDIF '\n' {
+	| tIF expr tTHEN '\n' stmtlist_insideif endif {
 		$$ = new IfStmtNode($expr, $stmtlist_insideif); }
 	;
 
@@ -513,7 +513,7 @@ ifelsestmt: tIF expr tTHEN stmt[stmt1] tELSE stmt[stmt2] {
 		NodeList *stmtlist2 = new NodeList;
 		stmtlist2->push_back($stmt2);
 		$$ = new IfElseStmtNode($expr, stmtlist1, stmtlist2); }
-	| tIF expr tTHEN stmt[stmt1] tELSE '\n' stmtlist_insideif[stmtlist2] tENDIF '\n' {
+	| tIF expr tTHEN stmt[stmt1] tELSE '\n' stmtlist_insideif[stmtlist2] endif {
 		NodeList *stmtlist1 = new NodeList;
 		stmtlist1->push_back($stmt1);
 		$$ = new IfElseStmtNode($expr, stmtlist1, $stmtlist2); }
@@ -521,9 +521,12 @@ ifelsestmt: tIF expr tTHEN stmt[stmt1] tELSE stmt[stmt2] {
 		NodeList *stmtlist2 = new NodeList;
 		stmtlist2->push_back($stmt2);
 		$$ = new IfElseStmtNode($expr, $stmtlist1, stmtlist2); }
-	| tIF expr tTHEN '\n' stmtlist_insideif[stmtlist1] tELSE '\n' stmtlist_insideif[stmtlist2] tENDIF '\n' {
+	| tIF expr tTHEN '\n' stmtlist_insideif[stmtlist1] tELSE '\n' stmtlist_insideif[stmtlist2] endif {
 		$$ = new IfElseStmtNode($expr, $stmtlist1, $stmtlist2); }
 	;
+
+endif: /* empty */	{ warning("LingoCompiler::parse: no end if"); }
+	| tENDIF '\n' ;
 
 loop: tREPEAT tWHILE expr '\n' stmtlist tENDREPEAT '\n' {
 		$$ = new RepeatWhileNode($expr, $stmtlist); }
