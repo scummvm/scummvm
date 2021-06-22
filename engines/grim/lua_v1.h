@@ -286,6 +286,17 @@ protected:
 	DECLARE_LUA_OPCODE(GetMemoryUsage);
 	DECLARE_LUA_OPCODE(GetFontDimensions);
 	DECLARE_LUA_OPCODE(PurgeText);
+
+	// mouse extensions
+	DECLARE_LUA_OPCODE(RegisterHotspot);
+	DECLARE_LUA_OPCODE(ActivateHotspot);
+	DECLARE_LUA_OPCODE(UpdateHotspot);
+	DECLARE_LUA_OPCODE(SwitchControlMode);
+	DECLARE_LUA_OPCODE(RegisterInventory);
+	DECLARE_LUA_OPCODE(MouseDown);
+	DECLARE_LUA_OPCODE(RenameHotspot);
+	DECLARE_LUA_OPCODE(GetControlMode);
+	DECLARE_LUA_OPCODE(SetOptionMode);
 };
 
 }

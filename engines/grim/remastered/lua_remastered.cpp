@@ -30,7 +30,9 @@
 #include "engines/grim/remastered/hotspot.h"
 
 #include "engines/grim/grim.h"
+#include "engines/grim/debug.h"
 #include "engines/grim/font.h"
+#include "engines/grim/gfx_base.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/registry.h"
 

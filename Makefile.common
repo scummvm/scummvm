@@ -466,6 +466,7 @@ endif
 DIST_FILES_ENGINEDATA+=macgui.dat
 ifdef ENABLE_GRIM
 DIST_FILES_ENGINEDATA+=grim-patch.lab
+DIST_FILES_ENGINEDATA+=mouse.lab
 endif
 ifdef ENABLE_MONKEY4
 DIST_FILES_ENGINEDATA+=monkey4-patch.m4b

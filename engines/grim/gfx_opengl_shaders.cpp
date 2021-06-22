@@ -46,6 +46,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
+#include "math/glmath.h"
 
 #include "engines/grim/actor.h"
 #include "engines/grim/bitmap.h"
@@ -2229,6 +2230,81 @@ void GfxOpenGLS::setBlendMode(bool additive) {
 	} else {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
+}
+
+void GfxOpenGLS::blackbox(int x0, int y0, int x1, int y1, float opacity) {
+	float px1 = x0 * _scaleW, py1 = y0 * _scaleH;
+	float px2 = x1 * _scaleW, py2 = y1 * _scaleH;
+	float data[] = { px1, py1, px1, py2, px2, py1, px2, py2 };
+
+	GLuint prim = nextPrimitive();
+	glBindBuffer(GL_ARRAY_BUFFER, prim);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float), data);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	_primitiveProgram->enableVertexAttribute("position", prim, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+	_primitiveProgram->use(true);
+	_primitiveProgram->setUniform("color", Math::Vector4d(0, 0, 0, opacity));
+	_primitiveProgram->setUniform("scaleWH", Math::Vector2d(1.f / _gameWidth, 1.f / _gameHeight));
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+bool GfxOpenGLS::worldToScreen(const Math::Vector3d &vec, int &x, int &y) {
+	if (_currentShadowArray)
+		return false;
+
+	Math::Vector3d win;
+
+	Math::Matrix4 proj(_projMatrix);
+	proj.transpose();
+	Math::Matrix4 view(_viewMatrix);
+	view.transpose();
+
+	const int viewPort[4] = {0, 0, _gameWidth, _gameHeight};
+	Math::gluMathProject(vec, view.getData(), proj.getData(), viewPort, win);
+
+	win.y() = _gameHeight - win.y();
+
+	if (win.x() < 0)
+		win.x() = 0;
+	if (win.x() >= _gameWidth)
+		win.x() = _gameWidth - 1;
+	if (win.y() < 0)
+		win.y() = 0;
+	if (win.y() >= _gameHeight)
+		win.y() = _gameHeight - 1;
+
+	x = (int)win.x();
+	y = (int)win.y();
+	return x > 0 && y > 0 && x < _gameWidth - 1 && y < _gameHeight - 1;
+}
+
+bool GfxOpenGLS::raycast(int x, int y, Math::Vector3d &r0, Math::Vector3d &r1) {
+	Math::Vector3d p0, p1;
+
+	const Common::Rect viewPort(0, 0, _gameWidth, _gameHeight);
+
+	const Math::Vector3d winPos0(x, _gameHeight - y, 0.0);
+	const Math::Vector3d winPos1(x, _gameHeight - y, 1.0);
+
+	Math::Matrix4 proj(_projMatrix);
+	proj.transpose();
+	Math::Matrix4 view(_viewMatrix);
+	view.transpose();
+
+	const Math::Matrix4 mvp = view * proj;
+	Math::gluMathUnProject(winPos0, mvp, viewPort, p0);
+	Math::gluMathUnProject(winPos1, mvp, viewPort, p1);
+
+	r0 = p0;
+	r1 = p1 - r0;
+	return true;
 }
 
 }

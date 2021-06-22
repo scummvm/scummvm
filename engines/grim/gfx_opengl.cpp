@@ -2110,6 +2110,36 @@ void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	glDepthMask(GL_TRUE);
 }
 
+void GfxOpenGL::blackbox(int x0, int y0, int x1, int y1, float opacity) {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glColor4f(0, 0, 0, opacity);
+
+	glBegin(GL_QUADS);
+	glVertex2f(x0 * _scaleW, y0 * _scaleH);
+	glVertex2f(x1 * _scaleW, y0 * _scaleH);
+	glVertex2f(x1 * _scaleW, y1 * _scaleH);
+	glVertex2f(x0 * _scaleW, y1 * _scaleH);
+	glEnd();
+
+	glColor4f(1, 1, 1, 1);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+	glDisable(GL_BLEND);
+}
+
 void GfxOpenGL::drawRectangle(const PrimitiveObject *primitive) {
 	float x1 = primitive->getP1().x * _scaleW;
 	float y1 = primitive->getP1().y * _scaleH;
@@ -2283,6 +2313,47 @@ void GfxOpenGL::setBlendMode(bool additive) {
 	} else {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
+}
+
+bool GfxOpenGL::worldToScreen(const Math::Vector3d &vec, int &x, int &y) {
+	if (_currentShadowArray)
+		return false;
+
+	GLdouble modelView[16], projection[16];
+	GLint viewPort[4];
+
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelView);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	glGetIntegerv(GL_VIEWPORT, viewPort);
+
+	Math::Vector3d win;
+	Math::gluMathProject<GLdouble, GLint>(vec, modelView, projection, viewPort, win);
+
+	if (win.x() < 0)
+		x = 0;
+	else if (win.x() >= _gameWidth)
+		x = _gameWidth - 1;
+	if (win.y() < 0)
+		y = 0;
+	else if (win.y() >= _gameHeight)
+		y = _gameHeight - 1;
+
+	return x > 0 && y > 0 && x < _gameWidth - 1 && y < _gameHeight - 1;
+}
+
+bool GfxOpenGL::raycast(int x, int y, Math::Vector3d &r0, Math::Vector3d &r1) {
+	GLint viewPortInd[4];
+
+	GLdouble winX = x, winY = _gameHeight - y;
+	glGetIntegerv(GL_VIEWPORT, viewPortInd);
+	Common::Rect viewPort(viewPortInd[0], viewPortInd[1], viewPortInd[2], viewPortInd[3]);
+	Math::Matrix4 modelMatrix = getModelView();
+	Math::Matrix4 projMatrix = getProjection();
+	Math::Matrix4 mvpMatrix = modelMatrix * projMatrix;
+	Math::gluMathUnProject(Math::Vector3d(winX, winY, 0.0), mvpMatrix, viewPort, r0);
+	Math::gluMathUnProject(Math::Vector3d(winX, winY, 1.0), mvpMatrix, viewPort, r1);
+	r1 -= r0;
+	return true;
 }
 
 } // end of namespace Grim

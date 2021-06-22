@@ -60,8 +60,9 @@ static const PlainGameDescriptor grimGames[] = {
 
 #define GAMEOPTION_LOAD_DATAUSR GUIO_GAMEOPTIONS1
 #define GAMEOPTION_SHOW_FPS GUIO_GAMEOPTIONS2
+#define GAMEOPTION_ENABLE_MOUSE GUIO_GAMEOPTIONS3
 
-#define GUI_OPTIONS_GRIME GUIO2(GAMEOPTION_LOAD_DATAUSR, GAMEOPTION_SHOW_FPS)
+#define GUI_OPTIONS_GRIME GUIO3(GAMEOPTION_LOAD_DATAUSR, GAMEOPTION_SHOW_FPS, GAMEOPTION_ENABLE_MOUSE)
 
 static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
@@ -79,6 +80,15 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			_s("Show FPS"),
 			_s("Show the current FPS-rate, while you play."),
 			"show_fps",
+			false
+		}
+	},
+	{
+		GAMEOPTION_ENABLE_MOUSE,
+		{
+			_s("Enable mouse"),
+			_s("Enable mouse interaction."),
+			"enable_mouse",
 			false
 		}
 	},

@@ -84,7 +84,7 @@ void Actor::restoreStaticState(SaveGame *state) {
 Actor::Actor() :
 		_talkColor(255, 255, 255), _pos(0, 0, 0),
 		_lookingMode(false), _followBoxes(false), _running(false),
-		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f),
+		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f), _walkBwd(false),
 		_turnRateMultiplier(0.f), _talkAnim(0),
 		_reflectionAngle(80), _scale(1.f), _timeScale(1.f),
 		_visible(true), _lipSync(nullptr), _turning(false), _singleTurning(false), _walking(false),
@@ -510,8 +510,9 @@ void Actor::setRot(const Math::Angle &pitchParam, const Math::Angle &yawParam, c
 	_turning = false;
 }
 
-void Actor::setPos(const Math::Vector3d &position) {
-	_walking = false;
+void Actor::setPos(const Math::Vector3d &position, int xnum) {
+	if (xnum == 0)
+		_walking = false;
 	_pos = position;
 
 	// Don't allow positions outside the sectors.
@@ -551,9 +552,8 @@ void Actor::calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, 
 			up = s->getNormal();
 		}
 	}
-
 	Math::Matrix3 m;
-	m.buildFromTargetDir(actorForward, lookVector, actorUp, up);
+	m.buildFromTargetDir(actorForward, _walkBwd ? -lookVector : lookVector, actorUp, up);
 
 	if (_puckOrient) {
 		m.getEuler(yaw, pitch, roll, Math::EO_ZXY);
@@ -597,7 +597,7 @@ void Actor::turnTo(const Math::Angle &pitchParam, const Math::Angle &yawParam, c
 		_turning = false;
 }
 
-void Actor::walkTo(const Math::Vector3d &p) {
+void Actor::walkTo(const Math::Vector3d &p, bool forceWalk) {
 	if (p == _pos)
 		_walking = false;
 	else {
@@ -748,6 +748,10 @@ void Actor::walkTo(const Math::Vector3d &p) {
 			if (!pathFound) {
 				warning("Actor::walkTo(): No path found for %s", _name.c_str());
 				if (g_grim->getGameType() == GType_MONKEY4) {
+					_walking = false;
+					return;
+				}
+				if (!forceWalk && !g_grim->isRemastered() && getName() == "Manny") {
 					_walking = false;
 					return;
 				}

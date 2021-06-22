@@ -75,6 +75,8 @@ public:
 
 	Math::Vector3d getClosestPoint(const Math::Vector3d &point) const;
 
+	Math::Vector3d raycast(const Math::Vector3d &v0, const Math::Vector3d &v1) const;
+
 	// Interface to trace a ray to its exit from the polygon
 	struct ExitInfo {
 		Math::Vector3d exitPoint;

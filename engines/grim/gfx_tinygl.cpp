@@ -1538,4 +1538,75 @@ void GfxTinyGL::setBlendMode(bool additive) {
 	}
 }
 
+void GfxTinyGL::blackbox(int x0, int y0, int x1, int y1, float opacity) {
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	tglOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	tglDisable(TGL_LIGHTING);
+	tglDisable(TGL_DEPTH_TEST);
+	tglDepthMask(TGL_FALSE);
+
+	tglEnable(TGL_BLEND);
+	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
+
+	tglColor4f(0, 0, 0, opacity);
+
+	tglBegin(TGL_QUADS);
+	tglVertex2f(x0 * _scaleW, y0 * _scaleH);
+	tglVertex2f(x1 * _scaleW, y0 * _scaleH);
+	tglVertex2f(x1 * _scaleW, y1 * _scaleH);
+	tglVertex2f(x0 * _scaleW, y1 * _scaleH);
+	tglEnd();
+
+	tglColor4f(1, 1, 1, 1);
+	tglDepthMask(TGL_TRUE);
+	tglEnable(TGL_DEPTH_TEST);
+	tglEnable(TGL_LIGHTING);
+	tglDisable(TGL_BLEND);
+}
+
+bool GfxTinyGL::worldToScreen(const Math::Vector3d &vec, int &x, int &y) {
+	if (_currentShadowArray)
+		return false;
+
+	TGLfloat modelView[16], projection[16];
+	TGLint viewPort[4];
+
+	tglGetFloatv(TGL_MODELVIEW_MATRIX, modelView);
+	tglGetFloatv(TGL_PROJECTION_MATRIX, projection);
+	tglGetIntegerv(TGL_VIEWPORT, viewPort);
+
+	Math::Vector3d win;
+	Math::gluMathProject<TGLfloat, TGLint>(vec, modelView, projection, viewPort, win);
+
+	if (win.x() < 0)
+		x = 0;
+	else if (win.x() >= _gameWidth)
+		x = _gameWidth - 1;
+	if (win.y() < 0)
+		y = 0;
+	else if (win.y() >= _gameHeight)
+		y = _gameHeight - 1;
+
+	return x > 0 && y > 0 && x < _gameWidth - 1 && y < _gameHeight - 1;
+}
+
+bool GfxTinyGL::raycast(int x, int y, Math::Vector3d &r0, Math::Vector3d &r1) {
+	TGLint viewPortInd[4];
+
+	TGLdouble winX = x, winY = _gameHeight - y;
+	tglGetIntegerv(TGL_VIEWPORT, viewPortInd);
+	Common::Rect viewPort(viewPortInd[0], viewPortInd[1], viewPortInd[2], viewPortInd[3]);
+	Math::Matrix4 modelMatrix = getModelView();
+	Math::Matrix4 projMatrix = getProjection();
+	Math::Matrix4 mvpMatrix = modelMatrix * projMatrix;
+	Math::gluMathUnProject(Math::Vector3d(winX, winY, 0.0), mvpMatrix, viewPort, r0);
+	Math::gluMathUnProject(Math::Vector3d(winX, winY, 1.0), mvpMatrix, viewPort, r1);
+	r1 -= r0;
+	return true;
+}
+
 } // end of namespace Grim

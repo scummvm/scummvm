@@ -481,6 +481,19 @@ Math::Vector3d Sector::getClosestPoint(const Math::Vector3d &point) const {
 	return _vertices[index];
 }
 
+Math::Vector3d Sector::raycast(const Math::Vector3d &v0, const Math::Vector3d &v1) const {
+	if (_normal.getMagnitude() == 0)
+		error("Sector normal is (0, 0, 0)");
+
+	double div = _normal.dotProduct(v1);
+	if (div == 0)
+		error("hitting normal at 90 degrees");
+
+	double s = _normal.dotProduct(_vertices[0] - v0) / div;
+
+	return v0 + s * v1;
+}
+
 void Sector::getExitInfo(const Math::Vector3d &s, const Math::Vector3d &dirVec, struct ExitInfo *result) const {
 	Math::Vector3d start = getProjectionToPlane(s);
 	Math::Vector3d dir = getProjectionToPuckVector(dirVec);

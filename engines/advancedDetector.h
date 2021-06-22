@@ -476,15 +476,6 @@ public:
 	 */
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
 
-	/**
-	 * Return the name of the engine plugin based on the engineID.
-	 *
-	 * The the engineID must match the one from MetaEngine.
-	 *
-	 * @see MetaEngine::getName().
-	 */
-	const char *getName() const override = 0;
-
 public:
 	/**
 	 * A hashmap of files and their MD5 checksums.

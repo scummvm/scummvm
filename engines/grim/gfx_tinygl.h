@@ -124,6 +124,10 @@ public:
 
 	void setBlendMode(bool additive) override;
 
+	bool worldToScreen(const Math::Vector3d &vec, int &x, int &y) override;
+	bool raycast(int x, int y, Math::Vector3d &r0, Math::Vector3d &r1) override;
+	void blackbox(int x0, int y0, int x1, int y1, float opacity) override;
+
 protected:
 	void createSpecialtyTextureFromScreen(uint id, uint8 *data, int x, int y, int width, int height) override;
 

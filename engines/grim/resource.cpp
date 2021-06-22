@@ -115,6 +115,8 @@ ResourceLoader::ResourceLoader() {
 
 	if (g_grim->getGameType() == GType_GRIM) {
 		if (g_grim->getGameFlags() & ADGF_DEMO) {
+			if (SearchMan.hasFile("mouse.lab") && ConfMan.getBool("enable_mouse"))
+				SearchMan.listMatchingMembers(files, "mouse.lab");
 			SearchMan.listMatchingMembers(files, "gfdemo01.lab");
 			SearchMan.listMatchingMembers(files, "gdemo001.lab"); // For the english demo with video.
 			SearchMan.listMatchingMembers(files, "grimdemo.mus");
@@ -140,6 +142,8 @@ ResourceLoader::ResourceLoader() {
 			if (g_grim->isRemastered()) {
 				SearchMan.listMatchingMembers(files, "commentary.lab");
 				SearchMan.listMatchingMembers(files, "images.lab");
+			} else if (SearchMan.hasFile("mouse.lab") && ConfMan.getBool("enable_mouse")) {
+				SearchMan.listMatchingMembers(files, "mouse.lab");
 			}
 			//Sort the archives in order to ensure that they are loaded with the correct order
 			Common::sort(files.begin(), files.end(), LabListComperator());
