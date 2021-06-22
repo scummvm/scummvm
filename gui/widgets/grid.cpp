@@ -29,15 +29,15 @@
 namespace GUI {
 
 GridItemWidget::GridItemWidget(GridWidget *boss, int x, int y, int w, int h)
-	: ContainerWidget(boss, x, y, w, h) {
+	: ContainerWidget(boss, x, y, w, h), CommandSender(boss) {
 
 	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_activeEntry = nullptr;
 	_grid = boss;
 	isHighlighted = false;
 }
-GridItemWidget::GridItemWidget(GridWidget *boss) :
-			GridItemWidget(boss, 0, 0, 0, 0) {}
+GridItemWidget::GridItemWidget(GridWidget *boss)
+	: GridItemWidget(boss, 0, 0, 0, 0) {}
 
 void GridItemWidget::setActiveEntry(GridItemInfo &entry) {
 	_activeEntry = &entry;
@@ -128,30 +128,47 @@ void GridItemWidget::handleMouseLeft(int button) {
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isHighlighted) {
 		// Work in progress
-		Dialog *tray = new GridItemTray(getAbsX() - 10, getAbsY() + _h, _w + 20, 60, _activeEntry->entryID, _grid);
-		
-		int buttonWidth = tray->getWidth() / 4;
-		int buttonHeight = tray->getHeight() / 2;
-		
-		PicButtonWidget *playButton = new PicButtonWidget(tray, (buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Play"), kStartCmd);
-		PicButtonWidget *loadButton = new PicButtonWidget(tray, buttonWidth + 2*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Saves"), kLoadGameCmd);
-		PicButtonWidget *editButton = new PicButtonWidget(tray, 2*buttonWidth + 3*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Edit"), kEditGameCmd);
-	
-		playButton->setGfxFromTheme("button_play.bmp");
-		loadButton->setGfxFromTheme("button_load.bmp");
-		editButton->setGfxFromTheme("button_options.bmp");
-		// playButton->markAsDirty();
-		tray->runModal();
+		_grid->openTray(getAbsX() - 10, getAbsY() + _h, _w + 20, 60, _activeEntry->entryID);
+		_grid->_tray->runModal();
 	}
 }
 
 #pragma mark -
 
+GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID)
+	: Dialog(x, y, w, h), CommandSender(boss) {
+		
+	_entryID = entryID;
+	_boss = boss;
+	
+	int buttonWidth = w / 4;
+	int buttonHeight = h / 2;
+
+	PicButtonWidget *playButton = new PicButtonWidget(this, (buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Play"), kStartCmd);
+	PicButtonWidget *loadButton = new PicButtonWidget(this, buttonWidth + 2*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Saves"), kLoadGameCmd);
+	PicButtonWidget *editButton = new PicButtonWidget(this, 2*buttonWidth + 3*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Edit"), kEditGameCmd);
+
+	playButton->setGfxFromTheme("button_play.bmp");
+	loadButton->setGfxFromTheme("button_load.bmp");
+	editButton->setGfxFromTheme("button_options.bmp");
+}
+
 void GridItemTray::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd)
 	{
 	case kStartCmd:
-		ConfMan.setActiveDomain(entryID);
+		close();
+		sendCommand(kStartCmd, _entryID);
+		break;
+	case kLoadGameCmd:
+		close();
+		sendCommand(kLoadGameCmd, _entryID);
+		break;
+	case kEditGameCmd:
+		close();
+		sendCommand(kEditGameCmd, _entryID);
+		break;
+	case kCloseCmd:
 		close();
 		break;
 	default:
@@ -548,6 +565,10 @@ void GridWidget::reflowLayout() {
 
 	scrollBarRecalc();
 	markAsDirty();
+}
+
+void GridWidget::openTray(int x, int y, int w, int h, int entryId) {
+	_tray = new GridItemTray(_boss, x, y, w, h, entryId);
 }
 
 void GridWidget::scrollBarRecalc() {
