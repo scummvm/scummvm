@@ -443,7 +443,12 @@ cmdargs: /* empty */									{
 	| '(' ')'							{
 		// This matches `cmd()`
 		$$ = new NodeList; }
-	| '(' expr ',' nonemptyexprlist[args] ')' {
+	| '(' expr ',' ')' {
+		// This matches `cmd(args,)`
+		NodeList *args = new NodeList;
+		args->push_back($expr);
+		$$ = args; }
+	| '(' expr ',' nonemptyexprlist[args] trailingcomma ')' {
 		// This matches `cmd(args, ...)`
 		$args->insert_at(0, $expr);
 		$$ = $args; }
@@ -600,7 +605,8 @@ simpleexpr_nounarymath:
 	| tSYMBOL						{ $$ = new SymbolNode($tSYMBOL); }	// D3
 	| tSTRING						{ $$ = new StringNode($tSTRING); }
 	| tNOT simpleexpr[arg]  %prec tUNARY	{ $$ = new UnaryOpNode(LC::c_not, $arg); }
-	| ID '(' exprlist[args] ')'		{ $$ = new FuncNode($ID, $args); }
+	| ID '(' ')'					{ $$ = new FuncNode($ID, new NodeList); }
+	| ID '(' nonemptyexprlist[args] trailingcomma ')'	{ $$ = new FuncNode($ID, $args); }
 	| '(' expr ')'					{ $$ = $expr; } ;
 	| var
 	| chunk
@@ -651,7 +657,12 @@ refargs: simpleexpr								{
 	| '(' ')'									{
 		// This matches `ref()`
 		$$ = new NodeList; }
-	| '(' expr ',' nonemptyexprlist[args] ')'	{
+	| '(' expr ',' ')' {
+		// This matches `ref(args,)`
+		NodeList *args = new NodeList;
+		args->push_back($expr);
+		$$ = args; }
+	| '(' expr ',' nonemptyexprlist[args] trailingcomma ')'	{
 		// This matches `ref(args, ...)`
 		$args->insert_at(0, $expr);
 		$$ = $args; }
