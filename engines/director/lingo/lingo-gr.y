@@ -326,12 +326,10 @@ CMDID: tVARID
 	| tREPEAT		{ $$ = new Common::String("repeat"); }
 	| tSCRIPT		{ $$ = new Common::String("script"); }
 	| tASSERTERROR	{ $$ = new Common::String("scummvmAssertError"); }
-	| tSET			{ $$ = new Common::String("set"); }
 	| tSHORT		{ $$ = new Common::String("short"); }
 	| tSOUND		{ $$ = new Common::String("sound"); }
 	| tSPRITE		{ $$ = new Common::String("sprite"); }
 	| tSTARTS		{ $$ = new Common::String("starts"); }
-	| tTELL			{ $$ = new Common::String("tell"); }
 	| tTHE			{ $$ = new Common::String("the"); }
 	| tTIME			{ $$ = new Common::String("time"); }
 	| tTO			{ $$ = new Common::String("to"); }
@@ -359,6 +357,8 @@ ID: CMDID
 	| tPLAY			{ $$ = new Common::String("play"); }
 	| tPROPERTY		{ $$ = new Common::String("property"); }
 	| tPUT			{ $$ = new Common::String("put"); }
+	| tSET			{ $$ = new Common::String("set"); }
+	| tTELL			{ $$ = new Common::String("tell"); }
 	| tTHEN			{ $$ = new Common::String("then"); }
 	| tWHEN			{ $$ = new Common::String("when"); }
 	;
