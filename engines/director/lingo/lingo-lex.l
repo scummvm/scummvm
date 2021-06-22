@@ -50,7 +50,7 @@ static uint inputlen;
 
 // Push lines in stack
 static void pushLine(uint num) {
-	LingoCompiler *compileryyun = g_lingo->_compiler;
+	LingoCompiler *compiler = g_lingo->_compiler;
 
 	if (num > inputlen)
 		return;
