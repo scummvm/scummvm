@@ -24,18 +24,22 @@
 #define GUI_WIDGETS_GRID_H
 
 #include "gui/dialog.h"
-#include "gui/widget.h"
 #include "gui/widgets/scrollbar.h"
 #include "common/str.h"
-#include "common/array.h"
+
 #include "image/bmp.h"
 #include "image/png.h"
 #include "graphics/svg.h"
 
 namespace GUI {
 
+class ScrollBarWidget;
+class GridItemWidget;
+class GridWidget;
+
 const Graphics::ManagedSurface *scaleGfx(Graphics::ManagedSurface *gfx, int w, int h);
 
+// TODO: Add more platforms
 enum Platform {
 	kPlatformDOS,
 	kPlatformAmiga,
@@ -43,24 +47,31 @@ enum Platform {
 	kPlatformUnknown = -1
 };
 
+// Cut-pasted commands from Launcher to here to make things work
+// TODO: Find a way to put them back in Launcher.cpp
 enum {
 	kStartCmd = 'STRT',
 	kEditGameCmd = 'EDTG',
 	kLoadGameCmd = 'LOAD',
 };
 
+/* GridItemInfo */
 struct GridItemInfo
 {
-	Common::String engineid;
-	Common::String gameid;
-	Common::String language;
-	Common::String title;
-	Platform platform;
-	Common::String thumbPath;
-	Common::String entryID;
+	typedef Common::String String;
 
-	GridItemInfo(Common::String &id, Common::String &eid, Common::String &gid, Common::String &t, Common::String &l, Common::String &p) : 
-		entryID(id), gameid(gid), engineid(eid), title(t), language(l) {
+	String 		engineid;
+	String 		gameid;
+	String 		language;
+	String 		title;
+	Platform 	platform;
+	String 		thumbPath;
+	String 		entryID;
+
+	GridItemInfo(const String &id, const String &eid, const String &gid
+		,const String &t, const String &l, const String &p)
+		: entryID(id), gameid(gid), engineid(eid), title(t), language(l) {
+		
 		if (p == "pc")
 			platform = kPlatformDOS;
 		else if (p == "amiga")
@@ -70,114 +81,128 @@ struct GridItemInfo
 		else
 			platform = kPlatformUnknown;
 
-		thumbPath = Common::String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
+		thumbPath = String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
 };
 
-class GridItemWidget;
-class GridWidget;
-
+/* GridItemTray */
 class GridItemTray: public Dialog {
 	Common::String entryID;
 	GridWidget *grid;
 public:
-	GridItemTray(int x, int y, int w, int h, Common::String &ID, GridWidget *gr) : Dialog(x, y, w, h) { entryID = ID; grid = gr;};
+	GridItemTray(int x, int y, int w, int h, const Common::String &ID, GridWidget *gr)
+		: Dialog(x, y, w, h) { entryID = ID; grid = gr; }
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
 
 /* GridWidget */
 class GridWidget : public ContainerWidget {
-private:
-	Common::Array<const Graphics::ManagedSurface *> _platformIcons;
-	Common::Array<const Graphics::ManagedSurface *> _flagIcons;
-	// _gridItems should be reserved to hold few more than visible items
-	Common::Array<GridItemWidget *> _gridItems;
-	Common::Array<GridItemInfo> _allEntries;
-	Common::Array<GridItemInfo> _visibleEntries;
-	Common::HashMap<Common::String, const Graphics::ManagedSurface *> _loadedSurfaces;
+public:
+	typedef Common::String String;
+	typedef Common::Array<Common::String> StringArray;
 
-	Common::Array<Common::Array<GridItemWidget *>> _grid;
+	typedef Common::U32String U32String;
+	typedef Common::Array<Common::U32String> U32StringArray;
+
+protected:
+	Common::Array<const Graphics::ManagedSurface *> _platformIcons;
+	
+	// Images are mapped by filename -> surface.
+	Common::HashMap<String, const Graphics::ManagedSurface *> _loadedSurfaces;
+
+	Common::Array<GridItemWidget *> 	_gridItems;
+	Common::Array<GridItemInfo> 		_allEntries;
+	Common::Array<GridItemInfo> 		_visibleEntries;
 
 	ScrollBarWidget *_scrollBar;
 
-	uint16 _scrollWindowHeight, _scrollWindowWidth, _scrollSpeed;
-	uint16 _innerHeight, _innerWidth;
-	uint16 _thumbnailHeight, _thumbnailWidth;
-	uint16 _gridItemHeight, _gridItemWidth;
-	uint16 _minGridXSpacing, _minGridYSpacing;
-	uint16 _gridXSpacing, _gridYSpacing;
-	
-	int _scrollPos;
-	int _itemsPerRow;
-	int _firstVisibleItem;
-	int _itemsOnScreen;
-	int _rows;
-	
-	bool _titlesVisible;
+	int				_scrollWindowHeight;
+	int				_scrollWindowWidth;
+	int				_scrollSpeed;
+	int				_scrollPos;
 
+	int				_innerHeight;
+	int				_innerWidth;
+	int				_thumbnailHeight;
+	int				_thumbnailWidth;
+	int				_gridItemHeight;
+	int				_gridItemWidth;
+	int				_minGridXSpacing;
+	int				_minGridYSpacing;
+	int				_gridXSpacing;
+	int				_gridYSpacing;
+	
+	int				_rows;
+	int				_itemsPerRow;
+	int				_firstVisibleItem;
+	int				_itemsOnScreen;
+	
+	bool 			_isTitlesVisible;
 
 public:
-
+	GridItemInfo 	*_selectedEntry;
+	
 	GridWidget(GuiObject *boss, int x, int y, int w, int h);
-	GridWidget(GuiObject *boss, const Common::String &name);
+	GridWidget(GuiObject *boss, const String &name);
 
-	const Graphics::ManagedSurface * filenameToSurface(Common::String &name);
-	const Graphics::ManagedSurface * platformToSurface(Platform platformCode);
-	const Graphics::ManagedSurface * languageToSurface(Common::String &lang);
+	const Graphics::ManagedSurface *filenameToSurface(const String &name);
+	const Graphics::ManagedSurface *languageToSurface(const String &lang);
+	const Graphics::ManagedSurface *platformToSurface(Platform platformCode);
 
-	bool calcVisibleEntries(void);
+	/// Update _visibleEntries from _allEntries and returns true if reload is required.
+	bool calcVisibleEntries();
 	void setEntryList(Common::Array<GridItemInfo> *list);
-	void destroyItems();
-	void loadPlatformIcons();
-	void loadFlagIcons();
-	void updateGrid(void);
-	void gridFromGameList();
-	int getLoadedNumber(void) {return _loadedSurfaces.size();}
+	
 	void reloadThumbnails();
+	void loadFlagIcons();
+	void loadPlatformIcons();
+	
+	void destroyItems();
+	void updateGrid();
+
+	int getThumbnailHeight() const { return _thumbnailHeight; }
+	int getThumbnailWidth() const { return _thumbnailWidth; }
+
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	
 	void reflowLayout() override;
+	
 	void scrollBarRecalc();
-
-	GridItemInfo *selectedEntry;
 };
 
-enum {
-	kThumbnailWidth = 192,
-	kThumbnailHeight = 192
-};
-
-/* EntryContainerWidget */
+/* GridItemWidget */
 class GridItemWidget : public ContainerWidget {
 public:
-	GridWidget *_grid;
+	typedef Common::String String;
+	typedef Common::Array<Common::String> StringArray;
 
-	Common::Array<GridItemInfo> _attachedEntries;
-	GridItemInfo *_activeEntry;
+	typedef Common::U32String U32String;
+	typedef Common::Array<Common::U32String> U32StringArray;
 
-	bool isHighlighted;
-	void setActiveEntry(GridItemInfo &entry);
-
-public:
+protected:
 	Graphics::ManagedSurface _thumbGfx;
 
+	GridItemInfo 	*_activeEntry;
+	GridWidget 		*_grid;
+	bool 			isHighlighted;
+
+public:
 	GridItemWidget(GridWidget *boss, int x, int y, int w, int h);
 	GridItemWidget(GridWidget *boss);
-	
-	void attachEntry(Common::String key, Common::String description, Common::ConfigManager::Domain *domain);
-	void attachEntry(GridItemInfo &entry);
-	void attachEntries(Common::Array<GridItemInfo> entry);
-	void setActiveEntry(int i) {setActiveEntry(_attachedEntries[i]);};
+
+	void move(int x, int y);
 	void update();
 	void updateThumb();
+	void setActiveEntry(GridItemInfo &entry);
+
 	void drawWidget() override;
+
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleMouseEntered(int button) override;
 	void handleMouseLeft(int button) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
-	void move(int x, int y);
-
 };
 
 } // End of namespace GUI

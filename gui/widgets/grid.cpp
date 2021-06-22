@@ -28,8 +28,9 @@
 
 namespace GUI {
 
-GridItemWidget::GridItemWidget(GridWidget *boss, int x, int y, int w, int h) :
-ContainerWidget(boss, x, y, w, h) {
+GridItemWidget::GridItemWidget(GridWidget *boss, int x, int y, int w, int h)
+	: ContainerWidget(boss, x, y, w, h) {
+
 	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_activeEntry = nullptr;
 	_grid = boss;
@@ -38,29 +39,12 @@ ContainerWidget(boss, x, y, w, h) {
 GridItemWidget::GridItemWidget(GridWidget *boss) :
 			GridItemWidget(boss, 0, 0, 0, 0) {}
 
-void GridItemWidget::attachEntry(Common::String key, Common::String description, Common::ConfigManager::Domain *domain) {
-	Common::String gameid = domain->getVal("gameid");
-	Common::String engineid = domain->getVal("engineid");
-	Common::String language = "XX";
-	Common::String platform = "UNK";
-	domain->tryGetVal("language",language);
-	domain->tryGetVal("platform", platform);
-	_attachedEntries.push_back(GridItemInfo(key, gameid, engineid, description, language, platform));
-}
-
-void GridItemWidget::attachEntry(GridItemInfo &entry) {
-	_attachedEntries.push_back(entry);
-}
-
-void GridItemWidget::attachEntries(Common::Array<GridItemInfo> entries) {
-	_attachedEntries.push_back(entries);
-}
-
 void GridItemWidget::setActiveEntry(GridItemInfo &entry) {
 	_activeEntry = &entry;
 }
 
 void GridItemWidget::updateThumb() {
+	// TODO: Placeholder image for missing thumb
 	const Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
 	_thumbGfx.free();
 	if (gfx)
@@ -68,40 +52,56 @@ void GridItemWidget::updateThumb() {
 }
 
 void GridItemWidget::update() {
-	if ((!_activeEntry) && (!_attachedEntries.empty())) {
-		_activeEntry = _attachedEntries.begin(); 
+	if (_activeEntry) {
+		updateThumb();
+		markAsDirty();
 	}
+}
 
-	updateThumb();
-	markAsDirty();
+void GridItemWidget::move(int x, int y) {
+	Widget::setPos(getRelX() + x, getRelY() + y);
 }
 
 void GridItemWidget::drawWidget() {
-	if (isHighlighted)
+	int thumbHeight = _grid->getThumbnailHeight();
+	int thumbWidth = _grid->getThumbnailWidth();
+
+	if (isHighlighted) {
+		// Draw a highlighted BG on hover
 		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - 10, _y - 10, _x + _w + 10, _y + _h), 
 										ThemeEngine::WidgetBackground::kGridItemHighlight);
-	else
+	} else {
+		// Draw a BG of the same color as grid area
+		// when it is not highlighted to cover up 
+		// the highlight shadow
+		// FIXME: Find a way to redraw the area around the widget
+		//		 instead of just drawing a cover-up
 		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - 20, _y - 10, _x + _w + 20, _y + _h + 10), 
 										ThemeEngine::WidgetBackground::kGridItemBackground);
-	
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + kThumbnailWidth, _y + kThumbnailHeight), 
+	}
+
+	// Draw Thumbnail Background
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _grid->getThumbnailWidth(), _y + thumbHeight), 
 										ThemeEngine::WidgetBackground::kThumbnailBackground);
 	
-	g_gui.theme()->drawSurface(Common::Point(_x, _y), 
-								_thumbGfx, true);
+	// Draw Thumbnail
+	g_gui.theme()->drawSurface(Common::Point(_x, _y), _thumbGfx, true);
 
+	// Draw Platform Icon
 	if (_activeEntry->platform != kPlatformUnknown) {
 		const Graphics::ManagedSurface *platGfx = _grid->platformToSurface(_activeEntry->platform);
-		g_gui.theme()->drawSurface(Common::Point(_x + kThumbnailWidth - 32, _y + kThumbnailHeight - 32), 
+		g_gui.theme()->drawSurface(Common::Point(_x + thumbWidth - 32, _y + thumbHeight - 32), 
 									*platGfx, true);
 	}
 
+	// Draw Flag
 	const Graphics::ManagedSurface *flagGfx = _grid->languageToSurface(_activeEntry->language);
 	if (flagGfx)
-		g_gui.theme()->drawSurface(Common::Point(_x + kThumbnailWidth - flagGfx -> w - 5, _y + 5), 
+		g_gui.theme()->drawSurface(Common::Point(_x + thumbWidth - flagGfx -> w - 5, _y + 5), 
 									*flagGfx, true);
 
-	g_gui.theme()->drawText(Common::Rect(_x, _y + kThumbnailHeight, _x + kThumbnailWidth, _y + kThumbnailHeight + 32),
+	// Draw Title
+	g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + 32),
 							_activeEntry->title, GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
 }
 
@@ -111,7 +111,7 @@ void GridItemWidget::handleMouseWheel(int x, int y, int direction) {
 
 void GridItemWidget::handleMouseEntered(int button) {
 	if (!isHighlighted) {
-		_grid->selectedEntry = _activeEntry;
+		_grid->_selectedEntry = _activeEntry;
 		isHighlighted = true;
 		markAsDirty();
 	}
@@ -119,7 +119,7 @@ void GridItemWidget::handleMouseEntered(int button) {
 
 void GridItemWidget::handleMouseLeft(int button) {
 	if (isHighlighted) {
-		_grid->selectedEntry = nullptr;
+		_grid->_selectedEntry = nullptr;
 		isHighlighted = false;
 		markAsDirty();
 	}
@@ -127,18 +127,21 @@ void GridItemWidget::handleMouseLeft(int button) {
 
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isHighlighted) {
+		// Work in progress
 		Dialog *tray = new GridItemTray(getAbsX() - 10, getAbsY() + _h, _w + 20, 60, _activeEntry->entryID, _grid);
 		
 		int buttonWidth = tray->getWidth() / 4;
 		int buttonHeight = tray->getHeight() / 2;
 		
-		ButtonWidget *playButton = new ButtonWidget(tray, (buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, Common::U32String("Play"), Common::U32String(), kStartCmd);
-		ButtonWidget *loadButton = new ButtonWidget(tray, buttonWidth + 2*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, Common::U32String("Saves"), Common::U32String(), kLoadGameCmd);
-		ButtonWidget *editButton = new ButtonWidget(tray, 2*buttonWidth + 3*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, Common::U32String("Edit"), Common::U32String(), kEditGameCmd);
+		ButtonWidget *playButton = new ButtonWidget(tray, (buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Play"), U32String(), kStartCmd);
+		ButtonWidget *loadButton = new ButtonWidget(tray, buttonWidth + 2*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Saves"), U32String(), kLoadGameCmd);
+		ButtonWidget *editButton = new ButtonWidget(tray, 2*buttonWidth + 3*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Edit"), U32String(), kEditGameCmd);
 		// playButton->markAsDirty();
 		tray->runModal();
 	}
 }
+
+#pragma mark -
 
 void GridItemTray::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd)
@@ -150,11 +153,6 @@ void GridItemTray::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	default:
 		break;
 	}
-}
-
-
-void GridItemWidget::move(int x, int y) {
-	Widget::setPos(getRelX() + x, getRelY() + y);
 }
 
 #pragma mark -
@@ -186,8 +184,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
 #else
 		error("No PNG support compiled");
 #endif
-	} 
-	else if (name.hasSuffix(".svg")) {
+	} else if (name.hasSuffix(".svg")) {
 		Graphics::SVGBitmap *image = nullptr;
 		Common::FSNode fileNode(name);
 		Common::SeekableReadStream *stream = fileNode.createReadStream();
@@ -203,36 +200,68 @@ Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
 
 #pragma mark -
 
-void GridWidget::scrollBarRecalc() {
-	_scrollBar->_numEntries = _rows + 2;
-	_scrollBar->_entriesPerPage = _itemsOnScreen / _itemsPerRow;
-	_scrollBar->_currentPos = _firstVisibleItem / _itemsPerRow;
-	_scrollBar->recalc();
-}
-
-GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h) : 
-		ContainerWidget(boss, x, y, w, h) {
+GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
+	: ContainerWidget(boss, x, y, w, h) {
+	
 	loadPlatformIcons();
 	loadFlagIcons();
-}
 
-GridWidget::GridWidget(GuiObject *boss, const Common::String &name) : 
-		ContainerWidget(boss, name) {
-	loadPlatformIcons();
-	loadFlagIcons();
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
 	
-	_gridItemHeight = _thumbnailHeight + (2*kLineHeight);
+	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
 	_gridItemWidth = _thumbnailWidth;
 	
 	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 200);
 	_scrollBar->setTarget(this);
-
-	_scrollPos = 0 * (_gridItemHeight + _gridYSpacing);
+	_scrollPos = 0;
 	_firstVisibleItem = 0;
+}
+
+GridWidget::GridWidget(GuiObject *boss, const String &name)
+	: ContainerWidget(boss, name) {
+	
+	loadPlatformIcons();
+	loadFlagIcons();
+
+	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
+	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
+	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
+	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+	
+	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
+	_gridItemWidth = _thumbnailWidth;
+	
+	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 200);
+	_scrollBar->setTarget(this);
+	_scrollPos = 0;
+	_firstVisibleItem = 0;
+}
+
+const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name) {
+	String path = String("./icons/")+name;
+	
+	for (auto l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
+		if (l->thumbPath == name) {
+			return _loadedSurfaces[path];
+		}
+	}
+	return nullptr;
+}
+
+const Graphics::ManagedSurface *GridWidget::languageToSurface(const String &lang) {
+	String path = String::format("./icons/%s.svg", lang.c_str());
+	return _loadedSurfaces[path];
+}
+
+const Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformCode) {
+	if ((platformCode == kPlatformUnknown) || (platformCode < 0 || platformCode >= _platformIcons.size())) {
+		warning("Unknown Platform");
+		return nullptr;
+	}
+	return _platformIcons[platformCode];
 }
 
 void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
@@ -241,69 +270,9 @@ void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
 	}
 }
 
-void GridWidget::destroyItems() {
-	for (Common::Array<GridItemWidget *>::iterator i = _gridItems.begin(), end = _gridItems.end(); i != end; ++i) {
-		removeWidget((*i));
-		delete (*i);
-	}
-
-	_gridItems.clear();
-}
-
-void GridWidget::loadPlatformIcons() {
-	for (auto iter = _platformIcons.begin(); iter != _platformIcons.end(); ++iter) {
-		delete *iter;
-	}
-	_platformIcons.clear();
-	Common::String pathPrefix("./icons/");
-	Common::Array<Common::String> iconFilenames;
-	iconFilenames.push_back(Common::String("dos.png"));
-	iconFilenames.push_back(Common::String("amiga.png"));
-	iconFilenames.push_back(Common::String("apple2.png"));
-
-	for (auto i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
-		Common::String fullPath = pathPrefix + (*i);
-		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(fullPath);
-		if (gfx) {
-			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
-			_platformIcons.push_back(scGfx);
-			_loadedSurfaces[fullPath] = scGfx;
-			gfx->free();
-			delete gfx;
-		}
-	}
-}
-
-void GridWidget::loadFlagIcons() {
-	for (auto iter = _flagIcons.begin(); iter != _flagIcons.end(); ++iter) {
-		delete *iter;
-	}
-	_flagIcons.clear();
-	Common::String pathPrefix("./icons/");
-	Common::Array<Common::String> iconFilenames;
-	iconFilenames.push_back(Common::String("en.svg"));
-	iconFilenames.push_back(Common::String("en-gb.svg"));
-	iconFilenames.push_back(Common::String("en-us.svg"));
-	iconFilenames.push_back(Common::String("it.svg"));
-	iconFilenames.push_back(Common::String("fr.svg"));
-
-	for (auto i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
-		Common::String fullPath = pathPrefix + (*i);
-		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(fullPath);
-		if (gfx) {
-			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
-			_flagIcons.push_back(scGfx);
-			_loadedSurfaces[fullPath] = scGfx;
-			gfx->free();
-			delete gfx;
-		}
-	}
-}
-
 bool GridWidget::calcVisibleEntries() {
 	bool needsReload = false;
 
-	int nFirstVisibleItem = 0;
 	int nItemsOnScreen = 0;
 
 	nItemsOnScreen = (3 + (_scrollWindowHeight / (_gridItemHeight + _gridYSpacing))) * (_itemsPerRow);
@@ -318,53 +287,91 @@ bool GridWidget::calcVisibleEntries() {
 		GridItemInfo *iter = _allEntries.begin() + ind;
 		_visibleEntries.push_back(*iter);
 	}
-
 	return needsReload;
 }
 
 void GridWidget::reloadThumbnails() {
 	Graphics::ManagedSurface *surf = nullptr;
-	Common::String gameid;
-	Common::String engineid;
-	Common::String path;
+	String gameid;
+	String engineid;
+	String path;
+	
 	for (Common::Array<GridItemInfo>::iterator iter = _visibleEntries.begin(); iter != _visibleEntries.end(); ++iter) {
-		path = Common::String("./icons/")+iter->thumbPath;
+		path = String("./icons/")+iter->thumbPath;
 		if (_loadedSurfaces.contains(path)) {
 			// warning("Thumbnail already loaded, skipping...");
-		}
-		else {
+		} else {
 			surf = loadSurfaceFromFile(path);
 			if (surf) {
-				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, kThumbnailWidth, 512));
+				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512));
 				_loadedSurfaces[path] = scSurf;
 			}
 		}
 	}
 }
 
-const Graphics::ManagedSurface *GridWidget::filenameToSurface(Common::String &name) {
-	Common::String path = Common::String("./icons/")+name;
+void GridWidget::loadFlagIcons() {
+	String pathPrefix("./icons/");
+	StringArray iconFilenames;
 	
-	for (auto l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
-		if (l->thumbPath == name) {
-			return _loadedSurfaces[path];
+	// TODO: Can we read the language list from language.cpp?
+	iconFilenames.push_back(String("en.svg"));
+	iconFilenames.push_back(String("en-gb.svg"));
+	iconFilenames.push_back(String("en-us.svg"));
+	iconFilenames.push_back(String("it.svg"));
+	iconFilenames.push_back(String("fr.svg"));
+
+	for (auto i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
+		String fullPath = pathPrefix + (*i);
+		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(fullPath);
+		if (gfx) {
+			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
+			_loadedSurfaces[fullPath] = scGfx;
+			gfx->free();
+			delete gfx;
 		}
 	}
-
-	return nullptr;
 }
 
-const Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformCode) {
-	if ((platformCode == kPlatformUnknown) || (platformCode < 0 || platformCode >= _platformIcons.size())) {
-		warning("Unknown Platform");
-		return nullptr;
+void GridWidget::loadPlatformIcons() {
+	for (auto iter = _platformIcons.begin(); iter != _platformIcons.end(); ++iter) {
+		delete *iter;
 	}
-	return _platformIcons[platformCode];
+	_platformIcons.clear();
+	String pathPrefix("./icons/");
+	StringArray iconFilenames;
+	
+	// TODO: Can we make a list of all platforms?
+	iconFilenames.push_back(String("dos.png"));
+	iconFilenames.push_back(String("amiga.png"));
+	iconFilenames.push_back(String("apple2.png"));
+
+	for (auto i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
+		String fullPath = pathPrefix + (*i);
+		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(fullPath);
+		if (gfx) {
+			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
+			_platformIcons.push_back(scGfx);
+			_loadedSurfaces[fullPath] = scGfx;
+			gfx->free();
+			delete gfx;
+		}
+	}
 }
 
-const Graphics::ManagedSurface *GridWidget::languageToSurface(Common::String &lang) {
-	Common::String path = Common::String::format("./icons/%s.svg", lang.c_str());
-	return _loadedSurfaces[path];
+void GridWidget::destroyItems() {
+	for (Common::Array<GridItemWidget *>::iterator i = _gridItems.begin(), end = _gridItems.end(); i != end; ++i) {
+		removeWidget((*i));
+		delete (*i);
+	}
+
+	_gridItems.clear();
+}
+
+void GridWidget::updateGrid() {
+	for (auto i = _gridItems.begin(); i != _gridItems.end(); ++i) {
+		(*i)->update();
+	}
 }
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
@@ -377,6 +384,9 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 		_scrollPos = 0;
 		scrollSpeed = 0;
 	}
+	// This lets user scroll a bit more after the last item
+	// comes into the view, which messes with the scrollbar.
+	// TODO: Make it so that scrolling doesn't go past last item.
 	if (_scrollPos < -(_innerHeight - _scrollWindowHeight)) {
 		_scrollPos = -(_innerHeight - _scrollWindowHeight);
 		scrollSpeed = 0;
@@ -390,15 +400,18 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	if (_gridItems.front()->getRelY() < -2 * (_gridItemHeight + _gridYSpacing)) {
 		needsReload = true;
 		_firstVisibleItem += _itemsPerRow;
+		
+		// Move the entire grid one row down
 		for (auto it = _gridItems.begin(); it != _gridItems.end(); ++it) {
 			GridItemWidget *item = *it;
 			item->move(0, _gridItemHeight + _gridYSpacing);
 		}
-	}
-
-	else if (_gridItems.front()->getRelY() > 50 - (_gridItemHeight + _gridYSpacing)) {
+	
+	} else if (_gridItems.front()->getRelY() > 50 - (_gridItemHeight + _gridYSpacing)) {
 		needsReload = true;
 		_firstVisibleItem -= _itemsPerRow;
+		
+		// Move the entire grid one row up
 		for (auto it = _gridItems.begin(); it != _gridItems.end(); ++it) {
 			GridItemWidget *item = *it;
 			item->move(0, -(_gridItemHeight + _gridYSpacing));
@@ -408,23 +421,30 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	if (needsReload) {
 		calcVisibleEntries();
 		reloadThumbnails();
-	}
-
-	if (needsReload) {
+		
+		// TODO: Refactor this into a function
+		// Assign entries from _visibleEntries to each GridItem in _gridItems
 		auto entry = _visibleEntries.begin();
+		// Start assigning from the second row as the first row is supposed
+		// to be offscreen.
 		auto it = _gridItems.begin() + _itemsPerRow;
+		
 		for (int k = 0; k < _itemsOnScreen; ++k) {
 			GridItemWidget *item = *it;
 			if (entry != _visibleEntries.end()) {
+				// Assign entry and update
 				item->setActiveEntry(*entry);
 				item->update();
 				item->setVisible(true);
 				++entry;
 			} else {
+				// If we run out of visible entries to display.
+				// i.e., scrolled to the very bottom, we make items invisible.
 				item->setActiveEntry(_visibleEntries.front());
 				item->update();
 				item->setVisible(false);
 			}
+
 			if (++it == _gridItems.end())
 				it = _gridItems.begin();
 		}
@@ -432,10 +452,12 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 
 	_scrollBar->_currentPos = _firstVisibleItem / _itemsPerRow;
 	_scrollBar->recalc();
+	
 	markAsDirty();
 }
 
 void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	// Work in progress
 	switch (cmd) {
 	case kSetPositionCmd:
 		if ((_firstVisibleItem / _itemsPerRow) != (int)data) {
@@ -452,11 +474,15 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 void GridWidget::reflowLayout() {
 	Widget::reflowLayout();
 	destroyItems();
+	
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
-	_itemsPerRow = MAX(((_scrollWindowWidth - 100) / (_gridItemWidth + _minGridXSpacing)), 1);
 	
-	_gridXSpacing = MAX(((_scrollWindowWidth - 50) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, (int)_minGridXSpacing);
+	// In all calculations with 50 or 100, we are assuming 50 to be
+	// the Hor / Vert padding of contents inside the grid.
+	// TODO: Expose this padding via themes.
+	_itemsPerRow = MAX(((_scrollWindowWidth - 100) / (_gridItemWidth + _minGridXSpacing)), 1);
+	_gridXSpacing = MAX(((_scrollWindowWidth - 50) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
 	
 	_rows = ceil(_allEntries.size() / (float)_itemsPerRow);
 	
@@ -494,6 +520,9 @@ void GridWidget::reflowLayout() {
 		}
 	}
 
+	// This assignment method is same while scrolling or resizing
+	// TODO: Refactor this into a function
+
 	auto entry = _visibleEntries.begin();
 	auto it = _gridItems.begin() + _itemsPerRow;
 
@@ -514,14 +543,16 @@ void GridWidget::reflowLayout() {
 	}
 
 	scrollBarRecalc();
-
 	markAsDirty();
 }
 
-void GridWidget::updateGrid() {
-	for (auto i = _gridItems.begin(); i != _gridItems.end(); ++i) {
-		(*i)->update();
-	}
+void GridWidget::scrollBarRecalc() {
+	// HACK: Our grid scrolls some distance past the last element.
+	// 	2 is an experimental value and might not work on all window sizes.
+	_scrollBar->_numEntries = _rows + 2;
+	_scrollBar->_entriesPerPage = _itemsOnScreen / _itemsPerRow;
+	_scrollBar->_currentPos = _firstVisibleItem / _itemsPerRow;
+	_scrollBar->recalc();
 }
 
 } // End of namespace GUI
