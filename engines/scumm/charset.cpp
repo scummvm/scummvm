@@ -1685,7 +1685,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 			color = 15;
 	}
 
-	bool drawToTextBox = (vs->number == 1 && _vm->_game.id == GID_INDY3);
+	bool drawToTextBox = (vs->number == kTextVirtScreen && _vm->_game.id == GID_INDY3);
 
 	if (drawToTextBox)
 		printCharToTextBox(chr, color, macLeft, macTop);
