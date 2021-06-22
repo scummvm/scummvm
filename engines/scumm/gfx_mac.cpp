@@ -130,7 +130,7 @@ void ScummEngine::mac_drawLoomPracticeMode() {
 	_system->copyRectToScreen(ptr, pitch, x, y, width, height);
 }
 
-void ScummEngine::mac_drawIndy3SpeechBox(Actor *a) {
+void ScummEngine::mac_drawIndy3TextBox(Actor *a) {
 	int x = 96;
 	int y = 31;
 	int width = 448;

@@ -2872,10 +2872,6 @@ void ScummEngine::actorTalk(const byte *msg) {
 
 		a = derefActor(_actorToPrintStrFor, "actorTalk");
 
-		if (_macScreen && _game.id == GID_INDY3) {
-			mac_drawIndy3SpeechBox(a);
-		}
-
 		if (!a->isInCurrentRoom()) {
 			oldact = 0xFF;
 		} else {
