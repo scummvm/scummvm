@@ -336,7 +336,7 @@ public:
 	void setTheCast(Datum &id, int field, Datum &d);
 	Datum getTheField(Datum &id1, int field);
 	void setTheField(Datum &id1, int field, Datum &d);
-	Datum getObjectProp(Datum &obj, Common::String &propName);
+	void getObjectProp(Datum &obj, Common::String &propName);
 	void setObjectProp(Datum &obj, Common::String &propName, Datum &d);
 	Datum getTheDate(int field);
 	Datum getTheTime(int field);

@@ -1595,25 +1595,31 @@ void Lingo::setTheField(Datum &id1, int field, Datum &d) {
 	member->setField(field, d);
 }
 
-Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
+void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 	Datum d;
 	if (obj.type == OBJECT) {
 		if (obj.u.obj->hasProp(propName)) {
-			return obj.u.obj->getProp(propName);
+			d = obj.u.obj->getProp(propName);
 		} else {
 			warning("Lingo::getObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
 		}
-	} else if (obj.type == PARRAY) {
+		g_lingo->push(d);
+		return;
+	}
+	if (obj.type == PARRAY) {
 		int index = LC::compareArrays(LC::eqData, obj, propName, true).u.i;
 		if (index > 0) {
 			d = obj.u.parr->operator[](index - 1).v;
 		}
-		return d;
-	} else if (obj.type == CASTREF) {
+		g_lingo->push(d);
+		return;
+	}
+	if (obj.type == CASTREF) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {
 			warning("Lingo::getObjectProp(): No movie loaded");
-			return d;
+			g_lingo->push(d);
+			return;
 		}
 
 		int id = obj.u.i;
@@ -1624,22 +1630,25 @@ Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 			} else {
 				warning("Lingo::getObjectProp(): CastMember %d not found", id);
 			}
-			return d;
+			g_lingo->push(d);
+			return;
 		}
 
 		if (member->hasProp(propName)) {
-			return member->getProp(propName);
+			d = member->getProp(propName);
 		} else {
 			warning("Lingo::getObjectProp(): CastMember %d has no property '%s'", id, propName.c_str());
 		}
-	} else if (_builtinFuncs.contains(propName) && _builtinFuncs[propName].nargs == 1) {
+		g_lingo->push(d);
+		return;
+	}
+	if (_builtinFuncs.contains(propName) && _builtinFuncs[propName].nargs == 1) {
 		push(obj);
 		LC::call(_builtinFuncs[propName], 1, true);
-		d = pop();
-	} else {
-		warning("Lingo::getObjectProp: Invalid object: %s", obj.asString(true).c_str());
+		return;
 	}
-	return d;
+	warning("Lingo::getObjectProp: Invalid object: %s", obj.asString(true).c_str());
+	g_lingo->push(d);
 }
 
 void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
