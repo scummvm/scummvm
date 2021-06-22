@@ -46,6 +46,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
+#include "graphics/projection.h"
 
 #include "engines/grim/actor.h"
 #include "engines/grim/bitmap.h"
@@ -304,6 +305,8 @@ void GfxOpenGLS::setupTexturedQuad() {
 	if (g_grim->getGameType() == GType_GRIM) {
 		_backgroundProgram->enableVertexAttribute("position", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 		_backgroundProgram->enableVertexAttribute("texcoord", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2 * sizeof(float));
+		_rotProgram->enableVertexAttribute("position", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+		_rotProgram->enableVertexAttribute("texcoord", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2 * sizeof(float));
 	} else {
 		_dimPlaneProgram->enableVertexAttribute("position", _smushVBO, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	}
@@ -391,6 +394,8 @@ void GfxOpenGLS::setupShaders() {
 
 		_dimProgram = OpenGL::ShaderGL::fromFiles("grim_dim", commonAttributes);
 		_dimRegionProgram = _dimProgram->clone();
+		_shadowPlaneProgram = OpenGL::ShaderGL::fromFiles("grim_shadowplane", primAttributes);
+		_rotProgram = OpenGL::ShaderGL::fromFiles("grim_rot", commonAttributes);
 	} else {
 		_dimPlaneProgram = OpenGL::ShaderGL::fromFiles("emi_dimplane", primAttributes);
 	}
@@ -1302,7 +1307,7 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 			delete[] texData;
 		bitmap->freeData();
 
-		OpenGL::ShaderGL *shader = _backgroundProgram->clone();
+		OpenGL::ShaderGL *shader = bitmap->_canRotate ? _rotProgram->clone() : _backgroundProgram->clone();
 		bitmap->_userData = shader;
 
 		if (g_grim->getGameType() == GType_MONKEY4) {
@@ -1317,7 +1322,7 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 	}
 }
 
-void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
+void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer, float rot) {
 	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data && bitmap->_data->_texc) {
 		BitmapData *data = bitmap->_data;
 		OpenGL::ShaderGL *shader = (OpenGL::ShaderGL *)data->_userData;
@@ -1369,6 +1374,14 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) 
 		shader->setUniform("offsetXY", Math::Vector2d(float(dx) / _gameWidth, float(dy) / _gameHeight));
 		shader->setUniform("sizeWH", Math::Vector2d(width / _gameWidth, height / _gameHeight));
 		shader->setUniform("texcrop", Math::Vector2d(width / nextHigher2((int)width), height / nextHigher2((int)height)));
+		if (bitmap->_data->_canRotate) {
+			float c = cos(rot), s = sin(rot);
+			Math::Matrix3 M;
+			M.getRow(0) << c << -s << 0;
+			M.getRow(1) << s << c << 0;
+			M.getRow(2) << 0 << 0 << 0;
+			shader->setUniform("rot", M);
+		}
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 		glDisable(GL_BLEND);
@@ -1498,8 +1511,8 @@ void GfxOpenGLS::createFont(Font *font) {
 	}
 
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size * charsWide, size * charsHigh, 0, GL_RGBA, GL_UNSIGNED_BYTE, temp);
@@ -1701,7 +1714,7 @@ void GfxOpenGLS::dimRegion(int xin, int yReal, int w, int h, float level) {
 
 void GfxOpenGLS::irisAroundRegion(int x1, int y1, int x2, int y2) {
 	_irisProgram->use();
-	_irisProgram->setUniform("color", Math::Vector3d(0.0f, 0.0f, 0.0f));
+	_irisProgram->setUniform("color", Math::Vector4d(0.0f, 0.0f, 0.0f, 1.0f));
 	_irisProgram->setUniform("scaleWH", Math::Vector2d(1.f / _gameWidth, 1.f / _gameHeight));
 
 	float fx1 = x1;
@@ -1794,8 +1807,8 @@ void GfxOpenGLS::loadEmergFont() {
 
 void GfxOpenGLS::drawGenericPrimitive(const float *vertices, uint32 numVertices, const PrimitiveObject *primitive) {
 	const Color color(primitive->getColor());
-	const Math::Vector3d colorV =
-	  Math::Vector3d(color.getRed(), color.getGreen(), color.getBlue()) / 255.f;
+	const Math::Vector4d colorV =
+	  Math::Vector4d(color.getRed(), color.getGreen(), color.getBlue(), 255.f) / 255.f;
 
 	GLuint prim = nextPrimitive();
 	glBindBuffer(GL_ARRAY_BUFFER, prim);
@@ -1830,10 +1843,10 @@ void GfxOpenGLS::drawGenericPrimitive(const float *vertices, uint32 numVertices,
 }
 
 void GfxOpenGLS::drawRectangle(const PrimitiveObject *primitive) {
-	float x1 = primitive->getP1().x * _scaleW;
-	float y1 = primitive->getP1().y * _scaleH;
-	float x2 = primitive->getP2().x * _scaleW;
-	float y2 = primitive->getP2().y * _scaleH;
+	float x1 = primitive->getP1().x; //* _scaleW;
+	float y1 = primitive->getP1().y; //* _scaleH;
+	float x2 = primitive->getP2().x; //* _scaleW;
+	float y2 = primitive->getP2().y; //* _scaleH;
 
 	if (primitive->isFilled()) {
 		float data[] = { x1, y1, x2 + 1, y1, x1, y2 + 1, x2 + 1, y2 + 1 };
@@ -1852,10 +1865,10 @@ void GfxOpenGLS::drawRectangle(const PrimitiveObject *primitive) {
 }
 
 void GfxOpenGLS::drawLine(const PrimitiveObject *primitive) {
-	float x1 = primitive->getP1().x * _scaleW;
-	float y1 = primitive->getP1().y * _scaleH;
-	float x2 = primitive->getP2().x * _scaleW;
-	float y2 = primitive->getP2().y * _scaleH;
+	float x1 = primitive->getP1().x;// * _scaleW;
+	float y1 = primitive->getP1().y;// * _scaleH;
+	float x2 = primitive->getP2().x;// * _scaleW;
+	float y2 = primitive->getP2().y;// * _scaleH;
 
 	float data[] = { x1, y1, x2, y2 };
 
@@ -1863,14 +1876,14 @@ void GfxOpenGLS::drawLine(const PrimitiveObject *primitive) {
 }
 
 void GfxOpenGLS::drawPolygon(const PrimitiveObject *primitive) {
-	float x1 = primitive->getP1().x * _scaleW;
-	float y1 = primitive->getP1().y * _scaleH;
-	float x2 = primitive->getP2().x * _scaleW;
-	float y2 = primitive->getP2().y * _scaleH;
-	float x3 = primitive->getP3().x * _scaleW;
-	float y3 = primitive->getP3().y * _scaleH;
-	float x4 = primitive->getP4().x * _scaleW;
-	float y4 = primitive->getP4().y * _scaleH;
+	float x1 = primitive->getP1().x;// * _scaleW;
+	float y1 = primitive->getP1().y;// * _scaleH;
+	float x2 = primitive->getP2().x;// * _scaleW;
+	float y2 = primitive->getP2().y;// * _scaleH;
+	float x3 = primitive->getP3().x;// * _scaleW;
+	float y3 = primitive->getP3().y;// * _scaleH;
+	float x4 = primitive->getP4().x;// * _scaleW;
+	float y4 = primitive->getP4().y;// * _scaleH;
 
 	const float data[] = { x1, y1, x2 + 1, y2 + 1, x3, y3 + 1, x4 + 1, y4 };
 
@@ -1937,8 +1950,8 @@ void GfxOpenGLS::prepareMovieFrame(Graphics::Surface* frame) {
 		glGenTextures(1, &_smushTexId);
 	}
 	glBindTexture(GL_TEXTURE_2D, _smushTexId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D, 0, frameFormat, nextHigher2(width), nextHigher2(height), 0, frameFormat, frameType, NULL);
@@ -2165,6 +2178,79 @@ void GfxOpenGLS::setBlendMode(bool additive) {
 	} else {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
+}
+
+void GfxOpenGLS::blackbox(int x0, int y0, int x1, int y1, float opacity) {
+	float px1 = x0, py1 = y0;// * _scaleW, py1 = y0 * _scaleH;
+	float px2 = x1, py2 = y1;// * _scaleW, py2 = y1 * _scaleH;
+	float data[] = { px1, py1, px1, py2, px2, py1, px2, py2 };
+
+	GLuint prim = nextPrimitive();
+	glBindBuffer(GL_ARRAY_BUFFER, prim);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float), data);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	_primitiveProgram->enableVertexAttribute("position", prim, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+	_primitiveProgram->use(true);
+	_primitiveProgram->setUniform("color", Math::Vector4d(0,0,0,opacity));
+	_primitiveProgram->setUniform("scaleWH", Math::Vector2d(1.f / _gameWidth, 1.f / _gameHeight));
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+bool GfxOpenGLS::worldToScreen(const Math::Vector3d &vec, int& x, int &y) {
+	if (_currentShadowArray) return false;
+
+	Math::Vector3d win;
+
+	Math::Matrix4 proj(_projMatrix);
+	proj.transpose();
+	Math::Matrix4 view(_viewMatrix);
+	view.transpose();
+
+	const int viewPort[4] = {0,0,_gameWidth,_gameHeight};
+	Graphics::project(vec, view, proj, viewPort, win);
+
+	win.y() = _gameHeight - win.y();
+
+	if (win.x() < 0)
+		win.x() = 0;
+	if (win.x() >= _gameWidth)
+		win.x() = _gameWidth - 1;
+	if (win.y() < 0)
+		win.y() = 0;
+	if (win.y() >= _gameHeight)
+		win.y() = _gameHeight - 1;
+
+	x = (int)win.x();
+	y = (int)win.y();
+	return x>0 && y>0 && x<_gameWidth-1 && y<_gameHeight-1;
+}
+
+bool GfxOpenGLS::raycast(int x, int y, Math::Vector3d &r0, Math::Vector3d &r1) {
+	Math::Vector3d p0, p1;
+
+	const int viewPort[4] = {0,0,_gameWidth,_gameHeight};
+
+	const Math::Vector3d winPos0(x, _gameHeight - y, 0.0);
+	const Math::Vector3d winPos1(x, _gameHeight - y, 1.0);
+
+	Math::Matrix4 proj(_projMatrix);
+	proj.transpose();
+	Math::Matrix4 view(_viewMatrix);
+	view.transpose();
+
+	Graphics::unProject(winPos0, view, proj, viewPort, p0);
+	Graphics::unProject(winPos1, view, proj, viewPort, p1);
+
+	r0 = p0;
+	r1 = p1 - r0;
+	return true;
 }
 
 }

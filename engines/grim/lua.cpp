@@ -20,6 +20,14 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
+
+#define USEPACKAGE
+//#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include <errno.h>
+
 #include "common/endian.h"
 #include "common/foreach.h"
 #include "common/system.h"
@@ -46,6 +54,8 @@
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
 #include "engines/grim/lua/lualib.h"
+#include "engines/grim/lua/lstate.h"
+
 
 namespace Grim {
 
@@ -83,6 +93,14 @@ void LuaObjects::addNil() {
 	_objects.push_back(obj);
 }
 
+void LuaObjects::add(const float* ar, int len) {
+	Obj obj;
+	obj._type = Obj::Array;
+	obj._elements = len;
+	obj._value.array = ar;
+	_objects.push_back(obj);
+}
+
 void LuaObjects::pushObjects() const {
 	for (Common::List<Obj>::const_iterator i = _objects.begin(); i != _objects.end(); ++i) {
 		const Obj &o = *i;
@@ -98,6 +116,17 @@ void LuaObjects::pushObjects() const {
 				break;
 			case Obj::String:
 				lua_pushstring(o._value.string);
+				break;
+			case Obj::Array:
+				lua_pushnumber(o._elements);
+				lua_Object tbl = lua_createtable();
+				for (int k=0; k<o._elements; k++) {
+					lua_pushobject(tbl);
+					lua_pushnumber(k);
+					lua_pushnumber(o._value.array[k]);
+					lua_settable();
+				}
+				lua_pushobject(tbl);
 				break;
 		}
 	}
@@ -295,19 +324,40 @@ void LuaBase::setMovieTime(float movieTime) {
 	lua_settable();
 }
 
+
 int LuaBase::dofile(const char *filename) {
+
+#ifdef USEPACKAGE
 	Common::SeekableReadStream *stream;
 	stream = g_resourceloader->openNewStreamFile(filename);
 	if (!stream) {
 		Debug::warning(Debug::Engine, "Cannot find script %s", filename);
 		return 2;
 	}
-
 	int32 size = stream->size();
 	char *buffer = new char[size];
 	stream->read(buffer, size);
-	int result = lua_dobuffer(const_cast<char *>(buffer), size, const_cast<char *>(filename));
 	delete stream;
+#else
+	Common::String path = "/Users/tpfaff/grimex/";
+	int len = strlen(filename);
+	for(int i = 0; i < len; i++)
+		path += tolower(filename[i]);
+
+	FILE* fp = fopen(path.c_str(),"rb");
+	if (!fp) {
+		Debug::warning(Debug::Engine, "cannot open %s : %d",path.c_str(),errno);
+		return 2;
+	}
+	fseek(fp, 0L, SEEK_END);
+	int size = ftell(fp);
+	//printf("loading %s: %d bytes\n",filename,sz2);
+	fseek(fp, 0L, SEEK_SET);
+	char *buffer = new char[size];
+	fread(buffer,1,size,fp);
+	fclose(fp);
+#endif
+	int result = lua_dobuffer(const_cast<char *>(buffer), size, const_cast<char *>(filename));
 	delete[] buffer;
 	return result;
 }
@@ -315,6 +365,19 @@ int LuaBase::dofile(const char *filename) {
 bool LuaBase::callback(const char *name) {
 	LuaObjects o;
 	return callback(name, o);
+}
+
+int LuaBase::queryVariable(const Common::String& name, bool direct) {
+	int num = -1;
+	lua_beginblock();
+	if (direct) {
+		num = lua_getnumber(lua_getglobal(name.c_str()));
+	} else {
+		lua_dostring(("return "+name).c_str());
+		num = lua_getnumber(lua_getresult(1));
+	}
+	lua_endblock();
+	return num;
 }
 
 bool LuaBase::callback(const char *name, const LuaObjects &objects) {

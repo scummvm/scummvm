@@ -16,69 +16,107 @@
 	android:focusableInTouchMode="true"
 />
 
-<ImageView
-        android:layout_width="wrap_content"
+    <ScrollView
+        android:id="@+id/sidebar"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-	android:src="@drawable/ic_action_settings"
-        android:id="@+id/options"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp" />
-
-	<HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btns_scrollview"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone">
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:visibility="gone" >
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center">
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-            <Button
+            <ImageView
+                android:id="@+id/btnMenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Menu"
-                android:id="@+id/menu_btn"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/menu"
+                android:src="@drawable/ic_menu" />
 
-            <Button
+            <ImageView
+                android:id="@+id/btnInventory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Inventory"
-                android:id="@+id/inventory_btn"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/inventory"
+                android:src="@drawable/ic_inventory" />
 
-            <Button
+            <ImageView
+                android:id="@+id/btnTouchmode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pick up"
-                android:id="@+id/pick_up_btn"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/touchmode"
+                android:src="@drawable/ic_touchmode2" />
 
-            <Button
+            <ImageView
+                android:id="@+id/btnAction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Use"
-                android:id="@+id/use_btn"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/action"
+                android:src="@drawable/ic_use" />
 
-            <Button
+            <ImageView
+                android:id="@+id/btnSkipDlg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Look at"
-                android:id="@+id/look_at_btn"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/skip_dlg"
+                android:src="@drawable/ic_skip_dialog" />
+
+            <ImageView
+                android:id="@+id/btnHotspot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/hotspot"
+                android:src="@drawable/ic_hotspot" />
+
+            <ImageView
+                android:id="@+id/btnUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/up"
+                android:src="@drawable/ic_up" />
+
+            <ImageView
+                android:id="@+id/btnOK"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/ok"
+                android:src="@drawable/ic_ok" />
+
+            <ImageView
+                android:id="@+id/btnDown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/down"
+                android:src="@drawable/ic_down" />
+
+            <ImageView
+                android:id="@+id/btnLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/left"
+                android:src="@drawable/ic_left" />
+
+            <ImageView
+                android:id="@+id/btnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/right"
+                android:src="@drawable/ic_right" />
 
 			<ImageView
 				android:id="@+id/show_keyboard"
@@ -89,7 +127,6 @@
 				android:src="@drawable/ic_action_keyboard" />
 
 		</LinearLayout>
-    </HorizontalScrollView>
+    </ScrollView>
 
 </RelativeLayout>
-

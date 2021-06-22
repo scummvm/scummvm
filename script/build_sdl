@@ -1,0 +1,2 @@
+cd ~/code/SDL-1.2.15
+CXXFLAGS="-arch i386 -arch x86_64 -mmacosx-version-min=10.5" CFLAGS="-arch i386 -arch x86_64 -mmacosx-version-min=10.5" LDFLAGS="-arch i386 -arch x86_64" ./configure --disable-shared --enable-static && make clean && make -j10 && make install

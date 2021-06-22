@@ -196,6 +196,12 @@ void Chore::fade(Animation::FadeMode mode, uint msecs) {
 }
 
 void Chore::fadeIn(uint msecs) {
+	if (!_playing) {
+		_playing = true;
+		_hasPlayed = true;
+		_currTime = -1;
+	}
+
 	fade(Animation::FadeIn, msecs);
 }
 

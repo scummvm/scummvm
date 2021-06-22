@@ -72,6 +72,8 @@ BitmapData::BitmapData(const Common::String &fname) {
 	_colorFormat = 0;
 	_texIds = nullptr;
 	_hasTransparency = 0;
+	_canRotate = false;
+	_smoothInterpolation = false;
 
 	_texc = nullptr;
 
@@ -136,6 +138,7 @@ bool BitmapData::loadGrimBm(Common::SeekableReadStream *data) {
 	_height = data->readUint32LE();
 	_colorFormat = BM_RGB565;
 	_hasTransparency = false;
+	_canRotate = false;
 
 	_data = new Graphics::PixelBuffer[_numImages];
 	data->seek(0x80, SEEK_SET);
@@ -188,12 +191,14 @@ BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const cha
 	_texIds = nullptr;
 	_bpp = buf.getFormat().bytesPerPixel * 8;
 	_hasTransparency = false;
+	_canRotate = false;
 	_colorFormat = BM_RGB565;
 	_data = new Graphics::PixelBuffer[_numImages];
 	_data[0].create(buf.getFormat(), w * h, DisposeAfterUse::YES);
 	_data[0].copyBuffer(0, w * h, buf);
 	_loaded = true;
 	_keepData = true;
+	_smoothInterpolation = false;
 
 	_userData = nullptr;
 	_texc = nullptr;
@@ -205,8 +210,8 @@ BitmapData::BitmapData(const Graphics::PixelBuffer &buf, int w, int h, const cha
 
 BitmapData::BitmapData() :
 		_numImages(0), _width(0), _height(0), _x(0), _y(0), _format(0), _numTex(0),
-		_bpp(0), _colorFormat(0), _texIds(nullptr), _hasTransparency(false), _data(nullptr),
-		_refCount(1), _loaded(false), _keepData(false), _texc(nullptr), _verts(nullptr),
+		_bpp(0), _colorFormat(0), _texIds(nullptr), _hasTransparency(false), _canRotate(false), _data(nullptr),
+		_refCount(1), _loaded(false), _keepData(false), _smoothInterpolation(false), _texc(nullptr), _verts(nullptr),
 		_layers(nullptr), _numCoords(0), _numVerts(0), _numLayers(0), _userData(nullptr) {
 }
 

@@ -493,7 +493,7 @@ int AndroidGraphicsManager::getScreenChangeID() const {
 bool AndroidGraphicsManager::showMouse(bool visible) {
 	ENTER("%d", visible);
 
-	_show_mouse = visible;
+	//_show_mouse = visible;
 
 	return true;
 }

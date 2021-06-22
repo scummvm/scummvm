@@ -31,6 +31,7 @@ encoding.dat           FILE    "dists/engine-data/encoding.dat"
 #ifdef BUILTIN_RESOURCES
 #if PLUGIN_ENABLED_STATIC(GRIM)
 grim-patch.lab         FILE    "dists/engine-data/grim-patch.lab"
+mouse.lab              FILE    "dists/engine-data/mouse.lab"
 monkey4-patch.m4b      FILE    "dists/engine-data/monkey4-patch.m4b"
 #endif
 #if PLUGIN_ENABLED_STATIC(MYST3)

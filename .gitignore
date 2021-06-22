@@ -7,6 +7,9 @@
 scummvm.dwp
 lib*.a
 .deps
+*.so
+*.apk
+/build
 
 /config.log
 /scummvm
@@ -277,3 +280,5 @@ android_project
 
 #Ignore snapcraft build artifacts
 .snap
+lua.tgz
+dists/engine-data/patches/grim_pnc

@@ -1,0 +1,10 @@
+#!/bin/bash
+a=`pwd`
+cd ~/grim/ex_lua
+if [ -f $1.lua ]; then
+	~/code/residualvm-tools/luac -o ../ex/$1.lua -b ../ex_orig/$1.lua $1.lua
+else
+	echo "$1 does not exist."
+fi
+cd $a
+

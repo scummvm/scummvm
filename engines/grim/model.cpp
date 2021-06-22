@@ -20,6 +20,10 @@
  *
  */
 
+
+//#define FORBIDDEN_SYMBOL_ALLOW_ALL
+//#define DUMP_MODEL
+
 #include "common/algorithm.h"
 #include "common/endian.h"
 #include "common/func.h"
@@ -83,6 +87,68 @@ Model::Model(const Common::String &filename, Common::SeekableReadStream *data, C
 			}
 		}
 	}
+#ifdef DUMP_MODEL
+	Common::String fn = filename;
+	for (int i=0; i<4; i++) fn.deleteLastChar();
+	Common::String path = "/Users/tpfaff/grimex/obj/" + fn + ".obj";
+	FILE* fp = fopen(path.c_str(),"wb");
+	// dump model as obj
+	int off=1,offT=1;
+	for (int i=0,m=0; i< _numGeosets; i++) {
+		for (int j=0; j<_geosets[i]._numMeshes; j++,m++) {
+			Mesh& mesh = _geosets[i]._meshes[j];
+			if (mesh._numFaces == 0) continue;
+			float w = 255, h = 255;
+			Material* mat = mesh._faces[0]._material;
+			if (mat) {
+				MaterialData *dat = mat->getData();
+				if (dat && dat->_numImages > 0) {
+					w= dat->_textures[0]._width-1;
+					h= dat->_textures[0]._height-1;
+				}
+			}
+			//fprintf(fp, "mtllib %s.mtl\nusemtl mat\n", fn.c_str());
+			for (int v=0; v<mesh._numVertices; v++) {
+				Math::Vector3d vx(mesh._vertices[v*3],mesh._vertices[v*3+1],mesh._vertices[v*3+2]);
+				Math::Vector3d n(mesh._vertNormals[v*3],mesh._vertNormals[v*3+1],mesh._vertNormals[v*3+2]);
+				mesh._matrix.transform(&vx, true);
+				mesh._matrix.transform(&n, false);
+				fprintf(fp,"v %g %g %g\n",vx.x(),vx.y(),vx.z());
+				fprintf(fp,"vn %g %g %g\n",n.x(),n.y(),n.z());
+			}
+			for (int v=0; v<mesh._numTextureVerts; v++) {
+				float* vert = &mesh._textureVerts[v*2];
+				fprintf(fp,"vt %g %g\n",vert[0]/w,-vert[1]/h);
+			}
+			for (int f=0; f<mesh._numFaces; f++) {
+				MeshFace& face = mesh._faces[f];
+				fprintf(fp,"f");
+				for (int v=0; v<face._numVertices; v++) {
+					fprintf(fp," %d/%d/%d",face._vertices[v]+off,
+						face._texVertices[v]+offT,face._vertices[v]+off);
+				}
+				fprintf(fp, "\n");
+			}
+			off += mesh._numVertices;
+			offT += mesh._numTextureVerts;
+			/*
+			path = "/Users/tpfaff/grimex/obj/" + fn;
+			path += Common::String::format(".%d.mtl",m);
+			fp = fopen(path.c_str(),"wb");
+			fprintf(fp, "newmtl mat\nKa 0 0 0\nKs 0 0 0\nmap_Kd %s.png\n", fn.c_str());
+			fclose(fp);
+
+			path = "/Users/tpfaff/grimex/obj/" + fn + ".png";
+			Material* mat = mesh._faces[0]._material;
+			if (mat) {
+				MaterialData *dat = mat->getData();
+				if (dat)
+					dat->saveTex(path.c_str());
+			}*/
+		}
+	}
+	fclose(fp);
+#endif
 
 	_bboxSize = max - _bboxPos;
 }

@@ -77,6 +77,8 @@
 #include "engines/grim/set.h"
 #include "engines/grim/sound.h"
 #include "engines/grim/debugger.h"
+#include "engines/grim/cursor.h"
+#include "engines/grim/hotspot.h"
 #include "engines/grim/remastered/overlay.h"
 #include "engines/grim/remastered/lua_remastered.h"
 #include "engines/grim/remastered/commentary.h"
@@ -93,7 +95,7 @@ GfxBase *g_driver = nullptr;
 int g_imuseState = -1;
 
 GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
-		Engine(syst), _currSet(nullptr), _selectedActor(nullptr), _pauseStartTime(0), _language(0) {
+		Engine(syst), _currSet(nullptr), _selectedActor(nullptr), _pauseStartTime(0), _opMode(0), _devMode(false), _language(0) {
 	g_grim = this;
 
 	setDebugger(new Debugger());
@@ -123,6 +125,9 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+
+	_cursor = nullptr;
+	_hotspotManager = nullptr;
 
 	_currSet = nullptr;
 	_selectedActor = nullptr;
@@ -231,6 +236,8 @@ GrimEngine::~GrimEngine() {
 	delete g_driver;
 	g_driver = nullptr;
 	delete _iris;
+	delete _hotspotManager;
+	delete _cursor;
 
 	// Remastered:
 	delete _commentary;
@@ -338,7 +345,7 @@ Common::Error GrimEngine::run() {
 	}
 
 	ConfMan.registerDefault("check_gamedata", true);
-	if (ConfMan.getBool("check_gamedata") && getGameFlags() != ADGF_REMASTERED) {
+	if (ConfMan.getBool("check_gamedata") && getGameFlags() != ADGF_REMASTERED && false) { // HACK
 		MD5CheckDialog d;
 		if (!d.runModal()) {
 			Common::U32String confirmString = Common::U32String::format(_(
@@ -382,14 +389,26 @@ Common::Error GrimEngine::run() {
 
 	if (getGameType() == GType_GRIM && (g_grim->getGameFlags() & ADGF_REMASTERED)) {
 		g_driver = createRenderer(1600, 900);
+	} else if (ConfMan.hasKey("gameWidth") && ConfMan.hasKey("gameHeight")) {
+		g_driver->setupScreen(ConfMan.getInt("gameWidth"), ConfMan.getInt("gameHeight"));
 	} else {
+#ifdef ANDROID
+		g_driver->setupScreen(1024, 768);
+#else
 		g_driver = createRenderer(640, 480);
+#endif
 	}
+	_system->showMouse(false);
+	_system->lockMouse(false);
 
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
 		// Play EMI Mac Aspyr logo
 		playAspyrLogo();
 	}
+
+	_cursor = new Cursor(this);
+	_hotspotManager = new HotspotMan;
+	_hotspotManager->initialize();
 
 	Bitmap *splash_bm = nullptr;
 	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
@@ -773,6 +792,9 @@ void GrimEngine::luaUpdate() {
 		_frameTime = 0;
 	}
 
+	int cutsceneMode = LuaBase::instance()->queryVariable("cutSceneLevel", true);
+	g_grim->getHotspotMan()->cutSceneMode(cutsceneMode);
+
 	LuaBase::instance()->update(_frameTime, _movieTime);
 
 	if (_currSet && (_mode == NormalMode || _mode == SmushMode)) {
@@ -834,6 +856,7 @@ void GrimEngine::updateDisplayScene() {
 		updateNormalMode();
 	} else if (_mode == DrawMode) {
 		updateDrawMode();
+		handleUserPaint();
 	}
 }
 
@@ -924,6 +947,13 @@ void GrimEngine::drawNormalMode() {
 	// The overlay objects should be drawn on top of everything else,
 	// including 3D objects such as Manny and the message tube
 	_currSet->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
+
+	drawCursor();
+}
+
+void GrimEngine::drawCursor() {
+	_hotspotManager->drawActive(_opMode);
+	_cursor->draw();
 }
 
 void GrimEngine::doFlip() {
@@ -947,6 +977,10 @@ void GrimEngine::doFlip() {
 			_lastFrameTime = currentTime;
 		}
 	}
+}
+
+inline float dist(const Common::Point& a, const Common::Point& b) {
+	return sqrt( (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) );
 }
 
 void GrimEngine::mainLoop() {
@@ -1008,6 +1042,8 @@ void GrimEngine::mainLoop() {
 			setMode(mode);
 		}
 
+		//_hotspotManager->update();
+
 		g_sound->flushTracks();
 		if (g_imuse) {
 			g_imuse->refreshScripts();
@@ -1017,26 +1053,135 @@ void GrimEngine::mainLoop() {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Handle any buttons, keys and joystick operations
-			Common::EventType type = event.type;
-			if (type == Common::EVENT_KEYDOWN || type == Common::EVENT_KEYUP) {
+			Common::EventType& type = event.type;
+
+			bool doubleClick = false;
+			if (type == Common::EVENT_DOUBLETAP) {
+				doubleClick = true;
+				type = Common::EVENT_LBUTTONDOWN;
+			}
+
+			// parse special gestures
+#ifdef ANDROID
+			static int swipeCount = 0;
+			static bool wasChecked = false, moveSwipe = false;
+			const float D = (float)g_driver->getScreenWidth() / 640.0f;
+			// catch inventory gestures
+			if (type == Common::EVENT_SCROLL_UP) {
+				int topInv0 = 110 * D, topInv1 = 150 * D;
+				int deltaX = 80 * D, deltaY = 120 * D;
+				Common::Point source = event.origin, dest = event.mouse;
+
+				//warning("%d %d -> %d %d",(int)(source.x/d),(int)(source.y/d),(int)(dest.x/d),(int)(dest.y/d));
+				if (source.y < topInv0 && (dest.y-source.y) > deltaY && fabs(dest.x-source.x) < deltaX) {
+					if (_hotspotManager->getCtrlMode() == HotspotMan::Normal) {
+						type = Common::EVENT_KEYDOWN;
+						event.kbd.keycode = Common::KEYCODE_i;
+					}
+				} else if (source.y > topInv1 && (dest.y-source.y) < -deltaY && fabs(dest.x-source.x) < deltaX) {
+					if (_hotspotManager->getCtrlMode() == HotspotMan::Inventory) {
+						type = Common::EVENT_KEYDOWN;
+						event.kbd.keycode = Common::KEYCODE_i;
+					}
+				}
+				swipeCount = 0;
+				wasChecked = false;
+			}
+
+			// are we on a move swipe ?
+			if (type == Common::EVENT_SCROLL_MOVE) {
+				if (!wasChecked) {
+					Common::Point mp = _hotspotManager->mannyPos2D(0),
+								  mp2 = _hotspotManager->mannyPos2D(0.25);
+					moveSwipe = (dist(Common::Point(D*mp.x,D*mp.y), event.origin) < D*50) ||
+								(dist(Common::Point(D*mp2.x,D*mp2.y), event.origin) < D*50);
+					wasChecked = true;
+				}
+				swipeCount = (swipeCount + 1) % 16;
+				type = (swipeCount == 0 && moveSwipe) ?
+					Common::EVENT_SCROLL : Common::EVENT_MOUSEMOVE;
+			}
+
+			// convert skip gestures
+			if (doubleClick && _mode == SmushMode) {
+				type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_ESCAPE;
+			}
+			// convert line skip gestures
+			if (type == Common::EVENT_LBUTTONDOWN && _hotspotManager->isDialog()) {
+				type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_PERIOD;
+			}
+#else
+			static unsigned int _lastClick=0;
+			if (type == Common::EVENT_LBUTTONDOWN) {
+				unsigned int currentTime = g_system->getMillis();
+				doubleClick = (currentTime - _lastClick) < 500;
+				_lastClick = currentTime;
+			}
+#endif
+			if (type == Common::EVENT_MOUSEMOVE) {
+				_cursor->updatePosition(event.mouse);
+				_hotspotManager->hover(_cursor->getPosition());
+			} else if (type == Common::EVENT_MBUTTONDOWN ||
+			           (type == Common::EVENT_LBUTTONDOWN && event.kbd.hasFlags(Common::KBD_CTRL))) {
+				Common::KeyState kbd(Common::KEYCODE_i);
+				handleChars(Common::EVENT_KEYDOWN, kbd);
+				handleControls(Common::EVENT_KEYDOWN, kbd);
+			} else if (type == Common::EVENT_LBUTTONDOWN ||
+			           type == Common::EVENT_RBUTTONDOWN ||
+			           type == Common::EVENT_SCROLL ||
+			           type == Common::EVENT_SCROLL_UP) {
+				_hotspotManager->event(_cursor->getPosition(), event, _opMode, doubleClick);
+			} else if (type == Common::EVENT_KEYDOWN || type == Common::EVENT_KEYUP) {
 				if (type == Common::EVENT_KEYDOWN) {
-					// Ignore everything but ESC when movies are playing
-					// This matches the retail and demo versions of EMI
-					// This also allows the PS2 version to skip movies
-					if (_mode == SmushMode && g_grim->getGameType() == GType_MONKEY4) {
+					bool nmode = _mode != DrawMode && _hotspotManager->getCtrlMode() == 0;
+
+					// Allow us to disgracefully skip movies in the PS2-version:
+					if (_mode == SmushMode && getGamePlatform() == Common::kPlatformPS2) {
 						if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 							g_movie->stop();
 							break;
 						}
-						continue;
-					}
-
-					if (_mode != DrawMode && _mode != SmushMode && (event.kbd.ascii == 'q')) {
+					} else if (_mode != DrawMode && _mode != SmushMode && (event.kbd.ascii == 'q')) {
 						handleExit();
 						break;
 					} else if (_mode != DrawMode && (event.kbd.keycode == Common::KEYCODE_PAUSE)) {
 						handlePause();
 						break;
+
+					// mouse additions
+					} else if (nmode && event.kbd.keycode == Common::KEYCODE_SPACE) {
+						_hotspotManager->flashHotspots();
+						break;
+					} else if (nmode && event.kbd.keycode == Common::KEYCODE_z && event.kbd.hasFlags(Common::KBD_SHIFT)) {
+						_devMode = !_devMode;
+						handleChars(type, event.kbd);
+					} else if (_devMode && event.kbd.keycode == Common::KEYCODE_h) {
+						_hotspotManager->getName(_cursor->getPosition());
+						break;
+					} else if (_devMode && _opMode > 0 && event.kbd.keycode == Common::KEYCODE_RETURN) {
+						_hotspotManager->okKey(event.kbd.hasFlags(Common::KBD_SHIFT));
+						break;
+					} else if (_devMode && event.kbd.keycode == Common::KEYCODE_LEFTBRACKET) {
+						_opMode = (_opMode+1) % 3;
+						_hotspotManager->cancel();
+						warning("set opMode %d %d",_opMode,_hotspotManager->getCtrlMode());
+					} else if (_devMode && event.kbd.keycode == Common::KEYCODE_RIGHTBRACKET) {
+						_opMode = (_opMode-1+3) % 3;
+						_hotspotManager->cancel();
+						warning("set opMode %d %d",_opMode,_hotspotManager->getCtrlMode());
+					} else if (_devMode && event.kbd.keycode == Common::KEYCODE_F5) {
+						_hotspotManager->initialize();
+					} else if (_devMode && event.kbd.keycode == Common::KEYCODE_F6) {
+						_hotspotManager->debug(1);
+					} else if (_devMode && event.kbd.keycode == Common::KEYCODE_F7) {
+						_hotspotManager->debug(2);
+					} else if (_devMode && _opMode > 0 && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						_hotspotManager->cancel();
+						break;
+
+
 					} else {
 						handleChars(type, event.kbd);
 					}
@@ -1217,6 +1362,9 @@ void GrimEngine::savegameRestore() {
 	lua_Restore(_savedState);
 	Debug::debug(Debug::Engine, "Lua restored successfully.");
 
+	_hotspotManager->restoreState(_savedState);
+	Debug::debug(Debug::Engine, "Hotspots restored successfully.");
+
 	delete _savedState;
 
 	//Re-read the values, since we may have been in some state that changed them when loading the savegame,
@@ -1238,6 +1386,7 @@ void GrimEngine::savegameRestore() {
 
 	_currSet->setupCamera();
 	g_driver->set3DMode();
+	_cursor->reload();
 }
 
 void GrimEngine::restoreGRIM() {
@@ -1386,6 +1535,9 @@ void GrimEngine::savegameSave() {
 
 	lua_Save(_savedState);
 
+	_hotspotManager->saveState(_savedState);
+	Debug::debug(Debug::Engine, "HotspotMan saved successfully.");
+
 	delete _savedState;
 
 	if (g_imuse)
@@ -1510,6 +1662,7 @@ void GrimEngine::makeCurrentSetup(int num) {
 		// here should be set sound position
 
 		_setupChanged = true;
+		_hotspotManager->updatePerspective();
 	}
 }
 
@@ -1688,5 +1841,6 @@ void GrimEngine::setSaveMetaData(const char *meta1, int meta2, const char *meta3
 	_saveMeta2 = meta2;
 	_saveMeta3 = meta3;
 }
+
 
 } // end of namespace Grim

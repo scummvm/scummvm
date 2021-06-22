@@ -27,6 +27,7 @@
 
 #include "common/str-array.h"
 #include "common/hashmap.h"
+#include "common/array.h"
 #include "common/events.h"
 
 #include "engines/advancedDetector.h"
@@ -49,6 +50,8 @@ class PrimitiveObject;
 class LuaBase;
 class Commentary;
 class GfxBase;
+class Cursor;
+class HotspotMan;
 
 struct ControlDescriptor {
 	const char *name;
@@ -103,6 +106,7 @@ public:
 	void setFlipEnable(bool state) { _flipEnable = state; }
 	bool getFlipEnable() { return _flipEnable; }
 	virtual void drawTextObjects();
+	void drawCursor();
 	void playIrisAnimation(Iris::Direction dir, int x, int y, int time);
 
 	void mainLoop();
@@ -193,6 +197,9 @@ public:
 
 	void debugLua(const Common::String &str);
 
+	inline HotspotMan *getHotspotMan() { return _hotspotManager; }
+	inline Cursor *getCursor() { return _cursor; }
+
 protected:
 	virtual void pauseEngineIntern(bool pause) override;
 
@@ -269,6 +276,11 @@ protected:
 	Common::Platform _gamePlatform;
 	Common::Language _gameLanguage;
 	uint32 _pauseStartTime;
+
+	Cursor *_cursor;
+	HotspotMan *_hotspotManager;
+	int _opMode;
+	bool _devMode;
 
 	// Remastered;
 	uint32 _language;

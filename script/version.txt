@@ -1,0 +1,3 @@
+internal_version.h
+dists/macosx/Info.plist
+README

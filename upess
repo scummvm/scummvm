@@ -1,0 +1,10 @@
+#!/bin/bash
+./up _actors
+./up _system
+./up _options
+./up _inventory
+./up _dialog
+./up _controls
+./up _sets
+./up _manny
+./up _objects

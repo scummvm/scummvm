@@ -741,7 +741,6 @@ STUB_FUNC(Lua_V1::SetCameraRoll)
 STUB_FUNC(Lua_V1::SetCameraInterest)
 STUB_FUNC(Lua_V1::GetCameraPosition)
 STUB_FUNC(Lua_V1::SpewStartup)
-STUB_FUNC(Lua_V1::WorldToScreen)
 STUB_FUNC(Lua_V1::SetActorRoll)
 STUB_FUNC(Lua_V1::SetActorFrustrumCull)
 STUB_FUNC(Lua_V1::DriveActorTo)
@@ -965,6 +964,18 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "RestoreIMuse", LUA_OPCODE(Lua_V1, RestoreIMuse) },
 	{ "GetMemoryUsage", LUA_OPCODE(Lua_V1, GetMemoryUsage) },
 	{ "dofile", LUA_OPCODE(Lua_V1, new_dofile) },
+	// extensions
+	{ "RegisterHotspot", LUA_OPCODE(Lua_V1, RegisterHotspot) },
+	{ "ActivateHotspot", LUA_OPCODE(Lua_V1, ActivateHotspot) },
+	{ "UpdateHotspot", LUA_OPCODE(Lua_V1, UpdateHotspot) },
+	{ "SwitchControlMode", LUA_OPCODE(Lua_V1, SwitchControlMode) },
+	{ "NotifyWalk", LUA_OPCODE(Lua_V1, NotifyWalk) },
+	{ "RegisterInventory", LUA_OPCODE(Lua_V1, RegisterInventory) },
+	{ "MouseDown", LUA_OPCODE(Lua_V1, MouseDown) },
+	{ "InteractMode", LUA_OPCODE(Lua_V1, InteractMode) },
+	{ "RenameHotspot", LUA_OPCODE(Lua_V1, RenameHotspot) },
+	{ "GetControlMode", LUA_OPCODE(Lua_V1, GetControlMode) },
+	{ "SetOptionMode", LUA_OPCODE(Lua_V1, SetOptionMode) }
 };
 
 static struct luaL_reg grimTextOpcodes[] = {
@@ -998,7 +1009,7 @@ struct luaL_reg grimPrimitivesOpcodes[] = {
 	{ "DrawRectangle", LUA_OPCODE(Lua_V1, DrawRectangle) },
 	{ "ChangePrimitive", LUA_OPCODE(Lua_V1, ChangePrimitive) },
 	{ "KillPrimitive", LUA_OPCODE(Lua_V1, KillPrimitive) },
-	{ "PurgePrimitiveQueue", LUA_OPCODE(Lua_V1, PurgePrimitiveQueue) }
+	{ "PurgePrimitiveQueue", LUA_OPCODE(Lua_V1, PurgePrimitiveQueue) },
 };
 
 struct luaL_reg grimHardwareOpcodes[] = {

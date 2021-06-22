@@ -19,4 +19,18 @@
   engine</i> to be useful.  Engines are available as separate plugin
   packages, from wherever you found ResidualVM.</string>
   <string name="to_market">To Market</string>
+  
+    <string name="menu">Menu</string>
+    <string name="inventory">Inventory</string>
+    <string name="action">Action</string>
+    <string name="up">Up</string>
+    <string name="ok">Down</string>
+    <string name="down">Down</string>
+    <string name="left">Down</string>
+    <string name="right">Down</string>
+    <string name="exit">Exit</string>
+    <string name="hotspot">Hotspot</string>
+    <string name="touchmode">Touchmode</string>
+    <string name="skip_dlg">Skip dialog</string>
+  
 </resources>

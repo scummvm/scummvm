@@ -1,0 +1,23 @@
+in vec2 position;
+in vec2 texcoord;
+
+uniform mat3 rot;
+uniform vec2 texcrop;
+uniform vec2 offsetXY;
+uniform vec2 sizeWH;
+
+out vec2 Texcoord;
+
+void main()
+{
+	Texcoord = texcoord * texcrop;
+	// rotation
+	vec2 pos_rot = vec2(rot * vec3(position - 0.5,0.0)) + 0.5;
+
+	// Coordinates are [0.0;1.0], transform [-1.0; 1.0] and flip Y
+	vec2 pos = offsetXY + pos_rot * sizeWH;
+	pos.x = pos.x * 2.0 - 1.0;
+	pos.y = -1.0 * (pos.y * 2.0 - 1.0);
+
+	gl_Position = vec4(pos, 0.0, 1.0);
+}

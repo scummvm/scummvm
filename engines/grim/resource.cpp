@@ -115,6 +115,9 @@ ResourceLoader::ResourceLoader() {
 
 	if (g_grim->getGameType() == GType_GRIM) {
 		if (g_grim->getGameFlags() & ADGF_DEMO) {
+			if (!SearchMan.hasFile("mouse.lab"))
+				error("mouse.lab not found");
+			SearchMan.listMatchingMembers(files, "mouse.lab");
 			SearchMan.listMatchingMembers(files, "gfdemo01.lab");
 			SearchMan.listMatchingMembers(files, "gdemo001.lab"); // For the english demo with video.
 			SearchMan.listMatchingMembers(files, "grimdemo.mus");
@@ -123,8 +126,11 @@ ResourceLoader::ResourceLoader() {
 		} else {
 			if (!SearchMan.hasFile("grim-patch.lab"))
 				error("%s", "grim-patch.lab not found");
+			if (!SearchMan.hasFile("mouse.lab"))
+				error("mouse.lab not found");
 
-			SearchMan.listMatchingMembers(files, "grim-patch.lab");
+			// SearchMan.listMatchingMembers(files, "grim-patch.lab");
+			SearchMan.listMatchingMembers(files, "mouse.lab");
 			SearchMan.listMatchingMembers(files, "data005.lab");
 			SearchMan.listMatchingMembers(files, "data004.lab");
 			SearchMan.listMatchingMembers(files, "data003.lab");

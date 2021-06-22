@@ -128,6 +128,7 @@ void Lua_V1::SetActorWalkChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
+	lua_Object walk_bwd = lua_getparam(4);
 	Costume *costume;
 	int chore;
 
@@ -145,6 +146,8 @@ void Lua_V1::SetActorWalkChore() {
 	}
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
+
+	actor->setWalkBwd(lua_isnumber(walk_bwd) && lua_getnumber(walk_bwd) != 0);
 
 	actor->setWalkChore(chore, costume);
 }
@@ -304,6 +307,7 @@ void Lua_V1::PutActorAt() {
 	lua_Object xObj = lua_getparam(2);
 	lua_Object yObj = lua_getparam(3);
 	lua_Object zObj = lua_getparam(4);
+	lua_Object xtraObj = lua_getparam(5);
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
 
@@ -316,7 +320,8 @@ void Lua_V1::PutActorAt() {
 	float x = lua_getnumber(xObj);
 	float y = lua_getnumber(yObj);
 	float z = lua_getnumber(zObj);
-	actor->setPos(Math::Vector3d(x, y, z));
+	int xnum = lua_isnumber(xtraObj) ? lua_getnumber(xtraObj) : 0;
+	actor->setPos(Math::Vector3d(x, y, z), xnum);
 }
 
 void Lua_V1::GetActorPos() {
@@ -584,7 +589,12 @@ void Lua_V1::WalkActorTo() {
 	float tz = lua_getnumber(tzObj);
 	Math::Vector3d tVec(tx, ty, tz);
 
-	actor->walkTo(destVec);
+	bool force = true;
+	lua_Object forceObj = lua_getparam(8);
+	if (lua_isnumber(forceObj) && lua_getnumber(forceObj)==0)
+		force = false;
+
+	actor->walkTo(destVec, force);
 }
 
 /* This draw an actor to an offscreen buffer.
@@ -1539,6 +1549,23 @@ void Lua_V1::GetActorRect() {
 	// Looking at how it is used I don't see any reason to ever return nil.
 	// If it does not return nil, the light that comes out of Chepito's lantern move properly.
 	lua_pushnumber(1);
+}
+
+void Lua_V1::WorldToScreen() {
+	lua_Object xObj = lua_getparam(1);
+	lua_Object yObj = lua_getparam(2);
+	lua_Object zObj = lua_getparam(3);
+
+	Math::Vector3d pos(lua_getnumber(xObj), lua_getnumber(yObj), lua_getnumber(zObj));
+	int x = 0, y = 0;
+	g_grim->getCurrSet()->setupCamera();
+	if (g_driver->worldToScreen(pos, x, y)) {
+		lua_pushnumber(x);
+		lua_pushnumber(y);
+	} else {
+		lua_pushnil();
+		lua_pushnil();
+	}
 }
 
 } // end of namespace Grim

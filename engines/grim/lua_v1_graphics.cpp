@@ -38,6 +38,7 @@ namespace Grim {
 
 void Lua_V1::GetImage() {
 	lua_Object nameObj = lua_getparam(1);
+	lua_Object transObj = lua_getparam(2);
 	if (!lua_isstring(nameObj)) {
 		lua_pushnil();
 		return;
@@ -45,6 +46,10 @@ void Lua_V1::GetImage() {
 	const char *bitmapName = lua_getstring(nameObj);
 	Bitmap *b = Bitmap::create(bitmapName);
 	lua_pushusertag(b->getId(), MKTAG('V','B','U','F'));
+	if (lua_isnumber(transObj) && lua_getnumber(transObj) > 0) {
+		b->_data->load();
+		b->_data->_hasTransparency = true;
+	}
 }
 
 void Lua_V1::FreeImage() {
@@ -263,6 +268,10 @@ void Lua_V1::ChangePrimitive() {
 		return;
 
 	PrimitiveObject *pmodify = getprimitive(param1);
+	if (!pmodify) {
+		warning("empty primitive !");
+		return;
+	}
 	assert(pmodify);
 
 	Color color;
@@ -465,10 +474,16 @@ void Lua_V1::KillPrimitive() {
 		return;
 
 	PrimitiveObject *prim = getprimitive(primObj);
-	delete prim;
+	if (prim)
+		delete prim;
 }
 
 void Lua_V1::DimScreen() {
+	lua_Object level = lua_getparam(1);
+	if (lua_isnumber(level))
+		g_driver->setDimLevel(lua_getnumber(level));
+	else
+		g_driver->setDimLevel(0.2);
 	g_driver->storeDisplay();
 	g_driver->dimScreen();
 }
@@ -509,6 +524,7 @@ void Lua_V1::SetGamma() {
 }
 
 void Lua_V1::Display() {
+	g_grim->drawCursor();
 	if (g_grim->getFlipEnable()) {
 		g_driver->flipBuffer();
 	}

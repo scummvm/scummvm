@@ -82,6 +82,12 @@ MODULE_OBJS += \
 	tinygl/ztriangle.o \
 	tinygl/zblit.o \
 	tinygl/zdirtyrect.o
+#   tinygl/ztriangle_shadow.o
+endif
+
+ifdef USE_OPENGL_SHADERS
+MODULE_OBJS += \
+	projection.o
 endif
 
 ifdef USE_ASPECT

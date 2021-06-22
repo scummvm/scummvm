@@ -1,0 +1,1 @@
+CFLAGS="-O3 -mmacosx-version-min=10.8" CXXFLAGS="-O3 -mmacosx-version-min=10.8" LDFLAGS=" -mmacosx-version-min=10.8" ../configure --disable-engine=myst3 --disable-engine=monkey4 --disable-vorbis --disable-mpeg2 --disable-jpeg --disable-png --disable-freetype2

@@ -149,7 +149,7 @@ public:
 	 * @param position The position.
 	 * @see getPos
 	 */
-	void setPos(const Math::Vector3d &position);
+	void setPos(const Math::Vector3d &position, int xnum=0);
 	/**
 	 * Returns the position of the actor on the 3D scene.
 	 *
@@ -167,7 +167,7 @@ public:
 	 * @see stopWalking
 	 * @see isWalking
 	 */
-	void walkTo(const Math::Vector3d &position);
+	void walkTo(const Math::Vector3d &position, bool force_walk);
 	/**
 	 * Stops immediately the actor's walk.
 	 *
@@ -560,6 +560,7 @@ public:
 	void drawToCleanBuffer();
 
 	bool isTalkingForeground() const;
+	void setWalkBwd(bool bwd) { _walkBwd = bwd; }
 
 	LightMode getLightMode() const { return _lightMode; }
 	void setLightMode(LightMode lightMode) { _lightMode = lightMode; }
@@ -604,6 +605,7 @@ private:
 	Math::Angle _pitch, _yaw, _roll;
 	float _walkRate, _turnRate;
 
+	bool _walkBwd;
 	bool _followBoxes;  // Constrain to walkboxes
 	bool _hasFollowedBoxes;
 	float _reflectionAngle; // Maximum angle to turn by at walls
