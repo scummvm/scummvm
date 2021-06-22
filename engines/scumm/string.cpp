@@ -1037,7 +1037,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	// HACK: Correct positions of text in books in Indy3 Mac.
 	// See also bug #8759.
-	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && a == 1) {
+	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && a == 1 && !_macScreen) {
 		if (_currentRoom == 75) {
 			// Grail Diary Page 1 (Library)
 			if (_charset->_startLeft < 160)
