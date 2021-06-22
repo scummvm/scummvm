@@ -1613,14 +1613,21 @@ void CharsetRendererMac::setCurID(int32 id) {
 
 int CharsetRendererMac::getFontHeight() {
 	int height = _macFonts[_curId].getFontHeight();
-	if (_curId == 0)
+	if (_vm->_game.id == GID_INDY3) {
+		// For font 0, round up the height. It's still not quite as
+		// widely spaced as in the original, but I think it looks fine.
+		if (height & 1)
+			height++;
 		height /= 2;
+	}
 	return height;
 }
 
 int CharsetRendererMac::getCharWidth(uint16 chr) {
 	int width = _macFonts[_curId].getCharWidth(chr);
-	if (_curId == 0)
+	// For font 1 in Last Crusade, we want the real width. It is used for
+	// text box titles, which are drawn outside the normal font rendering.
+	if (_curId == 0 || _vm->_game.id != GID_INDY3)
 		width /= 2;
 	return width;
 }
