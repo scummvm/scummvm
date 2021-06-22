@@ -53,6 +53,7 @@ enum {
 	kStartCmd = 'STRT',
 	kEditGameCmd = 'EDTG',
 	kLoadGameCmd = 'LOAD',
+	kOpenTrayCmd = 'OPTR',
 };
 
 /* GridItemInfo */
@@ -66,9 +67,9 @@ struct GridItemInfo
 	String 		title;
 	Platform 	platform;
 	String 		thumbPath;
-	String 		entryID;
+	int 		entryID;
 
-	GridItemInfo(const String &id, const String &eid, const String &gid
+	GridItemInfo(int id, const String &eid, const String &gid
 		,const String &t, const String &l, const String &p)
 		: entryID(id), gameid(gid), engineid(eid), title(t), language(l) {
 		
@@ -86,12 +87,17 @@ struct GridItemInfo
 };
 
 /* GridItemTray */
-class GridItemTray: public Dialog {
-	Common::String entryID;
-	GridWidget *grid;
+class GridItemTray: public Dialog, public CommandSender {
+	int			 	_entryID;
+	GuiObject 		*_boss;
 public:
-	GridItemTray(int x, int y, int w, int h, const Common::String &ID, GridWidget *gr)
-		: Dialog(x, y, w, h) { entryID = ID; grid = gr; }
+	typedef Common::String String;
+	typedef Common::Array<Common::String> StringArray;
+
+	typedef Common::U32String U32String;
+	typedef Common::Array<Common::U32String> U32StringArray;
+
+	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
@@ -142,6 +148,7 @@ protected:
 
 public:
 	GridItemInfo 	*_selectedEntry;
+	GridItemTray 	*_tray;
 	
 	GridWidget(GuiObject *boss, int x, int y, int w, int h);
 	GridWidget(GuiObject *boss, const String &name);
@@ -169,11 +176,12 @@ public:
 	
 	void reflowLayout() override;
 	
+	void openTray(int x, int y, int w, int h, int entryID);
 	void scrollBarRecalc();
 };
 
 /* GridItemWidget */
-class GridItemWidget : public ContainerWidget {
+class GridItemWidget : public ContainerWidget, public CommandSender {
 public:
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
