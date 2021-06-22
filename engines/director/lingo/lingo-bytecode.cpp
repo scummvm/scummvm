@@ -549,7 +549,7 @@ void LC::cb_objectfieldpush() {
 	int fieldNameId = g_lingo->readInt();
 	Common::String fieldName = g_lingo->_currentArchive->getName(fieldNameId);
 	Datum object = g_lingo->pop();
-	g_lingo->push(g_lingo->getObjectProp(object, fieldName));
+	g_lingo->getObjectProp(object, fieldName);
 }
 
 void LC::cb_varrefpush() {

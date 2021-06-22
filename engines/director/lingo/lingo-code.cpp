@@ -565,7 +565,7 @@ void LC::c_objectproppush() {
 	Datum obj = g_lingo->pop();
 	Common::String propName = g_lingo->readString();
 
-	g_lingo->push(g_lingo->getObjectProp(obj, propName));
+	g_lingo->getObjectProp(obj, propName);
 }
 
 void LC::c_objectpropassign() {
