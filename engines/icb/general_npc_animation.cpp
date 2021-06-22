@@ -480,10 +480,10 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	PXfloat cang = (PXfloat)PXcos(ang);
 	PXfloat sang = (PXfloat)PXsin(ang);
 
-	PXreal x = M->actor_xyz.x + PXfloat2PXreal(xnext * cang + znext * sang);
-	PXreal z = M->actor_xyz.z + PXfloat2PXreal(znext * cang - xnext * sang);
-	// x and z are the new coordinates
 	// FIXME: x and z are not used currently...
+	//PXreal x = M->actor_xyz.x + PXfloat2PXreal(xnext * cang + znext * sang);
+	//PXreal z = M->actor_xyz.z + PXfloat2PXreal(znext * cang - xnext * sang);
+	// x and z are the new coordinates
 
 	if (L->pan >= HALF_TURN)
 		L->pan -= FULL_TURN;
