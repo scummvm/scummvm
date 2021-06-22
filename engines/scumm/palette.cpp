@@ -253,7 +253,7 @@ void ScummEngine::resetPalette() {
 		default:
 			if ((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST))
 				setPaletteFromTable(tableAmigaPalette, sizeof(tableAmigaPalette) / 3);
-			else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformMacintosh)
+			else if ((_game.id == GID_LOOM || _game.id == GID_INDY3) && _game.platform == Common::kPlatformMacintosh)
 				setPaletteFromTable(tableMacPalette, sizeof(tableMacPalette) / 3);
 			else
 				setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
