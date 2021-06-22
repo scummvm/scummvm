@@ -1051,6 +1051,14 @@ bool LingoCompiler::visitFuncNode(FuncNode *node) {
 /* VarNode */
 
 bool LingoCompiler::visitVarNode(VarNode *node) {
+	if (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
+		int val = castNumToNum(node->name->c_str());
+		if (val != -1) {
+			code1(LC::c_intpush);
+			codeInt(val);
+			return true;
+		}
+	}
 	if (_refMode) {
 		codeVarRef(*node->name);
 		return true;
@@ -1059,14 +1067,6 @@ bool LingoCompiler::visitVarNode(VarNode *node) {
 		code1(LC::c_constpush);
 		codeString(node->name->c_str());
 		return true;
-	}
-	if (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
-		int val = castNumToNum(node->name->c_str());
-		if (val != -1) {
-			code1(LC::c_intpush);
-			codeInt(val);
-			return true;
-		}
 	}
 	codeVarGet(*node->name);
 	return true;
