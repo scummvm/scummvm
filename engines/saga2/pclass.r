@@ -29,37 +29,37 @@
 
 namespace Saga2 {
 
-// TODO FIXME. All of these have to be extracted from the disassembly
-
 enum {
-	protoClassArrow,
-	protoClassFood,
-	protoClassKey,
-	protoClassBottle,
-	protoClassPhysContainer,
-	protoClassBludgeoningWeapon,
-	protoClassSlashingWeapon,
-	protoClassBow,
-	protoClassInventory,
-	protoClassArmor,
-	protoClassWeaponWand,
-	protoClassShield,
-	protoClassTool,
-	protoClassBookDoc,
-	protoClassPsych,
-	protoClassMemory,
-	protoClassIdea,
-	protoClassScrollDoc,
-	protoClassMap,
-	protoClassSkill,
-	protoClassIdeaContainer,
-	protoClassMemoryContainer,
-	protoClassPsychContainer,
-	protoClassSkillContainer,
-	protoClassEnchantment,
-	protoClassMonsterGenerator,
-	protoClassEncounterGenerator,
-	protoClassMissionGenerator
+	protoClassArmor = 1,
+	protoClassArrow = 2,
+	protoClassBludgeoningWeapon = 4,
+	protoClassBookDoc = 5,
+	protoClassBottle = 6,
+	protoClassBow = 7,
+	protoClassEnchantment = 8,
+	protoClassEncounterGenerator = 9,
+	protoClassFood = 10,
+	protoClassIdea = 11,
+	protoClassInventory = 13,
+	protoClassKey = 14,
+	protoClassMap = 16,
+	protoClassMemory = 17,
+	protoClassMissionGenerator = 19,
+	protoClassMonsterGenerator = 20,
+	protoClassPhysContainer = 21,
+	protoClassPsych = 22,
+	protoClassScrollDoc = 24,
+	protoClassShield = 25,
+	protoClassSkill = 26,
+	protoClassSlashingWeapon = 28,
+	protoClassTool = 32,
+	protoClassWeaponWand = 33,
+
+	// FIXME: Doublecheck these
+	protoClassIdeaContainer = 12,
+	protoClassMemoryContainer = 18,
+	protoClassPsychContainer = 23,
+	protoClassSkillContainer = 27
 };
 
 } // end of namespace Saga2

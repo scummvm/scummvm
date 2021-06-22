@@ -224,7 +224,7 @@ struct ResourceObjectPrototype {
 		objPropHidden       = (1 << 10),    // "How not to be seen".
 		objPropGhosted      = (1 << 11),    // Object permanently ghosted
 		objPropHardSurface  = (1 << 12),    // Object makes hard sound when struck
-		objPropNoSurface    = (1 << 13),    // Object makes no sound when struck (may grunt however)
+		objPropNoSurface    = (1 << 13)     // Object makes no sound when struck (may grunt however)
 	};
 
 	int16           price;                  // object's price
