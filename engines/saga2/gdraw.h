@@ -28,7 +28,6 @@
 #define SAGA2_GDRAW_H
 
 #include "saga2/rect.h"
-#include "saga2/errors.h"
 
 namespace Saga2 {
 
@@ -408,7 +407,7 @@ public:
 void mapImage(gPort &from, gPort &to, gPen map[]);
 void mapImage(gPixelMap &from, gPixelMap &to, gPen map[]);
 
-errorCode NewTempPort(gPort &, int width, int height);
+bool NewTempPort(gPort &, int width, int height);
 void DisposeTempPort(gPort &);
 
 /* ============================================================================ *

@@ -164,7 +164,7 @@ CAutoMap::CAutoMap(const Rect16 box,
 	summaryData = summary;
 
 	// init the temporary blit surface port
-	if (NewTempPort(tPort, sumMapArea.width, sumMapArea.height) != errOK) {
+	if (!NewTempPort(tPort, sumMapArea.width, sumMapArea.height)) {
 		return;
 	}
 

@@ -965,7 +965,7 @@ void mapImage(gPort &from, gPort &to, gPen map[]) {
 *
 **********************************************************************
 */
-errorCode NewTempPort(gPort &port, int width, int height) {
+bool NewTempPort(gPort &port, int width, int height) {
 	gPixelMap       *map;
 
 	map = (gPixelMap *)TempAlloc(width * height + sizeof(gPixelMap));
@@ -974,9 +974,9 @@ errorCode NewTempPort(gPort &port, int width, int height) {
 		map->size.x = width;
 		map->size.y = height;
 		port.setMap(map);
-		return errOK;
+		return true;
 	} else
-		return errNoMemory;
+		return false;
 }
 
 /****** gdraw.cpp/DisposeTempPort *********************************
