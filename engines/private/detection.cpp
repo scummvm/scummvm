@@ -162,8 +162,8 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"private-eye", // MacOS release (US)
 		0,
-		AD_ENTRY2s("Private Eye", "9fb532d8276b9b5bb7cabf9450c45ea7", 1558848,
-		    "game.mac", "33553cc04813d3f658bbe9d548377878", 81894),
+		AD_ENTRY2s("game.mac", "33553cc04813d3f658bbe9d548377878", 81894,
+		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_USA,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
@@ -181,8 +181,8 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"private-eye", // MacOS demo (US)
 		0,
-		AD_ENTRY2s("Private Eye Demo", "e98bac1e7570c70b0e9443913d10740c", 1556256,
-		    "demogame.mac", "cfbceaa8b91f0f53c745db61d1bc9749", 6103),
+		AD_ENTRY2s("demogame.mac", "cfbceaa8b91f0f53c745db61d1bc9749", 6103,
+		    "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_USA,
 		Common::kPlatformMacintosh,
 		ADGF_DEMO,
