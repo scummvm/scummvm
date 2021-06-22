@@ -57,25 +57,6 @@ void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, i
 	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2, width * 2, height * 2);
 }
 
-void ScummEngine::mac_restoreCharsetBg() {
-	_nextLeft = _string[0].xpos;
-	_nextTop = _string[0].ypos + _screenTop;
-
-	if (_charset->_hasMask) {
-		_charset->_hasMask = false;
-		_charset->_str.left = -1;
-		_charset->_left = -1;
-
-		clearTextSurface();
-
-		VirtScreen *vs = &_virtscr[_charset->_textScreenID];
-		if (!vs->h)
-			return;
-
-		markRectAsDirty(vs->number, Common::Rect(vs->w, vs->h), USAGE_BIT_RESTORED);
-	}
-}
-
 void ScummEngine::mac_drawLoomPracticeMode() {
 	// In practice mode, the game shows the notes as they are being played.
 	// In the DOS version, this is drawn by script 27 but the Mac version

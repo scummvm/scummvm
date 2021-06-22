@@ -2983,9 +2983,6 @@ void ScummEngine::stopTalk() {
 			towns_restoreCharsetBg();
 		else
 #endif
-		if (_macScreen)
-			mac_restoreCharsetBg();
-		else
 			restoreCharsetBg();
 	}
 }
