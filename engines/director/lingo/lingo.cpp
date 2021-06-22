@@ -1249,7 +1249,7 @@ Datum Lingo::varFetch(const Datum &var, DatumHash *localvars, bool silent) {
 			if (_globalvars.contains(name)) {
 				return _globalvars[name];
 			}
-			warning("varAssign: global variable %s not defined", name.c_str());
+			warning("varFetch: global variable %s not defined", name.c_str());
 			return result;
 		}
 		break;
@@ -1259,7 +1259,7 @@ Datum Lingo::varFetch(const Datum &var, DatumHash *localvars, bool silent) {
 			if (localvars && localvars->contains(name)) {
 				return (*localvars)[name];
 			}
-			warning("varAssign: local variable %s not defined", name.c_str());
+			warning("varFetch: local variable %s not defined", name.c_str());
 			return result;
 		}
 		break;
@@ -1269,7 +1269,7 @@ Datum Lingo::varFetch(const Datum &var, DatumHash *localvars, bool silent) {
 			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
 				return _currentMe.u.obj->getProp(name);
 			}
-			warning("varAssign: property %s not defined", name.c_str());
+			warning("varFetch: property %s not defined", name.c_str());
 			return result;
 		}
 		break;
