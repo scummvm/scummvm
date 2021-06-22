@@ -293,7 +293,7 @@ public:
 	}
 
 	bool pollEvent(Event &ev) {
-	if (!_artificialEventQueue.empty()) {
+		if (!_artificialEventQueue.empty()) {
 			ev = _artificialEventQueue.pop();
 			return true;
 		} else {

@@ -212,6 +212,10 @@ private:
 	bool checkGameHash(const ADGameDescription *desc);
 
 	void checkForKeyCode(const Common::Event &event);
+	/**
+	 * @return false because we don't want to remap the given event again. This already happened on
+	 * recording the event. We record the custom events already, not the raw backend events.
+	 */
 	bool allowMapping() const override { return false; }
 
 	volatile uint32 _lastMillis;
