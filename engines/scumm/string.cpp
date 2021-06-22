@@ -779,7 +779,8 @@ void ScummEngine::CHARSET_1() {
 		_charset->_top = _nextTop;
 
 		if (createTextBox) {
-			mac_createIndy3TextBox(a);
+			if (!_keepText)
+				mac_createIndy3TextBox(a);
 			createTextBox = false;
 			drawTextBox = true;
 		}
