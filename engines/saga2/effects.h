@@ -274,7 +274,7 @@ inline uint16 makeEnchantmentID(uint16 type, uint16 damtyp, int16 damamt) {
 	assert(type < 8);
 	assert(damtyp < 32);
 	assert(damamt < 128 && damamt > -128);
-	return (type << 13) | (damtyp << 8) + (damamt + 128);
+	return ((type << 13) | (damtyp << 8)) + (damamt + 128);
 }
 
 /* skill*  are now in the spellid enum ;AS;
@@ -283,23 +283,23 @@ inline uint16 makeEnchantmentID(effectAttribTypes atttyp, int16 damamt)
 */
 
 inline uint16 makeEnchantmentID(effectResistTypes restyp, bool damamt) {
-	return (effectResist << 13) | (restyp << 8) + (damamt + 128);
+	return ((effectResist << 13) | (restyp << 8)) + (damamt + 128);
 }
 
 inline uint16 makeEnchantmentID(effectImmuneTypes immtyp, bool damamt) {
-	return (effectImmune << 13) | (immtyp << 8) + (damamt + 128);
+	return ((effectImmune << 13) | (immtyp << 8)) + (damamt + 128);
 }
 
 inline uint16 makeEnchantmentID(effectOthersTypes othtyp, bool damamt) {
-	return (effectOthers << 13) | (othtyp << 8) + (damamt + 128);
+	return ((effectOthers << 13) | (othtyp << 8)) + (damamt + 128);
 }
 
 inline uint16 makeEnchantmentID(objectFlags othtyp, bool damamt) {
-	return (effectNonActor << 13) | (othtyp << 8) + (damamt + 128);
+	return ((effectNonActor << 13) | (othtyp << 8)) + (damamt + 128);
 }
 
 inline uint16 makeEnchantmentID(uint8 damamt) {
-	return (effectPoison << 13) | (0 << 8) + damamt;
+	return ((effectPoison << 13) | (0 << 8)) + damamt;
 }
 
 inline effectTypes getEnchantmentType(uint16 eID) {
