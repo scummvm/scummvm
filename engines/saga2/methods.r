@@ -67,7 +67,7 @@ enum {
 	Method_GameObject_onAcceptLockToggle,
 	Method_GameObject_onAcceptMix,
 	Method_GameObject_onAcceptDrop,
-	Method_GameObject_onAcceptStrike,
+	Method_GameObject_onAcceptStrike = 37,
 	Method_GameObject_onAcceptInsertion = 40,
 	Method_GameObject_onTrigger = 41,
 	Method_GameObject_onTimerTick = 42,
