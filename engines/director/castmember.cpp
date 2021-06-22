@@ -683,31 +683,14 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_ptext = stxt->_ptext;
 }
 
-// calculate text dimensions in mactext
-// formula comes from the ctor of macwidget and mactext
-//	_dims.left = x;
-//	_dims.right = x + w + (2 * border) + (2 * gutter) + shadow;
-//	_dims.top = y;
-//	_dims.bottom = y + h + (2 * border) + gutter + shadow;
-// x, y, w + 2, h
-Common::Rect TextCastMember::getTextOnlyDimensions(const Common::Rect &targetDims) {
-	int w = targetDims.right - targetDims.left - 2 * _borderSize - 2 * _gutterSize - _boxShadow;
-	int h = targetDims.bottom - targetDims.top - 2 * _borderSize - _gutterSize - _boxShadow;
-	w -= 2;
-	return Common::Rect(w, h);
-}
-
 Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
 	Graphics::MacWidget *widget = nullptr;
-	Common::Rect dims;
 
 	switch (_type) {
 	case kCastText:
-		// since mactext will add some offsets itself, then we calculate it first, to make sure the result size is the same as bbox
-		// we are using a very special logic to solve the size for text castmembers now, please refer to sprite.cpp setCast()
-		dims = getTextOnlyDimensions(bbox);
-		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), dims.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow, Common::kMacCentralEurope);
+		// use initialRect for the dimensions just like button
+		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow, Common::kMacCentralEurope);
 		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
 		((Graphics::MacText *)widget)->draw();
 		((Graphics::MacText *)widget)->_focusable = _editable;
