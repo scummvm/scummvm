@@ -76,8 +76,6 @@ const int           straightBaseCost    = 4,
                     diagNormalCost      = diagBaseCost + 6,
                     diagHardCost        = diagBaseCost + 12;
 
-const int           maskSize            = 4;
-
 const int           subMetaSize         = 4,
                     subMetaShift        = 2,
                     subMetaMask         = subMetaSize - 1;
@@ -1016,16 +1014,14 @@ int16 tileSlopeHeight(
 			//  See if the tile is a potential supporting surface
 			if (tileBase < pt.z + objProtHt
 			        &&  supportHeight >= highestSupportHeight
-			        && (ti->combinedTerrainMask() &
-			            terrainSurface | terrainRaised)) {
+			        && (ti->combinedTerrainMask() & (terrainSurface | terrainRaised))) {
 				highestTileFlag = true;
 				highestTile = *pti;
 				highestSupportHeight = supportHeight;
 				highestSupportPlatform = i;
 			} else if (!highestTileFlag &&
 			           supportHeight <= lowestSupportHeight &&
-			           (ti->combinedTerrainMask() &
-			            terrainSurface | terrainRaised)) {
+			           (ti->combinedTerrainMask() & (terrainSurface | terrainRaised))) {
 				lowestTileFlag = true;
 				lowestTile = *pti;
 				lowestSupportHeight = supportHeight;
@@ -1106,12 +1102,10 @@ protected:
 
 	//  Calculates the center point given the base coordinate of the
 	//  cell array and a queue item which contains cell coordinates.
-	static void calcCenterPt(
-	    const TilePoint &baseTileCoords,
-	    const QueueItem &qi) {
-		centerPt.u = ((baseTileCoords.u + qi.u) << kTileUVShift)
+	static void calcCenterPt(const TilePoint &baseTileCoords_, const QueueItem &qi) {
+		centerPt.u = ((baseTileCoords_.u + qi.u) << kTileUVShift)
 		             +   kTileUVSize / 2;
-		centerPt.v = ((baseTileCoords.v + qi.v) << kTileUVShift)
+		centerPt.v = ((baseTileCoords_.v + qi.v) << kTileUVShift)
 		             +   kTileUVSize / 2;
 		centerPt.z = qi.z;
 
@@ -1122,6 +1116,8 @@ protected:
 	PathRequest(Actor *a, int16 howSmart);
 
 public:
+	virtual ~PathRequest() {}
+
 	void requestAbort(void) {
 		flags |= aborted;
 	}
@@ -1260,8 +1256,6 @@ public:
 /* ===================================================================== *
                             Globals
  * ===================================================================== */
-
-const int                   numPathRequests = 32;   // up to 32 messages allowed
 
 Common::List<WanderPathRequest *> pathRequestPool;
 
@@ -1683,22 +1677,18 @@ void PathRequest::abortReq(void) {
 }
 
 
-static uint32 severePathFinderOverruns = 0;
-
 PathResult PathRequest::findPath(void) {
 	assert(cellArray != nullptr);
 
-	static const uint8 costTable[] =
-	{ 4, 10, 12, 16, 12, 10, 4, 0, 4, 10, 12, 16, 12, 10, 4, 0 };
+	static const uint8 costTable[] = { 4, 10, 12, 16, 12, 10, 4, 0, 4, 10, 12, 16, 12, 10, 4, 0 };
 
-	int32           lastTick;
 	ProtoObj        *proto = actor->proto();
 	QueueItem       qi;
 	uint8 pCross = proto->crossSection;
 
 	if (flags & aborted) return pathAborted;
 
-	lastTick = gameTime;
+	int32 lastTick_ = gameTime;
 
 	while (queue.remove(qi)) {
 		assert(cellArray->getCell(qi.platform, qi.u, qi.v) != nullptr);
@@ -2024,7 +2014,7 @@ big_continue:
 			;
 		}
 
-		if ((gameTime - lastTick) >= 4) {         // JEFFKLUDGE
+		if ((gameTime - lastTick_) >= 4) {         // JEFFKLUDGE
 			if (timeLimitExceeded())
 				return pathDone;
 		}
@@ -2462,13 +2452,10 @@ TilePoint selectNearbySite(
 	int32           bestRating = -100,
 	                bestPossible = (maxDist - minDist) / 2;
 
-	SimpleCellArray *cellArray;
-
 	QueueItem       qi;
 
 	//  Allocate the array of cells
-	cellArray = (SimpleCellArray *)
-	            malloc(sizeof * cellArray);
+	SimpleCellArray *cellArray1 = (SimpleCellArray *)malloc(sizeof * cellArray1);
 
 	//  Nowhere indicates failure of the algorithm.
 	bestLoc = Nowhere;
@@ -2483,7 +2470,7 @@ TilePoint selectNearbySite(
 	baseCoords.z = 0;
 
 	//  Clear the search array and the queue
-	memset(cellArray, cellUnvisited, sizeof(*cellArray));
+	memset(cellArray1, cellUnvisited, sizeof(*cellArray1));
 	squeue.clear();
 
 	//  Iterate through all actors in the region and mark areas
@@ -2518,7 +2505,7 @@ TilePoint selectNearbySite(
 		//  If that tile is in the search area, then mark it.
 		if (objLoc.u >= 0 && objLoc.u < searchDiameter
 		        &&  objLoc.v >= 0 && objLoc.v < searchDiameter) {
-			(*cellArray)[objLoc.u][objLoc.v] = cellOccupied;
+			(*cellArray1)[objLoc.u][objLoc.v] = cellOccupied;
 		}
 	}
 
@@ -2559,7 +2546,7 @@ TilePoint selectNearbySite(
 		//  If this is the best cell found so far, and it is not
 		//  occupied, then mark it as the best cell.
 		if (rating > bestRating
-		        &&  !((*cellArray)[qi.u][qi.v] & cellOccupied)) {
+		        &&  !((*cellArray1)[qi.u][qi.v] & cellOccupied)) {
 			bool    cellOK = true;
 
 			//  if this point is on-screen, we might want to reject it...
@@ -2607,7 +2594,7 @@ TilePoint selectNearbySite(
 			uint16          *moveMask = &sTerrainMasks[dir - 1];
 
 			tDir = &tDirTable2[dir];
-			cell = &(*cellArray)[qi.u + tDir->u][qi.v + tDir->v];
+			cell = &(*cellArray1)[qi.u + tDir->u][qi.v + tDir->v];
 
 			//  Only visit each cell once. Do this before terrain
 			//  is checked, to save time.
@@ -2682,7 +2669,7 @@ TilePoint selectNearbySite(
 		}
 	}
 
-	free(cellArray);
+	free(cellArray1);
 
 	return  bestLoc != Nowhere
 	        ?   TilePoint(
@@ -2691,65 +2678,6 @@ TilePoint selectNearbySite(
 	            bestLoc.z)
 	        :   Nowhere;
 }
-
-#if 0
-
-//  Put a and b in ascending order.
-
-inline void order(int16 &a, int16 &b) {
-	if (a > b) {
-		int16 t = a;
-		a = b;
-		b = t;
-	}
-}
-
-/*
-template<class T> inline void order( T &a, T &b )
-{
-    if (a > b) { T t = a; a = b; b = t; }
-}
-*/
-
-TilePoint selectDistantSite(
-    Object          worldID,
-    TilePoint       minCoords,              // coords in tiles (ul of rect)
-    TilePoint       maxCoords,              // coords in tiles (lr of rect)
-    int             metaProperties) {
-	GameWorld       *world = (GameWorld *)GameObject::objectAddress(worldID);
-	int32           u, v;
-	int32           mapSize = mapList[world->mapNum].mapSize * kPlatformWidth;
-	int             matchCount = 0;
-
-	//  Make sure the location spec'd is within the bounds of the map
-	minCoords.u = clamp(0, minCoords.u, mapSize);
-	minCoords.v = clamp(0, minCoords.v, mapSize);
-	maxCoords.u = clamp(0, maxCoords.u, mapSize);
-	maxCoords.v = clamp(0, maxCoords.v, mapSize);
-
-	//  Make sure that the coords are in order
-	order(minCoords.u, maxCoords.u);
-	order(minCoords.v, maxCoords.v);
-
-	//  convert to metatile coords
-	minCoords.u = minCoords.u >> platformShift;
-	minCoords.v = minCoords.v >> platformShift;
-	maxCoords.u = (maxCoords.u + kPlatformWidth - 1) >> platformShift;
-	maxCoords.v = (maxCoords.v + kPlatformWidth - 1) >> platformShift;
-
-	//  Now, scan that area for metatiles...
-	for (u = minCoords.u; u < maxCoords.u; u++) {
-		for (v = minCoords.v; v < maxCoords.v; v++) {
-			//  Check the metatile at this location,
-			//  and determine if it has the correct properties.
-
-			//  Need to ask David R. how to use meta properties...
-		}
-	}
-}
-
-
-#endif
 
 bool checkPath(
     ObjectID            worldID,
@@ -2771,8 +2699,6 @@ bool checkPath(
 	              curTileRegV;
 
 	int16           mapNum = GameWorld::IDtoMapNum(worldID);
-
-	SimpleCellArray *cellArray;
 
 	QueueItem       qi;
 
@@ -2799,8 +2725,8 @@ bool checkPath(
 		return false;
 
 	//  Allocate the array of cells
-	cellArray = (SimpleCellArray *)malloc(sizeof * cellArray);
-	if (cellArray == nullptr)
+	SimpleCellArray *cellArray1 = (SimpleCellArray *)malloc(sizeof(*cellArray1));
+	if (cellArray1 == nullptr)
 		return false;
 
 	//  Calculate where search cells will be projected onto map
@@ -2813,7 +2739,7 @@ bool checkPath(
 	baseCoords.z = 0;
 
 	//  Clear the search array and the queue
-	memset(cellArray, cellUnvisited, sizeof(*cellArray));
+	memset(cellArray1, cellUnvisited, sizeof(* cellArray1));
 	squeue.clear();
 
 	//  Push the starting location in the center of the array.
@@ -2904,7 +2830,7 @@ bool checkPath(
 			testTileCoords.v = centerTileCoords.v + tDir->v;
 			testTileCoords.z = 0;
 
-			cell = &(*cellArray)[qi.u + tDir->u][qi.v + tDir->v];
+			cell = &(*cellArray1)[qi.u + tDir->u][qi.v + tDir->v];
 
 			//  Only visit each cell once..
 			if (*cell & cellVisited) continue;
@@ -2966,7 +2892,7 @@ bool checkPath(
 
 			//  If we're there, we're done
 			if (testTileCoords == destTileCoords) {
-				free(cellArray);
+				free(cellArray1);
 
 				//  If the resulting height is significantly different
 				//  from the destination height, assume we're on a
@@ -2984,7 +2910,7 @@ bool checkPath(
 		}
 	}
 
-	free(cellArray);
+	free(cellArray1);
 
 	//  If we're here we've haven't found a path
 	return false;
