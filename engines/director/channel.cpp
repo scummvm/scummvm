@@ -412,11 +412,19 @@ void Channel::setBbox(int l, int t, int r, int b) {
 	}
 }
 
+// here is the place for deciding whether the widget can be keep or not
+bool Channel::canKeepWidget(uint16 castId) {
+	if (_widget && _sprite && _sprite->_cast && !_sprite->_cast->_modified && castId && castId == _sprite->_castId) {
+		return true;
+	}
+	return false;
+}
+
 // currently, when we are setting hilite, we delete the widget and the re-create it
 // so we may optimize this if this operation takes much time
 void Channel::replaceWidget(uint16 previousCastId) {
 	// if the castmember is the same, and we are not modifying anything which cannot be handle by channel. Then we don't replace the widget
-	if (_sprite && _sprite->_cast && !_sprite->_cast->_modified && previousCastId && previousCastId == _sprite->_castId) {
+	if (canKeepWidget(previousCastId)) {
 		warning("Channel::replaceWidget(): skip deleting %d %s", _sprite->_castId, numToCastNum(_sprite->_castId));
 		return;
 	}
