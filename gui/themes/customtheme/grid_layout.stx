@@ -144,7 +144,7 @@
 					height = '80'
 					rtl = 'no'
 			/>
-			<layout type = 'vertical' align = 'center' padding = '23, 23, 8, 23'>
+			<layout type = 'vertical' align = 'stretch' padding = '23, 23, 8, 23'>
 				<layout type = 'horizontal' spacing = '5' padding = '10, 0, 0, 0'>
 					<widget name = 'SearchPic'
 							width = '16'
