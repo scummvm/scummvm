@@ -104,6 +104,8 @@ void GravityProcess::run() {
 		// Shouldn't happen as item should always hit the floor.
 		warning("Item %d fell too far, stopping GravityProcess", _itemNum);
 		terminate();
+		_itemNum = 0;
+		item->destroy();
 		return;
 	}
 
