@@ -1052,6 +1052,11 @@ void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
 		h = (h + 1) >> 1;
 	}
 
+	// If we requested fast transitions, speed everything up
+	// Ensure the chunksize isn't larger than the amount of pixels.
+	if (debugChannelSet(-1, kDebugFast))
+		t.chunkSize = MIN((uint) m, t.chunkSize*16);
+
 	switch (transProps[t.type].dir) {
 	case kTransDirHorizontal:
 		t.steps = w / t.chunkSize;
