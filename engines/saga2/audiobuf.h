@@ -136,97 +136,6 @@ protected:
 	void play(int16 bufNo = 0);          // internal: use the data
 	void activate(int16 bufNo);           // set buffer to fill & play
 };
-
-
-class doubleBuffer : public Buffer {
-private:
-	int16           bufID;             // for buffer manager
-	int16           AILLOCated;        // last buffer ( 0, 1 ) reported free
-	int16           fillBuffer,        // buffer being filled
-	                targetSated;       // target full
-	int32           lastPos, distPos;          // workaround for AIL sample status
-	int32           targetPos;
-
-public:
-	HSAMPLE         ailSampleHandle;   // sample handle
-	int             audioSet;
-
-
-public:
-	int16 ID(void) {
-		return bufID;    // for buffer Manager
-	}
-	void abortsound(void);                 // abort playback
-
-	doubleBuffer(size_t newSize, audioInterface *sd, int16 newID);
-	~doubleBuffer(void);
-
-	uint32 sample_status(void);           // gives the status of the buffer as a whole
-	void reset(void);                    // initialize buffer
-	void format(soundSample *ss);        // set various sound attribs.
-	bool laden(void);                     // check for full targets
-
-	void gave(size_t dSize);              // notify amount written
-	void took(size_t dSize);               // notify amount read
-	void fill(void);                      // convince buffer it is full
-//	void abort( void );                  // kill sound & return buffer to its heap
-	void release(void);               // return buffer to its heap
-	void setVolume(int8 val);         // internal : set buffer to fill & play
-
-protected:
-	int16 washed(void);                  // check for a clean buffer
-	void play(int16 bufNo = 0);          // internal: use the data
-	void activate(int16 bufNo);           // set buffer to fill & play
-};
-
-
-class singleBuffer : public Buffer {
-private:
-	int16           bufID;             // for buffer manager
-	int16           AILLOCated;        // last buffer ( 0, 1 ) reported free
-	int16           fillBuffer,        // buffer being filled
-	                targetSated;       // target full
-	int16           loopCount;
-
-public:
-	HSAMPLE         ailSampleHandle;   // sample handle
-	int16           audioSet;
-	uint32          lastRSize;                       // virtual remaining read size
-
-public:
-	int16 ID(void) {
-		return bufID;    // for buffer Manager
-	}
-
-	singleBuffer(size_t newSize, audioInterface *sd, int16 newID);
-	~singleBuffer(void);
-
-	uint32 sample_status(void);           // gives the status of the buffer as a whole
-	void reset(void);                    // initialize buffer
-	void format(soundSample *ss);        // set various sound attribs.
-	bool laden(void);                     // check for full targets
-
-	void gave(size_t dSize);              // notify amount written
-	void took(size_t dSize);               // notify amount read
-	void fill(void);                      // convince buffer it is full
-	void replay(void);                   // kill sound & return buffer to its heap
-	void abortsound(void);                    // kill sound & return buffer to its heap
-	void release(void);               // return buffer to its heap
-	void setVolume(int8 val);         // internal : set buffer to fill & play
-
-	void setLoopCount(int16 loops) {
-		loopCount = loops;
-	}
-	int16 getLoopCount(void) {
-		return loopCount;
-	}
-
-protected:
-	int16 washed(void);                  // check for a clean buffer
-	void play(int16 bufNo = 0);          // internal: use the data
-	void activate(int16 bufNo);           // set buffer to fill & play
-};
-
 class musicBuffer : public Buffer {
 private:
 	int16           bufID;             // for buffer manager
@@ -275,38 +184,6 @@ protected:
 public:
 	void fadeUp(int16 time, int8 volume);
 	void fadeDown(int16 time);
-};
-
-class cacheBuffer : public Buffer {
-private:
-	int16           bufID;             // for buffer manager
-	soundSample     *sformat;
-	int16           hasData;
-
-public:
-	int16 ID(void) {
-		return bufID;    // for buffer Manager
-	}
-
-	cacheBuffer(size_t newSize, int16 newID);
-	~cacheBuffer(void);
-
-	uint32 sample_status(void);           // gives the status of the buffer as a whole
-	void reset(void);                    // initialize buffer
-	void format(soundSample *ss);        // set various sound attribs.
-	bool laden(void);                 // check for full targets
-
-	void gave(size_t dSize);              // notify amount written
-	void took(size_t dSize);               // notify amount read
-	void fill(void);                      // convince buffer it is full
-	void abortsound(void);                    // kill sound & return buffer to its heap
-	void release(void);               // return buffer to its heap
-	void setVolume(int8 val);         // internal : set buffer to fill & play
-
-protected:
-	int16 washed(void);                  // check for a clean buffer
-	void play(int16 bufNo = 0);          // internal: use the data
-	void activate(int16 bufNo);           // set buffer to fill & play
 };
 
 } // end of namespace Saga2
