@@ -148,8 +148,8 @@ void ScummEngine::mac_drawIndy3TextBox() {
 	int h = _macIndy3TextBox->h - 2;
 
 	// The text box is drawn to the Mac screen and text surface, as if it
-	// had been one giant glyph. Note that it will end up on the main
-	// virtual screen, not the text one.
+	// had been one giant glyph. Note that it will be drawn on the main
+	// virtual screen, but we still pretend it's on the text one.
 
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
@@ -158,7 +158,6 @@ void ScummEngine::mac_drawIndy3TextBox() {
 
 	_macScreen->copyRectToSurface(ptr, pitch, x, y, w, h);
 	_textSurface.fillRect(Common::Rect(x, y, x + w, y + h), 0);
-	_charset->_textScreenID = vs->number;
 
 	// Mark the virtual screen as dirty. The top and left coordinates are
 	// rounded down, while the bottom and right ones are rounded up.
@@ -174,7 +173,32 @@ void ScummEngine::mac_drawIndy3TextBox() {
 	if ((x + w) & 1)
 		vsRight++;
 
-	markRectAsDirty(vs->number, vsLeft, vsRight, vsTop, vsBottom);
+	markRectAsDirty(kMainVirtScreen, vsLeft, vsRight, vsTop, vsBottom);
+}
+
+void ScummEngine::mac_undrawIndy3TextBox() {
+	int x = 96;
+	int y = 32;
+	int w = _macIndy3TextBox->w;
+	int h = _macIndy3TextBox->h - 2;
+
+	_macScreen->fillRect(Common::Rect(x, y, x + w, y + h), 0);
+	_textSurface.fillRect(Common::Rect(x, y, x + w, y + h), CHARSET_MASK_TRANSPARENCY);
+
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+
+	int vsTop = y / 2 - vs->topline;
+	int vsBottom = (y + h) / 2 - vs->topline;
+	int vsLeft = x / 2;
+	int vsRight = (x + w) / 2;
+
+	if ((y + h) & 1)
+		vsBottom++;
+
+	if ((x + w) & 1)
+		vsRight++;
+
+	markRectAsDirty(kMainVirtScreen, vsLeft, vsRight, vsTop, vsBottom);
 }
 
 } // End of namespace Scumm
