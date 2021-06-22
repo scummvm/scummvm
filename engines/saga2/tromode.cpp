@@ -30,7 +30,6 @@
 #include "saga2/fta.h"
 #include "saga2/player.h"
 #include "saga2/display.h"
-#include "saga2/config.h"
 #include "saga2/panel.h"
 
 namespace Saga2 {
@@ -56,7 +55,6 @@ extern bool gameRunning;
 extern gMouseState  prevState;
 extern gMousePointer    pointer;
 extern MouseExtState mouseQueue[];
-extern configuration    globalConfig;
 extern bool allPlayerActorsDead;
 
 extern int16        queueIn,

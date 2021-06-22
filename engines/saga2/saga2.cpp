@@ -79,11 +79,7 @@ Common::Error Saga2Engine::run() {
 	// Initialize graphics using following:
 	initGraphics(640, 480);
 
-	// Additional setup.
-	debug("Saga2Engine::init");
-
-	// Your main even loop should be (invoked from) here.
-	debug("Saga2Engine::go: Hello, World!");
+	readConfig();
 
 	loadExeResources();
 
@@ -255,6 +251,34 @@ void Saga2Engine::freeExeResources() {
 			free(*chunks[i].ptr);
 
 	freeCursors();
+}
+
+void Saga2Engine::readConfig() {
+	_autoWeapon = true;
+
+	if (ConfMan.hasKey("auto_weapon"))
+		_autoWeapon = ConfMan.getBool("auto_weapon");
+
+	_autoAggression = true;
+
+	if (ConfMan.hasKey("auto_aggression"))
+		_autoAggression = ConfMan.getBool("auto_aggression");
+
+	_showNight = true;
+
+	if (ConfMan.hasKey("show_night"))
+		_showNight = ConfMan.getBool("show_night");
+
+	_speechText = true;
+
+	if (ConfMan.hasKey("subtitles"))
+		_speechText = ConfMan.getBool("subtitles");
+
+	syncSoundSettings();
+}
+
+void Saga2Engine::saveConfig() {
+	ConfMan.flushToDisk();
 }
 
 } // End of namespace Saga2

@@ -37,7 +37,6 @@
 #include "saga2/annoy.h"
 #include "saga2/savefile.h"
 #include "saga2/cmisc.h"
-#include "saga2/config.h"
 
 namespace Saga2 {
 
@@ -54,7 +53,6 @@ extern  Point16     fineScroll;
 extern  Rect16      tileRect;
 int                 kludgeHeight = 15;
 extern  TilePoint   viewCenter;             // coordinates of view on map
-extern configuration    globalConfig;
 
 //-----------------------------------------------------------------------
 //	constants
@@ -354,7 +352,7 @@ bool Speech::setupActive(void) {
 	                             speechButtonCount,
 	                             speechBuffer,
 	                             bounds.width,
-	                             !globalConfig.speechText && (speechFlags & spHasVoice));
+	                             !g_vm->_speechText && (speechFlags & spHasVoice));
 
 	//  Compute height of bitmap based on number of lines of text.
 	//  Include 4 for outline width
@@ -462,7 +460,7 @@ void Speech::setWidth() {
 	                             speechButtonCount_,
 	                             speechBuffer,
 	                             defaultWidth,
-	                             !globalConfig.speechText && (speechFlags & spHasVoice));
+	                             !g_vm->_speechText && (speechFlags & spHasVoice));
 
 	//  If it's more than 3 lines, then use the max line width.
 
@@ -472,7 +470,7 @@ void Speech::setWidth() {
 		                             speechButtonCount_,
 		                             speechBuffer,
 		                             maxWidth,
-		                             !globalConfig.speechText && (speechFlags & spHasVoice));
+		                             !g_vm->_speechText && (speechFlags & spHasVoice));
 	}
 
 

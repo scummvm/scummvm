@@ -46,7 +46,6 @@
 #include "saga2/loadsave.h"
 #include "saga2/gamerate.h"
 #include "saga2/msgbox.h"
-#include "saga2/config.h"
 #include "saga2/savefile.h"
 
 namespace Saga2 {
@@ -60,7 +59,6 @@ namespace Saga2 {
 
 extern WindowDecoration autoMapDecorations[];
 extern gToolBase        G_BASE;
-extern configuration    globalConfig;
 extern char            *gameTimeStr;
 extern bool             underground;
 extern char             commandLineHelp[];
@@ -573,7 +571,6 @@ inline char drive(char *path) {
 
 static bool openResource(
     pHResource &hr,      // resource to initialize
-    const char *basePath,      // path to data file
     const char *defaultPath,   // backup path
     const char *fileName,      // file name & extension
     const char *description) {
@@ -601,26 +598,20 @@ static bool openResource(
 bool openResources(void) {
 
 	if (
-	    openResource(resFile,           globalConfig.imageResfilePath,
-	                 "..\\resfile\\",  IMAGE_RESFILE,
+	    openResource(resFile, "..\\resfile\\",  IMAGE_RESFILE,
 	                 "Imagery resource file")      &&
 
-	    openResource(objResFile,        globalConfig.mainResfilePath,
-	                 "..\\resfile\\",  OBJECT_RESFILE,
+	    openResource(objResFile, "..\\resfile\\",  OBJECT_RESFILE,
 	                 "Object resource file")      &&
 
-	    openResource(auxResFile,        globalConfig.dataResfilePath,
-	                 "..\\resfile\\",  AUX_RESFILE,
+	    openResource(auxResFile, "..\\resfile\\",  AUX_RESFILE,
 	                 "Data resource file")      &&
 
-	    openResource(scriptResFile,     globalConfig.scriptResfilePath,
-	                 "..\\scripts\\",  SCRIPT_RESFILE,
+	    openResource(scriptResFile, "..\\scripts\\",  SCRIPT_RESFILE,
 	                 "Script resource file")      &&
-	    openResource(voiceResFile,      globalConfig.voiceResfilePath,
-	                 "..\\sound\\",    VOICE_RESFILE,
+	    openResource(voiceResFile, "..\\sound\\",    VOICE_RESFILE,
 	                 "Voice resource file")       &&
-	    openResource(soundResFile,      globalConfig.soundResfilePath,
-	                 "..\\sound\\",    SOUND_RESFILE,
+	    openResource(soundResFile, "..\\sound\\",    SOUND_RESFILE,
 	                 "Sound resource file")) {
 		return true;
 	}

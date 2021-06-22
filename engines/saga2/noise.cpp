@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/config-manager.h"
+
 #include "saga2/std.h"
 #include "saga2/fta.h"
 #include "saga2/audio.h"
@@ -36,7 +38,6 @@
 #include "saga2/audiosmp.h"
 #include "saga2/audqueue.h"
 #include "saga2/audiosys.h"
-#include "saga2/config.h"
 #include "saga2/hresmgr.h"
 
 namespace Saga2 {
@@ -63,8 +64,6 @@ const uint32        baseMusicID     = MKTAG('M', 'I', 'L', 'O'),
 extern audioInterface   *audio;
 extern hResource        *soundResFile;          // script resources
 extern hResource        *voiceResFile;          // script resources
-extern configuration    globalConfig;
-extern char             iniFile[];
 
 extern int32            maxClicks;
 extern int32            clickSizes[];
@@ -234,17 +233,9 @@ void startAudio(void) {
 	            (uint32) 400000    // sound buffer size
 	        );
 
-	bool disVoice = false, disMusic= false, disSound= false, disLoops= false;
-	warning("STUB: startAudio, sync sound settings");
-#if 0
-
-	disMusic = !GetPrivateProfileInt("Sound", "Music", 1, iniFile);
-	disVoice = !GetPrivateProfileInt("Sound", "Voice", 1, iniFile);
-	disLoops = !GetPrivateProfileInt("Sound", "Loops", 1, iniFile);
-	disSound = !GetPrivateProfileInt("Sound", "Sound", 1, iniFile);
-#endif
-
 	return;
+
+	bool disVoice = true, disMusic = true, disSound = true, disLoops = true;
 
 	if (audio->active()) {
 		voiceDec = new decoderSet();
@@ -267,6 +258,11 @@ void startAudio(void) {
 		memDec->addDecoder(new soundDecoder(&readMemSound, &seekMemSound, &flushMemSound));
 
 		uint32 musicID = haveKillerSoundCard() ? goodMusicID : baseMusicID;
+
+		disVoice = !ConfMan.getInt("speech_volume");
+		disMusic = !ConfMan.getInt("music_volume");
+		disSound = !ConfMan.getInt("sfx_volume");
+		disLoops = disSound;
 
 		if (!disMusic) {
 			musicRes = soundResFile->newContext(musicID, "music resource");
@@ -302,11 +298,6 @@ void startAudio(void) {
 		//audio->setMusicFadeStyle(15,15,5);
 		audio->setMusicFadeStyle(0, 0, 0);
 		oldAttenuator = audio->setAttenuator(&volumeFromDist);
-
-		audio->setVolume(volMusic, volumeSetTo, globalConfig.musicVolume);
-		audio->setVolume(volVoice, volumeSetTo, globalConfig.voiceVolume);
-		audio->setVolume(volSandL, volumeSetTo, globalConfig.soundVolume);
-
 	}
 
 
