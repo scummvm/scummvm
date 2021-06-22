@@ -960,6 +960,7 @@ protected:
 	void mac_drawLoomPracticeMode();
 	void mac_createIndy3TextBox(Actor *a);
 	void mac_drawIndy3TextBox();
+	void mac_undrawIndy3TextBox();
 
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
 
