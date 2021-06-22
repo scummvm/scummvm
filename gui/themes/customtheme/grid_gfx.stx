@@ -132,6 +132,9 @@
 		<bitmap filename = 'editbtn_small.bmp' scalable_file = 'editbtn.svg' width = '16' height = '16'/>
 		<bitmap filename = 'switchbtn_small.bmp' scalable_file = 'switchbtn.svg' width = '16' height = '16'/>
 		<bitmap filename = 'fastreplay_small.bmp' scalable_file = 'fastreplay.svg' width = '16' height = '16'/>
+		<bitmap filename = 'button_play.bmp' scalable_file = 'button_play.svg' width = '15' height = '15'/>
+		<bitmap filename = 'button_load.bmp' scalable_file = 'button_load.svg' width = '15' height = '15'/>
+		<bitmap filename = 'button_options.bmp' scalable_file = 'button_options.svg' width = '15' height = '15'/>
 	</bitmaps>
 
 	<fonts>
