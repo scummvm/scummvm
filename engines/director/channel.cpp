@@ -40,7 +40,6 @@ Channel::Channel(Sprite *sp, int priority) {
 	else
 		_sprite = new Sprite(*sp);
 
-	_originalSprite = sp;
 	_widget = nullptr;
 	_currentPoint = sp->_startPoint;
 	_delta = Common::Point(0, 0);
@@ -135,6 +134,15 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 	return nullptr;
 }
 
+// TODO: eliminate this function when we got the correct method to deal with sprite size
+// since we didn't handle sprites very well for text cast members. thus we don't replace our text castmembers when only size changes
+// for explicitly changing, we have isModified to check
+bool hasTextCastMember(Sprite *sprite) {
+	if (sprite && sprite->_cast)
+		return sprite->_cast->_type == kCastText || sprite->_cast->_type == kCastButton;
+	return false;
+}
+
 bool Channel::isDirty(Sprite *nextSprite) {
 	// When a sprite is puppeted setTheSprite ensures that the dirty flag here is
 	// set. Otherwise, we need to rerender when the position, bounding box, or
@@ -153,7 +161,7 @@ bool Channel::isDirty(Sprite *nextSprite) {
 			_sprite->_ink != nextSprite->_ink;
 		if (!_sprite->_moveable)
 			isDirtyFlag |= _currentPoint != nextSprite->_startPoint;
-		if (!_sprite->_stretch)
+		if (!_sprite->_stretch && !hasTextCastMember(_sprite))
 			isDirtyFlag |= _width != nextSprite->_width || _height != nextSprite->_height;
 	}
 
@@ -275,13 +283,14 @@ void Channel::setCast(uint16 castId) {
 	_sprite->setCast(castId);
 	_width = _sprite->_width;
 	_height = _sprite->_height;
-	replaceWidget();
+	replaceWidget(0);
 }
 
 void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	if (!nextSprite)
 		return;
 
+	uint16 previousCastId = 0;
 	bool replace = isDirty(nextSprite);
 
 	if (nextSprite) {
@@ -300,6 +309,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 			// Updating scripts, etc. does not require a full re-render
 			_sprite->_scriptId = nextSprite->_scriptId;
 		} else {
+			previousCastId = _sprite->_castId;
 			replaceSprite(nextSprite);
 		}
 
@@ -309,7 +319,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 
 	if (replace) {
 		_sprite->updateCast();
-		replaceWidget();
+		replaceWidget(previousCastId);
 	}
 
 	setEditable(_sprite->_editable);
@@ -361,12 +371,11 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
 
 	// update the _sprite we stored in channel, and point the originalSprite to the new one
-	// release the widget, because we may having the new one, we may optimize this by adding it to dtor?
+	// release the widget, because we may having the new one
+	// TODO: if we are keeping the widget, then we don't releaseWidget for the current one
 	if (_sprite->_cast)
 		_sprite->_cast->releaseWidget();
-	delete _sprite;
-	_sprite = new Sprite(*nextSprite);
-	_originalSprite = nextSprite;
+	*_sprite = *nextSprite;
 
 	// Sprites marked moveable are constrained to the same bounding box until
 	// the moveable is disabled
@@ -405,7 +414,13 @@ void Channel::setBbox(int l, int t, int r, int b) {
 
 // currently, when we are setting hilite, we delete the widget and the re-create it
 // so we may optimize this if this operation takes much time
-void Channel::replaceWidget() {
+void Channel::replaceWidget(uint16 previousCastId) {
+	// if the castmember is the same, and we are not modifying anything which cannot be handle by channel. Then we don't replace the widget
+	if (_sprite && _sprite->_cast && !_sprite->_cast->_modified && previousCastId && previousCastId == _sprite->_castId) {
+		warning("Channel::replaceWidget(): skip deleting %d %s", _sprite->_castId, numToCastNum(_sprite->_castId));
+		return;
+	}
+
 	if (_widget) {
 		delete _widget;
 		_widget = nullptr;
@@ -425,11 +440,6 @@ void Channel::replaceWidget() {
 			if (_sprite->_cast->_type == kCastText || _sprite->_cast->_type == kCastButton) {
 				_sprite->_width = _widget->_dims.width();
 				_sprite->_height = _widget->_dims.height();
-				// TODO: originalSprite should not be modified. We shall amend it when we get the correct way to deal with button size.
-				if (_originalSprite) {
-					_originalSprite->_width = _sprite->_width;
-					_originalSprite->_height = _sprite->_height;
-				}
 				_width = _sprite->_width;
 				_height = _sprite->_height;
 			}

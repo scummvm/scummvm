@@ -62,7 +62,7 @@ public:
 	void setClean(Sprite *nextSprite, int spriteId, bool partial = false);
 	void setEditable(bool editable);
 	void replaceSprite(Sprite *nextSprite);
-	void replaceWidget();
+	void replaceWidget(uint16 previousCastId = 0);
 	bool updateWidget();
 
 	void updateGlobalAttr();
@@ -71,7 +71,6 @@ public:
 
 public:
 	Sprite *_sprite;
-	Sprite *_originalSprite;
 	Cursor _cursor;
 	Graphics::MacWidget *_widget;
 
