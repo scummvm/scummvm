@@ -724,6 +724,11 @@ void MainActor::nextInvItem() {
 	Std::vector<Item *> items;
 	getItemsWithShapeFamily(items, ShapeInfo::SF_CRUINVITEM, true);
 	getItemsWithShapeFamily(items, ShapeInfo::SF_CRUBOMB, true);
+	if (GAME_IS_REMORSE) {
+		Item *credits = getFirstItemWithShape(0x4ed, true);
+		if (credits)
+			items.push_back(credits);
+	}
 	_activeInvItem = getIdOfNextItemInList(items, _activeInvItem);
 }
 
