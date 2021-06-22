@@ -741,7 +741,8 @@ void ScummEngine::CHARSET_1() {
 		fakeBidiString(_charsetBuffer + _charsetBufPos, true);
 	}
 
-	bool drawTextBox = (_macScreen && _game.id == GID_INDY3);
+	bool createTextBox = (_macScreen && _game.id == GID_INDY3);
+	bool drawTextBox = false;
 
 	while (handleNextCharsetCode(a, &c)) {
 		if (c == 0) {
@@ -777,9 +778,10 @@ void ScummEngine::CHARSET_1() {
 		_charset->_left = _nextLeft;
 		_charset->_top = _nextTop;
 
-		if (drawTextBox) {
-			mac_drawIndy3TextBox(a);
-			drawTextBox = false;
+		if (createTextBox) {
+			mac_createIndy3TextBox(a);
+			createTextBox = false;
+			drawTextBox = true;
 		}
 
 		if (_game.version >= 7) {
@@ -820,6 +822,9 @@ void ScummEngine::CHARSET_1() {
 			_nextLeft = _charset->_left;
 			_nextTop = _charset->_top;
 		}
+
+		if (drawTextBox)
+			mac_drawIndy3TextBox();
 
 		if (_game.version <= 2) {
 			_talkDelay += _defaultTalkDelay;

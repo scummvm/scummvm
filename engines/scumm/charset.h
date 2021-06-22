@@ -282,6 +282,7 @@ protected:
 	int _lastTop;
 
 	void printCharInternal(int chr, int color, bool shadow, int x, int y);
+	void printCharToTextBox(int chr, int color, int x, int y);
 
 public:
 	CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile);

@@ -280,6 +280,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_hePaletteSlot = 0;
 	_16BitPalette = NULL;
 	_macScreen = NULL;
+	_macIndy3TextBox = NULL;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	_townsScreen = 0;
 	_scrollRequest = _scrollDeltaAdjust = 0;
@@ -680,6 +681,11 @@ ScummEngine::~ScummEngine() {
 	if (_macScreen) {
 		_macScreen->free();
 		delete _macScreen;
+	}
+
+	if (_macIndy3TextBox) {
+		_macIndy3TextBox->free();
+		delete _macIndy3TextBox;
 	}
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -1319,6 +1325,9 @@ Common::Error ScummEngine::init() {
 					_textSurfaceMultiplier = 2;
 					_macScreen = new Graphics::Surface();
 					_macScreen->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+
+					_macIndy3TextBox = new Graphics::Surface();
+					_macIndy3TextBox->create(448, 47, Graphics::PixelFormat::createFormatCLUT8());
 					break;
 				}
 			}
@@ -1696,6 +1705,10 @@ void ScummEngine::resetScumm() {
 
 	if (_macScreen) {
 		_macScreen->fillRect(Common::Rect(_macScreen->w, _macScreen->h), 0);
+	}
+
+	if (_macIndy3TextBox) {
+		_macIndy3TextBox->fillRect(Common::Rect(_macIndy3TextBox->w, _macIndy3TextBox->h), 0);
 	}
 
 	if (_game.version == 0) {

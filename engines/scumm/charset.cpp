@@ -1658,11 +1658,6 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	bool enableShadow = _enableShadow;
 	int color = _color;
 
-	// Shadowing is a bit of guesswork. It doesn't look like it's using
-	// the Mac's built-in form of shadowed text (which, as I recall it,
-	// never looked particularly good anyway). This seems to match the
-	// original look for normal text.
-
 	// HACK: Notes and their names should always be drawn with a shadow.
 	//       Actually, this doesn't quite match the original but I can't
 	//       figure out what the original does here. The "c" looks like
@@ -1690,7 +1685,12 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 			color = 15;
 	}
 
-	printCharInternal(chr, color, enableShadow, macLeft, macTop);
+	bool drawToTextBox = (vs->number == 1 && _vm->_game.id == GID_INDY3);
+
+	if (drawToTextBox)
+		printCharToTextBox(chr, color, macLeft, macTop);
+	else
+		printCharInternal(chr, color, enableShadow, macLeft, macTop);
 
 	// HACK: The way we combine high and low resolution graphics means
 	//       that sometimes, when a note name is drawn on the distaff, the
@@ -1744,7 +1744,8 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 			_str.bottom = bottom;
 	}
 
-	_vm->markRectAsDirty(vs->number, left, right, top - vs->topline, bottom - vs->topline);
+	if (!drawToTextBox)
+		_vm->markRectAsDirty(vs->number, left, right, top - vs->topline, bottom - vs->topline);
 
 	if (!ignoreCharsetMask) {
 		_hasMask = true;
@@ -1763,6 +1764,11 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 }
 
 void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int x, int y) {
+	// Shadowing is a bit of guesswork. It doesn't look like it's using
+	// the Mac's built-in form of shadowed text (which, as I recall it,
+	// never looked particularly good anyway). This seems to match the
+	// original look for normal text.
+
 	if (shadow) {
 		_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 2, y, 0);
 		_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x, y + 2, 0);
@@ -1779,6 +1785,10 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 
 	if (color != -1)
 		_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 1, y + 1, color);
+}
+
+void CharsetRendererMac::printCharToTextBox(int chr, int color, int x, int y) {
+	_macFonts[_curId].drawChar(_vm->_macIndy3TextBox, chr, x + 5, y + 11, _color);
 }
 
 void CharsetRendererMac::drawChar(int chr, Graphics::Surface &s, int x, int y) {

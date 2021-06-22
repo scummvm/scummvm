@@ -119,16 +119,11 @@ void ScummEngine::mac_drawLoomPracticeMode() {
 	_system->copyRectToScreen(ptr, pitch, x, y, width, height);
 }
 
-void ScummEngine::mac_drawIndy3TextBox(Actor *a) {
-	int x = 96;
-	int y = 31;
-	int width = 448;
-	int height = 46;
+void ScummEngine::mac_createIndy3TextBox(Actor *a) {
+	int width = _macIndy3TextBox->w;
+	int height = _macIndy3TextBox->h;
 
-	byte *ptr = (byte *)_macScreen->getBasePtr(x, y);
-	int pitch = _macScreen->pitch;
-
-	_macScreen->fillRect(Common::Rect(x, y, x + width, y + height), 0);
+	_macIndy3TextBox->fillRect(Common::Rect(width, height), 0);
 
 	int nameWidth = 0;
 
@@ -139,31 +134,31 @@ void ScummEngine::mac_drawIndy3TextBox(Actor *a) {
 		const char *name = (const char *)a->getActorName();
 		int len = strlen(name);
 
-		int charX = x + 25;
-		int charY = y - 1;
+		int charX = 25;
 
 		for (int i = 0; i < len; i++) {
-			_charset->drawChar(name[i], *_macScreen, charX, charY);
+			_charset->drawChar(name[i], *_macIndy3TextBox, charX, 0);
 			nameWidth += _charset->getCharWidth(name[i]);
 			charX += _charset->getCharWidth(name[i]);
 		}
-		_charset->drawChar(':', *_macScreen, charX, charY);
-		nameWidth += _charset->getCharWidth(':');
 
+		_charset->drawChar(':', *_macIndy3TextBox, charX, 0);
 		_charset->setCurID(oldID);
 	}
 
 	if (nameWidth) {
-		_macScreen->hLine(x + 2, y + 2, x + 20, 15);
-		_macScreen->hLine(x + 20 + nameWidth + 9, y + 2, x + width - 3, 15);
+		_macIndy3TextBox->hLine(2, 3, 20, 15);
+		_macIndy3TextBox->hLine(32 + nameWidth, 3, width - 3, 15);
 	} else
-		_macScreen->hLine(x + 2, y + 2, x + width - 3, 15);
+		_macIndy3TextBox->hLine(2, 3, width - 3, 15);
 
-	_macScreen->hLine(x + 2, y + height - 2, x + width - 3, 15);
-	_macScreen->vLine(x + 1, y + 3, y + height - 3, 15);
-	_macScreen->vLine(x + width - 2, y + 3, y + height - 3, 15);
+	_macIndy3TextBox->vLine(1, 4, height - 3, 15);
+	_macIndy3TextBox->vLine(width - 2, 4, height - 3, 15);
+	_macIndy3TextBox->hLine(2, height - 2, width - 3, 15);
+}
 
-	_system->copyRectToScreen(ptr, pitch, x, y, width, height);
+void ScummEngine::mac_drawIndy3TextBox() {
+	_system->copyRectToScreen((byte *)_macIndy3TextBox->getBasePtr(0, 0), _macIndy3TextBox->pitch, 96, 30, _macIndy3TextBox->w, _macIndy3TextBox->h);
 }
 
 } // End of namespace Scumm
