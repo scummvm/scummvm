@@ -68,6 +68,7 @@ public:
 	void updateGlobalAttr();
 
 	void addDelta(Common::Point pos);
+	bool canKeepWidget(uint16 castId);
 
 public:
 	Sprite *_sprite;
