@@ -365,7 +365,7 @@ void LingoCompiler::registerFactory(Common::String &name) {
 	// but bytecode needs it to resolve names
 	_assemblyContext->setName(name);
 	_assemblyContext->setFactory(true);
-	if (!g_lingo->_globalvars.contains(name)) {
+	if (!g_lingo->_globalvars.contains(name) || g_lingo->_globalvars[name].type == VOID) {
 		g_lingo->_globalvars[name] = _assemblyContext;
 	} else {
 		warning("BUILDBOT: Factory '%s' already defined", name.c_str());
