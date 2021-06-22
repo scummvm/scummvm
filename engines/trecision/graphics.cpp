@@ -110,9 +110,9 @@ void GraphicsManager::drawObj(int index, bool mask, Common::Rect drawRect, Commo
 
 	// If we have a valid object, draw it, otherwise erase it
 	// by using the background buffer
-	const uint16 *buf = index >= 0 ? _vm->_objPointers[index] : (uint16 *)_smkBackground.getPixels();
+	const uint16 *buf = index >= 0 ? _vm->_objectGraphics[index].buf : (uint16 *)_smkBackground.getPixels();
 	if (mask && index >= 0) {
-		uint8 *maskPtr = _vm->_maskPointers[index];
+		uint8 *maskPtr = _vm->_objectGraphics[index].mask;
 
 		for (uint16 y = drawRect.top; y < drawRect.bottom; ++y) {
 			uint16 sco = 0;

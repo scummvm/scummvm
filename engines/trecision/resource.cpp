@@ -149,26 +149,26 @@ void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objI
 		obj->readRect(stream);
 
 		uint32 size = obj->_rect.width() * obj->_rect.height();
-		delete[] _objPointers[objIndex];
-		_objPointers[objIndex] = new uint16[size];
+		delete[] _objectGraphics[objIndex].buf;
+		_objectGraphics[objIndex].buf = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			_objPointers[objIndex][i] = _graphicsMgr->convertToScreenFormat(stream->readUint16LE());
+			_objectGraphics[objIndex].buf[i] = _graphicsMgr->convertToScreenFormat(stream->readUint16LE());
 	}
 
 	if (obj->isModeMask()) {
 		obj->readRect(stream);
 
 		uint32 size = stream->readUint32LE();
-		delete[] _objPointers[objIndex];
-		_objPointers[objIndex] = new uint16[size];
+		delete[] _objectGraphics[objIndex].buf;
+		_objectGraphics[objIndex].buf = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			_objPointers[objIndex][i] = _graphicsMgr->convertToScreenFormat(stream->readUint16LE());
+			_objectGraphics[objIndex].buf[i] = _graphicsMgr->convertToScreenFormat(stream->readUint16LE());
 
 		size = stream->readUint32LE();
-		delete[] _maskPointers[objIndex];
-		_maskPointers[objIndex] = new uint8[size];
+		delete[] _objectGraphics[objIndex].mask;
+		_objectGraphics[objIndex].mask = new uint8[size];
 		for (uint32 i = 0; i < size; ++i)
-			_maskPointers[objIndex][i] = (uint8)stream->readByte();
+			_objectGraphics[objIndex].mask[i] = (uint8)stream->readByte();
 	}
 
 	refreshObject(objectId);

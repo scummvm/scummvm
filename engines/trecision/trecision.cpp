@@ -139,8 +139,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_flagWaitRegen = false;
 
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
-		_objPointers[i] = nullptr;
-		_maskPointers[i] = nullptr;
+		_objectGraphics[i].buf = nullptr;
+		_objectGraphics[i].mask = nullptr;
 	}
 
 	_curTime = 0;
@@ -180,8 +180,8 @@ TrecisionEngine::~TrecisionEngine() {
 	delete[] _textArea;
 
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
-		delete[] _objPointers[i];
-		delete[] _maskPointers[i];
+		delete[] _objectGraphics[i].buf;
+		delete[] _objectGraphics[i].mask;
 	}
 }
 

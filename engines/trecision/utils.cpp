@@ -131,7 +131,7 @@ bool TrecisionEngine::checkMask(Common::Point pos) {
 				}
 
 				if (_obj[checkedObj].isModeMask()) {
-					uint8 *mask = _maskPointers[i];
+					uint8 *mask = _objectGraphics[i].mask;
 					int16 d = _obj[checkedObj]._rect.left;
 					uint16 max = _obj[checkedObj]._rect.bottom;
 

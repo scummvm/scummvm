@@ -87,6 +87,11 @@ struct ElevatorAction {
 	uint16 newRoom;
 };
 
+struct ObjectGraphics {
+	uint16 *buf;
+	uint8 *mask;
+};
+
 class TrecisionEngine : public Engine {
 	void initMain();
 	void loadAll();
@@ -313,8 +318,7 @@ public:
 	bool _flagNoPaintScreen;
 	bool _flagWaitRegen;
 
-	uint16 *_objPointers[MAXOBJINROOM];
-	uint8 *_maskPointers[MAXOBJINROOM];
+	ObjectGraphics _objectGraphics[MAXOBJINROOM];
 
 	uint32 _curTime;
 	uint32 _characterSpeakTime;
