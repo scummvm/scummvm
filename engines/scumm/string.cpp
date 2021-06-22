@@ -741,6 +741,8 @@ void ScummEngine::CHARSET_1() {
 		fakeBidiString(_charsetBuffer + _charsetBufPos, true);
 	}
 
+	bool drawTextBox = (_macScreen && _game.id == GID_INDY3);
+
 	while (handleNextCharsetCode(a, &c)) {
 		if (c == 0) {
 			// End of text reached, set _haveMsg accordingly
@@ -774,6 +776,11 @@ void ScummEngine::CHARSET_1() {
 
 		_charset->_left = _nextLeft;
 		_charset->_top = _nextTop;
+
+		if (drawTextBox) {
+			mac_drawIndy3TextBox(a);
+			drawTextBox = false;
+		}
 
 		if (_game.version >= 7) {
 #ifdef ENABLE_SCUMM_7_8

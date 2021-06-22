@@ -1673,8 +1673,10 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	//       shadowing at all. I'll just keep it like this for now,
 	//       because it makes the notes stand out a bit better.
 
-	if ((chr >= 16 && chr <= 23) || chr == 60 || chr == 95) {
-		enableShadow = true;
+	if (_vm->_game.id == GID_LOOM) {
+		if ((chr >= 16 && chr <= 23) || chr == 60 || chr == 95) {
+			enableShadow = true;
+		}
 	}
 
 	// HACK: Apparently, note names are never drawn in light gray. Only
@@ -1683,8 +1685,10 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	//       light gray note names, because apparently the game never
 	//       changes them back to light gray once the draft is done?
 
-	if (chr >= 16 && chr <= 23 && _color == 7)
-		color = 15;
+	if (_vm->_game.id == GID_LOOM) {
+		if (chr >= 16 && chr <= 23 && _color == 7)
+			color = 15;
+	}
 
 	printCharInternal(chr, color, enableShadow, macLeft, macTop);
 
@@ -1700,11 +1704,13 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	//       Note that this will not affect the Practice Mode box, since
 	//       this note names are drawn by drawChar(), not printChar().
 
-	if (chr >= 16 && chr <= 23) {
-		int xOffset[] = { 16, 14, 12, 8, 6, 2, 0, 8 };
+	if (_vm->_game.id == GID_LOOM) {
+		if (chr >= 16 && chr <= 23) {
+			int xOffset[] = { 16, 14, 12, 8, 6, 2, 0, 8 };
 
-		int note = (chr == 23) ? 60 : 95;
-		printCharInternal(note, -1, enableShadow, macLeft + 18, macTop + xOffset[chr - 16]);
+			int note = (chr == 23) ? 60 : 95;
+			printCharInternal(note, -1, enableShadow, macLeft + 18, macTop + xOffset[chr - 16]);
+		}
 	}
 
 	// Mark the virtual screen as dirty, using downscaled coordinates.
