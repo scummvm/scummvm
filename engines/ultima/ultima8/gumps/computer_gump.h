@@ -24,6 +24,7 @@
 #define ULTIMA8_GUMPS_COMPUTERGUMP_H
 
 #include "ultima/ultima8/gumps/modal_gump.h"
+#include "ultima/ultima8/graphics/fonts/rendered_text.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/classtype.h"
 
@@ -34,7 +35,6 @@ namespace Ultima8 {
  * The gump for showing the computer with text in Crusader
  */
 class ComputerGump : public ModalGump {
-	Std::string _text;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -51,22 +51,39 @@ public:
 
 	void run() override;
 
+	void Paint(RenderSurface *, int32 lerp_factor, bool scaled) override;
+
 	INTRINSIC(I_readComputer);
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
 private:
-	void nextText();
+	void nextScreen();
 
-	/*
-	TODO: Implement stepping through the text
-	int _charOff;
-	int _charX;
-	int _charY;
-	*/
+	bool nextChar();
 
-	Gump *_textWidget;
+	RenderedText *_renderedLines[14];
+
+	Common::Array<Common::String> _textLines;
+
+	//! The current line from the full text
+	uint32 _curTextLine;
+
+	//! The current line in the rendered lines array
+	uint32 _curDisplayLine;
+
+	//! The current char within the current line
+	uint32 _charOff;
+
+	//! The frame when the next character will be added
+	uint32 _nextCharTick;
+
+	//! Tick now (timed separately to the kernel as this is run when game is paused)
+	uint32 _tick;
+
+	//! Whether display is currently paused waiting for input (with "MORE" at the bottom)
+	bool _paused;
 };
 
 } // End of namespace Ultima8

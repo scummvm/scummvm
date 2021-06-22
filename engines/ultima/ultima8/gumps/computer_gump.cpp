@@ -20,13 +20,18 @@
  *
  */
 
+#include "common/keyboard.h"
+
 #include "ultima/ultima8/gumps/computer_gump.h"
-#include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
+#include "ultima/ultima8/graphics/fonts/rendered_text.h"
+#include "ultima/ultima8/graphics/fonts/font.h"
+#include "ultima/ultima8/graphics/fonts/font_manager.h"
+#include "ultima/ultima8/graphics/fonts/shape_font.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 
 namespace Ultima {
@@ -37,17 +42,57 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(ComputerGump)
 static const int COMPUTER_FONT = 6;
 static const int COMPUTER_GUMP_SHAPE = 30;
 static const int COMPUTER_GUMP_SOUND = 0x33;
+static const int MAX_LINE_LEN = 19;
+
+static const int TEXT_XOFF = 41;
+static const int TEXT_YOFF = 38;
 
 ComputerGump::ComputerGump()
-	: ModalGump(), _textWidget(nullptr) {
-
+	: ModalGump(), _curTextLine(0), _charOff(0), _nextCharTick(0), _paused(false), _curDisplayLine(0), _tick(0) {
+	for (int i = 0; i < ARRAYSIZE(_renderedLines); i++) {
+		_renderedLines[i] = nullptr;
+	}
 }
 
 ComputerGump::ComputerGump(const Std::string &msg) :
-	ModalGump(0, 0, 100, 100), _text(msg), _textWidget(nullptr) {
+	ModalGump(0, 0, 100, 100), _curTextLine(0), _curDisplayLine(0),
+	_charOff(0), _nextCharTick(0), _paused(false), _tick(0) {
+	for (int i = 0; i < ARRAYSIZE(_renderedLines); i++) {
+		_renderedLines[i] = nullptr;
+	}
+
+	// Split the string on ^ or flow to 20 char lines.
+	debug("M '%s'", msg.c_str());
+	uint32 start = 0;
+	uint32 end = 0;
+	for (uint32 i = 0; i < msg.size(); i++) {
+		if (msg[i] == '^') {
+			_textLines.push_back(msg.substr(start, end - start));
+			debug("^ %d %d %d '%s'", i, start, end, _textLines.back().c_str());
+			end = i + 1;
+			start = i + 1;
+			continue;
+		}
+		end++;
+		if (end - start >= MAX_LINE_LEN) {
+			while (end > start && msg[end] != ' ')
+				end--;
+			_textLines.push_back(msg.substr(start, end - start));
+			debug("L %d %d %d '%s'", i, start, end, _textLines.back().c_str());
+			i = end;
+			end = i + 1;
+			start = i + 1;
+		}
+	}
+	if (start < msg.size())
+		_textLines.push_back(msg.substr(start));
 }
 
 ComputerGump::~ComputerGump(void) {
+	for (int i = 0; i < ARRAYSIZE(_renderedLines); i++) {
+		if (_renderedLines[i])
+			delete _renderedLines[i];
+	}
 }
 
 void ComputerGump::InitGump(Gump *newparent, bool take_focus) {
@@ -79,50 +124,129 @@ void ComputerGump::InitGump(Gump *newparent, bool take_focus) {
 	botGump->SetShape(shape, 1);
 	botGump->InitGump(this, false);
 
-	_textWidget = new TextWidget(41, 38, _text, true, COMPUTER_FONT, _dims.width() - 100,
-								_dims.height() - 100, Font::TEXT_LEFT);
-	_textWidget->InitGump(this);
-
-	AudioProcess *audio = AudioProcess::get_instance();
-	if (audio) {
-		audio->playSFX(COMPUTER_GUMP_SOUND, 0x80, 0, 1);
-	}
 }
 
 void ComputerGump::run() {
 	ModalGump::run();
-	TextWidget *widget = dynamic_cast<TextWidget *>(_textWidget);
-	assert(widget);
-	//widget->setupNextText();
 
-	// TODO:
-	// * Implement gradual display of the text
-	// * Pause on '^' char
-	// * Play sound 0x33 for each letter
-	// * Add <MORE> if there is too many lines of text
-}
-
-void ComputerGump::nextText() {
-	TextWidget *textWidget = dynamic_cast<TextWidget *>(_textWidget);
-
-	if (!textWidget)
+	_tick++;
+	if (_paused || _tick < _nextCharTick)
 		return;
 
-	if (!textWidget->setupNextText())
-		Close();
+	bool playsound = nextChar();
+
+	AudioProcess *audio = AudioProcess::get_instance();
+	if (playsound && audio) {
+		if (audio->isSFXPlaying(COMPUTER_GUMP_SOUND))
+			audio->stopSFX(COMPUTER_GUMP_SOUND, 0);
+		audio->playSFX(COMPUTER_GUMP_SOUND, 0x80, 0, 1);
+	}
 }
 
-Gump *ComputerGump::onMouseDown(int button, int32 mx, int32 my) {
-	nextText();
-	return this;
-}
 
-bool ComputerGump::OnKeyDown(int key, int mod) {
-	nextText();
+bool ComputerGump::nextChar() {
+	Font *computerfont = FontManager::get_instance()->getGameFont(COMPUTER_FONT, true);
+
+	if (_charOff >= _textLines[_curTextLine].size()) {
+		_curTextLine++;
+		_curDisplayLine++;
+		_charOff = 0;
+
+		if (_curTextLine >= _textLines.size()) {
+			_paused = true;
+			return false;
+		}
+	}
+
+	_nextCharTick = _tick + 2;
+
+	Common::String display;
+	if (_curDisplayLine == ARRAYSIZE(_renderedLines) - 1) {
+		display = "<MORE>";
+		_paused = true;
+	} else {
+		const Common::String &curline = _textLines[_curTextLine];
+		if (curline[_charOff] == '*') {
+			_nextCharTick += 10;
+			_charOff++;
+			return false;
+		}
+		_charOff++;
+		for (uint32 i = 0; i < _charOff; i++) {
+			char next = curline[i];
+			if (next == '*')
+				display += ' ';
+			else
+				display += next;
+		}
+	}
+
+	// Render the new line
+	unsigned int remaining;
+	RenderedText *rendered = computerfont->renderText(display, remaining);
+
+	if (_renderedLines[_curDisplayLine] != nullptr) {
+		delete _renderedLines[_curDisplayLine];
+	}
+	_renderedLines[_curDisplayLine] = rendered;
+
 	return true;
 }
 
 
+void ComputerGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
+	ModalGump::Paint(surf, lerp_factor, scaled);
+	for (int i = 0; i < ARRAYSIZE(_renderedLines); i++) {
+		if (_renderedLines[i] != nullptr)
+			_renderedLines[i]->draw(surf, _x + TEXT_XOFF, _y + TEXT_YOFF + i * 9);
+	}
+}
+
+void ComputerGump::nextScreen() {
+	_nextCharTick = 0;
+	_charOff = 0;
+	_paused = false;
+	_curTextLine++;
+	_curDisplayLine = 0;
+
+	for (int i = 0; i < ARRAYSIZE(_renderedLines); i++) {
+		if (_renderedLines[i] != nullptr) {
+			delete _renderedLines[i];
+			_renderedLines[i] = nullptr;
+		}
+	}
+
+	if (_curTextLine >= _textLines.size())
+		Close();
+}
+
+Gump *ComputerGump::onMouseDown(int button, int32 mx, int32 my) {
+	if (_paused) {
+		nextScreen();
+	} else {
+		// Not super efficient but it does the job.
+		while (!_paused)
+			nextChar();
+	}
+	return this;
+}
+
+bool ComputerGump::OnKeyDown(int key, int mod) {
+	if (key == Common::KEYCODE_ESCAPE) {
+		_paused = true;
+		Close();
+	}
+
+	if (_paused) {
+		nextScreen();
+	} else {
+		// Not super efficient but it does the job.
+		while (!_paused)
+			nextChar();
+	}
+
+	return true;
+}
 
 uint32 ComputerGump::I_readComputer(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_STRING(str);
