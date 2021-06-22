@@ -343,6 +343,11 @@ void ScummEngine::initScreens(int b, int h) {
 	}
 #endif
 
+	if (_macScreen) {
+		_macScreen->fillRect(Common::Rect(_macScreen->w, _macScreen->h), 0);
+		clearTextSurface();
+	}
+
 	if (!getResourceAddress(rtBuffer, 4)) {
 		// Since the size of screen 3 is fixed, there is no need to reallocate
 		// it if its size changed.
