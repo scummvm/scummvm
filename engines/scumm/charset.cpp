@@ -1772,21 +1772,30 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 }
 
 void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int x, int y) {
-	// Shadowing is a bit of guesswork. It doesn't look like it's using
-	// the Mac's built-in form of shadowed text (which, as I recall it,
-	// never looked particularly good anyway). This seems to match the
-	// original look for normal text.
-
 	if (shadow) {
-		_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 2, y, 0);
-		_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x, y + 2, 0);
-		_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 3, y + 3, 0);
+		if (_vm->_game.id == GID_LOOM) {
+			// Shadowing is a bit of guesswork. It doesn't look
+			// like it's using the Mac's built-in form of shadowed
+			// text (which, as I recall it, never looked
+			// particularly good anyway). This seems to match the
+			// original look for normal text.
 
-		if (color != -1) {
-			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y, _shadowColor);
-			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x, y + 2, _shadowColor);
-			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 3, y + 3, _shadowColor);
-		}
+			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 2, y, 0);
+			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x, y + 2, 0);
+			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 3, y + 3, 0);
+
+			if (color != -1) {
+				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y, _shadowColor);
+				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x, y + 2, _shadowColor);
+				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 3, y + 3, _shadowColor);
+			}
+		} else {
+			// Indy 3 uses simpler shadowing, and doesn't need the
+			// "draw only on text surface" hack.
+
+			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
+			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y + 2, _shadowColor);
+		}			
 	}
 
 	_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
@@ -1808,12 +1817,10 @@ void CharsetRendererMac::setColor(byte color) {
 	_enableShadow = false;
 	_shadowColor = 0;
 
-	if (_vm->_game.id == GID_LOOM) {
-		_enableShadow = ((color & 0xF0) != 0);
-		// Anything outside the ordinary palette should be fine.
-		_shadowColor = 255;
-		_color &= 0x0F;
-	}
+	_enableShadow = ((color & 0xF0) != 0);
+	// Anything outside the ordinary palette should be fine.
+	_shadowColor = 255;
+	_color &= 0x0F;
 }
 
 #ifdef ENABLE_SCUMM_7_8
