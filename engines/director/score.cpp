@@ -516,9 +516,6 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 				_movie->_videoPlayback = true;
 
 			_window->addDirtyRect(channel->getBbox());
-
-			// after setclean, we may get currentSprite deleted. thus we need to update it
-			currentSprite = channel->_sprite;
 			debugC(2, kDebugImages, "Score::renderSprites(): CH: %-3d castId: %03d(%s) [ink: %d, puppet: %d, moveable: %d, visible: %d] [bbox: %d,%d,%d,%d] [type: %d fg: %d bg: %d] [script: %d]", i, currentSprite->_castId, numToCastNum(currentSprite->_castId), currentSprite->_ink, currentSprite->_puppet, currentSprite->_moveable, channel->_visible, PRINT_RECT(channel->getBbox()), currentSprite->_spriteType, currentSprite->_foreColor, currentSprite->_backColor, currentSprite->_scriptId);
 		} else {
 			channel->setClean(nextSprite, i, true);
@@ -636,6 +633,14 @@ Sprite *Score::getSpriteById(uint16 id) {
 		warning("Score::getSpriteById(): sprite on frame %d with id %d not found", _currentFrame, id);
 		return nullptr;
 	}
+}
+
+Sprite *Score::getOriginalSpriteById(uint16 id) {
+	Frame *frame = _frames[_currentFrame];
+	if (id < frame->_sprites.size())
+		return frame->_sprites[id];
+	warning("Score::getOriginalSpriteById(%d): out of bounds", id);
+	return nullptr;
 }
 
 Channel *Score::getChannelById(uint16 id) {
