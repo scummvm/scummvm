@@ -247,7 +247,43 @@ struct ResourceObjectPrototype {
 
 	//  Copy constructor
 	ResourceObjectPrototype(ResourceObjectPrototype &proto) {
-		memcpy(this, &proto, sizeof(ResourceObjectPrototype));
+		classType = proto.classType;
+		script = proto.script;
+		nameIndex = proto.nameIndex;
+		iconSprite = proto.iconSprite;
+		groundSprite = proto.groundSprite;
+
+		for (int i = 0; i < 4; ++i)
+			colorMap[i] = proto.colorMap[i];
+
+		mass = proto.mass;
+		bulk = proto.bulk;
+		crossSection = proto.crossSection;
+		height = proto.height;
+		toughness = proto.toughness;
+		breakType = proto.breakType;
+		maxCapacity = proto.maxCapacity;
+		lockType = proto.lockType;
+		acceptableItems = proto.acceptableItems;
+		weaponDamage = proto.weaponDamage;
+		weaponFireRate = proto.weaponFireRate;
+		maximumRange = proto.maximumRange;
+		missileType = proto.missileType;
+		whereWearable = proto.whereWearable;
+		damageAbsorbtion = proto.damageAbsorbtion;
+		damageDivider = proto.damageDivider;
+		defenseBonus = proto.defenseBonus;
+		maxCharges = proto.maxCharges;
+		chargeType = proto.chargeType;
+		flags = proto.flags;
+		price = proto.price;
+		heldSpriteBase = proto.heldSpriteBase;
+		resistance = proto.resistance;
+		immunity = proto.immunity;
+		soundFXClass = proto.soundFXClass;
+
+		for (int i = 0; i < 7; ++i)
+			reserved[i] = proto.reserved[i];
 	}
 };
 
