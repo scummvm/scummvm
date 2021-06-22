@@ -71,7 +71,9 @@ Common::Error Window::loadInitialMovie() {
 
 	_currentMovie = new Movie(this);
 	_currentPath = getPath(movie, _currentPath);
-	_currentMovie->loadSharedCastsFrom(_currentPath + g_director->_sharedCastFile);
+	Common::String sharedCastPath = _currentPath + g_director->_sharedCastFile;
+	if (sharedCastPath != movie)
+		_currentMovie->loadSharedCastsFrom(sharedCastPath);
 	_currentMovie->setArchive(_mainArchive);
 
 	return Common::kNoError;
