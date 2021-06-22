@@ -169,10 +169,11 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 // EXPRESSION
 %type<node> simpleexpr_nounarymath simpleexpr
 %type<node> unarymath
-%type<node> expr expr_nounarymath sprite
+%type<node> expr expr_nounarymath expr_noeq sprite
 %type<node> var varorchunk varorthe
 %type<chunktype> chunktype
-%type<node> the writablethe theobj menu thedatetime thenumberof
+%type<node> the theobj menu thedatetime thenumberof
+%type<node> writablethe writabletheobj
 %type<node> list proppair
 %type<node> chunk object
 %type<nodelist> refargs proplist exprlist nonemptyexprlist
@@ -668,7 +669,9 @@ refargs: simpleexpr								{
 		$$ = $args; }
 	;
 
-the: writablethe
+the: tTHE ID							{ $$ = new TheNode($ID); }
+	| tTHE ID tOF theobj				{ $$ = new TheOfNode($ID, $theobj); }
+	| tTHE tNUMBER tOF theobj			{ $$ = new TheOfNode(new Common::String("number"), $theobj); }
 	| thedatetime
 	| thenumberof
 	| tTHE tLAST chunktype inof simpleexpr	{ $$ = new TheLastNode($chunktype, $simpleexpr); }
@@ -676,17 +679,12 @@ the: writablethe
 
 theobj: simpleexpr
 	| menu
-	| tMENUITEM simpleexpr[item] tOF tMENU simpleexpr[menu] { $$ = new MenuItemNode($item, $menu); }
+	| tMENUITEM simpleexpr[item] tOF tMENU simpleexpr[menu]	{ $$ = new MenuItemNode($item, $menu); }
 	| tSOUND simpleexpr[arg]			{ $$ = new SoundNode($arg); }
 	| tSPRITE simpleexpr[arg]			{ $$ = new SpriteNode($arg); }
 	;
 
 menu: tMENU	simpleexpr[arg]				{ $$ = new MenuNode($arg); } ;
-
-writablethe: tTHE ID					{ $$ = new TheNode($ID); }
-	| tTHE ID tOF theobj				{ $$ = new TheOfNode($ID, $theobj); }
-	| tTHE tNUMBER tOF theobj			{ $$ = new TheOfNode(new Common::String("number"), $theobj); }
-	;
 
 thedatetime: tTHE tABBREVIATED tDATE	{ $$ = new TheDateTimeNode(kTheAbbr, kTheDate); }
 	| tTHE tABBREVIATED tTIME			{ $$ = new TheDateTimeNode(kTheAbbr, kTheTime); }
@@ -716,6 +714,17 @@ chunktype: tCHAR				{ $$ = kChunkChar; }
 
 inof: tIN | tOF ;
 
+writablethe: tTHE ID					{ $$ = new TheNode($ID); }
+	| tTHE ID tOF writabletheobj		{ $$ = new TheOfNode($ID, $writabletheobj); }
+	;
+
+writabletheobj: simpleexpr
+	| tMENU	expr_noeq[arg]				{ $$ = new MenuNode($arg); } ;
+	| tMENUITEM expr_noeq[item] tOF tMENU expr_noeq[menu]	{ $$ = new MenuItemNode($item, $menu); }
+	| tSOUND expr_noeq[arg]				{ $$ = new SoundNode($arg); }
+	| tSPRITE expr_noeq[arg]			{ $$ = new SpriteNode($arg); }
+	;
+
 list: '[' exprlist ']'			{ $$ = new ListNode($exprlist); }
 	| '[' ':' ']'				{ $$ = new PropListNode(new NodeList); }
 	| '[' proplist ']'			{ $$ = new PropListNode($proplist); }
@@ -743,7 +752,7 @@ simpleexpr: simpleexpr_nounarymath
 	| unarymath
 	;
 
-// REMEMBER TO SYNC THIS WITH expr_nounarymath!
+// REMEMBER TO SYNC THIS WITH expr_nounarymath and expr_noeq!
 expr: simpleexpr
 	| sprite
 	| expr[a] '+' expr[b]		{ $$ = new BinaryOpNode(LC::c_add, $a, $b); }
@@ -788,6 +797,26 @@ expr_nounarymath: simpleexpr_nounarymath
 	| expr_nounarymath[a] tCONCAT expr[b]	{ $$ = new BinaryOpNode(LC::c_concat, $a, $b); }
 	| expr_nounarymath[a] tCONTAINS expr[b]	{ $$ = new BinaryOpNode(LC::c_contains, $a, $b); }
 	| expr_nounarymath[a] tSTARTS expr[b]	{ $$ = new BinaryOpNode(LC::c_starts, $a, $b); }
+	;
+
+expr_noeq: simpleexpr
+	| sprite
+	| expr_noeq[a] '+' expr_noeq[b]			{ $$ = new BinaryOpNode(LC::c_add, $a, $b); }
+	| expr_noeq[a] '-' expr_noeq[b]			{ $$ = new BinaryOpNode(LC::c_sub, $a, $b); }
+	| expr_noeq[a] '*' expr_noeq[b]			{ $$ = new BinaryOpNode(LC::c_mul, $a, $b); }
+	| expr_noeq[a] '/' expr_noeq[b]			{ $$ = new BinaryOpNode(LC::c_div, $a, $b); }
+	| expr_noeq[a] tMOD expr_noeq[b]		{ $$ = new BinaryOpNode(LC::c_mod, $a, $b); }
+	| expr_noeq[a] '>' expr_noeq[b]			{ $$ = new BinaryOpNode(LC::c_gt, $a, $b); }
+	| expr_noeq[a] '<' expr_noeq[b]			{ $$ = new BinaryOpNode(LC::c_lt, $a, $b); }
+	| expr_noeq[a] tNEQ expr_noeq[b]		{ $$ = new BinaryOpNode(LC::c_neq, $a, $b); }
+	| expr_noeq[a] tGE expr_noeq[b]			{ $$ = new BinaryOpNode(LC::c_ge, $a, $b); }
+	| expr_noeq[a] tLE expr_noeq[b]			{ $$ = new BinaryOpNode(LC::c_le, $a, $b); }
+	| expr_noeq[a] tAND expr_noeq[b]		{ $$ = new BinaryOpNode(LC::c_and, $a, $b); }
+	| expr_noeq[a] tOR expr_noeq[b]			{ $$ = new BinaryOpNode(LC::c_or, $a, $b); }
+	| expr_noeq[a] '&' expr_noeq[b]			{ $$ = new BinaryOpNode(LC::c_ampersand, $a, $b); }
+	| expr_noeq[a] tCONCAT expr_noeq[b]		{ $$ = new BinaryOpNode(LC::c_concat, $a, $b); }
+	| expr_noeq[a] tCONTAINS expr_noeq[b]	{ $$ = new BinaryOpNode(LC::c_contains, $a, $b); }
+	| expr_noeq[a] tSTARTS expr_noeq[b]		{ $$ = new BinaryOpNode(LC::c_starts, $a, $b); }
 	;
 
 sprite: tSPRITE expr tINTERSECTS simpleexpr	{ $$ = new IntersectsNode($expr, $simpleexpr); }
