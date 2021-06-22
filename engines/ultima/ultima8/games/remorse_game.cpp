@@ -143,7 +143,7 @@ bool RemorseGame::startInitialUsecode(int saveSlot) {
 
 
 static ProcId playMovie(const char *movieID, bool fade, bool noScale) {
-	MovieGump *gump = MovieGump::CruMovieViewer(movieID, 640, 480, nullptr, nullptr);
+	MovieGump *gump = MovieGump::CruMovieViewer(movieID, 640, 480, nullptr, nullptr, 0);
 	if (!gump) {
 		pout << "RemorseGame::playIntro: movie " << movieID << " not found." << Std::endl;
 		return 0;

@@ -24,9 +24,13 @@
 
 #include "ultima/ultima8/graphics/avi_player.h"
 #include "ultima/ultima8/graphics/skf_player.h"
+#include "ultima/ultima8/graphics/gump_shape_archive.h"
+#include "ultima/ultima8/graphics/shape.h"
+#include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
@@ -178,6 +182,7 @@ void MovieGump::run() {
 }
 
 void MovieGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
+	Gump::PaintThis(surf, lerp_factor, scaled);
 	_player->paint(surf, lerp_factor);
 }
 
@@ -192,6 +197,12 @@ bool MovieGump::OnKeyDown(int key, int mod) {
 	}
 
 	return true;
+}
+
+void MovieGump::ClearPlayerOffset() {
+	if (!_shape || !_player)
+		return;
+	_player->setOffset(0, 0);
 }
 
 /*static*/
@@ -216,13 +227,26 @@ ProcId MovieGump::U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool 
 	}
 }
 
-/*static*/ MovieGump *MovieGump::CruMovieViewer(const Std::string fname, int x, int y, const byte *pal, Gump *parent) {
+/*static*/ MovieGump *MovieGump::CruMovieViewer(const Std::string fname, int x, int y, const byte *pal, Gump *parent, uint16 frameshape) {
 	Common::SeekableReadStream *rs = _tryLoadCruAVI(fname);
 	if (!rs)
 		return nullptr;
 
 	MovieGump *gump = new MovieGump(x, y, rs, false, false, pal);
+
 	gump->InitGump(parent, true);
+
+	if (frameshape) {
+		GumpShapeArchive *gumpshapes = GameData::get_instance()->getGumps();
+		if (!gumpshapes) {
+			warning("failed to add movie frame: no gump shape archive");
+		} else {
+			gump->SetShape(gumpshapes->getShape(frameshape), 0);
+			gump->UpdateDimsFromShape();
+			gump->ClearPlayerOffset();
+		}
+	}
+
 	gump->setRelativePosition(CENTER);
 	gump->loadSubtitles(_tryLoadCruSubtitle(fname));
 	return gump;
@@ -286,7 +310,7 @@ uint32 MovieGump::I_playMovieOverlay(const uint8 *args,
 		const Palette *pal = palman->getPalette(PaletteManager::Pal_Game);
 		assert(pal);
 
-		CruMovieViewer(name, x, y, pal->_palette, nullptr);
+		CruMovieViewer(name, x, y, pal->_palette, nullptr, 52);
 	}
 
 	return 0;
@@ -299,7 +323,7 @@ uint32 MovieGump::I_playMovieCutscene(const uint8 *args, unsigned int /*argsize*
 	ARG_UINT16(y);
 
 	if (item) {
-		CruMovieViewer(name, x * 3, y * 3, nullptr, nullptr);
+		CruMovieViewer(name, x * 3, y * 3, nullptr, nullptr, 0);
 	}
 
 	return 0;
@@ -324,7 +348,7 @@ uint32 MovieGump::I_playMovieCutsceneAlt(const uint8 *args, unsigned int /*argsi
 	warning("MovieGump::I_playMovieCutsceneAlt: TODO: This intrinsic should pause and fade the background to grey (%s, %d)",
 			name.c_str(), item ? item->getObjId() : 0);
 
-	CruMovieViewer(name, x, y, nullptr, nullptr);
+	CruMovieViewer(name, x, y, nullptr, nullptr, 0);
 
 	return 0;
 }
@@ -335,7 +359,7 @@ uint32 MovieGump::I_playMovieCutsceneRegret(const uint8 *args, unsigned int /*ar
 
 	warning("MovieGump::I_playMovieCutsceneRegret: TODO: use fade argument %d", fade);
 
-	CruMovieViewer(name, 640, 480, nullptr, nullptr);
+	CruMovieViewer(name, 640, 480, nullptr, nullptr, 0);
 
 	return 0;
 }

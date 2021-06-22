@@ -196,7 +196,7 @@ void WeaselGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 Gump *WeaselGump::playMovie(const Std::string &filename) {
-	MovieGump *gump = MovieGump::CruMovieViewer(filename, 600, 450, nullptr, this);
+	MovieGump *gump = MovieGump::CruMovieViewer(filename, 600, 450, nullptr, this, 0);
 	if (!gump) {
 		warning("Couldn't load flic %s", filename.c_str());
 		return nullptr;

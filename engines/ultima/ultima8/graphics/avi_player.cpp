@@ -128,5 +128,10 @@ int AVIPlayer::getFrameNo() const {
 	return _decoder->getCurFrame();
 }
 
+void AVIPlayer::setOffset(int xoff, int yoff) {
+	_xoff = xoff;
+	_yoff = yoff;
+}
+
 } // End of namespace Ultima8
 } // End of namespace Ultima

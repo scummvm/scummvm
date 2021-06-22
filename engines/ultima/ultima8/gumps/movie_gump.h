@@ -56,7 +56,7 @@ public:
 	bool OnKeyDown(int key, int mod) override;
 
 	static ProcId U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool introMusicHack, bool noScale);
-	static MovieGump *CruMovieViewer(const Std::string fname, int x, int y, const byte *pal, Gump *parent);
+	static MovieGump *CruMovieViewer(const Std::string fname, int x, int y, const byte *pal, Gump *parent, uint16 frameshape);
 
 	bool loadData(Common::ReadStream *rs);
 	void saveData(Common::WriteStream *ws) override;
@@ -77,6 +77,9 @@ protected:
 
 	// Load subtitles from a iff file (No Regret format)
 	void loadIFFSubs(Common::SeekableReadStream *rs);
+
+	// Update the offset of the player if a shape has been set
+	void ClearPlayerOffset();
 
 	Common::HashMap<int, Common::String> _subtitles;
 	uint16 _subtitleWidget;

@@ -55,6 +55,9 @@ public:
 
 	int getFrameNo() const;
 
+	// Adjust the offsets by the given values
+	void setOffset(int xoff, int yoff) override;
+
 private:
 
 	bool _playing;

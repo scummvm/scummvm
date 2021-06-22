@@ -39,6 +39,7 @@ public:
 	virtual void start() = 0;
 	virtual void stop() = 0;
 	virtual bool isPlaying() const = 0;
+	virtual void setOffset(int x, int y) {};
 
 };
 
