@@ -1087,7 +1087,8 @@ void CManaIndicator::drawClipped(gPort &port,
 	gPixelMap   ringMap, starMap, mixMap, tempMap;
 
 
-	if (NewTempPort(tempPort, xSize, ySize) != errOK) return;
+	if (!NewTempPort(tempPort, xSize, ySize))
+		return;
 
 	// set the blit surface to a flat black
 	memset(tempPort.map->data, 24, tempPort.map->bytes());

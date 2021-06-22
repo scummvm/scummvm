@@ -356,8 +356,8 @@ void gSpriteImage::drawClipped(gPort &port,
 
 void gCompButton::loadImages(hResContext *con, hResID res1, hResID res2) {
 	if (con) {
-		checkAlloc(forImage = LoadResource(con, res1, "CBtn fore image"));
-		checkAlloc(resImage = LoadResource(con, res2, "CBtn res image"));
+		forImage = LoadResource(con, res1, "CBtn fore image");
+		resImage = LoadResource(con, res2, "CBtn res image");
 		dimImage    = NULL;
 	} else {
 		forImage    = NULL;
@@ -690,8 +690,6 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, hResContex
 
 	for (i = 0, k = resStart; i < numRes; i++, k++) {
 		images[i] = LoadResource(con, MKTAG(a, b, c, k), "Multi btn image");
-
-		checkAlloc(images[i]);
 	}
 
 	response = true;

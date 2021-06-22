@@ -907,7 +907,7 @@ void gTextBox::drawContents(void) {
 	aPos = MAX(cursorPos, anchorPos);
 
 	//  Allocate a temporary pixel map and render into it.
-	if (NewTempPort(tPort, editRect.width, editRect.height) == errOK) {
+	if (NewTempPort(tPort, editRect.width, editRect.height)) {
 		int16       cursorX,
 		            anchorX,
 		            hiliteX,
@@ -1053,7 +1053,7 @@ void gTextBox::drawAll(gPort &port,
 	bufRect.height  = editBaseRect.height;
 
 	//  Allocate a temporary pixel map and render into it.
-	if (NewTempPort(tempPort, bufRect.width, bufRect.height) == errOK) {
+	if (NewTempPort(tempPort, bufRect.width, bufRect.height)) {
 		Rect16  workRect;
 
 		workRect = bufRect;

@@ -735,7 +735,7 @@ void CDocument::renderText(void) {
 
 	Rect16  bltRect(0, 0, extent.width, extent.height);
 
-	if (NewTempPort(tPort, bltRect.width, bltRect.height) == errOK) {
+	if (NewTempPort(tPort, bltRect.width, bltRect.height)) {
 		// clear out the text buffer
 		int16           i, k;
 		uint8           *buffer = (uint8 *)tPort.map->data;
