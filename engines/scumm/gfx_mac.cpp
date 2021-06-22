@@ -169,7 +169,7 @@ void ScummEngine::mac_createIndy3TextBox(Actor *a) {
 }
 
 void ScummEngine::mac_drawIndy3TextBox() {
-	_system->copyRectToScreen((byte *)_macIndy3TextBox->getBasePtr(0, 0), _macIndy3TextBox->pitch, 96, 30, _macIndy3TextBox->w, _macIndy3TextBox->h);
+	_system->copyRectToScreen((byte *)_macIndy3TextBox->getBasePtr(0, 2), _macIndy3TextBox->pitch, 96, 32, _macIndy3TextBox->w, _macIndy3TextBox->h - 2);
 }
 
 } // End of namespace Scumm
