@@ -133,9 +133,13 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		int buttonWidth = tray->getWidth() / 4;
 		int buttonHeight = tray->getHeight() / 2;
 		
-		ButtonWidget *playButton = new ButtonWidget(tray, (buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Play"), U32String(), kStartCmd);
-		ButtonWidget *loadButton = new ButtonWidget(tray, buttonWidth + 2*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Saves"), U32String(), kLoadGameCmd);
-		ButtonWidget *editButton = new ButtonWidget(tray, 2*buttonWidth + 3*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Edit"), U32String(), kEditGameCmd);
+		PicButtonWidget *playButton = new PicButtonWidget(tray, (buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Play"), kStartCmd);
+		PicButtonWidget *loadButton = new PicButtonWidget(tray, buttonWidth + 2*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Saves"), kLoadGameCmd);
+		PicButtonWidget *editButton = new PicButtonWidget(tray, 2*buttonWidth + 3*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Edit"), kEditGameCmd);
+	
+		playButton->setGfxFromTheme("button_play.bmp");
+		loadButton->setGfxFromTheme("button_load.bmp");
+		editButton->setGfxFromTheme("button_options.bmp");
 		// playButton->markAsDirty();
 		tray->runModal();
 	}
