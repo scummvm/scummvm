@@ -163,7 +163,7 @@ singleBuffer::singleBuffer(size_t newSize, audioInterface *sd, int16 newID)
 		targetSated = false;
 		ailSampleHandle = AIL_allocate_sample_handle(sd->dig);
 		if (ailSampleHandle == NULL)
-			audioFatal("Unable to allocate audio handle");
+			error("Unable to allocate audio handle");
 		AIL_init_sample(ailSampleHandle);
 		AILLOCated = -1;
 		audioSet = 0;
@@ -194,7 +194,7 @@ musicBuffer::musicBuffer(size_t newSize, audioInterface *sd, int16 newID)
 		targetSated = false;
 		ailSampleHandle = AIL_allocate_sequence_handle(sd->mid);
 		if (ailSampleHandle == NULL)
-			audioFatal("Unable to allocate music handle");
+			error("Unable to allocate music handle");
 		data[1] = NULL;
 		audioSet = 0;
 	}

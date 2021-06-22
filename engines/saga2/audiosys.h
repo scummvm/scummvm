@@ -282,7 +282,7 @@ public:
 	// volume and enabled calls
 	bool active(void);
 	bool activeDIG(void) {
-		return dig != NULL;
+		return true;
 	}
 	bool enabled(volumeTarget i);
 	void enable(volumeTarget i, bool onOff);

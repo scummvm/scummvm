@@ -632,7 +632,7 @@ bool HuntToKillAssignment::isValid(void) {
 	//  If the target actor is already dead, then this is not a valid
 	//  assignment
 	if (flags & specificActor) {
-		SpecificActorTarget     *sat = (SpecificActorTarget *)getTarget();
+		const SpecificActorTarget *sat = (const SpecificActorTarget *)getTarget();
 
 		if (sat->getTargetActor()->isDead()) return false;
 	}
@@ -657,7 +657,7 @@ bool HuntToKillAssignment::taskNeeded(void) {
 	//  If we're hunting a specific actor, we only need a task if that
 	//  actor is still alive.
 	if (flags & specificActor) {
-		SpecificActorTarget     *sat = (SpecificActorTarget *)getTarget();
+		const SpecificActorTarget *sat = (const SpecificActorTarget *)getTarget();
 
 		return !sat->getTargetActor()->isDead();
 	}
