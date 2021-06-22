@@ -175,7 +175,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %type<node> the writablethe theobj menu thedatetime thenumberof
 %type<node> list proppair
 %type<node> chunk object
-%type<nodelist> proplist exprlist nonemptyexprlist
+%type<nodelist> refargs proplist exprlist nonemptyexprlist
 
 %left tAND tOR
 %left '<' tLE '>' tGE tEQ tNEQ tCONTAINS tSTARTS
@@ -616,14 +616,8 @@ varorthe: var
 	| writablethe
 	;
 
-chunk: tFIELD simpleexpr[arg]	{
-		NodeList *args = new NodeList;
-		args->push_back($arg);
-		$$ = new FuncNode(new Common::String("field"), args); }
-	| tCAST simpleexpr[arg]		{
-		NodeList *args = new NodeList;
-		args->push_back($arg);
-		$$ = new FuncNode(new Common::String("cast"), args); }
+chunk: tFIELD refargs		{ $$ = new FuncNode(new Common::String("field"), $refargs); }
+	| tCAST refargs			{ $$ = new FuncNode(new Common::String("cast"), $refargs); }
 	| tCHAR expr[idx] tOF simpleexpr[src]	{
 		$$ = new ChunkExprNode(kChunkChar, $idx, nullptr, $src); }
 	| tCHAR expr[start] tTO expr[end] tOF simpleexpr[src]	{
@@ -642,14 +636,22 @@ chunk: tFIELD simpleexpr[arg]	{
 		$$ = new ChunkExprNode(kChunkLine, $start, $end, $src); }
 	;
 
-object: tSCRIPT simpleexpr[arg]		{
+object: tSCRIPT refargs		{ $$ = new FuncNode(new Common::String("script"), $refargs); }
+	| tWINDOW refargs		{ $$ = new FuncNode(new Common::String("window"), $refargs); }
+	;
+
+refargs: simpleexpr								{
+		// This matches `ref arg` and `ref(arg)`
 		NodeList *args = new NodeList;
-		args->push_back($arg);
-		$$ = new FuncNode(new Common::String("script"), args); }
-	| tWINDOW simpleexpr[arg]		{
-		NodeList *args = new NodeList;
-		args->push_back($arg);
-		$$ = new FuncNode(new Common::String("window"), args); }
+		args->push_back($simpleexpr);
+		$$ = args; }
+	| '(' ')'									{
+		// This matches `ref()`
+		$$ = new NodeList; }
+	| '(' expr ',' nonemptyexprlist[args] ')'	{
+		// This matches `ref(args, ...)`
+		$args->insert_at(0, $expr);
+		$$ = $args; }
 	;
 
 the: writablethe
