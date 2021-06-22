@@ -3009,7 +3009,7 @@ int16 scriptMakeActor(int16 *args) {
 	Actor       *a;
 
 	assert(actorAppearanceName);
-	memcpy(&actorAppearanceNum, actorAppearanceName, 4);
+	actorAppearanceNum = READ_BE_INT32(actorAppearanceName);
 
 	a = Actor::newActor(
 	        args[0],
