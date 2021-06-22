@@ -1609,6 +1609,7 @@ void LB::b_editableText(int nargs) {
 		Datum sprite = g_lingo->pop();
 		if ((uint)sprite.asInt() < sc->_channels.size()) {
 			sc->getSpriteById(sprite.asInt())->_editable = state.asInt();
+			sc->getOriginalSpriteById(sprite.asInt())->_editable = state.asInt();
 		} else {
 			warning("b_editableText: sprite index out of bounds");
 		}
@@ -1620,6 +1621,7 @@ void LB::b_editableText(int nargs) {
 			return;
 		}
 		sc->getSpriteById(g_lingo->_currentChannelId)->_editable = true;
+		sc->getOriginalSpriteById(g_lingo->_currentChannelId)->_editable = true;
 	} else {
 		warning("b_editableText: unexpectedly received %d arguments", nargs);
 		g_lingo->dropStack(nargs);
@@ -1920,6 +1922,7 @@ void LB::b_puppetSprite(int nargs) {
 			}
 
 			sc->getSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
+			sc->getOriginalSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
 		} else {
 			warning("b_puppetSprite: sprite index out of bounds");
 		}
@@ -1931,6 +1934,7 @@ void LB::b_puppetSprite(int nargs) {
 			return;
 		}
 		sc->getSpriteById(g_lingo->_currentChannelId)->_puppet = true;
+		sc->getOriginalSpriteById(g_lingo->_currentChannelId)->_puppet = true;
 	} else {
 		warning("b_puppetSprite: unexpectedly received %d arguments", nargs);
 		g_lingo->dropStack(nargs);

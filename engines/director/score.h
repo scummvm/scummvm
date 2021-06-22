@@ -93,6 +93,7 @@ public:
 
 	Channel *getChannelById(uint16 id);
 	Sprite *getSpriteById(uint16 id);
+	Sprite *getOriginalSpriteById(uint16 id);
 
 	void setSpriteCasts();
 
