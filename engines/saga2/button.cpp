@@ -826,7 +826,7 @@ void *gSlider::getCurrentCompImage(void) {
 }
 
 int16 gSlider::getSliderLenVal(void) {
-	int16   val;
+	int16   val = 0;
 
 	if (slValMin < 0 && slValMax < 0) {
 		val = slValMax - slValMin;
@@ -843,7 +843,6 @@ int16 gSlider::getSliderLenVal(void) {
 
 void gSlider::draw(void) {
 	gPort   &port   = window.windowPort;
-	Rect16  rect    = window.getExtent();
 	Point16 offset  = Point16(0, 0);
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
