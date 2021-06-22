@@ -697,45 +697,42 @@ int16 FileDialog(int16 fileProcess) {
 
 
 	// get the graphics associated with the buttons
-	checkAlloc(pushBtnIm        = loadButtonRes(decRes, dialogPushResNum, numBtnImages));
-	checkAlloc(arrowUpIm        = loadButtonRes(decRes, upArrowResNum, numBtnImages));
-	checkAlloc(arrowDnIm        = loadButtonRes(decRes, dnArrowResNum, numBtnImages));
+	pushBtnIm = loadButtonRes(decRes, dialogPushResNum, numBtnImages);
+	arrowUpIm = loadButtonRes(decRes, upArrowResNum, numBtnImages);
+	arrowDnIm = loadButtonRes(decRes, dnArrowResNum, numBtnImages);
 
 
 	// create the window
-	checkAlloc(win = new ModalWindow(saveLoadWindowRect,
-	                                 0,
-	                                 nullptr));
+	win = new ModalWindow(saveLoadWindowRect, 0, nullptr);
 
 	gCompButton *t;
 	// make the quit button
-	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[0],
-	                               pushBtnIm, numBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit));
+	t = new gCompButton(*win, saveLoadButtonRects[0], pushBtnIm, numBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit);
 	//t->accelKey=0x1B;
 
 	// make the Save/Load button
-	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[1],
-	                               pushBtnIm, numBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]));
+	t = new gCompButton(*win, saveLoadButtonRects[1],
+	                               pushBtnIm, numBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]);
 	//t->accelKey=0x0D;
 	// make the up arrow
-	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[2],
-	                               arrowUpIm, numBtnImages, 0, cmdSaveDialogUp));
+	t = new gCompButton(*win, saveLoadButtonRects[2],
+	                               arrowUpIm, numBtnImages, 0, cmdSaveDialogUp);
 	//t->accelKey=33+0x80;
 	// make the down arrow
-	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[3],
-	                               arrowDnIm, numBtnImages, 0, cmdSaveDialogDown));
+	t = new gCompButton(*win, saveLoadButtonRects[3],
+	                               arrowDnIm, numBtnImages, 0, cmdSaveDialogDown);
 	//t->accelKey=34+0x80;
 	// attach the title
-	checkAlloc(new CPlaqText(*win, saveLoadTextRects[0],
-	                         textStrings[stringIndex][0], &Plate18Font, 0, pal, 0, nullptr));
+	new CPlaqText(*win, saveLoadTextRects[0],
+	                         textStrings[stringIndex][0], &Plate18Font, 0, pal, 0, nullptr);
 
 
 
 	// attach the text box editing field object
-	checkAlloc(textBox          = new gTextBox(*win, editBaseRect, &Onyx10Font,
+	textBox          = new gTextBox(*win, editBaseRect, &Onyx10Font,
 	        textHeight, textPen, textBackground, textHilite, textBackHilite, cursorColor,
 	        nullptr, "Error out", fieldStrings, editLen, 0, (uint16) - 1, displayOnly, nullptr,
-	        fileCommands[fileProcess], cmdDialogQuit));
+	        fileCommands[fileProcess], cmdDialogQuit);
 
 
 	win->setDecorations(saveWindowDecorations,
@@ -853,77 +850,74 @@ int16 OptionsDialog(bool disableSaveResume) {
 	decRes = resFile->newContext(dialogGroupID, "dialog resources");
 
 	// get the graphics associated with the buttons
-	checkAlloc(dialogPushImag   = loadButtonRes(decRes, dialogPushResNum, numBtnImages));
-	checkAlloc(checkImag        = loadButtonRes(decRes, checkResNum, numBtnImages));
-	checkAlloc(slideFaceImag    = loadButtonRes(decRes, slideFaceResNum, numSlideFace));
+	dialogPushImag   = loadButtonRes(decRes, dialogPushResNum, numBtnImages);
+	checkImag        = loadButtonRes(decRes, checkResNum, numBtnImages);
+	slideFaceImag    = loadButtonRes(decRes, slideFaceResNum, numSlideFace);
 
 	// create the window
-	checkAlloc(win = new ModalWindow(optionsWindowRect,
-	                                 0,
-	                                 nullptr));
+	win = new ModalWindow(optionsWindowRect, 0, nullptr);
 	gCompButton *t;
 
 	// buttons
 	if (!disableSaveResume) {
-		checkAlloc(t = new gCompButton(*win, optionsButtonRects[0],
-		                               dialogPushImag, numBtnImages, btnStrings[0], pal, 0, cmdDialogQuit));
+		t = new gCompButton(*win, optionsButtonRects[0],
+		                               dialogPushImag, numBtnImages, btnStrings[0], pal, 0, cmdDialogQuit);
 		t->accelKey = 0x1B;
 
-		checkAlloc(t = new gCompButton(*win, optionsButtonRects[1],
-		                               dialogPushImag, numBtnImages, btnStrings[1], pal, 0, cmdOptionsSaveGame));    // make the quit button
+		t = new gCompButton(*win, optionsButtonRects[1],
+		                               dialogPushImag, numBtnImages, btnStrings[1], pal, 0, cmdOptionsSaveGame);    // make the quit button
 		t->accelKey = 'S';
 	} else {
-		checkAlloc(t = new gCompButton(*win, optionsButtonRects[1],
-		                               dialogPushImag, numBtnImages, OPTN_DIALOG_BUTTON6, pal, 0, cmdOptionsNewGame));
+		t = new gCompButton(*win, optionsButtonRects[1],
+		                               dialogPushImag, numBtnImages, OPTN_DIALOG_BUTTON6, pal, 0, cmdOptionsNewGame);
 		t->accelKey = 'N';
 	}
 
-	checkAlloc(t = new gCompButton(*win, optionsButtonRects[2],
-	                               dialogPushImag, numBtnImages, btnStrings[2], pal, 0, cmdOptionsLoadGame));    // make the quit button
+	t = new gCompButton(*win, optionsButtonRects[2],
+	                               dialogPushImag, numBtnImages, btnStrings[2], pal, 0, cmdOptionsLoadGame);    // make the quit button
 	t->accelKey = 'L';
 
-	checkAlloc(t = new gCompButton(*win, optionsButtonRects[3],
-	                               dialogPushImag, numBtnImages, btnStrings[3], pal, 0, cmdQuitGame));
+	t = new gCompButton(*win, optionsButtonRects[3],
+	                               dialogPushImag, numBtnImages, btnStrings[3], pal, 0, cmdQuitGame);
 	t->accelKey = 'Q';
 
-	checkAlloc(t = new gCompButton(*win, optionsButtonRects[4],
-	                               dialogPushImag, numBtnImages, btnStrings[4], pal, 0, cmdCredits));
+	t = new gCompButton(*win, optionsButtonRects[4],
+	                               dialogPushImag, numBtnImages, btnStrings[4], pal, 0, cmdCredits);
 	t->accelKey = 'C';
 
-	checkAlloc(autoAggressBtn = new gOwnerSelCompButton(*win, optionsButtonRects[5],
-	        checkImag, numBtnImages, 0, cmdAutoAggression));
+	autoAggressBtn = new gOwnerSelCompButton(*win, optionsButtonRects[5],
+	        checkImag, numBtnImages, 0, cmdAutoAggression);
 	autoAggressBtn->select(isAutoAggressionSet());
 
-	checkAlloc(autoWeaponBtn = new gOwnerSelCompButton(*win, optionsButtonRects[6],
-	        checkImag, numBtnImages, 0, cmdAutoWeapon));
+	autoWeaponBtn = new gOwnerSelCompButton(*win, optionsButtonRects[6],
+	        checkImag, numBtnImages, 0, cmdAutoWeapon);
 	autoWeaponBtn->select(isAutoWeaponSet());
 
-	checkAlloc(speechTextBtn = new gOwnerSelCompButton(*win, optionsButtonRects[7],
-	        checkImag, numBtnImages, 0, cmdSpeechText));
+	speechTextBtn = new gOwnerSelCompButton(*win, optionsButtonRects[7],
+	        checkImag, numBtnImages, 0, cmdSpeechText);
 	speechTextBtn->select(globalConfig.speechText);
 
-	checkAlloc(nightBtn = new gOwnerSelCompButton(*win, optionsButtonRects[8],
-	        checkImag, numBtnImages, 0, cmdNight));
+	nightBtn = new gOwnerSelCompButton(*win, optionsButtonRects[8],
+	        checkImag, numBtnImages, 0, cmdNight);
 	nightBtn->select(globalConfig.showNight);
 
-	checkAlloc(new gSlider(*win, optTopSliderRect, optTopFaceRect, 0,
+	new gSlider(*win, optTopSliderRect, optTopFaceRect, 0,
 	                       127, slideFaceImag, numSlideFace, globalConfig.soundVolume,
-	                       0, cmdSetSoundVolume));
+	                       0, cmdSetSoundVolume);
 
-	checkAlloc(new gSlider(*win, optMidSliderRect, optMidFaceRect, 0,
+	new gSlider(*win, optMidSliderRect, optMidFaceRect, 0,
 	                       127, slideFaceImag, numSlideFace, globalConfig.voiceVolume,
-	                       0, cmdSetSpeechVolume));
+	                       0, cmdSetSpeechVolume);
 
-	checkAlloc(new gSlider(*win, optBotSliderRect, optBotFaceRect, 0,
+	new gSlider(*win, optBotSliderRect, optBotFaceRect, 0,
 	                       127, slideFaceImag, numSlideFace, globalConfig.musicVolume,
-	                       0, cmdSetMIDIVolume));
+	                       0, cmdSetMIDIVolume);
 
-	checkAlloc(new CPlaqText(*win, optionsTextRects[0],
-	                         textStrings[0], &Plate18Font, 0, pal, 0, nullptr));
+	new CPlaqText(*win, optionsTextRects[0],
+	                         textStrings[0], &Plate18Font, 0, pal, 0, nullptr);
 
 	for (int i = 1; i < numOptionsTexts; i++) {
-		checkAlloc(new CPlaqText(*win, optionsTextRects[i],
-		                         textStrings[i], &SmallFont, textPosLeft, pal, 0, nullptr));
+		new CPlaqText(*win, optionsTextRects[i], textStrings[i], &SmallFont, textPosLeft, pal, 0, nullptr);
 	}
 
 	win->setDecorations(optionsDecorations,
@@ -1034,12 +1028,10 @@ bool initUserDialog(void) {
 
 
 	// get the graphics associated with the buttons
-	checkAlloc(udDialogPushImag = loadButtonRes(udDecRes, dialogPushResNum, numBtnImages));
+	udDialogPushImag = loadButtonRes(udDecRes, dialogPushResNum, numBtnImages);
 
 	// create the window
-	checkAlloc(udWin = new ModalWindow(messageWindowRect,
-	                                   0,
-	                                   nullptr));
+	udWin = new ModalWindow(messageWindowRect, 0 nullptr);
 
 	udWin->setDecorations(messageDecorations,
 	                      elementsof(messageDecorations),
@@ -1103,32 +1095,30 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 
 	// button one
 	if (numBtns >= 1) {
-		checkAlloc(t = new gCompButton(*udWin, messageButtonRects[0],
-		                               udDialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit));
+		t = new gCompButton(*udWin, messageButtonRects[0],
+		                               udDialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit);
 		t->accel = k1;
 	}
 
 	// button two
 	if (numBtns >= 2) {
-		checkAlloc(t = new gCompButton(*udWin, messageButtonRects[1],
-		                               udDialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit));
+		t = new gCompButton(*udWin, messageButtonRects[1],
+		                               udDialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit);
 		t->accel = k2;
 	}
 
 	// button three
 	if (numBtns >= 3) {
-		checkAlloc(t = new gCompButton(*udWin, messageButtonRects[2],
-		                               udDialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit));
+		t = new gCompButton(*udWin, messageButtonRects[2],
+		                               udDialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit);
 		t->accel = k3;
 	}
 
 	// title for the box
-	checkAlloc(new CPlaqText(*udWin, messageTextRects[0],
-	                         title, &Plate18Font, nullptr, pal, 0, nullptr));
+	new CPlaqText(*udWin, messageTextRects[0], title, &Plate18Font, nullptr, pal, 0, nullptr);
 
 	// message for box
-	checkAlloc(new CPlacardPanel(*udWin, messageTextRects[1],
-	                             msg, &Onyx10Font, nullptr, pal, 0, nullptr));
+	new CPlacardPanel(*udWin, messageTextRects[1], msg, &Onyx10Font, nullptr, pal, 0, nullptr);
 
 
 	udWin->open();
@@ -1211,43 +1201,39 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 
 
 	// get the graphics associated with the buttons
-	checkAlloc(dialogPushImag   = loadButtonRes(decRes, dialogPushResNum, numBtnImages));
+	dialogPushImag   = loadButtonRes(decRes, dialogPushResNum, numBtnImages);
 
 	// create the window
-	checkAlloc(win = new ModalWindow(messageWindowRect,
-	                                 0,
-	                                 nullptr));
+	win = new ModalWindow(messageWindowRect, 0, nullptr);
 
 	gCompButton *t;
 
 	// button one
 	if (numBtns >= 1) {
-		checkAlloc(t = new gCompButton(*win, messageButtonRects[0],
-		                               dialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit));
+		t = new gCompButton(*win, messageButtonRects[0],
+		                               dialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit);
 		t->accelKey = k1;
 	}
 
 	// button two
 	if (numBtns >= 2) {
-		checkAlloc(t = new gCompButton(*win, messageButtonRects[1],
-		                               dialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit));
+		t = new gCompButton(*win, messageButtonRects[1],
+		                               dialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit);
 		t->accelKey = k2;
 	}
 
 	// button three
 	if (numBtns >= 3) {
-		checkAlloc(t = new gCompButton(*win, messageButtonRects[2],
-		                               dialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit));
+		t = new gCompButton(*win, messageButtonRects[2],
+		                               dialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit);
 		t->accelKey = k3;
 	}
 
 	// title for the box
-	checkAlloc(new CPlaqText(*win, messageTextRects[0],
-	                         title, &Plate18Font, 0, pal, 0, nullptr));
+	new CPlaqText(*win, messageTextRects[0], title, &Plate18Font, 0, pal, 0, nullptr);
 
 	// message for box
-	checkAlloc(new CPlacardPanel(*win, messageTextRects[1],
-	                             msg, &Onyx10Font, 0, pal, 0, nullptr));
+	new CPlacardPanel(*win, messageTextRects[1], msg, &Onyx10Font, 0, pal, 0, nullptr);
 
 	win->setDecorations(messageDecorations,
 	                    elementsof(messageDecorations),
@@ -1548,7 +1534,7 @@ void placardWindow(int8 type, char *text) {
 		pal.set(62, 64, 67, 11, 23, 17);
 
 		// create the window
-		checkAlloc(win = new CPlacardWindow(plaqRectWood, 0, nullptr, text, pal, &Plate18Font));
+		win = new CPlacardWindow(plaqRectWood, 0, nullptr, text, pal, &Plate18Font);
 
 		// setup the background imagery
 		win->setDecorations(plaqDecWood,
@@ -1563,7 +1549,7 @@ void placardWindow(int8 type, char *text) {
 		pal.set(16, 12, 18, 11, 23, 0x78);
 
 		// create the window
-		checkAlloc(win = new CPlacardWindow(plaqRectStone, 0, nullptr, text, pal, &Plate18Font));
+		win = new CPlacardWindow(plaqRectStone, 0, nullptr, text, pal, &Plate18Font);
 
 		// setup the background imagery
 		win->setDecorations(plaqDecStone,
@@ -1578,7 +1564,7 @@ void placardWindow(int8 type, char *text) {
 		pal.set(89, 93, 95, 11, 23, 0x76);
 
 		// create the window
-		checkAlloc(win = new CPlacardWindow(plaqRectBrass, 0, nullptr, text, pal, &Plate18Font));
+		win = new CPlacardWindow(plaqRectBrass, 0, nullptr, text, pal, &Plate18Font);
 
 		// setup the background imagery
 		win->setDecorations(plaqDecBrass,

@@ -192,8 +192,6 @@ void restoreProgramDir(void);                // chdir() to program directory
 
 void  *mustAlloc(uint32 size, const char desc[]);                // alloc 'size' bytes or fail
 RHANDLE mustAllocHandle(uint32 size, const char desc[]);         // as above, but relocatable
-//void   checkAlloc( void *ptr );               // check allocation
-#define checkAlloc(ptr) (ptr)
 
 // Returns Random Number
 

@@ -806,40 +806,40 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 
 	// setup mass/bulk indicator imagery
 	if (death) {
-		checkAlloc(massBulkImag     = ImageCache.requestImage(containerRes, MKTAG('D', 'J', 'B', massBulkResNum)));
+		massBulkImag = ImageCache.requestImage(containerRes, MKTAG('D', 'J', 'B', massBulkResNum));
 
-		checkAlloc(pieIndImag       = loadImageRes(containerRes, pieIndResNum, numPieIndImages, 'D', 'A', 'J'));
+		pieIndImag = loadImageRes(containerRes, pieIndResNum, numPieIndImages, 'D', 'A', 'J');
 	} else {
 
-		checkAlloc(massBulkImag     = ImageCache.requestImage(containerRes, MKTAG('G', 'J', 'B', massBulkResNum)));
+		massBulkImag = ImageCache.requestImage(containerRes, MKTAG('G', 'J', 'B', massBulkResNum));
 
-		checkAlloc(pieIndImag       = loadImageRes(containerRes, pieIndResNum, numPieIndImages, 'G', 'A', 'J'));
+		pieIndImag = loadImageRes(containerRes, pieIndResNum, numPieIndImages, 'G', 'A', 'J');
 	}
 
 	// attach controls to the indivControls panel
 	// these butttons will get deactivated along with the panel
-	checkAlloc(pieMass = new gCompImage(*panel,
+	pieMass = new gCompImage(*panel,
 	                                       Rect16(massPiePos.x, massPiePos.y, pieXSize, pieYSize),
 	                                       pieIndImag,
 	                                       numPieIndImages,
 	                                       0,
 	                                       type,
-	                                       cmdMassInd));
+	                                       cmdMassInd);
 
-	checkAlloc(pieBulk = new gCompImage(*panel,
+	pieBulk = new gCompImage(*panel,
 	                                       Rect16(bulkPiePos.x, bulkPiePos.y, pieXSize, pieYSize),
 	                                       pieIndImag,
 	                                       numPieIndImages,
 	                                       0,
 	                                       type,
-	                                       cmdBulkInd));
+	                                       cmdBulkInd);
 
 	// mass/bulk back image
-	checkAlloc(new gCompImage(*panel,
+	new gCompImage(*panel,
 	                             Rect16(backImagePos.x, backImagePos.y, backImageXSize, backImageYSize),
 	                             massBulkImag,
 	                             uiIndiv,
-	                             nullptr));
+	                             nullptr);
 
 	// release resource context
 	if (containerRes) {
@@ -937,24 +937,17 @@ CManaIndicator::CManaIndicator(gPanelList &list) : gCompImage(list,
 	assert(resFile);
 
 	// init the resource handle with the mana resource group
-	resContext  = resFile->newContext(MKTAG('M', 'A', 'N', 'A'),
-	                                  "mana context");
+	resContext  = resFile->newContext(MKTAG('M', 'A', 'N', 'A'), "mana context");
 
 	// load star images
-	checkAlloc(starImages = loadImageRes(resContext,
-	                                     starResNum,
-	                                     numStars,
-	                                     'S', 'T', 'A'));
+	starImages = loadImageRes(resContext, starResNum, numStars, 'S', 'T', 'A');
 
 	// load in the ring images
-	checkAlloc(ringImages = loadImageRes(resContext,
-	                                     ringResNum,
-	                                     numRings,
-	                                     'R', 'N', 'G'));
+	ringImages = loadImageRes(resContext, ringResNum, numRings, 'R', 'N', 'G');
 
-	checkAlloc(backImage = ImageCache.requestImage(resContext, MKTAG('B', 'A', 'C', 'K')));
+	backImage = ImageCache.requestImage(resContext, MKTAG('B', 'A', 'C', 'K'));
 
-	checkAlloc(wellImage = ImageCache.requestImage(resContext, MKTAG('W', 'E', 'L', 'L')));
+	wellImage = ImageCache.requestImage(resContext, MKTAG('W', 'E', 'L', 'L'));
 
 	// hmm this could be cleaner...
 	starRingEndPos[0] = Point16(redEndX,    redEndY);
@@ -1322,10 +1315,10 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	healthRes = resFile->newContext(imageGroupID, "health imagery context");
 
 	// load in health star imagery
-	checkAlloc(starImag = loadButtonRes(healthRes, starStart, starNum, 'S', 'T', 'A'));
+	starImag = loadButtonRes(healthRes, starStart, starNum, 'S', 'T', 'A');
 
 	// load in the health star border
-	checkAlloc(starFrameImag    = ImageCache.requestImage(healthRes, MKTAG('B', 'T', 'N', starFrameResNum)));
+	starFrameImag    = ImageCache.requestImage(healthRes, MKTAG('B', 'T', 'N', starFrameResNum));
 
 	// set the image indexes to nominal startup values
 	for (i = 0; i < numControls + 1; i++) {
@@ -1341,7 +1334,7 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	// health controls for the trio view
 	// deallocated with panel
 	for (i = 0; i < numControls; i++) {
-		checkAlloc(starBtns[i] = new gCompImage(*trioControls,
+		starBtns[i] = new gCompImage(*trioControls,
 		                           Rect16(starXPos,
 		                                  starYPos + starYOffset * i,
 		                                  starXSize,
@@ -1350,24 +1343,24 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 		                           starNum,
 		                           starInitial,
 		                           starIDs[i],
-		                           cmd));
+		                           cmd);
 
 
 		// image control for the star border/frame trio mode
-		checkAlloc(new gCompImage(*trioControls,
+		new gCompImage(*trioControls,
 		                             Rect16(frameXPos,
 		                                    frameYPos + starYOffset * i,
 		                                    frameXSize,
 		                                    frameYSize),
 		                             starFrameImag,
 		                             0,
-		                             nullptr));
+		                             nullptr);
 
 
 	}
 	// health control for individual mode
 	// deallocated with panel
-	checkAlloc(indivStarBtn = new gCompImage(*indivControls,
+	indivStarBtn = new gCompImage(*indivControls,
 	                          Rect16(starXPos,
 	                                 starYPos,
 	                                 starXSize,
@@ -1376,17 +1369,17 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	                          starNum,
 	                          starInitial,
 	                          uiIndiv,
-	                          cmd));
+	                          cmd);
 
 	// image control for the star border/frame indiv mode
-	checkAlloc(new gCompImage(*indivControls,
+	new gCompImage(*indivControls,
 	                             Rect16(frameXPos,
 	                                    frameYPos,
 	                                    frameXSize,
 	                                    frameYSize),
 	                             starFrameImag,
 	                             0,
-	                             nullptr));
+	                             nullptr);
 
 	// release resource context
 	if (healthRes) {
@@ -1646,31 +1639,31 @@ void SetupUserControls(void) {
 	imageRes        = resFile->newContext(imageGroupID, "image context");
 
 
-	// set up the control button images >>> move checkAlloc to *(new) check
-	checkAlloc(aggressImag      = loadButtonRes(imageRes, aggressResNum, numBtnImages));
-//	checkAlloc( jumpImag     = loadButtonRes( imageRes, jumpResNum, numBtnImages ) );
-	checkAlloc(centerImag       = loadButtonRes(imageRes, centerResNum, numBtnImages));
-	checkAlloc(bandingImag      = loadButtonRes(imageRes, bandingResNum, numBtnImages));
-	checkAlloc(menConBtnImag    = loadButtonRes(imageRes, menConBtnResNum, numBtnImages));
+	// set up the control button images
+	aggressImag      = loadButtonRes(imageRes, aggressResNum, numBtnImages);
+
+	centerImag       = loadButtonRes(imageRes, centerResNum, numBtnImages);
+	bandingImag      = loadButtonRes(imageRes, bandingResNum, numBtnImages);
+	menConBtnImag    = loadButtonRes(imageRes, menConBtnResNum, numBtnImages);
 
 	// setup the options button imagery
-	checkAlloc(optBtnImag       = loadButtonRes(imageRes, optBtnResNum, numBtnImages));
+	optBtnImag       = loadButtonRes(imageRes, optBtnResNum, numBtnImages);
 
 	// setup the brother selector button imagery and button frame
-	checkAlloc(julBtnImag       = loadButtonRes(imageRes, julBtnResNum, numBtnImages));
-	checkAlloc(phiBtnImag       = loadButtonRes(imageRes, phiBtnResNum, numBtnImages));
-	checkAlloc(kevBtnImag       = loadButtonRes(imageRes, kevBtnResNum, numBtnImages));
-	checkAlloc(broBtnFrameImag  = ImageCache.requestImage(imageRes, MKTAG('F', 'R', 'A', 'M')));
+	julBtnImag       = loadButtonRes(imageRes, julBtnResNum, numBtnImages);
+	phiBtnImag       = loadButtonRes(imageRes, phiBtnResNum, numBtnImages);
+	kevBtnImag       = loadButtonRes(imageRes, kevBtnResNum, numBtnImages);
+	broBtnFrameImag  = ImageCache.requestImage(imageRes, MKTAG('F', 'R', 'A', 'M'));
 
 
 	// set up the portrait name plates
 	for (n = 0; n < kNumViews; n++) {
-		checkAlloc(namePlateImages[n] = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', namePlateResNum[n])));
+		namePlateImages[n] = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', namePlateResNum[n]));
 	}
 
 	// get the frame image
-	checkAlloc(namePlateFrameImag = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', 15)));
-	checkAlloc(armorImag = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', 34)));
+	namePlateFrameImag = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', 15));
+	armorImag = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', 34));
 
 	// clean out the old context
 	if (imageRes) resFile->disposeContext(imageRes);
@@ -1681,51 +1674,46 @@ void SetupUserControls(void) {
 
 	// set up the portrait button images
 	for (n = 0; n < kNumViews; n++) {
-		checkAlloc(portImag[n]    = loadButtonRes(imageRes, portResNum[n], numPortImages, broNames[n].a, broNames[n].b, broNames[n].c));
+		portImag[n]    = loadButtonRes(imageRes, portResNum[n], numPortImages, broNames[n].a, broNames[n].b, broNames[n].c);
 	}
 
 	// setup stand alone controls
 
-	checkAlloc(optBtn = new gCompButton(*playControls, optBtnRect, optBtnImag,
-	                                       numBtnImages, 0, cmdOptions));
+	optBtn = new gCompButton(*playControls, optBtnRect, optBtnImag, numBtnImages, 0, cmdOptions);
 
-	checkAlloc(enchDisp = new gEnchantmentDisplay(*playControls, 0));
+	enchDisp = new gEnchantmentDisplay(*playControls, 0);
 
 	// setup the trio user cntl buttons
 	for (n = 0; n < kNumViews; n++) {
 		// portrait button
-		checkAlloc(portBtns[n]        = new gMultCompButton(*trioControls, views[n][index++],
-		                                  portImag[n], numPortImages, 0, false, brotherIDs[n], cmdPortrait));
+		portBtns[n]        = new gMultCompButton(*trioControls, views[n][index++],
+		                                  portImag[n], numPortImages, 0, false, brotherIDs[n], cmdPortrait);
 
 		portBtns[n]->setMousePoll(true);
 
 		// aggressive button
-		checkAlloc(aggressBtns[n]     = new gOwnerSelCompButton(*trioControls, views[n][index++],
-		                                  aggressImag, numBtnImages, brotherIDs[n], cmdAggressive));
-
-		// jump  button
-//		checkAlloc( jumpBtns[n]       = new gCompButton( *trioControls, views[n][index++],
-//							               jumpImag, numBtnImages, brotherIDs[n], cmdJump ) );
+		aggressBtns[n]     = new gOwnerSelCompButton(*trioControls, views[n][index++],
+		                                  aggressImag, numBtnImages, brotherIDs[n], cmdAggressive);
 
 		// name plates that go under the portraits
-		checkAlloc(armorInd[n]        = new gArmorIndicator(*trioControls, views[n][index++],
-		                                  armorImag, brotherIDs[n], cmdArmor));
+		armorInd[n]        = new gArmorIndicator(*trioControls, views[n][index++],
+		                                  armorImag, brotherIDs[n], cmdArmor);
 
 		// center on brother
-		checkAlloc(centerBtns[n]      = new gOwnerSelCompButton(*trioControls, views[n][index++],
-		                                  centerImag, numBtnImages, brotherIDs[n], cmdCenter));
+		centerBtns[n]      = new gOwnerSelCompButton(*trioControls, views[n][index++],
+		                                  centerImag, numBtnImages, brotherIDs[n], cmdCenter);
 
 		// banding
-		checkAlloc(bandingBtns[n] = new gOwnerSelCompButton(*trioControls, views[n][index++],
-		                              bandingImag, numBtnImages, brotherIDs[n], cmdBand));
+		bandingBtns[n] = new gOwnerSelCompButton(*trioControls, views[n][index++],
+		                              bandingImag, numBtnImages, brotherIDs[n], cmdBand);
 
 		// name plates that go under the portraits
-		checkAlloc(namePlates[n]  = new gCompImage(*trioControls, views[n][index++],
-		                              namePlateImages[n], 0, nullptr));
+		namePlates[n]  = new gCompImage(*trioControls, views[n][index++],
+		                              namePlateImages[n], 0, nullptr);
 
 		// the frames for the name plates
-		checkAlloc(namePlateFrames[n] = new gCompImage(*trioControls, views[n][index++],
-		                                  namePlateFrameImag, 0, nullptr));
+		namePlateFrames[n] = new gCompImage(*trioControls, views[n][index++],
+		                                  namePlateFrameImag, 0, nullptr);
 
 		index = 0;
 	}
@@ -1733,63 +1721,52 @@ void SetupUserControls(void) {
 	// individual control buttons
 
 	// portrait button
-	checkAlloc(indivPortBtn = new gMultCompButton(*indivControls, views[0][index++],
-	                          portImag[0], numPortImages, 0, false, uiIndiv, cmdPortrait));
+	indivPortBtn = new gMultCompButton(*indivControls, views[0][index++],
+	                          portImag[0], numPortImages, 0, false, uiIndiv, cmdPortrait);
 	indivPortBtn->setMousePoll(true);
 
 	// aggressive button
-	checkAlloc(indivAggressBtn  = new gOwnerSelCompButton(*indivControls, views[0][index++],
-	                              aggressImag, numBtnImages, uiIndiv, cmdAggressive));
+	indivAggressBtn  = new gOwnerSelCompButton(*indivControls, views[0][index++],
+	                              aggressImag, numBtnImages, uiIndiv, cmdAggressive);
 
-	// jump button
-//	checkAlloc( indivJumpBtn = new gCompButton( *indivControls, views[0][index++],
-//						            jumpImag, numBtnImages, uiIndiv, cmdJump ) );
-
-	checkAlloc(indivArmorInd    = new gArmorIndicator(*indivControls, views[0][index++],
-	                              armorImag, uiIndiv, cmdArmor));
+	indivArmorInd    = new gArmorIndicator(*indivControls, views[0][index++],
+	                              armorImag, uiIndiv, cmdArmor);
 	// center on brother
-	checkAlloc(indivCenterBtn   = new gOwnerSelCompButton(*indivControls, views[0][index++],
-	                              centerImag, numBtnImages, uiIndiv, cmdCenter));
+	indivCenterBtn   = new gOwnerSelCompButton(*indivControls, views[0][index++],
+	                              centerImag, numBtnImages, uiIndiv, cmdCenter);
 
 	// banding
-	checkAlloc(indivBandingBtn  = new gOwnerSelCompButton(*indivControls, views[0][index++],
-	                              bandingImag, numBtnImages, uiIndiv, cmdBand));
+	indivBandingBtn  = new gOwnerSelCompButton(*indivControls, views[0][index++],
+	                              bandingImag, numBtnImages, uiIndiv, cmdBand);
 
 	// name plates that go under the portraits
-	checkAlloc(indivNamePlate  = new gCompImage(*indivControls, views[0][index++],
-	                             namePlateImages[0], 0, nullptr));
+	indivNamePlate  = new gCompImage(*indivControls, views[0][index++],
+	                             namePlateImages[0], 0, nullptr);
 
 	// the frames for the name plates
-	checkAlloc(indivNamePlateFrame = new gCompImage(*indivControls, views[0][index++],
-	                                 namePlateFrameImag, 0, nullptr));
+	indivNamePlateFrame = new gCompImage(*indivControls, views[0][index++],
+	                                 namePlateFrameImag, 0, nullptr);
 
 	// setup the portrait object
-	checkAlloc(Portrait = new CPortrait(portBtns,      // portrait buttons
+	Portrait = new CPortrait(portBtns,      // portrait buttons
 	                                       indivPortBtn,
 	                                       numPortImages,// num of images per button
-	                                       kNumViews));   // number of brothers
+	                                       kNumViews);   // number of brothers
 
 
 	// mental container button
-	checkAlloc(menConBtn    = new gCompButton(*indivControls, menConBtnRect,
-	                          menConBtnImag, numBtnImages, uiIndiv, cmdBrain));
+	menConBtn = new gCompButton(*indivControls, menConBtnRect, menConBtnImag, numBtnImages, uiIndiv, cmdBrain);
 
 	// brother selection buttons >>> need to replace these with sticky buttons
-	checkAlloc(julBtn   = new gOwnerSelCompButton(*indivControls, julBtnRect,
-	                      julBtnImag, numBtnImages, uiJulian, cmdBroChange));
-
-	checkAlloc(phiBtn   = new gOwnerSelCompButton(*indivControls, phiBtnRect,
-	                      phiBtnImag, numBtnImages, uiPhillip, cmdBroChange));
-
-	checkAlloc(kevBtn   = new gOwnerSelCompButton(*indivControls, kevBtnRect,
-	                      kevBtnImag, numBtnImages, uiKevin, cmdBroChange));
+	julBtn = new gOwnerSelCompButton(*indivControls, julBtnRect, julBtnImag, numBtnImages, uiJulian, cmdBroChange);
+	phiBtn = new gOwnerSelCompButton(*indivControls, phiBtnRect, phiBtnImag, numBtnImages, uiPhillip, cmdBroChange);
+	kevBtn = new gOwnerSelCompButton(*indivControls, kevBtnRect, kevBtnImag, numBtnImages, uiKevin, cmdBroChange);
 
 	// frame for brother buttons
-	checkAlloc(broBtnFrame  = new gCompImage(*indivControls, broBtnRect,
-	                          broBtnFrameImag, uiIndiv, nullptr));
+	broBtnFrame = new gCompImage(*indivControls, broBtnRect, broBtnFrameImag, uiIndiv, nullptr);
 
 	// make the mana indicator
-	checkAlloc(ManaIndicator = new CManaIndicator(*indivControls));
+	ManaIndicator = new CManaIndicator(*indivControls);
 	ManaIndicator->setMousePoll(true);
 
 	// get rid of the resource contexts
