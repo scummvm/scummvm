@@ -13,7 +13,6 @@ MODULE_OBJS := \
 	blitters.o \
 	button.o \
 	calender.o \
-	config.o \
 	contain.o \
 	detection.o \
 	display.o \

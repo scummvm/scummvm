@@ -26,6 +26,9 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "common/config-manager.h"
+#include "audio/mixer.h"
+
 #include "saga2/std.h"
 #include "saga2/intrface.h"
 #include "saga2/grequest.h"
@@ -47,7 +50,6 @@
 #include "saga2/vpal.h"
 #include "saga2/palette.h"
 
-#include "saga2/config.h"
 #include "saga2/fontlib.h"
 #include "saga2/savefile.h"
 
@@ -88,7 +90,6 @@ APPFUNCV(cmdSaveVolumeSettings);
  * ===================================================================== */
 extern BackWindow       *mainWindow;
 extern audioInterface   *audio;
-extern configuration    globalConfig;
 extern bool fullInitialized;
 
 /* ===================================================================== *
@@ -895,22 +896,22 @@ int16 OptionsDialog(bool disableSaveResume) {
 
 	speechTextBtn = new gOwnerSelCompButton(*win, optionsButtonRects[7],
 	        checkImag, numBtnImages, 0, cmdSpeechText);
-	speechTextBtn->select(globalConfig.speechText);
+	speechTextBtn->select(g_vm->_speechText);
 
 	nightBtn = new gOwnerSelCompButton(*win, optionsButtonRects[8],
 	        checkImag, numBtnImages, 0, cmdNight);
-	nightBtn->select(globalConfig.showNight);
+	nightBtn->select(g_vm->_showNight);
 
 	new gSlider(*win, optTopSliderRect, optTopFaceRect, 0,
-	                       127, slideFaceImag, numSlideFace, globalConfig.soundVolume,
+	                       Audio::Mixer::kMaxMixerVolume, slideFaceImag, numSlideFace, ConfMan.getInt("sfx_volume"),
 	                       0, cmdSetSoundVolume);
 
 	new gSlider(*win, optMidSliderRect, optMidFaceRect, 0,
-	                       127, slideFaceImag, numSlideFace, globalConfig.voiceVolume,
+	                       Audio::Mixer::kMaxMixerVolume, slideFaceImag, numSlideFace, ConfMan.getInt("speech_volume"),
 	                       0, cmdSetSpeechVolume);
 
 	new gSlider(*win, optBotSliderRect, optBotFaceRect, 0,
-	                       127, slideFaceImag, numSlideFace, globalConfig.musicVolume,
+	                       Audio::Mixer::kMaxMixerVolume, slideFaceImag, numSlideFace, ConfMan.getInt("music_volume"),
 	                       0, cmdSetMIDIVolume);
 
 	new CPlaqText(*win, optionsTextRects[0],
@@ -930,7 +931,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 
 	EventLoop(rInfo.running, true);
 
-	writeConfig();
+	g_vm->saveConfig();
 
 	// remove the window all attatched controls
 	if (win) delete win;
@@ -1610,12 +1611,6 @@ void updateAutoWeaponButton(bool setting) {
 		autoWeaponBtn->select(setting);
 }
 
-//void updateShowNightButton( bool setting )
-//{
-//	if ( nightBtn != nullptr )
-//		nightBtn->select( setting );
-//}
-
 // dialog appfuncs
 APPFUNC(cmdDialogQuit) {
 	gWindow         *win;
@@ -1775,6 +1770,9 @@ APPFUNC(cmdQuitGame) {
 inline int16 quantizedVolume(uint16 trueVolume) {
 	int16 quantized = trueVolume & 0xFFF8;
 	quantized += (quantized / 16);
+
+	quantized += 2; // In ScummVM the range is 0..255
+
 	return quantized;
 }
 
@@ -1801,15 +1799,15 @@ APPFUNC(cmdAutoWeapon) {
 
 APPFUNC(cmdNight) {
 	if (isUserAction(ev)) {
-		globalConfig.showNight = !globalConfig.showNight;
-		nightBtn->select(globalConfig.showNight);
+		g_vm->_showNight = !g_vm->_showNight;
+		nightBtn->select(g_vm->_showNight);
 	}
 }
 
 APPFUNC(cmdSpeechText) {
 	if (isUserAction(ev)) {
-		globalConfig.speechText = !globalConfig.speechText;
-		speechTextBtn->select(globalConfig.speechText);
+		g_vm->_speechText = !g_vm->_speechText;
+		speechTextBtn->select(g_vm->_speechText);
 	}
 }
 
@@ -1819,8 +1817,8 @@ void volumeChanged(void);
 
 APPFUNC(cmdSetMIDIVolume) {
 	int16 v = quantizedVolume(ev.value);
-	globalConfig.musicVolume = v;
-	audio->setVolume(volMusic, volumeSetTo, globalConfig.musicVolume);
+	ConfMan.setInt("music_volume", v);
+	g_vm->syncSoundSettings();
 	volumeChanged();
 }
 
@@ -1828,11 +1826,9 @@ APPFUNC(cmdSetMIDIVolume) {
 
 APPFUNC(cmdSetDIGVolume) {
 	int16 v = quantizedVolume(ev.value);
-	globalConfig.soundVolume = v;
-	globalConfig.voiceVolume = v;
-	//audio->setVolume(volVoice,volumeSetTo,globalConfig.voiceVolume);
-	audio->setVolume(volSoundMaster, volumeSetTo, globalConfig.soundVolume);
-	//setVideoVolume(globalConfig.soundVolume);
+	ConfMan.setInt("speech_volume", v);
+	ConfMan.setInt("sfx_volume", v);
+	g_vm->syncSoundSettings();
 	volumeChanged();
 }
 
@@ -1840,8 +1836,8 @@ APPFUNC(cmdSetDIGVolume) {
 
 APPFUNC(cmdSetSpeechVolume) {
 	int16 v = quantizedVolume(ev.value);
-	globalConfig.voiceVolume = v;
-	audio->setVolume(volVoice, volumeSetTo, globalConfig.voiceVolume);
+	ConfMan.setInt("speech_volume", v);
+	g_vm->syncSoundSettings();
 	volumeChanged();
 }
 
@@ -1849,9 +1845,8 @@ APPFUNC(cmdSetSpeechVolume) {
 
 APPFUNC(cmdSetSoundVolume) {
 	int16 v = quantizedVolume(ev.value);
-	globalConfig.soundVolume = v;
-	audio->setVolume(volSandL, volumeSetTo, globalConfig.soundVolume);
-	//setVideoVolume(globalConfig.soundVolume);
+	ConfMan.setInt("sfx_volume", v);
+	g_vm->syncSoundSettings();
 	volumeChanged();
 }
 
@@ -1859,7 +1854,7 @@ APPFUNC(cmdSetSoundVolume) {
 //   This should be called when exiting the dialog to save the changes
 
 APPFUNCV(cmdSaveVolumeSettings) {
-	writeConfig();
+	g_vm->saveConfig();
 }
 
 } // end of namespace Saga2

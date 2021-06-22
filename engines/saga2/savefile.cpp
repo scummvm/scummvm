@@ -28,7 +28,6 @@
 
 #include "saga2/std.h"
 #include "saga2/savefile.h"
-#include "saga2/config.h"
 
 namespace Saga2 {
 
@@ -41,7 +40,7 @@ namespace Saga2 {
 //	number
 
 void getSaveFileName(int16 saveNo, char *fileName) {
-	sprintf(fileName, "%s%3.3d.SAV", globalConfig.savedGamePath, saveNo);
+	sprintf(fileName, "%3.3d.SAV", saveNo);
 }
 
 /* ===================================================================== *

@@ -29,7 +29,6 @@
 #include "saga2/std.h"
 #include "saga2/calender.h"
 #include "saga2/intrface.h"
-#include "saga2/config.h"
 #include "saga2/localize.h"
 #include "saga2/savefile.h"
 
@@ -42,8 +41,6 @@ namespace Saga2 {
 static bool calenderPaused;
 
 const int dayBias = CalenderTime::framesAtNoon / 6;
-
-extern configuration globalConfig;
 
 /* ===================================================================== *
    Constants
@@ -129,7 +126,7 @@ int CalenderTime::lightLevel(int maxLevel) {
 	//  to framesAtNoon*2/3. Then we clip off the part of the
 	//  curve below zero, and above 1/3, giving 1/3 night,
 	//  1/6 morning, 1/3 day, and 1/6 evening.
-	solarLevel = clamp(globalConfig.showNight ? /* 0 */ (dayBias * 5 / 4) : (framesAtNoon / 3),
+	solarLevel = clamp(g_vm->_showNight ? /* 0 */ (dayBias * 5 / 4) : (framesAtNoon / 3),
 	                   solarAngle * 2 + season - framesAtNoon / 3 + dayBias * 2,
 	                   framesAtNoon / 3);
 

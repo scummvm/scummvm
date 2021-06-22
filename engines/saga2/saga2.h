@@ -76,6 +76,9 @@ public:
 	void endVideo(void);
 	void abortVideo(void);
 
+	void readConfig();
+	void saveConfig();
+
 public:
 	// We need random numbers
 	Common::RandomSource *_rnd;
@@ -84,6 +87,11 @@ public:
 	weaponID _loadedWeapons = 0;
 	Common::List<TimerList *> _timerLists;
 	Common::List<Timer *> _timers;
+
+	bool _autoAggression;
+	bool _autoWeapon;
+	bool _showNight;
+	bool _speechText;
 
 private:
 	Video::SmackerDecoder *_smkDecoder;

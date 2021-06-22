@@ -42,7 +42,6 @@
 #include "saga2/intrface.h"
 #include "saga2/dispnode.h"
 #include "saga2/uidialog.h"
-#include "saga2/config.h"
 #include "saga2/contain.h"
 #include "saga2/savefile.h"
 
@@ -98,7 +97,6 @@ extern hResContext          *tileRes;       // tile resource handle
 extern CycleHandle          cycleList;      // list of tile cycling info
 extern int16                    cycleCount;
 extern int32                lastUpdateTime;         // time of last display update
-extern configuration        globalConfig;
 
 //Prototypes For Tile Mode GameMode Object Init
 void TileModeHandleTask(void);
@@ -301,7 +299,9 @@ static void resumeCombat(void) {
 //	This function performs all combat initialization tasks
 
 static void startCombat(void) {
-	if (globalConfig.autoAggression) autoAdjustAggression();
+	if (g_vm->_autoAggression)
+		autoAdjustAggression();
+
 	setCombatBehavior(true);
 	combatPaused = false;
 }
@@ -322,27 +322,27 @@ static void endCombat(void) {
 //-----------------------------------------------------------------------
 
 void toggleAutoAggression(void) {
-	globalConfig.autoAggression = !globalConfig.autoAggression;
-	updateAutoAggressionButton(globalConfig.autoAggression);
+	g_vm->_autoAggression = !g_vm->_autoAggression;
+	updateAutoAggressionButton(g_vm->_autoAggression);
 }
 
 //-----------------------------------------------------------------------
 
 bool isAutoAggressionSet(void) {
-	return globalConfig.autoAggression;
+	return g_vm->_autoAggression;
 }
 
 //-----------------------------------------------------------------------
 
 void toggleAutoWeapon(void) {
-	globalConfig.autoWeapon = !globalConfig.autoWeapon;
-	updateAutoWeaponButton(globalConfig.autoWeapon);
+	g_vm->_autoWeapon = !g_vm->_autoWeapon;
+	updateAutoWeaponButton(g_vm->_autoWeapon);
 }
 
 //-----------------------------------------------------------------------
 
 bool isAutoWeaponSet(void) {
-	return globalConfig.autoWeapon;
+	return g_vm->_autoWeapon;
 }
 
 //-----------------------------------------------------------------------
