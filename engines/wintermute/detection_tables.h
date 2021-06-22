@@ -115,7 +115,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"palladion",       "Palladion"},
 	{"papasdaughters1", "Papa's Daughters"},
 	{"papasdaughters2", "Papa's Daughters Go to the Sea"},
-	{"petka02", "Red Comrades 0.2: Operation F."},
+	{"petka02",         "Red Comrades 0.2: Operation F."},
 	{"pigeons",         "Pigeons in the Park"},
 	{"pizzamorgana",    "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"},
 	{"polechudes",      "Pole Chudes"},
@@ -799,7 +799,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Twilight: Dark Summer (Ario) (Persian)
 	WME_WINENTRY("darksummer", "",
-		WME_ENTRY1s("data.dcp","da1142983240a5bb62c32f79a863eac5", 1030873185), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "da1142983240a5bb62c32f79a863eac5", 1030873185), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
 	// Dead City (Czech)
 	WME_WINENTRY("deadcity", "",
@@ -833,15 +833,15 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Devil In The Capital (Hayoola) (Persian)
 	WME_WINENTRY("devilincapital", "",
-		WME_ENTRY1s("data.dcp","c54f7bc0b0d3d79096f9b999c23c9865", 1317026760), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "c54f7bc0b0d3d79096f9b999c23c9865", 1317026760), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
 	// Devil In The Capital (Steam, July 2017) (English)
 	WME_WINENTRY("devilincapital", "",
-		WME_ENTRY1s("data.dcp","c3a3cd00c0493cddb84ce243272f60be", 1317709066), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "c3a3cd00c0493cddb84ce243272f60be", 1317709066), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
 	// DFAF Adventure
 	WME_WINENTRY("dfafadventure", "",
-		WME_ENTRY1s("data.dcp","5704ebef961176f647742aa66bd09352", 10083417), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "5704ebef961176f647742aa66bd09352", 10083417), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
 
 	// Dirty Split (Czech)
 	WME_WINENTRY("dirtysplit", "",
@@ -877,23 +877,23 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// The Driller Incident (English)
 	WME_WINENTRY("driller", "",
-		WME_ENTRY1s("data.dcp","9cead7a85244263e0a5ff8f69dd7a1fc", 13671792), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "9cead7a85244263e0a5ff8f69dd7a1fc", 13671792), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// The Driller Incident (Russian)
 	WME_WINENTRY("driller", "",
-		WME_ENTRY1s("data.dcp","5bec2442339dd1ecf221873fff704617", 13671830), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "5bec2442339dd1ecf221873fff704617", 13671830), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Dr. Bohus
 	WME_WINENTRY("drbohus", "",
-		WME_ENTRY1s("data.dcp","a79e640ea15f7ca36addc08ab7b1db49", 59344013), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_2_43),
+		WME_ENTRY1s("data.dcp", "a79e640ea15f7ca36addc08ab7b1db49", 59344013), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_2_43),
 
 	// Dr. Doyle - Mystery Of The Cloche Hat
 	WME_WINENTRY("drdoylemotch", "",
-		WME_ENTRY1s("data.dcp","9276850f89f71c5e9ab173ce6788daa8", 45779909), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "9276850f89f71c5e9ab173ce6788daa8", 45779909), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Dreamcat
 	WME_WINENTRY("dreamcat", "",
-		WME_ENTRY1s("data.dcp","189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
 
 	// Dreamscape (Beta)
 	// NOTE: Package is called "Dreamland.rar", however game title is "Dreamscape"
