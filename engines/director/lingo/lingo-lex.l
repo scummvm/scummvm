@@ -22,6 +22,7 @@
 
 %option noyywrap
 %option noinput
+%option nounput
 %option never-interactive
 %option case-insensitive
 
@@ -49,7 +50,7 @@ static uint inputlen;
 
 // Push lines in stack
 static void pushLine(uint num) {
-	LingoCompiler *compiler = g_lingo->_compiler;
+	LingoCompiler *compileryyun = g_lingo->_compiler;
 
 	if (num > inputlen)
 		return;
