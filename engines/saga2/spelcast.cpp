@@ -823,6 +823,7 @@ void Effectron::bump(void) {
 	switch (parent->dProto->elasticity) {
 	case ecFlagBounce :
 		velocity = -velocity;
+		break;
 	case ecFlagDie :
 		kill();
 		break;
