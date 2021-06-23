@@ -1007,13 +1007,13 @@ Datum LC::readChunkRef(const Datum &src) {
 	Datum lastChar = g_lingo->pop();
 	Datum firstChar = g_lingo->pop();
 
-	if (firstChar.asInt() > 0)
+	if (firstChar.asInt() != 0)
 		return LC::chunkRef(kChunkChar, firstChar.asInt(), lastChar.asInt(), src);
-	if (firstWord.asInt() > 0)
+	if (firstWord.asInt() != 0)
 		return LC::chunkRef(kChunkWord, firstWord.asInt(), lastWord.asInt(), src);
-	if (firstItem.asInt() > 0)
+	if (firstItem.asInt() != 0)
 		return LC::chunkRef(kChunkItem, firstItem.asInt(), lastItem.asInt(), src);
-	if (lastLine.asInt() > 0)
+	if (firstLine.asInt() != 0)
 		return LC::chunkRef(kChunkLine, firstLine.asInt(), lastLine.asInt(), src);
 
 	return src;
