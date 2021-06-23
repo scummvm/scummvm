@@ -73,6 +73,9 @@ CruPathfinderProcess::CruPathfinderProcess(Actor *actor, Item *target, int maxst
 	// TODO: check if flag already set? kill other pathfinders?
 	assert(!actor->hasActorFlags(Actor::ACT_PATHFINDING));
 	actor->setActorFlag(Actor::ACT_PATHFINDING);
+
+	if (actor->isInCombat() && actor->hasActorFlags(Actor::ACT_WEAPONREADY))
+		actor->doAnim(Animation::unreadyWeapon, dir_current);
 }
 
 CruPathfinderProcess::CruPathfinderProcess(Actor *actor, int32 x, int32 y, int32 z, int maxsteps, int stopdistance, bool turnatend) :
@@ -95,6 +98,9 @@ CruPathfinderProcess::CruPathfinderProcess(Actor *actor, int32 x, int32 y, int32
 	// TODO: check if flag already set? kill other pathfinders?
 	assert(!actor->hasActorFlags(Actor::ACT_PATHFINDING));
 	actor->setActorFlag(Actor::ACT_PATHFINDING);
+
+	if (actor->isInCombat() && actor->hasActorFlags(Actor::ACT_WEAPONREADY))
+		actor->doAnim(Animation::unreadyWeapon, dir_current);
 }
 
 CruPathfinderProcess::~CruPathfinderProcess() {
@@ -116,7 +122,7 @@ void CruPathfinderProcess::terminate() {
 			if (_targetItem == 0) {
 				destdir = Direction_GetWorldDir(_targetY - iy, _targetX - ix, dirmode_8dirs);
 			} else {
-				Item *target = getItem(_targetItem);
+				const Item *target = getItem(_targetItem);
 				if (target) {
 					int32 tx, ty, tz;
 					target->getLocationAbsolute(tx, ty, tz);
@@ -216,12 +222,10 @@ Direction CruPathfinderProcess::nextDirFromPoint(struct Point3 &npcpt) {
 		state._combat = npc->isInCombat();
 		animresult = npc->tryAnim(anim, _nextDir2, 0, &state);
 
-		// Note: this will never trigger in our code -
-		// "tryAnim" code seems to behave differently in original?
-		/*if (_solidObject && ((_result >> 1) & 1)) {
+		if (_solidObject && animresult == Animation::FAILURE) {
 			_turnAtEnd = true;
 			return dir_invalid;
-		}*/
+		}
 
 		if (_stopDistance && (MAX(abs(_targetX - state._x), abs(_targetY - state._y)) <= _stopDistance)) {
 			_turnAtEnd = true;
@@ -302,7 +306,7 @@ void CruPathfinderProcess::run() {
 	if (_nextDir == dir_invalid) {
 		_dir16Flag = true;
 	} else {
-	   if (_currentStep == _maxSteps) {
+	   if (_currentStep >= _maxSteps) {
 			terminate(); //0
 			return;
 		}

@@ -229,8 +229,8 @@ public:
 		_lastActivityNo = 0;
 	}
 
-	int32 getLastTimeWasHit() const {
-		return _lastTimeWasHit;
+	int32 getLastTickWasHit() const {
+		return _lastTickWasHit;
 	}
 
 	//! run the given animation
@@ -304,8 +304,8 @@ public:
 	//! Add the x/y/z fire offsets given the current state of the actor
 	void addFireAnimOffsets(int32 &x, int32 &y, int32 &z);
 
-	uint32 getAttackMoveTimeoutFinish() const {
-		return _attackMoveStartTime + _attackMoveTimeout;
+	uint32 getAttackMoveTimeoutFinishFrame() const {
+		return _attackMoveStartFrame + _attackMoveTimeout;
 	}
 
 	uint16 getAttackMoveDodgeFactor() const {
@@ -452,11 +452,11 @@ protected:
 	uint16 _activeWeapon;
 
 	//! Kernel timer last time NPC was hit (only used in Crusader)
-	int32 _lastTimeWasHit;
+	int32 _lastTickWasHit;
 
 	//! The frame certain animations last happened (for Crusader).
 	//! Used in calcualting how hard controlled actor is to hit.
-	uint32 _attackMoveStartTime;
+	uint32 _attackMoveStartFrame;
 	//! The number of frames the above effect lasts for.
 	uint32 _attackMoveTimeout;
 	//! A spread divisor used by shots targeting the controlled actor when they

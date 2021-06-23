@@ -140,6 +140,7 @@ _soundTimestamp(0), _fireTimestamp(0) {
 	_type = ATTACK_PROCESS_TYPE;
 
 	setTacticNo(actor->getCombatTactic());
+	actor->setToStartOfAnim(Animation::stand);
 }
 
 AttackProcess::~AttackProcess() {
@@ -238,7 +239,7 @@ void AttackProcess::run() {
 			int32 x, y, z;
 			a->getHomePosition(x, y, z);
 			ProcId pid = Kernel::get_instance()->addProcess(
-					   new CruPathfinderProcess(a, x, y, z, 100, 0x40, true));
+					   new CruPathfinderProcess(a, x, y, z, 100, 0x80, true));
 			waitFor(pid);
 			return;
 		}
@@ -248,7 +249,7 @@ void AttackProcess::run() {
 			int32 x, y, z;
 			target->getLocation(x, y, z);
 			ProcId pid = Kernel::get_instance()->addProcess(
-					   new CruPathfinderProcess(a, x, y, z, 12, 0x40, true));
+					   new CruPathfinderProcess(a, x, y, z, 12, 0x80, true));
 			waitFor(pid);
 			return;
 		}
@@ -263,7 +264,7 @@ void AttackProcess::run() {
 			int32 y = (ty + ay) / 2;
 			int32 z = (tz + az) / 2;
 			ProcId pid = Kernel::get_instance()->addProcess(
-					   new CruPathfinderProcess(a, x, y, z, 12, 0x40, true));
+					   new CruPathfinderProcess(a, x, y, z, 12, 0x80, true));
 			waitFor(pid);
 			return;
 		}
@@ -391,7 +392,7 @@ void AttackProcess::run() {
 
 				if (itemFrame == targetFrame && (targetQ == 0 || itemQlo == targetQ)) {
 					ProcId pid = Kernel::get_instance()->addProcess(
-						 new CruPathfinderProcess(a, founditem, 100, 0x40, true));
+						 new CruPathfinderProcess(a, founditem, 100, 0x80, true));
 					waitFor(pid);
 					break;
 				}
@@ -529,7 +530,7 @@ void AttackProcess::genericAttack() {
 
 	AudioProcess *audio = AudioProcess::get_instance();
 	const Direction curdir = a->getDir();
-	const int32 now = Kernel::get_instance()->getTickNum();
+	const int32 ticknow = Kernel::get_instance()->getTickNum();
 	int wpnField8 = wpn ? wpn->getShapeInfo()->_weaponInfo->_field8 : 1;
 	const uint16 controlledNPC = World::get_instance()->getControlledNPCNum();
 	Direction targetdir = dir_invalid;
@@ -552,7 +553,7 @@ void AttackProcess::genericAttack() {
 			y += -0x1ff + randomOf(0x400);
 			_field96 = true;
 			const ProcId pid = Kernel::get_instance()->addProcess(
-								new CruPathfinderProcess(a, x, y, z, 12, 0x40, true));
+								new CruPathfinderProcess(a, x, y, z, 12, 0x80, true));
 			// add a tiny delay to avoid tight loops
 			Process *delayproc = new DelayProcess(2);
 			Kernel::get_instance()->addProcess(delayproc);
@@ -569,7 +570,7 @@ void AttackProcess::genericAttack() {
 		}
 		DirectionMode standDirMode = a->animDirMode(anim);
 		if (_timer3set) {
-			if (_timer3 >= now) {
+			if (_timer3 >= ticknow) {
 				if (a->isInCombat()) {
 					if (randomOf(3) != 0) {
 						const Animation::Sequence lastanim = a->getLastAnim();
@@ -604,9 +605,9 @@ void AttackProcess::genericAttack() {
 						a->setAttackAimFlag(true);
 						_wpnField8 *= 4;
 					}
-					_fireTimestamp = now;
+					_fireTimestamp = ticknow;
 					if (_timer4 == 0)
-						_timer4 = now;
+						_timer4 = ticknow;
 
 					const ProcId animpid = a->doAnim(Animation::attack, dir_current); // fire small weapon.
 					if (animpid == 0) {
@@ -643,10 +644,10 @@ void AttackProcess::genericAttack() {
 		if (targetdir == curdir) {
 			const uint16 rnd = randomOf(10);
 			const uint32 frameno = Kernel::get_instance()->getFrameNum();
-			const uint32 timeoutfinish = target->getAttackMoveTimeoutFinish();
+			const uint32 timeoutfinish = target->getAttackMoveTimeoutFinishFrame();
 
 			if (!onscreen ||
-				(!_field96 && !timer4and5Update(now) && frameno < timeoutfinish
+				(!_field96 && !timer4and5Update(ticknow) && frameno < timeoutfinish
 				 && rnd > 2 && (!_isActivityAorB || rnd > 3))) {
 				sleep(0x14);
 				return;
@@ -654,12 +655,12 @@ void AttackProcess::genericAttack() {
 
 			_field96 = false;
 			bool ready;
-			if (now - a->getLastTimeWasHit() < 120)
+			if (ticknow - a->getLastTickWasHit() <= 120)
 				ready = true;
 			else
-				ready = checkReady(now, targetdir);
+				ready = checkReady(ticknow, targetdir);
 
-			if (_timer2set && (randomOf(5) == 0 || checkTimer2PlusDelayElapsed(now))) {
+			if (_timer2set && (randomOf(5) == 0 || checkTimer2PlusDelayElapsed(ticknow))) {
 				_timer2set = false;
 			}
 
@@ -671,10 +672,10 @@ void AttackProcess::genericAttack() {
 				return;
 			}
 
-			checkRandomAttackSound(now, a->getShape());
+			checkRandomAttackSound(ticknow, a->getShape());
 
 			if (!a->hasActorFlags(Actor::ACT_WEAPONREADY)) {
-				_timer4 = now;
+				_timer4 = ticknow;
 				a->doAnim(Animation::readyWeapon, dir_current); // ready small wpn
 				return;
 			}
@@ -686,9 +687,9 @@ void AttackProcess::genericAttack() {
 				_soundNo = -1;
 			}
 
-			const int32 t5elapsed = now - _timer5;
+			const int32 t5elapsed = ticknow - _timer5;
 			if (t5elapsed > _wpnBasedTimeout) {
-				const int32 fireelapsed = now - _fireTimestamp;
+				const int32 fireelapsed = ticknow - _fireTimestamp;
 				if (fireelapsed <= _difficultyBasedTimeout) {
 					sleep(_difficultyBasedTimeout - fireelapsed);
 					return;
@@ -704,9 +705,9 @@ void AttackProcess::genericAttack() {
 					}
 				}
 
-				_fireTimestamp = now;
+				_fireTimestamp = ticknow;
 				if (_timer4 == 0) {
-					_timer4 = now;
+					_timer4 = ticknow;
 				}
 
 				const ProcId firepid = a->doAnim(Animation::attack, dir_current); // Fire SmallWpn
@@ -725,22 +726,22 @@ void AttackProcess::genericAttack() {
 			}
 		} else {
 			bool ready;
-			if (!timer4and5Update(now) && !_field7f) {
+			if (!timer4and5Update(ticknow) && !_field7f) {
 				if (standDirMode != dirmode_16dirs) {
 					targetdir = a->getDirToItemCentre(*target);
 				}
 				ready = a->fireDistance(target, targetdir, 0, 0, 0);
 				if (ready)
-					timeNowToTimerVal2(now);
+					timeNowToTimerVal2(ticknow);
 			} else {
-				timeNowToTimerVal2(now);
+				timeNowToTimerVal2(ticknow);
 				ready = true;
 				_field7f = false;
 			}
 
 			// 5a flag 1 set?
 			if (!a->hasActorFlags(Actor::ACT_WEAPONREADY) && ready) {
-				_timer4 = now;
+				_timer4 = ticknow;
 				a->doAnim(Animation::readyWeapon, dir_current); // ready SmallWpn
 				return;
 			}
@@ -836,7 +837,7 @@ void AttackProcess::pathfindToItemInNPCData() {
 	Actor *a = getActor(_itemNum);
 	Actor *target = getActor(_target);
 
-	Process *pathproc = new CruPathfinderProcess(a, target, 12, 0x40, false);
+	Process *pathproc = new CruPathfinderProcess(a, target, 12, 0x80, false);
 	// In case pathfinding fails delay for a bit to ensure we don't get
 	// stuck in a tight loop using all the cpu
 	Process *delayproc = new DelayProcess(10);

@@ -113,7 +113,7 @@ void RollingThunderProcess::run() {
 
 		if (dirtotarget == actordir) {
 			uint32 now = Kernel::get_instance()->getTickNum();
-			if (now - actor->getLastTimeWasHit() >= 120) {
+			if (now - actor->getLastTickWasHit() >= 120) {
 				if (actor->fireDistance(target, dirtotarget, 0, 0, 0)) {
 					actor->doAnim(Animation::attack, dir_current);
 					return;

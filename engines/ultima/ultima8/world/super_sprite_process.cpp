@@ -80,7 +80,7 @@ SuperSpriteProcess::SuperSpriteProcess(int shape, int frame, int sx, int sy, int
 			Actor *srcnpc = dynamic_cast<Actor *>(srcitem);
 			Actor *controlled = getControlledActor();
 			const uint32 frameno = Kernel::get_instance()->getFrameNum();
-			const uint32 timeoutfinish = controlled ? controlled->getAttackMoveTimeoutFinish() : 0;
+			const uint32 timeoutfinish = controlled ? controlled->getAttackMoveTimeoutFinishFrame() : 0;
 			if (!srcnpc || !srcnpc->getAttackAimFlag()) {
 				if (!srcnpc || frameno < timeoutfinish) {
 					if (!srcnpc && (controlled && controlled->isKneeling())) {

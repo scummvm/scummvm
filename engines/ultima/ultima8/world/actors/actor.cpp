@@ -72,8 +72,8 @@ Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
 		_lastAnim(Animation::stand), _animFrame(0), _direction(dir_north),
 		_fallStart(0), _unkByte(0), _actorFlags(0), _combatTactic(0),
 		_homeX(0), _homeY(0), _homeZ(0), _currentActivityNo(0),
-		_lastActivityNo(0), _activeWeapon(0), _lastTimeWasHit(0),
-		_attackMoveStartTime(0), _attackMoveTimeout(0),
+		_lastActivityNo(0), _activeWeapon(0), _lastTickWasHit(0),
+		_attackMoveStartFrame(0), _attackMoveTimeout(0),
 		_attackMoveDodgeFactor(1), _attackAimFlag(false) {
 	_defaultActivity[0] = 0;
 	_defaultActivity[1] = 0;
@@ -510,7 +510,7 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 		switch(anim) {
 			case Animation::walk:
 			case Animation::retreat: // SmallWeapon
-				_attackMoveStartTime = frameno;
+				_attackMoveStartFrame = frameno;
 				_attackMoveTimeout = 120;
 				_attackMoveDodgeFactor = 3;
 				break;
@@ -526,19 +526,19 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 			//case Animation::startRunSmallWeapon:
 			//case Animation::startRunLargeWeapon:
 			case Animation::startRun:
-				_attackMoveStartTime = frameno;
+				_attackMoveStartFrame = frameno;
 				_attackMoveTimeout = 120;
 				_attackMoveDodgeFactor = 2;
 				break;
 			case Animation::slideLeft:
 			case Animation::slideRight:
-				_attackMoveStartTime = frameno;
+				_attackMoveStartFrame = frameno;
 				_attackMoveTimeout = 60;
 				_attackMoveDodgeFactor = 3;
 				break;
 			case Animation::startKneeling:
 			case Animation::stopKneeling:
-				_attackMoveStartTime = frameno;
+				_attackMoveStartFrame = frameno;
 				_attackMoveTimeout = 75;
 				_attackMoveDodgeFactor = 3;
 				break;
@@ -939,7 +939,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 	if (isDead())
 		return;
 
-	_lastTimeWasHit = Kernel::get_instance()->getTickNum();
+	_lastTickWasHit = Kernel::get_instance()->getTickNum();
 
 	if (shape != 1 && this != getControlledActor()) {
 		Actor *controlled = getControlledActor();
@@ -1931,9 +1931,9 @@ void Actor::saveData(Common::WriteStream *ws) {
 		ws->writeUint16LE(_currentActivityNo);
 		ws->writeUint16LE(_lastActivityNo);
 		ws->writeUint16LE(_activeWeapon);
-		ws->writeSint32LE(_lastTimeWasHit);
+		ws->writeSint32LE(_lastTickWasHit);
 		ws->writeByte(0); // unused, keep for backward compatibility
-		ws->writeUint32LE(_attackMoveStartTime);
+		ws->writeUint32LE(_attackMoveStartFrame);
 		ws->writeUint32LE(_attackMoveTimeout);
 		ws->writeUint16LE(_attackMoveDodgeFactor);
 		ws->writeByte(_attackAimFlag ? 1 : 0);
@@ -1968,9 +1968,9 @@ bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
 		_currentActivityNo = rs->readUint16LE();
 		_lastActivityNo = rs->readUint16LE();
 		_activeWeapon = rs->readUint16LE();
-		_lastTimeWasHit = rs->readSint32LE();
+		_lastTickWasHit = rs->readSint32LE();
 		rs->readByte();  // unused, keep for backward compatibility
-		_attackMoveStartTime = rs->readUint32LE();
+		_attackMoveStartFrame = rs->readUint32LE();
 		_attackMoveTimeout = rs->readUint32LE();
 		_attackMoveDodgeFactor = rs->readUint16LE();
 		_attackAimFlag = rs->readByte() != 0;
