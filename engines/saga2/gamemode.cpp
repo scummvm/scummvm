@@ -99,21 +99,15 @@ void GameMode::SetStack(GameMode *modeFirst, ...) {
 
 	//Put List In New Array Of GameMode Object Pointers
 
-	warning("STUB: GameMode::SetStack()");
-
-#if 0
-	while (thisMode != End_List) {
+	while (thisMode != 0) {
 		newmodeStackPtr[newmodeStackCtr] = thisMode;
 		newmodeStackCtr++;
 		thisMode  = va_arg(Modes, GameMode *);
 
 	}
-#endif
 	va_end(Modes); //Clean Up
 
 	newmodeFlag = true;
-	return;
-
 }
 
 void GameMode::SetStack(GameMode **newStack, int newStackSize) {
