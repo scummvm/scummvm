@@ -1925,7 +1925,6 @@ void setMindContainer(int index, IntangibleContainerWindow &cw) {
 	GameObject      *object = GameObject::objectAddress(ownerID);
 	ContainerIterator iter(object);
 	GameObject      *item;
-	GameObject      *newContainer = NULL;
 	ObjectID        id;
 
 	assert(index >= 0);
@@ -1996,7 +1995,7 @@ APPFUNC(cmdMindContainerFunc) {
 				break;
 
 			case -1:
-				sprintf(textBuffer, "\0");
+				textBuffer[0] = 0;
 				break;
 
 			default:

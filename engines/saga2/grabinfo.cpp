@@ -254,6 +254,8 @@ void GrabInfo::setCursor(void) {
 		case Cast:
 			setMouseImage(kMouseAttakPtrImage, -11, -11);
 			break;
+		default:
+			break;
 		}
 	} else {
 		//  indicate current intention is not doable
