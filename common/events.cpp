@@ -71,6 +71,8 @@ void EventDispatcher::dispatch() {
 	dispatchPoll();
 
 	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
+		if (i->ignore)
+			continue;
 		while (i->source->pollEvent(event)) {
 			// We only try to process the events via the setup event mapper, when
 			// we have a setup mapper and when the event source allows mapping.
@@ -102,6 +104,8 @@ void EventDispatcher::clearEvents() {
 	Event event;
 
 	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
+		if (i->ignore)
+			continue;
 		while (i->source->pollEvent(event)) {}
 	}
 }
@@ -117,6 +121,7 @@ void EventDispatcher::registerSource(EventSource *source, bool autoFree) {
 
 	newEntry.source = source;
 	newEntry.autoFree = autoFree;
+	newEntry.ignore = false;
 
 	_sources.push_back(newEntry);
 }
@@ -130,6 +135,12 @@ void EventDispatcher::unregisterSource(EventSource *source) {
 			_sources.erase(i);
 			return;
 		}
+	}
+}
+
+void EventDispatcher::ignoreSources(bool ignore) {
+	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
+		i->ignore = ignore;
 	}
 }
 

@@ -107,7 +107,9 @@ void EventRecorder::deinit() {
 	_controlPanel->close();
 	delete _controlPanel;
 	debugC(1, kDebugLevelEventRec, "playback:action=stopplayback");
-	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
+	Common::EventDispatcher *eventDispater = g_system->getEventManager()->getEventDispatcher();
+	eventDispater->unregisterSource(this);
+	eventDispater->ignoreSources(false);
 	_recordMode = kPassthrough;
 	_playbackFile->close();
 	delete _playbackFile;
@@ -271,8 +273,11 @@ void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) 
 	}
 	if (_recordMode == kRecorderPlayback) {
 		debugC(1, kDebugLevelEventRec, "playback:action=\"Load file\" filename=%s", recordFileName.c_str());
+		Common::EventDispatcher *eventDispater = g_system->getEventManager()->getEventDispatcher();
+		eventDispater->clearEvents();
+		eventDispater->ignoreSources(true);
+		eventDispater->registerSource(this, false);
 	}
-	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
 	_screenshotPeriod = ConfMan.getInt("screenshot_period");
 	if (_screenshotPeriod == 0) {
 		_screenshotPeriod = kDefaultScreenshotPeriod;
@@ -304,9 +309,8 @@ void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) 
 /**
  * Opens or creates file depend of recording mode.
  *
- *@param id of recording or playing back game
- *@return true in case of success, false in case of error
- *
+ * @param id of recording or playing back game
+ * @return true in case of success, false in case of error
  */
 bool EventRecorder::openRecordFile(const Common::String &fileName) {
 	bool result;
