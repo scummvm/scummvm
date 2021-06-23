@@ -77,6 +77,10 @@ void World::clear() {
 	if (_currentMap)
 		delete _currentMap;
 	_currentMap = nullptr;
+
+	_alertActive = false;
+	_controlledNPCNum = 1;
+	_vargasShield = 5000;
 }
 
 void World::reset() {
