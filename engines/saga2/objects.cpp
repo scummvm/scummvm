@@ -2414,77 +2414,6 @@ extern int enchantmentProto;
 //-------------------------------------------------------------------
 //	Load and construct object and actor prototype arrays
 
-static void readObjectPrototype(hResContext *con, ResourceObjectPrototype &obj) {
-	obj.classType = con->readS16LE();
-	obj.script = con->readU16LE();
-	obj.nameIndex = con->readS16LE();
-	obj.iconSprite = con->readU16LE();
-	obj.groundSprite = con->readU16LE();
-
-	for (int i = 0; i < 4; ++i)
-		obj.colorMap[i] = con->readByte();
-
-	obj.mass = con->readByte();
-	obj.bulk = con->readByte();
-	obj.crossSection = con->readByte();
-	obj.height = con->readByte();
-	obj.toughness = con->readByte();
-	obj.breakType = con->readByte();
-	obj.maxCapacity = con->readU16LE();
-	obj.lockType = con->readByte();
-	obj.acceptableItems = con->readByte();
-	obj.weaponDamage = con->readByte();
-	obj.weaponFireRate = con->readByte();
-	obj.maximumRange = con->readByte();
-	obj.missileType = con->readByte();
-	obj.whereWearable = con->readByte();
-	obj.damageAbsorbtion = con->readSByte();
-	obj.damageDivider = con->readSByte();
-	obj.defenseBonus = con->readSByte();
-	obj.maxCharges = con->readByte();
-	obj.chargeType = con->readByte();
-	obj.flags = con->readS16LE();
-	obj.price = con->readS16LE();
-	obj.heldSpriteBase = con->readS16LE(); // union
-	obj.resistance = con->readS16LE();
-	obj.immunity = con->readS16LE();
-	obj.soundFXClass = con->readByte();
-
-	for (int i = 0; i < 7; ++i)
-		obj.reserved[i] = con->readByte();
-}
-
-static void readActorPrototype(hResContext *con, ResourceActorPrototype &act) {
-	readObjectPrototype(con, act.proto);
-
-	ActorAttributes *att = &act.ext.baseStats;
-	att->archery = con->readByte();
-	att->swordcraft = con->readByte();
-	att->shieldcraft = con->readByte();
-	att->bludgeon = con->readByte();
-	att->throwing = con->readByte();
-	att->spellcraft = con->readByte();
-	att->stealth = con->readByte();
-	att->agility = con->readByte();
-	att->brawn = con->readByte();
-	att->lockpick = con->readByte();
-	att->pilfer = con->readByte();
-	att->firstAid = con->readByte();
-	att->spotHidden = con->readByte();
-	att->pad = con->readSByte();
-	att->vitality = con->readS16LE();
-	att->redMana = con->readS16LE();
-	att->orangeMana = con->readS16LE();
-	att->yellowMana = con->readS16LE();
-	att->greenMana = con->readS16LE();
-	att->blueMana = con->readS16LE();
-	att->violetMana = con->readS16LE();
-
-	act.ext.combatBehavior = con->readByte();
-	act.ext.gruntStyle = con->readByte();
-	act.ext.baseEffectFlags = con->readU32LE();
-}
-
 void initPrototypes(void) {
 	const int resourceObjProtoSize = 52;
 	const int resourceActProtoSize = 86;
@@ -2521,7 +2450,7 @@ void initPrototypes(void) {
 
 	objectProtos = (ProtoObj *)malloc(objectProtoCount * sizeof (ProtoObj));
 
-	if (listRes->seek(objProtoID) == 0)
+	if ((stream = loadResourceToStream(listRes, objProtoID, "object prototypes")) == nullptr)
 		error("Unable to load Object Prototypes");
 
 	//  Load each individual prototype. Read in everything except
@@ -2531,7 +2460,7 @@ void initPrototypes(void) {
 		ResourceObjectPrototype ro;
 		ProtoObj    *pr = &objectProtos[i];
 
-		readObjectPrototype(listRes, ro);
+		ro.load(stream);
 
 		switch (ro.classType) {
 		case protoClassInventory:
@@ -2657,6 +2586,7 @@ void initPrototypes(void) {
 	}
 
 	listRes->rest();
+	delete stream;
 
 	//  Load the Actor prototype table
 
@@ -2668,19 +2598,20 @@ void initPrototypes(void) {
 
 	actorProtos = (ActorProto *)malloc(actorProtoCount * sizeof(ActorProto));
 
-	if (listRes->seek(actorProtoID) == 0)
+	if ((stream = loadResourceToStream(listRes, actorProtoID, "actor prototypes")) == nullptr)
 		error("Unable to load Actor Prototypes");
 
 	for (int i = 0; i < actorProtoCount; i++) {
 		ResourceActorPrototype  ra;
 		ActorProto              *pr = &actorProtos[i];
 
-		readActorPrototype(listRes, ra);
+		ra.load(stream);
 
 		new (pr) ActorProto(ra);
 	}
 
 	listRes->rest();
+	delete stream;
 }
 
 //-------------------------------------------------------------------
