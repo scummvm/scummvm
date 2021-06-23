@@ -285,6 +285,46 @@ struct ResourceObjectPrototype {
 		for (int i = 0; i < 7; ++i)
 			reserved[i] = proto.reserved[i];
 	}
+
+	void load(Common::SeekableReadStream *stream) {
+		classType = stream->readSint16LE();
+		script = stream->readUint16LE();
+		nameIndex = stream->readSint16LE();
+		iconSprite = stream->readUint16LE();
+		groundSprite = stream->readUint16LE();
+
+		for (int i = 0; i < 4; ++i)
+			colorMap[i] = stream->readByte();
+
+		mass = stream->readByte();
+		bulk = stream->readByte();
+		crossSection = stream->readByte();
+		height = stream->readByte();
+		toughness = stream->readByte();
+		breakType = stream->readByte();
+		maxCapacity = stream->readUint16LE();
+		lockType = stream->readByte();
+		acceptableItems = stream->readByte();
+		weaponDamage = stream->readByte();
+		weaponFireRate = stream->readByte();
+		maximumRange = stream->readByte();
+		missileType = stream->readByte();
+		whereWearable = stream->readByte();
+		damageAbsorbtion = stream->readSByte();
+		damageDivider = stream->readSByte();
+		defenseBonus = stream->readSByte();
+		maxCharges = stream->readByte();
+		chargeType = stream->readByte();
+		flags = stream->readSint16LE();
+		price = stream->readSint16LE();
+		heldSpriteBase = stream->readSint16LE(); // union
+		resistance = stream->readSint16LE();
+		immunity = stream->readSint16LE();
+		soundFXClass = stream->readByte();
+
+		for (int i = 0; i < 7; ++i)
+			reserved[i] = stream->readByte();
+	}
 };
 
 class ProtoObj : public ResourceObjectPrototype {

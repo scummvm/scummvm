@@ -169,6 +169,30 @@ struct ActorAttributes {
 	uint8 getSkillLevel(int16 id) {
 		return skill(id) / skillFracPointsPerLevel + 1;
 	}
+
+	void load(Common::SeekableReadStream *stream) {
+		archery = stream->readByte();
+		swordcraft = stream->readByte();
+		shieldcraft = stream->readByte();
+		bludgeon = stream->readByte();
+		throwing = stream->readByte();
+		spellcraft = stream->readByte();
+		stealth = stream->readByte();
+		agility = stream->readByte();
+		brawn = stream->readByte();
+		lockpick = stream->readByte();
+		pilfer = stream->readByte();
+		firstAid = stream->readByte();
+		spotHidden = stream->readByte();
+		pad = stream->readSByte();
+		vitality = stream->readSint16LE();
+		redMana = stream->readSint16LE();
+		orangeMana = stream->readSint16LE();
+		yellowMana = stream->readSint16LE();
+		greenMana = stream->readSint16LE();
+		blueMana = stream->readSint16LE();
+		violetMana = stream->readSint16LE();
+	}
 };  // 28 bytes
 
 
@@ -204,6 +228,13 @@ struct ResourceActorProtoExtension {
 	ResourceActorProtoExtension(ResourceActorProtoExtension &ext) {
 		memcpy(this, &ext, sizeof(ResourceActorProtoExtension));
 	}
+
+	void load(Common::SeekableReadStream *stream) {
+		baseStats.load(stream);
+		combatBehavior = stream->readByte();
+		gruntStyle = stream->readByte();
+		baseEffectFlags = stream->readUint32LE();
+	}
 };  // 28 bytes
 
 /* ===================================================================== *
@@ -214,6 +245,11 @@ struct ResourceActorProtoExtension {
 struct ResourceActorPrototype {
 	ResourceObjectPrototype         proto;  //  Standard prototype data
 	ResourceActorProtoExtension     ext;    //  Extended actor data
+
+	void load(Common::SeekableReadStream *stream) {
+		proto.load(stream);
+		ext.load(stream);
+	}
 };
 
 /* ===================================================================== *
