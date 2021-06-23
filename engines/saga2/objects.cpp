@@ -2918,23 +2918,23 @@ void cleanupWorlds(void) {
 //-------------------------------------------------------------------
 //	Initialize the Objects list
 
-static void readGameObject(hResContext *con, ResourceGameObject &obj) {
-	obj.protoIndex = con->readS16LE();
-	obj.location.u = con->readS16LE();
-	obj.location.v = con->readS16LE();
-	obj.location.z = con->readS16LE();
-	obj.nameIndex = con->readU16LE();
-	obj.parentID = con->readU16LE();
-	obj.script = con->readU16LE();
-	obj.objectFlags = con->readU16LE();
-	obj.hitPoints = con->readByte();
-	obj.misc = con->readU16LE();
+ResourceGameObject::ResourceGameObject(Common::SeekableReadStream *stream) {
+	protoIndex = stream->readSint16LE();
+	location.u = stream->readSint16LE();
+	location.v = stream->readSint16LE();
+	location.z = stream->readSint16LE();
+	nameIndex = stream->readUint16LE();
+	parentID = stream->readUint16LE();
+	script = stream->readUint16LE();
+	objectFlags = stream->readUint16LE();
+	hitPoints = stream->readByte();
+	misc = stream->readUint16LE();
 }
 
 void initObjects(void) {
-	int16               i,
-	                    resourceObjectCount;
-	ResourceGameObject  *resourceObjectList;
+	int16 i, resourceObjectCount;
+	Common::Array<ResourceGameObject> resourceObjectList;
+	Common::SeekableReadStream *stream;
 	const int resourceGameObjSize = 19;
 
 	//  Initialize the limbo counts
@@ -2959,15 +2959,14 @@ void initObjects(void) {
 	if (objectList == nullptr)
 		error("Unable to load Objects");
 
-	//  Allocate memory for the resource objects
-	resourceObjectList = new ResourceGameObject[resourceObjectCount]();
-
-	if (resourceObjectList == nullptr || listRes->seek(objListID) == 0)
+	if ((stream = loadResourceToStream(listRes, objListID, "res object list")) == nullptr)
 		error("Unable to load Objects");
 
 	//  Read the resource Objects
-	for (int k = 0; k < resourceObjectCount; ++k)
-		readGameObject(listRes, resourceObjectList[k]);
+	for (int k = 0; k < resourceObjectCount; ++k) {
+		ResourceGameObject res(stream);
+		resourceObjectList.push_back(res);
+	}
 
 	for (i = 0; i < resourceObjectCount; i++) {
 		GameObject  *obj = &objectList[i];
@@ -2987,8 +2986,6 @@ void initObjects(void) {
 		//  Use the default constructor for the extra actors
 		new (obj) GameObject;
 	}
-
-	delete[] resourceObjectList;
 
 	//  Go through the object list and initialize all objects.
 
