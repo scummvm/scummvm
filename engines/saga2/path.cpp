@@ -1061,7 +1061,7 @@ enum PathResult {
 };
 
 //  This if the base class for all PathRequests
-class PathRequest : public DNode {
+class PathRequest {
 	friend void addPathRequestToQueue(PathRequest *pr);
 
 protected:
@@ -1259,7 +1259,7 @@ public:
 
 Common::List<WanderPathRequest *> pathRequestPool;
 
-DList                       pathQueue;
+Common::List<PathRequest *> pathQueue;
 PathRequest                 *currentRequest = nullptr;
 
 static PathTilePosArray     *pathTileArray;
@@ -2264,12 +2264,10 @@ int16 WanderPathRequest::evaluateMove(const TilePoint &testPt, uint8) {
 }
 
 void runPathFinder(void) {
-	if (currentRequest == nullptr) {
-		currentRequest = (PathRequest *)pathQueue.first();
-		if (currentRequest != nullptr) {
-			currentRequest->remove();
-			currentRequest->initialize();
-		}
+	if (currentRequest == nullptr && !pathQueue.empty()) {
+		currentRequest = pathQueue.front();
+		pathQueue.pop_front();
+		currentRequest->initialize();
 	}
 
 	if (currentRequest != nullptr) {
@@ -2296,26 +2294,24 @@ void addPathRequestToQueue(PathRequest *pr) {
 	Actor           *centerActor = getCenterActor();
 
 	if (a == centerActor)
-		pathQueue.addHead(*pr);
+		pathQueue.push_front(pr);
 	else {
 		if (isPlayerActor(a)) {
-			PathRequest     *prInQueue;
+			Common::List<PathRequest *>::iterator it;
 
-			for (prInQueue = (PathRequest *)pathQueue.first();
-			        prInQueue != nullptr;
-			        prInQueue = (PathRequest *)prInQueue->next()) {
-				Actor       *prActor = prInQueue->actor;
+			for (it = pathQueue.begin(); it != pathQueue.end(); it++) {
+				Actor       *prActor = (*it)->actor;
 
 				if (prActor != centerActor || !isPlayerActor(prActor))
 					break;
 			}
 
-			if (prInQueue != nullptr)
-				pathQueue.insert(*pr, *prInQueue);
+			if (it != pathQueue.end())
+				pathQueue.insert(it, pr);
 			else
-				pathQueue.addTail(*pr);
+				pathQueue.push_back(pr);
 		} else
-			pathQueue.addTail(*pr);
+			pathQueue.push_back(pr);
 	}
 }
 
@@ -2341,10 +2337,8 @@ void abortPathFind(MotionTask *mTask) {
 
 		if (pr == currentRequest)
 			pr->requestAbort();
-		else {
-			pr->remove();
-			delete pr;
-		}
+		else
+			pathQueue.remove(pr);
 
 		mTask->pathFindTask = nullptr;
 	}
