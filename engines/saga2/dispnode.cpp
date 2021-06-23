@@ -743,16 +743,13 @@ void DisplayNode::drawObject(void) {
 			//  If we were carrying something in the right hand,
 			//  then fill in the component structure for it.
 			if (rightIndex >= 0) {
-				GameObject          *ob;
-				ProtoObj            *proto;
-
-				ob = GameObject::objectAddress(a->rightHandObject);
-				proto = ob->proto();
+				GameObject *ob = GameObject::objectAddress(a->rightHandObject);
+				ProtoObj *prot = ob->proto();
 
 				ob->getColorTranslation(rightColors);
 
 				sc = &scList[rightIndex];
-				sc->sp =    proto->getOrientedSprite(
+				sc->sp =    prot->getOrientedSprite(
 				                ob,
 				                a->poseInfo.rightObjectIndex);
 				assert(sc->sp != NULL);
@@ -969,8 +966,6 @@ void DisplayNode::drawEffect(void) {
 }
 
 void Effectron::drawEffect(void) {
-	const int16 partCount = 1;
-	const int16 bodyIndex = 0;
 	ColorTable      eColors;                // colors for object
 	bool obscured = false;
 	Point16         drawPos;

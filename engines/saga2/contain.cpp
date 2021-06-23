@@ -48,8 +48,6 @@ namespace Saga2 {
 uint8 weight = 0;
 uint8 encum  = 0;
 
-const hResID containerGroupID = MKTAG('C', 'O', 'N', 'T');
-
 const int           maxOpenDistance = 32;
 // selector image pointer
 static void         *selImage;
@@ -340,8 +338,6 @@ void ContainerView::totalObjects(void) {
 		//  If the object is visible, then add to total mass and
 		//  bulk.
 		if (isVisible(item)) {
-			// get the container slot location and count
-			TilePoint objLoc = item->getLocation();
 			uint16  numItems;
 
 			ProtoObj *proto = item->proto();
@@ -1686,7 +1682,7 @@ extern int16 openMindType;
 //  kind of container is appropriate, and also if a container of that
 //  type is already open.
 ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
-	ContainerNode   *cn;
+	ContainerNode   *cn = NULL;
 	GameObject      *obj = GameObject::objectAddress(id);
 	PlayerActorID   owner;
 

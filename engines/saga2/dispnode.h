@@ -117,9 +117,6 @@ public:
 	void  updateOStates(const int32 deltaTime);
 	void  updateEStates(const int32 deltaTime);
 	bool  dissipated(void);
-
-private:
-	int16           sortDepth;              // for sorting by depth
 };
 
 /* ============================================================================ *

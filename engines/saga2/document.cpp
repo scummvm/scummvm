@@ -552,7 +552,7 @@ bool CDocument::checkForImage(char      *string,
 	// image detected marker
 	if (strIndex[1] == dImage[0] &&
 	        strIndex[2] == dImage[1]) {
-		int16   numEat;         // number of characters to eat
+		int16   numEat = 0;         // number of characters to eat
 		char    *argv = &strIndex[2 + 1];  // array to first element
 
 		// delete context
@@ -908,7 +908,6 @@ int16 openScroll(uint16 textScript) {
 	gCompButton     *closeScroll;
 	void            **closeBtnImage;
 	uint16          buttonResID     = 0;
-	uint16          numBtnImages    = 2;
 	hResContext     *decRes;
 
 	// init the resource context handle
