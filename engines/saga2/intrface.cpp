@@ -594,31 +594,31 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 		length +=   appendToStr(
 		                &buf[length],
 		                asleepStr,
-		                elementsof(asleepStr) - 1,
+		                ARRAYSIZE(asleepStr) - 1,
 		                size - length - 1);
 	} else if (a->enchantmentFlags & (1 << actorParalyzed)) {
 		length +=   appendToStr(
 		                &buf[length],
 		                paralysedStr,
-		                elementsof(paralysedStr) - 1,
+		                ARRAYSIZE(paralysedStr) - 1,
 		                size - length - 1);
 	} else if (a->enchantmentFlags & (1 << actorBlind)) {
 		length +=   appendToStr(
 		                &buf[length],
 		                blindStr,
-		                elementsof(blindStr) - 1,
+		                ARRAYSIZE(blindStr) - 1,
 		                size - length - 1);
 	} else if (a->enchantmentFlags & (1 << actorFear)) {
 		length +=   appendToStr(
 		                &buf[length],
 		                afraidStr,
-		                elementsof(afraidStr) - 1,
+		                ARRAYSIZE(afraidStr) - 1,
 		                size - length - 1);
 	} else if (pa->isAggressive()) {
 		length +=   appendToStr(
 		                &buf[length],
 		                angryStr,
-		                elementsof(angryStr) - 1,
+		                ARRAYSIZE(angryStr) - 1,
 		                size - length - 1);
 	}
 
@@ -627,24 +627,24 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 			length +=   appendToStr(
 			                &buf[length],
 			                commaStr,
-			                elementsof(commaStr) - 1,
+			                ARRAYSIZE(commaStr) - 1,
 			                size - length - 1);
 		length +=   appendToStr(
 		                &buf[length],
 		                badlyWoundedStr,
-		                elementsof(badlyWoundedStr) - 1,
+		                ARRAYSIZE(badlyWoundedStr) - 1,
 		                size - length - 1);
 	} else if (stats.vitality * 2 > a->effectiveStats.vitality * 3) {
 		if (length != 0)
 			length +=   appendToStr(
 			                &buf[length],
 			                commaStr,
-			                elementsof(commaStr) - 1,
+			                ARRAYSIZE(commaStr) - 1,
 			                size - length - 1);
 		length +=   appendToStr(
 		                &buf[length],
 		                hurtStr,
-		                elementsof(hurtStr) - 1,
+		                ARRAYSIZE(hurtStr) - 1,
 		                size - length - 1);
 	}
 
@@ -653,24 +653,24 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 			length +=   appendToStr(
 			                &buf[length],
 			                commaStr,
-			                elementsof(commaStr) - 1,
+			                ARRAYSIZE(commaStr) - 1,
 			                size - length - 1);
 		length +=   appendToStr(
 		                &buf[length],
 		                poisonedStr,
-		                elementsof(poisonedStr) - 1,
+		                ARRAYSIZE(poisonedStr) - 1,
 		                size - length - 1);
 	} else if (a->enchantmentFlags & (1 << actorDiseased)) {
 		if (length != 0)
 			length +=   appendToStr(
 			                &buf[length],
 			                commaStr,
-			                elementsof(commaStr) - 1,
+			                ARRAYSIZE(commaStr) - 1,
 			                size - length - 1);
 		length +=   appendToStr(
 		                &buf[length],
 		                diseasedStr,
-		                elementsof(diseasedStr) - 1,
+		                ARRAYSIZE(diseasedStr) - 1,
 		                size - length - 1);
 	}
 
@@ -678,7 +678,7 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 		length +=   appendToStr(
 		                &buf[length],
 		                normalStr,
-		                elementsof(normalStr) - 1,
+		                ARRAYSIZE(normalStr) - 1,
 		                size - length - 1);
 	}
 }
@@ -705,7 +705,7 @@ CStatusLine::CStatusLine(gPanelList         &list,
 	lineDisplayed = false;
 	queueHead = queueTail = 0;
 
-	for (i = 0; i < elementsof(lineQueue); i++)
+	for (i = 0; i < ARRAYSIZE(lineQueue); i++)
 		lineQueue[i].text = nullptr;
 }
 

@@ -105,7 +105,7 @@ public:
 BandList::BandList(void) {
 	int i;
 
-	for (i = 0; i < elementsof(array); i++)
+	for (i = 0; i < ARRAYSIZE(array); i++)
 		free.addTail(array[i]);
 }
 
@@ -222,7 +222,7 @@ void *BandList::newBand(void) {
 //	Place a specific Band into the active list and return its address
 
 void *BandList::newBand(BandID id) {
-	assert(id >= 0 && id < elementsof(array));
+	assert(id >= 0 && id < ARRAYSIZE(array));
 
 	BandPlaceHolder     *bp;
 
@@ -395,7 +395,7 @@ Band::Band(void **buf) {
 	bufferPtr = (ObjectID *)bufferPtr + 1;
 
 	//  Restore the member count
-	assert(*((int16 *)bufferPtr) < elementsof(members));
+	assert(*((int16 *)bufferPtr) < ARRAYSIZE(members));
 	memberCount = *((int16 *)bufferPtr);
 	bufferPtr = (int16 *)bufferPtr + 1;
 

@@ -1250,7 +1250,7 @@ void GameObject::deleteObject(void) {
 		if (a->leftHandObject == id) a->leftHandObject = Nothing;
 		if (a->rightHandObject == id) a->rightHandObject = Nothing;
 
-		for (i = 0; i < elementsof(a->armorObjects); i++)
+		for (i = 0; i < ARRAYSIZE(a->armorObjects); i++)
 			if (a->armorObjects[i] == id)
 				a->wear(Nothing, i);
 	}
@@ -3246,7 +3246,7 @@ static ActiveRegion activeRegionList[playerActors];
 void updateActiveRegions(void) {
 	int16   i;
 
-	for (i = 0; i < elementsof(activeRegionList); i++)
+	for (i = 0; i < ARRAYSIZE(activeRegionList); i++)
 		activeRegionList[i].update();
 }
 
@@ -3761,7 +3761,7 @@ bool ActiveRegionObjectIterator::nextActiveRegion(void) {
 	TilePoint           currentRegionSize;
 
 	do {
-		if (++activeRegionIndex >= elementsof(activeRegionList))
+		if (++activeRegionIndex >= ARRAYSIZE(activeRegionList))
 			return false;
 
 		int16               prevRegionIndex;
@@ -3941,7 +3941,7 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 
 ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 	assert(activeRegionIndex >= 0);
-	assert(activeRegionIndex < elementsof(activeRegionList));
+	assert(activeRegionIndex < ARRAYSIZE(activeRegionList));
 
 	ObjectID        currentObjectID;
 

@@ -786,7 +786,7 @@ bool ProtoObj::acceptInsertionAtAction(
 
 //  Creates a color translation table for this object
 void ProtoObj::getColorTranslation(ColorTable map) {
-	buildColorTable(map, colorMap, elementsof(colorMap));
+	buildColorTable(map, colorMap, ARRAYSIZE(colorMap));
 }
 
 uint16  ProtoObj::containmentSet(void) {
@@ -1106,7 +1106,7 @@ bool InventoryProto::dropAction(
 
 			static const int8 dirOffsetTable[] = { 0, 1, -1, 2, -2, 3, -3 };
 
-			for (i = 0; i < elementsof(dirOffsetTable); i++) {
+			for (i = 0; i < ARRAYSIZE(dirOffsetTable); i++) {
 				TilePoint       testPt;
 				Direction       testDir;
 
@@ -2852,7 +2852,7 @@ ContainerWindow *EnchantmentProto::makeWindow( GameObject *Obj )
 
         // set the decorations for this window
     window->setDecorations( enchantDecorations,
-                            elementsof( enchantDecorations ),
+                            ARRAYSIZE( enchantDecorations ),
                             decRes, 'E', 'F', 'R' );
 
 

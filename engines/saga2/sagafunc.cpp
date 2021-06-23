@@ -2342,7 +2342,7 @@ C_Call *actorCFuncList[] = {
 	scriptActorImNotQuiteDead,
 };
 
-CallTable   actorCFuncs = { actorCFuncList, elementsof(actorCFuncList), 0 };
+CallTable   actorCFuncs = { actorCFuncList, ARRAYSIZE(actorCFuncList), 0 };
 
 //-----------------------------------------------------------------------
 //	Return the id of this TAI
@@ -2615,7 +2615,7 @@ C_Call *tagCFuncList[] = {
 	scriptTagReleaseLock,
 };
 
-CallTable   tagCFuncs = { tagCFuncList, elementsof(tagCFuncList), 0 };
+CallTable   tagCFuncs = { tagCFuncList, ARRAYSIZE(tagCFuncList), 0 };
 
 //-----------------------------------------------------------------------
 //	Find a mission by generator id
@@ -2696,7 +2696,7 @@ C_Call *missionCFuncList[] = {
 	scriptMissionMakeActor,
 };
 
-CallTable   missionCFuncs = { missionCFuncList, elementsof(missionCFuncList), 0 };
+CallTable   missionCFuncs = { missionCFuncList, ARRAYSIZE(missionCFuncList), 0 };
 
 //-----------------------------------------------------------------------
 //	Global functions
@@ -4014,6 +4014,6 @@ C_Call *globalCFuncList[] = {
 	scriptBigMul,
 };
 
-CallTable   globalCFuncs = { globalCFuncList, elementsof(globalCFuncList), 0 };
+CallTable   globalCFuncs = { globalCFuncList, ARRAYSIZE(globalCFuncList), 0 };
 
 } // end of namespace Saga2

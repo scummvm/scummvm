@@ -510,7 +510,7 @@ void PlayerActor::handleAttacked(void) {
 //	Return a pointer to a PlayerActor given it's ID
 
 PlayerActor *getPlayerActorAddress(PlayerActorID id) {
-	assert(id >= 0 && id < elementsof(playerList));
+	assert(id >= 0 && id < ARRAYSIZE(playerList));
 
 	return &playerList[id];
 }

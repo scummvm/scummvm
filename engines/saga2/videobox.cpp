@@ -137,7 +137,7 @@ void CVideoBox::init(void) {
 
 	// get the decorations for this window
 	setDecorations(vidDec,
-	               elementsof(vidDec),
+	               ARRAYSIZE(vidDec),
 	               decRes,
 	               'V', 'B', 'D');
 

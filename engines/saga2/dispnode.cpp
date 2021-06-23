@@ -501,7 +501,7 @@ void DisplayNode::drawObject(void) {
 			buildColorTable(
 			    mainColors,
 			    bubbleColorTable,
-			    elementsof(bubbleColorTable));
+			    ARRAYSIZE(bubbleColorTable));
 
 			if (a->kludgeCount < 0 || ++a->kludgeCount >= bubbleSpriteCount)
 				a->kludgeCount = 0;

@@ -572,7 +572,7 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	appearanceLRU.push_back(this);
 
 	//  Load in additional sprite banks if requested...
-	for (bank = 0; bank < (long)elementsof(spriteBanks); bank++) {
+	for (bank = 0; bank < (long)ARRAYSIZE(spriteBanks); bank++) {
 		//  Load the sprite handle...
 		if (spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank))) {
 			Common::SeekableReadStream *stream = loadResourceToStream(spriteRes, id + MKTAG(0, 0, 0, bank), "sprite bank");
@@ -666,7 +666,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	}
 
 	//  Dump the sprites being stored
-	for (bank = 0; bank < (long)elementsof(aa->spriteBanks); bank++) {
+	for (bank = 0; bank < (long)ARRAYSIZE(aa->spriteBanks); bank++) {
 		if (aa->spriteBanks[bank])
 			delete aa->spriteBanks[bank];
 		aa->spriteBanks[bank] = nullptr;
@@ -845,7 +845,7 @@ void initSprites(void) {
 	initQuickMem(0x10000);
 
 	//  Initialize actor appearance table
-	for (i = 0; i < elementsof(appearanceTable); i++) {
+	for (i = 0; i < ARRAYSIZE(appearanceTable); i++) {
 		ActorAppearance *aa = &appearanceTable[i];
 
 		aa->useCount = 0;

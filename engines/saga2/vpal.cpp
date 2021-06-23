@@ -247,7 +247,7 @@ void createPalette(
 	int             i;
 	uint32          fadeProgress = (elapsedTime << 8) / totalTime_;
 
-	for (i = 0; i < (long)elementsof(newP->entry); i++) {
+	for (i = 0; i < (long)ARRAYSIZE(newP->entry); i++) {
 		gPaletteEntry   *srcPal = &srcP->entry[i];
 		gPaletteEntry   *dstPal = &dstP->entry[i];
 		gPaletteEntry   *curPal = &newP->entry[i];

@@ -482,7 +482,7 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 	int16       i;
 	bool        objIsActor = isActor(getObject());
 
-	for (i = 0; i < (long)elementsof(playerActorIDs); i++) {
+	for (i = 0; i < (long)ARRAYSIZE(playerActorIDs); i++) {
 		Actor   *protag =
 		    getPlayerActorAddress(playerActorIDs[i])->getActor();
 

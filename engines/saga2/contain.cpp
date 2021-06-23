@@ -1241,7 +1241,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 	if (deathFlag) {
 		// set the decorations for this window
 		setDecorations(deathDecorations,
-		               elementsof(deathDecorations),
+		               ARRAYSIZE(deathDecorations),
 		               containerRes, 'F', 'R', 'M');
 		massWeightIndicator = NULL;
 	} else {
@@ -1258,7 +1258,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 
 		// set the decorations for this window
 		setDecorations(winDecs[bgndType],
-		               elementsof(brassDecorations),    // brass was arb, all should have same
+		               ARRAYSIZE(brassDecorations),    // brass was arb, all should have same
 		               containerRes, 'F', 'R', 'M');
 
 		// set the userdata such that we can extract the container object later
@@ -1343,7 +1343,7 @@ IntangibleContainerWindow::IntangibleContainerWindow(
 
 	// set the decorations for this window
 	setDecorations(mentalDecorations,
-	               elementsof(mentalDecorations),
+	               ARRAYSIZE(mentalDecorations),
 	               containerRes, 'F', 'R', 'M');
 
 	setMindContainer(nd.mindType, *this);
@@ -1928,7 +1928,7 @@ void setMindContainer(int index, IntangibleContainerWindow &cw) {
 	ObjectID        id;
 
 	assert(index >= 0);
-	assert(index < elementsof(classTable));
+	assert(index < ARRAYSIZE(classTable));
 
 	int             containerClass = classTable[index];
 

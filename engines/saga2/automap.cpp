@@ -551,7 +551,7 @@ int16 openAutoMap() {
 	scrollBtn = new gCompButton(*pAutoMap, scrollBtnRect, scrollBtnImage, numBtnImages, 0, cmdAutoMapScroll);
 
 	pAutoMap->setDecorations(autoMapDecorations,
-	                         elementsof(autoMapDecorations),
+	                         ARRAYSIZE(autoMapDecorations),
 	                         decRes, 'M', 'A', 'P');
 
 	// attach the structure to the book

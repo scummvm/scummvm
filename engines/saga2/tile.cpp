@@ -984,7 +984,7 @@ static TileActivityTaskList &aTaskList =
 //	Constructor
 
 TileActivityTaskList::TileActivityTaskList(void) {
-	for (uint i = 0; i < elementsof(array); i++) {
+	for (uint i = 0; i < ARRAYSIZE(array); i++) {
 		free.addTail(array[i]);
 	}
 }
@@ -997,7 +997,7 @@ TileActivityTaskList::TileActivityTaskList(void **buf) {
 
 	int16       taskCount;
 
-	for (uint i = 0; i < elementsof(array); i++) {
+	for (uint i = 0; i < ARRAYSIZE(array); i++) {
 		free.addTail(array[i]);
 	}
 
@@ -2481,7 +2481,7 @@ void WorldMapData::buildInstanceHash(void) {
 		if (ai->_data.itemType == activeTypeInstance) {
 			hashVal = (((ai->_data.instance.u + ai->_data.instance.h) << 4)
 			           + ai->_data.instance.v + (ai->_data.instance.groupID << 2))
-			          % elementsof(instHash);
+			          % ARRAYSIZE(instHash);
 
 			itemHash.setVal(hashVal, ai);
 		}
@@ -2496,7 +2496,7 @@ ActiveItem *WorldMapData::findHashedInstance(
     TilePoint &tp,
     int16 group) {
 	int16           hashVal = (((tp.u + tp.z) << 4) + tp.v + (group << 2))
-	                          % elementsof(instHash);
+	                          % ARRAYSIZE(instHash);
 
 	if (itemHash.contains(hashVal))
 		return itemHash.getVal(hashVal);
@@ -2865,7 +2865,7 @@ void buildRipTables(void) {
 	int16       tableIndex;
 
 	//  bit array of available rip tables
-	uint8       tableAvail[(elementsof(ripTableList) + 7) >> 3];
+	uint8       tableAvail[(ARRAYSIZE(ripTableList) + 7) >> 3];
 
 	memset(tableAvail, 0xFF, sizeof(tableAvail));
 
@@ -2899,7 +2899,7 @@ void buildRipTables(void) {
 
 		uint j;
 		//  Find available table
-		for (j = 0; j < elementsof(ripTableList); j++) {
+		for (j = 0; j < ARRAYSIZE(ripTableList); j++) {
 			if (tableAvail[j >> 3] & (1 << (j & 0x7)))
 				break;
 		}
