@@ -23,6 +23,9 @@
 #include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
+
 namespace DreamWeb {
 
 
@@ -144,6 +147,9 @@ void DreamWebEngine::useRoutine() {
 	if (findNextColon(&obText) != 0) {
 		if (findNextColon(&obText) != 0) {
 			if (*obText != 0) {
+				if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+					_ttsMan->say((const char *)obText, Common::TextToSpeechManager::INTERRUPT);
+				}
 				useText(obText);
 				hangOnP(400);
 				putBackObStuff();

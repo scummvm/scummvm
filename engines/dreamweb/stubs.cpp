@@ -2371,6 +2371,8 @@ void DreamWebEngine::describeOb() {
 		useCharsetIcons1();
 
 	printDirect(&obText, 33, &y, 241, 241 & 1);
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+		_ttsMan->say((const char *)obText);
 
 	if (getLanguage() == Common::RU_RUS)
 		resetCharset();
