@@ -482,6 +482,42 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSetPositionCmd:
 		if ((_firstVisibleItem / _itemsPerRow) != (int)data) {
+			_scrollPos = -data * (_gridItemHeight + _gridYSpacing);
+			_firstVisibleItem = data * _itemsPerRow;
+			if (calcVisibleEntries()) {
+				reloadThumbnails();
+			}
+			
+			int row = 0;
+			int col = 0;
+
+			for (auto it = _gridItems.begin(); it != _gridItems.end(); ++it) {
+				(*it)->setPos(50 + col * (_gridItemWidth + _gridXSpacing), 
+							(_scrollPos % (_gridItemHeight + _gridYSpacing)) + 50 + (row - 1) * (_gridItemHeight + _gridYSpacing));
+				if (++col >= _itemsPerRow) {
+					++row;
+					col = 0;
+				}
+			}
+
+			auto entry = _visibleEntries.begin();
+			auto it = _gridItems.begin() + _itemsPerRow;
+
+			for (int k = 0; k < _itemsOnScreen; ++k) {
+				GridItemWidget *item = *it;
+				if (entry != _visibleEntries.end()) {
+					item->setActiveEntry(*entry);
+					item->update();
+					item->setVisible(true);
+					++entry;
+				} else {
+					item->setActiveEntry(_visibleEntries.front());
+					item->update();
+					item->setVisible(false);
+				}
+				if (++it == _gridItems.end())
+					it = _gridItems.begin();
+			}
 			markAsDirty();
 
 			((GUI::Dialog *)_boss)->setFocusWidget(this);
@@ -572,11 +608,13 @@ void GridWidget::openTray(int x, int y, int w, int h, int entryId) {
 }
 
 void GridWidget::scrollBarRecalc() {
-	// HACK: Our grid scrolls some distance past the last element.
-	// 	2 is an experimental value and might not work on all window sizes.
-	_scrollBar->_numEntries = _rows + 2;
-	_scrollBar->_entriesPerPage = _itemsOnScreen / _itemsPerRow;
+	int old_pos = _scrollBar->_currentPos;
+	
+	_scrollBar->_numEntries = _rows;
+	_scrollBar->_entriesPerPage = _scrollWindowHeight / (_gridItemHeight + _gridYSpacing);
 	_scrollBar->_currentPos = _firstVisibleItem / _itemsPerRow;
+	
+	_scrollBar->checkBounds(old_pos);
 	_scrollBar->recalc();
 }
 
