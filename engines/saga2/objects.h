@@ -183,7 +183,6 @@ protected:
 	void remove(void);                   // removes from old list
 	void append(ObjectID newParent);         // adds to new list (no remove)
 	void insert(ObjectID newPrev);           // inserts after this item (no remove)
-	void protoAddressToOffset(void);         // converts proto address to offset in resource file
 
 	ProtoObj        *prototype;             // object that defines our behavior
 public:
