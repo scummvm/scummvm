@@ -69,13 +69,6 @@ void gMousePointer::draw(void) {
 
 //  Private routine to restore the mouse pointer image
 void gMousePointer::restore(void) {
-#if     defined( USEWINDOWS )
-	if (useWinCursor)
-		return;
-#endif
-
-	enum draw_modes saveMode = videoPort->drawMode; // current drawing mode
-
 	if (shown) {
 		//  blit from the saved map to the current position.
 

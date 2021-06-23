@@ -718,16 +718,13 @@ void DisplayNode::drawObject(void) {
 			//  If we were carrying something in the left hand,
 			//  then fill in the component structure for it.
 			if (leftIndex >= 0) {
-				GameObject          *ob;
-				ProtoObj            *proto;
-
-				ob = GameObject::objectAddress(a->leftHandObject);
-				proto = ob->proto();
+				GameObject *ob = GameObject::objectAddress(a->leftHandObject);
+				ProtoObj *prot = ob->proto();
 
 				ob->getColorTranslation(leftColors);
 
 				sc = &scList[leftIndex];
-				sc->sp =    proto->getOrientedSprite(
+				sc->sp =    prot->getOrientedSprite(
 				                ob,
 				                a->poseInfo.leftObjectIndex);
 				assert(sc->sp != NULL);
