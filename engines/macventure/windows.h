@@ -99,9 +99,15 @@ struct BorderBounds {
 	uint16 topOffset;
 	uint16 rightOffset;
 	uint16 bottomOffset;
-
+	uint16 rightScrollbarWidth;
+	uint16 bottomScrollbarHeight;
+	
 	BorderBounds(uint16 l, uint16 t, uint16 r, uint16 b) :
-	leftOffset(l), topOffset(t), rightOffset(r), bottomOffset(b) {}
+	leftOffset(l), topOffset(t), rightOffset(r), bottomOffset(b), rightScrollbarWidth(0), bottomScrollbarHeight(0) {}
+
+	BorderBounds(uint16 l, uint16 t, uint16 r, uint16 b, uint16 rs, uint16 bs) :
+	leftOffset(l), topOffset(t), rightOffset(r), bottomOffset(b), rightScrollbarWidth(rs), bottomScrollbarHeight(bs) {}
+
 };
 }
 #endif
