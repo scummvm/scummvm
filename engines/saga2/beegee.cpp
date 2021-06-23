@@ -256,7 +256,7 @@ void audioEnvironmentUseSet(int16 audioSet, int32 auxID, Point32 relPos) {
 		res = metaNoiseID(audioSet);
 	else
 		res = 0;
-	if (currentTheme != audioSet || auxTheme != auxID) {
+	if (currentTheme != (uint16)audioSet || auxTheme != (uint32)auxID) {
 		currentTheme = audioSet;
 		auxTheme = auxID;
 		themeAt = relPos;

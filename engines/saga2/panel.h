@@ -133,11 +133,11 @@ protected:
 	gWindow         &window;                // window this belongs to
 	Rect16          extent;                 // rectangular bounds of the control
 	const char      *title;                 // title of the panel
-	int             enabled : 1,            // allows disabling the panel
-	                selected : 1,           // some panels have a selected state
-	                imageLabel : 1,         // button label is image, not text
-	                ghosted : 1,            // button is dimmed
-	                wantMousePoll : 1;      // send mousemoves even if mouse not moving!
+	int             enabled,            // allows disabling the panel
+	                selected,           // some panels have a selected state
+	                imageLabel,         // button label is image, not text
+	                ghosted,            // button is dimmed
+	                wantMousePoll;      // send mousemoves even if mouse not moving!
 
 	// window constructor
 	gPanel(gWindow &, const Rect16 &, AppFunc *cmd);
