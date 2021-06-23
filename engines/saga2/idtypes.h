@@ -29,6 +29,11 @@
 
 namespace Saga2 {
 
+#define FTA
+
+typedef uint32      ChunkID;
+#define MakeID(a,b,c,d) ((d<<24L)|(c<<16L)|(b<<8L)|a)
+
 /* ===================================================================== *
    ObjectID
  * ===================================================================== */
@@ -226,6 +231,17 @@ typedef uint16 weaponID;
 typedef uint32 hResID;
 
 typedef uint8       ColorTable[256];
+
+#ifndef offsetof
+#define offsetof(type,field) (uint32)&(((type *)0)->field)
+#endif
+
+#define maxuint8 0xff
+#define maxint16 0x7fff
+#define minint16 0x8000
+#define maxuint16 0xffff
+#define maxint32 0x7fffffff
+
 
 // number of containers
 const int   kNumViews    = 3;

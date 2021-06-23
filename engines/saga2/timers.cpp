@@ -28,7 +28,7 @@
 
 #include "common/timer.h"
 
-#include "saga2/std.h"
+#include "saga2/saga2.h"
 #include "saga2/fta.h"
 #include "saga2/timers.h"
 #include "saga2/objects.h"

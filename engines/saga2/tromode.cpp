@@ -26,7 +26,7 @@
 
 #include "common/config-manager.h"
 
-#include "saga2/std.h"
+#include "saga2/saga2.h"
 #include "saga2/fta.h"
 #include "saga2/player.h"
 #include "saga2/display.h"

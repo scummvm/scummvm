@@ -24,7 +24,7 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#include "saga2/std.h"
+#include "saga2/saga2.h"
 #include "saga2/towerwin.h"
 #include "saga2/towerfta.h"
 #include "saga2/fta.h"

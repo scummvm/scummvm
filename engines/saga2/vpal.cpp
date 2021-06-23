@@ -29,7 +29,7 @@
 #include "common/debug.h"
 #include "graphics/palette.h"
 
-#include "saga2/std.h"
+#include "saga2/saga2.h"
 #include "saga2/fta.h"
 #include "saga2/vpal.h"
 #include "saga2/palette.h"
