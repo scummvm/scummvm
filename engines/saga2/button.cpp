@@ -297,7 +297,7 @@ void gCompImage::drawClipped(gPort &port,
 				textRect.x -= offset.x;
 				textRect.y -= offset.y;
 
-				writePlaqText(port, textRect, textFont, NULL, textPal, selected, title);
+				writePlaqText(port, textRect, textFont, 0, textPal, selected, title);
 			}
 		}
 	}

@@ -176,8 +176,8 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 		fail = true;
 	}
 
-#if DEBUGPACK
 	if (fail) {
+#if DEBUGPACK
 		Graphics::Surface surf;
 		surf.w = map->size.x;
 		surf.h = map->size.y;
@@ -187,8 +187,8 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 		surf.setPixels(map->data);
 
 		surf.debugPrint();
-	}
 #endif
+	}
 }
 
 void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData, bool mask) {
