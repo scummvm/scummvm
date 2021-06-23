@@ -498,7 +498,7 @@ void LB::b_charToNum(int nargs) {
 }
 
 void LB::b_delete(int nargs) {
-	Datum d = g_lingo->pop(false);
+	Datum d = g_lingo->pop();
 
 	Datum field;
 	int start, end;
@@ -549,7 +549,7 @@ void LB::b_delete(int nargs) {
 }
 
 void LB::b_hilite(int nargs) {
-	Datum d = g_lingo->pop(false);
+	Datum d = g_lingo->pop();
 
 	int fieldId, start, end;
 	if (d.isCastRef()) {

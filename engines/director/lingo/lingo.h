@@ -374,8 +374,8 @@ public:
 
 public:
 	void push(Datum d);
-	Datum pop(bool eval = true);
-	Datum peek(uint offset, bool eval = true);
+	Datum pop();
+	Datum peek(uint offset);
 
 public:
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;

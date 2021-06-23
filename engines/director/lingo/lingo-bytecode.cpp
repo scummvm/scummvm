@@ -406,7 +406,7 @@ void LC::cb_localcall() {
 
 void LC::cb_objectcall() {
 	int varType = g_lingo->readInt();
-	Datum varId = g_lingo->pop(false);
+	Datum varId = g_lingo->pop();
 	Datum nargs = g_lingo->pop();
 
 	Datum var = g_lingo->findVarV4(varType, varId);
@@ -436,7 +436,7 @@ void LC::cb_v4assign() {
 	int arg = g_lingo->readInt();
 	int op = (arg >> 4) & 0xF;
 	int varType = arg & 0xF;
-	Datum varId = g_lingo->pop(false);
+	Datum varId = g_lingo->pop();
 
 	Datum var = g_lingo->findVarV4(varType, varId);
 	g_lingo->push(var);

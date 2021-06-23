@@ -188,25 +188,19 @@ void Lingo::pushVoid() {
 	push(d);
 }
 
-Datum Lingo::pop(bool eval) {
+Datum Lingo::pop() {
 	assert (_stack.size() != 0);
 
 	Datum ret = _stack.back();
 	_stack.pop_back();
-	if (eval) {
-		ret = ret.eval();
-	}
 
 	return ret;
 }
 
-Datum Lingo::peek(uint offset, bool eval) {
+Datum Lingo::peek(uint offset) {
 	assert (_stack.size() > offset);
 
 	Datum ret = _stack[_stack.size() - 1 - offset];
-	if (eval) {
-		ret = ret.eval();
-	}
 
 	return ret;
 }
@@ -465,25 +459,25 @@ void LC::c_proprefpush() {
 
 void LC::c_varpush() {
 	LC::c_varrefpush();
-	Datum d = g_lingo->pop(false);
+	Datum d = g_lingo->pop();
 	g_lingo->push(g_lingo->varFetch(d));
 }
 
 void LC::c_globalpush() {
 	LC::c_globalrefpush();
-	Datum d = g_lingo->pop(false);
+	Datum d = g_lingo->pop();
 	g_lingo->push(g_lingo->varFetch(d));
 }
 
 void LC::c_localpush() {
 	LC::c_localrefpush();
-	Datum d = g_lingo->pop(false);
+	Datum d = g_lingo->pop();
 	g_lingo->push(g_lingo->varFetch(d));
 }
 
 void LC::c_proppush() {
 	LC::c_proprefpush();
-	Datum d = g_lingo->pop(false);
+	Datum d = g_lingo->pop();
 	g_lingo->push(g_lingo->varFetch(d));
 }
 
@@ -501,7 +495,7 @@ void LC::c_stackdrop() {
 
 void LC::c_assign() {
 	Datum d1, d2;
-	d1 = g_lingo->pop(false);
+	d1 = g_lingo->pop();
 	d2 = g_lingo->pop();
 
 	g_lingo->varAssign(d1, d2);
@@ -773,7 +767,7 @@ void LC::c_ampersand() {
 }
 
 void LC::c_putbefore() {
-	Datum var = g_lingo->pop(false);
+	Datum var = g_lingo->pop();
 	Datum a = g_lingo->pop();
 	Datum b = g_lingo->varFetch(var);
 
@@ -782,7 +776,7 @@ void LC::c_putbefore() {
 }
 
 void LC::c_putafter() {
-	Datum var = g_lingo->pop(false);
+	Datum var = g_lingo->pop();
 	Datum a = g_lingo->pop();
 	Datum b = g_lingo->varFetch(var);
 
@@ -1026,7 +1020,7 @@ void LC::c_of() {
 }
 
 void LC::c_charToOfRef() {
-	Datum src = g_lingo->pop(false);
+	Datum src = g_lingo->pop();
 	Datum indexTo = g_lingo->pop();
 	Datum indexFrom = g_lingo->pop();
 
@@ -1042,12 +1036,12 @@ void LC::c_charToOfRef() {
 
 void LC::c_charToOf() {
 	LC::c_charToOfRef();
-	Datum ref = g_lingo->pop(false);
+	Datum ref = g_lingo->pop();
 	g_lingo->push(ref.eval());
 }
 
 void LC::c_itemToOfRef() {
-	Datum src = g_lingo->pop(false);
+	Datum src = g_lingo->pop();
 	Datum indexTo = g_lingo->pop();
 	Datum indexFrom = g_lingo->pop();
 
@@ -1063,12 +1057,12 @@ void LC::c_itemToOfRef() {
 
 void LC::c_itemToOf() {
 	LC::c_itemToOfRef();
-	Datum ref = g_lingo->pop(false);
+	Datum ref = g_lingo->pop();
 	g_lingo->push(ref.eval());
 }
 
 void LC::c_lineToOfRef() {
-	Datum src = g_lingo->pop(false);
+	Datum src = g_lingo->pop();
 	Datum indexTo = g_lingo->pop();
 	Datum indexFrom = g_lingo->pop();
 
@@ -1084,12 +1078,12 @@ void LC::c_lineToOfRef() {
 
 void LC::c_lineToOf() {
 	LC::c_lineToOfRef();
-	Datum ref = g_lingo->pop(false);
+	Datum ref = g_lingo->pop();
 	g_lingo->push(ref.eval());
 }
 
 void LC::c_wordToOfRef() {
-	Datum src = g_lingo->pop(false);
+	Datum src = g_lingo->pop();
 	Datum indexTo = g_lingo->pop();
 	Datum indexFrom = g_lingo->pop();
 
@@ -1105,7 +1099,7 @@ void LC::c_wordToOfRef() {
 
 void LC::c_wordToOf() {
 	LC::c_wordToOfRef();
-	Datum ref = g_lingo->pop(false);
+	Datum ref = g_lingo->pop();
 	g_lingo->push(ref.eval());
 }
 
