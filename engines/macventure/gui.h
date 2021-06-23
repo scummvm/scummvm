@@ -61,6 +61,7 @@ class ImageAsset;
 class Dialog;
 
 BorderBounds borderBounds(MVWindowType type);
+Graphics::BorderOffsets borderOffsets(MVWindowType type);
 
 enum MenuAction {
 	kMenuActionAbout,
