@@ -45,7 +45,7 @@ namespace Private {
 
 PrivateEngine *g_private = NULL;
 
-extern int parse(char *);
+extern int parse(const char *);
 
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
@@ -179,15 +179,15 @@ Common::Error PrivateEngine::run() {
 	Decompiler decomp(buf, fileSize, _platform == Common::kPlatformMacintosh);
 	free(buf);
 
-	buf = (char *)decomp.getResult().c_str();
-	debugC(1, kPrivateDebugCode, "code:\n%s", buf);
+	Common::String scripts = decomp.getResult();
+	debugC(1, kPrivateDebugCode, "code:\n%s", scripts.c_str());
 
 	// Initialize stuff
 	Gen::g_vm = new Gen::VM();
 	Settings::g_setts = new Settings::SettingMaps();
 
 	initFuncs();
-	parse(buf);
+	parse(scripts.c_str());
 	delete file;
 	assert(maps.constants.size() > 0);
 

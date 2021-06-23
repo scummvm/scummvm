@@ -2188,7 +2188,7 @@ void yyfree (void * ptr )
 
 namespace Private {
 
-int parse(char *code) {
+int parse(const char *code) {
     g_setts->init();
     YY_BUFFER_STATE bp;
     yy_delete_buffer(YY_CURRENT_BUFFER);
