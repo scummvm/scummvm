@@ -403,6 +403,12 @@ public:
 	void unregisterSource(EventSource *source);
 
 	/**
+	 * Ignore some event sources and don't poll them. This is useful for e.g. the EventRecorder
+	 * where you don't want the other EventSource instances to interfer with the serialized events.
+	 */
+	void ignoreSources(bool ignore);
+
+	/**
 	 * Register a new EventObserver with the Dispatcher.
 	 *
 	 * @param listenPolls If set, then all pollEvent() calls are passed to the observer.
@@ -421,6 +427,7 @@ private:
 
 	struct Entry {
 		bool autoFree;
+		bool ignore;
 	};
 
 	struct SourceEntry : public Entry {
