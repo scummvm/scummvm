@@ -690,7 +690,7 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 // status line class
 CStatusLine::CStatusLine(gPanelList         &list,
                          const Rect16    &box,
-                         char            *msg,
+                         const char            *msg,
                          gFont           *font,
                          int16           textPos,
                          textPallete     &pal,
@@ -896,8 +896,6 @@ void CMassWeightIndicator::recalculate(void) {
 **              weight/bulk control ( so it refreshes )
 **/
 void CMassWeightIndicator::update(void) {
-	CMassWeightIndicator *indNode = nullptr;
-
 	if (bRedraw == true) {
 		for (Common::List<CMassWeightIndicator *>::iterator it = indList.begin(); it != indList.end(); ++it) {
 			(*it)->recalculate();

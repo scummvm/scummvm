@@ -95,7 +95,7 @@ hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 
 	_base = (hResEntry *)((uint8*)_res->_table + entry->offset - _res->_firstGroupOffset);
 	debugC(3, kDebugResources, "- _numEntries = %d, _base = %p, entry->offset = %d",
-	                            _numEntries, _base, entry->offset);
+	                            _numEntries, (void *)_base, entry->offset);
 
 	_valid = true;
 }

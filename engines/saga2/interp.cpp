@@ -73,7 +73,7 @@ int16                   lastExport;
 extern hResource    *scriptResFile;         // script resources
 hResContext         *scriptRes;             // script resource handle
 
-void script_error(char *msg) {
+void script_error(const char *msg) {
 	thisThread->flags |= Thread::aborted;
 	WriteStatusF(0, msg);
 }
@@ -302,7 +302,7 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		return segmentAddress(seg, index) + offset;
 	}
 
-	error("byteAddress: Invalid addressing mode: %d.\n", *pcPtr);
+	error("byteAddress: Invalid addressing mode: %d.\n", **pcPtr);
 }
 
 //  Returns the address of an object given an addressing mode
@@ -376,7 +376,7 @@ uint8 *objectAddress(
 		break;
 
 	default:
-		error("objectAddress: Invalid addressing mode: %d.\n", *pcPtr);
+		error("objectAddress: Invalid addressing mode: %d.\n", **pcPtr);
 	}
 
 	offs = index;
@@ -443,7 +443,7 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 		error("Addressing relative to 'this' not supported just yet.\n");
 
 	}
-	error("bitAddress: Invalid addressing mode: %d.\n", *pcPtr);
+	error("bitAddress: Invalid addressing mode: %d.\n", **pcPtr);
 }
 
 //  Returns the address of a string
@@ -577,7 +577,8 @@ bool Thread::interpret(void) {
 		switch (op = *pc++) {
 		case op_dup:
 			D_OP(op_dup);
-			*--stack = stack[0];              // duplicate value on stack
+			--stack;
+			*stack = stack[1];              // duplicate value on stack
 			break;
 
 		case op_drop:                           // drop word on stack
@@ -1582,7 +1583,6 @@ void Thread::dispatch(void) {
 	                    numWaitSemi = 0,
 	                    numWaitOther = 0;
 
-#if DEBUG
 	for (th = threadList.first(); th; th = threadList.next(th)) {
 		if (th->flags & waiting) {
 			switch (th->waitType) {
@@ -1604,8 +1604,7 @@ void Thread::dispatch(void) {
 		numThreads++;
 	}
 
-	WriteStatusF(17, "Threads:%d X:%d D:%d F:%d T:%d O:%d", numThreads, numExecute, numWaitDelay, numWaitFrames, numWaitSemi, numWaitOther);
-#endif
+	debugC(2, kDebugScripts, "Threads:%d X:%d D:%d F:%d T:%d O:%d", numThreads, numExecute, numWaitDelay, numWaitFrames, numWaitSemi, numWaitOther);
 
 	for (th = threadList.first(); th; th = nextThread) {
 		nextThread = threadList.next(th);
@@ -1637,6 +1636,8 @@ void Thread::dispatch(void) {
 					th->flags &= ~waiting;
 					((ActiveItem *)th->waitParam)->setExclusive(true);
 				}
+				break;
+			default:
 				break;
 			}
 		}

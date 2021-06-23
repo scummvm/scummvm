@@ -37,8 +37,7 @@
 
 namespace Saga2 {
 
-const uint32            imageGroupID = MKTAG('I', 'M', 'A', 'G'),
-                        borderID    = MKTAG('B', 'R', 'D',  0);
+const uint32            imageGroupID = MKTAG('I', 'M', 'A', 'G');
 
 const int defaultStatusWait = 15;
 

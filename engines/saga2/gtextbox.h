@@ -26,6 +26,7 @@
 
 #ifndef SAGA2_GTEXTBOX_H
 #define SAGA2_GTEXTBOX_H
+
 namespace Saga2 {
 
 enum textBoxFlags {
@@ -65,7 +66,6 @@ class gTextBox : public gControl {
 private:
 
 	char    **fieldStrings;
-	void    *bufRef;
 	char    *undoBuffer;                // undo buffer for editing
 	bool    internalBuffer;
 

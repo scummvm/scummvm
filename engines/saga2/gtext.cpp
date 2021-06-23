@@ -284,12 +284,12 @@ void gPort::drawStringChars(
     gPixelMap       &dest,
     int             xpos,                   // x position to draw it
     int             ypos) {                 // y position to draw it
-	uint8           *s,                     // pointer to string
-	                drawchar;               // char to draw
+	const char     *s;                     // pointer to string
+	uint8           drawchar;               // char to draw
 	int16           x;                      // current x position
 	uint8           *buffer,                // buffer to render to
 	                *uBuffer;               // underline buffer
-	uint16          rowMod = dest.size.x;   // row modulus of dest
+	uint16          drowMod = dest.size.x;  // row modulus of dest
 	int16           i;                      // loop index
 	uint8           underbar = (textStyles & textStyleBar) != 0;
 	bool            underscore;
@@ -299,35 +299,35 @@ void gPort::drawStringChars(
 
 	underPos = font->baseLine + 2;
 	if (underPos > font->height) underPos = font->height;
-	buffer = dest.data + (ypos * rowMod);
-	uBuffer = buffer + (underPos * rowMod);
+	buffer = dest.data + (ypos * drowMod);
+	uBuffer = buffer + (underPos * drowMod);
 
 	// draw drop-shadow, if any
 
 	if (textStyles & textStyleShadow) {
 		x = xpos - 1;
-		s = (uint8 *)str;
+		s = str;
 
 		if (textStyles & textStyleOutline) { // if outlining
 			for (i = 0; i < len; i++) {
 				drawchar = *s++;            // draw thick drop shadow
 				x += font->charKern[drawchar];
-				DrawChar3x3Outline(font, drawchar, x, buffer, shPen, rowMod);
+				DrawChar3x3Outline(font, drawchar, x, buffer, shPen, drowMod);
 				x += font->charSpace[drawchar] + textSpacing;
 			}
 		} else if (textStyles & textStyleThickOutline) { // if outlining
 			for (i = 0; i < len; i++) {
 				drawchar = *s++;                // draw thick drop shadow
 				x += font->charKern[drawchar];
-				DrawChar5x5Outline(font, drawchar, x, buffer, shPen, rowMod);
+				DrawChar5x5Outline(font, drawchar, x, buffer, shPen, drowMod);
 				x += font->charSpace[drawchar] + textSpacing;
 			}
 		} else {
 			for (i = 0; i < len; i++) {
 				drawchar = *s++;            // draw thick drop shadow
 				x += font->charKern[drawchar];
-				DrawChar(font, drawchar, x, buffer + rowMod,
-				         shPen, rowMod);
+				DrawChar(font, drawchar, x, buffer + drowMod,
+				         shPen, drowMod);
 				x += font->charSpace[drawchar] + textSpacing;
 			}
 		}
@@ -337,24 +337,24 @@ void gPort::drawStringChars(
 
 	if (textStyles & textStyleOutline) { // if outlining
 		x = xpos;
-		s = (uint8 *)str;
+		s = str;
 
 		for (i = 0; i < len; i++) {
 			drawchar = *s++;                // draw thick text
 			x += font->charKern[drawchar];
-			DrawChar3x3Outline(font, drawchar, x, buffer - rowMod,
-			                   olPen, rowMod);
+			DrawChar3x3Outline(font, drawchar, x, buffer - drowMod,
+			                   olPen, drowMod);
 			x += font->charSpace[drawchar] + textSpacing;
 		}
 	} else if (textStyles & textStyleThickOutline) { // if thick outlining
 		x = xpos;
-		s = (uint8 *)str;
+		s = str;
 
 		for (i = 0; i < len; i++) {
 			drawchar = *s++;                // draw extra thick text
 			x += font->charKern[drawchar];
-			DrawChar5x5Outline(font, drawchar, x, buffer - rowMod * 2,
-			                   olPen, rowMod);
+			DrawChar5x5Outline(font, drawchar, x, buffer - drowMod * 2,
+			                   olPen, drowMod);
 			x += font->charSpace[drawchar] + textSpacing;
 		}
 	}
@@ -362,7 +362,7 @@ void gPort::drawStringChars(
 	// draw inner part
 
 	x = xpos;
-	s = (uint8 *)str;
+	s = str;
 	underscore = textStyles & textStyleUnderScore ? true : false;
 
 	for (i = 0; i < len; i++) {
@@ -377,7 +377,7 @@ void gPort::drawStringChars(
 			if (textStyles & textStyleHiLiteBar) color = bgPen;
 		}
 		x += font->charKern[drawchar];
-		DrawChar(font, drawchar, x, buffer, color, rowMod);
+		DrawChar(font, drawchar, x, buffer, color, drowMod);
 		x += font->charSpace[drawchar] + textSpacing;
 
 		if (underscore) {               // draw underscore
@@ -453,8 +453,8 @@ int16 gPort::drawClippedString(
 
 	//  Handle special case of negative kern value of 1st character
 
-	if (font->charKern[s[0]] < 0) {
-		int16       kern = - font->charKern[s[0]];
+	if (font->charKern[(byte)s[0]] < 0) {
+		int16       kern = - font->charKern[(byte)s[0]];
 
 		clipWidth += kern;              // increase size of map to render
 		xoff += kern;                   // offset text into map right

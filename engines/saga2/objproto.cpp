@@ -418,15 +418,6 @@ bool ProtoObj::dropOn(
 	assert(target != NULL);
 	assert(isWorld(loc.context));
 
-	int16       scriptResult;
-	/*
-	        //  Handle object script in a standard fashion
-	    if (    ( scriptResult =    stdActionScript(
-	                                    Method_GameObject_onDropOnTAG,
-	                                    dObj, enactor, target ) )
-	                != actionResultNotDone )
-	        return scriptResult == actionResultSuccess;
-	*/
 	return dropOnAction(dObj, enactor, target, loc, num);
 }
 
@@ -627,19 +618,12 @@ bool ProtoObj::acceptHealing(
     int8        perDieMod) {
 	int8 pdm = perDieMod;
 	int16 damage = 0;
-	int16           scriptResult;
 	assert(dObj != Nothing);
 	damage = absDamage;
 	if (dice)
 		for (int d = 0; d < abs(dice); d++)
 			damage += (g_vm->_rnd->getRandomNumber(sides - 1) + pdm + 1) * (dice > 0 ? 1 : -1);
-#if 0
-	if ((scriptResult = stdActionScript(
-	                        Method_GameObject_onAcceptDamage,
-	                        dObj, enactor, Nothing))
-	        != actionResultNotDone)
-		return scriptResult == actionResultSuccess;
-#endif
+
 	return acceptHealingAction(dObj, enactor, damage);
 }
 
@@ -1091,7 +1075,6 @@ bool InventoryProto::dropAction(
 		ProtoObj            *enactorProto = enactorPtr->proto();
 		TilePoint           enactorLoc(enactorPtr->getLocation());
 		TilePoint           vector = loc - enactorLoc;
-		StandingTileInfo    sti;
 		GameObject          *extractedObj = NULL;
 
 		//  Split the merged object if needed.
@@ -1468,13 +1451,9 @@ bool KeyProto::setUseCursor(ObjectID dObj) {
 
 //  Send acceptLockToggle message to container
 bool KeyProto::useOnAction(ObjectID dObj, ObjectID enactor, ObjectID withObj) {
-	GameObject *container = GameObject::objectAddress(withObj),
-	            *thisKey   = GameObject::objectAddress(dObj);
-
-	int16 keyID = thisKey->_data.massCount > 0 ? thisKey->_data.massCount : lockType;
+	GameObject *container = GameObject::objectAddress(withObj);
 
 	if (!container->acceptLockToggle(enactor, lockType)) {
-//		WriteStatusF( 3, "%s doesn't work", thisKey->objName() );
 		return false;
 	}
 
@@ -1580,7 +1559,6 @@ bool MeleeWeaponProto::useAction(ObjectID dObj, ObjectID enactor) {
 		a->holdInRightHand(Nothing);
 	else {
 		GameObject      *leftHandObjectPtr;
-		ProtoObj        *leftHandProto;
 
 		leftHandObjectPtr = a->leftHandObject != Nothing
 		                    ?   GameObject::objectAddress(a->leftHandObject)
@@ -2257,7 +2235,6 @@ bool ArmorProto::useSlotAvailable(GameObject *obj, Actor *a) {
 bool ArmorProto::useAction(ObjectID dObj, ObjectID enactor) {
 	assert(isObject(dObj));
 	assert(isActor(enactor));
-	PlayerActorID   pID;
 
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
 	GameObject  *obj = GameObject::objectAddress(dObj);
@@ -2663,9 +2640,6 @@ uint16 SkillProto::containmentSet(void) {
 }
 
 bool SkillProto::useAction(ObjectID dObj, ObjectID enactor) {
-	//GameObject    *spellPtr = GameObject::objectAddress( dObj );
-	SpellStuff &sp = spellBook[getSpellID()];
-
 	if (nonUsable(this))
 		return false;
 
@@ -3024,27 +2998,21 @@ bool IntangibleContainerProto::canOpen(ObjectID dObj, ObjectID) {
 //  Open a intangible container
 bool IntangibleContainerProto::openAction(ObjectID dObj, ObjectID enactor) {
 	ContainerNode       *cn;
-	GameObject          *dObjPtr = GameObject::objectAddress(dObj);
 
 	//  Perform appropriate opening tasks
 	cn = CreateContainerNode(enactor, false);
 	cn->markForShow();
-//	dObjPtr->_data.objectFlags |= GameObject::objectOpen;          //  Set open bit;
 
 	return true;
 }
 
 bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
-	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
 	ContainerNode   *cn = globalContainerList.find(dObj, ContainerNode::mentalType);
 
 	assert(cn);
 
 	//  Mark container for lazy deletion
 	cn->markForDelete();
-
-	//  Clear open bit
-//	dObjPtr->_data.objectFlags &= ~GameObject::objectOpen;
 
 	return true;
 }

@@ -2364,7 +2364,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		debugC(3, kDebugLoading, "- plIndex: %d", plIndex);
 
 		// Now, load the actual metatile data...
-		if (stream = loadResourceToStream(tileRes, platformID + mapNum, "platform")) {
+		if ((stream = loadResourceToStream(tileRes, platformID + mapNum, "platform"))) {
 			if (stream->skip(plIndex * sizeof(Platform))) {
 				pce->pl.load(stream);
 				return &pce->pl;
@@ -4394,7 +4394,7 @@ void initTileCyclingStates(void) {
 	if (cycleList == nullptr)
 		error("Unable to load tile cycling data");
 
-	if (stream = loadResourceToStream(tileRes, cycleID, "cycle list")) {
+	if ((stream = loadResourceToStream(tileRes, cycleID, "cycle list"))) {
 		for (int i = 0; i < cycleCount; ++i)
 			cycleList[i].load(stream);
 
