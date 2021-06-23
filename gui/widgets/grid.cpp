@@ -435,6 +435,34 @@ void GridWidget::updateGrid() {
 	}
 }
 
+void GridWidget::assignEntriesToItems() {
+	// Assign entries from _visibleEntries to each GridItem in _gridItems
+	auto entry = _visibleEntries.begin();
+	// Start assigning from the second row as the first row is supposed
+	// to be offscreen.
+	auto it = _gridItems.begin() + _itemsPerRow;
+	
+	for (int k = 0; k < _itemsOnScreen; ++k) {
+		GridItemWidget *item = *it;
+		if (entry != _visibleEntries.end()) {
+			// Assign entry and update
+			item->setActiveEntry(*entry);
+			item->update();
+			item->setVisible(true);
+			++entry;
+		} else {
+			// If we run out of visible entries to display.
+			// e.g., scrolled to the very bottom, we make items invisible.
+			item->setActiveEntry(_visibleEntries.front());
+			item->update();
+			item->setVisible(false);
+		}
+
+		if (++it == _gridItems.end())
+			it = _gridItems.begin();
+	}
+}
+
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	int scrollSpeed = -direction*40;
 	bool needsReload = false;
@@ -482,33 +510,7 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	if (needsReload) {
 		calcVisibleEntries();
 		reloadThumbnails();
-		
-		// TODO: Refactor this into a function
-		// Assign entries from _visibleEntries to each GridItem in _gridItems
-		auto entry = _visibleEntries.begin();
-		// Start assigning from the second row as the first row is supposed
-		// to be offscreen.
-		auto it = _gridItems.begin() + _itemsPerRow;
-		
-		for (int k = 0; k < _itemsOnScreen; ++k) {
-			GridItemWidget *item = *it;
-			if (entry != _visibleEntries.end()) {
-				// Assign entry and update
-				item->setActiveEntry(*entry);
-				item->update();
-				item->setVisible(true);
-				++entry;
-			} else {
-				// If we run out of visible entries to display.
-				// i.e., scrolled to the very bottom, we make items invisible.
-				item->setActiveEntry(_visibleEntries.front());
-				item->update();
-				item->setVisible(false);
-			}
-
-			if (++it == _gridItems.end())
-				it = _gridItems.begin();
-		}
+		assignEntriesToItems();
 	}
 
 	_scrollBar->_currentPos = _firstVisibleItem / _itemsPerRow;
@@ -540,24 +542,7 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 				}
 			}
 
-			auto entry = _visibleEntries.begin();
-			auto it = _gridItems.begin() + _itemsPerRow;
-
-			for (int k = 0; k < _itemsOnScreen; ++k) {
-				GridItemWidget *item = *it;
-				if (entry != _visibleEntries.end()) {
-					item->setActiveEntry(*entry);
-					item->update();
-					item->setVisible(true);
-					++entry;
-				} else {
-					item->setActiveEntry(_visibleEntries.front());
-					item->update();
-					item->setVisible(false);
-				}
-				if (++it == _gridItems.end())
-					it = _gridItems.begin();
-			}
+			assignEntriesToItems();
 			markAsDirty();
 
 			((GUI::Dialog *)_boss)->setFocusWidget(this);
@@ -614,28 +599,7 @@ void GridWidget::reflowLayout() {
 		}
 	}
 
-	// This assignment method is same while scrolling or resizing
-	// TODO: Refactor this into a function
-
-	auto entry = _visibleEntries.begin();
-	auto it = _gridItems.begin() + _itemsPerRow;
-
-	for (int k = 0; k < _itemsOnScreen; ++k) {
-		GridItemWidget *item = *it;
-		if (entry != _visibleEntries.end()) {
-			item->setActiveEntry(*entry);
-			item->update();
-			item->setVisible(true);
-			++entry;
-		} else {
-			item->setActiveEntry(_visibleEntries.front());
-			item->update();
-			item->setVisible(false);
-		}
-		if (++it == _gridItems.end())
-			it = _gridItems.begin();
-	}
-
+	assignEntriesToItems();
 	scrollBarRecalc();
 	markAsDirty();
 }
