@@ -684,16 +684,6 @@ void TileModeSetup(void) {
 
 	lastUpdateTime = gameTime;
 
-#if DEBUG*0
-	debugMap.size.x = 64;
-	debugMap.size.y = 200;
-
-	debugMap.data = (uint8 *)RNewPtr(debugMap.bytes(), NULL);
-	if (debugMap.data == NULL) {
-		fatal("Unable to allocate memory for debug map\n");
-	}
-#endif
-
 	setCurrentWorld(WorldBaseID);
 	setCurrentMap(currentWorld->mapNum);
 }

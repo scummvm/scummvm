@@ -55,7 +55,7 @@ CImageNode::CImageNode(hResContext *con, uint32 resID) {
 
 CImageNode::~CImageNode(void) {
 	if (image) {
-		RDisposePtr(image);
+		free(image);
 		image = NULL;
 	}
 }

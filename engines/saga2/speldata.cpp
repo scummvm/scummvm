@@ -227,7 +227,7 @@ static void loadMagicData(void) {
 		spellBook[rsi->spell].setupFromResource(rsi);
 		SpellDisplayPrototypeList::sdpList.add(new SpellDisplayPrototype(rsi));
 
-		RDisposePtr(rsi);
+		free(rsi);
 		i++;
 	}
 	assert(i > 1);
@@ -248,7 +248,7 @@ static void loadMagicData(void) {
 		if (rse->spell)
 			spellBook[rse->spell].addEffect(rse);
 
-		RDisposePtr(rse);
+		free(rse);
 		i++;
 	}
 	assert(i > 1);

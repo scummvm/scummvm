@@ -58,8 +58,6 @@ MODULE_OBJS := \
 	property.o \
 	pt2angle.o \
 	rect.o \
-	rmem.o \
-	rserver.o \
 	saga2.o \
 	sagafunc.o \
 	savefile.o \

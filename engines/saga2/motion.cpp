@@ -4973,7 +4973,7 @@ void saveMotionTasks(SaveFileConstructor &saveGame) {
 
 	archiveBufSize = mTaskList.archiveSize();
 
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate motion task archive buffer");
 
@@ -4984,7 +4984,7 @@ void saveMotionTasks(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-----------------------------------------------------------------------
@@ -5000,7 +5000,7 @@ void loadMotionTasks(SaveFileReader &saveGame) {
 	void    *archiveBuffer;
 	void    *bufferPtr;
 
-	archiveBuffer = RNewPtr(saveGame.getChunkSize(), NULL, "archive buffer");
+	archiveBuffer = malloc(saveGame.getChunkSize());
 	if (archiveBuffer == NULL)
 		error("Unable to allocate motion task archive buffer");
 
@@ -5012,7 +5012,7 @@ void loadMotionTasks(SaveFileReader &saveGame) {
 	//  Reconstruct mTaskList from archived data
 	new (&mTaskList) MotionTaskList(&bufferPtr);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-----------------------------------------------------------------------

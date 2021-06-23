@@ -28,7 +28,6 @@
 #define SAGA2_FTA_H
 
 #include "saga2/gpointer.h"
-#include "saga2/rmem.h"
 
 namespace Saga2 {
 
@@ -160,29 +159,11 @@ void WriteStatusF(int16 lin, const char *msg, ...);
 //  File loading
 
 void  *LoadFile(char *filename);             // load file into buffer
-RHANDLE LoadFileToHandle(char *filename);    // load file into relocatable buf
 
 //  Resource loading
 
 void *LoadResource(hResContext *con, uint32 id, const char desc[]);
-RHANDLE LoadResourceToHandle(hResContext *con, uint32 id, const char desc[]);
 Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, const char desc[]);
-
-//  Asynchronous resource loading
-
-void RequestResource(
-    RHANDLE         handle,
-    int32           offset,
-    int32           length,
-    //  Function to notify when request is done.
-    void            *notify = NULL,
-    void            *userData = NULL);
-
-void syncResources(void);
-void *lockResource(RHANDLE h);
-void unlockResource(RHANDLE h);
-
-void loadAsyncResources(void);
 
 //  Directory control
 
@@ -191,7 +172,6 @@ void restoreProgramDir(void);                // chdir() to program directory
 //  Memory allocation
 
 void  *mustAlloc(uint32 size, const char desc[]);                // alloc 'size' bytes or fail
-RHANDLE mustAllocHandle(uint32 size, const char desc[]);         // as above, but relocatable
 
 // Returns Random Number
 
@@ -249,8 +229,6 @@ extern bool         gameRunning;            // true while game running
 
 extern gDisplayPort mainPort;               // main drawing port
 extern gMousePointer pointer;               // the mouse pointer
-
-extern RHeapPtr     gameHeap;               // memory heap for game
 
 extern volatile int32 gameTime;             // current timer
 

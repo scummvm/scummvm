@@ -375,7 +375,7 @@ void saveTaskStacks(SaveFileConstructor &saveGame) {
 
 	archiveBufSize = stackList.archiveSize();
 
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate task stack archive buffer");
 
@@ -386,7 +386,7 @@ void saveTaskStacks(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //----------------------------------------------------------------------
@@ -404,7 +404,7 @@ void loadTaskStacks(SaveFileReader &saveGame) {
 	void    *bufferPtr;
 
 	archiveBufSize = saveGame.getChunkSize();
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate task stack archive buffer");
 
@@ -419,7 +419,7 @@ void loadTaskStacks(SaveFileReader &saveGame) {
 
 	assert(bufferPtr == &((char *)archiveBuffer)[archiveBufSize]);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //----------------------------------------------------------------------
@@ -671,7 +671,7 @@ void saveTasks(SaveFileConstructor &saveGame) {
 
 	archiveBufSize = taskList.archiveSize();
 
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate task archive buffer");
 
@@ -686,7 +686,7 @@ void saveTasks(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //----------------------------------------------------------------------
@@ -704,7 +704,7 @@ void loadTasks(SaveFileReader &saveGame) {
 	void    *bufferPtr;
 
 	archiveBufSize = saveGame.getChunkSize();
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate task archive buffer");
 
@@ -719,7 +719,7 @@ void loadTasks(SaveFileReader &saveGame) {
 
 	assert(bufferPtr == &((char *)archiveBuffer)[archiveBufSize]);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //----------------------------------------------------------------------

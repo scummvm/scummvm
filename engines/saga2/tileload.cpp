@@ -63,8 +63,6 @@ void RHeapsAMess(void);
 
 void freeAllTileBanks(void) {
 	tileImageBanks.flush();
-	tileImageBanks.flush();
-	RHeapsAMess();
 }
 
 void unlockAllTileBanks(void) {

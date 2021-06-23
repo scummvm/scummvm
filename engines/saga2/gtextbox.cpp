@@ -296,8 +296,6 @@ bool gTextBox::insertText(char *newText, int length) {
 	currentLen[index] += (length - selWidth);
 	fieldStrings[index][currentLen[index]] = '\0';
 
-	RMemIntegrity();
-
 	return true;
 }
 
@@ -334,8 +332,6 @@ void gTextBox::setText(char *newText) {
 	cursorPos = anchorPos = 0;
 
 	if (window.isOpen()) drawContents();
-
-	RMemIntegrity();
 }
 
 //-----------------------------------------------------------------------
@@ -996,8 +992,6 @@ void gTextBox::drawContents(void) {
 
 		DisposeTempPort(tPort);              // dispose of temporary pixelmap
 	}
-
-	RMemIntegrity();
 }
 
 //-----------------------------------------------------------------------
@@ -1115,8 +1109,6 @@ void gTextBox::drawAll(gPort &port,
 
 		DisposeTempPort(tempPort);           // dispose of temporary pixelmap
 	}
-
-	RMemIntegrity();
 }
 
 } // end of namespace Saga2
