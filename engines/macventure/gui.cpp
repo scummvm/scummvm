@@ -1491,7 +1491,7 @@ void Gui::selectForDrag(Common::Point cursorPosition) {
 	Graphics::MacWindow *win = findWindow(ref);
 	WindowData &data = findWindowData((WindowReference) ref);
 
-	Common::Rect clickRect = calculateClickRect(cursorPosition + data.scrollPos, win->getDimensions());
+	Common::Rect clickRect = calculateClickRect(cursorPosition + data.scrollPos, win->getInnerDimensions());
 	checkSelect(data, cursorPosition, clickRect, (WindowReference)ref);
 }
 
