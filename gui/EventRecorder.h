@@ -74,7 +74,7 @@ public:
 		kPassthrough = 0,		/**< kPassthrough, do nothing */
 		kRecorderRecord = 1,		/**< kRecorderRecord, do the recording */
 		kRecorderPlayback = 2,		/**< kRecorderPlayback, playback existing recording */
-		kRecorderPlaybackPause = 3	/**< kRecordetPlaybackPause, interal state when user pauses the playback */
+		kRecorderPlaybackPause = 3	/**< kRecordetPlaybackPause, internal state when user pauses the playback */
 	};
 
 	void init(const Common::String &recordFileName, RecordMode mode);
