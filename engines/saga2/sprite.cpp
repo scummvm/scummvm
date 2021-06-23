@@ -786,7 +786,7 @@ SpriteSet::SpriteSet(Common::SeekableReadStream *stream) {
 }
 
 SpriteSet::~SpriteSet() {
-	for (int i = 0; i < count; ++i) {
+	for (uint i = 0; i < count; ++i) {
 		if (_sprites[i])
 			delete _sprites[i];
 	}

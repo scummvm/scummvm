@@ -276,7 +276,7 @@ uint32 volumeTerrain(int16 mapNum, const TileRegion &vol) {
 		}
 	}
 	return terrain;
-};
+}
 
 uint32 volumeTerrain(
     int16 mapNum,
@@ -297,7 +297,7 @@ uint32 volumeTerrain(
 	terrain = volumeTerrain(mapNum, volume);
 
 	return terrain;
-};
+}
 
 uint32 volumeTerrain(
     int16 mapNum,
@@ -345,7 +345,7 @@ uint32 volumeTerrain(
 	terrain = volumeTerrain(mapNum, volume);
 
 	return terrain;
-};
+}
 
 /* ===================================================================== *
    Function to get the terrain info for linear area

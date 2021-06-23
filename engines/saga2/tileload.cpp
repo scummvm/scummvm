@@ -55,8 +55,6 @@ static byte *tileResLoad(hResID i, bool asynch = false) {
 HandleArray tileImageBanks(64, tileResLoad, tileImageID);
 
 void initTileBank(int16 bankNum) {
-	byte *th;
-	th = tileImageBanks[bankNum];
 }
 
 void RHeapsAMess(void);
