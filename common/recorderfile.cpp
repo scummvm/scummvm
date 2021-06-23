@@ -370,6 +370,8 @@ void PlaybackFile::readEvent(RecorderEvent& event) {
 		event.type = (EventType)_tmpPlaybackFile.readUint32LE();
 		switch (event.type) {
 		case EVENT_KEYDOWN:
+			event.kbdRepeat = _tmpPlaybackFile.readByte();
+			// fallthrough
 		case EVENT_KEYUP:
 			event.time = _tmpPlaybackFile.readUint32LE();
 			event.kbd.keycode = (KeyCode)_tmpPlaybackFile.readSint32LE();
@@ -392,6 +394,21 @@ void PlaybackFile::readEvent(RecorderEvent& event) {
 			event.time = _tmpPlaybackFile.readUint32LE();
 			event.mouse.x = _tmpPlaybackFile.readSint16LE();
 			event.mouse.y = _tmpPlaybackFile.readSint16LE();
+			break;
+		case EVENT_CUSTOM_BACKEND_ACTION_START:
+		case EVENT_CUSTOM_BACKEND_ACTION_END:
+		case EVENT_CUSTOM_ENGINE_ACTION_START:
+		case EVENT_CUSTOM_ENGINE_ACTION_END:
+			event.time = _tmpPlaybackFile.readUint32LE();
+			event.customType = _tmpPlaybackFile.readUint32LE();
+			break;
+		case EVENT_JOYAXIS_MOTION:
+		case EVENT_JOYBUTTON_UP:
+		case EVENT_JOYBUTTON_DOWN:
+			event.time = _tmpPlaybackFile.readUint32LE();
+			event.joystick.axis = _tmpPlaybackFile.readByte();
+			event.joystick.button = _tmpPlaybackFile.readByte();
+			event.joystick.position = _tmpPlaybackFile.readSint16LE();
 			break;
 		default:
 			event.time = _tmpPlaybackFile.readUint32LE();
@@ -529,6 +546,8 @@ void PlaybackFile::writeEvent(const RecorderEvent &event) {
 		_tmpRecordFile.writeUint32LE((uint32)event.type);
 		switch(event.type) {
 		case EVENT_KEYDOWN:
+			_tmpRecordFile.writeByte(event.kbdRepeat);
+			// fallthrough
 		case EVENT_KEYUP:
 			_tmpRecordFile.writeUint32LE(event.time);
 			_tmpRecordFile.writeSint32LE(event.kbd.keycode);
@@ -551,6 +570,21 @@ void PlaybackFile::writeEvent(const RecorderEvent &event) {
 			_tmpRecordFile.writeUint32LE(event.time);
 			_tmpRecordFile.writeSint16LE(event.mouse.x);
 			_tmpRecordFile.writeSint16LE(event.mouse.y);
+			break;
+		case EVENT_CUSTOM_BACKEND_ACTION_START:
+		case EVENT_CUSTOM_BACKEND_ACTION_END:
+		case EVENT_CUSTOM_ENGINE_ACTION_START:
+		case EVENT_CUSTOM_ENGINE_ACTION_END:
+			_tmpRecordFile.writeUint32LE(event.time);
+			_tmpRecordFile.writeUint32LE(event.customType);
+			break;
+		case EVENT_JOYAXIS_MOTION:
+		case EVENT_JOYBUTTON_UP:
+		case EVENT_JOYBUTTON_DOWN:
+			_tmpRecordFile.writeUint32LE(event.time);
+			_tmpRecordFile.writeByte(event.joystick.axis);
+			_tmpRecordFile.writeByte(event.joystick.button);
+			_tmpRecordFile.writeSint16LE(event.joystick.position);
 			break;
 		default:
 			_tmpRecordFile.writeUint32LE(event.time);
