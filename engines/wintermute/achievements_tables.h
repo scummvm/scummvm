@@ -30,7 +30,9 @@ namespace Wintermute {
 static const Common::AchievementDescriptionList achievementDescriptionList[] = {
 	{"alphapolaris", Common::STEAM_ACHIEVEMENTS, "405780"},
 	{"carolreed10", Common::STEAM_ACHIEVEMENTS, "337130"},
+	{"carolreed10", Common::UNK_ACHIEVEMENTS, "337130"},
 	{"carolreed11", Common::STEAM_ACHIEVEMENTS, "340370"},
+	{"carolreed11", Common::UNK_ACHIEVEMENTS, "340370"},
 	{"corrosion", Common::STEAM_ACHIEVEMENTS, "349140"},
 	{"drdoylemotch", Common::STEAM_ACHIEVEMENTS, "574420"},
 	{"erinmyers", Common::STEAM_ACHIEVEMENTS, "1064660"},
