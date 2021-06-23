@@ -874,14 +874,11 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 	// This function returns a reference to the source text, the start index of the first chunk,
 	// and the end index of the last chunk in the chunk expression.
 
-	if (0 > endChunk && endChunk < startChunk)
-		return src;
-
 	// startChunk == -30000 means return the last chunk
 	if (startChunk < 1 && startChunk != -30000)
 		return src;
 
-	if (endChunk < 1)
+	if (endChunk < 1 || startChunk == -30000)
 		endChunk = startChunk;
 
 	Common::String str = src.eval().asString();
