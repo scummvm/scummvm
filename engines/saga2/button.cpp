@@ -189,13 +189,13 @@ gCompImage::~gCompImage(void) {
 	// if we LoadRes'ed image internally RDispose those
 	if (internalAlloc) {
 		for (int16 i = 0; i < numPtrAlloc; i++) {
-			RDisposePtr(compImages[i]);
+			free(compImages[i]);
 		}
 	}
 
 	// delete any pointer arrays new'ed
 	if (numPtrAlloc > 0) {
-		delete compImages;
+		free(compImages);
 	}
 }
 
@@ -334,7 +334,7 @@ void gSpriteImage::drawClipped(gPort &port,
 	//map.size = Point16( extent.height, extent.width );
 	map.size = sprPtr->size;
 
-	map.data = (uint8 *)RNewPtr(map.bytes(), NULL, "gcomp image sprite decompression map");
+	map.data = (uint8 *)malloc(map.bytes() * sizeof(uint8));
 	if (map.data == NULL) return;
 
 	memset(map.data, 0, map.bytes());
@@ -347,7 +347,7 @@ void gSpriteImage::drawClipped(gPort &port,
 	               extent.x - offset.x, extent.y - offset.y,
 	               map.size.x, map.size.y);
 
-	RDisposePtr(map.data);
+	free(map.data);
 }
 
 /* ===================================================================== *
@@ -482,17 +482,17 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void *image, uint1
 gCompButton::~gCompButton(void) {
 	if (internalAlloc) {
 		if (forImage) {
-			RDisposePtr(forImage);
+			free(forImage);
 			forImage = NULL;
 		}
 
 		if (resImage) {
-			RDisposePtr(resImage);
+			free(resImage);
 			resImage = NULL;
 		}
 
 		if (dimImage) {
-			RDisposePtr(dimImage);
+			free(dimImage);
 			dimImage = NULL;
 		}
 	}
@@ -750,11 +750,11 @@ gMultCompButton::~gMultCompButton(void) {
 	if (images && internalAlloc) {
 		for (i = 0; i <= max; i++) {
 			if (images[i]) {
-				RDisposePtr(images[i]);
+				free(images[i]);
 			}
 		}
 
-		delete images;
+		free(images);
 		images = NULL;
 	}
 }
