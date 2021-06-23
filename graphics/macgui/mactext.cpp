@@ -208,7 +208,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 	_plainByteMode = false;
 
 	if (font) {
-		_defaultFormatting = MacFontRun(_wm, font, 0, font->getFontHeight() + 1, 0, 0, 0);
+		_defaultFormatting = MacFontRun(_wm, font, 0, font->getFontHeight(), 0, 0, 0);
 		_defaultFormatting.font = font;
 	} else {
 		_defaultFormatting.font = NULL;
@@ -730,7 +730,6 @@ void MacText::render(int from, int to) {
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
 
-			//TODO: There might be a vertical alignment setting somewhere for differing font sizes in a single row?
 			int yOffset = 0;
 			if (_textLines[i].chunks[j].font->getFontAscent() < maxAscentForRow) {
 				yOffset = maxAscentForRow -_textLines[i].chunks[j].font->getFontAscent();
@@ -792,7 +791,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 			hastext = true;
 		}
 
-		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight() + 1);
+		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight());
 	}
 
 	if (!hastext && _textLines.size() > 1)
@@ -953,7 +952,7 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 void MacText::appendText(const Common::U32String &str, const Font *font, uint16 r, uint16 g, uint16 b, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
-	MacFontRun fontRun = MacFontRun(_wm, font, 0, font->getFontHeight() + 1, r, g, b);
+	MacFontRun fontRun = MacFontRun(_wm, font, 0, font->getFontHeight(), r, g, b);
 
 	_currentFormatting = fontRun;
 
@@ -1346,7 +1345,7 @@ void MacText::setSelection(int pos, bool start) {
 		if (_textMaxWidth == 0)
 			colX = 0;
 		else
-			colX = _surface->w;
+			colX = _textMaxWidth;
 	}
 
 	int rowY = _textLines[row].y;
