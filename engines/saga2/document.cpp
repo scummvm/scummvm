@@ -518,7 +518,7 @@ bool CDocument::checkForPageBreak(char *string, uint16 index, int32 &offset) {
 	        strIndex[2] == dPageBreak[1]) {
 		// eat the page breaks chars
 		// tie off the end
-		strIndex[0] = NULL;
+		strIndex[0] = 0;
 
 		// string them together
 		strcat(&strIndex[0], &strIndex[2 + 1]);
@@ -566,7 +566,7 @@ bool CDocument::checkForImage(char      *string,
 			// if the last entry is defined as a number
 			if (argv[7] == ':') {
 				// convert the text into a number
-				char    numSt[2]  = { argv[8], NULL };
+				char    numSt[2]  = { argv[8], 0 };
 				uint8   num         = atoi(numSt);
 
 
@@ -592,7 +592,7 @@ bool CDocument::checkForImage(char      *string,
 		    ((ImageHeader *)images[offPageIndex])->size;
 
 		// tie off the end
-		strIndex[0] = NULL;
+		strIndex[0] = 0;
 
 		// and string them together
 		strcat(&strIndex[0], &strIndex[2 + 1 + numEat]);
@@ -858,7 +858,7 @@ char            bookText[textSize] = { "" };
 void appendBookText(char *string) {
 	if (string) {
 		strncat(bookText, string, textSize - 1);
-		bookText[textSize - 1] = NULL;
+		bookText[textSize - 1] = 0;
 	}
 }
 

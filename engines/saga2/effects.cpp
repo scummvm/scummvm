@@ -205,7 +205,7 @@ void ProtoDrainage::implement(GameObject *cst, SpellTarget *trg, int8) {
 // enchant something based on an enchantment proto-effect
 
 bool ProtoEnchantment::realSavingThrow(Actor *a) {
-	int32 power = (a->getBaseStats())->vitality;
+	uint32 power = (a->getBaseStats())->vitality;
 	power *= power;
 	int32 saveSpace = absoluteMaximumVitality;
 	saveSpace *= saveSpace;

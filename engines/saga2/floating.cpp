@@ -139,7 +139,7 @@ void DecoratedWindow::setDecorations(
     WindowDecoration *dec,
     int16           count,
     hResContext     *con,
-    hResID          id) {
+    hResID          id_) {
 	int16           i;
 
 	decorations = dec;
@@ -149,8 +149,7 @@ void DecoratedWindow::setDecorations(
 
 	for (i = 0; i < numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
-		dec->image = ImageCache.requestImage(con,
-		                                     id | MKTAG(0, 0, 0, dec->imageNumber));
+		dec->image = ImageCache.requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
 	}
 }
 

@@ -417,7 +417,7 @@ CManaIndicator          *ManaIndicator       = nullptr;
 
 const int clickSounds = 3;
 
-int32 maxClicks = clickSounds;
+uint32 maxClicks = clickSounds;
 int32 clickSizes[clickSounds];
 uint8 *clickData[clickSounds];
 
@@ -1449,8 +1449,8 @@ void writePlaqText(gPort            &port,
                    const char      *msg, ...) {
 	char            lineBuf[128];
 	va_list         argptr;
-	int16           cnt;
 	Rect16          workRect;
+	int16 cnt;
 	gFont           *oldFont = port.font;
 
 	va_start(argptr, msg);
@@ -1501,12 +1501,11 @@ void writePlaqTextPos(gPort         &port,
                       const char       *msg, ...) {
 	char            lineBuf[128];
 	va_list         argptr;
-	int16           cnt;
 	Point16         drawPos;
 	gFont           *oldFont = port.font;
 
 	va_start(argptr, msg);
-	cnt = vsprintf(lineBuf, msg, argptr);
+	vsprintf(lineBuf, msg, argptr);
 	va_end(argptr);
 
 	SAVE_GPORT_STATE(port);
@@ -2812,7 +2811,6 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 	ContainerIterator   cIter(a);
 
 	GameObject          *obj;
-	ObjectID            id;
 
 	memset(newIconFlags, 0, sizeof newIconFlags);
 
@@ -2825,7 +2823,7 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 	    iconSpellBarrier,
 	*/
 
-	for (id = iter.first(&obj); id != Nothing; id = iter.next(&obj)) {
+	for (ObjectID id1 = iter.first(&obj); id1 != Nothing; id1 = iter.next(&obj)) {
 		uint16 enchantmentID = obj->getExtra();
 		uint16 eType = getEnchantmentType(enchantmentID);
 		uint16 eSubType = getEnchantmentSubType(enchantmentID);

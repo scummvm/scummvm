@@ -47,7 +47,7 @@ namespace Saga2 {
 extern audioInterface *audio;
 extern bool debugStatuses;
 extern bool debugResource;
-extern int32 maxClicks;
+extern uint32 maxClicks;
 extern int32 clickSizes[];
 extern uint8 *clickData[];
 

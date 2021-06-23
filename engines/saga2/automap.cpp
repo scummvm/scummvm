@@ -521,8 +521,6 @@ int16 openAutoMap() {
 	rInfo.running   = true;
 
 	hResContext     *decRes;
-	gCompButton     *closeAutoMap;
-	gCompButton     *scrollBtn;
 	void            *summaryData;
 	void            **closeBtnImage;
 	void            **scrollBtnImage;
@@ -546,9 +544,9 @@ int16 openAutoMap() {
 
 	pAutoMap = new CAutoMap(autoMapRect, (uint8 *)summaryData, 0, NULL);
 
-	closeAutoMap = new gCompButton(*pAutoMap, closeAutoMapBtnRect, closeBtnImage, numBtnImages, 0, cmdAutoMapQuit);
+	new gCompButton(*pAutoMap, closeAutoMapBtnRect, closeBtnImage, numBtnImages, 0, cmdAutoMapQuit);
 
-	scrollBtn = new gCompButton(*pAutoMap, scrollBtnRect, scrollBtnImage, numBtnImages, 0, cmdAutoMapScroll);
+	new gCompButton(*pAutoMap, scrollBtnRect, scrollBtnImage, numBtnImages, 0, cmdAutoMapScroll);
 
 	pAutoMap->setDecorations(autoMapDecorations,
 	                         ARRAYSIZE(autoMapDecorations),

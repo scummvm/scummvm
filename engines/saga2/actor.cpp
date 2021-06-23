@@ -614,10 +614,9 @@ bool ActorProto::acceptStrikeAction(
 			enactorPtr->handleSuccessfulStrike(weapon);
 
 			if (!a->isDead()) {
-				int16       mass = a->proto()->mass;
+				int16 pmass = a->proto()->mass;
 
-				if (mass <= 100
-				        || (rand() % 156) >= mass - 100) {
+				if (pmass <= 100 || (rand() % 156) >= pmass - 100) {
 					if ((rand() & 0x7) == 0)
 						MotionTask::fallDown(*a, *enactorPtr);
 					else
@@ -883,15 +882,13 @@ bool ActorProto::canFitMasswise(GameObject *container, GameObject *obj) {
 #endif
 	{
 		Actor           *a = (Actor *)container;
-		uint16          maxCapacity,
-		                totalMass;
 
 		// get the maxium amount of weight this character should be able to carry
-		maxCapacity = container->massCapacity();
+		uint16 cmaxCapacity = container->massCapacity();
 
-		totalMass = a->totalContainedMass();
+		uint16 totalMass = a->totalContainedMass();
 
-		return totalMass + obj->totalMass() <= maxCapacity;
+		return totalMass + obj->totalMass() <= cmaxCapacity;
 	}
 
 #if DEBUG
@@ -1025,7 +1022,15 @@ void Actor::init(
 	flags               = 0;
 	if (!(initFlags & actorPermanent))
 		flags |= temporary;
-	memset(&poseInfo, 0, sizeof(poseInfo));
+
+	poseInfo.flags = 0;
+	poseInfo.actorFrameIndex = 0;
+	poseInfo.actorFrameBank = 0;
+	poseInfo.leftObjectIndex = 0;
+	poseInfo.rightObjectIndex = 0;
+	poseInfo.leftObjectOffset.x = poseInfo.leftObjectOffset.y = 0;
+	poseInfo.rightObjectOffset.x = poseInfo.rightObjectOffset.y = 0;
+
 	appearance          = NULL;
 	cycleCount          = 0;
 	kludgeCount         = 0;
@@ -1088,7 +1093,15 @@ Actor::Actor(void) {
 	currentPose         = 0;
 	animationFlags      = 0;
 	flags               = 0;
-	memset(&poseInfo, 0, sizeof(poseInfo));
+
+	poseInfo.flags = 0;
+	poseInfo.actorFrameIndex = 0;
+	poseInfo.actorFrameBank = 0;
+	poseInfo.leftObjectIndex = 0;
+	poseInfo.rightObjectIndex = 0;
+	poseInfo.leftObjectOffset.x = poseInfo.leftObjectOffset.y = 0;
+	poseInfo.rightObjectOffset.x = poseInfo.rightObjectOffset.y = 0;
+
 	appearance          = nullptr;
 	cycleCount          = 0;
 	kludgeCount         = 0;
@@ -1146,7 +1159,15 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	currentPose         = 0;
 	animationFlags      = 0;
 	flags               = 0;
-	memset(&poseInfo, 0, sizeof(poseInfo));
+
+	poseInfo.flags = 0;
+	poseInfo.actorFrameIndex = 0;
+	poseInfo.actorFrameBank = 0;
+	poseInfo.leftObjectIndex = 0;
+	poseInfo.rightObjectIndex = 0;
+	poseInfo.leftObjectOffset.x = poseInfo.leftObjectOffset.y = 0;
+	poseInfo.rightObjectOffset.x = poseInfo.rightObjectOffset.y = 0;
+
 	appearance          = NULL;
 	cycleCount          = 0;
 	kludgeCount         = 0;

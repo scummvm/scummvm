@@ -432,9 +432,7 @@ void workBuffer::activate(int16 bufNo) {
 }
 
 void musicBuffer::activate(int16 bufNo) {
-	int32 n;
 	assert(ailSampleHandle);
-	n = bufNo;
 	audioSet = 0;
 	if (washed() > -1) {
 		targetSated = false;

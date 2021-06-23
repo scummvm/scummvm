@@ -30,10 +30,8 @@
 namespace Saga2 {
 
 DNode *DNode::remove(void) {
-	if (this) {
-		succ->pred = pred;
-		pred->succ = succ;
-	}
+	succ->pred = pred;
+	pred->succ = succ;
 	return this;
 }
 
