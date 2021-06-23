@@ -2298,24 +2298,11 @@ metaTileNoise MetaTile::HeavyMetaMusic(void) {
 //-----------------------------------------------------------------------
 //	Return a pointer to the specified platform
 
-static void readPlatform(hResContext *con, Platform &plt) {
-	plt.height = con->readU16LE();
-	plt.highestPixel = con->readU16LE();
-	plt.flags = con->readU16LE();
-
-	for (int j = 0; j < kPlatformWidth; ++j) {
-		for (int i = 0; i < kPlatformWidth; ++i) {
-			plt.tiles[j][i].tile = con->readU16LE();
-			plt.tiles[j][i].flags = con->readByte();
-			plt.tiles[j][i].tileHeight = con->readByte();
-		}
-	}
-}
-
 Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	const int			cacheFlag = 0x8000;
 	uint16              plIndex = _stack[layer];
 	PlatformCacheEntry  *pce;
+	Common::SeekableReadStream *stream;
 
 	assert(layer >= 0);
 	assert(_parent == mapList[mapNum].metaList);
@@ -2376,9 +2363,9 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		debugC(3, kDebugLoading, "- plIndex: %d", plIndex);
 
 		// Now, load the actual metatile data...
-		if (tileRes->seek(platformID + mapNum)) {
-			if (tileRes->skip(plIndex * sizeof(Platform))) {
-				readPlatform(tileRes, pce->pl);
+		if (stream = loadResourceToStream(tileRes, platformID + mapNum, "platform")) {
+			if (stream->skip(plIndex * sizeof(Platform))) {
+				pce->pl.load(stream);
 				return &pce->pl;
 			}
 		}
@@ -4396,31 +4383,23 @@ struct TileCycleArchive {
 //-----------------------------------------------------------------------
 //	Initialize the tile cycling state array
 
-static void readCycle(hResContext *con, TileCycleData &cyc) {
-	cyc.counter = con->readS32LE();
-	cyc.pad = con->readByte();
-	cyc.numStates = con->readByte();
-	cyc.currentState = con->readByte();
-	cyc.cycleSpeed = con->readByte();
-
-	for (int i = 0; i < 16; ++i)
-		cyc.cycleList[i] = con->readU16LE();
-}
-
 void initTileCyclingStates(void) {
+	Common::SeekableReadStream *stream;
 	const int tileCycleDataSize = 40;
 
 	cycleCount = tileRes->size(cycleID) / tileCycleDataSize;
 	cycleList = new TileCycleData[cycleCount];
-	tileRes->seek(cycleID);
-	for (int i = 0; i < cycleCount; ++i)
-		readCycle(tileRes, cycleList[i]);
-
-	debugC(2, kDebugLoading, "Loaded Cycles: cycleCount = %d", cycleCount);
 
 	if (cycleList == nullptr)
 		error("Unable to load tile cycling data");
 
+	if (stream = loadResourceToStream(tileRes, cycleID, "cycle list")) {
+		for (int i = 0; i < cycleCount; ++i)
+			cycleList[i].load(stream);
+
+		debugC(2, kDebugLoading, "Loaded Cycles: cycleCount = %d", cycleCount);
+		delete stream;
+	}
 }
 
 //-----------------------------------------------------------------------
