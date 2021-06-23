@@ -84,6 +84,8 @@ struct ResourceGameObject {
 	};
 
 	uint8           missileFacing;
+
+	ResourceGameObject(Common::SeekableReadStream *stream);
 };
 
 //  Base class of all objects

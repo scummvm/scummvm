@@ -3385,18 +3385,7 @@ void setCombatBehavior(bool enabled) {
 //-------------------------------------------------------------------
 //	Initialize the actor list
 
-ResourceActor::ResourceActor(Common::SeekableReadStream *stream) {
-	protoIndex = stream->readSint16LE();
-	location.u = stream->readSint16LE();
-	location.v = stream->readSint16LE();
-	location.z = stream->readSint16LE();
-	nameIndex = stream->readUint16LE();
-	parentID = stream->readUint16LE();
-	script = stream->readUint16LE();
-	objectFlags = stream->readUint16LE();
-	hitPoints = stream->readByte();
-	misc = stream->readUint16LE();
-
+ResourceActor::ResourceActor(Common::SeekableReadStream *stream) : ResourceGameObject(stream) {
 	faction = stream->readByte();
 	colorScheme = stream->readByte();
 	appearanceID = stream->readSint32BE();
