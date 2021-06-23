@@ -1602,6 +1602,8 @@ void PathRequest::finish(void) {
 
 	static TilePoint    tempResult[32];
 
+	debugC(2, kDebugPath, "Finishing Path Request: %p", (void *)this);
+
 	if (bestLoc != Nowhere) {
 		cell = cellArray->getCell(bestPlatform, bestLoc.u, bestLoc.v);
 		assert(cell != nullptr);
@@ -1672,6 +1674,8 @@ void PathRequest::finish(void) {
 }
 
 void PathRequest::abortReq(void) {
+	debugC(4, kDebugPath, "Aborting Path Request: %p", (void *)this);
+
 	if (mTask->pathFindTask == this)
 		mTask->pathFindTask = nullptr;
 }
@@ -1680,11 +1684,13 @@ void PathRequest::abortReq(void) {
 PathResult PathRequest::findPath(void) {
 	assert(cellArray != nullptr);
 
-	static const uint8 costTable[] = { 4, 10, 12, 16, 12, 10, 4, 0, 4, 10, 12, 16, 12, 10, 4, 0 };
+	static const uint8 costTable[] = {4, 10, 12, 16, 12, 10, 4, 0, 4, 10, 12, 16, 12, 10, 4, 0};
 
 	ProtoObj        *proto = actor->proto();
 	QueueItem       qi;
 	uint8 pCross = proto->crossSection;
+
+	debugC(4, kDebugPath, "Finding Path for %p: pCross = %d", (void *)this, pCross);
 
 	if (flags & aborted) return pathAborted;
 
@@ -2062,6 +2068,8 @@ DestinationPathRequest::DestinationPathRequest(Actor *a, int16 howSmart) :
 
 //  Initialize the static data members
 void DestinationPathRequest::initialize(void) {
+	debugC(2, kDebugPath, "Initializing Path Request: %p", (void *)this);
+
 	PathRequest::initialize();
 
 	//  Initialize bestDist to the highest possible value.

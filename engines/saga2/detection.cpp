@@ -36,6 +36,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Saga2::kDebugPalettes,  "palettes",  "Debug the palettes"},
 	{Saga2::kDebugLoading,   "loading",   "Debug the loading"},
 	{Saga2::kDebugTimers,    "timers",    "Debug the timers"},
+	{Saga2::kDebugPath,      "path",      "Debug the pathfinding"},
 	DEBUG_CHANNEL_END
 };
 

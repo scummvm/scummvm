@@ -51,7 +51,8 @@ enum {
 	kDebugTiles     = 1 << 5,
 	kDebugPalettes  = 1 << 6,
 	kDebugLoading   = 1 << 7,
-	kDebugTimers    = 1 << 8
+	kDebugTimers    = 1 << 8,
+	kDebugPath      = 1 << 9
 };
 
 #define TICKSPERSECOND (728L/10L)
