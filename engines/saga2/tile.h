@@ -316,6 +316,17 @@ public:
 	                cycleSpeed;             // speed of cycling (0=none)
 
 	TileID          cycleList[16];        // array of tiles
+
+	void load(Common::SeekableReadStream *stream) {
+		counter = stream->readSint32LE();
+		pad = stream->readByte();
+		numStates = stream->readByte();
+		currentState = stream->readByte();
+		cycleSpeed = stream->readByte();
+
+		for (int i = 0; i < 16; ++i)
+			cycleList[i] = stream->readUint16LE();
+	}
 };
 
 typedef TileCycleData
@@ -647,6 +658,20 @@ struct Platform {
 	                highestPixel;           // tallest tile upper extent
 	uint16          flags;                  // platform flags
 	TileRef         tiles[kPlatformWidth][kPlatformWidth];
+
+	void load(Common::SeekableReadStream *stream) {
+		height = stream->readUint16LE();
+		highestPixel = stream->readUint16LE();
+		flags = stream->readUint16LE();
+
+		for (int j = 0; j < kPlatformWidth; ++j) {
+			for (int i = 0; i < kPlatformWidth; ++i) {
+				tiles[j][i].tile = stream->readUint16LE();
+				tiles[j][i].flags = stream->readByte();
+				tiles[j][i].tileHeight = stream->readByte();
+			}
+		}
+	}
 
 	TileRef &getTileRef(const TilePoint p) {
 		return tiles[p.u][p.v];

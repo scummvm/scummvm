@@ -2312,10 +2312,12 @@ uint16 GameObject::totalContainedBulk(void) {
 //	Initial constructor
 
 GameWorld::GameWorld(int16 map) {
-	if (tileRes->seek(MKTAG('M', 'A', 'P', (char)map))) {
+	Common::SeekableReadStream *stream;
+	if (stream = loadResourceToStream(tileRes, MKTAG('M', 'A', 'P', (char)map),
+	                                  "game map")) {
 		int16   mapSize;    //  Size of map in MetaTiles
 
-		mapSize = tileRes->readU16LE();
+		mapSize = stream->readUint16LE();
 		size.u = (mapSize << kPlatShift) << kTileUVShift;
 		size.v = size.u;
 
@@ -2326,6 +2328,7 @@ GameWorld::GameWorld(int16 map) {
 			error("Unable to allocate world %d sector array", map);
 
 		mapNum = map;
+		delete stream;
 	} else {
 		size.u = size.v = 0;
 		sectorArraySize = 0;
