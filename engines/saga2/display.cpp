@@ -36,9 +36,6 @@ extern bool             gameRunning;
 extern bool             delayReDraw;
 extern gDisplayPort     mainPort;               // default rendering port
 extern BackWindow       *mainWindow;            // main window...
-#ifdef _WIN32
-extern CFTWindow        *pWindow;
-#endif
 
 /* ===================================================================== *
    Globals
@@ -53,10 +50,6 @@ bool                        paletteMayHaveChanged = false;
 
 static uint32 displayStatus = GraphicsInit;
 static bool paletteSuspendFlag = false;
-#ifndef _WIN32
-static bool VideoSaved = false;
-static uint8 VideoSaveMode;
-#endif
 
 
 /* ===================================================================== *
@@ -73,10 +66,6 @@ void lightsOut(void);
 void loadingScreen(void);
 void resetInputDevices(void);
 APPFUNC(cmdWindowFunc);                      // main window event handler
-#ifdef _WIN32
-void suspendProcessResources(void);
-void resumeProcessResources(void);
-#endif
 static void switchOn(void);
 static void switchOff(void);
 
@@ -103,9 +92,6 @@ void niceScreenStartup(void) {
 	disablePaletteChanges();
 	mainEnable();
 	closeLoadMode();
-#ifdef _WIN32
-	localCursorOn();
-#endif
 	pointer.move(Point16(320, 240));
 	//pointer.hide();
 	enablePaletteChanges();
@@ -260,28 +246,10 @@ void reDrawScreen(void) {
  * ===================================================================== */
 
 void blackOut(void) {
-	bool dispEnable = displayEnabled();
-#ifdef _WIN32
-	if (!dispEnable)
-		resumeDDGraphics();
-#endif
 	mainPort.drawMode = drawModeReplace;
 	mainPort.setColor(0);            //  fill screen with color
 	mainPort.fillRect(Rect16(0, 0, 640, 480));
-#ifdef _WIN32
-	if (pWindow) {
-		pWindow->SetEraseColor(0);
-		pWindow->Erase();
-		pWindow->FillBackBuffer();
-		pWindow->Flip();
-		pWindow->Erase();
-	}
-#endif
 	lightsOut();
-#ifdef _WIN32
-	if (!dispEnable)
-		suspendDDGraphics();
-#endif
 }
 
 
