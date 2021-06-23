@@ -1458,7 +1458,7 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 	programCounter.segment = segNum;
 	programCounter.offset = segOff;
 	threadArgs = args;
-	stackBase = (UBytePtr)malloc(stackSize);
+	stackBase = (byte *)malloc(stackSize);
 	stackPtr = stackBase + stackSize - initialStackFrameSize;
 	((uint16 *)stackPtr)[0] = 0;          // 0 args
 	((uint16 *)stackPtr)[1] = 0;          // dummy return address
@@ -1498,7 +1498,7 @@ Thread::Thread(void **buf) {
 
 	codeSeg = scriptRes->loadIndexResource(programCounter.segment, "saga code segment");
 
-	stackBase = (UBytePtr)malloc(stackSize);
+	stackBase = (byte *)malloc(stackSize);
 	stackPtr = stackBase + stackSize - stackOffset;
 
 	memcpy(stackPtr, bufferPtr, stackOffset);

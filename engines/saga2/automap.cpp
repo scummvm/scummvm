@@ -218,7 +218,7 @@ void CAutoMap::locateRegion(void) {
 		}
 	}
 
-	RDisposePtr(trRes);
+	free(trRes);
 	if (areaRes) auxResFile->disposeContext(areaRes);
 
 	baseCoords.u = centerCoords.u - summaryRadius;
@@ -568,7 +568,7 @@ int16 openAutoMap() {
 
 	unloadImageRes(closeBtnImage, numBtnImages);
 	unloadImageRes(scrollBtnImage, 2);
-	RDisposePtr(summaryData);
+	free(summaryData);
 	resFile->disposeContext(decRes);
 	decRes = NULL;
 

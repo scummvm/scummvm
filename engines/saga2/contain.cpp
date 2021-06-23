@@ -1822,7 +1822,7 @@ void saveContainerNodes(SaveFileConstructor &saveGame) {
 	archiveBufSize += numNodes * ContainerNode::archiveSize();
 
 	//  Allocate the archive buffer
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate ContainerNode archive buffer\n");
 
@@ -1847,7 +1847,7 @@ void saveContainerNodes(SaveFileConstructor &saveGame) {
 	    archiveBufSize);
 
 	//  Free the archive buffer
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 void loadContainerNodes(SaveFileReader &saveGame) {
@@ -1874,7 +1874,7 @@ void loadContainerNodes(SaveFileReader &saveGame) {
 
 	//  Allocate archive buffer
 	archiveBufSize = saveGame.bytesLeftInChunk();
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate ContainerNode archive buffer\n");
 
@@ -1897,7 +1897,7 @@ void loadContainerNodes(SaveFileReader &saveGame) {
 	assert(tempList.empty());
 
 	//  Free the archive buffer
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 void cleanupContainerNodes(void) {

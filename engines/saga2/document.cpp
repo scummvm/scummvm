@@ -159,14 +159,12 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 	textSize = clamp(0, strlen(buffer), maxSize);
 
 	// set the original text pointer
-	//origText = ( char * )RNewPtr( textSize + 1, NULL, "book original text buffer" );
 	origText = new char[textSize + 1];
 
 	// and fill it
 	strcpy(origText, buffer);
 
 	// make a working buffer
-	//text = ( char * )RNewPtr( textSize + 1, NULL, "book work text buffer" );
 	text = new char[textSize + 1];
 
 	// and fill it
@@ -205,25 +203,24 @@ CDocument::~CDocument(void) {
 
 	for (i = 0; i < maxPages; i++) {
 		if (images[i]) {
-			RDisposePtr(images[i]);
+			free(images[i]);
 		}
 	}
 
 	// get rid of the working text buffer
 	if (text) {
-		//RDisposePtr( text );
-		delete text;
+		delete[] text;
 		text = NULL;
 	}
 
 	if (origText) {
-		//RDisposePtr( origText );
-		delete origText;
+		delete[] origText;
 		origText = NULL;
 	}
 
 	// get rid of the resource context
-	if (illustrationCon) resFile->disposeContext(illustrationCon);
+	if (illustrationCon)
+		resFile->disposeContext(illustrationCon);
 }
 
 void CDocument::deactivate(void) {

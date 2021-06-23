@@ -29,8 +29,6 @@
 
 #include "common/file.h"
 
-#include "saga2/rmem.h"
-
 namespace Saga2 {
 
 
@@ -132,7 +130,7 @@ protected:
 	uint32          _bytecount;
 	uint32          _bytepos;
 
-	hResEntry      *findEntry(hResID id, RHANDLE **capture = NULL);
+	hResEntry      *findEntry(hResID id);
 	Common::File   *openExternal(Common::File *fh);
 
 public:
@@ -169,11 +167,8 @@ public:
 	bool        skip(uint32 amount);
 	bool        get(hResID id, void *buffer, uint32 size);
 	uint32       getSize(hResID id, const char desc[]);
-	RHANDLE     load(hResID id, const char [], bool async = false, bool cacheable = true);
 	byte       *loadResource(hResID id, const char desc[], Common::String filename = "");
 	byte       *loadIndexResource(int16 index, const char desc[], Common::String filename = "");
-	RHANDLE     loadIndex(int16 index, const char[], bool cacheable = true);
-	void        release(RHANDLE p);
 	void        releaseIndexData();
 	Common::File     *resFileHandle(void) {
 		return _handle;
@@ -218,9 +213,6 @@ inline hResID RES_ID(uint8 a, uint8 b, uint8 c, uint8 d) {
 
 #define HRES_ID         MKTAG('H','R','E','S')
 
-
-//  Handle-washing function.
-void washHandle(RHANDLE &handle);
 
 #ifdef _WIN32   //  Set structure alignment packing value to 1 byte
 #pragma pack( pop )

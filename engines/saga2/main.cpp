@@ -367,7 +367,6 @@ void displayUpdate(void) {
 			reDrawScreen();
 		//  Call asynchronous resource loader
 		debugC(1, kDebugEventLoop, "EventLoop: resource update");
-		loadAsyncResources();
 
 		//FIXME: Disabled for debug purposes. Enable and implement later.
 		//audioEventLoop();
@@ -536,28 +535,6 @@ Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, co
 	con->rest();
 
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
-}
-
-//-----------------------------------------------------------------------
-//	Loads a resource into a relocatable buffer and returns a handle
-
-RHANDLE LoadResourceToHandle(hResContext *con, uint32 id, const char desc[]) {
-	int32           size;
-	RHANDLE         buffer;             // allocated buffer
-
-	debugC(3, kDebugResources, "LoadResourceToHandle(): Loading resource %d (%s, %s)", id, tag2str(id), desc);
-
-	size = con->size(id);
-	if (size <= 0 || !con->seek(id)) {
-		error("LoadResourceToHandle(): Error reading resource ID '%s'.", tag2str(id));
-	}
-
-	//  Allocate the buffer
-	buffer = mustAllocHandle(size, desc);
-	con->read(*buffer, size);
-	con->rest();
-
-	return buffer;
 }
 
 typedef hResource *pHResource;
@@ -955,19 +932,6 @@ void *mustAlloc(uint32 size, const char desc[]) {
 	//  REM: Before we give up completely, try unloading some things...
 	if (ptr == NULL)
 		error("Local heap allocation size %d bytes failed.", size);
-	return ptr;
-}
-
-//-----------------------------------------------------------------------
-//	Allocates relocatable memory, or throws exception if allocation fails.
-
-RHANDLE mustAllocHandle(uint32 size, const char desc[]) {
-	void            **ptr;
-
-	ptr = (void **)malloc(size);
-	//  REM: Before we give up completely, try unloading some things...
-	if (ptr == NULL)
-		error("Local handle allocation size %d bytes failed.", size);
 	return ptr;
 }
 

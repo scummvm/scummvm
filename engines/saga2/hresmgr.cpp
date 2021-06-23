@@ -104,7 +104,7 @@ hResContext::~hResContext() {
 	releaseIndexData();
 }
 
-hResEntry *hResContext::findEntry(hResID id, RHANDLE **capture) {
+hResEntry *hResContext::findEntry(hResID id) {
 	hResEntry       *entry;
 	int16           i;
 
@@ -374,53 +374,6 @@ byte *hResContext::loadResource(hResID id, const char desc[], Common::String fil
 	return res;
 }
 
-RHANDLE hResContext::load(hResID id, const char desc[], bool async, bool cacheable) {
-	hResEntry   *entry;
-	RHANDLE     *capture;
-
-	if (!_valid)
-		return nullptr;
-	_bytecount = 0;
-	_bytepos = 0;
-
-	if ((entry = findEntry(id, &capture)) == nullptr)
-		return nullptr;
-
-	if (*capture != nullptr && **capture != nullptr) {
-		entry->use();
-	} else {
-		if (*capture == nullptr)
-			*capture = (RHANDLE)malloc(entry->size);
-
-		if (*capture == nullptr) return nullptr;
-
-		//  If it's an external resource, then load synchronously
-
-#ifdef WINKLUDGE
-		async = false;
-#endif
-		if (entry->isExternal() || async == false) {
-			if (seek(id) && read(**capture, entry->size)) {
-				entry->use();
-			} else {
-				free(*capture);
-				*capture = nullptr;
-			}
-
-			rest();
-		} else {
-#ifndef WINKLUDGE
-			RequestResource(*capture,
-							entry->offset,
-							entry->size);
-#endif
-			entry->use();
-		}
-	}
-
-	return (*capture);
-}
-
 byte *hResContext::loadIndexResource(int16 index, const char desc[], Common::String filename) {
 	hResEntry *entry;
 	entry = &_base[index];
@@ -453,63 +406,6 @@ byte *hResContext::loadIndexResource(int16 index, const char desc[], Common::Str
 	_file.read(res, entry->size);
 
 	return res;
-}
-
-RHANDLE hResContext::loadIndex(int16 index, const char desc[], bool cacheable) {
-	hResEntry   *entry;
-	RHANDLE     *capture; //, _handle;
-
-	if (!_valid)
-		return nullptr;
-	_bytecount = 0;
-	_bytepos = 0;
-
-	entry = &_base[index];
-
-	if (*capture != nullptr && **capture != nullptr) {
-		entry->use();
-	} else {
-		if (*capture == nullptr)
-			*capture = (RHANDLE)malloc(entry->size);
-
-		if (*capture == nullptr) return nullptr;
-
-		_res->_handle->seek(entry->resOffset(), SEEK_SET);
-
-		if (read(**capture, entry->size) == false) {
-			free(*capture);
-			*capture = nullptr;
-		}
-		entry->use();
-		rest();
-	}
-	return (*capture);
-}
-
-void hResContext::release(RHANDLE p) {
-	_bytecount = 0;
-	_bytepos = 0;
-
-	hResEntry   *entry;
-	RHANDLE     *d;
-
-	if (_valid && p != nullptr) {
-		entry = _base;
-
-		while (entry->id != BAD_ID) {
-			if ((RHANDLE)p == *d) {
-
-				entry->abandon();
-				if (!entry->isUsed()) {
-					RDisposeHandle(p);
-					*d = nullptr;
-				}
-				return;
-			}
-			entry++;
-			d++;
-		}
-	}
 }
 
 void hResContext::releaseIndexData() {
@@ -617,23 +513,6 @@ hResContext *hResource::newContext(hResID id, const char desc[]) {
 
 void hResource::disposeContext(hResContext *con) {
 	if (con) delete con;
-}
-
-
-/* ===================================================================== *
-   Assorted functions
- * ===================================================================== */
-
-//-----------------------------------------------------------------------
-//	For handles which have been purged, but the handle structure is
-//	still hanging around, we can free the handle structure and
-//	set the actual handle pointer to nullptr.
-
-void washHandle(RHANDLE &handle) {
-	if (handle != nullptr && *handle == nullptr) {
-		RDisposeHandle(handle);
-		handle = nullptr;
-	}
 }
 
 } // end of namespace Saga2

@@ -860,7 +860,7 @@ struct WorldMapData {
 	MetaTileList        *metaList;          //  MetaTile list
 	TileRefPtr          activeItemData;     //  ActiveItem tileRefs
 	ActiveItemList      *activeItemList;    //  ActiveItem list
-	UWordPtr            assocList;          //  Associations
+	uint16              *assocList;          //  Associations
 	RipTableIDPtr       ripTableIDList;     //  MetaTile object ripping
 
 	ActiveItem          *instHash[513];   //  ActiveItem hash table

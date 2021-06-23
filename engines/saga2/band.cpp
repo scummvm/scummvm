@@ -31,7 +31,6 @@
 #include "saga2/band.h"
 #include "saga2/savefile.h"
 #include "saga2/dlist.h"
-#include "saga2/rmem.h"
 
 namespace Saga2 {
 
@@ -328,7 +327,7 @@ void saveBands(SaveFileConstructor &saveGame) {
 
 	archiveBufSize = bandList.archiveSize();
 
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate band archive buffer");
 
@@ -339,7 +338,7 @@ void saveBands(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //----------------------------------------------------------------------
@@ -355,7 +354,7 @@ void loadBands(SaveFileReader &saveGame) {
 	void    *archiveBuffer;
 	void    *bufferPtr;
 
-	archiveBuffer = RNewPtr(saveGame.getChunkSize(), NULL, "archive buffer");
+	archiveBuffer = malloc(saveGame.getChunkSize());
 	if (archiveBuffer == NULL)
 		error("Unable to allocate task archive buffer");
 
@@ -368,7 +367,7 @@ void loadBands(SaveFileReader &saveGame) {
 	new (&bandList) BandList;
 	bandList.restore(bufferPtr);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //----------------------------------------------------------------------

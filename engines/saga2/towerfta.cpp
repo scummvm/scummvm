@@ -174,12 +174,10 @@ TERMINATOR(termResourceFiles) {
 // ------------------------------------------------------------------------
 
 INITIALIZER(initResourceServers) {
-	initServers();
 	return true;
 }
 
 TERMINATOR(termResourceServers) {
-	cleanupServers();                       // cleanup async servers
 }
 
 
@@ -480,10 +478,6 @@ INITIALIZER(initTop) {
 
 TERMINATOR(termTop) {
 	mainDisable();
-	RMemFastCleanup();
-#ifdef _WIN32
-	//pWindow->RestoreDisplay();
-#endif
 }
 
 } // end of namespace Saga2
