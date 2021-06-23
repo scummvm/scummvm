@@ -264,6 +264,8 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	if (surf) {
 		const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512));
 		_loadedSurfaces[String("placeholder")] = scSurf;
+		surf->free();
+		delete surf;
 	}
 }
 
@@ -292,6 +294,8 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	if (surf) {
 		const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512));
 		_loadedSurfaces[String("placeholder")] = scSurf;
+		surf->free();
+		delete surf;
 	}
 }
 
@@ -360,6 +364,8 @@ void GridWidget::reloadThumbnails() {
 			if (surf) {
 				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512));
 				_loadedSurfaces[path] = scSurf;
+				surf->free();
+				delete surf;
 			}
 		}
 	}
