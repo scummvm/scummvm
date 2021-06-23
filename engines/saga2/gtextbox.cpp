@@ -568,7 +568,6 @@ bool gTextBox::pointerHit(gPanelMessage &msg) {
 
 
 	if (Rect16(0, 0, extent.width, extent.height).ptInside(pos)) {
-		Rect16  textBoxExtent   = editRect;
 		int8    newIndex;
 		// get the position of the line
 		newIndex = clamp(0, pos.y / fontOffset, linesPerPage - 1);
@@ -646,7 +645,6 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 
 	//  Process the various keystrokes...
 	if (editing && cursorPos > anchorPos) {
-		int16 t = cursorPos;
 		cursorPos = anchorPos;
 		anchorPos = cursorPos;
 	}
@@ -905,13 +903,13 @@ void gTextBox::drawContents(void) {
 	//  Allocate a temporary pixel map and render into it.
 	if (NewTempPort(tPort, editRect.width, editRect.height)) {
 		int16       cursorX,
-		            anchorX,
+		            anchorX = 0,
 		            hiliteX,
 		            hiliteWidth,
-		            textHeight;
+		            textHeight_;
 
 
-		textHeight = fontHeight;
+		textHeight_ = fontHeight;
 
 
 		if (hilit || editing) {
@@ -978,7 +976,7 @@ void gTextBox::drawContents(void) {
 		tPort.setFont(textFont);
 		tPort.setColor(fontColorHilite);
 
-		tPort.moveTo(-scrollPixels, (editRect.height - textHeight + 1) / 2);
+		tPort.moveTo(-scrollPixels, (editRect.height - textHeight_ + 1) / 2);
 		tPort.drawText(fieldStrings[index], currentLen[index]);
 
 		//  Blit the pixelmap to the main screen

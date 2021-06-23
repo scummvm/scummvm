@@ -238,7 +238,7 @@ private:
 	}
 
 public:
-	CStatusLine(gPanelList &, const Rect16 &, char *, gFont *,
+	CStatusLine(gPanelList &, const Rect16 &, const char *, gFont *,
 	            int16, textPallete &, int32, int16, AppFunc *cmd = NULL);
 	~CStatusLine(void);
 

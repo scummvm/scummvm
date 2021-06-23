@@ -36,12 +36,7 @@
 
 #define TEST1           1           //  enable test code
 #define TEST2           1
-#define TEST3           1           //  loading/saving
 #define CHEATMOVE       1           // For moving with keypad in 8 directions
-
-#if TEST3
-#include "saga2/loadsave.h"
-#endif
 
 #ifdef ALEXS
 #include "saga2/automap.h"
@@ -114,7 +109,6 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 	Actor   *a = getCenterActor();
 	Location l(a->getLocation(), a->IDParent());
 
-	GameObject *object = (GameObject *)getCenterActor();
 #ifdef FTA
 	static int Object = 2;
 #endif
@@ -185,26 +179,6 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 		break;
 #endif
 
-
-#if TEST3
-	case '5':
-		saveGameState(0, "game 1");
-		break;
-
-	case '6':
-		saveGameState(1, "game 2");
-		break;
-
-	case '%':
-		cleanupGameState();
-		loadSavedGameState(0);
-		break;
-
-	case '^':
-		cleanupGameState();
-		loadSavedGameState(1);
-		break;
-#endif
 
 #ifdef FTA
 	case 'a':
