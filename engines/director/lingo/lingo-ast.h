@@ -602,7 +602,7 @@ struct IntNode : ExprNode {
 	int val;
 
 	IntNode(int valIn) : ExprNode(kIntNode), val(valIn) {}
-	virtual ~IntNode() = default;
+	virtual ~IntNode() {}
 	virtual bool accept(NodeVisitor *visitor) {
 		return visitor->visitIntNode(this);
 	}
@@ -614,7 +614,7 @@ struct FloatNode : ExprNode {
 	double val;
 
 	FloatNode(double valIn) : ExprNode(kFloatNode), val(valIn) {}
-	virtual ~FloatNode() = default;
+	virtual ~FloatNode() {}
 	virtual bool accept(NodeVisitor *visitor) {
 		return visitor->visitFloatNode(this);
 	}
