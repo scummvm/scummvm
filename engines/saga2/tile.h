@@ -383,7 +383,7 @@ struct ActiveItemData {
 			        worldNum;               // Add 0xf000 to get world Object ID
 		} instance;
 	};
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"
 

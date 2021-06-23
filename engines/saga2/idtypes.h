@@ -108,6 +108,7 @@ const int   activeItemMapShift = 13;
 
 const int16 activeItemIndexNullID = 0x1FFF;
 
+#include "common/pack-start.h"
 struct ActiveItemID {
 	int16           val;            //  ID value --
 	//      first 3 bits world number
@@ -179,7 +180,8 @@ struct ActiveItemID {
 	int16 getIndexNum(void) {
 		return val & activeItemIndexMask;
 	}
-};
+} PACKED_STRUCT;
+#include "common/pack-end.h"
 
 //  ID of NULL active item
 extern const ActiveItemID   NoActiveItem;

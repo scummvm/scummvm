@@ -104,7 +104,7 @@ struct TilePoint {
 	int16 quickDir(void);
 
 	int16 magnitude(void);
-};
+} PACKED_STRUCT;
 #include "common/pack-end.h"
 
 

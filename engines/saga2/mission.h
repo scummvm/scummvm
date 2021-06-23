@@ -63,7 +63,7 @@ struct ActiveMissionData {
 	KnowledgeID     missionKnowledgeList[32];
 	uint16          numObjectIDs,
 	                numKnowledgeIDs;
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"
 
