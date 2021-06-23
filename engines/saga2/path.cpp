@@ -1747,7 +1747,8 @@ PathResult PathRequest::findPath(void) {
 				        0)
 				    +   baseTileCoords,
 				    TilePoint(1, fetchRadius << 1, 0));
-			case 1:     // FALL THROUGH
+					// fall through
+			case 1:
 				tileArray.fetchTileSection(
 				    TilePoint(
 				        qi.u - fetchRadius,
@@ -1764,7 +1765,8 @@ PathResult PathRequest::findPath(void) {
 				        0)
 				    +   baseTileCoords,
 				    TilePoint(fetchRadius << 1, 1, 0));
-			case 3:     // FALL THROUGH
+					// fall through
+			case 3:
 				tileArray.fetchTileSection(
 				    TilePoint(
 				        qi.u - fetchRadius,
@@ -1781,7 +1783,8 @@ PathResult PathRequest::findPath(void) {
 				        0)
 				    +   baseTileCoords,
 				    TilePoint(1, fetchRadius << 1, 0));
-			case 5:     // FALL THROUGH
+					// fall through
+			case 5:
 				tileArray.fetchTileSection(
 				    TilePoint(
 				        qi.u - fetchRadius,
@@ -1798,7 +1801,8 @@ PathResult PathRequest::findPath(void) {
 				        0)
 				    +   baseTileCoords,
 				    TilePoint(fetchRadius << 1, 1,  0));
-			case 7:     // FALL THROUGH
+					// fall through
+			case 7:
 				tileArray.fetchTileSection(
 				    TilePoint(
 				        qi.u + fetchRadius,
@@ -2042,7 +2046,7 @@ bool PathRequest::timeLimitExceeded(void) {
 #ifdef OLD_PATHFINDER_TIME_MGMT
 	return (gameTime - firstTick >= timeLimit);
 #else
-	uint32 cutoff = smartness / (queue.getCount() ? 5 : 8);
+	int32 cutoff = smartness / (queue.getCount() ? 5 : 8);
 	return (gameTime - firstTick >= cutoff);
 #endif
 }
@@ -2084,7 +2088,7 @@ void DestinationPathRequest::initialize(void) {
 
 //  Set and evaluate a new center location.
 bool DestinationPathRequest::setCenter(
-    const TilePoint &baseTileCoords,
+    const TilePoint &baseTileCoords_,
     const QueueItem &qi) {
 	int16       dist,
 	            zDist,
@@ -2092,7 +2096,7 @@ bool DestinationPathRequest::setCenter(
 	TilePoint   targetDelta;
 
 	//  Calculate the center coordinates.
-	calcCenterPt(baseTileCoords, qi);
+	calcCenterPt(baseTileCoords_, qi);
 
 	//  Determine the target vector in order to calculate distance.
 	targetDelta = (targetCoords - centerPt);
@@ -2207,14 +2211,14 @@ void WanderPathRequest::initialize(void) {
 
 //  Set and evaluate a new center location.
 bool WanderPathRequest::setCenter(
-    const TilePoint &baseTileCoords,
+    const TilePoint &baseTileCoords_,
     const QueueItem &qi) {
 	int16       dist,
 	            zDist;
 	TilePoint   movementDelta;
 
 	//  Calculate the center coordinates.
-	calcCenterPt(baseTileCoords, qi);
+	calcCenterPt(baseTileCoords_, qi);
 
 	//  Determine the movement vector in order to calculate distance.
 	movementDelta = (startingCoords - centerPt);

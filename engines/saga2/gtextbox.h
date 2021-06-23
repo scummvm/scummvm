@@ -93,8 +93,8 @@ private:
 	int8    fontColorFore;
 	int8    fontColorBack;
 	int8    fontColorHilite;
-	int8    fontColorBackHilite;
-	int8    cursorColor;
+	byte    fontColorBackHilite;
+	byte    cursorColor;
 	int32   blinkStart;
 	int16   blinkX;
 	int8    blinkState;
@@ -166,8 +166,8 @@ public:
 	         int8        FGColor,        // foreground color of font
 	         int8        BGColor,        // background color of font
 	         int8        HLColor,        // hilite color of font
-	         int8        BGHLColor,      // back ground hilite color
-	         int8        CRColor,        // cusor color
+	         byte        BGHLColor,      // back ground hilite color
+	         byte        CRColor,        // cusor color
 	         const char  *title,         // title bar
 	         const char  *buffer,        // buffer to edit
 	         char        **stringBufs,

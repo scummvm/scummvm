@@ -706,26 +706,21 @@ int16 FileDialog(int16 fileProcess) {
 	// create the window
 	win = new ModalWindow(saveLoadWindowRect, 0, nullptr);
 
-	gCompButton *t;
 	// make the quit button
-	t = new gCompButton(*win, saveLoadButtonRects[0], pushBtnIm, numBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit);
+	new gCompButton(*win, saveLoadButtonRects[0], pushBtnIm, numBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit);
 	//t->accelKey=0x1B;
 
 	// make the Save/Load button
-	t = new gCompButton(*win, saveLoadButtonRects[1],
-	                               pushBtnIm, numBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]);
+	new gCompButton(*win, saveLoadButtonRects[1], pushBtnIm, numBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]);
 	//t->accelKey=0x0D;
 	// make the up arrow
-	t = new gCompButton(*win, saveLoadButtonRects[2],
-	                               arrowUpIm, numBtnImages, 0, cmdSaveDialogUp);
+	new gCompButton(*win, saveLoadButtonRects[2], arrowUpIm, numBtnImages, 0, cmdSaveDialogUp);
 	//t->accelKey=33+0x80;
 	// make the down arrow
-	t = new gCompButton(*win, saveLoadButtonRects[3],
-	                               arrowDnIm, numBtnImages, 0, cmdSaveDialogDown);
+	new gCompButton(*win, saveLoadButtonRects[3], arrowDnIm, numBtnImages, 0, cmdSaveDialogDown);
 	//t->accelKey=34+0x80;
 	// attach the title
-	new CPlaqText(*win, saveLoadTextRects[0],
-	                         textStrings[stringIndex][0], &Plate18Font, 0, pal, 0, nullptr);
+	new CPlaqText(*win, saveLoadTextRects[0], textStrings[stringIndex][0], &Plate18Font, 0, pal, 0, nullptr);
 
 
 

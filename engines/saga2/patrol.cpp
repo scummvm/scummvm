@@ -182,7 +182,7 @@ const TilePoint &PatrolRouteIterator::operator*(void) const {
 const PatrolRouteIterator &PatrolRouteIterator::operator++(void) {
 	const PatrolRoute &route = patrolRouteList[_mapNum]->getRoute(_routeNo);
 
-	if (_vertexNo >= 0 & _vertexNo < route.vertices()) {
+	if (_vertexNo >= 0 && _vertexNo < route.vertices()) {
 		if (!(_flags & patrolRouteRandom)) {
 			if (!(_flags & patrolRouteInAlternate)) {
 				if (!(_flags & patrolRouteReverse))
