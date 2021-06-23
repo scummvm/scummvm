@@ -71,7 +71,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x1d, LC::c_telldone,		"" },
 	{ 0x1e, LC::cb_list,		"" },
 	{ 0x1f, LC::cb_proplist,	"" },
-	{ 0x41, LC::c_intpush,		"b" },
+	{ 0x41, LC::c_intpush,		"B" },
 	{ 0x42, LC::c_argcnoretpush,"b" },
 	{ 0x43, LC::c_argcpush,		"b" },
 	// 0x44, push a constant
@@ -106,7 +106,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x64, LC::c_stackpeek, 	"b" },
 	{ 0x65, LC::c_stackdrop, 	"b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "b" },
-	{ 0x81, LC::c_intpush,		"w" },
+	{ 0x81, LC::c_intpush,		"W" },
 	{ 0x82, LC::c_argcnoretpush,"w" },
 	{ 0x83, LC::c_argcpush,		"w" },
 	// 0x84, push a constant
@@ -1320,11 +1320,24 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 							arg = (uint8)codeStore[pointer];
 							pointer += 1;
 							break;
+						case 'B':
+							// read one int8 as an argument
+							offsetList.push_back(_currentAssembly->size());
+							arg = (int8)codeStore[pointer];
+							pointer += 1;
+							break;
 						case 'w':
 							// read one uint16 as an argument
 							offsetList.push_back(_currentAssembly->size());
 							offsetList.push_back(_currentAssembly->size());
 							arg = (uint16)READ_BE_UINT16(&codeStore[pointer]);
+							pointer += 2;
+							break;
+						case 'W':
+							// read one int16 as an argument
+							offsetList.push_back(_currentAssembly->size());
+							offsetList.push_back(_currentAssembly->size());
+							arg = (int16)READ_BE_INT16(&codeStore[pointer]);
 							pointer += 2;
 							break;
 						case 'n':
