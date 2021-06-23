@@ -447,7 +447,7 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 			item->move(0, _gridItemHeight + _gridYSpacing);
 		}
 	
-	} else if (_gridItems.front()->getRelY() > 50 - (_gridItemHeight + _gridYSpacing)) {
+	} else if (_gridItems.front()->getRelY() > -_gridItemHeight) {
 		needsReload = true;
 		_firstVisibleItem -= _itemsPerRow;
 		
@@ -511,8 +511,8 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 			int col = 0;
 
 			for (auto it = _gridItems.begin(); it != _gridItems.end(); ++it) {
-				(*it)->setPos(50 + col * (_gridItemWidth + _gridXSpacing), 
-							(_scrollPos % (_gridItemHeight + _gridYSpacing)) + 50 + (row - 1) * (_gridItemHeight + _gridYSpacing));
+				(*it)->setPos(_minGridXSpacing + col * (_gridItemWidth + _gridXSpacing), 
+							(_scrollPos % (_gridItemHeight + _gridYSpacing)) + _gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing));
 				if (++col >= _itemsPerRow) {
 					++row;
 					col = 0;
@@ -554,16 +554,13 @@ void GridWidget::reflowLayout() {
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
 	
-	// In all calculations with 50 or 100, we are assuming 50 to be
-	// the Hor / Vert padding of contents inside the grid.
-	// TODO: Expose this padding via themes.
-	_itemsPerRow = MAX(((_scrollWindowWidth - 100) / (_gridItemWidth + _minGridXSpacing)), 1);
-	_gridXSpacing = MAX(((_scrollWindowWidth - 50) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
+	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing)) / (_gridItemWidth + _minGridXSpacing)), 1);
+	_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing)) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
 	
 	_rows = ceil(_allEntries.size() / (float)_itemsPerRow);
 	
-	_innerHeight = 100 + (_rows * (_gridItemHeight + _gridYSpacing));
-	_innerWidth = 100 + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
+	_innerHeight = _gridYSpacing + (_rows * (_gridItemHeight + _gridYSpacing));
+	_innerWidth = (2 * _minGridXSpacing) + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
 
 	if (_scrollPos < -(_innerHeight - _scrollWindowHeight))
 		_scrollPos = -(_innerHeight - _scrollWindowHeight);
@@ -583,8 +580,8 @@ void GridWidget::reflowLayout() {
 
 	for (int k = 0; k < _itemsOnScreen; ++k) {
 		GridItemWidget *newItem = new GridItemWidget(this, 
-									50 + col * (_gridItemWidth + _gridXSpacing), 
-									(_scrollPos % (_gridItemHeight + _gridYSpacing)) + 50 + (row - 1) * (_gridItemHeight + _gridYSpacing), 
+									_minGridXSpacing + col * (_gridItemWidth + _gridXSpacing), 
+									(_scrollPos % (_gridItemHeight + _gridYSpacing)) + _gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing), 
 									_gridItemWidth, 
 									_gridItemHeight);
 		
