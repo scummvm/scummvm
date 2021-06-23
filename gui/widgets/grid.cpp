@@ -44,7 +44,6 @@ void GridItemWidget::setActiveEntry(GridItemInfo &entry) {
 }
 
 void GridItemWidget::updateThumb() {
-	// TODO: Placeholder image for missing thumb
 	const Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
 	_thumbGfx.free();
 	if (gfx)
@@ -197,7 +196,7 @@ void GridItemTray::handleMouseWheel(int x, int y, int direction) {
 
 #pragma mark -
 
-Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
+Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 	Graphics::ManagedSurface *surf = nullptr;
 	const Graphics::Surface *srcSurface = nullptr;
 	if (name.hasSuffix(".png")) {
@@ -258,6 +257,14 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
+
+	Graphics::ManagedSurface *surf;
+	String path = String("./icons/placeholder.png");
+	surf = loadSurfaceFromFile(path);
+	if (surf) {
+		const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512));
+		_loadedSurfaces[String("placeholder")] = scSurf;
+	}
 }
 
 GridWidget::GridWidget(GuiObject *boss, const String &name)
@@ -278,6 +285,14 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
+
+	Graphics::ManagedSurface *surf;
+	String path = String("./icons/placeholder.png");
+	surf = loadSurfaceFromFile(path);
+	if (surf) {
+		const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512));
+		_loadedSurfaces[String("placeholder")] = scSurf;
+	}
 }
 
 const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name) {
@@ -285,7 +300,7 @@ const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name
 	
 	for (auto l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
 		if (l->thumbPath == name) {
-			return _loadedSurfaces[path];
+			return _loadedSurfaces.getValOrDefault(path, _loadedSurfaces["placeholder"]);
 		}
 	}
 	return nullptr;
