@@ -3439,6 +3439,8 @@ void initActors(void) {
 		resourceActorList.push_back(res);
 	}
 
+	delete stream;
+
 	for (i = 0; i < resourceActorCount; i++) {
 		Actor       *a = &actorList[i];
 
