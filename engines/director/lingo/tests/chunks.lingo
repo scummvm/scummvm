@@ -2,9 +2,11 @@
 
 -- put the last word of field 1 into field 3
 
-put the last char of "Macromedia, the multimedia company"
-put the last word of "Macromedia, the multimedia company"
-put the last word of "Macromedia, the multimedia company" && "man"
+scummvmAssertEqual(the last char of "Macromedia, the multimedia company", "y")
+scummvmAssertEqual(the last word of "Macromedia, the multimedia company", "company")
+scummvmAssertEqual(the last word of "Macromedia, the multimedia company" && "man", "company man")
+scummvmAssertEqual(word -30000 of "Macromedia, the multimedia company", "company")
+scummvmAssertEqual(word -30000 of "Macromedia, the multimedia company" && "man", "company man")
 
 set src = "abcdefghijklmnopqrstuvwxyz"
 scummvmAssertEqual(char 2 of src, "b")
