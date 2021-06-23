@@ -1117,7 +1117,7 @@ bool LingoCompiler::visitIntersectsNode(IntersectsNode *node) {
 	COMPILE(node->sprite2);
 	code1(LC::c_intersects);
 	return true;
-};
+}
 
 /* WithinNode */
 
