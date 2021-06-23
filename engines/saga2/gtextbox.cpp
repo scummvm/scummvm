@@ -159,7 +159,7 @@ gTextBox::gTextBox(
     int8            HLColor,
     int8            BGHLColor,
     int8            CRColor,
-    const char      *title,
+    const char      *title_,
     const char      *buffer,
     char            **stringBufs,
     uint16          length,
@@ -169,7 +169,7 @@ gTextBox::gTextBox(
     AppFunc         *cmd,
     AppFunc         *cmdEnter,
     AppFunc         *cmdEscape)
-	: gControl(list, box, title, ident, cmd) {
+	: gControl(list, box, title_, ident, cmd) {
 	int16   i;
 
 

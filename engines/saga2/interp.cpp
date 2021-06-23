@@ -677,6 +677,8 @@ bool Thread::interpret(void) {
 		case op_return:                     // return with value
 			D_OP(op_return);
 			returnVal = *stack++;
+			// fall through
+
 		case op_return_v:                   // return with void
 			D_OP(op_return_v);
 			stack = (int16 *)(stackBase + framePtr);    // pop autos
@@ -1126,6 +1128,7 @@ bool Thread::interpret(void) {
 		case op_reply:
 		case op_animate:
 			script_error("Feature not implemented.\n");
+			break;
 
 		default:
 			script_error("fatal error: undefined opcode");
@@ -1804,10 +1807,6 @@ scriptResult runScript(uint16 exportEntryNum, scriptCallFrame &args) {
 	scriptResult    result;
 	Thread          *saveThread = thisThread;
 
-	//  Lookup function entry point in export table
-	if (exportEntryNum < 0)
-		error("SAGA failure: Attempt to run script with invalid export ID %d.", exportEntryNum);
-
 	assert(exportEntryNum > 0);
 	lookupExport(exportEntryNum, segNum, segOff);
 
@@ -1856,10 +1855,6 @@ scriptResult runMethod(
 	//  index.
 	if (bType == builtinAbstract)
 		index = scriptClassID;
-
-	//  Lookup class function table in export table
-	if (scriptClassID < 0)
-		error("SAGA failure: Attempt to run object script with invalid export ID %d.\n", scriptClassID);
 
 	lookupExport(scriptClassID, segNum, segOff);
 

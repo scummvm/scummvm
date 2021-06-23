@@ -65,7 +65,6 @@ extern audioInterface   *audio;
 extern hResource        *soundResFile;          // script resources
 extern hResource        *voiceResFile;          // script resources
 
-extern int32            maxClicks;
 extern int32            clickSizes[];
 extern uint8            *clickData[];
 
@@ -208,7 +207,7 @@ BUFFERLOD(flushMemSound)  {
 
 static ATTENUATOR(volumeFromDist) {
 	TilePoint tp(loc.x, loc.y, 0);
-	int32 dist = tp.quickHDistance();
+	uint32 dist = tp.quickHDistance();
 	if (dist < fullVolumeDist) {
 		return abs(maxVol);
 	} else if (dist < offVolumeDist) {

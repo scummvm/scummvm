@@ -249,7 +249,6 @@ void SimpleWindow::drawClipped(
 	int16           textPos = textPosHigh;
 	//textPallete       pal( 33+9, 36+9, 41+9, 34+9, 40+9, 43+9 );
 	textPallete     pal(33 + 9, 33 + 9, 41 + 9, 33 + 9, 33 + 9, 41 + 9);
-	bool            selected = false;
 
 	box.x += 10;
 	box.y += 10;
@@ -260,7 +259,7 @@ void SimpleWindow::drawClipped(
 	pointer.hide(port, extent);              // hide mouse pointer
 
 	DrawOutlineFrame(port,  extent, windowColor);
-	writeWrappedPlaqText(port, box, mbButtonFont, textPos, pal, selected,  title);
+	writeWrappedPlaqText(port, box, mbButtonFont, textPos, pal, false, title);
 
 	gWindow::drawClipped(port, p, r);
 
@@ -347,9 +346,8 @@ void SimpleWindow::DrawOutlineFrame(gPort &port, const Rect16 &r, int16 fillColo
    SimpleButton
  * ===================================================================== */
 
-SimpleButton::SimpleButton(gWindow &win, const Rect16 &box, const char *title, uint16 ident,
-                           AppFunc *cmd)
-	: gControl(win, box, title, ident, cmd) {
+SimpleButton::SimpleButton(gWindow &win, const Rect16 &box, const char *title_, uint16 ident, AppFunc *cmd_)
+	: gControl(win, box, title_, ident, cmd_) {
 	window = &win;
 }
 

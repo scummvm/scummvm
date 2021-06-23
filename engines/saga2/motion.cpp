@@ -2524,7 +2524,6 @@ void MotionTask::walkAction(void) {
 	Actor           *a;
 	ActorAppearance *aa;
 	StandingTileInfo sti;
-	ProtoObj        *proto;
 
 	bool            moveTaskWaiting = false,
 	                moveTaskDone = false;
@@ -2538,8 +2537,6 @@ void MotionTask::walkAction(void) {
 		remove(motionWalkBlocked);
 		return;
 	}
-
-	proto = a->proto();
 
 	//  Make sure that the actor is interruptable
 	a->setInterruptablity(true);
@@ -4826,7 +4823,6 @@ falling:
 //	Calls the handling routine for each active motion task
 
 void moveActors(int32 deltaTime) {
-	deltaTime = 0;
 	MotionTask::updatePositions();
 }
 

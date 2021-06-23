@@ -797,15 +797,14 @@ void cleanupGUIMessagers(void) {
 #ifdef  WriteStatus
 void WriteStatusF(int16 line, const char *msg, ...) {
 	va_list         argptr;
-	int             cnt;
 	if (displayEnabled()) {
 		va_start(argptr, msg);
 		if (line > 9) {
 			if (Status2[line - 10])
-				cnt = Status2[line - 10]->va(msg, argptr);
+				Status2[line - 10]->va(msg, argptr);
 		} else {
 			if (Status[line])
-				cnt = Status[line]->va(msg, argptr);
+				Status[line]->va(msg, argptr);
 		}
 		va_end(argptr);
 	}
@@ -813,11 +812,10 @@ void WriteStatusF(int16 line, const char *msg, ...) {
 
 void WriteStatusF2(int16 line, const char *msg, ...) {
 	va_list         argptr;
-	int             cnt;
 	if (displayEnabled()) {
 		va_start(argptr, msg);
 		if (Status2[line])
-			cnt = Status2[line]->va(msg, argptr);
+			Status2[line]->va(msg, argptr);
 		va_end(argptr);
 	}
 }

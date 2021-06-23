@@ -469,9 +469,7 @@ void ContainerView::drawClipped(
 
 // draws the mereged object multi-item selector
 void ContainerView::drawSelector(gPort &port, Point16 &pos) {
-	const int bufSize = 20;
-
-	char buf[bufSize];
+	char buf[20];
 	uint8   num;
 
 	SAVE_GPORT_STATE(port);
@@ -481,7 +479,6 @@ void ContainerView::drawSelector(gPort &port, Point16 &pos) {
 
 	// draw the number of items selected thus far
 	num = sprintf(buf, " %d ", numPicked);
-//	num = strlen( buf );
 
 	port.moveTo(Point16(pos.x - ((3 * (num - 3)) + 1),  pos.y + 7));
 	port.setFont(&Helv11Font);
@@ -613,7 +610,7 @@ void ContainerView::pointerMove(gPanelMessage &msg) {
 		lastPickedObjectID = Nothing;
 		lastPickedObjectQuantity = -1;
 		mouseInfo.setText(NULL);
-		mouseText[0] = NULL;
+		mouseText[0] = 0;
 
 		// static bool that tells if the mouse cursor
 		// is in a panel
@@ -760,7 +757,7 @@ void ContainerView::clickOn(
 				// activate multi-object get interface if a mergeable object
 				getMerged(cObj);
 				mouseInfo.setText(NULL);
-				mouseText[0] = NULL;
+				mouseText[0] = 0;
 			}
 		} else {
 			//  just get the object into the cursor
@@ -895,7 +892,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 	if (slotID == Nothing) {
 		// clear out the mouse text
 		mouseInfo.setText(NULL);
-		mouseText[0] = NULL;
+		mouseText[0] = 0;
 
 		// reset the last picked thingy
 		lastPickedObjectID          = Nothing;
@@ -919,7 +916,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 
 		// clear out the mouse text
 		mouseInfo.setText(NULL);
-		mouseText[0] = NULL;
+		mouseText[0] = 0;
 
 		// reset the alarm flag
 		objTextAlarm = false;
@@ -950,7 +947,7 @@ void ContainerView::setCursorText(GameObject *obj) {
 void ContainerView::setDelayedCursorText(GameObject *obj) {
 	// clear out the mouse text
 	mouseInfo.setText(NULL);
-	mouseText[0] = NULL;
+	mouseText[0] = 0;
 
 	// reset the alarm flag
 	objTextAlarm = false;

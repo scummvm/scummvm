@@ -105,18 +105,16 @@ class frameSmoother: public frameCounter {
 	}
 
 	void calculateAverages(void) {
-		int i;
-
 		// clear averages
 		memset(avg1Sec, 0, 20);
 		avg5Sec = 0;
 
 		// get totals
-		for (i = 0; i < historySize; i++)
+		for (uint i = 0; i < historySize; i++)
 			avg1Sec[i / int(desiredFPS)] += ksHistory(i);
 
 		// get averages
-		for (i = 0; i < 5; i++) {
+		for (uint i = 0; i < 5; i++) {
 			avg5Sec += avg1Sec[i];
 			avg1Sec[i] /= desiredFPS;
 		}
@@ -127,20 +125,18 @@ class frameSmoother: public frameCounter {
 	}
 
 	void calculateVariance(void) {
-		int i;
-
 		// clear variances
 		memset(dif1Sec, 0, 20);
 		dif5Sec = 0;
 
 		// get variance totals
-		for (i = 0; i < historySize; i++) {
+		for (uint i = 0; i < historySize; i++) {
 			dif1Sec[i / int(desiredFPS)] += abs(ksHistory(i) - avg1Sec[i / int(desiredFPS)]);
 			dif5Sec += abs(ksHistory(i) - avg5Sec);
 		}
 
 		// get average variances
-		for (i = 0; i < 5; i++) {
+		for (uint i = 0; i < 5; i++) {
 			secDif += avg1Sec[i] - secAvg;
 			dif1Sec[i] /= desiredFPS;
 		}
