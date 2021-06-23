@@ -517,6 +517,7 @@ struct ResourceActor : public ResourceGameObject {
 	//  Pad bytes
 	uint8           reserved[18];
 
+	ResourceActor(Common::SeekableReadStream *stream);
 };
 
 class Actor : public GameObject {

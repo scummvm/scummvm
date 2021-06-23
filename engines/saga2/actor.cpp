@@ -3385,45 +3385,44 @@ void setCombatBehavior(bool enabled) {
 //-------------------------------------------------------------------
 //	Initialize the actor list
 
-static void readResourceActor(hResContext *con, ResourceActor &resourceActor) {
-	resourceActor.protoIndex = con->readS16LE();
-	resourceActor.location.u = con->readS16LE();
-	resourceActor.location.v = con->readS16LE();
-	resourceActor.location.z = con->readS16LE();
-	resourceActor.nameIndex = con->readU16LE();
-	resourceActor.parentID = con->readU16LE();
-	resourceActor.script = con->readU16LE();
-	resourceActor.objectFlags = con->readU16LE();
-	resourceActor.hitPoints = con->readByte();
-	resourceActor.misc = con->readU16LE();
+ResourceActor::ResourceActor(Common::SeekableReadStream *stream) {
+	protoIndex = stream->readSint16LE();
+	location.u = stream->readSint16LE();
+	location.v = stream->readSint16LE();
+	location.z = stream->readSint16LE();
+	nameIndex = stream->readUint16LE();
+	parentID = stream->readUint16LE();
+	script = stream->readUint16LE();
+	objectFlags = stream->readUint16LE();
+	hitPoints = stream->readByte();
+	misc = stream->readUint16LE();
 
-	resourceActor.faction = con->readByte();
-	resourceActor.colorScheme = con->readByte();
-	resourceActor.appearanceID = con->readS32BE();
-	resourceActor.attitude = con->readSByte();
-	resourceActor.mood = con->readSByte();
-	resourceActor.disposition = con->readByte();
-	resourceActor.currentFacing = con->readByte();
-	resourceActor.tetherLocU = con->readS16LE();
-	resourceActor.tetherLocV = con->readS16LE();
-	resourceActor.tetherDist = con->readS16LE();
-	resourceActor.leftHandObject = con->readU16LE();
-	resourceActor.rightHandObject = con->readU16LE();
+	faction = stream->readByte();
+	colorScheme = stream->readByte();
+	appearanceID = stream->readSint32BE();
+	attitude = stream->readSByte();
+	mood = stream->readSByte();
+	disposition = stream->readByte();
+	currentFacing = stream->readByte();
+	tetherLocU = stream->readSint16LE();
+	tetherLocV = stream->readSint16LE();
+	tetherDist = stream->readSint16LE();
+	leftHandObject = stream->readUint16LE();
+	rightHandObject = stream->readUint16LE();
 	for (int i = 0; i < 16; ++i) {
-		resourceActor.knowledge[i] = con->readU16LE();
+		knowledge[i] = stream->readUint16LE();
 	}
-	resourceActor.schedule = con->readU16LE();
+	schedule = stream->readUint16LE();
 	for (int i = 0; i < 18; ++i) { // padding bytes = not neccessary?
-		resourceActor.reserved[i] = con->readByte();
+		reserved[i] = stream->readByte();
 	}
 }
 
 void initActors(void) {
 	//  Load actors
-
-	int             i,
-	                resourceActorCount;
-	ResourceActor   *resourceActorList;
+	int i, resourceActorCount;
+	Common::Array<ResourceActor> resourceActorList;
+	Common::SeekableReadStream *stream;
 	const int resourceActorSize = 91; // size of the packed struct
 
 	resourceActorCount = listRes->size(actorListID)
@@ -3442,15 +3441,14 @@ void initActors(void) {
 	if (!actorList)
 		error("Unable to load Actors");
 
-	//  Allocate memory for the resource actors
-	resourceActorList = new ResourceActor[resourceActorCount]();
-
-	if (!resourceActorList || listRes->seek(actorListID) == 0)
+	if ((stream = loadResourceToStream(listRes, actorListID, "res actor list")) == nullptr)
 		error("Unable to load Actors");
 
 	//  Read the resource actors
-	for (int k = 0; k < resourceActorCount; ++k)
-		readResourceActor(listRes, resourceActorList[k]);
+	for (int k = 0; k < resourceActorCount; ++k) {
+		ResourceActor res(stream);
+		resourceActorList.push_back(res);
+	}
 
 	for (i = 0; i < resourceActorCount; i++) {
 		Actor       *a = &actorList[i];
@@ -3469,12 +3467,6 @@ void initActors(void) {
 	actorList[0].disposition = dispositionPlayer + 0;
 	actorList[1].disposition = dispositionPlayer + 1;
 	actorList[2].disposition = dispositionPlayer + 2;
-
-
-	//  Wait for the object initialization to append the actors to their
-	//  parents' child lists
-
-	delete[] resourceActorList;
 }
 
 //-------------------------------------------------------------------
