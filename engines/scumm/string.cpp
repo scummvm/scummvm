@@ -1036,7 +1036,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->setCurID(_string[a].charset);
 
 	// HACK: Correct positions of text in books in Indy3 Mac.
-	// See also bug #8759.
+	// See also bug #8759. Not needed when using the Mac font.
 	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && a == 1 && !_macScreen) {
 		if (_currentRoom == 75) {
 			// Grail Diary Page 1 (Library)
