@@ -60,13 +60,13 @@ Datum chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &src);
 Datum lastChunk(ChunkType type, const Datum &src);
 Datum readChunkRef(const Datum &src);
 void c_of();
-void c_charOf();
+void c_charToOfRef();
 void c_charToOf();
-void c_itemOf();
+void c_itemToOfRef();
 void c_itemToOf();
-void c_lineOf();
+void c_lineToOfRef();
 void c_lineToOf();
-void c_wordOf();
+void c_wordToOfRef();
 void c_wordToOf();
 
 void c_constpush();

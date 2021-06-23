@@ -262,10 +262,6 @@ static struct BuiltinProto {
 	{ "numberOfItems",	LB::b_numberofitems,1, 1, false, 300, FBLTIN },	//			D3 f
 	{ "numberOfLines",	LB::b_numberoflines,1, 1, false, 300, FBLTIN },	//			D3 f
 	{ "numberOfWords",	LB::b_numberofwords,1, 1, false, 300, FBLTIN },	//			D3 f
-	{ "lastCharOf",		LB::b_lastcharof,	1, 1, false, 400, FBLTIN },	//			D4 f
-	{ "lastItemOf",		LB::b_lastitemof,	1, 1, false, 400, FBLTIN },	//			D4 f
-	{ "lastLineOf",		LB::b_lastlineof,	1, 1, false, 400, FBLTIN },	//			D4 f
-	{ "lastWordOf",		LB::b_lastwordof,	1, 1, false, 400, FBLTIN },	//			D4 f
 
 	// ScummVM Asserts: Used for testing ScummVM's Lingo implementation
 	{ "scummvmAssert",	LB::b_scummvmassert,1, 2, true,  200, HBLTIN },
@@ -2549,30 +2545,6 @@ void LB::b_numberofwords(int nargs) {
 	Datum d = g_lingo->pop();
 	Datum chunkRef = LC::lastChunk(kChunkWord, d);
 	g_lingo->push(chunkRef.u.cref->startChunk);
-}
-
-void LB::b_lastcharof(int nargs) {
-	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::lastChunk(kChunkChar, d);
-	g_lingo->push(chunkRef.eval());
-}
-
-void LB::b_lastitemof(int nargs) {
-	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::lastChunk(kChunkItem, d);
-	g_lingo->push(chunkRef.eval());
-}
-
-void LB::b_lastlineof(int nargs) {
-	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::lastChunk(kChunkLine, d);
-	g_lingo->push(chunkRef.eval());
-}
-
-void LB::b_lastwordof(int nargs) {
-	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::lastChunk(kChunkWord, d);
-	g_lingo->push(chunkRef.eval());
 }
 
 void LB::b_scummvmassert(int nargs) {

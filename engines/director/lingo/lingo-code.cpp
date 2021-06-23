@@ -76,7 +76,6 @@ static struct FuncDescr {
 	{ LC::c_assign,			"c_assign",			""  },
 	{ LC::c_callcmd,		"c_callcmd",		"si" },
 	{ LC::c_callfunc,		"c_callfunc",		"si" },
-	{ LC::c_charOf,			"c_charOf",			"" },	// D3
 	{ LC::c_charToOf,		"c_charToOf",		"" },	// D3
 	{ LC::c_concat,			"c_concat",			"" },
 	{ LC::c_constpush,		"c_constpush",		"s" },
@@ -91,12 +90,10 @@ static struct FuncDescr {
 	{ LC::c_hilite,			"c_hilite",			"" },
 	{ LC::c_intersects,		"c_intersects",		"" },
 	{ LC::c_intpush,		"c_intpush",		"i" },
-	{ LC::c_itemOf,			"c_itemOf",			"" },	// D3
 	{ LC::c_itemToOf,		"c_itemToOf",		"" },	// D3
 	{ LC::c_jump,			"c_jump",			"o" },
 	{ LC::c_jumpifz,		"c_jumpifz",		"o" },
 	{ LC::c_le,				"c_le",				"" },
-	{ LC::c_lineOf,			"c_lineOf",			"" },	// D3
 	{ LC::c_lineToOf,		"c_lineToOf",		"" },	// D3
 	{ LC::c_localpush,		"c_localpush",		"s" },
 	{ LC::c_localrefpush,	"c_localrefpush",	"s" },
@@ -133,7 +130,6 @@ static struct FuncDescr {
 	{ LC::c_voidpush,		"c_voidpush",		""  },
 	{ LC::c_whencode,		"c_whencode",		"s" },
 	{ LC::c_within,			"c_within",			"" },
-	{ LC::c_wordOf,			"c_wordOf",			"" },	// D3
 	{ LC::c_wordToOf,		"c_wordToOf",		"" },	// D3
 	{ LC::c_xpop,			"c_xpop",			""  },
 	{ LC::cb_call,			"cb_call",			"N" },
@@ -1029,27 +1025,14 @@ void LC::c_of() {
 	g_lingo->push(ref.eval());
 }
 
-void LC::c_charOf() {
-	Datum src = g_lingo->pop(false);
-	Datum index = g_lingo->pop();
-
-	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && !src.isRef())) {
-		g_lingo->lingoError("LC::c_charOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
-		g_lingo->push(Datum(""));
-		return;
-	}
-
-	g_lingo->push(LC::chunkRef(kChunkChar, index.asInt(), 0, src));
-}
-
-void LC::c_charToOf() {
+void LC::c_charToOfRef() {
 	Datum src = g_lingo->pop(false);
 	Datum indexTo = g_lingo->pop();
 	Datum indexFrom = g_lingo->pop();
 
 	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
 			|| (src.type != STRING && !src.isRef())) {
-		warning("LC::c_charToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
+		warning("LC::c_charToOfRef(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
 	}
@@ -1057,27 +1040,20 @@ void LC::c_charToOf() {
 	g_lingo->push(LC::chunkRef(kChunkChar, indexFrom.asInt(), indexTo.asInt(), src));
 }
 
-void LC::c_itemOf() {
-	Datum src = g_lingo->pop(false);
-	Datum index = g_lingo->pop();
-
-	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && !src.isRef())) {
-		warning("LC::c_itemOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
-		g_lingo->push(Datum(""));
-		return;
-	}
-
-	g_lingo->push(LC::chunkRef(kChunkItem, index.asInt(), 0, src));
+void LC::c_charToOf() {
+	LC::c_charToOfRef();
+	Datum ref = g_lingo->pop(false);
+	g_lingo->push(ref.eval());
 }
 
-void LC::c_itemToOf() {
+void LC::c_itemToOfRef() {
 	Datum src = g_lingo->pop(false);
 	Datum indexTo = g_lingo->pop();
 	Datum indexFrom = g_lingo->pop();
 
 	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
 			|| (src.type != STRING && !src.isRef())) {
-		warning("LC::c_itemToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
+		warning("LC::c_itemToOfRef(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
 	}
@@ -1085,27 +1061,20 @@ void LC::c_itemToOf() {
 	g_lingo->push(LC::chunkRef(kChunkItem, indexFrom.asInt(), indexTo.asInt(), src));
 }
 
-void LC::c_lineOf() {
-	Datum src = g_lingo->pop(false);
-	Datum index = g_lingo->pop();
-
-	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && !src.isRef())) {
-		warning("LC::c_lineOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
-		g_lingo->push(Datum(""));
-		return;
-	}
-
-	g_lingo->push(LC::chunkRef(kChunkLine, index.asInt(), 0, src));
+void LC::c_itemToOf() {
+	LC::c_itemToOfRef();
+	Datum ref = g_lingo->pop(false);
+	g_lingo->push(ref.eval());
 }
 
-void LC::c_lineToOf() {
+void LC::c_lineToOfRef() {
 	Datum src = g_lingo->pop(false);
 	Datum indexTo = g_lingo->pop();
 	Datum indexFrom = g_lingo->pop();
 
 	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
 			|| (src.type != STRING && !src.isRef())) {
-		warning("LC::c_lineToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
+		warning("LC::c_lineToOfRef(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
 	}
@@ -1113,32 +1082,31 @@ void LC::c_lineToOf() {
 	g_lingo->push(LC::chunkRef(kChunkLine, indexFrom.asInt(), indexTo.asInt(), src));
 }
 
-void LC::c_wordOf() {
-	Datum src = g_lingo->pop(false);
-	Datum index = g_lingo->pop();
-
-	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && !src.isRef())) {
-		warning("LC::c_wordOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
-		g_lingo->push(Datum(""));
-		return;
-	}
-
-	g_lingo->push(LC::chunkRef(kChunkWord, index.asInt(), 0, src));
+void LC::c_lineToOf() {
+	LC::c_lineToOfRef();
+	Datum ref = g_lingo->pop(false);
+	g_lingo->push(ref.eval());
 }
 
-void LC::c_wordToOf() {
+void LC::c_wordToOfRef() {
 	Datum src = g_lingo->pop(false);
 	Datum indexTo = g_lingo->pop();
 	Datum indexFrom = g_lingo->pop();
 
 	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
 			|| (src.type != STRING && !src.isRef())) {
-		warning("LC::c_wordToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
+		warning("LC::c_wordToOfRef(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
 	}
 
 	g_lingo->push(LC::chunkRef(kChunkWord, indexFrom.asInt(), indexTo.asInt(), src));
+}
+
+void LC::c_wordToOf() {
+	LC::c_wordToOfRef();
+	Datum ref = g_lingo->pop(false);
+	g_lingo->push(ref.eval());
 }
 
 void LC::c_and() {

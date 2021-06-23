@@ -1283,19 +1283,39 @@ bool LingoCompiler::visitTheNumberOfNode(TheNumberOfNode *node) {
 /* TheLastNode */
 
 bool LingoCompiler::visitTheLastNode(TheLastNode *node) {
+	code1(LC::c_intpush);
+	codeInt(-30000);
+	code1(LC::c_intpush);
+	codeInt(0);
 	COMPILE(node->arg);
 	switch (node->type) {
 	case kChunkChar:
-		codeFunc("lastCharOf", 1);
+		if (_refMode) {
+			code1(LC::c_charToOfRef);
+		} else {
+			code1(LC::c_charToOf);
+		}
 		break;
 	case kChunkWord:
-		codeFunc("lastWordOf", 1);
+		if (_refMode) {
+			code1(LC::c_wordToOfRef);
+		} else {
+			code1(LC::c_wordToOf);
+		}
 		break;
 	case kChunkItem:
-		codeFunc("lastItemOf", 1);
+		if (_refMode) {
+			code1(LC::c_itemToOfRef);
+		} else {
+			code1(LC::c_itemToOf);
+		}
 		break;
 	case kChunkLine:
-		codeFunc("lastLineOf", 1);
+		if (_refMode) {
+			code1(LC::c_lineToOfRef);
+		} else {
+			code1(LC::c_lineToOf);
+		}
 		break;
 	}
 	return true;
@@ -1342,35 +1362,38 @@ bool LingoCompiler::visitChunkExprNode(ChunkExprNode *node) {
 	COMPILE(node->start);
 	if (node->end) {
 		COMPILE(node->end);
+	} else {
+		code1(LC::c_intpush);
+		codeInt(0);
 	}
 	COMPILE(node->src);
 	switch (node->type) {
 	case kChunkChar:
-		if (node->end) {
-			code1(LC::c_charToOf);
+		if (_refMode) {
+			code1(LC::c_charToOfRef);
 		} else {
-			code1(LC::c_charOf);
+			code1(LC::c_charToOf);
 		}
 		break;
 	case kChunkWord:
-		if (node->end) {
-			code1(LC::c_wordToOf);
+		if (_refMode) {
+			code1(LC::c_wordToOfRef);
 		} else {
-			code1(LC::c_wordOf);
+			code1(LC::c_wordToOf);
 		}
 		break;
 	case kChunkItem:
-		if (node->end) {
-			code1(LC::c_itemToOf);
+		if (_refMode) {
+			code1(LC::c_itemToOfRef);
 		} else {
-			code1(LC::c_itemOf);
+			code1(LC::c_itemToOf);
 		}
 		break;
 	case kChunkLine:
-		if (node->end) {
-			code1(LC::c_lineToOf);
+		if (_refMode) {
+			code1(LC::c_lineToOfRef);
 		} else {
-			code1(LC::c_lineOf);
+			code1(LC::c_lineToOf);
 		}
 		break;
 	}

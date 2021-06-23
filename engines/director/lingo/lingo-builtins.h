@@ -194,10 +194,6 @@ void b_numberofchars(int nargs);
 void b_numberofitems(int nargs);
 void b_numberoflines(int nargs);
 void b_numberofwords(int nargs);
-void b_lastcharof(int nargs);
-void b_lastitemof(int nargs);
-void b_lastlineof(int nargs);
-void b_lastwordof(int nargs);
 
 void b_scummvmassert(int nargs);
 void b_scummvmassertequal(int nargs);
