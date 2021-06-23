@@ -964,7 +964,7 @@ void ProtoObj::doBackgroundUpdate(GameObject *obj) {
 
 	// XXX: Temporary crash prevention
 	// We should properly solve the problem
-	debug(3, "XXX: doBackgroundUpdate");
+	debug(5, "XXX: doBackgroundUpdate");
 
 	if (w == nullptr) {
 		obj->deactivate();
