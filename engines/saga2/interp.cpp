@@ -1324,9 +1324,9 @@ Thread *ThreadList::next(Thread *thread) {
 	if (i == kNumThreads)
 		return nullptr;
 
-	for (; i < kNumThreads; i++)
-		if (_list[i])
-			return _list[i];
+	for (int j = i + 1; j < kNumThreads; j++)
+		if (_list[j])
+			return _list[j];
 
 	return nullptr;
 }
