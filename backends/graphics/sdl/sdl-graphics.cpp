@@ -121,17 +121,17 @@ Common::Rect SdlGraphicsManager::getPreferredFullscreenResolution() {
 
 bool SdlGraphicsManager::defaultGraphicsModeConfig() const {
 	const Common::ConfigManager::Domain *transientDomain = ConfMan.getDomain(Common::ConfigManager::kTransientDomain);
-	if (transientDomain && transientDomain->contains("gfx_mode")) {
-		const Common::String &mode = transientDomain->getVal("gfx_mode");
-		if (!mode.equalsIgnoreCase("normal") && !mode.equalsIgnoreCase("default")) {
+	if (transientDomain && transientDomain->contains("scaler")) {
+		const Common::String &mode = transientDomain->getVal("scaler");
+		if (!mode.equalsIgnoreCase("default")) {
 			return false;
 		}
 	}
 
 	const Common::ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();
-	if (gameDomain && gameDomain->contains("gfx_mode")) {
-		const Common::String &mode = gameDomain->getVal("gfx_mode");
-		if (!mode.equalsIgnoreCase("normal") && !mode.equalsIgnoreCase("default")) {
+	if (gameDomain && gameDomain->contains("scaler")) {
+		const Common::String &mode = gameDomain->getVal("scaler");
+		if (!mode.equalsIgnoreCase("default")) {
 			return false;
 		}
 	}

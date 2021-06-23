@@ -717,10 +717,9 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 	if ((int)w != _videoMode.screenWidth || (int)h != _videoMode.screenHeight) {
 		const bool useDefault = defaultGraphicsModeConfig();
 		if (useDefault && w > 320) {
-			// 0 will currently always be Normal1x scaling
-			setGraphicsMode(0);
+			setScaler(_videoMode.scalerIndex, 1);
 		} else {
-			setGraphicsMode(getGraphicsModeIdByName(ConfMan.get("gfx_mode")));
+			setScaler(_videoMode.scalerIndex, ConfMan.getInt("scale_factor"));
 		}
 	}
 
