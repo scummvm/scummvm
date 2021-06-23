@@ -42,7 +42,7 @@ ActiveMission *ActiveMission::newMission(ObjectID genID, uint16 script) {
 	int             i;
 	ActiveMission   *ms = NULL;
 
-	for (i = 0; i < elementsof(activeMissions); i++) {
+	for (i = 0; i < ARRAYSIZE(activeMissions); i++) {
 		if (!(activeMissions[i]._data.missionFlags & inUse)) {
 			ms = &activeMissions[i];
 			break;
@@ -58,7 +58,7 @@ ActiveMission *ActiveMission::newMission(ObjectID genID, uint16 script) {
 
 	ms->_data.numKnowledgeIDs = ms->_data.numObjectIDs = 0;
 
-	memset(ms->_data.missionVars, 0, elementsof(ms->_data.missionVars));
+	memset(ms->_data.missionVars, 0, ARRAYSIZE(ms->_data.missionVars));
 
 	return ms;
 }
@@ -69,7 +69,7 @@ ActiveMission *ActiveMission::newMission(ObjectID genID, uint16 script) {
 int ActiveMission::findMission(ObjectID genID) {
 	int             i;
 
-	for (i = 0; i < elementsof(activeMissions); i++) {
+	for (i = 0; i < ARRAYSIZE(activeMissions); i++) {
 		if (activeMissions[i]._data.missionFlags & inUse
 		        &&  activeMissions[i]._data.generatorID == genID) {
 			return i;
@@ -81,7 +81,7 @@ int ActiveMission::findMission(ObjectID genID) {
 
 ActiveMission *ActiveMission::missionAddress(int index) {
 	assert(index >= 0);
-	assert(index < elementsof(activeMissions));
+	assert(index < ARRAYSIZE(activeMissions));
 
 	return &activeMissions[index];
 }
@@ -90,7 +90,7 @@ ActiveMission *ActiveMission::missionAddress(int index) {
 //	Add record of object creation to mission
 
 bool ActiveMission::addObjectID(ObjectID objID) {
-	if (_data.numObjectIDs < elementsof(_data.missionObjectList)) {
+	if (_data.numObjectIDs < ARRAYSIZE(_data.missionObjectList)) {
 		_data.missionObjectList[_data.numObjectIDs++] = objID;
 		return true;
 	}
@@ -124,7 +124,7 @@ bool ActiveMission::removeObjectID(ObjectID objID) {
 bool ActiveMission::addKnowledgeID(ObjectID actor, uint16 knowledgeID) {
 	if (!isActor(actor)) return false;
 
-	if (_data.numKnowledgeIDs < elementsof(_data.missionKnowledgeList)) {
+	if (_data.numKnowledgeIDs < ARRAYSIZE(_data.missionKnowledgeList)) {
 		Actor       *a = (Actor *)GameObject::objectAddress(actor);
 
 		if (!a->addKnowledge(knowledgeID)) return false;
@@ -191,7 +191,7 @@ void ActiveMission::cleanup(void) {
 void initMissions(void) {
 	int     i;
 
-	for (i = 0; i < elementsof(activeMissions); i++)
+	for (i = 0; i < ARRAYSIZE(activeMissions); i++)
 		activeMissions[i]._data.missionFlags &= ~inUse;
 }
 

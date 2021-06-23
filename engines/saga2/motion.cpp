@@ -361,7 +361,7 @@ static MotionTaskList &mTaskList = *((MotionTaskList *)mTaskListBuffer);
 //	Initialize the MotionTaskList
 
 MotionTaskList::MotionTaskList(void) {
-	for (int i = 0; i < elementsof(array); i++) {
+	for (int i = 0; i < ARRAYSIZE(array); i++) {
 		free.addTail(array[i]);
 	}
 }
@@ -375,7 +375,7 @@ MotionTaskList::MotionTaskList(void **buf) {
 	int16       i,
 	            motionTaskCount;
 
-	for (i = 0; i < elementsof(array); i++) {
+	for (i = 0; i < ARRAYSIZE(array); i++) {
 		free.addTail(array[i]);
 	}
 
@@ -3283,7 +3283,7 @@ const uint8 twoHandedSwingArray[] = {
 const CombatMotionSet   twoHandedSwingSet =
     CombatMotionSet(
         twoHandedSwingArray,
-        elementsof(twoHandedSwingArray));
+        ARRAYSIZE(twoHandedSwingArray));
 
 //  Construct a subset of all high two handed swing types
 const uint8 twoHandedHighSwingArray[] = {
@@ -3295,7 +3295,7 @@ const uint8 twoHandedHighSwingArray[] = {
 const CombatMotionSet   twoHandedHighSwingSet =
     CombatMotionSet(
         twoHandedHighSwingArray,
-        elementsof(twoHandedHighSwingArray));
+        ARRAYSIZE(twoHandedHighSwingArray));
 
 //  Construct a subset of all low two handed swing types
 const uint8 twoHandedLowSwingArray[] = {
@@ -3307,7 +3307,7 @@ const uint8 twoHandedLowSwingArray[] = {
 const CombatMotionSet   twoHandedLowSwingSet =
     CombatMotionSet(
         twoHandedLowSwingArray,
-        elementsof(twoHandedLowSwingArray));
+        ARRAYSIZE(twoHandedLowSwingArray));
 
 //-----------------------------------------------------------------------
 //  Handle all two handed swing motions
@@ -3402,7 +3402,7 @@ const uint8 oneHandedSwingArray[] = {
 const CombatMotionSet   oneHandedSwingSet =
     CombatMotionSet(
         oneHandedSwingArray,
-        elementsof(oneHandedSwingArray));
+        ARRAYSIZE(oneHandedSwingArray));
 
 //  Construct a subset of all high one handed swing types
 const uint8 oneHandedHighSwingArray[] = {
@@ -3412,7 +3412,7 @@ const uint8 oneHandedHighSwingArray[] = {
 const CombatMotionSet   oneHandedHighSwingSet =
     CombatMotionSet(
         oneHandedHighSwingArray,
-        elementsof(oneHandedHighSwingArray));
+        ARRAYSIZE(oneHandedHighSwingArray));
 
 //  Construct a subset of all low one handed swing types
 const uint8 oneHandedLowSwingArray[] = {
@@ -3422,7 +3422,7 @@ const uint8 oneHandedLowSwingArray[] = {
 const CombatMotionSet   oneHandedLowSwingSet =
     CombatMotionSet(
         oneHandedLowSwingArray,
-        elementsof(oneHandedLowSwingArray));
+        ARRAYSIZE(oneHandedLowSwingArray));
 
 //-----------------------------------------------------------------------
 //  Handle all one handed swing motions

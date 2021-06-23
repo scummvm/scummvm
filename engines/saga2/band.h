@@ -98,7 +98,7 @@ public:
 	}
 
 	bool add(Actor *newMember) {
-		if (memberCount < elementsof(members)) {
+		if (memberCount < ARRAYSIZE(members)) {
 			members[memberCount++] = newMember;
 			return true;
 		} else

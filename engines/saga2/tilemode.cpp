@@ -668,7 +668,7 @@ void loadTileModeState(SaveFileReader &saveGame) {
 
 void TileModeSetup(void) {
 	//  Load in decorative panels for the main window (for this mode)
-	mainWindow->setDecorations(mainWindowDecorations, elementsof(mainWindowDecorations), imageRes);
+	mainWindow->setDecorations(mainWindowDecorations, ARRAYSIZE(mainWindowDecorations), imageRes);
 
 	//  Test to draw borders.
 	//  REM: We should actually have a routine to refresh the window...

@@ -680,18 +680,18 @@ void abortAllSpeeches(void) {
 void sentenceGenerator(char *sentence) {
 	int16 index;
 
-	index = rand() % elementsof(names);
+	index = rand() % ARRAYSIZE(names);
 	strcat(sentence, names[index]);
-	index = rand() % elementsof(verbs);
+	index = rand() % ARRAYSIZE(verbs);
 	strcat(sentence, verbs[index]);
-	index = rand() % elementsof(adjectives);
+	index = rand() % ARRAYSIZE(adjectives);
 	strcat(sentence, adjectives[index]);
-	index = rand() % elementsof(nouns);
+	index = rand() % ARRAYSIZE(nouns);
 	strcat(sentence, nouns[index]);
 
-//	for(int i=0; i<elementsof(sentenceParts); i++)
+//	for(int i=0; i<ARRAYSIZE(sentenceParts); i++)
 //	{
-//		strcat(sentence,sentenceParts[i].index = rand() % elementsof(sentenceParts[i]);
+//		strcat(sentence,sentenceParts[i].index = rand() % ARRAYSIZE(sentenceParts[i]);
 //	}
 
 }
@@ -1015,7 +1015,7 @@ bool isVisible(GameObject *obj) {
 SpeechTaskList::SpeechTaskList(void) {
 	lockFlag = false;
 
-	for (int i = 0; i < (long)elementsof(array); i++) {
+	for (int i = 0; i < (long)ARRAYSIZE(array); i++) {
 		free.addTail(array[i]);
 	}
 }
@@ -1032,7 +1032,7 @@ SpeechTaskList::SpeechTaskList(void **buf) {
 	lockFlag = false;
 
 	//  Initialize the free list
-	for (i = 0; i < (long)elementsof(array); i++) {
+	for (i = 0; i < (long)ARRAYSIZE(array); i++) {
 		free.addTail(array[i]);
 	}
 

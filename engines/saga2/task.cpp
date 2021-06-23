@@ -2170,11 +2170,11 @@ TilePoint GoAwayFromActorTask::getRepulsionVector(void) {
 	                    repulsionVector;
 	int16               i;
 	TilePoint           locArray[6];
-	int16               strengthArray[elementsof(locArray)] =
+	int16               strengthArray[ARRAYSIZE(locArray)] =
 	{ 1, 1, 1, 1, 1, 1 };
-	int16               distArray[elementsof(locArray)];
+	int16               distArray[ARRAYSIZE(locArray)];
 	TargetLocationArray tla(
-	    elementsof(locArray),
+	    ARRAYSIZE(locArray),
 	    locArray,
 	    distArray);
 
@@ -2728,9 +2728,9 @@ void HuntToBeNearObjectTask::evaluateTarget(void) {
 		Actor               *a = stack->getActor();
 		int16               i;
 		GameObject          *objArray[16];
-		int16               distArray[elementsof(objArray)];
+		int16               distArray[ARRAYSIZE(objArray)];
 		TargetObjectArray   toa(
-		    elementsof(objArray),
+		    ARRAYSIZE(objArray),
 		    objArray,
 		    distArray);
 		SenseInfo           info;
@@ -2867,9 +2867,9 @@ void HuntToPossessTask::evaluateTarget(void) {
 		Actor               *a = stack->getActor();
 		int16               i;
 		GameObject          *objArray[16];
-		int16               distArray[elementsof(objArray)];
+		int16               distArray[ARRAYSIZE(objArray)];
 		TargetObjectArray   toa(
-		    elementsof(objArray),
+		    ARRAYSIZE(objArray),
 		    objArray,
 		    distArray);
 		SenseInfo           info;
@@ -3166,9 +3166,9 @@ void HuntToBeNearActorTask::evaluateTarget(void) {
 		Actor               *a = stack->getActor();
 		int16               i;
 		Actor               *actorArray[16];
-		int16               distArray[elementsof(actorArray)];
+		int16               distArray[ARRAYSIZE(actorArray)];
 		TargetActorArray    taa(
-		    elementsof(actorArray),
+		    ARRAYSIZE(actorArray),
 		    actorArray,
 		    distArray);
 		SenseInfo           info;
@@ -3411,9 +3411,9 @@ void HuntToKillTask::evaluateTarget(void) {
 		ActorProto          *proto = (ActorProto *)a->proto();
 		int16               i;
 		Actor               *actorArray[16];
-		int16               distArray[elementsof(actorArray)];
+		int16               distArray[ARRAYSIZE(actorArray)];
 		TargetActorArray    taa(
-		    elementsof(actorArray),
+		    ARRAYSIZE(actorArray),
 		    actorArray,
 		    distArray);
 		SenseInfo           info;
@@ -3921,8 +3921,8 @@ void BandTask::evaluateTarget(void) {
 		TilePoint       repulsorVector;
 		int16           repulsorStrength;
 		TilePoint       repulsorVectorArray[6];
-		int16           repulsorStrengthArray[elementsof(repulsorVectorArray)];
-		int16           repulsorDistArray[elementsof(repulsorVectorArray)];
+		int16           repulsorStrengthArray[ARRAYSIZE(repulsorVectorArray)];
+		int16           repulsorDistArray[ARRAYSIZE(repulsorVectorArray)];
 		int16           repulsorCount;
 		bool            repulsorFlag;
 
@@ -3950,7 +3950,7 @@ void BandTask::evaluateTarget(void) {
 			int16           j = repulsorCount;
 
 			if (repulsorDist < repulsorDistArray[j - 1]) {
-				if (repulsorCount < (long)elementsof(repulsorVectorArray)) {
+				if (repulsorCount < (long)ARRAYSIZE(repulsorVectorArray)) {
 					repulsorDistArray[j] = repulsorDistArray[j - 1];
 					repulsorVectorArray[j] = repulsorVectorArray[j - 1];
 					repulsorStrengthArray[j] = repulsorStrengthArray[j - 1];
@@ -3965,8 +3965,8 @@ void BandTask::evaluateTarget(void) {
 				j--;
 			}
 
-			if (j < (long)elementsof(repulsorVectorArray)) {
-				if (repulsorCount < (long)elementsof(repulsorVectorArray))
+			if (j < (long)ARRAYSIZE(repulsorVectorArray)) {
+				if (repulsorCount < (long)ARRAYSIZE(repulsorVectorArray))
 					repulsorCount++;
 				repulsorDistArray[j] = repulsorDist;
 				repulsorVectorArray[j] = repulsorVector;
@@ -4099,8 +4099,8 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::firstEnemyRepulsor(
     int16       &repulsorStrength) {
 	assert(iteratingThruEnemies);
 
-	int16                   actorDistArray[elementsof(actorArray)];
-	TargetActorArray        taa(elementsof(actorArray), actorArray, actorDistArray);
+	int16                   actorDistArray[ARRAYSIZE(actorArray)];
+	TargetActorArray        taa(ARRAYSIZE(actorArray), actorArray, actorDistArray);
 	ActorPropertyTarget     target(actorPropIDEnemy);
 
 	numActors = target.actor(a->world(), a->getLocation(), taa);

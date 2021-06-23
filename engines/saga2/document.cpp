@@ -74,7 +74,7 @@ CDocumentAppearance scrollAppearance(
     Rect16(0,     0,   0,   0),                       //  (No page 2)
     Rect16(184, 206,  44,  42),                  //  Close button rect
     scrollDecorations,
-    elementsof(scrollDecorations),
+    ARRAYSIZE(scrollDecorations),
     MKTAG('S', 'C', 'R', 'L'),
     MKTAG('S', 'R', 'L', 0)
 );
@@ -101,7 +101,7 @@ CDocumentAppearance bookAppearance(
     Rect16(218, 26, 135, 205),                   //  Page 2
     Rect16(231, 217,  34,  27),                  //  Close button rect
     bookDecorations,
-    elementsof(bookDecorations),
+    ARRAYSIZE(bookDecorations),
     MKTAG('B', 'O', 'O', 'K'),
     MKTAG('B', 'K', 'D', 0)
 );
@@ -123,7 +123,7 @@ CDocumentAppearance parchAppearance(
     Rect16(0,     0,   0,   0),                       //  (No page 2)
     Rect16(164, 229,  20,  20),                  //  Close button rect
     parchDecorations,
-    elementsof(parchDecorations),
+    ARRAYSIZE(parchDecorations),
     MKTAG('P', 'A', 'R', 'C'),
     MKTAG('P', 'C', 'H', 0)
 );

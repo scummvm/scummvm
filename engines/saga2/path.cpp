@@ -867,13 +867,13 @@ DirMaskGroup *MaskComputer::computeMask(uint8 crossSection) {
 		}
 	}
 
-	if (arraySize < elementsof(array)) {
+	if (arraySize < ARRAYSIZE(array)) {
 		//  Allocate a new place for this mask group
 		maskGroup = ptrArray[arraySize] = &array[arraySize];
 		arraySize++;
 	} else
 		//  Discard last referenced mask group in array
-		maskGroup = ptrArray[elementsof(array) - 1];
+		maskGroup = ptrArray[ARRAYSIZE(array) - 1];
 
 	//  Compute the new group of masks
 	maskGroup->computeMask(crossSection);
@@ -1525,12 +1525,12 @@ void PathRequest::initialize(void) {
 				*tablePtrPtr = node;
 
 				if (nextAvailableLookupNode
-				        >=  elementsof(volumeLookupNodePool))
+				        >=  ARRAYSIZE(volumeLookupNodePool))
 					goto big_break;
 			}
 		}
 
-		if (++objectVolumes >= elementsof(objectVolumeArray)) break;
+		if (++objectVolumes >= ARRAYSIZE(objectVolumeArray)) break;
 	}
 big_break:
 
@@ -1607,7 +1607,7 @@ void PathRequest::finish(void) {
 		assert(cell != nullptr);
 
 		if (cell->direction != dirInvalid) {
-			res = &tempResult[elementsof(tempResult)];
+			res = &tempResult[ARRAYSIZE(tempResult)];
 
 			prevDir = dirInvalid;
 
@@ -1648,8 +1648,8 @@ void PathRequest::finish(void) {
 			}
 
 			if (resultSteps) {
-				while (stepCount < elementsof(path)
-				        &&  res < &tempResult[elementsof(tempResult)]) {
+				while (stepCount < ARRAYSIZE(path)
+				        &&  res < &tempResult[ARRAYSIZE(tempResult)]) {
 					*resultSteps++ = *res++;
 					stepCount++;
 				}

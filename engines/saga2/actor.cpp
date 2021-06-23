@@ -1330,7 +1330,7 @@ void *Actor::archive(void *buf) {
 	a->currentRecoveryPoints    = currentRecoveryPoints;
 	a->leaderID         = leader != NULL ? leader->thisID() : Nothing;
 	a->followersID      = followers != NULL ? getBandID(followers) : NoBand;
-	for (i = 0; i < elementsof(a->armorObjects); i++)
+	for (i = 0; i < ARRAYSIZE(a->armorObjects); i++)
 		a->armorObjects[i] = armorObjects[i];
 	a->currentTargetID  = currentTarget != NULL ? currentTarget->thisID() : Nothing;
 	for (i = 0; i < actorScriptVars; i++)
@@ -3076,7 +3076,7 @@ bool Actor::pathFindState(void) {
 //  Add knowledge package to actor
 
 bool Actor::addKnowledge(uint16 kID) {
-	for (int i = 0; i < elementsof(knowledge); i++) {
+	for (int i = 0; i < ARRAYSIZE(knowledge); i++) {
 		if (knowledge[i] == 0) {
 			knowledge[i] = kID;
 			return true;
@@ -3089,7 +3089,7 @@ bool Actor::addKnowledge(uint16 kID) {
 //  Remove knowledge package from actor
 
 bool Actor::removeKnowledge(uint16 kID) {
-	for (int i = 0; i < elementsof(knowledge); i++) {
+	for (int i = 0; i < ARRAYSIZE(knowledge); i++) {
 		if (knowledge[i] == kID) {
 			knowledge[i] = 0;
 			return true;
@@ -3102,7 +3102,7 @@ bool Actor::removeKnowledge(uint16 kID) {
 //  Remove all knowledge package from actor
 
 void Actor::clearKnowledge(void) {
-	for (int i = 0; i < elementsof(knowledge); i++) {
+	for (int i = 0; i < ARRAYSIZE(knowledge); i++) {
 		knowledge[i] = 0;
 	}
 }
@@ -3117,7 +3117,7 @@ void Actor::useKnowledge(scriptCallFrame &scf) {
 
 	//  First, search for the class with the best response
 
-	for (int i = 0; i < elementsof(knowledge); i++) {
+	for (int i = 0; i < ARRAYSIZE(knowledge); i++) {
 		if (knowledge[i]) {
 			scriptResult    res;
 

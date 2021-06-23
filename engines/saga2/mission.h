@@ -86,7 +86,7 @@ public:
 	void cleanup(void);
 
 	bool spaceForObject(void) {
-		return _data.numObjectIDs < elementsof(_data.missionObjectList);
+		return _data.numObjectIDs < ARRAYSIZE(_data.missionObjectList);
 	}
 
 	//  Add record of object creation to mission

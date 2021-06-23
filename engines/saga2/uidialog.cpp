@@ -737,7 +737,7 @@ int16 FileDialog(int16 fileProcess) {
 
 
 	win->setDecorations(saveWindowDecorations,
-	                    elementsof(saveWindowDecorations),
+	                    ARRAYSIZE(saveWindowDecorations),
 	                    decRes, 'S', 'L', 'D');
 
 	win->userData = &rInfo;
@@ -922,7 +922,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	}
 
 	win->setDecorations(optionsDecorations,
-	                    elementsof(optionsDecorations),
+	                    ARRAYSIZE(optionsDecorations),
 	                    decRes, 'O', 'P', 'T');
 
 
@@ -1035,7 +1035,7 @@ bool initUserDialog(void) {
 	udWin = new ModalWindow(messageWindowRect, 0 nullptr);
 
 	udWin->setDecorations(messageDecorations,
-	                      elementsof(messageDecorations),
+	                      ARRAYSIZE(messageDecorations),
 	                      udDecRes, 'M', 'E', 'S');
 
 	udWin->userData = &udrInfo;
@@ -1237,7 +1237,7 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	new CPlacardPanel(*win, messageTextRects[1], msg, &Onyx10Font, 0, pal, 0, nullptr);
 
 	win->setDecorations(messageDecorations,
-	                    elementsof(messageDecorations),
+	                    ARRAYSIZE(messageDecorations),
 	                    decRes, 'M', 'E', 'S');
 
 
@@ -1539,7 +1539,7 @@ void placardWindow(int8 type, char *text) {
 
 		// setup the background imagery
 		win->setDecorations(plaqDecWood,
-		                    elementsof(plaqDecWood),
+		                    ARRAYSIZE(plaqDecWood),
 		                    resContext, 'P', 'L', 'Q');
 
 		break;
@@ -1554,7 +1554,7 @@ void placardWindow(int8 type, char *text) {
 
 		// setup the background imagery
 		win->setDecorations(plaqDecStone,
-		                    elementsof(plaqDecStone),
+		                    ARRAYSIZE(plaqDecStone),
 		                    resContext, 'P', 'L', 'Q');
 
 		break;
@@ -1569,7 +1569,7 @@ void placardWindow(int8 type, char *text) {
 
 		// setup the background imagery
 		win->setDecorations(plaqDecBrass,
-		                    elementsof(plaqDecBrass),
+		                    ARRAYSIZE(plaqDecBrass),
 		                    resContext, 'P', 'L', 'Q');
 
 		break;

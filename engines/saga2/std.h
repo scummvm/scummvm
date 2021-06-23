@@ -38,12 +38,7 @@ typedef uint32      ChunkID;
 
 #define FTA
 
-// #define LEAVE        goto exitit         // bail out of function
 #define unless(x)   if((x)==NULL)       // an inverted if statement
-
-#ifndef elementsof
-#define elementsof(x) (sizeof(x)/sizeof(x[0]))
-#endif
 
 #ifndef offsetof
 #define offsetof(type,field) (uint32)&(((type *)0)->field)
