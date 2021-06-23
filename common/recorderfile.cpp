@@ -415,7 +415,7 @@ void PlaybackFile::readEvent(RecorderEvent& event) {
 		}
 		break;
 	}
-	event.kbdRepeat = true;
+	debug(3, "read event of type: %i (time: %u, systemmillis: %u)", event.type, event.time, g_system->getMillis(true));
 }
 
 void PlaybackFile::readEventsToBuffer(uint32 size) {
@@ -594,6 +594,7 @@ void PlaybackFile::writeEvent(const RecorderEvent &event) {
 	if (_recordCount == kMaxBufferedRecords) {
 		dumpRecordsToFile();
 	}
+	debug(3, "write event of type: %i (time: %u, systemmillis: %u)", event.type, event.time, g_system->getMillis(true));
 }
 
 void PlaybackFile::writeGameSettings() {
