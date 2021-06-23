@@ -1678,24 +1678,6 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 	}
 }
 
-void GameObject::protoAddressToOffset() {
-	ProtoObj    *objectBase = &objectProtos[0];
-	ProtoObj    *actorBase = &actorProtos[0];
-	int32 newProto, size = sizeof(ResourceObjectPrototype) + 4;//Add 4 for jump Table
-
-	if (prototype == nullptr) return;
-
-	warning("STUB: GameObject::protoAddressToOffset(): unsafe pointer arithmetics");
-
-	if (isActor(this))
-		newProto = (prototype - actorBase) / size;
-	else
-		newProto = (prototype - objectBase) / size;
-
-	prototype = (ProtoObj *)newProto;
-
-}
-
 GameObject *GameObject::getIntangibleContainer(int containerType) {
 
 	ObjectID        objID;
