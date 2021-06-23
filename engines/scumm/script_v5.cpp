@@ -2377,7 +2377,25 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->origLeft = vs->curRect.left;
 			break;
 		case 6:		// SO_VERB_ON
-			vs->curmode = 1;
+			// It seems that the Mac version of Indiana Jones and
+			// the Last Crusade treats the entire inventory as a
+			// single verb, or at least that's my guess as far as
+			// script 12 is concerned. In the 256-color DOS
+			// version (I don't have the EGA version), the script
+			// enables all inventory verbs, and possibly the
+			// inventory arrows. Well, that's what the hard-coded
+			// inventory script does, so this should be fine.
+			//
+			// This fixes a problem where if you offer an object
+			// to someone and then press "Never mind", the next
+			// time you try you see only one inventory object.
+			//
+			// I don't know if it has to be limited to this
+			// particular script, but that's what I'll do for now.
+			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && verb == 101 && vm.slot[_currentScript].number == 12) {
+				inventoryScriptIndy3Mac();
+			} else
+				vs->curmode = 1;
 			break;
 		case 7:		// SO_VERB_OFF
 			vs->curmode = 0;
