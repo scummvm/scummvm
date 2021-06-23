@@ -29,7 +29,7 @@
 
 namespace Saga2 {
 
-class TilePoint;
+struct TilePoint;
 struct TileRegion;
 
 // these control the rate of drowning damage

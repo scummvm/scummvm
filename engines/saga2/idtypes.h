@@ -108,13 +108,11 @@ const int   activeItemMapShift = 13;
 
 const int16 activeItemIndexNullID = 0x1FFF;
 
-class ActiveItemID {
-private:
+struct ActiveItemID {
 	int16           val;            //  ID value --
 	//      first 3 bits world number
 	//      next 13 bits index
 
-public:
 	//  Default constructor
 	ActiveItemID(void) {}
 
