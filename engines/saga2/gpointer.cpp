@@ -26,7 +26,7 @@
 
 #include "graphics/cursorman.h"
 
-#include "saga2/std.h"
+#include "saga2/saga2.h"
 #include "saga2/gpointer.h"
 
 namespace Saga2 {

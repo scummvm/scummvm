@@ -29,7 +29,7 @@
 #include "common/config-manager.h"
 #include "audio/mixer.h"
 
-#include "saga2/std.h"
+#include "saga2/saga2.h"
 #include "saga2/intrface.h"
 #include "saga2/grequest.h"
 #include "saga2/gtextbox.h"

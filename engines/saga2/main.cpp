@@ -30,7 +30,7 @@
 #include "common/events.h"
 #include "common/memstream.h"
 
-#include "saga2/std.h"
+#include "saga2/saga2.h"
 #include "saga2/setup.h"
 #include "saga2/transit.h"
 #include "saga2/player.h"

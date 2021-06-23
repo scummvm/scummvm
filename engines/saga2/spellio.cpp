@@ -26,7 +26,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
-#include "saga2/std.h"
+#include "saga2/saga2.h"
 #include "saga2/idtypes.h"
 #include "saga2/magic.h"
 #include "saga2/effects.h"

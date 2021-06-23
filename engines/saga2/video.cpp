@@ -27,7 +27,7 @@
 #include "graphics/palette.h"
 #include "video/smk_decoder.h"
 
-#include "saga2/std.h"
+#include "saga2/saga2.h"
 
 namespace Saga2 {
 

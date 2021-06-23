@@ -26,7 +26,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
-#include "saga2/std.h"
+#include "saga2/saga2.h"
 #include "saga2/mission.h"
 #include "saga2/actor.h"
 #include "saga2/savefile.h"

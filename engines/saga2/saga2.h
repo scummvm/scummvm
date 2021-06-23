@@ -23,9 +23,11 @@
 #ifndef SAGA2_H
 #define SAGA2_H
 
+#include "common/debug.h"
 #include "common/random.h"
 #include "common/serializer.h"
 #include "common/system.h"
+
 #include "engines/engine.h"
 
 #include "saga2/idtypes.h"

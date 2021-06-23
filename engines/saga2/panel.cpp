@@ -26,7 +26,7 @@
 
 #include "common/events.h"
 
-#include "saga2/std.h"
+#include "saga2/saga2.h"
 #include "saga2/panel.h"
 #include "saga2/fontlib.h"
 #include "saga2/floating.h"
