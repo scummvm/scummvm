@@ -2509,6 +2509,8 @@ void initPrototypes(void) {
 	}
 	nameListCount = count;
 
+	delete stream;
+
 	//  Load the Object prototype table
 
 	objectProtoCount = listRes->size(objProtoID)
@@ -2967,6 +2969,8 @@ void initObjects(void) {
 		ResourceGameObject res(stream);
 		resourceObjectList.push_back(res);
 	}
+
+	delete stream;
 
 	for (i = 0; i < resourceObjectCount; i++) {
 		GameObject  *obj = &objectList[i];
