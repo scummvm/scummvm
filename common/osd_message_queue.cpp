@@ -47,7 +47,7 @@ void OSDMessageQueue::addMessage(const Common::U32String &msg) {
 bool OSDMessageQueue::pollEvent(Common::Event &event) {
 	_mutex.lock();
 	if (!_messages.empty()) {
-		uint t = g_system->getMillis();
+		uint t = g_system->getMillis(true);
 		if (t - _lastUpdate >= kMinimumDelay) {
 			_lastUpdate = t;
 			Common::U32String msg = _messages.pop();

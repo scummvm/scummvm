@@ -427,7 +427,7 @@ bool DelayedEventSource::pollEvent(Event &event) {
 		return false;
 	}
 
-	uint32 now = g_system->getMillis();
+	uint32 now = g_system->getMillis(true);
 
 	if (now >= _delayedEffectiveTime) {
 		event = _delayedEvents.pop().event;

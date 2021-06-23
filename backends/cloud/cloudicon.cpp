@@ -75,12 +75,12 @@ CloudIcon::Type CloudIcon::getShownType() const {
 }
 
 bool CloudIcon::needsUpdate() const {
-	uint32 delaySinceLastUpdate = g_system->getMillis() - _lastUpdateTime;
+	uint32 delaySinceLastUpdate = g_system->getMillis(true) - _lastUpdateTime;
 	return delaySinceLastUpdate >= UPDATE_DELAY_MIN_MILLIS;
 }
 
 void CloudIcon::update() {
-	uint32 currentTime = g_system->getMillis();
+	uint32 currentTime = g_system->getMillis(true);
 	uint32 delaySinceLastUpdate = currentTime - _lastUpdateTime;
 	_lastUpdateTime = currentTime;
 
