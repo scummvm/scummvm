@@ -98,7 +98,10 @@ public:
 	typedef Common::Array<Common::U32String> U32StringArray;
 
 	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID);
+	
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseWheel(int x, int y, int direction) override;
 };
 
 
