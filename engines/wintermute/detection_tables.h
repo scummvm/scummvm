@@ -105,6 +105,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mirage",          "Mirage"},
 	{"miskatonic1",     "Miskatonic. Part One"},
 	{"msos",            "Monday Starts on Saturday"},
+	{"mukhtar",         "Mukhtar and his Team"},
 	{"mythguff",        "Myth: A Guff's Tale"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
@@ -143,6 +144,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"sotv2",           "Shadows on the Vatican - Act II: Wrath"},
 	{"strangechange",   "Strange Change"},
 	{"sunrise",         "Sunrise: The game"},
+	{"susanrose1",      "Susan Rose: Mysterious Child"},
+	{"susanrose2",      "Susan Rose: Delicate Murder"},
 	{"tanya1",          "Tanya Grotter and the Magical Double Bass"},
 	{"tanya2",          "Tanya Grotter and the Disappearing Floor"},
 	{"tehran1933",      "Murder In Tehran's Alleys 1933"},
@@ -153,6 +156,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"thelastcrownmh",  "The Last Crown - Midnight Horror"},
 	{"thelostcrowngha", "The Lost Crown - A Ghost-Hunting Adventure"},
 	{"tib",             "Fairy Tales About Toshechka and Boshechka"},
+	{"todaymama",       "Today, Mama!"},
 	{"tradestory",      "The Trader of Stories"},
 	{"twc",             "The White Chamber"},
 	{"war",             "War"},
@@ -1663,6 +1667,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Monday Starts on Saturday
 	WME_WINENTRY("msos", "",
 		WME_ENTRY1s("data.dcp", "2aa5ab924b05c9539a5a118bc263c2f8", 1049803074), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Mukhtar and his Team
+	WME_WINENTRY("mukhtar", "",
+		WME_ENTRY1s("data.dcp", "ed1deb8e6b2ce0a50ba26e035bdb7006", 1086177292), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
 	// Myth: A Guff's Tale
 	WME_WINENTRY("mythguff", "",
@@ -5230,6 +5238,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("sunrise", "Demo",
 		WME_ENTRY1s("data.dcp", "3bac4da87472d2e7676e9548970d521a", 52095549), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_7_93),
 
+	// Susan Rose: Mysterious Child
+	WME_WINENTRY("susanrose1", "",
+		WME_ENTRY1s("data.dcp", "bc607fe93d6751de2d0d0b7f4b2c90f8", 798965082), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_8_9),
+
+	// Susan Rose: Delicate Murder
+	WME_WINENTRY("susanrose2", "",
+		WME_ENTRY1s("data.dcp", "789660631a79ed76d95446d1f1e6e694", 922032035), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_8_11),
+
 	// Tanya Grotter and the Magical Double Bass
 	WME_WINENTRY("tanya1", "",
 		WME_ENTRY1s("data.dcp", "035bbdaff078cc4053ecf4b518c0d0fd", 1007507786), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_0),
@@ -5358,6 +5374,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// The White Chamber (Version 1.7 - Definitive Edition) (built 2008.06.29) (multi-language)
 	WME_WINENTRY("twc", "Definitive Edition",
 		WME_ENTRY1s("data.dcp", "0011d01142547c61e51ba24dc42b579e", 186451273), Common::UNK_LANG, ADGF_UNSTABLE, WME_1_8_6),
+
+	// Today, Mama!
+	WME_WINENTRY("todaymama", "",
+		WME_ENTRY1s("data.dcp", "b89e4a2000109f21d1aba10ef0920180", 1266324389), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_7_3),
 
 	// Vsevolod Prologue (Demo)
 	WME_WINENTRY("vsevolod", "Prologue",
