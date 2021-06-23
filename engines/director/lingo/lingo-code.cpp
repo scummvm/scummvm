@@ -869,7 +869,7 @@ void LC::c_within() {
 	}
 }
 
-Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &src, bool returnLast) {
+Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &src) {
 	// A chunk expression is made up of 0 or more chunks within a source text.
 	// This function returns a reference to the source text, the start index of the first chunk,
 	// and the end index of the last chunk in the chunk expression.
@@ -877,9 +877,8 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 	if (0 > endChunk && endChunk < startChunk)
 		return src;
 
-	// If startChunk < 1 && returnLast, we'll return the last chunk.
-	// Otherwise, the default is to return the full string.
-	if (startChunk < 1 && !returnLast)
+	// startChunk == -30000 means return the last chunk
+	if (startChunk < 1 && startChunk != -30000)
 		return src;
 
 	if (endChunk < 1)
@@ -978,7 +977,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 		break;
 	}
 
-	if (startChunk < 1) {
+	if (startChunk == -30000) {
 		// return the last chunk we found
 		startChunk = chunkNum;
 		endChunk = chunkNum;
@@ -1002,7 +1001,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 }
 
 Datum LC::lastChunk(ChunkType type, const Datum &src) {
-	return chunkRef(type, 0, 0, src, true);
+	return chunkRef(type, -30000, 0, src);
 }
 
 Datum LC::readChunkRef(const Datum &src) {
