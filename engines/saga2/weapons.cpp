@@ -95,6 +95,7 @@ ProtoEffect *createNewProtoEffect(Common::SeekableReadStream *stream) {
 	case effectPoison:
 		pe = new ProtoEnchantment(makeEnchantmentID(baseDamage),      // poison
 					reserved0, reserved1);
+		break;
 
 	case effectTAG:
 		pe = new ProtoTAGEffect((effectTAGTypes)effectType, skillDamage, baseDamage);
