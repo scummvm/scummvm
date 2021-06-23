@@ -962,10 +962,6 @@ void ProtoObj::doBackgroundUpdate(GameObject *obj) {
 	int u = location.u >> kSectorShift;
 	int v = location.v >> kSectorShift;
 
-	// XXX: Temporary crash prevention
-	// We should properly solve the problem
-	debug(5, "XXX: doBackgroundUpdate");
-
 	if (w == nullptr) {
 		obj->deactivate();
 		return;
