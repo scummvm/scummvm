@@ -128,7 +128,7 @@ void GridItemWidget::handleMouseLeft(int button) {
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isHighlighted) {
 		// Work in progress
-		_grid->openTray(getAbsX() - 10, getAbsY() + _h, _w + 20, 60, _activeEntry->entryID);
+		_grid->openTray(getAbsX() - 10, getAbsY() + _h, _w + 20, _h / 3, _activeEntry->entryID);
 		_grid->_tray->runModal();
 	}
 }
@@ -141,12 +141,12 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 	_entryID = entryID;
 	_boss = boss;
 	
-	int buttonWidth = w / 4;
-	int buttonHeight = h / 2;
+	int buttonWidth = w / 3;
+	int buttonHeight = h / 3;
 
-	PicButtonWidget *playButton = new PicButtonWidget(this, (buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Play"), kStartCmd);
-	PicButtonWidget *loadButton = new PicButtonWidget(this, buttonWidth + 2*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Saves"), kLoadGameCmd);
-	PicButtonWidget *editButton = new PicButtonWidget(this, 2*buttonWidth + 3*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, U32String("Edit"), kEditGameCmd);
+	PicButtonWidget *playButton = new PicButtonWidget(this, (buttonWidth / 3), buttonHeight / 3, (buttonWidth / 3) + buttonWidth * 2, buttonHeight, U32String("Play"), kStartCmd);
+	PicButtonWidget *loadButton = new PicButtonWidget(this, (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Saves"), kLoadGameCmd);
+	PicButtonWidget *editButton = new PicButtonWidget(this, buttonWidth + 2 * (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Edit"), kEditGameCmd);
 
 	playButton->setGfxFromTheme("button_play.bmp");
 	loadButton->setGfxFromTheme("button_load.bmp");
@@ -174,6 +174,25 @@ void GridItemTray::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	default:
 		break;
 	}
+}
+
+void GridItemTray::handleMouseDown(int x, int y, int button, int clickCount) {
+	Dialog::handleMouseDown(x, y, button, clickCount);
+	// HACK: Tray height is determined relative to grid item height
+	// hence we know the grid item height from within the tray.
+	// We might want to make tray height independent of grid item height.
+	if ((x < 0 || x > _w) || (y > _h || y < -(_h * 3))) {
+		// Close on clicking outside
+		close();
+	} else if (y < 0 && clickCount >= 2) {
+		// Run on double clicking thumbnail
+		close();
+		sendCommand(kStartCmd, _entryID);
+	}
+}
+
+void GridItemTray::handleMouseWheel(int x, int y, int direction) {
+	close();
 }
 
 #pragma mark -
