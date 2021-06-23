@@ -1573,12 +1573,13 @@ void initMaps(void) {
 			if (mapData->activeItemData == nullptr)
 				error("Unable to load active item data");
 
-			tileRes->seek(iTagRefID);
+			stream = loadResourceToStream(tileRes, iTagRefID, "active item data");
 			for (int k = 0; k < tileRefCount; ++k) {
-				mapData->activeItemData[k].tile = tileRes->readU16LE();
-				mapData->activeItemData[k].flags = tileRes->readByte();
-				mapData->activeItemData[k].tileHeight = tileRes->readByte();
+				mapData->activeItemData[k].tile = stream->readUint16LE();
+				mapData->activeItemData[k].flags = stream->readByte();
+				mapData->activeItemData[k].tileHeight = stream->readByte();
 			}
+			delete stream;
 		} else
 			mapData->activeItemData = nullptr;
 
@@ -1589,9 +1590,9 @@ void initMaps(void) {
 			if (mapData->assocList == nullptr)
 				error("Unable to load association list");
 
-			tileRes->seek(iAssocID);
+			stream = loadResourceToStream(tileRes, iAssocID, "association list");
 			for (int k = 0; k < assocCount; ++k)
-				mapData->assocList[k] = tileRes->readU16LE();
+				mapData->assocList[k] = stream->readUint16LE();
 		} else
 			mapData->assocList = nullptr;
 

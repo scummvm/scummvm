@@ -155,13 +155,6 @@ public:
 	inline size_t   bytesleft(void) {
 		return _bytecount;
 	}
-	uint8       readByte();
-	int8        readSByte();
-	uint16      readU16LE();
-	int16       readS16LE();
-	uint32      readU32LE();
-	int32       readS32LE();
-	int32       readS32BE();
 
 	bool        read(void *buffer, uint32 size);
 	bool        skip(uint32 amount);
