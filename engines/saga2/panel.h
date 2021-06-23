@@ -133,7 +133,7 @@ protected:
 	gWindow         &window;                // window this belongs to
 	Rect16          extent;                 // rectangular bounds of the control
 	const char      *title;                 // title of the panel
-	int             enabled,            // allows disabling the panel
+	byte             enabled,            // allows disabling the panel
 	                selected,           // some panels have a selected state
 	                imageLabel,         // button label is image, not text
 	                ghosted,            // button is dimmed
@@ -226,12 +226,12 @@ class gPanelMessage {
 public:
 	Point16         pickPos,                // mouse position relative to panel
 	                pickAbsPos;             // mouse position relative to display
-	int             leftButton : 1,         // left button state
-	                rightButton : 1,        // right button state
-	                inPanel : 1,            // whether mouse is currently in panel
-	                pointerEnter : 1,       // set when pointer enters panel
-	                pointerLeave : 1,       // set when pointer leaves panel
-	                doubleClick : 1;        // set when double click detected
+	byte             leftButton,         // left button state
+	                rightButton,        // right button state
+	                inPanel,            // whether mouse is currently in panel
+	                pointerEnter,       // set when pointer enters panel
+	                pointerLeave,       // set when pointer leaves panel
+	                doubleClick;        // set when double click detected
 
 	//  For keyboard input
 

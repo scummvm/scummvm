@@ -589,8 +589,8 @@ void gWindow::setPointer( gPixelMap &map, int x, int y )
    gControl class: The basis for buttons and other controls.
  * ===================================================================== */
 
-gControl::gControl(gPanelList &list, const Rect16 &box, const char *title, uint16 ident,
-                   AppFunc *cmd) : gPanel(list, box, title, ident, cmd) {
+gControl::gControl(gPanelList &list, const Rect16 &box, const char *title_, uint16 ident,
+                   AppFunc *cmd) : gPanel(list, box, title_, ident, cmd) {
 	accelKey = 0;
 
 	//  Add control to the window's control list.

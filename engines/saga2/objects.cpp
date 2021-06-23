@@ -529,7 +529,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 	// put the object name into the buffer as a default value
 	Common::strlcpy(nameBuf, objName(), size);
 
-	assert(strlen(objName()) < size - addTextSize);
+	assert(strlen(objName()) < (uint)(size - addTextSize));
 
 	// check to see if this item is a physical object
 	// if so, then give the count of the item ( if stacked )
@@ -604,10 +604,8 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 				assert(player);
 
 				int16           manaAmount;
-				int16           baseManaAmount;
 
 				manaAmount      = player->getEffStats()->mana(manaColor);
-				baseManaAmount  = player->getBaseStats().mana(manaColor);
 
 				sprintf(nameBuf, "%s [x%d]", objName(), manaAmount / manaCost);
 			}
@@ -1471,7 +1469,7 @@ void GameObject::updateState(void) {
  * ======================================================================= */
 
 const char *GameObject::nameText(uint16 index) {
-	if (index < 0 || index >= nameListCount)
+	if (index >= nameListCount)
 		return "Bad Name Index";
 
 	return nameList[index];
@@ -2341,6 +2339,8 @@ GameWorld::GameWorld(int16 map) {
 //	Constructor -- reconstruct from archive buffer
 
 GameWorld::GameWorld(void **buf) {
+	warning("STUB:GameWorld::GameWorld()");
+#if 0
 	int16   *bufferPtr = (int16 *)*buf;
 
 	size.u = size.v = *bufferPtr++;
@@ -2366,6 +2366,7 @@ GameWorld::GameWorld(void **buf) {
 	}
 
 	*buf = bufferPtr;
+#endif
 }
 
 //-------------------------------------------------------------------
@@ -3317,7 +3318,7 @@ SectorRegionObjectIterator::SectorRegionObjectIterator(GameWorld *world) :
 ObjectID SectorRegionObjectIterator::first(GameObject **obj) {
 	Sector      *currentSector;
 
-	currentObject = nullptr;
+	_currentObject = nullptr;
 
 	sectorCoords = minSector;
 	currentSector = searchWorld->getSector(sectorCoords.u, sectorCoords.v);
@@ -3335,9 +3336,9 @@ ObjectID SectorRegionObjectIterator::first(GameObject **obj) {
 		                    sectorCoords.v);
 	}
 
-	currentObject = GameObject::objectAddress(currentSector->childID);
+	_currentObject = GameObject::objectAddress(currentSector->childID);
 
-	if (obj != nullptr) *obj = currentObject;
+	if (obj != nullptr) *obj = _currentObject;
 	return currentSector->childID;
 }
 
@@ -3352,7 +3353,7 @@ ObjectID SectorRegionObjectIterator::next(GameObject **obj) {
 
 	ObjectID        currentObjectID;
 
-	currentObjectID = currentObject->IDNext();
+	currentObjectID = _currentObject->IDNext();
 
 	while (currentObjectID == Nothing) {
 		Sector      *currentSector;
@@ -3375,9 +3376,9 @@ ObjectID SectorRegionObjectIterator::next(GameObject **obj) {
 		currentObjectID = currentSector->childID;
 	}
 
-	currentObject = GameObject::objectAddress(currentObjectID);
+	_currentObject = GameObject::objectAddress(currentObjectID);
 
-	if (obj != nullptr) *obj = currentObject;
+	if (obj != nullptr) *obj = _currentObject;
 	return currentObjectID;
 }
 
@@ -3900,7 +3901,7 @@ bool ActiveRegionObjectIterator::nextSector(void) {
 ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 	ObjectID        currentObjectID = Nothing;
 
-	currentObject = nullptr;
+	_currentObject = nullptr;
 
 	if (firstSector()) {
 		Sector      *currentSector;
@@ -3912,7 +3913,7 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 		assert(currentSector != nullptr);
 
 		currentObjectID = currentSector->childID;
-		currentObject = currentObjectID != Nothing
+		_currentObject = currentObjectID != Nothing
 		                ?   GameObject::objectAddress(currentObjectID)
 		                :   nullptr;
 
@@ -3926,13 +3927,13 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 			assert(currentSector != nullptr);
 
 			currentObjectID = currentSector->childID;
-			currentObject = currentObjectID != Nothing
+			_currentObject = currentObjectID != Nothing
 			                ?   GameObject::objectAddress(currentObjectID)
 			                :   nullptr;
 		}
 	}
 
-	if (obj != nullptr) *obj = currentObject;
+	if (obj != nullptr) *obj = _currentObject;
 	return currentObjectID;
 }
 
@@ -3945,8 +3946,8 @@ ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 
 	ObjectID        currentObjectID;
 
-	currentObjectID = currentObject->IDNext();
-	currentObject = currentObjectID != Nothing
+	currentObjectID = _currentObject->IDNext();
+	_currentObject = currentObjectID != Nothing
 	                ?   GameObject::objectAddress(currentObjectID)
 	                :   nullptr;
 
@@ -3962,12 +3963,12 @@ ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 		assert(currentSector != nullptr);
 
 		currentObjectID = currentSector->childID;
-		currentObject = currentObjectID != Nothing
+		_currentObject = currentObjectID != Nothing
 		                ?   GameObject::objectAddress(currentObjectID)
 		                :   nullptr;
 	}
 
-	if (obj != nullptr) *obj = currentObject;
+	if (obj != nullptr) *obj = _currentObject;
 	return currentObjectID;
 }
 

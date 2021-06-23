@@ -920,7 +920,7 @@ class SectorRegionObjectIterator : public ObjectIterator {
 	                maxSector,
 	                sectorCoords;
 	GameWorld       *searchWorld;
-	GameObject      *currentObject;
+	GameObject      *_currentObject;
 
 public:
 	//  Constructor
@@ -1210,7 +1210,7 @@ class ActiveRegionObjectIterator : public ObjectIterator {
 	                sectorCoords;
 	uint8           sectorBitMask;
 	GameWorld       *currentWorld;
-	GameObject      *currentObject;
+	GameObject      *_currentObject;
 
 	bool firstActiveRegion(void);
 	bool nextActiveRegion(void);

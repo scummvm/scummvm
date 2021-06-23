@@ -1709,7 +1709,7 @@ uint8 MeleeWeaponProto::defenseDirMask(void) {
 //	Rate this weapon's goodness for a specified attack situation
 
 uint8 MeleeWeaponProto::weaponRating(
-    ObjectID weaponID,
+    ObjectID weaponID_,
     ObjectID wielderID,
     ObjectID targetID) {
 	assert(isActor(wielderID));
@@ -1932,13 +1932,13 @@ bool BowProto::useSlotAvailable(GameObject *obj, Actor *a) {
 //	Rate this weapon's goodness for a specified attack situation
 
 uint8 BowProto::weaponRating(
-    ObjectID weaponID,
+    ObjectID weaponID_,
     ObjectID wielderID,
     ObjectID targetID) {
 	assert(isActor(wielderID));
 	assert(isObject(targetID) || isActor(targetID));
 
-	if (getProjectile(weaponID, wielderID) == NULL) return 0;
+	if (getProjectile(weaponID_, wielderID) == NULL) return 0;
 
 	Actor       *wielder = (Actor *)GameObject::objectAddress(wielderID);
 
@@ -2022,10 +2022,10 @@ bool WeaponWandProto::useSlotAvailable(GameObject *obj, Actor *a) {
 //	Rate this weapon's goodness for a specified attack situation
 
 uint8 WeaponWandProto::weaponRating(
-    ObjectID weaponID,
+    ObjectID weaponID_,
     ObjectID wielderID,
     ObjectID targetID) {
-	assert(isObject(weaponID) || isActor(weaponID));
+	assert(isObject(weaponID_) || isActor(weaponID_));
 	assert(isActor(wielderID));
 	assert(isObject(targetID) || isActor(targetID));
 
@@ -2037,7 +2037,7 @@ uint8 WeaponWandProto::weaponRating(
 	        &&  !wielder->isActionAvailable(fightStanceAction(wielderID)))
 		return 0;
 
-	GameObject  *weapon = GameObject::objectAddress(weaponID),
+	GameObject  *weapon = GameObject::objectAddress(weaponID_),
 	             *target = GameObject::objectAddress(targetID);
 	int16       dist = (target->getLocation() - wielder->getLocation()).quickHDistance();
 	uint8       rating = 0;
@@ -2088,7 +2088,7 @@ bool ProjectileProto::isObjectBeingUsed(GameObject *) {
 //	Rate this weapon's goodness for a specified attack situation
 
 uint8 ProjectileProto::weaponRating(
-    ObjectID weaponID,
+    ObjectID weaponID_,
     ObjectID wielderID,
     ObjectID targetID) {
 	//  Projectiles are worthless as far as wieldable weapons
@@ -2763,13 +2763,13 @@ void EnchantmentProto::doBackgroundUpdate(GameObject *obj) {
 	// then hurt the victim
 	if (parentObj && isActor(parentObj)) {
 		// get the enchantment type
-		uint16 flags = obj->getExtra();
-		uint16  type = getEnchantmentType(flags),
-		        subType = getEnchantmentSubType(flags);
+		uint16 flgs = obj->getExtra();
+		uint16  type = getEnchantmentType(flgs),
+		        subType = getEnchantmentSubType(flgs);
 
 		if (type == effectOthers && subType == actorPoisoned) {
 			// get the damage amount for this poison
-			int16 damage = getEnchantmentAmount(flags);
+			int16 damage = getEnchantmentAmount(flgs);
 
 			// apply the damage
 			parentObj->acceptDamage(obj->thisID(), damage, kDamagePoison);
@@ -2792,73 +2792,6 @@ void EnchantmentProto::doBackgroundUpdate(GameObject *obj) {
 		obj->setHitPoints(hitPoints);
 	}
 }
-
-/*
-ContainerWindow *EnchantmentProto::makeWindow( GameObject *Obj )
-{
-    ContainerWindow *window;
-
-    uint32 contContextID = RES_ID( 'C', 'O', 'N', 'T' );
-
-    ButtonInfoStruct    CloseInfo( entCloseBtnRect,
-                                   contContextID,
-                                   'E', 'C', 'L',
-                                   0, 1 ),
-
-                        ScrollInfo( entScrollBtnRect,
-                                    contContextID,
-                                    'E', 'S', 'L',
-                                    0, 1 );
-
-    window = new EnchContainerWindow(
-
-                            // the obj
-                        Obj,
-
-                            // rect of the window
-                        physWindowRect,
-
-                            // start position of container hot spot section
-                        entHotSpotXY,
-
-                            // object drawing information
-                        entObjectDisplayRect,
-
-                            // gauge image information
-                        gaugesImageInfo,
-                        weightPieImageInfo,
-                        encumPieImageInfo,
-
-                            // button information
-                        CloseInfo,
-                        ScrollInfo,
-
-                            // icon positioning
-                        Point16( physIconOriginX, physIconOriginY ),
-                        Point16( physIconSpaceX, physIconSpaceY ),
-                        2,  //Rows
-                        2,  //Cols
-                        4 );//Total Rows
-
-
-        // init the resource context handle
-    hResContext *decRes = resFile->newContext( contContextID,
-                                                "enchant container window resource" );
-
-
-        // set the decorations for this window
-    window->setDecorations( enchantDecorations,
-                            ARRAYSIZE( enchantDecorations ),
-                            decRes, 'E', 'F', 'R' );
-
-
-    resFile->disposeContext( decRes );
-    decRes = NULL;
-
-    return window;
-}
-*/
-
 
 /* ======================================================================== *
    GeneratorProto
@@ -2930,7 +2863,7 @@ void EncounterGeneratorProto::doBackgroundUpdate(GameObject *obj) {
 
 			//  Now, roll to see if we got an encounter!
 
-			if ((g_vm->_rnd->getRandomNumber(65534) & 0x0000ffff) < prob) {
+			if ((g_vm->_rnd->getRandomNumber(65534) & 0x0000ffff) < (uint)prob) {
 				scriptCallFrame scf;
 
 #if DEBUG
