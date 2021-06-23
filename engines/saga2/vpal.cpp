@@ -184,7 +184,7 @@ void cleanupPalettes(void) {
 //	Begin fade up/down
 
 void beginFade(gPalettePtr newPalette, int32 fadeDuration) {
-	startTime = g_system->getMillis();
+	startTime = gameTime;
 	totalTime = fadeDuration;
 
 	//  Save the current palette for interpolation
@@ -200,7 +200,7 @@ void beginFade(gPalettePtr newPalette, int32 fadeDuration) {
 bool updatePalette() {
 	int32           elapsedTime;
 
-	elapsedTime = g_system->getMillis() - startTime;
+	elapsedTime = gameTime - startTime;
 	if (totalTime == 0)
 		return false;
 
