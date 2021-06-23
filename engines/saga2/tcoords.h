@@ -43,12 +43,9 @@ enum facingDirections {
 };
 typedef uint8 Direction;
 
-/* ============================================================================ *
-   A class which defines a position on a tile map (including height)
- * ============================================================================ */
 
-class TilePoint {
-public:
+#include "common/pack-start.h"
+struct TilePoint {
 		//	When an object is within a World, the u & v represent
 		//	the U and V coordinates on the tilemap, and the Z
 		//	represents the height.
@@ -108,6 +105,8 @@ public:
 
 	int16 magnitude(void);
 };
+#include "common/pack-end.h"
+
 
 /* ============================================================================ *
    Constants

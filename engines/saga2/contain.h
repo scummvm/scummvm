@@ -55,7 +55,7 @@ class ProtoObj;
 class gCompButton;
 class gCompImage;
 class gMultCompButton;
-class TilePoint;
+struct TilePoint;
 
 /* ===================================================================== *
    Class definitions

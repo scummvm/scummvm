@@ -333,7 +333,7 @@ public:
 void initSprites(void);
 void cleanupSprites(void);
 
-class TilePoint;
+struct TilePoint;
 
 //  Draw a plain sprite into a gPort, no masking or clipping
 void DrawSprite(gPort &port, const Point16 &dest, Sprite *sp);

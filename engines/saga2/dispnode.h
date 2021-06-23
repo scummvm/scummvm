@@ -33,7 +33,7 @@
 namespace Saga2 {
 
 class GameObject;
-class TilePoint;
+struct TilePoint;
 
 class Effectron;
 

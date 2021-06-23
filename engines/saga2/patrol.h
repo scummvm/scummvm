@@ -29,7 +29,7 @@
 
 namespace Saga2 {
 
-class TilePoint;
+struct TilePoint;
 class  PatrolRouteList;
 extern PatrolRouteList **patrolRouteList;   // Global patrol route array
 
