@@ -376,8 +376,8 @@ uint32 lineTerrain(
 	uint16      subTileMask_ = 0;
 
 	int16       tileStartZ,
-	            *minZ,
-	            *maxZ;
+	            minZ,
+	            maxZ;
 
 	int32       curZ,
 	            zStep;
@@ -423,11 +423,11 @@ uint32 lineTerrain(
 	curZ = (int32)curSubTile.z << 16;
 	zStep = ((int32)(destSubTile.z - curSubTile.z) << 16);
 	if (zStep > 0) {
-		minZ = &tileStartZ;
-		maxZ = &curSubTile.z;
+		minZ = tileStartZ;
+		maxZ = curSubTile.z;
 	} else {
-		minZ = &curSubTile.z;
-		maxZ = &tileStartZ;
+		minZ = curSubTile.z;
+		maxZ = tileStartZ;
 	}
 
 	if (uDiff > vDiff) {
@@ -447,8 +447,8 @@ uint32 lineTerrain(
 				                mapNum,
 				                tilePt,
 				                subTileMask_,
-				                *minZ,
-				                *maxZ + 1);
+				                minZ,
+				                maxZ + 1);
 				if (terrain & opaqueTerrain) return terrain;
 
 				tilePt.u = curSubTile.u >> kTileSubShift;
@@ -478,8 +478,8 @@ uint32 lineTerrain(
 					                mapNum,
 					                tilePt,
 					                subTileMask_,
-					                *minZ,
-					                *maxZ + 1);
+					                minZ,
+					                maxZ + 1);
 					if (terrain & opaqueTerrain) return terrain;
 
 					tilePt.v = curSubTile.v >> kTileSubShift;
@@ -516,8 +516,8 @@ uint32 lineTerrain(
 				                mapNum,
 				                tilePt,
 				                subTileMask_,
-				                *minZ,
-				                *maxZ + 1);
+				                minZ,
+				                maxZ + 1);
 				if (terrain & opaqueTerrain) return terrain;
 
 				tilePt.v = curSubTile.v >> kTileSubShift;
@@ -548,8 +548,8 @@ uint32 lineTerrain(
 					                mapNum,
 					                tilePt,
 					                subTileMask_,
-					                *minZ,
-					                *maxZ + 1);
+					                minZ,
+					                maxZ + 1);
 					if (terrain & opaqueTerrain) return terrain;
 
 					tilePt.u = curSubTile.u >> kTileSubShift;
@@ -577,8 +577,8 @@ uint32 lineTerrain(
 	                mapNum,
 	                tilePt,
 	                subTileMask_,
-	                *minZ,
-	                *maxZ);
+	                minZ,
+	                maxZ);
 
 	return terrain;
 }
