@@ -1321,12 +1321,13 @@ Thread *ThreadList::next(Thread *thread) {
 		if (_list[i] == thread)
 			break;
 
-	if (i == kNumThreads)
+	i++;
+	if (i >= kNumThreads)
 		return nullptr;
 
-	for (int j = i + 1; j < kNumThreads; j++)
-		if (_list[j])
-			return _list[j];
+	for (; i < kNumThreads; i++)
+		if (_list[i])
+			return _list[i];
 
 	return nullptr;
 }
