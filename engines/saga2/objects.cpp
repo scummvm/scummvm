@@ -4261,15 +4261,11 @@ bool objObscured(GameObject *testObj) {
 	bool        obscured = false;
 
 	if (isObject(testObj)) {
-		debug(3, "STUB: objObscured");
 		Point16             drawPos,
 		                    org;
 		ObjectSpriteInfo    objSprInfo;
 		ColorTable          objColors;
 		ProtoObj            *proto = testObj->proto();
-		ObjectID parent = testObj->_data.parentID;
-		if (isWorld(parent) == false)
-			return false;
 
 		//  Calculate X, Y coordinates of the sprite
 		TileToScreenCoords(testObj->getLocation(), drawPos);
