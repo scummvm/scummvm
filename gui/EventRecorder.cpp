@@ -75,6 +75,7 @@ EventRecorder::EventRecorder() {
 	_fakeMixerManager = nullptr;
 	_initialized = false;
 	_needRedraw = false;
+	_processingMillis = false;
 	_fastPlayback = false;
 
 	_fakeTimer = 0;
@@ -122,10 +123,11 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 	if (!_initialized) {
 		return;
 	}
-	if (skipRecord) {
+	if (skipRecord || _processingMillis) {
 		millis = _fakeTimer;
 		return;
 	}
+	// to prevent calling this recursively
 	if (_recordMode == kRecorderPlaybackPause) {
 		millis = _fakeTimer;
 	}
@@ -151,14 +153,19 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 			// are querying the millis by themselves, too. If the EventRecorder::poll
 			// is registered and thus dispatched after those EventSource instances, it
 			// might look like it ran out-of-sync.
+			millis = _fakeTimer;
 			return;
 		}
-		updateSubsystems();
+		_processingMillis = true;
 		_fakeTimer = _nextEvent.time;
+		millis = _fakeTimer;
+		debug(3, "millis event: %u", millis);
+
+		updateSubsystems();
 		_nextEvent = _playbackFile->getNextEvent();
 		_timerManager->handler();
-		millis = _fakeTimer;
 		_controlPanel->setReplayedTime(_fakeTimer);
+		_processingMillis = false;
 		break;
 	case kRecorderPlaybackPause:
 		millis = _fakeTimer;

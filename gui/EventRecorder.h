@@ -230,6 +230,7 @@ private:
 	Common::String _recordFileName;
 	bool _fastPlayback;
 	bool _needRedraw;
+	bool _processingMillis;
 };
 
 } // End of namespace GUI
