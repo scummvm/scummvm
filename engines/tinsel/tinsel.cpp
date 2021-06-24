@@ -1355,8 +1355,8 @@ const char *TinselEngine::getSampleIndex(LANGUAGE lang) {
 
 	} else {
 		cd = 0;
-		if (lang != TXT_JAPANESE)
-			lang = TXT_ENGLISH;
+		if (!Common::File::exists(_sampleFiles[lang][cd]))
+			lang = TXT_ENGLISH; // fallback to ENGLISH.IDX/.SMP if <LANG>.IDX is not found
 	}
 
 	return _sampleIndices[lang][cd];
@@ -1376,8 +1376,8 @@ const char *TinselEngine::getSampleFile(LANGUAGE lang) {
 
 	} else {
 		cd = 0;
-		if (lang != TXT_JAPANESE)
-			lang = TXT_ENGLISH;
+		if (!Common::File::exists(_sampleFiles[lang][cd]))
+			lang = TXT_ENGLISH; // fallback to ENGLISH.IDX/.SMP if <LANG>.IDX is not found
 	}
 
 	return _sampleFiles[lang][cd];
