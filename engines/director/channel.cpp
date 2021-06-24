@@ -372,8 +372,7 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 
 	// update the _sprite we stored in channel, and point the originalSprite to the new one
 	// release the widget, because we may having the new one
-	// TODO: if we are keeping the widget, then we don't releaseWidget for the current one
-	if (_sprite->_cast)
+	if (_sprite->_cast && !canKeepWidget(_sprite, nextSprite))
 		_sprite->_cast->releaseWidget();
 	*_sprite = *nextSprite;
 
@@ -413,8 +412,17 @@ void Channel::setBbox(int l, int t, int r, int b) {
 }
 
 // here is the place for deciding whether the widget can be keep or not
+// here's the definition, we first need to have widgets to keep, and the cast is not modified(modified means we need to re-create the widget)
+// and the castId should be same while castId should not be zero
 bool Channel::canKeepWidget(uint16 castId) {
 	if (_widget && _sprite && _sprite->_cast && !_sprite->_cast->_modified && castId && castId == _sprite->_castId) {
+		return true;
+	}
+	return false;
+}
+
+bool Channel::canKeepWidget(Sprite *currentSprite, Sprite *nextSprite) {
+	if (_widget && currentSprite && currentSprite->_cast && nextSprite && nextSprite->_cast && !currentSprite->_cast->_modified && currentSprite->_castId == nextSprite->_castId && currentSprite->_castId) {
 		return true;
 	}
 	return false;
@@ -425,7 +433,7 @@ bool Channel::canKeepWidget(uint16 castId) {
 void Channel::replaceWidget(uint16 previousCastId) {
 	// if the castmember is the same, and we are not modifying anything which cannot be handle by channel. Then we don't replace the widget
 	if (canKeepWidget(previousCastId)) {
-		warning("Channel::replaceWidget(): skip deleting %d %s", _sprite->_castId, numToCastNum(_sprite->_castId));
+		debug(5, "Channel::replaceWidget(): skip deleting %d %s", _sprite->_castId, numToCastNum(_sprite->_castId));
 		return;
 	}
 
