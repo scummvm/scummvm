@@ -442,13 +442,13 @@ void MotionTaskList::cleanup(void) {
 //	Get a new motion task, if there is one available, and initialize it.
 
 MotionTask *MotionTaskList::newTask(GameObject *obj) {
-	MotionTask *mt;
+	MotionTask *mt = nullptr;
 
 	//  Check see if there's already motion associated with this object.
 	for (Common::List<MotionTask *>::iterator it = _list.begin(); it != _list.end(); ++it) {
-		mt = *it;
 
-		if (mt->object == obj) {
+		if ((*it)->object == obj) {
+			mt = *it;
 			wakeUpThread(mt->thread, motionInterrupted);
 			mt->thread = NoThread;
 
@@ -456,12 +456,12 @@ MotionTask *MotionTaskList::newTask(GameObject *obj) {
 		}
 	}
 
-	if (mt == NULL) {
+	if (mt == nullptr) {
 		mt = new MotionTask;
 
 		mt->object = obj;
 		mt->motionType = mt->prevMotionType = MotionTask::motionTypeNone;
-		mt->pathFindTask = NULL;
+		mt->pathFindTask = nullptr;
 		mt->pathCount = -1;
 		mt->flags = 0;
 		mt->velocity = TilePoint(0, 0, 0);
