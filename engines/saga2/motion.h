@@ -28,7 +28,6 @@
 #define SAGA2_MOTION_H
 
 #include "saga2/actor.h"
-#include "saga2/dlist.h"
 
 namespace Saga2 {
 
@@ -90,7 +89,7 @@ void setObjectSurface(GameObject *obj, StandingTileInfo &sti);
 //      can set off trap
 //      can explode
 
-class MotionTask : private DNode {
+class MotionTask {
 	friend class    MotionTaskList;
 	friend class    PathRequest;
 	friend class    DestinationPathRequest;
@@ -539,9 +538,7 @@ public:
 class MotionTaskList {
 	friend class    MotionTask;
 
-	DList           list,
-	                free;
-	MotionTask      array[48];
+	Common::List<MotionTask *> _list;
 
 public:
 	//  Default constructor
