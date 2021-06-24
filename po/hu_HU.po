@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-24 10:31+0000\n"
+"POT-Creation-Date: 2021-06-24 21:09+0000\n"
 "PO-Revision-Date: 2021-06-24 12:35+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -7160,7 +7160,7 @@ msgstr ""
 "A teenagent.dat fájl tömörített és a zlib nem része ennek a futtatható "
 "állománynak. Kérlek tömörítsd ki"
 
-#: engines/tinsel/detection_tables.h:466
+#: engines/tinsel/detection_tables.h:482
 msgid "Saturn CD version is not yet supported"
 msgstr "A Saturn CD verzió még nem támogatott"
 

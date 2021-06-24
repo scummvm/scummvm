@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-24 10:31+0000\n"
+"POT-Creation-Date: 2021-06-24 21:09+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -6976,7 +6976,7 @@ msgid ""
 "executable. Please decompress it"
 msgstr ""
 
-#: engines/tinsel/detection_tables.h:466
+#: engines/tinsel/detection_tables.h:482
 msgid "Saturn CD version is not yet supported"
 msgstr ""
 

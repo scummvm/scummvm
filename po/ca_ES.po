@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-24 10:31+0000\n"
+"POT-Creation-Date: 2021-06-24 21:09+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -7201,7 +7201,7 @@ msgstr ""
 "El fitxer teenagent.dat està comprimit però aquest executable no conté zlib. "
 "Descomprimiu-lo, si us plau"
 
-#: engines/tinsel/detection_tables.h:466
+#: engines/tinsel/detection_tables.h:482
 #, fuzzy
 msgid "Saturn CD version is not yet supported"
 msgstr "Identificador de joc no suportat"

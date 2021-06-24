@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-24 10:31+0000\n"
+"POT-Creation-Date: 2021-06-24 21:09+0000\n"
 "PO-Revision-Date: 2021-06-18 05:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -7187,7 +7187,7 @@ msgstr ""
 "Файл teenagent.dat сжат, но zlib не включён в эту программу. Пожалуйста, "
 "распакуйте его"
 
-#: engines/tinsel/detection_tables.h:466
+#: engines/tinsel/detection_tables.h:482
 msgid "Saturn CD version is not yet supported"
 msgstr "Версия для Saturn CD ещё не поддерживается"
 
