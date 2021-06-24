@@ -331,16 +331,11 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 void Channel::setEditable(bool editable) {
 	if (_sprite->_cast && _sprite->_cast->_type == kCastText) {
 		// if the sprite is editable, then we refresh the selEnd and setStart
-		if (_sprite->_cast->isEditable() == editable)
-			return;
-		_sprite->_cast->setEditable(editable);
+		if (_sprite->_cast->isEditable() != editable)
+			_sprite->_cast->setEditable(editable);
 
 		if (_widget) {
-			// since this method may called after the widget is created
-			// so we better also set the attributes which may affected by editable
-			((Graphics::MacText *)_widget)->_focusable = editable;
 			((Graphics::MacText *)_widget)->setEditable(editable);
-			((Graphics::MacText *)_widget)->_selectable = editable;
 			// we only set the first editable text member in score active
 			if (editable) {
 				Graphics::MacWidget *activewidget = g_director->_wm->getActiveWidget();

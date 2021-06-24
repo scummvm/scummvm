@@ -183,7 +183,7 @@ bool Movie::processEvent(Common::Event &event) {
 		if (_currentHiliteChannelId && sc->_channels[_currentHiliteChannelId])
 			g_director->getCurrentWindow()->invertChannel(sc->_channels[_currentHiliteChannelId]);
 
-		debugC(3, kDebugEvents, "event: Button Up @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), _currentHiliteChannelId);
+		debugC(3, kDebugEvents, "event: Button Up @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), _currentHandlingChannelId);
 
 		_currentDraggedChannel = nullptr;
 
