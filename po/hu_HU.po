@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-24 10:31+0000\n"
-"PO-Revision-Date: 2021-06-13 10:25+0000\n"
+"PO-Revision-Date: 2021-06-24 12:35+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1025,7 +1025,7 @@ msgstr "Nyújtás mód:"
 
 #: gui/options.cpp:1429
 msgid "Scaler:"
-msgstr ""
+msgstr "Méretező:"
 
 #: gui/options.cpp:1442 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -2802,7 +2802,7 @@ msgstr "Nyújtás mód"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:61
 msgid "SDL Surface"
-msgstr ""
+msgstr "SDL Felület"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2379
 msgid "Active graphics filter:"
@@ -5183,6 +5183,9 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"Ha aktiválva van, egy elemre vagy területre kattintva a villám kurzorával "
+"közvetlenül oda vezet, átugorva a köztes képernyőket. Csak olyan pontos "
+"területre lehet 'Zipelni', ahol már járt."
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -5193,6 +5196,8 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"A képernyő átmeneteinek be- vagy kikapcsolása. A képernyőátmenetek "
+"kikapcsolásával gyorsabban navigálhat a játékban."
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
@@ -5773,6 +5778,8 @@ msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
+"Tömörített játék észlelve. Kérlek, bontsd ki a tömörítést a Wiki játékunk "
+"leírásának megfelelően"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -7710,8 +7717,9 @@ msgid "Phone down button"
 msgstr "Telefon le gomb"
 
 #: engines/wintermute/keymapper_tables.h:358
+#, fuzzy
 msgid "Alt use item"
-msgstr ""
+msgstr "Alt use item"
 
 #: engines/wintermute/keymapper_tables.h:429
 #: engines/wintermute/keymapper_tables.h:562
@@ -8030,10 +8038,8 @@ msgid "Cancel input"
 msgstr "Bevitel megszakítás"
 
 #: engines/wintermute/keymapper_tables.h:1307
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle subtitles"
-msgstr "Váltás némításra"
+msgstr "Felirat váltása"
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Shift"
