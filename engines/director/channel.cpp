@@ -369,12 +369,26 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 		return;
 
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
+	bool widgetKeeped = true;
 
 	// update the _sprite we stored in channel, and point the originalSprite to the new one
 	// release the widget, because we may having the new one
-	if (_sprite->_cast && !canKeepWidget(_sprite, nextSprite))
+	if (_sprite->_cast && !canKeepWidget(_sprite, nextSprite)) {
+		widgetKeeped = false;
 		_sprite->_cast->releaseWidget();
+	}
+
+	int width = _width;
+	int height = _height;
+
 	*_sprite = *nextSprite;
+
+	// since we are using initialRect for the text cast member now, then the sprite size is meaning less for us.
+	// thus, we keep the _sprite size here
+	if (hasTextCastMember(_sprite) && widgetKeeped) {
+		_sprite->_width = width;
+		_sprite->_height = height;
+	}
 
 	// Sprites marked moveable are constrained to the same bounding box until
 	// the moveable is disabled
