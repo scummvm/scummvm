@@ -1403,7 +1403,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 				}
 				return;
 			}
-			firstArg = firstArg.eval();
+			firstArg = g_lingo->_stack[g_lingo->_stack.size() - nargs] = firstArg.eval();
 		}
 
 		// Script/Xtra method call
