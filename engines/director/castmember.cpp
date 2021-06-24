@@ -692,10 +692,8 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 		// use initialRect for the dimensions just like button
 		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow, Common::kMacCentralEurope);
 		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
-		((Graphics::MacText *)widget)->draw();
-		((Graphics::MacText *)widget)->_focusable = _editable;
 		((Graphics::MacText *)widget)->setEditable(_editable);
-		((Graphics::MacText *)widget)->_selectable = _editable;
+		((Graphics::MacText *)widget)->draw();
 
 		// since we disable the ability of setActive in setEdtiable, then we need to set active widget manually
 		if (_editable) {
@@ -765,6 +763,9 @@ bool TextCastMember::isEditable() {
 
 void TextCastMember::setEditable(bool editable) {
 	_editable = editable;
+	// if we are linking to the widget, then we can modify it directly.
+	if (_widget)
+		((Graphics::MacText *)_widget)->setEditable(editable);
 }
 
 void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
