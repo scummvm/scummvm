@@ -201,6 +201,7 @@ void RecorderDialog::updateList() {
 	Common::StringArray files = saveFileMan->listSavefiles(pattern);
 	Common::PlaybackFile file;
 	Common::U32StringArray namesList;
+	Common::sort(files.begin(), files.end());
 	_fileHeaders.clear();
 	for (Common::StringArray::iterator i = files.begin(); i != files.end(); ++i) {
 		if (file.openRead(*i)) {
