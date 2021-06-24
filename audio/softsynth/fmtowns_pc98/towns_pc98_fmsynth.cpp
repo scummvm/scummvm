@@ -948,7 +948,7 @@ void TownsPC98_FmSynthPercussionSource::advanceInput(RhtChannel *ins) {
 #endif // DISABLE_PC98_RHYTHM_CHANNEL
 
 TownsPC98_FmSynth::TownsPC98_FmSynth(Audio::Mixer *mixer, EmuType type) :
-	_mixer(mixer),
+	_mixer(mixer), _mutex(mixer->mutex()),
 	_chanInternal(0), _ssg(0),
 #ifndef DISABLE_PC98_RHYTHM_CHANNEL
 	_prc(0),
