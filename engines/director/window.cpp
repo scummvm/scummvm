@@ -234,7 +234,7 @@ void Window::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 		break;
 	case kLineBottomTopSprite:
 		pd->ms->pd = &plotStroke;
-		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, g_director->getInkDrawPixel(), pd);
+		Graphics::drawLine(strokeRect.left, strokeRect.bottom, strokeRect.right, strokeRect.top, pd->ms->foreColor, g_director->getInkDrawPixel(), pd);
 		break;
 	default:
 		warning("Window::inkBlitFrom: Expected shape type but got type %d", pd->ms->spriteType);
