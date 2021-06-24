@@ -174,7 +174,7 @@ bool MacButton::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!MacButton::draw(forceRedraw))
 		return false;
 
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), _wm->_colorGreen2);
+	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left, _dims.top), _wm->_colorGreen2);
 
 	return true;
 }
