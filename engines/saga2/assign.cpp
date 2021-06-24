@@ -35,6 +35,8 @@ namespace Saga2 {
 
 const uint16 indefinitely = CalenderTime::framesPerDay;
 
+extern Common::Array<char *> nameList;
+
 /* ===================================================================== *
    ActorAssignment member functions
  * ===================================================================== */
@@ -44,7 +46,10 @@ ActorAssignment::ActorAssignment(Actor *a, uint16 until) :
 	startFrame(calender.frameInDay()),
 	endFrame(until) {
 	_actor = a;
+	debugC(2, kDebugActors, "New assignment for %p (%s) from %d until %d: %p",
+	      (void *)a, nameList[a->proto()->nameIndex], startFrame, endFrame, (void *)this);
 	a->_assignment = this;
+	a->flags |= hasAssignment;
 }
 
 //----------------------------------------------------------------------
@@ -60,6 +65,7 @@ ActorAssignment::ActorAssignment(Actor *ac, void **buf) {
 
 	_actor = ac;
 	ac->_assignment = this;
+	a->flags |= hasAssignment;
 }
 
 //----------------------------------------------------------------------
@@ -67,6 +73,8 @@ ActorAssignment::ActorAssignment(Actor *ac, void **buf) {
 
 ActorAssignment::~ActorAssignment(void) {
 	Actor *a = getActor();
+	debugC(2, kDebugActors, "Ending assignment for %p (%s): %p",
+	      (void *)a, nameList[a->proto()->nameIndex], (void *)this);
 
 	//  Determine if the actor has a task initiated by this assignment
 	if (a->currentGoal == actorGoalFollowAssignment
@@ -76,6 +84,8 @@ ActorAssignment::~ActorAssignment(void) {
 		delete a->curTask;
 		a->curTask = NULL;
 	}
+
+	a->flags &= ~hasAssignment;
 }
 
 //----------------------------------------------------------------------
