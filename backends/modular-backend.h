@@ -77,7 +77,7 @@ public:
 	virtual bool setStretchMode(int mode) override final;
 	virtual int getStretchMode() const override final;
 	virtual uint getDefaultScaler() const override final;
-	virtual int getDefaultScaleFactor() const override final;
+	virtual uint getDefaultScaleFactor() const override final;
 	virtual bool setScaler(uint mode, int factor) override final;
 	virtual uint getScaler() const override final;
 #ifdef USE_RGB_COLOR

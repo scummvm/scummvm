@@ -886,7 +886,7 @@ public:
 	 *
 	 * @return The 'default' scale factor.
 	 */
-	virtual int getDefaultScaleFactor() const { return 1; }
+	virtual uint getDefaultScaleFactor() const { return 1; }
 
 	/**
 	 * Switch to the specified scaler.

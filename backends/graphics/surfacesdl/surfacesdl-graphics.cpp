@@ -557,7 +557,7 @@ uint SurfaceSdlGraphicsManager::getDefaultScaler() const {
 	return ScalerMan.findScalerPluginIndex("normal");
 }
 
-int SurfaceSdlGraphicsManager::getDefaultScaleFactor() const {
+uint SurfaceSdlGraphicsManager::getDefaultScaleFactor() const {
 #ifdef USE_SCALERS
 	return 2;
 #else

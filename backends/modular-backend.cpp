@@ -112,7 +112,7 @@ uint ModularGraphicsBackend::getDefaultScaler() const {
 	return _graphicsManager->getDefaultScaler();
 }
 
-int ModularGraphicsBackend::getDefaultScaleFactor() const {
+uint ModularGraphicsBackend::getDefaultScaleFactor() const {
 	return _graphicsManager->getDefaultScaleFactor();
 }
 
