@@ -3199,8 +3199,13 @@ void ActiveRegion::update(void) {
 				for (v = region.min.v; v < region.max.v; v++) {
 					if (uOutOfRange
 					        ||  v < newRegion.min.v
-					        ||  v >= newRegion.max.v)
-						world->getSector(u, v)->deactivate();
+							||  v >= newRegion.max.v) {
+
+						if(Sector *sect = world->getSector(u, v))
+							sect->deactivate();
+						else
+							warning("ActiveRegion::update: Invalid Sector (%d, %d)", u, v);
+					}
 				}
 			}
 
