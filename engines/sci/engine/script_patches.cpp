@@ -6802,11 +6802,55 @@ static const uint16 kq7TooManySavesPatch[] = {
 	PATCH_END
 };
 
+// During the chapter one opening cartoon, clicking the skip-scene button too
+//  quickly breaks the game. openingCartoon sets a 20 tick timer in state 0 and
+//  initializes ego in state 1. If skip-scene is clicked during this window then
+//  KQEgo:init is never called, Valanice never appears, and clicking eventually
+//  crashes the game. This also happens in Sierra's interpreter.
+//
+// We fix this by adding code to the skip-scene handler in openingCartoon to
+//  call KQEgo:init if the script was in state 0 when skip-scene was clicked.
+//  We make room by overwriting an unnecessary state check.
+//
+// Applies to: All versions
+// Responsible method: openingCartoon:changeState
+static const uint16 kq7OpeningCartoonSignature[] = {
+	SIG_MAGICDWORD,
+	0x18,                                   // not
+	0x30, SIG_UINT16(0x0544),               // bnt 05444 [ skip if skip-scene clicked ]
+	SIG_ADDTOOFFSET(+0x0541),
+	0x32, SIG_ADDTOOFFSET(+2),              // jmp [ ret ]
+	0x87, 0x01,                             // lap 01
+	0x65, 0x16,                             // aTop state
+	0x36,                                   // push
+	0x3c,                                   // dup
+	0x35, 0x00,                             // ldi 00
+	0x1a,                                   // eq? [ is state 0? always true ]
+	0x30, SIG_ADDTOOFFSET(+2),              // bnt [ toss, ret ]
+	SIG_END
+};
+
+static const uint16 kq7OpeningCartoonPatch[] = {
+	PATCH_ADDTOOFFSET(+1),
+	0x30, PATCH_UINT16(0x0542),             // bnt 0542 [ skip if skip-scene clicked ]
+	PATCH_ADDTOOFFSET(+0x0541),
+	0x48,                                   // ret
+	0x63, 0x22,                             // pToa ticks [ non-zero if we were in state 0 ]
+	0x31, 0x09,                             // bnt 09     [ skip ego init if state > 0 ]
+	0x38, PATCH_SELECTOR16(init),           // pushi init
+	0x76,                                   // push0
+	0x81, 0x00,                             // lag 00
+	0x4a, PATCH_UINT16(0x0004),             // send 0004 [ KQEgo init: ]
+	0x36,                                   // push [ to satisfy toss ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
 	{  true,     0, "remove hardcoded spin loop",                  1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
 	{  true,    30, "fix allowing too many saves",                 1, kq7TooManySavesSignature,                 kq7TooManySavesPatch },
+	{  true,  1250, "fix opening cartoon",                         1, kq7OpeningCartoonSignature,               kq7OpeningCartoonPatch },
 	{  true,  5300, "fix snake oil salesman disposal",             1, kq7SnakeOilSalesmanSignature,             kq7SnakeOilSalesmanPatch },
 	{  true,  5301, "fix chicken cartoon",                         1, kq7ChickenCartoonSignature,               kq7ChickenCartoonPatch },
 	{  true,  6100, "fix extra ambrosia",                          1, kq7ExtraAmbrosiaSignature,                kq7ExtraAmbrosiaPatch },
