@@ -319,9 +319,19 @@ bool PlaybackFile::readSaveRecord() {
 	return true;
 }
 
-
+bool PlaybackFile::hasNextEvent() const {
+	if (_readStream->err()) {
+		return false;
+	}
+	return !_readStream->eos();
+}
 
 RecorderEvent PlaybackFile::getNextEvent() {
+	if (!hasNextEvent()) {
+		debug(3, "end of recorder file reached.");
+		g_system->quit();
+	}
+
 	assert(_mode == kRead);
 	if (isEventsBufferEmpty()) {
 		PlaybackFile::ChunkHeader header;

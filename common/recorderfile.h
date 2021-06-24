@@ -127,6 +127,7 @@ public:
 	bool openRead(const String &fileName);
 	void close();
 
+	bool hasNextEvent() const;
 	RecorderEvent getNextEvent();
 	void writeEvent(const RecorderEvent &event);
 
