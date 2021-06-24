@@ -112,7 +112,6 @@ void PlaybackFile::close() {
 }
 
 bool PlaybackFile::parseHeader() {
-	PlaybackFileHeader result;
 	ChunkHeader nextChunk;
 	_playbackParseState = kFileStateCheckFormat;
 	if (!readChunkHeader(nextChunk)) {
