@@ -65,7 +65,7 @@ ActorAssignment::ActorAssignment(Actor *ac, void **buf) {
 
 	_actor = ac;
 	ac->_assignment = this;
-	a->flags |= hasAssignment;
+	ac->flags |= hasAssignment;
 }
 
 //----------------------------------------------------------------------
