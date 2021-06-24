@@ -111,7 +111,7 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 	if (!isDemo) {
 		// I18N: Option for fast scene switching
 		_zipModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.ZipMode", _("~Z~ip Mode Activated"),
-																_("When activated, clicking on an item or area with the lightning bolt cursor takes you directly there, skipping intermediate screens. You can only 'Zip' to a precise area you’ve already been."));
+																_("When activated, clicking on an item or area with the lightning bolt cursor takes you directly there, skipping intermediate screens. You can only 'Zip' to a precise area you've already been."));
 	}
 
 	_transitionsCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.Transistions", _("~T~ransitions Enabled"),
