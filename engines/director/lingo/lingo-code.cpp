@@ -77,6 +77,7 @@ static struct FuncDescr {
 	{ LC::c_callcmd,		"c_callcmd",		"si" },
 	{ LC::c_callfunc,		"c_callfunc",		"si" },
 	{ LC::c_charToOf,		"c_charToOf",		"" },	// D3
+	{ LC::c_charToOfRef,	"c_charToOfRef",	"" },	// D3
 	{ LC::c_concat,			"c_concat",			"" },
 	{ LC::c_constpush,		"c_constpush",		"s" },
 	{ LC::c_contains,		"c_contains",		"" },
@@ -91,10 +92,12 @@ static struct FuncDescr {
 	{ LC::c_intersects,		"c_intersects",		"" },
 	{ LC::c_intpush,		"c_intpush",		"i" },
 	{ LC::c_itemToOf,		"c_itemToOf",		"" },	// D3
+	{ LC::c_itemToOfRef,	"c_itemToOfRef",	"" },	// D3
 	{ LC::c_jump,			"c_jump",			"o" },
 	{ LC::c_jumpifz,		"c_jumpifz",		"o" },
 	{ LC::c_le,				"c_le",				"" },
 	{ LC::c_lineToOf,		"c_lineToOf",		"" },	// D3
+	{ LC::c_lineToOfRef,	"c_lineToOfRef",	"" },	// D3
 	{ LC::c_localpush,		"c_localpush",		"s" },
 	{ LC::c_localrefpush,	"c_localrefpush",	"s" },
 	{ LC::c_lt,				"c_lt",				"" },
@@ -131,6 +134,7 @@ static struct FuncDescr {
 	{ LC::c_whencode,		"c_whencode",		"s" },
 	{ LC::c_within,			"c_within",			"" },
 	{ LC::c_wordToOf,		"c_wordToOf",		"" },	// D3
+	{ LC::c_wordToOfRef,	"c_wordToOfRef",	"" },	// D3
 	{ LC::c_xpop,			"c_xpop",			""  },
 	{ LC::cb_call,			"cb_call",			"N" },
 	{ LC::cb_delete,		"cb_delete",		"i" },
