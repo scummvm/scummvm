@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-24 10:31+0000\n"
-"PO-Revision-Date: 2021-06-12 20:33+0000\n"
+"PO-Revision-Date: 2021-06-24 12:35+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1032,7 +1032,7 @@ msgstr "Modo de ajuste:"
 
 #: gui/options.cpp:1429
 msgid "Scaler:"
-msgstr ""
+msgstr "Escalado:"
 
 #: gui/options.cpp:1442 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -2839,7 +2839,7 @@ msgstr "Modo de ajuste"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:61
 msgid "SDL Surface"
-msgstr ""
+msgstr "«SDL Surface»"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2379
 msgid "Active graphics filter:"
@@ -5241,6 +5241,10 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"Al activar esta opción, cuando se pulse en un objeto o zona con el cursor "
+"con forma de rayo te desplazarás directamente a los mismos, omitiendo las "
+"pantallas intermedia. Solo podrás avanzar rápidamente a una zona en la que "
+"ya hayas estado."
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -5251,6 +5255,8 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"Activa o desactiva las transiciones entre pantallas. Al desactivarlas podrás "
+"navegar más rápidamente por el juego."
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
@@ -5836,6 +5842,8 @@ msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
+"Se ha detectado una versión comprimida del juego. Por favor, descomprímela "
+"siguiendo las instrucciones de la descripción del juego en nuestra wiki."
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -7808,7 +7816,7 @@ msgstr "Teléfono: botón abajo"
 
 #: engines/wintermute/keymapper_tables.h:358
 msgid "Alt use item"
-msgstr ""
+msgstr "Usar objeto (alt.)"
 
 #: engines/wintermute/keymapper_tables.h:429
 #: engines/wintermute/keymapper_tables.h:562
@@ -8127,10 +8135,8 @@ msgid "Cancel input"
 msgstr "Cancelar entrada"
 
 #: engines/wintermute/keymapper_tables.h:1307
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle subtitles"
-msgstr "Silenciar audio"
+msgstr "Subtítulos"
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Shift"
