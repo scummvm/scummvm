@@ -271,7 +271,8 @@ void MacText::init() {
 }
 
 MacText::~MacText() {
-	_wm->setActiveWidget(nullptr);
+	if (_wm->getActiveWidget() == this)
+		_wm->setActiveWidget(nullptr);
 
 	delete _cursorRect;
 	delete _surface;
@@ -872,6 +873,15 @@ void MacText::setAlignOffset(TextAlign align) {
 
 Common::Point MacText::calculateOffset() {
 	return Common::Point(_border + _gutter, _border + _gutter / 2);
+}
+
+void MacText::setSelRange(int selStart, int selEnd) {
+	if (selStart == _selStart && selEnd == _selEnd)
+		return;
+	_selStart = selStart;
+	_selEnd = selEnd;
+	setSelection(_selStart, true);
+	setSelection(_selEnd, false);
 }
 
 void MacText::setActive(bool active) {
