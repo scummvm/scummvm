@@ -486,10 +486,12 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_DONTSHOWBITS		121
 #define SCI_DISPLAY_SETSTROKE			122
 
+const char *lastText = "";
 void GfxPaint16::textToSpeech(const char *text) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr && g_sci->getGameId() == GID_LAURABOW2)
+	if (text != lastText && ttsMan != nullptr && g_sci->getGameId() == GID_LAURABOW2)
 		ttsMan->say(text, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	lastText = text;
 }
 
 reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int argc, reg_t *argv) {
