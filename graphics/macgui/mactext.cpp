@@ -913,8 +913,17 @@ void MacText::setEditable(bool editable) {
 	if (editable == _editable)
 		return;
 
+	// if we are not editable, then we also update the state of active, and tell wm too
+	if (!editable) {
+		setActive(false);
+		if (_wm->getActiveWidget() == this)
+			_wm->setActiveWidget(nullptr);
+	}
+
 	_editable = editable;
 	_cursorOff = !editable;
+	_selectable = editable;
+	_focusable = editable;
 
 	if (!editable) {
 		undrawCursor();
