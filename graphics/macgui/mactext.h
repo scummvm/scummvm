@@ -234,7 +234,7 @@ public:
 	Common::U32String getEditedString();
 	Common::U32String getText() { return _str; }
 
-	void setSelRange(int selStart, int selEnd) { _selStart = selStart, _selEnd = selEnd; }
+	void setSelRange(int selStart, int selEnd);
 
 private:
 	void init();
