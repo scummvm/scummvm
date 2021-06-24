@@ -48,9 +48,6 @@ namespace Saga2 {
 
 bool    interruptableMotionsPaused;
 
-//  Used to track the next motion task to process
-static MotionTask *nextMT;
-
 /* ===================================================================== *
    Test Functions
  * ===================================================================== */
@@ -353,23 +350,21 @@ uint8 computeTurnFrames(Direction fromDir, Direction toDir) {
 //-----------------------------------------------------------------------
 //	The list of active motion tasks for all actors
 
-static uint8 mTaskListBuffer[sizeof(MotionTaskList)];
-
-static MotionTaskList &mTaskList = *((MotionTaskList *)mTaskListBuffer);
+static MotionTaskList mTaskList;
+static Common::List<MotionTask *>::iterator nextMT;
 
 //-----------------------------------------------------------------------
 //	Initialize the MotionTaskList
 
 MotionTaskList::MotionTaskList(void) {
-	for (int i = 0; i < ARRAYSIZE(array); i++) {
-		free.addTail(array[i]);
-	}
 }
 
 //-----------------------------------------------------------------------
 //	Reconstruct motion task list from archive buffer
 
 MotionTaskList::MotionTaskList(void **buf) {
+	warning("STUB: MotionTaskList::MotionTaskList(**buf)");
+#if 0
 	void        *bufferPtr = *buf;
 
 	int16       i,
@@ -399,6 +394,7 @@ MotionTaskList::MotionTaskList(void **buf) {
 	}
 
 	*buf = bufferPtr;
+#endif
 }
 
 //-----------------------------------------------------------------------
@@ -409,13 +405,8 @@ int32 MotionTaskList::archiveSize(void) {
 	//  Initilialize with sizeof motion task count
 	int32       size = sizeof(int16);
 
-	MotionTask  *mt;
-
-	//  Accumulate the archive size of each motion task
-	for (mt = (MotionTask *)list.first();
-	        mt;
-	        mt = (MotionTask *)mt->next())
-		size += mt->archiveSize();
+	for (Common::List<MotionTask *>::iterator it = _list.begin(); it != _list.end(); ++it)
+		size += (*it)->archiveSize();
 
 	return size;
 }
@@ -424,24 +415,15 @@ int32 MotionTaskList::archiveSize(void) {
 //	Create an archive of the motion tasks in the specified buffer
 
 void *MotionTaskList::archive(void *buf) {
-	int16           motionTaskCount;
-	MotionTask      *mt;
-
-	//  Count the active motion tasks
-	for (mt = (MotionTask *)list.first(), motionTaskCount = 0;
-	        mt;
-	        mt = (MotionTask *)mt->next())
-		motionTaskCount++;
+	int16 motionTaskCount = _list.size();
 
 	//  Store the motion task count
 	*((int16 *)buf) = motionTaskCount;
 	buf = (int16 *)buf + 1;
 
 	//  Archive the active motion tasks
-	for (mt = (MotionTask *)list.first();
-	        mt;
-	        mt = (MotionTask *)mt->next())
-		buf = mt->archive(buf);
+	for (Common::List<MotionTask *>::iterator it = _list.begin(); it != _list.end(); ++it)
+		buf = (*it)->archive(buf);
 
 	return buf;
 }
@@ -450,28 +432,22 @@ void *MotionTaskList::archive(void *buf) {
 //	Cleanup the motion tasks
 
 void MotionTaskList::cleanup(void) {
-	MotionTask      *mt;
-	MotionTask      *nextMT_;
+	for (Common::List<MotionTask *>::iterator it = _list.begin(); it != _list.end(); ++it)
+		delete *it;
 
-	//  Remove all of the active motion tasks
-	for (mt = (MotionTask *)list.first();
-	        mt;
-	        mt = nextMT_) {
-		nextMT_ = (MotionTask *)mt->next();
-		mt->remove();
-	}
+	_list.clear();
 }
 
 //-----------------------------------------------------------------------
 //	Get a new motion task, if there is one available, and initialize it.
 
 MotionTask *MotionTaskList::newTask(GameObject *obj) {
-	MotionTask      *mt;
+	MotionTask *mt;
 
 	//  Check see if there's already motion associated with this object.
-	for (mt = (MotionTask *)list.first();
-	        mt;
-	        mt = (MotionTask *)mt->next()) {
+	for (Common::List<MotionTask *>::iterator it = _list.begin(); it != _list.end(); ++it) {
+		mt = *it;
+
 		if (mt->object == obj) {
 			wakeUpThread(mt->thread, motionInterrupted);
 			mt->thread = NoThread;
@@ -481,24 +457,25 @@ MotionTask *MotionTaskList::newTask(GameObject *obj) {
 	}
 
 	if (mt == NULL) {
-		mt = (MotionTask *)free.remHead();
+		mt = new MotionTask;
 
-		if (mt) {
-			mt->object = obj;
-			mt->motionType = mt->prevMotionType = MotionTask::motionTypeNone;
-			mt->pathFindTask = NULL;
-			mt->pathCount = -1;
-			mt->flags = 0;
-			mt->velocity = TilePoint(0, 0, 0);
-			mt->immediateLocation = mt->finalTarget = obj->getLocation();
-			mt->thread = NoThread;
+		mt->object = obj;
+		mt->motionType = mt->prevMotionType = MotionTask::motionTypeNone;
+		mt->pathFindTask = NULL;
+		mt->pathCount = -1;
+		mt->flags = 0;
+		mt->velocity = TilePoint(0, 0, 0);
+		mt->immediateLocation = mt->finalTarget = obj->getLocation();
+		mt->thread = NoThread;
 
-			list.addTail(*mt);
+		_list.push_back(mt);
 
-			if (isActor(obj))((Actor *)obj)->moveTask = mt;
-		}
+		if (isActor(obj))
+			((Actor *)obj)->moveTask = mt;
 	}
+
 	obj->_data.objectFlags |= objectMoving;
+
 	return mt;
 }
 
@@ -1198,8 +1175,8 @@ void *MotionTask::archive(void *buf) {
 //	When a motion task is finished, call this function to delete it.
 
 void MotionTask::remove(int16 returnVal) {
-	if (nextMT == this)
-		nextMT = (MotionTask *)next();
+	if (nextMT != mTaskList._list.end() && *nextMT == this)
+		++nextMT;
 
 	object->_data.objectFlags &= ~objectMoving;
 	if (objObscured(object))
@@ -1219,8 +1196,7 @@ void MotionTask::remove(int16 returnVal) {
 			a->setInterruptablity(true);
 	}
 
-	DNode::remove();
-	mTaskList.free.addTail(*this);
+	mTaskList._list.remove(this);
 
 	abortPathFind(this);
 	pathFindTask = NULL;
@@ -4169,21 +4145,21 @@ void MotionTask::defensiveMeleeAction(void) {
 //	Routine to update positions of all moving objects using MotionTasks
 
 void MotionTask::updatePositions(void) {
-	MotionTask      *mt;
 	TilePoint       targetVector;
 	TilePoint       fallVelocity, terminalVelocity(15, 15, 0);
 	TilePoint       curLoc;
 	int16           targetDist;
 	StandingTileInfo sti;
 
-	nextMT = NULL;
-	for (mt = (MotionTask *)mTaskList.list.first(); mt; mt = nextMT) {
+	for (Common::List<MotionTask *>::iterator it = mTaskList._list.begin(); it != mTaskList._list.end(); it = nextMT) {
+		MotionTask *mt = *it;
 		GameObject  *obj = mt->object;
 		ProtoObj    *proto = obj->proto();
 		Actor       *a = (Actor *)obj;
 		bool        moveTaskDone = false;
 
-		nextMT = (MotionTask *)mt->next();
+		nextMT = it;
+		nextMT++;
 
 		if (!isWorld(obj->IDParent())) {
 			mt->remove();
@@ -4260,7 +4236,7 @@ void MotionTask::updatePositions(void) {
 							    mt->finalTarget,
 							    (mt->flags & requestRun) != 0);
 						}
-						nextMT = mt;
+						nextMT = it;
 					}
 				} else {
 					a->setAction(newAction, 0);
@@ -4279,7 +4255,7 @@ void MotionTask::updatePositions(void) {
 						    mt->finalTarget,
 						    (mt->flags & requestRun) != 0);
 					}
-					nextMT = mt;
+					nextMT = it;
 				} else if (mt->freeFall(obj->_data.location, sti) == false)
 					moveTaskDone = true;
 			} else {
@@ -4300,7 +4276,7 @@ void MotionTask::updatePositions(void) {
 						    mt->finalTarget,
 						    (mt->flags & requestRun) != 0);
 					}
-					nextMT = mt;
+					nextMT = it;
 				}
 			}
 			break;
@@ -4341,7 +4317,7 @@ void MotionTask::updatePositions(void) {
 				if (targetDist > kTileUVSize) {
 					mt->motionType = mt->prevMotionType;
 					mt->flags |= reset;
-					nextMT = mt;
+					nextMT = it;
 				} else
 					moveTaskDone = true;
 			}
@@ -4389,7 +4365,7 @@ void MotionTask::updatePositions(void) {
 						if (mt && mt->motionType == motionTypeUseObjectOnObject)
 							moveTaskDone = true;
 						else
-							nextMT = mt;
+							nextMT = it;
 					}
 				}
 			} else {
@@ -4401,7 +4377,7 @@ void MotionTask::updatePositions(void) {
 				if (mt && mt->motionType == motionTypeUseObjectOnObject)
 					moveTaskDone = true;
 				else
-					nextMT = mt;
+					nextMT = it;
 			}
 
 			break;
@@ -4442,7 +4418,7 @@ void MotionTask::updatePositions(void) {
 				if (mt && mt->motionType == motionTypeUseObjectOnTAI)
 					moveTaskDone = true;
 				else
-					nextMT = mt;
+					nextMT = it;
 			}
 			break;
 
@@ -4462,7 +4438,7 @@ void MotionTask::updatePositions(void) {
 				if (mt && mt->motionType == motionTypeUseObjectOnLocation)
 					moveTaskDone = true;
 				else
-					nextMT = mt;
+					nextMT = it;
 			}
 			break;
 
@@ -4522,7 +4498,7 @@ void MotionTask::updatePositions(void) {
 					if (mt && mt->motionType == motionTypeDropObject)
 						moveTaskDone = true;
 					else
-						nextMT = mt;
+						nextMT = it;
 				}
 			} else {
 				//  The actor will now be uniterruptable
@@ -4533,7 +4509,7 @@ void MotionTask::updatePositions(void) {
 				if (mt && mt->motionType == motionTypeDropObject)
 					moveTaskDone = true;
 				else
-					nextMT = mt;
+					nextMT = it;
 			}
 
 			CMassWeightIndicator::bRedraw = true;   // tell the mass/weight indicators to refresh
@@ -4557,7 +4533,7 @@ void MotionTask::updatePositions(void) {
 					if (mt && mt->motionType == motionTypeDropObjectOnObject)
 						moveTaskDone = true;
 					else
-						nextMT = mt;
+						nextMT = it;
 				}
 			} else {
 				//  The actor will now be uniterruptable
@@ -4569,7 +4545,7 @@ void MotionTask::updatePositions(void) {
 				if (mt && mt->motionType == motionTypeDropObjectOnObject)
 					moveTaskDone = true;
 				else
-					nextMT = mt;
+					nextMT = it;
 			}
 
 			CMassWeightIndicator::bRedraw = true;   // tell the mass/weight indicators to refresh
@@ -4595,7 +4571,7 @@ void MotionTask::updatePositions(void) {
 				if (mt && mt->motionType == motionTypeDropObjectOnTAI)
 					moveTaskDone = true;
 				else
-					nextMT = mt;
+					nextMT = it;
 			}
 			break;
 
@@ -4987,6 +4963,8 @@ void saveMotionTasks(SaveFileConstructor &saveGame) {
 //	Load the motion task list from a save file
 
 void loadMotionTasks(SaveFileReader &saveGame) {
+	warning("STUB: loadMotionTasks()");
+#if 0
 	//  If there is no saved data, simply call the default constructor
 	if (saveGame.getChunkSize() == 0) {
 		new (&mTaskList) MotionTaskList;
@@ -5009,6 +4987,7 @@ void loadMotionTasks(SaveFileReader &saveGame) {
 	new (&mTaskList) MotionTaskList(&bufferPtr);
 
 	free(archiveBuffer);
+#endif
 }
 
 //-----------------------------------------------------------------------
