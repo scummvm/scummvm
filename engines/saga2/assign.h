@@ -50,6 +50,11 @@ enum AssignmentTypes {
  * ===================================================================== */
 
 class ActorAssignment {
+
+	enum {
+		hasAssignment   = (1 << 3)
+	};
+
 	uint16  startFrame,     //  Time in day when this was constructed
 	        endFrame;       //  End time of the assignment
 
