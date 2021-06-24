@@ -63,10 +63,10 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x15, LC::c_contains,		"" },
 	{ 0x16, LC::c_starts,		"" },
 	{ 0x17, LC::c_of,			"" },
-	{ 0x18, LC::c_hilite,		"" },
+	{ 0x18, LC::cb_hilite,		"" },
 	{ 0x19, LC::c_intersects,	"" },
 	{ 0x1a, LC::c_within,		"" },
-	{ 0x1b, LC::cb_field,		"" },
+	{ 0x1b, LC::c_field,		"" },
 	{ 0x1c, LC::c_tell,			"" },
 	{ 0x1d, LC::c_telldone,		"" },
 	{ 0x1e, LC::cb_list,		"" },
@@ -378,13 +378,16 @@ void LC::cb_delete() {
 	Datum var = g_lingo->findVarV4(varType, varID);
 	Datum chunkRef = readChunkRef(var);
 	g_lingo->push(chunkRef);
-	LB::b_delete(1);
+	LC::c_delete();
 }
 
-void LC::cb_field() {
-	LB::b_field(1);
+void LC::cb_hilite() {
+	Datum fieldID = g_lingo->pop().asCastId();
+	fieldID.type = FIELDREF;
+	Datum chunkRef = readChunkRef(fieldID);
+	g_lingo->push(chunkRef);
+	LC::c_hilite();
 }
-
 
 void LC::cb_localcall() {
 	int functionId = g_lingo->readInt();

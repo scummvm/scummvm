@@ -126,6 +126,7 @@ char		{ count(); return tCHAR; }		// D3
 chars		{ count(); return tCHARS; }
 contains	{ count(); return tCONTAINS; }
 date		{ count(); return tDATE; }
+delete		{ count(); return tDELETE; }
 down		{ count(); return tDOWN; }
 else		{ count(); return tELSE; }
 end({spc}+{identifier})?	{
@@ -152,6 +153,7 @@ field		{ count(); return tFIELD; }
 frame		{ count(); return tFRAME; }
 global		{ count(); return tGLOBAL; }
 go{spc}+(to)?	{ count(); return tGO; }
+hilite		{ count(); return tHILITE; }
 if			{ count(); return tIF; }
 instance	{ count(); return tINSTANCE; }
 intersects	{ count(); return tINTERSECTS;}

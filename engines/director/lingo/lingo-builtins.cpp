@@ -27,7 +27,6 @@
 
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
-#include "graphics/macgui/mactext.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -107,8 +106,6 @@ static struct BuiltinProto {
 	// String
 	{ "chars",			LB::b_chars,		3, 3, true, 200, FBLTIN },	// D2 f
 	{ "charToNum",		LB::b_charToNum,	1, 1, true, 200, FBLTIN },	// D2 f
-	{ "delete",			LB::b_delete,		1, 1, true, 300, CBLTIN },	//		D3 command
-	{ "hilite",			LB::b_hilite,		1, 1, true, 300, CBLTIN },	//		D3 c
 	{ "length",			LB::b_length,		1, 1, true, 200, FBLTIN },	// D2 f
 	{ "numToChar",		LB::b_numToChar,	1, 1, true, 200, FBLTIN },	// D2 f
 	{ "offset",			LB::b_offset,		2, 3, true, 200, FBLTIN },	// D2 f
@@ -254,7 +251,6 @@ static struct BuiltinProto {
 	{ "version",		LB::b_version,		0, 0, false, 300, KBLTIN },	//		D3 k
 	// References
 	{ "cast",			LB::b_cast,			1, 1, false, 400, FBLTIN },	//			D4 f
-	{ "field",			LB::b_field,		1, 1, false, 300, FBLTIN },	//		D3 f
 	{ "script",			LB::b_script,		1, 1, false, 400, FBLTIN },	//			D4 f
 	{ "window",			LB::b_window,		1, 1, false, 400, FBLTIN },	//			D4 f
 	// Chunk operations
@@ -495,94 +491,6 @@ void LB::b_charToNum(int nargs) {
 
 	Datum res(chr);
 	g_lingo->push(res);
-}
-
-void LB::b_delete(int nargs) {
-	Datum d = g_lingo->pop();
-
-	Datum field;
-	int start, end;
-	if (d.type == CHUNKREF) {
-		if (d.u.cref->source.isVarRef() || d.u.cref->source.isCastRef()) {
-			field = d.u.cref->source;
-			start = d.u.cref->start;
-			end = d.u.cref->end;
-		} else {
-			warning("BUILDBOT: b_delete: bad chunk ref field type: %s", d.u.cref->source.type2str());
-			return;
-		}
-	} else if (d.isRef()) {
-		field = d;
-		start = 0;
-		end = -1;
-	} else {
-		warning("BUILDBOT: b_delete: bad field type: %s", d.type2str());
-		return;
-	}
-
-	if (start < 0)
-		return;
-
-	Common::String text = g_lingo->varFetch(field).asString();
-	if (d.type == CHUNKREF) {
-		switch (d.u.cref->type) {
-		case kChunkChar:
-			break;
-		case kChunkWord:
-			while (end < (int)text.size() && Common::isSpace(text[end]))
-				end++;
-			break;
-		case kChunkItem:
-		case kChunkLine:
-			// last char of the first portion is the delimiter. skip it.
-			if (start > 0)
-				start--;
-			break;
-		}
-	}
-
-	Common::String res = text.substr(0, start) + text.substr(end);
-	Datum s;
-	s.u.s = new Common::String(res);
-	s.type = STRING;
-	g_lingo->varAssign(field, s);
-}
-
-void LB::b_hilite(int nargs) {
-	Datum d = g_lingo->pop();
-
-	int fieldId, start, end;
-	if (d.isCastRef()) {
-		fieldId = d.u.i;
-		start = 0;
-		end = -1;
-	} else if (d.type == CHUNKREF) {
-		if (d.u.cref->source.isCastRef()) {
-			fieldId = d.u.cref->source.u.i;
-			start = d.u.cref->start;
-			end = d.u.cref->end;
-		} else {
-			warning("BUILDBOT: b_delete: bad chunk ref field type: %s", d.u.cref->source.type2str());
-			return;
-		}
-	} else {
-		warning("BUILDBOT: b_hilite: bad field type: %s", d.type2str());
-		return;
-	}
-
-	if (start < 0)
-		return;
-
-	Score *score = g_director->getCurrentMovie()->getScore();
-	uint16 spriteId = score->getSpriteIdByMemberId(fieldId);
-	if (spriteId == 0)
-		return;
-
-	Channel *channel = score->getChannelById(spriteId);
-	if (channel->_sprite->_cast && channel->_sprite->_cast->_type == kCastText && channel->_widget) {
-		((Graphics::MacText *)channel->_widget)->setSelection(start, true);
-		((Graphics::MacText *)channel->_widget)->setSelection(end, false);
-	}
 }
 
 void LB::b_length(int nargs) {
@@ -2460,13 +2368,6 @@ void LB::b_cast(int nargs) {
 	Datum d = g_lingo->pop();
 	Datum res = d.asCastId();
 	res.type = CASTREF;
-	g_lingo->push(res);
-}
-
-void LB::b_field(int nargs) {
-	Datum d = g_lingo->pop();
-	Datum res = d.asCastId();
-	res.type = FIELDREF;
 	g_lingo->push(res);
 }
 

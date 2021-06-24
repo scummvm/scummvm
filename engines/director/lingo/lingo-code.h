@@ -132,7 +132,10 @@ void c_mci();
 void c_mciwait();
 
 void c_open();
+void c_delete();
 void c_hilite();
+void c_field();
+void c_fieldref();
 
 // custom instructions for testing
 void c_asserterror();
@@ -146,7 +149,7 @@ void cb_unk2();
 // bytecode-related instructions
 void cb_call();
 void cb_delete();
-void cb_field();
+void cb_hilite();
 void cb_globalassign();
 void cb_globalpush();
 void cb_list();

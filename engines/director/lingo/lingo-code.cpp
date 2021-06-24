@@ -43,7 +43,11 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/mactext.h"
+
 #include "director/director.h"
+#include "director/castmember.h"
 #include "director/movie.h"
 #include "director/score.h"
 #include "director/sprite.h"
@@ -81,8 +85,11 @@ static struct FuncDescr {
 	{ LC::c_concat,			"c_concat",			"" },
 	{ LC::c_constpush,		"c_constpush",		"s" },
 	{ LC::c_contains,		"c_contains",		"" },
+	{ LC::c_delete,			"c_delete", 		"" },
 	{ LC::c_div,			"c_div",			"" },
 	{ LC::c_eq,				"c_eq",				"" },
+	{ LC::c_field,			"c_field",			"" },
+	{ LC::c_fieldref,		"c_fieldref",		"" },
 	{ LC::c_floatpush,		"c_floatpush",		"f" },
 	{ LC::c_globalpush,		"c_globalpush",		"s" },
 	{ LC::c_globalrefpush,	"c_globalrefpush",	"s" },
@@ -138,7 +145,7 @@ static struct FuncDescr {
 	{ LC::c_xpop,			"c_xpop",			""  },
 	{ LC::cb_call,			"cb_call",			"N" },
 	{ LC::cb_delete,		"cb_delete",		"i" },
-	{ LC::cb_field,			"cb_field",			"" },
+	{ LC::cb_hilite,		"cb_hilite",		"" },
 	{ LC::cb_globalassign,	"cb_globalassign",	"N" },
 	{ LC::cb_globalpush,	"cb_globalpush",	"N" },
 	{ LC::cb_list,			"cb_list",			"" },
@@ -1565,12 +1572,106 @@ void LC::c_procret() {
 	}
 }
 
+void LC::c_delete() {
+	Datum d = g_lingo->pop();
+
+	Datum field;
+	int start, end;
+	if (d.type == CHUNKREF) {
+		if (d.u.cref->source.isVarRef() || d.u.cref->source.isCastRef()) {
+			field = d.u.cref->source;
+			start = d.u.cref->start;
+			end = d.u.cref->end;
+		} else {
+			warning("BUILDBOT: c_delete: bad chunk ref field type: %s", d.u.cref->source.type2str());
+			return;
+		}
+	} else if (d.isRef()) {
+		field = d;
+		start = 0;
+		end = -1;
+	} else {
+		warning("BUILDBOT: c_delete: bad field type: %s", d.type2str());
+		return;
+	}
+
+	if (start < 0)
+		return;
+
+	Common::String text = g_lingo->varFetch(field).asString();
+	if (d.type == CHUNKREF) {
+		switch (d.u.cref->type) {
+		case kChunkChar:
+			break;
+		case kChunkWord:
+			while (end < (int)text.size() && Common::isSpace(text[end]))
+				end++;
+			break;
+		case kChunkItem:
+		case kChunkLine:
+			// last char of the first portion is the delimiter. skip it.
+			if (start > 0)
+				start--;
+			break;
+		}
+	}
+
+	Common::String res = text.substr(0, start) + text.substr(end);
+	Datum s;
+	s.u.s = new Common::String(res);
+	s.type = STRING;
+	g_lingo->varAssign(field, s);
+}
+
 void LC::c_hilite() {
-	Datum fieldID = g_lingo->pop().asCastId();
-	fieldID.type = FIELDREF;
-	Datum chunkRef = readChunkRef(fieldID);
-	g_lingo->push(chunkRef);
-	LB::b_hilite(1);
+	Datum d = g_lingo->pop();
+
+	int fieldId, start, end;
+	if (d.isCastRef()) {
+		fieldId = d.u.i;
+		start = 0;
+		end = -1;
+	} else if (d.type == CHUNKREF) {
+		if (d.u.cref->source.isCastRef()) {
+			fieldId = d.u.cref->source.u.i;
+			start = d.u.cref->start;
+			end = d.u.cref->end;
+		} else {
+			warning("BUILDBOT: c_delete: bad chunk ref field type: %s", d.u.cref->source.type2str());
+			return;
+		}
+	} else {
+		warning("BUILDBOT: c_hilite: bad field type: %s", d.type2str());
+		return;
+	}
+
+	if (start < 0)
+		return;
+
+	Score *score = g_director->getCurrentMovie()->getScore();
+	uint16 spriteId = score->getSpriteIdByMemberId(fieldId);
+	if (spriteId == 0)
+		return;
+
+	Channel *channel = score->getChannelById(spriteId);
+	if (channel->_sprite->_cast && channel->_sprite->_cast->_type == kCastText && channel->_widget) {
+		((Graphics::MacText *)channel->_widget)->setSelection(start, true);
+		((Graphics::MacText *)channel->_widget)->setSelection(end, false);
+	}
+}
+
+void LC::c_fieldref() {
+	Datum d = g_lingo->pop();
+	Datum res = d.asCastId();
+	res.type = FIELDREF;
+	g_lingo->push(res);
+}
+
+void LC::c_field() {
+	LC::c_fieldref();
+	Datum d = g_lingo->pop();
+	Datum ref = d.eval();
+	g_lingo->push(ref.eval());
 }
 
 void LC::c_asserterror() {

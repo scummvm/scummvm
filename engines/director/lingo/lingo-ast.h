@@ -47,6 +47,8 @@ struct ExitRepeatNode;
 struct ExitNode;
 struct TellNode;
 struct WhenNode;
+struct DeleteNode;
+struct HiliteNode;
 struct AssertErrorNode;
 struct IntNode;
 struct FloatNode;
@@ -110,6 +112,8 @@ enum NodeType {
 	kExitNode,
 	kTellNode,
 	kWhenNode,
+	kDeleteNode,
+	kHiliteNode,
 	kAssertErrorNode,
 	kIntNode,
 	kFloatNode,
@@ -175,6 +179,8 @@ public:
 	virtual bool visitExitNode(ExitNode *node) = 0;
 	virtual bool visitTellNode(TellNode *node) = 0;
 	virtual bool visitWhenNode(WhenNode *node) = 0;
+	virtual bool visitDeleteNode(DeleteNode *node) = 0;
+	virtual bool visitHiliteNode(HiliteNode *node) = 0;
 	virtual bool visitAssertErrorNode(AssertErrorNode *node) = 0;
 	virtual bool visitIntNode(IntNode *node) = 0;
 	virtual bool visitFloatNode(FloatNode *node) = 0;
@@ -579,6 +585,34 @@ struct WhenNode : StmtNode {
 	}
 	virtual bool accept(NodeVisitor *visitor) {
 		return visitor->visitWhenNode(this);
+	}
+};
+
+/* DeleteNode */
+
+struct DeleteNode : StmtNode {
+	Node *chunk;
+
+	DeleteNode(Node *chunkIn) : StmtNode(kDeleteNode), chunk(chunkIn) {}
+	virtual ~DeleteNode() {
+		delete chunk;
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitDeleteNode(this);
+	}
+};
+
+/* HiliteNode */
+
+struct HiliteNode : StmtNode {
+	Node *chunk;
+
+	HiliteNode(Node *chunkIn) : StmtNode(kHiliteNode), chunk(chunkIn) {}
+	virtual ~HiliteNode() {
+		delete chunk;
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitHiliteNode(this);
 	}
 };
 

@@ -96,6 +96,8 @@ public:
 	virtual bool visitExitNode(ExitNode *node);
 	virtual bool visitTellNode(TellNode *node);
 	virtual bool visitWhenNode(WhenNode *node);
+	virtual bool visitDeleteNode(DeleteNode *node);
+	virtual bool visitHiliteNode(HiliteNode *node);
 	virtual bool visitAssertErrorNode(AssertErrorNode *node);
 	virtual bool visitIntNode(IntNode *node);
 	virtual bool visitFloatNode(FloatNode *node);

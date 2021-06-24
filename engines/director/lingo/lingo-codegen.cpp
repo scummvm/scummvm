@@ -536,12 +536,6 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 		}
 	}
 
-	if ((node->name->equalsIgnoreCase("delete") || node->name->equalsIgnoreCase("hilite")) && node->args->size() == 1) {
-		COMPILE_REF((*node->args)[0]);
-		codeCmd(*node->name, 1);
-		return true;
-	}
-
 	if (node->args->size() >= 1 && (*node->args)[0]->type == kVarNode) {
 		// This could be a method call. Code the first arg as a reference.
 		COMPILE_REF((*node->args)[0]);
@@ -965,6 +959,22 @@ bool LingoCompiler::visitWhenNode(WhenNode *node) {
 	return true;
 }
 
+/* DeleteNode */
+
+bool LingoCompiler::visitDeleteNode(DeleteNode *node) {
+	COMPILE_REF(node->chunk);
+	code1(LC::c_delete);
+	return true;
+}
+
+/* HiliteNode */
+
+bool LingoCompiler::visitHiliteNode(HiliteNode *node) {
+	COMPILE_REF(node->chunk);
+	code1(LC::c_hilite);
+	return true;
+}
+
 /* AssertErrorNode */
 
 bool LingoCompiler::visitAssertErrorNode(AssertErrorNode *node) {
@@ -1035,6 +1045,16 @@ bool LingoCompiler::visitPropPairNode(PropPairNode *node) {
 /* FuncNode */
 
 bool LingoCompiler::visitFuncNode(FuncNode *node) {
+	if (node->name->equalsIgnoreCase("field") && node->args->size() >= 1) {
+		COMPILE((*node->args)[0]);
+		if (_refMode) {
+			code1(LC::c_fieldref);
+		} else {
+			code1(LC::c_field);
+		}
+		return true;
+	}
+
 	if (node->args->size() >= 1 && (*node->args)[0]->type == kVarNode) {
 		// This could be a method call. Code the first arg as a reference.
 		COMPILE_REF((*node->args)[0]);

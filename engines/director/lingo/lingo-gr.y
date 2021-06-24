@@ -128,7 +128,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %token<s> tVARID tSTRING tSYMBOL
 %token<s> tENDCLAUSE
 %token tCAST tFIELD tSCRIPT tWINDOW
-%token tDOWN tELSE tELSIF tEXIT tFRAME tGLOBAL tGO tIF tIN tINTO tMACRO
+%token tDELETE tDOWN tELSE tELSIF tEXIT tFRAME tGLOBAL tGO tHILITE tIF tIN tINTO tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tFACTORY tOPEN tPLAY tINSTANCE
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
@@ -301,9 +301,11 @@ CMDID: tVARID
 	| tCHARS		{ $$ = new Common::String("chars"); }
 	| tCONTAINS		{ $$ = new Common::String("contains"); }
 	| tDATE			{ $$ = new Common::String("date"); }
+	| tDELETE		{ $$ = new Common::String("delete"); }
 	| tDOWN			{ $$ = new Common::String("down"); }
 	| tFIELD		{ $$ = new Common::String("field"); }
 	| tFRAME		{ $$ = new Common::String("frame"); }
+	| tHILITE		{ $$ = new Common::String("hilite"); }
 	| tIN			{ $$ = new Common::String("in"); }
 	| tINTERSECTS	{ $$ = new Common::String("intersects"); }
 	| tINTO			{ $$ = new Common::String("into"); }
@@ -415,6 +417,8 @@ proc: CMDID cmdargs '\n'				{ $$ = new CmdNode($CMDID, $cmdargs); }
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
 	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
 	| tEXIT '\n'						{ $$ = new ExitNode(); }
+	| tDELETE chunk '\n'				{ $$ = new DeleteNode($chunk); }
+	| tHILITE chunk '\n'				{ $$ = new HiliteNode($chunk); }
 	| tASSERTERROR stmtoneliner			{ $$ = new AssertErrorNode($stmtoneliner); }
 	;
 
@@ -644,6 +648,13 @@ chunk: tFIELD refargs		{ $$ = new FuncNode(new Common::String("field"), $refargs
 		$$ = new ChunkExprNode(kChunkLine, $idx, nullptr, $src); }
 	| tLINE expr[start] tTO expr[end] tOF simpleexpr[src]	{
 		$$ = new ChunkExprNode(kChunkLine, $start, $end, $src); }
+	| tTHE tLAST chunktype inof simpleexpr	{ $$ = new TheLastNode($chunktype, $simpleexpr); }
+	;
+
+chunktype: tCHAR				{ $$ = kChunkChar; }
+	| tWORD						{ $$ = kChunkWord; }
+	| tITEM						{ $$ = kChunkItem; }
+	| tLINE						{ $$ = kChunkLine; }
 	;
 
 object: tSCRIPT refargs		{ $$ = new FuncNode(new Common::String("script"), $refargs); }
@@ -674,7 +685,6 @@ the: tTHE ID							{ $$ = new TheNode($ID); }
 	| tTHE tNUMBER tOF theobj			{ $$ = new TheOfNode(new Common::String("number"), $theobj); }
 	| thedatetime
 	| thenumberof
-	| tTHE tLAST chunktype inof simpleexpr	{ $$ = new TheLastNode($chunktype, $simpleexpr); }
 	;
 
 theobj: simpleexpr
@@ -704,12 +714,6 @@ thenumberof:
 	| tTHE tNUMBER tOF tITEMS inof simpleexpr	{ $$ = new TheNumberOfNode(kNumberOfItems, $simpleexpr); }
 	| tTHE tNUMBER tOF tLINES inof simpleexpr	{ $$ = new TheNumberOfNode(kNumberOfLines, $simpleexpr); }
 	| tTHE tNUMBER tOF tMENUITEMS inof menu		{ $$ = new TheNumberOfNode(kNumberOfMenuItems, $menu); }
-	;
-
-chunktype: tCHAR				{ $$ = kChunkChar; }
-	| tWORD						{ $$ = kChunkWord; }
-	| tITEM						{ $$ = kChunkItem; }
-	| tLINE						{ $$ = kChunkLine; }
 	;
 
 inof: tIN | tOF ;

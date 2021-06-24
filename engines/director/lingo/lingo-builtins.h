@@ -44,8 +44,6 @@ void b_tan(int nargs);
 
 void b_chars(int nargs);
 void b_charToNum(int nargs);
-void b_delete(int nargs);
-void b_hilite(int nargs);
 void b_length(int nargs);
 void b_numToChar(int nargs);
 void b_offset(int nargs);
@@ -187,7 +185,6 @@ void b_true(int nargs);
 void b_version(int nargs);
 
 void b_cast(int nargs);
-void b_field(int nargs);
 void b_script(int nargs);
 
 void b_numberofchars(int nargs);
