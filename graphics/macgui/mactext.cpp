@@ -1906,21 +1906,16 @@ void MacText::setText(const Common::U32String &str) {
 	_fullRefresh = true;
 	render();
 
+	if (_selectable) {
+		setSelection(_selStart, true);
+		setSelection(_selEnd, false);
+	}
+	
 	_contentIsDirty = true;
 }
 
 void MacText::setText(const Common::String &str) {
-	_str = Common::U32String(str, _encodeType);
-	_textLines.clear();
-	splitString(_str);
-
-	_cursorRow = _cursorCol = 0;
-	recalcDims();
-	updateCursorPos();
-	_fullRefresh = true;
-	render();
-
-	_contentIsDirty = true;
+	setText(Common::U32String(str, _encodeType));
 }
 
 //////////////////
