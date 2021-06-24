@@ -880,8 +880,6 @@ void MacText::setSelRange(int selStart, int selEnd) {
 		return;
 	_selStart = selStart;
 	_selEnd = selEnd;
-	setSelection(_selStart, true);
-	setSelection(_selEnd, false);
 }
 
 void MacText::setActive(bool active) {
@@ -1182,9 +1180,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 
 	SelectedText s = _selectedText;
 
-	bool swaped = false;
 	if (s.startY > s.endY || (s.startY == s.endY && s.startX > s.endX)) {
-		swaped = true;
 		SWAP(s.startX, s.endX);
 		SWAP(s.startY, s.endY);
 		SWAP(s.startRow, s.endRow);
@@ -1228,7 +1224,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 			else if (_textAlignment == kTextAlignCenter)
 				alignOffset = (_maxWidth / 2) - (getLineWidth(start_row) / 2);
 
-			if (swaped && start_row == s.startRow && s.startCol != 0) {
+			if (start_row == s.startRow && s.startCol != 0) {
 				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width());
 				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width());
 			} else {
@@ -1259,7 +1255,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 			// if we are selecting text reversely, and we are at the first line but not the select from begining, then we add offset to x1
 			// the reason here is if we are not drawing the single line, then we draw selection from x1 to x2 + offset. i.e. we draw from begin
 			// otherwise, we draw selection from x1 + offset to x2 + offset
-			if (swaped && row == s.startRow && s.startCol != 0) {
+			if (row == s.startRow && s.startCol != 0) {
 				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width());
 				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width());
 			} else {
