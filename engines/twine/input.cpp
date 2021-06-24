@@ -138,10 +138,12 @@ void Input::processCustomEngineEventStart(const Common::Event &event) {
 	} else {
 		actionStates[event.customType] = 1 + event.kbdRepeat;
 	}
+	debug(3, "twine custom event type start: %i", event.customType);
 }
 
 void Input::processCustomEngineEventEnd(const Common::Event &event) {
 	actionStates[event.customType] = 0;
+	debug(3, "twine custom event type end: %i", event.customType);
 }
 
 void Input::readKeys() {
