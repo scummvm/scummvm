@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-24 21:09+0000\n"
-"PO-Revision-Date: 2021-06-13 19:25+0000\n"
+"PO-Revision-Date: 2021-06-25 11:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1023,7 +1023,7 @@ msgstr "拡大モード："
 
 #: gui/options.cpp:1429
 msgid "Scaler:"
-msgstr ""
+msgstr "スケーラー："
 
 #: gui/options.cpp:1442 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -2786,7 +2786,7 @@ msgstr "ストレッチモード"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:61
 msgid "SDL Surface"
-msgstr ""
+msgstr "SDLサーフェス"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2379
 msgid "Active graphics filter:"
@@ -5146,7 +5146,7 @@ msgid ""
 "When activated, clicking on an item or area with the lightning bolt cursor "
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
-msgstr ""
+msgstr "有効な場合、稲妻のカーソルでアイテムやエリアをクリックすると、直接移動できます。行った事のある場所のみ\"Zip\"できます。"
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -5156,7 +5156,7 @@ msgstr "トランジションを有効化しました"
 msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
-msgstr ""
+msgstr "画面遷移のON/OFFを切り替えます。OFFにすると、ゲームの速度が上がります。"
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
@@ -5732,7 +5732,7 @@ msgstr "このメニューは未実装です"
 msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
-msgstr ""
+msgstr "圧縮されたゲームが検出されました。Wikiの説明に従って解凍して下さい"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -7653,7 +7653,7 @@ msgstr "電話の上ボタン"
 
 #: engines/wintermute/keymapper_tables.h:358
 msgid "Alt use item"
-msgstr ""
+msgstr "Altでアイテムを使用"
 
 #: engines/wintermute/keymapper_tables.h:429
 #: engines/wintermute/keymapper_tables.h:562
@@ -7972,10 +7972,8 @@ msgid "Cancel input"
 msgstr "入力をキャンセル"
 
 #: engines/wintermute/keymapper_tables.h:1307
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle subtitles"
-msgstr "消音の切替"
+msgstr "字幕の切替"
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Shift"
