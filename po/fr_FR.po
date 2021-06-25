@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-24 21:09+0000\n"
-"PO-Revision-Date: 2021-06-14 03:25+0000\n"
+"PO-Revision-Date: 2021-06-26 03:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1034,7 +1034,7 @@ msgstr "Mode d'étirement :"
 
 #: gui/options.cpp:1429
 msgid "Scaler:"
-msgstr ""
+msgstr "Scaleur :"
 
 #: gui/options.cpp:1442 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -2845,7 +2845,7 @@ msgstr "Mode d'étirement"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:61
 msgid "SDL Surface"
-msgstr ""
+msgstr "SDL Surface"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2379
 msgid "Active graphics filter:"
@@ -2899,11 +2899,11 @@ msgstr "Diminuer le facteur d'échelle"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:462
 msgid "Switch to the next scaler"
-msgstr "Basculer vers l'échelle suivante"
+msgstr "Basculer vers le scaleur suivant"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:467
 msgid "Switch to the previous scaler"
-msgstr "Basculer vers l'échelle précédente"
+msgstr "Basculer vers le scaleur précédent"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -5249,6 +5249,10 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"Activez cette option pour tranformer le pointeur en un éclair lorqu'il se "
+"trouve sur certains objets ou certains endroits et, en cliquant dessus, vous "
+"transporter rapidement à ces endroits. Cette option n'est disponible que "
+"pour des endroits où vous êtes déjà allés."
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -5259,6 +5263,8 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"Active ou désactive la transition entre les écrans, ce qui vous permet de "
+"parcourir plus rapidement le jeu."
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
@@ -5848,6 +5854,8 @@ msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
+"Je compressé détecté. Merci de le décompresser comme spécifié dans la "
+"description du jeu sur notre Wiki"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -5917,8 +5925,7 @@ msgstr "Utiliser \"LarryScale\" (mise à l'échelle Cartoon de haute qualité)"
 #: engines/sci/detection.cpp:217
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
-"Utiliser une mise à l'échelle spéciale pour dessiner les sprites de "
-"personnages"
+"Utiliser un scaleur spécial cartoon pour dessiner les sprites de personnages"
 
 #: engines/sci/detection.cpp:226
 msgid "Prefer digital sound effects"
@@ -7844,7 +7851,7 @@ msgstr "Téléphone bouton Bas"
 
 #: engines/wintermute/keymapper_tables.h:358
 msgid "Alt use item"
-msgstr ""
+msgstr "Utiliser objet (alternatif)"
 
 #: engines/wintermute/keymapper_tables.h:429
 #: engines/wintermute/keymapper_tables.h:562
@@ -8163,10 +8170,8 @@ msgid "Cancel input"
 msgstr "Annuler la saisie"
 
 #: engines/wintermute/keymapper_tables.h:1307
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle subtitles"
-msgstr "Act./Désact. Muet"
+msgstr "Act./Désact. les sous-titres"
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Shift"
