@@ -894,6 +894,7 @@ void MacText::setActive(bool active) {
 		// clear the selection and cursor
 		_selectedText.endY = -1;
 		_cursorState = false;
+		_inTextSelection = false;
 	}
 
 	// after we change the status of active, we need to do a refresh to clear the stuff we don't need
@@ -1200,6 +1201,9 @@ void MacText::drawSelection(int xoff, int yoff) {
 	int maxSelectionHeight = getDimensions().height() - _border - _gutter / 2;
 	int maxSelectionWidth = getDimensions().width() - _border - _gutter;
 
+	if (s.endCol == getLineCharWidth(s.endRow))
+		s.endX = maxSelectionWidth;
+
 	end = MIN((int)maxSelectionHeight, end);
 
 	int numLines = 0;
@@ -1235,7 +1239,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 	for (int y = start; y < end; y++) {
 		if (!numLines) {
 			x1 = 0;
-			x2 = getDimensions().width();
+			x2 = maxSelectionWidth;
 
 			alignOffset = getAlignOffset(row);
 
@@ -1660,7 +1664,7 @@ void MacText::updateTextSelection(int x, int y) {
 int MacText::getAlignOffset(int row) {
 	int alignOffset = 0;
 	if (_textAlignment == kTextAlignRight)
-		alignOffset = _maxWidth - getLineWidth(row);
+		alignOffset = MAX<int>(0, _maxWidth - getLineWidth(row) - 1);
 	else if (_textAlignment == kTextAlignCenter)
 		alignOffset = (_maxWidth / 2) - (getLineWidth(row) / 2);
 	return alignOffset;
