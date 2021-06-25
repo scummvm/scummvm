@@ -254,18 +254,9 @@ IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateDDBFromBitmap(Bitma
 }
 
 void ScummVMRendererGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool hasAlpha) {
-	ALSoftwareBitmap *target = (ALSoftwareBitmap *)bitmapToUpdate;
-	if (target->GetWidth() != bitmap->GetWidth() || target->GetHeight() != bitmap->GetHeight())
-		error("UpdateDDBFromBitmap: mismatched bitmap size");
-	const int color_depth = bitmap->GetColorDepth();
-	if (color_depth != target->GetColorDepth())
-		error("UpdateDDBFromBitmap: mismatched colour depths");
-
-	if (color_depth == 8) {
-		select_palette(_G(palette));
-
-		unselect_palette();
-	}
+	ALSoftwareBitmap *alSwBmp = (ALSoftwareBitmap *)bitmapToUpdate;
+	alSwBmp->_bmp = bitmap;
+	alSwBmp->_hasAlpha = hasAlpha;
 }
 
 void ScummVMRendererGraphicsDriver::DestroyDDB(IDriverDependantBitmap *bitmap) {
