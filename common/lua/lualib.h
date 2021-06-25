@@ -8,7 +8,7 @@
 #ifndef lualib_h
 #define lualib_h
 
-#include "lua.h"
+#include "common/lua/lua.h"
 
 
 /* Key to file-handle type */
