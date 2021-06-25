@@ -22,6 +22,8 @@
 
 #include "common/system.h"
 #include "common/translation.h"
+#include "common/text-to-speech.h"
+#include "common/config-manager.h"
 
 #include "engines/util.h"
 #include "graphics/cursorman.h"
@@ -1209,6 +1211,20 @@ reg_t kShakeScreen(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxScreen->kernelShakeScreen(shakeCount, directions);
 	return s->r_acc;
 }
+Common::String lastText = "initial";
+Common::String lastLastText = "initial";
+Common::String lastLastLastText = "initial";
+Common::String lastLastLastLastText = "initial";
+Common::String lastLastLastLastLastText = "initial";
+Common::String lastLastLastLastLastLastText = "initial";
+Common::String temp;
+Common::String tmp;
+
+void textToSpeech(const char *text) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && g_sci->getGameId() == GID_LAURABOW2 && g_sci->isDemo() == false)
+		ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
+}
 
 reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	reg_t textp = argv[0];
@@ -1227,6 +1243,23 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	uint16 languageSplitter = 0;
 	Common::String splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter);
 
+	if (lastText != text){
+		if (text == lastLastText && lastText == "") {
+			debug("don't leave blank");
+		}
+		else {
+			debug("|%s|%s|%s|%s|%s|", text.c_str(), lastText.c_str(), lastLastText.c_str(), lastLastLastText.c_str(), lastLastLastLastText.c_str());
+			textToSpeech(text.c_str());
+			temp = lastText;
+			lastText = text;
+			tmp = lastLastText;
+			lastLastText = temp;
+			temp = lastLastLastText;
+			lastLastLastText = tmp;
+			tmp = lastLastLastLastText;
+			lastLastLastLastText = temp;
+		}
+	}
 	return g_sci->_gfxPaint16->kernelDisplay(splitText.c_str(), languageSplitter, argc, argv);
 }
 
