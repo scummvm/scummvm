@@ -193,7 +193,8 @@ private:
 	void deletePreviousCharInternal(int *row, int *col);
 	void insertTextFromClipboard();
 	// getStringWidth for mactext version, because we may have the plain bytes mode
-	int getStringWidth(const Font * font, const Common::U32String &str);
+	int getStringWidth(const Font *font, const Common::U32String &str);
+	int getAlignOffset(int row);
 
 public:
 	void appendTextDefault(const Common::U32String &str, bool skipAdd = false);

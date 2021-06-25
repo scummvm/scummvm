@@ -708,11 +708,7 @@ void MacText::render(int from, int to) {
 	_surface->fillRect(Common::Rect(0, _textLines[from].y, _surface->w, _textLines[to].y + getLineHeight(to)), _bgcolor);
 
 	for (int i = from; i <= to; i++) {
-		int xOffset = 0;
-		if (_textAlignment == kTextAlignRight)
-			xOffset = _maxWidth - getLineWidth(i);
-		else if (_textAlignment == kTextAlignCenter)
-			xOffset = (_maxWidth / 2) - (getLineWidth(i) / 2);
+		int xOffset = getAlignOffset(i);
 		xOffset++;
 
 		int maxAscentForRow = 0;
@@ -1222,10 +1218,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 			x2 = s.endX;
 		// deal with the first line, which is not a complete line
 		if (numLines) {
-			if (_textAlignment == kTextAlignRight)
-				alignOffset = _maxWidth - getLineWidth(start_row);
-			else if (_textAlignment == kTextAlignCenter)
-				alignOffset = (_maxWidth / 2) - (getLineWidth(start_row) / 2);
+			alignOffset = getAlignOffset(start_row);
 
 			if (start_row == s.startRow && s.startCol != 0) {
 				x1 = MIN<int>(x1 + xoff + alignOffset, maxSelectionWidth);
@@ -1244,10 +1237,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 			x1 = 0;
 			x2 = getDimensions().width();
 
-			if (_textAlignment == kTextAlignRight)
-				alignOffset = _maxWidth - getLineWidth(row);
-			else if (_textAlignment == kTextAlignCenter)
-				alignOffset = (_maxWidth / 2) - (getLineWidth(row) / 2);
+			alignOffset = getAlignOffset(row);
 
 			numLines = getLineHeight(row);
 			if (y + _scrollPos == s.startY && s.startX > 0)
@@ -1667,6 +1657,14 @@ void MacText::updateTextSelection(int x, int y) {
 	_contentIsDirty = true;
 }
 
+int MacText::getAlignOffset(int row) {
+	int alignOffset = 0;
+	if (_textAlignment == kTextAlignRight)
+		alignOffset = _maxWidth - getLineWidth(row);
+	else if (_textAlignment == kTextAlignCenter)
+		alignOffset = (_maxWidth / 2) - (getLineWidth(row) / 2);
+	return alignOffset;
+}
 
 void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	int nsx, nsy, nrow, ncol;
@@ -1694,11 +1692,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 	ncol = 0;
 
-	int alignOffset = 0;
-	if (_textAlignment == kTextAlignRight)
-		alignOffset = _maxWidth - getLineWidth(nrow);
-	else if (_textAlignment == kTextAlignCenter)
-		alignOffset = (_maxWidth / 2) - (getLineWidth(nrow) / 2);
+	int alignOffset = getAlignOffset(nrow);
 
 	int width = 0, pwidth = 0;
 	int mcol = 0, pmcol = 0;
@@ -2164,11 +2158,7 @@ void MacText::updateCursorPos() {
 
 		_cursorRow = MIN<int>(_cursorRow, _textLines.size() - 1);
 
-		int alignOffset = 0;
-		if (_textAlignment == kTextAlignRight)
-			alignOffset = _maxWidth - getLineWidth(_cursorRow);
-		else if (_textAlignment == kTextAlignCenter)
-			alignOffset = (_maxWidth / 2) - (getLineWidth(_cursorRow) / 2);
+		int alignOffset = getAlignOffset(_cursorRow);
 
 		_cursorY = _textLines[_cursorRow].y - _scrollPos;
 		_cursorX = getLineWidth(_cursorRow, false, _cursorCol) + alignOffset;
