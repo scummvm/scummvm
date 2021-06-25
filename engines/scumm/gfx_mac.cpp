@@ -210,4 +210,12 @@ void ScummEngine::mac_undrawIndy3TextBox() {
 	markRectAsDirty(kMainVirtScreen, vsLeft, vsRight, vsTop, vsBottom);
 }
 
+void ScummEngine::mac_undrawIndy3CreditsText() {
+	// Set _masMask to make the text clear, and _textScreenID to ensure
+	// that it's the main area that's cleared.
+	_charset->_hasMask = true;
+	_charset->_textScreenID = kMainVirtScreen;
+	restoreCharsetBg();
+}
+
 } // End of namespace Scumm

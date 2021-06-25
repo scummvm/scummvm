@@ -1441,6 +1441,20 @@ void ScummEngine::decreaseScriptDelay(int amount) {
 		if (ss->status == ssPaused) {
 			ss->delay -= amount;
 			if (ss->delay < 0) {
+				if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && ss->number == 134 && ss->where == WIO_GLOBAL) {
+					// Unlike the DOS version, there doesn't
+					// appear to be anything in the credits
+					// script to clear the credits between
+					// the text screens. I don't know how
+					// the original did it, but the only
+					// reliable way I can think of is to
+					// trigger on the end of each delay
+					// throughout the script.
+					//
+					// Since this is at the very end of the
+					// game, it should be safe enough.
+					mac_undrawIndy3CreditsText();
+				}
 				ss->status = ssRunning;
 				ss->delay = 0;
 			}
