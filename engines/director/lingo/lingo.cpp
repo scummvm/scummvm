@@ -1138,7 +1138,7 @@ int Lingo::getInt(uint pc) {
 	return (int)READ_UINT32(&((*_currentScript)[pc]));
 }
 
-void Lingo::varAssign(const Datum &var, Datum &value) {
+void Lingo::varAssign(const Datum &var, const Datum &value) {
 	switch (var.type) {
 	case VARREF:
 		{
@@ -1203,6 +1203,16 @@ void Lingo::varAssign(const Datum &var, Datum &value) {
 				warning("varAssign: Unhandled cast type %d", member->_type);
 				break;
 			}
+		}
+		break;
+	case CHUNKREF:
+		{
+			if (var.u.cref->start < 0)
+				return;
+
+			Common::String src = var.u.cref->source.eval().asString();
+			Common::String res = src.substr(0, var.u.cref->start) + value.asString() + src.substr(var.u.cref->end);
+			varAssign(var.u.cref->source, res);
 		}
 		break;
 	default:
