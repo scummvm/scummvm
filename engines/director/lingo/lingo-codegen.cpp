@@ -1079,13 +1079,13 @@ bool LingoCompiler::visitVarNode(VarNode *node) {
 			return true;
 		}
 	}
-	if (_refMode) {
-		codeVarRef(*node->name);
-		return true;
-	}
 	if (g_lingo->_builtinConsts.contains(*node->name)) {
 		code1(LC::c_constpush);
 		codeString(node->name->c_str());
+		return true;
+	}
+	if (_refMode) {
+		codeVarRef(*node->name);
 		return true;
 	}
 	codeVarGet(*node->name);
