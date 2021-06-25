@@ -1012,16 +1012,17 @@ Datum LC::readChunkRef(const Datum &src) {
 	Datum lastChar = g_lingo->pop();
 	Datum firstChar = g_lingo->pop();
 
-	if (firstChar.asInt() != 0)
-		return LC::chunkRef(kChunkChar, firstChar.asInt(), lastChar.asInt(), src);
-	if (firstWord.asInt() != 0)
-		return LC::chunkRef(kChunkWord, firstWord.asInt(), lastWord.asInt(), src);
-	if (firstItem.asInt() != 0)
-		return LC::chunkRef(kChunkItem, firstItem.asInt(), lastItem.asInt(), src);
+	Datum ref = src;
 	if (firstLine.asInt() != 0)
-		return LC::chunkRef(kChunkLine, firstLine.asInt(), lastLine.asInt(), src);
+		ref = LC::chunkRef(kChunkLine, firstLine.asInt(), lastLine.asInt(), ref);
+	if (firstItem.asInt() != 0)
+		ref = LC::chunkRef(kChunkItem, firstItem.asInt(), lastItem.asInt(), ref);
+	if (firstWord.asInt() != 0)
+		ref = LC::chunkRef(kChunkWord, firstWord.asInt(), lastWord.asInt(), ref);
+	if (firstChar.asInt() != 0)
+		ref = LC::chunkRef(kChunkChar, firstChar.asInt(), lastChar.asInt(), ref);
 
-	return src;
+	return ref;
 }
 
 void LC::c_of() {
