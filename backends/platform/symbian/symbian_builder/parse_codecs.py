@@ -22,7 +22,6 @@
 from __future__ import with_statement
 import os
 from common_names import *
-from prj_generator import SafeWriteFile
 
 excluded = ("renderer.cpp", "sjis.cpp", "coktel_decoder.cpp")
 
@@ -103,15 +102,15 @@ def processModule_mk(dir, mmp_file):
             src += ["SOURCE   %s.cpp" %tmp[:-2]]
    SafeWriteFile(mmp_file, src, 'a')
 
-def parse_codecs(platform = "S60v3"):
+def parse_codecs(platform):
    uids = get_UIDs(build)
    codecs_mmp = os.path.join(mmps, mmp_name)
    SafeWriteFile(codecs_mmp, mmp_template %platform)
    for i in range(len(uids)):
       idx = i+1
       SafeWriteFile(codecs_mmp, "#define SCUMMVM_PT_%d\n" %idx, 'a')
-   SafeWriteFile(codecs_mmp, "\n#include \"../mmp/macros.mmh\"\n", 'a')
+   SafeWriteFile(codecs_mmp, "\n#include \"../%s/macros.mmh\"\n" %platform, 'a')
    [processModule_mk(i, codecs_mmp) for i in src_dirs]
 
 if __name__ == "__main__":
-   parse_codecs()
+   parse_codecs(platform = "S60v3")

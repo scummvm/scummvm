@@ -88,6 +88,12 @@ namespace std
 #undef remove
 #endif
 
+#if __cplusplus >= 201103L
+#define USE_CXX11
+#define NO_CXX11_INITIALIZER_LIST
+#define NO_CXX11_NULLPTR_T
+#endif //USE_CXX11
+
 #define DISABLE_COMMAND_LINE
 #define USE_RGB_COLOR
 #define USE_TINYGL
@@ -182,16 +188,18 @@ namespace std
 
 // Functions from openlibm not declared in Symbian math.h
 extern "C"{
-	float roundf (float x);
+	float  roundf (float x);
 	double nearbyint(double x);
 	double round(double x);
-	int __signbit(double);
-	int __signbitf(float);
-	int __signbitl(long double);
-	float truncf(float);
-	float fminf(float x, float y);
-	float fmaxf(float x, float y);
+	long   lround(double);
+	int  __signbit(double);
+	int  __signbitf(float);
+	int  __signbitl(long double);
+	float  truncf(float);
+	float  fminf(float x, float y);
+	float  fmaxf(float x, float y);
 	double fmax (double x, double y);
+	long long int strtoll(const char* start, char** end, int radix);
 }
 
 

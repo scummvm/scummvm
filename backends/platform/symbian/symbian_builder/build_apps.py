@@ -21,7 +21,6 @@
 
 
 import subprocess
-from prj_generator import SafeWriteFile
 from common_names import *
 
 
@@ -30,8 +29,12 @@ def build_apps(plats = "S60v3"):
    out, err = cmd.communicate()
    cmd1 = subprocess.Popen('abld build gcce urel', stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=plats, shell=True)
    out1, err1 = cmd1.communicate()
-   SafeWriteFile(build_log, out + out1, 'a')
-   SafeWriteFile(build_err, err + err1, 'a')
+   out = out + out1
+   err = err + err1
+   # I hope it correctly store logs in parallel tasks
+   # after cmd.communicate() we have ugly 'crcrlf' line endings
+   SafeWriteFile(build_log, out.replace(u"\r", u""), 'a')
+   SafeWriteFile(build_err, err.replace(u"\r", u""), 'a')
 
 if __name__ == "__main__":
    build_apps(plats = "S60v3")
