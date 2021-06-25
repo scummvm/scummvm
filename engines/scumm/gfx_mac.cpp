@@ -124,11 +124,9 @@ void ScummEngine::mac_createIndy3TextBox(Actor *a) {
 		_charset->setCurID(2);
 
 		const char *name = (const char *)a->getActorName();
-		int len = strlen(name);
-
 		int charX = 25;
 
-		for (int i = 0; i < len; i++) {
+		for (int i = 0; name[i] && nameWidth < width - 50; i++) {
 			_charset->drawChar(name[i], *_macIndy3TextBox, charX, 0);
 			nameWidth += _charset->getCharWidth(name[i]);
 			charX += _charset->getCharWidth(name[i]);
