@@ -509,7 +509,7 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"Demo",
-			AD_ENTRY1("demo", "8d3a750d1c840b1b1071e42f9e6f6aa2"),
+			AD_ENTRY1("demo_os", "dfc30c6a57998a56e8980f7ea3413867"),
 			Common::EN_GRB,
 			Common::kPlatformAmiga,
 			ADGF_DEMO,
