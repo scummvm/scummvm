@@ -1627,19 +1627,19 @@ void LC::c_hilite() {
 	Datum d = g_lingo->pop();
 
 	int fieldId, start, end;
-	if (d.isCastRef()) {
-		fieldId = d.u.i;
-		start = 0;
-		end = -1;
-	} else if (d.type == CHUNKREF) {
+	if (d.type == CHUNKREF) {
 		if (d.u.cref->source.isCastRef()) {
 			fieldId = d.u.cref->source.u.i;
 			start = d.u.cref->start;
 			end = d.u.cref->end;
 		} else {
-			warning("BUILDBOT: c_delete: bad chunk ref field type: %s", d.u.cref->source.type2str());
+			warning("BUILDBOT: c_hilite: bad chunk ref field type: %s", d.u.cref->source.type2str());
 			return;
 		}
+	} else if (d.isCastRef()) {
+		fieldId = d.u.i;
+		start = 0;
+		end = -1;
 	} else {
 		warning("BUILDBOT: c_hilite: bad field type: %s", d.type2str());
 		return;
