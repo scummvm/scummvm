@@ -105,23 +105,24 @@ void DreamWebEngine::bibleQuote() {
 						"Go your ways and pour out the vails of the wrath of god upon the earth. "
 						"Book of revelation Chapter 16 verse 1.";
 	const char *frStory = "Puis j'entendis une voix forte qui venait du temple et disait aux sept anges: "
-						" Allez verser sur la terre les sept coupes de la colère de Dieu."
+						" Allez verser sur la terre les sept coupes de la col\xC3\xA8re de Dieu."
 						"L'Apocalypse, chapitre 16, verset 1";
-	const char *esStory = "Oí una gran voz que decía desde el templo a los siete ángeles: "
+	const char *esStory = "O\xC3\xAD una gran voz que dec\xC3\xAD""a"" desde el templo a los siete \xC3\xA1ngeles: "
 						"Id y derramad sobre la tierra las siete copas de la ira de Dios. "
-						"Apocalipsis, capítulo 16, versículo primero.";
-	const char *deStory = "Dann hörte ich, wie eine laute Stimme aus dem Tempel den sieben Engeln zurief: "
-						"Geht und gießt die sieben Schalen mit dem Zorn Gottes über die Erde. "
+						"Apocalipsis, cap\xC3\xADtulo 16, vers\xC3\xAD""culo"" primero.";
+	const char *deStory = "Dann h\xC3\xB6rte ich, wie eine laute Stimme aus dem Tempel den sieben Engeln zurief: "
+						"Geht und gie\xC3\x9Ft die sieben Schalen mit dem Zorn Gottes \xC3\xBC""ber"" die Erde. "
 						"Offenbarung des Johannes. Kapitel 16 Vers 1";
 	const char *itStory = "Udii poi una gran voce dal tempio che diceva ai sette angeli: "
 						"Andate e versate sulla terra le sette coppe dell'ira di Dio. "
 						"Dal libro dell'Apocalisse, capitolo uno, primo versetto";
-	const char *ruStory = "И услышал я из храма громкий голос, говорящий семи Ангелам: "
-						"идите и вылейте семь чаш гнева Божия на землю. "
-						"Откровение 16 стих 1";
-	const char *czStory = "Tu jsem uslyšel mocný hlas ze svatyně, který těm sedmi andělům říkal: "
-						"Jděte a vylejte těch sedm misek Božího hněvu na zem."
-						"Zjevení 16 verš 1";
+	const char *ruStory = "\xD0\x98 \xD1\x83\xD1\x81\xD0\xBB\xD1\x8B\xD1\x88\xD0\xB0\xD0\xBB \xD1\x8F \xD0\xB8\xD0\xB7 \xD1\x85\xD1\x80\xD0\xB0\xD0\xBC\xD0\xB0 \xD0\xB3\xD1\x80\xD0\xBE\xD0\xBC\xD0\xBA\xD0\xB8\xD0\xB9 \xD0\xB3\xD0\xBE\xD0\xBB\xD0\xBE\xD1\x81, \xD0\xB3\xD0\xBE\xD0\xB2\xD0\xBE\xD1\x80\xD1\x8F\xD1\x89\xD0\xB8\xD0\xB9 \xD1\x81\xD0\xB5\xD0\xBC\xD0\xB8 \xD0\x90\xD0\xBD\xD0\xB3\xD0\xB5\xD0\xBB\xD0\xB0\xD0\xBC: "
+						"\xD0\xB8\xD0\xB4\xD0\xB8\xD1\x82\xD0\xB5 \xD0\xB8 \xD0\xB2\xD1\x8B\xD0\xBB\xD0\xB5\xD0\xB9\xD1\x82\xD0\xB5 \xD1\x81\xD0\xB5\xD0\xBC\xD1\x8C \xD1\x87\xD0\xB0\xD1\x88 \xD0\xB3\xD0\xBD\xD0\xB5\xD0\xB2\xD0\xB0 \xD0\x91\xD0\xBE\xD0\xB6\xD0\xB8\xD1\x8F \xD0\xBD\xD0\xB0 \xD0\xB7\xD0\xB5\xD0\xBC\xD0\xBB\xD1\x8E. "
+						"\xD0\x9E\xD1\x82\xD0\xBA\xD1\x80\xD0\xBE\xD0\xB2\xD0\xB5\xD0\xBD\xD0\xB8\xD0\xB5 16 \xD1\x81\xD1\x82\xD0\xB8\xD1\x85 1";
+	const char *csStory = "Tu jsem usly\xC5\xA1""el"" mocn\xC3\xBD hlas ze svatyn\xC4\x9B, kter\xC3\xBD t\xC4\x9Bm sedmi and\xC4\x9Bl\xC5\xAFm \xC5\x99\xC3\xADkal: "
+						"Jd\xC4\x9Bte a vylejte t\xC4\x9B""ch"" sedm misek Bo\xC5\xBE\xC3\xADho hn\xC4\x9Bvu na zem."
+						"Zjeven\xC3\xAD 16 ver\xC5\xA1 1";
+
 
 	const char *theStory;
 	switch(getLanguage()) {
@@ -141,7 +142,7 @@ void DreamWebEngine::bibleQuote() {
 		theStory = ruStory;
 		break;
 	case Common::CZ_CZE:
-		theStory = czStory;
+		theStory = csStory;
 		break;
 	default:
 		theStory = enStory;
