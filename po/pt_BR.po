@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-24 21:09+0000\n"
-"PO-Revision-Date: 2021-06-13 10:25+0000\n"
+"PO-Revision-Date: 2021-06-25 11:25+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -1034,7 +1034,7 @@ msgstr "Redimensionar:"
 
 #: gui/options.cpp:1429
 msgid "Scaler:"
-msgstr ""
+msgstr "Redimensionar:"
 
 #: gui/options.cpp:1442 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -2825,7 +2825,7 @@ msgstr "Modo de preenchimento"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:61
 msgid "SDL Surface"
-msgstr ""
+msgstr "Superfície SDL"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2379
 msgid "Active graphics filter:"
@@ -5218,6 +5218,9 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"Quando ativado, clicar em um item ou área com o cursor em forma de raio leva "
+"você diretamente para lá, pulando as telas intermediárias. Você só pode "
+"'Pular' para uma área específica em que você já esteve."
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -5228,6 +5231,8 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"Ativa ou desativa as transições de tela. Desativar as transições de tela "
+"permitirá que você navegue mais rapidamente pelo jogo."
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
@@ -5814,6 +5819,8 @@ msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
+"Jogo compactado detectado. Por favor, descompacte-o conforme especificado na "
+"descrição do jogo em nosso Wiki"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -7783,7 +7790,7 @@ msgstr "Botão para baixo do telefone"
 
 #: engines/wintermute/keymapper_tables.h:358
 msgid "Alt use item"
-msgstr ""
+msgstr "Usar item (Alt.)"
 
 #: engines/wintermute/keymapper_tables.h:429
 #: engines/wintermute/keymapper_tables.h:562
@@ -8102,10 +8109,8 @@ msgid "Cancel input"
 msgstr "Cancelar entrada"
 
 #: engines/wintermute/keymapper_tables.h:1307
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle subtitles"
-msgstr "Ativar/desativar som"
+msgstr "Ativar/desativar legendas"
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Shift"
