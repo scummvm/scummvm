@@ -124,6 +124,7 @@ Example of a configuration file
     path=C:\amiga_mi2\
     music_driver=windows
 
+.. _configuration_keys:
 
 Configuration keys
 =====================

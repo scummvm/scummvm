@@ -51,6 +51,7 @@
       advanced_topics/configuration_file
       advanced_topics/understand_audio
       advanced_topics/understand_graphics
+      advanced_topics/understand_search_box
 
 .. toctree::
       :caption: Help
