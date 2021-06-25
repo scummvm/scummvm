@@ -308,9 +308,10 @@ struct HandlerNode : Node {
 struct CmdNode : StmtNode {
 	Common::String *name;
 	NodeList *args;
+	uint lineNumber;
 
-	CmdNode(Common::String *nameIn, NodeList *argsIn)
-		: StmtNode(kCmdNode), name(nameIn), args(argsIn) {}
+	CmdNode(Common::String *nameIn, NodeList *argsIn, uint lineNumberIn)
+		: StmtNode(kCmdNode), name(nameIn), args(argsIn), lineNumber(lineNumberIn) {}
 	virtual ~CmdNode() {
 		delete name;
 		deleteList(args);

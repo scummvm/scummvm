@@ -253,14 +253,6 @@ int LingoCompiler::codeInt(int val) {
 }
 
 int LingoCompiler::codeCmd(const Common::String &s, int numpar) {
-	// Insert current line number to our asserts
-	if (s.equalsIgnoreCase("scummvmAssert") || s.equalsIgnoreCase("scummvmAssertEqual")) {
-		code1(LC::c_intpush);
-		codeInt(_linenumber);
-
-		numpar++;
-	}
-
 	int ret = code1(LC::c_callcmd);
 
 	codeString(s.c_str());
@@ -484,7 +476,9 @@ bool LingoCompiler::visitHandlerNode(HandlerNode *node) {
 /* CmdNode */
 
 bool LingoCompiler::visitCmdNode(CmdNode *node) {
-	if (node->name->equalsIgnoreCase("go") && node->args->size() == 1 && (*node->args)[0]->type == kVarNode){
+	int numargs = node->args->size();
+
+	if (node->name->equalsIgnoreCase("go") && numargs == 1 && (*node->args)[0]->type == kVarNode){
 		VarNode *var = static_cast<VarNode *>((*node->args)[0]);
 		if (var->name->equalsIgnoreCase("loop") ||
 				var->name->equalsIgnoreCase("next") ||
@@ -497,7 +491,7 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 	}
 
 	// `play done` compiles to `play()`
-	if (node->name->equalsIgnoreCase("play") && node->args->size() == 1 && (*node->args)[0]->type == kVarNode) {
+	if (node->name->equalsIgnoreCase("play") && numargs == 1 && (*node->args)[0]->type == kVarNode) {
 		VarNode *var = static_cast<VarNode *>((*node->args)[0]);
 		if (var->name->equalsIgnoreCase("done")) {
 			codeCmd(*node->name, 0);
@@ -506,7 +500,7 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 	}
 
 	if (node->name->equalsIgnoreCase("playAccel")) {
-		for (uint i = 0; i < node->args->size(); i++) {
+		for (uint i = 0; i < numargs; i++) {
 			Node *arg = (*node->args)[i];
 			if (arg->type == kVarNode) {
 				code1(LC::c_symbolpush);
@@ -515,11 +509,11 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 				COMPILE(arg);
 			}
 		}
-		codeCmd(*node->name, node->args->size());
+		codeCmd(*node->name, numargs);
 		return true;
 	}
 
-	if (node->name->equalsIgnoreCase("sound") && node->args->size() >= 1 && (*node->args)[0]->type == kVarNode) {
+	if (node->name->equalsIgnoreCase("sound") && numargs >= 1 && (*node->args)[0]->type == kVarNode) {
 		VarNode *var = static_cast<VarNode *>((*node->args)[0]);
 		if (var->name->equalsIgnoreCase("close") ||
 				var->name->equalsIgnoreCase("fadeIn") ||
@@ -528,24 +522,30 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 				var->name->equalsIgnoreCase("stop")) {
 			code1(LC::c_symbolpush);
 			codeString(var->name->c_str());
-			for (uint i = 1; i < node->args->size(); i++) {
+			for (uint i = 1; i < numargs; i++) {
 				COMPILE((*node->args)[i]);
 			}
-			codeCmd(*node->name, node->args->size());
+			codeCmd(*node->name, numargs);
 			return true;
 		}
 	}
 
-	if (node->args->size() >= 1 && (*node->args)[0]->type == kVarNode) {
+	if (numargs >= 1 && (*node->args)[0]->type == kVarNode) {
 		// This could be a method call. Code the first arg as a reference.
 		COMPILE_REF((*node->args)[0]);
-		for (uint i = 1; i < node->args->size(); i++) {
+		for (uint i = 1; i < numargs; i++) {
 			COMPILE((*node->args)[i]);
 		}
 	} else {
 		COMPILE_LIST(node->args);
 	}
-	codeCmd(*node->name, node->args->size());
+	// Insert current line number to our asserts
+	if (node->name->equalsIgnoreCase("scummvmAssert") || node->name->equalsIgnoreCase("scummvmAssertEqual")) {
+		code1(LC::c_intpush);
+		codeInt(node->lineNumber);
+		numargs++;
+	}
+	codeCmd(*node->name, numargs);
 	return true;
 }
 

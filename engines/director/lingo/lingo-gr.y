@@ -402,18 +402,18 @@ stmtoneliner: proc
 	| definevars
 	;
 
-proc: CMDID cmdargs '\n'				{ $$ = new CmdNode($CMDID, $cmdargs); }
-	| tPUT cmdargs '\n'					{ $$ = new CmdNode(new Common::String("put"), $cmdargs); }
-	| tGO cmdargs '\n'					{ $$ = new CmdNode(new Common::String("go"), $cmdargs); }
-	| tGO frameargs '\n'				{ $$ = new CmdNode(new Common::String("go"), $frameargs); }
-	| tPLAY cmdargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $cmdargs); }
-	| tPLAY frameargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $frameargs); }
-	| tOPEN cmdargs '\n'				{ $$ = new CmdNode(new Common::String("open"), $cmdargs); }
+proc: CMDID cmdargs '\n'				{ $$ = new CmdNode($CMDID, $cmdargs, g_lingo->_compiler->_linenumber - 1); }
+	| tPUT cmdargs '\n'					{ $$ = new CmdNode(new Common::String("put"), $cmdargs, g_lingo->_compiler->_linenumber - 1); }
+	| tGO cmdargs '\n'					{ $$ = new CmdNode(new Common::String("go"), $cmdargs, g_lingo->_compiler->_linenumber - 1); }
+	| tGO frameargs '\n'				{ $$ = new CmdNode(new Common::String("go"), $frameargs, g_lingo->_compiler->_linenumber - 1); }
+	| tPLAY cmdargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $cmdargs, g_lingo->_compiler->_linenumber - 1); }
+	| tPLAY frameargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $frameargs, g_lingo->_compiler->_linenumber - 1); }
+	| tOPEN cmdargs '\n'				{ $$ = new CmdNode(new Common::String("open"), $cmdargs, g_lingo->_compiler->_linenumber - 1); }
 	| tOPEN expr[arg1] tWITH expr[arg2] '\n' {
 		NodeList *args = new NodeList;
 		args->push_back($arg1);
 		args->push_back($arg2);
-		$$ = new CmdNode(new Common::String("open"), args); }
+		$$ = new CmdNode(new Common::String("open"), args, g_lingo->_compiler->_linenumber - 1); }
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
 	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
 	| tEXIT '\n'						{ $$ = new ExitNode(); }

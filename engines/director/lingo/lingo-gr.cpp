@@ -3179,43 +3179,43 @@ yyreduce:
 
   case 113: /* proc: CMDID cmdargs '\n'  */
 #line 405 "engines/director/lingo/lingo-gr.y"
-                                                        { (yyval.node) = new CmdNode((yyvsp[-2].s), (yyvsp[-1].nodelist)); }
+                                                        { (yyval.node) = new CmdNode((yyvsp[-2].s), (yyvsp[-1].nodelist), g_lingo->_compiler->_linenumber - 1); }
 #line 3184 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 114: /* proc: tPUT cmdargs '\n'  */
 #line 406 "engines/director/lingo/lingo-gr.y"
-                                                                { (yyval.node) = new CmdNode(new Common::String("put"), (yyvsp[-1].nodelist)); }
+                                                                { (yyval.node) = new CmdNode(new Common::String("put"), (yyvsp[-1].nodelist), g_lingo->_compiler->_linenumber - 1); }
 #line 3190 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 115: /* proc: tGO cmdargs '\n'  */
 #line 407 "engines/director/lingo/lingo-gr.y"
-                                                                { (yyval.node) = new CmdNode(new Common::String("go"), (yyvsp[-1].nodelist)); }
+                                                                { (yyval.node) = new CmdNode(new Common::String("go"), (yyvsp[-1].nodelist), g_lingo->_compiler->_linenumber - 1); }
 #line 3196 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 116: /* proc: tGO frameargs '\n'  */
 #line 408 "engines/director/lingo/lingo-gr.y"
-                                                        { (yyval.node) = new CmdNode(new Common::String("go"), (yyvsp[-1].nodelist)); }
+                                                        { (yyval.node) = new CmdNode(new Common::String("go"), (yyvsp[-1].nodelist), g_lingo->_compiler->_linenumber - 1); }
 #line 3202 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 117: /* proc: tPLAY cmdargs '\n'  */
 #line 409 "engines/director/lingo/lingo-gr.y"
-                                                        { (yyval.node) = new CmdNode(new Common::String("play"), (yyvsp[-1].nodelist)); }
+                                                        { (yyval.node) = new CmdNode(new Common::String("play"), (yyvsp[-1].nodelist), g_lingo->_compiler->_linenumber - 1); }
 #line 3208 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 118: /* proc: tPLAY frameargs '\n'  */
 #line 410 "engines/director/lingo/lingo-gr.y"
-                                                        { (yyval.node) = new CmdNode(new Common::String("play"), (yyvsp[-1].nodelist)); }
+                                                        { (yyval.node) = new CmdNode(new Common::String("play"), (yyvsp[-1].nodelist), g_lingo->_compiler->_linenumber - 1); }
 #line 3214 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 119: /* proc: tOPEN cmdargs '\n'  */
 #line 411 "engines/director/lingo/lingo-gr.y"
-                                                        { (yyval.node) = new CmdNode(new Common::String("open"), (yyvsp[-1].nodelist)); }
+                                                        { (yyval.node) = new CmdNode(new Common::String("open"), (yyvsp[-1].nodelist), g_lingo->_compiler->_linenumber - 1); }
 #line 3220 "engines/director/lingo/lingo-gr.cpp"
     break;
 
@@ -3225,7 +3225,7 @@ yyreduce:
 		NodeList *args = new NodeList;
 		args->push_back((yyvsp[-3].node));
 		args->push_back((yyvsp[-1].node));
-		(yyval.node) = new CmdNode(new Common::String("open"), args); }
+		(yyval.node) = new CmdNode(new Common::String("open"), args, g_lingo->_compiler->_linenumber - 1); }
 #line 3230 "engines/director/lingo/lingo-gr.cpp"
     break;
 
