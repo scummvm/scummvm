@@ -2320,7 +2320,7 @@ GameWorld::GameWorld(int16 map) {
 	if ((stream = loadResourceToStream(tileRes, MKTAG('M', 'A', 'P', (char)map), "game map"))) {
 		int16   mapSize;    //  Size of map in MetaTiles
 
-		mapSize = stream->readUint16LE();
+		mapSize = stream->readSint16LE();
 		size.u = (mapSize << kPlatShift) << kTileUVShift;
 		size.v = size.u;
 

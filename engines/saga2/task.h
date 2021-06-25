@@ -137,6 +137,8 @@ protected:
 	TaskStack   *stack;
 
 public:
+	Common::String _type;
+
 	//  Constructor -- initial construction
 	Task(TaskStack *ts) : stack(ts) {
 		newTask(this);
@@ -191,6 +193,8 @@ protected:
 public:
 	//  Constructor
 	WanderTask(TaskStack *ts) : Task(ts) {
+		debugC(2, kDebugTasks, " - WanderTask");
+		_type = "WanderTask";
 		wander();
 	}
 
@@ -262,6 +266,8 @@ public:
 		maxU(uMax),
 		maxV(vMax),
 		gotoTether(NULL) {
+		debugC(2, kDebugTasks, " - TetheredWanderTask");
+		_type = "TetheredWanderTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -309,6 +315,8 @@ public:
 		Task(ts),
 		wander(NULL),
 		prevRunState(false) {
+		debugC(2, kDebugTasks, " - GotoTask");
+		_type = "GotoTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -358,6 +366,8 @@ public:
 		GotoTask(ts),
 		targetLoc(tp),
 		runThreshold(runDist) {
+		debugC(2, kDebugTasks, " - GotoLocationTask");
+		_type = "GotoLocationTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -414,6 +424,8 @@ public:
 		regionMinV(minV),
 		regionMaxU(maxU),
 		regionMaxV(maxV) {
+		debugC(2, kDebugTasks, " - GotoRegionTask");
+		_type = "GotoRegionTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -471,6 +483,8 @@ public:
 		sightCtr(0),
 		flags(trackFlag ? track : 0),
 		lastKnownLoc(Nowhere) {
+		debugC(2, kDebugTasks, " - GotoObjectTargetTask");
+		_type = "GotoObjectTargetTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -516,6 +530,8 @@ public:
 	    bool        trackFlag = false) :
 		GotoObjectTargetTask(ts, trackFlag),
 		targetObj(obj) {
+		debugC(2, kDebugTasks, " - GotoObjectTask");
+		_type = "GotoObjectTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -555,6 +571,8 @@ public:
 	GotoActorTask(TaskStack *ts, Actor *a, bool trackFlag = false) :
 		GotoObjectTargetTask(ts, trackFlag),
 		targetActor(a) {
+		debugC(2, kDebugTasks, " - GotoActorTask");
+		_type = "GotoActorTask";
 	}
 	//  Constructor -- reconstruct from archive buffer
 	GotoActorTask(void **buf, TaskID id);
@@ -600,12 +618,16 @@ public:
 		Task(ts),
 		goTask(NULL),
 		flags(0) {
+		debugC(2, kDebugTasks, " - GoAwayFromTask1");
+		_type = "GoAwayFromTask";
 	}
 
 	GoAwayFromTask(TaskStack *ts, bool runFlag) :
 		Task(ts),
 		goTask(NULL),
 		flags(runFlag ? run : 0) {
+		debugC(2, kDebugTasks, " - GoAwayFromTask2");
+		_type = "GoAwayFromTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -647,6 +669,8 @@ public:
 	GoAwayFromObjectTask(TaskStack *ts, GameObject *object) :
 		GoAwayFromTask(ts),
 		obj(object) {
+		debugC(2, kDebugTasks, " - GoAwayFromObjectTask");
+		_type = "GoAwayFromObjectTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -730,6 +754,8 @@ public:
 	HuntTask(TaskStack *ts) :
 		Task(ts),
 		huntFlags(0) {
+		debugC(2, kDebugTasks, " - HuntTask");
+		_type = "HuntTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -827,6 +853,8 @@ public:
 		HuntLocationTask(ts, t),
 		range(r),
 		targetEvaluateCtr(0) {
+		debugC(2, kDebugTasks, " - HuntToBeNearLocationTask");
+		_type = "HuntToBeNearLocationTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -918,6 +946,8 @@ public:
 		HuntObjectTask(ts, ot),
 		range(r),
 		targetEvaluateCtr(0) {
+		debugC(2, kDebugTasks, " - HuntToBeNearObjectTask");
+		_type = "HuntToBeNearObjectTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -972,6 +1002,8 @@ public:
 		HuntObjectTask(ts, ot),
 		targetEvaluateCtr(0),
 		grabFlag(false) {
+		debugC(2, kDebugTasks, " - HuntToPossessTask");
+		_type = "HuntToPossessTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -1078,6 +1110,8 @@ public:
 		goAway(NULL),
 		range(MAX<uint16>(r, 16)),
 		targetEvaluateCtr(0) {
+		debugC(2, kDebugTasks, " - HuntToBeNearActorTask");
+		_type = "HuntToBeNearActorTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -1205,6 +1239,8 @@ public:
 	    bool                trackFlag = false) :
 		HuntActorTask(ts, at, trackFlag),
 		objToGive(obj) {
+		debugC(2, kDebugTasks, " - HuntToGiveTask");
+		_type = "HuntToGiveTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -1326,6 +1362,8 @@ public:
 		attend(NULL),
 		currentTarget(Nowhere),
 		targetEvaluateCtr(0) {
+		debugC(2, kDebugTasks, " - BandTask");
+		_type = "BandTask";
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -1452,6 +1490,8 @@ public:
 		gotoWayPoint(NULL),
 		patrolIter(iter),
 		lastWayPointNum(stopAt) {
+		debugC(2, kDebugTasks, " - FollowPatrolRouteTask");
+		_type = "FollowPatrolRouteTask";
 		followPatrolRoute();
 	}
 
@@ -1508,7 +1548,10 @@ class AttendTask : public Task {
 
 public:
 	//  Constructor -- initial construction
-	AttendTask(TaskStack *ts, GameObject *o) : Task(ts), obj(o) {}
+	AttendTask(TaskStack *ts, GameObject *o) : Task(ts), obj(o) {
+		debugC(2, kDebugTasks, " - AttendTask");
+		_type = "AttendTask";
+	}
 
 	//  Constructor -- reconstruct from archive buffer
 	AttendTask(void **buf, TaskID id);
