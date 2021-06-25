@@ -1201,10 +1201,13 @@ void MacText::drawSelection(int xoff, int yoff) {
 	if (end < 0)
 		return;
 
-	end = MIN((int)getDimensions().height(), end);
+	int maxSelectionHeight = getDimensions().height() - _border - _gutter / 2;
+	int maxSelectionWidth = getDimensions().width() - _border - _gutter;
+
+	end = MIN((int)maxSelectionHeight, end);
 
 	int numLines = 0;
-	int x1 = 0, x2 = getDimensions().width();
+	int x1 = 0, x2 = maxSelectionWidth;
 	int row = s.startRow;
 	int alignOffset = 0;
 
@@ -1225,11 +1228,11 @@ void MacText::drawSelection(int xoff, int yoff) {
 				alignOffset = (_maxWidth / 2) - (getLineWidth(start_row) / 2);
 
 			if (start_row == s.startRow && s.startCol != 0) {
-				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width());
-				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width());
+				x1 = MIN<int>(x1 + xoff + alignOffset, maxSelectionWidth);
+				x2 = MIN<int>(x2 + xoff + alignOffset, maxSelectionWidth);
 			} else {
-				x1 = MIN<int>(x1 + xoff, getDimensions().width());
-				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width());
+				x1 = MIN<int>(x1 + xoff, maxSelectionWidth);
+				x2 = MIN<int>(x2 + xoff + alignOffset, maxSelectionWidth);
 			}
 
 			row = start_row + 1;
@@ -1256,17 +1259,17 @@ void MacText::drawSelection(int xoff, int yoff) {
 			// the reason here is if we are not drawing the single line, then we draw selection from x1 to x2 + offset. i.e. we draw from begin
 			// otherwise, we draw selection from x1 + offset to x2 + offset
 			if (row == s.startRow && s.startCol != 0) {
-				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width());
-				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width());
+				x1 = MIN<int>(x1 + xoff + alignOffset, maxSelectionWidth);
+				x2 = MIN<int>(x2 + xoff + alignOffset, maxSelectionWidth);
 			} else {
-				x1 = MIN<int>(x1 + xoff, getDimensions().width());
-				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width());
+				x1 = MIN<int>(x1 + xoff, maxSelectionWidth);
+				x2 = MIN<int>(x2 + xoff + alignOffset, maxSelectionWidth);
 			}
 			row++;
 		}
 		numLines--;
 
-		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, MIN<int>(y + yoff, getDimensions().height() - 1));
+		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, MIN<int>(y + yoff, maxSelectionHeight - 1));
 
 		for (int x = x1; x < x2; x++, ptr++)
 			if (*ptr == _fgcolor)
