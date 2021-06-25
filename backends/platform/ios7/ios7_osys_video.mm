@@ -439,7 +439,7 @@ int16 OSystem_iOS7::getOverlayWidth() {
 	return _videoContext->overlayWidth;
 }
 
-Graphics::PixelFormat getOverlayFormat() const {
+Graphics::PixelFormat OSystem_iOS7::getOverlayFormat() const {
 	return _videoContext->overlayTexture.format;
 }
 
