@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-24 21:09+0000\n"
-"PO-Revision-Date: 2021-06-13 19:25+0000\n"
+"PO-Revision-Date: 2021-06-26 03:25+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1028,7 +1028,7 @@ msgstr "Venytystila:"
 
 #: gui/options.cpp:1429
 msgid "Scaler:"
-msgstr ""
+msgstr "Skalaaja:"
 
 #: gui/options.cpp:1442 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -2810,7 +2810,7 @@ msgstr "Venytystila"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:61
 msgid "SDL Surface"
-msgstr ""
+msgstr "SDL-pinta"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2379
 msgid "Active graphics filter:"
@@ -5192,6 +5192,9 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"Jos tämä on valittu, esineen tai alueen klikkaaminen salamakursorilla vie "
+"sinut suoraan sinne, ohittaen välissä olevat ruudut. Voit 'zipata' vain "
+"tarkkaan alueeseen jossa olet jo käynyt."
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -5202,6 +5205,8 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"Siirtymät ruutujen välillä päälle tai pois. Siirtymien poistaminen nopeuttaa "
+"pelissä liikkumista."
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
@@ -5780,6 +5785,8 @@ msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
+"Pakattu peli havaittu. Ole hyvä ja pura se wikissämme olevan pelin ohjeiden "
+"mukaisesti"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -8052,10 +8059,8 @@ msgid "Cancel input"
 msgstr "Peruuta syöte"
 
 #: engines/wintermute/keymapper_tables.h:1307
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle subtitles"
-msgstr "Äänien mykistys päälle / pois"
+msgstr "Tekstitys päälle / pois"
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Shift"
