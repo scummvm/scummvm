@@ -476,7 +476,7 @@ bool LingoCompiler::visitHandlerNode(HandlerNode *node) {
 /* CmdNode */
 
 bool LingoCompiler::visitCmdNode(CmdNode *node) {
-	int numargs = node->args->size();
+	uint numargs = node->args->size();
 
 	if (node->name->equalsIgnoreCase("go") && numargs == 1 && (*node->args)[0]->type == kVarNode){
 		VarNode *var = static_cast<VarNode *>((*node->args)[0]);
