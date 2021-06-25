@@ -285,6 +285,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "takeru",				"Buichi Terasawa's Takeru: Letter of the Law" },
 	{ "teamxtreme1",		"Operation: Weather Disaster" },
 	{ "teamxtreme2",		"Operation: Eco-Nightmare" },
+	{ "the7colors",			"The Seven Colors: Legend of PSY・S City" }, // English fan translation
 	{ "tkkg6",				"TKKG: The Forged Fifties" },
 	{ "tkkg9",				"TKKG: Voodoo Magic" },
 	{ "tommy",				"Pete Townshend Presents Tommy: The Interactive Adventure" },
@@ -516,6 +517,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ankh3",				"アンク 3" },
 	{ "cellofania",			"セロファニア" },
 	{ "chinacrisis",		"China Crisis" },
+	{ "chisanaensoka",		"小さな演奏家" },									// Little Musician (Crickets)
 	{ "chuckletime",   		"チャックルタイム" },
 	{ "chuteng",   			"中天" },
 	{ "cutie10",   			"キューティ１０" },
@@ -532,24 +534,23 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "horrortour2",		"Zeddas: Horror Tour 2" },
 	{ "horrortour3",		"ラビラーント" },							   		// Labyrinthe
 	{ "inugumi",   			"犬組" },
-	{ "jpfolktales",       	"日本昔話" },
-	{ "jpgeography",       	"Visual日本地理" },
 	{ "katsumadojo",		"信光の勝馬道場" },
 	{ "kazuyakun",			"数ヤ君" },
 	{ "kenji",				"Kenji" },
 	{ "kishido",			"棋士道" },									   		// Art of Shogi (Go)
-	{ "littlemusician",		"小さな演奏家" },
 	{ "lzone",				"L-ZONE" },
 	{ "maria",				"MA-RI-A 人形館の呪い" },
 	{ "marinefantasy",		"大方洋二の海中写真館 Marine Fantasy" },
 	{ "mazebrew",			"MazeBrew" },
 	{ "mipeterwolf",		"～Music Island Vol.1～　\"ピーターと狼\"" },
+	{ "mukashibanashi",     "日本昔話" },										// Nihon Mukashi Banashi (Japanese Folk Tales)
 	{ "muzukashiihon",		"難しい本を読むと眠くなる" },						// "Reading a Difficult Book Makes Me Sleepy"
+	{ "nihonchiri",       	"Visual日本地理" },									// Japan Geography
 	{ "niningashi",			"ににんがし" },
 	{ "nonta",				"のんたくんとゆかいななかまたち" },				   	// Nonta-kun and his Wonderful Friends
 	{ "novacity",			"Nova City" },
 	{ "orgotto",			"Orgotto" },
-	{ "osakashuchuza",		"大阪集中座" },									 	// Compulsory Osaka Dialect Intensive Course
+	{ "osaka1",				"必修大阪弁集中講座I 2010年、標準語は大阪弁になる" }, // Hisshu Osaka-ben shuchu koza (Mandatory Osaka Dialect)
 	{ "peaceland",			"PeaceLand" },
 	{ "phantplanet",		"アミューズメント プラネット ファンタスマゴリア" },	// Amusement Planet Phantasmagoria
 	{ "popup",				"Pop Up Computer" },
@@ -568,13 +569,12 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "tantei",				"完全探偵マニュアル" },							 	// Perfect Detective Manual
 	{ "tetsuman",			"ハイ! 鉄マン です" }, 	   					    	// Hai! Tetsuman Desu
 	{ "tetsumangaiden",		"鉄マン外伝 ゲーム大王の野望" }, 				 	// Tetsuman Gaiden: Game Daiou no Yabou
-	{ "the7colors",			"The Seven Colors: Legend of PSY・S City" },
 	{ "tokimemotype1",		"ときめきメモリアルタイピング" },					// Tokimeki Memorial Typing
 	{ "ttw",				"Through the Window: In Search for the Lost Bag" },
 	{ "twistynight1",		"Twisty Night #1 合わせ月の夜" },
 	{ "twistynight2",		"Twisty Night #2 フェンネル" },
 	{ "twistynight3",		"Twisty Night #3 いにしえびと" },
-	{ "ukiuki1",			"ウキウキ釣り天国 ～幻の天狗池～" },			 	// Ukiuki tsuri tengoku
+	{ "ukiuki1",			"ウキウキ釣り天国 ～幻の天狗池～" },			 	// Ukiuki tsuri tengoku (Fishing)
 	{ "ukiukistamp",		"うきうきスタンプ" },
 	{ "ukyo1",				"うきょー1" },
 	{ "victorianpark",		"Victorian Park" },
@@ -1165,6 +1165,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// https://www.youtube.com/watch?v=iDr0x22zRvs
 	MACGAME1("childishgambino", "", "Donald Glover - Cut 1", "1ae45c23586b41997ba52e2e7c771c4c", 827858, 310),
 
+	// Original filename is 小さな演奏家デモ
+	MACDEMO1_l("chisanaensoka", "Demo", "Chisana enso-ka Demo", "f5277c53bacd27936158dd3867e587e2", 1501224, Common::JA_JPN, 311),
+
 	MACDEMO1_l("chuckletime", "Demo", "Chuckle Time", "f5277c53bacd27936158dd3867e587e2", 608416, Common::JA_JPN, 311),
 
 	WINDEMO1("cinemania94", "Demo", "CINEOVR.EXE", "7c8230a804abf9353b05627a675b5ffb", 1426843, 310),
@@ -1354,9 +1357,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("leonardo", "", "LEO.EXE", "65d06b5fef155a2473434571aff5bc29", 370000, 310),
 
 	WINDEMO1("leopardspots", "Demo", "LEOPARD.EXE", "2b3543a9131a49f665982d26513a84f8", 1081371, 310),
-
-	// Original filename is 小さな演奏家デモ
-	MACDEMO1_l("littlemusician", "Demo", "Little Musician Demo", "f5277c53bacd27936158dd3867e587e2", 1501224, Common::JA_JPN, 311),
 
 	MACGAME1("lzone", "",   "L-ZONE", 		"f5277c53bacd27936158dd3867e587e2", 392484, 300),
 	MACGAME1("lzone", "v2", "L-ZONE", 		"276bee761e48a6fd709df77d5c2f60dd", 395344, 300),
@@ -2183,10 +2183,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("journey2life", "", "LIFE.EXE", "b23041f4f5cce3d15ef985bbd513030a", 756297, 404),
 
 	// Original filename is 日本昔話
-	MACDEMO1_l("jpfolktales", "Demo", "Folktales from Japan", "8ea9e9a699c61edddffd79ddd0c994d7", 290654, Common::JA_JPN, 402),
-
-	// Original filename is Visual日本地理DEMO
-	MACDEMO1_l("jpgeography", "Demo", "Visual Japan Geography DEMO", "8b138db44d4421cc7294a9dc792ccf1b", 306940, Common::JA_JPN, 402),
+	MACDEMO1_l("mukashibanashi", "Demo", "Nihon Mukashi Banashi", "8ea9e9a699c61edddffd79ddd0c994d7", 290654, Common::JA_JPN, 402),
 
 	// Original Taiwan release is called 塔克拉玛干—敦煌传奇 (Taklamakan: Dunhuang Chuanqi)
 	MACGAME1("karma", "", "Karma", "ea646eccc9a53f44ce082459d4809a06", 485535, 400),
@@ -2325,6 +2322,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("newslinks", "Demo", "NEWS.EXE", "22900fa6922d71b1f880aa3cc0bbad1a", 16526563, 404),
 
+	// Original filename is Visual日本地理DEMO
+	MACDEMO1_l("nihonchiri", "Demo", "Visual Nihon Chiri DEMO", "8b138db44d4421cc7294a9dc792ccf1b", 306940, Common::JA_JPN, 402),
+
 	MACGAME1("nile", "", "Nile Passage to Egypt", "9765ad17bce6a2b40dd7f48377e82436", 512990, 400),
 	WINGAME1("nile", "", "NILE.EXE", "9b00cbba14f0a2e0445784ebacf62c78", 2846777, 400),
 
@@ -2359,10 +2359,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("origin", "V8",  "CATALOG.EXE", "e6fe968cbe2b51ea423af58216c78392", 9509999, 400),
 	WINGAME1("origin", "V11", "CATALOG.EXE", "c117a85d635a2b4469a141f7f051b0a8", 10347633, 400),
 
-	MACDEMO2_l("osakashuchuza", "Demo", "DEMO",		 "bcd3c718db258701496b3c5bcb827ef2", 483415,
-										"START.DIR", "8b82c58788768cfa88115217de4e8995", 825192, Common::JA_JPN, 404),
-	WINDEMO2_l("osakashuchuza", "Demo", "DEMO.EXE",	 "763f360a098cf3bec7cbdc5685b1e4a3", 1193483,
-										"START.DIR", "83190aa4c2db873334d36bac329ec670", 825036, Common::JA_JPN, 404),	
+	WINDEMO2_l("osaka1", "Demo", "DEMO.EXE",  "763f360a098cf3bec7cbdc5685b1e4a3", 1193483,
+								 "START.DIR", "83190aa4c2db873334d36bac329ec670", 825036, Common::JA_JPN, 404),
+	MACDEMO2_l("osaka1", "Demo", "DEMO",	  "5a012e69fec2369ad2e8d73c42d928f3", 1096269,
+								 "START.DIR", "8b82c58788768cfa88115217de4e8995", 825192, Common::JA_JPN, 404),
 
 	MACGAME1("oslotg", "", "OSLO\'s T&G", "ef59432e7b24df951cb7096cfd45d168", 307427, 400),
 	WINGAME1("oslotg", "", "OSLOTG.EXE", "c4be18eb4f16e3e21df22d0703866900", 995939, 400),
