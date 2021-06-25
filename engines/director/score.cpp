@@ -500,9 +500,6 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		// this doesn't include changes in dimension or position!
 		bool widgetRedrawn = channel->updateWidget();
 
-		if (channel->isActiveText())
-			_movie->_currentEditableTextChannel = i;
-
 		if (channel->isActiveVideo())
 			_movie->_videoPlayback = true;
 
@@ -520,6 +517,11 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		} else {
 			channel->setClean(nextSprite, i, true);
 		}
+
+		// update editable text channel after we render the sprites. because for the current frame, we may get those sprites only when we finished rendering
+		// (because we are creating widgets and setting active state when we rendering sprites)
+		if (channel->isActiveText())
+			_movie->_currentEditableTextChannel = i;
 	}
 }
 
