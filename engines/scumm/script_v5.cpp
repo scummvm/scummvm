@@ -2392,7 +2392,7 @@ void ScummEngine_v5::o5_verbOps() {
 			//
 			// I don't know if it has to be limited to this
 			// particular script, but that's what I'll do for now.
-			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && verb == 101 && vm.slot[_currentScript].number == 12) {
+			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && verb == 101 && vm.slot[_currentScript].number == 12 && vm.slot[_currentScript].where == WIO_GLOBAL) {
 				inventoryScriptIndy3Mac();
 			} else
 				vs->curmode = 1;
