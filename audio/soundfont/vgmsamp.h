@@ -27,10 +27,10 @@
 #ifndef AUDIO_SOUNDFONT_VGMSAMP_H
 #define AUDIO_SOUNDFONT_VGMSAMP_H
 
-#include "common.h"
+#include "audio/soundfont/common.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "vgmitem.h"
+#include "audio/soundfont/vgmitem.h"
 
 class VGMSampColl;
 class VGMInstrSet;

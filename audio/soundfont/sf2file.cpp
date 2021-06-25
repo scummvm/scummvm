@@ -27,8 +27,8 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "sf2file.h"
-#include "synthfile.h"
+#include "audio/soundfont/sf2file.h"
+#include "audio/soundfont/synthfile.h"
 
 using namespace std;
 

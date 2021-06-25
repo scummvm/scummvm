@@ -30,8 +30,8 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/array.h"
-#include "vgmitem.h"
-#include "sf2file.h"
+#include "audio/soundfont/vgmitem.h"
+#include "audio/soundfont/sf2file.h"
 
 class VGMSampColl;
 class VGMInstr;

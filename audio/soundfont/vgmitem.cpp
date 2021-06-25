@@ -25,9 +25,9 @@
  * refer to the included VGMTrans_LICENSE.txt file
  */
 
-#include "common.h"
-#include "vgmitem.h"
-#include "vgminstrset.h"
+#include "audio/soundfont/common.h"
+#include "audio/soundfont/vgmitem.h"
+#include "audio/soundfont/vgminstrset.h"
 
 using namespace std;
 
