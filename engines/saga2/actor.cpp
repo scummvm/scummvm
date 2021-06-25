@@ -985,6 +985,8 @@ void Actor::init(
     uint8   initFlags) {
 	int         i;
 
+	debugC(1, kDebugActors, "Actor init flags: %d, permanent: %d", initFlags, initFlags & actorPermanent);
+
 	//  Fixup the prototype pointer to point to an actor prototype
 	prototype           = (ProtoObj *)&actorProtos[protoIndex];
 
@@ -1066,7 +1068,6 @@ void Actor::init(
 //-----------------------------------------------------------------------
 //  Actor constructor -- copies the resource fields and simply NULL's most
 //	of the rest of the data members
-
 Actor::Actor(void) {
 	prototype = nullptr;
 	faction             = 0;
@@ -1378,6 +1379,9 @@ Actor *Actor::newActor(
     uint8   initFlags) {
 	GameObject      *limbo = objectAddress(ActorLimbo);
 	Actor           *a;
+
+	debugC(2, kDebugActors, "Actor::newActor(protoNum = %d, nameIndex = %d, scriptIndex = %d, appearanceNum = %d, colorSchemeIndex = %d, factionNum = %d, initFlags = %d)",
+		protoNum, nameIndex, scriptIndex, appearanceNum, colorSchemeIndex, factionNum, initFlags);
 
 	if (limbo->IDChild() == Nothing) {
 		int16       i;

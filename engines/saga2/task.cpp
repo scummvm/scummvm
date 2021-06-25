@@ -586,7 +586,7 @@ void *TaskList::archive(void *buf) {
 }
 
 void TaskList::newTask(Task *t) {
-	warning("List: %p Adding task %p", (void *)this, (void *)t);
+	debugC(1, kDebugTasks, "List: %p Adding task %p", (void *)this, (void *)t);
 	for (int i = 0; i < numTasks; i++)
 		if (!_list[i]) {
 			_list[i] = t;
@@ -605,11 +605,10 @@ void TaskList::newTask(Task *t, TaskID id) {
 //	into the inactive list
 
 void TaskList::deleteTask(Task *p) {
-	warning("List: %p Deleting task %p", (void *)this, (void *)p);
+	debugC(1, kDebugTasks, "List: %p Deleting task %p", (void *)this, (void *)p);
 	for (int i = 0; i < numTasks; i++)
 		if (_list[i] == p) {
 			_list[i] = nullptr;
-			warning("Deleted");
 		}
 }
 

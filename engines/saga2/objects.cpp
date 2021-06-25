@@ -1335,7 +1335,9 @@ void GameObject::deleteObjectRecursive(void) {
 //	Activate this object
 
 void GameObject::activate(void) {
-	if (_data.objectFlags & objectActivated) return;
+	warning("GameObject::activate %d", thisID());
+	if (_data.objectFlags & objectActivated)
+		return;
 
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
@@ -1350,7 +1352,11 @@ void GameObject::activate(void) {
 
 	runObjectMethod(dObj, Method_GameObject_onActivate, scf);
 
-	if (isActor(this))((Actor *)this)->activateActor();
+
+
+	if (isActor(this)) {
+		((Actor *)this)->activateActor();
+	}
 }
 
 //-----------------------------------------------------------------------
