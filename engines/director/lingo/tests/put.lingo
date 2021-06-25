@@ -1,0 +1,23 @@
+put "qwertyuiop" into test
+put "a" before char 3 of test
+scummvmAssertEqual(test, "qwaertyuiop")
+
+put "qwertyuiop" into test
+put "a" into char 3 of test
+scummvmAssertEqual(test, "qwartyuiop")
+
+put "qwertyuiop" into test
+put "a" after char 3 of test
+scummvmAssertEqual(test, "qweartyuiop")
+
+put "lorem ipsum dolor sit amet" into test
+put "asdf" before word 3 of test
+scummvmAssertEqual(test, "lorem ipsum asdfdolor sit amet")
+
+put "lorem ipsum dolor sit amet" into test
+put "asdf" into word 3 of test
+scummvmAssertEqual(test, "lorem ipsum asdf sit amet")
+
+put "lorem ipsum dolor sit amet" into test
+put "asdf" after word 3 of test
+scummvmAssertEqual(test, "lorem ipsum dolorasdf sit amet")
