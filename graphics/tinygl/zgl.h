@@ -457,7 +457,7 @@ void glClose();
 // glopXXX functions
 
 #define ADD_OP(a,b,c) void glop ## a (GLContext *, GLParam *);
-#include "opinfo.h"
+#include "graphics/tinygl/opinfo.h"
 
 // this clip epsilon is needed to avoid some rounding errors after
 // several clipping stages
