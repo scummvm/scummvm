@@ -440,6 +440,7 @@ const int       numTasks = 64;
 //  global instantiation of this class
 class TaskList {
 
+	int _size;
 	Task *_list[numTasks];
 
 public:
@@ -488,6 +489,7 @@ public:
 //	the inactive list
 
 TaskList::TaskList(void) {
+	_size = 0;
 	for (int i = 0; i < numTasks; i++)
 		_list[i] = nullptr;
 }
@@ -586,17 +588,22 @@ void *TaskList::archive(void *buf) {
 }
 
 void TaskList::newTask(Task *t) {
-	debugC(1, kDebugTasks, "List: %p Adding task %p", (void *)this, (void *)t);
+	debugC(1, kDebugTasks, "List: %p Adding task %p (total %d)", (void *)this, (void *)t, ++_size);
 	for (int i = 0; i < numTasks; i++)
 		if (!_list[i]) {
 			_list[i] = t;
 
 			return;
 		}
-	warning("Too many tasks in the list, > %d", numTasks);
+
+	for (int i = 0; i < numTasks; i++)
+		debug("%d: %p (%s)", i, (void *)_list[i], _list[i]->_type.c_str());
+	error("Too many tasks in the list, > %d", numTasks);
 }
 
 void TaskList::newTask(Task *t, TaskID id) {
+	if (_list[id])
+		error("Task already exists");
 	_list[id] = t;
 }
 
@@ -605,7 +612,7 @@ void TaskList::newTask(Task *t, TaskID id) {
 //	into the inactive list
 
 void TaskList::deleteTask(Task *p) {
-	debugC(1, kDebugTasks, "List: %p Deleting task %p", (void *)this, (void *)p);
+	debugC(1, kDebugTasks, "List: %p Deleting task %p (total %d)", (void *)this, (void *)p, --_size);
 	for (int i = 0; i < numTasks; i++)
 		if (_list[i] == p) {
 			_list[i] = nullptr;
@@ -2100,6 +2107,7 @@ GoAwayFromActorTask::GoAwayFromActorTask(
     Actor       *a,
     bool        runFlag) :
 	GoAwayFromTask(ts, runFlag) {
+	debugC(2, kDebugTasks, " - GoAwayFromActorTask1");
 	SpecificActorTarget(a).clone(targetMem);
 }
 
@@ -2109,6 +2117,7 @@ GoAwayFromActorTask::GoAwayFromActorTask(
     bool                runFlag) :
 	GoAwayFromTask(ts, runFlag) {
 	assert(at.size() <= sizeof(targetMem));
+	debugC(2, kDebugTasks, " - GoAwayFromActorTask2");
 	//  Copy the target to the target buffer
 	at.clone(targetMem);
 }
@@ -2380,6 +2389,7 @@ HuntLocationTask::HuntLocationTask(TaskStack *ts, const Target &t) :
 	HuntTask(ts),
 	currentTarget(Nowhere) {
 	assert(t.size() <= sizeof(targetMem));
+	debugC(2, kDebugTasks, " - HuntLocationTask");
 	//  Copy the target to the target buffer
 	t.clone(targetMem);
 }
@@ -2569,6 +2579,7 @@ HuntObjectTask::HuntObjectTask(TaskStack *ts, const ObjectTarget &ot) :
 	HuntTask(ts),
 	currentTarget(NULL) {
 	assert(ot.size() <= sizeof(targetMem));
+	debugC(2, kDebugTasks, " - HuntObjectTask");
 	//  Copy the target to the target buffer
 	ot.clone(targetMem);
 }
@@ -2947,6 +2958,7 @@ HuntActorTask::HuntActorTask(
 	flags(trackFlag ? track : 0),
 	currentTarget(NULL) {
 	assert(at.size() <= sizeof(targetMem));
+	debugC(2, kDebugTasks, " - HuntActorTask");
 	//  Copy the target to the target buffer
 	at.clone(targetMem);
 }
@@ -3295,6 +3307,7 @@ HuntToKillTask::HuntToKillTask(
 	targetEvaluateCtr(0),
 	specialAttackCtr(10),
 	flags(evalWeapon) {
+	debugC(2, kDebugTasks, " - HuntToKillTask");
 	Actor       *a = stack->getActor();
 
 	if (isActor(a->currentTarget))

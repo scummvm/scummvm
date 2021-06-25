@@ -1585,7 +1585,7 @@ void Actor::vitalityUpdate(void) {
 
 void Actor::activateActor(void) {
 	if (thisID() > 32768)
-		debugC(1, kDebugActors, "Actors: Activated %d ", thisID() - 32768);
+		debugC(1, kDebugActors, "Actors: Activated %d (%s) ", thisID() - 32768, objName());
 	evaluateNeeds();
 }
 
@@ -1594,7 +1594,7 @@ void Actor::activateActor(void) {
 
 void Actor::deactivateActor(void) {
 	if (thisID() > 32768)
-		debugC(1, kDebugActors, "Actors: De-activated %d ", thisID() - 32768);
+		debugC(1, kDebugActors, "Actors: De-activated %d (%s)", thisID() - 32768, objName());
 
 	//  Kill task
 	if (curTask != NULL) {
