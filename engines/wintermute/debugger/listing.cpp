@@ -20,7 +20,7 @@
  *
  */
 
-#include "listing.h"
+#include "engines/wintermute/debugger/listing.h"
 #include "common/array.h"
 
 namespace Wintermute {
