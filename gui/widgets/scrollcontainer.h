@@ -25,7 +25,7 @@
 
 #include "gui/widget.h"
 #include "common/str.h"
-#include "scrollbar.h"
+#include "gui/widgets/scrollbar.h"
 
 namespace GUI {
 
