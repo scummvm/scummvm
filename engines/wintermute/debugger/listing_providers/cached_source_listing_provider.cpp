@@ -20,10 +20,10 @@
  *
  */
 
-#include "cached_source_listing_provider.h"
-#include "basic_source_listing_provider.h"
-#include "blank_listing_provider.h"
-#include "source_listing.h"
+#include "engines/wintermute/debugger/listing_providers/cached_source_listing_provider.h"
+#include "engines/wintermute/debugger/listing_providers/basic_source_listing_provider.h"
+#include "engines/wintermute/debugger/listing_providers/blank_listing_provider.h"
+#include "engines/wintermute/debugger/listing_providers/source_listing.h"
 
 namespace Wintermute {
 

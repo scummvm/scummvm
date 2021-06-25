@@ -26,7 +26,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "engines/wintermute/debugger/error.h"
-#include "source_listing_provider.h"
+#include "engines/wintermute/debugger/listing_providers/source_listing_provider.h"
 
 namespace Wintermute {
 

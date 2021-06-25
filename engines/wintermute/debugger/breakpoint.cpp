@@ -22,7 +22,7 @@
 
 #include "breakpoint.h"
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
-#include "script_monitor.h"
+#include "engines/wintermute/debugger/script_monitor.h"
 
 namespace Wintermute {
 

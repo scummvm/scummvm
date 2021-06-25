@@ -22,7 +22,7 @@
 
 #include "watch.h"
 #include "watch_instance.h"
-#include "script_monitor.h"
+#include "engines/wintermute/debugger/script_monitor.h"
 
 namespace Wintermute {
 

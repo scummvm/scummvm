@@ -24,7 +24,7 @@
 #define BASIC_SOURCE_LISTING_PROVIDER_H_
 
 #include "engines/wintermute/debugger/listing_provider.h"
-#include "source_listing_provider.h"
+#include "engines/wintermute/debugger/listing_providers/source_listing_provider.h"
 #include "source_listing.h"
 #include "common/fs.h"
 

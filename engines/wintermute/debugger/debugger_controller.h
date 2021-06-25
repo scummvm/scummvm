@@ -27,9 +27,9 @@
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/debugger/listing_providers/source_listing_provider.h"
-#include "script_monitor.h"
+#include "engines/wintermute/debugger/script_monitor.h"
 #include "error.h"
-#include "listing.h"
+#include "engines/wintermute/debugger/listing.h"
 namespace Wintermute {
 
 class ScScript;

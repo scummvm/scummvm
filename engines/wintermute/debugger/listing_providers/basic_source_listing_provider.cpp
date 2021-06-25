@@ -20,7 +20,7 @@
  *
  */
 
-#include "basic_source_listing_provider.h"
+#include "engines/wintermute/debugger/listing_providers/basic_source_listing_provider.h"
 #include "engines/wintermute/base/base_file_manager.h"
 
 namespace Wintermute {
