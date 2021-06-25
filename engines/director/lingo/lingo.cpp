@@ -1207,11 +1207,38 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 		break;
 	case CHUNKREF:
 		{
-			if (var.u.cref->start < 0)
-				return;
-
 			Common::String src = var.u.cref->source.eval().asString();
-			Common::String res = src.substr(0, var.u.cref->start) + value.asString() + src.substr(var.u.cref->end);
+			Common::String res;
+			if (var.u.cref->start >= 0) {
+				res = src.substr(0, var.u.cref->start) + value.asString() + src.substr(var.u.cref->end);
+			} else {
+				// non-existent chunk - insert more chars, items, or lines
+				res = src;
+				int numberOfChunks = LC::lastChunk(var.u.cref->type, var.u.cref->source).u.cref->startChunk;
+				switch (var.u.cref->type) {
+				case kChunkChar:
+					while (numberOfChunks < var.u.cref->startChunk - 1) {
+						res += ' ';
+						numberOfChunks++;
+					}
+					break;
+				case kChunkWord:
+					break;
+				case kChunkItem:
+					while (numberOfChunks < var.u.cref->startChunk ) {
+						res += _itemDelimiter;
+						numberOfChunks++;
+					}
+					break;
+				case kChunkLine:
+					while (numberOfChunks < var.u.cref->startChunk ) {
+						res += '\n';
+						numberOfChunks++;
+					}
+					break;
+				}
+				res += value.asString();
+			}
 			varAssign(var.u.cref->source, res);
 		}
 		break;
