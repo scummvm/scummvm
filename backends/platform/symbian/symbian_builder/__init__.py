@@ -20,35 +20,41 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 
-from prj_generator import create_mmps, SafeWriteFile
+from prj_generator import create_mmps
 from mmp_gen import create_engine_mmps
 from build_apps import build_apps
 from create_installers import create_installers
 from datetime import datetime
+import time
 from piper import build_mmp
 from parse_codecs import parse_codecs
 from parse_base import parse_base
 from common_names import *
+from scummvm_hrh import Generate_ScummVm_hrh
+from parse_lua import parse_lua
+from parse_gamedata import parse_gamedata
 
 def minimal_whitelist(engine):
    data = "#ifdef SCUMMVM_PT_1\nscummvm_base.mmp\nscummvm_codecs.mmp\n%s\n#endif // SCUMMVM_PT_%s\n" %engine
    SafeWriteFile(os.path.join(mmps, whitelist), data)
 
 def run(build, pkgs, only_begotten_engine = None):
-   log = "Build started at: %s\n" %datetime.now()
+   log = "Build started at: %s\n" %time.ctime()
    SafeWriteFile(build_log, log)
    SafeWriteFile(build_err, '')
+   Generate_ScummVm_hrh(build)
    create_mmps(build, pkgs)
    create_engine_mmps(build)
-   parse_codecs()
+   parse_codecs(pkgs)
    parse_base()
+   parse_lua()
+   parse_gamedata(build, pkgs)
 
-   log = "Build engines started at: %s\n" %datetime.now()
    SafeWriteFile(build_log, log, 'a')
    if only_begotten_engine:
       minimal_whitelist(build_log)
    build_mmp(only_begotten_engine)
-   log = "Build engines ended at: %s\n" %datetime.now()
+   log = "Build engines ended at: %s\n" %time.ctime()
    SafeWriteFile(build_log, log, 'a')
 
    build_apps(pkgs)

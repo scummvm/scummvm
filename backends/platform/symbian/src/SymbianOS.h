@@ -49,9 +49,8 @@ public:
 	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 protected:
-	RFs* _RFs;
-public:
-	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
+	RFs &_RFs;
+	TFileName _localpath;
 };
 
 #endif

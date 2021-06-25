@@ -20,6 +20,9 @@
  *
  */
 
+
+#include <bacline.h>	// CCommandLineArguments
+
 #include "backends/platform/symbian/src/portdefs.h"
 #include "base/main.h"
 #include "backends/platform/symbian/src/SymbianOS.h"
@@ -72,7 +75,7 @@ int main(int argc, char *argv[]) {
 		}
 #endif
 	}
-	setbuf(stderr, NULL);			/* No buffering */
+	setbuf(stderr, NULL);	/* No buffering */
 
 	// Create our OSystem instance
 	g_system = new OSystem_SDL_Symbian();
@@ -85,8 +88,41 @@ int main(int argc, char *argv[]) {
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
 
+	// catch input params and pass to argv/argc
+	CCommandLineArguments *cmdline = CCommandLineArguments::NewL();
+	if (!cmdline) {
+		error("Failure to alloc CCommandLineArguments!");
+		return -1;
+	}
+	
+	argc = cmdline->Count();
+	if (argc > 1) {
+		debug("console arg count by CCommandLineArguments: %d", argc);
+		argv = new char* [argc];
+		HBufC8 *buf = HBufC8::NewMax(20); //this suffice for most cases
+		for (TInt i = 0; i < argc; ++i) {
+			TPtrC arg = cmdline->Arg(i);
+			argv[i] = new char[arg.Length() + 1](); //hold zero terminated string
+			if (arg.Length() > buf->Length())
+				buf->ReAlloc(arg.Length());
+
+			TPtr arg2((TUint16 *)arg.Ptr(), arg.Length(), arg.Length());
+			TPtr8 pbuf2(buf->Des());
+			pbuf2 = arg2.Collapse();
+			pbuf2.Copy((TUint8 *)argv[i], arg.Length());
+			debug("argv[%d]: %s", i, argv[i]);
+		}
+		delete buf;
+	}
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
+
+	// clear argv
+	for (TInt i = 0; i < argc; ++i) {
+		delete[] argv[i];
+	}
+	delete[] argv;
+	delete cmdline;
 
 	// Free OSystem
 	g_system->destroy();

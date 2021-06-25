@@ -23,45 +23,21 @@ from __future__ import with_statement
 import os
 from common_names import *
 
-excluded = ("", "")
 
-def exclude_special_cpp(tmp):
-   d = "%s.cpp" %tmp[:-2]
-   if d in excluded:
-      print "excluded: %s" %d
-      return ""
-   return tmp
+active_config = ("USE_LUA", )
+src_dirs = ("common", )
+mmp_name = "scummvm_lua.mmp"
 
-src_dirs = ("backends", "common", "engines", "gui", "math")
-mmp_name = "scummvm_base.mmp"
 
 mmp_template = """
-TARGET          scummvm_base.lib
+TARGET          scummvm_lua.lib
 TARGETTYPE      lib
-#include "../%s/build_config.mmh"
 
-// compiler must use png.h from libpng.lib instead ScummVM's
-OPTION			GCCE -I'/Symbian/S60_5th_Edition_SDK_v1.0/epoc32/include/png'
+MACRO           __IGNORE__E32STD_H__
 
-// added and managed by porter
-SOURCEPATH  ..\..\..\..\\backends
-SOURCE     audiocd\sdl\sdl-audiocd.cpp
-SOURCE     fs\symbian\symbianstream.cpp
-SOURCE     mixer\symbiansdl\symbiansdl-mixer.cpp
-// end porter job\n
-#include "build_parts.mmh"
-\n#include \"../%s/macros.mmh\"\n
+#include        "../%s/build_config.mmh"
 """
 
-
-def checkMacro(macro, active_conf = active_config):
-   t = macro.split()[-1]
-   if t in active_conf:
-      return True
-   else:
-      if t not in disabled_config:
-         print "New macro found: %s" %t
-      return False
 
 def processModule_mk(folder, mmp_file, active_conf = active_config):
    pth = os.path.join('..\..\..', folder)
@@ -75,32 +51,25 @@ def processModule_mk(folder, mmp_file, active_conf = active_config):
 
    for i in f:
       if "MODULE_OBJS :=" in i:
-         addsrc = True
+         continue
       elif "endif" in i:
          addsrc = False
-      elif "SDL_BACKEND" in i:
+      elif "USE_LUA" in i:
          addsrc = True
-      elif "ENABLE_" in i:
-         addsrc = checkMacro(i, active_conf)
-      elif "USE_" in i:
-         addsrc = checkMacro(i, active_conf)
-      elif "DISABLE_" in i:
-         addsrc = checkMacro(i, active_conf)
       elif addsrc is True:
          tmp = i.strip()
          tmp = tmp.rstrip("\\")
          tmp = tmp.strip()
-         tmp = exclude_special_cpp(tmp)
          if tmp.endswith(".o"):
             src += ["SOURCE   %s.cpp" %tmp[:-2]]
    SafeWriteFile(mmp_file, src, 'a')
 
 
-def parse_base(platform = "S60v3"):
-   uids = get_UIDs(build)
+def parse_lua(platform = "S60v3"):
    mmp_file = os.path.join(mmps, mmp_name)
-   SafeWriteFile(mmp_file, mmp_template %(platform, platform) )
-   [processModule_mk(i, mmp_file) for i in src_dirs]
+   SafeWriteFile(mmp_file, mmp_template %platform)
+   [processModule_mk(i, mmp_file, active_config) for i in src_dirs]
+
 
 if __name__ == "__main__":
-   parse_base()
+   parse_lua()
