@@ -277,8 +277,8 @@ public:
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext();
 	void cleanLocalVars();
-	void varAssign(const Datum &var, Datum &value, DatumHash *localvars = nullptr);
-	Datum varFetch(const Datum &var, DatumHash *localvars = nullptr, bool silent = false);
+	void varAssign(const Datum &var, Datum &value);
+	Datum varFetch(const Datum &var, bool silent = false);
 	Datum findVarV4(int varType, const Datum &id);
 
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);

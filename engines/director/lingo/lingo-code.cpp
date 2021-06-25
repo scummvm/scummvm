@@ -1394,7 +1394,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 		if (firstArg.isVarRef()) { // first arg could be method name
 			Datum objName(name);
 			objName.type = VARREF;
-			Datum obj = g_lingo->varFetch(objName, nullptr, true);
+			Datum obj = g_lingo->varFetch(objName, true);
 			if (obj.type == OBJECT && (obj.u.obj->getObjType() & (kFactoryObj | kXObj))) {
 				debugC(3, kDebugLingoExec, "Method called on object: <%s>", obj.asString(true).c_str());
 				AbstractObject *target = obj.u.obj;

@@ -1138,17 +1138,13 @@ int Lingo::getInt(uint pc) {
 	return (int)READ_UINT32(&((*_currentScript)[pc]));
 }
 
-void Lingo::varAssign(const Datum &var, Datum &value, DatumHash *localvars) {
-	if (localvars == nullptr) {
-		localvars = _localvars;
-	}
-
+void Lingo::varAssign(const Datum &var, Datum &value) {
 	switch (var.type) {
 	case VARREF:
 		{
 			Common::String name = *var.u.s;
-			if (localvars && localvars->contains(name)) {
-				(*localvars)[name] = value;
+			if (_localvars && _localvars->contains(name)) {
+				(*_localvars)[name] = value;
 				return;
 			}
 			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
@@ -1168,8 +1164,8 @@ void Lingo::varAssign(const Datum &var, Datum &value, DatumHash *localvars) {
 	case LOCALREF:
 		{
 			Common::String name = *var.u.s;
-			if (localvars && localvars->contains(name)) {
-				(*localvars)[name] = value;
+			if (_localvars && _localvars->contains(name)) {
+				(*_localvars)[name] = value;
 			} else {
 				warning("varAssign: local variable %s not defined", name.c_str());
 			}
@@ -1215,11 +1211,7 @@ void Lingo::varAssign(const Datum &var, Datum &value, DatumHash *localvars) {
 	}
 }
 
-Datum Lingo::varFetch(const Datum &var, DatumHash *localvars, bool silent) {
-	if (localvars == nullptr) {
-		localvars = _localvars;
-	}
-
+Datum Lingo::varFetch(const Datum &var, bool silent) {
 	Datum result;
 
 	switch (var.type) {
@@ -1228,8 +1220,8 @@ Datum Lingo::varFetch(const Datum &var, DatumHash *localvars, bool silent) {
 			Datum d;
 			Common::String name = *var.u.s;
 
-			if (localvars && localvars->contains(name)) {
-				return (*localvars)[name];
+			if (_localvars && _localvars->contains(name)) {
+				return (*_localvars)[name];
 			}
 			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
 				return _currentMe.u.obj->getProp(name);
@@ -1256,8 +1248,8 @@ Datum Lingo::varFetch(const Datum &var, DatumHash *localvars, bool silent) {
 	case LOCALREF:
 		{
 			Common::String name = *var.u.s;
-			if (localvars && localvars->contains(name)) {
-				return (*localvars)[name];
+			if (_localvars && _localvars->contains(name)) {
+				return (*_localvars)[name];
 			}
 			warning("varFetch: local variable %s not defined", name.c_str());
 			return result;
