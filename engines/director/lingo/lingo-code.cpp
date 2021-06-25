@@ -1578,11 +1578,15 @@ void LC::c_delete() {
 	Datum field;
 	int start, end;
 	if (d.type == CHUNKREF) {
-		if (d.u.cref->source.isVarRef() || d.u.cref->source.isCastRef()) {
-			field = d.u.cref->source;
-			start = d.u.cref->start;
-			end = d.u.cref->end;
-		} else {
+		start = d.u.cref->start;
+		end = d.u.cref->end;
+		field = d.u.cref->source;
+		while (field.type == CHUNKREF) {
+			start += field.u.cref->start;
+			end += field.u.cref->start;
+			field = field.u.cref->source;
+		}
+		if (!field.isVarRef() && !field.isCastRef()) {
 			warning("BUILDBOT: c_delete: bad chunk ref field type: %s", d.u.cref->source.type2str());
 			return;
 		}
@@ -1628,10 +1632,16 @@ void LC::c_hilite() {
 
 	int fieldId, start, end;
 	if (d.type == CHUNKREF) {
-		if (d.u.cref->source.isCastRef()) {
-			fieldId = d.u.cref->source.u.i;
-			start = d.u.cref->start;
-			end = d.u.cref->end;
+		start = d.u.cref->start;
+		end = d.u.cref->end;
+		Datum src = d.u.cref->source;
+		while (src.type == CHUNKREF) {
+			start += src.u.cref->start;
+			end += src.u.cref->start;
+			src = src.u.cref->source;
+		}
+		if (src.isCastRef()) {
+			fieldId = src.u.i;
 		} else {
 			warning("BUILDBOT: c_hilite: bad chunk ref field type: %s", d.u.cref->source.type2str());
 			return;
