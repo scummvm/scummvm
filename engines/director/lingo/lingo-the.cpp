@@ -1311,6 +1311,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			if (castId != sprite->_castId) {
 				g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 				channel->setCast(castId);
+				// TODO: find the correct way to replace widget, instead of changing the original one.
+				score->getOriginalSpriteById(id)->setCast(castId);
 				channel->_dirty = true;
 			}
 		}
