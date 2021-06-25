@@ -37,3 +37,7 @@ scummvmAssertEqual(test, "foo,,,,,,,,,bar")
 put "foo" into test"
 put "bar" into line 10 of test
 scummvmAssertEqual(test, "foo" & RETURN & RETURN & RETURN & RETURN & RETURN & RETURN & RETURN & RETURN & RETURN & "bar")
+
+put "foo" & RETURN & "lorem ipsum" into test
+put "bar" into char 3 of word 2 of line 2 of test
+scummvmAssertEqual(test, "foo" & RETURN & "lorem ipbarum")
