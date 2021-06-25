@@ -1304,7 +1304,7 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 		{
 			Common::String src = var.u.cref->source.eval().asString();
 			result.type = STRING;
-			if (var.u.cref->start == -1) {
+			if (var.u.cref->start < 0) {
 				result.u.s = new Common::String("");
 			} else {
 				result.u.s = new Common::String(src.substr(var.u.cref->start, var.u.cref->end - var.u.cref->start));
