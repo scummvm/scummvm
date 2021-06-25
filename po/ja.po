@@ -5146,7 +5146,9 @@ msgid ""
 "When activated, clicking on an item or area with the lightning bolt cursor "
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
-msgstr "有効な場合、稲妻のカーソルでアイテムやエリアをクリックすると、直接移動できます。行った事のある場所のみ\"Zip\"できます。"
+msgstr ""
+"有効な場合、稲妻のカーソルでアイテムやエリアをクリックすると、直接移動できま"
+"す。行った事のある場所のみ\"Zip\"できます。"
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -5156,7 +5158,8 @@ msgstr "トランジションを有効化しました"
 msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
-msgstr "画面遷移のON/OFFを切り替えます。OFFにすると、ゲームの速度が上がります。"
+msgstr ""
+"画面遷移のON/OFFを切り替えます。OFFにすると、ゲームの速度が上がります。"
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
