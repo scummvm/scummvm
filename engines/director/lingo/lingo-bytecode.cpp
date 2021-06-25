@@ -644,9 +644,33 @@ void LC::cb_varassign() {
 
 
 void LC::cb_v4assign2() {
-	g_lingo->readInt();
-	g_lingo->printSTUBWithArglist("cb_v4assign2", 10);
-	g_lingo->dropStack(10);
+int arg = g_lingo->readInt();
+	int op = (arg >> 4) & 0xF;
+	int varType = arg & 0xF;
+	Datum varId = g_lingo->pop();
+
+	Datum var = g_lingo->findVarV4(varType, varId);
+	Datum ref = readChunkRef(var);
+	g_lingo->push(ref);
+
+	switch (op) {
+	case 1:
+		// put value into chunk
+		LC::c_assign();
+		break;
+	case 2:
+		// put value after chunk
+		LC::c_putafter();
+		break;
+	case 3:
+		// put value before chunk
+		LC::c_putbefore();
+		break;
+	default:
+		warning("cb_v4assign2: unknown operator %d", op);
+		g_lingo->pop();
+		break;
+	}
 }
 
 
