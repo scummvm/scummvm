@@ -181,6 +181,12 @@ namespace std
 #endif
 
 // Functions from openlibm not declared in Symbian math.h
+#if __GNUC__
+#define restrict __restrict__
+#else
+#define restrict
+#endif //__GNUC__
+
 extern "C"{
 	float roundf (float x);
 	double nearbyint(double x);
@@ -192,6 +198,8 @@ extern "C"{
 	float fminf(float x, float y);
 	float fmaxf(float x, float y);
 	double fmax (double x, double y);
+	long long int strtoll(const char * restrict start, char ** restrict end, int radix);
+	double nsvg__atof(const char* s);
 }
 
 

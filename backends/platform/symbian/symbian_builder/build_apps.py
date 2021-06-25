@@ -21,7 +21,6 @@
 
 
 import subprocess
-from prj_generator import SafeWriteFile
 from common_names import *
 
 
