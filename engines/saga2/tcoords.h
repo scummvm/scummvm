@@ -104,6 +104,10 @@ struct TilePoint {
 	int16 quickDir(void);
 
 	int16 magnitude(void);
+
+	void debugPrint(int level = 0, const char *msg = "TilePoint:") {
+		debug(level, "%s %d, %d, %d", msg, u, v, z);
+	}
 } PACKED_STRUCT;
 #include "common/pack-end.h"
 
