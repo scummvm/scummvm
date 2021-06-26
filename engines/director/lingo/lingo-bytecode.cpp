@@ -236,7 +236,7 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x07, 0x1a, kTheSoundLevel,		kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x1b, kTheStageColor,		kTheNOField,		true, kTEANOArgs },
 //	{ 0x07, 0x1c, ????,					kTheNOField,		true, kTEANOArgs },
-	{ 0x07, 0x1d, kTheStillDown,		kTheNOField,		true, kTEANOArgs },
+	{ 0x07, 0x1d, kTheSwitchColorDepth,	kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x1e, kTheTimeoutKeyDown,	kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x1f, kTheTimeoutLength,	kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x20, kTheTimeoutMouse,		kTheNOField,		true, kTEANOArgs },
