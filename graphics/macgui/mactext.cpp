@@ -228,10 +228,7 @@ void MacText::init() {
 	_selStart = -1;
 
 	_defaultFormatting.wm = _wm;
-	// try to set fgcolor as default color in chunks
-	if (_wm->_mode & kWMModeWin95) {
-		_defaultFormatting.fgcolor = _fgcolor;
-	}
+	_defaultFormatting.fgcolor = _fgcolor;
 	_currentFormatting = _defaultFormatting;
 	_composeSurface->clear(_bgcolor);
 
@@ -326,6 +323,29 @@ void MacText::setMaxWidth(int maxWidth) {
 	updateCursorPos();
 
 	_fullRefresh = true;
+	_contentIsDirty = true;
+}
+
+void MacText::setColors(uint32 fg, uint32 bg) {
+	_bgcolor = bg;
+	_fgcolor = fg;
+	for (uint i = 0; i < _textLines.size(); i++)
+		setTextColor(fg, i);
+}
+
+void MacText::setTextColor(uint32 color, uint32 line) {
+	if (line >= _textLines.size()) {
+		warning("MacText::setTextColor(): line %d is out of bounds", line);
+		return;
+	}
+
+	uint fgcol = _wm->findBestColor(color);
+	for (uint j = 0; j < _textLines[line].chunks.size(); j++) {
+		_textLines[line].chunks[j].fgcolor = fgcol;
+	}
+
+	_fullRefresh = true;
+	render();
 	_contentIsDirty = true;
 }
 
