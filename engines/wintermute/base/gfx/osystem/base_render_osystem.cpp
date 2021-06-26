@@ -34,6 +34,7 @@
 #include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
+#include "engines/util.h"
 #include "common/system.h"
 #include "common/queue.h"
 #include "common/config-manager.h"
@@ -123,11 +124,9 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	_windowed = !ConfMan.getBool("fullscreen");
 
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	g_system->beginGFXTransaction();
-		g_system->initSize(_width, _height, &format);
-	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+	initGraphics(_width, _height, &format);
 
-	if (gfxError != OSystem::kTransactionSuccess) {
+	if (g_system->getScreenFormat() != format) {
 		warning("Couldn't setup GFX-backend for %dx%dx%d", _width, _height, format.bytesPerPixel * 8);
 		return STATUS_FAILED;
 	}
