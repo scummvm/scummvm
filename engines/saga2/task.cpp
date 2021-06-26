@@ -612,7 +612,7 @@ void TaskList::newTask(Task *t, TaskID id) {
 //	into the inactive list
 
 void TaskList::deleteTask(Task *p) {
-	debugC(1, kDebugTasks, "List: %p Deleting task %p (total %d)", (void *)this, (void *)p, --_size);
+	debugC(1, kDebugTasks, "List: %p Deleting task %p (%s) (total %d)", (void *)this, (void *)p, p->_type.c_str(), --_size);
 	for (int i = 0; i < numTasks; i++)
 		if (_list[i] == p) {
 			_list[i] = nullptr;
