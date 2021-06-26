@@ -39,7 +39,7 @@ namespace Sci {
 #else
 #define _PACKINT32(n) (((uint32)n) >> 24 & 0xFF), (((uint32)n) >> 16 & 0xFF), (((uint32)n) >> 8 & 0xFF), (((uint32)n) & 0xFF)
 #endif
-#define _BYTEOP(op, numBytes, ...) op, _PACKINT32(numBytes), __VA_ARGS__
+#define _BYTEOP(op, numBytes, ARGS...) op, _PACKINT32(numBytes), ##ARGS
 #define _NUMBEROP(op, type, value) op, sizeof(type), _PACKINT32(value)
 #define _FILLOP(op, numBytes, value) op, _PACKINT32(numBytes), value
 // End of internal resource patcher macros
@@ -52,12 +52,12 @@ namespace Sci {
 /**
  * Replaces data at the current position.
  */
-#define REPLACE(numBytes, ...) _BYTEOP(kReplaceBytes, numBytes, __VA_ARGS__)
+#define REPLACE(numBytes, ARGS...) _BYTEOP(kReplaceBytes, numBytes, ##ARGS)
 
 /**
  * Inserts new data at the current position.
  */
-#define INSERT(numBytes, ...) _BYTEOP(kInsertBytes, numBytes, __VA_ARGS__)
+#define INSERT(numBytes, ARGS...) _BYTEOP(kInsertBytes, numBytes, ##ARGS)
 
 /**
  * Replaces a number of the given type at the current position with the given
