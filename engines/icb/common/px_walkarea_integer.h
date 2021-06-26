@@ -34,16 +34,16 @@ namespace ICB {
 
 #define INTEGER_WALKAREA_API_SCHEMA 1
 
-typedef struct __point { // 3D integer coordinate representation
+struct __point { // 3D integer coordinate representation
 	__point(void) : x(0), y(0), z(0) { ; }
 	__point(int32 X, int32 Y, int32 Z) : x(X), y(Y), z(Z) { ; }
 
 	int32 x;
 	int32 y;
 	int32 z;
-} __point;
+};
 
-typedef struct {
+struct __aWalkArea{
 	char name[32];         // Name of the walkarea
 	char cameraCluster[8]; // Hashed cameraName value
 
@@ -59,7 +59,7 @@ typedef struct {
 	__point points[1]; // The points themselves (spline is always closed)
 
 	char cameraName[1]; // Name of associated camera (DWORD aligned)
-} __aWalkArea;
+};
 
 class INTEGER_WalkAreaFile {
 public:
