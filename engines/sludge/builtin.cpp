@@ -2097,7 +2097,7 @@ builtIn(renameFile) {
 	if (failSecurityCheck(nam))
 		return BR_ERROR;
 
-	fun->reg.setVariable(SVT_INT, rename(nam.c_str(), newnam.c_str()));
+	fun->reg.setVariable(SVT_INT, !g_system->getSavefileManager()->renameSavefile(nam.c_str(), newnam.c_str()));
 
 	return BR_CONTINUE;
 }
