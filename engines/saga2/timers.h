@@ -30,10 +30,10 @@
 #include "saga2/idtypes.h"
 #include "saga2/dlist.h"
 #include "saga2/calender.h"
+#include "saga2/objects.h"
 
 namespace Saga2 {
 
-class GameObject;
 class TimerList;
 
 //  Fetch a specified actor's TimerList
@@ -97,8 +97,8 @@ public:
 	//  Constructor -- initial construction
 	Timer(GameObject *o, TimerID timerID, int16 frameInterval) : _obj(o), _id(timerID), _interval(frameInterval) {
 		_alarm.set(_interval);
-		debugC(1, kDebugTimers, "Creating timer %p (obj %p)",
-		       (void *)this, (void *)o);
+		debugC(1, kDebugTimers, "Creating timer %p for %p (%s)",
+		       (void *)this, (void *)o, o->objName());
 
 		g_vm->_timers.push_back(this);
 	}
