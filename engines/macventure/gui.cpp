@@ -1487,7 +1487,9 @@ void Gui::selectForDrag(Common::Point cursorPosition) {
 	if (ref == kNoWindow) {
 		return;
 	}
-
+	if(_engine->needsClickToContinue())
+		return;
+	
 	Graphics::MacWindow *win = findWindow(ref);
 	WindowData &data = findWindowData((WindowReference) ref);
 
