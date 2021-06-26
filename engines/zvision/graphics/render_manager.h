@@ -31,7 +31,7 @@
 
 #include "graphics/surface.h"
 
-#include "graphics_effect.h"
+#include "zvision/graphics/graphics_effect.h"
 
 class OSystem;
 
