@@ -570,8 +570,10 @@ void GridWidget::reflowLayout() {
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
 	
-	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing)) / (_gridItemWidth + _minGridXSpacing)), 1);
-	_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing)) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
+	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
+	
+	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
+	_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
 	
 	_rows = ceil(_allEntries.size() / (float)_itemsPerRow);
 	
@@ -587,8 +589,7 @@ void GridWidget::reflowLayout() {
 	_firstVisibleItem = _itemsPerRow * ((int)ceil(-_scrollPos / (float)(_gridItemHeight + _gridYSpacing)) - 1);
 	_firstVisibleItem = (_firstVisibleItem < 0) ? 0 : _firstVisibleItem;
 
-	_scrollBar->setSize(20, _h);
-	_scrollBar->setPos(_w - _scrollBar->getWidth(), 0);
+	_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h, false);
 
 	if (calcVisibleEntries()) {
 		reloadThumbnails();
