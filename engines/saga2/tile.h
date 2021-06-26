@@ -32,7 +32,6 @@
 #include "saga2/tileload.h"
 #include "saga2/annoy.h"
 #include "saga2/terrain.h"
-#include "saga2/dlist.h"
 #include "saga2/property.h"
 #include "saga2/tcoords.h"
 
@@ -566,7 +565,7 @@ public:
 //  Since most things in the game aren't moving at a given point, the
 //  variables for simulating motion don't need to always be present.
 
-class TileActivityTask : private DNode {
+class TileActivityTask {
 	friend class    TileActivityTaskList;
 	friend class    ActiveItem;
 
@@ -608,11 +607,9 @@ public:
 class TileActivityTaskList {
 	friend class    TileActivityTask;
 
-	DList               list,
-	                    free;
-	TileActivityTask    array[32];
-
 public:
+	Common::List<TileActivityTask *> _list;
+
 	//  Constructor -- initial construction
 	TileActivityTaskList(void);
 

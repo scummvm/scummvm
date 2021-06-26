@@ -975,24 +975,20 @@ void cleanupActiveItemStates(void) {
 //-----------------------------------------------------------------------
 //	The list of active tile activity tasks
 
-static uint8 aTaskListBuffer[sizeof(TileActivityTaskList)];
-
-static TileActivityTaskList &aTaskList =
-    *((TileActivityTaskList *)aTaskListBuffer);
+static TileActivityTaskList aTaskList;
 
 //-----------------------------------------------------------------------
 //	Constructor
 
 TileActivityTaskList::TileActivityTaskList(void) {
-	for (uint i = 0; i < ARRAYSIZE(array); i++) {
-		free.addTail(array[i]);
-	}
 }
 
 //-----------------------------------------------------------------------
 //	Reconstruct the TileActivityTaskList from an archive buffer
 
 TileActivityTaskList::TileActivityTaskList(void **buf) {
+	warning("STUB: TileActivityTaskList::TileActivityTaskList(void **buf)");
+#if 0
 	void        *bufferPtr = *buf;
 
 	int16       taskCount;
@@ -1025,6 +1021,7 @@ TileActivityTaskList::TileActivityTaskList(void **buf) {
 	}
 
 	*buf = bufferPtr;
+#endif
 }
 
 //-----------------------------------------------------------------------
@@ -1032,12 +1029,9 @@ TileActivityTaskList::TileActivityTaskList(void **buf) {
 //	TileActivityTaskList
 
 int32 TileActivityTaskList::archiveSize(void) {
-	int32               size = sizeof(int16);
-	TileActivityTask    *tat;
+	int32 size = sizeof(int16);
 
-	for (tat = (TileActivityTask *)list.first();
-	        tat != nullptr;
-	        tat = (TileActivityTask *)tat->next())
+	for (Common::List<TileActivityTask *>::iterator it = _list.begin(); it != _list.end(); ++it)
 		size += sizeof(ActiveItemID) + sizeof(uint8);
 
 	return size;
@@ -1048,27 +1042,19 @@ int32 TileActivityTaskList::archiveSize(void) {
 //	archive buffer
 
 Common::MemorySeekableReadWriteStream *TileActivityTaskList::archive(Common::MemorySeekableReadWriteStream *stream) {
-	int16               taskCount;
-	TileActivityTask    *tat;
-
-	for (tat = (TileActivityTask *)list.first(), taskCount = 0;
-	        tat != nullptr;
-	        tat = (TileActivityTask *)tat->next())
-		taskCount++;
+	int16 taskCount = _list.size();
 
 	//  Store the task count
 	stream->writeSint16LE(taskCount);
 
-	for (tat = (TileActivityTask *)list.first();
-	        tat != nullptr;
-	        tat = (TileActivityTask *)tat->next()) {
-		ActiveItem  *ai = tat->tai;
+	for (Common::List<TileActivityTask *>::iterator it = _list.begin(); it != _list.end(); ++it) {
+		ActiveItem  *ai = (*it)->tai;
 
 		//  Store the activeItemID
 		stream->writeSint16LE(ai->thisID());
 
 		//  Store the task type
-		stream->writeByte(tat->activityType);
+		stream->writeByte((*it)->activityType);
 	}
 
 	return stream;
@@ -1078,15 +1064,10 @@ Common::MemorySeekableReadWriteStream *TileActivityTaskList::archive(Common::Mem
 //	Cleanup
 
 void TileActivityTaskList::cleanup(void) {
-	TileActivityTask    *tat;
-	TileActivityTask    *nextTat;
+	for (Common::List<TileActivityTask *>::iterator it = _list.begin(); it != _list.end(); ++it)
+		delete *it;
 
-	for (tat = (TileActivityTask *)list.first();
-	        tat != nullptr;
-	        tat = nextTat) {
-		nextTat = (TileActivityTask *)tat->next();
-		tat->remove();
-	}
+	_list.clear();
 }
 
 //-----------------------------------------------------------------------
@@ -1094,41 +1075,36 @@ void TileActivityTaskList::cleanup(void) {
 //	and initialize it.
 
 TileActivityTask *TileActivityTaskList::newTask(ActiveItem *activeInstance) {
-	TileActivityTask        *tat;
+	TileActivityTask *tat = nullptr;
 
 	//  Check see if there's already tile activity task associated with
 	//  this instance.
-	for (tat = (TileActivityTask *)list.first();
-	        tat;
-	        tat = (TileActivityTask *)tat->next()) {
-		if (tat->tai == activeInstance) break;
-	}
+	for (Common::List<TileActivityTask *>::iterator it = _list.begin(); it != _list.end(); ++it)
+		if ((*it)->tai == activeInstance) {
+			tat = *it;
+			break;
+		}
 
-#if TATLOG
-	if (tat) writeLog("Found old TAT\n");
-#endif
+	if (tat)
+		debugC(3, kDebugTasks, "Found old TAT");
 
 	if (tat == nullptr) {
-		tat = (TileActivityTask *)free.remHead();
+		debugC(3, kDebugTasks, "Making new TAT");
 
-#if TATLOG
-		writeLog("Making new TAT\n");
-#endif
-		if (tat) {
-			tat->tai = activeInstance;
-			tat->activityType = TileActivityTask::activityTypeNone;
-			tat->script = NoThread;
-			tat->targetState = 0;
+		tat = new TileActivityTask;
 
-			list.addTail(*tat);
-		}
+		tat->tai = activeInstance;
+		tat->activityType = TileActivityTask::activityTypeNone;
+		tat->script = NoThread;
+		tat->targetState = 0;
+
+		_list.push_back(tat);
 	}
 
 	//  If we re-used an old task struct, then make sure script gets woken up.
 	if (tat->script != NoThread) {
-#if TATLOG
-		writeLog("Waking up thread TAT\n");
-#endif
+		debugC(3, kDebugTasks, "Waking up thread TAT");
+
 		wakeUpThread(tat->script);
 		tat->script = NoThread;
 	}
@@ -1144,22 +1120,18 @@ TileActivityTask *TileActivityTaskList::newTask(ActiveItem *activeInstance) {
 //	When a tile activity task is finished, call this function to delete it.
 
 void TileActivityTask::remove(void) {
-#if TATLOG
-	writeLog("Removing TAT\n");
-#endif
-	DNode::remove();
-	aTaskList.free.addTail(*this);
+	debugC(3, kDebugTasks, "Removing TAT");
+
+	aTaskList._list.remove(this);
 }
 
 //-----------------------------------------------------------------------
 //	This initiates a tile activity task for opening a door
 
 void TileActivityTask::openDoor(ActiveItem &activeInstance) {
-	TileActivityTask        *tat;
+	debugC(3, kDebugTasks, "TAT Open Door");
 
-#if TATLOG
-	writeLog("TAT Open Door\n");
-#endif
+	TileActivityTask *tat;
 	if ((tat = aTaskList.newTask(&activeInstance)) != nullptr)
 		tat->activityType = activityTypeOpen;
 }
@@ -1168,11 +1140,9 @@ void TileActivityTask::openDoor(ActiveItem &activeInstance) {
 //	This initiates a tile activity task for closing a door
 
 void TileActivityTask::closeDoor(ActiveItem &activeInstance) {
-	TileActivityTask        *tat;
+	debugC(3, kDebugTasks, "TAT Close Door");
 
-#if TATLOG
-	writeLog("TAT Close Door\n");
-#endif
+	TileActivityTask *tat;
 	if ((tat = aTaskList.newTask(&activeInstance)) != nullptr)
 		tat->activityType = activityTypeClose;
 }
@@ -1181,22 +1151,19 @@ void TileActivityTask::closeDoor(ActiveItem &activeInstance) {
 //	This initiates a tile activity task for script-based activity
 
 void TileActivityTask::doScript(ActiveItem &activeInstance, uint8 finalState, ThreadID scr) {
-	TileActivityTask        *tat;
+	debugC(3, kDebugTasks, "TAT Do Script");
 
-#if TATLOG
-	writeLog("TAT Do Script\n");
-#endif
+	TileActivityTask *tat;
 	if ((tat = aTaskList.newTask(&activeInstance)) != nullptr) {
-#if TATLOG
-		if (scr) writeLog("TAT Assign Script!\n");
-#endif
+		if (scr)
+			debugC(3, kDebugTasks, "TAT Assign Script!");
+
 		tat->activityType = activityTypeScript;
 		tat->targetState = finalState;
 		tat->script = scr;
 	} else {
-#if TATLOG
-		writeLog("Waking up thread 'cause newTask Failed\n");
-#endif
+		debugC(3, kDebugTasks, "Waking up thread 'cause newTask Failed");
+
 		wakeUpThread(scr);           //  If there were no threads available
 	}
 }
@@ -1205,26 +1172,21 @@ void TileActivityTask::doScript(ActiveItem &activeInstance, uint8 finalState, Th
 //	Routine to update positions of all active terrain using TileActivityTasks
 
 void TileActivityTask::updateActiveItems(void) {
-	TileActivityTask    *tat,
-	                    *nextTat;
-#if DEBUG
-	int                 count = 0,
-	                    scriptCount = 0;
-#endif
+	int count = 0, scriptCount = 0;
 
-	for (tat = (TileActivityTask *)aTaskList.list.first(); tat; tat = nextTat) {
-		ActiveItem  *activityInstance = tat->tai;
-		bool        activityTaskDone = false;
+	for (Common::List<TileActivityTask *>::iterator it = aTaskList._list.begin(); it != aTaskList._list.end();) {
+		TileActivityTask *tat = *it;
+		ActiveItem *activityInstance = tat->tai;
+		bool activityTaskDone = false;
 
 		int16       mapNum = activityInstance->getMapNum();
 		uint16      state = activityInstance->getInstanceState(mapNum);
 
-		nextTat = (TileActivityTask *)tat->next();
-
-#if TATLOG
+		// collecting stats
 		count++;
-		if (tat->script != NoThread) scriptCount++;
-#endif
+		if (tat->script != NoThread)
+			scriptCount++;
+
 		switch (tat->activityType) {
 
 		case activityTypeOpen:
@@ -1255,29 +1217,29 @@ void TileActivityTask::updateActiveItems(void) {
 			break;
 		}
 
+		++it; // Go to next task before potentially removing it
+
 		if (activityTaskDone) {
 			//  Wake up the script...
-#if TATLOG
-			if (tat->script != NoThread) writeLog("TAT Wake Up Thread\n");
-#endif
-			if (tat->script != NoThread) wakeUpThread(tat->script);
+			if (tat->script != NoThread) {
+				debugC(3, kDebugTasks, "TAT Wake Up Thread");
+
+				wakeUpThread(tat->script);
+			}
 			tat->remove();
 		}
 	}
 
-#if DEBUG
-	WriteStatusF(16, "TileTasks: %d SW:%d", count, scriptCount);
-#endif
+	debugC(3, kDebugTasks, "TileTasks: %d SW:%d", count, scriptCount);
 }
 
 //-----------------------------------------------------------------------
 //	Search for tile activity task matching an item
 
 TileActivityTask *TileActivityTask::find(ActiveItem *tai) {
-	TileActivityTask    *tat;
-
-	for (tat = (TileActivityTask *)aTaskList.list.first(); tat; tat = (TileActivityTask *)tat->next()) {
-		if (tai == tat->tai) return tat;
+	for (Common::List<TileActivityTask *>::iterator it = aTaskList._list.begin(); it != aTaskList._list.end(); ++it) {
+		if (tai == (*it)->tai)
+			return *it;
 	}
 
 	return nullptr;
@@ -1287,24 +1249,23 @@ TileActivityTask *TileActivityTask::find(ActiveItem *tai) {
 //	Add script to tile activity task...
 
 bool TileActivityTask::setWait(ActiveItem *tai, ThreadID script) {
-	TileActivityTask    *tat;
+	TileActivityTask *tat = find(tai);
 
-	tat = find(tai);
+	debugC(3, kDebugTasks, "Set Wait TAT\n");
 
-#if TATLOG
-	writeLog("Set Wait TAT\n");
-#endif
 	if (tat) {
-#if TATLOG
-		if (tat->script != NoThread) writeLog("TAT Waking Up Thread\n");
-#endif
-		if (tat->script != NoThread) wakeUpThread(tat->script);
+		if (tat->script != NoThread) {
+			debugC(3, kDebugTasks, "TAT Waking Up Thread\n");
+
+			wakeUpThread(tat->script);
+		}
 		tat->script = script;
+
 		return true;
 	}
-#if TATLOG
-	writeLog("SetWait failed\n");
-#endif
+
+	debugC(3, kDebugTasks, "SetWait failed\n");
+
 	return false;
 }
 
@@ -1319,8 +1280,6 @@ void moveActiveTerrain(int32 deltaTime) {
 //	Initialize the tile activity task list
 
 void initTileTasks(void) {
-	//  Simply call the default constructor
-	new (&aTaskList) TileActivityTaskList;
 }
 
 //-----------------------------------------------------------------------
