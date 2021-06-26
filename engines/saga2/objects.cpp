@@ -974,7 +974,7 @@ void GameObject::updateImage(ObjectID oldParentID) {
 		sect = w->getSector(u, v);
 		if (sect) {
 			if (sect->isActivated())
-				sect->activate();
+				activate();
 		}
 		else
 			warning("GameObject::updateImage: Invalid Sector (%d, %d))", u, v);
