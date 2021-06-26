@@ -658,6 +658,12 @@ void TextCastMember::setColors(uint32 *fgcolor, uint32 *bgcolor) {
 
 	if (bgcolor)
 		_bgcolor = *bgcolor;
+
+	// if we want to keep the format unchanged, then we need to modify _ftext as well
+	if (_widget)
+		((Graphics::MacText *)_widget)->setColors(_fgcolor, _bgcolor);
+	else
+		_modified = true;
 }
 
 Graphics::TextAlign TextCastMember::getAlignment() {
