@@ -364,7 +364,12 @@ bool Ultima8Engine::startupGame() {
 	if (_gameInfo->_type == GameInfo::GAME_U8) {
 		_ucMachine = new UCMachine(U8Intrinsics, 256);
 	} else if (_gameInfo->_type == GameInfo::GAME_REMORSE) {
-		_ucMachine = new UCMachine(RemorseIntrinsics, 311);
+		if (_gameInfo->_ucOffVariant == GameInfo::GAME_UC_REM_DEMO)
+			_ucMachine = new UCMachine(RemorseDemoIntrinsics, 310);
+		else if (_gameInfo->_ucOffVariant == GameInfo::GAME_UC_REM_ES)
+			_ucMachine = new UCMachine(RemorseEsIntrinsics, 309);
+		else
+			_ucMachine = new UCMachine(RemorseIntrinsics, 311);
 	} else if (_gameInfo->_type == GameInfo::GAME_REGRET) {
 		_ucMachine = new UCMachine(RegretIntrinsics, 350);
 	} else {
@@ -814,6 +819,7 @@ bool Ultima8Engine::getGameInfo(const istring &game, GameInfo *ginfo) {
 	ginfo->_type = GameInfo::GAME_UNKNOWN;
 	ginfo->version = 0;
 	ginfo->_language = GameInfo::GAMELANG_UNKNOWN;
+	ginfo->_ucOffVariant = GameInfo::GAME_UC_DEFAULT;
 
 	assert(game == "ultima8" || game == "remorse" || game == "regret");
 
@@ -823,6 +829,14 @@ bool Ultima8Engine::getGameInfo(const istring &game, GameInfo *ginfo) {
 		ginfo->_type = GameInfo::GAME_REMORSE;
 	else if (game == "regret")
 		ginfo->_type = GameInfo::GAME_REGRET;
+
+	if (ginfo->_type == GameInfo::GAME_REMORSE)
+	{
+		if (_gameDescription->desc.flags & ADGF_DEMO)
+			ginfo->_ucOffVariant = GameInfo::GAME_UC_REM_DEMO;
+		else if (_gameDescription->desc.language == Common::ES_ESP)
+			ginfo->_ucOffVariant = GameInfo::GAME_UC_REM_ES;
+	}
 
 	switch (_gameDescription->desc.language) {
 	case Common::EN_ANY:

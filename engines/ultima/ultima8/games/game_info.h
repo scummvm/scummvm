@@ -44,6 +44,13 @@ struct GameInfo {
 		GAME_PENTAGRAM_MENU
 	} _type;
 
+	// Usecode coff variant
+	enum GameUsecodeOffsetVariant {
+		GAME_UC_DEFAULT, // Most versions of most games
+		GAME_UC_REM_ES,  // Crusader: No Remorse Spanish
+		GAME_UC_REM_DEMO // Crusader: No Remorse Demo
+	} _ucOffVariant;
+
 	//! version number, encoded as 100*major + minor
 	//! so, 2.12 becomes 212
 	//! 0 = unknown
