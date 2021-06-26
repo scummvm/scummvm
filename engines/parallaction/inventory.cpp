@@ -358,11 +358,8 @@ void Parallaction_ns::initInventory() {
 }
 
 void Parallaction_br::initInventory() {
-	_inventory = new Inventory(_invProps_BR._maxItems, _verbs_BR);
-	assert(_inventory);
 	_inventoryRenderer = new InventoryRenderer(this, &_invProps_BR);
 	assert(_inventoryRenderer);
-	_inventoryRenderer->setInventory(_inventory);
 
 	_dinoInventory = new Inventory(_invProps_BR._maxItems, _verbs_BR);
 	_donnaInventory = new Inventory(_invProps_BR._maxItems, _verbs_BR);
@@ -378,7 +375,6 @@ void Parallaction_ns::destroyInventory() {
 
 void Parallaction_br::destroyInventory() {
 	delete _inventoryRenderer;
-	delete _inventory;
 	_inventory = 0;
 	_inventoryRenderer = 0;
 
