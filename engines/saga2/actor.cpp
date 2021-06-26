@@ -1417,7 +1417,7 @@ Actor *Actor::newActor(
 
 	if (a->flags & temporary) {
 		incTempActorCount(protoNum);
-		debugC(1, kDebugActors, "Actors: Created temp actor %d new count:%d", a->thisID() - 32768, getTempActorCount(protoNum));
+		debugC(1, kDebugActors, "Actors: Created temp actor %d (%s) new count:%d", a->thisID() - 32768, a->objName(), getTempActorCount(protoNum));
 	}
 
 	return a;
@@ -1431,7 +1431,7 @@ void Actor::deleteActor(void) {
 		uint16      protoNum = (ActorProto *)prototype - actorProtos;
 
 		decTempActorCount(protoNum);
-		debugC(1, kDebugActors, "Actors: Deleting temp actor %d new count:%d", thisID() - 32768, getTempActorCount(protoNum));
+		debugC(1, kDebugActors, "Actors: Deleting temp actor %d (%s) new count:%d", thisID() - 32768, objName(), getTempActorCount(protoNum));
 	}
 
 	//  Kill task
