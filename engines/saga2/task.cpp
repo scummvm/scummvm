@@ -4626,6 +4626,7 @@ void TaskStack::abortTask(void) {
 		Task    *stackBottom = getTaskAddress(stackBottomID);
 
 		stackBottom->abortTask();
+		delete stackBottom;
 	}
 }
 
