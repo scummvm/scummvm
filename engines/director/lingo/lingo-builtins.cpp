@@ -1500,6 +1500,7 @@ void LB::b_alert(int nargs) {
 	if (!debugChannelSet(-1, kDebugFewFramesOnly)) {
 		GUI::MessageDialog dialog(alert.c_str(), "OK");
 		dialog.runModal();
+		g_director->_wm->clearHandlingWidgets();
 	}
 }
 
