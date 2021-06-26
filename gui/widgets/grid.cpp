@@ -21,6 +21,8 @@
  */
 
 #include "common/system.h"
+#include "common/file.h"
+
 #include "gui/gui-manager.h"
 #include "gui/widgets/grid.h"
 
