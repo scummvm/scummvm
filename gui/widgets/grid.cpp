@@ -126,6 +126,12 @@ void GridItemWidget::handleMouseLeft(int button) {
 	}
 }
 
+void GridItemWidget::handleMouseMoved(int x, int y, int button) {
+	if (!isHighlighted) {
+		handleMouseEntered(button);
+	}
+}
+
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isHighlighted) {
 		// Work in progress
