@@ -498,7 +498,10 @@ void ScriptInterpreter::execScriptFunction(uint16 index) {
 }
 
 int16 ScriptInterpreter::getGameVar(uint variable) {
-	debug(2, "ScriptInterpreter::getGameVar(%d{%s})", variable, varNames[variable]);
+	if (variable > 21)
+		debug(2, "ScriptInterpreter::getGameVar(%d)", variable);
+	else
+		debug(2, "ScriptInterpreter::getGameVar(%d{%s})", variable, varNames[variable]);
 
 	switch (variable) {
 	case  0: return _vm->_mouseDisabled;
@@ -524,13 +527,16 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 	case 20: return _vm->_sceneHeight;
 	case 21: return _vm->_sceneWidth;
 	default:
-		warning("Getting unimplemented game variable %s (%d)", varNames[variable], variable);
+		warning("Getting unimplemented game variable %d", variable);
 		return 0;
 	}
 }
 
 void ScriptInterpreter::setGameVar(uint variable, int16 value) {
-	debug(2, "ScriptInterpreter::setGameVar(%d{%s}, %d)", variable, varNames[variable], value);
+	if (variable > 21)
+		debug(2, "ScriptInterpreter::setGameVar(%d, %d)", variable, value);
+	else
+		debug(2, "ScriptInterpreter::setGameVar(%d{%s}, %d)", variable, varNames[variable], value);
 
 	switch (variable) {
 	case 0:
@@ -596,8 +602,10 @@ void ScriptInterpreter::setGameVar(uint variable, int16 value) {
 		break;
 	case 1:
 	case 2:
-	default:
 		warning("Setting unimplemented game variable %s (%d) to %d", varNames[variable], variable, value);
+		break;
+	default:
+		warning("Setting unimplemented game variable (%d) to %d", variable, value);
 		break;
 	}
 }
