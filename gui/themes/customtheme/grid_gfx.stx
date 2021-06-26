@@ -1036,10 +1036,9 @@
 		<drawstep	func = 'roundedsq'
 					radius = '5'
 					stroke = '2'
-					fg_color = 'lightgray2'
+					fg_color = 'black'
 					fill = 'background'
 					bg_color = 'dialog_background'
-					shadow = '5'
 		/>
 	</drawdata>
 
