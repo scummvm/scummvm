@@ -112,8 +112,9 @@ void GridItemWidget::drawWidget() {
 									*flagGfx, true);
 
 	// Draw Title
-	g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight),
-							_activeEntry->title, GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
+	if (_grid->_isTitlesVisible)
+		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight),
+								_activeEntry->title, GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
 }
 
 void GridItemWidget::handleMouseWheel(int x, int y, int direction) {
@@ -358,6 +359,10 @@ bool GridWidget::calcVisibleEntries() {
 	return needsReload;
 }
 
+void GridWidget::setTitlesVisible(bool vis) {
+	_isTitlesVisible = vis;
+}
+
 void GridWidget::reloadThumbnails() {
 	Graphics::ManagedSurface *surf = nullptr;
 	String gameid;
@@ -571,9 +576,11 @@ void GridWidget::reflowLayout() {
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
 
+	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
+
 	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	
-	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
+	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight * _isTitlesVisible);
 	_gridItemWidth = _thumbnailWidth;
 
 	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
