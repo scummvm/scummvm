@@ -439,6 +439,12 @@ void GridWidget::destroyItems() {
 	_gridItems.clear();
 }
 
+void GridWidget::move(int x, int y) {
+	for (auto i = _gridItems.begin(); i != _gridItems.end(); ++i) {
+		(*i)->move(x, y);
+	}
+}
+
 void GridWidget::updateGrid() {
 	for (auto i = _gridItems.begin(); i != _gridItems.end(); ++i) {
 		(*i)->update();
@@ -501,20 +507,14 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 		_firstVisibleItem += _itemsPerRow;
 		
 		// Move the entire grid one row down
-		for (auto it = _gridItems.begin(); it != _gridItems.end(); ++it) {
-			GridItemWidget *item = *it;
-			item->move(0, _gridItemHeight + _gridYSpacing);
-		}
+		move(0, _gridItemHeight + _gridYSpacing);
 	
 	} else if (_gridItems.front()->getRelY() > -_gridItemHeight) {
 		needsReload = true;
 		_firstVisibleItem -= _itemsPerRow;
 		
 		// Move the entire grid one row up
-		for (auto it = _gridItems.begin(); it != _gridItems.end(); ++it) {
-			GridItemWidget *item = *it;
-			item->move(0, -(_gridItemHeight + _gridYSpacing));
-		}
+		move(0, -(_gridItemHeight + _gridYSpacing));
 	}
 
 	if (needsReload) {
