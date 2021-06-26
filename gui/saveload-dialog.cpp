@@ -588,7 +588,7 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 		if (_thumbnailSupport) {
 			const Graphics::Surface *thumb = desc.getThumbnail();
-			if (thumb)
+			if (thumb && _gfxWidget->isVisible())
 				_gfxWidget->setGfx(thumb, true);
 		}
 
