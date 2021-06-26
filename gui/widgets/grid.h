@@ -218,6 +218,7 @@ public:
 	void handleMouseEntered(int button) override;
 	void handleMouseLeft(int button) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseMoved(int x, int y, int button) override;
 };
 
 } // End of namespace GUI
