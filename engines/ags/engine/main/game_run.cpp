@@ -726,6 +726,8 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	_G(our_eip) = 1004;
 
 	game_loop_check_new_room();
+	if (_G(abort_engine))
+		return;
 
 	_G(our_eip) = 1005;
 

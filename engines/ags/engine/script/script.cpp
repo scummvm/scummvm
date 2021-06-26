@@ -97,7 +97,7 @@ void run_function_on_non_blocking_thread(NonBlockingScriptFunction *funcToRun) {
 
 	funcToRun->globalScriptHasFunction = DoRunScriptFuncCantBlock(_G(gameinstFork), funcToRun, funcToRun->globalScriptHasFunction);
 
-	if (room_changes_was != _GP(play).room_changes)
+	if (room_changes_was != _GP(play).room_changes || _G(abort_engine))
 		return;
 
 	funcToRun->roomHasFunction = DoRunScriptFuncCantBlock(_G(roominstFork), funcToRun, funcToRun->roomHasFunction);
@@ -281,8 +281,12 @@ bool DoRunScriptFuncCantBlock(ccInstance *sci, NonBlockingScriptFunction *funcTo
 
 	if (funcToRun->numParameters < 3) {
 		result = sci->CallScriptFunction((const char *)funcToRun->functionName, funcToRun->numParameters, funcToRun->params);
-	} else
+	} else {
 		quit("DoRunScriptFuncCantBlock called with too many parameters");
+	}
+
+	if (_G(abort_engine))
+		return false;
 
 	if (result == -2) {
 		// the function doens't exist, so don't try and run it again
@@ -292,6 +296,7 @@ bool DoRunScriptFuncCantBlock(ccInstance *sci, NonBlockingScriptFunction *funcTo
 	} else {
 		funcToRun->atLeastOneImplementationExists = true;
 	}
+
 	// this might be nested, so don't disrupt blocked scripts
 	_G(ccErrorString) = "";
 	_G(ccError) = 0;
