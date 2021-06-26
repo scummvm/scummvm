@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-26 13:21+0000\n"
+"POT-Creation-Date: 2021-06-26 18:39+0000\n"
 "PO-Revision-Date: 2021-06-18 05:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -75,7 +75,7 @@ msgstr "Вверх"
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
-#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:199
+#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:183
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -2389,7 +2389,7 @@ msgstr ""
 "скорее всего, не будет работать стабильно, и сохранения игр могут не "
 "работать в будущих версиях ScummVM."
 
-#: engines/engine.cpp:651 engines/wintermute/wintermute.cpp:199
+#: engines/engine.cpp:651 engines/wintermute/wintermute.cpp:183
 msgid "Start anyway"
 msgstr "Всё равно запустить"
 
@@ -7606,22 +7606,26 @@ msgstr "Поддержка для Hero Craft не скомпилирована"
 msgid "Wintermute3D support is not compiled in"
 msgstr "Поддержка для Wintermute3D не скомпилирована"
 
-#: engines/wintermute/wintermute.cpp:165
+#: engines/wintermute/wintermute.cpp:149
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "Эта игра требует поддержки PNG, JPEG и Vorbis."
 
-#: engines/wintermute/wintermute.cpp:176
+#: engines/wintermute/wintermute.cpp:160
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr "Эта игра требует движок FoxTail, который не был скомпилирован."
 
-#: engines/wintermute/wintermute.cpp:187
+#: engines/wintermute/wintermute.cpp:171
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr "Эта игра требует движок HeroCraft, который не был скомпилирован."
 
-#: engines/wintermute/wintermute.cpp:198
+#: engines/wintermute/wintermute.cpp:182
+#, fuzzy
+#| msgid ""
+#| "This game requires 3D capabilities that are out ScummVM scope. As such, "
+#| "it is likely to be unplayable totally or partially."
 msgid ""
-"This game requires 3D capabilities that are out ScummVM scope. As such, it "
-"is likely to be unplayable totally or partially."
+"This game requires 3D capabilities, which is not compiled in. As such, it is "
+"likely to be unplayable totally or partially."
 msgstr ""
 "Эта игра требует поддержки 3D персонажей, что выходит за рамки ScummVM. "
 "Ввиду этого, игра скорее всего не будет работать целиком или частично."

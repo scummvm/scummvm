@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-26 13:21+0000\n"
+"POT-Creation-Date: 2021-06-26 18:39+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -75,7 +75,7 @@ msgstr "Yukarı git"
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
-#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:199
+#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:183
 msgid "Cancel"
 msgstr "İptal"
 
@@ -2401,7 +2401,7 @@ msgid ""
 "might not work in future versions of ScummVM."
 msgstr ""
 
-#: engines/engine.cpp:651 engines/wintermute/wintermute.cpp:199
+#: engines/engine.cpp:651 engines/wintermute/wintermute.cpp:183
 msgid "Start anyway"
 msgstr ""
 
@@ -7407,22 +7407,22 @@ msgstr "Özellikler derlenmiştir:"
 msgid "Wintermute3D support is not compiled in"
 msgstr "Özellikler derlenmiştir:"
 
-#: engines/wintermute/wintermute.cpp:165
+#: engines/wintermute/wintermute.cpp:149
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr ""
 
-#: engines/wintermute/wintermute.cpp:176
+#: engines/wintermute/wintermute.cpp:160
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr ""
 
-#: engines/wintermute/wintermute.cpp:187
+#: engines/wintermute/wintermute.cpp:171
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
 
-#: engines/wintermute/wintermute.cpp:198
+#: engines/wintermute/wintermute.cpp:182
 msgid ""
-"This game requires 3D capabilities that are out ScummVM scope. As such, it "
-"is likely to be unplayable totally or partially."
+"This game requires 3D capabilities, which is not compiled in. As such, it is "
+"likely to be unplayable totally or partially."
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:150

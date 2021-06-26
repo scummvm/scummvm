@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-26 13:21+0000\n"
+"POT-Creation-Date: 2021-06-26 18:39+0000\n"
 "PO-Revision-Date: 2021-06-26 11:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -75,7 +75,7 @@ msgstr "Remonter"
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
-#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:199
+#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:183
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -2409,7 +2409,7 @@ msgstr ""
 "complètement supporté par ScummVM. Il est donc instable et les sauvegardes "
 "peuvent ne pas marcher avec une future version de ScummVM."
 
-#: engines/engine.cpp:651 engines/wintermute/wintermute.cpp:199
+#: engines/engine.cpp:651 engines/wintermute/wintermute.cpp:183
 msgid "Start anyway"
 msgstr "Lancer quand même"
 
@@ -7705,26 +7705,30 @@ msgstr "La prise en charge de Hero Craft n'est pas incluse"
 msgid "Wintermute3D support is not compiled in"
 msgstr "La prise en charge de Wintermute3D n'est pas incluse"
 
-#: engines/wintermute/wintermute.cpp:165
+#: engines/wintermute/wintermute.cpp:149
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "Ce jeu nécessite le support des formats PNG, JPEG et Vorbis."
 
-#: engines/wintermute/wintermute.cpp:176
+#: engines/wintermute/wintermute.cpp:160
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr ""
 "Ce jeu nécessite le sous-moteur FoxTail qui n'est pas inclus dans la "
 "compilation."
 
-#: engines/wintermute/wintermute.cpp:187
+#: engines/wintermute/wintermute.cpp:171
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
 "Ce jeu nécessite le sous-moteur HeroCraft qui n'est pas inclus dans la "
 "compilation."
 
-#: engines/wintermute/wintermute.cpp:198
+#: engines/wintermute/wintermute.cpp:182
+#, fuzzy
+#| msgid ""
+#| "This game requires 3D capabilities that are out ScummVM scope. As such, "
+#| "it is likely to be unplayable totally or partially."
 msgid ""
-"This game requires 3D capabilities that are out ScummVM scope. As such, it "
-"is likely to be unplayable totally or partially."
+"This game requires 3D capabilities, which is not compiled in. As such, it is "
+"likely to be unplayable totally or partially."
 msgstr ""
 "Ce jeu nécessite des capacités 3D qui sont en dehors du champ d'action de "
 "ScummVM. En conséquence, il est probable qu'il soit totalement ou "
