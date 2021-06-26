@@ -283,7 +283,12 @@ void MacWindowManager::setMode(uint32 mode) {
 }
 
 void MacWindowManager::clearHandlingWidgets() {
-	_mouseDown = false;
+	// pass a LBUTTONUP event to those widgets should clear those state
+	Common::Event event;
+	event.type = Common::EVENT_LBUTTONUP;
+	event.mouse = _lastClickPos;
+	processEvent(event);
+
 	setActiveWidget(nullptr);
 	_hoveredWidget = nullptr;
 }

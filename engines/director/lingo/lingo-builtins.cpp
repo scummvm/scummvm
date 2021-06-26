@@ -1498,9 +1498,9 @@ void LB::b_alert(int nargs) {
 	warning("b_alert(%s)", alert.c_str());
 
 	if (!debugChannelSet(-1, kDebugFewFramesOnly)) {
+		g_director->_wm->clearHandlingWidgets();
 		GUI::MessageDialog dialog(alert.c_str(), "OK");
 		dialog.runModal();
-		g_director->_wm->clearHandlingWidgets();
 	}
 }
 
