@@ -20,6 +20,13 @@
  *
  */
 
+// This define lets us use the system function remove() on Symbian, which
+// is disabled by default due to a macro conflict.
+// See backends/platform/symbian/src/portdefs.h .
+#if defined (__SYMBIAN32__)
+#define SYMBIAN_USE_SYSTEM_REMOVE
+#endif
+
 #include "glk/agt/agility.h"
 
 namespace Glk {
