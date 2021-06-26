@@ -346,6 +346,7 @@ const Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformC
 }
 
 void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
+	_allEntries.clear();
 	for (auto entryIter = list->begin(); entryIter != list->end(); ++entryIter) {
 		_allEntries.push_back(*entryIter);
 	}
