@@ -558,6 +558,7 @@ private:
 	void	initResources();
 	void	initInventory();
 	void	destroyInventory();
+	Inventory *findInventory(const char *name);
 	void	setupBalloonManager();
 	void	initFonts();
 	void	freeFonts();
