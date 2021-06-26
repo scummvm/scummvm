@@ -301,6 +301,14 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	}
 }
 
+GridWidget::~GridWidget() {
+	_platformIcons.clear();
+	_loadedSurfaces.clear();
+	_gridItems.clear();
+	_allEntries.clear();
+	_visibleEntries.clear();
+}
+
 const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name) {
 	String path = String("./icons/")+name;
 	
