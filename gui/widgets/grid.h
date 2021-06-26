@@ -172,6 +172,7 @@ public:
 	
 	void destroyItems();
 	void updateGrid();
+	void move(int x, int y);
 	void assignEntriesToItems();
 
 	int getThumbnailHeight() const { return _thumbnailHeight; }
