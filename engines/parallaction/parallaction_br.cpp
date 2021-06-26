@@ -51,9 +51,6 @@ Parallaction_br::Parallaction_br(OSystem* syst, const PARALLACTIONGameDescriptio
 	_subtitleY = 0;
 	_subtitle[0] = 0;
 	_subtitle[1] = 0;
-	_charInventories[0] = 0;
-	_charInventories[1] = 0;
-	_charInventories[2] = 0;
 	_countersNames = 0;
 	_callables = 0;
 	_walker = 0;

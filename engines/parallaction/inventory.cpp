@@ -354,9 +354,9 @@ void Parallaction_br::initInventory() {
 	assert(_inventoryRenderer);
 	_inventoryRenderer->setInventory(_inventory);
 
-	_charInventories[0] = new Inventory(_invProps_BR._maxItems, _verbs_BR);
-	_charInventories[1] = new Inventory(_invProps_BR._maxItems, _verbs_BR);
-	_charInventories[2] = new Inventory(_invProps_BR._maxItems, _verbs_BR);
+	_dinoInventory = new Inventory(_invProps_BR._maxItems, _verbs_BR);
+	_donnaInventory = new Inventory(_invProps_BR._maxItems, _verbs_BR);
+	_dougInventory = new Inventory(_invProps_BR._maxItems, _verbs_BR);
 }
 
 void Parallaction_ns::destroyInventory() {
@@ -372,12 +372,12 @@ void Parallaction_br::destroyInventory() {
 	_inventory = 0;
 	_inventoryRenderer = 0;
 
-	delete _charInventories[0];
-	delete _charInventories[1];
-	delete _charInventories[2];
-	_charInventories[0] = 0;
-	_charInventories[1] = 0;
-	_charInventories[2] = 0;
+	delete _dinoInventory;
+	delete _donnaInventory;
+	delete _dougInventory;
+	_dinoInventory = 0;
+	_donnaInventory = 0;
+	_dougInventory = 0;
 }
 
 
