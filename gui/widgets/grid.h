@@ -132,6 +132,7 @@ protected:
 	int				_scrollSpeed;
 	int				_scrollPos;
 
+public:
 	int				_innerHeight;
 	int				_innerWidth;
 	int				_thumbnailHeight;
@@ -150,7 +151,6 @@ protected:
 	
 	bool 			_isTitlesVisible;
 
-public:
 	GridItemInfo 	*_selectedEntry;
 	GridItemTray 	*_tray;
 	

@@ -69,7 +69,8 @@ void GridItemWidget::drawWidget() {
 
 	if (isHighlighted) {
 		// Draw a highlighted BG on hover
-		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - 10, _y - 10, _x + _w + 10, _y + _h), 
+		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - (_grid->_gridXSpacing / 3), _y - (_grid->_gridYSpacing / 3),
+											_x + _w + (_grid->_gridXSpacing / 3), _y + _h + (_grid->_gridYSpacing / 3)), 
 										ThemeEngine::WidgetBackground::kGridItemHighlight);
 	} else {
 		// Draw a BG of the same color as grid area
@@ -77,7 +78,8 @@ void GridItemWidget::drawWidget() {
 		// the highlight shadow
 		// FIXME: Find a way to redraw the area around the widget
 		//		 instead of just drawing a cover-up
-		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - 20, _y - 10, _x + _w + 20, _y + _h + 10), 
+		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - 2 * (_grid->_gridXSpacing / 3), _y - 2 * (_grid->_gridYSpacing / 3),
+											_x + _w + 2 * (_grid->_gridXSpacing / 3), _y + _h + 2 * (_grid->_gridYSpacing / 3)), 
 										ThemeEngine::WidgetBackground::kGridItemBackground);
 	}
 
@@ -102,7 +104,7 @@ void GridItemWidget::drawWidget() {
 									*flagGfx, true);
 
 	// Draw Title
-	g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + 32),
+	g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight),
 							_activeEntry->title, GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
 }
 
@@ -135,7 +137,7 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isHighlighted) {
 		// Work in progress
-		_grid->openTray(getAbsX() - 10, getAbsY() + _h, _w + 20, _h / 3, _activeEntry->entryID);
+		_grid->openTray(getAbsX() - _grid->_gridXSpacing / 3, getAbsY() + _h, _w + _grid->_gridXSpacing / 3, _h / 3, _activeEntry->entryID);
 		_grid->_tray->runModal();
 	}
 }
