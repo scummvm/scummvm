@@ -1335,9 +1335,10 @@ void GameObject::deleteObjectRecursive(void) {
 //	Activate this object
 
 void GameObject::activate(void) {
-	warning("GameObject::activate %d (%s)", thisID(), objName());
 	if (_data.objectFlags & objectActivated)
 		return;
+
+	debugC(1, kDebugActors, "GameObject::activate %d (%s)", thisID(), objName());
 
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
@@ -1363,8 +1364,10 @@ void GameObject::activate(void) {
 //	Deactivate this object
 
 void GameObject::deactivate(void) {
-	if (!(_data.objectFlags & objectActivated)) return;
-	warning("GameObject::deactivate %d (%s)", thisID(), objName());
+	if (!(_data.objectFlags & objectActivated))
+		return;
+
+	debugC(1, kDebugActors, "GameObject::deactivate %d (%s)", thisID(), objName());
 
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
@@ -1384,7 +1387,8 @@ void GameObject::deactivate(void) {
 	removeAllTimers();
 	removeAllSensors();
 
-	if (isActor(this))((Actor *)this)->deactivateActor();
+	if (isActor(this))
+		((Actor *)this)->deactivateActor();
 }
 
 //  Determine if an object is contained in this object

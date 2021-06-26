@@ -354,8 +354,8 @@ void displayUpdate(void) {
 		GameMode::modeStackPtr[GameMode::modeStackCtr - 1]->handleTask();
 		lrate.updateFrameCount();
 		loops++;
-		elapsed += (g_system->getMillis() - lastGameTime);
-		lastGameTime = g_system->getMillis();
+		elapsed += (gameTime - lastGameTime);
+		lastGameTime = gameTime;
 
 
 		debugC(1, kDebugEventLoop, "EventLoop: Interface indicator updates");
