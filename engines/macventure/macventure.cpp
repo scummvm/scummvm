@@ -1141,8 +1141,8 @@ void GlobalSettings::loadSettings(Common::SeekableReadStream *dataStream) {
 	dataStream->readUint16BE(); // unknown
 	_invTop = dataStream->readUint16BE();
 	_invLeft = dataStream->readUint16BE();
-	_invWidth = dataStream->readUint16BE();
 	_invHeight = dataStream->readUint16BE();
+	_invWidth = dataStream->readUint16BE();
 	_invOffsetY = dataStream->readUint16BE();
 	_invOffsetX = dataStream->readSint16BE();
 	_defaultFont = dataStream->readUint16BE();
