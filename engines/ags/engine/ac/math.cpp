@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "ags/engine/ac/math.h"
 #include "ags/shared/ac/common.h" // quit
 #include "ags/shared/util/math.h"
@@ -40,7 +41,7 @@ int FloatToInt(float value, int roundDirection) {
 		else if (roundDirection == eRoundUp)
 			return static_cast<int>(value + 0.999999);
 		else
-			quit("!FloatToInt: invalid round direction");
+			error("!FloatToInt: invalid round direction");
 	} else {
 		// negative number
 		if (roundDirection == eRoundUp)
@@ -50,7 +51,7 @@ int FloatToInt(float value, int roundDirection) {
 		else if (roundDirection == eRoundDown)
 			return static_cast<int>(value - 0.999999);
 		else
-			quit("!FloatToInt: invalid round direction");
+			error("!FloatToInt: invalid round direction");
 	}
 	return 0;
 }
@@ -133,14 +134,20 @@ float Math_GetPi() {
 
 float Math_Sqrt(float value) {
 	if (value < 0.0)
-		quit("!Sqrt: cannot perform square root of negative number");
+		error("!Sqrt: cannot perform square root of negative number");
 
 	return ::sqrt(value);
 }
 
 int __Rand(int upto) {
+	// WORKAROUND: Fix crash in Captain Disaster in Death Has a Million Stomping Boots
+	// at the start of Act 2, walking to Aquarium
+	if (upto == -1 && ConfMan.get("gameid") == "captaindisaster")
+		upto = INT32_MAX;
+
 	if (upto < 0)
-		quit("!Random: invalid parameter passed -- must be at least 0.");
+		error("!Random: invalid parameter passed -- must be at least 0.");
+
 	return ::AGS::g_vm->getRandomNumber(upto);
 }
 
