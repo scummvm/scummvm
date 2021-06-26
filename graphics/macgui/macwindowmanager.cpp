@@ -282,6 +282,12 @@ void MacWindowManager::setMode(uint32 mode) {
 		_fontMan->forceBuiltinFonts();
 }
 
+void MacWindowManager::clearHandlingWidgets() {
+	_mouseDown = false;
+	setActiveWidget(nullptr);
+	_hoveredWidget = nullptr;
+}
+
 void MacWindowManager::setActiveWidget(MacWidget *widget) {
 	if (_activeWidget == widget)
 		return;
