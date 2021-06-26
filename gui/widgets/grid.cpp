@@ -161,9 +161,9 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 	PicButtonWidget *loadButton = new PicButtonWidget(this, (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Saves"), kLoadGameCmd);
 	PicButtonWidget *editButton = new PicButtonWidget(this, buttonWidth + 2 * (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Edit"), kEditGameCmd);
 
-	playButton->setGfxFromTheme("button_play.bmp");
-	loadButton->setGfxFromTheme("button_load.bmp");
-	editButton->setGfxFromTheme("button_options.bmp");
+	playButton->setGfxFromTheme("button_play.bmp", 0, false);
+	loadButton->setGfxFromTheme("button_load.bmp", 0, false);
+	editButton->setGfxFromTheme("button_options.bmp", 0, false);
 }
 
 void GridItemTray::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
