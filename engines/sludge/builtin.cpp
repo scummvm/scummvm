@@ -20,6 +20,13 @@
  *
  */
 
+// This define lets us use the system function remove() on Symbian, which
+// is disabled by default due to a macro conflict.
+// See backends/platform/symbian/src/portdefs.h .
+#ifdef __SYMBIAN32__
+#define SYMBIAN_USE_SYSTEM_REMOVE
+#endif
+
 #include "common/config-manager.h"
 #include "common/random.h"
 #include "common/savefile.h"
