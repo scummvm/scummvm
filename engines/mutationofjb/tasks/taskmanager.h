@@ -24,12 +24,11 @@
 #define MUTATIONOFJB_TASKMANAGER_H
 
 #include "common/array.h"
-#include "task.h"
+#include "mutationofjb/tasks/task.h"
 
 namespace MutationOfJB {
 
 class Game;
-class Task;
 
 /**
  * Handles task management.
