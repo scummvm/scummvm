@@ -358,7 +358,6 @@ public:
 	bool		isItemInInventory(int32 v);
 	const		InventoryItem* getInventoryItem(int16 pos);
 	int16		getInventoryItemIndex(int16 pos);
-	void		cleanInventory(bool keepVerbs = true);
 	void		openInventory();
 	void		closeInventory();
 
@@ -403,7 +402,7 @@ public:
 	void scheduleWalk(int16 x, int16 y, bool fromUser) override;
 	DialogueManager *createDialogueManager(ZonePtr z) override;
 	bool processGameEvent(int event) override;
-
+	void cleanInventory(bool keepVerbs);
 	void	changeBackground(const char *background, const char *mask = 0, const char *path = 0);
 
 private:
@@ -559,6 +558,7 @@ private:
 	void	initInventory();
 	void	destroyInventory();
 	Inventory *findInventory(const char *name);
+	void	cleanInventory(bool keepVerbs);
 	void	setupBalloonManager();
 	void	initFonts();
 	void	freeFonts();
