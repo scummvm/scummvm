@@ -952,7 +952,6 @@ void agx_create(fc_type fc);
 void write_descr(descr_ptr *dp, descr_line *txt);
 void agx_write(void);
 void agx_wclose(void);
-void agx_wabort(void);
 
 /* ------------------------------------------------------------------- */
 /*  In AUXFILE.C                                                       */
@@ -1126,7 +1125,6 @@ void buffclose(void); /* Close the current file */
 
 void bw_open(fc_type fc, filetype ext); /* Open buffered file for writing */
 void bw_close(void); /* Close buffered file */
-void bw_abort(void); /* Close and delete buffered file */
 
 /* "Universal" file routines */
 extern const size_t ft_leng[FT_COUNT];  /* File lengths of the data types */
@@ -1199,7 +1197,6 @@ rbool filevalid(genfile f, filetype ft);
 void readclose(genfile f);
 void writeclose(genfile f, file_id_type fileid);
 
-void binremove(genfile f, file_id_type fileid);
 void binseek(genfile f, long offset);
 rbool binread(genfile f, void *buff, long recsize, long recnum, const char **errstr);
 long varread(genfile f, void *buff, long recsize, long recnum, const char **errstr);

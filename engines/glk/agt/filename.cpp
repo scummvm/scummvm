@@ -514,14 +514,6 @@ void writeclose(genfile f, file_id_type fileid) {
 	fclose(f);
 }
 
-void binremove(genfile f, file_id_type fileid) {
-	assert(f != NULL);
-	assert(fileid != NULL);
-	fclose(f);
-	remove((char *)fileid);
-	rfree(fileid);
-}
-
 long binsize(genfile f)
 /* Returns the size of a binary file */
 {

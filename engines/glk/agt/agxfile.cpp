@@ -1473,11 +1473,5 @@ void agx_wclose(void) {
 	rfree(gindex);
 }
 
-
-void agx_wabort(void) {
-	bw_abort();
-	rfree(gindex);
-}
-
 } // End of namespace AGT
 } // End of namespace Glk
