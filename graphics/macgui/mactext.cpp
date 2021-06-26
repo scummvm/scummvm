@@ -349,6 +349,84 @@ void MacText::setTextColor(uint32 color, uint32 line) {
 	_contentIsDirty = true;
 }
 
+void MacText::getChunkPosFromIndex(int index, uint &lineNum, uint &chunkNum, uint &offset) {
+	if (_textLines.empty()) {
+		lineNum = chunkNum = offset = 0;
+		return;
+	}
+	for (uint i = 0; i < _textLines.size(); i++) {
+		if (getLineCharWidth(i) <= index) {
+			index -= getLineCharWidth(i);
+		} else {
+			lineNum = i;
+			chunkNum = _textLines[i].getChunkNum(&index);
+			offset = index;
+			return;
+		}
+	}
+	lineNum = _textLines.size() - 1;
+	chunkNum = _textLines[lineNum].chunks.size() - 1;
+	offset = 0;
+}
+
+void MacText::setTextColor(uint32 color, uint32 start, uint32 end) {
+	if (_textLines.empty())
+		return;
+	if (start > end)
+		SWAP(start, end);
+
+	uint startRow, startCol;
+	uint endRow, endCol;
+	uint offset;
+
+	getChunkPosFromIndex(start, startRow, startCol, offset);
+	// if offset != 0, then we need to split the chunk
+	if (offset != 0) {
+		uint textSize = _textLines[startRow].chunks[startCol].text.size();
+		MacFontRun newChunk = _textLines[startRow].chunks[startCol];
+		newChunk.text = newChunk.text.substr(offset, textSize - offset);
+		_textLines[startRow].chunks[startCol].text = _textLines[startRow].chunks[startCol].text.substr(0, offset);
+		_textLines[startRow].chunks.insert_at(startCol + 1, newChunk);
+		startCol++;
+	}
+
+	getChunkPosFromIndex(end, endRow, endCol, offset);
+	if (offset != 0) {
+		uint textSize = _textLines[endRow].chunks[endCol].text.size();
+		MacFontRun newChunk = _textLines[endRow].chunks[endCol];
+		newChunk.text = newChunk.text.substr(offset, textSize - offset);
+		_textLines[endRow].chunks[endCol].text = _textLines[endRow].chunks[endCol].text.substr(0, offset);
+		_textLines[endRow].chunks.insert_at(endCol + 1, newChunk);
+		endCol++;
+	}
+
+	uint col = _wm->findBestColor(color);
+	// after spliting, we are going to modify the colors now
+	for (uint i = startRow; i <= endRow; i++) {
+		uint from, to;
+		if (i == startRow && i == endRow) {
+			from = startCol;
+			to = endCol;
+		} else if (i == startRow) {
+			from = startCol;
+			to = _textLines[startRow].chunks.size();
+		} else if (i == endRow) {
+			from = 0;
+			to = endCol;
+		} else {
+			from = 0;
+			to = _textLines[i].chunks.size();
+		}
+		for (uint j = from; j < to; j++) {
+			_textLines[i].chunks[j].fgcolor = col;
+		}
+	}
+
+	_fullRefresh = true;
+	render();
+	_contentIsDirty = true;
+}
+
 void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
 		uint16 palinfo1, uint16 palinfo2, uint16 palinfo3) {
 	_defaultFormatting.setValues(_defaultFormatting.wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
