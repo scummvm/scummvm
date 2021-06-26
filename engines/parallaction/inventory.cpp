@@ -137,12 +137,16 @@ void Parallaction::closeInventory() {
 
 
 
-InventoryRenderer::InventoryRenderer(Parallaction *vm, InventoryProperties *props, Inventory *inv) : _vm(vm), _props(props), _inv(inv) {
+InventoryRenderer::InventoryRenderer(Parallaction *vm, InventoryProperties *props) : _vm(vm), _props(props) {
 	_surf.create(_props->_width, _props->_height, Graphics::PixelFormat::createFormatCLUT8());
 }
 
 InventoryRenderer::~InventoryRenderer() {
 	_surf.free();
+}
+
+void InventoryRenderer::setInventory(Inventory *inventory) {
+	_inv = inventory;
 }
 
 void InventoryRenderer::showInventory() {
@@ -338,15 +342,17 @@ const InventoryItem* Inventory::getItem(ItemPosition pos) const {
 void Parallaction_ns::initInventory() {
 	_inventory = new Inventory(_invProps_NS._maxItems, _verbs_NS);
 	assert(_inventory);
-	_inventoryRenderer = new InventoryRenderer(this, &_invProps_NS, _inventory);
+	_inventoryRenderer = new InventoryRenderer(this, &_invProps_NS);
 	assert(_inventoryRenderer);
+	_inventoryRenderer->setInventory(_inventory);
 }
 
 void Parallaction_br::initInventory() {
 	_inventory = new Inventory(_invProps_BR._maxItems, _verbs_BR);
 	assert(_inventory);
-	_inventoryRenderer = new InventoryRenderer(this, &_invProps_BR, _inventory);
+	_inventoryRenderer = new InventoryRenderer(this, &_invProps_BR);
 	assert(_inventoryRenderer);
+	_inventoryRenderer->setInventory(_inventory);
 
 	_charInventories[0] = new Inventory(_invProps_BR._maxItems, _verbs_BR);
 	_charInventories[1] = new Inventory(_invProps_BR._maxItems, _verbs_BR);
