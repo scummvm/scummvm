@@ -1845,8 +1845,7 @@ void GameObject::removeAllTimers(void) {
 	//  Get this object's timer list
 	if ((timerList = fetchTimerList(this)) != nullptr) {
 		for (Common::List<Timer *>::iterator it = timerList->_timers.begin(); it != timerList->_timers.end(); ++it) {
-			timerList->_timers.remove(*it);
-			delete *it;
+			timerList->_timers.erase(it);
 		}
 
 		delete timerList;
