@@ -126,7 +126,6 @@ void GridItemWidget::handleMouseEntered(int button) {
 		_grid->_selectedEntry = _activeEntry;
 		isHighlighted = true;
 		markAsDirty();
-		draw();
 	}
 }
 
@@ -135,7 +134,6 @@ void GridItemWidget::handleMouseLeft(int button) {
 		_grid->_selectedEntry = nullptr;
 		isHighlighted = false;
 		markAsDirty();
-		draw();
 	}
 }
 
