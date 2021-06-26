@@ -398,13 +398,13 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 
 void Channel::setWidth(int w) {
 	if (_sprite->_puppet && _sprite->_stretch) {
-		_width = w;
+		_width = MAX<int>(w, 0);
 	}
 }
 
 void Channel::setHeight(int h) {
 	if (_sprite->_puppet && _sprite->_stretch) {
-		_height = h;
+		_height = MAX<int>(h, 0);
 	}
 }
 
