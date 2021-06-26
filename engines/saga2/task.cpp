@@ -2375,6 +2375,7 @@ void HuntTask::removeWanderTask(void) {
 
 void HuntTask::removeGotoTask(void) {
 	subTask->abortTask();
+	delete subTask;
 	huntFlags &= ~huntGoto;
 }
 
