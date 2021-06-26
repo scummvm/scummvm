@@ -171,7 +171,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_RIGHT"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action("GEOM", _("Show scene geometry"));
+		act = new Action("DBGSCN", _("Show scene geometry"));
 		act->setKeyEvent(KEYCODE_F1);
 		act->addDefaultInputMapping("F1"); // original keyboard
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
@@ -355,7 +355,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_Y"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action("ALTUSE", _("Alt use item"));
+		act = new Action("ALTUSE", _("Alternative action"));
 		act->setMiddleClickEvent();
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
 		act->addDefaultInputMapping("BACKSPACE"); // extra keyboard
@@ -679,7 +679,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action("GEOM", _("Show scene geometry"));
+		act = new Action("DBGSCN", _("Show scene geometry"));
 		act->setKeyEvent(KeyState(KEYCODE_F2, 0, KBD_CTRL));
 		act->addDefaultInputMapping("C+F2"); // original keyboard
 		gameKeyMap->addAction(act);
@@ -1079,7 +1079,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("F8"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action("SKIPMG", _("Skip minigame"));
+		act = new Action(kStandardActionSkip, _("Skip"));
 		act->setKeyEvent(KeyState(KEYCODE_BACKSPACE, ASCII_BACKSPACE));
 		act->addDefaultInputMapping("BACKSPACE"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
@@ -1373,7 +1373,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action("SHIFT", _("Shift"));
+		act = new Action("SHIFT", _("Shift key"));
 		act->setKeyEvent(KEYCODE_RSHIFT);
 		act->addDefaultInputMapping("LSHIFT"); // original keyboard control
 		act->addDefaultInputMapping("RSHIFT"); // original keyboard control
@@ -1473,7 +1473,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("t"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action("VICH", _("Use Chapayev"));
+		act = new Action("ALTUSE", _("Chapayev's action"));
 		act->setKeyEvent(KeyState(KEYCODE_c, 'c'));
 		act->addDefaultInputMapping("6"); // original keyboard
 		act->addDefaultInputMapping("c"); // original keyboard
@@ -1514,7 +1514,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_Y"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action("PAUSE", _("Pause"));
+		act = new Action(kStandardActionPause, _("Pause"));
 		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
 		act->addDefaultInputMapping("SPACE"); // original keyboard
 		act->addDefaultInputMapping("p"); // original keyboard
@@ -1550,14 +1550,14 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("S+p"); // original keyboard
 		gameKeyMap->addAction(act);
 	} else if (gameId == "polechudes") {
-		act = new Action("SLOW", _("Spin slower"));
+		act = new Action("SLOWER", _("Spin wheel slower"));
 		act->setKeyEvent(KEYCODE_F1);
 		act->addDefaultInputMapping("F1"); // original keyboard
 		act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // extra mouse
 		act->addDefaultInputMapping("JOY_UP"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action("FAST", _("Spin faster"));
+		act = new Action("FASTER", _("Spin wheel faster"));
 		act->setKeyEvent(KEYCODE_F2);
 		act->addDefaultInputMapping("F2"); // original keyboard
 		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // extra mouse
@@ -1757,7 +1757,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("F1"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action("GEOM", _("Show scene geometry"));
+		act = new Action("DBGSCN", _("Show scene geometry"));
 		act->setKeyEvent(KEYCODE_F2);
 		act->addDefaultInputMapping("F2"); // original keyboard
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
@@ -1784,7 +1784,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("F6"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action("BEZIER", _("Bezier window"));
+		act = new Action("DBGBEZ", _("Bezier window"));
 		act->setKeyEvent(KEYCODE_F7);
 		act->addDefaultInputMapping("F7"); // original keyboard
 		gameKeyMap->addAction(act);
@@ -1800,7 +1800,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("F3"); // original keyboard
 		gameKeyMap->addAction(act);
 	} else if (gameId == "twc") {
-		act = new Action("ACT", _("Droid action"));
+		act = new Action("ALTUSE", _("Droid's action"));
 		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
 		act->addDefaultInputMapping("SPACE"); // original keyboard
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
@@ -1862,7 +1862,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_LEFT"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action(kStandardActionOpenSettings, _("Music menu"));
+		act = new Action(kStandardActionOpenSettings, _("Settings"));
 		act->setKeyEvent(KeyState(KEYCODE_m, 'm'));
 		act->addDefaultInputMapping("m"); // original keyboard
 		act->addDefaultInputMapping("JOY_RIGHT"); // extra joy
