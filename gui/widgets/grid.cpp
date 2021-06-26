@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "common/file.h"
+#include "common/language.h"
 
 #include "gui/gui-manager.h"
 #include "gui/widgets/grid.h"
@@ -323,7 +324,7 @@ const Graphics::ManagedSurface *GridWidget::languageToSurface(const String &lang
 }
 
 const Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformCode) {
-	if ((platformCode == kPlatformUnknown) || (platformCode < 0 || platformCode >= _platformIcons.size())) {
+	if ((platformCode == kPlatformUnknown) || (platformCode < 0 || platformCode >= (int)_platformIcons.size())) {
 		warning("Unknown Platform");
 		return nullptr;
 	}
@@ -383,24 +384,18 @@ void GridWidget::reloadThumbnails() {
 }
 
 void GridWidget::loadFlagIcons() {
-	String pathPrefix("./icons/");
-	StringArray iconFilenames;
-	
-	// TODO: Can we read the language list from language.cpp?
-	iconFilenames.push_back(String("en.svg"));
-	iconFilenames.push_back(String("en-gb.svg"));
-	iconFilenames.push_back(String("en-us.svg"));
-	iconFilenames.push_back(String("it.svg"));
-	iconFilenames.push_back(String("fr.svg"));
-
-	for (auto i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
-		String fullPath = pathPrefix + (*i);
-		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(fullPath);
+	const Common::LanguageDescription *l =Common::g_languages;
+	for (; l->code; ++l) {
+		String path = String::format("./icons/%s.svg", l->code);
+		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
-			_loadedSurfaces[fullPath] = scGfx;
+			_loadedSurfaces[path] = scGfx;
 			gfx->free();
 			delete gfx;
+		}
+		else {
+			_loadedSurfaces[path] = nullptr;
 		}
 	}
 }
