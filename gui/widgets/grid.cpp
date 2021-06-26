@@ -88,7 +88,14 @@ void GridItemWidget::drawWidget() {
 										ThemeEngine::WidgetBackground::kThumbnailBackground);
 	
 	// Draw Thumbnail
-	g_gui.theme()->drawSurface(Common::Point(_x, _y), _thumbGfx, true);
+	if (_thumbGfx.empty()) {
+		// Draw Title when thumbnail is missing
+		g_gui.theme()->drawText(Common::Rect(_x, _y, _x + thumbWidth, _y + thumbHeight),
+							_activeEntry->title, GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter,
+							ThemeEngine::kTextInversion, 0, true, ThemeEngine::kFontStyleBold,
+							ThemeEngine::kFontColorAlternate, false);
+	}
+	else g_gui.theme()->drawSurface(Common::Point(_x, _y), _thumbGfx, true);
 
 	// Draw Platform Icon
 	if (_activeEntry->platform != kPlatformUnknown) {
@@ -271,16 +278,6 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
-
-	Graphics::ManagedSurface *surf;
-	String path = String("./icons/placeholder.png");
-	surf = loadSurfaceFromFile(path);
-	if (surf) {
-		const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512));
-		_loadedSurfaces[String("placeholder")] = scSurf;
-		surf->free();
-		delete surf;
-	}
 }
 
 GridWidget::GridWidget(GuiObject *boss, const String &name)
@@ -301,16 +298,6 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
-
-	Graphics::ManagedSurface *surf;
-	String path = String("./icons/placeholder.png");
-	surf = loadSurfaceFromFile(path);
-	if (surf) {
-		const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512));
-		_loadedSurfaces[String("placeholder")] = scSurf;
-		surf->free();
-		delete surf;
-	}
 }
 
 GridWidget::~GridWidget() {
@@ -326,7 +313,7 @@ const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name
 	
 	for (auto l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
 		if (l->thumbPath == name) {
-			return _loadedSurfaces.getValOrDefault(path, _loadedSurfaces["placeholder"]);
+			return _loadedSurfaces[path];
 		}
 	}
 	return nullptr;
@@ -389,6 +376,9 @@ void GridWidget::reloadThumbnails() {
 				_loadedSurfaces[path] = scSurf;
 				surf->free();
 				delete surf;
+			}
+			else {
+				_loadedSurfaces[path] = nullptr;
 			}
 		}
 	}
