@@ -300,6 +300,7 @@ public:
 
 	void passPalette(const byte *palette, uint size);
 	uint findBestColor(byte cr, byte cg, byte cb);
+	uint findBestColor(uint32 color);
 	void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
 
 	const byte *getPalette() { return _palette; }
