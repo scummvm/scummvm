@@ -165,6 +165,7 @@ public:
 	/// Update _visibleEntries from _allEntries and returns true if reload is required.
 	bool calcVisibleEntries();
 	void setEntryList(Common::Array<GridItemInfo> *list);
+	void setTitlesVisible(bool vis);
 	
 	void reloadThumbnails();
 	void loadFlagIcons();

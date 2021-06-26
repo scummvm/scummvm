@@ -70,6 +70,7 @@
 		<def var = 'GridItemThumbnail.Height' value = '192' scalable = 'no'/>
 		<def var = 'Grid.XSpacing' value = '40' scalable = 'no'/>
 		<def var = 'Grid.YSpacing' value = '30' scalable = 'no'/>
+		<def var = 'Grid.ShowTitles' value = '1' scalable = 'no'/>
 
 		<widget name = 'OptionsLabel'
 				size = '115, Globals.Line.Height'
