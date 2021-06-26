@@ -166,13 +166,13 @@ bool ComputerGump::nextChar() {
 		_paused = true;
 	} else {
 		const Common::String &curline = _textLines[_curTextLine];
-		if (curline[_charOff] == '*') {
+		if (_charOff < curline.size() && curline[_charOff] == '*') {
 			_nextCharTick += 10;
 			_charOff++;
 			return false;
 		}
 		_charOff++;
-		for (uint32 i = 0; i < _charOff; i++) {
+		for (uint32 i = 0; i < _charOff && i < curline.size(); i++) {
 			char next = curline[i];
 			if (next == '*')
 				display += ' ';
