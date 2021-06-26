@@ -377,7 +377,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 
 	_saveLoad->setPartComplete(_char.getBaseName());
 
-	cleanInventory();
+	cleanInventory(true);
 	cleanupGame();
 
 	_gfx->setPalette(_gfx->_palette);

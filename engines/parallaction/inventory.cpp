@@ -122,8 +122,14 @@ int16 Parallaction::getInventoryItemIndex(int16 pos) {
 	return _inventory->getItemName(pos);
 }
 
-void Parallaction::cleanInventory(bool keepVerbs) {
+void Parallaction_ns::cleanInventory(bool keepVerbs) {
 	_inventory->clear(keepVerbs);
+}
+
+void Parallaction_br::cleanInventory(bool keepVerbs) {
+	_dinoInventory->clear(keepVerbs);
+	_donnaInventory->clear(keepVerbs);
+	_dougInventory->clear(keepVerbs);
 }
 
 void Parallaction::openInventory() {
