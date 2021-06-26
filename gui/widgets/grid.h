@@ -37,7 +37,7 @@ class ScrollBarWidget;
 class GridItemWidget;
 class GridWidget;
 
-const Graphics::ManagedSurface *scaleGfx(Graphics::ManagedSurface *gfx, int w, int h);
+const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h);
 
 // TODO: Add more platforms
 enum Platform {
@@ -155,6 +155,7 @@ public:
 	
 	GridWidget(GuiObject *boss, int x, int y, int w, int h);
 	GridWidget(GuiObject *boss, const String &name);
+	~GridWidget();
 
 	const Graphics::ManagedSurface *filenameToSurface(const String &name);
 	const Graphics::ManagedSurface *languageToSurface(const String &lang);
