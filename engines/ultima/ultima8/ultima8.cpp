@@ -362,16 +362,16 @@ bool Ultima8Engine::startupGame() {
 	_gameData = new GameData(_gameInfo);
 
 	if (_gameInfo->_type == GameInfo::GAME_U8) {
-		_ucMachine = new UCMachine(U8Intrinsics, 256);
+		_ucMachine = new UCMachine(U8Intrinsics, ARRAYSIZE(U8Intrinsics));
 	} else if (_gameInfo->_type == GameInfo::GAME_REMORSE) {
 		if (_gameInfo->_ucOffVariant == GameInfo::GAME_UC_REM_DEMO)
-			_ucMachine = new UCMachine(RemorseDemoIntrinsics, 310);
+			_ucMachine = new UCMachine(RemorseDemoIntrinsics, ARRAYSIZE(RemorseDemoIntrinsics));
 		else if (_gameInfo->_ucOffVariant == GameInfo::GAME_UC_REM_ES)
-			_ucMachine = new UCMachine(RemorseEsIntrinsics, 309);
+			_ucMachine = new UCMachine(RemorseEsIntrinsics, ARRAYSIZE(RemorseEsIntrinsics));
 		else
-			_ucMachine = new UCMachine(RemorseIntrinsics, 311);
+			_ucMachine = new UCMachine(RemorseIntrinsics, ARRAYSIZE(RemorseIntrinsics));
 	} else if (_gameInfo->_type == GameInfo::GAME_REGRET) {
-		_ucMachine = new UCMachine(RegretIntrinsics, 350);
+		_ucMachine = new UCMachine(RegretIntrinsics, ARRAYSIZE(RegretIntrinsics));
 	} else {
 		CANT_HAPPEN_MSG("Invalid game type.");
 	}
