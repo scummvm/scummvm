@@ -546,7 +546,7 @@ void DropdownButtonWidget::drawWidget() {
 
 #pragma mark -
 
-const Graphics::ManagedSurface *scaleGfx(Graphics::ManagedSurface *gfx, int w, int h) {
+const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h) {
 	int nw = w, nh = h;
 
 	// Maintain aspect ratio
