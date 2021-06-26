@@ -885,7 +885,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ultrobot", 			"Isaac Asimov\'s The Ultimate Robot" },
 	{ "znemesis",			"Zork Nemesis: The Forbidden Lands" },
 
-	// Screensavers
+	// Screen Savers
 	{ "barbssbubbles",		"Barbie Screen Styler: Bubbles" },
 	{ "barbsskisses",		"Barbie Screen Styler: Kisses" },
 	{ "barbssshoes",		"Barbie Screen Styler: Shoes" },
@@ -911,9 +911,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "hoaddams2",			"Hollywood Online: Addams Family Values" },
 	{ "hoangus",			"Hollywood Online: Angus" },
 	{ "hodolores",			"Hollywood Online: Dolores Claiborne" },
-	{ "hothenet",			"Hollywood Online: The Net" },
 	{ "horobroy",			"Hollywood Online: Rob Roy: Legend of the Mist" },
 	{ "hostargate",			"Hollywood Online: Stargate" },
+	{ "hothenet",			"Hollywood Online: The Net" },
 	{ "leepipes",			"Lee Pipes Press Kit" },
 	{ "mulanpresskit",		"Mulan Multimedia Press Kit" },
 	{ "stalker",			"S.T.A.L.K.E.R.: Shadow of Chernobyl" },
@@ -1148,8 +1148,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is アニマルタウンデモ版
 	MACDEMO1_l("animaltown", "Demo", "Animal Town Demo Version", "f5277c53bacd27936158dd3867e587e2", 395177, Common::JA_JPN, 311),
 
-	WINDEMO1("msartgallery", "Demo", "ARTGDEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 370002, 310),
-
 	MACDEMO1_l("asylum300", "Demo", "ASYLUM 300 DEMO", "4c7fddccfe5ab2e9c6398efa5dbe37c1", 1038279, Common::JA_JPN, 313),
 
 	// Original filename is Babylon 5 Interactive/Mac
@@ -1194,7 +1192,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("chaos", "Demo", "Start CHAOS Demo", "f5277c53bacd27936158dd3867e587e2", 394939, Common::JA_JPN, 311),
 	WINGAME1("chaos", "", "CHAOS.EXE", "7c8230a804abf9353b05627a675b5ffb", 375294, 300),
 
-	// Each section is on a separate disk with its own projector.
+	// Each section is on a separate disk with its own projector
 	// https://www.youtube.com/watch?v=iDr0x22zRvs
 	MACGAME1("childishgambino", "", "Donald Glover - Cut 1", "1ae45c23586b41997ba52e2e7c771c4c", 827858, 310),
 
@@ -1447,6 +1445,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Demos from The Computer Buyer Collection Volume 1 - Sep 1995
 	WINDEMO1("msarcade",	   "Demo", "ARCADE.EXE",   "2b3543a9131a49f665982d26513a84f8", 1843614, 310),
+	WINDEMO1("msartgallery",   "Demo", "ARTGDEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 370002, 310),
 	WINDEMO1("msbaseball",	   "Demo", "BASEBALL.EXE", "2b3543a9131a49f665982d26513a84f8", 370013, 310),
 	WINDEMO1("msbasketball",   "Demo", "BASKET.EXE",   "2b3543a9131a49f665982d26513a84f8", 370014, 310),
 	WINDEMO1("msbhumanbody",   "Demo", "HUMAN.EXE",	   "2b3543a9131a49f665982d26513a84f8", 918807, 310),
@@ -1577,7 +1576,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("schoolworld", "Breed",	 "BREED.EXE",		 "7c8230a804abf9353b05627a675b5ffb", 375277, Common::JA_JPN, 310),
 
 	// Manual only. Full game is made in VB3 and contains unsupported content
-	WINGAME1("scissorsnstones", "", "MANUAL.EXE", "12345", 12345, 310),
+	WINGAME1("scissorsnstones", "", "MANUAL.EXE", "7c8230a804abf9353b05627a675b5ffb", 2494292, 310),
 
 	// Full game was never released
 	MACDEMO1("screamingmetal", "v1.0 Demo", "Screaming Metal Demo", "0a280df213c5bf3eca241f37151e1d56", 373190, 310),
@@ -2407,7 +2406,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Demo executable name is ににんがしデモ
 	// Full version executable name is ににんがし
 	// There are also projectors to play audio in 11kHz or for systems with 4MB RAM
-	MACGAME1_l("niningashi", "", "Niningashi", "0666ae690e459d3d0d91800ebd94de46", 290682, Common::JA_JPN, 402),
+	MACGAME1_l("niningashi", "",	 "Niningashi",		"0666ae690e459d3d0d91800ebd94de46", 290682, Common::JA_JPN, 402),
 	MACDEMO1_l("niningashi", "Demo", "Niningashi Demo", "0666ae690e459d3d0d91800ebd94de46", 290682, Common::JA_JPN, 402),
 	WINDEMO2_l("niningashi", "Demo", "S.EXE",			"0c8a24a885123f20992c0c74d8c5062c", 768683,
 									 "MAIN.DXR",		"8af3de22d679eb4e192429ca682bb974", 1119286, Common::JA_JPN, 404),
@@ -3750,8 +3749,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// https://web.archive.org/web/20060208235824/http://billetrille.savannah.dk/dtpages.php3?page_id=208&lang=english
 	MACDEMO1_l("billetrille2", "Demo", "VilleLilli2Demo", "4ea5fc09f79eee6dded94dc40f303779", 196171, Common::FI_FIN, 800),
 
-	WINGAME2("bobmambo5", "Enhanced CD", "START.EXE", "e24d4bab978b1a5c2326d2c56cf4d781", 6980680,
-										 "MAMBO.MOV", "990db0c7187621250dfca0a55996538e", 39868175, 800),
+	WINGAME2("bobmambo5", "ECD", "START.EXE", "e24d4bab978b1a5c2326d2c56cf4d781", 6980680,
+								 "MAMBO.MOV", "990db0c7187621250dfca0a55996538e", 39868175, 800),
 
 	MACGAME1("cmi", "CM38/10/01", "CMi_38_Mac", "f065c75691d28120e9f630448c3b1b71", 1225735, 800),
 	WINGAME1("cmi", "CM38/10/01", "CMi_38_Win.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2514361, 800),
