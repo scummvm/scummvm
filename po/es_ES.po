@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-26 18:39+0000\n"
-"PO-Revision-Date: 2021-06-26 14:26+0000\n"
+"PO-Revision-Date: 2021-06-26 21:01+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7688,16 +7688,12 @@ msgstr ""
 "compilación."
 
 #: engines/wintermute/wintermute.cpp:182
-#, fuzzy
-#| msgid ""
-#| "This game requires 3D capabilities that are out ScummVM scope. As such, "
-#| "it is likely to be unplayable totally or partially."
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
-"Este juego requiere unas funciones 3D que no entran en el ámbito de ScummVM, "
-"así que probablemente no será jugable en su totalidad o parcialmente."
+"Este juego requiere unas funciones 3D que no están incluidas en esta "
+"compilación. Es probable que no sea jugable en su totalidad o parcialmente."
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
