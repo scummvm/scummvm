@@ -498,7 +498,7 @@ void ScriptInterpreter::execScriptFunction(uint16 index) {
 }
 
 int16 ScriptInterpreter::getGameVar(uint variable) {
-	if(variable > 21)
+	if (variable > 21)
 		debug(2, "ScriptInterpreter::getGameVar(%d)", variable);
 	else
 		debug(2, "ScriptInterpreter::getGameVar(%d{%s})", variable, varNames[variable]);
