@@ -110,6 +110,8 @@ void GridItemWidget::drawWidget() {
 
 void GridItemWidget::handleMouseWheel(int x, int y, int direction) {
 	_grid->handleMouseWheel(x, y, direction);
+	_grid->_selectedEntry = nullptr;
+	isHighlighted = false;
 }
 
 void GridItemWidget::handleMouseEntered(int button) {
@@ -117,6 +119,7 @@ void GridItemWidget::handleMouseEntered(int button) {
 		_grid->_selectedEntry = _activeEntry;
 		isHighlighted = true;
 		markAsDirty();
+		draw();
 	}
 }
 
@@ -125,6 +128,7 @@ void GridItemWidget::handleMouseLeft(int button) {
 		_grid->_selectedEntry = nullptr;
 		isHighlighted = false;
 		markAsDirty();
+		draw();
 	}
 }
 
