@@ -186,6 +186,7 @@ public:
 	void setColors(uint32 fg, uint32 bg) override;
 	// set fgcolor for line x
 	void setTextColor(uint32 color, uint32 line);
+	void setTextColor(uint32 color, uint32 start, uint32 end);
 
 	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendText(const Common::String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
@@ -220,6 +221,7 @@ public:
 	void addNewLine(int *row, int *col);
 	void insertChar(byte c, int *row, int *col);
 
+	void getChunkPosFromIndex(int index, uint &lineNum, uint &chunkNum, uint &offset);
 	void getRowCol(int x, int y, int *sx, int *sy, int *row, int *col);
 	Common::U32String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
