@@ -134,8 +134,18 @@ void Parallaction::closeInventory() {
 	_inventoryRenderer->hideInventory();
 }
 
-
-
+Inventory *Parallaction_br::findInventory(const char *name) {
+	if (!scumm_stricmp(name, "dino")) {
+		return _dinoInventory;
+	}
+	if (!scumm_stricmp(name, "donna")) {
+		return _donnaInventory;
+	}
+	if (!scumm_stricmp(name, "doug")) {
+		return _dougInventory;
+	}
+	return 0;
+}
 
 InventoryRenderer::InventoryRenderer(Parallaction *vm, InventoryProperties *props) : _vm(vm), _props(props) {
 	_surf.create(_props->_width, _props->_height, Graphics::PixelFormat::createFormatCLUT8());
