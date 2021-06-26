@@ -781,10 +781,6 @@ void bw_close(void) {
 	writeclose(bfile, bw_fileid);
 }
 
-void bw_abort(void) {
-	binremove(bfile, bw_fileid);
-}
-
 
 /*-------------------------------------------------------------------------*/
 /* Block reading and writing code and support for internal buffers         */
