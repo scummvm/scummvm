@@ -351,6 +351,28 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOLAUNCHLOAD)
 	},
 
+	// English Windows Demo 8BPP
+	{
+		"buried",
+		"Demo 8BPP",
+		AD_ENTRY1s("BIT816.EXE", "5535fd50e504537ab08066a89df1b6de", 1259040),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		GUIO1(GUIO_NOLAUNCHLOAD)
+	},
+
+	// English Windows Demo 24BPP
+	{
+		"buried",
+		"Demo 24BPP",
+		AD_ENTRY1s("BIT2416.EXE", "53c520eb7c977fb1c2bb235e2a517b85", 2816256),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | GF_TRUECOLOR,
+		GUIO1(GUIO_NOLAUNCHLOAD)
+	},
+
 	// English Windows 3.11 Trial 8BPP
 	// v1.1
 	{
