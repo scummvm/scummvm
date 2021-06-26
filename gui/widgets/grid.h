@@ -126,6 +126,7 @@ protected:
 
 	ScrollBarWidget *_scrollBar;
 
+	int 			_scrollBarWidth;
 	int				_scrollWindowHeight;
 	int				_scrollWindowWidth;
 	int				_scrollSpeed;
