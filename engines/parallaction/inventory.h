@@ -98,8 +98,10 @@ protected:
 	void refresh();
 
 public:
-	InventoryRenderer(Parallaction *vm, InventoryProperties *props, Inventory *inv);
+	InventoryRenderer(Parallaction *vm, InventoryProperties *props);
 	virtual ~InventoryRenderer();
+
+	void setInventory(Inventory *inventory);
 
 	void showInventory();
 	void hideInventory();
