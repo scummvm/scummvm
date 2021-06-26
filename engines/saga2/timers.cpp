@@ -269,8 +269,8 @@ void cleanupTimers(void) {
  * ===================================================================== */
 
 TimerList::TimerList(GameObject *o) : _obj(o) {
-	debugC(1, kDebugTimers, "Creating timer list %p (obj %p)",
-		   (void *)this, (void *)o);
+	debugC(1, kDebugTimers, "Creating timer list %p for %p (%s)",
+		   (void *)this, (void *)o, o->objName());
 	g_vm->_timerLists.push_back(this);
 }
 
@@ -290,8 +290,8 @@ TimerList::TimerList(void **buf) {
 }
 
 TimerList::~TimerList() {
-	debugC(1, kDebugTimers, "Deleting timer list %p (obj %p)",
-		   (void *)this, (void *)_obj);
+	debugC(1, kDebugTimers, "Deleting timer list %p for %p (%s))",
+		   (void *)this, (void *)_obj, _obj->objName());
 	g_vm->_timerLists.remove(this);
 }
 
