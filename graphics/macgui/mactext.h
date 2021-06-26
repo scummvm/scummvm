@@ -183,6 +183,10 @@ public:
 	virtual void setActive(bool active) override;
 	void setEditable(bool editable);
 
+	void setColors(uint32 fg, uint32 bg) override;
+	// set fgcolor for line x
+	void setTextColor(uint32 color, uint32 line);
+
 	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendText(const Common::String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
