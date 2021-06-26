@@ -42,6 +42,7 @@
 		<def var = 'ShowLauncherLogo' value = '1'/>
 		<def var = 'ShowGlobalMenuLogo' value = '1'/>
 		<def var = 'ShowSearchPic' value = '1'/>
+		<def var = 'LibraryDisplayType' value = '1'/>
 
 		<def var = 'ShowChooserPics' value = '1'/>
 		<def var = 'ShowChooserPageDisplay' value = '1'/>
@@ -144,57 +145,56 @@
 					height = '80'
 					rtl = 'no'
 			/>
-			<layout type = 'vertical' align = 'stretch' padding = '0, 0, 0, 0'>
-				<layout type = 'horizontal' spacing = '5' padding = '10, 0, 0, 0'>
-					<widget name = 'SearchPic'
-							width = '16'
-							height = '17'
-							rtl = 'no'
-					/>
-					<widget name = 'Search'
-							width = '150'
-							height = 'Globals.Line.Height'
-					/>
-					<widget name = 'SearchClearButton'
-							height = 'Globals.Line.Height'
-							width = 'Globals.Line.Height'
-					/>
-					<space />
-					<widget name = 'Version'
-							width = '310'
-							height = 'Globals.Line.Height'
-							textalign = 'center'
-					/>
-					<space />
-					<widget name = 'LoadGameButton'
-							type = 'Button'
-					/>
-					<widget name = 'AddGameButton'
-							type = 'Button'
-					/>
-					<widget name = 'RemoveGameButton'
-							type = 'Button'
-					/>	
-					<widget name = 'OptionsButton'
-							type = 'Button'
-					/>
-					<widget name = 'AboutButton'
-							type = 'Button'
-					/>
-					<widget name = 'QuitButton'
-							type = 'Button'
-					/>
-				</layout>
-				<layout type = 'horizontal' spacing = '5' padding = '10, 0, 0, 0'>
-					<widget name = 'GameList'
-						width = '200'
-					/>
-					<widget name = 'IconArea'/>
-					<!-- <widget name = 'Thumbnail'
-						width = '180'
-						height = '155'
-					/> -->
-				</layout>
+			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
+				<widget name = 'SearchPic'
+						width = '16'
+						height = '17'
+						rtl = 'no'
+				/>
+				<widget name = 'Search'
+						width = '150'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'SearchClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
+				<space />
+				<widget name = 'Version'
+						width = '310'
+						height = 'Globals.Line.Height'
+						textalign = 'center'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
+				<widget name = 'AddGameButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'RemoveGameButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'LoadGameButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'OptionsButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'AboutButton'
+						height = 'Globals.Button.Height'
+				/>
+				<widget name = 'QuitButton'
+						height = 'Globals.Button.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
+				<widget name = 'GameList'
+					width = '200'
+				/>
+				<widget name = 'IconArea'/>
+				<!-- <widget name = 'Thumbnail'
+					width = '180'
+					height = '155'
+				/> -->
 			</layout>
 		</layout>
 	</dialog>

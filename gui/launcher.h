@@ -62,7 +62,7 @@ public:
 	Common::String getGameConfig(int item, Common::String key);
 protected:
 	EditTextWidget  *_searchWidget;
-	GridWidget	*_grid;
+	GridWidget		*_grid;
 	ListWidget		*_list;
 	Widget			*_startButton;
 	ButtonWidget	*_loadButton;
@@ -79,6 +79,7 @@ protected:
 	SaveLoadChooser	*_loadDialog;
 
 	String _search;
+	int _libraryDisplay;
 
 	void reflowLayout() override;
 

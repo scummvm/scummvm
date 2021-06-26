@@ -98,14 +98,14 @@ bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, C
 		token = token.substr(1);
 		invert = !invert;
 	}
-	
+
 	bool result = false;
 	Common::String token8 = token;
 	size_t pos = token8.findFirstOf(":=~");
 	if (pos != token8.npos) {
 		Common::String key = token8.substr(0, token8.findFirstOf(token8[pos]));
 		Common::String filter = token8.substr(token8.findFirstOf(token8[pos]) + 1);
-	
+
 		if (key.size()) {
 			if (Common::String("description").hasPrefix(key)) {
 				key = "description";
@@ -121,7 +121,7 @@ bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, C
 				key = "platform";
 			}
 		}
-	
+
 		LauncherDialog *launcher = (LauncherDialog *)(boss);
 		Common::String data = launcher->getGameConfig(idx, key);
 		data.toLowercase();
@@ -136,7 +136,7 @@ bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, C
 	} else {
 		result = item.contains(token);
 	}
-	
+
 	return invert ? !result : result;
 }
 
@@ -144,7 +144,6 @@ LauncherDialog::LauncherDialog()
 	: Dialog("Launcher") {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
-	_grid = new GridWidget(this, "Launcher.IconArea");
 	build();
 
 	GUI::GuiManager::instance()._launched = true;
@@ -169,8 +168,19 @@ LauncherDialog::~LauncherDialog() {
 }
 
 void LauncherDialog::build() {
+	_grid = nullptr;
 #ifndef DISABLE_FANCY_THEMES
 	_logo = nullptr;
+
+	// or doesn't exist
+	if (g_gui.theme()->supportsImages()) {
+		// 0 = list only, 1 = grid + list, 2 = grid only
+		if (g_gui.xmlEval()->getVar("Globals.LibraryDisplayType") > 0) {
+			_libraryDisplay = g_gui.xmlEval()->getVar("Globals.LibraryDisplayType");
+			_grid = new GridWidget(this, "Launcher.IconArea");
+		}
+	}
+
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
@@ -226,15 +236,18 @@ void LauncherDialog::build() {
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
 	// Add list with game titles
-	_list = new ListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
-	_list->setEditable(false);
-	_list->enableDictionarySelect(true);
-	_list->setNumberingMode(kListNumberingOff);
-	_list->setFilterMatcher(LauncherFilterMatcher, this);
+	_list = nullptr;
+	if (g_gui.xmlEval()->getVar("Globals.LibraryDisplayType") < 2 || !g_gui.theme()->supportsImages()) {
+		_list = new ListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
+		_list->setEditable(false);
+		_list->enableDictionarySelect(true);
+		_list->setNumberingMode(kListNumberingOff);
+		_list->setFilterMatcher(LauncherFilterMatcher, this);
+	}
 
 	// Populate the list
 	updateListing();
-	
+
 	// Restore last selection
 	String last(ConfMan.get("lastselectedgame", ConfigManager::kApplicationDomain));
 	selectTarget(last);
@@ -283,11 +296,15 @@ void LauncherDialog::open() {
 
 void LauncherDialog::close() {
 	// Save last selection
-	const int sel = _list->getSelected();
-	if (sel >= 0)
-		ConfMan.set("lastselectedgame", _domains[sel], ConfigManager::kApplicationDomain);
-	else
+	if (_list) 	{
+		const int sel = _list->getSelected();
+		if (sel >= 0)
+			ConfMan.set("lastselectedgame", _domains[sel], ConfigManager::kApplicationDomain);
+		else
+			ConfMan.removeKey("lastselectedgame", ConfigManager::kApplicationDomain);
+	} else {
 		ConfMan.removeKey("lastselectedgame", ConfigManager::kApplicationDomain);
+	}
 
 	ConfMan.flushToDisk();
 	Dialog::close();
@@ -371,7 +388,8 @@ void LauncherDialog::updateListing() {
 		gridList.push_back(GridItemInfo(k++, engineid, gameid, title, language, platform));
 	}
 
-	_grid->setEntryList(&gridList);
+	if (_grid)
+		_grid->setEntryList(&gridList);
 
 	// And fill out our structures
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
@@ -393,19 +411,20 @@ void LauncherDialog::updateListing() {
 		colors.push_back(color);
 		_domains.push_back(iter->key);
 	}
+	if (_list) {
+		const int oldSel = _list->getSelected();
+		_list->setList(l, &colors);
+		if (oldSel < (int)l.size())
+			_list->setSelected(oldSel);	// Restore the old selection
+		else if (oldSel != -1)
+			// Select the last entry if the list has been reduced
+			_list->setSelected(_list->getList().size() - 1);
+		updateButtons();
 
-	const int oldSel = _list->getSelected();
-	_list->setList(l, &colors);
-	if (oldSel < (int)l.size())
-		_list->setSelected(oldSel);	// Restore the old selection
-	else if (oldSel != -1)
-		// Select the last entry if the list has been reduced
-		_list->setSelected(_list->getList().size() - 1);
-	updateButtons();
-
-	// Update the filter settings, those are lost when "setList"
-	// is called.
-	_list->setFilter(_searchWidget->getEditString());
+		// Update the filter settings, those are lost when "setList"
+		// is called.
+		_list->setFilter(_searchWidget->getEditString());
+	}
 }
 
 void LauncherDialog::addGame() {
@@ -594,8 +613,13 @@ void LauncherDialog::handleKeyDown(Common::KeyState state) {
 	if (state.keycode == Common::KEYCODE_TAB) {
 		// Toggle between the game list and the quick search field.
 		if (getFocusWidget() == _searchWidget) {
-			setFocusWidget(_list);
+			if (_list)
+				setFocusWidget(_list);
+			else if (_grid)
+				setFocusWidget(_grid);
 		} else if (getFocusWidget() == _list) {
+			setFocusWidget(_searchWidget);
+		} else if (getFocusWidget() == _grid) {
 			setFocusWidget(_searchWidget);
 		}
 	}
@@ -716,8 +740,10 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 }
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	int item = _list->getSelected();
-	if (data) {
+	int item = 0;
+	if (_list)
+		item = _list->getSelected();
+	if (_grid) {
 		item = data;
 	}
 
@@ -773,12 +799,14 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kSearchCmd:
 		// Update the active search filter.
-		_list->setFilter(_searchWidget->getEditString());
+		if (_list)
+			_list->setFilter(_searchWidget->getEditString());
 		break;
 	case kSearchClearCmd:
 		// Reset the active search filter, thus showing all games again
 		_searchWidget->setEditString(Common::U32String());
-		_list->setFilter(Common::U32String());
+		if (_list)
+			_list->setFilter(Common::U32String());
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -786,13 +814,17 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void LauncherDialog::updateButtons() {
-	bool enable = (_list->getSelected() >= 0);
+	bool enable = false;
+	if (_list)
+		enable = (_list->getSelected() >= 0);
 	if (enable != _removeButton->isEnabled()) {
 		_removeButton->setEnabled(enable);
 		_removeButton->markAsDirty();
 	}
 
-	int item = _list->getSelected();
+	int item = 0;
+	if (_list)
+		item = _list->getSelected();
 	bool en = enable;
 
 	if (item >= 0)
@@ -806,6 +838,20 @@ void LauncherDialog::updateButtons() {
 
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
+	if (g_gui.theme()->supportsImages()) {
+		// 0 = list only, 1 = grid + list, 2 = grid only
+		int newLibraryDisplay = g_gui.xmlEval()->getVar("Globals.LibraryDisplayType");
+
+		if ((_libraryDisplay != newLibraryDisplay) && (newLibraryDisplay > 0)) {
+			_libraryDisplay = newLibraryDisplay;
+			removeWidget(_grid);
+			delete _grid;
+			_grid = nullptr;
+			_grid = new GridWidget(this, "Launcher.IconArea");
+			updateListing();
+		}
+	}
+
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
@@ -861,9 +907,22 @@ void LauncherDialog::reflowLayout() {
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 #endif
 
+	if ((g_gui.xmlEval()->getVar("Globals.LibraryDisplayType") > 1) && (_list)) {
+		removeWidget(_list);
+		_list = nullptr;
+	}
+	if ((g_gui.xmlEval()->getVar("Globals.LibraryDisplayType") < 2) && (!_list)) {
+		_list = new ListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
+		_list->setEditable(false);
+		_list->enableDictionarySelect(true);
+		_list->setNumberingMode(kListNumberingOff);
+
+		updateListing();
+	}
+
 	_w = g_system->getOverlayWidth();
 	_h = g_system->getOverlayHeight();
-	
+
 	Dialog::reflowLayout();
 }
 
