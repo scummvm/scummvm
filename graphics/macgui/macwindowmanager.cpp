@@ -1165,6 +1165,12 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 	setFullRefresh(true);
 }
 
+uint MacWindowManager::findBestColor(uint32 color) {
+	byte r, g, b;
+	decomposeColor(color, r, g, b);
+	return findBestColor(r, g, b);
+}
+
 uint MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
 	if (_pixelformat.bytesPerPixel == 4)
 		return _pixelformat.RGBToColor(cr, cg, cb);
