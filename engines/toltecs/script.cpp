@@ -533,7 +533,7 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 }
 
 void ScriptInterpreter::setGameVar(uint variable, int16 value) {
-	if(variable > 21)
+	if (variable > 21)
 		debug(2, "ScriptInterpreter::setGameVar(%d, %d)", variable, value);
 	else
 		debug(2, "ScriptInterpreter::setGameVar(%d{%s}, %d)", variable, varNames[variable], value);
