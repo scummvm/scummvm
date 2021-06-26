@@ -578,8 +578,16 @@ void GridWidget::reflowLayout() {
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
 	
+	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
+	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
+	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
+	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+
 	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	
+	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
+	_gridItemWidth = _thumbnailWidth;
+
 	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
 	_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
 	
