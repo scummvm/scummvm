@@ -208,12 +208,19 @@ bool Channel::isMatteIntersect(Channel *channel) {
 	Common::Rect yourBbox = channel->getBbox();
 	Common::Rect intersectRect = myBbox.findIntersectingRect(yourBbox);
 
-	if (intersectRect.isEmpty() || !_sprite->_cast || _sprite->_cast->_type != kCastBitmap ||
-			!channel->_sprite->_cast || channel->_sprite->_cast->_type != kCastBitmap)
+	if (!myBbox.contains(yourBbox))
 		return false;
+	Graphics::Surface *myMatte = nullptr;
+	Graphics::Surface *yourMatte = nullptr;
 
-	Graphics::Surface *myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
-	Graphics::Surface *yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte();
+	if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap)
+		myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
+	if (channel->_sprite->_cast && channel->_sprite->_cast->_type == kCastBitmap)
+		yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte();
+	if (_sprite->isQDShape())
+		myMatte = _sprite->getQDMatte();
+	if (channel->_sprite->isQDShape())
+		yourMatte = channel->_sprite->getQDMatte();
 
 	if (myMatte && yourMatte) {
 		for (int i = intersectRect.top; i < intersectRect.bottom; i++) {
@@ -229,17 +236,25 @@ bool Channel::isMatteIntersect(Channel *channel) {
 	return false;
 }
 
+// this contains channel. i.e. myBox contain yourBox
 bool Channel::isMatteWithin(Channel *channel) {
 	Common::Rect myBbox = getBbox();
 	Common::Rect yourBbox = channel->getBbox();
 	Common::Rect intersectRect = myBbox.findIntersectingRect(yourBbox);
 
-	if (!myBbox.contains(yourBbox) || !_sprite->_cast || _sprite->_cast->_type != kCastBitmap ||
-			!channel->_sprite->_cast || channel->_sprite->_cast->_type != kCastBitmap)
+	if (!myBbox.contains(yourBbox))
 		return false;
+	Graphics::Surface *myMatte = nullptr;
+	Graphics::Surface *yourMatte = nullptr;
 
-	Graphics::Surface *myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
-	Graphics::Surface *yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte();
+	if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap)
+		myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
+	if (channel->_sprite->_cast && channel->_sprite->_cast->_type == kCastBitmap)
+		yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte();
+	if (_sprite->isQDShape())
+		myMatte = _sprite->getQDMatte();
+	if (channel->_sprite->isQDShape())
+		yourMatte = channel->_sprite->getQDMatte();
 
 	if (myMatte && yourMatte) {
 		for (int i = intersectRect.top; i < intersectRect.bottom; i++) {
