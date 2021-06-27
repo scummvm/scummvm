@@ -92,6 +92,19 @@ gPanel::gPanel(gPanelList &list, const Rect16 &box,
 	id = ident;
 }
 
+gPanel::gPanel(gPanelList &list, const StaticRect &box,
+               const char *newTitle, uint16 ident, AppFunc *cmd)
+	: window(list.window) {
+	title = newTitle;
+	extent = Rect16(box);
+	enabled = 1;
+	ghosted = 0;
+	selected = 0;
+	imageLabel = 0;
+	command = cmd;
+	id = ident;
+}
+
 //  Dummy virtual functions
 
 gPanel::~gPanel() {
@@ -609,6 +622,15 @@ gControl::gControl(gPanelList &list, const Rect16 &box, gPixelMap &img, uint16 i
 
 gControl::~gControl() {
 	remove();
+}
+
+gControl::gControl(gPanelList &list, const StaticRect &box, const char *title_, uint16 ident,
+                   AppFunc *cmd) : gPanel(list, box, title_, ident, cmd) {
+	accelKey = 0;
+
+	//  Add control to the window's control list.
+
+	list.contents.addTail(*this);
 }
 
 void gControl::enable(bool abled) {

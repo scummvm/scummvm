@@ -179,6 +179,25 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void **images,
 #endif
 }
 
+gCompImage::gCompImage(gPanelList &list, const StaticRect &box, void **images,
+                       int16 numRes, int16 initial, const char *text, textPallete &pal,
+                       uint16 ident, AppFunc *cmd) : gControl(list, box, text, ident, cmd) {
+	init();
+
+	if (images) {
+		compImages = images;
+
+		// set up limits
+		max          = numRes - 1;
+		currentImage = clamp(min, initial, max);
+	}
+
+	title    = text;
+	textFont = &Onyx10Font;  // >>> this should be dynamic
+	textPal  = pal;
+}
+
+
 gCompImage::~gCompImage(void) {
 	// delete any allocated image pointers
 	// for JEFFL: I took out the winklude #ifdefs becuase I belive
@@ -478,6 +497,21 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void *image, uint1
 	extent          = box;
 }
 
+gCompButton::gCompButton(gPanelList &list, const StaticRect &box, void **images, int16 numRes, const char *text, textPallete &pal, uint16 ident, AppFunc *cmd) : gCompImage(list, box, NULL, 0, 0, text, pal, ident, cmd) {
+	if (images[0] && images[1] && numRes == 2) {
+		forImage = images[0];
+		resImage = images[1];
+		dimImage = nullptr;
+	} else {
+		forImage = nullptr;
+		resImage = nullptr;
+		dimImage = nullptr;
+	}
+
+	internalAlloc = false;
+	dimmed        = false;
+	extent        = box;
+}
 
 gCompButton::~gCompButton(void) {
 	if (internalAlloc) {
