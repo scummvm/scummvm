@@ -222,7 +222,7 @@ Direction CruPathfinderProcess::nextDirFromPoint(struct Point3 &npcpt) {
 		state._combat = npc->isInCombat();
 		animresult = npc->tryAnim(anim, _nextDir2, 0, &state);
 
-		if (_solidObject && animresult == Animation::FAILURE) {
+		if (_solidObject && (animresult == Animation::SUCCESS)) {
 			_turnAtEnd = true;
 			return dir_invalid;
 		}
@@ -282,6 +282,7 @@ void CruPathfinderProcess::run() {
 		return;
 	}
 
+	// Update target location if tracking to an item
 	if (_targetItem != 0 && _solidObject) {
 		Item *target = getItem(_targetItem);
 		if (target)
