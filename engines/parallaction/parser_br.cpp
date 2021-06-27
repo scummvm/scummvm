@@ -653,7 +653,7 @@ DECLARE_COMMAND_PARSER(give)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->_object = 4 + atoi(_tokens[1]);
+	ctxt.cmd->_object = 4 + _vm->_objectsNames->lookup(_tokens[1]);
 	ctxt.nextToken++;
 
 	if (!scumm_stricmp("dino", _tokens[2])) {
