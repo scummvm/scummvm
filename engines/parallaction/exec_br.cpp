@@ -284,12 +284,12 @@ DECLARE_COMMAND_OPCODE(swap) {
 	AnimationPtr newCharacterAnimation = _vm->_location.findAnimation(newCharacterName);
 	AnimationPtr oldCharaterAnimation = _vm->_char._ani;
 
-	strlcpy(oldCharaterAnimation->_name, _vm->_char.getName(), ZONENAME_LENGTH);
+	Common::strlcpy(oldCharaterAnimation->_name, _vm->_char.getName(), ZONENAME_LENGTH);
 	_vm->_char.setName(newCharacterName);
 
 	_vm->_char._ani = newCharacterAnimation;
 	_vm->_char._talk = _vm->_disk->loadTalk(newCharacterName);
-	strlcpy(_vm->_char._ani->_name, "yourself", ZONENAME_LENGTH);
+	Common::strlcpy(_vm->_char._ani->_name, "yourself", ZONENAME_LENGTH);
 
 	_vm->linkUnlinkedZoneAnimations();
 
