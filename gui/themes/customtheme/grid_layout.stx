@@ -42,7 +42,7 @@
 		<def var = 'ShowLauncherLogo' value = '1'/>
 		<def var = 'ShowGlobalMenuLogo' value = '1'/>
 		<def var = 'ShowSearchPic' value = '1'/>
-		<def var = 'LibraryDisplayType' value = '1'/>
+		<def var = 'LibraryDisplayType' value = '2'/>
 
 		<def var = 'ShowChooserPics' value = '1'/>
 		<def var = 'ShowChooserPageDisplay' value = '1'/>
