@@ -51,6 +51,11 @@ void SceneScriptHF01::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(2, 560, 231, 639, 360, 0);
 		if (Game_Flag_Query(kFlagSpinnerAtHF01)) {
 			Scene_Exit_Add_2D_Exit(3, 0, 311, 66, 417, 2);
+			if (_vm->_cutContent) {
+				// improve hotspot for Spinner in HF01
+				Scene_Exit_Add_2D_Exit(4,  66, 335, 140, 410, 2);
+				Scene_Exit_Add_2D_Exit(5, 140, 350, 230, 390, 2);
+			}
 		}
 	}
 
@@ -210,7 +215,8 @@ bool SceneScriptHF01::ClickedOnExit(int exitId) {
 		return true;
 	}
 
-	if (exitId == 3) {
+	if (exitId == 3
+	    || (_vm->_cutContent && (exitId == 4 || exitId == 5))) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 0.0f, -260.0f, 0, true, false, false)) {
 			Game_Flag_Reset(kFlagMcCoyInChinaTown);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
