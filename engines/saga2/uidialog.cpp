@@ -136,22 +136,22 @@ enum messageImageResIDs {
 
 // Save/Load dialog metrics
 
-const   int numSaveLoadPanels   = 3;
-const   int numSaveLoadBtns     = 4;
-const   int numSaveLoadTexts    = 1;
+const int kNumSaveLoadPanels   = 3;
+const int kNumSaveLoadBtns     = 4;
+const int kNumSaveLoadTexts    = 1;
 
-const   int16       SLDBoxXSize = 374,
-                    SLDBoxXSzNS = 366,
-                    SLDBoxYSize = 223,
-                    SLDBoxX     = (640 - SLDBoxXSize) / 2,
-                    SLDBoxY     = (480 - SLDBoxYSize) / 3;
+const int16 SLDBoxXSize = 374,
+            SLDBoxXSzNS = 366,
+            SLDBoxYSize = 223,
+            SLDBoxX     = (640 - SLDBoxXSize) / 2,
+            SLDBoxY     = (480 - SLDBoxYSize) / 3;
 
-const   int16       SLTPHeight = 38;
-const   int16       SLMDHeight = 122;
-const   int16       SLBTHeight = 63;
-const   int16       SLTPWidth  = 374;
-const   int16       SLMDWidth  = 374;
-const   int16       SLBTWidth  = 374;
+const int16 SLTPHeight = 38;
+const int16 SLMDHeight = 122;
+const int16 SLBTHeight = 63;
+const int16 SLTPWidth  = 374;
+const int16 SLMDWidth  = 374;
+const int16 SLBTWidth  = 374;
 
 
 
@@ -211,24 +211,24 @@ Rect16  saveLoadWindowRect =    Rect16(SLDBoxX,
 
 // indirections
 
-Rect16  saveLoadPanelRects[numSaveLoadPanels] = { { SLTopPanel },
+Rect16  saveLoadPanelRects[kNumSaveLoadPanels] = { { SLTopPanel },
 	{ SLMidPanel },
 	{ SLBotPanel }
 };
 
-Rect16  saveLoadButtonRects[numSaveLoadBtns]  = { { SLQuitBtnRect },
+Rect16  saveLoadButtonRects[kNumSaveLoadBtns]  = { { SLQuitBtnRect },
 	{ SLBtnRect     },
 	{ SLUpArrowBtnRect },
 	{ SLDnArrowBtnRect }
 };
 
-Rect16  saveLoadTextRects[numSaveLoadTexts]   = { { SLTitleRect } };
+Rect16  saveLoadTextRects[kNumSaveLoadTexts]   = { { SLTitleRect } };
 
 
 
 // save/load dialog window decorations
 
-WindowDecoration saveWindowDecorations[numSaveLoadPanels] =
+WindowDecoration saveWindowDecorations[kNumSaveLoadPanels] =
 
 {	{ WindowDecoration(saveLoadPanelRects[0], SLTopPanelResID) },
 	{ WindowDecoration(saveLoadPanelRects[1], SLMidPanelResID) },
@@ -238,9 +238,9 @@ WindowDecoration saveWindowDecorations[numSaveLoadPanels] =
 
 // Options dialog metrics
 
-const   int numOptionsPanels    = 3;
-const   int numOptionsBtns      = 9;
-const   int numOptionsTexts     = 8;
+const   int kNumOptionsPanels    = 3;
+const   int kNumOptionsBtns      = 9;
+const   int kNumOptionsTexts     = 8;
 
 
 const   int16       optBoxXSize = 487,
@@ -277,53 +277,53 @@ Rect16  optBotPanel(optBoxX,
 
 
 // buttons
-const   int buttonSpace         =   3;
-const   int buttonYOffset       =   optTPHeight + 7;
-const   int pushButtonWidth     =   121;
-const   int pushButtonHeight    =   30;
+const   int kButtonSpace         =   3;
+const   int kButtonYOffset       =   optTPHeight + 7;
+const   int kPushButtonWidth     =   121;
+const   int kPushButtonHeight    =   30;
 
-const   int sliderWidth         =   168;
+const   int kSliderWidth         =   168;
 //const   int sliderHeight        =   15;
-const   int imageHeight         =   17;
+const   int kImageHeight         =   17;
 
-const   int textPixelLen        =   175;
-const   int smallTextOffset     =    80;
+const   int kTextPixelLen        =   175;
+const   int kSmallTextOffset     =    80;
 
 static const StaticRect optResumeRect = {
-	optBoxXSzNS - (pushButtonWidth + 14),
-	buttonYOffset + buttonSpace,
-	pushButtonWidth,
-	pushButtonHeight
+	optBoxXSzNS - (kPushButtonWidth + 14),
+	kButtonYOffset + kButtonSpace,
+	kPushButtonWidth,
+	kPushButtonHeight
 };
 
 static const StaticRect optSaveRect = {
-	optBoxXSzNS - (pushButtonWidth + 14),
-	buttonYOffset + ((pushButtonHeight * 1) + buttonSpace * 2),
-	pushButtonWidth,
-	pushButtonHeight
+	optBoxXSzNS - (kPushButtonWidth + 14),
+	kButtonYOffset + ((kPushButtonHeight * 1) + kButtonSpace * 2),
+	kPushButtonWidth,
+	kPushButtonHeight
 };
 
 
 
 static const StaticRect optRestoreRect = {
-	optBoxXSzNS - (pushButtonWidth + 14),
-	buttonYOffset + ((pushButtonHeight * 2) + buttonSpace * 3),
-	pushButtonWidth,
-	pushButtonHeight
+	optBoxXSzNS - (kPushButtonWidth + 14),
+	kButtonYOffset + ((kPushButtonHeight * 2) + kButtonSpace * 3),
+	kPushButtonWidth,
+	kPushButtonHeight
 };
 
 static const StaticRect optQuitRect = {
-	optBoxXSzNS - (pushButtonWidth + 14),
-	buttonYOffset + ((pushButtonHeight * 3) + buttonSpace * 4),
-	pushButtonWidth,
-	pushButtonHeight
+	optBoxXSzNS - (kPushButtonWidth + 14),
+	kButtonYOffset + ((kPushButtonHeight * 3) + kButtonSpace * 4),
+	kPushButtonWidth,
+	kPushButtonHeight
 };
 
 static const StaticRect optCreditsRect = {
-	optBoxXSzNS - (pushButtonWidth + 14),
-	buttonYOffset + ((pushButtonHeight * 4) + buttonSpace * 5),
-	pushButtonWidth,
-	pushButtonHeight
+	optBoxXSzNS - (kPushButtonWidth + 14),
+	kButtonYOffset + ((kPushButtonHeight * 4) + kButtonSpace * 5),
+	kPushButtonWidth,
+	kPushButtonHeight
 };
 
 static const StaticRect optAggressRect = {
@@ -356,33 +356,33 @@ static const StaticRect optNightRect = {
 
 Rect16  optTopSliderRect(15,
                          15 + optTPHeight - 2,
-                         sliderWidth,
-                         imageHeight);
+                         kSliderWidth,
+                         kImageHeight);
 
 Rect16  optMidSliderRect(15,
                          optTopSliderRect.y + 32 - 2,
-                         sliderWidth,
-                         imageHeight);
+                         kSliderWidth,
+                         kImageHeight);
 
 Rect16  optBotSliderRect(15,
                          optMidSliderRect.y + 32 - 2,
-                         sliderWidth,
-                         imageHeight);
+                         kSliderWidth,
+                         kImageHeight);
 
 Rect16  optTopFaceRect(optTopSliderRect.x,
                        optTopSliderRect.y,
                        28,
-                       imageHeight);
+                       kImageHeight);
 
 Rect16  optMidFaceRect(optMidSliderRect.x,
                        optMidSliderRect.y,
                        28,
-                       imageHeight);
+                       kImageHeight);
 
 Rect16  optBotFaceRect(optBotSliderRect.x,
                        optBotSliderRect.y,
                        28,
-                       imageHeight);
+                       kImageHeight);
 
 
 // texts
@@ -392,39 +392,39 @@ Rect16  optTitleText(0,
                      optBoxXSzNS,
                      optTPHeight);
 
-Rect16  optTopSlideText(16 + sliderWidth,
+Rect16  optTopSlideText(16 + kSliderWidth,
                         optTopSliderRect.y + 1,
-                        textPixelLen,
+                        kTextPixelLen,
                         20);
 
-Rect16  optMidSlideText(16 + sliderWidth,
+Rect16  optMidSlideText(16 + kSliderWidth,
                         optMidSliderRect.y + 1,
-                        textPixelLen,
+                        kTextPixelLen,
                         17);
 
-Rect16  optBotSlideText(16 + sliderWidth,
+Rect16  optBotSlideText(16 + kSliderWidth,
                         optBotSliderRect.y + 1,
-                        textPixelLen,
+                        kTextPixelLen,
                         17);
 
 Rect16  optTopCheckText(optAggressRect.x + optAggressRect.width + 3,
                         optAggressRect.y,
-                        textPixelLen - smallTextOffset,
+                        kTextPixelLen - kSmallTextOffset,
                         17);
 
 Rect16  optMidCheckText(optWeaponRect.x + optWeaponRect.width + 3,
                         optWeaponRect.y,
-                        textPixelLen - smallTextOffset,
+                        kTextPixelLen - kSmallTextOffset,
                         17);
 
 Rect16  optBotCheckText(optSpeechRect.x  + optSpeechRect.width + 3,
                         optSpeechRect.y,
-                        textPixelLen - smallTextOffset,
+                        kTextPixelLen - kSmallTextOffset,
                         17);
 
 Rect16  optTop2CheckText(optNightRect.x + optNightRect.width + 3,
                          optNightRect.y,
-                         textPixelLen - smallTextOffset,
+                         kTextPixelLen - kSmallTextOffset,
                          17);
 
 // options window rect
@@ -437,7 +437,7 @@ Rect16  optionsWindowRect =     Rect16(optBoxX,
 
 // indirections
 
-Rect16  optionsPanelRects[numOptionsPanels]       = { { optTopPanel },
+Rect16  optionsPanelRects[kNumOptionsPanels]       = { { optTopPanel },
 	{ optMidPanel },
 	{ optBotPanel }
 };
@@ -467,7 +467,7 @@ Rect16  optionsTextRects[]                          = { { optTitleText },
 
 // options dialog window decorations
 
-WindowDecoration optionsDecorations[numOptionsPanels] =
+WindowDecoration optionsDecorations[kNumOptionsPanels] =
 
 {	{ WindowDecoration(optionsPanelRects[0], optTopPanelResID) },
 	{ WindowDecoration(optionsPanelRects[1], optMidPanelResID) },
@@ -477,9 +477,9 @@ WindowDecoration optionsDecorations[numOptionsPanels] =
 
 // Message Dialog Metrics
 
-const   int numMessagePanels    = 1;
-const   int numMessageBtns      = 3;
-const   int numMessageTexts     = 2;
+const   int kNumMessagePanels    = 1;
+const   int kNumMessageBtns      = 3;
+const   int kNumMessageTexts     = 2;
 const   int mesBtnOffset        = 14;
 
 const   int16       mesBoxXSize = 374,
@@ -498,21 +498,21 @@ Rect16  messagePanel(mesBoxX,
 
 
 // buttons
-Rect16  mesCancelBtnRect(mesBoxXSzNS - (pushButtonWidth + mesBtnOffset),
+Rect16  mesCancelBtnRect(mesBoxXSzNS - (kPushButtonWidth + mesBtnOffset),
                          mesBoxY - mesBtnOffset,
-                         pushButtonWidth,
-                         pushButtonHeight);
+                         kPushButtonWidth,
+                         kPushButtonHeight);
 
 Rect16  mesOkBtnRect(mesBtnOffset,
                      mesBoxY - mesBtnOffset,
-                     pushButtonWidth,
-                     pushButtonHeight);
+                     kPushButtonWidth,
+                     kPushButtonHeight);
 
 
-Rect16  mesBtn3Rect(mesBoxXSzNS / 2 - pushButtonWidth / 2,
+Rect16  mesBtn3Rect(mesBoxXSzNS / 2 - kPushButtonWidth / 2,
                     mesBoxY - mesBtnOffset,
-                    pushButtonWidth,
-                    pushButtonHeight);
+                    kPushButtonWidth,
+                    kPushButtonHeight);
 
 
 
@@ -530,12 +530,12 @@ Rect16  messageRect(0,
 
 
 
-Rect16  messageTextRects[numMessageTexts]     = { { mesTitleRect },
+Rect16  messageTextRects[kNumMessageTexts]     = { { mesTitleRect },
 	{ messageRect }
 };
 
 
-Rect16  messageButtonRects[numMessageBtns]    = { { mesOkBtnRect },
+Rect16  messageButtonRects[kNumMessageBtns]    = { { mesOkBtnRect },
 	{ mesCancelBtnRect },
 	{ mesBtn3Rect     }
 };
@@ -552,7 +552,7 @@ Rect16  messageWindowRect = Rect16(mesBoxX,
 
 
 // message dialog window decorations
-WindowDecoration messageDecorations[numMessagePanels] =
+WindowDecoration messageDecorations[kNumMessagePanels] =
 
 { { WindowDecoration(messagePanel, mesPanelResID) } };
 
@@ -660,11 +660,11 @@ int16 FileDialog(int16 fileProcess) {
 	AppFunc *fileCommands[2]  = { cmdFileSave, cmdFileLoad };
 
 	// text for dialog
-	const char    *saveTextStrings[numSaveLoadTexts]    = { SAVE_DIALOG_NAME };
-	const char    *saveBtnStrings[numSaveLoadBtns]      = { SAVE_DIALOG_BUTTON1, SAVE_DIALOG_BUTTON2 };
+	const char    *saveTextStrings[kNumSaveLoadTexts]    = { SAVE_DIALOG_NAME };
+	const char    *saveBtnStrings[kNumSaveLoadBtns]      = { SAVE_DIALOG_BUTTON1, SAVE_DIALOG_BUTTON2 };
 
-	const char    *loadTextStrings[numSaveLoadTexts]    = { LOAD_DIALOG_NAME };
-	const char    *loadBtnStrings[numSaveLoadBtns]      = { LOAD_DIALOG_BUTTON1, LOAD_DIALOG_BUTTON2 };
+	const char    *loadTextStrings[kNumSaveLoadTexts]    = { LOAD_DIALOG_NAME };
+	const char    *loadBtnStrings[kNumSaveLoadBtns]      = { LOAD_DIALOG_BUTTON1, LOAD_DIALOG_BUTTON2 };
 
 	const char    **textStrings[] = { saveTextStrings, loadTextStrings };
 	const char    **btnStrings[]  = { saveBtnStrings, loadBtnStrings };
@@ -810,7 +810,7 @@ void updateAllUserControls(void);
 
 int16 OptionsDialog(bool disableSaveResume) {
 	// text for dialog
-	const char  *btnStrings[numOptionsBtns] = {
+	const char  *btnStrings[kNumOptionsBtns] = {
 		OPTN_DIALOG_BUTTON1,
 		OPTN_DIALOG_BUTTON2,
 		OPTN_DIALOG_BUTTON3,
@@ -819,7 +819,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	};
 
 
-	const char *textStrings[numOptionsTexts] = {
+	const char *textStrings[kNumOptionsTexts] = {
 		OPTN_DIALOG_NAME,
 		OPTN_DIALOG_SLIDE1,
 		OPTN_DIALOG_SLIDE2,
@@ -932,7 +932,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	new CPlaqText(*win, optionsTextRects[0],
 	                         textStrings[0], &Plate18Font, 0, pal, 0, nullptr);
 
-	for (int i = 1; i < numOptionsTexts; i++) {
+	for (int i = 1; i < kNumOptionsTexts; i++) {
 		new CPlaqText(*win, optionsTextRects[i], textStrings[i], &SmallFont, textPosLeft, pal, 0, nullptr);
 	}
 
