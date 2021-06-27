@@ -546,13 +546,13 @@ static void print_stack(int16 *stackBase, int16 *stack) {
 	if (size > STACK_PRINT_DEPTH)
 		end = stack + STACK_PRINT_DEPTH;
 
-	debugCN(2, kDebugScripts, "stack size: %d: [", size);
+	debugCN(3, kDebugScripts, "stack size: %d: [", size);
 	for (int16 *i = stack; i < end; i++)
-		debugCN(2, kDebugScripts, "%d ", *i);
+		debugCN(3, kDebugScripts, "%d ", *i);
 	if (size > STACK_PRINT_DEPTH)
-		debugCN(2, kDebugScripts, "... ");
+		debugCN(3, kDebugScripts, "... ");
 
-	debugC(2, kDebugScripts, "]");
+	debugC(3, kDebugScripts, "]");
 }
 
 #define D_OP(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s", (pc - codeSeg - 1), (pc - codeSeg - 1), #x)
