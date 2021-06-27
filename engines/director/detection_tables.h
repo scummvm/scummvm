@@ -472,6 +472,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Finnish titles
 	{ "aapelin1",			"Aapelin ABC: Hurjistunut Pölynimuri" },
+	{ "kcd",				"Kompuutteri Kaikille" },
 	{ "kultapossu",			"Kultapossu ja Leo Leijona: Sateenkaarivarkaat" },
 	{ "petepilotti1",		"Pete Pilotti & Pontiac: Seikkailu Lapponiassa" },
 
@@ -483,6 +484,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "forestiajr",			"Forestia Révoltozoo" },
 	{ "guignols1",			"Les Guignols de l'Info ... LE JEU!" },
 	{ "guignols2",			"Les Guignols de l'Info: Le cauchemar de PPD" },
+	{ "lvi",				"La Vague Interactive" },
 	{ "madmac",				"Mad Mac Cartoons" },
 	{ "sethi2",				"Sethi et le sorcier inca" },
 	{ "sethi3",				"Sethi et la Tribu de Neandertal" },
@@ -690,6 +692,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Russian titles
 	{ "engl",				"English for Beginners" },
+	{ "pl",					"Подводная Лодка" },						   // Podvodnaya Lodka (Submarine) magazine
 	{ "tchaik",				"Пётр Ильи́ч Чайко́вский: Жизнь и творчество" }, // Pyotr Ilyich Tchaikovsky: Life and Work
 	{ "tutti",				"Волшебные истории Тутти" },				   // Tutti's Magical Stories
 
@@ -753,13 +756,16 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "blenderbest",   		"Best of Blender: The Interactive Entertainment Magazine" },
 	{ "cmi",   				"Computer Music Interactive" },
 	{ "gamingmegapac",		"MacUser Presents Gaming MegaPac" },
+	{ "godigital",			"Go Digital Interactive Magazine" },
 	{ "insidemacgames",   	"Inside Mac Games" },
 	{ "interactivemagic",   "Mac Interactive Magic" },
+	{ "iwave",   			"Interactive Wave" },
 	{ "maccubed7",			"MacCubed Disc 7: Internet & Utilities" },
 	{ "macsca",				"Mac S.C.A. Magazine" },
 	{ "macweekvideo",		"MacWEEK Guide to Desktop Video" },
 	{ "mieuxmieux",			"Le CD-ROM Mac Mieux-Mieux" },
 	{ "mindvirus",			"Mindvirus" },
+	{ "pcformat",			"PC Format" },
 	{ "pcwuk",				"Personal Computer World" },
 	{ "stream",				"Digital Culture Stream Magazine" },
 
@@ -1388,6 +1394,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("leonardo", "", "LEO.EXE", "65d06b5fef155a2473434571aff5bc29", 370000, 310),
 
 	WINDEMO1("leopardspots", "Demo", "LEOPARD.EXE", "2b3543a9131a49f665982d26513a84f8", 1081371, 310),
+
+	MACGAME1_l("lvi", "Nº1", "LVI_8Mo", "7f443f2e63fd497a9ad85b10dc880a91", 384462, Common::FR_FRA, 310),
+	WINGAME1_l("lvi", "Nº1", "LVI.EXE", "65d06b5fef155a2473434571aff5bc29", 634203, Common::FR_FRA, 310),
 
 	MACGAME1("lzone", "",   "L-ZONE", 		"f5277c53bacd27936158dd3867e587e2", 392484, 300),
 	MACGAME1("lzone", "v2", "L-ZONE", 		"276bee761e48a6fd709df77d5c2f60dd", 395344, 300),
@@ -2074,6 +2083,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("ggmdsuper", "", "SUPRGAME.EXE",			"5da9f151d28659d83cb381ceca7493f1", 740518, 404),
 	WINGAME1_l("ggmdsuper", "", "SUPER.EXE",			"5da9f151d28659d83cb381ceca7493f1", 740518, Common::NL_NLD, 404),
 
+	MACGAME1("godigital", "Vol.1 No.1",	"Go Digital vol.1 no.1", "dc5a87dda7a0daf46604515f7d2cca66", 291322, 403),
+	MACGAME1("godigital", "Vol.1 No.2", "Go Digital vol 1 # 2",  "97474208c44c78f26bef8b2011d341aa", 482838, 404),
+	MACGAME1("godigital", "Vol.2 No.1", "GoDigital3",			 "e6833f1ce3b022f0128e4c80a55bcd46", 284630, 404),
+	WINGAME1("godigital", "Vol.1 No.1",	"GODIGIT.EXE", "8183e02291e69b19c9b1b149a8036ffd", 34247559, 404),
+	WINGAME1("godigital", "Vol.1 No.2", "GODIGIT.EXE", "7ce7407982b9c3abfab010432a0b9b96", 703515, 404),
+	WINGAME1("godigital", "Vol.2 No.1", "GODIG3.EXE",  "601b468f1e0e22319b7abd5c0d1787e7", 889427, 404),
+
 	MACDEMO2_l("greetingstudio", "Demo", "Click Me",   "17efee018a660458fae80de4364021ac", 484351,
 								 		 "MAIN.DIR",   "f5f8e6c76bb0659fc80fa2c1c263afa9", 3016176, Common::JA_JPN, 404),
 	WINDEMO1_l("greetingstudio", "Demo", "SHOWME.EXE", "711b37028bca19093720fcb281c08b4d", 754977, Common::JA_JPN, 404),
@@ -2200,6 +2216,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("isis", "", "ISIS.EXE", "59c1cb960199dd3f041262ab5271bb23", 14747213, 400),
 	MACGAME1_l("isis", "", "ISIS", "dedfabf9ee7bf5aab003bdab4137bca6", 780610, Common::DE_DEU, 400),
 	WINGAME1_l("isis", "", "ISIS.EXE", "d7f7e89495ac22c75b3fc04c09675b6e", 16750643, Common::DE_DEU, 400),
+
+	MACGAME1("iwave", "Issue 1", "!", "ae7178ba5dd9dcd15fb7a27cd99089b2", 484389, 400),
+	WINGAME1("iwave", "Issue 1", "IWAVE.EXE", "67aa1f75dc23e071e5325be04e9738a6", 690955, 400),
 
 	// Note: There are four versions of the binary included on the disc.
 	MACGAME1("jewels", "", "Jewels 11 Meg", "339c89a148c4ff2c5c815c62ac006325", -1, 400),
@@ -2790,7 +2809,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("battles", "", "BATTLES OF THE WORLD", "06ed90580400cd9e263525f84c8075fd", 705701, 500),
 	WINGAME1("battles", "", "BT_INT32.EXE", "3460ad87d2ba57104e2810a77b53c220", 1400693, 500),
 
-	WINGAME1_l("bigmax", "nº 10", "BIG32.EXE", "3460ad87d2ba57104e2810a77b53c220", 4539109, Common::PT_BRA, 500),
+	WINGAME1_l("bigmax", "nº10", "BIG32.EXE", "3460ad87d2ba57104e2810a77b53c220", 4539109, Common::PT_BRA, 500),
 
 	MACGAME1("blender", "Volume 2.5", "Blender (PPC)", "f102e699371fd85eaf57606a1c0b1adc", 94329, 501),
 	MACGAME1("blender", "Volume 3.1", "Blender (PPC)", "013ce52c2d8fa0f004fe6d1118448a58", 108119, 501),
@@ -3201,7 +3220,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("barbnail", "", "LAUNCH.EXE", "518a98696fe1122e08410b0f157f21bf", 1758656,
 							 "intro.dxr",  "8732eb742a8bbfd6de5c55b22e41317b", 2549490, 602),
 
-	WINGAME1_l("bigmax", "nº 20", "BIG32.EXE", "518a98696fe1122e08410b0f157f21bf", 7313980, Common::PT_BRA, 602),
+	WINGAME1_l("bigmax", "nº20", "BIG32.EXE", "518a98696fe1122e08410b0f157f21bf", 7313980, Common::PT_BRA, 602),
 
 	MACGAME1("casperact", "", "Casper Activity Center", "904cb6465321d8e1d12d2a5a29612050", 1029165, 600),
 	WINGAME1("casperact", "", "CASPER32.EXE", "a593079aecf5bd938ce75264cac24b2d", 1819279, 600),
@@ -3324,6 +3343,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("jumpaheadss2000at", "", "ATEST.EXE", "a593079aecf5bd938ce75264cac24b2d", 1508221, 600),
 	WINGAME1("jumpaheadss2000wb", "", "WORKBOOK.EXE", "a593079aecf5bd938ce75264cac24b2d", 1731863, 600),
 
+	WINGAME1_l("kcd", "K15 2001", "V_Fi.exe", "518a98696fe1122e08410b0f157f21bf", 1704035, Common::FI_FIN, 602),
+
 	WINGAME1("kingandi", "", "King&I.exe", "518a98696fe1122e08410b0f157f21bf", 1967220, 602),
 
 	WINGAME2_l("kontyngent99", "", "START.EXE", "d62438566e44826960fc16c5c23dbe43", 1513041,
@@ -3405,6 +3426,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("pettsonjk", "", "Pesosen joulukalenteri", "3aaab7a6b2cbcc767f839bd6d8d3dd26", 1032582, Common::FI_FIN, 602),
 	WINGAME1_l("pettsonjk", "", "PETWIN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 1702396, Common::SE_SWE, 600),
 	WINGAME1_l("pettsonjk", "", "PETWIN95.EXE", "518a98696fe1122e08410b0f157f21bf", 1738188, Common::FI_FIN, 602),
+
+	WINGAME1_l("pl", "Nº11 1998", "submarine.exe", "a593079aecf5bd938ce75264cac24b2d", 1700379, Common::RU_RUS, 600),
 
 	// DVD-ROM content from Planetary Traveler movie
 	WINGAME1("planetrav", "", "PCDVD.EXE", "a593079aecf5bd938ce75264cac24b2d", 2345815, 600),
@@ -3725,8 +3748,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("bobmambo5", "Enhanced CD", "START.EXE", "e24d4bab978b1a5c2326d2c56cf4d781", 6980680,
 										 "MAMBO.MOV", "990db0c7187621250dfca0a55996538e", 39868175, 800),
 
-	MACGAME1("cmi", "disc 20", "CMi_38_Mac", "f065c75691d28120e9f630448c3b1b71", 1225735, 800),
-	WINGAME1("cmi", "disc 20", "CMi_38_Win.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2514361, 800),
+	MACGAME1("cmi", "CM38/10/01", "CMi_38_Mac", "f065c75691d28120e9f630448c3b1b71", 1225735, 800),
+	WINGAME1("cmi", "CM38/10/01", "CMi_38_Win.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2514361, 800),
 
 	MACGAME1("dispix2and3", "", "2nd and 3rd Grade", "a44511b8ff0e46b4f9c85dd1cb58d458", 220552, 851),
 	WINGAME1("dispix2and3", "", "2nd and 3rd Grade.exe", "68835b24dd317fbc96e4a8c53892a361", 2630239, 851),
@@ -3825,6 +3848,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("operafatal", "Classic OS", "Opera Classic", "78e78f91a6e42ece5a585c3a3dc81de3", 172200, Common::DE_DEU, 800),
 
+	WINGAME1("pcformat", "PCF132 CD 02/02", "PCF132.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 4722596, 800),
+
 	// Mac OS X installer runs the game in Classic environment
 	MACGAME1_l("pettson1", "v3.0", "Spelen",	   "a44511b8ff0e46b4f9c85dd1cb58d458", 158043, Common::NL_NLD, 851),
 	WINGAME1_l("pettson1", "v3.0", "Spelen.exe",   "568c6f849ff7f2104636a99f151a6cd6", 3249822, Common::NL_NLD, 851),
@@ -3832,6 +3857,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("pettson3", "",	   "Pettson3.exe", "1c753fb8361ba617ae6142fcdd12d3d5", 2443868, Common::SE_SWE, 800),
 
 	WINDEMO1("phonicsquest", "Demo", "Phonics Quest Demo.exe", "0c81c84ca4966313ad27d47daba44537", 2202074, 851),
+
+	WINGAME2_l("pl", "Nº4 2001", "Start.exe",		"e24d4bab978b1a5c2326d2c56cf4d781", 2247370,
+								 "PL_2001_#04.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 3842928, Common::RU_RUS, 800),
 
 	WINGAME2_l("polis3", "", "launcher.exe", "0c81c84ca4966313ad27d47daba44537", 2860282,
 							 "polis3.dxr",	 "1a391250c502a1f55da5a4d0438b493d", 3533782, Common::ES_ESP, 851),
