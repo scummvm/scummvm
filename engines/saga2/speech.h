@@ -79,7 +79,7 @@ enum {
 	speakLock       = (1 << 3),         // lock UI while speech in progress
 };
 
-class Speech : private DNode {
+class Speech {
 private:
 	friend class SpeechTaskList;
 	friend void setNextActive();
@@ -171,10 +171,8 @@ class SpeechTaskList {
 	    int                 flags
 	);
 
-	DList           activeList,
-	                nonActiveList,
-	                free;
-	Speech          array[MAX_SPEECH_PTRS];
+	Common::List<Speech *> _list,
+	                       _inactiveList;
 
 	int8            lockFlag;
 
@@ -204,12 +202,20 @@ public:
 	Speech *findSpeech(ObjectID id);
 
 	Speech *currentActive(void) {
-		return (Speech *)activeList.first();
+		if (_list.size() > 0)
+			return _list.front();
+		return nullptr;
 	}
 
 	int32 activeCount(void) {
-		return activeList.count();
+		return _list.size();
 	}
+
+	int speechCount(void) {
+		return _list.size() + _inactiveList.size();
+	}
+
+	void remove(Speech *p);
 };
 
 extern SpeechTaskList &speechList;
