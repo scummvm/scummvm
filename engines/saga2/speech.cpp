@@ -559,6 +559,10 @@ void Speech::dispose(void) {
 		}
 	} else wakeUpThread(thread, 0);
 
+	GameObject *obj = GameObject::objectAddress(objID);
+
+	debugC(1, kDebugTasks, "Speech: Disposing %p for %p (%s)", (void *)this, (void *)obj, obj->objName());
+
 	remove();
 }
 
@@ -1170,6 +1174,8 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 	if (sp == NULL) fatal("Ran out of Speech Tasks, Object = %s\n", obj->objName());
 #endif
 	if (sp == NULL) return NULL;
+
+	debugC(1, kDebugTasks, "Speech: New Task: %p for %p (%s) (flags = %d)", (void *)sp, (void *)obj, obj->objName(), flags);
 
 	sp->sampleCount = sp->charCount = 0;
 	sp->objID       = id;
