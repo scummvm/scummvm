@@ -347,7 +347,7 @@ bool GridWidget::calcVisibleEntries() {
 	needsReload = true;
 	_itemsOnScreen = nItemsOnScreen;
 
-	int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_allEntries.size()-1);
+	int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_allEntries.size());
 
 	_visibleEntries.clear();
 	for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
