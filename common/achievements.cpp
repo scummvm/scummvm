@@ -85,10 +85,12 @@ bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
 
 
 String AchievementsManager::getCurrentLang() const {
+#ifdef USE_TRANSLATION
 	String uiLang = TransMan.getCurrentLanguage().c_str();
 	if (_achievements.contains(uiLang)) {
 		return uiLang;
 	}
+#endif
 
 	return "en";
 }
