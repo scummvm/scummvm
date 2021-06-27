@@ -130,7 +130,7 @@ struct Command {
 	int				_zeta0;
 	int				_zeta1;
 	int				_zeta2;
-	int				_characterId;
+	Common::String	_characterName;
 	Common::String	_string2;
 	int				_musicCommand;
 	int				_musicParm;
