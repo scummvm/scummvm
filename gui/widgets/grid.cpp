@@ -148,18 +148,19 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isHighlighted) {
 		// Work in progress
-		_grid->openTray(getAbsX() - _grid->_gridXSpacing / 3, getAbsY() + _h, _w + 2 * (_grid->_gridXSpacing / 3), _h / 3, _activeEntry->entryID);
+		_grid->openTray(getAbsX() - _grid->_gridXSpacing / 3, getAbsY() + _h, _w + 2 * (_grid->_gridXSpacing / 3), kLineHeight * 3, _activeEntry->entryID);
 		_grid->_tray->runModal();
 	}
 }
 
 #pragma mark -
 
-GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID)
+GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid)
 	: Dialog(x, y, w, h), CommandSender(boss) {
 		
 	_entryID = entryID;
 	_boss = boss;
+	_grid = grid;
 	
 	int buttonWidth = w / 3;
 	int buttonHeight = h / 3;
@@ -198,10 +199,7 @@ void GridItemTray::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 
 void GridItemTray::handleMouseDown(int x, int y, int button, int clickCount) {
 	Dialog::handleMouseDown(x, y, button, clickCount);
-	// HACK: Tray height is determined relative to grid item height
-	// hence we know the grid item height from within the tray.
-	// We might want to make tray height independent of grid item height.
-	if ((x < 0 || x > _w) || (y > _h || y < -(_h * 3))) {
+	if ((x < 0 || x > _w) || (y > _h || y < -(_grid->_gridItemHeight))) {
 		// Close on clicking outside
 		close();
 	} else if (y < 0 && clickCount >= 2) {
@@ -608,7 +606,7 @@ void GridWidget::reflowLayout() {
 
 	for (int k = 0; k < _itemsOnScreen; ++k) {
 		GridItemWidget *newItem = new GridItemWidget(this, 
-									_minGridXSpacing + col * (_gridItemWidth + _gridXSpacing), 
+									2 * _minGridXSpacing + col * (_gridItemWidth + _gridXSpacing), 
 									(_scrollPos % (_gridItemHeight + _gridYSpacing)) + _gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing), 
 									_gridItemWidth, 
 									_gridItemHeight);
@@ -627,7 +625,7 @@ void GridWidget::reflowLayout() {
 }
 
 void GridWidget::openTray(int x, int y, int w, int h, int entryId) {
-	_tray = new GridItemTray(_boss, x, y, w, h, entryId);
+	_tray = new GridItemTray(_boss, x, y, w, h, entryId, this);
 }
 
 void GridWidget::scrollBarRecalc() {

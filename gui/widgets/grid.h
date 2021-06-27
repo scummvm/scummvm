@@ -89,6 +89,7 @@ struct GridItemInfo
 /* GridItemTray */
 class GridItemTray: public Dialog, public CommandSender {
 	int			 	_entryID;
+	GridWidget 		*_grid;
 	GuiObject 		*_boss;
 public:
 	typedef Common::String String;
@@ -97,7 +98,7 @@ public:
 	typedef Common::U32String U32String;
 	typedef Common::Array<Common::U32String> U32StringArray;
 
-	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID);
+	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid);
 	
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
