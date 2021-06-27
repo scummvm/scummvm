@@ -76,6 +76,8 @@ public:
 
 	void setCast(uint16 castid);
 	bool isQDShape();
+	Graphics::Surface *getQDMatte();
+	void createQDMatte();
 
 	Frame *_frame;
 	Score *_score;
@@ -83,7 +85,7 @@ public:
 
 	uint16 _scriptId;
 	uint16 _scriptCastIndex;
-	byte _colorcode;  // x40 editable, 0x80 moveable
+	byte _colorcode; // x40 editable, 0x80 moveable
 	byte _blendAmount;
 	uint32 _unk3;
 
@@ -97,6 +99,8 @@ public:
 	uint16 _castId;
 	uint16 _pattern;
 	CastMember *_cast;
+
+	Graphics::FloodFill *_matte; // matte for quickdraw shape
 
 	byte _thickness;
 	Common::Point _startPoint;
