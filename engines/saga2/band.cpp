@@ -30,7 +30,6 @@
 #include "saga2/actor.h"
 #include "saga2/band.h"
 #include "saga2/savefile.h"
-#include "saga2/dlist.h"
 
 namespace Saga2 {
 
@@ -43,21 +42,9 @@ const int numBands = 32;
 //  Manages the memory used for the Band's.  There will only be one
 //  global instantiation of this class
 class BandList {
-
-	struct BandPlaceHolder : public DNode {
-		uint8 buf[sizeof(Band)];
-
-		Band *getBand(void) {
-			return (Band *)&buf;
-		}
-	};
-
-	DList                       list,       //  allocated Bands
-	                            free;       //  unallocated Bands
-
-	BandPlaceHolder             array[numBands];
-
 public:
+	Band *_list[numBands];
+
 	//  Constructor -- initial construction
 	BandList(void);
 
@@ -76,25 +63,27 @@ public:
 
 	//  Place a Band from the inactive list into the active
 	//  list.
-	void *newBand(void);
-	void *newBand(BandID id);
+	Band *newBand(void);
+	Band *newBand(BandID id);
+
+	void addBand(Band *band);
 
 	//  Place a Band back into the inactive list.
-	void deleteBand(void *p);
+	void deleteBand(Band *p);
 
 	//  Return the specified Band's ID
 	BandID getBandID(Band *b) {
-		BandPlaceHolder     *bp;
+		for (int i = 0; i < numBands; i++)
+			if (_list[i] == b)
+				return i;
 
-		warning("FIXME: BandPlaceHolder::getBandID(): unsafe pointer arithmetics");
-		bp = ((BandPlaceHolder *)((uint8 *)b - offsetof(BandPlaceHolder, buf)));
-		return bp - array;
+		error("BandList::getBandID(): Unknown band");
 	}
 
 	//  Return a pointer to a Band given a BandID
 	Band *getBandAddress(BandID id) {
 		assert(id >= 0 && id < numBands);
-		return array[id].getBand();
+		return _list[id];
 	}
 };
 
@@ -103,27 +92,16 @@ public:
 //	the inactive list
 
 BandList::BandList(void) {
-	int i;
-
-	for (i = 0; i < ARRAYSIZE(array); i++)
-		free.addTail(array[i]);
+	for (int i = 0; i < numBands; i++)
+		_list[i] = nullptr;
 }
 
 //----------------------------------------------------------------------
 //	BandList destructor
 
 BandList::~BandList(void) {
-	BandPlaceHolder     *bp;
-	BandPlaceHolder     *nextBP;
-
-	for (bp = (BandPlaceHolder *)list.first();
-	        bp != NULL;
-	        bp = nextBP) {
-		//  Save the address of the next in the list
-		nextBP = (BandPlaceHolder *)bp->next();
-
-		delete bp->getBand();
-	}
+	for (int i = 0; i < numBands; i++)
+		delete _list[i];
 }
 
 //----------------------------------------------------------------------
@@ -145,7 +123,7 @@ void *BandList::restore(void *buf) {
 		id = *((BandID *)buf);
 		buf = (BandID *)buf + 1;
 
-		new (id)Band(&buf);
+		_list[id] = new Band(&buf);
 	}
 
 	return buf;
@@ -156,12 +134,10 @@ void *BandList::restore(void *buf) {
 
 int32 BandList::archiveSize(void) {
 	int32               size = sizeof(int16);
-	BandPlaceHolder     *bp;
 
-	for (bp = (BandPlaceHolder *)list.first();
-	        bp != NULL;
-	        bp = (BandPlaceHolder *)bp->next())
-		size += sizeof(BandID) + bp->getBand()->archiveSize();
+	for (int i = 0; i < numBands; i++)
+		if (_list[i])
+			size += sizeof(BandID) + _list[i]->archiveSize();
 
 	return size;
 }
@@ -170,30 +146,26 @@ int32 BandList::archiveSize(void) {
 //	Make an archive of the BandList in an archive buffer
 
 void *BandList::archive(void *buf) {
-	int16               bandCount = 0;
-	BandPlaceHolder     *bp;
+	int16 bandCount = 0;
 
 	//  Count the active bands
-	for (bp = (BandPlaceHolder *)list.first();
-	        bp != NULL;
-	        bp = (BandPlaceHolder *)bp->next())
-		bandCount++;
+	for (int i = 0; i < numBands; i++)
+		if (_list[i])
+			bandCount++;
 
 	//  Store the band count in the archive buffer
 	*((int16 *)buf) = bandCount;
 	buf = (int16 *)buf + 1;
 
 	//  Iterate through the bands, archiving each
-	for (bp = (BandPlaceHolder *)list.first();
-	        bp != NULL;
-	        bp = (BandPlaceHolder *)bp->next()) {
-		Band    *b = bp->getBand();
+	for (int i = 0; i < numBands; i++) {
+		if (_list[i]) {
+			//  Store the Band's id number
+			*((BandID *)buf) = i;
+			buf = (BandID *)buf + 1;
 
-		//  Store the Band's id number
-		*((BandID *)buf) = bp - array;
-		buf = (BandID *)buf + 1;
-
-		buf = b->archive(buf);
+			buf = _list[i]->archive(buf);
+		}
 	}
 
 	return buf;
@@ -202,17 +174,13 @@ void *BandList::archive(void *buf) {
 //----------------------------------------------------------------------
 //	Place a Band into the active list and return its address
 
-void *BandList::newBand(void) {
-	BandPlaceHolder     *bp;
+Band *BandList::newBand(void) {
+	for (int i = 0; i < numBands; i++) {
+		if (!_list[i]) {
+			_list[i] = new Band();
 
-	//  Grab a band holder from the inactive list
-	bp = (BandPlaceHolder *)free.remHead();
-
-	if (bp != NULL) {
-		//  Place the place holder into the active list
-		list.addTail(*bp);
-
-		return bp->buf;
+			return _list[i];
+		}
 	}
 
 	return NULL;
@@ -221,56 +189,44 @@ void *BandList::newBand(void) {
 //----------------------------------------------------------------------
 //	Place a specific Band into the active list and return its address
 
-void *BandList::newBand(BandID id) {
-	assert(id >= 0 && id < ARRAYSIZE(array));
+Band *BandList::newBand(BandID id) {
+	assert(id >= 0 && id < numBands);
 
-	BandPlaceHolder     *bp;
+	if (_list[id])
+		delete _list[id];
 
-	//  Grab the band place holder from the inactive list
-	bp = (BandPlaceHolder *)&array[id];
-	bp->remove();
+	_list[id] = new Band();
 
-	//  Place the place holder into the active list
-	list.addTail(*bp);
+	return _list[id];
+}
 
-	return bp->buf;
+ void BandList::addBand(Band *b) {
+	for (int i = 0; i < numBands; i++) {
+		if (!_list[i]) {
+			_list[i] = b;
+
+			return;
+		}
+	}
+
+	error("BandList::addBand(): Too many bands, > %d", numBands);
 }
 
 //----------------------------------------------------------------------
 //	Remove the specified Band from the active list and place it back
 //	into the inactive list
 
-void BandList::deleteBand(void *p) {
-	BandPlaceHolder     *bp;
+void BandList::deleteBand(Band *p) {
+	int id = getBandID(p);
 
-	warning("FIXME: BandList::deleteBand(): unsafe pointer arithmetics");
-
-	//  Convert the pointer to the Band to a pointer to the
-	//  BandPlaceHolder
-	bp = (BandPlaceHolder *)((uint8 *)p - offsetof(BandPlaceHolder, buf));
-
-	//  Remove the band place holder from the active list
-	bp->remove();
-
-	//  Place it into the inactive list
-	free.addTail(*bp);
+	_list[id] = nullptr;
 }
 
 /* ===================================================================== *
    Global BandList instantiation
  * ===================================================================== */
 
-//	This is a statically allocated buffer large enough to hold a BandList.
-//	The bandList is a BandList reference to this area of memory.  The
-//	reason that I did this in this manner is to prevent the BandList
-//	constructor from being called until it is expicitly called using an
-//	overloaded new call.  The overloaded new call will simply return a
-//	pointer to the bandListBuffer in order to construct the BandList in
-//	place.
-
-static uint8 bandListBuffer[sizeof(BandList)];
-
-static BandList &bandList = *((BandList *)bandListBuffer);
+static BandList bandList;
 
 /* ===================================================================== *
    Misc. band management functions
@@ -280,11 +236,11 @@ static BandList &bandList = *((BandList *)bandListBuffer);
 //	Call the bandList member function newBand() to get a pointer to a
 //	new Band
 
-void *newBand(void) {
+Band *newBand(void) {
 	return bandList.newBand();
 }
 
-void *newBand(BandID id) {
+Band *newBand(BandID id) {
 	return bandList.newBand(id);
 }
 
@@ -292,7 +248,7 @@ void *newBand(BandID id) {
 //	Call the bandList member function deleteBand() to dispose of a
 //	previously allocated Band
 
-void deleteBand(void *p) {
+void deleteBand(Band *p) {
 	bandList.deleteBand(p);
 }
 
@@ -314,8 +270,6 @@ Band *getBandAddress(BandID id) {
 //	Initialize the bandList
 
 void initBands(void) {
-	//  Simply call the default constructor for the band list
-	new (&bandList) BandList;
 }
 
 //----------------------------------------------------------------------
@@ -382,8 +336,12 @@ void cleanupBands(void) {
    Band member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
+Band::Band() : leader(nullptr), memberCount(0) {
+	bandList.addBand(this);
+}
+Band::Band(Actor *l) : leader(l), memberCount(0) {
+	bandList.addBand(this);
+}
 
 Band::Band(void **buf) {
 	void        *bufferPtr = *buf;
@@ -408,6 +366,8 @@ Band::Band(void **buf) {
 	}
 
 	*buf = bufferPtr;
+
+	bandList.addBand(this);
 }
 
 //----------------------------------------------------------------------
