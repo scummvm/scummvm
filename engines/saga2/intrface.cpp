@@ -2302,10 +2302,9 @@ APPFUNC(cmdAggressive) {
 	} else if (ev.eventType == gEventMouseMove) {
 		if (ev.value == gCompImage::enter) {
 			// set the text in the cursor
-			warning("STUB: APPFUNC(cmdAggressive)");
-			//mouseInfo.setText(isAggressive(transBroID)
-			//                  ? ON_AGRESS
-			//                  : OFF_AGRESS);
+			mouseInfo.setText(isAggressive(transBroID)
+			                  ? ON_AGRESS
+			                  : OFF_AGRESS);
 		} else if (ev.value == gCompImage::leave) {
 			mouseInfo.setText(nullptr);
 		}
@@ -2368,10 +2367,9 @@ APPFUNC(cmdCenter) {
 	if (ev.eventType == gEventMouseMove) {
 		if (ev.value == gCompImage::enter) {
 			// set the text in the cursor
-			warning("STUB: APPFUNC(cmdCenter)");
-			//mouseInfo.setText(getCenterActorPlayerID() == transBroID
-			//                  ? ON_CENTER
-			//                  : OFF_CENTER);
+			mouseInfo.setText(getCenterActorPlayerID() == transBroID
+			                  ? ON_CENTER
+			                  : OFF_CENTER);
 		} else if (ev.value == gCompImage::leave) {
 			mouseInfo.setText(nullptr);
 		}
@@ -2403,10 +2401,9 @@ APPFUNC(cmdBand) {
 	} else if (ev.eventType == gEventMouseMove) {
 		if (ev.value == gCompImage::enter) {
 			// set the text in the cursor
-			warning("STUB: APPFUNC(cmdBand)");
-			//mouseInfo.setText(isBanded(transBroID)
-			//                  ? ON_BANDED
-			//                  : OFF_BANDED);
+			mouseInfo.setText(isBanded(transBroID)
+			                  ? ON_BANDED
+			                  : OFF_BANDED);
 		} else if (ev.value == gCompImage::leave) {
 			mouseInfo.setText(nullptr);
 		}
