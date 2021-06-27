@@ -242,7 +242,7 @@ void FireType::applySplashDamageAround(const Point3 &pt, int damage, int rangedi
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	currentmap->areaSearch(&uclist, script, sizeof(script), nullptr,
-						   getRange() * 32 / rangediv, true, pt.x, pt.y);
+						   getRange() * 32 / rangediv, false, pt.x, pt.y);
 	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
 		Item *splashitem = getItem(uclist.getuint16(i));
 		if (!splashitem) {
