@@ -122,6 +122,9 @@ public:
 		y <<= (int16)a;
 	}
 
+	void debugPrint(int level = 0, const char *msg = "Point32:") {
+		debug(level, "%s %d,%d", msg, x, y);
+	}
 	// Point16 functions
 
 };
@@ -234,6 +237,10 @@ public:
 	void operator<<=(int a)     {
 		x <<= (int32)a;
 		y <<= (int32)a;
+	}
+
+	void debugPrint(int level = 0, const char *msg = "Point32:") {
+		debug(level, "%s %d,%d", msg, x, y);
 	}
 };
 

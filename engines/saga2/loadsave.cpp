@@ -93,6 +93,7 @@ void initGameState(void) {
 
 	initGlobals();
 	initTimer();
+	initAudio();
 	initCalender();
 	initWorlds();
 	initActors();
@@ -482,6 +483,7 @@ void cleanupGameState(void) {
 	cleanupObjects();
 	cleanupActors();
 	cleanupWorlds();
+	cleanupAudio();
 	cleanupTimer();
 	cleanupGlobals();
 }
