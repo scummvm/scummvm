@@ -28,6 +28,7 @@
 #include "director/channel.h"
 #include "director/sprite.h"
 #include "director/castmember.h"
+#include "director/window.h"
 
 #include "graphics/macgui/mactext.h"
 #include "graphics/macgui/macbutton.h"
@@ -329,10 +330,30 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		replaceWidget(previousCastId);
 	}
 
-	setEditable(_sprite->_editable);
+	updateTextCast();
 	updateGlobalAttr();
 
 	_dirty = false;
+}
+
+// this is used to for setting and updating text castmember
+// e.g. set editable, update dims for auto expanding
+void Channel::updateTextCast() {
+	if (!_sprite->_cast || _sprite->_cast->_type != kCastText)
+		return;
+	setEditable(_sprite->_editable);
+
+	if (_widget) {
+		Graphics::MacText *textWidget = (Graphics::MacText *)_widget;
+		// if we got auto expand text, then we update dims to sprite
+		if (!textWidget->getFixDims() && (_sprite->_width != _widget->_dims.width() || _sprite->_height != _widget->_dims.height())) {
+			_sprite->_width = _widget->_dims.width();
+			_sprite->_height = _widget->_dims.height();
+			_width = _sprite->_width;
+			_height = _sprite->_height;
+			g_director->getCurrentWindow()->addDirtyRect(_widget->_dims);
+		}
+	}
 }
 
 void Channel::setEditable(bool editable) {

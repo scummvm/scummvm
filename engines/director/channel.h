@@ -64,6 +64,7 @@ public:
 	void replaceSprite(Sprite *nextSprite);
 	void replaceWidget(uint16 previousCastId = 0);
 	bool updateWidget();
+	void updateTextCast();
 
 	void updateGlobalAttr();
 

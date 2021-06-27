@@ -697,6 +697,8 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 	case kCastText:
 		// use initialRect for the dimensions just like button
 		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow, Common::kMacCentralEurope);
+		// D3/4, mactext will auto expand
+		((Graphics::MacText *)widget)->setFixDims(g_director->getVersion() <= 200);
 		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
 		((Graphics::MacText *)widget)->setEditable(_editable);
 		((Graphics::MacText *)widget)->draw();
