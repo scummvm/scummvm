@@ -456,7 +456,14 @@ void Parallaction_br::loadProgram(AnimationPtr a, const char *filename) {
 	return;
 }
 
-
+void Parallaction_br::linkUnlinkedZoneAnimations() {
+	ZoneList::iterator zit = _location._zones.begin();
+	for ( ; zit != _location._zones.end(); ++zit) {
+		if ((*zit)->_flags & kFlagsActive) {
+			(*zit)->_linkedAnim = _location.findAnimation((*zit)->_linkedName.c_str());
+		}
+	}
+}
 
 void Parallaction_br::changeCharacter(const char *name) {
 
