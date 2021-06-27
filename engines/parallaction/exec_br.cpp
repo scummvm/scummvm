@@ -299,16 +299,14 @@ DECLARE_COMMAND_OPCODE(swap) {
 
 
 DECLARE_COMMAND_OPCODE(give) {
-	warning("Parallaction_br::cmdOp_give not yet implemented");
+	int item = ctxt._cmd->_object;
+	Inventory *targetInventory = _vm->findInventory(ctxt._cmd->_characterName.c_str());
 
-	/* NOTE: the following code is disabled until I deal with _inventory and
-	 * _charInventories not being public
-	 */
-/*  int item = ctxt._cmd->_object;
-	int recipient = ctxt._cmd->_characterId;
-	_vm->_charInventories[recipient]->addItem(item);
+	if (targetInventory) {
+		targetInventory->addItem(item);
+	}
+
 	_vm->_inventory->removeItem(item);
-*/
 }
 
 
