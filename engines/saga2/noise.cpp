@@ -96,18 +96,6 @@ hResContext         *voiceRes,
                     *longRes;
 
 
-//-----------------------------------------------------------------------
-//	debugging studff
-
-#if DEBUG
-char hellBuffer[256];
-int audioVerbosity = 1;
-bool debugStatuses;
-bool debugResource;
-bool debugAudioThemes;
-bool randomAudioTesting;
-#endif
-
 /* ===================================================================== *
    Locals
  * ===================================================================== */
@@ -310,13 +298,6 @@ void startAudio(void) {
 		clickData[2] = (uint8 *) LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
 	}
 
-#if DEBUG
-	if (debugStatuses) {
-		WriteStatusF(5, audio->statusMessage());
-		audio->setVerbosity(3);
-	}
-#endif
-
 	if (disMusic)
 		audio->disable(volMusic);
 	if (disVoice)
@@ -335,13 +316,6 @@ void audioEventLoop(void) {
 	if (audio->playFlag())
 		audio->playMe();
 
-#if DEBUG
-	if (randomAudioTesting)
-		audioStressTest();
-	if (debugStatuses)
-		WriteStatusF(5, audio->statusMessage());
-#endif
-
 	audioEnvironmentCheck();
 }
 
@@ -357,15 +331,6 @@ void makeGruntSound(uint8 cs, Location l) {
 	playSoundAt(MKTAG('G', 'N', 'T', cs), l);
 }
 
-
-//-----------------------------------------------------------------------
-// debugging crap
-
-char dummy[256];
-#if DEBUG
-void DebMsg(const char *fmt, ...);
-char msg[80];
-#endif
 
 //-----------------------------------------------------------------------
 //	check for higher quality MIDI card
@@ -440,12 +405,15 @@ void resumeAudio(void) {
 //  UI volume change hook
 
 void volumeChanged(void) {
-#if ZERO_VOLUME_DISABLES
-	if (audio->getVolume(volLoops)) resumeLoops();
-	else suspendLoops();
-	if (audio->getVolume(volMusic)) resumeMusic();
-	else suspendMusic();
-#endif
+	if (audio->getVolume(volLoops))
+		resumeLoops();
+	else
+		suspendLoops();
+
+	if (audio->getVolume(volMusic))
+		resumeMusic();
+	else
+		suspendMusic();
 }
 
 /* ===================================================================== *
@@ -467,64 +435,50 @@ Point32 translateLocation(Location playAt) {
 //	MIDI playback
 
 void playMusic(uint32 s) {
-#ifndef AUDIO_DISABLED
 	currentMidi = s;
 
 	if (hResCheckResID(musicRes, s)) {
-#ifdef _WIN32
-		audio->stopMusic();
-#endif
 		audio->queueMusic(s, musicDec, 0);
 	} else
 		audio->stopMusic();
-
-#endif
 }
 
 //-----------------------------------------------------------------------
 // in memory sfx
 
 void playMemSound(uint32 s) {
-#ifndef AUDIO_DISABLED
 	if (bufCheckResID(NULL, s))
 		audio->queueSound(s, memDec, 1, Here);
-#endif
 }
 
 //-----------------------------------------------------------------------
 // on disk sfx
 
 void playSound(uint32 s) {
-#ifndef AUDIO_DISABLED
 	if (hResCheckResID(soundRes, s))
 		audio->queueSound(s, soundDec, 1, Here);
-#endif
 }
 
 //-----------------------------------------------------------------------
 // on disk sfx (x2 buffered)
 
 void playLongSound(uint32 s) {
-#ifndef AUDIO_DISABLED
 	if (hResCheckResID(longRes, s))
 		audio->queueVoice(s, longSoundDec);
 	else
 		audio->stopVoice();
-#endif
 }
 
 //-----------------------------------------------------------------------
 // on disk voice (x2 buffered)
 
 void playVoice(uint32 s) {
-#ifndef AUDIO_DISABLED
 	if (hResCheckResID(voiceRes, s)) {
 		if (s)
 			audio->queueVoice(s, voiceDec, Here);
 		else
 			audio->stopVoice();
 	}
-#endif
 }
 
 //-----------------------------------------------------------------------
@@ -532,13 +486,13 @@ void playVoice(uint32 s) {
 
 bool sayVoice(uint32 s[]) {
 	bool worked = false;
-#ifndef AUDIO_DISABLED
+
 	if (hResCheckResID(voiceRes, s)) {
 		audio->queueVoice(s, voiceDec, Here);
 		if (audio->talking())
 			worked = true;
 	}
-#endif
+
 	return worked;
 }
 
@@ -546,9 +500,8 @@ bool sayVoice(uint32 s[]) {
 // main loop playback
 
 void _playLoop(uint32 s) {
-	warning("STUB: _playLoop(%d)", s);
-	return;
-#ifndef AUDIO_DISABLED
+	warning("STUB: playLoop(%d)", s);
+
 	currentLoop = s;
 	if (currentLoop == audio->currentLoop())
 		return;
@@ -556,34 +509,27 @@ void _playLoop(uint32 s) {
 	audio->stopLoop();
 	if (hResCheckResID(loopRes, s))
 		audio->queueLoop(s, loopDec, 0, Here);
-#endif
 }
 
 //-----------------------------------------------------------------------
 // loop playback that disables background loops
 
 void playLoop(uint32 s) {
-#ifndef AUDIO_DISABLED
 	if (s) {
 		//disableBGLoop(s);
 	} else {
 		_playLoop(s);
 		//enableBGLoop();
 	}
-#endif
 }
-
-
 
 
 //-----------------------------------------------------------------------
 // attenuated sound players
 
 void playSoundAt(uint32 s, Point32 p) {
-#ifndef AUDIO_DISABLED
 	if (hResCheckResID(soundRes, s))
 		audio->queueSound(s, soundDec, 1, p);
-#endif
 }
 
 void playSoundAt(uint32 s, Location playAt) {
@@ -597,13 +543,13 @@ void playSoundAt(uint32 s, Location playAt) {
 
 bool sayVoiceAt(uint32 s[], Point32 p) {
 	bool worked = false;
-#ifndef AUDIO_DISABLED
+
 	if (hResCheckResID(voiceRes, s)) {
 		audio->queueVoice(s, voiceDec, p);
 		if (audio->talking())
 			worked = true;
 	}
-#endif
+
 	return worked;
 }
 
@@ -618,12 +564,10 @@ bool sayVoiceAt(uint32 s[], Location playAt) {
 // loop playback w/ attenuation
 
 void playLoopAt(uint32 s, Point32 loc) {
-#ifndef AUDIO_DISABLED
 	if (hResCheckResID(loopRes, s))
 		audio->queueLoop(s, loopDec, 0, loc);
 	else
 		audio->stopLoop();
-#endif
 }
 
 void addAuxTheme(Location loc, soundSegment lid);
@@ -631,13 +575,11 @@ void killAuxTheme(soundSegment lid);
 void killAllAuxThemes(void);
 
 void playLoopAt(uint32 s, Location playAt) {
-#ifndef AUDIO_DISABLED
 	if (s) {
 		addAuxTheme(playAt, s);
 	} else {
 		killAllAuxThemes();
 	}
-#endif
 }
 
 //-----------------------------------------------------------------------
@@ -726,6 +668,7 @@ void PlayLoopAt(char IDstr[], Location l) {
 }
 
 void PlayMusic(char IDstr[]) {
+	warning("STUB: PlayMusic()");
 	if (IDstr == NULL)
 		playMusic(0);
 	else
