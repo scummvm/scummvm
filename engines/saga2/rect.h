@@ -243,6 +243,10 @@ typedef Point32         Vector32;           // vectors are treated as points
 
 typedef Point32         Extent32;               // contains width and height
 
+struct StaticRect {
+	int16 x, y, width, height;
+};
+
 /* ===================================================================== *
    Rect16: 16-bit 2-D rectangle
  * ===================================================================== */
@@ -304,6 +308,14 @@ public:
 		return r;
 	}
 #endif
+
+	Rect16(StaticRect r) {
+		x = r.x;
+		y = r.y;
+		width = r.width;
+		height = r.height;
+	}
+
 	//  Rect16 operators
 
 	friend int     operator==(Rect16 a, Rect16 b) {

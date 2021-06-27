@@ -289,51 +289,70 @@ const   int imageHeight         =   17;
 const   int textPixelLen        =   175;
 const   int smallTextOffset     =    80;
 
+static const StaticRect optResumeRect = {
+	optBoxXSzNS - (pushButtonWidth + 14),
+	buttonYOffset + buttonSpace,
+	pushButtonWidth,
+	pushButtonHeight
+};
 
-Rect16  optResumeRect(optBoxXSzNS - (pushButtonWidth + 14),
-                      buttonYOffset + buttonSpace,
-                      pushButtonWidth,
-                      pushButtonHeight);
+static const StaticRect optSaveRect = {
+	optBoxXSzNS - (pushButtonWidth + 14),
+	buttonYOffset + ((pushButtonHeight * 1) + buttonSpace * 2),
+	pushButtonWidth,
+	pushButtonHeight
+};
 
-Rect16  optSaveRect(optBoxXSzNS - (pushButtonWidth + 14),
-                    buttonYOffset + ((pushButtonHeight * 1) + buttonSpace * 2),
-                    pushButtonWidth,
-                    pushButtonHeight);
 
-Rect16  optRestoreRect(optBoxXSzNS - (pushButtonWidth + 14),
-                       buttonYOffset + ((pushButtonHeight * 2) + buttonSpace * 3),
-                       pushButtonWidth,
-                       pushButtonHeight);
 
-Rect16  optQuitRect(optBoxXSzNS - (pushButtonWidth + 14),
-                    buttonYOffset + ((pushButtonHeight * 3) + buttonSpace * 4),
-                    pushButtonWidth,
-                    pushButtonHeight);
+static const StaticRect optRestoreRect = {
+	optBoxXSzNS - (pushButtonWidth + 14),
+	buttonYOffset + ((pushButtonHeight * 2) + buttonSpace * 3),
+	pushButtonWidth,
+	pushButtonHeight
+};
 
-Rect16  optCreditsRect(optBoxXSzNS - (pushButtonWidth + 14),
-                       buttonYOffset + ((pushButtonHeight * 4) + buttonSpace * 5),
-                       pushButtonWidth,
-                       pushButtonHeight);
+static const StaticRect optQuitRect = {
+	optBoxXSzNS - (pushButtonWidth + 14),
+	buttonYOffset + ((pushButtonHeight * 3) + buttonSpace * 4),
+	pushButtonWidth,
+	pushButtonHeight
+};
 
-Rect16  optAggressRect(14,
-                       98 + optTPHeight,
-                       18,
-                       17);
+static const StaticRect optCreditsRect = {
+	optBoxXSzNS - (pushButtonWidth + 14),
+	buttonYOffset + ((pushButtonHeight * 4) + buttonSpace * 5),
+	pushButtonWidth,
+	pushButtonHeight
+};
 
-Rect16  optWeaponRect(14,
-                      121 + optTPHeight,
-                      18,
-                      17);
+static const StaticRect optAggressRect = {
+	14,
+	98 + optTPHeight,
+	18,
+	17
+};
 
-Rect16  optSpeechRect(14,
-                      121 + 23 + optTPHeight,
-                      18,
-                      17);
+static const StaticRect optWeaponRect = {
+	14,
+	121 + optTPHeight,
+	18,
+	17
+};
 
-Rect16  optNightRect(14 + 200,
-                     98 + optTPHeight,
-                     18,
-                     17);
+static const StaticRect optSpeechRect = {
+	14,
+	121 + 23 + optTPHeight,
+	18,
+	17
+};
+
+static const StaticRect optNightRect = {
+	14 + 200,
+	98 + optTPHeight,
+	18,
+	17
+};
 
 Rect16  optTopSliderRect(15,
                          15 + optTPHeight - 2,
@@ -423,7 +442,8 @@ Rect16  optionsPanelRects[numOptionsPanels]       = { { optTopPanel },
 	{ optBotPanel }
 };
 
-Rect16  optionsButtonRects[]                        = { { optResumeRect },
+StaticRect optionsButtonRects[] = {
+	{ optResumeRect },
 	{ optSaveRect },
 	{ optRestoreRect },
 	{ optQuitRect },

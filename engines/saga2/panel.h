@@ -149,6 +149,8 @@ public:
 	// constructor
 	gPanel(gPanelList &, const Rect16 &, const char *, uint16, AppFunc *cmd = NULL);
 	gPanel(gPanelList &, const Rect16 &, gPixelMap &, uint16, AppFunc *cmd = NULL);
+
+	gPanel(gPanelList &, const StaticRect &, const char *, uint16, AppFunc *cmd = NULL);
 	virtual ~gPanel();                      // destructor
 
 	virtual gPanel *hitTest(const Point16 &p);
@@ -402,6 +404,8 @@ public:
 
 	gControl(gPanelList &, const Rect16 &, const char *, uint16, AppFunc *cmd = NULL);
 	gControl(gPanelList &, const Rect16 &, gPixelMap &, uint16, AppFunc *cmd = NULL);
+
+	gControl(gPanelList &, const StaticRect &, const char *, uint16, AppFunc *cmd = NULL);
 	~gControl();                            // destructor
 
 	gPanel *keyTest(int16 key);

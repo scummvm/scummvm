@@ -125,6 +125,9 @@ public:
 	           uint16 ident,
 	           AppFunc *cmd);
 
+	gCompImage(gPanelList &, const StaticRect &, void **, int16, int16,
+	           const char *, textPallete &, uint16, AppFunc *cmd = NULL);
+
 	~gCompImage(void);
 
 	void    pointerMove(gPanelMessage &msg);
@@ -221,6 +224,10 @@ public:
 
 	gCompButton(gPanelList &, const Rect16 &, void *,
 	            uint16, AppFunc *cmd = NULL);
+
+	gCompButton(gPanelList &, const StaticRect &, void **, int16,
+	            const char *, textPallete &, uint16, AppFunc *cmd = NULL);
+
 
 	~gCompButton(void);
 
