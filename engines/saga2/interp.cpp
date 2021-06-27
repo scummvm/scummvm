@@ -1608,7 +1608,7 @@ void Thread::dispatch(void) {
 		numThreads++;
 	}
 
-	debugC(2, kDebugScripts, "Threads:%d X:%d D:%d F:%d T:%d O:%d", numThreads, numExecute, numWaitDelay, numWaitFrames, numWaitSemi, numWaitOther);
+	debugC(9, kDebugScripts, "Threads:%d X:%d D:%d F:%d T:%d O:%d", numThreads, numExecute, numWaitDelay, numWaitFrames, numWaitSemi, numWaitOther);
 
 	for (th = threadList.first(); th; th = nextThread) {
 		nextThread = threadList.next(th);
