@@ -86,7 +86,8 @@ void AIScriptCrazylegs::OtherAgentExitedThisSet(int otherActorId) {
 
 void AIScriptCrazylegs::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 	if (Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsLeavesShowroom && otherActorId == kActorMcCoy) {
-		if (combatMode && Global_Variable_Query(kVariableChapter) < 5) {
+		if (combatMode && Global_Variable_Query(kVariableChapter) < 5
+		    && (!_vm->_cutContent || Actor_Query_In_Set(kActorCrazylegs, kSetHF05))) {
 			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
 			Actor_Says(kActorCrazylegs, 430, 3);

@@ -56,7 +56,12 @@ void SceneScriptPS09::InitializeScene() {
 	}
 	if (Game_Flag_Query(kFlagCrazylegsArrested)) { // cut feature? it is impossible to arrest crazylegs
 		Actor_Put_In_Set(kActorCrazylegs, kSetPS09);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_At_XYZ(kActorCrazylegs, -290.0f, 0.33f, -235.0f, 207);
+#else
+		// Correct orientation for CrazyLegs
+		Actor_Set_At_XYZ(kActorCrazylegs, -290.0f, 0.33f, -235.0f, 583);
+#endif
 	}
 }
 
@@ -200,8 +205,14 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 				Actor_Face_Actor(kActorMcCoy, kActorGrigorian, true);
 				Actor_Says(kActorMcCoy, 4435, 14);
 				Actor_Says(kActorGrigorian, 430, 16);
+#if !BLADERUNNER_ORIGINAL_BUGS
+				Actor_Face_Heading(kActorGrigorian, 512, true);
+#endif
 				Actor_Says(kActorCrazylegs, 1130, kAnimationModeTalk);
 				Game_Flag_Set(kFlagPS09CrazylegsGrigorianTalk);
+#if !BLADERUNNER_ORIGINAL_BUGS
+				Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
+#endif
 				return true;
 			}
 

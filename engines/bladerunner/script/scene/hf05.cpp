@@ -607,6 +607,8 @@ void SceneScriptHF05::dialogueWithCrazylegs2() { // cut feature? it is impossibl
 		Actor_Says(kActorMcCoy, 1995, kAnimationModeTalk);
 		Game_Flag_Set(kFlagCrazylegsArrested);
 		Actor_Put_In_Set(kActorCrazylegs, kSetPS09);
+		// This XYZ is awry (won't show Crazylegs inside a cell or at all in the PS09 scene)
+		// but it is eventually overridden by the PS09 script, which puts Crazylegs at the right spot
 		Actor_Set_At_XYZ(kActorCrazylegs, -315.15f, 0.0f, 241.06f, 583);
 		Actor_Set_Goal_Number(kActorCrazylegs, kGoalCrazyLegsIsArrested);
 		Game_Flag_Set(kFlagCrazylegsArrestedTalk);
