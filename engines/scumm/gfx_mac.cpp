@@ -212,7 +212,8 @@ void ScummEngine::mac_undrawIndy3TextBox() {
 
 void ScummEngine::mac_undrawIndy3CreditsText() {
 	// Set _masMask to make the text clear, and _textScreenID to ensure
-	// that it's the main area that's cleared.
+	// that it's the main area that's cleared. Note that this only works
+	// with the high-resolution font.
 	_charset->_hasMask = true;
 	_charset->_textScreenID = kMainVirtScreen;
 	restoreCharsetBg();
