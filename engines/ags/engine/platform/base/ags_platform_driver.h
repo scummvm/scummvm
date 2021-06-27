@@ -56,7 +56,8 @@ enum eScriptSystemOSID {
 	eOS_Mac,
 	eOS_Android,
 	eOS_iOS,
-	eOS_PSP
+	eOS_PSP,
+	eOS_Web
 };
 
 enum SetupReturnValue {

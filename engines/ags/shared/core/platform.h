@@ -38,6 +38,7 @@ namespace AGS3 {
 #define AGS_PLATFORM_OS_ANDROID (0)
 #define AGS_PLATFORM_OS_IOS     (0)
 #define AGS_PLATFORM_OS_PSP     (0)
+#define AGS_PLATFORM_OS_EMSCRIPTEN (0)
 // check Android first because sometimes it can get confused with host OS
 #elif defined(__ANDROID__) || defined(ANDROID)
 #define AGS_PLATFORM_SCUMMVM    (0)
