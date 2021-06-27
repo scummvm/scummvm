@@ -208,7 +208,7 @@ bool Channel::isMatteIntersect(Channel *channel) {
 	Common::Rect yourBbox = channel->getBbox();
 	Common::Rect intersectRect = myBbox.findIntersectingRect(yourBbox);
 
-	if (!myBbox.contains(yourBbox))
+	if (intersectRect.isEmpty())
 		return false;
 	Graphics::Surface *myMatte = nullptr;
 	Graphics::Surface *yourMatte = nullptr;
@@ -217,10 +217,6 @@ bool Channel::isMatteIntersect(Channel *channel) {
 		myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
 	if (channel->_sprite->_cast && channel->_sprite->_cast->_type == kCastBitmap)
 		yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte();
-	if (_sprite->isQDShape())
-		myMatte = _sprite->getQDMatte();
-	if (channel->_sprite->isQDShape())
-		yourMatte = channel->_sprite->getQDMatte();
 
 	if (myMatte && yourMatte) {
 		for (int i = intersectRect.top; i < intersectRect.bottom; i++) {
@@ -251,10 +247,6 @@ bool Channel::isMatteWithin(Channel *channel) {
 		myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
 	if (channel->_sprite->_cast && channel->_sprite->_cast->_type == kCastBitmap)
 		yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte();
-	if (_sprite->isQDShape())
-		myMatte = _sprite->getQDMatte();
-	if (channel->_sprite->isQDShape())
-		yourMatte = channel->_sprite->getQDMatte();
 
 	if (myMatte && yourMatte) {
 		for (int i = intersectRect.top; i < intersectRect.bottom; i++) {
@@ -542,6 +534,10 @@ void Channel::addDelta(Common::Point pos) {
 
 		constraintBbox.left += regPoint.x;
 		constraintBbox.right -= regPoint.x;
+
+		// offset for the boundary
+		constraintBbox.right++;
+		constraintBbox.bottom++;
 
 		if (!constraintBbox.contains(currentBbox)) {
 			if (currentBbox.top < constraintBbox.top) {
