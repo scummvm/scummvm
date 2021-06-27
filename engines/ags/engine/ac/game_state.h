@@ -183,7 +183,7 @@ struct GameState {
 	char  bad_parsed_word[100];
 	int   raw_color = 0;
 	int32_t raw_modified[MAX_ROOM_BGFRAMES];
-	Shared::PBitmap raw_drawing_surface = 0;
+	Shared::PBitmap raw_drawing_surface;
 	short filenumbers[MAXSAVEGAMES];
 	int   room_changes = 0;
 	int   mouse_cursor_hidden = 0;
