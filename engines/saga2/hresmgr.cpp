@@ -85,7 +85,7 @@ hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 
 	_parent = sire;
 
-	debugC(3, kDebugResources, "Creating context %x (%s)", id, tag2str(id));
+	debugC(3, kDebugResources, "Creating context %x (%s), %s", id, tag2str(id), desc);
 	if ((entry = _parent->findEntry(id)) == nullptr) {
 		debugC(3, kDebugResources, "Could not create context");
 		return;
@@ -197,6 +197,7 @@ bool hResContext::seek(hResID id) {
 		// resource _data is actually a path name
 
 		_handle = openExternal(_res->_handle);
+
 		return (_handle != nullptr);
 	}
 
