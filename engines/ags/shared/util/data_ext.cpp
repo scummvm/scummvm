@@ -85,8 +85,14 @@ HError ReadExtData(PfnReadExtBlock reader, int flags, Stream *in) {
 		if (!err)
 			return err;
 
-		// Finally test that we did not read too much or too little
 		soff_t cur_pos = in->GetPosition();
+
+		// WORKAROUND: For at least the MMM games, the translation
+		// files' first block length is incorrect by one byte
+		if (cur_pos == (block_end + 1) && cur_pos < 100)
+			cur_pos = block_end;
+
+		// Finally test that we did not read too much or too little
 		if (cur_pos > block_end) {
 			return new DataExtError(kDataExtErr_BlockDataOverlapping,
 				String::FromFormat("Block: '%s', expected to end at offset: %lld, finished reading at %lld.",
