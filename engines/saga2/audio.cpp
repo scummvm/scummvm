@@ -39,12 +39,16 @@
 
 namespace Saga2 {
 
+audioInterface *audio;
+
 void initAudio() {
 	warning("STUB: initAudio()");
+	audio = new audioInterface();
 }
 
 void cleanupAudio() {
 	warning("STUB: cleanupAudio()");
+	delete audio;
 }
 
 void *audioAlloc(size_t s, const char desc[]) {
@@ -52,13 +56,10 @@ void *audioAlloc(size_t s, const char desc[]) {
 	return malloc(s);
 }
 
-void audioFree(void *mem)
-{
+void audioFree(void *mem) {
 	warning("STUB: audioFree()");
 	//delete mem;
 }
-
-audioInterface *audio;
 
 audioInterface::audioInterface(const char *driver_path, const char *undriver_path) {
 	warning("STUB: audioInteraface::audioInterface()");
@@ -102,7 +103,7 @@ bool audioInterface::goodMIDICard(void) {
 }
 
 void audioInterface::queueSound(soundSegment s, decoderSet *, int16 loopFactor, sampleLocation where) {
-	warning("STUB: audioInterface::queueSound()");
+	warning("STUB: audioInterface::queueSound(%d,  @%d,%d)", s, where.x, where.y);
 }
 void audioInterface::queueLoop(soundSegment s, decoderSet *sDec, int16 loopFactor, sampleLocation where) {
 	warning("STUB: audioInterface::queueLoop()");
@@ -111,7 +112,7 @@ void audioInterface::stopLoop(void) {
 	warning("STUB: audioInterface::stopLoop()");
 }
 void audioInterface::setLoopPosition(sampleLocation newLoc) {
-	warning("STUB: audioInterface::setLoopPosition()");
+	warning("STUB: audioInterface::setLoopPosition(%d,%d)", newLoc.x, newLoc.y);
 }
 
 void audioInterface::queueVoice(soundSegment s, decoderSet *, sampleLocation where) {
