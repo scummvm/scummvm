@@ -165,6 +165,7 @@ Common::Error Parallaction_br::go() {
 			_nextPart = 1;
 			_input->_inputMode = Input::kInputModeGame;
 		} else {
+			_input->setMenuPointer();
 			startGui(splash);
 			 // don't show splash after first time
 			splash = false;

@@ -489,10 +489,6 @@ void Input::initCursors() {
 			Graphics::Surface *surf = new Graphics::Surface;
 			surf->create(_mouseComboProps_BR._width, _mouseComboProps_BR._height, Graphics::PixelFormat::createFormatCLUT8());
 			_comboArrow = new SurfaceToFrames(surf);
-
-			// TODO: choose the pointer depending on the active character
-			// For now, we pick Donna's
-			_mouseArrow = _donnaCursor;
 		} else {
 			// TODO: Where are the Amiga cursors?
 			Graphics::Surface *surf1 = new Graphics::Surface;
@@ -569,6 +565,29 @@ void Input::setInventoryCursor(ItemName name) {
 		warning("Input::setInventoryCursor: unknown gametype");
 	}
 
+}
+
+void Input::setMenuPointer() {
+	switch (_gameType) {
+	case GType_Nippon: {
+		error("Input::setMenuPointer not supported for Nippon Safes");
+	}
+
+	case GType_BRA: {
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			// Donna's cursor doubles as the cursor used
+			// in the startup menu.
+			_mouseArrow = _donnaCursor;
+			setArrowCursor();
+		} else {
+			warning("Input::setMenuPointer not yet implemented for Amiga");
+		}
+		break;
+	}
+
+	default:
+		warning("Input::setMenuPointer: unknown gametype");
+	}
 }
 
 void Input::setCharacterPointer(const char *name) {
