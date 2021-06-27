@@ -101,6 +101,9 @@ private:
 
 	// true means make EGA picture drawing visible
 	bool _EGAdrawingVisualize;
+
+	const char *thelastText = "";
+
 };
 
 } // End of namespace Sci

@@ -355,6 +355,10 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 void GfxControls16::kernelDrawText(Common::Rect rect, reg_t obj, const char *text, uint16 languageSplitter, int16 fontId, TextAlignment alignment, int16 style, bool hilite) {
 	if (_ttsMan != nullptr && g_sci->getGameId() == GID_LAURABOW2)
 		_ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
+	if (g_sci->getGameId() == GID_CASTLEBRAIN && g_sci->isDemo() == false)
+		_ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
+	if (g_sci->getGameId() == GID_LAURABOW)
+		_ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
 	if (!hilite) {
 		rect.grow(1);
 		_paint16->eraseRect(rect);
