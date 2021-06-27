@@ -216,6 +216,9 @@ public:
 	void setText(const Common::U32String &str);
 	void setText(const Common::String &str);
 
+	void setFixDims(bool fixed) { _fixedDims = fixed; }
+	bool getFixDims() { return _fixedDims; }
+
 	void deleteSelection();
 	void deletePreviousChar(int *row, int *col);
 	void addNewLine(int *row, int *col);
@@ -301,6 +304,8 @@ protected:
 	int _maxWidth;
 	int _interLinear;
 	int _textShadow;
+
+	bool _fixedDims;
 
 	int _selEnd;
 	int _selStart;
