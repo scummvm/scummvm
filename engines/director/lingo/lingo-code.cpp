@@ -843,7 +843,8 @@ void LC::c_intersects() {
 		return;
 	}
 
-	if (sprite1->_sprite->_ink == kInkTypeMatte && sprite2->_sprite->_ink == kInkTypeMatte) {
+	// don't regard quick draw shape as matte type
+	if ((!sprite1->_sprite->isQDShape() && sprite1->_sprite->_ink == kInkTypeMatte) && (!sprite2->_sprite->isQDShape() && sprite2->_sprite->_ink == kInkTypeMatte)) {
 		g_lingo->push(Datum(sprite2->isMatteIntersect(sprite1)));
 	} else {
 		g_lingo->push(Datum(sprite2->getBbox().intersects(sprite1->getBbox())));
@@ -863,7 +864,8 @@ void LC::c_within() {
 		return;
 	}
 
-	if (sprite1->_sprite->_ink == kInkTypeMatte && sprite2->_sprite->_ink == kInkTypeMatte) {
+	// don't regard quick draw shape as matte type
+	if ((!sprite1->_sprite->isQDShape() && sprite1->_sprite->_ink == kInkTypeMatte) && (!sprite2->_sprite->isQDShape() && sprite2->_sprite->_ink == kInkTypeMatte)) {
 		g_lingo->push(Datum(sprite2->isMatteWithin(sprite1)));
 	} else {
 		g_lingo->push(Datum(sprite2->getBbox().contains(sprite1->getBbox())));
