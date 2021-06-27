@@ -511,6 +511,8 @@ public:
 	void setupSubtitles(const char *s, const char *s2, int y);
 	void clearSubtitles();
 
+	Inventory *findInventory(const char *name);
+
 	void testCounterCondition(const Common::String &name, int op, int value);
 	void restoreOrSaveZoneFlags(ZonePtr z, bool restore);
 
@@ -541,7 +543,6 @@ public:
 	ZonePtr		_activeZone2;
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
 
-
 private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;
@@ -557,7 +558,7 @@ private:
 	void	initResources();
 	void	initInventory();
 	void	destroyInventory();
-	Inventory *findInventory(const char *name);
+
 	void	cleanInventory(bool keepVerbs);
 	void	setupBalloonManager();
 	void	initFonts();
