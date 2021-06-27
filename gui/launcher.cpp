@@ -155,7 +155,8 @@ void LauncherDialog::selectTarget(const String &target) {
 		StringArray::const_iterator iter;
 		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
 			if (target == *iter) {
-				_list->setSelected(itemToSelect);
+				if (_list)
+					_list->setSelected(itemToSelect);
 				break;
 			}
 		}
