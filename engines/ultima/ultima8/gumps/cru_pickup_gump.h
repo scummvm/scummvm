@@ -57,8 +57,8 @@ public:
 		return _q;
 	}
 
-	//! Update for a second item pickup - generally just replace existing count text.
-	void updateForNewItem(const Item *item, bool showCount);
+	//! Update for a second item pickup - updates existing count text.
+	void updateForNewItem(const Item *item);
 	void addCountText();
 
 	bool loadData(Common::ReadStream *rs, uint32 version);

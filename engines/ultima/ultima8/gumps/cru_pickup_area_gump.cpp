@@ -67,7 +67,7 @@ void CruPickupAreaGump::addPickup(const Item *item, bool showCount) {
 			continue;
 		if (pug->getShapeNo() == shapeno) {
 			// Already a notification for this object, update it
-			pug->updateForNewItem(item, showCount);
+			pug->updateForNewItem(item);
 			return;
 		}
 		int32 x, y;

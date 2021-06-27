@@ -52,7 +52,10 @@ CruPickupGump::CruPickupGump(const Item *item, int y, bool showCount) : Gump(0, 
 	const WeaponInfo *weaponInfo = item->getShapeInfo()->_weaponInfo;
 	if (weaponInfo) {
 		_itemShapeNo = item->getShape();
-		_q = item->getQuality();
+		if (item->getShapeInfo()->_family == ShapeInfo::SF_CRUAMMO)
+			_q = 1;
+		else
+			_q = item->getQuality();
 		_itemName = weaponInfo->_name;
 		_gumpShapeNo = weaponInfo->_displayGumpShape;
 		_gumpFrameNo = weaponInfo->_displayGumpFrame;
@@ -123,7 +126,7 @@ void CruPickupGump::InitGump(Gump *newparent, bool take_focus) {
 	itemgump->Move(ITEM_AREA_WIDTH / 2 - itemframe->_width / 2, _dims.height() / 2 - itemframe->_height / 2);
 }
 
-void CruPickupGump::updateForNewItem(const Item *item, bool showCount) {
+void CruPickupGump::updateForNewItem(const Item *item) {
 	assert(item);
 	assert(item->getShape() == _itemShapeNo);
 	TextWidget *oldtext = dynamic_cast<TextWidget *>(FindGump(&FindByIndex<COUNT_TEXT_INDEX>));
@@ -132,7 +135,8 @@ void CruPickupGump::updateForNewItem(const Item *item, bool showCount) {
 		oldtext->Close();
 	}
 
-	_showCount = showCount;
+	// Always show count for repeat objects.
+	_showCount = true;
 
 	// If we're updating the existing count, add 1 or special-case credits
 	if (_itemShapeNo == 0x4ed)
