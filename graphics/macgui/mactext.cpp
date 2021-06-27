@@ -224,6 +224,8 @@ void MacText::init() {
 	_textMaxHeight = 0;
 	_surface = nullptr;
 
+	_fixedDims = true;
+
 	_selEnd = -1;
 	_selStart = -1;
 
@@ -955,6 +957,19 @@ void MacText::recalcDims() {
 	}
 
 	_textMaxHeight = y - _interLinear;
+
+	if (!_fixedDims) {
+		int newBottom = _dims.top + _textMaxHeight + (2 * _border) + _gutter + _shadow;
+		if (newBottom > _dims.bottom) {
+			_dims.bottom = newBottom;
+			delete _composeSurface;
+			_composeSurface = new ManagedSurface(_dims.width(), _dims.height(), _wm->_pixelformat);
+			reallocSurface();
+			_fullRefresh = true;
+			_contentIsDirty = true;
+			render();
+		}
+	}
 }
 
 void MacText::setAlignOffset(TextAlign align) {
