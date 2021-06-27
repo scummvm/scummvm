@@ -1499,7 +1499,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("newton", "Demo", "Complete Newton Demo", "7f443f2e63fd497a9ad85b10dc880a91", 383575, 313),
 
 	MACDEMO1_l("nonta", "Demo", "Nonta", "f5277c53bacd27936158dd3867e587e2", 390262, Common::JA_JPN, 311),
-	MACDEMO1_l("novacity", "Demo", "demo", "f5277c53bacd27936158dd3867e587e2", 390381, Common::JA_JPN, 311),
+
+	// Original movie filename is NOVA オープニングZ
+	MACDEMO2_l("novacity", "Demo", "demo",			 "f5277c53bacd27936158dd3867e587e2", 390381,
+								   "NOVA Opening Z", "1ffe4ff06bb9a2a97d76e5e20c51dcc8", 3811151, Common::JA_JPN, 311),
+
 	MACDEMO1_l("nsxpress", "Demo", "NSX Press", "f5277c53bacd27936158dd3867e587e2", 452135, Common::JA_JPN, 311),
 	MACDEMO1_l("oceansbelow", "Demo", "Oceans Below Auto-Demo", "f5277c53bacd27936158dd3867e587e2", 2680311, Common::JA_JPN, 311),
 
@@ -1535,8 +1539,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1("playroom", "Color Demo", "Color Playroom Demo", "b29b31f423a332e7f9e059187e62e1be", 1000734, 300),
 
-	MACGAME2_l("presenpack", "", "Start", 		"f5277c53bacd27936158dd3867e587e2", 390255,
-								 "Shared Cast", "49593263c6c5a84897e5bb8c848d45df", 749687, Common::JA_JPN, 311),
+	MACGAME2_l("presenpack", "", "Start",		 "f5277c53bacd27936158dd3867e587e2", 390255,
+								 "SampleMovie1", "ad6bc606c81db01035f12e3d230d6b89", 2872942, Common::JA_JPN, 311),
 
 	// Product is by 株式会社パークウェーブ (Parc Wave)
 	// Original filename is PRESSiT.デモ
@@ -1638,9 +1642,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1_l("ttw", "Demo", "T.T.W.Demo", "51e8b81db434a6dcae723f6b7724143d", 691332, Common::JA_JPN, 302),
 
-	// Full version is D4
-	MACDEMO2_l("ukiuki1", "Demo", "DEMO",		 "f5277c53bacd27936158dd3867e587e2", 392508,
-								  "Shared Cast", "1a784d62d7a97967da230f4e3c28d70e", 80517, Common::JA_JPN, 311),
+// Full version is D4
+	MACDEMO2_l("ukiuki1", "Demo", "DEMO",	   "f5277c53bacd27936158dd3867e587e2", 392508,
+								  "D_opening", "107b285846b271eda498870c2ea5ccf7", 1677174, Common::JA_JPN, 311),
 
 	// Original filename is うきうきスタンプ3のおしらせ
 	MACDEMO1_l("ukiukistamp", "Vol.3 Demo", "Notice of Ukiuki Stamp 3", "f5277c53bacd27936158dd3867e587e2", 392544, Common::JA_JPN, 311),
@@ -2606,7 +2610,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac demo executable name is デモ
 	MACGAME1_l("tetsuman", "", 	   "Tetsuman",		"bcd3c718db258701496b3c5bcb827ef2", 484323, Common::JA_JPN, 404),
 	MACDEMO2_l("tetsuman", "Demo", "Demo",			"bcd3c718db258701496b3c5bcb827ef2", 484323,
-	                        	   "Shared.Dir",	"9483980a6005555eeee43ee38a70d671", 1656506, Common::JA_JPN, 404),
+	                        	   "LOGO",			"eca1db6f65dbd3213dbddf121adb3db2", 1050164, Common::JA_JPN, 404),
 	WINGAME1_l("tetsuman", "", 	   "TETUMAN.EXE", 	"460a27915f96f1aeb50b271722637a60", 746847, Common::JA_JPN, 404),
 	WINDEMO2_l("tetsuman", "Demo", "DEMO.EXE", 		"460a27915f96f1aeb50b271722637a60", 746847,
 								   "SHARED.DIR", 	"1a294eaa8f725a54aa00e5ec6d3560a9", 1656378, Common::JA_JPN, 404),
@@ -3288,7 +3292,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("fpdollhouse", "Dress Up Demo", "DHDEMO95.EXE", "518a98696fe1122e08410b0f157f21bf", 1512578, 602),
 
 	MACGAME1("fpgarage", "", "Big Action Garage", "1d9149b9745e35ef93ed4cdf08ec3af7", 1032662, 602),
-	WINGAME1("fpgarage", "", "GARAGE.EXE", "518a98696fe1122e08410b0f157f21bf", 1512853, 602),
+	WINGAME2("fpgarage", "", "GARAGE.EXE", "518a98696fe1122e08410b0f157f21bf", 1512853,
+							 "START.DXR",  "f69996bd5a1dea3971c7647e86b4ee30", 190436, 602),
 
 	MACDEMO1("fpreadyt", "ABC Fun Demo",	  "FP Toddler Demo",	  "1d9149b9745e35ef93ed4cdf08ec3af7", 1032634, 602),
 	WINDEMO1("fpreadyt", "ABC Fun Demo",	  "TODDEM95.EXE",		  "518a98696fe1122e08410b0f157f21bf", 1512576, 602),
