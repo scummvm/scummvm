@@ -99,21 +99,6 @@ int16               speechLineCount,        // count of speech lines
 static Point16      initialSpeechPosition;  // inital coords of speech
 
 //  Image data for the little "bullet"
-
-#if 0
-static uint8 BulletData[] = {
-	0x00, 0x00, 0x00, 0x0F, 0x0F, 0x0F, 0x00, 0x00, 0x00, // Row 0
-	0x00, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x00, // Row 1
-	0x00, 0x0F, 0x0F, 0x43, 0x41, 0x41, 0x0F, 0x0F, 0x00, // Row 2
-	0x0F, 0x0F, 0x45, 0x43, 0x41, 0x01, 0x41, 0x0F, 0x0F, // Row 3
-	0x0F, 0x0F, 0x47, 0x45, 0x43, 0x41, 0x41, 0x0F, 0x0F, // Row 4
-	0x0F, 0x0F, 0x45, 0x47, 0x47, 0x45, 0x45, 0x0F, 0x0F, // Row 5
-	0x00, 0x0F, 0x0F, 0x45, 0x47, 0x47, 0x0F, 0x0F, 0x00, // Row 6
-	0x00, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x00, // Row 7
-	0x00, 0x00, 0x00, 0x0F, 0x0F, 0x0F, 0x00, 0x00, 0x00, // Row 8
-};
-#else
-//  Remapped by hand into new palette
 static uint8 BulletData[] = {
 	0x00, 0x00, 0x00, 0x18, 0x18, 0x18, 0x00, 0x00, 0x00, // Row 0
 	0x00, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x00, // Row 1
@@ -125,7 +110,6 @@ static uint8 BulletData[] = {
 	0x00, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x00, // Row 7
 	0x00, 0x00, 0x00, 0x18, 0x18, 0x18, 0x00, 0x00, 0x00, // Row 8
 };
-#endif
 
 static gStaticImage BulletImage(9, 9, BulletData);
 
@@ -618,89 +602,6 @@ void abortSpeech(void) {
 	if (speechList.currentActive()) speechList.currentActive()->abortSpeech();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-//Non Member Speech Functions / User Interface Calls
-
-void queueActorSpeech(
-    GameObject          *obj,
-    char                *text,
-    int                 count,
-    int32               sampleID,
-    int                 flags
-) {
-	Speech *sp;
-
-	//  Check see if there's already speech associated with this object.
-	for (sp = (Speech *)speechList._inactiveList.first();
-	        sp;
-	        sp = (Speech *)sp->next()) {
-		if (sp->obj == obj) {
-			if (!sp->addSpeech(text, sampleID, flags))
-				throw gError("Cant Append Speech");
-			return;
-		}
-	}
-
-	sp = speechList.newTask(obj, text, count, sampleID, flags);
-
-}
-
-//  Causes all speeches to be skipped over
-
-void abortAllSpeeches(void) {
-//	int16            i;
-
-//	activeSpeech.speechFinished.set( 0 );
-//	SetAlarm( &activeSpeech.speechFinished, 0 );
-//	if (activeSpeech.sampleID != -1)
-//	{
-//		StopVoices();
-//		activeSpeech.sampleID = -1;
-//	}
-//	if (abortEnabled)
-//	{
-//		skipSpeeches = true;
-//		wakeUpThreads( TWAIT_SPEECH );
-//	}
-
-//	for (i=0; i<10; i++) dispatchThreads();
-}
-
-void sentenceGenerator(char *sentence) {
-	int16 index;
-
-	index = rand() % ARRAYSIZE(names);
-	strcat(sentence, names[index]);
-	index = rand() % ARRAYSIZE(verbs);
-	strcat(sentence, verbs[index]);
-	index = rand() % ARRAYSIZE(adjectives);
-	strcat(sentence, adjectives[index]);
-	index = rand() % ARRAYSIZE(nouns);
-	strcat(sentence, nouns[index]);
-
-//	for(int i=0; i<ARRAYSIZE(sentenceParts); i++)
-//	{
-//		strcat(sentence,sentenceParts[i].index = rand() % ARRAYSIZE(sentenceParts[i]);
-//	}
-
-}
-#endif
-
 //-----------------------------------------------------------------------
 //	Delete all speeches relating to a particular actor
 
@@ -716,9 +617,7 @@ int16 TextWrap(
     int16           line_pixels[],          // pixel count of each line
     char            *text,                  // the text to render
     int16           width                   // width to constrain text
-)
-
-{
+) {
 	int16           i,                      // loop counter
 	                line_start,             // start of current line
 	                last_space,             // last space encountered
@@ -1244,10 +1143,6 @@ APPFUNC(cmdClickSpeech) {
 
 		if ((sp = speechList.currentActive()) != NULL) {
 			sp->selectedButton = pickSpeechButton(ev.mouse);
-#if 0
-			if (sp->selectedButton != 0)
-				sp->dispose();
-#endif
 		}
 		break;
 
