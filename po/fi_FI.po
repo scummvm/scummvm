@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-27 15:47+0000\n"
-"PO-Revision-Date: 2021-06-26 03:25+0000\n"
+"PO-Revision-Date: 2021-06-27 23:25+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -7612,16 +7612,12 @@ msgstr ""
 "tähän ScummVM:ään."
 
 #: engines/wintermute/wintermute.cpp:182
-#, fuzzy
-#| msgid ""
-#| "This game requires 3D capabilities that are out ScummVM scope. As such, "
-#| "it is likely to be unplayable totally or partially."
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
-"Tämä peli tarvitsee 3D-ominaisuuksia jotka eivät kuulu ScummVM:n "
-"repertuaariin. Tämän takia se ei ole osittain tai laisinkaan pelattavissa."
+"Tämä peli tarvitsee 3D-ominaisuuksia joita ei ole käännetty tähän ScummVM:"
+"ään. Tämän takia se ei ole osittain tai laisinkaan pelattavissa."
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
@@ -7747,10 +7743,8 @@ msgstr "Puhelimen alas-nappi"
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:361
-#, fuzzy
-#| msgid "Alternative intro"
 msgid "Alternative action"
-msgstr "Vaihtoehtoinen intro"
+msgstr "Vaihtoehtoinen toiminto"
 
 #: engines/wintermute/keymapper_tables.h:432
 #: engines/wintermute/keymapper_tables.h:565
@@ -8076,18 +8070,14 @@ msgstr "Tekstitys päälle / pois"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1388
-#, fuzzy
-#| msgid "Shift"
 msgid "Shift key"
-msgstr "Shift"
+msgstr "Shift-näppäin"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1490
-#, fuzzy
-#| msgid "Previous action"
 msgid "Chapayev's action"
-msgstr "Edellinen toiminto"
+msgstr "Chepayevin toiminto"
 
 #: engines/wintermute/keymapper_tables.h:1538
 #: engines/wintermute/keymapper_tables.h:1791
@@ -8113,17 +8103,13 @@ msgstr "Dialogivastaus 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1569
-#, fuzzy
-#| msgid "Spin slower"
 msgid "Spin wheel slower"
-msgstr "Pyöritä hitaammin"
+msgstr "Pyöritä pyörää hitaammin"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1577
-#, fuzzy
-#| msgid "Spin faster"
 msgid "Spin wheel faster"
-msgstr "Pyöritä nopeammin"
+msgstr "Pyöritä pyörää nopeammin"
 
 #: engines/wintermute/keymapper_tables.h:1655
 msgid "Zoom out"
@@ -8145,10 +8131,8 @@ msgstr "Bezier-ikkuna"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1825
-#, fuzzy
-#| msgid "Droid action"
 msgid "Droid's action"
-msgstr "Droiditoiminto"
+msgstr "Droidin toiminto"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
 #: engines/wintermute/keymapper_tables.h:1933
