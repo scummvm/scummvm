@@ -1070,7 +1070,6 @@ SpeechTaskList::SpeechTaskList(void **buf) {
 
 int32 SpeechTaskList::archiveSize(void) {
 	int32       size = 0;
-	Speech      *sp;
 
 	size += sizeof(int16);   //  Speech count
 
@@ -1092,7 +1091,6 @@ int32 SpeechTaskList::archiveSize(void) {
 
 void *SpeechTaskList::archive(void *buf) {
 	int16       count = 0;
-	Speech      *sp;
 
 	count += _list.size() + _inactiveList.size();
 
