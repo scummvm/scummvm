@@ -571,4 +571,31 @@ void Input::setInventoryCursor(ItemName name) {
 
 }
 
+void Input::setCharacterPointer(const char *name) {
+	switch (_gameType) {
+	case GType_Nippon: {
+		error("Input::setCharacterPointer not supported for Nippon Safes");
+	}
+
+	case GType_BRA: {
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			if (!scumm_stricmp(name, "dino")) {
+				_mouseArrow = _dinoCursor;
+			} else if (!scumm_stricmp(name, "donna")) {
+				_mouseArrow = _donnaCursor;
+			} else if (!scumm_stricmp(name, "doug")) {
+				_mouseArrow = _dougCursor;
+			}
+			setArrowCursor();
+		} else {
+			warning("Input::setCharacterPointer not yet implemented for Amiga");
+		}
+		break;
+	}
+
+	default:
+		warning("Input::setCharacterPointer: unknown gametype");
+	}
+}
+
 } // namespace Parallaction
