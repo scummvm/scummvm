@@ -106,9 +106,9 @@ public:
 };
 
 #ifdef DEBUG_MANAGED_OBJECTS
-#define ManagedObjectLog(...) Debug::Printf(kDbgGroup_ManObj, kDbgMsg_Debug, __VA_ARGS__)
+#define ManagedObjectLog(ARGS...) Debug::Printf(kDbgGroup_ManObj, kDbgMsg_Debug, ##ARGS)
 #else
-#define ManagedObjectLog(...)
+#define ManagedObjectLog(ARGS...)
 #endif
 
 } // namespace AGS3
