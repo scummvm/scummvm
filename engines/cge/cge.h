@@ -34,6 +34,7 @@
 #include "cge/console.h"
 #include "cge/bitmap.h"
 #include "cge/sound.h"
+#include "common/text-to-speech.h"
 
 struct ADGameDescription;
 

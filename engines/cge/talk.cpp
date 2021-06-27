@@ -30,6 +30,8 @@
 #include "cge/game.h"
 #include "cge/events.h"
 #include "cge/cge_main.h"
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
 
 namespace CGE {
 
@@ -75,6 +77,7 @@ uint16 Font::width(const char *text) {
 
 Talk::Talk(CGEEngine *vm, const char *text, TextBoxStyle mode, bool wideSpace)
 	: Sprite(vm, NULL), _mode(mode), _wideSpace(wideSpace), _vm(vm) {
+	textToSpeech(text);
 	_ts = NULL;
 	_flags._syst = true;
 	update(text);
@@ -86,6 +89,15 @@ Talk::Talk(CGEEngine *vm)
 	_ts = NULL;
 	_flags._syst = true;
 	_wideSpace = false;
+}
+
+const char *lastText = "";
+
+void textToSpeech(const char *text) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (lastText != text && ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+		ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
+		lastText = text;
 }
 
 void Talk::update(const char *text) {
@@ -203,6 +215,8 @@ InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldText(NULL), _vm(vm) 
 }
 
 void InfoLine::update(const char *text) {
+	textToSpeech(text);
+
 	if (text == _oldText)
 		return;
 

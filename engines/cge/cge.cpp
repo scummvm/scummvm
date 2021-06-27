@@ -27,6 +27,7 @@
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/text-to-speech.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "gui/message.h"

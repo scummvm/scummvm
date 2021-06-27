@@ -46,6 +46,7 @@ namespace CGE {
 #define kFontExt           ".CFT"
 
 enum TextBoxStyle { kTBPure, kTBRect, kTBRound };
+void textToSpeech(const char *text);
 
 class Talk : public Sprite {
 protected:
