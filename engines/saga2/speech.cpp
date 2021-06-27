@@ -194,8 +194,8 @@ void *Speech::restore(void *buf) {
 	//  Requeue the speech if needed
 	if (speechFlags & spQueued) {
 		//  Add to the active list
-		DNode::remove();
-		speechList.activeList.addTail(*this);
+		speechList.remove(this);
+		speechList._list.push_back(this);
 	}
 
 	return buf;
@@ -291,10 +291,10 @@ bool Speech::append(char *text, int32 sampID) {
 bool Speech::activate(void) {
 
 	//  Remove from existing list
-	DNode::remove();
+	speechList.remove(this);
 
 	//  Add to the active list
-	speechList.activeList.addTail(*this);
+	speechList._list.push_back(this);
 
 	speechFlags |= spQueued;
 
@@ -561,7 +561,7 @@ void Speech::dispose(void) {
 
 	GameObject *obj = GameObject::objectAddress(objID);
 
-	debugC(1, kDebugTasks, "Speech: Disposing %p for %p (%s)", (void *)this, (void *)obj, obj->objName());
+	debugC(1, kDebugTasks, "Speech: Disposing %p for %p (%s) (total = %d)'", (void *)this, (void *)obj, obj->objName(), speechList.speechCount());
 
 	remove();
 }
@@ -646,7 +646,7 @@ void queueActorSpeech(
 	Speech *sp;
 
 	//  Check see if there's already speech associated with this object.
-	for (sp = (Speech *)speechList.nonActiveList.first();
+	for (sp = (Speech *)speechList._inactiveList.first();
 	        sp;
 	        sp = (Speech *)sp->next()) {
 		if (sp->obj == obj) {
@@ -1013,15 +1013,29 @@ bool isVisible(GameObject *obj) {
    SpeechTaskList member functions
  * ===================================================================== */
 
+void SpeechTaskList::remove(Speech *p) {
+	for (Common::List<Speech *>::iterator it = _list.begin();
+			it != _list.end(); ++it) {
+		if (p == *it) {
+			_list.remove(p);
+			break;
+		}
+	}
+
+	for (Common::List<Speech *>::iterator it = _inactiveList.begin();
+			it != _inactiveList.end(); ++it) {
+		if (p == *it) {
+			_inactiveList.remove(p);
+			break;
+		}
+	}
+}
+
 //-----------------------------------------------------------------------
 //	Initialize the SpeechTaskList
 
 SpeechTaskList::SpeechTaskList(void) {
 	lockFlag = false;
-
-	for (int i = 0; i < (long)ARRAYSIZE(array); i++) {
-		free.addTail(array[i]);
-	}
 }
 
 //-----------------------------------------------------------------------
@@ -1035,21 +1049,16 @@ SpeechTaskList::SpeechTaskList(void **buf) {
 
 	lockFlag = false;
 
-	//  Initialize the free list
-	for (i = 0; i < (long)ARRAYSIZE(array); i++) {
-		free.addTail(array[i]);
-	}
-
 	//  Get the speech count
 	count = *((int16 *)bufferPtr);
 	bufferPtr = (int16 *)bufferPtr + 1;
 
 	//  Restore the speeches
 	for (i = 0; i < count; i++) {
-		Speech      *sp = (Speech *)free.remHead();
+		Speech *sp = new Speech;
 		assert(sp != NULL);
 
-		nonActiveList.addTail(*sp);
+		_inactiveList.push_back(sp);
 		bufferPtr = sp->restore(bufferPtr);
 	}
 
@@ -1065,17 +1074,15 @@ int32 SpeechTaskList::archiveSize(void) {
 
 	size += sizeof(int16);   //  Speech count
 
-	//  Tally active speeches
-	for (sp = (Speech *)activeList.first();
-	        sp != NULL;
-	        sp = (Speech *)sp->next())
-		size += sp->archiveSize();
+	for (Common::List<Speech *>::iterator it = _list.begin();
+			it != _list.end(); ++it) {
+		size += (*it)->archiveSize();
+	}
 
-	//  Tally inactive speeches
-	for (sp = (Speech *)nonActiveList.first();
-	        sp != NULL;
-	        sp = (Speech *)sp->next())
-		size += sp->archiveSize();
+	for (Common::List<Speech *>::iterator it = _inactiveList.begin();
+			it != _inactiveList.end(); ++it) {
+		size += (*it)->archiveSize();
+	}
 
 	return size;
 }
@@ -1087,33 +1094,23 @@ void *SpeechTaskList::archive(void *buf) {
 	int16       count = 0;
 	Speech      *sp;
 
-	//  Tally active speeches
-	for (sp = (Speech *)activeList.first();
-	        sp != NULL;
-	        sp = (Speech *)sp->next())
-		count++;
-
-	//  Tally inactive speeches
-	for (sp = (Speech *)nonActiveList.first();
-	        sp != NULL;
-	        sp = (Speech *)sp->next())
-		count++;
+	count += _list.size() + _inactiveList.size();
 
 	//  Store speech count
 	*((int16 *)buf) = count;
 	buf = (int16 *)buf + 1;
 
 	//  Store active speeches
-	for (sp = (Speech *)activeList.first();
-	        sp != NULL;
-	        sp = (Speech *)sp->next())
-		buf = sp->archive(buf);
+	for (Common::List<Speech *>::iterator it = _list.begin();
+			it != _list.end(); ++it) {
+		buf = (*it)->archive(buf);
+	}
 
 	//  Store inactive speeches
-	for (sp = (Speech *)nonActiveList.first();
-	        sp != NULL;
-	        sp = (Speech *)sp->next())
-		buf = sp->archive(buf);
+	for (Common::List<Speech *>::iterator it = _inactiveList.begin();
+			it != _inactiveList.end(); ++it) {
+		buf = (*it)->archive(buf);
+	}
 
 	return buf;
 }
@@ -1122,41 +1119,31 @@ void *SpeechTaskList::archive(void *buf) {
 //	Cleanup the speech tasks
 
 void SpeechTaskList::cleanup(void) {
-	Speech      *sp;
-	Speech      *nextSP;
-
-	//  Remove active speeches
-	for (sp = (Speech *)activeList.first();
-	        sp != NULL;
-	        sp = nextSP) {
-		nextSP = (Speech *)sp->next();
-
-		sp->remove();
+	for (Common::List<Speech *>::iterator it = speechList._list.begin();
+	     it != speechList._list.end(); ++it) {
+		delete *it;
 	}
 
-	//  Remove inactive speeches
-	for (sp = (Speech *)nonActiveList.first();
-	        sp != NULL;
-	        sp = nextSP) {
-		nextSP = (Speech *)sp->next();
-
-		sp->remove();
+	for (Common::List<Speech *>::iterator it = speechList._inactiveList.begin();
+	     it != speechList._inactiveList.end(); ++it) {
+		delete *it;
 	}
+
+	_list.clear();
+	_inactiveList.clear();
 }
 
 //-----------------------------------------------------------------------
 //	Search for a speech task associated with a particular GameObject.
 
 Speech *SpeechTaskList::findSpeech(ObjectID id) {
-	Speech *sp;
-
-	for (sp = (Speech *)speechList.nonActiveList.first();
-	        sp;
-	        sp = (Speech *)sp->next()) {
-		if (sp->objID == id) return sp;
+	for (Common::List<Speech *>::iterator it = speechList._inactiveList.begin();
+	     it != speechList._inactiveList.end(); ++it) {
+		if ((*it)->objID == id)
+			return *it;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -1169,13 +1156,18 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 	//  Actors cannot speak if not in the world
 	if (obj->world() != currentWorld) return NULL;
 
-	sp = (Speech *)free.remHead();
+	if (speechCount() >= MAX_SPEECH_PTRS) {
+		warning("Too many speech tasks: > %d", MAX_SPEECH_PTRS);
+		return nullptr;
+	}
+
+	sp = new Speech;
 #if DEBUG
 	if (sp == NULL) fatal("Ran out of Speech Tasks, Object = %s\n", obj->objName());
 #endif
 	if (sp == NULL) return NULL;
 
-	debugC(1, kDebugTasks, "Speech: New Task: %p for %p (%s) (flags = %d)", (void *)sp, (void *)obj, obj->objName(), flags);
+	debugC(1, kDebugTasks, "Speech: New Task: %p for %p (%s) (flags = %d) (total = %d)", (void *)sp, (void *)obj, obj->objName(), flags, speechCount());
 
 	sp->sampleCount = sp->charCount = 0;
 	sp->objID       = id;
@@ -1201,7 +1193,7 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 		sp->penColor = 4 + 9;
 	}
 
-	nonActiveList.addTail(*sp);
+	_inactiveList.push_back(sp);
 	return sp;
 }
 
@@ -1222,8 +1214,7 @@ void SpeechTaskList::SetLock(int newState) {
 //	When a speech task is finished, call this function to delete it.
 
 void Speech::remove(void) {
-	DNode::remove();
-	speechList.free.addTail(*this);
+	speechList.remove(this);
 }
 
 //-----------------------------------------------------------------------
