@@ -31,7 +31,7 @@ def build_apps(plats = "S60v3"):
    out1, err1 = cmd1.communicate()
    out = out + out1
    err = err + err1
-   # I hope it correctly store logs in parallel tasks
+   # I hope it correctly stores logs in parallel tasks
    # after cmd.communicate() we have ugly 'crcrlf' line endings
    SafeWriteFile(build_log, out.replace(u"\r", u""), 'a')
    SafeWriteFile(build_err, err.replace(u"\r", u""), 'a')
