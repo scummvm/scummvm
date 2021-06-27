@@ -42,7 +42,6 @@ Command::Command() {
 	_zeta0 = 0;
 	_zeta1 = 0;
 	_zeta2 = 0;
-	_characterId = 0;
 	_musicCommand = 0;
 	_musicParm = 0;
 }
