@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-27 15:47+0000\n"
-"PO-Revision-Date: 2021-06-26 14:26+0000\n"
+"PO-Revision-Date: 2021-06-27 23:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -7528,16 +7528,10 @@ msgstr ""
 "このゲームはHeroCraftサブエンジンが必要ですが、コンパイルされていません。"
 
 #: engines/wintermute/wintermute.cpp:182
-#, fuzzy
-#| msgid ""
-#| "This game requires 3D capabilities that are out ScummVM scope. As such, "
-#| "it is likely to be unplayable totally or partially."
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
-msgstr ""
-"このゲームは、ScummVMの範囲外の3D機能を必要とします。そのため、全部または一部"
-"がプレイできない可能性があります。"
+msgstr "このゲームは3D機能を必要としますが、ScummVMには組み込まれていません。そのため、全部または一部がプレイできない可能性があります。"
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
@@ -7996,10 +7990,8 @@ msgstr "Shiftキー"
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1490
-#, fuzzy
-#| msgid "Previous action"
 msgid "Chapayev's action"
-msgstr "前の行動"
+msgstr "Chapayevのアクション"
 
 #: engines/wintermute/keymapper_tables.h:1538
 #: engines/wintermute/keymapper_tables.h:1791
@@ -8025,17 +8017,13 @@ msgstr "回答ダイアログ4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1569
-#, fuzzy
-#| msgid "Spin slower"
 msgid "Spin wheel slower"
-msgstr "回転速度を下げる"
+msgstr "ホイールをゆっくり回す"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1577
-#, fuzzy
-#| msgid "Spin faster"
 msgid "Spin wheel faster"
-msgstr "回転速度を上げる"
+msgstr "ホイールを速く回す"
 
 #: engines/wintermute/keymapper_tables.h:1655
 msgid "Zoom out"
@@ -8057,10 +8045,8 @@ msgstr "ベジエウィンドウ"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1825
-#, fuzzy
-#| msgid "Droid action"
 msgid "Droid's action"
-msgstr "ドロイドアクション"
+msgstr "ドロイドのアクション"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
 #: engines/wintermute/keymapper_tables.h:1933
