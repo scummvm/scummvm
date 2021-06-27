@@ -27,10 +27,6 @@
 #include "common/noncopyable.h"
 #include "common/safe-bool.h"
 #include "common/types.h"
-#ifdef USE_CXX11
-/* For nullptr_t */
-#include <cstddef>
-#endif
 
 namespace Common {
 

@@ -486,6 +486,8 @@ typedef uint32 uintptr;
 namespace std {
 	typedef decltype(nullptr) nullptr_t;
 }
+#else
+#include <cstddef>
 #endif
 
 #include "common/forbidden.h"
