@@ -135,7 +135,7 @@ bool audioInterface::saying(soundSegment s) {
 
 bool audioInterface::active(void) {
 	warning("STUB: audioInterface::active()");
-	return false;
+	return true;
 }
 void audioInterface::enable(volumeTarget i, bool onOff) {
 	warning("STUB: audioInterface::enable()");

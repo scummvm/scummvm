@@ -62,6 +62,7 @@ MODULE_OBJS := \
 	sagafunc.o \
 	savefile.o \
 	sensor.o \
+	shorten.o \
 	speech.o \
 	spelcast.o \
 	speldata.o \

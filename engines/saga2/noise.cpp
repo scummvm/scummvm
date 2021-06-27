@@ -25,6 +25,7 @@
  */
 
 #include "common/config-manager.h"
+#include "audio/mixer.h"
 
 #include "saga2/saga2.h"
 #include "saga2/fta.h"
@@ -39,6 +40,7 @@
 #include "saga2/audqueue.h"
 #include "saga2/audiosys.h"
 #include "saga2/hresmgr.h"
+#include "saga2/shorten.h"
 
 namespace Saga2 {
 
@@ -219,8 +221,6 @@ void startAudio(void) {
 	            (uint32) 131072,   // sound buffer size 128k
 	            (uint32) 400000    // sound buffer size
 	        );
-
-	return;
 
 	bool disVoice = true, disMusic = true, disSound = true, disLoops = true;
 
@@ -463,6 +463,7 @@ void playSound(uint32 s) {
 // on disk sfx (x2 buffered)
 
 void playLongSound(uint32 s) {
+	warning("playLongSound(%d)", s);
 	if (hResCheckResID(longRes, s))
 		audio->queueVoice(s, longSoundDec);
 	else
@@ -473,6 +474,8 @@ void playLongSound(uint32 s) {
 // on disk voice (x2 buffered)
 
 void playVoice(uint32 s) {
+	warning("playVoice(%d)", s);
+
 	if (hResCheckResID(voiceRes, s)) {
 		if (s)
 			audio->queueVoice(s, voiceDec, Here);
@@ -485,6 +488,8 @@ void playVoice(uint32 s) {
 // supplemental interface for speech
 
 bool sayVoice(uint32 s[]) {
+	warning("sayVoice(%d)", s[0]);
+
 	bool worked = false;
 
 	if (hResCheckResID(voiceRes, s)) {
@@ -500,15 +505,21 @@ bool sayVoice(uint32 s[]) {
 // main loop playback
 
 void _playLoop(uint32 s) {
-	warning("STUB: playLoop(%d)", s);
+	warning("STUB: _playLoop(%d)", s);
 
 	currentLoop = s;
-	if (currentLoop == audio->currentLoop())
+	if (currentLoop == audio->currentLoop() && 0)
 		return;
 
 	audio->stopLoop();
-	if (hResCheckResID(loopRes, s))
-		audio->queueLoop(s, loopDec, 0, Here);
+
+	byte *data = loopRes->loadResource(s, "loop sound");
+	uint32 size = loopRes->getSize(s, "loop sound");
+
+	warning("Size: %d", size);
+
+	Common::hexdump(data, MIN(size, 256U));
+	audio->queueLoop(s, loopDec, 0, Here);
 }
 
 //-----------------------------------------------------------------------
@@ -541,16 +552,18 @@ void playSoundAt(uint32 s, Location playAt) {
 //-----------------------------------------------------------------------
 // voice playback w/ attenuation
 
+Audio::SoundHandle _speechSoundHandle;
+
 bool sayVoiceAt(uint32 s[], Point32 p) {
-	bool worked = false;
+	warning("sayVoiceAt(%s, %d,%d)", tag2str(s[0]), p.x, p.y);
 
-	if (hResCheckResID(voiceRes, s)) {
-		audio->queueVoice(s, voiceDec, p);
-		if (audio->talking())
-			worked = true;
-	}
+	Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, s[0], "voice data");
 
-	return worked;
+	Audio::AudioStream *aud = makeShortenStream(*stream);
+
+	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, aud);
+
+	return true;
 }
 
 bool sayVoiceAt(uint32 s[], Location playAt) {
