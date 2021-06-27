@@ -57,6 +57,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 
 	g_vm = this;
 
+	_bandList = nullptr;
 	_smkDecoder = nullptr;
 	_videoX = _videoY = 0;
 

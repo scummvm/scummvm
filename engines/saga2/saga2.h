@@ -41,6 +41,7 @@ namespace Saga2 {
 
 class Timer;
 class TimerList;
+class BandList;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -91,6 +92,7 @@ public:
 	weaponID _loadedWeapons = 0;
 	Common::List<TimerList *> _timerLists;
 	Common::List<Timer *> _timers;
+	BandList *_bandList;
 
 	bool _autoAggression;
 	bool _autoWeapon;

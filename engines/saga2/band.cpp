@@ -37,13 +37,13 @@ namespace Saga2 {
    BandList class
  * ===================================================================== */
 
-const int numBands = 32;
+const int kNumBands = 32;
 
 //  Manages the memory used for the Band's.  There will only be one
 //  global instantiation of this class
 class BandList {
 public:
-	Band *_list[numBands];
+	Band *_list[kNumBands];
 
 	//  Constructor -- initial construction
 	BandList(void);
@@ -73,7 +73,7 @@ public:
 
 	//  Return the specified Band's ID
 	BandID getBandID(Band *b) {
-		for (int i = 0; i < numBands; i++)
+		for (int i = 0; i < kNumBands; i++)
 			if (_list[i] == b)
 				return i;
 
@@ -82,7 +82,7 @@ public:
 
 	//  Return a pointer to a Band given a BandID
 	Band *getBandAddress(BandID id) {
-		assert(id >= 0 && id < numBands);
+		assert(id >= 0 && id < kNumBands);
 		return _list[id];
 	}
 };
@@ -92,7 +92,7 @@ public:
 //	the inactive list
 
 BandList::BandList(void) {
-	for (int i = 0; i < numBands; i++)
+	for (int i = 0; i < kNumBands; i++)
 		_list[i] = nullptr;
 }
 
@@ -100,7 +100,7 @@ BandList::BandList(void) {
 //	BandList destructor
 
 BandList::~BandList(void) {
-	for (int i = 0; i < numBands; i++)
+	for (int i = 0; i < kNumBands; i++)
 		delete _list[i];
 }
 
@@ -135,7 +135,7 @@ void *BandList::restore(void *buf) {
 int32 BandList::archiveSize(void) {
 	int32               size = sizeof(int16);
 
-	for (int i = 0; i < numBands; i++)
+	for (int i = 0; i < kNumBands; i++)
 		if (_list[i])
 			size += sizeof(BandID) + _list[i]->archiveSize();
 
@@ -149,7 +149,7 @@ void *BandList::archive(void *buf) {
 	int16 bandCount = 0;
 
 	//  Count the active bands
-	for (int i = 0; i < numBands; i++)
+	for (int i = 0; i < kNumBands; i++)
 		if (_list[i])
 			bandCount++;
 
@@ -158,7 +158,7 @@ void *BandList::archive(void *buf) {
 	buf = (int16 *)buf + 1;
 
 	//  Iterate through the bands, archiving each
-	for (int i = 0; i < numBands; i++) {
+	for (int i = 0; i < kNumBands; i++) {
 		if (_list[i]) {
 			//  Store the Band's id number
 			*((BandID *)buf) = i;
@@ -175,7 +175,7 @@ void *BandList::archive(void *buf) {
 //	Place a Band into the active list and return its address
 
 Band *BandList::newBand(void) {
-	for (int i = 0; i < numBands; i++) {
+	for (int i = 0; i < kNumBands; i++) {
 		if (!_list[i]) {
 			_list[i] = new Band();
 
@@ -190,7 +190,7 @@ Band *BandList::newBand(void) {
 //	Place a specific Band into the active list and return its address
 
 Band *BandList::newBand(BandID id) {
-	assert(id >= 0 && id < numBands);
+	assert(id >= 0 && id < kNumBands);
 
 	if (_list[id])
 		delete _list[id];
@@ -201,7 +201,7 @@ Band *BandList::newBand(BandID id) {
 }
 
  void BandList::addBand(Band *b) {
-	for (int i = 0; i < numBands; i++) {
+	for (int i = 0; i < kNumBands; i++) {
 		if (!_list[i]) {
 			_list[i] = b;
 
@@ -209,7 +209,7 @@ Band *BandList::newBand(BandID id) {
 		}
 	}
 
-	error("BandList::addBand(): Too many bands, > %d", numBands);
+	error("BandList::addBand(): Too many bands, > %d", kNumBands);
 }
 
 //----------------------------------------------------------------------
@@ -223,12 +223,6 @@ void BandList::deleteBand(Band *p) {
 }
 
 /* ===================================================================== *
-   Global BandList instantiation
- * ===================================================================== */
-
-static BandList bandList;
-
-/* ===================================================================== *
    Misc. band management functions
  * ===================================================================== */
 
@@ -237,11 +231,11 @@ static BandList bandList;
 //	new Band
 
 Band *newBand(void) {
-	return bandList.newBand();
+	return g_vm->_bandList->newBand();
 }
 
 Band *newBand(BandID id) {
-	return bandList.newBand(id);
+	return g_vm->_bandList->newBand(id);
 }
 
 //----------------------------------------------------------------------
@@ -249,27 +243,28 @@ Band *newBand(BandID id) {
 //	previously allocated Band
 
 void deleteBand(Band *p) {
-	bandList.deleteBand(p);
+	g_vm->_bandList->deleteBand(p);
 }
 
 //----------------------------------------------------------------------
 //	Return the specified Band's ID
 
 BandID getBandID(Band *b) {
-	return bandList.getBandID(b);
+	return g_vm->_bandList->getBandID(b);
 }
 
 //----------------------------------------------------------------------
 //	Return a pointer to a Band given a BandID
 
 Band *getBandAddress(BandID id) {
-	return bandList.getBandAddress(id);
+	return g_vm->_bandList->getBandAddress(id);
 }
 
 //----------------------------------------------------------------------
 //	Initialize the bandList
 
 void initBands(void) {
+	g_vm->_bandList = new BandList();
 }
 
 //----------------------------------------------------------------------
@@ -279,13 +274,13 @@ void saveBands(SaveFileConstructor &saveGame) {
 	int32   archiveBufSize;
 	void    *archiveBuffer;
 
-	archiveBufSize = bandList.archiveSize();
+	archiveBufSize = g_vm->_bandList->archiveSize();
 
 	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate band archive buffer");
 
-	bandList.archive(archiveBuffer);
+	g_vm->_bandList->archive(archiveBuffer);
 
 	saveGame.writeChunk(
 	    MKTAG('B', 'A', 'N', 'D'),
@@ -301,12 +296,12 @@ void saveBands(SaveFileConstructor &saveGame) {
 void loadBands(SaveFileReader &saveGame) {
 	//  If there is no saved data, simply call the default constructor
 	if (saveGame.getChunkSize() == 0) {
-		new (&bandList) BandList;
+		g_vm->_bandList = new BandList;
 		return;
 	}
 
-	void    *archiveBuffer;
-	void    *bufferPtr;
+	void *archiveBuffer;
+	void *bufferPtr;
 
 	archiveBuffer = malloc(saveGame.getChunkSize());
 	if (archiveBuffer == NULL)
@@ -318,8 +313,8 @@ void loadBands(SaveFileReader &saveGame) {
 	bufferPtr = archiveBuffer;
 
 	//  Reconstruct taskList from archived data
-	new (&bandList) BandList;
-	bandList.restore(bufferPtr);
+	g_vm->_bandList = new BandList;
+	g_vm->_bandList->restore(bufferPtr);
 
 	free(archiveBuffer);
 }
@@ -328,8 +323,8 @@ void loadBands(SaveFileReader &saveGame) {
 //	Cleanup the bandList
 
 void cleanupBands(void) {
-	//  Simply call the bandList's destructor
-	bandList.~BandList();
+	delete g_vm->_bandList;
+	g_vm->_bandList = nullptr;
 }
 
 /* ===================================================================== *
@@ -337,10 +332,10 @@ void cleanupBands(void) {
  * ===================================================================== */
 
 Band::Band() : leader(nullptr), memberCount(0) {
-	bandList.addBand(this);
+	g_vm->_bandList->addBand(this);
 }
 Band::Band(Actor *l) : leader(l), memberCount(0) {
-	bandList.addBand(this);
+	g_vm->_bandList->addBand(this);
 }
 
 Band::Band(void **buf) {
@@ -367,7 +362,7 @@ Band::Band(void **buf) {
 
 	*buf = bufferPtr;
 
-	bandList.addBand(this);
+	g_vm->_bandList->addBand(this);
 }
 
 //----------------------------------------------------------------------
