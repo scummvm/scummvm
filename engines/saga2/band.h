@@ -38,11 +38,11 @@ const int       maxBandMembers = 32;
  * ===================================================================== */
 
 //  Allocate a new band
-void *newBand(void);
-void *newBand(BandID id);
+Band *newBand(void);
+Band *newBand(BandID id);
 
 //  Delete a previously allocated band
-void deleteBand(void *p);
+void deleteBand(Band *p);
 
 //  Get a band's ID given its address
 BandID getBandID(Band *b);
@@ -69,11 +69,14 @@ class Band {
 	Actor       *members[maxBandMembers];
 
 public:
-	//  Constructor -- initial construction
-	Band(Actor *l) : leader(l), memberCount(0) {}
+
+	Band();
+	Band(Actor *l);
 
 	//  Constructor -- reconstruct from archive buffer
 	Band(void **buf);
+
+	~Band() { deleteBand(this); }
 
 	//  Return the number of bytes needed to archive this object in a
 	//  buffer
@@ -81,17 +84,6 @@ public:
 
 	//  Archive this object in a buffer
 	void *archive(void *buf);
-
-	//  Overloaded memory management functions
-	void *operator new (size_t) {
-		return newBand();
-	}
-	void *operator new (size_t, BandID id) {
-		return newBand(id);
-	}
-	void operator delete (void *p) {
-		deleteBand(p);
-	}
 
 	Actor *getLeader(void) {
 		return leader;
