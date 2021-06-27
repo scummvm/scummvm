@@ -480,6 +480,8 @@ void Parallaction_br::changeCharacter(const char *name) {
 
 		_inventory = findInventory(name);
 		_inventoryRenderer->setInventory(_inventory);
+
+		_input->setCharacterPointer(name);
 	}
 
 	_char._ani->_flags |= kFlagsActive;

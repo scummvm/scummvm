@@ -296,7 +296,7 @@ DECLARE_COMMAND_OPCODE(swap) {
 	_vm->_inventory = _vm->findInventory(newCharacterName);
 	_vm->_inventoryRenderer->setInventory(_vm->_inventory);
 
-	_vm->_input->changeCharacterPointer(newCharacterName);
+	_vm->_input->setCharacterPointer(newCharacterName);
 }
 
 
