@@ -255,7 +255,7 @@ int16 scriptActorTransfer(int16 *args) {
 				globalContainerList.setUpdate(targetID);
 		}
 	} else {
-		obj->move(Location(args[1], args[2], args[3], args[0 ]));
+		obj->move(Location(args[1], args[2], args[3], args[0]));
 	}
 
 	//  If optional 5th parameter is present, then set actor facing
@@ -524,6 +524,7 @@ int16 scriptActorSay(int16 *args) {
 		uint16      sampleNum = args[i];
 		char        *speechText = STRING(args[i + 1]);
 
+		debugC(2, kDebugScripts, "Speech Text: - %s", speechText);
 		sp->append(speechText, sampleNum);
 	}
 
@@ -1259,6 +1260,7 @@ int16 scriptActorGetVitality(int16 *) {
 	if (isActor((GameObject *)thisThread->thisObject)) {
 		Actor       *a = (Actor *)thisThread->thisObject;
 
+		debugC(2, kDebugScripts, " - value = %d", a->getStats()->vitality);
 		return a->getStats()->vitality;
 	}
 
@@ -1276,6 +1278,7 @@ int16 scriptActorSetVitality(int16 *args) {
 		int16       &vitalityRef = a->getStats()->vitality;
 		int16       oldVal = vitalityRef;
 		PlayerActorID   pID;
+		debugC(2, kDebugScripts, " - value = %d", args[0]);
 
 		vitalityRef = args[0];
 		if (actorToPlayerID(a, pID)) updateBrotherControls(pID);
