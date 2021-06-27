@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-26 18:39+0000\n"
+"POT-Creation-Date: 2021-06-27 15:47+0000\n"
 "PO-Revision-Date: 2021-06-26 13:23+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -2027,7 +2027,7 @@ msgstr "Fehler beim Ausführen des Spiels:"
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Konnte keine Spiel-Engine finden, die dieses Spiel starten kann"
 
-#: common/achievements.cpp:229
+#: common/achievements.cpp:231
 msgid "Achievement unlocked!"
 msgstr "Errungenschaften freigeschaltet!"
 

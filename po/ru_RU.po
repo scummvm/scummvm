@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-26 18:39+0000\n"
+"POT-Creation-Date: 2021-06-27 15:47+0000\n"
 "PO-Revision-Date: 2021-06-18 05:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2024,7 +2024,7 @@ msgstr "Ошибка запуска игры:"
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Не могу найти движок для запуска выбранной игры"
 
-#: common/achievements.cpp:229
+#: common/achievements.cpp:231
 msgid "Achievement unlocked!"
 msgstr "Достижение разблокировано!"
 

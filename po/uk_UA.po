@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-26 18:39+0000\n"
+"POT-Creation-Date: 2021-06-27 15:47+0000\n"
 "PO-Revision-Date: 2021-06-18 05:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -2026,7 +2026,7 @@ msgstr "Помилка запуску гри:"
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Не можу знайти движок для запуску вибраної гри"
 
-#: common/achievements.cpp:229
+#: common/achievements.cpp:231
 msgid "Achievement unlocked!"
 msgstr "Досягнення є!"
 
