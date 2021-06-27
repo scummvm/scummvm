@@ -1431,6 +1431,8 @@ void KIA::playObjectDescription() {
 	case kModelAnimationDektorasCard:
 		playActorDialogue(kActorMcCoy, 8835);
 		break;
+	case kModelAnimationLetter:
+		// fall through
 	case kModelAnimationGrigoriansNote:
 		playActorDialogue(kActorMcCoy, 8840);
 		break;

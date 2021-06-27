@@ -393,11 +393,23 @@ void SceneScriptHF05::talkWithCrazyLegs2() {
 
 void SceneScriptHF05::dialogueWithCrazylegs1() {
 	Dialogue_Menu_Clear_List();
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? there is no way how to obtain this clue
 	 && Global_Variable_Query(kVariableChapter) == 3
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1180, 3, 6, 7); // ADVERTISEMENT
 	}
+#else
+	if (Actor_Clue_Query(kActorMcCoy, kClueCrazysInvolvement)
+	 && Global_Variable_Query(kVariableChapter) == 3
+	) {
+		// This dialogue point does not talk about Grigorian's Note
+		// but rather a Note that CrazyLegs wrote on one of his flyers
+		// kClueCrazysInvolvement is only acquired in _cutContent (Restored Content) mode
+		// so no need to add that extra check in the if clause.
+		DM_Add_To_List_Never_Repeat_Once_Selected(1180, 3, 6, 7); // ADVERTISEMENT
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	if (Actor_Clue_Query(kActorMcCoy, kClueCrazylegsInterview1)) {
 		// kClueCrazylegsInterview1 is acquired (after bug fix)
 		// only when Dektora has bought the car (kClueCarRegistration1)
@@ -456,8 +468,16 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 	switch (answer) {
 	case 1180: // ADVERTISEMENT
 		Actor_Says(kActorMcCoy, 1890, 23);
+		if (_vm->_cutContent) {
+			// McCoy shows the sales pamphlet (from Dektora's Vanity drawer) to CrazyLegs
+			Item_Pickup_Spin_Effect_From_Actor(kModelAnimationTyrellSalesPamphlet, kActorMcCoy, 0, 0);
+		}
 		Actor_Says(kActorCrazylegs, 510, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 1920, 23);
+		if (_vm->_cutContent) {
+			// McCoy shows the note he found inside the sales pamphlet (from Dektora's Vanity drawer) to CrazyLegs
+			Item_Pickup_Spin_Effect_From_Actor(kModelAnimationLetter, kActorMcCoy, 0, 0);
+		}
 		Actor_Says(kActorMcCoy, 1925, kAnimationModeTalk);
 		Actor_Says(kActorCrazylegs, 530, 12);
 		Actor_Says(kActorMcCoy, 1930, 18);

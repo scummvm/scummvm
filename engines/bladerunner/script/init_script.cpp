@@ -2623,6 +2623,7 @@ void InitScript::Init_CDB() {
 	CDB_Set_Clue_Asset_Type(kClueDektoraInterview3, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueDektorasCard, kClueTypeObject);
 	CDB_Set_Clue_Asset_Type(kClueGrigoriansNote, kClueTypeObject);
+	CDB_Set_Clue_Asset_Type(kClueCrazysInvolvement, kClueTypeObject); // Restored Content
 	CDB_Set_Clue_Asset_Type(kClueCollectionReceipt, kClueTypeObject);
 	CDB_Set_Clue_Asset_Type(kClueSpecialIngredient, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueStolenCheese, kClueTypeAudioRecording);

@@ -35,6 +35,17 @@ void SceneScriptNR07::InitializeScene() {
 void SceneScriptNR07::SceneLoaded() {
 	Obstacle_Object("VANITY", true);
 	Clickable_Object("VASE");
+
+	if (_vm->_cutContent
+	    && Global_Variable_Query(kVariableChapter) < 4) {
+		// The car is only bought by Reps from CrazyLegs
+		// if Dektora is a Replicant (so she will have the note from CrazyLegs)
+		// or if Dektora  is human and Gordo is also human (in which case, there'll be no note in the drawer) 
+		// We add the region in any case - on Restored Content mode
+		// to indicate there might be something of interest there,
+		// albeit not all playthroughs will have the note in there.
+		Scene_2D_Region_Add(0, 501, 381, 522, 466);
+	}
 }
 
 bool SceneScriptNR07::MouseClick(int x, int y) {
@@ -148,6 +159,45 @@ bool SceneScriptNR07::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptNR07::ClickedOn2DRegion(int region) {
+	if (_vm->_cutContent
+	    && region == 0) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -134.5f, -73.35f, 43.98f, 4, true, false, false)) {
+			Player_Loses_Control();
+			Actor_Face_Object(kActorMcCoy, "VANITY", true);
+			if (Actor_Query_Is_In_Current_Set(kActorDektora)) {
+				Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, -2);
+				Actor_Says(kActorDektora, 560, 31); // Please don't touch that. It's private.
+				Actor_Says(kActorMcCoy, 8525, 19);  // Hmph.
+			} else {
+				if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
+					if (Actor_Clue_Query(kActorMcCoy, kClueCrazysInvolvement)) {
+						Actor_Says(kActorMcCoy, 8580, 12); // Nothing else there
+					} else {
+						Sound_Play(kSfxDRAWER1, 90, 85, 85, 50);
+						Delay(700);
+						Actor_Clue_Acquire(kActorMcCoy, kClueCrazysInvolvement, false, -1);
+						// McCoy picks up a sales brochure (it's CrazyLeg's -- but the model is the same as the Tyrell's Pamphlet)
+						Item_Pickup_Spin_Effect(kModelAnimationTyrellSalesPamphlet, 508, 401);
+						// McCoy finds something inside the brochure - CrazyLeg's note to the Replicants
+						// Logic is similar to HC03 (finding photos inside Izo's camera)
+						Actor_Voice_Over(3690, kActorVoiceOver); // Hmm
+						Delay(1200);
+						Item_Pickup_Spin_Effect(kModelAnimationLetter, 508, 401);
+						Actor_Says(kActorMcCoy, 6975, 12); // Interesting
+						// We don't remove the region after picking the clue
+						// McCoy will just point out that there's nothing more there to find.
+						// (Saves us from using up a flag and having to write extra code)
+					}
+				} else {
+					Sound_Play(kSfxDRAWER1, 90, 85, 85, 50);
+					Delay(700);
+					Actor_Voice_Over(3700, kActorVoiceOver); // Nothing
+				}
+			}
+			Player_Gains_Control();
+		}
+		return true;
+	}
 	return false;
 }
 

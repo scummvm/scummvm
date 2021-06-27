@@ -37,7 +37,7 @@ class Music {
 	struct Track {
 		Common::String name;
 		int            volume;             // A value between 0 and 100 - It is the set volume for the track regardless of fadeIn and fadeOut transitions
-		int            pan;                // A value between -100  and 100 (right?) (0 is center) - It is the set pan/balance for the track regardless of any ongoing adjustments
+		int            pan;                // A value between -100 (left) and 100 (right) (0 is center) - It is the set pan/balance for the track regardless of any ongoing adjustments
 		int32          timeFadeInSeconds;  // how long will it take for the track to reach target volume (in seconds)
 		int32          timePlaySeconds;    // how long the track will play before starting fading out (in seconds) - uses timeFadeOutSeconds for fadeout
 		                                   // -1: Special value for playing the whole track

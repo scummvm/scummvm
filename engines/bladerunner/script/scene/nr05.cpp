@@ -363,6 +363,7 @@ void SceneScriptNR05::talkToEarlyQ() {
 		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);
 		if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) { // cut content? this clue is unobtanium
 			// TODO why is Grigorian's Note needed here, for EarlyQ to reveal who Hecuba is?
+			// TODO could CrazysInvolvement also do here?
 			//      maybe another clue should be required in its place or some additional ones?
 			Actor_Says(kActorEarlyQ, 580, 12);
 			Actor_Says(kActorMcCoy, 3560, 13);
