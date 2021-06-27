@@ -272,7 +272,29 @@ DECLARE_COMMAND_OPCODE(scroll) {
 
 
 DECLARE_COMMAND_OPCODE(swap) {
-	warning("Parallaction_br::cmdOp_swap not yet implemented");
+	warning("Parallaction_br::cmdOp_swap does not handle a follower yet");
+
+	/*
+		TODO:
+		- fixup follower
+		- change mouse pointer
+	*/
+
+	const char *newCharacterName = ctxt._cmd->_string.c_str();
+	AnimationPtr newCharacterAnimation = _vm->_location.findAnimation(newCharacterName);
+	AnimationPtr oldCharaterAnimation = _vm->_char._ani;
+
+	strlcpy(oldCharaterAnimation->_name, _vm->_char.getName(), ZONENAME_LENGTH);
+	_vm->_char.setName(newCharacterName);
+
+	_vm->_char._ani = newCharacterAnimation;
+	_vm->_char._talk = _vm->_disk->loadTalk(newCharacterName);
+	strlcpy(_vm->_char._ani->_name, "yourself", ZONENAME_LENGTH);
+
+	_vm->linkUnlinkedZoneAnimations();
+
+	_vm->_inventory = _vm->findInventory(newCharacterName);
+	_vm->_inventoryRenderer->setInventory(_vm->_inventory);
 }
 
 

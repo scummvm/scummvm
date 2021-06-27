@@ -512,6 +512,7 @@ public:
 	void clearSubtitles();
 
 	Inventory *findInventory(const char *name);
+	void linkUnlinkedZoneAnimations();
 
 	void testCounterCondition(const Common::String &name, int op, int value);
 	void restoreOrSaveZoneFlags(ZonePtr z, bool restore);
