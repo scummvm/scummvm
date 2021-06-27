@@ -67,7 +67,7 @@ public:
 	void setSkipSignature(bool skip) { _skipSignature = skip; }
 	void setKeepTransparencyPaletted(bool keep) { _keepTransparencyPaletted = keep; }
 private:
-	Graphics::PixelFormat getByteOrderRgbaPixelFormat() const;
+	Graphics::PixelFormat getByteOrderRgbaPixelFormat(bool isAlpha) const;
 
 	byte *_palette;
 	uint16 _paletteColorCount;

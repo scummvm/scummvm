@@ -63,11 +63,11 @@ void PNGDecoder::destroy() {
 	_palette = NULL;
 }
 
-Graphics::PixelFormat PNGDecoder::getByteOrderRgbaPixelFormat() const {
+Graphics::PixelFormat PNGDecoder::getByteOrderRgbaPixelFormat(bool isAlpha) const {
 #ifdef SCUMM_BIG_ENDIAN
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	return Graphics::PixelFormat(4, 8, 8, 8, isAlpha ? 8 : 0, 24, 16, 8, 0);
 #else
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+	return Graphics::PixelFormat(4, 8, 8, 8, isAlpha ? 8 : 0, 0, 8, 16, 24);
 #endif
 }
 
@@ -201,7 +201,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 
 		_outputSurface->create(width, height,
-			hasRgbaPalette ? getByteOrderRgbaPixelFormat() : Graphics::PixelFormat::createFormatCLUT8());
+			hasRgbaPalette ? getByteOrderRgbaPixelFormat(true) : Graphics::PixelFormat::createFormatCLUT8());
 		png_set_packing(pngPtr);
 
 		if (hasRgbaPalette) {
@@ -219,11 +219,13 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			_palette = nullptr;
 		}
 	} else {
+ 		bool isAlpha = (colorType & PNG_COLOR_MASK_ALPHA);
 		if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
+ 			isAlpha = true;
 			png_set_expand(pngPtr);
 		}
 
-		_outputSurface->create(width, height, getByteOrderRgbaPixelFormat());
+		_outputSurface->create(width, height, getByteOrderRgbaPixelFormat(isAlpha));
 		if (!_outputSurface->getPixels()) {
 			error("Could not allocate memory for output image.");
 		}
