@@ -202,6 +202,15 @@ void DecoratedWindow::update(const Rect16 &updateRect) {
 	updateWindowSection(r);
 }
 
+void DecoratedWindow::update(const StaticRect &updateRect) {
+	Rect16          r = updateRect;
+
+	r.x += extent.x;
+	r.y += extent.y;
+
+	updateWindowSection(r);
+}
+
 /* ===================================================================== *
    BackWindow member functions
  * ===================================================================== */
@@ -213,6 +222,11 @@ BackWindow::BackWindow(const Rect16 &r, uint16 ident, AppFunc *cmd)
 }
 
 void BackWindow::invalidate(Rect16 *area) {
+	if (displayEnabled())
+		window.update(*area);
+}
+
+void BackWindow::invalidate(const StaticRect *area) {
 	if (displayEnabled())
 		window.update(*area);
 }

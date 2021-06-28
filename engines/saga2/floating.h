@@ -233,6 +233,7 @@ public:
 	//  Update a region of a window, and all floaters which
 	//  might be above that window.
 	void update(const Rect16 &updateRect);
+	void update(const StaticRect &updateRect);
 };
 
 /* ===================================================================== *
@@ -247,6 +248,7 @@ class BackWindow : public DecoratedWindow {
 public:
 	BackWindow(const Rect16 &, uint16, AppFunc *cmd = NULL);
 	void invalidate(Rect16 *area);
+	void invalidate(const StaticRect *area);
 
 	virtual bool isBackdrop(void);
 };
