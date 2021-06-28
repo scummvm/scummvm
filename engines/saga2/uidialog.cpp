@@ -521,71 +521,87 @@ const   int16       mesBoxXSize = 374,
 
 
 // panels
-Rect16  messagePanel(mesBoxX,
-                     mesBoxY,
-                     mesBoxXSize,
-                     mesBoxYSize);
+static const StaticRect messagePanel = {
+	mesBoxX,
+	mesBoxY,
+	mesBoxXSize,
+	mesBoxYSize
+};
 
 
 
 // buttons
-Rect16  mesCancelBtnRect(mesBoxXSzNS - (kPushButtonWidth + mesBtnOffset),
-                         mesBoxY - mesBtnOffset,
-                         kPushButtonWidth,
-                         kPushButtonHeight);
+static const StaticRect mesCancelBtnRect = {
+	mesBoxXSzNS - (kPushButtonWidth + mesBtnOffset),
+	mesBoxY - mesBtnOffset,
+	kPushButtonWidth,
+	kPushButtonHeight
+};
 
-Rect16  mesOkBtnRect(mesBtnOffset,
-                     mesBoxY - mesBtnOffset,
-                     kPushButtonWidth,
-                     kPushButtonHeight);
+static const StaticRect mesOkBtnRect = {
+	mesBtnOffset,
+	mesBoxY - mesBtnOffset,
+	kPushButtonWidth,
+	kPushButtonHeight
+};
 
 
-Rect16  mesBtn3Rect(mesBoxXSzNS / 2 - kPushButtonWidth / 2,
-                    mesBoxY - mesBtnOffset,
-                    kPushButtonWidth,
-                    kPushButtonHeight);
+static const StaticRect mesBtn3Rect = {
+	mesBoxXSzNS / 2 - kPushButtonWidth / 2,
+	mesBoxY - mesBtnOffset,
+	kPushButtonWidth,
+	kPushButtonHeight
+};
 
 
 
 
 // texts
-Rect16  mesTitleRect(0,
-                     0,
-                     mesBoxXSzNS,
-                     47);
+static const StaticRect mesTitleRect = {
+	0,
+	0,
+	mesBoxXSzNS,
+	47
+};
 
-Rect16  messageRect(0,
-                    0,
-                    mesBoxXSzNS,
-                    mesBoxYSize);
+static const StaticRect messageRect = {
+	0,
+	0,
+	mesBoxXSzNS,
+	mesBoxYSize
+};
 
 
 
-Rect16  messageTextRects[kNumMessageTexts]     = { { mesTitleRect },
+StaticRect messageTextRects[kNumMessageTexts] = {
+	{ mesTitleRect },
 	{ messageRect }
 };
 
 
-Rect16  messageButtonRects[kNumMessageBtns]    = { { mesOkBtnRect },
+StaticRect messageButtonRects[kNumMessageBtns] = {
+	{ mesOkBtnRect },
 	{ mesCancelBtnRect },
-	{ mesBtn3Rect     }
+	{ mesBtn3Rect }
 };
 
 
 
 // options window rect
-Rect16  messageWindowRect = Rect16(mesBoxX,
-                                   mesBoxY,
-                                   mesBoxXSize,
-                                   mesBoxYSize);
+static const StaticRect messageWindowRect = {
+	mesBoxX,
+	mesBoxY,
+	mesBoxXSize,
+	mesBoxYSize
+};
 
 
 
 
 // message dialog window decorations
-WindowDecoration messageDecorations[kNumMessagePanels] =
-
-{ { WindowDecoration(messagePanel, mesPanelResID) } };
+WindowDecoration messageDecorations[kNumMessagePanels] = {
+	{ WindowDecoration(messagePanel, mesPanelResID) }
+};
 
 
 // pointer to the auto aggression button
