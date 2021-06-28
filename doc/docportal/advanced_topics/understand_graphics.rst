@@ -28,7 +28,7 @@ A comparison of graphics modes
 
     **Normal1x**: No filtering, no scaling (original resolution). Fastest.
 
-.. figure:: /images/graphics/graphics_mode/2x.png
+.. figure:: ../images/graphics/graphics_mode/2x.png
 
    **Normal2x**: No filtering, scales the image by a factor of 2. Default for non 640x480 games.
 
@@ -42,7 +42,7 @@ A comparison of graphics modes
 
 .. figure:: ../images/graphics/graphics_mode/hq2x.png
 
-    **HQ2x**:  Uses lookup tables to create anti-aliased output. Very nice high quality filter, but slow.
+    **HQ2x**: Uses lookup tables to create anti-aliased output. Very nice high quality filter, but slow.
 
 .. figure:: ../images/graphics/graphics_mode/hq3x.png
 
