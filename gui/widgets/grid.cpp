@@ -148,7 +148,18 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isHighlighted && isVisible()) {
 		// Work in progress
-		_grid->openTray(getAbsX() - _grid->_gridXSpacing / 3, getAbsY() + _h, _w + 2 * (_grid->_gridXSpacing / 3), kLineHeight * 3, _activeEntry->entryID);
+		// Since user expected to click on "entry" and not the "widget", we
+		// must open the tray where the user expects it to be, which might
+		// not be at the new widget location.
+		int oldX = getAbsX(), oldY = getAbsY();
+		int offsetY = 0;
+		if (_y > (_grid->getHeight() - _h - _grid->_trayHeight)) {
+			offsetY = _y - (_grid->getHeight() - _h - _grid->_trayHeight);
+			sendCommand(kSetPositionCmd, _grid->getScrollPos() + offsetY);
+			_grid->markAsDirty();
+			_grid->draw();
+		}
+		_grid->openTray(oldX,  oldY - offsetY + _h, _activeEntry->entryID);
 		_grid->_tray->runModal();
 	}
 }
@@ -540,6 +551,7 @@ void GridWidget::reflowLayout() {
 
 	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	
+	_trayHeight = kLineHeight * 3;
 	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight * _isTitlesVisible);
 	_gridItemWidth = _thumbnailWidth;
 
@@ -548,7 +560,7 @@ void GridWidget::reflowLayout() {
 	
 	_rows = ceil(_allEntries.size() / (float)_itemsPerRow);
 	
-	_innerHeight = _gridYSpacing + _rows * (_gridItemHeight + _gridYSpacing);
+	_innerHeight = _trayHeight + _gridYSpacing + _rows * (_gridItemHeight + _gridYSpacing);
 	_innerWidth = (2 * _minGridXSpacing) + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
 
 	_scrollBar->checkBounds(_scrollBar->_currentPos);
@@ -585,8 +597,8 @@ void GridWidget::reflowLayout() {
 	markAsDirty();
 }
 
-void GridWidget::openTray(int x, int y, int w, int h, int entryId) {
-	_tray = new GridItemTray(_boss, x, y, w, h, entryId, this);
+void GridWidget::openTray(int x, int y, int entryId) {
+	_tray = new GridItemTray(_boss, x  - _gridXSpacing / 3, y, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, entryId, this);
 }
 
 void GridWidget::scrollBarRecalc() {
