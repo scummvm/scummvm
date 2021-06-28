@@ -50,8 +50,7 @@ public:
 	void codeVarSet(const Common::String &name);
 	void codeVarRef(const Common::String &name);
 	void codeVarGet(const Common::String &name);
-	bool codeTheFieldSet(int entity, Node *id, const Common::String &field);
-	bool codeTheFieldGet(int entity, Node *id, const Common::String &field);
+	int getTheFieldID(int entity, const Common::String &field, bool silent = false);
 	void registerFactory(Common::String &s);
 	void registerMethodVar(const Common::String &name, VarType type = kVarGeneric);
 	void updateLoopJumps(uint nextTargetPos, uint exitTargetPos);
