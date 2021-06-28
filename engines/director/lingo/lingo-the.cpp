@@ -1494,6 +1494,8 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	if (!member) {
 		if (field == kTheLoaded) {
 			d = 0;
+		} else if (field == kTheNumber) {
+			d = -1;
 		} else {
 			g_lingo->lingoError("Lingo::getTheCast(): CastMember %s not found", id1.asString().c_str());
 		}
