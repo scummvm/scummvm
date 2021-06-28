@@ -39,3 +39,7 @@ scummvmAssertEqual(char 2 to 0 of field 1, "b")
 scummvmAssertEqual(char 2 to 4 of field 1, "bcd")
 scummvmAssertEqual(char 2 to 1000 of field 1, "bcdefghijklmnopqrstuvwxyz")
 scummvmAssertEqual(word 1000 of field 1, "")
+
+put "lorem ipsum dolor sit amet" into field 1
+set the foreColor of word 2 of field 1 to 10
+put the foreColor of word 2 of field 1
