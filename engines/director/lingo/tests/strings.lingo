@@ -22,7 +22,6 @@ if the key = Return then
 end if
 
 when keydown then if the key=return then set the stagecolor to random (256)
-file(mWritestring, return)
 
 put return
 
