@@ -1407,7 +1407,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 					g_lingo->_stack[g_lingo->_stack.size() - nargs] = funcSym.target; // Set first arg to target
 					call(funcSym, nargs, allowRetVal);
 				} else {
-					warning("Object <%s> has no method '%s'", obj.asString(true).c_str(), firstArg.u.s->c_str());
+					g_lingo->lingoError("Object <%s> has no method '%s'", obj.asString(true).c_str(), firstArg.u.s->c_str());
 				}
 				return;
 			}
@@ -1459,7 +1459,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	Datum target = funcSym.target;
 
 	if (funcSym.type == VOIDSYM) {
-		warning("Call to undefined handler. Dropping %d stack items", nargs);
+		g_lingo->lingoError("Call to undefined handler. Dropping %d stack items", nargs);
 
 		for (int i = 0; i < nargs; i++)
 			g_lingo->pop();

@@ -1603,7 +1603,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		if (obj.u.obj->hasProp(propName)) {
 			d = obj.u.obj->getProp(propName);
 		} else {
-			warning("Lingo::getObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+			g_lingo->lingoError("Lingo::getObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
 		}
 		g_lingo->push(d);
 		return;
@@ -1619,7 +1619,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 	if (obj.type == CASTREF) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {
-			warning("Lingo::getObjectProp(): No movie loaded");
+			g_lingo->lingoError("Lingo::getObjectProp(): No movie loaded");
 			g_lingo->push(d);
 			return;
 		}
@@ -1630,7 +1630,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 			if (propName.equalsIgnoreCase("loaded")) {
 				d = 0;
 			} else {
-				warning("Lingo::getObjectProp(): CastMember %d not found", id);
+				g_lingo->lingoError("Lingo::getObjectProp(): CastMember %d not found", id);
 			}
 			g_lingo->push(d);
 			return;
@@ -1639,7 +1639,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		if (member->hasProp(propName)) {
 			d = member->getProp(propName);
 		} else {
-			warning("Lingo::getObjectProp(): CastMember %d has no property '%s'", id, propName.c_str());
+			g_lingo->lingoError("Lingo::getObjectProp(): CastMember %d has no property '%s'", id, propName.c_str());
 		}
 		g_lingo->push(d);
 		return;
@@ -1649,7 +1649,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		LC::call(_builtinFuncs[propName], 1, true);
 		return;
 	}
-	warning("Lingo::getObjectProp: Invalid object: %s", obj.asString(true).c_str());
+	g_lingo->lingoError("Lingo::getObjectProp: Invalid object: %s", obj.asString(true).c_str());
 	g_lingo->push(d);
 }
 
@@ -1658,7 +1658,7 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 		if (obj.u.obj->hasProp(propName)) {
 			obj.u.obj->setProp(propName, val);
 		} else {
-			warning("Lingo::setObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
+			g_lingo->lingoError("Lingo::setObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
 		}
 	} else if (obj.type == PARRAY) {
 		int index = LC::compareArrays(LC::eqData, obj, propName, true).u.i;
@@ -1671,24 +1671,24 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 	} else if (obj.type == CASTREF) {
 		Movie *movie = _vm->getCurrentMovie();
 		if (!movie) {
-			warning("Lingo::setObjectProp(): No movie loaded");
+			g_lingo->lingoError("Lingo::setObjectProp(): No movie loaded");
 			return;
 		}
 
 		int id = obj.u.i;
 		CastMember *member = movie->getCastMember(id);
 		if (!member) {
-			warning("Lingo::setObjectProp(): CastMember %d not found", id);
+			g_lingo->lingoError("Lingo::setObjectProp(): CastMember %d not found", id);
 			return;
 		}
 
 		if (member->hasProp(propName)) {
 			member->setProp(propName, val);
 		} else {
-			warning("Lingo::setObjectProp(): CastMember %d has no property '%s'", id, propName.c_str());
+			g_lingo->lingoError("Lingo::setObjectProp(): CastMember %d has no property '%s'", id, propName.c_str());
 		}
 	} else {
-		warning("Lingo::setObjectProp: Invalid object: %s", obj.asString(true).c_str());
+		g_lingo->lingoError("Lingo::setObjectProp: Invalid object: %s", obj.asString(true).c_str());
 	}
 }
 
