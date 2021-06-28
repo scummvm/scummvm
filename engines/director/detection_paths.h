@@ -101,11 +101,23 @@ const char *directoryGlobs[] = {
 	"deutsch",
 	"francais",						// Rename from Français
 	"italiano",						// Virtual Tourism Paris
+	"please copy to hd. G2",		// Rename from HDにｺﾋﾟｰして下さい。G2
 	"please copy to hd. G3",		// Rename from HDにｺﾋﾟｰして下さい。G3
 	"_files_",						// The Gate
 	"popup",						// Pop Up Computer
 	"alpha",						// Interactive Alphabet
 	"technik",						// Glasklar Technology Interactive
+	"badday",
+	"copy to hdd",					// Rename from HDDにコピーしてください
+	"bdm",
+	"dkyasp",						// Bad Day on the Midway Japanese
+	"win_demo",
+	"file",
+	"mfile",
+	"movie",						// Teichiku demos
+	"install_mac",
+	"install_win",
+	"copyto_hd",					// Incarnatia
 	"alcohol 101",
 	"audio",
 	"print",
@@ -114,6 +126,8 @@ const char *directoryGlobs[] = {
 	"cd extra",
 	"catalog",						// Sarah McLachlan ECD (NettMedia)
 	"hd",							// Grammar Playtime
+	"scr",
+	"scr_mov",						// Cardcaptor Sakura screen savers
 	"dicfiles",						// Time Blazers series
 	"docs",							// Enhanced CDs
 	"anim",							// 1 vs 100 (Mindscape)
