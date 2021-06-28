@@ -7,107 +7,106 @@ This guide expands on the information contained on the :doc:`graphics settings <
 How do the graphics settings work together?
 ----------------------------------------------
 
-The graphics mode, aspect ratio, and stretch mode settings work together to change the resolution and display of each game. The first setting applied to the image is the graphics mode, then the aspect ratio correction, and then the stretch mode setting. The only exception to this is OpenGL mode, which applies all settings in one pass to arrive at a final image.
+The graphics mode scaler, aspect ratio, and stretch mode settings work together to change the resolution and display of each game.
+
+For the SDL Surface graphics mode, the scaler is applied first, then the aspect ratio correction, and finally the stretch mode. For the OpenGL graphics mode there is no scaler and the aspect ratio correct and stretch modes are applied together in one pass to arrive to the final image. This means that when you want to preserve pixels, you may prefer to use the OpenGL mode, especially if you use aspect ratio correction. The aspect ratio correction in the SDL Surface mode introduces some irregularities that can be avoided with the OpenGL mode.
 
 Render modes are only applicable to some older games that were designed to be played on multiple systems, and lets us choose which system's graphics to replicate.
 
-
+.. _graphics:
 Graphics modes
 ---------------------------
+
+Most platforms have either one or two available graphics modes. The most common ones are OpenGL and SDL Surface.
+
+To switch between graphics modes, press :kbd:`Ctrl + Alt` and :kbd:`1` to :kbd:`8`.
+
+OpenGL graphics mode
+*************************************
+
+With the OpenGL graphics mode the original game image is provided to the graphics card, and the graphics card stretches this image to the requested size. This means that the aspect ratio correction and stretch mode are applied together in one step to go directly from the original game resolution (for example 320x200) to the final display resolution (for example 1280x960). This scaling uses either bilinear interpolation or nearest neighbor interpolation depending on the :ref:`Filter graphics <filter>` option.
+
+SDL Surface graphics mode
+*************************************
+
+With the SDL Surface graphics mode, a software scaler is applied to the game image, before applying the aspect ratio correction with a software vertical stretch. The image is then passed to SDL to apply the :ref:`stretch mode <stretch>` and get the final result. With the graphics mode the software scaler is not affected by the :ref:`Filter graphics <filter>` options. This option only affects the aspect ratio correction and the final scaling related to the stretch mode.
+
+A comparison of SDL Surface software scalers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The original game graphics are upscaled using different graphical filters, which are specialized algorithms used to ensure that low resolution pixel-art still looks good when it is displayed at a higher resolution.
 
 If the game originally ran at a resolution of 320x200—which is typical for most SCUMM games—then using a graphics mode with a scale factor of 2x yields 640x400 graphics. A 3x scale factor yields 960x600.
 
-There is always a speed penalty when using any form of filtering.
-
-A comparison of graphics modes
-*************************************
+There is always a speed penalty when using a scaler other than Normal 1x.
 
 .. figure:: ../images/graphics/graphics_mode/1x.png
 
-    **Normal1x**: No filtering, no scaling (original resolution). Fastest.
+    **Normal 1x**: No filtering, no scaling (original resolution). Fastest.
 
 .. figure:: ../images/graphics/graphics_mode/2x.png
 
-   **Normal2x**: No filtering, scales the image by a factor of 2. Default for non 640x480 games.
+   **Normal 2x**: No filtering, scales the image by a factor of 2. Default for non 640x480 games.
 
 .. figure:: ../images/graphics/graphics_mode/3x.png
 
-   **Normal3x**: No filtering, scales the image by a factor of 3.
+   **Normal 3x**: No filtering, scales the image by a factor of 3.
 
 .. figure:: ../images/graphics/graphics_mode/4x.png
 
-    **Normal4x**: No filtering, scales the image by a factor of 4.
+    **Normal 4x**: No filtering, scales the image by a factor of 4.
 
 .. figure:: ../images/graphics/graphics_mode/hq2x.png
 
-    **HQ2x**: Uses lookup tables to create anti-aliased output. Very nice high quality filter, but slow.
+    **HQ 2x**: Uses lookup tables to create anti-aliased output. Very nice high quality filter, but slow.
 
 .. figure:: ../images/graphics/graphics_mode/hq3x.png
 
-    **HQ3x**: Uses lookup tables to create anti-aliased output. Very nice high quality filter, but slow.
+    **HQ 3x**: Uses lookup tables to create anti-aliased output. Very nice high quality filter, but slow.
 
 .. figure:: ../images/graphics/graphics_mode/edge2x.png
 
-    **Edge2x**: Uses edge-directed interpolation. Sharp, clean, anti-aliased image with very few artifacts.
+    **Edge 2x**: Uses edge-directed interpolation. Sharp, clean, anti-aliased image with very few artifacts.
 
 .. figure:: ../images/graphics/graphics_mode/edge3x.png
 
-    **Edge3x**: Uses edge-directed interpolation. Sharp, clean, anti-aliased image with very few artifacts.
+    **Edge 3x**: Uses edge-directed interpolation. Sharp, clean, anti-aliased image with very few artifacts.
 
 .. figure:: ../images/graphics/graphics_mode/advmame2x.png
 
-    **AdvMAME2x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
+    **AdvMAME 2x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
 
 .. figure:: ../images/graphics/graphics_mode/advmame3x.png
 
-    **AdvMAME3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
+    **AdvMAME 3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
 
 .. figure:: ../images/graphics/graphics_mode/advmame4x.png
 
-    **AdvMAME3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
+    **AdvMAME 3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
 
 .. figure:: ../images/graphics/graphics_mode/sai2x.png
 
-    **SaI2x**: Uses bilinear filtering to interpolate pixels.
+    **SaI 2x**: Uses bilinear filtering to interpolate pixels.
 
 .. figure:: ../images/graphics/graphics_mode/supersai2x.png
 
-    **SuperSaI2x**: An enhanced version of the SAI2x filter.
+    **SuperSaI 2x**: An enhanced version of the SAI2x filter.
 
 .. figure:: ../images/graphics/graphics_mode/supereagle2x.png
 
-    **SuperEagle2x**: A variation of the SAI2x filter. Less blurry than SAI2x, but slower.
+    **SuperEagle 2x**: A variation of the SAI2x filter. Less blurry than SAI2x, but slower.
 
 .. figure:: ../images/graphics/graphics_mode/pm2x.png
 
-    **PM2x**: Analyzes the eight neighboring pixels to create smoother diagonal lines and rounded edges.
+    **PM 2x**: Analyzes the eight neighboring pixels to create smoother diagonal lines and rounded edges.
 
 .. figure:: ../images/graphics/graphics_mode/dotmatrix2x.png
 
-    **DotMatrix2x**: Dot matrix effect.
+    **DotMatrix 2x**: Dot matrix effect.
 
 .. figure:: ../images/graphics/graphics_mode/tv2x.png
 
-    **TV2x**: Interlace filter. Introduces scan lines to emulate a TV.
-
-
-
-
-.. note::
-
-    Not all platforms support all the graphics modes.
-
-To switch between graphics modes, press :kbd:`Ctrl + Alt` and :kbd:`1` to :kbd:`8`.
-
-OpenGL mode
-**************
-
-OpenGL graphics mode works a little differently to the other graphics modes. Instead of applying the aspect ratio and stretch mode settings one after the other (and after the graphics mode scaling has been applied), it does all the scaling and stretching in one step, going directly from the original game resolution to the final display resolution. OpenGL mode uses hardware rendering, instead of software rendering.
-
-Output is controlled by your window size (or screen resolution if in full screen) and the stretch mode selected, as well as the **Filter graphics** option.
-
+    **TV 2x**: Interlace filter. Introduces scan lines to emulate a TV.
 
 
 .. _aspect:
@@ -172,6 +171,7 @@ The game may be stretch horizontally or vertically to fill the window. This mode
 
 To switch between stretch modes, press :kbd:`Ctrl+Alt+s`.
 
+.. _filter:
 Render mode
 -------------
 
@@ -206,7 +206,7 @@ Below are some of the common render modes, to illustrate how the render mode set
 Filter graphics
 ----------------
 
-When enabled, ScummVM uses bilinear interpolation instead of nearest neighbor for the :ref:`aspect ratio <aspect>` and :ref:`stretch mode <stretch>`. It does not affect the graphics mode scaling unless OpenGL is selected, in which case it determines how the OpenGL scaling is done.
+When enabled, ScummVM uses bilinear interpolation instead of nearest neighbor for the :ref:`aspect ratio <aspect>` and :ref:`stretch mode <stretch>`. It does not affect the :ref:`graphics mode scaler <graphics>`.
 
 Nearest neighbor is a simple way to scale an image; each pixel becomes multiple pixels of the same color. While this preserves the sharper details in a pixel art image, it also creates "jagged" edges as the image is scaled up. Bilinear interpolation finds the average color between pixel color values and fills in missing pixel, which results in a "smoothed" image.
 
