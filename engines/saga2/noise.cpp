@@ -574,7 +574,7 @@ bool sayVoiceAt(uint32 s[], Point32 p) {
 	for (uint32 i = 1; s[i]; i++)
 		debugCN(1, kDebugSound, ", %s", tag2str(s[i]));
 
-	debugC(1, kDebugSound, "], %d,%d", p.x, p.y);
+	debugC(1, kDebugSound, "], %d,%d)", p.x, p.y);
 
 	Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, s[0], "voice data");
 
