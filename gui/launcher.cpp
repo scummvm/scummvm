@@ -168,21 +168,6 @@ LauncherDialog::~LauncherDialog() {
 	delete _loadDialog;
 }
 
-ButtonWidget *LauncherDialog::createSwitchButton(const Common::String &name, const Common::U32String &desc, const Common::U32String &tooltip, const char *image, uint32 cmd) {
-	ButtonWidget *button;
-
-#ifndef DISABLE_FANCY_THEMES
-	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPics") == 1 && g_gui.theme()->supportsImages()) {
-		button = new PicButtonWidget(this, name, tooltip, cmd);
-		((PicButtonWidget *)button)->useThemeTransparency(true);
-		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(image), kPicButtonStateEnabled, false);
-	} else
-#endif
-		button = new ButtonWidget(this, name, desc, tooltip, cmd);
-
-	return button;
-}
-
 void LauncherDialog::build() {
 	_list = nullptr;
 #ifndef DISABLE_LIBRARYDISPLAY_GRID
@@ -314,16 +299,18 @@ void LauncherDialog::open() {
 
 void LauncherDialog::close() {
 	// Save last selection
-	if (_list) 	{
-		const int sel = _list->getSelected();
-		if (sel >= 0)
-			ConfMan.set("lastselectedgame", _domains[sel], ConfigManager::kApplicationDomain);
-		else
-			ConfMan.removeKey("lastselectedgame", ConfigManager::kApplicationDomain);
-	} else {
+	int sel;
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
+	if (_libraryDisplay == kLibraryDisplayGrid)
+		sel = _grid->getSelected();
+	else
+#endif
+		sel = _list->getSelected();
+	if (sel >= 0)
+		ConfMan.set("lastselectedgame", _domains[sel], ConfigManager::kApplicationDomain);
+	else
 		ConfMan.removeKey("lastselectedgame", ConfigManager::kApplicationDomain);
-	}
-
+		
 	ConfMan.flushToDisk();
 	Dialog::close();
 }
@@ -389,6 +376,21 @@ void LauncherDialog::addChooserButtons() {
 	_listButton = createSwitchButton("Launcher.ListSwitch", Common::U32String("L"), _("List view"), ThemeEngine::kImageList, kListSwitchCmd);
 	_gridButton = createSwitchButton("Launcher.GridSwitch", Common::U32String("G"), _("Grid view"), ThemeEngine::kImageGrid, kGridSwitchCmd);
 }
+
+ButtonWidget *LauncherDialog::createSwitchButton(const Common::String &name, const Common::U32String &desc, const Common::U32String &tooltip, const char *image, uint32 cmd) {
+	ButtonWidget *button;
+
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPics") == 1 && g_gui.theme()->supportsImages()) {
+		button = new PicButtonWidget(this, name, tooltip, cmd);
+		((PicButtonWidget *)button)->useThemeTransparency(true);
+		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(image), kPicButtonStateEnabled, false);
+	} else
+#endif
+		button = new ButtonWidget(this, name, desc, tooltip, cmd);
+
+	return button;
+}
 #endif
 
 void LauncherDialog::updateListing() {
@@ -437,6 +439,7 @@ void LauncherDialog::updateListing() {
 	// Now sort the list in dictionary order
 	Common::sort(domainList.begin(), domainList.end(), LauncherEntryComparator());
 
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
 	Common::Array<GridItemInfo> gridList;
 
 	int k = 0;
@@ -453,8 +456,9 @@ void LauncherDialog::updateListing() {
 		gridList.push_back(GridItemInfo(k++, engineid, gameid, title, language, platform));
 	}
 
-	if (_grid)
+	if (_libraryDisplay == kLibraryDisplayGrid)
 		_grid->setEntryList(&gridList);
+#endif
 
 	// And fill out our structures
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
@@ -678,13 +682,13 @@ void LauncherDialog::handleKeyDown(Common::KeyState state) {
 	if (state.keycode == Common::KEYCODE_TAB) {
 		// Toggle between the game list and the quick search field.
 		if (getFocusWidget() == _searchWidget) {
-			if (_list)
-				setFocusWidget(_list);
-			else if (_grid)
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
+			if (_libraryDisplay == kLibraryDisplayGrid)
 				setFocusWidget(_grid);
+			else
+#endif
+				setFocusWidget(_list);
 		} else if (getFocusWidget() == _list) {
-			setFocusWidget(_searchWidget);
-		} else if (getFocusWidget() == _grid) {
 			setFocusWidget(_searchWidget);
 		}
 	}
@@ -806,11 +810,12 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	int item = 0;
-	if (_list)
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
+	if (_libraryDisplay == kLibraryDisplayGrid)
+		item = _grid->getSelected();
+	else
+#endif
 		item = _list->getSelected();
-	if (_grid) {
-		item = data;
-	}
 
 	switch (cmd) {
 	case kAddGameCmd:
@@ -873,14 +878,18 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (_list)
 			_list->setFilter(Common::U32String());
 		break;
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
 	case kGridSwitchCmd:
+		_libraryDisplay = kLibraryDisplayGrid;
 		openGrid();
 		ConfMan.set("gui_launcher_grid", "grid", Common::ConfigManager::kApplicationDomain);
 		break;
 	case kListSwitchCmd:
+		_libraryDisplay = kLibraryDisplayList;
 		openList();
 		ConfMan.set("gui_launcher_grid", "list", Common::ConfigManager::kApplicationDomain);
 		break;
+#endif
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
@@ -888,15 +897,24 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 void LauncherDialog::updateButtons() {
 	bool enable = false;
-	if (_list)
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
+	if (_libraryDisplay == kLibraryDisplayGrid)
+		enable = (_grid->getSelected() >= 0);
+	else
+#endif
 		enable = (_list->getSelected() >= 0);
+		
 	if (enable != _removeButton->isEnabled()) {
 		_removeButton->setEnabled(enable);
 		_removeButton->markAsDirty();
 	}
 
 	int item = 0;
-	if (_list)
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
+	if (_libraryDisplay == kLibraryDisplayGrid)
+		item = _grid->getSelected();
+	else
+#endif
 		item = _list->getSelected();
 	bool en = enable;
 
