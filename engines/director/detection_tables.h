@@ -531,18 +531,25 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gate3",				"the GATE III 王国「MU」への扉" },					// Gateway to the Kingdom of MU
 	{ "granmarmalade",		"グラン・マーマレード・マジカル・ビレッジ" },
 	{ "henachoco",			"へなちょこダービー" },						    	// HenaChoco Derby
+	{ "himejijo",			"A.MAZING姫路城" },									// A.MAZING Himejijo (the HIMEJI Castle)
 	{ "horrortour2",		"Zeddas: Horror Tour 2" },
 	{ "horrortour3",		"ラビラーント" },							   		// Labyrinthe
+	{ "incarnatia",   		"Incarnatia" },
 	{ "inugumi",   			"犬組" },
+	{ "ios",   				"iós" },
+	{ "jyajya",				"Jya jya" },										// HyperCard with D3 movie
+	{ "karuta",				"かるたでおじゃる" },								// Karuta de ojaru
 	{ "katsumadojo",		"信光の勝馬道場" },
 	{ "kazuyakun",			"数ヤ君" },
 	{ "kenji",				"Kenji" },
 	{ "kishido",			"棋士道" },									   		// Art of Shogi (Go)
 	{ "lzone",				"L-ZONE" },
+	{ "macaroni",			"マカロニほうれん荘 Interactive" },					// Romaji title in manual is Macaroni Hourensou
 	{ "maria",				"MA-RI-A 人形館の呪い" },
 	{ "marinefantasy",		"大方洋二の海中写真館 Marine Fantasy" },
 	{ "mazebrew",			"MazeBrew" },
 	{ "mipeterwolf",		"～Music Island Vol.1～　\"ピーターと狼\"" },
+	{ "missihb",			"MISS Interactive Hard Boiled" },
 	{ "mukashibanashi",     "日本昔話" },										// Nihon Mukashi Banashi (Japanese Folk Tales)
 	{ "muzukashiihon",		"難しい本を読むと眠くなる" },						// "Reading a Difficult Book Makes Me Sleepy"
 	{ "nihonchiri",       	"Visual日本地理" },									// Japan Geography
@@ -551,6 +558,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "novacity",			"Nova City" },
 	{ "orgotto",			"Orgotto" },
 	{ "osaka1",				"必修大阪弁集中講座I 2010年、標準語は大阪弁になる" }, // Hisshu Osaka-ben shuchu koza (Mandatory Osaka Dialect)
+	{ "osaka2",				"必修大阪弁集中講座II 2015年、東京人の逆襲" },		// Tokyoites Strike Back
 	{ "peaceland",			"PeaceLand" },
 	{ "phantplanet",		"アミューズメント プラネット ファンタスマゴリア" },	// Amusement Planet Phantasmagoria
 	{ "popup",				"Pop Up Computer" },
@@ -565,47 +573,65 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "rolypolys",			"ローリーポーリーズの七転び八起き" },
 	{ "rolypolys2",			"ローリーポーリーズの世界旅行" },
 	{ "sakin2",				"砂金II" }, 				   				    	// Sakin II
+	{ "sakuratoasobo",		"さくらとあそぼ" }, 				   				// Let's Play with "SAKURA"!
 	{ "schoolworld",     	"A-L: Artificial Life: School World" },
 	{ "tantei",				"完全探偵マニュアル" },							 	// Perfect Detective Manual
 	{ "tetsuman",			"ハイ! 鉄マン です" }, 	   					    	// Hai! Tetsuman Desu
 	{ "tetsumangaiden",		"鉄マン外伝 ゲーム大王の野望" }, 				 	// Tetsuman Gaiden: Game Daiou no Yabou
 	{ "tokimemotype1",		"ときめきメモリアルタイピング" },					// Tokimeki Memorial Typing
+	{ "tokimemotypegs",		"ときメモGSタイピング" },							// Tokimemo GS Typing (Girl's Side)
 	{ "ttw",				"Through the Window: In Search for the Lost Bag" },
+	{ "twinbeeparadise",	"ツインビーPARADISE in どんぶり島" },				// TwinBee Paradise in Donburi Shima
 	{ "twistynight1",		"Twisty Night #1 合わせ月の夜" },
 	{ "twistynight2",		"Twisty Night #2 フェンネル" },
 	{ "twistynight3",		"Twisty Night #3 いにしえびと" },
 	{ "ukiuki1",			"ウキウキ釣り天国 ～幻の天狗池～" },			 	// Ukiuki tsuri tengoku (Fishing)
+	{ "ukiuki2",			"ウキウキ釣り天国2 ～波止の五目釣り～" },
+	{ "ukiuki3",			"ウキウキ釣り天国3 ～人魚島のボート釣り～" },
 	{ "ukiukistamp",		"うきうきスタンプ" },
 	{ "ukyo1",				"うきょー1" },
 	{ "victorianpark",		"Victorian Park" },
 	{ "void",				"VOID" },
 	{ "vvs",				"Virtual Variety Show" },
+	{ "wariwari",			"わりわりワールド" },								// Wari Wari World
 	{ "xaxa",				"XAXA MACHINE" },
 	{ "ybr2",				"イエロー・ブリック・ロードII" },
 	{ "ybr3",				"Yellow Brick Road ハラペコ月と星あつめ" },
+	{ "yoidon",				"よ〜いドン!" },									// Yo-i Don!
 	{ "zaibatsu",			"財閥銀行" },								  		// Zaibatsu Bank
 
 	// Japanese art and multimedia reference
 	{ "a5tours",			"A5 Tours: Special Data Library" },
 	{ "asylum300",			"Asylum 300" },
+	{ "clockkero",			"ケロ時計" },
+	{ "clocksakura",		"さくら時計" },
+	{ "clocktomoyo",		"知世時計" },
+	{ "ddoa2",				"アイドル探偵ＹＯＵ＆ＭＹ" },						// Idol Tantei (Doki Doki On-air Drama Series)
 	{ "eguchi",				"江口寿史 CG MUSEUM" },								// Hisashi Eguchi
 	{ "fototune",			"FotoTune Multimedia Show" },
 	{ "futarinoryori",		"ふたりの料理物語" },								// A Tale of Two Chefs
 	{ "goalrush1",			"Goal Rush!!" },
 	{ "goalrush2",			"Goal Rush!! 2 ～戦術分析編～" },
+	{ "ioshow",				"iós How To Game" },
 	{ "keiri",				"経理入門" },										// Introduction to Accounting
 	{ "mazebox",			"The Latest Works of MazeBox" },
 	{ "moderntimes",		"Charles Chaplin in Modern Times" },
 	{ "mominoki",			"もみの木の下で ～ The Day of St.Claus" },			// Under the Fir Tree
 	{ "moritaka",			"森高千里 CD-ROM 渡良瀬橋" },
 	{ "oceansbelow",		"Oceans Below" },
+	{ "sakurascr",			"さくらのSCRセレクタ" },							// Sakura's SCR Selector
 	{ "satodesign",			"The Art of Computer Designing: A Black and White Approach" },
 	{ "satohomosexual",		"Homosexual" },
 	{ "sculpt4d",			"Sculpt 4D" },
 	{ "spawncollection",	"Spawn Figure Collection for Windows 95" },
+	{ "sskero",				"ケロ Screen Saver" },
+	{ "sssakura",			"さくら Screen Saver" },
+	{ "ssyamazaki",			"山崎君 Screen Saver" },							// Yamazaki-kun
+	{ "ssyukito",			"雪兎さん Screen Saver" },							// Yukito-san
 	{ "tokon5",				"闘魂V: 長州 力" },									// Fighting Spirit V: Riki Choshu
 	{ "tree",				"Onyx Tree Pro" },
 	{ "tri3dtrial",			"Tri-3D-Trial" },
+	{ "ukiukibgv",			"ウキウキ釣り天国 BGV" },							// Background Video? (Screen Saver)
 	{ "vcb",				"Virtual Cocktail Bar 200種類のカクテルのデータベース" },
 
 	// Japanese product demos
@@ -903,6 +929,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "macplaymate2",		"MacPlaymate II" },
 	{ "sadowar",			"RSP" },
 	{ "thebody",			"The Body: Five doors plus" },
+	{ "thelegs",			"The Legs ～Get a LEG up～" },
 	{ "venus",				"Venus Photo CD-ROM" },
 	{ "vvalerie1",			"Virtual Valerie" },	
 	{ "vvalerie2",			"Virtual Valerie 2" },
@@ -1322,6 +1349,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is JOINT-net/DEMO
 	MACDEMO1_l("jointnet", "Demo", "JOINT-net-DEMO", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 895582, Common::JA_JPN, 300),
 
+	// HyperCard game calls movie using external MacroMind Player
+	MACGAME2_l("jyajya", "", "MacroMind Player", "f5277c53bacd27936158dd3867e587e2", 390204,
+							 "JyajyaInit",		 "5d96a5c42b500370663431f360af3629", 669, Common::JA_JPN, 311),
+
 	// Original filename is 信光の勝馬道場ｵｰﾄﾃﾞﾓ
 	MACDEMO1_l("katsumadojo", "Demo", "Shinko's Katsuma Dojo Auto Demo", "a1da9af48fe47cf9c7e90f83dd5ddd0f", 2138762, Common::JA_JPN, 313),
 
@@ -1720,10 +1751,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("amnesty", "", "AMNESTY.EXE", "39b849bbba9eaf39c92ca25e0bb36a56", 736902, 404),
 
-	MACDEMO2_l("angelgate", "Demo", "DEMO",  "bcd3c718db258701496b3c5bcb827ef2", 483415,
-									"START", "66600069c64ac7938eba0531ea1c1537", 10482, Common::JA_JPN, 404),
-	WINDEMO2_l("angelgate", "Demo", "DEMO.EXE", "32640d047e9e0d9498a6654de07e8248", 746865,
-									"START", "9261f9d13410517d9172975ea33695c2", 10354, Common::JA_JPN, 404),
+	WINGAME1_l("angelgate", "",		"ANGEL.EXE", "046f0458f64b9008bc4b0dca5b895390", 746991, Common::JA_JPN, 404),
+	WINDEMO2_l("angelgate", "Demo", "DEMO.EXE",	 "32640d047e9e0d9498a6654de07e8248", 746865,
+									"START",	 "9261f9d13410517d9172975ea33695c2", 10354, Common::JA_JPN, 404),
+	MACDEMO2_l("angelgate", "Demo", "DEMO", 	 "bcd3c718db258701496b3c5bcb827ef2", 483415,
+									"START",	 "66600069c64ac7938eba0531ea1c1537", 10482, Common::JA_JPN, 404),
 
 	WINGAME1_l("ankh1", "", "ANKH.EXE", "ca3b036aed6f38beb3ee762e171b663e", 746959, Common::JA_JPN, 404),
 
@@ -1750,11 +1782,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Both Mac and Win versions require installation to extract executable
 	// Russian version appears to be identical with only assets replaced
-	MACGAME1("badday", "", "BadDay (Universal)", "b7e69c37b7355022d400c14aa97c5d54", 483781, 404),
+	// Original Japanese Mac filename is バッドデイ(Power PC)
+	MACGAME1("badday", "",	 "BadDay (Universal)", "b7e69c37b7355022d400c14aa97c5d54", 483781, 404),
+	MACGAME1_l("badday", "", "BadDay (Power PC)",  "c5f8c31feb5c3d4596b63455c520fc46", 60352, Common::JA_JPN, 404),
 	WINGAME2("badday", "",   "BAD_DAY.EXE", "4ad339db5379a860b33cbb0fa64f18e2", 742342,
-							 "DDDCIN.MOV",	"acc88ef9ec8300b7d7d551a94b4ff314", 1095967, 404),
+							 "BADDAY.DXR",	"b4b6fa644f64555f9f7af51454c40909", 288810, 404),
 	WINGAME2_l("badday", "", "BAD_DAY.EXE",	"4ad339db5379a860b33cbb0fa64f18e2", 742342,
-							 "DDDCIN.MOV",	"b70e34d15e9fa9494dbb59cac5900841", 1094682, Common::RU_RUS, 404),
+							 "BADDAY.DXR",	"b4b6fa644f64555f9f7af51454c40909", 397994, Common::RU_RUS, 404),
+	WINGAME2_l("badday", "", "BAD_DAY.EXE",	"7589f11c6411e59c0e82ec129090460f", 768773,
+							 "BADDAY.DXR",	"26c3b03b18e7aa098216be73d96289b0", 549108, Common::JA_JPN, 404),
 
 	// Original filename is みんなであそぼ　デモ
 	// Kidsoft US packaging says A Bear Family Adventure featuring Playtime in the Park by Erica Dale
@@ -2012,6 +2048,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("fuzzyfloppybee", "", "APEDORO.EXE", "317dfcb883a6dd59129606adcd3ffdcb", 696827, Common::IT_ITA, 404),
 
+	MACGAME1_l("gate2", "", "THE_GATE",		"8ea9e9a699c61edddffd79ddd0c994d7", 290654, Common::JA_JPN, 402),
 	MACGAME1_l("gate3", "", "THE_GATE",		"33f733b2809b94c3301096902f642b6e", 290654, Common::JA_JPN, 402),
 	WINGAME1_l("gate1", "", "THE_GATE.EXE", "dd0bb1a07ad5b5d4489ac8f54e6ada2e", 712014, Common::JA_JPN, 402),
 	WINGAME1_l("gate2", "", "THE_GATE.EXE", "0818b5c0ced885b5ebcef1bfd9523405", 711962, Common::JA_JPN, 402),
@@ -2085,6 +2122,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("hhouse", "", "HHOUSE.EXE", "e798a08ba6057705af028673f7a9a2ef", 3181345, 400),
 
+	// Found on Uki Uki 3 CD
+	// Original movie filename is デモ
+	MACDEMO2_l("himejijo", "Demo", "Macromedia Player", "de889febf08007ca7ac501a952cfba6f", 457275,
+								   "Demo",				"88c318f3e821b4a76f8ff67bb97c002f", 6736268, Common::JA_JPN, 400),
+
 	WINGAME1("hkbigfun", "", "KITTY.EXE", "42e600e8a917de593f4048428ec8d8b8", 703689, 404),
 
 	MACGAME1("horobroy", "", "Rob Roy", "01be45e7241194dad07938e7059b88e3", 483382, 404),
@@ -2151,6 +2193,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2("iona", "'96", "DEMO.EXE", "95a3aeb1017546da820a8d3c95d3c4e4", 1946711,
 							"MAIN.DIR", "71eacbde48a94043390d7dab58b8bb52", 1812168, 404),
 
+	WINGAME1_l("ios", "",	 "IOS.EXE", "2b8edd5af0f79d84542c57754b7fbf61", 1004833, Common::JA_JPN, 404),
+	WINGAME1_l("ioshow", "", "HOW.EXE", "a526a724f26e266b17815b4f7f7ae079", 1863309, Common::JA_JPN, 404),
+
 	MACGAME1("isis", "", "ISIS", "dedfabf9ee7bf5aab003bdab4137bca6", 777886, 400),
 	WINGAME1("isis", "", "ISIS.EXE", "59c1cb960199dd3f041262ab5271bb23", 14747213, 400),
 	MACGAME1_l("isis", "", "ISIS", "dedfabf9ee7bf5aab003bdab4137bca6", 780610, Common::DE_DEU, 400),
@@ -2189,6 +2234,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("karma", "", "Karma", "ea646eccc9a53f44ce082459d4809a06", 485535, 400),
 	WINGAME1("karma", "", "KARMA.EXE", "e830af6b5dfca4964184e7d61039e120", 697047, 400),
 	WINGAME1_l("karma", "", "DH.EXE", "f917ac9c649bff9eaf538ae69432a145", 690991, Common::ZH_TWN, 400),
+
+	// Original Mac filename is かるた
+	MACDEMO1_l("karuta", "Demo", "Karuta",		 "78138a77207907642744d0960c14d9e5", 484567, Common::JA_JPN, 404),
+	WINDEMO2_l("karuta", "Demo", "S.EXE",		 "aa3900a47af9c2b5f066fbbff43dd1f3", 746989,
+								 "OPENING4.DIR", "89beafaa3b41f1c533d13fb378d5eebf", 3995204, Common::JA_JPN, 404),
 
 	MACDEMO1_l("kenji", "Demo", "KENJI", "4577dd3eadc467a986ab172d90871b22", 502033, Common::JA_JPN, 404),
 
@@ -2336,6 +2386,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// There are also projectors to play audio in 11kHz or for systems with 4MB RAM
 	MACGAME1_l("niningashi", "", "Niningashi", "0666ae690e459d3d0d91800ebd94de46", 290682, Common::JA_JPN, 402),
 	MACDEMO1_l("niningashi", "Demo", "Niningashi Demo", "0666ae690e459d3d0d91800ebd94de46", 290682, Common::JA_JPN, 402),
+	WINDEMO2_l("niningashi", "Demo", "S.EXE",			"0c8a24a885123f20992c0c74d8c5062c", 768683,
+									 "MAIN.DXR",		"8af3de22d679eb4e192429ca682bb974", 1119286, Common::JA_JPN, 404),
 
 	WINDEMO1("nixon", "Demo", "NIXON.EXE", "ca89b860bb28aed3a699478a7f411ee5", 3193595, 404),
 
@@ -2359,6 +2411,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("origin", "V8",  "CATALOG.EXE", "e6fe968cbe2b51ea423af58216c78392", 9509999, 400),
 	WINGAME1("origin", "V11", "CATALOG.EXE", "c117a85d635a2b4469a141f7f051b0a8", 10347633, 400),
 
+	WINGAME1_l("osaka1", "",	 "OSAKA.EXE", "c0479277618ab17bd9c79b5da66ab435", 1491097, Common::JA_JPN, 400),
 	WINDEMO2_l("osaka1", "Demo", "DEMO.EXE",  "763f360a098cf3bec7cbdc5685b1e4a3", 1193483,
 								 "START.DIR", "83190aa4c2db873334d36bac329ec670", 825036, Common::JA_JPN, 404),
 	MACDEMO2_l("osaka1", "Demo", "DEMO",	  "5a012e69fec2369ad2e8d73c42d928f3", 1096269,
@@ -2539,11 +2592,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2_l("tetsuman", "Demo", "DEMO.EXE", 		"460a27915f96f1aeb50b271722637a60", 746847,
 								   "SHARED.DIR", 	"1a294eaa8f725a54aa00e5ec6d3560a9", 1656378, Common::JA_JPN, 404),
 
-	// Pippin disc contains Pippin + Mac executables.
+	// Pippin disc contains Pippin + Mac executables
 	// On Win/Mac disc, the original Mac executable name is 鉄マン外伝
-	MACGAME1_l("tetsumangaiden", "", "Tetsuman Gaiden", "ea646eccc9a53f44ce082459d4809a06", 484323, Common::JA_JPN, 404),
-	PIPGAME1_l("tetsumangaiden", "", "GAIDEN.Pippin", "2618a85198d0180e3eae9162f81aafed", 61059, Common::JA_JPN, 404),
-	WINGAME1_l("tetsumangaiden", "", "GAIDEN.EXE", "e0176c2683e3f3cac971e976bafb8fee", 747105, Common::JA_JPN, 404),
+	// Mac demo executable name is デモ
+	MACGAME1_l("tetsumangaiden", "",	 "Tetsuman Gaiden", "ea646eccc9a53f44ce082459d4809a06", 484323, Common::JA_JPN, 404),
+	MACDEMO2_l("tetsumangaiden", "Demo", "Demo",			"0cbcb147543278d3f719fc31a3e6def6", 1097597,
+										 "LOGO",			"e656c2676aa805ae95c40dbd3ac3cd61", 1049760, Common::JA_JPN, 404),
+	PIPGAME1_l("tetsumangaiden", "",	 "GAIDEN.Pippin",	"2618a85198d0180e3eae9162f81aafed", 61059, Common::JA_JPN, 404),
+	WINGAME1_l("tetsumangaiden", "",	 "GAIDEN.EXE",		"e0176c2683e3f3cac971e976bafb8fee", 747105, Common::JA_JPN, 404),
+	WINDEMO2_l("tetsumangaiden", "Demo", "S.EXE",			"6e8d348333574dad57d316b780bc5f35", 747195,
+										 "LOGO", 			"82d44fb57e72e6243b55634379a74f6c", 1051768, Common::JA_JPN, 404),
 
 	// Mac version is not Director
 	WINGAME1("thinkinthingsdp", "", "PARENTS.EXE", "4e82061a925caa16320c52b38aeb68c5", 1160899, 400),
@@ -2594,7 +2652,37 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("ubt", "", "BTDEMO.EXE", "dbe72b7dc91c72db5b4597857aecf5c6", 696813, 404),
 
 	// YOBI.EXE is a projector for lower performance systems
-	WINGAME1_l("ukiuki1", "", "TENNGU.EXE", "f0bbb9938a7cb899b6fc93ef7f3e8150", 747145, Common::JA_JPN, 404),
+	WINGAME1_l("ukiuki1", "", 	  "TENNGU.EXE", "f0bbb9938a7cb899b6fc93ef7f3e8150", 747145, Common::JA_JPN, 404),
+	WINDEMO2_l("ukiuki1", "Demo", "S.EXE",		"09430e02b3540e623d0b400792958901", 747145,
+								  "LOGO.DIR",	"b6d341c63fbea25898fc310981413c28", 1053528, Common::JA_JPN, 404),
+	WINGAME1("ukiukibgv", "",	  "BGV",		"4dc07ac998272bb4027a9979f5b6c3b6", 1097649, 404),
+	{
+		{
+			"ukiuki1", "CD Demo",
+			// Original filename is 幻の天狗池
+			AD_ENTRY1s("Maboroshi no tengu-chi", "792a89586ed20c4662b51c2bfd43be80", 1102407),
+			Common::JA_JPN,
+			Common::kPlatformMacintosh,
+			ADGF_CD | ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		404
+	},
+
+	// Original Mac demo filename is デモ
+	// Original Mac full game filename is 波止の五目釣り
+	// Windows demos on Uki Uki 3 sample disc are hidden in MOVIE/BMP
+	// All of the Windows demo projectors use the S.EXE filename
+	MACGAME1_l("ukiuki2", "",	  "Hashi no gomoku-dzuri", "bcd3c718db258701496b3c5bcb827ef2", 488946, Common::JA_JPN, 404),
+	MACDEMO2_l("ukiuki2", "Demo", "Demo",  				   "5ef06a50a335ec0a9a0f9017057ccfe9", 1097469,
+								  "START", 				   "c1eaf606b97d1fb5a55214485d330aa9", 9228, Common::JA_JPN, 404),
+	WINDEMO2_l("ukiuki2", "Demo", "S.EXE",  			   "5ef06a50a335ec0a9a0f9017057ccfe9", 1097469,
+								  "OPENING",			   "c1eaf606b97d1fb5a55214485d330aa9", 9228, Common::JA_JPN, 404),
+
+	// Demo is D5
+	// Original filename is 人魚島のボート釣り
+	MACGAME1_l("ukiuki3", "", "Ningyo shima no boto-dzuri", "bcd3c718db258701496b3c5bcb827ef2", 488038, Common::JA_JPN, 404),
 
 	MACGAME1("universe", "", "Invisible Universe", "78138a77207907642744d0960c14d9e5", 596766, 404),
 	WINGAME2("universe", "", "UNIVERSE.EXE", "77ddb6ca4c45b78cc501868afa55e166", 700157,
@@ -2629,6 +2717,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("warlock", "", "START.EXE",	  "04e0887e76ee58b86ace1d89bf816d9f", 694159,
 							  "SSWARLCK.DIR", "aa3d2d8d69746d2b0f312427649cd98f", 608862, Common::JA_JPN, 400),
 
+	// Original Mac filename is わりわりワールド_デモ
+	MACDEMO1_l("wariwari", "Demo", "Wari Wari World Demo", "f808a9f231b77617fa559cf9d2da66c1", 502975, Common::JA_JPN, 400),
+	WINDEMO2_l("wariwari", "Demo", "S.EXE",				   "56faebd9531821fe9be95515c43f7fcc", 744019,
+								   "WADEMO.DXR",		   "cf6453b97f7e1cb1fb19ecb59bbb9caf", 6213026, Common::JA_JPN, 404),
+
 	MACDEMO1("warplanes", "Demo", "Warplanes Demo", "4f7ff33ce95ed9f42befdae4f9b6b690", 292244, 403),
 
 	MACGAME1("whales", "", "World Of Whales", "da0da5d543b237051975ad70bec129f4", 483774, 404),
@@ -2642,6 +2735,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("wwanimals", "Demo", "ANIMALS.EXE", "25fee176193d52cf7cbc2b604bfcbf8c", 6961631, 404),
 
 	MACGAME1_l("xaxa", "", "XAXA MACHINE", "ff0b7a4b925c7345785c372d618d0967", 343233, Common::JA_JPN, 400),
+
+	// Original Mac filename is よーいドンDEMO
+	MACDEMO1_l("yoidon", "Demo", "Yo-i Don DEMO", "3a0c62a46f36157434c4204e50f22886", 305032, Common::JA_JPN, 403),
+	WINDEMO2_l("yoidon", "Demo", "S.EXE",		  "9448daa2ccbc2c3707df48323327feb0", 747007,
+								 "START.DXR",	  "651764cd9add9cc56022dc499b2aca92", 9803044, Common::JA_JPN, 404),
 
 	MACGAME1_l("ybr2", "", "YBR2", "b797956eb3a4dabcc15bfadf6fc66591", 504153, Common::JA_JPN, 400),
 	WINGAME1_l("ybr2", "", "YBR2.EXE", "dbe273c1df60305be98a1a582ddd2c3b", 860579, Common::JA_JPN, 400),
@@ -2718,6 +2816,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Series includes Schubert, Tchaikovsky, Mozart, Vivaldi and probably more
 	WINGAME1_l("clasplusbee2", "", "BEE2_95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1694421, Common::ES_ESP, 501),
 
+	// Clocks from Let's Play with Sakura CD
+	// Windows versions are D6
+	// Original filenames follow the entries on each line
+	MACGAME1_l("clockkero", "",	  "Kero Tokei",	  "65063397536553c4f6ff2a6c07194bf7", 1602707, Common::JA_JPN, 500), // ケロ時計
+	MACGAME1_l("clocksakura", "", "Sakura Tokei", "65063397536553c4f6ff2a6c07194bf7", 1602709, Common::JA_JPN, 500), // さくら時計
+	MACGAME1_l("clocktomoyo", "", "Tomoyo Tokei", "65063397536553c4f6ff2a6c07194bf7", 1602707, Common::JA_JPN, 500), // 知世時計
+
 	MACGAME1("colormind", "v1.5", "ColorMind 1.5", "37faaf693259d7a4fa031f4a2edf3098", 126087, 501),
 
 	MACGAME1_l("crusader", "", "Croisades", "6e7e31d05709e1d38d63f4df6a59eec0", 718381, Common::FR_FRA, 501),
@@ -2766,6 +2871,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("edmark", "", "DEMO.EXE", 	  "2e62abdad839e42068afdcd0644d7dcf", 917547,
 						   "MAININT",	  "1e995592236894b843c3853906bbee1d", 2935876, 500),
 
+	// Original Mac filename is 江口寿史
+	MACGAME1_l("eguchi", "", "Hisashi Eguchi", "552992fb31c736ca67ffd403096596d6", 719909, Common::JA_JPN, 501),
 	WINGAME1_l("eguchi", "", "EGU32.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1410078, Common::JA_JPN, 501),
 
 	WINGAME1_l("ernie", "", "Ernie.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1417481, Common::SE_SWE, 500),
@@ -2833,6 +2940,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("imesceneryfish", "ECD", "runme.exe",		  "47b17c219097afb877fd9bc15455e4d4", 738415,
 									  "main.dir",		  "0b20d6b771b4f5fd50e823c3773aecdd", 3526788, 404),
 
+	// Installers for both platforms also use Director
+	MACGAME1_l("incarnatia", "", "incarnatia_PowerMac", "2e7d373f75c014be20cfb04c5cd65dae", 108736, Common::JA_JPN, 501),
+	WINGAME1_l("incarnatia", "", "incarnatia_Win.exe", "38b75ecdedf662326fe4931a68ae60cd", 1414152, Common::JA_JPN, 501),
+
 	MACGAME1("jslearn", "1997 D5 Demo", "JumpStart Previews", "231d3041df162be4a0ddd36a74eb03b6", 718745, 501),
 	WINGAME1("jslearn", "1997 D5 Demo", "PREV32A.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411155, 501),
 
@@ -2854,6 +2965,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filenames use N° instead of No
 	MACGAME1_l("mieuxmieux", "N°16", "CD Mieux-Mieux No16", "227fcce08de8028e2201f5f4eb3b3cc3", 720132, Common::FR_FRA, 501),
 
+	WINGAME1_l("missihb", "", "MISS95.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1410206, Common::JA_JPN, 501),
+
 	WINGAME1("mmalgebra", "", "mmalgbra.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1887007, 501),
 
 	MACGAME1("mmmath3", "", "Mission Masters Math 3", "ec6fba1c2d0fd9dbe987f4336cb08e2b", 718381, 501),
@@ -2874,6 +2987,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("nine", "", "nine_95.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1555823, 501),
 
 	WINGAME1("noir", "", "NOIR.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1020879, 500),
+
+	MACDEMO1_l("osaka2", "Demo", "OSAKA2",	   "2e75b0d7a218c71d5dd00a27eb755f00", 719012, Common::JA_JPN, 501),
+	WINDEMO1_l("osaka2", "Demo", "OSAKA2.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1410110, Common::JA_JPN, 501),
 
 	WINGAME1("parliament", "", "GUIDE.EXE", "2e62abdad839e42068afdcd0644d7dcf", 918871, 500),
 
@@ -2962,6 +3078,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("spellingbee", "", "WIN95.EXE",   "1a7acbba10a7246ba58c1d53fc7203f5", 1411387,
 								"136MAIN.DXR", "b46fe5ee3a0903bb763121059cee2c06", 679554, 501),
 
+	// Screen savers found on Let's Play with "Sakura" activity CD
+	// Windows versions on same disc are D6
+	// Original filenames follow the entries on each line
+	MACGAME1_l("sskero", "",	 "Kero",		 "65063397536553c4f6ff2a6c07194bf7", 1608622, Common::JA_JPN, 500), // ケロ
+	MACGAME1_l("sssakura", "",	 "Sakura",		 "65063397536553c4f6ff2a6c07194bf7", 1608788, Common::JA_JPN, 500), // さくら
+	MACGAME1_l("ssyamazaki", "", "Yamazaki-kun", "65063397536553c4f6ff2a6c07194bf7", 3693218, Common::JA_JPN, 500), // 山崎君
+	MACGAME1_l("ssyukito", "",	 "Yukito-san",	 "65063397536553c4f6ff2a6c07194bf7", 4867440, Common::JA_JPN, 500), // 雪兎さん
+
 	// Found on Revolutionary War Picture CD from Holiday Digital Pictures
 	MACGAME1("ssrevwar", "", "Revolutionary War Screen Saver", "43234754a346ed7ac25b581f6d106866", 218094, 500),
 
@@ -3002,6 +3126,25 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("troubleshoot101", "Basic", "Troubleshooting 101 IA", "62e979424add2428daa835610fb83864", 719261, 501),
 	MACGAME1("troubleshoot101", "Music", "Troubleshooting 101 IA w MUSIC", "222fbd020a3910ef748724945145771c", 719261, 501),
+
+	// Original filename is ﾂｲﾝﾋﾞｰPARADISE in どんぶり島.exe
+	WINGAME1_l("twinbeeparadise", "", "TwinBee PARADISE in Donburi Shima.exe", "2535f11350bc1f2b7ca2dcc6c0cdddfd", 1410246, Common::JA_JPN, 501),
+
+	WINDEMO2_l("ukiuki3", "Demo", "S.EXE",	  "f7bf3d09655f30ba327810f010150004", 1035432,
+								  "LOGO.DIR", "7cd32d690ffaaf21c75ccfb9507a712d", 1052642, Common::JA_JPN, 501),
+	{
+		{
+			"ukiuki3", "CD Demo",
+			// Original filename is 幻の天狗池.EXE
+			AD_ENTRY1s("BOAT95.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1410860),
+			Common::JA_JPN,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_CD,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		501
+	},
 
 	MACGAME1("vp2", "", "VPhys2", "cb91232ecece0045461d236d5914c03d", 719261, 500),
 	MACDEMO1("vp2", "Demo", "VP2Demo", "cb91232ecece0045461d236d5914c03d", 719261, 500),
@@ -3069,12 +3212,25 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// General preview for ClueFinders series. Does not correspond to a specific game.
 	WINGAME1("cfdemo", "", "CFDemo.exe", "d62438566e44826960fc16c5c23dbe43", 11941853, 650),
 
+	// Clocks from Let's Play with Sakura CD
+	// Mac versions are D5
+	// Original filenames follow the entries on each line
+	WINGAME1_l("clockkero", "",	  "Kero Tokei.exe",	  "45871c12eb944f09f50ee742113a1e2d", 2770370, Common::JA_JPN, 650), // ケロ時計.exe
+	WINGAME1_l("clocksakura", "", "Sakura Tokei.exe", "45871c12eb944f09f50ee742113a1e2d", 2754593, Common::JA_JPN, 650), // さくら時計.exe
+	WINGAME1_l("clocktomoyo", "", "Tomoyo Tokei.exe", "45871c12eb944f09f50ee742113a1e2d", 3184823, Common::JA_JPN, 650), // 知世時計.exe
+
 	MACGAME1("concentration", "ECD", "Natural",	   "f987dae6f5cdd01875c886a491591e72", 1031658, 650),
 	WINGAME2("concentration", "ECD", "win95.exe",  "d62438566e44826960fc16c5c23dbe43", 1703271,
 									 "stub32.dxr", "c835559b5556665bc755350ec9bd8244", 47639, 650),
 
 	MACGAME1_l("crusader2000", "", "Lancer Croisades", "398eb2cdf121feb490097c6323d52267", 1031745, Common::FR_FRA, 650),
 	WINGAME1_l("crusader2000", "", "Croisade.exe", "d62438566e44826960fc16c5c23dbe43", 1546312, Common::FR_FRA, 650),
+
+	// Doki Doki On-air Drama Series acts as a companion to a series of radio broadcasts
+	// It includes the audio episodes alongside sketches, interviews, and mini-games
+	// Original filenames are as follows:
+	// Vol.2 - アイドル探偵ＹＯＵ＆ＭＹ
+	MACGAME1_l("ddoa2", "Vol.2", "Idol Tantei You & My", "baed611e800d4619b66bbb28db3df1c7", 1033523, Common::JA_JPN, 601),
 
 	WINGAME1("delphi4tutor", "", "Del4Tutor.exe", "ece1c7a090010965890840102978e693", 3125198, 601),
 
@@ -3180,6 +3336,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("learninternet", "", "VIDPROF.EXE", "b0f3841f6e8005e519445b22de37749b", 2674733, 600),
 	WINGAME1("learnworks2", "v4.0", "Vidprof.exe", "b0f3841f6e8005e519445b22de37749b", 2854401, 600),
 
+	// Pre-rendered CG animated adventure based on the popular comedy manga
+	// Developed by Future Pirates, published by Toshiba EMI
+	MACGAME1_l("macaroni", "", "Macaroni.PowerMac", "be7faef1b5c713e2d13a693eb6e1f5c9", 180281, Common::JA_JPN, 404),
+
 	WINDEMO1("madtg", "1998 Demo", "MTGDSLID.EXE", "b0f3841f6e8005e519445b22de37749b", 1317661, 600),
 
 	// Masters of the Elements - English (from lotharsm)
@@ -3273,6 +3433,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("revwar", "", "BEGIN.exe",	   "d62438566e44826960fc16c5c23dbe43", 1514063,
 						   "mainmenu.dxr", "1b6c62ffd84ac53fce242a8f0a4cc337", 5839626, 650),
 
+	// Found on Let's Play with "Sakura"
+	// This directly runs the screen savers available on the CD
+	// Original filename is さくらのscrセレクタ
+	MACGAME1_l("sakurascr", "", "Sakura\'s scr selector", "65063397536553c4f6ff2a6c07194bf7", 1822055, Common::JA_JPN, 602),
+
+	// Original filenames are さくらとあそぼ
+	MACGAME1_l("sakuratoasobo", "", "Let\'s Play with Sakura", "8d83064402198a909b0abcebc6b46d2b", 118198, Common::JA_JPN, 602),
+	WINGAME1_l("sakuratoasobo", "", "Let\'s Play with Sakura.exe", "45871c12eb944f09f50ee742113a1e2d", 1982850, Common::JA_JPN, 650),
+
 	MACGAME1("shrlucky", "", "Arcade", "dab7a517b0877454d1e16c40c9b5a9be", 1029193, 600),
 	WINGAME1("shrlucky", "", "ARCWIN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 7304861, 600),
 
@@ -3280,6 +3449,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("ssleepipes", "", "pipes",		"dc48a185cfddce0d48a199fd25e328ac", 94195, 650),
 	WINGAME1("ssleepipes", "", "pipes.exe", "a593079aecf5bd938ce75264cac24b2d", 1545446, 600),
+
+	// Screen savers found on Let's Play with "Sakura" activity CD
+	// Mac versions are D5
+	WINGAME1_l("sskero", "",	 "Kero.exe",	 "45871c12eb944f09f50ee742113a1e2d", 1730497, Common::JA_JPN, 650),
+	WINGAME1_l("sssakura", "",	 "Sakura.exe",	 "45871c12eb944f09f50ee742113a1e2d", 1736349, Common::JA_JPN, 650),
+	WINGAME1_l("ssyamazaki", "", "Yamazaki.exe", "45871c12eb944f09f50ee742113a1e2d", 3854052, Common::JA_JPN, 650),
+	WINGAME1_l("ssyukito", "",	 "Yukito.exe",	 "45871c12eb944f09f50ee742113a1e2d", 5003908, Common::JA_JPN, 650),
 
 	// Mac version is D5
 	WINGAME1("ssrevwar", "", "Revwar.exe", "d62438566e44826960fc16c5c23dbe43", 21088827, 650),
@@ -3897,6 +4073,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("miamath", "OS X", "MiaOSX", "666bfa2ee1ae12443ce06f5dd142502b", 53741, 1000),
 	WINGAME1("miamath", "", "MiaMath.exe", "0c25e89b5084b272f0eab7827b6e411a", 2671820, 1000),
 
+	WINDEMO1_l("tokimemotypegs", "Demo", "tkmkgstype.exe", "1d1646000633ab994404ac38fb350553", 2716404, Common::JA_JPN, 1000),
+
 //////////////////////////////////////////////////
 //
 // Adobe Director v11
@@ -3939,6 +4117,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "START.DIR",		"beeb32cacc5108838a8b5c6850275b86", 7342, Common::JA_JPN, 404),
 	WINDEMO2_l("thebody", "Demo", "DEMO.EXE",		"763f360a098cf3bec7cbdc5685b1e4a3", 1193483,
 								  "START.DIR",		"dd60f73a3c0590754b07e0cee4ec2921", 7206, Common::JA_JPN, 404),
+	WINDEMO2_l("thelegs", "8-bit Color Demo",  "S.EXE",		  "c3c38bd3907ca7e13220b74bd0317a6c", 1013279,
+											   "START8.DIR",  "ed4bfebf096a195ae68db0fe7ba999cc", 4812, Common::JA_JPN, 500),
+	WINDEMO2_l("thelegs", "16-bit Color Demo", "S.EXE",		  "1c654e09938e5a27f694e694aca13833", 1387193,
+											   "START16.DIR", "1b42803d81028c827022eb08e00616b0", 4942, Common::JA_JPN, 500),
 
 	// Original filename is ビーナスの美女のデモ
 	MACDEMO1("venus", 	  "Demo", "Venus no Bijo Demo", "1ae45c23586b41997ba52e2e7c771c4c", 3333366, 310),
