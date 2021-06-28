@@ -81,24 +81,29 @@ void audioInterface::cleanupAudioInterface(void) {
 void audioInterface::suspendGameClock(void) {
 	warning("STUB: audioInterace::suspendGameClock()");
 }
+
 void audioInterface::resumeGameClock(void) {
 	warning("STUB: audioInterface::resumeGameClock()");
 }
 
 bool audioInterface::playFlag(void) {
-	warning("STUB: audioInterface::playFlag()");
+	debugC(2, kDebugSound, "STUB: audioInterface::playFlag()");
 	return (!audio->queue.isPlaying() && audio->queue.getSize() > 0);
 }
+
 void audioInterface::playMe(void) {
 	warning("STUB: audioInterface::PlayMe()");
 	audio->queue.playNext();
 }
+
 void audioInterface::queueMusic(soundSegment s, decoderSet *, int16 loopFactor, sampleLocation where) {
 	warning("STUB: audioInterface::queueMusic()");
 }
+
 void audioInterface::stopMusic(void) {
 	warning("STUB: audioInterface::stopMusic()");
 }
+
 bool audioInterface::goodMIDICard(void) {
 	warning("STUB: audioInterface::goodMIDICard()");
 	return false;
@@ -107,12 +112,15 @@ bool audioInterface::goodMIDICard(void) {
 void audioInterface::queueSound(soundSegment s, decoderSet *, int16 loopFactor, sampleLocation where) {
 	warning("STUB: audioInterface::queueSound(%d,  @%d,%d)", s, where.x, where.y);
 }
+
 void audioInterface::queueLoop(soundSegment s, decoderSet *sDec, int16 loopFactor, sampleLocation where) {
 	warning("STUB: audioInterface::queueLoop()");
 }
+
 void audioInterface::stopLoop(void) {
 	warning("STUB: audioInterface::stopLoop()");
 }
+
 void audioInterface::setLoopPosition(sampleLocation newLoc) {
 	warning("STUB: audioInterface::setLoopPosition(%d,%d)", newLoc.x, newLoc.y);
 }
@@ -121,16 +129,20 @@ void audioInterface::queueVoice(soundSegment s, decoderSet *, sampleLocation whe
 	warning("STUB: audioInterface::queueVoice(soundSegment, decoderSet *, sampleLocation)");
 	audio->queue.pushVoice(s);
 }
+
 void audioInterface::queueVoice(soundSegment s[], decoderSet *, sampleLocation where) {
 	warning("STUB: audioInterface::queueVoice(soundSegment [], decoderSet *, sampleLocation)");
 }
+
 void audioInterface::stopVoice(void) {
 	warning("STUB: audioInterface::stopVoice()");
 }
+
 bool audioInterface::talking(void) {
 	warning("STUB: audioInterface::talking()");
 	return false;
 }
+
 bool audioInterface::saying(soundSegment s) {
 	warning("STUB: audioInterface::saying()");
 	return false;
@@ -140,22 +152,28 @@ bool audioInterface::active(void) {
 	warning("STUB: audioInterface::active()");
 	return true;
 }
+
 void audioInterface::enable(volumeTarget i, bool onOff) {
 	warning("STUB: audioInterface::enable()");
 }
+
 void audioInterface::setVolume(volumeTarget targ, volumeMode op, Volume val) {
 	warning("STUB: audioInterface::setVolume()");
 }
+
 Volume audioInterface::getVolume(volumeTarget src) {
 	warning("STUB: audioInterface::getVolume()");
 	return 0;
 }
+
 void audioInterface::setMusicFadeStyle(int16 tOut, int16 tIn, int16 tOver) {
 	warning("STUB: audioInterface::setMusicFadeStyle()");
 }
+
 void audioInterface::suspend(void) {
 	warning("STUB: audioInterface::suspend()");
 }
+
 void audioInterface::resume(void) {
 	warning("STUB: audioInterface::resume()");
 }
