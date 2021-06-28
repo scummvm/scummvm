@@ -153,7 +153,16 @@
 						width = 'Globals.Line.Height'
 				/>
 				<space />
+				<widget name = 'ListSwitch'
+						height = 'Globals.Button.Height'
+						width = 'Globals.Button.Height'
+				/>
+				<widget name = 'GridSwitch'
+						height = 'Globals.Button.Height'
+						width = 'Globals.Button.Height'
+				/>
 			</layout>
+			<widget name = 'GameList'/>
 			<widget name = 'IconArea'/>
 			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
 				<widget name = 'AddGameButton'

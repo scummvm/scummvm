@@ -140,7 +140,7 @@
 	</globals>
 
 	<dialog name = 'Launcher' overlays = 'screen'>
-		<layout type = 'vertical' align = 'center' padding = '23, 23, 8, 23'>
+		<layout type = 'vertical' align = 'center' padding = '23, 23, 8, 40'>
 			<widget name = 'Logo'
 					width = '287'
 					height = '80'
@@ -188,14 +188,19 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
-				<widget name = 'GameList'
-					width = '200'
-				/>
+				<widget name = 'GameList'/>
 				<widget name = 'IconArea'/>
-				<!-- <widget name = 'Thumbnail'
-					width = '180'
-					height = '155'
-				/> -->
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
+				<widget name = 'ListSwitch'
+						height = 'Globals.Button.Height'
+						width = 'Globals.Button.Height'
+				/>
+				<widget name = 'GridSwitch'
+						height = 'Globals.Button.Height'
+						width = 'Globals.Button.Height'
+				/>
+				<space />
 			</layout>
 		</layout>
 	</dialog>
