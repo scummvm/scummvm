@@ -22,6 +22,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Spanish Amazon: Guardians of Eden.
    - Added support for AGS Games versions 2.5+.
    - Added support for Nightlong: Union City Conspiracy.
+   - Added support for The Journeyman Project 2: Buried in Time.
 
  New ports:
    - The Nintendo DS port got a major rewrite.
