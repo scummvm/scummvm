@@ -144,6 +144,7 @@ public:
 	int				_minGridYSpacing;
 	int				_gridXSpacing;
 	int				_gridYSpacing;
+	int				_trayHeight;
 	
 	int				_rows;
 	int				_itemsPerRow;
@@ -177,6 +178,7 @@ public:
 	void move(int x, int y);
 	void assignEntriesToItems();
 
+	int getScrollPos() const { return -_scrollPos; }
 	int getThumbnailHeight() const { return _thumbnailHeight; }
 	int getThumbnailWidth() const { return _thumbnailWidth; }
 
@@ -185,7 +187,7 @@ public:
 	
 	void reflowLayout() override;
 	
-	void openTray(int x, int y, int w, int h, int entryID);
+	void openTray(int x, int y, int entryID);
 	void scrollBarRecalc();
 };
 
