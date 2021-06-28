@@ -636,7 +636,10 @@ void moveLoop(Location loc) {
 // supplemental interface check for speech
 
 bool stillDoingVoice(uint32 sampno) {
-	return (audio->saying(sampno));
+	warning("STUB: stillDoingVoice(%s)", tag2str(sampno));
+	return g_system->getMixer()->isSoundHandleActive(_speechSoundHandle);
+
+//	return (audio->saying(sampno));
 }
 
 
