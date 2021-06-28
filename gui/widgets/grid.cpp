@@ -146,7 +146,7 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 }
 
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	if (isHighlighted) {
+	if (isHighlighted && isVisible()) {
 		// Work in progress
 		_grid->openTray(getAbsX() - _grid->_gridXSpacing / 3, getAbsY() + _h, _w + 2 * (_grid->_gridXSpacing / 3), kLineHeight * 3, _activeEntry->entryID);
 		_grid->_tray->runModal();
