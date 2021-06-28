@@ -866,6 +866,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_GK1_CD_WIN },
 
+	// Gabriel Knight - Hebrew fan translation, based on English Dos CD
+	// Executable scanning reports "2.000.000", VERSION file reports "01.100.000"
+	{"gk1", "CD", {
+		{"resource.map", 0, "372d059f75856afa6d73dd84cbb8913d", 10996},
+		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 12581736},
+		{"PATCHES/0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_CD, GUIO_GK1_CD_DOS },
+
 	// Gabriel Knight - Korean fan translation, based on English Windows CD
 	// Executable scanning reports "2.000.000", VERSION file reports "01.100.000"
 	{"gk1", "CD", {
