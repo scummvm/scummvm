@@ -474,7 +474,10 @@ void GridWidget::assignEntriesToItems() {
 			// Assign entry and update
 			item->setActiveEntry(*entry);
 			item->update();
-			item->setVisible(true);
+			if (k >= _itemsOnScreen - _itemsPerRow)
+				item->setVisible(false);
+			else
+				item->setVisible(true);
 			++entry;
 		} else {
 			// If we run out of visible entries to display.
