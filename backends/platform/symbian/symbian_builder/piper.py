@@ -50,7 +50,7 @@ def thread_func(q):
       tmp = os.path.join(pth, "bld.inf")
       SafeWriteFile(tmp, prj_template %fname)
 
-#Needed because datetime.now() returns the same time for every call
+        #Needed because datetime.now() returns the same time for every call
       start = time.strftime("%H:%M:%S")
 
       cmd = subprocess.Popen('bldmake bldfiles', stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=pth, shell=True)
