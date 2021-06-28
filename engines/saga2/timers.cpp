@@ -111,7 +111,11 @@ TimerList *fetchTimerList(GameObject *obj) {
 //----------------------------------------------------------------------
 //	Check all active Timers
 void checkTimers(void) {
-	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); ++it) {
+	Common::List<Timer *>::iterator nextIt;
+
+	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); it = nextIt) {
+		nextIt = it;
+		nextIt++;
 		if ((*it)->check()) {
 			debugC(2, kDebugTimers, "Timer tick for %p (%s): %p (duration %d)", (void *)(*it)->getObject(), (*it)->getObject()->objName(), (void *)(*it), (*it)->getInterval());
 			(*it)->reset();
