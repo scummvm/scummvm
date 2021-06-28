@@ -616,6 +616,20 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 	if (node->var->type == kTheOfNode) {
 		TheOfNode *the = static_cast<TheOfNode *>(node->var);
 		switch (the->obj->type) {
+		case kChunkExprNode:
+			{
+				int fieldId = getTheFieldID(kTheChunk, *the->prop, true);
+				if (fieldId >= 0) {
+					COMPILE(node->val);
+					COMPILE_REF(the->obj);
+					code1(LC::c_theentityassign);
+					codeInt(kTheChunk);
+					codeInt(fieldId);
+					return true;
+				}
+				// fall back to generic object
+			}
+			break;
 		case kFuncNode:
 			{
 				FuncNode *func = static_cast<FuncNode *>(the->obj);
@@ -1206,6 +1220,19 @@ bool LingoCompiler::visitTheNode(TheNode *node) {
 
 bool LingoCompiler::visitTheOfNode(TheOfNode *node) {
 	switch (node->obj->type) {
+	case kChunkExprNode:
+		{
+			int fieldId = getTheFieldID(kTheChunk, *node->prop, true);
+			if (fieldId >= 0) {
+				COMPILE_REF(node->obj);
+				code1(LC::c_theentitypush);
+				codeInt(kTheChunk);
+				codeInt(fieldId);
+				return true;
+			}
+			// fall back to generic object
+		}
+		break;
 	case kFuncNode:
 		{
 			FuncNode *func = static_cast<FuncNode *>(node->obj);

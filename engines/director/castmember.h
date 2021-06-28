@@ -233,6 +233,10 @@ public:
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;
 
+	bool hasChunkField(int field);
+	Datum getChunkField(int field, int start, int end);
+	bool setChunkField(int field, int start, int end, const Datum &value);
+
 	SizeType _borderSize;
 	SizeType _gutterSize;
 	SizeType _boxShadow;

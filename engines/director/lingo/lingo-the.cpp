@@ -50,6 +50,7 @@ TheEntity entities[] = {
 	{ kTheCenterStage,		"centerStage",		false, 200, false },	// D2 p
 	{ kTheCheckBoxAccess,	"checkBoxAccess",	false, 200, false },	// D2 p
 	{ kTheCheckBoxType,		"checkBoxType",		false, 200, false },	// D2 p
+	{ kTheChunk,			"chunk",			true,  300, false },	//		D3
 	{ kTheClickLoc,			"clickLoc",			false, 400, true },	// 			D4 function
 	{ kTheClickOn,			"clickOn",			false, 200, true },	// D2 f
 	{ kTheColorDepth,		"colorDepth",		false, 200, false },	// D2 p
@@ -248,6 +249,13 @@ TheEntityField fields[] = {
 	{ kTheField,	"textSize",		kTheTextSize,	300 },//		D3 p
 	{ kTheField,	"textStyle",	kTheTextStyle,	300 },//		D3 p
 
+	// Chunk fields
+	{ kTheChunk,	"foreColor",	kTheForeColor,	400 },//				D4 p
+	{ kTheChunk,	"textFont",		kTheTextFont,	300 },//		D3 p
+	{ kTheChunk,	"textHeight",	kTheTextHeight,	300 },//		D3 p
+	{ kTheChunk,	"textSize",		kTheTextSize,	300 },//		D3 p
+	{ kTheChunk,	"textStyle",	kTheTextStyle,	300 },//		D3 p
+
 	{ kTheWindow,	"drawRect",		kTheDrawRect,	400 },//				D4 p
 	{ kTheWindow,	"fileName",		kTheFileName,	400 },//				D4 p
 	{ kTheWindow,	"modal",		kTheModal,		400 },//				D4 p
@@ -390,6 +398,9 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheCheckBoxType:
 		d.type = INT;
 		d.u.i = g_director->getCurrentMovie()->_checkBoxType;
+		break;
+	case kTheChunk:
+		d = getTheChunk(id, field);
 		break;
 	case kTheClickLoc:
 		d.u.farr = new DatumArray;
@@ -886,6 +897,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheCheckBoxType:
 		g_director->getCurrentMovie()->_checkBoxType = d.asInt();
+		break;
+	case kTheChunk:
+		setTheChunk(id, field, d);
 		break;
 	case kTheColorDepth:
 		_vm->_colorDepth = d.asInt();
@@ -1595,6 +1609,98 @@ void Lingo::setTheField(Datum &id1, int field, Datum &d) {
 	}
 
 	member->setField(field, d);
+}
+
+Datum Lingo::getTheChunk(Datum &chunk, int field) {
+	Datum d;
+
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::getTheChunk(): No movie loaded");
+		return d;
+	}
+
+	if (chunk.type != CHUNKREF) {
+		warning("BUILDBOT: Lingo::getTheChunk(): bad chunk ref type: %s", chunk.type2str());
+		return d;
+	}
+
+	int start, end;
+	start = chunk.u.cref->start;
+	end = chunk.u.cref->end;
+	Datum src = chunk.u.cref->source;
+	while (src.type == CHUNKREF) {
+		start += src.u.cref->start;
+		end += src.u.cref->start;
+		src = src.u.cref->source;
+	}
+	if (!src.isCastRef()) {
+		warning("BUILDBOT: Lingo::getTheChunk(): bad chunk ref field type: %s", src.type2str());
+		return d;
+	}
+
+	CastMember *member = movie->getCastMember(src.u.i);
+	if (!member) {
+		g_lingo->lingoError("Lingo::getTheChunk(): CastMember %d not found", src.u.i);
+		return d;
+	}
+	if (member->_type != kCastText) {
+		g_lingo->lingoError("Lingo::getTheChunk(): CastMember %d is not a field", src.u.i);
+		return d;
+	}
+
+	if (!((TextCastMember *)member)->hasChunkField(field)) {
+		warning("Lingo::getTheChunk(): CastMember %d has no chunk property '%s'", src.u.i, field2str(field));
+		return d;
+	}
+
+	d = ((TextCastMember *)member)->getChunkField(field, start, end);
+
+	return d;
+}
+
+void Lingo::setTheChunk(Datum &chunk, int field, Datum &d) {
+	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::setTheChunk(): No movie loaded");
+		return;
+	}
+
+	if (chunk.type != CHUNKREF) {
+		warning("BUILDBOT: Lingo::setTheChunk(): bad chunk ref type: %s", chunk.type2str());
+		return;
+	}
+
+	int start, end;
+	start = chunk.u.cref->start;
+	end = chunk.u.cref->end;
+	Datum src = chunk.u.cref->source;
+	while (src.type == CHUNKREF) {
+		start += src.u.cref->start;
+		end += src.u.cref->start;
+		src = src.u.cref->source;
+	}
+	if (!src.isCastRef()) {
+		warning("BUILDBOT: Lingo::setTheChunk(): bad chunk ref field type: %s", src.type2str());
+		return;
+	}
+
+	CastMember *member = movie->getCastMember(src.u.i);
+	if (!member) {
+		g_lingo->lingoError("Lingo::setTheChunk(): CastMember %d not found", src.u.i);
+		return;
+	}
+	if (member->_type != kCastText) {
+		g_lingo->lingoError("Lingo::setTheChunk(): CastMember %d is not a field", src.u.i);
+		return;
+	}
+
+	if (!((TextCastMember *)member)->hasChunkField(field)) {
+		warning("Lingo::setTheChunk(): CastMember %d has no chunk property '%s'", src.u.i, field2str(field));
+		return;
+	}
+
+	((TextCastMember *)member)->setChunkField(field, start, end, d);
 }
 
 void Lingo::getObjectProp(Datum &obj, Common::String &propName) {

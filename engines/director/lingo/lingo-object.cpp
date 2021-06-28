@@ -979,4 +979,68 @@ bool TextCastMember::setField(int field, const Datum &d) {
 	return CastMember::setField(field, d);
 }
 
+bool TextCastMember::hasChunkField(int field) {
+	switch (field) {
+	case kTheForeColor:
+	case kTheTextFont:
+	case kTheTextHeight:
+	case kTheTextSize:
+	case kTheTextStyle:
+		return true;
+	default:
+		break;
+	}
+	return false;
+}
+
+Datum TextCastMember::getChunkField(int field, int start, int end) {
+	Datum d;
+
+	switch (field) {
+	case kTheForeColor:
+		warning("TextCastMember::getChunkField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		break;
+	case kTheTextFont:
+		warning("TextCastMember::getChunkField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		break;
+	case kTheTextHeight:
+		warning("TextCastMember::getChunkField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		break;
+	case kTheTextSize:
+		warning("TextCastMember::getChunkField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		break;
+	case kTheTextStyle:
+		warning("TextCastMember::getChunkField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		break;
+	default:
+		break;
+	}
+
+	return d;
+}
+
+bool TextCastMember::setChunkField(int field, int start, int end, const Datum &d) {
+	switch (field) {
+	case kTheForeColor:
+		warning("TextCastMember::setChunkField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		return false;
+	case kTheTextFont:
+		warning("TextCastMember::setChunkField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		return false;
+	case kTheTextHeight:
+		warning("TextCastMember::setChunkField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		return false;
+	case kTheTextSize:
+		warning("TextCastMember::setChunkField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		return false;
+	case kTheTextStyle:
+		warning("TextCastMember::setChunkField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		return false;
+	default:
+		break;
+	}
+
+	return false;
+}
+
 } // End of namespace Director

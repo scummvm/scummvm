@@ -37,6 +37,7 @@ enum TheEntityType {
 	kTheChars,
 	kTheCheckBoxAccess,
 	kTheCheckBoxType,
+	kTheChunk,
 	kTheClickLoc,
 	kTheClickOn,
 	kTheColorDepth,
