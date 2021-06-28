@@ -890,8 +890,8 @@ int Datum::asCastId() const {
 			if (member)
 				return member->getID();
 
-			g_lingo->lingoError("Datum::asCastId: reference to non-existent cast member: %s", asString().c_str());
-			return 0;
+			warning("Datum::asCastId: reference to non-existent cast member: %s", asString().c_str());
+			return -1;
 		}
 		break;
 	case INT:
