@@ -111,8 +111,11 @@ const char *directoryGlobs[] = {
 	"print",
 	"vids",							// Alcohol 101
 	"dir_data",						// Garage
+	"cd extra",
+	"catalog",						// Sarah McLachlan ECD (NettMedia)
 	"hd",							// Grammar Playtime
 	"dicfiles",						// Time Blazers series
+	"docs",							// Enhanced CDs
 	0
 };
 
