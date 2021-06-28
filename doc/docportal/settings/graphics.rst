@@ -25,7 +25,7 @@ All settings can also be changed in the :doc:`../advanced_topics/configuration_f
 .. _gfxmode:
 
 Graphics mode
-	Changes the resolution of the game, while also selecting which filter is used to scale up the resolution. For example, a 2x graphics mode will take a 320x200 resolution game and scale it up to 640x400.
+	Change the graphics backend used to render the ScummVM window on the screen. Different graphics modes have different options available (such as scalers and stretch modes).
 
 	*gfx_mode*
 
@@ -43,6 +43,13 @@ Stretch mode
 	Changes the way the game is displayed in relation to the window or screen size.
 
 	*stretch_mode*
+
+.. _scalers:
+
+Scalers
+	Changes the resolution of the game, while also selecting which filter is used to scale up the resolution. For example, a 2x scaler will take a 320x200 resolution game and scale it up to 640x400.
+
+	*scaler* and *scale_factor*
 
 .. _ratio:
 
