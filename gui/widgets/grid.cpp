@@ -119,13 +119,13 @@ void GridItemWidget::drawWidget() {
 
 void GridItemWidget::handleMouseWheel(int x, int y, int direction) {
 	_grid->handleMouseWheel(x, y, direction);
-	_grid->_selectedEntry = nullptr;
+	_grid->_selectedEntry = -1;
 	isHighlighted = false;
 }
 
 void GridItemWidget::handleMouseEntered(int button) {
 	if (!isHighlighted) {
-		_grid->_selectedEntry = _activeEntry;
+		_grid->_selectedEntry = _activeEntry->entryID;
 		isHighlighted = true;
 		markAsDirty();
 	}
@@ -133,7 +133,7 @@ void GridItemWidget::handleMouseEntered(int button) {
 
 void GridItemWidget::handleMouseLeft(int button) {
 	if (isHighlighted) {
-		_grid->_selectedEntry = nullptr;
+		_grid->_selectedEntry = -1;
 		isHighlighted = false;
 		markAsDirty();
 	}
@@ -287,6 +287,8 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
+
+	_selectedEntry = 0;
 }
 
 GridWidget::GridWidget(GuiObject *boss, const String &name)
@@ -307,6 +309,8 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
+
+	_selectedEntry = 0;
 }
 
 GridWidget::~GridWidget() {

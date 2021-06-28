@@ -153,7 +153,7 @@ public:
 	
 	bool 			_isTitlesVisible;
 
-	GridItemInfo 	*_selectedEntry;
+	int 			_selectedEntry;
 	GridItemTray 	*_tray;
 	
 	GridWidget(GuiObject *boss, int x, int y, int w, int h);
@@ -179,6 +179,7 @@ public:
 	void assignEntriesToItems();
 
 	int getScrollPos() const { return -_scrollPos; }
+	int getSelected() const { return _selectedEntry; }
 	int getThumbnailHeight() const { return _thumbnailHeight; }
 	int getThumbnailWidth() const { return _thumbnailWidth; }
 
