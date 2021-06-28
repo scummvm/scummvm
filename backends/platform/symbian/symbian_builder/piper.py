@@ -67,7 +67,7 @@ def thread_func(q):
 
       out = out + out1
       err = err + err1
-#After cmd.communicate() we have ugly 'crcrlf' line endings
+      #After cmd.communicate() we have ugly 'crcrlf' line endings
       SafeWriteFile(build_log, out.replace(u"\r", u""), mode = 'a')
       SafeWriteFile(build_err, err.replace(u"\r", u""), mode = 'a')
       SafeWriteFile(build_time, "Engine %s build time: %s.\n" %(fileName, str(diff)) , mode = 'a')
