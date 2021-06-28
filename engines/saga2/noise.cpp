@@ -634,7 +634,7 @@ void moveLoop(Location loc) {
 bool stillDoingVoice(uint32 sampno) {
 	warning("STUB: stillDoingVoice(%s)", tag2str(sampno));
 
-	return audio->queue.isSpeechPlaying();
+	return audio->queue.isSpeechPlaying(sampno);
 }
 
 
