@@ -116,6 +116,7 @@ const char *directoryGlobs[] = {
 	"hd",							// Grammar Playtime
 	"dicfiles",						// Time Blazers series
 	"docs",							// Enhanced CDs
+	"anim",							// 1 vs 100 (Mindscape)
 	0
 };
 

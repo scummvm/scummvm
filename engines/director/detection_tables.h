@@ -117,6 +117,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "frankrw",			"Franklin's Reading World" },
 	{ "freakshow",			"Freak Show" },
 	{ "fsky",				"A Field Trip to the Sky" },
+	{ "fuzzyfloppybee",		"Fuzzy & Floppy: The Adventure of the Golden Bee" },
 	{ "gadget",				"Gadget: Invention, Travel & Adventure" },
 	{ "gadgetpaf",			"Gadget: Past as Future" },
 	{ "garage",				"Garage: Bad Dream Adventure" }, // English fan translation
@@ -461,6 +462,8 @@ static const PlainGameDescriptor directorGames[] = {
 	// Danish titles
 	{ "bamse1",				"Bamses allerskoreste spille-rom" },
 	{ "bamse2",				"Bamse: Min egen spille-rom" },
+	{ "billetrille1",		"Bille & Trille: Da fantasien slap løs" },
+	{ "billetrille2",		"Bille & Trille: Helt ude i skoven" },
 
 	// Dutch titles
 	{ "beestenboel",		"Beestenboel Zoölogic" },
@@ -472,6 +475,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "petepilotti1",		"Pete Pilotti & Pontiac: Seikkailu Lapponiassa" },
 
 	// French titles
+	{ "1contre100",			"1 contre 100" },
 	{ "affaires1",			"Affaires à suivre: L'Île diabolique" },
 	{ "boulebill",			"Boule et Bill: Au Voleur!" },
 	{ "fg25ans",			"25 Ans! Le CD-ROM de Fluide Glacial" },
@@ -483,6 +487,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sethi3",				"Sethi et la Tribu de Neandertal" },
 	{ "svmvillagina5",		"SVM Multimedia: Villagina 5" },
 	{ "teddybear",			"Opération Teddy Bear" },
+	{ "tomlisaindiens",		"Tom et Lisa: les Indiens" },
 
 	// German titles
 	{ "bibi2",				"Bibi Blocksberg 2: Ein verhexter Schultag" },
@@ -497,6 +502,8 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Italian titles
 	{ "ironmask",			"The Iron Mask" },
+	{ "lunes",				"I Lunes e la sfera di Lasifer" },					// Lunes & the sphere of Lasifer
+	{ "magicanti",			"I Magicanti e i 3 elementi" },						// The Magicanti & the 3 elements
 
 	// Japanese games
 	{ "4sight",				"four-sight" },
@@ -652,11 +659,19 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "irpf2002",			"Tutorial do IRPF 2002" },
 	{ "kinderkit",			"Kinder-Kit" },
 	{ "lobomau",			"As Histórias do Lobo Mau" },
+	{ "objetivo",			"Astrologia e Geografia Objetivo" },
 	{ "ratinho",			"Programa do Ratinho" },
+
+	// Russian titles
+	{ "engl",				"English for Beginners" },
+	{ "tchaik",				"Пётр Ильи́ч Чайко́вский: Жизнь и творчество" }, // Pyotr Ilyich Tchaikovsky: Life and Work
+	{ "tutti",				"Волшебные истории Тутти" },				   // Tutti's Magical Stories
 
 	// Spanish titles
 	{ "123habloingles",		"1·2·3 Hablo Inglés" },
 	{ "abrapalabra",		"Abrapalabra: La Magicia de Aprender a Leer" },
+	{ "clasplusbee2",		"Classical Plus: Ludwig van Beethoven" },	// Planeta DeAgostini, a Spanish-Italian company based in Barcelona
+	{ "eso",				"ESO Essentials: Student's Interactive CD-ROM" },
 	{ "inventos",			"Grandes Inventos" },
 	{ "pcplus64",			"PC Plus Super CD 64" },
 	{ "supermente",			"Super Mente" }, // Published only in Mexico
@@ -842,6 +857,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "barbssbubbles",		"Barbie Screen Styler: Bubbles" },
 	{ "barbsskisses",		"Barbie Screen Styler: Kisses" },
 	{ "barbssshoes",		"Barbie Screen Styler: Shoes" },
+	{ "billetrille1ss",		"Bille & Trille 1 Screen Saver" },
 	{ "cinemac",			"CineMac Screen Saver Factory" },
 	{ "lewisclarkss",		"Lewis and Clark Screen Saver" },
 	{ "photos4us",			"Photos4us" },
@@ -1994,6 +2010,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is ・ふたりの料理物語
 	MACDEMO1_l("futarinoryori", "Demo", "A Tale of Two Chefs", "22815cf659b911c4e07d0015cac5d98f", 301937, Common::JA_JPN, 400),
 
+	WINGAME1_l("fuzzyfloppybee", "", "APEDORO.EXE", "317dfcb883a6dd59129606adcd3ffdcb", 696827, Common::IT_ITA, 404),
+
 	MACGAME1_l("gate3", "", "THE_GATE",		"33f733b2809b94c3301096902f642b6e", 290654, Common::JA_JPN, 402),
 	WINGAME1_l("gate1", "", "THE_GATE.EXE", "dd0bb1a07ad5b5d4489ac8f54e6ada2e", 712014, Common::JA_JPN, 402),
 	WINGAME1_l("gate2", "", "THE_GATE.EXE", "0818b5c0ced885b5ebcef1bfd9523405", 711962, Common::JA_JPN, 402),
@@ -2697,6 +2715,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("cezanne", "", "CEZANNE", "8e171256e4811dc976720da230634d87", 705689, 500),
 	WINGAME1("cezanne", "", "CEZWIN95.EXE", "3460ad87d2ba57104e2810a77b53c220", 2763107, 500),
 
+	// Series includes Schubert, Tchaikovsky, Mozart, Vivaldi and probably more
+	WINGAME1_l("clasplusbee2", "", "BEE2_95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1694421, Common::ES_ESP, 501),
+
 	MACGAME1("colormind", "v1.5", "ColorMind 1.5", "37faaf693259d7a4fa031f4a2edf3098", 126087, 501),
 
 	MACGAME1_l("crusader", "", "Croisades", "6e7e31d05709e1d38d63f4df6a59eec0", 718381, Common::FR_FRA, 501),
@@ -3069,6 +3090,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("egypt", "", "Egypt", "0944b962ebb00f4b5d5149d220f8449b", 114142, 702),
 
+	WINDEMO1_l("engl", "Demo", "ENGL.EXE", "a593079aecf5bd938ce75264cac24b2d", 13304811, Common::RU_RUS, 600),
+
 	MACGAME1("espanatomy", "", "Anatomy & Physiology ESP", "e3a044ab01f96d6645bc315628c2b00f", 118396, 602),
 	WINGAME1("espanatomy", "", "Anatomy & Physiology ESP.exe", "625deae5e42f9453c5e4ccf7d322f048", 1526924, 602),
 
@@ -3189,6 +3212,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("nightcafe", "", "Cafe", "e8fd8a7b24520e47344c2d9768a2479f", 1029193, 600),
 	WINGAME1("nightcafe", "", "Cafe95.exe", "a593079aecf5bd938ce75264cac24b2d", 1701222, 600),
 
+	// Found on covermount of CD-ROM Today (Brazil) Volume 4 Número 16
+	// Only a 16-bit executable is provided
+	WINGAME1_l("objetivo", "", "OBETIVO.EXE", "b0f3841f6e8005e519445b22de37749b", 11660888, Common::PT_BRA, 600),
+
 	// O!Kay is a monthly magazine for German students in grades 1 to 4 to learn English.
 	// If ordered, every three months a CD-ROM is included with unique educational games.
 	// The "Try out" demos most likely also required paid subscriptions.
@@ -3257,6 +3284,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac version is D5
 	WINGAME1("ssrevwar", "", "Revwar.exe", "d62438566e44826960fc16c5c23dbe43", 21088827, 650),
 
+	WINDEMO1_l("tchaik", "Demo", "TCHAIK.EXE", "a593079aecf5bd938ce75264cac24b2d", 15780729, Common::RU_RUS, 600),
+
 	WINGAME1("technik", "", "Techni00.exe", "1b8d78ddca650041b8997cac7af3184b", 1615559, 650),
 
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
@@ -3266,6 +3295,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("trekpedia98", "", "Ency98 Player", "b0b0e36586489ca6070d20feeff52fa5", 1091806, 600),
 	WINGAME1("trekpedia98", "", "ENCY98.EXE", "35f1550747fcf691283b0f2486144e2b", 1707566, 600),
+
+	// Overview of Tutti's Magical Stories series
+	WINGAME1_l("tutti", "", "TUTTI.EXE", "a593079aecf5bd938ce75264cac24b2d", 14715583, Common::RU_RUS, 600),
 
 	WINGAME1("void", "", "VOID.exe", "1154a54e6fb77f82e9091a9adc37a4cb", 1701070, 602),
 
@@ -3303,6 +3335,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("bibi2", "", "Spielstart",  "0944b962ebb00f4b5d5149d220f8449b", 117347, Common::DE_DEU, 702),
 	WINGAME2_l("bibi2", "", "Start.exe",   "7c18c9a6af2694156bf09ed195c1ab09", 1820386,
 							"SPIELST.DXR", "24139a522420d2c6e3f4d0aa502f5936", 2250124, Common::DE_DEU, 702),
+
+	// Finnish title is Ville & Lilli: Mielikuvitus vauhdissa
+	// Developer website calls this Double Trouble: Crazy Cool Kindergarten,
+	// although we don't know if it was actually released in English
+	// https://web.archive.org/web/20060208235831/http://billetrille.savannah.dk/dtpages.php3?page_id=8&lang=english
+
+	MACGAME1_l("billetrille1", "",	   "VilleLilli",		 "0944b962ebb00f4b5d5149d220f8449b", 112758, Common::FI_FIN, 702),
+	WINDEMO1_l("billetrille1", "Demo", "VilleLilliDemo.exe", "18e31b6357c42300bb6947a6af7b8a69", 5150588, Common::FI_FIN, 702),
+
+	// Bonus content on retail CD releases. No text or dialogue is used.
+	WINGAME1("billetrille1ss", "", "screensaverDT1.exe", "18e31b6357c42300bb6947a6af7b8a69", 3261985, 702),
 
 	WINGAME1("buzz1", "", "DBLY1.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2201114, 702),
 
@@ -3426,6 +3469,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("tkkgkit", "", "Phantombild Start", "0944b962ebb00f4b5d5149d220f8449b", 115754, Common::DE_DEU, 702),
 	WINGAME1_l("tkkgkit", "", "Phantombild Start.exe", "7c18c9a6af2694156bf09ed195c1ab09", 1820554, Common::DE_DEU, 702),
 
+	MACGAME1_l("tomlisaindiens", "", "Tom en Lisa", "19f92df0c7cb7a17b02ed5c73b1ee4c1", 33105, Common::NL_NLD, 702),
+	WINGAME1_l("tomlisaindiens", "", "TOM ET LISA.EXE", "7c18c9a6af2694156bf09ed195c1ab09", 783498, Common::NL_NLD, 702),
+
 	// Original filename is DreamLight® Verttice™ 3.0
 	MACGAME1("verttice", "v3.0", "DreamLight Verttice 3.0", "0944b962ebb00f4b5d5149d220f8449b", 123353, 702),
 	WINGAME1("verttice", "v3.0", "DreamLight Verttice 30.EXE", "7c18c9a6af2694156bf09ed195c1ab09", 3010200, 702),
@@ -3493,6 +3539,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("bibifilm", "", "Filmstudio", "3ba983d2dd8c94d882c0de01ab920c43", 1249397, Common::DE_DEU, 850),
 	WINGAME1_l("bibifilm", "", "Filmstudio_start.exe", "c163f36141579ee374f7b4b2bddee95a", 148898, Common::DE_DEU, 850),
+
+	// Finnish title is Ville & Lilli: Ihan Pihalla
+	// Developer website calls this Double Trouble: Wacky Woods,
+	// although we don't know if it was actually released in English
+	// https://web.archive.org/web/20060208235824/http://billetrille.savannah.dk/dtpages.php3?page_id=208&lang=english
+	MACDEMO1_l("billetrille2", "Demo", "VilleLilli2Demo", "4ea5fc09f79eee6dded94dc40f303779", 196171, Common::FI_FIN, 800),
 
 	WINGAME2("bobmambo5", "Enhanced CD", "START.EXE", "e24d4bab978b1a5c2326d2c56cf4d781", 6980680,
 										 "MAMBO.MOV", "990db0c7187621250dfca0a55996538e", 39868175, 800),
@@ -3573,6 +3625,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("lewisclarkss", "", "Lewis and Clark Screen Saver", "b1bf6ceb4afd79814f93ee1d866f9a29", 243455, 850),
 	WINGAME1("lewisclarkss", "", "Lewis and Clark Screen Saver.exe", "c163f36141579ee374f7b4b2bddee95a", 29172512, 850),
+
+	WINGAME1_l("lunes", "", "Lunes.exe", "9482a4a5f6ae02470ce1863808120f6e", 2258509, Common::IT_ITA, 851),
+
+	// Advertainment film from Ferrero (chocolates)
+	WINGAME1_l("magicanti", "", "Magicanti.exe", "0c81c84ca4966313ad27d47daba44537", 2158202, Common::IT_ITA, 851),
 
 	MACDEMO1("mickeyk", "D8 Demo",	 "MickeyK",		 "4ea5fc09f79eee6dded94dc40f303779", 197114, 800),
 	WINDEMO1("mickeyk", "D8 Demo",	 "MickeyK.exe",	 "e24d4bab978b1a5c2326d2c56cf4d781", 2532440, 800),
@@ -3712,6 +3769,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("boulebill", "", "Boule et Bill Au voleur !!!", "9ba96b315646d5f62be9ab5597d2e0d7", 176370, Common::FR_FRA, 901),
 	WINGAME1_l("boulebill", "", "Au voleur!.exe", "4b89dba499aefda5201eef3d27963d01", 2186312, Common::FR_FRA, 900),
 
+	WINGAME2_l("eso", "", "START.EXE",	"c612aa43e7ef55aa4fd2e1085fb1ef7a", 3752491,
+						  "ESO_D1.DXR", "6d39a8ef9a8060e21616f23872c581b6", 2075636, Common::ES_ESP, 900),
+
 	// Mac Classic OS version is D8
 	MACGAME1_l("garygadget5", "OS X", "Miel5 OSX", "d483e955df901222145267d2ad729ea2", 284016, Common::NL_NLD, 900),
 	WINGAME1_l("garygadget5", "", "Miel5.exe", "7202313e2b177197b62e84dcf24d1292", 4253422, Common::NL_NLD, 900),
@@ -3756,6 +3816,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 // Macromedia Director MX 2004 (v10)
 //
 //////////////////////////////////////////////////
+
+	WINGAME2_l("1contre100", "", "start.exe", "00541c08177b6d55a3df893bcfccc843", 2764454,
+								 "main.dxr",  "c2bf555f6209e51a1c8cce29c8e6534f", 43315121, Common::FR_FRA, 1010),
 
 	MACGAME1("babarcoins", "", "Mac.osx", 		"a171b7a952d1ac68ae3cd419d6dfc674", 309249, 1010),
 	WINGAME2("babarcoins", "", "Start.exe",		"b198e9bf56c679747e4fd0972d5ba7b7", 2659300,
