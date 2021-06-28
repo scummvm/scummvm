@@ -358,6 +358,76 @@ enum {
     kMaxJumpStep     = 64    // highest jump character likes
 };
 
+
+// Save/Load dialog metrics
+
+enum {
+	kNumSaveLoadPanels   = 3,
+	kNumSaveLoadBtns     = 4,
+	kNumSaveLoadTexts    = 1,
+
+	kSLDBoxXSize = 374,
+	kSLDBoxXSzNS = 366,
+	kSLDBoxYSize = 223,
+	kSLDBoxX     = (640 - kSLDBoxXSize) / 2,
+	kSLDBoxY     = (480 - kSLDBoxYSize) / 3,
+
+	kSLTPHeight = 38,
+	kSLMDHeight = 122,
+	kSLBTHeight = 63,
+	kSLTPWidth  = 374,
+	kSLMDWidth  = 374,
+	kSLBTWidth  = 374
+};
+
+// Options dialog metrics
+enum {
+	kNumOptionsPanels    = 3,
+	kNumOptionsBtns      = 9,
+	kNumOptionsTexts     = 8,
+
+	kOptBoxXSize = 487,
+	kOptBoxXSzNS = 479,
+	kOptBoxYSize = 230,
+	kOptBoxX     = (640 - kOptBoxXSize) / 2,
+	kOptBoxY     = (480 - kOptBoxYSize) / 3,
+
+	kOptTPHeight = 39,
+	kOptMDHeight = 90,
+	kOptBTHeight = 101,
+	kOptTPWidth  = 487,
+	kOptMDWidth  = 487,
+	kOptBTWidth  = 487
+};
+
+// buttons
+enum {
+	kButtonSpace         =   3,
+	kButtonYOffset       =   kOptTPHeight + 7,
+	kPushButtonWidth     =   121,
+	kPushButtonHeight    =   30,
+
+	kSliderWidth         =   168,
+	kImageHeight         =   17,
+
+	kTextPixelLen        =   175,
+	kSmallTextOffset     =    80
+};
+
+// Message Dialog Metrics
+enum {
+	kNumMessagePanels    = 1,
+	kNumMessageBtns      = 3,
+	kNumMessageTexts     = 2,
+	kMesBtnOffset        = 14,
+
+	kMesBoxXSize = 374,
+	kMesBoxXSzNS = 368,
+	kMesBoxYSize = 146,
+	kMesBoxX     = (640 - kMesBoxXSize) / 2,
+	kMesBoxY     = (480 - kMesBoxYSize) / 3
+};
+
 } // end of namespace Saga2
 
 #endif
