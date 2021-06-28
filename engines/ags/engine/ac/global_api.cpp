@@ -927,7 +927,7 @@ RuntimeScriptValue Sc_MoveCharacter(const RuntimeScriptValue *params, int32_t pa
 
 // void (int chaa,int xx,int yy,int direct)
 RuntimeScriptValue Sc_MoveCharacterBlocking(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT4(MoveCharacterBlocking);
+	API_SCALL_INT_PINT4(MoveCharacterBlocking);
 }
 
 // void (int cc,int xx, int yy)

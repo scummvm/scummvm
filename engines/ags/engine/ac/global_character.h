@@ -65,7 +65,7 @@ void SetCharacterClickable(int cha, int clik);
 void SetCharacterIgnoreWalkbehinds(int cha, int clik);
 void MoveCharacterToObject(int chaa, int obbj);
 void MoveCharacterToHotspot(int chaa, int hotsp);
-void MoveCharacterBlocking(int chaa, int xx, int yy, int direct);
+int MoveCharacterBlocking(int chaa, int xx, int yy, int direct);
 
 void RunCharacterInteraction(int cc, int mood);
 int  AreCharObjColliding(int charid, int objid);
