@@ -177,7 +177,6 @@ private:
 
 	HTIMER                  gameTimer;
 
-	soundQueue              *queue;              // the queue
 	queueFlags              queueRes;
 
 	BufferRequest           numBuffers;
@@ -217,6 +216,7 @@ private:
 	int32                   suspendCalls;
 
 public:
+	SoundQueue              queue;              // the queue
 	HDIGDRIVER              dig;               // AIL sample driver
 	HMDIDRIVER              mid;               // AIL MIDI driver
 	audioAttenuationFunction attenuator;
@@ -302,7 +302,7 @@ public:
 		verbosity = n;
 	}
 	int16 getQueueSize(void) {
-		return queue->getSize();
+		return queue.getSize();
 	}
 
 	// moving sample calls

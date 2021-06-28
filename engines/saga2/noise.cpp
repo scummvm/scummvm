@@ -576,11 +576,7 @@ bool sayVoiceAt(uint32 s[], Point32 p) {
 
 	debugC(1, kDebugSound, "], %d,%d)", p.x, p.y);
 
-	Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, s[0], "voice data");
-
-	Audio::AudioStream *aud = makeShortenStream(*stream);
-
-	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, aud);
+	audio->queue.pushVoice(s);
 
 	return true;
 }
@@ -637,7 +633,7 @@ void moveLoop(Location loc) {
 
 bool stillDoingVoice(uint32 sampno) {
 	warning("STUB: stillDoingVoice(%s)", tag2str(sampno));
-	return g_system->getMixer()->isSoundHandleActive(_speechSoundHandle);
+	return audio->queue.isPlaying();
 
 //	return (audio->saying(sampno));
 }

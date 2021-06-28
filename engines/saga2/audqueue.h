@@ -27,33 +27,57 @@
 #ifndef SAGA2_AUDQUEUE_H
 #define SAGA2_AUDQUEUE_H
 
+#include "audio/mixer.h"
+#include "saga2/saga2.h"
+#include "saga2/shorten.h"
+#include "saga2/hresmgr.h"
+
 namespace Saga2 {
 
-class soundQueue {
-public:
-	positionedSample            *tip;
-	soundSegment            curSeg;
-	soundSegment            headSeg;
+Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, const char desc[]);
+
+extern hResContext *voiceRes;
+
+class SoundQueue {
 private:
-	PublicPtrQueue<positionedSample>    sampleList;
+	Common::Queue<soundSegment> _voiceQueue;
+	Common::Queue<soundSegment> _sfxQueue;
+	Common::Queue<soundSegment> _bgmQueue;
+	Audio::SoundHandle _speechSoundHandle;
 
 public:
-	soundQueue(void) {
-		tip = NULL;
+	void pushVoice(soundSegment s) {
+		_voiceQueue.push(s);
 	}
-	~soundQueue(void);
 
-	positionedSample *firstSample(void);
-	positionedSample *nextSample(void);
+	void pushVoice(soundSegment s[]) {
+		soundSegment *p = s;
+		while (*p) {
+			_voiceQueue.push(*p);
+			p++;
+		}
+	}
 
-	soundSegment firstSegment(void);
-	soundSegment nextSegment(void);
+	void playNext() {
+		if (_voiceQueue.size()) {
+			soundSegment s = _voiceQueue.pop();
+			Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, s, "voice data");
 
-	void pushSample(positionedSample *sam, decoderSet *);
-	bool findSample(soundSegment s);
+			Audio::AudioStream *aud = makeShortenStream(*stream);
 
-	int16 getSize(void);
-	int16 getSampleSize(void);
+			g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, aud);
+
+			delete stream;
+		}
+	}
+
+	bool isPlaying() {
+		return g_system->getMixer()->isSoundHandleActive(_speechSoundHandle);
+	}
+
+	int getSize() {
+		return _voiceQueue.size();
+	}
 };
 
 } // end of namespace Saga2

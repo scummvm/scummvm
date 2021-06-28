@@ -41,9 +41,10 @@ namespace Saga2 {
 
 audioInterface *audio;
 
-void initAudio() {
+bool initAudio() {
 	warning("STUB: initAudio()");
 	audio = new audioInterface();
+	return true;
 }
 
 void cleanupAudio() {
@@ -86,10 +87,11 @@ void audioInterface::resumeGameClock(void) {
 
 bool audioInterface::playFlag(void) {
 	warning("STUB: audioInterface::playFlag()");
-	return false;
+	return (!audio->queue.isPlaying() && audio->queue.getSize() > 0);
 }
 void audioInterface::playMe(void) {
 	warning("STUB: audioInterface::PlayMe()");
+	audio->queue.playNext();
 }
 void audioInterface::queueMusic(soundSegment s, decoderSet *, int16 loopFactor, sampleLocation where) {
 	warning("STUB: audioInterface::queueMusic()");
@@ -117,6 +119,7 @@ void audioInterface::setLoopPosition(sampleLocation newLoc) {
 
 void audioInterface::queueVoice(soundSegment s, decoderSet *, sampleLocation where) {
 	warning("STUB: audioInterface::queueVoice(soundSegment, decoderSet *, sampleLocation)");
+	audio->queue.pushVoice(s);
 }
 void audioInterface::queueVoice(soundSegment s[], decoderSet *, sampleLocation where) {
 	warning("STUB: audioInterface::queueVoice(soundSegment [], decoderSet *, sampleLocation)");
