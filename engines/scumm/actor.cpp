@@ -487,7 +487,7 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 
 	// These two lines fix bug #1052 (INDY3: Hitler facing wrong directions in the Berlin scene).
 	// I can't see anything like this in the original SCUMM1/2 code, so I limit this to SCUMM3.
-	if (_vm->_game.version == 3 && (int)_speedx > ABS(diffX) && (int)_speedy > ABS(diffY))
+	if (_vm->_game.version == 3 && !(_moving & MF_LAST_LEG) && (int)_speedx > ABS(diffX) && (int)_speedy > ABS(diffY))
 		return 0;
 
 	if (diffY < 0)
