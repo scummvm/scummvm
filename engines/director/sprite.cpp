@@ -207,6 +207,9 @@ bool Sprite::shouldHilite() {
 	if (_moveable)
 		return false;
 
+	if (_puppet)
+		return false;
+
 	if (g_director->getVersion() < 400 && _ink == kInkTypeMatte)
 		return true;
 
