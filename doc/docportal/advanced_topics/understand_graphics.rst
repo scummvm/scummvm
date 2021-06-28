@@ -134,21 +134,41 @@ To toggle aspect ratio on and off, press :kbd:`Ctrl+Alt+a`.
 Stretch modes
 ----------------------
 
+Stretch modes control how the game screen is stretched to fill the ScummVM window (or the screen in full screen mode).
 
-There are six stretch modes:
+.. figure:: ../images/graphics/stretch_mode/center.png
 
-- Center: centers the image in the window.
-- Pixel-perfect scaling: scales the image to the highest multiple of the game resolution that fits the window, or that fits the screen if in fullscreen mode. Any empty space is filled with black bars.
+    **Center**: The game screen is not scaled and is centered in the ScummVM window.
 
-    - For example, a game with an original resolution of 320x200 with aspect ratio correction applied (320x240) and a 3x graphics mode, will be stretched to a multiple of 900x720 pixels: 1800x1440, 2700x2160 and so on.
+.. figure:: ../images/graphics/stretch_mode/pixel-perfect.png
 
-- Even pixels scaling: scales the image to the highest multiple of the original game width and height. Any empty space is filled with black bars. When aspect ratio is enabled, it may be different from pixel-perfect as it will use a height that is a multiple of the original game height at the cost of not respecting exactly the aspect ratio. This ensure we get even pixels. This stretch mode is only available in OpenGL graphics mode.
+    **Pixel-perfect scaling**: The game screen is scaled to the highest multiple of the game resolution that fits in the ScummVM window. Any empty space is filled with black bars.
 
-    - For example, with a screen resolution of 1920x1080, a game with an original resolution of 320x200 with aspect ratio correction applied (320x240) will be stretched to 1280x1000 (original width of 320 x 4 and original height of 200 x 5) which is a ratio of 320x250 and not 320x240. For comparison the pixel-perfect mode would stretch to 1280x960 (320x240 scaled by a factor 4, which means a scaling of x4.8 on the original height that would introduce some artifacts).
+The base resolution for this stretch mode includes the selected scaler and, if enabled, the :ref:`aspect ratio correction <aspect>`. This means that if the original game resolution is 320x200 and a 2x scaler is selected, the display is a multiple of 640x400 (for example 1280x800 or 1920x1200). And if aspect ratio correction is also selected, the display is a multiple of 640x480. With this stretch mode you may thus prefer to use either the OpenGL graphics mode or the SDL Surface graphics mode with a 1x scaler.
 
-- Fit to window: fits the image to the window, but maintains the aspect ratio and does not stretch it to fill the window.
-- Stretch: stretches the image to fill the window
-- Fit to window (4:3): fits the image to the window, at a forced 4:3 aspect ratio.
+This means that while the width of result will always be a multiple of the original game width, if aspect ratio correction is enabled the height of the result may not be a multiple of the original game height. This can thus cause some blurring. If you want to use aspect ratio correction but avoid any blurring, you may prefer to use the Even-pixels scaling.
+
+.. figure:: ../images/graphics/stretch_mode/even-pixels.png
+
+    **Even pixels scaling**: The game screen is scaled to the highest multiples of the original game width and height. Any empty space is filled with black bars. This mode is only available for the OpenGL graphics mode.
+
+The factors used on the width and height may be different if the :ref:`aspect ratio correction <aspect>` is enabled as it will try to get the result as close as possible to the expected aspect ratio. For example, with a screen resolution of 1920x1080, a game with an original resolution of 320x200 and the aspect ratio correction enabled will be stretched to 1280x1000 (original width of 320 x 4 and original height of 200 x 5). Unlike the Pixel-perfect scaling, This does not provide exactly the expected aspect ratio (4:3) but uses instead a good approximation (4:3.125) while ensuring all the original pixels are scaled by the same amount.
+
+.. figure:: ../images/graphics/stretch_mode/fit-to-window.png
+
+    **Fit to window**: Fits the game to the window, but maintains the aspect ratio.
+
+With this mode you may get either horizontal black bars or vertical black bars on the side, but not both.
+
+.. figure:: ../images/graphics/stretch_mode/stretch-to-window.png
+
+    **Stretch to window**: Stretches the game to fill the window.
+
+The game may be stretch horizontally or vertically to fill the window. This mode does not enforce the aspect ratio of the game to be preserved.
+
+.. figure:: ../images/graphics/stretch_mode/fit-3-4.png
+
+    **Fit to window (4:3)**: Fits the image to the window, at a forced 4:3 aspect ratio.
 
 To switch between stretch modes, press :kbd:`Ctrl+Alt+s`.
 
