@@ -136,81 +136,102 @@ enum messageImageResIDs {
 
 
 // panels
-Rect16  SLTopPanel(kSLDBoxX,
-                   kSLDBoxY,
-                   kSLTPWidth,
-                   kSLTPHeight);
+static const StaticRect SLTopPanel = {
+	kSLDBoxX,
+	kSLDBoxY,
+	kSLTPWidth,
+	kSLTPHeight
+};
 
-Rect16  SLMidPanel(kSLDBoxX,
-                   kSLDBoxY + kSLTPHeight,
-                   kSLMDWidth,
-                   kSLMDHeight);
+static const StaticRect SLMidPanel = {
+	kSLDBoxX,
+	kSLDBoxY + kSLTPHeight,
+	kSLMDWidth,
+	kSLMDHeight
+};
 
-Rect16  SLBotPanel(kSLDBoxX,
-                   kSLDBoxY + kSLTPHeight + kSLMDHeight,
-                   kSLBTWidth,
-                   kSLBTHeight);
+static const StaticRect SLBotPanel = {
+	kSLDBoxX,
+	kSLDBoxY + kSLTPHeight + kSLMDHeight,
+	kSLBTWidth,
+	kSLBTHeight
+};
 
 
 // buttons
-Rect16  SLQuitBtnRect(211,
-                      kSLTPHeight + kSLMDHeight + 11,
-                      122,
-                      30);
+static const StaticRect SLQuitBtnRect = {
+	211,
+	kSLTPHeight + kSLMDHeight + 11,
+	122,
+	30
+};
 
-Rect16  SLBtnRect(31,
-                  kSLTPHeight + kSLMDHeight + 11,
-                  122,
-                  30);
+static const StaticRect SLBtnRect = {
+	31,
+	kSLTPHeight + kSLMDHeight + 11,
+	122,
+	30
+};
 
-Rect16  SLUpArrowBtnRect(327,
-                         46,
-                         32,
-                         36);
+static const StaticRect SLUpArrowBtnRect = {
+	327,
+	46,
+	32,
+	36
+};
 
-Rect16  SLDnArrowBtnRect(327,
-                         121,
-                         32,
-                         36);
+static const StaticRect SLDnArrowBtnRect = {
+	327,
+	121,
+	32,
+	36
+};
 
 // texts
 
-Rect16  SLTitleRect(0,
-                    0,
-                    kSLDBoxXSzNS,
-                    47);
+static const StaticRect SLTitleRect = {
+	0,
+	0,
+	kSLDBoxXSzNS,
+	47
+};
 
 
 // save load window rect
 
-Rect16  saveLoadWindowRect =    Rect16(kSLDBoxX,
-                                       kSLDBoxY,
-                                       kSLDBoxXSize,
-                                       kSLDBoxYSize);
+static const StaticRect saveLoadWindowRect = {
+	kSLDBoxX,
+	kSLDBoxY,
+	kSLDBoxXSize,
+	kSLDBoxYSize
+};
 
 
 // indirections
 
-Rect16  saveLoadPanelRects[kNumSaveLoadPanels] = { { SLTopPanel },
+static const StaticRect saveLoadPanelRects[kNumSaveLoadPanels] = {
+	{ SLTopPanel },
 	{ SLMidPanel },
 	{ SLBotPanel }
 };
 
-Rect16  saveLoadButtonRects[kNumSaveLoadBtns]  = { { SLQuitBtnRect },
-	{ SLBtnRect     },
+static const StaticRect saveLoadButtonRects[kNumSaveLoadBtns] = {
+	{ SLQuitBtnRect },
+	{ SLBtnRect },
 	{ SLUpArrowBtnRect },
 	{ SLDnArrowBtnRect }
 };
 
-Rect16  saveLoadTextRects[kNumSaveLoadTexts]   = { { SLTitleRect } };
+static const StaticRect saveLoadTextRects[kNumSaveLoadTexts] = {
+	{ SLTitleRect }
+};
 
 
 
 // save/load dialog window decorations
 
-WindowDecoration saveWindowDecorations[kNumSaveLoadPanels] =
-
-{	{ WindowDecoration(saveLoadPanelRects[0], SLTopPanelResID) },
+WindowDecoration saveWindowDecorations[kNumSaveLoadPanels] = {
+	{ WindowDecoration(saveLoadPanelRects[0], SLTopPanelResID) },
 	{ WindowDecoration(saveLoadPanelRects[1], SLMidPanelResID) },
 	{ WindowDecoration(saveLoadPanelRects[2], SLBotPanelResID) }
 };
@@ -219,20 +240,26 @@ WindowDecoration saveWindowDecorations[kNumSaveLoadPanels] =
 
 // panels
 
-Rect16  optTopPanel(kOptBoxX,
-                    kOptBoxY,
-                    kOptTPWidth,
-                    kOptTPHeight);
+static const StaticRect optTopPanel = {
+	kOptBoxX,
+	kOptBoxY,
+	kOptTPWidth,
+	kOptTPHeight
+};
 
-Rect16  optMidPanel(kOptBoxX,
-                    kOptBoxY + kOptTPHeight,
-                    kOptMDWidth,
-                    kOptMDHeight);
+static const StaticRect optMidPanel = {
+	kOptBoxX,
+	kOptBoxY + kOptTPHeight,
+	kOptMDWidth,
+	kOptMDHeight
+};
 
-Rect16  optBotPanel(kOptBoxX,
-                    kOptBoxY + kOptTPHeight + kOptMDHeight,
-                    kOptBTWidth,
-                    kOptBTHeight);
+static const StaticRect optBotPanel = {
+	kOptBoxX,
+	kOptBoxY + kOptTPHeight + kOptMDHeight,
+	kOptBTWidth,
+	kOptBTHeight
+};
 
 
 static const StaticRect optResumeRect = {
@@ -413,13 +440,13 @@ static const StaticRect optionsWindowRect = {
 
 // indirections
 
-Rect16 optionsPanelRects[kNumOptionsPanels] = {
+static StaticRect optionsPanelRects[kNumOptionsPanels] = {
 	{ optTopPanel },
 	{ optMidPanel },
 	{ optBotPanel }
 };
 
-StaticRect optionsButtonRects[] = {
+static StaticRect optionsButtonRects[] = {
 	{ optResumeRect },
 	{ optSaveRect },
 	{ optRestoreRect },
@@ -431,7 +458,7 @@ StaticRect optionsButtonRects[] = {
 	{ optNightRect }
 };
 
-StaticRect optionsTextRects[] = {
+static StaticRect optionsTextRects[] = {
 	{ optTitleText },
 	{ optTopSlideText },
 	{ optMidSlideText },
@@ -445,7 +472,7 @@ StaticRect optionsTextRects[] = {
 
 // options dialog window decorations
 
-WindowDecoration optionsDecorations[kNumOptionsPanels] = {
+static WindowDecoration optionsDecorations[kNumOptionsPanels] = {
 	{ WindowDecoration(optionsPanelRects[0], optTopPanelResID) },
 	{ WindowDecoration(optionsPanelRects[1], optMidPanelResID) },
 	{ WindowDecoration(optionsPanelRects[2], optBotPanelResID) }
@@ -504,13 +531,13 @@ static const StaticRect messageRect = {
 
 
 
-StaticRect messageTextRects[kNumMessageTexts] = {
+static StaticRect messageTextRects[kNumMessageTexts] = {
 	{ mesTitleRect },
 	{ messageRect }
 };
 
 
-StaticRect messageButtonRects[kNumMessageBtns] = {
+static StaticRect messageButtonRects[kNumMessageBtns] = {
 	{ mesOkBtnRect },
 	{ mesCancelBtnRect },
 	{ mesBtn3Rect }
@@ -530,7 +557,7 @@ static const StaticRect messageWindowRect = {
 
 
 // message dialog window decorations
-WindowDecoration messageDecorations[kNumMessagePanels] = {
+static WindowDecoration messageDecorations[kNumMessagePanels] = {
 	{ WindowDecoration(messagePanel, mesPanelResID) }
 };
 
