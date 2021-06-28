@@ -547,14 +547,20 @@ int Actor::actorWalkStep() {
 			return 1;
 	}
 
-	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y)) {
-		setBox(_walkdata.curbox);
+	if (_vm->_game.version == 3) {
+		if (_walkdata.next.x - (int)_speedx <= _pos.x && _walkdata.next.x + (int)_speedx >= _pos.x)
+			_pos.x = _walkdata.next.x;
+		if (_walkdata.next.y - (int)_speedy <= _pos.y && _walkdata.next.y + (int)_speedy >= _pos.y)
+			_pos.y = _walkdata.next.y;
 	}
+
+	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y))
+		setBox(_walkdata.curbox);
 
 	distX = ABS(_walkdata.next.x - _walkdata.cur.x);
 	distY = ABS(_walkdata.next.y - _walkdata.cur.y);
 
-	if (ABS(_pos.x - _walkdata.cur.x) >= distX && ABS(_pos.y - _walkdata.cur.y) >= distY) {
+	if ((_vm->_game.version == 3 && _pos == _walkdata.next) || (_vm->_game.version != 3 && ABS(_pos.x - _walkdata.cur.x) >= distX && ABS(_pos.y - _walkdata.cur.y) >= distY)) {
 		_moving &= ~MF_IN_LEG;
 		return 0;
 	}
