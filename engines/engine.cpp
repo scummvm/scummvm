@@ -530,6 +530,11 @@ void Engine::handleAutoSave() {
 }
 
 void Engine::saveAutosaveIfEnabled() {
+	// Reset the last autosave time first.
+	// Doing it here rather than after saving the game prevents recursive calls if saving the game
+	// causes the engine to poll events (as is the case with the AGS engine for example).
+	_lastAutosaveTime = _system->getMillis();
+
 	if (_autosaveInterval != 0) {
 		bool saveFlag = canSaveAutosaveCurrently();
 
@@ -549,13 +554,9 @@ void Engine::saveAutosaveIfEnabled() {
 		if (!saveFlag) {
 			// Set the next autosave interval to be in 5 minutes, rather than whatever
 			// full autosave interval the user has selected
-			_lastAutosaveTime = _system->getMillis() + (5 * 60 * 1000) - _autosaveInterval;
-			return;
+			_lastAutosaveTime += (5 * 60 * 1000) - _autosaveInterval;
 		}
 	}
-
-	// Reset the last autosave time
-	_lastAutosaveTime = _system->getMillis();
 }
 
 void Engine::errorString(const char *buf1, char *buf2, int size) {
