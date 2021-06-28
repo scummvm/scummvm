@@ -106,6 +106,10 @@ const char *directoryGlobs[] = {
 	"popup",						// Pop Up Computer
 	"alpha",						// Interactive Alphabet
 	"technik",						// Glasklar Technology Interactive
+	"alcohol 101",
+	"audio",
+	"print",
+	"vids",							// Alcohol 101
 	"dir_data",						// Garage
 	"hd",							// Grammar Playtime
 	"dicfiles",						// Time Blazers series
