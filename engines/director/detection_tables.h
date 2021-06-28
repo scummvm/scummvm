@@ -61,6 +61,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "betterd",			"The Better Dead Ratification" },
 	{ "beyondthewall",		"Beyond the Wall of Stars" },
 	{ "bobcastle",			"Bob the Builder: Bob's Castle Adventure" },
+	{ "bodypark",			"Body Park" },
 	{ "brer",				"Brer Rabbit and the Wonderful Tar Baby" },
 	{ "buzz1",				"Buzz Lightyear 1st Grade" },
 	{ "casperact",			"Casper Activity Center" },
@@ -76,6 +77,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "daedalus",			"The Daedalus Encounter" },
 	{ "darkeye",			"The Dark Eye" },
 	{ "dazzeloids",			"Dazzeloids" },
+	{ "dcanyon",			"Devil's Canyon: A Dinamation Adventure" },
 	{ "deathstar",			"Death Star Destructo" },
 	{ "derratsorcerum",		"Derrat Sorcerum" },
 	{ "devo",				"DEVO Presents: Adventures of the Smart Patrol" },
@@ -117,6 +119,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "fsky",				"A Field Trip to the Sky" },
 	{ "gadget",				"Gadget: Invention, Travel & Adventure" },
 	{ "gadgetpaf",			"Gadget: Past as Future" },
+	{ "garage",				"Garage: Bad Dream Adventure" }, // English fan translation
 	{ "garfieldmadcats",	"Garfield: Mad about Cats" },
 	{ "generations",		"Generations" },
 	{ "ggmd",				"The Great Green Mouse Disaster" },
@@ -124,6 +127,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ggmdpics",			"The Great Green Mouse Disaster: Gallery" },
 	{ "ggmdsuper",			"The Great Green Mouse Disaster: Super Game" },
 	{ "giggletour",			"The Gigglebone Gang World Tour" },
+	{ "grammarplaytime2",	"Grammar Playtime Vol.2: Asking Questions" },
 	{ "gundam0079",			"Gundam 0079: The War for Earth" },
 	{ "guscarn",			"Gus Goes to the Kooky Carnival" },
 	{ "gusolis",			"Gus Goes to Cyberopolis" },
@@ -190,6 +194,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mastermansionex",	"Masterpiece Mansion: Art Explorer" },
 	{ "martian",			"Ray Bradbury's The Martian Chronicles Adventure Game" },
 	{ "maze",				"The Riddle of the Maze" },
+	{ "mcmillennium",		"Mission Code: Millennium" },
 	{ "mediaband",			"Meet Mediaband" },
 	{ "melements",			"Masters of the Elements" },
 	{ "mentalmaths",		"Mental Maths Booster" },
@@ -199,6 +204,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mickeyt",			"Mickey Mouse Toddler" },
 	{ "mirage",				"Mirage" },
 	{ "mmalgebra",			"Multimedia Algebra" },
+	{ "mmiqtest",			"Multimedia IQ Test" },
 	{ "mmmath3",			"Mission Masters Math Grade 3: Defeat Dirty D!" },
 	{ "mrsquack",			"Reading with Peter Cottontail: The Story of Mrs. Quack" },
 	{ "mummy",				"Mummy: Tomb of the Pharaoh" },
@@ -248,6 +254,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "rhem1",				"Rhem" },
 	{ "rhlava",				"Rescue Heroes: Lava Landslide" },
 	{ "rhmeteor",			"Rescue Heroes: Meteor Madness" },
+	{ "sajaklucky",			"Pat Sajak's Lucky Letters" },
 	{ "screamingmetal",		"Screaming Metal" },
 	{ "searchlearn",     	"Search & Learn Adventures" },
 	{ "secretkeys",     	"Search for the Secret Keys with Mickey" },	
@@ -267,6 +274,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "smartsteps3rd",		"Smart Steps 3rd Grade" },
 	{ "snh",				"A Silly Noisy House" },
 	{ "snow7han",			"Snow White and the Seven Hansels: The Fairy Tale Game" },
+	{ "spacestationalpha",	"Space Station Alpha: The Encounter" },
 	{ "spellingbee",		"Arc Media Spelling Bee" },
 	{ "spyclub",			"Spy Club" },
 	{ "spykids3d",			"Spy Kids 3-D: Game Over" },
@@ -1076,6 +1084,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is BOB©1991
 	MACGAME1("bob", "", "BOB 1991", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 1209537, 300),
 
+	WINDEMO1("bodypark", "Demo", "BODYPARK.EXE", "65d06b5fef155a2473434571aff5bc29", 1654314, 310),
+
 	WINDEMO1("bookshelf94", "Demo", "BS94DEMO.EXE", "7c8230a804abf9353b05627a675b5ffb", 375300, 310),
 
 	WINDEMO1("bpmc", "", "BPMC.EXE", "1998188253fc8657198e3e78efe823a8", 370291, 313),
@@ -1648,6 +1658,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("alice", "", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304714, 400),
 	WINGAME1("alice", "", "ALICE.EXE", "c67ece9b657ee80355520ac37a25fe55", 684733, 400),
 
+	MACGAME1("alphabet", "", "Alpha.ppc", "71287376e445ab9c98f0d150bb0ed175", 59444, 404),
 	WINGAME1("alphabet", "", "ALPHA.EXE", "c89c8301db7ef0ebffedf435863b3ffc", 749092, 404),
 
 	WINGAME1("amnesty", "", "AMNESTY.EXE", "39b849bbba9eaf39c92ca25e0bb36a56", 736902, 404),
@@ -1816,6 +1827,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("dazzeloids", "Demo", "Dazzleoids", "77f4098988d5386794d1530065f514cd", 301953, 400),
 	PIPGAME1_l("dazzeloids", "", "Dazzeloids", "2324c2928417a696fca46535ded53e32", 68242, Common::JA_JPN, 400),
 	WINGAME1("dazzeloids", "", "DAZZ.EXE", "65768d30ebe836309ad2c3779a66f3ce", 1034266, 400),
+
+	MACGAME1_l("dcanyon", "", "Devils Canyon (16+Mb)", "97474208c44c78f26bef8b2011d341aa", 483774, Common::IT_ITA, 404),
+	WINGAME2("dcanyon", "",	  "DCANYON.EXE",		   "f5033a9fd54d41d348fa97bd13f8f088", 1050728,
+							  "00INTRO.DIR",		   "d0c7645593725340480e2425811d6d8f", 3644052, 404),
+	WINGAME2_l("dcanyon", "", "DCANYON.EXE",		   "f5033a9fd54d41d348fa97bd13f8f088", 1050728,
+							  "00intro.Dir",		   "f6ca66b328f7fbcdd2e911273d74677c", 3777126, Common::IT_ITA, 404),
+	WINGAME2_l("dcanyon", "", "DCANYON.EXE",		   "85e7939a0c3041660defb80e0d530230", 744381,
+							  "00INTRO.DIR",		   "3621850ac727f9cf116c41143482c16c", 4044830, Common::JA_JPN, 404),
 
 	// Mac executable is Derrat Sorcerum™ v1.0.3
 	MACGAME1("derratsorcerum", "", "Derrat Sorcerum v1.0.3", "a546ef2b921a9b48fd93928f1a505f22", 483762, 400),
@@ -2174,6 +2193,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("mathtest", "", "mathtest (mac)", "cdb27c916044ae4dceb4b7326063fa03", 301925, 400),
 
+	WINDEMO1("mcmillennium", "Demo", "MILLDEMO.EXE", "b6027f900ae90ed59de3d22e68d2bfed", 3630918, 404),
+
 	// Full game is not Director
 	WINDEMO1("mechwarrior2", "Demo", "MW2DEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
 
@@ -2187,6 +2208,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("mirage", "", "MIRAGE.EXE", "2291ea234c14f1ccb8f2e67ae09bbfa3", 696867, 400),
 	MACGAME1("mirage", "Making Of", "The Making of Mirage", "78138a77207907642744d0960c14d9e5", 486982, 400),
 	WINGAME1("mirage", "Making Of", "MAKINGOF.EXE", "2458926212e5589c013b7e7c28b9bee0", 698407, 400),
+
+	MACGAME1("mmiqtest", "", "Multimedia IQ Test", "7fd44b6dffa0ea0402eaed4c3769b39b", 285566, 404),
+	WINGAME1("mmiqtest", "", "IQTEST.EXE", "2a788332a4d3af3e5c5f9fe230e6c89f", 740528, 404),
 
 	MACGAME1("moag", "", "MacMoag", "46697df7ffee90bf7cd4c0cec4c54c28", 494808, 404),
 	WINGAME1("moag", "", "WINMOAG.EXE", "3483a0e7c65996c4edce7f8c0c3c43e3", 726173, 404),
@@ -2396,6 +2420,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original filename is 素材辞典『体験版』ブラウザ
 	MACDEMO1_l("sozaijiten", "Vol. 1 (Stone) Trial Version", "Sozaijiten (Trial Version) Browser", "d1ef4c4efcc587aea2a84a70d9eb778a", 297377, Common::JA_JPN, 402),
+
+	MACGAME1("spacestationalpha", "", "The Encounter 16+MB", "e019f541a05887922e2ee19bcff5bb25", 483774, 404),
 
 	// Full game is not Director
 	WINDEMO1("spycraft", "Demo", "SPYCRAFT.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
@@ -2988,11 +3014,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("fusion", "", "Start FUSION Mac", "3849d7cd0cdbe4f46333879cbed56492", 1029165, 600),
 	WINGAME1("fusion", "", "FUSION.exe", "518a98696fe1122e08410b0f157f21bf", 1513751, 602),
 
+	MACGAME1_l("garage", "", "Garage",	   "e5ed4533b25be47b708bb1245550cb2c", 118818, Common::JA_JPN, 650),
+	WINGAME2("garage", "",	 "Garage.exe", "0e43a5130e1964231fa25472108ca522", 1516264,
+							 "open.swf",   "9c6eb1fb21dfcd3ddff4c153c88a53b7", 96640, 650),
+	WINGAME2_l("garage", "", "Garage.exe", "0e43a5130e1964231fa25472108ca522", 1516264,
+							 "open.swf",   "d01cf5e6eb157859466f846ccb30a081", 178668, Common::JA_JPN, 650),
+
 	// Windows version on same disc is D8
 	MACGAME2_l("garygadget2", "", "Game",		 "1d9149b9745e35ef93ed4cdf08ec3af7", 1030361,
 								  "StartCD.dxr", "07c672f1c05c4c12ac6abbb371a0ee1f", 24053, Common::NL_NLD, 600),
 
 	WINDEMO1("generations", "v4.2 Demo", "GEN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 15646702, 600),
+
+	// Published by A-Star Interactive (Singapore)
+	WINGAME1("grammarplaytime2", "", "H_32.exe", "a593079aecf5bd938ce75264cac24b2d", 2234889, 600),
 
 	WINGAME1("hamletmurder", "", "PMHamlet.exe", "a593079aecf5bd938ce75264cac24b2d", 1873557, 600),
 
@@ -3533,6 +3568,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filenames are Spökmaskinen (OS X) and Spökmaskinen.exe
 	MACGAME1_l("pettson4", "", "Spokmaskinen (OS X)", "d483e955df901222145267d2ad729ea2", 284153, Common::SE_SWE, 900),
 	WINGAME1_l("pettson4", "", "Spokmaskinen.exe", "627d23c658a36a3b6d0053a6dcda1a37", 2330628, Common::SE_SWE, 900),
+
+	WINGAME1("sajaklucky", "Deluxe", "LuckyLettersDeluxe.exe", "001d65a360a61861118f3cfa92c68ef3", 14018695, 900),
 
 	// Classic Mac OS and Windows executables are D8
 	MACGAME1_l("sethi2", "OS X", "Sethi Incas",	 "d483e955df901222145267d2ad729ea2", 233556, Common::FR_FRA, 900),
