@@ -49,7 +49,7 @@ def get_UIDs(build):
    return uids
 
 def SafeWriteFile(path, data, mode = 'w'):
-   """Save list elments as strings. Save strings as is"""
+   """Save list elements as strings. Save strings as is"""
    with open(path, mode) as f:
       if type(data) is list:
          for s in data:
