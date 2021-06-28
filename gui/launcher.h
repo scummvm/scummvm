@@ -23,6 +23,10 @@
 #ifndef GUI_LAUNCHER_DIALOG_H
 #define GUI_LAUNCHER_DIALOG_H
 
+#ifdef DISABLE_FANCY_THEMES
+#define DISABLE_LIBRARYDISPLAY_GRID
+#endif
+
 #include "gui/dialog.h"
 #include "engines/game.h"
 
@@ -40,6 +44,18 @@ class GraphicsWidget;
 class StaticTextWidget;
 class EditTextWidget;
 class SaveLoadChooser;
+
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
+enum LibraryDisplayType {
+	kLibraryDisplayList = 1,
+	kLibraryDisplayGrid = 2,
+};
+
+enum {
+	kListSwitchCmd = 'LIST',
+	kGridSwitchCmd = 'GRID'
+};
+#endif
 
 class LauncherDialog : public Dialog {
 	typedef Common::String String;
@@ -62,7 +78,6 @@ public:
 	Common::String getGameConfig(int item, Common::String key);
 protected:
 	EditTextWidget  *_searchWidget;
-	GridWidget		*_grid;
 	ListWidget		*_list;
 	Widget			*_startButton;
 	ButtonWidget	*_loadButton;
@@ -79,7 +94,19 @@ protected:
 	SaveLoadChooser	*_loadDialog;
 
 	String _search;
-	int _libraryDisplay;
+
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
+	GridWidget			*_grid;
+	ButtonWidget		*_listButton;
+	ButtonWidget		*_gridButton;
+	LibraryDisplayType 	_libraryDisplay;
+
+	void addChooserButtons();
+	void openGrid();
+	void openList();
+
+	ButtonWidget *createSwitchButton(const Common::String &name, const Common::U32String &desc, const Common::U32String &tooltip, const char *image, uint32 cmd = 0);
+#endif
 
 	void reflowLayout() override;
 

@@ -168,20 +168,30 @@ LauncherDialog::~LauncherDialog() {
 	delete _loadDialog;
 }
 
+ButtonWidget *LauncherDialog::createSwitchButton(const Common::String &name, const Common::U32String &desc, const Common::U32String &tooltip, const char *image, uint32 cmd) {
+	ButtonWidget *button;
+
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPics") == 1 && g_gui.theme()->supportsImages()) {
+		button = new PicButtonWidget(this, name, tooltip, cmd);
+		((PicButtonWidget *)button)->useThemeTransparency(true);
+		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(image), kPicButtonStateEnabled, false);
+	} else
+#endif
+		button = new ButtonWidget(this, name, desc, tooltip, cmd);
+
+	return button;
+}
+
 void LauncherDialog::build() {
+	_list = nullptr;
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
 	_grid = nullptr;
+	_listButton = nullptr;
+	_gridButton = nullptr;
+#endif
 #ifndef DISABLE_FANCY_THEMES
 	_logo = nullptr;
-
-	// or doesn't exist
-	if (g_gui.theme()->supportsImages()) {
-		// 0 = list only, 1 = grid + list, 2 = grid only
-		if (g_gui.xmlEval()->getVar("Globals.LibraryDisplayType") > 0) {
-			_libraryDisplay = g_gui.xmlEval()->getVar("Globals.LibraryDisplayType");
-			_grid = new GridWidget(this, "Launcher.IconArea");
-		}
-	}
-
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
@@ -236,18 +246,25 @@ void LauncherDialog::build() {
 	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, Common::U32String(), kSearchCmd);
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
-	// Add list with game titles
-	_list = nullptr;
-	if (g_gui.xmlEval()->getVar("Globals.LibraryDisplayType") < 2 || !g_gui.theme()->supportsImages()) {
-		_list = new ListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
-		_list->setEditable(false);
-		_list->enableDictionarySelect(true);
-		_list->setNumberingMode(kListNumberingOff);
-		_list->setFilterMatcher(LauncherFilterMatcher, this);
-	}
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
+	const Common::String &userConfig = ConfMan.get("gui_launcher_grid", Common::ConfigManager::kApplicationDomain);
 
+	if (g_gui.theme()->supportsImages() && userConfig.equalsIgnoreCase("grid")) {
+		_libraryDisplay = kLibraryDisplayGrid;
+		openGrid();
+	} else {
+		_libraryDisplay = kLibraryDisplayList;
+		openList();
+	}
+#else
+	// Add list with game titles
+	_list = new ListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
+	_list->setEditable(false);
+	_list->enableDictionarySelect(true);
+	_list->setNumberingMode(kListNumberingOff);
 	// Populate the list
 	updateListing();
+#endif
 
 	// Restore last selection
 	String last(ConfMan.get("lastselectedgame", ConfigManager::kApplicationDomain));
@@ -326,6 +343,53 @@ struct LauncherEntryComparator {
 			return scumm_compareDictionary(x.description.c_str(), y.description.c_str()) < 0;
 	}
 };
+
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
+void LauncherDialog::openGrid() {
+	// Close list if it is open
+	if (_list) {
+		removeWidget(_list);
+		delete _list;
+		_list = nullptr;
+	}
+	if (_grid) return;
+	_grid = new GridWidget(this, "Launcher.IconArea");
+	updateListing();
+	reflowLayout();
+}
+
+void LauncherDialog::openList() {
+	// Close grid if it is open
+	if (_grid) {
+		removeWidget(_grid);
+		delete _grid;
+		_grid = nullptr;
+	}
+	if (_list) return;
+	_list = new ListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
+	_list->setEditable(false);
+	_list->enableDictionarySelect(true);
+	_list->setNumberingMode(kListNumberingOff);
+	_list->setFilterMatcher(LauncherFilterMatcher, this);
+	updateListing();
+	reflowLayout();
+}
+
+void LauncherDialog::addChooserButtons() {
+	if (_listButton) {
+		removeWidget(_listButton);
+		delete _listButton;
+	}
+
+	if (_gridButton) {
+		removeWidget(_gridButton);
+		delete _gridButton;
+	}
+
+	_listButton = createSwitchButton("Launcher.ListSwitch", Common::U32String("L"), _("List view"), ThemeEngine::kImageList, kListSwitchCmd);
+	_gridButton = createSwitchButton("Launcher.GridSwitch", Common::U32String("G"), _("Grid view"), ThemeEngine::kImageGrid, kGridSwitchCmd);
+}
+#endif
 
 void LauncherDialog::updateListing() {
 	U32StringArray l;
@@ -809,6 +873,14 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (_list)
 			_list->setFilter(Common::U32String());
 		break;
+	case kGridSwitchCmd:
+		openGrid();
+		ConfMan.set("gui_launcher_grid", "grid", Common::ConfigManager::kApplicationDomain);
+		break;
+	case kListSwitchCmd:
+		openList();
+		ConfMan.set("gui_launcher_grid", "list", Common::ConfigManager::kApplicationDomain);
+		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
@@ -839,20 +911,6 @@ void LauncherDialog::updateButtons() {
 
 void LauncherDialog::reflowLayout() {
 #ifndef DISABLE_FANCY_THEMES
-	if (g_gui.theme()->supportsImages()) {
-		// 0 = list only, 1 = grid + list, 2 = grid only
-		int newLibraryDisplay = g_gui.xmlEval()->getVar("Globals.LibraryDisplayType");
-
-		if ((_libraryDisplay != newLibraryDisplay) && (newLibraryDisplay > 0)) {
-			_libraryDisplay = newLibraryDisplay;
-			removeWidget(_grid);
-			delete _grid;
-			_grid = nullptr;
-			_grid = new GridWidget(this, "Launcher.IconArea");
-			updateListing();
-		}
-	}
-
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
@@ -908,18 +966,9 @@ void LauncherDialog::reflowLayout() {
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 #endif
 
-	if ((g_gui.xmlEval()->getVar("Globals.LibraryDisplayType") > 1) && (_list)) {
-		removeWidget(_list);
-		_list = nullptr;
-	}
-	if ((g_gui.xmlEval()->getVar("Globals.LibraryDisplayType") < 2) && (!_list)) {
-		_list = new ListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
-		_list->setEditable(false);
-		_list->enableDictionarySelect(true);
-		_list->setNumberingMode(kListNumberingOff);
-
-		updateListing();
-	}
+#ifndef DISABLE_LIBRARYDISPLAY_GRID
+	addChooserButtons();
+#endif
 
 	_w = g_system->getOverlayWidth();
 	_h = g_system->getOverlayHeight();
