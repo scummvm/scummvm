@@ -316,7 +316,7 @@ static void restore_game_displayed_room_status(Stream *in, RestoredData &r_data)
 		if (bb)
 			_G(raw_saved_screen) = read_serialized_bitmap(in);
 
-		// get the current _GP(troom), in case they save in room 600 or whatever
+		// get the current troom, in case they save in room 600 or whatever
 		ReadRoomStatus_Aligned(&_GP(troom), in);
 
 		if (_GP(troom).tsdatasize > 0) {

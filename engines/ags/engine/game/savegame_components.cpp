@@ -914,7 +914,7 @@ HSaveError WriteThisRoom(Stream *out) {
 	// persistent room's indicator
 	const bool persist = _G(displayed_room) < MAX_ROOMS;
 	out->WriteBool(persist);
-	// write the current _GP(troom) state, in case they save in temporary room
+	// write the current troom state, in case they save in temporary room
 	if (!persist)
 		_GP(troom).WriteToSavegame(out);
 	return HSaveError::None();
@@ -960,7 +960,7 @@ HSaveError ReadThisRoom(Stream *in, int32_t cmp_ver, const PreservedParams &pp, 
 	// save the new room music vol for later use
 	r_data.RoomVolume = (RoomVolumeMod)in->ReadInt32();
 
-	// read the current _GP(troom) state, in case they saved in temporary room
+	// read the current troom state, in case they saved in temporary room
 	if (!in->ReadBool())
 		_GP(troom).ReadFromSavegame(in);
 
