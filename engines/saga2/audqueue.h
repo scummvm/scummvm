@@ -29,54 +29,114 @@
 
 #include "audio/mixer.h"
 #include "saga2/saga2.h"
+#include "saga2/fta.h"
 #include "saga2/shorten.h"
 #include "saga2/hresmgr.h"
 
 namespace Saga2 {
 
-Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, const char desc[]);
-
 extern hResContext *voiceRes;
+extern hResContext *soundRes;
+extern hResContext *musicRes;
 
 class SoundQueue {
 private:
-	Common::Queue<soundSegment> _voiceQueue;
+	Common::Queue<soundSegment> _speechQueue;
 	Common::Queue<soundSegment> _sfxQueue;
 	Common::Queue<soundSegment> _bgmQueue;
 	Audio::SoundHandle _speechSoundHandle;
+	Audio::SoundHandle _sfxSoundHandle;
+	Audio::SoundHandle _bgmSoundHandle;
 
 public:
 	void pushVoice(soundSegment s) {
-		_voiceQueue.push(s);
+		_speechQueue.push(s);
 	}
 
 	void pushVoice(soundSegment s[]) {
 		soundSegment *p = s;
 		while (*p) {
-			_voiceQueue.push(*p);
+			_speechQueue.push(*p);
 			p++;
 		}
 	}
 
+	void pushSound(soundSegment s) {
+		_sfxQueue.push(s);
+	}
+
+	void pushMusic(soundSegment s) {
+		_bgmQueue.push(s);
+	}
+
 	void playNext() {
-		if (_voiceQueue.size()) {
-			soundSegment s = _voiceQueue.pop();
-			Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, s, "voice data");
+		if (_speechQueue.size()) {
+			soundSegment s = _speechQueue.pop();
+			playSpeech(s);
+		}
 
-			Audio::AudioStream *aud = makeShortenStream(*stream);
-
-			g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, aud);
-
-			delete stream;
+		if (_sfxQueue.size()) {
+			soundSegment s = _sfxQueue.pop();
+			playSound(s);
 		}
 	}
 
-	bool isPlaying() {
+	void playSpeech(soundSegment s) {
+		Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, s, "voice data");
+
+		Audio::AudioStream *aud = makeShortenStream(*stream);
+
+		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, aud);
+
+		delete stream;
+	}
+
+	void playSound(soundSegment s) {
+		warning("STUB: SoundQueue::playSound");
+
+#if 0
+		Common::SeekableReadStream *stream = loadResourceToStream(soundRes, s, "voice data");
+
+		Audio::AudioStream *aud = makeShortenStream(*stream);
+
+		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_sfxSoundHandle, aud);
+
+		delete stream;
+#endif
+	}
+
+	void playMusic(soundSegment s) {
+		warning("STUB: SoundQueue::playMusic");
+
+#if 0
+		Common::SeekableReadStream *stream = loadResourceToStream(musicRes, s, "voice data");
+
+		Audio::AudioStream *aud = makeShortenStream(*stream);
+
+		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_bgmSoundHandle, aud);
+
+		delete stream;
+#endif
+	}
+
+	bool isSpeechPlaying() {
 		return g_system->getMixer()->isSoundHandleActive(_speechSoundHandle);
 	}
 
+	bool isSoundPlaying() {
+		return g_system->getMixer()->isSoundHandleActive(_sfxSoundHandle);
+	}
+
+	bool isMusicPlaying() {
+		return g_system->getMixer()->isSoundHandleActive(_bgmSoundHandle);
+	}
+
+	bool isPlaying() {
+		return isSpeechPlaying() || isSoundPlaying() || isMusicPlaying();
+	}
+
 	int getSize() {
-		return _voiceQueue.size();
+		return _speechQueue.size() + _sfxQueue.size() + _bgmQueue.size();
 	}
 };
 
