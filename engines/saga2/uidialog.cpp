@@ -354,90 +354,121 @@ static const StaticRect optNightRect = {
 	17
 };
 
-Rect16  optTopSliderRect(15,
-                         15 + optTPHeight - 2,
-                         kSliderWidth,
-                         kImageHeight);
+static const StaticRect optTopSliderRect = {
+	15,
+	15 + optTPHeight - 2,
+	kSliderWidth,
+	kImageHeight
+};
 
-Rect16  optMidSliderRect(15,
-                         optTopSliderRect.y + 32 - 2,
-                         kSliderWidth,
-                         kImageHeight);
+static const StaticRect optMidSliderRect = {
+	15,
+	(int16)(optTopSliderRect.y + 32 - 2),
+	kSliderWidth,
+	kImageHeight
+};
 
-Rect16  optBotSliderRect(15,
-                         optMidSliderRect.y + 32 - 2,
-                         kSliderWidth,
-                         kImageHeight);
+static const StaticRect optBotSliderRect = {
+	15,
+	(int16)(optMidSliderRect.y + 32 - 2),
+	kSliderWidth,
+	kImageHeight
+};
 
-Rect16  optTopFaceRect(optTopSliderRect.x,
-                       optTopSliderRect.y,
-                       28,
-                       kImageHeight);
+static const StaticRect optTopFaceRect = {
+	optTopSliderRect.x,
+	optTopSliderRect.y,
+	28,
+	kImageHeight
+};
 
-Rect16  optMidFaceRect(optMidSliderRect.x,
-                       optMidSliderRect.y,
-                       28,
-                       kImageHeight);
+static const StaticRect optMidFaceRect = {
+	optMidSliderRect.x,
+	optMidSliderRect.y,
+	28,
+	kImageHeight
+};
 
-Rect16  optBotFaceRect(optBotSliderRect.x,
-                       optBotSliderRect.y,
-                       28,
-                       kImageHeight);
+static const StaticRect optBotFaceRect = {
+	optBotSliderRect.x,
+	optBotSliderRect.y,
+	28,
+	kImageHeight
+};
 
 
 // texts
 
-Rect16  optTitleText(0,
-                     0,
-                     optBoxXSzNS,
-                     optTPHeight);
+static const StaticRect optTitleText = {
+	0,
+	0,
+	optBoxXSzNS,
+	optTPHeight
+};
 
-Rect16  optTopSlideText(16 + kSliderWidth,
-                        optTopSliderRect.y + 1,
-                        kTextPixelLen,
-                        20);
+static const StaticRect optTopSlideText = {
+	16 + kSliderWidth,
+	(int16)(optTopSliderRect.y + 1),
+	kTextPixelLen,
+	20
+};
 
-Rect16  optMidSlideText(16 + kSliderWidth,
-                        optMidSliderRect.y + 1,
-                        kTextPixelLen,
-                        17);
+static const StaticRect optMidSlideText = {
+	16 + kSliderWidth,
+	(int16)(optMidSliderRect.y + 1),
+	kTextPixelLen,
+	17
+};
 
-Rect16  optBotSlideText(16 + kSliderWidth,
-                        optBotSliderRect.y + 1,
-                        kTextPixelLen,
-                        17);
+static const StaticRect optBotSlideText = {
+	16 + kSliderWidth,
+	(int16)(optBotSliderRect.y + 1),
+	kTextPixelLen,
+	17
+};
 
-Rect16  optTopCheckText(optAggressRect.x + optAggressRect.width + 3,
-                        optAggressRect.y,
-                        kTextPixelLen - kSmallTextOffset,
-                        17);
+static const StaticRect optTopCheckText = {
+	(int16)(optAggressRect.x + optAggressRect.width + 3),
+	optAggressRect.y,
+	kTextPixelLen - kSmallTextOffset,
+	17
+};
 
-Rect16  optMidCheckText(optWeaponRect.x + optWeaponRect.width + 3,
-                        optWeaponRect.y,
-                        kTextPixelLen - kSmallTextOffset,
-                        17);
+static const StaticRect optMidCheckText = {
+	(int16)(optWeaponRect.x + optWeaponRect.width + 3),
+	optWeaponRect.y,
+	kTextPixelLen - kSmallTextOffset,
+	17
+};
 
-Rect16  optBotCheckText(optSpeechRect.x  + optSpeechRect.width + 3,
-                        optSpeechRect.y,
-                        kTextPixelLen - kSmallTextOffset,
-                        17);
+static const StaticRect optBotCheckText = {
+	(int16)(optSpeechRect.x  + optSpeechRect.width + 3),
+	optSpeechRect.y,
+	kTextPixelLen - kSmallTextOffset,
+	17
+};
 
-Rect16  optTop2CheckText(optNightRect.x + optNightRect.width + 3,
-                         optNightRect.y,
-                         kTextPixelLen - kSmallTextOffset,
-                         17);
+static const StaticRect optTop2CheckText = {
+	(int16)(optNightRect.x + optNightRect.width + 3),
+	optNightRect.y,
+	kTextPixelLen - kSmallTextOffset,
+	17
+};
 
 // options window rect
 
-Rect16  optionsWindowRect =     Rect16(optBoxX,
-                                       optBoxY,
-                                       optBoxXSize,
-                                       optBoxYSize);
+static const StaticRect optionsWindowRect = {
+	optBoxX,
+	optBoxY,
+	optBoxXSize,
+	optBoxYSize
+};
 
 
 // indirections
 
-Rect16  optionsPanelRects[kNumOptionsPanels]       = { { optTopPanel },
+Rect16 optionsPanelRects[kNumOptionsPanels] = {
+	{ optTopPanel },
 	{ optMidPanel },
 	{ optBotPanel }
 };
@@ -454,7 +485,8 @@ StaticRect optionsButtonRects[] = {
 	{ optNightRect }
 };
 
-Rect16  optionsTextRects[]                          = { { optTitleText },
+StaticRect optionsTextRects[] = {
+	{ optTitleText },
 	{ optTopSlideText },
 	{ optMidSlideText },
 	{ optBotSlideText },
@@ -467,9 +499,8 @@ Rect16  optionsTextRects[]                          = { { optTitleText },
 
 // options dialog window decorations
 
-WindowDecoration optionsDecorations[kNumOptionsPanels] =
-
-{	{ WindowDecoration(optionsPanelRects[0], optTopPanelResID) },
+WindowDecoration optionsDecorations[kNumOptionsPanels] = {
+	{ WindowDecoration(optionsPanelRects[0], optTopPanelResID) },
 	{ WindowDecoration(optionsPanelRects[1], optMidPanelResID) },
 	{ WindowDecoration(optionsPanelRects[2], optBotPanelResID) }
 };
