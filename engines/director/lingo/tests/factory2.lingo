@@ -1,8 +1,0 @@
-global aim1
-AimGun2
-
-aim1(mDispose)
-
-set notAMethod = 0
-aim2(notAMethod) -- should error
-aim2("notAMethod") -- should run fallback handler

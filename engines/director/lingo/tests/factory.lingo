@@ -1,3 +1,11 @@
+AimGun2
+
+aim1(mDispose)
+
+set notAMethod = 0
+scummvmAssertError aim2(notAMethod) -- should error
+aim2("notAMethod") -- should run fallback handler
+
 --
 macro AimGun2
 global aim1
