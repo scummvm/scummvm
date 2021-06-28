@@ -7531,7 +7531,9 @@ msgstr ""
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
-msgstr "このゲームは3D機能を必要としますが、ScummVMには組み込まれていません。そのため、全部または一部がプレイできない可能性があります。"
+msgstr ""
+"このゲームは3D機能を必要としますが、ScummVMには組み込まれていません。そのた"
+"め、全部または一部がプレイできない可能性があります。"
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
