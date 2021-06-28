@@ -299,8 +299,7 @@ void processEventLoop(bool updateScreen) {
 	}
 
 	debugC(1, kDebugEventLoop, "EventLoop: audio event loop");
-	//FIXME: Disabled for debug purposes. Enable and implement later.
-	//audioEventLoop();
+	audioEventLoop();
 
 	debugC(1, kDebugEventLoop, "EventLoop: game mode update");
 	if (GameMode::newmodeFlag)
@@ -368,8 +367,7 @@ void displayUpdate(void) {
 		//  Call asynchronous resource loader
 		debugC(1, kDebugEventLoop, "EventLoop: resource update");
 
-		//FIXME: Disabled for debug purposes. Enable and implement later.
-		//audioEventLoop();
+		audioEventLoop();
 
 		//  Call the asynchronous path finder
 		debugC(1, kDebugEventLoop, "EventLoop: pathfinder update");

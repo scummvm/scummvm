@@ -40,6 +40,7 @@ enum initializationStates {
 	graphicsSystemInitialized,
 	procResEnabled,
 	memoryInitialized,
+	audioInitialized,
 	videoInitialized,
 	resourcesInitialized,
 	serversInitialized,
