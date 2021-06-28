@@ -479,62 +479,18 @@ void GridWidget::assignEntriesToItems() {
 }
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
-	int scrollSpeed = -direction*40;
-	bool needsReload = false;
-
-	_scrollPos += scrollSpeed;
-	
-	if (_scrollPos > 0) {
-		_scrollPos = 0;
-		scrollSpeed = 0;
-	}
-	// This lets user scroll a bit more after the last item
-	// comes into the view, which messes with the scrollbar.
-	// TODO: Make it so that scrolling doesn't go past last item.
-	if (_scrollPos < -(_innerHeight - _scrollWindowHeight)) {
-		_scrollPos = -(_innerHeight - _scrollWindowHeight);
-		scrollSpeed = 0;
-	}
-
-	for (auto it = _gridItems.begin(); it != _gridItems.end(); ++it) {
-		GridItemWidget *item = *it;
-		item->move(0, scrollSpeed);
-	}
-
-	if (_gridItems.front()->getRelY() < -2 * (_gridItemHeight + _gridYSpacing)) {
-		needsReload = true;
-		_firstVisibleItem += _itemsPerRow;
-		
-		// Move the entire grid one row down
-		move(0, _gridItemHeight + _gridYSpacing);
-	
-	} else if (_gridItems.front()->getRelY() > -_gridItemHeight) {
-		needsReload = true;
-		_firstVisibleItem -= _itemsPerRow;
-		
-		// Move the entire grid one row up
-		move(0, -(_gridItemHeight + _gridYSpacing));
-	}
-
-	if (needsReload) {
-		calcVisibleEntries();
-		reloadThumbnails();
-		assignEntriesToItems();
-	}
-
-	_scrollBar->_currentPos = _firstVisibleItem / _itemsPerRow;
-	_scrollBar->recalc();
-	
-	markAsDirty();
+	_scrollBar->handleMouseWheel(x, y, direction);
+	_scrollPos = -_scrollBar->_currentPos;
 }
 
 void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	// Work in progress
 	switch (cmd) {
 	case kSetPositionCmd:
-		if ((_firstVisibleItem / _itemsPerRow) != (int)data) {
-			_scrollPos = -data * (_gridItemHeight + _gridYSpacing);
-			_firstVisibleItem = data * _itemsPerRow;
+		if (-_scrollPos != (int)data) {
+			_scrollPos = -data;
+			_firstVisibleItem = _itemsPerRow * (-_scrollPos / (_gridItemHeight + _gridYSpacing));
+			_firstVisibleItem = (_firstVisibleItem < 0) ? 0 : _firstVisibleItem;
 			if (calcVisibleEntries()) {
 				reloadThumbnails();
 			}
@@ -543,14 +499,13 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 			int col = 0;
 
 			for (auto it = _gridItems.begin(); it != _gridItems.end(); ++it) {
-				(*it)->setPos(_minGridXSpacing + col * (_gridItemWidth + _gridXSpacing), 
-							(_scrollPos % (_gridItemHeight + _gridYSpacing)) + _gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing));
+				(*it)->setPos(2 * _minGridXSpacing + col * (_gridItemWidth + _gridXSpacing), 
+							  _gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing) - (-_scrollPos % (_gridItemHeight + _gridYSpacing)));
 				if (++col >= _itemsPerRow) {
 					++row;
 					col = 0;
 				}
 			}
-
 			assignEntriesToItems();
 			markAsDirty();
 
@@ -565,7 +520,7 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 void GridWidget::reflowLayout() {
 	Widget::reflowLayout();
 	destroyItems();
-	
+
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
 	
@@ -593,20 +548,19 @@ void GridWidget::reflowLayout() {
 	
 	_rows = ceil(_allEntries.size() / (float)_itemsPerRow);
 	
-	_innerHeight = _gridYSpacing + (_rows * (_gridItemHeight + _gridYSpacing));
+	_innerHeight = _gridYSpacing + _rows * (_gridItemHeight + _gridYSpacing);
 	_innerWidth = (2 * _minGridXSpacing) + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
 
-	if (_scrollPos < -(_innerHeight - _scrollWindowHeight))
-		_scrollPos = -(_innerHeight - _scrollWindowHeight);
+	_scrollBar->checkBounds(_scrollBar->_currentPos);
+	_scrollPos = _scrollBar->_currentPos;
 
 	int row = 0;
 	int col = 0;
 
-	_firstVisibleItem = _itemsPerRow * ((int)ceil(-_scrollPos / (float)(_gridItemHeight + _gridYSpacing)) - 1);
+	_firstVisibleItem = _itemsPerRow * ((-_scrollPos) / (_gridItemHeight + _gridYSpacing));
 	_firstVisibleItem = (_firstVisibleItem < 0) ? 0 : _firstVisibleItem;
 
 	_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h, false);
-
 	if (calcVisibleEntries()) {
 		reloadThumbnails();
 	}
@@ -614,7 +568,7 @@ void GridWidget::reflowLayout() {
 	for (int k = 0; k < _itemsOnScreen; ++k) {
 		GridItemWidget *newItem = new GridItemWidget(this, 
 									2 * _minGridXSpacing + col * (_gridItemWidth + _gridXSpacing), 
-									(_scrollPos % (_gridItemHeight + _gridYSpacing)) + _gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing), 
+							  		_gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing) - ((-_scrollPos) % (_gridItemHeight + _gridYSpacing)),
 									_gridItemWidth, 
 									_gridItemHeight);
 		
@@ -636,13 +590,13 @@ void GridWidget::openTray(int x, int y, int w, int h, int entryId) {
 }
 
 void GridWidget::scrollBarRecalc() {
-	int old_pos = _scrollBar->_currentPos;
+	_scrollBar->_numEntries = _innerHeight;
+	_scrollBar->_entriesPerPage = _scrollWindowHeight - _gridYSpacing;
+	_scrollBar->_currentPos = -_scrollPos;
+	_scrollBar->_singleStep = kLineHeight;
 	
-	_scrollBar->_numEntries = _rows;
-	_scrollBar->_entriesPerPage = _scrollWindowHeight / (_gridItemHeight + _gridYSpacing);
-	_scrollBar->_currentPos = _firstVisibleItem / _itemsPerRow;
-	
-	_scrollBar->checkBounds(old_pos);
+	_scrollBar->checkBounds(_scrollBar->_currentPos);
+	_scrollPos = _scrollBar->_currentPos;
 	_scrollBar->recalc();
 }
 
