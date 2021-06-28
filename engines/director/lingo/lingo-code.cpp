@@ -1588,7 +1588,7 @@ void LC::c_delete() {
 			field = field.u.cref->source;
 		}
 		if (!field.isVarRef() && !field.isCastRef()) {
-			warning("BUILDBOT: c_delete: bad chunk ref field type: %s", d.u.cref->source.type2str());
+			warning("BUILDBOT: c_delete: bad chunk ref field type: %s", field.type2str());
 			return;
 		}
 	} else if (d.isRef()) {
@@ -1644,7 +1644,7 @@ void LC::c_hilite() {
 		if (src.isCastRef()) {
 			fieldId = src.u.i;
 		} else {
-			warning("BUILDBOT: c_hilite: bad chunk ref field type: %s", d.u.cref->source.type2str());
+			warning("BUILDBOT: c_hilite: bad chunk ref field type: %s", src.type2str());
 			return;
 		}
 	} else if (d.isCastRef()) {
