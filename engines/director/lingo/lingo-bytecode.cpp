@@ -257,6 +257,13 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x09, 0x11, kTheCast,				kTheForeColor,		true, kTEAItemId },
 	{ 0x09, 0x12, kTheCast,				kTheBackColor,		true, kTEAItemId },
 
+	// the chunk of cast
+	{ 0x0a, 0x03, kTheChunk,			kTheTextStyle,		true, kTEAChunk },
+	{ 0x0a, 0x04, kTheChunk,			kTheTextFont,		true, kTEAChunk },
+	{ 0x0a, 0x05, kTheChunk,			kTheTextHeight,		true, kTEAChunk },
+	{ 0x0a, 0x07, kTheChunk,			kTheTextSize,		true, kTEAChunk },
+	{ 0x0a, 0x11, kTheChunk,			kTheForeColor,		true, kTEAChunk },
+
 	{ 0x0b, 0x01, kTheField,			kTheName,			true, kTEAItemId },
 	{ 0x0b, 0x02, kTheField,			kTheText,			true, kTEAItemId },
 	{ 0x0b, 0x03, kTheField,			kTheTextStyle,		true, kTEAItemId },
@@ -266,6 +273,13 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x0b, 0x07, kTheField,			kTheTextSize,		true, kTEAItemId },
 	{ 0x0b, 0x09, kTheField,			kTheHilite,			true, kTEAItemId },
 	{ 0x0b, 0x11, kTheField,			kTheForeColor,		true, kTEAItemId },
+
+	// the chunk of field
+	{ 0x0c, 0x03, kTheChunk,			kTheTextStyle,		true, kTEAChunk },
+	{ 0x0c, 0x04, kTheChunk,			kTheTextFont,		true, kTEAChunk },
+	{ 0x0c, 0x05, kTheChunk,			kTheTextHeight,		true, kTEAChunk },
+	{ 0x0c, 0x07, kTheChunk,			kTheTextSize,		true, kTEAChunk },
+	{ 0x0c, 0x11, kTheChunk,			kTheForeColor,		true, kTEAChunk },
 
 	{ 0x0d, 0x0c, kTheCast,				kTheLoop,			true, kTEAItemId },
 	{ 0x0d, 0x0d, kTheCast,				kTheDuration,		true, kTEAItemId },
@@ -740,6 +754,14 @@ void LC::cb_v4theentitypush() {
 				warning("cb_v4theentitypush: STUB: kTEAMenuIdItemId");
 			}
 			break;
+		case kTEAChunk:
+			{
+				Datum fieldRef = g_lingo->pop().asCastId();
+				fieldRef.type = FIELDREF;
+				Datum chunkRef = readChunkRef(fieldRef);
+				result = g_lingo->getTheEntity(entity, chunkRef, field);
+			}
+			break;
 		default:
 			warning("cb_v4theentitypush: unknown call type %d", g_lingo->_lingoV4TheEntity[key]->type);
 			break;
@@ -836,6 +858,14 @@ void LC::cb_v4theentityassign() {
 			/*Datum menuId = */g_lingo->pop();
 			/*Datum itemId = */g_lingo->pop();
 			warning("cb_v4theentityassign: STUB: kTEAMenuIdItemId");
+		}
+		break;
+	case kTEAChunk:
+		{
+			Datum fieldRef = g_lingo->pop().asCastId();
+			fieldRef.type = FIELDREF;
+			Datum chunkRef = readChunkRef(fieldRef);
+			g_lingo->setTheEntity(entity, chunkRef, field, value);
 		}
 		break;
 	default:

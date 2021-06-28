@@ -37,7 +37,8 @@ enum TheEntityArgsType {
 	kTEANOArgs = 0,
 	kTEAItemId = 1,
 	kTEAString,
-	kTEAMenuIdItemId
+	kTEAMenuIdItemId,
+	kTEAChunk
 };
 
 struct LingoV4TheEntity {
