@@ -87,7 +87,7 @@ void audioInterface::resumeGameClock(void) {
 }
 
 bool audioInterface::playFlag(void) {
-	debugC(2, kDebugSound, "STUB: audioInterface::playFlag()");
+	debugC(5, kDebugSound, "STUB: audioInterface::playFlag()");
 	return (!audio->queue.isPlaying() && audio->queue.getSize() > 0);
 }
 

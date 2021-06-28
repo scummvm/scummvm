@@ -48,6 +48,8 @@ private:
 	Audio::SoundHandle _sfxSoundHandle;
 	Audio::SoundHandle _bgmSoundHandle;
 
+	soundSegment _currentSpeech = 0;
+
 public:
 	void pushVoice(soundSegment s) {
 		_speechQueue.push(s);
@@ -72,6 +74,7 @@ public:
 	void playNext() {
 		if (_speechQueue.size()) {
 			soundSegment s = _speechQueue.pop();
+			_currentSpeech = s;
 			playSpeech(s);
 		}
 
@@ -121,6 +124,11 @@ public:
 
 	bool isSpeechPlaying() {
 		return g_system->getMixer()->isSoundHandleActive(_speechSoundHandle);
+	}
+
+	bool isSpeechPlaying(soundSegment s) {
+		debugC(2, kDebugSound, "STUB: Sound: isSpeechPlaying(%d) vs %d", s, _currentSpeech);
+		return isSpeechPlaying() && _currentSpeech <= s;
 	}
 
 	bool isSoundPlaying() {
