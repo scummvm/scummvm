@@ -435,6 +435,8 @@ Point32 translateLocation(Location playAt) {
 //	MIDI playback
 
 void playMusic(uint32 s) {
+	debugC(1, kDebugSound, "playMusic(%s)", tag2str(s));
+
 	currentMidi = s;
 
 	if (hResCheckResID(musicRes, s)) {
@@ -447,6 +449,8 @@ void playMusic(uint32 s) {
 // in memory sfx
 
 void playMemSound(uint32 s) {
+	debugC(1, kDebugSound, "playMemSound(%s)", tag2str(s));
+
 	if (bufCheckResID(NULL, s))
 		audio->queueSound(s, memDec, 1, Here);
 }
@@ -455,6 +459,8 @@ void playMemSound(uint32 s) {
 // on disk sfx
 
 void playSound(uint32 s) {
+	debugC(1, kDebugSound, "playSound(%s)", tag2str(s));
+
 	if (hResCheckResID(soundRes, s))
 		audio->queueSound(s, soundDec, 1, Here);
 }
@@ -463,7 +469,8 @@ void playSound(uint32 s) {
 // on disk sfx (x2 buffered)
 
 void playLongSound(uint32 s) {
-	warning("playLongSound(%d)", s);
+	debugC(1, kDebugSound, "playLongSound(%s)", tag2str(s));
+
 	if (hResCheckResID(longRes, s))
 		audio->queueVoice(s, longSoundDec);
 	else
@@ -474,7 +481,7 @@ void playLongSound(uint32 s) {
 // on disk voice (x2 buffered)
 
 void playVoice(uint32 s) {
-	warning("playVoice(%d)", s);
+	debugC(1, kDebugSound, "playVoice(%s)", tag2str(s));
 
 	if (hResCheckResID(voiceRes, s)) {
 		if (s)
@@ -488,7 +495,12 @@ void playVoice(uint32 s) {
 // supplemental interface for speech
 
 bool sayVoice(uint32 s[]) {
-	warning("sayVoice(%d)", s[0]);
+	debugCN(1, kDebugSound, "sayVoice([%s", tag2str(s[0]));
+
+	for (uint32 i = 1; s[i]; i++)
+		debugCN(1, kDebugSound, ", %s", tag2str(s[i]));
+
+	debugC(1, kDebugSound, "])");
 
 	bool worked = false;
 
@@ -505,7 +517,7 @@ bool sayVoice(uint32 s[]) {
 // main loop playback
 
 void _playLoop(uint32 s) {
-	warning("STUB: _playLoop(%d)", s);
+	warning("STUB: _playLoop(%s)", tag2str(s));
 
 	currentLoop = s;
 	if (currentLoop == audio->currentLoop() && 0)
@@ -539,6 +551,8 @@ void playLoop(uint32 s) {
 // attenuated sound players
 
 void playSoundAt(uint32 s, Point32 p) {
+	debugC(1, kDebugSound, "playSoundAt(%s, %d,%d)", tag2str(s), p.x, p.y);
+
 	if (hResCheckResID(soundRes, s))
 		audio->queueSound(s, soundDec, 1, p);
 }
@@ -555,7 +569,12 @@ void playSoundAt(uint32 s, Location playAt) {
 Audio::SoundHandle _speechSoundHandle;
 
 bool sayVoiceAt(uint32 s[], Point32 p) {
-	warning("sayVoiceAt(%s, %d,%d)", tag2str(s[0]), p.x, p.y);
+	debugCN(1, kDebugSound, "sayVoiceAt([%s", tag2str(s[0]));
+
+	for (uint32 i = 1; s[i]; i++)
+		debugCN(1, kDebugSound, ", %s", tag2str(s[i]));
+
+	debugC(1, kDebugSound, "], %d,%d", p.x, p.y);
 
 	Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, s[0], "voice data");
 
@@ -577,6 +596,8 @@ bool sayVoiceAt(uint32 s[], Location playAt) {
 // loop playback w/ attenuation
 
 void playLoopAt(uint32 s, Point32 loc) {
+	debugC(1, kDebugSound, "playLoopAt(%s, %d,%d)", tag2str(s), loc.x, loc.y);
+
 	if (hResCheckResID(loopRes, s))
 		audio->queueLoop(s, loopDec, 0, loc);
 	else
@@ -588,6 +609,8 @@ void killAuxTheme(soundSegment lid);
 void killAllAuxThemes(void);
 
 void playLoopAt(uint32 s, Location playAt) {
+	debugC(1, kDebugSound, "playLoopAt(%s, %d,%d,%d)", tag2str(s), playAt.u, playAt.v, playAt.z);
+
 	if (s) {
 		addAuxTheme(playAt, s);
 	} else {
