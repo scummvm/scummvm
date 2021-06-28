@@ -43,6 +43,9 @@ TERMINATOR(termPlayOutro);
 INITIALIZER(initSystemTimer);
 TERMINATOR(termSystemTimer);
 
+INITIALIZER(initAudio);
+TERMINATOR (termAudio);
+
 INITIALIZER(initResourceFiles);
 TERMINATOR(termResourceFiles);
 

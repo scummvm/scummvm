@@ -58,6 +58,7 @@ TowerLayer tower[fullyInitialized] = {
 	{ memoryInitialized,         &initMemPool,          &termMemPool },
 	{ introInitialized,          &initPlayIntro,        &termPlayOutro },
 	{ timerInitialized,          &initSystemTimer,      &termSystemTimer },
+	{ audioInitialized,          &initAudio,            &termAudio},
 	{ resourcesInitialized,      &initResourceFiles,    &termResourceFiles },
 	{ serversInitialized,        &initResourceServers,  &termResourceServers },
 	{ pathFinderInitialized,     &initPathFinders,      &termPathFinders },
@@ -159,6 +160,14 @@ TERMINATOR(termSystemTimer) {
 	cleanupSystemTimer();
 }
 
+// ------------------------------------------------------------------------
+
+extern INITIALIZER(initAudio);
+
+TERMINATOR (termAudio)
+{
+	cleanupAudio();
+}
 
 // ------------------------------------------------------------------------
 
