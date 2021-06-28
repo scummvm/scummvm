@@ -576,7 +576,7 @@ bool sayVoiceAt(uint32 s[], Point32 p) {
 
 	debugC(1, kDebugSound, "], %d,%d)", p.x, p.y);
 
-	audio->queue.pushVoice(s);
+	audio->queueVoice(s, voiceDec, p);
 
 	return true;
 }
@@ -633,9 +633,8 @@ void moveLoop(Location loc) {
 
 bool stillDoingVoice(uint32 sampno) {
 	warning("STUB: stillDoingVoice(%s)", tag2str(sampno));
-	return audio->queue.isPlaying();
 
-//	return (audio->saying(sampno));
+	return audio->queue.isSpeechPlaying();
 }
 
 

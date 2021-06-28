@@ -111,6 +111,7 @@ bool audioInterface::goodMIDICard(void) {
 
 void audioInterface::queueSound(soundSegment s, decoderSet *, int16 loopFactor, sampleLocation where) {
 	warning("STUB: audioInterface::queueSound(%d,  @%d,%d)", s, where.x, where.y);
+	audio->queue.pushSound(s);
 }
 
 void audioInterface::queueLoop(soundSegment s, decoderSet *sDec, int16 loopFactor, sampleLocation where) {
@@ -132,6 +133,7 @@ void audioInterface::queueVoice(soundSegment s, decoderSet *, sampleLocation whe
 
 void audioInterface::queueVoice(soundSegment s[], decoderSet *, sampleLocation where) {
 	warning("STUB: audioInterface::queueVoice(soundSegment [], decoderSet *, sampleLocation)");
+	audio->queue.pushVoice(s);
 }
 
 void audioInterface::stopVoice(void) {
