@@ -210,8 +210,12 @@ bool Sprite::shouldHilite() {
 	if (_puppet)
 		return false;
 
-	if (g_director->getVersion() < 400 && _ink == kInkTypeMatte)
-		return true;
+	if (_ink == kInkTypeMatte) {
+		if (g_director->getVersion() < 300)
+			return true;
+		if (isQDShape())
+			return true;
+	}
 
 	if (_cast) {
 		// we have our own check for button, thus we don't need it here
