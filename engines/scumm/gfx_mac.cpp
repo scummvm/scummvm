@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "scumm/charset.h"
 #include "scumm/usage_bits.h"
+#include "scumm/verbs.h"
 
 namespace Scumm {
 
@@ -77,8 +78,9 @@ void ScummEngine::mac_restoreCharsetBg() {
 void ScummEngine::mac_drawLoomPracticeMode() {
 	// In practice mode, the game shows the notes as they are being played.
 	// In the DOS version, this is drawn by script 27 but the Mac version
-	// just sets variables 50 and 54. I'm not sure what the difference
-	// between the two is.
+	// just sets variables 50 and 54. The box is actually a verb, and it
+	// seems that setting variable 50 is pretty much equal to turning verb
+	// 53 on or off. I'm not sure what the purpose of variable 54 is.
 
 	int x = 216;
 	int y = 377;
@@ -88,6 +90,15 @@ void ScummEngine::mac_drawLoomPracticeMode() {
 
 	byte *ptr = (byte *)_macScreen->getBasePtr(x,  y);
 	int pitch = _macScreen->pitch;
+
+	int slot = getVerbSlot(53, 0);
+	VerbSlot *vs = &_verbs[slot];
+
+	vs->curmode = (VAR(var) != 0);
+	vs->curRect.left = x / 2;
+	vs->curRect.right = (x + width) / 2;
+	vs->curRect.top = y / 22;
+	vs->curRect.bottom = (y + height) / 2;
 
 	_macScreen->fillRect(Common::Rect(x, y, x + width, y + height), 0);
 
