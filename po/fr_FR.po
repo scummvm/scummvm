@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-27 15:47+0000\n"
-"PO-Revision-Date: 2021-06-28 09:25+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2021-06-28 18:09+0000\n"
+"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -2016,7 +2016,7 @@ msgid ""
 msgstr ""
 "ScummVM peut maintenant rechercher les mises à jour\n"
 "automatiquement, ce qui nécessite un accès internet.\n"
-"Voulez-vous activer cette options ?"
+"Voulez-vous activer cette option ?"
 
 #: gui/updates-dialog.cpp:52
 msgid ""
@@ -2445,7 +2445,7 @@ msgstr ""
 "\n"
 "Veuillez fournir les informations ci-dessous à l'équipe de ScummVM sur %s "
 "ainsi que le nom du jeu que vous avez essayé d'ajouter, sa version, la "
-"langue, etc... :"
+"langue, etc. :"
 
 #: engines/game.cpp:175
 #, c-format
@@ -5423,8 +5423,8 @@ msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
-"Utiliser le fichier archive 'arcriven.z' marche également. Vous pouvez "
-"également utiliser l'exécutable pour Mac qui se nomme 'Riven'."
+"Utiliser le fichier archive 'arcriven.z' fonctionne également. Vous pouvez "
+"aussi utiliser l'exécutable pour Mac qui se nomme 'Riven'."
 
 #: engines/mohawk/riven.cpp:170
 msgid ""
@@ -5432,7 +5432,7 @@ msgid ""
 "works."
 msgstr ""
 "Il vous manque le fichier 'extras.mhk'. Utiliser le fichier archive "
-"'arcriven.z' marche également."
+"'arcriven.z' fonctionne également."
 
 #: engines/mohawk/riven.cpp:504
 msgid "You are missing the following required Riven data files:\n"
@@ -5589,7 +5589,7 @@ msgstr "Ouvrir le menu triches principal"
 
 #: engines/nancy/input.cpp:256
 msgid "Open event flags cheat menu"
-msgstr "Ouvrir le menu triches - marqueurs d'évenements"
+msgstr "Ouvrir le menu triches - marqueurs d'évènements"
 
 #: engines/nancy/dialogs.cpp:41
 msgid "Player Speech"
@@ -5624,7 +5624,7 @@ msgid ""
 msgstr ""
 "Utilise les menus principaux, de sauvegarde/chargement et de configuration "
 "du moteur original. Le menu principal global de ScummVM est toujours "
-"accessible via son raccourcis clavier."
+"accessible via son raccourci clavier."
 
 #. I18N: Second Chance is the name of the original engine's autosave system
 #: engines/nancy/dialogs.cpp:46
@@ -5855,7 +5855,7 @@ msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
-"Je compressé détecté. Merci de le décompresser comme spécifié dans la "
+"Jeu compressé détecté. Merci de le décompresser comme spécifié dans la "
 "description du jeu sur notre Wiki"
 
 #: engines/queen/detection.cpp:45
