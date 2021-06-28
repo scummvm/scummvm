@@ -671,7 +671,7 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 				COMPILE(node->val);
 				COMPILE(menuItem->arg1)
 				COMPILE(menuItem->arg2);
-				code1(LC::c_theentityassign);
+				code1(LC::c_themenuitementityassign);
 				codeInt(kTheMenuItem);
 				codeInt(fieldId);
 				return true;
@@ -1257,7 +1257,7 @@ bool LingoCompiler::visitTheOfNode(TheOfNode *node) {
 				return false;
 			COMPILE(menuItem->arg1)
 			COMPILE(menuItem->arg2);
-			code1(LC::c_theentitypush);
+			code1(LC::c_themenuentitypush);
 			codeInt(kTheMenuItem);
 			codeInt(fieldId);
 			return true;
