@@ -381,6 +381,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "princetonsat98",		"The Princeton Review: Inside the SAT '98" },
 	{ "revwar",     		"Revolutionary War Picture CD" },
 	{ "saillusion",     	"Scientific American Library: Illusion" },
+	{ "sarahcatalog",     	"Sarah McLachlan Catalogue" },
 	{ "sauniverse",     	"Scientific American Library: The Universe" },
 	{ "sciencesmart",		"Science Smart" },
 	{ "scrutiny",			"ScruTiny in the Great Round" },
@@ -441,8 +442,20 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "wriggle",			"Wriggle" },
 
 	// Music videos and enhanced music CDs
+	{ "avrilletgo",			"Avril Lavigne: Let Go" },
 	{ "bobmambo5",			"Bob the Builder: Mambo No. 5" },
+	{ "chaquico1000",		"Craig Chaquico: A Thousand Pictures" },
+	{ "concentration",		"Solitudes: Natural Concentration" },
+	{ "girlsaloudbox",		"Girls Aloud: The Singles Box Set" },
+	{ "imesceneryfish",		"I Mother Earth: Scenery and Fish" },
 	{ "princerave",			"Prince: Rave Un2 the Joy Fantastic" },
+	{ "relaxation",			"Solitudes: Natural Relaxation" },
+	{ "relaxplayer",		"Solitudes: Natural Relaxation Audio Player" },
+	{ "royksoppam",			"Röyksopp: Melody A.M." },
+	{ "sarahsurfacing",		"Sarah McLachlan: Surfacing" },
+	{ "smashchillin",		"Smash Hits: Chillin\' Out Summer 2001" },
+	{ "songbird",			"Solitudes: Songbird Symphony" },
+	{ "stressrelief2",		"Solitudes: Natural Stress Relief II" },
 	{ "tonetrakker",		"Tone Trakker" },
 
 	// Danish titles
@@ -669,9 +682,11 @@ static const PlainGameDescriptor directorGames[] = {
 	// Titles containing Director extras
 	{ "amgpremiere",		"The American Girls Premiere" },
 	{ "dcanyoncd",			"Dino CD Audio Player" },
+	{ "freeallangels",		"Ash: Free All Angels Video Mixer" },
 	{ "lbfamfun",			"Little Bear Family Fun" },
 	{ "poliq",				"Political IQ Test" },
 	{ "scissorsnstones",	"Scissors N Stones On-Line Manual" },
+	{ "solmahjong",			"Solitudes Mahjong Game" },
 	{ "superbowltrivia",	"Super Bowl Trivia Game" },
 	{ "thinkinthingsdp",	"Dear Parents: About Thinkin' Things..." },
 	{ "ultrobotkit",		"Robotoid Assembly Toolkit" },
@@ -758,6 +773,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "cinemania96",		"Microsoft Cinemania 96" },
 	{ "cpu",   				"Connectix PowerBook Utilities" },
 	{ "d",   				"D" },
+	{ "dotsafe",   			"Dotsafe" },
 	{ "earthwormjim",		"Earthworm Jim" },
 	{ "explorapedia",		"Microsoft Explorapedia" },
 	{ "famalbum",			"Family Album Creator" },
@@ -836,6 +852,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ssholidaymickey",	"Holiday Mickey Screen Saver" },
 	{ "ssleepipes",			"The Lee Pipes Desktop Animated Feature" },
 	{ "sslivepicture",		"Live Picture Screen Saver" },
+	{ "ssnatureasart",		"Nature as Art" },
 	{ "sspeekaboo",			"Winnie the Pooh Peek-a-Boo Screen Saver" },
 	{ "ssrevwar",			"Revolutionary War Screen Saver" },
 
@@ -1795,6 +1812,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("cclown", "", "Color Clown", "bcea0da496deb8bf81c136a8538b9a01", 852148, 404),
 	WINGAME1("cclown", "", "CCLOWN.EXE", "9bb66730af24e8a5d5cbbddfe98b33e6", 1050805, 404),
 	WINDEMO1("cclown", "Help", "HCLOWN.EXE", "ed58a56a9e9e003433854a041cfb12c0", 698845, 404),
+
+	MACGAME1("chaquico1000", "ECD", "1000 Pictures", "01be45e7241194dad07938e7059b88e3", 486982, 404),
+	WINGAME1("chaquico1000", "ECD", "1000_PIC.EXE", "7f69b6805b6a70c75b98171370ab906f", 4110937, 404),
 
 	// Original filename is Chine Crisis /demo
 	MACDEMO1_l("chinacrisis", "Demo", "Chine Crisis -demo", "b06606b4d174b85d41b265bd366959d6", 288414, Common::JA_JPN, 402),
@@ -2788,6 +2808,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("ibmcdextra", "", "SAMPLER.EXE", "2e62abdad839e42068afdcd0644d7dcf", 929109,
 							   "SAMPMM.DIR",  "0a17bfdfbd2413932af9d1578419b4e3", 4642820, 500),
 
+	MACGAME1("imesceneryfish", "ECD", "Scenery and Fish", "e60d4b832a771b0064a703938f82dfb3", 2804, 404),
+	WINGAME2("imesceneryfish", "ECD", "runme.exe",		  "47b17c219097afb877fd9bc15455e4d4", 738415,
+									  "main.dir",		  "0b20d6b771b4f5fd50e823c3773aecdd", 3526788, 404),
+
 	MACGAME1("jslearn", "1997 D5 Demo", "JumpStart Previews", "231d3041df162be4a0ddd36a74eb03b6", 718745, 501),
 	WINGAME1("jslearn", "1997 D5 Demo", "PREV32A.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411155, 501),
 
@@ -2875,6 +2899,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("saillusion", "", "Illusion", "06ed90580400cd9e263525f84c8075fd", 705673, Common::DE_DEU, 500),
 	WINGAME1("saillusion", "", "ILLUSION.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411175, 501),
 	WINGAME1_l("saillusion", "", "Illusion.exe", "1c1fa9c5797b8d2cdc04ad283d9e41d7", 1412949, Common::DE_DEU, 501),
+
+	// Catalogue is found on Surfacing ECD
+	// Windows version calls catalogue from ECD main menu
+	MACGAME1("sarahcatalog", "",	  "Cat player",		 "b861188374e80b1184e7f96dcab4fc9b", 718353, 501),
+	MACGAME1("sarahsurfacing", "ECD", "surf ecd Player", "06ed90580400cd9e263525f84c8075fd", 704765, 501),
+	WINGAME1("sarahsurfacing", "ECD", "RUNME32.EXE",	 "3460ad87d2ba57104e2810a77b53c220", 1462645, 501),
 
 	MACGAME1("sauniverse", "", "UNIVPPC", "f488a0465587e739b67e53d224449b9a", 94329, 500),
 	WINGAME1("sauniverse", "", "UNIV32.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1468873, 501),
@@ -3017,6 +3047,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// General preview for ClueFinders series. Does not correspond to a specific game.
 	WINGAME1("cfdemo", "", "CFDemo.exe", "d62438566e44826960fc16c5c23dbe43", 11941853, 650),
+
+	MACGAME1("concentration", "ECD", "Natural",	   "f987dae6f5cdd01875c886a491591e72", 1031658, 650),
+	WINGAME2("concentration", "ECD", "win95.exe",  "d62438566e44826960fc16c5c23dbe43", 1703271,
+									 "stub32.dxr", "c835559b5556665bc755350ec9bd8244", 47639, 650),
 
 	MACGAME1_l("crusader2000", "", "Lancer Croisades", "398eb2cdf121feb490097c6323d52267", 1031745, Common::FR_FRA, 650),
 	WINGAME1_l("crusader2000", "", "Croisade.exe", "d62438566e44826960fc16c5c23dbe43", 1546312, Common::FR_FRA, 650),
@@ -3285,6 +3319,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Launches installer for non-Director game (Nanico)
 	WINGAME1_l("divertire", "Número 5", "divertire.exe", "c1a2e8b7e41fa204009324a9c7db1030", 4653626, Common::PT_BRA, 702),
 
+	// Found as Enhanced CD content on WOW 2000 Christian Rock compilation
+	WINDEMO1("dotsafe", "Demo", "DOTSAFE.EXE", "c1a2e8b7e41fa204009324a9c7db1030", 19795672, 700),
+
 	WINGAME2("easports2000", "", "PC.EXE", 	  "c1a2e8b7e41fa204009324a9c7db1030", 2212134,
 								 "INTRO.DXR", "209cd844f714140413eb58c3a69db454", 5179191, 700),
 
@@ -3368,8 +3405,23 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("rainbowfish2", "", "Arcobaleno.exe", "06f5ec786e7f2e94e36571f651810fb4", 1817774, Common::IT_ITA, 702),
 	WINGAME1_l("rainbowfish2", "", "wal.exe", "06f5ec786e7f2e94e36571f651810fb4", 1817774, Common::DE_DEU, 702),
 
+	WINGAME1("relaxation", "ECD",  "solitude.exe", "7a4164849d026c0f2aa8ea4c7d5447ba", 1807680, 702),
+	MACGAME1("relaxplayer", "ECD", "Relax",		   "0944b962ebb00f4b5d5149d220f8449b", 112738, 702),
+
 	MACGAME1("smartsteps3rd", "", "Smart Steps 3rd Grade", "0944b962ebb00f4b5d5149d220f8449b", 116042, 702),
 	WINGAME1("smartsteps3rd", "", "Smart Steps 3rd Grade.exe", "7c18c9a6af2694156bf09ed195c1ab09", 1820192, 702),
+
+	// Found on Solitudes Enhanced CDs
+	// 1999 version is on Natural Relaxation
+	// 2001 version is on Songbird Symphony, Stress Relief 2 and others
+	MACGAME1("solmahjong", "1999 version", "Mahjong",	  "0944b962ebb00f4b5d5149d220f8449b", 113714, 702),
+	MACGAME1("solmahjong", "2001 version", "Mahjong",	  "0944b962ebb00f4b5d5149d220f8449b", 112758, 702),
+	WINGAME1("solmahjong", "1999 version", "Mahjong.exe", "7a4164849d026c0f2aa8ea4c7d5447ba", 2757472, 702),
+	WINGAME1("solmahjong", "2001 version", "Mahjong.exe", "7a4164849d026c0f2aa8ea4c7d5447ba", 2832712, 702),
+
+	// Screen Saver found on Solitudes Natural Relaxation ECD
+	MACGAME1("ssnatureasart", "", "Nature As Art", "0944b962ebb00f4b5d5149d220f8449b", 199990, 702),
+	WINGAME1("ssnatureasart", "", "Nature As Art.exe", "7a4164849d026c0f2aa8ea4c7d5447ba", 3246939, 702),
 
 	MACGAME1_l("tkkgkit", "", "Phantombild Start", "0944b962ebb00f4b5d5149d220f8449b", 115754, Common::DE_DEU, 702),
 	WINGAME1_l("tkkgkit", "", "Phantombild Start.exe", "7c18c9a6af2694156bf09ed195c1ab09", 1820554, Common::DE_DEU, 702),
@@ -3420,6 +3472,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("alfons", "", "Alfons", "08c9ea94f6469e71ae0c71987bbf6323", 199733, Common::SE_SWE, 851),
 	WINGAME1_l("alfons", "", "Alfons.exe", "02913e7deeab4ece4ae44ad521082d4e", 2166668, Common::SE_SWE, 851),
 
+	MACGAME2("avrilletgo", "ECD", "Projector",	   "4ea5fc09f79eee6dded94dc40f303779", 194863,
+								  "movie.dxr",	   "6d0c0712fdd32cf1de489b4c152b2460", 50908119, 800),
+	WINGAME2("avrilletgo", "ECD", "Projector.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 56830,
+								  "movie.dxr",	   "b8dc39b080e4892913c2d302fec39567", 50907991, 800),
+
 	MACDEMO1("balto2", "Trailer", "MacBolto", "08c9ea94f6469e71ae0c71987bbf6323", 155737, 850),
 	WINDEMO1("balto2", "Trailer", "Balto.exe", "c163f36141579ee374f7b4b2bddee95a", 2309044, 850),	
 
@@ -3456,6 +3513,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("fractiondecimal", "", "Fd.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 4775506, 800),
 
+	// Found as mini-game on Chillin Out ECD from Smash Hits magazine
+	WINGAME1("freeallangels", "", "FREE ALL ANGELS.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2248678, 800),
+
 	MACGAME1("garfieldmadcats", "", "Mad About Cats", "4ea5fc09f79eee6dded94dc40f303779", 194891, 800),
 	WINGAME1("garfieldmadcats", "", "Garfield Start.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2695719, 800),
 
@@ -3471,6 +3531,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Mac OS X and Windows versions are D9
 	MACGAME1_l("garygadget5", "Classic OS", "Miel5 OS9", "789536da81694518f494945bb161ace9", 234210, Common::NL_NLD, 851),
+
+	// Mac version on CD02 is D10
+	WINGAME1("girlsaloudbox", "CD02 No Good Advice", 		"Clickme.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2911148, 800),
+	MACGAME1("girlsaloudbox", "CD03 Life Got Cold",  		"Enhanced",	   "08c9ea94f6469e71ae0c71987bbf6323", 190678, 850),
+	WINGAME2("girlsaloudbox", "CD03 Life Got Cold",  		"Start.exe",   "c163f36141579ee374f7b4b2bddee95a", 2117284,
+													 		"ECD.dxr",	   "7d8cb42d6784efca5dda28e879423f84", 14581925, 850),
+	MACGAME1("girlsaloudbox", "CD05 The Show",		 		"Enhanced",	   "08c9ea94f6469e71ae0c71987bbf6323", 186904, 850),
+	WINGAME2("girlsaloudbox", "CD05 The Show",		 		"Start.exe",   "c163f36141579ee374f7b4b2bddee95a", 2117284,
+													 		"ECD.dxr",	   "4517e9e28fcec6762e8155765221d9e8", 3446870, 850),
+	WINGAME2("girlsaloudbox", "CD13 Something Kinda Ooooh", "Start.exe",   "c163f36141579ee374f7b4b2bddee95a", 2117284,
+													 		"ECD.dxr",	   "27e4760a954f90285f80331ed5036426", 4236916, 850),
 
 	MACGAME1_l("girlspack", "", "Das Girl's Pack", "4ea5fc09f79eee6dded94dc40f303779", 214488, Common::DE_DEU, 800),
 	WINGAME2_l("girlspack", "", "Projector.exe",   "e24d4bab978b1a5c2326d2c56cf4d781", 2251176,
@@ -3562,6 +3633,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("rhmeteor", "", "RH Meteor Madness", "4ea5fc09f79eee6dded94dc40f303779", 199688, 800),
 	WINGAME1("rhmeteor", "", "RescueHeroes.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2248192, 800),
 
+	MACGAME2("royksoppam", "Bonus disc", "Projector", "a44511b8ff0e46b4f9c85dd1cb58d458", 155743,
+										 "MAIN.dxr",  "b03dfbaac4bf75198d724048e4fdad80", 3236242, 851),
+
 	MACDEMO1("secretkeys", "Demo", "Secret Keys Demo", "a44511b8ff0e46b4f9c85dd1cb58d458", 155771, 851),
 	WINDEMO1("secretkeys", "Demo", "Secret Keys Demo.exe", "0c81c84ca4966313ad27d47daba44537", 2200706, 851),
 
@@ -3571,6 +3645,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("sethi2", "", "Sethi_Incas.exe", "0c81c84ca4966313ad27d47daba44537", 2158774, Common::FR_FRA, 851),
 
 	WINGAME1_l("skeeto10", "", "mm7main.exe", "0c81c84ca4966313ad27d47daba44537", 12051446, Common::DA_DAN, 851),
+
+	// Loads two external Flash games and one external Director game
+	WINGAME1("smashchillin", "ECD", "Smash.exe", "c163f36141579ee374f7b4b2bddee95a", 2152147, 850),
+
+	MACGAME2("songbird", "ECD", "Solitudes",			 "08c9ea94f6469e71ae0c71987bbf6323", 157045,
+								"Songbird Symphony.CDQ", "8383a2142c38600d464847409b76db5a", 5925, 850),
+	WINGAME1("songbird", "ECD", "solitudes.exe",		 "c163f36141579ee374f7b4b2bddee95a", 2118995, 850),
+
+	MACGAME2("stressrelief2", "ECD", "Solitudes",					 "08c9ea94f6469e71ae0c71987bbf6323", 157045,
+									 "Natural Stress Relief II.CDQ", "18256d220db28ca68c8907d5ac590190", 12912, 850),
 
 	WINGAME1("spykids3d", "", "Spy Kids 3D.exe", "c163f36141579ee374f7b4b2bddee95a", 1314722, 850),
 
@@ -3676,6 +3760,61 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("babarcoins", "", "Mac.osx", 		"a171b7a952d1ac68ae3cd419d6dfc674", 309249, 1010),
 	WINGAME2("babarcoins", "", "Start.exe",		"b198e9bf56c679747e4fd0972d5ba7b7", 2659300,
 							   "ba-01_A01.dxr", "cb38821091082aeb097e88551b791e05", 9946435, 1010),
+
+	// CDs 03-05 are D8 for Mac and Windows
+	// CD02 and CD13 are D8 for Windows and D10 for Mac
+	// Several discs contain mini-games using Flash Player (v6,v7,v8)
+	MACGAME1("girlsaloudbox", "CD02 No Good Advice",			  		"OSX",		  		   "666bfa2ee1ae12443ce06f5dd142502b", 331558, 1000),
+	MACGAME1("girlsaloudbox", "CD06 Love Machine (Classic)",			"ECD.classic", 		   "670b37815e4e3f61b7af77cc676a791c", 259405, 1000),
+	MACGAME1("girlsaloudbox", "CD06 Love Machine (OS X)",				"ECD.osx",	  		   "666bfa2ee1ae12443ce06f5dd142502b", 309243, 1000),
+	WINGAME2("girlsaloudbox", "CD06 Love Machine",				  		"start.exe",		   "827e5af88f4c096652a1523dc28c9bf4", 8376442,
+																		"GirlsAloud.mov",	   "1b689c2002aa2397fde706f197aa11d1", 47282498, 1000),
+	MACGAME1("girlsaloudbox", "CD07 I'll Stand By You (Classic)",		"ECD.classic",		   "670b37815e4e3f61b7af77cc676a791c", 260404, 1000),
+	MACGAME1("girlsaloudbox", "CD07 I'll Stand By You (OS X)",			"ECD.osx",			   "666bfa2ee1ae12443ce06f5dd142502b", 310246, 1000),
+	WINGAME2("girlsaloudbox", "CD07 I'll Stand By You",				  	"start.exe",		   "827e5af88f4c096652a1523dc28c9bf4", 8830599,
+																		"Stand Final.mov",	   "823208f98b99ba3a4987e3085dfd624f", 44262711, 1000),
+	MACGAME1("girlsaloudbox", "CD08 Wake Me Up (Classic)",				"ECD.classic", 		   "670b37815e4e3f61b7af77cc676a791c", 258001, 1000),
+	MACGAME1("girlsaloudbox", "CD08 Wake Me Up (OS X)",					"ECD.osx",			   "666bfa2ee1ae12443ce06f5dd142502b", 307842, 1000),
+	WINGAME2("girlsaloudbox", "CD08 Wake Me Up",				  		"start.exe",		   "827e5af88f4c096652a1523dc28c9bf4", 7455567,
+																		"Girls AloudWake.mov", "a70ba1e1e16cbf213a6155485533495e", 52371605, 1000),
+	MACGAME1("girlsaloudbox", "CD09 Long Hot Summer (Classic)",			"Click Me os9",		   "08c9ea94f6469e71ae0c71987bbf6323", 205687, 1000),
+	MACGAME1("girlsaloudbox", "CD09 Long Hot Summer (OS X)",			"Click Me.osx",		   "666bfa2ee1ae12443ce06f5dd142502b", 311946, 1000),
+	WINGAME2("girlsaloudbox", "CD09 Long Hot Summer",					"start.exe",		   "827e5af88f4c096652a1523dc28c9bf4", 9316487,
+																		"SUMMER.DAT",		   "a56b212624c0a1742f6b579581c8384e", 118528, 1000),
+	MACGAME1("girlsaloudbox", "CD10 Biology (Classic)",					"Click Me os9",		   "08c9ea94f6469e71ae0c71987bbf6323", 205856, 1000),
+	MACGAME1("girlsaloudbox", "CD10 Biology (OS X)",					"Click Me.osx",		   "666bfa2ee1ae12443ce06f5dd142502b", 312115, 1000),
+	WINGAME2("girlsaloudbox", "CD10 Biology",				  			"start.exe",		   "827e5af88f4c096652a1523dc28c9bf4", 9348193,
+																		"Biology.mp3",		   "3039a3d35b819e15c806b8e1c8d108f3", 904581, 1000),
+	MACGAME1("girlsaloudbox", "CD11 See the Day (Classic)",				"Click Me os9",		   "08c9ea94f6469e71ae0c71987bbf6323", 189904, 1000),
+	MACGAME1("girlsaloudbox", "CD11 See the Day (OS X)",				"Click Me.osx",		   "666bfa2ee1ae12443ce06f5dd142502b", 296163, 1000),
+	WINGAME2("girlsaloudbox", "CD11 See the Day",				  		"START.EXE",		   "827e5af88f4c096652a1523dc28c9bf4", 7006606,
+																		"TRACK.MP3",		   "7cc9e0f7e9257442490650f4cb747339", 4881282, 1000),
+	MACGAME1("girlsaloudbox", "CD12 Whole Lotta History (Classic)",		"Click Me os9",		   "08c9ea94f6469e71ae0c71987bbf6323", 190669, 1000),
+	MACGAME1("girlsaloudbox", "CD12 Whole Lotta History (OS X)",		"Click Me.osx",		   "666bfa2ee1ae12443ce06f5dd142502b", 296928, 1000),
+	WINGAME2("girlsaloudbox", "CD12 Whole Lotta History",				"start.exe",		   "827e5af88f4c096652a1523dc28c9bf4", 8680437,
+																		"GIRLS ALOUD.mov",	   "0897d41deb1a044243238bb692933226", 58160086, 1000),
+	MACGAME1("girlsaloudbox", "CD13 Something Kinda Ooooh (Classic)", 	"Click Me os9",		   "08c9ea94f6469e71ae0c71987bbf6323", 191649, 1000),
+	MACGAME1("girlsaloudbox", "CD13 Something Kinda Ooooh (OS X)",	  	"Click Me.osx",		   "666bfa2ee1ae12443ce06f5dd142502b", 297908, 1000),
+	MACGAME1("girlsaloudbox", "CD14 I Think We're Alone Now (Classic)",	"ECD.classic",		   "670b37815e4e3f61b7af77cc676a791c", 248015, 1000),
+	MACGAME1("girlsaloudbox", "CD14 I Think We're Alone Now (OS X)",	"ECD.osx",			   "666bfa2ee1ae12443ce06f5dd142502b", 297853, 1000),
+	WINGAME2("girlsaloudbox", "CD14 I Think We're Alone Now",	  		"START.EXE",		   "827e5af88f4c096652a1523dc28c9bf4", 5480254,
+																		"girls.mov",		   "055c7cdf5708c24861e8e9d856e7a4b3", 58248141, 1000),
+	MACGAME1("girlsaloudbox", "CD15 Walk This Way (Classic)", 			"ECD.classic", 		   "670b37815e4e3f61b7af77cc676a791c", 242326, 1000),
+	MACGAME1("girlsaloudbox", "CD15 Walk This Way (OS X)",	  			"ECD.osx",			   "666bfa2ee1ae12443ce06f5dd142502b", 292174, 1000),
+	WINGAME2("girlsaloudbox", "CD15 Walk This Way",						"start.exe",		   "827e5af88f4c096652a1523dc28c9bf4", 5405872,
+																		"walk.mov",			   "546eb2b6de937674e47d20ad406e4ad3", 49937425, 1000),
+	MACGAME1("girlsaloudbox", "CD16 Sexy! No No No ... (Classic)",		"ECD.classic", 		   "670b37815e4e3f61b7af77cc676a791c", 257648, 1000),
+	MACGAME1("girlsaloudbox", "CD16 Sexy! No No No ... (OS X)",	  		"ECD.osx",			   "666bfa2ee1ae12443ce06f5dd142502b", 307486, 1000),
+	WINGAME2("girlsaloudbox", "CD16 Sexy! No No No ...",	  	  		"start.exe",		   "827e5af88f4c096652a1523dc28c9bf4", 7730270,
+																		"Girls.mov",		   "9148a343290835d87dc297bb10d13c78", 52424731, 1000),
+	MACGAME1("girlsaloudbox", "CD17 Call the Shots (Classic)", 			"ECD.classic", 		   "670b37815e4e3f61b7af77cc676a791c", 256127, 1000),
+	MACGAME1("girlsaloudbox", "CD17 Call the Shots (OS X)",	  			"ECD.osx",			   "666bfa2ee1ae12443ce06f5dd142502b", 305965, 1000),
+	WINGAME2("girlsaloudbox", "CD17 Call the Shots", 			  		"START.EXE", 		   "827e5af88f4c096652a1523dc28c9bf4", 6006160,
+													 					"Girls.mov",		   "b16ea946f4e3096eb2485345fe8899c9", 59580337, 1000),
+	MACGAME1("girlsaloudbox", "CD18 Can't Speak French (Classic)", 		"ECD.classic", 		   "670b37815e4e3f61b7af77cc676a791c", 258680, 1000),
+	MACGAME1("girlsaloudbox", "CD18 Can't Speak French (OS X)",	  		"ECD.osx",			   "666bfa2ee1ae12443ce06f5dd142502b", 308520, 1000),
+	WINGAME2("girlsaloudbox", "CD18 Can't Speak French", 		  		"START.EXE", 		   "827e5af88f4c096652a1523dc28c9bf4", 8080898,
+													 					"french.mov",		   "b64f3b5aaa44dcd3037f01d4f687e072", 53929555, 1000),
 
 	WINGAME2("jsworldp", "",		 "LearnGameLaunch.exe", "7c71b8b5f156d1ee56ca0f9624dec827", 4627915,
 									 "LevelData.utd",		"093b8127750b4762ede83231b3085a46", 81284, 1000),
