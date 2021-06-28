@@ -532,8 +532,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 		}
 	}
 
-	// Rate is always 44100Hz
-	rate = 44100;
+	rate = 22050;
 
 	// Cleanup
 	for (i = 0; i < channels; i++) {
