@@ -39,11 +39,6 @@
 
 namespace Saga2 {
 
-void testTileRendering();
-void testScripts();
-void initScripts();
-void testOpenImage();
-bool openResources();
 void main_saga2();
 
 Saga2Engine *g_vm;
@@ -85,24 +80,6 @@ Common::Error Saga2Engine::run() {
 	loadExeResources();
 
 	main_saga2();
-
-#if 0
-	if (openResources()) {
-		testOpenImage();
-		initScripts();
-		testScripts();
-		testTileRendering();
-	}
-
-	// Simple main event loop
-	Common::Event evt;
-	while (!shouldQuit()) {
-		g_system->getEventManager()->pollEvent(evt);
-
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-	}
-#endif
 
 	return Common::kNoError;
 }
