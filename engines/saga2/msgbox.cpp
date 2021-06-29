@@ -44,9 +44,9 @@ static const StaticRect mbWindowRect = {70, 170, 500, 140};
 static const StaticRect mbOkBtnRect = {100, 100, 100, 25};
 static const StaticRect mbCancelBtnRect = {300, 100, 100, 25};
 static const StaticRect mbOneBtnRect = {200, 100, 100, 25};
-static const StaticRect mbButtonRects[numMessageBtns] = {
-	{ mbOkBtnRect },
-	{ mbCancelBtnRect }
+static const StaticRect *mbButtonRects[numMessageBtns] = {
+	&mbOkBtnRect,
+	&mbCancelBtnRect
 };
 static gFont    *mbButtonFont = &ThinFix8Font;
 
@@ -72,7 +72,7 @@ void writePlaqText(gPort            &port,
                    const char      *msg, ...);
 
 inline Rect16 butBox(int n, int i) {
-	return (n > 1 ? mbButtonRects[i] : mbOneBtnRect);
+	return (n > 1 ? *mbButtonRects[i] : mbOneBtnRect);
 }
 
 /* ===================================================================== *

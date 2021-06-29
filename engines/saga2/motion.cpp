@@ -1260,7 +1260,7 @@ void MotionTask::calcVelocity(const TilePoint &vector,  int16 turns) {
 //	This initiates a motion task for turning an actor
 
 void MotionTask::turn(Actor &obj, Direction dir) {
-	assert(dir >= 0 && dir < 8);
+	assert(dir < 8);
 
 	MotionTask      *mt;
 
@@ -2485,7 +2485,7 @@ void MotionTask::walkAction(void) {
 		walkNormal  = 0,
 		walkSlow,
 		walkRun,
-		walkStairs,
+		walkStairs
 	};
 
 	TilePoint       immediateTarget = getImmediateTarget(),
