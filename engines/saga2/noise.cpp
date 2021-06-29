@@ -749,11 +749,8 @@ int annoyingTestVoice(int32 sampID) {
 //-----------------------------------------------------------------------
 
 int annoyingTestMusic(int32 sampID) {
-#if defined(_WIN32) && !defined(USE_REAL_WAIL)
-	playMusic(MKTAG('M', 'I', 'D', sampID));
-#else
+	//playMusic(MKTAG('M', 'I', 'D', sampID));
 	playMusic(MKTAG('X', 'M', 'I', sampID));
-#endif
 	return 0;
 }
 

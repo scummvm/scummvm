@@ -29,10 +29,6 @@
 
 namespace Saga2 {
 
-#ifdef _WIN32   //  Set structure alignment packing value to 1 byte
-#pragma pack( push, 1 )
-#endif
-
 const int           maxBanks = 64;          // 64 banks maximum
 
 /* ============================================================================ *

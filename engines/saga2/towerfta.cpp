@@ -99,17 +99,10 @@ bool openResources(void);
 void closeResources(void);
 void initServers(void);
 void cleanupServers(void);
-//void initBackPanel(void);
 void initMagic(void);
 void cleanupMagic(void);
 void cleanupMousePointer(void);
-//void mainEnable( void );
-//void mainDisable( void );
-//void lightsOut( void );
 void resetInputDevices(void);
-#ifdef _WIN32
-//	void localCursorOn( void );
-#endif
 
 extern hResContext      *tileRes;       // tile resource handle
 extern hResContext      *listRes;

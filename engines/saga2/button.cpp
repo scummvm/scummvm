@@ -554,9 +554,6 @@ bool gCompButton::activate(gEventType why) {
 	window.update(extent);
 
 	if (why == gEventKeyDown) { // momentarily depress
-#ifndef _WIN32
-		g_system->delayMillis(200);
-#endif
 		deactivate();
 		notify(gEventNewValue, 1);       // notify App of successful hit
 	}

@@ -68,10 +68,6 @@ void blackOut(void);
 void quickSavePalette(void);
 void quickRestorePalette(void);
 void cursorFullHide(bool onOff);
-#ifdef _WIN32
-void suspendWinTimer(void);
-void resumeWinTimer(void);
-#endif
 
 static void doIntro(void);
 static void doWintro(int16 whichOne);
@@ -169,9 +165,6 @@ void TroModeExternEvent(void) {
 static void TroModeSetup(void) {
 	suspendAudio();
 	pointer.hide();
-#ifdef _WIN32
-	cursorFullHide(true);
-#endif
 	quickSavePalette();
 	blackOut();
 	displayDisable(PlayingVideo);
@@ -190,9 +183,6 @@ static void TroModeCleanup(void) {
 	blackOut();
 	quickRestorePalette();
 	resumeAudio();
-#ifdef _WIN32
-	cursorFullHide(false);
-#endif
 	pointer.show();
 //	pointer.manditoryShow();                     //  hide mouse pointer
 	resetInputDevices();

@@ -225,9 +225,6 @@ public:
 private:
 	char                    status[256];       // audio status messages
 	int16                   verbosity;
-#if defined(_WIN32) && defined(USE_REAL_WAIL)
-	LPDIRECTSOUND       lpDS;
-#endif
 
 public:
 	// ctor, dtor, initialization

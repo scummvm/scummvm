@@ -34,25 +34,6 @@ namespace Saga2 {
 
 #define USE_MEMORY_MAPPED_FILES 0
 
-#if defined(_WIN32) && USE_MEMORY_MAPPED_FILES
-#define HR_FILE MMFILE
-#define HR_OPEN mmfopen
-#define HR_CLOSE mmfclose
-#define HR_SEEK mmfseek
-#define HR_READ mmfread
-#else
-#define HR_FILE FILE
-#define HR_OPEN ftaopen
-#define HR_CLOSE ftaclose
-#define HR_SEEK ftaseek
-#define HR_READ ftaread
-#endif
-
-
-#ifdef _WIN32   //  Set structure alignment packing value to 1 byte
-#pragma pack( push, 1 )
-#endif
-
 /* ===================================================================== *
    Constants and common types
  * ===================================================================== */
@@ -190,26 +171,8 @@ public:
 	void        readResource(hResEntry &element);
 };
 
-/* ===================================================================== *
-   Resource Type Macros
- * ===================================================================== */
-
-#if 0
-#define RES_ID(a,b,c,d) ((uint32)(a) | (uint32)(b) << 8 | \
-                         (uint32)(c) << 16 | (uint32)(d) << 24)
-
-#else
-inline hResID RES_ID(uint8 a, uint8 b, uint8 c, uint8 d) {
-	return ((uint32)(a) | (uint32)(b) << 8 | (uint32)(c) << 16 | (uint32)(d) << 24);
-}
-#endif
-
 #define HRES_ID         MKTAG('H','R','E','S')
 
-
-#ifdef _WIN32   //  Set structure alignment packing value to 1 byte
-#pragma pack( pop )
-#endif
 
 } // end of namespace Saga2
 

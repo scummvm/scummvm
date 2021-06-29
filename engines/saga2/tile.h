@@ -35,10 +35,6 @@
 #include "saga2/property.h"
 #include "saga2/tcoords.h"
 
-#ifdef _WIN32   //  Set structure alignment packing value to 1 byte
-#pragma pack( push, 1 )
-#endif
-
 namespace Saga2 {
 
 /* ===================================================================== *
@@ -1071,11 +1067,6 @@ TilePoint selectNearbySite(
     int32           minDist,
     int32           maxDist,
     bool            offScreenOnly = false);     // true if we want it off-screen
-
-
-#ifdef _WIN32   //  Set structure alignment packing value to 1 byte
-#pragma pack( pop )
-#endif
 
 } // end of namespace Saga2
 

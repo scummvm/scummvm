@@ -54,11 +54,6 @@ void TPCircle(const TilePoint &tp, const int radius, int16 color) {
 	TPLine(tp + TilePoint(radius / 1, radius / -2, 0), tp + TilePoint(radius / 1, radius / 2, 0), color);
 }
 
-#ifdef _WIN32
-#include <windows.h>
-#include "saga2/ftawin.h"
-extern CFTWindow        *pWindow;
-#endif
 extern Rect16           tileRect;
 
 //  Draw a line in TP space
@@ -75,21 +70,9 @@ void TPLine(const TilePoint &start, const TilePoint &stop) {
 	startPt.y   += tileRect.y;
 	stopPt.y    += tileRect.y;
 
-#ifdef _WIN32
-	HDC     hdc;
-	HPEN    hPen;
-
-	hdc = GetDC(pWindow->m_hWnd);
-	hPen = SelectObject(hdc, GetStockObject(WHITE_PEN));
-	MoveToEx(hdc, startPt.x, startPt.y, NULL);
-	LineTo(hdc, stopPt.x, stopPt.y);
-	SelectObject(hdc, hPen);
-	ReleaseDC(pWindow->m_hWnd, hdc);
-#else
 	mainPort.setColor(1);
 	mainPort.moveTo(startPt);
 	mainPort.drawTo(stopPt);
-#endif
 }
 
 void TPLine(const TilePoint &start, const TilePoint &stop, int16 color);
@@ -106,21 +89,9 @@ void TPLine(const TilePoint &start, const TilePoint &stop, int16 color) {
 	startPt.y   += tileRect.y;
 	stopPt.y    += tileRect.y;
 
-#ifdef _WIN32
-	HDC     hdc;
-	HPEN    hPen;
-
-	hdc = GetDC(pWindow->m_hWnd);
-	hPen = SelectObject(hdc, GetStockObject(WHITE_PEN));
-	MoveToEx(hdc, startPt.x, startPt.y, NULL);
-	LineTo(hdc, stopPt.x, stopPt.y);
-	SelectObject(hdc, hPen);
-	ReleaseDC(pWindow->m_hWnd, hdc);
-#else
 	mainPort.setColor(color);
 	mainPort.moveTo(startPt);
 	mainPort.drawTo(stopPt);
-#endif
 }
 #endif
 

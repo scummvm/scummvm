@@ -52,11 +52,6 @@
 
 void drawMainDisplay(void);
 
-
-#ifndef _WIN32
-#pragma off (unreferenced);
-#endif
-
 #define MONOLOG(s) {debugC(2, kDebugScripts, "cfunc: " #s );}
 #define OBJLOG(s) {debugC(2, kDebugScripts, "cfunc: [%s]." #s , ((GameObject *)thisThread->thisObject)->objName() );}
 
@@ -3056,9 +3051,9 @@ int16 scriptGetCenterActor(int16 *) {
 int16 scriptPlaySound(int16 *args) {
 	MONOLOG(PlaySound);
 	char        *sID = STRING(args[0]);
-//#ifndef _WIN32
+
 	PlaySound(sID);
-//#endif
+
 	return 0;
 }
 
@@ -3167,9 +3162,9 @@ int16 scriptIsContaining(int16 *args) {
 int16 scriptPlayLongSound(int16 *args) {
 	MONOLOG(PlayLongSound);
 	char        *sID = STRING(args[0]);
-#ifndef _WIN32
+
 	PlayLongSound(sID);
-#endif
+
 	return 0;
 }
 
@@ -3780,9 +3775,9 @@ int16 scriptOpenAutoMap(int16 *args) {
 int16 scriptPlayVideo(int16 *args) {
 	MONOLOG(PlaySound);
 	char        *sID = STRING(args[0]);
-//#ifndef _WIN32
+
 	openVidBox(sID);
-//#endif
+
 	return 0;
 }
 

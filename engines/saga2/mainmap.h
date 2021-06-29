@@ -31,39 +31,6 @@ namespace Saga2 {
 
 void main_saga2();
 
-/* ===================================================================== *
-   Multitasking control
- * ===================================================================== */
-
-//  Forbid() disables all multitasking within this application,
-//  and Permit() re-enables it. Use these when you need to access
-//  critical data and don't want other tasks mucking with it.
-//  (DOS tasking is cooperative, so these funcs are NULL).
-//
-//  REM: Use these with extreme caution! You can cause the
-//  program to lock up if used improperly. Make sure every
-//  Forbid() has a matching Permit(), even under error conditions.
-
-#ifdef _WIN32
-void Forbid(void);
-void Permit(void);
-#else
-inline void Forbid(void) {}
-inline void Permit(void) {}
-#endif
-
-#ifdef _WIN32
-#define returnAfterThrow(n) return n
-#else
-#define returnAfterThrow(n)
-#endif
-
-#ifdef _WIN32
-#define controlPause(n) ((void)0)
-#else
-#define controlPause(n) delay(n)
-#endif
-
 // command line parsing
 //extern char *commandLineHelp;
 void parseCommandLine(int argc, char *argv[]);

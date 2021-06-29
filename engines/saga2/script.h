@@ -32,10 +32,6 @@
 
 namespace Saga2 {
 
-#ifdef _WIN32   //  Set structure alignment packing value to 1 byte
-#pragma pack( push, 1 )
-#endif
-
 typedef int16   ThreadID;
 
 //  Various result codes returned from runScript
@@ -349,10 +345,6 @@ struct ResImportTable {
 };
 
 extern ResImportTable       *resImports;
-
-#ifdef _WIN32   //  Reset old structure alignment
-#pragma pack( pop )
-#endif
 
 } // end of namespace Saga2
 

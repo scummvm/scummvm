@@ -48,24 +48,6 @@ public:
 		x = nx;
 		y = ny;
 	}
-#if _MACINTOSH
-	Point16(Point p) {
-		x = p.h;
-		y = p.v;
-	}
-	operator Point() {
-		Point p;
-		p.h = x;
-		p.v = y;
-		return p;
-	}
-#endif
-#if     defined( USEWINDOWS ) || defined( _WIN32 )
-	Point16(LPARAM  lparam) {
-		x = LOWORD(lparam);
-		y = HIWORD(lparam);
-	}
-#endif
 
 	Point16(StaticPoint16 p) {
 		x = p.x;
@@ -176,25 +158,6 @@ public:
 	operator Point16() {
 		return Point16((int16)x, (int16)y);
 	}
-
-#if _MACINTOSH
-	Point32(Point p) {
-		x = p.h;
-		y = p.v;
-	}
-	operator Point() {
-		Point p;
-		p.h = x;
-		p.v = y;
-		return p;
-	}
-#endif
-#if     defined( USEWINDOWS ) || defined( _WIN32 )
-	Point32(LPARAM  lparam) {
-		x = LOWORD(lparam);
-		y = HIWORD(lparam);
-	}
-#endif
 
 	Point32(StaticPoint32 p) {
 		x = p.x;
@@ -307,38 +270,6 @@ public:
 		width = (int16)(b.x - a.x);
 		height = (int16)(b.y - a.y);
 	}
-#if _MACINTOSH
-	Rect16(Rect r) {
-		x = r.left;
-		y = r.top;
-		width = r.right - r.left;
-		height = r.bottom - r.top;
-	}
-	operator Rect() {
-		Rect r;
-		r.left = x;
-		r.top = y;
-		r.right = x + width;
-		r.bottom = y + height;
-		return r;
-	}
-#endif
-#if     defined( USEWINDOWS ) || defined( _WIN32 )
-	Rect16(RECT r) {
-		x = (int16)r.left;
-		y = (int16)r.top;
-		width = (int16)(r.right - r.left);
-		height = (int16)(r.bottom - r.top);
-	}
-	operator RECT() {
-		RECT r;
-		r.left = x;
-		r.top = y;
-		r.right = x + width;
-		r.bottom = y + height;
-		return r;
-	}
-#endif
 
 	Rect16(StaticRect r) {
 		x = r.x;
@@ -459,38 +390,6 @@ public:
 		return Rect16((int16)x, (int16)y, (int16)width, (int16)height);
 	}
 
-#if _MACINTOSH
-	Rect32(Rect r) {
-		x = r.left;
-		y = r.top;
-		width = r.right - r.left;
-		height = r.bottom - r.top;
-	}
-	operator Rect() {
-		Rect r;
-		r.left = x;
-		r.top = y;
-		r.right = x + width;
-		r.bottom = y + height;
-		return r;
-	}
-#endif
-#if     defined( USEWINDOWS ) || defined( _WIN32 )
-	Rect32(RECT r) {
-		x = r.left;
-		y = r.top;
-		width = r.right - r.left;
-		height = r.bottom - r.top;
-	}
-	operator RECT() {
-		RECT r;
-		r.left = x;
-		r.top = y;
-		r.right = x + width;
-		r.bottom = y + height;
-		return r;
-	}
-#endif
 	//  Rect32 operators
 
 	friend int     operator==(Rect32 a, Rect32 b) {

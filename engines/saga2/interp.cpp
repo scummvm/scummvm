@@ -123,9 +123,6 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 	default:
 		error("Invalid builtin object segment number: %d\n", segment);
 	}
-#if _WIN32
-	return NULL;
-#endif
 }
 
 //-----------------------------------------------------------------------

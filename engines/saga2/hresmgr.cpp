@@ -33,31 +33,6 @@
 namespace Saga2 {
 
 /* ===================================================================== *
-   Calls which do disk access
-    bool hResContext::seek(hResID id)
-      fseek
-    void hResContext::rest(void)
-      fclose
-    bool hResContext::read(void *buffer, int32 size)
-      fread
-    uint32 hResContext::readbytes(void *buffer, uint32 size)
-      fseek
-      fread
-    bool hResContext::skip(int32 amount)
-      fseek
-    RHANDLE hResContext::loadIndex( int16 index, const char desc[], bool cacheable )
-      fseek
-    hResource::hResource(char *resname, char *extname, const char desc[])
-      fopen
-      fseek
-      fread
-    hResource::~hResource()
-      fclose
-
-   Calls which deal with external files
-    HR_FILE *hResContext::openExternal(HR_FILE *fh)
- * ===================================================================== */
-/* ===================================================================== *
    Resource context
  * ===================================================================== */
 
