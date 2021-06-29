@@ -169,6 +169,18 @@ static const AdlGameDescription gameFileDescriptions[] = {
 };
 
 static const AdlGameDescription gameDiskDescriptions[] = {
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Simi Valley address
+		{
+			"hires1", "",
+			AD_ENTRY1s("mysthous", "629b9d034cbf8d8e3a612398f53a8dfc", 116480),
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			MH_OPTIONS
+		},
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_SIMI
+	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Coarsegold address
 		{
 			"hires1", "",
