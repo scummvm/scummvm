@@ -462,8 +462,7 @@ public:
 
 	enum {
 		chunkTileDiameter = 4,
-		regionChunkDiameter =
-		    (searchDiameter + chunkTileDiameter - 1) / chunkTileDiameter,
+		regionChunkDiameter = (searchDiameter + chunkTileDiameter - 1) / chunkTileDiameter
 	};
 
 private:
@@ -1057,7 +1056,7 @@ int16 tileSlopeHeight(
 enum PathResult {
 	pathNotDone,
 	pathDone,
-	pathAborted,
+	pathAborted
 };
 
 //  This if the base class for all PathRequests
@@ -1073,7 +1072,7 @@ protected:
 	enum pathFlags {
 		aborted     = (1 << 0),             // path request has been aborted
 		completed   = (1 << 1),             // pathfinder has found best path
-		run         = (1 << 2),
+		run         = (1 << 2)
 	};
 
 	//  These static members are initialized when the path request
@@ -1641,7 +1640,7 @@ void PathRequest::finish(void) {
 					assert(bestLoc.u >= 0 && bestLoc.u < searchDiameter);
 					assert(bestLoc.v >= 0 && bestLoc.v < searchDiameter);
 					bestPlatform -= cell->platformDelta;
-					assert(bestPlatform >= 0 && bestPlatform < maxPlatforms);
+					assert(bestPlatform < maxPlatforms);
 				} else
 					break;
 			}
@@ -2376,7 +2375,7 @@ void abortPathFind(MotionTask *mTask) {
 enum cellStates {
 	cellUnvisited = 0,
 	cellOccupied = (1 << 0),
-	cellVisited = (1 << 1),
+	cellVisited = (1 << 1)
 };
 
 typedef uint8       SimpleCellArray[searchDiameter][searchDiameter];

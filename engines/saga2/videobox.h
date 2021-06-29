@@ -39,23 +39,23 @@ public:
 		xSize   = 340,
 		ySize   = 220,
 		x       = (640 - xSize) / 2,
-		y       = (480 - ySize) / 3,
+		y       = (480 - ySize) / 3
 	};
 
 private:
 	enum brush {
 		xBrushSize  = 340,  // size of each brush 'chunk'.
 		yBrushSize  = 110,
-		numBrushes  = 2,    // number of chunks
+		numBrushes  = 2     // number of chunks
 	};
 
 	enum borderWidth {
-		borderWidth = 6,
+		borderWidth = 6
 	};
 
 	enum {
 		vidPan1ResID = 0,
-		vidPan2ResID,
+		vidPan2ResID
 	};
 
 public:
