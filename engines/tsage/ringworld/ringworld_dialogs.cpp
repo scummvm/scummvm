@@ -282,7 +282,7 @@ OptionsDialog::OptionsDialog() {
 
 	// Set all the buttons to the widest button
 	GfxButton *btnList[6] = {&_btnRestore, &_btnSave, &_btnRestart, &_btnQuit, &_btnSound, &_btnResume};
-	int16 btnWidth = 0;
+	int32 btnWidth = 0;
 	for (int idx = 0; idx < 6; ++idx)
 		btnWidth = MAX(btnWidth, btnList[idx]->_bounds.width());
 	for (int idx = 0; idx < 6; ++idx)

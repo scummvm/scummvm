@@ -67,7 +67,7 @@ void BubbleBox::clearBubbles() {
 		_vm->_screen->_screenYOff = 0;
 		Common::Rect r = _bubbles[i];
 		r.left -= 2;
-		r.right = MIN(r.right, (int16)_vm->_screen->w);
+		r.right = MIN(r.right, (int32)_vm->_screen->w);
 
 		_vm->_screen->copyBlock(&_vm->_buffer1, r);
 	}

@@ -1561,8 +1561,8 @@ void mainDraw(bool waitFl) {
 			return;
 		}
 	} else if ((linkedRelation) && (linkedMsgList)) {
-		int16 mouseX;
-		int16 mouseY;
+		int32 mouseX;
+		int32 mouseY;
 		int16 button;
 		getMouseStatus(&main10, &mouseX, &button, &mouseY);
 

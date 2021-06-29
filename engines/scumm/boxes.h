@@ -49,7 +49,7 @@ struct BoxCoords {			/* Box coordinates */
 	Common::Point lr;
 };
 
-int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16& outX, int16& outY);
+int getClosestPtOnBox(const BoxCoords &box, int x, int y, int32 & outX, int32 & outY);
 
 } // End of namespace Scumm
 

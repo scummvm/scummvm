@@ -147,8 +147,8 @@ void Selection::startSelection(const Point &pos) {
 		return;
 	}
 
-	tx = MIN(pos.x, (int16)_hor);
-	ty = MIN(pos.y, (int16)_ver);
+	tx = MIN(pos.x, (int32)_hor);
+	ty = MIN(pos.y, (int32)_ver);
 
 	_select.left = _select.right = _last.x = tx;
 	_select.top = _select.bottom = _last.y = ty;
@@ -167,8 +167,8 @@ void Selection::moveSelection(const Point &pos) {
 		return;
 	}
 
-	tx = MIN(pos.x, (int16)_hor);
-	ty = MIN(pos.y, (int16)_ver);
+	tx = MIN(pos.x, (int32)_hor);
+	ty = MIN(pos.y, (int32)_ver);
 
 	_select.right = _last.x = tx;
 	_select.bottom = _last.y = ty;

@@ -82,9 +82,9 @@ void GfxPicture::draw(bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 }
 
 void GfxPicture::reset() {
-	int16 startY = _ports->getPort()->top;
-	int16 startX = 0;
-	int16 x, y;
+	int32 startY = _ports->getPort()->top;
+	int32 startX = 0;
+	int32 x, y;
 	_screen->vectorAdjustCoordinate(&startX, &startY);
 	for (y = startY; y < _screen->getHeight(); y++) {
 		for (x = startX; x < _screen->getWidth(); x++) {
@@ -868,11 +868,11 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	}
 
 	// hard borders for filling
-	int16 borderLeft = curPort->rect.left + curPort->left;
-	int16 borderTop = curPort->rect.top + curPort->top;
-	int16 borderRight = curPort->rect.right + curPort->left - 1;
-	int16 borderBottom = curPort->rect.bottom + curPort->top - 1;
-	int16 curToLeft, curToRight, a_set, b_set;
+	int32 borderLeft = curPort->rect.left + curPort->left;
+	int32 borderTop = curPort->rect.top + curPort->top;
+	int32 borderRight = curPort->rect.right + curPort->left - 1;
+	int32 borderBottom = curPort->rect.bottom + curPort->top - 1;
+	int32 curToLeft, curToRight, a_set, b_set;
 
 	// Translate coordinates, if required (needed for Macintosh 480x300)
 	_screen->vectorAdjustCoordinate(&borderLeft, &borderTop);

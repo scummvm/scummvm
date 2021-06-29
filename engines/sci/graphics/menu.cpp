@@ -363,8 +363,8 @@ void GfxMenu::drawBar() {
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
-		int16 textWidth;
-		int16 textHeight;
+		int32 textWidth;
+		int32 textHeight;
 		if (g_sci->isLanguageRTL()) {
 			_text16->StringWidth(listEntry->textSplit.c_str(), _text16->GetFontId(), textWidth, textHeight);
 			_ports->_curPort->curLeft -= textWidth;
@@ -383,7 +383,7 @@ void GfxMenu::calculateMenuWidth() {
 	GuiMenuList::iterator menuIterator;
 	GuiMenuList::iterator menuEnd = _list.end();
 	GuiMenuEntry *menuEntry;
-	int16 dummyHeight;
+	int32 dummyHeight;
 
 	menuIterator = _list.begin();
 	while (menuIterator != menuEnd) {
@@ -400,7 +400,7 @@ void GfxMenu::calculateMenuAndItemWidth() {
 	GuiMenuItemList::iterator itemIterator;
 	GuiMenuItemList::iterator itemEnd = _itemList.end();
 	GuiMenuItemEntry *itemEntry;
-	int16 dummyHeight;
+	int32 dummyHeight;
 
 	calculateMenuWidth();
 
@@ -1024,8 +1024,8 @@ void GfxMenu::kernelDrawStatus(const char *text, int16 colorPen, int16 colorBack
 	if (!g_sci->isLanguageRTL()) {
 		_ports->moveTo(0, 1);
 	} else {
-		int16 textWidth;
-		int16 textHeight;
+		int32 textWidth;
+		int32 textHeight;
 		_text16->StringWidth(text, _text16->GetFontId(), textWidth, textHeight);
 		_ports->moveTo(_screen->getWidth() - textWidth, 1);
 	}
