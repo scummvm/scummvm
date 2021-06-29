@@ -262,8 +262,7 @@ void HiRes1Engine::init() {
 		_files = new Files_Plain();
 	} else {
 		Files_AppleDOS *files = new Files_AppleDOS();
-		// Non-PD versions have an obfuscated VTOC
-		if (!files->open(getDiskImageName(0), (getGameVersion() == GAME_VER_HR1_PD ? 17 : 16)))
+		if (!files->open(getDiskImageName(0)))
 			error("Failed to open '%s'", getDiskImageName(0).c_str());
 		_files = files;
 	}

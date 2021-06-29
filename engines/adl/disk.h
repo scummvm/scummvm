@@ -134,7 +134,7 @@ public:
 	Files_AppleDOS();
 	~Files_AppleDOS() override;
 
-	bool open(const Common::String &filename, uint trackVTOC = 17);
+	bool open(const Common::String &filename);
 	const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const override;
 	Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const override;
 
@@ -161,7 +161,7 @@ private:
 		Common::Array<TrackSector> sectors;
 	};
 
-	void readVTOC(uint trackVTOC);
+	void readVTOC();
 	void readSectorList(TrackSector start, Common::Array<TrackSector> &list);
 	Common::SeekableReadStream *createReadStreamText(const TOCEntry &entry) const;
 	Common::SeekableReadStream *createReadStreamBinary(const TOCEntry &entry) const;
