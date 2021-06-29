@@ -692,10 +692,16 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
 	Graphics::MacWidget *widget = nullptr;
+	Common::Rect dims(bbox);
 
 	switch (_type) {
 	case kCastText:
-		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow, Common::kMacCentralEurope, _textType == kTextTypeFixed);
+		// for mactext, we can expand now, but we can't shrink. so we may pass the small size when we have adjustToFit text style
+		if (_textType == kTextTypeAdjustToFit) {
+			dims.right = MIN<int>(dims.right, dims.left + _initialRect.width());
+			dims.bottom = MIN<int>(dims.bottom, dims.top + _initialRect.height());
+		}
+		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow, Common::kMacCentralEurope, _textType == kTextTypeFixed);
 		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
 		((Graphics::MacText *)widget)->setEditable(_editable);
 		((Graphics::MacText *)widget)->draw();
