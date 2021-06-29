@@ -114,7 +114,7 @@ void EffectDisplayPrototypeList::append(EffectDisplayPrototype *nedp, int32 acou
 }
 
 EffectDisplayPrototype *EffectDisplayPrototypeList::operator[](EffectID e) {
-	assert(e >= 0 && e < maxCount);
+	assert(e < maxCount);
 	return effects[e];
 }
 

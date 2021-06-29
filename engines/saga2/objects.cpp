@@ -401,7 +401,7 @@ void GameObject::remove(void) {             // removes from old list
 
 	//  If object has not parent, then it's not on a list
 	if (_data.parentID == Nothing) return;
-	if (id >= Nothing && id <= ImportantLimbo) return;
+	if (id <= ImportantLimbo) return;
 
 	//  Get the head of the object chain. Worlds have more than
 	//  one, so we need to get the right one.
@@ -669,7 +669,7 @@ int32 GameObject::getSprOffset(int16 num) {
 	enum spriteDelimiters {
 		spriteNumFew    = 2,
 		spriteNumSome   = 10,
-		spriteNumMany   = 25,
+		spriteNumMany   = 25
 	};
 
 	// default return offset is zero ( no change )
@@ -1019,9 +1019,6 @@ ObjectID GameObject::extractMerged(const Location &loc, int16 num) {
 			if (_data.massCount == 0) {
 				this->deleteObject();
 			}
-
-			// _data.massCount should never go negitive
-			assert(_data.massCount >= 0);
 		} else
 			return Nothing;
 	} else {
@@ -1052,9 +1049,6 @@ GameObject *GameObject::extractMerged(int16 num) {
 			if (_data.massCount == 0) {
 				this->deleteObject();
 			}
-
-			// _data.massCount should never go negitive
-			assert(_data.massCount >= 0);
 		} else
 			return nullptr;
 	} else {
@@ -4432,20 +4426,14 @@ void cleanupReadyContainers(void) {
 		unloadImageRes(backImages, numReadyContRes);
 	}
 
-	if (TrioCviews) {
-		int16   i;
+	for (int16 i = 0; i < kNumViews && i < playerActors ; i++) {
+		delete TrioCviews[i];
+		TrioCviews[i] = nullptr;
 
-		//delete TrioCviews;
-
-		for (i = 0; i < kNumViews && i < playerActors ; i++) {
-			delete TrioCviews[i];
-			TrioCviews[i] = nullptr;
-
-			delete playerList[i].readyNode;
-			playerList[i].readyNode = nullptr;
-		}
-		delete indivReadyNode;
+		delete playerList[i].readyNode;
+		playerList[i].readyNode = nullptr;
 	}
+	delete indivReadyNode;
 
 	if (indivCviewTop) {
 		delete indivCviewTop;

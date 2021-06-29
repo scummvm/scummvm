@@ -87,7 +87,7 @@ const ActiveItemID  NoActiveItem(0, activeItemIndexNullID);
 enum SurfaceType {
 	surfaceHoriz,               //  Level surface
 	surfaceVertV,               //  Vertical surface, parallel to V axis
-	surfaceVertU,               //  Vertical surface, parallel to U axis
+	surfaceVertU                //  Vertical surface, parallel to U axis
 };
 
 
@@ -2277,7 +2277,6 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 			//	Get the address of the pce from the cache
 		pce = &platformCache[plIndex];
 
-		assert(pce->platformNum >= 0);
 		assert(pce->metaID != NoMetaTile);
 		assert(pce->metaID == thisID(mapNum));
 
@@ -2318,7 +2317,6 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		pce->metaID = thisID(mapNum);
 		_stack[layer] = (cacheIndex | cacheFlag);
 
-		assert(plIndex >= 0);
 		assert(plIndex * sizeof(Platform) < tileRes->size(platformID + mapNum));
 		debugC(3, kDebugLoading, "- plIndex: %d", plIndex);
 
@@ -3044,7 +3042,7 @@ enum maskRules {
 	maskRuleConvexNear,
 	maskRuleConcaveFar,
 	maskRuleConvexFar,
-	maskRuleConcaveNear,
+	maskRuleConcaveNear
 
 	//  More mask types to come!
 };

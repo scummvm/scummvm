@@ -69,7 +69,7 @@ enum initializationStates {
 	gameModeInitialized,
 	gameDisplayEnabled,
 	activeErrInitialized,
-	fullyInitialized,
+	fullyInitialized
 };
 
 } // end of namespace Saga2
