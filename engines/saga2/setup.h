@@ -100,8 +100,6 @@ enum borderIDs {
 	MWRightBorder3
 };
 
-extern WindowDecoration mainWindowDecorations[];
-
 const int   extraObjects  = 512,
             extraActors   = 64;
 

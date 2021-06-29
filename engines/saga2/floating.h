@@ -236,6 +236,7 @@ public:
 	void setDecorations(WindowDecoration *, int16, hResContext *, hResID);
 	void setDecorations(WindowDecoration *, int16, hResContext *, char, char, char);
 
+	void setDecorations(StaticWindow *, int16, hResContext *);
 	void setDecorations(StaticWindow *, int16, hResContext *, hResID);
 	void setDecorations(StaticWindow *, int16, hResContext *, char, char, char);
 

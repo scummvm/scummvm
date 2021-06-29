@@ -234,13 +234,13 @@ static bool         inCombat,
 // precompiled header services if data is assigned during declaration
 // inside a header.  GT 09/11/95
 
-WindowDecoration mainWindowDecorations[] = {
-	WindowDecoration(Rect16(0,  0, 640, 20),    MWTopBorder),       // top border
-	WindowDecoration(Rect16(0, 440, 640, 40), MWBottomBorder),   // bottom border
-	WindowDecoration(Rect16(0, 20, 20, 420),    MWLeftBorder),      // left border
-	WindowDecoration(Rect16(460, 20, 180, 142),  MWRightBorder1), // right border #1
-	WindowDecoration(Rect16(460, 162, 180, 151),  MWRightBorder2),// right border #2
-	WindowDecoration(Rect16(460, 313, 180, 127),  MWRightBorder3),// right border #3
+static StaticWindow mainWindowDecorations[] = {
+	{{0,  0, 640, 20},     nullptr, MWTopBorder},       // top border
+	{{0, 440, 640, 40},    nullptr, MWBottomBorder},    // bottom border
+	{{0, 20, 20, 420},     nullptr, MWLeftBorder},      // left border
+	{{460, 20, 180, 142},  nullptr, MWRightBorder1},    // right border #1
+	{{460, 162, 180, 151}, nullptr, MWRightBorder2},    // right border #2
+	{{460, 313, 180, 127}, nullptr, MWRightBorder3},    // right border #3
 };
 
 /* ===================================================================== *
