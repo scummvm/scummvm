@@ -30,7 +30,7 @@
 namespace Saga2 {
 
 enum {
-	grFramesPerSecond = 0,
+	grFramesPerSecond = 0
 };
 
 class frameCounter {
@@ -84,7 +84,7 @@ enum {
 	grFPKS1SecVarOld        = 12,
 	grFPKS1SecVarOldest     = 13,
 	grFPKS5SecVar           = 14,
-	grFPKSVar1SecAvg        = 15,
+	grFPKSVar1SecAvg        = 15
 };
 
 class frameSmoother: public frameCounter {

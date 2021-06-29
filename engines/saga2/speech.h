@@ -76,7 +76,7 @@ enum {
 	speakContinued  = (1 << 0),         // Append next speech
 	speakNoAnimate  = (1 << 1),         // Don't animate speaking
 	speakWait       = (1 << 2),         // wait until speech finished
-	speakLock       = (1 << 3),         // lock UI while speech in progress
+	speakLock       = (1 << 3)          // lock UI while speech in progress
 };
 
 class Speech {
@@ -134,7 +134,7 @@ public:
 		spHasVoice      = (1 << 1),         //  The audio interface is playing this voice
 		spQueued        = (1 << 2),         //  In active queue
 		spActive        = (1 << 3),         //  Is current active speech
-		spLock          = (1 << 4),         //  Lock UI while speaking
+		spLock          = (1 << 4)          //  Lock UI while speaking
 	};
 
 	// remove speech, dealloc resources

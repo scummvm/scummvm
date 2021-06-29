@@ -202,7 +202,7 @@ void loadSavedGameState(int16 saveNo) {
 		loadAutoMapFlag             = (1 << 26),
 		loadUIStateFlag             = (1 << 27),
 		loadPaletteStateFlag        = (1 << 28),
-		loadContainerNodesFlag      = (1 << 29),
+		loadContainerNodesFlag      = (1 << 29)
 	};
 
 	uint32  loadFlags = 0;

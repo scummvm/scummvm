@@ -118,7 +118,7 @@ extern gPen         mainPens[];         // the array of pens
 enum bevelOptions {
 	bevelRecessed   = (1 << 0),         // bevel is pushed in
 	bevelFilled     = (1 << 1),         // bevel filled with approp. color
-	bevelInverted   = (1 << 2),         // pushed in w/slightly diff. look
+	bevelInverted   = (1 << 2)          // pushed in w/slightly diff. look
 };
 
 void DrawBevelFrame(gPort &port, const Rect16 &r, uint16 flags);
