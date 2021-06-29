@@ -229,8 +229,14 @@ void MacText::init() {
 	_textMaxHeight = 0;
 	_surface = nullptr;
 
-	if (!_fixedDims)
+	if (!_fixedDims) {
+		int right = _dims.right;
 		_dims.right = MAX<int>(_dims.right, _dims.left + _maxWidth + (2 * _border) + (2 * _gutter) + _shadow);
+		if (right != _dims.right) {
+			delete _composeSurface;
+			_composeSurface = new ManagedSurface(_dims.width(), _dims.height(), _wm->_pixelformat);
+		}
+	}
 
 	_selEnd = -1;
 	_selStart = -1;
