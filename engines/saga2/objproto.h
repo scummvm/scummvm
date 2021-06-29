@@ -127,7 +127,7 @@ public:
 		context = con;
 	}
 
-	Location(TilePoint p, ObjectID con) {
+	Location(TilePoint p, ObjectID con = 0) {
 		u = p.u;
 		v = p.v;
 		z = p.z;
