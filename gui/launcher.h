@@ -23,14 +23,28 @@
 #ifndef GUI_LAUNCHER_DIALOG_H
 #define GUI_LAUNCHER_DIALOG_H
 
-#ifdef DISABLE_FANCY_THEMES
-#define DISABLE_LIBRARYDISPLAY_GRID
-#endif
 
 #include "gui/dialog.h"
 #include "engines/game.h"
 
 namespace GUI {
+
+// Disable the grid for platforms that disable fancy themes
+#ifdef DISABLE_FANCY_THEMES
+#define DISABLE_LAUNCHERDISPLAY_GRID
+#endif
+
+#ifndef DISABLE_LAUNCHERDISPLAY_GRID
+enum LauncherDisplayType {
+	kLauncherDisplayList = 1,
+	kLauncherDisplayGrid = 2,
+};
+
+enum {
+	kListSwitchCmd = 'LIST',
+	kGridSwitchCmd = 'GRID'
+};
+#endif
 
 class BrowserDialog;
 class CommandSender;
@@ -44,18 +58,6 @@ class GraphicsWidget;
 class StaticTextWidget;
 class EditTextWidget;
 class SaveLoadChooser;
-
-#ifndef DISABLE_LIBRARYDISPLAY_GRID
-enum LibraryDisplayType {
-	kLibraryDisplayList = 1,
-	kLibraryDisplayGrid = 2,
-};
-
-enum {
-	kListSwitchCmd = 'LIST',
-	kGridSwitchCmd = 'GRID'
-};
-#endif
 
 class LauncherDialog : public Dialog {
 	typedef Common::String String;
@@ -95,11 +97,11 @@ protected:
 
 	String _search;
 
-#ifndef DISABLE_LIBRARYDISPLAY_GRID
+#ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	GridWidget			*_grid;
 	ButtonWidget		*_listButton;
 	ButtonWidget		*_gridButton;
-	LibraryDisplayType 	_libraryDisplay;
+	LauncherDisplayType 	_launcherDisplay;
 
 	void addChooserButtons();
 	void openGrid();
