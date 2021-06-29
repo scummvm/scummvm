@@ -171,7 +171,6 @@ void mainDisable(void);
 void lightsOut(void);
 
 void cleanupGame(void);                  // auto-cleanup function
-void RShowMem(void);
 void parseCommandLine(int argc, char *argv[]);
 const char *getExeFromCommandLine(int argc, char *argv[]);
 void WriteStatusF2(int16 line, const char *msg, ...);

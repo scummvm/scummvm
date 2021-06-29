@@ -123,8 +123,6 @@ void voiceTest2(void);
 
 void toggleMusic(void);
 
-void RShowMem(void);
-
 #if CHEATMOVE
 void cheatMove(int16 key);
 #endif
@@ -148,9 +146,8 @@ Alarm               dispObjNameAlarm;       // Alarm used for time delay
 
 Alarm               containerObjTextAlarm;  // time delay for container view object text
 
-#if DEBUG && TEST1
 ObjectID            pickedActor;
-#endif
+
 #if CHEATMOVE
 ObjectID            selectedObject = Nothing;
 bool                nudge = false;
@@ -1016,42 +1013,6 @@ void TileModeHandleKey(int16 key, int16 qual) {
 	case 0x1b:
 		if (uiKeysEnabled)
 			OptionsDialog();
-		break;
-#endif
-
-
-#if DEBUG
-	case 'l':
-		RShowMem();
-		break;
-
-	case 't':
-		extern bool showTile;
-		showTile = !showTile;
-		break;
-
-	// basically for changing the light level
-
-	case 'c': {
-		extern bool autoMapCheat;
-		autoMapCheat = !autoMapCheat;
-	}
-	break;
-
-	case 'h':
-		calender.hour += 1;
-
-		if (calender.hour >= 24) {
-			calender.hour = 0;
-		}
-
-		break;
-
-	case 'w':
-		calender.hour = 9;
-		calender.days++;
-		dayNightUpdate();
-
 		break;
 #endif
 

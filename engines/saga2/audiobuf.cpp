@@ -110,19 +110,25 @@ musicBuffer::musicBuffer(size_t newSize, audioInterface *sd, int16 newID)
 		bufID = newID;
 		fillBuffer = 0;
 		targetSated = false;
+	warning("STUB: musicBuffer::musicBuffer()");
+#if 0
 		ailSampleHandle = AIL_allocate_sequence_handle(sd->mid);
 		if (ailSampleHandle == 0)
 			error("Unable to allocate music handle");
+#endif
 		data[1] = NULL;
 		audioSet = 0;
 	}
 }
 
 musicBuffer::~musicBuffer(void) {
+	warning("STUB: musicBuffer::~musicBuffer()");
+#if 0
 	assert(ailSampleHandle);
 	if (ailSampleHandle) {
 		AIL_release_sequence_handle(ailSampleHandle);
 	}
+#endif
 }
 
 
@@ -215,7 +221,11 @@ uint32 workBuffer::sample_status(void) {
 
 
 uint32 musicBuffer::sample_status(void) {
+	warning("STUB: musicBuffer::sample_status()");
+	return 0;
+#if 0
 	return (AIL_sequence_status(ailSampleHandle));
+#endif
 }
 
 /*******************************************************************/
@@ -374,10 +384,13 @@ void musicBuffer::abortsound(void) {
 }
 
 void musicBuffer::release(void) {
+	warning("STUB: musicBuffer::release()");
+#if 0
 	assert(ailSampleHandle);
 // new
 	AIL_end_sequence(ailSampleHandle);
 	audioSet = 0;
+#endif
 }
 
 /*******************************************************************/
@@ -395,6 +408,8 @@ void workBuffer::play(int16 bufNo) {
 }
 
 void musicBuffer::play(int16 bufNo) {
+	warning("STUB: musicBuffer::play()");
+#if 0
 	assert(bufNo == 0);
 	assert(ailSampleHandle);
 	if (AIL_init_sequence(ailSampleHandle, rData, 0) <= 0) {
@@ -404,6 +419,7 @@ void musicBuffer::play(int16 bufNo) {
 	AIL_set_sequence_loop_count(ailSampleHandle, loopCount);
 	AIL_start_sequence(ailSampleHandle);
 	took(rSize);
+#endif
 }
 
 /*******************************************************************/
@@ -468,9 +484,12 @@ void workBuffer::reset(void) {
 }
 
 void musicBuffer::reset(void) {
+	warning("STUB: musicBuffer::reset()");
+#if 0
 	AIL_end_sequence(ailSampleHandle);
 	audioSet = 0;
 	activate(0);
+#endif
 }
 
 /*******************************************************************/
@@ -483,6 +502,8 @@ void workBuffer::setVolume(int8) {
 }
 
 void musicBuffer::setVolume(int8 v) {
+	warning("STUB: musicBuffer::setVolume()");
+#if 0
 	if (audioSet) {
 		if (AIL_sequence_volume(ailSampleHandle) != v) {
 			AIL_lock();
@@ -490,22 +511,29 @@ void musicBuffer::setVolume(int8 v) {
 			AIL_unlock();
 		}
 	}
+#endif
 }
 
 void musicBuffer::fadeUp(int16 time, int8 volume) {
+	warning("STUB: musicBuffer::fadeUp()");
+#if 0
 	if (audioSet) {
 		AIL_lock();
 		AIL_set_sequence_volume(ailSampleHandle, volume, time);
 		AIL_unlock();
 	}
+#endif
 }
 
 void musicBuffer::fadeDown(int16 time) {
+	warning("STUB: musicBuffer::fadeDown()");
+#if 0
 	if (audioSet) {
 		AIL_lock();
 		AIL_set_sequence_volume(ailSampleHandle, 0, time);
 		AIL_unlock();
 	}
+#endif
 }
 
 } // end of namespace Saga2

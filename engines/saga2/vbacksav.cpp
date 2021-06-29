@@ -30,7 +30,7 @@
 namespace Saga2 {
 
 gBackSave::gBackSave(const Rect16 &extent) {
-	Rect16  displayRect(0, 0, gDisplaySize.x, gDisplaySize.y);
+	Rect16  displayRect(0, 0, 640, 480);
 
 	//  initialize the rectangle
 
