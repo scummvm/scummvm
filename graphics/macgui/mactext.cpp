@@ -229,8 +229,6 @@ void MacText::init() {
 	_textMaxHeight = 0;
 	_surface = nullptr;
 
-	_fixedDims = true;
-
 	_selEnd = -1;
 	_selStart = -1;
 
@@ -970,9 +968,12 @@ void MacText::recalcDims() {
 			delete _composeSurface;
 			_composeSurface = new ManagedSurface(_dims.width(), _dims.height(), _wm->_pixelformat);
 			reallocSurface();
+			if (!_fullRefresh) {
+				_fullRefresh = true;
+				render();
+			}
 			_fullRefresh = true;
 			_contentIsDirty = true;
-			render();
 		}
 	}
 }
