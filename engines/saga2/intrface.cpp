@@ -353,7 +353,8 @@ int16   namePlateResNum[] = { 8, 9, 10 };
 int16   numNamePlateRes[] = { 1, 1, 1 };
 
 // brother resource names
-ResName broNames[] = { { 'J', 'U', 'L', 0 },
+ResName broNames[] = {
+	{ 'J', 'U', 'L', 0 },
 	{ 'P', 'H', 'I', 0 },
 	{ 'K', 'E', 'V', 0 }
 };
@@ -363,22 +364,26 @@ const uint32 containerGroupID = MKTAG('C', 'O', 'N', 'T');
 
 // button position views
 // topBox, midBox, and botBox are defined in uimetrcs.h
-static const StaticRect *views[] = { topBox, midBox, botBox };
+static const StaticRect *views[] = {
+	{ topBox },
+	{ midBox },
+	{ botBox }
+};
 
 // individual indicators/buttons
-static const StaticRect menConBtnRect = { 485, 265, 44, 43 };
+static const StaticRect menConBtnRect = {485, 265, 44, 43};
 
 // options button
-static const StaticRect optBtnRect = { 20, 445, 26, 15 };
+static const StaticRect optBtnRect = {20, 445, 26, 15};
 
 //  enchantment display
-static const StaticRect enchDispRect = { 0, 0, 630, 18 };
+static const StaticRect enchDispRect = {0, 0, 630, 18};
 
 // brother buttons and frame
-static const StaticRect broBtnRect = { 481, 450, 144, 11 };
-static const StaticRect julBtnRect = { 482, 451, 44, 9 };
-static const StaticRect phiBtnRect = { 531, 451, 44, 9 };
-static const StaticRect kevBtnRect = { 580, 451, 44, 9 };
+static const StaticRect broBtnRect = {481, 450, 144, 11};
+static const StaticRect julBtnRect = {482, 451, 44, 9};
+static const StaticRect phiBtnRect = {531, 451, 44, 9};
+static const StaticRect kevBtnRect = {580, 451, 44, 9};
 
 
 textPallete genericTextPal(9 + 15, 20, 14, 11, 23, 17);
