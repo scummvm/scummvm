@@ -111,7 +111,7 @@ void TextManager::formattingOneString() {
 	_subStringAgain = false;
 }
 
-void TextManager::characterTalk(const char *s) {
+void TextManager::characterTalk(Common::String s) {
 	_vm->_flagSomeoneSpeaks = true;
 	_vm->_flagCharacterSpeak = true;
 	_vm->_flagSkipTalk = false;

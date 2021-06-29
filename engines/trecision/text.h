@@ -63,7 +63,7 @@ class TextManager {
 	Common::Point positionString(uint16 x, uint16 y, const char *string, bool characterFl);
 	void formattingSuperString();
 	void formattingOneString();
-	void characterTalk(const char *s);
+	void characterTalk(Common::String s);
 	void characterContinueTalk();
 	void characterMute();
 	void someoneContinueTalk();
