@@ -218,7 +218,7 @@ enum effectCollisionCont {
 	ecFlagNone = 0,
 	ecFlagBounce,
 	ecFlagDie,
-	ecFlagStop,
+	ecFlagStop
 };
 
 enum effectDirectionInit {
@@ -227,7 +227,7 @@ enum effectDirectionInit {
 	diFlagInc2 = 2,
 	diFlagInc3 = 3,
 	diFlagInc4 = 4,
-	diFlagRand = 5,
+	diFlagRand = 5
 };
 
 

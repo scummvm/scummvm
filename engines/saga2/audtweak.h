@@ -40,7 +40,7 @@ enum audioTerrains {
 	audioTerrainRiver,
 	audioTerrainFire,
 
-	audioTerrainLIMIT,
+	audioTerrainLIMIT
 };
 
 struct IntermittentAudioRecord {

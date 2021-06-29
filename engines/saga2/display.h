@@ -38,13 +38,7 @@ enum DisplayDisabledBecause {
 	PlayingVideo            = 1 << 1,
 	GraphicsInit            = 1 << 2,
 	GameSuspended           = 1 << 3,
-	GameEnded               = 1 << 4,
-#ifdef _WIN32
-	WindowInactive        = 1 << 8,
-	WindowResizing        = 1 << 9,
-	TimerSuspended        = 1 << 10,
-	WindowReresing        = 1 << 11,
-#endif
+	GameEnded               = 1 << 4
 };
 
 /* ===================================================================== *

@@ -44,7 +44,7 @@ enum SpellManaID {
 	sManaIDGreen    = 3,
 	sManaIDBlue     = 4,
 	sManaIDViolet   = 5,
-	sManaIDSkill    = 6,        // skills are here for convenience
+	sManaIDSkill    = 6         // skills are here for convenience
 };
 
 //-------------------------------------------------------------------
@@ -63,7 +63,7 @@ enum SpellTargetingTypes {
 	spellTargTAG        = 1 << 2, // cast at tileactivity inst.
 	spellTargObject     = 1 << 3, // cast at objects
 	spellTargActor      = 1 << 4,
-	spellTargCaster     = 1 << 5,
+	spellTargCaster     = 1 << 5
 };
 
 //-------------------------------------------------------------------
@@ -75,7 +75,7 @@ enum SpellApplicationTypes {
 	spellApplyTAG       = spellTargTAG,
 	spellApplyObject    = spellTargObject,
 	spellApplyActor     = spellTargObject,
-	spellApplyTracking  = 1 << 6, // track object targets
+	spellApplyTracking  = 1 << 6  // track object targets
 };
 
 
@@ -97,7 +97,7 @@ enum effectAreas {
 	eAreaMissle,
 	eAreaGlow,
 	eAreaBeam,
-	eAreaWall,
+	eAreaWall
 };
 
 

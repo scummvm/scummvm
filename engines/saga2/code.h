@@ -194,10 +194,6 @@ enum op_types {
 	op_jmp_seedrandom,                      // seeded random jump
 	op_symref_x,                            // get the export number of the symbol
 
-#if 0
-	op_type,
-#endif
-
 	op_last         /* about 90 so far */
 };
 
@@ -254,14 +250,7 @@ enum addr_types {
 	//  specified that the address is relative to whatever
 	//  object the 1st argument is referrring to.
 
-	addr_this,                              // relative to arg 1
-
-//	addr_common=0,                           // offset from global variables
-//	addr_static,                         // offset from global variables
-
-//	addr_id,                             // offset from const id object
-//	addr_id_indirect,                        // offset from stack id object
-//	addr_index,                              // index from id
+	addr_this                              // relative to arg 1
 };
 
 #define IS_CONST(x)     ((x) >= op_constint && (x) <= op_conststr)
@@ -273,41 +262,6 @@ enum addr_types {
 
 // #define IS_UNOP2(x)      ((x) == op_getarray || (x) == op_putarray)
 // #define CONST(op)        ((op) >= op_constflag && (op) <= op_conststr)
-
-#if 0
-op_conststr,                            // constant string
-/* we would need an array ref for each type of thing we get,
-    as well as a way to get the array base...
-    (I.e. pointer math)
-*/
-op_getarray,                            /* arrays not supported currently */
-op_putarray,
-
-operands we need to add:
-op_select                   implements selection statement
-op_bin2str                  binary to string
-op_fork                     might have to be done in - language so debugger works ?
-op_foreach                  implements "foreach"
-
-op_t,                       fast true and false
-op_f,
-
-- - also need to change statement producer to "drop" top of stack
-if necessary.
-
-op_min,                 /* comparison opcodes */
-op_max,
-op_clamp,
-op_abs,
-
-op_dropn,               /* drop n stack locations */
-op_swap,                /* swap s[0] and s[1] */
-op_swap2,               /* transpose s[0] and  s[2] */
-op_dupn,                /* duplicate s[0]-s[n-1] */
-
-op_acalc,               /* array calculation */
-op_field,               /* field reference */
-#endif
 
 //  Flags for special statements
 

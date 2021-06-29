@@ -2813,7 +2813,7 @@ void Actor::handleSuccessfulKill(Actor *target) {
 
 bool Actor::canBlockWith(GameObject *defenseObj, Direction relativeDir) {
 	assert(defenseObj->proto()->canBlock());
-	assert(relativeDir >= 0 && relativeDir < 8);
+	assert(relativeDir < 8);
 
 	//  Assuming that the actor may increment or decrement their facing
 	//  to block, these masks represent the possible relative facings
