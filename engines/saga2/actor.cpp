@@ -654,7 +654,7 @@ bool ActorProto::acceptInsertionAtAction(
 		notInUse,
 		heldInLeftHand,
 		heldInRightHand,
-		worn,
+		worn
 	}           inUseType;
 	int         wornWhere;
 

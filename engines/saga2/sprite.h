@@ -120,7 +120,7 @@ struct ActorPose {
 
 		leftObjectInFront   = (1 << 3),     // left object in front of actor
 		rightObjectInFront  = (1 << 4),     // right object in front of actor
-		leftOverRight       = (1 << 5),     // left in front of right
+		leftOverRight       = (1 << 5)      // left in front of right
 	};
 
 	uint16          flags;                  // sequence element flags
@@ -203,7 +203,7 @@ struct SpriteComponent {
 enum spriteEffectFlags {
 	sprFXGhosted            = (1 << 0),     // semi-translucent dither
 	sprFXTerrainMask        = (1 << 1),     // mask sprite to terrain
-	sprFXGhostIfObscured    = (1 << 2),     // apply ghosted effect if
+	sprFXGhostIfObscured    = (1 << 2)      // apply ghosted effect if
 	// obscured by terrain
 };
 
@@ -242,7 +242,7 @@ enum spriteBankNums {
 	sprDnStairsBankNum,
 	sprSitBankNum,
 
-	sprBankCount,
+	sprBankCount
 };
 
 enum spriteBankBits {
@@ -259,7 +259,7 @@ enum spriteBankBits {
 	sprPassiveBank  = (1 << sprPassiveBankNum),
 	sprUpStairsBank = (1 << sprUpStairsBankNum),
 	sprDnStairsBank = (1 << sprDnStairsBankNum),
-	sprSitBank      = (1 << sprSitBankNum),
+	sprSitBank      = (1 << sprSitBankNum)
 };
 
 //  This structure is used to contain all of the items needed

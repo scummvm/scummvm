@@ -129,7 +129,7 @@ enum tile_flags {
 	tileWalkSense   = (1 << 2),
 
 	//  Indicates that tile has been recently modified
-	tileModified    = (1 << 3),
+	tileModified    = (1 << 3)
 };
 
 /* ===================================================================== *
@@ -156,7 +156,7 @@ enum terrainTypes {
 	terrNumIce,
 	terrNumCold,
 	terrNumHot,
-	terrNumFurniture,
+	terrNumFurniture
 };
 
 enum terrainBits {
@@ -179,7 +179,7 @@ enum terrainBits {
 	terrainIce          = (1 << terrNumIce),
 	terrainCold         = (1 << terrNumCold),
 	terrainHot          = (1 << terrNumHot),
-	terrainFurniture    = (1 << terrNumFurniture),
+	terrainFurniture    = (1 << terrNumFurniture)
 };
 
 //  A combination mask of all the terrain types which can have
@@ -341,7 +341,7 @@ const int maxCycleRanges = 128;             // 128 should do for now...
 
 enum ActiveItemTypes {
 	activeTypeGroup = 0,
-	activeTypeInstance,
+	activeTypeInstance
 };
 
 //  A pointer to the array of active item state arrays
@@ -396,7 +396,7 @@ public:
 	enum {
 		activeItemLocked    = (1 << 8),     // The door is locked
 		activeItemOpen      = (1 << 9),     // The door is open (not used)
-		activeItemExclusive = (1 << 10),    // Script semaphore
+		activeItemExclusive = (1 << 10)     // Script semaphore
 	};
 
 	ActiveItem(ActiveItemList *parent, int ind, Common::SeekableReadStream *stream);
@@ -423,7 +423,7 @@ public:
 		builtInNone = 0,                    // TAG handled by SAGA
 		builtInLamp,                        // TAG has lamp behavior
 		builtInDoor,                        // TAG has door behavior
-		builtInTransporter,                 // TAG has transporter behavior
+		builtInTransporter                  // TAG has transporter behavior
 	};
 
 	//  Return the state number of this active item instance
@@ -580,7 +580,7 @@ class TileActivityTask {
 		activityTypeOpen,                   // open door
 		activityTypeClose,                  // close door
 
-		activityTypeScript,                 // scriptable activity
+		activityTypeScript                  // scriptable activity
 	};
 
 	void remove(void);                   // tile activity task is finished.
@@ -726,9 +726,7 @@ enum platformFlags {
 	plCutUPos = (1 << 13),
 	plCutUNeg = (1 << 13),
 	plCutVPos = (1 << 13),
-	plCutVNeg = (1 << 13),
-
-
+	plCutVNeg = (1 << 13)
 };
 
 #if OLDPLATFLAAGS
@@ -744,7 +742,7 @@ enum platformFlags {
 	plCutVNeg = (1 << 4),
 
 	plVisible = (1 << 5),                   // platform is visible
-	plEnabled = (1 << 6),                   // enforce platform terrain.
+	plEnabled = (1 << 6)                    // enforce platform terrain.
 };
 #endif
 
@@ -863,7 +861,7 @@ enum mapEdgeTypes {
 	edgeTypeFill0,
 	edgeTypeFill1,
 	edgeTypeRepeat,
-	edgeTypeWrap,
+	edgeTypeWrap
 };
 
 typedef MapHeader   *MapPtr,

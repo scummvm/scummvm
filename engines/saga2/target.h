@@ -44,7 +44,7 @@ enum TargetType {
 	specificObjectTarget,
 	objectPropertyTarget,
 	specificActorTarget,
-	actorPropertyTarget,
+	actorPropertyTarget
 };
 
 /* ===================================================================== *

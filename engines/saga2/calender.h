@@ -50,8 +50,7 @@ public:
 
 		//  Derived variables
 		framesPerHour   = (framesPerDay / hoursPerDay),
-		framesAtNoon    = (framesPerDay / 2),
-
+		framesAtNoon    = (framesPerDay / 2)
 	};
 
 	uint16      years,

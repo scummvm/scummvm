@@ -66,18 +66,18 @@ public:
 	enum PlayerActorFlags {
 		playerAggressive        = (1 << 0), // Player is in aggressive mode
 		playerBanded            = (1 << 1), // Player is banded
-		playerHasCartography    = (1 << 2), // Player has ability to map
+		playerHasCartography    = (1 << 2)  // Player has ability to map
 	};
 
 	// recovery information
 	enum Recovery {
 		baseManaRec             = 1,
 		attribPointsPerUpdate   = 1,
-		attribPointsPerValue    = 10,
+		attribPointsPerValue    = 10
 	};
 
 	enum {
-		vitalityLevelBump       = 50,
+		vitalityLevelBump       = 50
 	};
 
 	//  Container node for ready containers

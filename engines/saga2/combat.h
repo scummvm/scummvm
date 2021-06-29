@@ -34,7 +34,7 @@ class Location;
 enum weaponHitType {
 	hitMiss     = 0,
 	hitShield,
-	hitTarget,
+	hitTarget
 };
 
 //-----------------------------------------------------------------------
@@ -52,7 +52,7 @@ enum combatSound {
 	swordMetal,
 	whoosh1,
 	whoosh2,
-	whoosh3,
+	whoosh3
 };
 
 

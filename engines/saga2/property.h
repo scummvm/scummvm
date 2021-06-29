@@ -221,7 +221,7 @@ enum {
 	objPropIDPlayerActor,
 	objPropIDEnemy,
 
-	objPropIDCount,
+	objPropIDCount
 };
 
 extern const ObjectProperty *objPropArray[objPropIDCount];
@@ -251,7 +251,7 @@ enum {
 	actorPropIDPlayerActor,
 	actorPropIDEnemy,
 
-	actorPropIDCount,
+	actorPropIDCount
 };
 
 extern const ActorProperty *actorPropArray[actorPropIDCount];
@@ -276,7 +276,7 @@ typedef int16 TilePropertyID;
 enum {
 	tilePropIDHasWater,
 
-	tilePropIDCount,
+	tilePropIDCount
 };
 
 extern const TileProperty *tilePropArray[tilePropIDCount];
@@ -391,7 +391,7 @@ typedef int16 MetaTilePropertyID;
 enum {
 	metaTilePropIDHasWater,
 
-	metaTilePropIDCount,
+	metaTilePropIDCount
 };
 
 extern const MetaTileProperty *metaTilePropArray[metaTilePropIDCount];

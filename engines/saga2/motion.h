@@ -53,12 +53,12 @@ enum MotionThreadReturnValues {
 	motionStarted,                  //  The actor started moving.
 	motionCompleted,                //  The actor motion completed
 	//  successfully.
-	motionWalkBlocked,              //  The walk motion failed.
+	motionWalkBlocked               //  The walk motion failed.
 };
 
 enum {
 	moveWait            = (1 << 0),
-	moveRun             = (1 << 1),
+	moveRun             = (1 << 1)
 };
 
 /* ===================================================================== *

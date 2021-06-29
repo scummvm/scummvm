@@ -340,7 +340,7 @@ private:
 		ViewableRows    = 6,
 		ViewableCols    = 4,
 		maxRows         = 8,
-		maxCols         = 4,
+		maxCols         = 4
 	};
 
 public:
@@ -360,7 +360,7 @@ public:
 		isSpell       = (1 << 11),
 		isSkill       = (1 << 12),
 		isEnchantment = (1 << 13),
-		isTargetable  = (1 << 14),
+		isTargetable  = (1 << 14)
 	};
 
 //	kludge: define earlier, incorrectly spelled names to correct spelling
@@ -371,7 +371,7 @@ public:
 	enum spriteTypes {
 		objOnGround = 0,
 		objInContainerView,
-		objAsMousePtr,
+		objAsMousePtr
 	};
 
 	//  Memeber functions
@@ -760,7 +760,7 @@ private:
 		ViewableRows    = 4,
 		ViewableCols    = 4,
 		maxRows         = 8,
-		maxCols         = 4,
+		maxCols         = 4
 	};
 
 public:
@@ -915,7 +915,7 @@ class WeaponProto : public InventoryProto {
 
 protected:
 	enum {
-		inRangeRatingBonus = 4,
+		inRangeRatingBonus = 4
 	};
 
 public:
