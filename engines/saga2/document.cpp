@@ -57,10 +57,10 @@ APPFUNC(cmdDocumentQuit);
 //Rect16    closeScrollBtnRect( 184, 206, 44, 42 );
 
 // options dialog window decorations
-WindowDecoration scrollDecorations[] = {
-	{ WindowDecoration(Rect16(202,  54, 232, 100), 0) },
-	{ WindowDecoration(Rect16(212, 154, 212, 100), 1) },
-	{ WindowDecoration(Rect16(202, 254, 236, 117), 2) }
+static StaticWindow scrollDecorations[] = {
+	{{202,  54, 232, 100}, nullptr, 0},
+	{{212, 154, 212, 100}, nullptr, 1},
+	{{202, 254, 236, 117}, nullptr, 2}
 };
 
 static uint8 scrollTextColors[] = { 65, 65, 65, 65, 65, 65, 65, 66, 66, 67, 67, 67, 67, 66, 66, 66 };
@@ -84,10 +84,10 @@ CDocumentAppearance scrollAppearance(
  * ===================================================================== */
 
 // options dialog window decorations
-WindowDecoration bookDecorations[] = {
-	{ WindowDecoration(Rect16(123,  76, 394, 88), 0) },
-	{ WindowDecoration(Rect16(123, 164, 394, 80), 1) },
-	{ WindowDecoration(Rect16(123, 244, 394, 77), 2) }
+static StaticWindow bookDecorations[] = {
+	{{123,  76, 394, 88}, nullptr, 0},
+	{{123, 164, 394, 80}, nullptr, 1},
+	{{123, 244, 394, 77}, nullptr, 2}
 };
 
 static uint8 bookTextColors[] = { 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65 };
@@ -111,8 +111,9 @@ CDocumentAppearance bookAppearance(
  * ===================================================================== */
 
 // options dialog window decorations
-WindowDecoration parchDecorations[] =
-{ { WindowDecoration(Rect16(202,  54, 208, 256), 0) } };
+static StaticWindow parchDecorations[] = {
+	{{202,  54, 208, 256}, nullptr, 0}
+};
 
 CDocumentAppearance parchAppearance(
     Rect16(202, 54, 208, 256),                   //  Window size
