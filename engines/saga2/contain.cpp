@@ -131,28 +131,28 @@ ContainerAppearanceDef  physicalContainerAppearance(
     0                                       //  Total rows
 );
 
-static WindowDecoration brassDecorations[] = {
-	{ WindowDecoration(Rect16(0,  0, 268,  86), 3) },
-	{ WindowDecoration(Rect16(13, 86, 242, 109), 4) },
-	{ WindowDecoration(Rect16(13, 195, 242, 121), 5) }
+static StaticWindow brassDecorations[] = {
+	{{0,  0, 268,  86},   nullptr, 3},
+	{{13, 86, 242, 109},  nullptr, 4},
+	{{13, 195, 242, 121}, nullptr, 5}
 };
 
-static WindowDecoration clothDecorations[] = {
-	{ WindowDecoration(Rect16(0,  0, 268,  86), 6) },
-	{ WindowDecoration(Rect16(13, 86, 242, 109), 7) },
-	{ WindowDecoration(Rect16(13, 195, 242, 121), 8) }
+static StaticWindow clothDecorations[] = {
+	{{0,  0, 268,  86},   nullptr, 6},
+	{{13, 86, 242, 109},  nullptr, 7},
+	{{13, 195, 242, 121}, nullptr, 8}
 };
 
-static WindowDecoration steelDecorations[] = {
-	{ WindowDecoration(Rect16(0,  0, 268,  86), 9) },
-	{ WindowDecoration(Rect16(13, 86, 242, 109), 10) },
-	{ WindowDecoration(Rect16(13, 195, 242, 121), 11) }
+static StaticWindow steelDecorations[] = {
+	{{0,  0, 268,  86},   nullptr, 9},
+	{{13, 86, 242, 109},  nullptr, 10},
+	{{13, 195, 242, 121}, nullptr, 11}
 };
 
-static WindowDecoration woodDecorations[] = {
-	{ WindowDecoration(Rect16(0,  0, 268,  86), 12) },
-	{ WindowDecoration(Rect16(13, 86, 242, 109), 13) },
-	{ WindowDecoration(Rect16(13, 195, 242, 121), 14) }
+static StaticWindow woodDecorations[] = {
+	{{0,  0, 268,  86},   nullptr, 12},
+	{{13, 86, 242, 109},  nullptr, 13},
+	{{13, 195, 242, 121}, nullptr, 14}
 };
 
 //-----------------------------------------------------------------------
@@ -176,8 +176,8 @@ ContainerAppearanceDef  deathContainerAppearance(
 );
 
 // physal dialog window decorations
-static WindowDecoration deathDecorations[] =
-{ { WindowDecoration(Rect16(0,  0, 206,  250), 15) } };
+static StaticWindow deathDecorations[] =
+{ {{0,  0, 206,  250}, nullptr, 15} };
 
 //-----------------------------------------------------------------------
 //	ReadyContainer appearance
@@ -219,8 +219,8 @@ ContainerAppearanceDef  mentalContainerAppearance(
     20                                      //  Total rows
 );
 
-static WindowDecoration mentalDecorations[] =
-{ { WindowDecoration(Rect16(0,  0, 158,  215), 0) } };      //  Bottom decoration panel
+static StaticWindow mentalDecorations[] =
+{ {{0,  0, 158,  215}, nullptr, 0} };      //  Bottom decoration panel
 
 //-----------------------------------------------------------------------
 //	Enchantment container appearance
@@ -1242,11 +1242,12 @@ TangibleContainerWindow::TangibleContainerWindow(
 		               containerRes, 'F', 'R', 'M');
 		massWeightIndicator = NULL;
 	} else {
-		static WindowDecoration *winDecs[] =  { brassDecorations,
-		                                        clothDecorations,
-		                                        steelDecorations,
-		                                        woodDecorations
-		                                      };
+		static StaticWindow *winDecs[] =  {
+			brassDecorations,
+		    clothDecorations,
+		    steelDecorations,
+		    woodDecorations
+		};
 		uint16      bgndType = view->containerObject->proto()->appearanceType;
 
 		assert(bgndType < 4);
