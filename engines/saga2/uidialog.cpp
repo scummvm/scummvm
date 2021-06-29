@@ -230,10 +230,10 @@ static const StaticRect *saveLoadTextRects[kNumSaveLoadTexts] = {
 
 // save/load dialog window decorations
 
-WindowDecoration saveWindowDecorations[kNumSaveLoadPanels] = {
-	{ WindowDecoration(*saveLoadPanelRects[0], SLTopPanelResID) },
-	{ WindowDecoration(*saveLoadPanelRects[1], SLMidPanelResID) },
-	{ WindowDecoration(*saveLoadPanelRects[2], SLBotPanelResID) }
+StaticWindow saveWindowDecorations[kNumSaveLoadPanels] = {
+	{*saveLoadPanelRects[0], nullptr, SLTopPanelResID},
+	{*saveLoadPanelRects[1], nullptr, SLMidPanelResID},
+	{*saveLoadPanelRects[2], nullptr, SLBotPanelResID}
 };
 
 

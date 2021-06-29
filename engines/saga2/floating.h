@@ -53,6 +53,12 @@ class  GameObject;
 //  artwork, this class provides a linked list of all the "artwork
 //  panels" which cover the borders of the image.
 
+struct StaticWindow {
+	StaticRect extent;
+	void *image;
+	int16 imageNumber;
+};
+
 struct WindowDecoration {
 	Rect16          extent;                 // area that image covers
 	void            *image;                 // pointer to image data
@@ -68,6 +74,12 @@ struct WindowDecoration {
 		extent = r;
 		image = NULL;
 		imageNumber = num;
+	}
+
+	WindowDecoration(StaticWindow s) {
+		extent = s.extent;
+		image = s.image;
+		imageNumber = s.imageNumber;
 	}
 
 	// this sets the decorations ( for use with the default constructor
@@ -223,6 +235,9 @@ public:
 	void setDecorations(WindowDecoration *, int16, hResContext *);
 	void setDecorations(WindowDecoration *, int16, hResContext *, hResID);
 	void setDecorations(WindowDecoration *, int16, hResContext *, char, char, char);
+
+	void setDecorations(StaticWindow *, int16, hResContext *, hResID);
+	void setDecorations(StaticWindow *, int16, hResContext *, char, char, char);
 
 
 	//  Free up memory used by decorative panels
