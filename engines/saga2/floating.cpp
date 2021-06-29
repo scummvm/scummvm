@@ -122,16 +122,22 @@ void DecoratedWindow::setDecorations(
     hResContext     *con) {
 	int16           i;
 
-	decorations = dec;
 	numDecorations = count;
 
+	if (decorations)
+		delete[] decorations;
+
+	decorations = new WindowDecoration[numDecorations];
+
 	//  For each "decorative panel" within the frame of the window
+
 	for (i = 0; i < numDecorations; i++, dec++) {
-
-		// request an image pointer from the imageCache
-
+		// request an image pointer from the image Cache
 		dec->image = ImageCache.requestImage(con,
 		                                     MKTAG('B', 'R', 'D', dec->imageNumber));
+		decorations[i].extent = dec->extent;
+		decorations[i].image = dec->image;
+		decorations[i].imageNumber = dec->imageNumber;
 	}
 }
 
@@ -142,19 +148,60 @@ void DecoratedWindow::setDecorations(
     hResID          id_) {
 	int16           i;
 
-	decorations = dec;
 	numDecorations = count;
+
+	if (decorations)
+		delete[] decorations;
+
+	decorations = new WindowDecoration[numDecorations];
 
 	//  For each "decorative panel" within the frame of the window
 
 	for (i = 0; i < numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
 		dec->image = ImageCache.requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
+		decorations[i].extent = dec->extent;
+		decorations[i].image = dec->image;
+		decorations[i].imageNumber = dec->imageNumber;
 	}
 }
 
 void DecoratedWindow::setDecorations(
     WindowDecoration *dec,
+    int16           count,
+    hResContext     *con,
+    char a, char b, char c) {
+	setDecorations(dec, count, con, MKTAG(a, b, c, 0));
+}
+
+
+void DecoratedWindow::setDecorations(
+    StaticWindow *dec,
+    int16           count,
+    hResContext     *con,
+    hResID          id_) {
+	int16           i;
+
+	numDecorations = count;
+
+	if (decorations)
+		delete[] decorations;
+
+	decorations = new WindowDecoration[numDecorations];
+
+	//  For each "decorative panel" within the frame of the window
+
+	for (i = 0; i < numDecorations; i++, dec++) {
+		// request an image pointer from the image Cache
+		dec->image = ImageCache.requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
+		decorations[i].extent = dec->extent;
+		decorations[i].image = dec->image;
+		decorations[i].imageNumber = dec->imageNumber;
+	}
+}
+
+void DecoratedWindow::setDecorations(
+    StaticWindow *dec,
     int16           count,
     hResContext     *con,
     char a, char b, char c) {
@@ -172,7 +219,8 @@ void DecoratedWindow::removeDecorations(void) {
 		ImageCache.releaseImage(dec->image);
 	}
 
-	decorations = NULL;
+	if (decorations)
+		delete[] decorations;
 	numDecorations = 0;
 }
 
