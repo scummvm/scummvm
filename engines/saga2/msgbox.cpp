@@ -39,12 +39,13 @@ const int8 windowColor = 33 + 9;
 const int8 buttonColor = 36 + 9;
 const int numMessageBtns  = 2;
 
-Rect16  mbWindowRect(70, 170, 500, 140);
+static const StaticRect mbWindowRect = {70, 170, 500, 140};
 
-const Rect16    mbOkBtnRect(100, 100, 100, 25);
-const Rect16    mbCancelBtnRect(300, 100, 100, 25);
-const Rect16    mbOneBtnRect(200, 100, 100, 25);
-const Rect16    mbButtonRects[numMessageBtns] = { { mbOkBtnRect },
+static const StaticRect mbOkBtnRect = {100, 100, 100, 25};
+static const StaticRect mbCancelBtnRect = {300, 100, 100, 25};
+static const StaticRect mbOneBtnRect = {200, 100, 100, 25};
+static const StaticRect mbButtonRects[numMessageBtns] = {
+	{ mbOkBtnRect },
 	{ mbCancelBtnRect }
 };
 static gFont    *mbButtonFont = &ThinFix8Font;
