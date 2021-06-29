@@ -365,9 +365,9 @@ const uint32 containerGroupID = MKTAG('C', 'O', 'N', 'T');
 // button position views
 // topBox, midBox, and botBox are defined in uimetrcs.h
 static const StaticRect *views[] = {
-	{ topBox },
-	{ midBox },
-	{ botBox }
+	topBox,
+	midBox,
+	botBox
 };
 
 // individual indicators/buttons
