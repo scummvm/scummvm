@@ -88,7 +88,7 @@ enum stimuliTypes {
 	senseDidGive,                           // we gave something to protag
 
 	//  Number of sensory types
-	senseCount,
+	senseCount
 
 };
 

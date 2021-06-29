@@ -97,7 +97,7 @@ enum borderIDs {
 	MWLeftBorder,
 	MWRightBorder1,
 	MWRightBorder2,
-	MWRightBorder3,
+	MWRightBorder3
 };
 
 extern WindowDecoration mainWindowDecorations[];

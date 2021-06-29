@@ -45,7 +45,7 @@ enum SensorType {
 	objectPropertySensor,
 	specificActorSensor,
 	actorPropertySensor,
-	eventSensor,
+	eventSensor
 };
 
 //  Sensors will be checked every 5 frames

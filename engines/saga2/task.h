@@ -55,11 +55,7 @@ enum TaskType {
 	bandTask,
 	bandAndAvoidEnemiesTask,
 	followPatrolRouteTask,
-	attendTask,
-#if 0
-	defendTask,
-	parryTask,
-#endif
+	attendTask
 };
 
 /* ===================================================================== *
@@ -463,12 +459,12 @@ class GotoObjectTargetTask : public GotoTask {
 
 	enum {
 		track       = (1 << 0),
-		inSight     = (1 << 1),
+		inSight     = (1 << 1)
 	};
 
 	//  static const doesn't work in Visual C++
 	enum {
-		sightRate = 16,
+		sightRate = 16
 	};
 //	static const int16  sightRate = 16;
 
@@ -609,7 +605,7 @@ class GoAwayFromTask : public Task {
 	uint8                   flags;
 
 	enum {
-		run = (1 << 0),
+		run = (1 << 0)
 	};
 
 public:
@@ -746,7 +742,7 @@ class HuntTask : public Task {
 
 	enum HuntFlags {
 		huntWander  = (1 << 0), //  Indicates that subtask is a wander task
-		huntGoto    = (1 << 1), //  Indicates that subtask is a goto task
+		huntGoto    = (1 << 1)  //  Indicates that subtask is a goto task
 	};
 
 public:
@@ -843,7 +839,7 @@ class HuntToBeNearLocationTask : public HuntLocationTask {
 
 	//  static const doesn't work in Visual C++
 	enum {
-		targetEvaluateRate = 64,
+		targetEvaluateRate = 64
 	};
 //	static const uint8  targetEvaluateRate;
 
@@ -933,7 +929,7 @@ class HuntToBeNearObjectTask : public HuntObjectTask {
 	uint8               targetEvaluateCtr;
 
 	enum {
-		targetEvaluateRate = 64,
+		targetEvaluateRate = 64
 	};
 //	static const uint8  targetEvaluateRate;
 
@@ -990,7 +986,7 @@ class HuntToPossessTask : public HuntObjectTask {
 	uint8               targetEvaluateCtr;
 
 	enum {
-		targetEvaluateRate = 64,
+		targetEvaluateRate = 64
 	};
 //	static const uint8  targetEvaluateRate;
 
@@ -1042,7 +1038,7 @@ class HuntActorTask : public HuntTask {
 	uint8               flags;
 
 	enum {
-		track   = (1 << 0),
+		track   = (1 << 0)
 	};
 
 protected:
@@ -1090,14 +1086,14 @@ class HuntToBeNearActorTask : public HuntActorTask {
 	uint8                   targetEvaluateCtr;
 
 	enum {
-		targetEvaluateRate = 16,
+		targetEvaluateRate = 16
 	};
 //	static const uint8  targetEvaluateRate;
 
 public:
 
 	enum {
-		tooClose = 12,
+		tooClose = 12
 	};
 
 	//  Constructor -- initial construction
@@ -1164,17 +1160,17 @@ class HuntToKillTask : public HuntActorTask {
 	uint8               specialAttackCtr;
 
 	enum {
-		targetEvaluateRate = 16,
+		targetEvaluateRate = 16
 	};
 
 	enum {
-		currentWeaponBonus = 1,
+		currentWeaponBonus = 1
 	};
 
 	uint8               flags;
 
 	enum {
-		evalWeapon      = (1 << 0),
+		evalWeapon      = (1 << 0)
 	};
 //	static const uint8  targetEvaluateRate;
 
@@ -1281,7 +1277,7 @@ class BandTask : public HuntTask {
 	uint8               targetEvaluateCtr;
 
 	enum {
-		targetEvaluateRate = 2,
+		targetEvaluateRate = 2
 	};
 
 public:
@@ -1631,7 +1627,7 @@ class ParryTask : public Task {
 
 	enum {
 		motionStarted   = (1 << 0),
-		blockStarted    = (1 << 1),
+		blockStarted    = (1 << 1)
 	};
 
 public:
