@@ -287,7 +287,7 @@ void Sprite::setCast(uint16 castId) {
 
 		// TODO: Respect sprite width/height settings. Need to determine how to read
 		// them properly.
-		if (_cast->_type != kCastShape) {
+		if (_cast->_type != kCastShape && _cast->_type != kCastText) {
 			Common::Rect dims = _cast->getInitialRect();
 			_width = dims.width();
 			_height = dims.height();
