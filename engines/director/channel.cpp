@@ -406,6 +406,7 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 
 	*_sprite = *nextSprite;
 
+	// TODO: auto expand text size is meaning less for us, not all text
 	// since we are using initialRect for the text cast member now, then the sprite size is meaning less for us.
 	// thus, we keep the _sprite size here
 	if (hasTextCastMember(_sprite) && widgetKeeped) {
