@@ -91,9 +91,6 @@ hResContext         *spriteRes,         // sprite resource handle
 //  An array of 32 actor appearances
 static ActorAppearance appearanceTable[32];
 
-//  A least-recently-used list of actor appearances
-static Common::List<ActorAppearance *> appearanceLRU;
-
 /* ===================================================================== *
    Quick memory routines
  * ===================================================================== */
@@ -569,7 +566,7 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	WriteStatusF(2, "Loading Banks: %x", banksNeeded);
 
 	//  Make this one the most recently used entry
-	appearanceLRU.push_back(this);
+	g_vm->_appearanceLRU.push_back(this);
 
 	//  Load in additional sprite banks if requested...
 	for (bank = 0; bank < (long)ARRAYSIZE(spriteBanks); bank++) {
@@ -639,7 +636,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 
 	//  Search the table for either a matching appearance,
 	//  or for an empty one.
-	for (Common::List<ActorAppearance *>::iterator it = appearanceLRU.begin(); it != appearanceLRU.end(); ++it) {
+	for (Common::List<ActorAppearance *>::iterator it = g_vm->_appearanceLRU.begin(); it != g_vm->_appearanceLRU.end(); ++it) {
 		if ((*it)->id == id                    // If has same ID
 		        && (*it)->poseList != nullptr) {      // and frames not dumped
 			// then use this one!
@@ -653,7 +650,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	//  empty one.
 	ActorAppearance *aa = nullptr;
 	//  Search from LRU end of list.
-	for (Common::List<ActorAppearance *>::iterator it = appearanceLRU.begin(); it != appearanceLRU.end(); ++it) {
+	for (Common::List<ActorAppearance *>::iterator it = g_vm->_appearanceLRU.begin(); it != g_vm->_appearanceLRU.end(); ++it) {
 		if ((*it)->useCount == 0)  {	// If not in use
 			aa = *it;					// then use this one!
 			break;
@@ -849,7 +846,7 @@ void initSprites(void) {
 		ActorAppearance *aa = &appearanceTable[i];
 
 		aa->useCount = 0;
-		appearanceLRU.push_front(aa);
+		g_vm->_appearanceLRU.push_front(aa);
 	}
 }
 
