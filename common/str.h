@@ -349,8 +349,11 @@ void replace(Common::String &source, const Common::String &what, const Common::S
  * Take a 32 bit value and turn it into a four character string, where each of
  * the four bytes is turned into one character. Most significant byte is printed
  * first.
+ *
+ * @param tag tag value to convert
+ * @param nonPrintable indicate if non-printable characters need to be printed as octals
  */
-String tag2string(uint32 tag);
+String tag2string(uint32 tag, bool nonPrintable = false);
 
 /**
  * Copy up to size - 1 characters from src to dst and also zero terminate the
@@ -406,6 +409,13 @@ size_t strnlen(const char *src, size_t maxSize);
  * copying or printing it.
  */
 #define tag2str(x)	Common::tag2string(x).c_str()
+
+/**
+ * Convenience wrapper for tag2string with non-printable characters which "returns" a C string.
+ * Note: It is *NOT* safe to do anything with the return value other than directly
+ * copying or printing it.
+ */
+#define tag2strP(x)	Common::tag2string(x, true).c_str()
 
 /**
  * Converts string with all non-printable characters properly escaped
