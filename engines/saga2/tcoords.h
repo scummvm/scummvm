@@ -51,6 +51,39 @@ struct StaticTilePoint {
 		v = nv;
 		z = nz;
 	}
+
+	friend StaticTilePoint operator+(StaticTilePoint a, StaticTilePoint b) {
+		int16 nu = a.u + b.u;
+		int16 nv = a.v + b.v;
+		int16 nz = a.z + b.z;
+		StaticTilePoint p = {nu, nv, nz};
+
+		return p;
+	}
+
+	friend StaticTilePoint operator-(StaticTilePoint a, StaticTilePoint b) {
+		int16 nu = a.u - b.u;
+		int16 nv = a.v - b.v;
+		int16 nz = a.z - b.z;
+		StaticTilePoint p = {nu, nv, nz};
+
+		return p;
+	}
+
+	friend StaticTilePoint operator*(StaticTilePoint a, int b) {
+		int16 nu = a.u * b;
+		int16 nv = a.v * b;
+		int16 nz = a.z * b;
+		StaticTilePoint p = {nu, nv, nz};
+
+		return p;
+	}
+
+	void operator+=(StaticTilePoint a) {
+		u += a.u;
+		v += a.v;
+		z += a.z;
+	}
 };
 
 #include "common/pack-start.h"
