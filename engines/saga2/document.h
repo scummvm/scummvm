@@ -57,43 +57,17 @@ enum pageOrientation {
 	pageOrientHorizontal
 };
 
-class CDocumentAppearance {
-public:
-	Rect16          windowPos;                  //  Position of window on screen
+struct CDocumentAppearance {
+	StaticRect      windowPos;                  //  Position of window on screen
 	int16           numPages;                   //  Number of visible pages
 	int16           orientation;                //  Orientation of pages
 	uint8           *textColors;                //  Text color array
-	Rect16          pageRect[maxVisiblePages];//  Array of visible page rects
-	Rect16          closeRect;                  //  Close-box rectangle
+	StaticRect      pageRect[maxVisiblePages];//  Array of visible page rects
+	StaticRect      closeRect;                  //  Close-box rectangle
 	StaticWindow    *decoList;                 //  List of decorator panels
 	int16           numDecos;                   //  Number of decorator panels
 	hResID          groupID;                    //  Resource ID for decoration group
 	hResID          decoID;                     //  Resource ID for decorations
-
-	CDocumentAppearance(
-	    Rect16      _windowPos,
-	    int16       _numPages,
-	    int16       _orientation,
-	    uint8       *_textColors,
-	    Rect16      _pageRect_0,
-	    Rect16      _pageRect_1,
-	    Rect16      _closeRect,
-	    StaticWindow *_decoList,
-	    int16       _numDecos,
-	    hResID      _groupID,
-	    hResID      _decoID)
-		:   windowPos(_windowPos),
-		    numPages(_numPages),
-		    orientation(_orientation),
-		    textColors(_textColors),
-		    closeRect(_closeRect),
-		    decoList(_decoList),
-		    numDecos(_numDecos),
-		    groupID(_groupID),
-		    decoID(_decoID) {
-		pageRect[0]       = _pageRect_0;
-		pageRect[1]       = _pageRect_1;
-	}
 };
 
 //  Base class for scrolls, books, and parchments
