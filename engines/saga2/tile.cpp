@@ -4683,51 +4683,6 @@ void updateMainDisplay(void) {
 	cycleTiles(deltaTime);
 }
 
-void testTiles() {
-	//initBackPanel();
-	//initMaps();
-	initTileCyclingStates();
-
-	setCurrentMap(0);
-	PlayModeSetup();
-
-	//buildRoofTable();
-	//buildDisplayList();
-
-	// draws tiles to tileDrawMap.data
-	drawMetaTiles();
-
-	//uint8 *img = (uint8*)mapList[0].map->mapData;
-	//int16 size = mapList[0].map->size;
-	uint8 *img = tileDrawMap.data;
-	Point16 size = tileDrawMap.size;
-	debugC(3, kDebugTiles, "img = %p, size = %d,%d", (void *)img, size.x, size.y);
-	//Common::hexdump(img, size*size);
-
-	Graphics::Surface sur;
-	sur.create(size.x, size.y, Graphics::PixelFormat::createFormatCLUT8());
-	sur.setPixels(img);
-	sur.debugPrint();
-	g_system->copyRectToScreen(sur.getPixels(), sur.pitch, 0, 0, sur.w, sur.h);
-
-	//  Draw sprites onto back buffer
-	//drawDisplayList();
-
-	//  Render the image of the mouse pointer on everything else
-	//drawTileMousePointer();
-
-	//  Blit it all onto the screen
-	//drawPage->writePixels(
-	//    tileRect,
-	//    tileDrawMap.data
-	//    + fineScroll.x
-	//    + fineScroll.y * tileDrawMap.size.x,
-	//    tileDrawMap.size.x);
-
-	cleanupTileCyclingStates();
-	cleanupMaps();
-}
-
 void drawMainDisplay(void) {
 
 

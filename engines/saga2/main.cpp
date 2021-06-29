@@ -57,7 +57,6 @@ namespace Saga2 {
 // enable the following to display event loop processing
 #define DEBUG_LOOP 0
 
-extern WindowDecoration autoMapDecorations[];
 extern gToolBase        G_BASE;
 extern char            *gameTimeStr;
 extern bool             underground;
@@ -182,8 +181,6 @@ int16 OptionsDialog(bool disableSaveResume = false);
 
 static void mainLoop(bool &cleanExit, int argc, char *argv[]);
 void displayUpdate(void);
-
-void testTiles();
 
 bool initResourceHandles();
 bool initDisplayPort();
@@ -592,42 +589,6 @@ bool openResources(void) {
 	}
 	return false;
 
-}
-
-void testOpenImage() {
-		hResContext     *decRes;
-
-		decRes = resFile->newContext(MKTAG('A', 'M', 'A', 'P'), "Automap Resources");
-		//checkAlloc(summaryData = LoadResource(decRes,
-		//									  MKTAG('S', 'U', 'M', currentMapNum),
-		//									  "summary data"));
-
-		WindowDecoration *dec = &autoMapDecorations[0];
-		dec->image = LoadResource(decRes, MKTAG('M', 'A', 'P', 0), "MAP0");
-		//dec->image = ImageCache.requestImage(decRes, MKTAG('M', 'A', 'P', 0) | MKTAG('B', 'R', 'D', dec->imageNumber));
-		Point16 pos(0, 0);
-		drawCompressedImage(mainPort, pos, dec->image);
-}
-
-void testScripts() {
-	scriptCallFrame scf;
-	//for (int i = 1; i < 100; ++i)
-	//	runScript(i, scf);
-	runScript(1, scf);
-}
-
-void testTileRendering() {
-	tileRes = resFile->newContext(MKTAG('T', 'I', 'L', 'E'), "tile resources");
-	listRes = objResFile->newContext(MKTAG('L', 'I', 'S', 'T'), "list resources");
-	resImports = (ResImportTable *)LoadResource(listRes, MKTAG('I', 'M', 'P', 'O'), "res imports");
-
-	initResourceHandles();
-	mainPort.setDisplayPage(&protoPage);
-	initPanelSystem();
-	initDisplayPort();
-	initDisplay();
-	initGameMaps();
-	testTiles();
 }
 
 //-----------------------------------------------------------------------
