@@ -103,6 +103,8 @@ workBuffer::~workBuffer(void) {
 
 musicBuffer::musicBuffer(size_t newSize, audioInterface *sd, int16 newID)
 	: Buffer(newSize) {
+	warning("STUB: musicBuffer::musicBuffer()");
+#if 0
 	if (sd && sd->enabled(volMusic)) {
 		assert(sd);
 		assert(sd->mid);
@@ -110,15 +112,13 @@ musicBuffer::musicBuffer(size_t newSize, audioInterface *sd, int16 newID)
 		bufID = newID;
 		fillBuffer = 0;
 		targetSated = false;
-	warning("STUB: musicBuffer::musicBuffer()");
-#if 0
 		ailSampleHandle = AIL_allocate_sequence_handle(sd->mid);
 		if (ailSampleHandle == 0)
 			error("Unable to allocate music handle");
-#endif
 		data[1] = NULL;
 		audioSet = 0;
 	}
+#endif
 }
 
 musicBuffer::~musicBuffer(void) {
