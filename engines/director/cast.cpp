@@ -168,7 +168,7 @@ void Cast::setCastMemberModified(int castId) {
 		return;
 	}
 
-	cast->_modified = 1;
+	cast->setModified(true);
 }
 
 Common::String Cast::getString(Common::String str) {

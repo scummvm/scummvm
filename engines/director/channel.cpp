@@ -453,7 +453,7 @@ void Channel::replaceWidget(uint16 previousCastId) {
 
 	if (_sprite && _sprite->_cast) {
 		Common::Rect bbox(getBbox());
-		_sprite->_cast->_modified = false;
+		_sprite->_cast->setModified(false);
 
 //		if (_sprite->_cast->_type == kCastText)
 //			debug("%s %d\n", ((TextCastMember *)_sprite->_cast)->_ftext.c_str(), ((TextCastMember *)_sprite->_cast)->_editable);
