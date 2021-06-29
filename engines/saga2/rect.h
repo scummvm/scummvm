@@ -29,6 +29,15 @@
 
 namespace Saga2 {
 
+struct StaticPoint16 {
+	int16 x, y;
+
+	void set(int16 nx, int16 ny) {
+		x = nx;
+		y = ny;
+	}
+};
+
 class Point16 {
 public:
 	int16               x, y;
@@ -57,6 +66,11 @@ public:
 		y = HIWORD(lparam);
 	}
 #endif
+
+	Point16(StaticPoint16 p) {
+		x = p.x;
+		y = p.y;
+	}
 
 	void load(Common::SeekableReadStream *stream);
 

@@ -87,8 +87,8 @@ class FloatingWindow;
 class DragBar : public gControl {
 
 public:
-	static Point16  dragOffset,             // mouse offset
-	       dragPos;                // new position of window
+	static StaticPoint16  dragOffset,             // mouse offset
+	                      dragPos;                // new position of window
 	static bool     update;                 // true = update window pos
 	static FloatingWindow *dragWindow;      // which window to update
 
