@@ -139,6 +139,10 @@ typedef Point16         Extent16;               // contains width and height
    Point32: 32-bit 2-D point
  * ===================================================================== */
 
+struct StaticPoint32 {
+	int32 x, y;
+};
+
 class Point32 {
 public:
 	int32               x, y;
@@ -177,6 +181,12 @@ public:
 		y = HIWORD(lparam);
 	}
 #endif
+
+	Point32(StaticPoint32 p) {
+		x = p.x;
+		y = p.y;
+	}
+
 	// Point32 operators
 	friend Point32 operator+ (Point32 a, Point32 b) {
 		return Point32(a.x + b.x, a.y + b.y);

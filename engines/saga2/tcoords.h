@@ -43,6 +43,15 @@ enum facingDirections {
 };
 typedef uint8 Direction;
 
+struct StaticTilePoint {
+	int16 u, v, z;
+
+	void set(int nu, int nv, int nz) {
+		u = nu;
+		v = nv;
+		z = nz;
+	}
+};
 
 #include "common/pack-start.h"
 struct TilePoint {
@@ -59,6 +68,11 @@ struct TilePoint {
 	TilePoint() { u = v = z = 0; }
 	TilePoint(int16 nu, int16 nv, int16 nz) { u = nu; v = nv; z = nz; }
 	TilePoint(Common::SeekableReadStream *stream);
+	TilePoint(StaticTilePoint p) {
+		u = p.u;
+		v = p.v;
+		z = p.z;
+	}
 
 		// TilePoint operators
 	friend TilePoint operator+ (TilePoint a, TilePoint b)

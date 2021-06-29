@@ -92,28 +92,37 @@ const   int16       autoMapMDWidth  = 544;
 const   int16       autoMapBTWidth  = 544;
 
 
-Rect16  autoMapRect(autoMapBoxX,
-                    autoMapBoxY,
-                    autoMapBoxXSize,
-                    autoMapBoxYSize);
+static const StaticRect autoMapRect = {
+	autoMapBoxX,
+	autoMapBoxY,
+	autoMapBoxXSize,
+	autoMapBoxYSize
+};
 
-Rect16  autoMapTopPanelRect(autoMapBoxX,
-                            autoMapBoxY,
-                            autoMapTPWidth,
-                            autoMapTPHeight);
+static const StaticRect autoMapTopPanelRect = {
+	autoMapBoxX,
+	autoMapBoxY,
+	autoMapTPWidth,
+	autoMapTPHeight
+};
 
-Rect16  autoMapMidPanelRect(autoMapBoxX,
-                            autoMapBoxY + autoMapTPHeight,
-                            autoMapMDWidth,
-                            autoMapMDHeight);
+static const StaticRect autoMapMidPanelRect = {
+	autoMapBoxX,
+	autoMapBoxY + autoMapTPHeight,
+	autoMapMDWidth,
+	autoMapMDHeight
+};
 
-Rect16  autoMapBotPanelRect(autoMapBoxX,
-                            autoMapBoxY + autoMapTPHeight + autoMapMDHeight,
-                            autoMapBTWidth,
-                            autoMapBTHeight);
+static const StaticRect autoMapBotPanelRect = {
+	autoMapBoxX,
+	autoMapBoxY + autoMapTPHeight + autoMapMDHeight,
+	autoMapBTWidth,
+	autoMapBTHeight
+};
 
 
-Rect16  autoMapPanelRects[numAutoMapPanels]   = { { autoMapTopPanelRect },
+static const StaticRect autoMapPanelRects[numAutoMapPanels] = {
+	{ autoMapTopPanelRect },
 	{ autoMapMidPanelRect },
 	{ autoMapBotPanelRect }
 };
@@ -123,8 +132,19 @@ const int16     scrollBtnWidth  = 42;
 const int16     scrollBtnHeight = 42;
 
 
-Rect16  closeAutoMapBtnRect(-1,  276,  42, 41);
-Rect16  scrollBtnRect(493, 275, scrollBtnWidth, scrollBtnHeight);
+static const StaticRect closeAutoMapBtnRect = {
+	-1,
+	276,
+	42,
+	41
+};
+
+static const StaticRect scrollBtnRect = {
+	493,
+	275,
+	scrollBtnWidth,
+	scrollBtnHeight
+};
 
 
 WindowDecoration autoMapDecorations[numAutoMapPanels] = {

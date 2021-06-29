@@ -44,15 +44,12 @@ struct auxAudioTheme {
 	bool active;
 	Location l;
 	soundSegment loopID;
-
-	auxAudioTheme() {
-		active = false;
-		loopID = 0;
-		l = Nowhere;
-	}
 };
 
-auxAudioTheme aats[AUXTHEMES];
+static auxAudioTheme aats[AUXTHEMES] = {
+	{ false, Nowhere, 0 },
+	{ false, Nowhere, 0 }
+};
 
 void addAuxTheme(Location loc, soundSegment lid);
 void killAuxTheme(soundSegment lid);
@@ -62,7 +59,8 @@ void killAllAuxThemes(void);
    Constants
  * ===================================================================== */
 
-const TilePoint AudibilityVector = TilePoint(1, 1, 0);
+const static StaticTilePoint AudibilityVector = { 1, 1, 0 };
+
 const int32 checkGameTime = 1000;
 
 /* ===================================================================== *
@@ -88,7 +86,7 @@ static Deejay grandMasterFTA;
 
 static uint32 currentTheme = 0;
 static uint32 auxTheme = 0;
-static Point32 themeAt;
+static StaticPoint32 themeAt = {0, 0};
 
 static int32 lastGameTime = 0;
 static int32 elapsedGameTime = 0;
@@ -98,7 +96,24 @@ static bool playingExternalLoop = false;
 int activeFactions[maxFactions];
 
 
-TilePoint themeVectors[MaxThemes];
+static StaticTilePoint themeVectors[MaxThemes] = {
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0}
+};
 
 
 
@@ -189,19 +204,20 @@ void setAreaSound(const TilePoint &) {
 			Point32 themePos;
 			for (int r = 1; r < 5 && loopID == 0 ; r++) {
 				TileRegion  regn;
-				regn.max = baseCoords + ((AudibilityVector * r) << kPlatShift) ; ///kTileUVSize;
-				regn.min = baseCoords - ((AudibilityVector * r) << kPlatShift); ///kTileUVSize;
+				TilePoint AudVec = TilePoint(AudibilityVector);
+				regn.max = baseCoords + ((AudVec * r) << kPlatShift) ; ///kTileUVSize;
+				regn.min = baseCoords - ((AudVec * r) << kPlatShift); ///kTileUVSize;
 				MetaTileIterator    mIter(currentMapNum, regn);
 				int i = 0;
 				int j = 0;
 
-				TilePoint       dist = AudibilityVector * r << (kPlatShift + 1);
+				TilePoint       dist = AudVec * r << (kPlatShift + 1);
 				dist = dist << 4;
 				themePos.x = dist.u;
 				themePos.y = dist.v;
 				MetaTilePtr     mt = mIter.first(&mtPos);
 				for (i = 0; i < 16; i++) {
-					themeVectors[i] = TilePoint(0, 0, 0);
+					themeVectors[i].set(0, 0, 0);
 				}
 				while (mt) {
 					i++;
@@ -259,7 +275,8 @@ void audioEnvironmentUseSet(int16 audioSet, int32 auxID, Point32 relPos) {
 	if (currentTheme != (uint16)audioSet || auxTheme != (uint32)auxID) {
 		currentTheme = audioSet;
 		auxTheme = auxID;
-		themeAt = relPos;
+		themeAt.x = relPos.x;
+		themeAt.y = relPos.y;
 		_playLoop(0);
 		if (currentTheme)
 			playLoopAt(res, themeAt);
@@ -270,7 +287,8 @@ void audioEnvironmentUseSet(int16 audioSet, int32 auxID, Point32 relPos) {
 			WriteStatusF(9, "Thm: %2.2d (%d,%d) was (%d,%d)   ", audioSet, relPos.x, relPos.y, themeAt.x, themeAt.y);
 		}
 #endif
-		themeAt = relPos;
+		themeAt.x = relPos.x;
+		themeAt.y = relPos.y;
 		moveLoop(themeAt);
 	}
 }
