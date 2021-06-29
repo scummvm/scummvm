@@ -245,8 +245,8 @@ void BackWindow::toFront(void) {}
    DragBar class member functions
  * ===================================================================== */
 
-Point16             DragBar::dragOffset,
-DragBar::dragPos;
+StaticPoint16 DragBar::dragOffset = {0, 0};
+StaticPoint16 DragBar::dragPos = {0, 0};
 bool                DragBar::update;
 FloatingWindow      *DragBar::dragWindow;
 
@@ -267,7 +267,7 @@ bool DragBar::pointerHit(gPanelMessage &msg) {
 
 	dragPos.x = wExtent.x;
 	dragPos.y = wExtent.y;
-	dragOffset = msg.pickAbsPos;
+	dragOffset.set(msg.pickAbsPos.x, msg.pickAbsPos.y);
 
 	return true;
 }
@@ -287,7 +287,7 @@ void DragBar::pointerDrag(gPanelMessage &msg) {
 	//  If window position has changed, then signal the drawing loop
 
 	if (pos != dragPos) {
-		dragPos = pos;
+		dragPos.set(pos.x, pos.y);
 		update = true;
 		dragWindow = (FloatingWindow *)&window;
 	}
