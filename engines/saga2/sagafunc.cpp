@@ -2506,7 +2506,7 @@ int16 scriptTagUse(int16 *args) {
 //		void "c" setAnimation( int flags, int targetState );
 
 enum {
-	tileAnimateWait = (1 << 0),             // wait until animation finished
+	tileAnimateWait = (1 << 0)              // wait until animation finished
 };
 
 int16 scriptTagSetAnimation(int16 *args) {
