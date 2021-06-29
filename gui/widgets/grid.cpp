@@ -112,9 +112,13 @@ void GridItemWidget::drawWidget() {
 									*flagGfx, true);
 
 	// Draw Title
-	if (_grid->_isTitlesVisible)
+	if (_grid->_isTitlesVisible) {
+		int breakPoint = breakText(_activeEntry->title, thumbWidth);
 		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight),
-								_activeEntry->title, GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
+								_activeEntry->title.substr(0, breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
+		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight + kLineHeight, _x + thumbWidth, _y + thumbHeight + 2 * kLineHeight),
+								_activeEntry->title.substr(breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
+	}
 }
 
 void GridItemWidget::handleMouseWheel(int x, int y, int direction) {
@@ -225,6 +229,21 @@ void GridItemTray::handleMouseWheel(int x, int y, int direction) {
 }
 
 #pragma mark -
+
+// Returns a breaking point for double-lined text
+// TODO: extend for multiple lines
+int breakText(const Common::String &str, int fitWidth) {
+	int textWidth = g_gui.getStringWidth(str);
+	if (textWidth <= fitWidth) return str.size();
+
+	textWidth = 0;
+	int curPos = 0;
+	while (textWidth < fitWidth) {
+		textWidth += g_gui.getCharWidth(str[curPos]);
+		++curPos;
+	}
+	return curPos - 1;
+}
 
 Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 	Graphics::ManagedSurface *surf = nullptr;
