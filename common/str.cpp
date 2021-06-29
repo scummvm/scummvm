@@ -689,19 +689,24 @@ void replace(Common::String &source, const Common::String &what, const Common::S
 	}
 }
 
-String tag2string(uint32 tag) {
-	char str[5];
-	str[0] = (char)(tag >> 24);
-	str[1] = (char)(tag >> 16);
-	str[2] = (char)(tag >> 8);
-	str[3] = (char)tag;
-	str[4] = '\0';
-	// Replace non-printable chars by dot
-	for (int i = 0; i < 4; ++i) {
-		if (!Common::isPrint(str[i]))
-			str[i] = '.';
+String tag2string(uint32 tag, bool nonPrintable) {
+	Common::String res;
+
+	for (int i = 3; i >= 0; i--) {
+		byte b = (tag >> (8 * i)) & 0xff;
+
+		if (!Common::isPrint(b)) {
+			if (nonPrintable) {
+				res += Common::String::format("\\%03o", b);
+			} else {
+				res += '.';
+			}
+		} else {
+			res += b;
+		}
 	}
-	return String(str);
+
+	return res;
 }
 
 #endif
