@@ -65,19 +65,18 @@ static StaticWindow scrollDecorations[] = {
 
 static uint8 scrollTextColors[] = { 65, 65, 65, 65, 65, 65, 65, 66, 66, 67, 67, 67, 67, 66, 66, 66 };
 
-CDocumentAppearance scrollAppearance(
-    Rect16(202, 54, 236, 317),                   //  Window size
-    1,
-    pageOrientVertical,
-    scrollTextColors,
-    Rect16(50,  64, 131, 169),                   //  Page 1
-    Rect16(0,     0,   0,   0),                       //  (No page 2)
-    Rect16(184, 206,  44,  42),                  //  Close button rect
-    scrollDecorations,
-    ARRAYSIZE(scrollDecorations),
-    MKTAG('S', 'C', 'R', 'L'),
-    MKTAG('S', 'R', 'L', 0)
-);
+CDocumentAppearance scrollAppearance = {
+	{202, 54, 236, 317},
+	1,
+	pageOrientVertical,
+	scrollTextColors,
+	{ {50, 64, 131, 169}, {0, 0, 0, 0} },
+	{184, 206,  44,  42},
+	scrollDecorations,
+	ARRAYSIZE(scrollDecorations),
+	MKTAG('S', 'C', 'R', 'L'),
+	MKTAG('S', 'R', 'L', 0)
+};
 
 /* ===================================================================== *
    Book metrics
@@ -92,19 +91,18 @@ static StaticWindow bookDecorations[] = {
 
 static uint8 bookTextColors[] = { 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65 };
 
-CDocumentAppearance bookAppearance(
-    Rect16(123, 76, 394, 252),                   //  Window size
-    2,
-    pageOrientHorizontal,
-    bookTextColors,
-    Rect16(40,  26, 135, 205),                   //  Page 1
-    Rect16(218, 26, 135, 205),                   //  Page 2
-    Rect16(231, 217,  34,  27),                  //  Close button rect
-    bookDecorations,
-    ARRAYSIZE(bookDecorations),
-    MKTAG('B', 'O', 'O', 'K'),
-    MKTAG('B', 'K', 'D', 0)
-);
+CDocumentAppearance bookAppearance = {
+	{123, 76, 394, 252},
+	2,
+	pageOrientHorizontal,
+	bookTextColors,
+	{ {40, 26, 135, 205}, {218, 26, 135, 205} },
+	{231, 217,  34,  27},
+	bookDecorations,
+	ARRAYSIZE(bookDecorations),
+	MKTAG('B', 'O', 'O', 'K'),
+	MKTAG('B', 'K', 'D', 0)
+};
 
 /* ===================================================================== *
    Parchment metrics
@@ -115,19 +113,18 @@ static StaticWindow parchDecorations[] = {
 	{{202,  54, 208, 256}, nullptr, 0}
 };
 
-CDocumentAppearance parchAppearance(
-    Rect16(202, 54, 208, 256),                   //  Window size
-    1,
-    pageOrientVertical,
-    bookTextColors,
-    Rect16(27,  18, 149, 212),                   //  Page 1
-    Rect16(0,     0,   0,   0),                       //  (No page 2)
-    Rect16(164, 229,  20,  20),                  //  Close button rect
-    parchDecorations,
-    ARRAYSIZE(parchDecorations),
-    MKTAG('P', 'A', 'R', 'C'),
-    MKTAG('P', 'C', 'H', 0)
-);
+CDocumentAppearance parchAppearance = {
+	{202, 54, 208, 256},
+	1,
+	pageOrientVertical,
+	bookTextColors,
+	{ {27, 18, 149, 212}, {0, 0, 0, 0} },
+	{64, 229,  20,  20},
+	parchDecorations,
+	ARRAYSIZE(parchDecorations),
+	MKTAG('P', 'A', 'R', 'C'),
+	MKTAG('P', 'C', 'H', 0)
+};
 
 // deliminator defines
 char deliminator    = '@';
@@ -773,7 +770,7 @@ void CDocument::renderText(void) {
 		for (pageIndex = currentPage;
 		        pageIndex - currentPage < app.numPages && pageIndex < pages;
 		        pageIndex++) {
-			Rect16  *pageRect = &app.pageRect[pageIndex % app.numPages];
+			StaticRect *pageRect = &app.pageRect[pageIndex % app.numPages];
 
 			// if there is an image on this page
 			if (images[pageIndex]) {
