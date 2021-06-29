@@ -309,8 +309,9 @@ Common::HashMap<Common::String, uint32> DefaultSaveFileManager::loadTimestamps()
 	while (!file->eos()) {
 		//read filename into buffer (reading until the first ' ')
 		Common::String buffer;
-		while (!file->eos()) {
+		while (true) {
 			byte b = file->readByte();
+			if (file->eos()) break;
 			if (b == ' ') break;
 			buffer += (char)b;
 		}
@@ -320,8 +321,9 @@ Common::HashMap<Common::String, uint32> DefaultSaveFileManager::loadTimestamps()
 		while (true) {
 			bool lineEnded = false;
 			buffer = "";
-			while (!file->eos()) {
+			while (true) {
 				byte b = file->readByte();
+				if (file->eos()) break;
 				if (b == ' ' || b == '\n' || b == '\r') {
 					lineEnded = (b == '\n');
 					break;
