@@ -256,37 +256,37 @@ bool userControlsSetup = false;
  * ===================================================================== */
 
 // position arrays for all buttons on the individual panels
-Rect16  topBox[numButtons] =  {
-	/* portrait          */             Rect16(489, 22 + (yContOffset * 0), 65, 72),
-	/* agress            */             Rect16(559, 86 + (yContOffset * 0), 28, 27),
-	/* jump              */             Rect16(592, 86 + (yContOffset * 0), 28, 27),
-	/* center            */             Rect16(559, 56 + (yContOffset * 0), 28, 27),
-	/* banding           */             Rect16(592, 56 + (yContOffset * 0), 28, 27),
-	/* namePlates        */             Rect16(488, 94 + (yFaceOffset * 0), 65, 15),
-	/* namePlateFrames   */             Rect16(487, 20 + (yFaceOffset * 0), 69, 92)
+static const StaticRect topBox[numButtons] = {
+	/* portrait          */ { 489, 22 + (yContOffset * 0), 65, 72 },
+	/* agress            */ { 559, 86 + (yContOffset * 0), 28, 27 },
+	/* jump              */ { 592, 86 + (yContOffset * 0), 28, 27 },
+	/* center            */ { 559, 56 + (yContOffset * 0), 28, 27 },
+	/* banding           */ { 592, 56 + (yContOffset * 0), 28, 27 },
+	/* namePlates        */ { 488, 94 + (yFaceOffset * 0), 65, 15 },
+	/* namePlateFrames   */ { 487, 20 + (yFaceOffset * 0), 69, 92 }
 };
 
 
-Rect16  midBox[numButtons] =  {
-	Rect16(489, 22 + (yContOffset * 1), 65, 72),
-	Rect16(559, 86 + (yContOffset * 1), 28, 27),
-	Rect16(592, 86 + (yContOffset * 1), 28, 27),
-	Rect16(559, 56 + (yContOffset * 1), 28, 27),
-	Rect16(592, 56 + (yContOffset * 1), 28, 27),
-	Rect16(488, 94 + (yFaceOffset * 1), 65, 15),
-	Rect16(487, 20 + (yFaceOffset * 1), 69, 92)
+static const StaticRect midBox[numButtons] = {
+	{ 489, 22 + (yContOffset * 1), 65, 72 },
+	{ 559, 86 + (yContOffset * 1), 28, 27 },
+	{ 592, 86 + (yContOffset * 1), 28, 27 },
+	{ 559, 56 + (yContOffset * 1), 28, 27 },
+	{ 592, 56 + (yContOffset * 1), 28, 27 },
+	{ 488, 94 + (yFaceOffset * 1), 65, 15 },
+	{ 487, 20 + (yFaceOffset * 1), 69, 92 }
 };
 
 
 
-Rect16  botBox[numButtons] =  {
-	Rect16(489, 22 + (yContOffset * 2), 65, 72),
-	Rect16(559, 86 + (yContOffset * 2), 28, 27),
-	Rect16(592, 86 + (yContOffset * 2), 28, 27),
-	Rect16(559, 56 + (yContOffset * 2), 28, 27),
-	Rect16(592, 56 + (yContOffset * 2), 28, 27),
-	Rect16(488, 94 + (yFaceOffset * 2), 65, 15),
-	Rect16(487, 20 + (yFaceOffset * 2), 69, 92)
+static const StaticRect botBox[numButtons] = {
+	{ 489, 22 + (yContOffset * 2), 65, 72 },
+	{ 559, 86 + (yContOffset * 2), 28, 27 },
+	{ 592, 86 + (yContOffset * 2), 28, 27 },
+	{ 559, 56 + (yContOffset * 2), 28, 27 },
+	{ 592, 56 + (yContOffset * 2), 28, 27 },
+	{ 488, 94 + (yFaceOffset * 2), 65, 15 },
+	{ 487, 20 + (yFaceOffset * 2), 69, 92 }
 };
 
 
@@ -363,22 +363,22 @@ const uint32 containerGroupID = MKTAG('C', 'O', 'N', 'T');
 
 // button position views
 // topBox, midBox, and botBox are defined in uimetrcs.h
-Rect16  *views[] = { topBox, midBox, botBox };
+static const StaticRect *views[] = { topBox, midBox, botBox };
 
 // individual indicators/buttons
-Rect16  menConBtnRect   = Rect16(485, 265, 44, 43);
+static const StaticRect menConBtnRect = { 485, 265, 44, 43 };
 
 // options button
-Rect16  optBtnRect      = Rect16(20, 445, 26, 15);
+static const StaticRect optBtnRect = { 20, 445, 26, 15 };
 
 //  enchantment display
-Rect16  enchDispRect    = Rect16(0, 0, 630, 18);
+static const StaticRect enchDispRect = { 0, 0, 630, 18 };
 
 // brother buttons and frame
-Rect16  broBtnRect      = Rect16(481, 450, 144, 11);
-Rect16  julBtnRect      = Rect16(482, 451, 44, 9);
-Rect16  phiBtnRect      = Rect16(531, 451, 44, 9);
-Rect16  kevBtnRect      = Rect16(580, 451, 44, 9);
+static const StaticRect broBtnRect = { 481, 450, 144, 11 };
+static const StaticRect julBtnRect = { 482, 451, 44, 9 };
+static const StaticRect phiBtnRect = { 531, 451, 44, 9 };
+static const StaticRect kevBtnRect = { 580, 451, 44, 9 };
 
 
 textPallete genericTextPal(9 + 15, 20, 14, 11, 23, 17);

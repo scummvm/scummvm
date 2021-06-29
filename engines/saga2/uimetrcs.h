@@ -47,10 +47,6 @@ const int           backWidth = 42,
 const   int16   numButtons      = 7;
 const   int16   yContOffset     = 150;
 
-
-// position arrays for all buttons on the individual panels
-extern Rect16   topBox[], midBox[], botBox[];
-
 // facial button position defines
 const  int16  yFaceOffset       = 150;
 
