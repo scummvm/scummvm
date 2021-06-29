@@ -50,11 +50,8 @@ namespace Saga2 {
 #define TEST1           1           //  enable test code
 #define TEST2           1
 #define TEST3           1
-#if DEBUG
+
 #define CHEATMOVE       1           // For moving with keypad in 8 directions
-#else
-#define CHEATMOVE       0
-#endif
 
 /* ===================================================================== *
    gStickyDragControl class: a gGenericControl with a sticky mouse
