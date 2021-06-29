@@ -723,8 +723,10 @@ TEMPLATE void BASESTRING::trim() {
 #endif
 
 TEMPLATE void BASESTRING::assignAppend(value_type c) {
-	if (c == 0)
+	if (c == 0) {
+		warning("Adding \\0 to String is currently not well defined");
 		return;
+	}
 	ensureCapacity(_size + 1, true);
 
 	_str[_size++] = c;
