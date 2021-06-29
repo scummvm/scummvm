@@ -24,6 +24,7 @@
 #include "common/hash-str.h"
 #include "common/list.h"
 #include "common/memorypool.h"
+#include "common/textconsole.h"
 #include "common/util.h"
 #include "common/mutex.h"
 
