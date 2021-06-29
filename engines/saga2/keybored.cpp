@@ -80,8 +80,6 @@ void voiceTest2(void);
 #endif
 void toggleMusic(void);
 
-void RShowMem(void);
-
 extern APPFUNCV(videoTest1);
 extern APPFUNCV(videoTest2);
 
@@ -139,10 +137,6 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 
 	case 'j':
 		if (a) MotionTask::jump(*a);
-		break;
-
-	case 'l':
-		RShowMem();
 		break;
 
 #ifdef WINKLUDGE

@@ -62,13 +62,6 @@ public:
 	virtual void writeComplementPixels(Rect16 dispRect, uint8 *pixPtr, uint16 pixMod, uint8 color);
 };
 
-extern Extent16     gDisplaySize;
-
-#if     defined( USEWINDOWS )
-// For access to WinPause/ResumeTransfer()'s
-#include "WDisplay.h"
-#endif
-
 } // end of namespace Saga2
 
 #endif
