@@ -48,7 +48,7 @@ namespace Saga2 {
 
 #define AUDIO_REFRESH_RATE 5
 
-Point32 VeryFarAway = Point32(32767, 32766);
+static const StaticPoint32 VeryFarAway = {32767, 32766};
 
 const uint32 fullVolumeDist = 75;
 const uint32 offVolumeDist = 200;
@@ -565,8 +565,6 @@ void playSoundAt(uint32 s, Location playAt) {
 
 //-----------------------------------------------------------------------
 // voice playback w/ attenuation
-
-Audio::SoundHandle _speechSoundHandle;
 
 bool sayVoiceAt(uint32 s[], Point32 p) {
 	debugCN(1, kDebugSound, "sayVoiceAt([%s", tag2strP(s[0]));
