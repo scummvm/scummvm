@@ -209,21 +209,21 @@ static const StaticRect saveLoadWindowRect = {
 
 // indirections
 
-static const StaticRect saveLoadPanelRects[kNumSaveLoadPanels] = {
-	{ SLTopPanel },
-	{ SLMidPanel },
-	{ SLBotPanel }
+static const StaticRect *saveLoadPanelRects[kNumSaveLoadPanels] = {
+	&SLTopPanel,
+	&SLMidPanel,
+	&SLBotPanel
 };
 
-static const StaticRect saveLoadButtonRects[kNumSaveLoadBtns] = {
-	{ SLQuitBtnRect },
-	{ SLBtnRect },
-	{ SLUpArrowBtnRect },
-	{ SLDnArrowBtnRect }
+static const StaticRect *saveLoadButtonRects[kNumSaveLoadBtns] = {
+	&SLQuitBtnRect,
+	&SLBtnRect,
+	&SLUpArrowBtnRect,
+	&SLDnArrowBtnRect
 };
 
-static const StaticRect saveLoadTextRects[kNumSaveLoadTexts] = {
-	{ SLTitleRect }
+static const StaticRect *saveLoadTextRects[kNumSaveLoadTexts] = {
+	&SLTitleRect
 };
 
 
@@ -231,9 +231,9 @@ static const StaticRect saveLoadTextRects[kNumSaveLoadTexts] = {
 // save/load dialog window decorations
 
 WindowDecoration saveWindowDecorations[kNumSaveLoadPanels] = {
-	{ WindowDecoration(saveLoadPanelRects[0], SLTopPanelResID) },
-	{ WindowDecoration(saveLoadPanelRects[1], SLMidPanelResID) },
-	{ WindowDecoration(saveLoadPanelRects[2], SLBotPanelResID) }
+	{ WindowDecoration(*saveLoadPanelRects[0], SLTopPanelResID) },
+	{ WindowDecoration(*saveLoadPanelRects[1], SLMidPanelResID) },
+	{ WindowDecoration(*saveLoadPanelRects[2], SLBotPanelResID) }
 };
 
 
@@ -440,42 +440,42 @@ static const StaticRect optionsWindowRect = {
 
 // indirections
 
-static StaticRect optionsPanelRects[kNumOptionsPanels] = {
-	{ optTopPanel },
-	{ optMidPanel },
-	{ optBotPanel }
+static const StaticRect *optionsPanelRects[kNumOptionsPanels] = {
+	&optTopPanel,
+	&optMidPanel,
+	&optBotPanel
 };
 
-static StaticRect optionsButtonRects[] = {
-	{ optResumeRect },
-	{ optSaveRect },
-	{ optRestoreRect },
-	{ optQuitRect },
-	{ optCreditsRect },
-	{ optAggressRect },
-	{ optWeaponRect },
-	{ optSpeechRect },
-	{ optNightRect }
+static const StaticRect *optionsButtonRects[] = {
+	&optResumeRect,
+	&optSaveRect,
+	&optRestoreRect,
+	&optQuitRect,
+	&optCreditsRect,
+	&optAggressRect,
+	&optWeaponRect,
+	&optSpeechRect,
+	&optNightRect
 };
 
-static StaticRect optionsTextRects[] = {
-	{ optTitleText },
-	{ optTopSlideText },
-	{ optMidSlideText },
-	{ optBotSlideText },
-	{ optTopCheckText },
-	{ optMidCheckText },
-	{ optBotCheckText },
-	{ optTop2CheckText }
+static const StaticRect *optionsTextRects[] = {
+	&optTitleText,
+	&optTopSlideText,
+	&optMidSlideText,
+	&optBotSlideText,
+	&optTopCheckText,
+	&optMidCheckText,
+	&optBotCheckText,
+	&optTop2CheckText
 };
 
 
 // options dialog window decorations
 
 static WindowDecoration optionsDecorations[kNumOptionsPanels] = {
-	{ WindowDecoration(optionsPanelRects[0], optTopPanelResID) },
-	{ WindowDecoration(optionsPanelRects[1], optMidPanelResID) },
-	{ WindowDecoration(optionsPanelRects[2], optBotPanelResID) }
+	{ WindowDecoration(*optionsPanelRects[0], optTopPanelResID) },
+	{ WindowDecoration(*optionsPanelRects[1], optMidPanelResID) },
+	{ WindowDecoration(*optionsPanelRects[2], optBotPanelResID) }
 };
 
 
@@ -531,16 +531,16 @@ static const StaticRect messageRect = {
 
 
 
-static StaticRect messageTextRects[kNumMessageTexts] = {
-	{ mesTitleRect },
-	{ messageRect }
+static const StaticRect *messageTextRects[kNumMessageTexts] = {
+	&mesTitleRect,
+	&messageRect
 };
 
 
-static StaticRect messageButtonRects[kNumMessageBtns] = {
-	{ mesOkBtnRect },
-	{ mesCancelBtnRect },
-	{ mesBtn3Rect }
+static const StaticRect *messageButtonRects[kNumMessageBtns] = {
+	&mesOkBtnRect,
+	&mesCancelBtnRect,
+	&mesBtn3Rect
 };
 
 
@@ -732,20 +732,20 @@ int16 FileDialog(int16 fileProcess) {
 	win = new ModalWindow(saveLoadWindowRect, 0, nullptr);
 
 	// make the quit button
-	new gCompButton(*win, saveLoadButtonRects[0], pushBtnIm, numBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit);
+	new gCompButton(*win, *saveLoadButtonRects[0], pushBtnIm, numBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit);
 	//t->accelKey=0x1B;
 
 	// make the Save/Load button
-	new gCompButton(*win, saveLoadButtonRects[1], pushBtnIm, numBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]);
+	new gCompButton(*win, *saveLoadButtonRects[1], pushBtnIm, numBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]);
 	//t->accelKey=0x0D;
 	// make the up arrow
-	new gCompButton(*win, saveLoadButtonRects[2], arrowUpIm, numBtnImages, 0, cmdSaveDialogUp);
+	new gCompButton(*win, *saveLoadButtonRects[2], arrowUpIm, numBtnImages, 0, cmdSaveDialogUp);
 	//t->accelKey=33+0x80;
 	// make the down arrow
-	new gCompButton(*win, saveLoadButtonRects[3], arrowDnIm, numBtnImages, 0, cmdSaveDialogDown);
+	new gCompButton(*win, *saveLoadButtonRects[3], arrowDnIm, numBtnImages, 0, cmdSaveDialogDown);
 	//t->accelKey=34+0x80;
 	// attach the title
-	new CPlaqText(*win, saveLoadTextRects[0], textStrings[stringIndex][0], &Plate18Font, 0, pal, 0, nullptr);
+	new CPlaqText(*win, *saveLoadTextRects[0], textStrings[stringIndex][0], &Plate18Font, 0, pal, 0, nullptr);
 
 
 
@@ -881,44 +881,44 @@ int16 OptionsDialog(bool disableSaveResume) {
 
 	// buttons
 	if (!disableSaveResume) {
-		t = new gCompButton(*win, optionsButtonRects[0],
+		t = new gCompButton(*win, *optionsButtonRects[0],
 		                               dialogPushImag, numBtnImages, btnStrings[0], pal, 0, cmdDialogQuit);
 		t->accelKey = 0x1B;
 
-		t = new gCompButton(*win, optionsButtonRects[1],
+		t = new gCompButton(*win, *optionsButtonRects[1],
 		                               dialogPushImag, numBtnImages, btnStrings[1], pal, 0, cmdOptionsSaveGame);    // make the quit button
 		t->accelKey = 'S';
 	} else {
-		t = new gCompButton(*win, optionsButtonRects[1],
+		t = new gCompButton(*win, *optionsButtonRects[1],
 		                               dialogPushImag, numBtnImages, OPTN_DIALOG_BUTTON6, pal, 0, cmdOptionsNewGame);
 		t->accelKey = 'N';
 	}
 
-	t = new gCompButton(*win, optionsButtonRects[2],
+	t = new gCompButton(*win, *optionsButtonRects[2],
 	                               dialogPushImag, numBtnImages, btnStrings[2], pal, 0, cmdOptionsLoadGame);    // make the quit button
 	t->accelKey = 'L';
 
-	t = new gCompButton(*win, optionsButtonRects[3],
+	t = new gCompButton(*win, *optionsButtonRects[3],
 	                               dialogPushImag, numBtnImages, btnStrings[3], pal, 0, cmdQuitGame);
 	t->accelKey = 'Q';
 
-	t = new gCompButton(*win, optionsButtonRects[4],
+	t = new gCompButton(*win, *optionsButtonRects[4],
 	                               dialogPushImag, numBtnImages, btnStrings[4], pal, 0, cmdCredits);
 	t->accelKey = 'C';
 
-	autoAggressBtn = new gOwnerSelCompButton(*win, optionsButtonRects[5],
+	autoAggressBtn = new gOwnerSelCompButton(*win, *optionsButtonRects[5],
 	        checkImag, numBtnImages, 0, cmdAutoAggression);
 	autoAggressBtn->select(isAutoAggressionSet());
 
-	autoWeaponBtn = new gOwnerSelCompButton(*win, optionsButtonRects[6],
+	autoWeaponBtn = new gOwnerSelCompButton(*win, *optionsButtonRects[6],
 	        checkImag, numBtnImages, 0, cmdAutoWeapon);
 	autoWeaponBtn->select(isAutoWeaponSet());
 
-	speechTextBtn = new gOwnerSelCompButton(*win, optionsButtonRects[7],
+	speechTextBtn = new gOwnerSelCompButton(*win, *optionsButtonRects[7],
 	        checkImag, numBtnImages, 0, cmdSpeechText);
 	speechTextBtn->select(g_vm->_speechText);
 
-	nightBtn = new gOwnerSelCompButton(*win, optionsButtonRects[8],
+	nightBtn = new gOwnerSelCompButton(*win, *optionsButtonRects[8],
 	        checkImag, numBtnImages, 0, cmdNight);
 	nightBtn->select(g_vm->_showNight);
 
@@ -934,11 +934,11 @@ int16 OptionsDialog(bool disableSaveResume) {
 	                       Audio::Mixer::kMaxMixerVolume, slideFaceImag, numSlideFace, ConfMan.getInt("music_volume"),
 	                       0, cmdSetMIDIVolume);
 
-	new CPlaqText(*win, optionsTextRects[0],
+	new CPlaqText(*win, *optionsTextRects[0],
 	                         textStrings[0], &Plate18Font, 0, pal, 0, nullptr);
 
 	for (int i = 1; i < kNumOptionsTexts; i++) {
-		new CPlaqText(*win, optionsTextRects[i], textStrings[i], &SmallFont, textPosLeft, pal, 0, nullptr);
+		new CPlaqText(*win, *optionsTextRects[i], textStrings[i], &SmallFont, textPosLeft, pal, 0, nullptr);
 	}
 
 	win->setDecorations(optionsDecorations,
@@ -1231,30 +1231,30 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 
 	// button one
 	if (numBtns >= 1) {
-		t = new gCompButton(*win, messageButtonRects[0],
+		t = new gCompButton(*win, *messageButtonRects[0],
 		                               dialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit);
 		t->accelKey = k1;
 	}
 
 	// button two
 	if (numBtns >= 2) {
-		t = new gCompButton(*win, messageButtonRects[1],
+		t = new gCompButton(*win, *messageButtonRects[1],
 		                               dialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit);
 		t->accelKey = k2;
 	}
 
 	// button three
 	if (numBtns >= 3) {
-		t = new gCompButton(*win, messageButtonRects[2],
+		t = new gCompButton(*win, *messageButtonRects[2],
 		                               dialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit);
 		t->accelKey = k3;
 	}
 
 	// title for the box
-	new CPlaqText(*win, messageTextRects[0], title, &Plate18Font, 0, pal, 0, nullptr);
+	new CPlaqText(*win, *messageTextRects[0], title, &Plate18Font, 0, pal, 0, nullptr);
 
 	// message for box
-	new CPlacardPanel(*win, messageTextRects[1], msg, &Onyx10Font, 0, pal, 0, nullptr);
+	new CPlacardPanel(*win, *messageTextRects[1], msg, &Onyx10Font, 0, pal, 0, nullptr);
 
 	win->setDecorations(messageDecorations,
 	                    ARRAYSIZE(messageDecorations),
