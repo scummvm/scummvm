@@ -143,7 +143,7 @@ enum SpellID {
 	spellMaelstrom,
 	spellDeath_Cloud,
 	spellVenom_Blast,
-	totalSpellBookPages,
+	totalSpellBookPages
 };
 
 #define nullSpell ((SpellID)0xFF)

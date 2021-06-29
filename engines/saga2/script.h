@@ -52,7 +52,7 @@ enum scriptResult {
 	scriptResultFinished,
 
 	//  Script spun off as async thread; no answer available.
-	scriptResultAsync,
+	scriptResultAsync
 };
 
 //  Variables specific to a thread
@@ -101,7 +101,7 @@ enum {
 
 	//  Code returned by script when requested action should complete
 	//  the action
-	actionResultNotDone,
+	actionResultNotDone
 };
 
 //  Method used to refer to a SAGA object
@@ -118,7 +118,7 @@ enum builtinTypes {
 	builtinTypeObject = -1,
 	builtinTypeTAG = -2,
 	builtinAbstract = -3,
-	builtinTypeMission = -4,
+	builtinTypeMission = -4
 };
 
 /* ===================================================================== *
@@ -207,7 +207,7 @@ public:
 		// run until it is finished or this bit
 		// is cleared
 
-		asleep      = (waiting | finished | aborted),
+		asleep      = (waiting | finished | aborted)
 	};
 
 	int16           stackSize,              // allocated size of stack
@@ -223,7 +223,7 @@ public:
 		waitDelay,                          // waiting for a timer
 		waitFrameDelay,                     // waiting for frame count
 		waitOther,                          // waiting for to be awoken
-		waitTagSemaphore,                   // waiting for a tag semaphore
+		waitTagSemaphore                    // waiting for a tag semaphore
 
 //		waitSpeech,                         // waiting for speech to finish
 //		waitDialogEnd,                      // waiting for my dialog to finish

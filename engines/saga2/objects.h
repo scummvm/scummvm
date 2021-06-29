@@ -54,7 +54,7 @@ enum ActorManaID {
 	manaIDBlue,
 	manaIDViolet,
 
-	numManas,
+	numManas
 };
 
 //  Used to indicate if objects can be stacked or merged
@@ -168,7 +168,7 @@ private:
 	// container info
 	enum {
 		maxRow      = 20,
-		maxCol      = 4,
+		maxCol      = 4
 	};
 
 public:
@@ -1326,7 +1326,7 @@ enum MissileFacings {
 	missileUpRtRt,
 	missileUpRt,
 	missileUpUpRt,
-	missileNoFacing,
+	missileNoFacing
 };
 
 enum blockageType {

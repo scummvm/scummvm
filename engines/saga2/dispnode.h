@@ -39,7 +39,7 @@ class Effectron;
 
 enum nodeType {
 	nodeTypeObject = 0,
-	nodeTypeEffect,
+	nodeTypeEffect
 };
 
 
@@ -58,7 +58,7 @@ private:
 	uint8                   flags;                  // various flags
 
 	enum {
-		displayIndicator = (1 << 0),
+		displayIndicator = (1 << 0)
 	};
 
 public:

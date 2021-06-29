@@ -102,7 +102,7 @@ enum effectResistTypes {
 	// Physiological Damage
 	resistStarve    = kDamageStarve,
 	// other
-	resistEnergy    = kDamageEnergy,
+	resistEnergy    = kDamageEnergy
 };
 
 //
@@ -130,7 +130,7 @@ enum effectImmuneTypes {
 	// PhysiologiDamage
 	immuneStarve    = resistStarve,
 	// other
-	immuneEnergy    = resistEnergy,
+	immuneEnergy    = resistEnergy
 };
 
 //
@@ -175,15 +175,7 @@ enum effectOthersTypes {
 	actorNotDefenseless = 26,   // forgo defenselessness check
 	actorDisappearOnDeath = 27, // gets deleted on death and spews inventory
 	// dead or moved flags
-//		actorMapping        =15,    //
-//		actorLandWalk       =0 ,    // someone else had this I have no idea what it is
-//		actorFloat          =2 ,    // the creature can travel through malts shakes & sundaes
-	actorWaterWalk,          // can walk on water (same as float ?)
-//		actorPanic          =13,    // creature takes off randomly
-//		actorSpotHidden     =17,    // can see hidden
-//		actorDetTraps       =22,    // traps glow green
-//		actorFlameAura      =23,    // has a flaming aura
-//		actorDead           =25,    // death spell
+	actorWaterWalk           // can walk on water (same as float ?)
 };
 
 //
@@ -201,7 +193,7 @@ enum effectDrainsTypes {
 	drainsManaViolet,
 	drainsLifeLevel,
 	drainsVitality,
-	drainsMoney,
+	drainsMoney
 };
 
 
@@ -211,7 +203,7 @@ enum effectDrainsTypes {
 
 enum effectTAGTypes {
 	settagLocked        = 1,
-	settagOpen          = 2,
+	settagOpen          = 2
 };
 
 
@@ -220,7 +212,7 @@ enum effectTAGTypes {
 //
 
 enum effectLocationTypes {
-	locateDummy         = 1,
+	locateDummy         = 1
 };
 
 enum objectFlags {
@@ -238,7 +230,7 @@ enum objectFlags {
 	objectAlias         = (1 << 11),    // object is not real, just a copy of another object
 	objectTriggeringTAG = (1 << 12),    // object has triggerred TAG upon which it rests
 	objectOnScreen      = (1 << 13),    // object is on display list
-	objectSightedByCenter = (1 << 14),  // there is a line of sight to center actor
+	objectSightedByCenter = (1 << 14)   // there is a line of sight to center actor
 };
 
 
@@ -258,7 +250,7 @@ enum effectSpecialTypes {
 	specialCreateFWisp,              // calls a saga function
 	specialCreateWraith,             // calls a saga function
 	specialCreateFood,               // calls a saga function
-	specialRejoin,
+	specialRejoin
 };
 
 // ------------------------------------------------------------------

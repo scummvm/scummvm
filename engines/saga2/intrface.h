@@ -311,8 +311,7 @@ private:
 		bulkPieXOffset  = 53,
 		bulkPieYOffset  = 9,
 		pieXSize        = 28,
-		pieYSize        = 26,
-
+		pieYSize        = 26
 	};
 
 	// xy positions of this indicator
@@ -383,7 +382,7 @@ public:
 		star6XSize = 36,
 		star6YSize = 35,
 		star7XSize = 46,
-		star7YSize = 45,
+		star7YSize = 45
 	};
 
 	// sizes of the rings
@@ -401,7 +400,7 @@ public:
 		ring6XSize = 32,
 		ring6YSize = 31,
 		ring7XSize = 40,
-		ring7YSize = 39,
+		ring7YSize = 39
 	};
 
 	// area of control
@@ -409,7 +408,7 @@ public:
 		x       = 475,
 		y       = 315,
 		xSize   = 152,
-		ySize   = 135,
+		ySize   = 135
 	};
 
 	// coordinates
@@ -419,7 +418,7 @@ public:
 		wellXSize   = 108,
 		wellYSize   = 123,
 		wellX       = (xSize / 2 - wellXSize / 2) + 1,
-		wellY       = ySize / 2 - wellYSize / 2,
+		wellY       = ySize / 2 - wellYSize / 2
 	};
 
 	// manas end points
@@ -439,7 +438,7 @@ public:
 		lowerMidX   = 70    + xOffset,
 		lowerMidY   = 135   + yOffset,
 		lowerRightX = 122   + xOffset,
-		lowerRightY = 106   + yOffset,
+		lowerRightY = 106   + yOffset
 	};
 
 	enum manaEndCoords {
@@ -456,18 +455,18 @@ public:
 		violetEndX      = lowerRightX,  //d
 		violetEndY      = lowerRightY,  //e
 		numXYCoords     = 12,
-		numManaTypes    = numXYCoords / 2,
+		numManaTypes    = numXYCoords / 2
 	};
 
 	// mana star display offset from well center
 	enum startOffset {
-		startOffset = 12,
+		startOffset = 12
 	};
 
 	// mana information
 	enum manainfo {
 		maxLevel = 200,
-		numManaRegions = numManaTypes,
+		numManaRegions = numManaTypes
 	};
 
 	// resource data
@@ -476,7 +475,7 @@ public:
 		numRings        = 7,
 		starResNum      = 0,
 		ringResNum      = 0,
-		numManaColors   = 13,
+		numManaColors   = 13
 	};
 
 	// this describes a star
@@ -567,7 +566,7 @@ private:
 		starNum             = 23,
 		starInitial         = 0,
 		starLevels          = 24,
-		numControls         = kNumViews,
+		numControls         = kNumViews
 	};
 
 	enum {
@@ -579,7 +578,7 @@ private:
 		frameXPos   = 571,
 		frameYPos   = 20,
 		frameXSize  = 32,
-		frameYSize  = 32,
+		frameYSize  = 32
 	};
 
 	// resource handle

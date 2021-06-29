@@ -137,7 +137,7 @@ public:
 template<int size> class FixedBitArray {
 private:
 	enum {
-		lWords = ((size + 31) / 32),
+		lWords = ((size + 31) / 32)
 	};
 
 	int16 WORDNUM(int n) {

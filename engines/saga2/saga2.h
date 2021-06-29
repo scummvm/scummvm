@@ -92,7 +92,7 @@ public:
 	Common::RandomSource *_rnd;
 
 	WeaponStuff _weaponRack[kMaxWeapons];
-	weaponID _loadedWeapons = 0;
+	weaponID _loadedWeapons;
 	Common::List<TimerList *> _timerLists;
 	Common::List<Timer *> _timers;
 	Common::List<ActorAppearance *> _appearanceLRU;

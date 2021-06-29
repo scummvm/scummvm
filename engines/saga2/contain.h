@@ -73,7 +73,7 @@ protected:
 
 	enum imageData {
 		selectorX = 10,
-		selectorY = 25,
+		selectorY = 25
 	};
 
 public:
@@ -109,7 +109,7 @@ public:
 	//  ID of the last object the mouse was on
 	enum {
 		bufSize     = 60,
-		accelSpeed  = 8,    // this tells the multi-item getting gadget how many items to grab per time unit
+		accelSpeed  = 8     // this tells the multi-item getting gadget how many items to grab per time unit
 	};
 
 	static ObjectID lastPickedObjectID;
@@ -443,7 +443,7 @@ public:
 		actionUpdate    = (1 << 0),         //  Refresh this window
 		actionDelete    = (1 << 1),         //  Delete this window
 		actionHide      = (1 << 2),         //  Refresh this window
-		actionShow      = (1 << 3),         //  Refresh this window
+		actionShow      = (1 << 3)          //  Refresh this window
 	};
 
 private:

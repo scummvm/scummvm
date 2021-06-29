@@ -37,7 +37,7 @@ enum keyQualifiers {
 	qualifierAlt    = (1 << 2),
 
 	// special qualifiers used internally
-	spQualifierFunc = (1 << 7),             // indicates function key
+	spQualifierFunc = (1 << 7)              // indicates function key
 };
 
 const int           homeKey     = (0x47 << 8),

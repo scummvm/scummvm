@@ -59,7 +59,7 @@ enum ActorSkillID {
 	skillIDPilfer,      //  gone
 	skillIDFirstAid,    //  gone
 	skillIDSpotHidden,  //  gone
-	numSkills,
+	numSkills
 };
 
 enum ArmorObjectTypes {
@@ -98,11 +98,11 @@ struct ActorAttributes {
 		skillBasePercent            = 100,
 		skillFracPointsPerLevel     = 5,    // this being twenty and levels at 5
 		skillLevels                 = 20,   // will make the advancement calc quick & easy
-		skillMaxLevel               = skillFracPointsPerLevel * skillLevels,
+		skillMaxLevel               = skillFracPointsPerLevel * skillLevels
 	};
 
 	enum vitalityInfo {
-		vitalityLimit               = 256,
+		vitalityLimit               = 256
 	};
 
 	//  Automatic skills
@@ -207,7 +207,7 @@ enum combatBehaviorTypes {
 	behaviorHungry,
 	behaviorCowardly,
 	behaviorBerserk,
-	behaviorSmart,
+	behaviorSmart
 };
 
 //  This defines the additional data fields needed for actor prototypes
@@ -263,7 +263,7 @@ private:
 		ViewableRows    = 3,
 		ViewableCols    = 3,
 		maxRows         = 3,
-		maxCols         = 3,
+		maxCols         = 3
 	};
 
 public:
@@ -416,7 +416,7 @@ enum actionSequenceOptions {
 
 	//  This flag gets set if the sprite could not be displayed
 	//  because it's bank hasn't been loaded yet.
-	animateNotLoaded = (1 << 7),
+	animateNotLoaded = (1 << 7)
 };
 
 //  Various types of action sequences
@@ -497,7 +497,7 @@ enum ActorAnimationTypes {
 	actionSpecial5,                         // special Action
 	actionSpecial6,                         // special Action
 	actionSpecial7,                         // special Action
-	actionSpecial8,                         // special Action
+	actionSpecial8                          // special Action
 };
 
 enum ActorGoalTypes {
@@ -505,7 +505,7 @@ enum ActorGoalTypes {
 	actorGoalPreserveSelf,
 	actorGoalAttackEnemy,
 	actorGoalFollowLeader,
-	actorGoalAvoidEnemies,
+	actorGoalAvoidEnemies
 };
 
 //  The actor structure will be divided into two parts.  The
@@ -616,7 +616,7 @@ public:
 		afraid          = (1 << 2),
 		hasAssignment   = (1 << 3),
 		specialAttack   = (1 << 4),
-		fightStance     = (1 << 5),
+		fightStance     = (1 << 5)
 	};
 
 	uint8           flags;
@@ -663,7 +663,7 @@ public:
 	int16           currentRecoveryPoints;  // fraction left from last recovery
 
 	enum vitalityRecovery {
-		recPointsPerVitality        = 10,
+		recPointsPerVitality        = 10
 	};
 
 

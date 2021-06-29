@@ -78,7 +78,7 @@ class gCompImage : public gControl {
 private:
 
 	enum {
-		textSize    = 128,
+		textSize    = 128
 	};
 
 	// number of image pointer allocated

@@ -60,6 +60,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_bandList = nullptr;
 	_smkDecoder = nullptr;
 	_videoX = _videoY = 0;
+	_loadedWeapons = 0;
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "res");
 

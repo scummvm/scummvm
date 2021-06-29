@@ -194,7 +194,7 @@ extern const ActiveItemID   NoActiveItem;
 enum TaskResult {
 	taskFailed      = -1,   //  Task has ended in failure
 	taskNotDone     =  0,   //  Task has not ended yet
-	taskSucceeded   =  1,   //  Task has ended in success
+	taskSucceeded   =  1    //  Task has ended in success
 };
 
 typedef int16   TaskID;
