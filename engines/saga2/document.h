@@ -65,7 +65,7 @@ public:
 	uint8           *textColors;                //  Text color array
 	Rect16          pageRect[maxVisiblePages];//  Array of visible page rects
 	Rect16          closeRect;                  //  Close-box rectangle
-	WindowDecoration *decoList;                 //  List of decorator panels
+	StaticWindow    *decoList;                 //  List of decorator panels
 	int16           numDecos;                   //  Number of decorator panels
 	hResID          groupID;                    //  Resource ID for decoration group
 	hResID          decoID;                     //  Resource ID for decorations
@@ -78,7 +78,7 @@ public:
 	    Rect16      _pageRect_0,
 	    Rect16      _pageRect_1,
 	    Rect16      _closeRect,
-	    WindowDecoration *_decoList,
+	    StaticWindow *_decoList,
 	    int16       _numDecos,
 	    hResID      _groupID,
 	    hResID      _decoID)

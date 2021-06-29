@@ -176,8 +176,9 @@ ContainerAppearanceDef  deathContainerAppearance(
 );
 
 // physal dialog window decorations
-static StaticWindow deathDecorations[] =
-{ {{0,  0, 206,  250}, nullptr, 15} };
+static StaticWindow deathDecorations[] = {
+	{{0,  0, 206,  250}, nullptr, 15}
+};
 
 //-----------------------------------------------------------------------
 //	ReadyContainer appearance
@@ -219,9 +220,9 @@ ContainerAppearanceDef  mentalContainerAppearance(
     20                                      //  Total rows
 );
 
-static StaticWindow mentalDecorations[] =
-{ {{0,  0, 158,  215}, nullptr, 0} };      //  Bottom decoration panel
-
+static StaticWindow mentalDecorations[] = {
+	{{0,  0, 158,  215}, nullptr, 0}      //  Bottom decoration panel
+};
 //-----------------------------------------------------------------------
 //	Enchantment container appearance
 
