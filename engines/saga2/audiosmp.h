@@ -57,7 +57,7 @@ typedef Point32 sampleLocation;
 enum soundSampleRate {
 	soundRate11K = 11025,
 	soundRate22K = 22050,
-	soundRate44K = 44100,
+	soundRate44K = 44100
 };
 
 
@@ -70,19 +70,19 @@ public:
 		sampleStop,
 		samplePart,
 		sampleDone,
-		sampleKill,
+		sampleKill
 	};
 
 	enum soundSampleChannels {
 		channelMono,
 		channelStereo,
 		channelLeftOnly,
-		channelRightOnly,
+		channelRightOnly
 	};
 
 	enum soundSampleGranularity {
 		granularity8Bit,
-		granularity16Bit,
+		granularity16Bit
 	};
 
 
@@ -90,7 +90,7 @@ public:
 	enum soundSampleFlags {
 		sampleLooped = 0x0001,
 		sampleSigned = 0x0002,
-		sampleRvrsed = 0x0004,
+		sampleRvrsed = 0x0004
 	};
 private:
 	bool                    initialized;

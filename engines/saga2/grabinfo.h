@@ -53,7 +53,7 @@ public:
 private:
 
 	enum {
-		bufSize = 60,
+		bufSize = 60
 	};
 
 protected:

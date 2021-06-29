@@ -61,7 +61,7 @@ class soundQueue;
 enum soundDecoderType {
 	decodeInPlace,
 	decodeBuffer,
-	decodeSource,
+	decodeSource
 };
 
 /* ===================================================================== *
@@ -124,7 +124,7 @@ enum decoderStatuses {
 	msgSamplePause  = 1 << 3,   // partial load - continue next time
 	msgSampleDone   = 1 << 4,   // sample complete
 	msgWaitForBuffer = 1 << 5,  // waiting for free buffer
-	msgIOError      = 1 << 6,   // an I/O error occurred reading the file
+	msgIOError      = 1 << 6    // an I/O error occurred reading the file
 };
 
 class soundDecoder {

@@ -387,7 +387,7 @@ public:
  * ============================================================================ */
 
 enum actorCreationFlags {
-	actorPermanent = (1 << 0),
+	actorPermanent = (1 << 0)
 };
 
 enum DispositionType {

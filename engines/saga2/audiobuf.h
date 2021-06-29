@@ -57,7 +57,7 @@ enum soundBufferStatus {
 	bufferFull,        // buffer is full & ready to go
 	bufferPlay,        // buffer is playing
 	bufferWork,        // indicates a permanent work buffer
-	bufferUsed,
+	bufferUsed
 };
 
 
