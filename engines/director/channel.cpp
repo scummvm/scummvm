@@ -392,7 +392,7 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 		return;
 
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
-	bool widgetKeeped = true;
+	bool widgetKeeped = _sprite->_cast && _widget;
 
 	// update the _sprite we stored in channel, and point the originalSprite to the new one
 	// release the widget, because we may having the new one

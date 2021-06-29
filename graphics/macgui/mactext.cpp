@@ -229,6 +229,9 @@ void MacText::init() {
 	_textMaxHeight = 0;
 	_surface = nullptr;
 
+	if (!_fixedDims)
+		_dims.right = MAX<int>(_dims.right, _dims.left + _maxWidth + (2 * _border) + (2 * _gutter) + _shadow);
+
 	_selEnd = -1;
 	_selStart = -1;
 
