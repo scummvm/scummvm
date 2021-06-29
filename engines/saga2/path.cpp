@@ -82,37 +82,37 @@ const int           subMetaSize         = 4,
 
 
 
-static TilePoint tDirTable[8] = {
-	TilePoint(4, 4, 0),
-	TilePoint(0, 4, 0),
-	TilePoint(-4, 4, 0),
-	TilePoint(-4, 0, 0),
-	TilePoint(-4, -4, 0),
-	TilePoint(0, -4, 0),
-	TilePoint(4, -4, 0),
-	TilePoint(4, 0, 0)
+static StaticTilePoint tDirTable[8] = {
+	{ 4,  4, 0},
+	{ 0,  4, 0},
+	{-4,  4, 0},
+	{-4,  0, 0},
+	{-4, -4, 0},
+	{ 0, -4, 0},
+	{ 4, -4, 0},
+	{ 4,  0, 0}
 };
 
-static TilePoint tDirTable2[8] = {
-	TilePoint(1, 1, 0),
-	TilePoint(0, 1, 0),
-	TilePoint(-1, 1, 0),
-	TilePoint(-1, 0, 0),
-	TilePoint(-1, -1, 0),
-	TilePoint(0, -1, 0),
-	TilePoint(1, -1, 0),
-	TilePoint(1, 0, 0)
+static StaticTilePoint tDirTable2[8] = {
+	{ 1,  1, 0},
+	{ 0,  1, 0},
+	{-1,  1, 0},
+	{-1,  0, 0},
+	{-1, -1, 0},
+	{ 0, -1, 0},
+	{ 1, -1, 0},
+	{ 1,  0, 0}
 };
 
-static TilePoint tDirTable3[8] = {
-	TilePoint(16, 16, 0),
-	TilePoint(0, 16, 0),
-	TilePoint(-16, 16, 0),
-	TilePoint(-16,  0, 0),
-	TilePoint(-16, -16, 0),
-	TilePoint(0, -16, 0),
-	TilePoint(16, -16, 0),
-	TilePoint(16,  0, 0)
+static StaticTilePoint tDirTable3[8] = {
+	{ 16,  16, 0},
+	{  0,  16, 0},
+	{-16,  16, 0},
+	{-16,   0, 0},
+	{-16, -16, 0},
+	{  0, -16, 0},
+	{ 16, -16, 0},
+	{ 16,   0, 0}
 };
 
 
@@ -1078,10 +1078,10 @@ protected:
 
 	//  These static members are initialized when the path request
 	//  becomes the current active request being serviced.
-	static TilePoint        path[16];
+	static StaticTilePoint  path[16];
 	static int16            pathLength;
 
-	static TilePoint        baseCoords,
+	static StaticTilePoint  baseCoords,
 	       baseTileCoords,
 	       centerPt,       // The current center coordinates
 	       bestLoc;        // The best cell coordinates,
@@ -1167,7 +1167,7 @@ protected:
 
 	//  These static members are initialized when the path request
 	//  becomes the current active request being serviced.
-	static TilePoint    targetCoords;   // The current destination coordinates
+	static StaticTilePoint targetCoords;   // The current destination coordinates
 	// quantized to the nearest tile
 	// center.
 	static uint8        targetPlatform;
@@ -1217,7 +1217,7 @@ protected:
 
 	//  These static members are initialized when the path request
 	//  becomes the current active request being serviced.
-	static TilePoint    startingCoords; // The actor's location at the
+	static StaticTilePoint startingCoords; // The actor's location at the
 	// beginning of the service.
 	static int16        bestDist,       // The distance from the target of
 	       // the best cell visited so far.
@@ -1257,9 +1257,6 @@ public:
                             Globals
  * ===================================================================== */
 
-Common::List<WanderPathRequest *> pathRequestPool;
-
-Common::List<PathRequest *> pathQueue;
 PathRequest                 *currentRequest = nullptr;
 
 static PathTilePosArray     *pathTileArray;
@@ -1280,13 +1277,13 @@ struct VolumeLookupNode {
 static VolumeLookupNode     volumeLookupNodePool[256];
 static VolumeLookupNode     *volumeLookupTable[searchDiameter][searchDiameter];
 
-TilePoint       PathRequest::path[16];
+StaticTilePoint PathRequest::path[16] = {0, 0, 0};
 int16           PathRequest::pathLength;
 
-TilePoint       PathRequest::baseCoords,
-                PathRequest::baseTileCoords,
-                PathRequest::centerPt,      // The current center coordinates
-                PathRequest::bestLoc;       // The best cell coordinates,
+StaticTilePoint PathRequest::baseCoords = {0, 0, 0},
+                PathRequest::baseTileCoords = {0, 0, 0},
+                PathRequest::centerPt = {0, 0, 0},      // The current center coordinates
+                PathRequest::bestLoc = {0, 0, 0};       // The best cell coordinates,
 // currently visited
 uint8           PathRequest::centerPlatform,
                 PathRequest::bestPlatform;
@@ -1300,12 +1297,12 @@ DirMaskGroup    *PathRequest::dirMasks;
 
 PathTileRegion  PathRequest::tileArray;
 
-TilePoint       DestinationPathRequest::targetCoords;
+StaticTilePoint DestinationPathRequest::targetCoords = {0, 0, 0};
 uint8           DestinationPathRequest::targetPlatform;
 int16           DestinationPathRequest::bestDist,
                 DestinationPathRequest::centerCost;
 
-TilePoint       WanderPathRequest::startingCoords;
+StaticTilePoint WanderPathRequest::startingCoords = {0, 0, 0};
 int16           WanderPathRequest::bestDist,
                 WanderPathRequest::centerCost;
 
@@ -1422,7 +1419,7 @@ void PathRequest::initialize(void) {
 	dirMasks = maskComp->computeMask(pCross);
 
 	//  Set the best location to the starting location
-	bestLoc = Nowhere;
+	bestLoc.set(Nowhere.u, Nowhere.v, Nowhere.z);
 
 	//  Calculate where search cells will be projected onto map
 	baseTileCoords.u = (startingCoords.u >> kTileUVShift) - searchCenter;
@@ -1594,13 +1591,13 @@ big_break:
 void PathRequest::finish(void) {
 	Direction           prevDir;
 	int16               prevHeight;
-	TilePoint           *resultSteps = path,
+	StaticTilePoint     *resultSteps = path,
 	                     coords;
 	int16               stepCount = 0;
-	TilePoint           *res;
+	StaticTilePoint     *res;
 	PathCell            *cell;
 
-	static TilePoint    tempResult[32];
+	static StaticTilePoint tempResult[32];
 
 	debugC(2, kDebugPath, "Finishing Path Request: %p", (void *)this);
 
@@ -1702,7 +1699,7 @@ PathResult PathRequest::findPath(void) {
 		assert(qi.v >= 1 && qi.v < searchDiameter - 1);
 
 		TilePoint   centerTileCoords;
-		TilePoint   *tDir;
+		StaticTilePoint *tDir;
 		int32       i,
 		            dir,
 		            endDir;
@@ -2205,7 +2202,9 @@ void WanderPathRequest::initialize(void) {
 
 	//  Initialize bestDist to zero.
 	bestDist = 0;
-	startingCoords = actor->getLocation();
+	startingCoords.set(actor->getLocation().u,
+	                   actor->getLocation().v,
+	                   actor->getLocation().z);
 }
 
 
@@ -2276,9 +2275,9 @@ int16 WanderPathRequest::evaluateMove(const TilePoint &testPt, uint8) {
 }
 
 void runPathFinder(void) {
-	if (currentRequest == nullptr && !pathQueue.empty()) {
-		currentRequest = pathQueue.front();
-		pathQueue.pop_front();
+	if (currentRequest == nullptr && !g_vm->_pathQueue.empty()) {
+		currentRequest = g_vm->_pathQueue.front();
+		g_vm->_pathQueue.pop_front();
 		currentRequest->initialize();
 	}
 
@@ -2306,24 +2305,24 @@ void addPathRequestToQueue(PathRequest *pr) {
 	Actor           *centerActor = getCenterActor();
 
 	if (a == centerActor)
-		pathQueue.push_front(pr);
+		g_vm->_pathQueue.push_front(pr);
 	else {
 		if (isPlayerActor(a)) {
 			Common::List<PathRequest *>::iterator it;
 
-			for (it = pathQueue.begin(); it != pathQueue.end(); it++) {
+			for (it = g_vm->_pathQueue.begin(); it != g_vm->_pathQueue.end(); it++) {
 				Actor       *prActor = (*it)->actor;
 
 				if (prActor != centerActor || !isPlayerActor(prActor))
 					break;
 			}
 
-			if (it != pathQueue.end())
-				pathQueue.insert(it, pr);
+			if (it != g_vm->_pathQueue.end())
+				g_vm->_pathQueue.insert(it, pr);
 			else
-				pathQueue.push_back(pr);
+				g_vm->_pathQueue.push_back(pr);
 		} else
-			pathQueue.push_back(pr);
+			g_vm->_pathQueue.push_back(pr);
 	}
 }
 
@@ -2350,7 +2349,7 @@ void abortPathFind(MotionTask *mTask) {
 		if (pr == currentRequest)
 			pr->requestAbort();
 		else
-			pathQueue.remove(pr);
+			g_vm->_pathQueue.remove(pr);
 
 		mTask->pathFindTask = nullptr;
 	}
@@ -2524,7 +2523,7 @@ TilePoint selectNearbySite(
 	while (squeue.remove(qi)) {
 		TilePoint   centerTileCoords,
 		            distVector;
-		TilePoint   *tDir;
+		StaticTilePoint *tDir;
 		int16       dir;
 		int32       distFromCenter,
 		            rating;
@@ -2799,7 +2798,7 @@ bool checkPath(
 
 	while (squeue.remove(qi)) {
 		TilePoint   centerTileCoords;
-		TilePoint   *tDir;
+		StaticTilePoint *tDir;
 		int16       centerDistFromDest;
 		int       dir;
 

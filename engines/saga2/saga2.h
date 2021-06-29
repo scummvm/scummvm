@@ -43,6 +43,7 @@ class Timer;
 class TimerList;
 class BandList;
 class ActorAppearance;
+class PathRequest;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -95,7 +96,9 @@ public:
 	Common::List<TimerList *> _timerLists;
 	Common::List<Timer *> _timers;
 	Common::List<ActorAppearance *> _appearanceLRU;
+	Common::List<PathRequest *> _pathQueue;
 	BandList *_bandList;
+
 
 	bool _autoAggression;
 	bool _autoWeapon;
