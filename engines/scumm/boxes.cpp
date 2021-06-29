@@ -643,7 +643,7 @@ BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 	return *box;
 }
 
-int getClosestPtOnBox(const BoxCoords &box, int x, int y, int16& outX, int16& outY) {
+int getClosestPtOnBox(const BoxCoords &box, int x, int y, int32 &outX, int32 &outY) {
 	const Common::Point p(x, y);
 	Common::Point tmp;
 	uint dist;

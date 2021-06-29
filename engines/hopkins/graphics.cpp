@@ -1227,10 +1227,10 @@ void GraphicsManager::displayDebugRect(Graphics::Surface *surface, const Common:
 
 	// Move for scrolling offset and adjust to crop on-screen
 	r.translate(-_scrollPosX, 0);
-	r.left = MAX(r.left, (int16)0);
-	r.top = MAX(r.top, (int16)0);
-	r.right = MIN(r.right, (int16)SCREEN_WIDTH);
-	r.bottom = MIN(r.bottom, (int16)SCREEN_HEIGHT);
+	r.left = MAX(r.left, (int32)0);
+	r.top = MAX(r.top, (int32)0);
+	r.right = MIN(r.right, (int32)SCREEN_WIDTH);
+	r.bottom = MIN(r.bottom, (int32)SCREEN_HEIGHT);
 
 	// If there's an on-screen portion, display it
 	if (r.isValidRect())

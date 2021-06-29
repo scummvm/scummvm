@@ -128,8 +128,8 @@ public:
 
 	void scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel = 1);
 
-	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
-	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
+	void adjustToUpscaledCoordinates(int32 &y, int32 &x);
+	void adjustBackUpscaledCoordinates(int32 &y, int32 &x);
 
 	void dither(bool addToFlag);
 
@@ -459,7 +459,7 @@ public:
 		return vectorGetPixel(_controlScreen, x, y);
 	}
 
-	void vectorAdjustCoordinate(int16 *x, int16 *y) {
+	void vectorAdjustCoordinate(int32 *x, int32 *y) {
 		switch (_upscaledHires) {
 		case GFX_SCREEN_UPSCALED_480x300:
 			*x = (*x * 3) / 2;

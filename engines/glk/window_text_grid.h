@@ -101,8 +101,8 @@ public:
 	 */
 	void setSize(const Point &newSize) override {
 		Window::setSize(newSize);
-		_curX = CLIP((int16)_curX, _bbox.left, _bbox.right);
-		_curY = CLIP((int16)_curY, _bbox.top, _bbox.bottom);
+		_curX = CLIP((int32)_curX, _bbox.left, _bbox.right);
+		_curY = CLIP((int32)_curY, _bbox.top, _bbox.bottom);
 	}
 
 	/**
@@ -110,8 +110,8 @@ public:
 	 */
 	void setPosition(const Point &newPos) override {
 		_bbox.moveTo(newPos);
-		_curX = CLIP((int16)_curX, _bbox.left, _bbox.right);
-		_curY = CLIP((int16)_curY, _bbox.top, _bbox.bottom);
+		_curX = CLIP((int32)_curX, _bbox.left, _bbox.right);
+		_curY = CLIP((int32)_curY, _bbox.top, _bbox.bottom);
 	}
 
 	/**

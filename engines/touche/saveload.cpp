@@ -46,7 +46,15 @@ static void saveOrLoad(Common::WriteStream &stream, int16 &i) {
 	stream.writeSint16LE(i);
 }
 
+static void saveOrLoad(Common::WriteStream &stream, int32 &i) {
+	stream.writeSint16LE(i);
+}
+
 static void saveOrLoad(Common::ReadStream &stream, int16 &i) {
+	i = stream.readSint16LE();
+}
+
+static void saveOrLoad(Common::ReadStream &stream, int32 &i) {
 	i = stream.readSint16LE();
 }
 

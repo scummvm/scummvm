@@ -805,8 +805,8 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 	const Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	const SciSpan<const byte> &bitmap = getBitmap(loopNo, celNo);
-	const int16 celHeight = celInfo->height;
-	const int16 celWidth = celInfo->width;
+	const int32 celHeight = celInfo->height;
+	const int32 celWidth = celInfo->width;
 	const byte clearKey = celInfo->clearKey;
 	const byte drawMask = priority > 15 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
 
@@ -814,8 +814,8 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 		// Merge view palette in...
 		_palette->set(&_viewPalette, false);
 
-	const int16 width = MIN(clipRect.width(), celWidth);
-	const int16 height = MIN(clipRect.height(), celHeight);
+	const int32 width = MIN(clipRect.width(), celWidth);
+	const int32 height = MIN(clipRect.height(), celHeight);
 
 	if (!width || !height) {
 		return;
@@ -886,11 +886,11 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	createScalingTable(scalingX, celWidth, _screen->getWidth(), scaleX);
 	createScalingTable(scalingY, celHeight, _screen->getHeight(), scaleY);
 
-	int16 scaledWidth = MIN(clipRect.width(), (int16)scalingX.size());
-	int16 scaledHeight = MIN(clipRect.height(), (int16)scalingY.size());
+	int32 scaledWidth = MIN(clipRect.width(), (int32)scalingX.size());
+	int32 scaledHeight = MIN(clipRect.height(), (int32)scalingY.size());
 
-	const int16 offsetY = clipRect.top - rect.top;
-	const int16 offsetX = clipRect.left - rect.left;
+	const int32 offsetY = clipRect.top - rect.top;
+	const int32 offsetX = clipRect.left - rect.left;
 
 	const byte *bitmapData = bitmap.getUnsafeDataAt(0, celWidth * celHeight);
 	for (int y = 0; y < scaledHeight; y++) {
@@ -930,11 +930,11 @@ void GfxView::createScalingTable(Common::Array<uint16> &table, int16 celSize, ui
 	}
 }
 
-void GfxView::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
+void GfxView::adjustToUpscaledCoordinates(int32 &y, int32 &x) {
 	_screen->adjustToUpscaledCoordinates(y, x);
 }
 
-void GfxView::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
+void GfxView::adjustBackUpscaledCoordinates(int32 &y, int32 &x) {
 	_screen->adjustBackUpscaledCoordinates(y, x);
 }
 

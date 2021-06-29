@@ -156,8 +156,8 @@ void MapBase::shiftViewport(const Point &delta) {
 	topLeft += delta;
 
 	// Shift the viewport, but constraining the map to fill up the screen
-	topLeft.x = CLIP(topLeft.x, (int16)0, (int16)(width() - _viewportPos._size.x));
-	topLeft.y = CLIP(topLeft.y, (int16)0, (int16)(height() - _viewportPos._size.y));
+	topLeft.x = CLIP(topLeft.x, (int32)0, (int32)(width() - _viewportPos._size.x));
+	topLeft.y = CLIP(topLeft.y, (int32)0, (int32)(height() - _viewportPos._size.y));
 }
 
 void MapBase::addWidget(MapWidget *widget) {

@@ -83,7 +83,7 @@ void Camera::camPanTo(int target) {
 	}
 }
 
-bool Camera::camPan(int16 *picture_view, int16 *player_loc, int display_size, int picture_size) {
+bool Camera::camPan(int32 *picture_view, int32 *player_loc, int display_size, int picture_size) {
 	bool panningFl = false;
 	if (_panAllowedFl) {
 		Scene &scene = _vm->_game->_scene;

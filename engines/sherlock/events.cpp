@@ -154,7 +154,7 @@ void Events::setCursor(CursorId cursorId, const Common::Point &cursorPos, const 
 	s.SHblitFrom(surface, Common::Point(drawPos.x, drawPos.y));
 
 	// Draw the cursor image
-	drawPos = Common::Point(MAX(cursorPt.x, (int16)0), MAX(cursorPt.y, (int16)0));
+	drawPos = Common::Point(MAX(cursorPt.x, (int32)0), MAX(cursorPt.y, (int32)0));
 	s.SHtransBlitFrom(cursorImg, Common::Point(drawPos.x, drawPos.y));
 
 	// Set up hotspot position for cursor, adjusting for cursor image's position within the surface

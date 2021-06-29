@@ -52,11 +52,11 @@ public:
 	void ClearChar(int16 chr);
 
 	int16 GetLongest(const char *&text, int16 maxWidth, GuiResourceId orgFontId);
-	void Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight, bool restoreFont);
-	void StringWidth(const Common::String &str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	void Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int32 &textWidth, int32 &textHeight, bool restoreFont);
+	void StringWidth(const Common::String &str, GuiResourceId orgFontId, int32 &textWidth, int32 &textHeight);
 	void ShowString(const Common::String &str, GuiResourceId orgFontId, int16 orgPenColor);
 	void DrawString(const Common::String &str, GuiResourceId orgFontId, int16 orgPenColor);
-	int16 Size(Common::Rect &rect, const char *text, uint16 textLanguage, GuiResourceId fontId, int16 maxWidth);
+	int16 Size(Common::Rect &rect, const char *text, uint16 textLanguage, GuiResourceId fontId, int32 maxWidth);
 	void Draw(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void Show(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void Box(const char *text, uint16 languageSplitter, bool show, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId);

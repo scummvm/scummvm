@@ -765,7 +765,7 @@ void MacWindowManager::draw() {
 				}
 
 				adjustDimensions(clip, innerDims, adjWidth, adjHeight);
-				g_system->copyRectToScreen(w->getWindowSurface()->getBasePtr(MAX(clip.left - innerDims.left, 0), MAX(clip.top - innerDims.top, 0)), w->getWindowSurface()->pitch,MAX(innerDims.left, (int16)0), MAX(innerDims.top, (int16)0), adjWidth, adjHeight);
+				g_system->copyRectToScreen(w->getWindowSurface()->getBasePtr(MAX(clip.left - innerDims.left, 0), MAX(clip.top - innerDims.top, 0)), w->getWindowSurface()->pitch,MAX(innerDims.left, (int32)0), MAX(innerDims.top, (int32)0), adjWidth, adjHeight);
 
 				dirtyRects.push_back(clip);
 			}

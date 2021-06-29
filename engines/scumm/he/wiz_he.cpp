@@ -2091,7 +2091,7 @@ void Wiz::drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, i
 	bbox[3].x = 0;
 	bbox[3].y = wizH - 1;
 
-	int16 xmin_p, xmax_p, ymin_p, ymax_p;
+	int32 xmin_p, xmax_p, ymin_p, ymax_p;
 	xmin_p = ymin_p = (int16)0x7FFF;
 	xmax_p = ymax_p = (int16)0x8000;
 
@@ -2102,7 +2102,7 @@ void Wiz::drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, i
 		ymax_p = MAX(wp[i].y, ymax_p);
 	}
 
-	int16 xmin_b, xmax_b, ymin_b, ymax_b;
+	int32 xmin_b, xmax_b, ymin_b, ymax_b;
 	xmin_b = ymin_b = (int16)0x7FFF;
 	xmax_b = ymax_b = (int16)0x8000;
 

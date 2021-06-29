@@ -1026,8 +1026,8 @@ bool BladeRunnerEngine::loadSplash() {
 
 Common::Point BladeRunnerEngine::getMousePos() const {
 	Common::Point p = _eventMan->getMousePos();
-	p.x = CLIP(p.x, int16(0), int16(639));
-	p.y = CLIP(p.y, int16(0), int16(479));
+	p.x = CLIP(p.x, int32(0), int32(639));
+	p.y = CLIP(p.y, int32(0), int32(479));
 	return p;
 }
 

@@ -204,8 +204,8 @@ void Screen::slamRect(const Common::Rect &r) {
 	}
 }
 
-void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
-		int16 *width_, int16 *height_) {
+void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int32 *xp, int32 *yp,
+		int32 *width_, int32 *height_) {
 	Common::Point imgPos = pt + frame->_offset;
 	Common::Rect newBounds(imgPos.x, imgPos.y, imgPos.x + frame->_frame.w, imgPos.y + frame->_frame.h);
 	Common::Rect oldBounds(*xp, *yp, *xp + *width_, *yp + *height_);
@@ -232,8 +232,8 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, i
 	*height_ = newBounds.height();
 }
 
-void Screen::flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
-		int16 *width_, int16 *height_, int scaleVal) {
+void Screen::flushScaleImage(ImageFrame *frame, const Common::Point &pt, int32 *xp, int32 *yp,
+		int32 *width_, int32 *height_, int scaleVal) {
 	Common::Point imgPos(pt.x + frame->sDrawXOffset(scaleVal), pt.y + frame->sDrawYOffset(scaleVal));
 	Common::Rect newBounds(imgPos.x, imgPos.y, imgPos.x + frame->sDrawXSize(scaleVal),
 		imgPos.y + frame->sDrawYSize(scaleVal));

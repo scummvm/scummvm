@@ -980,12 +980,12 @@ struct UpScaledAdjust {
 	int denominator;
 };
 
-void GfxScreen::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
+void GfxScreen::adjustToUpscaledCoordinates(int32 &y, int32 &x) {
 	x = _upscaledWidthMapping[x];
 	y = _upscaledHeightMapping[y];
 }
 
-void GfxScreen::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
+void GfxScreen::adjustBackUpscaledCoordinates(int32 &y, int32 &x) {
 	switch (_upscaledHires) {
 	case GFX_SCREEN_UPSCALED_480x300:
 		x = (x * 4) / 6;
