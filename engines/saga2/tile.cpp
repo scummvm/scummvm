@@ -1488,7 +1488,7 @@ void initMaps(void) {
 	for (worldCount = 0;
 	        tileRes->seek(mapID + worldCount);
 	        worldCount++) {
-				warning("MapID: %s %08x res: %s %08x", tag2str(mapID), mapID, tag2str(mapID + worldCount), mapID + worldCount);
+				warning("MapID: %s %08x res: %s %08x", tag2strP(mapID), mapID, tag2strP(mapID + worldCount), mapID + worldCount);
 			}
 
 	//  Allocate the map data array
