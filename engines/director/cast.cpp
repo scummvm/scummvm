@@ -1076,10 +1076,10 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 
 	InfoEntries castInfo = Movie::loadInfoEntries(stream, _version);
 
-	debugCN(4, kDebugLoading, "Cast::loadCastInfo(): str(%d): '", castInfo.strings.size());
+	debugCN(4, kDebugLoading, "Cast::loadCastInfo(): castId: %s str(%d): '", numToCastNum(id), castInfo.strings.size());
 
 	for (uint i = 0; i < castInfo.strings.size(); i++) {
-		debugCN(4, kDebugLoading, "%s'", castInfo.strings[i].readString().c_str());
+		debugCN(4, kDebugLoading, "%s'", Common::toPrintable(castInfo.strings[i].readString()).c_str());
 		if (i != castInfo.strings.size() - 1)
 			debugCN(4, kDebugLoading, ", '");
 	}
