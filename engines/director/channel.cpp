@@ -424,14 +424,14 @@ void Channel::setBbox(int l, int t, int r, int b) {
 // here's the definition, we first need to have widgets to keep, and the cast is not modified(modified means we need to re-create the widget)
 // and the castId should be same while castId should not be zero
 bool Channel::canKeepWidget(uint16 castId) {
-	if (_widget && _sprite && _sprite->_cast && !_sprite->_cast->_modified && castId && castId == _sprite->_castId) {
+	if (_widget && _sprite && _sprite->_cast && !_sprite->_cast->isModified() && castId && castId == _sprite->_castId) {
 		return true;
 	}
 	return false;
 }
 
 bool Channel::canKeepWidget(Sprite *currentSprite, Sprite *nextSprite) {
-	if (_widget && currentSprite && currentSprite->_cast && nextSprite && nextSprite->_cast && !currentSprite->_cast->_modified && currentSprite->_castId == nextSprite->_castId && currentSprite->_castId) {
+	if (_widget && currentSprite && currentSprite->_cast && nextSprite && nextSprite->_cast && !currentSprite->_cast->isModified() && currentSprite->_castId == nextSprite->_castId && currentSprite->_castId) {
 		return true;
 	}
 	return false;
