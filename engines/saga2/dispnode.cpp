@@ -582,11 +582,8 @@ void DisplayNode::drawObject(void) {
 			if (anim == nullptr)
 				return;
 
-			assert(anim->start[0] >= 0);
 			assert(anim->start[0] <  10000);
-			assert(anim->start[1] >= 0);
 			assert(anim->start[1] <  10000);
-			assert(anim->start[2] >= 0);
 			assert(anim->start[2] <  10000);
 
 			assert(pose->rightObjectOffset.x < 1000);

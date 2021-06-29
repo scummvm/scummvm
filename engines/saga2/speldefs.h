@@ -146,7 +146,7 @@ public :
 		spellTargetPoint,                   // targeted on a particular point
 		spellTargetObjectPoint,             // targeted on an object's location
 		spellTargetObject,                  // targeted on an object (tracking)
-		spellTargetTAG,                     // targeted on an object (tracking)
+		spellTargetTAG                      // targeted on an object (tracking)
 	};
 
 private:
@@ -254,7 +254,7 @@ enum EffectronFlagMasks {
 	effectronOK     = 0,
 	effectronHidden = (1 << 0),
 	effectronDead   = (1 << 1),
-	effectronBumped = (1 << 2),
+	effectronBumped = (1 << 2)
 };
 
 typedef uint32 EffectronFlags;

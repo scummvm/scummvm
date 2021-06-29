@@ -84,7 +84,7 @@ enum actorEnchantments {
 	enchDetectPoison,
 
 	//  Changes NPC behavior
-	enchHasNoSmell,
+	enchHasNoSmell
 };
 
 //-----------------------------------------------------------------------
@@ -112,7 +112,7 @@ enum worldEnchantments {
 
 	weTimeStop = 0,
 
-	weCount,
+	weCount
 };
 
 } // end of namespace Saga2

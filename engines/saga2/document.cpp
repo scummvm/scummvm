@@ -789,7 +789,7 @@ void CDocument::renderText(void) {
 			}
 
 			for (; lineIndex < numLines[pageIndex]; lineIndex++) {
-				assert(pageIndex <= maxPages && pageIndex >= 0);
+				assert(pageIndex <= maxPages);
 
 				tPort.moveTo(pageRect->x, pageRect->y + (textHeight * lineIndex) + 1);
 				tPort.setColor(app.textColors[lineIndex]);

@@ -79,7 +79,7 @@ private:
 
 	enum {
 		maxLines    = 16,
-		maxText     = 512,
+		maxText     = 512
 	};
 
 	int16   titleCount;
@@ -120,7 +120,7 @@ public:
 class CPlacardPanel : public CPlaqText {
 	enum {
 		maxLines    = 16,
-		maxText     = 512,
+		maxText     = 512
 	};
 
 	int16   titleCount;
