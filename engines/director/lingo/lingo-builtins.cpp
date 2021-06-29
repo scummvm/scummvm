@@ -1923,7 +1923,6 @@ void LB::b_immediateSprite(int nargs) {
 			}
 
 			sc->getSpriteById(sprite.asInt())->_immediate = (bool)state.asInt();
-			sc->getOriginalSpriteById(sprite.asInt())->_immediate = (bool)state.asInt();
 		} else {
 			warning("b_immediateSprite: sprite index out of bounds");
 		}
@@ -1935,7 +1934,6 @@ void LB::b_immediateSprite(int nargs) {
 			return;
 		}
 		sc->getSpriteById(g_lingo->_currentChannelId)->_immediate = true;
-		sc->getOriginalSpriteById(g_lingo->_currentChannelId)->_immediate = true;
 	} else {
 		warning("b_immediateSprite: unexpectedly received %d arguments", nargs);
 		g_lingo->dropStack(nargs);
@@ -1966,7 +1964,6 @@ void LB::b_puppetSprite(int nargs) {
 			}
 
 			sc->getSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
-			sc->getOriginalSpriteById(sprite.asInt())->_puppet = (bool)state.asInt();
 		} else {
 			warning("b_puppetSprite: sprite index out of bounds");
 		}
@@ -1978,7 +1975,6 @@ void LB::b_puppetSprite(int nargs) {
 			return;
 		}
 		sc->getSpriteById(g_lingo->_currentChannelId)->_puppet = true;
-		sc->getOriginalSpriteById(g_lingo->_currentChannelId)->_puppet = true;
 	} else {
 		warning("b_puppetSprite: unexpectedly received %d arguments", nargs);
 		g_lingo->dropStack(nargs);
