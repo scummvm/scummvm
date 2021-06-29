@@ -4552,18 +4552,6 @@ bool underSameRoof(GameObject *obj1, GameObject *obj2) {
 
 extern void testSprites(void);
 
-
-#ifdef _WIN32
-void *LockTileDrawMapSurface(LPRECT rc = nullptr);
-bool UnlockTileDrawMapSurface(void *);
-void drawTileMapToScreen(Rect16 tileRect, void *);
-#include "ftawin.h"
-extern CFTWindow *pWindow;
-extern  uint32 tileSurfaceWidth;
-extern  uint32 tileSurfaceHeight;
-
-#endif
-
 void updateMainDisplay(void) {
 	static TilePoint lastViewLoc = TilePoint(0, 0, 0);
 

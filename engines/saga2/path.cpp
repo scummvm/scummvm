@@ -563,13 +563,6 @@ PathCell *PathArray::makeCell(int plat, int uCoord, int vCoord, bool *newCell) {
 	} else {
 		//  Failed to allocate cell so throw exception
 		error("Cell Allocation failure");
-
-#ifdef _WIN32
-		//  Visual C++ 4.0 requires this return because it appearently
-		//  does not recognize the 'throw' statement as a return
-		//  structure
-		return nullptr;
-#endif
 	}
 }
 

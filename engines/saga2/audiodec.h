@@ -64,19 +64,9 @@ enum soundDecoderType {
 	decodeSource
 };
 
-/* ===================================================================== *
-   Visual C sucks
- * ===================================================================== */
-
-#ifdef _WIN32
-typedef int16 __cdecl INPLACEDECODER(Buffer &, soundDecoder *, soundSample &);
-typedef int16 __cdecl BUFFERDECODER(Buffer &, soundDecoder *, soundSample &, workBuffer *);
-typedef int16 __cdecl BUFFERLOADER(Buffer &, soundSample &);
-#else
 typedef int16 INPLACEDECODER(Buffer &, soundDecoder *, soundSample &);
 typedef int16 BUFFERDECODER(Buffer &, soundDecoder *, soundSample &, workBuffer *);
 typedef int16 BUFFERLOADER(Buffer &, soundSample &);
-#endif
 
 union soundServer {
 	INPLACEDECODER  *pDec;
@@ -141,15 +131,9 @@ public:
 private:
 	soundDecoder();
 public:
-#ifdef _WIN32
-	soundDecoder(INPLACEDECODER *, INPLACEDECODER *, INPLACEDECODER *);
-	soundDecoder(BUFFERDECODER *, BUFFERDECODER *, BUFFERDECODER *, int16, audioInterface *, int16);
-	soundDecoder(BUFFERLOADER *, BUFFERLOADER *, BUFFERLOADER *);
-#else
 	soundDecoder(INPLACEDECODER, INPLACEDECODER, INPLACEDECODER);
 	soundDecoder(BUFFERDECODER, BUFFERDECODER, BUFFERDECODER, int16, audioInterface *, int16);
 	soundDecoder(BUFFERLOADER, BUFFERLOADER, BUFFERLOADER);
-#endif
 	~soundDecoder(void);
 	soundDecoder &operator=(const soundDecoder &src);
 	soundDecoder(const soundDecoder &src);

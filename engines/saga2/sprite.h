@@ -34,10 +34,6 @@ namespace Saga2 {
 class gPort;
 class gPixelMap;
 
-#ifdef _WIN32   //  Set structure alignment packing value to 1 byte
-#pragma pack( push, 1 )
-#endif
-
 /* ===================================================================== *
    Basic sprite structures
  * ===================================================================== */
@@ -385,10 +381,6 @@ void buildColorTable(
 //  Functions to load and release an actor appearance
 ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded);
 void ReleaseActorAppearance(ActorAppearance *aa);
-
-#ifdef _WIN32   //  Set structure alignment packing value to 1 byte
-#pragma pack( pop )
-#endif
 
 } // end of namespace Saga2
 

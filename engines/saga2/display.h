@@ -94,11 +94,6 @@ void resumeAudio(void);
 
 // ------------------------------------------------------------------------
 // The display may be disabled for several reasons these track them
-
-#ifdef _WIN32
-void localCursorOn(void);
-void localCursorOff(void);
-#endif
 void blackOut(void);
 void assertCurrentPalette(void);
 

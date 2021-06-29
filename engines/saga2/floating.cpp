@@ -387,9 +387,6 @@ bool gButton::activate(gEventType why) {
 	draw();
 
 	if (why == gEventKeyDown) {             // momentarily depress
-#ifndef _WIN32
-		g_system->delayMillis(200);
-#endif
 		deactivate();
 		notify(gEventNewValue, 1);       // notify App of successful hit
 	}
