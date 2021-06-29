@@ -132,12 +132,7 @@ const int16     scrollBtnWidth  = 42;
 const int16     scrollBtnHeight = 42;
 
 
-static const StaticRect closeAutoMapBtnRect = {
-	-1,
-	276,
-	42,
-	41
-};
+static const StaticRect closeAutoMapBtnRect = {-1, 276, 42, 41};
 
 static const StaticRect scrollBtnRect = {
 	493,
