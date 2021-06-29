@@ -287,6 +287,7 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
+	_itemsOnScreen = 0;
 
 	_selectedEntry = 0;
 }
@@ -309,6 +310,7 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
+	_itemsOnScreen = 0;
 
 	_selectedEntry = 0;
 }
@@ -355,19 +357,25 @@ void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
 bool GridWidget::calcVisibleEntries() {
 	bool needsReload = false;
 
-	int nItemsOnScreen = 0;
-
+	int nFirstVisibleItem = 0, nItemsOnScreen = 0;
+	
+	nFirstVisibleItem = _itemsPerRow * (-_scrollPos / (_gridItemHeight + _gridYSpacing));
+	nFirstVisibleItem = (nFirstVisibleItem < 0) ? 0 : nFirstVisibleItem;
+	
 	nItemsOnScreen = (3 + (_scrollWindowHeight / (_gridItemHeight + _gridYSpacing))) * (_itemsPerRow);
 
-	needsReload = true;
-	_itemsOnScreen = nItemsOnScreen;
+	if (nFirstVisibleItem != _firstVisibleItem || nItemsOnScreen != _itemsOnScreen) {
+		needsReload = true;
+		_itemsOnScreen = nItemsOnScreen;
+		_firstVisibleItem = nFirstVisibleItem;
 
-	int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_allEntries.size());
+		int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_allEntries.size());
 
-	_visibleEntries.clear();
-	for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
-		GridItemInfo *iter = _allEntries.begin() + ind;
-		_visibleEntries.push_back(*iter);
+		_visibleEntries.clear();
+		for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
+			GridItemInfo *iter = _allEntries.begin() + ind;
+			_visibleEntries.push_back(*iter);
+		}
 	}
 	return needsReload;
 }
@@ -507,8 +515,7 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	case kSetPositionCmd:
 		if (-_scrollPos != (int)data) {
 			_scrollPos = -data;
-			_firstVisibleItem = _itemsPerRow * (-_scrollPos / (_gridItemHeight + _gridYSpacing));
-			_firstVisibleItem = (_firstVisibleItem < 0) ? 0 : _firstVisibleItem;
+			
 			if (calcVisibleEntries()) {
 				reloadThumbnails();
 			}
@@ -576,10 +583,9 @@ void GridWidget::reflowLayout() {
 	int row = 0;
 	int col = 0;
 
-	_firstVisibleItem = _itemsPerRow * ((-_scrollPos) / (_gridItemHeight + _gridYSpacing));
-	_firstVisibleItem = (_firstVisibleItem < 0) ? 0 : _firstVisibleItem;
 
 	_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h, false);
+	
 	if (calcVisibleEntries()) {
 		reloadThumbnails();
 	}
