@@ -226,6 +226,7 @@ static struct BuiltinProto {
 	{ "unLoadCast",		LB::b_unLoadCast,	0, 2, false, 300, CBLTIN },	//		D3.1 c
 	{ "updateStage",	LB::b_updateStage,	0, 0, false, 200, CBLTIN },	// D2 c
 	{ "zoomBox",		LB::b_zoomBox,		-1,0, false, 200, CBLTIN },	// D2 c
+	{"immediateSprite", LB::b_immediateSprite, -1, 0, false, 200, CBLTIN}, // D2 c
 	// Point
 	{ "point",			LB::b_point,		2, 2, true,  400, FBLTIN },	//			D4 f
 	{ "inside",			LB::b_inside,		2, 2, true,  400, FBLTIN },	//			D4 f
@@ -1897,6 +1898,48 @@ void LB::b_puppetSound(int nargs) {
 
 	int castId = castMember.asCastId();
 	sound->playCastMember(castId, channel);
+}
+
+void LB::b_immediateSprite(int nargs) {
+	Score *sc = g_director->getCurrentMovie()->getScore();
+	if (!sc) {
+		warning("b_immediateSprite: no score");
+		g_lingo->dropStack(nargs);
+		return;
+	}
+
+	if (nargs == 2) {
+		Datum state = g_lingo->pop();
+		Datum sprite = g_lingo->pop();
+
+		Sprite *sp = sc->getSpriteById(sprite.asInt());
+		if ((uint)sprite.asInt() < sc->_channels.size()) {
+			if (sc->getNextFrame() && !sp->_immediate) {
+				// same as puppetSprite
+				Channel *channel = sc->getChannelById(sprite.asInt());
+
+				channel->replaceSprite(sc->_frames[sc->getNextFrame()]->_sprites[sprite.asInt()]);
+				channel->_dirty = true;
+			}
+
+			sc->getSpriteById(sprite.asInt())->_immediate = (bool)state.asInt();
+			sc->getOriginalSpriteById(sprite.asInt())->_immediate = (bool)state.asInt();
+		} else {
+			warning("b_immediateSprite: sprite index out of bounds");
+		}
+	} else if (nargs == 0 && g_director->getVersion() < 400) {
+		g_lingo->dropStack(nargs);
+
+		if (g_lingo->_currentChannelId == -1) {
+			warning("b_immediateSprite: channel Id is missing");
+			return;
+		}
+		sc->getSpriteById(g_lingo->_currentChannelId)->_immediate = true;
+		sc->getOriginalSpriteById(g_lingo->_currentChannelId)->_immediate = true;
+	} else {
+		warning("b_immediateSprite: unexpectedly received %d arguments", nargs);
+		g_lingo->dropStack(nargs);
+	}
 }
 
 void LB::b_puppetSprite(int nargs) {

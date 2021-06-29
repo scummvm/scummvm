@@ -122,6 +122,7 @@ void b_unLoad(int nargs);
 void b_unLoadCast(int nargs);
 void b_updateStage(int nargs);
 void b_zoomBox(int nargs);
+void b_immediateSprite(int nargs);
 
 void b_abort(int nargs);
 void b_continue(int nargs);
