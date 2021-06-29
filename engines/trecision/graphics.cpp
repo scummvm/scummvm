@@ -39,9 +39,14 @@
 
 namespace Trecision {
 
-GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm),  _font(nullptr) {	
+GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm) {	
 	for (int i = 0; i < 3; ++i)
 		_bitMask[i] = 0;
+
+	for (int i = 0; i < 256; ++i) {
+		_fonts[i]._width = 0;
+		_fonts[i]._data = nullptr;
+	}
 }
 
 GraphicsManager::~GraphicsManager() {
@@ -54,7 +59,8 @@ GraphicsManager::~GraphicsManager() {
 	_saveSlotThumbnails.free();
 	_textureMat.free();
 
-	delete[] _font;
+	for (int i = 0; i < 256; ++i)
+		delete[] _fonts[i]._data;
 }
 
 bool GraphicsManager::init() {
@@ -274,7 +280,7 @@ void GraphicsManager::loadData() {
 	readSurface(iconsDataFile, &_inventoryIcons, ICONDX, ICONDY, READICON);
 	delete iconsDataFile;
 
-	_font = _vm->readData("nlfont.fnt");
+	loadFont();
 }
 
 void GraphicsManager::setSaveSlotThumbnail(byte iconSlot, const Graphics::Surface *thumbnail) {
@@ -643,12 +649,11 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 }
 
 uint16 GraphicsManager::getCharWidth(byte character) {
-	return _font[character * 3 + 2];
+	return _fonts[character]._width;
 }
 
 void GraphicsManager::drawChar(byte curChar, uint16 textColor, uint16 line, Common::Rect rect, Common::Rect subtitleRect, uint16 inc, Graphics::Surface *externalSurface) {
-	const uint16 charOffset = _font[curChar * 3] + (uint16)(_font[curChar * 3 + 1] << 8);
-	uint16 fontDataOffset = 768;
+	uint16 fontDataOffset = 0;
 	const uint16 charWidth = getCharWidth(curChar);
 
 	for (uint16 y = line * CARHEI; y < (line + 1) * CARHEI; ++y) {
@@ -657,9 +662,9 @@ void GraphicsManager::drawChar(byte curChar, uint16 textColor, uint16 line, Comm
 
 		while (curPos <= charWidth - 1) {
 			if (y >= subtitleRect.top && y < subtitleRect.bottom) {
-				if (curColor != MASKCOL && (_font[charOffset + fontDataOffset])) {
+				if (curColor != MASKCOL && _fonts[curChar]._data[fontDataOffset]) {
 					const uint16 charLeft = inc + curPos;
-					const uint16 charRight = charLeft + _font[charOffset + fontDataOffset];
+					const uint16 charRight = charLeft + _fonts[curChar]._data[fontDataOffset];
 					drawCharPixel(
 						y,
 						charLeft,
@@ -672,7 +677,7 @@ void GraphicsManager::drawChar(byte curChar, uint16 textColor, uint16 line, Comm
 				}
 			}
 
-			curPos += _font[charOffset + fontDataOffset];
+			curPos += _fonts[curChar]._data[fontDataOffset];
 			++fontDataOffset;
 
 			if (curColor == MASKCOL)
@@ -737,6 +742,37 @@ void GraphicsManager::showCursor() {
 
 void GraphicsManager::hideCursor() {
 	CursorMan.showMouse(false);
+}
+
+void GraphicsManager::loadFont() {
+	Common::String fileName = "nlfont.fnt";
+	Common::SeekableReadStream *fontStream = _vm->_dataFile.createReadStreamForMember(fileName);
+	if (fontStream == nullptr)
+		error("readData(): File %s not found", fileName.c_str());
+
+	uint16 fontDataOffset = 768;
+
+	for (int i = 0; i < 256; ++i) {
+		uint16 offset = fontStream->readSint16LE();
+		_fonts[i]._width = fontStream->readByte();
+
+		int tmpPos = fontStream->pos();
+		fontStream->seek(offset + fontDataOffset);
+
+		int cpt = 0;
+		for (uint16 y = 0; y < CARHEI; ++y) {
+			uint16 curPos = 0;
+			while (curPos <= _fonts[i]._width - 1) {
+				curPos += fontStream->readByte();
+				++cpt;
+			}
+		}
+
+		fontStream->seek(offset + fontDataOffset);
+		_fonts[i]._data = new int8[cpt];
+		fontStream->read(_fonts[i]._data, cpt);
+		fontStream->seek(tmpPos);
+	}
 }
 
 bool GraphicsManager::isCursorVisible() {
