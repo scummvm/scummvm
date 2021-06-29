@@ -94,13 +94,14 @@ uint MacTextLine::getChunkNum(int *col) {
 }
 
 
-MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
+MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, bool fixedDims) :
 	MacWidget(parent, x, y, w, h, wm, true, border, gutter, boxShadow),
 	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = s;
 	_fullRefresh = true;
 
+	_fixedDims = fixedDims;
 	_wm = wm;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
@@ -119,12 +120,13 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	init();
 }
 
-MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, Common::CodePage encodeType) :
+MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, Common::CodePage encodeType, bool fixedDims) :
 	MacWidget(parent, x, y, w, h, wm, true, border, gutter, boxShadow),
 	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = Common::U32String(s, encodeType);
 
+	_fixedDims = fixedDims;
 	_wm = wm;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
@@ -144,12 +146,13 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 }
 
 // NOTE: This constructor and the one afterward are for MacText engines that don't use widgets. This is the classic was MacText was constructed.
-MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
+MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
 	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = s;
 
+	_fixedDims = fixedDims;
 	_wm = wm;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
@@ -168,12 +171,13 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	init();
 }
 
-MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, Common::CodePage encodeType) :
+MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, Common::CodePage encodeType, bool fixedDims) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
 	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = Common::U32String(s, encodeType);
 
+	_fixedDims = fixedDims;
 	_wm = wm;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
@@ -193,12 +197,13 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 }
 
 // Working with plain Font
-MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
+MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
 	_macFont(nullptr), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = s;
 
+	_fixedDims = fixedDims;
 	_wm = wm;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
