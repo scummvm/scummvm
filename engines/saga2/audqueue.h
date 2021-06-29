@@ -48,9 +48,13 @@ private:
 	Audio::SoundHandle _sfxSoundHandle;
 	Audio::SoundHandle _bgmSoundHandle;
 
-	soundSegment _currentSpeech = 0;
+	soundSegment _currentSpeech;
 
 public:
+	SoundQueue() {
+		_currentSpeech = 0;
+	}
+
 	void pushVoice(soundSegment s) {
 		_speechQueue.push(s);
 	}

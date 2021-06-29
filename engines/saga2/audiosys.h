@@ -82,12 +82,12 @@ enum volumeTarget {
 	volVLandM,              // voice loops and music
 	volAll,                 // all four
 	volSoundMaster = 1L << 4, // master sound volume level
-	volMusicMaster = 1L << 5, // master music volume level
+	volMusicMaster = 1L << 5  // master music volume level
 };
 
 enum volumeMode {
 	volumeSetTo = 0L,   // absolute mode
-	volumeUpDown,      // relative mode
+	volumeUpDown       // relative mode
 };
 
 /*******************************************************************/
@@ -143,21 +143,21 @@ public:
 		requestSound2   = 6L,
 		maxBuffers      = 7L,
 		requestMusic    = 8L,
-		requestSound    = 9L,
+		requestSound    = 9L
 	};
 
 private:
 	enum sampleFlags {
 		sampleClear   = 0L,
 		sampleMoving  = 1L << 0,
-		sampleQueued  = 1L << 1,
+		sampleQueued  = 1L << 1
 	};
 
 	enum sampleStopLevel {
 		sStopCleanup  = 0L,
 		sStopSegment  = 1L,
 		sStopSample   = 2L,
-		sStopQueue    = 3L,
+		sStopQueue    = 3L
 	};
 
 	enum queueFlags {
@@ -169,7 +169,7 @@ private:
 		qrPlayDone    = 5L,
 		qrFinishing   = 6L,
 		qrFinished    = 7L,
-		qrCleanup     = 8L,
+		qrCleanup     = 8L
 	};
 
 	int16                   instance;
