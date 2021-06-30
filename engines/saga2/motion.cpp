@@ -110,27 +110,27 @@ x           Single
     Motion Constants
  * ===================================================================== */
 
-TilePoint dirTable[8] = {
-	TilePoint(2, 2, 0),
-	TilePoint(0, 3, 0),
-	TilePoint(-2, 2, 0),
-	TilePoint(-3, 0, 0),
-	TilePoint(-2, -2, 0),
-	TilePoint(0, -3, 0),
-	TilePoint(2, -2, 0),
-	TilePoint(3, 0, 0)
+const StaticTilePoint dirTable[8] = {
+	{ 2,  2, 0},
+	{ 0,  3, 0},
+	{-2,  2, 0},
+	{-3,  0, 0},
+	{-2, -2, 0},
+	{ 0, -3, 0},
+	{ 2, -2, 0},
+	{ 3,  0, 0}
 };
 
 //  Incremental direction table
-TilePoint incDirTable[8] = {
-	TilePoint(1, 1, 0),
-	TilePoint(0, 1, 0),
-	TilePoint(-1, 1, 0),
-	TilePoint(-1, 0, 0),
-	TilePoint(-1, -1, 0),
-	TilePoint(0, -1, 0),
-	TilePoint(1, -1, 0),
-	TilePoint(1, 0, 0)
+const StaticTilePoint incDirTable[8] = {
+	{ 1,  1, 0},
+	{ 0,  1, 0},
+	{-1,  1, 0},
+	{-1,  0, 0},
+	{-1, -1, 0},
+	{ 0, -1, 0},
+	{ 1, -1, 0},
+	{ 1,  0, 0}
 };
 
 extern uint16   uMaxMasks[4],

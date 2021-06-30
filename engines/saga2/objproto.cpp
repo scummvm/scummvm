@@ -55,8 +55,6 @@ extern PlayerActor playerList[];    //  Master list of all PlayerActors
 
 extern ObjectSoundFXs   *objectSoundFXTable;    // the global object sound effects table
 
-extern TilePoint incDirTable[];
-
 #if DEBUG
 extern bool     massAndBulkCount;
 #endif

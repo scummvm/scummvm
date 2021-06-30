@@ -193,7 +193,7 @@ int16 scriptActorMove(int16 *args) {
 //	parameter is for actor facing, only used by actors)
 //		void "c" moveRel( GameObject id baseObj, int angle, int distance, ... );
 
-extern TilePoint dirTable[8];
+extern const StaticTilePoint dirTable[8];
 
 int16 scriptActorMoveRel(int16 *args) {
 	OBJLOG(MoveRel);

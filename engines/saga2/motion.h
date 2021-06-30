@@ -34,7 +34,8 @@ namespace Saga2 {
 class PathRequest;
 struct StandingTileInfo;
 
-extern TilePoint dirTable[];
+extern const StaticTilePoint dirTable[];
+extern const StaticTilePoint incDirTable[];
 
 
 const int   gravity         = 2;
