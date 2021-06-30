@@ -168,7 +168,7 @@ void Textbox::drawTextbox() {
 		// Remove hotspot tokens and mark that we need to calculate the bounds
 		// A single text line should only have one hotspot, but there's at least
 		// one malformed line in TVD that breaks this
-		uint32 hotspotPos, lastHotspotPos;
+		uint32 hotspotPos, lastHotspotPos = 0;
 		while (hotspotPos = currentLine.find(_hotspotToken), hotspotPos != String::npos) {
 			currentLine.erase(hotspotPos, ARRAYSIZE(_hotspotToken) - 1);
 
