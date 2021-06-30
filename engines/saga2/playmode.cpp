@@ -191,7 +191,7 @@ void PlayModeSetup(void) {
 	//  for tile mode.
 	//  NOTE: Make sure these are allocated first, so that they
 	//  can over-ride other controls.
-	assert(speakButtonControls = new gPanelList(*mainWindow));
+	speakButtonControls = new gPanelList(*mainWindow);
 
 	//  Create a control covering the map area.
 	speakButtonPanel = new gGenericControl(*speakButtonControls,
@@ -202,11 +202,11 @@ void PlayModeSetup(void) {
 
 	//  Create a panelList to contain all controls created
 	//  for play mode.
-	assert(playControls = new gPanelList(*mainWindow));
+	playControls = new gPanelList(*mainWindow);
 
 	//  Create a panelList to contain all controls created
 	//  for tile mode.
-	assert(tileControls = new gPanelList(*mainWindow));
+	tileControls = new gPanelList(*mainWindow);
 
 	//  Create a panelList to contain all controls created
 	//  for stage mode.

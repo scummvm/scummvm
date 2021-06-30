@@ -142,7 +142,7 @@ const ActorProperty *actorPropArray[actorPropIDCount] = {
 
 //  Determine if this tile has water
 static bool tileHasWater(TileInfo *ti) {
-	return ti->combinedTerrainMask() & terrainWater ? true : false;
+	return (ti->combinedTerrainMask() & terrainWater) ? true : false;
 }
 
 const SimpleTileProperty tilePropHasWater(tileHasWater);

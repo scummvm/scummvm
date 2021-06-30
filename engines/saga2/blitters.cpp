@@ -132,7 +132,6 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 #if DEBUGPACK
 			warning("unpackSprite: too many trans %d < %d for %dx%d (src %d bytes)", bytes, trans, map->size.x, map->size.y, dataSize);
 #endif
-			trans = bytes;
 			fail = true;
 			break;
 		}
@@ -196,7 +195,7 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData, bo
 	const byte *readPointer;
 	byte *drawPointer;
 	Point32 drawPoint;
-	int widthCount = 0;
+	int widthCount;
 	int row, col, count, lowBound;
 	int bgRunCount;
 	int fgRunCount;

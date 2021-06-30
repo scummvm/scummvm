@@ -2225,6 +2225,7 @@ RipTable *RipTable::ripTableAddress(RipTableID id) {
 //	Return a rip table's ID
 
 RipTableID RipTable::thisID(void) {
+	warning("RipTable::thisID(): Unsafe pointer arithmetics");
 	return this - ripTableList;
 }
 

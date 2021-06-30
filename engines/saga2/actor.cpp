@@ -320,28 +320,18 @@ bool ActorProto::acceptDropAction(
 	if (dropType & isIntangible) {
 		//  Set up the arguments we want to pass to the script
 
-		scf.value           = droppedObj->proto()->lockType
-		                      + senseIdeaGreeting;
+		scf.value = droppedObj->proto()->lockType + senseIdeaGreeting;
 
 		//  Invoke the script...
 
 		if (dropType & isConcept) {
-			result = runObjectMethod(dObj, Method_Actor_onTalkTo, scf);
+			runObjectMethod(dObj, Method_Actor_onTalkTo, scf);
 		} else if (dropType & isPsych) {
 			//  What to do???
 		} else if (dropType & (isSpell | isSkill)) {
 			//  What to do???
 			//  Cast the spell on the actor?
 		}
-
-		/*      isConcept     = (1<< 9),
-		        isPsych       = (1<<10),
-		        isSpell       = (1<<11),
-		        isSkill       = (1<<12),
-		        isEnchantment = (1<<13),
-		        isTargetable  = (1<<14), */
-
-//		mouseInfo.setIntent( GrabInfo::WalkTo );
 	} else {
 		scf.value = count;
 
@@ -3072,25 +3062,6 @@ uint8 Actor::evaluateFollowerNeeds(Actor *follower) {
 
 	return actorGoalFollowLeader;
 }
-
-#if DEBUG
-
-uint32 objectTerrain(GameObject *obj, StandingTileInfo &);
-
-void showObjectTerrain(GameObject *obj) {
-	StandingTileInfo    sti;
-	uint32 terrain = objectTerrain(obj, sti);
-	char    terrLetters[] = "NERWSHWFRSL0000";
-	char str[33];
-
-	for (int i = 0; i < 32; i++) {
-		str[i] = terrain & (1 << i) ? terrLetters[i] : '-';
-	}
-	str[32] = '\0';
-
-//  WriteStatusF( 4, str );
-}
-#endif
 
 //  Returns 0 if not moving, 1 if path being calculated,
 //  2 if path being followed.

@@ -111,7 +111,6 @@ void drawMainDisplay(void);
 void updateMainDisplay(void);
 
 #if DEBUG
-void showObjectTerrain(GameObject *obj);
 void soundTest1(void);
 void soundTest2(void);
 void voiceTest1(void);
@@ -157,8 +156,7 @@ static struct _delayedNavigation {
 	bool        pathFindFlag;
 	Alarm       delay;
 
-	//  Visual C++ complains about this not having a constructor.
-	_delayedNavigation(void) {;}
+	_delayedNavigation(void) : pathFindFlag(false) {}
 
 } delayedNavigation;
 static bool navigationDelayed = false;
@@ -786,10 +784,6 @@ void TileModeHandleTask(void) {
 
 
 		if (G_BASE.isMousePanel(tileMapControl)) {
-#if DEBUG
-			showObjectTerrain(a);
-#endif
-
 			//  If mouse is near edge of screen, then run.
 			runFlag =       lastMousePos.x < runThreshhold
 			                ||  lastMousePos.x >= tileRect.width - runThreshhold
