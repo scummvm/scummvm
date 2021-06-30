@@ -148,6 +148,22 @@ static const AdlGameDescription gameFileDescriptions[] = {
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_COARSE
 	},
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - French - Without MIXEDON
+		{
+			"hires1", "VF1",
+			{
+				{ "ADVENTURE", 0, "6e2245979871b44a9fec46b4b2ba590a", 29952 },
+				{ "AUTO LOAD OBJ", 0, "3d417e923e70abe9a82e51155974027d", 12288 },
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformApple2,
+			ADGF_TESTING,
+			MH_OPTIONS
+		},
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_VF1
+	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Coarsegold - With MIXEDON
 		{
 			"hires1", "V3",
@@ -166,7 +182,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
 		{
-			"hires1", 0,
+			"hires1", "PD",
 			{
 				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
 				{ "AUTO LOAD OBJ", 0, "23bfccfe9fcff9b22cf6c41bde9078ac", 12291 },

@@ -84,6 +84,8 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_display(nullptr),
 		_graphics(nullptr),
 		_textMode(false),
+		_verbErrorPos(19),
+		_nounErrorPos(30),
 		_linesPrinted(0),
 		_isRestarting(false),
 		_isRestoring(false),
@@ -1063,17 +1065,24 @@ Common::String AdlEngine::getWord(const Common::String &line, uint &index) const
 
 Common::String AdlEngine::formatVerbError(const Common::String &verb) const {
 	Common::String err = _strings.verbError;
-	for (uint i = 0; i < verb.size(); ++i)
-		err.setChar(verb[i], i + 19);
+
+	if (_verbErrorPos + verb.size() > err.size())
+		error("Failed to format verb error string");
+
+	err.replace(_verbErrorPos, verb.size(), verb);
+
 	return err;
 }
 
 Common::String AdlEngine::formatNounError(const Common::String &verb, const Common::String &noun) const {
 	Common::String err = _strings.nounError;
-	for (uint i = 0; i < verb.size(); ++i)
-		err.setChar(verb[i], i + 19);
-	for (uint i = 0; i < noun.size(); ++i)
-		err.setChar(noun[i], i + 30);
+
+	if (_verbErrorPos + verb.size() > err.size() || _nounErrorPos + noun.size() > err.size())
+		error("Failed to format noun error string");
+
+	err.replace(_verbErrorPos, verb.size(), verb);
+	err.replace(_nounErrorPos, noun.size(), noun);
+
 	return err;
 }
 

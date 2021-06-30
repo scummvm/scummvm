@@ -67,9 +67,6 @@ namespace Adl {
 #define IDI_HR1_OFS_ITEM_OFFSETS 0x68ff
 #define IDI_HR1_OFS_SHAPES       0x4f00
 
-#define IDI_HR1_OFS_VERBS        0x3800
-#define IDI_HR1_OFS_NOUNS        0x0f00
-
 class HiRes1Engine : public AdlEngine {
 public:
 	HiRes1Engine(OSystem *syst, const AdlGameDescription *gd) :
@@ -229,6 +226,14 @@ void HiRes1Engine::runIntro() {
 	if (getGameVersion() >= GAME_VER_HR1_COARSE) {
 		bool instructions = false;
 
+		char keyInstr = 'I';
+		char keyGame = 'G';
+
+		if (getLanguage() == Common::FR_FRA) {
+			keyInstr = 'M';
+			keyGame = 'J';
+		}
+
 		while (1) {
 			_display->printString(str);
 			Common::String s = inputString();
@@ -239,10 +244,10 @@ void HiRes1Engine::runIntro() {
 			if (s.empty())
 				continue;
 
-			if (s[0] == _display->asciiToNative('I')) {
+			if (s[0] == _display->asciiToNative(keyInstr)) {
 				instructions = true;
 				break;
-			} else if (s[0] == _display->asciiToNative('G')) {
+			} else if (s[0] == _display->asciiToNative(keyGame)) {
 				break;
 			}
 		}
@@ -292,7 +297,7 @@ void HiRes1Engine::init() {
 	}
 
 	_graphics = new GraphicsMan_v1<Display_A2>(*static_cast<Display_A2 *>(_display));
-	_display->moveCursorTo(Common::Point(0, 3));
+	_display->moveCursorTo(Common::Point(0, 23)); // DOS 3.3
 
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));
 
@@ -323,10 +328,20 @@ void HiRes1Engine::init() {
 	_messageIds.itemNotHere = IDI_HR1_MSG_ITEM_NOT_HERE;
 	_messageIds.thanksForPlaying = IDI_HR1_MSG_THANKS_FOR_PLAYING;
 
+	if (getLanguage() == Common::FR_FRA) {
+		_verbErrorPos = 15;
+		_nounErrorPos = 31;
+	}
+
 	// Load message offsets
 	stream->seek(IDI_HR1_OFS_MSGS);
 	for (uint i = 0; i < IDI_HR1_NUM_MESSAGES; ++i)
 		_messages.push_back(_files->getDataBlock(IDS_HR1_MESSAGES, stream->readUint16LE()));
+
+	// The French version has 5 additional strings
+	if (getLanguage() == Common::FR_FRA)
+		for (uint i = 0; i < 5; ++i)
+			_messages.push_back(_files->getDataBlock(IDS_HR1_MESSAGES, stream->readUint16LE()));
 
 	// Load picture data from executable
 	stream->seek(IDI_HR1_OFS_PICS);
@@ -357,10 +372,10 @@ void HiRes1Engine::init() {
 	if (stream->eos() || stream->err())
 		error("Failed to read game data from '" IDS_HR1_EXE_1 "'");
 
-	stream->seek(IDI_HR1_OFS_VERBS);
+	stream->seek(getLanguage() == Common::FR_FRA ? 0x900 : 0x3800);
 	loadWords(*stream, _verbs, _priVerbs);
 
-	stream->seek(IDI_HR1_OFS_NOUNS);
+	stream->seek(0xf00);
 	loadWords(*stream, _nouns, _priNouns);
 }
 
@@ -422,7 +437,7 @@ void HiRes1Engine::printString(const Common::String &str) {
 	_display->printString(wrap);
 
 	if (_messageDelay)
-		delay(14 * 166018 / 1000);
+		delay(getLanguage() == Common::FR_FRA ? 2900 : 2250);
 }
 
 Common::String HiRes1Engine::loadMessage(uint idx) const {

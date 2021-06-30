@@ -63,6 +63,10 @@ GameVersion getGameVersion(const AdlGameDescription &adlDesc) {
 	return adlDesc.version;
 }
 
+Common::Language getLanguage(const AdlGameDescription &adlDesc) {
+	return adlDesc.desc.language;
+}
+
 Common::Platform getPlatform(const AdlGameDescription &adlDesc) {
 	return adlDesc.desc.platform;
 }

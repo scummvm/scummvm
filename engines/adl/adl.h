@@ -57,6 +57,7 @@ namespace Adl {
 Common::String getDiskImageName(const AdlGameDescription &adlDesc, byte volume);
 GameType getGameType(const AdlGameDescription &desc);
 GameVersion getGameVersion(const AdlGameDescription &desc);
+Common::Language getLanguage(const AdlGameDescription &desc);
 Common::Platform getPlatform(const AdlGameDescription &desc);
 
 class Console;
@@ -261,6 +262,7 @@ protected:
 	Common::String getDiskImageName(byte volume) const { return Adl::getDiskImageName(*_gameDescription, volume); }
 	GameType getGameType() const { return Adl::getGameType(*_gameDescription); }
 	GameVersion getGameVersion() const { return Adl::getGameVersion(*_gameDescription); }
+	Common::Language getLanguage() const { return Adl::getLanguage(*_gameDescription); }
 	virtual void gameLoop();
 	virtual void loadState(Common::ReadStream &stream);
 	virtual void saveState(Common::WriteStream &stream);
@@ -411,6 +413,8 @@ protected:
 		Common::String pressReturn;
 		Common::String lineFeeds;
 	} _strings;
+
+	uint32 _verbErrorPos, _nounErrorPos;
 
 	struct {
 		uint cantGoThere;
