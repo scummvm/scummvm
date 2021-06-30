@@ -375,39 +375,6 @@ struct ContainerAppearanceDef {
 	uint16          rows,
 	                cols,
 	                totRows;
-
-	ContainerAppearanceDef(
-	    Rect16      _defaultWindowPos,
-	    Rect16      _viewRect,
-	    Rect16      _closeRect,
-	    Rect16      _scrollRect,
-	    Rect16      _iconRect,
-	    Rect16      _massRect,
-	    hResID      _closeResID_0,
-	    hResID      _closeResID_1,
-	    hResID      _scrollResID_0,
-	    hResID      _scrollResID_1,
-	    Point16     _iconOrigin,
-	    Point16     _iconSpacing,
-	    uint16      _rows,
-	    uint16      _cols,
-	    uint16      _totRows)
-		:   defaultWindowPos(_defaultWindowPos),
-		    viewRect(_viewRect),
-		    closeRect(_closeRect),
-		    scrollRect(_scrollRect),
-		    iconRect(_iconRect),
-		    massRect(_massRect),
-		    iconOrigin(_iconOrigin),
-		    iconSpacing(_iconSpacing),
-		    rows(_rows),
-		    cols(_cols),
-		    totRows(_totRows) {
-		closeResID[0]     = _closeResID_0;
-		closeResID[1]     = _closeResID_1;
-		scrollResID[0]    = _scrollResID_0;
-		scrollResID[1]    = _scrollResID_1;
-	}
 };
 
 /* ===================================================================== *
