@@ -1354,8 +1354,122 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 
 	int pan = 0;
 	if (!voiceOver && _id != BladeRunnerEngine::kActorVoiceOver) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
 		pan = (75 * (2 *  CLIP<int>(screenPosition.x, 0, 640) - 640)) / 640; // map [0..640] to [-75..75]
+#else
+		// There are a few situations whereby 
+		// the actor is not actually in the set when speaking, 
+		// and the original code would result in audio playing 
+		// from a wrong balance point (bad pan value).
+		// We capture these situations here and set the pan explicitly.
+		// Mainly, these are:
+		// tv news, machine voices (from PCs, Doors etc)
+		// dispatch calls when used as actor speech and not as ambient sounds
+		// phone calls (From Guzza, to Guzza, Lucy, Clovis, Dektora, Steele)
+		// and other special cases, where the actor is not actually in the scene.
+		//
+		// pan:: map [0..640] to [-75..75]
+		if ((_id == kActorNewscaster     && sentenceId >= 0    && sentenceId <= 240)
+		 || (_id == kActorTyrell         && sentenceId >= 430  && sentenceId <= 460)
+		 || (_id == kActorGuzza          && sentenceId >= 1540 && sentenceId <= 1600)
+		 || (_id == kActorGovernorKolvig && sentenceId >= 80   && sentenceId <= 130)) {
+			// MA04 TV
+			// x: 149 --> pan: -41
+			// PS05 TV
+			// x: 527 --> pan:  48
+			// These quotes only play in kSetMA04 and kSetPS05
+			pan = (_vm->_playerActor->getSetId() == kSetMA04) ? -41 : 48;
+		} else if ((_id == kActorLucy     && sentenceId >= 500  && sentenceId <= 640)
+		        || (_id == kActorClovis   && sentenceId >= 310  && sentenceId <= 540)
+		        || (_id == kActorDektora  && sentenceId >= 220  && sentenceId <= 490)
+		        || (_id == kActorSteele   && sentenceId >= 680  && sentenceId <= 820)
+		        || (_id == kActorGuzza    && sentenceId >= 0    && sentenceId <= 70)) {
+			// MA04 phone
+			// x: 351 --> pan: 7
+			// These quotes only play in kSetMA04
+			pan = 7;
+		} else if (_id == kActorGuzza     && sentenceId >= 1380 && sentenceId <= 1480) {
+			// NR02 phone (Taffy's)
+			// x: 300 --> pan: -5
+			// DR06 phone (Twin's Apartment)
+			// x: 565 --> pan: 57
+			// These quotes only play in either kSetNR02 or kSetDR06
+			pan = (_vm->_playerActor->getSetId() == kSetNR02) ? -5 : 57;
+		} else if (_id == kActorAnsweringMachine) {
+			if (sentenceId == 0) {
+				// kSetBB07 - Bradbury, Sebastian's Lab Computer   (0)
+				// x: 567 --> pan: 58
+				pan = 58;
+			} else if (sentenceId >= 10 && sentenceId <= 50) {
+				// kSetDR06 - Luther & Lance answering machine [10, 50]
+				// x: 278 --> pan: -11
+				pan = -11;
+			} else if (sentenceId == 60) {
+				// kSetDR06 - Twin's Apartment
+				// Restored Cut Content quote
+				// (Twin's Lab has a door announcer -- as heard in the video intro of Act 4 too)
+				// Pan will be at vidphone spot
+				// x: 565 --> pan: 57
+				pan = 57;
+			} else if (sentenceId >= 330 && sentenceId <= 370) {
+				// Mainframe terminal - x: 500 --> pan: 42
+				// These quotes only play in kSetPS06
+				pan = 42;
+			}
+			// Default pan is already set to 0 (ie. center) 
+			// Includes Maze Scenes (kSetPS10_PS11_PS12_PS13) - quotes [280, 320]
+			// Also ESPER, KIA, VK, Elevator (MA06) and Spinner.
+		} else {
+			Vector3 actorScreenPosition;
+			switch (_id) {
+			case kActorLance:
+				// Lance does not have a model, but he is "attached" to his twin Luther
+				actorScreenPosition = _vm->_view->calculateScreenPosition(_vm->_actors[kActorLuther]->getPosition());
+				break;
+			case kActorDispatcher:
+				// kActorDispatcher does not have a model, but should be "attached" to McCoy or Steele
+				if (sentenceId >= 0 && sentenceId <= 40) {
+					// Steele's radio
+					actorScreenPosition = _vm->_view->calculateScreenPosition(_vm->_actors[kActorSteele]->getPosition());
+				} else {
+					// McCoy's radio
+					actorScreenPosition = _vm->_view->calculateScreenPosition(_vm->_playerActor->getPosition());
+				}
+				break;
+			case kActorOfficerLeary:
+				// Voice from dispatcher is attached to McCoy (coming from his radio)
+				if ((sentenceId >= 240 && sentenceId <= 450)
+				    || (sentenceId == 460 && _vm->_language == Common::DE_DEU)
+				    || (sentenceId >= 480 && sentenceId <= 530 && _vm->_language == Common::ES_ESP)
+				    || (sentenceId >= 520 && sentenceId <= 530 && _vm->_language == Common::IT_ITA)
+				) {
+					// responding to dispatch
+					actorScreenPosition = _vm->_view->calculateScreenPosition(_vm->_playerActor->getPosition());
+				} else {
+					actorScreenPosition = _vm->_view->calculateScreenPosition(_position);
+				}
+				break;
+			case kActorOfficerGrayford:
+				// Voice from dispatcher is attached to McCoy (coming from his radio)
+				if ((sentenceId >= 360 && sentenceId <= 450)
+				    || (sentenceId == 460 && _vm->_language == Common::DE_DEU)
+				    || (sentenceId >= 470 && sentenceId <= 550)
+				    || (sentenceId >= 560 && sentenceId <= 610 && _vm->_language == Common::ES_ESP)
+				) {
+					// responding to dispatch
+					actorScreenPosition = _vm->_view->calculateScreenPosition(_vm->_playerActor->getPosition());
+				} else {
+					actorScreenPosition = _vm->_view->calculateScreenPosition(_position);
+				}
+				break;
+			default:
+				actorScreenPosition = _vm->_view->calculateScreenPosition(_position);
+			}
+			pan	= (75 * (2 *  CLIP<int>(actorScreenPosition.x, 0, 640) - 640)) / 640; // map [0..640] to [-75..75]
+		}
+		// debug("actor: %d, pan: %d", _id, pan);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 
 	_vm->_subtitles->loadInGameSubsText(_id, sentenceId);
