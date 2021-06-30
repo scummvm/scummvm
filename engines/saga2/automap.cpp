@@ -143,9 +143,9 @@ static const StaticRect scrollBtnRect = {
 
 
 StaticWindow autoMapDecorations[numAutoMapPanels] = {
-	{*autoMapPanelRects[0], nullptr, autoMapTopPanelResID},
-	{*autoMapPanelRects[1], nullptr, autoMapMidPanelResID},
-	{*autoMapPanelRects[2], nullptr, autoMapBotPanelResID}
+	{*(autoMapPanelRects[0]), NULL, autoMapTopPanelResID},
+	{*(autoMapPanelRects[1]), NULL, autoMapMidPanelResID},
+	{*(autoMapPanelRects[2]), NULL, autoMapBotPanelResID}
 };
 
 
