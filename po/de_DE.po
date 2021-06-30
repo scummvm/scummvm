@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-30 13:00+0000\n"
+"POT-Creation-Date: 2021-06-30 17:19+0000\n"
 "PO-Revision-Date: 2021-06-26 13:23+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -2804,27 +2804,27 @@ msgid "Resolution: %dx%d"
 msgstr "Auflösung: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:687
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2413
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2409
 msgid "Enabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur an"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:689
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2419
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2415
 msgid "Disabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur aus"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2435
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2431
 msgid "Filtering enabled"
 msgstr "Bilineare Filterung aktiviert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:712
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2437
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2433
 msgid "Filtering disabled"
 msgstr "Bilineare Filterung deaktiviert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2464
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
 msgid "Stretch mode"
 msgstr "Skaliermodus"
 
@@ -2832,7 +2832,7 @@ msgstr "Skaliermodus"
 msgid "SDL Surface"
 msgstr "SDL Surface"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2379
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2375
 msgid "Active graphics filter:"
 msgstr "Aktiver Grafikfilter:"
 

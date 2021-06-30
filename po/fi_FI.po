@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-30 13:00+0000\n"
+"POT-Creation-Date: 2021-06-30 17:19+0000\n"
 "PO-Revision-Date: 2021-06-30 13:44+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2785,27 +2785,27 @@ msgid "Resolution: %dx%d"
 msgstr "Resoluutio: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:687
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2413
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2409
 msgid "Enabled aspect ratio correction"
 msgstr "Kuvasuhteen korjaus päällä"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:689
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2419
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2415
 msgid "Disabled aspect ratio correction"
 msgstr "Kuvasuhteen korjaus pois päältä"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:710
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2435
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2431
 msgid "Filtering enabled"
 msgstr "Suodatus päällä"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:712
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2437
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2433
 msgid "Filtering disabled"
 msgstr "Suodatus pois päältä"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:741
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2464
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
 msgid "Stretch mode"
 msgstr "Venytystila"
 
@@ -2813,7 +2813,7 @@ msgstr "Venytystila"
 msgid "SDL Surface"
 msgstr "SDL-pinta"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2379
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2375
 msgid "Active graphics filter:"
 msgstr "Valittu grafiikkasuodatin:"
 
