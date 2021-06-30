@@ -29,6 +29,7 @@
 //
 
 #include "video/qt_decoder.h"
+#include "video/qt_data.h"
 
 #include "audio/audiostream.h"
 
@@ -171,7 +172,13 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 				// if flag bit 3 is set, use the default palette
 				//uint16 colorCount = 1 << colorDepth;
 
-				warning("Predefined palette! %dbpp", colorDepth);
+				debug(0, "Predefined palette! %dbpp", colorDepth);
+				if (colorDepth == 2)
+					memcpy(entry->_palette, quickTimeDefaultPalette4, 4 * 3);
+				else if (colorDepth == 4)
+					memcpy(entry->_palette, quickTimeDefaultPalette16, 16 * 3);
+				else if (colorDepth == 8)
+					memcpy(entry->_palette, quickTimeDefaultPalette256, 256 * 3);
 			} else {
 				debug(0, "Palette from file");
 
