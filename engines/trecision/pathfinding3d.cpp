@@ -848,14 +848,14 @@ void PathFinding3D::buildFramelist() {
 	int curAction, curFrame, cfp;
 	if (_vm->_actor->_curAction == hWALK) {
 		// compute current frame
-		cfp = _vm->_defActionLen[hSTART] + 1 + _vm->_actor->_curFrame;
+		cfp = defActionLen[hSTART] + 1 + _vm->_actor->_curFrame;
 		v += cfp * _vm->_actor->_vertexNum;
 
 		curAction = hWALK;
 		curFrame = _vm->_actor->_curFrame;
 
 		// if it wasn't the last frame, take the next step
-		if (_vm->_actor->_curFrame < _vm->_defActionLen[hWALK] - 1) {
+		if (_vm->_actor->_curFrame < defActionLen[hWALK] - 1) {
 			++cfp;
 			++curFrame;
 			v += _vm->_actor->_vertexNum;
@@ -867,7 +867,7 @@ void PathFinding3D::buildFramelist() {
 		curAction = hWALK;
 		curFrame = _vm->_actor->_curAction - hSTOP0;
 
-		cfp = _vm->_defActionLen[hSTART] + 1 + curFrame;
+		cfp = defActionLen[hSTART] + 1 + curFrame;
 		v += cfp * _vm->_actor->_vertexNum;
 	} else {
 		// if he was standing, start working or turn
@@ -898,17 +898,17 @@ void PathFinding3D::buildFramelist() {
 		++curFrame;
 		++cfp;
 
-		if (curFrame >= _vm->_defActionLen[curAction]) {
+		if (curFrame >= defActionLen[curAction]) {
 			if (curAction == hSTART) {
 				curAction = hWALK;
 				curFrame = 0;
-				cfp = _vm->_defActionLen[hSTART] + 1;
+				cfp = defActionLen[hSTART] + 1;
 
 				ox = 0.0f;
 			} else if (curAction == hWALK) {
 				curAction = hWALK;
 				curFrame = 0;
-				cfp = _vm->_defActionLen[hSTART] + 1;
+				cfp = defActionLen[hSTART] + 1;
 
 				// end walk frame
 				ox = _vm->_actor->frameCenter(v) - firstFrame;
@@ -943,11 +943,11 @@ void PathFinding3D::buildFramelist() {
 	int index = 0;
 	cfp = 0;
 	while (index != curAction)
-		cfp += _vm->_defActionLen[index++];
+		cfp += defActionLen[index++];
 
 	v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
 
-	for (index = 0; index < _vm->_defActionLen[curAction]; ++index) {
+	for (index = 0; index < defActionLen[curAction]; ++index) {
 		curLen = oz + _vm->_actor->frameCenter(v) - firstFrame;
 		_step[i]._pz = oz - firstFrame; // where to render
 		_step[i]._dz = curLen;          // where it is

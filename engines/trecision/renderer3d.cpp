@@ -463,7 +463,7 @@ void Renderer3D::calcCharacterPoints() {
 	int cfp = 0;
 	int cur = 0;
 	while (cur < actor->_curAction)
-		cfp += _vm->_defActionLen[cur++];
+		cfp += defActionLen[cur++];
 
 	if (actor->_curAction == hWALKOUT)
 		cfp = 1;
@@ -702,7 +702,7 @@ void Renderer3D::calcCharacterPoints() {
 	}
 
 	if (actor->_curAction == hLAST) // exit displacer
-		actor->_lim[2] = actor->_lim[3] - (((actor->_lim[3] - actor->_lim[2]) * actor->_curFrame) / _vm->_defActionLen[hLAST]);
+		actor->_lim[2] = actor->_lim[3] - (((actor->_lim[3] - actor->_lim[2]) * actor->_curFrame) / defActionLen[hLAST]);
 
 	// set zbuffer vars
 	setZBufferRegion(actor->_lim[0], actor->_lim[2], actor->_lim[1] - actor->_lim[0]);

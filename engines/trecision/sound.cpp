@@ -168,7 +168,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 	case hSTOP2:
 	case hSTOP3:
 	case hSTOP9:
-		if (frame >= _vm->_defActionLen[act] - 1)
+		if (frame >= defActionLen[act] - 1)
 			stepLeft = true;
 		break;
 	case hSTOP4:
@@ -176,7 +176,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 	case hSTOP6:
 	case hSTOP7:
 	case hSTOP8:
-		if (frame >= _vm->_defActionLen[act] - 1)
+		if (frame >= defActionLen[act] - 1)
 			stepRight = true;
 		break;
 	default:
@@ -280,8 +280,7 @@ void SoundManager::loadRoomSounds() {
 
 void SoundManager::loadSamples(Common::SeekableReadStreamEndian *stream) {
 	for (int i = 0; i < NUMSAMPLES; ++i) {
-		for (int j = 0; j < 14; j++)
-			_gSample[i]._name += stream->readByte();
+		_gSample[i]._name = stream->readString(0, 14);
 		_gSample[i]._volume = stream->readByte();
 		_gSample[i]._flag = stream->readByte();
 		_gSample[i]._panning = stream->readSByte();

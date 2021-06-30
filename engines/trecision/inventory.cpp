@@ -37,10 +37,11 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 
 	_graphicsMgr->clearScreenBufferInventory();
 
-	for (byte iconSlot = 0; iconSlot < ICONSHOWN; iconSlot++) {
-		if (iconSlot + startIcon >= _inventory.size())
+	for (uint8 iconSlot = 0; iconSlot < ICONSHOWN; iconSlot++) {
+		uint8 i = iconSlot + startIcon;
+		if (i >= _inventory.size())
 			break;
-		const byte iconIndex = _inventory[iconSlot + startIcon];
+		const byte iconIndex = _inventory[i];
 		if (iconIndex == _lightIcon)
 			continue;
 

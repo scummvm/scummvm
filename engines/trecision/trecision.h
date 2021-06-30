@@ -328,29 +328,29 @@ public:
 	uint8 _textStatus;
 
 	uint32 _pauseStartTime;
+};
 
-	uint8 const _defActionLen[hLAST + 1] = {
-		/* STAND */ 1,
-		/* PARTE */ 1,
-		/* WALK  */ 10,
-		/* END   */ 1,
-		/* STOP0 */ 3,
-		/* STOP1 */ 4,
-		/* STOP2 */ 3,
-		/* STOP3 */ 2,
-		/* STOP4 */ 3,
-		/* STOP5 */ 4,
-		/* STOP6 */ 3,
-		/* STOP7 */ 3,
-		/* STOP8 */ 2,
-		/* STOP9 */ 3,
-		/* WALKI */ 12,
-		/* BOH   */ 9,
-		/* UGG   */ 41,
-		/* UTT   */ 35,
-		/* WALKO */ 12,
-		/* LAST  */ 15
-	};
+uint8 static const defActionLen[hLAST + 1] = {
+	/* STAND */ 1,
+	/* PARTE */ 1,
+	/* WALK  */ 10,
+	/* END   */ 1,
+	/* STOP0 */ 3,
+	/* STOP1 */ 4,
+	/* STOP2 */ 3,
+	/* STOP3 */ 2,
+	/* STOP4 */ 3,
+	/* STOP5 */ 4,
+	/* STOP6 */ 3,
+	/* STOP7 */ 3,
+	/* STOP8 */ 2,
+	/* STOP9 */ 3,
+	/* WALKI */ 12,
+	/* BOH   */ 9,
+	/* UGG   */ 41,
+	/* UTT   */ 35,
+	/* WALKO */ 12,
+	/* LAST  */ 15
 };
 
 } // End of namespace Trecision

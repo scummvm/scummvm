@@ -151,7 +151,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_cx = _cy = 0;
 
 	_textArea = nullptr;
-	_snake52 = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0};
+	Message msg = { MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0 };
+	_snake52 = msg;
 	for (int i = 0; i < 50; ++i)
 		_scriptFrame[i].clear();
 

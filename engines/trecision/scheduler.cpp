@@ -29,8 +29,8 @@ Scheduler::Scheduler(TrecisionEngine *vm) : _vm(vm) {
 	_token = CLASS_CHAR;
 	_counter = 0;
 
-	_idleMsg = { MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0 };
-	_msg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0};
+	Message msg = { MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0 };
+	_idleMsg = _msg = msg;
 }
 
 Scheduler::~Scheduler() {

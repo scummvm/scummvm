@@ -48,7 +48,7 @@ struct SRoom {
 	void loadRoom(Common::SeekableReadStreamEndian *stream);
 
 private:
-	uint8 _flag = 0; // Room visited or not, extra or not
+	uint8 _flag; // Room visited or not, extra or not
 };
 
 struct SObject {
@@ -97,8 +97,8 @@ struct SObject {
 	void loadObj(Common::SeekableReadStreamEndian *stream);
 
 private:
-	uint8 _flag = 0;
-	uint8 _mode = 0;
+	uint8 _flag;
+	uint8 _mode;
 };
 
 struct SInvObject {
@@ -116,7 +116,7 @@ struct SInvObject {
 	void loadObj(Common::SeekableReadStreamEndian *stream);
 
 private:
-	uint8 _flag = 0;
+	uint8 _flag;
 };
 
 struct SAtFrame {
@@ -184,7 +184,7 @@ struct STexture {
 	bool isActive() { return _active; };
 
 private:
-	bool _active = false;
+	bool _active;
 };
 
 struct SVertex {

@@ -384,7 +384,7 @@ void Actor::actorDoAction(int action) {
 	int cur = 0;
 
 	while (cur < action)
-		cfp += _vm->_defActionLen[cur++];
+		cfp += defActionLen[cur++];
 	v = &_characterArea[cfp * _vertexNum];
 
 	if (action == hWALKOUT)
@@ -392,7 +392,7 @@ void Actor::actorDoAction(int action) {
 	else if (action == hLAST)
 		v = _characterArea;
 
-	int len = _vm->_defActionLen[action];
+	int len = defActionLen[action];
 
 	int stepIdx;
 	for (stepIdx = _vm->_pathFind->_curStep; stepIdx < len + _vm->_pathFind->_curStep; ++stepIdx) {

@@ -44,7 +44,7 @@ enum ObjectFlags {
 	kObjFlagTake = 16,
 	kObjFlagUseWith = 32,
 	kObjFlagExtra = 64,
-	kObjFlagDone = 128,
+	kObjFlagDone = 128
 };
 
 enum SoundFlags {
@@ -1617,7 +1617,7 @@ enum SentenceId {
 enum AnimationId {
 	kAnim113UseVial = 77,
 	kAnim121TryOpenLetterboxes = 82,
-	kAnim122OpenLetterbox17 = 83,
+	kAnim122OpenLetterbox17 = 83
 };
 
 

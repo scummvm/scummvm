@@ -42,7 +42,7 @@ private:
 	void executeAtFrameDoit(ATFHandle *h, int doit, uint16 obj);
 	void processAtFrame(ATFHandle *h, int type, int atf);
 
-	ATFHandle _animType[3]{};
+	ATFHandle _animType[3];
 	int _oneSpeakDialogCount;
 
 public:
