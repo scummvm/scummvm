@@ -7716,8 +7716,8 @@ msgid ""
 "likely to be unplayable totally or partially."
 msgstr ""
 "Questo gioco richiede funzionalità 3D, che non sono state incluse durante la "
-"compilazione. Di conseguenza, è probabile che sia parzialmente (o totalmente)"
-" ingiocabile."
+"compilazione. Di conseguenza, è probabile che sia parzialmente (o "
+"totalmente) ingiocabile."
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
