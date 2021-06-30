@@ -37,10 +37,10 @@ class Cursor : public Graphics::MacCursor {
  public:
 	Cursor();
 
-	void readFromCast(uint cursorId, uint maskId);
+	void readFromCast(CastMemberID cursorId, CastMemberID maskId);
 	void readFromResource(int resourceId);
 
-	bool isEmpty() { return !(_cursorResId || _cursorCastId); }
+	bool isEmpty() { return _cursorResId == 0 && _cursorCastId.member == 0; }
 	bool operator==(const Cursor &c);
 
 	virtual byte getKeyColor() const override { return _keyColor; }
@@ -50,11 +50,11 @@ class Cursor : public Graphics::MacCursor {
 	Graphics::MacCursorType _cursorType;
 	int _cursorResId;
 
-	uint _cursorCastId;
-	uint _cursorMaskId;
+	CastMemberID _cursorCastId;
+	CastMemberID _cursorMaskId;
 
 private:
-	void resetCursor(Graphics::MacCursorType type, bool shouldClear = false, int resId = 0, uint castId = 0, uint maskId = 0);
+	void resetCursor(Graphics::MacCursorType type, bool shouldClear = false, int resId = 0, CastMemberID castId = CastMemberID(0, 0), CastMemberID maskId = CastMemberID(0, 0));
 
 private:
 	bool _usePalette;

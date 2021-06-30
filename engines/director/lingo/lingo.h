@@ -112,6 +112,7 @@ struct Datum {	/* interpreter stack type */
 		PropertyArray *parr; /* PARRAY */
 		AbstractObject *obj; /* OBJECT */
 		ChunkReference *cref; /* CHUNKREF */
+		CastMemberID *cast;	/* CASTREF, FIELDREF */
 	} u;
 
 	int *refCount;
@@ -123,6 +124,7 @@ struct Datum {	/* interpreter stack type */
 	Datum(double val);
 	Datum(const Common::String &val);
 	Datum(AbstractObject *val);
+	Datum(const CastMemberID &val);
 	void reset();
 
 	~Datum() {
@@ -133,7 +135,7 @@ struct Datum {	/* interpreter stack type */
 	double asFloat() const;
 	int asInt() const;
 	Common::String asString(bool printonly = false) const;
-	int asCastId() const;
+	CastMemberID asMemberID() const;
 
 	bool isRef() const;
 	bool isVarRef() const;
@@ -199,11 +201,11 @@ struct LingoEvent {
 	LEvent event;
 	int eventId;
 	ScriptType scriptType;
-	int scriptId;
+	CastMemberID scriptId;
 	bool passByDefault;
 	int channelId;
 
-	LingoEvent (LEvent e, int ei, ScriptType st, int si, bool pass, int ci = -1) {
+	LingoEvent (LEvent e, int ei, ScriptType st, CastMemberID si, bool pass, int ci = -1) {
 		event = e;
 		eventId = ei;
 		scriptType = st;
@@ -242,7 +244,7 @@ public:
 	void resetLingo();
 
 	void executeHandler(const Common::String &name);
-	void executeScript(ScriptType type, uint16 id);
+	void executeScript(ScriptType type, CastMemberID id);
 	void printStack(const char *s, uint pc);
 	void printCallStack(uint pc);
 	Common::String decodeInstruction(LingoArchive *archive, ScriptData *sd, uint pc, uint *newPC = NULL);
@@ -264,7 +266,7 @@ public:
 	// lingo-events.cpp
 private:
 	void initEventHandlerTypes();
-	void processEvent(LEvent event, ScriptType st, int entityId, int channelId = -1);
+	void processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int channelId = -1);
 
 public:
 	ScriptType event2script(LEvent ev);
@@ -313,7 +315,8 @@ public:
 	void func_gotoprevious();
 	void func_play(Datum &frame, Datum &movie);
 	void func_playdone();
-	void func_cursor(int cursorId, int maskId);
+	void func_cursor(CastMemberID cursorId, CastMemberID maskId);
+	void func_cursor(int cursorId);
 	int func_marker(int m);
 	uint16 func_label(Datum &label);
 

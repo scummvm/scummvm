@@ -95,21 +95,21 @@ void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, &stream, -1, _channels[soundChannel - 1].volume);
 }
 
-void DirectorSound::playCastMember(int castId, uint8 soundChannel, bool allowRepeat) {
-	if (castId == 0) {
+void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bool allowRepeat) {
+	if (memberID.member == 0) {
 		stopSound(soundChannel);
 	} else {
-		CastMember *soundCast = _vm->getCurrentMovie()->getCastMember(castId);
+		CastMember *soundCast = _vm->getCurrentMovie()->getCastMember(memberID);
 		if (soundCast) {
 			if (soundCast->_type != kCastSound) {
-				warning("DirectorSound::playCastMember: attempted to play a non-SoundCastMember cast member %d", castId);
+				warning("DirectorSound::playCastMember: attempted to play a non-SoundCastMember %s", memberID.asString().c_str());
 			} else {
-				if (!allowRepeat && lastPlayingCast(soundChannel) == castId)
+				if (!allowRepeat && lastPlayingCast(soundChannel) == memberID)
 					return;
 				bool looping = ((SoundCastMember *)soundCast)->_looping;
 				AudioDecoder *ad = ((SoundCastMember *)soundCast)->_audio;
 				if (!ad) {
-					warning("DirectorSound::playCastMember: no audio data attached to cast member %d", castId);
+					warning("DirectorSound::playCastMember: no audio data attached to %s", memberID.asString().c_str());
 					return;
 				}
 				Audio::AudioStream *as;
@@ -122,10 +122,10 @@ void DirectorSound::playCastMember(int castId, uint8 soundChannel, bool allowRep
 					return;
 				}
 				playStream(*as, soundChannel);
-				_channels[soundChannel - 1].lastPlayingCast = castId;
+				_channels[soundChannel - 1].lastPlayingCast = memberID;
 			}
 		} else {
-			warning("DirectorSound::playCastMember: couldn't find cast member %d", castId);
+			warning("DirectorSound::playCastMember: couldn't find %s", memberID.asString().c_str());
 		}
 	}
 }
@@ -194,9 +194,9 @@ bool DirectorSound::isChannelValid(uint8 soundChannel) {
 	return true;
 }
 
-int DirectorSound::lastPlayingCast(uint8 soundChannel) {
+CastMemberID DirectorSound::lastPlayingCast(uint8 soundChannel) {
 	if (!isChannelValid(soundChannel))
-		return false;
+		return CastMemberID(0, 0);
 
 	return _channels[soundChannel - 1].lastPlayingCast;
 }
@@ -207,7 +207,7 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 
 	cancelFade(soundChannel);
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
-	_channels[soundChannel - 1].lastPlayingCast = 0;
+	_channels[soundChannel - 1].lastPlayingCast = CastMemberID(0, 0);
 	return;
 }
 
@@ -216,7 +216,7 @@ void DirectorSound::stopSound() {
 		cancelFade(i + 1);
 
 		_mixer->stopHandle(_channels[i].handle);
-		_channels[i].lastPlayingCast = 0;
+		_channels[i].lastPlayingCast = CastMemberID(0, 0);
 	}
 
 	_mixer->stopHandle(_scriptSound);

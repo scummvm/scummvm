@@ -101,7 +101,7 @@ private:
 public:
 	int _numChannels;
 	byte _channelData[kChannelDataSize];
-	uint16 _actionId;
+	CastMemberID _actionId;
 	uint16 _transDuration;
 	uint8 _transArea; // 1 - Whole Window, 0 - Changing Area
 	uint8 _transChunkSize;
@@ -109,9 +109,9 @@ public:
 	PaletteInfo _palette;
 	uint8 _tempo;
 
-	uint16 _sound1;
+	CastMemberID _sound1;
 	uint8 _soundType1;
-	uint16 _sound2;
+	CastMemberID _sound2;
 	uint8 _soundType2;
 
 	byte _colorTempo;

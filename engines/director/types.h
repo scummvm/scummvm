@@ -378,7 +378,7 @@ struct CastMemberID {
 		return member != c.member || castLib != c.castLib;
 	}
 
-	const char *str() const;
+	Common::String asString() const;
 };
 
 struct Datum;

@@ -449,7 +449,7 @@ void Lingo::execute(uint pc) {
 	_abort = false;
 }
 
-void Lingo::executeScript(ScriptType type, uint16 id) {
+void Lingo::executeScript(ScriptType type, CastMemberID id) {
 	Movie *movie = _vm->getCurrentMovie();
 	if (!movie) {
 		warning("Request to execute script with no movie");
@@ -459,16 +459,16 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 	ScriptContext *sc = movie->getScriptContext(type, id);
 
 	if (!sc) {
-		debugC(3, kDebugLingoExec, "Request to execute non-existent script type %d id %d", type, id);
+		debugC(3, kDebugLingoExec, "Request to execute non-existent script type %d id %d of castLib %d", type, id.member, id.castLib);
 		return;
 	}
 
 	if (!sc->_eventHandlers.contains(kEventGeneric)) {
-		debugC(3, kDebugLingoExec, "Request to execute script type %d id %d with no scopeless lingo", type, id);
+		debugC(3, kDebugLingoExec, "Request to execute script type %d id %d of castLib %d with no scopeless lingo", type, id.member, id.castLib);
 		return;
 	}
 
-	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d", scriptType2str(type), id);
+	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d, castLib %d", scriptType2str(type), id.member, id.castLib);
 
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
 	LC::call(sym, 0, false);
@@ -625,6 +625,13 @@ Datum::Datum(AbstractObject *val) {
 	}
 }
 
+Datum::Datum(const CastMemberID &val) {
+	u.cast = new CastMemberID(val);
+	type = CASTREF;
+	refCount = new int;
+	*refCount = 1;
+}
+
 void Datum::reset() {
 	if (!refCount)
 		return;
@@ -663,6 +670,10 @@ void Datum::reset() {
 			break;
 		case CHUNKREF:
 			delete u.cref;
+			break;
+		case CASTREF:
+		case FIELDREF:
+			delete u.cast;
 			break;
 		default:
 			break;
@@ -802,20 +813,10 @@ Common::String Datum::asString(bool printonly) const {
 		s = Common::String::format("property: #%s", u.s->c_str());
 		break;
 	case CASTREF:
-		s = Common::String::format("cast %d", u.i);
+		s = Common::String::format("member %d of castLib %d", u.cast->member, u.cast->castLib);
 		break;
 	case FIELDREF:
-		{
-			int idx = u.i;
-			CastMember *member = g_director->getCurrentMovie()->getCastMember(idx);
-			if (!member) {
-				warning("asString(): Unknown cast id %d", idx);
-				s = "";
-				break;
-			}
-
-			s = Common::String::format("field: \"%s\"", ((TextCastMember *)member)->getText().c_str());
-		}
+		s = Common::String::format("field %d of castLib %d", u.cast->member, u.cast->castLib);
 		break;
 	case CHUNKREF:
 		{
@@ -875,40 +876,11 @@ Common::String Datum::asString(bool printonly) const {
 	return s;
 }
 
-int Datum::asCastId() const {
-	Movie *movie = g_director->getCurrentMovie();
-	if (!movie) {
-		warning("Datum::asCastId: No movie");
-		return 0;
-	}
+CastMemberID Datum::asMemberID() const {
+	if (type == CASTREF || type == FIELDREF)
+		return *u.cast;
 
-	int castId = 0;
-	switch (type) {
-	case STRING:
-		{
-			CastMember *member = movie->getCastMemberByName(asString());
-			if (member)
-				return member->getID();
-
-			warning("Datum::asCastId: reference to non-existent cast member: %s", asString().c_str());
-			return -1;
-		}
-		break;
-	case INT:
-	case CASTREF:
-		castId = u.i;
-		break;
-	case FLOAT:
-		castId = u.f;
-		break;
-	case VOID:
-		warning("Datum::asCastId: reference to VOID cast ID");
-		break;
-	default:
-		error("Datum::asCastId: unsupported cast ID type %s", type2str());
-	}
-
-	return castId;
+	return g_lingo->resolveCastMember(*this, 0);
 }
 
 bool Datum::isRef() const {
@@ -1056,7 +1028,7 @@ void Lingo::runTests() {
 
 			if (!debugChannelSet(-1, kDebugCompileOnly)) {
 				if (!_compiler->_hadError)
-					executeScript(kTestScript, counter);
+					executeScript(kTestScript, CastMemberID(counter, 0));
 				else
 					debug(">> Skipping execution");
 			}
@@ -1072,7 +1044,7 @@ void Lingo::runTests() {
 
 void Lingo::executeImmediateScripts(Frame *frame) {
 	for (uint16 i = 0; i <= _vm->getCurrentMovie()->getScore()->_numChannelsDisplayed; i++) {
-		if (_vm->getCurrentMovie()->getScore()->_immediateActions.contains(frame->_sprites[i]->_scriptId)) {
+		if (_vm->getCurrentMovie()->getScore()->_immediateActions.contains(frame->_sprites[i]->_scriptId.member)) {
 			// From D5 only explicit event handlers are processed
 			// Before that you could specify commands which will be executed on mouse up
 			if (_vm->getVersion() < 500)
@@ -1189,10 +1161,9 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 				warning("varAssign: Assigning to a reference to an empty movie");
 				return;
 			}
-			int castId = var.u.i;
-			CastMember *member = movie->getCastMember(castId);
+			CastMember *member = movie->getCastMember(*var.u.cast);
 			if (!member) {
-				warning("varAssign: Unknown cast id %d", castId);
+				warning("varAssign: Unknown %s", var.u.cast->asString().c_str());
 				return;
 			}
 			switch (member->_type) {
@@ -1310,10 +1281,9 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 				warning("varFetch: Assigning to a reference to an empty movie");
 				return result;
 			}
-			int castId = var.u.i;
-			CastMember *member = movie->getCastMember(castId);
+			CastMember *member = movie->getCastMember(*var.u.cast);
 			if (!member) {
-				warning("varFetch: Unknown cast id %d", castId);
+				warning("varFetch: Unknown %s", var.u.cast->asString().c_str());
 				return result;
 			}
 			switch (member->_type) {

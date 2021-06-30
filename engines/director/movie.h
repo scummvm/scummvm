@@ -117,14 +117,14 @@ public:
 	void clearSharedCast();
 	void loadSharedCastsFrom(Common::String filename);
 
-	CastMember *getCastMember(int castId);
-	CastMember *getCastMemberByName(const Common::String &name);
-	CastMemberInfo *getCastMemberInfo(int castId);
-	const Stxt *getStxt(int castId);
+	CastMember *getCastMember(CastMemberID memberID);
+	CastMember *getCastMemberByName(const Common::String &name, int castLib);
+	CastMemberInfo *getCastMemberInfo(CastMemberID memberID);
+	const Stxt *getStxt(CastMemberID memberID);
 
 	LingoArchive *getMainLingoArch();
 	LingoArchive *getSharedLingoArch();
-	ScriptContext *getScriptContext(ScriptType type, uint16 id);
+	ScriptContext *getScriptContext(ScriptType type, CastMemberID id);
 	Symbol getHandler(const Common::String &name);
 
 	// events.cpp

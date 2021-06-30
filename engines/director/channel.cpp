@@ -115,7 +115,8 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 			return nullptr;
 		}
 	} else if (_sprite->_ink == kInkTypeMask) {
-		CastMember *member = g_director->getCurrentMovie()->getCastMember(_sprite->_castId + 1);
+		CastMemberID maskID(_sprite->_castId.member + 1, _sprite->_castId.castLib);
+		CastMember *member = g_director->getCurrentMovie()->getCastMember(maskID);
 
 		if (member && member->_initialRect == _sprite->_cast->_initialRect) {
 			Common::Rect bbox(getBbox());
@@ -287,24 +288,24 @@ Common::Rect Channel::getBbox(bool unstretched) {
 	return result;
 }
 
-void Channel::setCast(uint16 castId) {
-	_sprite->setCast(castId);
+void Channel::setCast(CastMemberID memberID) {
+	_sprite->setCast(memberID);
 	_width = _sprite->_width;
 	_height = _sprite->_height;
-	replaceWidget(0);
+	replaceWidget();
 }
 
 void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	if (!nextSprite)
 		return;
 
-	uint16 previousCastId = 0;
+	CastMemberID previousCastId(0, 0);
 	bool replace = isDirty(nextSprite);
 
 	if (nextSprite) {
 		if (nextSprite->_cast && (_dirty || _sprite->_castId != nextSprite->_castId)) {
 			if (nextSprite->_cast->_type == kCastDigitalVideo) {
-				Common::String path = nextSprite->_cast->getCast()->getVideoPath(nextSprite->_castId);
+				Common::String path = nextSprite->_cast->getCast()->getVideoPath(nextSprite->_castId.member);
 
 				if (!path.empty()) {
 					((DigitalVideoCastMember *)nextSprite->_cast)->loadVideo(pathMakeRelative(path));
@@ -452,15 +453,15 @@ void Channel::setBbox(int l, int t, int r, int b) {
 // here is the place for deciding whether the widget can be keep or not
 // here's the definition, we first need to have widgets to keep, and the cast is not modified(modified means we need to re-create the widget)
 // and the castId should be same while castId should not be zero
-bool Channel::canKeepWidget(uint16 castId) {
-	if (_widget && _sprite && _sprite->_cast && !_sprite->_cast->isModified() && castId && castId == _sprite->_castId) {
+bool Channel::canKeepWidget(CastMemberID castId) {
+	if (_widget && _sprite && _sprite->_cast && !_sprite->_cast->isModified() && castId.member && castId == _sprite->_castId) {
 		return true;
 	}
 	return false;
 }
 
 bool Channel::canKeepWidget(Sprite *currentSprite, Sprite *nextSprite) {
-	if (_widget && currentSprite && currentSprite->_cast && nextSprite && nextSprite->_cast && !currentSprite->_cast->isModified() && currentSprite->_castId == nextSprite->_castId && currentSprite->_castId) {
+	if (_widget && currentSprite && currentSprite->_cast && nextSprite && nextSprite->_cast && !currentSprite->_cast->isModified() && currentSprite->_castId == nextSprite->_castId && currentSprite->_castId.member) {
 		return true;
 	}
 	return false;
@@ -468,10 +469,10 @@ bool Channel::canKeepWidget(Sprite *currentSprite, Sprite *nextSprite) {
 
 // currently, when we are setting hilite, we delete the widget and the re-create it
 // so we may optimize this if this operation takes much time
-void Channel::replaceWidget(uint16 previousCastId) {
+void Channel::replaceWidget(CastMemberID previousCastId) {
 	// if the castmember is the same, and we are not modifying anything which cannot be handle by channel. Then we don't replace the widget
 	if (canKeepWidget(previousCastId)) {
-		debug(5, "Channel::replaceWidget(): skip deleting %d %s", _sprite->_castId, numToCastNum(_sprite->_castId));
+		debug(5, "Channel::replaceWidget(): skip deleting %s", _sprite->_castId.asString().c_str());
 		return;
 	}
 

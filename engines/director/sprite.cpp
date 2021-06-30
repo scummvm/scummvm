@@ -38,17 +38,15 @@ Sprite::Sprite(Frame *frame) {
 	_score = _frame->getScore();
 	_movie = _score->getMovie();
 
-	_scriptId = 0;
-	_scriptCastIndex = 0;
+	_scriptId = CastMemberID(0, 0);
 	_colorcode = 0;
 	_blendAmount = 0;
 	_unk3 = 0;
 
 	_enabled = false;
-	_castId = 0;
+	_castId = CastMemberID(0, 0);
 	_pattern = 0;
 
-	_castIndex = 0;
 	_spriteType = kInactiveSprite;
 	_inkData = 0;
 	_ink = kInkTypeCopy;
@@ -263,11 +261,11 @@ void Sprite::setPattern(uint16 pattern) {
 	}
 }
 
-void Sprite::setCast(uint16 castId) {
-	CastMember *member = _movie->getCastMember(castId);
-	_castId = castId;
+void Sprite::setCast(CastMemberID memberID) {
+	CastMember *member = _movie->getCastMember(memberID);
+	_castId = memberID;
 
-	if (castId == 0)
+	if (memberID.member == 0)
 		return;
 
 	if (member) {
@@ -293,7 +291,7 @@ void Sprite::setCast(uint16 castId) {
 			_height = dims.height();
 		}
 	} else {
-		warning("Sprite::setCast(): CastMember id %d(%s) has null member", castId, numToCastNum(castId));
+		warning("Sprite::setCast(): %s has null member", memberID.asString().c_str());
 	}
 }
 

@@ -1633,7 +1633,8 @@ void LC::c_delete() {
 void LC::c_hilite() {
 	Datum d = g_lingo->pop();
 
-	int fieldId, start, end;
+	CastMemberID fieldId;
+	int start, end;
 	if (d.type == CHUNKREF) {
 		start = d.u.cref->start;
 		end = d.u.cref->end;
@@ -1644,13 +1645,13 @@ void LC::c_hilite() {
 			src = src.u.cref->source;
 		}
 		if (src.isCastRef()) {
-			fieldId = src.u.i;
+			fieldId = *d.u.cast;
 		} else {
 			warning("BUILDBOT: c_hilite: bad chunk ref field type: %s", src.type2str());
 			return;
 		}
 	} else if (d.isCastRef()) {
-		fieldId = d.u.i;
+		fieldId = *d.u.cast;
 		start = 0;
 		end = -1;
 	} else {
@@ -1675,7 +1676,7 @@ void LC::c_hilite() {
 
 void LC::c_fieldref() {
 	Datum d = g_lingo->pop();
-	Datum res = d.asCastId();
+	Datum res = d.asMemberID();
 	res.type = FIELDREF;
 	g_lingo->push(res);
 }

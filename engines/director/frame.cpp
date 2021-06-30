@@ -42,12 +42,12 @@ Frame::Frame(Score *score, int numChannels) {
 
 	_numChannels = numChannels;
 
-	_sound1 = 0;
-	_sound2 = 0;
+	_sound1 = CastMemberID(0, 0);
+	_sound2 = CastMemberID(0, 0);
 	_soundType1 = 0;
 	_soundType2 = 0;
 
-	_actionId = 0;
+	_actionId = CastMemberID(0, 0);
 	_skipFrameFlag = 0;
 	_blend = 0;
 
@@ -91,7 +91,7 @@ Frame::Frame(const Frame &frame) {
 
 	_score = frame._score;
 
-	debugC(1, kDebugLoading, "Frame. action: %d transType: %d transDuration: %d", _actionId, _transType, _transDuration);
+	debugC(1, kDebugLoading, "Frame. action: %s transType: %d transDuration: %d", _actionId.asString().c_str(), _transType, _transDuration);
 
 	_sprites.resize(_numChannels + 1);
 
@@ -131,7 +131,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 
 	if (version < kFileVer400) {
 		// Sound/Tempo/Transition
-		_actionId = stream->readByte();
+		_actionId = CastMemberID(stream->readByte(), 0);
 		_soundType1 = stream->readByte(); // type: 0x17 for sounds (sound is cast id), 0x16 for MIDI (sound is cmd id)
 		uint8 transFlags = stream->readByte(); // 0x80 is whole stage (vs changed area), rest is duration in 1/4ths of a second
 
@@ -144,10 +144,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		_transChunkSize = stream->readByte();
 		_tempo = stream->readByte();
 		_transType = static_cast<TransitionType>(stream->readByte());
-		_sound1 = stream->readUint16();
+		_sound1 = CastMemberID(stream->readUint16(), 0);
 
 		if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-			_sound2 = stream->readUint16();
+			_sound2 = CastMemberID(stream->readUint16(), 0);
 			_soundType2 = stream->readByte();
 		} else {
 			stream->read(unk, 3);
@@ -158,7 +158,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		_blend = stream->readByte();
 
 		if (_vm->getPlatform() != Common::kPlatformMacintosh) {
-			_sound2 = stream->readUint16();
+			_sound2 = CastMemberID(stream->readUint16(), 0);
 			_soundType2 = stream->readByte();
 		}
 
@@ -188,7 +188,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 			stream->read(unk, 4);
 		}
 
-		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
+		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId.member, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1.member, _skipFrameFlag, _blend, _sound2.member, _soundType2);
 
 		if (_vm->getPlatform() == Common::kPlatformMacintosh)
 			stream->read(unk, 3);
@@ -210,9 +210,9 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		_transChunkSize = stream->readByte();
 		_tempo = stream->readByte();
 		_transType = static_cast<TransitionType>(stream->readByte());
-		_sound1 = stream->readUint16();
+		_sound1 = CastMemberID(stream->readUint16(), 0);
 
-		_sound2 = stream->readUint16();
+		_sound2 = CastMemberID(stream->readUint16(), 0);
 		_soundType2 = stream->readByte();
 
 		_skipFrameFlag = stream->readByte();
@@ -222,7 +222,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		_colorSound1 = stream->readByte();
 		_colorSound2 = stream->readByte();
 
-		_actionId = stream->readUint16();
+		_actionId = CastMemberID(stream->readUint16(), 0);
 
 		_colorScript = stream->readByte();
 		_colorTrans = stream->readByte();
@@ -247,7 +247,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 
 		stream->readByte();
 
-		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
+		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId.member, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1.member, _skipFrameFlag, _blend, _sound2.member, _soundType2);
 	} else if (version >= kFileVer500 && version < kFileVer600) {
 		// Sound/Tempo/Transition channel
 		stream->read(unk, 24);
@@ -269,7 +269,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		Sprite &sprite = *_sprites[i + 1];
 
 		if (version < kFileVer500) {
-			sprite._scriptId = stream->readByte();
+			sprite._scriptId = CastMemberID(stream->readByte(), 0);
 			sprite._spriteType = (SpriteType)stream->readByte();
 			sprite._enabled = sprite._spriteType != kInactiveSprite;
 			if (version >= kFileVer400) {
@@ -287,7 +287,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 			if (sprite.isQDShape()) {
 				sprite._pattern = stream->readUint16();
 			} else {
-				sprite._castId = stream->readUint16();
+				sprite._castId = CastMemberID(stream->readUint16(), 0);
 			}
 
 			sprite._startPoint.y = (int16)stream->readUint16();
@@ -297,7 +297,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 			sprite._width = (int16)stream->readUint16();
 
 			if (version >= kFileVer400) {
-				sprite._scriptId = stream->readUint16();
+				sprite._scriptId = CastMemberID(stream->readUint16(), 0);
 				// & 0x0f scorecolor
 				// 0x10 forecolor is rgb
 				// 0x20 bgcolor is rgb
@@ -310,11 +310,13 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 			sprite._spriteType = (SpriteType)stream->readByte();
 			sprite._inkData = stream->readByte();
 
-			sprite._castIndex = stream->readUint16();
-			sprite._castId = stream->readUint16();
+			uint16 castLib = stream->readUint16();
+			uint16 memberID = stream->readUint16();
+			sprite._castId = CastMemberID(memberID, castLib);
 
-			sprite._scriptCastIndex = stream->readUint16();
-			sprite._scriptId = stream->readUint16();
+			uint16 scriptCastLib = stream->readUint16();
+			uint16 scriptMemberID = stream->readUint16();
+			sprite._scriptId = CastMemberID(scriptMemberID, scriptCastLib);
 
 			sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
 			sprite._backColor = _vm->transformColor((uint8)stream->readByte());
@@ -336,8 +338,9 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 			sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
 			sprite._backColor = _vm->transformColor((uint8)stream->readByte());
 
-			sprite._castIndex = stream->readUint16();
-			sprite._castId = stream->readUint16();
+			uint16 castLib = stream->readUint16();
+			uint16 memberID = stream->readUint16();
+			sprite._castId = CastMemberID(memberID, castLib);
 
 			/* uint32 spriteId = */stream->readUint32();
 
@@ -369,12 +372,12 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 
 		sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
 
-		if (sprite._castId) {
-			debugC(4, kDebugLoading, "CH: %-3d castId: %03d(%s) [flags:%04x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %d, flags2: %x, unk2: %x, unk3: %x",
-				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._inkData,
+		if (sprite._castId.member) {
+			debugC(4, kDebugLoading, "CH: %-3d castId: %s [flags:%04x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %s, flags2: %x, unk2: %x, unk3: %x",
+				i + 1, sprite._castId.asString().c_str(), sprite._inkData,
 				sprite._ink, sprite._trails, sprite._thickness, sprite._width, sprite._height,
 				sprite._startPoint.x, sprite._startPoint.y,
-				sprite._spriteType, sprite._foreColor, sprite._backColor, sprite._scriptId, sprite._colorcode, sprite._blendAmount, sprite._unk3);
+				sprite._spriteType, sprite._foreColor, sprite._backColor, sprite._scriptId.asString().c_str(), sprite._colorcode, sprite._blendAmount, sprite._unk3);
 		} else {
 			debugC(4, kDebugLoading, "CH: %-3d castId: 000", i + 1);
 		}
@@ -387,7 +390,7 @@ void Frame::readMainChannels(Common::SeekableReadStreamEndian &stream, uint16 of
 	while (offset < finishPosition) {
 		switch(offset) {
 		case kScriptIdPosition:
-			_actionId = stream.readByte();
+			_actionId = CastMemberID(stream.readByte(), 0);
 			offset++;
 			break;
 		case kSoundType1Position:
@@ -417,7 +420,7 @@ void Frame::readMainChannels(Common::SeekableReadStreamEndian &stream, uint16 of
 			offset++;
 			break;
 		case kSound1Position:
-			_sound1 = stream.readUint16();
+			_sound1 = CastMemberID(stream.readUint16(), 0);
 			offset+=2;
 			break;
 		case kSkipFrameFlagsPosition:
@@ -429,7 +432,7 @@ void Frame::readMainChannels(Common::SeekableReadStreamEndian &stream, uint16 of
 			offset++;
 			break;
 		case kSound2Position:
-			_sound2 = stream.readUint16();
+			_sound2 = CastMemberID(stream.readUint16(), 0);
 			offset += 2;
 			break;
 		case kSound2TypePosition:
@@ -449,7 +452,7 @@ void Frame::readMainChannels(Common::SeekableReadStreamEndian &stream, uint16 of
 		}
 	}
 
-	debugC(1, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
+	debugC(1, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId.member, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1.member, _skipFrameFlag, _blend, _sound2.member, _soundType2);
 }
 
 void Frame::readPaletteInfo(Common::SeekableReadStreamEndian &stream) {
@@ -499,7 +502,7 @@ void Frame::readSprite(Common::SeekableReadStreamEndian &stream, uint16 offset, 
 			fieldPosition += 2;
 			break;
 		case kSpritePositionCastId:
-			sprite._castId = stream.readUint16();
+			sprite._castId = CastMemberID(stream.readUint16(), 0);
 			fieldPosition += 2;
 			break;
 		case kSpritePositionY:
@@ -525,7 +528,7 @@ void Frame::readSprite(Common::SeekableReadStreamEndian &stream, uint16 offset, 
 			break;
 		}
 	}
-	warning("Frame::readSprite(): %03d(%d)[%x,%x,%02x %02x,%d/%d/%d/%d]", sprite._castId, sprite._enabled, x1, x2, sprite._thickness, sprite._inkData, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
+	warning("Frame::readSprite(): %s(%d)[%x,%x,%02x %02x,%d/%d/%d/%d]", sprite._castId.asString().c_str(), sprite._enabled, x1, x2, sprite._thickness, sprite._inkData, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
 
 }
 

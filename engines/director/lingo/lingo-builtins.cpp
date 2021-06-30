@@ -1518,9 +1518,9 @@ void LB::b_cursor(int nargs) {
 		Datum sprite = d.u.farr->operator[](0);
 		Datum mask = d.u.farr->operator[](1);
 
-		g_lingo->func_cursor(sprite.asCastId(), mask.asCastId());
+		g_lingo->func_cursor(sprite.asMemberID(), mask.asMemberID());
 	} else {
-		g_lingo->func_cursor(d.asInt(), -1);
+		g_lingo->func_cursor(d.asInt());
 	}
 }
 
@@ -1658,25 +1658,24 @@ void LB::b_installMenu(int nargs) {
 	// installMenu castNum
 	Datum d = g_lingo->pop();
 
-	int castId = d.asCastId();
-
-	if (castId == 0) {
+	CastMemberID memberID = d.asMemberID();
+	if (memberID.member == 0) {
 		g_director->_wm->removeMenu();
 		return;
 	}
 
-	CastMember *member = g_director->getCurrentMovie()->getCastMember(castId);
+	CastMember *member = g_director->getCurrentMovie()->getCastMember(memberID);
 	if (!member) {
-		g_lingo->lingoError("installMenu: Unknown cast number #%d", castId);
+		g_lingo->lingoError("installMenu: Unknown %s", memberID.asString().c_str());
 		return;
 	}
 	if (member->_type != kCastText) {
-		g_lingo->lingoError("installMenu: Cast member %d is not a field", castId);
+		g_lingo->lingoError("installMenu: %s is not a field", memberID.asString().c_str());
 		return;
 	}
 	TextCastMember *field = static_cast<TextCastMember *>(member);
 
-	Common::String menuStxt = g_lingo->_compiler->codePreprocessor(field->getText().c_str(), field->getCast()->_lingoArchive, kNoneScript, castId, true);
+	Common::String menuStxt = g_lingo->_compiler->codePreprocessor(field->getText().c_str(), field->getCast()->_lingoArchive, kNoneScript, memberID.member, true);
 	Common::String line;
 	int linenum = -1; // We increment it before processing
 
@@ -1843,14 +1842,10 @@ void LB::b_puppetPalette(int nargs) {
 				palette = kClutNTSC;
 			} else if (palStr.equalsIgnoreCase("Metallic")) {
 				palette = kClutMetallic;
-			} else {
-				CastMember *member = g_director->getCurrentMovie()->getCastMemberByName(palStr);
-
-				if (member && member->_type == kCastPalette)
-					palette = ((PaletteCastMember *)member)->getPaletteId();
 			}
-		} else {
-			CastMember *member = g_director->getCurrentMovie()->getCastMember(d.asInt());
+		}
+		if (!palette) {
+			CastMember *member = g_director->getCurrentMovie()->getCastMember(d.asMemberID());
 
 			if (member && member->_type == kCastPalette)
 				palette = ((PaletteCastMember *)member)->getPaletteId();
@@ -1896,7 +1891,7 @@ void LB::b_puppetSound(int nargs) {
 		return;
 	}
 
-	int castId = castMember.asCastId();
+	CastMemberID castId = castMember.asMemberID();
 	sound->playCastMember(castId, channel);
 }
 
@@ -2414,26 +2409,26 @@ void LB::b_version(int nargs) {
 ///////////////////
 void LB::b_cast(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum res = d.asCastId();
+	Datum res = d.asMemberID();
 	res.type = CASTREF;
 	g_lingo->push(res);
 }
 
 void LB::b_script(int nargs) {
 	Datum d = g_lingo->pop();
-	int castId = d.asCastId();
-	CastMember *cast = g_director->getCurrentMovie()->getCastMember(castId);
+	CastMemberID memberID = d.asMemberID();
+	CastMember *cast = g_director->getCurrentMovie()->getCastMember(memberID);
 
 	if (cast) {
 		ScriptContext *script = nullptr;
 
 		if (cast->_type == kCastLingoScript) {
 			// script cast can be either a movie script or score script
-			script = g_director->getCurrentMovie()->getScriptContext(kMovieScript, castId);
+			script = g_director->getCurrentMovie()->getScriptContext(kMovieScript, memberID);
 			if (!script)
-				script = g_director->getCurrentMovie()->getScriptContext(kScoreScript, castId);
+				script = g_director->getCurrentMovie()->getScriptContext(kScoreScript, memberID);
 		} else {
-			g_director->getCurrentMovie()->getScriptContext(kCastScript, castId);
+			g_director->getCurrentMovie()->getScriptContext(kCastScript, memberID);
 		}
 
 		if (script) {

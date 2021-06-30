@@ -48,11 +48,11 @@ struct FadeParams {
 
 struct SoundChannel {
 	Audio::SoundHandle handle;
-	int lastPlayingCast;
+	CastMemberID lastPlayingCast;
 	byte volume;
 	FadeParams *fade;
 
-	SoundChannel(): handle(), lastPlayingCast(0), volume(255), fade(nullptr) {}
+	SoundChannel(): handle(), volume(255), fade(nullptr) {}
 };
 
 class DirectorSound {
@@ -73,14 +73,14 @@ public:
 	void playFile(Common::String filename, uint8 soundChannel);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
-	void playCastMember(int castId, uint8 soundChannel, bool allowRepeat = true);
+	void playCastMember(CastMemberID memberID, uint8 soundChannel, bool allowRepeat = true);
 	void systemBeep();
 
 	void registerFade(uint8 soundChannel, bool fadeIn, int ticks);
 	bool fadeChannel(uint8 soundChannel);
 
 	bool isChannelActive(uint8 soundChannel);
-	int lastPlayingCast(uint8 soundChannel);
+	CastMemberID lastPlayingCast(uint8 soundChannel);
 	void stopSound(uint8 soundChannel);
 	void stopSound();
 

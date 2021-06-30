@@ -98,8 +98,9 @@ int Score::getCurrentPalette() {
 }
 
 int Score::resolvePaletteId(int id) {
+	// TODO: Palette ID should be a CastMemberID to allow for palettes in different casts
 	if (id > 0) {
-		CastMember *member = _movie->getCastMember(id);
+		CastMember *member = _movie->getCastMember(CastMemberID(id, 0));
 		id = (member && member->_type == kCastPalette) ? ((PaletteCastMember *)member)->getPaletteId() : 0;
 	}
 
@@ -458,7 +459,7 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (mode != kRenderNoWindowRender)
 		_window->render();
 
-	if (_frames[frameId]->_sound1 || _frames[frameId]->_sound2)
+	if (_frames[frameId]->_sound1.member || _frames[frameId]->_sound2.member)
 		playSoundChannel(frameId);
 
 	if (_cursorDirty) {
@@ -513,7 +514,7 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 				_movie->_videoPlayback = true;
 
 			_window->addDirtyRect(channel->getBbox());
-			debugC(2, kDebugImages, "Score::renderSprites(): CH: %-3d castId: %03d(%s) [ink: %d, puppet: %d, moveable: %d, visible: %d] [bbox: %d,%d,%d,%d] [type: %d fg: %d bg: %d] [script: %d]", i, currentSprite->_castId, numToCastNum(currentSprite->_castId), currentSprite->_ink, currentSprite->_puppet, currentSprite->_moveable, channel->_visible, PRINT_RECT(channel->getBbox()), currentSprite->_spriteType, currentSprite->_foreColor, currentSprite->_backColor, currentSprite->_scriptId);
+			debugC(2, kDebugImages, "Score::renderSprites(): CH: %-3d castId: %s [ink: %d, puppet: %d, moveable: %d, visible: %d] [bbox: %d,%d,%d,%d] [type: %d fg: %d bg: %d] [script: %s]", i, currentSprite->_castId.asString().c_str(), currentSprite->_ink, currentSprite->_puppet, currentSprite->_moveable, channel->_visible, PRINT_RECT(channel->getBbox()), currentSprite->_spriteType, currentSprite->_foreColor, currentSprite->_backColor, currentSprite->_scriptId.asString().c_str());
 		} else {
 			channel->setClean(nextSprite, i, true);
 		}
@@ -618,7 +619,7 @@ Common::List<Channel *> Score::getSpriteIntersections(const Common::Rect &r) {
 	return intersections;
 }
 
-uint16 Score::getSpriteIdByMemberId(uint16 id) {
+uint16 Score::getSpriteIdByMemberId(CastMemberID id) {
 	for (uint i = 0; i < _channels.size(); i++)
 		if (_channels[i]->_sprite->_castId == id)
 			return i;
@@ -657,7 +658,7 @@ Channel *Score::getChannelById(uint16 id) {
 void Score::playSoundChannel(uint16 frameId) {
 	Frame *frame = _frames[frameId];
 
-	debugC(5, kDebugLoading, "playSoundChannel(): Sound1 %d Sound2 %d", frame->_sound1, frame->_sound2);
+	debugC(5, kDebugLoading, "playSoundChannel(): Sound1 %s Sound2 %s", frame->_sound1.asString().c_str(), frame->_sound2.asString().c_str());
 	DirectorSound *sound = _vm->getSoundManager();
 	sound->playCastMember(frame->_sound1, 1, false);
 	sound->playCastMember(frame->_sound2, 2, false);
@@ -776,7 +777,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 			frame->readChannels(str, version);
 			delete str;
 
-			debugC(8, kDebugLoading, "Score::loadFrames(): Frame %d actionId: %d", _frames.size(), frame->_actionId);
+			debugC(8, kDebugLoading, "Score::loadFrames(): Frame %d actionId: %s", _frames.size(), frame->_actionId.asString().c_str());
 
 			_frames.push_back(frame);
 		} else {
@@ -792,7 +793,7 @@ void Score::setSpriteCasts() {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			_frames[i]->_sprites[j]->setCast(_frames[i]->_sprites[j]->_castId);
 
-			debugC(1, kDebugImages, "Score::setSpriteCasts(): Frame: %d Channel: %d castId: %d type: %d", i, j, _frames[i]->_sprites[j]->_castId, _frames[i]->_sprites[j]->_spriteType);
+			debugC(1, kDebugImages, "Score::setSpriteCasts(): Frame: %d Channel: %d castId: %s type: %d", i, j, _frames[i]->_sprites[j]->_castId.asString().c_str(), _frames[i]->_sprites[j]->_spriteType);
 		}
 	}
 }
@@ -886,12 +887,12 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 
 	// Now let's scan which scripts are actually referenced
 	for (uint i = 0; i < _frames.size(); i++) {
-		if (_frames[i]->_actionId <= _actions.size())
-			scriptRefs[_frames[i]->_actionId] = true;
+		if ((uint)_frames[i]->_actionId.member <= _actions.size())
+			scriptRefs[_frames[i]->_actionId.member] = true;
 
 		for (uint16 j = 0; j <= _frames[i]->_numChannels; j++) {
-			if (_frames[i]->_sprites[j]->_scriptId <= _actions.size())
-				scriptRefs[_frames[i]->_sprites[j]->_scriptId] = true;
+			if ((uint)_frames[i]->_sprites[j]->_scriptId.member <= _actions.size())
+				scriptRefs[_frames[i]->_sprites[j]->_scriptId.member] = true;
 		}
 	}
 

@@ -34,8 +34,8 @@ Cursor::Cursor() {
 	_cursorResId = 0;
 	_cursorType = Graphics::kMacCursorArrow;
 
-	_cursorCastId = 0;
-	_cursorMaskId = 0;
+	_cursorCastId = CastMemberID(0, 0);
+	_cursorMaskId = CastMemberID(0, 0);
 
 	_usePalette = false;
 }
@@ -47,7 +47,7 @@ bool Cursor::operator==(const Cursor &c) {
 		_cursorMaskId == c._cursorMaskId;
 }
 
-void Cursor::readFromCast(uint cursorId, uint maskId) {
+void Cursor::readFromCast(CastMemberID cursorId, CastMemberID maskId) {
 	if (cursorId == _cursorCastId && maskId == _cursorMaskId)
 		return;
 
@@ -147,7 +147,7 @@ void Cursor::readFromResource(int resourceId) {
 	}
 }
 
-void Cursor::resetCursor(Graphics::MacCursorType type, bool shouldClear, int resId, uint castId, uint maskId) {
+void Cursor::resetCursor(Graphics::MacCursorType type, bool shouldClear, int resId, CastMemberID castId, CastMemberID maskId) {
 	if (shouldClear)
 		clear();
 

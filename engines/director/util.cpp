@@ -201,15 +201,13 @@ char *numToCastNum(int num) {
 	return res;
 }
 
-const char *CastMemberID::str() const {
-	static char res[40];
+Common::String CastMemberID::asString() const {
+	Common::String res = Common::String::format("member %d", member);
 
 	if (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo)
-		snprintf(res, 40, "member %d(%s)", member, numToCastNum(member));
-	else if (g_director->getVersion() < 500)
-		snprintf(res, 40, "member %d", member);
-	else
-		snprintf(res, 40, "member %d of castLib %d", member, castLib);
+		res += "(" + Common::String(numToCastNum(member)) + ")";
+	else if (g_director->getVersion() >= 500)
+		res += Common::String::format(" of castLib %d", castLib);
 
 	return res;
 }

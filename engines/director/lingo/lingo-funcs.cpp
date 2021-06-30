@@ -301,15 +301,16 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	func_goto(frame, movie);
 }
 
-void Lingo::func_cursor(int cursorId, int maskId) {
+void Lingo::func_cursor(CastMemberID cursorId, CastMemberID maskId) {
 	Cursor cursor;
+	cursor.readFromCast(cursorId, maskId);
+	// TODO: Figure out why there are artifacts here
+	_vm->_wm->replaceCursor(cursor._cursorType, ((Graphics::Cursor *)&cursor));
+}
 
-	if (maskId == -1) {
-		cursor.readFromResource(cursorId);
-	} else {
-		cursor.readFromCast(cursorId, maskId);
-	}
-
+void Lingo::func_cursor(int cursorId) {
+	Cursor cursor;
+	cursor.readFromResource(cursorId);
 	// TODO: Figure out why there are artifacts here
 	_vm->_wm->replaceCursor(cursor._cursorType, ((Graphics::Cursor *)&cursor));
 }

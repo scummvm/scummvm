@@ -173,7 +173,7 @@ void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::Mana
 			inkBlitSurface(&pd, srcRect, channel->getMask());
 		}
 	} else {
-		warning("Window::inkBlitFrom: No source surface: spriteType: %d, castType: %d, castId: %d", channel->_sprite->_spriteType, channel->_sprite->_cast ? channel->_sprite->_cast->_type : 0, channel->_sprite->_castId);
+		warning("Window::inkBlitFrom: No source surface: spriteType: %d, castType: %d, castId: %s", channel->_sprite->_spriteType, channel->_sprite->_cast ? channel->_sprite->_cast->_type : 0, channel->_sprite->_castId.asString().c_str());
 	}
 }
 
