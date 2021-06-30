@@ -37,6 +37,7 @@
 #include "saga2/annoy.h"
 #include "saga2/savefile.h"
 #include "saga2/cmisc.h"
+#include "saga2/tilemode.h"
 
 namespace Saga2 {
 
@@ -1096,8 +1097,6 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 
 void SpeechTaskList::SetLock(int newState) {
 	if (newState && lockFlag == false) {
-		extern void noStickyMap(void);
-
 		noStickyMap();
 		LockUI(true);
 		lockFlag = true;

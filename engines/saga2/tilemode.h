@@ -60,6 +60,8 @@ inline void cleanupTileModeState(void) { /* do nothing */ }
 void TileModeSetup(void);                        // alloc tile resources
 void TileModeCleanup(void);                      // free tile resources
 
+void noStickyMap(void);
+
 } // end of namespace Saga2
 
 #endif

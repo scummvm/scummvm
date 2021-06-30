@@ -49,6 +49,7 @@
 #include "saga2/transit.h"
 #include "saga2/contain.h"
 #include "saga2/tile.h"
+#include "saga2/tilemode.h"
 
 void drawMainDisplay(void);
 
@@ -3817,9 +3818,6 @@ int16 scriptTransportCenterBand(int16 *args) {
 //		void "c" lockUI( int locked )
 
 int16 scriptLockUI(int16 *args) {
-	extern void LockUI(bool state);
-	extern void noStickyMap(void);
-
 	MONOLOG(lockUI);
 
 	noStickyMap();
