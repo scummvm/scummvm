@@ -771,6 +771,48 @@ void GraphicsManager::loadFont() {
 		fontStream->read(_fonts[i]._data, cpt);
 		fontStream->seek(tmpPos);
 	}
+
+	// Fix o+e ligature character (lowercase and uppercase). Ticket #12623
+
+	// Format is :
+	// - Each line represents a line of pixels
+	// - colors are in this order : none, shadow, text. Colors are looping until the total number of pixels corresponds to the character width
+	// - each number correspond to a number of pixels of the corresponding color
+	// So, 1, 6, 0, 2 means : 1 pixel unchanged, 6 pixels shadow, 0 pixel in text color, 2 pixels unchanged
+	static const int8 fix140[67] = {
+		1, 8,
+		0, 2, 2, 0, 1, 3, 0, 1,
+		0, 1, 1, 0, 2, 2, 0, 3,
+		0, 1, 1, 0, 3, 1, 0, 2, 0, 1,
+		0, 1, 1, 0, 3, 2, 0, 1, 0, 1,
+		0, 1, 1, 0, 3, 1, 0, 2, 0, 1,
+		0, 1, 1, 0, 2, 2, 0, 3,
+		0, 2, 2, 0, 1, 3, 0, 1,
+		1, 8,
+		9
+	};
+
+	static const int8 fix156[54] = {
+		9,
+		9,
+		1, 6, 0, 2,
+		0, 2, 2, 0, 1, 2, 0, 1, 0, 1,
+		0, 1, 1, 0, 2, 1, 0, 2, 1, 0, 1,
+		0, 1, 1, 0, 2, 4, 0, 1,
+		0, 1, 1, 0, 2, 1, 0, 4,
+		0, 2, 2, 0, 1, 3, 0, 1,
+		1, 8,
+		9
+	};
+
+	delete _fonts[140]._data;
+	delete _fonts[156]._data;
+	_fonts[140]._width = _fonts[156]._width = 9;
+	_fonts[140]._data = new int8[67];
+	_fonts[156]._data = new int8[54];
+
+	memcpy(_fonts[140]._data, fix140, 67);
+	memcpy(_fonts[156]._data, fix156, 54);
 }
 
 bool GraphicsManager::isCursorVisible() {
