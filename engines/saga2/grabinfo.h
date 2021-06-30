@@ -145,8 +145,6 @@ public:
 	void clearGauge(void);
 };
 
-extern GrabInfo mouseInfo;
-
 } // end of namespace Saga2
 
 #endif

@@ -102,10 +102,10 @@ void niceScreenStartup(void) {
 	//pointer.show();
 	updateAllUserControls();
 	reDrawScreen();
-	mouseInfo.replaceObject();
-	mouseInfo.clearGauge();
-	mouseInfo.setText(NULL);
-	mouseInfo.setIntent(GrabInfo::WalkTo);
+	g_vm->_mouseInfo->replaceObject();
+	g_vm->_mouseInfo->clearGauge();
+	g_vm->_mouseInfo->setText(NULL);
+	g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
 	resetInputDevices();
 }
 

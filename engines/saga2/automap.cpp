@@ -302,8 +302,6 @@ gPanel *CAutoMap::keyTest(int16 key) {
 
 // ------------------------------------------------------------------------
 // mouse movement event handler
-extern GrabInfo mouseInfo;
-
 void CAutoMap::pointerMove(gPanelMessage &msg) {
 	Point16 pos     = msg.pickAbsPos;
 
@@ -318,7 +316,7 @@ void CAutoMap::pointerMove(gPanelMessage &msg) {
 		viewRegion.min.v = MAX(localAreaRegion.min.v, baseCoords.v);
 		viewRegion.max.v = MIN<int16>(localAreaRegion.max.v, baseCoords.v + (int16)summaryDiameter) - 1;
 		char *mtext = getMapFeaturesText(viewRegion, currentWorld->mapNum, baseCoords, pos) ;
-		mouseInfo.setText(mtext);
+		g_vm->_mouseInfo->setText(mtext);
 	} else {
 		notify(gEventMouseMove, 0);
 	}

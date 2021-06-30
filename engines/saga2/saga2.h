@@ -46,6 +46,7 @@ class BandList;
 class ActorAppearance;
 class PathRequest;
 class MotionTask;
+class GrabInfo;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -101,6 +102,7 @@ public:
 	Common::List<PathRequest *> _pathQueue;
 	Common::List<MotionTask *>::iterator _nextMT;
 	BandList *_bandList;
+	GrabInfo *_mouseInfo;
 
 	gDisplayPort _mainPort;
 

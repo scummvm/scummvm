@@ -33,8 +33,6 @@
 
 namespace Saga2 {
 
-GrabInfo mouseInfo;
-
 /* ===================================================================== *
    GrabInfo members
  * ===================================================================== */
@@ -356,19 +354,19 @@ extern bool walkEnabled;
 
 void cycleCursor() {
 
-	if (! mouseInfo.cursorCyclingEnabled)
+	if (! g_vm->_mouseInfo.cursorCyclingEnabled)
 		return;
 
 	uint8 curIntent;
-	curIntent  = mouseInfo.getIntent();
+	curIntent  = g_vm->_mouseInfo.getIntent();
 	if (++curIntent == GrabInfo::IntentCounts)
-		mouseInfo.setIntent(1); //Set Cursor First State Skip None
+		g_vm->_mouseInfo.setIntent(1); //Set Cursor First State Skip None
 	else {
 		if (!walkEnabled && curIntent == GrabInfo::WalkTo)
 			++curIntent;
-		if (curIntent == GrabInfo::PickUp && mouseInfo.getObject() != nullptr)
+		if (curIntent == GrabInfo::PickUp && g_vm->_mouseInfo.getObject() != nullptr)
 			++curIntent;
-		if (curIntent == GrabInfo::Drop && mouseInfo.getObject() == nullptr)
+		if (curIntent == GrabInfo::Drop && g_vm->_mouseInfo.getObject() == nullptr)
 			++curIntent;
 		if (!eyeEnabled && curIntent == GrabInfo::LookAt)
 			++curIntent;
@@ -377,11 +375,11 @@ void cycleCursor() {
 				curIntent = 1; //Set Cursor First State Skip None
 			else {
 				curIntent = 2;
-				if (curIntent == GrabInfo::PickUp && mouseInfo.getObject() != nullptr)
+				if (curIntent == GrabInfo::PickUp && g_vm->_mouseInfo.getObject() != nullptr)
 					++curIntent;
 			}
 		}
-		mouseInfo.setIntent(curIntent); //Set Cursor To Next State
+		g_vm->_mouseInfo.setIntent(curIntent); //Set Cursor To Next State
 	}
 
 }

@@ -610,13 +610,13 @@ void ContainerView::pointerMove(gPanelMessage &msg) {
 	if (msg.pointerLeave) {
 		lastPickedObjectID = Nothing;
 		lastPickedObjectQuantity = -1;
-		mouseInfo.setText(NULL);
+		g_vm->_mouseInfo->setText(NULL);
 		mouseText[0] = 0;
 
 		// static bool that tells if the mouse cursor
 		// is in a panel
 		mouseInView = false;
-		mouseInfo.setDoable(true);
+		g_vm->_mouseInfo->setDoable(true);
 	} else {
 //		if( msg.pointerEnter )
 		{
@@ -625,14 +625,14 @@ void ContainerView::pointerMove(gPanelMessage &msg) {
 			mouseInView = true;
 
 			GameObject *mouseObject;
-			mouseObject = mouseInfo.getObject();
+			mouseObject = g_vm->_mouseInfo->getObject();
 
 			if (!node.isAccessable(getCenterActorID())) {
-				mouseInfo.setDoable(false);
+				g_vm->_mouseInfo->setDoable(false);
 			} else if (mouseObject == NULL) {
-				mouseInfo.setDoable(true);
+				g_vm->_mouseInfo->setDoable(true);
 			} else {
-				mouseInfo.setDoable(containerObject->canContain(mouseObject->thisID()));
+				g_vm->_mouseInfo->setDoable(containerObject->canContain(mouseObject->thisID()));
 			}
 		}
 
@@ -647,10 +647,10 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 	uint16       mouseSet;
 
 	slotObject  = pickObject(msg.pickPos);
-	mouseObject = mouseInfo.getObject();
+	mouseObject = g_vm->_mouseInfo->getObject();
 	mouseSet    = mouseObject ? mouseObject->containmentSet() : 0;
 
-	if (!mouseInfo.getDoable()) return false;
+	if (!g_vm->_mouseInfo->getDoable()) return false;
 
 	if (msg.doubleClick && !alreadyDone) {
 		dblClick(mouseObject, slotObject, msg);
@@ -658,9 +658,9 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 		if (mouseObject != NULL) {
 			alreadyDone = true;    // if object then no doubleClick
 
-			if (mouseInfo.getIntent() == GrabInfo::Drop) {
+			if (g_vm->_mouseInfo->getIntent() == GrabInfo::Drop) {
 				if (mouseSet & ProtoObj::isTangible) {
-					dropPhysical(msg, mouseObject, slotObject, mouseInfo.getMoveCount());
+					dropPhysical(msg, mouseObject, slotObject, g_vm->_mouseInfo->getMoveCount());
 				}
 
 				//  intangibles are used by dropping them
@@ -671,20 +671,20 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 					useConcept(msg, mouseObject, slotObject);
 				} else {
 					// !!!! bad state, reset cursor
-					mouseInfo.replaceObject();
+					g_vm->_mouseInfo->replaceObject();
 				}
-			} else if (mouseInfo.getIntent() == GrabInfo::Use) {
+			} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
 				if (mouseSet & ProtoObj::isTangible) {
 					usePhysical(msg, mouseObject, slotObject);
 				} else if ((mouseSet & ProtoObj::isSpell) ||
 				           (mouseSet & ProtoObj::isSkill)) {
-					mouseInfo.replaceObject();
+					g_vm->_mouseInfo->replaceObject();
 				} else {
 					useConcept(msg, mouseObject, slotObject);
 				}
 			} else {
 				// !!!! bad state, reset cursor
-				mouseInfo.replaceObject();
+				g_vm->_mouseInfo->replaceObject();
 			}
 		} else {
 			// default to doubleClick active
@@ -757,7 +757,7 @@ void ContainerView::clickOn(
 			} else {
 				// activate multi-object get interface if a mergeable object
 				getMerged(cObj);
-				mouseInfo.setText(NULL);
+				g_vm->_mouseInfo->setText(NULL);
 				mouseText[0] = 0;
 			}
 		} else {
@@ -788,7 +788,7 @@ void ContainerView::dblClickOn(
 		//  Only player actors can be possessors as far as the UI is concerned
 		if (actorIDToPlayerID(possessor, pID) == false) possessor = Nothing;
 
-		mouseInfo.replaceObject(); //Put Object Back
+		g_vm->_mouseInfo->replaceObject(); //Put Object Back
 		if (!(proto->setUseCursor(mObj->thisID()))) {
 			MotionTask::useObject(
 			    possessor == Nothing ? *getCenterActor() : * (Actor *)GameObject::objectAddress(possessor),
@@ -803,11 +803,11 @@ void ContainerView::dropPhysical(
     GameObject      *mObj,
     GameObject      *cObj,
     int16           num) {
-	assert(mouseInfo.getObject() == mObj);
+	assert(g_vm->_mouseInfo->getObject() == mObj);
 	assert(mObj->containmentSet() & ProtoObj::isTangible);
 
 	//  Place object back where it came from, temporarily
-	mouseInfo.replaceObject();
+	g_vm->_mouseInfo->replaceObject();
 
 	//  test to check if item is accepted by container
 	if (containerObject->canContain(mObj->thisID())) {
@@ -834,13 +834,13 @@ void ContainerView::usePhysical(
     gPanelMessage   &msg,
     GameObject      *mObj,
     GameObject      *cObj) {
-	assert(mouseInfo.getObject() == mObj);
+	assert(g_vm->_mouseInfo->getObject() == mObj);
 	assert(mObj->containmentSet() & ProtoObj::isTangible);
 
 	if (cObj == NULL) {
 		dropPhysical(msg, mObj, cObj);
 	} else {
-		mouseInfo.replaceObject();
+		g_vm->_mouseInfo->replaceObject();
 		//  Use mouse object on container object
 		MotionTask::useObjectOnObject(*getCenterActor(), *mObj, *cObj);
 	}
@@ -851,10 +851,10 @@ void ContainerView::useConcept(
     gPanelMessage   &msg,
     GameObject      *mObj,
     GameObject      *cObj) {
-	assert(mouseInfo.getObject() == mObj);
+	assert(g_vm->_mouseInfo->getObject() == mObj);
 	assert(mObj->containmentSet() & ProtoObj::isIntangible);
 
-	mouseInfo.replaceObject();
+	g_vm->_mouseInfo->replaceObject();
 
 	//  Determine if this object can go into this container
 	if (containerObject->canContain(mObj->thisID())) {
@@ -892,7 +892,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 	// set the mouse text to null if there is no object to get hints about
 	if (slotID == Nothing) {
 		// clear out the mouse text
-		mouseInfo.setText(NULL);
+		g_vm->_mouseInfo->setText(NULL);
 		mouseText[0] = 0;
 
 		// reset the last picked thingy
@@ -916,7 +916,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 		lastPickedObjectQuantity    = slotObject->getExtra();
 
 		// clear out the mouse text
-		mouseInfo.setText(NULL);
+		g_vm->_mouseInfo->setText(NULL);
 		mouseText[0] = 0;
 
 		// reset the alarm flag
@@ -942,12 +942,12 @@ void ContainerView::setCursorText(GameObject *obj) {
 	// put the normalized text into cursorText
 	obj->objCursorText(cursorText, bufSize);
 
-	mouseInfo.setText(cursorText);
+	g_vm->_mouseInfo->setText(cursorText);
 }
 
 void ContainerView::setDelayedCursorText(GameObject *obj) {
 	// clear out the mouse text
-	mouseInfo.setText(NULL);
+	g_vm->_mouseInfo->setText(NULL);
 	mouseText[0] = 0;
 
 	// reset the alarm flag
@@ -2003,11 +2003,11 @@ APPFUNC(cmdMindContainerFunc) {
 			}
 
 			// set the text in the cursor
-			mouseInfo.setText(textBuffer);
+			g_vm->_mouseInfo->setText(textBuffer);
 		}
 
 		if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(NULL);
+			g_vm->_mouseInfo->setText(NULL);
 		}
 	}
 }
@@ -2024,14 +2024,14 @@ APPFUNC(cmdCloseButtonFunc) {
 		updateContainerWindows();
 
 		// make sure the hint text goes away
-		if (mouseInfo.getObject() == NULL) {
-			mouseInfo.setText(NULL);
+		if (g_vm->_mouseInfo->getObject() == NULL) {
+			g_vm->_mouseInfo->setText(NULL);
 		}
 	} else if (ev.eventType == gEventMouseMove) {
 		if (ev.value == gCompImage::enter) {
-			mouseInfo.setText(CLOSE_MOUSE);
+			g_vm->_mouseInfo->setText(CLOSE_MOUSE);
 		} else if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(NULL);
+			g_vm->_mouseInfo->setText(NULL);
 		}
 	}
 }
@@ -2049,9 +2049,9 @@ APPFUNC(cmdScrollFunc) {
 		ev.window->update(cw->getView().getExtent());
 	} else if (ev.eventType == gEventMouseMove) {
 		if (ev.value == gCompImage::enter) {
-			mouseInfo.setText(SCROLL_MOUSE);
+			g_vm->_mouseInfo->setText(SCROLL_MOUSE);
 		} else if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(NULL);
+			g_vm->_mouseInfo->setText(NULL);
 		}
 	}
 }
