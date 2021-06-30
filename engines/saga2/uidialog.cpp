@@ -1519,14 +1519,18 @@ void placardWindow(int8 type, char *text) {
 	                              145);
 
 	// decoration information
-	WindowDecoration plaqDecWood[1] =
-	{ { WindowDecoration(plaqRectWood, 0) } };
+	WindowDecoration plaqDecWood[1] = {
+		WindowDecoration(plaqRectWood, 0)
+	};
 
-	WindowDecoration plaqDecStone[1] =
-	{ { WindowDecoration(plaqRectStone, 1) } };
+	WindowDecoration plaqDecStone[1] = {
+		WindowDecoration(plaqRectStone, 1)
+	};
 
-	WindowDecoration plaqDecBrass[2] =
-	{ { WindowDecoration(plaqRectBrass, 2) } };
+	WindowDecoration plaqDecBrass[2] = {
+		WindowDecoration(plaqRectBrass, 2),
+		WindowDecoration(plaqRectBrass, 2)
+	};
 
 	// used to hold the coloration of the text for a give type
 	textPallete     pal;
