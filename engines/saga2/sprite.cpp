@@ -139,10 +139,10 @@ void DrawCompositeMaskedSprite(
     int16           effects,                // effects flags
     bool            *obscured) {            // set if object obscured by terrain
 	SpriteComponent *sc;                    // sprite component
-	int16           xMax,                   // extent of composite
-	                xMin,
-	                yMax,
-	                yMin;
+	int16           xMax = 0,               // extent of composite
+	                xMin = 0,
+	                yMax = 0,
+	                yMin = 0;
 	Rect16          clip;                   // clip rect of port
 	gPixelMap       compMap,                // pixel map for composite
 	                sprMap;                 // sprite map
