@@ -1085,19 +1085,15 @@ void ScummEngine::drawVerb(int verb, int mode) {
 	// and then counts on the background to draw over them. Obviously that
 	// won't work here.
 	//
-	// As far as I can tell, all normal rooms, i.e. rooms that could
-	// sensibly have verbs, are 128 pixels tall. Other heights I've seen
-	// are 136, 176, 184, 192 and 200, probably depending at least partly
-	// on how much text is displayed in them.
-	//
-	// So to work around the issue, we only draw verbs in rooms that are
-	// 128 pixels tall and hope for the best.
+	// I thought it would be possible to base this workaround on room
+	// height, but then verbs aren't redrawn after reading books. So I
+	// guess the safest path is to limit it to this particular room.
 	//
 	// Note that with the low-resolution font, which does implement the
 	// "has mask" feature, the Macintosh version still needs a hack in
 	// printChar() for black text to work properly. This version of the
 	// game is weird.
-	if (_game.id == GID_INDY3 && _macScreen && _roomHeight > 128)
+	if (_game.id == GID_INDY3 && _macScreen && _currentRoom == 80)
 		return;
 
 	vs = &_verbs[verb];
