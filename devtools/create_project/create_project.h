@@ -255,7 +255,7 @@ struct BuildSetup {
 		useSDL2 = true;
 		useCanonicalLibNames = false;
 		useStaticDetection = true;
-		useWindowsUnicode = false;
+		useWindowsUnicode = true;
 	}
 
 	bool featureEnabled(std::string feature) const;

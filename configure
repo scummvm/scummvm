@@ -222,7 +222,7 @@ _default_optimization_level=-O2
 _nuked_opl=yes
 _builtin_resources=yes
 _windows_console=yes
-_windows_unicode=no
+_windows_unicode=yes
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -910,8 +910,8 @@ Optional Features:
                            into the ScummVM binary
   --enable-windows-console  show console output on Windows (default)
   --disable-windows-console do not show console output on Windows
-  --enable-windows-unicode  use Windows Unicode APIs
-  --disable-windows-unicode use Windows ANSI APIs (default)
+  --enable-windows-unicode  use Windows Unicode APIs (default)
+  --disable-windows-unicode use Windows ANSI APIs
 
 Optional Libraries:
   --with-alsa-prefix=DIR   prefix where alsa is installed (optional)
