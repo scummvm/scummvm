@@ -500,7 +500,7 @@ void gWindow::setPos(Point16 pos) {
 	windowPort.origin.y = extent.y;
 
 	//  set port's clip
-	newClip = intersect(extent, mainPort.clip);
+	newClip = intersect(extent, g_vm->_mainPort.clip);
 	newClip.x -= extent.x;
 	newClip.y -= extent.y;
 	windowPort.setClip(newClip);

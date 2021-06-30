@@ -34,7 +34,6 @@ namespace Saga2 {
 
 extern bool             gameRunning;
 extern bool             delayReDraw;
-extern gDisplayPort     mainPort;               // default rendering port
 extern BackWindow       *mainWindow;            // main window...
 
 /* ===================================================================== *
@@ -246,9 +245,9 @@ void reDrawScreen(void) {
  * ===================================================================== */
 
 void blackOut(void) {
-	mainPort.drawMode = drawModeReplace;
-	mainPort.setColor(0);            //  fill screen with color
-	mainPort.fillRect(Rect16(0, 0, 640, 480));
+	g_vm->_mainPort.drawMode = drawModeReplace;
+	g_vm->_mainPort.setColor(0);            //  fill screen with color
+	g_vm->_mainPort.fillRect(Rect16(0, 0, 640, 480));
 	lightsOut();
 }
 

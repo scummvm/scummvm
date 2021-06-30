@@ -4719,11 +4719,11 @@ extern int32            gameTime;
             }
         }
 
-        pointer.hide( mainPort, tileRect );
+        pointer.hide( g_vm->_mainPort, tileRect );
         drawPage->writePixels(  tileRect,
                                 tileDrawMap.data,
                                 tileDrawMap.size.x );
-        pointer.show( mainPort, tileRect );
+        pointer.show( g_vm->_mainPort, tileRect );
     }
 */
 #endif

@@ -273,12 +273,12 @@ TERMINATOR(termDisplayPort) {
 // ------------------------------------------------------------------------
 
 INITIALIZER(initPanelSystem) {
-	initPanels(mainPort);
-	if (mainPort.map == nullptr) {
+	initPanels(g_vm->_mainPort);
+	if (g_vm->_mainPort.map == nullptr) {
 		gPixelMap *tmap = new gPixelMap;
 		tmap->size = Point16(screenWidth, screenHeight);
 		tmap->data = new uint8[tmap->bytes()];
-		mainPort.setMap(tmap);
+		g_vm->_mainPort.setMap(tmap);
 	}
 	return true;
 }
@@ -324,11 +324,11 @@ TERMINATOR(termMousePointer) {
 // ------------------------------------------------------------------------
 
 INITIALIZER(initDisplay) {
-	mainPort.setColor(0);            //  fill screen with color
-	drawPage = &mainPort.protoPage;
-	mainPort.setDisplayPage(drawPage);
+	g_vm->_mainPort.setColor(0);            //  fill screen with color
+	drawPage = &g_vm->_mainPort.protoPage;
+	g_vm->_mainPort.setDisplayPage(drawPage);
 	//lightsOut();
-	//mainPort.fillRect( Rect16( 0, 0, screenWidth, screenHeight ) );
+	//g_vm->_mainPort.fillRect( Rect16( 0, 0, screenWidth, screenHeight ) );
 
 	//  Create a panelList to contain the controls which are
 	//  only active when all three brothers are shown

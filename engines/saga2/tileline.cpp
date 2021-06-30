@@ -70,9 +70,9 @@ void TPLine(const TilePoint &start, const TilePoint &stop) {
 	startPt.y   += tileRect.y;
 	stopPt.y    += tileRect.y;
 
-	mainPort.setColor(1);
-	mainPort.moveTo(startPt);
-	mainPort.drawTo(stopPt);
+	g_vm->_mainPort.setColor(1);
+	g_vm->_mainPort.moveTo(startPt);
+	g_vm->_mainPort.drawTo(stopPt);
 }
 
 void TPLine(const TilePoint &start, const TilePoint &stop, int16 color);
@@ -89,9 +89,9 @@ void TPLine(const TilePoint &start, const TilePoint &stop, int16 color) {
 	startPt.y   += tileRect.y;
 	stopPt.y    += tileRect.y;
 
-	mainPort.setColor(color);
-	mainPort.moveTo(startPt);
-	mainPort.drawTo(stopPt);
+	g_vm->_mainPort.setColor(color);
+	g_vm->_mainPort.moveTo(startPt);
+	g_vm->_mainPort.drawTo(stopPt);
 }
 #endif
 

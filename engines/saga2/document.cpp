@@ -827,7 +827,7 @@ void CDocument::drawClipped(
 
 void CDocument::draw(void) {         // redraw the window
 	// draw the book image
-	drawClipped(mainPort, Point16(0, 0), extent);
+	drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
 
 	// draw the text onto the book
 	renderText();

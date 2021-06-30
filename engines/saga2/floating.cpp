@@ -61,7 +61,6 @@ extern Rect16       tileRect;
 extern gPixelMap    tileDrawMap;
 extern Point16      fineScroll;
 extern gFont        *mainFont;
-extern gDisplayPort mainPort;
 extern bool         allPlayerActorsDead;
 
 
@@ -253,7 +252,7 @@ void DecoratedWindow::removeDecorations(void) {
 void DecoratedWindow::draw(void) {               // redraw the window
 	pointer.hide();
 	if (displayEnabled())
-		drawClipped(mainPort, Point16(0, 0), extent);
+		drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
 	pointer.show();
 }
 
@@ -691,13 +690,13 @@ void updateWindowSection(const Rect16 &r) {
 	}
 	//  Now, blit the temporary bitmap to the main screen.
 
-	mainPort.setMode(drawModeReplace);
-	pointer.hide(mainPort, clip);
-	mainPort.bltPixels(tempMap,
+	g_vm->_mainPort.setMode(drawModeReplace);
+	pointer.hide(g_vm->_mainPort, clip);
+	g_vm->_mainPort.bltPixels(tempMap,
 	                   0, 0,
 	                   clip.x, clip.y, clip.width, clip.height);
-	pointer.show(mainPort, clip);
-	mainPort.setMode(drawModeMatte);
+	pointer.show(g_vm->_mainPort, clip);
+	g_vm->_mainPort.setMode(drawModeMatte);
 	delete[] tempMap.data;
 }
 
