@@ -87,12 +87,12 @@ struct TransParams {
 };
 
 class Window : public Graphics::MacWindow, public Object<Window> {
- public:
+public:
 	Window(int id, bool scrollable, bool resizable, bool editable, Graphics::MacWindowManager *wm, DirectorEngine *vm, bool isStage);
 	~Window();
 
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
-	void invertChannel(Channel *channel);
+	void invertChannel(Channel *channel, const Common::Rect &destRect);
 
 	bool needsAppliedColor(DirectorPlotData *pd);
 	void setStageColor(uint32 stageColor, bool forceReset = false);
