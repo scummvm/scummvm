@@ -589,8 +589,8 @@ void Surface::debugPrint(int debuglevel, int width, int height, int x, int y, in
 				const byte *srcRow = (const byte *)getBasePtr(xx, yy + ys);
 
 				for (int xs = 0; xs < scale && xx + xs < w; xs++) {
-					byte r, g, b, a;
-					uint32 color;
+					byte r = 0, g = 0, b = 0, a = 0;
+					uint32 color = 0;
 
 					switch (format.bytesPerPixel) {
 					case 1: {
