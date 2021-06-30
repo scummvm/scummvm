@@ -493,6 +493,7 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 DECLARE_INSTRUCTION_OPCODE(color) {
 	InstructionPtr inst = ctxt._inst;
 	_vm->_gfx->_palette.setEntry(inst->_opB.getValue(), inst->_colors[0], inst->_colors[1], inst->_colors[2]);
+	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 }
 
 
