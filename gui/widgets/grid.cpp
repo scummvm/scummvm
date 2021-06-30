@@ -90,10 +90,15 @@ void GridItemWidget::drawWidget() {
 	
 	// Draw Thumbnail
 	if (_thumbGfx.empty()) {
+		int breakPoint = breakText(_activeEntry->title, thumbWidth);
 		// Draw Title when thumbnail is missing
-		g_gui.theme()->drawText(Common::Rect(_x, _y, _x + thumbWidth, _y + thumbHeight),
-							_activeEntry->title, GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter,
-							ThemeEngine::kTextInversion, 0, true, ThemeEngine::kFontStyleBold,
+		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight / 2 - kLineHeight, _x + thumbWidth, _y + thumbHeight / 2),
+							_activeEntry->title.substr(0, breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter,
+							ThemeEngine::kTextInversionNone, 0, true, ThemeEngine::kFontStyleNormal,
+							ThemeEngine::kFontColorAlternate, false);
+		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight / 2, _x + thumbWidth, _y + thumbHeight / 2 + kLineHeight),
+							_activeEntry->title.substr(breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter,
+							ThemeEngine::kTextInversionNone, 0, true, ThemeEngine::kFontStyleNormal,
 							ThemeEngine::kFontColorAlternate, false);
 	}
 	else g_gui.theme()->drawSurface(Common::Point(_x, _y), _thumbGfx, true);
