@@ -101,14 +101,6 @@ struct ScriptPatch {
 	{"warlock", nullptr, kPlatformMacintosh, "DATA/K/KT/OutMarauderKT", kMovieScript, 2,
 			23, "set Spacesuit = 0 then", "set Spacesuit = 0"},
 
-	// Unbalanced 'end if' at the end of the script
-	{"warlock", nullptr, kPlatformMacintosh, "DATA/STAMBUL/DRUNK", kMovieScript, 4,
-			5, "end if", ""},
-
-	// Unbalanced 'end if' at the end of the script
-	{"warlock", nullptr, kPlatformMacintosh, "STAMBUL/DRUNK", kMovieScript, 5,
-			5, "end if", ""},
-
 	// Missing '&'
 	{"warlock", nullptr, kPlatformMacintosh, "DATA/NAV/Shared Cast", kMovieScript, 1,
 			19, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
@@ -121,10 +113,6 @@ struct ScriptPatch {
 			3, "Channels 17 to 18", ""},
 	{"warlock", "", kPlatformWindows, "WRLCKSHP/UpForeECall", kScoreScript, 12,
 			4, "Frames 150 to 160", ""},
-
-	// Unbalanced 'end if' at the end of the script
-	{"warlock", "", kPlatformWindows, "STAMBUL/DRUNK", kMovieScript, 5,
-			5, "end if", ""},
 
 	// Missing '&'
 	{"warlock", nullptr, kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 0,
@@ -156,9 +144,6 @@ struct ScriptPatch {
 			   "GO \"SPACE\" OF MOVIE \"L-ZONE:DATA:R-G:ST-A2\""},
 
 
-	// Unbalanced 'end if' at the end of the script
-	{"jman", "", kPlatformWindows, "mmm/TSA RR 06", kScoreScript, 26,
-			17, "end if", ""},
 	{"jman", "", kPlatformWindows, "mmm/Mars Space Game 05", kMovieScript, 3,
 			68, "set DamageParameter = (gProcessorSpeed/2) + 7)", "set DamageParameter = (gProcessorSpeed/2) + 7"},
 
