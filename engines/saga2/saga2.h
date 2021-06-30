@@ -45,6 +45,7 @@ class TimerList;
 class BandList;
 class ActorAppearance;
 class PathRequest;
+class MotionTask;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -98,6 +99,7 @@ public:
 	Common::List<Timer *> _timers;
 	Common::List<ActorAppearance *> _appearanceLRU;
 	Common::List<PathRequest *> _pathQueue;
+	Common::List<MotionTask *>::iterator _nextMT;
 	BandList *_bandList;
 
 	gDisplayPort _mainPort;
