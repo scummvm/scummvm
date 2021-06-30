@@ -221,6 +221,7 @@ _optimization_level=
 _default_optimization_level=-O2
 _nuked_opl=yes
 _builtin_resources=yes
+_windows_console=yes
 _windows_unicode=no
 # Default commands
 _ranlib=ranlib
@@ -907,6 +908,8 @@ Optional Features:
                            you are doing!
   --no-builtin-resources   do not include additional resources (e.g. engine data, fonts)
                            into the ScummVM binary
+  --enable-windows-console  show console output on Windows (default)
+  --disable-windows-console do not show console output on Windows
   --enable-windows-unicode  use Windows Unicode APIs
   --disable-windows-unicode use Windows ANSI APIs (default)
 
@@ -1378,6 +1381,12 @@ for ac_option in $@; do
 		;;
 	--no-builtin-resources)
 		_builtin_resources=no
+		;;
+	--enable-windows-console)
+		_windows_console=yes
+		;;
+	--disable-windows-console)
+		_windows_console=no
 		;;
 	--enable-windows-unicode)
 		_windows_unicode=yes
@@ -5960,6 +5969,21 @@ fi
 
 if test "$_text_console" = yes ; then
 	echo_n ", text console"
+	if test "$_windows_console" = no ; then
+		case "$_host_os" in
+			mingw*)
+				_windows_console=yes
+				;;
+		esac
+	fi
+fi
+
+if test "$_windows_console" = yes ; then
+	case "$_host_os" in
+		mingw*)
+			echo_n ", Windows console"
+			;;
+	esac
 fi
 
 if test "$_vkeybd" = yes ; then
@@ -6036,6 +6060,11 @@ case $_host_os in
 	mingw*)
 		if test "$_windows_unicode" = yes; then
 			append_var DEFINES "-DUNICODE -D_UNICODE"
+		fi
+		# SDL2 sets -mwindows flag by default in sdl2.pc
+		# We need to directly replace this in the SDL pkg-config
+		if test "$_windows_console" = yes; then
+			LIBS=`echo $LIBS | sed -e 's/-mconsole//g' -e 's/-mwindows//g'`
 		fi
 		;;
 	riscos)
