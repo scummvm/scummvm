@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-29 23:01+0000\n"
+"POT-Creation-Date: 2021-06-30 03:39+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -65,7 +65,7 @@ msgstr "Jít nahoru"
 #: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:396
 #: gui/saveload-dialog.cpp:469 gui/saveload-dialog.cpp:771
 #: gui/saveload-dialog.cpp:1168 gui/themebrowser.cpp:55
-#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:644
+#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:645
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
 #: backends/events/default/default-events.cpp:209
@@ -779,14 +779,14 @@ msgstr "Hledat v seznamu her"
 msgid "Search:"
 msgstr "Hledat:"
 
-#: gui/launcher.cpp:211 engines/dialogs.cpp:98 engines/engine.cpp:794
+#: gui/launcher.cpp:211 engines/dialogs.cpp:98 engines/engine.cpp:795
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:631
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Nahrát hru:"
 
-#: gui/launcher.cpp:211 engines/dialogs.cpp:98 engines/engine.cpp:794
+#: gui/launcher.cpp:211 engines/dialogs.cpp:98 engines/engine.cpp:795
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/trecision/saveload.cpp:253
@@ -2200,7 +2200,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~N~ávrat do Spouštěče"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:823 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2219,7 +2219,7 @@ msgstr "~N~ávrat do Spouštěče"
 msgid "Save game:"
 msgstr "Uložit hru:"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:823 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2344,17 +2344,17 @@ msgstr ""
 "abyste mohli poslouchat hudbu ve hře.\n"
 "Pro podrobnosti si přečtěte README."
 
-#: engines/engine.cpp:543 engines/metaengine.cpp:340 engines/savestate.cpp:81
+#: engines/engine.cpp:548 engines/metaengine.cpp:340 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:253 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Automatické ukládání"
 
-#: engines/engine.cpp:545
+#: engines/engine.cpp:550
 msgid "Error occurred making autosave"
 msgstr "Při ukládání se vyskytla chyba"
 
-#: engines/engine.cpp:622
+#: engines/engine.cpp:623
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2363,17 +2363,17 @@ msgstr ""
 "Načtení uložené hry selhalo (%s)! Prosím přečtěte si dokumentaci pro "
 "základní informace a pokyny k získání další podpory."
 
-#: engines/engine.cpp:640
+#: engines/engine.cpp:641
 msgid "WARNING: "
 msgstr ""
 
-#: engines/engine.cpp:640
+#: engines/engine.cpp:641
 #, fuzzy
 #| msgid "Full title of the game"
 msgid " Shall we still run the game?"
 msgstr "Úplný název hry"
 
-#: engines/engine.cpp:641
+#: engines/engine.cpp:642
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2383,15 +2383,15 @@ msgstr ""
 "ScummVM. Proto je možné, že bude nestabilní a jakékoli uložené hry nemusí "
 "fungovat v budoucích verzích ScummVM."
 
-#: engines/engine.cpp:644 engines/wintermute/wintermute.cpp:183
+#: engines/engine.cpp:645 engines/wintermute/wintermute.cpp:183
 msgid "Start anyway"
 msgstr "Přesto spustit"
 
-#: engines/engine.cpp:651
+#: engines/engine.cpp:652
 msgid "This game is not supported."
 msgstr "Tato hra není podporována"
 
-#: engines/engine.cpp:651
+#: engines/engine.cpp:652
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2399,11 +2399,11 @@ msgstr ""
 "Tato hra není podporována z důvodu\n"
 "\n"
 
-#: engines/engine.cpp:790
+#: engines/engine.cpp:791
 msgid "Loading game is currently unavailable"
 msgstr "Načtení hry je momentálně nedostupné"
 
-#: engines/engine.cpp:819
+#: engines/engine.cpp:820
 msgid "Saving game is currently unavailable"
 msgstr "Uložení hry je momentálně nedostupné"
 
