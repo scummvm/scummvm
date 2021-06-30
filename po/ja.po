@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-29 17:38+0000\n"
+"POT-Creation-Date: 2021-06-29 23:01+0000\n"
 "PO-Revision-Date: 2021-06-27 23:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -5350,14 +5350,14 @@ msgstr "後退"
 #: engines/mohawk/riven.cpp:886 engines/wintermute/keymapper_tables.h:162
 #: engines/wintermute/keymapper_tables.h:742
 #: engines/wintermute/keymapper_tables.h:2046
-#: engines/wintermute/keymapper_tables.h:2153
+#: engines/wintermute/keymapper_tables.h:2147
 msgid "Turn left"
 msgstr "左へ"
 
 #: engines/mohawk/riven.cpp:892 engines/wintermute/keymapper_tables.h:168
 #: engines/wintermute/keymapper_tables.h:747
 #: engines/wintermute/keymapper_tables.h:2052
-#: engines/wintermute/keymapper_tables.h:2160
+#: engines/wintermute/keymapper_tables.h:2154
 msgid "Turn right"
 msgstr "右へ"
 
@@ -7538,13 +7538,13 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
 #: engines/wintermute/keymapper_tables.h:2040
-#: engines/wintermute/keymapper_tables.h:2139
+#: engines/wintermute/keymapper_tables.h:2140
 msgid "Walk forward"
 msgstr "前に歩く"
 
 #: engines/wintermute/keymapper_tables.h:156
 #: engines/wintermute/keymapper_tables.h:737
-#: engines/wintermute/keymapper_tables.h:2146
+#: engines/wintermute/keymapper_tables.h:2162
 msgid "Walk backward"
 msgstr "後ろに歩く"
 

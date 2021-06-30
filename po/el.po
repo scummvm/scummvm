@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-29 17:38+0000\n"
+"POT-Creation-Date: 2021-06-29 23:01+0000\n"
 "PO-Revision-Date: 2021-06-12 20:40+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5506,14 +5506,14 @@ msgstr "Προχώρησε προς τα πίσω"
 #: engines/mohawk/riven.cpp:886 engines/wintermute/keymapper_tables.h:162
 #: engines/wintermute/keymapper_tables.h:742
 #: engines/wintermute/keymapper_tables.h:2046
-#: engines/wintermute/keymapper_tables.h:2153
+#: engines/wintermute/keymapper_tables.h:2147
 msgid "Turn left"
 msgstr "Στρίψε αριστερά"
 
 #: engines/mohawk/riven.cpp:892 engines/wintermute/keymapper_tables.h:168
 #: engines/wintermute/keymapper_tables.h:747
 #: engines/wintermute/keymapper_tables.h:2052
-#: engines/wintermute/keymapper_tables.h:2160
+#: engines/wintermute/keymapper_tables.h:2154
 msgid "Turn right"
 msgstr "Στρίψε δεξιά"
 
@@ -7790,13 +7790,13 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
 #: engines/wintermute/keymapper_tables.h:2040
-#: engines/wintermute/keymapper_tables.h:2139
+#: engines/wintermute/keymapper_tables.h:2140
 msgid "Walk forward"
 msgstr "Περπάτα μπροστά"
 
 #: engines/wintermute/keymapper_tables.h:156
 #: engines/wintermute/keymapper_tables.h:737
-#: engines/wintermute/keymapper_tables.h:2146
+#: engines/wintermute/keymapper_tables.h:2162
 msgid "Walk backward"
 msgstr "Οπισθοχώρησε"
 

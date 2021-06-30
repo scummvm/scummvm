@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-29 17:38+0000\n"
+"POT-Creation-Date: 2021-06-29 23:01+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -5436,7 +5436,7 @@ msgstr "Vzad"
 #: engines/mohawk/riven.cpp:886 engines/wintermute/keymapper_tables.h:162
 #: engines/wintermute/keymapper_tables.h:742
 #: engines/wintermute/keymapper_tables.h:2046
-#: engines/wintermute/keymapper_tables.h:2153
+#: engines/wintermute/keymapper_tables.h:2147
 #, fuzzy
 msgid "Turn left"
 msgstr "Otočit se doleva"
@@ -5444,7 +5444,7 @@ msgstr "Otočit se doleva"
 #: engines/mohawk/riven.cpp:892 engines/wintermute/keymapper_tables.h:168
 #: engines/wintermute/keymapper_tables.h:747
 #: engines/wintermute/keymapper_tables.h:2052
-#: engines/wintermute/keymapper_tables.h:2160
+#: engines/wintermute/keymapper_tables.h:2154
 #, fuzzy
 msgid "Turn right"
 msgstr "Otočit se doprava"
@@ -7676,14 +7676,14 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
 #: engines/wintermute/keymapper_tables.h:2040
-#: engines/wintermute/keymapper_tables.h:2139
+#: engines/wintermute/keymapper_tables.h:2140
 #, fuzzy
 msgid "Walk forward"
 msgstr "Přejít na"
 
 #: engines/wintermute/keymapper_tables.h:156
 #: engines/wintermute/keymapper_tables.h:737
-#: engines/wintermute/keymapper_tables.h:2146
+#: engines/wintermute/keymapper_tables.h:2162
 #, fuzzy
 msgid "Walk backward"
 msgstr "Přejít na"

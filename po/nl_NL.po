@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-29 17:38+0000\n"
+"POT-Creation-Date: 2021-06-29 23:01+0000\n"
 "PO-Revision-Date: 2021-05-27 09:25+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -5455,14 +5455,14 @@ msgstr "Beweeg achteruit"
 #: engines/mohawk/riven.cpp:886 engines/wintermute/keymapper_tables.h:162
 #: engines/wintermute/keymapper_tables.h:742
 #: engines/wintermute/keymapper_tables.h:2046
-#: engines/wintermute/keymapper_tables.h:2153
+#: engines/wintermute/keymapper_tables.h:2147
 msgid "Turn left"
 msgstr "Draai Linksom"
 
 #: engines/mohawk/riven.cpp:892 engines/wintermute/keymapper_tables.h:168
 #: engines/wintermute/keymapper_tables.h:747
 #: engines/wintermute/keymapper_tables.h:2052
-#: engines/wintermute/keymapper_tables.h:2160
+#: engines/wintermute/keymapper_tables.h:2154
 msgid "Turn right"
 msgstr "Draai Rechtsom"
 
@@ -7766,13 +7766,13 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
 #: engines/wintermute/keymapper_tables.h:2040
-#: engines/wintermute/keymapper_tables.h:2139
+#: engines/wintermute/keymapper_tables.h:2140
 msgid "Walk forward"
 msgstr "Loop vooruit"
 
 #: engines/wintermute/keymapper_tables.h:156
 #: engines/wintermute/keymapper_tables.h:737
-#: engines/wintermute/keymapper_tables.h:2146
+#: engines/wintermute/keymapper_tables.h:2162
 msgid "Walk backward"
 msgstr "Loop achteruit"
 
