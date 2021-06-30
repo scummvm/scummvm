@@ -312,14 +312,6 @@ CastMember *Movie::getCastMemberByName(const Common::String &name) {
 	return result;
 }
 
-CastMember *Movie::getCastMemberByScriptId(int scriptId) {
-	CastMember *result = _cast->getCastMemberByScriptId(scriptId);
-	if (result == nullptr && _sharedCast) {
-		result = _sharedCast->getCastMemberByScriptId(scriptId);
-	}
-	return result;
-}
-
 CastMemberInfo *Movie::getCastMemberInfo(int castId) {
 	CastMemberInfo *result = _cast->getCastMemberInfo(castId);
 	if (result == nullptr && _sharedCast) {

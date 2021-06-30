@@ -965,14 +965,14 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	// initialise the script
 	ScriptType scriptType = kCastScript;
 	Common::String castName;
-	CastMember *member = g_director->getCurrentMovie()->getCastMemberByScriptId(scriptId);
+	CastMember *member = archive->cast->getCastMemberByScriptId(scriptId);
 	int castId;
 	if (member) {
 		if (member->_type == kCastLingoScript)
 			scriptType = ((ScriptCastMember *)member)->_scriptType;
 
 		castId = member->getID();
-		CastMemberInfo *info = g_director->getCurrentMovie()->getCastMemberInfo(castId);
+		CastMemberInfo *info = member->getInfo();
 		if (info)
 			castName = info->name;
 	} else {
