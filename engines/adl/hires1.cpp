@@ -68,11 +68,6 @@ namespace Adl {
 #define IDI_HR1_OFS_PD_TEXT_2    0x016d
 #define IDI_HR1_OFS_PD_TEXT_3    0x0259
 
-#define IDI_HR1_OFS_INTRO_TEXT   0x0066
-#define IDI_HR1_OFS_GAME_OR_HELP 0x000f
-
-#define IDI_HR1_OFS_LOGO_0       0x1003
-
 #define IDI_HR1_OFS_ITEMS        0x0100
 #define IDI_HR1_OFS_ROOMS        0x050a
 #define IDI_HR1_OFS_PICS         0x4b03
@@ -108,7 +103,7 @@ private:
 	void loadRoom(byte roomNr) override;
 	void showRoom() override;
 
-	void showInstructions(Common::SeekableReadStream &stream, const uint pages[], bool goHome);
+	void showInstructions(Common::SeekableReadStream &stream);
 	void wordWrap(Common::String &str) const;
 
 	Files *_files;
@@ -125,26 +120,43 @@ private:
 	} _gameStrings;
 };
 
-void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream, const uint pages[], bool goHome) {
+void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream) {
 	_display->setMode(Display::kModeText);
 
-	uint page = 0;
-	while (pages[page] != 0) {
-		if (goHome)
+	for (;;) {
+		byte opc = stream.readByte();
+
+		if (opc != 0x20)
+			error("Error reading instructions");
+
+		uint16 addr = stream.readUint16BE();
+
+		if (addr == 0x58fc) {
+			// HOME
 			_display->home();
+		} else if (addr == 0x6ffd) {
+			// GETLN1
+			inputString();
 
-		uint count = pages[page++];
-		for (uint i = 0; i < count; ++i) {
-			_display->printString(readString(stream));
-			stream.seek(3, SEEK_CUR);
+			if (shouldQuit())
+				return;
+		} else {
+			// We assume print string call (addr varies per game)
+			Common::String str = readString(stream);
+
+			if (stream.err() || stream.eos())
+				error("Error reading instructions");
+
+			// Ctrl-D signifies system command (main binary would be loaded here)
+			size_t posChr4 = str.findFirstOf(_display->asciiToNative(4));
+
+			if (posChr4 != str.npos) {
+				_display->printString(str.substr(0, posChr4));
+				return;
+			}
+
+			_display->printString(str);
 		}
-
-		inputString();
-
-		if (shouldQuit())
-			return;
-
-		stream.seek((goHome ? 6 : 3), SEEK_CUR);
 	}
 }
 
@@ -153,7 +165,12 @@ void HiRes1Engine::runIntro() {
 
 	// Early version have no bitmap in 'AUTO LOAD OBJ'
 	if (getGameVersion() >= GAME_VER_HR1_COARSE) {
-		stream->seek(IDI_HR1_OFS_LOGO_0);
+		// Later binaries have a MIXEDON prepended to it, by skipping it
+		// we can use the same offsets for both variants
+		if (stream->readUint16BE() == 0xad53)
+			stream.reset(_files->createReadStream(IDS_HR1_EXE_0, 3));
+
+		stream->seek(0x1000);
 		_display->setMode(Display::kModeGraphics);
 		static_cast<Display_A2 *>(_display)->loadFrameBuffer(*stream);
 		_display->renderGraphics();
@@ -199,7 +216,7 @@ void HiRes1Engine::runIntro() {
 
 	_display->setMode(Display::kModeMixed);
 
-	str = readStringAt(*stream, IDI_HR1_OFS_GAME_OR_HELP);
+	str = readStringAt(*stream, 0xc);
 
 	if (getGameVersion() >= GAME_VER_HR1_COARSE) {
 		bool instructions = false;
@@ -223,17 +240,16 @@ void HiRes1Engine::runIntro() {
 		}
 
 		if (instructions) {
-			// This version shows the last page during the loading of the game
-			// We wait for a key instead (even though there's no prompt for that).
-			const uint pages[] = { 6, 6, 4, 5, 8, 7, 0 };
-			stream->seek(IDI_HR1_OFS_INTRO_TEXT);
-			showInstructions(*stream, pages, true);
+			stream->seek(0x5d);
+			showInstructions(*stream);
 			_display->printAsciiString("\r");
 		}
 	} else {
-		const uint pages[] = { 6, 6, 8, 6, 0 };
-		stream->seek(6);
-		showInstructions(*stream, pages, false);
+		// This version shows the last page during the loading of the game
+		// We wait for a key instead (even though there's no prompt for that).
+		stream->seek(3);
+		showInstructions(*stream);
+		inputString();
 	}
 
 	stream.reset(_files->createReadStream(IDS_HR1_EXE_1));

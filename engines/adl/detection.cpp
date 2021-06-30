@@ -116,9 +116,9 @@ static const PlainGameDescriptor adlGames[] = {
 };
 
 static const AdlGameDescription gameFileDescriptions[] = {
-	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Simi Valley address
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Simi Valley
 		{
-			"hires1", 0,
+			"hires1", "V1",
 			{
 				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
 				{ "AUTO LOAD OBJ", 0, "a2ab7be25842e1fa9f1343b0894a8b6f", 4095 },
@@ -132,9 +132,25 @@ static const AdlGameDescription gameFileDescriptions[] = {
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_SIMI
 	},
-	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Coarsegold address
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Coarsegold - Without MIXEDON
 		{
-			"hires1", 0,
+			"hires1", "V2",
+			{
+				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
+				{ "AUTO LOAD OBJ", 0, "669b5f313ffdfb373ab8dce5961688d3", 12288 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			MH_OPTIONS
+		},
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_COARSE
+	},
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Coarsegold - With MIXEDON
+		{
+			"hires1", "V3",
 			{
 				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
 				{ "AUTO LOAD OBJ", 0, "f6a6ac60c04c6ba6dff68b92cc279ba2", 12291 },
@@ -169,9 +185,9 @@ static const AdlGameDescription gameFileDescriptions[] = {
 };
 
 static const AdlGameDescription gameDiskDescriptions[] = {
-	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Simi Valley address
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Simi Valley
 		{
-			"hires1", "",
+			"hires1", "V1",
 			AD_ENTRY1s("mysthous", "629b9d034cbf8d8e3a612398f53a8dfc", 116480),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
@@ -181,9 +197,21 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_SIMI
 	},
-	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Coarsegold address
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Coarsegold - Without MIXEDON
 		{
-			"hires1", "",
+			"hires1", "V2",
+			AD_ENTRY1s("mysthous", "b22561b5327c7dcdb659e2d649749310", 116480),
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			MH_OPTIONS
+		},
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_COARSE
+	},
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Coarsegold - With MIXEDON
+		{
+			"hires1", "V3",
 			AD_ENTRY1s("mysthous", "8df0b3b3e609a2e40237e2419c1cb767", 116480),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
@@ -195,7 +223,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
 		{
-			"hires1", "",
+			"hires1", "PD",
 			AD_ENTRY1s("mysthous", "54d20eb1ef0084ac3c2d16c31c5b7eb7", 143360),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
