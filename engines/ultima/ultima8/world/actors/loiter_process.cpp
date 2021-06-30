@@ -23,6 +23,7 @@
 #include "ultima/ultima8/world/actors/loiter_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
+#include "ultima/ultima8/world/actors/cru_pathfinder_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/ultima8.h"
@@ -49,6 +50,9 @@ LoiterProcess::LoiterProcess(Actor *actor, int32 c) : _count(c) {
 	Process *previous = Kernel::get_instance()->findProcess(_itemNum, _type);
 	if (previous)
 		previous->terminate();
+	Process *prevpf = Kernel::get_instance()->findProcess(_itemNum, PathfinderProcess::PATHFINDER_PROC_TYPE);
+	if (prevpf)
+		prevpf->terminate();
 }
 
 void LoiterProcess::run() {
@@ -73,7 +77,12 @@ void LoiterProcess::run() {
 	x += 32 * ((getRandom() % 20) - 10);
 	y += 32 * ((getRandom() % 20) - 10);
 
-	PathfinderProcess *pfp = new PathfinderProcess(a, x, y, z);
+	Process *pfp;
+	if (GAME_IS_U8)
+		pfp = new PathfinderProcess(a, x, y, z);
+	else
+		pfp = new CruPathfinderProcess(a, x, y, z, 0xc, 0x80, false);
+
 	Kernel::get_instance()->addProcess(pfp);
 
 	bool hasidle1 = a->hasAnim(Animation::idle1);
