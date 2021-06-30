@@ -1230,7 +1230,8 @@ public:
 	virtual void clearOverlay() = 0;
 
 	/**
-	 * Copy the content of the overlay into a buffer provided by the caller.
+	 * Copy the content of the overlay into a surface provided by the
+	 * caller.
 	 *
 	 * This is only used to implement fake alpha blending.
 	 */
