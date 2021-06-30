@@ -26,6 +26,7 @@
 #include "common/zlib.h"
 
 #include "director/director.h"
+#include "director/movie.h"
 #include "director/util.h"
 
 namespace Director {
@@ -196,6 +197,19 @@ char *numToCastNum(int num) {
 
 		res[2] = '1' + num;
 	}
+
+	return res;
+}
+
+const char *CastMemberID::str() const {
+	static char res[40];
+
+	if (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo)
+		snprintf(res, 40, "member %d(%s)", member, numToCastNum(member));
+	else if (g_director->getVersion() < 500)
+		snprintf(res, 40, "member %d", member);
+	else
+		snprintf(res, 40, "member %d of castLib %d", member, castLib);
 
 	return res;
 }

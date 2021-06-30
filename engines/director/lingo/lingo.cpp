@@ -1346,4 +1346,36 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 	return result;
 }
 
+CastMemberID Lingo::resolveCastMember(const Datum &memberID, const Datum &castLib) {
+	Movie *movie = g_director->getCurrentMovie();
+	if (!movie) {
+		warning("Lingo::resolveCastMember: No movie");
+		return CastMemberID(-1, castLib.asInt());
+	}
+
+	switch (memberID.type) {
+	case STRING:
+		{
+			CastMember *member = movie->getCastMemberByName(memberID.asString(), castLib.asInt());
+			if (member)
+				return CastMemberID(member->getID(), castLib.asInt());
+
+			warning("Lingo::resolveCastMember: reference to non-existent cast member: %s", memberID.asString().c_str());
+			return CastMemberID(-1, castLib.asInt());
+		}
+		break;
+	case INT:
+	case FLOAT:
+		return CastMemberID(memberID.asInt(), castLib.asInt());
+		break;
+	case VOID:
+		warning("Lingo::resolveCastMember: reference to VOID member ID");
+		break;
+	default:
+		error("Lingo::resolveCastMember: unsupported member ID type %s", memberID.type2str());
+	}
+
+	return CastMemberID(-1, castLib.asInt());
+}
+
 } // End of namespace Director

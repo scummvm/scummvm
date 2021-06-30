@@ -280,6 +280,7 @@ public:
 	void varAssign(const Datum &var, const Datum &value);
 	Datum varFetch(const Datum &var, bool silent = false);
 	Datum findVarV4(int varType, const Datum &id);
+	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib);
 
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
 
