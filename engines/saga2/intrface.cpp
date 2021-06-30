@@ -2013,7 +2013,7 @@ void toggleIndivMode(void) {
 
 void setCenterBrother(uint16 whichBrother) {
 	//  If we picked up anything, then put it back.
-	mouseInfo.replaceObject();
+	g_vm->_mouseInfo->replaceObject();
 
 	// set the new center actor
 	setCenterActor(&playerList[whichBrother]);
@@ -2172,7 +2172,7 @@ APPFUNC(cmdPortrait) {
 	const int stateBufSize = 60;
 
 	uint16  panID = ev.panel->id;
-	GameObject      *mouseObject = mouseInfo.getObject();   // object being dragged
+	GameObject      *mouseObject = g_vm->_mouseInfo->getObject();   // object being dragged
 
 	switch (ev.eventType) {
 
@@ -2183,10 +2183,10 @@ APPFUNC(cmdPortrait) {
 			Actor           *centerActorPtr = getCenterActor();
 
 			//  we dropped the object onto another object
-			if (mouseInfo.getDoable()) {
-				int16   intent = mouseInfo.getIntent();
+			if (g_vm->_mouseInfo->getDoable()) {
+				int16   intent = g_vm->_mouseInfo->getIntent();
 
-				mouseInfo.replaceObject();
+				g_vm->_mouseInfo->replaceObject();
 				if (intent == GrabInfo::Use) {
 					//  If we are using an intangible object (spell) then consider
 					//  the owner of the spell to be the center actor for the rest
@@ -2208,13 +2208,13 @@ APPFUNC(cmdPortrait) {
 					    *centerActorPtr,
 					    *mouseObject,
 					    *pa->getActor(),
-					    mouseInfo.getMoveCount());
+					    g_vm->_mouseInfo->getMoveCount());
 				}
 
 //				( ( gGenericControl * )ev.panel )->disableDblClick();
 				//  clickActionDone = true;
-			} else if (mouseInfo.getIntent() == GrabInfo::Use) {
-				mouseInfo.replaceObject();
+			} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+				g_vm->_mouseInfo->replaceObject();
 //				clickActionDone = true;
 			}
 		} else if (panID != uiIndiv) {
@@ -2230,8 +2230,8 @@ APPFUNC(cmdPortrait) {
 	case gEventMouseMove:
 
 		if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(nullptr);
-			mouseInfo.setDoable(true);
+			g_vm->_mouseInfo->setText(nullptr);
+			g_vm->_mouseInfo->setDoable(true);
 			break;
 		}
 
@@ -2242,12 +2242,12 @@ APPFUNC(cmdPortrait) {
 				Actor           *targetActor = pa->getActor(),
 				                 *enactor = getCenterActor();
 
-				mouseInfo.setText(nullptr);
+				g_vm->_mouseInfo->setText(nullptr);
 
 				if ((enactor->getLocation() - targetActor->getLocation()).quickHDistance() > 96) {
-					mouseInfo.setDoable(false);
+					g_vm->_mouseInfo->setDoable(false);
 				} else {
-					mouseInfo.setDoable(true);
+					g_vm->_mouseInfo->setDoable(true);
 				}
 			} else {
 
@@ -2270,7 +2270,7 @@ APPFUNC(cmdPortrait) {
 					break;
 				}
 				// set the text in the cursor
-				mouseInfo.setText(buf);
+				g_vm->_mouseInfo->setText(buf);
 			}
 		}
 		break;
@@ -2307,11 +2307,11 @@ APPFUNC(cmdAggressive) {
 	} else if (ev.eventType == gEventMouseMove) {
 		if (ev.value == gCompImage::enter) {
 			// set the text in the cursor
-			mouseInfo.setText(isAggressive(transBroID)
+			g_vm->_mouseInfo->setText(isAggressive(transBroID)
 			                  ? ON_AGRESS
 			                  : OFF_AGRESS);
 		} else if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(nullptr);
+			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
@@ -2344,7 +2344,7 @@ APPFUNC(cmdArmor) {
 
 			if (gai->attr.damageAbsorbtion == 0
 			        &&  gai->attr.defenseBonus == 0) {
-				mouseInfo.setText(NO_ARMOR);
+				g_vm->_mouseInfo->setText(NO_ARMOR);
 			} else {
 				sprintf(buf,
 				        DESC_ARMOR,
@@ -2353,10 +2353,10 @@ APPFUNC(cmdArmor) {
 				        gai->attr.defenseBonus);
 
 				// set the text in the cursor
-				mouseInfo.setText(buf);
+				g_vm->_mouseInfo->setText(buf);
 			}
 		} else if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(nullptr);
+			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
@@ -2372,11 +2372,11 @@ APPFUNC(cmdCenter) {
 	if (ev.eventType == gEventMouseMove) {
 		if (ev.value == gCompImage::enter) {
 			// set the text in the cursor
-			mouseInfo.setText(getCenterActorPlayerID() == transBroID
+			g_vm->_mouseInfo->setText(getCenterActorPlayerID() == transBroID
 			                  ? ON_CENTER
 			                  : OFF_CENTER);
 		} else if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(nullptr);
+			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
@@ -2406,11 +2406,11 @@ APPFUNC(cmdBand) {
 	} else if (ev.eventType == gEventMouseMove) {
 		if (ev.value == gCompImage::enter) {
 			// set the text in the cursor
-			mouseInfo.setText(isBanded(transBroID)
+			g_vm->_mouseInfo->setText(isBanded(transBroID)
 			                  ? ON_BANDED
 			                  : OFF_BANDED);
 		} else if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(nullptr);
+			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
@@ -2420,8 +2420,8 @@ APPFUNC(cmdOptions) {
 		OptionsDialog();
 		//openOptionsPanel();
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::enter)        mouseInfo.setText(OPTIONS_PANEL);
-		else if (ev.value == gCompImage::leave) mouseInfo.setText(nullptr);
+		if (ev.value == gCompImage::enter)        g_vm->_mouseInfo->setText(OPTIONS_PANEL);
+		else if (ev.value == gCompImage::leave) g_vm->_mouseInfo->setText(nullptr);
 	}
 }
 
@@ -2460,9 +2460,9 @@ APPFUNC(cmdBroChange) {
 				break;
 			}
 			// set the text in the cursor
-			mouseInfo.setText(buf);
+			g_vm->_mouseInfo->setText(buf);
 		} else if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(nullptr);
+			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
@@ -2472,7 +2472,7 @@ APPFUNC(cmdHealthStar) {
 
 	if (ev.eventType == gEventMouseMove) {
 		if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(nullptr);
+			g_vm->_mouseInfo->setText(nullptr);
 			return;
 		}
 
@@ -2487,7 +2487,7 @@ APPFUNC(cmdHealthStar) {
 		char buf[40];
 
 		sprintf(buf, "%s %d/%d", HEALTH_HINT, currVitality, baseVitality);
-		mouseInfo.setText(buf);
+		g_vm->_mouseInfo->setText(buf);
 	}
 }
 
@@ -2519,11 +2519,11 @@ APPFUNC(cmdMassInd) {
 
 			if (baseWeight != unlimitedCapacity) {
 				sprintf(buf, "%s %d/%d", WEIGHT_HINT, curWeight, baseWeight);
-				mouseInfo.setText(buf);
+				g_vm->_mouseInfo->setText(buf);
 			} else
-				mouseInfo.setText(UNK_WEIGHT_HINT);
+				g_vm->_mouseInfo->setText(UNK_WEIGHT_HINT);
 		} else if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(nullptr);
+			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
@@ -2557,11 +2557,11 @@ APPFUNC(cmdBulkInd) {
 
 			if (baseBulk != unlimitedCapacity) {
 				sprintf(buf, "%s %d/%d", BULK_HINT, curBulk, baseBulk);
-				mouseInfo.setText(buf);
+				g_vm->_mouseInfo->setText(buf);
 			} else
-				mouseInfo.setText(UNK_BULK_HINT);
+				g_vm->_mouseInfo->setText(UNK_BULK_HINT);
 		} else if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(nullptr);
+			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
 }
@@ -2633,9 +2633,9 @@ APPFUNC(cmdManaInd) {
 			}
 
 			// set the text in the cursor
-			mouseInfo.setText(textBuffer);
+			g_vm->_mouseInfo->setText(textBuffer);
 		} else
-			mouseInfo.setText(nullptr);
+			g_vm->_mouseInfo->setText(nullptr);
 	}
 }
 
@@ -2761,7 +2761,7 @@ void gEnchantmentDisplay::drawClipped(gPort &port, const    Point16 &offset, con
 
 void gEnchantmentDisplay::pointerMove(gPanelMessage &msg) {
 	if (msg.pointerLeave) {
-		mouseInfo.setText(nullptr);
+		g_vm->_mouseInfo->setText(nullptr);
 	} else {
 		int16       x = extent.width - 10;
 
@@ -2780,7 +2780,7 @@ void gEnchantmentDisplay::pointerMove(gPanelMessage &msg) {
 					if (iconFlags[i] == 255)
 						sprintf(buf, "%s", enchantmentNames[i]);
 					else sprintf(buf, "%s : %d", enchantmentNames[i], iconFlags[i]);
-					mouseInfo.setText(buf);
+					g_vm->_mouseInfo->setText(buf);
 					return;
 				}
 			}

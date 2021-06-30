@@ -1248,8 +1248,8 @@ void GameObject::deleteObject(void) {
 
 	unstack();
 
-	if (mouseInfo.getObject() == this)
-		mouseInfo.replaceObject();
+	if (g_vm->_mouseInfo->getObject() == this)
+		g_vm->_mouseInfo->replaceObject();
 	if (pickedObject == thisID())
 		pickedObject = Nothing;
 
@@ -4342,12 +4342,12 @@ APPFUNC(cmdBrain) {
 		}
 	} else if (ev.eventType == gEventMouseMove) {
 		if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(nullptr);
+			g_vm->_mouseInfo->setText(nullptr);
 		} else { //if (ev.value == gCompImage::enter)
 			// set the text in the cursor
-			if (part == 0)      mouseInfo.setText(IDEAS_INVENT);
-			else if (part == 1) mouseInfo.setText(SPELL_INVENT);
-			else                mouseInfo.setText(SKILL_INVENT);
+			if (part == 0)      g_vm->_mouseInfo->setText(IDEAS_INVENT);
+			else if (part == 1) g_vm->_mouseInfo->setText(SPELL_INVENT);
+			else                g_vm->_mouseInfo->setText(SKILL_INVENT);
 		}
 	}
 }

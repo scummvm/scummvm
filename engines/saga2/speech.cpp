@@ -409,8 +409,8 @@ bool Speech::setupActive(void) {
 
 	if (speechButtonCount > 0) {
 		//  REM: Also set pointer to arrow shape.
-		mouseInfo.setIntent(GrabInfo::WalkTo);
-//		mouseInfo.setDoable( tileRect.ptInside( ev.mouse ) );
+		g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+//		g_vm->_mouseInfo->setDoable( tileRect.ptInside( ev.mouse ) );
 		speakButtonControls->enable(true);
 
 		speechList.SetLock(false);
@@ -1135,7 +1135,7 @@ APPFUNC(cmdClickSpeech) {
 	case gEventMouseMove:
 	case gEventMouseDrag:
 
-		mouseInfo.setDoable(tileRect.ptInside(ev.mouse));
+		g_vm->_mouseInfo->setDoable(tileRect.ptInside(ev.mouse));
 		break;
 
 	case gEventMouseDown:

@@ -239,7 +239,8 @@ void PlayModeSetup(void) {
 
 
 	//  Set up mouse cursor
-	mouseInfo.setIntent(GrabInfo::WalkTo);
+	g_vm->_mouseInfo = new GrabInfo;
+	g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
 
 	//  Start by displaying first frame stright off, no delay
 	frameAlarm.set(0);
@@ -274,6 +275,7 @@ void PlayModeCleanup(void) {
 	delete MassWeightIndicator;
 	delete HealthIndicator;
 
+	delete g_vm->_mouseInfo;
 
 	// dallocate compressed button images
 

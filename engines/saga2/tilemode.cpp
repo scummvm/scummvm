@@ -424,24 +424,24 @@ static void evalMouseState(void) {
 	Actor           *a = getCenterActor();
 	bool            interruptable = a->isInterruptable();
 
-	mouseInfo.setDoable(interruptable);
+	g_vm->_mouseInfo->setDoable(interruptable);
 
-	if (mouseInfo.getObject() != NULL) {
-		GameObject  *mObj = mouseInfo.getObject();
+	if (g_vm->_mouseInfo->getObject() != NULL) {
+		GameObject  *mObj = g_vm->_mouseInfo->getObject();
 
 		//  If the mouse pointer has an object and the intention
 		//  is set to use, modify the doable setting depending
 		//  on wether the mouse is pointing at another object
 		//  and if so, wether the other object is within the
 		//  use range of the center actor
-		if (mouseInfo.getIntent() == GrabInfo::Use) {
+		if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
 			assert(obj != NULL);
 
 			if (mObj->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
 				GameObject  *tob = pickedObject != Nothing ? obj : NULL;
 				// If it's a spell we need to do more complex testing
 				//   to see if the current target is valid
-				mouseInfo.setDoable(
+				g_vm->_mouseInfo->setDoable(
 				    interruptable
 				    &&  validTarget(
 				        a,
@@ -450,7 +450,7 @@ static void evalMouseState(void) {
 				        (SkillProto *)GameObject::protoAddress(
 				            mObj->thisID())));
 			} else {
-				mouseInfo.setDoable(
+				g_vm->_mouseInfo->setDoable(
 				    interruptable
 				    && (pickedObject == Nothing
 				        || (a->inUseRange(
@@ -478,9 +478,9 @@ static void evalMouseState(void) {
 					if (a->inAttackRange(obj->getLocation())
 					        && (a->inRange(obj->getLocation(), 8)
 					            ||  lineOfSight(a, obj, terrainTransparent)))
-						mouseInfo.setIntent(GrabInfo::Attack);
+						g_vm->_mouseInfo->setIntent(GrabInfo::Attack);
 					else {
-						mouseInfo.setIntent(GrabInfo::WalkTo);
+						g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
 						walkToPos = obj->getLocation();
 					}
 				} else
@@ -491,7 +491,7 @@ static void evalMouseState(void) {
 					//  finished can initiate a new action, if so, set
 					//  the intention to walk to the mouse pointer
 					if (interruptable) {
-						mouseInfo.setIntent(GrabInfo::WalkTo);
+						g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
 						if (tileMapControl->isSticky())
 							setMouseImage(kMouseAutoWalkImage, -8, -8);
 						walkToPos = tilePickPos;
@@ -502,7 +502,7 @@ static void evalMouseState(void) {
 			{
 				//  Set the intention to walk to the mouse
 				//  pointer
-				mouseInfo.setIntent(GrabInfo::WalkTo);
+				g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
 				if (tileMapControl->isSticky())
 					setMouseImage(kMouseAutoWalkImage, -8, -8);
 				walkToPos = tilePickPos;
@@ -522,10 +522,10 @@ static void evalMouseState(void) {
 					if (a->inAttackRange(obj->getLocation())
 					        && (a->inRange(obj->getLocation(), 8)
 					            ||  lineOfSight(a, obj, terrainTransparent))) {
-						mouseInfo.setIntent(GrabInfo::Attack);
-						mouseInfo.setDoable(true);
+						g_vm->_mouseInfo->setIntent(GrabInfo::Attack);
+						g_vm->_mouseInfo->setDoable(true);
 					} else {
-						mouseInfo.setIntent(GrabInfo::WalkTo);
+						g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
 						walkToPos = obj->getLocation();
 					}
 				} else
@@ -537,16 +537,16 @@ static void evalMouseState(void) {
 					if (isActor(pickedObject)) {
 						a = (Actor *)obj;
 
-						mouseInfo.setIntent(
+						g_vm->_mouseInfo->setIntent(
 						    !a->isDead()
 						    ?   GrabInfo::WalkTo
 						    :   GrabInfo::Open);
 						walkToPos = obj->getLocation();
 					} else {
-						mouseInfo.setIntent(obj->isCarryable()
+						g_vm->_mouseInfo->setIntent(obj->isCarryable()
 						                    ? GrabInfo::PickUp
 						                    : GrabInfo::Open);
-						mouseInfo.setDoable(
+						g_vm->_mouseInfo->setDoable(
 						    interruptable
 						    &&  a->inReach(obj->getLocation())
 						    && (a->inRange(obj->getLocation(), 8)
@@ -558,7 +558,7 @@ static void evalMouseState(void) {
 			{
 				//  Simply set the intention to walk to the mouse
 				//  pointer
-				mouseInfo.setIntent(GrabInfo::WalkTo);
+				g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
 				if (tileMapControl->isSticky())
 					setMouseImage(kMouseAutoWalkImage, -8, -8);
 				walkToPos = tilePickPos;
@@ -568,14 +568,14 @@ static void evalMouseState(void) {
 
 	if (mousePressed
 	        &&  !clickActionDone
-	        &&  mouseInfo.getObject() == NULL) {
+	        &&  g_vm->_mouseInfo->getObject() == NULL) {
 		a = getCenterActor();
 
 		//  Since the mouse is being dragged, initiate
 		//  the effects of the mouse drag
 
-		if (mouseInfo.getIntent() == GrabInfo::WalkTo) {
-			if (mouseInfo.getDoable()
+		if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo) {
+			if (g_vm->_mouseInfo->getDoable()
 			        &&  !navigationDelayed) {
 				MotionTask  *mt = a->moveTask;
 
@@ -588,8 +588,8 @@ static void evalMouseState(void) {
 					updateAlarm.set(ticksPerSecond / 2);
 				}
 			}
-		} else if (mouseInfo.getIntent() == GrabInfo::Attack) {
-			if (mouseInfo.getDoable())
+		} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Attack) {
+			if (g_vm->_mouseInfo->getDoable())
 				a->attack(GameObject::objectAddress(pickedObject));
 		}
 	}
@@ -778,7 +778,7 @@ void TileModeHandleTask(void) {
 		if (ContainerView::objTextAlarm == true) {
 			// if the mouse is in a container...
 			if (ContainerView::mouseInView) {
-				mouseInfo.setText(ContainerView::mouseText);
+				g_vm->_mouseInfo->setText(ContainerView::mouseText);
 			}
 		}
 
@@ -827,8 +827,8 @@ void TileModeHandleTask(void) {
 				lastPickedObject = pickedObject;
 
 				//  Remove current mouse cursor text and gauge
-				mouseInfo.setText(NULL);
-				mouseInfo.clearGauge();
+				g_vm->_mouseInfo->setText(NULL);
+				g_vm->_mouseInfo->clearGauge();
 
 				//  If mouse in on object set alarm to determine when
 				//  to display the object's name
@@ -846,12 +846,12 @@ void TileModeHandleTask(void) {
 					// get the object text into the buffer
 					item->objCursorText(cursorText, bufSize);
 
-					mouseInfo.setText(cursorText);
+					g_vm->_mouseInfo->setText(cursorText);
 					if (isActor(pickedObject)) {
 						a = (Actor *)GameObject::objectAddress(pickedObject);
-						mouseInfo.setGauge(a->getStats()->vitality, a->getBaseStats()->vitality);
+						g_vm->_mouseInfo->setGauge(a->getStats()->vitality, a->getBaseStats()->vitality);
 					} else {
-						mouseInfo.clearGauge();
+						g_vm->_mouseInfo->clearGauge();
 					}
 				}
 			}
@@ -1060,14 +1060,14 @@ static APPFUNC(cmdClickTileMap) {
 		if (ev.value & gGenericControl::leave) {
 			mousePressed = false;
 
-			if (mouseInfo.getObject() == NULL)
-				mouseInfo.setIntent(GrabInfo::WalkTo);
-			mouseInfo.setDoable(true);
+			if (g_vm->_mouseInfo->getObject() == NULL)
+				g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+			g_vm->_mouseInfo->setDoable(true);
 
 			//  Remove any mouse text
 			lastPickedObject = Nothing;
-			mouseInfo.setText(NULL);
-			mouseInfo.clearGauge();
+			g_vm->_mouseInfo->setText(NULL);
+			g_vm->_mouseInfo->clearGauge();
 		}
 		lastMousePos = ev.mouse;
 		break;
@@ -1085,7 +1085,7 @@ static APPFUNC(cmdClickTileMap) {
 			Actor       *centerActorPtr =
 			    (Actor *)GameObject::objectAddress(centerActorID);
 
-			if ((mouseObject = mouseInfo.getObject()) != NULL) {
+			if ((mouseObject = g_vm->_mouseInfo->getObject()) != NULL) {
 				//  If we are using an intangible object (spell) then consider
 				//  the owner of the spell to be the center actor for the rest
 				//  of this action.
@@ -1100,10 +1100,10 @@ static APPFUNC(cmdClickTileMap) {
 
 				if (pickedObject != Nothing) {
 					//  we dropped the object onto another object
-					if (mouseInfo.getDoable()) {
-						int16   intent = mouseInfo.getIntent();
+					if (g_vm->_mouseInfo->getDoable()) {
+						int16   intent = g_vm->_mouseInfo->getIntent();
 
-						mouseInfo.replaceObject();
+						g_vm->_mouseInfo->replaceObject();
 						if (intent == GrabInfo::Use) {
 							MotionTask::useObjectOnObject(
 							    *centerActorPtr,
@@ -1114,24 +1114,24 @@ static APPFUNC(cmdClickTileMap) {
 							    *centerActorPtr,
 							    *mouseObject,
 							    *GameObject::objectAddress(pickedObject),
-							    mouseInfo.getMoveCount());
+							    g_vm->_mouseInfo->getMoveCount());
 						}
 
 						((gGenericControl *)ev.panel)->disableDblClick();
 						clickActionDone = true;
-					} else if (mouseInfo.getIntent() == GrabInfo::Use) {
-						mouseInfo.replaceObject();
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+						g_vm->_mouseInfo->replaceObject();
 						clickActionDone = true;
 					}
 				} else if (pickedTAI != NULL) {
 					//  we dropped the object onto active terrain
 
-					if (mouseInfo.getDoable()) {
-						if (mouseInfo.getIntent() == GrabInfo::Drop
-						        ||  mouseInfo.getIntent() == GrabInfo::Use) {
-							int16   intent = mouseInfo.getIntent();
+					if (g_vm->_mouseInfo->getDoable()) {
+						if (g_vm->_mouseInfo->getIntent() == GrabInfo::Drop
+						        ||  g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+							int16   intent = g_vm->_mouseInfo->getIntent();
 
-							mouseInfo.replaceObject();
+							g_vm->_mouseInfo->replaceObject();
 							if (intent == GrabInfo::Drop) {
 								MotionTask::dropObjectOnTAI(
 								    *centerActorPtr,
@@ -1158,49 +1158,49 @@ static APPFUNC(cmdClickTileMap) {
 							((gGenericControl *)ev.panel)->disableDblClick();
 							clickActionDone = true;
 						}
-					} else if (mouseInfo.getIntent() == GrabInfo::Use) {
-						mouseInfo.replaceObject();
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+						g_vm->_mouseInfo->replaceObject();
 						clickActionDone = true;
 					}
 				} else if (pickedObject == Nothing) {
 					//  we dropped the object on the ground
 
-					if (mouseInfo.getIntent() == GrabInfo::Drop
-					        &&  mouseInfo.getDoable()) {
-						mouseInfo.replaceObject();
+					if (g_vm->_mouseInfo->getIntent() == GrabInfo::Drop
+					        &&  g_vm->_mouseInfo->getDoable()) {
+						g_vm->_mouseInfo->replaceObject();
 						MotionTask::dropObject(
 						    *centerActorPtr,
 						    *mouseObject,
 						    Location(tilePickPos, currentWorld->thisID()),
-						    mouseInfo.getMoveCount());
+						    g_vm->_mouseInfo->getMoveCount());
 						((gGenericControl *)ev.panel)->disableDblClick();
 						clickActionDone = true;
-					} else if (mouseInfo.getIntent() == GrabInfo::Use
-					           &&  mouseInfo.getDoable()) {
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use
+					           &&  g_vm->_mouseInfo->getDoable()) {
 						// New for spells - this enables objects to be used on a
 						//   general location (for area spells etc)
-						mouseInfo.replaceObject();
+						g_vm->_mouseInfo->replaceObject();
 						MotionTask::useObjectOnLocation(
 						    *centerActorPtr,
 						    *mouseObject,
 						    Location(tilePickPos, currentWorld->thisID()));
 						clickActionDone = true;
-					} else if (mouseInfo.getIntent() == GrabInfo::Use) {
-						mouseInfo.replaceObject();
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+						g_vm->_mouseInfo->replaceObject();
 						clickActionDone = true;
 					}
 				}
 			} else if (pickedObject != Nothing) {
 				//GameObject      *obj = GameObject::objectAddress(pickedObject);
 
-				if (mouseInfo.getDoable()) {
+				if (g_vm->_mouseInfo->getDoable()) {
 					PlayerActorID   pID;
 
 					if (actorIDToPlayerID(pickedObject, pID) && !isBrotherDead(pID)) {
 						setCenterBrother(pID);
 						clickActionDone = true;
-					} else if (mouseInfo.getIntent() == GrabInfo::PickUp
-					           ||  mouseInfo.getIntent() == GrabInfo::Open) {
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::PickUp
+					           ||  g_vm->_mouseInfo->getIntent() == GrabInfo::Open) {
 						GameObject  *pickedObjPtr =
 						    GameObject::objectAddress(pickedObject);
 						int16       quantity = 1;
@@ -1214,7 +1214,7 @@ static APPFUNC(cmdClickTileMap) {
 
 						if (pickedObjPtr->take(centerActorID, quantity))
 							clickActionDone = true;
-					} else if (mouseInfo.getIntent() == GrabInfo::Attack) {
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Attack) {
 						centerActorPtr->attack(
 						    GameObject::objectAddress(pickedObject));
 						((gGenericControl *)ev.panel)->disableDblClick();
@@ -1230,8 +1230,8 @@ static APPFUNC(cmdClickTileMap) {
 			//  We're not pointing at an object and the mouse cursor
 			//  does not have an object
 			else {
-				if (mouseInfo.getIntent() == GrabInfo::WalkTo
-				        &&  mouseInfo.getDoable()) {
+				if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo
+				        &&  g_vm->_mouseInfo->getDoable()) {
 					if (pickedTAI == NULL) {
 						navigateDirect(walkToPos, false);
 						//      ( ( gGenericControl * )ev.panel )->disableDblClick();
@@ -1255,7 +1255,7 @@ static APPFUNC(cmdClickTileMap) {
 			dblClick = false;
 		else {
 			if (pathFindAlarm.check()) { // mouse click was too long for path find
-				if (mouseInfo.getIntent() == GrabInfo::WalkTo) {
+				if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo) {
 					Actor   *a = getCenterActor();
 
 					if (a->moveTask && a->moveTask->isWalk())
@@ -1285,13 +1285,13 @@ static APPFUNC(cmdClickTileMap) {
 
 		navigationDelayed = false;
 
-		if ((mouseObject = mouseInfo.getObject()) != NULL) {
-			mouseInfo.replaceObject();
+		if ((mouseObject = g_vm->_mouseInfo->getObject()) != NULL) {
+			g_vm->_mouseInfo->replaceObject();
 			MotionTask::useObject(*getCenterActor(), *mouseObject);
 		} else if (pickedObject != Nothing) {
 			GameObject      *obj = GameObject::objectAddress(pickedObject);
 
-			if (mouseInfo.getDoable()) {
+			if (g_vm->_mouseInfo->getDoable()) {
 				//  Double-click on an actor is the same as "greet".
 				if (isActor(pickedObject)
 				        &&  !((Actor *)obj)->isDead()
@@ -1299,8 +1299,8 @@ static APPFUNC(cmdClickTileMap) {
 					ActorProto  *proto = (ActorProto *)obj->proto();
 
 					proto->greetActor(pickedObject, getCenterActorID());
-				} else if (mouseInfo.getIntent() == GrabInfo::PickUp
-				           ||  mouseInfo.getIntent() == GrabInfo::Open
+				} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::PickUp
+				           ||  g_vm->_mouseInfo->getIntent() == GrabInfo::Open
 				           || (isActor(pickedObject) && ((Actor *)obj)->isDead())) {
 					GameObject  *pickedObjPtr =
 					    GameObject::objectAddress(pickedObject);

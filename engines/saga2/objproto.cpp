@@ -305,7 +305,7 @@ bool ProtoObj::closeAction(ObjectID, ObjectID) {
 //  Take this object
 bool ProtoObj::take(ObjectID dObj, ObjectID enactor, int16 num) {
 	assert(dObj != Nothing);
-	assert(mouseInfo.getObjectId() == Nothing);
+	assert(g_vm->_mouseInfo->getObjectId() == Nothing);
 
 	// >>> this needs to be dynamic!
 	if (mass > 200 || bulk > 200) return false;
@@ -1011,7 +1011,7 @@ uint16 InventoryProto::containmentSet(void) {
 }
 
 bool InventoryProto::takeAction(ObjectID dObj, ObjectID enactor, int16 num) {
-	mouseInfo.copyObject(dObj, GrabInfo::Drop, num);
+	g_vm->_mouseInfo->copyObject(dObj, GrabInfo::Drop, num);
 	return true;
 }
 
@@ -1438,8 +1438,8 @@ uint16 PhysicalContainerProto::bulkCapacity(GameObject *) {
 
 //  Put key into mouse with intention to use
 bool KeyProto::setUseCursor(ObjectID dObj) {
-	assert(mouseInfo.getObjectId() == Nothing);
-	mouseInfo.copyObject(GameObject::objectAddress(dObj), GrabInfo::Use);
+	assert(g_vm->_mouseInfo->getObjectId() == Nothing);
+	g_vm->_mouseInfo->copyObject(GameObject::objectAddress(dObj), GrabInfo::Use);
 	return true;
 }
 
@@ -2411,8 +2411,8 @@ uint8 ShieldProto::getDamageSound(const ObjectSoundFXs &soundFXs) {
 
 //  Put tool into mouse with intention to use
 bool ToolProto::setUseCursor(ObjectID dObj) {
-	assert(mouseInfo.getObjectId() == Nothing);
-	mouseInfo.copyObject(GameObject::objectAddress(dObj), GrabInfo::Use);
+	assert(g_vm->_mouseInfo->getObjectId() == Nothing);
+	g_vm->_mouseInfo->copyObject(GameObject::objectAddress(dObj), GrabInfo::Use);
 	return true;
 }
 
@@ -2492,14 +2492,14 @@ bool IntangibleObjProto::useAction(ObjectID dObj, ObjectID enactor) {
 
 bool IntangibleObjProto::takeAction(ObjectID dObj, ObjectID enactor, int16) {
 	assert(isObject(dObj));
-	assert(mouseInfo.getObjectId() == Nothing);
+	assert(g_vm->_mouseInfo->getObjectId() == Nothing);
 
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
 
 	if (dObjPtr->isTrueSkill())
 		return false;
 
-	mouseInfo.copyObject(dObj);
+	g_vm->_mouseInfo->copyObject(dObj);
 
 	return true;
 }
@@ -2641,7 +2641,7 @@ bool SkillProto::useAction(ObjectID dObj, ObjectID enactor) {
 		Actor   *attackerPtr = (Actor *) GameObject::objectAddress(enactor);
 		return castUntargetedSpell(attackerPtr, this);
 	}
-	mouseInfo.copyObject(dObj, GrabInfo::Use);
+	g_vm->_mouseInfo->copyObject(dObj, GrabInfo::Use);
 	return true;
 }
 

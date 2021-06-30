@@ -53,6 +53,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	g_vm = this;
 
 	_bandList = nullptr;
+	_mouseInfo = nullptr;
 	_smkDecoder = nullptr;
 	_videoX = _videoY = 0;
 	_loadedWeapons = 0;
