@@ -182,9 +182,10 @@ void gPanel::invalidate(Rect16 *) {
 void gPanel::drawTitle(enum text_positions placement) {
 	gPort           &port = window.windowPort;
 	Rect16          r = extent;
-	const gPixelMap       *img;
+	const gPixelMap *img = nullptr;
 
-	if (title == NULL) return;
+	if (title == NULL)
+		return;
 
 	if (imageLabel) {
 		img = (const gPixelMap *)title;

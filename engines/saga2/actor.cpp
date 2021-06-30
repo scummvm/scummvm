@@ -656,7 +656,7 @@ bool ActorProto::acceptInsertionAtAction(
 		heldInRightHand,
 		worn
 	}           inUseType;
-	int         wornWhere;
+	int         wornWhere = 0;
 
 	assert(isActor(dObj));
 	assert(isObject(item));
@@ -1378,7 +1378,7 @@ Actor *Actor::newActor(
     uint8   factionNum,
     uint8   initFlags) {
 	GameObject      *limbo = objectAddress(ActorLimbo);
-	Actor           *a;
+	Actor           *a = nullptr;
 
 	debugC(2, kDebugActors, "Actor::newActor(protoNum = %d, nameIndex = %d, scriptIndex = %d, appearanceNum = %d, colorSchemeIndex = %d, factionNum = %d, initFlags = %d)",
 		protoNum, nameIndex, scriptIndex, appearanceNum, colorSchemeIndex, factionNum, initFlags);
@@ -1399,11 +1399,15 @@ Actor *Actor::newActor(
 		//  REM: If things start getting really tight, we can
 		//  start recycling common objects...
 
-		if (i >= actorCount) return NULL;
+		if (i >= actorCount)
+			return nullptr;
 	} else {
 		actorLimboCount--;
 		a = (Actor *)limbo->child();
 	}
+
+	if (!a)
+		return nullptr;
 
 	a->setLocation(Location(0, 0, 0, Nothing));
 	a->init(

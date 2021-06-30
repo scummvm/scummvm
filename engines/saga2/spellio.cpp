@@ -98,7 +98,7 @@ void SpellStuff::setupFromResource(ResourceSpellItem *rsi) {
 // add spell internal effect
 
 void SpellStuff::addEffect(ResourceSpellEffect *rse) {
-	ProtoEffect *pe;
+	ProtoEffect *pe = nullptr;
 	assert(rse && rse->spell == master);
 	switch (rse->effectGroup) {
 	case effectNone     :
@@ -197,11 +197,10 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 		break;
 	}
 	}
-	if (pe == NULL)
+	if (pe == nullptr)
 		error("failed to alloc protoEffect");
 
-
-	if (effects == NULL)
+	if (effects == nullptr)
 		effects = pe;
 	else {
 		ProtoEffect *tail;

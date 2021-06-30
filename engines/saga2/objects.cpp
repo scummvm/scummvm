@@ -1167,7 +1167,7 @@ ObjectID GameObject::makeAlias(const Location &l) {
 //  return it's address
 GameObject *GameObject::newObject(void) {   // get a newly created object
 	GameObject      *limbo = objectAddress(ObjectLimbo),
-	                 *obj;
+	                *obj = nullptr;
 
 	if (limbo->_data.childID == Nothing) {
 		int16       i;
@@ -1185,7 +1185,8 @@ GameObject *GameObject::newObject(void) {   // get a newly created object
 		//  REM: If things start getting really tight, we can
 		//  start recycling common objects...
 
-		if (i >= objectCount) return nullptr;
+		if (i >= objectCount)
+			return nullptr;
 	} else {
 		objectLimboCount--;
 		obj = limbo->child();
@@ -3453,19 +3454,19 @@ ObjectID RadialObjectIterator::first(GameObject **obj, int16 *dist) {
 //	Return the next object within the specified region
 
 ObjectID RadialObjectIterator::next(GameObject **obj, int16 *dist) {
-	GameObject      *currentObject;
+	GameObject      *currentObject = nullptr;
 	ObjectID        currentObjectID;
-	int16           currentDist;
+	int16           currentDist = 0;
 
 	do {
 		currentObjectID = SectorRegionObjectIterator::next(&currentObject);
 	} while (currentObjectID != Nothing
-	         && (currentDist =
-	                 computeDist(currentObject->getLocation()))
-	         >   radius);
+	         && (currentDist = computeDist(currentObject->getLocation())) > radius);
 
-	if (dist != nullptr) *dist = currentDist;
-	if (obj != nullptr) *obj = currentObject;
+	if (dist != nullptr)
+		*dist = currentDist;
+	if (obj != nullptr)
+		*obj = currentObject;
 	return currentObjectID;
 }
 

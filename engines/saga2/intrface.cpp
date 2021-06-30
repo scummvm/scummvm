@@ -2574,7 +2574,7 @@ APPFUNC(cmdManaInd) {
 			int     manaType = -1;
 			int     numManaRegions = ManaIndicator->getNumManaRegions();
 			int     i;
-			int     curMana, baseMana;
+			int     curMana = 0, baseMana = 0;
 			PlayerActor *player             = &playerList[getCenterActorPlayerID()];
 			ActorAttributes *stats          = player->getEffStats();
 			ActorAttributes baseStatsRef    = player->getBaseStats();
@@ -2598,46 +2598,28 @@ APPFUNC(cmdManaInd) {
 			}
 
 			switch (manaType) {
-#define RED_MANA            "Red Mana:"
-#define ORANGE_MANA         "Orange Mana:"
-
-
-
-#define YELLOW_MANA         "Yellow Mana:"
-
-
-
-#define GREEN_MANA          "Green Mana:"
-
-
-
-#define BLUE_MANA           "Blue Mana:"
-
-
-
-#define VIOLET_MANA         "Purple Mana:"
 			case 0:
-				sprintf(textBuffer, "%s %d/%d", RED_MANA, curMana, baseMana);
+				sprintf(textBuffer, "%s %d/%d", "Red Mana:", curMana, baseMana);
 				break;
 
 			case 1:
-				sprintf(textBuffer, "%s %d/%d", ORANGE_MANA, curMana, baseMana);
+				sprintf(textBuffer, "%s %d/%d", "Orange Mana:", curMana, baseMana);
 				break;
 
 			case 2:
-				sprintf(textBuffer, "%s %d/%d", YELLOW_MANA, curMana, baseMana);
+				sprintf(textBuffer, "%s %d/%d", "Yellow Mana:", curMana, baseMana);
 				break;
 
 			case 3:
-				sprintf(textBuffer, "%s %d/%d", GREEN_MANA, curMana, baseMana);
+				sprintf(textBuffer, "%s %d/%d", "Green Mana:", curMana, baseMana);
 				break;
 
 			case 4:
-				sprintf(textBuffer, "%s %d/%d", BLUE_MANA, curMana, baseMana);
+				sprintf(textBuffer, "%s %d/%d", "Blue Mana:", curMana, baseMana);
 				break;
 
 			case 5:
-				sprintf(textBuffer, "%s %d/%d", VIOLET_MANA, curMana, baseMana);
+				sprintf(textBuffer, "%s %d/%d", "Purple Mana:", curMana, baseMana);
 				break;
 
 			case -1:

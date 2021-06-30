@@ -2646,7 +2646,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 	        pos.x += kMetaTileWidth
 	    ) {
 		TilePoint       clipCoords;
-		int16           mtile;
+		int16           mtile = 0;
 		MetaTilePtr     metaPtr;
 
 		clipCoords.u = (uint16)coords.u % curMap->mapSize;
@@ -3283,7 +3283,7 @@ void maskMetaRow(
 	        pos.x += kMetaTileWidth
 	    ) {
 		TilePoint       clipCoords;
-		int16           mtile;
+		int16           mtile = 0;
 		MetaTilePtr     metaPtr;
 
 		clipCoords.u = (uint16)coords.u % curMap->mapSize;
@@ -3311,9 +3311,11 @@ void maskMetaRow(
 				mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~metaTileVisited;
 				break;
 			}
-		} else mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~metaTileVisited;
+		} else
+			mtile = mapData[clipCoords.u * curMap->mapSize + clipCoords.v] & ~metaTileVisited;
 
-		if (mtile >= curMap->metaCount) mtile = curMap->metaCount - 1;
+		if (mtile >= curMap->metaCount)
+			mtile = curMap->metaCount - 1;
 
 		metaPtr = metaArray[mtile];
 		put = drawList;
@@ -4071,7 +4073,7 @@ TilePoint pickTile(Point32 pos,
 	                testCoords,
 	                deltaP;
 	MetaTile        *mt;
-	ActiveItemPtr   bestTileTAI;
+	ActiveItemPtr   bestTileTAI = nullptr;
 	TileInfo        *ti,
 	                *bestTile = nullptr;
 	uint8           *imageData;
@@ -4190,36 +4192,21 @@ TilePoint pickTile(Point32 pos,
 
 						if (sti.surfaceTAG == nullptr) {
 							if (surface != surfaceHoriz
-							        &&  pointOnHiddenSurface(
-							            tCoords + origin,
-							            pCoords,
-							            surface)) {
-								surface =   surface == surfaceVertU
-								            ?   surfaceVertV
-								            :   surfaceVertU;
+							        &&  pointOnHiddenSurface(tCoords + origin, pCoords, surface)) {
+								surface = surface == surfaceVertU ? surfaceVertV : surfaceVertU;
 							}
 
 							//  If pick point is on vertical surface
 							//  not facing protaganist, reject tile
-							if (surface == surfaceVertU
-							        &&  pCoords.v < protagPos.v)
+							if (surface == surfaceVertU &&  pCoords.v < protagPos.v)
 								continue;
-							if (surface == surfaceVertV
-							        &&  pCoords.u < protagPos.u)
+							if (surface == surfaceVertV &&  pCoords.u < protagPos.u)
 								continue;
-							/*                              //  Make sure surface is exposed, else reject it
-							                            if (    surface != surfaceHoriz
-							                                &&  !validSurface( tCoords + origin, pCoords ) )
-							                                continue;*/
 						}
 
 						pickCoords = pCoords;
 						floorCoords = fCoords;
 						bestTile = ti;
-#ifdef DAVIDR
-						bestTP = tCoords + origin;
-						bestTP.z = sti.surfaceHeight;
-#endif
 						bestTileTAI = sti.surfaceTAG;
 					}
 				}
@@ -4262,51 +4249,6 @@ TilePoint pickTile(Point32 pos,
 		if (pickTAI) *pickTAI = nullptr;
 		return pickCoords;
 	}
-
-#ifdef DAVIDR
-	if (showTile) {
-		if (bestTile) {
-			bestTP.u <<= kTileUVShift;
-			bestTP.v <<= kTileUVShift;
-			showAbstractTile(bestTP, bestTile);
-
-			TilePoint   pt1, pt2;
-			pt1 = pt2 = pickCoords;
-			pt1.u += 3;
-			pt2.u -= 3;
-			TPLine(pt1, pt2);
-			pt1 = pt2 = pickCoords;
-			pt1.v += 3;
-			pt2.v -= 3;
-			TPLine(pt1, pt2);
-
-			pt1 = pt2 = floorCoords;
-			pt1.u += 2;
-			pt1.v += 2;
-			pt2.u -= 2;
-			pt2.v -= 2;
-			TPLine(pt1, pt2);
-			pt1 = pt2 = floorCoords;
-			pt1.u += 2;
-			pt1.v -= 2;
-			pt2.u -= 2;
-			pt2.v += 2;
-			TPLine(pt1, pt2);
-
-			pt1 = pt2 = pickCoords;
-			pt1.z = bestTP.z;
-			TPLine(pt1, pt2);
-			pt2.z = bestTP.z;
-			pt2.u = pt1.u & 0xFFF0;
-			TPLine(pt1, pt2);
-			pt2.u = pt1.u;
-			pt2.v = pt1.v & 0xFFF0;
-			TPLine(pt1, pt2);
-
-			WriteStatusF(8, "%4.4x:%4.4x:%4.4x", pickCoords.u, pickCoords.v, pickCoords.z);
-		}
-	}
-#endif
 
 	if (floorResult) *floorResult = floorCoords;
 	if (pickTAI) *pickTAI = bestTileTAI;

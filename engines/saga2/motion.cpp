@@ -2491,12 +2491,12 @@ void MotionTask::walkAction(void) {
 	TilePoint       immediateTarget = getImmediateTarget(),
 	                newPos,
 	                targetVector;
-	int16           targetDist;
+	int16           targetDist = 0;
 	int16           movementDirection,
 	                directionAngle;
 	int16           moveBlocked,
-	                speed,
-	                speedScale;
+	                speed = walkSpeed,
+	                speedScale = 2;
 	Actor           *a;
 	ActorAppearance *aa;
 	StandingTileInfo sti;
