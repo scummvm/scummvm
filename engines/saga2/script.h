@@ -232,7 +232,7 @@ public:
 	union {
 		Alarm       waitAlarm;              // for time-delay
 		FrameAlarm  waitFrameAlarm;         // for frame count delay
-		long        waitParam;              // for other waiting
+		ActiveItem *waitParam;              // for other waiting
 	};
 
 	scriptCallFrame threadArgs;             // arguments from C to thread
@@ -265,7 +265,7 @@ public:
 	scriptResult run(void);
 
 	//  Tells thread to wait for an event
-	void waitForEvent(enum WaitTypes wt, long param) {
+	void waitForEvent(enum WaitTypes wt, ActiveItem *param) {
 		flags |= waiting;
 		waitType = wt;
 		waitParam = param;
