@@ -63,14 +63,13 @@ bool hResCheckResID(hResContext *hrc, uint32 s) {
 }
 
 bool hResCheckResID(hResContext *hrc, uint32 s[]) {
-	int i = 0;
 	if (s != NULL) {
 		if (s[0] == 0)
 			return false;
-		while (s[i]) {
+
+		for (int i = 0; s[i]; i++) {
 			if (!hResCheckResID(hrc, s[i]))
 				return false;
-			i++;
 		}
 	}
 	return true;

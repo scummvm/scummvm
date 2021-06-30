@@ -255,7 +255,7 @@ void setAreaSound(const TilePoint &) {
 				loopID = 0;
 			}
 			audioEnvironmentUseSet(loopID, ss, themePos << kPlatShift);
-		} else if (!playingExternalLoop) {
+		} else if (playingExternalLoop) {
 			audioEnvironmentUseSet(playingExternalLoop, 0, Point16(0, 0)); //themePos << kPlatShift);
 		}
 	}

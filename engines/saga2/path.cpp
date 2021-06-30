@@ -2304,7 +2304,7 @@ void addPathRequestToQueue(PathRequest *pr) {
 		if (isPlayerActor(a)) {
 			Common::List<PathRequest *>::iterator it;
 
-			for (it = g_vm->_pathQueue.begin(); it != g_vm->_pathQueue.end(); it++) {
+			for (it = g_vm->_pathQueue.begin(); it != g_vm->_pathQueue.end(); ++it) {
 				Actor       *prActor = (*it)->actor;
 
 				if (prActor != centerActor || !isPlayerActor(prActor))

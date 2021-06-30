@@ -465,8 +465,7 @@ class RandomGenerator {
 	static const uint32 b;          //  arbitrary constant
 
 public:
-	RandomGenerator(void) {
-		a = 1;
+	RandomGenerator(void) : a(1) {
 	}
 	RandomGenerator(uint16 seed) {
 		a = (uint32)seed << 16;
@@ -603,7 +602,7 @@ bool Thread::interpret(void) {
 		case op_getflag:                        // get a flag
 			D_OP(op_getflag);
 			addr = bitAddress(this, &pc, &w);    // get address of bit
-			*--stack = (*addr) & w ? 1 : 0;     // true or false if bit set
+			*--stack = ((*addr) & w) ? 1 : 0;     // true or false if bit set
 			break;
 
 		case op_getint:                         // read from integer field (mode)
@@ -1923,7 +1922,7 @@ scriptResult runObjectMethod(
     scriptCallFrame &args) {
 	GameObject      *obj;
 
-	assert(obj = GameObject::objectAddress(id));
+	obj = GameObject::objectAddress(id);
 
 	return runMethod(obj->scriptClass(),
 	                 builtinTypeObject,
@@ -1941,7 +1940,7 @@ scriptResult runTagMethod(
     scriptCallFrame &args) {
 	ActiveItemPtr   aItem;
 
-	assert(aItem = ActiveItem::activeItemAddress(index));
+	aItem = ActiveItem::activeItemAddress(index);
 	if (!aItem->_data.scriptClassID)
 		return scriptResultNoScript;
 

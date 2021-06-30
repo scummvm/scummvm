@@ -2097,7 +2097,6 @@ int16 scriptActorDeductPayment(int16 *args) {
 				if (massCount > paymentAmount) {
 					obj->setExtra(massCount - paymentAmount);
 					globalContainerList.setUpdate(obj->IDParent());
-					paymentAmount = 0;
 					break;
 				} else {
 					if (delObj) {
@@ -2107,7 +2106,8 @@ int16 scriptActorDeductPayment(int16 *args) {
 					}
 					paymentAmount -= massCount;
 					delObj = obj;
-					if (paymentAmount == 0) break;
+					if (paymentAmount == 0)
+						break;
 				}
 			} else {
 				//  Non-mergeable objects count as 1
