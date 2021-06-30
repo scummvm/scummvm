@@ -117,7 +117,7 @@ void GridItemWidget::drawWidget() {
 		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight),
 								_activeEntry->title.substr(0, breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
 		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight + kLineHeight, _x + thumbWidth, _y + thumbHeight + 2 * kLineHeight),
-								_activeEntry->title.substr(breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
+								_activeEntry->title.substr(breakPoint + 1), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
 	}
 }
 
@@ -234,15 +234,22 @@ void GridItemTray::handleMouseWheel(int x, int y, int direction) {
 // TODO: extend for multiple lines
 int breakText(const Common::String &str, int fitWidth) {
 	int textWidth = g_gui.getStringWidth(str);
+	
+	// If empty string is passed
+	if (str.size() == 0) return 1;
 	if (textWidth <= fitWidth) return str.size();
 
 	textWidth = 0;
 	int curPos = 0;
+	int breakPoint = str.size();
 	while (textWidth < fitWidth) {
 		textWidth += g_gui.getCharWidth(str[curPos]);
+		if (str[curPos] == ' ') {
+			breakPoint = curPos;
+		}
 		++curPos;
 	}
-	return curPos - 1;
+	return breakPoint;
 }
 
 Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
