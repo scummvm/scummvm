@@ -178,7 +178,7 @@ IntMenuItem::IntMenuItem(Common::String text, short xp, short yp, int shortcutKe
 Common::String IntMenuItem::getText() const {
 	// do custom formatting for some menu entries,
 	// and generate a Common::String of the results
-	char outputBuffer[10];
+	char outputBuffer[20];
 
 	switch (_output) {
 	case MENU_OUTPUT_REAGENT:
