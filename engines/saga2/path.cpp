@@ -1066,13 +1066,18 @@ protected:
 
 	enum pathFlags {
 		aborted     = (1 << 0),             // path request has been aborted
+
 		completed   = (1 << 1),             // pathfinder has found best path
 		run         = (1 << 2)
 	};
 
+	enum {
+		kPathSize = 16
+	};
+
 	//  These static members are initialized when the path request
 	//  becomes the current active request being serviced.
-	static StaticTilePoint  path[16];
+	static TilePoint *path;
 	static int16            pathLength;
 
 	static StaticTilePoint  baseCoords,
@@ -1110,7 +1115,12 @@ protected:
 	PathRequest(Actor *a, int16 howSmart);
 
 public:
-	virtual ~PathRequest() {}
+	virtual ~PathRequest() {
+		if (path)
+			delete[] path;
+
+		path = nullptr;
+	}
 
 	void requestAbort(void) {
 		flags |= aborted;
@@ -1271,7 +1281,7 @@ struct VolumeLookupNode {
 static VolumeLookupNode     volumeLookupNodePool[256];
 static VolumeLookupNode     *volumeLookupTable[searchDiameter][searchDiameter];
 
-StaticTilePoint PathRequest::path[16] = {0, 0, 0};
+TilePoint *PathRequest::path = nullptr;
 int16           PathRequest::pathLength;
 
 StaticTilePoint PathRequest::baseCoords = {0, 0, 0},
@@ -1386,6 +1396,9 @@ PathRequest::PathRequest(Actor *a, int16 howSmart) {
 	smartness   = howSmart;
 	mTask       = actor->moveTask;
 	flags       = mTask->flags & MotionTask::requestRun ? run : 0;
+
+	if (path == nullptr)
+		path = new TilePoint[kPathSize]();
 
 	mTask->pathFindTask = this;
 }
@@ -1585,13 +1598,13 @@ big_break:
 void PathRequest::finish(void) {
 	Direction           prevDir;
 	int16               prevHeight = 0;
-	StaticTilePoint     *resultSteps = path,
-	                     coords;
+	TilePoint           *resultSteps = path,
+	                    coords;
 	int16               stepCount = 0;
-	StaticTilePoint     *res;
+	TilePoint           *res;
 	PathCell            *cell;
 
-	static StaticTilePoint tempResult[32];
+	static TilePoint tempResult[32];
 
 	debugC(2, kDebugPath, "Finishing Path Request: %p", (void *)this);
 
@@ -1641,7 +1654,7 @@ void PathRequest::finish(void) {
 			}
 
 			if (resultSteps) {
-				while (stepCount < ARRAYSIZE(path)
+				while (stepCount < kPathSize
 				        &&  res < &tempResult[ARRAYSIZE(tempResult)]) {
 					*resultSteps++ = *res++;
 					stepCount++;
