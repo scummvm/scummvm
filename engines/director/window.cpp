@@ -113,6 +113,7 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 
 	if (!blitTo)
 		blitTo = _composeSurface;
+	Channel *hiliteChannel = _currentMovie->getScore()->getChannelById(_currentMovie->_currentHiliteChannelId);
 
 	for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); i++) {
 		const Common::Rect &r = *i;
@@ -129,10 +130,19 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 						continue;
 				}
 
-				if ((*j)->_visible)
+				if ((*j)->_visible) {
+					if ((*j) == hiliteChannel)
+						continue;
 					inkBlitFrom(*j, r, blitTo);
+				}
 			}
 		}
+	}
+
+	if (_currentMovie->_currentHiliteChannelId) {
+		blitTo->fillRect(hiliteChannel->getBbox(), _stageColor);
+		inkBlitFrom(hiliteChannel, hiliteChannel->getBbox(), blitTo);
+		invertChannel(hiliteChannel);
 	}
 
 	_dirtyRects.clear();

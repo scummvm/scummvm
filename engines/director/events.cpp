@@ -117,8 +117,8 @@ bool Movie::processEvent(Common::Event &event) {
 		// hiliteChannelId is specified for BitMap castmember, so we deal with them separately with other castmember
 		// if we are moving out of bounds, then we don't hilite it anymore
 		if (_currentHiliteChannelId && !sc->_channels[_currentHiliteChannelId]->isMouseIn(pos)) {
-			g_director->getCurrentWindow()->invertChannel(sc->_channels[_currentHiliteChannelId]);
 			g_director->getCurrentWindow()->setDirty(true);
+			g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
 			_currentHiliteChannelId = 0;
 			_currentHandlingChannelId = 0;
 		}
@@ -157,7 +157,8 @@ bool Movie::processEvent(Common::Event &event) {
 
 			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite()) {
 				_currentHiliteChannelId = spriteId;
-				g_director->getCurrentWindow()->invertChannel(sc->_channels[spriteId]);
+				g_director->getCurrentWindow()->setDirty(true);
+				g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
 			}
 
 			_lastEventTime = g_director->getMacTicks();
@@ -180,8 +181,10 @@ bool Movie::processEvent(Common::Event &event) {
 
 		_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
 
-		if (_currentHiliteChannelId && sc->_channels[_currentHiliteChannelId])
-			g_director->getCurrentWindow()->invertChannel(sc->_channels[_currentHiliteChannelId]);
+		if (_currentHiliteChannelId && sc->_channels[_currentHiliteChannelId]) {
+			g_director->getCurrentWindow()->setDirty(true);
+			g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
+		}
 
 		debugC(3, kDebugEvents, "event: Button Up @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), _currentHandlingChannelId);
 
