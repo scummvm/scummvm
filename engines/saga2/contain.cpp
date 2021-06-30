@@ -115,18 +115,18 @@ ContainerList       globalContainerList;
 //	Physical container appearance
 
 static ContainerAppearanceDef physicalContainerAppearance = {
-    {250, 60, 268, 304 + 16},
-    {17 + 4, 87, 268 - 2, 304 - 87},
-    {13 + 8, 37, 44, 42},
-    {13 + 8 + 44, 37, 44, 42},
-    {13 + 118, 50, 36, 36},
-    {13 + 139, 37, 88, 43},
+	{250, 60, 268, 304 + 16},
+	{17 + 4, 87, 268 - 2, 304 - 87},
+	{13 + 8, 37, 44, 42},
+	{13 + 8 + 44, 37, 44, 42},
+	{13 + 118, 50, 36, 36},
+	{13 + 139, 37, 88, 43},
 	{ MKTAG('P', 'C', 'L', 0), MKTAG('P', 'C', 'L', 1) },
 	{ MKTAG('P', 'S', 'L', 0), MKTAG('P', 'S', 'L', 1) },
-    {13, 8},
-    {22, 22},
-    0, 0,
-    0
+	{13, 8},
+	{22, 22},
+	0, 0,
+	0
 };
 
 static StaticWindow brassDecorations[] = {
@@ -157,18 +157,18 @@ static StaticWindow woodDecorations[] = {
 //	Death container appearance
 
 ContainerAppearanceDef  deathContainerAppearance = {
-    {260, 60, 206, 250},
-    {2, 87, 206 - 22, 250 - 87 - 32},
-    {16,  24, 44, 42},
-    {120 + 18, 24, 44, 42},
-    {0, 0, 0, 0},
-    {0, 0, 0, 0},
+	{260, 60, 206, 250},
+	{2, 87, 206 - 22, 250 - 87 - 32},
+	{16,  24, 44, 42},
+	{120 + 18, 24, 44, 42},
+	{0, 0, 0, 0},
+	{0, 0, 0, 0},
 	{ MKTAG('D', 'C', 'L', 0), MKTAG('D', 'C', 'L', 1) },
 	{ MKTAG('D', 'S', 'L', 0), MKTAG('D', 'S', 'L', 1) },
-    {27, -4},
-    {22, 22},
-    0, 0,
-    0
+	{27, -4},
+	{22, 22},
+	0, 0,
+	0
 };
 
 // physal dialog window decorations
@@ -180,36 +180,36 @@ static StaticWindow deathDecorations[] = {
 //	ReadyContainer appearance
 
 ContainerAppearanceDef  readyContainerAppearance = {
-    {0, 0, 0, 0},
-    {476, 105, 0, 0},
-    {0, 0, 0, 0},
-    {0, 0, 0, 0},
-    {0, 0, 0, 0},
-    {0, 0, 0, 0},
+	{0, 0, 0, 0},
+	{476, 105, 0, 0},
+	{0, 0, 0, 0},
+	{0, 0, 0, 0},
+	{0, 0, 0, 0},
+	{0, 0, 0, 0},
 	{ 0, 0 },
 	{ 0, 0 },
-    {iconOriginX - 1, iconOriginY - 1 - 8},
-    {iconSpacingX, iconSpacingY},
-    1, 3,
-    3
+	{iconOriginX - 1, iconOriginY - 1 - 8},
+	{iconSpacingX, iconSpacingY},
+	1, 3,
+	3
 };
 
 //-----------------------------------------------------------------------
 //	Mental Container appearance
 
 ContainerAppearanceDef  mentalContainerAppearance = {
-    {478, 168 - 54, 158, 215},
-    {2, 86 - 18 - 4, 158 - 2, 215 - 66},
-    {2, 19, 44, 44},
-    {103, 40 - 18 - 4, 44, 44},
-    {0, 0, 0, 0},
-    {0, 0, 0, 0},
+	{478, 168 - 54, 158, 215},
+	{2, 86 - 18 - 4, 158 - 2, 215 - 66},
+	{2, 19, 44, 44},
+	{103, 40 - 18 - 4, 44, 44},
+	{0, 0, 0, 0},
+	{0, 0, 0, 0},
 	{ MKTAG('C', 'L', 'S', 0), MKTAG('C', 'L', 'S', 1) },
 	{ MKTAG('S', 'E', 'L', 0), MKTAG('S', 'E', 'L', 1) },
 	{3, 0},
 	{4, 4},
-    4, 4,
-    20
+	4, 4,
+	20
 };
 
 static StaticWindow mentalDecorations[] = {
@@ -219,18 +219,18 @@ static StaticWindow mentalDecorations[] = {
 //	Enchantment container appearance
 
 ContainerAppearanceDef  enchantmentContainerAppearance = {
-    {262, 92, 116, 202},
-    {2, 87, 116 - 2, 202 - 87},
-    {7, 50, 44, 43},
-    {57, 50, 44, 43},
-    {38, 7, 32, 32},
-    {0, 0, 0, 0},
+	{262, 92, 116, 202},
+	{2, 87, 116 - 2, 202 - 87},
+	{7, 50, 44, 43},
+	{57, 50, 44, 43},
+	{38, 7, 32, 32},
+	{0, 0, 0, 0},
 	{ MKTAG('A', 'A', 'A', 0), MKTAG('A', 'A', 'A', 0) },
 	{ MKTAG('A', 'A', 'A', 0), MKTAG('A', 'A', 'A', 0) },
 	{12, 98},
 	{16, 13},
-    2, 2,
-    2
+	2, 2,
+	2
 };
 
 //-----------------------------------------------------------------------
