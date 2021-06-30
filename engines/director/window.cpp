@@ -70,27 +70,28 @@ Window::~Window() {
 	}
 }
 
-void Window::invertChannel(Channel *channel) {
+void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 	const Graphics::Surface *mask = channel->getMask(true);
-	Common::Rect destRect = channel->getBbox();
+	Common::Rect srcRect = channel->getBbox();
+	srcRect.clip(destRect);
 
 	if (_wm->_pixelformat.bytesPerPixel == 1) {
-		for (int i = 0; i < destRect.height(); i++) {
-			byte *src = (byte *)_composeSurface->getBasePtr(destRect.left, destRect.top + i);
+		for (int i = 0; i < srcRect.height(); i++) {
+			byte *src = (byte *)_composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
 			const byte *msk = mask ? (const byte *)mask->getBasePtr(0, i) : nullptr;
 
-			for (int j = 0; j < destRect.width(); j++, src++)
+			for (int j = 0; j < srcRect.width(); j++, src++)
 				if (!mask || (msk && !(*msk++)))
 					*src = ~(*src);
 		}
 	} else {
 		uint32 alpha = _wm->_pixelformat.ARGBToColor(255, 0, 0, 0);
 
-		for (int i = 0; i < destRect.height(); i++) {
-			uint32 *src = (uint32 *)_composeSurface->getBasePtr(destRect.left, destRect.top + i);
+		for (int i = 0; i < srcRect.height(); i++) {
+			uint32 *src = (uint32 *)_composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
 			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(0, i) : nullptr;
 
-			for (int j = 0; j < destRect.width(); j++, src++)
+			for (int j = 0; j < srcRect.width(); j++, src++)
 				if (!mask || (msk && !(*msk++)))
 					*src = ~(*src & ~alpha) | alpha;
 		}
@@ -131,18 +132,12 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 				}
 
 				if ((*j)->_visible) {
-					if ((*j) == hiliteChannel)
-						continue;
 					inkBlitFrom(*j, r, blitTo);
+					if ((*j) == hiliteChannel)
+						invertChannel(hiliteChannel, r);
 				}
 			}
 		}
-	}
-
-	if (_currentMovie->_currentHiliteChannelId) {
-		blitTo->fillRect(hiliteChannel->getBbox(), _stageColor);
-		inkBlitFrom(hiliteChannel, hiliteChannel->getBbox(), blitTo);
-		invertChannel(hiliteChannel);
 	}
 
 	_dirtyRects.clear();
