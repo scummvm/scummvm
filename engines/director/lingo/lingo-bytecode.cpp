@@ -721,7 +721,7 @@ void LC::cb_v4theentitypush() {
 		case kTEAString:
 			{
 				Datum stringArg = g_lingo->pop();
-				ChunkType chunkType;
+				ChunkType chunkType = kChunkChar;
 				switch (entity) {
 				case kTheChars:
 					chunkType = kChunkChar;
