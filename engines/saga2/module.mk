@@ -33,7 +33,6 @@ MODULE_OBJS := \
 	imagcach.o \
 	interp.o \
 	intrface.o \
-	keybored.o \
 	loadmsg.o \
 	loadsave.o \
 	magic.o \
