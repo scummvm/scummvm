@@ -1703,12 +1703,8 @@ void SurfaceSdlGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
 	byte *src = (byte *)_overlayscreen->pixels;
 	byte *dst = (byte *)surface.getPixels();
 	int h = MIN<int>(surface.h, _videoMode.overlayHeight);
-	int pitch = MIN<int>(surface.w, _videoMode.overlayWidth * 2);
-	do {
-		memcpy(dst, src, pitch);
-		src += _overlayscreen->pitch;
-		dst += surface.pitch;
-	} while (--h);
+	int w = MIN<int>(surface.w, _videoMode.overlayWidth);
+	crossBlit(dst, src, surface.pitch, _overlayscreen->pitch, w, h, surface.format, _overlayFormat);
 
 	SDL_UnlockSurface(_overlayscreen);
 }
