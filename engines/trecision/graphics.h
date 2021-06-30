@@ -58,6 +58,8 @@ class GraphicsManager {
 
 	Common::List<Common::Rect> _dirtyRects;
 
+	const Graphics::PixelFormat _rgb555Format;
+
 	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
 	void drawCharPixel(uint16 y, uint16 charLeft, uint16 charRight, Common::Rect rect, Common::Rect subtitleRect, uint16 color, Graphics::Surface *externalSurface = nullptr);
 	void initCursor();

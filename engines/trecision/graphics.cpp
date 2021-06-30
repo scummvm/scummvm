@@ -39,7 +39,7 @@
 
 namespace Trecision {
 
-GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm) {	
+GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm), _rgb555Format(2, 5, 5, 5, 0, 10, 5, 0, 0) {	
 	for (int i = 0; i < 3; ++i)
 		_bitMask[i] = 0;
 
@@ -64,15 +64,14 @@ GraphicsManager::~GraphicsManager() {
 }
 
 bool GraphicsManager::init() {
-	// Find a suitable 16-bit format
-	const Graphics::PixelFormat rgb555(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	// Find a suitable 16-bit format, currently we don't support other color depths
 	Common::List<Graphics::PixelFormat> formats = g_system->getSupportedFormats();
 	for (Common::List<Graphics::PixelFormat>::iterator it = formats.begin(); it != formats.end(); ++it) {
 		if (it->bytesPerPixel != 2 || it->aBits()) {
 			it = formats.reverse_erase(it);
-		} else if (*it == rgb555) {
+		} else if (*it == _rgb555Format) {
 			formats.clear();
-			formats.push_back(rgb555);
+			formats.push_back(_rgb555Format);
 			break;
 		}
 	}
@@ -240,13 +239,12 @@ void GraphicsManager::copyToScreen(int x, int y, int w, int h) {
 }
 
 void GraphicsManager::readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height, uint16 count) {
-	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-	surface->create(width * count, height, pixelFormat);
+	surface->create(width * count, height, _rgb555Format);
 
 	for (uint16 i = 0; i < count; ++i) {
 		for (uint16 y = 0; y < height; ++y) {
 			void *p = surface->getBasePtr(width * i, y);
-			stream->read(p, width * pixelFormat.bytesPerPixel);
+			stream->read(p, width * _rgb555Format.bytesPerPixel);
 		}
 	}
 
@@ -350,7 +348,7 @@ void GraphicsManager::clearScreenBufferSaveSlotDescriptions() {
 
 uint16 GraphicsManager::convertToScreenFormat(uint16 color) const {
 	uint8 r, g, b;
-	g_system->getScreenFormat().colorToRGB(color, r, g, b);
+	_rgb555Format.colorToRGB(color, r, g, b);
 	return (uint16)_screenFormat.RGBToColor(r, g, b);
 }
 
