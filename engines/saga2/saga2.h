@@ -32,6 +32,7 @@
 
 #include "saga2/idtypes.h"
 #include "saga2/weapons.h"
+#include "saga2/vdraw.h"
 
 namespace Video {
 class SmackerDecoder;
@@ -99,6 +100,7 @@ public:
 	Common::List<PathRequest *> _pathQueue;
 	BandList *_bandList;
 
+	gDisplayPort _mainPort;
 
 	bool _autoAggression;
 	bool _autoWeapon;

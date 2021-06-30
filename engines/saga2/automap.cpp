@@ -427,7 +427,7 @@ void CAutoMap::drawClipped(
 
 void CAutoMap::draw(void) {          // redraw the window
 	// draw the entire panel
-	drawClipped(mainPort, Point16(0, 0), extent);
+	drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
 }
 
 // ------------------------------------------------------------------------

@@ -236,9 +236,9 @@ void SimpleWindow::update(const Rect16 &) {
 }
 
 void SimpleWindow::draw(void) {
-	pointer.hide(mainPort, extent);              // hide mouse pointer
-	drawClipped(mainPort, Point16(0, 0), extent);
-	pointer.show(mainPort, extent);              // show mouse pointer
+	pointer.hide(g_vm->_mainPort, extent);              // hide mouse pointer
+	drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
+	pointer.show(g_vm->_mainPort, extent);              // show mouse pointer
 }
 
 void SimpleWindow::drawClipped(

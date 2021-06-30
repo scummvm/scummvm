@@ -65,9 +65,6 @@ public:
 	void scrollPixels(const Rect16 r, int dx, int dy);
 };
 
-extern void initVGAGraphics(gDisplayPort &mainPort);
-extern void cleanupVGAGraphics(void);
-
 extern vDisplayPage *drawPage;
 
 } // end of namespace Saga2

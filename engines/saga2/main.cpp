@@ -80,8 +80,7 @@ uint32 cliMemory        = 0;
 gMouseState             mouseState;
 
 //  Display variables
-gDisplayPort            mainPort;               // default rendering port
-gMousePointer           pointer(mainPort);   // the actual pointer
+gMousePointer           pointer(g_vm->_mainPort);   // the actual pointer
 BackWindow              *mainWindow;            // main window...
 
 //  Memory allocation heap
@@ -725,14 +724,14 @@ bool initGUIMessagers(void) {
 	for (int i = 0; i < 10; i++) {
 		char debItem[16];
 		sprintf(debItem, "Status%1.1d", i);
-		Status[i] = new StatusLineMessager(debItem, i, &mainPort);
+		Status[i] = new StatusLineMessager(debItem, i, &g_vm->_mainPort);
 		if (Status[i] == NULL)
 			return false;
 		sprintf(debItem, "Status%2.2d", i + 10);
-		Status2[i] = new StatusLineMessager(debItem, i, &mainPort, 468, 21 + (11 * i));
+		Status2[i] = new StatusLineMessager(debItem, i, &g_vm->_mainPort, 468, 21 + (11 * i));
 	}
 	for (int j = 0; j < 3; j++)
-		ratemess[j] = new StatusLineMessager("FrameRates", j, &mainPort, 5, 450 + (11 * j), 500);
+		ratemess[j] = new StatusLineMessager("FrameRates", j, &g_vm->_mainPort, 5, 450 + (11 * j), 500);
 	return true;
 }
 
