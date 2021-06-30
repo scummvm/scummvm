@@ -114,22 +114,20 @@ ContainerList       globalContainerList;
 //-----------------------------------------------------------------------
 //	Physical container appearance
 
-ContainerAppearanceDef  physicalContainerAppearance(
-    Rect16(250, 60, 268, 304 + 16),          //  Default window position
-    Rect16(17 + 4, 87, 268 - 2, 304 - 87), //  view rectangle
-    Rect16(13 + 8, 37, 44, 42),              //  close button rectangle
-    Rect16(13 + 8 + 44, 37, 44, 42),         //  scroll button rectangle
-    Rect16(13 + 118, 50, 36, 36),            //  icon rectangle
-    Rect16(13 + 139, 37, 88, 43),            //  massBulk rectangle
-    MKTAG('P', 'C', 'L', 0),                //  CloseBox normal image
-    MKTAG('P', 'C', 'L', 1),                //  CloseBox selected image
-    MKTAG('P', 'S', 'L', 0),                //  Scroll button normal image
-    MKTAG('P', 'S', 'L', 1),                //  Scroll button selected image
-    Point16(13, 8),                          //  Icon origin
-    Point16(22, 22),                         //  Icon spacing
-    0, 0,                                   //  Visible rows and columns (filled in later)
-    0                                       //  Total rows
-);
+static ContainerAppearanceDef physicalContainerAppearance = {
+    {250, 60, 268, 304 + 16},
+    {17 + 4, 87, 268 - 2, 304 - 87},
+    {13 + 8, 37, 44, 42},
+    {13 + 8 + 44, 37, 44, 42},
+    {13 + 118, 50, 36, 36},
+    {13 + 139, 37, 88, 43},
+	{ MKTAG('P', 'C', 'L', 0), MKTAG('P', 'C', 'L', 1) },
+	{ MKTAG('P', 'S', 'L', 0), MKTAG('P', 'S', 'L', 1) },
+    {13, 8},
+    {22, 22},
+    0, 0,
+    0
+};
 
 static StaticWindow brassDecorations[] = {
 	{{0,  0, 268,  86},   nullptr, 3},
@@ -158,22 +156,20 @@ static StaticWindow woodDecorations[] = {
 //-----------------------------------------------------------------------
 //	Death container appearance
 
-ContainerAppearanceDef  deathContainerAppearance(
-    Rect16(260, 60, 206, 250),           //  Default window position
-    Rect16(2, 87, 206 - 22, 250 - 87 - 32),      //  view rectangle
-    Rect16(16,  24, 44, 42),                 //  close button rectangle
-    Rect16(120 + 18, 24, 44, 42),            //  scroll button rectangle
-    Rect16(0, 0, 0, 0),                      //  icon rectangle
-    Rect16(0, 0, 0, 0),                      //  massBulk rectangle
-    MKTAG('D', 'C', 'L', 0),                //  CloseBox normal image
-    MKTAG('D', 'C', 'L', 1),                //  CloseBox selected image
-    MKTAG('D', 'S', 'L', 0),                //  Scroll button normal image
-    MKTAG('D', 'S', 'L', 1),                //  Scroll button selected image
-    Point16(27, -4),                         //  Icon origin
-    Point16(22, 22),                         //  Icon spacing
-    0, 0,                                   //  Visible rows and columns (filled in later)
-    0                                       //  Total rows
-);
+ContainerAppearanceDef  deathContainerAppearance = {
+    {260, 60, 206, 250},
+    {2, 87, 206 - 22, 250 - 87 - 32},
+    {16,  24, 44, 42},
+    {120 + 18, 24, 44, 42},
+    {0, 0, 0, 0},
+    {0, 0, 0, 0},
+	{ MKTAG('D', 'C', 'L', 0), MKTAG('D', 'C', 'L', 1) },
+	{ MKTAG('D', 'S', 'L', 0), MKTAG('D', 'S', 'L', 1) },
+    {27, -4},
+    {22, 22},
+    0, 0,
+    0
+};
 
 // physal dialog window decorations
 static StaticWindow deathDecorations[] = {
@@ -183,42 +179,38 @@ static StaticWindow deathDecorations[] = {
 //-----------------------------------------------------------------------
 //	ReadyContainer appearance
 
-ContainerAppearanceDef  readyContainerAppearance(
-    Rect16(0, 0, 0, 0),                      //  Default window position
-    Rect16(476, 105, 0, 0),                  //  view rectangle
-    Rect16(0, 0, 0, 0),                      //  close button rectangle
-    Rect16(0, 0, 0, 0),                      //  scroll button rectangle
-    Rect16(0, 0, 0, 0),                      //  icon rectangle
-    Rect16(0, 0, 0, 0),                      //  massBulk rectangle
-    0,                                      //  CloseBox normal image
-    0,                                      //  CloseBox selected image
-    0,                                      //  Scroll button normal image
-    0,                                      //  Scroll button selected image
-    Point16(iconOriginX - 1, iconOriginY - 1 - 8), //  Icon origin
-    Point16(iconSpacingX, iconSpacingY),     //  Icon spacing
-    1, 3,                                   //  Visible rows and columns
-    3                                       //  Total rows
-);
+ContainerAppearanceDef  readyContainerAppearance = {
+    {0, 0, 0, 0},
+    {476, 105, 0, 0},
+    {0, 0, 0, 0},
+    {0, 0, 0, 0},
+    {0, 0, 0, 0},
+    {0, 0, 0, 0},
+	{ 0, 0 },
+	{ 0, 0 },
+    {iconOriginX - 1, iconOriginY - 1 - 8},
+    {iconSpacingX, iconSpacingY},
+    1, 3,
+    3
+};
 
 //-----------------------------------------------------------------------
 //	Mental Container appearance
 
-ContainerAppearanceDef  mentalContainerAppearance(
-    Rect16(478, 168 - 54, 158, 215),     //  Default window position
-    Rect16(2, 86 - 18 - 4, 158 - 2, 215 - 66), //  view rectangle
-    Rect16(2, 19, 44, 44),               //  close button rectangle
-    Rect16(103, 40 - 18 - 4, 44, 44),        //  scroll button rectangle
-    Rect16(0, 0, 0, 0),                      //  icon rectangle
-    Rect16(0, 0, 0, 0),                      //  massBulk rectangle
-    MKTAG('C', 'L', 'S', 0),                //  CloseBox normal image
-    MKTAG('C', 'L', 'S', 1),                //  CloseBox selected image
-    MKTAG('S', 'E', 'L', 0),                //  Scroll button normal image
-    MKTAG('S', 'E', 'L', 1),                //  Scroll button selected image
-    Point16(3, 0),                       //  Icon origin
-    Point16(4, 4),                       //  Icon spacing
-    4, 4,                                   //  Visible rows and columns
-    20                                      //  Total rows
-);
+ContainerAppearanceDef  mentalContainerAppearance = {
+    {478, 168 - 54, 158, 215},
+    {2, 86 - 18 - 4, 158 - 2, 215 - 66},
+    {2, 19, 44, 44},
+    {103, 40 - 18 - 4, 44, 44},
+    {0, 0, 0, 0},
+    {0, 0, 0, 0},
+	{ MKTAG('C', 'L', 'S', 0), MKTAG('C', 'L', 'S', 1) },
+	{ MKTAG('S', 'E', 'L', 0), MKTAG('S', 'E', 'L', 1) },
+	{3, 0},
+	{4, 4},
+    4, 4,
+    20
+};
 
 static StaticWindow mentalDecorations[] = {
 	{{0,  0, 158,  215}, nullptr, 0}      //  Bottom decoration panel
@@ -226,22 +218,20 @@ static StaticWindow mentalDecorations[] = {
 //-----------------------------------------------------------------------
 //	Enchantment container appearance
 
-ContainerAppearanceDef  enchantmentContainerAppearance(
-    Rect16(262, 92, 116, 202),           //  Default window position
-    Rect16(2, 87, 116 - 2, 202 - 87),        //  view rectangle
-    Rect16(7, 50, 44, 43),               //  close button rectangle
-    Rect16(57, 50, 44, 43),                  //  scroll button rectangle
-    Rect16(38, 7, 32, 32),               //  icon rectangle
-    Rect16(0, 0, 0, 0),                      //  massBulk rectangle
-    MKTAG('A', 'A', 'A', 0),                //  CloseBox normal image
-    MKTAG('A', 'A', 'A', 0),                //  CloseBox selected image
-    MKTAG('A', 'A', 'A', 0),                //  Scroll button normal image
-    MKTAG('A', 'A', 'A', 0),                //  Scroll button selected image
-    Point16(12, 98),                         //  Icon origin
-    Point16(16, 13),                         //  Icon spacing
-    2, 2,                                   //  Visible rows and columns
-    2                                       //  Total rows
-);
+ContainerAppearanceDef  enchantmentContainerAppearance = {
+    {262, 92, 116, 202},
+    {2, 87, 116 - 2, 202 - 87},
+    {7, 50, 44, 43},
+    {57, 50, 44, 43},
+    {38, 7, 32, 32},
+    {0, 0, 0, 0},
+	{ MKTAG('A', 'A', 'A', 0), MKTAG('A', 'A', 'A', 0) },
+	{ MKTAG('A', 'A', 'A', 0), MKTAG('A', 'A', 'A', 0) },
+	{12, 98},
+	{16, 13},
+    2, 2,
+    2
+};
 
 //-----------------------------------------------------------------------
 //	ContainerView class
