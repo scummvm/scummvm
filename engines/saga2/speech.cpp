@@ -622,7 +622,7 @@ int16 TextWrap(
 	int16           i,                      // loop counter
 	                line_start,             // start of current line
 	                last_space,             // last space encountered
-	                last_space_pixels,      // pixel pos of last space
+	                last_space_pixels = 0,  // pixel pos of last space
 	                pixel_len,              // pixel length of line
 	                line_count = 0;         // number of lines
 
@@ -688,7 +688,7 @@ int16 buttonWrap(
 	int16           i,                      // loop counter
 	                line_start,             // start of current line
 	                last_space,             // last space encountered
-	                last_space_pixels,      // pixel pos of last space
+	                last_space_pixels = 0,  // pixel pos of last space
 	                charPixels,             // pixel length of character
 	                linePixels,             // pixels in current line
 	                buttonPixels,           // pixels in current button

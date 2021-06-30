@@ -90,7 +90,7 @@ void deleteSensor(Sensor *p) {
 
 void *constructSensor(int16 ctr, void *buf) {
 	int16           type;
-	Sensor          *sensor;
+	Sensor          *sensor = nullptr;
 	SensorList      *sl;
 
 	//  Get the sensor type
@@ -123,12 +123,12 @@ void *constructSensor(int16 ctr, void *buf) {
 		break;
 	}
 
-	assert(sensor != NULL);
+	assert(sensor != nullptr);
 
 	//  Get the sensor list
 	sl = fetchSensorList(sensor->getObject());
 
-	assert(sl != NULL);
+	assert(sl != nullptr);
 
 	//  Append this Sensor to the sensor list
 	sl->_list.push_back(sensor);

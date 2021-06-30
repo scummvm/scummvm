@@ -124,6 +124,8 @@ static StaticTilePoint tDirTable3[8] = {
 struct PathTileInfo {
 	TileInfo    *surfaceTile;
 	int16       surfaceHeight;
+
+	PathTileInfo() : surfaceTile(nullptr), surfaceHeight(0) {}
 };
 
 typedef PathTileInfo        PathTilePosInfo[maxPlatforms];
@@ -1582,7 +1584,7 @@ big_break:
 
 void PathRequest::finish(void) {
 	Direction           prevDir;
-	int16               prevHeight;
+	int16               prevHeight = 0;
 	StaticTilePoint     *resultSteps = path,
 	                     coords;
 	int16               stepCount = 0;
