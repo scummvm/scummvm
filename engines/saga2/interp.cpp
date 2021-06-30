@@ -1633,9 +1633,9 @@ void Thread::dispatch(void) {
 				break;
 
 			case waitTagSemaphore:
-				if (((ActiveItem *)th->waitParam)->isExclusive() == false) {
+				if (th->waitParam->isExclusive() == false) {
 					th->flags &= ~waiting;
-					((ActiveItem *)th->waitParam)->setExclusive(true);
+					th->waitParam->setExclusive(true);
 				}
 				break;
 			default:

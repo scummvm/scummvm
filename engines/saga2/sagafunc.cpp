@@ -2571,7 +2571,7 @@ int16 scriptTagObtainLock(int16 *) {
 		WriteStatusF(15, "Locked: %d\n", lockCount);
 #endif
 	} else {
-		thisThread->waitForEvent(Thread::waitTagSemaphore, (long)ai);
+		thisThread->waitForEvent(Thread::waitTagSemaphore, ai);
 #if DEBUG*0
 		lockCount += 1;
 		WriteStatusF(15, "Locked: %d\n", lockCount);
