@@ -146,8 +146,6 @@ extern ObjectID     pickedObject;
 
 const uint32    imageGroupID = MKTAG('I', 'M', 'A', 'G');
 
-extern TilePoint    incDirTable[];
-
 bool unstickObject(GameObject *obj);
 
 /* ===================================================================== *
