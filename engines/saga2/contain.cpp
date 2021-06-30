@@ -1762,11 +1762,11 @@ void initContainers(void) {
 	if (containerRes == NULL)
 		containerRes = resFile->newContext(MKTAG('C', 'O', 'N', 'T'), "cont.resources");
 
-	selImage = ImageCache.requestImage(imageRes, MKTAG('A', 'M', 'N', 'T'));
+	selImage = g_vm->_imageCache->requestImage(imageRes, MKTAG('A', 'M', 'N', 'T'));
 }
 
 void cleanupContainers(void) {
-	if (selImage)       ImageCache.releaseImage(selImage);
+	if (selImage)       g_vm->_imageCache->releaseImage(selImage);
 	if (containerRes)   resFile->disposeContext(containerRes);
 
 	selImage = NULL;

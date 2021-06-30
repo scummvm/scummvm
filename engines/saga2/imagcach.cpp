@@ -36,6 +36,14 @@ namespace Saga2 {
 extern char *idname(long s);
 #endif
 
+void initImageCache() {
+	g_vm->_imageCache = new CImageCache;
+}
+
+void cleanupImageCache() {
+	delete g_vm->_imageCache;
+}
+
 CImageNode::CImageNode(hResContext *con, uint32 resID) {
 	if (con) {
 #if DEBUG
@@ -183,8 +191,5 @@ void *CImageCache::requestImage(hResContext *con, uint32 resID) {
 	// return the newly loaded image
 	return imageNode->getImagePtr();
 }
-
-// global declarations
-CImageCache ImageCache;
 
 } // end of namespace Saga2

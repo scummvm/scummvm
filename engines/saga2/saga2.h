@@ -47,6 +47,7 @@ class ActorAppearance;
 class PathRequest;
 class MotionTask;
 class GrabInfo;
+class CImageCache;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -102,6 +103,7 @@ public:
 	Common::List<PathRequest *> _pathQueue;
 	Common::List<MotionTask *>::iterator _nextMT;
 	BandList *_bandList;
+	CImageCache *_imageCache;
 	GrabInfo *_mouseInfo;
 
 	gDisplayPort _mainPort;

@@ -29,6 +29,9 @@
 
 namespace Saga2 {
 
+void initImageCache(void);
+void cleanupImageCache(void);
+
 /* ===================================================================== *
    ImageNode class which defines a re-entrant image resource
  * ===================================================================== */
@@ -72,10 +75,6 @@ public:
 	void *requestImage(hResContext *con, uint32 resID);
 	void releaseImage(void *);
 };
-
-
-// global declarations
-extern CImageCache ImageCache;
 
 } // end of namespace Saga2
 
