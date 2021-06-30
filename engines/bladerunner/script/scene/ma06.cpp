@@ -126,10 +126,13 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3,  10, 0, 1u);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 10, 0, 1u);
 
-			Actor_Says(kActorAnsweringMachine, 80, 3);     // your floor number please
+			if (_vm->_cutContent) {
+				Actor_Says(kActorAnsweringMachine, 70, kAnimationModeTalk); // voice print identification
+			}
+			Actor_Says(kActorAnsweringMachine, 80, kAnimationModeTalk);     // your floor number please
 			Actor_Says(kActorMcCoy, 2940, 18);             // McCoy: McCoy 88F
 			Game_Flag_Set(kFlagMA06ToMA02);                // to McCoy's Apartment
-			Actor_Says(kActorAnsweringMachine, 90, 3);     // 88 thank you
+			Actor_Says(kActorAnsweringMachine, 90, kAnimationModeTalk);     // 88 thank you
 			Actor_Face_Actor(kActorMcCoy, kActorRachael, true);
 			Actor_Says(kActorMcCoy, 2710, 14);             // Excuse me
 
@@ -168,7 +171,10 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3,  10, 0, 1u);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 10, 0, 1u);
 
-			Actor_Says(kActorAnsweringMachine, 80, 3);      // your floor number please
+			if (_vm->_cutContent) {
+				Actor_Says(kActorAnsweringMachine, 70, kAnimationModeTalk); // voice print identification
+			}
+			Actor_Says(kActorAnsweringMachine, 80, kAnimationModeTalk);     // your floor number please
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsInsideElevatorStartTalkAct4);
 			//
 			Delay(500);
@@ -256,7 +262,10 @@ void SceneScriptMA06::activateElevator() {
 			break;
 		}
 
-		Actor_Says(kActorAnsweringMachine, 80, kAnimationModeTalk);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorAnsweringMachine, 70, kAnimationModeTalk); // voice print identification
+		}
+		Actor_Says(kActorAnsweringMachine, 80, kAnimationModeTalk);     // your floor number please
 		Player_Gains_Control();
 		int floorLevel = Elevator_Activate(kElevatorMA);
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -279,7 +288,7 @@ void SceneScriptMA06::activateElevator() {
 			} else {
 				Sound_Play(kSfxELEBAD1, 100, 0, 0, 50);
 				Delay(500);
-				Actor_Says(kActorAnsweringMachine, 610, 3);
+				Actor_Says(kActorAnsweringMachine, 610, kAnimationModeTalk);
 			}
 		} else { // floorLevel == 0
 			Actor_Says(kActorMcCoy, 2940, 18);
@@ -293,7 +302,7 @@ void SceneScriptMA06::activateElevator() {
 				Actor_Says(kActorMcCoy, 8527, kAnimationModeTalk);
 			} else {
 				Game_Flag_Set(kFlagMA06ToMA02);
-				Actor_Says(kActorAnsweringMachine, 90, 3);
+				Actor_Says(kActorAnsweringMachine, 90, kAnimationModeTalk);
 			}
 		}
 	}
