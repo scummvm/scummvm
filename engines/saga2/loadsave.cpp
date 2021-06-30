@@ -45,6 +45,7 @@
 #include "saga2/vpal.h"
 #include "saga2/palette.h"
 #include "saga2/contain.h"
+#include "saga2/imagcach.h"
 
 namespace Saga2 {
 
@@ -91,6 +92,7 @@ void initGameState(void) {
 	pauseTimer();
 
 	initGlobals();
+	initImageCache();
 	initTimer();
 	initAudio();
 	initCalender();
@@ -484,6 +486,7 @@ void cleanupGameState(void) {
 	cleanupWorlds();
 	cleanupAudio();
 	cleanupTimer();
+	cleanupImageCache();
 	cleanupGlobals();
 }
 

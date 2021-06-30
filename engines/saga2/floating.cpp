@@ -132,7 +132,7 @@ void DecoratedWindow::setDecorations(
 
 	for (i = 0; i < numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
-		dec->image = ImageCache.requestImage(con,
+		dec->image = g_vm->_imageCache->requestImage(con,
 		                                     MKTAG('B', 'R', 'D', dec->imageNumber));
 		decorations[i].extent = dec->extent;
 		decorations[i].image = dec->image;
@@ -158,7 +158,7 @@ void DecoratedWindow::setDecorations(
 
 	for (i = 0; i < numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
-		dec->image = ImageCache.requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
+		dec->image = g_vm->_imageCache->requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
 		decorations[i].extent = dec->extent;
 		decorations[i].image = dec->image;
 		decorations[i].imageNumber = dec->imageNumber;
@@ -190,7 +190,7 @@ void DecoratedWindow::setDecorations(
 
 	for (i = 0; i < numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
-		dec->image = ImageCache.requestImage(con,
+		dec->image = g_vm->_imageCache->requestImage(con,
 		                                     MKTAG('B', 'R', 'D', dec->imageNumber));
 		decorations[i].extent = dec->extent;
 		decorations[i].image = dec->image;
@@ -216,7 +216,7 @@ void DecoratedWindow::setDecorations(
 
 	for (i = 0; i < numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
-		dec->image = ImageCache.requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
+		dec->image = g_vm->_imageCache->requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
 		decorations[i].extent = dec->extent;
 		decorations[i].image = dec->image;
 		decorations[i].imageNumber = dec->imageNumber;
@@ -239,7 +239,7 @@ void DecoratedWindow::removeDecorations(void) {
 
 	// release requests made to the Image Cache
 	for (dec = decorations, i = 0; i < numDecorations; i++, dec++) {
-		ImageCache.releaseImage(dec->image);
+		g_vm->_imageCache->releaseImage(dec->image);
 	}
 
 	if (decorations)

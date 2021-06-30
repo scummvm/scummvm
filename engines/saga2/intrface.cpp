@@ -811,12 +811,12 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 
 	// setup mass/bulk indicator imagery
 	if (death) {
-		massBulkImag = ImageCache.requestImage(containerRes, MKTAG('D', 'J', 'B', massBulkResNum));
+		massBulkImag = g_vm->_imageCache->requestImage(containerRes, MKTAG('D', 'J', 'B', massBulkResNum));
 
 		pieIndImag = loadImageRes(containerRes, pieIndResNum, numPieIndImages, 'D', 'A', 'J');
 	} else {
 
-		massBulkImag = ImageCache.requestImage(containerRes, MKTAG('G', 'J', 'B', massBulkResNum));
+		massBulkImag = g_vm->_imageCache->requestImage(containerRes, MKTAG('G', 'J', 'B', massBulkResNum));
 
 		pieIndImag = loadImageRes(containerRes, pieIndResNum, numPieIndImages, 'G', 'A', 'J');
 	}
@@ -869,7 +869,7 @@ CMassWeightIndicator::~CMassWeightIndicator(void) {
 	indList.remove(this);
 
 	unloadImageRes(pieIndImag, numPieIndImages);
-	ImageCache.releaseImage(massBulkImag);
+	g_vm->_imageCache->releaseImage(massBulkImag);
 }
 
 /*****************************************************************************
@@ -948,9 +948,9 @@ CManaIndicator::CManaIndicator(gPanelList &list) : gCompImage(list,
 	// load in the ring images
 	ringImages = loadImageRes(resContext, ringResNum, numRings, 'R', 'N', 'G');
 
-	backImage = ImageCache.requestImage(resContext, MKTAG('B', 'A', 'C', 'K'));
+	backImage = g_vm->_imageCache->requestImage(resContext, MKTAG('B', 'A', 'C', 'K'));
 
-	wellImage = ImageCache.requestImage(resContext, MKTAG('W', 'E', 'L', 'L'));
+	wellImage = g_vm->_imageCache->requestImage(resContext, MKTAG('W', 'E', 'L', 'L'));
 
 	// hmm this could be cleaner...
 	starRingEndPos[0] = Point16(redEndX,    redEndY);
@@ -998,8 +998,8 @@ CManaIndicator::~CManaIndicator(void) {
 	unloadImageRes(ringImages, numRings);
 
 	// release back image
-	ImageCache.releaseImage(backImage);
-	ImageCache.releaseImage(wellImage);
+	g_vm->_imageCache->releaseImage(backImage);
+	g_vm->_imageCache->releaseImage(wellImage);
 
 	// release the saved map
 	if (savedMap.data)
@@ -1321,7 +1321,7 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	starImag = loadButtonRes(healthRes, starStart, starNum, 'S', 'T', 'A');
 
 	// load in the health star border
-	starFrameImag    = ImageCache.requestImage(healthRes, MKTAG('B', 'T', 'N', starFrameResNum));
+	starFrameImag    = g_vm->_imageCache->requestImage(healthRes, MKTAG('B', 'T', 'N', starFrameResNum));
 
 	// set the image indexes to nominal startup values
 	for (i = 0; i < numControls + 1; i++) {
@@ -1397,7 +1397,7 @@ CHealthIndicator::~CHealthIndicator(void) {
 	unloadImageRes(starImag, starNum);
 
 	// release star frame imagery
-	ImageCache.releaseImage(starFrameImag);
+	g_vm->_imageCache->releaseImage(starFrameImag);
 }
 
 //  Recalculate and update the health star for a particular brother
@@ -1578,7 +1578,7 @@ void **loadButtonRes(hResContext *con, int16 resID, int16 numRes) {
 
 	for (i = 0, k = resID; i < numRes; i++, k++) {
 		// get an image from the image cache
-		images[i] = ImageCache.requestImage(con, MKTAG('B', 'T', 'N', k));
+		images[i] = g_vm->_imageCache->requestImage(con, MKTAG('B', 'T', 'N', k));
 	}
 
 	return images;
@@ -1594,7 +1594,7 @@ void **loadButtonRes(hResContext *con, int16 resID, int16 numRes, char a, char b
 	void **images = (void **)malloc(sizeof(void *)*numRes);
 
 	for (i = 0, k = resID; i < numRes; i++, k++) {
-		images[i] = ImageCache.requestImage(con, MKTAG(a, b, c, k));
+		images[i] = g_vm->_imageCache->requestImage(con, MKTAG(a, b, c, k));
 	}
 
 	return images;
@@ -1612,7 +1612,7 @@ void unloadImageRes(void **images, int16 numRes) {
 
 	if (images) {
 		for (i = 0; i < numRes; i++) {
-			ImageCache.releaseImage(images[i]);
+			g_vm->_imageCache->releaseImage(images[i]);
 		}
 
 		free(images);
@@ -1655,17 +1655,17 @@ void SetupUserControls(void) {
 	julBtnImag       = loadButtonRes(imageRes, julBtnResNum, numBtnImages);
 	phiBtnImag       = loadButtonRes(imageRes, phiBtnResNum, numBtnImages);
 	kevBtnImag       = loadButtonRes(imageRes, kevBtnResNum, numBtnImages);
-	broBtnFrameImag  = ImageCache.requestImage(imageRes, MKTAG('F', 'R', 'A', 'M'));
+	broBtnFrameImag  = g_vm->_imageCache->requestImage(imageRes, MKTAG('F', 'R', 'A', 'M'));
 
 
 	// set up the portrait name plates
 	for (n = 0; n < kNumViews; n++) {
-		namePlateImages[n] = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', namePlateResNum[n]));
+		namePlateImages[n] = g_vm->_imageCache->requestImage(imageRes, MKTAG('B', 'T', 'N', namePlateResNum[n]));
 	}
 
 	// get the frame image
-	namePlateFrameImag = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', 15));
-	armorImag = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', 34));
+	namePlateFrameImag = g_vm->_imageCache->requestImage(imageRes, MKTAG('B', 'T', 'N', 15));
+	armorImag = g_vm->_imageCache->requestImage(imageRes, MKTAG('B', 'T', 'N', 34));
 
 	// clean out the old context
 	if (imageRes) resFile->disposeContext(imageRes);
@@ -1824,15 +1824,15 @@ void CleanupButtonImages(void) {
 	}
 
 	// name plate frame
-	ImageCache.releaseImage(namePlateFrameImag);
-	ImageCache.releaseImage(armorImag);
+	g_vm->_imageCache->releaseImage(namePlateFrameImag);
+	g_vm->_imageCache->releaseImage(armorImag);
 
 	// release name frames
-	ImageCache.releaseImage(broBtnFrameImag);
+	g_vm->_imageCache->releaseImage(broBtnFrameImag);
 
 	// name plates
 	for (i = 0; i < kNumViews; i++) {
-		ImageCache.releaseImage(namePlateImages[i]);
+		g_vm->_imageCache->releaseImage(namePlateImages[i]);
 	}
 }
 
