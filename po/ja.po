@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-30 13:00+0000\n"
-"PO-Revision-Date: 2021-06-27 23:25+0000\n"
+"PO-Revision-Date: 2021-06-30 13:44+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6778,17 +6778,12 @@ msgstr ""
 "現できます。"
 
 #: engines/scumm/scumm.cpp:1335
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable. Music and high-"
-#| "resolution\n"
-#| "versions of font and cursor will be disabled."
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
-"Macintosh用実行ファイル「Loom」が見つかりません。\n"
-"音楽、高解像度のフォントやカーソルは使えなくなります。"
+"「Indy」のMacintosh用実行ファイルが見つかりません。\n"
+"高解像度のフォントは使用できません。"
 
 #: engines/scumm/scumm.cpp:1361
 msgid ""
