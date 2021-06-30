@@ -155,7 +155,10 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 
 	if (p->ms) {
 		// Get the pixel that macDrawPixel will give us, but store it to apply the
-		// ink later.
+		// ink later
+		// if we have lineSize <= 0, means we are not drawing anything. so we may return directly.
+		if (p->ms->lineSize <= 0)
+			return;
 		tmpDst = *dst;
 		(p->_wm->getDrawPixel())(x, y, src, p->ms->pd);
 		src = *dst;
