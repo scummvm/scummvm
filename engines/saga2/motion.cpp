@@ -3228,12 +3228,6 @@ struct CombatMotionSet {
 	const uint8 *list;          //  Array of motion types
 	uint16      listSize;       //  Size of array
 
-	//  Constructor
-	CombatMotionSet(const uint8 *l, uint16 sz) :
-		list(l),
-		listSize(sz) {
-	}
-
 	//  Select randome element from the array
 	uint8 selectRandom(void) const {
 		return list[rand() % listSize];
@@ -3252,10 +3246,10 @@ const uint8 twoHandedSwingArray[] = {
 	MotionTask::twoHandedSwingRightLow,
 };
 
-const CombatMotionSet   twoHandedSwingSet =
-    CombatMotionSet(
-        twoHandedSwingArray,
-        ARRAYSIZE(twoHandedSwingArray));
+const CombatMotionSet twoHandedSwingSet = {
+	twoHandedSwingArray,
+	ARRAYSIZE(twoHandedSwingArray)
+};
 
 //  Construct a subset of all high two handed swing types
 const uint8 twoHandedHighSwingArray[] = {
@@ -3264,10 +3258,10 @@ const uint8 twoHandedHighSwingArray[] = {
 	MotionTask::twoHandedSwingRightHigh,
 };
 
-const CombatMotionSet   twoHandedHighSwingSet =
-    CombatMotionSet(
-        twoHandedHighSwingArray,
-        ARRAYSIZE(twoHandedHighSwingArray));
+const CombatMotionSet twoHandedHighSwingSet = {
+	twoHandedHighSwingArray,
+	ARRAYSIZE(twoHandedHighSwingArray)
+};
 
 //  Construct a subset of all low two handed swing types
 const uint8 twoHandedLowSwingArray[] = {
@@ -3276,10 +3270,10 @@ const uint8 twoHandedLowSwingArray[] = {
 	MotionTask::twoHandedSwingRightLow,
 };
 
-const CombatMotionSet   twoHandedLowSwingSet =
-    CombatMotionSet(
-        twoHandedLowSwingArray,
-        ARRAYSIZE(twoHandedLowSwingArray));
+const CombatMotionSet twoHandedLowSwingSet = {
+	twoHandedLowSwingArray,
+	ARRAYSIZE(twoHandedLowSwingArray)
+};
 
 //-----------------------------------------------------------------------
 //  Handle all two handed swing motions
@@ -3371,30 +3365,30 @@ const uint8 oneHandedSwingArray[] = {
 //				MotionTask::oneHandedThrust,
 };
 
-const CombatMotionSet   oneHandedSwingSet =
-    CombatMotionSet(
-        oneHandedSwingArray,
-        ARRAYSIZE(oneHandedSwingArray));
+const CombatMotionSet oneHandedSwingSet = {
+	oneHandedSwingArray,
+	ARRAYSIZE(oneHandedSwingArray)
+};
 
 //  Construct a subset of all high one handed swing types
 const uint8 oneHandedHighSwingArray[] = {
 	MotionTask::oneHandedSwingHigh,
 };
 
-const CombatMotionSet   oneHandedHighSwingSet =
-    CombatMotionSet(
-        oneHandedHighSwingArray,
-        ARRAYSIZE(oneHandedHighSwingArray));
+const CombatMotionSet oneHandedHighSwingSet = {
+	oneHandedHighSwingArray,
+	ARRAYSIZE(oneHandedHighSwingArray)
+};
 
 //  Construct a subset of all low one handed swing types
 const uint8 oneHandedLowSwingArray[] = {
 	MotionTask::oneHandedSwingLow,
 };
 
-const CombatMotionSet   oneHandedLowSwingSet =
-    CombatMotionSet(
-        oneHandedLowSwingArray,
-        ARRAYSIZE(oneHandedLowSwingArray));
+const CombatMotionSet oneHandedLowSwingSet = {
+	oneHandedLowSwingArray,
+	ARRAYSIZE(oneHandedLowSwingArray)
+};
 
 //-----------------------------------------------------------------------
 //  Handle all one handed swing motions
