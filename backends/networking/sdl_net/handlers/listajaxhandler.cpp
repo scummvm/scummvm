@@ -86,7 +86,7 @@ Common::JSONObject ListAjaxHandler::listDirectory(Common::String path) {
 
 	// fill the content
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
-		Common::String name = i->getDisplayName();
+		Common::String name = i->getName();
 		if (i->isDirectory()) name += "/";
 
 		Common::String filePath = i->getPath();
