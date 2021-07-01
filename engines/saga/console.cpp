@@ -52,20 +52,6 @@ Console::Console(SagaEngine *vm) : GUI::Debugger() {
 	registerCmd("play_sound",	WRAP_METHOD(Console, cmdPlaySound));
 	registerCmd("play_voice",	WRAP_METHOD(Console, cmdPlayVoice));
 
-	// Game stuff
-
-#if 0
-	#define MAXPATH 512
-
-	// Register "g_language" cfg cvar
-	strncpy(GameModule.game_language, "us", MAXPATH);
-
-	CVAR_Register_S(GameModule.game_language, "g_language", NULL, CVAR_CFG, GAME_LANGSTR_LIMIT);
-
-	// Register "g_skipintro" cfg cvar
-	CVAR_Register_I(&GameModule.g_skipintro, "g_skipintro", NULL, CVAR_CFG, 0, 1);
-#endif
-
 	// Scene commands
 	registerCmd("current_scene",		WRAP_METHOD(Console, cmdCurrentScene));
 	registerCmd("current_chapter",	WRAP_METHOD(Console, cmdCurrentChapter));

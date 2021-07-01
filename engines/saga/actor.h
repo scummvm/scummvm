@@ -269,16 +269,6 @@ struct Location {
 		y = stream.readUint16LE();
 		z = stream.readUint16LE();
 	}
-
-#if 0
-	// Obsolete function, throws warnings in older versions of GCC
-	// (warning: int format, int32 arg)
-	// Keeping it around for debug purposes
-	void debugPrint(int debuglevel = 0, const char *loc = "Loc:") const {
-		debug(debuglevel, "%s %d, %d, %d", loc, x, y, z);
-	}
-#endif
-
 };
 
 class CommonObjectData {

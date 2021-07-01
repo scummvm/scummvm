@@ -55,15 +55,6 @@ enum SceneFlags {
 	kSceneFlagShowCursor = 2
 };
 
-// FTA2 possible endings
-enum FTA2Endings {
-	kFta2BadEndingLaw = 0,
-	kFta2BadEndingChaos = 1,
-	kFta2GoodEnding1 = 2,
-	kFta2GoodEnding2 = 3,
-	kFta2BadEndingDeath = 4
-};
-
 struct BGInfo {
 	Rect bounds;
 	byte *buffer;
@@ -364,28 +355,12 @@ class Scene {
 	int ITEStartProc();
 	int IHNMStartProc();
 	int IHNMCreditsProc();
-	int DinoStartProc();
-	int FTA2StartProc();
-	int FTA2EndProc(FTA2Endings whichEnding);
-	void playMovie(const char *filename);
 
 	void IHNMLoadCutaways();
 	bool checkKey();
 
 	bool playTitle(int title, int time, int mode = kPanelVideo);
 	bool playLoopingTitle(int title, int seconds);
-
- public:
-	static int SC_IHNMIntroMovieProc1(int param, void *refCon);
-	static int SC_IHNMIntroMovieProc2(int param, void *refCon);
-	static int SC_IHNMIntroMovieProc3(int param, void *refCon);
-	static int SC_IHNMCreditsMovieProc(int param, void *refCon);
-
- private:
-	int IHNMIntroMovieProc1(int param);
-	int IHNMIntroMovieProc2(int param);
-	int IHNMIntroMovieProc3(int param);
-	int IHNMCreditsMovieProc(int param);
 
  public:
 	static int SC_ITEIntroAnimProc(int param, void *refCon);

@@ -128,12 +128,6 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	// Mac CD Wyrmkeep
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patch");
 
-	// Dinotopia
-	SearchMan.addSubDirectoryMatching(gameDataDir, "smack");
-
-	// FTA2
-	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
-
 	_displayClip.left = _displayClip.top = 0;
 }
 
