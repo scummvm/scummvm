@@ -612,12 +612,6 @@ public:
 	~SAGA1Script() override;
 };
 
-class SAGA2Script : public Script {
-public:
-	SAGA2Script(SagaEngine *vm);
-	~SAGA2Script() override;
-};
-
 } // End of namespace Saga
 
 #endif

@@ -59,14 +59,12 @@ struct PatchData {
 };
 
 struct ResourceData {
-	uint32 id;		// SAGA2
-	uint32 category;	// SAGA2
 	size_t offset;
 	size_t size;
 	PatchData *patchData;
 
 	ResourceData() :
-		id(0), category(0), offset(0), size(0), patchData(NULL) {
+		offset(0), size(0), patchData(NULL) {
 	}
 
 	~ResourceData() {
@@ -74,10 +72,6 @@ struct ResourceData {
 			delete patchData;
 			patchData = NULL;
 		}
-	}
-
-	bool isExternal() {	// SAGA2
-		return ((offset & (1L<<31)) != 0L);
 	}
 };
 
@@ -128,22 +122,6 @@ public:
 		return &_table[resourceId];
 	}
 
-	// SAGA 2
-	int32 getEntryNum(uint32 id) {
-		int32 num = 0;
-		uint32 miloCategory = MKTAG('M', 'I', 'L', 'O');
-
-		for (ResourceDataArray::const_iterator i = _table.begin(); i != _table.end(); ++i) {
-			//uint32 c = i->category;
-			//debug("%c%c%c%c, offset: %d, size: %d", (c >> 24),  (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF, i->offset, i->size);
-			// Ignore low quality music resources (MILO)
-			if (i->id == id && i->category != miloCategory)
-				return num;
-
-			num++;
-		}
-		return -1;
-	}
 protected:
 	const char *_fileName;
 	uint16 _fileType;
@@ -275,38 +253,6 @@ protected:
 	}
 private:
 	MetaResource _metaResource;
-};
-#endif
-
-#ifdef ENABLE_SAGA2
-// DINO, FTA2
-class ResourceContext_HRS: public ResourceContext {
-protected:
-	ResourceDataArray _categories;
-
-	bool loadRes(uint32 contextOffset, uint32 contextSize) override {
-		return loadResV2(contextSize);
-	}
-	bool loadResV2(uint32 contextSize);
-
-	void readCategory(ResourceData &element);
-	void readEntry(ResourceData &element);
-	uint32 getCategory(uint32 resourceOffset);
-};
-
-class Resource_HRS : public Resource {
-public:
-	Resource_HRS(SagaEngine *vm) : Resource(vm) {}
-	uint32 convertResourceId(uint32 resourceId) override { return resourceId; }
-	void loadGlobalResources(int chapter, int actorsEntrance) override {}
-	MetaResource* getMetaResource() override {
-		MetaResource *dummy = 0;
-		return dummy;
-	}
-protected:
-	ResourceContext *createContext() override {
-		return new ResourceContext_HRS();
-	}
 };
 #endif
 

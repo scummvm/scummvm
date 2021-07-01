@@ -185,10 +185,6 @@ bool Resource::createContexts() {
 		{	GID_IHNM,	"sfx.res",			false,	0	},
 		{	GID_IHNM,	"sfx.cmp",			true,	0	},
 #endif
-#ifdef ENABLE_SAGA2
-		{	GID_FTA2,	"ftasound.hrs",		false,	0	},
-		{	GID_DINO,	"dinosnd.hrs",		false,	0	},
-#endif
 		{	-1,			"",				false,	0	}
 	};
 
@@ -224,9 +220,6 @@ bool Resource::createContexts() {
 		{	GID_IHNM,	"voicess.cmp",					true	,	0},
 		{	GID_IHNM,	"voicesd.res",					false	,	0},
 		{	GID_IHNM,	"voicesd.cmp",					true	,	0},
-#endif
-#ifdef ENABLE_SAGA2
-		{	GID_FTA2,	"ftavoice.hrs",					false	,	0},
 #endif
 		{	-1,			"",							false	,	0}
 	};

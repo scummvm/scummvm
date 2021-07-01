@@ -42,12 +42,6 @@ MODULE_OBJS += \
 	sfuncs_ihnm.o
 endif
 
-ifdef ENABLE_SAGA2
-MODULE_OBJS += \
-	introproc_saga2.o \
-	resource_hrs.o
-endif
-
 # This module can be built as a plugin
 ifeq ($(ENABLE_SAGA), DYNAMIC_PLUGIN)
 PLUGIN := 1

@@ -58,9 +58,7 @@ struct GamePatchDescription {
 
 enum GameIds {
 	GID_ITE = 0,
-	GID_IHNM = 1,
-	GID_DINO = 2,
-	GID_FTA2 = 3
+	GID_IHNM = 1
 };
 
 enum GameFeatures {

@@ -278,7 +278,7 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 };
 
 
-#if defined(ENABLE_IHNM) || defined(ENABLE_SAGA2)
+#if defined(ENABLE_IHNM)
 
 // IHNM
 #define IHNM_CONVERSE_MAX_TEXT_WIDTH (485 - 8)
@@ -365,75 +365,6 @@ static PanelButton IHNM_SavePanelButtons[] = {
 #ifdef ENABLE_IHNM
 
 static const GameDisplayInfo IHNM_DisplayInfo = {
-	640, 480,	// logical width&height
-
-	0,			// scene path y offset
-	304,		// scene height
-
-	0,			// status x offset
-	304,		// status y offset
-	616,		// status width
-	24,			// status height
-	8,			// status text y offset
-	253,		// status text color
-	250,		// status BG color
-	616, 304,	// save reminder pos
-	24, 24,		// save reminder w&h
-	0,			// save reminder first sprite number
-	16,			// number of save reminder sprites
-
-	11, 12,		// left portrait x, y offset
-	-1, -1,		// right portrait x, y offset
-
-	8, 9,		// inventory Up & Down button indexes
-	2, 4,		// inventory rows, columns
-
-	0, 328,		// main panel offsets
-	ARRAYSIZE(IHNM_MainPanelButtons),
-	IHNM_MainPanelButtons,
-
-	IHNM_CONVERSE_MAX_TEXT_WIDTH,
-	IHNM_CONVERSE_TEXT_HEIGHT,
-	IHNM_CONVERSE_TEXT_LINES,
-	11, 12,		// converse Up & Down button indexes
-	0, 328,		// converse panel offsets
-	ARRAYSIZE(IHNM_ConversePanelButtons),
-	IHNM_ConversePanelButtons,
-
-	11, 0,		// save file index
-	15,			// optionSaveFileVisible
-	92, 46,		// option panel offsets
-	ARRAYSIZE(IHNM_OptionPanelButtons),
-	IHNM_OptionPanelButtons,
-
-	190,94,			// quit panel offsets
-	260,115,		// quit panel width & height
-	ARRAYSIZE(IHNM_QuitPanelButtons),
-	IHNM_QuitPanelButtons,
-
-	190, 94,		// load panel offsets
-	260, 115,		// load panel width & height
-	ARRAYSIZE(IHNM_LoadPanelButtons),
-	IHNM_LoadPanelButtons,
-
-	2,				// save edit index
-	190, 94,		// save panel offsets
-	260, 115,		// save panel width & height
-	ARRAYSIZE(IHNM_SavePanelButtons),
-	IHNM_SavePanelButtons,
-
-	// No protection panel in IHNM
-	-1,				// protect edit index
-	0, 0,			// protect panel offsets
-	0, 0,			// protect panel width & height
-	ARRAYSIZE(IHNM_SavePanelButtons),
-	IHNM_SavePanelButtons
-};
-#endif
-
-#ifdef ENABLE_SAGA2
-// TODO: Fill in missing bits, currently contains IHNM_DisplayInfo
-static const GameDisplayInfo FTA2_DisplayInfo = {
 	640, 480,	// logical width&height
 
 	0,			// scene path y offset

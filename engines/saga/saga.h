@@ -38,24 +38,11 @@ struct ADGameFileDescription;
 /**
  * This is the namespace of the SAGA engine.
  *
- * Status of this engine:
- *
- * This engine contains 2 main engine generations, SAGA and SAGA2
- *
- * SAGA status: complete
- *
- * SAGA2 status: in early stages of development, no recent activity. Contact sev
- *  if you want to work on it, since we have some original source codes.
+ * Status of this engine: complete
  *
  * Games using this engine:
- *
- * SAGA:
  * - Inherit the Earth
  * - I Have No Mouth And I Must Scream
- *
- * SAGA2:
- * - Dinotopia
- * - Faery Tale Adventure II: Halls of the Dead
  *
  */
 namespace Saga {
@@ -549,7 +536,6 @@ public:
 
 	bool isBigEndian() const;
 	bool isMacResources() const;
-	bool isSaga2() const { return getGameId() == GID_DINO || getGameId() == GID_FTA2; }
 	const GameResourceDescription *getResourceDescription() const;
 
 	const GameFontDescription *getFontDescription(int index) const;

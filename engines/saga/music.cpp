@@ -212,8 +212,6 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _pla
 			// Note that the IHNM demo has only got one music file
 			// (music.rsc). It is assumed that it contains FM music
 			_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_FM);
-		} else if (_vm->getGameId() == GID_DINO || _vm->getGameId() == GID_FTA2) {
-			_musicContext = _vm->_resource->getContext(GAME_SOUNDFILE);
 		}
 	}
 
@@ -323,10 +321,6 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		realTrackNumber = resourceId - 8;
 	} else if (_vm->getGameId() == GID_IHNM) {
 		realTrackNumber = resourceId + 1;
-	} else if (_vm->getGameId() == GID_DINO || _vm->getGameId() == GID_FTA2) {
-		realTrackNumber = resourceId + 1;
-		uint32 musicTrackTag = MKTAG('X','M','I', (byte)(resourceId + 1));
-		resourceId = _musicContext->getEntryNum(musicTrackTag);
 	}
 
 	// Try to open standalone digital track

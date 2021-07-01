@@ -147,11 +147,6 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 		error("Interface::Interface() resource context not found");
 	}
 
-	// Do nothing for SAGA2 games for now
-	if (_vm->isSaga2()) {
-		return;
-	}
-
 	// Main panel
 	_mainPanel.buttons = _vm->getDisplayInfo().mainPanelButtons;
 	_mainPanel.buttonsCount = _vm->getDisplayInfo().mainPanelButtonsCount;
@@ -720,11 +715,6 @@ bool Interface::processAscii(Common::KeyState keystate) {
 }
 
 void Interface::setStatusText(const char *text, int statusColor) {
-	if (_vm->getGameId() == GID_FTA2 || _vm->getGameId() == GID_DINO) {
-		warning("setStatusText not implemented for SAGA2");
-		return;
-	}
-
 	if (_vm->getGameId() == GID_IHNM) {
 		// Don't show the status text for the IHNM chapter selection screens (chapter 8), or
 		// scene 0 (IHNM demo introduction)

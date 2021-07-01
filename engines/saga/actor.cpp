@@ -1055,11 +1055,6 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 }
 
 void Actor::drawActors() {
-	// Do nothing for SAGA2 games for now
-	if (_vm->isSaga2()) {
-		return;
-	}
-
 	// WORKAROUND
 	// Bug #4746: 'ITE: Graphic Glitches during racoon death "Cut Scene"'
 	if (_vm->_anim->hasCutaway()  || _vm->_scene->currentSceneNumber() == 287 || _vm->_scene->currentSceneNumber() == 286) {

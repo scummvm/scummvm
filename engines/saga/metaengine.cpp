@@ -114,12 +114,6 @@ Common::Error SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 		return Common::Error(Common::kUnsupportedGameidError, _s("I Have No Mouth support not compiled in"));
 #endif
 		break;
-	case Saga::GID_DINO:
-	case Saga::GID_FTA2:
-#ifndef ENABLE_SAGA2
-		return Common::Error(Common::kUnsupportedGameidError, _s("SAGA2 support not compiled in"));
-#endif
-		break;
 	default:
 		break;
 	}
@@ -265,12 +259,6 @@ const GameDisplayInfo &SagaEngine::getDisplayInfo() {
 #ifdef ENABLE_IHNM
 		case GID_IHNM:
 			return IHNM_DisplayInfo;
-#endif
-#ifdef ENABLE_SAGA2
-		case GID_DINO:
-			return FTA2_DisplayInfo;	// TODO
-		case GID_FTA2:
-			return FTA2_DisplayInfo;
 #endif
 		default:
 			error("getDisplayInfo: Unknown game ID");

@@ -42,9 +42,6 @@
 #include "audio/decoders/voc.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
-#ifdef ENABLE_SAGA2
-#include "saga/shorten.h"
-#endif
 
 namespace Saga {
 
@@ -94,12 +91,6 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 		for (uint i = 0; i < _fxTableIDs.size(); i++) {
 			_fxTableIDs[i] = metaS.readSint16LE();
 		}
-#endif
-#ifdef ENABLE_SAGA2
-	} else if (_vm->getGameId() == GID_DINO) {
-		// TODO
-	} else if (_vm->getGameId() == GID_FTA2) {
-		// TODO
 #endif
 	}
 }
@@ -187,7 +178,7 @@ enum GameSoundType {
 	kSoundOGG = 5,
 	kSoundFLAC = 6,
 	kSoundAIFF = 7,
-	kSoundShorten = 8,
+	//kSoundShorten = 8,	// used in SAGA2
 	kSoundMacSND = 9,
 	kSoundPC98 = 10
 };
@@ -254,8 +245,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundWAV;
 		} else if (!memcmp(header, "FORM", 4)) {
 			resourceType = kSoundAIFF;
-		} else if (!memcmp(header, "ajkg", 4)) {
-			resourceType = kSoundShorten;
 		}
 
 		// If patch data exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
@@ -407,14 +396,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		result = true;
 		} break;
 	case kSoundWAV:
-	case kSoundShorten:
-		if (resourceType == kSoundWAV) {
-			result = Audio::loadWAVFromStream(readS, size, rate, rawFlags);
-#ifdef ENABLE_SAGA2
-		} else if (resourceType == kSoundShorten) {
-			result = loadShortenFromStream(readS, size, rate, rawFlags);
-#endif
-		}
+		result = Audio::loadWAVFromStream(readS, size, rate, rawFlags);
 
 		if (result) {
 			Audio::SeekableAudioStream *audStream = Audio::makeRawStream(READ_STREAM(size), rate, rawFlags);
