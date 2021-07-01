@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-01 13:24+0000\n"
+"POT-Creation-Date: 2021-07-01 13:30+0000\n"
 "PO-Revision-Date: 2021-06-18 05:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -5817,7 +5817,7 @@ msgstr "Пробная версия для Windows не поддерживает
 msgid "I Have No Mouth support not compiled in"
 msgstr "Поддержка для I Have No Mouth не скомпилирована"
 
-#: engines/saga/saga.cpp:237
+#: engines/saga/saga.cpp:231
 msgid "Error loading game resources."
 msgstr "Ошибка чтения файлов ресурсов игры."
 

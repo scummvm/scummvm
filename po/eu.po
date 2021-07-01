@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-01 13:24+0000\n"
+"POT-Creation-Date: 2021-07-01 13:30+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -5916,7 +5916,7 @@ msgstr "Jokoaren ID ez-onartua"
 msgid "I Have No Mouth support not compiled in"
 msgstr "Ezaugarri erantsiak:"
 
-#: engines/saga/saga.cpp:237
+#: engines/saga/saga.cpp:231
 #, fuzzy
 msgid "Error loading game resources."
 msgstr "Jokoa exekutatzean errorea:"

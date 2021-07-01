@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-01 13:24+0000\n"
+"POT-Creation-Date: 2021-07-01 13:30+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -5908,7 +5908,7 @@ msgstr "Spil-id ikke understøttet"
 msgid "I Have No Mouth support not compiled in"
 msgstr "Funktionaliteter som er kompileret ind:"
 
-#: engines/saga/saga.cpp:237
+#: engines/saga/saga.cpp:231
 #, fuzzy
 msgid "Error loading game resources."
 msgstr "Fejl ved læsning af gemt fil"

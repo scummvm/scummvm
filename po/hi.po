@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-01 13:24+0000\n"
+"POT-Creation-Date: 2021-07-01 13:30+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -5576,7 +5576,7 @@ msgstr ""
 msgid "I Have No Mouth support not compiled in"
 msgstr "सुविधा बनाए गए:"
 
-#: engines/saga/saga.cpp:237
+#: engines/saga/saga.cpp:231
 msgid "Error loading game resources."
 msgstr ""
 
