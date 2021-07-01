@@ -1412,7 +1412,7 @@ void CHealthIndicator::updateStar(gCompImage *starCtl, int32 bro, int32 baseVita
 
 	maxStar = clamp(0, baseVitality / 10 + 14, starLevels - 1);
 //	imageIndex = (int16)( sqrt( sqrt( (double)curVitality ) ) * maxStar) / sqrt( sqrt( (double)baseVitality ) );
-	imageIndex = (int16)(sqrt((double)MAX(0, curVitality)) * maxStar) / sqrt((double)baseVitality);
+	imageIndex = (int16)(sqrt((double)MAX((int32)0, curVitality)) * maxStar) / sqrt((double)baseVitality);
 
 	// prevent needless draws
 	if (imageIndexMemory[bro] != imageIndex) {
