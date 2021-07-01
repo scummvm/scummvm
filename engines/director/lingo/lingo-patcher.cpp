@@ -98,11 +98,11 @@ struct ScriptPatch {
 			4, "Frames 20 to 20", ""},
 
 	// Stray 'then' (obvious copy/paste error)
-	{"warlock", nullptr, kPlatformMacintosh, "DATA/K/KT/OutMarauderKT", kMovieScript, 2,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/K/KT/OutMarauderKT", kMovieScript, 14,
 			23, "set Spacesuit = 0 then", "set Spacesuit = 0"},
 
 	// Missing '&'
-	{"warlock", nullptr, kPlatformMacintosh, "DATA/NAV/Shared Cast", kMovieScript, 1,
+	{"warlock", nullptr, kPlatformMacintosh, "DATA/NAV/Shared Cast", kMovieScript, 510,
 			19, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
@@ -115,11 +115,7 @@ struct ScriptPatch {
 			4, "Frames 150 to 160", ""},
 
 	// Missing '&'
-	{"warlock", nullptr, kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 0,
-			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
-				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
-
-	{"warlock", nullptr, kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 1,	// For running by the buildbot
+	{"warlock", nullptr, kPlatformUnknown, "NAV/Shared Cast", kMovieScript, 510,
 			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
@@ -144,7 +140,7 @@ struct ScriptPatch {
 			   "GO \"SPACE\" OF MOVIE \"L-ZONE:DATA:R-G:ST-A2\""},
 
 
-	{"jman", "", kPlatformWindows, "mmm/Mars Space Game 05", kMovieScript, 3,
+	{"jman", "", kPlatformWindows, "mmm/Mars Space Game 05", kMovieScript, 10,
 			68, "set DamageParameter = (gProcessorSpeed/2) + 7)", "set DamageParameter = (gProcessorSpeed/2) + 7"},
 
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr, nullptr}
