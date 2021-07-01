@@ -172,7 +172,7 @@ extern ObjectID     viewCenterObject;       // ID of object that view tracks
    Exports
  * ===================================================================== */
 
-StaticRect tileRect{tileRectX, tileRectY, tileRectWidth, tileRectHeight};
+Rect16 tileRect(tileRectX, tileRectY, tileRectWidth, tileRectHeight);
 gPixelMap           tileDrawMap;
 
 /* ===================================================================== *
