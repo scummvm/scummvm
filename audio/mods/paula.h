@@ -115,7 +115,7 @@ protected:
 	};
 
 	bool _end;
-	Common::Mutex _mutex;
+	Common::Mutex &_mutex;
 
 	virtual void interrupt() = 0;
 

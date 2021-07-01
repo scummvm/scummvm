@@ -35,13 +35,14 @@
 
 #include "common/scummsys.h"
 
+#include "audio/mixer.h"
 #include "audio/mods/paula.h"
 #include "audio/null.h"
 
 namespace Audio {
 
 Paula::Paula(bool stereo, int rate, uint interruptFreq, FilterMode filterMode, int periodScaleDivisor) :
-		_stereo(stereo), _rate(rate), _periodScale((double)kPalPaulaClock / (rate * periodScaleDivisor)), _intFreq(interruptFreq) {
+		_stereo(stereo), _rate(rate), _periodScale((double)kPalPaulaClock / (rate * periodScaleDivisor)), _intFreq(interruptFreq), _mutex(g_system->getMixer()->mutex()) {
 
 	_filterState.mode      = filterMode;
 	_filterState.ledFilter = false;
