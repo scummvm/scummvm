@@ -82,7 +82,7 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 
 	stopAudio();
 	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
-	uint32 start = _fileStream->pos();
+	uint32 startPos = _fileStream->pos();
 	uint32 offset = 0;
 	for (uint32 i = 0; i < seekFrame; i++) {
 		videoTrack->increaseCurFrame();
@@ -90,13 +90,13 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 		// the previous palette as their base. Therefore, we need to
 		// parse all palette entries up to the requested frame
 		if (_frameTypes[videoTrack->getCurFrame()] & 1) {
-			_fileStream->seek(start + offset, SEEK_SET);
+			_fileStream->seek(startPos + offset, SEEK_SET);
 			videoTrack->unpackPalette(_fileStream);
 		}
 		offset += _frameSizes[i] & ~3;
 	}
 
-	if (!_fileStream->seek(start + offset, SEEK_SET))
+	if (!_fileStream->seek(startPos + offset, SEEK_SET))
 		return false;
 
 	while (getCurFrame() < (int)frame) {
@@ -484,16 +484,16 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 	const byte *palette = smkDecoder->getPalette();
 
 	if (smkDecoder->getCurFrame() == 0 && !_bgAnimRestarted) {
-		bool drawFrame = true;
+		bool drawFrameFlag = true;
 
 		for (int32 i = 0; i < MAXCHILD; i++) {
 			if ((_animTab[animation]._flag & (SMKANIM_OFF1 << i))) {
-				drawFrame = false;
+				drawFrameFlag = false;
 				break;
 			}
 		}
 
-		if (drawFrame)
+		if (drawFrameFlag)
 			_vm->_graphicsMgr->blitToScreenBuffer(frame, 0, TOP, palette, true);
 	} else {
 		while (lastRect) {

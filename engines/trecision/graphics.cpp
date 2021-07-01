@@ -363,11 +363,11 @@ void GraphicsManager::shadow(uint16 x, uint16 y, uint8 num) {
 	}
 
 	const uint16 val = (uint16)_screenBuffer.getPixel(x, y);
-	const uint16 shadow =
+	const uint16 shadowVal =
 			((((val & _bitMask[2]) * num >> 7) & _bitMask[2]) |
 			(((val & _bitMask[1]) * num >> 7) & _bitMask[1]) |
 			(((val & _bitMask[0]) * num >> 7) & _bitMask[0]));
-	_screenBuffer.setPixel(x, y, shadow);
+	_screenBuffer.setPixel(x, y, shadowVal);
 }
 
 void GraphicsManager::pixelAliasing(uint16 x, uint16 y) {
