@@ -29,6 +29,7 @@
 #include "common/hashmap.h"
 #include "common/ptr.h"
 #include "common/str.h"
+#include "common/ustr.h"
 
 class AbstractFSNode;
 
@@ -154,7 +155,7 @@ public:
 	 *
 	 * @return The display name.
 	 */
-	virtual String getDisplayName() const;
+	virtual U32String getDisplayName() const;
 
 	/**
 	 * Return a string representation of the name of the file. This can be

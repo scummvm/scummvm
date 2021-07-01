@@ -87,7 +87,7 @@ bool FSNode::getChildren(FSList &fslist, ListMode mode, bool hidden) const {
 	return true;
 }
 
-String FSNode::getDisplayName() const {
+U32String FSNode::getDisplayName() const {
 	assert(_realNode);
 	return _realNode->getDisplayName();
 }

@@ -42,12 +42,12 @@ bool ChRootFilesystemNode::exists() const {
 	return _realNode->exists();
 }
 
-Common::String ChRootFilesystemNode::getDisplayName() const {
-	return getName();
+Common::U32String ChRootFilesystemNode::getDisplayName() const {
+	return _realNode->getDisplayName();
 }
 
 Common::String ChRootFilesystemNode::getName() const {
-	return _realNode->AbstractFSNode::getDisplayName();
+	return _realNode->getName();
 }
 
 Common::String ChRootFilesystemNode::getPath() const {

@@ -124,7 +124,7 @@ public:
 	 *
 	 * @note By default, this method returns the value of getName().
 	 */
-	virtual Common::String getDisplayName() const { return getName(); }
+	virtual Common::U32String getDisplayName() const = 0;
 
 	/**
 	 * Returns the last component of the path pointed by this FSNode.

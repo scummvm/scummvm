@@ -103,7 +103,7 @@ public:
 	virtual ~MorphOSFilesystemNode() override;
 
 	virtual bool exists() const override;
-	virtual Common::String getDisplayName() const override { return _sDisplayName; }
+	virtual Common::U32String getDisplayName() const override { return _sDisplayName; }
 	virtual Common::String getName() const override { return _sDisplayName; }
 	virtual Common::String getPath() const override { return _sPath; }
 	virtual bool isDirectory() const override { return _bIsDirectory; }
