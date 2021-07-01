@@ -1053,12 +1053,11 @@ uint16 lineDist(
  * ============================================================================ */
 
 //  Converts Local XY to UV coordinates
-TilePoint pickTilePos(Point32 pos, const TilePoint &protagPos);
-TilePoint pickTile(Point32 pos,
+StaticTilePoint pickTilePos(Point32 pos, const TilePoint &protagPos);
+StaticTilePoint pickTile(Point32 pos,
                    const TilePoint &protagPos,
-                   TilePoint *floor = NULL,
+                   StaticTilePoint *floor = NULL,
                    ActiveItemPtr *pickTAI = NULL);
-
 
 //  Function to select a nearby site
 TilePoint selectNearbySite(

@@ -814,7 +814,7 @@ void DisplayNode::drawObject(void) {
 //-----------------------------------------------------------------------
 //	Do mouse hit-test on objects
 
-ObjectID pickObject(const Point16 &mouse, TilePoint &objPos) {
+ObjectID pickObject(const Point16 &mouse, StaticTilePoint &objPos) {
 	DisplayNode     *dn;
 	ObjectID        result = Nothing;
 	int32           dist = maxint32;
@@ -871,7 +871,7 @@ ObjectID pickObject(const Point16 &mouse, TilePoint &objPos) {
 					if (GetSpritePixel(spr, flipped, testPoint)) {
 						dist = newDist;
 						result = obj->thisID();
-						objPos = loc;
+						objPos.set(loc.u, loc.v, loc.z);
 						objPos.z += MAX(-spr->offset.y - testPoint.y, 0);
 					} else if (result == Nothing) { //  If no object found yet
 						Point16     testPoint2;
@@ -890,7 +890,7 @@ ObjectID pickObject(const Point16 &mouse, TilePoint &objPos) {
 						for (testPoint2.x = minX; testPoint2.x <= maxX; testPoint2.x++) {
 							if (GetSpritePixel(spr, flipped, testPoint2)) {
 								result = obj->thisID();
-								objPos = loc;
+								objPos.set(loc.u, loc.v, loc.z);
 								objPos.z += MAX(-spr->offset.y - testPoint.y, 0);
 								break;
 							}

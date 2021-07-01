@@ -88,6 +88,24 @@ struct StaticTilePoint {
 		return p;
 	}
 
+	friend StaticTilePoint operator<<(StaticTilePoint a, int b) {
+		int16 nu = a.u << b;
+		int16 nv = a.v << b;
+		int16 nz = a.z << b;
+		StaticTilePoint p = {nu, nv, nz};
+
+		return p;
+	}
+
+	friend StaticTilePoint operator>>(StaticTilePoint a, int b) {
+		int16 nu = a.u >> b;
+		int16 nv = a.v >> b;
+		int16 nz = a.z >> b;
+		StaticTilePoint p = {nu, nv, nz};
+
+		return p;
+	}
+
 	void operator+=(StaticTilePoint a) {
 		u += a.u;
 		v += a.v;

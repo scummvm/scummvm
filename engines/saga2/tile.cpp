@@ -3528,14 +3528,13 @@ void showAbstractTile(const TilePoint &tp, TileInfo *ti) {
 
 //  Compute the picked position as if the mouse were pointing at the same
 //  level as the protagainist's feet.
-TilePoint pickTilePos(Point32 pos, const TilePoint &protagPos) {
-	TilePoint       coords;
+StaticTilePoint pickTilePos(Point32 pos, const TilePoint &protagPos) {
+	StaticTilePoint coords = {0, 0, 0};
 
 	pos.x += tileScroll.x;
 	pos.y += tileScroll.y + protagPos.z;
 
-	coords = XYToUV(pos);
-	coords.z = protagPos.z;
+	coords.set(XYToUV(pos).u, XYToUV(pos).v, protagPos.z);
 
 	return coords;
 }
@@ -4052,11 +4051,12 @@ bool pointOnHiddenSurface(
 //-----------------------------------------------------------------------
 //	Return the TilePoint at which the mouse it pointing
 
-TilePoint pickTile(Point32 pos,
+StaticTilePoint pickTile(Point32 pos,
                    const TilePoint &protagPos,
-                   TilePoint *floorResult,
+                   StaticTilePoint *floorResult,
                    ActiveItemPtr *pickTAI) {
 	WorldMapData    *curMap = &mapList[currentMapNum];
+	StaticTilePoint result = {0, 0, 0};
 
 	TilePoint       pickCoords,
 	                floorCoords,
@@ -4244,16 +4244,22 @@ TilePoint pickTile(Point32 pos,
 		zMax = protagPos.z + kMaxPickHeight + (coords - protagPos).quickHDistance();
 	}
 
+	result.set(pickCoords.u, pickCoords.v, pickCoords.z);
+
 	//  If no tile was found, return the default.
 	if (!bestTile) {
-		if (floorResult) *floorResult = floorCoords;
-		if (pickTAI) *pickTAI = nullptr;
-		return pickCoords;
+		if (floorResult)
+			floorResult->set(floorCoords.u, floorCoords.v, floorCoords.z);
+		if (pickTAI)
+			*pickTAI = nullptr;
+		return result;
 	}
 
-	if (floorResult) *floorResult = floorCoords;
-	if (pickTAI) *pickTAI = bestTileTAI;
-	return pickCoords;
+	if (floorResult)
+		floorResult->set(floorCoords.u, floorCoords.v, floorCoords.z);
+	if (pickTAI)
+		*pickTAI = bestTileTAI;
+	return result;
 }
 
 /* ===================================================================== *

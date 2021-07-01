@@ -127,10 +127,10 @@ void incrementActiveFaction(Actor *a);
 
 //  dispatch functions
 static APPFUNC(cmdClickTileMap);                 // appFunc for map display
-TilePoint           tilePickPos,            // mouse coord over tilemap (floor)
-                    tilePickExactPos,       // mouse coord of click on tilemap
-                    objPickPos,             // coord of mouse picked object
-                    walkToPos;              // navigation target location
+static StaticTilePoint tilePickPos = {0, 0, 0},       // mouse coord over tilemap (floor)
+                       tilePickExactPos = {0, 0, 0},  // mouse coord of click on tilemap
+                       objPickPos = {0, 0, 0},        // coord of mouse picked object
+                       walkToPos = {0, 0, 0};         // navigation target location
 
 ObjectID            pickedObject;           // which object picked by mouse
 ActiveItemPtr       pickedTAI;              // which active item instance
@@ -481,7 +481,9 @@ static void evalMouseState(void) {
 						g_vm->_mouseInfo->setIntent(GrabInfo::Attack);
 					else {
 						g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
-						walkToPos = obj->getLocation();
+						walkToPos.set(obj->getLocation().u,
+						              obj->getLocation().v,
+						              obj->getLocation().z);
 					}
 				} else
 					//  The mouse is not pointing at an object
@@ -526,7 +528,9 @@ static void evalMouseState(void) {
 						g_vm->_mouseInfo->setDoable(true);
 					} else {
 						g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
-						walkToPos = obj->getLocation();
+						walkToPos.set(obj->getLocation().u,
+						              obj->getLocation().v,
+						              obj->getLocation().z);
 					}
 				} else
 					//  Center actor is not aggressive
@@ -541,7 +545,9 @@ static void evalMouseState(void) {
 						    !a->isDead()
 						    ?   GrabInfo::WalkTo
 						    :   GrabInfo::Open);
-						walkToPos = obj->getLocation();
+						walkToPos.set(obj->getLocation().u,
+						              obj->getLocation().v,
+						              obj->getLocation().z);
 					} else {
 						g_vm->_mouseInfo->setIntent(obj->isCarryable()
 						                    ? GrabInfo::PickUp

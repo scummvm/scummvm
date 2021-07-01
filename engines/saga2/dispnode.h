@@ -34,6 +34,7 @@ namespace Saga2 {
 
 class GameObject;
 struct TilePoint;
+struct StaticTilePoint;
 
 class Effectron;
 
@@ -47,7 +48,7 @@ class DisplayNode {
 	friend class    DisplayNodeList;
 	friend class    SpellDisplayList;
 	friend class    GameObject;
-	friend ObjectID pickObject(const Point16 &mouse, TilePoint &objPos);
+	friend ObjectID pickObject(const Point16 &mouse, StaticTilePoint &objPos);
 
 private:
 	DisplayNode             *nextDisplayed;         // pointer to next in display list
@@ -84,7 +85,7 @@ public:
 const int           maxDisplayed = 100;
 
 class DisplayNodeList {
-	friend ObjectID pickObject(const Point16 &mouse, TilePoint &objPos);
+	friend ObjectID pickObject(const Point16 &mouse, StaticTilePoint &objPos);
 
 public:
 	uint16              count;                  // number of entries in list

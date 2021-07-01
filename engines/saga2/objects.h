@@ -1349,7 +1349,7 @@ bool lineOfSight(
 bool objObscured(GameObject *testObj);
 
 //  Determine which object mouse pointer is picking
-ObjectID pickObject(const Point16 &mouse, TilePoint &objPos);
+ObjectID pickObject(const Point16 &mouse, StaticTilePoint &objPos);
 
 //  Create enchantment attach it to object
 ObjectID EnchantObject(
