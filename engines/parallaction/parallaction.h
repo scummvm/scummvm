@@ -578,6 +578,7 @@ private:
 	Common::String		_followerName;
 	AnimationPtr		_follower;
 	PathWalker_BR		*_walker;
+	int					_ferrcycleMode;
 
 	// dos callables
 	void _c_null(void *);
