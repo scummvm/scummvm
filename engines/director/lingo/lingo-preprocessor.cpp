@@ -90,7 +90,7 @@ static const char *findtokstart(const char *start, const char *token) {
 	return ptr;
 }
 
-Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, uint16 id, bool simple) {
+Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, CastMemberID id, bool simple) {
 	Common::String res;
 
 	// We start from processing the continuation synbols

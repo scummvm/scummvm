@@ -96,13 +96,13 @@ ScriptContext *LingoCompiler::compileAnonymous(const char *code) {
 	debugC(1, kDebugCompile, "Compiling anonymous lingo\n"
 			"***********\n%s\n\n***********", code);
 
-	return compileLingo(code, nullptr, kNoneScript, 0, "[anonymous]", true);
+	return compileLingo(code, nullptr, kNoneScript, CastMemberID(0, 0), "[anonymous]", true);
 }
 
-ScriptContext *LingoCompiler::compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonymous) {
+ScriptContext *LingoCompiler::compileLingo(const char *code, LingoArchive *archive, ScriptType type, CastMemberID id, const Common::String &scriptName, bool anonymous) {
 	_assemblyArchive = archive;
 	_assemblyAST = nullptr;
-	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, archive, type, id);
+	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, archive, type, id.member);
 	_currentAssembly = new ScriptData;
 
 	_methodVars = new VarTypeHash;

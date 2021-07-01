@@ -35,7 +35,7 @@ public:
 	virtual ~LingoCompiler() {}
 
 	ScriptContext *compileAnonymous(const char *code);
-	ScriptContext *compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonyomous = false);
+	ScriptContext *compileLingo(const char *code, LingoArchive *archive, ScriptType type, CastMemberID id, const Common::String &scriptName, bool anonyomous = false);
 	ScriptContext *compileLingoV4(Common::SeekableReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName, uint16 version);
 
 	int code1(inst code) { _currentAssembly->push_back(code); return _currentAssembly->size() - 1; }
@@ -131,10 +131,10 @@ private:
 
 public:
 	// lingo-preprocessor.cpp
-	Common::String codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, uint16 id, bool simple = false);
+	Common::String codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, CastMemberID id, bool simple = false);
 
 	// lingo-patcher.cpp
-	Common::String patchLingoCode(Common::String &line, LingoArchive *archive, ScriptType type, uint16 id, int linenumber);
+	Common::String patchLingoCode(Common::String &line, LingoArchive *archive, ScriptType type, CastMemberID id, int linenumber);
 };
 
 } // End of namespace Director
