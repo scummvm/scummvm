@@ -101,7 +101,8 @@ static bool launcherDialog() {
 #if defined(__DC__)
 	DCLauncherDialog dlg;
 #else
-	GUI::LauncherDialog dlg;
+	GUI::LauncherChooser dlg;
+	dlg.selectLauncher();
 #endif
 	return (dlg.runModal() != -1);
 }
