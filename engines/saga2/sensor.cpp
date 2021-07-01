@@ -35,9 +35,6 @@
 
 namespace Saga2 {
 
-Common::List<SensorList *> sensorListList;
-Common::List<Sensor *> sensorList;
-
 /* ===================================================================== *
    SensorList management functions
  * ===================================================================== */
@@ -46,14 +43,14 @@ Common::List<Sensor *> sensorList;
 //	Allocate a new SensorList
 
 void newSensorList(SensorList *s) {
-	sensorListList.push_back(s);
+	g_vm->_sensorListList.push_back(s);
 }
 
 //----------------------------------------------------------------------
 //	Deallocate an SensorList
 
 void deleteSensorList(SensorList *s) {
-	sensorListList.remove(s);
+	g_vm->_sensorListList.remove(s);
 }
 
 /* ===================================================================== *
@@ -64,7 +61,7 @@ void deleteSensorList(SensorList *s) {
 //	Allocate a new Sensor
 
 void newSensor(Sensor *s) {
-	sensorList.push_back(s);
+	g_vm->_sensorList.push_back(s);
 
 	s->checkCtr = sensorCheckRate;
 }
@@ -82,7 +79,7 @@ void newSensor(Sensor *s, int16 ctr) {
 //	Deallocate a Sensor
 
 void deleteSensor(Sensor *p) {
-	sensorList.remove(p);
+	g_vm->_sensorList.remove(p);
 }
 
 //----------------------------------------------------------------------
@@ -166,7 +163,7 @@ void *archiveSensor(Sensor *sensor, void *buf) {
 //----------------------------------------------------------------------
 
 void checkSensors(void) {
-	for (Common::List<Sensor *>::iterator it = sensorList.begin(); it != sensorList.end(); ++it) {
+	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it) {
 		Sensor *sensor = *it;
 
 		if (--sensor->checkCtr <= 0) {
@@ -198,7 +195,7 @@ void assertEvent(const GameEvent &ev) {
 	assert(ev.directObject != NULL);
 	assert(isObject(ev.directObject) || isActor(ev.directObject));
 
-	for (Common::List<Sensor *>::iterator it = sensorList.begin(); it != sensorList.end(); ++it) {
+	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it) {
 		Sensor *sensor = *it;
 
 		if (sensor->evaluateEvent(ev)) {
@@ -232,7 +229,7 @@ void initSensors(void) {
 void saveSensors(SaveFileConstructor &saveGame) {
 	warning("STUB: saveSensort()");
 #if 0
-	int16                   sensorListCount = 0,
+	int16                   g_vm->_sensorListCount = 0,
 	                        sensorCount = 0;
 
 	SensorListHolder        *listHolder;
@@ -243,19 +240,19 @@ void saveSensors(SaveFileConstructor &saveGame) {
 	int32                   archiveBufSize = 0;
 
 	//  Add the sizes of the sensor list count an sensor count
-	archiveBufSize += sizeof(sensorListCount) + sizeof(sensorCount);
+	archiveBufSize += sizeof(g_vm->_sensorListCount) + sizeof(sensorCount);
 
 	//  Tally the sensor lists
-	for (listHolder = (SensorListHolder *)sensorListList.first();
+	for (listHolder = (SensorListHolder *)g_vm->_sensorListList.first();
 	        listHolder != NULL;
 	        listHolder = (SensorListHolder *)listHolder->next())
-		sensorListCount++;
+		g_vm->_sensorListCount++;
 
 	//  Add the total archive size of all of the sensor lists
-	archiveBufSize += sensorListCount * SensorList::archiveSize();
+	archiveBufSize += g_vm->_sensorListCount * SensorList::archiveSize();
 
 	//  Tally the sensors and add the archive size of each
-	for (Common::List<Sensor *>::iterator it = sensorList.begin(); it != sensorList.end(); ++it) {
+	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it) {
 		sensorCount++;
 		archiveBufSize += sizeof((*it)->checkCtr) + sensorArchiveSize(*it);
 	}
@@ -268,16 +265,16 @@ void saveSensors(SaveFileConstructor &saveGame) {
 	bufferPtr = archiveBuffer;
 
 	//  Store the sensor list count and sensor count
-	*((int16 *)bufferPtr)      = sensorListCount;
+	*((int16 *)bufferPtr)      = g_vm->_sensorListCount;
 	*((int16 *)bufferPtr + 1)  = sensorCount;
 	bufferPtr = (int16 *)bufferPtr + 2;
 
 	//  Archive all sensor lists
-	for (Common::List<SensorList *>::iterator it = sensorListList.begin(); it != sensorListList.end(); ++it) {
+	for (Common::List<SensorList *>::iterator it = g_vm->_sensorListList.begin(); it != g_vm->_sensorListList.end(); ++it) {
 		bufferPtr = (*it)->archive(bufferPtr);
 
 	//  Archive all sensors
-	for (Common::List<Sensor *>::iterator it = sensorList.begin(); it != sensorList.end(); ++it) {
+	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it) {
 		*((int16 *)bufferPtr) = (*it)->checkCtr;
 		bufferPtr = (int16 *)bufferPtr + 1;
 
@@ -303,7 +300,7 @@ void loadSensors(SaveFileReader &saveGame) {
 	warning("STUB: loadSensort()");
 #if 0
 	int16       i,
-	            sensorListCount,
+	            g_vm->_sensorListCount,
 	            sensorCount;
 
 	void        *archiveBuffer,
@@ -320,12 +317,12 @@ void loadSensors(SaveFileReader &saveGame) {
 	bufferPtr = archiveBuffer;
 
 	//  Get the sensor list count and sensor count
-	sensorListCount = *((int16 *)bufferPtr);
+	g_vm->_sensorListCount = *((int16 *)bufferPtr);
 	sensorCount     = *((int16 *)bufferPtr + 1);
 	bufferPtr = (int16 *)bufferPtr + 2;
 
 	//  Restore all sensor lists
-	for (i = 0; i < sensorListCount; i++)
+	for (i = 0; i < g_vm->_sensorListCount; i++)
 		new SensorList(&bufferPtr);
 
 	//  Restore all sensors
@@ -348,22 +345,22 @@ void loadSensors(SaveFileReader &saveGame) {
 //	Cleanup the active sensors
 
 void cleanupSensors(void) {
-	for (Common::List<SensorList *>::iterator it = sensorListList.begin(); it != sensorListList.end(); ++it)
+	for (Common::List<SensorList *>::iterator it = g_vm->_sensorListList.begin(); it != g_vm->_sensorListList.end(); ++it)
 		delete *it;
 
-	sensorListList.clear();
+	g_vm->_sensorListList.clear();
 
-	for (Common::List<Sensor *>::iterator it = sensorList.begin(); it != sensorList.end(); ++it)
+	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it)
 		delete *it;
 
-	sensorList.clear();
+	g_vm->_sensorList.clear();
 }
 
 //----------------------------------------------------------------------
 //	Fetch a specified object's SensorList
 
 SensorList *fetchSensorList(GameObject *obj) {
-	for (Common::List<SensorList *>::iterator it = sensorListList.begin(); it != sensorListList.end(); ++it) {
+	for (Common::List<SensorList *>::iterator it = g_vm->_sensorListList.begin(); it != g_vm->_sensorListList.end(); ++it) {
 		if ((*it)->getObject() == obj)
 			return *it;
 	}

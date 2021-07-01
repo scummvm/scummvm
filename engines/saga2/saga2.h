@@ -48,6 +48,8 @@ class PathRequest;
 class MotionTask;
 class GrabInfo;
 class CImageCache;
+class SensorList;
+class Sensor;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -102,6 +104,8 @@ public:
 	Common::List<Timer *> _timers;
 	Common::List<ActorAppearance *> _appearanceLRU;
 	Common::List<PathRequest *> _pathQueue;
+	Common::List<SensorList *> _sensorListList;
+	Common::List<Sensor *> _sensorList;
 	Common::List<MotionTask *>::iterator _nextMT;
 	BandList *_bandList;
 	CImageCache *_imageCache;
