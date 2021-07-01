@@ -173,7 +173,7 @@ void PatrolRouteIterator::altDecrement(void) {
 
 //-----------------------------------------------------------------------
 //	Return the coordinates of the current waypoint
-const TilePoint &PatrolRouteIterator::operator*(void) const {
+const TilePoint PatrolRouteIterator::operator*(void) const {
 	const PatrolRoute &route = patrolRouteList[_mapNum]->getRoute(_routeNo);
 
 	return _vertexNo >= 0 && _vertexNo < route.vertices() ? route[_vertexNo] : Nowhere;

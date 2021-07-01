@@ -79,7 +79,7 @@ const int           slowScrollSpeed = 6,
                     fastThreshhold  = 16,
                     snapThreshhold  = 400;
 
-const TilePoint Nowhere((int16)minint16, (int16)minint16, (int16)minint16);
+const StaticTilePoint Nowhere = {(int16)minint16, (int16)minint16, (int16)minint16};
 
 const MetaTileID    NoMetaTile(nullID, nullID);
 const ActiveItemID  NoActiveItem(0, activeItemIndexNullID);

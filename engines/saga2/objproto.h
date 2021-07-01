@@ -94,6 +94,16 @@ bool isWorld(GameObject *);
    Location: Describes location of object within world or container
  * ===================================================================== */
 
+struct StaticLocation {
+	StaticTilePoint tile;
+	ObjectID context;
+
+	void set(TilePoint t, ObjectID con) {
+		tile.set(t.u, t.v, t.z);
+		context = con;
+	}
+};
+
 class Location : public TilePoint {
 public:
 	//  context = the ObjectID of containing context
@@ -132,6 +142,13 @@ public:
 		v = p.v;
 		z = p.z;
 		context = con;
+	}
+
+	Location(StaticLocation l) {
+		u = l.tile.u;
+		v = l.tile.v;
+		z = l.tile.z;
+		context = l.context;
 	}
 
 };

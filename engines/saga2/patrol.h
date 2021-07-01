@@ -142,7 +142,7 @@ public:
 	}
 
 	// Return the coordinates of the current waypoint
-	const TilePoint &operator*(void) const;
+	const TilePoint operator*(void) const;
 
 	// Iterate
 	const PatrolRouteIterator &operator++(void);

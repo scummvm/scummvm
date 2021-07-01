@@ -42,13 +42,13 @@ namespace Saga2 {
 
 struct auxAudioTheme {
 	bool active;
-	Location l;
+	StaticLocation l;
 	soundSegment loopID;
 };
 
 static auxAudioTheme aats[AUXTHEMES] = {
-	{ false, Nowhere, 0 },
-	{ false, Nowhere, 0 }
+	{false, {Nowhere, 0}, 0},
+	{false, {Nowhere, 0}, 0}
 };
 
 void addAuxTheme(Location loc, soundSegment lid);
@@ -153,7 +153,7 @@ void initAudioEnvirons(void) {
 void addAuxTheme(Location loc, soundSegment lid) {
 	for (int i = 0; i < AUXTHEMES; i++) {
 		if (!aats[i].active) {
-			aats[i].l = loc;
+			aats[i].l.set(loc, loc.context);
 			aats[i].loopID = lid;
 			aats[i].active = true;
 			return;
@@ -239,7 +239,7 @@ void setAreaSound(const TilePoint &) {
 					if (aats[i].active) {
 						Location loc = getCenterActor()->notGetWorldLocation();
 						if (aats[i].l.context == Nothing || loc.context == aats[i].l.context) {
-							TilePoint tp = (aats[i].l >> kTileUVShift) - baseCoords;
+							TilePoint tp = (aats[i].l.tile >> kTileUVShift) - baseCoords;
 							if (tp.magnitude() < dist.magnitude()) {
 								dist = tp;
 								loopID = USEAUXTHEME;

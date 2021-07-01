@@ -106,6 +106,14 @@ struct StaticTilePoint {
 		return p;
 	}
 
+	friend int operator==(StaticTilePoint a, StaticTilePoint b) {
+		return a.u == b.u && a.v == b.v && a.z == b.z;
+	}
+
+	friend int operator!=(StaticTilePoint a, StaticTilePoint b) {
+		return a.u != b.u || a.v != b.v || a.z != b.z;
+	}
+
 	void operator+=(StaticTilePoint a) {
 		u += a.u;
 		v += a.v;
@@ -191,7 +199,7 @@ struct TilePoint {
  * ============================================================================ */
 
 	//	A TilePoint defining a NULL location
-const extern TilePoint	Nowhere;
+const extern StaticTilePoint Nowhere;
 
 /* ============================================================================ *
    TileRegion: Specifies a rectangular region of tiles using min/max

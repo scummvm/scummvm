@@ -45,7 +45,7 @@ extern PlatformHandle   platformList;       // platform resource hunk
  * ===================================================================== */
 
 static int16        prevMapNum;
-static TilePoint    prevCoords = Nowhere;
+static StaticTilePoint prevCoords = Nowhere;
 static MetaTilePtr  prevMeta;
 
 /* ===================================================================== *
@@ -923,7 +923,7 @@ int16 tileNopeHeight(
 		//  Look up the metatile on the map.
 		metaPtr = prevMeta = mapList[mapNum].lookupMeta(metaCoords);
 		prevMapNum = mapNum;
-		prevCoords = metaCoords;
+		prevCoords.set(metaCoords.u, metaCoords.v, metaCoords.z);
 	}
 
 	if (metaPtr == NULL) return 0L;
