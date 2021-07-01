@@ -617,7 +617,7 @@ bool Debugger::cmdOpenLog(int argc, const char **argv) {
 #ifndef DISABLE_MD5
 struct ArchiveMemberLess {
 	bool operator()(const Common::ArchiveMemberPtr &x, const Common::ArchiveMemberPtr &y) const {
-		return (*x).getDisplayName().compareToIgnoreCase((*y).getDisplayName()) < 0;
+		return (*x).getName().compareToIgnoreCase((*y).getName()) < 0;
 	}
 };
 
@@ -653,7 +653,7 @@ bool Debugger::cmdMd5(int argc, const char **argv) {
 			for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
 				Common::SeekableReadStream *stream = (*iter)->createReadStream();
 				Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-				debugPrintf("%s  %s  %d\n", md5.c_str(), (*iter)->getDisplayName().c_str(), (int32)stream->size());
+				debugPrintf("%s  %s  %d\n", md5.c_str(), (*iter)->getName().c_str(), (int32)stream->size());
 				delete stream;
 			}
 		}

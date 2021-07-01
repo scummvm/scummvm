@@ -347,7 +347,7 @@ bool ThemeEngine::init() {
 			if (member) {
 				_themeArchive = Common::makeZipArchive(member->createReadStream());
 				if (!_themeArchive) {
-					warning("Failed to open Zip archive '%s'.", member->getDisplayName().c_str());
+					warning("Failed to open Zip archive '%s'.", member->getName().c_str());
 				}
 			} else {
 				_themeArchive = Common::makeZipArchive(node);
@@ -919,13 +919,13 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 		assert((*i)->getName().hasSuffix(".stx"));
 
 		if (_parser->loadStream((*i)->createReadStream()) == false) {
-			warning("Failed to load STX file '%s'", (*i)->getDisplayName().c_str());
+			warning("Failed to load STX file '%s'", (*i)->getName().c_str());
 			_parser->close();
 			return false;
 		}
 
 		if (_parser->parse() == false) {
-			warning("Failed to parse STX file '%s'", (*i)->getDisplayName().c_str());
+			warning("Failed to parse STX file '%s'", (*i)->getName().c_str());
 			_parser->close();
 			return false;
 		}
@@ -1913,7 +1913,7 @@ void ThemeEngine::listUsableThemes(Common::Archive &archive, Common::List<ThemeD
 		td.name.clear();
 		if (themeConfigUsable(**i, td.name)) {
 			td.filename = (*i)->getName();
-			td.id = (*i)->getDisplayName();
+			td.id = (*i)->getName();
 
 			// If the name of the node object also contains
 			// the ".zip" suffix, we will strip it.
