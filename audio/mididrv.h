@@ -124,6 +124,7 @@ public:
 	static const byte MIDI_CONTROLLER_CHORUS = 0x5D;
 	static const byte MIDI_CONTROLLER_RPN_LSB = 0x64;
 	static const byte MIDI_CONTROLLER_RPN_MSB = 0x65;
+	static const byte MIDI_CONTROLLER_ALL_SOUND_OFF = 0x78;
 	static const byte MIDI_CONTROLLER_RESET_ALL_CONTROLLERS = 0x79;
 	static const byte MIDI_CONTROLLER_ALL_NOTES_OFF = 0x7B;
 	static const byte MIDI_CONTROLLER_OMNI_ON = 0x7C;
@@ -131,11 +132,24 @@ public:
 	static const byte MIDI_CONTROLLER_MONO_ON = 0x7E;
 	static const byte MIDI_CONTROLLER_POLY_ON = 0x7F;
 
-	static const byte MIDI_RPN_PITCH_BEND_SENSITIVITY_MSB = 0x00;
-	static const byte MIDI_RPN_PITCH_BEND_SENSITIVITY_LSB = 0x00;
-	static const byte MIDI_RPN_NULL = 0x7F;
+	static const uint16 MIDI_RPN_PITCH_BEND_SENSITIVITY = 0x0000;
+	static const uint16 MIDI_RPN_MASTER_TUNING_FINE = 0x0001;
+	static const uint16 MIDI_RPN_MASTER_TUNING_COARSE = 0x0002;
+	static const uint16 MIDI_RPN_NULL = 0x7F7F;
+
+	static const uint8 MIDI_META_END_OF_TRACK = 0x2F;
+	static const uint8 MIDI_META_SEQUENCER = 0x7F;
 
 	static const uint16 MIDI_PITCH_BEND_DEFAULT = 0x2000;
+	static const uint8 MIDI_PANNING_DEFAULT = 0x40;
+	static const uint8 MIDI_EXPRESSION_DEFAULT = 0x7F;
+	static const uint16 MIDI_MASTER_TUNING_FINE_DEFAULT = 0x2000;
+	static const uint8 MIDI_MASTER_TUNING_COARSE_DEFAULT = 0x40;
+
+	static const uint8 GM_PITCH_BEND_SENSITIVITY_DEFAULT = 0x02;
+
+	static const uint8 GS_RHYTHM_FIRST_NOTE = 0x1B;
+	static const uint8 GS_RHYTHM_LAST_NOTE = 0x58;
 
 	MidiDriver_BASE();
 
@@ -210,8 +224,8 @@ public:
 
 	/**
 	 * Stops all currently active notes. Specify stopSustainedNotes if
-	 * the MIDI data makes use of the sustain controller to also stop
-	 * sustained notes.
+	 * the MIDI data makes use of the sustain controller to make sure
+	 * sustained notes are also stopped.
 	 *
 	 * Usually, the MIDI parser tracks active notes and terminates them
 	 * when playback is stopped. This method should be used as a backup
@@ -342,7 +356,7 @@ public:
 	};
 
 	enum {
-//		PROP_TIMEDIV = 1,
+		//		PROP_TIMEDIV = 1,
 		PROP_OLD_ADLIB = 2,
 		PROP_CHANNEL_MASK = 3,
 		// HACK: Not so nice, but our SCUMM AdLib code is in audio/
@@ -351,10 +365,10 @@ public:
 		 * Set this to enable or disable scaling of the MIDI channel
 		 * volume with the user volume settings (including setting it
 		 * to 0 when Mute All is selected). This is currently
-		 * implemented in the MT-32/GM drivers (regular and Miles AIL).
+		 * implemented in the MT-32/GM drivers (regular and Miles AIL)
+		 * and the regular AdLib driver.
 		 *
-		 * Default is enabled for the regular driver, and disabled for
-		 * the Miles AIL driver.
+		 * Default is disabled.
 		 */
 		PROP_USER_VOLUME_SCALING = 5,
 		/**
@@ -375,7 +389,39 @@ public:
 		 * Set this property before opening the driver, to make sure
 		 * that the default panning is set correctly.
 		 */
-		 PROP_MIDI_DATA_REVERSE_PANNING = 6
+		PROP_MIDI_DATA_REVERSE_PANNING = 6,
+		/**
+		 * Set this property to specify the behavior of the AdLib driver
+		 * for note frequency and volume calculation.
+		 *
+		 * ACCURACY_MODE_SB16_WIN95: volume and frequency calculation is
+		 * identical to the Windows 95 SB16 driver. This is the default.
+		 * ACCURACY_MODE_GM: volume and frequency calculation is closer
+		 * to the General MIDI and MIDI specifications. Volume is more
+		 * dynamic and frequencies are closer to actual note frequencies.
+		 * Calculations are more CPU intensive in this mode.
+		 */
+		PROP_OPL_ACCURACY_MODE = 7,
+		/**
+		 * Set this property to specify the OPL channel allocation
+		 * behavior of the AdLib driver.
+		 *
+		 * ALLOCATION_MODE_DYNAMIC: behavior is identical to the Windows
+		 * 95 SB16 driver. Whenever a note is played, an OPL channel is
+		 * allocated to play this note if:
+		 * 1. the channel is not playing a note, or
+		 * 2. the channel is playing a note of the same instrument, or
+		 * 3. the channel is playing the least recently started note.
+		 * This mode is the default.
+		 * ALLOCATION_MODE_STATIC: when a note is played, an OPL channel
+		 * is exclusively allocated to the MIDI channel and source
+		 * playing the note. All notes on this MIDI channel are played
+		 * using this OPL channel. If no OPL channels are unallocated,
+		 * allocation will fail and the note will not play. This mode
+		 * requires MIDI channels to be monophonic (i.e. only play one
+		 * note at a time).
+		 */
+		PROP_OPL_CHANNEL_ALLOCATION_MODE = 8
 	};
 
 	/**
@@ -400,12 +446,12 @@ public:
 
 	// HIGH-LEVEL SEMANTIC METHODS
 	virtual void setPitchBendRange(byte channel, uint range) {
-		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_MSB, MIDI_RPN_PITCH_BEND_SENSITIVITY_MSB);
-		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_LSB, MIDI_RPN_PITCH_BEND_SENSITIVITY_LSB);
+		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_MSB, MIDI_RPN_PITCH_BEND_SENSITIVITY >> 8);
+		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_LSB, MIDI_RPN_PITCH_BEND_SENSITIVITY & 0xFF);
 		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_DATA_ENTRY_MSB, range); // Semi-tones
 		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_DATA_ENTRY_LSB, 0); // Cents
-		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_MSB, MIDI_RPN_NULL);
-		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_LSB, MIDI_RPN_NULL);
+		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_MSB, MIDI_RPN_NULL >> 8);
+		send(MIDI_COMMAND_CONTROL_CHANGE | channel, MIDI_CONTROLLER_RPN_LSB, MIDI_RPN_NULL & 0xFF);
 	}
 
 	/**
