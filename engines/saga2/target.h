@@ -569,8 +569,8 @@ class SpecificActorTarget : public ActorTarget {
 
 public:
 	//  Constructor -- initial construction
-	SpecificActorTarget(Actor *actor) :
-		a(actor) {
+	SpecificActorTarget(Actor *actor_) :
+		a(actor_) {
 	}
 
 	//  Constructor -- reconstruct from archive buffer
