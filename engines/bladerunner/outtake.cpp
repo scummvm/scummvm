@@ -27,6 +27,10 @@
 #include "bladerunner/subtitles.h"
 #include "bladerunner/vqa_player.h"
 #include "bladerunner/time.h"
+#include "bladerunner/ambient_sounds.h"
+#include "bladerunner/audio_player.h"
+#include "bladerunner/game_constants.h"
+#include "bladerunner/game_info.h"
 
 #include "common/debug.h"
 #include "common/events.h"
@@ -80,6 +84,10 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 		int frame = vqaPlayer.update();
 		blit(_surfaceVideo, _vm->_surfaceFront); // This helps to make subtitles disappear properly, if the video is rendered in separate surface and then pushed to the front surface
 		if (frame == -3) { // end of video
+			if (_vm->_cutContent && resName.equals("FLYTRU_E.VQA")) {
+				_vm->_ambientSounds->removeAllNonLoopingSounds(true);
+				_vm->_ambientSounds->removeAllLoopingSounds(1u);
+			}
 			break;
 		}
 
@@ -87,7 +95,50 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 			_vm->_subtitles->loadOuttakeSubsText(resNameNoVQASuffix, frame);
 			_vm->_subtitles->tickOuttakes(_vm->_surfaceFront);
 			_vm->blitToScreen(_vm->_surfaceFront);
+			if (_vm->_cutContent && resName.equals("FLYTRU_E.VQA")) {
+				// This FLYTRU_E outtake has 150 frames
+				_vm->_ambientSounds->tick();
+				switch (frame) {
+				case 0:
+					_vm->_ambientSounds->addLoopingSound(kSfxLABAMB1,   95, 0, 0u);
+					_vm->_ambientSounds->addLoopingSound(kSfxROOFAIR1, 100, 0, 0u);
+					_vm->_ambientSounds->addLoopingSound(kSfxPSPA6,     70, 0, 1u);
+					break;
+				case 6:
+					_vm->_ambientSounds->playSound(kSfxSPIN1A, 100, 60, 100, 99);
+					break;
+				case 12:
+					_vm->_ambientSounds->playSound(kSfxSWEEP3, 55, 60, 100, 89);
+					break;
+				case 28:
+					if (_vm->_rnd.getRandomNumberRng(1, 5) < 4) 
+						_vm->_ambientSounds->playSound(kSfxTHNDER3, 82, -20, -20, 99);
+					break;
+				case 34:
+					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxMUSVOL8), 22, 30, 30, 99, 0, Audio::Mixer::kMusicSoundType);
+					break;
+				case 52:
+					if (_vm->_rnd.getRandomNumberRng(1, 4) < 4) 
+						_vm->_ambientSounds->playSound(kSfxTHNDR3, 90, 10, 10, 89);
+					break;
+				case 82:
+					if (_vm->_rnd.getRandomNumberRng(1, 5) < 5) 
+						_vm->_ambientSounds->playSound(kSfxSIREN2, 62, -60, 45, 99);
+					break;
+				case 105:
+					if (_vm->_rnd.getRandomNumberRng(1, 5) < 4) 
+						_vm->_ambientSounds->playSound(kSfxTHNDER4, 95, -20, -20, 99);
+					break;
+				}
+			}
 		}
+	}
+
+	if ((_vm->_vqaStopIsRequested || _vm->shouldQuit())
+		&& _vm->_cutContent && resName.equals("FLYTRU_E.VQA")) {
+		_vm->_ambientSounds->removeAllNonLoopingSounds(true);
+		_vm->_ambientSounds->removeAllLoopingSounds(0u);
+		_vm->_audioPlayer->stopAll();
 	}
 
 	_vm->_vqaIsPlaying = false;

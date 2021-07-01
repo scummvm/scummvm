@@ -323,10 +323,13 @@ void SceneScriptPS01::PlayerWalkedOut() {
 
 	if (!Game_Flag_Query(kflagPS01toPS02)) {
 		if (Global_Variable_Query(kVariableChapter) == 1) {
-			Outtake_Play(kOuttakeTowards3, true, -1);
+			if (_vm->_cutContent && (Random_Query(1, 8) == 1)) {
+				Outtake_Play(kOuttakeFlyThrough, true, -1);
+			} else {
+				Outtake_Play(kOuttakeTowards3, true, -1);
+			}
 		}
-#if BLADERUNNER_ORIGINAL_BUGS
-#else
+#if !BLADERUNNER_ORIGINAL_BUGS
 		else {
 			// Acts 2, 3 - should still use a spinner fly-through transition
 			if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
@@ -335,7 +338,7 @@ void SceneScriptPS01::PlayerWalkedOut() {
 				Outtake_Play(kOuttakeTowards3, true, -1); // available in Acts 1, 2, 3
 			}
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 	}
 }
 
