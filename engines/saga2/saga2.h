@@ -107,6 +107,7 @@ public:
 	Common::List<SensorList *> _sensorListList;
 	Common::List<Sensor *> _sensorList;
 	Common::List<MotionTask *>::iterator _nextMT;
+	Common::List<int> _platformLRU;
 	BandList *_bandList;
 	CImageCache *_imageCache;
 	GrabInfo *_mouseInfo;

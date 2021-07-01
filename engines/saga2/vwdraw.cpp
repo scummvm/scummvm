@@ -407,11 +407,11 @@ void vDisplayPage::fillRect(Rect16 r, uint8 color) {
 void vDisplayPage::invertRect(Rect16 r, uint8 color) {
 }
 
-void vDisplayPage::writePixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
+void vDisplayPage::writePixels(Rect16 r, uint8 *pixPtr, uint16 pixMod) {
 	g_system->copyRectToScreen(pixPtr, pixMod, r.x, r.y, r.width, r.height);
 }
 
-void vDisplayPage::writeTransPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
+void vDisplayPage::writeTransPixels(Rect16 r, uint8 *pixPtr, uint16 pixMod) {
 	Graphics::Surface *surf = g_system->lockScreen();
 
 	_BltPixelsT(pixPtr, pixMod, (byte *)surf->getBasePtr(r.x, r.y), surf->pitch, r.width, r.height );

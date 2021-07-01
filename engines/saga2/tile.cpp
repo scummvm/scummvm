@@ -172,7 +172,7 @@ extern ObjectID     viewCenterObject;       // ID of object that view tracks
    Exports
  * ===================================================================== */
 
-Rect16              tileRect(tileRectX, tileRectY, tileRectWidth, tileRectHeight);
+StaticRect tileRect{tileRectX, tileRectY, tileRectWidth, tileRectHeight};
 gPixelMap           tileDrawMap;
 
 /* ===================================================================== *
@@ -183,7 +183,7 @@ int16                   cycleCount;
 
 uint16                  rippedRoofID;
 
-TilePoint               ripTableCoords = Nowhere;
+static StaticTilePoint  ripTableCoords = Nowhere;
 
 static RipTable         ripTableList[25];
 
@@ -197,7 +197,6 @@ CyclePtr                cycleList;          // list of tile cycling info
 //  Platform caching management
 const int           platformCacheSize = 256;
 
-Common::List<int> platformLRU;  // least recently used
 PlatformCacheEntry  platformCache[platformCacheSize];
 
 /* ===================================================================== *
@@ -1813,7 +1812,7 @@ void initPlatformCache(void) {
 
 		//  Fill up the LRU with empty platforms
 		pce->metaID = NoMetaTile;
-		platformLRU.push_back(i);
+		g_vm->_platformLRU.push_back(i);
 	}
 }
 
@@ -2282,8 +2281,8 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		assert(pce->metaID == thisID(mapNum));
 
 			//	Move to the end of the LRU
-		platformLRU.remove(plIndex);
-		platformLRU.push_back(plIndex);
+		g_vm->_platformLRU.remove(plIndex);
+		g_vm->_platformLRU.push_back(plIndex);
 
 			//	return the address of the platform
 		return &pce->pl;
@@ -2294,9 +2293,9 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		//  dump something from the cache. Dump the one that
 		//  was least recently used.
 		//  Get head of LRU chain.
-		int cacheIndex = platformLRU.front();
-		platformLRU.pop_front();
-		platformLRU.push_back(cacheIndex);
+		int cacheIndex = g_vm->_platformLRU.front();
+		g_vm->_platformLRU.pop_front();
+		g_vm->_platformLRU.push_back(cacheIndex);
 
 		pce = &platformCache[cacheIndex];
 

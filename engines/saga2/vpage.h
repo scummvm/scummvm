@@ -56,8 +56,8 @@ public:
 	//  pixMod is the line modulus of the buffer.)
 
 	virtual void readPixels(Rect16 &dispRect, uint8 *pixPtr, uint16 pixMod);
-	virtual void writePixels(Rect16 &dispRect, uint8 *pixPtr, uint16 pixMod);
-	virtual void writeTransPixels(Rect16 &dispRect, uint8 *pixPtr, uint16 pixMod);
+	virtual void writePixels(Rect16 dispRect, uint8 *pixPtr, uint16 pixMod);
+	virtual void writeTransPixels(Rect16 dispRect, uint8 *pixPtr, uint16 pixMod);
 	virtual void writeColorPixels(Rect16 dispRect, uint8 *pixPtr, uint16 pixMod, uint8 color);
 	virtual void writeComplementPixels(Rect16 dispRect, uint8 *pixPtr, uint16 pixMod, uint8 color);
 };
