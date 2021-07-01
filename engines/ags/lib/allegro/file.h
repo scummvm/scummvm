@@ -40,162 +40,162 @@ namespace AGS3 {
 #define F_EXE_MAGIC     0x736C682BL    /* magic number for appended data */
 
 struct _al_normal_packfile_details {
-int hndl;                           /* DOS file handle */
-int flags;                          /* PACKFILE_FLAG_* constants */
-unsigned char *buf_pos;             /* position in buffer */
-int buf_size;                       /* number of bytes in the buffer */
-long todo;                          /* number of bytes still on the disk */
-struct PACKFILE *parent;            /* nested, parent file */
-struct LZSS_PACK_DATA *pack_data;   /* for LZSS compression */
-struct LZSS_UNPACK_DATA *unpack_data; /* for LZSS decompression */
-char *filename;                     /* name of the file */
-char *passdata;                     /* encryption key data */
-char *passpos;                      /* current key position */
-unsigned char buf[F_BUF_SIZE];      /* the actual data buffer */
+	int hndl;                           /* DOS file handle */
+	int flags;                          /* PACKFILE_FLAG_* constants */
+	unsigned char *buf_pos;             /* position in buffer */
+	int buf_size;                       /* number of bytes in the buffer */
+	long todo;                          /* number of bytes still on the disk */
+	struct PACKFILE *parent;            /* nested, parent file */
+	struct LZSS_PACK_DATA *pack_data;   /* for LZSS compression */
+	struct LZSS_UNPACK_DATA *unpack_data; /* for LZSS decompression */
+	char *filename;                     /* name of the file */
+	char *passdata;                     /* encryption key data */
+	char *passpos;                      /* current key position */
+	unsigned char buf[F_BUF_SIZE];      /* the actual data buffer */
 };
 
 struct PACKFILE_VTABLE {
-AL_METHOD(int, pf_fclose, (void *userdata));
-AL_METHOD(int, pf_getc, (void *userdata));
-AL_METHOD(int, pf_ungetc, (int c, void *userdata));
-AL_METHOD(long, pf_fread, (void *p, long n, void *userdata));
-AL_METHOD(int, pf_putc, (int c, void *userdata));
-AL_METHOD(long, pf_fwrite, (AL_CONST void *p, long n, void *userdata));
-AL_METHOD(int, pf_fseek, (void *userdata, int offset));
-AL_METHOD(int, pf_feof, (void *userdata));
-AL_METHOD(int, pf_ferror, (void *userdata));
+	AL_METHOD(int, pf_fclose, (void *userdata));
+	AL_METHOD(int, pf_getc, (void *userdata));
+	AL_METHOD(int, pf_ungetc, (int c, void *userdata));
+	AL_METHOD(long, pf_fread, (void *p, long n, void *userdata));
+	AL_METHOD(int, pf_putc, (int c, void *userdata));
+	AL_METHOD(long, pf_fwrite, (AL_CONST void *p, long n, void *userdata));
+	AL_METHOD(int, pf_fseek, (void *userdata, int offset));
+	AL_METHOD(int, pf_feof, (void *userdata));
+	AL_METHOD(int, pf_ferror, (void *userdata));
 };
 
 /**
  * Allegro file class
  */
 struct PACKFILE {
-virtual ~PACKFILE() {
-	close();
-}
+	virtual ~PACKFILE() {
+		close();
+	}
 
-virtual void close() {}
-virtual int pack_fseek(int offset) = 0;
-virtual int pack_getc() = 0;
-virtual int pack_putc(int c) = 0;
-virtual int pack_ungetc(int c) = 0;
-virtual long pack_fread(void *p, long n) = 0;
-virtual long pack_fwrite(AL_CONST void *p, long n) = 0;
-virtual int pack_feof() = 0;
-virtual int pack_ferror() = 0;
-virtual void *pack_get_userdata() const {
-	return nullptr;
-}
+	virtual void close() {}
+	virtual int pack_fseek(int offset) = 0;
+	virtual int pack_getc() = 0;
+	virtual int pack_putc(int c) = 0;
+	virtual int pack_ungetc(int c) = 0;
+	virtual long pack_fread(void *p, long n) = 0;
+	virtual long pack_fwrite(AL_CONST void *p, long n) = 0;
+	virtual int pack_feof() = 0;
+	virtual int pack_ferror() = 0;
+	virtual void *pack_get_userdata() const {
+		return nullptr;
+	}
 
-PACKFILE *pack_fopen_chunk(int pack);
-PACKFILE *pack_fclose_chunk();
-int pack_igetw();
-long pack_igetl();
-int pack_iputw(int w);
-long pack_iputl(long l);
-int pack_mgetw();
-long pack_mgetl();
-int pack_mputw(int w);
-long pack_mputl(long l);
-char *pack_fgets(char *p, int max);
-int pack_fputs(AL_CONST char *p);
-};
+	PACKFILE *pack_fopen_chunk(int pack);
+	PACKFILE *pack_fclose_chunk();
+	int pack_igetw();
+	long pack_igetl();
+	int pack_iputw(int w);
+	long pack_iputl(long l);
+	int pack_mgetw();
+	long pack_mgetl();
+	int pack_mputw(int w);
+	long pack_mputl(long l);
+	char *pack_fgets(char *p, int max);
+	int pack_fputs(AL_CONST char *p);
+	};
 
 struct ScummVMPackFile : public PACKFILE {
 public:
-Common::SeekableReadStream *_stream;
+	Common::SeekableReadStream *_stream;
 
-ScummVMPackFile(Common::SeekableReadStream *rs) : PACKFILE(), _stream(rs) {
-}
+	ScummVMPackFile(Common::SeekableReadStream *rs) : PACKFILE(), _stream(rs) {
+	}
 
-virtual ~ScummVMPackFile() {}
+	virtual ~ScummVMPackFile() {}
 
-void close() override {
-	delete _stream;
-	_stream = nullptr;
-}
+	void close() override {
+		delete _stream;
+		_stream = nullptr;
+	}
 
-int pack_fseek(int offset) override {
-	return _stream->seek(offset, SEEK_CUR);
-}
+	int pack_fseek(int offset) override {
+		return _stream->seek(offset, SEEK_CUR);
+	}
 
-int pack_getc() override {
-	return _stream->readByte();
-}
+	int pack_getc() override {
+		return _stream->readByte();
+	}
 
-int pack_putc(int c) override {
-	error("pack_putc is not yet supported");
-}
+	int pack_putc(int c) override {
+		error("pack_putc is not yet supported");
+	}
 
-int pack_ungetc(int c) override {
-	_stream->seek(-1, SEEK_CUR);
-	return 0;
-}
+	int pack_ungetc(int c) override {
+		_stream->seek(-1, SEEK_CUR);
+		return 0;
+	}
 
-long pack_fread(void *p, long n) override {
-	return _stream->read(p, n);
-}
+	long pack_fread(void *p, long n) override {
+		return _stream->read(p, n);
+	}
 
-long pack_fwrite(AL_CONST void *p, long n) override {
-	error("pack_fwrite is not yet supported");
-}
+	long pack_fwrite(AL_CONST void *p, long n) override {
+		error("pack_fwrite is not yet supported");
+	}
 
-int pack_feof() override {
-	return _stream->eos();
-}
+	int pack_feof() override {
+		return _stream->eos();
+	}
 
-int pack_ferror() override {
-	return _stream->err();
-}
-};
+	int pack_ferror() override {
+		return _stream->err();
+	}
+	};
 
-struct VTablePackFile : public PACKFILE {
-AL_CONST PACKFILE_VTABLE *_vTable;
-void *_userData;
+	struct VTablePackFile : public PACKFILE {
+	AL_CONST PACKFILE_VTABLE *_vTable;
+	void *_userData;
 
-VTablePackFile(AL_CONST PACKFILE_VTABLE *vTable, void *userData) :
-	_vTable(vTable), _userData(userData) {
-}
+	VTablePackFile(AL_CONST PACKFILE_VTABLE *vTable, void *userData) :
+		_vTable(vTable), _userData(userData) {
+	}
 
-void close() override {
-	_vTable->pf_fclose(_userData);
-}
+	void close() override {
+		_vTable->pf_fclose(_userData);
+	}
 
-int pack_fseek(int offset) override {
-	return _vTable->pf_fseek(_userData, offset);
-}
+	int pack_fseek(int offset) override {
+		return _vTable->pf_fseek(_userData, offset);
+	}
 
-int pack_getc() override {
-	return _vTable->pf_getc(_userData);
-}
+	int pack_getc() override {
+		return _vTable->pf_getc(_userData);
+	}
 
-int pack_putc(int c) override {
-	return _vTable->pf_putc(c, _userData);
-}
+	int pack_putc(int c) override {
+		return _vTable->pf_putc(c, _userData);
+	}
 
-int pack_ungetc(int c) override {
-	return _vTable->pf_ungetc(c, _userData);
-}
+	int pack_ungetc(int c) override {
+		return _vTable->pf_ungetc(c, _userData);
+	}
 
-long pack_fread(void *p, long n) override {
-	return _vTable->pf_fread(p, n, _userData);
-}
+	long pack_fread(void *p, long n) override {
+		return _vTable->pf_fread(p, n, _userData);
+	}
 
-long pack_fwrite(AL_CONST void *p, long n) override {
-	return _vTable->pf_fwrite(p, n, _userData);
-}
+	long pack_fwrite(AL_CONST void *p, long n) override {
+		return _vTable->pf_fwrite(p, n, _userData);
+	}
 
-int pack_feof() override {
-	return _vTable->pf_feof(_userData);
-}
+	int pack_feof() override {
+		return _vTable->pf_feof(_userData);
+	}
 
-int pack_ferror() override {
-	return _vTable->pf_ferror(_userData);
-}
+	int pack_ferror() override {
+		return _vTable->pf_ferror(_userData);
+	}
 
-virtual void *pack_get_userdata() const override {
-	return _userData;
-}
+	virtual void *pack_get_userdata() const override {
+		return _userData;
+	}
 };
 
 extern char *fix_filename_case(char *path);
