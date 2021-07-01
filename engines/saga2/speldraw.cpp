@@ -150,10 +150,8 @@ SpellDisplayPrototype *SpellDisplayPrototypeList::operator[](SpellID s) {
 
 void SpellDisplayPrototype::getColorTranslation(ColorTable map, Effectron *e) {
 	int32 i = colorMap[whichColorMap(effect, e)];
-	i = MAX(0, MIN(loadedColorMaps, i));
-	buildColorTable(map,
-	                spellSchemes->_schemes[i]->bank,
-	                11);
+	i = MAX<int32>(0, MIN(loadedColorMaps, i));
+	buildColorTable(map, spellSchemes->_schemes[i]->bank, 11);
 }
 
 /* ===================================================================== *
