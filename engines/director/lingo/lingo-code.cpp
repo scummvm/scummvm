@@ -301,7 +301,7 @@ void Lingo::popContext() {
 
 	if (_stack.size() == fp->stackSizeBefore + 1) {
 		if (!fp->allowRetVal) {
-			warning("dropping return value");
+			debugC(5, kDebugLingoExec, "dropping return value");
 			g_lingo->pop();
 		}
 	} else if (_stack.size() == fp->stackSizeBefore) {
