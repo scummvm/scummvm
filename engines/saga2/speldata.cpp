@@ -59,32 +59,32 @@ const int32 maxSpellColorMaps = 32;
 /* const */     // For some reason, MVC can't handle constant static classes.
 // ( Note: It would be better to use a SIN/COS table anyway than
 // a table of points, since that allows more than 24 directions ).
-TilePoint WallVectors[8] = {
-	TilePoint(2, 0, 0), TilePoint(1, 1, 0), TilePoint(0, 2, 0),
-	TilePoint(-1, 2, 0), TilePoint(-2, 0, 0), TilePoint(-1, -1, 0),
-	TilePoint(0, -2, 0), TilePoint(1, -1, 0)
+StaticTilePoint WallVectors[8] = {
+	{2, 0, 0}, {1, 1, 0}, {0, 2, 0},
+	{-1, 2, 0}, {-2, 0, 0}, {-1, -1, 0},
+	{0, -2, 0}, {1, -1, 0}
 };
 
-TilePoint FireballVectors[24] = {
-	TilePoint(4, 0, 0), TilePoint(4, 1, 0), TilePoint(3, 2, 0),
-	TilePoint(3, 3, 0), TilePoint(2, 3, 0), TilePoint(1, 4, 0),
-	TilePoint(0, 4, 0), TilePoint(-1, 4, 0), TilePoint(-2, 3, 0),
-	TilePoint(-3, 3, 0), TilePoint(-3, 2, 0), TilePoint(-4, 1, 0),
-	TilePoint(-4, 0, 0), TilePoint(-4, -1, 0), TilePoint(-3, -2, 0),
-	TilePoint(-3, -3, 0), TilePoint(-2, -3, 0), TilePoint(-1, -4, 0),
-	TilePoint(0, -4, 0), TilePoint(1, -4, 0), TilePoint(2, -3, 0),
-	TilePoint(3, -3, 0), TilePoint(3, -2, 0), TilePoint(4, -1, 0)
+StaticTilePoint FireballVectors[24] = {
+	{4, 0, 0}, {4, 1, 0}, {3, 2, 0},
+	{3, 3, 0}, {2, 3, 0}, {1, 4, 0},
+	{0, 4, 0}, {-1, 4, 0}, {-2, 3, 0},
+	{-3, 3, 0}, {-3, 2, 0}, {-4, 1, 0},
+	{-4, 0, 0}, {-4, -1, 0}, {-3, -2, 0},
+	{-3, -3, 0}, {-2, -3, 0}, {-1, -4, 0},
+	{0, -4, 0}, {1, -4, 0}, {2, -3, 0},
+	{3, -3, 0}, {3, -2, 0}, {4, -1, 0}
 };
 
-TilePoint SquareSpellVectors[32] = {
-	TilePoint(4, 0, 0), TilePoint(4, 1, 0), TilePoint(4, 2, 0), TilePoint(4, 3, 0),
-	TilePoint(4, 4, 0), TilePoint(3, 4, 0), TilePoint(2, 4, 0), TilePoint(1, 4, 0),
-	TilePoint(0, 4, 0), TilePoint(-1, 4, 0), TilePoint(-2, 4, 0), TilePoint(-3, 4, 0),
-	TilePoint(-4, 4, 0), TilePoint(-4, 3, 0), TilePoint(-4, 2, 0), TilePoint(-4, 1, 0),
-	TilePoint(-4, 0, 0), TilePoint(-4, -1, 0), TilePoint(-4, -2, 0), TilePoint(-4, -3, 0),
-	TilePoint(-4, -4, 0), TilePoint(-3, -4, 0), TilePoint(-2, -4, 0), TilePoint(-1, -4, 0),
-	TilePoint(0, -4, 0), TilePoint(1, -4, 0), TilePoint(2, -4, 0), TilePoint(3, -4, 0),
-	TilePoint(4, -4, 0), TilePoint(4, -3, 0), TilePoint(4, -2, 0), TilePoint(4, -1, 0)
+StaticTilePoint SquareSpellVectors[32] = {
+	{4, 0, 0}, {4, 1, 0}, {4, 2, 0}, {4, 3, 0},
+	{4, 4, 0}, {3, 4, 0}, {2, 4, 0}, {1, 4, 0},
+	{0, 4, 0}, {-1, 4, 0}, {-2, 4, 0}, {-3, 4, 0},
+	{-4, 4, 0}, {-4, 3, 0}, {-4, 2, 0}, {-4, 1, 0},
+	{-4, 0, 0}, {-4, -1, 0}, {-4, -2, 0}, {-4, -3, 0},
+	{-4, -4, 0}, {-3, -4, 0}, {-2, -4, 0}, {-1, -4, 0},
+	{0, -4, 0}, {1, -4, 0}, {2, -4, 0}, {3, -4, 0},
+	{4, -4, 0}, {4, -3, 0}, {4, -2, 0}, {4, -1, 0}
 };
 
 /* ===================================================================== *

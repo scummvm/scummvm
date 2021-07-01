@@ -68,9 +68,9 @@ const int16 wallInnerRadius = 16;
  * ===================================================================== */
 
 // ball shaped spell shapes
-extern TilePoint WallVectors[];
-extern TilePoint FireballVectors[];
-extern TilePoint SquareSpellVectors[];
+extern StaticTilePoint WallVectors[];
+extern StaticTilePoint FireballVectors[];
+extern StaticTilePoint SquareSpellVectors[];
 
 /* ===================================================================== *
    Spell shape math explanations
