@@ -376,9 +376,6 @@ static const StaticRect menConBtnRect = {485, 265, 44, 43};
 // options button
 static const StaticRect optBtnRect = {20, 445, 26, 15};
 
-//  enchantment display
-static const StaticRect enchDispRect = {0, 0, 630, 18};
-
 // brother buttons and frame
 static const StaticRect broBtnRect = {481, 450, 144, 11};
 static const StaticRect julBtnRect = {482, 451, 44, 9};
