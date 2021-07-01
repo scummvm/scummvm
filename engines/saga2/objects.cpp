@@ -65,7 +65,6 @@ const uint32        nameListID  = MKTAG('N', 'A', 'M', 'E'),
    Locals
  * ===================================================================== */
 
-Common::Array<char *> nameList;                // handle to list of names
 uint32              nameListCount;
 
 ProtoObj            *objectProtos = nullptr;   // object prototypes
@@ -1476,7 +1475,7 @@ const char *GameObject::nameText(uint16 index) {
 	if (index >= nameListCount)
 		return "Bad Name Index";
 
-	return nameList[index];
+	return g_vm->_nameList[index];
 }
 
 #define INTANGIBLE_MASK (ProtoObj::isEnchantment|ProtoObj::isSpell|ProtoObj::isSkill)
@@ -2443,7 +2442,7 @@ void initPrototypes(void) {
 
 		char *name = new char[s.size() + 1];
 		Common::strlcpy(name, s.c_str(), s.size() + 1);
-		nameList.push_back(name);
+		g_vm->_nameList.push_back(name);
 	}
 	nameListCount = count;
 
@@ -2628,10 +2627,10 @@ void initPrototypes(void) {
 
 void cleanupPrototypes(void) {
 	for (uint i = 0; i < nameListCount; ++i) {
-		if (nameList[i])
-			delete[] nameList[i];
+		if (g_vm->_nameList[i])
+			delete[] g_vm->_nameList[i];
 
-		nameList.clear();
+		g_vm->_nameList.clear();
 	}
 
 	if (actorProtos != nullptr) {
