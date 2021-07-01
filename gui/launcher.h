@@ -33,6 +33,7 @@ namespace GUI {
 #ifdef DISABLE_FANCY_THEMES
 #define DISABLE_LAUNCHERDISPLAY_GRID
 #endif
+#define kSwitchLauncherDialog -2
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 enum LauncherDisplayType {
@@ -58,20 +59,41 @@ class GraphicsWidget;
 class StaticTextWidget;
 class EditTextWidget;
 class SaveLoadChooser;
+class LauncherDialog;
 
-class LauncherDialog : public Dialog {
+class LauncherChooser {
+	typedef Common::String String;
+	typedef Common::U32String U32String;
+protected:
+	LauncherDialog *_impl;
+
+public:
+	LauncherChooser();
+	~LauncherChooser();
+
+	int runModal();
+	void selectLauncher();
+};
+
+class LauncherDialog : protected Dialog {
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
 
 	typedef Common::U32String U32String;
 	typedef Common::Array<Common::U32String> U32StringArray;
 public:
-	LauncherDialog();
+	LauncherDialog(const Common::String &dialogName);
 	~LauncherDialog() override;
 
 	void rebuild();
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+
+#ifndef DISABLE_LAUNCHERDISPLAY_GRID
+	virtual LauncherDisplayType getType() const = 0;
+#endif // !DISABLE_LAUNCHERDISPLAY_GRID
+
+	int run();
 
 	void handleKeyDown(Common::KeyState state) override;
 	void handleKeyUp(Common::KeyState state) override;
@@ -79,36 +101,23 @@ public:
 	bool doGameDetection(const Common::String &path);
 	Common::String getGameConfig(int item, Common::String key);
 protected:
-	EditTextWidget  *_searchWidget;
-	ListWidget		*_list;
-	Widget			*_startButton;
-	ButtonWidget	*_loadButton;
-	Widget			*_editButton;
-	Widget			*_removeButton;
 #ifndef DISABLE_FANCY_THEMES
 	GraphicsWidget		*_logo;
 	GraphicsWidget		*_searchPic;
 #endif
-	StaticTextWidget	*_searchDesc;
-	ButtonWidget	*_searchClearButton;
+	String			_title;
 	StringArray		_domains;
 	BrowserDialog	*_browser;
 	SaveLoadChooser	*_loadDialog;
 
-	String _search;
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
-	GridWidget			*_grid;
 	ButtonWidget		*_listButton;
 	ButtonWidget		*_gridButton;
-	LauncherDisplayType 	_launcherDisplay;
 
 	void addChooserButtons();
-	void openGrid();
-	void openList();
-
 	ButtonWidget *createSwitchButton(const Common::String &name, const Common::U32String &desc, const Common::U32String &tooltip, const char *image, uint32 cmd = 0);
-#endif
+#endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
 	void reflowLayout() override;
 
@@ -116,11 +125,11 @@ protected:
 	 * Fill the list widget with all currently configured targets, and trigger
 	 * a redraw.
 	 */
-	void updateListing();
+	virtual void updateListing();
 
-	void updateButtons();
+	virtual void updateButtons();
 
-	void build();
+	virtual void build();
 	void clean();
 
 	void open() override;
@@ -158,11 +167,87 @@ protected:
 	 *
 	 * @target	name of target to select
 	 */
-	void selectTarget(const String &target);
+	virtual void selectTarget(const String &target);
 private:
 
 	bool checkModifier(int modifier);
 };
+
+class LauncherSimple : public LauncherDialog {
+	typedef Common::String String;
+	typedef Common::Array<Common::String> StringArray;
+
+	typedef Common::U32String U32String;
+	typedef Common::Array<Common::U32String> U32StringArray;
+public:
+	LauncherSimple(const U32String &title);
+
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleKeyDown(Common::KeyState state) override;
+
+	void reflowLayout() override;
+
+	#ifndef DISABLE_LAUNCHERDISPLAY_GRID
+	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
+	#endif // !DISABLE_LAUNCHERDISPLAY_GRID
+
+	void close() override;
+
+protected:
+	void updateListing() override;
+	void updateButtons() override;
+	void selectTarget(const String &target) override;
+	void build() override;
+private:
+	ListWidget 		*_list;
+	EditTextWidget  *_searchWidget;
+	ButtonWidget	*_addButton;
+	Widget			*_startButton;
+	ButtonWidget	*_loadButton;
+	Widget			*_editButton;
+	Widget			*_removeButton;
+	StaticTextWidget	*_searchDesc;
+	ButtonWidget	*_searchClearButton;
+	String			 _search;
+};
+
+#ifndef DISABLE_LAUNCHERDISPLAY_GRID
+class LauncherGrid : public LauncherDialog {
+	typedef Common::String String;
+	typedef Common::Array<Common::String> StringArray;
+
+	typedef Common::U32String U32String;
+	typedef Common::Array<Common::U32String> U32StringArray;
+public:
+	LauncherGrid(const U32String &title);
+
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleKeyDown(Common::KeyState state) override;
+
+	void reflowLayout() override;
+
+	LauncherDisplayType getType() const override { return kLauncherDisplayGrid; }
+
+	void close() override;
+
+protected:
+	void updateListing() override;
+	void updateButtons() override;
+	void selectTarget(const String &target) override;
+	void build() override;
+private:
+	GridWidget		*_grid;
+	EditTextWidget  *_searchWidget;
+	ButtonWidget	*_addButton;
+	Widget			*_startButton;
+	ButtonWidget	*_loadButton;
+	Widget			*_editButton;
+	Widget			*_removeButton;
+	StaticTextWidget	*_searchDesc;
+	ButtonWidget	*_searchClearButton;
+	String			 _search;
+};
+#endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
 } // End of namespace GUI
 
