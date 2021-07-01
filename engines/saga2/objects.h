@@ -1232,7 +1232,7 @@ public:
 //  This class iterates through every object within a container
 
 class ContainerIterator {
-	ObjectID        *nextID;
+	ObjectID         nextID;
 
 public:
 	GameObject      *object;

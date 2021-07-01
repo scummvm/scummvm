@@ -3990,17 +3990,17 @@ ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 
 ContainerIterator::ContainerIterator(GameObject *container) {
 	//  Get the ID of the 1st object in the sector list
-	nextID = &container->_data.childID;
+	nextID = container->_data.childID;
 	object = nullptr;
 }
 
 ObjectID ContainerIterator::next(GameObject **obj) {
-	ObjectID        id = *nextID;
+	ObjectID        id = nextID;
 
 	if (id == Nothing) return Nothing;
 
 	object = GameObject::objectAddress(id);
-	nextID = &object->_data.siblingID;
+	nextID = object->_data.siblingID;
 
 	if (obj) *obj = object;
 	return id;
