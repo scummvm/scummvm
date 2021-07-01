@@ -27,6 +27,8 @@
 #ifndef SAGA2_AUDIO_H
 #define SAGA2_AUDIO_H
 
+#include "audio/mixer.h"
+
 /* ===================================================================== *
    the library(s) must be recompiled if you change these settings
  * ===================================================================== */

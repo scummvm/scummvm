@@ -128,6 +128,11 @@ private:
 /* Audio Interface Class                                           */
 /*                                                                 */
 /*******************************************************************/
+struct SoundInstance {
+	soundSegment seg;
+	bool loop;
+	sampleLocation loc;
+};
 
 class audioInterface {
 public:
@@ -216,7 +221,12 @@ private:
 	int32                   suspendCalls;
 
 public:
-	SoundQueue              queue;              // the queue
+	Audio::SoundHandle _speechSoundHandle;
+	Audio::SoundHandle _sfxSoundHandle;
+	Audio::SoundHandle _bgmSoundHandle;
+	Common::Queue<SoundInstance> _speechQueue;
+	Common::Queue<SoundInstance> _sfxQueue;
+	Common::Queue<SoundInstance> _bgmQueue;
 	HDIGDRIVER              dig;               // AIL sample driver
 	HMDIDRIVER              mid;               // AIL MIDI driver
 	audioAttenuationFunction attenuator;
@@ -299,7 +309,7 @@ public:
 		verbosity = n;
 	}
 	int16 getQueueSize(void) {
-		return queue.getSize();
+		return _speechQueue.size() + _sfxQueue.size() + _bgmQueue.size();
 	}
 
 	// moving sample calls

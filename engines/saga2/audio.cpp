@@ -26,12 +26,14 @@
 
 #include "saga2/saga2.h"
 #include "saga2/audio.h"
+#include "saga2/fta.h"
+#include "saga2/shorten.h"
+#include "saga2/hresmgr.h"
 
 #include "saga2/rect.h"
 #include "saga2/queues.h"
 #include "saga2/idtypes.h"
 #include "saga2/audiosmp.h"
-#include "saga2/audqueue.h"
 #include "saga2/audiosys.h"
 
 #include "saga2/audiodec.h"
@@ -40,6 +42,10 @@
 namespace Saga2 {
 
 audioInterface *audio;
+
+extern hResContext *voiceRes;
+extern hResContext *soundRes;
+extern hResContext *musicRes;
 
 bool initAudio() {
 	warning("STUB: initAudio()");
@@ -88,18 +94,25 @@ void audioInterface::resumeGameClock(void) {
 
 bool audioInterface::playFlag(void) {
 	debugC(5, kDebugSound, "STUB: audioInterface::playFlag()");
-	return (!audio->queue.isPlaying() && audio->queue.getSize() > 0);
+	bool isSoundActive = g_system->getMixer()->isSoundHandleActive(audio->_speechSoundHandle);
+	return !isSoundActive && audio->_speechQueue.size() > 0;
 }
 
 void audioInterface::playMe(void) {
 	warning("STUB: audioInterface::PlayMe()");
-	audio->queue.playNext();
+	SoundInstance si = audio->_speechQueue.pop();
+
+	Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, si.seg, "voice data");
+
+	Audio::AudioStream *aud = makeShortenStream(*stream);
+
+	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &audio->_speechSoundHandle, aud);
+
+	delete stream;
 }
 
 void audioInterface::playMusic(soundSegment s, int16 loopFactor, sampleLocation where) {
 	warning("STUB: audioInterface::queueMusic()");
-
-
 }
 
 void audioInterface::stopMusic(void) {
@@ -113,7 +126,13 @@ bool audioInterface::goodMIDICard(void) {
 
 void audioInterface::queueSound(soundSegment s, decoderSet *, int16 loopFactor, sampleLocation where) {
 	warning("STUB: audioInterface::queueSound(%d,  @%d,%d)", s, where.x, where.y);
-	audio->queue.pushSound(s);
+	SoundInstance si;
+
+	si.seg = s;
+	si.loop = loopFactor;
+	si.loc = where;
+
+	audio->_sfxQueue.push(si);
 }
 
 void audioInterface::queueLoop(soundSegment s, decoderSet *sDec, int16 loopFactor, sampleLocation where) {
@@ -130,12 +149,28 @@ void audioInterface::setLoopPosition(sampleLocation newLoc) {
 
 void audioInterface::queueVoice(soundSegment s, decoderSet *, sampleLocation where) {
 	warning("STUB: audioInterface::queueVoice(soundSegment, decoderSet *, sampleLocation)");
-	audio->queue.pushVoice(s);
+	SoundInstance si;
+
+	si.seg = s;
+	si.loop = false;
+	si.loc = where;
+
+	audio->_speechQueue.push(si);
 }
 
 void audioInterface::queueVoice(soundSegment s[], decoderSet *, sampleLocation where) {
 	warning("STUB: audioInterface::queueVoice(soundSegment [], decoderSet *, sampleLocation)");
-	audio->queue.pushVoice(s);
+	SoundInstance si;
+
+	soundSegment *p = s;
+	while (*p) {
+		si.seg = *p;
+		si.loop = false;
+		si.loc = where;
+
+		audio->_speechQueue.push(si);
+		p++;
+	}
 }
 
 void audioInterface::stopVoice(void) {
