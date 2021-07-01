@@ -48,7 +48,7 @@ class TextCastMember;
 
 class Cast {
 public:
-	Cast(Movie *movie, bool shared = false);
+	Cast(Movie *movie, uint16 castLibID, bool shared = false);
 	~Cast();
 
 	void loadArchive();
@@ -87,6 +87,7 @@ private:
 public:
 	Archive *_castArchive;
 	uint16 _version;
+	uint16 _castLibID;
 
 	Common::HashMap<uint16, Common::String> _fontMap;
 

@@ -69,7 +69,7 @@ Movie::Movie(Window *window) {
 
 	_movieArchive = nullptr;
 
-	_cast = new Cast(this);
+	_cast = new Cast(this, 0);
 	_sharedCast = nullptr;
 	_score = new Score(this);
 
@@ -290,7 +290,7 @@ void Movie::loadSharedCastsFrom(Common::String filename) {
 	debug(0, "@@@@   Loading shared cast '%s'", filename.c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-	_sharedCast = new Cast(this, true);
+	_sharedCast = new Cast(this, 0, true);
 	_sharedCast->setArchive(sharedCast);
 	_sharedCast->loadArchive();
 }

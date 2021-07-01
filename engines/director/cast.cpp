@@ -61,11 +61,12 @@ const char *scriptType2str(ScriptType scr) {
 	return scriptTypes[scr];
 }
 
-Cast::Cast(Movie *movie, bool isShared) {
+Cast::Cast(Movie *movie, uint16 castLibID, bool isShared) {
 	_movie = movie;
 	_vm = _movie->getVM();
 	_lingo = _vm->getLingo();
 
+	_castLibID = castLibID;
 	_isShared = isShared;
 
 	_lingoArchive = new LingoArchive(this);
