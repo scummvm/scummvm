@@ -2009,7 +2009,7 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 	}
 
 	if (forDetection) {
-		int p = moduleRootDir.find('/');
+		std::string::size_type p = moduleRootDir.find('/');
 		std::string engineName = moduleRootDir.substr(p + 1);
 		std::string engineNameUpper;
 
