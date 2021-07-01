@@ -428,6 +428,15 @@ enum {
 	kMesBoxY     = (480 - kMesBoxYSize) / 3
 };
 
+//Sets Up Tile Map Area
+enum {
+	kTileRectX      = 16 + 4,
+	kTileRectY      = 16 + 4,
+	kTileRectWidth  = 448 - 8,
+	kTileRectHeight = 428 - 8
+};
+
+
 } // end of namespace Saga2
 
 #endif

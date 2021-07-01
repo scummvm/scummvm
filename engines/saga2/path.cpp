@@ -2564,7 +2564,6 @@ TilePoint selectNearbySite(
 			//  if this point is on-screen, we might want to reject it...
 			if (offScreenOnly) {
 				Point16 screenCoords;           // screen coordinates
-				extern Rect16 tileRect;
 
 				//  Convert to XY coords.
 				TileToScreenCoords(centerPt, screenCoords);
@@ -2572,8 +2571,8 @@ TilePoint selectNearbySite(
 				//  If the point is on-screen, then reject it.
 				//  (We want the monsters to walk in from off-screen,
 				//  not 'pop in').
-				if (screenCoords.x >= -16 && screenCoords.x <= tileRect.width + 16
-				        &&  screenCoords.y >= -16 && screenCoords.y <= tileRect.height + 80) {
+				if (screenCoords.x >= -16 && screenCoords.x <= kTileRectWidth + 16
+				        &&  screenCoords.y >= -16 && screenCoords.y <= kTileRectHeight + 80) {
 					cellOK = false;
 				}
 			}

@@ -172,7 +172,6 @@ extern ObjectID     viewCenterObject;       // ID of object that view tracks
    Exports
  * ===================================================================== */
 
-Rect16 tileRect(tileRectX, tileRectY, tileRectWidth, tileRectHeight);
 gPixelMap           tileDrawMap;
 
 /* ===================================================================== *
@@ -1657,9 +1656,6 @@ void setCurrentMap(int mapNum) {
 		audioEnvironmentSetWorld(mapNum);
 	}
 
-//	tileScroll.x = mapList[mapNum].mapHeight - tileRect.width - 800;
-//	tileScroll.y = mapList[mapNum].mapHeight - tileRect.width / 2;
-
 	lastUpdateTime = gameTime;
 }
 
@@ -2923,7 +2919,7 @@ inline void drawMetaTiles(void) {
 
 	debugC(2, kDebugTiles, "baseCoords = (%d,%d,%d)", baseCoords.u, baseCoords.v, baseCoords.z);
 
-	setAreaSound(baseCoords); //+TilePoint(tileRectWidth, tileRectHeight,0));
+	setAreaSound(baseCoords);
 
 	updateHandleRefs(baseCoords);  // viewPoint, &sti );
 	//  coordinates of current metatile (in X,Y), relative to screen
@@ -2987,17 +2983,17 @@ inline void drawTileMousePointer(void) {
 		saveMap = pointer.getSaveMap(saveExtent);
 
 		//  If the pointer overlaps the tile scrolling area
-		if (saveExtent.overlap(tileRect)) {
+		if (saveExtent.overlap(Rect16(kTileRectX, kTileRectY, kTileRectWidth, kTileRectHeight))) {
 			//  get the intersecting area
-			blitExtent = intersect(saveExtent, tileRect);
+			blitExtent = intersect(saveExtent, Rect16(kTileRectX, kTileRectY, kTileRectWidth, kTileRectHeight));
 
 			mouseSavePort.setMap(saveMap);
 
 			//  Blit the tile data into the backsave buffer
 			mouseSavePort.bltPixels(
 			    tileDrawMap,
-			    blitExtent.x - tileRect.x + fineScroll.x,
-			    blitExtent.y - tileRect.y + fineScroll.y,
+			    blitExtent.x - kTileRectX + fineScroll.x,
+			    blitExtent.y - kTileRectY + fineScroll.y,
 			    blitExtent.x - saveExtent.x,
 			    blitExtent.y - saveExtent.y,
 			    blitExtent.width,
@@ -3006,8 +3002,8 @@ inline void drawTileMousePointer(void) {
 			//  Blit the mouse pointer onto the tile map
 			int x, y;
 
-			x = mouseState.pos.x + offset.x + fineScroll.x - tileRect.x;
-			y = mouseState.pos.y + offset.y + fineScroll.y - tileRect.y;
+			x = mouseState.pos.x + offset.x + fineScroll.x - kTileRectX;
+			y = mouseState.pos.y + offset.y + fineScroll.y - kTileRectY;
 
 //			if ( x >=0 && y >=0 )
 			TBlit(&tileDrawMap, currentPtr, x, y);
@@ -4527,7 +4523,7 @@ void updateMainDisplay(void) {
 	int32           scrollSpeed = defaultScrollSpeed,
 	                scrollDistance;
 
-	int16           viewSize = tileRect.height;
+	int16           viewSize = kTileRectHeight;
 	int16           mapSectors = curMap->mapSize * 8 * 16 / kSectorSize;
 	TilePoint       trackPos,
 	                mCoords;
@@ -4552,10 +4548,10 @@ void updateMainDisplay(void) {
 	//  Convert to XY coordinates.
 	targetScroll.x =
 	    ((trackPos.u - trackPos.v) << 1)
-	    +   curMap->mapHeight - tileRect.width / 2;
+	    +   curMap->mapHeight - kTileRectWidth / 2;
 	targetScroll.y =
 	    curMap->mapHeight - (trackPos.u + trackPos.v)
-	    -   trackPos.z - tileRect.height / 2 - 32;
+	    -   trackPos.z - kTileRectHeight / 2 - 32;
 	debugC(1, kDebugTiles, "targetScroll = (%d,%d)", targetScroll.x, targetScroll.y);
 
 	//  Compute the delta vector between the current scroll position
@@ -4583,8 +4579,8 @@ void updateMainDisplay(void) {
 	fineScroll.y = 0;
 
 	//  Compute the center of the screen in (u,v) coords.
-	scrollCenter.x = tileScroll.x + tileRect.width  / 2;
-	scrollCenter.y = tileScroll.y + tileRect.height / 2;
+	scrollCenter.x = tileScroll.x + kTileRectWidth  / 2;
+	scrollCenter.y = tileScroll.y + kTileRectHeight / 2;
 	viewCenter = XYToUV(scrollCenter);
 
 	//  Compute the largest U/V rectangle which completely
@@ -4629,17 +4625,19 @@ void drawMainDisplay(void) {
 	//  Render the text if any
 	updateSpeech();
 
+	Rect16 rect(kTileRectX, kTileRectY, kTileRectWidth, kTileRectHeight);
+
 	//  Render floating windows
 	drawFloatingWindows(backPort,
-	                    Point16(tileRect.x - fineScroll.x, tileRect.y),
-	                    tileRect);
+	                    Point16(kTileRectX - fineScroll.x, kTileRectY),
+	                    rect);
 
 	//  Render the image of the mouse pointer on everything else
 	drawTileMousePointer();
 
 	//  Blit it all onto the screen
 	drawPage->writePixels(
-	    tileRect,
+	    rect,
 	    tileDrawMap.data
 	    + fineScroll.x
 	    + fineScroll.y * tileDrawMap.size.x,
@@ -4672,65 +4670,6 @@ void ShowObjectSection(GameObject *obj) {
 	TPLine(tp4, tp1);
 }
 
-#endif
-
-#if 0
-
-//  Tile drawing speed test
-
-/*
-int32               tclock0,
-                    tclock1;
-
-extern int32            gameTime;
-
-    for (int i=0; i<30000; i++)
-    {
-        drawTile(   &tileDrawMap,
-                    0, 64, ti->attrs.height,
-                    (*th)->tileData( *ti ) );
-    }
-
-    tclock1 = gameTime;
-    debug( "Time = %d", tclock1 - tclock0 );
-*/
-
-
-/*
-        //  Tile drawing speed test 2
-
-    for (int i = 0; i < 256; i+=4)
-    {
-        for (int y=0; y <= tileDrawMap.size.y + 32; y += tileHeight)
-        {
-            for (int x=0; x <= tileDrawMap.size.x; x += tileWidth)
-            {
-                drawTile(   &tileDrawMap,
-                            x, y, ti->attrs.height,
-                            (*th)->tileData( *ti ) );
-                drawTile(   &tileDrawMap,
-                            x, y, ti->attrs.height,
-                            (*th)->tileData( *ti ) );
-            }
-
-            for (x=tileDX; x <= tileDrawMap.size.x; x += tileWidth)
-            {
-                drawTile(   &tileDrawMap,
-                            x, y + tileDY, ti->attrs.height,
-                            (*th)->tileData( *ti ) );
-                drawTile(   &tileDrawMap,
-                            x, y + tileDY, ti->attrs.height,
-                            (*th)->tileData( *ti ) );
-            }
-        }
-
-        pointer.hide( g_vm->_mainPort, tileRect );
-        drawPage->writePixels(  tileRect,
-                                tileDrawMap.data,
-                                tileDrawMap.size.x );
-        pointer.show( g_vm->_mainPort, tileRect );
-    }
-*/
 #endif
 
 //-----------------------------------------------------------------------

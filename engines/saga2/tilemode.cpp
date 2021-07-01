@@ -161,8 +161,6 @@ static struct _delayedNavigation {
 } delayedNavigation;
 static bool navigationDelayed = false;
 
-extern Rect16       tileRect;
-
 //Tile Mode GameMode Object
 
 GameMode            TileMode = {
@@ -673,7 +671,7 @@ void TileModeSetup(void) {
 	mainWindow->draw();
 
 	//  Create a control covering the map area.
-	tileMapControl = new gStickyDragControl(*playControls, tileRect, 0, cmdClickTileMap);
+	tileMapControl = new gStickyDragControl(*playControls, Rect16(kTileRectX, kTileRectY, kTileRectWidth, kTileRectHeight), 0, cmdClickTileMap);
 
 	//Enable Tile Mode Specific Controls
 	tileControls->enable(true);
@@ -792,9 +790,9 @@ void TileModeHandleTask(void) {
 		if (G_BASE.isMousePanel(tileMapControl)) {
 			//  If mouse is near edge of screen, then run.
 			runFlag =       lastMousePos.x < runThreshhold
-			                ||  lastMousePos.x >= tileRect.width - runThreshhold
+			                ||  lastMousePos.x >= kTileRectWidth - runThreshhold
 			                ||  lastMousePos.y < runThreshhold
-			                ||  lastMousePos.y >= tileRect.height - runThreshhold;
+			                ||  lastMousePos.y >= kTileRectHeight - runThreshhold;
 
 			//  Calculate the mouse's position on the tile map.
 			if (runFlag) {

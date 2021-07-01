@@ -51,7 +51,6 @@ struct TextSpan {
 //	externs
 
 extern  Point16     fineScroll;
-extern  Rect16      tileRect;
 int                 kludgeHeight = 15;
 extern  TilePoint   viewCenter;             // coordinates of view on map
 
@@ -410,7 +409,6 @@ bool Speech::setupActive(void) {
 	if (speechButtonCount > 0) {
 		//  REM: Also set pointer to arrow shape.
 		g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
-//		g_vm->_mouseInfo->setDoable( tileRect.ptInside( ev.mouse ) );
 		speakButtonControls->enable(true);
 
 		speechList.SetLock(false);
@@ -481,11 +479,11 @@ bool Speech::calcPosition(Point16 &p) {
 
 	p.x = clamp(8,
 	            p.x - bounds.width / 2,
-	            8 + maxWidth /* tileRect.width - 40 */ - bounds.width);
+	            8 + maxWidth - bounds.width);
 
-	p.y = clamp(tileRect.y + 8,
+	p.y = clamp(kTileRectY + 8,
 	            p.y - (bounds.height + actorHeight),
-	            tileRect.height - 50 - bounds.height);
+	            kTileRectHeight - 50 - bounds.height);
 
 	return true;
 }
@@ -890,8 +888,8 @@ bool isVisible(GameObject *obj) {
 	//For Determining If Object Is Being Displayed
 	//Could We Just Check Display List ???
 	int16           distanceX, distanceY;
-	int16           viewSizeY = tileRect.height;
-	int16           viewSizeX = tileRect.width;
+	int16           viewSizeY = kTileRectHeight;
+	int16           viewSizeX = kTileRectWidth;
 
 	//I Figure This Differently Than In Dispnode
 	int16           loadDistX = viewSizeX / 2;
@@ -1119,8 +1117,8 @@ void Speech::remove(void) {
 int16 pickSpeechButton(Point16 mouse) {
 	Point16 p = mouse - initialSpeechPosition;
 
-	p.x -= tileRect.x;
-	p.y -= tileRect.y;
+	p.x -= kTileRectX;
+	p.y -= kTileRectY;
 
 	return pickButton(p,
 	                  speechLineList, speechLineCount,
@@ -1135,7 +1133,7 @@ APPFUNC(cmdClickSpeech) {
 	case gEventMouseMove:
 	case gEventMouseDrag:
 
-		g_vm->_mouseInfo->setDoable(tileRect.ptInside(ev.mouse));
+		g_vm->_mouseInfo->setDoable(Rect16(kTileRectX, kTileRectY, kTileRectWidth, kTileRectHeight).ptInside(ev.mouse));
 		break;
 
 	case gEventMouseDown:

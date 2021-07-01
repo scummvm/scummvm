@@ -60,7 +60,6 @@ extern WorldMapData                     *mapList;
 extern SpellDisplayList                 activeSpells;
 extern SpellStuff                       spellBook[];
 extern Point32                          lastMousePos;           // Last mouse position over map
-extern Rect16                           tileRect;
 
 /* ===================================================================== *
    Inlines

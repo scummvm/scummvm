@@ -69,13 +69,6 @@ extern const ContainerInfo  indivReadyContInfoTop;
 extern const ContainerInfo  indivReadyContInfoBot;
 
 
-//Sets Up Tile Map Area
-
-const int   tileRectX           =   16 + 4,
-            tileRectY           =   16 + 4,
-            tileRectWidth       =   448 - 8,
-            tileRectHeight      =   428 - 8;
-
 //Sets Up Filenames based on PROJECT defined in make.
 
 #define IMAGE_RESFILE   "FTAIMAGE.HRS"

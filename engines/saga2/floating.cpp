@@ -57,7 +57,6 @@ extern gToolBase    G_BASE;
 //  These externs are imported because the window update routines
 //  need to know about the scrolling tile area.
 
-extern Rect16       tileRect;
 extern gPixelMap    tileDrawMap;
 extern Point16      fineScroll;
 extern gFont        *mainFont;
@@ -619,7 +618,7 @@ void updateWindowSection(const Rect16 &r) {
 	Point16         offset(r.x, r.y);
 	Rect16          clip,
 	                animClip;
-	Point16         animOffset(tileRect.x - fineScroll.x, tileRect.y);
+	Point16         animOffset(kTileRectX - fineScroll.x, kTileRectY);
 
 	//  Detects that program is shutting down and aborts the blit
 	if (tileDrawMap.data == nullptr)
@@ -647,7 +646,7 @@ void updateWindowSection(const Rect16 &r) {
 	//  rectangle. If they overlap, then copy part of the animated
 	//  area into the temporary bitmap.
 
-	animClip = intersect(tileRect, clip);
+	animClip = intersect(Rect16(kTileRectX, kTileRectY, kTileRectWidth, kTileRectHeight), clip);
 	if (!animClip.empty() && !allPlayerActorsDead) {
 		//  Compute which pixel on the animated pixel map is the
 		//  upper left corner of the clip area

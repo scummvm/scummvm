@@ -54,8 +54,6 @@ void TPCircle(const TilePoint &tp, const int radius, int16 color) {
 	TPLine(tp + TilePoint(radius / 1, radius / -2, 0), tp + TilePoint(radius / 1, radius / 2, 0), color);
 }
 
-extern Rect16           tileRect;
-
 //  Draw a line in TP space
 
 void TPLine(const TilePoint &start, const TilePoint &stop) {
@@ -65,10 +63,10 @@ void TPLine(const TilePoint &start, const TilePoint &stop) {
 	TileToScreenCoords(start, startPt);
 	TileToScreenCoords(stop, stopPt);
 
-	startPt.x   += tileRect.x;
-	stopPt.x    += tileRect.x;
-	startPt.y   += tileRect.y;
-	stopPt.y    += tileRect.y;
+	startPt.x   += kTileRectX;
+	stopPt.x    += kTileRectX;
+	startPt.y   += kTileRectY;
+	stopPt.y    += kTileRectY;
 
 	g_vm->_mainPort.setColor(1);
 	g_vm->_mainPort.moveTo(startPt);
@@ -84,10 +82,10 @@ void TPLine(const TilePoint &start, const TilePoint &stop, int16 color) {
 	TileToScreenCoords(start, startPt);
 	TileToScreenCoords(stop, stopPt);
 
-	startPt.x   += tileRect.x;
-	stopPt.x    += tileRect.x;
-	startPt.y   += tileRect.y;
-	stopPt.y    += tileRect.y;
+	startPt.x   += kTileRectX;
+	stopPt.x    += kTileRectX;
+	startPt.y   += kTileRectY;
+	stopPt.y    += kTileRectY;
 
 	g_vm->_mainPort.setColor(color);
 	g_vm->_mainPort.moveTo(startPt);

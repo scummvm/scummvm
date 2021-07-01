@@ -45,7 +45,6 @@ const int defaultStatusWait = 15;
    Imports
  * ===================================================================== */
 
-extern Rect16       tileRect;
 extern gPixelMap    tileDrawMap;
 extern gPort        tileDrawPort;
 extern BackWindow   *mainWindow;
@@ -150,8 +149,8 @@ extern bool gameRunning;
 bool checkTileAreaPort(void) {
 	if (gameRunning && tileDrawMap.data == nullptr) {
 		//  Allocate back buffer for tile rendering
-		tileDrawMap.size.x = (tileRect.width + kTileWidth - 1) & ~kTileDXMask;
-		tileDrawMap.size.y = (tileRect.height + kTileWidth - 1) & ~kTileDXMask;
+		tileDrawMap.size.x = (kTileRectWidth + kTileWidth - 1) & ~kTileDXMask;
+		tileDrawMap.size.y = (kTileRectHeight + kTileWidth - 1) & ~kTileDXMask;
 		tileDrawMap.data = new uint8[tileDrawMap.bytes()]();
 	}
 

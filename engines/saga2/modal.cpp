@@ -35,7 +35,6 @@ ModalWindow *mWinPtr;
 
 extern gPixelMap    tileDrawMap;
 extern Point16      fineScroll;
-extern Rect16       tileRect;
 extern gToolBase    G_BASE;
 
 APPFUNC(cmdModalWindow);

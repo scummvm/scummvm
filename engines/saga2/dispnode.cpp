@@ -55,7 +55,6 @@ bool                            centerActorIndicatorEnabled;
 extern int16        currentMapNum;
 extern WorldMapData *mapList;
 
-extern Rect16       tileRect;
 extern Point16      fineScroll;
 extern gPort        backPort;
 
@@ -192,7 +191,7 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 	int16           distList[maxDisplayed + 1];
 	int16           sortCount = 0;
 	int16           i;
-	int16           viewSize = tileRect.height;
+	int16           viewSize = kTileRectHeight;
 
 	//  Distance at which characters should be loaded.
 	int16           loadDist = viewSize + viewSize / 2;
@@ -414,9 +413,9 @@ void DisplayNode::drawObject(void) {
 
 		//  Reject any sprites which fall off the edge of the screen.
 		if (drawPos.x < -32
-		        || drawPos.x > tileRect.x + tileRect.width + 32
+		        || drawPos.x > kTileRectX + kTileRectWidth + 32
 		        || drawPos.y < -32
-		        || drawPos.y > tileRect.y + tileRect.height + 100) {
+		        || drawPos.y > kTileRectY + kTileRectHeight + 100) {
 			//  Disable hit-test on the object's box
 			hitBox.width = -1;
 			hitBox.height = -1;
@@ -489,9 +488,9 @@ void DisplayNode::drawObject(void) {
 
 			//  Reject any sprites which fall off the edge of the screen.
 			if (drawPos.x < -maxSpriteWidth
-			        || drawPos.x > tileRect.x + tileRect.width + maxSpriteWidth
+			        || drawPos.x > kTileRectX + kTileRectWidth + maxSpriteWidth
 			        || drawPos.y < -maxSpriteBaseLine
-			        || drawPos.y > tileRect.y + tileRect.height + maxSpriteHeight) {
+			        || drawPos.y > kTileRectY + kTileRectHeight + maxSpriteHeight) {
 				//  Mark as being off screen
 				a->setOnScreen(false);
 				a->setObscured(false);
@@ -518,9 +517,9 @@ void DisplayNode::drawObject(void) {
 		} else {
 			//  Reject any sprites which fall off the edge of the screen.
 			if (drawPos.x < -maxSpriteWidth
-			        || drawPos.x > tileRect.x + tileRect.width + maxSpriteWidth
+			        || drawPos.x > kTileRectX + kTileRectWidth + maxSpriteWidth
 			        || drawPos.y < -maxSpriteBaseLine
-			        || drawPos.y > tileRect.y + tileRect.height + maxSpriteHeight) {
+			        || drawPos.y > kTileRectY + kTileRectHeight + maxSpriteHeight) {
 				//  Disable hit-test on the object's box
 				hitBox.width = -1;
 				hitBox.height = -1;
@@ -975,9 +974,9 @@ void Effectron::drawEffect(void) {
 
 	//  Reject any sprites which fall off the edge of the screen.
 	if (drawPos.x < -32
-	        || drawPos.x > tileRect.x + tileRect.width + 32
+	        || drawPos.x > kTileRectX + kTileRectWidth + 32
 	        || drawPos.y < -32
-	        || drawPos.y > tileRect.y + tileRect.height + 100) {
+	        || drawPos.y > kTileRectY + kTileRectHeight + 100) {
 		//  Disable hit-test on the object's box
 		hitBox.width = -1;
 		hitBox.height = -1;
