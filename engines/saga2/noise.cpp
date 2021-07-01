@@ -439,25 +439,8 @@ void playMusic(uint32 s) {
 
 	currentMidi = s;
 
-	Common::SeekableReadStream *stream = loadResourceToStream(musicRes, s, "music data");
-	Common::DumpFile out;
-
-	Common::String path = Common::String::format("./dumps/mus%s.mus", tag2strP(s));
-
-	if (out.open(path, true)) {
-		int size = musicRes->getSize(s, "music data");
-		byte *buf = (byte *)malloc(size);
-		stream->read(buf, size);
-		out.write(buf, size);
-		out.flush();
-		out.close();
-	}
-
-	delete stream;
-
-
 	if (hResCheckResID(musicRes, s)) {
-		audio->queueMusic(s, musicDec, 0);
+		audio->playMusic(s, 0);
 	} else
 		audio->stopMusic();
 }

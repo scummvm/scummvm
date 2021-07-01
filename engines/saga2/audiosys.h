@@ -245,7 +245,7 @@ public:
 	void playMe(void);
 
 	// music calls
-	void queueMusic(soundSegment s, decoderSet *, int16 loopFactor = 1, sampleLocation where = Here);
+	void playMusic(soundSegment s, int16 loopFactor = 1, sampleLocation where = Here);
 	void stopMusic(void);
 	soundSegment currentMusic(void) {
 		return playing;    // ID of music currently playing

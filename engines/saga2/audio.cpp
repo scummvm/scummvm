@@ -96,8 +96,10 @@ void audioInterface::playMe(void) {
 	audio->queue.playNext();
 }
 
-void audioInterface::queueMusic(soundSegment s, decoderSet *, int16 loopFactor, sampleLocation where) {
+void audioInterface::playMusic(soundSegment s, int16 loopFactor, sampleLocation where) {
 	warning("STUB: audioInterface::queueMusic()");
+
+
 }
 
 void audioInterface::stopMusic(void) {
