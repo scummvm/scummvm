@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-30 17:19+0000\n"
+"POT-Creation-Date: 2021-07-01 13:24+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -5576,12 +5576,7 @@ msgstr ""
 msgid "I Have No Mouth support not compiled in"
 msgstr "सुविधा बनाए गए:"
 
-#: engines/saga/metaengine.cpp:120
-#, fuzzy
-msgid "SAGA2 support not compiled in"
-msgstr "सुविधा बनाए गए:"
-
-#: engines/saga/saga.cpp:247
+#: engines/saga/saga.cpp:237
 msgid "Error loading game resources."
 msgstr ""
 
@@ -7992,6 +7987,10 @@ msgstr ""
 "हैं। आपको अपने चुने पैकेज के सारे फॉन्ट की आवश्यकता होगी, यानी की Liberation fonts से "
 "LiberationMono, LiberationSans और LiberationSerif, या GNU FreeFont से "
 "FreeMono, FreeSans और FreeSerif."
+
+#, fuzzy
+#~ msgid "SAGA2 support not compiled in"
+#~ msgstr "सुविधा बनाए गए:"
 
 #~ msgid "Associated key : %s"
 #~ msgstr "सम्बंधित कुंजी : %s"

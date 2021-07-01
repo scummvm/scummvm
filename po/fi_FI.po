@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-30 17:19+0000\n"
+"POT-Creation-Date: 2021-07-01 13:24+0000\n"
 "PO-Revision-Date: 2021-06-30 13:44+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -5806,11 +5806,7 @@ msgstr "Windows:in koeversio ei ole vielä tuettu"
 msgid "I Have No Mouth support not compiled in"
 msgstr "I Have No Mouth-tukea ei ole käännetty mukaan"
 
-#: engines/saga/metaengine.cpp:120
-msgid "SAGA2 support not compiled in"
-msgstr "SAGA2-tukea ei ole käännetty mukaan"
-
-#: engines/saga/saga.cpp:247
+#: engines/saga/saga.cpp:237
 msgid "Error loading game resources."
 msgstr "Peliresursseja lukiessa tapahtui virhe."
 
@@ -8312,6 +8308,9 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid "SAGA2 support not compiled in"
+#~ msgstr "SAGA2-tukea ei ole käännetty mukaan"
 
 #~ msgid "Skip minigame"
 #~ msgstr "Ohita minipeli"

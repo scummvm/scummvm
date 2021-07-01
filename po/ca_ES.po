@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-30 17:19+0000\n"
+"POT-Creation-Date: 2021-07-01 13:24+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5889,12 +5889,7 @@ msgstr "Identificador de joc no suportat"
 msgid "I Have No Mouth support not compiled in"
 msgstr "Característiques compilades:"
 
-#: engines/saga/metaengine.cpp:120
-#, fuzzy
-msgid "SAGA2 support not compiled in"
-msgstr "Característiques compilades:"
-
-#: engines/saga/saga.cpp:247
+#: engines/saga/saga.cpp:237
 #, fuzzy
 msgid "Error loading game resources."
 msgstr "Error al executar el joc:"
@@ -8434,6 +8429,10 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~ msgid "SAGA2 support not compiled in"
+#~ msgstr "Característiques compilades:"
 
 #, fuzzy
 #~ msgid "Skip minigame"
