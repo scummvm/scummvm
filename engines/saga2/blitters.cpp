@@ -301,7 +301,7 @@ void maskTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 	drawTile(map, x, y, height, srcData, true);
 }
 
-void TBlit(gPixelMap *dstMap, gPixelMap *srcMap, int xpos, int ypos) {
+void TBlit(gPixelMap *dstMap, gPixelMap *srcMap, int32 xpos, int32 ypos) {
 	int16 w = srcMap->size.x;
 	int16 h = srcMap->size.y;
 	int32 offset = 0;
@@ -349,7 +349,7 @@ void TBlit4(gPixelMap *d, gPixelMap *s, int32 x, int32 y) {
 	TBlit(d, s, x, y);
 }
 
-void compositePixels(gPixelMap *compMap, gPixelMap *sprMap, int xpos, int ypos, byte *lookup) {
+void compositePixels(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32 ypos, byte *lookup) {
 	byte *srcPtr = sprMap->data;
 	byte *dstPtr = compMap->data + xpos + ypos * compMap->size.x;
 	int16 rowMod = compMap->size.x - sprMap->size.x;
@@ -367,7 +367,7 @@ void compositePixels(gPixelMap *compMap, gPixelMap *sprMap, int xpos, int ypos, 
 	}
 }
 
-void compositePixelsRvs(gPixelMap *compMap, gPixelMap *sprMap, int xpos, int ypos, byte *lookup) {
+void compositePixelsRvs(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32 ypos, byte *lookup) {
 	byte *srcPtr = sprMap->data + sprMap->bytes();
 	byte *dstPtr = compMap->data + xpos + (ypos + sprMap->size.y) * compMap->size.x;
 
