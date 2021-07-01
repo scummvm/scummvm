@@ -250,7 +250,7 @@ GfxSurface::~GfxSurface() {
 	assert(disposeAfterUse() == DisposeAfterUse::NO);
 }
 
-void GfxSurface::create(uint16 width, uint16 height) {
+void GfxSurface::create(int32 width, int32 height) {
 	free();
 
 	_rawSurface.create(width, height);

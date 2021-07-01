@@ -103,7 +103,7 @@ public:
 	Graphics::ManagedSurface &lockSurface();
 	void unlockSurface();
 	void synchronize(Serializer &s);
-	void create(uint16 width, uint16 height) override;
+	void create(int32 width, int32 height) override;
 	void setBounds(const Rect &bounds);
 	const Rect &getBounds() const { return _bounds; }
 
