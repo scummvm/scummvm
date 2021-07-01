@@ -362,19 +362,21 @@ public:
  * ===================================================================== */
 
 struct ContainerAppearanceDef {
-	Rect16          defaultWindowPos;       //  default position of window
-	Rect16          viewRect;               //  position of view within window
-	Rect16          closeRect,              //  position of close button
-	                scrollRect,             //  position of scrolling button
-	                iconRect,               //  position of container icon
-	                massRect;               //  position of mass & bulk indicator
-	hResID          closeResID[2],        //  resource ID's for close box
-	                scrollResID[2];       //  resource ID's for scroll indicator
-	Point16         iconOrigin,
-	                iconSpacing;
-	uint16          rows,
-	                cols,
-	                totRows;
+	StaticRect defaultWindowPos;       //  default position of window
+	StaticRect viewRect;               //  position of view within window
+	StaticRect closeRect,              //  position of close button
+	           scrollRect,             //  position of scrolling button
+	           iconRect,               //  position of container icon
+	           massRect;               //  position of mass & bulk indicator
+
+	hResID closeResID[2],              //  resource ID's for close box
+	       scrollResID[2];             //  resource ID's for scroll indicator
+
+	StaticPoint16 iconOrigin,
+	              iconSpacing;
+	uint16 rows,
+	       cols,
+	       totRows;
 };
 
 /* ===================================================================== *
