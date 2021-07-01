@@ -1135,8 +1135,8 @@ bool MacMenu::mouseClick(int x, int y) {
 			if (_wm->_mode & kWMModalMenuMode) {
 				int x1 = _menustack.back()->bbox.left;
 				int y1 = _menustack.back()->bbox.top;
-				uint w = _menustack.back()->bbox.width() + 2;
-				uint h = _menustack.back()->bbox.height() + 2;
+				int w = _menustack.back()->bbox.width() + 2;
+				int h = _menustack.back()->bbox.height() + 2;
 
 				if (x1 + w > _wm->_screenCopy->w)
 					w = _wm->_screenCopy->w - 1 - x1;

@@ -1151,7 +1151,7 @@ void Puzzles::journalSaavedro(int16 move) {
 			Graphics::Surface *leftBitmap = new Graphics::Surface();
 			leftBitmap->create(bitmap->w / 2, bitmap->h, Texture::getRGBAPixelFormat());
 
-			for (uint i = 0; i < bitmap->h; i++) {
+			for (int i = 0; i < bitmap->h; i++) {
 				memcpy(leftBitmap->getBasePtr(0, i),
 						bitmap->getBasePtr(0, i),
 						leftBitmap->w * 4);

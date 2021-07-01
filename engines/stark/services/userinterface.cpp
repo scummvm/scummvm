@@ -360,8 +360,8 @@ void UserInterface::saveGameScreenThumbnail() {
 	_gameWindowThumbnail->create(kThumbnailWidth, kThumbnailHeight, big->format);
 
 	uint32 *dst = (uint32 *)_gameWindowThumbnail->getPixels();
-	for (uint i = 0; i < _gameWindowThumbnail->h; i++) {
-		for (uint j = 0; j < _gameWindowThumbnail->w; j++) {
+	for (int i = 0; i < _gameWindowThumbnail->h; i++) {
+		for (int j = 0; j < _gameWindowThumbnail->w; j++) {
 			uint32 srcX = big->w * j / _gameWindowThumbnail->w;
 			uint32 srcY = big->h * i / _gameWindowThumbnail->h;
 			uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY);

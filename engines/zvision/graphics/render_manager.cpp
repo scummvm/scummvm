@@ -245,7 +245,7 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 
 	// If the destination internal buffer is the same size as what we're copying into it,
 	// there is no need to free() and re-create
-	if (imageWidth != destination.w || imageHeight != destination.h) {
+	if ((int)imageWidth != destination.w || (int)imageHeight != destination.h) {
 		destination.create(imageWidth, imageHeight, _engine->_resourcePixelFormat);
 	}
 
@@ -345,10 +345,10 @@ Graphics::Surface *RenderManager::tranposeSurface(const Graphics::Surface *surfa
 	const uint16 *source = (const uint16 *)surface->getPixels();
 	uint16 *dest = (uint16 *)tranposedSurface->getPixels();
 
-	for (uint32 y = 0; y < tranposedSurface->h; ++y) {
+	for (int32 y = 0; y < tranposedSurface->h; ++y) {
 		uint32 columnIndex = y * tranposedSurface->w;
 
-		for (uint32 x = 0; x < tranposedSurface->w; ++x) {
+		for (int32 x = 0; x < tranposedSurface->w; ++x) {
 			dest[columnIndex + x] = source[x * surface->w + y];
 		}
 	}

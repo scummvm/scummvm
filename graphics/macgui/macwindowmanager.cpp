@@ -656,8 +656,8 @@ void MacWindowManager::loadDesktop() {
 
 void MacWindowManager::drawDesktop() {
 	if (_desktopBmp) {
-		for (uint i = 0; i < _desktop->w; ++i) {
-			for (uint j = 0; j < _desktop->h; ++j) {
+		for (int i = 0; i < _desktop->w; ++i) {
+			for (int j = 0; j < _desktop->h; ++j) {
 				uint32 color = *(uint32 *)_desktopBmp->getBasePtr(i % _desktopBmp->w, j % _desktopBmp->h);
 				if (_pixelformat.bytesPerPixel == 1) {
 					byte r, g, b;

@@ -98,9 +98,9 @@ void Cursor::loadAvailableCursors() {
 		delete bmpStream;
 
 		// Apply the colorkey for transparency
-		for (uint y = 0; y < surfaceRGBA->h; y++) {
+		for (int y = 0; y < surfaceRGBA->h; y++) {
 			byte *pixels = (byte *)(surfaceRGBA->getBasePtr(0, y));
-			for (uint x = 0; x < surfaceRGBA->w; x++) {
+			for (int x = 0; x < surfaceRGBA->w; x++) {
 				byte *r = pixels + 0;
 				byte *g = pixels + 1;
 				byte *b = pixels + 2;

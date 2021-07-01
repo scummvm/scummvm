@@ -334,9 +334,9 @@ void CDToonsDecoder::renderBlock(byte *data, uint dataSize, int destX, int destY
 	debugN(9, "CDToons renderBlock at (%d, %d), width %d, height %d\n",
 		destX, destY, width, height);
 
-	if (destX + width > _surface->w)
+	if (destX + width > (uint)_surface->w)
 		width = _surface->w - destX;
-	if (destY + height > _surface->h)
+	if (destY + height > (uint)_surface->h)
 		height = _surface->h - destY;
 
 	uint skip = 0;

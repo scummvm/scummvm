@@ -48,8 +48,8 @@ bool Screenshot::saveToFile(Graphics::Surface *data, Common::WriteStream *stream
 	stream->writeUint16LE(data->h);
 	stream->writeByte(THUMBNAIL_VERSION);
 
-	for (uint y = 0; y < data->h; y++) {
-		for (uint x = 0; x < data->w; x++) {
+	for (int y = 0; y < data->h; y++) {
+		for (int x = 0; x < data->w; x++) {
 			// This is only called by createThumbnail below, which
 			// provides a fake 'surface' with LE data in it.
 			byte a, r, g, b;
@@ -106,7 +106,7 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 
 		// Move to next block
 		++x;
-		if (x == thumbnail.w) {
+		if (x == (uint)thumbnail.w) {
 			x = 0;
 			++y;
 		}

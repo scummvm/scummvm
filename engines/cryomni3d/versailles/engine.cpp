@@ -541,8 +541,8 @@ void CryOmni3DEngine_Versailles::makeTranslucent(Graphics::Surface &dst,
 
 	const byte *srcP = (const byte *) src.getPixels();
 	byte *dstP = (byte *) dst.getPixels();
-	for (uint y = 0; y < dst.h; y++) {
-		for (uint x = 0; x < dst.w; x++) {
+	for (int y = 0; y < dst.h; y++) {
+		for (int x = 0; x < dst.w; x++) {
 			dstP[x] = _transparentPaletteMap[srcP[x]];
 		}
 		dstP += dst.pitch;

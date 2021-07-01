@@ -922,7 +922,7 @@ bool GlkAPI::glk_image_draw_scaled(winid_t win, const Graphics::Surface &image, 
 	if (!win) {
 		warning("image_draw_scaled: invalid ref");
 	} else if (g_conf->_graphics) {
-		if (image.w == width && image.h == height) {
+		if (image.w == (int32)width && image.h == (int32)height) {
 			return glk_image_draw(win, image, transColor, xp, yp);
 
 		} else {

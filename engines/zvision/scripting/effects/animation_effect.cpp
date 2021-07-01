@@ -153,9 +153,9 @@ bool AnimationEffect::process(uint32 deltaTimeInMillis) {
 				// aa10 in Nemesis (Juperon, outside the asylum). We do allow scaling up only
 				// when a simple 2x filter is requested (e.g. the alchemists and cup sequence
 				// in Nemesis)
-				if (frame->w > dstw || frame->h > dsth || (frame->w == dstw / 2 && frame->h == dsth / 2)) {
+				if (frame->w > (int)dstw || frame->h > (int)dsth || (frame->w == (int)dstw / 2 && frame->h == (int)dsth / 2)) {
 					if (nod->_scaled)
-						if (nod->_scaled->w != dstw || nod->_scaled->h != dsth) {
+						if (nod->_scaled->w != (int)dstw || nod->_scaled->h != (int)dsth) {
 							nod->_scaled->free();
 							delete nod->_scaled;
 							nod->_scaled = NULL;

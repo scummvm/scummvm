@@ -118,11 +118,11 @@ void Debugger::saveRawPicture(const RawDecoder &rd, Common::WriteStream &ws) {
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Graphics::ManagedSurface destSurface(surface->w, surface->h, format);
 
-	for (uint y = 0; y < surface->h; ++y) {
+	for (int y = 0; y < surface->h; ++y) {
 		const byte *srcP = (const byte *)surface->getBasePtr(0, y);
 		uint32 *destP = (uint32 *)destSurface.getBasePtr(0, y);
 
-		for (uint x = 0; x < surface->w; ++x, ++srcP, ++destP) {
+		for (int x = 0; x < surface->w; ++x, ++srcP, ++destP) {
 			if ((int)*srcP == transColor || (int)*srcP < palStart) {
 				*destP = format.ARGBToColor(0, 0, 0, 0);
 			} else {

@@ -328,11 +328,11 @@ void AVISurface::copyMovieFrame(const Graphics::Surface &src, Graphics::ManagedS
 		assert(src.format.bytesPerPixel == 4 && dest.format.bytesPerPixel == 2);
 		uint16 transPixel = _videoSurface->getTransparencyColor();
 
-		for (uint y = 0; y < MIN(src.h, dest.h); ++y) {
+		for (int y = 0; y < MIN(src.h, dest.h); ++y) {
 			const uint32 *pSrc = (const uint32 *)src.getBasePtr(0, y);
 			uint16 *pDest = (uint16 *)dest.getBasePtr(0, y);
 
-			for (uint x = 0; x < MIN(src.w, dest.w); ++x, ++pSrc, ++pDest) {
+			for (int x = 0; x < MIN(src.w, dest.w); ++x, ++pSrc, ++pDest) {
 				src.format.colorToARGB(*pSrc, a, r, g, b);
 				assert(a == 0 || a == 0xff);
 

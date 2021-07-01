@@ -422,7 +422,7 @@ Common::Rect SpotItemFace::getFaceRect() const {
 }
 
 void SpotItemFace::draw() {
-	for (uint i = 0; i < _bitmap->h; i++) {
+	for (int i = 0; i < _bitmap->h; i++) {
 		memcpy(_face->_bitmap->getBasePtr(_posX, _posY + i),
 				_bitmap->getBasePtr(0, i),
 				_bitmap->w * 4);
@@ -433,7 +433,7 @@ void SpotItemFace::draw() {
 }
 
 void SpotItemFace::undraw() {
-	for (uint i = 0; i < _notDrawnBitmap->h; i++) {
+	for (int i = 0; i < _notDrawnBitmap->h; i++) {
 		memcpy(_face->_bitmap->getBasePtr(_posX, _posY + i),
 				_notDrawnBitmap->getBasePtr(0, i),
 				_notDrawnBitmap->w * 4);

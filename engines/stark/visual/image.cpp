@@ -107,11 +107,11 @@ Graphics::Surface *VisualImageXMG::multiplyColorWithAlpha(const Graphics::Surfac
 	Graphics::Surface *dest = new Graphics::Surface();
 	dest->create(source->w, source->h, Gfx::Driver::getRGBAPixelFormat());
 
-	for (uint y = 0; y < source->h; y++) {
+	for (int y = 0; y < source->h; y++) {
 		const uint8 *src = (const uint8 *) source->getBasePtr(0, y);
 		uint8 *dst = (uint8 *) dest->getBasePtr(0, y);
 
-		for (uint x = 0; x < source->w; x++) {
+		for (int x = 0; x < source->w; x++) {
 			uint8 a, r, g, b;
 			r = *src++;
 			g = *src++;

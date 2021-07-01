@@ -83,7 +83,7 @@ void GraphicsMan::draw(Graphics::Surface *screen, const Graphics::Surface *s) {
 	uint16 w = MIN(screen->w, s->w);
 	const byte *src = (const byte *)s->getBasePtr(0, 0);
 	byte *dst = (byte *)screen->getBasePtr(0, 0);
-	for (uint y = 0; y < s->h; y++) {
+	for (int y = 0; y < s->h; y++) {
 		if (y < screen->h) {
 			memcpy(dst, src, w);
 		}

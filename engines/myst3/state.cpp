@@ -517,8 +517,8 @@ Graphics::Surface *GameState::resizeThumbnail(Graphics::Surface *big, uint width
 	small->create(width, height, big->format);
 
 	uint32 *dst = (uint32 *)small->getPixels();
-	for (uint i = 0; i < small->h; i++) {
-		for (uint j = 0; j < small->w; j++) {
+	for (int i = 0; i < small->h; i++) {
+		for (int j = 0; j < small->w; j++) {
 			uint32 srcX = big->w * j / small->w;
 			uint32 srcY = big->h * i / small->h;
 			uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY);
