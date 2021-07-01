@@ -561,7 +561,26 @@ public:
 			int KEY_WITH;
 			int KEY_GOLD;
 			int KEY_GEMS;
+			int KEY_BROWSE;
+			int KEY_BUY_SPELLS;
+			int KEY_SPELL_INFO;
+			int KEY_SIGN_IN;
+			int KEY_DRINK;
+			int KEY_FOOD;
+			int KEY_TIP;
+			int KEY_RUMORS;
+			int KEY_HEAL;
+			int KEY_DONATION;
+			int KEY_UNCURSE;
+			int KEY_TRAIN;
 		} LOCATIONS;
+
+		struct {
+			int KEY_START_NEW_GAME;
+			int KEY_LOAD_GAME;
+			int KEY_SHOW_CREDITS;
+			int KEY_VIEW_ENDGAME;
+		} CLOUDSOFXEENMENU;
 	} KEY_CONSTANTS;
 
 

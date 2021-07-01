@@ -2117,14 +2117,39 @@ public:
 
 		class EN_Locations : public Locations {
 		public:
-			const int KEY_DEP()  { return Common::KEYCODE_d; }
-			const int KEY_WITH() { return Common::KEYCODE_w; }
-			const int KEY_GOLD() { return Common::KEYCODE_o; }
-			const int KEY_GEMS() { return Common::KEYCODE_e; }
+			const int KEY_DEP()        { return Common::KEYCODE_d; }
+			const int KEY_WITH()       { return Common::KEYCODE_w; }
+			const int KEY_GOLD()       { return Common::KEYCODE_o; }
+			const int KEY_GEMS()       { return Common::KEYCODE_e; }
+			const int KEY_BROWSE()     { return Common::KEYCODE_b; }
+			const int KEY_BUY_SPELLS() { return Common::KEYCODE_b; }
+			const int KEY_SPELL_INFO() { return Common::KEYCODE_s; }
+			const int KEY_SIGN_IN()    { return Common::KEYCODE_s; }
+			const int KEY_DRINK()      { return Common::KEYCODE_d; }
+			const int KEY_FOOD()       { return Common::KEYCODE_f; }
+			const int KEY_TIP()        { return Common::KEYCODE_t; }
+			const int KEY_RUMORS()     { return Common::KEYCODE_r; }
+			const int KEY_HEAL()       { return Common::KEYCODE_h; }
+			const int KEY_DONATION()   { return Common::KEYCODE_d; }
+			const int KEY_UNCURSE()    { return Common::KEYCODE_u; }
+			const int KEY_TRAIN()      { return Common::KEYCODE_t; }
 		};
 		EN_Locations *LOCATIONS() {
 			if (!_l) _l = new EN_Locations();
 			return _l;
+		}
+
+		class EN_CloudsOfXeenMenu : public CloudsOfXeenMenu {
+		public:
+			const int KEY_START_NEW_GAME() { return Common::KEYCODE_s; }
+			const int KEY_LOAD_GAME()      { return Common::KEYCODE_l; }
+			const int KEY_SHOW_CREDITS()   { return Common::KEYCODE_c; }
+			const int KEY_VIEW_ENDGAME()   { return Common::KEYCODE_e; }
+		};
+		EN_CloudsOfXeenMenu *CLOUDSOFXEENMENU() {
+			if (!_soxm)
+				_soxm = new EN_CloudsOfXeenMenu();
+			return _soxm;
 		}
 
 	private:
@@ -2138,6 +2163,7 @@ public:
 		EN_DialogsQuickFight   *_dqf = NULL;
 		EN_DialogsSpells       *_ds = NULL;
 		EN_Locations           *_l = NULL;
+		EN_CloudsOfXeenMenu    *_soxm = NULL;
 	};
 
 	EN_KeyConstants *KEY_CONSTANTS() {
