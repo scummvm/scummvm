@@ -63,8 +63,8 @@ void setGameTarget(const char *target) {
 }
 
 static Common::String generateSavegameFilename(uint slotID) {
-	char buffer[MAX_SAVEGAME_SIZE];
-	snprintf(buffer, MAX_SAVEGAME_SIZE, "%s.%.3d", gameTarget, slotID);
+	char buffer[MAX_SAVEGAME_SIZE+5];
+	snprintf(buffer, MAX_SAVEGAME_SIZE+5, "%s.%.3d", gameTarget, slotID);
 	return Common::String(buffer);
 }
 
