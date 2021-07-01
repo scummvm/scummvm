@@ -547,7 +547,7 @@ void _playLoop(uint32 s) {
 
 	warning("Size: %d", size);
 
-	Common::hexdump(data, MIN(size, 256U));
+	Common::hexdump(data, MIN<uint>(size, 256));
 	audio->queueLoop(s, loopDec, 0, Here);
 }
 
