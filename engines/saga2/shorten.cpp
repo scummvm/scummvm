@@ -25,7 +25,7 @@
 #include "common/textconsole.h"
 #include "audio/audiostream.h"
 
-#include "saga/shorten.h"
+#include "saga2/shorten.h"
 
 // Based on etree's Shorten tool, version 3.6.1
 // http://etree.org/shnutils/shorten/

@@ -29,7 +29,6 @@ MODULE_OBJS := \
 	scene.o \
 	script.o \
 	sfuncs.o \
-	shorten.o \
 	sndres.o \
 	sound.o \
 	sprite.o \
