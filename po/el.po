@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-01 13:30+0000\n"
-"PO-Revision-Date: 2021-06-12 20:40+0000\n"
+"PO-Revision-Date: 2021-07-01 15:36+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -1045,7 +1045,7 @@ msgstr "Λειτουργία επέκτασης:"
 
 #: gui/options.cpp:1429
 msgid "Scaler:"
-msgstr ""
+msgstr "Κλιμακωτής:"
 
 #: gui/options.cpp:1442 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -2875,7 +2875,7 @@ msgstr "Λειτουργία επέκτασης εικόνας"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:61
 msgid "SDL Surface"
-msgstr ""
+msgstr "Επιφάνεια SDL"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2375
 msgid "Active graphics filter:"
@@ -5300,6 +5300,10 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"Αν ενεργοποιηθεί, κάνοντας κλικ πάνω σε ένα αντικείμενο ή περιοχή με τον "
+"κέρσορα σε μοφή κεραυνού, θα μεταφερθείτε εκεί άμεσα, προσπερνώντας "
+"ενδιάμεσες σκηνές. Μπορείτε να χρησιμοποιήσετε αυτή τη δυνατότητα ('Ζιπ') "
+"μόνο προς περιοχές που έχετε ήδη επισκεφθεί."
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -5310,6 +5314,9 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"Εναλλαγή μεταξύ ενεργών κι ανενεργών μεταβάσεων μεταξύ σκηνών. "
+"Απενεργοποιώντας τις μεταβάσεις, θα έχετε τη δυνατότητα να πλοηγηθείτε "
+"γρηγορότερα στο παιχνίδι."
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
@@ -5902,6 +5909,8 @@ msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
+"Εντοπίστηκε συμπιεσμένο παιχνίδι. Παρακαλούμε αποσυμπιέστε το ακολουθώντας "
+"τις οδηγίες στην περιγραφή του παιχνιδιού στο Βικι μας"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -6983,17 +6992,11 @@ msgstr ""
 "περικοπή της ανάλυσης σε 320x200 από το φάκελο (tab) 'μηχανή'."
 
 #: engines/scumm/scumm.cpp:1335
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable. Music and high-"
-#| "resolution\n"
-#| "versions of font and cursor will be disabled."
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
-"Δεν βρέθηκε το εκτελέσιμο του 'Loom' για Macintosh. Η μουσική και οι "
-"εκδοχές\n"
+"Δεν βρέθηκε το εκτελέσιμο του 'Indy' για Macintosh. Οι εκδοχές\n"
 "υψηλής ανάλυσης γραμματοσειράς (font) θα απενεργοποιηθούν."
 
 #: engines/scumm/scumm.cpp:1361
@@ -7786,16 +7789,13 @@ msgstr ""
 "γίνει compiled."
 
 #: engines/wintermute/wintermute.cpp:182
-#, fuzzy
-#| msgid ""
-#| "This game requires 3D capabilities that are out ScummVM scope. As such, "
-#| "it is likely to be unplayable totally or partially."
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
-"Αυτό το παιχνίδι απαιτεί δυνατότητες 3D που βρίσκονται εκτός του πεδίου του "
-"ScummVM. Ως εκ τούτου, ενδέχεται να μην παίζει σωστά εξ'ολοκλήρου ή εν μέρει."
+"Αυτό το παιχνίδι απαιτεί δυνατότητες 3D που δεν έχουν συμπεριληφθεί κατά τη "
+"μεταγλώττιση (compilation). Ως εκ τούτου, ενδέχεται να μην παίζει σωστά "
+"εξ'ολοκλήρου ή εν μέρει."
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
@@ -7921,10 +7921,8 @@ msgstr "Τηλέφωνο: Κουμπί για Κάτω"
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:361
-#, fuzzy
-#| msgid "Alternative intro"
 msgid "Alternative action"
-msgstr "Εναλλακτική εισαγωγή"
+msgstr "Εναλλακτική ενέργεια"
 
 #: engines/wintermute/keymapper_tables.h:432
 #: engines/wintermute/keymapper_tables.h:565
@@ -8245,25 +8243,19 @@ msgid "Cancel input"
 msgstr "Ακύρωση εντολής"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle subtitles"
-msgstr "Εναλλαγή σίγασης"
+msgstr "Εναλλαγή υποτίτλων"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1388
-#, fuzzy
-#| msgid "Shift"
 msgid "Shift key"
-msgstr "Shift"
+msgstr "Πλήκτρο Shift"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1490
-#, fuzzy
-#| msgid "Previous action"
 msgid "Chapayev's action"
-msgstr "Προηγούμενη ενέργεια"
+msgstr "Ενέργεια του Chapayev"
 
 #: engines/wintermute/keymapper_tables.h:1538
 #: engines/wintermute/keymapper_tables.h:1791
@@ -8289,17 +8281,13 @@ msgstr "4η απάντηση διαλόγου"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1569
-#, fuzzy
-#| msgid "Spin slower"
 msgid "Spin wheel slower"
-msgstr "Πιο αργή περιστροφή"
+msgstr "Περιστροφή τροχού πιο αργά"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1577
-#, fuzzy
-#| msgid "Spin faster"
 msgid "Spin wheel faster"
-msgstr "Πιο γρήγορη περιστροφή"
+msgstr "Περιστροφή τροχού πιο γρήγορα"
 
 #: engines/wintermute/keymapper_tables.h:1655
 msgid "Zoom out"
@@ -8321,10 +8309,8 @@ msgstr "Παράθυρο Bezier"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1825
-#, fuzzy
-#| msgid "Droid action"
 msgid "Droid's action"
-msgstr "Ενέργεια ρομπότ"
+msgstr "Ενέργεια του ρομπότ"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
 #: engines/wintermute/keymapper_tables.h:1933
