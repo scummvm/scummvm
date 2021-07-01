@@ -951,7 +951,7 @@ int Datum::equalTo(Datum &d, bool ignoreCase) const {
 	case OBJECT:
 		return u.obj == d.u.obj;
 	case CASTREF:
-		return u.i == d.u.i;
+		return *u.cast == *d.u.cast;
 	default:
 		break;
 	}
