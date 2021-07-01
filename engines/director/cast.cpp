@@ -70,7 +70,6 @@ Cast::Cast(Movie *movie, bool isShared) {
 
 	_lingoArchive = new LingoArchive(this);
 
-	_movieScriptCount = 0;
 	_castArrayStart = _castArrayEnd = 0;
 
 	_castIDoffset = 0;
@@ -432,7 +431,7 @@ void Cast::loadCast() {
 			if (debugChannelSet(-1, kDebugFewFramesOnly))
 				warning("Compiling STXT %d", *iterator);
 
-			loadScriptText(*(r = _castArchive->getResource(MKTAG('S','T','X','T'), *iterator)));
+			loadScriptText(*(r = _castArchive->getResource(MKTAG('S','T','X','T'), *iterator)), *iterator - _castIDoffset);
 			delete r;
 		}
 
@@ -1023,7 +1022,7 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 	}
 }
 
-void Cast::loadScriptText(Common::SeekableReadStreamEndian &stream) {
+void Cast::loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	/*uint32 unk1 = */ stream.readUint32();
 	uint32 strLen = stream.readUint32();
 	/*uin32 dataLen = */ stream.readUint32();
@@ -1045,14 +1044,12 @@ void Cast::loadScriptText(Common::SeekableReadStreamEndian &stream) {
 		return;
 
 	if (ConfMan.getBool("dump_scripts"))
-		dumpScript(script.c_str(), kMovieScript, _movieScriptCount);
+		dumpScript(script.c_str(), kMovieScript, id);
 
 	if (script.contains("\nmenu:") || script.hasPrefix("menu:"))
 		return;
 
-	_lingoArchive->addCode(script.c_str(), kMovieScript, _movieScriptCount);
-
-	_movieScriptCount++;
+	_lingoArchive->addCode(script.c_str(), kMovieScript, id);
 }
 
 void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {

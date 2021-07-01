@@ -80,7 +80,7 @@ public:
 
 private:
 	PaletteV4 loadPalette(Common::SeekableReadStreamEndian &stream);
-	void loadScriptText(Common::SeekableReadStreamEndian &stream);
+	void loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id);
 	void loadFontMap(Common::SeekableReadStreamEndian &stream);
 	Common::String getString(Common::String str);
 
@@ -100,7 +100,6 @@ public:
 	uint16 _stageColor;
 	int _defaultPalette;
 
-	uint16 _movieScriptCount;
 	LingoArchive *_lingoArchive;
 
 private:

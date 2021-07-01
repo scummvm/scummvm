@@ -230,12 +230,11 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 	_script = fileInfo.strings[0].readString(false);
 
 	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
-		_cast->dumpScript(_script.c_str(), kMovieScript, _cast->_movieScriptCount);
+		_cast->dumpScript(_script.c_str(), kMovieScript, 0);
 
 	if (!_script.empty())
-		_cast->_lingoArchive->addCode(_script.c_str(), kMovieScript, _cast->_movieScriptCount);
+		_cast->_lingoArchive->addCode(_script.c_str(), kMovieScript, 0);
 
-	_cast->_movieScriptCount++;
 	_changedBy = fileInfo.strings[1].readString();
 	_createdBy = fileInfo.strings[2].readString();
 	_createdBy = fileInfo.strings[3].readString();
