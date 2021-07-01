@@ -3430,9 +3430,9 @@ TileRegion RadialObjectIterator::computeSectorRegion(
 //	Return the first object within the specified region
 
 ObjectID RadialObjectIterator::first(GameObject **obj, int16 *dist) {
-	GameObject      *currentObject;
+	GameObject      *currentObject = nullptr;
 	ObjectID        currentObjectID;
-	int16           currentDist;
+	int16           currentDist = 0;
 
 	currentObjectID = SectorRegionObjectIterator::first(&currentObject);
 	while (currentObjectID != Nothing
