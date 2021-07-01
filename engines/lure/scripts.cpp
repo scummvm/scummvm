@@ -212,7 +212,7 @@ void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
 
 	Sound.killSounds();
 	if (animResult == ABORT_NONE) {
-		Sound.musicInterface_Play(Sound.isRoland() ? 0 : 0x28, 0, false);
+		Sound.musicInterface_Play(Sound.isRoland() ? 0 : 0x28, false);
 		events.interruptableDelay(5500);
 	}
 	delete anim;
@@ -224,7 +224,7 @@ void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
 
 	if (!Sound.isRoland())
 		Sound.loadSection(ADLIB_ENDGAME_SOUND_RESOURCE_ID);
-	Sound.musicInterface_Play(Sound.isRoland() ? 6 : 0, 0, true);
+	Sound.musicInterface_Play(Sound.isRoland() ? 6 : 0, true);
 
 	anim = new AnimationSequence(ENDGAME_ANIM_ID + 2, p, false);
 	anim->show();

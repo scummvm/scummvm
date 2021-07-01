@@ -246,7 +246,7 @@ bool Introduction::playMusic(uint8 soundNumber, bool fadeOut) {
 
 		if (!result) {
 			_currentSound = soundNumber;
-			Sound.musicInterface_Play(_currentSound, 0, true);
+			Sound.musicInterface_Play(_currentSound, true);
 		}
 	}
 

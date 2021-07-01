@@ -401,7 +401,7 @@ void Game::displayChuteAnimation() {
 	Sound.killSounds();
 
 	AnimationSequence *anim = new AnimationSequence(CHUTE_ANIM_ID, palette, true);
-	Sound.musicInterface_Play(0x40, 0, true);
+	Sound.musicInterface_Play(0x40, true);
 	AnimAbortType result = anim->show();
 	delete anim;
 
@@ -446,7 +446,7 @@ void Game::displayBarrelAnimation() {
 	mouse.cursorOff();
 
 	Sound.killSounds();
-	Sound.musicInterface_Play(0x3B, 0, true);
+	Sound.musicInterface_Play(0x3B, true);
 
 	AnimationSequence *anim = new AnimationSequence(BARREL_ANIM_ID, palette, true);
 	anim->show();

@@ -31,6 +31,7 @@
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/endian.h"
+#include "audio/adlib_ms.h"
 #include "audio/midiparser.h"
 
 namespace Common {
@@ -44,7 +45,6 @@ namespace Lure {
 SoundManager::SoundManager() {
 	Disk &disk = Disk::getReference();
 
-	int index;
 	_descs = disk.getEntry(SOUND_DESC_RESOURCE_ID);
 	_numDescs = _descs->size() / sizeof(SoundDescResource);
 	_soundData = NULL;
@@ -54,25 +54,18 @@ SoundManager::SoundManager() {
 	_isRoland = MidiDriver::getMusicType(dev) != MT_ADLIB;
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
-	Common::fill(_channelsInUse, _channelsInUse + NUM_CHANNELS, false);
 	Common::fill(_sourcesInUse, _sourcesInUse + LURE_MAX_SOURCES, false);
 
 	if (_isRoland) {
 		_driver = _mt32Driver = new MidiDriver_MT32GM(MT_MT32);
 	} else {
-		_driver = MidiDriver::createMidi(dev);
+		_driver = new MidiDriver_ADLIB_Lure();
 	}
+	_driver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+
 	int statusCode = _driver->open();
 	if (statusCode)
 		error("Sound driver returned error code %d", statusCode);
-
-	if (!_isRoland) {
-		for (index = 0; index < NUM_CHANNELS; ++index) {
-			_channelsInner[index].midiChannel = _driver->allocateChannel();
-			/* 90 is power on default for midi compliant devices */
-			_channelsInner[index].volume = 90;
-		}
-	}
 
 	syncSounds();
 }
@@ -275,7 +268,6 @@ void SoundManager::killSounds() {
 
 	// Clear the active sounds
 	_activeSounds.clear();
-	Common::fill(_channelsInUse, _channelsInUse + NUM_CHANNELS, false);
 }
 
 void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
@@ -295,41 +287,22 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 	if (_isRoland)
 		numChannels = (rec.numChannels & 3);
 	else
-		numChannels = ((rec.numChannels >> 2) & 3) + 1;
+		numChannels = ((rec.numChannels >> 2) & 3);
 
-	int channelCtr, channelCtr2;
-	for (channelCtr = 0; channelCtr <= (NUM_CHANNELS - numChannels); ++channelCtr) {
-		for (channelCtr2 = 0; channelCtr2 < numChannels; ++channelCtr2)
-			if (_channelsInUse[channelCtr + channelCtr2])
-				break;
-
-		if (channelCtr2 == numChannels)
-			break;
-	}
-
-	if (channelCtr > (NUM_CHANNELS - numChannels)) {
-		// No channels free
-		debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::addSound - no channels free");
+	if (numChannels == 0)
+		// Don't play sounds for which 0 channels are defined.
 		return;
-	}
-
-	// Mark the found channels as in use
-	Common::fill(_channelsInUse+channelCtr, _channelsInUse+channelCtr + numChannels, true);
 
 	SoundDescResource *newEntry = new SoundDescResource();
 	newEntry->soundNumber = rec.soundNumber;
-	newEntry->channel = channelCtr;
+	newEntry->channel = rec.channel;
 	newEntry->numChannels = numChannels;
 	newEntry->flags = rec.flags;
-
-	if (_isRoland)
-		newEntry->volume = rec.volume;
-	else /* resource volumes do not seem to work well with our AdLib emu */
-		newEntry->volume = 240; /* 255 causes clipping with AdLib */
+	newEntry->volume = rec.volume;
 
 	_activeSounds.push_back(SoundList::value_type(newEntry));
 
-	musicInterface_Play(rec.soundNumber, channelCtr, false, numChannels, newEntry->volume);
+	musicInterface_Play(rec.soundNumber, false, numChannels, newEntry->volume);
 }
 
 void SoundManager::addSound2(uint8 soundIndex) {
@@ -368,7 +341,7 @@ void SoundManager::setVolume(uint8 soundNumber, uint8 volume) {
 
 	SoundDescResource *entry = findSound(soundNumber);
 	if (entry)
-		musicInterface_SetVolume(entry->channel, volume);
+		musicInterface_SetVolume(entry->soundNumber, volume);
 }
 
 uint8 SoundManager::descIndexOf(uint8 soundNumber) {
@@ -387,27 +360,7 @@ uint8 SoundManager::descIndexOf(uint8 soundNumber) {
 void SoundManager::syncSounds() {
 	musicInterface_TidySounds();
 
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-	_musicVolume = mute ? 0 : MIN(256, ConfMan.getInt("music_volume"));
-	_sfxVolume = mute ? 0 : MIN(256, ConfMan.getInt("sfx_volume"));
-
-	if (_isRoland) {
-		_mt32Driver->syncSoundSettings();
-	} else {
-		_soundMutex.lock();
-		MusicListIterator i;
-		for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-			// FIXME This should not override the sound resource volume
-			// on the MidiMusic object.
-			if ((*i)->isMusic())
-				(*i)->setVolume(_musicVolume);
-			else
-				(*i)->setVolume(_sfxVolume);
-		}
-		_soundMutex.unlock();
-	}
+	_driver->syncSoundSettings();
 }
 
 SoundDescResource *SoundManager::findSound(uint8 soundNumber) {
@@ -439,9 +392,6 @@ void SoundManager::tidySounds() {
 			// Still playing, so move to next entry
 			++i;
 		else {
-			// Mark the channels that it used as now being free
-			Common::fill(_channelsInUse + rec.channel, _channelsInUse + rec.channel + rec.numChannels, false);
-
 			i = _activeSounds.erase(i);
 		}
 	}
@@ -471,9 +421,7 @@ void SoundManager::restoreSounds() {
 		SoundDescResource const &rec = **i;
 
 		if ((rec.numChannels != 0) && ((rec.flags & SF_RESTORE) != 0)) {
-			Common::fill(_channelsInUse + rec.channel, _channelsInUse + rec.channel + rec.numChannels, true);
-
-			musicInterface_Play(rec.soundNumber, rec.channel, false, rec.numChannels, rec.volume);
+			musicInterface_Play(rec.soundNumber, false, rec.numChannels, rec.volume);
 		}
 
 		++i;
@@ -489,41 +437,20 @@ bool SoundManager::fadeOut() {
 	// Fade out all the active sounds
 	musicInterface_TidySounds();
 
-	if (_isRoland) {
-		_mt32Driver->startFade(3000, 0);
-		while (_mt32Driver->isFading()) {
-			if (events.interruptableDelay(100)) {
-				result = ((events.type() == Common::EVENT_KEYDOWN && events.event().kbd.keycode == 27) ||
-					LureEngine::getReference().shouldQuit());
-				_mt32Driver->abortFade();
-				break;
-			}
-		}
-	} else {
-		bool inProgress = true;
-		while (inProgress) {
-			inProgress = false;
-
-			_soundMutex.lock();
-			MusicListIterator i;
-			for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-				MidiMusic &music = **i;
-				if (music.getVolume() > 0) {
-					inProgress = true;
-					music.setVolume(music.getVolume() >= 10 ? music.getVolume() - 10 : 0);
-				}
-			}
-
-			_soundMutex.unlock();
-			g_system->delayMillis(10);
+	_driver->startFade(3000, 0);
+	while (_driver->isFading()) {
+		if (events.interruptableDelay(100)) {
+			result = ((events.type() == Common::EVENT_KEYDOWN && events.event().kbd.keycode == 27) ||
+				LureEngine::getReference().shouldQuit());
+			_driver->abortFade();
+			break;
 		}
 	}
 
 	// Kill all the sounds
 	musicInterface_KillAll();
 
-	if (_isRoland)
-		_mt32Driver->setSourceVolume(MidiDriver_MT32GM::DEFAULT_SOURCE_NEUTRAL_VOLUME);
+	_driver->setSourceVolume(MidiDriver_Multisource::DEFAULT_SOURCE_NEUTRAL_VOLUME);
 
 	return result;
 }
@@ -562,9 +489,8 @@ void SoundManager::resume() {
 // musicInterface_Play
 // Play the specified sound
 
-void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, bool isMusic, uint8 numChannels, uint8 volume) {
-	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_Play soundNumber=%d, channel=%d",
-		soundNumber, channelNumber);
+void SoundManager::musicInterface_Play(uint8 soundNumber, bool isMusic, uint8 numChannels, uint8 volume) {
+	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_Play soundNumber=%d", soundNumber);
 	Game &game = Game::getReference();
 
 	if (!_soundData)
@@ -607,24 +533,22 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, b
 	// specifying volume.
 	_soundMutex.lock();
 	int8 source = -1;
-	if (_isRoland) {
-		if (isMusic) {
-			source = 0;
-		} else {
-			for (int i = 1; i < LURE_MAX_SOURCES; ++i) {
-				if (!_sourcesInUse[i]) {
-					source = i;
-					break;
-				}
+	if (isMusic) {
+		source = 0;
+	} else {
+		for (int i = 1; i < LURE_MAX_SOURCES; ++i) {
+			if (!_sourcesInUse[i]) {
+				source = i;
+				break;
 			}
 		}
-		if (source == -1)
-			warning("Insufficient sources to play sound %i", soundNumber);
-		else
-			_sourcesInUse[source] = true;
 	}
-	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNum,
-		isMusic, loop, source, numChannels, soundStart, dataSize, volume);
+	if (source == -1)
+		warning("Insufficient sources to play sound %i", soundNumber);
+	else
+		_sourcesInUse[source] = true;
+	MidiMusic *sound = new MidiMusic(_driver, soundNum, isMusic,
+		loop, source, numChannels, soundStart, dataSize, volume);
 	_playingSounds.push_back(MusicList::value_type(sound));
 	_soundMutex.unlock();
 }
@@ -675,16 +599,16 @@ bool SoundManager::musicInterface_CheckPlaying(uint8 soundNumber) {
 // musicInterface_SetVolume
 // Sets the volume of the specified channel
 
-void SoundManager::musicInterface_SetVolume(uint8 channelNum, uint8 volume) {
-	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_SetVolume channel=%d, volume=%d",
-		channelNum, volume);
+void SoundManager::musicInterface_SetVolume(uint8 soundNumber, uint8 volume) {
+	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_SetVolume soundNumber=%d, volume=%d",
+		   soundNumber, volume);
 	musicInterface_TidySounds();
 
 	_soundMutex.lock();
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		MidiMusic &music = **i;
-		if (music.channelNumber() == channelNum)
+		if (music.soundNumber() == soundNumber)
 			music.setVolume(volume);
 	}
 	_soundMutex.unlock();
@@ -761,7 +685,6 @@ void SoundManager::musicInterface_TrashReverb() {
 	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_TrashReverb");
 
 	/*
-	// TODO Should this do anything on AdLib? It does not have reverb AFAIK
 	if (_isRoland) {
 		// Set reverb parameters to mode Room, time 1, level 0
 		static const byte sysExData[] = { 0x00, 0x00, 0x00 };
@@ -813,25 +736,19 @@ void SoundManager::doTimer() {
 
 /*------------------------------------------------------------------------*/
 
-MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-					 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, int8 source, uint8 numChannels, void *soundData, uint32 size, uint8 volume) {
+MidiMusic::MidiMusic(MidiDriver_Multisource *driver, uint8 soundNum, bool isMus, bool loop,
+		int8 source, uint8 numChannels, void *soundData, uint32 size, uint8 volume) {
 	_driver = driver;
 	assert(_driver);
 	_mt32Driver = dynamic_cast<MidiDriver_MT32GM *>(_driver);
 	assert(!Sound.isRoland() || _mt32Driver);
 	_source = source;
-	_channels = channels;
 	_soundNumber = soundNum;
-	_channelNumber = channelNum;
 	_isMusic = isMus;
 	_loop = loop;
 
 	_numChannels = numChannels;
-	_volume = 0;
-
-	// Set sound resource volume (default is 80h - neutral).
-	// TODO AdLib currently does not use sound resource volume, so use fixed 240.
-	setVolume(Sound.isRoland() ? volume : 240);
+	_volume = volume;
 
 	_parser = MidiParser::createParser_SMF(source);
 	_parser->setMidiDriver(this);
@@ -871,8 +788,8 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 
 MidiMusic::~MidiMusic() {
 	_parser->unloadMusic();
-	if (Sound.isRoland() && _isPlaying)
-		_mt32Driver->deinitSource(_source);
+	if (_isPlaying)
+		_driver->deinitSource(_source);
 	delete _parser;
 	delete _decompressedSound;
 }
@@ -880,23 +797,7 @@ MidiMusic::~MidiMusic() {
 void MidiMusic::setVolume(int volume) {
 	volume = CLIP(volume, 0, 255);
 
-	if (_volume == volume)
-		return;
-
 	_volume = volume;
-
-	// MT-32 MIDI data sets channel volume using control change,
-	// so this is only needed for AdLib.
-	if (!Sound.isRoland()) {
-		volume *= _isMusic ? Sound.musicVolume() : Sound.sfxVolume();
-
-		for (int i = 0; i < _numChannels; ++i) {
-			if (_channels[_channelNumber + i].midiChannel != NULL)
-				_channels[_channelNumber + i].midiChannel->volume(
-					_channels[_channelNumber + i].volume *
-					volume / 65025);
-		}
-	}
 }
 
 void MidiMusic::playMusic() {
@@ -913,45 +814,12 @@ void MidiMusic::send(uint32 b) {
 }
 
 void MidiMusic::send(int8 source, uint32 b) {
-	byte channel;
-	if (Sound.isRoland()) {
-		// Channel mapping is handled by the driver
-		channel = b & 0x0F;
-	} else {
-		// Remap data channel to (one of) the channel(s) assigned to this player
-#ifdef SOUND_CROP_CHANNELS
-		if ((b & 0xF) >= _numChannels) return;
-		channel = _channelNumber + (byte)(b & 0x0F);
-#else
-		channel = _channelNumber + ((byte)(b & 0x0F) % _numChannels);
-#endif
-
-		if ((channel >= NUM_CHANNELS) || (_channels[channel].midiChannel == NULL))
-			return;
-	}
-
-	if ((b & 0xFFF0) == 0x07B0) {
-		// Adjust volume changes by song and master volume
-		byte volume = (byte)((b >> 16) & 0x7F);
-		_channels[channel].volume = volume;
-		if (!Sound.isRoland()) {
-			// Scale volume for AdLib only.
-			// MT-32 sound resource volume is applied to note velocity,
-			// and user volume scaling is handled by the driver.
-			// TODO AdLib might use velocity for sound resource volume
-			// as well.
-			uint16 master_volume = _isMusic ? Sound.musicVolume() : Sound.sfxVolume();
-			volume = volume * _volume * master_volume / 65025;
-		}
-		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xFFF0) == 0x18B0) {
+	if ((b & 0xFFF0) == 0x18B0) {
 		if (Sound.isRoland())
 			// Some tracks use CC 18. This is undefined in the MIDI standard
 			// and does nothing on an MT-32. Not sending this to the device
 			// in case it is a GM device with non-standard behavior for this CC.
 			return;
-	} else if ((b & 0xFFF0) == 0x007BB0) {
-		// No implementation
 	} else if (((b & 0xF0) == 0x90)) {
 		// Note On
 		if (Sound.isRoland()) {
@@ -977,11 +845,7 @@ void MidiMusic::send(int8 source, uint32 b) {
 		}
 	}
 
-	if (Sound.isRoland()) {
-		_driver->send(source, b);
-	} else {
-		_channels[channel].midiChannel->send(b);
-	}
+	_driver->send(source, b);
 }
 
 void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
@@ -989,12 +853,10 @@ void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
 }
 
 void MidiMusic::metaEvent(int8 source, byte type, byte *data, uint16 length) {
-	//Only thing we care about is End of Track.
-	if (type != 0x2F)
-		return;
+	if (type == MIDI_META_END_OF_TRACK)
+		stopMusic();
 
 	_driver->metaEvent(source, type, data, length);
-	stopMusic();
 }
 
 void MidiMusic::onTimer() {
@@ -1006,8 +868,7 @@ void MidiMusic::stopMusic() {
 	debugC(ERROR_DETAILED, kLureDebugSounds, "MidiMusic::stopMusic sound %d", _soundNumber);
 	_isPlaying = false;
 	_parser->unloadMusic();
-	if (Sound.isRoland())
-		_mt32Driver->deinitSource(_source);
+	_driver->deinitSource(_source);
 }
 
 void MidiMusic::pauseMusic() {
@@ -1016,6 +877,180 @@ void MidiMusic::pauseMusic() {
 
 void MidiMusic::resumeMusic() {
 	_parser->resumePlaying();
+}
+
+// Note that the values higher than 0xF000 are one octave higher than the other
+// values. Other than that only the lower 10 bits are significant.
+const uint16 MidiDriver_ADLIB_Lure::OPL_FREQUENCY_LOOKUP[192] = {
+	0x02B2, 0x02B4, 0x02B7, 0x02B9, 0x02BC, 0x02BE, 0x02C1, 0x02C3, 0x02C6, 0x02C9, 0x02CB, 0x02CE, 0x02D0, 0x02D3, 0x02D6, 0x02D8,
+	0x02DB, 0x02DD, 0x02E0, 0x02E3, 0x02E5, 0x02E8, 0x02EB, 0x02ED, 0x02F0, 0x02F3, 0x02F6, 0x02F8, 0x02FB, 0x02FE, 0x0301, 0x0303,
+	0x0306, 0x0309, 0x030C, 0x030F, 0x0311, 0x0314, 0x0317, 0x031A, 0x031D, 0x0320, 0x0323, 0x0326, 0x0329, 0x032B, 0x032E, 0x0331,
+	0x0334, 0x0337, 0x033A, 0x033D, 0x0340, 0x0343, 0x0346, 0x0349, 0x034C, 0x034F, 0x0352, 0x0356, 0x0359, 0x035C, 0x035F, 0x0362,
+	0x0365, 0x0368, 0x036B, 0x036F, 0x0372, 0x0375, 0x0378, 0x037B, 0x037F, 0x0382, 0x0385, 0x0388, 0x038C, 0x038F, 0x0392, 0x0395,
+	0x0399, 0x039C, 0x039F, 0x03A3, 0x03A6, 0x03A9, 0x03AD, 0x03B0, 0x03B4, 0x03B7, 0x03BB, 0x03BE, 0x03C1, 0x03C5, 0x03C8, 0x03CC,
+	0x03CF, 0x03D3, 0x03D7, 0x03DA, 0x03DE, 0x03E1, 0x03E5, 0x03E8, 0x03EC, 0x03F0, 0x03F3, 0x03F7, 0x03FB, 0x03FE, 0xFE01, 0xFE03,
+	0xFE05, 0xFE07, 0xFE08, 0xFE0A, 0xFE0C, 0xFE0E, 0xFE10, 0xFE12, 0xFE14, 0xFE16, 0xFE18, 0xFE1A, 0xFE1C, 0xFE1E, 0xFE20, 0xFE21,
+	0xFE23, 0xFE25, 0xFE27, 0xFE29, 0xFE2B, 0xFE2D, 0xFE2F, 0xFE31, 0xFE34, 0xFE36, 0xFE38, 0xFE3A, 0xFE3C, 0xFE3E, 0xFE40, 0xFE42,
+	0xFE44, 0xFE46, 0xFE48, 0xFE4A, 0xFE4C, 0xFE4F, 0xFE51, 0xFE53, 0xFE55, 0xFE57, 0xFE59, 0xFE5C, 0xFE5E, 0xFE60, 0xFE62, 0xFE64,
+	0xFE67, 0xFE69, 0xFE6B, 0xFE6D, 0xFE6F, 0xFE72, 0xFE74, 0xFE76, 0xFE79, 0xFE7B, 0xFE7D, 0xFE7F, 0xFE82, 0xFE84, 0xFE86, 0xFE89,
+	0xFE8B, 0xFE8D, 0xFE90, 0xFE92, 0xFE95, 0xFE97, 0xFE99, 0xFE9C, 0xFE9E, 0xFEA1, 0xFEA3, 0xFEA5, 0xFEA8, 0xFEAA, 0xFEAD, 0xFEAF
+};
+
+MidiDriver_ADLIB_Lure::MidiDriver_ADLIB_Lure() :
+		MidiDriver_ADLIB_Multisource(OPL::Config::kOpl2),
+		_pitchBendSensitivity(1) {
+	for (int i = 0; i < LURE_MAX_SOURCES; i++) {
+		for (int j = 0; j < MIDI_CHANNEL_COUNT; j++) {
+			_instrumentDefs[i][j] = { 0 };
+		}
+	}
+
+	// The MIDI data uses monophonic channels and the original interpreter
+	// allocates a fixed OPL channel to each MIDI channel of each source. This
+	// behavior is similar to the static allocation mode, though the actual
+	// channel allocations are a bit different.
+	_allocationMode = ALLOCATION_MODE_STATIC;
+
+	// These global settings are different from the base class defaults.
+	_modulationDepth = MODULATION_DEPTH_LOW;
+	_vibratoDepth = VIBRATO_DEPTH_LOW;
+}
+
+void MidiDriver_ADLIB_Lure::channelAftertouch(uint8 channel, uint8 pressure, uint8 source) {
+	_activeNotesMutex.lock();
+
+	// Find the active note on the specified channel.
+	for (int i = 0; i < determineNumOplChannels(); i++) {
+		if (_activeNotes[i].noteActive && _activeNotes[i].source == source &&
+				_activeNotes[i].channel == channel) {
+			// Set the velocity of the note and recalculate and write the
+			// volume.
+			_activeNotes[i].velocity = pressure;
+
+			recalculateVolumes(channel, source);
+
+			break;
+		}
+	}
+
+	_activeNotesMutex.unlock();
+}
+
+void MidiDriver_ADLIB_Lure::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+	if (type == MIDI_META_SEQUENCER && length >= 6 &&
+			data[0] == 0x00 && data[1] == 0x00 && data[2] == 0x3F && data[3] == 0x00) {
+		// Custom sequencer meta event
+		switch (data[4]) {
+		case 0x01:
+			// Instrument definition
+			uint8 channel;
+			channel = data[5];
+			assert(length == 0x22);
+			assert(source >= 0);
+			assert(channel < MIDI_CHANNEL_COUNT);
+
+			// Instrument definitions use the AdLib BNK format, but omit the
+			// first 2 fields.
+			AdLibBnkInstrumentDefinition bnkInstDef;
+			bnkInstDef = { 0 };
+			memcpy((uint8*)&bnkInstDef + 2, &data[6], sizeof(AdLibBnkInstrumentDefinition) - 2);
+			// Store the definition in the _instrumentDefs array.
+			bnkInstDef.toOplInstrumentDefinition(_instrumentDefs[source][channel]);
+			break;
+		case 0x02:
+			// Rhythm mode
+			
+			// data[5] == 0: off, >= 1: on.
+			// This is never turned on in the game's music data, so this is not
+			// implemented.
+			break;
+		case 0x03:
+			// Pitch bend sensitivity
+
+			_pitchBendSensitivity = data[5];
+			break;
+		default:
+			// Unknown sequencer meta event.
+			warning("MidiDriver_ADLIB_Lure::metaEvent - Unknown sequencer meta event type %X", data[4]);
+			break;
+		}
+		return;
+	}
+
+	// Use default handling for other meta events.
+	MidiDriver_ADLIB_Multisource::metaEvent(source, type, data, length);
+}
+
+MidiDriver_ADLIB_Lure::InstrumentInfo MidiDriver_ADLIB_Lure::determineInstrument(uint8 channel, uint8 source, uint8 note) {
+	InstrumentInfo instrument = { 0 };
+
+	// Lure does not use a rhythm channel.
+	instrument.oplNote = note;
+	// Get the instrument definition set by the last meta event.
+	instrument.instrumentDef = &_instrumentDefs[source][channel];
+	// Identify the instrument by source and channel.
+	instrument.instrumentId = (source << 4) | channel;
+
+	return instrument;
+}
+
+uint16 MidiDriver_ADLIB_Lure::calculateFrequency(uint8 channel, uint8 source, uint8 note) {
+	// Lower the note by an octave. Notes in the lowest octave get clipped to 0.
+	note -= (note >= 0xC ? 0xC : note);
+
+	// The pitch bend is a number of semitones (in bits 8+) and an 8 bit
+	// fraction of a semitone (only the most significant 4 bits are used).
+	int32 pitchBend = calculatePitchBend(channel, source, 0);
+
+	// Discard the lower 4 bits of the pitch bend (the +8 is for rounding), 
+	// add the MIDI note and clip the result to the range 0-5FF. Note that
+	// MIDI notes 60-7F get clipped to 5F.
+	uint16 noteValue = CLIP((note << 4) + ((pitchBend + 8) >> 4), 0, 0x5FF);
+	// Convert the note value to octave note and octave (block).
+	uint8 octaveNote = (noteValue >> 4) % 12;
+	uint8 block = (noteValue >> 4) / 12;
+
+	// Add the note fraction to the octave note and look up the OPL frequency
+	// (F-num) value to use.
+	uint8 octaveNoteValue = (octaveNote << 4) | (noteValue & 0xF);
+	uint16 oplFrequency = OPL_FREQUENCY_LOOKUP[octaveNoteValue];
+	if (oplFrequency < 0xF000) {
+		// Lookup values which have 0 in the highest 6 bits need to be lowered
+		// one octave.
+		if (block > 0) {
+			block--;
+		} else {
+			// If the octave is already 0, bitshift the frequency to halve it.
+			oplFrequency >>= 1;
+		}
+	}
+
+	// Return the F-num and block in OPL register format.
+	return (oplFrequency & 0x3FF) | (block << 10);
+}
+
+int32 MidiDriver_ADLIB_Lure::calculatePitchBend(uint8 channel, uint8 source, uint16 oplFrequency) {
+	// Convert MIDI pitch bend value to a 14 bit signed value
+	// (range -0x2000 - 0x2000).
+	int16 pitchBend = _controlData[source][channel].pitchBend - 0x2000;
+	// Discard the lower 5 bits to turn it into a 9 bit value (-0x100 - 0x100).
+	pitchBend >>= 5;
+	// Double it for every sensitivity semitone over 1. Note that sensitivity
+	// is typically specified as 1, which will not change the value.
+	pitchBend <<= _pitchBendSensitivity - 1;
+
+	return pitchBend;
+}
+
+uint8 MidiDriver_ADLIB_Lure::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+	uint8 operatorVolume = instrumentDef.getOperatorDefinition(operatorNum).level & OPL_MASK_LEVEL;
+
+	// Scale the instrument definition operator volume by velocity.
+	// Invert it, multiply by velocity, add 0x40 for rounding and divide by 7F.
+	uint8 invertedVolume = (((0x3F - operatorVolume) * velocity) + 0x40) >> 7;
+
+	// Invert the volume again before returning it.
+	return 0x3F - invertedVolume;
 }
 
 } // End of namespace Lure

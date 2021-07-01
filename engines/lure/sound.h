@@ -31,6 +31,7 @@
 #include "common/singleton.h"
 #include "common/ptr.h"
 
+#include "audio/adlib_ms.h"
 #include "audio/mididrv.h"
 #include "audio/mt32gm.h"
 
@@ -42,25 +43,18 @@ namespace Lure {
 #define NUM_CHANNELS 16
 #define LURE_MAX_SOURCES 10
 
-struct ChannelEntry {
-	MidiChannel *midiChannel;
-	uint8 volume;
-};
-
 class MidiMusic: public MidiDriver_BASE {
 private:
 	uint8 _soundNumber;
-	uint8 _channelNumber;
 	uint8 _numChannels;
 	byte _volume;
 	MemoryBlock *_decompressedSound;
 	uint8 *_soundData;
 	uint8 _soundSize;
-	MidiDriver *_driver;
+	MidiDriver_Multisource *_driver;
 	MidiDriver_MT32GM *_mt32Driver;
 	int8 _source;
 	MidiParser *_parser;
-	ChannelEntry *_channels;
 	bool _isMusic;
 	bool _loop;
 	bool _isPlaying;
@@ -71,8 +65,8 @@ private:
 	uint32 songLength(uint16 songNum) const;
 
 public:
-	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
-		 uint8 channelNum, uint8 soundNum, bool isMus, bool loop, int8 source, uint8 numChannels, void *soundData, uint32 size, uint8 volume);
+	MidiMusic(MidiDriver_Multisource *driver, uint8 soundNum, bool isMus, bool loop,
+		int8 source, uint8 numChannels, void *soundData, uint32 size, uint8 volume);
 	~MidiMusic() override;
 	void setVolume(int volume);
 	int getVolume() const { return _volume; }
@@ -95,7 +89,6 @@ public:
 
 	void onTimer();
 
-	uint8 channelNumber() const { return _channelNumber; }
 	uint8 soundNumber() const { return _soundNumber; }
 	int8 source() const { return _source; }
 	bool isPlaying() const { return _isPlaying; }
@@ -110,7 +103,7 @@ private:
 	uint8 _soundsTotal;
 	int _numDescs;
 	SoundDescResource *soundDescs() { return (SoundDescResource *) _descs->data(); }
-	MidiDriver *_driver;
+	MidiDriver_Multisource *_driver;
 	MidiDriver_MT32GM *_mt32Driver;
 	typedef Common::List<Common::SharedPtr<SoundDescResource> > SoundList;
 	typedef SoundList::iterator SoundListIterator;
@@ -118,16 +111,11 @@ private:
 	typedef Common::List<Common::SharedPtr<MidiMusic> > MusicList;
 	typedef MusicList::iterator MusicListIterator;
 	MusicList _playingSounds;
-	ChannelEntry _channelsInner[NUM_CHANNELS];
-	bool _channelsInUse[NUM_CHANNELS];
 	bool _sourcesInUse[LURE_MAX_SOURCES];
 	bool _nativeMT32;
 	bool _isRoland;
 	Common::Mutex _soundMutex;
 	bool _paused;
-
-	uint16 _musicVolume;
-	uint16 _sfxVolume;
 
 	// Internal support methods
 	void bellsBodge();
@@ -162,18 +150,48 @@ public:
 	bool getPaused() const { return _paused; }
 	bool hasNativeMT32() const { return _nativeMT32; }
 	bool isRoland() const { return _isRoland; }
-	uint16 musicVolume() const { return _musicVolume; }
-	uint16 sfxVolume() const { return _sfxVolume; }
 
 	// The following methods implement the external sound player module
 	//void musicInterface_Initialize();
-	void musicInterface_Play(uint8 soundNumber, uint8 channelNumber, bool isMusic = false, uint8 numChannels = 4, uint8 volume = 0x80);
+	void musicInterface_Play(uint8 soundNumber, bool isMusic = false, uint8 numChannels = 4, uint8 volume = 0x80);
 	void musicInterface_Stop(uint8 soundNumber);
 	bool musicInterface_CheckPlaying(uint8 soundNumber);
-	void musicInterface_SetVolume(uint8 channelNum, uint8 volume);
+	void musicInterface_SetVolume(uint8 soundNumber, uint8 volume);
 	void musicInterface_KillAll();
 	void musicInterface_ContinuePlaying();
 	void musicInterface_TrashReverb();
+};
+
+// AdLib MidiDriver subclass implementing the behavior specific to Lure of the
+// Temptress.
+class MidiDriver_ADLIB_Lure : public MidiDriver_ADLIB_Multisource {
+protected:
+	// Lookup array for OPL frequency (F-num) values.
+	static const uint16 OPL_FREQUENCY_LOOKUP[];
+
+public:
+	MidiDriver_ADLIB_Lure();
+
+	// Channel aftertouch is used to adjust a note's volume. This is done by
+	// overriding the velocity of the active note and recalculating the volume.
+	void channelAftertouch(uint8 channel, uint8 pressure, uint8 source) override;
+	// The MIDI data uses three custom sequencer meta events; the most important
+	// one sets the instrument definition for a channel.
+	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+
+protected:
+	InstrumentInfo determineInstrument(uint8 channel, uint8 source, uint8 note)	override;
+	uint16 calculateFrequency(uint8 channel, uint8 source, uint8 note) override;
+	// Returns the number of semitones in bits 8+ and an 8 bit fraction of a
+	// semitone.
+	int32 calculatePitchBend(uint8 channel, uint8 source, uint16 oplFrequency) override;
+	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
+
+	// Stores the instrument definitions set by sequencer meta events.
+	OplInstrumentDefinition _instrumentDefs[LURE_MAX_SOURCES][MIDI_CHANNEL_COUNT];
+	// Pitch bend sensitivity in semi-tones. This is a global setting;
+	// it cannot be specified for a specific MIDI channel.
+	uint8 _pitchBendSensitivity;
 };
 
 } // End of namespace Lure

@@ -217,8 +217,7 @@ AnimAbortType AnimationSequence::show() {
 		if (_pPixels < _pPixelsEnd && (_isEGA || _pLines < _pLinesEnd)) {
 			if ((soundFrame != NULL) && (soundFrame->rolandSoundId != 0xFF) && (frameCtr == 0))
 				Sound.musicInterface_Play(
-					Sound.isRoland() ? soundFrame->rolandSoundId : soundFrame->adlibSoundId,
-					soundFrame->channelNum, soundFrame->music);
+					Sound.isRoland() ? soundFrame->rolandSoundId : soundFrame->adlibSoundId, soundFrame->music);
 
 			if (_isEGA)
 				egaDecodeFrame(_pPixels);
