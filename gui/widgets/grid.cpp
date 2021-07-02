@@ -120,9 +120,9 @@ void GridItemWidget::drawWidget() {
 	if (_grid->_isTitlesVisible) {
 		int breakPoint = breakText(_activeEntry->title, thumbWidth);
 		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight),
-								_activeEntry->title.substr(0, breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
+								_activeEntry->title.substr(0, breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter);
 		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight + kLineHeight, _x + thumbWidth, _y + thumbHeight + 2 * kLineHeight),
-								_activeEntry->title.substr(breakPoint + 1), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
+								_activeEntry->title.substr(breakPoint + 1), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter);
 	}
 }
 
