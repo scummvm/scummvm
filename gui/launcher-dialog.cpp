@@ -345,7 +345,73 @@ void LauncherDialog::reflowLayout() {
 }
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	Dialog::handleCommand(sender, cmd, data);
+	int item = getSelected();
+
+	switch (cmd) {
+	case kAddGameCmd:
+		addGame();
+		break;
+	case kMassAddGameCmd:
+		massAddGame();
+		break;
+	case kRemoveGameCmd:
+		removeGame(item);
+		break;
+	case kEditGameCmd:
+		editGame(item);
+		break;
+	case kLoadGameCmd:
+		loadGame(item);
+		break;
+#ifdef ENABLE_EVENTRECORDER
+	case kRecordGameCmd:
+		recordGame(item);
+		break;
+#endif
+	case kOptionsCmd: {
+		GlobalOptionsDialog options(this);
+		options.runModal();
+		}
+		break;
+	case kAboutCmd: {
+		AboutDialog about;
+		about.runModal();
+		}
+		break;
+	case kStartCmd:
+	case kListItemActivatedCmd:
+	case kListItemDoubleClickedCmd:
+		// Start the selected game.
+		assert(item >= 0);
+		ConfMan.setActiveDomain(_domains[item]);
+		close();
+		break;
+	case kListItemRemovalRequestCmd:
+		removeGame(item);
+		break;
+	case kListSelectionChangedCmd:
+		updateButtons();
+		break;
+	case kQuitCmd:
+		ConfMan.setActiveDomain("");
+		setResult(-1);
+		close();
+		break;
+#ifndef DISABLE_LAUNCHERDISPLAY_GRID
+	case kGridSwitchCmd:
+		setResult(kSwitchLauncherDialog);
+		ConfMan.set("gui_launcher_chooser", "grid", Common::ConfigManager::kApplicationDomain);
+		close();
+		break;
+	case kListSwitchCmd:
+		setResult(kSwitchLauncherDialog);
+		ConfMan.set("gui_launcher_chooser", "list", Common::ConfigManager::kApplicationDomain);
+		close();
+		break;
+#endif
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
 }
 
 void LauncherDialog::updateListing() {}
@@ -893,58 +959,8 @@ void LauncherSimple::handleKeyDown(Common::KeyState state) {
 }
 
 void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	int item = _list->getSelected();
 
 	switch (cmd) {
-	case kAddGameCmd:
-		addGame();
-		break;
-	case kMassAddGameCmd:
-		massAddGame();
-		break;
-	case kRemoveGameCmd:
-		removeGame(item);
-		break;
-	case kEditGameCmd:
-		editGame(item);
-		break;
-	case kLoadGameCmd:
-		loadGame(item);
-		break;
-#ifdef ENABLE_EVENTRECORDER
-	case kRecordGameCmd:
-		recordGame(item);
-		break;
-#endif
-	case kOptionsCmd: {
-		GlobalOptionsDialog options(this);
-		options.runModal();
-		}
-		break;
-	case kAboutCmd: {
-		AboutDialog about;
-		about.runModal();
-		}
-		break;
-	case kStartCmd:
-	case kListItemActivatedCmd:
-	case kListItemDoubleClickedCmd:
-		// Start the selected game.
-		assert(item >= 0);
-		ConfMan.setActiveDomain(_domains[item]);
-		close();
-		break;
-	case kListItemRemovalRequestCmd:
-		removeGame(item);
-		break;
-	case kListSelectionChangedCmd:
-		updateButtons();
-		break;
-	case kQuitCmd:
-		ConfMan.setActiveDomain("");
-		setResult(-1);
-		close();
-		break;
 	case kSearchCmd:
 		// Update the active search filter.
 		_list->setFilter(_searchWidget->getEditString());
@@ -954,15 +970,8 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_searchWidget->setEditString(Common::U32String());
 		_list->setFilter(Common::U32String());
 		break;
-#ifndef DISABLE_LAUNCHERDISPLAY_GRID
-	case kGridSwitchCmd:
-		setResult(kSwitchLauncherDialog);
-		ConfMan.set("gui_launcher_chooser", "grid", Common::ConfigManager::kApplicationDomain);
-		close();
-		break;
-#endif
 	default:
-		Dialog::handleCommand(sender, cmd, data);
+		LauncherDialog::handleCommand(sender, cmd, data);
 	}
 }
 
@@ -1018,66 +1027,7 @@ void LauncherGrid::handleKeyDown(Common::KeyState state) {
 }
 
 void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	int item = data;
-
-	switch (cmd) {
-	case kAddGameCmd:
-		addGame();
-		break;
-	case kMassAddGameCmd:
-		massAddGame();
-		break;
-	case kRemoveGameCmd:
-		removeGame(item);
-		break;
-	case kEditGameCmd:
-		editGame(item);
-		break;
-	case kLoadGameCmd:
-		loadGame(item);
-		break;
-#ifdef ENABLE_EVENTRECORDER
-	case kRecordGameCmd:
-		recordGame(item);
-		break;
-#endif
-	case kOptionsCmd: {
-		GlobalOptionsDialog options(this);
-		options.runModal();
-		}
-		break;
-	case kAboutCmd: {
-		AboutDialog about;
-		about.runModal();
-		}
-		break;
-	case kStartCmd:
-	case kListItemActivatedCmd:
-	case kListItemDoubleClickedCmd:
-		// Start the selected game.
-		assert(item >= 0);
-		ConfMan.setActiveDomain(_domains[item]);
-		close();
-		break;
-	case kListItemRemovalRequestCmd:
-		removeGame(item);
-		break;
-	case kListSelectionChangedCmd:
-		updateButtons();
-		break;
-	case kQuitCmd:
-		ConfMan.setActiveDomain("");
-		setResult(-1);
-		close();
-		break;
-	case kListSwitchCmd:
-		setResult(kSwitchLauncherDialog);
-		ConfMan.set("gui_launcher_chooser", "list", Common::ConfigManager::kApplicationDomain);
-		close();
-		break;
-	default:
-		Dialog::handleCommand(sender, cmd, data);
-	}
+	LauncherDialog::handleCommand(sender, cmd, data);
 }
 
 void LauncherGrid::updateListing() {
