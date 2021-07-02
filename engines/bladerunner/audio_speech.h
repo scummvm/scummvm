@@ -51,7 +51,7 @@ public:
 
 	bool playSpeechLine(int actorId, int sentenceId, int volume, int a4, int priority);
 
-	void setVolume(int volume);
+//	void setVolume(int volume);
 	int getVolume() const;
 	void playSample();
 

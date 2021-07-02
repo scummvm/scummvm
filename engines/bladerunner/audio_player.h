@@ -48,6 +48,8 @@ class AudioPlayer {
 	// increase tracks, reduce probability of tracks being skipped
 	static const int kTracks = 12;
 #endif // BLADERUNNER_ORIGINAL_BUGS
+	// Use SFX sound type if none is specified
+	static const Audio::Mixer::SoundType kAudioPlayerSoundType = Audio::Mixer::kSFXSoundType;
 
 	struct Track {
 		bool                isActive;
@@ -68,7 +70,7 @@ public:
 	AudioPlayer(BladeRunnerEngine *vm);
 	~AudioPlayer();
 
-	int playAud(const Common::String &name, int volume, int panStart, int panEnd, int priority, byte flags = 0, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType);
+	int playAud(const Common::String &name, int volume, int panStart, int panEnd, int priority, byte flags = 0, Audio::Mixer::SoundType type = kAudioPlayerSoundType);
 	bool isActive(int track) const;
 	uint32 getLength(int track) const;
 	void stop(int track, bool immediately);
@@ -76,7 +78,7 @@ public:
 	void adjustVolume(int track, int volume, uint32 delaySeconds, bool overrideVolume);
 	void adjustPan(int track, int pan, uint32 delaySeconds);
 
-	void setVolume(int volume);
+//	void setVolume(int volume);
 	int getVolume() const;
 	void playSample();
 

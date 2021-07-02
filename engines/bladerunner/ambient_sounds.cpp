@@ -39,6 +39,13 @@ AmbientSounds::AmbientSounds(BladeRunnerEngine *vm) {
 	_nonLoopingSounds = new NonLoopingSound[kNonLoopingSounds];
 	_loopingSounds = new LoopingSound[kLoopingSounds];
 
+	// The actual volume of ambient sounds is determined by the mixer (see BladeRunnerEngine::syncSoundSettings())
+	// In our BladeRunner engine ambient sounds do not have a distinct sound type of their own,
+	// so they are treated as kAmbientSoundType (default type, see: ambient_sounds.h).
+	//
+	// _ambientVolume here sets a percentage to be appied on the specified track volume
+	// before sending it to the audio player
+	// (setting _ambientVolume to 100 renders it indifferent)
 	_ambientVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
 
 	for (int i = 0; i != kNonLoopingSounds; ++i) {
@@ -73,6 +80,10 @@ static inline void sort(uint32 *a, uint32 *b) {
 	}
 }
 
+//
+// addSound() will add a track to the non-looping tracks array list
+// it will use the kAmbientSoundType for Mixer's Sound Type.
+// see AmbientSounds::tick()
 void AmbientSounds::addSound(
 	int sfxId,
 	uint32 delayMinSeconds, uint32 delayMaxSeconds,
@@ -113,6 +124,10 @@ void AmbientSounds::removeAllNonLoopingSounds(bool stopPlaying) {
 	}
 }
 
+//
+// addSpeech() will add a track to the non-looping tracks array list
+// it will use the kAmbientSoundType for Mixer's Sound Type
+// see AmbientSounds::tick()
 void AmbientSounds::addSpeech(int actorId, int sentenceId, uint32 delayMinSeconds, uint32 delayMaxSeconds, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -131,16 +146,33 @@ void AmbientSounds::addSpeech(int actorId, int sentenceId, uint32 delayMinSecond
 					priority, unk);
 }
 
-void AmbientSounds::playSound(int sfxId, int volume, int panStart, int panEnd, int priority) {
-	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(sfxId), volume * _ambientVolume / 100, panStart, panEnd, priority, kAudioPlayerOverrideVolume);
+// Explicitly plays a sound effect (sfx) track (specified by id)
+// It does not add it as a track to the non-looping tracks array list
+// It uses the parameter "type" as the mixer's sound type - which determines the volume setting in effect.
+// By default sound type is kAmbientSoundType (see ambient_sounds.h).
+void AmbientSounds::playSound(int sfxId, int volume, int panStart, int panEnd, int priority, Audio::Mixer::SoundType type) {
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(sfxId), volume * _ambientVolume / 100, panStart, panEnd, priority, kAudioPlayerOverrideVolume, type);
 }
 
+// Explicitly plays a speech cue
+// It does not add it as a track to the non-looping tracks array list
+// It uses mixer's sound type kSpeechSoundType - which determines the volume setting in effect (Speech)
 void AmbientSounds::playSpeech(int actorId, int sentenceId, int volume, int panStart, int panEnd, int priority) {
 	Common::String name = Common::String::format( "%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
 	_vm->_audioPlayer->playAud(name, volume * _ambientVolume / 100, panStart, panEnd, priority, kAudioPlayerOverrideVolume, Audio::Mixer::kSpeechSoundType);
 }
 
-void AmbientSounds::addLoopingSound(int sfxId, int volume, int pan, uint32 delaySeconds) {
+// Looping Sound will use paramerter "type" as the mixer's SoundType when playing this track.
+// By default sound type is kAmbientSoundType (see ambient_sounds.h).
+// This determines the volume setting that will be in effect for the audio.
+//
+// NOTE If restoring from a saved game, a looping track will always use the default SoundType (kAmbientSoundType)
+// because sound type is not stored.
+// TODO We could save the sound type re-using the space for field "track.audioPlayerTrack"
+// which is skipped for *both* looping and non-looping tracks in save() and load() code
+// However, the issue is negligible; the default SoundType for looping tracks is overridden
+// only in one special case so far (restored content Outtake "FLYTRU_E.VQA", see: outtake.cpp)
+void AmbientSounds::addLoopingSound(int sfxId, int volume, int pan, uint32 delaySeconds, Audio::Mixer::SoundType type) {
 	const Common::String &name = _vm->_gameInfo->getSfxTrack(sfxId);
 	int32 hash = MIXArchive::getHash(name);
 
@@ -159,6 +191,7 @@ void AmbientSounds::addLoopingSound(int sfxId, int volume, int pan, uint32 delay
 	track.hash = hash;
 	track.pan = pan;
 	track.volume = volume;
+	track.soundType = (int32) type;
 
 	int actualVolumeStart = volume * _ambientVolume / 100;
 	int actualVolumeEnd = actualVolumeStart;
@@ -167,7 +200,7 @@ void AmbientSounds::addLoopingSound(int sfxId, int volume, int pan, uint32 delay
 		actualVolumeStart = 0;
 	}
 
-	track.audioPlayerTrack = _vm->_audioPlayer->playAud(name, actualVolumeStart, pan, pan, 99, kAudioPlayerLoop | kAudioPlayerOverrideVolume);
+	track.audioPlayerTrack = _vm->_audioPlayer->playAud(name, actualVolumeStart, pan, pan, 99, kAudioPlayerLoop | kAudioPlayerOverrideVolume, type);
 
 	if (track.audioPlayerTrack == -1) {
 		removeLoopingSoundByIndex(i, 0u);
@@ -208,6 +241,7 @@ void AmbientSounds::removeAllLoopingSounds(uint32 delaySeconds) {
 	}
 }
 
+// tick() only handles the non-looping added ambient sounds
 void AmbientSounds::tick() {
 	uint32 now = _vm->_time->current();
 
@@ -229,12 +263,17 @@ void AmbientSounds::tick() {
 
 		track.volume = _vm->_rnd.getRandomNumberRng(track.volumeMin, track.volumeMax);
 
+		Audio::Mixer::SoundType mixerAmbientSoundType = kAmbientSoundType;
+		if (track.soundType >= 0) {
+			mixerAmbientSoundType = (Audio::Mixer::SoundType) track.soundType;
+		}
 		track.audioPlayerTrack = _vm->_audioPlayer->playAud(track.name,
-															track.volume * _ambientVolume / 100,
-															panStart,
-															panEnd,
-															track.priority,
-															kAudioPlayerOverrideVolume);
+		                                                    track.volume * _ambientVolume / 100,
+		                                                    panStart,
+		                                                    panEnd,
+		                                                    track.priority,
+		                                                    kAudioPlayerOverrideVolume,
+		                                                    mixerAmbientSoundType);
 
 		track.nextPlayTimeStart = now;
 		track.nextPlayTimeDiff  = _vm->_rnd.getRandomNumberRng(track.delayMin, track.delayMax);
@@ -249,7 +288,11 @@ void AmbientSounds::setVolume(int volume) {
 				if (_vm->_audioPlayer->isActive(_loopingSounds[i].audioPlayerTrack)) {
 					_vm->_audioPlayer->adjustVolume(_loopingSounds[i].audioPlayerTrack, newVolume, 1u, false);
 				} else {
-					_loopingSounds[i].audioPlayerTrack = _vm->_audioPlayer->playAud(_loopingSounds[i].name, 1, _loopingSounds[i].pan, _loopingSounds[i].pan, 99, kAudioPlayerLoop | kAudioPlayerOverrideVolume);
+					Audio::Mixer::SoundType mixerAmbientSoundType = kAmbientSoundType;
+					if (_loopingSounds[i].soundType >= 0) {
+						mixerAmbientSoundType = (Audio::Mixer::SoundType) _loopingSounds[i].soundType;
+					}
+					_loopingSounds[i].audioPlayerTrack = _vm->_audioPlayer->playAud(_loopingSounds[i].name, 1, _loopingSounds[i].pan, _loopingSounds[i].pan, 99, kAudioPlayerLoop | kAudioPlayerOverrideVolume, mixerAmbientSoundType);
 					if (_loopingSounds[i].audioPlayerTrack == -1) {
 						removeLoopingSound(i, 0u);
 					} else {
@@ -354,6 +397,7 @@ void AmbientSounds::addSoundByName(
 	track.panEndMin = panEndMin;
 	track.panEndMax = panEndMax;
 	track.priority = priority;
+	track.soundType = -1;
 }
 
 void AmbientSounds::removeNonLoopingSoundByIndex(int index, bool stopPlaying) {
@@ -366,6 +410,7 @@ void AmbientSounds::removeNonLoopingSoundByIndex(int index, bool stopPlaying) {
 	track.isActive = false;
 	track.audioPlayerTrack = -1;
 	//	track.field_45 = 0;
+	track.soundType = -1;
 }
 
 void AmbientSounds::removeLoopingSoundByIndex(int index, uint32 delaySeconds) {
@@ -383,6 +428,7 @@ void AmbientSounds::removeLoopingSoundByIndex(int index, uint32 delaySeconds) {
 	track.audioPlayerTrack = -1;
 	track.volume = 0;
 	track.pan = 0;
+	track.soundType = -1;
 }
 
 void AmbientSounds::save(SaveFileWriteStream &f) {
@@ -460,6 +506,7 @@ void AmbientSounds::load(SaveFileReadStream &f) {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		track.priority = f.readInt();
 		f.skip(4); // field_45
+		track.soundType = -1;
 	}
 
 	for (int i = 0; i != kLoopingSounds; ++i) {
@@ -471,12 +518,17 @@ void AmbientSounds::load(SaveFileReadStream &f) {
 		track.audioPlayerTrack = -1;
 		track.volume = f.readInt();
 		track.pan = f.readInt();
+		track.soundType = -1;
 	}
 
 	for (int i = 0; i != kLoopingSounds; ++i) {
 		LoopingSound &track = _loopingSounds[i];
 		if (track.isActive) {
-			track.audioPlayerTrack = _vm->_audioPlayer->playAud(track.name, 1, track.pan, track.pan, 99, kAudioPlayerLoop | kAudioPlayerOverrideVolume);
+			Audio::Mixer::SoundType mixerAmbientSoundType = kAmbientSoundType;
+			if (track.soundType >= 0) {
+				mixerAmbientSoundType = (Audio::Mixer::SoundType) track.soundType;
+			}
+			track.audioPlayerTrack = _vm->_audioPlayer->playAud(track.name, 1, track.pan, track.pan, 99, kAudioPlayerLoop | kAudioPlayerOverrideVolume, mixerAmbientSoundType);
 			if (track.audioPlayerTrack == -1) {
 				removeLoopingSoundByIndex(i, 0u);
 			} else {

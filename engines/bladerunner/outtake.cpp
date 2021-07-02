@@ -97,40 +97,49 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 			_vm->blitToScreen(_vm->_surfaceFront);
 			if (_vm->_cutContent && resName.equals("FLYTRU_E.VQA")) {
 				// This FLYTRU_E outtake has 150 frames
-				_vm->_ambientSounds->tick();
+				//
+				// We can have at most kLoopingSounds (3) looping ambient tracks
+				// Outtakes in general use a specific Mixer Sound Type (ie. VQAPlayer::kVQASoundType)
+				//      so the sounds here should conform too.
+				//     (see VQAPlayer::update())
+				//
+				// No need for _ambientSounds->tick() since it's not required for looping ambient tracks,
+				// nor for explicitly played Sounds (via playSound())
+				// It is harmless however, so it could remain.
+				//_vm->_ambientSounds->tick();
 				switch (frame) {
 				case 0:
-					_vm->_ambientSounds->addLoopingSound(kSfxLABAMB1,   95, 0, 0u);
-					_vm->_ambientSounds->addLoopingSound(kSfxROOFAIR1, 100, 0, 0u);
-					_vm->_ambientSounds->addLoopingSound(kSfxPSPA6,     74, 0, 1u);
+					_vm->_ambientSounds->addLoopingSound(kSfxLABAMB1,   95, 0, 0u, VQAPlayer::kVQASoundType);
+					_vm->_ambientSounds->addLoopingSound(kSfxROOFAIR1, 100, 0, 0u, VQAPlayer::kVQASoundType);
+					_vm->_ambientSounds->addLoopingSound(kSfxPSPA6,     74, 0, 1u, VQAPlayer::kVQASoundType);
 					break;
 				case 18:
-					_vm->_ambientSounds->playSound(kSfxSPIN2A, 100, 90, 20, 99);
+					_vm->_ambientSounds->playSound(kSfxSPIN2A, 100, 90, 20, 99, VQAPlayer::kVQASoundType);
 					break;
 				case 24:
-					_vm->_ambientSounds->playSound(kSfxSWEEP4, 45, 90, 20, 99);
+					_vm->_ambientSounds->playSound(kSfxSWEEP4, 45, 90, 20, 99, VQAPlayer::kVQASoundType);
 					break;
 				case 32:
 					if (_vm->_rnd.getRandomNumberRng(1, 5) < 4) 
-						_vm->_ambientSounds->playSound(kSfxTHNDER3, 82, -20, -20, 99);
+						_vm->_ambientSounds->playSound(kSfxTHNDER3, 82, -20, -20, 99, VQAPlayer::kVQASoundType);
 					break;
 				case 41:
-					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxMUSVOL8), 22, 46, 46, 99, 0, Audio::Mixer::kMusicSoundType);
+					_vm->_ambientSounds->playSound(kSfxMUSVOL8, 22, 46, 46, 99, VQAPlayer::kVQASoundType);
 					break;
 				case 52:
 					if (_vm->_rnd.getRandomNumberRng(1, 4) < 4) 
-						_vm->_ambientSounds->playSound(kSfxTHNDR3, 90, 10, 10, 89);
+						_vm->_ambientSounds->playSound(kSfxTHNDR3, 90, 10, 10, 89, VQAPlayer::kVQASoundType);
 					break;
 				case 78:
 					if (_vm->_rnd.getRandomNumberRng(1, 5) < 5) 
-						_vm->_ambientSounds->playSound(kSfxSIREN2, 62, -60, 45, 99);
+						_vm->_ambientSounds->playSound(kSfxSIREN2, 62, -60, 45, 99, VQAPlayer::kVQASoundType);
 					break;
 				case 105:
-					_vm->_ambientSounds->playSound(kSfxSWEEP3, 22, 20, 95, 99);
+					_vm->_ambientSounds->playSound(kSfxSWEEP3, 22, 20, 95, 99, VQAPlayer::kVQASoundType);
 					break;
 				case 112:
 					if (_vm->_rnd.getRandomNumberRng(1, 5) < 4) 
-						_vm->_ambientSounds->playSound(kSfxTHNDER4, 95, -20, -20, 99);
+						_vm->_ambientSounds->playSound(kSfxTHNDER4, 95, -20, -20, 99, VQAPlayer::kVQASoundType);
 					break;
 				}
 			}

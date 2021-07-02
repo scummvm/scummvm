@@ -24,6 +24,7 @@
 #define BLADERUNNER_AMBIENT_SOUNDS_H
 
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 #include "common/str.h"
 
@@ -34,8 +35,9 @@ class SaveFileReadStream;
 class SaveFileWriteStream;
 
 class AmbientSounds {
-	static const int kNonLoopingSounds = 25;
-	static const int kLoopingSounds = 3;
+	static const int kNonLoopingSounds                     = 25;
+	static const int kLoopingSounds                        = 3;
+	static const Audio::Mixer::SoundType kAmbientSoundType = Audio::Mixer::kSFXSoundType;
 
 	struct NonLoopingSound {
 		bool           isActive;
@@ -54,6 +56,7 @@ class AmbientSounds {
 		int            panEndMin;
 		int            panEndMax;
 		int            priority;
+		int32          soundType; // new - not stored in saved games
 	};
 
 	struct LoopingSound {
@@ -63,6 +66,7 @@ class AmbientSounds {
 		int            audioPlayerTrack;
 		int            volume;
 		int            pan;
+		int32          soundType; // new - not stored in saved games
 	};
 
 	BladeRunnerEngine *_vm;
@@ -93,10 +97,10 @@ public:
 		int panStartMin, int panStartMax,
 		int panEndMin, int panEndMax,
 		int priority, int unk);
-	void playSound(int sfxId, int volume, int panStart, int panEnd, int priority);
+	void playSound(int sfxId, int volume, int panStart, int panEnd, int priority, Audio::Mixer::SoundType type = kAmbientSoundType);
 	void playSpeech(int actorId, int sentenceId, int volume, int panStart, int panEnd, int priority);
 
-	void addLoopingSound(int sfxId, int volume, int pan, uint32 delaySeconds);
+	void addLoopingSound(int sfxId, int volume, int pan, uint32 delaySeconds, Audio::Mixer::SoundType type = kAmbientSoundType);
 	void adjustLoopingSound(int sfxId, int volume, int pan, uint32 delaySeconds);
 	// it seems there is little confusion in original code about delay parameter,
 	// sometimes it is used as boolean in same way as stopPlaying from non looping

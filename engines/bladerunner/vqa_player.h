@@ -45,6 +45,7 @@ class ZBuffer;
 
 class VQAPlayer {
 	friend class Debugger;
+	friend class OuttakePlayer;
 
 	BladeRunnerEngine           *_vm;
 	Common::String               _name;
@@ -53,8 +54,10 @@ class VQAPlayer {
 	Audio::QueuingAudioStream   *_audioStream;
 	Graphics::Surface           *_surface;
 
-	static const uint32  kVqaFrameTimeDiff        = 4000; // 60 * 1000 / 15
-	static const int     kMaxAudioPreloadedFrames = 15;
+	static const uint32  kVqaFrameTimeDiff             = 4000; // 60 * 1000 / 15
+	static const int     kMaxAudioPreloadedFrames      = 15;
+	// Use speech sound type as in original engine
+	static const Audio::Mixer::SoundType kVQASoundType = Audio::Mixer::kSpeechSoundType;
 
 	int _frame;
 	int _frameNext;

@@ -34,6 +34,9 @@ namespace BladeRunner {
 
 Music::Music(BladeRunnerEngine *vm) {
 	_vm = vm;
+	// _musicVolume here sets a percentage to be appied on the specified track volume
+	// before sending it to the audio player
+	// (setting _musicVolume to 100 renders it indifferent)
 	_musicVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
 	reset();
 }

@@ -170,11 +170,10 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 					}
 				}
 				if (_vm->_mixer->isReady()) {
-					// Use speech sound type as in original engine
 					// Audio stream starts playing, consuming queued "audio frames"
 					// Note: On its own, the audio will not re-synch with video;
 					// It plays independently so it can get ahead!
-					_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, _audioStream);
+					_vm->_mixer->playStream(kVQASoundType, &_soundHandle, _audioStream);
 				}
 				_audioStarted = true;
 			}

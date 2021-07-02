@@ -48,6 +48,9 @@ AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) {
 		_tracks[i].stream = nullptr;
 	}
 
+	// _sfxVolume here sets a percentage to be appied on the specified track volume
+	// before sending it to the audio player
+	// (setting _sfxVolume to 100 renders it indifferent)
 	_sfxVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
 }
 
@@ -89,9 +92,11 @@ void AudioPlayer::adjustPan(int track, int pan, uint32 delaySeconds) {
 	_vm->_audioMixer->adjustPan(_tracks[track].channel, pan, 60u * delaySeconds);
 }
 
-void AudioPlayer::setVolume(int volume) {
-	_sfxVolume = volume;
-}
+// We no longer set the _sfxVolume (audio player's default volume percent) via a public method
+// It is set in AudioPlayer::AudioPlayer() constructor and keeps its value constant.
+//void AudioPlayer::setVolume(int volume) {
+//	_sfxVolume = volume;
+//}
 
 int AudioPlayer::getVolume() const {
 	return _sfxVolume;

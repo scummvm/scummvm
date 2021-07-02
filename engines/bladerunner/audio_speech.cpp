@@ -49,6 +49,9 @@ void AudioSpeech::mixerChannelEnded(int channel, void *data) {
 
 AudioSpeech::AudioSpeech(BladeRunnerEngine *vm) {
 	_vm = vm;
+	// _speechVolume here sets a percentage to be appied on the specified voice cue volume
+	// before sending it to the audio player
+	// (setting _speechVolume to 100 renders it indifferent)
 	_speechVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 50 : 100;
 	_isActive = false;
 	_data = new byte[kBufferSize];
@@ -132,9 +135,11 @@ bool AudioSpeech::playSpeechLine(int actorId, int sentenceId, int volume, int a4
 	return _vm->_audioPlayer->playAud(name, _speechVolume * volume / 100, pan, pan, priority, kAudioPlayerOverrideVolume, Audio::Mixer::kSpeechSoundType);
 }
 
-void AudioSpeech::setVolume(int volume) {
-	_speechVolume = volume;
-}
+// We no longer set the _speechVolume (speech default volume percent) via a public method
+// It is set in AudioSpeech::AudioSpeech() constructor and keeps its value constant.
+//void AudioSpeech::setVolume(int volume) {
+//	_speechVolume = volume;
+//}
 
 int AudioSpeech::getVolume() const {
 	return _speechVolume;
