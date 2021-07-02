@@ -52,7 +52,7 @@ void TalkEntry::load(byte *dataStart, Common::SeekableReadStream &stream) {
 		_talkId, textOffs, tblOffs, voiceNameOffs);
 
 #if defined(SCUMM_BIG_ENDIAN)
-	for (byte *ptr = (byte *)_text; ptr != _tblPtr; ptr += 2) {
+	for (byte *ptr = (byte *)_text; *ptr != 0; ptr += 2) {
 		WRITE_UINT16(ptr, SWAP_BYTES_16(READ_UINT16(ptr)));
 	}
 #endif
