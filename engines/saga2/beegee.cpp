@@ -27,7 +27,7 @@
 #include "saga2/saga2.h"
 #include "saga2/idtypes.h"
 #include "saga2/tile.h"
-#include "saga2/music.h"
+#include "saga2/beegee.h"
 #include "saga2/player.h"
 
 #include "saga2/audtweak.h"

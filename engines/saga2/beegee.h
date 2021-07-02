@@ -65,6 +65,64 @@ private:
 	void playIntermittent(int soundNo);
 };
 
+const int16 NoEnemy = -1;
+const int16 MaxThemes = 16;
+const uint32 FarAway = 250;
+
+/* ===================================================================== *
+   Types
+ * ===================================================================== */
+
+//-----------------------------------------------------------------------
+// Music selection brain
+
+class Deejay {
+private:
+	int     enemy;
+	bool    aggr;
+	bool    day;
+	bool    ugd;
+	bool    susp;
+
+	static int current;
+	static int currentID;
+
+public:
+	Deejay() {
+		enemy = -1;
+		aggr = false;
+		day = true;
+		susp = false;
+		ugd = false;
+	}
+	~Deejay() {}
+
+private:
+	void select(void);
+
+public:
+	void setEnemy(int16 enemyType = -1) {
+		enemy = enemyType;
+		select();
+	}
+	void setAggression(bool aggressive) {
+		aggr = aggressive;
+		select();
+	}
+	void setDaytime(bool daytime) {
+		day = daytime;
+		select();
+	}
+	void setSuspend(bool suspended) {
+		susp = suspended;
+		select();
+	}
+	void setWorld(bool underground) {
+		ugd = underground;
+		select();
+	}
+};
+
 } // end of namespace Saga2
 
 #endif
