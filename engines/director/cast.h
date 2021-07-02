@@ -89,7 +89,7 @@ public:
 	uint16 _version;
 	uint16 _castLibID;
 
-	Common::HashMap<uint16, Common::String> _fontMap;
+	Common::HashMap<uint16, uint16> _fontMap;
 
 	Common::HashMap<int, CastMember *> *_loadedCast;
 	Common::HashMap<int, const Stxt *> *_loadedStxts;

@@ -328,8 +328,6 @@ void Cast::loadCast() {
 
 	// Font Mapping
 	if (_castArchive->hasResource(MKTAG('V', 'W', 'F', 'M'), -1)) {
-		_vm->_wm->_fontMan->clearFontMapping();
-
 		loadFontMap(*(r = _castArchive->getFirstResource(MKTAG('V', 'W', 'F', 'M'))));
 		delete r;
 	}
@@ -1193,8 +1191,8 @@ void Cast::loadFontMap(Common::SeekableReadStreamEndian &stream) {
 			font += stream.readByte();
 		}
 
-		_fontMap[id] = font;
-		_vm->_wm->_fontMan->registerFontMapping(id, font);
+		// Map cast font ID to window manager font ID
+		_fontMap[id] = _vm->_wm->_fontMan->registerFontName(font);
 
 		debugC(3, kDebugLoading, "Fontmap. ID %d Font %s", id, font.c_str());
 		currentRawPosition = stream.pos();

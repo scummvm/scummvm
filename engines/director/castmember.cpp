@@ -690,7 +690,7 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 }
 
 Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
-	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
+	Graphics::MacFont *macFont = new Graphics::MacFont(_cast->_fontMap[_fontId], _fontSize, _textSlant);
 	Graphics::MacWidget *widget = nullptr;
 	Common::Rect dims(bbox);
 
@@ -749,7 +749,7 @@ void TextCastMember::setText(const char *text) {
 		return;
 
 	// If text has changed, use the cached formatting from first STXT in this castmember.
-	Common::String formatting = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo3);
+	Common::String formatting = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _cast->_fontMap[_fontId], _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo3);
 	_ptext = text;
 	_ftext = formatting + text;
 
