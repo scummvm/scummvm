@@ -5,7 +5,6 @@ MODULE_OBJS := \
 	arrowptr.o \
 	assign.o \
 	audio.o \
-	audiobuf.o \
 	automap.o \
 	band.o \
 	beegee.o \
