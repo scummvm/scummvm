@@ -320,8 +320,6 @@ const uint8 MidiDriver_ADLIB_Multisource::OPL_VOLUME_LOOKUP[32] = {
 	0x09, 0x08, 0x07, 0x06, 0x05, 0x05, 0x04, 0x04, 0x03, 0x03, 0x02, 0x02, 0x01, 0x01, 0x00, 0x00
 };
 
-const float MidiDriver_ADLIB_Multisource::OPL_FREQUENCY_CONVERSION_FACTOR = pow(2, 20) / 49716.0f;
-
 MidiDriver_ADLIB_Multisource::MidiChannelControlData::MidiChannelControlData() {
 	init();
 }
@@ -384,7 +382,8 @@ MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(OPL::Config::OplType 
 		_rhythmBank(OPL_RHYTHM_BANK),
 		_rhythmBankFirstNote(GS_RHYTHM_FIRST_NOTE),
 		_rhythmBankLastNote(GS_RHYTHM_LAST_NOTE),
-		_noteCounter(1) {
+		_noteCounter(1),
+		_oplFrequencyConversionFactor(pow(2, 20) / 49716.0f) {
 	memset(_channelAllocations, 0xFF, sizeof(_channelAllocations));
 	Common::fill(_shadowRegisters, _shadowRegisters + sizeof(_shadowRegisters), 0);
 }
@@ -783,6 +782,7 @@ void MidiDriver_ADLIB_Multisource::dataEntry(uint8 channel, uint8 dataMsb, uint8
 		}
 		// Apply the new pitch bend sensitivity to any active notes.
 		recalculateFrequencies(channel, source);
+		break;
 	case MIDI_RPN_MASTER_TUNING_FINE:
 		// MSB and LSB are combined to a fraction of a semitone.
 		if (dataMsb != 0xFF) {
@@ -795,6 +795,7 @@ void MidiDriver_ADLIB_Multisource::dataEntry(uint8 channel, uint8 dataMsb, uint8
 		}
 		// Apply the new master tuning to any active notes.
 		recalculateFrequencies(channel, source);
+		break;
 	case MIDI_RPN_MASTER_TUNING_COARSE:
 		// MSB = semitones, LSB is ignored.
 		if (dataMsb != 0xFF) {
@@ -802,8 +803,11 @@ void MidiDriver_ADLIB_Multisource::dataEntry(uint8 channel, uint8 dataMsb, uint8
 		}
 		// Apply the new master tuning to any active notes.
 		recalculateFrequencies(channel, source);
+		break;
+	default:
+		// Ignore data entry if null or an unknown RPN is active.
+		break;
 	}
-	// Ignore data entry if null or an unknown RPN is active.
 }
 
 void MidiDriver_ADLIB_Multisource::volume(uint8 channel, uint8 volume, uint8 source) {
@@ -1064,7 +1068,7 @@ void MidiDriver_ADLIB_Multisource::recalculateVolumes(uint8 channel, uint8 sourc
 }
 
 MidiDriver_ADLIB_Multisource::InstrumentInfo MidiDriver_ADLIB_Multisource::determineInstrument(uint8 channel, uint8 source, uint8 note) {
-	InstrumentInfo instrument = { 0 };
+	InstrumentInfo instrument = { 0, 0, 0 };
 
 	if (channel == MIDI_RHYTHM_CHANNEL) {
 		// On the rhythm channel, the note played indicates which instrument
@@ -1225,7 +1229,7 @@ uint16 MidiDriver_ADLIB_Multisource::calculateFrequency(uint8 channel, uint8 sou
 		// Note that the resulting value is double the actual frequency because
 		// of the use of block 0 (which halves the frequency). This allows for
 		// slightly higher precision in the pitch bend calculation.
-		oplFrequency = round(noteFrequency * OPL_FREQUENCY_CONVERSION_FACTOR);
+		oplFrequency = round(noteFrequency * _oplFrequencyConversionFactor);
 		block = 0;
 	}
 

@@ -387,13 +387,6 @@ protected:
 	 */
 	static const uint8 OPL_VOLUME_LOOKUP[];
 
-
-	/**
-	 * Factor to convert a frequency in Hertz to the format used by the OPL
-	 * registers (F-num).
-	 */
-	static const float OPL_FREQUENCY_CONVERSION_FACTOR;
-
 	/**
 	 * Contains the current controller settings for a MIDI channel.
 	 */
@@ -1039,6 +1032,9 @@ protected:
 	// The amount of notes played since the driver was opened / reset.
 	uint32 _noteCounter;
 
+	// Factor to convert a frequency in Hertz to the format used by the OPL
+	// registers (F - num).
+	float _oplFrequencyConversionFactor;
 	// The values last written to each OPL register.
 	uint8 _shadowRegisters[0x200];
 
