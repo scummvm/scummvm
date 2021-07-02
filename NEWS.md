@@ -102,10 +102,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added smooth scrolling for FM-TOWNS versions of games.
    - Added optional trimming to 200 pixels for some FM-TOWNS games, so aspect-ratio correction is possible.
    - Fixed audio distortion in Loom for PC-Engine.
-   - Added support for the high resolution font and cursor in the Macintosh version of Loom.
+   - Added support for the high resolution font and cursor in the 16-color Macintosh version of Loom.
    - Added support for Japanese Mac version of The Dig.
    - Added partial support for the high resolution fonts and cursor in the
-     Macintosh version of Indiana Jones and the Last Crusade.
+     16-color Macintosh version of Indiana Jones and the Last Crusade.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
