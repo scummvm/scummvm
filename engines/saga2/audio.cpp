@@ -36,9 +36,6 @@
 #include "saga2/audiosmp.h"
 #include "saga2/audiosys.h"
 
-#include "saga2/audiodec.h"
-#include "saga2/audiofnc.h"
-
 namespace Saga2 {
 
 audioInterface *audio;
@@ -220,45 +217,6 @@ void audioInterface::resume(void) {
 audioAttenuationFunction audioInterface::setAttenuator(audioAttenuationFunction newAF) {
 	warning("STUB: audioInterface::setAttenuator()");
 	return nullptr;
-}
-
-soundDecoder::soundDecoder() {
-	warning("STUB: soundDecoder::soundDecoder()");
-}
-
-soundDecoder::~soundDecoder() {
-	warning("STUB: soundDecoder::~soundDecoder()");
-}
-
-soundDecoder::soundDecoder(INPLACEDECODER *, INPLACEDECODER *, INPLACEDECODER *) {
-	warning("STUB: soundDecoder::soundDecoder(INPLACEDECODER *, INPLACEDECODER *, INPLACEDECODER *)");
-}
-
-soundDecoder::soundDecoder(BUFFERDECODER *, BUFFERDECODER *, BUFFERDECODER *, int16, audioInterface *, int16) {
-	warning("STUB: soundDecoder::soundDecoder(BUFFERDECODER *, BUFFERDECODER *, BUFFERDECODER *, int16, audioInterface *, int16)");
-}
-
-soundDecoder::soundDecoder(BUFFERLOADER *, BUFFERLOADER *, BUFFERLOADER *) {
-	warning("STUB: soundDecoder::soundDecoder(BUFFERLOADER *, BUFFERLOADER *, BUFFERLOADER *)");
-}
-
-void decoderSet::addDecoder(soundDecoder *sodec) {
-	warning("STUB: soundDecoder::addDecoder()");
-}
-
-BUFFERDEC(flushDecompress) {
-	warning("STUB: flushDecompress()");
-	return 0;
-}
-
-BUFFERDEC(seekDecompress) {
-	warning("STUB: seekDecompress()");
-	return 0;
-}
-
-BUFFERDEC(readDecompress) {
-	warning("STUB: readDecompress()");
-	return 0;
 }
 
 } // end of namespace Saga2

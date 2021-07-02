@@ -29,8 +29,6 @@
 
 namespace Saga2 {
 
-class decoderSet;
-
 /* ===================================================================== *
 
    Sound Sample Attributes
@@ -111,7 +109,6 @@ public:
 	soundSegment            curSeg;
 	soundSegment            headSeg;
 	void                    *sourceBuffer;
-	decoderSet              *decoder;
 	PublicQueue<uint32>     segmentList;
 
 	soundSample(soundSegment sa[]);  //, sampleLocation pos=Point32( 0, 0 ));

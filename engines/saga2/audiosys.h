@@ -313,7 +313,7 @@ public:
 
 
 private:
-	void playMusic(decoderSet *decList, BufferRequest targBuffer, positionedSample *ss, int16 loopFactor);
+	void playMusic(BufferRequest targBuffer, positionedSample *ss, int16 loopFactor);
 
 	void setSoundMasterVolume(Volume val);
 	void setMusicMasterVolume(Volume val);

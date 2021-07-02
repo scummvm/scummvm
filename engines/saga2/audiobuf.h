@@ -36,9 +36,6 @@ class singleBuffer;
 class musicBuffer;
 class cacheBuffer;
 
-class soundDecoder;
-class decoderSet;
-
 class soundSample;
 
 class soundQueue;

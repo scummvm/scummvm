@@ -31,8 +31,6 @@
 #include "saga2/fta.h"
 #include "saga2/audio.h"
 #include "saga2/audiores.h"
-#include "saga2/audiodec.h"
-#include "saga2/audiofnc.h"
 #include "saga2/annoy.h"
 #include "saga2/player.h"
 #include "saga2/queues.h"
@@ -78,16 +76,6 @@ soundSegment            currentMidi;
 soundSegment            currentLoop;
 
 //-----------------------------------------------------------------------
-//	decoder sets
-
-decoderSet              *voiceDec,
-                        *soundDec,
-                        *longSoundDec,
-                        *musicDec,
-                        *loopDec,
-                        *memDec;
-
-//-----------------------------------------------------------------------
 //	resource contexts
 
 hResContext         *voiceRes,
@@ -126,68 +114,6 @@ bool hResCheckResID(hResContext *hrc, uint32 s);
 bool hResCheckResID(hResContext *hrc, uint32 s[]);
 
 /* ===================================================================== *
-   Decoder routines
- * ===================================================================== */
-
-//-----------------------------------------------------------------------
-//	Specific DECODER routines
-
-BUFFERLOD(seekMusic)   {
-	return hResSeek(sb, ss, musicRes, true);
-}
-BUFFERLOD(readMusic)   {
-	return hResRead(sb, ss, musicRes);
-}
-BUFFERLOD(flushMusic)  {
-	return hResFlush(sb, ss, musicRes);
-}
-BUFFERLOD(seekLongSound)   {
-	return hResSeek(sb, ss, longRes, false);
-}
-BUFFERLOD(readLongSound)   {
-	return hResRead(sb, ss, longRes);
-}
-BUFFERLOD(flushLongSound)  {
-	return hResFlush(sb, ss, longRes);
-}
-BUFFERLOD(seekSound)   {
-	return hResSeek(sb, ss, soundRes, true);
-}
-BUFFERLOD(readSound)   {
-	return hResRead(sb, ss, soundRes);
-}
-BUFFERLOD(flushSound)  {
-	return hResFlush(sb, ss, soundRes);
-}
-BUFFERLOD(seekLoop)   {
-	return hResSeek(sb, ss, loopRes, true);
-}
-BUFFERLOD(readLoop)   {
-	return hResRead(sb, ss, loopRes);
-}
-BUFFERLOD(flushLoop)  {
-	return hResFlush(sb, ss, loopRes);
-}
-BUFFERLOD(seekVoice)   {
-	return hResSeek(sb, ss, voiceRes, false);
-}
-BUFFERLOD(readVoice)   {
-	return hResRead(sb, ss, voiceRes);
-}
-BUFFERLOD(flushVoice)  {
-	return hResFlush(sb, ss, voiceRes);
-}
-BUFFERLOD(seekMemSound)   {
-	return bufSeek(sb, ss);
-}
-BUFFERLOD(readMemSound)   {
-	return bufRead(sb, ss);
-}
-BUFFERLOD(flushMemSound)  {
-	return bufFlush(sb, ss);
-}
-
-/* ===================================================================== *
    ATTENUATOR routines
  * ===================================================================== */
 
@@ -224,25 +150,6 @@ void startAudio(void) {
 	bool disVoice = true, disMusic = true, disSound = true, disLoops = true;
 
 	if (audio->active()) {
-		voiceDec = new decoderSet();
-		voiceDec->addDecoder(new soundDecoder(&readVoice, &seekVoice, &flushVoice));
-		voiceDec->addDecoder(new soundDecoder(&readDecompress, &seekDecompress, &flushDecompress, 16384, audio, 1));
-
-		musicDec = new decoderSet();
-		musicDec->addDecoder(new soundDecoder(&readMusic, &seekMusic, &flushMusic));
-
-		soundDec = new decoderSet();
-		soundDec->addDecoder(new soundDecoder(&readSound, &seekSound, &flushSound));
-
-		longSoundDec = new decoderSet();
-		longSoundDec->addDecoder(new soundDecoder(&readLongSound, &seekLongSound, &flushLongSound));
-
-		loopDec = new decoderSet();
-		loopDec->addDecoder(new soundDecoder(&readLoop, &seekLoop, &flushLoop));
-
-		memDec = new decoderSet();
-		memDec->addDecoder(new soundDecoder(&readMemSound, &seekMemSound, &flushMemSound));
-
 		uint32 musicID = haveKillerSoundCard() ? goodMusicID : baseMusicID;
 
 		disVoice = !ConfMan.getInt("speech_volume");
