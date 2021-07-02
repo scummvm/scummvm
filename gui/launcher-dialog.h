@@ -94,7 +94,10 @@ protected:
 	StringArray		_domains;
 	BrowserDialog	*_browser;
 	SaveLoadChooser	*_loadDialog;
-
+	StaticTextWidget	*_searchDesc;
+	ButtonWidget	*_searchClearButton;
+	String			 _search;
+	EditTextWidget  *_searchWidget;
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	ButtonWidget		*_listButton;
@@ -172,8 +175,6 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
 
-	void reflowLayout() override;
-
 	#ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
 	#endif // !DISABLE_LAUNCHERDISPLAY_GRID
@@ -186,15 +187,11 @@ protected:
 	void build() override;
 private:
 	ListWidget 		*_list;
-	EditTextWidget  *_searchWidget;
 	ButtonWidget	*_addButton;
 	Widget			*_startButton;
 	ButtonWidget	*_loadButton;
 	Widget			*_editButton;
 	Widget			*_removeButton;
-	StaticTextWidget	*_searchDesc;
-	ButtonWidget	*_searchClearButton;
-	String			 _search;
 };
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
@@ -210,8 +207,6 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
 
-	void reflowLayout() override;
-
 	LauncherDisplayType getType() const override { return kLauncherDisplayGrid; }
 
 protected:
@@ -222,15 +217,11 @@ protected:
 	void build() override;
 private:
 	GridWidget		*_grid;
-	EditTextWidget  *_searchWidget;
 	ButtonWidget	*_addButton;
 	Widget			*_startButton;
 	ButtonWidget	*_loadButton;
 	Widget			*_editButton;
 	Widget			*_removeButton;
-	StaticTextWidget	*_searchDesc;
-	ButtonWidget	*_searchClearButton;
-	String			 _search;
 };
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
