@@ -159,7 +159,8 @@ struct LauncherEntryComparator {
 #pragma mark -
 
 LauncherDialog::LauncherDialog(const Common::String &dialogName)
-	: Dialog(dialogName), _title(dialogName), _browser(nullptr), _loadDialog(nullptr)
+	: Dialog(dialogName), _title(dialogName), _browser(nullptr),
+	_loadDialog(nullptr), _searchClearButton(nullptr), _searchDesc(nullptr)
 #ifndef DISABLE_FANCY_THEMES
 	, _logo(nullptr), _searchPic(nullptr)
 #endif // !DISABLE_FANCY_THEMES
@@ -278,6 +279,68 @@ void LauncherDialog::close() {
 }
 
 void LauncherDialog::reflowLayout() {
+	#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
+		StaticTextWidget *ver = (StaticTextWidget *)findWidget(String(_title + ".Version").c_str());
+		if (ver) {
+			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign(_title + ".Version"));
+			ver->setLabel(Common::U32String(gScummVMVersionDate));
+		}
+
+		if (!_logo)
+			_logo = new GraphicsWidget(this, _title + ".Logo");
+		_logo->useThemeTransparency(true);
+		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
+	} else {
+		StaticTextWidget *ver = (StaticTextWidget *)findWidget(String(_title + ".Version").c_str());
+		if (ver) {
+			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign(_title + ".Version"));
+			ver->setLabel(Common::U32String(gScummVMFullVersion));
+		}
+
+		if (_logo) {
+			removeWidget(_logo);
+			_logo->setNext(nullptr);
+			delete _logo;
+			_logo = nullptr;
+		}
+	}
+
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		if (!_searchPic)
+			_searchPic = new GraphicsWidget(this, _title + ".SearchPic");
+		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
+
+		if (_searchDesc) {
+			removeWidget(_searchDesc);
+			_searchDesc->setNext(nullptr);
+			delete _searchDesc;
+			_searchDesc = nullptr;
+		}
+	} else {
+		if (!_searchDesc)
+			_searchDesc = new StaticTextWidget(this, _title + ".SearchDesc", _("Search:"));
+
+		if (_searchPic) {
+			removeWidget(_searchPic);
+			_searchPic->setNext(nullptr);
+			delete _searchPic;
+			_searchPic = nullptr;
+		}
+	}
+
+	removeWidget(_searchClearButton);
+	_searchClearButton->setNext(nullptr);
+	delete _searchClearButton;
+	_searchClearButton = addClearButton(this, _title + ".SearchClearButton", kSearchClearCmd);
+#endif
+#ifndef DISABLE_LAUNCHERDISPLAY_GRID
+	addChooserButtons();
+#endif
+
+	_w = g_system->getOverlayWidth();
+	_h = g_system->getOverlayHeight();
+
 	Dialog::reflowLayout();
 }
 
@@ -302,8 +365,8 @@ void LauncherDialog::addChooserButtons() {
 		delete _gridButton;
 	}
 
-	_listButton = createSwitchButton(_title+".ListSwitch", Common::U32String("L"), _("List view"), ThemeEngine::kImageList, kListSwitchCmd);
-	_gridButton = createSwitchButton(_title+".GridSwitch", Common::U32String("G"), _("Grid view"), ThemeEngine::kImageGrid, kGridSwitchCmd);
+	_listButton = createSwitchButton(_title + ".ListSwitch", Common::U32String("L"), _("List view"), ThemeEngine::kImageList, kListSwitchCmd);
+	_gridButton = createSwitchButton(_title + ".GridSwitch", Common::U32String("G"), _("Grid view"), ThemeEngine::kImageGrid, kGridSwitchCmd);
 }
 
 ButtonWidget *LauncherDialog::createSwitchButton(const Common::String &name, const Common::U32String &desc, const Common::U32String &tooltip, const char *image, uint32 cmd) {
@@ -629,9 +692,8 @@ bool LauncherDialog::checkModifier(int checkedModifier) {
 
 LauncherSimple::LauncherSimple(const U32String &title)
 	: LauncherDialog(title),
-	_list (nullptr), _searchWidget(nullptr), _addButton(nullptr),
-	_startButton(nullptr), _loadButton(nullptr), _editButton(nullptr),
-	_removeButton(nullptr), _searchDesc(nullptr), _searchClearButton(nullptr) {
+	_list (nullptr), _addButton(nullptr), _startButton(nullptr),
+	_loadButton(nullptr), _editButton(nullptr),	_removeButton(nullptr) {
 
 	build();
 }
@@ -931,80 +993,13 @@ void LauncherSimple::updateButtons() {
 	}
 }
 
-void LauncherSimple::reflowLayout() {
-#ifndef DISABLE_FANCY_THEMES
-	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
-		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
-		if (ver) {
-			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign("Launcher.Version"));
-			ver->setLabel(Common::U32String(gScummVMVersionDate));
-		}
-
-		if (!_logo)
-			_logo = new GraphicsWidget(this, "Launcher.Logo");
-		_logo->useThemeTransparency(true);
-		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
-	} else {
-		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
-		if (ver) {
-			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign("Launcher.Version"));
-			ver->setLabel(Common::U32String(gScummVMFullVersion));
-		}
-
-		if (_logo) {
-			removeWidget(_logo);
-			_logo->setNext(nullptr);
-			delete _logo;
-			_logo = nullptr;
-		}
-	}
-
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		if (!_searchPic)
-			_searchPic = new GraphicsWidget(this, "Launcher.SearchPic");
-		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
-
-		if (_searchDesc) {
-			removeWidget(_searchDesc);
-			_searchDesc->setNext(nullptr);
-			delete _searchDesc;
-			_searchDesc = nullptr;
-		}
-	} else {
-		if (!_searchDesc)
-			_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
-
-		if (_searchPic) {
-			removeWidget(_searchPic);
-			_searchPic->setNext(nullptr);
-			delete _searchPic;
-			_searchPic = nullptr;
-		}
-	}
-
-	removeWidget(_searchClearButton);
-	_searchClearButton->setNext(nullptr);
-	delete _searchClearButton;
-	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
-#endif
-#ifndef DISABLE_LAUNCHERDISPLAY_GRID
-	addChooserButtons();
-#endif
-
-	_w = g_system->getOverlayWidth();
-	_h = g_system->getOverlayHeight();
-
-	Dialog::reflowLayout();
-}
-
 #pragma mark -
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 LauncherGrid::LauncherGrid(const U32String &title)
 	: LauncherDialog(title),
-	_grid (nullptr), _searchWidget(nullptr), _addButton(nullptr),
-	_startButton(nullptr), _loadButton(nullptr), _editButton(nullptr),
-	_removeButton(nullptr), _searchDesc(nullptr), _searchClearButton(nullptr) {
+	_grid (nullptr), _addButton(nullptr), _startButton(nullptr),
+	_loadButton(nullptr), _editButton(nullptr),	_removeButton(nullptr) {
 
 	build();
 }
@@ -1083,71 +1078,6 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
-}
-
-void LauncherGrid::reflowLayout() {
-#ifndef DISABLE_FANCY_THEMES
-	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
-		StaticTextWidget *ver = (StaticTextWidget *)findWidget("LauncherGrid.Version");
-		if (ver) {
-			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign("LauncherGrid.Version"));
-			ver->setLabel(Common::U32String(gScummVMVersionDate));
-		}
-
-		if (!_logo)
-			_logo = new GraphicsWidget(this, "LauncherGrid.Logo");
-		_logo->useThemeTransparency(true);
-		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
-	} else {
-		StaticTextWidget *ver = (StaticTextWidget *)findWidget("LauncherGrid.Version");
-		if (ver) {
-			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign("LauncherGrid.Version"));
-			ver->setLabel(Common::U32String(gScummVMFullVersion));
-		}
-
-		if (_logo) {
-			removeWidget(_logo);
-			_logo->setNext(nullptr);
-			delete _logo;
-			_logo = nullptr;
-		}
-	}
-
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		if (!_searchPic)
-			_searchPic = new GraphicsWidget(this, "LauncherGrid.SearchPic");
-		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
-
-		if (_searchDesc) {
-			removeWidget(_searchDesc);
-			_searchDesc->setNext(nullptr);
-			delete _searchDesc;
-			_searchDesc = nullptr;
-		}
-	} else {
-		if (!_searchDesc)
-			_searchDesc = new StaticTextWidget(this, "LauncherGrid.SearchDesc", _("Search:"));
-
-		if (_searchPic) {
-			removeWidget(_searchPic);
-			_searchPic->setNext(nullptr);
-			delete _searchPic;
-			_searchPic = nullptr;
-		}
-	}
-
-	removeWidget(_searchClearButton);
-	_searchClearButton->setNext(nullptr);
-	delete _searchClearButton;
-	_searchClearButton = addClearButton(this, "LauncherGrid.SearchClearButton", kSearchClearCmd);
-#endif
-
-	addChooserButtons();
-
-	_w = g_system->getOverlayWidth();
-	_h = g_system->getOverlayHeight();
-
-	Dialog::reflowLayout();
 }
 
 void LauncherGrid::updateListing() {
