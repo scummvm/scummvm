@@ -219,4 +219,27 @@ audioAttenuationFunction audioInterface::setAttenuator(audioAttenuationFunction 
 	return nullptr;
 }
 
+bool bufCheckResID(hResContext *hrc, uint32 s) {
+	return s != 0;
+}
+
+bool hResCheckResID(hResContext *hrc, uint32 s) {
+	if (hrc != NULL)
+		return hrc->seek(s);
+	return false;
+}
+
+bool hResCheckResID(hResContext *hrc, uint32 s[]) {
+	if (s != NULL) {
+		if (s[0] == 0)
+			return false;
+
+		for (int i = 0; s[i]; i++) {
+			if (!hResCheckResID(hrc, s[i]))
+				return false;
+		}
+	}
+	return true;
+}
+
 } // end of namespace Saga2

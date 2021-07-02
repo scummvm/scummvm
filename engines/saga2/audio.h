@@ -29,6 +29,8 @@
 
 #include "audio/mixer.h"
 
+namespace Saga2 {
+
 /* ===================================================================== *
    the library(s) must be recompiled if you change these settings
  * ===================================================================== */
@@ -78,5 +80,7 @@ void AIL_set_sequence_volume(HSEQUENCE S, int32 volume, int32 milliseconds);
 inline void audioFatal(char *msg) {
 	error("Sound error %s", msg);
 }
+
+} // end of namespace Saga2
 
 #endif
