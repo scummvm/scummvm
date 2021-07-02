@@ -414,11 +414,6 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-void LauncherDialog::updateListing() {}
-void LauncherDialog::updateButtons() {}
-void LauncherDialog::selectTarget(const Common::String &target) {}
-int LauncherDialog::getSelected() { return 0; }
-
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 void LauncherDialog::addChooserButtons() {
 	if (_listButton) {
