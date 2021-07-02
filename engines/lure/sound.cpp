@@ -565,8 +565,8 @@ void SoundManager::musicInterface_Stop(uint8 soundNumber) {
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		if ((*i)->soundNumber() == soundNum) {
-			if ((*i)->source() >= 0)
-				_sourcesInUse[(*i)->source()] = false;
+			if ((*i)->getSource() >= 0)
+				_sourcesInUse[(*i)->getSource()] = false;
 			_playingSounds.erase(i);
 			break;
 		}
@@ -703,8 +703,8 @@ void SoundManager::musicInterface_TidySounds() {
 	MusicListIterator i = _playingSounds.begin();
 	while (i != _playingSounds.end()) {
 		if (!(*i)->isPlaying()) {
-			if ((*i)->source() >= 0)
-				_sourcesInUse[(*i)->source()] = false;
+			if ((*i)->getSource() >= 0)
+				_sourcesInUse[(*i)->getSource()] = false;
 			i = _playingSounds.erase(i);
 		} else {
 			++i;
@@ -982,7 +982,7 @@ void MidiDriver_ADLIB_Lure::metaEvent(int8 source, byte type, byte *data, uint16
 }
 
 MidiDriver_ADLIB_Lure::InstrumentInfo MidiDriver_ADLIB_Lure::determineInstrument(uint8 channel, uint8 source, uint8 note) {
-	InstrumentInfo instrument = { 0 };
+	InstrumentInfo instrument = { 0, 0, 0 };
 
 	// Lure does not use a rhythm channel.
 	instrument.oplNote = note;
@@ -1000,12 +1000,12 @@ uint16 MidiDriver_ADLIB_Lure::calculateFrequency(uint8 channel, uint8 source, ui
 
 	// The pitch bend is a number of semitones (in bits 8+) and an 8 bit
 	// fraction of a semitone (only the most significant 4 bits are used).
-	int32 pitchBend = calculatePitchBend(channel, source, 0);
+	int32 newPitchBend = calculatePitchBend(channel, source, 0);
 
 	// Discard the lower 4 bits of the pitch bend (the +8 is for rounding), 
 	// add the MIDI note and clip the result to the range 0-5FF. Note that
 	// MIDI notes 60-7F get clipped to 5F.
-	uint16 noteValue = CLIP((note << 4) + ((pitchBend + 8) >> 4), 0, 0x5FF);
+	uint16 noteValue = CLIP((note << 4) + ((newPitchBend + 8) >> 4), (int32)0, (int32)0x5FF);
 	// Convert the note value to octave note and octave (block).
 	uint8 octaveNote = (noteValue >> 4) % 12;
 	uint8 block = (noteValue >> 4) / 12;
@@ -1032,14 +1032,14 @@ uint16 MidiDriver_ADLIB_Lure::calculateFrequency(uint8 channel, uint8 source, ui
 int32 MidiDriver_ADLIB_Lure::calculatePitchBend(uint8 channel, uint8 source, uint16 oplFrequency) {
 	// Convert MIDI pitch bend value to a 14 bit signed value
 	// (range -0x2000 - 0x2000).
-	int16 pitchBend = _controlData[source][channel].pitchBend - 0x2000;
+	int16 newPitchBend = _controlData[source][channel].pitchBend - 0x2000;
 	// Discard the lower 5 bits to turn it into a 9 bit value (-0x100 - 0x100).
-	pitchBend >>= 5;
+	newPitchBend >>= 5;
 	// Double it for every sensitivity semitone over 1. Note that sensitivity
 	// is typically specified as 1, which will not change the value.
-	pitchBend <<= _pitchBendSensitivity - 1;
+	newPitchBend <<= _pitchBendSensitivity - 1;
 
-	return pitchBend;
+	return newPitchBend;
 }
 
 uint8 MidiDriver_ADLIB_Lure::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {

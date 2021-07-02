@@ -90,7 +90,7 @@ public:
 	void onTimer();
 
 	uint8 soundNumber() const { return _soundNumber; }
-	int8 source() const { return _source; }
+	int8 getSource() const { return _source; }
 	bool isPlaying() const { return _isPlaying; }
 	bool isMusic() const { return _isMusic; }
 };
