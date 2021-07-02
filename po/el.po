@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-01 13:30+0000\n"
+"POT-Creation-Date: 2021-07-02 14:20+0000\n"
 "PO-Revision-Date: 2021-07-01 15:36+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4037,7 +4037,7 @@ msgstr "Αποτυχία αρχικοποίησης πόρων"
 msgid "A required game resource was not found"
 msgstr "Δεν βρέθηκε ένας απαιτούμενος πόρος του παιχνιδιού"
 
-#: engines/bladerunner/bladerunner.cpp:2292
+#: engines/bladerunner/bladerunner.cpp:2301
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4048,7 +4048,7 @@ msgstr ""
 "λειτουργία θα αλλάξει σε \"Επαναφοράς Κομμένου Περιεχομένου\" για αυτή τη "
 "συνεδρία μέχρι να βγείτε εντελώς από το παιχνίδι."
 
-#: engines/bladerunner/bladerunner.cpp:2294
+#: engines/bladerunner/bladerunner.cpp:2303
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4059,7 +4059,7 @@ msgstr ""
 "λειτουργία θα αλλάξει σε \"Αρχικού Περιεχομένου\" για αυτή τη συνεδρία μέχρι "
 "να βγείτε εντελώς από το παιχνίδι."
 
-#: engines/bladerunner/bladerunner.cpp:2296
+#: engines/bladerunner/bladerunner.cpp:2305
 msgid "Continue"
 msgstr "Συνέχεια"
 

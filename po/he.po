@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-01 13:30+0000\n"
+"POT-Creation-Date: 2021-07-02 14:20+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -3974,7 +3974,7 @@ msgstr "אתחול המשאבים נכשל"
 msgid "A required game resource was not found"
 msgstr "משאב משחק חובה לא נמצא"
 
-#: engines/bladerunner/bladerunner.cpp:2292
+#: engines/bladerunner/bladerunner.cpp:2301
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3983,7 +3983,7 @@ msgstr ""
 "אזהרה: משחק זה נשמר במצב שחזור תוכן חתוך, אך אתה משחק במצב תוכן מקורי. המצב "
 "יותאם לתוכן חתוך משוחזר להפעלה זו עד שתעזוב את המשחק לחלוטין."
 
-#: engines/bladerunner/bladerunner.cpp:2294
+#: engines/bladerunner/bladerunner.cpp:2303
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3992,7 +3992,7 @@ msgstr ""
 "אזהרה: משחק זה נשמר במצב תוכן מקורי, אך אתה משחק במצב Restored Cut Content. "
 "המצב יותאם למצב תוכן מקורי להפעלה זו עד שתעזוב לחלוטין את המשחק."
 
-#: engines/bladerunner/bladerunner.cpp:2296
+#: engines/bladerunner/bladerunner.cpp:2305
 msgid "Continue"
 msgstr "המשך"
 
