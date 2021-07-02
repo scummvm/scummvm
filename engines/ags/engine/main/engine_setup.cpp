@@ -292,7 +292,6 @@ void engine_post_gfxmode_setup(const Size &init_desktop) {
 	engine_post_gfxmode_screen_setup(dm, has_driver_changed);
 	engine_post_gfxmode_mouse_setup(dm, init_desktop);
 
-	video_on_gfxmode_changed();
 	invalidate_screen();
 }
 

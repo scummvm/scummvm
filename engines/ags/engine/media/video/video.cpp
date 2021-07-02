@@ -157,8 +157,4 @@ bool play_flc_file(int numb, int playflags) {
 	return false;
 }
 
-void video_on_gfxmode_changed() {
-	warning("TODO: video_on_gfxmode_changed");
-}
-
 } // namespace AGS3
