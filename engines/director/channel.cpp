@@ -519,18 +519,23 @@ void Channel::addRegistrationOffset(Common::Point &pos, bool subtract) {
 		return;
 
 	switch (_sprite->_cast->_type) {
-	case kCastBitmap:
-		{
-			BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
+	case kCastBitmap: {
+		BitmapCastMember *bc = (BitmapCastMember *)(_sprite->_cast);
 
-			if (subtract)
-				pos -= Common::Point(bc->_initialRect.left - bc->_regX,
-															bc->_initialRect.top - bc->_regY);
-			else
-				pos += Common::Point(bc->_initialRect.left - bc->_regX,
-															bc->_initialRect.top - bc->_regY);
+		Common::Point point(0, 0);
+		// stretch the offset
+		if (!_sprite->_stretch && (_sprite->_width < bc->_initialRect.width() || _sprite->_height < bc->_initialRect.height())) {
+			point.x = (bc->_initialRect.left - bc->_regX) * _sprite->_width / bc->_initialRect.width();
+			point.y = (bc->_initialRect.top - bc->_regY) * _sprite->_height / bc->_initialRect.height();
+		} else {
+			point.x = bc->_initialRect.left - bc->_regX;
+			point.y = bc->_initialRect.top - bc->_regY;
 		}
-		break;
+		if (subtract)
+			pos -= point;
+		else
+			pos += point;
+	} break;
 	case kCastDigitalVideo:
 		pos -= Common::Point(_sprite->_cast->_initialRect.width() >> 1, _sprite->_cast->_initialRect.height() >> 1);
 		break;
