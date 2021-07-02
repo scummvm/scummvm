@@ -53,8 +53,8 @@ class KIASectionSettings : public KIASectionBase {
 	UISlider      *_musicVolume;
 	UISlider      *_soundEffectVolume;
 	UISlider      *_speechVolume;
-#if BLADERUNNER_ORIGINAL_SETTINGS
 	UISlider      *_ambientSoundVolume;
+#if BLADERUNNER_ORIGINAL_SETTINGS
 	UISlider      *_gammaCorrection;
 #endif
 	UICheckBox    *_directorsCut;

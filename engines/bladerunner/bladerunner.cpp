@@ -2029,6 +2029,14 @@ void BladeRunnerEngine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(_mixer->kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(_mixer->kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(_mixer->kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	// By default, if no ambient_volume is found in configuration manager, set ambient volume from sfx volume
+	int configAmbientVolume = _mixer->getVolumeForSoundType(_mixer->kSFXSoundType);
+	if (ConfMan.hasKey("ambient_volume")) {
+		configAmbientVolume = ConfMan.getInt("ambient_volume");
+	} else {
+		ConfMan.setInt("ambient_volume", configAmbientVolume);
+	}
+	_mixer->setVolumeForSoundType(_mixer->kPlainSoundType, configAmbientVolume);
 	// debug("syncSoundSettings: Volumes synced as Music: %d, Sfx: %d, Speech: %d", ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"), ConfMan.getInt("speech_volume"));
 
 	if (_noMusicDriver) {
@@ -2044,6 +2052,7 @@ void BladeRunnerEngine::syncSoundSettings() {
 		}
 		_mixer->muteSoundType(_mixer->kSFXSoundType, allSoundIsMuted);
 		_mixer->muteSoundType(_mixer->kSpeechSoundType, allSoundIsMuted);
+		_mixer->muteSoundType(_mixer->kPlainSoundType, allSoundIsMuted);
 	}
 
 	if (ConfMan.hasKey("speech_mute") && !allSoundIsMuted) {

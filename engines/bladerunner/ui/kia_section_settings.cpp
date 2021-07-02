@@ -79,7 +79,8 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 #else
 	_musicVolume          = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 160, 460, 170), _vm->_mixer->kMaxMixerVolume, 0);
 	_soundEffectVolume    = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 185, 460, 195), _vm->_mixer->kMaxMixerVolume, 0);
-	_speechVolume         = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 210, 460, 220), _vm->_mixer->kMaxMixerVolume, 0);
+	_ambientSoundVolume   = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 210, 460, 220), _vm->_mixer->kMaxMixerVolume, 0);
+	_speechVolume         = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 235, 460, 245), _vm->_mixer->kMaxMixerVolume, 0);
 #endif
 	_subtitlesEnable                   = nullptr;
 
@@ -126,9 +127,9 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 
 	_uiContainer->add(_musicVolume);
 	_uiContainer->add(_soundEffectVolume);
+	_uiContainer->add(_ambientSoundVolume);
 	_uiContainer->add(_speechVolume);
 #if BLADERUNNER_ORIGINAL_SETTINGS
-	_uiContainer->add(_ambientSoundVolume);
 	_uiContainer->add(_gammaCorrection);
 #endif
 	_uiContainer->add(_directorsCut);
@@ -155,9 +156,9 @@ KIASectionSettings::~KIASectionSettings() {
 	delete _uiContainer;
 	delete _musicVolume;
 	delete _soundEffectVolume;
+	delete _ambientSoundVolume;
 	delete _speechVolume;
 #if BLADERUNNER_ORIGINAL_SETTINGS
-	delete _ambientSoundVolume;
 	delete _gammaCorrection;
 #endif
 	delete _directorsCut;
@@ -215,6 +216,7 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 #else
 	_musicVolume->setValue(_vm->_mixer->getVolumeForSoundType(_vm->_mixer->kMusicSoundType));
 	_soundEffectVolume->setValue(_vm->_mixer->getVolumeForSoundType(_vm->_mixer->kSFXSoundType));
+	_ambientSoundVolume->setValue(_vm->_mixer->getVolumeForSoundType(_vm->_mixer->kPlainSoundType));
 	_speechVolume->setValue(_vm->_mixer->getVolumeForSoundType(_vm->_mixer->kSpeechSoundType));
 #endif
 
@@ -227,12 +229,12 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	const char *textConversationChoices = _vm->_textOptions->getText(0);
 	const char *textMusic = _vm->_textOptions->getText(2);
 	const char *textSoundEffects = _vm->_textOptions->getText(3);
+	const char *textAmbientSound = _vm->_textOptions->getText(4);
 	const char *textSpeech = _vm->_textOptions->getText(5);
 	const char *textSoft = _vm->_textOptions->getText(10);
 	const char *textLoud = _vm->_textOptions->getText(11);
 	const char *textDesignersCut = _vm->_textOptions->getText(18);
 #if BLADERUNNER_ORIGINAL_SETTINGS
-	const char *textAmbientSound = _vm->_textOptions->getText(4);
 	const char *textGammaCorrection = _vm->_textOptions->getText(7);
 	const char *textDark = _vm->_textOptions->getText(14);
 	const char *textLight = _vm->_textOptions->getText(15);
@@ -241,10 +243,10 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	int posConversationChoices = 320 - _vm->_mainFont->getStringWidth(textConversationChoices) / 2;
 	int posMusic = 320 - _vm->_mainFont->getStringWidth(textMusic) / 2;
 	int posSoundEffects = 320 - _vm->_mainFont->getStringWidth(textSoundEffects) / 2;
+	int posAmbientSound = 320 - _vm->_mainFont->getStringWidth(textAmbientSound) / 2;
 	int posSpeech = 320 - _vm->_mainFont->getStringWidth(textSpeech) / 2;
 	int posSoft = 178 - _vm->_mainFont->getStringWidth(textSoft);
 #if BLADERUNNER_ORIGINAL_SETTINGS
-	int posAmbientSound = 320 - _vm->_mainFont->getStringWidth(textAmbientSound) / 2;
 	int posGammaCorrection = 320 - _vm->_mainFont->getStringWidth(textGammaCorrection) / 2;
 	int posDark = 178 - _vm->_mainFont->getStringWidth(textDark);
 #endif
@@ -261,7 +263,6 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	_vm->_mainFont->drawString(&surface, textSoft, posSoft, 186, surface.w, surface.format.RGBToColor(216, 184, 112));
 	_vm->_mainFont->drawString(&surface, textLoud, 462, 186, surface.w, surface.format.RGBToColor(216, 184, 112));
 
-#if BLADERUNNER_ORIGINAL_SETTINGS
 	_vm->_mainFont->drawString(&surface, textAmbientSound, posAmbientSound, 200, surface.w, surface.format.RGBToColor(232, 208, 136));
 	_vm->_mainFont->drawString(&surface, textSoft, posSoft, 211, surface.w, surface.format.RGBToColor(216, 184, 112));
 	_vm->_mainFont->drawString(&surface, textLoud, 462, 211, surface.w, surface.format.RGBToColor(216, 184, 112));
@@ -270,13 +271,10 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	_vm->_mainFont->drawString(&surface, textSoft, posSoft, 236, surface.w, surface.format.RGBToColor(216, 184, 112));
 	_vm->_mainFont->drawString(&surface, textLoud, 462, 236, surface.w, surface.format.RGBToColor(216, 184, 112));
 
+#if BLADERUNNER_ORIGINAL_SETTINGS
 	_vm->_mainFont->drawString(&surface, textGammaCorrection, posGammaCorrection, 250, surface.w, surface.format.RGBToColor(232, 208, 136));
 	_vm->_mainFont->drawString(&surface, textDark, posDark, 261, surface.w, surface.format.RGBToColor(216, 184, 112));
 	_vm->_mainFont->drawString(&surface, textLight, 462, 261, surface.w, surface.format.RGBToColor(216, 184, 112));
-#else
-	_vm->_mainFont->drawString(&surface, textSpeech, posSpeech, 200, surface.w, surface.format.RGBToColor(232, 208, 136));
-	_vm->_mainFont->drawString(&surface, textSoft, posSoft, 211, surface.w, surface.format.RGBToColor(216, 184, 112));
-	_vm->_mainFont->drawString(&surface, textLoud, 462, 211, surface.w, surface.format.RGBToColor(216, 184, 112));
 #endif
 
 	_vm->_mainFont->drawString(&surface, textDesignersCut, 192, 365, surface.w, surface.format.RGBToColor(232, 208, 136));
@@ -430,6 +428,10 @@ void KIASectionSettings::sliderCallback(void *callbackData, void *source) {
 		ConfMan.setInt("sfx_volume", self->_soundEffectVolume->_value);
 		self->_vm->syncSoundSettings();
 		self->_vm->_audioPlayer->playSample();
+	} else if (source == self->_ambientSoundVolume) {
+		ConfMan.setInt("ambient_volume", self->_ambientSoundVolume->_value);
+		self->_vm->syncSoundSettings();
+		self->_vm->_ambientSounds->playSample();
 	} else if (source == self->_speechVolume) {
 		ConfMan.setInt("speech_volume", self->_speechVolume->_value);
 		self->_vm->syncSoundSettings();

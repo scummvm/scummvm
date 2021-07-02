@@ -37,7 +37,7 @@ class SaveFileWriteStream;
 class AmbientSounds {
 	static const int kNonLoopingSounds                     = 25;
 	static const int kLoopingSounds                        = 3;
-	static const Audio::Mixer::SoundType kAmbientSoundType = Audio::Mixer::kSFXSoundType;
+	static const Audio::Mixer::SoundType kAmbientSoundType = Audio::Mixer::kPlainSoundType;
 
 	struct NonLoopingSound {
 		bool           isActive;
