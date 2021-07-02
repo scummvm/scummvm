@@ -32,9 +32,6 @@
 #include "saga2/audio.h"
 #include "saga2/annoy.h"
 #include "saga2/player.h"
-#include "saga2/queues.h"
-#include "saga2/audiosmp.h"
-#include "saga2/audiosys.h"
 #include "saga2/hresmgr.h"
 #include "saga2/shorten.h"
 

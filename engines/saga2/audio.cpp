@@ -31,10 +31,7 @@
 #include "saga2/hresmgr.h"
 
 #include "saga2/rect.h"
-#include "saga2/queues.h"
 #include "saga2/idtypes.h"
-#include "saga2/audiosmp.h"
-#include "saga2/audiosys.h"
 
 namespace Saga2 {
 

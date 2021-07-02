@@ -37,10 +37,6 @@
 #include "saga2/script.h"
 #include "saga2/audio.h"
 
-#include "saga2/queues.h"
-#include "saga2/audiosmp.h"
-#include "saga2/audiosys.h"
-
 #include "saga2/uidialog.h"
 #include "saga2/document.h"
 #include "saga2/tilemode.h"
