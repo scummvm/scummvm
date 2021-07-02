@@ -1152,7 +1152,7 @@ void LauncherGrid::updateButtons() {
 }
 
 void LauncherGrid::selectTarget(const String &target) {}
-int LauncherGrid::getSelected() { return 0; }
+int LauncherGrid::getSelected() { return _grid->getSelected(); }
 
 void LauncherGrid::build() {
 	_grid = nullptr;
