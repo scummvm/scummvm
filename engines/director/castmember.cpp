@@ -180,7 +180,27 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 	}
 
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
-	widget->getSurface()->blitFrom(*_img->getSurface());
+
+	// scale for drawing a smaller sprite
+	if (bbox.width() < _initialRect.width() || bbox.height() < _initialRect.height()) {
+
+		int scaleX = SCALE_THRESHOLD * _initialRect.width() / bbox.width();
+		int scaleY = SCALE_THRESHOLD * _initialRect.height() / bbox.height();
+
+		for (int y = 0, scaleYCtr = 0; y < bbox.height(); y++, scaleYCtr += scaleY) {
+			if (g_director->_wm->_pixelformat.bytesPerPixel == 1) {
+				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
+					const byte *src = (const byte *)_img->getSurface()->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
+					byte *dst = (byte *)widget->getSurface()->getBasePtr(x, y);
+					*dst = *src;
+				}
+			}
+		}
+
+	} else {
+		widget->getSurface()->blitFrom(*_img->getSurface());
+	}
+
 	return widget;
 }
 
