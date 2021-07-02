@@ -135,71 +135,48 @@ static ATTENUATOR(volumeFromDist) {
 //	after system initialization - startup code
 
 void startAudio(void) {
-	bool disVoice = true, disMusic = true, disSound = true, disLoops = true;
+	uint32 musicID = haveKillerSoundCard() ? goodMusicID : baseMusicID;
 
-	if (audio->active()) {
-		uint32 musicID = haveKillerSoundCard() ? goodMusicID : baseMusicID;
+	musicRes = soundResFile->newContext(musicID, "music resource");
+	if (musicRes == NULL)
+		error("Musicians on Strike (No music resource context)!\n");
 
-		disVoice = !ConfMan.getInt("speech_volume");
-		disMusic = !ConfMan.getInt("music_volume");
-		disSound = !ConfMan.getInt("sfx_volume");
-		disLoops = disSound;
+	soundRes = soundResFile->newContext(soundID, "sound resource");
+	if (soundRes == NULL)
+		error("No sound effect resource context!\n");
 
-		if (!disMusic) {
-			musicRes = soundResFile->newContext(musicID, "music resource");
-			if (musicRes == NULL)
-				error("Musicians on Strike (No music resource context)!\n");
-		}
+	longRes = soundResFile->newContext(soundID, "long sound resource");
+	if (longRes == NULL)
+		error("No sound effect resource context!\n");
 
-		if (!disSound) {
-			soundRes = soundResFile->newContext(soundID, "sound resource");
-			if (soundRes == NULL)
-				error("No sound effect resource context!\n");
-		}
+	loopRes = soundResFile->newContext(loopedID, "loops resource");
+	if (loopRes == NULL)
+		error("No loop effect resource context!\n");
 
-		if (!disSound) {
-			longRes = soundResFile->newContext(soundID, "long sound resource");
-			if (longRes == NULL)
-				error("No sound effect resource context!\n");
-		}
+	voiceRes = voiceResFile->newContext(voiceID, "voice resource");
+	if (voiceRes == NULL)
+		error("Laryngitis Error (No voice resource context)!\n");
 
-		if (!disLoops) {
-			loopRes = soundResFile->newContext(loopedID, "loops resource");
-			if (loopRes == NULL)
-				error("No loop effect resource context!\n");
-		}
+	audio->initAudioInterface();
+	audio->setMusicFadeStyle(0, 0, 0);
+	oldAttenuator = audio->setAttenuator(&volumeFromDist);
 
-		if (!disVoice) {
-			voiceRes = voiceResFile->newContext(voiceID, "voice resource");
-			if (voiceRes == NULL)
-				error("Laryngitis Error (No voice resource context)!\n");
-		}
+	// kludgy in memory click sounds
+	clickSizes[0] = 0;
+	clickSizes[1] = soundRes->size(MKTAG('C', 'L', 'K', 1));
+	clickSizes[2] = soundRes->size(MKTAG('C', 'L', 'K', 2));
+	clickData[0] = NULL;
+	clickData[1] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 1), "Click 1");
+	clickData[2] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
 
-		audio->initAudioInterface();
-		//audio->setMusicFadeStyle(15,15,5);
-		audio->setMusicFadeStyle(0, 0, 0);
-		oldAttenuator = audio->setAttenuator(&volumeFromDist);
-	}
-
-
-	if (audio->activeDIG()) {
-		// kludgy in memory click sounds
-		clickSizes[0] = 0;
-		clickSizes[1] = soundRes->size(MKTAG('C', 'L', 'K', 1));
-		clickSizes[2] = soundRes->size(MKTAG('C', 'L', 'K', 2));
-		clickData[0] = NULL;
-		clickData[1] = (uint8 *) LoadResource(soundRes, MKTAG('C', 'L', 'K', 1), "Click 1");
-		clickData[2] = (uint8 *) LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
-	}
-
-	if (disMusic)
+	if (!ConfMan.getInt("music_volume"))
 		audio->disable(volMusic);
-	if (disVoice)
+	if (!ConfMan.getInt("speech_volume"))
 		audio->disable(volVoice);
-	if (disLoops)
+	if (!ConfMan.getInt("sfx_volume")) {
 		audio->disable(volLoops);
-	if (disSound)
 		audio->disable(volSound);
+	}
 }
 
 //-----------------------------------------------------------------------
@@ -592,198 +569,5 @@ void PlayMusic(char IDstr[]) {
 	else
 		playMusic(parse_res_id(IDstr));
 }
-
-
-
-/* ===================================================================== *
-   DEBUGGING & TESTING
- * ===================================================================== */
-
-#if DEBUG
-
-//-----------------------------------------------------------------------
-//	Test events
-
-//-----------------------------------------------------------------------
-//  This call annoyingly says "o-pen" or "cloooose" when using doors
-//-----------------------------------------------------------------------
-
-int annoyingTestSound(int32 sampID) {
-	if (debugStatuses) {
-		WriteStatusF(6, "Queued sound : %X ", MKTAG('T', 'S', 'T', sampID));
-	}
-	playSound(MKTAG('S', 'F', 'X', sampID));
-	return 0;
-}
-
-int annoyingTestSound2(int32 sampID) {
-	playSound(MKTAG('T', 'S', 'T', sampID));
-	return 0;
-}
-
-//-----------------------------------------------------------------------
-//  This call annoyingly says "o-pen" or "cloooose" when using doors
-//-----------------------------------------------------------------------
-
-int annoyingTestVoice(int32 sampID) {
-	playVoice(MKTAG('T', 'S', 'T', sampID));
-	return 0;
-}
-
-//-----------------------------------------------------------------------
-//  This call annoyingly plays cheesy music when 'M' is hit
-//-----------------------------------------------------------------------
-
-int annoyingTestMusic(int32 sampID) {
-	//playMusic(MKTAG('M', 'I', 'D', sampID));
-	playMusic(MKTAG('X', 'M', 'I', sampID));
-	return 0;
-}
-
-static char convBuf[5];
-
-inline uint32 extendID(int16 smallID) {
-	sprintf(convBuf, "%4.4d", smallID);
-	return smallID ? MKTAG(convBuf[0] + 'A' - '0', convBuf[1], convBuf[2], convBuf[3]) : 0 ;
-}
-
-int16 aResponse[20] = {
-	1, 2, 3, 4, 5, 6, 7, 8, 9,
-	1234, 1237, 1255, 1264, 1268, 1273, 0, 0, 0, 0, 9999
-};
-
-void voiceTest1(void) {
-	playVoice(extendID(aResponse[rand() % 20]));
-}
-
-void voiceTest2(void) {
-	int16 i = rand() % 8;
-	switch (i) {
-	case 0:
-		playLoop(0);
-		break;
-	case 1:
-		PlayLoop("TER:1");
-		break;
-	case 2:
-		PlayLoop("TER:6");
-		break;
-	case 3:
-		PlayLoop("TER:5");
-		break;
-	case 4:
-		PlayLoop(":0");
-		break;
-	case 5:
-		playLoop(MKTAG('T', 'E', 'R', 2));
-		break;
-	case 6:
-		playLoop(MKTAG('T', 'E', 'R', 3));
-		break;
-	case 7:
-		playLoop(MKTAG('T', 'E', 'R', 8));
-		break;
-	}
-}
-
-void soundTest1(void) {
-	int16 i = rand() % 8;
-	switch (i) {
-	case 0:
-		playSound(0);
-		break;
-	case 1:
-		playSound(MKTAG('S', 'F', 'X', 5));
-		break;
-	case 2:
-		playSound(MKTAG('S', 'F', 'X', 8));
-		break;
-	case 3:
-		playSound(MKTAG('S', 'F', 'X', 20));
-		break;
-	case 4:
-		PlaySound("SFX:11");
-		break;
-	case 5:
-		PlaySound("SFX:15");
-		break;
-	case 6:
-		playSound(MKTAG('S', 'F', 'X', 3));
-		break;
-	case 7:
-		playSound(MKTAG('B', 'A', 'D', 47)); // put down a card
-	}
-}
-
-void soundTest2(void) {
-	int16 i = rand() % 8;
-	switch (i) {
-	case 0:
-		playMusic(0);
-		break;
-	case 1:
-		PlayMusic(":0");
-		break;
-	case 2:
-		playMusic(MKTAG('X', 'M', 'I', 1));
-		break;
-	case 3:
-		playMusic(MKTAG('X', 'M', 'I', 2));
-		break;
-	case 4:
-		playMusic(MKTAG('X', 'M', 'I', 3));
-		break;
-	case 5:
-		PlayMusic("XMI:1");
-		break;
-	case 6:
-		PlayMusic("XMI:2");
-		break;
-	case 7:
-		PlayMusic("BAD:3");
-		break;
-	}
-}
-
-void queueRandSound(void) {
-	int16 i = rand() % 4;
-	switch (i) {
-	case 0:
-		soundTest1();
-		break;
-	case 1:
-		soundTest2();
-		break;
-	case 2:
-		voiceTest1();
-		break;
-	case 3:
-		voiceTest2();
-		break;
-	}
-
-}
-
-int testingAudio = 0;
-static int32 nextone = 0;
-static uint32 lastdelta = 0;
-
-void audioStressTest(void) {
-	if (randomAudioTesting) {
-		if (gameTime > nextone) {
-			if (audioVerbosity > 3) {
-				char msg[80];
-				sprintf(msg, "%d tick interval\n", lastdelta);
-				audioLog(msg);
-			}
-			queueRandSound();
-			lastdelta = (rand() % 1000);
-			nextone = gameTime + lastdelta;
-		}
-	}
-}
-
-
-#endif //DEBUG
 
 } // end of namespace Saga2

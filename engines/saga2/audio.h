@@ -109,7 +109,7 @@ private:
 
 public:
 	// ctor, dtor, initialization
-	audioInterface(const char *driver_path = DRIVER_PATH, const char *undriver_path = UNDRIVER_PATH);
+	audioInterface();
 	~audioInterface();
 
 	// init, cleanup

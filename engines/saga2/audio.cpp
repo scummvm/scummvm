@@ -52,17 +52,7 @@ void cleanupAudio() {
 	delete audio;
 }
 
-void *audioAlloc(size_t s, const char desc[]) {
-	warning("STUB: audioAlloc()");
-	return malloc(s);
-}
-
-void audioFree(void *mem) {
-	warning("STUB: audioFree()");
-	//delete mem;
-}
-
-audioInterface::audioInterface(const char *driver_path, const char *undriver_path) {
+audioInterface::audioInterface() {
 	warning("STUB: audioInteraface::audioInterface()");
 }
 
