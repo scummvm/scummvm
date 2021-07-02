@@ -26,7 +26,6 @@
 
 #include "saga2/saga2.h"
 #include "saga2/fta.h"
-#include "saga2/dlist.h"
 #include "saga2/imagcach.h"
 #include "saga2/hresmgr.h"
 
@@ -148,19 +147,18 @@ void CImageCache::releaseImage(void *imagePtr) {
 	if (!imagePtr)  return;
 
 	CImageNode *imageNode;
-	CImageNode *prevImageNode;
+	Common::List<CImageNode *>::iterator nextIt;
 
+	for (Common::List<CImageNode *>::iterator it = _nodes.begin(); it != _nodes.end(); it = nextIt) {
+		nextIt = it;
+		nextIt++;
 
-	for (imageNode = (CImageNode *)nodes.last();
-	        imageNode != NULL;
-	        imageNode = prevImageNode) {
-		prevImageNode = (CImageNode *)imageNode->prev();
-
+		imageNode = *it;
 		if (imageNode->isSameImage(imagePtr)) {
 			// if that was the last request for the imageNode, delete it
 			if (imageNode->releaseRequest()) {
 				// remove and delete it
-				imageNode->remove();
+				_nodes.remove(imageNode);
 				delete imageNode;
 			}
 		}
@@ -171,9 +169,9 @@ void *CImageCache::requestImage(hResContext *con, uint32 resID) {
 	CImageNode *imageNode;
 
 	// look through all nodes to see if we have that image already
-	for (imageNode = (CImageNode *)nodes.last();
-	        imageNode;
-	        imageNode = (CImageNode *)imageNode->prev()) {
+	for (Common::List<CImageNode *>::iterator it = _nodes.begin(); it != _nodes.end(); it++) {
+		imageNode = *it;
+
 		if (imageNode->isSameImage(con, resID)) {
 			// return the image Ptr to the already allocated image resource
 			return imageNode->getImagePtr();
@@ -186,7 +184,7 @@ void *CImageCache::requestImage(hResContext *con, uint32 resID) {
 	imageNode = new CImageNode(con, resID);
 
 	// add this node to the list
-	nodes.addTail(*imageNode);
+	_nodes.push_back(imageNode);
 
 	// return the newly loaded image
 	return imageNode->getImagePtr();

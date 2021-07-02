@@ -36,7 +36,7 @@ void cleanupImageCache(void);
    ImageNode class which defines a re-entrant image resource
  * ===================================================================== */
 
-class CImageNode : public DNode {
+class CImageNode {
 private:
 	uint32      contextID;  // ID of context
 	uint32      resourceID;     // RES_ID of  image
@@ -64,11 +64,11 @@ public:
 
 class CImageCache {
 private:
-	DList nodes;    // list of ImageNode
+	Common::List<CImageNode *> _nodes;    // list of ImageNode
 
 public:
 	CImageCache(void) {
-		assert(nodes.empty());
+		assert(_nodes.empty());
 	}
 	~CImageCache(void);
 
