@@ -102,30 +102,33 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 				case 0:
 					_vm->_ambientSounds->addLoopingSound(kSfxLABAMB1,   95, 0, 0u);
 					_vm->_ambientSounds->addLoopingSound(kSfxROOFAIR1, 100, 0, 0u);
-					_vm->_ambientSounds->addLoopingSound(kSfxPSPA6,     70, 0, 1u);
+					_vm->_ambientSounds->addLoopingSound(kSfxPSPA6,     74, 0, 1u);
 					break;
-				case 6:
-					_vm->_ambientSounds->playSound(kSfxSPIN1A, 100, 60, 100, 99);
+				case 18:
+					_vm->_ambientSounds->playSound(kSfxSPIN2A, 100, 90, 20, 99);
 					break;
-				case 12:
-					_vm->_ambientSounds->playSound(kSfxSWEEP3, 55, 60, 100, 89);
+				case 24:
+					_vm->_ambientSounds->playSound(kSfxSWEEP4, 45, 90, 20, 99);
 					break;
-				case 28:
+				case 32:
 					if (_vm->_rnd.getRandomNumberRng(1, 5) < 4) 
 						_vm->_ambientSounds->playSound(kSfxTHNDER3, 82, -20, -20, 99);
 					break;
-				case 34:
-					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxMUSVOL8), 22, 30, 30, 99, 0, Audio::Mixer::kMusicSoundType);
+				case 41:
+					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxMUSVOL8), 22, 46, 46, 99, 0, Audio::Mixer::kMusicSoundType);
 					break;
 				case 52:
 					if (_vm->_rnd.getRandomNumberRng(1, 4) < 4) 
 						_vm->_ambientSounds->playSound(kSfxTHNDR3, 90, 10, 10, 89);
 					break;
-				case 82:
+				case 78:
 					if (_vm->_rnd.getRandomNumberRng(1, 5) < 5) 
 						_vm->_ambientSounds->playSound(kSfxSIREN2, 62, -60, 45, 99);
 					break;
 				case 105:
+					_vm->_ambientSounds->playSound(kSfxSWEEP3, 22, 20, 95, 99);
+					break;
+				case 112:
 					if (_vm->_rnd.getRandomNumberRng(1, 5) < 4) 
 						_vm->_ambientSounds->playSound(kSfxTHNDER4, 95, -20, -20, 99);
 					break;
