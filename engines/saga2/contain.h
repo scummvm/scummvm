@@ -31,7 +31,6 @@
 
 namespace Saga2 {
 
-//DNode
 //	gPanel
 //		gControl
 class ContainerView;
@@ -45,7 +44,6 @@ class EnchantContainerView;
 //				FloatingWindow
 class ContainerWindow;
 class ContainerNode;
-//DList
 class ContainerList;
 struct ContainerAppearanceDef;
 
@@ -389,7 +387,7 @@ struct ContainerAppearanceDef {
 
 //  REM: What about the ordering of windows?
 
-class ContainerNode : public DNode {
+class ContainerNode {
 
 	friend class    ContainerList;
 	friend class    ContainerView;
@@ -498,21 +496,23 @@ public:
 
 //  A list of container nodes
 
-class ContainerList : public DList {
-
-	friend class ContainerNodeIterator;
-
+class ContainerList {
 public:
-	void add(ContainerNode &cn) {
-		addHead(cn);
+	Common::List<ContainerNode *> _list;
+
+	void add(ContainerNode *cn) {
+		_list.push_front(cn);
 	}
-	void remove(ContainerNode &cn) {
-		cn.remove();
+
+	void remove(ContainerNode *cn) {
+		_list.remove(cn);
 	}
-	void moveToFront(ContainerNode &cn) {
-		cn.remove();
+
+	void moveToFront(ContainerNode *cn) {
+		remove(cn);
 		add(cn);
 	}
+
 	ContainerNode *find(ObjectID id);
 	ContainerNode *find(ObjectID id, int16 type);
 
