@@ -901,7 +901,7 @@ MidiDriver_ADLIB_Lure::MidiDriver_ADLIB_Lure() :
 		_pitchBendSensitivity(1) {
 	for (int i = 0; i < LURE_MAX_SOURCES; i++) {
 		for (int j = 0; j < MIDI_CHANNEL_COUNT; j++) {
-			_instrumentDefs[i][j] = { 0 };
+			memset(_instrumentDefs, 0, sizeof(_instrumentDefs));
 		}
 	}
 
@@ -952,7 +952,7 @@ void MidiDriver_ADLIB_Lure::metaEvent(int8 source, byte type, byte *data, uint16
 			// Instrument definitions use the AdLib BNK format, but omit the
 			// first 2 fields.
 			AdLibBnkInstrumentDefinition bnkInstDef;
-			bnkInstDef = { 0 };
+			memset(&bnkInstDef, 0, sizeof(bnkInstDef));
 			memcpy((uint8*)&bnkInstDef + 2, &data[6], sizeof(AdLibBnkInstrumentDefinition) - 2);
 			// Store the definition in the _instrumentDefs array.
 			bnkInstDef.toOplInstrumentDefinition(_instrumentDefs[source][channel]);
