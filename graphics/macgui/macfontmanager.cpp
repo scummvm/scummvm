@@ -34,7 +34,7 @@ namespace Graphics {
 
 // Source: Apple IIGS Technical Note #41, "Font Family Numbers"
 // http://apple2.boldt.ca/?page=til/tn.iigs.041
-static const char *const fontNames[] = {
+static const char *const defaultFontNames[] = {
 	"Chicago",	// system font
 	"Geneva",	// application font
 	"New York",
@@ -110,9 +110,13 @@ Common::String cleanFontName(const Common::String fontname) {
 }
 
 MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
-	for (uint i = 0; i < ARRAYSIZE(fontNames); i++)
-		if (fontNames[i])
-			_fontIds.setVal(fontNames[i], i);
+	for (uint i = 0; i < ARRAYSIZE(defaultFontNames); i++)
+		if (defaultFontNames[i]) {
+			_fontNames.push_back(defaultFontNames[i]);
+			_fontIds.setVal(defaultFontNames[i], i);
+		} else {
+			_fontNames.push_back(Common::String());
+		}
 
 	if (_mode & MacGUIConstants::kWMModeForceBuiltinFonts) {
 		_builtInFonts = true;
@@ -242,6 +246,8 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 			if (familySlant) {
 				familyName = cleanFontName(familyName);
 			}
+
+			registerFontName(familyName);
 
 			Graphics::MacFontFamily *fontFamily = new MacFontFamily();
 			fontFamily->load(*fond);
@@ -398,21 +404,23 @@ int MacFontManager::parseSlantFromName(const Common::String &name) {
 	return slantVal;
 }
 
-void MacFontManager::registerFontMapping(uint16 id, Common::String name) {
-	_extraFontNames[id] = name;
-	_extraFontIds[name] = id;
-}
+int MacFontManager::registerFontName(Common::String name) {
+	// Don't register an empty font name, just return Geneva's ID.
+	if (name.empty())
+		return 1;
 
-void MacFontManager::clearFontMapping() {
-	_extraFontNames.clear();
-	_extraFontIds.clear();
-}
+	if (_fontIds.contains(name))
+		return _fontIds[name];
 
+	_fontNames.push_back(name);
+	_fontIds[name] = _fontNames.size() - 1;
+	return _fontNames.size() - 1;
+}
 void MacFont::setName(const char *name) {
 	_name = name;
 }
 
-const Common::String MacFontManager::getFontName(int id, int size, int slant, bool tryGen) {
+const Common::String MacFontManager::getFontName(uint16 id, int size, int slant, bool tryGen) {
 	Common::String n;
 
 	if (id == 3) // This is Geneva
@@ -420,20 +428,19 @@ const Common::String MacFontManager::getFontName(int id, int size, int slant, bo
 
 	int extraSlant = 0;
 
-	if (_extraFontNames.contains(id)) {
-		n = cleanFontName(_extraFontNames[id]);
-		extraSlant = parseFontSlant(_extraFontNames[id]);
+	if (id < ARRAYSIZE(defaultFontNames)) {
+		n = _fontNames[id];
+	} else if (id < _fontNames.size()) {
+		n = cleanFontName(_fontNames[id]);
+		extraSlant = parseFontSlant(_fontNames[id]);
 		// let's try parse slant from name
 		if (!extraSlant)
-			extraSlant = parseSlantFromName(_extraFontNames[id]);
-	} else if (id < ARRAYSIZE(fontNames)) {
-		if (fontNames[id])
-			n = fontNames[id];
+			extraSlant = parseSlantFromName(_fontNames[id]);
 	}
 
 	if (n.empty()) {
 		warning("MacFontManager: Requested font ID %d not found. Falling back to Geneva", id);
-		n = fontNames[1]; // Fallback to Geneva
+		n = _fontNames[1]; // Fallback to Geneva
 	}
 
 	return Common::String::format("%s-%d-%d", n.c_str(), slant | extraSlant, size);
@@ -444,12 +451,9 @@ const Common::String MacFontManager::getFontName(MacFont &font) {
 }
 
 int MacFontManager::getFontIdByName(Common::String name) {
-	if (_extraFontIds.contains(name))
-		return _extraFontIds[name];
+	if (_fontIds.contains(name))
+		return _fontIds[name];
 
-	for (int f = 0; f < ARRAYSIZE(fontNames); f++)
-		if (fontNames[f] != NULL && strcmp(fontNames[f], name.c_str()) == 0)
-			return f;
 	return 1;
 }
 

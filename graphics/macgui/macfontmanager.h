@@ -127,7 +127,7 @@ public:
 	 * @param size size of the font
 	 * @return the font name or NULL if ID goes beyond the mapping
 	 */
-	const Common::String getFontName(int id, int size, int slant = kMacFontRegular, bool tryGen = false);
+	const Common::String getFontName(uint16 id, int size, int slant = kMacFontRegular, bool tryGen = false);
 	const Common::String getFontName(MacFont &font);
 	int getFontIdByName(Common::String name);
 
@@ -135,8 +135,12 @@ public:
 	void loadFonts(const Common::String &fileName);
 	void loadFonts(Common::MacResManager *fontFile);
 
-	void registerFontMapping(uint16 id, Common::String name);
-	void clearFontMapping();
+	/**
+	 * Register a font name if it doesn't already exist.
+	 * @param name name of the font
+	 * @return the font's ID
+	 */
+	int registerFontName(Common::String name);
 
 	void forceBuiltinFonts() { _builtInFonts = true; }
 	int parseSlantFromName(const Common::String &name);
@@ -157,10 +161,8 @@ private:
 	uint32 _mode;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
 
-	Common::HashMap<Common::String, int> _fontIds;
-
-	Common::HashMap<uint16, Common::String> _extraFontNames;
-	Common::HashMap<Common::String, int> _extraFontIds;
+	Common::Array<Common::String> _fontNames;
+	Common::HashMap<Common::String, uint16> _fontIds;
 
 	int parseFontSlant(Common::String slant);
 
