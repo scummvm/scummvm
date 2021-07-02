@@ -124,7 +124,7 @@ bool audioInterface::goodMIDICard(void) {
 	return false;
 }
 
-void audioInterface::queueSound(soundSegment s, decoderSet *, int16 loopFactor, sampleLocation where) {
+void audioInterface::queueSound(soundSegment s, int16 loopFactor, sampleLocation where) {
 	warning("STUB: audioInterface::queueSound(%d,  @%d,%d)", s, where.x, where.y);
 	SoundInstance si;
 
@@ -135,7 +135,7 @@ void audioInterface::queueSound(soundSegment s, decoderSet *, int16 loopFactor, 
 	audio->_sfxQueue.push(si);
 }
 
-void audioInterface::queueLoop(soundSegment s, decoderSet *sDec, int16 loopFactor, sampleLocation where) {
+void audioInterface::queueLoop(soundSegment s, int16 loopFactor, sampleLocation where) {
 	warning("STUB: audioInterface::queueLoop()");
 }
 
@@ -147,8 +147,8 @@ void audioInterface::setLoopPosition(sampleLocation newLoc) {
 	warning("STUB: audioInterface::setLoopPosition(%d,%d)", newLoc.x, newLoc.y);
 }
 
-void audioInterface::queueVoice(soundSegment s, decoderSet *, sampleLocation where) {
-	warning("STUB: audioInterface::queueVoice(soundSegment, decoderSet *, sampleLocation)");
+void audioInterface::queueVoice(soundSegment s, sampleLocation where) {
+	warning("STUB: audioInterface::queueVoice(soundSegment, sampleLocation)");
 	SoundInstance si;
 
 	si.seg = s;
@@ -158,8 +158,8 @@ void audioInterface::queueVoice(soundSegment s, decoderSet *, sampleLocation whe
 	audio->_speechQueue.push(si);
 }
 
-void audioInterface::queueVoice(soundSegment s[], decoderSet *, sampleLocation where) {
-	warning("STUB: audioInterface::queueVoice(soundSegment [], decoderSet *, sampleLocation)");
+void audioInterface::queueVoice(soundSegment s[], sampleLocation where) {
+	warning("STUB: audioInterface::queueVoice(soundSegment [], sampleLocation)");
 	SoundInstance si;
 
 	soundSegment *p = s;

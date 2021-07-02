@@ -31,8 +31,6 @@ namespace Saga2 {
 
 class Buffer;
 class musicBuffer;
-class soundQueue;
-class decoderSet;
 
 /*******************************************************************/
 /* DRIVERS subdirectory                                            */
@@ -263,14 +261,12 @@ public:
 	bool goodMIDICard(void);
 
 	// sound calls
-	void queueSound(soundSegment s, decoderSet *, int16 loopFactor = 1, sampleLocation where = Here);
-	//void queueSoundAt( soundSegment s, decoderSet *, sampleLocation where, int16 loopFactor=1);
-	void queueSoundSample(positionedSample *ss, decoderSet *sDec, int16 loopFactor);
+	void queueSound(soundSegment s, int16 loopFactor = 1, sampleLocation where = Here);
+	void queueSoundSample(positionedSample *ss, int16 loopFactor);
 
 	// loop calls
-	void queueLoop(soundSegment s, decoderSet *sDec, int16 loopFactor = 0, sampleLocation where = Here);
-	//void queueLoopAt( soundSegment s, decoderSet *sDec, sampleLocation where , int16 loopFactor=0 );
-	void queueLoopSample(positionedSample *ss, decoderSet *sDec, int16 loopFactor = 0);
+	void queueLoop(soundSegment s, int16 loopFactor = 0, sampleLocation where = Here);
+	void queueLoopSample(positionedSample *ss, int16 loopFactor = 0);
 	void stopLoop(void);
 	void setLoopPosition(sampleLocation newLoc);
 	soundSegment currentLoop(void) {
@@ -278,8 +274,8 @@ public:
 	}
 
 	// voice calls
-	void queueVoice(soundSegment s, decoderSet *, sampleLocation where = Here);
-	void queueVoice(soundSegment s[], decoderSet *, sampleLocation where = Here);
+	void queueVoice(soundSegment s, sampleLocation where = Here);
+	void queueVoice(soundSegment s[], sampleLocation where = Here);
 	void stopVoice(void);
 	void endVoice(sampleStopLevel ssl = sStopCleanup);
 	void resetState(BufferRequest br);
@@ -317,18 +313,7 @@ public:
 
 
 private:
-	void load_drivers(const char *driver_path = DRIVER_PATH, const char *undriver_path = UNDRIVER_PATH);
-	void load_dig_driver(void);
-	void load_mid_driver(void);
-	bool notEmpty(void);
-	BufferRequest needBuffer(positionedSample *ss, BufferRequest needBufNo);
-	void format(void);
-	void openSample(decoderSet *decList, Buffer *);                // open/seek function
-	void closeSample(decoderSet *decList, Buffer *);               // close/flush function
-	void playSample(decoderSet *decList, BufferRequest, positionedSample *);                // read/load function
-	sampleFlags playQueue(decoderSet *decList, BufferRequest, soundQueue *);               // read/load function
 	void playMusic(decoderSet *decList, BufferRequest targBuffer, positionedSample *ss, int16 loopFactor);
-	void makeWriteable(Buffer *sb);     // buffer release
 
 	void setSoundMasterVolume(Volume val);
 	void setMusicMasterVolume(Volume val);

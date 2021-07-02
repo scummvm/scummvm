@@ -451,7 +451,7 @@ void playMemSound(uint32 s) {
 	debugC(1, kDebugSound, "playMemSound(%s)", tag2strP(s));
 
 	if (bufCheckResID(NULL, s))
-		audio->queueSound(s, memDec, 1, Here);
+		audio->queueSound(s, 1, Here);
 }
 
 //-----------------------------------------------------------------------
@@ -461,7 +461,7 @@ void playSound(uint32 s) {
 	debugC(1, kDebugSound, "playSound(%s)", tag2strP(s));
 
 	if (hResCheckResID(soundRes, s))
-		audio->queueSound(s, soundDec, 1, Here);
+		audio->queueSound(s, 1, Here);
 }
 
 //-----------------------------------------------------------------------
@@ -471,7 +471,7 @@ void playLongSound(uint32 s) {
 	debugC(1, kDebugSound, "playLongSound(%s)", tag2strP(s));
 
 	if (hResCheckResID(longRes, s))
-		audio->queueVoice(s, longSoundDec);
+		audio->queueVoice(s);
 	else
 		audio->stopVoice();
 }
@@ -484,7 +484,7 @@ void playVoice(uint32 s) {
 
 	if (hResCheckResID(voiceRes, s)) {
 		if (s)
-			audio->queueVoice(s, voiceDec, Here);
+			audio->queueVoice(s, Here);
 		else
 			audio->stopVoice();
 	}
@@ -504,7 +504,7 @@ bool sayVoice(uint32 s[]) {
 	bool worked = false;
 
 	if (hResCheckResID(voiceRes, s)) {
-		audio->queueVoice(s, voiceDec, Here);
+		audio->queueVoice(s, Here);
 		if (audio->talking())
 			worked = true;
 	}
@@ -530,7 +530,7 @@ void _playLoop(uint32 s) {
 	warning("Size: %d", size);
 
 	Common::hexdump(data, MIN<uint>(size, 256));
-	audio->queueLoop(s, loopDec, 0, Here);
+	audio->queueLoop(s, 0, Here);
 }
 
 //-----------------------------------------------------------------------
@@ -553,7 +553,7 @@ void playSoundAt(uint32 s, Point32 p) {
 	debugC(1, kDebugSound, "playSoundAt(%s, %d,%d)", tag2strP(s), p.x, p.y);
 
 	if (hResCheckResID(soundRes, s))
-		audio->queueSound(s, soundDec, 1, p);
+		audio->queueSound(s, 1, p);
 }
 
 void playSoundAt(uint32 s, Location playAt) {
@@ -573,7 +573,7 @@ bool sayVoiceAt(uint32 s[], Point32 p) {
 
 	debugC(1, kDebugSound, "], %d,%d)", p.x, p.y);
 
-	audio->queueVoice(s, voiceDec, p);
+	audio->queueVoice(s, p);
 
 	return true;
 }
@@ -592,7 +592,7 @@ void playLoopAt(uint32 s, Point32 loc) {
 	debugC(1, kDebugSound, "playLoopAt(%s, %d,%d)", tag2strP(s), loc.x, loc.y);
 
 	if (hResCheckResID(loopRes, s))
-		audio->queueLoop(s, loopDec, 0, loc);
+		audio->queueLoop(s, 0, loc);
 	else
 		audio->stopLoop();
 }
