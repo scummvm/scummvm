@@ -128,13 +128,11 @@ void GridItemWidget::drawWidget() {
 
 void GridItemWidget::handleMouseWheel(int x, int y, int direction) {
 	_grid->handleMouseWheel(x, y, direction);
-	_grid->_selectedEntry = -1;
 	isHighlighted = false;
 }
 
 void GridItemWidget::handleMouseEntered(int button) {
 	if (!isHighlighted) {
-		_grid->_selectedEntry = _activeEntry->entryID;
 		isHighlighted = true;
 		markAsDirty();
 	}
@@ -142,7 +140,6 @@ void GridItemWidget::handleMouseEntered(int button) {
 
 void GridItemWidget::handleMouseLeft(int button) {
 	if (isHighlighted) {
-		_grid->_selectedEntry = -1;
 		isHighlighted = false;
 		markAsDirty();
 	}
@@ -160,6 +157,7 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		// Since user expected to click on "entry" and not the "widget", we
 		// must open the tray where the user expects it to be, which might
 		// not be at the new widget location.
+		_grid->_selectedEntry = _activeEntry->entryID;
 		int oldX = getAbsX(), oldY = getAbsY();
 		int offsetY = 0;
 		if (_y > (_grid->getHeight() - _h - _grid->_trayHeight)) {
