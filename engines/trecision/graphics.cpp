@@ -243,8 +243,9 @@ void GraphicsManager::readSurface(Common::SeekableReadStream *stream, Graphics::
 
 	for (uint16 i = 0; i < count; ++i) {
 		for (uint16 y = 0; y < height; ++y) {
-			void *p = surface->getBasePtr(width * i, y);
-			stream->read(p, width * _rgb555Format.bytesPerPixel);
+			for (uint16 x = 0; x < width; ++x) {
+				surface->setPixel(width * i + x, y, stream->readUint16LE());
+			}
 		}
 	}
 
