@@ -44,6 +44,7 @@ MODULE_OBJS := \
 	motion.o \
 	mouseimg.o \
 	msgbox.o \
+	music.o \
 	noise.o \
 	objects.o \
 	objproto.o \

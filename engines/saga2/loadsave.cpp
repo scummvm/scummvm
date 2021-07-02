@@ -94,7 +94,6 @@ void initGameState(void) {
 	initGlobals();
 	initImageCache();
 	initTimer();
-	initAudio();
 	initCalender();
 	initWorlds();
 	initActors();

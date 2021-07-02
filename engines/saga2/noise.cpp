@@ -157,7 +157,7 @@ void startAudio(void) {
 	if (voiceRes == NULL)
 		error("Laryngitis Error (No voice resource context)!\n");
 
-	audio->initAudioInterface();
+	audio->initAudioInterface(musicRes);
 	audio->setMusicFadeStyle(0, 0, 0);
 	oldAttenuator = audio->setAttenuator(&volumeFromDist);
 

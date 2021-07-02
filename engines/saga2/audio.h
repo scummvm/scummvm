@@ -31,6 +31,9 @@
 
 namespace Saga2 {
 
+class Music;
+class hResContext;
+
 #define QUEUES_EXTERNAL_ALLOCATION 1
 
 // TODO: FIXME. STUB
@@ -88,12 +91,9 @@ struct SoundInstance {
 
 class audioInterface {
 private:
-	int16                   initialized;
-
-	HTIMER                  gameTimer;
-
-	soundSegment            playing;           // ID of music currently playing
 	soundSegment            looping;           // ID of music currently playing
+
+	Music *_music;
 
 public:
 	Audio::SoundHandle _speechSoundHandle;
@@ -113,7 +113,7 @@ public:
 	~audioInterface();
 
 	// init, cleanup
-	void initAudioInterface();
+	void initAudioInterface(hResContext *musicContext);
 	void cleanupAudioInterface(void);
 
 	// timer calls
@@ -127,9 +127,6 @@ public:
 	// music calls
 	void playMusic(soundSegment s, int16 loopFactor = 1, sampleLocation where = Here);
 	void stopMusic(void);
-	soundSegment currentMusic(void) {
-		return playing;    // ID of music currently playing
-	}
 
 	// sound calls
 	void queueSound(soundSegment s, int16 loopFactor = 1, sampleLocation where = Here);

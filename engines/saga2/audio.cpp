@@ -29,6 +29,7 @@
 #include "saga2/fta.h"
 #include "saga2/shorten.h"
 #include "saga2/hresmgr.h"
+#include "saga2/music.h"
 
 #include "saga2/rect.h"
 #include "saga2/idtypes.h"
@@ -53,15 +54,15 @@ void cleanupAudio() {
 }
 
 audioInterface::audioInterface() {
-	warning("STUB: audioInteraface::audioInterface()");
+	_music = nullptr;
 }
 
 audioInterface::~audioInterface() {
-	warning("STUB: audioInteraface::~audioInterface()");
+	delete _music;
 }
 
-void audioInterface::initAudioInterface() {
-	warning("STUB: audioInterface::initAudioInterface()");
+void audioInterface::initAudioInterface(hResContext *musicContext) {
+	_music = new Music(musicContext, g_system->getMixer());
 }
 
 void audioInterface::cleanupAudioInterface(void) {
@@ -96,15 +97,17 @@ void audioInterface::playMe(void) {
 }
 
 void audioInterface::playMusic(soundSegment s, int16 loopFactor, sampleLocation where) {
-	warning("STUB: audioInterface::queueMusic()");
+	warning("STUB: audioInterface::playMusic()");
+	_music->play(s, loopFactor ? MUSIC_LOOP : MUSIC_NORMAL);
 }
 
 void audioInterface::stopMusic(void) {
 	warning("STUB: audioInterface::stopMusic()");
+	_music->stop();
 }
 
 void audioInterface::queueSound(soundSegment s, int16 loopFactor, sampleLocation where) {
-	warning("STUB: audioInterface::queueSound(%d,  @%d,%d)", s, where.x, where.y);
+	warning("STUB: audioInterface::queueSound(%s,  @%d,%d)", tag2strP(s), where.x, where.y);
 	SoundInstance si;
 
 	si.seg = s;
