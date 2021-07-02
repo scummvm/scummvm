@@ -30,7 +30,7 @@
 #include "gui/chooser.h"
 #include "gui/editgamedialog.h"
 #include "gui/gui-manager.h"
-#include "gui/launcher.h"
+#include "gui/launcher-dialog.h"
 #include "gui/message.h"
 #include "gui/remotebrowser.h"
 #include "gui/widgets/edittext.h"

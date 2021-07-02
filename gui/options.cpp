@@ -28,7 +28,7 @@
 #include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
 #include "gui/ThemeEval.h"
-#include "gui/launcher.h"
+#include "gui/launcher-dialog.h"
 
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/remap-widget.h"

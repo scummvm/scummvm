@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	filebrowser-dialog.o \
 	gui-manager.o \
 	launcher.o \
+	launcher-dialog.o \
 	massadd.o \
 	message.o \
 	object.o \
