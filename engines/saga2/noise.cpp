@@ -135,14 +135,6 @@ static ATTENUATOR(volumeFromDist) {
 //	after system initialization - startup code
 
 void startAudio(void) {
-	audioInterfaceSettings audioBufferSizes = audioInterfaceSettings(
-	            (int16)  2,       // number of sound buffers
-	            (uint32) 32768,   // voice buffer size   32k
-	            (uint32) 65536,   // music buffer size   64k
-	            (uint32) 131072,   // sound buffer size 128k
-	            (uint32) 400000    // sound buffer size
-	        );
-
 	bool disVoice = true, disMusic = true, disSound = true, disLoops = true;
 
 	if (audio->active()) {
@@ -183,7 +175,7 @@ void startAudio(void) {
 				error("Laryngitis Error (No voice resource context)!\n");
 		}
 
-		audio->initAudioInterface(audioBufferSizes);
+		audio->initAudioInterface();
 		//audio->setMusicFadeStyle(15,15,5);
 		audio->setMusicFadeStyle(0, 0, 0);
 		oldAttenuator = audio->setAttenuator(&volumeFromDist);
@@ -251,14 +243,6 @@ void toggleMusic(void) {
 /* ===================================================================== *
    Audio hooks for videos
  * ===================================================================== */
-
-//-----------------------------------------------------------------------
-//	hook used by videos
-
-HDIGDRIVER &digitalAudioDriver(void) {
-	assert(audio);
-	return audio->dig;
-}
 
 //-----------------------------------------------------------------------
 //  suspend & resume calls

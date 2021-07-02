@@ -70,7 +70,7 @@ audioInterface::~audioInterface() {
 	warning("STUB: audioInteraface::~audioInterface()");
 }
 
-void audioInterface::initAudioInterface(audioInterfaceSettings &ais) {
+void audioInterface::initAudioInterface() {
 	warning("STUB: audioInterface::initAudioInterface()");
 }
 
@@ -111,11 +111,6 @@ void audioInterface::playMusic(soundSegment s, int16 loopFactor, sampleLocation 
 
 void audioInterface::stopMusic(void) {
 	warning("STUB: audioInterface::stopMusic()");
-}
-
-bool audioInterface::goodMIDICard(void) {
-	warning("STUB: audioInterface::goodMIDICard()");
-	return false;
 }
 
 void audioInterface::queueSound(soundSegment s, int16 loopFactor, sampleLocation where) {
