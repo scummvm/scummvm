@@ -86,6 +86,7 @@ private:
 	void setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame);
 	void refreshSmkAnim(uint16 animation);
 	void handleEndOfVideo(int animation, int slot);
+	bool shouldShowAnim(int animation, Common::Rect curRect);
 
 	void drawSmkBackgroundFrame(int animation);
 	void drawSmkIconFrame(uint16 startIcon, uint16 iconNum);

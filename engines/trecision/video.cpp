@@ -472,6 +472,20 @@ static bool rectsIntersect(Common::Rect r1, Common::Rect r2) {
 	return (r1.left <= r2.right) && (r1.right >= r2.left) && (r1.top <= r2.bottom) && (r1.bottom >= r2.top);
 }
 
+bool AnimManager::shouldShowAnim(int animation, Common::Rect curRect) {
+	bool hideAnim = false;
+
+	for (int32 i = 0; i < MAXCHILD; i++) {
+		const bool intersect = rectsIntersect(_animTab[animation]._lim[i], curRect);
+		const bool animAreaEnabled = !(_animTab[animation]._flag & (SMKANIM_OFF1 << i));
+		hideAnim = intersect && !animAreaEnabled;
+		if (hideAnim)
+			break;
+	}
+
+	return !hideAnim;
+}
+
 void AnimManager::drawSmkBackgroundFrame(int animation) {
 	NightlongSmackerDecoder *smkDecoder = _smkAnims[kSmackerBackground];
 	if (smkDecoder == nullptr)
@@ -483,31 +497,11 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 	const Common::Rect *lastRect = smkDecoder->getNextDirtyRect();
 	const byte *palette = smkDecoder->getPalette();
 
-	if (smkDecoder->getCurFrame() == 0 && !_bgAnimRestarted) {
-		bool drawFrameFlag = true;
-
-		for (int32 i = 0; i < MAXCHILD; i++) {
-			if ((_animTab[animation]._flag & (SMKANIM_OFF1 << i))) {
-				drawFrameFlag = false;
-				break;
-			}
-		}
-
-		if (drawFrameFlag)
-			_vm->_graphicsMgr->blitToScreenBuffer(frame, 0, TOP, palette, true);
+	if (smkDecoder->getCurFrame() == 0 && shouldShowAnim(animation, *lastRect) && !_bgAnimRestarted) {
+		_vm->_graphicsMgr->blitToScreenBuffer(frame, 0, TOP, palette, true);
 	} else {
 		while (lastRect) {
-			bool drawDirtyRect = true;
-
-			for (int32 i = 0; i < MAXCHILD; i++) {
-				const bool intersect = rectsIntersect(_animTab[animation]._lim[i], *lastRect);
-				if ((_animTab[animation]._flag & (SMKANIM_OFF1 << i)) && intersect) {
-					drawDirtyRect = false;
-					break;
-				}
-			}
-
-			if (smkDecoder->getCurFrame() > 0 && drawDirtyRect) {
+			if (smkDecoder->getCurFrame() > 0 && shouldShowAnim(animation, *lastRect)) {
 				Graphics::Surface anim = frame->getSubArea(*lastRect);
 				_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, palette, true);
 			}
