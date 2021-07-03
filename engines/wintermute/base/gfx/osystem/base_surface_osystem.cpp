@@ -160,22 +160,27 @@ bool BaseSurfaceOSystem::finishLoad() {
 			error("Missing palette while loading 8bit image %s", _filename.c_str());
 		}
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
-		needsColorKey = true;
+	} else if (image->getSurface()->format != g_system->getScreenFormat()) {
+		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
 	} else {
-		if (image->getSurface()->format != g_system->getScreenFormat()) {
-			_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
-		} else {
-			_surface = new Graphics::Surface();
-			_surface->copyFrom(*image->getSurface());
-		}
+		_surface = new Graphics::Surface();
+		_surface->copyFrom(*image->getSurface());
+	}
 
-		if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
-			// 32 bpp BMPs have nothing useful in their alpha-channel -> color-key
-			needsColorKey = true;
-			replaceAlpha = false;
-		} else if (image->getSurface()->format.aBits() == 0) {
-			needsColorKey = true;
-		}
+	if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
+		// WME 1.x always use colorkey, even for images with transparency
+		needsColorKey = true;
+		replaceAlpha = false;
+	} else if (BaseEngine::instance().isFoxTail()) {
+		// FoxTail does not use colorkey
+		needsColorKey = false;
+	} else if (_filename.hasSuffix(".bmp")) {
+		// generic WME Lite ignores alpha channel for BMPs
+		needsColorKey = true;
+		replaceAlpha = false;
+	} else if (image->getSurface()->format.aBits() == 0) {
+		// generic WME Lite does not use colorkey for non-BMPs with transparency
+		needsColorKey = true;
 	}
 
 	if (needsColorKey) {
