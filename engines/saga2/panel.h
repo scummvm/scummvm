@@ -27,7 +27,6 @@
 #ifndef SAGA2_PANEL_H
 #define SAGA2_PANEL_H
 
-#include "saga2/dlist.h"
 #include "saga2/input.h"
 #include "saga2/vdraw.h"
 
@@ -124,7 +123,7 @@ typedef void        AppFunc(gEvent &);
    gPanel class: The basic user interface element
  * ===================================================================== */
 
-class gPanel : public DNode {
+class gPanel {
 	friend class    gToolBase;
 	friend class    gWindow;
 
@@ -247,6 +246,8 @@ public:
    gPanelList class: A list of panels
  * ===================================================================== */
 
+class gControl;
+
 class gPanelList : public gPanel {
 
 	friend class    gControl;
@@ -257,7 +258,7 @@ class gPanelList : public gPanel {
 
 protected:
 
-	DList           contents;               // list of panels
+	Common::List<gPanel *> contents;               // list of panels
 
 	gPanelList(gWindow &, const Rect16 &, char *, uint16, AppFunc *cmd = NULL);
 
@@ -283,13 +284,13 @@ public:
 };
 
 inline void gPanel::moveToFront(gPanelList &l) {
-	remove();
-	l.contents.addHead(*this);
+	l.contents.remove(this);
+	l.contents.push_front(this);
 }
 
 inline void gPanel::moveToBack(gPanelList &l) {
-	remove();
-	l.contents.addTail(*this);
+	l.contents.remove(this);
+	l.contents.push_back(this);
 }
 
 /* ===================================================================== *
@@ -470,7 +471,7 @@ class gToolBase {
 
 	// windows
 
-	DList           windowList;             // list of windows
+	Common::List<gWindow *> windowList;     // list of windows
 	gWindow         *mouseWindow,           // window mouse is in
 	                *activeWindow;          // current active window
 	gPanel          *mousePanel,            // panel that mouse is in
@@ -514,11 +515,17 @@ public:
 	void handleMouse(Common::Event &event, uint32 time);
 	void handleKeyStroke(Common::Event &event);
 	void handleTimerTick(int32 tick);
+	Common::List<gWindow *>::iterator topWindowIterator(void) {
+		return windowList.end();
+	}
+	Common::List<gWindow *>::iterator bottomWindowIterator(void) {
+		return windowList.reverse_begin();
+	}
 	gWindow *topWindow(void) {
-		return (gWindow *)windowList.first();
+		return windowList.front();
 	}
 	gWindow *bottomWindow(void) {
-		return (gWindow *)windowList.last();
+		return windowList.back();
 	}
 	bool isMousePanel(gPanel *p) {
 		return (mousePanel != NULL) ? (p == mousePanel) : (p == topWindow());

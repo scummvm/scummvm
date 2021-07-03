@@ -612,7 +612,6 @@ bool checkTileAreaPort(void);
 extern bool userControlsSetup;
 
 void updateWindowSection(const Rect16 &r) {
-	DecoratedWindow *dw;
 	gPixelMap       tempMap;
 	gPort           tempPort;
 	Point16         offset(r.x, r.y);
@@ -681,11 +680,8 @@ void updateWindowSection(const Rect16 &r) {
 	//  For each window, both background and float, that overlaps
 	//  the clip, draw the window's imagery
 	if (userControlsSetup) {
-		for (dw = (DecoratedWindow *)G_BASE.bottomWindow();
-		        dw;
-		        dw = (DecoratedWindow *)dw->prev()) {
-			dw->drawClipped(tempPort, offset, clip);
-		}
+		for (Common::List<gWindow *>::iterator it = G_BASE.bottomWindowIterator(); it != G_BASE.topWindowIterator(); --it)
+			(*it)->drawClipped(tempPort, offset, clip);
 	}
 	//  Now, blit the temporary bitmap to the main screen.
 
@@ -735,9 +731,8 @@ void drawFloatingWindows(gPort &port, const Point16 &offset, const Rect16 &clip)
 		}
 	}
 
-	for (dw = (DecoratedWindow *)G_BASE.bottomWindow();
-	        dw;
-	        dw = (DecoratedWindow *)dw->prev()) {
+	for (Common::List<gWindow *>::iterator it = G_BASE.bottomWindowIterator(); it != G_BASE.topWindowIterator(); --it) {
+		dw = (DecoratedWindow *)(*it);
 		if (!dw->isBackdrop())
 			dw->drawClipped(port, offset, clip);
 	}

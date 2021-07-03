@@ -15,7 +15,6 @@ MODULE_OBJS := \
 	detection.o \
 	display.o \
 	dispnode.o \
-	dlist.o \
 	document.o \
 	effects.o \
 	enchant.o \

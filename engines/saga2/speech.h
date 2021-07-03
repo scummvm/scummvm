@@ -28,7 +28,6 @@
 #define SAGA2_SPEECH_H
 
 #include "saga2/objects.h"
-#include "saga2/dlist.h"
 
 namespace Saga2 {
 
