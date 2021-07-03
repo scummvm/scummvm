@@ -768,13 +768,15 @@ public:
 	int16           mapNum;                 // map number for this world.
 
 	//  Default constructor
-	GameWorld(void) : sectorArray(NULL) {}
+	GameWorld(void) : sectorArraySize(0), sectorArray(nullptr), mapNum(0) {}
 
 	//  Initial constructor
 	GameWorld(int16 map);
 
 	//  Constructor -- reconstruct from archive buffer
 	GameWorld(void **buf);
+
+	~GameWorld();
 
 	int32 archiveSize(void);
 	void *archive(void *buf);

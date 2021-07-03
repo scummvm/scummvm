@@ -2374,6 +2374,11 @@ GameWorld::GameWorld(void **buf) {
 #endif
 }
 
+GameWorld::~GameWorld() {
+	if (sectorArray)
+		delete[] sectorArray;
+}
+
 //-------------------------------------------------------------------
 //	Return the number of bytes need to make an archive of this world
 
