@@ -129,7 +129,6 @@ Decompiler::Decompiler(char *buf, uint32 fileSize, bool mac) {
 	Common::String firstBytes((const char *)array.begin(), (const char *)array.begin() + kHeaderSize);
 
 	if (firstBytes != kHeader) {
-		debug("Not a precompiled game matrix");
 		_result = Common::String(buf);
 		return;
 	}

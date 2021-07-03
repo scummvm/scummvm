@@ -54,7 +54,6 @@ static void fChgMode(ArgArray args) {
 
 	if (args.size() == 3) {
 		Symbol *location = g_private->maps.lookupLocation(args[2].u.sym->name);
-		debug("location: %s", location->name->c_str());
 		setSymbol(location, true);
 	}
 
