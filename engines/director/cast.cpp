@@ -76,6 +76,7 @@ Cast::Cast(Movie *movie, uint16 castLibID, bool isShared) {
 	_castIDoffset = 0;
 
 	_castArchive = nullptr;
+	_version = 0;
 
 	_loadedStxts = nullptr;
 	_loadedCast = nullptr;

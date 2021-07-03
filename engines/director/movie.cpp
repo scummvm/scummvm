@@ -65,6 +65,7 @@ Movie::Movie(Window *window) {
 	_currentHiliteChannelId = 0;
 	_currentHandlingChannelId = 0;
 
+	_version = 0;
 	_allowOutdatedLingo = false;
 
 	_movieArchive = nullptr;
