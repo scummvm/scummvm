@@ -181,7 +181,7 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
-	// scale for drawing a smaller sprite
+	// scale for drawing a different size sprite
 	if (bbox.width() < _initialRect.width() || bbox.height() < _initialRect.height()) {
 
 		int scaleX = SCALE_THRESHOLD * _initialRect.width() / bbox.width();
@@ -191,8 +191,12 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 			if (g_director->_wm->_pixelformat.bytesPerPixel == 1) {
 				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
 					const byte *src = (const byte *)_img->getSurface()->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
-					byte *dst = (byte *)widget->getSurface()->getBasePtr(x, y);
-					*dst = *src;
+					*(byte *)widget->getSurface()->getBasePtr(x, y) = *src;
+				}
+			} else {
+				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
+					const int *src = (const int *)_img->getSurface()->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
+					*(int *)widget->getSurface()->getBasePtr(x, y) = *src;
 				}
 			}
 		}
