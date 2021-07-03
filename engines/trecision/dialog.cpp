@@ -294,7 +294,7 @@ void DialogManager::afterChoice() {
 		_vm->_obj[oCHOCOLATES4A]._examine = 1105;
 		_vm->_obj[oCHOCOLATES4A]._action = 1106;
 		_vm->_obj[oDOORC4A]._action = 1118;
-		_vm->_animMgr->_animTab[aBKG4A]._flag |= SMKANIM_OFF1;
+		_vm->_animMgr->_animTab[aBKG4A].toggleAnimArea(1, false);
 		_vm->setObjectVisible(ocHELLEN4A, false);
 		_vm->setObjectVisible(oHELLENA4A, true);
 		break;

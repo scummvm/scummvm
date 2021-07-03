@@ -40,10 +40,6 @@ namespace Trecision {
 #define SMKANIM_LOOP 4
 #define SMKANIM_OLD 8
 #define SMKANIM_ON 16
-#define SMKANIM_OFF1 32
-#define SMKANIM_OFF2 64
-#define SMKANIM_OFF3 128
-#define SMKANIM_OFF4 256
 
 enum SmackerType {
 	kSmackerBackground = 0,		// Scene background animations

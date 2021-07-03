@@ -123,7 +123,7 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, uint16 objectId
 		break;
 
 	case fANIMOFF1:
-		anim->_flag |= SMKANIM_OFF1;
+		anim->toggleAnimArea(1, false);
 		if (_vm->_curRoom == kRoom11 ||
 			_vm->_curRoom == kRoom1D ||
 			_vm->_curRoom == kRoom14 ||
@@ -133,35 +133,35 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, uint16 objectId
 			_vm->_animMgr->smkToggleTrackAudio(0, 1, false);
 		break;
 	case fANIMOFF2:
-		anim->_flag |= SMKANIM_OFF2;
+		anim->toggleAnimArea(2, false);
 		if (_vm->_curRoom == kRoom2E)
 			_vm->_animMgr->smkToggleTrackAudio(0, 2, false);
 		break;
 	case fANIMOFF3:
-		anim->_flag |= SMKANIM_OFF3;
+		anim->toggleAnimArea(3, false);
 		break;
 	case fANIMOFF4:
-		anim->_flag |= SMKANIM_OFF4;
+		anim->toggleAnimArea(4, false);
 		if (_vm->_curRoom == kRoom28)
 			_vm->_animMgr->smkToggleTrackAudio(0, 1, false);
 		break;
 
 	case fANIMON1:
-		anim->_flag &= ~SMKANIM_OFF1;
+		anim->toggleAnimArea(1, true);
 		if (_vm->_curRoom == kRoom14 || _vm->_curRoom == kRoom1D || _vm->_curRoom == kRoom22 || _vm->_curRoom == kRoom48 || _vm->_curRoom == kRoom4P) {
 			_vm->_animMgr->smkToggleTrackAudio(0, 1, true);
 		}
 		break;
 	case fANIMON2:
-		anim->_flag &= ~SMKANIM_OFF2;
+		anim->toggleAnimArea(2, true);
 		if (_vm->_curRoom == kRoom2E)
 			_vm->_animMgr->smkToggleTrackAudio(0, 2, true);
 		break;
 	case fANIMON3:
-		anim->_flag &= ~SMKANIM_OFF3;
+		anim->toggleAnimArea(3, true);
 		break;
 	case fANIMON4:
-		anim->_flag &= ~SMKANIM_OFF4;
+		anim->toggleAnimArea(4, true);
 		break;
 	case fENDDEMO:
 		_vm->demoOver();
@@ -329,17 +329,15 @@ void AnimTypeManager::end(int type) {
 
 	h->_lastFrame = h->_curFrame;
 
-	uint16 flag = _vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag;
-
 	for (int32 i = 0; i < MAXATFRAME; ++i) {
 		// if it's time to run this AtFrame
 		if (anim->_atFrame[i]._numFrame == 0 && anim->_atFrame[i]._type) {
-			const uint8 child = anim->_atFrame[i]._child;
-			if ( child == 0 ||
-				(child == 1 && !(flag & SMKANIM_OFF1)) ||
-				(child == 2 && !(flag & SMKANIM_OFF2)) ||
-				(child == 3 && !(flag & SMKANIM_OFF3)) ||
-				(child == 4 && !(flag & SMKANIM_OFF4)))
+			const uint8 area = anim->_atFrame[i]._area;
+			if ( area == 0 ||
+				(area == 1 && anim->isAnimAreaShown(1)) ||
+				(area == 2 && anim->isAnimAreaShown(2)) ||
+				(area == 3 && anim->isAnimAreaShown(3)) ||
+				(area == 4 && anim->isAnimAreaShown(4)))
 				processAtFrame(h, anim->_atFrame[i]._type, i);
 		}
 	}
@@ -366,12 +364,12 @@ void AnimTypeManager::handler(int type) {
 		if (anim->_atFrame[i]._numFrame > h->_lastFrame &&
 			anim->_atFrame[i]._numFrame <= h->_curFrame &&
 			anim->_atFrame[i]._numFrame != 0) {
-			const uint8 child = anim->_atFrame[i]._child;
+			const uint8 child = anim->_atFrame[i]._area;
 			if ( child == 0 ||
-				(child == 1 && !(flag & SMKANIM_OFF1)) ||
-				(child == 2 && !(flag & SMKANIM_OFF2)) ||
-				(child == 3 && !(flag & SMKANIM_OFF3)) ||
-				(child == 4 && !(flag & SMKANIM_OFF4)))
+				(child == 1 && anim->isAnimAreaShown(1)) ||
+				(child == 2 && anim->isAnimAreaShown(2)) ||
+				(child == 3 && anim->isAnimAreaShown(3)) ||
+				(child == 4 && anim->isAnimAreaShown(4)))
 				processAtFrame(h, anim->_atFrame[i]._type, i);
 		}
 	}

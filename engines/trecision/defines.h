@@ -2338,7 +2338,7 @@ Game Structure
 #define MAXTEXTSTACK 3
 
 // define smacker animations
-#define MAXCHILD 4
+#define MAXAREA 4
 #define MAXATFRAME 16
 
 /******************************************************************************
