@@ -649,13 +649,14 @@ static void fPhoneClip(ArgArray args) {
 	}
 	int i = args[2].u.val;
 	int j = args[3].u.val;
+	Symbol *flag = g_private->maps.lookupVariable(args[4].u.sym->name);
 
 	if (i == j)
-		fAddSound(args[0].u.str, "PhoneClip", args[4].u.sym, args[5].u.val);
+		fAddSound(args[0].u.str, "PhoneClip", flag, args[5].u.val);
 	else {
 		assert(i < j);
 		Common::String sound = g_private->getRandomPhoneClip(args[0].u.str, i, j);
-		fAddSound(sound, "PhoneClip", args[4].u.sym, args[5].u.val);
+		fAddSound(sound, "PhoneClip", flag, args[5].u.val);
 	}
 }
 

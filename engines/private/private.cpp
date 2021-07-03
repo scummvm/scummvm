@@ -904,9 +904,11 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	size = stream->readUint32LE();
 	_phone.clear();
 	PhoneInfo p;
+	Common::String name;
 	for (uint32 j = 0; j < size; ++j) {
 		p.sound = stream->readString();
-		p.flag = maps.variables.getVal(stream->readString());
+		name = stream->readString();
+		p.flag = maps.lookupVariable(&name);
 		p.val = stream->readUint32LE();
 		_phone.push_back(p);
 	}
