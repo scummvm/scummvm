@@ -23,6 +23,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die spanische Version von Ringworld hinzugefügt.
    - Unterstützung für die spanische Version von Amazon: Guardians of Eden hinzugefügt.
    - Unterstützung für Nightlong: Union City Conspiracy hinzugefügt.
+   - Unterstützung für The Journeyman Project 2: Buried in Time hinzugefügt.
 
  Neue Portierungen:
    - Die Version für den Nintendo DS wurde zu großen Teilen neu geschrieben.
@@ -105,8 +106,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Die Darstellung von FM-TOWNS-Spielen kann nun auf eine Höhe von 200 Pixeln beschränkt werden, um eine
      Seitenverhältniskorrektur zu ermöglichen.
    - Audioprobleme in der PC-Engine-Version von Loom korrigiert.
-   - Unterstützung für hochauflösende Schriftarten und Cursor-Darstellungen in der Macintosh-Version von Loom hinzugefügt.
+   - Unterstützung für hochauflösende Schriftarten und Cursor-Darstellungen in der 16-Farben-Macintosh-Version von Loom hinzugefügt.
    - Unterstützung für die japanische Macintosh-Version von The Dig hinzugefügt.
+   - Teilweise Unterstützung für die hochauflösenden Schriftarten und den Mauszeiger in der 16-Farben-Macintosh-Version von Indiana Jones and the Last Crusade hinzugefügt.
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
