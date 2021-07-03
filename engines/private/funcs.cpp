@@ -722,7 +722,7 @@ static void fSafeDigit(ArgArray args) {
 static void fAskSave(ArgArray args) {
 	// This is not needed, since scummvm will take care of this
 	debugC(1, kPrivateDebugScript, "WARNING: AskSave is partially implemented");
-	g_private->_nextSetting = args[0].u.str;
+	g_private->_nextSetting = *args[0].u.sym->name;
 }
 
 static void fTimer(ArgArray args) {
