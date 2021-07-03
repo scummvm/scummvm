@@ -475,16 +475,13 @@ static bool rectsIntersect(Common::Rect r1, Common::Rect r2) {
 }
 
 bool AnimManager::shouldShowAnim(int animation, Common::Rect curRect) {
-	bool hideAnim = false;
-
 	for (int32 i = 0; i < MAXAREA; i++) {
 		const bool intersect = rectsIntersect(_animTab[animation]._lim[i], curRect);
-		hideAnim = intersect && !_animTab[animation].isAnimAreaShown(i + 1);
-		if (hideAnim)
-			break;
+		if (intersect && !_animTab[animation].isAnimAreaShown(i + 1))
+			return false;
 	}
 
-	return !hideAnim;
+	return true;
 }
 
 void AnimManager::drawSmkBackgroundFrame(int animation) {
