@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "ags/lib/std/algorithm.h"
 #include "ags/lib/std/math.h"
 #include "ags/engine/ac/display.h"
@@ -85,6 +86,12 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	int padding = get_textwindow_padding(usingGui);
 	int paddingScaled = get_fixed_pixel_size(padding);
 	int paddingDoubledScaled = get_fixed_pixel_size(padding * 2); // Just in case screen size does is not neatly divisible by 320x200
+
+	// FIXME: Fixes the display of the F1 help dialog in La Croix Pan,
+	// since it was previously incorrectly wrapping on the 's' at the end
+	// of the 'Cursors' word. May be due to minor differences in width calcs
+	if (padding == 3 && ConfMan.get("gameid") == "lacroixpan")
+		padding = 0;
 
 	ensure_text_valid_for_font(todis, usingfont);
 	break_up_text_into_lines(todis, Lines, wii - 2 * padding, usingfont);
