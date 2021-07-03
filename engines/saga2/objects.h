@@ -72,14 +72,6 @@ struct ResourceGameObject {
 	uint16          objectFlags;
 	uint8           hitPoints;
 	uint16          misc;
-	union {
-		uint16      massCount;              // for mergeables, object count
-		uint16      textStringID;           // inscription for documents
-		uint16      enchantmentType;        // for enchantments
-		uint16      generatorFrequency;     // for encounter and mission generators
-	};
-
-	uint8           missileFacing;
 
 	ResourceGameObject(Common::SeekableReadStream *stream);
 };
