@@ -62,7 +62,7 @@ public:
 	void setClean(Sprite *nextSprite, int spriteId, bool partial = false);
 	void setEditable(bool editable);
 	void replaceSprite(Sprite *nextSprite);
-	void replaceWidget(CastMemberID previousCastId = CastMemberID(0, 0));
+	void replaceWidget(CastMemberID previousCastId = CastMemberID(0, 0), bool force = false);
 	bool updateWidget();
 	void updateTextCast();
 
