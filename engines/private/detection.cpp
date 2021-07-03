@@ -66,7 +66,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_GRB,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -76,7 +76,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_GRB,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_UNSTABLE,
+		ADGF_DEMO | ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -106,7 +106,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -116,7 +116,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_UNSTABLE,
+		ADGF_DEMO | ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -126,7 +126,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -136,7 +136,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -146,7 +146,7 @@ static const ADGameDescription gameDescriptions[] = {
 		    "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_UNSTABLE,
+		ADGF_DEMO | ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -166,7 +166,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_USA,
 		Common::kPlatformMacintosh,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -185,7 +185,7 @@ static const ADGameDescription gameDescriptions[] = {
 		    "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_USA,
 		Common::kPlatformMacintosh,
-		ADGF_DEMO,
+		ADGF_DEMO | ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
