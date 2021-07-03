@@ -78,8 +78,8 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	uint32 infoSize = stream.readUint32LE();
-	if (infoSize != 40 && infoSize != 108) {
-		warning("Only Windows v3 & v4 bitmaps are supported");
+	if (infoSize != 40 && infoSize != 52 && infoSize != 56 && infoSize != 108 && infoSize != 124) {
+		warning("Only Windows v1-v5 bitmaps are supported, unknown header: %d", infoSize);
 		return false;
 	}
 
@@ -108,6 +108,8 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	/* uint32 pixelsPerMeterY = */ stream.readUint32LE();
 	_paletteColorCount = stream.readUint32LE();
 	/* uint32 colorsImportant = */ stream.readUint32LE();
+
+	stream.seek(infoSize - 40, SEEK_CUR);
 
 	if (bitsPerPixel == 4 || bitsPerPixel == 8) {
 		if (_paletteColorCount == 0)
