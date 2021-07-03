@@ -222,7 +222,13 @@ struct ResourceActorProtoExtension {
 	uint32              baseEffectFlags;    // special effects, see EFFECTS.H
 
 	//  Default constructor -- do nothing
-	ResourceActorProtoExtension(void) {}
+	ResourceActorProtoExtension(void) {
+		memset(&baseStats, 0, sizeof(baseStats));
+
+		combatBehavior = 0;
+		gruntStyle = 0;
+		baseEffectFlags = 0;
+	}
 
 	//  Copy constructor
 	ResourceActorProtoExtension(ResourceActorProtoExtension &ext) {
