@@ -34,7 +34,7 @@ namespace Image {
  */
 class BitmapRawDecoder : public Codec {
 public:
-	BitmapRawDecoder(int width, int height, int bitsPerPixel, bool _flip = false);
+	BitmapRawDecoder(int width, int height, int bitsPerPixel, bool ignoreAlpha, bool _flip = false);
 	~BitmapRawDecoder();
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
@@ -44,6 +44,7 @@ private:
 	Graphics::Surface _surface;
 	int _width, _height;
 	int _bitsPerPixel;
+	bool _ignoreAlpha;
 
 	// this flag indicates whether bitmapRawDecoder is created to decode QTvideo or raw images.
 	// because we need to flip the image when we are dealing with QTvideo
