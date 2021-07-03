@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-02 14:20+0000\n"
-"PO-Revision-Date: 2021-06-18 05:18+0000\n"
+"PO-Revision-Date: 2021-07-03 09:12+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1030,7 +1030,7 @@ msgstr "Режим розтягування:"
 
 #: gui/options.cpp:1429
 msgid "Scaler:"
-msgstr ""
+msgstr "Масштаб:"
 
 #: gui/options.cpp:1442 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -2824,7 +2824,7 @@ msgstr "Стретч-режим"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:61
 msgid "SDL Surface"
-msgstr ""
+msgstr "Поверхня SDL"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2375
 msgid "Active graphics filter:"
