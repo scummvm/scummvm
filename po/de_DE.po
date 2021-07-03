@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-02 14:20+0000\n"
-"PO-Revision-Date: 2021-06-26 13:23+0000\n"
+"PO-Revision-Date: 2021-07-03 09:11+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1035,7 +1035,7 @@ msgstr "Skaliermodus:"
 
 #: gui/options.cpp:1429
 msgid "Scaler:"
-msgstr ""
+msgstr "Skalierung:"
 
 #: gui/options.cpp:1442 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -5240,6 +5240,11 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"Wenn Sie diesen Modus aktivieren und mit dem Blitz-Mauszeiger auf ein "
+"Element oder einen Bereich klicken, werden Sie dort direkt hin befördert. "
+"Die auf der Strecke liegenden Bildschirme werden übersprungen. Sie können "
+"mit dem \"Zip-Modus\" nur zu einem Ort wechseln, den Sie bereits besucht "
+"haben."
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -5250,6 +5255,8 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"Schaltet die Bildschirmübergänge ein oder aus. Bei ausgeschalteten "
+"Bildschirmübergängen können Sie sich schneller durch das Spiel bewegen."
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
@@ -8174,10 +8181,8 @@ msgstr "Untertitel umschalten"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1388
-#, fuzzy
-#| msgid "Shift"
 msgid "Shift key"
-msgstr "Shift"
+msgstr "Umschalt-Taste"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
