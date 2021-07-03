@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	bladerunner.o \
 	boundingbox.o \
 	chapters.o \
+	color.o \
 	combat.o \
 	crimes_database.o \
 	debugger.o \

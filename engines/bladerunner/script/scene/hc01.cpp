@@ -113,10 +113,13 @@ bool SceneScriptHC01::ClickedOnActor(int actorId) {
 			if (!Game_Flag_Query(kFlagHC01IzoTalk1)) {
 				Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
 				if (_vm->_cutContent) {
-					Actor_Says_With_Pause(kActorIzo,  0, 0.2f, 13);
+					Actor_Says_With_Pause(kActorIzo, 0, 0.2f, 13);
+					Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
+					Actor_Says_With_Pause(kActorIzo, 10, 0.2f, 13);
+				} else {
+					Actor_Says_With_Pause(kActorIzo, 10, 0.2f, 13);
+					Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
 				}
-				Actor_Says_With_Pause(kActorIzo, 10, 0.2f, 13);
-				Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
 				Actor_Says(kActorIzo, 20, 17);
 				Actor_Says(kActorMcCoy, 1035, 18);
 				Actor_Says_With_Pause(kActorIzo, 30, 0.2f, 17);
@@ -216,6 +219,7 @@ bool SceneScriptHC01::ClickedOn2DRegion(int region) {
 
 void SceneScriptHC01::SceneFrameAdvanced(int frame) {
 	Set_Fade_Color(1.0f, 1.0f, 1.0f);
+
 	if (frame >= 61
 	 && frame < 65
 	) {

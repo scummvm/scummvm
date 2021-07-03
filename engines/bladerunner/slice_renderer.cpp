@@ -582,9 +582,8 @@ void SliceRenderer::drawSlice(int slice, bool advanced, int y, Graphics::Surface
 						color.r = ((int)(_setEffectColor.r + _lightsColor.r * color.r) / 65536) + aescColor.r;
 						color.g = ((int)(_setEffectColor.g + _lightsColor.g * color.g) / 65536) + aescColor.g;
 						color.b = ((int)(_setEffectColor.b + _lightsColor.b * color.b) / 65536) + aescColor.b;
-
-						int bladeToScummVmConstant = 256 / 32;
-						outColor = _pixelFormat.RGBToColor(CLIP(color.r * bladeToScummVmConstant, 0, 255), CLIP(color.g * bladeToScummVmConstant, 0, 255), CLIP(color.b * bladeToScummVmConstant, 0, 255));
+						// We need to convert from 5 bits per channel (r,g,b) to 8 bits
+						outColor = _pixelFormat.RGBToColor(Color::get8BitColorFrom5Bit(color.r), Color::get8BitColorFrom5Bit(color.g), Color::get8BitColorFrom5Bit(color.b));
 					}
 
 					for (int x = previousVertexX; x != vertexX; ++x) {

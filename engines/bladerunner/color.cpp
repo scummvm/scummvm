@@ -20,39 +20,23 @@
  *
  */
 
-#ifndef BLADERUNNER_COLOR_H
-#define BLADERUNNER_COLOR_H
-
-#include "common/system.h"
+#include "bladerunner/color.h"
 
 namespace BladeRunner {
 
-class Color {
+// This array essentially stores the conversion from unsigned 5bit values to 8bit
+// ie. ((int)i * 255) / 31 (integer division), for i values 0 to 31	
+// Note that just using a multiplier 256/16 (= 8) will not properly
+// map the color, since eg. value 31 would be mapped to 248 instead of 255.
+const uint8 Color::map5BitsTo8Bits[] = {0, 8, 16, 24, 32, 41, 49, 57, 65, 74, 82, 90, 98, 106, 115, 123, 131, 139, 148, 156, 164, 172, 180, 189, 197, 205, 213, 222, 230, 238, 246, 255};
 
-	static const uint8 map5BitsTo8Bits[32];
-
-public:
-	float r;
-	float g;
-	float b;
-
-	Color() : r(0.0f), g(0.0f), b(0.0f) {}
-
-	Color(float r_, float g_, float b_) : r(r_), g(g_), b(b_) {}
-
-	static uint8 get8BitColorFrom5Bit(uint8 col5b);
-};
-
-#include "common/pack-start.h"
-
-struct Color256 {
-	uint8 r;
-	uint8 g;
-	uint8 b;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"
-
+uint8 Color::get8BitColorFrom5Bit(uint8 col5b) {
+	if (col5b > 31) {
+		// A value larger than 31 is invalid (never going to happen for 5bits)
+		// but still catch the case, since the parameter is 8bits
+		return 255;
+	}
+	return map5BitsTo8Bits[col5b];
+}
+	
 } // End of namespace BladeRunner
-
-#endif

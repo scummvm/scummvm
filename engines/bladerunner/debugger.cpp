@@ -2617,12 +2617,11 @@ void Debugger::drawScreenEffects() {
 					Common::Rect r((entry.x + x) * 2, (entry.y + y) * 2, (entry.x + x) * 2 + 2, (entry.y + y) * 2 + 2);
 
 					int ec = entry.data[j++];
-					const int bladeToScummVmConstant = 256 / 16;
-
+					// We need to convert from 5 bits per channel (r,g,b) to 8 bits
 					int color = _vm->_surfaceFront.format.RGBToColor(
-						CLIP(entry.palette[ec].r * bladeToScummVmConstant, 0, 255),
-						CLIP(entry.palette[ec].g * bladeToScummVmConstant, 0, 255),
-						CLIP(entry.palette[ec].b * bladeToScummVmConstant, 0, 255));
+						Color::get8BitColorFrom5Bit(entry.palette[ec].r),
+						Color::get8BitColorFrom5Bit(entry.palette[ec].g),
+						Color::get8BitColorFrom5Bit(entry.palette[ec].b));
 					_vm->_surfaceFront.fillRect(r, color);
 				}
 			}

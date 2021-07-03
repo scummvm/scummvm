@@ -58,8 +58,8 @@ bool SliceAnimations::open(const Common::String &name) {
 			_palettes[i].color[j].g = color_g;
 			_palettes[i].color[j].b = color_b;
 
-			const int bladeToScummVmConstant = 256 / 32; // 5 bits to 8 bits
-			_palettes[i].value[j] = screenFormat.RGBToColor(color_r * bladeToScummVmConstant, color_g * bladeToScummVmConstant, color_b * bladeToScummVmConstant);
+			// We need to convert from 5 bits per channel (r,g,b) to 8 bits
+			_palettes[i].value[j] = screenFormat.RGBToColor(Color::get8BitColorFrom5Bit(color_r), Color::get8BitColorFrom5Bit(color_g), Color::get8BitColorFrom5Bit(color_b));
 		}
 	}
 
