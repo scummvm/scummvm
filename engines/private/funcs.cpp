@@ -52,8 +52,11 @@ static void fChgMode(ArgArray args) {
 	} else
 		assert(0);
 
-	if (args.size() == 3)
-		setSymbol(args[2].u.sym, true);
+	if (args.size() == 3) {
+		Symbol *location = g_private->maps.lookupLocation(args[2].u.sym->name);
+		debug("location: %s", location->name->c_str());
+		setSymbol(location, true);
+	}
 
 	// This is the only place where this should be used
 	if (g_private->_noStopSounds) {

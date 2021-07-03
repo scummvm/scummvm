@@ -105,17 +105,18 @@ static Symbol *install(const Common::String &n, int t, int d, const char *s, Com
 
 /* lookup some name in some symbol table */
 Symbol *SymbolMaps::lookupRect(Common::String *n) {
-	//debug("looking rect up %s", n->c_str());
-
 	assert(rects.contains(*n));
 	return lookup(*n, rects);
 }
 
 Symbol *SymbolMaps::lookupVariable(Common::String *n) {
-	//debug("looking variable up %s", n->c_str());
-
 	assert(variables.contains(*n));
 	return lookup(*n, variables);
+}
+
+Symbol *SymbolMaps::lookupLocation(Common::String *n) {
+	assert(locations.contains(*n));
+	return lookup(*n, locations);
 }
 
 /* lookup some name in some symbol table */
