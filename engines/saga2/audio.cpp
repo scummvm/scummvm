@@ -79,19 +79,19 @@ void audioInterface::resumeGameClock(void) {
 
 bool audioInterface::playFlag(void) {
 	debugC(5, kDebugSound, "STUB: audioInterface::playFlag()");
-	bool isSoundActive = g_system->getMixer()->isSoundHandleActive(audio->_speechSoundHandle);
-	return !isSoundActive && audio->_speechQueue.size() > 0;
+	bool isSoundActive = g_system->getMixer()->isSoundHandleActive(_speechSoundHandle);
+	return !isSoundActive && _speechQueue.size() > 0;
 }
 
 void audioInterface::playMe(void) {
 	warning("STUB: audioInterface::PlayMe()");
-	SoundInstance si = audio->_speechQueue.pop();
+	SoundInstance si = _speechQueue.pop();
 
 	Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, si.seg, "voice data");
 
 	Audio::AudioStream *aud = makeShortenStream(*stream);
 
-	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &audio->_speechSoundHandle, aud);
+	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, aud);
 
 	delete stream;
 }
@@ -114,7 +114,7 @@ void audioInterface::queueSound(soundSegment s, int16 loopFactor, sampleLocation
 	si.loop = loopFactor;
 	si.loc = where;
 
-	audio->_sfxQueue.push(si);
+	_sfxQueue.push(si);
 }
 
 void audioInterface::queueLoop(soundSegment s, int16 loopFactor, sampleLocation where) {
@@ -137,7 +137,7 @@ void audioInterface::queueVoice(soundSegment s, sampleLocation where) {
 	si.loop = false;
 	si.loc = where;
 
-	audio->_speechQueue.push(si);
+	_speechQueue.push(si);
 }
 
 void audioInterface::queueVoice(soundSegment s[], sampleLocation where) {
@@ -150,7 +150,7 @@ void audioInterface::queueVoice(soundSegment s[], sampleLocation where) {
 		si.loop = false;
 		si.loc = where;
 
-		audio->_speechQueue.push(si);
+		_speechQueue.push(si);
 		p++;
 	}
 }
