@@ -308,11 +308,14 @@ void LogicManager::startCharacterAnimations() {
 		_vm->_actor->_lim[2] = 240;
 	} else if (_vm->_curRoom == kRoom1B && _vm->_oldRoom == kRoom18 && (_vm->_animMgr->_animTab[aBKG1B]._flag & SMKANIM_OFF1))
 		_vm->startCharacterAction(a1B12SCAPPATOPO, 0, 0, 0);
-	else if (_vm->_curRoom == kRoom2B && (_vm->_oldRoom == kRoom2A))
+	else if (_vm->_curRoom == kRoom2B && _vm->_oldRoom == kRoom2A)
 		_vm->startCharacterAction(a2B2ESCEPOZZO, 0, 2, 0);
-	else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && _vm->_room[kRoom23A].isDone())
-		_vm->startCharacterAction(aWALKIN, 0, 0, _vm->_room[kRoom23A].isDone() ? 0 : 361);
-	else if (_vm->_curRoom == kRoom33 && _vm->_oldRoom == kRoom32) {
+	else if (_vm->_curRoom == kRoom23A && _vm->_oldRoom == kRoom21) {
+		if (_vm->_room[kRoom23A].isDone())
+			_vm->startCharacterAction(aWALKIN, 0, 0, 0);
+		else
+			_vm->_flagShowCharacter = false;
+	} else if (_vm->_curRoom == kRoom33 && _vm->_oldRoom == kRoom32) {
 		const uint16 roofAction = _vm->isObjectVisible(oBRUCIATURA33) ? a3311SALESCALE : a3313CHIUDEBOTOLA;
 		_vm->startCharacterAction(roofAction, 0, 0, 0);
 	} else if (_vm->_curRoom == kRoom54 && (_vm->_oldRoom == kRoom53)) {
@@ -467,6 +470,9 @@ void LogicManager::endChangeRoom() {
 	} else if (_vm->_curRoom == kRoom13CU) {
 		const uint16 closeupObjectId = _vm->isObjectVisible(oLETTERA13) ? oLETTERA13 : oPENPADA13;
 		_vm->_textMgr->characterSay(_vm->_obj[closeupObjectId]._examine);
+	} else if (_vm->_curRoom == kRoom23A && _vm->_oldRoom == kRoom21 && !_vm->_room[kRoom23A].isDone()) {
+		_vm->_flagShowCharacter = true;
+		_vm->startCharacterAction(aWALKIN, 0, 0, 361);
 	} else if (_vm->_curRoom == kRoom24 && !_vm->_room[kRoom24].isDone())
 		_vm->_textMgr->characterSay(381);
 	else if (_vm->_curRoom == kRoom2G && !_vm->_room[kRoom2G].isDone())
