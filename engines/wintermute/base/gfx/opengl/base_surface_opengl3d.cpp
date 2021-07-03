@@ -22,6 +22,7 @@
 
 #include "common/algorithm.h"
 #include "graphics/transform_tools.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
@@ -174,11 +175,19 @@ bool BaseSurfaceOpenGL3D::create(const Common::String &filename, bool defaultCK,
 
 	_imageData = img.getSurface()->convertTo(OpenGL::TextureGL::getRGBAPixelFormat(), img.getPalette());
 
-	if (_filename.hasSuffix(".bmp") && img.getSurface()->format.bytesPerPixel == 4) {
-		// 32 bpp BMPs have nothing useful in their alpha-channel -> color-key
+	if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
+		// WME 1.x always use colorkey, even for images with transparency
+		needsColorKey = true;
+		replaceAlpha = false;
+	} else if (BaseEngine::instance().isFoxTail()) {
+		// FoxTail does not use colorkey
+		needsColorKey = false;
+	} else if (_filename.hasSuffix(".bmp")) {
+		// generic WME Lite ignores alpha channel for BMPs
 		needsColorKey = true;
 		replaceAlpha = false;
 	} else if (img.getSurface()->format.aBits() == 0) {
+		// generic WME Lite does not use colorkey for non-BMPs with transparency
 		needsColorKey = true;
 	}
 
