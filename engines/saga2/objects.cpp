@@ -3319,7 +3319,7 @@ void loadActiveRegions(SaveFileReader &saveGame) {
 //	Constructor
 
 SectorRegionObjectIterator::SectorRegionObjectIterator(GameWorld *world) :
-	searchWorld(world) {
+	searchWorld(world), _currentObject(nullptr) {
 	assert(searchWorld != nullptr);
 	assert(isWorld(searchWorld));
 

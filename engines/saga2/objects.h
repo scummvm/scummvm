@@ -925,7 +925,8 @@ public:
 	    const TileRegion    &sectorRegion) :
 		searchWorld(world),
 		minSector(sectorRegion.min),
-		maxSector(sectorRegion.max) {
+		maxSector(sectorRegion.max),
+		_currentObject(nullptr) {
 		assert(searchWorld != NULL);
 		assert(isWorld(searchWorld));
 	}
@@ -1212,7 +1213,7 @@ class ActiveRegionObjectIterator : public ObjectIterator {
 
 public:
 	//  Constructor
-	ActiveRegionObjectIterator(void) : activeRegionIndex(-1) {}
+	ActiveRegionObjectIterator(void) : activeRegionIndex(-1), sectorBitMask(0), currentWorld(nullptr), _currentObject(nullptr) {}
 
 	//  Iteration functions
 	ObjectID first(GameObject **obj);
@@ -1271,8 +1272,7 @@ class RecursiveContainerIterator {
 public:
 	//  Constructor
 	RecursiveContainerIterator(GameObject *container) :
-		root(container->thisID()) {
-	}
+		root(container->thisID()), id(0) {}
 
 	//  Iteration functions
 	ObjectID first(GameObject **obj);
