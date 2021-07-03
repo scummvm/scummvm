@@ -46,6 +46,9 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 	if (_bitsPerPixel == 1) {
 		srcPitch = (_width + 7) / 8;
 		extraDataLength = (srcPitch % 2) ? 2 - (srcPitch % 2) : 0;
+	} else if (_bitsPerPixel == 4) {
+		srcPitch = (_width + 1) / 2;
+		extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
 	}
 
 	if (_bitsPerPixel == 1) {
