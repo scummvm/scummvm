@@ -120,33 +120,34 @@ void GraphicsManager::drawObj(int index, bool mask, Common::Rect drawRect, Commo
 		uint8 *maskPtr = _vm->_objectGraphics[index].mask;
 
 		for (uint16 y = drawRect.top; y < drawRect.bottom; ++y) {
-			uint16 sco = 0;
-			uint16 c = 0;
-			while (sco < drawRect.width()) {
-				if (c == 0) { // jump
-					sco += *maskPtr;
+			uint16 x = 0;
+			bool copyBytes = false;
+			while (x < drawRect.width()) {
+				if (!copyBytes) { // jump
+					x += *maskPtr;
 					++maskPtr;
 
-					c = 1;
+					copyBytes = true;
 				} else { // copy
 					const uint16 maskOffset = *maskPtr;
 
 					if (maskOffset != 0 && y >= drawRect.top + drawObjRect.top && y < drawRect.top + drawObjRect.bottom) {
-						if (sco >= drawObjRect.left && sco + maskOffset < drawObjRect.right)
-							memcpy(_screenBuffer.getBasePtr(sco + drawRect.left, y), buf, maskOffset * 2);
+						const void *src = (x >= drawObjRect.left) ? buf : buf + drawObjRect.left - x;
+						int offset = (x >= drawObjRect.left) ? x : drawObjRect.left;
+						void *dst = _screenBuffer.getBasePtr(offset + drawRect.left, y);
 
-						else if (sco < drawObjRect.left && sco + maskOffset < drawObjRect.right && sco + maskOffset >= drawObjRect.left)
-							memcpy(_screenBuffer.getBasePtr(drawObjRect.left + drawRect.left, y), buf + drawObjRect.left - sco, (maskOffset + sco - drawObjRect.left) * 2);
-
-						else if (sco >= drawObjRect.left && sco + maskOffset >= drawObjRect.right && sco < drawObjRect.right)
-							memcpy(_screenBuffer.getBasePtr(sco + drawRect.left, y), buf, (drawObjRect.right - sco) * 2);
-
-						else if (sco < drawObjRect.left && sco + maskOffset >= drawObjRect.right)
-							memcpy(_screenBuffer.getBasePtr(drawObjRect.left + drawRect.left, y), buf + drawObjRect.left - sco, (drawObjRect.right - drawObjRect.left) * 2);
+						if (x >= drawObjRect.left && x + maskOffset < drawObjRect.right)
+							memcpy(dst, src, maskOffset * 2);
+						else if (x < drawObjRect.left && x + maskOffset < drawObjRect.right && x + maskOffset >= drawObjRect.left)
+							memcpy(dst, src, (maskOffset + x - drawObjRect.left) * 2);
+						else if (x >= drawObjRect.left && x + maskOffset >= drawObjRect.right && x < drawObjRect.right)
+							memcpy(dst, src, (drawObjRect.right - x) * 2);
+						else if (x < drawObjRect.left && x + maskOffset >= drawObjRect.right)
+							memcpy(dst, src, (drawObjRect.right - drawObjRect.left) * 2);
 					}
-					sco += *maskPtr;
+					x += *maskPtr;
 					buf += *maskPtr++;
-					c = 0;
+					copyBytes = false;
 				}
 			}
 		}
