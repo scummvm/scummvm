@@ -438,7 +438,6 @@ bool ShouldAntiAliasText() {
 }
 
 void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx) {
-
 	color_t outline_color = ds->GetCompatibleColor(_GP(play).speech_text_shadow);
 	if (get_font_outline(usingfont) >= 0) {
 		// MACPORT FIX 9/6/5: cast

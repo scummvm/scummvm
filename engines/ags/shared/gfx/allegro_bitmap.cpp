@@ -151,9 +151,8 @@ void Bitmap::SetMaskColor(color_t color) {
 }
 
 color_t Bitmap::GetCompatibleColor(color_t color) {
-	color_t compat_color = 0;
-	__my_setcolor(&compat_color, color, bitmap_color_depth(_alBitmap));
-	return compat_color;
+	byte r = getr16(color), g = getg16(color), b = getb16(color);
+	return (color_t)_alBitmap->format.RGBToColor(r, g, b);
 }
 
 //=============================================================================
