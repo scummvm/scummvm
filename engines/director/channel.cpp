@@ -406,6 +406,7 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	if (_sprite->_cast && !canKeepWidget(_sprite, nextSprite)) {
 		widgetKeeped = false;
 		_sprite->_cast->releaseWidget();
+		newSprite = true;
 	}
 
 	int width = _width;
