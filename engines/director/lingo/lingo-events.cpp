@@ -171,9 +171,9 @@ void Movie::queueFrameEvent(LEvent event, int eventId) {
 		return;
 
 	if (event == kEventEnterFrame && script->_eventHandlers.contains(kEventGeneric)) {
-		_eventQueue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, scriptId, false));
+		_eventQueue.push(LingoEvent(kEventGeneric, eventId, kScoreScript, scriptId, false, 0));
 	} else if (script->_eventHandlers.contains(event)) {
-		_eventQueue.push(LingoEvent(event, eventId, kScoreScript, scriptId, false));
+		_eventQueue.push(LingoEvent(event, eventId, kScoreScript, scriptId, false, 0));
 	}
 }
 
