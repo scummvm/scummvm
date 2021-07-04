@@ -814,9 +814,6 @@ void Ultima8Engine::handleDelayedEvents() {
 }
 
 bool Ultima8Engine::getGameInfo(const istring &game, GameInfo *ginfo) {
-	// first try getting the information from the config file
-	// if that fails, try to autodetect it
-
 	ginfo->_name = game;
 	ginfo->_type = GameInfo::GAME_UNKNOWN;
 	ginfo->version = 0;
