@@ -99,6 +99,7 @@ public:
 	Audio::SoundHandle _speechSoundHandle;
 	Audio::SoundHandle _sfxSoundHandle;
 	Audio::SoundHandle _bgmSoundHandle;
+	Audio::SoundHandle _clickSoundHandle;
 	Common::Queue<SoundInstance> _speechQueue;
 	Common::Queue<SoundInstance> _sfxQueue;
 	Common::Queue<SoundInstance> _bgmQueue;

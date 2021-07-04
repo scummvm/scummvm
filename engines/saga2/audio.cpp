@@ -25,6 +25,8 @@
  */
 
 #include "common/config-manager.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
 
 #include "saga2/saga2.h"
 #include "saga2/audio.h"
@@ -50,21 +52,17 @@ const uint32        baseMusicID     = MKTAG('M', 'I', 'L', 'O'),
                     loopedID        = MKTAG('L', 'O', 'O', 'P'),
                     voiceID         = MKTAG('T', 'A', 'L', 'K');
 
-extern hResource        *soundResFile;          // script resources
-extern hResource        *voiceResFile;          // script resources
+extern hResource *soundResFile;          // script resources
+extern hResource *voiceResFile;          // script resources
 
-extern int32            clickSizes[];
-extern uint8            *clickData[];
+extern int32 clickSizes[];
+extern uint8 *clickData[];
 
 
-soundSegment            currentMidi;
-soundSegment            currentLoop;
+soundSegment currentMidi;
+soundSegment currentLoop;
 
-hResContext         *voiceRes,
-                    *musicRes,
-                    *soundRes,
-                    *loopRes,
-                    *longRes;
+hResContext *voiceRes, *musicRes, *soundRes, *loopRes, *longRes;
 
 
 static audioAttenuationFunction oldAttenuator;
@@ -291,8 +289,9 @@ void playMusic(uint32 s) {
 void playMemSound(uint32 s) {
 	debugC(1, kDebugSound, "playMemSound(%s)", tag2strP(s));
 
-	if (bufCheckResID(NULL, s))
-		audio->queueSound(s, 1, Here);
+	Audio::AudioStream *aud = Audio::makeRawStream(clickData[s], clickSizes[s], 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
+
+	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &audio->_clickSoundHandle, aud);
 }
 
 //-----------------------------------------------------------------------

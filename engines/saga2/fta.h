@@ -163,6 +163,7 @@ void  *LoadFile(char *filename);             // load file into buffer
 //  Resource loading
 
 void *LoadResource(hResContext *con, uint32 id, const char desc[]);
+void dumpResource(hResContext *con, uint32 id);
 Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, const char desc[]);
 
 //  Directory control

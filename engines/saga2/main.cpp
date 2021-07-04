@@ -530,6 +530,29 @@ Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, co
 	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }
 
+void dumpResource(hResContext *con, uint32 id) {
+	int32 size = con->size(id);
+	if (size <= 0 || !con->seek(id)) {
+		error("dumpResource(): Error reading resource ID '%s'.", tag2str(id));
+	}
+
+	byte *buffer = (byte *)malloc(size);
+	con->read(buffer, size);
+	con->rest();
+
+	Common::DumpFile out;
+
+	Common::String path = Common::String::format("./dumps/mus%s.dat", tag2strP(id));
+
+	if (out.open(path, true)) {
+		out.write(buffer, size);
+		out.flush();
+		out.close();
+	}
+
+	free(buffer);
+}
+
 typedef hResource *pHResource;
 
 inline char drive(char *path) {
