@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/gumps/remorse_credits_gump.h"
 
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
@@ -117,7 +118,10 @@ void RemorseCreditsGump::InitGump(Gump *newparent, bool take_focus) {
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
 	if (musicproc) {
-		musicproc->playMusic(19);
+		if (GAME_IS_REMORSE)
+			musicproc->playMusic(19);
+		else
+			musicproc->playMusic(17);
 	}
 }
 
