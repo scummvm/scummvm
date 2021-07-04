@@ -74,6 +74,8 @@ ComputerGump::ComputerGump(const Std::string &msg) :
 			continue;
 		}
 		end++;
+		if (end >= msg.size())
+			break;
 		if (end - start >= MAX_LINE_LEN) {
 			while (end > start && msg[end] != ' ')
 				end--;
