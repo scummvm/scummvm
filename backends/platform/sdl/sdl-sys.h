@@ -111,6 +111,32 @@
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
+// Fix compilation on non-x86 architectures
+// It needs various (usually forbidden) symbols from unistd.h
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_chdir)
+	#undef chdir
+	#define chdir FAKE_chdir
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_getcwd)
+	#undef getcwd
+	#define getcwd FAKE_getcwd
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_getwd)
+	#undef getwd
+	#define getwd FAKE_getwd
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_unlink)
+	#undef unlink
+	#define unlink FAKE_unlink
+	#endif
+
+#endif // FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+
 // HACK: SDL might include windows.h which defines its own ARRAYSIZE.
 // However, we want to use the version from common/util.h. Thus, we make sure
 // that we actually have this definition after including the SDL headers.
@@ -273,5 +299,30 @@
 	#endif
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
+// re-forbid all those unistd.h symbols again (if they were forbidden)
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_chdir)
+	#undef chdir
+	#define chdir(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_getcwd)
+	#undef getcwd
+	#define getcwd(a,b) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_getwd)
+	#undef getwd
+	#define getwd(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+	#endif
+
+	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_unlink)
+	#undef unlink
+	#define unlink(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+	#endif
+
+#endif // FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
 #endif
