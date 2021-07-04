@@ -105,6 +105,8 @@ public:
 	Common::Queue<SoundInstance> _bgmQueue;
 	audioAttenuationFunction attenuator;
 
+	Audio::Mixer *_mixer;
+
 private:
 	char                    status[256];       // audio status messages
 

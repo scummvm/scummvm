@@ -568,7 +568,8 @@ audioInterface::~audioInterface() {
 }
 
 void audioInterface::initAudioInterface(hResContext *musicContext) {
-	_music = new Music(musicContext, g_system->getMixer());
+	_mixer = g_system->getMixer();
+	_music = new Music(musicContext, _mixer);
 }
 
 void audioInterface::cleanupAudioInterface(void) {
@@ -585,21 +586,33 @@ void audioInterface::resumeGameClock(void) {
 
 bool audioInterface::playFlag(void) {
 	debugC(5, kDebugSound, "STUB: audioInterface::playFlag()");
-	bool isSoundActive = g_system->getMixer()->isSoundHandleActive(_speechSoundHandle);
-	return !isSoundActive && _speechQueue.size() > 0;
+	return _speechQueue.size() > 0 || _sfxQueue.size() > 0;
 }
 
 void audioInterface::playMe(void) {
 	warning("STUB: audioInterface::PlayMe()");
-	SoundInstance si = _speechQueue.pop();
 
-	Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, si.seg, "voice data");
+	if (_speechQueue.size() > 0 && !_mixer->isSoundHandleActive(_speechSoundHandle)) {
+		SoundInstance si = _speechQueue.pop();
 
-	Audio::AudioStream *aud = makeShortenStream(*stream);
+		Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, si.seg, "voice data");
 
-	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, aud);
+		Audio::AudioStream *aud = makeShortenStream(*stream);
 
-	delete stream;
+		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, aud);
+
+		delete stream;
+	}
+
+	if (_sfxQueue.size() > 0 && !_mixer->isSoundHandleActive(_sfxSoundHandle)) {
+		SoundInstance si = _sfxQueue.pop();
+
+		Common::SeekableReadStream *stream = loadResourceToStream(soundRes, si.seg, "sound data");
+
+		Audio::AudioStream *aud = Audio::makeRawStream(stream, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
+
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &audio->_sfxSoundHandle, aud);
+	}
 }
 
 void audioInterface::playMusic(soundSegment s, int16 loopFactor, sampleLocation where) {
