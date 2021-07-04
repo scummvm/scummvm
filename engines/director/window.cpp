@@ -214,6 +214,9 @@ void Window::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 		Graphics::drawFilledRect(fillAreaRect, pd->ms->foreColor, g_director->getInkDrawPixel(), pd);
 		// fall through
 	case kOutlinedRectangleSprite:
+		// if we have lineSize <= 0, means we are not drawing anything. so we may return directly.
+		if (pd->ms->lineSize <= 0)
+			break;
 		pd->ms->pd = &plotStroke;
 		Graphics::drawRect(strokeRect, pd->ms->foreColor, g_director->getInkDrawPixel(), pd);
 		break;
@@ -222,6 +225,8 @@ void Window::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 		Graphics::drawRoundRect(fillAreaRect, 12, pd->ms->foreColor, true, g_director->getInkDrawPixel(), pd);
 		// fall through
 	case kOutlinedRoundedRectangleSprite:
+		if (pd->ms->lineSize <= 0)
+			break;
 		pd->ms->pd = &plotStroke;
 		Graphics::drawRoundRect(strokeRect, 12, pd->ms->foreColor, false, g_director->getInkDrawPixel(), pd);
 		break;
@@ -230,6 +235,8 @@ void Window::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 		Graphics::drawEllipse(fillAreaRect.left, fillAreaRect.top, fillAreaRect.right, fillAreaRect.bottom, pd->ms->foreColor, true, g_director->getInkDrawPixel(), pd);
 		// fall through
 	case kOutlinedOvalSprite:
+		if (pd->ms->lineSize <= 0)
+			break;
 		pd->ms->pd = &plotStroke;
 		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, pd->ms->foreColor, false, g_director->getInkDrawPixel(), pd);
 		break;
