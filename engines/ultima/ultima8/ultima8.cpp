@@ -90,7 +90,7 @@
 #include "ultima/ultima8/world/actors/ambush_process.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
 #include "ultima/ultima8/audio/u8_music_process.h"
-#include "ultima/ultima8/audio/remorse_music_process.h"
+#include "ultima/ultima8/audio/cru_music_process.h"
 #include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/meta_engine.h"
@@ -239,8 +239,8 @@ bool Ultima8Engine::startup() {
 		ProcessLoader<U8MusicProcess>::load);
 	_kernel->addProcessLoader("U8MusicProcess",
 		ProcessLoader<U8MusicProcess>::load);
-	_kernel->addProcessLoader("RemorseMusicProcess",
-		ProcessLoader<RemorseMusicProcess>::load);
+	_kernel->addProcessLoader("RemorseMusicProcess", // name was changed, keep this for backward-compatibility.
+		ProcessLoader<CruMusicProcess>::load);
 	_kernel->addProcessLoader("AudioProcess",
 		ProcessLoader<AudioProcess>::load);
 	_kernel->addProcessLoader("EggHatcherProcess",

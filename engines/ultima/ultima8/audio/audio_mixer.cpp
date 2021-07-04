@@ -23,7 +23,7 @@
 #include "ultima/ultima8/audio/audio_mixer.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/u8_music_process.h"
-#include "ultima/ultima8/audio/remorse_music_process.h"
+#include "ultima/ultima8/audio/cru_music_process.h"
 #include "ultima/ultima8/audio/audio_channel.h"
 #include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -59,7 +59,7 @@ void AudioMixer::createProcesses() {
 	if (GAME_IS_U8) {
 		kernel->addProcess(new U8MusicProcess(_midiPlayer));
 	} else if (GAME_IS_CRUSADER) {
-		kernel->addProcess(new RemorseMusicProcess());
+		kernel->addProcess(new CruMusicProcess());
 	}
 }
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA8_GUMPS_REMORSEMENUGUMP_H
-#define ULTIMA8_GUMPS_REMORSEMENUGUMP_H
+#ifndef ULTIMA8_GUMPS_CRUCREDITSGUMP_H
+#define ULTIMA8_GUMPS_CRUCREDITSGUMP_H
 
 #include "ultima/ultima8/gumps/modal_gump.h"
 #include "ultima/ultima8/misc/classtype.h"
@@ -29,30 +29,65 @@
 namespace Ultima {
 namespace Ultima8 {
 
+class RenderedText;
+
 /**
- * The game menu for Crusader: No Remorse.  Different enough to the U8 menu that it's implemented separately.
+ * Full-screen gump for the credits roll in Crusader: No Remorse
  */
-class RemorseMenuGump : public ModalGump {
+class CruCreditsGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	RemorseMenuGump();
-	~RemorseMenuGump() override;
+	CruCreditsGump();
+	CruCreditsGump(Common::SeekableReadStream *txtrs, Common::SeekableReadStream *bmprs,
+	            uint32 flags = FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL);
+	~CruCreditsGump() override;
 
 	// Init the gump, call after construction
 	void InitGump(Gump *newparent, bool take_focus = true) override;
+
 	void Close(bool no_del = false) override;
+
+	void run() override;
 
 	// Paint the Gump
 	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
 	bool OnKeyDown(int key, int mod) override;
-	bool OnTextInput(int unicode) override;
-	void ChildNotify(Gump *child, uint32 message) override;
 
 protected:
+	enum CredLineType {
+		kCredTitle,
+		kCredName
+	};
 
-	virtual void selectEntry(int entry);
+	struct CredLine {
+		Common::String _text;
+		enum CredLineType _lineType;
+	};
+
+	struct CredScreen {
+		//! The lines of text for this screen
+		Common::Array<CredLine> _lines;
+		//! How long to display this screen, in engine ticks
+		unsigned int _delay;
+	};
+
+	//! Number of clock ticks the gump has run
+	int _timer;
+	//! Clock tick where the next screen should be shown
+	int _nextScreenStart;
+	//! Current screen number
+	int _screenNo;
+
+	//! Pre-rendered text
+	Common::Array<RenderedText *> _currentLines;
+
+	//! The starry background picture
+	RenderSurface *_background;
+
+	//! Screen text data
+	Common::Array<CredScreen> _screens;
 };
 
 } // End of namespace Ultima8

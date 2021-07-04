@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima8/gumps/remorse_menu_gump.h"
+#include "ultima/ultima8/gumps/cru_menu_gump.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -44,12 +44,12 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMenuGump)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CruMenuGump)
 
 static const int MENU_MUSIC_REMORSE = 20;
 static const int MENU_MUSIC_REGRET = 18;
 
-RemorseMenuGump::RemorseMenuGump()
+CruMenuGump::CruMenuGump()
 	: ModalGump(0, 0, 640, 480, 0, FLAG_DONT_SAVE) {
 
 	Mouse *mouse = Mouse::get_instance();
@@ -68,11 +68,11 @@ RemorseMenuGump::RemorseMenuGump()
 	MetaEngine::setGameMenuActive(true);
 }
 
-RemorseMenuGump::~RemorseMenuGump() {
+CruMenuGump::~CruMenuGump() {
 	MetaEngine::setGameMenuActive(false);
 }
 
-void RemorseMenuGump::Close(bool no_del) {
+void CruMenuGump::Close(bool no_del) {
 	// Restore old music state and palette.
 	// Music state can be changed by the Intro and Credits
 	MusicProcess *musicprocess = MusicProcess::get_instance();
@@ -92,7 +92,7 @@ static const int numMenuEntries = 6;
 static const int menuEntryX[] = {45, 45, 45, 446, 488, 550};
 static const int menuEntryY[] = {50, 101, 151, 58, 151, 198};
 
-void RemorseMenuGump::InitGump(Gump *newparent, bool take_focus) {
+void CruMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	GumpShapeArchive *shapeArchive = GameData::get_instance()->getGumps();
@@ -166,11 +166,11 @@ void RemorseMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	}
 }
 
-void RemorseMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
+void CruMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
 }
 
-bool RemorseMenuGump::OnKeyDown(int key, int mod) {
+bool CruMenuGump::OnKeyDown(int key, int mod) {
 	if (Gump::OnKeyDown(key, mod)) return true;
 
 	if (key == Common::KEYCODE_ESCAPE) {
@@ -185,14 +185,14 @@ bool RemorseMenuGump::OnKeyDown(int key, int mod) {
 	return true;
 }
 
-void RemorseMenuGump::ChildNotify(Gump *child, uint32 message) {
+void CruMenuGump::ChildNotify(Gump *child, uint32 message) {
 	ButtonWidget *buttonWidget = dynamic_cast<ButtonWidget *>(child);
 	if (buttonWidget && message == ButtonWidget::BUTTON_CLICK) {
 		selectEntry(child->GetIndex());
 	}
 }
 
-void RemorseMenuGump::selectEntry(int entry) {
+void CruMenuGump::selectEntry(int entry) {
 	switch (entry) {
 	case 1: { // New Game
 		DifficultyGump *gump = new DifficultyGump();
@@ -223,7 +223,7 @@ void RemorseMenuGump::selectEntry(int entry) {
 	}
 }
 
-bool RemorseMenuGump::OnTextInput(int unicode) {
+bool CruMenuGump::OnTextInput(int unicode) {
 	return Gump::OnTextInput(unicode);
 }
 

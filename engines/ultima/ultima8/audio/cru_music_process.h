@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA8_AUDIO_REMORSEMUSICPROCESS_H
-#define ULTIMA8_AUDIO_REMORSEMUSICPROCESS_H
+#ifndef ULTIMA8_AUDIO_CRUMUSICPROCESS_H
+#define ULTIMA8_AUDIO_CRUMUSICPROCESS_H
 
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/misc/classtype.h"
@@ -34,7 +34,7 @@ namespace Ultima8 {
 class Debugger;
 class MidiPlayer;
 
-class RemorseMusicProcess : public MusicProcess {
+class CruMusicProcess : public MusicProcess {
 	friend class Debugger;
 
 protected:
@@ -56,8 +56,8 @@ private:
 	const char **_trackNames;
 
 public:
-	RemorseMusicProcess();
-	~RemorseMusicProcess() override;
+	CruMusicProcess();
+	~CruMusicProcess() override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 

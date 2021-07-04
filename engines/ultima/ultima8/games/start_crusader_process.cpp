@@ -22,7 +22,7 @@
 
 
 #include "ultima/ultima8/games/start_crusader_process.h"
-#include "ultima/ultima8/games/remorse_game.h"
+#include "ultima/ultima8/games/cru_game.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -54,7 +54,7 @@ void StartCrusaderProcess::run() {
 		}
 	} else if (!_skipStart && _initStage == PlaySecondMovie) {
 		_initStage = ShowMenu;
-		RemorseGame *game = dynamic_cast<RemorseGame *>(Game::get_instance());
+		CruGame *game = dynamic_cast<CruGame *>(Game::get_instance());
 		assert(game);
 		ProcId moviepid = game->playIntroMovie2(false);
 		Process *movieproc = Kernel::get_instance()->getProcess(moviepid);

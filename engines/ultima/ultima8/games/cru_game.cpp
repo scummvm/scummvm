@@ -23,14 +23,14 @@
 #include "common/config-manager.h"
 
 #include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/games/remorse_game.h"
+#include "ultima/ultima8/games/cru_game.h"
 #include "ultima/ultima8/games/start_crusader_process.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/gumps/main_menu_process.h"
-#include "ultima/ultima8/gumps/remorse_credits_gump.h"
+#include "ultima/ultima8/gumps/cru_credits_gump.h"
 #include "ultima/ultima8/gumps/cru_demo_gump.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -46,10 +46,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
-RemorseGame::RemorseGame() : Game() {
+CruGame::CruGame() : Game() {
 }
 
-RemorseGame::~RemorseGame() {
+CruGame::~CruGame() {
 
 }
 
@@ -67,7 +67,7 @@ static bool loadPalette(const char *path, PaletteManager::PalIndex index) {
 	return true;
 }
 
-bool RemorseGame::loadFiles() {
+bool CruGame::loadFiles() {
 	// Load palette
 	pout << "Load Palettes" << Std::endl;
 
@@ -91,7 +91,7 @@ bool RemorseGame::loadFiles() {
 	return true;
 }
 
-bool RemorseGame::startGame() {
+bool CruGame::startGame() {
 	// NOTE: assumes the entire engine has been reset!
 
 	pout << "Starting new Crusader: No Remorse game." << Std::endl;
@@ -136,7 +136,7 @@ bool RemorseGame::startGame() {
 	return true;
 }
 
-bool RemorseGame::startInitialUsecode(int saveSlot) {
+bool CruGame::startInitialUsecode(int saveSlot) {
 	Process* proc = new StartCrusaderProcess(saveSlot);
 	Kernel::get_instance()->addProcess(proc);
 	return true;
@@ -153,21 +153,21 @@ static ProcId playMovie(const char *movieID, bool fade, bool noScale) {
 	return gump->GetNotifyProcess()->getPid();
 }
 
-ProcId RemorseGame::playIntroMovie(bool fade) {
+ProcId CruGame::playIntroMovie(bool fade) {
 	const char *name = (GAME_IS_REMORSE ? "T01" : "origin");
 	return playMovie(name, fade, true);
 }
 
-ProcId RemorseGame::playIntroMovie2(bool fade) {
+ProcId CruGame::playIntroMovie2(bool fade) {
 	const char *name = (GAME_IS_REMORSE ? "T02" : "ANIM01");
 	return playMovie(name, fade, false);
 }
 
-ProcId RemorseGame::playEndgameMovie(bool fade) {
+ProcId CruGame::playEndgameMovie(bool fade) {
 	return playMovie("O01", fade, false);
 }
 
-void RemorseGame::playDemoScreen() {
+void CruGame::playDemoScreen() {
 	Process *menuproc = new MainMenuProcess();
 	Kernel::get_instance()->addProcess(menuproc);
 
@@ -189,7 +189,7 @@ void RemorseGame::playDemoScreen() {
 }
 
 
-void RemorseGame::playCredits() {
+void CruGame::playCredits() {
 	Process *menuproc = new MainMenuProcess();
 	Kernel::get_instance()->addProcess(menuproc);
 
@@ -208,7 +208,7 @@ void RemorseGame::playCredits() {
 			 << bmp_filename << Std::endl;
 		return;
 	}
-	Gump *creditsgump = new RemorseCreditsGump(txtrs, bmprs);
+	Gump *creditsgump = new CruCreditsGump(txtrs, bmprs);
 	creditsgump->InitGump(nullptr);
 	creditsgump->CreateNotifier();
 	Process *notifyproc = creditsgump->GetNotifyProcess();
@@ -218,7 +218,7 @@ void RemorseGame::playCredits() {
 	}
 }
 
-void RemorseGame::writeSaveInfo(Common::WriteStream *ws) {
+void CruGame::writeSaveInfo(Common::WriteStream *ws) {
 }
 
 } // End of namespace Ultima8

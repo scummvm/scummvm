@@ -20,18 +20,18 @@
  *
  */
 
-#ifndef ULTIMA8_GAMES_REMORSEGAME_H
-#define ULTIMA8_GAMES_REMORSEGAME_H
+#ifndef ULTIMA8_GAMES_CRUGAME_H
+#define ULTIMA8_GAMES_CRUGAME_H
 
 #include "ultima/ultima8/games/game.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class RemorseGame : public Game {
+class CruGame : public Game {
 public:
-	RemorseGame();
-	~RemorseGame() override;
+	CruGame();
+	~CruGame() override;
 
 	//! load/init game's data files
 	bool loadFiles() override;

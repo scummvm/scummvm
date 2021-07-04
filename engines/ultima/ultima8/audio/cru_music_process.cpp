@@ -22,7 +22,7 @@
 
 #include "common/system.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/audio/remorse_music_process.h"
+#include "ultima/ultima8/audio/cru_music_process.h"
 #include "ultima/ultima8/filesys/file_system.h"
 #include "audio/mods/mod_xm_s3m.h"
 
@@ -94,20 +94,20 @@ static const int REGRET_MAP_TRACKS[] = {
 	15,  9, 12, 10, 19, 14, 21,  0};
 
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMusicProcess)
+DEFINE_RUNTIME_CLASSTYPE_CODE(CruMusicProcess)
 
-RemorseMusicProcess::RemorseMusicProcess() : MusicProcess(), _currentTrack(0), _savedTrack(0), _m16offset(0) {
+CruMusicProcess::CruMusicProcess() : MusicProcess(), _currentTrack(0), _savedTrack(0), _m16offset(0) {
 	_maxTrack = (GAME_IS_REMORSE ? MAX_TRACK_REMORSE : MAX_TRACK_REGRET);
 	_trackNames = (GAME_IS_REMORSE ? TRACK_FILE_NAMES_REMORSE
 				   : TRACK_FILE_NAMES_REGRET);
 }
 
-RemorseMusicProcess::~RemorseMusicProcess() {
+CruMusicProcess::~CruMusicProcess() {
 	// We shouldn't need to do anything here - the mixer will
 	// clean up the stream for us.
 }
 
-void RemorseMusicProcess::playMusic(int track) {
+void CruMusicProcess::playMusic(int track) {
 	if (GAME_IS_REGRET && track == 0x45) {
 		// Play the default track for the current map
 		uint32 curmap = World::get_instance()->getCurrentMap()->getNum();
@@ -127,34 +127,34 @@ void RemorseMusicProcess::playMusic(int track) {
 	playMusic_internal(track);
 }
 
-void RemorseMusicProcess::playCombatMusic(int track) {
+void CruMusicProcess::playCombatMusic(int track) {
 	// Only U8 has combat music.. ignore it.
 }
 
-void RemorseMusicProcess::queueMusic(int track) {
+void CruMusicProcess::queueMusic(int track) {
 	playMusic_internal(track);
 }
 
-void RemorseMusicProcess::unqueueMusic() {
+void CruMusicProcess::unqueueMusic() {
 
 }
 
-void RemorseMusicProcess::restoreMusic() {
+void CruMusicProcess::restoreMusic() {
 
 }
 
-void RemorseMusicProcess::saveTrackState() {
+void CruMusicProcess::saveTrackState() {
 	assert(!_savedTrack);
 	_savedTrack = _currentTrack;
 }
 
-void RemorseMusicProcess::restoreTrackState() {
+void CruMusicProcess::restoreTrackState() {
 	int saved = _savedTrack;
 	_savedTrack = 0;
 	playMusic_internal(saved);
 }
 
-void RemorseMusicProcess::playMusic_internal(int track) {
+void CruMusicProcess::playMusic_internal(int track) {
 	if (track < 0 || track > _maxTrack) {
 		warning("Not playing track %d (max is %d)", track, _maxTrack);
 		playMusic_internal(0);
@@ -198,7 +198,7 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 	}
 }
 
-void RemorseMusicProcess::run() {
+void CruMusicProcess::run() {
 	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
 	assert(mixer);
 	if (mixer->isSoundHandleActive(_soundHandle)) {
@@ -210,7 +210,7 @@ void RemorseMusicProcess::run() {
 	playMusic_internal(_currentTrack);
 }
 
-void RemorseMusicProcess::saveData(Common::WriteStream *ws) {
+void CruMusicProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 
 	ws->writeUint32LE(static_cast<uint32>(_currentTrack));
@@ -218,7 +218,7 @@ void RemorseMusicProcess::saveData(Common::WriteStream *ws) {
 	ws->writeByte(_m16offset);
 }
 
-bool RemorseMusicProcess::loadData(Common::ReadStream *rs, uint32 version) {
+bool CruMusicProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!Process::loadData(rs, version)) return false;
 
 	_currentTrack = static_cast<int32>(rs->readUint32LE());
@@ -235,19 +235,19 @@ bool RemorseMusicProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	return true;
 }
 
-bool RemorseMusicProcess::isPlaying() {
+bool CruMusicProcess::isPlaying() {
 	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
 	return _currentTrack != 0 && mixer && mixer->isSoundHandleActive(_soundHandle);
 }
 
-void RemorseMusicProcess::pauseMusic() {
+void CruMusicProcess::pauseMusic() {
 	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
 	assert(mixer);
 	if (mixer->isSoundHandleActive(_soundHandle))
 		mixer->pauseHandle(_soundHandle, true);
 }
 
-void RemorseMusicProcess::unpauseMusic() {
+void CruMusicProcess::unpauseMusic() {
 	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
 	assert(mixer);
 	if (mixer->isSoundHandleActive(_soundHandle))

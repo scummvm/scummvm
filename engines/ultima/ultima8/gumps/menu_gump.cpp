@@ -23,7 +23,7 @@
 #include "common/config-manager.h"
 
 #include "ultima/ultima8/gumps/menu_gump.h"
-#include "ultima/ultima8/gumps/remorse_menu_gump.h"
+#include "ultima/ultima8/gumps/cru_menu_gump.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -268,7 +268,7 @@ void MenuGump::showMenu() {
 		if (GAME_IS_U8)
 			gump = new MenuGump();
 		else
-			gump = new RemorseMenuGump();
+			gump = new CruMenuGump();
 		gump->InitGump(0);
 		gump->setRelativePosition(CENTER);
 	}
@@ -280,7 +280,7 @@ void MenuGump::inputName() {
 	if (GAME_IS_U8)
 		gump = new MenuGump(true);
 	else
-		gump = new RemorseMenuGump();
+		gump = new CruMenuGump();
 	gump->InitGump(0);
 	gump->setRelativePosition(CENTER);
 }

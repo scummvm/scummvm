@@ -386,8 +386,8 @@ MODULE_OBJS := \
 	ultima8/audio/midi_player.o \
 	ultima8/audio/music_flex.o \
 	ultima8/audio/music_process.o \
+	ultima8/audio/cru_music_process.o \
 	ultima8/audio/raw_audio_sample.o \
-	ultima8/audio/remorse_music_process.o \
 	ultima8/audio/sonarc_audio_sample.o \
 	ultima8/audio/sound_flex.o \
 	ultima8/audio/speech_flex.o \
@@ -403,10 +403,10 @@ MODULE_OBJS := \
 	ultima8/filesys/raw_archive.o \
 	ultima8/filesys/savegame.o \
 	ultima8/filesys/u8_save_file.o \
+	ultima8/games/cru_game.o \
 	ultima8/games/game.o \
 	ultima8/games/game_data.o \
 	ultima8/games/game_info.o \
-	ultima8/games/remorse_game.o \
 	ultima8/games/start_crusader_process.o \
 	ultima8/games/start_u8_process.o \
 	ultima8/games/treasure_loader.o \
@@ -451,10 +451,12 @@ MODULE_OBJS := \
 	ultima8/gumps/container_gump.o \
 	ultima8/gumps/credits_gump.o \
 	ultima8/gumps/cru_ammo_gump.o \
+	ultima8/gumps/cru_credits_gump.o \
 	ultima8/gumps/cru_demo_gump.o \
 	ultima8/gumps/cru_energy_gump.o \
 	ultima8/gumps/cru_health_gump.o \
 	ultima8/gumps/cru_inventory_gump.o \
+	ultima8/gumps/cru_menu_gump.o \
 	ultima8/gumps/cru_pickup_area_gump.o \
 	ultima8/gumps/cru_pickup_gump.o \
 	ultima8/gumps/cru_stat_gump.o \
@@ -480,8 +482,6 @@ MODULE_OBJS := \
 	ultima8/gumps/paperdoll_gump.o \
 	ultima8/gumps/quit_gump.o \
 	ultima8/gumps/readable_gump.o \
-	ultima8/gumps/remorse_menu_gump.o \
-	ultima8/gumps/remorse_credits_gump.o \
 	ultima8/gumps/resizable_gump.o \
 	ultima8/gumps/scroll_gump.o \
 	ultima8/gumps/shape_viewer_gump.o \
