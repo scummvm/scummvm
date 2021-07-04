@@ -836,8 +836,10 @@ bool Ultima8Engine::getGameInfo(const istring &game, GameInfo *ginfo) {
 	{
 		if (_gameDescription->desc.flags & ADGF_DEMO)
 			ginfo->_ucOffVariant = GameInfo::GAME_UC_REM_DEMO;
-		else if (_gameDescription->desc.language == Common::ES_ESP)
+		else if (_gameDescription->desc.language == Common::ES_ESP &&
+				 Common::String("") == _gameDescription->desc.extra) {
 			ginfo->_ucOffVariant = GameInfo::GAME_UC_REM_ES;
+		}
 	}
 
 	switch (_gameDescription->desc.language) {
