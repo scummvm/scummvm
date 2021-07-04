@@ -1105,6 +1105,8 @@ static void engine_print_info(const std::set<String> &keys, ConfigTree *user_cfg
 // is mixed with game-related data adjustments. Divide it in parts, move game
 // data init into either InitGameState() or other game method as appropriate.
 int initialize_engine(const ConfigTree &startup_opts) {
+	_G(proper_exit) = false;
+
 	if (_G(engine_pre_init_callback)) {
 		_G(engine_pre_init_callback)();
 	}

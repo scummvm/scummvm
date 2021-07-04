@@ -3398,6 +3398,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("stickythestickfigurepart1thecrimsonhouse", "Crimson House Files.exe", "3b095a7872e04769d04ab45e9c1b66eb", 3610653),
 	GAME_ENTRY("stranded", "Stranded.exe", "18b284c22010850f79bc5c20054a70c4", 39791629),
 	GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", 3186614879),
+	GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", -1), // for 32-bit limited filesystems
 	GAME_ENTRY("stranger", "Stranger.exe", "0500aacb6c176d47ac0f8158f055db83", 5854099),
 	GAME_ENTRY("strangerinstickworld", "game1.exe", "a524cbb1c51589903c4043b98917f1d9", 42525810),
 	GAME_ENTRY("strangerthings", "StrangerThings.exe", "cc19db728abbcf657db6b76afb0e92d1", 43636017),

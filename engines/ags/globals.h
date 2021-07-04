@@ -742,7 +742,7 @@ public:
 	int _new_room_pos = 0;
 	int _new_room_x = SCR_NO_VALUE, _new_room_y = SCR_NO_VALUE;
 	int _new_room_loop = SCR_NO_VALUE;
-	bool _proper_exit = false;
+	bool _proper_exit = true;
 	int _our_eip = 0;
 
 	int _oldmouse = 0;

@@ -85,7 +85,7 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 }
 
 AGSEngine::~AGSEngine() {
-	if (_G(proper_exit) == 0) {
+	if (_globals && _G(proper_exit) == 0) {
 		_G(platform)->DisplayAlert("Error: the program has exited without requesting it.\n"
 		                           "Program pointer: %+03d  (write this number down), ACI version %s\n"
 		                           "If you see a list of numbers above, please write them down and contact\n"
@@ -122,6 +122,15 @@ Common::Error AGSEngine::run() {
 
 	if (isUnsupportedPre25()) {
 		GUIError("The selected game is a completed unsupported pre-2.5 version");
+		return Common::kNoError;
+	}
+
+	if (is64BitGame()) {
+		// If the game file was opened and the engine started, but the
+		// size is -1, then it must be a game like Strangeland where
+		// the data file is > 2Gb
+		GUIError("The selected game has a data file greater than 2Gb, " \
+			"which isn't supported by your version of ScummVM yet");
 		return Common::kNoError;
 	}
 
@@ -222,6 +231,12 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h, int colorDepth) {
 bool AGSEngine::isUnsupportedPre25() const {
 	return _gameDescription->desc.extra &&
 		!strcmp(_gameDescription->desc.extra, "Pre 2.5");
+}
+
+bool AGSEngine::is64BitGame() const {
+	Common::File f;
+	return f.open(_gameDescription->desc.filesDescriptions[0].fileName)
+		&& f.size() == -1;
 }
 
 bool AGSEngine::canLoadGameStateCurrently() {
