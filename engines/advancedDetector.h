@@ -52,7 +52,7 @@ struct ADGameFileDescription {
 	const char *fileName; ///< Name of the described file.
 	uint16 fileType;      ///< Optional. Not used during detection, only by engines.
 	const char *md5;      ///< MD5 of (the beginning of) the described file. Optional. Set to NULL to ignore.
-	int32 fileSize;       ///< Size of the described file. Set to -1 to ignore.
+	int64 fileSize;       ///< Size of the described file. Set to -1 to ignore.
 };
 
 /**
@@ -522,11 +522,11 @@ public:
 		return md5HashMap.getVal(fname);
 	}
 
-	void setSize(Common::String fname, int32 size) {
+	void setSize(Common::String fname, int64 size) {
 		sizeHashMap.setVal(fname, size);
 	}
 
-	int32 getSize(Common::String fname) {
+	int64 getSize(Common::String fname) {
 		return sizeHashMap.getVal(fname);
 	}
 
@@ -547,7 +547,7 @@ private:
 	friend class Common::Singleton<MD5CacheManager>;
 
 	typedef Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileHashMap;
-	typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeHashMap;
+	typedef Common::HashMap<Common::String, int64, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeHashMap;
 	FileHashMap md5HashMap;
 	SizeHashMap sizeHashMap;
 };

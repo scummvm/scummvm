@@ -104,7 +104,7 @@ enum GameSupportLevel {
  * files while detecting a game.
  */
 struct FileProperties {
-	int32 size;
+	int64 size;
 	Common::String md5;
 
 	FileProperties() : size(-1) {}

@@ -222,7 +222,7 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 	report += Common::U32String("\n\n");
 
 	for (FilePropertiesMap::const_iterator file = matchedFiles.begin(); file != matchedFiles.end(); ++file)
-		report += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
+		report += Common::String::format("  {\"%s\", 0, \"%s\", %lld},\n", file->_key.c_str(), file->_value.md5.c_str(), (long long)file->_value.size);
 
 	report += Common::U32String("\n");
 
