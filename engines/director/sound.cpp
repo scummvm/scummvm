@@ -314,7 +314,7 @@ bool SNDDecoder::processBufferCommand(Common::SeekableReadStreamEndian &stream) 
 	/*uint16 unk1 =*/stream.readUint16();
 	int32 offset = stream.readUint32();
 	if (offset != stream.pos()) {
-		warning("SNDDecoder: Bad sound header offset. Expected: %d, read: %d", stream.pos(), offset);
+		warning("SNDDecoder: Bad sound header offset. Expected: %d, read: %d", (int)stream.pos(), offset);
 		return false;
 	}
 	/*uint32 dataPtr =*/stream.readUint32();

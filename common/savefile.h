@@ -106,7 +106,7 @@ public:
 	*
 	* @return The current position indicator, or -1 if an error occurred.
 	 */
-	virtual int32 pos() const;
+	virtual int64 pos() const;
 };
 
 /**

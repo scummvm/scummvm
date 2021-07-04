@@ -622,7 +622,7 @@ bool Sc2::load(MfcArchive &file) {
 	}
 
 	if (file.size() - file.pos() > 0)
-		error("Sc2::load(): (%d bytes left)", file.size() - file.pos());
+		error("Sc2::load(): (%d bytes left)", (int)(file.size() - file.pos()));
 
 	return true;
 }

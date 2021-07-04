@@ -375,7 +375,7 @@ ASFStream::Packet *ASFStream::readPacket() {
 	_curPacket++;
 
 	if ((uint32)_stream->pos() != packetStartPos + _maxPacketSize)
-		error("ASFStream::readPacket(): Mismatching packet pos: %d (should be %d)", _stream->pos(), _maxPacketSize + packetStartPos);
+		error("ASFStream::readPacket(): Mismatching packet pos: %d (should be %d)", (int)_stream->pos(), _maxPacketSize + packetStartPos);
 
 	return packet;
 }

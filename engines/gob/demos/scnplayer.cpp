@@ -91,7 +91,7 @@ bool SCNPlayer::readLabels(Common::SeekableReadStream &scn, LabelMap &labels) {
 		if (lineStartsWith(line, "LABEL ")) {
 			// Label => Add to the hashmap
 			labels.setVal(line.c_str() + 6, scn.pos());
-			debugC(2, kDebugDemo, "Found label \"%s\" (%d)", line.c_str() + 6, scn.pos());
+			debugC(2, kDebugDemo, "Found label \"%s\" (%d)", line.c_str() + 6, (int)scn.pos());
 		}
 	}
 

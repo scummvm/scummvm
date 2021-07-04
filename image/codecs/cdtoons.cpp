@@ -74,7 +74,7 @@ Graphics::Surface *CDToonsDecoder::decodeFrame(Common::SeekableReadStream &strea
 	byte u6 = stream.readByte();
 	byte backgroundColor = stream.readByte();
 	debugN(5, "CDToons frame %d, size %d, unknown %04x (at 0), blocks valid until %d, unknown 6 is %02x, bkg color is %02x\n",
-		frameId, stream.size(), u0, blocksValidUntil, u6, backgroundColor);
+		frameId, (int)stream.size(), u0, blocksValidUntil, u6, backgroundColor);
 
 	Common::Rect clipRect = readRect(stream);
 	debugN(9, "CDToons clipRect: (%d, %d) to (%d, %d)\n",
@@ -125,10 +125,10 @@ Graphics::Surface *CDToonsDecoder::decodeFrame(Common::SeekableReadStream &strea
 
 	if (stream.pos() > blockOffset)
 		error("CDToons header ended at 0x%08x, but blocks should have started at 0x%08x",
-			stream.pos(), blockOffset);
+			(int)stream.pos(), blockOffset);
 
 	if (stream.pos() != blockOffset)
-		error("CDToons had %d unknown bytes after header", blockOffset - stream.pos());
+		error("CDToons had %d unknown bytes after header", blockOffset - (int)stream.pos());
 
 	for (uint i = 0; i < blockCount; i++) {
 		uint16 blockId = stream.readUint16BE();
@@ -278,9 +278,9 @@ Graphics::Surface *CDToonsDecoder::decodeFrame(Common::SeekableReadStream &strea
 
 		if (stream.pos() > nextPos)
 			error("CDToons ran off the end of a block while reading it (at %d, next block at %d)",
-				stream.pos(), nextPos);
+				(int)stream.pos(), nextPos);
 		if (stream.pos() != nextPos) {
-			warning("CDToons had %d unknown bytes after block", nextPos - stream.pos());
+			warning("CDToons had %d unknown bytes after block", nextPos - (int32)stream.pos());
 			stream.seek(nextPos);
 		}
 

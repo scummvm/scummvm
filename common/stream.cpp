@@ -108,7 +108,7 @@ uint32 MemoryReadStream::read(void *dataPtr, uint32 dataSize) {
 	return dataSize;
 }
 
-bool MemoryReadStream::seek(int32 offs, int whence) {
+bool MemoryReadStream::seek(int64 offs, int whence) {
 	// Pre-Condition
 	assert(_pos <= _size);
 	switch (whence) {
@@ -245,7 +245,7 @@ SeekableSubReadStream::SeekableSubReadStream(SeekableReadStream *parentStream, u
 	_eos = false;
 }
 
-bool SeekableSubReadStream::seek(int32 offset, int whence) {
+bool SeekableSubReadStream::seek(int64 offset, int whence) {
 	assert(_pos >= _begin);
 	assert(_pos <= _end);
 
@@ -416,10 +416,10 @@ protected:
 public:
 	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 
-	virtual int32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
-	virtual int32 size() const { return _parentStream->size(); }
+	virtual int64 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
+	virtual int64 size() const { return _parentStream->size(); }
 
-	virtual bool seek(int32 offset, int whence = SEEK_SET);
+	virtual bool seek(int64 offset, int whence = SEEK_SET);
 };
 
 BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
@@ -427,7 +427,7 @@ BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *paren
 	_parentStream(parentStream) {
 }
 
-bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
+bool BufferedSeekableReadStream::seek(int64 offset, int whence) {
 	// If it is a "local" seek, we may get away with "seeking" around
 	// in the buffer only.
 	_eos = false; // seeking always cancels EOS
@@ -551,7 +551,7 @@ public:
 
 	virtual bool flush() { return flushBuffer(); }
 
-	virtual int32 pos() const { return _pos; }
+	virtual int64 pos() const { return _pos; }
 
 };
 

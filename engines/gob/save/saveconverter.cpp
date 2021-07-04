@@ -332,21 +332,21 @@ uint32 SaveConverter::read(void *dataPtr, uint32 dataSize) {
 	return _stream->read(dataPtr, dataSize);
 }
 
-int32 SaveConverter::pos() const {
+int64 SaveConverter::pos() const {
 	if (!_data || !_stream)
 		return -1;
 
 	return _stream->pos();
 }
 
-int32 SaveConverter::size() const {
+int64 SaveConverter::size() const {
 	if (!_data || !_stream)
 		return -1;
 
 	return _stream->size();
 }
 
-bool SaveConverter::seek(int32 offset, int whence) {
+bool SaveConverter::seek(int64 offset, int whence) {
 	if (!_data || !_stream)
 		return false;
 

@@ -130,9 +130,9 @@ public:
 	void clearErr() override;	/*!< Implement abstract Stream method. */
 	bool eos() const override;	/*!< Implement abstract SeekableReadStream method. */
 
-	int32 pos() const override;	 /*!< Implement abstract SeekableReadStream method. */
-	int32 size() const override; /*!< Implement abstract SeekableReadStream method. */
-	bool seek(int32 offs, int whence = SEEK_SET) override;	/*!< Implement abstract SeekableReadStream method. */
+	int64 pos() const override;	 /*!< Implement abstract SeekableReadStream method. */
+	int64 size() const override; /*!< Implement abstract SeekableReadStream method. */
+	bool seek(int64 offs, int whence = SEEK_SET) override;	/*!< Implement abstract SeekableReadStream method. */
 	uint32 read(void *dataPtr, uint32 dataSize) override;	/*!< Implement abstract SeekableReadStream method. */
 };
 
@@ -171,10 +171,10 @@ public:
 
 	virtual bool flush() override;
 
-	virtual int32 pos() const override;
+	virtual int64 pos() const override;
 
-	virtual bool seek(int32 offset, int whence = SEEK_SET) override;
-	virtual int32 size() const override;
+	virtual bool seek(int64 offset, int whence = SEEK_SET) override;
+	virtual int64 size() const override;
 };
 
 /** @} */

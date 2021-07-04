@@ -1296,7 +1296,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 		Common::File dmuFile;
 		char buffer[128];
 		debugC(DEBUG_SOUND, "Found base tag FMUS in sound %d, size %d", idx, total_size);
-		debugC(DEBUG_SOUND, "It was at position %d", _fileHandle->pos());
+		debugC(DEBUG_SOUND, "It was at position %d", (int)_fileHandle->pos());
 
 		_fileHandle->seek(4, SEEK_CUR);
 		// HSHD size

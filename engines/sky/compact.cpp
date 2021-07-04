@@ -141,7 +141,7 @@ SkyCompact::SkyCompact() {
 	if (SKY_CPT_SIZE != _cptFile->size()) {
 		GUI::MessageDialog dialog(_("The \"sky.cpt\" engine data file has an incorrect size."), _("OK"));
 		dialog.runModal();
-		error("Incorrect sky.cpt size (%d, expected: %d)", _cptFile->size(), SKY_CPT_SIZE);
+		error("Incorrect sky.cpt size (%d, expected: %d)", (int)_cptFile->size(), SKY_CPT_SIZE);
 	}
 
 	// set the necessary data structs up...

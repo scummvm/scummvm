@@ -75,7 +75,7 @@ bool T7GFont::load(Common::SeekableReadStream &stream) {
 			uint16 offset = glyphOffsets[i];
 			delete[] glyphOffsets;
 			error("Groovie::T7GFont: Glyph %d starts at %d but the current "
-				"offset is %d", i, offset, stream.pos());
+				"offset is %d", i, offset, (int)stream.pos());
 			return false;
 		}
 

@@ -1121,7 +1121,7 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	_goto.y = _goto.y * FIXED_INT_MULTIPLIER / 100;
 
 	// Offset 42
-	warning("pos %d", s.pos());
+	warning("pos %d", (int)s.pos());
 
 	// Unverified
 	_lookFlag = s.readSint16BE();

@@ -185,7 +185,7 @@ LBCode::LBCode(MohawkEngine_LivingBooks *vm, uint16 baseId) : _vm(vm) {
 
 	uint32 totalSize = bcodStream->readUint32();
 	if (totalSize != (uint32)bcodStream->size())
-		error("BCOD had size %d, but claimed to be of size %d", bcodStream->size(), totalSize);
+		error("BCOD had size %d, but claimed to be of size %d", (int)bcodStream->size(), totalSize);
 	_size = bcodStream->readUint32();
 	if (_size + 8 > totalSize)
 		error("BCOD code was of size %d, beyond size %d", _size, totalSize);

@@ -74,9 +74,9 @@ public:
 	bool eos() const override;
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 
-	int32 pos() const override;
-	int32 size() const override;
-	bool seek(int32 offset, int whence = SEEK_SET) override;
+	int64 pos() const override;
+	int64 size() const override;
+	bool seek(int64 offset, int whence = SEEK_SET) override;
 };
 
 

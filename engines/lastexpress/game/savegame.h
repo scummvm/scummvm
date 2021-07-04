@@ -105,9 +105,9 @@ public:
 		memset(_buffer, 0, 256);
 	}
 
-	int32 pos() const override { return MemoryWriteStreamDynamic::pos(); }
-	int32 size() const override { return MemoryWriteStreamDynamic::size(); }
-	bool seek(int32 offset, int whence = SEEK_SET) override { return MemoryWriteStreamDynamic::seek(offset, whence); }
+	int64 pos() const override { return MemoryWriteStreamDynamic::pos(); }
+	int64 size() const override { return MemoryWriteStreamDynamic::size(); }
+	bool seek(int64 offset, int whence = SEEK_SET) override { return MemoryWriteStreamDynamic::seek(offset, whence); }
 	bool eos() const override { return _eos; }
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 	uint32 write(const void *dataPtr, uint32 dataSize) override;

@@ -220,7 +220,7 @@ bool MUSPlayer::readString(Common::SeekableReadStream &stream, Common::String &s
 bool MUSPlayer::readSNDHeader(Common::SeekableReadStream &snd, int &timbreCount, int &timbrePos) {
 	// Sanity check
 	if (snd.size() <= 6) {
-		warning("MUSPlayer::readSNDHeader(): File too small (%d)", snd.size());
+		warning("MUSPlayer::readSNDHeader(): File too small (%d)", (int)snd.size());
 		return false;
 	}
 

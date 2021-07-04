@@ -119,15 +119,15 @@ bool PackFile::eos() const {
 	return _orgStream->eos();
 }
 
-int32 PackFile::pos() const {
+int64 PackFile::pos() const {
 	return _orgStream->pos() - _offset;
 }
 
-int32 PackFile::size() const {
+int64 PackFile::size() const {
 	return _size;
 }
 
-bool PackFile::seek(int32 offset, int whence) {
+bool PackFile::seek(int64 offset, int whence) {
 	if (_codeTable && whence == SEEK_SET)
 		offset += _offset;
 	return _orgStream->seek(offset, whence);

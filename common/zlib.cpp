@@ -316,13 +316,13 @@ public:
 	bool eos() const {
 		return _eos;
 	}
-	int32 pos() const {
+	int64 pos() const {
 		return _pos;
 	}
-	int32 size() const {
+	int64 size() const {
 		return _origSize;
 	}
-	bool seek(int32 offset, int whence = SEEK_SET) {
+	bool seek(int64 offset, int whence = SEEK_SET) {
 		int32 newPos = 0;
 		switch (whence) {
 		default:
@@ -372,7 +372,7 @@ public:
 		// bytes, so this should be fine.
 		byte tmpBuf[1024];
 		while (!err() && offset > 0) {
-			offset -= read(tmpBuf, MIN((int32)sizeof(tmpBuf), offset));
+			offset -= read(tmpBuf, MIN((int64)sizeof(tmpBuf), offset));
 		}
 
 		_eos = false;
@@ -487,7 +487,7 @@ public:
 		return dataSize - _stream.avail_in;
 	}
 
-	virtual int32 pos() const { return _pos; }
+	virtual int64 pos() const { return _pos; }
 };
 
 #endif	// USE_ZLIB

@@ -704,7 +704,7 @@ MohawkSurface *LivingBooksBitmap_v1::decodeImageLB(Common::SeekableReadStreamEnd
 		uint16 lengthBits = endianStream->readUint16();
 
 		if (compressedSize != (uint32)endianStream->size() - 24)
-			error("More bytes (%d) remaining in stream than header says there should be (%d)", endianStream->size() - 24, compressedSize);
+			error("More bytes (%d) remaining in stream than header says there should be (%d)", (int)endianStream->size() - 24, compressedSize);
 
 		// These two errors are really just sanity checks and should never go off
 		if (posBits != POS_BITS)

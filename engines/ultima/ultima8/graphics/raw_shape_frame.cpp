@@ -127,7 +127,7 @@ void RawShapeFrame::loadGenericFormat(const uint8 *data, uint32 size, const Conv
 		} else {
 			if (ds.size() - ds.pos() < (int32)format->_bytes_line_offset) {
 				warning("going off end of %d buffer at %d reading %d",
-						ds.size(), ds.pos(), format->_bytes_line_offset);
+						(int)ds.size(), (int)ds.pos(), format->_bytes_line_offset);
 			}
 			_line_offsets[i] = readX(ds, format->_bytes_line_offset) - ((_height - i) * format->_bytes_line_offset);
 		}

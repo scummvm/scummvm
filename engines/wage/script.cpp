@@ -216,7 +216,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 			processIf();
 			break;
 		case 0x87: // EXIT
-			debug(6, "exit at offset %d", _data->pos() - 1);
+			debug(6, "exit at offset %d", (int)_data->pos() - 1);
 
 			return true;
 		case 0x89: // MOVE
@@ -267,7 +267,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 		case 0x88: // END
 			break;
 		default:
-			debug(0, "Unknown opcode: %d", _data->pos());
+			debug(0, "Unknown opcode: %d", (int)_data->pos());
 		}
 	}
 
@@ -335,7 +335,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 Script::Operand *Script::readOperand() {
 	byte operandType = _data->readByte();
 
-	debug(7, "%x: readOperand: 0x%x", _data->pos(), operandType);
+	debug(7, "%x: readOperand: 0x%x", (int)_data->pos(), operandType);
 
 	Context *cont = &_world->_player->_context;
 	switch (operandType) {
@@ -418,7 +418,7 @@ Script::Operand *Script::readOperand() {
 			_data->seek(-1, SEEK_CUR);
 			return readStringOperand();
 		} else {
-			debug("Dunno what %x is (index=%d)!\n", operandType, _data->pos()-1);
+			debug("Dunno what %x is (index=%d)!\n", operandType, (int)_data->pos() - 1);
 		}
 		return NULL;
 	}
@@ -486,7 +486,7 @@ void Script::assign(byte operandType, int uservar, uint16 value) {
 		cont->_statVariables[PHYS_SPE_CUR] = value;
 		break;
 	default:
-		debug("No idea what I'm supposed to assign! (%x at %d)!\n", operandType, _data->pos()-1);
+		debug("No idea what I'm supposed to assign! (%x at %d)!\n", operandType, (int)_data->pos() - 1);
 	}
 }
 
@@ -1207,7 +1207,7 @@ void Script::convertToText() {
 
 		if (c < 0x80) {
 			if (c < 0x20) {
-				warning("convertToText: Unknown code 0x%02x at %d", c, _data->pos());
+				warning("convertToText: Unknown code 0x%02x at %d", c, (int)_data->pos());
 				c = ' ';
 			}
 
@@ -1216,7 +1216,7 @@ void Script::convertToText() {
 				c = _data->readByte();
 
 				if (c < 0x20) {
-					warning("convertToText: Unknown code 0x%02x at %d", c, _data->pos());
+					warning("convertToText: Unknown code 0x%02x at %d", c, (int)_data->pos());
 					c = ' ';
 				}
 			} while (c < 0x80);

@@ -43,13 +43,13 @@ public:
 	static bool exists(const Common::String &filename);
 	void close();
 
-	int32 pos() const override {
+	int64 pos() const override {
 		return _pos;
 	}
-	int32 size() const override {
+	int64 size() const override {
 		return _data.size();
 	}
-	bool seek(int32 offset, int whence = SEEK_SET) override;
+	bool seek(int64 offset, int whence = SEEK_SET) override;
 
 	bool eos() const override {
 		return _pos >= (int)_data.size();

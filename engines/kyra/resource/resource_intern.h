@@ -155,9 +155,9 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize) override { return _stream->read(dataPtr, dataSize); }
 
 	// Common::SeekableReadStream interface
-	int32 pos() const override { return _stream->pos(); }
-	int32 size() const override { return _stream->size(); }
-	bool seek(int32 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
+	int64 pos() const override { return _stream->pos(); }
+	int64 size() const override { return _stream->size(); }
+	bool seek(int64 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
 
 private:
 	Common::SeekableReadStream *_stream;

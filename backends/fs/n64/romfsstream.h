@@ -50,9 +50,9 @@ public:
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
 	virtual bool flush();
 
-	virtual int32 pos() const;
-	virtual int32 size() const;
-	virtual bool seek(int32 offs, int whence = SEEK_SET);
+	virtual int64 pos() const;
+	virtual int64 size() const;
+	virtual bool seek(int64 offs, int whence = SEEK_SET);
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
 

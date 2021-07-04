@@ -105,7 +105,7 @@ byte *BaseFileManager::readWholeFile(const Common::String &filename, uint32 *siz
 
 	buffer = new byte[file->size() + 1];
 	if (buffer == nullptr) {
-		debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Error allocating buffer for file '%s' (%d bytes)", filename.c_str(), file->size() + 1);
+		debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Error allocating buffer for file '%s' (%d bytes)", filename.c_str(), (int)file->size() + 1);
 		closeFile(file);
 		return nullptr;
 	}

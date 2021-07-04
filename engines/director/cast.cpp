@@ -564,12 +564,12 @@ void Cast::loadCastChildren() {
 
 		switch (tag) {
 		case MKTAG('D', 'I', 'B', ' '):
-			debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d (%d), %d bytes", imgId, realId, pic->size());
+			debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d (%d), %d bytes", imgId, realId, (int)pic->size());
 			img = new DIBDecoder();
 			break;
 
 		case MKTAG('B', 'I', 'T', 'D'):
-			debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d (%d), %d bytes", imgId, realId, pic->size());
+			debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d (%d), %d bytes", imgId, realId, (int)pic->size());
 
 			if (w > 0 && h > 0) {
 				if (_version < kFileVer600) {
@@ -698,7 +698,7 @@ PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream) {
 	uint16 index = (steps * 3) - 1;
 	byte *_palette = new byte[index + 1];
 
-	debugC(3, kDebugLoading, "Cast::loadPalette(): %d steps, %d bytes", steps, stream.size());
+	debugC(3, kDebugLoading, "Cast::loadPalette(): %d steps, %d bytes", steps, (int)stream.size());
 
 	if (steps > 256) {
 		warning("Cast::loadPalette(): steps > 256: %d", steps);

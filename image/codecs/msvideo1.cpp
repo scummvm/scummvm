@@ -30,7 +30,7 @@ namespace Image {
 
 #define CHECK_STREAM_PTR(n) \
   if ((stream.pos() + n) > stream.size() ) { \
-	warning ("MS Video-1: Stream out of bounds (%d >= %d) d%d", stream.pos() + n, stream.size(), n); \
+	warning ("MS Video-1: Stream out of bounds (%d >= %d) d%d", (int)stream.pos() + n, (int)stream.size(), n); \
 	return; \
   }
 

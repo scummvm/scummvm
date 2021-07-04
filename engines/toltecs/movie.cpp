@@ -179,7 +179,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 			_vm->_screen->finishTalkTextItems();
 			break;
 		default:
-			error("MoviePlayer::playMovie(%04X) Unknown chunk type %d at %08X", resIndex, chunkType, _vm->_arc->pos() - 5 - chunkSize);
+			error("MoviePlayer::playMovie(%04X) Unknown chunk type %d at %08X", resIndex, chunkType, (int)_vm->_arc->pos() - 5 - chunkSize);
 		}
 
 		if (!handleInput())

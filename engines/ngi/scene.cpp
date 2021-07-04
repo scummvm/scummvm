@@ -237,7 +237,7 @@ bool Scene::load(MfcArchive &file) {
 	initStaticANIObjects();
 
 	if (file.size() - file.pos() > 0)
-		error("Scene::load  (%d bytes left)", file.size() - file.pos());
+		error("Scene::load  (%d bytes left)", (int)(file.size() - file.pos()));
 
 	return true;
 }

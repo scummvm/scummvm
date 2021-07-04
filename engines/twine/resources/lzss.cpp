@@ -100,7 +100,7 @@ uint32 LzssReadStream::read(void *buf, uint32 dataSize) {
 	return dataSize;
 }
 
-bool LzssReadStream::seek(int32 offset, int whence) {
+bool LzssReadStream::seek(int64 offset, int whence) {
 	if (whence == SEEK_SET) {
 		_pos = offset;
 	} else if (whence == SEEK_CUR) {

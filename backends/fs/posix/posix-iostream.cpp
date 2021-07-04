@@ -106,7 +106,7 @@ PosixIoStream::PosixIoStream(void *handle) :
 #endif // ANDROID_PLAIN_PORT
 }
 
-int32 PosixIoStream::size() const {
+int64 PosixIoStream::size() const {
 	int fd = fileno((FILE *)_handle);
 	if (fd == -1) {
 		return StdioStream::size();

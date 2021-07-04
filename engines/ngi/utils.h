@@ -78,9 +78,9 @@ public:
 
 	bool eos() const override { return _stream->eos(); }
 	uint32 read(void *dataPtr, uint32 dataSize) override { return _stream->read(dataPtr, dataSize); }
-	int32 pos() const override { return _stream ? _stream->pos() : _wstream->pos(); }
-	int32 size() const override { return _stream->size(); }
-	bool seek(int32 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
+	int64 pos() const override { return _stream ? _stream->pos() : _wstream->pos(); }
+	int64 size() const override { return _stream->size(); }
+	bool seek(int64 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
 
 	uint32 write(const void *dataPtr, uint32 dataSize) override { return _wstream->write(dataPtr, dataSize); }
 

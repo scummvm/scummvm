@@ -51,7 +51,7 @@ void Font::load(const Pack &pack, int id, byte height, byte widthPack) {
 
 	_data = new byte[s->size()];
 	s->read(_data, s->size());
-	debugC(0, kDebugFont, "font size: %d", s->size());
+	debugC(0, kDebugFont, "font size: %d", (int)s->size());
 
 	_height = height;
 	_widthPack = widthPack;

@@ -638,7 +638,7 @@ uint32 OutFile::write(const void *dataPtr, uint32 dataSize) {
 	return _backingStream.write(dataPtr, dataSize);
 }
 
-int32 OutFile::pos() const {
+int64 OutFile::pos() const {
 	return _backingStream.pos();
 }
 
