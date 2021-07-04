@@ -102,8 +102,8 @@
 
 	<bitmaps>
 		<bitmap filename = 'logo.bmp'/>
-		<bitmap filename = 'cursor.bmp'/>
-		<bitmap filename = 'cursor_small.bmp'/>
+		<bitmap filename = 'cursor.bmp' scalable_file = 'cursor.svg' width = '24' height = '24'/>
+		<bitmap filename = 'cursor_small.bmp' scalable_file = 'cursor.svg' width = '16' height = '16'/>
 		<bitmap filename = 'checkbox.bmp'/>
 		<bitmap filename = 'checkbox_empty.bmp'/>
 		<bitmap filename = 'checkbox_disabled.bmp'/>
