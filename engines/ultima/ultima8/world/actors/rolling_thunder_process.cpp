@@ -57,7 +57,7 @@ RollingThunderProcess::RollingThunderProcess(Actor *actor) : _target(0), _timer(
 void RollingThunderProcess::run() {
 	Actor *actor = getActor(_itemNum);
 
-	if (!actor) {
+	if (!actor || actor->isDead()) {
 		// gone! maybe dead..
 		terminate();
 		return;
