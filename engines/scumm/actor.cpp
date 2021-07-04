@@ -591,7 +591,7 @@ int Actor::actorWalkStep() {
 				_pos.y -= 1;
 		}
 	} else if (_vm->_game.version == 3) {
-		if ((_walkdata.xfrac += _walkdata.v3XAdd) > _v3stepThreshold) {
+		if ((_walkdata.xfrac += _walkdata.v3XAdd) >= _v3stepThreshold) {
 			_pos.x += _walkdata.deltaXFactor;
 			_walkdata.xfrac -= _v3stepThreshold;
 		}
