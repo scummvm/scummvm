@@ -138,6 +138,11 @@ public:
 	 */
 	bool isUnsupportedPre25() const;
 
+	/*
+	 * Returns true if the game has data files greater than 2Gb
+	 */
+	bool is64BitGame() const;
+
 	/**
 	 * Indicate whether a game state can be loaded.
 	 */
