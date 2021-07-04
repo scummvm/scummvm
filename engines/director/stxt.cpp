@@ -23,6 +23,7 @@
 #include "common/substream.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/stxt.h"
 
 namespace Director {
@@ -68,7 +69,7 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 
 	while (formattingCount) {
 		debugC(3, kDebugText, "Stxt init: formattingCount: %u", formattingCount);
-		_style.read(textStream);
+		_style.read(textStream, _cast);
 
 		assert(prevPos <= _style.formatStartOffset);  // If this is triggered, we have to implement sorting
 
@@ -110,12 +111,12 @@ FontStyle::FontStyle() {
 	r = g = b = 0;
 }
 
-void FontStyle::read(Common::ReadStreamEndian &stream) {
+void FontStyle::read(Common::ReadStreamEndian &stream, Cast *cast) {
 	formatStartOffset = stream.readUint32();
 	height = stream.readUint16();
 	ascent = stream.readUint16();
 
-	fontId = stream.readUint16();
+	fontId = cast->mapFont(stream.readUint16());
 	textSlant = stream.readByte();
 	stream.readByte(); // padding
 	fontSize = stream.readUint16();

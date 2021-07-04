@@ -87,6 +87,8 @@ public:
 
 	void dumpScript(const char *script, ScriptType type, uint16 id);
 
+	uint16 mapFont(uint16 id);
+
 private:
 	PaletteV4 loadPalette(Common::SeekableReadStreamEndian &stream);
 	void loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id);

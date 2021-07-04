@@ -679,17 +679,7 @@ Graphics::TextAlign TextCastMember::getAlignment() {
 }
 
 void TextCastMember::importStxt(const Stxt *stxt) {
-	if (_cast->_version < kFileVer400) {
-		if (_cast->_fontMap.contains(stxt->_style.fontId)) {
-			_fontId = _cast->_fontMap[stxt->_style.fontId];
-		} else {
-			_fontId = 1; // fall back to Geneva
-		}
-	} else {
-		// FIXME: This should use the font map.
-		// D4 font maps are not implemented yet, so just use the unmapped ID.
-		_fontId = stxt->_style.fontId;
-	}
+	_fontId = stxt->_style.fontId;
 	_textSlant = stxt->_style.textSlant;
 	_fontSize = stxt->_style.fontSize;
 	_fgpalinfo1 = stxt->_style.r;

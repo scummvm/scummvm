@@ -29,6 +29,8 @@ class ReadStreamEndian;
 
 namespace Director {
 
+class Cast;
+
 struct FontStyle {
 	uint32 formatStartOffset;
 	uint16 height;
@@ -42,7 +44,7 @@ struct FontStyle {
 	uint16 r, g, b;
 
 	FontStyle();
-	void read(Common::ReadStreamEndian &textStream);
+	void read(Common::ReadStreamEndian &textStream, Cast *cast);
 };
 
 class Stxt {

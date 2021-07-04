@@ -30,6 +30,13 @@
 
 namespace Director {
 
+uint16 Cast::mapFont(uint16 id) {
+	if (_fontMap.contains(id)) {
+		return _fontMap[id];
+	}
+	return id;
+}
+
 void Cast::loadFontMap(Common::SeekableReadStreamEndian &stream) {
 	if (stream.size() == 0)
 		return;
