@@ -46,6 +46,15 @@ class ScriptCastMember;
 class ShapeCastMember;
 class TextCastMember;
 
+typedef Common::HashMap<byte, byte> CharMap;
+typedef Common::HashMap<uint16, uint16> FontSizeMap;
+struct FontXPlatformInfo {
+	Common::String toFont;
+	bool remapChars;
+	FontSizeMap sizeMap;
+};
+typedef Common::HashMap<Common::String, FontXPlatformInfo *> FontXPlatformMap;
+
 class Cast {
 public:
 	Cast(Movie *movie, uint16 castLibID, bool shared = false);
@@ -82,6 +91,8 @@ private:
 	PaletteV4 loadPalette(Common::SeekableReadStreamEndian &stream);
 	void loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id);
 	void loadFontMap(Common::SeekableReadStreamEndian &stream);
+	void loadFXmp(Common::SeekableReadStreamEndian &stream);
+	bool readFXmpLine(Common::SeekableReadStreamEndian &stream);
 	Common::String getString(Common::String str);
 
 public:
@@ -90,6 +101,10 @@ public:
 	uint16 _castLibID;
 
 	Common::HashMap<uint16, uint16> _fontMap;
+	CharMap _macCharsToWin;
+	CharMap _winCharsToMac;
+	FontXPlatformMap _macFontsToWin;
+	FontXPlatformMap _winFontsToMac;
 
 	Common::HashMap<int, CastMember *> *_loadedCast;
 	Common::HashMap<int, const Stxt *> *_loadedStxts;

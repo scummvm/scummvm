@@ -102,6 +102,12 @@ Cast::~Cast() {
 	for (Common::HashMap<uint16, CastMemberInfo *>::iterator it = _castsInfo.begin(); it != _castsInfo.end(); ++it)
 		delete it->_value;
 
+	for (FontXPlatformMap::iterator it = _macFontsToWin.begin(); it != _macFontsToWin.end(); ++it)
+		delete it->_value;
+
+	for (FontXPlatformMap::iterator it = _winFontsToMac.begin(); it != _winFontsToMac.end(); ++it)
+		delete it->_value;
+
 	delete _loadedStxts;
 	delete _loadedCast;
 	delete _lingoArchive;
@@ -330,6 +336,12 @@ void Cast::loadCast() {
 	// Font Mapping
 	if (_castArchive->hasResource(MKTAG('V', 'W', 'F', 'M'), -1)) {
 		loadFontMap(*(r = _castArchive->getFirstResource(MKTAG('V', 'W', 'F', 'M'))));
+		delete r;
+	}
+
+	// Cross-Platform Font Mapping
+	if (_castArchive->hasResource(MKTAG('F', 'X', 'm', 'p'), -1)) {
+		loadFXmp(*(r = _castArchive->getFirstResource(MKTAG('F', 'X', 'm', 'p'))));
 		delete r;
 	}
 
