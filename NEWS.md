@@ -133,14 +133,17 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixes for character selection, deselection, and dismissing to better match original.
 
  AmigaOS port:
-   - Add native system file browser feature
-   - Re-activate nuked OPL Adlib driver
+   - Add native system file browser feature.
+   - Re-activate nuked OPL Adlib driver.
 
  MorphOS port:
-   - Added native system file browser feature
-   - Added Cloud feature
-   - Re-activate nuked OPL Adlib driver
-   - Added CAMD MIDI driver support
+   - Added native system file browser feature.
+   - Added Cloud feature.
+   - Re-activate nuked OPL Adlib driver.
+   - Added CAMD MIDI driver support.
+
+  Windows port:
+   - Use OpenGL renderer by default, providing better support for HiDPI displays.
 
 #### 2.2.0 "Interactive Fantasy" (2020-09-27)
 

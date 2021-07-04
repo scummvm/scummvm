@@ -145,6 +145,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Der nuked OPL Adlib-Treiber ist wieder aktiviert.
    - Unterstützung für den CAMD MIDI-Treiber hinzugefügt.
 
+ Windows-Portierung:
+   - Standardmäßig wird nun der OpenGL-Renderer verwendet, der eine deutlich verbesserte Unterstützung für HiDPI-Displays bietet.
+
 #### 2.2.0 "Interactive Fantasy" (27.09.2020)
 
  Neue Spiele:
