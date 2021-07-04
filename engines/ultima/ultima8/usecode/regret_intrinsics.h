@@ -372,18 +372,18 @@ Intrinsic RegretIntrinsics[] = {
 	AudioProcess::I_playSFX, // Intrinsic13F()
 	// 0140
 	AudioProcess::I_isSFXPlaying, // Intrinsic140()
-	0, // TODO: World::I_clrAlertActive, but not the same as remorse
+	World::I_clrAlertActive, // TODO: World::I_clrAlertActive, but not the same as remorse
 	PaletteFaderProcess::I_fadeToGivenColor, // Intrinsic142()
 	Actor::I_isDead, // Intrinsic143()
 	Actor::I_setDead, // Intrinsic144()
-	0, // Intrinsic145() - I_maybeShowCredits
+	Game::I_playCredits, // Intrinsic145()
 	PaletteFaderProcess::I_jumpToAllGrey, // Intrinsic146()
 	Item::I_getFamilyOfType, // Intrinsic147()
 	Actor::I_getNpcNum, // Intrinsic148()
 	Item::I_getQLo, // Intrinsic149()
 	Item::I_andStatus, // Intrinsic14A()
 	Ultima8Engine::I_getCurrentTimerTick, // Intrinsic14B()
-	0, // TODO: World::I_setAlertActive, but not the same as remorse
+	World::I_setAlertActive, // TODO: World::I_setAlertActive, but not the same as remorse
 	Ultima8Engine::I_getAvatarInStasis, // Intrinsic14D()
 	MainActor::I_addItemCru, // Intrinsic14E()
 	Egg::I_getEggXRange, // Intrinsic14F()

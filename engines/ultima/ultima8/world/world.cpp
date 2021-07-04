@@ -420,6 +420,15 @@ void World::setAlertActive(bool active)
 	assert(GAME_IS_CRUSADER);
 	_alertActive = active;
 
+	if (GAME_IS_REMORSE) {
+		setAlertActiveRemorse(active);
+	} else {
+		setAlertActiveRegret(active);
+	}
+}
+
+void World::setAlertActiveRemorse(bool active)
+{
 	// Replicate the behavior of the original game.
 	LOOPSCRIPT(script,
 		LS_OR(
@@ -437,6 +446,7 @@ void World::setAlertActive(bool active)
 	for (uint32 i = 0; i < itemlist.getSize(); i++) {
 		uint16 itemid = itemlist.getuint16(i);
 		Item *item = getItem(itemid);
+		assert(item);
 		int frame = item->getFrame();
 		if (_alertActive) {
 			if (item->getShape() == 0x477) {
@@ -453,6 +463,45 @@ void World::setAlertActive(bool active)
 				item->setFrame(0);
 			}
 		}
+	}
+}
+
+void World::setAlertActiveRegret(bool active)
+{
+	setAlertActiveRemorse(active);
+
+	LOOPSCRIPT(offscript, LS_OR(LS_SHAPE_EQUAL(0x660), LS_SHAPE_EQUAL(0x661)));
+	LOOPSCRIPT(onscript, LS_OR(LS_SHAPE_EQUAL(0x662), LS_SHAPE_EQUAL(0x663)));
+
+	const uint8 *script = active ? onscript : offscript;
+	// note: size should be the same, but just to be explicit.
+	int scriptlen = active ? sizeof(onscript) : sizeof(offscript);
+
+	UCList itemlist(2);
+	_world->getCurrentMap()->areaSearch(&itemlist, script, scriptlen,
+										nullptr, 0xffff, false);
+	for (uint32 i = 0; i < itemlist.getSize(); i++) {
+		uint16 itemid = itemlist.getuint16(i);
+		Item *item = getItem(itemid);
+		assert(item);
+		switch (item->getShape()) {
+			case 0x660:
+				item->setShape(0x663);
+				break;
+			case 0x661:
+				item->setShape(0x662);
+				break;
+			case 0x662:
+				item->setShape(0x661);
+				break;
+			case 0x663:
+				item->setShape(0x660);
+				break;
+			default:
+				warning("unexpected shape %d returned from search", item->getShape());
+				break;
+		}
+		item->setFrame(0);
 	}
 }
 

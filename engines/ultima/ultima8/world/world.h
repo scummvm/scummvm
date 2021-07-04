@@ -173,6 +173,10 @@ public:
 	INTRINSIC(I_resetVargasShield); // for Crusader: No Remorse
 
 private:
+
+	void setAlertActiveRemorse(bool active);
+	void setAlertActiveRegret(bool active);
+
 	static World *_world;
 
 	Std::vector<Map *> _maps;
