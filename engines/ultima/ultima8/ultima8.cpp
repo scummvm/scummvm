@@ -241,6 +241,8 @@ bool Ultima8Engine::startup() {
 		ProcessLoader<U8MusicProcess>::load);
 	_kernel->addProcessLoader("RemorseMusicProcess", // name was changed, keep this for backward-compatibility.
 		ProcessLoader<CruMusicProcess>::load);
+	_kernel->addProcessLoader("CruMusicProcess",
+		ProcessLoader<CruMusicProcess>::load);
 	_kernel->addProcessLoader("AudioProcess",
 		ProcessLoader<AudioProcess>::load);
 	_kernel->addProcessLoader("EggHatcherProcess",
