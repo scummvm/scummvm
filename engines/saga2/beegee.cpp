@@ -30,15 +30,10 @@
 #include "saga2/beegee.h"
 #include "saga2/player.h"
 
-#include "saga2/audtweak.h"
-
 namespace Saga2 {
 
 #define AUXTHEMES 2
 #define USEAUXTHEME 0xe0
-/* ===================================================================== *
-   Types
- * ===================================================================== */
 
 struct auxAudioTheme {
 	bool active;
@@ -55,9 +50,71 @@ void addAuxTheme(Location loc, soundSegment lid);
 void killAuxTheme(soundSegment lid);
 void killAllAuxThemes(void);
 
-/* ===================================================================== *
-   Constants
- * ===================================================================== */
+
+enum audioTerrains {
+	kAudioTerrainForest      = 1,
+	kAudioTerrainSurf,
+	kAudioTerrainCity,
+	kAudioTerrainCavern,
+	kAudioTerrainColdWind,
+	kAudioTerrainJungle,
+	kAudioTerrainLava,
+	kAudioTerrainRiver,
+	kAudioTerrainFire,
+
+	kAudioTerrainLIMIT
+};
+
+struct IntermittentAudioRecord {
+	int noSoundOdds;
+	int soundOdds[4];
+};
+
+const IntermittentAudioRecord intermittentAudioRecords[kAudioTerrainLIMIT] = {
+	//
+	// none  1   2   3   4
+	//
+	{  0, {  0,  0,  0,  0 } },  // no record
+	{  1, {  1,  0,  0,  0 } },  // Forest
+	{  0, {  0,  0,  0,  0 } },  // Surf
+	{  0, {  0,  0,  0,  0 } },  // City
+	{  0, {  0,  0,  0,  0 } },  // Cavern
+	{  0, {  0,  0,  0,  0 } },  // ColdWind
+	{  0, {  0,  0,  0,  0 } },  // Jungle
+	{  0, {  0,  0,  0,  0 } },  // Lava
+	{  0, {  0,  0,  0,  0 } },  // River
+	{  0, {  0,  0,  0,  0 } }   // Fire
+};
+
+
+// Factional music mapping
+//   Built in factions
+//     0 = suspended
+//     1 = daytime 1
+//     2 = daytime 2
+//     3 = underground
+//     4 = nighttime
+//     5 = aggressive
+//   Faction based
+//     6 = faction 0
+//     7 = faction 1
+//       etc
+
+inline int8 musicMapping(int16 musicChoice) {
+	if (musicChoice < 1) {
+		return 0;
+	} else if (musicChoice < 6) {
+		return musicChoice;
+	} else if (musicChoice == 6) {
+		return 6;
+	} else if (musicChoice > 11 && musicChoice < 14) {
+		return 7;
+	} else if (musicChoice > 8 && musicChoice < 12) {
+		return 8;
+	} else {
+		return 6;
+	}
+}
 
 const static StaticTilePoint AudibilityVector = { 1, 1, 0 };
 
