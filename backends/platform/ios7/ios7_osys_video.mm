@@ -382,15 +382,14 @@ void OSystem_iOS7::clearOverlay() {
 
 void OSystem_iOS7::grabOverlay(Graphics::Surface &surface) {
 	//printf("grabOverlay()\n");
-	int h = _videoContext->overlayHeight;
+	assert(surface.w >= _videoContext->overlayWidth);
+	assert(surface.h >= _videoContext->overlayHeight);
+	assert(surface.format.bytesPerPixel == sizeof(uint16));
 
-	byte *dst = (byte *)surface.getPixels();
 	const byte *src = (const byte *)_videoContext->overlayTexture.getPixels();
-	do {
-		memcpy(dst, src, _videoContext->overlayWidth * sizeof(uint16));
-		src += _videoContext->overlayTexture.pitch;
-		dst += surface.pitch;
-	} while (--h);
+	byte *dst = (byte *)surface.getPixels();
+	Graphics::copyBlit(dst, src, surface.pitch,  _videoContext->overlayTexture.pitch,
+		_videoContext->overlayWidth, _videoContext->overlayHeight, sizeof(uint16));
 }
 
 void OSystem_iOS7::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {

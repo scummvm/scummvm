@@ -411,6 +411,9 @@ void OSystem_DS::clearOverlay() {
 }
 
 void OSystem_DS::grabOverlay(Graphics::Surface &surface) {
+	assert(surface.w >= _overlay.w);
+	assert(surface.h >= _overlay.h);
+	assert(surface.format.bytesPerPixel == _overlay.format.bytesPerPixel);
 	_overlay.grab((byte *)surface.getPixels(), surface.pitch);
 }
 

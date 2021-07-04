@@ -32,6 +32,7 @@
 #include "backends/fs/n64/n64-fs-factory.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
+#include "graphics/conversion.h"
 
 typedef unsigned long long uint64;
 
@@ -666,15 +667,14 @@ void OSystem_N64::clearOverlay() {
 }
 
 void OSystem_N64::grabOverlay(Graphics::Surface &surface) {
-	int h = _overlayHeight;
-	uint16 *src = _overlayBuffer;
-	byte *dst = (byte *)surface.getPixels();
+	assert(surface.w >= _overlayWidth);
+	assert(surface.h >= _overlayHeight);
+	assert(surface.format.bytesPerPixel == sizeof(uint16));
 
-	do {
-		memcpy(dst, src, _overlayWidth * sizeof(uint16));
-		src += _overlayWidth;
-		dst += surface.pitch;
-	} while (--h);
+	byte *src = (byte *)_overlayBuffer;
+	byte *dst = (byte *)surface.getPixels();
+	Graphics::copyBlit(dst, src, surface.pitch, _overlayWidth * sizeof(uint16),
+		_overlayWidth, _overlayHeight, sizeof(uint16));
 }
 
 void OSystem_N64::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {

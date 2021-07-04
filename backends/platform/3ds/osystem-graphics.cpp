@@ -26,6 +26,7 @@
 #include "backends/platform/3ds/options-dialog.h"
 #include "backends/platform/3ds/config.h"
 #include "common/rect.h"
+#include "graphics/conversion.h"
 #include "graphics/fontman.h"
 #include "gui/gui-manager.h"
 
@@ -627,12 +628,14 @@ void OSystem_3DS::clearOverlay() {
 }
 
 void OSystem_3DS::grabOverlay(Graphics::Surface &surface) {
-	byte *dst = (byte *)surface.getPixels();
+	assert(surface.w >= getOverlayWidth());
+	assert(surface.h >= getOverlayHeight());
+	assert(surface.format.bytesPerPixel == _overlay.format.bytesPerPixel);
 
-	for (int y = 0; y < getOverlayHeight(); ++y) {
-		memcpy(dst, _overlay.getBasePtr(0, y), getOverlayWidth() * _overlay.format.bytesPerPixel);
-		dst += surface.pitch;
-	}
+	byte *src = (byte *)_overlay.getPixels();
+	byte *dst = (byte *)surface.getPixels();
+	Graphics::copyBlit(dst, src, surface.pitch, _overlay.pitch,
+		getOverlayWidth(), getOverlayHeight(), _overlay.format.bytesPerPixel);
 }
 
 void OSystem_3DS::copyRectToOverlay(const void *buf, int pitch, int x,
