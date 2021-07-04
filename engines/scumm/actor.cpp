@@ -151,6 +151,8 @@ void Actor::initActor(int mode) {
 		_flip = false;
 		_speedx = 8;
 		_speedy = 2;
+		_v3stepX = 0;
+		_v3stepThreshold = 0;
 		_frame = 0;
 		_walkbox = 0;
 		_animProgress = 0;
@@ -483,42 +485,52 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 
 	diffX = next.x - _pos.x;
 	diffY = next.y - _pos.y;
-	deltaYFactor = _speedy << 16;
 
-	// These two lines fix bug #1052 (INDY3: Hitler facing wrong directions in the Berlin scene).
-	// I can't see anything like this in the original SCUMM1/2 code, so I limit this to SCUMM3.
-	if (_vm->_game.version == 3 && !(_moving & MF_LAST_LEG) && (int)_speedx > ABS(diffX) && (int)_speedy > ABS(diffY))
-		return 0;
+	if (_vm->_game.version == 3) {
+		// These two lines fix bug #1052 (INDY3: Hitler facing wrong directions in the Berlin scene).
+		// I can't see anything like this in the original SCUMM1/2 code, so I limit this to SCUMM3.
+		if (!(_moving & MF_LAST_LEG) && (int)_speedx > ABS(diffX) && (int)_speedy > ABS(diffY))
+			return 0;
 
-	if (diffY < 0)
-		deltaYFactor = -deltaYFactor;
-
-	deltaXFactor = deltaYFactor * diffX;
-	if (diffY != 0) {
-		deltaXFactor /= diffY;
+		_v3stepX = ((ABS(diffY) / (int)_speedy) >> 1) > (ABS(diffX) / (int)_speedx) ? _speedy + 1 : _speedx;
+		_v3stepThreshold = MAX(ABS(diffY) / _speedy, ABS(diffX) / _v3stepX);
+		deltaXFactor = diffX < 0 ? -_v3stepX : _v3stepX;
+		deltaYFactor = diffY < 0 ? -_speedy : _speedy;
+		_walkdata.xfrac = _walkdata.v3XAdd = diffX / deltaXFactor;
+		_walkdata.yfrac = _walkdata.v3YAdd = diffY / deltaYFactor;
 	} else {
-		deltaYFactor = 0;
-	}
+		deltaYFactor = _speedy << 16;
+		if (diffY < 0)
+			deltaYFactor = -deltaYFactor;
 
-	if ((uint) ABS(deltaXFactor) > (_speedx << 16))	{
-		deltaXFactor = _speedx << 16;
-		if (diffX < 0)
-			deltaXFactor = -deltaXFactor;
-
-		deltaYFactor = deltaXFactor * diffY;
-		if (diffX != 0) {
-			deltaYFactor /= diffX;
+		deltaXFactor = deltaYFactor * diffX;
+		if (diffY != 0) {
+			deltaXFactor /= diffY;
 		} else {
-			deltaXFactor = 0;
+			deltaYFactor = 0;
 		}
+
+		if ((uint)ABS(deltaXFactor) > (_speedx << 16)) {
+			deltaXFactor = _speedx << 16;
+			if (diffX < 0)
+				deltaXFactor = -deltaXFactor;
+
+			deltaYFactor = deltaXFactor * diffY;
+			if (diffX != 0) {
+				deltaYFactor /= diffX;
+			} else {
+				deltaXFactor = 0;
+			}
+		}
+
+		_walkdata.xfrac = 0;
+		_walkdata.yfrac = 0;
 	}
 
 	_walkdata.cur = _pos;
 	_walkdata.next = next;
 	_walkdata.deltaXFactor = deltaXFactor;
 	_walkdata.deltaYFactor = deltaYFactor;
-	_walkdata.xfrac = 0;
-	_walkdata.yfrac = 0;
 
 	if (_vm->_game.version <= 3)
 		// The x/y distance ratio which determines whether to face up/down instead of left/right is different for SCUMM1/2 and SCUMM3.
@@ -548,7 +560,7 @@ int Actor::actorWalkStep() {
 	}
 
 	if (_vm->_game.version == 3) {
-		if (_walkdata.next.x - (int)_speedx <= _pos.x && _walkdata.next.x + (int)_speedx >= _pos.x)
+		if (_walkdata.next.x - (int)_v3stepX <= _pos.x && _walkdata.next.x + (int)_v3stepX >= _pos.x)
 			_pos.x = _walkdata.next.x;
 		if (_walkdata.next.y - (int)_speedy <= _pos.y && _walkdata.next.y + (int)_speedy >= _pos.y)
 			_pos.y = _walkdata.next.y;
@@ -577,6 +589,15 @@ int Actor::actorWalkStep() {
 				_pos.y += 1;
 			else
 				_pos.y -= 1;
+		}
+	} else if (_vm->_game.version == 3) {
+		if ((_walkdata.xfrac += _walkdata.v3XAdd) > _v3stepThreshold) {
+			_pos.x += _walkdata.deltaXFactor;
+			_walkdata.xfrac -= _v3stepThreshold;
+		}
+		if ((_walkdata.yfrac += _walkdata.v3YAdd) >= _v3stepThreshold) {
+			_pos.y += _walkdata.deltaYFactor;
+			_walkdata.yfrac -= _v3stepThreshold;
 		}
 	} else {
 		tmpX = (_pos.x * (1 << 16)) + _walkdata.xfrac + (_walkdata.deltaXFactor / 256) * _scalex;

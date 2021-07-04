@@ -151,6 +151,7 @@ protected:
 		Common::Point point3;
 		int32 deltaXFactor, deltaYFactor;
 		uint16 xfrac, yfrac;
+		uint16 v3XAdd, v3YAdd;
 
 		void reset() {
 			dest.x = dest.y = 0;
@@ -164,6 +165,8 @@ protected:
 			deltaYFactor = 0;
 			xfrac = 0;
 			yfrac = 0;
+			v3XAdd = 0;
+			v3YAdd = 0;
 		}
 	};
 
@@ -173,6 +176,7 @@ protected:
 	uint16 _facing;
 	uint16 _targetFacing;
 	uint _speedx, _speedy;
+	uint _v3stepX, _v3stepThreshold;
 	byte _animProgress, _animSpeed;
 	bool _costumeNeedsInit;
 	ActorWalkData _walkdata;
