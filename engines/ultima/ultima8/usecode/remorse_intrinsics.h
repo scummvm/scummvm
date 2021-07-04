@@ -388,6 +388,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Item::I_getDirToItem,
 	Actor::I_turnToward,
 	MovieGump::I_playMovieCutsceneAlt,
+	// 0x10
 	Item::I_getQLo,
 	Actor::I_getMap,
 	MusicProcess::I_playMusic,
@@ -404,10 +405,11 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Actor::I_getLastAnimSet,
 	Item::I_fireWeapon,
 	Item::I_create,
+	// 0x20
 	Item::I_popToCoords,
 	Actor::I_setDead,
 	Item::I_push,
-	0, // TODO: Intrinsic023 10a8:26a8,
+	Item::I_getEtherealTop,
 	Item::I_setShape,
 	Item::I_touch,
 	Item::I_getQHi,
@@ -420,6 +422,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Container::I_destroyContents,
 	Item::I_getQLo,
 	Item::I_inFastArea,
+	// 0x30
 	Item::I_setQHi,
 	Item::I_legalMoveToPoint,
 	CurrentMap::I_canExistAtPoint,
@@ -436,6 +439,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	AudioProcess::I_isSFXPlayingForObject,
 	Item::I_setQLo,
 	Item::I_getFamily,
+	// 0x40
 	Item::I_fall,
 	Egg::I_getEggId,
 	CameraProcess::I_moveTo,
@@ -452,6 +456,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Item::I_getQHi,
 	Item::I_isOn,
 	Item::I_getQHi,
+	// 0x50
 	Item::I_isOn,
 	Item::I_getQHi,
 	Actor::I_getCurrentActivityNo,
@@ -468,6 +473,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Item::I_legalCreateAtPoint,
 	Item::I_getPoint,
 	CruStatusGump::I_hideStatusGump,
+	// 0x60
 	MovieGump::I_playMovieOverlay,
 	CruStatusGump::I_showStatusGump,
 	Actor::I_setDead,
@@ -484,6 +490,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	UCMachine::I_true,
 	Kernel::I_resetRef,
 	Item::I_getNpcNum,
+	// 0x70
 	Item::I_andStatus,
 	Ultima8Engine::I_getUnkCrusaderFlag,
 	Ultima8Engine::I_setUnkCrusaderFlag,
@@ -500,6 +507,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Actor::I_getHp,
 	Actor::I_setActivity,
 	Item::I_getQuality,
+	// 0x80
 	Item::I_setQuality,
 	Item::I_use,
 	MainActor::I_getMaxEnergy,
@@ -516,6 +524,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Item::I_setBroken,
 	Item::I_hurl,
 	Item::I_getNpcNum,
+	// 0x90
 	PaletteFaderProcess::I_jumpToAllBlack,
 	MusicProcess::I_stopMusic,
 	0,
@@ -532,6 +541,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	PaletteFaderProcess::I_fadeFromBlack,
 	PaletteFaderProcess::I_fadeToBlack,
 	PaletteFaderProcess::I_fadeToBlack,
+	// 0xA0
 	PaletteFaderProcess::I_fadeToGivenColor,
 	Actor::I_setDead,
 	Item::I_getQLo,
@@ -548,6 +558,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Item::I_getFamilyOfType,
 	Item::I_getNpcNum,
 	Item::I_getQLo,
+	// 0xB0
 	Item::I_getQHi,
 	Item::I_unequip,
 	Item::I_avatarStoleSomething,
@@ -564,6 +575,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Item::I_isOn,
 	Item::I_hurl,
 	Item::I_getQHi,
+	// 0xC0
 	Item::I_andStatus,
 	Item::I_hurl,
 	Item::I_andStatus,
@@ -580,6 +592,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Actor::I_isInCombat,
 	Actor::I_setActivity,
 	Item::I_setQAndCombine,
+	// 0xD0
 	Item::I_use,
 	AudioProcess::I_stopAllSFX,
 	MovieGump::I_playMovieCutscene,
@@ -596,6 +609,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Actor::I_getLastActivityNo,
 	Actor::I_setCombatTactic,
 	Actor::I_getEquip,
+	// 0xE0
 	Actor::I_setEquip,
 	Actor::I_getDefaultActivity0,
 	Actor::I_getDefaultActivity1,
@@ -612,6 +626,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Item::I_popToContainer,
 	BatteryChargerProcess::I_create,
 	Kernel::I_getNumProcesses,
+	// 0xF0
 	Item::I_getQHi,
 	Item::I_isOn,
 	Actor::I_setActivity,
@@ -628,10 +643,11 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	MainActor::I_hasKeycard,
 	ComputerGump::I_readComputer,
 	UCMachine::I_numToStr,
+	// 0x100
 	Item::I_getNpcNum,
 	Item::I_andStatus,
 	Item::I_getNpcNum,
-	Ultima8Engine::I_moveKeyDownRecently,
+	Item::I_isCrusTypeNPC,
 	Item::I_andStatus,
 	Item::I_getNpcNum,
 	Item::I_andStatus,
@@ -681,7 +697,6 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Actor::I_getLastAnimSet,
 	Item::I_setQuality,
 	0 // Unused
-
 };
 
 
@@ -966,7 +981,7 @@ Intrinsic RemorseEsIntrinsics[] = {
 	Item::I_getNpcNum,
 	Item::I_andStatus,
 	Item::I_getNpcNum,
-	Ultima8Engine::I_moveKeyDownRecently,
+	Item::I_isCrusTypeNPC,
 	Item::I_andStatus,
 	Item::I_getNpcNum,
 	Item::I_andStatus,
