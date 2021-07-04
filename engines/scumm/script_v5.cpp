@@ -1060,15 +1060,9 @@ void ScummEngine_v5::o5_getActorY() {
 	int a;
 	getResultPos();
 
-	if ((_game.id == GID_INDY3) && !(_game.platform == Common::kPlatformMacintosh)) {
+	if ((_game.id == GID_INDY3) && !(_game.platform == Common::kPlatformMacintosh))
 		a = getVarOrDirectByte(PARAM_1);
-
-		// WORKAROUND bug #560 (can't get into Zeppelin)
-		if (_roomResource == 36) {
-			setResult(getObjY(a) - 1);
-			return;
-		}
-	} else
+	else
 		a = getVarOrDirectWord(PARAM_1);
 
 	setResult(getObjY(a));
