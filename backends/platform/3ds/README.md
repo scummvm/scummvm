@@ -137,7 +137,8 @@ game engines will eventually be listed here.
 4.1.1) Compiling third-party libraries
 --------------------------------------
 It is strongly recommended that you use devkitPro's pacman in order to get the most recent
-portlibs for your build.
+portlibs for your build. Instructions for accessing these binaries can be found here:
+https://devkitpro.org/wiki/devkitPro_pacman
 
 The following libraries can be downloaded with pacman:
 
@@ -152,6 +153,7 @@ The following libraries can be downloaded with pacman:
 |  tremor       |  3ds-libvorbisidec    |
 |  flac         |  3ds-flac             |
 |  curl         |  3ds-curl             |
+|  libtheora    |  3ds-libtheora        |
 
 At the moment of writing, the version of `freetype2` packaged by devkitPro has an issue
 where it allocates too much data on the stack when ScummVM loads GUI themes.
@@ -164,10 +166,10 @@ be found through pacman.
 
 The following pacman packages are also recommended:
  - `3ds-dev`
- - `devkitpro-pkgbuild-helpers`
+ - `dkp-toolchain-vars`
 
-Once you have the `devkitpro-pkgbuild-helpers` package, you should be able to find
-the following scripts in your `/opt/devkitpro` folder:
+Once you have the `dkp-toolchain-vars` package, you should be able to find the following
+scripts in your `/opt/devkitpro` folder:
  - `devkitarm.sh`
  - `3dsvars.sh`
 
@@ -192,24 +194,31 @@ Most libraries used can be compiled with same commands and configuration flags.
 
 4.1.2) Manually setting up the environment
 ------------------------------------------
-In case you don't have the helpers package downloaded, you can use the following to set-up
-your environment variables.
+In case you don't have the `dkp-toolchain-vars` package downloaded, you can use the
+following to set-up your environment variables.
 
 It is assumed that you have these variables already set up. If not, then do so:
- - DEVKITPRO    Your root devkitPro directory
- - DEVKITARM    Your root devkitARM directory (probably same as $DEVKITPRO/devkitARM)
- - CTRULIB      Your root libctru directory (probably same as $DEVKITPRO/libctru)
+ - DEVKITPRO	Your root devkitPro directory (usually /opt/devkitpro)
+ - DEVKITARM	Your root devkitARM directory (probably same as $DEVKITPRO/devkitARM)
+ - CTRULIB		Your root libctru directory (probably same as $DEVKITPRO/libctru)
 
 In the source directory of the library:
 ```
  $ export PORTLIBS=$DEVKITPRO/portlibs/3ds
- $ export PATH=$DEVKITARM/bin:$PATH
+ $ export PATH=$DEVKITPRO/tools/bin:$PORTLIBS/bin:$DEVKITARM/bin:$PATH
  $ export PKG_CONFIG_PATH=$PORTLIBS/lib/pkgconfig
  $ export PKG_CONFIG_LIBDIR=$PORTLIBS/lib/pkgconfig
  $ export CFLAGS="-g -march=armv6k -mtune=mpcore -mfloat-abi=hard -O2
                     -mword-relocations -ffunction-sections -fdata-sections"
- $ export CPPFLAGS="-I$PORTLIBS/include -I$CTRULIB/include"
- $ export LDFLAGS="-L$PORTLIBS/lib"
+ $ export CXXFLAGS="$CFLAGS"
+ $ export CPPFLAGS="-D_3DS -D__3DS__ -I$PORTLIBS/include -I$CTRULIB/include"
+ $ export LDFLAGS="-L$PORTLIBS/lib -L$CTRULIB/lib"
+ $ export TOOL_PREFIX=arm-none-eabi-
+ $ export CC=${TOOL_PREFIX}gcc
+ $ export CXX=${TOOL_PREFIX}g++
+ $ export AR=${TOOL_PREFIX}gcc-ar
+ $ export RANLIB=${TOOL_PREFIX}gcc-ranlib
+ $ export LIBS="-lctru"
  ```
 
 4.2) Compiling ScummVM
