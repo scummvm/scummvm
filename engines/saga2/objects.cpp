@@ -136,7 +136,7 @@ bool                massAndBulkCount;
  * ===================================================================== */
 
 extern BackWindow   *mainWindow;
-extern Point16      fineScroll;             // current scroll pos
+extern StaticPoint16 fineScroll;             // current scroll pos
 extern hResContext  *imageRes;              // image resource handle
 extern PlayerActor  playerList[];   //  Master list of all PlayerActors
 extern SpellStuff   spellBook[];

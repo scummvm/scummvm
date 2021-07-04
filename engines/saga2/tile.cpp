@@ -194,9 +194,7 @@ byte                   **stateArray;        //  Array of active item instance
 CyclePtr                cycleList;          // list of tile cycling info
 
 //  Platform caching management
-const int           platformCacheSize = 256;
-
-PlatformCacheEntry  platformCache[platformCacheSize];
+PlatformCacheEntry  *platformCache;
 
 /* ===================================================================== *
    View state
@@ -204,12 +202,11 @@ PlatformCacheEntry  platformCache[platformCacheSize];
 
 int16               defaultScrollSpeed = slowScrollSpeed;
 
-Point32             tileScroll,             // current tile scroll pos
-//					backScroll,              // quantized scroll pos
-                    targetScroll;           // where scroll going to
-Point16             fineScroll;
+static StaticPoint32 tileScroll = {0, 0},             // current tile scroll pos
+                     targetScroll = {0, 0};           // where scroll going to
+StaticPoint16 fineScroll = {0, 0};
 
-TilePoint           viewCenter;             // coordinates of view on map
+StaticTilePoint viewCenter = {0, 0, 0};             // coordinates of view on map
 
 //  These two variables define which sectors overlap the view rect.
 
@@ -1588,6 +1585,8 @@ void cleanupMaps(void) {
 
 	delete[] ripTableList;
 
+	delete[] platformCache;
+
 	//  Iterate through each map, dumping the data
 	for (i = 0; i < worldCount; i++) {
 		WorldMapData    *mapData = &mapList[i];
@@ -1789,7 +1788,9 @@ void loadAutoMap(SaveFileReader &saveGame) {
 //	Initialize the platform cache
 
 void initPlatformCache(void) {
-	for (int i = 0; i < platformCacheSize; i++) {
+	platformCache = new PlatformCacheEntry[PlatformCacheEntry::kPlatformCacheSize];
+
+	for (int i = 0; i < PlatformCacheEntry::kPlatformCacheSize; i++) {
 		PlatformCacheEntry  *pce = &platformCache[i];
 
 		//  Fill up the LRU with empty platforms
@@ -2254,7 +2255,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	} else if (plIndex & cacheFlag) {
 		plIndex &= ~cacheFlag;
 
-		assert(plIndex < platformCacheSize);
+		assert(plIndex < PlatformCacheEntry::kPlatformCacheSize);
 
 			//	Get the address of the pce from the cache
 		pce = &platformCache[plIndex];
@@ -2282,7 +2283,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		pce = &platformCache[cacheIndex];
 
 		//  Compute the layer of this entry in the cache
-		assert(cacheIndex < platformCacheSize);
+		assert(cacheIndex < PlatformCacheEntry::kPlatformCacheSize);
 		assert(cacheIndex >= 0);
 
 		if (pce->metaID != NoMetaTile) {
@@ -4504,7 +4505,7 @@ void updateMainDisplay(void) {
 
 	WorldMapData    *curMap = &mapList[currentMapNum];
 
-	Point32         scrollCenter,
+	StaticPoint32   scrollCenter,
 	                scrollDelta;
 	int32           scrollSpeed = defaultScrollSpeed,
 	                scrollDistance;
@@ -4567,7 +4568,9 @@ void updateMainDisplay(void) {
 	//  Compute the center of the screen in (u,v) coords.
 	scrollCenter.x = tileScroll.x + kTileRectWidth  / 2;
 	scrollCenter.y = tileScroll.y + kTileRectHeight / 2;
-	viewCenter = XYToUV(scrollCenter);
+	viewCenter.set(XYToUV(scrollCenter).u,
+	               XYToUV(scrollCenter).v,
+	               0);
 
 	//  Compute the largest U/V rectangle which completely
 	//  encloses the view area, and convert to sector coords.

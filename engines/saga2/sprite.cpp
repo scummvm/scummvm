@@ -56,7 +56,6 @@ extern void drawTileMask(
  * ===================================================================== */
 
 extern gPixelMap    tileDrawMap;
-extern Point16      fineScroll;             // current scroll pos
 
 //  Color map ranges
 extern uint8        *ColorMapRanges;

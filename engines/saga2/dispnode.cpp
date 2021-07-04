@@ -55,7 +55,7 @@ bool                            centerActorIndicatorEnabled;
 extern int16        currentMapNum;
 extern WorldMapData *mapList;
 
-extern Point16      fineScroll;
+extern StaticPoint16 fineScroll;
 extern gPort        backPort;
 
 extern SpriteSet    *objectSprites,        // object sprites

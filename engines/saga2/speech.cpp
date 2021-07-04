@@ -50,9 +50,9 @@ struct TextSpan {
 //-----------------------------------------------------------------------
 //	externs
 
-extern  Point16     fineScroll;
+extern  StaticPoint16 fineScroll;
 int                 kludgeHeight = 15;
-extern  TilePoint   viewCenter;             // coordinates of view on map
+extern  StaticTilePoint viewCenter;         // coordinates of view on map
 
 //-----------------------------------------------------------------------
 //	constants

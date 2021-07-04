@@ -34,7 +34,6 @@ namespace Saga2 {
 ModalWindow *mWinPtr;
 
 extern gPixelMap    tileDrawMap;
-extern Point16      fineScroll;
 extern gToolBase    G_BASE;
 
 APPFUNC(cmdModalWindow);

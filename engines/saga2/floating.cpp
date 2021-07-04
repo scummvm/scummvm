@@ -58,7 +58,7 @@ extern gToolBase    G_BASE;
 //  need to know about the scrolling tile area.
 
 extern gPixelMap    tileDrawMap;
-extern Point16      fineScroll;
+extern StaticPoint16 fineScroll;
 extern gFont        *mainFont;
 extern bool         allPlayerActorsDead;
 

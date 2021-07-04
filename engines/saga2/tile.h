@@ -751,6 +751,10 @@ struct PlatformCacheEntry {
 	                layerNum;               // index of this plat in mt.
 	MetaTileID      metaID;                 // pointer to parent metatile
 	Platform        pl;                     // actual platform data
+
+	enum {
+		kPlatformCacheSize = 256
+	};
 };
 
 /* ======================================================================= *
@@ -962,7 +966,7 @@ public:
    Exports
  * ===================================================================== */
 
-extern TilePoint    viewCenter;             // coordinates of view on map
+extern StaticTilePoint viewCenter;             // coordinates of view on map
 
 //  These two variables define which sectors overlap the view rect.
 
