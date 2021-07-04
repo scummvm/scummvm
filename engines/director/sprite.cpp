@@ -288,7 +288,7 @@ void Sprite::setCast(CastMemberID memberID) {
 		Common::Rect dims = _cast->getInitialRect();
 		// strange logic here, need to be fixed
 		if (_cast->_type == kCastBitmap) {
-			if (_width > dims.width() || _height > dims.height()) {
+			if (_width >= dims.width() || _height >= dims.height()) {
 				_width = dims.width();
 				_height = dims.height();
 			}
