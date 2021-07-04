@@ -173,7 +173,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Dutch, Version 1.0
 	{
 		"pokus",
-		0,
+		"v1.0",
 		AD_ENTRY1s("HPP.orb", "b769855e2fc94b9180763211c349a9ed", 509498007),
 		Common::NL_NLD,
 		Common::kPlatformWindows,
@@ -184,7 +184,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Dutch, Version 2.0
 	{
 		"pokus",
-		0,
+		"v2.0",
 		AD_ENTRY1s("HPP.orb", "993b0491d507efee0010e4f1c000ab8b", 509498617),
 		Common::NL_NLD,
 		Common::kPlatformWindows,
