@@ -766,6 +766,10 @@ struct RipTable {
 	uint16      ripID;
 	int16       zTable[kPlatformWidth][kPlatformWidth];
 
+	enum {
+		kRipTableSize = 25
+	};
+
 	//  Constructor
 	RipTable(void) : metaID(NoMetaTile) {}
 

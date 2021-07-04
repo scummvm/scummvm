@@ -67,6 +67,10 @@ typedef int16   PlayerActorID;
    MetaTileID struct
  * ===================================================================== */
 
+struct StaticMetaTileID {
+	int16 map, index;
+};
+
 struct MetaTileID {
 	int16           map;            //  map number
 	int16           index;          //  index into metatile array
@@ -79,6 +83,11 @@ struct MetaTileID {
 
 	//  Constructor
 	MetaTileID(int16 m, int16 i) : map(m), index(i) {}
+
+	MetaTileID(StaticMetaTileID mt) {
+		map = mt.map;
+		index = mt.index;
+	}
 
 	MetaTileID operator = (const MetaTileID &id) {
 		map = id.map;
@@ -96,7 +105,7 @@ struct MetaTileID {
 };
 
 //  ID of NULL meta tile
-extern const MetaTileID     NoMetaTile;
+extern const StaticMetaTileID NoMetaTile;
 
 /* ===================================================================== *
    ActiveItemID struct
@@ -107,6 +116,10 @@ const int   activeItemMapMask = 0xE000;
 const int   activeItemMapShift = 13;
 
 const int16 activeItemIndexNullID = 0x1FFF;
+
+struct StaticActiveItemID {
+	int16 val;
+};
 
 #include "common/pack-start.h"
 struct ActiveItemID {
@@ -125,13 +138,13 @@ struct ActiveItemID {
 	ActiveItemID(int16 idVal) : val(idVal) {}
 
 	//  Constructor
-#if DEBUG
-	ActiveItemID(int16 m, int16 i);
-#else
 	ActiveItemID(int16 m, int16 i) :
 		val((m << activeItemMapShift) | (i & activeItemIndexMask)) {
 	}
-#endif
+
+	ActiveItemID(StaticActiveItemID a) {
+		val = a.val;
+	}
 
 	ActiveItemID operator = (const ActiveItemID &id) {
 		val = id.val;
@@ -141,6 +154,10 @@ struct ActiveItemID {
 	ActiveItemID operator = (int16 idVal) {
 		val = idVal;
 		return *this;
+	}
+
+	static int16 getVal(int16 m, int16 i) {
+		return (m << activeItemMapShift) | (i & activeItemIndexMask);
 	}
 
 	bool operator == (const ActiveItemID &id) const {
@@ -155,27 +172,19 @@ struct ActiveItemID {
 		return val;
 	}
 
-#if DEBUG
-	void setMapNum(int16 m);
-#else
 	void setMapNum(int16 m) {
 		val &= ~activeItemMapMask;
 		val |= (m << activeItemMapShift);
 	}
-#endif
 
 	int16 getMapNum(void) {
 		return (uint16)val >> activeItemMapShift;
 	}
 
-#if DEBUG
-	void setIndexNum(int16 i);
-#else
 	void setIndexNum(int16 i) {
 		val &= ~activeItemIndexMask;
 		val |= i & activeItemIndexMask;
 	}
-#endif
 
 	int16 getIndexNum(void) {
 		return val & activeItemIndexMask;
@@ -184,7 +193,7 @@ struct ActiveItemID {
 #include "common/pack-end.h"
 
 //  ID of NULL active item
-extern const ActiveItemID   NoActiveItem;
+extern const StaticActiveItemID NoActiveItem;
 
 /* ===================================================================== *
    Task's and TaskStacks

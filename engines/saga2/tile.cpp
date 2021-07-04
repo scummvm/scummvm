@@ -81,8 +81,8 @@ const int           slowScrollSpeed = 6,
 
 const StaticTilePoint Nowhere = {(int16)minint16, (int16)minint16, (int16)minint16};
 
-const MetaTileID    NoMetaTile(nullID, nullID);
-const ActiveItemID  NoActiveItem(0, activeItemIndexNullID);
+const StaticMetaTileID NoMetaTile = {nullID, nullID};
+const StaticActiveItemID  NoActiveItem = {ActiveItemID::getVal(0, activeItemIndexNullID)};
 
 enum SurfaceType {
 	surfaceHoriz,               //  Level surface
@@ -184,7 +184,7 @@ uint16                  rippedRoofID;
 
 static StaticTilePoint  ripTableCoords = Nowhere;
 
-static RipTable         ripTableList[25];
+static RipTable         *ripTableList;
 
 WorldMapData            *mapList;           //  master map data array
 
@@ -233,30 +233,6 @@ BankBits LoadedBanks;                // what banks are loaded?
 
 /* ===================================================================== *
    ActiveItemID member functions
- * ===================================================================== */
-
-#if DEBUG
-ActiveItemID::ActiveItemID(int16 m, int16 i) :
-	val((m << activeItemMapShift) | (i & activeItemIndexMask)) {
-	assert(m < 0x8);
-	assert((uint16)i <= activeItemIndexNullID);
-}
-
-void ActiveItemID::setMapNum(int16 m) {
-	assert(m < 0x8);
-	val &= ~activeItemMapMask;
-	val |= (m << activeItemMapShift);
-}
-
-void ActiveItemID::setIndexNum(int16 i) {
-	assert((uint16)i <= activeItemIndexNullID);
-	val &= ~activeItemIndexMask;
-	val |= i & activeItemIndexMask;
-}
-#endif
-
-/* ===================================================================== *
-   Finds the address of a tile associated with a TileID
  * ===================================================================== */
 
 //-----------------------------------------------------------------------
@@ -1591,6 +1567,13 @@ void initMaps(void) {
 		mapData->buildInstanceHash();
 	}
 
+	ripTableList = new RipTable[RipTable::kRipTableSize];
+	for (int k = 0; k < RipTable::kRipTableSize; ++k) {
+		ripTableList[k].metaID = NoMetaTile;
+		ripTableList[k].ripID = 0;
+		memset(ripTableList[k].zTable, 0, sizeof(ripTableList[k].zTable));
+	}
+
 	initPlatformCache();
 	initMapFeatures();
 }
@@ -1602,6 +1585,9 @@ void cleanupMaps(void) {
 	int16       i;
 
 	termMapFeatures();
+
+	delete[] ripTableList;
+
 	//  Iterate through each map, dumping the data
 	for (i = 0; i < worldCount; i++) {
 		WorldMapData    *mapData = &mapList[i];
@@ -2818,7 +2804,7 @@ void buildRipTables(void) {
 	int16       tableIndex;
 
 	//  bit array of available rip tables
-	uint8       tableAvail[(ARRAYSIZE(ripTableList) + 7) >> 3];
+	uint8       tableAvail[(RipTable::kRipTableSize + 7) >> 3];
 
 	memset(tableAvail, 0xFF, sizeof(tableAvail));
 
@@ -2852,7 +2838,7 @@ void buildRipTables(void) {
 
 		uint j;
 		//  Find available table
-		for (j = 0; j < ARRAYSIZE(ripTableList); j++) {
+		for (j = 0; j < RipTable::kRipTableSize; j++) {
 			if (tableAvail[j >> 3] & (1 << (j & 0x7)))
 				break;
 		}
