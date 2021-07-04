@@ -284,6 +284,9 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 		f.type = INT;
 		f.u.i = ref.frameI;
 
+		if (g_lingo->_currentChannelId == 0)
+			f.u.i++;
+
 		func_goto(f, m);
 
 		return;
