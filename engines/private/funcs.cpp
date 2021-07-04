@@ -716,7 +716,10 @@ static void fSoundArea(ArgArray args) {
 }
 
 static void fSafeDigit(ArgArray args) {
-	debugC(1, kPrivateDebugScript, "WARNING: SafeDigit is not implemented");
+	assert(args[0].type == NUM);
+	assert(args[1].type == RECT);
+	debugC(1, kPrivateDebugScript, "SafeDigit(%d, ..)", args[0].u.val);
+	g_private->addSafeDigit(args[0].u.val, args[1].u.rect);
 }
 
 static void fAskSave(ArgArray args) {

@@ -211,6 +211,7 @@ public:
 	Graphics::ManagedSurface *_compositeSurface;
 	Graphics::Surface *loadMask(const Common::String &, int, int, bool);
 	void drawMask(Graphics::Surface *);
+	void fillRect(uint32, Common::Rect);
 	bool inMask(Graphics::Surface *, Common::Point);
 	uint32 _transparentColor;
 	Common::Rect screenRect;
@@ -231,6 +232,7 @@ public:
 	Common::String getPoliceBustFromMOSetting();
 	Common::String getAlternateGameVariable();
 	Common::String getPoliceIndexVariable();
+	Common::String getWallSafeValueVariable();
 
 	// movies
 	Common::String _nextMovie;
@@ -312,6 +314,17 @@ public:
 	void selectPoliceRadioArea(Common::Point);
 	void selectPhoneArea(Common::Point);
 	void checkPhoneCall();
+
+	// Safe
+	uint32 _safeColor;
+	Common::String _safeNumberPath;
+	MaskInfo _safeDigitArea[3];
+	Common::Rect _safeDigitRect[3];
+	uint32 _safeDigit[3];
+
+	bool selectSafeDigit(Common::Point);
+	void addSafeDigit(uint32, Common::Rect*);
+	void renderSafeDigit(uint32);
 
 	// Random values
 	bool getRandomBool(uint);

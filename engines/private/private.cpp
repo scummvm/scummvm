@@ -106,6 +106,14 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 
 	// Diary
 	_diaryLocPrefix = "inface/diary/loclist/";
+
+	// Safe
+	_safeNumberPath = "sg/search_s/sgsaf%d.bmp";
+	for (uint d = 0 ; d < 3; d++) {
+		_safeDigitArea[d].clear();
+		_safeDigit[d] = 0;
+		_safeDigitRect[d] = Common::Rect(0, 0);
+	}
 }
 
 PrivateEngine::~PrivateEngine() {
@@ -198,6 +206,7 @@ Common::Error PrivateEngine::run() {
 		return Common::kUnsupportedColorMode;
 
 	_transparentColor = _pixelFormat.RGBToColor(0, 255, 0);
+	_safeColor = _pixelFormat.RGBToColor(65, 65, 65);
 	screenRect = Common::Rect(0, 0, _screenW, _screenH);
 	changeCursor("default");
 	_origin = Common::Point(0, 0);
@@ -246,6 +255,8 @@ Common::Error PrivateEngine::run() {
 				else if (selectDossierNextSheet(mousePos))
 					break;
 				else if (selectDossierPrevSheet(mousePos))
+					break;
+				else if (selectSafeDigit(mousePos))
 					break;
 
 				selectPauseMovie(mousePos);
@@ -387,6 +398,15 @@ void PrivateEngine::clearAreas() {
 		_dossierPrevSheetMask.surf->free();
 	delete _dossierPrevSheetMask.surf;
 	_dossierPrevSheetMask.clear();
+
+	for (uint d = 0 ; d < 3; d++) {
+		if (_safeDigitArea[d].surf)
+			_safeDigitArea[d].surf->free();
+		delete _safeDigitArea[d].surf;
+		_safeDigitArea[d].clear();
+		_safeDigit[d] = 0;
+		_safeDigitRect[d] = Common::Rect(0, 0);
+	}
 }
 
 void PrivateEngine::startPoliceBust() {
@@ -550,6 +570,13 @@ Common::String PrivateEngine::getPoliceBustFromMOSetting() {
 		return "kPoliceBustFromMO";
 
 	return "k6";
+}
+
+Common::String PrivateEngine::getWallSafeValueVariable() {
+	if ((_language == Common::EN_USA || _language == Common::RU_RUS) && _platform != Common::kPlatformMacintosh)
+		return "kWallSafeValue";
+
+	return "k3";
 }
 
 Common::String PrivateEngine::getExitCursor() {
@@ -790,6 +817,59 @@ bool PrivateEngine::selectDossierPrevSuspect(Common::Point mousePos) {
 		return true;
 	}
 	return false;
+}
+
+bool PrivateEngine::selectSafeDigit(Common::Point mousePos) {
+	if (_safeDigitArea[0].surf == NULL)
+		return false;
+
+	mousePos = mousePos - _origin;
+	if (mousePos.x < 0 || mousePos.y < 0)
+		return false;
+
+	for (uint d = 0 ; d < 3; d ++)
+		if (_safeDigitRect[d].contains(mousePos)) {
+			_safeDigit[d] = (_safeDigit[d] + 1) % 10;
+			renderSafeDigit(d);
+			Private::Symbol *sym = maps.variables.getVal(getWallSafeValueVariable());
+			sym->u.val = 100*_safeDigit[0] + 10*_safeDigit[1] + _safeDigit[2];
+			return true;
+		}
+
+	return false;
+}
+
+void PrivateEngine::addSafeDigit(uint32 d, Common::Rect *rect) {
+
+	MaskInfo m;
+	_safeDigitRect[d] = *rect;
+	fillRect(_safeColor, _safeDigitRect[d]);
+	m.surf = loadMask(Common::String::format(_safeNumberPath.c_str(), _safeDigit[d]), _safeDigitRect[d].left, _safeDigitRect[d].top, true);
+	m.cursor = g_private->getExitCursor();
+	m.nextSetting = "";
+	m.flag1 = NULL;
+	m.flag2 = NULL;
+	_safeDigitArea[d] = m;
+	drawScreen();
+}
+
+
+void PrivateEngine::renderSafeDigit(uint32 d) {
+
+	if (_safeDigitArea[d].surf != NULL) {
+		_safeDigitArea[d].surf->free();
+		delete _safeDigitArea[d].surf;
+		_safeDigitArea[d].clear();
+	}
+	fillRect(_safeColor, _safeDigitRect[d]);
+	MaskInfo m;
+	m.surf = loadMask(Common::String::format(_safeNumberPath.c_str(), _safeDigit[d]), _safeDigitRect[d].left, _safeDigitRect[d].top, true);
+	m.cursor = g_private->getExitCursor();
+	m.nextSetting = "";
+	m.flag1 = NULL;
+	m.flag2 = NULL;
+	_safeDigitArea[d] = m;
+	drawScreen();
 }
 
 void PrivateEngine::selectLoadGame(Common::Point mousePos) {
@@ -1141,6 +1221,12 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 	surf->free();
 	delete surf;
 	_image->destroy();
+}
+
+void PrivateEngine::fillRect(uint32 color, Common::Rect rect) {
+	debugC(1, kPrivateDebugFunction, "%s(%d,..)", __FUNCTION__, color);
+	rect.translate(_origin.x, _origin.y);
+	_compositeSurface->fillRect(rect, color);
 }
 
 void PrivateEngine::drawScreenFrame() {
