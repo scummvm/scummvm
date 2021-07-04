@@ -247,7 +247,7 @@ ROMImage::~ROMImage() {
 	if (ownFile) {
 		const Bit8u *data = file->getData();
 		delete file;
-		delete data;
+		delete[] data;
 	}
 }
 

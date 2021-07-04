@@ -18,10 +18,10 @@
 #ifndef MT32EMU_CONFIG_H
 #define MT32EMU_CONFIG_H
 
-#define MT32EMU_VERSION      "2.5.0"
+#define MT32EMU_VERSION      "2.5.1"
 #define MT32EMU_VERSION_MAJOR 2
 #define MT32EMU_VERSION_MINOR 5
-#define MT32EMU_VERSION_PATCH 0
+#define MT32EMU_VERSION_PATCH 1
 
 /* Library Exports Configuration
  *
