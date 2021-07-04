@@ -933,12 +933,12 @@ void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 lin
 
 	// Add artificial CD-ROM delay
 	if (addCdRomDelay == true) {
-		if (_stack->getStackId() != kIntroStack || _stack->getStackId() != kMenuStack) {
+		if (_stack->getStackId() != kIntroStack && _stack->getStackId() != kMenuStack) {
 			// Pretty arbitrary delays to mimic a period correct 4x drive
 			// TODO: Since the disc layout of the original CD-ROMs is known,
 			//       it should be possible to adapt the delay depending on the
 			//       target stack in order to replicate the original loading times.
-			g_system->delayMillis(_rnd->getRandomNumberRng(200,500));
+			g_system->delayMillis(_rnd->getRandomNumberRng(1000,1200));
 		}
 	}
 
@@ -974,8 +974,11 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 			// The original engine disables the mouse cursor when loading new cards.
 			_cursor->hideCursor();
 			_system->updateScreen();
-			// Pretty arbitrary delays to mimic a period correct 4x drive
-			g_system->delayMillis(_rnd->getRandomNumberRng(175,225));
+
+			// Pretty arbitrary delays to mimic a period correct 2x-4x drive
+			// Note: This is not only based on seeking times (only 80-120ms depending
+			//       on the source), but also accounts for loading the next chunk of data.
+			g_system->delayMillis(_rnd->getRandomNumberRng(350,400));
 			_cursor->showCursor();
 		}
 	}
