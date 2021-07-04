@@ -41,7 +41,7 @@ public:
 	ConsoleStream() : Common::WriteStream(), _precision(dec) {
 	}
 
-	int32 pos() const override {
+	int64 pos() const override {
 		return 0;
 	}
 

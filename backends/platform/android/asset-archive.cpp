@@ -49,11 +49,11 @@ public:
 
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 
-	virtual int32 pos() const { return _pos; }
+	virtual int64 pos() const { return _pos; }
 
-	virtual int32 size() const { return _len; }
+	virtual int64 size() const { return _len; }
 
-	virtual bool seek(int32 offset, int whence = SEEK_SET);
+	virtual bool seek(int64 offset, int whence = SEEK_SET);
 
 private:
 	void close();

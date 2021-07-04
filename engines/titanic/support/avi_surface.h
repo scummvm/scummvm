@@ -56,9 +56,9 @@ public:
 
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 	bool eos() const override { return _innerStream->eos(); }
-	int32 pos() const override { return _innerStream->pos(); }
-	int32 size() const override { return _innerStream->size(); }
-	bool seek(int32 offset, int whence = SEEK_SET) override {
+	int64 pos() const override { return _innerStream->pos(); }
+	int64 size() const override { return _innerStream->size(); }
+	bool seek(int64 offset, int whence = SEEK_SET) override {
 		return _innerStream->seek(offset, whence);
 	}
 	bool skip(uint32 offset) override {

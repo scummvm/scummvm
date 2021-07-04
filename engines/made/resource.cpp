@@ -162,7 +162,7 @@ void PictureResource::loadChunked(byte *source, int size) {
 			_picturePalette = new byte[_paletteColorCount * 3];
 			sourceS->read(_picturePalette, _paletteColorCount * 3);
 		} else {
-			error("PictureResource::loadChunked() Invalid chunk %08X at %08X", chunkType, sourceS->pos());
+			error("PictureResource::loadChunked() Invalid chunk %08X at %08X", chunkType, (int)sourceS->pos());
 		}
 
 	}

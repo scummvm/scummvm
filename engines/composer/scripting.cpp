@@ -109,7 +109,7 @@ void ComposerEngine::runEvent(uint16 id, int16 param1, int16 param2, int16 param
 
 	Common::SeekableReadStream *stream = getResource(ID_EVNT, id);
 	if (stream->size() != 2)
-		error("bad EVNT size %d", stream->size());
+		error("bad EVNT size %d", (int)stream->size());
 	uint16 scriptId = stream->readUint16LE();
 	delete stream;
 
@@ -178,10 +178,10 @@ void ComposerEngine::runScript(uint16 id) {
 
 	Common::SeekableReadStream *stream = getResource(ID_SCRP, id);
 	if (stream->size() < 2)
-		error("SCRP was too small (%d)", stream->size());
+		error("SCRP was too small (%d)", (int)stream->size());
 	uint16 size = stream->readUint16LE();
-	if (stream->size() < 2 + 2*size)
-		error("SCRP was too small (%d, but claimed %d entries)", stream->size(), size);
+	if ((int)stream->size() < 2 + 2*size)
+		error("SCRP was too small (%d, but claimed %d entries)", (int)stream->size(), size);
 	uint16 *script = new uint16[size];
 	for (uint i = 0; i < size; i++)
 		script[i] = stream->readUint16LE();

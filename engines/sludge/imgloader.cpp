@@ -33,7 +33,7 @@
 namespace Sludge {
 
 bool ImgLoader::loadImage(int num, const char *fname, Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve) {
-	debugC(3, kSludgeDebugGraphics, "Loading image at position: %i", stream->pos());
+	debugC(3, kSludgeDebugGraphics, "Loading image at position: %d", (int)stream->pos());
 
 	bool dumpPng = false;
 

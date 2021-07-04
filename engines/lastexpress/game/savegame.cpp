@@ -439,7 +439,7 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 void SaveLoad::loadStream(GameId id) {
 	Common::InSaveFile *save = openForLoading(id);
 	if (save->size() < 32)
-		error("[SaveLoad::loadStream] Savegame seems to be corrupted (not enough data: %i bytes)", save->size());
+		error("[SaveLoad::loadStream] Savegame seems to be corrupted (not enough data: %i bytes)", (int)save->size());
 
 	if (!_savegame)
 		error("[SaveLoad::loadStream] Savegame stream is invalid");
@@ -629,7 +629,7 @@ bool SaveLoad::loadMainHeader(Common::InSaveFile *stream, SavegameMainHeader *he
 
 	// Check there is enough data (32 bytes)
 	if (stream->size() < 32) {
-		debugC(2, kLastExpressDebugSavegame, "Savegame seems to be corrupted (not enough data: %i bytes)", stream->size());
+		debugC(2, kLastExpressDebugSavegame, "Savegame seems to be corrupted (not enough data: %i bytes)", (int)stream->size());
 		return false;
 	}
 

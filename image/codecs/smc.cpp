@@ -79,7 +79,7 @@ const Graphics::Surface *SMCDecoder::decodeFrame(Common::SeekableReadStream &str
 
 	int32 chunkSize = stream.readUint32BE() & 0x00FFFFFF;
 	if (chunkSize != stream.size())
-		warning("MOV chunk size != SMC chunk size (%d != %d); ignoring SMC chunk size", chunkSize, stream.size());
+		warning("MOV chunk size != SMC chunk size (%d != %d); ignoring SMC chunk size", chunkSize, (int)stream.size());
 
 	int32 totalBlocks = ((_surface->w + 3) / 4) * ((_surface->h + 3) / 4);
 
@@ -91,7 +91,7 @@ const Graphics::Surface *SMCDecoder::decodeFrame(Common::SeekableReadStream &str
 
 		// make sure stream ptr hasn't gone out of bounds
 		if (stream.pos() > stream.size()) {
-			warning("SMC decoder just went out of bounds (stream ptr = %d, chunk size = %d)", stream.pos(), stream.size());
+			warning("SMC decoder just went out of bounds (stream ptr = %d, chunk size = %d)", (int)stream.pos(), (int)stream.size());
 			return _surface;
 		}
 

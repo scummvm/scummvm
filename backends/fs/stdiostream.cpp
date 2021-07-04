@@ -54,21 +54,36 @@ bool StdioStream::eos() const {
 	return feof((FILE *)_handle) != 0;
 }
 
-int32 StdioStream::pos() const {
+int64 StdioStream::pos() const {
+#if defined(WIN32)
+	return _ftelli64((FILE *)_handle);
+#else
 	return ftell((FILE *)_handle);
+#endif
 }
 
-int32 StdioStream::size() const {
-	int32 oldPos = ftell((FILE *)_handle);
+int64 StdioStream::size() const {
+#if defined(WIN32)
+	int64 oldPos = _ftelli64((FILE *)_handle);
+	_fseeki64((FILE *)_handle, 0, SEEK_END);
+	int64 length = _ftelli64((FILE *)_handle);
+	_fseeki64((FILE *)_handle, oldPos, SEEK_SET);
+#else
+	int64 oldPos = ftell((FILE *)_handle);
 	fseek((FILE *)_handle, 0, SEEK_END);
-	int32 length = ftell((FILE *)_handle);
+	int64 length = ftell((FILE *)_handle);
 	fseek((FILE *)_handle, oldPos, SEEK_SET);
+#endif
 
 	return length;
 }
 
-bool StdioStream::seek(int32 offs, int whence) {
+bool StdioStream::seek(int64 offs, int whence) {
+#if defined(WIN32)
+	return _fseeki64((FILE *)_handle, offs, whence) == 0;
+#else
 	return fseek((FILE *)_handle, offs, whence) == 0;
+#endif
 }
 
 uint32 StdioStream::read(void *ptr, uint32 len) {

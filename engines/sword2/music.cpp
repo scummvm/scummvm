@@ -225,7 +225,7 @@ void CLUInputStream::refill() {
 
 	_file->seek(_file_pos, SEEK_SET);
 
-	uint len_left = _file->read(in, MIN((uint32)BUFFER_SIZE, _end_pos - _file->pos()));
+	uint len_left = _file->read(in, MIN((uint32)BUFFER_SIZE, _end_pos - (uint32)_file->pos()));
 
 	_file_pos = _file->pos();
 

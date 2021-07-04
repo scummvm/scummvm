@@ -75,10 +75,10 @@ public:
 	bool eos() const { return _eos; }
 	void clearErr() { _eos = false; }
 
-	int32 pos() const { return _pos; }
-	int32 size() const { return _size; }
+	int64 pos() const { return _pos; }
+	int64 size() const { return _size; }
 
-	bool seek(int32 offs, int whence = SEEK_SET);
+	bool seek(int64 offs, int whence = SEEK_SET);
 };
 
 
@@ -91,10 +91,10 @@ public:
 	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO)
 		: MemoryReadStream(buf, len, disposeMemory), SeekableReadStreamEndian(bigEndian), ReadStreamEndian(bigEndian) {}
 
-	int32 pos() const override { return MemoryReadStream::pos(); }
-	int32 size() const override { return MemoryReadStream::size(); }
+	int64 pos() const override { return MemoryReadStream::pos(); }
+	int64 size() const override { return MemoryReadStream::size(); }
 
-	bool seek(int32 offs, int whence = SEEK_SET) override { return MemoryReadStream::seek(offs, whence); }
+	bool seek(int64 offs, int whence = SEEK_SET) override { return MemoryReadStream::seek(offs, whence); }
 
 	bool skip(uint32 offset) override { return MemoryReadStream::seek(offset, SEEK_CUR); }
 };
@@ -126,13 +126,13 @@ public:
 		return dataSize;
 	}
 
-	virtual int32 pos() const override { return _pos; }
-	virtual int32 size() const override { return _bufSize; }
+	virtual int64 pos() const override { return _pos; }
+	virtual int64 size() const override { return _bufSize; }
 
 	virtual bool err() const override { return _err; }
 	virtual void clearErr() override { _err = false; }
 
-	virtual bool seek(int32 offset, int whence = SEEK_SET) override { return false; }
+	virtual bool seek(int64 offset, int whence = SEEK_SET) override { return false; }
 };
 
 /**
@@ -144,7 +144,7 @@ private:
 public:
 	SeekableMemoryWriteStream(byte *buf, uint32 len) : MemoryWriteStream(buf, len), _ptrOrig(buf) {}
 
-	virtual bool seek(int32 offset, int whence = SEEK_SET) override {
+	virtual bool seek(int64 offset, int whence = SEEK_SET) override {
 		switch (whence) {
 		case SEEK_END:
 			// SEEK_END works just like SEEK_SET, only 'reversed',
@@ -222,12 +222,12 @@ public:
 		return dataSize;
 	}
 
-	virtual int32 pos() const override { return _pos; }
-	virtual int32 size() const override { return _size; }
+	virtual int64 pos() const override { return _pos; }
+	virtual int64 size() const override { return _size; }
 
 	byte *getData() { return _data; }
 
-	virtual bool seek(int32 offs, int whence = SEEK_SET) override {
+	virtual bool seek(int64 offs, int whence = SEEK_SET) override {
 		// Pre-Condition
 		assert(_pos <= _size);
 		switch (whence) {
@@ -333,9 +333,9 @@ public:
 		return dataSize;
 	}
 
-	virtual int32 pos() const override { return _pos - _length; }
-	virtual int32 size() const override { return _size; }
-	virtual bool seek(int32, int) override { return false; }
+	virtual int64 pos() const override { return _pos - _length; }
+	virtual int64 size() const override { return _size; }
+	virtual bool seek(int64, int) override { return false; }
 	virtual bool eos() const override { return _eos; }
 	virtual void clearErr() override { _eos = false; }
 
@@ -378,8 +378,8 @@ public:
 		return dataSize;
 	}
 
-	int32 pos() const override { return _pos; }
-	int32 size() const override { return _bufSize; }
+	int64 pos() const override { return _pos; }
+	int64 size() const override { return _bufSize; }
 
 	bool eos() const override { return _eos; }
 
@@ -412,7 +412,7 @@ public:
 		return dataSize;
 	}
 
-	bool seek(int32 offset, int whence = SEEK_SET) override {
+	bool seek(int64 offset, int whence = SEEK_SET) override {
 		switch (whence) {
 		case SEEK_END:
 			// SEEK_END works just like SEEK_SET, only 'reversed',

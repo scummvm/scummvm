@@ -43,9 +43,9 @@ public:
 	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
 
 	// Common::SeekableReadStream implementation
-	virtual int32 pos() const override;
-	virtual int32 size() const override;
-	virtual bool seek(int32 offset, int whence = SEEK_SET) override;
+	virtual int64 pos() const override;
+	virtual int64 size() const override;
+	virtual bool seek(int64 offset, int whence = SEEK_SET) override;
 
 private:
 	// Consts
@@ -286,15 +286,15 @@ bool PatchedFile::eos() const {
 		return false;
 }
 
-int32 PatchedFile::pos() const {
+int64 PatchedFile::pos() const {
 	return _pos;
 }
 
-int32 PatchedFile::size() const {
+int64 PatchedFile::size() const {
 	return _newSize;
 }
 
-bool PatchedFile::seek(int32 offset, int whence) {
+bool PatchedFile::seek(int64 offset, int whence) {
 	int32 totJump, relOffset;
 	uint32 skipDiff, skipExtra, skipSize;
 	relOffset = 0;

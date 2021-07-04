@@ -114,15 +114,15 @@ public:
 		return _stream->Read(dataPtr, dataSize);
 	}
 
-	int32 pos() const override {
+	int64 pos() const override {
 		return _stream->GetPosition();
 	}
 
-	int32 size() const override {
+	int64 size() const override {
 		return _stream->GetLength();
 	}
 
-	bool seek(int32 offset, int whence = SEEK_SET) override {
+	bool seek(int64 offset, int whence = SEEK_SET) override {
 		StreamSeek origin = kSeekBegin;
 		if (whence == SEEK_CUR)
 			origin = kSeekCurrent;

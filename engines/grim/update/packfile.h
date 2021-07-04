@@ -38,9 +38,9 @@ public:
 	void clearErr();
 	uint32 read(void *dataPtr, uint32 dataSize);
 	bool eos() const;
-	int32 pos() const;
-	int32 size() const;
-	bool seek(int32 offset, int whence = SEEK_SET);
+	int64 pos() const;
+	int64 size() const;
+	bool seek(int64 offset, int whence = SEEK_SET);
 
 private:
 	Common::SeekableReadStream *_orgStream;

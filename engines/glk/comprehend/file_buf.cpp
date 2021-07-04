@@ -55,7 +55,7 @@ void FileBuffer::close() {
 	_pos = 0;
 }
 
-bool FileBuffer::seek(int32 offset, int whence) {
+bool FileBuffer::seek(int64 offset, int whence) {
 	switch (whence) {
 	case SEEK_SET:
 		_pos = offset;

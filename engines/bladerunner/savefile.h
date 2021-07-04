@@ -95,7 +95,7 @@ public:
 
 	uint32 write(const void *dataPtr, uint32 dataSize) override { return _s.write(dataPtr, dataSize); }
 	bool flush() override { return _s.flush(); }
-	int32 pos() const override { return _s.pos(); }
+	int64 pos() const override { return _s.pos(); }
 
 	void debug(char *p);
 
@@ -120,9 +120,9 @@ public:
 
 	bool eos() const override { return _s.eos(); }
 	uint32 read(void *dataPtr, uint32 dataSize) override { return _s.read(dataPtr, dataSize); }
-	int32 pos() const override { return _s.pos(); }
-	int32 size() const override { return _s.size(); }
-	bool seek(int32 offset, int whence = SEEK_SET) override { return _s.seek(offset, whence); }
+	int64 pos() const override { return _s.pos(); }
+	int64 size() const override { return _s.size(); }
+	bool seek(int64 offset, int whence = SEEK_SET) override { return _s.seek(offset, whence); }
 
 	int32 readInt();
 	float readFloat();

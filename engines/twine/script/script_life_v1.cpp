@@ -1876,7 +1876,7 @@ void ScriptLife::processLifeScript(int32 actorIdx) {
 		if (scriptOpcode < ARRAYSIZE(function_map)) {
 			end = function_map[scriptOpcode].function(_engine, ctx);
 		} else {
-			error("Actor %d with wrong offset/opcode - Offset: %d (opcode: %i)", actorIdx, ctx.stream.pos() - 1, scriptOpcode);
+			error("Actor %d with wrong offset/opcode - Offset: %d (opcode: %i)", actorIdx, (int)ctx.stream.pos() - 1, scriptOpcode);
 		}
 
 		if (end < 0) {

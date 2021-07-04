@@ -576,7 +576,7 @@ void ComposerEngine::loadCTBL(uint16 id, uint fadePercent) {
 	debug(1, "CTBL: %d entries", numEntries);
 
 	if ((numEntries > 256) || (stream->size() < 2 + (numEntries * 3)))
-		error("CTBL %d was invalid (%d entries, size %d)", id, numEntries, stream->size());
+		error("CTBL %d was invalid (%d entries, size %d)", id, numEntries, (int)stream->size());
 
 	byte buffer[256 * 3];
 	stream->read(buffer, numEntries * 3);
@@ -680,7 +680,7 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 	case kBitmapUncompressed:
 		if (stream->size() - (uint)stream->pos() != size)
 			error("kBitmapUncompressed stream had %d bytes left, supposed to be %d",
-				stream->size() - (uint)stream->pos(), size);
+				(int)(stream->size() - stream->pos()), size);
 		if (size != outSize)
 			error("kBitmapUncompressed size %d doesn't match required size %d",
 				size, outSize);

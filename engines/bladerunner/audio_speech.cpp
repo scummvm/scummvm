@@ -83,7 +83,7 @@ bool AudioSpeech::playSpeech(const Common::String &name, int pan) {
 	}
 
 	if (r->size() > kBufferSize) {
-		warning("AudioSpeech::playSpeech: AUD larger than buffer size (%d > %d)", r->size(), kBufferSize);
+		warning("AudioSpeech::playSpeech: AUD larger than buffer size (%d > %d)", (int)r->size(), kBufferSize);
 		return false;
 	}
 

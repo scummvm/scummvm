@@ -222,7 +222,7 @@ public:
 	}
 	bool flush() override { return _parentStream->flush(); }
 	void finalize() override {}
-	int32 pos() const override { return _parentStream->pos() - _begin; }
+	int64 pos() const override { return _parentStream->pos() - _begin; }
 };
 
 class StringArray : public Common::StringArray {
@@ -392,7 +392,7 @@ public:
 	/**
 	 * Returns the current position
 	 */
-	int32 pos() const override;
+	int64 pos() const override;
 };
 
 } // End of namespace Xeen

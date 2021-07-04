@@ -665,7 +665,7 @@ bool ShieldEffect::loadPattern() {
 
 	Common::SeekableReadStream *stream = desc.getData();
 	if (stream->size() != 4096) {
-		error("Incorrect shield effect support file size %d", stream->size());
+		error("Incorrect shield effect support file size %d", (int)stream->size());
 	}
 
 	stream->read(_pattern, 4096);

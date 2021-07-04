@@ -122,7 +122,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 	saveFile->writeUint32LE(header.encSize);
 
 	debugC(3, kDebugLoading, "version: %d magic: %s updateCounter: %d unkField: %d encSize: %d, pos: %d",
-			header.version, header.magic, header.updateCounter, header.unkField, header.encSize, saveFile->pos());
+			header.version, header.magic, header.updateCounter, header.unkField, header.encSize, (int)saveFile->pos());
 
 	saveFile->write(stream.getData(), stream.size());
 

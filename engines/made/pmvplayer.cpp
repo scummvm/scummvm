@@ -238,7 +238,7 @@ void PmvPlayer::readChunk(uint32 &chunkType, uint32 &chunkSize) {
 	chunkSize = _fd->readUint32LE();
 
 	debug(2, "ofs = %08X; chunkType = %c%c%c%c; chunkSize = %d\n",
-		_fd->pos(),
+		(int)_fd->pos(),
 		(chunkType >> 24) & 0xFF, (chunkType >> 16) & 0xFF, (chunkType >> 8) & 0xFF, chunkType & 0xFF,
 		chunkSize);
 

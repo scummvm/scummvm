@@ -184,7 +184,7 @@ bool ADLPlayer::load(Common::SeekableReadStream &adl) {
 bool ADLPlayer::readHeader(Common::SeekableReadStream &adl, int &timbreCount) {
 	// Sanity check
 	if (adl.size() < 60) {
-		warning("ADLPlayer::readHeader(): File too small (%d)", adl.size());
+		warning("ADLPlayer::readHeader(): File too small (%d)", (int)adl.size());
 		return false;
 	}
 

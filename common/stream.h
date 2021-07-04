@@ -123,7 +123,7 @@ public:
 	*
 	* @return The current position indicator, or -1 if an error occurred.
 	 */
-	virtual int32 pos() const = 0;
+	virtual int64 pos() const = 0;
 
 	/**
 	 * @name Functions for writing data
@@ -320,7 +320,7 @@ public:
 	 *
 	 * @return True on success, false in case of a failure.
 	 */
-	virtual bool seek(int32 offset, int whence = SEEK_SET) = 0;
+	virtual bool seek(int64 offset, int whence = SEEK_SET) = 0;
 
 	/**
 	 * Obtain the current size of the stream, measured in bytes.
@@ -329,7 +329,7 @@ public:
 	 *
 	 * @return The size of the stream, or -1 if an error occurred.
 	 */
-	virtual int32 size() const = 0;
+	virtual int64 size() const = 0;
 };
 
 /**
@@ -670,7 +670,7 @@ public:
 	 *
 	 * @return The current position indicator, or -1 if an error occurred.
 	 */
-	virtual int32 pos() const = 0;
+	virtual int64 pos() const = 0;
 
 	/**
 	 * Obtain the total size of the stream, measured in bytes.
@@ -678,7 +678,7 @@ public:
 	 *
 	 * @return The size of the stream, or -1 if an error occurred.
 	 */
-	virtual int32 size() const = 0;
+	virtual int64 size() const = 0;
 
 	/**
 	 * Set the stream position indicator for the stream.
@@ -697,7 +697,7 @@ public:
 	 *
 	 * @return True on success, false in case of a failure.
 	 */
-	virtual bool seek(int32 offset, int whence = SEEK_SET) = 0;
+	virtual bool seek(int64 offset, int whence = SEEK_SET) = 0;
 
 	/**
 	 * Skip the given number of bytes in the stream.

@@ -63,7 +63,7 @@ QTRLEDecoder::~QTRLEDecoder() {
 #define CHECK_STREAM_PTR(n) \
 	do { \
 		if ((stream.pos() + n) > stream.size()) { \
-			warning("QTRLE Problem: stream out of bounds (%d > %d)", stream.pos() + n, stream.size()); \
+			warning("QTRLE Problem: stream out of bounds (%d > %d)", (int)stream.pos() + n, (int)stream.size()); \
 			return; \
 		} \
 	} while (0)

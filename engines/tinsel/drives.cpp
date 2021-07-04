@@ -200,17 +200,17 @@ void TinselFile::close() {
 	_stream = nullptr;
 }
 
-int32 TinselFile::pos() const {
+int64 TinselFile::pos() const {
 	assert(_stream);
 	return _stream->pos();
 }
 
-int32 TinselFile::size() const {
+int64 TinselFile::size() const {
 	assert(_stream);
 	return _stream->size();
 }
 
-bool TinselFile::seek(int32 offset, int whence) {
+bool TinselFile::seek(int64 offset, int whence) {
 	assert(_stream);
 	return _stream->seek(offset, whence);
 }

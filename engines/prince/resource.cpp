@@ -52,7 +52,7 @@ Common::SeekableReadStream *Resource::getDecompressedStream(Common::SeekableRead
 		dec.decompress(buffer + 18, decompData, decompLen);
 		free(buffer);
 
-		debug(8, "Resource::getDecompressedStream: decompressed %d to %d bytes", stream->size(), decompLen);
+		debug(8, "Resource::getDecompressedStream: decompressed %d to %d bytes", (int)stream->size(), decompLen);
 
 		return new Common::MemoryReadStream(decompData, decompLen, DisposeAfterUse::YES);
 	} else {

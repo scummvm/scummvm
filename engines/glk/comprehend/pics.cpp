@@ -149,7 +149,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 	uint16 a, b;
 
 	opcode = ctx->_file.readByte();
-	debugCN(kDebugGraphics, "  %.4x [%.2x]: ", ctx->_file.pos() - 1, opcode);
+	debugCN(kDebugGraphics, "  %.4x [%.2x]: ", (int)ctx->_file.pos() - 1, opcode);
 
 	byte param = opcode & 0xf;
 	opcode >>= 4;

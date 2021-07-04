@@ -301,7 +301,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 	}
 
 	debugC(DEBUG_DETAILED, kTinselDebugSound, "Playing sound %d.%d, %d bytes at %d (pan %d)", id, sub, sampleLen,
-			_sampleStream.pos(), getPan(x));
+			(int)_sampleStream.pos(), getPan(x));
 
 	// allocate a buffer
 	byte *sampleBuf = (byte *) malloc(sampleLen);

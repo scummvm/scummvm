@@ -245,7 +245,7 @@ private:
 
   uint32 read(void *buf, uint32 cnt) override;
   bool skip(uint32 offset) override;
-  bool seek(int32 offs, int whence) override;
+  bool seek(int64 offs, int whence) override;
 
 public:
   InVMSave()
@@ -259,8 +259,8 @@ public:
 
   bool eos() const override { return _eos; }
   void clearErr() override { _eos = false; }
-  int32 pos() const override { return _pos; }
-  int32 size() const override { return _size; }
+  int64 pos() const override { return _pos; }
+  int64 size() const override { return _size; }
 
   bool readSaveGame(const char *filename)
   { return ::readSaveGame(buffer, _size, filename); }
@@ -275,7 +275,7 @@ private:
 
 public:
   uint32 write(const void *buf, uint32 cnt);
-  virtual int32 pos() const { return _pos; }
+  virtual int64 pos() const { return _pos; }
 
   OutVMSave(const char *_filename)
 	: _pos(0), committed(-1), iofailed(false)

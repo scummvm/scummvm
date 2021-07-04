@@ -930,7 +930,7 @@ bool MidiPlayer_Midi::readD110DrvData() {
 	}
 
 	if (f.size() != 3500)
-		error("Unknown '%s' size (%d)", fileName, f.size());
+		error("Unknown '%s' size (%d)", fileName, (int)f.size());
 
 	f.seek(42);
 

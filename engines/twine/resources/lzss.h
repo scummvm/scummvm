@@ -42,9 +42,9 @@ public:
 
 	void clearErr() override { _err = false; }
 	bool err() const override { return _err; }
-	int32 pos() const override { return _pos; }
-	int32 size() const override { return _size; }
-	bool seek(int32 offset, int whence = SEEK_SET) override;
+	int64 pos() const override { return _pos; }
+	int64 size() const override { return _size; }
+	bool seek(int64 offset, int whence = SEEK_SET) override;
 
 	bool eos() const override;
 	uint32 read(void *buf, uint32 size) override;

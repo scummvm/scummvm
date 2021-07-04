@@ -41,9 +41,9 @@ public:
 	bool open(const Common::String &filename) override = 0;
 	virtual bool openSubFile(const Common::String &filename) = 0;
 
-	int32 pos() const override = 0;
-	int32 size() const override = 0;
-	bool seek(int32 offs, int whence = SEEK_SET) override = 0;
+	int64 pos() const override = 0;
+	int64 size() const override = 0;
+	bool seek(int64 offs, int whence = SEEK_SET) override = 0;
 
 // Unused
 #if 0
@@ -70,9 +70,9 @@ public:
 	void clearErr() override { _myEos = false; BaseScummFile::clearErr(); }
 
 	bool eos() const override;
-	int32 pos() const override;
-	int32 size() const override;
-	bool seek(int32 offs, int whence = SEEK_SET) override;
+	int64 pos() const override;
+	int64 size() const override;
+	bool seek(int64 offs, int whence = SEEK_SET) override;
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
@@ -114,9 +114,9 @@ public:
 
 	void close() override;
 	bool eos() const override { return _stream->eos(); }
-	int32 pos() const override { return _stream->pos(); }
-	int32 size() const override { return _stream->size(); }
-	bool seek(int32 offs, int whence = SEEK_SET) override { return _stream->seek(offs, whence); }
+	int64 pos() const override { return _stream->pos(); }
+	int64 size() const override { return _stream->size(); }
+	bool seek(int64 offs, int whence = SEEK_SET) override { return _stream->seek(offs, whence); }
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 

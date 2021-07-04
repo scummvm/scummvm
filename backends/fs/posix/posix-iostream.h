@@ -42,7 +42,7 @@ public:
 	~PosixIoStream();
 #endif
 
-	int32 size() const override;
+	int64 size() const override;
 };
 
 #endif

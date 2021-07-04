@@ -131,41 +131,41 @@ Common::Error HDBGame::loadGameState(int slot) {
 }
 
 void HDBGame::saveGame(Common::OutSaveFile *out) {
-	debug(1, "HDBGame::saveGame: start at %u", out->pos());
+	debug(1, "HDBGame::saveGame: start at %u", (uint32)out->pos());
 
 	// Save Map Name and Time
 	out->writeUint32LE(_saveHeader.seconds);
 	out->write(_inMapName, 32);
 
-	debug(1, "HDBGame::saveGame: map at %u", out->pos());
+	debug(1, "HDBGame::saveGame: map at %u", (uint32)out->pos());
 	// Save Map Object Data
 	_map->save(out);
 
 	// Save Window Object Data
-	debug(1, "HDBGame::saveGame: window at %u", out->pos());
+	debug(1, "HDBGame::saveGame: window at %u", (uint32)out->pos());
 	_window->save(out);
 
 	// Save Gfx Object Data
-	debug(1, "HDBGame::saveGame: gfx at %u", out->pos());
+	debug(1, "HDBGame::saveGame: gfx at %u", (uint32)out->pos());
 	_gfx->save(out);
 
 	// Save Sound Object Data
-	debug(1, "HDBGame::saveGame: sound at %u", out->pos());
+	debug(1, "HDBGame::saveGame: sound at %u", (uint32)out->pos());
 	_sound->save(out);
 
 	// Save Game Object Data
-	debug(1, "HDBGame::saveGame: game object at %u", out->pos());
+	debug(1, "HDBGame::saveGame: game object at %u", (uint32)out->pos());
 	save(out);
 
 	// Save AI Object Data
-	debug(1, "HDBGame::saveGame: ai at %u", out->pos());
+	debug(1, "HDBGame::saveGame: ai at %u", (uint32)out->pos());
 	_ai->save(out);
 
-	debug(1, "HDBGame::saveGame: end at %u", out->pos());
+	debug(1, "HDBGame::saveGame: end at %u", (uint32)out->pos());
 }
 
 void HDBGame::loadGame(Common::InSaveFile *in) {
-	debug(1, "HDBGame::loadGame: start at %u", in->pos());
+	debug(1, "HDBGame::loadGame: start at %u", (uint32)in->pos());
 
 	// Load Map Name and Time
 	_timeSeconds = in->readUint32LE();
@@ -177,30 +177,30 @@ void HDBGame::loadGame(Common::InSaveFile *in) {
 	Common::strlcpy(_saveHeader.mapName, _inMapName, sizeof(_saveHeader.mapName));
 
 	// Load Map Object Data
-	debug(1, "HDBGame::loadGame: map at %u", in->pos());
+	debug(1, "HDBGame::loadGame: map at %u", (uint32)in->pos());
 	_map->loadSaveFile(in);
 
 	// Load Window Object Data
-	debug(1, "HDBGame::loadGame: window at %u", in->pos());
+	debug(1, "HDBGame::loadGame: window at %u", (uint32)in->pos());
 	_window->loadSaveFile(in);
 
 	// Load Gfx Object Data
-	debug(1, "HDBGame::loadGame: gfx at %u", in->pos());
+	debug(1, "HDBGame::loadGame: gfx at %u", (uint32)in->pos());
 	_gfx->loadSaveFile(in);
 
 	// Load Sound Object Data
-	debug(1, "HDBGame::loadGame: sound at %u", in->pos());
+	debug(1, "HDBGame::loadGame: sound at %u", (uint32)in->pos());
 	_sound->loadSaveFile(in);
 
 	// Load Game Object Data
-	debug(1, "HDBGame::loadGame: game object at %u", in->pos());
+	debug(1, "HDBGame::loadGame: game object at %u", (uint32)in->pos());
 	loadSaveFile(in);
 
 	// Load AI Object Data
-	debug(1, "HDBGame::loadGame: ai at %u", in->pos());
+	debug(1, "HDBGame::loadGame: ai at %u", (uint32)in->pos());
 	_ai->loadSaveFile(in);
 
-	debug(1, "HDBGame::loadGame: end at %u", in->pos());
+	debug(1, "HDBGame::loadGame: end at %u", (uint32)in->pos());
 
 	_gfx->turnOffFade();
 }

@@ -36,7 +36,7 @@ private:
 
 	uint32 read(void *buf, uint32 cnt) override;
 	bool skip(uint32 offset) override;
-	bool seek(int32 offs, int whence) override;
+	bool seek(int64 offs, int whence) override;
 
 public:
 	InPAKSave() : fd(NULL) { }
@@ -52,10 +52,10 @@ public:
 	void clearErr() override {
 		pakfs_clearerr(fd);
 	}
-	int32 pos() const override {
+	int64 pos() const override {
 		return pakfs_tell(fd);
 	}
-	int32 size() const override {
+	int64 size() const override {
 		return fd->size;
 	}
 
@@ -72,7 +72,7 @@ private:
 public:
 	uint32 write(const void *buf, uint32 cnt);
 
-	virtual int32 pos() const {
+	virtual int64 pos() const {
 		return pakfs_tell(fd);
 	}
 

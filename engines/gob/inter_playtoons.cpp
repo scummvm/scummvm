@@ -289,7 +289,7 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 	_vm->_draw->animateCursor(4);
 	if (offset > stream->size()) {
 		warning("oPlaytoons_readData: File \"%s\", Offset (%d) > file size (%d)",
-				file.c_str(), offset, stream->size());
+				file.c_str(), offset, (int)stream->size());
 		delete stream;
 		return;
 	}

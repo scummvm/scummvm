@@ -216,7 +216,7 @@ void GameData::parse_function(FileBuffer *fb, Function *func) {
 
 	p = (const uint8 *)memchr(fb->dataPtr(), 0x00, fb->size() - fb->pos());
 	if (!p)
-		error("bad function @ %.4x", fb->pos());
+		error("bad function @ %.4x", (int)fb->pos());
 
 	for (;;) {
 		Instruction instruction;

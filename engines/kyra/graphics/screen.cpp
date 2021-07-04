@@ -3336,7 +3336,7 @@ bool Screen::loadPalette(const char *filename, Palette &pal) {
 			numCols = stream->size() / Palette::kVGABytesPerColor;
 			pal.loadVGAPalette(*stream, 0, MIN(maxCols, numCols));
 		} else {
-			error("Screen::loadPalette(): Failed to load file '%s' with invalid size %d in HiColor mode", filename, stream->size());
+			error("Screen::loadPalette(): Failed to load file '%s' with invalid size %d in HiColor mode", filename, (int)stream->size());
 		}
 	}
 

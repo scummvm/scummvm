@@ -128,10 +128,10 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize) override;
 
 	bool eos() const override { return _eos; }
-	int32 pos() const override { return _pos; }
-	int32 size() const override { return _size; }
+	int64 pos() const override { return _pos; }
+	int64 size() const override { return _size; }
 	void clearErr() override { _eos = false; Common::MemoryWriteStreamDynamic::clearErr(); }
-	bool seek(int32 offs, int whence = SEEK_SET) override { return Common::MemoryWriteStreamDynamic::seek(offs, whence); }
+	bool seek(int64 offs, int whence = SEEK_SET) override { return Common::MemoryWriteStreamDynamic::seek(offs, whence); }
 
 protected:
 	bool _eos;

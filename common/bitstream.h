@@ -265,12 +265,12 @@ public:
 	}
 
 	/** Return the stream position in bits. */
-	uint32 pos() const {
+	uint64 pos() const {
 		return _pos;
 	}
 
 	/** Return the stream size in bits. */
-	uint32 size() const {
+	uint64 size() const {
 		return _size;
 	}
 
@@ -325,11 +325,11 @@ public:
 		return false;
 	}
 
-	int32 pos() const {
+	int64 pos() const {
 		return _pos;
 	}
 
-	int32 size() const {
+	int64 size() const {
 		return _size;
 	}
 

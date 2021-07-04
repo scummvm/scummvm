@@ -986,7 +986,7 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 		}
 
 		if (File::pos() - res->offset != res->length)
-			error("extract_resource - length mismatch while extracting graphics resource (was %04X, should be %04X)", File::pos() - res->offset, res->length);
+			error("extract_resource - length mismatch while extracting graphics resource (was %04X, should be %04X)", (int32)File::pos() - res->offset, res->length);
 
 		break;
 
@@ -1049,7 +1049,7 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 			error("extract_resource - unknown sound type %d/%d detected",val,cnt);
 
 		if (File::pos() - res->offset != res->length)
-			error("extract_resource - length mismatch while extracting sound resource (was %04X, should be %04X)", File::pos() - res->offset, res->length);
+			error("extract_resource - length mismatch while extracting sound resource (was %04X, should be %04X)", (int32)File::pos() - res->offset, res->length);
 
 		break;
 

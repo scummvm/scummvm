@@ -55,7 +55,7 @@ bool GameLoader::readSavegame(const char *fname) {
 	header.encSize = saveFile->readUint32LE();
 
 	debugC(3, kDebugLoading, "version: %d magic: %s updateCounter: %d unkField: %d encSize: %d, pos: %d",
-			header.version, header.magic, header.updateCounter, header.unkField, header.encSize, saveFile->pos());
+			header.version, header.magic, header.updateCounter, header.unkField, header.encSize, (int)saveFile->pos());
 
 	if (header.version != 48)
 		return false;

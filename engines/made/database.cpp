@@ -681,7 +681,7 @@ bool GameDatabaseV3::getSavegameDescription(const char *filename, Common::String
 	}
 
 	if (size != in->size() - 64) {
-		warning("Unexpected save game size. Expected %d, size is %d (file size - 64)", size, in->size() - 64);
+		warning("Unexpected save game size. Expected %d, size is %d (file size - 64)", size, (int)in->size() - 64);
 		delete in;
 		return false;
 	}

@@ -290,7 +290,7 @@ bool Debugger::cmdDumpFiles(int argc, const char **) {
 			return true; \
 		} \
 		Common::String md5str = Common::computeStreamMD5AsString(*stream); \
-		debugC(1, kLastExpressDebugResource, "%s, %d, %s", (*it)->getName().c_str(), stream->size(), md5str.c_str()); \
+		debugC(1, kLastExpressDebugResource, "%s, %d, %s", (*it)->getName().c_str(), (int)stream->size(), md5str.c_str()); \
 		delete stream; \
 	} \
 }

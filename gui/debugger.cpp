@@ -653,7 +653,7 @@ bool Debugger::cmdMd5(int argc, const char **argv) {
 			for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
 				Common::SeekableReadStream *stream = (*iter)->createReadStream();
 				Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-				debugPrintf("%s  %s  %d\n", md5.c_str(), (*iter)->getDisplayName().c_str(), stream->size());
+				debugPrintf("%s  %s  %d\n", md5.c_str(), (*iter)->getDisplayName().c_str(), (int32)stream->size());
 				delete stream;
 			}
 		}
@@ -703,7 +703,7 @@ bool Debugger::cmdMd5Mac(int argc, const char **argv) {
 				if (macResMan.hasDataFork()) {
 					Common::SeekableReadStream *stream = macResMan.getDataFork();
 					Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-					debugPrintf("%s  %s (data)  %d\n", md5.c_str(), macResMan.getBaseFileName().c_str(), stream->size());
+					debugPrintf("%s  %s (data)  %d\n", md5.c_str(), macResMan.getBaseFileName().c_str(), (int32)stream->size());
 				}
 			}
 			macResMan.close();

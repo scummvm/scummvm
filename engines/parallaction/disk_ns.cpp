@@ -688,11 +688,11 @@ public:
 		if (_dispose) delete _stream;
 	}
 
-	int32 size() const override {
+	int64 size() const override {
 		return _stream->size();
 	}
 
-	int32 pos() const override {
+	int64 pos() const override {
 		return _stream->pos();
 	}
 
@@ -700,7 +700,7 @@ public:
 		return _stream->eos();
 	}
 
-	bool seek(int32 offs, int whence = SEEK_SET) override {
+	bool seek(int64 offs, int whence = SEEK_SET) override {
 		return _stream->seek(offs, whence);
 	}
 

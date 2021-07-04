@@ -52,7 +52,7 @@ uint32 OutSaveFile::write(const void *dataPtr, uint32 dataSize) {
 	return _wrapped->write(dataPtr, dataSize);
 }
 
-int32 OutSaveFile::pos() const {
+int64 OutSaveFile::pos() const {
 	return _wrapped->pos();
 }
 

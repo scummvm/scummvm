@@ -1749,7 +1749,7 @@ LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, 
 	debug(5, "ANI SPRResourceId: %d, offset %d", sprResourceId, sprResourceOffset);
 
 	if (aniStream->pos() != aniStream->size())
-		error("Still %d bytes at the end of anim stream", aniStream->size() - aniStream->pos());
+		error("Still %d bytes at the end of anim stream", (int)(aniStream->size() - aniStream->pos()));
 
 	delete aniStream;
 
@@ -1788,7 +1788,7 @@ LBAnimation::LBAnimation(MohawkEngine_LivingBooks *vm, LBAnimationItem *parent, 
 		error("Ignoring %d back nodes", numBackNodes);
 
 	if (sprStream->pos() != sprStream->size())
-		error("Still %d bytes at the end of sprite stream", sprStream->size() - sprStream->pos());
+		error("Still %d bytes at the end of sprite stream", (int)(sprStream->size() - sprStream->pos()));
 
 	delete sprStream;
 
@@ -1819,7 +1819,7 @@ void LBAnimation::loadShape(uint16 resourceId) {
 
 	if (_vm->isPreMohawk()) {
 		if (shapeStream->size() < 6)
-			error("V1 SHP Record size too short (%d)", shapeStream->size());
+			error("V1 SHP Record size too short (%d)", (int)shapeStream->size());
 
 		uint16 u0 = shapeStream->readUint16();
 		if (u0 != 3)
@@ -1833,7 +1833,7 @@ void LBAnimation::loadShape(uint16 resourceId) {
 		debug(8, "V1 SHP: idCount: %d", idCount);
 
 		if (shapeStream->size() != (idCount * 2) + 6)
-			error("V1 SHP Record size mismatch (%d)", shapeStream->size());
+			error("V1 SHP Record size mismatch (%d)", (int)shapeStream->size());
 
 		for (uint16 i = 0; i < idCount; i++) {
 			_shapeResources.push_back(shapeStream->readUint16());
@@ -1844,7 +1844,7 @@ void LBAnimation::loadShape(uint16 resourceId) {
 		debug(8, "SHP: idCount: %d", idCount);
 
 		if (shapeStream->size() != (idCount * 6) + 2)
-			error("SHP Record size mismatch (%d)", shapeStream->size());
+			error("SHP Record size mismatch (%d)", (int)shapeStream->size());
 
 		for (uint16 i = 0; i < idCount; i++) {
 			_shapeResources.push_back(shapeStream->readUint16());
@@ -2083,7 +2083,7 @@ void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
 
 	int endPos = stream->pos() + size;
 	if (endPos > stream->size())
-		error("Item is larger (should end at %d) than stream (size %d)", endPos, stream->size());
+		error("Item is larger (should end at %d) than stream (size %d)", endPos, (int)stream->size());
 
 	while (true) {
 		if (stream->pos() == endPos)
@@ -2105,7 +2105,7 @@ void LBItem::readFrom(Common::SeekableSubReadStreamEndian *stream) {
 				(int)stream->pos() - (int)(oldPos + 4 + (uint)dataSize), dataType, dataSize);
 
 		if (stream->pos() > endPos)
-			error("Read off the end (at %d) of data (ends at %d)", stream->pos(), endPos);
+			error("Read off the end (at %d) of data (ends at %d)", (int)stream->pos(), endPos);
 
 		assert(!stream->eos());
 	}

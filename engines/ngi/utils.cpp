@@ -364,7 +364,7 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 
 	uint obTag = readUint16LE();
 
-	debugC(7, kDebugLoading, "parseClass::obTag = %d (%04x)  at 0x%08x", obTag, obTag, pos() - 2);
+	debugC(7, kDebugLoading, "parseClass::obTag = %d (%04x)  at 0x%08x", obTag, obTag, (int)pos() - 2);
 
 	if (obTag == 0x0000) {
 		return NULL;
@@ -394,7 +394,7 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 		*isCopyReturned = false;
 	} else if ((obTag & 0x8000) == 0) {
 		if (_objectMap.size() < obTag) {
-			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
+			error("Object index too big: %d  at 0x%08x", obTag, (int)pos() - 2);
 		}
 		debugC(7, kDebugLoading, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
 
@@ -406,7 +406,7 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 		obTag &= ~0x8000;
 
 		if (_objectMap.size() < obTag) {
-			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
+			error("Object index too big: %d  at 0x%08x", obTag, (int)pos() - 2);
 		}
 
 		debugC(7, kDebugLoading, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
