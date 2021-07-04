@@ -72,6 +72,26 @@ static const SAGA2GameDescription gameDescriptions[] = {
 		GID_DINO
 	},
 
+	{
+		{
+			"dino",
+			"",
+			{
+				{"dinodata.hrs", GAME_RESOURCEFILE,				    "45aa7026d441dd69957385c25d2fd33e", 2698},
+				{"dino.hrs",     GAME_OBJRESOURCEFILE,				"7cf3665887a4a18e2fff6938a954c050", 66018},
+				{"scripts.hrs",	 GAME_SCRIPTFILE,					"d405841a249a365cf92fc65dd52fb953", 164181},
+				{"dinosnd.hrs",  GAME_SOUNDFILE | GAME_VOICEFILE,	"27a57517be881ad9e0f671901486356e", 228642994},
+				{"dinoimag.hrs", GAME_IMAGEFILE,					"d24d80676f7afcfaca0b61c95056044f", 42448562},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_DINO
+	},
+
 	// Faery Tale Adventure II: Halls of the Dead Section /////////////////////////////////////////////////////
 
 	// Faery Tale Adventure II: Halls of the Dead - English CD version
