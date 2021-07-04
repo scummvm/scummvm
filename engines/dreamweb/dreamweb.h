@@ -878,6 +878,7 @@ public:
 	void lookAtCard();
 	void obsThatDoThings();
 	void describeOb();
+	void textToSpeech(const char *text);
 	void putBackObStuff();
 	void showDiaryPage();
 	void showDiaryKeys();

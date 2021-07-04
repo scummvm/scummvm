@@ -1183,11 +1183,15 @@ void DreamWebEngine::commandOnlyCond(uint8 command, uint8 commandType) {
 void DreamWebEngine::commandOnly(uint8 command) {
 	delTextLine();
 	const uint8 *string = (const uint8 *)_commandText.getString(command);
-	printDirect(string, _textAddressX, _textAddressY, _textLen, (bool)(_textLen & 1));
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-		_ttsMan->say((const char *)string);
-	}
 
+	Common::String string2(_commandText.getString(command));
+	const char *str1 = "";
+
+	printDirect(string, _textAddressX, _textAddressY, _textLen, (bool)(_textLen & 1));
+
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled") && str1 != string2) {
+		_ttsMan->say((const char*)string);
+	}
 	_newTextLine = 1;
 }
 
@@ -2360,6 +2364,13 @@ void DreamWebEngine::obsThatDoThings() {
 	}
 }
 
+void DreamWebEngine::textToSpeech(const char *text) {
+	auto colon_pos = strchr(text, ':');
+	Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+		_ttsMan->say(result);
+}
+
 void DreamWebEngine::describeOb() {
 	const uint8 *obText = getObTextStart();
 	uint16 y = 92;
@@ -2371,8 +2382,7 @@ void DreamWebEngine::describeOb() {
 		useCharsetIcons1();
 
 	printDirect(&obText, 33, &y, 241, 241 & 1);
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
-		_ttsMan->say((const char *)obText);
+	textToSpeech((const char *)obText);
 
 	if (getLanguage() == Common::RU_RUS)
 		resetCharset();

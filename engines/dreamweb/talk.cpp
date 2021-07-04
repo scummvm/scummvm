@@ -25,6 +25,7 @@
 #include "common/text-to-speech.h"
 #include "common/config-manager.h"
 
+
 namespace DreamWeb {
 
 void DreamWebEngine::talk() {
@@ -94,9 +95,12 @@ void DreamWebEngine::startTalk() {
 
 	_charShift = 91+91;
 
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !hasSpeech()) {
-        _ttsMan->say((const char *)str);
-    }
+	const char *text = (const char *)str;
+	auto colon_pos = strchr(text, ':');
+	const char *goodText = colon_pos + 1;
+
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !hasSpeech())
+		_ttsMan->say(goodText);
 
 	if (getLanguage() == Common::RU_RUS)
 		useCharsetIcons1();
