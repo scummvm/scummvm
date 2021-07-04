@@ -49,6 +49,7 @@ public:
 	ProcId playEndgameMovie(bool fade) override;
 	void playCredits() override;
 	void playQuotes() override;
+	void playDemoScreen() override { }; // no demo for U8
 
 protected:
 	Std::string getCreditText(Common::SeekableReadStream *rs);

@@ -49,7 +49,8 @@ public:
 	ProcId playIntroMovie2(bool fade);
 	ProcId playEndgameMovie(bool fade) override;
 	void playCredits() override;
-	void playQuotes() override { };
+	void playQuotes() override { }; // no quotes for Crusader
+	void playDemoScreen() override;
 };
 
 } // End of namespace Ultima8

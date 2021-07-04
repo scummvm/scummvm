@@ -576,7 +576,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Item::I_hurl,
 	Item::I_getQHi,
 	Actor::I_addHp,
-	0, // TOOD: Intrinsic0CC 1020:049c,
+	Game::I_playDemoScreen,
 	Actor::I_isInCombat,
 	Actor::I_setActivity,
 	Item::I_setQAndCombine,

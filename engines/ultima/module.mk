@@ -451,6 +451,7 @@ MODULE_OBJS := \
 	ultima8/gumps/container_gump.o \
 	ultima8/gumps/credits_gump.o \
 	ultima8/gumps/cru_ammo_gump.o \
+	ultima8/gumps/cru_demo_gump.o \
 	ultima8/gumps/cru_energy_gump.o \
 	ultima8/gumps/cru_health_gump.o \
 	ultima8/gumps/cru_inventory_gump.o \

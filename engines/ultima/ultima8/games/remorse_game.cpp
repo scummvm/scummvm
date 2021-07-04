@@ -31,6 +31,7 @@
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/gumps/main_menu_process.h"
 #include "ultima/ultima8/gumps/remorse_credits_gump.h"
+#include "ultima/ultima8/gumps/cru_demo_gump.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/world.h"
@@ -166,8 +167,29 @@ ProcId RemorseGame::playEndgameMovie(bool fade) {
 	return playMovie("O01", fade, false);
 }
 
+void RemorseGame::playDemoScreen() {
+	Process *menuproc = new MainMenuProcess();
+	Kernel::get_instance()->addProcess(menuproc);
+
+	static const Std::string bmp_filename = "static/buyme.dat";
+	Common::SeekableReadStream *bmprs = FileSystem::get_instance()->ReadFile(bmp_filename);
+	if (!bmprs) {
+		perr << "RemorseGame::playDemoScreen: error opening demo background: "
+			 << bmp_filename << Std::endl;
+		return;
+	}
+	Gump *gump = new CruDemoGump(bmprs);
+	gump->InitGump(0);
+	gump->CreateNotifier();
+	Process *notifyproc = gump->GetNotifyProcess();
+
+	if (notifyproc) {
+		menuproc->waitFor(notifyproc);
+	}
+}
+
+
 void RemorseGame::playCredits() {
-	warning("TODO: RemorseGame::playCredits: Implement Crusader credits");
 	Process *menuproc = new MainMenuProcess();
 	Kernel::get_instance()->addProcess(menuproc);
 

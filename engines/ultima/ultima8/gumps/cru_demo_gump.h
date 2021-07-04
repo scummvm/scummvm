@@ -20,50 +20,40 @@
  *
  */
 
-#ifndef ULTIMA8_GAMES_GAME_H
-#define ULTIMA8_GAMES_GAME_H
+#ifndef ULTIMA8_GUMPS_CRUDEMOGUMP_H
+#define ULTIMA8_GUMPS_CRUDEMOGUMP_H
 
-#include "ultima/ultima8/games/game_info.h"
-#include "ultima/ultima8/usecode/intrinsics.h"
+#include "ultima/ultima8/gumps/modal_gump.h"
+#include "ultima/ultima8/misc/classtype.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class Game {
+/**
+ * Full-screen gump for showing the "buy me" screen
+ */
+class CruDemoGump : public ModalGump {
 public:
-	Game();
-	virtual ~Game();
+	ENABLE_RUNTIME_CLASSTYPE()
 
-	static Game *get_instance() {
-		return _game;
-	}
+	CruDemoGump();
+	CruDemoGump(Common::SeekableReadStream *bmprs,
+	            uint32 flags = FLAG_PREVENT_SAVE, int32 layer = LAYER_MODAL);
+	~CruDemoGump() override;
 
-	//! load/init game's data files
-	virtual bool loadFiles() = 0;
+	// Init the gump, call after construction
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	//! initialize new game
-	virtual bool startGame() = 0;
+	void Close(bool no_del = false) override;
 
-	//! start initial usecode
-	virtual bool startInitialUsecode(int saveSlot = -1) = 0;
+	// Paint the Gump
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	//! write game-specific savegame info (avatar stats, equipment, ...)
-	virtual void writeSaveInfo(Common::WriteStream *ws) = 0;
-
-	virtual ProcId playIntroMovie(bool fade) = 0;
-	virtual ProcId playEndgameMovie(bool fade) = 0;
-	virtual void playCredits() = 0;
-	virtual void playQuotes() = 0;
-	virtual void playDemoScreen() = 0;
-
-	static Game *createGame(const GameInfo *info);
-
-	INTRINSIC(I_playEndgame);
-	INTRINSIC(I_playCredits);
-	INTRINSIC(I_playDemoScreen);
+	bool OnKeyDown(int key, int mod) override;
 
 protected:
-	static Game *_game;
+	//! The background picture
+	RenderSurface *_background;
 };
 
 } // End of namespace Ultima8

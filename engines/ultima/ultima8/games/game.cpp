@@ -79,8 +79,13 @@ uint32 Game::I_playEndgame(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
-uint32 Game::I_playCredits(const uint8 *args, unsigned int /*argsize*/) {
+uint32 Game::I_playCredits(const uint8 */*args*/, unsigned int /*argsize*/) {
 	Game::get_instance()->playCredits();
+	return 0;
+}
+
+uint32 Game::I_playDemoScreen(const uint8 */*args*/, unsigned int /*argsize*/) {
+	Game::get_instance()->playDemoScreen();
 	return 0;
 }
 
