@@ -48,7 +48,7 @@ struct GameInfo {
 	enum GameUsecodeOffsetVariant {
 		GAME_UC_DEFAULT, // Most versions of most games
 		GAME_UC_REM_ES,  // Crusader: No Remorse Spanish
-		GAME_UC_REM_DEMO // Crusader: No Remorse Demo
+		GAME_UC_DEMO     // Crusader: No Remorse or No Regret Demos
 	} _ucOffVariant;
 
 	//! version number, encoded as 100*major + minor
