@@ -517,7 +517,7 @@ bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, con
 		return false;
 
 	fileProps.md5 = Common::computeStreamMD5AsString(testFile, _md5Bytes);
-	fileProps.size = (int32)testFile.size();
+	fileProps.size = testFile.size();
 	MD5Man.setMD5(hashname, fileProps.md5);
 	MD5Man.setSize(hashname, fileProps.size);
 
@@ -551,7 +551,7 @@ bool AdvancedMetaEngine::getFilePropertiesExtern(uint md5Bytes, const FileMap &a
 	if (!testFile.open(allFiles[fname]))
 		return false;
 
-	fileProps.size = (int32)testFile.size();
+	fileProps.size = testFile.size();
 	fileProps.md5 = Common::computeStreamMD5AsString(testFile, md5Bytes);
 	return true;
 }

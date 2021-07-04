@@ -55,7 +55,7 @@ bool StdioStream::eos() const {
 }
 
 int64 StdioStream::pos() const {
-#if defined(WIN32)
+#if defined(_MSC_VER)
 	return _ftelli64((FILE *)_handle);
 #else
 	return ftell((FILE *)_handle);
@@ -63,7 +63,7 @@ int64 StdioStream::pos() const {
 }
 
 int64 StdioStream::size() const {
-#if defined(WIN32)
+#if defined(_MSC_VER)
 	int64 oldPos = _ftelli64((FILE *)_handle);
 	_fseeki64((FILE *)_handle, 0, SEEK_END);
 	int64 length = _ftelli64((FILE *)_handle);
@@ -79,7 +79,7 @@ int64 StdioStream::size() const {
 }
 
 bool StdioStream::seek(int64 offs, int whence) {
-#if defined(WIN32)
+#if defined(_MSC_VER)
 	return _fseeki64((FILE *)_handle, offs, whence) == 0;
 #else
 	return fseek((FILE *)_handle, offs, whence) == 0;
