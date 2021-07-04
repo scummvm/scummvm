@@ -56,7 +56,7 @@ void Cast::loadFontMap(Common::SeekableReadStreamEndian &stream) {
 		// Map cast font ID to window manager font ID
 		_fontMap[id] = _vm->_wm->_fontMan->registerFontName(font);
 
-		debugC(3, kDebugLoading, "Fontmap. ID %d Font %s", id, font.c_str());
+		debugC(3, kDebugLoading, "Cast::loadFontMap: Mapping font %d (%s) to %d", id, font.c_str(), _fontMap[id]);
 		currentRawPosition = stream.pos();
 		stream.seek(positionInfo);
 	}
