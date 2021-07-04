@@ -100,8 +100,6 @@ extern SpellDisplayList         activeSpells;
    Global data
  * ===================================================================== */
 
-EffectDisplayPrototypeList      EffectDisplayPrototypeList::edpList(maxEffectPrototypes);
-SpellDisplayPrototypeList       SpellDisplayPrototypeList::sdpList(maxSpellPrototypes);
 SpriteSet                       *spellSprites;         // longsword test sprites
 SpellStuff                      spellBook[maxSpells];
 
@@ -125,6 +123,9 @@ static void loadMagicData(void);
 // InitMagic called from main startup code
 
 void initMagic(void) {
+	g_vm->_edpList = new EffectDisplayPrototypeList(maxEffectPrototypes);
+	g_vm->_sdpList = new SpellDisplayPrototypeList(maxSpellPrototypes);
+
 	defineEffects();
 	loadMagicData();
 
@@ -150,8 +151,11 @@ void cleanupMagic(void) {
 	for (int i = 0; i < maxSpells; i++) {
 		spellBook[i].killEffects();
 	}
-	SpellDisplayPrototypeList::sdpList.cleanup();
-	EffectDisplayPrototypeList::edpList.cleanup();
+	g_vm->_sdpList->cleanup();
+	g_vm->_edpList->cleanup();
+
+	delete g_vm->_sdpList;
+	delete g_vm->_edpList;
 }
 
 
@@ -163,9 +167,9 @@ void cleanupMagic(void) {
 // the macros make things more legible than the entire call
 
 // Set up a display effect shape
-#define ADD_EFFECT( n, p, s, f, h, b, i ) ( EffectDisplayPrototypeList::edpList.add( new EffectDisplayPrototype(n,&p,&s,&f,&h,&b,&i )))
+#define ADD_EFFECT( n, p, s, f, h, b, i ) ( g_vm->_edpList->add( new EffectDisplayPrototype(n,&p,&s,&f,&h,&b,&i )))
 // Chain another effect when done
-#define SECOND_EFFECT( e, n, p, s, f, h, b, i ) ( EffectDisplayPrototypeList::edpList.append( new EffectDisplayPrototype(n,&p,&s,&f,&h,&b,&i ),e))
+#define SECOND_EFFECT( e, n, p, s, f, h, b, i ) ( g_vm->_edpList->append( new EffectDisplayPrototype(n,&p,&s,&f,&h,&b,&i ),e))
 
 //-----------------------------------------------------------------------
 
@@ -193,7 +197,7 @@ static void defineEffects(void) {
 }
 
 //-----------------------------------------------------------------------
-#define ADD_SHOW( e, a, b, c, d, f, g, m, i, s, n ) ( SpellDisplayPrototypeList::sdpList.add( new SpellDisplayPrototype( e, a, b, c, d, f, g, m, i, s, n )))
+#define ADD_SHOW( e, a, b, c, d, f, g, m, i, s, n ) ( g_vm->_sdpList->add( new SpellDisplayPrototype( e, a, b, c, d, f, g, m, i, s, n )))
 
 //-----------------------------------------------------------------------
 // loadMagicData : reads magic related data from the resource file
@@ -225,7 +229,7 @@ static void loadMagicData(void) {
 			error("Unable to load data for spell %d", i);
 
 		spellBook[rsi->spell].setupFromResource(rsi);
-		SpellDisplayPrototypeList::sdpList.add(new SpellDisplayPrototype(rsi));
+		g_vm->_sdpList->add(new SpellDisplayPrototype(rsi));
 
 		free(rsi);
 		i++;

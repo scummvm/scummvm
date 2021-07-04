@@ -307,7 +307,7 @@ SpellTarget::SpellTarget(StorageSpellTarget &sst) {
 
 SpellInstance::SpellInstance(StorageSpellInstance &ssi) {
 	implementAge = ssi.implementAge; // age at which to implement the spell effects
-	dProto = SpellDisplayPrototypeList::sdpList[ssi.dProto];
+	dProto = (*g_vm->_sdpList)[ssi.dProto];
 	caster = GameObject::objectAddress(ssi.caster);
 	target = new SpellTarget(ssi.target);
 	GameObject *go = GameObject::objectAddress(ssi.world);
@@ -316,15 +316,10 @@ SpellInstance::SpellInstance(StorageSpellInstance &ssi) {
 	age = ssi.age;
 	spell = ssi.spell;
 	maxAge = ssi.maxAge;
-#if 0
-	effect = EffectDisplayPrototypeList::edpList[ssi.effect];
-	effSeq = ssi.effSeq;        // which effect in a sequence is being played
-#else
 	effSeq = 0;
-	effect = EffectDisplayPrototypeList::edpList[ssi.effect];
+	effect = (*g_vm->_edpList)[ssi.effect];
 	while (effSeq < ssi.effSeq)         // which effect in a sequence is being played
 		effect = effect->next;
-#endif
 }
 
 size_t SpellDisplayList::saveSize(void) {

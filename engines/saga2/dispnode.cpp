@@ -44,7 +44,6 @@ DisplayNode                     *DisplayNodeList::head;
 DisplayNodeList                 mainDisplayList;
 
 SpellDisplayList                activeSpells(maxActiveSpells);
-//extern SpellDisplayPrototypeList      SpellDisplayPrototypeList::sdpList;
 
 bool                            centerActorIndicatorEnabled;
 
@@ -990,7 +989,7 @@ void Effectron::drawEffect(void) {
 	sc->sp = spellSprites->sprite(spriteID());   //tempSpellSpriteIDs[rand()%39] );
 	sc->offset.x = scList->offset.y = 0;
 
-	SpellDisplayPrototypeList::sdpList[parent->spell]->
+	(*g_vm->_sdpList)[parent->spell]->
 	getColorTranslation(eColors, this);
 
 	sc->colorTable = eColors;

@@ -50,6 +50,8 @@ class GrabInfo;
 class CImageCache;
 class SensorList;
 class Sensor;
+class EffectDisplayPrototypeList;
+class SpellDisplayPrototypeList;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -111,6 +113,9 @@ public:
 	BandList *_bandList;
 	CImageCache *_imageCache;
 	GrabInfo *_mouseInfo;
+	EffectDisplayPrototypeList *_edpList;
+	SpellDisplayPrototypeList *_sdpList;
+
 
 	gDisplayPort _mainPort;
 

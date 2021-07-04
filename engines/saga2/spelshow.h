@@ -201,8 +201,6 @@ public:
 	void cleanup(void);
 	void append(EffectDisplayPrototype *edp, int32 acount);
 	EffectDisplayPrototype *operator[](EffectID e);
-
-	static EffectDisplayPrototypeList edpList;
 };
 
 //-----------------------------------------------------------------------
@@ -292,8 +290,6 @@ public:
 	void cleanup(void);
 	int32 add(SpellDisplayPrototype *sdp);
 	SpellDisplayPrototype *operator[](SpellID s);
-
-	static SpellDisplayPrototypeList sdpList;
 };
 
 //-----------------------------------------------------------------------
@@ -385,7 +381,7 @@ inline EffectID Effectron::spellID(void) {
 	return parent->spell;
 }
 inline SpellDisplayPrototype *Effectron::spell(void) {
-	return SpellDisplayPrototypeList::sdpList[(SpellID) spellID()];
+	return (*g_vm->_sdpList)[(SpellID) spellID()];
 }
 inline EffectID Effectron::effectID(void) {
 	return spell()->effect;

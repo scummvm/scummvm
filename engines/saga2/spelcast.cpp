@@ -647,7 +647,7 @@ SpellInstance::~SpellInstance() {
 // common initialization code
 
 void SpellInstance::init(void) {
-	dProto = SpellDisplayPrototypeList::sdpList[spell];
+	dProto = (*g_vm->_sdpList)[spell];
 	ProtoObj        *proto = caster->proto();
 	TilePoint       sPoint = caster->getWorldLocation();
 	sPoint.z += proto->height / 2;
@@ -656,7 +656,7 @@ void SpellInstance::init(void) {
 	effSeq = 0;
 	assert(dProto);
 	if (!dProto)   return;
-	effect = EffectDisplayPrototypeList::edpList[dProto->effect];
+	effect = (*g_vm->_edpList)[dProto->effect];
 	implementAge = dProto->implementAge;
 	maxAge = dProto->maxAge;
 	initEffect(sPoint);
