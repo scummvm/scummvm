@@ -1412,11 +1412,13 @@ begin_credits("Credits");
 
 			begin_section("Win32");
 				add_person("Travis Howell", "Kirben", "");
+				add_person("Lothar Serra Mari", "lotharsm", "");
 			end_section();
 
 			begin_section("Win64");
 				add_person("Chris Gray", "Psychoid", "(retired)");
 				add_person("Johannes Schickel", "LordHoto", "(retired)");
+				add_person("Lothar Serra Mari", "lotharsm", "");
 			end_section();
 		end_section();
 

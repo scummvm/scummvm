@@ -1810,6 +1810,8 @@ Win32
 
    * - Travis Howell
      -
+   * - Lothar Serra Mari
+     -
 
 Win64
 ^^^^^
@@ -1821,6 +1823,8 @@ Win64
      - (retired)
    * - Johannes Schickel
      - (retired)
+   * - Lothar Serra Mari
+     -
 
 GUI Translations
 ****************
