@@ -1398,7 +1398,11 @@ void GFXtests::showPixelFormat(const Graphics::PixelFormat &pf, uint aLoss) {
 
 	g_system->beginGFXTransaction();
 		g_system->initSize(320, 200, &pf);
-	g_system->endGFXTransaction();
+	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+	if (gfxError) {
+		Testsuite::logPrintf("WARNING! Pixel Format %s is unsupported\n", pf.toString().c_str());
+		return;
+	}
 	Testsuite::clearScreen(true);
 
 	Graphics::Surface *screen = g_system->lockScreen();
