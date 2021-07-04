@@ -1169,36 +1169,4 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	_castsInfo[id] = ci;
 }
 
-void Cast::loadFontMap(Common::SeekableReadStreamEndian &stream) {
-	if (stream.size() == 0)
-		return;
-
-	debugC(2, kDebugLoading, "****** Loading FontMap VWFM");
-
-	uint16 count = stream.readUint16();
-	uint32 offset = (count * 2) + 2;
-	uint32 currentRawPosition = offset;
-
-	for (uint16 i = 0; i < count; i++) {
-		uint16 id = stream.readUint16();
-		uint32 positionInfo = stream.pos();
-
-		stream.seek(currentRawPosition);
-
-		uint16 size = stream.readByte();
-		Common::String font;
-
-		for (uint16 k = 0; k < size; k++) {
-			font += stream.readByte();
-		}
-
-		// Map cast font ID to window manager font ID
-		_fontMap[id] = _vm->_wm->_fontMan->registerFontName(font);
-
-		debugC(3, kDebugLoading, "Fontmap. ID %d Font %s", id, font.c_str());
-		currentRawPosition = stream.pos();
-		stream.seek(positionInfo);
-	}
-}
-
 } // End of namespace Director

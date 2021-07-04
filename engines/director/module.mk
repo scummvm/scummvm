@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	cursor.o \
 	director.o \
 	events.o \
+	fonts.o \
 	frame.o \
 	graphics.o \
 	images.o \
