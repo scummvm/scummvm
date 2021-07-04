@@ -122,14 +122,18 @@ FXmpToken readFXmpToken(Common::SeekableReadStreamEndian &stream) {
 			res.str += ch;
 			ch = stream.readByte();
 		} while (!stream.eos() && Common::isAlpha(ch));
-		stream.seek(-1, SEEK_CUR);
+		if (!stream.eos()) {
+			stream.seek(-1, SEEK_CUR);
+		}
 	} else if (Common::isDigit(ch)) {
 		res.type = FXMP_TOKEN_INT;
 		do {
 			res.str += ch;
 			ch = stream.readByte();
 		} while (!stream.eos() && Common::isDigit(ch));
-		stream.seek(-1, SEEK_CUR);
+		if (!stream.eos()) {
+			stream.seek(-1, SEEK_CUR);
+		}
 	} else if (ch == '"') {
 		res.type = FXMP_TOKEN_STRING;
 		ch = stream.readByte();
