@@ -174,8 +174,8 @@ struct TilePoint {
 	void operator-= (TilePoint a) { u -= a.u; v -= a.v; z -= a.z; }
 
 	int16 quickHDistance(void) {
-		int16		au = (int16)abs(u),
-					av = (int16)abs(v);
+		int16		au = (int16)ABS(u),
+					av = (int16)ABS(v);
 
 		if (au > av)
 			return (int16)(au + (av >> 1));
@@ -264,8 +264,8 @@ public:
 	void operator-= (TilePoint32 a) { u -= a.u; v -= a.v; z -= a.z; }
 
 	int32 quickHDistance( void ) {
-		int32		au = abs( u ),
-					av = abs( v );
+		int32		au = ABS( u ),
+					av = ABS( v );
 
 		if (au > av) return au + (av >> 1);
 		else return av + (au >> 1);

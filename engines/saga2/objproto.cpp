@@ -619,7 +619,7 @@ bool ProtoObj::acceptHealing(
 	assert(dObj != Nothing);
 	damage = absDamage;
 	if (dice)
-		for (int d = 0; d < abs(dice); d++)
+		for (int d = 0; d < ABS(dice); d++)
 			damage += (g_vm->_rnd->getRandomNumber(sides - 1) + pdm + 1) * (dice > 0 ? 1 : -1);
 
 	return acceptHealingAction(dObj, enactor, damage);

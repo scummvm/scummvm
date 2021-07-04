@@ -897,8 +897,8 @@ bool isVisible(GameObject *obj) {
 
 	TileToScreenCoords(viewCenter, vp);
 
-	distanceX = abs(vp.x - p.x);
-	distanceY = abs(vp.y - p.y);
+	distanceX = ABS(vp.x - p.x);
+	distanceY = ABS(vp.y - p.y);
 
 	if ((distanceY >= loadDistY) ||
 	        (distanceX >= loadDistX))

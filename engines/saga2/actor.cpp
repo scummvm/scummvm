@@ -395,7 +395,7 @@ bool ActorProto::acceptDamageAction(
 		damage = absDamage;
 
 		if (dice)
-			for (int d = 0; d < abs(dice); d++)
+			for (int d = 0; d < ABS(dice); d++)
 				damage += ((rand() % sides) + pdm + 1) * (dice > 0 ? 1 : -1);
 	}
 
@@ -3318,7 +3318,7 @@ int16 GetRandomBetween(int start, int end) {
 	//  Here's a more efficient way to express this.
 
 	if (start == end) return start;
-	else return (rand() % abs(end - start)) + start;
+	else return (rand() % ABS(end - start)) + start;
 
 }
 

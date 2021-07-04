@@ -930,7 +930,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 			        ||  _curMouseState.right > 1) {
 				Point16 diff = lastClickPos - _curMouseState.pos;
 
-				if (abs(diff.x) + abs(diff.y) < 6)
+				if (ABS(diff.x) + ABS(diff.y) < 6)
 					msg.doubleClick = 1;
 			}
 

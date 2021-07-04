@@ -131,8 +131,8 @@ class frameSmoother: public frameCounter {
 
 		// get variance totals
 		for (uint i = 0; i < historySize; i++) {
-			dif1Sec[i / int(desiredFPS)] += abs(ksHistory(i) - avg1Sec[i / int(desiredFPS)]);
-			dif5Sec += abs(ksHistory(i) - avg5Sec);
+			dif1Sec[i / int(desiredFPS)] += ABS(ksHistory(i) - avg1Sec[i / int(desiredFPS)]);
+			dif5Sec += ABS(ksHistory(i) - avg5Sec);
 		}
 
 		// get average variances

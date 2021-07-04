@@ -862,9 +862,9 @@ int16 gSlider::getSliderLenVal(void) {
 	if (slValMin < 0 && slValMax < 0) {
 		val = slValMax - slValMin;
 	} else if (slValMin < 0 && slValMax >= 0) {
-		val = abs(slValMin) + slValMax;
+		val = ABS(slValMin) + slValMax;
 	} else if (slValMin >= 0 && slValMax < 0) {
-		val = abs(slValMax) - slValMin;
+		val = ABS(slValMax) - slValMin;
 	} else if (slValMin >= 0 && slValMax >= 0) {
 		val = slValMax - slValMin;
 	}

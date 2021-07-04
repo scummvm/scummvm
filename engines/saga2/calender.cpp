@@ -109,13 +109,13 @@ int CalenderTime::lightLevel(int maxLevel) {
 	//  grows to 'framesAtNoon' at noon, then shrinks
 	//  back to 0 at midnight again.
 	solarAngle =    framesAtNoon
-	                -   abs(frameInDay() - framesAtNoon);
+	                -   ABS(frameInDay() - framesAtNoon);
 
 	//  Just for fun, we'll make the days longer in the summer,
 	//  and shorter the winter. The calculation produces a number
 	//  which equals daysPerYear/4 in summer, and -daysperYear/4
 	//  in winter.
-	season = daysPerYear / 4 - abs(dayInYear - daysPerYear / 2);
+	season = daysPerYear / 4 - ABS(dayInYear - daysPerYear / 2);
 
 	//  Convert season to an extra hour of daylight in summer,
 	//  and an extra hour of night in winter. (That's an extra

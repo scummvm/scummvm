@@ -97,9 +97,9 @@ static ATTENUATOR(volumeFromDist) {
 	TilePoint tp(loc.x, loc.y, 0);
 	uint32 dist = tp.quickHDistance();
 	if (dist < fullVolumeDist) {
-		return abs(maxVol);
+		return ABS(maxVol);
 	} else if (dist < offVolumeDist) {
-		return abs((int)(maxVol * ((int)((offVolumeDist - fullVolumeDist) - (dist - fullVolumeDist))) / (offVolumeDist - fullVolumeDist)));
+		return ABS((int)(maxVol * ((int)((offVolumeDist - fullVolumeDist) - (dist - fullVolumeDist))) / (offVolumeDist - fullVolumeDist)));
 	}
 	return 0;
 }

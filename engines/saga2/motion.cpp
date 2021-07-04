@@ -274,7 +274,7 @@ bool unstickObject(GameObject *obj) {
 
 			//  Set new radius to maximum of abs of the 3 coords, minus 1
 			//  (Because we want solution to converge faster)
-			newRadius = MAX(MAX(abs(dx), abs(dy)), abs(dz)) - 1;
+			newRadius = MAX(MAX(ABS(dx), ABS(dy)), ABS(dz)) - 1;
 			if (newRadius < radius) {
 				radius = newRadius;
 
@@ -2178,7 +2178,7 @@ void MotionTask::ballisticAction(void) {
 	//  Make Up For Rounding Errors In ThrowTo
 
 	if (uFrac) {
-		uErrorTerm += abs(uFrac);
+		uErrorTerm += ABS(uFrac);
 
 		if (uErrorTerm >= steps) {
 			uErrorTerm -= steps;
@@ -2190,7 +2190,7 @@ void MotionTask::ballisticAction(void) {
 	}
 
 	if (vFrac) {
-		vErrorTerm += abs(vFrac);
+		vErrorTerm += ABS(vFrac);
 
 		if (vErrorTerm >= steps) {
 			vErrorTerm -= steps;
@@ -2434,7 +2434,7 @@ bool MotionTask::nextWayPoint(void) {
 			//  use dumb pathfinding until the pathfinder finishes it's task.
 
 			if ((finalTarget - object->_data.location).quickHDistance() > 0
-			        ||  abs(finalTarget.z - object->_data.location.z) > kMaxStepHeight) {
+			        ||  ABS(finalTarget.z - object->_data.location.z) > kMaxStepHeight) {
 				//  If no pathfind in progress
 				if ((flags & pathFind)
 				        &&  !(flags & finalPath)
@@ -2585,7 +2585,7 @@ void MotionTask::walkAction(void) {
 
 			//  If we're not already there, then proceed towards
 			//  the target.
-			if (targetDist > 0 || abs(targetVector.z) > kMaxStepHeight)
+			if (targetDist > 0 || ABS(targetVector.z) > kMaxStepHeight)
 				break;
 		}
 
@@ -2645,7 +2645,7 @@ void MotionTask::walkAction(void) {
 
 	if (moveTaskDone || moveTaskWaiting) {
 		movementDirection = a->currentFacing;
-	} else if (targetDist == 0 && abs(targetVector.z) > kMaxStepHeight) {
+	} else if (targetDist == 0 && ABS(targetVector.z) > kMaxStepHeight) {
 		if (pathFindTask) {
 			movementDirection = a->currentFacing;
 			moveTaskWaiting = true;

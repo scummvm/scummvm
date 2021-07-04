@@ -1710,7 +1710,7 @@ bool GameObject::inRange(const TilePoint &tp, uint16 range) {
 	TilePoint   vector = tp - loc;
 
 	return      vector.quickHDistance() <= range
-	            &&  abs(vector.z) <= range;
+	            &&  ABS(vector.z) <= range;
 }
 
 //-----------------------------------------------------------------------
@@ -3527,8 +3527,8 @@ ObjectID RingObjectIterator::next(GameObject **obj) {
 int16 DispRegionObjectIterator::computeDist(const TilePoint &tp) {
 	//  Compute distance from object to screen center.
 	//  REM: remember to add in Z there somewhere.
-	return  abs(getCenter().u - tp.u)
-	        +  abs(getCenter().v - tp.v);
+	return  ABS(getCenter().u - tp.u)
+	        +  ABS(getCenter().v - tp.v);
 }
 
 /* ======================================================================= *

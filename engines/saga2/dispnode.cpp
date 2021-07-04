@@ -206,8 +206,8 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 		int16       dist;
 
 		//  Compute distance from object to screen center.
-		dist =      abs(viewCenter.u - objLoc.u)
-		            +   abs(viewCenter.v - objLoc.v);
+		dist =      ABS(viewCenter.u - objLoc.u)
+		            +   ABS(viewCenter.v - objLoc.v);
 
 		//  Determine if the object is beyond the screen threshold
 		if ((dist >= loadDist

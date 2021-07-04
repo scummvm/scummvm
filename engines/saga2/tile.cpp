@@ -3667,7 +3667,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 
 		//  Compute the mask which represents the subtile
 		sMask = calcSubTileMask(subTile.u, subTile.v);
-		yBound = abs(subTileRel.x >> 1);
+		yBound = ABS(subTileRel.x >> 1);
 
 		while (subTileRel.y >= 0
 		        && subTile.u < 4
@@ -3812,7 +3812,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 				sMask <<= kSubTileMaskUShift + kSubTileMaskVShift;
 				subTileRel.y -= kSubTileDY * 2;
 			}
-			yBound = abs(subTileRel.x >> 1);
+			yBound = ABS(subTileRel.x >> 1);
 
 			if (subTile.u >= 4 || subTile.v >= 4) {
 				//  No subtile was found, so lets move the pointer.
@@ -3826,10 +3826,10 @@ SurfaceType pointOnTile(TileInfo            *ti,
 					subTileRel.x = relPos.x -
 					               ((subTile.u - subTile.v) << kSubTileDXShift);
 					subTileRel.y = ti->attrs.terrainHeight + kSubTileDY * 2 -
-					               abs(subTileRel.x >> 1) - 1;
+					               ABS(subTileRel.x >> 1) - 1;
 
 					sMask = calcSubTileMask(subTile.u, subTile.v);
-					yBound = abs(subTileRel.x >> 1);
+					yBound = ABS(subTileRel.x >> 1);
 				} else {
 					//  If there were no raised subtiles checked, move the
 					//  pointer laterally to the nearest raised subtile.
@@ -3899,7 +3899,7 @@ testLeft:
 					if (raisedCol == -4) break;
 
 					//  compute the number of subtiles in column
-					int8 subsInCol = 4 - abs(raisedCol);
+					int8 subsInCol = 4 - ABS(raisedCol);
 					relPos.x = (raisedCol << kSubTileDXShift) + subTileRel.x;
 
 					if (raisedCol > 0) {
@@ -3925,7 +3925,7 @@ testLeft:
 					//  column
 					subTileRel.y = relPos.y - ((subTile.u + subTile.v) * kSubTileDY) - h;
 					sMask = calcSubTileMask(subTile.u, subTile.v);
-					yBound = abs(subTileRel.x >> 1);
+					yBound = ABS(subTileRel.x >> 1);
 				}
 			}
 		}
@@ -4122,7 +4122,7 @@ StaticTilePoint pickTile(Point32 pos,
 	mt = curMap->lookupMeta(mCoords);
 
 	//  While we are less than the pick altitude
-	while (relPos.y < zMax + kTileDX + kMaxStepHeight - abs(relPos.x >> 1)) {
+	while (relPos.y < zMax + kTileDX + kMaxStepHeight - ABS(relPos.x >> 1)) {
 		//  If there is a metatile on this spot
 		if (mt != nullptr) {
 			//  Iterate through all platforms
@@ -4155,7 +4155,7 @@ StaticTilePoint pickTile(Point32 pos,
 
 				//  Reject the tile if mouse position is below lower tile
 				//  boundary
-				if ((relPos.y - sti.surfaceHeight) < abs(relPos.x >> 1))
+				if ((relPos.y - sti.surfaceHeight) < ABS(relPos.x >> 1))
 					continue;
 
 				if (ti->attrs.height > 0) {
@@ -4525,8 +4525,8 @@ void updateMainDisplay(void) {
 	viewDiff = trackPos - lastViewLoc;
 	lastViewLoc = trackPos;
 
-	if (abs(viewDiff.u) > 8 * kPlatformWidth * kTileUVSize
-	        ||  abs(viewDiff.v) > 8 * kPlatformWidth * kTileUVSize)
+	if (ABS(viewDiff.u) > 8 * kPlatformWidth * kTileUVSize
+	        ||  ABS(viewDiff.v) > 8 * kPlatformWidth * kTileUVSize)
 		freeAllTileBanks();
 
 	//  Add current coordinates to map if they have mapping
@@ -4693,25 +4693,25 @@ void markMetaAsVisited(const TilePoint &pt) {
  * ===================================================================== */
 
 int16 quickDistance(const Point16 &p) {
-	int16       ax = abs(p.x),
-	            ay = abs(p.y);
+	int16       ax = ABS(p.x),
+	            ay = ABS(p.y);
 
 	if (ax > ay) return ax + (ay >> 1);
 	else return ay + (ax >> 1);
 }
 
 int32 quickDistance(const Point32 &p) {
-	int32       ax = abs(p.x),
-	            ay = abs(p.y);
+	int32       ax = ABS(p.x),
+	            ay = ABS(p.y);
 
 	if (ax > ay) return ax + (ay >> 1);
 	else return ay + (ax >> 1);
 }
 
 int16 TilePoint::magnitude(void) {
-	int16       au = abs(u),
-	            av = abs(v),
-	            az = abs(z);
+	int16       au = ABS(u),
+	            av = ABS(v),
+	            az = ABS(z);
 
 	if (az > au && az > av) return az + ((au + av) >> 1);
 	if (au > av)            return au + ((az + av) >> 1);
@@ -4763,7 +4763,7 @@ uint16 lineDist(
 	else
 		dist = lineFar;
 
-	return abs(dist);
+	return ABS(dist);
 }
 
 } // end of namespace Saga2

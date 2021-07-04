@@ -3619,15 +3619,15 @@ int16 scriptSwapRegions(int16 *args) {
 	region1.min.u = args[1];
 	region1.min.v = args[2];
 	region1.min.z = -128;
-	region1.max.u = args[1] + abs(args[6]);
-	region1.max.v = args[2] + abs(args[7]);
+	region1.max.u = args[1] + ABS(args[6]);
+	region1.max.v = args[2] + ABS(args[7]);
 	region1.max.z = 127;
 
 	region2.min.u = args[4];
 	region2.min.v = args[5];
 	region2.min.z = -128;
-	region2.max.u = args[4] + abs(args[6]);
-	region2.max.v = args[5] + abs(args[7]);
+	region2.max.u = args[4] + ABS(args[6]);
+	region2.max.v = args[5] + ABS(args[7]);
 	region2.max.z = 127;
 
 	//  Count how many objects are in each region

@@ -30,13 +30,13 @@
 namespace Saga2 {
 
 inline int32 RANDOM(int32 minV, int32 maxV) {
-	return (maxV - minV + 1) ? g_vm->_rnd->getRandomNumber(abs(maxV - minV)) + minV : 0;
+	return (maxV - minV + 1) ? g_vm->_rnd->getRandomNumber(ABS(maxV - minV)) + minV : 0;
 }
 
 inline int32 diceRoll(int dice, int sides, int perDieMod, int base) {
 	int32 rv = base;
 	if (dice)
-		for (int i = 0; i < abs(dice); i++)
+		for (int i = 0; i < ABS(dice); i++)
 			rv += (RANDOM(1, sides) + perDieMod * (dice > 0 ? 1 : -1));
 	return rv;
 }
