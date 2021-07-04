@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-02 14:20+0000\n"
+"POT-Creation-Date: 2021-07-04 16:49+0000\n"
 "PO-Revision-Date: 2021-05-15 04:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2528,7 +2528,7 @@ msgstr ""
 msgid "Starting MIDI dump"
 msgstr "MIDI 덤프를 시작합니다"
 
-#: audio/mods/paula.cpp:303
+#: audio/mods/paula.cpp:304
 msgid "Amiga Audio emulator"
 msgstr "Amiga Audio 에뮬레이터"
 

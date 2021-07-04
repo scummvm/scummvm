@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-02 14:20+0000\n"
+"POT-Creation-Date: 2021-07-04 16:49+0000\n"
 "PO-Revision-Date: 2021-06-18 05:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2576,7 +2576,7 @@ msgstr ""
 msgid "Starting MIDI dump"
 msgstr "Начинаю создание дампа MIDI"
 
-#: audio/mods/paula.cpp:303
+#: audio/mods/paula.cpp:304
 msgid "Amiga Audio emulator"
 msgstr "Эмулятор звука Amiga"
 
