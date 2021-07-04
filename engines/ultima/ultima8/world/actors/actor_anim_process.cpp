@@ -93,6 +93,14 @@ bool ActorAnimProcess::init() {
 	if (!actor->hasFlags(Item::FLG_FASTAREA)) {
 		// not in the fast area? Can't play an animation then.
 		// (If we do, the actor will likely fall because the floor is gone.)
+
+#ifdef WATCHACTOR
+	if (_itemNum == watchactor)
+		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
+			 << "] ActorAnimProcess " << getPid() << " init failed "
+			 << "(actor " << _itemNum << "not fast)" << Std::endl;
+#endif
+
 		return false;
 	}
 
@@ -113,6 +121,14 @@ bool ActorAnimProcess::init() {
 	if (!_tracker->init(actor, _action, _dir)) {
 		delete _tracker;
 		_tracker = nullptr;
+
+#ifdef WATCHACTOR
+	if (_itemNum == watchactor)
+		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
+			 << "] ActorAnimProcess " << getPid() << " init failed "
+			 << "(tracker init failed)" << Std::endl;
+#endif
+
 		return false;
 	}
 
@@ -655,7 +671,7 @@ void ActorAnimProcess::terminate() {
 	if (_itemNum == watchactor)
 		pout << "Animation ["
 		     << Kernel::get_instance()->getFrameNum()
-		     << "] ActorAnimProcess terminating"
+		     << "] ActorAnimProcess " << getPid() << " terminating"
 		     << Std::endl;
 #endif
 

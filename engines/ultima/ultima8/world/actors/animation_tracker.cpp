@@ -64,8 +64,15 @@ bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
 	uint32 actionnum = AnimDat::getActionNumberForSequence(action, actor);
 	_animAction = GameData::get_instance()->getMainShapes()->
 	             getAnim(shape, actionnum);
-	if (!_animAction)
+	if (!_animAction) {
+#ifdef WATCHACTOR
+		if (actor && actor->getObjId() == watchactor) {
+			debug(6, "AnimationTracker: no animation action %d for shape %d",
+				  actionnum, shape);
+		}
+#endif
 		return false;
+	}
 
 	_dir = dir;
 
