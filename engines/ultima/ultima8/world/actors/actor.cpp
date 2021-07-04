@@ -1378,6 +1378,7 @@ ProcId Actor::dieU8(uint16 damageType) {
 ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 	bool is_robot = isRobotCru();
 	bool created_koresh = false;
+	const uint32 startshape = getShape();
 
 	World *world = World::get_instance();
 
@@ -1466,6 +1467,27 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 	if (!created_koresh) {
 		bool fall_backwards = true;
 		bool fall_random_dir = false;
+
+		if (GAME_IS_REGRET) {
+			uint32 shape = getShape();
+			if (startshape == shape) {
+				if (shape == 0x5ff || shape == 0x5d7) {
+					setShape(0x606);
+					setToStartOfAnim(Animation::fallBackwardsCru);
+				} else if (shape == 0x625 || shape == 0x626) {
+					setShape(0x62e);
+					setToStartOfAnim(Animation::fallBackwardsCru);
+				} else if (shape == 0x5f0 || shape == 0x2c3) {
+					setShape(0x5d5);
+					setToStartOfAnim(Animation::fallBackwardsCru);
+				} else if (shape == 0x62f || shape == 0x630) {
+					setShape(0x631);
+					setToStartOfAnim(Animation::fallBackwardsCru);
+				}
+			}
+		}
+
+
 		Direction dirtest[9];
 		/* 0x383 == 899 (robot), 1423 = plasma death, 1430 = fire death skeleton */
 		if (getShape() != 899 && getShape() != 0x58f && getShape() != 0x596) {
