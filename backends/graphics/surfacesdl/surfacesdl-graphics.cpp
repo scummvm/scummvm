@@ -1700,11 +1700,14 @@ void SurfaceSdlGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
 	if (SDL_LockSurface(_overlayscreen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
+	assert(surface.w >= _videoMode.overlayWidth);
+	assert(surface.h >= _videoMode.overlayHeight);
+	assert(surface.format.bytesPerPixel == 2);
+
 	byte *src = (byte *)_overlayscreen->pixels;
 	byte *dst = (byte *)surface.getPixels();
-	int h = MIN<int>(surface.h, _videoMode.overlayHeight);
-	int w = MIN<int>(surface.w, _videoMode.overlayWidth);
-	crossBlit(dst, src, surface.pitch, _overlayscreen->pitch, w, h, surface.format, _overlayFormat);
+	Graphics::copyBlit(dst, src, surface.pitch, _overlayscreen->pitch,
+		_videoMode.overlayWidth, _videoMode.overlayHeight, 2);
 
 	SDL_UnlockSurface(_overlayscreen);
 }

@@ -340,17 +340,15 @@ void AndroidGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
 	GLTHREADCHECK;
 
 	const Graphics::Surface *overlaySurface = _overlay_texture->surface_const();
+
+	assert(surface.w >= overlaySurface->w);
+	assert(surface.h >= overlaySurface->h);
+	assert(surface.format.bytesPerPixel == sizeof(uint16));
 	assert(overlaySurface->format.bytesPerPixel == sizeof(uint16));
 
-	byte *dst = (byte *)surface.getPixels();
 	const byte *src = (const byte *)overlaySurface->getPixels();
-	uint h = overlaySurface->h;
-
-	do {
-		memcpy(dst, src, overlaySurface->w * overlaySurface->format.bytesPerPixel);
-		src += overlaySurface->pitch;
-		dst += surface.pitch;
-	} while (--h);
+	byte *dst = (byte *)surface.getPixels();
+	Graphics::copyBlit(dst, src, surface.pitch, overlaySurface->pitch, w, h, sizeof(uint16));
 }
 
 void AndroidGraphicsManager::copyRectToOverlay(const void *buf, int pitch,

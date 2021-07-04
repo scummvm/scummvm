@@ -577,15 +577,14 @@ void OSystem_Wii::clearOverlay() {
 }
 
 void OSystem_Wii::grabOverlay(Graphics::Surface &surface) {
-	int h = _overlayHeight;
-	uint16 *src = _overlayPixels;
-	byte *dst = (byte *)surface.getPixels();
+	assert(surface.w >= _overlayWidth);
+	assert(surface.h >= _overlayHeight);
+	assert(surface.format.bytesPerPixel == sizeof(uint16));
 
-	do {
-		memcpy(dst, src, _overlayWidth * sizeof(uint16));
-		src += _overlayWidth;
-		dst += surface.pitch;
-	} while (--h);
+	byte *src = (byte *)_overlayPixels;
+	byte *dst = (byte *)surface.getPixels();
+	Graphics::copyBlit(dst, src, surface.pitch, _overlayWidth * sizeof(uint16),
+		_overlayWidth, _overlayHeight, sizeof(uint16));
 }
 
 void OSystem_Wii::copyRectToOverlay(const void *buf, int pitch, int x,
