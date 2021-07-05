@@ -129,27 +129,20 @@ void initGameState(void) {
 //----------------------------------------------------------------------
 //	Save the current game state
 
-void writeSavegameHeader(Common::OutSaveFile *out, SaveFileHeader &header) {
-	out->writeUint32LE(header.gameID);
-	out->write(header.saveName, saveNameSize);
-	out->write(header.reserved, sizeof(header.reserved));
-}
-
 Common::Error saveGameState(int16 saveNo, char *saveName) {
 	pauseTimer();
 
-	//SaveFileConstructor     saveGame(saveNo, saveName);
-	Common::OutSaveFile *out = g_vm->getSaveFileManager()->openForSaving(getSaveFileName(saveNo));
+	debugC(1, kDebugSaveload, "Saving game");
+
+	Common::OutSaveFile *out = g_vm->getSaveFileManager()->openForSaving(getSaveFileName(saveNo), false);
 	if (!out)
 		return Common::kCreatingFileFailed;
 
 	SaveFileHeader header;
-	memset(&header, 0, sizeof(header));
 	header.gameID = gameID;
-	Common::strlcpy(header.saveName, saveName, saveNameSize - 1);
+	header.saveName = saveName;
 
-	warning("saveGameState: gameID: %s, saveName: %s", tag2str(header.gameID), header.saveName);
-	writeSavegameHeader(out, header);
+	header.write(out);
 
 #if 0
 	saveGlobals(saveGame);

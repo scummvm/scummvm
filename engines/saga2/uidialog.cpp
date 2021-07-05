@@ -589,7 +589,7 @@ char **initFileFields(void) {
 		strings[i] = new char[editLen + 1];
 
 		if (getSaveName(i, header)) {
-			strncpy(strings[i], header.saveName, editLen);
+			strncpy(strings[i], header.saveName.c_str(), editLen);
 		} else {
 			strncpy(strings[i], FILE_DIALOG_NONAME, editLen);
 			strings[i][0] |= 0x80;
@@ -623,24 +623,16 @@ void destroyFileFields(char **strings) {
 }
 
 bool getSaveName(int8 saveNo, SaveFileHeader &header) {
-	FILE            *fileHandle;            //  A standard C file handle
-	char            fileName[fileNameSize + 1];
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(getSaveFileName(saveNo));
 
-	//  Construct the file name based on the save number
-	getSaveFileName(saveNo, fileName);
-
-	//  Open the file or throw an exception
-	if ((fileHandle = fopen(fileName, "rb")) == nullptr) {
+	if (!in) {
+		warning("Unable to load save %s", getSaveFileName(saveNo));
 		return false;
 	}
 
-	//  Read the save file header
-	if (fread(&header, sizeof(header), 1, fileHandle) != 1) {
-		return false;
-	}
+	header.read(in);
 
-	// close the used file handle
-	if (fileHandle != nullptr) fclose(fileHandle);
+	delete in;
 
 	return true;
 }

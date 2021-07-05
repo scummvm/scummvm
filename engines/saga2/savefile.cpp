@@ -31,6 +31,25 @@
 
 namespace Saga2 {
 
+void SaveFileHeader::read(Common::InSaveFile *in) {
+	char fileName[SaveFileHeader::kSaveNameSize];
+	gameID = in->readUint32BE();;
+	in->read(fileName, SaveFileHeader::kSaveNameSize);
+	saveName = fileName;
+}
+
+void SaveFileHeader::write(Common::OutSaveFile *out) {
+	out->writeUint32BE(gameID);
+	out->write(saveName.c_str(), saveName.size());
+
+	int remainingBytes = SaveFileHeader::kHeaderSize - saveName.size() - 4;
+
+	for (int i = 0; i < remainingBytes; ++i)
+		out->writeByte(0);
+
+	debugC(1, kDebugSaveload, "Writing game header: gameID = %s, saveName = %s", tag2str(gameID), saveName);
+}
+
 /* ===================================================================== *
    Functions
  * ===================================================================== */
@@ -55,6 +74,9 @@ Common::String getSaveFileName(int16 saveNo) {
 //	Constructor
 
 SaveFileConstructor::SaveFileConstructor(int16 saveNo, char *saveName) {
+	warning("STUB: SaveFileConstructor::SaveFileConstructor");
+
+#if 0
 	char    fileName[fileNameSize];
 
 	//  Construct the file name string
@@ -77,6 +99,7 @@ SaveFileConstructor::SaveFileConstructor(int16 saveNo, char *saveName) {
 		error("Error writing save game header: \"%s\"", fileName);
 
 	chunkSize = posInChunk = 0;
+#endif
 }
 
 //----------------------------------------------------------------------
