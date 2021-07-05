@@ -240,9 +240,11 @@ void volumeChanged(void) {
 	else
 		suspendLoops();
 
-	if (audio->getVolume(kVolMusic))
+	if (audio->getVolume(kVolMusic)) {
 		resumeMusic();
-	else
+
+		audio->_music->setVolume(audio->getVolume(kVolMusic));
+	} else
 		suspendMusic();
 }
 

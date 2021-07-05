@@ -1847,8 +1847,7 @@ APPFUNC(cmdSetMIDIVolume) {
 
 APPFUNC(cmdSetDIGVolume) {
 	int16 v = quantizedVolume(ev.value);
-	ConfMan.setInt("speech_volume", v);
-	ConfMan.setInt("sfx_volume", v);
+	ConfMan.setInt("music_volume", v);
 	g_vm->syncSoundSettings();
 	volumeChanged();
 }

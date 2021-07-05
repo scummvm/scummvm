@@ -184,4 +184,9 @@ void Music::stop() {
 	_player->stop();
 }
 
+void Music::setVolume(int volume) {
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+	_player->setVolume(volume);
+}
+
 } // End of namespace Saga

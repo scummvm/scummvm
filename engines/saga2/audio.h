@@ -56,8 +56,6 @@ private:
 	SoundInstance _currentLoop;
 	SoundInstance _currentMusic;
 
-	Music *_music;
-
 public:
 	Audio::SoundHandle _speechSoundHandle;
 	Audio::SoundHandle _sfxSoundHandle;
@@ -69,6 +67,7 @@ public:
 	Common::Queue<SoundInstance> _sfxQueue;
 
 	Audio::Mixer *_mixer;
+	Music *_music;
 
 public:
 	// ctor, dtor, initialization

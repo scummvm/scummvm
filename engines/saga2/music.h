@@ -71,13 +71,12 @@ public:
 	void resume();
 	void stop();
 
-	void setVolume(int volume, int time = 1);
+	void setVolume(int volume);
 	int getVolume() { return _currentVolume; }
 
 	bool isAdlib() const { return _player->isAdlib(); }
 
 private:
-	Saga2Engine *_vm;
 	Audio::Mixer *_mixer;
 
 	MusicDriver *_player;
