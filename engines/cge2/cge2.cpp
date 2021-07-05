@@ -26,6 +26,7 @@
  */
 
 #include "engines/util.h"
+#include "common/text-to-speech.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -105,6 +106,8 @@ CGE2Engine::CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription)
 		_oldSfxVolume = ConfMan.getInt("sfx_volume");
 		_music = _oldMusicVolume != 0;
 	}
+
+	_ttsMan = g_system->getTextToSpeechManager();
 }
 
 void CGE2Engine::init() {
@@ -181,6 +184,8 @@ bool CGE2Engine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error CGE2Engine::run() {
+    // if (_ttsMan != nullptr)
+	// 	_ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
 	syncSoundSettings();
 	initGraphics(kScrWidth, kScrHeight);
 

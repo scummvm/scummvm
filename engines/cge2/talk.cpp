@@ -28,6 +28,9 @@
 #include "cge2/general.h"
 #include "cge2/talk.h"
 
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
+
 namespace CGE2 {
 
 void CGE2Engine::setAutoColors() {
@@ -254,6 +257,14 @@ InfoLine::InfoLine(CGE2Engine *vm, uint16 w, ColorBank color)
 }
 
 void InfoLine::update(const char *text) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+    if (text) {
+        if (lastText != text) {
+            if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+                ttsMan->say(text);
+            lastText = text;
+        }
+    }
 	if (!_realTime && (text == _oldText))
 		return;
 

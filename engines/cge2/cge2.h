@@ -161,6 +161,8 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error run() override;
 
+	Common::TextToSpeechManager *_ttsMan;
+
 	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
 
 	bool showTitle(const char *name);
