@@ -194,8 +194,13 @@ public:
 	void appendText(const Common::U32String &str, const Font *font, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
 
 	int getTextFont() { return _defaultFormatting.fontId; }
-	int getTextSize() { return _defaultFormatting.fontSize; }
+
+	// because currently, we are counting linespacing as font height
+	int getTextSize() { return _defaultFormatting.fontSize - _lineSpacing; }
 	int getTextColor() { return _defaultFormatting.fgcolor; }
+
+	int getLineSpacing() { return _lineSpacing; }
+	void setLineSpacing(int linespacing);
 
 private:
 	void appendText_(const Common::U32String &strWithFont, uint oldLen);
@@ -316,6 +321,7 @@ protected:
 
 	int _textMaxWidth;
 	int _textMaxHeight;
+	int _lineSpacing;
 
 	ManagedSurface *_surface;
 
