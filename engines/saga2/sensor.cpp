@@ -345,15 +345,19 @@ void loadSensors(SaveFileReader &saveGame) {
 //	Cleanup the active sensors
 
 void cleanupSensors(void) {
-	for (Common::List<SensorList *>::iterator it = g_vm->_sensorListList.begin(); it != g_vm->_sensorListList.end(); ++it)
+	Common::List<SensorList *>::iterator sensorListNextIt;
+	for (Common::List<SensorList *>::iterator it = g_vm->_sensorListList.begin(); it != g_vm->_sensorListList.end(); it = sensorListNextIt) {
+		sensorListNextIt = it;
+		sensorListNextIt++;
 		delete *it;
+	}
 
-	g_vm->_sensorListList.clear();
-
-	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it)
+	Common::List<Sensor *>::iterator sensorNextIt;
+	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); it = sensorNextIt) {
+		sensorNextIt = it;
+		sensorNextIt++;
 		delete *it;
-
-	g_vm->_sensorList.clear();
+	}
 }
 
 //----------------------------------------------------------------------
