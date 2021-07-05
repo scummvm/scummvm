@@ -264,7 +264,7 @@ static struct BuiltinProto {
 	{ "scummvmAssert",	LB::b_scummvmassert,1, 2, true,  200, HBLTIN },
 	{ "scummvmAssertEqual",	LB::b_scummvmassertequal,2,3,true,200,HBLTIN },
 
-	// XCOD/XFCN (HyperCard), normally exposed
+	// XCMD/XFCN (HyperCard), normally exposed
 	{ "GetVolumes", LB::b_getVolumes, 0, 0, true, 400, FBLTIN },
 
 	// Used in "Eastern Mind", normally a TheEntity
