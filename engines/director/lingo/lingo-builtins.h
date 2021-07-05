@@ -199,9 +199,6 @@ void b_scummvmassertequal(int nargs);
 // XCMD/XFCN (HyperCard), normally exposed
 void b_getVolumes(int nargs);
 
-// Used in "Eastern Mind", normally a TheEntity
-void b_colorQD(int nargs);
-
 } // End of namespace LB
 
 } // End of namespace Director
