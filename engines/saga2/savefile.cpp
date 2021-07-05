@@ -246,6 +246,23 @@ bool SaveFileReader::firstChunk(ChunkID &chunk, int32 &size) {
 	return true;
 }
 
+bool firstChunk(Common::InSaveFile *in, ChunkID &chunk, int32 &size) {
+	if (!in->seek(SaveFileHeader::kHeaderSize, SEEK_SET))
+		error("Error seeking first save game chunk");
+
+	if (in->size() - in->pos() < 8) {
+		debugC(1, kDebugSaveload, "Reached EOF on first Chunk %s", tag2str(chunk));
+		return false;
+	}
+
+	chunk = in->readUint32BE();
+	size = in->readUint32LE();
+
+	debugC(1, kDebugSaveload, "First Chunk loaded: chunkID = %s, size = %d", tag2str(chunk), size);
+
+	return true;
+}
+
 //----------------------------------------------------------------------
 //	Make the next chunk the current chunk
 
@@ -272,6 +289,21 @@ bool SaveFileReader::nextChunk(ChunkID &chunk, int32 &size) {
 	//  Return the chunk ID and chunk size
 	chunk = chunkHeader.id;
 	size = chunkHeader.size;
+
+	//  Return success
+	return true;
+}
+
+bool nextChunk(Common::InSaveFile *in, ChunkID &chunk, int32 &size) {
+	if (in->size() - in->pos() < 8) {
+		debugC(1, kDebugSaveload, "Reached EOF at %s", tag2str(chunk));
+		return false;
+	}
+
+	chunk = in->readUint32BE();
+	size = in->readUint32LE();
+
+	debugC(1, kDebugSaveload, "Next Chunk loaded: chunkID = %s, size = %d", tag2str(chunk), size);
 
 	//  Return success
 	return true;

@@ -156,6 +156,9 @@ public:
 	}
 };
 
+bool firstChunk(Common::InSaveFile *in, ChunkID &chunk, int32 &size);
+bool nextChunk(Common::InSaveFile *in, ChunkID &chunk, int32 &size);
+
 } // end of namespace Saga2
 
 #endif

@@ -702,6 +702,22 @@ void saveGlobals(SaveFileConstructor &saveGame) {
 	    sizeof(archive));
 }
 
+void saveGlobals(Common::OutSaveFile *out) {
+	out->write("GLOB", 4);
+	out->writeUint32LE(sizeof(GlobalsArchive));
+
+	out->writeUint32LE(objectIndex);
+	out->writeUint32LE(actorIndex);
+	out->writeByte(brotherBandingEnabled);
+	out->writeByte(centerActorIndicatorEnabled);
+	out->writeByte(interruptableMotionsPaused);
+	out->writeByte(objectStatesPaused);
+	out->writeByte(actorStatesPaused);
+	out->writeByte(actorTasksPaused);
+	out->writeByte(combatBehaviorEnabled);
+	out->writeByte(backgroundSimulationPaused);
+}
+
 //-----------------------------------------------------------------------
 //	Restore miscellaneouse globals from a save file
 
@@ -720,6 +736,20 @@ void loadGlobals(SaveFileReader &saveGame) {
 	actorTasksPaused            = archive.actorTasksPaused;
 	combatBehaviorEnabled       = archive.combatBehaviorEnabled;
 	backgroundSimulationPaused  = archive.backgroundSimulationPaused;
+}
+
+void loadGlobals(Common::InSaveFile *in) {
+	objectIndex = in->readUint32LE();
+	actorIndex = in->readUint32LE();
+	brotherBandingEnabled = in->readByte();
+	centerActorIndicatorEnabled = in->readByte();
+	interruptableMotionsPaused = in->readByte();
+	objectStatesPaused = in->readByte();
+	actorStatesPaused = in->readByte();
+	actorTasksPaused = in->readByte();
+	combatBehaviorEnabled = in->readByte();
+	backgroundSimulationPaused = in->readByte();
+	GlobalsArchive  archive;
 }
 
 /********************************************************************/

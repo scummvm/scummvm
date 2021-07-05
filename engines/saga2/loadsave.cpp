@@ -144,8 +144,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 
 	header.write(out);
 
+	saveGlobals(out);
+
 #if 0
-	saveGlobals(saveGame);
 	saveTimer(saveGame);
 	saveCalender(saveGame);
 	saveWorlds(saveGame);
@@ -227,45 +228,46 @@ void loadSavedGameState(int16 saveNo) {
 
 	pauseTimer();
 
-	SaveFileReader  saveGame(saveNo);
+	Common::InSaveFile *in = g_vm->getSaveFileManager()->openForLoading(getSaveFileName(saveNo));
+	//SaveFileReader  saveGame(saveNo);
 	ChunkID         id;
 	int32           chunkSize;
 	bool            notEOF;
 
-	notEOF = saveGame.firstChunk(id, chunkSize);
+	notEOF = firstChunk(in, id, chunkSize);
 	while (notEOF) {
 		switch (id) {
-		case MakeID('G', 'L', 'O', 'B'):
-			loadGlobals(saveGame);
+		case MKTAG('G', 'L', 'O', 'B'):
+			loadGlobals(in);
 			loadFlags |= loadGlobalsFlag;
 			break;
-
-		case MakeID('T', 'I', 'M', 'E'):
+#if 0
+		case MKTAG('T', 'I', 'M', 'E'):
 			loadTimer(saveGame);
 			loadFlags |= loadTimerFlag;
 			break;
 
-		case MakeID('C', 'A', 'L', 'E'):
+		case MKTAG('C', 'A', 'L', 'E'):
 			loadCalender(saveGame);
 			loadFlags |= loadCalenderFlag;
 			break;
 
-		case MakeID('W', 'R', 'L', 'D'):
+		case MKTAG('W', 'R', 'L', 'D'):
 			loadWorlds(saveGame);
 			loadFlags |= loadWorldsFlag;
 			break;
 
-		case MakeID('A', 'C', 'T', 'R'):
+		case MKTAG('A', 'C', 'T', 'R'):
 			loadActors(saveGame);
 			loadFlags |= loadActorsFlag;
 			break;
 
-		case MakeID('O', 'B', 'J', 'S'):
+		case MKTAG('O', 'B', 'J', 'S'):
 			loadObjects(saveGame);
 			loadFlags |= loadObjectsFlag;
 			break;
 
-		case MakeID('B', 'A', 'N', 'D'):
+		case MKTAG('B', 'A', 'N', 'D'):
 			if (loadFlags & loadActorsFlag) {
 				loadBands(saveGame);
 				loadFlags |= loadBandsFlag;
@@ -273,7 +275,7 @@ void loadSavedGameState(int16 saveNo) {
 				error("Bands loaded prematurely");
 			break;
 
-		case MakeID('P', 'L', 'Y', 'R'):
+		case MKTAG('P', 'L', 'Y', 'R'):
 			if (loadFlags & loadBandsFlag) {
 				loadPlayerActors(saveGame);
 				loadFlags |= loadPlayerActorsFlag;
@@ -281,32 +283,32 @@ void loadSavedGameState(int16 saveNo) {
 				error("PlayerActors loaded prematurely");
 			break;
 
-		case MakeID('C', 'N', 'T', 'R'):
+		case MKTAG('C', 'N', 'T', 'R'):
 			loadCenterActor(saveGame);
 			loadFlags |= loadCenterActorFlag;
 			break;
 
-		case MakeID('T', 'A', 'G', 'S'):
+		case MKTAG('T', 'A', 'G', 'S'):
 			loadActiveItemStates(saveGame);
 			loadFlags |= loadActiveItemStatesFlag;
 			break;
 
-		case MakeID('C', 'Y', 'C', 'L'):
+		case MKTAG('C', 'Y', 'C', 'L'):
 			loadTileCyclingStates(saveGame);
 			loadFlags |= loadTileCyclingStatesFlag;
 			break;
 
-		case MakeID('S', 'D', 'T', 'A'):
+		case MKTAG('S', 'D', 'T', 'A'):
 			loadSAGADataSeg(saveGame);
 			loadFlags |= loadSAGADataSegFlag;
 			break;
 
-		case MakeID('S', 'A', 'G', 'A'):
+		case MKTAG('S', 'A', 'G', 'A'):
 			loadSAGAThreads(saveGame);
 			loadFlags |= loadSAGAThreadsFlag;
 			break;
 
-		case MakeID('M', 'O', 'T', 'N'):
+		case MKTAG('M', 'O', 'T', 'N'):
 			if (!(~loadFlags & (loadActorsFlag | loadObjectsFlag))) {
 				loadMotionTasks(saveGame);
 				loadFlags |= loadMotionTasksFlag;
@@ -314,7 +316,7 @@ void loadSavedGameState(int16 saveNo) {
 				error("MotionTasks loaded prematurely");
 			break;
 
-		case MakeID('T', 'S', 'T', 'K'):
+		case MKTAG('T', 'S', 'T', 'K'):
 			if (loadFlags & loadActorsFlag) {
 				loadTaskStacks(saveGame);
 				loadFlags |= loadTaskStacksFlag;
@@ -322,7 +324,7 @@ void loadSavedGameState(int16 saveNo) {
 				error("TaskStacks loaded prematurely");
 			break;
 
-		case MakeID('T', 'A', 'S', 'K'):
+		case MKTAG('T', 'A', 'S', 'K'):
 			if (loadFlags & loadTaskStacksFlag) {
 				loadTasks(saveGame);
 				loadFlags |= loadTasksFlag;
@@ -330,7 +332,7 @@ void loadSavedGameState(int16 saveNo) {
 				error("Tasks loaded prematurely");
 			break;
 
-		case MakeID('T', 'A', 'C', 'T'):
+		case MKTAG('T', 'A', 'C', 'T'):
 			if (loadFlags & loadWorldsFlag) {
 				loadTileTasks(saveGame);
 				loadFlags |= loadTileTasksFlag;
@@ -338,7 +340,7 @@ void loadSavedGameState(int16 saveNo) {
 				error("TileActivityTasks loaded prematurely");
 			break;
 
-		case MakeID('S', 'P', 'C', 'H'):
+		case MKTAG('S', 'P', 'C', 'H'):
 			if (!(~loadFlags & (loadActorsFlag | loadObjectsFlag))) {
 				loadSpeechTasks(saveGame);
 				loadFlags |= loadSpeechTasksFlag;
@@ -346,12 +348,12 @@ void loadSavedGameState(int16 saveNo) {
 				error("SpeechTasks loaded prematurely");
 			break;
 
-		case MakeID('A', 'R', 'E', 'G'):
+		case MKTAG('A', 'R', 'E', 'G'):
 			loadActiveRegions(saveGame);
 			loadFlags |= loadActiveRegionsFlag;
 			break;
 
-		case MakeID('T', 'I', 'M', 'R'):
+		case MKTAG('T', 'I', 'M', 'R'):
 			if (loadFlags & loadActorsFlag) {
 				loadTimers(saveGame);
 				loadFlags |= loadTimersFlag;
@@ -359,7 +361,7 @@ void loadSavedGameState(int16 saveNo) {
 				error("Timers loaded prematurely");
 			break;
 
-		case MakeID('S', 'E', 'N', 'S'):
+		case MKTAG('S', 'E', 'N', 'S'):
 			if (loadFlags & loadActorsFlag) {
 				loadSensors(saveGame);
 				loadFlags |= loadSensorsFlag;
@@ -367,22 +369,22 @@ void loadSavedGameState(int16 saveNo) {
 				error("Sensors loaded prematurely");
 			break;
 
-		case MakeID('A', 'C', 'N', 'T'):
+		case MKTAG('A', 'C', 'N', 'T'):
 			loadTempActorCount(saveGame);
 			loadFlags |= loadTempActorCountFlag;
 			break;
 
-		case MakeID('M', 'I', 'S', 'S'):
+		case MKTAG('M', 'I', 'S', 'S'):
 			loadMissions(saveGame);
 			loadFlags |= loadMissionsFlag;
 			break;
 
-		case MakeID('F', 'A', 'C', 'T'):
+		case MKTAG('F', 'A', 'C', 'T'):
 			loadFactionTallies(saveGame);
 			loadFlags |= loadFactionTalliesFlag;
 			break;
 
-		case MakeID('T', 'M', 'S', 'T'):
+		case MKTAG('T', 'M', 'S', 'T'):
 			if (loadFlags & loadActorsFlag) {
 				loadTileModeState(saveGame);
 				loadFlags |= loadTileModeStateFlag;
@@ -390,12 +392,12 @@ void loadSavedGameState(int16 saveNo) {
 				error("TileMode state loaded prematurely");
 			break;
 
-		case MakeID('S', 'P', 'E', 'L'):
+		case MKTAG('S', 'P', 'E', 'L'):
 			loadSpellState(saveGame);
 			loadFlags |= loadSpellStateFlag;
 			break;
 
-		case MakeID('A', 'M', 'A', 'P'):
+		case MKTAG('A', 'M', 'A', 'P'):
 			if (loadFlags & loadWorldsFlag) {
 				loadAutoMap(saveGame);
 				loadFlags |= loadAutoMapFlag;
@@ -403,7 +405,7 @@ void loadSavedGameState(int16 saveNo) {
 				error("Auto map loaded prematurely");
 			break;
 
-		case MakeID('U', 'I', 'S', 'T'):
+		case MKTAG('U', 'I', 'S', 'T'):
 			if (loadFlags & loadPlayerActorsFlag) {
 				loadUIState(saveGame);
 				loadFlags |= loadUIStateFlag;
@@ -411,22 +413,25 @@ void loadSavedGameState(int16 saveNo) {
 				error("UI state loaded prematurely");
 			break;
 
-		case MakeID('P', 'A', 'L', 'E'):
+		case MKTAG('P', 'A', 'L', 'E'):
 			loadPaletteState(saveGame);
 			loadFlags |= loadPaletteStateFlag;
 			break;
 
-		case MakeID('C', 'O', 'N', 'T'):
+		case MKTAG('C', 'O', 'N', 'T'):
 			if (loadFlags & loadObjectsFlag) {
 				loadContainerNodes(saveGame);
 				loadFlags |= loadContainerNodesFlag;
 			} else
 				error("ContainerNodes loaded prematurely");
 			break;
+#endif
 		}
 
-		notEOF = saveGame.nextChunk(id, chunkSize);
+		notEOF = nextChunk(in, id, chunkSize);
 	}
+
+	delete in;
 
 	if (!(loadFlags & loadGlobalsFlag))
 		error("Globals not loaded");
@@ -466,6 +471,7 @@ void loadSavedGameState(int16 saveNo) {
 
 	if (!(loadFlags & loadActiveRegionsFlag))
 		error("Active Regions not loaded");
+
 
 	resumeTimer();
 }

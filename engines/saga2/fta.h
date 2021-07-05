@@ -192,7 +192,9 @@ void cleanupPathFinder(void);
 
 void initGlobals(void);
 void saveGlobals(SaveFileConstructor &saveGame);
+void saveGlobals(Common::OutSaveFile *out);
 void loadGlobals(SaveFileReader &saveGame);
+void loadGlobals(Common::InSaveFile *in);
 inline void cleanupGlobals(void) {}      // do nothing
 
 /* ===================================================================== *
