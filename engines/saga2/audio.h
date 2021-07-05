@@ -48,34 +48,14 @@ inline void audioFatal(char *msg) {
 typedef int8 Volume;
 typedef Point32 sampleLocation;
 
-typedef Volume(*audioAttenuationFunction)(sampleLocation loc, Volume maxVol);
-#define ATTENUATOR( name ) Volume name( sampleLocation loc, Volume maxVol )
-
-#define DRIVER_PATH "DRIVERS"
-#define UNDRIVER_PATH ".."
-
 #define Here Point32(0,0)
 
 typedef int8 Volume;
 
-enum volumeTarget {
-	volSound      = 1L << 0, // sound volume
-	volVoice      = 1L << 1, // voice volume
-	volSandV,               // sound & voice
-	volLoops      = 1L << 2, // looped sounds
-	volSandL,               // sound and music
-	volVandL,               // voice and music
-	volSVandL,              // voice and music
-	volMusic      = 1L << 3, // music
-	volSandM,               // sound and music
-	volVandM,               // voice and music
-	volSVandM,              // sound voice and music
-	volLandM,               // loops and music
-	volSLandM,              // sound loops and music
-	volVLandM,              // voice loops and music
-	volAll,                 // all four
-	volSoundMaster = 1L << 4, // master sound volume level
-	volMusicMaster = 1L << 5  // master music volume level
+enum VolumeTarget {
+	kVolSfx,
+	kVolVoice,
+	kVolMusic
 };
 
 enum volumeMode {
@@ -101,10 +81,13 @@ public:
 	Audio::SoundHandle _sfxSoundHandle;
 	Audio::SoundHandle _bgmSoundHandle;
 	Audio::SoundHandle _clickSoundHandle;
+	Audio::SoundHandle _loopSoundHandle;
+
 	Common::List<SoundInstance> _speechQueue;
 	Common::Queue<SoundInstance> _sfxQueue;
-	Common::Queue<SoundInstance> _bgmQueue;
-	audioAttenuationFunction attenuator;
+
+	SoundInstance _loopSound;
+	SoundInstance _musicSound;
 
 	Audio::Mixer *_mixer;
 
@@ -149,28 +132,10 @@ public:
 
 	// volume and enabled calls
 	bool active(void);
-	bool activeDIG(void) {
-		return true;
-	}
-	bool enabled(volumeTarget i);
-	void enable(volumeTarget i, bool onOff);
-	void disable(volumeTarget i) {
-		enable(i, false);
-	}
-	void setVolume(volumeTarget targ, volumeMode op, Volume val);
-	Volume getVolume(volumeTarget src);
-	void setMusicFadeStyle(int16 tOut, int16 tIn, int16 tOver);
+
+	Volume getVolume(VolumeTarget src);
 	void suspend(void);
 	void resume(void);
-
-	//debugging calls
-	char *statusMessage(void);
-	int16 getQueueSize(void) {
-		return _speechQueue.size() + _sfxQueue.size() + _bgmQueue.size();
-	}
-
-	// moving sample calls
-	audioAttenuationFunction setAttenuator(audioAttenuationFunction newAF);
 };
 
 } // end of namespace Saga2

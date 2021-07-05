@@ -65,8 +65,6 @@ soundSegment currentLoop;
 hResContext *voiceRes, *musicRes, *soundRes, *loopRes, *longRes;
 
 
-static audioAttenuationFunction oldAttenuator;
-
 bool haveKillerSoundCard(void);
 void writeConfig(void);
 void disableBGLoop(bool s = true);
@@ -91,7 +89,7 @@ bool hResCheckResID(hResContext *hrc, uint32 s[]);
 //-----------------------------------------------------------------------
 //	our distance based volume attenuator
 
-static ATTENUATOR(volumeFromDist) {
+static Volume volumeFromDist(sampleLocation loc, Volume maxVol) {
 	TilePoint tp(loc.x, loc.y, 0);
 	uint32 dist = tp.quickHDistance();
 	if (dist < fullVolumeDist) {
@@ -133,8 +131,6 @@ void startAudio(void) {
 		error("Laryngitis Error (No voice resource context)!\n");
 
 	audio->initAudioInterface(musicRes);
-	audio->setMusicFadeStyle(0, 0, 0);
-	oldAttenuator = audio->setAttenuator(&volumeFromDist);
 
 	// kludgy in memory click sounds
 	clickSizes[0] = 0;
@@ -143,15 +139,6 @@ void startAudio(void) {
 	clickData[0] = NULL;
 	clickData[1] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 1), "Click 1");
 	clickData[2] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
-
-	if (!ConfMan.getInt("music_volume"))
-		audio->disable(volMusic);
-	if (!ConfMan.getInt("speech_volume"))
-		audio->disable(volVoice);
-	if (!ConfMan.getInt("sfx_volume")) {
-		audio->disable(volLoops);
-		audio->disable(volSound);
-	}
 }
 
 //-----------------------------------------------------------------------
@@ -205,7 +192,6 @@ void suspendLoops(void) {
 }
 
 void resumeLoops(void) {
-	//if (audio->enabled(volLoops))
 	if (loopRes)
 		enableBGLoop();
 }
@@ -215,7 +201,6 @@ void suspendMusic(void) {
 }
 
 void resumeMusic(void) {
-	//if (audio->enabled(volMusic))
 	if (musicRes)
 		audioEnvironmentSuspend(false);
 }
@@ -230,7 +215,6 @@ void suspendAudio(void) {
 
 void resumeAudio(void) {
 	if (audio) {
-		//if (audio->enabled(volSound)||audio->enabled(volVoice))
 		if (soundRes != NULL || voiceRes != NULL) {
 			audio->resume();
 			resumeLoops();
@@ -243,12 +227,12 @@ void resumeAudio(void) {
 //  UI volume change hook
 
 void volumeChanged(void) {
-	if (audio->getVolume(volLoops))
+	if (audio->getVolume(kVolSfx))
 		resumeLoops();
 	else
 		suspendLoops();
 
-	if (audio->getVolume(volMusic))
+	if (audio->getVolume(kVolMusic))
 		resumeMusic();
 	else
 		suspendMusic();
@@ -356,20 +340,15 @@ bool sayVoice(uint32 s[]) {
 // main loop playback
 
 void _playLoop(uint32 s) {
-	warning("STUB: _playLoop(%s)", tag2strP(s));
-
 	currentLoop = s;
-	if (currentLoop == audio->currentLoop() && 0)
+	if (currentLoop == audio->currentLoop())
 		return;
 
 	audio->stopLoop();
 
-	byte *data = loopRes->loadResource(s, "loop sound");
-	uint32 size = loopRes->getSize(s, "loop sound");
+	if (!s)
+		return;
 
-	warning("Size: %d", size);
-
-	Common::hexdump(data, MIN<uint>(size, 256));
 	audio->queueLoop(s, 0, Here);
 }
 
@@ -378,10 +357,8 @@ void _playLoop(uint32 s) {
 
 void playLoop(uint32 s) {
 	if (s) {
-		//disableBGLoop(s);
 	} else {
 		_playLoop(s);
-		//enableBGLoop();
 	}
 }
 
@@ -623,17 +600,18 @@ void audioInterface::playMe(void) {
 }
 
 void audioInterface::playMusic(soundSegment s, int16 loopFactor, sampleLocation where) {
-	warning("STUB: audioInterface::playMusic()");
 	_music->play(s, loopFactor ? MUSIC_LOOP : MUSIC_NORMAL);
+
+	_musicSound.seg = s;
+	_musicSound.loop = loopFactor;
+	_musicSound.loc = where;
 }
 
 void audioInterface::stopMusic(void) {
-	warning("STUB: audioInterface::stopMusic()");
 	_music->stop();
 }
 
 void audioInterface::queueSound(soundSegment s, int16 loopFactor, sampleLocation where) {
-	warning("STUB: audioInterface::queueSound(%s,  @%d,%d)", tag2strP(s), where.x, where.y);
 	SoundInstance si;
 
 	si.seg = s;
@@ -644,11 +622,19 @@ void audioInterface::queueSound(soundSegment s, int16 loopFactor, sampleLocation
 }
 
 void audioInterface::queueLoop(soundSegment s, int16 loopFactor, sampleLocation where) {
-	warning("STUB: audioInterface::queueLoop(%s, %d, @%d,%d)", tag2strP(s), loopFactor, where.x, where.y);
+	_loopSound.seg = s;
+	_loopSound.loop = loopFactor;
+	_loopSound.loc = where;
+
+	Common::SeekableReadStream *stream = loadResourceToStream(loopRes, s, "loop data");
+
+	Audio::AudioStream *aud = Audio::makeRawStream(stream, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
+
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &audio->_loopSoundHandle, aud);
 }
 
 void audioInterface::stopLoop(void) {
-	warning("STUB: audioInterface::stopLoop()");
+	_mixer->stopHandle(_loopSoundHandle);
 }
 
 void audioInterface::setLoopPosition(sampleLocation newLoc) {
@@ -682,12 +668,11 @@ void audioInterface::queueVoice(soundSegment s[], sampleLocation where) {
 }
 
 void audioInterface::stopVoice(void) {
-	warning("STUB: audioInterface::stopVoice()");
+	_mixer->stopHandle(_speechSoundHandle);
 }
 
 bool audioInterface::talking(void) {
-	warning("STUB: audioInterface::talking()");
-	return _currentSpeech != 0;
+	return _mixer->isSoundHandleActive(_speechSoundHandle);
 }
 
 bool audioInterface::saying(soundSegment s) {
@@ -706,34 +691,27 @@ bool audioInterface::active(void) {
 	return true;
 }
 
-void audioInterface::enable(volumeTarget i, bool onOff) {
-	warning("STUB: audioInterface::enable()");
-}
+Volume audioInterface::getVolume(VolumeTarget src) {
+	switch (src) {
+	case kVolMusic:
+		return ConfMan.getInt("music_volume");
 
-void audioInterface::setVolume(volumeTarget targ, volumeMode op, Volume val) {
-	warning("STUB: audioInterface::setVolume()");
-}
+	case kVolSfx:
+		return ConfMan.getInt("sfx_volume");
 
-Volume audioInterface::getVolume(volumeTarget src) {
-	warning("STUB: audioInterface::getVolume()");
+	case kVolVoice:
+		return ConfMan.getInt("speech_volume");
+	}
+
 	return 0;
 }
 
-void audioInterface::setMusicFadeStyle(int16 tOut, int16 tIn, int16 tOver) {
-	warning("STUB: audioInterface::setMusicFadeStyle()");
-}
-
 void audioInterface::suspend(void) {
-	warning("STUB: audioInterface::suspend()");
+	_mixer->pauseAll(true);
 }
 
 void audioInterface::resume(void) {
-	warning("STUB: audioInterface::resume()");
-}
-
-audioAttenuationFunction audioInterface::setAttenuator(audioAttenuationFunction newAF) {
-	warning("STUB: audioInterface::setAttenuator()");
-	return nullptr;
+	_mixer->pauseAll(false);
 }
 
 bool bufCheckResID(hResContext *hrc, uint32 s) {
