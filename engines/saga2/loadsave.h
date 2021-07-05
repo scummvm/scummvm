@@ -33,7 +33,7 @@ namespace Saga2 {
 void initGameState(void);
 
 //  Save the current game state
-void saveGameState(int16 saveNo, char *saveName);
+Common::Error saveGameState(int16 saveNo, char *saveName);
 
 //  Load a previously saved game state
 void loadSavedGameState(int16 saveNo);
@@ -44,6 +44,7 @@ void cleanupGameState(void);
 void checkRestartGame(const char *exeName);
 void loadRestartGame(void);
 void getSaveFileName(int16 saveNo, char *fileName);
+Common::String getSaveFileName(int16 saveNo);
 
 } // end of namespace Saga2
 

@@ -27,6 +27,8 @@
 #ifndef SAGA2_SAVEFILE_H
 #define SAGA2_SAVEFILE_H
 
+#include "common/savefile.h"
+
 namespace Saga2 {
 
 /* ===================================================================== *
@@ -36,11 +38,7 @@ namespace Saga2 {
 const int16     saveNameSize = 40,
                 fileNameSize = 260;
 
-#ifdef FTA
 const ChunkID   gameID = MKTAG('F', 'T', 'A', '2');
-#else
-const ChunkID   gameID = MKTAG('D', 'I', 'N', 'O');
-#endif
 
 /* ===================================================================== *
    SaveFileHeader class

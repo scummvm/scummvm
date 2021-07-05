@@ -43,6 +43,10 @@ void getSaveFileName(int16 saveNo, char *fileName) {
 	sprintf(fileName, "%3.3d.SAV", saveNo);
 }
 
+Common::String getSaveFileName(int16 saveNo) {
+	return Common::String::format("%3.3d.SAV", saveNo);
+}
+
 /* ===================================================================== *
    SaveFileConstructor member functions
  * ===================================================================== */
