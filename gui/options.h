@@ -285,6 +285,8 @@ protected:
 	ButtonWidget	 *_iconPathClearButton;
 	StaticTextWidget *_extraPath;
 	ButtonWidget	 *_extraPathClearButton;
+	StaticTextWidget *_shaderPath;
+	ButtonWidget	 *_shaderPathClearButton;
 #ifdef DYNAMIC_MODULES
 	StaticTextWidget *_pluginsPath;
 	ButtonWidget	 *_pluginsPathClearButton;
