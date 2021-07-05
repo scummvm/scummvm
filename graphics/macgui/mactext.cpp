@@ -347,6 +347,18 @@ void MacText::setColors(uint32 fg, uint32 bg) {
 		setTextColor(fg, i);
 }
 
+void MacText::setTextSize(int textSize) {
+	for (uint i = 0; i < _textLines.size(); i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			_textLines[i].chunks[j].fontSize = textSize;
+		}
+	}
+
+	_fullRefresh = true;
+	render();
+	_contentIsDirty = true;
+}
+
 void MacText::setTextColor(uint32 color, uint32 line) {
 	if (line >= _textLines.size()) {
 		warning("MacText::setTextColor(): line %d is out of bounds", line);

@@ -197,6 +197,8 @@ public:
 
 	// because currently, we are counting linespacing as font height
 	int getTextSize() { return _defaultFormatting.fontSize; }
+	void setTextSize(int textSize);
+
 	int getTextColor() { return _defaultFormatting.fgcolor; }
 
 private:
