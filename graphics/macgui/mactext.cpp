@@ -395,7 +395,23 @@ void MacText::getChunkPosFromIndex(int index, uint &lineNum, uint &chunkNum, uin
 	offset = 0;
 }
 
+void setTextColorCallback(MacFontRun &macFontRun, int color) {
+	macFontRun.fgcolor = color;
+}
+
 void MacText::setTextColor(uint32 color, uint32 start, uint32 end) {
+	setTextChunks(start, end, color, setTextColorCallback);
+}
+
+void setTextSizeCallback(MacFontRun &macFontRun, int textSize) {
+	macFontRun.fontSize = textSize;
+}
+
+void MacText::setTextSize(int textSize, int start, int end) {
+	setTextChunks(start, end, textSize, setTextSizeCallback);
+}
+
+void MacText::setTextChunks(int start, int end, int param, void (*callback)(MacFontRun &, int)) {
 	if (_textLines.empty())
 		return;
 	if (start > end)
@@ -426,8 +442,6 @@ void MacText::setTextColor(uint32 color, uint32 start, uint32 end) {
 		endCol++;
 	}
 
-	uint col = _wm->findBestColor(color);
-	// after spliting, we are going to modify the colors now
 	for (uint i = startRow; i <= endRow; i++) {
 		uint from, to;
 		if (i == startRow && i == endRow) {
@@ -444,13 +458,41 @@ void MacText::setTextColor(uint32 color, uint32 start, uint32 end) {
 			to = _textLines[i].chunks.size();
 		}
 		for (uint j = from; j < to; j++) {
-			_textLines[i].chunks[j].fgcolor = col;
+			callback(_textLines[i].chunks[j], param);
 		}
 	}
 
 	_fullRefresh = true;
 	render();
 	_contentIsDirty = true;
+}
+
+// this maybe need to amend
+// currently, we just return the text size of first character.
+int MacText::getTextSize(int start, int end) {
+	if (_textLines.empty())
+		return _defaultFormatting.fontSize;
+	if (start > end)
+		SWAP(start, end);
+
+	uint startRow, startCol;
+	uint offset;
+
+	getChunkPosFromIndex(start, startRow, startCol, offset);
+	return _textLines[startRow].chunks[startCol].fontSize;
+}
+
+uint MacText::getTextColor(int start, int end) {
+	if (_textLines.empty())
+		return _defaultFormatting.fontSize;
+	if (start > end)
+		SWAP(start, end);
+
+	uint startRow, startCol;
+	uint offset;
+
+	getChunkPosFromIndex(start, startRow, startCol, offset);
+	return _textLines[startRow].chunks[startCol].fgcolor;
 }
 
 void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,

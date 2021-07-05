@@ -199,9 +199,15 @@ public:
 	int getTextSize() { return _defaultFormatting.fontSize; }
 	void setTextSize(int textSize);
 
-	int getTextColor() { return _defaultFormatting.fgcolor; }
+	int getTextSize(int start, int end);
+	void setTextSize(int textSize, int start, int end);
+
+	uint getTextColor() { return _defaultFormatting.fgcolor; }
+	uint getTextColor(int start, int end);
 
 private:
+	void setTextChunks(int start, int end, int param, void (*callback)(MacFontRun &, int));
+
 	void appendText_(const Common::U32String &strWithFont, uint oldLen);
 	void deletePreviousCharInternal(int *row, int *col);
 	void insertTextFromClipboard();
