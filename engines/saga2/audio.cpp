@@ -90,7 +90,7 @@ bool hResCheckResID(hResContext *hrc, uint32 s[]);
 //-----------------------------------------------------------------------
 //	our distance based volume attenuator
 
-static Volume volumeFromDist(sampleLocation loc, Volume maxVol) {
+static byte volumeFromDist(sampleLocation loc, byte maxVol) {
 	TilePoint tp(loc.x, loc.y, 0);
 	uint32 dist = tp.quickHDistance();
 	if (dist < fullVolumeDist) {
@@ -575,7 +575,7 @@ void audioInterface::playMe(void) {
 
 		Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, si.seg, "voice data");
 		Audio::AudioStream *aud = makeShortenStream(*stream);
-		Volume vol = volumeFromDist(si.loc, getVolume(kVolVoice));
+		byte vol = volumeFromDist(si.loc, getVolume(kVolVoice));
 
 		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechSoundHandle, aud, -1, vol);
 
@@ -587,7 +587,7 @@ void audioInterface::playMe(void) {
 
 		Common::SeekableReadStream *stream = loadResourceToStream(soundRes, si.seg, "sound data");
 		Audio::AudioStream *aud = Audio::makeRawStream(stream, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
-		Volume vol = volumeFromDist(si.loc, getVolume(kVolSfx));
+		byte vol = volumeFromDist(si.loc, getVolume(kVolSfx));
 
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxSoundHandle, aud, -1, vol);
 	}
@@ -621,10 +621,11 @@ void audioInterface::playLoop(soundSegment s, int16 loopFactor, sampleLocation w
 	_currentLoop.loc = where;
 
 	Common::SeekableReadStream *stream = loadResourceToStream(loopRes, s, "loop data");
-	Audio::AudioStream *aud = Audio::makeRawStream(stream, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
-	Volume vol = volumeFromDist(where, getVolume(kVolSfx));
+	Audio::SeekableAudioStream *aud = Audio::makeRawStream(stream, 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
+	Audio::AudioStream *laud = Audio::makeLoopingAudioStream(aud, loopFactor);
+	byte vol = volumeFromDist(where, getVolume(kVolSfx));
 
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &audio->_loopSoundHandle, aud, -1, vol);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &audio->_loopSoundHandle, laud, -1, vol);
 }
 
 void audioInterface::stopLoop(void) {
@@ -636,7 +637,7 @@ void audioInterface::setLoopPosition(sampleLocation newLoc) {
 		return;
 
 	_currentLoop.loc = newLoc;
-	Volume vol = volumeFromDist(newLoc, getVolume(kVolSfx));
+	byte vol = volumeFromDist(newLoc, getVolume(kVolSfx));
 
 	_mixer->setChannelVolume(_loopSoundHandle, vol);
 }
@@ -684,7 +685,7 @@ bool audioInterface::saying(soundSegment s) {
 	return false;
 }
 
-Volume audioInterface::getVolume(VolumeTarget src) {
+byte audioInterface::getVolume(VolumeTarget src) {
 	switch (src) {
 	case kVolMusic:
 		return ConfMan.getInt("music_volume");

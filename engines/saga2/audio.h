@@ -45,12 +45,9 @@ inline void audioFatal(char *msg) {
 	error("Sound error %s", msg);
 }
 
-typedef int8 Volume;
 typedef Point32 sampleLocation;
 
 #define Here Point32(0,0)
-
-typedef int8 Volume;
 
 enum VolumeTarget {
 	kVolSfx,
@@ -123,7 +120,7 @@ public:
 	bool talking(void);
 	bool saying(soundSegment s);
 
-	Volume getVolume(VolumeTarget src);
+	byte getVolume(VolumeTarget src);
 	void suspend(void);
 	void resume(void);
 };
