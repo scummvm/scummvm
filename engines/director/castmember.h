@@ -259,6 +259,7 @@ public:
 	uint16 _fgpalinfo1, _fgpalinfo2, _fgpalinfo3;
 	ButtonType _buttonType;
 	bool _editable;
+	int _lineSpacing;
 
 	Common::String _ftext;
 	Common::String _ptext;
