@@ -95,6 +95,19 @@ void MusicDriver::send(uint32 b) {
 	Audio::MidiPlayer::send(b);
 }
 
+void MusicDriver::sendToChannel(byte channel, uint32 b) {
+	if (!_channelsTable[channel]) {
+		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		// If a new channel is allocated during the playback, make sure
+		// its volume is correctly initialized.
+		if (_channelsTable[channel])
+			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
+	}
+
+	if (_channelsTable[channel])
+		_channelsTable[channel]->send(b);
+}
+
 void MusicDriver::metaEvent(byte type, byte *data, uint16 length) {
 	// TODO: Seems SAGA does not want / need to handle end-of-track events?
 }
