@@ -93,6 +93,10 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	if (padding == 3 && ConfMan.get("gameid") == "lacroixpan")
 		padding = 0;
 
+	// WORKAROUND: Guard Duty specifies a wii of 100,000, which is larger
+	// than can be supported by ScummVM's surface classes
+	wii = MIN(wii, 10000);
+
 	ensure_text_valid_for_font(todis, usingfont);
 	break_up_text_into_lines(todis, Lines, wii - 2 * padding, usingfont);
 	disp.lineheight = getfontheight_outlined(usingfont);
