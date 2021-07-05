@@ -4345,7 +4345,7 @@ void loadTileCyclingStates(SaveFileReader &saveGame) {
 
 void cleanupTileCyclingStates(void) {
 	if (cycleList != nullptr) {
-		free(cycleList);
+		delete[] cycleList;
 		cycleList = nullptr;
 	}
 }
