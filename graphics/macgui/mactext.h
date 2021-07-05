@@ -196,11 +196,8 @@ public:
 	int getTextFont() { return _defaultFormatting.fontId; }
 
 	// because currently, we are counting linespacing as font height
-	int getTextSize() { return _defaultFormatting.fontSize - _lineSpacing; }
+	int getTextSize() { return _defaultFormatting.fontSize; }
 	int getTextColor() { return _defaultFormatting.fgcolor; }
-
-	int getLineSpacing() { return _lineSpacing; }
-	void setLineSpacing(int linespacing);
 
 private:
 	void appendText_(const Common::U32String &strWithFont, uint oldLen);
@@ -242,6 +239,8 @@ public:
 	void clearSelection();
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
+
+	int getLineSpacing() { return _interLinear; }
 
 	/**
 	 * set the selection of mactext
@@ -321,7 +320,6 @@ protected:
 
 	int _textMaxWidth;
 	int _textMaxHeight;
-	int _lineSpacing;
 
 	ManagedSurface *_surface;
 

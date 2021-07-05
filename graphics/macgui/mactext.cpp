@@ -109,7 +109,6 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_macFontMode = true;
 	_encodeType = Common::kUtf8;
 	_plainByteMode = false;
-	_lineSpacing = 0;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -135,7 +134,6 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_macFontMode = true;
 	_encodeType = encodeType;
 	_plainByteMode = true;
-	_lineSpacing = 0;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -162,7 +160,6 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	_macFontMode = true;
 	_encodeType = Common::kUtf8;
 	_plainByteMode = false;
-	_lineSpacing = 0;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -188,7 +185,6 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 	_macFontMode = true;
 	_encodeType = encodeType;
 	_plainByteMode = true;
-	_lineSpacing = 0;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -215,7 +211,6 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 	_macFontMode = false;
 	_encodeType = Common::kUtf8;
 	_plainByteMode = false;
-	_lineSpacing = 0;
 
 	if (font) {
 		_defaultFormatting = MacFontRun(_wm, font, 0, font->getFontHeight(), 0, 0, 0);
@@ -905,7 +900,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 			hastext = true;
 		}
 
-		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight()) + _lineSpacing;
+		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight());
 	}
 
 	if (!hastext && _textLines.size() > 1)
@@ -955,6 +950,9 @@ int MacText::getLineHeight(int line) {
 void MacText::setInterLinear(int interLinear) {
 	_interLinear = interLinear;
 	recalcDims();
+	_fullRefresh = true;
+	render();
+	_contentIsDirty = true;
 }
 
 void MacText::recalcDims() {
@@ -1064,15 +1062,6 @@ void MacText::resize(int w, int h) {
 
 	_maxWidth = w;
 	setMaxWidth(_maxWidth);
-}
-
-void MacText::setLineSpacing(int linespacing) {
-	_lineSpacing = linespacing;
-	recalcDims();
-	updateCursorPos();
-	_fullRefresh = true;
-	render();
-	_contentIsDirty = true;
 }
 
 void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
