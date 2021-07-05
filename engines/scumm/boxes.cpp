@@ -1251,26 +1251,11 @@ void Actor_v3::findPathTowardsOld(byte box1, byte box2, byte finalBox, Common::P
 	p2.x = 32000;
 	p3.x = 32000;
 
-	// next box (box2) = final box?
 	if (box2 == finalBox) {
-		// I have commented out the mask check for INDY3 which was meant as a fix for the zeppeline path finding. But it
-		// is wrong and causes issues (e. g. bug #12666 - when Indy starts walking away from the window he will be facing
-		// down instead of right; the mask check is not the cause of all the problems that particular scene had, but at
-		// least some of them). At first glance at disasm it might seem that the original would do such a check, since it
-		// actually calls getMaskFromBox() for both boxes. However, the results do not get evaluated. Looks like some
-		// leftover code...
-
-		// In Indy3, the masks (= z-level) have to match, too -- needed for the
-		// 'maze' in the zeppelin (see bug #1778).
-		//if (_vm->_game.id != GID_INDY3 || _vm->getMaskFromBox(box1) == _vm->getMaskFromBox(box2)) {
-			// Is the actor (x,y) between both gates?
-			if (compareSlope(_pos, _walkdata.dest, gateA[0]) !=
-					compareSlope(_pos, _walkdata.dest, gateB[0]) &&
-					compareSlope(_pos, _walkdata.dest, gateA[1]) !=
-					compareSlope(_pos, _walkdata.dest, gateB[1])) {
+		// Is the actor (x,y) between both gates?
+		if (compareSlope(_pos, _walkdata.dest, gateA[0]) !=	compareSlope(_pos, _walkdata.dest, gateB[0]) &&
+			compareSlope(_pos, _walkdata.dest, gateA[1]) !=	compareSlope(_pos, _walkdata.dest, gateB[1]))
 				return;
-			}
-		//}
 	}
 
 	p3 = closestPtOnLine(gateA[1], gateB[1], _pos);
