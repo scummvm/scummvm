@@ -315,7 +315,7 @@ void EditableWidget::drawCaret(bool erase) {
 
 	if (erase) {
 		GUI::EditableWidget::String character;
-		int width;
+		int32 width;
 
 		if ((uint)_caretPos < _editString.size()) {
 			const byte chr = _editString[_caretPos];
