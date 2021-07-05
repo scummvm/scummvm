@@ -1272,7 +1272,8 @@ Actor::Actor(void **buf) : GameObject(buf) {
 Actor::~Actor(void) {
 	if (appearance != NULL) ReleaseActorAppearance(appearance);
 
-	delete _assignment;
+	if (getAssignment())
+		delete getAssignment();
 }
 
 //-----------------------------------------------------------------------

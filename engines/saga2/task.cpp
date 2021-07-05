@@ -165,8 +165,14 @@ TaskStackList::TaskStackList(void) {
 //	TaskStackList destructor
 
 TaskStackList::~TaskStackList(void) {
-	for (int i = 0; i < numTaskStacks; i++)
+	for (int i = 0; i < numTaskStacks; i++) {
+		if (_list[i] == nullptr)
+			continue;
+
+		_list[i]->actor->curTask = nullptr;
 		delete _list[i];
+		_list[i] = nullptr;
+	}
 }
 
 //----------------------------------------------------------------------

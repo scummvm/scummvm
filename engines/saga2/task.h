@@ -1672,10 +1672,11 @@ class TaskStack {
 
 	TaskID          stackBottomID;  //  Bottom task in stack
 
-	Actor           *actor;     //  Pointer to actor performing tasks
 	int16           evalCount,  //  Counter for automatic task re-evaluation
 	                evalRate;   //  Rate of automatic task re-evalutation
 public:
+	Actor           *actor;     //  Pointer to actor performing tasks
+
 	//  Constructor
 	TaskStack(Actor *a) :
 		stackBottomID(NoTask),
