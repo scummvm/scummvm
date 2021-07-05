@@ -640,8 +640,16 @@ static void fAMRadioClip(ArgArray args) {
 }
 
 static void fPoliceClip(ArgArray args) {
-	assert(args.size() <= 4);
+	assert(args.size() <= 4 || args.size() == 6);
 	fAddSound(args[0].u.str, "PoliceClip");
+	// In the original, the flag is triggered when the clip is played, but here we just change
+	// the flag when the clip is added to play. The effect for the played, is mostly the same.
+	if (args.size() == 6) {
+		assert(args[4].type == NAME);
+		assert(args[5].type == NUM);
+		Symbol *flag = g_private->maps.lookupVariable(args[4].u.sym->name);
+		setSymbol(flag, args[5].u.val);
+	}
 }
 
 static void fPhoneClip(ArgArray args) {
