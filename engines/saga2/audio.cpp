@@ -469,9 +469,11 @@ void moveLoop(Location loc) {
 // supplemental interface check for speech
 
 bool stillDoingVoice(uint32 sampno) {
-	warning("STUB: stillDoingVoice(%s)", tag2strP(sampno));
+	bool result = audio->saying(sampno);
 
-	return g_system->getMixer()->isSoundHandleActive(audio->_speechSoundHandle);
+	warning("STUB: stillDoingVoice(%s) -> %d", tag2strP(sampno), result);
+
+	return result;
 }
 
 
@@ -561,6 +563,7 @@ void cleanupAudio() {
 
 audioInterface::audioInterface() {
 	_music = nullptr;
+	_currentSpeech = 0;
 }
 
 audioInterface::~audioInterface() {
@@ -585,15 +588,19 @@ void audioInterface::resumeGameClock(void) {
 }
 
 bool audioInterface::playFlag(void) {
-	debugC(5, kDebugSound, "STUB: audioInterface::playFlag()");
+	debugC(5, kDebugSound, "audioInterface::playFlag()");
+	if (_speechQueue.size() == 0 && !_mixer->isSoundHandleActive(_speechSoundHandle))
+		_currentSpeech = 0;
+
 	return _speechQueue.size() > 0 || _sfxQueue.size() > 0;
 }
 
 void audioInterface::playMe(void) {
-	warning("STUB: audioInterface::PlayMe()");
-
 	if (_speechQueue.size() > 0 && !_mixer->isSoundHandleActive(_speechSoundHandle)) {
-		SoundInstance si = _speechQueue.pop();
+		SoundInstance si = _speechQueue.front();
+		_speechQueue.pop_front();
+
+		_currentSpeech = si.seg;
 
 		Common::SeekableReadStream *stream = loadResourceToStream(voiceRes, si.seg, "voice data");
 
@@ -656,7 +663,7 @@ void audioInterface::queueVoice(soundSegment s, sampleLocation where) {
 	si.loop = false;
 	si.loc = where;
 
-	_speechQueue.push(si);
+	_speechQueue.push_back(si);
 }
 
 void audioInterface::queueVoice(soundSegment s[], sampleLocation where) {
@@ -669,7 +676,7 @@ void audioInterface::queueVoice(soundSegment s[], sampleLocation where) {
 		si.loop = false;
 		si.loc = where;
 
-		_speechQueue.push(si);
+		_speechQueue.push_back(si);
 		p++;
 	}
 }
@@ -680,11 +687,17 @@ void audioInterface::stopVoice(void) {
 
 bool audioInterface::talking(void) {
 	warning("STUB: audioInterface::talking()");
-	return false;
+	return _currentSpeech != 0;
 }
 
 bool audioInterface::saying(soundSegment s) {
-	warning("STUB: audioInterface::saying()");
+	if (_currentSpeech == s)
+		return true;
+
+	for (Common::List<SoundInstance>::iterator it = _speechQueue.begin(); it != _speechQueue.end(); ++it)
+		if ((*it).seg == s)
+			return true;
+
 	return false;
 }
 

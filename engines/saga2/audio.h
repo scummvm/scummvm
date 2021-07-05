@@ -91,7 +91,8 @@ struct SoundInstance {
 
 class audioInterface {
 private:
-	soundSegment            looping;           // ID of music currently playing
+	soundSegment looping;           // ID of music currently playing
+	uint32 _currentSpeech;
 
 	Music *_music;
 
@@ -100,7 +101,7 @@ public:
 	Audio::SoundHandle _sfxSoundHandle;
 	Audio::SoundHandle _bgmSoundHandle;
 	Audio::SoundHandle _clickSoundHandle;
-	Common::Queue<SoundInstance> _speechQueue;
+	Common::List<SoundInstance> _speechQueue;
 	Common::Queue<SoundInstance> _sfxQueue;
 	Common::Queue<SoundInstance> _bgmQueue;
 	audioAttenuationFunction attenuator;
