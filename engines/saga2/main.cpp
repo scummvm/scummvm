@@ -749,7 +749,6 @@ void loadGlobals(Common::InSaveFile *in) {
 	actorTasksPaused = in->readByte();
 	combatBehaviorEnabled = in->readByte();
 	backgroundSimulationPaused = in->readByte();
-	GlobalsArchive  archive;
 }
 
 /********************************************************************/
