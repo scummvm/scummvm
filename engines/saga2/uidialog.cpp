@@ -626,7 +626,7 @@ bool getSaveName(int8 saveNo, SaveFileHeader &header) {
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(getSaveFileName(saveNo));
 
 	if (!in) {
-		warning("Unable to load save %s", getSaveFileName(saveNo));
+		debugC(1, kDebugSaveload, "Unable to load save %d (%s)", saveNo, getSaveFileName(saveNo).c_str());
 		return false;
 	}
 

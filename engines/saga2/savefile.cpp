@@ -47,7 +47,7 @@ void SaveFileHeader::write(Common::OutSaveFile *out) {
 	for (int i = 0; i < remainingBytes; ++i)
 		out->writeByte(0);
 
-	debugC(1, kDebugSaveload, "Writing game header: gameID = %s, saveName = %s", tag2str(gameID), saveName);
+	debugC(1, kDebugSaveload, "Writing game header: gameID = %s, saveName = %s", tag2str(gameID), saveName.c_str());
 }
 
 /* ===================================================================== *
