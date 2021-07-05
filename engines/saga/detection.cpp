@@ -30,10 +30,6 @@
 static const PlainGameDescriptor sagaGames[] = {
 	{"ite", "Inherit the Earth: Quest for the Orb"},
 	{"ihnm", "I Have No Mouth and I Must Scream"},
-#if 0
-	{"dino", "Dinotopia"},
-	{"fta2", "Faery Tale Adventure II: Halls of the Dead"},
-#endif
 	{0, 0}
 };
 
@@ -51,17 +47,13 @@ public:
 	const char *getName() const override {
 		return "SAGA ["
 
-#if defined(ENABLE_IHNM) && defined(ENABLE_SAGA2)
+#if defined(ENABLE_IHNM)
 			"all games"
 #else
 			"ITE"
 
 #if defined(ENABLE_IHNM)
 			", IHNM"
-#endif
-
-#if defined(ENABLE_SAGA2)
-			", SAGA2 games"
 #endif
 
 #endif
