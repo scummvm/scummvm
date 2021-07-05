@@ -131,7 +131,7 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 	_inputIsDirty = true;	//force it to redraw input
 
 	if (_editable) {
-		_scrollPos = MAX(0, _mactext->getTextHeight() - getInnerDimensions().height());
+		_scrollPos = MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height());
 
 		updateCursorPos();
 	}
@@ -536,7 +536,7 @@ void MacTextWindow::scroll(int delta) {
 	if (_editable)
 		_scrollPos = CLIP<int>(_scrollPos, 0, _mactext->getTextHeight() - kConScrollStep);
 	else
-		_scrollPos = CLIP<int>(_scrollPos, 0, MAX(0, _mactext->getTextHeight() - getInnerDimensions().height()));
+		_scrollPos = CLIP<int>(_scrollPos, 0, MAX<int>(0, _mactext->getTextHeight() - getInnerDimensions().height()));
 
 	undrawCursor();
 	_cursorY -= (_scrollPos - oldScrollPos);

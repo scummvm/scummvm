@@ -1123,7 +1123,7 @@ void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
 	_contentIsDirty = true;
 
 	if (_editable) {
-		_scrollPos = MAX(0, getTextHeight() - getDimensions().height());
+		_scrollPos = MAX<int>(0, getTextHeight() - getDimensions().height());
 
 		_cursorRow = getLineCount();
 		_cursorCol = getLineCharWidth(_cursorRow);
@@ -1749,7 +1749,7 @@ void MacText::scroll(int delta) {
 	if (_editable)
 		_scrollPos = CLIP<int>(_scrollPos, 0, MacText::getTextHeight() - kConScrollStep);
 	else
-		_scrollPos = CLIP<int>(_scrollPos, 0, MAX(0, MacText::getTextHeight() - getDimensions().height()));
+		_scrollPos = CLIP<int>(_scrollPos, 0, MAX<int>(0, MacText::getTextHeight() - getDimensions().height()));
 
 	undrawCursor();
 	_cursorY -= (_scrollPos - oldScrollPos);
