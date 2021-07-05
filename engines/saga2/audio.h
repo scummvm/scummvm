@@ -108,9 +108,6 @@ public:
 
 	Audio::Mixer *_mixer;
 
-private:
-	char                    status[256];       // audio status messages
-
 public:
 	// ctor, dtor, initialization
 	audioInterface();

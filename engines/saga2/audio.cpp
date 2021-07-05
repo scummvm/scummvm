@@ -644,7 +644,7 @@ void audioInterface::queueSound(soundSegment s, int16 loopFactor, sampleLocation
 }
 
 void audioInterface::queueLoop(soundSegment s, int16 loopFactor, sampleLocation where) {
-	warning("STUB: audioInterface::queueLoop()");
+	warning("STUB: audioInterface::queueLoop(%s, %d, @%d,%d)", tag2strP(s), loopFactor, where.x, where.y);
 }
 
 void audioInterface::stopLoop(void) {
