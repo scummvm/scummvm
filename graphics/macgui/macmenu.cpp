@@ -1138,9 +1138,9 @@ bool MacMenu::mouseClick(int x, int y) {
 				uint w = _menustack.back()->bbox.width() + 2;
 				uint h = _menustack.back()->bbox.height() + 2;
 
-				if (x1 + w > _wm->_screenCopy->w)
+				if (x1 + (int)w > _wm->_screenCopy->w)
 					w = _wm->_screenCopy->w - 1 - x1;
-				if (y1 + h > _wm->_screenCopy->h)
+				if (y1 + (int)h > _wm->_screenCopy->h)
 					h = _wm->_screenCopy->h - 1 - y1;
 
 				g_system->copyRectToScreen(_wm->_screenCopy->getBasePtr(x1, y1), _wm->_screenCopy->pitch, x1, y1, w, h);

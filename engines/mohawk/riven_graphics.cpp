@@ -281,11 +281,11 @@ public:
 			Graphics::Surface *screen = _system->lockScreen();
 
 			uint alpha = elapsed * 255 / _duration;
-			for (uint y = 0; y < _mainScreen->h; y++) {
+			for (int y = 0; y < _mainScreen->h; y++) {
 				uint16 *src1 = (uint16 *) _mainScreen->getBasePtr(0, y);
 				uint16 *src2 = (uint16 *) _effectScreen->getBasePtr(0, y);
 				uint16 *dst = (uint16 *) screen->getBasePtr(0, y);
-				for (uint x = 0; x < _mainScreen->w; x++) {
+				for (int x = 0; x < _mainScreen->w; x++) {
 					uint8 r1, g1, b1, r2, g2, b2;
 					_mainScreen->format.colorToRGB(*src1++, r1, g1, b1);
 					_effectScreen->format.colorToRGB(*src2++, r2, g2, b2);
@@ -715,7 +715,7 @@ void RivenGraphics::updateCredits() {
 			Graphics::Surface *frame = findImage(_creditsImage)->getSurface();
 			memcpy(_mainScreen->getBasePtr(124, _mainScreen->h - 1), frame->getBasePtr(0, _creditsPos), frame->pitch);
 			_creditsPos++;
-			if (_creditsPos == _mainScreen->h) {
+			if (_creditsPos == (uint)_mainScreen->h) {
 				_creditsImage++;
 				_creditsPos = 0;
 			}

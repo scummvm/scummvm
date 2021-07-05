@@ -63,7 +63,8 @@ void Surface::drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, 
 		error("Surface::drawThickLine: bytesPerPixel must be 1, 2, or 4");
 }
 
-void Surface::create(uint16 width, uint16 height, const PixelFormat &f) {
+void Surface::create(int16 width, int16 height, const PixelFormat &f) {
+	assert(width >= 0 && height >= 0);
 	free();
 
 	w = width;
@@ -84,7 +85,7 @@ void Surface::free() {
 	format = PixelFormat();
 }
 
-void Surface::init(uint16 width, uint16 height, uint16 newPitch, void *newPixels, const PixelFormat &f) {
+void Surface::init(int16 width, int16 height, int16 newPitch, void *newPixels, const PixelFormat &f) {
 	w = width;
 	h = height;
 	pitch = newPitch;
@@ -369,8 +370,7 @@ void Surface::flipVertical(const Common::Rect &r) {
 	delete[] temp;
 }
 
-Graphics::Surface *Surface::scale(uint16 newWidth, uint16 newHeight, bool filtering) const {
-
+Graphics::Surface *Surface::scale(int16 newWidth, int16 newHeight, bool filtering) const {
 	Graphics::Surface *target = new Graphics::Surface();
 
 	target->create(newWidth, newHeight, format);

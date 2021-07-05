@@ -354,7 +354,7 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const by
 
 	Common::Array<const uint8 *> rows;
 	rows.reserve(surface->h);
-	for (uint y = 0; y < surface->h; ++y) {
+	for (int y = 0; y < surface->h; ++y) {
 		rows.push_back((const uint8 *)surface->getBasePtr(0, y));
 	}
 

@@ -137,8 +137,8 @@ bool AnimationEffect::process(uint32 deltaTimeInMillis) {
 			const Graphics::Surface *frame = _animation->decodeNextFrame();
 
 			if (frame) {
-				uint32 dstw;
-				uint32 dsth;
+				int dstw;
+				int dsth;
 				if (isPanorama) {
 					dstw = nod->pos.height();
 					dsth = nod->pos.width();

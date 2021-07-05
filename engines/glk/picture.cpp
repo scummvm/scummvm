@@ -217,7 +217,7 @@ Picture *Pictures::load(const Common::String &name) {
 Picture *Pictures::scale(Picture *src, size_t sx, size_t sy) {
 	// Check for the presence of an already scaled version of that size
 	Picture *dst = retrieve(src->_name, true);
-	if (dst && dst->w == sx && dst->h == sy)
+	if (dst && (size_t)dst->w == sx && (size_t)dst->h == sy)
 		return dst;
 
 	// Create a new picture of the destination size and rescale the source picture

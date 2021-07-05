@@ -1206,7 +1206,7 @@ bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics:
 			curBackground->move(-stripSize, 0, curBackground->h);
 
 			for (int j = 0; j < curBackground->h; j++)
-				memcpy(curBackground->getBasePtr(curBackground->w - stripSize, j), newBackground->getBasePtr(i, j), stripSize * newBackground->format.bytesPerPixel);
+				memcpy(curBackground->getBasePtr(curBackground->w - (int)stripSize, j), newBackground->getBasePtr(i, j), stripSize * newBackground->format.bytesPerPixel);
 
 			invalidateWindow(false);
 			_vm->yield();

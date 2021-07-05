@@ -34,7 +34,7 @@ BITMAP::BITMAP(Graphics::ManagedSurface *owner) : _owner(owner),
 	w(owner->w), h(owner->h), pitch(owner->pitch), format(owner->format),
 	clip(true), ct(0), cl(0), cr(owner->w), cb(owner->h) {
 	line.resize(h);
-	for (uint y = 0; y < h; ++y)
+	for (int y = 0; y < h; ++y)
 		line[y] = (byte *)_owner->getBasePtr(0, y);
 }
 

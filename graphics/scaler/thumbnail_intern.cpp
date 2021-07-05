@@ -187,8 +187,8 @@ static bool grabScreen565(Graphics::Surface *surf) {
 		g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 	}
 
-	for (uint y = 0; y < screen->h; ++y) {
-		for (uint x = 0; x < screen->w; ++x) {
+	for (int y = 0; y < screen->h; ++y) {
+		for (int x = 0; x < screen->w; ++x) {
 			byte r = 0, g = 0, b = 0;
 
 			if (screenFormat.bytesPerPixel == 1) {
@@ -246,8 +246,8 @@ bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h,
 	Graphics::Surface screen;
 	screen.create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
-	for (uint y = 0; y < screen.h; ++y) {
-		for (uint x = 0; x < screen.w; ++x) {
+	for (int y = 0; y < screen.h; ++y) {
+		for (int x = 0; x < screen.w; ++x) {
 			byte r, g, b;
 			r = palette[pixels[y * w + x] * 3];
 			g = palette[pixels[y * w + x] * 3 + 1];
@@ -274,8 +274,8 @@ bool createScreenShot(Graphics::Surface &surf) {
 			return false;
 		}
 		surf.create(screen->w, screen->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-		for (uint y = 0; y < screen->h; ++y) {
-			for (uint x = 0; x < screen->w; ++x) {
+		for (int y = 0; y < screen->h; ++y) {
+			for (int x = 0; x < screen->w; ++x) {
 				byte r = 0, g = 0, b = 0, a = 0;
 				uint32 col = READ_UINT32(screen->getBasePtr(x, y));
 				screenFormat.colorToARGB(col, a, r, g, b);

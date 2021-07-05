@@ -1241,8 +1241,8 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 
 void Gui::invertWindowColors(WindowReference winID) {
 	Graphics::ManagedSurface *srf = findWindow(winID)->getWindowSurface();
-	for (uint y = 0; y < srf->h; y++) {
-		for (uint x = 0; x < srf->w; x++) {
+	for (int y = 0; y < srf->h; y++) {
+		for (int x = 0; x < srf->w; x++) {
 			byte p = *(byte *)srf->getBasePtr(x, y);
 			*(byte *)srf->getBasePtr(x, y) =
 				(p == kColorWhite) ? kColorBlack : kColorGray80;

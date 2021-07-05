@@ -2281,7 +2281,7 @@ void SurfaceSdlGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface
 
 		byte *dst = (byte *) _osdIconSurface->pixels;
 		const byte *src = (const byte *) icon->getPixels();
-		for (uint y = 0; y < icon->h; y++) {
+		for (int y = 0; y < icon->h; y++) {
 			memcpy(dst, src, icon->w * iconFormat.bytesPerPixel);
 			src += icon->pitch;
 			dst += _osdIconSurface->pitch;

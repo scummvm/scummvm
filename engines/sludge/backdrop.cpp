@@ -76,7 +76,7 @@ bool GraphicsManager::loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 	// 65535 is the value of AUTOFIT constant in Sludge
 	if (fracX == 65535) {
 		nP->wrapS = false;
-		if (nP->surface.w < _winWidth) {
+		if (nP->surface.w < (int16)_winWidth) {
 			fatal("For AUTOFIT parallax backgrounds, the image must be at least as wide as the game window/screen.");
 			return false;
 		}
@@ -86,7 +86,7 @@ bool GraphicsManager::loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 
 	if (fracY == 65535) {
 		nP->wrapT = false;
-		if (nP->surface.h < _winHeight) {
+		if (nP->surface.h < (int16)_winHeight) {
 			fatal("For AUTOFIT parallax backgrounds, the image must be at least as tall as the game window/screen.");
 			return false;
 		}
@@ -357,7 +357,7 @@ bool GraphicsManager::loadLightMap(int v) {
 	if (!ImgLoader::loadImage(v, "lightmap", g_sludge->_resMan->getData(), &tmp))
 		return false;
 
-	if (tmp.w != _sceneWidth || tmp.h != _sceneHeight) {
+	if (tmp.w != (int16)_sceneWidth || tmp.h != (int16)_sceneHeight) {
 		if (_lightMapMode == LIGHTMAPMODE_HOTSPOT) {
 			return fatal("Light map width and height don't match scene width and height. That is required for lightmaps in HOTSPOT mode.");
 		} else if (_lightMapMode == LIGHTMAPMODE_PIXEL) {

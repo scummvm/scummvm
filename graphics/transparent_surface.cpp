@@ -739,7 +739,7 @@ void TransparentSurface::setAlphaMode(AlphaType mode) {
 	_alphaMode = mode;
 }
 
-TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight, bool filtering) const {
+TransparentSurface *TransparentSurface::scale(int16 newWidth, int16 newHeight, bool filtering) const {
 
 	TransparentSurface *target = new TransparentSurface();
 

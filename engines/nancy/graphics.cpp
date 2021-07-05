@@ -163,13 +163,13 @@ void GraphicsManager::copyToManaged(const Graphics::Surface &src, Graphics::Mana
 		return;
 	}
 
-	for (uint y = 0; y < src.h; ++y) {
+	for (int y = 0; y < src.h; ++y) {
 		if (!doubleSize) {
 			// Copy single line bottom to top
 			memcpy(dst.getBasePtr(0, y), src.getBasePtr(0, src.h - y - 1), src.w * src.format.bytesPerPixel);
 		} else {
 			// Make four copies of each source pixel
-			for (uint x = 0; x < src.w; ++x) {
+			for (int x = 0; x < src.w; ++x) {
 				switch (src.format.bytesPerPixel) {
 				case 1: {
 					const byte *srcP = (const byte *)src.getBasePtr(x, y);

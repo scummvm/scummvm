@@ -183,14 +183,14 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail
 		switch (header.format.bytesPerPixel) {
 		case 2: {
 			uint16 *pixels = (uint16 *)thumbnail->getBasePtr(0, y);
-			for (uint x = 0; x < thumbnail->w; ++x) {
+			for (int x = 0; x < thumbnail->w; ++x) {
 				*pixels++ = in.readUint16BE();
 			}
 			} break;
 
 		case 4: {
 			uint32 *pixels = (uint32 *)thumbnail->getBasePtr(0, y);
-			for (uint x = 0; x < thumbnail->w; ++x) {
+			for (int x = 0; x < thumbnail->w; ++x) {
 				*pixels++ = in.readUint32BE();
 			}
 			} break;
@@ -247,18 +247,18 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 	out.writeByte(thumb.format.aShift);
 
 	// Serialize the pixel data
-	for (uint y = 0; y < thumb.h; ++y) {
+	for (int y = 0; y < thumb.h; ++y) {
 		switch (thumb.format.bytesPerPixel) {
 		case 2: {
 			const uint16 *pixels = (const uint16 *)thumb.getBasePtr(0, y);
-			for (uint x = 0; x < thumb.w; ++x) {
+			for (int x = 0; x < thumb.w; ++x) {
 				out.writeUint16BE(*pixels++);
 			}
 			} break;
 
 		case 4: {
 			const uint32 *pixels = (const uint32 *)thumb.getBasePtr(0, y);
-			for (uint x = 0; x < thumb.w; ++x) {
+			for (int x = 0; x < thumb.w; ++x) {
 				out.writeUint32BE(*pixels++);
 			}
 			} break;

@@ -348,7 +348,7 @@ bool Location::scrollToSmooth(const Common::Point &position, bool followCharacte
 
 	Common::Point delta;
 	if (position.x < _scroll.x) {
-		delta.x = -scrollStep;
+		delta.x = -(int)scrollStep;
 		delta.x = CLIP<int16>(delta.x, position.x - _scroll.x, 0);
 	} else if (position.x > _scroll.x) {
 		delta.x = scrollStep;
@@ -356,7 +356,7 @@ bool Location::scrollToSmooth(const Common::Point &position, bool followCharacte
 	}
 
 	if (position.y < _scroll.y) {
-		delta.y = -scrollStep;
+		delta.y = -(int)scrollStep;
 		delta.y = CLIP<int16>(delta.y, position.y - _scroll.y, 0);
 	} else if (position.y > _scroll.y) {
 		delta.y = scrollStep;

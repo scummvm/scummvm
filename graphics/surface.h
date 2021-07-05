@@ -55,19 +55,19 @@ struct Surface {
 	/**
 	 * Width of the surface.
 	 */
-	uint16 w;
+	int16 w;
 
 	/**
 	 * Height of the surface.
 	 */
-	uint16 h;
+	int16 h;
 
 	/**
 	 * Number of bytes in a pixel line.
 	 *
 	 * @note This might not equal w * bytesPerPixel.
 	 */
-	uint16 pitch;
+	int16 pitch;
 
 protected:
 	/**
@@ -188,7 +188,7 @@ public:
 	 * @param height  Height of the surface object.
 	 * @param format  The pixel format to be used by the surface.
 	 */
-	void create(uint16 width, uint16 height, const PixelFormat &format);
+	void create(int16 width, int16 height, const PixelFormat &format);
 
 	/**
 	 * Release the memory used by the pixel memory of this surface.
@@ -212,7 +212,7 @@ public:
 	 * @param pixels  Pixel data.
 	 * @param format  Pixel format of the pixel data.
 	 */
-	void init(uint16 width, uint16 height, uint16 pitch, void *pixels, const PixelFormat &format);
+	void init(int16 width, int16 height, int16 pitch, void *pixels, const PixelFormat &format);
 
 	/**
 	 * Copy the data from another surface.
@@ -402,7 +402,7 @@ public:
 	 * @param newHeight  The resulting height.
 	 * @param filtering  Whether or not to use bilinear filtering.
 	 */
-	Graphics::Surface *scale(uint16 newWidth, uint16 newHeight, bool filtering = false) const;
+	Graphics::Surface *scale(int16 newWidth, int16 newHeight, bool filtering = false) const;
 
 	/**
 	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and

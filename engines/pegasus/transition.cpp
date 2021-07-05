@@ -74,8 +74,8 @@ void ScreenFader::setFaderValue(const int32 value) {
 			// linear fade instead, which looks fairly well, IMO.
 			Graphics::Surface *screen = g_system->lockScreen();
 
-			for (uint y = 0; y < _screen.h; y++) {
-				for (uint x = 0; x < _screen.w; x++) {
+			for (int y = 0; y < _screen.h; y++) {
+				for (int x = 0; x < _screen.w; x++) {
 					if (_screen.format.bytesPerPixel == 2)
 						WRITE_UINT16(screen->getBasePtr(x, y), fadePixel(READ_UINT16(_screen.getBasePtr(x, y)), value));
 					else

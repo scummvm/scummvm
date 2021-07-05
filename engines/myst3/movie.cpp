@@ -509,9 +509,9 @@ void ProjectorMovie::update() {
 	float delta = zoom / 10.0 / _frame->w;
 
 	// For each pixel in the target image
-	for (uint i = 0; i < _frame->h; i++) {
+	for (int i = 0; i < _frame->h; i++) {
 		byte *dst = (byte *)_frame->getBasePtr(0, i);
-		for (uint j = 0; j < _frame->w; j++) {
+		for (int j = 0; j < _frame->w; j++) {
 			uint8 depth;
 			uint16 r = 0, g = 0, b = 0;
 			uint32 srcX = (uint32)(backgroundX + j * delta);

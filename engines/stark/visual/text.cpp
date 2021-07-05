@@ -155,11 +155,11 @@ static float linearToSrgb(float x) {
 static void multiplyColorWithAlpha(Graphics::Surface *source) {
 	assert(source->format == Gfx::Driver::getRGBAPixelFormat());
 
-	for (uint y = 0; y < source->h; y++) {
+	for (int y = 0; y < source->h; y++) {
 		const uint8 *src = (const uint8 *) source->getBasePtr(0, y);
 		uint8 *dst = (uint8 *) source->getBasePtr(0, y);
 
-		for (uint x = 0; x < source->w; x++) {
+		for (int x = 0; x < source->w; x++) {
 			uint8 a, r, g, b;
 			r = *src++;
 			g = *src++;
@@ -206,11 +206,11 @@ static void blendWithColor(Graphics::Surface *source, const Color &color) {
 	float sGL = srgbToLinear(color.g / 255.f);
 	float sBL = srgbToLinear(color.b / 255.f);
 
-	for (uint y = 0; y < source->h; y++) {
+	for (int y = 0; y < source->h; y++) {
 		const uint8 *src = (const uint8 *) source->getBasePtr(0, y);
 		uint8 *dst = (uint8 *) source->getBasePtr(0, y);
 
-		for (uint x = 0; x < source->w; x++) {
+		for (int x = 0; x < source->w; x++) {
 			uint8 a, r, g, b;
 			r = *src++;
 			g = *src++;

@@ -144,7 +144,7 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @param filtering Whether or not to use bilinear filtering.
 	 * @see TransformStruct
 	 */
-	TransparentSurface *scale(uint16 newWidth, uint16 newHeight, bool filtering = false) const;
+	TransparentSurface *scale(int16 newWidth, int16 newHeight, bool filtering = false) const;
 
 	/**
 	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and

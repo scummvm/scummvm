@@ -462,8 +462,8 @@ void ImageAsset::blitDirect(Graphics::ManagedSurface *target, int ox, int oy, co
 		uint bmpofs = (y + sy) * rowBytes;
 		byte pix = 0;
 		for (uint x = 0; x < w; x++) {
-			assert(ox + x <= target->w);
-			assert(oy + y <= target->h);
+			assert(ox + x <= (uint)target->w);
+			assert(oy + y <= (uint)target->h);
 			pix = data[bmpofs + ((x + sx) >> 3)] & (1 << (7 - ((x + sx) & 7)));
 			pix = pix ? kColorBlack : kColorWhite;
 			*((byte *)target->getBasePtr(ox + x, oy + y)) = pix;
@@ -479,8 +479,8 @@ void ImageAsset::blitBIC(Graphics::ManagedSurface *target, int ox, int oy, const
 		uint bmpofs = (y + sy) * rowBytes;
 		byte pix = 0;
 		for (uint x = 0; x < w; x++) {
-			assert(ox + x <= target->w);
-			assert(oy + y <= target->h);
+			assert(ox + x <= (uint)target->w);
+			assert(oy + y <= (uint)target->h);
 			pix = data[bmpofs + ((x + sx) >> 3)] & (1 << (7 - ((x + sx) & 7)));
 			if (pix) {
 				*((byte *)target->getBasePtr(ox + x, oy + y)) = kColorWhite;
@@ -497,8 +497,8 @@ void ImageAsset::blitOR(Graphics::ManagedSurface *target, int ox, int oy, const 
 		uint bmpofs = (y + sy) * rowBytes;
 		byte pix = 0;
 		for (uint x = 0; x < w; x++) {
-			assert(ox + x <= target->w);
-			assert(oy + y <= target->h);
+			assert(ox + x <= (uint)target->w);
+			assert(oy + y <= (uint)target->h);
 			pix = data[bmpofs + ((x + sx) >> 3)] & (1 << (7 - ((x + sx) & 7)));
 			if (pix) {
 				*((byte *)target->getBasePtr(ox + x, oy + y)) = kColorBlack;
@@ -517,8 +517,8 @@ void ImageAsset::blitXOR(Graphics::ManagedSurface *target, int ox, int oy, const
 		for (uint x = 0; x < w; x++) {
 			pix = data[bmpofs + ((x + sx) >> 3)] & (1 << (7 - ((x + sx) & 7)));
 			if (pix) { // We need to xor
-				assert(ox + x <= target->w);
-				assert(oy + y <= target->h);
+				assert(ox + x <= (uint)target->w);
+				assert(oy + y <= (uint)target->h);
 				byte p = *((byte *)target->getBasePtr(ox + x, oy + y));
 				*((byte *)target->getBasePtr(ox + x, oy + y)) =
 					(p == kColorWhite) ? kColorBlack : kColorWhite;
@@ -532,10 +532,10 @@ void ImageAsset::calculateSectionToDraw(Graphics::ManagedSurface *target, int &o
 	calculateSectionInDirection(target->w, bitWidth, ox, sx, w);
 	calculateSectionInDirection(target->h, bitHeight, oy, sy, h);
 
-	assert(w <= target->w);
+	assert(w <= (uint)target->w);
 	assert((int)w >= 0);
 	assert(w <= bitWidth);
-	assert(h <= target->h);
+	assert(h <= (uint)target->h);
 	assert((int)h >= 0);
 	assert(h <= bitHeight);
 }

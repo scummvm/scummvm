@@ -226,7 +226,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	int offset = 0;
-	if (_surface->w < (pixels.size() / _surface->h))
+	if (_surface->w < (int)(pixels.size() / _surface->h))
 		offset = (pixels.size() / _surface->h) - _surface->w;
 
 	uint32 color;

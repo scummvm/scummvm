@@ -144,11 +144,11 @@ void ManagedSurface::setPixels(void *newPixels) {
 	_innerSurface.setPixels(newPixels);
 }
 
-void ManagedSurface::create(uint16 width, uint16 height) {
+void ManagedSurface::create(int16 width, int16 height) {
 	create(width, height, PixelFormat::createFormatCLUT8());
 }
 
-void ManagedSurface::create(uint16 width, uint16 height, const PixelFormat &pixelFormat) {
+void ManagedSurface::create(int16 width, int16 height, const PixelFormat &pixelFormat) {
 	free();
 	_innerSurface.create(width, height, pixelFormat);
 

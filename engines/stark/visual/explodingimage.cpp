@@ -74,8 +74,8 @@ void VisualExplodingImage::initFromSurface(const Graphics::Surface *surface, uin
 	explosionAmplitude.y *= _surface->h / (float)originalHeight;
 
 	uint index = 0;
-	for (uint y = 0; y < _surface->h; y++) {
-		for (uint x = 0; x < _surface->w; x++, index++) {
+	for (int y = 0; y < _surface->h; y++) {
+		for (int x = 0; x < _surface->w; x++, index++) {
 			_units[index].setPosition(x, y);
 			_units[index].setExplosionSettings(explosionCenter, explosionAmplitude, _surface->w / (float)originalWidth);
 			_units[index].setColor(*static_cast<uint32 *>(_surface->getBasePtr(x, y)), _surface->format);

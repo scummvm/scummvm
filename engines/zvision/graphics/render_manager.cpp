@@ -192,8 +192,8 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 	// Some files are true TGA, while others are TGZ
 	uint32 fileType = file.readUint32BE();
 
-	uint32 imageWidth;
-	uint32 imageHeight;
+	int imageWidth;
+	int imageHeight;
 	Image::TGADecoder tga;
 	uint16 *buffer;
 	// All Z-Vision images are in RGB 555
@@ -238,9 +238,7 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 
 	// Flip the width and height if transposed
 	if (transposed) {
-		uint16 temp = imageHeight;
-		imageHeight = imageWidth;
-		imageWidth = temp;
+		SWAP(imageWidth, imageHeight);
 	}
 
 	// If the destination internal buffer is the same size as what we're copying into it,
@@ -254,10 +252,10 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 	if (transposed) {
 		uint16 *dest = (uint16 *)destination.getPixels();
 
-		for (uint32 y = 0; y < imageHeight; ++y) {
+		for (int y = 0; y < imageHeight; ++y) {
 			uint32 columnIndex = y * imageWidth;
 
-			for (uint32 x = 0; x < imageWidth; ++x) {
+			for (int x = 0; x < imageWidth; ++x) {
 				dest[columnIndex + x] = buffer[x * imageHeight + y];
 			}
 		}
@@ -345,10 +343,10 @@ Graphics::Surface *RenderManager::tranposeSurface(const Graphics::Surface *surfa
 	const uint16 *source = (const uint16 *)surface->getPixels();
 	uint16 *dest = (uint16 *)tranposedSurface->getPixels();
 
-	for (uint32 y = 0; y < tranposedSurface->h; ++y) {
-		uint32 columnIndex = y * tranposedSurface->w;
+	for (int y = 0; y < tranposedSurface->h; ++y) {
+		int columnIndex = y * tranposedSurface->w;
 
-		for (uint32 x = 0; x < tranposedSurface->w; ++x) {
+		for (int x = 0; x < tranposedSurface->w; ++x) {
 			dest[columnIndex + x] = source[x * surface->w + y];
 		}
 	}

@@ -257,7 +257,7 @@ void Viewport::setPreviousFrame() {
 }
 
 void Viewport::setVerticalScroll(uint scroll) {
-	assert(scroll + _drawSurface.h <= _fullFrame.h);
+	assert((int)scroll + _drawSurface.h <= _fullFrame.h);
 
 	Common::Rect sourceBounds = _screenPosition;
 	sourceBounds.moveTo(0, scroll);

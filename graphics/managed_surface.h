@@ -99,9 +99,9 @@ public:
 	 */
 	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds);
 public:
-	uint16 &w;           /*!< Width of the surface rectangle. */
-	uint16 &h;           /*!< Height of the surface rectangle. */
-	uint16 &pitch;       /*!< Pitch of the surface rectangle. See @ref Surface::pitch. */
+	int16 &w;           /*!< Width of the surface rectangle. */
+	int16 &h;           /*!< Height of the surface rectangle. */
+	int16 &pitch;       /*!< Pitch of the surface rectangle. See @ref Surface::pitch. */
 	PixelFormat &format; /*!< Pixel format of the surface. See @ref PixelFormat. */
 public:
 	/**
@@ -249,12 +249,12 @@ public:
 	/**
 	 * Allocate memory for the pixel data of the surface.
 	 */
-	virtual void create(uint16 width, uint16 height);
+	virtual void create(int16 width, int16 height);
 
 	/**
 	 * Allocate memory for the pixel data of the surface.
 	 */
-	virtual void create(uint16 width, uint16 height, const PixelFormat &pixelFormat);
+	virtual void create(int16 width, int16 height, const PixelFormat &pixelFormat);
 
 	/**
 	 * Set up the surface as a subsection of another passed parent surface.

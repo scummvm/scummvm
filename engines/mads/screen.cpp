@@ -682,7 +682,7 @@ void Screen::panTransition(MSurface &newScreen, byte *palData, int entrySide,
 //	uint32 baseTicks, currentTicks;
 	byte paletteMap[256];
 
-	size.x = MIN(newScreen.w, (uint16)MADS_SCREEN_WIDTH);
+	size.x = MIN(newScreen.w, (int16)MADS_SCREEN_WIDTH);
 	size.y = newScreen.h;
 	if (newScreen.h >= MADS_SCREEN_HEIGHT)
 		size.y = MADS_SCENE_HEIGHT;

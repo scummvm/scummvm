@@ -176,8 +176,8 @@ Surface::Surface()
 
 void Surface::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcPtr, uint srcPitch) {
 	Graphics::Surface *dstSurf = getSurface();
-	assert(x + w <= dstSurf->w);
-	assert(y + h <= dstSurf->h);
+	assert(x + w <= (uint)dstSurf->w);
+	assert(y + h <= (uint)dstSurf->h);
 
 	// *sigh* Common::Rect::extend behaves unexpected whenever one of the two
 	// parameters is an empty rect. Thus, we check whether the current dirty
@@ -194,7 +194,7 @@ void Surface::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcP
 	const uint pitch = dstSurf->pitch;
 	const uint bytesPerPixel = dstSurf->format.bytesPerPixel;
 
-	if (srcPitch == pitch && x == 0 && w == dstSurf->w) {
+	if (srcPitch == pitch && x == 0 && w == (uint)dstSurf->w) {
 		memcpy(dst, src, h * pitch);
 	} else {
 		while (h-- > 0) {
@@ -257,7 +257,7 @@ void Texture::allocate(uint width, uint height) {
 
 	// In case the needed texture dimension changed we will reinitialize the
 	// texture data buffer.
-	if (_glTexture.getWidth() != _textureData.w || _glTexture.getHeight() != _textureData.h) {
+	if (_glTexture.getWidth() != (uint)_textureData.w || _glTexture.getHeight() != (uint)_textureData.h) {
 		// Create a buffer for the texture data.
 		_textureData.create(_glTexture.getWidth(), _glTexture.getHeight(), _format);
 	}
@@ -330,7 +330,7 @@ void TextureCLUT8::allocate(uint width, uint height) {
 
 	// We only need to reinitialize our CLUT8 surface when the output size
 	// changed.
-	if (width == _clut8Data.w && height == _clut8Data.h) {
+	if (width == (uint)_clut8Data.w && height == (uint)_clut8Data.h) {
 		return;
 	}
 
@@ -443,7 +443,7 @@ void FakeTexture::allocate(uint width, uint height) {
 
 	// We only need to reinitialize our surface when the output size
 	// changed.
-	if (width == _rgbData.w && height == _rgbData.h) {
+	if (width == (uint)_rgbData.w && height == (uint)_rgbData.h) {
 		return;
 	}
 
@@ -604,7 +604,7 @@ void TextureCLUT8GPU::allocate(uint width, uint height) {
 
 	// In case the needed texture dimension changed we will reinitialize the
 	// texture data buffer.
-	if (_clut8Texture.getWidth() != _clut8Data.w || _clut8Texture.getHeight() != _clut8Data.h) {
+	if (_clut8Texture.getWidth() != (uint)_clut8Data.w || _clut8Texture.getHeight() != (uint)_clut8Data.h) {
 		// Create a buffer for the texture data.
 		_clut8Data.create(_clut8Texture.getWidth(), _clut8Texture.getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 	}

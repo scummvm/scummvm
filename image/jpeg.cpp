@@ -298,7 +298,7 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// Allocate buffer for one scanline
 	JDIMENSION pitch = cinfo.output_width * _surface.format.bytesPerPixel;
-	assert(_surface.pitch >= pitch);
+	assert(_surface.pitch >= (int)pitch);
 	JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr)&cinfo, JPOOL_IMAGE, pitch, 1);
 
 	// Go through the image data scanline by scanline
