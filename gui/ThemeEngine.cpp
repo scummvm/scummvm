@@ -1352,7 +1352,7 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 	if (activePos >= 0) {
 		Common::Rect tabRect(r.left + activePos, r.top, r.left + activePos + tabWidths[active], r.top + tabHeight);
 		const uint16 tabLeft = activePos;
-		const uint16 tabRight = MAX(r.right - tabRect.right, 0);
+		const uint16 tabRight = MAX(r.right - tabRect.right, (int32)0);
 		drawDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
 		drawDDText(getTextData(kDDTabActive), getTextColor(kDDTabActive), tabRect, tabs[active], false, false,
 		           convertTextAlignH(_widgets[kDDTabActive]->_textAlignH, rtl), _widgets[kDDTabActive]->_textAlignV);
