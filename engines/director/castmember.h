@@ -239,7 +239,9 @@ public:
 	bool setChunkField(int field, int start, int end, const Datum &value);
 
 	int getTextHeight();
+
 	int getTextSize();
+	void setTextSize(int textSize);
 
 	SizeType _borderSize;
 	SizeType _gutterSize;

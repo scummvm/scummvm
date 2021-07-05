@@ -813,6 +813,15 @@ Common::String TextCastMember::getText() {
 	return _ptext;
 }
 
+void TextCastMember::setTextSize(int textSize) {
+	if (_widget) {
+		((Graphics::MacText *)_widget)->setTextSize(textSize);
+		((Graphics::MacText *)_widget)->draw();
+	} else {
+		warning("TextCastMember::setTextSize: unprocessed setting text size for cast member %d %s", _castId, numToCastNum(_castId));
+	}
+}
+
 bool TextCastMember::isEditable() {
 	return _editable;
 }
