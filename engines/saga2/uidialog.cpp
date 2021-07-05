@@ -1827,6 +1827,8 @@ APPFUNC(cmdSpeechText) {
 	if (isUserAction(ev)) {
 		g_vm->_speechText = !g_vm->_speechText;
 		speechTextBtn->select(g_vm->_speechText);
+
+		ConfMan.setBool("subtitles", g_vm->_speechText);
 	}
 }
 
