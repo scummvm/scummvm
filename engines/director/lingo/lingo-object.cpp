@@ -896,16 +896,16 @@ Datum TextCastMember::getField(int field) {
 		}
 		break;
 	case kTheTextFont:
-		warning("TextCastMember::getField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		d.u.i = _fontId;
 		break;
 	case kTheTextHeight:
-		warning("TextCastMember::getField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		d.u.i = getTextHeight();
 		break;
 	case kTheTextSize:
-		warning("TextCastMember::getField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		d.u.i = getTextSize();
 		break;
 	case kTheTextStyle:
-		warning("TextCastMember::getField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		d.u.i = _textSlant;
 		break;
 	default:
 		d = CastMember::getField(field);
