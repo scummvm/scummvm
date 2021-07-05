@@ -788,6 +788,23 @@ void TextCastMember::setText(const char *text) {
 	}
 }
 
+int TextCastMember::getTextHeight() {
+	if (_widget)
+		return ((Graphics::MacText *)_widget)->getTextHeight();
+	else
+		warning("TextCastMember::getTextHeight: getting text height when there is no widget, returning 0");
+	return 0;
+}
+
+// this should be amend when we have some where using this function
+int TextCastMember::getTextSize() {
+	if (_widget)
+		return ((Graphics::MacText *)_widget)->getTextSize();
+	else
+		warning("TextCastMember::getTextSize: getting text size when there is no widget, returning 0");
+	return 0;
+}
+
 Common::String TextCastMember::getText() {
 	return _ptext;
 }

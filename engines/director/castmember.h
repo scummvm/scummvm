@@ -238,6 +238,9 @@ public:
 	Datum getChunkField(int field, int start, int end);
 	bool setChunkField(int field, int start, int end, const Datum &value);
 
+	int getTextHeight();
+	int getTextSize();
+
 	SizeType _borderSize;
 	SizeType _gutterSize;
 	SizeType _boxShadow;
