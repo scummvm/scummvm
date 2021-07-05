@@ -111,7 +111,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_plainByteMode = false;
 
 	if (macFont) {
-		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
+		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 	} else {
 		_defaultFormatting.font = NULL;
@@ -136,7 +136,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_plainByteMode = true;
 
 	if (macFont) {
-		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
+		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 	} else {
 		_defaultFormatting.font = NULL;
@@ -162,7 +162,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	_plainByteMode = false;
 
 	if (macFont) {
-		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
+		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 	} else {
 		_defaultFormatting.font = NULL;
@@ -187,7 +187,7 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 	_plainByteMode = true;
 
 	if (macFont) {
-		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
+		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 	} else {
 		_defaultFormatting.font = NULL;
@@ -213,7 +213,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 	_plainByteMode = false;
 
 	if (font) {
-		_defaultFormatting = MacFontRun(_wm, font, 0, font->getFontHeight(), 0, 0, 0);
+		_defaultFormatting = MacFontRun(this, _wm, font, 0, font->getFontHeight(), 0, 0, 0);
 		_defaultFormatting.font = font;
 	} else {
 		_defaultFormatting.font = NULL;
@@ -443,7 +443,7 @@ void MacText::setTextColor(uint32 color, uint32 start, uint32 end) {
 
 void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
 		uint16 palinfo1, uint16 palinfo2, uint16 palinfo3) {
-	_defaultFormatting.setValues(_defaultFormatting.wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+	_defaultFormatting.setValues(this, _defaultFormatting.wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 	MacFont macFont = MacFont(fontId, fontSize, textSlant);
 
@@ -612,7 +612,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 				D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
 						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
-				current_format.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+				current_format.setValues(this, _wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				if (!_macFontMode)
 					current_format.font = _defaultFormatting.font;
@@ -631,7 +631,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 				D(9, "** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
 						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
-				current_format.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+				current_format.setValues(this, _wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				// So far, we enforce single font here, though in the future, font size could be altered
 				if (!_macFontMode)
@@ -1068,7 +1068,7 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, uint16 r, uint16 g, uint16 b, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
-	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, r, g, b);
+	MacFontRun fontRun = MacFontRun(this, _wm, fontId, fontSlant, fontSize, r, g, b);
 
 	_currentFormatting = fontRun;
 
@@ -1094,7 +1094,7 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 void MacText::appendText(const Common::U32String &str, const Font *font, uint16 r, uint16 g, uint16 b, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
-	MacFontRun fontRun = MacFontRun(_wm, font, 0, font->getFontHeight(), r, g, b);
+	MacFontRun fontRun = MacFontRun(this, _wm, font, 0, font->getFontHeight(), r, g, b);
 
 	_currentFormatting = fontRun;
 

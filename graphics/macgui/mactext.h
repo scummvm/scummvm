@@ -53,9 +53,11 @@ struct MacFontRun {
 	// to determine whether the next word is part of this one
 	bool wordContinuation;
 	const Font *font;
+	MacText *parent;
 	MacWindowManager *wm;
 
 	MacFontRun() {
+		parent = nullptr;
 		wm = nullptr;
 		fontId = textSlant = fontSize = 0;
 		palinfo1 = palinfo2 = palinfo3 = 0;
@@ -64,21 +66,22 @@ struct MacFontRun {
 		wordContinuation = false;
 	}
 
-	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
+	MacFontRun(MacText *parent_, MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
-		setValues(wm_, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+		setValues(parent_, wm_, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
 		wordContinuation = false;
 	}
 
-	MacFontRun(MacWindowManager *wm_, const Font *font_, byte textSlant_, uint16 fontSize_,
+	MacFontRun(MacText *parent_, MacWindowManager *wm_, const Font *font_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
-		setValues(wm_, 0, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+		setValues(parent_, wm_, 0, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
 		font = font_;
 		wordContinuation = false;
 	}
 
-	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
+	void setValues(MacText *parent_, MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
+		parent    = parent_;
 		wm        = wm_;
 		fontId    = fontId_;
 		textSlant = textSlant_;
