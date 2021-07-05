@@ -174,10 +174,10 @@ bool Movie::loadArchive() {
 
 Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	Common::Rect rect;
-	rect.top = stream.readUint16();
-	rect.left = stream.readUint16();
-	rect.bottom = stream.readUint16();
-	rect.right = stream.readUint16();
+	rect.top = stream.readSint16();
+	rect.left = stream.readSint16();
+	rect.bottom = stream.readSint16();
+	rect.right = stream.readSint16();
 
 	return rect;
 }
