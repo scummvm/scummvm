@@ -541,7 +541,7 @@ void CoktelDecoder::renderBlockSparse(Graphics::Surface &dstSurf, const byte *sr
 			if (pixCount & 0x80) { // Data
 				int16 copyCount;
 
-				pixCount  = MIN((pixCount & 0x7F) + 1, srcRect.width() - pixWritten);
+				pixCount  = MIN<int16>((pixCount & 0x7F) + 1, srcRect.width() - pixWritten);
 				copyCount = CLIP<int16>(rect.width() - pixWritten, 0, pixCount);
 				memcpy(dstRow, src, copyCount);
 
@@ -576,7 +576,7 @@ void CoktelDecoder::renderBlockSparse2Y(Graphics::Surface &dstSurf, const byte *
 			int16 pixCount = *src++;
 
 			if (pixCount & 0x80) { // Data
-				pixCount  = MIN((pixCount & 0x7F) + 1, srcRect.width() - pixWritten);
+				pixCount  = MIN<int16>((pixCount & 0x7F) + 1, srcRect.width() - pixWritten);
 				memcpy(dstRow                 , src, pixCount);
 				memcpy(dstRow + dstSurf.pitch, src, pixCount);
 
@@ -610,7 +610,7 @@ void CoktelDecoder::renderBlockRLE(Graphics::Surface &dstSurf, const byte *src, 
 			if (pixCount & 0x80) {
 				int16 copyCount;
 
-				pixCount  = MIN((pixCount & 0x7F) + 1, srcRect.width() - pixWritten);
+				pixCount  = MIN<int16>((pixCount & 0x7F) + 1, srcRect.width() - pixWritten);
 				copyCount = CLIP<int16>(rect.width() - pixWritten, 0, pixCount);
 
 				if (*src != 0xFF) { // Normal copy
