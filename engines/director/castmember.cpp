@@ -796,7 +796,7 @@ int TextCastMember::getTextHeight() {
 	if (_widget)
 		return ((Graphics::MacText *)_widget)->getLineSpacing();
 	else
-		warning("TextCastMember::getTextHeight: getting text line spacing when there is no widget, returning 0");
+		return _lineSpacing;
 	return 0;
 }
 
@@ -805,7 +805,7 @@ int TextCastMember::getTextSize() {
 	if (_widget)
 		return ((Graphics::MacText *)_widget)->getTextSize();
 	else
-		warning("TextCastMember::getTextSize: getting text size when there is no widget, returning 0");
+		return _fontSize;
 	return 0;
 }
 
@@ -818,7 +818,8 @@ void TextCastMember::setTextSize(int textSize) {
 		((Graphics::MacText *)_widget)->setTextSize(textSize);
 		((Graphics::MacText *)_widget)->draw();
 	} else {
-		warning("TextCastMember::setTextSize: unprocessed setting text size for cast member %d %s", _castId, numToCastNum(_castId));
+		_fontSize = textSize;
+		_modified = true;
 	}
 }
 

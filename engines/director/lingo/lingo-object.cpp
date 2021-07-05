@@ -961,14 +961,15 @@ bool TextCastMember::setField(int field, const Datum &d) {
 	}
 		return true;
 	case kTheTextFont:
-		warning("TextCastMember::setField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		_fontId = d.asInt();
+		_modified = true;
 		return false;
 	case kTheTextHeight:
 		_lineSpacing = d.asInt();
 		_modified = true;
 		return false;
 	case kTheTextSize:
-		warning("TextCastMember::setField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		setTextSize(d.asInt());
 		return false;
 	case kTheTextStyle:
 		_textSlant = d.asInt();
@@ -1000,19 +1001,19 @@ Datum TextCastMember::getChunkField(int field, int start, int end) {
 
 	switch (field) {
 	case kTheForeColor:
-		warning("TextCastMember::getChunkField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		d.u.i = getForeColor();
 		break;
 	case kTheTextFont:
-		warning("TextCastMember::getChunkField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		d.u.i = _fontId;
 		break;
 	case kTheTextHeight:
-		warning("TextCastMember::getChunkField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		d.u.i = _lineSpacing;
 		break;
 	case kTheTextSize:
-		warning("TextCastMember::getChunkField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		d.u.i = _fontSize;
 		break;
 	case kTheTextStyle:
-		warning("TextCastMember::getChunkField(): Unprocessed getting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		d.u.i = _textSlant;
 		break;
 	default:
 		break;
@@ -1022,21 +1023,27 @@ Datum TextCastMember::getChunkField(int field, int start, int end) {
 }
 
 bool TextCastMember::setChunkField(int field, int start, int end, const Datum &d) {
+	uint color = 0;
 	switch (field) {
 	case kTheForeColor:
-		warning("TextCastMember::setChunkField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		color = d.asInt();
+		setColors(&color, nullptr);
 		return false;
 	case kTheTextFont:
-		warning("TextCastMember::setChunkField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		_fontId = d.asInt();
+		_modified = true;
 		return false;
 	case kTheTextHeight:
-		warning("TextCastMember::setChunkField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		_lineSpacing = d.asInt();
+		_modified = true;
 		return false;
 	case kTheTextSize:
-		warning("TextCastMember::setChunkField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		_fontSize = d.asInt();
+		_modified = true;
 		return false;
 	case kTheTextStyle:
-		warning("TextCastMember::setChunkField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		_textSlant = d.asInt();
+		_modified = true;
 		return false;
 	default:
 		break;
