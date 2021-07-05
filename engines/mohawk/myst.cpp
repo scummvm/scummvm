@@ -104,11 +104,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_mainMenuDialog = new MystMenuDialog(this);
 
 	// Enable CD-ROM delay simulation if necessary
-	if (ConfMan.getBool("cdromdelay")) {
-		addCdRomDelay = true;
-	} else {
-		addCdRomDelay = false;
-	}
+	addCdRomDelay = ConfMan.getBool("cdromdelay");
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
@@ -542,11 +538,7 @@ void MohawkEngine_Myst::applyGameSettings() {
 	}
 
 	// Toggle CD-ROM simulation if necessary
-	if (ConfMan.getBool("cdromdelay")) {
-		addCdRomDelay = true;
-	} else {
-		addCdRomDelay = false;
-	}
+	addCdRomDelay = ConfMan.getBool("cdromdelay");
 }
 
 Common::KeymapArray MohawkEngine_Myst::initKeymaps(const char *target) {
@@ -932,7 +924,7 @@ void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 lin
 	_gfx->clearCache();
 
 	// Add artificial CD-ROM delay
-	if (addCdRomDelay == true) {
+	if (addCdRomDelay) {
 		if (_stack->getStackId() != kIntroStack && _stack->getStackId() != kMenuStack) {
 			// Pretty arbitrary delays to mimic a period correct 4x drive
 			// TODO: Since the disc layout of the original CD-ROMs is known,
@@ -968,7 +960,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	}
 
 	// Add artificial CD-ROM delay
-	if (addCdRomDelay == true) {
+	if (addCdRomDelay) {
 		if (_stack->getStackId() != kIntroStack && _stack->getStackId() != kMenuStack) {
 			// The original engine disables the mouse cursor when loading new cards.
 			_cursor->hideCursor();
