@@ -339,6 +339,12 @@ void Cast::loadCast() {
 		delete r;
 	}
 
+	// Font Mapping V4
+	if (_castArchive->hasResource(MKTAG('F', 'm', 'a', 'p'), -1)) {
+		loadFontMapV4(*(r = _castArchive->getFirstResource(MKTAG('F', 'm', 'a', 'p'))));
+		delete r;
+	}
+
 	// Cross-Platform Font Mapping
 	if (_castArchive->hasResource(MKTAG('F', 'X', 'm', 'p'), -1)) {
 		loadFXmp(*(r = _castArchive->getFirstResource(MKTAG('F', 'X', 'm', 'p'))));

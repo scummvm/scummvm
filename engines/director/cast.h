@@ -93,6 +93,7 @@ private:
 	PaletteV4 loadPalette(Common::SeekableReadStreamEndian &stream);
 	void loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id);
 	void loadFontMap(Common::SeekableReadStreamEndian &stream);
+	void loadFontMapV4(Common::SeekableReadStreamEndian &stream);
 	void loadFXmp(Common::SeekableReadStreamEndian &stream);
 	bool readFXmpLine(Common::SeekableReadStreamEndian &stream);
 	Common::String getString(Common::String str);

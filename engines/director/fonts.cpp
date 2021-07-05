@@ -69,6 +69,55 @@ void Cast::loadFontMap(Common::SeekableReadStreamEndian &stream) {
 	}
 }
 
+void Cast::loadFontMapV4(Common::SeekableReadStreamEndian &stream) {
+	debugC(2, kDebugLoading, "****** Loading FontMap Fmap");
+
+	uint32 mapLength = stream.readUint32();
+	/* uint32 namesLength = */ stream.readUint32();
+	uint32 bodyStart = stream.pos();
+	uint32 namesStart = bodyStart + mapLength;
+
+	/* uint32 unk1 = */ stream.readUint32();
+	/* uint32 unk2 = */ stream.readUint32();
+	uint32 entriesUsed = stream.readUint32();
+	/* uint32 entriesTotal = */ stream.readUint32();
+	/* uint32 unk3 = */ stream.readUint32();
+	/* uint32 unk4 = */ stream.readUint32();
+	/* uint32 unk5 = */ stream.readUint32();
+
+	for (uint32 i = 0; i < entriesUsed; i++) {
+		uint32 nameOffset = stream.readUint32();
+
+		uint32 returnPos = stream.pos();
+		stream.seek(namesStart + nameOffset);
+		uint32 nameLength = stream.readUint32();
+		Common::String name = stream.readString(0, nameLength);
+		stream.seek(returnPos);
+
+		uint16 platform = stream.readUint16();
+		uint16 id = stream.readUint16();
+
+		Common::String platformName;
+		switch (platform) {
+		case 1:
+			platformName = "Mac";
+			break;
+		case 2:
+			platformName = "Win";
+			break;
+		default:
+			warning("Cast::loadFontMap: Unknown platform ID %d", platform);
+			platformName = "UNK";
+			break;
+		}
+
+		// Map cast font ID to window manager font ID
+		_fontMap[id] = _vm->_wm->_fontMan->registerFontName(name);
+
+		debugC(3, kDebugLoading, "Cast::loadFontMapV4: Mapping %s font %d (%s) to %d", platformName.c_str(), id, name.c_str(), _fontMap[id]);
+	}
+}
+
 enum FXmpTokenType {
 	FXMP_TOKEN_WORD,
 	FXMP_TOKEN_INT,
