@@ -34,17 +34,6 @@ namespace Saga2 {
 class Music;
 class hResContext;
 
-#define QUEUES_EXTERNAL_ALLOCATION 1
-
-// TODO: FIXME. STUB
-typedef int HDIGDRIVER;
-typedef int HTIMER;
-typedef int HMDIDRIVER;
-
-inline void audioFatal(char *msg) {
-	error("Sound error %s", msg);
-}
-
 typedef Point32 sampleLocation;
 
 #define Here Point32(0,0)
@@ -53,11 +42,6 @@ enum VolumeTarget {
 	kVolSfx,
 	kVolVoice,
 	kVolMusic
-};
-
-enum volumeMode {
-	volumeSetTo = 0L,   // absolute mode
-	volumeUpDown       // relative mode
 };
 
 struct SoundInstance {

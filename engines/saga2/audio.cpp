@@ -59,8 +59,6 @@ extern hResource *voiceResFile;          // script resources
 extern int32 clickSizes[];
 extern uint8 *clickData[];
 
-
-soundSegment currentMidi;
 soundSegment currentLoop;
 
 hResContext *voiceRes, *musicRes, *soundRes, *loopRes, *longRes;
@@ -268,8 +266,6 @@ Point32 translateLocation(Location playAt) {
 
 void playMusic(uint32 s) {
 	debugC(1, kDebugSound, "playMusic(%s)", tag2strP(s));
-
-	currentMidi = s;
 
 	if (hResCheckResID(musicRes, s)) {
 		audio->playMusic(s, 0);
