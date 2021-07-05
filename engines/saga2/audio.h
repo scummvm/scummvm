@@ -71,8 +71,9 @@ struct SoundInstance {
 
 class audioInterface {
 private:
-	soundSegment looping;           // ID of music currently playing
-	uint32 _currentSpeech;
+	SoundInstance _currentSpeech;
+	SoundInstance _currentLoop;
+	SoundInstance _currentMusic;
 
 	Music *_music;
 
@@ -86,9 +87,6 @@ public:
 	Common::List<SoundInstance> _speechQueue;
 	Common::Queue<SoundInstance> _sfxQueue;
 
-	SoundInstance _loopSound;
-	SoundInstance _musicSound;
-
 	Audio::Mixer *_mixer;
 
 public:
@@ -98,11 +96,6 @@ public:
 
 	// init, cleanup
 	void initAudioInterface(hResContext *musicContext);
-	void cleanupAudioInterface(void);
-
-	// timer calls
-	void suspendGameClock(void);
-	void resumeGameClock(void);
 
 	// event loop calls
 	bool playFlag(void);
@@ -116,11 +109,11 @@ public:
 	void queueSound(soundSegment s, int16 loopFactor = 1, sampleLocation where = Here);
 
 	// loop calls
-	void queueLoop(soundSegment s, int16 loopFactor = 0, sampleLocation where = Here);
+	void playLoop(soundSegment s, int16 loopFactor = 0, sampleLocation where = Here);
 	void stopLoop(void);
 	void setLoopPosition(sampleLocation newLoc);
 	soundSegment currentLoop(void) {
-		return looping;    // ID of music currently playing
+		return _currentLoop.seg;
 	}
 
 	// voice calls
@@ -129,9 +122,6 @@ public:
 	void stopVoice(void);
 	bool talking(void);
 	bool saying(soundSegment s);
-
-	// volume and enabled calls
-	bool active(void);
 
 	Volume getVolume(VolumeTarget src);
 	void suspend(void);
