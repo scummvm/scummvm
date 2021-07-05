@@ -262,11 +262,19 @@ void loadTimers(SaveFileReader &saveGame) {
 //	Cleanup the active Timers
 
 void cleanupTimers(void) {
-	for (Common::List<TimerList *>::iterator it = g_vm->_timerLists.begin(); it != g_vm->_timerLists.end(); ++it)
+	Common::List<TimerList *>::iterator timerListNextIt;
+	for (Common::List<TimerList *>::iterator it = g_vm->_timerLists.begin(); it != g_vm->_timerLists.end(); it = timerListNextIt) {
+		timerListNextIt = it;
+		timerListNextIt++;
 		delete *it;
+	}
 
-	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); ++it)
+	Common::List<Timer *>::iterator timerNextIt;
+	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); it = timerNextIt) {
+		timerNextIt = it;
+		timerNextIt++;
 		delete *it;
+	}
 }
 
 /* ===================================================================== *
