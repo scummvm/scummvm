@@ -542,7 +542,11 @@ void GameData::loadRemorseData() {
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	// Load weapon, armour info
-	config->readConfigFile("data/remorseweapons.ini", "weapons");
+	if (_gameInfo->_type == GameInfo::GAME_REMORSE)
+		config->readConfigFile("data/remorseweapons.ini", "weapons");
+	else
+		config->readConfigFile("data/regretweapons.ini", "weapons");
+
 	config->readConfigFile("data/remorse.ini", "game");
 
 	// Load typeflags

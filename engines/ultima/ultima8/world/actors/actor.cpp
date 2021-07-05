@@ -1460,6 +1460,23 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 			setShape(0x59c);
 			setToStartOfAnim(Animation::fallBackwardsCru);
 		}
+	} else if ((damageType == 0x10) || (damageType == 0x12)) {
+		if (!is_robot) {
+			setShape(0x5d6);
+			setToStartOfAnim(Animation::fallBackwardsCru);
+		}
+	} else if (damageType == 0x11) {
+		if (!is_robot) {
+			setShape(0x62d);
+			setToStartOfAnim(Animation::fallBackwardsCru);
+		}
+	} else if (damageType == 0x14) {
+		if (!is_robot) {
+			if (true /*isViolenceEnabled()*/) {
+				setShape(0x278);
+				setToStartOfAnim(Animation::fallBackwardsCru);
+			}
+		}
 	} else if (damageType == 7 && _objId == 1) {
 		lastanim = doAnimAfter(Animation::electrocuted, dir_current, lastanim);
 	}

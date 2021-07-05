@@ -414,11 +414,18 @@ void SuperSpriteProcess::advanceFrame() {
 		Item *sprite = getItem(_spriteNo);
 		assert(sprite);
 		sprite->move(_nextpt);
+		uint32 frame = sprite->getFrame() + 1;
 		if (_fireType == 0xe) {
-			uint32 frame = sprite->getFrame();
-			frame++;
 			if (frame > 0x4b)
 				frame = 0x47;
+			sprite->setFrame(frame);
+		} else if (_fireType == 0x11) { // No Regret only
+			if (frame % 6 == 0)
+				frame = frame - 5;
+			sprite->setFrame(frame);
+		} else if (_fireType == 0x14) { // No Regret only
+			if ((frame - 0xdb) % 3 == 0)
+				frame = frame - 2;
 			sprite->setFrame(frame);
 		}
 	}
