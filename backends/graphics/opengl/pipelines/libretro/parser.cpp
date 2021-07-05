@@ -32,6 +32,7 @@
 #include "common/tokenizer.h"
 #include "common/ptr.h"
 #include "common/util.h"
+#include "common/config-manager.h"
 
 #include "common/textconsole.h"
 
@@ -443,13 +444,14 @@ bool PresetParser::parsePassScale(const uint id, ShaderPass *pass) {
 #undef passKey
 
 ShaderPreset *parsePreset(const Common::String &fileName) {
-	Common::FSNode fileNode("./shaders/presets/" + fileName);
+	Common::String _shaderPath = ConfMan.get("shaderpath");
+	Common::FSNode fileNode(_shaderPath + fileName);
 	if (!fileNode.exists() || !fileNode.isReadable() || fileNode.isDirectory()) {
 		warning("LibRetro Preset Parsing: No such readable file '%s'", fileName.c_str());
 		return nullptr;
 	}
 
-	Common::FSNode basePath("./shaders/presets/");
+	Common::FSNode basePath(_shaderPath);
 	if (!basePath.exists() || !basePath.isReadable() || !basePath.isDirectory()) {
 		warning("LibRetro Preset Parsing: Base path '%s' to file '%s' invalid", basePath.getPath().c_str(), fileName.c_str());
 		return nullptr;
