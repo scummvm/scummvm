@@ -85,22 +85,24 @@ void CruMenuGump::Close(bool no_del) {
 	ModalGump::Close(no_del);
 }
 
-static const int frameTopLeft = 54;
-static const int firstMenuEntry = 58;
+static const int FRAME_TOP_LEFT = 54;
+static const int FIRST_MENU_ENTRY = 58;
 
-static const int numMenuEntries = 6;
-static const int menuEntryX[] = {45, 45, 45, 446, 488, 550};
-static const int menuEntryY[] = {50, 101, 151, 58, 151, 198};
+static const int NUM_MENU_ENTRIES = 6;
+static const int MENU_ENTRY_X_REM[] = {45, 45, 45, 446, 488, 550};
+static const int MENU_ENTRY_Y_REM[] = {50, 101, 151, 58, 151, 198};
+static const int MENU_ENTRY_X_REG[] = {45, 45, 45, 446, 489, 550};
+static const int MENU_ENTRY_Y_REG[] = {95, 147, 197, 103, 196, 243};
 
 void CruMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	GumpShapeArchive *shapeArchive = GameData::get_instance()->getGumps();
 
-	Shape *topLeft = shapeArchive->getShape(frameTopLeft);
-	Shape *topRight = shapeArchive->getShape(frameTopLeft + 1);
-	Shape *botLeft = shapeArchive->getShape(frameTopLeft + 2);
-	Shape *botRight = shapeArchive->getShape(frameTopLeft + 3);
+	Shape *topLeft = shapeArchive->getShape(FRAME_TOP_LEFT);
+	Shape *topRight = shapeArchive->getShape(FRAME_TOP_LEFT + 1);
+	Shape *botLeft = shapeArchive->getShape(FRAME_TOP_LEFT + 2);
+	Shape *botRight = shapeArchive->getShape(FRAME_TOP_LEFT + 3);
 
 	if (!topLeft || !topRight || !botLeft || !botRight) {
 		error("Couldn't load shapes for menu background");
@@ -130,21 +132,24 @@ void CruMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	_dims.setWidth(tlFrame->_width + trFrame->_width);
 	_dims.setHeight(tlFrame->_height + brFrame->_height);
 
-	Gump *tlGump = new Gump(0, 0, tlFrame->_width, tlFrame->_height);
+	Gump *tlGump = new Gump(0, 0, tlFrame->_width, tlFrame->_height, 0, 0, _layer);
 	tlGump->SetShape(topLeft, 0);
 	tlGump->InitGump(this, false);
-	Gump *trGump = new Gump(tlFrame->_width, 0, trFrame->_width, trFrame->_height);
+	Gump *trGump = new Gump(tlFrame->_width, 0, trFrame->_width, trFrame->_height, 0, 0, _layer);
 	trGump->SetShape(topRight, 0);
 	trGump->InitGump(this, false);
-	Gump *blGump = new Gump(0, tlFrame->_height, blFrame->_width, blFrame->_height);
+	Gump *blGump = new Gump(0, tlFrame->_height, blFrame->_width, blFrame->_height, 0, 0, _layer);
 	blGump->SetShape(botLeft, 0);
 	blGump->InitGump(this, false);
-	Gump *brGump = new Gump(blFrame->_width, trFrame->_height, brFrame->_width, brFrame->_height);
+	Gump *brGump = new Gump(blFrame->_width, trFrame->_height, brFrame->_width, brFrame->_height, 0, 0, _layer);
 	brGump->SetShape(botRight, 0);
 	brGump->InitGump(this, false);
 
-	for (int i = 0; i < numMenuEntries; i++) {
-		uint32 entryShapeNum = firstMenuEntry + i;
+	const int *MENU_ENTRY_X = GAME_IS_REMORSE ? MENU_ENTRY_X_REM : MENU_ENTRY_X_REG;
+	const int *MENU_ENTRY_Y = GAME_IS_REMORSE ? MENU_ENTRY_Y_REM : MENU_ENTRY_Y_REG;
+
+	for (int i = 0; i < NUM_MENU_ENTRIES; i++) {
+		uint32 entryShapeNum = FIRST_MENU_ENTRY + i;
 		Shape *menuEntry = shapeArchive->getShape(entryShapeNum);
 		if (!menuEntry) {
 			error("Couldn't load shape for menu entry %d", i);
@@ -160,7 +165,8 @@ void CruMenuGump::InitGump(Gump *newparent, bool take_focus) {
 
 		FrameID frame_up(GameData::GUMPS, entryShapeNum, 0);
 		FrameID frame_down(GameData::GUMPS, entryShapeNum, 1);
-		Gump *widget = new ButtonWidget(menuEntryX[i], menuEntryY[i], frame_up, frame_down, true);
+		Gump *widget = new ButtonWidget(MENU_ENTRY_X[i], MENU_ENTRY_Y[i],
+										frame_up, frame_down, true, _layer + 1);
 		widget->InitGump(this, false);
 		widget->SetIndex(i + 1);
 	}
