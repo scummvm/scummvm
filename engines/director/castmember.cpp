@@ -567,6 +567,9 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_fgpalinfo1 = _fgpalinfo2 = _fgpalinfo3 = 0xff;
 	_widget = nullptr;
 
+	// seems like the line spacing is default to 1 in D4
+	_lineSpacing = g_director->getVersion() >= 400 ? 1 : 0;
+
 	if (version < kFileVer400) {
 		_flags1 = flags1; // region: 0 - auto, 1 - matte, 2 - disabled
 		_borderSize = static_cast<SizeType>(stream.readByte());
@@ -788,11 +791,12 @@ void TextCastMember::setText(const char *text) {
 	}
 }
 
+// D4 dictionary book said this is line spacing
 int TextCastMember::getTextHeight() {
 	if (_widget)
-		return ((Graphics::MacText *)_widget)->getTextHeight();
+		return ((Graphics::MacText *)_widget)->getLineSpacing();
 	else
-		warning("TextCastMember::getTextHeight: getting text height when there is no widget, returning 0");
+		warning("TextCastMember::getTextHeight: getting text line spacing when there is no widget, returning 0");
 	return 0;
 }
 

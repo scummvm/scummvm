@@ -958,19 +958,21 @@ bool TextCastMember::setField(int field, const Datum &d) {
 
 			_textAlign = align;
 			_modified = true;
-		}
+	}
 		return true;
 	case kTheTextFont:
 		warning("TextCastMember::setField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kTheTextHeight:
-		warning("TextCastMember::setField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		_lineSpacing = d.asInt();
+		_modified = true;
 		return false;
 	case kTheTextSize:
 		warning("TextCastMember::setField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kTheTextStyle:
-		warning("TextCastMember::setField(): Unprocessed setting field \"%s\" of field %d", g_lingo->field2str(field), _castId);
+		_textSlant = d.asInt();
+		_modified = true;
 		return false;
 	default:
 		break;
