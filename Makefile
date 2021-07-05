@@ -100,7 +100,7 @@ ifneq ($(SAVED_PKG_CONFIG_LIBDIR),unset)
 endif
 
 # check if configure has been run or has been changed since last run
-configure.stamp: $(srcdir)/configure $(ENGINE_SUBDIRS_CONFIGURE)
+configure.stamp: $(srcdir)/configure $(srcdir)/engines.awk $(ENGINE_SUBDIRS_CONFIGURE)
 ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 	@echo "Running $(srcdir)/configure with the last specified parameters"
 	@sleep 2
