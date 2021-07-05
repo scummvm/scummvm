@@ -247,7 +247,6 @@ Common::Error PrivateEngine::run() {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				_numberClicks++;
 				if (selectDossierNextSuspect(mousePos))
 					break;
 				else if (selectDossierPrevSuspect(mousePos))
@@ -641,6 +640,7 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
 		}
 	}
 	if (!ns.empty()) {
+		_numberClicks++; // count click only if it hits a hotspot
 		_nextSetting = ns;
 	}
 }
@@ -673,7 +673,7 @@ void PrivateEngine::selectMask(Common::Point mousePos) {
 		}
 	}
 	if (!ns.empty()) {
-		//debug("Mask selected %s", ns->c_str());
+		_numberClicks++; // count click only if it hits a hotspot
 		_nextSetting = ns;
 	}
 }
