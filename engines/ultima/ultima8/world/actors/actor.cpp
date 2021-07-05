@@ -936,7 +936,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 		*/
 	}
 
-	if (isDead())
+	if (isDead() && (getShape() != 0x5d6 || GAME_IS_REMORSE))
 		return;
 
 	_lastTickWasHit = Kernel::get_instance()->getTickNum();
@@ -1395,7 +1395,13 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 	destroyContents();
 	giveTreasure();
 
-	if (damageType == 3 || damageType == 4 || damageType == 10 || damageType == 12) {
+	if (getShape() == 0x5d6 && GAME_IS_REGRET) {
+		// you only die twice.. (frozen person breaking into pieces)
+		if (!isBusy()) {
+			setShape(0x5ef);
+			setToStartOfAnim(Animation::fallBackwardsCru);
+		}
+	} else if (damageType == 3 || damageType == 4 || damageType == 10 || damageType == 12) {
 		if (!is_robot /* && violence enabled */) {
 			const FireType *ft = GameData::get_instance()->getFireType(damageType);
 			assert(ft);
