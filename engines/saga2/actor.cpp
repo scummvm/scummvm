@@ -1254,8 +1254,9 @@ Actor::Actor(void **buf) : GameObject(buf) {
 	bufferPtr = &a[1];
 
 	if (flags & hasAssignment) {
-		delete _assignment;
 		bufferPtr = constructAssignment(this, bufferPtr);
+	} else {
+		_assignment = nullptr;
 	}
 
 	appearance      = NULL;

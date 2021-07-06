@@ -768,7 +768,7 @@ public:
 	ActorAssignment *getAssignment(void) {
 		return  flags & hasAssignment
 		        ? _assignment
-		        :   NULL;
+		        : nullptr;
 	}
 
 	//  determine wether this actor has a specified property
