@@ -292,6 +292,11 @@ void Sprite::setCast(CastMemberID memberID) {
 				_width = dims.width();
 				_height = dims.height();
 			}
+			// for ink copy sprites, we use the original dims
+			if (_ink == kInkTypeCopy) {
+				_width = dims.width();
+				_height = dims.height();
+			}
 		} else if (_cast->_type != kCastShape && _cast->_type != kCastText) {
 			_width = dims.width();
 			_height = dims.height();
