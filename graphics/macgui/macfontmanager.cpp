@@ -313,20 +313,30 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 	}
 }
 
-const Font *MacFontManager::getFont(MacFont macFont) {
+const Font *MacFontManager::getFont(MacFont macFont, FontXPlatformMap *fontXPlatformMap) {
+	int id = macFont.getId();
+	int size = macFont.getSize();
+	if (fontXPlatformMap && fontXPlatformMap->contains(id)) {
+		FontXPlatformInfo *info = (*fontXPlatformMap)[id];
+		id = info->toFont;
+		if (info->sizeMap.contains(size)) {
+			size = info->sizeMap[size];
+		}
+	}
+
 	Common::String name;
 	const Font *font = 0;
 
 	if (!_builtInFonts) {
 		if (macFont.getName().empty()) {
-			name = getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant());
+			name = getFontName(id, size, macFont.getSlant());
 			macFont.setName(name);
 		}
 
 		if (!_fontRegistry.contains(macFont.getName())) {
 			// Let's try to generate name
 			if (macFont.getSlant() != kMacFontRegular) {
-				name = getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant(), true);
+				name = getFontName(id, size, macFont.getSlant(), true);
 				macFont.setName(name);
 			}
 
@@ -346,16 +356,16 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 #ifdef USE_FREETYPE2
 	if (!font) {
 		if (_mode & kWMModeUnicode) {
-			if (macFont.getSize() <= 0) {
+			if (size <= 0) {
 				debug(1, "MacFontManager::getFont() - Font size <= 0!");
 			}
-			Common::HashMap<int, const Graphics::Font *>::iterator pFont = _uniFonts.find(macFont.getSize());
+			Common::HashMap<int, const Graphics::Font *>::iterator pFont = _uniFonts.find(size);
 
 			if (pFont != _uniFonts.end()) {
 				font = pFont->_value;
 			} else {
-				font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", macFont.getSize(), Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeMonochrome);
-				_uniFonts[macFont.getSize()] = font;
+				font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeMonochrome);
+				_uniFonts[size] = font;
 			}
 		}
 	}

@@ -56,7 +56,7 @@ const Font *MacFontRun::getFont() {
 
 	MacFont macFont = MacFont(fontId, fontSize, textSlant);
 
-	font = wm->_fontMan->getFont(macFont);
+	font = wm->_fontMan->getFont(macFont, parent->_fontXPlatformMap);
 
 	return font;
 }
@@ -115,7 +115,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
-		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
+		_defaultFormatting.font = wm->_fontMan->getFont(*macFont, _fontXPlatformMap);
 	} else {
 		_defaultFormatting.font = NULL;
 	}
@@ -143,7 +143,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
-		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
+		_defaultFormatting.font = wm->_fontMan->getFont(*macFont, _fontXPlatformMap);
 	} else {
 		_defaultFormatting.font = NULL;
 	}
@@ -172,7 +172,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
-		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
+		_defaultFormatting.font = wm->_fontMan->getFont(*macFont, _fontXPlatformMap);
 	} else {
 		_defaultFormatting.font = NULL;
 	}
@@ -200,7 +200,7 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
-		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
+		_defaultFormatting.font = wm->_fontMan->getFont(*macFont, _fontXPlatformMap);
 	} else {
 		_defaultFormatting.font = NULL;
 	}
@@ -462,7 +462,7 @@ void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSiz
 
 	MacFont macFont = MacFont(fontId, fontSize, textSlant);
 
-	_defaultFormatting.font = _wm->_fontMan->getFont(macFont);
+	_defaultFormatting.font = _wm->_fontMan->getFont(macFont, _fontXPlatformMap);
 }
 
 static const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len) {
