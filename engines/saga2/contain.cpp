@@ -44,14 +44,12 @@
 
 namespace Saga2 {
 
-// debug
-uint8 weight = 0;
-uint8 encum  = 0;
+enum {
+	kMaxOpenDistance = 32
+};
 
-const int           maxOpenDistance = 32;
 // selector image pointer
-static void         *selImage;
-
+static void *selImage;
 
 /* ===================================================================== *
    Imports
@@ -1570,8 +1568,10 @@ bool ContainerNode::isAccessable(ObjectID enactor) {
 	holder = obj->possessor();
 	if (holder != Nothing || isActor(object)) {
 		//  "Reach" for other players is further than for other objects
-		if (holder != a->thisID() && dist > 96) return false;
-	} else if (dist > maxOpenDistance) return false;
+		if (holder != a->thisID() && dist > 96)
+			return false;
+	} else if (dist > kMaxOpenDistance)
+		return false;
 
 	return true;
 }
@@ -1624,7 +1624,7 @@ void ContainerList::doDeferredActions(void) {
 			//  from the protagonist, then quietly close the object.
 			GameObject  *obj = GameObject::objectAddress(n->object);
 			if (obj->world() != world
-			        || (obj->getWorldLocation() - tp).quickHDistance() > maxOpenDistance) {
+			        || (obj->getWorldLocation() - tp).quickHDistance() > kMaxOpenDistance) {
 				//  Close object image and window (silently)
 				obj->setFlags(0, objectOpen);
 				delete n;
