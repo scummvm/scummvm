@@ -400,7 +400,8 @@ void setTextColorCallback(MacFontRun &macFontRun, int color) {
 }
 
 void MacText::setTextColor(uint32 color, uint32 start, uint32 end) {
-	setTextChunks(start, end, color, setTextColorCallback);
+	uint col = _wm->findBestColor(color);
+	setTextChunks(start, end, col, setTextColorCallback);
 }
 
 void setTextSizeCallback(MacFontRun &macFontRun, int textSize) {
@@ -467,24 +468,44 @@ void MacText::setTextChunks(int start, int end, int param, void (*callback)(MacF
 	_contentIsDirty = true;
 }
 
+void setTextFontCallback(MacFontRun &macFontRun, int fontId) {
+	macFontRun.fontId = fontId;
+}
+
+void MacText::setTextFont(int start, int end, int fontId) {
+	setTextChunks(start, end, fontId, setTextFontCallback);
+}
+
+void setTextSlantCallback(MacFontRun &macFontRun, int textSlant) {
+	macFontRun.textSlant = textSlant;
+}
+
+void MacText::setTextSlant(int start, int end, int textSlant) {
+	setTextChunks(start, end, textSlant, setTextSlantCallback);
+}
+
 // this maybe need to amend
 // currently, we just return the text size of first character.
 int MacText::getTextSize(int start, int end) {
-	if (_textLines.empty())
-		return _defaultFormatting.fontSize;
-	if (start > end)
-		SWAP(start, end);
-
-	uint startRow, startCol;
-	uint offset;
-
-	getChunkPosFromIndex(start, startRow, startCol, offset);
-	return _textLines[startRow].chunks[startCol].fontSize;
+	return getTextChunks(start, end).fontSize;
 }
 
 uint MacText::getTextColor(int start, int end) {
+	return getTextChunks(start, end).fgcolor;
+}
+
+int MacText::getTextFont(int start, int end) {
+	return getTextChunks(start, end).fontId;
+}
+
+int MacText::getTextSlant(int start, int end) {
+	return getTextChunks(start, end).textSlant;
+}
+
+// only getting the first chunk for the selected area
+MacFontRun MacText::getTextChunks(int start, int end) {
 	if (_textLines.empty())
-		return _defaultFormatting.fontSize;
+		return _defaultFormatting;
 	if (start > end)
 		SWAP(start, end);
 
@@ -492,7 +513,7 @@ uint MacText::getTextColor(int start, int end) {
 	uint offset;
 
 	getChunkPosFromIndex(start, startRow, startCol, offset);
-	return _textLines[startRow].chunks[startCol].fgcolor;
+	return _textLines[startRow].chunks[startCol];
 }
 
 void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
