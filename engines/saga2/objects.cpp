@@ -1114,16 +1114,11 @@ ObjectID GameObject::copy(const Location &l) {
 
 ObjectID GameObject::copy(const Location &l, int16 num) {
 	GameObject      *newObj;
-//	ObjectID        id = thisID();
 
 	if (isWorld(this))
 		error("World copying not allowed.");
 
 	if (isActor(this)) {
-//      newObj = newActor();
-//      newObj->move( l );
-		// REM: Call actor copy function...
-
 		error("Actor copying not yet implemented.");
 	} else {
 		if ((newObj = newObject()) == nullptr) return Nothing;
@@ -1134,7 +1129,6 @@ ObjectID GameObject::copy(const Location &l, int16 num) {
 		newObj->_data.script      = _data.script;
 		newObj->_data.objectFlags = _data.objectFlags;
 		newObj->_data.hitPoints   = _data.hitPoints;
-		newObj->_data.massCount   = _data.massCount;
 		newObj->_data.massCount   = num;
 
 		// this did occur before any of the assignments
