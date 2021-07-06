@@ -132,24 +132,6 @@ uint32 hResContext::count(hResID id) {
 	return count;
 }
 
-Common::File *hResContext::openExternal(Common::File *fh) {
-	char    name[160];
-	int     len;
-	uint16  size;
-	Common::File *file;
-	file = &_file;
-
-	_bytecount = 0;
-	_bytepos = 0;
-	strcpy(name, _res->_externalPath);
-	len = strlen(name);
-	size = fh->readUint32LE();
-	fh->read(&name, sizeof(name));
-	name[len + size] = 0;
-	file->open(name);
-	return file;
-}
-
 // this function sets _handle
 
 bool hResContext::seek(hResID id) {
@@ -169,11 +151,7 @@ bool hResContext::seek(hResID id) {
 	_res->_handle->seek(_bytepos, SEEK_SET);
 
 	if (entry->isExternal()) {
-		// resource _data is actually a path name
-
-		_handle = openExternal(_res->_handle);
-
-		return (_handle != nullptr);
+		error("hResContext: External entries are not supported");
 	}
 
 	_handle = _res->_handle;
@@ -348,7 +326,7 @@ void hResource::readResource(hResEntry &element) {
 	debugC(3, kDebugResources, "%s, offset: %x, size: %d", tag2str(id), element.offset, element.size);
 }
 
-hResource::hResource(const char *resname, const char *extname, const char desc[]) {
+hResource::hResource(const char *resname, const char desc[]) {
 	hResEntry   origin;
 	int32      tableSize;
 	const int32 resourceSize = 4 + 4 + 4; // id, offset, size
@@ -358,8 +336,6 @@ hResource::hResource(const char *resname, const char *extname, const char desc[]
 	_parent = nullptr;
 	_numEntries = 0;
 	_filename = resname;
-
-	strncpy(_externalPath, extname ? extname : "", EXTERNAL_PATH_SIZE);
 
 	debugC(1, kDebugResources, "Opening resource: %s", resname);
 	if (!_file.open(resname))

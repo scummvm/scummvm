@@ -562,20 +562,17 @@ inline char drive(char *path) {
 //-----------------------------------------------------------------------
 //	Routine to initialize an arbitrary resource file
 
-static bool openResource(
-    pHResource &hr,      // resource to initialize
-    const char *defaultPath,   // backup path
-    const char *fileName,      // file name & extension
-    const char *description) {
-	if (hr) delete hr;
+static bool openResource(pHResource &hr, const char *fileName, const char *description) {
+	if (hr)
+		delete hr;
 	hr = NULL;
 
-	hr = new hResource(fileName, defaultPath, description);
+	hr = new hResource(fileName, description);
 
 	while (hr == NULL || !hr->_valid) {
 		if (hr) delete hr;
 		hr = NULL;
-		hr = new hResource(fileName, defaultPath, description);
+		hr = new hResource(fileName, description);
 	}
 
 	if (hr == NULL || !hr->_valid) {
@@ -591,21 +588,12 @@ static bool openResource(
 bool openResources(void) {
 
 	if (
-	    openResource(resFile, "..\\resfile\\",  IMAGE_RESFILE,
-	                 "Imagery resource file")      &&
-
-	    openResource(objResFile, "..\\resfile\\",  OBJECT_RESFILE,
-	                 "Object resource file")      &&
-
-	    openResource(auxResFile, "..\\resfile\\",  AUX_RESFILE,
-	                 "Data resource file")      &&
-
-	    openResource(scriptResFile, "..\\scripts\\",  SCRIPT_RESFILE,
-	                 "Script resource file")      &&
-	    openResource(voiceResFile, "..\\sound\\",    VOICE_RESFILE,
-	                 "Voice resource file")       &&
-	    openResource(soundResFile, "..\\sound\\",    SOUND_RESFILE,
-	                 "Sound resource file")) {
+	    openResource(resFile, IMAGE_RESFILE, "Imagery resource file") &&
+	    openResource(objResFile, OBJECT_RESFILE, "Object resource file") &&
+	    openResource(auxResFile, AUX_RESFILE, "Data resource file") &&
+	    openResource(scriptResFile, SCRIPT_RESFILE, "Script resource file") &&
+	    openResource(voiceResFile, VOICE_RESFILE, "Voice resource file") &&
+	    openResource(soundResFile, SOUND_RESFILE, "Sound resource file")) {
 		return true;
 	}
 	return false;
