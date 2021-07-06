@@ -299,7 +299,7 @@ void SimpleWindow::writeWrappedPlaqText(gPort           &port,
 			i = (src - text);
 		tPos += i;
 		memset(lineBuf, '\0', 128);
-		strncpy(lineBuf, text, i);
+		Common::strlcpy(lineBuf, text, i);
 		writePlaqText(port, r2, font, textPos, pal, hiLite, lineBuf);
 		r2.y += font->height + 4;
 		r2.height -= font->height + 4;

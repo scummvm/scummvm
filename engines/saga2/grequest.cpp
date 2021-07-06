@@ -256,10 +256,7 @@ ModalRequestWindow::ModalRequestWindow(
 
 	int16   fontHeight = mainFont->height;
 
-	strncpy(
-	    buttonBuf,
-	    (buttonText ? buttonText : "_OK"),
-	    sizeof buttonBuf - 1);
+	Common::strlcpy(buttonBuf, (buttonText ? buttonText : "_OK"), sizeof(buttonBuf));
 
 	//  break up the button text string
 	buttonCount = SplitString(buttonBuf, buttonStrings, maxButtons, '|');

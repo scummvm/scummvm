@@ -92,7 +92,7 @@ SaveFileConstructor::SaveFileConstructor(int16 saveNo, char *saveName) {
 	memset(&header, '\0', sizeof(header));
 
 	header.gameID = gameID;
-	strncpy(header.saveName, saveName, sizeof(header.saveName) - 1);
+	Common::strlcpy(header.saveName, saveName, sizeof(header.saveName));
 
 	//  Write the header
 	if (fwrite(&header, sizeof(header), 1, fileHandle) != 1)

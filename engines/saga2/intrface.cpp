@@ -586,7 +586,7 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 	buf[size - 1] = '\0';
 
 	if (a->isDead()) {
-		strncpy(buf, DEAD_STATE, size - 1);
+		Common::strlcpy(buf, DEAD_STATE, size);
 		return;
 	}
 
@@ -753,7 +753,7 @@ void CStatusLine::experationCheck(void) {
 		minWaitAlarm.set(lineQueue[queueTail].frameTime / 5);
 
 		// copy upto the buffer's size in chars
-		strncpy(lineBuf, lineQueue[queueTail].text, bufSize - 1);
+		Common::strlcpy(lineBuf, lineQueue[queueTail].text, bufSize);
 		lineBuf[bufSize - 1] = '\0';
 
 		//  free the queue text buffer

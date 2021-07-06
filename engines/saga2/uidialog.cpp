@@ -589,9 +589,9 @@ char **initFileFields(void) {
 		strings[i] = new char[editLen + 1];
 
 		if (getSaveName(i, header)) {
-			strncpy(strings[i], header.saveName.c_str(), editLen);
+			Common::strlcpy(strings[i], header.saveName.c_str(), editLen);
 		} else {
-			strncpy(strings[i], FILE_DIALOG_NONAME, editLen);
+			Common::strlcpy(strings[i], FILE_DIALOG_NONAME, editLen);
 			strings[i][0] |= 0x80;
 		}
 
