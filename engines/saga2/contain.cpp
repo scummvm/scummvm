@@ -1488,9 +1488,6 @@ void ContainerNode::show(void) {
 	//  open the window; Object should already be "open"
 	if (window == NULL) {
 		switch (type) {
-		case readyType:
-			return;
-
 		case physicalType:
 			physicalContainerAppearance.rows    = proto->getViewableRows();
 			physicalContainerAppearance.cols    = proto->getViewableCols();
@@ -1512,6 +1509,10 @@ void ContainerNode::show(void) {
 		case enchantType:
 			window = new EnchantmentContainerWindow(*this, enchantmentContainerAppearance);
 			break;
+
+		case readyType:
+		default:
+			return;
 		}
 	}
 
