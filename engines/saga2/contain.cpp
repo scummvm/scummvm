@@ -1724,9 +1724,7 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
 
 		//  If node was successfull created, and we wanted it open, and the owner
 		//  is the center actor or no-actor then make the container window visible.
-		if (cn != NULL
-		        &&  open
-		        &&  id == getCenterActorID()) {
+		if (open && id == getCenterActorID()) {
 			cn->show();
 		}
 	} else {
