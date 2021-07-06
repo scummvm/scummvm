@@ -691,6 +691,8 @@ void saveGlobals(SaveFileConstructor &saveGame) {
 }
 
 void saveGlobals(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving globals");
+
 	out->write("GLOB", 4);
 	out->writeUint32LE(sizeof(GlobalsArchive));
 
@@ -704,6 +706,17 @@ void saveGlobals(Common::OutSaveFile *out) {
 	out->writeByte(actorTasksPaused);
 	out->writeByte(combatBehaviorEnabled);
 	out->writeByte(backgroundSimulationPaused);
+
+	debugC(3, kDebugSaveload, "... objectIndex = %d", objectIndex);
+	debugC(3, kDebugSaveload, "... actorIndex = %d", actorIndex);
+	debugC(3, kDebugSaveload, "... brotherBandingEnabled = %d", brotherBandingEnabled);
+	debugC(3, kDebugSaveload, "... centerActorIndicatorEnabled = %d", centerActorIndicatorEnabled);
+	debugC(3, kDebugSaveload, "... interruptableMotionsPaused = %d", interruptableMotionsPaused);
+	debugC(3, kDebugSaveload, "... objectStatesPaused = %d", objectStatesPaused);
+	debugC(3, kDebugSaveload, "... actorStatesPaused = %d", actorStatesPaused);
+	debugC(3, kDebugSaveload, "... actorTasksPaused = %d", actorTasksPaused);
+	debugC(3, kDebugSaveload, "... combatBehaviorEnabled = %d", combatBehaviorEnabled);
+	debugC(3, kDebugSaveload, "... backgroundSimulationPaused = %d", backgroundSimulationPaused);
 }
 
 //-----------------------------------------------------------------------
@@ -727,6 +740,8 @@ void loadGlobals(SaveFileReader &saveGame) {
 }
 
 void loadGlobals(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading globals");
+
 	objectIndex = in->readUint32LE();
 	actorIndex = in->readUint32LE();
 	brotherBandingEnabled = in->readByte();
@@ -737,6 +752,17 @@ void loadGlobals(Common::InSaveFile *in) {
 	actorTasksPaused = in->readByte();
 	combatBehaviorEnabled = in->readByte();
 	backgroundSimulationPaused = in->readByte();
+
+	debugC(3, kDebugSaveload, "... objectIndex = %d", objectIndex);
+	debugC(3, kDebugSaveload, "... actorIndex = %d", actorIndex);
+	debugC(3, kDebugSaveload, "... brotherBandingEnabled = %d", brotherBandingEnabled);
+	debugC(3, kDebugSaveload, "... centerActorIndicatorEnabled = %d", centerActorIndicatorEnabled);
+	debugC(3, kDebugSaveload, "... interruptableMotionsPaused = %d", interruptableMotionsPaused);
+	debugC(3, kDebugSaveload, "... objectStatesPaused = %d", objectStatesPaused);
+	debugC(3, kDebugSaveload, "... actorStatesPaused = %d", actorStatesPaused);
+	debugC(3, kDebugSaveload, "... actorTasksPaused = %d", actorTasksPaused);
+	debugC(3, kDebugSaveload, "... combatBehaviorEnabled = %d", combatBehaviorEnabled);
+	debugC(3, kDebugSaveload, "... backgroundSimulationPaused = %d", backgroundSimulationPaused);
 }
 
 /********************************************************************/
