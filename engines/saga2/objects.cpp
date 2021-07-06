@@ -2374,6 +2374,35 @@ GameWorld::GameWorld(void **buf) {
 #endif
 }
 
+GameWorld::GameWorld(Common::SeekableReadStream *stream) {
+	size.u = size.v = stream->readSint16LE();
+	mapNum = stream->readSint16LE();
+
+	debugC(3, kDebugSaveload, "World %d", thisID());
+	debugC(3, kDebugSaveload, "... size.u = size.v = %d", size.u);
+	debugC(3, kDebugSaveload, "... mapNum = %d", mapNum);
+
+	if (size.u != 0) {
+		int32 sectorArrayCount;
+
+		sectorArraySize = size.u / kSectorSize;
+		sectorArrayCount = sectorArraySize * sectorArraySize;
+		sectorArray = new Sector[sectorArrayCount]();
+
+		if (sectorArray == nullptr)
+			error("Unable to allocate world %d sector array", mapNum);
+
+		for (int i = 0; i < sectorArrayCount; ++i) {
+			sectorArray[i].read(stream);
+			debugC(4, kDebugSaveload, "...... sectArray[%d].activationCount = %d", i, sectorArray[i].activationCount);
+			debugC(4, kDebugSaveload, "...... sectArray[%d].childID = %d", i, sectorArray[i].childID);
+		}
+	} else {
+		sectorArraySize = 0;
+		sectorArray = nullptr;
+	}
+}
+
 GameWorld::~GameWorld() {
 	if (sectorArray)
 		delete[] sectorArray;
@@ -2806,6 +2835,45 @@ void saveWorlds(SaveFileConstructor &saveGame) {
 	free(archiveBuffer);
 }
 
+void saveWorlds(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving worlds");
+
+	int32 archiveBufSize = 0;
+
+	//  Accumulate size of archive buffer
+
+	//  Add size of the current world's ID
+	archiveBufSize += sizeof(ObjectID);
+
+	for (int i = 0; i < worldCount; i++)
+		archiveBufSize += worldList[i].archiveSize();
+
+	out->write("WRLD", 4);
+	out->writeUint32LE(archiveBufSize);
+
+	out->writeUint16LE(currentWorld->thisID());
+
+	debugC(3, kDebugSaveload, "... currentWorld->thisID() = %d", currentWorld->thisID());
+
+	for (int i = 0; i < worldCount; ++i) {
+		Sector *sectArray = worldList[i].sectorArray;
+		int32 sectorArrayCount = worldList[i].sectorArraySize *
+		                         worldList[i].sectorArraySize;
+
+		out->writeSint16LE(worldList[i].size.u);
+		out->writeSint16LE(worldList[i].mapNum);
+
+		debugC(3, kDebugSaveload, "... worldList[%d].size.u = %d", i, worldList[i].size.u);
+		debugC(3, kDebugSaveload, "... worldList[%d].mapNum = %d", i, worldList[i].mapNum);
+
+		for (int j = 0; j < sectorArrayCount; ++j) {
+			sectArray[j].write(out);
+			debugC(4, kDebugSaveload, "...... sectArray[%d].activationCount = %d", j, sectArray[j].activationCount);
+			debugC(4, kDebugSaveload, "...... sectArray[%d].childID = %d", j, sectArray[j].childID);
+		}
+	}
+}
+
 //-------------------------------------------------------------------
 //	Load the worlds from a save game file
 
@@ -2848,6 +2916,27 @@ void loadWorlds(SaveFileReader &saveGame) {
 	setCurrentMap(currentWorld->mapNum);
 }
 
+void loadWorlds(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading worlds");
+
+	ObjectID    currentWorldID;
+
+	worldList = new GameWorld[worldListSize]();
+	if (worldList == nullptr)
+		error("Unable to allocate world list");
+
+	currentWorldID = in->readUint16LE();
+
+	debugC(3, kDebugSaveload, "... currentWorldID = %d", currentWorldID);
+
+	for (int i = 0; i < worldCount; ++i)
+		new (&worldList[i]) GameWorld(in);
+
+	//  Reset the current world
+	currentWorld = (GameWorld *)GameObject::objectAddress(currentWorldID);
+	setCurrentMap(currentWorld->mapNum);
+}
+
 //-------------------------------------------------------------------
 //	Cleanup the GameWorld list
 
@@ -2858,7 +2947,10 @@ void cleanupWorlds(void) {
 		gw->cleanup();
 	}
 
-	if (worldList != nullptr) delete[] worldList;
+	if (worldList != nullptr) {
+		delete[] worldList;
+		worldList = nullptr;
+	}
 }
 
 //-------------------------------------------------------------------
@@ -3139,6 +3231,17 @@ void Sector::deactivate(void) {
 
 	activationCount--;
 }
+
+void Sector::read(Common::InSaveFile *in) {
+	activationCount = in->readUint16LE();
+	childID = in->readUint16LE();
+}
+
+void Sector::write(Common::OutSaveFile *out) {
+	out->writeUint16LE(activationCount);
+	out->writeUint16LE(childID);
+}
+
 
 /* ======================================================================= *
    ActiveRegion member functions

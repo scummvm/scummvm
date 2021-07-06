@@ -739,6 +739,9 @@ public:
 
 	void activate(void);
 	void deactivate(void);
+
+	void write(Common::OutSaveFile *out);
+	void read(Common::InSaveFile *in);
 };
 
 /* ======================================================================= *
@@ -761,10 +764,10 @@ class GameWorld : public GameObject {
 	friend class    GameObject;
 	friend class    ObjectIterator;
 
+public:
 	TilePoint       size;                   // size of world in U/V coords
 	int16           sectorArraySize;        // size of sector array
 	Sector          *sectorArray;          // array of sectors
-public:
 	int16           mapNum;                 // map number for this world.
 
 	//  Default constructor
@@ -775,6 +778,8 @@ public:
 
 	//  Constructor -- reconstruct from archive buffer
 	GameWorld(void **buf);
+
+	GameWorld(Common::SeekableReadStream *stream);
 
 	~GameWorld();
 
@@ -1405,9 +1410,11 @@ void initWorlds(void);
 
 //  Save worlds to the save file
 void saveWorlds(SaveFileConstructor &saveGame);
+void saveWorlds(Common::OutSaveFile *out);
 
 //  Load worlds from the save file
 void loadWorlds(SaveFileReader &saveGame);
+void loadWorlds(Common::InSaveFile *in);
 
 //  Cleanup game worlds
 void cleanupWorlds(void);
