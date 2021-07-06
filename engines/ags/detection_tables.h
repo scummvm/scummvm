@@ -2105,6 +2105,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 96799674),
 	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 96799833),
 	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 96800964),
+	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 430357136),
 	DEMO_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 727898212),
 	DEMO_ENTRY("pubmastersquest", "pub master quest [demo].exe", "e1676318c8a040fcf508b817013dc8fe", 23431689),
 	DEMO_ENTRY("puzzlebots", "puzzlebots_demo.exe", "34b49df9cf6eadb5c3587b3921d5b72f", 354138961),
