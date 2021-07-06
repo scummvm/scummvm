@@ -511,7 +511,8 @@ void *MotionTask::restore(void *buf) {
 	            :   NULL;
 
 	//  If the object is an actor, plug this motion task into the actor
-	if (isActor(object))((Actor *)object)->moveTask = this;
+	if (object && isActor(object))
+		((Actor *)object)->moveTask = this;
 
 	if (motionType == motionTypeWalk
 	        ||  prevMotionType == motionTypeWalk) {
