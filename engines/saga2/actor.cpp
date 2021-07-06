@@ -1169,10 +1169,9 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	deactivationCounter = 0;
 	_assignment = nullptr;
 
-	memcpy(
-	    &effectiveStats,
-	    &((ActorProto *)prototype)->baseStats,
-	    sizeof(effectiveStats));
+	if (prototype)
+		memcpy(&effectiveStats, &((ActorProto *)prototype)->baseStats, sizeof(effectiveStats));
+
 	effectiveStats.vitality = MAX<uint16>(effectiveStats.vitality, 1);
 
 	actionCounter       = 0;
