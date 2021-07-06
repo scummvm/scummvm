@@ -717,12 +717,12 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 
 		as->numPoses = poseBytes / poseSize;
 
-		as->animations = (ActorAnimation **)malloc(as->numAnimations * sizeof(ActorAnimation));
+		as->animations = (ActorAnimation **)malloc(as->numAnimations * sizeof(ActorAnimation *));
 
 		for (uint i = 0; i < as->numAnimations; i++)
 			as->animations[i] = new ActorAnimation(poseStream);
 
-		as->poses = (ActorPose **)malloc(as->numPoses * sizeof(ActorPose));
+		as->poses = (ActorPose **)malloc(as->numPoses * sizeof(ActorPose *));
 
 		for (uint i = 0; i < as->numPoses; i++)
 			as->poses[i] = new ActorPose(poseStream);
