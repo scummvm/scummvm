@@ -69,7 +69,7 @@ void GridItemWidget::drawWidget() {
 	int thumbHeight = _grid->getThumbnailHeight();
 	int thumbWidth = _grid->getThumbnailWidth();
 
-	if (isHighlighted) {
+	if ((isHighlighted) || (_grid->getSelected() == _activeEntry->entryID)) {
 		// Draw a highlighted BG on hover
 		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - (_grid->_gridXSpacing / 3), _y - (_grid->_gridYSpacing / 3),
 											_x + _w + (_grid->_gridXSpacing / 3), _y + _h + (_grid->_gridYSpacing / 3)), 
@@ -154,11 +154,11 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isHighlighted && isVisible()) {
+		_grid->_selectedEntry = _activeEntry->entryID;
 		// Work in progress
 		// Since user expected to click on "entry" and not the "widget", we
 		// must open the tray where the user expects it to be, which might
 		// not be at the new widget location.
-		_grid->_selectedEntry = _activeEntry->entryID;
 		int oldX = getAbsX(), oldY = getAbsY();
 		int offsetY = 0;
 		if (_y > (_grid->getHeight() - _h - _grid->_trayHeight)) {
@@ -230,6 +230,13 @@ void GridItemTray::handleMouseDown(int x, int y, int button, int clickCount) {
 
 void GridItemTray::handleMouseWheel(int x, int y, int direction) {
 	close();
+}
+
+void GridItemTray::handleMouseMoved(int x, int y, int button) {
+	if ((x < 0 || x > _w) || (y > _h || y < -(_grid->_gridItemHeight))) {
+		// Close on going outside
+		close();
+	}
 }
 
 #pragma mark -
