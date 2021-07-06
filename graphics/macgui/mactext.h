@@ -206,10 +206,10 @@ public:
 	uint getTextColor(int start, int end);
 
 	int getTextFont(int start, int end);
-	void setTextFont(int start, int end, int fontId);
+	void setTextFont(int fontId, int start, int end);
 
 	int getTextSlant(int start, int end);
-	void setTextSlant(int start, int end, int textSlant);
+	void setTextSlant(int textSlant, int start, int end);
 
 private:
 	MacFontRun getTextChunks(int start, int end);
