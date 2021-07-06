@@ -530,7 +530,7 @@ void LauncherDialog::removeGame(int item) {
 		// Write config to disk
 		ConfMan.flushToDisk();
 
-		// Update the ListWidget and force a redraw
+		// Update the ListWidget/GridWidget and force a redraw
 		updateListing();
 		g_gui.scheduleTopDialogRedraw();
 	}
