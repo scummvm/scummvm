@@ -382,6 +382,9 @@ void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
 	for (auto entryIter = list->begin(); entryIter != list->end(); ++entryIter) {
 		_allEntries.push_back(*entryIter);
 	}
+	if (!_gridItems.empty()) {
+		reflowLayout();
+	}
 }
 
 bool GridWidget::calcVisibleEntries() {
