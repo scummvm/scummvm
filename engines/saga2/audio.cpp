@@ -545,6 +545,7 @@ void cleanupAudio() {
 
 audioInterface::audioInterface() {
 	_music = nullptr;
+	_mixer = g_system->getMixer();
 }
 
 audioInterface::~audioInterface() {
@@ -552,7 +553,6 @@ audioInterface::~audioInterface() {
 }
 
 void audioInterface::initAudioInterface(hResContext *musicContext) {
-	_mixer = g_system->getMixer();
 	_music = new Music(musicContext, _mixer);
 }
 
