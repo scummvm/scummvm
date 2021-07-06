@@ -1624,7 +1624,9 @@ uint32 Ultima8Engine::I_moveKeyDownRecently(const uint8 *args, unsigned int /*ar
 
 bool Ultima8Engine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
 	folder = "ultima8";
-	majorVersion = 1;
+	// Version 1: Initial release
+	// Version 2: Add data for Crusader games
+	majorVersion = 2;
 	minorVersion = 0;
 	return true;
 }
