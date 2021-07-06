@@ -3678,8 +3678,8 @@ int16 scriptSwapRegions(int16 *args) {
 		obj->move(loc);
 	}
 
-	delete objArray1;
-	delete objArray2;
+	delete[] objArray1;
+	delete[] objArray2;
 
 	return 0;
 }
