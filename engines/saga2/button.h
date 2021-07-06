@@ -52,7 +52,9 @@ struct textPallete {
 	uint8   inHilitePen;
 
 	// default constructor
-	textPallete(void) { ; }      // do nothing
+	textPallete() {
+		dlPen = urPen = inPen = dlHilitePen = urHilitePen = inHilitePen = 0;
+	 }
 
 	textPallete(uint8 dlP, uint8 urP, uint8 inP, uint8 dlHP, uint8 urHP, uint8 inHP) {
 		set(dlP, urP, inP, dlHP, urHP, inHP);

@@ -49,7 +49,7 @@ void gCompImage::init(void) {
 	internalAlloc   = false;
 	currentImage    = 0;
 	numPtrAlloc     = 0;
-//	imageText[0]   = NULL;
+	textFont        = &Onyx10Font;  // default
 }
 
 gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, uint16 ident,
@@ -103,7 +103,8 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, const c
 	// setup a single image configuration
 	init();
 
-	if (!image) return;
+	if (!image)
+		return;
 
 	compImages = (void **)malloc(sizeof(void *) * 1); // allocate room for one pointer
 
@@ -120,7 +121,8 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void **images,
                        uint16 ident, AppFunc *cmd) : gControl(list, box, NULL, ident, cmd) {
 	init();
 
-	if (!images) return;
+	if (!images)
+		return;
 
 	compImages      = images;
 
@@ -729,6 +731,7 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, void **new
 		max     = 0;
 		min     = 0;
 		current = 0;
+		response = hitResponse;
 		return;
 	}
 
