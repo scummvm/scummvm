@@ -102,7 +102,10 @@ Cast::~Cast() {
 	for (Common::HashMap<uint16, CastMemberInfo *>::iterator it = _castsInfo.begin(); it != _castsInfo.end(); ++it)
 		delete it->_value;
 
-	for (Graphics::FontXPlatformMap::iterator it = _fontXPlatformMap.begin(); it != _fontXPlatformMap.end(); ++it)
+	for (FontXPlatformMap::iterator it = _macFontsToWin.begin(); it != _macFontsToWin.end(); ++it)
+		delete it->_value;
+
+	for (FontXPlatformMap::iterator it = _winFontsToMac.begin(); it != _winFontsToMac.end(); ++it)
 		delete it->_value;
 
 	delete _loadedStxts;

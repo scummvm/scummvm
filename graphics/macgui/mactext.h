@@ -39,10 +39,6 @@ class MacText;
 class MacWidget;
 class MacWindow;
 class MacWindowManager;
-struct FontXPlatformInfo;
-
-typedef Common::HashMap<byte, byte> CharMap;
-typedef Common::HashMap<uint16, FontXPlatformInfo *> FontXPlatformMap;
 
 struct MacFontRun {
 	Common::U32String text;
@@ -57,11 +53,9 @@ struct MacFontRun {
 	// to determine whether the next word is part of this one
 	bool wordContinuation;
 	const Font *font;
-	MacText *parent;
 	MacWindowManager *wm;
 
 	MacFontRun() {
-		parent = nullptr;
 		wm = nullptr;
 		fontId = textSlant = fontSize = 0;
 		palinfo1 = palinfo2 = palinfo3 = 0;
@@ -70,22 +64,21 @@ struct MacFontRun {
 		wordContinuation = false;
 	}
 
-	MacFontRun(MacText *parent_, MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
+	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
-		setValues(parent_, wm_, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+		setValues(wm_, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
 		wordContinuation = false;
 	}
 
-	MacFontRun(MacText *parent_, MacWindowManager *wm_, const Font *font_, byte textSlant_, uint16 fontSize_,
+	MacFontRun(MacWindowManager *wm_, const Font *font_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
-		setValues(parent_, wm_, 0, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+		setValues(wm_, 0, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
 		font = font_;
 		wordContinuation = false;
 	}
 
-	void setValues(MacText *parent_, MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
+	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
-		parent    = parent_;
 		wm        = wm_;
 		fontId    = fontId_;
 		textSlant = textSlant_;
@@ -152,8 +145,8 @@ struct SelectedText {
 
 class MacText : public MacWidget {
 public:
-	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true, CharMap *charMap = nullptr, FontXPlatformMap *fontXPlatformMap = nullptr);
-	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, Common::CodePage encodeType = Common::kMacCentralEurope, bool fixedDims = true, CharMap *charMap = nullptr, FontXPlatformMap *fontXPlatformMap = nullptr);
+	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true);
+	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, Common::CodePage encodeType = Common::kMacCentralEurope, bool fixedDims = true);
 	// 0 pixels between the lines by default
 
 	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
@@ -303,9 +296,6 @@ public:
 	int _scrollPos;
 
 	bool _fullRefresh;
-
-	CharMap *_charMap;
-	FontXPlatformMap *_fontXPlatformMap;
 
 protected:
 	Common::U32String _str;

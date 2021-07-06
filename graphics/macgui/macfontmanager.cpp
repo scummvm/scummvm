@@ -313,30 +313,20 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 	}
 }
 
-const Font *MacFontManager::getFont(MacFont macFont, FontXPlatformMap *fontXPlatformMap) {
-	int id = macFont.getId();
-	int size = macFont.getSize();
-	if (fontXPlatformMap && fontXPlatformMap->contains(id)) {
-		FontXPlatformInfo *info = (*fontXPlatformMap)[id];
-		id = info->toFont;
-		if (info->sizeMap.contains(size)) {
-			size = info->sizeMap[size];
-		}
-	}
-
+const Font *MacFontManager::getFont(MacFont macFont) {
 	Common::String name;
 	const Font *font = 0;
 
 	if (!_builtInFonts) {
 		if (macFont.getName().empty()) {
-			name = getFontName(id, size, macFont.getSlant());
+			name = getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant());
 			macFont.setName(name);
 		}
 
 		if (!_fontRegistry.contains(macFont.getName())) {
 			// Let's try to generate name
 			if (macFont.getSlant() != kMacFontRegular) {
-				name = getFontName(id, size, macFont.getSlant(), true);
+				name = getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant(), true);
 				macFont.setName(name);
 			}
 
@@ -356,16 +346,16 @@ const Font *MacFontManager::getFont(MacFont macFont, FontXPlatformMap *fontXPlat
 #ifdef USE_FREETYPE2
 	if (!font) {
 		if (_mode & kWMModeUnicode) {
-			if (size <= 0) {
+			if (macFont.getSize() <= 0) {
 				debug(1, "MacFontManager::getFont() - Font size <= 0!");
 			}
-			Common::HashMap<int, const Graphics::Font *>::iterator pFont = _uniFonts.find(size);
+			Common::HashMap<int, const Graphics::Font *>::iterator pFont = _uniFonts.find(macFont.getSize());
 
 			if (pFont != _uniFonts.end()) {
 				font = pFont->_value;
 			} else {
-				font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", size, Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeMonochrome);
-				_uniFonts[size] = font;
+				font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", macFont.getSize(), Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeMonochrome);
+				_uniFonts[macFont.getSize()] = font;
 			}
 		}
 	}

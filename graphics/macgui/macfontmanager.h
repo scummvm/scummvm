@@ -66,15 +66,6 @@ enum {
 
 class Font;
 
-typedef Common::HashMap<byte, byte> CharMap;
-typedef Common::HashMap<uint16, uint16> FontSizeMap;
-struct FontXPlatformInfo {
-	uint16 toFont;
-	bool remapChars;
-	FontSizeMap sizeMap;
-};
-typedef Common::HashMap<uint16, FontXPlatformInfo *> FontXPlatformMap;
-
 class MacFont {
 public:
 	MacFont(int id = kMacFontChicago, int size = 12, int slant = kMacFontRegular, FontManager::FontUsage fallback = Graphics::FontManager::kBigGUIFont) {
@@ -126,10 +117,9 @@ public:
 	 * Retrieve a font from the available ones.
 	 * @param name Name of the desired font.
 	 * @param fallback Fallback policy in case the desired font isn't there.
-	 * @param fontXPlatformMap an optional map from Windows fonts to Mac fonts or vice versa
 	 * @return The requested font or the fallback.
 	 */
-	const Font *getFont(MacFont macFont, FontXPlatformMap *fontXPlatformMap = nullptr);
+	const Font *getFont(MacFont macFont);
 
 	/**
 	 * Return font name from standard ID
