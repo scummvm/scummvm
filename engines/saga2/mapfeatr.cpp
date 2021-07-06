@@ -314,7 +314,7 @@ CMapFeature::CMapFeature(TilePoint where, int16 inWorld, const char *desc) {
 	visible = false;
 	featureCoords = where;
 	world = inWorld;
-	strncpy(name, desc, MAX_MAP_FEATURE_NAME_LENGTH);
+	Common::strlcpy(name, desc, MAX_MAP_FEATURE_NAME_LENGTH);
 }
 
 
