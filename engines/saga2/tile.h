@@ -956,6 +956,9 @@ public:
 	TileIterator(int16 mapNum, const TileRegion &reg) :
 		metaIter(mapNum, reg),
 		region(reg) {
+			mt = nullptr;
+			platIndex = 0;
+			platform = nullptr;
 	}
 
 	TileInfo *first(TilePoint *loc, StandingTileInfo *stiResult = NULL);
