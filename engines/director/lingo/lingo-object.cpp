@@ -36,6 +36,7 @@
 #include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/winxobj.h"
+#include "graphics/macgui/mactext.h"
 
 namespace Director {
 
@@ -999,21 +1000,38 @@ bool TextCastMember::hasChunkField(int field) {
 Datum TextCastMember::getChunkField(int field, int start, int end) {
 	Datum d;
 
+	Graphics::MacText *macText = ((Graphics::MacText *)_widget);
+	if (!_widget)
+		warning("TextCastMember::getChunkField getting chunk field when there is no linked widget, returning the default value");
+
 	switch (field) {
 	case kTheForeColor:
-		d.u.i = getForeColor();
+		if (_widget)
+			d.u.i = macText->getTextColor(start, end);
+		else
+			d.u.i = getForeColor();
 		break;
 	case kTheTextFont:
-		d.u.i = _fontId;
+		if (_widget)
+			d.u.i = macText->getTextFont(start, end);
+		else
+			d.u.i = _fontId;
 		break;
 	case kTheTextHeight:
+		warning("TextCastMember::getChunkField getting text height(line spacing) is not implemented yet, returning the default one");
 		d.u.i = _lineSpacing;
 		break;
 	case kTheTextSize:
-		d.u.i = _fontSize;
+		if (_widget)
+			d.u.i = macText->getTextSize(start, end);
+		else
+			d.u.i = _fontSize;
 		break;
 	case kTheTextStyle:
-		d.u.i = _textSlant;
+		if (_widget)
+			d.u.i = macText->getTextSlant(start, end);
+		else
+			d.u.i = _textSlant;
 		break;
 	default:
 		break;
@@ -1023,28 +1041,30 @@ Datum TextCastMember::getChunkField(int field, int start, int end) {
 }
 
 bool TextCastMember::setChunkField(int field, int start, int end, const Datum &d) {
-	uint color = 0;
+	Graphics::MacText *macText = ((Graphics::MacText *)_widget);
+	if (!_widget)
+		warning("TextCastMember::setChunkField setting chunk field when there is no linked widget");
+
 	switch (field) {
 	case kTheForeColor:
-		color = d.asInt();
-		setColors(&color, nullptr);
-		return false;
+		if (_widget)
+			macText->setTextColor(d.asInt(), start, end);
+		return true;
 	case kTheTextFont:
-		_fontId = d.asInt();
-		_modified = true;
-		return false;
+		if (_widget)
+			macText->setTextFont(d.asInt(), start, end);
+		return true;
 	case kTheTextHeight:
-		_lineSpacing = d.asInt();
-		_modified = true;
+		warning("TextCastMember::setChunkField setting text height(line spacing) is not implemented yet");
 		return false;
 	case kTheTextSize:
-		_fontSize = d.asInt();
-		_modified = true;
-		return false;
+		if (_widget)
+			macText->setTextSize(d.asInt(), start, end);
+		return true;
 	case kTheTextStyle:
-		_textSlant = d.asInt();
-		_modified = true;
-		return false;
+		if (_widget)
+			macText->setTextSlant(d.asInt(), start, end);
+		return true;
 	default:
 		break;
 	}

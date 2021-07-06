@@ -472,7 +472,7 @@ void setTextFontCallback(MacFontRun &macFontRun, int fontId) {
 	macFontRun.fontId = fontId;
 }
 
-void MacText::setTextFont(int start, int end, int fontId) {
+void MacText::setTextFont(int fontId, int start, int end) {
 	setTextChunks(start, end, fontId, setTextFontCallback);
 }
 
@@ -480,7 +480,7 @@ void setTextSlantCallback(MacFontRun &macFontRun, int textSlant) {
 	macFontRun.textSlant = textSlant;
 }
 
-void MacText::setTextSlant(int start, int end, int textSlant) {
+void MacText::setTextSlant(int textSlant, int start, int end) {
 	setTextChunks(start, end, textSlant, setTextSlantCallback);
 }
 
