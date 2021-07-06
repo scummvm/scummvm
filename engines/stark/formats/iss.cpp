@@ -64,6 +64,14 @@ protected:
 	}
 };
 
+static void skipString(Common::SeekableReadStream *stream) {
+	// Skip until the next space. Note that this will read past \0
+	// characters as well. That's not a bug.
+	byte ch;
+	while ((ch = stream->readByte()) != 0x20)
+		;
+}
+
 static Common::String readString(Common::SeekableReadStream *stream) {
 	Common::String ret = "";
 	byte ch;
@@ -86,24 +94,24 @@ Audio::RewindableAudioStream *makeISSStream(Common::SeekableReadStream *stream, 
 		codec = readString(stream);
 		blockSize = (uint16)strtol(codec.c_str(), 0, 10);
 
-		readString(stream);
+		skipString(stream);
 		// name ?
 
-		readString(stream);
+		skipString(stream);
 		// ?
 
 		codec = readString(stream);
 		channels = (uint16)strtol(codec.c_str(), 0, 10) + 1;
 
-		readString(stream);
+		skipString(stream);
 		// ?
 
 		codec = readString(stream);
 		freq = 44100 / (uint16)strtol(codec.c_str(), 0, 10);
 
-		readString(stream);
+		skipString(stream);
 
-		readString(stream);
+		skipString(stream);
 
 		codec = readString(stream);
 		size = (uint32)strtol(codec.c_str(), 0, 10);
@@ -111,7 +119,7 @@ Audio::RewindableAudioStream *makeISSStream(Common::SeekableReadStream *stream, 
 		return new ISSADPCMStream(stream, DisposeAfterUse::YES, size, freq, channels, blockSize);
 	} else if (codec.equals("Sound")) {
 
-		readString(stream);
+		skipString(stream);
 		// name ?
 
 		codec = readString(stream);
@@ -120,15 +128,15 @@ Audio::RewindableAudioStream *makeISSStream(Common::SeekableReadStream *stream, 
 		codec = readString(stream);
 		channels = (uint16)strtol(codec.c_str(), 0, 10) + 1;
 
-		readString(stream);
+		skipString(stream);
 		// ?
 
 		codec = readString(stream);
 		freq = 44100 / (uint16)strtol(codec.c_str(), 0, 10);
 
-		readString(stream);
+		skipString(stream);
 
-		readString(stream);
+		skipString(stream);
 
 		flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 		if (channels == 2)
