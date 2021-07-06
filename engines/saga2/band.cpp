@@ -333,14 +333,19 @@ void cleanupBands(void) {
 
 Band::Band() : leader(nullptr), memberCount(0) {
 	g_vm->_bandList->addBand(this);
+
+	for (int i = 0; i < maxBandMembers; i++)
+		members[i] = nullptr;
 }
 Band::Band(Actor *l) : leader(l), memberCount(0) {
 	g_vm->_bandList->addBand(this);
+
+	for (int i = 0; i < maxBandMembers; i++)
+		members[i] = nullptr;
 }
 
 Band::Band(void **buf) {
 	void        *bufferPtr = *buf;
-	int16       i;
 
 	//  Restore the leader pointer
 	assert(isActor(*((ObjectID *)bufferPtr)));
@@ -352,8 +357,11 @@ Band::Band(void **buf) {
 	memberCount = *((int16 *)bufferPtr);
 	bufferPtr = (int16 *)bufferPtr + 1;
 
+	for (int i = 0; i < maxBandMembers; i++)
+		members[i] = nullptr;
+
 	//  Restore the member pointers
-	for (i = 0; i < memberCount; i++) {
+	for (int i = 0; i < memberCount; i++) {
 		assert(isActor(*((ObjectID *)bufferPtr)));
 		members[i] = (Actor *)GameObject::objectAddress(
 		                   *((ObjectID *)bufferPtr));
