@@ -205,7 +205,14 @@ public:
 	uint getTextColor() { return _defaultFormatting.fgcolor; }
 	uint getTextColor(int start, int end);
 
+	int getTextFont(int start, int end);
+	void setTextFont(int start, int end, int fontId);
+
+	int getTextSlant(int start, int end);
+	void setTextSlant(int start, int end, int textSlant);
+
 private:
+	MacFontRun getTextChunks(int start, int end);
 	void setTextChunks(int start, int end, int param, void (*callback)(MacFontRun &, int));
 
 	void appendText_(const Common::U32String &strWithFont, uint oldLen);
