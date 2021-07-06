@@ -435,7 +435,14 @@ private:
 	};
 
 public:
-	ContainerNode(void) {}
+	ContainerNode(void) {
+		object = 0;
+		type = 0;
+		owner = 0;
+		window = nullptr;
+		action = 0;
+		mindType = 0;
+	}
 	ContainerNode(ContainerList &cl, ObjectID id, int type);
 	~ContainerNode();
 
