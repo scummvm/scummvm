@@ -25,7 +25,6 @@
 #include "common/text-to-speech.h"
 #include "common/config-manager.h"
 
-
 namespace DreamWeb {
 
 void DreamWebEngine::talk() {

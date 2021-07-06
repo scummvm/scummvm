@@ -1968,6 +1968,13 @@ void DreamWebEngine::doLook() {
 	dumpTextLine();
 	uint8 index = _roomNum & 31;
 	const uint8 *string = (const uint8 *)_roomDesc.getString(index);
+
+	const char *placeName = (const char *)string;
+	auto colon_pos = strchr(placeName, ':');
+	const char *desRoom = colon_pos + 1;
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+		_ttsMan->say(desRoom);
+
 	findNextColon(&string);
 	uint16 x;
 	if (_realLocation < 50)
