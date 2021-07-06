@@ -1366,7 +1366,6 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 			else
 				anim = Animation::kneelAndFireLargeWeapon;
 		} else {
-			// TODO: fireLarge seems to be different ID in Regret, check me.
 			if (ma || smallwpn)
 				anim = Animation::fireSmallWeapon;
 			else
