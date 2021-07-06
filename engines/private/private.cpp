@@ -509,7 +509,7 @@ bool PrivateEngine::cursorMask(Common::Point mousePos) {
 }
 
 bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
-	if (_mode == 1) {
+	if (_mode == 1 && !_policeBustEnabled) {
 		uint32 tol = 15;
 		Common::Rect window(_origin.x - tol, _origin.y - tol, _screenW - _origin.x + tol, _screenH - _origin.y + tol);
 		if (!window.contains(mousePos)) {
@@ -593,7 +593,7 @@ Common::String PrivateEngine::getInventoryCursor() {
 }
 
 void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
-	if (_mode == 1) {
+	if (_mode == 1 && !_policeBustEnabled) {
 		uint32 tol = 15;
 		Common::Rect window(_origin.x - tol, _origin.y - tol, _screenW - _origin.x + tol, _screenH - _origin.y + tol);
 		if (!window.contains(mousePos)) {
