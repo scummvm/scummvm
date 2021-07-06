@@ -522,8 +522,6 @@ public:
 	void setUpdate(ObjectID id);
 };
 
-extern ContainerList    globalContainerList;
-
 ContainerNode *CreateContainerNode(ObjectID id, bool open = true, int16 mindType = 0);
 ContainerNode *CreateReadyContainerNode(PlayerActorID player);
 ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type);

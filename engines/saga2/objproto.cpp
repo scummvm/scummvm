@@ -1260,13 +1260,14 @@ bool PhysicalContainerProto::openAction(ObjectID dObj, ObjectID) {
 	cn = CreateContainerNode(dObj, false);
 	cn->markForShow();                                      //  Deferred open
 	dObjPtr->_data.objectFlags |= objectOpen;         //  Set open bit;
-	globalContainerList.setUpdate(dObjPtr->IDParent());
+	g_vm->_containerList->setUpdate(dObjPtr->IDParent());
+
 	return true;
 }
 
 bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
-	ContainerNode   *cn = globalContainerList.find(dObj, ContainerNode::physicalType);
+	ContainerNode   *cn = g_vm->_containerList->find(dObj, ContainerNode::physicalType);
 
 	assert(dObjPtr->isOpen());
 	assert(cn);
@@ -1276,7 +1277,8 @@ bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 
 	//  Clear open bit
 	dObjPtr->_data.objectFlags &= ~objectOpen;
-	globalContainerList.setUpdate(dObjPtr->IDParent());
+	g_vm->_containerList->setUpdate(dObjPtr->IDParent());
+
 	return true;
 }
 
@@ -1324,13 +1326,6 @@ bool PhysicalContainerProto::acceptInsertionAction(
 				return false;
 		}
 	}
-
-	//  If we extracted the dropped objects from a pile, then make sure
-	//  the old pile gets redrawn. PlaceObject already takes care of
-	//  redrawing the target container; But because extractMerged creates
-	//  the extracted portion inside of "Nothing" the source container might
-	//  not be redrawn in this case.
-//	if (prevItemPtr) globalContainerList.setUpdate( prevItemPtr->IDParent() );
 
 	return true;
 }
@@ -2244,7 +2239,7 @@ bool ArmorProto::useAction(ObjectID dObj, ObjectID enactor) {
 	else
 		a->wear(dObj, slot);
 
-	globalContainerList.setUpdate(obj->IDParent());
+	g_vm->_containerList->setUpdate(obj->IDParent());
 
 	return true;
 }
@@ -2934,7 +2929,7 @@ bool IntangibleContainerProto::openAction(ObjectID dObj, ObjectID enactor) {
 }
 
 bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
-	ContainerNode   *cn = globalContainerList.find(dObj, ContainerNode::mentalType);
+	ContainerNode *cn = g_vm->_containerList->find(dObj, ContainerNode::mentalType);
 
 	assert(cn);
 

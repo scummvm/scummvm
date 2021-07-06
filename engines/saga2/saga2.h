@@ -40,6 +40,7 @@ class SmackerDecoder;
 
 namespace Saga2 {
 
+class ContainerList;
 class Timer;
 class TimerList;
 class BandList;
@@ -116,7 +117,7 @@ public:
 	GrabInfo *_mouseInfo;
 	EffectDisplayPrototypeList *_edpList;
 	SpellDisplayPrototypeList *_sdpList;
-
+	ContainerList *_containerList;
 
 	gDisplayPort _mainPort;
 

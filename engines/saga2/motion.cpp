@@ -3582,11 +3582,8 @@ void MotionTask::fireBowAction(void) {
 					                    * (actorCrossSection + projCrossSection);
 					actorLoc.z += a->proto()->height * 7 / 8;
 
-					if ((projID =   proj->extractMerged(
-					                    Location(actorLoc, a->IDParent()),
-					                    1))
-					        !=  Nothing) {
-						globalContainerList.setUpdate(a->thisID());
+					if ((projID =   proj->extractMerged(Location(actorLoc, a->IDParent()), 1)) !=  Nothing) {
+						g_vm->_containerList->setUpdate(a->thisID());
 						proj = GameObject::objectAddress(projID);
 						shootObject(*proj, *a, *targetObj, 16);
 					}

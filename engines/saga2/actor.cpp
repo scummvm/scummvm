@@ -202,7 +202,7 @@ bool ActorProto::closeAction(ObjectID dObj, ObjectID) {
 	assert(isActor(dObj));
 
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
-	ContainerNode   *cn = globalContainerList.find(dObj, ContainerNode::deadType);
+	ContainerNode   *cn = g_vm->_containerList->find(dObj, ContainerNode::deadType);
 
 	assert(dObjPtr->isOpen());
 	assert(cn);
@@ -2189,7 +2189,9 @@ void Actor::holdInRightHand(ObjectID objID) {
 	assert(isObject(objID));
 	rightHandObject = objID;
 
-	if (isPlayerActor(this)) globalContainerList.setUpdate(thisID());
+	if (isPlayerActor(this))
+		g_vm->_containerList->setUpdate(thisID());
+
 	evalActorEnchantments(this);
 }
 
@@ -2197,7 +2199,9 @@ void Actor::holdInLeftHand(ObjectID objID) {
 	assert(isObject(objID));
 	leftHandObject = objID;
 
-	if (isPlayerActor(this)) globalContainerList.setUpdate(thisID());
+	if (isPlayerActor(this))
+		g_vm->_containerList->setUpdate(thisID());
+
 	evalActorEnchantments(this);
 }
 
@@ -2221,7 +2225,9 @@ void Actor::wear(ObjectID objID, uint8 where) {
 
 	armorObjects[where] = objID;
 
-	if (isPlayerActor(this)) globalContainerList.setUpdate(thisID());
+	if (isPlayerActor(this))
+		g_vm->_containerList->setUpdate(thisID());
+
 	evalActorEnchantments(this);
 
 	if (actorToPlayerID(this, playerID)) {

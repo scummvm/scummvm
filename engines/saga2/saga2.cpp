@@ -36,6 +36,7 @@
 
 #include "saga2/gdraw.h"
 #include "saga2/mouseimg.h"
+#include "saga2/contain.h"
 
 namespace Saga2 {
 
@@ -78,6 +79,8 @@ Saga2Engine::~Saga2Engine() {
 Common::Error Saga2Engine::run() {
 	// Initialize graphics using following:
 	initGraphics(640, 480);
+
+	_containerList = new ContainerList;
 
 	readConfig();
 

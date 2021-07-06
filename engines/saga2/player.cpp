@@ -570,7 +570,7 @@ void setCenterActor(PlayerActorID newCenter) {
 	viewCenterObject = playerList[centerActor].getActorID();
 
 	indivReadyNode->changeOwner(newCenter);
-	globalContainerList.setPlayerNum(newCenter);
+	g_vm->_containerList->setPlayerNum(newCenter);
 	setEnchantmentDisplay();
 
 	if (a->curTask != NULL) {
