@@ -147,6 +147,9 @@ public:
 	inline bool is_targetable() const {
 		return (_flags & (SI_OCCL | SI_CRU_TARGETABLE));
 	}
+	inline bool is_invitem() const {
+		return (_family == SF_CRUINVITEM);
+	}
 
 	bool hasQuantity() const {
 		return (_family == SF_QUANTITY || _family == SF_REAGENT);

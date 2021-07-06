@@ -109,6 +109,7 @@ struct SortItem {
 	bool    _fixed : 1;
 	bool    _land : 1;
 	bool 	_sprite : 1;         // Always-on-top sprite, for Crusader (U8 sprites appear in z order)
+	bool 	_invitem : 1;        // Crusader inventory item, should appear above other things
 
 	bool    _occluded : 1;       // Set true if occluded
 	bool  	_clipped : 1;        // Clipped to RenderSurface
@@ -309,6 +310,18 @@ inline bool SortItem::below(const SortItem &si2) const {
 	if (si1._sprite != si2._sprite)
 		return si1._sprite < si2._sprite;
 
+	// Clearly in y?
+	if (si1._y <= si2._yFar)
+		return true;
+	if (si1._yFar >= si2._y)
+		return false;
+
+	// Clearly in x?
+	if (si1._x <= si2._xLeft)
+		return true;
+	if (si1._xLeft >= si2._x)
+		return false;
+
 	// Specialist z flat handling
 	if (si1._flat && si2._flat) {
 		// Differing z is easy for flats
@@ -343,24 +356,21 @@ inline bool SortItem::below(const SortItem &si2) const {
 	}
 	// Mixed, or non flat
 	else {
+		// Inv items always drawn first if their z-bottom is equal or higher. 
+		// This is a bit of a hack as 2 places in Crusader there are keycards
+		// on tables but their z position is the bottom z of the table.
+		if (si1._invitem) {
+			if (si1._z >= si2._z)
+				return false;
+		}
+
 		// Clearly in z
 		if (si1._zTop <= si2._z)
 			return true;
+
 		if (si1._z >= si2._zTop)
 			return false;
 	}
-
-	// Clearly in y?
-	if (si1._y <= si2._yFar)
-		return true;
-	if (si1._yFar >= si2._y)
-		return false;
-
-	// Clearly in x?
-	if (si1._x <= si2._xLeft)
-		return true;
-	if (si1._xLeft >= si2._x)
-		return false;
 
 	// Are overlapping in all 3 dimentions if we come here
 
@@ -553,7 +563,10 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_trans = info->is_translucent();
 	si->_fixed = info->is_fixed();
 	si->_land = info->is_land();
-	si->_sprite = GAME_IS_CRUSADER && (si->_extFlags & Item::EXT_SPRITE);
+	if (GAME_IS_CRUSADER) {
+		si->_sprite = si->_extFlags & Item::EXT_SPRITE;
+		si->_invitem = info->is_invitem();
+	}
 
 	si->_occluded = false;
 	si->_order = -1;
