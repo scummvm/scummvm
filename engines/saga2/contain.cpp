@@ -261,6 +261,9 @@ ContainerView::ContainerView(
 	scrollPosition  = 0;
 	totalRows       = app.totRows;
 	setMousePoll(true);
+	totalMass = 0;
+	totalBulk = 0;
+	numObjects = 0;
 }
 
 //  Destructor
