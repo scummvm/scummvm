@@ -60,6 +60,11 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_videoX = _videoY = 0;
 	_loadedWeapons = 0;
 
+	_autoAggression = true;
+	_autoWeapon = true;
+	_showNight = true;
+	_speechText = true;
+
 	SearchMan.addSubDirectoryMatching(gameDataDir, "res");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "dos/drivers"); // For Miles Sound files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "drivers");
