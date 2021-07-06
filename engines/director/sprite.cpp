@@ -123,22 +123,13 @@ void Sprite::createQDMatte() {
 	tmp.create(_width, _height, g_director->_pixelformat);
 	tmp.clear(g_director->_wm->_colorWhite);
 
-	MacShape *ms = new MacShape();
-
-	ms->ink = _ink;
-	ms->spriteType = _spriteType;
-	ms->foreColor = _foreColor;
-	ms->backColor = _backColor;
-	ms->lineSize = _thickness & 0x3;
-	ms->pattern = getPattern();
-
 	Common::Rect srcRect(_width, _height);
 
 	Common::Rect fillAreaRect((int)srcRect.width(), (int)srcRect.height());
-	Graphics::MacPlotData plotFill(&tmp, nullptr, &g_director->getPatterns(), ms->pattern, 0, 0, 1, ms->backColor);
+	Graphics::MacPlotData plotFill(&tmp, nullptr, &g_director->getPatterns(), getPattern(), 0, 0, 1, _backColor);
 
-	Common::Rect strokeRect(MAX((int)srcRect.width() - ms->lineSize, 0), MAX((int)srcRect.height() - ms->lineSize, 0));
-	Graphics::MacPlotData plotStroke(&tmp, nullptr, &g_director->getPatterns(), 1, 0, 0, ms->lineSize, ms->backColor);
+	Common::Rect strokeRect(MAX((int)srcRect.width() - _thickness & 0x3, 0), MAX((int)srcRect.height() - _thickness & 0x3, 0));
+	Graphics::MacPlotData plotStroke(&tmp, nullptr, &g_director->getPatterns(), 1, 0, 0, _thickness & 0x3, _backColor);
 
 	switch (_spriteType) {
 	case kRectangleSprite:
