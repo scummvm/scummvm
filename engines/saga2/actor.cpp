@@ -396,7 +396,7 @@ bool ActorProto::acceptDamageAction(
 
 		if (dice)
 			for (int d = 0; d < ABS(dice); d++)
-				damage += ((rand() % sides) + pdm + 1) * (dice > 0 ? 1 : -1);
+				damage += (g_vm->_rnd->getRandomNumber(sides - 1) + pdm + 1) * (dice > 0 ? 1 : -1);
 	}
 
 	if (damage > 0 && resistant)
@@ -436,7 +436,7 @@ bool ActorProto::acceptDamageAction(
 		Location        al = Location(a->getLocation(), a->IDParent());
 		if (gruntStyle > 0
 		        && ((flags & ResourceObjectPrototype::objPropNoSurface)
-		            || (damage > 2 && (rand() % vitality) < (damage * 2))))
+		            || (damage > 2 && g_vm->_rnd->getRandomNumber(vitality - 1) < (damage * 2))))
 			makeGruntSound(gruntStyle, al);
 
 		if (enactorPtr != NULL) {
@@ -570,7 +570,7 @@ bool ActorProto::acceptStrikeAction(
 	hitChance = MAX<uint8>(hitChance, 5);
 
 	//  Randomly determine hit success
-	if (rand() % toHitBase < hitChance) {
+	if (g_vm->_rnd->getRandomNumber(toHitBase - 1) < hitChance) {
 		//  Hit has succeeded
 
 		GameObject      *blockingObj = a->blockingObject(enactorPtr);
@@ -583,7 +583,7 @@ bool ActorProto::acceptStrikeAction(
 			                   - (int)blockingObj->proto()->getSkillValue(dObj))
 			                *   skillScalingFactor;
 
-			if (rand() % toHitBase >= hitChance) {
+			if (g_vm->_rnd->getRandomNumber(toHitBase - 1) >= hitChance) {
 				//  The shield was hit
 				blockingObj->acceptStrike(
 				    enactor,
@@ -606,8 +606,8 @@ bool ActorProto::acceptStrikeAction(
 			if (!a->isDead()) {
 				int16 pmass = a->proto()->mass;
 
-				if (pmass <= 100 || (rand() % 156) >= pmass - 100) {
-					if ((rand() & 0x7) == 0)
+				if (pmass <= 100 || g_vm->_rnd->getRandomNumber(154) >= pmass - 100) {
+					if (g_vm->_rnd->getRandomNumber(7) == 0)
 						MotionTask::fallDown(*a, *enactorPtr);
 					else
 						MotionTask::acceptHit(*a, *enactorPtr);
@@ -787,7 +787,7 @@ void ActorProto::doBackgroundUpdate(GameObject *obj) {
 			} else {
 				//  If the actor has failed morale there is a random
 				//  chance of him regaining his courage
-				if ((a->flags & Actor::afraid) && rand() % 128 == 0)
+				if ((a->flags & Actor::afraid) && g_vm->_rnd->getRandomNumber(127) == 0)
 					a->flags &= ~Actor::afraid;
 			}
 		}
@@ -839,7 +839,7 @@ void ActorProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 
 		player->skillAdvance(skillIDBludgeon, points);
 
-		if (rand() & 1)
+		if (g_vm->_rnd->getRandomNumber(1))
 			player->skillAdvance(skillIDBrawn, points);
 	}
 }
@@ -2109,7 +2109,7 @@ bool Actor::nextAnimationFrame(void) {
 
 	if (animationFlags & animateRandom) {
 		//  Select a random frame from the series.
-		currentPose = rand() % numPoses;
+		currentPose = g_vm->_rnd->getRandomNumber(numPoses - 1);
 	} else if (animationFlags & animateReverse) {
 		//  Note that the logic for forward repeats is slightly
 		//  different for reverse repeats. Specifically, the
@@ -2306,7 +2306,7 @@ void Actor::updateAppearance(int32) {
 						}
 					} else //Assume -1
 						if (nextAnimationFrame())//If Last Frame In Wait Animation
-							cycleCount = rand() % 20;
+							cycleCount = g_vm->_rnd->getRandomNumber(19);
 				}
 			}
 		} else {
@@ -2709,7 +2709,7 @@ void Actor::handleDamageTaken(uint8 damage) {
 	        &&  !hasEffect(actorRepelUndead)) {
 		if (flags & afraid) {
 			//  Let's give monsters a small chance of regaining their courage
-			if ((uint16)rand() <= 0x3fff)
+			if ((uint16)g_vm->_rnd->getRandomNumber(65534) <= 0x3fff)
 				flags &= ~afraid;
 		} else {
 			int16       i,
@@ -2745,7 +2745,7 @@ void Actor::handleDamageTaken(uint8 damage) {
 			moraleBase -= bonus * moraleBase >> 16;
 
 			//  Test this actor's morale
-			if ((uint16)rand() <= moraleBase)
+			if ((uint16)g_vm->_rnd->getRandomNumber(65534) <= moraleBase)
 				flags |= afraid;
 		}
 	}
@@ -2864,7 +2864,7 @@ void Actor::evaluateMeleeAttack(Actor *attacker) {
 			if (canBlockWithSecondary) {
 				//  If we can block with either primary or secondary
 				//  there is a 25% chance of using the secondary
-				defenseObj = ((rand() & 0x3) != 0) ? primary : secondary;
+				defenseObj = (g_vm->_rnd->getRandomNumber(3) != 0) ? primary : secondary;
 			} else {
 				//  The primary defensive object will be used
 				defenseObj = primary;
@@ -3015,7 +3015,7 @@ void Actor::removeFollower(Actor *bandMember) {
 
 				moraleBase -= moraleBase * moraleBonus >> 16;
 
-				if ((uint16)rand() <= moraleBase)
+				if ((uint16)g_vm->_rnd->getRandomNumber(65534) <= moraleBase)
 					follower->flags |= afraid;
 			}
 		}
@@ -3143,7 +3143,7 @@ void Actor::useKnowledge(scriptCallFrame &scf) {
 				if (pri > 0) {
 					//  Add a bit of jitter to response
 
-					pri += rand() & 3;
+					pri += g_vm->_rnd->getRandomNumber(3);
 
 					if (pri > bestResponsePri) {
 						bestResponsePri = pri;
@@ -3317,11 +3317,7 @@ bool areActorsInitialized(void) {
 }
 
 int16 GetRandomBetween(int start, int end) {
-	//  Here's a more efficient way to express this.
-
-	if (start == end) return start;
-	else return (rand() % ABS(end - start)) + start;
-
+	g_vm->_rnd->getRandomNumberRng(start, end);
 }
 
 void updateActorStates(void) {
