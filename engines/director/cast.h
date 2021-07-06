@@ -31,6 +31,12 @@ namespace Common {
 	class SeekableReadStreamEndian;
 }
 
+namespace Graphics {
+	struct FontXPlatformInfo;
+	typedef Common::HashMap<byte, byte> CharMap;
+	typedef Common::HashMap<uint16, FontXPlatformInfo *> FontXPlatformMap;
+}
+
 namespace Director {
 
 class Archive;
@@ -45,15 +51,6 @@ class BitmapCastMember;
 class ScriptCastMember;
 class ShapeCastMember;
 class TextCastMember;
-
-typedef Common::HashMap<byte, byte> CharMap;
-typedef Common::HashMap<uint16, uint16> FontSizeMap;
-struct FontXPlatformInfo {
-	Common::String toFont;
-	bool remapChars;
-	FontSizeMap sizeMap;
-};
-typedef Common::HashMap<Common::String, FontXPlatformInfo *> FontXPlatformMap;
 
 class Cast {
 public:
@@ -104,10 +101,8 @@ public:
 	uint16 _castLibID;
 
 	Common::HashMap<uint16, uint16> _fontMap;
-	CharMap _macCharsToWin;
-	CharMap _winCharsToMac;
-	FontXPlatformMap _macFontsToWin;
-	FontXPlatformMap _winFontsToMac;
+	Graphics::CharMap _charMap;
+	Graphics::FontXPlatformMap _fontXPlatformMap;
 
 	Common::HashMap<int, CastMember *> *_loadedCast;
 	Common::HashMap<int, const Stxt *> *_loadedStxts;

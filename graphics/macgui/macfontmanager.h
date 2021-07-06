@@ -66,6 +66,15 @@ enum {
 
 class Font;
 
+typedef Common::HashMap<byte, byte> CharMap;
+typedef Common::HashMap<uint16, uint16> FontSizeMap;
+struct FontXPlatformInfo {
+	uint16 toFont;
+	bool remapChars;
+	FontSizeMap sizeMap;
+};
+typedef Common::HashMap<uint16, FontXPlatformInfo *> FontXPlatformMap;
+
 class MacFont {
 public:
 	MacFont(int id = kMacFontChicago, int size = 12, int slant = kMacFontRegular, FontManager::FontUsage fallback = Graphics::FontManager::kBigGUIFont) {

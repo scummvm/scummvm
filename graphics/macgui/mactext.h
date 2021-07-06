@@ -39,6 +39,10 @@ class MacText;
 class MacWidget;
 class MacWindow;
 class MacWindowManager;
+struct FontXPlatformInfo;
+
+typedef Common::HashMap<byte, byte> CharMap;
+typedef Common::HashMap<uint16, FontXPlatformInfo *> FontXPlatformMap;
 
 struct MacFontRun {
 	Common::U32String text;
@@ -148,8 +152,8 @@ struct SelectedText {
 
 class MacText : public MacWidget {
 public:
-	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true);
-	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, Common::CodePage encodeType = Common::kMacCentralEurope, bool fixedDims = true);
+	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true, CharMap *charMap = nullptr, FontXPlatformMap *fontXPlatformMap = nullptr);
+	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, Common::CodePage encodeType = Common::kMacCentralEurope, bool fixedDims = true, CharMap *charMap = nullptr, FontXPlatformMap *fontXPlatformMap = nullptr);
 	// 0 pixels between the lines by default
 
 	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
@@ -299,6 +303,9 @@ public:
 	int _scrollPos;
 
 	bool _fullRefresh;
+
+	CharMap *_charMap;
+	FontXPlatformMap *_fontXPlatformMap;
 
 protected:
 	Common::U32String _str;

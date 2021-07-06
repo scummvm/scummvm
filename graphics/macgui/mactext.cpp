@@ -94,7 +94,7 @@ uint MacTextLine::getChunkNum(int *col) {
 }
 
 
-MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, bool fixedDims) :
+MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, bool fixedDims, CharMap *charMap, FontXPlatformMap *fontXPlatformMap) :
 	MacWidget(parent, x, y, w, h, wm, true, border, gutter, boxShadow),
 	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
@@ -110,6 +110,9 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_encodeType = Common::kUtf8;
 	_plainByteMode = false;
 
+	_charMap = charMap;
+	_fontXPlatformMap = fontXPlatformMap;
+
 	if (macFont) {
 		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
@@ -120,7 +123,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	init();
 }
 
-MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, Common::CodePage encodeType, bool fixedDims) :
+MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, Common::CodePage encodeType, bool fixedDims, CharMap *charMap, FontXPlatformMap *fontXPlatformMap) :
 	MacWidget(parent, x, y, w, h, wm, true, border, gutter, boxShadow),
 	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
@@ -134,6 +137,9 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_macFontMode = true;
 	_encodeType = encodeType;
 	_plainByteMode = true;
+
+	_charMap = charMap;
+	_fontXPlatformMap = fontXPlatformMap;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -161,6 +167,9 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	_encodeType = Common::kUtf8;
 	_plainByteMode = false;
 
+	_charMap = nullptr;
+	_fontXPlatformMap = nullptr;
+
 	if (macFont) {
 		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
@@ -185,6 +194,9 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 	_macFontMode = true;
 	_encodeType = encodeType;
 	_plainByteMode = true;
+
+	_charMap = nullptr;
+	_fontXPlatformMap = nullptr;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(this, _wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -211,6 +223,9 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *f
 	_macFontMode = false;
 	_encodeType = Common::kUtf8;
 	_plainByteMode = false;
+
+	_charMap = nullptr;
+	_fontXPlatformMap = nullptr;
 
 	if (font) {
 		_defaultFormatting = MacFontRun(this, _wm, font, 0, font->getFontHeight(), 0, 0, 0);
