@@ -133,6 +133,12 @@ public:
 	};
 
 	/**
+	 * Returns true if the selected game is an unsupported one
+	 * earlier than version 2.5
+	 */
+	bool isUnsupportedPre25() const;
+
+	/**
 	 * Indicate whether a game state can be loaded.
 	 */
 	bool canLoadGameStateCurrently() override;

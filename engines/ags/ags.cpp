@@ -120,6 +120,11 @@ Common::Error AGSEngine::run() {
 		return Common::kNoError;
 	}
 
+	if (isUnsupportedPre25()) {
+		GUIError("The selected game is a completed unsupported pre-2.5 version");
+		return Common::kNoError;
+	}
+
 	if (debugChannelSet(-1, kDebugScript))
 		AGS3::ccSetOption(SCOPT_DEBUGRUN, 1);
 
@@ -212,6 +217,11 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h, int colorDepth) {
 
 	_rawScreen = new Graphics::Screen();
 	_screen = new ::AGS3::BITMAP(_rawScreen);
+}
+
+bool AGSEngine::isUnsupportedPre25() const {
+	return _gameDescription->desc.extra &&
+		!strcmp(_gameDescription->desc.extra, "Pre 2.5");
 }
 
 bool AGSEngine::canLoadGameStateCurrently() {
