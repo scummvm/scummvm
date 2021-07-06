@@ -145,10 +145,10 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	header.write(out);
 
 	saveGlobals(out);
+	saveTimer(out);
+	saveCalender(out);
 
 #if 0
-	saveTimer(saveGame);
-	saveCalender(saveGame);
 	saveWorlds(saveGame);
 	saveActors(saveGame);
 	saveObjects(saveGame);
@@ -241,16 +241,17 @@ void loadSavedGameState(int16 saveNo) {
 			loadGlobals(in);
 			loadFlags |= loadGlobalsFlag;
 			break;
-#if 0
+
 		case MKTAG('T', 'I', 'M', 'E'):
-			loadTimer(saveGame);
+			loadTimer(in);
 			loadFlags |= loadTimerFlag;
 			break;
 
 		case MKTAG('C', 'A', 'L', 'E'):
-			loadCalender(saveGame);
+			loadCalender(in);
 			loadFlags |= loadCalenderFlag;
 			break;
+#if 0
 
 		case MKTAG('W', 'R', 'L', 'D'):
 			loadWorlds(saveGame);

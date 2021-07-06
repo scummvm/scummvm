@@ -233,6 +233,31 @@ void saveCalender(SaveFileConstructor &saveGame) {
 	}
 }
 
+void saveCalender(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving calender");
+
+	out->write("CALE", 4);
+	out->writeUint32LE(sizeof(calenderPaused + sizeof(calender)));
+
+	out->writeByte(calenderPaused);
+	out->writeUint16LE(calender.years);
+	out->writeUint16LE(calender.weeks);
+	out->writeUint16LE(calender.days);
+	out->writeUint16LE(calender.dayInYear);
+	out->writeUint16LE(calender.dayInWeek);
+	out->writeUint16LE(calender.hour);
+	out->writeUint16LE(calender.frameInHour);
+
+	debugC(3, kDebugSaveload, "... calenderPaused = %d", calenderPaused);
+	debugC(3, kDebugSaveload, "... calender.years = %d", calender.years);
+	debugC(3, kDebugSaveload, "... calender.weeks = %d", calender.weeks);
+	debugC(3, kDebugSaveload, "... calender.days = %d", calender.days);
+	debugC(3, kDebugSaveload, "... calender.dayInYear = %d", calender.dayInYear);
+	debugC(3, kDebugSaveload, "... calender.dayInWeek = %d", calender.dayInWeek);
+	debugC(3, kDebugSaveload, "... calender.hour = %d", calender.hour);
+	debugC(3, kDebugSaveload, "... calender.frameInHour = %d", calender.frameInHour);
+}
+
 //-----------------------------------------------------------------------
 //	Read the calender data from a save file.  Assume the save file is at
 //	the correct chunk.
@@ -242,6 +267,28 @@ void loadCalender(SaveFileReader &saveGame) {
 
 	saveGame.read(&calenderPaused, sizeof(calenderPaused));
 	saveGame.read(&calender, sizeof(calender));
+}
+
+void loadCalender(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading calender");
+
+	calenderPaused = in->readByte();
+	calender.years = in->readUint16LE();
+	calender.weeks = in->readUint16LE();
+	calender.days = in->readUint16LE();
+	calender.dayInYear = in->readUint16LE();
+	calender.dayInWeek = in->readUint16LE();
+	calender.hour = in->readUint16LE();
+	calender.frameInHour = in->readUint16LE();
+
+	debugC(3, kDebugSaveload, "... calenderPaused = %d", calenderPaused);
+	debugC(3, kDebugSaveload, "... calender.years = %d", calender.years);
+	debugC(3, kDebugSaveload, "... calender.weeks = %d", calender.weeks);
+	debugC(3, kDebugSaveload, "... calender.days = %d", calender.days);
+	debugC(3, kDebugSaveload, "... calender.dayInYear = %d", calender.dayInYear);
+	debugC(3, kDebugSaveload, "... calender.dayInWeek = %d", calender.dayInWeek);
+	debugC(3, kDebugSaveload, "... calender.hour = %d", calender.hour);
+	debugC(3, kDebugSaveload, "... calender.frameInHour = %d", calender.frameInHour);
 }
 
 CalenderTime    calender;
