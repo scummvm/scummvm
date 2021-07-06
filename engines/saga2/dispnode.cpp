@@ -129,7 +129,12 @@ void  DisplayNodeList::init(uint16 s) {
 // DisplayNode stuff
 
 DisplayNode::DisplayNode() {
-	efx = NULL;
+	nextDisplayed = nullptr;
+	sortDepth = 0;
+	object = nullptr;
+	flags = 0;                  // various flags
+	type = nodeTypeObject;
+	efx = nullptr;
 }
 
 TilePoint DisplayNode::SpellPos(void) {
