@@ -1366,7 +1366,7 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 			else
 				anim = Animation::kneelAndFireLargeWeapon;
 		} else {
-			if (ma || smallwpn)
+			if (smallwpn || !ma)
 				anim = Animation::fireSmallWeapon;
 			else
 				anim = Animation::fireLargeWeapon;
