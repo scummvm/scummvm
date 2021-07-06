@@ -74,6 +74,10 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 		assert(prevPos <= _style.formatStartOffset);  // If this is triggered, we have to implement sorting
 
 		while (prevPos != _style.formatStartOffset) {
+			// We should theoretically handle the cross-platform character mappings stored in _cast->_charMap here.
+			// However, Director 4 seems to ignore these mappings despite storing them.
+			// Maybe they're handled in a later version?
+
 			char f = text.firstChar();
 			_ftext += text.firstChar();
 			text.deleteChar(0);
