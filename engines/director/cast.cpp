@@ -102,10 +102,10 @@ Cast::~Cast() {
 	for (Common::HashMap<uint16, CastMemberInfo *>::iterator it = _castsInfo.begin(); it != _castsInfo.end(); ++it)
 		delete it->_value;
 
-	for (FontXPlatformMap::iterator it = _macFontsToWin.begin(); it != _macFontsToWin.end(); ++it)
+	for (FontXPlatformMap::iterator it = _fontXPlatformMap.begin(); it != _fontXPlatformMap.end(); ++it)
 		delete it->_value;
 
-	for (FontXPlatformMap::iterator it = _winFontsToMac.begin(); it != _winFontsToMac.end(); ++it)
+	for (FontMap::iterator it = _fontMap.begin(); it != _fontMap.end(); ++it)
 		delete it->_value;
 
 	delete _loadedStxts;
@@ -339,15 +339,15 @@ void Cast::loadCast() {
 		delete r;
 	}
 
-	// Font Mapping V4
-	if (_castArchive->hasResource(MKTAG('F', 'm', 'a', 'p'), -1)) {
-		loadFontMapV4(*(r = _castArchive->getFirstResource(MKTAG('F', 'm', 'a', 'p'))));
-		delete r;
-	}
-
 	// Cross-Platform Font Mapping
 	if (_castArchive->hasResource(MKTAG('F', 'X', 'm', 'p'), -1)) {
 		loadFXmp(*(r = _castArchive->getFirstResource(MKTAG('F', 'X', 'm', 'p'))));
+		delete r;
+	}
+
+	// Font Mapping V4
+	if (_castArchive->hasResource(MKTAG('F', 'm', 'a', 'p'), -1)) {
+		loadFontMapV4(*(r = _castArchive->getFirstResource(MKTAG('F', 'm', 'a', 'p'))));
 		delete r;
 	}
 

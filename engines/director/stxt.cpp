@@ -113,10 +113,10 @@ FontStyle::FontStyle() {
 
 void FontStyle::read(Common::ReadStreamEndian &stream, Cast *cast) {
 	formatStartOffset = stream.readUint32();
-	height = stream.readUint16();
+	uint16 originalHeight = height = stream.readUint16();
 	ascent = stream.readUint16();
 
-	fontId = cast->mapFont(stream.readUint16());
+	uint16 originalFontId = fontId = stream.readUint16();
 	textSlant = stream.readByte();
 	stream.readByte(); // padding
 	fontSize = stream.readUint16();
@@ -125,8 +125,16 @@ void FontStyle::read(Common::ReadStreamEndian &stream, Cast *cast) {
 	g = stream.readUint16();
 	b = stream.readUint16();
 
-	debugC(3, kDebugLoading, "FontStyle::read(): formatStartOffset: %d, height: %d ascent: %d, fontId: %d, textSlant: %d, fontSize: %d, r: %x g: %x b: %x",
-			formatStartOffset, height, ascent, fontId, textSlant, fontSize, r, g, b);
+	if (cast->_fontMap.contains(originalFontId)) {
+		FontInfo *info = cast->_fontMap[originalFontId];
+		fontId = info->toFont;
+		if (info->sizeMap.contains(originalHeight)) {
+			height = info->sizeMap[height];
+		}
+	}
+
+	debugC(3, kDebugLoading, "FontStyle::read(): formatStartOffset: %d, height: %d -> %d ascent: %d, fontId: %d -> %d, textSlant: %d, fontSize: %d, r: %x g: %x b: %x",
+			formatStartOffset, originalHeight, height, ascent, originalFontId, fontId, textSlant, fontSize, r, g, b);
 }
 
 } // End of namespace Director

@@ -32,7 +32,7 @@ namespace Director {
 
 uint16 Cast::mapFont(uint16 id) {
 	if (_fontMap.contains(id)) {
-		return _fontMap[id];
+		return _fontMap[id]->toFont;
 	}
 	return id;
 }
@@ -61,9 +61,11 @@ void Cast::loadFontMap(Common::SeekableReadStreamEndian &stream) {
 		}
 
 		// Map cast font ID to window manager font ID
-		_fontMap[id] = _vm->_wm->_fontMan->registerFontName(font);
+		FontInfo *info = new FontInfo;
+		info->toFont = _vm->_wm->_fontMan->registerFontName(font);
+		_fontMap[id] = info;
 
-		debugC(3, kDebugLoading, "Cast::loadFontMap: Mapping font %d (%s) to %d", id, font.c_str(), _fontMap[id]);
+		debugC(3, kDebugLoading, "Cast::loadFontMap: Mapping font %d (%s) to %d", id, font.c_str(), _fontMap[id]->toFont);
 		currentRawPosition = stream.pos();
 		stream.seek(positionInfo);
 	}
@@ -112,9 +114,18 @@ void Cast::loadFontMapV4(Common::SeekableReadStreamEndian &stream) {
 		}
 
 		// Map cast font ID to window manager font ID
-		_fontMap[id] = _vm->_wm->_fontMan->registerFontName(name);
+		FontInfo *info = new FontInfo;
+		if (platform == 2 && _fontXPlatformMap.contains(name)) {
+			FontXPlatformInfo *xinfo = _fontXPlatformMap[name];
+			info->toFont = _vm->_wm->_fontMan->registerFontName(xinfo->toFont);
+			info->remapChars = xinfo->remapChars;
+			info->sizeMap = xinfo->sizeMap;
+		} else {
+			info->toFont = _vm->_wm->_fontMan->registerFontName(name);
+		}
+		_fontMap[id] = info;
 
-		debugC(3, kDebugLoading, "Cast::loadFontMapV4: Mapping %s font %d (%s) to %d", platformName.c_str(), id, name.c_str(), _fontMap[id]);
+		debugC(3, kDebugLoading, "Cast::loadFontMapV4: Mapping %s font %d (%s) to %d", platformName.c_str(), id, name.c_str(), _fontMap[id]->toFont);
 	}
 }
 
@@ -332,11 +343,10 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 			}
 			byte toChar = atoi(tok.str.c_str());
 
-			if (fromPlatform == Common::kPlatformMacintosh) {
-				_macCharsToWin[fromChar] = toChar;
-				debugC(3, kDebugLoading, "Cast::readFXmpLine: Mapping Mac char %d to Win char %d", fromChar, toChar);
-			} else {
-				_winCharsToMac[fromChar] = toChar;
+			// TODO: We should fill _charMap with mappings matching the current platform.
+			// We only have Mac fonts right now, though, so we'll always use the Win => Mac mappings.
+			if (fromPlatform == Common::kPlatformWindows) {
+				_charMap[fromChar] = toChar;
 				debugC(3, kDebugLoading, "Cast::readFXmpLine: Mapping Win char %d to Mac char %d", fromChar, toChar);
 			}
 
@@ -409,16 +419,17 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 			tok = readFXmpToken(stream);
 		}
 
-		if (fromPlatform == Common::kPlatformMacintosh) {
-			_macFontsToWin[fromFont] = info;
-			debugC(3, kDebugLoading, "Cast::readFXmpLine: Mapping Mac font '%s' to Win font '%s'", fromFont.c_str(), info->toFont.c_str());
-		} else {
-			_winFontsToMac[fromFont] = info;
+		// TODO: We should fill _fontXPlatformMap with mappings matching the current platform.
+		// We only have Mac fonts right now, though, so we'll always use the Win => Mac mappings.
+		if (fromPlatform == Common::kPlatformWindows) {
+			_fontXPlatformMap[fromFont] = info;
 			debugC(3, kDebugLoading, "Cast::readFXmpLine: Mapping Win font '%s' to Mac font '%s'", fromFont.c_str(), info->toFont.c_str());
-		}
-		debugC(4, kDebugLoading, "  Remap characters: %d", info->remapChars);
-		for (FontSizeMap::iterator it = info->sizeMap.begin(); it != info->sizeMap.end(); ++it) {
-			debugC(4, kDebugLoading, "  Mapping size %d to %d", it->_key, it->_value);
+			debugC(4, kDebugLoading, "  Remap characters: %d", info->remapChars);
+			for (FontSizeMap::iterator it = info->sizeMap.begin(); it != info->sizeMap.end(); ++it) {
+				debugC(4, kDebugLoading, "  Mapping size %d to %d", it->_key, it->_value);
+			}
+		} else {
+			delete info;
 		}
 	}
 

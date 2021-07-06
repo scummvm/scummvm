@@ -52,8 +52,19 @@ struct FontXPlatformInfo {
 	Common::String toFont;
 	bool remapChars;
 	FontSizeMap sizeMap;
+
+	FontXPlatformInfo() : remapChars(false) {}
 };
 typedef Common::HashMap<Common::String, FontXPlatformInfo *> FontXPlatformMap;
+
+struct FontInfo {
+	uint16 toFont;
+	bool remapChars;
+	FontSizeMap sizeMap;
+
+	FontInfo() : remapChars(false) {}
+};
+typedef Common::HashMap<uint16, FontInfo *> FontMap;
 
 class Cast {
 public:
@@ -103,11 +114,9 @@ public:
 	uint16 _version;
 	uint16 _castLibID;
 
-	Common::HashMap<uint16, uint16> _fontMap;
-	CharMap _macCharsToWin;
-	CharMap _winCharsToMac;
-	FontXPlatformMap _macFontsToWin;
-	FontXPlatformMap _winFontsToMac;
+	CharMap _charMap;
+	FontXPlatformMap _fontXPlatformMap;
+	FontMap _fontMap;
 
 	Common::HashMap<int, CastMember *> *_loadedCast;
 	Common::HashMap<int, const Stxt *> *_loadedStxts;
