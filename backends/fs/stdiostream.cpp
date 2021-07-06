@@ -55,19 +55,26 @@ bool StdioStream::eos() const {
 }
 
 int64 StdioStream::pos() const {
-#if defined(_MSC_VER)
+#if defined(WIN32)
 	return _ftelli64((FILE *)_handle);
+#elif defined(__linux__) || defined(__APPLE__)
+	return ftello((FILE *)_handle);
 #else
 	return ftell((FILE *)_handle);
 #endif
 }
 
 int64 StdioStream::size() const {
-#if defined(_MSC_VER)
+#if defined(WIN32)
 	int64 oldPos = _ftelli64((FILE *)_handle);
 	_fseeki64((FILE *)_handle, 0, SEEK_END);
 	int64 length = _ftelli64((FILE *)_handle);
 	_fseeki64((FILE *)_handle, oldPos, SEEK_SET);
+#elif defined(__linux__) || defined(__APPLE__)
+	int64 oldPos = ftello((FILE *)_handle);
+	fseeko((FILE *)_handle, 0, SEEK_END);
+	int64 length = ftello((FILE *)_handle);
+	fseeko((FILE *)_handle, oldPos, SEEK_SET);
 #else
 	int64 oldPos = ftell((FILE *)_handle);
 	fseek((FILE *)_handle, 0, SEEK_END);
@@ -79,8 +86,10 @@ int64 StdioStream::size() const {
 }
 
 bool StdioStream::seek(int64 offs, int whence) {
-#if defined(_MSC_VER)
+#if defined(WIN32)
 	return _fseeki64((FILE *)_handle, offs, whence) == 0;
+#elif defined(__linux__) || defined(__APPLE__)
+	return fseeko((FILE *)_handle, offs, whence) == 0;
 #else
 	return fseek((FILE *)_handle, offs, whence) == 0;
 #endif
