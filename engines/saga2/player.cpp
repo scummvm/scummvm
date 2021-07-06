@@ -311,7 +311,7 @@ void PlayerActor::skillAdvance(uint8 stat,
                                uint8 points,
                                uint8 useMult) {
 	// roll percentile dice
-	if (rand() % 100 < advanceChance) {
+	if (g_vm->_rnd->getRandomNumber(99) < advanceChance) {
 		uint8 increase;
 		int16   oldValue = baseStats.skill(stat) / ActorAttributes::skillFracPointsPerLevel;
 
@@ -354,7 +354,7 @@ void PlayerActor::skillAdvance(uint8 stat,
 
 void PlayerActor::vitalityAdvance(uint8 points) {
 	while (points-- > 0) {
-		if (rand() % ActorAttributes::vitalityLimit > baseStats.vitality) {
+		if (g_vm->_rnd->getRandomNumber(ActorAttributes::vitalityLimit - 1) > baseStats.vitality) {
 			if (++vitalityMemory >= vitalityLevelBump) {
 				vitalityMemory -= vitalityLevelBump;
 				baseStats.vitality++;

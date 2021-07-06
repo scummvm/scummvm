@@ -1640,7 +1640,7 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 		Direction   startDir,
 		            dir;
 
-		startDir = dir = rand() & 0x7;
+		startDir = dir = g_vm->_rnd->getRandomNumber(7);
 
 		do {
 			TilePoint           probeLoc;
@@ -1648,8 +1648,8 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 
 			//  Compute a _data.location to place the object
 			probeLoc = _data.location + incDirTable[dir] * dist;
-			probeLoc.u += (rand() & 0x3) - 2;
-			probeLoc.v += (rand() & 0x3) - 2;
+			probeLoc.u += g_vm->_rnd->getRandomNumber(3) - 2;
+			probeLoc.v += g_vm->_rnd->getRandomNumber(3) - 2;
 			probeLoc.z = tileSlopeHeight(probeLoc, mapNum, obj, &sti);
 
 			//  If _data.location is not blocked, drop the object
@@ -4158,28 +4158,6 @@ GameObject *objectCollision(GameObject *obj, GameWorld *world, const TilePoint &
 }
 
 /* ======================================================================= *
-   Randomly Scatter Object Location In World
- * ======================================================================= */
-
-//void GameWorld::randomScatter()
-//{
-//  ObjectIterator  objIter( this );
-//  GameObject      *objPtr;
-//  ObjectID        id;
-//  TilePoint       randLoc;
-//  Point16         maxUV(100,100);//Temp Test
-
-//  Iterate through each object in the world
-
-//  while ( ( id = objIter.next( &objPtr ) ) != Nothing )
-//  {
-//  Select a random Location.
-//      randLoc.u = rand() % maxUV.x;
-//      randLoc.v = rand() % maxUV.y;
-//      objPtr->move(randLoc);
-//  }
-//}
-/* ======================================================================= *
    Test for line of sight between two objects
  * ======================================================================= */
 
@@ -4560,7 +4538,7 @@ void doBackgroundSimulation(void) {
 			if (obj->isScavengable()
 			        &&  !obj->isActivated()
 			        &&  isWorld(obj->IDParent())
-			        &&  rand() % MIN(objectLimboCount / 2, 60) == 0) {
+			        &&  g_vm->_rnd->getRandomNumber(MIN(objectLimboCount / 2, 60) - 1) == 0) {
 				obj->deleteObjectRecursive();
 			}
 

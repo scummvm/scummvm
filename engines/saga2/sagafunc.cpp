@@ -3430,7 +3430,7 @@ int16 scriptPickRandomLivingActor(int16 *args) {
 
 	if (livingCount <= 0) return Nothing;
 
-	livingCount = rand() % livingCount;
+	livingCount = g_vm->_rnd->getRandomNumber(livingCount - 1);
 
 	for (i = 0; i < thisThread->argCount; i++) {
 		if (isActor(args[i])) {
