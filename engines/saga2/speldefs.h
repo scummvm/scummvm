@@ -161,11 +161,12 @@ public:
 
 	SpellTarget() {
 		type = spellTargetNone;
-		obj = NULL;
+		obj = nullptr;
 		loc.u = 0;
 		loc.v = 0;
 		loc.z = 0;
-		next = NULL;
+		next = nullptr;
+		tag = nullptr;
 	}
 
 	// This constructor is for non-tracking targets
@@ -173,25 +174,29 @@ public:
 		type = spellTargetObjectPoint;
 		loc = object.getWorldLocation();
 		loc.z += object.proto()->height / 2;
-		next = NULL;
+		next = nullptr;
 		obj = &object;
+		tag = nullptr;
 	}
 
 	// This constructor is for tracking targets
 	SpellTarget(GameObject *object) {
 		type = spellTargetObject;
 		obj = object;
-		next = NULL;
+		next = nullptr;
+		tag = nullptr;
 	}
 	SpellTarget(TilePoint &tp) {
 		type = spellTargetPoint;
 		loc = tp;
-		next = NULL;
+		next = nullptr;
+		tag = nullptr;
 	}
 	SpellTarget(ActiveItem *ai) {
 		type = spellTargetTAG;
 		tag = ai;
-		next = NULL;
+		next = nullptr;
+		tag = nullptr;
 	}
 	SpellTarget(StorageSpellTarget &sst);
 
@@ -212,8 +217,9 @@ public:
 	}
 
 	~SpellTarget() {
-		if (next) delete next;
-		next = NULL;
+		if (next)
+			delete next;
+		next = nullptr;
 	};
 
 	TilePoint getPoint(void) {
