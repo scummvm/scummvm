@@ -160,12 +160,12 @@ FXmpToken readFXmpToken(Common::SeekableReadStreamEndian &stream) {
 		ch = stream.readByte();
 		if (stream.eos()) {
 			res.type = FXMP_TOKEN_ERROR;
-			warning("readFXmpToken: Expected '-' but got EOF");
+			warning("BUILDBOT: readFXmpToken: Expected '-' but got EOF");
 			return res;
 		}
 		if (ch != '-') {
 			res.type = FXMP_TOKEN_ERROR;
-			warning("readFXmpToken: Expected '-' but got '%c'", ch);
+			warning("BUILDBOT: readFXmpToken: Expected '-' but got '%c'", ch);
 			return res;
 		}
 		foundComment = true;
@@ -207,7 +207,7 @@ FXmpToken readFXmpToken(Common::SeekableReadStreamEndian &stream) {
 		} while (!stream.eos() && ch != '"');
 		if (stream.eos()) {
 			res.type = FXMP_TOKEN_ERROR;
-			warning("readFXmpToken: Expected '\"' but got EOF");
+			warning("BUILDBOT: readFXmpToken: Expected '\"' but got EOF");
 		}
 	} else if (ch == ':') {
 		res.type = FXMP_TOKEN_COLON;
@@ -217,14 +217,14 @@ FXmpToken readFXmpToken(Common::SeekableReadStreamEndian &stream) {
 		ch = stream.readByte();
 		if (stream.eos()) {
 			res.type = FXMP_TOKEN_ERROR;
-			warning("readFXmpToken: Expected '>' but got EOF");
+			warning("BUILDBOT: readFXmpToken: Expected '>' but got EOF");
 		} else {
 			res.str += ch;
 			if (ch == '>') {
 				res.type = FXMP_TOKEN_ARROW;
 			} else {
 				res.type = FXMP_TOKEN_ERROR;
-				warning("readFXmpToken: Expected '>' but got '%c'", ch);
+				warning("BUILDBOT: readFXmpToken: Expected '>' but got '%c'", ch);
 			}
 		}
 	} else if (ch == '\r') {
@@ -240,7 +240,7 @@ FXmpToken readFXmpToken(Common::SeekableReadStreamEndian &stream) {
 		}
 	} else {
 		res.type = FXMP_TOKEN_ERROR;
-		warning("readFXmpToken: Unexpected '%c'", ch);
+		warning("BUILDBOT: readFXmpToken: Unexpected '%c'", ch);
 	}
 
 	return res;
@@ -265,7 +265,7 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 	// from
 	Common::Platform fromPlatform;
 	if (tok.type != FXMP_TOKEN_WORD) {
-		warning("Cast::readFXmpLine: Expected WORD, got %s", FXmpTokenTypeStrings[tok.type]);
+		warning("BUILDBOT: Cast::readFXmpLine: Expected WORD, got %s", FXmpTokenTypeStrings[tok.type]);
 		return false;
 	}
 	if (tok.str.equalsIgnoreCase("Mac")) {
@@ -273,13 +273,13 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 	} else if (tok.str.equalsIgnoreCase("Win")) {
 		fromPlatform = Common::kPlatformWindows;
 	} else {
-		warning("Cast::readFXmpLine: Expected 'Mac' or 'Win', got '%s'", tok.str.c_str());
+		warning("BUILDBOT: Cast::readFXmpLine: Expected 'Mac' or 'Win', got '%s'", tok.str.c_str());
 		return false;
 	}
 
 	tok = readFXmpToken(stream);
 	if (tok.type != FXMP_TOKEN_COLON) {
-		warning("Cast::readFXmpLine: Expected COLON, got %s", FXmpTokenTypeStrings[tok.type]);
+		warning("BUILDBOT: Cast::readFXmpLine: Expected COLON, got %s", FXmpTokenTypeStrings[tok.type]);
 		return false;
 	}
 
@@ -292,28 +292,28 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 
 	// arrow
 	if (tok.type != FXMP_TOKEN_ARROW) {
-		warning("Cast::readFXmpLine: Expected ARROW, got %s", FXmpTokenTypeStrings[tok.type]);
+		warning("BUILDBOT: Cast::readFXmpLine: Expected ARROW, got %s", FXmpTokenTypeStrings[tok.type]);
 		return false;
 	}
 
 	// to
 	tok = readFXmpToken(stream);
 	if (tok.type != FXMP_TOKEN_WORD) {
-		warning("Cast::readFXmpLine: Expected WORD, got %s", FXmpTokenTypeStrings[tok.type]);
+		warning("BUILDBOT: Cast::readFXmpLine: Expected WORD, got %s", FXmpTokenTypeStrings[tok.type]);
 		return false;
 	}
 	if (fromPlatform == Common::kPlatformMacintosh && !tok.str.equalsIgnoreCase("Win")) {
-		warning("Cast::readFXmpLine: Expected 'Win', got '%s'", tok.str.c_str());
+		warning("BUILDBOT: Cast::readFXmpLine: Expected 'Win', got '%s'", tok.str.c_str());
 		return false;
 	}
 	if (fromPlatform == Common::kPlatformWindows && !tok.str.equalsIgnoreCase("Mac")) {
-		warning("Cast::readFXmpLine: Expected 'Mac', got '%s'", tok.str.c_str());
+		warning("BUILDBOT: Cast::readFXmpLine: Expected 'Mac', got '%s'", tok.str.c_str());
 		return false;
 	}
 
 	tok = readFXmpToken(stream);
 	if (tok.type != FXMP_TOKEN_COLON) {
-		warning("Cast::readFXmpLine: Expected COLON, got %s", FXmpTokenTypeStrings[tok.type]);
+		warning("BUILDBOT: Cast::readFXmpLine: Expected COLON, got %s", FXmpTokenTypeStrings[tok.type]);
 		return false;
 	}
 
@@ -322,20 +322,20 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 		tok = readFXmpToken(stream);
 		while (tok.type != FXMP_TOKEN_NEWLINE && tok.type != FXMP_TOKEN_EOF) {
 			if (tok.type != FXMP_TOKEN_INT) {
-				warning("Cast::readFXmpLine: Expected INT, got %s", FXmpTokenTypeStrings[tok.type]);
+				warning("BUILDBOT: Cast::readFXmpLine: Expected INT, got %s", FXmpTokenTypeStrings[tok.type]);
 				return false;
 			}
 			byte fromChar = atoi(tok.str.c_str());
 
 			tok = readFXmpToken(stream);
 			if (tok.type != FXMP_TOKEN_ARROW) {
-				warning("Cast::readFXmpLine: Expected ARROW, got %s", FXmpTokenTypeStrings[tok.type]);
+				warning("BUILDBOT: Cast::readFXmpLine: Expected ARROW, got %s", FXmpTokenTypeStrings[tok.type]);
 				return false;
 			}
 
 			tok = readFXmpToken(stream);
 			if (tok.type != FXMP_TOKEN_INT) {
-				warning("Cast::readFXmpLine: Expected INT, got %s", FXmpTokenTypeStrings[tok.type]);
+				warning("BUILDBOT: Cast::readFXmpLine: Expected INT, got %s", FXmpTokenTypeStrings[tok.type]);
 				return false;
 			}
 			byte toChar = atoi(tok.str.c_str());
@@ -356,7 +356,7 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 		// to font
 		tok = readFXmpToken(stream);
 		if (tok.type != FXMP_TOKEN_WORD && tok.type != FXMP_TOKEN_STRING) {
-			warning("Cast::readFXmpLine: Expected WORD or STRING, got %s", FXmpTokenTypeStrings[tok.type]);
+			warning("BUILDBOT: Cast::readFXmpLine: Expected WORD or STRING, got %s", FXmpTokenTypeStrings[tok.type]);
 			delete info;
 			return false;
 		}
@@ -368,7 +368,7 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 		info->remapChars = true;
 		if (tok.type == FXMP_TOKEN_WORD) {
 			if (!tok.str.equalsIgnoreCase("Map")) {
-				warning("Cast::readFXmpLine: Expected 'Map', got '%s'", tok.str.c_str());
+				warning("BUILDBOT: Cast::readFXmpLine: Expected 'Map', got '%s'", tok.str.c_str());
 				delete info;
 				return false;
 			}
@@ -379,7 +379,7 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 			} else if (tok.str.equalsIgnoreCase("None")) {
 				info->remapChars = false;
 			} else {
-				warning("Cast::readFXmpLine: Expected 'All' or 'None', got '%s'", tok.str.c_str());
+				warning("BUILDBOT: Cast::readFXmpLine: Expected 'All' or 'None', got '%s'", tok.str.c_str());
 				delete info;
 				return false;
 			}
@@ -390,7 +390,7 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 		// size mappings
 		while (tok.type != FXMP_TOKEN_NEWLINE && tok.type != FXMP_TOKEN_EOF) {
 			if (tok.type != FXMP_TOKEN_INT) {
-				warning("Cast::readFXmpLine: Expected INT, got %s", FXmpTokenTypeStrings[tok.type]);
+				warning("BUILDBOT: Cast::readFXmpLine: Expected INT, got %s", FXmpTokenTypeStrings[tok.type]);
 				delete info;
 				return false;
 			}
@@ -398,14 +398,14 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 
 			tok = readFXmpToken(stream);
 			if (tok.type != FXMP_TOKEN_ARROW) {
-				warning("Cast::readFXmpLine: Expected ARROW, got %s", FXmpTokenTypeStrings[tok.type]);
+				warning("BUILDBOT: Cast::readFXmpLine: Expected ARROW, got %s", FXmpTokenTypeStrings[tok.type]);
 				delete info;
 				return false;
 			}
 
 			tok = readFXmpToken(stream);
 			if (tok.type != FXMP_TOKEN_INT) {
-				warning("Cast::readFXmpLine: Expected INT, got %s", FXmpTokenTypeStrings[tok.type]);
+				warning("BUILDBOT: Cast::readFXmpLine: Expected INT, got %s", FXmpTokenTypeStrings[tok.type]);
 				delete info;
 				return false;
 			}
