@@ -49,13 +49,12 @@ enum Platform {
 	kPlatformUnknown = -1
 };
 
-// Cut-pasted commands from Launcher to here to make things work
-// TODO: Find a way to put them back in Launcher.cpp
 enum {
-	kStartCmd = 'STRT',
-	kEditGameCmd = 'EDTG',
-	kLoadGameCmd = 'LOAD',
+	kPlayButtonCmd = 'PLAY',
+	kEditButtonCmd = 'EDIT',
+	kLoadButtonCmd = 'LOAD',
 	kOpenTrayCmd = 'OPTR',
+	kItemDoubleClickedCmd = 'LBX2',
 };
 
 /* GridItemInfo */

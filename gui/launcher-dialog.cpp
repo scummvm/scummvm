@@ -64,11 +64,14 @@ using Common::ConfigManager;
 namespace GUI {
 
 enum {
+	kStartCmd = 'STRT',
 	kAboutCmd = 'ABOU',
 	kOptionsCmd = 'OPTN',
 	kAddGameCmd = 'ADDG',
 	kMassAddGameCmd = 'MADD',
+	kEditGameCmd = 'EDTG',
 	kRemoveGameCmd = 'REMG',
+	kLoadGameCmd = 'LOAD',
 	kRecordGameCmd = 'RECG',
 	kQuitCmd = 'QUIT',
 	kSearchCmd = 'SRCH',
