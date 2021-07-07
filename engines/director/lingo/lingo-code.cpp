@@ -1623,7 +1623,10 @@ void LC::c_delete() {
 		}
 	}
 
-	Common::String res = text.substr(0, start) + text.substr(end);
+	Common::String res = text.substr(0, start);
+	if (end >= 0) {
+		res += text.substr(end);
+	}
 	Datum s;
 	s.u.s = new Common::String(res);
 	s.type = STRING;
