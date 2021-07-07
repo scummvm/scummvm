@@ -58,6 +58,7 @@ void deleteTarget(Target *t);
 
 void *constructTarget(void *mem, void *buf);
 void readTarget(void *mem, Common::InSaveFile *in);
+void writeTarget(const Target *t, Common::OutSaveFile *out);
 int32 targetArchiveSize(const Target *t);
 void *archiveTarget(const Target *t, void *buf);
 
@@ -146,6 +147,8 @@ public:
 	//  Create an archive of this object in the specified buffer
 	virtual void *archive(void *buf) const = 0;
 
+	virtual void write(Common::OutSaveFile *out) const = 0;
+
 	//  Return an integer representing the type of target
 	virtual int16 getType(void) const = 0;
 
@@ -201,6 +204,8 @@ public:
 
 	//  Create an archive of this object in the specified buffer
 	void *archive(void *buf) const;
+
+	void write(Common::OutSaveFile *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -268,6 +273,8 @@ public:
 	//  Create an archive of this object in the specified buffer
 	void *archive(void *buf) const;
 
+	void write(Common::OutSaveFile *out) const;
+
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
 
@@ -305,6 +312,8 @@ public:
 
 	//  Create an archive of this object in the specified buffer
 	void *archive(void *buf) const;
+
+	void write(Common::OutSaveFile *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -362,6 +371,8 @@ public:
 	//  Create an archive of this object in the specified buffer
 	void *archive(void *buf) const;
 
+	void write(Common::OutSaveFile *out) const;
+
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
 
@@ -401,6 +412,8 @@ public:
 
 	//  Create an archive of this object in the specified buffer
 	void *archive(void *buf) const;
+
+	void write(Common::OutSaveFile *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -486,6 +499,8 @@ public:
 	//  Create an archive of this object in the specified buffer
 	void *archive(void *buf) const;
 
+	void write(Common::OutSaveFile *out) const;
+
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
 
@@ -540,6 +555,8 @@ public:
 
 	//  Create an archive of this object in the specified buffer
 	void *archive(void *buf) const;
+
+	void write(Common::OutSaveFile *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -599,6 +616,8 @@ public:
 
 	//  Create an archive of this object in the specified buffer
 	void *archive(void *buf) const;
+
+	void write(Common::OutSaveFile *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -662,6 +681,8 @@ public:
 
 	//  Create an archive of this object in the specified buffer
 	void *archive(void *buf) const;
+
+	void write(Common::OutSaveFile *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;

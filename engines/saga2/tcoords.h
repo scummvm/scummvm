@@ -150,7 +150,7 @@ struct TilePoint {
 		z = stream->readSint16LE();
 	}
 
-	void write(Common::OutSaveFile *out) {
+	void write(Common::OutSaveFile *out) const {
 		out->writeSint16LE(u);
 		out->writeSint16LE(v);
 		out->writeSint16LE(z);

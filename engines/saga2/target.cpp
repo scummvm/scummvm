@@ -131,6 +131,12 @@ void readTarget(void *mem, Common::InSaveFile *in) {
 	}
 }
 
+void writeTarget(const Target *t, Common::OutSaveFile *out) {
+	out->writeSint16LE(t->getType());
+
+	t->write(out);
+}
+
 int32 targetArchiveSize(const Target *t) {
 	return sizeof(int16) + t->archiveSize();
 }
@@ -234,6 +240,11 @@ void *LocationTarget::archive(void *buf) const {
 	*((TilePoint *)buf) = loc;
 
 	return (TilePoint *)buf + 1;
+}
+
+void LocationTarget::write(Common::OutSaveFile *out) const {
+	//  Store the target location
+	loc.write(out);
 }
 
 //----------------------------------------------------------------------
@@ -437,6 +448,11 @@ void *SpecificTileTarget::archive(void *buf) const {
 	return (TileID *)buf + 1;
 }
 
+void SpecificTileTarget::write(Common::OutSaveFile *out) const {
+	//  Store the tile ID
+	out->writeUint16LE(tile);
+}
+
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
@@ -511,6 +527,10 @@ void *TilePropertyTarget::archive(void *buf) const {
 	*((TilePropertyID *)buf) = tileProp;
 
 	return (TilePropertyID *)buf + 1;
+}
+
+void TilePropertyTarget::write(Common::OutSaveFile *out) const {
+	out->writeSint16LE(tileProp);
 }
 
 //----------------------------------------------------------------------
@@ -704,6 +724,12 @@ void *SpecificMetaTileTarget::archive(void *buf) const {
 	return &bufferPtr[1];
 }
 
+void SpecificMetaTileTarget::write(Common::OutSaveFile *out) const {
+	//  Store the MetaTileID
+	out->writeSint16LE(meta.map);
+	out->writeSint16LE(meta.index);
+}
+
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
@@ -782,6 +808,11 @@ void *MetaTilePropertyTarget::archive(void *buf) const {
 	*((MetaTilePropertyID *)buf) = metaProp;
 
 	return (MetaTilePropertyID *)buf + 1;
+}
+
+void MetaTilePropertyTarget::write(Common::OutSaveFile *out) const {
+	//  Store the MetaTilePropertyID
+	out->writeSint16LE(metaProp);
 }
 
 //----------------------------------------------------------------------
@@ -1076,6 +1107,11 @@ void *SpecificObjectTarget::archive(void *buf) const {
 	return (ObjectID *)buf + 1;
 }
 
+void SpecificObjectTarget::write(Common::OutSaveFile *out) const {
+	//  Store the ObjectID
+	out->writeUint16LE(obj);
+}
+
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
@@ -1244,6 +1280,11 @@ void *ObjectPropertyTarget::archive(void *buf) const {
 	return (ObjectPropertyID *)buf + 1;
 }
 
+void ObjectPropertyTarget::write(Common::OutSaveFile *out) const {
+	//  Store the ObjectPropertyID
+	out->writeSint16LE(objProp);
+}
+
 //----------------------------------------------------------------------
 //	Return an integer representing the type of target
 
@@ -1367,6 +1408,14 @@ void *SpecificActorTarget::archive(void *buf) const {
 	*((ObjectID *)buf) = actorID;
 
 	return (ObjectID *)buf + 1;
+}
+
+void SpecificActorTarget::write(Common::OutSaveFile *out) const {
+	//  Convert the actor pointer to an actor ID;
+	ObjectID actorID = a != NULL ? a->thisID() : Nothing;
+
+	//  Store the actor ID
+	out->writeUint16LE(actorID);
 }
 
 //----------------------------------------------------------------------
@@ -1565,6 +1614,11 @@ void *ActorPropertyTarget::archive(void *buf) const {
 	*((ActorPropertyID *)buf) = actorProp;
 
 	return (ActorPropertyID *)buf + 1;
+}
+
+void ActorPropertyTarget::write(Common::OutSaveFile *out) const {
+	//  Store the ActorPropertyID
+	out->writeSint16LE(actorProp);
 }
 
 //----------------------------------------------------------------------

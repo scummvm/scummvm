@@ -148,6 +148,8 @@ public:
 	//  to save it on disk
 	void *archive(void *buf) const;
 
+	void write(Common::OutSaveFile *out) const;
+
 	//  Return an integer representing the type of this assignment
 	int16 type(void) const;
 
@@ -220,6 +222,8 @@ public:
 	//  Write the data from this assignment object to a buffer in order
 	//  to save it on disk
 	void *archive(void *buf) const;
+
+	void write(Common::OutSaveFile *out) const;
 
 	int16 type(void) const;
 
@@ -305,6 +309,8 @@ public:
 	//  to save it on disk
 	void *archive(void *buf) const;
 
+	void write(Common::OutSaveFile *out) const;
+
 	int16 type(void) const;
 
 protected:
@@ -381,6 +387,8 @@ public:
 	//  to save it on disk
 	void *archive(void *buf) const;
 
+	void write(Common::OutSaveFile *out) const;
+
 	//  Determine if assignment's time limit is up or if the actor is
 	//  already dead
 	bool isValid(void);
@@ -430,6 +438,8 @@ public:
 	//  Write the data from this assignment object to a buffer in order
 	//  to save it on disk
 	void *archive(void *buf) const;
+
+	void write(Common::OutSaveFile *out) const;
 };
 
 /* ===================================================================== *
@@ -477,6 +487,8 @@ public:
 	//  Write the data from this assignment object to a buffer in order
 	//  to save it on disk
 	void *archive(void *buf) const;
+
+	void write(Common::OutSaveFile *out) const;
 
 	//  Return an integer representing the type of this assignment
 	int16 type(void) const;

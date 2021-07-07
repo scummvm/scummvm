@@ -284,6 +284,23 @@ void *PatrolRouteAssignment::archive(void *buf) const {
 	return buf;
 }
 
+void PatrolRouteAssignment::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving PatrolRouteAssignment");
+
+	//  Let the base class write its data to the buffer
+	ActorAssignment::write(out);
+
+	//  Store the route number
+	out->writeSint16LE(routeNo);
+	out->writeSint16LE(startingWayPoint);
+	out->writeSint16LE(endingWayPoint);
+
+	//  Store the route flags
+	out->writeByte(routeFlags);
+	//  Store the assignment flags
+	out->writeByte(flags);
+}
+
 //----------------------------------------------------------------------
 //	Return an integer representing the class of this object for archival
 //	reasons.
@@ -441,6 +458,19 @@ void *HuntToBeNearLocationAssignment::archive(void *buf) const {
 	return (uint16 *)buf + 1;
 }
 
+void HuntToBeNearLocationAssignment::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving HuntToBeNearLocationAssignment");
+
+	//  Let the base class archive its data
+	ActorAssignment::write(out);
+
+	//  Store the target
+	writeTarget(getTarget(), out);
+
+	//  Store the range
+	out->writeUint16LE(range);
+}
+
 //----------------------------------------------------------------------
 //	Return an integer representing the class of this object for archival
 //	reasons.
@@ -574,6 +604,22 @@ void *HuntToBeNearActorAssignment::archive(void *buf) const {
 	return buf;
 }
 
+void HuntToBeNearActorAssignment::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving HuntToBeNearActorAssignment");
+
+	//  Let the base class archive its data
+	ActorAssignment::write(out);
+
+	//  Store the target
+	writeTarget(getTarget(), out);
+
+	//  Store the range
+	out->writeUint16LE(range);
+
+	//  Store the flags
+	out->writeByte(flags);
+}
+
 //----------------------------------------------------------------------
 //	Return an integer representing the class of this object for archival
 //	reasons.
@@ -688,6 +734,19 @@ void *HuntToKillAssignment::archive(void *buf) const {
 	return buf;
 }
 
+void HuntToKillAssignment::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving HuntToKillAssignment");
+
+	//  Let the base class archive its data
+	ActorAssignment::write(out);
+
+	//  Store the target
+	writeTarget(getTarget(), out);
+
+	//  Store the flags
+	out->writeByte(flags);
+}
+
 //----------------------------------------------------------------------
 //	Determine if this assignment is still valid
 
@@ -799,6 +858,19 @@ void *TetheredAssignment::archive(void *buf) const {
 	return a;
 }
 
+void TetheredAssignment::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving TetheredAssignment");
+
+	//  Let the base class archive its data
+	ActorAssignment::write(out);
+
+	//  Copy data to buffer
+	out->writeSint16LE(minU);
+	out->writeSint16LE(minV);
+	out->writeSint16LE(maxU);
+	out->writeSint16LE(maxV);
+}
+
 /* ===================================================================== *
    TetheredWanderAssignment member functions
  * ===================================================================== */
@@ -894,6 +966,21 @@ void *AttendAssignment::archive(void *buf) const {
 	*((ObjectID *)buf) = objID;
 
 	return (ObjectID *)buf + 1;
+}
+
+void AttendAssignment::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving AttendAssignment");
+
+	//  Let the base class write its data to the buffer
+	ActorAssignment::write(out);
+
+	ObjectID    objID;
+
+	//  Convert the object pointer to an object ID
+	objID = obj != NULL ? obj->thisID() : Nothing;
+
+	//  Store the object ID
+	out->writeUint16LE(objID);
 }
 
 //----------------------------------------------------------------------

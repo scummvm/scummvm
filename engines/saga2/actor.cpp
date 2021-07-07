@@ -1267,6 +1267,8 @@ Actor::Actor(void **buf) : GameObject(buf) {
 }
 
 Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
+	debugC(3, kDebugSaveload, "Loading actor %d", thisID());
+
 	//  Fixup the prototype pointer to point to an actor prototype
 	prototype   =   prototype != nullptr
 	                ? (ProtoObj *)&actorProtos[prototype - objectProtos]
@@ -1336,7 +1338,6 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	for (int i = 0; i < ARRAYSIZE(scriptVar); ++i)
 		scriptVar[i] = in->readSint16LE();
 
-	warning("STUB: Actor::Actor(Common::InSaveFile *): unfinished");
 	if (flags & hasAssignment) {
 		readAssignment(this, in);
 	} else {
@@ -1346,6 +1347,43 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	appearance = nullptr;
 	moveTask = nullptr;
 	curTask = nullptr;
+
+	debugC(4, kDebugSaveload, "... faction = %d", faction);
+	debugC(4, kDebugSaveload, "... colorScheme = %d", colorScheme);
+	debugC(4, kDebugSaveload, "... appearanceID = %d", appearanceID);
+	debugC(4, kDebugSaveload, "... attitude = %d", attitude);
+	debugC(4, kDebugSaveload, "... mood = %d", mood);
+	debugC(4, kDebugSaveload, "... disposition = %d", disposition);
+	debugC(4, kDebugSaveload, "... currentFacing = %d", currentFacing);
+	debugC(4, kDebugSaveload, "... tetherLocU = %d", tetherLocU);
+	debugC(4, kDebugSaveload, "... tetherLocV = %d", tetherLocV);
+	debugC(4, kDebugSaveload, "... tetherDist = %d", tetherDist);
+	debugC(4, kDebugSaveload, "... leftHandObject = %d", leftHandObject);
+	debugC(4, kDebugSaveload, "... rightHandObject = %d", rightHandObject);
+//	debugC(4, kDebugSaveload, "... knowledge = %d", knowledge);
+	debugC(4, kDebugSaveload, "... schedule = %d", schedule);
+//	debugC(4, kDebugSaveload, "... conversationMemory = %d", conversationMemory);
+	debugC(4, kDebugSaveload, "... currentAnimation = %d", currentAnimation);
+	debugC(4, kDebugSaveload, "... currentPose = %d", currentPose);
+	debugC(4, kDebugSaveload, "... animationFlags = %d", animationFlags);
+	debugC(4, kDebugSaveload, "... flags = %d", flags);
+//	debugC(4, kDebugSaveload, "... out = %d", out);
+	debugC(4, kDebugSaveload, "... cycleCount = %d", cycleCount);
+	debugC(4, kDebugSaveload, "... kludgeCount = %d", kludgeCount);
+	debugC(4, kDebugSaveload, "... enchantmentFlags = %d", enchantmentFlags);
+	debugC(4, kDebugSaveload, "... currentGoal = %d", currentGoal);
+	debugC(4, kDebugSaveload, "... deactivationCounter = %d", deactivationCounter);
+//	debugC(4, kDebugSaveload, "... out = %d", out);
+	debugC(4, kDebugSaveload, "... actionCounter = %d", actionCounter);
+	debugC(4, kDebugSaveload, "... effectiveResistance = %d", effectiveResistance);
+	debugC(4, kDebugSaveload, "... effectiveImmunity = %d", effectiveImmunity);
+	debugC(4, kDebugSaveload, "... recPointsPerUpdate = %d", recPointsPerUpdate);
+	debugC(4, kDebugSaveload, "... currentRecoveryPoints = %d", currentRecoveryPoints);
+	debugC(4, kDebugSaveload, "... leaderID = %d", leaderID);
+	debugC(4, kDebugSaveload, "... followersID = %d", followersID);
+//	debugC(4, kDebugSaveload, "... armorObjects = %d", armorObjects);
+	debugC(4, kDebugSaveload, "... currentTargetID = %d", currentTargetID);
+//	debugC(4, kDebugSaveload, "... scriptVar = %d", scriptVar);
 }
 
 //-----------------------------------------------------------------------

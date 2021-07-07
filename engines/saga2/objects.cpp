@@ -267,6 +267,8 @@ GameObject::GameObject(void **buf) {
 }
 
 GameObject::GameObject(Common::InSaveFile *in) {
+	debugC(3, kDebugSaveload, "Loading object %d", thisID());
+
 	int16 pInd = in->readSint16LE();
 	//  Convert the protoype index into an object proto pointer
 	prototype = pInd != -1
