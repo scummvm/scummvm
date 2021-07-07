@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-07 17:21+0000\n"
-"PO-Revision-Date: 2021-06-18 05:18+0000\n"
+"PO-Revision-Date: 2021-07-07 23:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -1029,7 +1029,7 @@ msgstr "Режим растягивания:"
 
 #: gui/options.cpp:1429
 msgid "Scaler:"
-msgstr ""
+msgstr "Увеличение:"
 
 #: gui/options.cpp:1442 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -2823,7 +2823,7 @@ msgstr "Режим растягивания"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:61
 msgid "SDL Surface"
-msgstr ""
+msgstr "Поверхность SDL"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2375
 msgid "Active graphics filter:"
@@ -5207,6 +5207,9 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"Если активировано, то нажатие на предмет или область курсором-молнией "
+"мгновенно переносит вас туда, пропуская промежуточные экраны. Вы можете так "
+"перемещаться только туда, где вы уже были."
 
 #: engines/mohawk/dialogs.cpp:117
 msgid "~T~ransitions Enabled"
@@ -5217,6 +5220,8 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"Включить или выключить переходы. Выключение переходов позволит вам "
+"перемещаться по игре быстрее."
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
@@ -5799,6 +5804,8 @@ msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
+"Обнаружена сжатая игра. Пожалуйста, разожмите её как указано в описании игры "
+"на нашей Wiki"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -6858,16 +6865,11 @@ msgstr ""
 "до 320x200 на вкладке «Движок»."
 
 #: engines/scumm/scumm.cpp:1335
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable. Music and high-"
-#| "resolution\n"
-#| "versions of font and cursor will be disabled."
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
-"Не удалось найти исполнимый файл 'Loom' Macintosh. Музыка и шрифты\n"
+"Не удалось найти исполнимый файл 'Штвн' Macintosh. Шрифты\n"
 "высокого разрешения будут выключены."
 
 #: engines/scumm/scumm.cpp:1361
@@ -7628,16 +7630,12 @@ msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr "Эта игра требует движок HeroCraft, который не был скомпилирован."
 
 #: engines/wintermute/wintermute.cpp:182
-#, fuzzy
-#| msgid ""
-#| "This game requires 3D capabilities that are out ScummVM scope. As such, "
-#| "it is likely to be unplayable totally or partially."
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
-"Эта игра требует поддержки 3D персонажей, что выходит за рамки ScummVM. "
-"Ввиду этого, игра скорее всего не будет работать целиком или частично."
+"Эта игра требует поддержки 3D графики, но она не была скомпилирована. Ввиду "
+"этого, игра скорее всего не будет работать целиком или частично."
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
@@ -7763,10 +7761,8 @@ msgstr "Кнопка телефона Вниз"
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:361
-#, fuzzy
-#| msgid "Alternative intro"
 msgid "Alternative action"
-msgstr "Альтернативное вступление"
+msgstr "Альтернативное действие"
 
 #: engines/wintermute/keymapper_tables.h:432
 #: engines/wintermute/keymapper_tables.h:565
@@ -8087,25 +8083,19 @@ msgid "Cancel input"
 msgstr "Отмена ввода"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle subtitles"
-msgstr "Вкл/выкл звук"
+msgstr "Вкл/выкл субтитры"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1388
-#, fuzzy
-#| msgid "Shift"
 msgid "Shift key"
-msgstr "Shift"
+msgstr "Кнопка Shift"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1490
-#, fuzzy
-#| msgid "Previous action"
 msgid "Chapayev's action"
-msgstr "Предыдущее действие"
+msgstr "Действие Чапаева"
 
 #: engines/wintermute/keymapper_tables.h:1538
 #: engines/wintermute/keymapper_tables.h:1791
@@ -8163,8 +8153,6 @@ msgstr "Окно Безье"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1825
-#, fuzzy
-#| msgid "Droid action"
 msgid "Droid's action"
 msgstr "Действие дроида"
 
