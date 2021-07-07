@@ -97,9 +97,9 @@ public:
 	Common::String getVideoPath(int castId);
 
 	void dumpScript(const char *script, ScriptType type, uint16 id);
+	PaletteV4 loadPalette(Common::SeekableReadStreamEndian &stream);
 
 private:
-	PaletteV4 loadPalette(Common::SeekableReadStreamEndian &stream);
 	void loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id);
 	void loadFontMap(Common::SeekableReadStreamEndian &stream);
 	void loadFontMapV4(Common::SeekableReadStreamEndian &stream);
