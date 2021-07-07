@@ -320,7 +320,7 @@ void Cast::loadCast() {
 
 			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[i]);
 			PaletteV4 p = loadPalette(*pal);
-			g_director->addPalette(clutList[i], p.palette, p.length);
+			g_director->addPalette(clutList[i] & 0xff, p.palette, p.length);
 			delete pal;
 		}
 	}
@@ -506,9 +506,12 @@ void Cast::loadCastChildren() {
 			// TODO: Verify how palettes work in >D4 versions
 			if (_version >= kFileVer400 && _version < kFileVer500 && member->_children.size() == 1) {
 				member->_palette = g_director->getPalette(member->_children[0].index);
-			} else if (_version < kFileVer400) {
+			} else if (_version >= kFileVer300 && _version < kFileVer400) {
 				// D3 palettes are always kept in this ascending order
 				member->_palette = g_director->getPalette((++p)->_value.id);
+			} else if (_version < kFileVer300) {
+				// for D2, we shall use the castId to get the palette
+				member->_palette = g_director->getPalette(member->getID());
 			} else {
 				warning("Cast::loadSpriteChildren(): Expected 1 child for palette cast, got %d", member->_children.size());
 			}
