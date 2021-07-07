@@ -74,7 +74,7 @@ public:
 	uint16 getPattern();
 	void setPattern(uint16 pattern);
 
-	void setCast(CastMemberID memberID);
+	void setCast(CastMemberID memberID, bool forceDims = false);
 	bool isQDShape();
 	Graphics::Surface *getQDMatte();
 	void createQDMatte();
