@@ -81,6 +81,7 @@ LingoCompiler::LingoCompiler() {
 	_assemblyContext = nullptr;
 
 	_indef = false;
+	_methodVars = nullptr;
 
 	_linenumber = _colnumber = _bytenumber = 0;
 	_lines[0] = _lines[1] = _lines[2] = nullptr;

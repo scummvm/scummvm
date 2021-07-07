@@ -62,7 +62,7 @@ struct FontInfo {
 	bool remapChars;
 	FontSizeMap sizeMap;
 
-	FontInfo() : remapChars(false) {}
+	FontInfo() : toFont(0), remapChars(false) {}
 };
 typedef Common::HashMap<uint16, FontInfo *> FontMap;
 

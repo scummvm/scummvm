@@ -395,6 +395,7 @@ Common::SeekableReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16 id
 RIFXArchive::RIFXArchive() : Archive() {
 	_isBigEndian = true;
 	_rifxType = 0;
+	_ilsBodyOffset = 0;
 }
 
 RIFXArchive::~RIFXArchive() {

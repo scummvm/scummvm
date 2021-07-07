@@ -79,6 +79,8 @@ Cast::Cast(Movie *movie, uint16 castLibID, bool isShared) {
 	_version = 0;
 	_platform = g_director->getPlatform();
 
+	_stageColor = 0;
+
 	_loadedStxts = nullptr;
 	_loadedCast = nullptr;
 
