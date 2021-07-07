@@ -184,9 +184,9 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 	int buttonWidth = w / 3;
 	int buttonHeight = h / 3;
 
-	PicButtonWidget *playButton = new PicButtonWidget(this, (buttonWidth / 3), buttonHeight / 3, (buttonWidth / 3) + buttonWidth * 2, buttonHeight, U32String("Play"), kStartCmd);
-	PicButtonWidget *loadButton = new PicButtonWidget(this, (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Saves"), kLoadGameCmd);
-	PicButtonWidget *editButton = new PicButtonWidget(this, buttonWidth + 2 * (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Edit"), kEditGameCmd);
+	PicButtonWidget *playButton = new PicButtonWidget(this, (buttonWidth / 3), buttonHeight / 3, (buttonWidth / 3) + buttonWidth * 2, buttonHeight, U32String("Play"), kPlayButtonCmd);
+	PicButtonWidget *loadButton = new PicButtonWidget(this, (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Saves"), kLoadButtonCmd);
+	PicButtonWidget *editButton = new PicButtonWidget(this, buttonWidth + 2 * (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Edit"), kEditButtonCmd);
 
 	playButton->setGfxFromTheme("button_play.bmp", 0, false);
 	loadButton->setGfxFromTheme("button_load.bmp", 0, false);
@@ -196,17 +196,17 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 void GridItemTray::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd)
 	{
-	case kStartCmd:
+	case kPlayButtonCmd:
 		close();
-		sendCommand(kStartCmd, _entryID);
+		sendCommand(kPlayButtonCmd, _entryID);
 		break;
-	case kLoadGameCmd:
+	case kLoadButtonCmd:
 		close();
-		sendCommand(kLoadGameCmd, _entryID);
+		sendCommand(kLoadButtonCmd, _entryID);
 		break;
-	case kEditGameCmd:
+	case kEditButtonCmd:
 		close();
-		sendCommand(kEditGameCmd, _entryID);
+		sendCommand(kEditButtonCmd, _entryID);
 		break;
 	case kCloseCmd:
 		close();
@@ -224,7 +224,7 @@ void GridItemTray::handleMouseDown(int x, int y, int button, int clickCount) {
 	} else if (y < 0 && clickCount >= 2) {
 		// Run on double clicking thumbnail
 		close();
-		sendCommand(kStartCmd, _entryID);
+		sendCommand(kItemDoubleClickedCmd, _entryID);
 	}
 }
 
