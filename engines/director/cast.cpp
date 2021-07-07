@@ -77,6 +77,7 @@ Cast::Cast(Movie *movie, uint16 castLibID, bool isShared) {
 
 	_castArchive = nullptr;
 	_version = 0;
+	_platform = g_director->getPlatform();
 
 	_loadedStxts = nullptr;
 	_loadedCast = nullptr;
@@ -283,14 +284,18 @@ bool Cast::loadConfig() {
 	}
 
 	if (_version >= kFileVer400) {
-		for (int i = 0; i < 0x16; i++) {
+		for (int i = 0; i < 0x08; i++) {
+			stream->readByte();
+		}
+		_platform = platformFromID(stream->readUint16());
+		for (int i = 0; i < 0x0c; i++) {
 			stream->readByte();
 		}
 		_defaultPalette = (int16)stream->readUint16();
 		for (int i = 0; i < 0x08; i++) {
 			stream->readByte();
 		}
-		debugC(1, kDebugLoading, "Cast::loadConfig(): defaultPalette: %d", _defaultPalette);
+		debugC(1, kDebugLoading, "Cast::loadConfig(): platform: %s, defaultPalette: %d", getPlatformAbbrev(_platform), _defaultPalette);
 	}
 
 	uint16 humanVer = humanVersion(_version);

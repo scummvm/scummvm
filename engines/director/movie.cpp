@@ -114,6 +114,7 @@ bool Movie::loadArchive() {
 		return false;
 
 	_version = _cast->_version;
+	_platform = _cast->_platform;
 	_movieRect = _cast->_movieRect;
 	// Wait to handle _stageColor until palette is loaded in loadCast...
 

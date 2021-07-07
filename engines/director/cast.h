@@ -110,6 +110,7 @@ private:
 public:
 	Archive *_castArchive;
 	uint16 _version;
+	Common::Platform _platform;
 	uint16 _castLibID;
 
 	CharMap _charMap;

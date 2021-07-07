@@ -146,6 +146,7 @@ private:
 public:
 	Archive *_movieArchive;
 	uint16 _version;
+	Common::Platform _platform;
 	Common::Rect _movieRect;
 	uint16 _currentClickOnSpriteId;
 	uint16 _currentEditableTextChannel;
