@@ -55,6 +55,7 @@ public:
 	}
 
 	void load(Common::SeekableReadStream *stream);
+	void write(Common::OutSaveFile *out);
 
 	// Point16 operators
 	friend Point16 operator+ (Point16 a, Point16 b) {

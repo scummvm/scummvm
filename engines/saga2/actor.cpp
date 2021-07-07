@@ -1357,6 +1357,102 @@ void *Actor::archive(void *buf) {
 	return buf;
 }
 
+void Actor::write(Common::OutSaveFile *out) {
+	ProtoObj    *holdProto = prototype;
+
+	debugC(3, kDebugSaveload, "Saving actor %d", thisID());
+
+	//  Modify the protoype temporarily so the GameObject::archive()
+	//  will store the index correctly
+	if (prototype != NULL)
+		prototype = &objectProtos[(ActorProto *)prototype - actorProtos];
+
+	GameObject::write(out);
+
+	//  Restore the prototype pointer
+	prototype = holdProto;
+
+	out->writeByte(faction);
+	out->writeByte(colorScheme);
+	out->writeSint32LE(appearanceID);
+	out->writeSByte(attitude);
+	out->writeSByte(mood);
+
+	out->writeByte(disposition);
+	out->writeByte(currentFacing);
+	out->writeSint16LE(tetherLocU);
+	out->writeSint16LE(tetherLocV);
+	out->writeSint16LE(tetherDist);
+	out->writeUint16LE(leftHandObject);
+	out->writeUint16LE(rightHandObject);
+
+	out->write(knowledge, sizeof(knowledge));
+	out->writeUint16LE(schedule);
+	out->write(conversationMemory, sizeof(conversationMemory));
+
+	out->writeByte(currentAnimation);
+	out->writeByte(currentPose);
+	out->writeByte(animationFlags);
+
+	out->writeByte(flags);
+	poseInfo.write(out);
+	out->writeSint16LE(cycleCount);
+	out->writeSint16LE(kludgeCount);
+	out->writeUint32LE(enchantmentFlags);
+	out->writeByte(currentGoal);
+	out->writeByte(deactivationCounter);
+	effectiveStats.write(out);
+	out->writeByte(actionCounter);
+	out->writeUint16LE(effectiveResistance);
+	out->writeUint16LE(effectiveImmunity);
+	out->writeSint16LE(recPointsPerUpdate);
+	out->writeUint16LE(currentRecoveryPoints);
+	out->writeUint16LE(leader != NULL ? leader->thisID() : Nothing);
+	out->writeSint16LE(followers != NULL ? getBandID(followers) : NoBand);
+	out->write(armorObjects, ARMOR_COUNT * 2);
+	out->writeUint16LE(currentTarget != NULL ? currentTarget->thisID() : Nothing);
+	out->write(scriptVar, sizeof(scriptVar));
+
+	if (flags & hasAssignment)
+		writeAssignment(this, out);
+	debugC(4, kDebugSaveload, "... faction = %d", faction);
+	debugC(4, kDebugSaveload, "... colorScheme = %d", colorScheme);
+	debugC(4, kDebugSaveload, "... appearanceID = %d", appearanceID);
+	debugC(4, kDebugSaveload, "... attitude = %d", attitude);
+	debugC(4, kDebugSaveload, "... mood = %d", mood);
+	debugC(4, kDebugSaveload, "... disposition = %d", disposition);
+	debugC(4, kDebugSaveload, "... currentFacing = %d", currentFacing);
+	debugC(4, kDebugSaveload, "... tetherLocU = %d", tetherLocU);
+	debugC(4, kDebugSaveload, "... tetherLocV = %d", tetherLocV);
+	debugC(4, kDebugSaveload, "... tetherDist = %d", tetherDist);
+	debugC(4, kDebugSaveload, "... leftHandObject = %d", leftHandObject);
+	debugC(4, kDebugSaveload, "... rightHandObject = %d", rightHandObject);
+//	debugC(4, kDebugSaveload, "... knowledge = %d", knowledge);
+	debugC(4, kDebugSaveload, "... schedule = %d", schedule);
+//	debugC(4, kDebugSaveload, "... conversationMemory = %d", conversationMemory);
+	debugC(4, kDebugSaveload, "... currentAnimation = %d", currentAnimation);
+	debugC(4, kDebugSaveload, "... currentPose = %d", currentPose);
+	debugC(4, kDebugSaveload, "... animationFlags = %d", animationFlags);
+	debugC(4, kDebugSaveload, "... flags = %d", flags);
+//	debugC(4, kDebugSaveload, "... out = %d", out);
+	debugC(4, kDebugSaveload, "... cycleCount = %d", cycleCount);
+	debugC(4, kDebugSaveload, "... kludgeCount = %d", kludgeCount);
+	debugC(4, kDebugSaveload, "... enchantmentFlags = %d", enchantmentFlags);
+	debugC(4, kDebugSaveload, "... currentGoal = %d", currentGoal);
+	debugC(4, kDebugSaveload, "... deactivationCounter = %d", deactivationCounter);
+//	debugC(4, kDebugSaveload, "... out = %d", out);
+	debugC(4, kDebugSaveload, "... actionCounter = %d", actionCounter);
+	debugC(4, kDebugSaveload, "... effectiveResistance = %d", effectiveResistance);
+	debugC(4, kDebugSaveload, "... effectiveImmunity = %d", effectiveImmunity);
+	debugC(4, kDebugSaveload, "... recPointsPerUpdate = %d", recPointsPerUpdate);
+	debugC(4, kDebugSaveload, "... currentRecoveryPoints = %d", currentRecoveryPoints);
+	debugC(4, kDebugSaveload, "... leaderID = %d", leader != NULL ? leader->thisID() : Nothing);
+	debugC(4, kDebugSaveload, "... followersID = %d", followers != NULL ? getBandID(followers) : NoBand);
+//	debugC(4, kDebugSaveload, "... armorObjects = %d", armorObjects);
+	debugC(4, kDebugSaveload, "... currentTargetID = %d", currentTarget != NULL ? currentTarget->thisID() : Nothing);
+//	debugC(4, kDebugSaveload, "... scriptVar = %d", scriptVar);
+}
+
 //-----------------------------------------------------------------------
 //	Return a newly created actor
 
@@ -3499,6 +3595,27 @@ void saveActors(SaveFileConstructor &saveGame) {
 	    archiveBufSize);
 
 	free(archiveBuffer);
+}
+
+void saveActors(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving actors");
+
+	int32   archiveBufSize = 0;
+
+	//  Accumulate size of archive buffer
+
+	//  Add size of actor count
+	archiveBufSize += sizeof(int16);
+
+	for (int i = 0; i < actorCount; i++)
+		archiveBufSize += actorList[i].archiveSize();
+
+	out->write("ACTR", 4);
+	out->writeUint32LE(archiveBufSize);
+	out->writeSint16LE(actorCount);
+
+	for (int i = 0; i < actorCount; ++i)
+		actorList[i].write(out);
 }
 
 //-------------------------------------------------------------------

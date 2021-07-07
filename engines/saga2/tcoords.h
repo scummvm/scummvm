@@ -27,6 +27,8 @@
 #ifndef SAGA2_TCOORDS_H
 #define SAGA2_TCOORDS_H
 
+#include "common/savefile.h"
+
 namespace Saga2 {
 
 enum facingDirections {
@@ -140,6 +142,12 @@ struct TilePoint {
 		u = p.u;
 		v = p.v;
 		z = p.z;
+	}
+
+	void write(Common::OutSaveFile *out) {
+		out->writeSint16LE(u);
+		out->writeSint16LE(v);
+		out->writeSint16LE(z);
 	}
 
 		// TilePoint operators

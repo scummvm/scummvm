@@ -610,6 +610,18 @@ ActorPose::ActorPose(Common::SeekableReadStream *stream) {
 	rightObjectOffset.load(stream);
 }
 
+void ActorPose::write(Common::OutSaveFile *out) {
+	out->writeUint16LE(flags);
+
+	out->writeByte(actorFrameIndex);
+	out->writeByte(actorFrameBank);
+	out->writeByte(leftObjectIndex);
+	out->writeByte(rightObjectIndex);
+
+	leftObjectOffset.write(out);
+	rightObjectOffset.write(out);
+}
+
 ColorScheme::ColorScheme(Common::SeekableReadStream *stream) {
 	for (int i = 0; i < 11; ++i)
 		bank[i] = stream->readByte();

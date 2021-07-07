@@ -300,6 +300,42 @@ void *GameObject::archive(void *buf) {
 	return &a[1];
 }
 
+void GameObject::write(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving object %d", thisID());
+
+	int16 pInd = prototype != nullptr ? prototype - objectProtos : -1;
+	out->writeSint16LE(pInd);
+	_data.location.write(out);
+	out->writeUint16LE(_data.nameIndex);
+	out->writeUint16LE(_data.parentID);
+	out->writeUint16LE(_data.siblingID);
+	out->writeUint16LE(_data.childID);
+	out->writeUint16LE(_data.script);
+	out->writeUint16LE(_data.objectFlags);
+	out->writeByte(_data.hitPoints);
+	out->writeByte(_data.bParam);
+	out->writeUint16LE(_data.massCount);
+	out->writeByte(_data.missileFacing);
+	out->writeSint16LE(_data.currentTAG);
+	out->writeByte(_data.sightCtr);
+
+	debugC(4, kDebugSaveload, "... protoIndex = %d", pInd);
+	debugC(4, kDebugSaveload, "... _data.location = (%d, %d, %d)",
+	       _data.location.u, _data.location.v, _data.location.z);
+	debugC(4, kDebugSaveload, "... _data.nameIndex = %d", _data.nameIndex);
+	debugC(4, kDebugSaveload, "... _data.parentID = %d", _data.parentID);
+	debugC(4, kDebugSaveload, "... _data.siblingID = %d", _data.siblingID);
+	debugC(4, kDebugSaveload, "... _data.childID = %d", _data.childID);
+	debugC(4, kDebugSaveload, "... _data.script = %d", _data.script);
+	debugC(4, kDebugSaveload, "... _data.objectFlags = %d", _data.objectFlags);
+	debugC(4, kDebugSaveload, "... _data.hitPoints = %d", _data.hitPoints);
+	debugC(4, kDebugSaveload, "... _data.bParam = %d", _data.bParam);
+	debugC(4, kDebugSaveload, "... _data.massCount = %d", _data.massCount);
+	debugC(4, kDebugSaveload, "... _data.missileFacing = %d", _data.missileFacing);
+	debugC(4, kDebugSaveload, "... _data.currentTAG = %d", _data.currentTAG);
+	debugC(4, kDebugSaveload, "... _data.sightCtr = %d", _data.sightCtr);
+}
+
 //  Same as above but use object addresses instead of ID's
 
 bool isObject(GameObject *obj) {

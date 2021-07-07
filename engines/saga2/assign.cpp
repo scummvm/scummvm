@@ -106,6 +106,11 @@ void *ActorAssignment::archive(void *buf) const {
 	return a;
 }
 
+void ActorAssignment::write(Common::OutSaveFile *out) const {
+	out->writeUint16LE(startFrame);
+	out->writeUint16LE(endFrame);
+}
+
 //----------------------------------------------------------------------
 //	Determine if the time limit for this assignment has been exceeded
 
@@ -899,6 +904,16 @@ void *archiveAssignment(Actor *a, void *buf) {
 	}
 
 	return buf;
+}
+
+void writeAssignment(Actor *a, Common::OutSaveFile *out) {
+	ActorAssignment *assign = a->getAssignment();
+
+	if (assign != NULL) {
+		out->writeSint16LE(assign->type());
+
+		assign->write(out);
+	}
 }
 
 }

@@ -116,7 +116,9 @@ struct ObjectData {
 
 void     initActors(void);
 void     saveActors(SaveFileConstructor &);
+void     saveActors(Common::OutSaveFile *out);
 void     loadActors(SaveFileReader &);
+void     loadActors(Common::InSaveFile *in);
 void     cleanupActors(void);
 class GameObject {
 
@@ -192,6 +194,8 @@ public:
 
 	//  Archive the object in a buffer
 	void *archive(void *buf);
+
+	void write(Common::OutSaveFile *out);
 
 	//  returns the address of the object based on the ID, and this
 	//  includes accounting for actors.

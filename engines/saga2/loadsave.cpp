@@ -148,9 +148,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveTimer(out);
 	saveCalender(out);
 	saveWorlds(out);
+	saveActors(out);
 
 #if 0
-	saveActors(saveGame);
 	saveObjects(saveGame);
 	saveBands(saveGame);
 	savePlayerActors(saveGame);

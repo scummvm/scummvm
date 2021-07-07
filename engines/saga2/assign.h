@@ -78,6 +78,8 @@ public:
 	//  to save it on disk
 	virtual void *archive(void *buf) const;
 
+	virtual void write(Common::OutSaveFile *out) const;
+
 	//  Construct a TaskStack for this assignment
 	TaskStack *createTask(void);
 
@@ -483,6 +485,8 @@ int32 assignmentArchiveSize(Actor *a);
 
 //  Write the specified actor's assignment to an archive buffer
 void *archiveAssignment(Actor *a, void *buf);
+
+void writeAssignment(Actor *a, Common::OutSaveFile *out);
 
 }
 

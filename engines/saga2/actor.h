@@ -27,6 +27,7 @@
 #ifndef SAGA2_ACTOR_H
 #define SAGA2_ACTOR_H
 
+#include "common/savefile.h"
 #include "saga2/objects.h"
 
 namespace Saga2 {
@@ -192,6 +193,30 @@ struct ActorAttributes {
 		greenMana = stream->readSint16LE();
 		blueMana = stream->readSint16LE();
 		violetMana = stream->readSint16LE();
+	}
+
+	void write(Common::OutSaveFile *out) {
+		out->writeByte(archery);
+		out->writeByte(swordcraft);
+		out->writeByte(shieldcraft);
+		out->writeByte(bludgeon);
+		out->writeByte(throwing);
+		out->writeByte(spellcraft);
+		out->writeByte(stealth);
+		out->writeByte(agility);
+		out->writeByte(brawn);
+		out->writeByte(lockpick);
+		out->writeByte(pilfer);
+		out->writeByte(firstAid);
+		out->writeByte(spotHidden);
+		out->writeSByte(pad);
+		out->writeSint16LE(vitality);
+		out->writeSint16LE(redMana);
+		out->writeSint16LE(orangeMana);
+		out->writeSint16LE(yellowMana);
+		out->writeSint16LE(greenMana);
+		out->writeSint16LE(blueMana);
+		out->writeSint16LE(violetMana);
 	}
 };  // 28 bytes
 
@@ -705,6 +730,8 @@ public:
 	//  Reconstruct from archive buffer
 	Actor(void **buf);
 
+	Actor(Common::InSaveFile *in);
+
 	//  Destructor
 	~Actor(void);
 
@@ -713,6 +740,8 @@ public:
 
 	//  Archive this actor in a buffer
 	void *archive(void *buf);
+
+	void write(Common::OutSaveFile *out);
 
 	static Actor *newActor(
 	    int16   protoNum,
