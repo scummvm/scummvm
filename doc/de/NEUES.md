@@ -109,6 +109,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für hochauflösende Schriftarten und Cursor-Darstellungen in der 16-Farben-Macintosh-Version von Loom hinzugefügt.
    - Unterstützung für die japanische Macintosh-Version von The Dig hinzugefügt.
    - Teilweise Unterstützung für die hochauflösenden Schriftarten und den Mauszeiger in der 16-Farben-Macintosh-Version von Indiana Jones and the Last Crusade hinzugefügt.
+   - Fehlende Instrumente in der m64k-Mac-Version von Monkey Island 2 und Indiana Jones and the Fate of Atlantis korrigiert.
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
