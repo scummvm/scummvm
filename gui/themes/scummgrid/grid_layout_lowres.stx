@@ -59,6 +59,8 @@
 		<def var = 'Predictive.ShowDeletePic' value = '0' scalable = 'yes'/>
 
 		<def var = 'DropdownButton.Width' value = '7' scalable = 'yes'/>
+		
+		<def var = 'GridSupported' value = '1'/>
 		<def var = 'GridItemThumbnail.Width' value = '128' scalable = 'no'/>
 		<def var = 'GridItemThumbnail.Height' value = '128' scalable = 'no'/>
 		<def var = 'Grid.XSpacing' value = '10' scalable = 'no'/>

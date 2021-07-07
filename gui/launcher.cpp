@@ -21,6 +21,8 @@
  */
 
 #include "common/config-manager.h"
+#include "gui/gui-manager.h"
+#include "gui/ThemeEval.h"
 
 #include "gui/launcher.h"
 #include "gui/launcher-dialog.h"
@@ -41,7 +43,7 @@ LauncherDisplayType getRequestedLauncherType() {
 	const Common::String &userConfig = ConfMan.get("gui_launcher_chooser", Common::ConfigManager::kApplicationDomain);
 	// If grid needs to be disabled on certain resolutions,
 	// those conditions need to be added here
-	if (userConfig.equalsIgnoreCase("grid")) {
+	if (userConfig.equalsIgnoreCase("grid") && g_gui.xmlEval()->getVar("Globals.GridSupported", 0)) {
 		return kLauncherDisplayGrid;
 	} else {
 		return kLauncherDisplayList;
