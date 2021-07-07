@@ -12,7 +12,6 @@ MODULE_OBJS := \
 	button.o \
 	calender.o \
 	contain.o \
-	detection.o \
 	display.o \
 	dispnode.o \
 	document.o \
