@@ -129,7 +129,9 @@ class GameObject {
 
 	friend void     initObjects(void);
 	friend void     saveObjects(SaveFileConstructor &);
+	friend void     saveObjects(Common::OutSaveFile *out);
 	friend void     loadObjects(SaveFileReader &);
+	friend void     loadObjects(Common::InSaveFile *in);
 	friend void     cleanupObjects(void);
 
 	friend void     buildDisplayList(void);
@@ -189,6 +191,8 @@ public:
 	GameObject(void **buf);
 
 	GameObject(Common::InSaveFile *in);
+
+	void read(Common::InSaveFile *in);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -1430,9 +1434,11 @@ void initObjects(void);
 
 //  Save the objects to the save file
 void saveObjects(SaveFileConstructor &saveGame);
+void saveObjects(Common::OutSaveFile *out);
 
 //  Load the objects from the save file
 void loadObjects(SaveFileReader &saveGame);
+void loadObjects(Common::InSaveFile *in);
 
 //  Cleanup object list
 void cleanupObjects(void);

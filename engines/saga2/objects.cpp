@@ -75,7 +75,7 @@ int16               objectProtoCount,       // object prototype count
                     actorProtoCount;        // actor prototype count
 
 GameObject          *objectList = nullptr;     // list of all objects
-int16               objectCount;            // count of objects
+const int16         objectCount = 4971;        // count of objects
 
 Actor               *actorList = nullptr;      // list of all actors
 int16               actorCount;
@@ -267,6 +267,12 @@ GameObject::GameObject(void **buf) {
 }
 
 GameObject::GameObject(Common::InSaveFile *in) {
+	debugC(3, kDebugSaveload, "Loading object %d", thisID());
+
+	read(in);
+}
+
+void GameObject::read(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "Loading object %d", thisID());
 
 	int16 pInd = in->readSint16LE();
@@ -3046,10 +3052,6 @@ void initObjects(void) {
 	if (resourceObjectCount < 4)
 		error("Unable to load Objects");
 
-	//  Add extra space for alias objects
-
-	objectCount = resourceObjectCount + extraObjects;
-
 	//  Allocate memory for the object list
 	objectListSize = objectCount * sizeof(GameObject);
 	objectList = new GameObject[objectCount]();
@@ -3191,6 +3193,27 @@ void saveObjects(SaveFileConstructor &saveGame) {
 	free(archiveBuffer);
 }
 
+void saveObjects(Common::OutSaveFile *out) {
+	int32 archiveBufSize;
+
+	archiveBufSize = sizeof(objectLimboCount)
+	                 +   sizeof(actorLimboCount)
+	                 +   sizeof(importantLimboCount)
+	                 +   objectListSize;
+
+	out->write("OBJS", 4);
+	out->writeUint32LE(archiveBufSize);
+
+	//  Store the limbo counts
+	out->writeSint16LE(objectLimboCount);
+	out->writeSint16LE(actorLimboCount);
+	out->writeSint16LE(importantLimboCount);
+
+	//  Store the object list
+	for (int i = 0; i < objectCount; i++)
+		objectList[i].write(out);
+}
+
 //-------------------------------------------------------------------
 //	Load the object list from a save file
 
@@ -3205,7 +3228,7 @@ void loadObjects(SaveFileReader &saveGame) {
 
 	//  Restore the object list
 	objectListSize = saveGame.bytesLeftInChunk();
-	objectCount = objectListSize / sizeof(GameObject);
+	//objectCount = objectListSize / sizeof(GameObject);
 
 	objectList = new GameObject[objectCount]();
 	if (objectList == nullptr)
@@ -3222,6 +3245,20 @@ void loadObjects(SaveFileReader &saveGame) {
 		    ?   &objectProtos[*((int16 *)&obj->prototype)]
 		    :   nullptr;
 	}
+}
+
+void loadObjects(Common::InSaveFile *in) {
+	//  Restore the limbo counts
+	objectLimboCount = in->readSint16LE();
+	actorLimboCount = in->readSint16LE();
+	importantLimboCount = in->readSint16LE();
+
+	objectList = new GameObject[objectCount]();
+	if (objectList == nullptr)
+		error("Unable to load Objects");
+
+	for (int i = 0; i < objectCount; i++)
+		objectList[i].read(in);
 }
 
 //-------------------------------------------------------------------

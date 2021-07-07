@@ -42,9 +42,9 @@ class gameObject;
    Exports
  * ===================================================================== */
 
-extern int16    objectCount,        //  Number of elements in the object list
-       actorCount,         //  Number of elements in the actor list
-       worldCount;         //  Number of elements in the world list
+extern const int16 objectCount;  //  Number of elements in the object list
+extern int16 actorCount,         //  Number of elements in the actor list
+             worldCount;         //  Number of elements in the world list
 
 #define Permanent ((uint8)255)
 

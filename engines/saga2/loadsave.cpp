@@ -149,9 +149,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveCalender(out);
 	saveWorlds(out);
 	saveActors(out);
+	saveObjects(out);
 
 #if 0
-	saveObjects(saveGame);
 	saveBands(saveGame);
 	savePlayerActors(saveGame);
 	saveCenterActor(saveGame);
@@ -261,12 +261,12 @@ void loadSavedGameState(int16 saveNo) {
 			loadActors(in);
 			loadFlags |= loadActorsFlag;
 			break;
-#if 0
 
 		case MKTAG('O', 'B', 'J', 'S'):
-			loadObjects(saveGame);
+			loadObjects(in);
 			loadFlags |= loadObjectsFlag;
 			break;
+#if 0
 
 		case MKTAG('B', 'A', 'N', 'D'):
 			if (loadFlags & loadActorsFlag) {
