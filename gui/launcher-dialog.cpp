@@ -1037,7 +1037,24 @@ void LauncherGrid::handleKeyDown(Common::KeyState state) {
 }
 
 void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	LauncherDialog::handleCommand(sender, cmd, data);
+	
+	switch (cmd) {
+	case kPlayButtonCmd:
+	case kItemDoubleClickedCmd:
+		LauncherDialog::handleCommand(sender, kStartCmd, 0);
+		break;
+	case kEditButtonCmd:
+		LauncherDialog::handleCommand(sender, kEditGameCmd, 0);
+		break;
+	case kLoadButtonCmd:
+		LauncherDialog::handleCommand(sender, kLoadGameCmd, 0);
+		break;
+	case kItemClicked:
+		updateButtons();
+		break;
+	default:
+		LauncherDialog::handleCommand(sender, cmd, data);
+	}
 }
 
 void LauncherGrid::updateListing() {

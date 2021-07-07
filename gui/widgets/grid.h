@@ -54,6 +54,7 @@ enum {
 	kEditButtonCmd = 'EDIT',
 	kLoadButtonCmd = 'LOAD',
 	kOpenTrayCmd = 'OPTR',
+	kItemClicked = 'LBX1',
 	kItemDoubleClickedCmd = 'LBX2',
 };
 
@@ -109,7 +110,7 @@ public:
 
 
 /* GridWidget */
-class GridWidget : public ContainerWidget {
+class GridWidget : public ContainerWidget, public CommandSender {
 public:
 	typedef Common::String String;
 	typedef Common::Array<Common::String> StringArray;
