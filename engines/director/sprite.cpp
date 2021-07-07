@@ -261,7 +261,7 @@ void Sprite::setPattern(uint16 pattern) {
 	}
 }
 
-void Sprite::setCast(CastMemberID memberID) {
+void Sprite::setCast(CastMemberID memberID, bool forceDims) {
 	CastMember *member = _movie->getCastMember(memberID);
 	_castId = memberID;
 
@@ -288,16 +288,18 @@ void Sprite::setCast(CastMemberID memberID) {
 		Common::Rect dims = _cast->getInitialRect();
 		// strange logic here, need to be fixed
 		if (_cast->_type == kCastBitmap) {
-			if (_width >= dims.width() || _height >= dims.height()) {
-				_width = dims.width();
-				_height = dims.height();
-			}
 			// for ink copy sprites, we use the original dims
 			if (_ink == kInkTypeCopy) {
 				_width = dims.width();
 				_height = dims.height();
 			}
 		} else if (_cast->_type != kCastShape && _cast->_type != kCastText) {
+			_width = dims.width();
+			_height = dims.height();
+		}
+
+		// if we are setting the cast though lingo, then we modify the sprites dims to suit for cast member
+		if (forceDims) {
 			_width = dims.width();
 			_height = dims.height();
 		}
