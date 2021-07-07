@@ -257,6 +257,9 @@ BandID getBandID(Band *b) {
 //	Return a pointer to a Band given a BandID
 
 Band *getBandAddress(BandID id) {
+	if (g_vm->_bandList == nullptr)
+		return nullptr;
+
 	return g_vm->_bandList->getBandAddress(id);
 }
 
