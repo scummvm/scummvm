@@ -451,7 +451,9 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 		renderSprites(frameId, mode);
 
 	int currentPalette = _frames[frameId]->_palette.paletteId;
-	if (!_puppetPalette && currentPalette != 0 && currentPalette != _lastPalette) {
+	if (!_puppetPalette && currentPalette != _lastPalette) {
+		if (currentPalette == 0)
+			currentPalette = g_director->getCurrentMovie()->getCast()->_defaultPalette;
 		_lastPalette = currentPalette;
 		g_director->setPalette(resolvePaletteId(currentPalette));
 	}
