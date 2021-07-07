@@ -493,10 +493,9 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		} else {
 			warning("RIFXArchive::openStream(): Can not open dump file %s", buf);
 		}
-
-		free(dumpData);
-		delete dumpStream;
 	}
+	free(dumpData);
+	delete dumpStream;
 
 	// If we couldn't read the map, we can't do anything past this point.
 	if (!readMapSuccess)

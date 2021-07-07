@@ -196,6 +196,7 @@ Lingo::~Lingo() {
 	resetLingo();
 	cleanupFuncs();
 	cleanupMethods();
+	delete _compiler;
 }
 
 void Lingo::reloadBuiltIns() {
