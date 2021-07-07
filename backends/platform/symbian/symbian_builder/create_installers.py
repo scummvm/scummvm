@@ -26,12 +26,16 @@ from common_names import *
 
 
 def makesis(pkg, path):
-   t = "makesis -d%EPOCROOT% %s" %pkg
+   print "pkg: %s" %pkg
+   t = "makesis -c %s" %pkg
    cmd = subprocess.Popen(t, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=path, shell=True)
    out, err = cmd.communicate()
    SafeWriteFile(build_log, out)
    SafeWriteFile(build_err, err)
 
-def create_installers(path = "S60v3"):
+def create_installers(path):
    t = os.listdir(path)
    [makesis(pkg, path) for pkg in t if ".pkg" in pkg]
+
+if __name__ == "__main__":
+   create_installers(path = "S60v3")

@@ -42,7 +42,7 @@ hrh_template = """
 
 #endif
 """
-macro_templatte = """#elif defined (SCUMMVM_PT_%s)
+macro_template = """#elif defined (SCUMMVM_PT_%s)
 #define ScummUid %s
 """
 
@@ -50,12 +50,12 @@ def Generate_ScummVm_hrh(build):
    uids = get_UIDs(build)
    defines = ""
    for i in range(len(uids)):
-      if i > 1:
-         defines += macro_templatte %(i, uids[i])
+      if i > 0:
+         defines += macro_template %(i+1, uids[i])
    data = hrh_template %(uids[0], defines)
    SafeWriteFile(os.path.join("src", "ScummVm.hrh"), data)
 
 if __name__ == "__main__":
-   Generate_ScummVm_hrh(build = "S60v3")
+   Generate_ScummVm_hrh(build = "full")
 
    

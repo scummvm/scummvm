@@ -40,6 +40,8 @@ CAPABILITY LocalServices ReadUserData
 
 // *** Static Libraries
 STATICLIBRARY	scummvm_base.lib
+STATICLIBRARY	scummvm_codecs.lib
+STATICLIBRARY	scummvm_lua.lib
 STATICLIBRARY	liba52.lib
 STATICLIBRARY	libFAAD2.lib
 STATICLIBRARY	libflacdec.lib
@@ -52,6 +54,7 @@ STATICLIBRARY	theora.lib
 STATICLIBRARY	libtremor.lib
 STATICLIBRARY	zlib.lib
 STATICLIBRARY	esdl.lib
+STATICLIBRARY	openlibm.lib
 
 // *** SOURCE files
 
@@ -95,3 +98,11 @@ LIBRARY  remconcoreapi.lib remconinterfacebase.lib apmime.lib drtaeabi.lib // li
 SOURCEPATH ..\..\sdl
 SOURCE sdl-window.cpp
 
+//These files compiled if particular engines or features enabled.
+//So we compile them with app build.
+SOURCEPATH  ..\..\..\..\video
+SOURCE coktel_decoder.cpp //GOB and SCI32 games
+
+SOURCEPATH  ..\..\..\..\graphics
+SOURCE sjis.cpp //KYRA, SCI, SCUMM, SAGA and AGOS
+SOURCE renderer.cpp //USE_TINYGL

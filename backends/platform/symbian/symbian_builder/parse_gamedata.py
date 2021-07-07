@@ -54,12 +54,11 @@ pkg_template = """;;;
 ;Supports Series 60 v 5.0
 [0x1028315F], 0, 0, 0, {"Series60ProductID"}
 ; Scummvm Documentation
-"..\..\..\..\COPYRIGHT"-"!:\\resource\\apps\\scummvm\\COPYRIGHT", FT, TC
-"..\..\..\..\COPYING"-"!:\\resource\\apps\\scummvm\\COPYING", FT, TC
-"..\README"-"!:\\resource\\apps\\scummvm\\SYMBIAN_README", FT, TC
-"..\..\..\..\AUTHORS"-"!:\\resource\\apps\scummvm\\AUTHORS"
-"..\..\..\..\README.md"-"!:\\resource\\apps\\scummvm\\README.md"
-"..\..\..\..\NEWS.md"-"!:\\resource\\apps\\scummvm\\NEWS.md"
+"..\..\..\..\COPYRIGHT"-"", FT, TC
+"..\..\..\..\COPYING"-"", FT, TC
+"..\..\..\..\COPYING.FREEFONT"   - "", FT, TC
+"..\README"-"", FT, TC
+"..\..\..\..\AUTHORS"-""
 
 ; Scummvm help
 "..\help\ScummVM.hlp"-"!:\\resource\help\ScummVM.hlp"

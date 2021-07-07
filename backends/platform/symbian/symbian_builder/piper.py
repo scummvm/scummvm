@@ -86,7 +86,7 @@ def build_mmp(try_fix = False):
 
    for fileName in fileNames:
       q.put(fileName)
-   print q.qsize()
+   print "Queve size: %s" %q.qsize()
    print "Thread count: %s" %mp.cpu_count()
    threads = [ threading.Thread(target=thread_func, args=(q, )) for i in range(mp.cpu_count()) ]
    for thread in threads:
