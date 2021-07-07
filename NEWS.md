@@ -106,6 +106,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Japanese Mac version of The Dig.
    - Added partial support for the high resolution fonts and cursor in the
      16-color Macintosh version of Indiana Jones and the Last Crusade.
+   - Fixed missing instruments in the m68k Mac versions of Monkey Island 2
+     and Indiana Jones and the Fate of Atlantis.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
