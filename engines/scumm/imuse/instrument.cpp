@@ -136,9 +136,9 @@ public:
 	void copy_to(Instrument *dest) override { dest->program(_program, _mt32); }
 	bool is_valid() override {
 		return (_program < 128) &&
-		       ((_native_mt32 == _mt32) || _native_mt32
+		       ((_native_mt32 == _mt32) || (_native_mt32
 		        ? (MidiDriver::_gmToMt32[_program] < 128)
-		        : (MidiDriver::_mt32ToGm[_program] < 128));
+		        : (MidiDriver::_mt32ToGm[_program] < 128)));
 	}
 };
 
