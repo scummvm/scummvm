@@ -326,7 +326,7 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	_firstVisibleItem = 0;
 	_itemsOnScreen = 0;
 
-	_selectedEntry = 0;
+	_selectedEntry = -1;
 }
 
 GridWidget::GridWidget(GuiObject *boss, const String &name)
@@ -349,7 +349,7 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_firstVisibleItem = 0;
 	_itemsOnScreen = 0;
 
-	_selectedEntry = 0;
+	_selectedEntry = -1;
 }
 
 GridWidget::~GridWidget() {
