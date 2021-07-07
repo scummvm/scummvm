@@ -387,18 +387,10 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		}
 		break;
 	case kStartCmd:
-	case kListItemActivatedCmd:
-	case kListItemDoubleClickedCmd:
 		// Start the selected game.
 		assert(item >= 0);
 		ConfMan.setActiveDomain(_domains[item]);
 		close();
-		break;
-	case kListItemRemovalRequestCmd:
-		removeGame(item);
-		break;
-	case kListSelectionChangedCmd:
-		updateButtons();
 		break;
 	case kQuitCmd:
 		ConfMan.setActiveDomain("");
@@ -969,6 +961,16 @@ void LauncherSimple::handleKeyDown(Common::KeyState state) {
 void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 	switch (cmd) {
+	case kListItemActivatedCmd:
+	case kListItemDoubleClickedCmd:
+		LauncherDialog::handleCommand(sender, kStartCmd, 0);
+		break;
+	case kListItemRemovalRequestCmd:
+		LauncherDialog::handleCommand(sender, kRemoveGameCmd, 0);
+		break;
+	case kListSelectionChangedCmd:
+		updateButtons();
+		break;
 	case kSearchCmd:
 		// Update the active search filter.
 		_list->setFilter(_searchWidget->getEditString());
