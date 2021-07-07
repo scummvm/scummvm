@@ -153,14 +153,31 @@ FXmpToken readFXmpToken(Common::SeekableReadStreamEndian &stream) {
 	}
 
 	// skip comment
+	bool foundComment = false;
 	if (ch == ';') {
+		foundComment = true;
+	} else if (ch == '-') {
+		ch = stream.readByte();
+		if (stream.eos()) {
+			res.type = FXMP_TOKEN_ERROR;
+			warning("readFXmpToken: Expected '-' but got EOF");
+			return res;
+		}
+		if (ch != '-') {
+			res.type = FXMP_TOKEN_ERROR;
+			warning("readFXmpToken: Expected '-' but got '%c'", ch);
+			return res;
+		}
+		foundComment = true;
+	}
+	if (foundComment) {
 		while (!stream.eos() && ch != '\r') {
 			ch = stream.readByte();
 		}
-	}
-	if (stream.eos()) {
-		res.type = FXMP_TOKEN_EOF;
-		return res;
+		if (stream.eos()) {
+			res.type = FXMP_TOKEN_EOF;
+			return res;
+		}
 	}
 
 	if (Common::isAlpha(ch)) {
