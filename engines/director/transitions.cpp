@@ -531,6 +531,11 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 
 		g_lingo->executePerFrameHook(t.frame, i);
 	}
+
+	// re-render the surface to clean the tracks when of transitions
+	render(true, _composeSurface);
+	_contentIsDirty = true;
+	g_director->draw();
 }
 
 static int getLog2(int n) {
