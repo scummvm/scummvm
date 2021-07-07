@@ -66,6 +66,15 @@ ActorAssignment::ActorAssignment(Actor *ac, void **buf) {
 	ac->flags |= hasAssignment;
 }
 
+ActorAssignment::ActorAssignment(Actor *ac, Common::SeekableReadStream *stream) {
+	startFrame = stream->readUint16LE();
+	endFrame = stream->readUint16LE();
+
+	_actor = ac;
+	ac->_assignment = this;
+	ac->flags |= hasAssignment;
+}
+
 //----------------------------------------------------------------------
 //	ActorAssignment destructor
 
@@ -219,6 +228,23 @@ PatrolRouteAssignment::PatrolRouteAssignment(Actor *a, void **buf) :
 	bufferPtr = (uint8 *)bufferPtr + 2;
 
 	*buf = bufferPtr;
+}
+
+PatrolRouteAssignment::PatrolRouteAssignment(Actor *a, Common::SeekableReadStream *stream) :
+	ActorAssignment(a, stream) {
+	debugC(4, kDebugSaveload, "... Loading PatrolRouteAssignment");
+
+	//  Restore route number
+	routeNo = stream->readSint16LE();
+	//  Restore the starting way point
+	startingWayPoint = stream->readSint16LE();
+	//  Restore the ending way point
+	endingWayPoint = stream->readSint16LE();
+
+	//  Restore the route flags
+	routeFlags = stream->readByte();
+	//  Restore the assignment flags
+	flags = stream->readByte();
 }
 
 //----------------------------------------------------------------------
@@ -377,6 +403,17 @@ HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, void **
 	*buf = (uint16 *)bufferPtr + 1;
 }
 
+HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, Common::SeekableReadStream *stream) :
+	ActorAssignment(a, stream) {
+	debugC(4, kDebugSaveload, "... Loading HuntToBeNearLocationAssignment");
+
+	//  Restore the target
+	readTarget(targetMem, stream);
+
+	//  Restore the range
+	range = stream->readUint16LE();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes need to archive the data in this
 //	assignment
@@ -489,6 +526,19 @@ HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(Actor *a, void **buf) :
 	bufferPtr = (uint8 *)bufferPtr + 1;
 
 	*buf = bufferPtr;
+}
+
+HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(Actor *a, Common::SeekableReadStream *stream) :
+	ActorAssignment(a, stream) {
+	debugC(4, kDebugSaveload, "... Loading HuntToBeNearActorAssignment");
+
+	readTarget(targetMem, stream);
+
+	//  Restore the range
+	range = stream->readUint16LE();
+
+	//  Restore the flags
+	flags = stream->readByte();
 }
 
 //----------------------------------------------------------------------
@@ -708,6 +758,16 @@ TetheredAssignment::TetheredAssignment(Actor *ac, void **buf) : ActorAssignment(
 	*buf = a;
 }
 
+TetheredAssignment::TetheredAssignment(Actor *ac, Common::SeekableReadStream *stream) : ActorAssignment(ac, stream) {
+	debugC(4, kDebugSaveload, "... Loading TetheredAssignment");
+
+	//  Read data from buffer
+	minU = stream->readSint16LE();
+	minV = stream->readSint16LE();
+	maxU = stream->readSint16LE();
+	maxV = stream->readSint16LE();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes need to archive the data in this
 //	assignment
@@ -796,6 +856,18 @@ AttendAssignment::AttendAssignment(Actor *a, void **buf) : ActorAssignment(a, bu
 	*buf = bufferPtr;
 }
 
+AttendAssignment::AttendAssignment(Actor *a, Common::SeekableReadStream *stream) : ActorAssignment(a, stream) {
+	debugC(4, kDebugSaveload, "... Loading AttendAssignment");
+
+	ObjectID    objID;
+
+	//  Get the object ID
+	objID = stream->readUint16LE();
+
+	//  Convert the object ID to an object pointer
+	obj = objID != Nothing ? GameObject::objectAddress(objID) : NULL;
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes need to archive the data in this
 //	assignment
@@ -876,6 +948,34 @@ void *constructAssignment(Actor *a, void *buf) {
 	}
 
 	return buf;
+}
+
+void readAssignment(Actor *a, Common::InSaveFile *in) {
+	//  Get the type which is the first word in the archive buffer
+	int16 type = in->readSint16LE();
+
+	//  Based upon the type, call the correct constructor
+	switch (type) {
+	case patrolRouteAssignment:
+		new PatrolRouteAssignment(a, in);
+		break;
+
+	case huntToBeNearActorAssignment:
+		new HuntToBeNearActorAssignment(a, in);
+		break;
+
+	case huntToBeNearLocationAssignment:
+		new HuntToBeNearLocationAssignment(a, in);
+		break;
+
+	case tetheredWanderAssignment:
+		new TetheredWanderAssignment(a, in);
+		break;
+
+	case attendAssignment:
+		new AttendAssignment(a, in);
+		break;
+	}
 }
 
 //----------------------------------------------------------------------

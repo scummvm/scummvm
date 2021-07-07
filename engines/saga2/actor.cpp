@@ -1337,13 +1337,11 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 		scriptVar[i] = in->readSint16LE();
 
 	warning("STUB: Actor::Actor(Common::InSaveFile *): unfinished");
-#if 0
 	if (flags & hasAssignment) {
-		bufferPtr = constructAssignment(this, bufferPtr);
+		readAssignment(this, in);
 	} else {
 		_assignment = nullptr;
 	}
-#endif
 
 	appearance = nullptr;
 	moveTask = nullptr;

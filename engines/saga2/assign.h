@@ -67,6 +67,8 @@ public:
 	//  Constructor -- reconstruct from archive buffer
 	ActorAssignment(Actor *a, void **buf);
 
+	ActorAssignment(Actor *a, Common::SeekableReadStream *stream);
+
 	//  Destructor
 	virtual ~ActorAssignment(void);
 
@@ -135,6 +137,8 @@ public:
 
 	//  Constructor -- constructs from archive buffer
 	PatrolRouteAssignment(Actor *a, void **buf);
+
+	PatrolRouteAssignment(Actor *a, Common::SeekableReadStream *stream);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
@@ -206,6 +210,8 @@ public:
 
 	//  Constructor -- constructs from archive buffer
 	HuntToBeNearLocationAssignment(Actor *a, void **buf);
+
+	HuntToBeNearLocationAssignment(Actor *a, Common::SeekableReadStream *stream);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
@@ -288,6 +294,8 @@ public:
 
 	//  Constructor -- reconstructs from archive buffer
 	HuntToBeNearActorAssignment(Actor *a, void **buf);
+
+	HuntToBeNearActorAssignment(Actor *a, Common::SeekableReadStream *stream);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
@@ -413,6 +421,8 @@ public:
 
 	TetheredAssignment(Actor *a, void **buf);
 
+	TetheredAssignment(Actor *a, Common::SeekableReadStream *stream);
+
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
 	int32 archiveSize(void) const;
@@ -433,6 +443,8 @@ public:
 
 	//  Constructor -- constructs from archive buffer
 	TetheredWanderAssignment(Actor *a, void **buf) : TetheredAssignment(a, buf) {}
+
+	TetheredWanderAssignment(Actor *a, Common::SeekableReadStream *stream) : TetheredAssignment(a, stream) {}
 
 	//  Return an integer representing the type of this assignment
 	int16 type(void) const;
@@ -455,6 +467,8 @@ public:
 
 	//  Constructor -- constructs from archive buffer
 	AttendAssignment(Actor *a, void **buf);
+
+	AttendAssignment(Actor *a, Common::SeekableReadStream *stream);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
@@ -487,6 +501,7 @@ int32 assignmentArchiveSize(Actor *a);
 void *archiveAssignment(Actor *a, void *buf);
 
 void writeAssignment(Actor *a, Common::OutSaveFile *out);
+void readAssignment(Actor *a, Common::InSaveFile *in);
 
 }
 

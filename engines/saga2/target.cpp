@@ -89,6 +89,48 @@ void *constructTarget(void *mem, void *buf) {
 	return buf;
 }
 
+void readTarget(void *mem, Common::InSaveFile *in) {
+	int16 type = in->readSint16LE();
+
+	switch (type) {
+	case locationTarget:
+		new (mem) LocationTarget(in);
+		break;
+
+	case specificTileTarget:
+		new (mem) SpecificTileTarget(in);
+		break;
+
+	case tilePropertyTarget:
+		new (mem) TilePropertyTarget(in);
+		break;
+
+	case specificMetaTileTarget:
+		new (mem) SpecificMetaTileTarget(in);
+		break;
+
+	case metaTilePropertyTarget:
+		new (mem) MetaTilePropertyTarget(in);
+		break;
+
+	case specificObjectTarget:
+		new (mem)  SpecificObjectTarget(in);
+		break;
+
+	case objectPropertyTarget:
+		new (mem)  ObjectPropertyTarget(in);
+		break;
+
+	case specificActorTarget:
+		new (mem) SpecificActorTarget(in);
+		break;
+
+	case actorPropertyTarget:
+		new (mem) ActorPropertyTarget(in);
+		break;
+	}
+}
+
 int32 targetArchiveSize(const Target *t) {
 	return sizeof(int16) + t->archiveSize();
 }
@@ -167,6 +209,13 @@ LocationTarget::LocationTarget(void **buf) {
 	loc = *bufferPtr;
 
 	*buf = &bufferPtr[1];
+}
+
+LocationTarget::LocationTarget(Common::SeekableReadStream *stream) {
+	debugC(5, kDebugSaveload, "...... LocationTarget");
+
+	//  Restore the targe location
+	loc.load(stream);
 }
 
 //----------------------------------------------------------------------
@@ -363,6 +412,13 @@ SpecificTileTarget::SpecificTileTarget(void **buf) {
 	*buf = bufferPtr;
 }
 
+SpecificTileTarget::SpecificTileTarget(Common::SeekableReadStream *stream) {
+	debugC(5, kDebugSaveload, "...... SpecificTileTarget");
+
+	//  Restore the tile ID
+	tile = stream->readUint16LE();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -431,6 +487,13 @@ TilePropertyTarget::TilePropertyTarget(void **buf) {
 	tileProp = *bufferPtr;
 
 	*buf = &bufferPtr[1];
+}
+
+TilePropertyTarget::TilePropertyTarget(Common::SeekableReadStream *stream) {
+	debugC(5, kDebugSaveload, "...... TilePropertyTarget");
+
+	//  Restore the TilePropertyID
+	tileProp = stream->readSint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -612,6 +675,14 @@ SpecificMetaTileTarget::SpecificMetaTileTarget(void **buf) {
 	*buf = &bufferPtr[1];
 }
 
+SpecificMetaTileTarget::SpecificMetaTileTarget(Common::SeekableReadStream *stream) {
+	debugC(5, kDebugSaveload, "...... SpecificMetaTileTarget");
+
+	//  Restore the MetaTileID
+	meta.map = stream->readSint16LE();
+	meta.index = stream->readSint16LE();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -686,6 +757,13 @@ MetaTilePropertyTarget::MetaTilePropertyTarget(void **buf) {
 	metaProp = *bufferPtr;
 
 	*buf = &bufferPtr[1];
+}
+
+MetaTilePropertyTarget::MetaTilePropertyTarget(Common::SeekableReadStream *stream) {
+	debugC(5, kDebugSaveload, "...... MetaTilePropertyTarget");
+
+	//  Restore the MetaTilePropertyID
+	metaProp = stream->readSint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -973,6 +1051,13 @@ SpecificObjectTarget::SpecificObjectTarget(void **buf) {
 	*buf = &bufferPtr[1];
 }
 
+SpecificObjectTarget::SpecificObjectTarget(Common::SeekableReadStream *stream) {
+	debugC(5, kDebugSaveload, "...... SpecificObjectTarget");
+
+	//  Restore the ObjectID
+	obj = stream->readUint16LE();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -1134,6 +1219,13 @@ ObjectPropertyTarget::ObjectPropertyTarget(void **buf) {
 	*buf = &bufferPtr[1];
 }
 
+ObjectPropertyTarget::ObjectPropertyTarget(Common::SeekableReadStream *stream) {
+	debugC(5, kDebugSaveload, "...... ObjectPropertyTarget");
+
+	//  Restore the ObjectPropertyID
+	objProp = stream->readSint16LE();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -1240,6 +1332,20 @@ SpecificActorTarget::SpecificActorTarget(void **buf) {
 	    :   NULL;
 
 	*buf = bufferPtr + 1;
+}
+
+SpecificActorTarget::SpecificActorTarget(Common::SeekableReadStream *stream) {
+	debugC(5, kDebugSaveload, "...... SpecificActorTarget");
+
+	ObjectID actorID;
+
+	//  Get the actor's ID
+	actorID = stream->readUint16LE();
+
+	//  Convert the actor ID into an Actor pointer
+	a = actorID != Nothing
+	    ? (Actor *)GameObject::objectAddress(actorID)
+	    :   NULL;
 }
 
 //----------------------------------------------------------------------
@@ -1434,6 +1540,13 @@ ActorPropertyTarget::ActorPropertyTarget(void **buf) {
 	actorProp = *bufferPtr;
 
 	*buf = &bufferPtr[1];
+}
+
+ActorPropertyTarget::ActorPropertyTarget(Common::SeekableReadStream *stream) {
+	debugC(5, kDebugSaveload, "...... ActorPropertyTarget");
+
+	//  Restore the ActorPropertyID
+	actorProp = stream->readSint16LE();
 }
 
 //----------------------------------------------------------------------
