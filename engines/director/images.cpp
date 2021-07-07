@@ -182,7 +182,8 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	Common::Array<int> pixels;
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
-	if ((stream.size() == _pitch * _surface->h * _bitsPerPixel / 8) || (g_director->getVersion() == 200 && stream.size() >= _surface->h * _surface->w * (_bitsPerPixel / 8))) {
+	// logic above does not fit the situation when _bitsPerPixel == 1, need to fix.
+	if ((stream.size() == _pitch * _surface->h * _bitsPerPixel / 8) || (_bitsPerPixel != 1 && g_director->getVersion() == 200 && stream.size() >= _surface->h * _surface->w * _bitsPerPixel / 8)) {
 		debugC(6, kDebugImages, "Skipping compression");
 		for (int i = 0; i < stream.size(); i++) {
 			pixels.push_back((int)stream.readByte());
