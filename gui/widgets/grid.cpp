@@ -155,6 +155,7 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isHighlighted && isVisible()) {
 		_grid->_selectedEntry = _activeEntry->entryID;
+		sendCommand(kItemClicked, 0);
 		// Work in progress
 		// Since user expected to click on "entry" and not the "widget", we
 		// must open the tray where the user expects it to be, which might
@@ -310,7 +311,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 #pragma mark -
 
 GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
-	: ContainerWidget(boss, x, y, w, h) {
+	: ContainerWidget(boss, x, y, w, h), CommandSender(boss) {
 	
 	loadPlatformIcons();
 	loadFlagIcons();
@@ -333,7 +334,7 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 }
 
 GridWidget::GridWidget(GuiObject *boss, const String &name)
-	: ContainerWidget(boss, name) {
+	: ContainerWidget(boss, name), CommandSender(boss) {
 	
 	loadPlatformIcons();
 	loadFlagIcons();
@@ -579,6 +580,7 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 		}
 		break;
 	default:
+		sendCommand(cmd, 0);
 		break;
 	}
 }
@@ -652,7 +654,7 @@ void GridWidget::reflowLayout() {
 }
 
 void GridWidget::openTray(int x, int y, int entryId) {
-	_tray = new GridItemTray(_boss, x  - _gridXSpacing / 3, y, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, entryId, this);
+	_tray = new GridItemTray(this, x  - _gridXSpacing / 3, y, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, entryId, this);
 }
 
 void GridWidget::scrollBarRecalc() {
