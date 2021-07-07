@@ -453,7 +453,7 @@ void Cast::loadCast() {
 		delete r;
 
 		// Try to load movie script, it starts with a comment
-		if (_version <= kFileVer300) {
+		if (_version < kFileVer400) {
 			if (debugChannelSet(-1, kDebugFewFramesOnly))
 				warning("Compiling STXT %d", *iterator);
 
