@@ -260,27 +260,37 @@ bool Cast::loadConfig() {
 	// uint16 stageColorG = stream.readUint16();
 	// uint16 stageColorB = stream.readUint16();
 
+	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, fileVersion: %d, framerate: %d, light: %d, unk: %d, font: %d, size: %d"
+			", style: %d", len, fileVersion, currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
+	debugC(1, kDebugLoading, "Cast::loadConfig(): stagecolor: %d, depth: %d",
+			_stageColor, bitdepth);
+	if (debugChannelSet(1, kDebugLoading))
+		_movieRect.debugPrint(1, "Cast::loadConfig(): Movie rect: ");
+
 	_version = fileVersion;
-	if (_version >= kFileVer300) {
+
+	// D3 fields - Macromedia did not increment the fileVersion from D2 to D3
+	// so we just have to check if there are more bytes to read.
+	if (stream->pos() < stream->size()) {
 		for (int i = 0; i < 0x06; i++) {
 			stream->readByte();
 		}
-
 		_version = stream->readUint16();
-
 		for (int i = 0; i < 0x0a; i++) {
 			stream->readByte();
 		}
+		debugC(1, kDebugLoading, "Cast::loadConfig(): directorVersion: %d", _version);
+	}
 
-		if (_version >= kFileVer400) {
-			for (int i = 0; i < 0x16; i++)
-				stream->readByte();
-
-			_defaultPalette = (int16)stream->readUint16();
-
-			for (int i = 0; i < 0x08; i++)
-				stream->readByte();
+	if (_version >= kFileVer400) {
+		for (int i = 0; i < 0x16; i++) {
+			stream->readByte();
 		}
+		_defaultPalette = (int16)stream->readUint16();
+		for (int i = 0; i < 0x08; i++) {
+			stream->readByte();
+		}
+		debugC(1, kDebugLoading, "Cast::loadConfig(): defaultPalette: %d", _defaultPalette);
 	}
 
 	uint16 humanVer = humanVersion(_version);
@@ -289,13 +299,6 @@ bool Cast::loadConfig() {
 			warning("Movie is from later version v%d", humanVer);
 		_vm->setVersion(humanVer);
 	}
-
-	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, ver: %d, framerate: %d, light: %d, unk: %d, font: %d, size: %d"
-			", style: %d", len, fileVersion, currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
-	debugC(1, kDebugLoading, "Cast::loadConfig(): stagecolor: %d, depth: %d, directorVer: %d",
-			_stageColor, bitdepth, _version);
-	if (debugChannelSet(1, kDebugLoading))
-		_movieRect.debugPrint(1, "Cast::loadConfig(): Movie rect: ");
 
 	delete stream;
 	return true;
