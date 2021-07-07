@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-07 17:21+0000\n"
-"PO-Revision-Date: 2021-07-03 15:25+0000\n"
+"PO-Revision-Date: 2021-07-07 23:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -5220,6 +5220,8 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"Ввімкнути або вимкнути переходи між екранами. Вимикання переходів дозволить "
+"вам швидше пересуватися у грі."
 
 #: engines/mohawk/dialogs.cpp:121
 msgid "Play the Myst fly by movie"
@@ -5802,6 +5804,8 @@ msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
+"Знайдено заархівовану гру. Будь-ласка, розархівуйте її як вказано в описі "
+"гри на Wiki"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -6854,17 +6858,12 @@ msgstr ""
 "до 320x200, на вкладці \"двигун\"."
 
 #: engines/scumm/scumm.cpp:1335
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable. Music and high-"
-#| "resolution\n"
-#| "versions of font and cursor will be disabled."
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
-"Не вдалося знайти файл програми 'Loom' Macintosh. Музику та шрифти\n"
-"високої роздільності буде вимкнено."
+"Не вдалося знайти файл програми 'Indy' Macintosh. Шрифти високої\n"
+"роздільності буде вимкнено."
 
 #: engines/scumm/scumm.cpp:1361
 msgid ""
@@ -7623,16 +7622,12 @@ msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr "Ця гра потрубує движка HeroCraft, який відсутній у збірці."
 
 #: engines/wintermute/wintermute.cpp:182
-#, fuzzy
-#| msgid ""
-#| "This game requires 3D capabilities that are out ScummVM scope. As such, "
-#| "it is likely to be unplayable totally or partially."
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
-"Ця гра потребує підтримки 3D, яка виходить за рамки ScummVM. Тому ця гра "
-"скорше за все не працює частково або повністю."
+"Ця гра потребує підтримки 3D, яку не було скомпільовано. Тому ця гра скорше "
+"за все не працює частково або повністю."
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
@@ -7758,10 +7753,8 @@ msgstr "Кнопка телефону Вниз"
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:361
-#, fuzzy
-#| msgid "Alternative intro"
 msgid "Alternative action"
-msgstr "Альтернативний вступ"
+msgstr "Альтернативна дія"
 
 #: engines/wintermute/keymapper_tables.h:432
 #: engines/wintermute/keymapper_tables.h:565
@@ -8082,25 +8075,19 @@ msgid "Cancel input"
 msgstr "Відміна вводу"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle subtitles"
-msgstr "Перемкнути звук"
+msgstr "Перемкнути субтитри"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1388
-#, fuzzy
-#| msgid "Shift"
 msgid "Shift key"
-msgstr "Shift"
+msgstr "Кнопка Shift"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1490
-#, fuzzy
-#| msgid "Previous action"
 msgid "Chapayev's action"
-msgstr "Попередня дія"
+msgstr "Дія Чапаєва"
 
 #: engines/wintermute/keymapper_tables.h:1538
 #: engines/wintermute/keymapper_tables.h:1791
@@ -8126,17 +8113,13 @@ msgstr "Діалог відповідь 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1569
-#, fuzzy
-#| msgid "Spin slower"
 msgid "Spin wheel slower"
-msgstr "Крутитися повільніше"
+msgstr "Крутити колесо повільніше"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1577
-#, fuzzy
-#| msgid "Spin faster"
 msgid "Spin wheel faster"
-msgstr "Крутитися швидше"
+msgstr "Крутити колесо швидше"
 
 #: engines/wintermute/keymapper_tables.h:1655
 msgid "Zoom out"
