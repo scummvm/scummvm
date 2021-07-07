@@ -1409,6 +1409,7 @@ ContainerNode::ContainerNode(ContainerList &cl, ObjectID id, int typ) {
 	object      = id;
 	owner       = ownerID;
 	action      = 0;
+	mindType    = 0;
 
 	//  Add to container list.
 	cl.add(this);
