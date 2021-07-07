@@ -279,6 +279,11 @@ void LauncherDialog::close() {
 }
 
 void LauncherDialog::reflowLayout() {
+	if (getType() == kLauncherDisplayGrid && !g_gui.xmlEval()->getVar("Globals.GridSupported", 0)) {
+		setResult(kSwitchLauncherDialog);
+		close();
+		return;
+	}
 	#ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget(String(_title + ".Version").c_str());
@@ -419,12 +424,17 @@ void LauncherDialog::addChooserButtons() {
 	if (_listButton) {
 		removeWidget(_listButton);
 		delete _listButton;
+		_listButton = nullptr;
 	}
 
 	if (_gridButton) {
 		removeWidget(_gridButton);
 		delete _gridButton;
+		_gridButton = nullptr;
 	}
+
+	if (!g_gui.xmlEval()->getVar("Globals.GridSupported", 0))
+		return;
 
 	_listButton = createSwitchButton(_title + ".ListSwitch", Common::U32String("L"), _("List view"), ThemeEngine::kImageList, kListSwitchCmd);
 	_gridButton = createSwitchButton(_title + ".GridSwitch", Common::U32String("G"), _("Grid view"), ThemeEngine::kImageGrid, kGridSwitchCmd);
