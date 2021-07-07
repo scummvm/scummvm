@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-07 17:21+0000\n"
 "PO-Revision-Date: 2021-07-07 23:33+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: lolbot-iichan <lolbot_iichan@mail.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -8121,17 +8121,13 @@ msgstr "Ответ диалога 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1569
-#, fuzzy
-#| msgid "Spin slower"
 msgid "Spin wheel slower"
-msgstr "Крутиться медленнее"
+msgstr "Вращать барабан медленнее"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1577
-#, fuzzy
-#| msgid "Spin faster"
 msgid "Spin wheel faster"
-msgstr "Крутиться быстрее"
+msgstr "Вращать барабан быстрее"
 
 #: engines/wintermute/keymapper_tables.h:1655
 msgid "Zoom out"
