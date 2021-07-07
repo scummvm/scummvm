@@ -560,7 +560,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			e.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 
 			{
-				int32 *c;
+				int16 *c;
 				int s;
 
 				if (arg2 == AKEYCODE_DPAD_UP || arg2 == AKEYCODE_DPAD_DOWN) {
