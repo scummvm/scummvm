@@ -99,7 +99,10 @@ int Score::getCurrentPalette() {
 
 int Score::resolvePaletteId(int id) {
 	// TODO: Palette ID should be a CastMemberID to allow for palettes in different casts
-	if (id > 0) {
+	// 255 represent system palette in D2
+	if (id == 255) {
+		id = g_director->getCurrentMovie()->getCast()->_defaultPalette;
+	} else if (id > 0) {
 		CastMember *member = _movie->getCastMember(CastMemberID(id, 0));
 		id = (member && member->_type == kCastPalette) ? ((PaletteCastMember *)member)->getPaletteId() : 0;
 	}
@@ -452,8 +455,6 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 
 	int currentPalette = _frames[frameId]->_palette.paletteId;
 	if (!_puppetPalette && currentPalette != _lastPalette) {
-		if (currentPalette == 0)
-			currentPalette = g_director->getCurrentMovie()->getCast()->_defaultPalette;
 		_lastPalette = currentPalette;
 		g_director->setPalette(resolvePaletteId(currentPalette));
 	}
