@@ -454,9 +454,6 @@ bool EventRecorder::notifyEvent(const Common::Event &ev) {
 	evt.mouse.y = evt.mouse.y * (g_system->getOverlayHeight() / g_system->getHeight());
 	switch (_recordMode) {
 	case kRecorderPlayback:
-		if (!ev.kbdRepeat) {
-			return true;
-		}
 		return false;
 	case kRecorderRecord:
 		g_gui.processEvent(evt, _controlPanel);
