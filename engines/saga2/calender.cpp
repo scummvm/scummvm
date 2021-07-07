@@ -237,7 +237,7 @@ void saveCalender(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving calender");
 
 	out->write("CALE", 4);
-	out->writeUint32LE(sizeof(calenderPaused + sizeof(calender)));
+	out->writeUint32LE(sizeof(calenderPaused) + sizeof(calender));
 
 	out->writeByte(calenderPaused);
 	out->writeUint16LE(calender.years);
