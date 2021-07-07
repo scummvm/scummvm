@@ -76,8 +76,6 @@ public:
 
 	void setCast(CastMemberID memberID, bool forceDims = false);
 	bool isQDShape();
-	Graphics::Surface *getQDMatte();
-	void createQDMatte();
 
 	Frame *_frame;
 	Score *_score;
@@ -97,8 +95,6 @@ public:
 	CastMemberID _castId;
 	uint16 _pattern;
 	CastMember *_cast;
-
-	Graphics::FloodFill *_matte; // matte for quickdraw shape
 
 	byte _thickness;
 	Common::Point _startPoint;
