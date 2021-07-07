@@ -144,6 +144,12 @@ struct TilePoint {
 		z = p.z;
 	}
 
+	void load(Common::SeekableReadStream *stream) {
+		u = stream->readSint16LE();
+		v = stream->readSint16LE();
+		z = stream->readSint16LE();
+	}
+
 	void write(Common::OutSaveFile *out) {
 		out->writeSint16LE(u);
 		out->writeSint16LE(v);

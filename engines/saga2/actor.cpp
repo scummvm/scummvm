@@ -1266,6 +1266,90 @@ Actor::Actor(void **buf) : GameObject(buf) {
 	*buf = bufferPtr;
 }
 
+Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
+	//  Fixup the prototype pointer to point to an actor prototype
+	prototype   =   prototype != nullptr
+	                ? (ProtoObj *)&actorProtos[prototype - objectProtos]
+	                :   nullptr;
+
+	faction = in->readByte();
+	colorScheme = in->readByte();
+	appearanceID = in->readSint32LE();
+	attitude = in->readSByte();
+	mood = in->readSByte();
+
+	disposition = in->readByte();
+	currentFacing = in->readByte();
+	tetherLocU = in->readSint16LE();
+	tetherLocV = in->readSint16LE();
+	tetherDist = in->readSint16LE();
+	leftHandObject = in->readUint16LE();
+	rightHandObject = in->readUint16LE();
+
+	for (int i = 0; i < ARRAYSIZE(knowledge); ++i)
+		knowledge[i] = in->readUint16LE();
+
+	schedule = in->readUint16LE();
+
+	for (int i = 0; i < ARRAYSIZE(conversationMemory); ++i)
+		conversationMemory[i] = in->readByte();
+
+	currentAnimation = in->readByte();
+	currentPose = in->readByte();
+	animationFlags = in->readByte();
+
+	flags = in->readByte();
+	poseInfo.load(in);
+	cycleCount = in->readSint16LE();
+	kludgeCount = in->readSint16LE();
+	enchantmentFlags = in->readUint32LE();
+	currentGoal = in->readByte();
+	deactivationCounter = in->readByte();
+	effectiveStats.load(in);
+	actionCounter = in->readByte();
+	effectiveResistance = in->readUint16LE();
+	effectiveImmunity = in->readUint16LE();
+	recPointsPerUpdate = in->readSint16LE();
+	currentRecoveryPoints = in->readUint16LE();
+
+	int leaderID = in->readUint16LE();
+
+	leader = leaderID != Nothing
+	         ? (Actor *)GameObject::objectAddress(leaderID)
+	         :   nullptr;
+
+	int followersID = in->readSint16LE();
+
+	followers = followersID != NoBand
+	            ?   getBandAddress(followersID)
+	            :   nullptr;
+
+	for (int i = 0; i < ARRAYSIZE(armorObjects); ++i)
+		armorObjects[i] = in->readUint16LE();
+
+	int currentTargetID = in->readUint16LE();
+
+	currentTarget = currentTargetID != Nothing
+	                ?   GameObject::objectAddress(currentTargetID)
+	                :   nullptr;
+
+	for (int i = 0; i < ARRAYSIZE(scriptVar); ++i)
+		scriptVar[i] = in->readSint16LE();
+
+	warning("STUB: Actor::Actor(Common::InSaveFile *): unfinished");
+#if 0
+	if (flags & hasAssignment) {
+		bufferPtr = constructAssignment(this, bufferPtr);
+	} else {
+		_assignment = nullptr;
+	}
+#endif
+
+	appearance = nullptr;
+	moveTask = nullptr;
+	curTask = nullptr;
+}
+
 //-----------------------------------------------------------------------
 //	Destructor
 
@@ -1362,6 +1446,7 @@ void Actor::write(Common::OutSaveFile *out) {
 
 	debugC(3, kDebugSaveload, "Saving actor %d", thisID());
 
+	warning("STUB: Actor::write: Pointer arithmetic");
 	//  Modify the protoype temporarily so the GameObject::archive()
 	//  will store the index correctly
 	if (prototype != NULL)
@@ -1407,14 +1492,24 @@ void Actor::write(Common::OutSaveFile *out) {
 	out->writeUint16LE(effectiveImmunity);
 	out->writeSint16LE(recPointsPerUpdate);
 	out->writeUint16LE(currentRecoveryPoints);
-	out->writeUint16LE(leader != NULL ? leader->thisID() : Nothing);
-	out->writeSint16LE(followers != NULL ? getBandID(followers) : NoBand);
+
+	int leaderID = (leader != NULL) ? leader->thisID() : Nothing;
+
+	out->writeUint16LE(leaderID);
+
+	int followersID = (followers != NULL) ? getBandID(followers) : NoBand;
+
+	out->writeSint16LE(followersID);
 	out->write(armorObjects, ARMOR_COUNT * 2);
-	out->writeUint16LE(currentTarget != NULL ? currentTarget->thisID() : Nothing);
+
+	int currentTargetID = currentTarget != NULL ? currentTarget->thisID() : Nothing;
+
+	out->writeUint16LE(currentTargetID);
 	out->write(scriptVar, sizeof(scriptVar));
 
 	if (flags & hasAssignment)
 		writeAssignment(this, out);
+	
 	debugC(4, kDebugSaveload, "... faction = %d", faction);
 	debugC(4, kDebugSaveload, "... colorScheme = %d", colorScheme);
 	debugC(4, kDebugSaveload, "... appearanceID = %d", appearanceID);
@@ -3614,6 +3709,8 @@ void saveActors(Common::OutSaveFile *out) {
 	out->writeUint32LE(archiveBufSize);
 	out->writeSint16LE(actorCount);
 
+	debugC(3, kDebugSaveload, "... actorCount = %d", actorCount);
+
 	for (int i = 0; i < actorCount; ++i)
 		actorList[i].write(out);
 }
@@ -3654,6 +3751,26 @@ void loadActors(SaveFileReader &saveGame) {
 
 	//  Deallocate the archive buffer
 	free(archiveBuffer);
+}
+
+void loadActors(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading actors");
+
+	//  Read in the actor count
+	actorCount = in->readSint16LE();
+
+	debugC(3, kDebugSaveload, "... actorCount = %d", actorCount);
+
+	//  Allocate the actor array
+	actorListSize = actorCount * sizeof(Actor);
+	actorList = new Actor[actorCount]();
+	if (actorList == NULL)
+		error("Unable to load Actors");
+
+	for (int i = 0; i < actorCount; i++)
+		//  Initilize actors with archive data
+		new (&actorList[i]) Actor(in);
+
 }
 
 //-------------------------------------------------------------------

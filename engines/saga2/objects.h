@@ -188,6 +188,8 @@ public:
 	//  Constructor -- reconstruct from archive buffer
 	GameObject(void **buf);
 
+	GameObject(Common::InSaveFile *in);
+
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void);

@@ -266,6 +266,32 @@ GameObject::GameObject(void **buf) {
 	*buf = &a[1];
 }
 
+GameObject::GameObject(Common::InSaveFile *in) {
+	int16 pInd = in->readSint16LE();
+	//  Convert the protoype index into an object proto pointer
+	prototype = pInd != -1
+	            ?   &objectProtos[pInd]
+	            :   nullptr;
+
+	_data.projectDummy = 0;
+	_data.location.load(in);
+	_data.nameIndex = in->readUint16LE();
+	_data.parentID = in->readUint16LE();
+	_data.siblingID = in->readUint16LE();
+	_data.childID = in->readUint16LE();
+	_data.script = in->readUint16LE();
+	_data.objectFlags = in->readUint16LE();
+	_data.hitPoints = in->readByte();
+	_data.bParam = in->readByte();
+	_data.massCount = in->readUint16LE();
+	_data.missileFacing = in->readByte();
+	_data.currentTAG.val = in->readSint16LE();
+	_data.sightCtr = in->readByte();
+	memset(&_data.reserved, 0, sizeof(_data.reserved));
+
+	_data.obj = this;
+}
+
 //-----------------------------------------------------------------------
 //	Return the number of bytes need to archive this object in an archive
 //	buffer.
@@ -303,6 +329,7 @@ void *GameObject::archive(void *buf) {
 void GameObject::write(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving object %d", thisID());
 
+	warning("STUB: GameObject::write: Pointer arithmetic");
 	int16 pInd = prototype != nullptr ? prototype - objectProtos : -1;
 	out->writeSint16LE(pInd);
 	_data.location.write(out);
@@ -332,7 +359,7 @@ void GameObject::write(Common::OutSaveFile *out) {
 	debugC(4, kDebugSaveload, "... _data.bParam = %d", _data.bParam);
 	debugC(4, kDebugSaveload, "... _data.massCount = %d", _data.massCount);
 	debugC(4, kDebugSaveload, "... _data.missileFacing = %d", _data.missileFacing);
-	debugC(4, kDebugSaveload, "... _data.currentTAG = %d", _data.currentTAG);
+	debugC(4, kDebugSaveload, "... _data.currentTAG.val = %d", _data.currentTAG.val);
 	debugC(4, kDebugSaveload, "... _data.sightCtr = %d", _data.sightCtr);
 }
 

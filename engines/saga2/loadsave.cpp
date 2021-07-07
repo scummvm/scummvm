@@ -256,12 +256,12 @@ void loadSavedGameState(int16 saveNo) {
 			loadWorlds(in);
 			loadFlags |= loadWorldsFlag;
 			break;
-#if 0
 
 		case MKTAG('A', 'C', 'T', 'R'):
-			loadActors(saveGame);
+			loadActors(in);
 			loadFlags |= loadActorsFlag;
 			break;
+#if 0
 
 		case MKTAG('O', 'B', 'J', 'S'):
 			loadObjects(saveGame);
