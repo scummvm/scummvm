@@ -737,4 +737,17 @@ uint16 humanVersion(uint16 ver) {
 	return 200;
 }
 
+Common::Platform platformFromID(uint16 id) {
+	switch (id) {
+	case 1:
+		return Common::kPlatformMacintosh;
+	case 2:
+		return Common::kPlatformWindows;
+	default:
+		warning("platformFromID: Unknown platform ID %d", id);
+		break;
+	}
+	return Common::kPlatformUnknown;
+}
+
 } // End of namespace Director

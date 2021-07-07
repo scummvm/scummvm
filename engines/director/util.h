@@ -82,6 +82,8 @@ Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &strea
 
 uint16 humanVersion(uint16 ver);
 
+Common::Platform platformFromID(uint16 id);
+
 } // End of namespace Director
 
 #endif

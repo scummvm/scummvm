@@ -27,6 +27,7 @@
 
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -89,26 +90,12 @@ void Cast::loadFontMapV4(Common::SeekableReadStreamEndian &stream) {
 		Common::String name = stream.readString(0, nameLength);
 		stream.seek(returnPos);
 
-		uint16 platform = stream.readUint16();
+		Common::Platform platform = platformFromID(stream.readUint16());
 		uint16 id = stream.readUint16();
-
-		Common::String platformName;
-		switch (platform) {
-		case 1:
-			platformName = "Mac";
-			break;
-		case 2:
-			platformName = "Win";
-			break;
-		default:
-			warning("Cast::loadFontMap: Unknown platform ID %d", platform);
-			platformName = "UNK";
-			break;
-		}
 
 		// Map cast font ID to window manager font ID
 		FontInfo *info = new FontInfo;
-		if (platform == 2 && _fontXPlatformMap.contains(name)) {
+		if (platform == Common::kPlatformWindows && _fontXPlatformMap.contains(name)) {
 			FontXPlatformInfo *xinfo = _fontXPlatformMap[name];
 			info->toFont = _vm->_wm->_fontMan->registerFontName(xinfo->toFont);
 			info->remapChars = xinfo->remapChars;
@@ -118,7 +105,7 @@ void Cast::loadFontMapV4(Common::SeekableReadStreamEndian &stream) {
 		}
 		_fontMap[id] = info;
 
-		debugC(3, kDebugLoading, "Cast::loadFontMapV4: Mapping %s font %d (%s) to %d", platformName.c_str(), id, name.c_str(), _fontMap[id]->toFont);
+		debugC(3, kDebugLoading, "Cast::loadFontMapV4: Mapping %s font %d (%s) to %d", getPlatformAbbrev(platform), id, name.c_str(), _fontMap[id]->toFont);
 	}
 }
 
