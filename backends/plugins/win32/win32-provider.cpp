@@ -19,20 +19,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+ 
+// Disable symbol overrides so that we can use system headers.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
 
 #if defined(DYNAMIC_MODULES) && defined(_WIN32)
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <tchar.h>
 
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 #include "backends/plugins/win32/win32-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/debug.h"
 #include "common/fs.h"
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
 
 class Win32Plugin final : public DynamicPlugin {
 protected:
