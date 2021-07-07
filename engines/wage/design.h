@@ -83,7 +83,7 @@ public:
 	static void drawVLine(Graphics::ManagedSurface *surface, int x, int y1, int y2, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType);
 
 	bool isBoundsCalculation() { return _boundsCalculationMode; }
-	void adjustBounds(int32 x, int32 y);
+	void adjustBounds(int16 x, int16 y);
 
 private:
 	byte *_data;

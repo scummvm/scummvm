@@ -132,15 +132,15 @@ public:
 	 * Copy an image from the back buffer to the screen, taking care of both the
 	 * new area covered by the shape as well as the old area, which must be restored
 	 */
-	void flushImage(ImageFrame *frame, const Common::Point &pt, int32 *xp, int32 *yp,
-		int32 *width, int32 *height);
+	void flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
+		int16 *width, int16 *height);
 
 	/**
 	 * Similar to flushImage, this method takes in an extra parameter for the scale proporation,
 	 * which affects the calculated bounds accordingly
 	 */
-	void flushScaleImage(ImageFrame *frame, const Common::Point &pt, int32 *xp, int32 *yp,
-		int32 *width, int32 *height, int scaleVal);
+	void flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
+		int16 *width, int16 *height, int scaleVal);
 
 	/**
 	 * Variation of flushImage/flushScaleImage that takes in and updates a rect

@@ -164,8 +164,8 @@ int16 Op_Narrator() {
 
 int16 Op_GetMouseX() {
 	int16 dummy;
-	int32 mouseX;
-	int32 mouseY;
+	int16 mouseX;
+	int16 mouseY;
 	int16 mouseButton;
 
 	getMouseStatus(&dummy, &mouseX, &mouseButton, &mouseY);
@@ -175,8 +175,8 @@ int16 Op_GetMouseX() {
 
 int16 Op_GetMouseY() {
 	int16 dummy;
-	int32 mouseX;
-	int32 mouseY;
+	int16 mouseX;
+	int16 mouseY;
 	int16 mouseButton;
 
 	getMouseStatus(&dummy, &mouseX, &mouseButton, &mouseY);
@@ -705,8 +705,8 @@ int16 Op_FadeIn() {
 
 int16 Op_GetMouseButton() {
 	int16 dummy;
-	int32 mouseX;
-	int32 mouseY;
+	int16 mouseX;
+	int16 mouseY;
 	int16 mouseButton;
 
 	getMouseStatus(&dummy, &mouseX, &mouseButton, &mouseY);

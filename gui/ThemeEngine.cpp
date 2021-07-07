@@ -1163,7 +1163,7 @@ void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo s
 		dd = kDDSliderDisabled;
 
 	Common::Rect r2 = r;
-	r2.setWidth(MIN((int32)width, r.width()));
+	r2.setWidth(MIN((int16)width, r.width()));
 	//	r2.top++; r2.bottom--; r2.left++; r2.right--;
 
 	if (rtl) {

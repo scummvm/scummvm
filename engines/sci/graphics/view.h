@@ -78,8 +78,8 @@ public:
 
 	bool isScaleable();
 
-	void adjustToUpscaledCoordinates(int32 &y, int32 &x);
-	void adjustBackUpscaledCoordinates(int32 &y, int32 &x);
+	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
+	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
 
 private:
 	void initData(GuiResourceId resourceId);

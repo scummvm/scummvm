@@ -43,7 +43,7 @@ struct GuiMenuEntry {
 	uint16 id;
 	Common::String text;
 	Common::String textSplit;
-	int32 textWidth;
+	int16 textWidth;
 
 	GuiMenuEntry(uint16 curId)
 	 : id(curId), textWidth(0) { }
@@ -62,9 +62,9 @@ struct GuiMenuItemEntry {
 	Common::String text;
 	Common::String textSplit;
 	reg_t textVmPtr;
-	int32 textWidth;
+	int16 textWidth;
 	Common::String textRightAligned;
-	int32 textRightAlignedWidth;
+	int16 textRightAlignedWidth;
 
 	GuiMenuItemEntry(uint16 curMenuId, uint16 curId)
 	 : menuId(curMenuId), id(curId),

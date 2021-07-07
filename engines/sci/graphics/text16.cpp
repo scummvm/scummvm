@@ -367,7 +367,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 	return resultCharCount;
 }
 
-void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int32 &textWidth, int32 &textHeight, bool restoreFont) {
+void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight, bool restoreFont) {
 	uint16 curChar;
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
@@ -412,7 +412,7 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 	return;
 }
 
-void GfxText16::StringWidth(const Common::String &str, GuiResourceId orgFontId, int32 &textWidth, int32 &textHeight) {
+void GfxText16::StringWidth(const Common::String &str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
 	Width(str.c_str(), 0, str.size(), orgFontId, textWidth, textHeight, true);
 }
 
@@ -423,12 +423,12 @@ void GfxText16::DrawString(const Common::String &str, GuiResourceId orgFontId, i
 	Draw(str.c_str(), 0, str.size(), orgFontId, orgPenColor);
 }
 
-int16 GfxText16::Size(Common::Rect &rect, const char *text, uint16 languageSplitter, GuiResourceId fontId, int32 maxWidth) {
+int16 GfxText16::Size(Common::Rect &rect, const char *text, uint16 languageSplitter, GuiResourceId fontId, int16 maxWidth) {
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
 	int16 charCount;
-	int32 maxTextWidth = 0, textWidth;
-	int32 totalHeight = 0, textHeight;
+	int16 maxTextWidth = 0, textWidth;
+	int16 totalHeight = 0, textHeight;
 
 	if (fontId != -1)
 		SetFont(fontId);
@@ -538,7 +538,7 @@ void GfxText16::Show(const char *text, int16 from, int16 len, GuiResourceId orgF
 
 // Draws a text in rect.
 void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId) {
-	int32 textWidth, maxTextWidth, textHeight, charCount;
+	int16 textWidth, maxTextWidth, textHeight, charCount;
 	int16 offset = 0;
 	int16 hline = 0;
 	GuiResourceId previousFontId = GetFontId();

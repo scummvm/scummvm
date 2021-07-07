@@ -462,7 +462,7 @@ void GfxTransitions::straight(int16 number, bool blackoutFlag) {
 	}
 }
 
-void GfxTransitions::scrollCopyOldToScreen(Common::Rect screenRect, int32 x, int32 y) {
+void GfxTransitions::scrollCopyOldToScreen(Common::Rect screenRect, int16 x, int16 y) {
 	if (_screen->getUpscaledHires()) {
 		_screen->adjustToUpscaledCoordinates(screenRect.top, screenRect.left);
 		_screen->adjustToUpscaledCoordinates(screenRect.bottom, screenRect.right);

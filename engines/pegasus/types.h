@@ -46,7 +46,7 @@ typedef uint32 NotificationFlags;
 
 // Mac types.
 typedef int16 ResIDType;
-typedef int32 CoordType;
+typedef int16 CoordType;
 
 enum SlideDirection {
 	kSlideLeftMask = 1,

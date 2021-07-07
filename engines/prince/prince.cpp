@@ -1016,9 +1016,9 @@ void PrinceEngine::mouseWeirdo() {
 		default:
 			break;
 		}
-		mousePos.x = CLIP(mousePos.x, (int32) 315, (int32) 639);
+		mousePos.x = CLIP(mousePos.x, (int16) 315, (int16) 639);
 		_flags->setFlagValue(Flags::MXFLAG, mousePos.x);
-		mousePos.y = CLIP(mousePos.y, (int32) 0, (int32) 170);
+		mousePos.y = CLIP(mousePos.y, (int16) 0, (int16) 170);
 		_flags->setFlagValue(Flags::MYFLAG, mousePos.y);
 		_system->warpMouse(mousePos.x, mousePos.y);
 	}

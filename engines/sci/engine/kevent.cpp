@@ -323,8 +323,8 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 
 	if (obj.getSegment()) {
-		int32 x = readSelectorValue(segMan, obj, SELECTOR(x));
-		int32 y = readSelectorValue(segMan, obj, SELECTOR(y));
+		int16 x = readSelectorValue(segMan, obj, SELECTOR(x));
+		int16 y = readSelectorValue(segMan, obj, SELECTOR(y));
 
 		g_sci->_gfxCoordAdjuster->kernelGlobalToLocal(x, y);
 
@@ -341,8 +341,8 @@ reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 
 	if (obj.getSegment()) {
-		int32 x = readSelectorValue(segMan, obj, SELECTOR(x));
-		int32 y = readSelectorValue(segMan, obj, SELECTOR(y));
+		int16 x = readSelectorValue(segMan, obj, SELECTOR(x));
+		int16 y = readSelectorValue(segMan, obj, SELECTOR(y));
 
 		g_sci->_gfxCoordAdjuster->kernelLocalToGlobal(x, y);
 

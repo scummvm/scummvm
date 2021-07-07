@@ -230,8 +230,8 @@ void gfxModuleData_flipScreen() {
 }
 
 void gfxModuleData_addDirtyRect(const Common::Rect &r) {
-	_vm->_dirtyRects.push_back(Common::Rect(	MAX(r.left, (int32)0), MAX(r.top, (int32)0),
-		MIN(r.right, (int32)320), MIN(r.bottom, (int32)200)));
+	_vm->_dirtyRects.push_back(Common::Rect(	MAX(r.left, (int16)0), MAX(r.top, (int16)0),
+		MIN(r.right, (int16)320), MIN(r.bottom, (int16)200)));
 }
 
 /**

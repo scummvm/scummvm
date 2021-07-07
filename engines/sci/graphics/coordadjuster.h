@@ -40,8 +40,8 @@ public:
 	GfxCoordAdjuster16(GfxPorts *ports);
 	~GfxCoordAdjuster16();
 
-	void kernelGlobalToLocal(int32 &x, int32 &y, reg_t planeObject = NULL_REG);
-	void kernelLocalToGlobal(int32 &x, int32 &y, reg_t planeObject = NULL_REG);
+	void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
+	void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
 
 	Common::Rect onControl(Common::Rect rect);
 	void setCursorPos(Common::Point &pos);

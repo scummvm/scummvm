@@ -53,7 +53,7 @@ public:
 	Camera(MADSEngine *vm);
 
 	void camPanTo(int target);
-	bool camPan(int32 *picture_view, int32 *player_loc, int display_size, int picture_size);
+	bool camPan(int16 *picture_view, int16 *player_loc, int display_size, int picture_size);
 	void setDefaultPanX();
 	void setDefaultPanY();
 };

@@ -195,7 +195,7 @@ bool Design::isPointOpaque(int x, int y) {
 	return pixel != kColorGreen;
 }
 
-void Design::adjustBounds(int32 x, int32 y) {
+void Design::adjustBounds(int16 x, int16 y) {
 	_bounds->right  = MAX(x, _bounds->right);
 	_bounds->bottom = MAX(y, _bounds->bottom);
 }

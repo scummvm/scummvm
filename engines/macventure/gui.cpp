@@ -738,8 +738,8 @@ void Gui::drawDraggedObject() {
 		ImageAsset *asset = _assets[_draggedObj.id];
 
 		// In case of overflow from the right/top
-		uint w = asset->getWidth() + MIN((int32)0, _draggedObj.pos.x);
-		uint h = asset->getHeight() + MIN((int32)0, _draggedObj.pos.y);
+		uint w = asset->getWidth() + MIN((int16)0, _draggedObj.pos.x);
+		uint h = asset->getHeight() + MIN((int16)0, _draggedObj.pos.y);
 
 		// In case of overflow from the bottom/left
 		if (_draggedObj.pos.x > 0 && _draggedObj.pos.x + w > kScreenWidth) {
@@ -766,7 +766,7 @@ void Gui::drawDraggedObject() {
 				target.x + _draggedSurface.w,
 				target.y + _draggedSurface.h),
 			Common::Point(0, 0));
-		asset->blitInto(&_draggedSurface, MIN((int32)0, _draggedObj.pos.x), MIN((int32)0, _draggedObj.pos.y), kBlitBIC);
+		asset->blitInto(&_draggedSurface, MIN((int16)0, _draggedObj.pos.x), MIN((int16)0, _draggedObj.pos.y), kBlitBIC);
 
 		g_system->copyRectToScreen(
 			_draggedSurface.getBasePtr(0, 0),

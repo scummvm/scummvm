@@ -1806,7 +1806,7 @@ AdjustBoxResult Actor_v2::adjustXYToBeInBox(const int dstX, const int dstY) {
 AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 	const uint thresholdTable[] = { 30, 80, 0 };
 	AdjustBoxResult abr;
-	int32 tmpX, tmpY;
+	int16 tmpX, tmpY;
 	int tmpDist, bestDist, threshold, numBoxes;
 	byte flags, bestBox;
 	int box;

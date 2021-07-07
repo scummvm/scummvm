@@ -957,10 +957,10 @@ void ESPER::drawPhotoWithGrid(Graphics::Surface &surface) {
 }
 
 void ESPER::drawSelection(Graphics::Surface &surface, bool crosshair, int style) {
-	int left   = CLIP(_selection.left,   _screen.left, (int32)(_screen.right  - 1));
-	int top    = CLIP(_selection.top,    _screen.top,  (int32)(_screen.bottom - 1));
-	int right  = CLIP(_selection.right,  _screen.left, (int32)(_screen.right  - 1));
-	int bottom = CLIP(_selection.bottom, _screen.top,  (int32)(_screen.bottom - 1));
+	int left   = CLIP(_selection.left,   _screen.left, (int16)(_screen.right  - 1));
+	int top    = CLIP(_selection.top,    _screen.top,  (int16)(_screen.bottom - 1));
+	int right  = CLIP(_selection.right,  _screen.left, (int16)(_screen.right  - 1));
+	int bottom = CLIP(_selection.bottom, _screen.top,  (int16)(_screen.bottom - 1));
 
 	int color = surface.format.RGBToColor(0, 144, 0);
 	if (style) {

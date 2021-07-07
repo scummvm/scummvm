@@ -80,8 +80,8 @@ void PrinceEngine::changeCursor(uint16 curId) {
 	case 3:
 		curSurface = _cursor3->getSurface();
 		Common::Point mousePos = _system->getEventManager()->getMousePos();
-		mousePos.x = CLIP(mousePos.x, (int32) 315, (int32) 639);
-		mousePos.y = CLIP(mousePos.y, (int32) 0, (int32) 170);
+		mousePos.x = CLIP(mousePos.x, (int16) 315, (int16) 639);
+		mousePos.y = CLIP(mousePos.y, (int16) 0, (int16) 170);
 		_system->warpMouse(mousePos.x, mousePos.y);
 		break;
 	}

@@ -1389,8 +1389,8 @@ bool checkInput(int16 *buttonPtr) {
 extern bool manageEvents();
 
 int CruiseEngine::processInput() {
-	int32 mouseX = 0;
-	int32 mouseY = 0;
+	int16 mouseX = 0;
+	int16 mouseY = 0;
 	int16 button = 0;
 
 	/*if (inputSub1keyboad())
@@ -1746,7 +1746,7 @@ bool manageEvents() {
 	return false;
 }
 
-void getMouseStatus(int16 *pMouseVar, int32 *pMouseX, int16 *pMouseButton, int32 *pMouseY) {
+void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY) {
 	*pMouseX = currentMouseX;
 	*pMouseY = currentMouseY;
 	*pMouseButton = currentMouseButton;
@@ -1757,7 +1757,7 @@ void CruiseEngine::mainLoop() {
 	//int32 t_start,t_left;
 	//uint32 t_end;
 	//int32 q=0;                     /* Dummy */
-	int32 mouseX, mouseY;
+	int16 mouseX, mouseY;
 	int16 mouseButton;
 
 	int enableUser = 0;

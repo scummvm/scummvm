@@ -44,15 +44,15 @@ namespace Common {
  * Simple class for handling both 2D position and size.
  */
 struct Point {
-	int32 x;	/*!< The horizontal position of the point. */
-	int32 y;	/*!< The vertical position of the point. */
+	int16 x;	/*!< The horizontal position of the point. */
+	int16 y;	/*!< The vertical position of the point. */
 
 	Point() : x(0), y(0) {}
 
 	/**
 	 * Create a point with position defined by @p x1 and @p y1.
 	 */
-	Point(int32 x1, int32 y1) : x(x1), y(y1) {}
+	Point(int16 x1, int16 y1) : x(x1), y(y1) {}
 	/**
 	 * Determine whether the position of two points is the same.
 	 */
@@ -143,21 +143,21 @@ static inline Point operator*(double multiplier, const Point &p) { return Point(
  * When writing code using our Rect class, always keep this principle in mind!
 */
 struct Rect {
-	int32 top, left;		/*!< The point at the top left of the rectangle (part of the Rect). */
-	int32 bottom, right;	/*!< The point at the bottom right of the rectangle (not part of the Rect). */
+	int16 top, left;		/*!< The point at the top left of the rectangle (part of the Rect). */
+	int16 bottom, right;	/*!< The point at the bottom right of the rectangle (not part of the Rect). */
 
 	Rect() : top(0), left(0), bottom(0), right(0) {}
 	/**
 	 * Create a rectangle with the top-left corner at position (0, 0) and the given width @p w and height @p h.
 	 */
-	Rect(int32 w, int32 h) : top(0), left(0), bottom(h), right(w) {}
+	Rect(int16 w, int16 h) : top(0), left(0), bottom(h), right(w) {}
 	/**
 	 * Create a rectangle with the top-left corner at the given position (x1, y1)
 	 * and the bottom-right corner at the position (x2, y2).
 	 *
 	 * The @p x2 value must be greater or equal @p x1 and @p y2 must be greater or equal @p y1.
 	 */
-	Rect(int32 x1, int32 y1, int32 x2, int32 y2) : top(y1), left(x1), bottom(y2), right(x2) {
+	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
 	/**
@@ -173,14 +173,14 @@ struct Rect {
 	 */
 	bool operator!=(const Rect &rhs) const { return !equals(rhs); }
 
-	int32 width() const { return right - left; }  /*!< Return the width of a rectangle. */
-	int32 height() const { return bottom - top; } /*!< Return the height of a rectangle. */
+	int16 width() const { return right - left; }  /*!< Return the width of a rectangle. */
+	int16 height() const { return bottom - top; } /*!< Return the height of a rectangle. */
 
-	void setWidth(int32 aWidth) {   /*!< Set the width to @p aWidth value. */
+	void setWidth(int16 aWidth) {   /*!< Set the width to @p aWidth value. */
 		right = left + aWidth;
 	}
 
-	void setHeight(int32 aHeight) { /*!< Set the height to @p aHeight value. */
+	void setHeight(int16 aHeight) { /*!< Set the height to @p aHeight value. */
 		bottom = top + aHeight;
 	}
 
@@ -192,7 +192,7 @@ struct Rect {
 	 *
 	 * @return True if the given position is inside this rectangle, false otherwise.
 	 */
-	bool contains(int32 x, int32 y) const {
+	bool contains(int16 x, int16 y) const {
 		return (left <= x) && (x < right) && (top <= y) && (y < bottom);
 	}
 
@@ -272,7 +272,7 @@ struct Rect {
 	 *
 	 * @param offset The size to grow by.
 	 */
-	void grow(int32 offset) {
+	void grow(int16 offset) {
 		top -= offset;
 		left -= offset;
 		bottom += offset;
@@ -302,7 +302,7 @@ struct Rect {
    	/**
 	 * Reduce the dimensions of this rectangle by setting max width and max heigth.
 	 */
-	void clip(int32 maxw, int32 maxh) {
+	void clip(int16 maxw, int16 maxh) {
 		clip(Rect(0, 0, maxw, maxh));
 	}
 
@@ -326,7 +326,7 @@ struct Rect {
 	/**
 	 * Move this rectangle to the position defined by @p x, @p y.
 	 */
-	void moveTo(int32 x, int32 y) {
+	void moveTo(int16 x, int16 y) {
 		bottom += y - top;
 		right += x - left;
 		top = y;
@@ -336,7 +336,7 @@ struct Rect {
 	/**
 	 * Move the rectangle by the given delta x and y values.
 	 */
-	void translate(int32 dx, int32 dy) {
+	void translate(int16 dx, int16 dy) {
 		left += dx; right += dx;
 		top += dy; bottom += dy;
 	}
@@ -359,7 +359,7 @@ struct Rect {
 	 * Create a rectangle around the given center.
 	 * @note The center point is rounded up and left when given an odd width and height.
 	 */
-	static Rect center(int32 cx, int32 cy, int32 w, int32 h) {
+	static Rect center(int16 cx, int16 cy, int16 w, int16 h) {
 		int x = cx - w / 2, y = cy - h / 2;
 		return Rect(x, y, x + w, y + h);
 	}
