@@ -212,6 +212,7 @@ void GridItemTray::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		close();
 		break;
 	default:
+		Dialog::handleCommand(sender, cmd, 0);
 		break;
 	}
 }
@@ -229,10 +230,12 @@ void GridItemTray::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void GridItemTray::handleMouseWheel(int x, int y, int direction) {
+	Dialog::handleMouseWheel(x, y, direction);
 	close();
 }
 
 void GridItemTray::handleMouseMoved(int x, int y, int button) {
+	Dialog::handleMouseMoved(x, y, button);
 	if ((x < 0 || x > _w) || (y > _h || y < -(_grid->_gridItemHeight))) {
 		// Close on going outside
 		close();
