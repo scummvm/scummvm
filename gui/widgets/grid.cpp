@@ -534,8 +534,6 @@ void GridWidget::assignEntriesToItems() {
 		} else {
 			// If we run out of visible entries to display.
 			// e.g., scrolled to the very bottom, we make items invisible.
-			item->setActiveEntry(_visibleEntries.front());
-			item->update();
 			item->setVisible(false);
 		}
 
