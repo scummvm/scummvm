@@ -181,29 +181,6 @@ void Cast::setCastMemberModified(int castId) {
 	cast->setModified(true);
 }
 
-Common::String Cast::getString(Common::String str) {
-	if (str.size() == 0) {
-		return str;
-	}
-
-	uint8 f = static_cast<uint8>(str.firstChar());
-
-	if (f == 0) {
-		return "";
-	}
-
-	//TODO: check if all versions need to cut off the first character.
-	if (_version >= kFileVer400) {
-		str.deleteChar(0);
-	}
-
-	if (str.lastChar() == '\x00') {
-		str.deleteLastChar();
-	}
-
-	return str;
-}
-
 void Cast::setArchive(Archive *archive) {
 	_castArchive = archive;
 

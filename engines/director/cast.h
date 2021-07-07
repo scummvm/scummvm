@@ -105,7 +105,6 @@ private:
 	void loadFontMapV4(Common::SeekableReadStreamEndian &stream);
 	void loadFXmp(Common::SeekableReadStreamEndian &stream);
 	bool readFXmpLine(Common::SeekableReadStreamEndian &stream);
-	Common::String getString(Common::String str);
 
 public:
 	Archive *_castArchive;
