@@ -52,7 +52,6 @@ Sprite::Sprite(Frame *frame) {
 	_ink = kInkTypeCopy;
 	_trails = 0;
 
-	_matte = nullptr;
 	_cast = nullptr;
 
 	_thickness = 0;
@@ -72,7 +71,6 @@ Sprite::Sprite(Frame *frame) {
 }
 
 Sprite::~Sprite() {
-	delete _matte;
 }
 
 bool Sprite::isQDShape() {
@@ -116,77 +114,6 @@ bool Sprite::respondsToMouse() {
 bool Sprite::isActive() {
 	return _movie->getScriptContext(kScoreScript, _scriptId) != nullptr
 			|| _movie->getScriptContext(kCastScript, _castId) != nullptr;
-}
-
-void Sprite::createQDMatte() {
-	Graphics::ManagedSurface tmp;
-	tmp.create(_width, _height, g_director->_pixelformat);
-	tmp.clear(g_director->_wm->_colorWhite);
-
-	Common::Rect srcRect(_width, _height);
-
-	Common::Rect fillAreaRect((int)srcRect.width(), (int)srcRect.height());
-	Graphics::MacPlotData plotFill(&tmp, nullptr, &g_director->getPatterns(), getPattern(), 0, 0, 1, _backColor);
-
-	Common::Rect strokeRect(MAX((int)srcRect.width() - _thickness & 0x3, 0), MAX((int)srcRect.height() - _thickness & 0x3, 0));
-	Graphics::MacPlotData plotStroke(&tmp, nullptr, &g_director->getPatterns(), 1, 0, 0, _thickness & 0x3, _backColor);
-
-	switch (_spriteType) {
-	case kRectangleSprite:
-		Graphics::drawFilledRect(fillAreaRect, g_director->_wm->_colorBlack, g_director->_wm->getDrawPixel(), &plotFill);
-		// fall through
-	case kOutlinedRectangleSprite:
-		Graphics::drawRect(strokeRect, g_director->_wm->_colorBlack, g_director->_wm->getDrawPixel(), &plotStroke);
-		break;
-	case kRoundedRectangleSprite:
-		Graphics::drawRoundRect(fillAreaRect, 12, g_director->_wm->_colorBlack, true, g_director->_wm->getDrawPixel(), &plotFill);
-		// fall through
-	case kOutlinedRoundedRectangleSprite:
-		Graphics::drawRoundRect(strokeRect, 12, g_director->_wm->_colorBlack, false, g_director->_wm->getDrawPixel(), &plotStroke);
-		break;
-	case kOvalSprite:
-		Graphics::drawEllipse(fillAreaRect.left, fillAreaRect.top, fillAreaRect.right, fillAreaRect.bottom, g_director->_wm->_colorBlack, true, g_director->_wm->getDrawPixel(), &plotFill);
-		// fall through
-	case kOutlinedOvalSprite:
-		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, g_director->_wm->_colorBlack, false, g_director->_wm->getDrawPixel(), &plotStroke);
-		break;
-	case kLineTopBottomSprite:
-		Graphics::drawLine(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, g_director->_wm->_colorBlack, g_director->_wm->getDrawPixel(), &plotStroke);
-		break;
-	case kLineBottomTopSprite:
-		Graphics::drawLine(strokeRect.left, strokeRect.bottom, strokeRect.right, strokeRect.top, g_director->_wm->_colorBlack, g_director->_wm->getDrawPixel(), &plotStroke);
-		break;
-	default:
-		warning("Sprite:createQDMatte Expected shape type but got type %d", _spriteType);
-	}
-
-	Graphics::Surface managedSurface;
-	managedSurface.create(_width, _height, g_director->_pixelformat);
-	managedSurface.copyFrom(tmp);
-
-	_matte = new Graphics::FloodFill(&managedSurface, g_director->_wm->_colorWhite, 0, true);
-
-	for (int yy = 0; yy < managedSurface.h; yy++) {
-		_matte->addSeed(0, yy);
-		_matte->addSeed(managedSurface.w - 1, yy);
-	}
-
-	for (int xx = 0; xx < managedSurface.w; xx++) {
-		_matte->addSeed(xx, 0);
-		_matte->addSeed(xx, managedSurface.h - 1);
-	}
-
-	_matte->fillMask();
-	tmp.free();
-	managedSurface.free();
-}
-
-Graphics::Surface *Sprite::getQDMatte() {
-	if (!isQDShape() || _ink != kInkTypeMatte)
-		return nullptr;
-	if (!_matte)
-		createQDMatte();
-	return _matte ? _matte->getMask() : nullptr;
 }
 
 bool Sprite::shouldHilite() {
