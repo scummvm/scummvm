@@ -3322,7 +3322,7 @@ bool areActorsInitialized(void) {
 }
 
 int16 GetRandomBetween(int start, int end) {
-	g_vm->_rnd->getRandomNumberRng(start, end);
+	return g_vm->_rnd->getRandomNumberRng(start, end);
 }
 
 void updateActorStates(void) {
