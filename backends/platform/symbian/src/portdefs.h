@@ -232,6 +232,10 @@ void *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdout
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 
+#if defined(__GNUC__)
+# define va_copy(dst, src) __builtin_va_copy(dst, src)
+#endif
+
 // we cannot include SymbianOS.h everywhere, but this works too (functions code is in SymbianOS.cpp)
 namespace Symbian {
 extern char* GetExecutablePath();

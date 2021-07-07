@@ -36,7 +36,7 @@ build = 'full'
 # build = 'release'
 
 #sis package version
-sis_major_version, sis_minor_version, sis_build_number = 2, 3, 0
+sis_major_version, sis_minor_version, sis_build_number = 2, '03', 0
 
 
 uids = ("0xA0000657", "0xA0000658", "0x2006FE7C", "0x2006FE7D", "0x2006FE7E", "0x2006FE7F", "0x2006FE80")
@@ -56,6 +56,9 @@ def SafeWriteFile(path, data, mode = 'w'):
             f.write(s + '\n')
       else:
          f.write(data)
+
+def AppendToFile(path, data):
+   SafeWriteFile(path, data, mode = 'a')
 
 active_config = ("DISABLE_NUKED_OPL", "USE_A52", "USE_MPEG2",  "USE_BINK", "USE_THEORADEC", "USE_TINYGL",
 "ENABLE_VKEYBD")

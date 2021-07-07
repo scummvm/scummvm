@@ -26,6 +26,7 @@ from build_apps import build_apps
 from create_installers import create_installers
 from datetime import datetime
 import time
+
 from piper import build_mmp
 from parse_codecs import parse_codecs
 from parse_base import parse_base
@@ -33,6 +34,8 @@ from common_names import *
 from scummvm_hrh import Generate_ScummVm_hrh
 from parse_lua import parse_lua
 from parse_gamedata import parse_gamedata
+from pkg_generator import create_pkgs
+from source_patcher import fix_src
 
 def minimal_whitelist(engine):
    data = "#ifdef SCUMMVM_PT_1\nscummvm_base.mmp\nscummvm_codecs.mmp\n%s\n#endif // SCUMMVM_PT_%s\n" %engine
@@ -49,6 +52,8 @@ def run(build, pkgs, only_begotten_engine = None):
    parse_base()
    parse_lua()
    parse_gamedata(build, pkgs)
+   create_pkgs(build, pkgs)
+   fix_src()
 
    SafeWriteFile(build_log, log, 'a')
    if only_begotten_engine:
