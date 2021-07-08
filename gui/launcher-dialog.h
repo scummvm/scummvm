@@ -27,6 +27,13 @@
 #include "gui/dialog.h"
 #include "engines/game.h"
 
+using Common::String;
+using Common::U32String;
+using Common::Array;
+
+typedef Array<String> StringArray;
+typedef Array<U32String> U32StringArray;
+
 namespace GUI {
 
 // Disable the grid for platforms that disable fancy themes
@@ -61,11 +68,7 @@ class EditTextWidget;
 class SaveLoadChooser;
 
 class LauncherDialog : protected Dialog {
-	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
 
-	typedef Common::U32String U32String;
-	typedef Common::Array<Common::U32String> U32StringArray;
 public:
 	LauncherDialog(const Common::String &dialogName);
 	~LauncherDialog() override;
@@ -164,11 +167,6 @@ private:
 };
 
 class LauncherSimple : public LauncherDialog {
-	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
-
-	typedef Common::U32String U32String;
-	typedef Common::Array<Common::U32String> U32StringArray;
 public:
 	LauncherSimple(const U32String &title);
 
@@ -196,11 +194,6 @@ private:
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 class LauncherGrid : public LauncherDialog {
-	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
-
-	typedef Common::U32String U32String;
-	typedef Common::Array<Common::U32String> U32StringArray;
 public:
 	LauncherGrid(const U32String &title);
 
