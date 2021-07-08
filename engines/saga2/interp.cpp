@@ -1763,11 +1763,25 @@ void saveSAGADataSeg(SaveFileConstructor &saveGame) {
 	    dataSegSize);
 }
 
+void saveSAGADataSeg(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving Data Segment");
+
+	out->write("SDTA", 4);
+	out->writeUint32LE(dataSegSize);
+	out->write(dataSegment, dataSegSize);
+}
+
 //-----------------------------------------------------------------------
 //	Load the SAGA data segment from a save file
 
 void loadSAGADataSeg(SaveFileReader &saveGame) {
+	debugC(2, kDebugSaveload, "Loading Data Segment");
+
 	saveGame.read(dataSegment, dataSegSize);
+}
+
+void loadSAGADataSeg(Common::InSaveFile *in) {
+	in->read(dataSegment, dataSegSize);
 }
 
 //-----------------------------------------------------------------------

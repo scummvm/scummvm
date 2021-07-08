@@ -126,9 +126,11 @@ void initSAGADataSeg(void);
 
 //  Save the SAGA data segment to a save file
 void saveSAGADataSeg(SaveFileConstructor &saveGame);
+void saveSAGADataSeg(Common::OutSaveFile *out);
 
 //  Load the SAGA data segment from a save file
 void loadSAGADataSeg(SaveFileReader &saveGame);
+void loadSAGADataSeg(Common::InSaveFile *in);
 
 //  Dispose of the SAGA data segment -- do nothing
 inline void cleanupSAGADataSeg(void) {}
