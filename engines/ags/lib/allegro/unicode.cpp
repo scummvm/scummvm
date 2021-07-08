@@ -33,4 +33,151 @@ size_t ustrsize(const char *s) {
 	return strlen(s);
 }
 
+/* utf8_getc:
+ * Reads a character from a UTF - 8 string.
+ */
+/*static*/ int utf8_getc(const char *s) {
+	int c = *((unsigned char *)(s++));
+	int n, t;
+
+	if (c & 0x80) {
+		n = 1;
+		while (c & (0x80 >> n))
+			n++;
+
+		c &= (1 << (8 - n)) - 1;
+
+		while (--n > 0) {
+			t = *((unsigned char *)(s++));
+
+			if ((!(t & 0x80)) || (t & 0x40))
+				return '^';
+
+			c = (c << 6) | (t & 0x3F);
+		}
+	}
+
+	return c;
+}
+
+
+
+/* utf8_getx:
+ *  Reads a character from a UTF-8 string, advancing the pointer position.
+ */
+/*static*/ int utf8_getx(char **s) {
+	int c = *((unsigned char *)((*s)++));
+	int n, t;
+
+	if (c & 0x80) {
+		n = 1;
+		while (c & (0x80 >> n))
+			n++;
+
+		c &= (1 << (8 - n)) - 1;
+
+		while (--n > 0) {
+			t = *((unsigned char *)((*s)++));
+
+			if ((!(t & 0x80)) || (t & 0x40)) {
+				(*s)--;
+				return '^';
+			}
+
+			c = (c << 6) | (t & 0x3F);
+		}
+	}
+
+	return c;
+}
+
+
+
+/* utf8_setc:
+ *  Sets a character in a UTF-8 string.
+ */
+/*static*/ int utf8_setc(char *s, int c) {
+	int size, bits, b, i;
+
+	if (c < 128) {
+		*s = c;
+		return 1;
+	}
+
+	bits = 7;
+	while (c >= (1 << bits))
+		bits++;
+
+	size = 2;
+	b = 11;
+
+	while (b < bits) {
+		size++;
+		b += 5;
+	}
+
+	b -= (7 - size);
+	s[0] = c >> b;
+
+	for (i = 0; i < size; i++)
+		s[0] |= (0x80 >> i);
+
+	for (i = 1; i < size; i++) {
+		b -= 6;
+		s[i] = 0x80 | ((c >> b) & 0x3F);
+	}
+
+	return size;
+}
+
+
+
+/* utf8_width:
+ *  Returns the width of a UTF-8 character.
+ */
+/*static*/ int utf8_width(const char *s) {
+	int c = *((unsigned char *)s);
+	int n = 1;
+
+	if (c & 0x80) {
+		while (c & (0x80 >> n))
+			n++;
+	}
+
+	return n;
+}
+
+
+
+/* utf8_cwidth:
+ *  Returns the width of a UTF-8 character.
+ */
+/*static*/ int utf8_cwidth(int c) {
+	int size, bits, b;
+
+	if (c < 128)
+		return 1;
+
+	bits = 7;
+	while (c >= (1 << bits))
+		bits++;
+
+	size = 2;
+	b = 11;
+
+	while (b < bits) {
+		size++;
+		b += 5;
+	}
+
+	return size;
+}
+
+/* utf8_isok:
+ *  Checks whether this character can be encoded in UTF-8 format.
+ */
+/*static*/ int utf8_isok(int c) {
+	return true;
+}
+
 } // namespace AGS3

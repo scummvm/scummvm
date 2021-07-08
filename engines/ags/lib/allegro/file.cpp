@@ -102,6 +102,17 @@ int PACKFILE::pack_fputs(AL_CONST char *p) {
 
 /*------------------------------------------------------------------*/
 
+/* Use strictly UTF-8 encoding for the file paths
+ */
+#define U_CURRENT U_UTF8
+#define ugetc     utf8_getc
+#define ugetx     utf8_getx
+#define ugetxc    utf8_getx
+#define usetc     utf8_setc
+#define uwidth    utf8_width
+#define ucwidth   utf8_cwidth
+#define uisok     utf8_isok
+
 char *fix_filename_case(char *path) {
 	return path;
 }

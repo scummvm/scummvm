@@ -36,6 +36,15 @@ namespace AGS3 {
 extern void set_uformat(int format);
 extern size_t ustrsize(const char *s);
 
+/* UTF-8 support functions
+ */
+int utf8_getc(const char *s);
+int utf8_getx(char **s);
+int utf8_setc(char *s, int c);
+int utf8_width(const char *s);
+int utf8_cwidth(int c);
+int utf8_isok(int c);
+
 } // namespace AGS3
 
 #endif
