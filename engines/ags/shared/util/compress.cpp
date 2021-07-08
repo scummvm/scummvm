@@ -297,10 +297,10 @@ void rle_compress(Bitmap *bmp, Shared::Stream *out) {
 			cpackbitl(&bmp->GetScanLineForWriting(y)[0], bmp->GetWidth(), out);
 	} else if (depth == 2) {
 		for (int y = 0; y < bmp->GetHeight(); y++)
-			cpackbitl16((unsigned short *)&bmp->GetScanLine(y)[0], bmp->GetWidth(), out);
+			cpackbitl16((uint16_t *)&bmp->GetScanLine(y)[0], bmp->GetWidth(), out);
 	} else {
 		for (int y = 0; y < bmp->GetHeight(); y++)
-			cpackbitl32((unsigned int *)&bmp->GetScanLine(y)[0], bmp->GetWidth(), out);
+			cpackbitl32((uint32_t *)&bmp->GetScanLine(y)[0], bmp->GetWidth(), out);
 	}
 }
 
@@ -311,10 +311,10 @@ void rle_decompress(Bitmap *bmp, Shared::Stream *in) {
 			cunpackbitl(&bmp->GetScanLineForWriting(y)[0], bmp->GetWidth(), in);
 	} else if (depth == 2) {
 		for (int y = 0; y < bmp->GetHeight(); y++)
-			cunpackbitl16((unsigned short *)&bmp->GetScanLineForWriting(y)[0], bmp->GetWidth(), in);
+			cunpackbitl16((uint16_t *)&bmp->GetScanLineForWriting(y)[0], bmp->GetWidth(), in);
 	} else {
 		for (int y = 0; y < bmp->GetHeight(); y++)
-			cunpackbitl32((unsigned int *)&bmp->GetScanLineForWriting(y)[0], bmp->GetWidth(), in);
+			cunpackbitl32((uint32_t *)&bmp->GetScanLineForWriting(y)[0], bmp->GetWidth(), in);
 	}
 }
 
