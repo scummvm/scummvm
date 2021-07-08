@@ -60,8 +60,8 @@ void CmdText::displayTemp(InkColor color, Verb v) {
 }
 
 void CmdText::displayTemp(InkColor color, const char *name, bool outlined) {
-	char temp[MAX_COMMAND_LEN];
-	snprintf(temp, MAX_COMMAND_LEN, "%s %s", _command, name);
+	char temp[MAX_COMMAND_LEN + 2];
+	snprintf(temp, MAX_COMMAND_LEN + 1, "%s %s", _command, name);
 	display(color, temp, outlined);
 }
 
@@ -85,9 +85,9 @@ public:
 	CmdTextHebrew(uint8 y, QueenEngine *vm) : CmdText(y, vm) {}
 
 	void displayTemp(InkColor color, const char *name, bool outlined) override {
-		char temp[MAX_COMMAND_LEN];
+		char temp[MAX_COMMAND_LEN + 2];
 
-		snprintf(temp, MAX_COMMAND_LEN, "%s %s", name, _command);
+		snprintf(temp, MAX_COMMAND_LEN + 1, "%s %s", name, _command);
 		display(color, temp, outlined);
 	}
 
@@ -116,12 +116,12 @@ public:
 	CmdTextGreek(uint8 y, QueenEngine *vm) : CmdText(y, vm) {}
 
 	void displayTemp(InkColor color, const char *name, bool outlined) override {
-		char temp[MAX_COMMAND_LEN];
+		char temp[MAX_COMMAND_LEN + 2];
 		// don't show a space after the goto and give commands in the Greek version
 		if (_command[1] != (char)-34 && !(_command[1] == (char)-2 && strlen(_command) > 5))
-			snprintf(temp, MAX_COMMAND_LEN, "%s %s", _command, name);
+			snprintf(temp, MAX_COMMAND_LEN + 1, "%s %s", _command, name);
 		else
-			snprintf(temp, MAX_COMMAND_LEN, "%s%s", _command, name);
+			snprintf(temp, MAX_COMMAND_LEN + 1, "%s%s", _command, name);
 		display(color, temp, outlined);
 	}
 
