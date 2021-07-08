@@ -139,7 +139,7 @@ Common::Point LBValue::toPoint() const {
 	case kLBValueString:
 		{
 		Common::Point ret;
-		sscanf(string.c_str(), "%d , %d", &ret.x, &ret.y);
+		sscanf(string.c_str(), "%hd , %hd", &ret.x, &ret.y);
 		return ret;
 		}
 	case kLBValueInteger:
@@ -158,7 +158,7 @@ Common::Rect LBValue::toRect() const {
 	case kLBValueString:
 		{
 		Common::Rect ret;
-		sscanf(string.c_str(), "%d , %d , %d , %d", &ret.left, &ret.top, &ret.right, &ret.bottom);
+		sscanf(string.c_str(), "%hd , %hd , %hd , %hd", &ret.left, &ret.top, &ret.right, &ret.bottom);
 		return ret;
 		}
 	case kLBValueInteger:
