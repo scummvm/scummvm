@@ -206,16 +206,7 @@ void Sprite::setCast(CastMemberID memberID, bool forceDims) {
 		Common::Rect dims = _cast->getInitialRect();
 		// strange logic here, need to be fixed
 		if (_cast->_type == kCastBitmap) {
-			// i'm not sure about whether to use original dims though comparing with the current one. or we decide it by ink type
-			// for now, we have only met one scaling situation in warlock stambul dancing girl.
-			// at that situation, we are using sprite dims to guide us scaling the cast. And the ink type for that is bkgnd transparent4
-			// maybe there is an flag to indicate the sprite is scaling or not?
-			if (_width >= dims.width() || _height >= dims.height()) {
-				_width = dims.width();
-				_height = dims.height();
-			}
-			// for ink copy sprites, we use the original dims
-			if (_ink == kInkTypeCopy) {
+			if (!(_inkData & 0x80)) {
 				_width = dims.width();
 				_height = dims.height();
 			}
