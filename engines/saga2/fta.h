@@ -148,6 +148,9 @@ public:
 	void set(uint32 duration);
 	bool check(void);
 	uint32 elapsed(void);                    // time elapsed since alarm set
+
+	void write(Common::OutSaveFile *out);
+	void read(Common::InSaveFile *in);
 };
 
 /* ===================================================================== *

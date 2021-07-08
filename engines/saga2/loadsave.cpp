@@ -155,9 +155,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveActiveItemStates(out);
 	saveTileCyclingStates(out);
 	saveSAGADataSeg(out);
+	saveSAGAThreads(out);
 
 #if 0
-	saveSAGAThreads(saveGame);
 	saveMotionTasks(saveGame);
 	saveTaskStacks(saveGame);
 	saveTasks(saveGame);
@@ -301,12 +301,12 @@ void loadSavedGameState(int16 saveNo) {
 			loadSAGADataSeg(in);
 			loadFlags |= loadSAGADataSegFlag;
 			break;
-#if 0
 
 		case MKTAG('S', 'A', 'G', 'A'):
-			loadSAGAThreads(saveGame);
+			loadSAGAThreads(in, chunkSize);
 			loadFlags |= loadSAGAThreadsFlag;
 			break;
+#if 0
 
 		case MKTAG('M', 'O', 'T', 'N'):
 			if (!(~loadFlags & (loadActorsFlag | loadObjectsFlag))) {

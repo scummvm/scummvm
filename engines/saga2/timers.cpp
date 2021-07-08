@@ -98,6 +98,16 @@ void loadTimer(Common::InSaveFile *in) {
    Alarms
  * ====================================================================== */
 
+void Alarm::write(Common::OutSaveFile *out) {
+	out->writeUint32LE(basetime);
+	out->writeUint32LE(duration);
+}
+
+void Alarm::read(Common::InSaveFile *in) {
+	basetime = in->readUint32LE();
+	duration = in->readUint32LE();
+}
+
 void Alarm::set(uint32 dur) {
 	basetime = gameTime;
 	duration = dur;

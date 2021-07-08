@@ -1159,12 +1159,16 @@ public:
 	//  Reconstruct from archive buffer
 	void *restore(void *buf);
 
+	void read(Common::InSaveFile *in);
+
 	//  Return the number of bytes needed to archive this thread list
 	//  in an archive buffer
 	int32 archiveSize(void);
 
 	//  Create an archive of this thread list in an archive buffer
 	void *archive(void *buf);
+
+	void write(Common::OutSaveFile *out);
 
 	//  Cleanup the active threads
 	void cleanup(void);
@@ -1223,6 +1227,26 @@ void *ThreadList::restore(void *buf) {
 	return buf;
 }
 
+void ThreadList::read(Common::InSaveFile *in) {
+	int16 threadCount;
+
+	//  Get the count of threads and increment the buffer pointer
+	threadCount = in->readSint16LE();
+	debugC(3, kDebugSaveload, "... threadCount = %d", threadCount);
+
+	//  Iterate through the archive data, reconstructing the Threads
+	for (int i = 0; i < threadCount; i++) {
+		debugC(3, kDebugSaveload, "Saving Thread %d", i);
+		ThreadID id;
+
+		//  Retreive the Thread's id number
+		id = in->readSint16LE();
+		debugC(4, kDebugSaveload, "...... id = %d", id);
+
+		new Thread(in);
+	}
+}
+
 int32 ThreadList::archiveSize(void) {
 	int32 size = sizeof(int16);
 
@@ -1269,6 +1293,28 @@ void *ThreadList::archive(void *buf) {
 #endif
 
 	return buf;
+}
+
+void ThreadList::write(Common::OutSaveFile *out) {
+	int16 threadCount = 0;
+	Thread *th;
+
+	//  Count the active threads
+	for (th = first(); th; th = next(th))
+		threadCount++;
+
+	//  Store the thread count in the archive buffer
+	out->writeSint16LE(threadCount);
+	debugC(3, kDebugSaveload, "... threadCount = %d", threadCount);
+
+	//  Iterate through the threads, archiving each
+	for (th = first(); th; th = next(th)) {
+		debugC(3, kDebugSaveload, "Loading ThreadID %d", getThreadID(th));
+		//  Store the Thread's id number
+		out->writeSint16LE(getThreadID(th));
+
+		th->write(out);
+	}
 }
 
 //-------------------------------------------------------------------
@@ -1352,7 +1398,7 @@ static ThreadList &threadList = *((ThreadList *)threadListBuffer);
 
 void initSAGAThreads(void) {
 	//  Simply call the Thread List default constructor
-	new ThreadList;
+	new (&threadList) ThreadList;
 }
 
 //-------------------------------------------------------------------
@@ -1378,13 +1424,25 @@ void saveSAGAThreads(SaveFileConstructor &saveGame) {
 	free(archiveBuffer);
 }
 
+void saveSAGAThreads(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving SAGA Threads");
+
+	int32   archiveBufSize;
+
+	archiveBufSize = threadList.archiveSize();
+
+	out->write("SAGA", 4);
+	out->writeUint32LE(archiveBufSize);
+	threadList.write(out);
+}
+
 //-------------------------------------------------------------------
 //	Load the active SAGA threads from a save file
 
 void loadSAGAThreads(SaveFileReader &saveGame) {
 	//  If there is no saved data, simply call the default constructor
 	if (saveGame.getChunkSize() == 0) {
-		new ThreadList;
+		new (&threadList) ThreadList;
 		return;
 	}
 
@@ -1401,12 +1459,26 @@ void loadSAGAThreads(SaveFileReader &saveGame) {
 	bufferPtr = archiveBuffer;
 
 	//  Reconstruct stackList from archived data
-	new ThreadList;
+	new (&threadList) ThreadList;
 	bufferPtr = threadList.restore(bufferPtr);
 
 	assert((char *)bufferPtr == (char *)archiveBuffer +   saveGame.getChunkSize());
 
 	free(archiveBuffer);
+}
+
+void loadSAGAThreads(Common::InSaveFile *in, int32 chunkSize) {
+	debugC(2, kDebugSaveload, "Loading SAGA Threads");
+
+	//  If there is no saved data, simply call the default constructor
+	if (chunkSize == 0) {
+		new (&threadList) ThreadList;
+		return;
+	}
+
+	//  Reconstruct stackList from archived data
+	new (&threadList) ThreadList;
+	threadList.read(in);
 }
 
 //-------------------------------------------------------------------
@@ -1510,6 +1582,37 @@ Thread::Thread(void **buf) {
 	newThread(this);
 }
 
+Thread::Thread(Common::SeekableReadStream *stream) {
+	int16   stackOffset;
+
+	programCounter.segment = stream->readUint16LE();
+	programCounter.offset = stream->readUint16LE();
+
+	stackSize = stream->readSint16LE();
+	flags = stream->readSint16LE();
+	framePtr = stream->readSint16LE();
+	returnVal = stream->readSint16LE();
+
+	waitAlarm.read(stream);
+
+	stackOffset = stream->readSint16LE();
+
+	debugC(4, kDebugSaveload, "...... stackSize = %d", stackSize);
+	debugC(4, kDebugSaveload, "...... flags = %d", flags);
+	debugC(4, kDebugSaveload, "...... framePtr = %d", framePtr);
+	debugC(4, kDebugSaveload, "...... returnVal = %d", returnVal);
+	debugC(4, kDebugSaveload, "...... stackOffset = %d", stackOffset);
+
+	codeSeg = scriptRes->loadIndexResource(programCounter.segment, "saga code segment");
+
+	stackBase = (byte *)malloc(stackSize);
+	stackPtr = stackBase + stackSize - stackOffset;
+
+	stream->read(stackPtr, stackOffset);
+
+	newThread(this);
+}
+
 //-----------------------------------------------------------------------
 //	Thread destructor
 
@@ -1567,6 +1670,32 @@ void *Thread::archive(void *buf) {
 	buf = (uint8 *)buf + stackOffset;
 
 	return buf;
+}
+
+void Thread::write(Common::OutSaveFile *out) {
+	int16   stackOffset;
+
+	out->writeUint16LE(programCounter.segment);
+	out->writeUint16LE(programCounter.offset);
+
+	out->writeSint16LE(stackSize);
+	out->writeSint16LE(flags);
+	out->writeSint16LE(framePtr);
+	out->writeSint16LE(returnVal);
+
+	waitAlarm.write(out);
+
+	warning("STUB: Thread::write: Pointer arithmetic");
+	stackOffset = (stackBase + stackSize) - stackPtr;
+	out->writeSint16LE(stackOffset);
+
+	out->write(stackPtr, stackOffset);
+
+	debugC(4, kDebugSaveload, "...... stackSize = %d", stackSize);
+	debugC(4, kDebugSaveload, "...... flags = %d", flags);
+	debugC(4, kDebugSaveload, "...... framePtr = %d", framePtr);
+	debugC(4, kDebugSaveload, "...... returnVal = %d", returnVal);
+	debugC(4, kDebugSaveload, "...... stackOffset = %d", stackOffset);
 }
 
 //-----------------------------------------------------------------------
