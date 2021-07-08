@@ -325,7 +325,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("record_mode", "none");
 	ConfMan.registerDefault("record_file_name", "record.bin");
 
-	ConfMan.registerDefault("gui_saveload_chooser", "list");
+	ConfMan.registerDefault("gui_saveload_chooser", "grid");
 	ConfMan.registerDefault("gui_saveload_last_pos", "0");
 
 	ConfMan.registerDefault("gui_browser_show_hidden", false);
