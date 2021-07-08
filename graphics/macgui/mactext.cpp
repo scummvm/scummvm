@@ -271,7 +271,7 @@ void MacText::init() {
 	_cursorRect = new Common::Rect(0, 0, 1, 1);
 
 	_cursorSurface = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
-	_cursorSurface->clear(_wm->_colorBlack);
+	_cursorSurface->clear(_fgcolor);
 	_cursorSurface2 = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
 	_cursorSurface2->clear(_bgcolor);
 
@@ -343,8 +343,14 @@ void MacText::setMaxWidth(int maxWidth) {
 void MacText::setColors(uint32 fg, uint32 bg) {
 	_bgcolor = bg;
 	_fgcolor = fg;
+	// also set the cursor color
+	_cursorSurface->clear(_fgcolor);
 	for (uint i = 0; i < _textLines.size(); i++)
 		setTextColor(fg, i);
+
+	_fullRefresh = true;
+	render();
+	_contentIsDirty = true;
 }
 
 void MacText::setTextSize(int textSize) {
@@ -370,9 +376,7 @@ void MacText::setTextColor(uint32 color, uint32 line) {
 		_textLines[line].chunks[j].fgcolor = fgcol;
 	}
 
-	_fullRefresh = true;
-	render();
-	_contentIsDirty = true;
+	// if we are calling this func separately, then here need a refresh
 }
 
 void MacText::getChunkPosFromIndex(int index, uint &lineNum, uint &chunkNum, uint &offset) {
@@ -1317,8 +1321,10 @@ bool MacText::draw(bool forceRedraw) {
 	if (_cursorState && !((_inTextSelection || _selectedText.endY != -1) && _active))
 		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
 
-	if (_selectedText.endY != -1)
+	if (_selectedText.endY != -1) {
+		debug("drawing selectio");
 		drawSelection(offset.x, offset.y);
+	}
 
 	return true;
 }
