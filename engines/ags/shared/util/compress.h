@@ -37,18 +37,10 @@ class Bitmap;
 
 using namespace AGS; // FIXME later
 
-void csavecompressed(Shared::Stream *out, const unsigned char *tobesaved, const RGB pala[256]);
-// RLE compression
-void cpackbitl(const uint8_t *line, int size, Shared::Stream *out);
-void cpackbitl16(const uint16_t *line, int size, Shared::Stream *out);
-void cpackbitl32(const uint32_t *line, int size, Shared::Stream *out);
-// RLE decompression
-int  cunpackbitl(uint8_t *line, int size, Shared::Stream *in);
-int  cunpackbitl16(uint16_t *line, int size, Shared::Stream *in);
-int  cunpackbitl32(uint32_t *line, int size, Shared::Stream *in);
+void rle_compress(Shared::Bitmap *, Shared::Stream *);
+void rle_decompress(Shared::Bitmap *, Shared::Stream *);
 
-//=============================================================================
-
+// LZW compression
 void save_lzw(Shared::Stream *out, const Shared::Bitmap *bmpp, const RGB *pall);
 void load_lzw(Shared::Stream *in, Shared::Bitmap **bmm, int dst_bpp, RGB *pall);
 void savecompressed_allegro(Shared::Stream *out, const Shared::Bitmap *bmpp, const RGB *pall);

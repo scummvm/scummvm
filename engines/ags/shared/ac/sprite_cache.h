@@ -149,10 +149,6 @@ private:
 	static sprkey_t FindTopmostSprite(const std::vector<Shared::Bitmap *> &sprites);
 	// Seek stream to sprite
 	void        SeekToSprite(sprkey_t index);
-	// Writes compressed sprite to the stream
-	static void CompressSprite(Shared::Bitmap *sprite, Shared::Stream *out);
-	// Uncompresses sprite from stream into the given bitmap
-	static void UnCompressSprite(Shared::Bitmap *sprite, Shared::Stream *in);
 
 	// Internal sprite reference
 	struct SpriteRef {
