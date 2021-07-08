@@ -121,7 +121,7 @@ Common::Error AGSEngine::run() {
 	}
 
 	if (isUnsupportedPre25()) {
-		GUIError("The selected game is a completed unsupported pre-2.5 version");
+		GUIError("The selected game is a completely unsupported pre-2.5 version");
 		return Common::kNoError;
 	}
 
