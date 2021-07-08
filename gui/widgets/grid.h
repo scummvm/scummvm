@@ -31,6 +31,12 @@
 #include "image/png.h"
 #include "graphics/svg.h"
 
+using Common::String;
+using Common::U32String;
+using Common::Array;
+
+typedef Array<String> StringArray;
+
 namespace GUI {
 
 class ScrollBarWidget;
@@ -60,8 +66,6 @@ enum {
 
 /* GridItemInfo */
 struct GridItemInfo {
-	typedef Common::String String;
-
 	String 		engineid;
 	String 		gameid;
 	String 		language;
@@ -93,12 +97,6 @@ class GridItemTray: public Dialog, public CommandSender {
 	GridWidget 		*_grid;
 	GuiObject 		*_boss;
 public:
-	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
-
-	typedef Common::U32String U32String;
-	typedef Common::Array<Common::U32String> U32StringArray;
-
 	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid);
 	
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
@@ -110,13 +108,6 @@ public:
 
 /* GridWidget */
 class GridWidget : public ContainerWidget, public CommandSender {
-public:
-	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
-
-	typedef Common::U32String U32String;
-	typedef Common::Array<Common::U32String> U32StringArray;
-
 protected:
 	Common::Array<const Graphics::ManagedSurface *> _platformIcons;
 	
@@ -196,13 +187,6 @@ public:
 
 /* GridItemWidget */
 class GridItemWidget : public ContainerWidget, public CommandSender {
-public:
-	typedef Common::String String;
-	typedef Common::Array<Common::String> StringArray;
-
-	typedef Common::U32String U32String;
-	typedef Common::Array<Common::U32String> U32StringArray;
-
 protected:
 	Graphics::ManagedSurface _thumbGfx;
 
