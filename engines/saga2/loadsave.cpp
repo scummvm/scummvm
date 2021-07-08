@@ -150,9 +150,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveWorlds(out);
 	saveActors(out);
 	saveObjects(out);
+	saveBands(out);
 
 #if 0
-	saveBands(saveGame);
 	savePlayerActors(saveGame);
 	saveCenterActor(saveGame);
 	saveActiveItemStates(saveGame);
@@ -266,15 +266,15 @@ void loadSavedGameState(int16 saveNo) {
 			loadObjects(in);
 			loadFlags |= loadObjectsFlag;
 			break;
-#if 0
 
 		case MKTAG('B', 'A', 'N', 'D'):
 			if (loadFlags & loadActorsFlag) {
-				loadBands(saveGame);
+				loadBands(in, chunkSize);
 				loadFlags |= loadBandsFlag;
 			} else
 				error("Bands loaded prematurely");
 			break;
+#if 0
 
 		case MKTAG('P', 'L', 'Y', 'R'):
 			if (loadFlags & loadBandsFlag) {
