@@ -55,14 +55,13 @@ class PlayerActor {
 	friend void cleanupPlayerActors(void);
 
 	ObjectID        actorID;            // ID of player's actor
+
+public:
 	int16           portraitType;       // Integer representing portrait state
 	// for this player actor
 	uint16          flags;              // various flags
 
 	ActorAttributes baseStats;          // Base stats for this actor
-
-
-public:
 	enum PlayerActorFlags {
 		playerAggressive        = (1 << 0), // Player is in aggressive mode
 		playerBanded            = (1 << 1), // Player is banded
@@ -305,9 +304,11 @@ void initPlayerActors(void);
 
 //  Store the player actor list in a save file
 void savePlayerActors(SaveFileConstructor &saveGame);
+void savePlayerActors(Common::OutSaveFile *out);
 
 //  Load the player list data from a save file
 void loadPlayerActors(SaveFileReader &saveGame);
+void loadPlayerActors(Common::InSaveFile *in);
 
 //  Cleanup the player actor list
 void cleanupPlayerActors(void);

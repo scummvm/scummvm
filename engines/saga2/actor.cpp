@@ -1307,7 +1307,7 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	enchantmentFlags = in->readUint32LE();
 	currentGoal = in->readByte();
 	deactivationCounter = in->readByte();
-	effectiveStats.load(in);
+	effectiveStats.read(in);
 	actionCounter = in->readByte();
 	effectiveResistance = in->readUint16LE();
 	effectiveImmunity = in->readUint16LE();

@@ -986,6 +986,51 @@ void savePlayerActors(SaveFileConstructor &saveGame) {
 	    sizeof(archiveBuffer));
 }
 
+void savePlayerActors(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving PlayerActors");
+
+	const int archiveSize = playerActors * 38;
+
+	out->write("PLYR", 4);
+	out->writeUint32LE(archiveSize);
+
+	for (int i = 0; i < playerActors; i++) {
+		debugC(3, kDebugSaveload, "Saving PlayerActor %d", i);
+
+		PlayerActor *p = &playerList[i];
+
+		//  Store the portrait type
+		out->writeSint16LE(p->portraitType);
+
+		//  Store the flags
+		out->writeUint16LE(p->flags);
+
+		//  Store the base stats
+		p->baseStats.write(out);
+
+		//  Store accumulation arrays
+		for (int j = 0; j < numManas; ++j)
+			out->writeSint16LE(p->manaMemory[j]);
+
+		for (int j = 0; j < numSkills; ++j)
+			out->writeByte(p->attribRecPools[j]);
+
+		for (int j = 0; j < numSkills; ++j)
+			out->writeByte(p->attribMemPools[j]);
+
+		//  Store the vitality memory
+		out->writeByte(p->vitalityMemory);
+
+		//  Store the attack notification flag
+		out->writeByte(p->notifiedOfAttack);
+
+		debugC(4, kDebugSaveload, "... playerList[%d].portraitType = %d", i, p->portraitType);
+		debugC(4, kDebugSaveload, "... playerList[%d].flags = %d", i, p->flags);
+		debugC(4, kDebugSaveload, "... playerList[%d].vitalityMemory = %d", i, p->vitalityMemory);
+		debugC(4, kDebugSaveload, "... playerList[%d].notifiedOfAttack = %d", i, p->notifiedOfAttack);
+	}
+}
+
 //-----------------------------------------------------------------------
 //	Load the player list data from a save file
 
@@ -1027,6 +1072,48 @@ void loadPlayerActors(SaveFileReader &saveGame) {
 
 		//  Restore the attack notification flag
 		p->notifiedOfAttack = a->notifiedOfAttack;
+	}
+
+	readyContainerSetup();
+}
+
+void loadPlayerActors(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading PlayerActors");
+
+	for (int i = 0; i < playerActors; i++) {
+		debugC(3, kDebugSaveload, "Loading PlayerActor %d", i);
+
+		PlayerActor *p = &playerList[i];
+
+		//  Restore the portrait type
+		p->portraitType = in->readSint16LE();
+
+		//  Restore the flags
+		p->flags = in->readUint16LE();
+
+		//  Restore the base stats
+		p->baseStats.read(in);
+
+		//  Restore the accumulation arrays
+		for (int j = 0; j < numManas; ++j)
+			p->manaMemory[j] = in->readSint16LE();
+
+		for (int j = 0; j < numSkills; ++j)
+			p->attribRecPools[j] = in->readByte();
+
+		for (int j = 0; j < numSkills; ++j)
+			p->attribMemPools[j] = in->readByte();
+
+		//  Restore the vitality memory
+		p->vitalityMemory = in->readByte();
+
+		//  Restore the attack notification flag
+		p->notifiedOfAttack = in->readByte();
+
+		debugC(4, kDebugSaveload, "... playerList[%d].portraitType = %d", i, p->portraitType);
+		debugC(4, kDebugSaveload, "... playerList[%d].flags = %d", i, p->flags);
+		debugC(4, kDebugSaveload, "... playerList[%d].vitalityMemory = %d", i, p->vitalityMemory);
+		debugC(4, kDebugSaveload, "... playerList[%d].notifiedOfAttack = %d", i, p->notifiedOfAttack);
 	}
 
 	readyContainerSetup();

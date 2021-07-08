@@ -171,28 +171,28 @@ struct ActorAttributes {
 		return skill(id) / skillFracPointsPerLevel + 1;
 	}
 
-	void load(Common::SeekableReadStream *stream) {
-		archery = stream->readByte();
-		swordcraft = stream->readByte();
-		shieldcraft = stream->readByte();
-		bludgeon = stream->readByte();
-		throwing = stream->readByte();
-		spellcraft = stream->readByte();
-		stealth = stream->readByte();
-		agility = stream->readByte();
-		brawn = stream->readByte();
-		lockpick = stream->readByte();
-		pilfer = stream->readByte();
-		firstAid = stream->readByte();
-		spotHidden = stream->readByte();
-		pad = stream->readSByte();
-		vitality = stream->readSint16LE();
-		redMana = stream->readSint16LE();
-		orangeMana = stream->readSint16LE();
-		yellowMana = stream->readSint16LE();
-		greenMana = stream->readSint16LE();
-		blueMana = stream->readSint16LE();
-		violetMana = stream->readSint16LE();
+	void read(Common::InSaveFile *in) {
+		archery = in->readByte();
+		swordcraft = in->readByte();
+		shieldcraft = in->readByte();
+		bludgeon = in->readByte();
+		throwing = in->readByte();
+		spellcraft = in->readByte();
+		stealth = in->readByte();
+		agility = in->readByte();
+		brawn = in->readByte();
+		lockpick = in->readByte();
+		pilfer = in->readByte();
+		firstAid = in->readByte();
+		spotHidden = in->readByte();
+		pad = in->readSByte();
+		vitality = in->readSint16LE();
+		redMana = in->readSint16LE();
+		orangeMana = in->readSint16LE();
+		yellowMana = in->readSint16LE();
+		greenMana = in->readSint16LE();
+		blueMana = in->readSint16LE();
+		violetMana = in->readSint16LE();
 	}
 
 	void write(Common::OutSaveFile *out) {
@@ -261,7 +261,7 @@ struct ResourceActorProtoExtension {
 	}
 
 	void load(Common::SeekableReadStream *stream) {
-		baseStats.load(stream);
+		baseStats.read(stream);
 		combatBehavior = stream->readByte();
 		gruntStyle = stream->readByte();
 		baseEffectFlags = stream->readUint32LE();

@@ -92,7 +92,6 @@ void initGameState(void) {
 	pauseTimer();
 
 	initGlobals();
-	initImageCache();
 	initTimer();
 	initCalender();
 	initWorlds();
@@ -151,9 +150,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveActors(out);
 	saveObjects(out);
 	saveBands(out);
+	savePlayerActors(out);
 
 #if 0
-	savePlayerActors(saveGame);
 	saveCenterActor(saveGame);
 	saveActiveItemStates(saveGame);
 	saveTileCyclingStates(saveGame);
@@ -274,15 +273,15 @@ void loadSavedGameState(int16 saveNo) {
 			} else
 				error("Bands loaded prematurely");
 			break;
-#if 0
 
 		case MKTAG('P', 'L', 'Y', 'R'):
 			if (loadFlags & loadBandsFlag) {
-				loadPlayerActors(saveGame);
+				loadPlayerActors(in);
 				loadFlags |= loadPlayerActorsFlag;
 			} else
 				error("PlayerActors loaded prematurely");
 			break;
+#if 0
 
 		case MKTAG('C', 'N', 'T', 'R'):
 			loadCenterActor(saveGame);
@@ -510,7 +509,6 @@ void cleanupGameState(void) {
 	cleanupWorlds();
 	cleanupAudio();
 	cleanupTimer();
-	cleanupImageCache();
 	cleanupGlobals();
 }
 
