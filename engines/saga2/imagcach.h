@@ -29,9 +29,6 @@
 
 namespace Saga2 {
 
-void initImageCache(void);
-void cleanupImageCache(void);
-
 /* ===================================================================== *
    ImageNode class which defines a re-entrant image resource
  * ===================================================================== */

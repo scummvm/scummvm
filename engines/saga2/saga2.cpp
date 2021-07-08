@@ -37,6 +37,7 @@
 #include "saga2/gdraw.h"
 #include "saga2/mouseimg.h"
 #include "saga2/contain.h"
+#include "saga2/imagcach.h"
 
 namespace Saga2 {
 
@@ -54,7 +55,6 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	g_vm = this;
 
 	_bandList = nullptr;
-	_imageCache = nullptr;
 	_mouseInfo = nullptr;
 	_smkDecoder = nullptr;
 	_videoX = _videoY = 0;
@@ -70,6 +70,8 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "drivers");
 
 	_loadedWeapons = 0;
+
+	_imageCache = new CImageCache;
 }
 
 Saga2Engine::~Saga2Engine() {
@@ -79,6 +81,7 @@ Saga2Engine::~Saga2Engine() {
 
 	// Dispose your resources here
 	delete _rnd;
+	delete _imageCache;
 }
 
 Common::Error Saga2Engine::run() {
