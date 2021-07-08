@@ -1016,7 +1016,9 @@ void cleanupActiveItemStates(void);
 
 void initTileCyclingStates(void);
 void saveTileCyclingStates(SaveFileConstructor &saveGame);
+void saveTileCyclingStates(Common::OutSaveFile *out);
 void loadTileCyclingStates(SaveFileReader &saveGame);
+void loadTileCyclingStates(Common::InSaveFile *in);
 void cleanupTileCyclingStates(void);
 
 void initAutoMap(void);

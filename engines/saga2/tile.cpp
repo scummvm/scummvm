@@ -4418,6 +4418,25 @@ void saveTileCyclingStates(SaveFileConstructor &saveGame) {
 	delete[] archiveBuffer;
 }
 
+void saveTileCyclingStates(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving TileCyclingStates");
+
+	const int tileCycleArchiveSize = 4 + 1;
+
+	out->write("CYCL", 4);
+	out->writeUint32LE(tileCycleArchiveSize * cycleCount);
+
+	for (int i = 0; i < cycleCount; i++) {
+		debugC(3, kDebugSaveload, "Saving TileCyclingState %d", i);
+
+		out->writeSint32LE(cycleList[i].counter);
+		out->writeByte(cycleList[i].currentState);
+
+		debugC(4, kDebugSaveload, "... counter = %d", cycleList[i].counter);
+		debugC(4, kDebugSaveload, "... currentState = %d", cycleList[i].currentState);
+	}
+}
+
 //-----------------------------------------------------------------------
 //	Load the tile cycling state array from a save file
 
@@ -4441,6 +4460,21 @@ void loadTileCyclingStates(SaveFileReader &saveGame) {
 	}
 
 	delete[] archiveBuffer;
+}
+
+void loadTileCyclingStates(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading TileCyclingStates");
+
+	initTileCyclingStates();
+
+	for (int i = 0; i < cycleCount; i++) {
+		debugC(3, kDebugSaveload, "Loading TileCyclingState %d", i);
+		cycleList[i].counter = in->readSint32LE();
+		cycleList[i].currentState = in->readByte();
+
+		debugC(4, kDebugSaveload, "... counter = %d", cycleList[i].counter);
+		debugC(4, kDebugSaveload, "... currentState = %d", cycleList[i].currentState);
+	}
 }
 
 //-----------------------------------------------------------------------
