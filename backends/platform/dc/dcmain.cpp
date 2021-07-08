@@ -218,7 +218,7 @@ bool OSystem_Dreamcast::getFeatureState(Feature f)
   }
 }
 
-void OSystem_Dreamcast::getTimeAndDate(TimeDate &td) const {
+void OSystem_Dreamcast::getTimeAndDate(TimeDate &td, bool skipRecord) const {
   time_t curTime;
   time(&curTime);
   struct tm t = *localtime(&curTime);

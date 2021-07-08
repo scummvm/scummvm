@@ -117,7 +117,7 @@ void OSystem_DS::doTimerCallback(int interval) {
 	}
 }
 
-void OSystem_DS::getTimeAndDate(TimeDate &td) const {
+void OSystem_DS::getTimeAndDate(TimeDate &td, bool skipRecord) const {
 	time_t curTime = time(0);
 	struct tm t = *localtime(&curTime);
 	td.tm_sec = t.tm_sec;

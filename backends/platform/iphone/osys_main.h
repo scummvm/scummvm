@@ -173,7 +173,7 @@ public:
 	virtual void quit();
 
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-	virtual void getTimeAndDate(TimeDate &t) const;
+	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const;
 
 	virtual Audio::Mixer *getMixer();
 

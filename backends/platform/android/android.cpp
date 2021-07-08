@@ -575,7 +575,7 @@ Audio::Mixer *OSystem_Android::getMixer() {
 	return _mixer;
 }
 
-void OSystem_Android::getTimeAndDate(TimeDate &td) const {
+void OSystem_Android::getTimeAndDate(TimeDate &td, bool skipRecord) const {
 	struct tm tm;
 	const time_t curTime = time(0);
 

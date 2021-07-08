@@ -125,7 +125,7 @@ public:
 
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
-	virtual void getTimeAndDate(TimeDate &t) const;
+	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const;
 	void doTimerCallback(int interval = 10);
 
 	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }

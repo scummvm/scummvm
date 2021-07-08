@@ -185,7 +185,7 @@ public:
 	virtual void quit() override;
 
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
-	virtual void getTimeAndDate(TimeDate &t) const override;
+	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
 
 	virtual Audio::Mixer *getMixer() override;
 

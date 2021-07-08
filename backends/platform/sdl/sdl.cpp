@@ -638,7 +638,7 @@ void OSystem_SDL::delayMillis(uint msecs) {
 		SDL_Delay(msecs);
 }
 
-void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
+void OSystem_SDL::getTimeAndDate(TimeDate &td, bool skipRecord) const {
 	time_t curTime = time(0);
 	struct tm t = *localtime(&curTime);
 	td.tm_sec = t.tm_sec;
@@ -648,6 +648,10 @@ void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
 	td.tm_wday = t.tm_wday;
+
+#ifdef ENABLE_EVENTRECORDER
+	g_eventRec.processTimeAndDate(td, skipRecord);
+#endif
 }
 
 MixerManager *OSystem_SDL::getMixerManager() {

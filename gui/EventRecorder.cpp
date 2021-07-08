@@ -77,6 +77,13 @@ EventRecorder::EventRecorder() {
 	_needRedraw = false;
 	_processingMillis = false;
 	_fastPlayback = false;
+	_lastTimeDate.tm_sec = 0;
+	_lastTimeDate.tm_min = 0;
+	_lastTimeDate.tm_hour = 0;
+	_lastTimeDate.tm_mday = 0;
+	_lastTimeDate.tm_mon = 0;
+	_lastTimeDate.tm_year = 0;
+	_lastTimeDate.tm_wday = 0;
 
 	_fakeTimer = 0;
 	_savedState = false;
@@ -117,6 +124,42 @@ void EventRecorder::deinit() {
 	switchMixer();
 	switchTimerManagers();
 	DebugMan.disableDebugChannel("EventRec");
+}
+
+void EventRecorder::processTimeAndDate(TimeDate &td, bool skipRecord) {
+	if (!_initialized) {
+		return;
+	}
+	if (skipRecord) {
+		td = _lastTimeDate;
+		return;
+	}
+	Common::RecorderEvent timeDateEvent;
+	switch (_recordMode) {
+	case kRecorderRecord:
+		timeDateEvent.recordedtype = Common::kRecorderEventTypeTimeDate;
+		timeDateEvent.timeDate = td;
+		_lastTimeDate = td;
+		_playbackFile->writeEvent(timeDateEvent);
+		break;
+	case kRecorderPlayback:
+		if (_nextEvent.recordedtype != Common::kRecorderEventTypeTimeDate) {
+			// just re-use any previous date time value
+			td = _lastTimeDate;
+			return;
+		}
+		_lastTimeDate = _nextEvent.timeDate;
+		td = _lastTimeDate;
+		debug(3, "timedate event");
+
+		_nextEvent = _playbackFile->getNextEvent();
+		break;
+	case kRecorderPlaybackPause:
+		td = _lastTimeDate;
+		break;
+	default:
+		break;
+	}
 }
 
 void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {

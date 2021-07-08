@@ -81,6 +81,7 @@ public:
 	void deinit();
 	bool processDelayMillis();
 	uint32 getRandomSeed(const Common::String &name);
+	void processTimeAndDate(TimeDate &td, bool skipRecord);
 	void processMillis(uint32 &millis, bool skipRecord);
 	void processGameDescription(const ADGameDescription *desc);
 	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
@@ -178,6 +179,7 @@ private:
 	bool notifyEvent(const Common::Event &event) override;
 	bool _initialized;
 	volatile uint32 _fakeTimer;
+	TimeDate _lastTimeDate;
 	bool _savedState;
 	bool _needcontinueGame;
 	int _temporarySlot;

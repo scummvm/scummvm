@@ -195,7 +195,7 @@ public:
 	virtual void quit();
 
 	virtual Audio::Mixer *getMixer();
-	virtual void getTimeAndDate(TimeDate &t) const;
+	virtual void getTimeAndDate(TimeDate &t, bool skipRecord = false) const;
 	virtual void setTimerCallback(TimerProc callback, int interval);
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 

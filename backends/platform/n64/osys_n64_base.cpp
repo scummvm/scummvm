@@ -838,7 +838,7 @@ Audio::Mixer *OSystem_N64::getMixer() {
 	return _mixer;
 }
 
-void OSystem_N64::getTimeAndDate(TimeDate &t) const {
+void OSystem_N64::getTimeAndDate(TimeDate &t, bool skipRecord) const {
 	// No RTC inside the N64, read mips timer to simulate
 	// passing of time, not a perfect solution, but can't think
 	// of anything better.
