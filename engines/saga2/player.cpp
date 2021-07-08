@@ -1161,6 +1161,21 @@ void saveCenterActor(SaveFileConstructor &saveGame) {
 	saveGame.writeChunk(MakeID('C', 'N', 'T', 'R'), &a, sizeof(a));
 }
 
+void saveCenterActor(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving CenterActor");
+
+	const int32 centerActorArchiveSize = 4;
+
+	out->write("CNTR", 4);
+	out->writeUint32LE(centerActorArchiveSize);
+	//  Store the center actor and view object
+	out->writeSint16LE(centerActor);
+	out->writeUint16LE(viewCenterObject);
+
+	debugC(3, kDebugSaveload, "... centerActor = %d", centerActor);
+	debugC(3, kDebugSaveload, "... viewCenterObject = %d", viewCenterObject);
+}
+
 //-----------------------------------------------------------------------
 //	Load the center actor ID and the view object ID from the save file
 
@@ -1172,6 +1187,17 @@ void loadCenterActor(SaveFileReader &saveGame) {
 	//  Restore the center actor and view object
 	centerActor         = a.centerActor;
 	viewCenterObject    = a.viewCenterObject;
+}
+
+void loadCenterActor(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading CenterActor");
+
+	//  Restore the center actor and view object
+	centerActor = in->readSint16LE();
+	viewCenterObject = in->readUint16LE();
+
+	debugC(3, kDebugSaveload, "... centerActor = %d", centerActor);
+	debugC(3, kDebugSaveload, "... viewCenterObject = %d", viewCenterObject);
 }
 
 //-----------------------------------------------------------------------

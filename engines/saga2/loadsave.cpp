@@ -151,9 +151,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveObjects(out);
 	saveBands(out);
 	savePlayerActors(out);
+	saveCenterActor(out);
 
 #if 0
-	saveCenterActor(saveGame);
 	saveActiveItemStates(saveGame);
 	saveTileCyclingStates(saveGame);
 	saveSAGADataSeg(saveGame);
@@ -281,12 +281,12 @@ void loadSavedGameState(int16 saveNo) {
 			} else
 				error("PlayerActors loaded prematurely");
 			break;
-#if 0
 
 		case MKTAG('C', 'N', 'T', 'R'):
-			loadCenterActor(saveGame);
+			loadCenterActor(in);
 			loadFlags |= loadCenterActorFlag;
 			break;
+#if 0
 
 		case MKTAG('T', 'A', 'G', 'S'):
 			loadActiveItemStates(saveGame);

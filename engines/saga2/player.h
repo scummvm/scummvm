@@ -322,9 +322,11 @@ void initCenterActor(void);
 
 //  Save the center actor ID and the view object ID to a save file
 void saveCenterActor(SaveFileConstructor &saveGame);
+void saveCenterActor(Common::OutSaveFile *out);
 
 //  Load the center actor ID and the view object ID from the save file
 void loadCenterActor(SaveFileReader &saveGame);
+void loadCenterActor(Common::InSaveFile *in);
 
 //  Do nothing
 inline void cleanupCenterActor(void) {}
