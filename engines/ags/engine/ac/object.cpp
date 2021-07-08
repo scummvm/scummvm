@@ -292,7 +292,7 @@ void Object_Move(ScriptObject *objj, int x, int y, int speed, int blocking, int 
 	move_object(objj->id, x, y, speed, direct);
 
 	if ((blocking == BLOCKING) || (blocking == 1))
-		GameLoopUntilValueIsZero(&_G(objs)[objj->id].moving);
+		GameLoopUntilNotMoving(&_G(objs)[objj->id].moving);
 	else if ((blocking != IN_BACKGROUND) && (blocking != 0))
 		quit("Object.Move: invalid BLOCKING paramter");
 }
