@@ -23,11 +23,9 @@
 //
 // Sprite caching system.
 //
-// TODO: split out sprite serialization into something like "SpriteFile" class.
-// SpriteCache should only manage caching and provide bitmaps by demand.
-// There should be a separate unit which manages streaming and decompressing.
-// Perhaps an interface which would allow multiple implementation depending
-// on compression type.
+// SpriteFile handles sprite serialization and streaming.
+// SpriteCache provides bitmaps by demand; it uses SpriteFile to load sprites
+// and does MRU (most-recent-use) caching.
 //
 // TODO: store sprite data in a specialized container type that is optimized
 // for having most keys allocated in large continious sequences by default.
@@ -48,6 +46,7 @@
 #include "ags/lib/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/error.h"
+#include "ags/shared/util/geometry.h"
 
 namespace AGS3 {
 
@@ -109,6 +108,64 @@ struct SpriteFileIndex {
 	std::vector<soff_t>  Offsets;
 };
 
+class SpriteFile {
+public:
+	// Standart sprite file and sprite index names
+	static const char *const DefaultSpriteFileName;
+	static const char *const DefaultSpriteIndexName;
+
+	SpriteFile();
+	// Loads sprite reference information and inits sprite stream
+	HAGSError   OpenFile(const Shared::String &filename, const Shared::String &sprindex_filename,
+		std::vector<Size> &metrics);
+	void        Reset();
+
+	// Tells if bitmaps in the file are compressed
+	bool        IsFileCompressed() const;
+	// Tells the highest known sprite index
+	sprkey_t    GetTopmostSprite() const;
+
+	// Loads sprite index file
+	bool        LoadSpriteIndexFile(const Shared::String &filename, int expectedFileID,
+		soff_t spr_initial_offs, sprkey_t topmost, std::vector<Size> &metrics);
+	// Rebuilds sprite index from the main sprite file
+	HAGSError   RebuildSpriteIndex(AGS::Shared::Stream *in, sprkey_t topmost, SpriteFileVersion vers,
+		std::vector<Size> &metrics);
+
+	HAGSError LoadSprite(sprkey_t index, Shared::Bitmap *&sprite);
+	HAGSError LoadSpriteData(sprkey_t index, Size &metric, int &bpp, std::vector<char> &data);
+
+	// Saves all sprites to file; fills in index data for external use
+	// TODO: refactor to be able to save main file and index file separately (separate function for gather data?)
+	static int  SaveToFile(const Shared::String &save_to_file,
+		const std::vector<Shared::Bitmap *> &sprites, // available sprites (may contain nullptrs)
+		SpriteFile *read_from_file, // optional file to read missing sprites from
+		bool compressOutput, SpriteFileIndex &index);
+	// Saves sprite index table in a separate file
+	static int  SaveSpriteIndex(const Shared::String &filename, const SpriteFileIndex &index);
+
+private:
+	// Finds the topmost occupied slot index. Warning: may be slow.
+	static sprkey_t FindTopmostSprite(const std::vector<Shared::Bitmap *> &sprites);
+	// Seek stream to sprite
+	void        SeekToSprite(sprkey_t index);
+	// Writes compressed sprite to the stream
+	static void CompressSprite(Shared::Bitmap *sprite, Shared::Stream *out);
+	// Uncompresses sprite from stream into the given bitmap
+	static void UnCompressSprite(Shared::Bitmap *sprite, Shared::Stream *in);
+
+	// Internal sprite reference
+	struct SpriteRef {
+		soff_t Offset = 0; // data offset
+		size_t Size = 0;   // cache size of element, in bytes
+	};
+
+	// Array of sprite references
+	std::vector<SpriteRef> _spriteData;
+	std::unique_ptr<Shared::Stream> _stream; // the sprite stream
+	bool _compressed; // are sprites compressed
+	sprkey_t _curPos; // current stream position (sprite slot)
+};
 
 class SpriteCache {
 public:
@@ -116,12 +173,19 @@ public:
 	static const sprkey_t MAX_SPRITE_INDEX = INT32_MAX - 1;
 	static const size_t   MAX_SPRITE_SLOTS = INT32_MAX;
 
-	// Standart sprite file and sprite index names
-	static const Shared::String DefaultSpriteFileName;
-	static const Shared::String DefaultSpriteIndexName;
-
 	SpriteCache(std::vector<SpriteInfo> &sprInfos);
 	~SpriteCache();
+
+	// Loads sprite reference information and inits sprite stream
+	HAGSError   InitFile(const Shared::String &filename, const Shared::String &sprindex_filename);
+	// Saves current cache contents to the file
+	int         SaveToFile(const Shared::String &filename, bool compressOutput, SpriteFileIndex &index);
+	// Closes an active sprite file stream
+	void        DetachFile();
+
+	inline bool IsFileCompressed() const {
+		return _file.IsFileCompressed();
+	}
 
 	// Tells if there is a sprite registered for the given index;
 	// this includes sprites that were explicitly assigned but failed to init and were remapped
@@ -139,8 +203,6 @@ public:
 	size_t      GetMaxCacheSize() const;
 	// Returns number of sprite slots in the bank (this includes both actual sprites and free slots)
 	size_t      GetSpriteSlotCount() const;
-	// Finds the topmost occupied slot index. Warning: may be slow.
-	sprkey_t    FindTopmostSprite() const;
 	// Loads sprite and and locks in memory (so it cannot get removed implicitly)
 	void        Precache(sprkey_t index);
 	// Remap the given index to the sprite 0
@@ -162,40 +224,23 @@ public:
 	// Sets max cache size in bytes
 	void        SetMaxCacheSize(size_t size);
 
-	// Loads sprite reference information and inits sprite stream
-	HAGSError   InitFile(const Shared::String &filename, const Shared::String &sprindex_filename);
-	// Tells if bitmaps in the file are compressed
-	bool        IsFileCompressed() const;
-	// Opens file stream
-	int         AttachFile(const Shared::String &filename);
-	// Closes file stream
-	void        DetachFile();
-	// Saves all sprites to file; fills in index data for external use
-	// TODO: refactor to be able to save main file and index file separately (separate function for gather data?)
-	int         SaveToFile(const Shared::String &filename, bool compressOutput, SpriteFileIndex &index);
-	// Saves sprite index table in a separate file
-	int         SaveSpriteIndex(const Shared::String &filename, const SpriteFileIndex &index);
-
 	// Loads (if it's not in cache yet) and returns bitmap by the sprite index
-	Shared::Bitmap *operator[](sprkey_t index);
+	Shared::Bitmap *operator[] (sprkey_t index);
 
 private:
 	void        Init();
+	// Load sprite from game resource
+	size_t      LoadSprite(sprkey_t index);
 	// Gets the index of a sprite which data is used for the given slot;
 	// in case of remapped sprite this will return the one given sprite is remapped to
 	sprkey_t    GetDataIndex(sprkey_t index);
-	// Load sprite from game resource
-	size_t      LoadSprite(sprkey_t index);
-	// Seek stream to sprite
-	void        SeekToSprite(sprkey_t index);
 	// Delete the oldest image in cache
 	void        DisposeOldest();
 
 	// Information required for the sprite streaming
 	// TODO: split into sprite cache and sprite stream data
 	struct SpriteData {
-		soff_t          Offset; // data offset
-		soff_t          Size;   // cache size of element, in bytes
+		size_t          Size; // to track cache size
 		uint32_t        Flags;
 		// TODO: investigate if we may safely use unique_ptr here
 		// (some of these bitmaps may be assigned from outside of the cache)
@@ -218,10 +263,8 @@ private:
 	std::vector<SpriteInfo> &_sprInfos;
 	// Array of sprite references
 	std::vector<SpriteData> _spriteData;
-	bool _compressed;        // are sprites compressed
 
-	std::unique_ptr<Shared::Stream> _stream; // the sprite stream
-	sprkey_t _lastLoad; // last loaded sprite index
+	SpriteFile _file;
 
 	size_t _maxCacheSize;  // cache size limit
 	size_t _lockedSize;    // size in bytes of currently locked images
@@ -234,15 +277,6 @@ private:
 	std::vector<sprkey_t> _mrubacklink;
 	int _liststart;
 	int _listend;
-
-	// Loads sprite index file
-	bool        LoadSpriteIndexFile(const Shared::String &filename, int expectedFileID, soff_t spr_initial_offs, sprkey_t topmost);
-	// Rebuilds sprite index from the main sprite file
-	HAGSError   RebuildSpriteIndex(AGS::Shared::Stream *in, sprkey_t topmost, SpriteFileVersion vers);
-	// Writes compressed sprite to the stream
-	void        CompressSprite(Shared::Bitmap *sprite, Shared::Stream *out);
-	// Uncompresses sprite from stream into the given bitmap
-	void        UnCompressSprite(Shared::Bitmap *sprite, Shared::Stream *in);
 
 	// Initialize the empty sprite slot
 	void        InitNullSpriteParams(sprkey_t index);

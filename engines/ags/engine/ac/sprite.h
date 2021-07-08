@@ -31,7 +31,7 @@ void get_new_size_for_sprite(int ee, int ww, int hh, int &newwid, int &newhit);
 void set_rgb_mask_using_alpha_channel(Shared::Bitmap *image);
 // from is a 32-bit RGBA image, to is a 15/16/24-bit destination image
 Shared::Bitmap *remove_alpha_channel(Shared::Bitmap *from);
-void pre_save_sprite(int ee);
+void pre_save_sprite(Shared::Bitmap *bitmap);
 void initialize_sprite(int ee);
 
 } // namespace AGS3

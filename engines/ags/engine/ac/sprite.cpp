@@ -110,7 +110,7 @@ Bitmap *remove_alpha_channel(Bitmap *from) {
 	return to;
 }
 
-void pre_save_sprite(int ee) {
+void pre_save_sprite(Bitmap *image) {
 	// not used, we don't save
 }
 

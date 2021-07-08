@@ -583,13 +583,13 @@ void show_preload() {
 int engine_init_sprites() {
 	Debug::Printf(kDbgMsg_Info, "Initialize sprites");
 
-	HError err = _GP(spriteset).InitFile(SpriteCache::DefaultSpriteFileName, SpriteCache::DefaultSpriteIndexName);
+	HError err = _GP(spriteset).InitFile(SpriteFile::DefaultSpriteFileName, SpriteFile::DefaultSpriteIndexName);
 	if (!err) {
 		sys_main_shutdown();
 		allegro_exit();
 		_G(proper_exit) = 1;
 		_G(platform)->DisplayAlert("Could not load sprite set file %s\n%s",
-		                           SpriteCache::DefaultSpriteFileName.GetCStr(),
+		                           SpriteFile::DefaultSpriteFileName,
 		                           err->FullMessage().GetCStr());
 		return EXIT_ERROR;
 	}
