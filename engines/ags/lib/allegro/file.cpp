@@ -113,6 +113,10 @@ int PACKFILE::pack_fputs(AL_CONST char *p) {
 #define ucwidth   utf8_cwidth
 #define uisok     utf8_isok
 
+void set_filename_encoding(int) {
+	// No implementation
+}
+
 char *fix_filename_case(char *path) {
 	return path;
 }

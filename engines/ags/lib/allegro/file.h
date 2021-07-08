@@ -198,6 +198,7 @@ public:
 	}
 };
 
+extern void set_filename_encoding(int);
 extern char *fix_filename_case(char *path);
 extern char *fix_filename_slashes(char *path);
 extern char *append_filename(char *dest, const char *path, const char *filename, int size);

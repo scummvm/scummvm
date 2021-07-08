@@ -76,6 +76,10 @@ void main_create_platform_driver() {
 #define SVG_VERSION_FWCOMPAT_REVISION   1111
 
 void main_init(int argc, const char *argv[]) {
+	// Init libraries: set text encoding
+	set_uformat(U_UTF8);
+	set_filename_encoding(U_UNICODE);
+
 	_G(EngineVersion) = Version(ACI_VERSION_STR " " SPECIAL_VERSION);
 #if defined (BUILD_STR)
 	_G(EngineVersion).BuildInfo = BUILD_STR;
