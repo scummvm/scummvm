@@ -373,6 +373,15 @@ void PlaybackFile::readEvent(RecorderEvent& event) {
 	case kRecorderEventTypeTimer:
 		event.time = _tmpPlaybackFile.readUint32LE();
 		break;
+	case kRecorderEventTypeTimeDate:
+		event.timeDate.tm_sec = _tmpPlaybackFile.readSint32LE();
+		event.timeDate.tm_min = _tmpPlaybackFile.readSint32LE();
+		event.timeDate.tm_hour = _tmpPlaybackFile.readSint32LE();
+		event.timeDate.tm_mday = _tmpPlaybackFile.readSint32LE();
+		event.timeDate.tm_mon = _tmpPlaybackFile.readSint32LE();
+		event.timeDate.tm_year = _tmpPlaybackFile.readSint32LE();
+		event.timeDate.tm_wday = _tmpPlaybackFile.readSint32LE();
+		break;
 	default:
 		// fallthrough intended
 	case kRecorderEventTypeNormal:
@@ -548,6 +557,15 @@ void PlaybackFile::writeEvent(const RecorderEvent &event) {
 	switch (event.recordedtype) {
 	case kRecorderEventTypeTimer:
 		_tmpRecordFile.writeUint32LE(event.time);
+		break;
+	case kRecorderEventTypeTimeDate:
+		_tmpRecordFile.writeSint32LE(event.timeDate.tm_sec);
+		_tmpRecordFile.writeSint32LE(event.timeDate.tm_min);
+		_tmpRecordFile.writeSint32LE(event.timeDate.tm_hour);
+		_tmpRecordFile.writeSint32LE(event.timeDate.tm_mday);
+		_tmpRecordFile.writeSint32LE(event.timeDate.tm_mon);
+		_tmpRecordFile.writeSint32LE(event.timeDate.tm_year);
+		_tmpRecordFile.writeSint32LE(event.timeDate.tm_wday);
 		break;
 	default:
 		// fallthrough intended

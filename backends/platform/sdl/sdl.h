@@ -83,7 +83,7 @@ public:
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 	virtual uint32 getMillis(bool skipRecord = false) override;
 	virtual void delayMillis(uint msecs) override;
-	virtual void getTimeAndDate(TimeDate &td) const override;
+	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
 	virtual MixerManager *getMixerManager() override;
 	virtual Common::TimerManager *getTimerManager() override;
 	virtual Common::SaveFileManager *getSavefileManager() override;

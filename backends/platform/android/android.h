@@ -135,7 +135,7 @@ public:
 	virtual void setWindowCaption(const Common::U32String &caption) override;
 
 	virtual Audio::Mixer *getMixer() override;
-	virtual void getTimeAndDate(TimeDate &t) const override;
+	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
 	virtual void logMessage(LogMessageType::Type type, const char *message) override;
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 	virtual bool openUrl(const Common::String &url) override;

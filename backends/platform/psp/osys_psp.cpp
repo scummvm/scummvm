@@ -429,7 +429,7 @@ void OSystem_PSP::logMessage(LogMessageType::Type type, const char *message) {
 		PspDebugTrace(false, "%s", message);	// write to file
 }
 
-void OSystem_PSP::getTimeAndDate(TimeDate &td) const {
+void OSystem_PSP::getTimeAndDate(TimeDate &td, bool skipRecord) const {
 	time_t curTime = time(0);
 	struct tm t = *localtime(&curTime);
 	td.tm_sec = t.tm_sec;

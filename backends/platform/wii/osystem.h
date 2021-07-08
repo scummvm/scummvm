@@ -208,7 +208,7 @@ public:
 
 	virtual Audio::Mixer *getMixer() override;
 	virtual FilesystemFactory *getFilesystemFactory() override;
-	virtual void getTimeAndDate(TimeDate &t) const override;
+	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;
 
 	virtual void logMessage(LogMessageType::Type type, const char *message) override;
 

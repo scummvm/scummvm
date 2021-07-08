@@ -198,7 +198,7 @@ void OSystem_IPHONE::setTimerCallback(TimerProc callback, int interval) {
 void OSystem_IPHONE::quit() {
 }
 
-void OSystem_IPHONE::getTimeAndDate(TimeDate &td) const {
+void OSystem_IPHONE::getTimeAndDate(TimeDate &td, bool skipRecord) const {
 	time_t curTime = time(0);
 	struct tm t = *localtime(&curTime);
 	td.tm_sec = t.tm_sec;

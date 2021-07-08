@@ -142,7 +142,7 @@ public:
   void delayMillis(uint msecs);
 
   // Get the current time and date. Correspond to time()+localtime().
-  void getTimeAndDate(TimeDate &t) const;
+  void getTimeAndDate(TimeDate &td, bool skipRecord = false) const;
 
   // Get the next event.
   // Returns true if an event was retrieved.

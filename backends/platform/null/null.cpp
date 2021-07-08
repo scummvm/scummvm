@@ -87,7 +87,7 @@ public:
 
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
-	virtual void getTimeAndDate(TimeDate &t) const;
+	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const;
 
 	virtual void quit();
 
@@ -208,7 +208,7 @@ void OSystem_NULL::delayMillis(uint msecs) {
 #endif
 }
 
-void OSystem_NULL::getTimeAndDate(TimeDate &td) const {
+void OSystem_NULL::getTimeAndDate(TimeDate &td, bool skipRecord) const {
 	time_t curTime = time(0);
 	struct tm t = *localtime(&curTime);
 	td.tm_sec = t.tm_sec;

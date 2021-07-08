@@ -1368,7 +1368,7 @@ public:
 	 * On many systems, this corresponds to the combination of time()
 	 * and localtime().
 	 */
-	virtual void getTimeAndDate(TimeDate &t) const = 0;
+	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const = 0;
 
 	/**
 	 * Return the timer manager singleton.

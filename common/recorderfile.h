@@ -38,21 +38,39 @@ namespace Common {
 
 enum RecorderEventType {
 	kRecorderEventTypeNormal = 0,
-	kRecorderEventTypeTimer = 1
+	kRecorderEventTypeTimer = 1,
+	kRecorderEventTypeTimeDate = 2
 };
 
 struct RecorderEvent : Event {
 	RecorderEventType recordedtype;
-	uint32 time;
+	union {
+		uint32 time;
+		TimeDate timeDate;
+	};
 
 	RecorderEvent() {
 		recordedtype = kRecorderEventTypeNormal;
 		time = 0;
+		timeDate.tm_sec = 0;
+		timeDate.tm_min = 0;
+		timeDate.tm_hour = 0;
+		timeDate.tm_mday = 0;
+		timeDate.tm_mon = 0;
+		timeDate.tm_year = 0;
+		timeDate.tm_wday = 0;
 	}
 
 	RecorderEvent(const Event &e) : Event(e) {
 		recordedtype = kRecorderEventTypeNormal;
 		time = 0;
+		timeDate.tm_sec = 0;
+		timeDate.tm_min = 0;
+		timeDate.tm_hour = 0;
+		timeDate.tm_mday = 0;
+		timeDate.tm_mon = 0;
+		timeDate.tm_year = 0;
+		timeDate.tm_wday = 0;
 	}
 };
 

@@ -138,7 +138,7 @@ public:
 
 	// Misc
 	FilesystemFactory *getFilesystemFactory() { return &PSPFilesystemFactory::instance(); }
-	void getTimeAndDate(TimeDate &t) const;
+	void getTimeAndDate(TimeDate &td, bool skipRecord = false) const;
 	virtual void engineDone();
 
 	void quit();
