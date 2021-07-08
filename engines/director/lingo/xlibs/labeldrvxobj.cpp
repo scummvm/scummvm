@@ -53,7 +53,7 @@ void LabelDrvXObj::initialize(int type) {
 			LabelDrvXObject *xobj = new LabelDrvXObject(kXObj);
 			g_lingo->_globalvars[xlibName] = xobj;
 		} else {
-			warning("PalXObject already initialized");
+			warning("LabelDrvXObj already initialized");
 		}
 	}
 }
@@ -80,7 +80,7 @@ void LabelDrvXObj::m_setRange(int nargs) {
 	Common::String from = d1.asString();
 	Common::String to = d2.asString();
 
-	me->_range = from;
+	me->_range = from; // Store it so we could return value in the requested range
 }
 
 void LabelDrvXObj::m_getDrive(int nargs) {
@@ -90,7 +90,7 @@ void LabelDrvXObj::m_getDrive(int nargs) {
 
 	Common::String label = d1.asString();
 
-	g_lingo->push(Datum(me->_range));
+	g_lingo->push(Datum(me->_range)); // Always returning first letter
 }
 
 } // End of namespace Director
