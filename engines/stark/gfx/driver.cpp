@@ -74,6 +74,7 @@ Driver *Driver::create() {
 #endif
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
 		//driver = CreateTinyGLDriver();
+		error("This game does not currently support software rendering");
 	}
 
 	if (driver)
