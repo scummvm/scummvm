@@ -139,6 +139,7 @@ public:
 	void updateHeader();
 	void addSaveFile(const String &fileName, InSaveFile *saveStream);
 private:
+	Array<byte> _tmpBuffer;
 	WriteStream *_recordFile;
 	WriteStream *_writeStream;
 	WriteStream *_screenshotsFile;
@@ -150,7 +151,6 @@ private:
 	bool _headerDumped;
 	int _recordCount;
 	uint32 _eventsSize;
-	byte _tmpBuffer[kRecordBuffSize];
 	PlaybackFileHeader _header;
 	PlaybackFileState _playbackParseState;
 
