@@ -22,6 +22,8 @@
 
 #include "common/endian.h"
 
+#include "graphics/macgui/mactext.h"
+
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/channel.h"
@@ -32,11 +34,12 @@
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
+
 #include "director/lingo/xlibs/fileio.h"
-#include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/flushxobj.h"
+#include "director/lingo/xlibs/labeldrvxobj.h"
+#include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/winxobj.h"
-#include "graphics/macgui/mactext.h"
 
 namespace Director {
 
@@ -109,6 +112,7 @@ static struct XLibProto {
 	{ "FileIO",					FileIO::initialize,					kXObj | kFactoryObj,	200 },	// D2
 	{ "FlushXObj",				FlushXObj::initialize,				kXObj,					400 },	// D4
 	{ "PalXObj",				PalXObj:: initialize,				kXObj,					400 }, 	// D4
+	{ "LabelDrv",				LabelDrvXObj:: initialize,			kXObj,					400 }, 	// D4
 	{ "winXObj",				RearWindowXObj::initialize,			kXObj,					400 },	// D4
 	{ 0, 0, 0, 0 }
 
