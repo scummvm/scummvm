@@ -80,7 +80,9 @@ DirectorPlotData Channel::getPlotData() {
 		pd.ms = getShape();
 		pd.applyColor = false;
 	} else {
-		pd.setApplyColor();
+		// for the editable text sprite, we shall apply color in mactext. because those editable part may changed without let director knowing it
+		if (!(_sprite->_spriteType == kTextSprite && _sprite->_cast && _sprite->_cast->isEditable()))
+			pd.setApplyColor();
 	}
 
 	return pd;
@@ -492,14 +494,20 @@ void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
 		Common::Rect bbox(getBbox());
 		_sprite->_cast->setModified(false);
 
-//		if (_sprite->_cast->_type == kCastText)
-//			debug("%s %d\n", ((TextCastMember *)_sprite->_cast)->_ftext.c_str(), ((TextCastMember *)_sprite->_cast)->_editable);
 		_widget = _sprite->_cast->createWidget(bbox, this);
 		if (_widget) {
 			_widget->_priority = _priority;
 			_widget->draw();
 
 			if (_sprite->_cast->_type == kCastText || _sprite->_cast->_type == kCastButton) {
+				// for editable test cast, we didn't apply the color, thus, we should set color when we are creating cast member
+				// this should be amend to setting colors before we create castmember.
+				// but currently, fgcolor is not available in mactext due to the fact that we are using _ftext to decide render formatting
+				if (_sprite->_cast->_type == kCastText && _sprite->_cast->isEditable()) {
+					((Graphics::MacText *)_widget)->setColors(_sprite->_foreColor, _sprite->_backColor);
+					((Graphics::MacText *)_widget)->draw();
+				}
+
 				_sprite->_width = _widget->_dims.width();
 				_sprite->_height = _widget->_dims.height();
 				_width = _sprite->_width;
