@@ -769,7 +769,7 @@ void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
 	_cursorKeyColor = keycolor;
 	_pfCursor = !format ? Graphics::PixelFormat::createFormatCLUT8() : *format;
 
-	if (w != _cursor.w || h != _cursor.h || _cursor.format != _pfCursor) {
+	if (w != (uint)_cursor.w || h != (uint)_cursor.h || _cursor.format != _pfCursor) {
 		_cursor.create(w, h, _pfCursor);
 		_cursorTexture.create(w, h, &DEFAULT_MODE);
 	}
@@ -800,11 +800,11 @@ void applyKeyColor(Graphics::Surface *src, Graphics::Surface *dst, const SrcColo
 	assert(dst->format.bytesPerPixel == 4);
 	assert((dst->w >= src->w) && (dst->h >= src->h));
 
-	for (uint y = 0; y < src->h; ++y) {
+	for (uint y = 0; y < (uint)src->h; ++y) {
 		SrcColor *srcPtr = (SrcColor *)src->getBasePtr(0, y);
 		uint32 *dstPtr = (uint32 *)dst->getBasePtr(0, y);
 
-		for (uint x = 0; x < src->w; ++x) {
+		for (uint x = 0; x < (uint)src->w; ++x) {
 			const SrcColor color = *srcPtr++;
 
 			if (color == keyColor) {
