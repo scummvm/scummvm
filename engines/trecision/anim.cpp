@@ -357,8 +357,6 @@ void AnimTypeManager::handler(int type) {
 	if (h->_curFrame <= h->_lastFrame)
 		return;
 
-	const uint16 flag = _vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag;
-
 	for (int32 i = 0; i < MAXATFRAME; ++i) {
 		// if it's time to run this AtFrame
 		if (anim->_atFrame[i]._numFrame > h->_lastFrame &&
