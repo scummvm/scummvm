@@ -366,7 +366,7 @@ GridWidget::~GridWidget() {
 const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name) {
 	String path = String("./icons/") + name;
 	
-	for (auto l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
+	for (Common::Array<GridItemInfo>::iterator l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
 		if (l->thumbPath == name) {
 			return _loadedSurfaces[path];
 		}
@@ -389,7 +389,7 @@ const Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformC
 
 void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
 	_allEntries.clear();
-	for (auto entryIter = list->begin(); entryIter != list->end(); ++entryIter) {
+	for (Common::Array<GridItemInfo>::iterator entryIter = list->begin(); entryIter != list->end(); ++entryIter) {
 		_allEntries.push_back(*entryIter);
 	}
 	if (!_gridItems.empty()) {
@@ -468,7 +468,7 @@ void GridWidget::loadFlagIcons() {
 }
 
 void GridWidget::loadPlatformIcons() {
-	for (auto iter = _platformIcons.begin(); iter != _platformIcons.end(); ++iter) {
+	for (Common::Array<const Graphics::ManagedSurface *>::iterator iter = _platformIcons.begin(); iter != _platformIcons.end(); ++iter) {
 		delete *iter;
 	}
 	_platformIcons.clear();
@@ -480,7 +480,7 @@ void GridWidget::loadPlatformIcons() {
 	iconFilenames.push_back(String("amiga.png"));
 	iconFilenames.push_back(String("apple2.png"));
 
-	for (auto i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
+	for (StringArray::iterator i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
 		String fullPath = pathPrefix + (*i);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(fullPath);
 		if (gfx) {
@@ -503,23 +503,23 @@ void GridWidget::destroyItems() {
 }
 
 void GridWidget::move(int x, int y) {
-	for (auto i = _gridItems.begin(); i != _gridItems.end(); ++i) {
+	for (Common::Array<GridItemWidget *>::iterator i = _gridItems.begin(); i != _gridItems.end(); ++i) {
 		(*i)->move(x, y);
 	}
 }
 
 void GridWidget::updateGrid() {
-	for (auto i = _gridItems.begin(); i != _gridItems.end(); ++i) {
+	for (Common::Array<GridItemWidget *>::iterator i = _gridItems.begin(); i != _gridItems.end(); ++i) {
 		(*i)->update();
 	}
 }
 
 void GridWidget::assignEntriesToItems() {
 	// Assign entries from _visibleEntries to each GridItem in _gridItems
-	auto entry = _visibleEntries.begin();
+	Common::Array<GridItemInfo>::iterator entry = _visibleEntries.begin();
 	// Start assigning from the second row as the first row is supposed
 	// to be offscreen.
-	auto it = _gridItems.begin() + _itemsPerRow;
+	Common::Array<GridItemWidget *>::iterator it = _gridItems.begin() + _itemsPerRow;
 	
 	for (int k = 0; k < _itemsOnScreen; ++k) {
 		GridItemWidget *item = *it;
@@ -562,7 +562,7 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 			int row = 0;
 			int col = 0;
 
-			for (auto it = _gridItems.begin(); it != _gridItems.end(); ++it) {
+			for (Common::Array<GridItemWidget *>::iterator it = _gridItems.begin(); it != _gridItems.end(); ++it) {
 				(*it)->setPos(2 * _minGridXSpacing + col * (_gridItemWidth + _gridXSpacing), 
 							  _gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing) - (-_scrollPos % (_gridItemHeight + _gridYSpacing)));
 				if (++col >= _itemsPerRow) {
