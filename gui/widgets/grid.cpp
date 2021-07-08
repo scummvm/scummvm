@@ -101,8 +101,8 @@ void GridItemWidget::drawWidget() {
 							_activeEntry->title.substr(breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter,
 							ThemeEngine::kTextInversionNone, 0, true, ThemeEngine::kFontStyleNormal,
 							ThemeEngine::kFontColorAlternate, false);
-	}
-	else g_gui.theme()->drawSurface(Common::Point(_x, _y), _thumbGfx, true);
+	} else
+		g_gui.theme()->drawSurface(Common::Point(_x, _y), _thumbGfx, true);
 
 	// Draw Platform Icon
 	if (_activeEntry->platform != kPlatformUnknown) {
@@ -195,8 +195,7 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 }
 
 void GridItemTray::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	switch (cmd)
-	{
+	switch (cmd) {
 	case kPlayButtonCmd:
 		close();
 		sendCommand(kPlayButtonCmd, _entryID);
@@ -365,7 +364,7 @@ GridWidget::~GridWidget() {
 }
 
 const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name) {
-	String path = String("./icons/")+name;
+	String path = String("./icons/") + name;
 	
 	for (auto l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
 		if (l->thumbPath == name) {
@@ -435,7 +434,7 @@ void GridWidget::reloadThumbnails() {
 	String path;
 	
 	for (Common::Array<GridItemInfo>::iterator iter = _visibleEntries.begin(); iter != _visibleEntries.end(); ++iter) {
-		path = String("./icons/")+iter->thumbPath;
+		path = String("./icons/") + iter->thumbPath;
 		if (_loadedSurfaces.contains(path)) {
 			// warning("Thumbnail already loaded, skipping...");
 		} else {
@@ -445,8 +444,7 @@ void GridWidget::reloadThumbnails() {
 				_loadedSurfaces[path] = scSurf;
 				surf->free();
 				delete surf;
-			}
-			else {
+			} else {
 				_loadedSurfaces[path] = nullptr;
 			}
 		}
@@ -463,8 +461,7 @@ void GridWidget::loadFlagIcons() {
 			_loadedSurfaces[path] = scGfx;
 			gfx->free();
 			delete gfx;
-		}
-		else {
+		} else {
 			_loadedSurfaces[path] = nullptr;
 		}
 	}
