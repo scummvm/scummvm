@@ -106,7 +106,7 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 
 		// Move to next block
 		++x;
-		if (x == thumbnail.w) {
+		if (x == (uint)thumbnail.w) {
 			x = 0;
 			++y;
 		}
