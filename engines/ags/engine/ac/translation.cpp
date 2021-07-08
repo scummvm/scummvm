@@ -105,7 +105,11 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 	}
 
 	// Setup a text encoding mode depending on the translation data hint
-	set_uformat(U_ASCII);
+	String encoding = _GP(trans).StrOptions["encoding"];
+	if (encoding.CompareNoCase("utf-8") == 0)
+		set_uformat(U_UTF8);
+	else
+		set_uformat(U_ASCII);
 
 	Debug::Printf("Translation initialized: %s", _G(trans_filename).GetCStr());
 	return true;
