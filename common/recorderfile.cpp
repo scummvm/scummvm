@@ -34,7 +34,10 @@
 
 namespace Common {
 
-PlaybackFile::PlaybackFile() : _tmpRecordFile(_tmpBuffer, kRecordBuffSize), _tmpPlaybackFile(_tmpBuffer, kRecordBuffSize) {
+PlaybackFile::PlaybackFile()
+	: _tmpBuffer(kRecordBuffSize)
+	, _tmpRecordFile(_tmpBuffer.data(), kRecordBuffSize)
+	, _tmpPlaybackFile(_tmpBuffer.data(), kRecordBuffSize) {
 	_readStream = NULL;
 	_writeStream = NULL;
 	_screenshotsFile = NULL;
@@ -44,7 +47,7 @@ PlaybackFile::PlaybackFile() : _tmpRecordFile(_tmpBuffer, kRecordBuffSize), _tmp
 	_headerDumped = false;
 	_recordCount = 0;
 	_eventsSize = 0;
-	memset(_tmpBuffer, 1, kRecordBuffSize);
+	memset(_tmpBuffer.data(), 1, kRecordBuffSize);
 
 	_playbackParseState = kFileStateCheckFormat;
 }
@@ -400,7 +403,7 @@ void PlaybackFile::readEvent(RecorderEvent& event) {
 }
 
 void PlaybackFile::readEventsToBuffer(uint32 size) {
-	_readStream->read(_tmpBuffer, size);
+	_readStream->read(_tmpBuffer.data(), size);
 	_tmpPlaybackFile.seek(0);
 	_eventsSize = size;
 }
@@ -423,7 +426,7 @@ void PlaybackFile::dumpRecordsToFile() {
 	}
 	_writeStream->writeUint32LE(kEventTag);
 	_writeStream->writeUint32LE(_tmpRecordFile.pos());
-	_writeStream->write(_tmpBuffer, _tmpRecordFile.pos());
+	_writeStream->write(_tmpBuffer.data(), _tmpRecordFile.pos());
 	_tmpRecordFile.seek(0);
 	_recordCount = 0;
 }
@@ -644,8 +647,8 @@ void PlaybackFile::updateHeader() {
 	dumpHeaderToFile();
 	uint32 readedSize = 0;
 	do {
-		readedSize = _readStream->read(_tmpBuffer, kRecordBuffSize);
-		_writeStream->write(_tmpBuffer, readedSize);
+		readedSize = _readStream->read(_tmpBuffer.data(), kRecordBuffSize);
+		_writeStream->write(_tmpBuffer.data(), readedSize);
 	} while (readedSize != 0);
 	delete _writeStream;
 	_writeStream = NULL;
