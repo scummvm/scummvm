@@ -58,8 +58,7 @@ void LauncherChooser::selectLauncher() {
 		delete _impl;
 		_impl = nullptr;
 
-		switch (requestedType)
-		{
+		switch (requestedType) {
 		case kLauncherDisplayGrid:
 			_impl = new LauncherGrid(Common::U32String("LauncherGrid"));
 			break;

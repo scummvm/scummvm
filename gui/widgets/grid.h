@@ -55,12 +55,11 @@ enum {
 	kLoadButtonCmd = 'LOAD',
 	kOpenTrayCmd = 'OPTR',
 	kItemClicked = 'LBX1',
-	kItemDoubleClickedCmd = 'LBX2',
+	kItemDoubleClickedCmd = 'LBX2'
 };
 
 /* GridItemInfo */
-struct GridItemInfo
-{
+struct GridItemInfo {
 	typedef Common::String String;
 
 	String 		engineid;

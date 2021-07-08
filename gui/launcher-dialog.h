@@ -38,7 +38,7 @@ namespace GUI {
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 enum LauncherDisplayType {
 	kLauncherDisplayList = 1,
-	kLauncherDisplayGrid = 2,
+	kLauncherDisplayGrid = 2
 };
 
 enum {
@@ -175,9 +175,9 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
 
-	#ifndef DISABLE_LAUNCHERDISPLAY_GRID
+#ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
-	#endif // !DISABLE_LAUNCHERDISPLAY_GRID
+#endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
 protected:
 	void updateListing() override;

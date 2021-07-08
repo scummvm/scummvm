@@ -186,7 +186,7 @@ LauncherDialog::~LauncherDialog() {
 
 void LauncherDialog::clean() {
 	while (_firstWidget) {
-		Widget* w = _firstWidget;
+		Widget *w = _firstWidget;
 		removeWidget(w);
 		// This is called from rebuild() which may result from handleCommand being called by
 		// a child widget sendCommand call. In such a case sendCommand is still being executed
@@ -287,7 +287,7 @@ void LauncherDialog::reflowLayout() {
 		close();
 		return;
 	}
-	#ifndef DISABLE_FANCY_THEMES
+#ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget(String(_title + ".Version").c_str());
 		if (ver) {
