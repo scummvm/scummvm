@@ -220,7 +220,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 		int tail = (_surface->w * _surface->h * _bitsPerPixel / 8) - pixels.size();
 
 		warning("BITDDecoder::loadStream(): premature end of stream (%d of %d pixels)",
-			pixels.size(), pixels.size() + tail);
+				pixels.size(), pixels.size() + tail);
 
 		for (int i = 0; i < tail; i++)
 			pixels.push_back(0);
@@ -229,6 +229,10 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	int offset = 0;
 	if (_surface->w < (int)(pixels.size() / _surface->h))
 		offset = (pixels.size() / _surface->h) - _surface->w;
+	// looks like the data want to round up to 2, so we either got offset 1 or 0.
+	// but we may met situation when the pixel size is exactly equals to w * h, thus we add a check here.
+	if (offset)
+		offset = _surface->w % 2;
 
 	uint32 color;
 	bool paletted = (g_director->_pixelformat.bytesPerPixel == 1);
