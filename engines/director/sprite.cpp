@@ -179,7 +179,7 @@ void Sprite::setPattern(uint16 pattern) {
 	}
 }
 
-void Sprite::setCast(CastMemberID memberID, bool forceDims) {
+void Sprite::setCast(CastMemberID memberID) {
 	CastMember *member = _movie->getCastMember(memberID);
 	_castId = memberID;
 
@@ -190,7 +190,7 @@ void Sprite::setCast(CastMemberID memberID, bool forceDims) {
 		_cast = member;
 
 		if (_cast->_type == kCastText &&
-				(_spriteType == kButtonSprite ||
+			(_spriteType == kButtonSprite ||
 				 _spriteType == kCheckboxSprite ||
 				 _spriteType == kRadioButtonSprite)) {
 			// WORKAROUND: In D2/D3 there can be text casts that have button
@@ -211,12 +211,6 @@ void Sprite::setCast(CastMemberID memberID, bool forceDims) {
 				_height = dims.height();
 			}
 		} else if (_cast->_type != kCastShape && _cast->_type != kCastText) {
-			_width = dims.width();
-			_height = dims.height();
-		}
-
-		// if we are setting the cast though lingo, then we modify the sprites dims to suit for cast member
-		if (forceDims) {
 			_width = dims.width();
 			_height = dims.height();
 		}

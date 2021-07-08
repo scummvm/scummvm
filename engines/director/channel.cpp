@@ -289,7 +289,7 @@ Common::Rect Channel::getBbox(bool unstretched) {
 }
 
 void Channel::setCast(CastMemberID memberID) {
-	_sprite->setCast(memberID, true);
+	_sprite->setCast(memberID);
 	_width = _sprite->_width;
 	_height = _sprite->_height;
 	replaceWidget();
