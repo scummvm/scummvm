@@ -1009,7 +1009,9 @@ TilePoint getClosestPointOnTAI(ActiveItem *TAI, GameObject *obj);
 
 void initActiveItemStates(void);
 void saveActiveItemStates(SaveFileConstructor &saveGame);
+void saveActiveItemStates(Common::OutSaveFile *out);
 void loadActiveItemStates(SaveFileReader &saveGame);
+void loadActiveItemStates(Common::InSaveFile *in);
 void cleanupActiveItemStates(void);
 
 void initTileCyclingStates(void);

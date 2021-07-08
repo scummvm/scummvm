@@ -856,6 +856,61 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 	free(archiveBuffer);
 }
 
+void saveActiveItemStates(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving ActiveItemStates");
+
+	int32 archiveBufSize = 0;
+
+	for (int i = 0; i < worldCount; i++) {
+		int32 size = tileRes->size(tagStateID + i);
+		archiveBufSize += sizeof(int16);
+		if (stateArray[i] != nullptr)
+			archiveBufSize += size;
+	}
+
+	out->write("TAGS", 4);
+	out->writeUint32LE(archiveBufSize);
+
+	for (int i = 0; i < worldCount; i++) {
+		debugC(3, kDebugSaveload, "Saving ActiveItemState %d", i);
+
+		if (stateArray[i] != nullptr) {
+			WorldMapData *mapData = &mapList[i];
+			ActiveItemList *activeItemList = mapData->activeItemList;
+			int16 activeItemCount = mapData->activeCount;
+			int32 arraySize = tileRes->size(tagStateID + i);
+
+			//  Save the size of the state array
+			out->writeSint16LE(arraySize);
+
+			debugC(4, kDebugSaveload, "... arraySize = %d", arraySize);
+
+			for (int j = 0; j < activeItemCount; j++) {
+				ActiveItem *activeItem = activeItemList->_items[j];
+				uint8 *statePtr;
+
+				if (activeItem->_data.itemType != activeTypeInstance)
+					continue;
+
+				//  Get a pointer to the current active item's state
+				//  data in the archive buffer
+				statePtr = &stateArray[i][activeItem->_data.instance.stateIndex];
+
+				//  Set the high bit of the state value based upon the
+				//  active item's locked state
+				if (activeItem->isLocked())
+					*statePtr |= (1 << 7);
+				else
+					*statePtr &= ~(1 << 7);
+			}
+
+			//  Copy the state data to the archive buffer
+			out->write(stateArray[i], arraySize);
+		} else
+			out->writeSint16LE(0);
+	}
+}
+
 //-----------------------------------------------------------------------
 //	Load the active item instance states from a save file
 
@@ -923,6 +978,54 @@ void loadActiveItemStates(SaveFileReader &saveGame) {
 	}
 
 	free(archiveBuffer);
+}
+
+void loadActiveItemStates(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading ActiveItemStates");
+
+	stateArray = new byte *[worldCount]();
+
+	if (stateArray == nullptr)
+		error("Unable to allocate the active item state array array");
+
+	for (int i = 0; i < worldCount; i++) {
+		debugC(3, kDebugSaveload, "Loading ActiveItemState %d", i);
+
+		int32 arraySize;
+
+		arraySize = in->readSint16LE();
+
+		debugC(4, kDebugSaveload, "... arraySize = %d", arraySize);
+
+		stateArray[i] = (byte *)malloc(arraySize);
+		in->read(stateArray[i], arraySize);
+
+		if (arraySize > 0) {
+			WorldMapData *mapData = &mapList[i];
+			ActiveItemList *activeItemList = mapData->activeItemList;
+			int16 activeItemCount = mapData->activeCount;
+
+			for (int j = 0; j < activeItemCount; j++) {
+				ActiveItem      *activeItem = activeItemList->_items[j];
+				uint8           *statePtr;
+
+				if (activeItem->_data.itemType != activeTypeInstance)
+					continue;
+
+				//  Get a pointer to the current active item's state
+				//  data in the archive buffer
+				statePtr = &stateArray[i][activeItem->_data.instance.stateIndex];
+
+				//  Reset the locked state of the active item based
+				//  upon the high bit of the buffered state value
+				activeItem->setLocked((*statePtr & (1 << 7)) != 0);
+
+				//  Clear the high bit of the state value
+				*statePtr &= ~(1 << 7);
+			}
+		} else
+			stateArray[i] = nullptr;
+	}
 }
 
 //-----------------------------------------------------------------------
