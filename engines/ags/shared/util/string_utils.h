@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_UTIL_STRING_UTILS_H
 #define AGS_SHARED_UTIL_STRING_UTILS_H
 
-#include "ags/shared/util/string.h"
+#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 
@@ -81,6 +81,10 @@ void            ReadCStr(char *buf, Stream *in, size_t buf_limit);
 void            SkipCStr(Stream *in);
 void            WriteCStr(const char *cstr, Stream *out);
 void            WriteCStr(const String &s, Stream *out);
+
+// Serialize and unserialize a string map, both keys and values are read using ReadString
+void            ReadStringMap(StringMap &map, Stream *in);
+void            WriteStringMap(const StringMap &map, Stream *out);
 
 } // namespace StrUtil
 } // namespace Shared
