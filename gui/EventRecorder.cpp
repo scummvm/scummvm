@@ -605,7 +605,7 @@ void EventRecorder::setFileHeader() {
 		setAuthor("Unknown Author");
 	}
 	if (_name.empty()) {
-		g_eventRec.setName(Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description);
+		g_eventRec.setName(Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon + 1, 1900 + t.tm_year) + desc.description);
 	}
 	_playbackFile->getHeader().author = _author;
 	_playbackFile->getHeader().notes = _desc;
