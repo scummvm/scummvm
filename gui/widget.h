@@ -38,7 +38,6 @@
 namespace GUI {
 
 class ScrollContainerWidget;
-class ScrollBarWidget;
 
 enum {
 	WIDGET_ENABLED		= 1 <<  0,
@@ -304,7 +303,7 @@ public:
 
 protected:
 	void drawWidget() override;
-	
+
 	Graphics::ManagedSurface _gfx[kPicButtonStateMax + 1];
 	int _alpha;
 	bool _transparency;
