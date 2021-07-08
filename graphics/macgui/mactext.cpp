@@ -275,6 +275,13 @@ void MacText::init() {
 	_cursorSurface2 = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
 	_cursorSurface2->clear(_bgcolor);
 
+	// currently, we are not using fg color to render text. And we are not passing fg color correctly, thus we read it our self.
+	int color = getFgColor();
+	if (color != -1) {
+		debug(9, "Reading fg color though text, instead of the argument");
+		_fgcolor = color;
+	}
+
 	reallocSurface();
 	setAlignOffset(_textAlignment);
 	updateCursorPos();
@@ -289,6 +296,19 @@ MacText::~MacText() {
 	delete _surface;
 	delete _cursorSurface;
 	delete _cursorSurface2;
+}
+
+// this func returns the fg color of the first character we met in text
+int MacText::getFgColor() {
+	if (_textLines.empty())
+		return -1;
+	for (uint i = 0; i < _textLines.size(); i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			if (!_textLines[i].chunks[j].text.empty())
+				return _textLines[i].chunks[j].fgcolor;
+		}
+	}
+	return -1;
 }
 
 // we are doing this because we may need to dealing with the plain byte. See ctor of mactext which contains String str instead of U32String str
@@ -910,17 +930,17 @@ void MacText::render(int from, int to) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
-				i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
-				_textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
-				(const void *)_textLines[i].chunks[j].getFont());
+			debug(0, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
+				  i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
+				  _textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
+				  (const void *)_textLines[i].chunks[j].getFont());
 
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
 
 			int yOffset = 0;
 			if (_textLines[i].chunks[j].font->getFontAscent() < maxAscentForRow) {
-				yOffset = maxAscentForRow -_textLines[i].chunks[j].font->getFontAscent();
+				yOffset = maxAscentForRow - _textLines[i].chunks[j].font->getFontAscent();
 			}
 
 			if (_plainByteMode) {
