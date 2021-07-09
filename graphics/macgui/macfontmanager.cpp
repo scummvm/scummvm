@@ -66,6 +66,17 @@ static struct FontProto {
 	{ 33,		kCharsLatin,	-1,		"Avant Garde" },
 	{ 34,		kCharsLatin,	-1,		"New Century Schoolbook" },
 
+	// Japanese (names are Shift JIS encoded)
+	{ 16384,	kCharsJapanese,	-1,		"Osaka" },
+	{ 16433,	kCharsJapanese,	16436,	"\x93\x99\x95\x9D\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Mono Gothic
+	{ 16435,	kCharsJapanese,	16436,	"\x93\x99\x95\x9D\x96\xBE\x92\xA9" }, // Mono Ming
+	{ 16436,	kCharsJapanese,	-1,		"Osaka\x81\x7C\x93\x99\x95\x9D" }, // Osaka Mono
+	{ 16436,	kCharsJapanese,	-1,		"OsakaMono" }, // redundant entry is to register English name
+	{ 16640,	kCharsJapanese,	16384,	"\x92\x86\x83\x53\x83\x56\x83\x62\x83\x4E\x91\xCC" }, // Medium Gothic
+	{ 16641,	kCharsJapanese,	16384,	"\x8D\xD7\x96\xBE\x92\xA9\x91\xCC" }, // Ming
+	{ 16700,	kCharsJapanese,	16384,	"\x95\xBD\x90\xAC\x96\xBE\x92\xA9" }, // Heisi Mincho
+	{ 16701,	kCharsJapanese,	16384,	"\x95\xBD\x90\xAC\x8A\x70\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Heisei Kaku Gothic
+
 	{ -1,		kCharsUnknown,	-1,		NULL }
 };
 
@@ -121,6 +132,7 @@ MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
 	} else {
 		loadFonts();
 	}
+	_japaneseFontsLoaded = false;
 	_nextFontId = 100;
 }
 
@@ -362,6 +374,14 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 	const Font *font = 0;
 
 	if (!_builtInFonts) {
+		if (_fontInfo.contains(macFont.getId())) {
+			if (_fontInfo[macFont.getId()]->charset == kCharsJapanese && !_japaneseFontsLoaded) {
+				loadJapaneseFonts();
+			}
+		} else {
+			warning("MacFontManager::getFont: No _fontInfo entry for font %d", macFont.getId());
+		}
+
 		if (macFont.getName().empty()) {
 			name = getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant());
 			macFont.setName(name);

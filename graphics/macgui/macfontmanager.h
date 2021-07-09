@@ -162,6 +162,7 @@ public:
 private:
 	void loadFontsBDF();
 	void loadFonts();
+	void loadJapaneseFonts();
 
 	void generateFontSubstitute(MacFont &macFont);
 	void generateFONTFont(MacFont &toFont, MacFont &fromFont);
@@ -172,6 +173,7 @@ private:
 
 private:
 	bool _builtInFonts;
+	bool _japaneseFontsLoaded;
 	uint32 _mode;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
 
