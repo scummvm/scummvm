@@ -32,7 +32,11 @@
 #include "ags/shared/util/string_utils.h"
 #include "ags/globals.h"
 
+
 namespace AGS3 {
+
+// Project-dependent implementation
+extern int wgettextwidth_compensate(const char *tex, int font);
 
 #define STD_BUFFER_SIZE 3000
 
@@ -164,15 +168,6 @@ bool use_default_linespacing(size_t fontNumber) {
 	if (fontNumber >= _GP(fonts).size())
 		return false;
 	return _GP(fonts)[fontNumber].Info.LineSpacing == 0;
-}
-
-// Project-dependent implementation
-extern int wgettextwidth_compensate(const char *tex, int font);
-
-namespace AGS {
-namespace Shared {
-SplitLines Lines;
-}
 }
 
 // Replaces AGS-specific linebreak tags with common '\n'

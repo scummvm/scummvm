@@ -679,7 +679,7 @@ public:
 	std::vector<AGS::Shared::Font> *_fonts;
 	TTFFontRenderer *_ttfRenderer;
 	WFNFontRenderer *_wfnRenderer;
-	SplitLines *_fontLines;
+	SplitLines *_Lines;
 
 	/**@}*/
 

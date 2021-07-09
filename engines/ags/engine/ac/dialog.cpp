@@ -331,7 +331,7 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 			else text_color = ds->GetCompatibleColor(utextcol);
 		}
 
-		break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[ww]]), Lines, areawid - (2 * padding + 2 + bullet_wid), usingfont);
+		break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[ww]]), _GP(Lines), areawid - (2 * padding + 2 + bullet_wid), usingfont);
 		dispyp[ww] = curyp;
 		if (_GP(game).dialog_bullet > 0) {
 			draw_gui_sprite_v330(ds, _GP(game).dialog_bullet, dlgxp, curyp, ds_has_alpha);
@@ -345,8 +345,8 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 			sprintf(tempbfr, "%d.", ww + 1);
 			wouttext_outline(ds, dlgxp + actualpicwid, curyp, usingfont, text_color, tempbfr);
 		}
-		for (size_t cc = 0; cc < Lines.Count(); cc++) {
-			wouttext_outline(ds, dlgxp + ((cc == 0) ? 0 : 9) + bullet_wid, curyp, usingfont, text_color, Lines[cc].GetCStr());
+		for (size_t cc = 0; cc < _GP(Lines).Count(); cc++) {
+			wouttext_outline(ds, dlgxp + ((cc == 0) ? 0 : 9) + bullet_wid, curyp, usingfont, text_color, _GP(Lines)[cc].GetCStr());
 			curyp += linespacing;
 		}
 		if (ww < numdisp - 1)
@@ -360,8 +360,8 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 #define GET_OPTIONS_HEIGHT {\
 		needheight = 0;\
 		for (int i = 0; i < numdisp; ++i) {\
-			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), Lines, areawid-(2*padding+2+bullet_wid), usingfont);\
-			needheight += getheightoflines(usingfont, Lines.Count()) + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);\
+			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), _GP(Lines), areawid-(2*padding+2+bullet_wid), usingfont);\
+			needheight += getheightoflines(usingfont, _GP(Lines).Count()) + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);\
 		}\
 		if (parserInput) needheight += parserInput->Height + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);\
 	}
@@ -645,7 +645,7 @@ void DialogOptions::Redraw() {
 		int biggest = 0;
 		padding = _GP(guis)[_GP(game).options[OPT_DIALOGIFACE]].Padding;
 		for (int i = 0; i < numdisp; ++i) {
-			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), Lines, areawid - ((2 * padding + 2) + bullet_wid), usingfont);
+			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), _GP(Lines), areawid - ((2 * padding + 2) + bullet_wid), usingfont);
 			if (_G(longestline) > biggest)
 				biggest = _G(longestline);
 		}

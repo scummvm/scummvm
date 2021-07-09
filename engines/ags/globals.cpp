@@ -189,7 +189,7 @@ Globals::Globals() {
 	_fonts = new std::vector<AGS::Shared::Font>();
 	_ttfRenderer = new TTFFontRenderer();
 	_wfnRenderer = new WFNFontRenderer();
-	_fontLines = new SplitLines();
+	_Lines = new SplitLines();
 
 	// game.cpp globals
 	_ccDynamicGUIObject = new CCGUIObject();
@@ -419,6 +419,7 @@ Globals::~Globals() {
 	delete _fonts;
 	delete _ttfRenderer;
 	delete _wfnRenderer;
+	delete _Lines;
 
 	// game.cpp globals
 	delete _ccDynamicGUIObject;

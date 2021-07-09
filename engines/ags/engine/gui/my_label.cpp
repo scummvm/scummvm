@@ -47,10 +47,10 @@ void MyLabel::draw(Bitmap *ds) {
 	char *teptr = &text[0];
 	color_t text_color = ds->GetCompatibleColor(0);
 
-	if (break_up_text_into_lines(teptr, Lines, wid, _G(acdialog_font)) == 0)
+	if (break_up_text_into_lines(teptr, _GP(Lines), wid, _G(acdialog_font)) == 0)
 		return;
-	for (size_t ee = 0; ee < Lines.Count(); ee++) {
-		wouttext_outline(ds, x, cyp, _G(acdialog_font), text_color, Lines[ee].GetCStr());
+	for (size_t ee = 0; ee < _GP(Lines).Count(); ee++) {
+		wouttext_outline(ds, x, cyp, _G(acdialog_font), text_color, _GP(Lines)[ee].GetCStr());
 		cyp += TEXT_HT;
 	}
 }

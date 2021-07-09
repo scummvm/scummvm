@@ -139,12 +139,6 @@ private:
 // returns number of lines, or 0 if text cannot be split well to fit in this width
 size_t split_lines(const char *texx, SplitLines &lines, int width, int fontNumber, size_t max_lines = -1);
 
-namespace AGS {
-namespace Shared {
-extern SplitLines Lines;
-} // namespace Shared
-} // namespace AGS
-
 } // namespace AGS3
 
 #endif
