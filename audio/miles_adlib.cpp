@@ -28,6 +28,7 @@
 #include "common/util.h"
 
 #include "audio/fmopl.h"
+#include "audio/adlib_ms.h"
 
 namespace Audio {
 
@@ -116,7 +117,7 @@ uint16 milesAdLibVolumeSensitivityTable[] = {
 };
 
 
-class MidiDriver_Miles_AdLib : public MidiDriver {
+class MidiDriver_Miles_AdLib : public MidiDriver_Multisource {
 public:
 	MidiDriver_Miles_AdLib(InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount);
 	virtual ~MidiDriver_Miles_AdLib();
@@ -125,14 +126,17 @@ public:
 	int open() override;
 	void close() override;
 	void send(uint32 b) override;
+	void send(int8 source, uint32 b) override;
 	MidiChannel *allocateChannel() override { return NULL; }
 	MidiChannel *getPercussionChannel() override { return NULL; }
 
 	bool isOpen() const override { return _isOpen; }
 	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
+	void stopAllNotes(uint8 source, uint8 channel) override;
+	void applySourceVolume(uint8 source) override;
+
 	void setVolume(byte volume);
-	virtual uint32 property(int prop, uint32 param) override;
 
 	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
 
@@ -437,6 +441,34 @@ void MidiDriver_Miles_AdLib::send(uint32 b) {
 	}
 }
 
+void MidiDriver_Miles_AdLib::send(int8 source, uint32 b) {
+	// TODO Implement proper multisource support.
+	if (source == -1 || source == 0)
+		send(b);
+}
+
+void MidiDriver_Miles_AdLib::stopAllNotes(uint8 source, uint8 channel) {
+	if (!(source == 0 || source == 0xFF))
+		return;
+
+	for (int i = 0; i < _modeVirtualFmVoicesCount; i++) {
+		if (_virtualFmVoices[i].inUse && (channel == 0xFF || _virtualFmVoices[i].actualMidiChannel == channel)) {
+			releaseFmVoice(i);
+		}
+	}
+}
+
+void MidiDriver_Miles_AdLib::applySourceVolume(uint8 source) {
+	if (!(source == 0 || source == 0xFF))
+		return;
+
+	for (int i = 0; i < _modeVirtualFmVoicesCount; i++) {
+		if (_virtualFmVoices[i].inUse) {
+			updatePhysicalFmVoice(i, true, kMilesAdLibUpdateFlags_Reg_40);
+		}
+	}
+}
+
 void MidiDriver_Miles_AdLib::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
 	_adlibTimerProc = timerProc;
 	_adlibTimerParam = timerParam;
@@ -736,6 +768,20 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 		compositeVolume = compositeVolume >> 8; // get upmost 8 bits
 		if (compositeVolume)
 			compositeVolume++; // round up in case result wasn't 0
+
+		// Scale by source volume.
+		compositeVolume = compositeVolume * _sources[0].volume / _sources[0].neutralVolume;
+		if (_userVolumeScaling) {
+			if (_userMute) {
+				compositeVolume = 0;
+			} else {
+				// Scale by user volume.
+				uint16 userVolume = (_sources[0].type == SOURCE_TYPE_SFX ? _userSfxVolume : _userMusicVolume); // Treat SOURCE_TYPE_UNDEFINED as music
+				compositeVolume = (compositeVolume * userVolume) >> 8;
+			}
+		}
+		// Source volume scaling might clip volume, so reduce to maximum.
+		compositeVolume = MIN(compositeVolume, (uint16)0x7F);
 	}
 
 	if (registerUpdateFlags & kMilesAdLibUpdateFlags_Reg_20) {
@@ -1057,10 +1103,6 @@ void MidiDriver_Miles_AdLib::setRegister(int reg, int value) {
 		_opl->write(0x223, value);
 		//warning("OPL3 write %x %x (%d)", reg & 0xFF, value, value);
 	}
-}
-
-uint32 MidiDriver_Miles_AdLib::property(int prop, uint32 param) {
-	return 0;
 }
 
 MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *streamAdLib, Common::SeekableReadStream *streamOPL3) {
