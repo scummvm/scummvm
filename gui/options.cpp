@@ -82,8 +82,10 @@ enum {
 	kChooseSaveDirCmd		= 'chos',
 	kSavePathClearCmd		= 'clsp',
 	kChooseThemeDirCmd		= 'chth',
+	kChooseIconDirCmd		= 'chic',
 	kThemePathClearCmd		= 'clth',
 	kBrowserPathClearCmd	= 'clbr',
+	kIconPathClearCmd		= 'clic',
 	kChooseExtraDirCmd		= 'chex',
 	kExtraPathClearCmd		= 'clex',
 	kChoosePluginsDirCmd	= 'chpl',
@@ -1877,6 +1879,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_savePathClearButton = nullptr;
 	_themePath = nullptr;
 	_themePathClearButton = nullptr;
+	_iconPath = nullptr;
+	_iconPathClearButton = nullptr;
 	_extraPath = nullptr;
 	_extraPathClearButton = nullptr;
 #ifdef DYNAMIC_MODULES
@@ -2138,6 +2142,7 @@ void GlobalOptionsDialog::build() {
 	// Set _savePath to the current save path
 	Common::String savePath(ConfMan.get("savepath", _domain));
 	Common::String themePath(ConfMan.get("themepath", _domain));
+	Common::String iconPath(ConfMan.get("iconpath", _domain));
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
 
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
@@ -2150,6 +2155,12 @@ void GlobalOptionsDialog::build() {
 		_themePath->setLabel(_c("None", "path"));
 	} else {
 		_themePath->setLabel(themePath);
+	}
+
+	if (iconPath.empty() || !ConfMan.hasKey("iconPath", _domain)) {
+		_iconPath->setLabel(_c("None", "path"));
+	} else {
+		_iconPath->setLabel(iconPath);
 	}
 
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
@@ -2238,6 +2249,14 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 	_themePath = new StaticTextWidget(boss, prefix + "ThemePath", _c("None", "path"));
 
 	_themePathClearButton = addClearButton(boss, prefix + "ThemePathClearButton", kThemePathClearCmd);
+
+	if (!lowres)
+		new ButtonWidget(boss, prefix + "IconButton", _("Icon Path:"), Common::U32String(), kChooseIconDirCmd);
+	else
+		new ButtonWidget(boss, prefix + "IconButton", _c("Icon Path:", "lowres"), Common::U32String(), kChooseIconDirCmd);
+	_iconPath = new StaticTextWidget(boss, prefix + "IconPath", _c("None", "path"));
+
+	_iconPathClearButton = addClearButton(boss, prefix + "IconPathClearButton", kIconPathClearCmd);
 
 	if (!lowres)
 		new ButtonWidget(boss, prefix + "ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
@@ -2626,6 +2645,12 @@ void GlobalOptionsDialog::apply() {
 	else
 		ConfMan.removeKey("themepath", _domain);
 
+	Common::U32String iconPath(_iconPath->getLabel());
+	if (!iconPath.empty() && (iconPath != _c("None", "path")))
+		ConfMan.set("iconpath", iconPath.encode(), _domain);
+	else
+		ConfMan.removeKey("iconpath", _domain);
+
 	Common::U32String extraPath(_extraPath->getLabel());
 	if (!extraPath.empty() && (extraPath != _c("None", "path")))
 		ConfMan.set("extrapath", extraPath.encode(), _domain);
@@ -2858,6 +2883,16 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		}
 		break;
 	}
+	case kChooseIconDirCmd: {
+		BrowserDialog browser(_("Select directory for GUI launcher thumbnails"), true);
+		if (browser.runModal() > 0) {
+			// User made his choice...
+			Common::FSNode dir(browser.getResult());
+			_iconPath->setLabel(dir.getPath());
+			g_gui.scheduleTopDialogRedraw();
+		}
+		break;
+	}
 	case kChooseExtraDirCmd: {
 		BrowserDialog browser(_("Select directory for extra files"), true);
 		if (browser.runModal() > 0) {
@@ -2899,6 +2934,9 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 #endif
 	case kThemePathClearCmd:
 		_themePath->setLabel(_c("None", "path"));
+		break;
+	case kIconPathClearCmd:
+		_iconPath->setLabel(_c("None", "path"));
 		break;
 	case kExtraPathClearCmd:
 		_extraPath->setLabel(_c("None", "path"));
@@ -3180,6 +3218,11 @@ void GlobalOptionsDialog::reflowLayout() {
 		_themePathClearButton->setNext(nullptr);
 		delete _themePathClearButton;
 		_themePathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.ThemePathClearButton", kThemePathClearCmd);
+
+		_tabWidget->removeWidget(_iconPathClearButton);
+		_iconPathClearButton->setNext(nullptr);
+		delete _iconPathClearButton;
+		_iconPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.IconPathClearButton", kIconPathClearCmd);
 
 		_tabWidget->removeWidget(_extraPathClearButton);
 		_extraPathClearButton->setNext(nullptr);
