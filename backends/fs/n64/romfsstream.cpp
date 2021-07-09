@@ -45,20 +45,20 @@ bool RomfsStream::eos() const {
 	return romfs_eof((ROMFILE *)_handle) != 0;
 }
 
-int32 RomfsStream::pos() const {
+int64 RomfsStream::pos() const {
 	return romfs_tell((ROMFILE *)_handle);
 }
 
-int32 RomfsStream::size() const {
-	int32 oldPos = romfs_tell((ROMFILE *)_handle);
+int64 RomfsStream::size() const {
+	int64 oldPos = romfs_tell((ROMFILE *)_handle);
 	romfs_seek((ROMFILE *)_handle, 0, SEEK_END);
-	int32 length = romfs_tell((ROMFILE *)_handle);
+	int64 length = romfs_tell((ROMFILE *)_handle);
 	romfs_seek((ROMFILE *)_handle, oldPos, SEEK_SET);
 
 	return length;
 }
 
-bool RomfsStream::seek(int32 offs, int whence) {
+bool RomfsStream::seek(int64 offs, int whence) {
 	return romfs_seek((ROMFILE *)_handle, offs, whence) >= 0;
 }
 

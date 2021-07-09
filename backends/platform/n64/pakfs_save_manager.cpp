@@ -35,7 +35,7 @@ uint32 InPAKSave::read(void *buf, uint32 cnt) {
 	return pakfs_read(buf, 1, cnt, fd);
 }
 
-bool InPAKSave::seek(int32 offs, int whence) {
+bool InPAKSave::seek(int64 offs, int whence) {
 	pakfs_seek(fd, offs, whence);
 
 	return true;
