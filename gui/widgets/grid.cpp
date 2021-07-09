@@ -271,8 +271,6 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 				surf = new Graphics::ManagedSurface(srcSurface->convertTo(g_system->getOverlayFormat()));
 			}
 				
-		} else {
-			warning("No such file : %s", name.c_str());
 		}
 #else
 		error("No PNG support compiled");
@@ -365,7 +363,6 @@ const Graphics::ManagedSurface *GridWidget::languageToSurface(const String &lang
 
 const Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformCode) {
 	if ((platformCode == kPlatformUnknown) || (platformCode < 0 || platformCode >= (int)_platformIcons.size())) {
-		warning("Unknown Platform");
 		return nullptr;
 	}
 	return _platformIcons[platformCode];
@@ -419,9 +416,7 @@ void GridWidget::reloadThumbnails() {
 	
 	for (Common::Array<GridItemInfo>::iterator iter = _visibleEntries.begin(); iter != _visibleEntries.end(); ++iter) {
 		path = String::format("%s/%s", _iconDir.c_str(), iter->thumbPath.c_str());
-		if (_loadedSurfaces.contains(path)) {
-			// warning("Thumbnail already loaded, skipping...");
-		} else {
+		if (!_loadedSurfaces.contains(path)) {
 			surf = loadSurfaceFromFile(path);
 			if (surf) {
 				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512));
