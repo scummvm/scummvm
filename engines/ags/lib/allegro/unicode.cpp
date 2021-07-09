@@ -37,7 +37,7 @@ size_t ustrsize(const char *s) {
  * Reads a character from a UTF - 8 string.
  */
 /*static*/ int utf8_getc(const char *s) {
-	int c = *((unsigned char *)(s++));
+	int c = *((const unsigned char *)(s++));
 	int n, t;
 
 	if (c & 0x80) {
@@ -48,7 +48,7 @@ size_t ustrsize(const char *s) {
 		c &= (1 << (8 - n)) - 1;
 
 		while (--n > 0) {
-			t = *((unsigned char *)(s++));
+			t = *((const unsigned char *)(s++));
 
 			if ((!(t & 0x80)) || (t & 0x40))
 				return '^';
@@ -136,7 +136,7 @@ size_t ustrsize(const char *s) {
  *  Returns the width of a UTF-8 character.
  */
 /*static*/ int utf8_width(const char *s) {
-	int c = *((unsigned char *)s);
+	int c = *((const unsigned char *)s);
 	int n = 1;
 
 	if (c & 0x80) {

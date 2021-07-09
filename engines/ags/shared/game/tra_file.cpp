@@ -102,7 +102,7 @@ HError ReadTraBlock(Translation &tra, Stream *in, TraFileBlock block, const Stri
 		tra.SpeechFont = in->ReadInt32();
 		tra.RightToLeft = in->ReadInt32();
 		return HError::None();
-	case (TraFileBlock)0:
+	case kTraFblk_ExtStrID:
 		// continue reading extensions with string ID
 		break;
 	default:
