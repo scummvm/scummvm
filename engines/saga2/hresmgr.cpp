@@ -42,6 +42,8 @@ hResContext::hResContext() {
 	_parent = nullptr;
 	_numEntries = 0;
 	_handle = &_file;
+	_res = nullptr;
+	_bytecount = _bytepos = 0;
 }
 
 hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
