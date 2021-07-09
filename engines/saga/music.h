@@ -26,6 +26,7 @@
 #define SAGA_MUSIC_H
 
 #include "audio/mididrv.h"
+#include "audio/mididrv_ms.h"
 #include "audio/midiplayer.h"
 #include "audio/midiparser.h"
 #include "audio/mixer.h"
@@ -40,33 +41,11 @@ enum MusicFlags {
 	MUSIC_LOOP = 0x0001
 };
 
-class MusicDriver : public Audio::MidiPlayer {
-public:
-	MusicDriver();
-
-	void play(SagaEngine *vm, ByteArray *buffer, bool loop);
-	void playQuickTime(const Common::String &musicName, bool loop);
-	void pause() override;
-	void resume() override;
-
-	bool isAdlib() const { return _driverType == MT_ADLIB; }
-
-	// FIXME
-	bool isPlaying() const { return _parser && _parser->isPlaying(); }
-
-	// MidiDriver_BASE interface implementation
-	void send(uint32 b) override;
-	void metaEvent(byte type, byte *data, uint16 length) override;
-
-protected:
-	MusicType _driverType;
-	bool _isGM;
-	bool _milesAudioMode;
-};
-
 class Music {
-public:
+private:
+	static const uint8 MUSIC_SUNSPOT = 26;
 
+public:
 	Music(SagaEngine *vm, Audio::Mixer *mixer);
 	~Music();
 	bool isPlaying();
@@ -79,8 +58,11 @@ public:
 
 	void setVolume(int volume, int time = 1);
 	int getVolume() { return _currentVolume; }
+	void resetVolume();
 
-	bool isAdlib() const { return _player->isAdlib(); }
+	bool isAdlib() const { return  _driverType == MT_ADLIB; }
+
+	void syncSoundSettings();
 
 	Common::Array<int32> _songTable;
 
@@ -88,22 +70,31 @@ private:
 	SagaEngine *_vm;
 	Audio::Mixer *_mixer;
 
-	MusicDriver *_player;
-	TownsPC98_AudioDriver *_playerPC98;
+	MidiParser *_parser;
+	MidiDriver_Multisource *_driver;
+	TownsPC98_AudioDriver *_driverPC98;
 	Audio::SoundHandle _musicHandle;
 	uint32 _trackNumber;
 
+	int _userVolume;
+	bool _userMute;
 	int _targetVolume;
 	int _currentVolume;
 	int _currentVolumePercent;
 	bool _digitalMusic;
+	MusicType _musicType;
+	MusicType _driverType;
 
 	ResourceContext *_musicContext;
 	ResourceContext *_digitalMusicContext;
 
 
 	static void musicVolumeGaugeCallback(void *refCon);
-	static void onTimer(void *refCon);
+	static void timerCallback(void *refCon);
+	void onTimer();
+	bool playDigital(uint32 resourceId, MusicFlags flags);
+	void playQuickTime(uint32 resourceId, MusicFlags flags);
+	void playMidi(uint32 resourceId, MusicFlags flags);
 	void musicVolumeGauge();
 	ByteArray *_currentMusicBuffer;
 	ByteArray _musicBuffer[2];

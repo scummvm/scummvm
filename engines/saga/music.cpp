@@ -27,6 +27,7 @@
 #include "saga/resource.h"
 #include "saga/music.h"
 
+#include "audio/adlib_ms.h"
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
@@ -43,142 +44,69 @@
 
 namespace Saga {
 
-#define BUFFER_SIZE 4096
-#define MUSIC_SUNSPOT 26
-
-MusicDriver::MusicDriver() : _isGM(false) {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driverType = MidiDriver::getMusicType(dev);
-
-	switch (_driverType) {
-	case MT_ADLIB:
-		if (Common::File::exists("INSTR.AD") && Common::File::exists("INSTR.OPL")) {
-			_milesAudioMode = true;
-			_driver = Audio::MidiDriver_Miles_AdLib_create("INSTR.AD", "INSTR.OPL");
-		} else if (Common::File::exists("SAMPLE.AD") && Common::File::exists("SAMPLE.OPL")) {
-			_milesAudioMode = true;
-			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
-		} else {
-			_milesAudioMode = false;
-			MidiPlayer::createDriver();
-		}
-		break;
-	case MT_MT32:
-		_milesAudioMode = true;
-		_driver = Audio::MidiDriver_Miles_MT32_create("");
-		break;
-	default:
-		_milesAudioMode = false;
-		MidiPlayer::createDriver();
-		break;
-	}
-
-	int retValue = _driver->open();
-	if (retValue == 0) {
-		if (_driverType != MT_ADLIB) {
-			if (_driverType == MT_MT32 || _nativeMT32)
-				_driver->sendMT32Reset();
-			else
-				_driver->sendGMReset();
-		}
-
-		_driver->setTimerCallback(this, &timerCallback);
-	}
-}
-
-void MusicDriver::send(uint32 b) {
-	if (_milesAudioMode) {
-		_driver->send(b);
-		return;
-	}
-
-	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
-		// Remap MT32 instruments to General Midi
-		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
-	}
-	Audio::MidiPlayer::send(b);
-}
-
-void MusicDriver::metaEvent(byte type, byte *data, uint16 length) {
-	// TODO: Seems SAGA does not want / need to handle end-of-track events?
-}
-
-void MusicDriver::play(SagaEngine *vm, ByteArray *buffer, bool loop) {
-	if (buffer->size() < 4) {
-		error("Music::play() wrong music resource size");
-	}
-
-	// Check if the game is using XMIDI or SMF music
-	if (!memcmp(buffer->getBuffer(), "FORM", 4)) {
-		_parser = MidiParser::createParser_XMIDI();
-		// ITE had MT32 mapped instruments
-		_isGM = (vm->getGameId() != GID_ITE);
-	} else {
-		_parser = MidiParser::createParser_SMF();
-		// ITE with standalone MIDI files is General MIDI
-		_isGM = (vm->getGameId() == GID_ITE);
-	}
-
-	if (!_parser->loadMusic(buffer->getBuffer(), buffer->size()))
-		error("Music::play() wrong music resource");
-
-	_parser->setTrack(0);
-	_parser->setMidiDriver(this);
-	_parser->setTimerRate(_driver->getBaseTempo());
-	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-	_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
-
-	// Handle music looping
-	_parser->property(MidiParser::mpAutoLoop, loop);
-
-	_isPlaying = true;
-}
-
-void MusicDriver::playQuickTime(const Common::String &musicName, bool loop) {
-	// IHNM Mac uses QuickTime MIDI
-	_parser = MidiParser::createParser_QT();
-	_isGM = true;
-
-	if (!((MidiParser_QT *)_parser)->loadFromContainerFile(musicName))
-		error("MusicDriver::playQuickTime(): Failed to load file '%s'", musicName.c_str());
-
-	_parser->setTrack(0);
-	_parser->setMidiDriver(this);
-	_parser->setTimerRate(_driver->getBaseTempo());
-	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-	_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
-
-	// Handle music looping
-	_parser->property(MidiParser::mpAutoLoop, loop);
-
-	_isPlaying = true;
-}
-
-void MusicDriver::pause() {
-	_isPlaying = false;
-}
-
-void MusicDriver::resume() {
-	_isPlaying = true;
-}
-
-
-Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _player(0), _playerPC98(0), _musicContext(0) {
+Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _parser(0), _driver(0), _driverPC98(0), _musicContext(0) {
 	_currentVolume = 0;
 	_currentMusicBuffer = NULL;
 
 	if (_vm->getPlatform() == Common::kPlatformPC98) {
-		_playerPC98 = new TownsPC98_AudioDriver(mixer, PC98AudioPluginDriver::kType86);
-		_playerPC98->init();
+		_musicType = _driverType = MT_PC98;
+
+		_driverPC98 = new TownsPC98_AudioDriver(mixer, PC98AudioPluginDriver::kType86);
+		_driverPC98->init();
 	} else {
-		_player = new MusicDriver();
+		_musicType = (_vm->getGameId() == GID_ITE && _vm->getPlatform() == Common::kPlatformDOS ? MT_MT32 : MT_GM);
+
+		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | (_musicType == MT_MT32 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
+		_driverType = MidiDriver::getMusicType(dev);
+
+		switch (_driverType) {
+		case MT_ADLIB:
+			if (_vm->getPlatform() == Common::kPlatformDOS) {
+				const char *opl2InstDefFilename;
+				const char *opl3InstDefFilename;
+				if (_vm->getGameId() == GID_ITE) {
+					opl2InstDefFilename = "INSTR.AD";
+					opl3InstDefFilename = "INSTR.OPL";
+				} else {
+					// IHNM
+					opl2InstDefFilename = "SAMPLE.AD";
+					opl3InstDefFilename = "SAMPLE.OPL";
+				}
+				if (Common::File::exists(opl2InstDefFilename) && Common::File::exists(opl3InstDefFilename)) {
+					_driver = (MidiDriver_Multisource *)Audio::MidiDriver_Miles_AdLib_create(opl2InstDefFilename, opl3InstDefFilename);
+				} else {
+					error("Could not find AdLib instrument definition files %s and %s", opl2InstDefFilename, opl3InstDefFilename);
+				}
+			} else {
+				_driver = new MidiDriver_ADLIB_Multisource(OPL::Config::OplType::kOpl3);
+			}
+			break;
+		case MT_MT32:
+		case MT_GM:
+			if (_vm->getPlatform() == Common::kPlatformDOS) {
+				_driver = Audio::MidiDriver_Miles_MIDI_create(_musicType, "");
+			} else {
+				_driver = new MidiDriver_MT32GM(_musicType);
+			}
+			break;
+		default:
+			_driver = new MidiDriver_NULL_Multisource();
+			break;
+		}
+
+		if (_driver) {
+			_driver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+			if (_driver->open() != 0)
+				error("Failed to open MIDI driver.");
+
+			_driver->setTimerCallback(this, &timerCallback);
+			_driver->setSourceNeutralVolume(255);
+		}
 	}
 
 	_digitalMusicContext = _vm->_resource->getContext(GAME_DIGITALMUSICFILE);
-	if (_player) {
-		if (!_player->isAdlib())
-			_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_GM);
-	}
+	if (_driverType != MT_ADLIB)
+		_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_GM);
 
 	if (!_musicContext)
 		_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_FM);
@@ -211,11 +139,16 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _pla
 			// different in the two files. I have no idea why.
 			// Note that the IHNM demo has only got one music file
 			// (music.rsc). It is assumed that it contains FM music
+
+			// TODO If program flow gets here, this getContext call previously
+			// returned null...
 			_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_FM);
 		}
 	}
 
 	_trackNumber = 0;
+	_userVolume = 0;
+	_userMute = false;
 	_targetVolume = 0;
 	_currentVolumePercent = 0;
 
@@ -225,8 +158,19 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _pla
 Music::~Music() {
 	_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 	_mixer->stopHandle(_musicHandle);
-	delete _player;
-	delete _playerPC98;
+	if (_parser) {
+		_parser->stopPlaying();
+		delete _parser;
+	}
+	if (_driver) {
+		_driver->setTimerCallback(0, 0);
+		_driver->close();
+		delete _driver;
+	}
+	if (_driverPC98) {
+		_driverPC98->reset();
+		delete _driverPC98;
+	}
 }
 
 void Music::musicVolumeGaugeCallback(void *refCon) {
@@ -250,11 +194,16 @@ void Music::musicVolumeGauge() {
 	if (volume < 0)
 		volume = 1;
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
-	if (_player)
-		_player->setVolume(volume);
-	if (_playerPC98)
-		_playerPC98->setMusicVolume(volume);
+	int scaledVolume;
+	if (_userMute) {
+		scaledVolume = 0;
+	} else {
+		scaledVolume = (volume * _userVolume) >> 8;
+	}
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, scaledVolume);
+	if (_driverPC98)
+		_driverPC98->setMusicVolume(scaledVolume);
 
 	if (_currentVolumePercent == 100) {
 		_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
@@ -270,32 +219,49 @@ void Music::setVolume(int volume, int time) {
 		volume = 255;
 
 	if (time == 1) {
-		if (ConfMan.hasKey("mute") && ConfMan.getBool("mute"))
-			volume = 0;
-
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
-		if (_player)
-			_player->setVolume(volume);
-		if (_playerPC98)
-			_playerPC98->setMusicVolume(volume);
+		if (_driver) {
+			if (_driver->isFading(0))
+				_driver->abortFade(0, MidiDriver_Multisource::FADE_ABORT_TYPE_CURRENT_VOLUME);
+			_driver->setSourceVolume(0, volume);
+		}
 
 		_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
+
+		int scaledVolume;
+		if (_userMute) {
+			scaledVolume = 0;
+		} else {
+			scaledVolume = (volume * _userVolume) >> 8;
+		}
+
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, scaledVolume);
+		if (_driverPC98)
+			_driverPC98->setMusicVolume(scaledVolume);
+
 		_currentVolume = volume;
 		return;
 	}
 
+	if (_driver)
+		_driver->startFade(0, time * 30, volume);
+	// TODO When doing a fade-out, this function is called with time 1000.
+	// Each callback decreases volume by 10%, so it takes 10 * 1000 * 3000 us =
+	// 30 seconds. That doesn't seem right. Also, the game does not wait for
+	// the fade-out to complete, but immediately plays the next track.
 	_vm->getTimerManager()->installTimerProc(&musicVolumeGaugeCallback, time * 3000L, this, "sagaMusicVolume");
+}
+
+void Music::resetVolume() {
+	// Abort a fade / gauge if active and set volume to max.
+	setVolume(255);
 }
 
 bool Music::isPlaying() {
 
-	return _mixer->isSoundHandleActive(_musicHandle) || (_player ? _player->isPlaying() : false) || (_playerPC98 ? _playerPC98->musicPlaying() : false);
+	return _mixer->isSoundHandleActive(_musicHandle) || (_parser ? _parser->isPlaying() : false) || (_driverPC98 ? _driverPC98->musicPlaying() : false);
 }
 
 void Music::play(uint32 resourceId, MusicFlags flags) {
-	Audio::SeekableAudioStream *audioStream = NULL;
-	uint32 loopStart = 0;
-
 	debug(2, "Music::play %d, %d", resourceId, flags);
 
 	if (isPlaying() && _trackNumber == resourceId)
@@ -308,11 +274,29 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	_trackNumber = resourceId;
 	_mixer->stopHandle(_musicHandle);
-	if (_player)
-		_player->stop();
-	if (_playerPC98)
-		_playerPC98->reset();
+	if (_parser)
+		_parser->stopPlaying();
+	if (_driverPC98)
+		_driverPC98->reset();
 
+	resetVolume();
+
+	bool digital = playDigital(resourceId, flags);
+
+	if (!digital) {
+		// Load MIDI/XMI resource data
+		if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
+			// Load the external music file for Mac IHNM
+			playQuickTime(resourceId, flags);
+		} else {
+			playMidi(resourceId, flags);
+		}
+	}
+}
+
+bool Music::playDigital(uint32 resourceId, MusicFlags flags) {
+	Audio::SeekableAudioStream *audioStream = NULL;
+	uint32 loopStart = 0;
 	int realTrackNumber = 0;
 
 	if (_vm->getGameId() == GID_ITE) {
@@ -332,9 +316,9 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		stream = Audio::SeekableAudioStream::openStreamFile(trackName[i]);
 		if (stream) {
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
-			                        Audio::makeLoopingAudioStream(stream, (flags == MUSIC_LOOP) ? 0 : 1));
+							   Audio::makeLoopingAudioStream(stream, (flags == MUSIC_LOOP) ? 0 : 1));
 			_digitalMusic = true;
-			return;
+			return true;
 		}
 	}
 
@@ -352,11 +336,11 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 				int offs = (_digitalMusicContext->isCompressed()) ? 9 : 0;
 
 				Common::SeekableSubReadStream *musicStream = new Common::SeekableSubReadStream(musicFile,
-							(uint32)resData->offset + offs, (uint32)resData->offset + resData->size - offs);
+																							   (uint32)resData->offset + offs, (uint32)resData->offset + resData->size - offs);
 
 				if (!_digitalMusicContext->isCompressed()) {
 					byte musicFlags = Audio::FLAG_STEREO |
-										Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+									  Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 
 					if (_vm->isBigEndian() || (_vm->getFeatures() & GF_SOME_MAC_RESOURCES))
 						musicFlags &= ~Audio::FLAG_LITTLE_ENDIAN;
@@ -400,62 +384,113 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		debug(2, "Playing digitized music");
 		if (loopStart) {
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
-			                        new Audio::SubLoopingAudioStream(audioStream,
-			                        (flags == MUSIC_LOOP ? 0 : 1),
-			                        Audio::Timestamp(0, loopStart, audioStream->getRate()),
-			                        audioStream->getLength()));
+							   new Audio::SubLoopingAudioStream(audioStream,
+																(flags == MUSIC_LOOP ? 0 : 1),
+																Audio::Timestamp(0, loopStart, audioStream->getRate()),
+																audioStream->getLength()));
 		} else {
 			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
-			                        Audio::makeLoopingAudioStream(audioStream, (flags == MUSIC_LOOP ? 0 : 1)));
+							   Audio::makeLoopingAudioStream(audioStream, (flags == MUSIC_LOOP ? 0 : 1)));
 		}
 		_digitalMusic = true;
-		return;
+		return true;
 	}
 
-	// Load MIDI/XMI resource data
-	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
-		// Load the external music file for Mac IHNM
-		_player->playQuickTime(Common::String::format("Music/Music%02x", resourceId), flags & MUSIC_LOOP);
+	return false;
+}
+
+void Music::playQuickTime(uint32 resourceId, MusicFlags flags) {
+	// IHNM Mac uses QuickTime MIDI
+	_parser = MidiParser::createParser_QT();
+
+	_parser->setMidiDriver(_driver);
+	_parser->setTimerRate(_driver->getBaseTempo());
+	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+	_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+
+	// Handle music looping
+	_parser->property(MidiParser::mpAutoLoop, flags & MUSIC_LOOP);
+
+	const Common::String &musicName = Common::String::format("Music/Music%02x", resourceId);
+	if (!((MidiParser_QT *)_parser)->loadFromContainerFile(musicName))
+		error("Music::playQuickTime(): Failed to load file '%s'", musicName.c_str());
+	_parser->setTrack(0);
+}
+
+void Music::playMidi(uint32 resourceId, MusicFlags flags) {
+	if (_currentMusicBuffer == &_musicBuffer[1]) {
+		_currentMusicBuffer = &_musicBuffer[0];
 	} else {
-		if (_currentMusicBuffer == &_musicBuffer[1]) {
-			_currentMusicBuffer = &_musicBuffer[0];
-		} else {
-			_currentMusicBuffer = &_musicBuffer[1];
+		_currentMusicBuffer = &_musicBuffer[1];
+	}
+
+	_vm->_resource->loadResource(_musicContext, resourceId, *_currentMusicBuffer);
+
+	if (_driverPC98) {
+		_driverPC98->loadMusicData(_currentMusicBuffer->data() + 4);
+	} else {
+		if (_currentMusicBuffer->size() < 4) {
+			error("Music::playMidi() wrong music resource size");
 		}
 
-		_vm->_resource->loadResource(_musicContext, resourceId, *_currentMusicBuffer);
-		if (_player)
-			_player->play(_vm, _currentMusicBuffer, (flags & MUSIC_LOOP));
-		else if (_playerPC98)
-			_playerPC98->loadMusicData(_currentMusicBuffer->data() + 4);
-	}
+		// Check if the game is using XMIDI or SMF music
+		if (!memcmp(_currentMusicBuffer->getBuffer(), "FORM", 4)) {
+			_parser = MidiParser::createParser_XMIDI(0, 0, 0);
+		} else {
+			_parser = MidiParser::createParser_SMF(0);
+		}
 
-	setVolume(_vm->_musicVolume);
+		_parser->setMidiDriver(_driver);
+		_parser->setTimerRate(_driver->getBaseTempo());
+		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+
+		// Handle music looping
+		_parser->property(MidiParser::mpAutoLoop, flags & MUSIC_LOOP);
+		if (!_parser->loadMusic(_currentMusicBuffer->getBuffer(), _currentMusicBuffer->size()))
+			error("Music::play() wrong music resource");
+	}
 }
 
 void Music::pause() {
-	if (_player) {
-		_player->pause();
-		_player->setVolume(0);
-	} else if (_playerPC98) {
-		_playerPC98->pause();
+	if (_parser) {
+		_parser->pausePlaying();
+	} else if (_driverPC98) {
+		_driverPC98->pause();
 	}
 }
 
 void Music::resume() {
-	if (_player) {
-		_player->resume();
-		_player->setVolume(_vm->_musicVolume);
-	} else if (_playerPC98) {
-		_playerPC98->cont();
+	if (_parser) {
+		_parser->resumePlaying();
+	} else if (_driverPC98) {
+		_driverPC98->cont();
 	}
 }
 
 void Music::stop() {
-	if (_player)
-		_player->stop();
-	else if (_playerPC98)
-		_playerPC98->reset();
+	if (_parser)
+		_parser->stopPlaying();
+	else if (_driverPC98)
+		_driverPC98->reset();
+}
+
+void Music::syncSoundSettings() {
+	if (_driver)
+		_driver->syncSoundSettings();
+
+	_userVolume = ConfMan.getInt("music_volume");
+	_userMute = ConfMan.hasKey("mute") && ConfMan.getBool("mute");
+	setVolume(_currentVolume);
+}
+
+void Music::onTimer() {
+	if (_parser)
+		_parser->onTimer();
+}
+
+void Music::timerCallback(void *data) {
+	((Music *)data)->onTimer();
 }
 
 } // End of namespace Saga
