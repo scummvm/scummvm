@@ -133,7 +133,6 @@ MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
 		loadFonts();
 	}
 	_japaneseFontsLoaded = false;
-	_nextFontId = 100;
 }
 
 MacFontManager::~MacFontManager() {
@@ -468,7 +467,7 @@ int MacFontManager::parseSlantFromName(const Common::String &name) {
 	return slantVal;
 }
 
-int MacFontManager::registerFontName(Common::String name) {
+int MacFontManager::registerFontName(Common::String name, int preferredId) {
 	// Don't register an empty font name, just return Geneva's ID.
 	if (name.empty())
 		return 1;
@@ -476,11 +475,21 @@ int MacFontManager::registerFontName(Common::String name) {
 	if (_fontIds.contains(name))
 		return _fontIds[name];
 
+	int id;
+	if (preferredId > -1 && !_fontInfo.contains(id)) {
+		id = preferredId;
+	} else {
+		// Preferred ID is already registered, find an unused one.
+		id = 0;
+		while (_fontInfo.contains(id))
+			id++;
+	}
+
 	FontInfo *info = new FontInfo;
 	info->name = name;
-	_fontInfo[_nextFontId] = info;
-	_fontIds[name] = _nextFontId;
-	return _nextFontId++;
+	_fontInfo[id] = info;
+	_fontIds[name] = id;
+	return id;
 }
 void MacFont::setName(const char *name) {
 	_name = name;

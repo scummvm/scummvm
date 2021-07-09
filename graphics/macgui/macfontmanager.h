@@ -154,7 +154,7 @@ public:
 	 * @param name name of the font
 	 * @return the font's ID
 	 */
-	int registerFontName(Common::String name);
+	int registerFontName(Common::String name, int preferredId = -1);
 
 	void forceBuiltinFonts() { _builtInFonts = true; }
 	int parseSlantFromName(const Common::String &name);
@@ -177,7 +177,6 @@ private:
 	uint32 _mode;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
 
-	uint16 _nextFontId;
 	Common::HashMap<int, FontInfo *> _fontInfo;
 	Common::HashMap<Common::String, int> _fontIds;
 
