@@ -78,7 +78,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 					error("Could not find AdLib instrument definition files %s and %s", opl2InstDefFilename, opl3InstDefFilename);
 				}
 			} else {
-				_driver = new MidiDriver_ADLIB_Multisource(OPL::Config::OplType::kOpl3);
+				_driver = new MidiDriver_ADLIB_Multisource(OPL::Config::kOpl3);
 			}
 			break;
 		case MT_MT32:
