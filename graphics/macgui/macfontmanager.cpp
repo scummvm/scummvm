@@ -498,6 +498,9 @@ int MacFontManager::registerFontName(Common::String name, int preferredId) {
 
 	FontInfo *info = new FontInfo;
 	info->name = name;
+	if (preferredId >= 16000) {
+		info->lang = Common::JA_JPN;
+	}
 	_fontInfo[id] = info;
 	_fontIds[name] = id;
 	return id;
