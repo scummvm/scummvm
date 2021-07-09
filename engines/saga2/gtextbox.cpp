@@ -183,6 +183,7 @@ gTextBox::gTextBox(
 	cursorPos               = anchorPos = scrollPixels = 0;
 	undoBuffer              = new char[maxLen + 1]();
 	textFont                = font;
+	oldFont                 = nullptr;
 	fontHeight              = height;
 	fontOffset              = fontHeight + 2;
 
@@ -205,6 +206,10 @@ gTextBox::gTextBox(
 	isActiveCtl             = false;
 	selected                = 0;
 	parent                  = &list;
+
+	blinkStart = 0;
+	blinkX = 0;
+	blinkState = 0;
 
 	// set the filedStrings pointer
 	fieldStrings = stringBufs;
