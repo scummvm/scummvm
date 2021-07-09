@@ -1320,7 +1320,6 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		int16 param = thread->pop() + 9;
 
 		if (param >= 9 && param <= 34) {
-			_vm->_music->setVolume(_vm->_musicVolume, 1);
 			_vm->_music->play(param);
 		} else {
 			_vm->_music->stop();
@@ -1338,7 +1337,6 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		if (uint(param1) >= _vm->_music->_songTable.size()) {
 			warning("sfPlayMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTable.size() - 1);
 		} else {
-			_vm->_music->setVolume(_vm->_musicVolume, 1);
 			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP : MUSIC_NORMAL);
 			if (!_vm->_scene->haveChapterPointsChanged()) {
 				_vm->_scene->setCurrentMusicTrack(param1);

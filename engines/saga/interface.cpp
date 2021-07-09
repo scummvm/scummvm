@@ -1628,10 +1628,13 @@ void Interface::setOption(PanelButton *panelButton) {
 		}
 		break;
 	case kTextMusic:
-		_vm->_musicVolume = _vm->_musicVolume + 25;
-		if (_vm->_musicVolume > 255) _vm->_musicVolume = 0;
-		_vm->_music->setVolume(_vm->_musicVolume, 1);
-		ConfMan.setInt("music_volume", _vm->_musicVolume);
+		int userVolume;
+		userVolume = ConfMan.getInt("music_volume");
+		userVolume = userVolume + 25;
+		if (userVolume > 255)
+			userVolume = 0;
+		ConfMan.setInt("music_volume", userVolume);
+		_vm->_music->syncSoundSettings();
 		break;
 	case kTextSound:
 		_vm->_soundVolume = _vm->_soundVolume + 25;
@@ -2268,8 +2271,10 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 		}
 		break;
 	case kTextMusic:
-		if (_vm->_musicVolume) {
-			textId = kText10Percent + _vm->_musicVolume / 25 - 1;
+		int userVolume;
+		userVolume = ConfMan.getInt("music_volume");
+		if (userVolume) {
+			textId = kText10Percent + userVolume / 25 - 1;
 			if (textId > kTextMax) {
 				textId = kTextMax;
 			}

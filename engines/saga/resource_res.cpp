@@ -173,7 +173,6 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 			_vm->_music->_songTable[i] = songS.readSint32LE();
 	} else {
 		// The IHNM demo has a fixed music track and doesn't load a song table
-		_vm->_music->setVolume(_vm->_musicVolume, 1);
 		_vm->_music->play(3, MUSIC_LOOP);
 	}
 

@@ -420,7 +420,7 @@ void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
 	if (uint(param1) >= _vm->_music->_songTable.size()) {
 		warning("sfQueueMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTable.size() - 1);
 	} else {
-		_vm->_music->setVolume(_vm->_musicVolume, 1);
+		_vm->_music->resetVolume();
 		_vm->_events->queueMusic(_vm->_music->_songTable[param1], param2, _vm->ticksToMSec(1000));
 
 		if (!_vm->_scene->haveChapterPointsChanged()) {

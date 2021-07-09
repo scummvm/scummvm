@@ -65,7 +65,6 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	_spiritualBarometer = 0;
 
 	_soundVolume = 0;
-	_musicVolume = 0;
 	_speechVolume = 0;
 	_subtitlesEnabled = false;
 	_voicesEnabled = false;
@@ -202,7 +201,6 @@ Common::Error SagaEngine::run() {
 	ConfMan.registerDefault("talkspeed", "255");
 	ConfMan.registerDefault("subtitles", "true");
 
-	_musicVolume = ConfMan.getInt("music_volume");
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	_readingSpeed = getTalkspeed();
 	_copyProtection = ConfMan.getBool("copy_protection");
@@ -278,7 +276,7 @@ Common::Error SagaEngine::run() {
 	_interface->converseClear();
 	_script->setVerb(_script->getVerbType(kVerbWalkTo));
 
-	_music->setVolume(_musicVolume, 1);
+	_music->resetVolume();
 
 	_gfx->initPalette();
 
@@ -630,9 +628,7 @@ void SagaEngine::syncSoundSettings() {
 	if (_readingSpeed > 3)
 		_readingSpeed = 0;
 
-	_musicVolume = ConfMan.getInt("music_volume");
-	_music->setVolume(_musicVolume, 1);
-	_sound->setVolume();
+	_music->syncSoundSettings();
 }
 
 void SagaEngine::pauseEngineIntern(bool pause) {
