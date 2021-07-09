@@ -46,14 +46,6 @@ class GridWidget;
 const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h);
 Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name);
 
-// TODO: Add more platforms
-enum Platform {
-	kPlatformDOS,
-	kPlatformAmiga,
-	kPlatformApple2,
-	kPlatformUnknown = -1
-};
-
 enum {
 	kPlayButtonCmd = 'PLAY',
 	kEditButtonCmd = 'EDIT',
@@ -69,23 +61,13 @@ struct GridItemInfo {
 	String 		gameid;
 	String 		language;
 	String 		title;
-	Platform 	platform;
+	Common::Platform 	platform;
 	String 		thumbPath;
 	int 		entryID;
 
 	GridItemInfo(int id, const String &eid, const String &gid
-		,const String &t, const String &l, const String &p)
-		: entryID(id), gameid(gid), engineid(eid), title(t), language(l) {
-		
-		if (p == "pc")
-			platform = kPlatformDOS;
-		else if (p == "amiga")
-			platform = kPlatformAmiga;
-		else if (p == "apple2")
-			platform = kPlatformApple2;
-		else
-			platform = kPlatformUnknown;
-
+		,const String &t, const String &l, Common::Platform p)
+		: entryID(id), gameid(gid), engineid(eid), title(t), language(l), platform(p) {
 		thumbPath = String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
 };
@@ -155,7 +137,7 @@ public:
 
 	const Graphics::ManagedSurface *filenameToSurface(const String &name);
 	const Graphics::ManagedSurface *languageToSurface(const String &lang);
-	const Graphics::ManagedSurface *platformToSurface(Platform platformCode);
+	const Graphics::ManagedSurface *platformToSurface(Common::Platform platformCode);
 
 	/// Update _visibleEntries from _allEntries and returns true if reload is required.
 	bool calcVisibleEntries();

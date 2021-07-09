@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/file.h"
 #include "common/language.h"
+#include "common/platform.h"
 
 #include "gui/gui-manager.h"
 #include "gui/widgets/grid.h"
@@ -361,10 +362,9 @@ const Graphics::ManagedSurface *GridWidget::languageToSurface(const String &lang
 	return _loadedSurfaces[path];
 }
 
-const Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformCode) {
-	if ((platformCode == kPlatformUnknown) || (platformCode < 0 || platformCode >= (int)_platformIcons.size())) {
+const Graphics::ManagedSurface *GridWidget::platformToSurface(Common::Platform platformCode) {
+	if (platformCode == Common::Platform::kPlatformUnknown)
 		return nullptr;
-	}
 	return _platformIcons[platformCode];
 }
 
@@ -447,26 +447,17 @@ void GridWidget::loadFlagIcons() {
 }
 
 void GridWidget::loadPlatformIcons() {
-	for (Common::Array<const Graphics::ManagedSurface *>::iterator iter = _platformIcons.begin(); iter != _platformIcons.end(); ++iter) {
-		delete *iter;
-	}
-	_platformIcons.clear();
-	StringArray iconFilenames;
-	
-	// TODO: Can we make a list of all platforms?
-	iconFilenames.push_back(String("dos.png"));
-	iconFilenames.push_back(String("amiga.png"));
-	iconFilenames.push_back(String("apple2.png"));
-
-	for (StringArray::iterator i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
-		String fullPath = String::format("%s/%s", _iconDir.c_str(), i->c_str());
-		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(fullPath);
+	const Common::PlatformDescription *l = Common::g_platforms;
+	for (; l->abbrev; ++l) {
+		String path = String::format("%s/%s.png", _iconDir.c_str(), l->abbrev);
+		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
 			_platformIcons.push_back(scGfx);
-			_loadedSurfaces[fullPath] = scGfx;
 			gfx->free();
 			delete gfx;
+		} else {
+			_platformIcons.push_back(nullptr);
 		}
 	}
 }

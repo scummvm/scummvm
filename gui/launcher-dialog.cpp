@@ -1105,11 +1105,11 @@ void LauncherGrid::updateListing() {
 		Common::String title = iter->description;
 		Common::String engineid = "UNK";
 		Common::String language = "XX";
-		Common::String platform = "UNK";
+		Common::String platform;
 		iter->domain->tryGetVal("engineid", engineid);
 		iter->domain->tryGetVal("language",language);
 		iter->domain->tryGetVal("platform", platform);
-		gridList.push_back(GridItemInfo(k++, engineid, gameid, title, language, platform));
+		gridList.push_back(GridItemInfo(k++, engineid, gameid, title, language, Common::parsePlatform(platform)));
 	}
 
 	_grid->setEntryList(&gridList);
