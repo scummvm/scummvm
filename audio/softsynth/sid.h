@@ -28,6 +28,8 @@
 #ifndef AUDIO_SOFTSYNTH_SID_H
 #define AUDIO_SOFTSYNTH_SID_H
 
+#include "common/scummsys.h"
+
 // Inlining on/off.
 #define RESID_INLINE inline
 
