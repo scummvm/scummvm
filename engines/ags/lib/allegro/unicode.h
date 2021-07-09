@@ -33,16 +33,6 @@ namespace AGS3 {
 #define U_UTF8          AL_ID('U','T','F','8')
 #define U_CURRENT       AL_ID('c','u','r','.')
 
-/* set_uformat:
- *  Selects a new text encoding format.
- */
-extern void set_uformat(int format);
-
-/* get_uformat:
- *  Returns the current text encoding format.
- */
-extern int get_uformat();
-extern size_t ustrsize(const char *s);
 
 /* UTF-8 support functions
  */
@@ -67,6 +57,73 @@ extern int (*uwidth)(const char *s);
 extern int (*ucwidth)(int c);
 /* uisok: */
 extern int (*uisok)(int c);
+
+/* set_uformat:
+ *  Selects a new text encoding format.
+ */
+extern void set_uformat(int format);
+
+/* get_uformat:
+ *  Returns the current text encoding format.
+ */
+extern int get_uformat();
+extern size_t ustrsize(const char *s);
+/* &nicode string length
+ */
+extern int ustrlen(const char *s);
+/* utolower:
+ *  Unicode-aware version of the ANSI tolower() function.
+ */
+extern int utolower(int c);
+/* utoupper:
+ *  Unicode-aware version of the ANSI toupper() function.
+ */
+extern int utoupper(int c);
+/* Unicode string compare
+ */
+extern int ustrcmp(const char *s1, const char *s2);
+ /* ustricmp:
+  *  Unicode-aware version of the DJGPP stricmp() function.
+  */
+extern int ustricmp(const char *s1, const char *s2);
+/* ustrncmp:
+ *  Unicode-aware version of the ANSI strncmp() function.
+ */
+extern int ustrncmp(const char *s1, const char *s2, int n);
+/* ustrnicmp:
+ *  Unicode-aware version of the DJGPP strnicmp() function.
+ */
+extern int ustrnicmp(const char *s1, const char *s2, int n);
+/* uoffset:
+ *  Returns the offset in bytes from the start of the string to the
+ *  character at the specified index. If the index is negative, counts
+ *  backward from the end of the string (-1 returns an offset to the
+ *  last character).
+ */
+extern int uoffset(const char *s, int index);
+/* ustrlwr:
+ *  Unicode-aware version of the ANSI strlwr() function.
+ */
+extern char *ustrlwr(char *s);
+/* ustrupr:
+ *  Unicode-aware version of the ANSI strupr() function.
+ */
+extern char *ustrupr(char *s);
+/* ustrstr:
+ *  Unicode-aware version of the ANSI strstr() function.
+ */
+extern char *ustrstr(const char *s1, const char *s2);
+/* usetat:
+ *  Modifies the character at the specified index within the string,
+ *  handling adjustments for variable width data. Returns how far the
+ *  rest of the string was moved.
+ */
+int usetat(char *s, int index, int c);
+/* ustrsizez:
+ *  Returns the size of the specified string in bytes, including the
+ *  trailing zero.
+ */
+extern int ustrsizez(const char *s);
 
 } // namespace AGS3
 
