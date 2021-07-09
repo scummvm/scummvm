@@ -24,6 +24,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die spanische Version von Amazon: Guardians of Eden hinzugefügt.
    - Unterstützung für Nightlong: Union City Conspiracy hinzugefügt.
    - Unterstützung für The Journeyman Project 2: Buried in Time hinzugefügt.
+   - UNterstützung für Crusader: No Remorse hinzugefügt.
 
  Neue Portierungen:
    - Die Version für den Nintendo DS wurde zu großen Teilen neu geschrieben.
@@ -148,6 +149,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Windows-Portierung:
    - Standardmäßig wird nun der OpenGL-Renderer verwendet, der eine deutlich verbesserte Unterstützung für HiDPI-Displays bietet.
+
 
 #### 2.2.0 "Interactive Fantasy" (27.09.2020)
 
