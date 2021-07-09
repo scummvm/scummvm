@@ -137,16 +137,9 @@ static pMessager Status2[10];
 
 pMessager ratemess[3];
 
-#if 1
 frameSmoother frate(frameRate, TICKSPERSECOND, gameTime);
-//frameSmoother lrate(frameRate,TICKSPERSECOND,gameTime);
 frameCounter lrate(TICKSPERSECOND, gameTime);
 frameCounter irate(TICKSPERSECOND, gameTime);
-#else
-frameCounter frate(TICKSPERSECOND, gameTime);
-frameCounter lrate(TICKSPERSECOND, gameTime);
-frameCounter irate(TICKSPERSECOND, gameTime);
-#endif
 
 /* ===================================================================== *
    Prototypes
