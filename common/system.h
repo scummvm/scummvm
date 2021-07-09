@@ -67,7 +67,6 @@ class WriteStream;
 class HardwareInputSet;
 class Keymap;
 class KeymapperDefaultBindings;
-class Encoding;
 
 typedef Array<Keymap *> KeymapArray;
 }
@@ -138,7 +137,6 @@ enum Type {
  * - Sound output
  */
 class OSystem : Common::NonCopyable {
-	friend class Common::Encoding;
 protected:
 	OSystem();
 	virtual ~OSystem();
