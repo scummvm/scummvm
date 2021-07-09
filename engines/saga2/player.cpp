@@ -354,7 +354,7 @@ void PlayerActor::skillAdvance(uint8 stat,
 
 void PlayerActor::vitalityAdvance(uint8 points) {
 	while (points-- > 0) {
-		if (g_vm->_rnd->getRandomNumber(ActorAttributes::vitalityLimit - 1) > baseStats.vitality) {
+		if ((int16)g_vm->_rnd->getRandomNumber(ActorAttributes::vitalityLimit - 1) > baseStats.vitality) {
 			if (++vitalityMemory >= vitalityLevelBump) {
 				vitalityMemory -= vitalityLevelBump;
 				baseStats.vitality++;

@@ -436,7 +436,7 @@ bool ActorProto::acceptDamageAction(
 		Location        al = Location(a->getLocation(), a->IDParent());
 		if (gruntStyle > 0
 		        && ((flags & ResourceObjectPrototype::objPropNoSurface)
-		            || (damage > 2 && g_vm->_rnd->getRandomNumber(vitality - 1) < (damage * 2))))
+		            || (damage > 2 && (int16)g_vm->_rnd->getRandomNumber(vitality - 1) < (damage * 2))))
 			makeGruntSound(gruntStyle, al);
 
 		if (enactorPtr != NULL) {
@@ -606,7 +606,7 @@ bool ActorProto::acceptStrikeAction(
 			if (!a->isDead()) {
 				int16 pmass = a->proto()->mass;
 
-				if (pmass <= 100 || g_vm->_rnd->getRandomNumber(154) >= pmass - 100) {
+				if (pmass <= 100 || (int16)g_vm->_rnd->getRandomNumber(154) >= pmass - 100) {
 					if (g_vm->_rnd->getRandomNumber(7) == 0)
 						MotionTask::fallDown(*a, *enactorPtr);
 					else
