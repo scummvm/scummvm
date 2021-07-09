@@ -307,7 +307,7 @@ bool Map::loadMap(char *name) {
 }
 
 bool Map::load(Common::SeekableReadStream *stream) {
-	debug(5, "map stream size: %d(%x)", stream->size(), stream->size());
+	debug(5, "map stream size: %ld(%lx)", stream->size(), stream->size());
 
 	// Load MSM data header
 	stream->read(_name, 32);
