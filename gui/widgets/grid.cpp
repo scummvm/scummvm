@@ -68,6 +68,8 @@ void GridItemWidget::move(int x, int y) {
 void GridItemWidget::drawWidget() {
 	int thumbHeight = _grid->getThumbnailHeight();
 	int thumbWidth = _grid->getThumbnailWidth();
+	Array<U32String> titleLines;
+	g_gui.getFont().wordWrapText(_activeEntry->title, thumbWidth, titleLines);
 
 	if ((isHighlighted) || (_grid->getSelected() == _activeEntry->entryID)) {
 		// Draw a highlighted BG on hover
@@ -91,16 +93,15 @@ void GridItemWidget::drawWidget() {
 	
 	// Draw Thumbnail
 	if (_thumbGfx.empty()) {
-		int breakPoint = breakText(_activeEntry->title, thumbWidth);
 		// Draw Title when thumbnail is missing
-		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight / 2 - kLineHeight, _x + thumbWidth, _y + thumbHeight / 2),
-							_activeEntry->title.substr(0, breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter,
+		int linesInThumb = MIN(thumbHeight / kLineHeight, (int)titleLines.size());
+		for (int i = 0; i < linesInThumb; ++i) {
+			g_gui.theme()->drawText(Common::Rect(_x, _y + ((thumbHeight - (linesInThumb - 2 * i) * kLineHeight)) / 2,
+							_x + thumbWidth, _y + ((thumbHeight - (linesInThumb - 2 * i) * kLineHeight)) / 2 + kLineHeight),
+							titleLines[i], GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter,
 							ThemeEngine::kTextInversionNone, 0, true, ThemeEngine::kFontStyleNormal,
 							ThemeEngine::kFontColorAlternate, false);
-		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight / 2, _x + thumbWidth, _y + thumbHeight / 2 + kLineHeight),
-							_activeEntry->title.substr(breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter,
-							ThemeEngine::kTextInversionNone, 0, true, ThemeEngine::kFontStyleNormal,
-							ThemeEngine::kFontColorAlternate, false);
+		}
 	} else
 		g_gui.theme()->drawSurface(Common::Point(_x, _y), _thumbGfx, true);
 
@@ -119,11 +120,16 @@ void GridItemWidget::drawWidget() {
 
 	// Draw Title
 	if (_grid->_isTitlesVisible) {
-		int breakPoint = breakText(_activeEntry->title, thumbWidth);
+		if (titleLines.size() < 2) {
+			titleLines.push_back(U32String());
+		} else if (titleLines.size() > 2) {
+			titleLines[1].erase(titleLines[1].size() - 3);
+			titleLines[1]+=U32String("...");
+		}
 		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight),
-								_activeEntry->title.substr(0, breakPoint), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter);
+								titleLines[0], GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter);
 		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight + kLineHeight, _x + thumbWidth, _y + thumbHeight + 2 * kLineHeight),
-								_activeEntry->title.substr(breakPoint + 1), GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter);
+								titleLines[1], GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter);
 	}
 }
 
@@ -243,28 +249,6 @@ void GridItemTray::handleMouseMoved(int x, int y, int button) {
 }
 
 #pragma mark -
-
-// Returns a breaking point for double-lined text
-// TODO: extend for multiple lines
-int breakText(const Common::String &str, int fitWidth) {
-	int textWidth = g_gui.getStringWidth(str);
-	
-	// If empty string is passed
-	if (str.size() == 0) return 1;
-	if (textWidth <= fitWidth) return str.size();
-
-	textWidth = 0;
-	int curPos = 0;
-	int breakPoint = str.size();
-	while (textWidth < fitWidth) {
-		textWidth += g_gui.getCharWidth(str[curPos]);
-		if (str[curPos] == ' ') {
-			breakPoint = curPos;
-		}
-		++curPos;
-	}
-	return breakPoint;
-}
 
 Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 	Graphics::ManagedSurface *surf = nullptr;
