@@ -385,7 +385,7 @@ bool InVMSave::skip(uint32 offset)
   return true;
 }
 
-bool InVMSave::seek(int32 offs, int whence)
+bool InVMSave::seek(int64 offs, int whence)
 {
   switch(whence) {
   case SEEK_SET:
