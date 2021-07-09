@@ -59,15 +59,15 @@ private:
 	void close();
 	AAsset *_asset;
 
-	uint32 _pos;
-	uint32 _len;
+	int64 _pos;
+	int64 _len;
 	bool _eos;
 };
 
 AssetInputStream::AssetInputStream(AAssetManager *as, const Common::String &path) :
 	_eos(false), _pos(0) {
 	_asset = AAssetManager_open(as, path.c_str(), AASSET_MODE_RANDOM);
-	_len = AAsset_getLength(_asset);
+	_len = AAsset_getLength64(_asset);
 }
 
 AssetInputStream::~AssetInputStream() {
@@ -90,7 +90,7 @@ uint32 AssetInputStream::read(void *dataPtr, uint32 dataSize) {
 }
 
 bool AssetInputStream::seek(int64 offset, int whence) {
-	int res = AAsset_seek(_asset, offset, whence);
+	int64 res = AAsset_seek64(_asset, offset, whence);
 	if (res == -1) {
 		return false;
 	}
