@@ -45,7 +45,6 @@ class GridWidget;
 
 const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h);
 Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name);
-int breakText(const Common::String &str, int fitWidth);
 
 // TODO: Add more platforms
 enum Platform {
