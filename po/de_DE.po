@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-09 15:15+0000\n"
+"POT-Creation-Date: 2021-07-09 17:34+0000\n"
 "PO-Revision-Date: 2021-07-03 09:11+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -6030,7 +6030,7 @@ msgstr ""
 "Bitte verwenden Sie einen externen Betrachter, um die Hilfedatei des Spiels "
 "zu öffnen: %s"
 
-#: engines/sci/engine/kmisc.cpp:871
+#: engines/sci/engine/kmisc.cpp:872
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
