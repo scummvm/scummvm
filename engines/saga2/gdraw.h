@@ -197,6 +197,7 @@ public:
 		font = nullptr;
 		textSpacing = 0;
 		textStyles = 0;
+		fgPen = bgPen = olPen = shPen = 0;
 	}
 
 	virtual ~gPort() {}
