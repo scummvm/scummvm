@@ -118,12 +118,16 @@ public:
 	//  Reconstruct from an archive buffer
 	void *restore(void *buf);
 
+	void read(Common::InSaveFile *in);
+
 	//  Return the number of bytes needed to make an archive of the
 	//  TaskStackList
 	int32 archiveSize(void);
 
 	//  Make an archive of the TaskStackList in an archive buffer
 	void *archive(void *buf);
+
+	void write(Common::OutSaveFile *out);
 
 	//  Place a TaskStack from the inactive list into the active
 	//  list.
@@ -206,6 +210,32 @@ void *TaskStackList::restore(void *buf) {
 	return buf;
 }
 
+void TaskStackList::read(Common::InSaveFile *in) {
+	int16 taskStackCount;
+
+	//  Get the count of task stacks and increment the buffer pointer
+	taskStackCount = in->readSint16LE();
+	debugC(3, kDebugSaveload, "... taskStackCount = %d", taskStackCount);
+
+	//  Iterate through the archive data, reconstructing the TaskStacks
+	for (int i = 0; i < taskStackCount; i++) {
+		TaskStackID id;
+		TaskStack *ts;
+
+		//  Retreive the TaskStack's id number
+		id = in->readSint16LE();
+		debugC(3, kDebugSaveload, "Loading Task Stack %d", id);
+
+		ts = new TaskStack;
+		_list[id] = ts;
+
+		ts->read(in);
+
+		//  Plug this TaskStack into the Actor
+		ts->getActor()->curTask = ts;
+	}
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes necessary to archive this TaskStackList
 
@@ -256,6 +286,30 @@ void *TaskStackList::archive(void *buf) {
 	}
 #endif
 	return buf;
+}
+
+void TaskStackList::write(Common::OutSaveFile *out) {
+	int16 taskStackCount = 0;
+
+	//  Count the active task stacks
+	for (int i = 0; i < numTaskStacks; i++)
+		if (_list[i])
+			taskStackCount++;
+
+	//  Store the task stack count in the archive buffer
+	out->writeSint16LE(taskStackCount);
+	debugC(3, kDebugSaveload, "... taskStackCount = %d", taskStackCount);
+
+	for (int i = 0; i < numTaskStacks; i++) {
+		if (_list[i] == nullptr)
+			continue;
+
+		debugC(3, kDebugSaveload, "Saving Task Stack %d", i);
+
+		TaskStack *ts = _list[i];
+		out->writeSint16LE(i);
+		ts->write(out);
+	}
 }
 
 //----------------------------------------------------------------------
@@ -395,6 +449,19 @@ void saveTaskStacks(SaveFileConstructor &saveGame) {
 	free(archiveBuffer);
 }
 
+void saveTaskStacks(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving Task Stacks");
+
+	int32 archiveBufSize;
+
+	archiveBufSize = stackList.archiveSize();
+
+	out->write("TSTK", 4);
+	out->writeUint32LE(archiveBufSize);
+
+	stackList.write(out);
+}
+
 //----------------------------------------------------------------------
 //	Load the stackList from a save file
 
@@ -426,6 +493,20 @@ void loadTaskStacks(SaveFileReader &saveGame) {
 	assert(bufferPtr == &((char *)archiveBuffer)[archiveBufSize]);
 
 	free(archiveBuffer);
+}
+
+void loadTaskStacks(Common::InSaveFile *in, int32 chunkSize) {
+	debugC(2, kDebugSaveload, "Saving Task Stacks");
+
+	//  If there is no saved data, simply call the default constructor
+	if (chunkSize == 0) {
+		new (&stackList) TaskStackList;
+		return;
+	}
+
+	//  Reconstruct stackList from archived data
+	new (&stackList) TaskStackList;
+	stackList.read(in);
 }
 
 //----------------------------------------------------------------------
@@ -4595,6 +4676,46 @@ void *TaskStack::archive(void *buf) {
 	buf = (int16 *)buf + 1;
 
 	return buf;
+}
+
+void TaskStack::write(Common::OutSaveFile *out) {
+	//  Store the stack bottom TaskID
+	out->writeSint16LE(stackBottomID);
+
+	//  Store the actor's id
+	out->writeUint16LE(actor->thisID());
+
+	//  Store the evalCount and evalRate
+	out->writeSint16LE(evalCount);
+
+	out->writeSint16LE(evalRate);
+
+	debugC(4, kDebugSaveload, "...... stackBottomID = %d", stackBottomID);
+	debugC(4, kDebugSaveload, "...... actorID = %d", actor->thisID());
+	debugC(4, kDebugSaveload, "...... evalCount = %d", evalCount);
+	debugC(4, kDebugSaveload, "...... evalRate = %d", evalRate);
+}
+
+void TaskStack::read(Common::InSaveFile *in) {
+	ObjectID actorID;
+
+	//  Restore the stack bottom pointer
+	stackBottomID = in->readSint16LE();
+
+	//  Restore the actor pointer
+	actorID = in->readUint16LE();
+	actor = (Actor *)GameObject::objectAddress(actorID);
+
+	//  Restore the evaluation count
+	evalCount = in->readSint16LE();
+
+	//  Restore the evaluation rate
+	evalRate = in->readSint16LE();
+
+	debugC(4, kDebugSaveload, "...... stackBottomID = %d", stackBottomID);
+	debugC(4, kDebugSaveload, "...... actorID = %d", actorID);
+	debugC(4, kDebugSaveload, "...... evalCount = %d", evalCount);
+	debugC(4, kDebugSaveload, "...... evalRate = %d", evalRate);
 }
 
 #if DEBUG

@@ -88,9 +88,11 @@ void initTaskStacks(void);
 
 //  Save the task stack list to a save file
 void saveTaskStacks(SaveFileConstructor &saveGame);
+void saveTaskStacks(Common::OutSaveFile *out);
 
 //  Load the task stack list from a save file
 void loadTaskStacks(SaveFileReader &saveGame);
+void loadTaskStacks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the task stacks
 void cleanupTaskStacks(void);
@@ -1678,6 +1680,12 @@ public:
 	Actor           *actor;     //  Pointer to actor performing tasks
 
 	//  Constructor
+	TaskStack() :
+		stackBottomID(0),
+		evalCount(0),
+		evalRate(0),
+		actor(nullptr) {}
+
 	TaskStack(Actor *a) :
 		stackBottomID(NoTask),
 		actor(a),
@@ -1706,6 +1714,10 @@ public:
 
 	//  Create an archive of this TaskStack in a buffer
 	void *archive(void *buf);
+
+	void write(Common::OutSaveFile *out);
+
+	void read(Common::InSaveFile *in);
 
 	//  Set the bottom task of this task stack
 	void setTask(Task *t);
