@@ -106,8 +106,8 @@ void GridItemWidget::drawWidget() {
 		g_gui.theme()->drawSurface(Common::Point(_x, _y), _thumbGfx, true);
 
 	// Draw Platform Icon
-	if (_activeEntry->platform != kPlatformUnknown) {
-		const Graphics::ManagedSurface *platGfx = _grid->platformToSurface(_activeEntry->platform);
+	const Graphics::ManagedSurface *platGfx = _grid->platformToSurface(_activeEntry->platform);
+	if (platGfx) {
 		g_gui.theme()->drawSurface(Common::Point(_x + thumbWidth - 32, _y + thumbHeight - 32), 
 									*platGfx, true);
 	}
