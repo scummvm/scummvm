@@ -162,7 +162,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 					if (slotNum == 0 && header.gameID == Kyra::GI_KYRA3)
 						header.description = "New Game";
 
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
+					saveList.push_back(SaveStateDescriptor(slotNum, header.description.decode(Common::kISO8859_1)));
 				}
 				delete in;
 			}
