@@ -580,6 +580,13 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 			_screen->_charSpacing = 0;
 
 			Util::convertISOToDOS(_savegameNames[i]);
+			if (_vm->gameFlags().lang == Common::JA_JPN) {
+				// Clean out special characters from GMM save dialog which might get misinterpreted as SJIS
+				for (uint ii = 0; ii < strlen(_savegameNames[i]); ++ii) {
+					if (_savegameNames[i][ii] < 32) // due to the signed char type this will also clean up everything >= 0x80
+						_savegameNames[i][ii] = ' ';
+				}
+			}
 
 			menu.item[i].itemString = _savegameNames[i];
 			menu.item[i].enabled = 1;

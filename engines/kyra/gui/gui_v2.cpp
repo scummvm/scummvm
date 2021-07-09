@@ -447,6 +447,14 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 			Common::String s = header.description;
 			s = Util::convertISOToDOS(s);
 
+			if (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_CNA || _vm->gameFlags().lang == Common::ZH_TWN) {
+				// Clean out special characters from GMM save dialog which might get misinterpreted as SJIS
+				for (Common::String::iterator ii = s.begin(); ii != s.end(); ++ii) {
+					if (*ii < 32) // due to the signed char type this will also clean up everything >= 0x80
+						*ii = ' ';
+				}
+			}
+
 			// Trim long GMM save descriptions to fit our save slots
 			_screen->_charSpacing = -2;
 			int fC = _screen->getTextWidth(s.c_str());

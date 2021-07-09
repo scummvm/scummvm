@@ -379,7 +379,7 @@ protected:
 	void loadGameStateCheck(int slot);
 	Common::Error loadGameState(int slot) override = 0;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override {
-		return saveGameStateIntern(slot, desc.c_str(), 0);
+		return saveGameStateIntern(slot, Common::U32String(desc).encode(Common::kISO8859_1).c_str(), 0);
 	}
 	virtual Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 

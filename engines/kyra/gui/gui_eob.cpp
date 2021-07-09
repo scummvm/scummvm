@@ -4443,6 +4443,7 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, bool highlight) {
 	int y = _saveSlotY + slot * 17 + 20;
 	int w = 167;
 	char slotString[26];
+	memset(slotString, 0, 26);
 	Common::strlcpy(slotString, slot < _numSlotsVisible ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], _vm->gameFlags().platform == Common::kPlatformFMTowns ? 25 : 20);
 
 	if (slot >= 6) {
@@ -4589,7 +4590,17 @@ void GUI_EoB::setupSaveMenuSlots() {
 	for (int i = 0; i < _numSlotsVisible; ++i) {
 		if (_savegameOffset + i < _savegameListSize) {
 			if (_savegameList[i + _savegameOffset]) {
+				memset(_saveSlotStringsTemp[i], 0, 25);
 				Common::strlcpy(_saveSlotStringsTemp[i], _savegameList[i + _savegameOffset], 25);
+
+				if (_vm->gameFlags().platform == Common::kPlatformPC98 || _vm->gameFlags().platform == Common::kPlatformFMTowns || (_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang != Common::JA_JPN)) {
+					// Clean out special characters from GMM save dialog which might get misinterpreted as SJIS
+					for (uint ii = 0; ii < strlen(_saveSlotStringsTemp[i]); ++ii) {
+						if (_saveSlotStringsTemp[i][ii] < 32 && _saveSlotStringsTemp[i][ii] != '\r') // due to the signed char type this will also clean up everything >= 0x80
+							_saveSlotStringsTemp[i][ii] = ' ';
+					}
+				}
+
 				_saveSlotIdTemp[i] = i + _savegameOffset;
 				continue;
 			}
