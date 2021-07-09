@@ -362,4 +362,22 @@ protected:
 	Common::TimerManager::TimerProc _timer_proc;
 };
 
+class MidiDriver_NULL_Multisource : public MidiDriver_Multisource {
+public:
+	int open() override { return 0; }
+	bool isOpen() const override { return true; }
+	void close() override { }
+	uint32 getBaseTempo() override { return 10000; }
+	MidiChannel *allocateChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return 0; }
+
+	using MidiDriver_Multisource::send;
+	void send(int8 source, uint32 b) override { }
+	using MidiDriver_Multisource::stopAllNotes;
+	void stopAllNotes(uint8 source, uint8 channel) override { }
+
+protected:
+	void applySourceVolume(uint8 source) override { }
+};
+
 #endif
