@@ -492,7 +492,7 @@ public:
 
 	static MidiParser *createParser_SMF(int8 source = -1);
 	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0, int source = -1);
-	static MidiParser *createParser_QT();
+	static MidiParser *createParser_QT(int8 source = -1);
 	static void timerCallback(void *data) { ((MidiParser *) data)->onTimer(); }
 };
 /** @} */

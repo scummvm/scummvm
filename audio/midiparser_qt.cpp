@@ -21,6 +21,7 @@
  */
 
 #include "audio/midiparser_qt.h"
+#include "audio/mididrv.h"
 #include "common/debug.h"
 #include "common/memstream.h"
 
@@ -399,6 +400,22 @@ void MidiParser_QT::resetTracking() {
 	_partMap.clear();
 }
 
+void MidiParser_QT::sendToDriver(uint32 b) {
+	if (_source < 0) {
+		MidiParser::sendToDriver(b);
+	} else {
+		_driver->send(_source, b);
+	}
+}
+
+void MidiParser_QT::sendMetaEventToDriver(byte type, byte *data, uint16 length) {
+	if (_source < 0) {
+		MidiParser::sendMetaEventToDriver(type, data, length);
+	} else {
+		_driver->metaEvent(_source, type, data, length);
+	}
+}
+
 Common::QuickTimeParser::SampleDesc *MidiParser_QT::readSampleDesc(Track *track, uint32 format, uint32 descSize) {
 	if (track->codecType == CODEC_TYPE_MIDI) {
 		debug(0, "MIDI Codec FourCC '%s'", tag2str(format));
@@ -495,6 +512,6 @@ uint32 MidiParser_QT::readUint32() {
 	return value;
 }
 
-MidiParser *MidiParser::createParser_QT() {
-	return new MidiParser_QT();
+MidiParser *MidiParser::createParser_QT(int8 source) {
+	return new MidiParser_QT(source);
 }
