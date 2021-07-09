@@ -215,7 +215,7 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 		if (_contentsStream->pos() == 0)
 			request->addHeader(Common::String::format("Content-Length: 0"));
 		else
-			request->addHeader(Common::String::format("Content-Range: bytes %u-%u/%u", oldPos, _contentsStream->pos() - 1, _contentsStream->size()));
+			request->addHeader(Common::String::format("Content-Range: bytes %u-%lu/%lu", oldPos, _contentsStream->pos() - 1, _contentsStream->size()));
 	}
 
 	_workingRequest = ConnMan.addRequest(request);

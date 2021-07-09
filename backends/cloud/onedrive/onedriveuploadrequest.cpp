@@ -103,7 +103,7 @@ void OneDriveUploadRequest::uploadNextPart() {
 	request->setBuffer(buffer, size);
 
 	if (_uploadUrl != "") {
-		request->addHeader(Common::String::format("Content-Range: bytes %u-%u/%u", oldPos, _contentsStream->pos() - 1, _contentsStream->size()));
+		request->addHeader(Common::String::format("Content-Range: bytes %u-%lu/%lu", oldPos, _contentsStream->pos() - 1, _contentsStream->size()));
 	} else if (_contentsStream->size() == 0) {
 		warning("\"Sorry, OneDrive can't upload empty files\"");
 		finishUpload(StorageFile(_savePath, 0, 0, false));
