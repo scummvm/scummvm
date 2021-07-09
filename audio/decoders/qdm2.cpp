@@ -2482,7 +2482,7 @@ void QDM2Stream::qdm2_synthesis_filter(uint8 index)
 }
 
 bool QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream &in, QueuingAudioStream *audioStream) {
-	debug(1, "QDM2Stream::qdm2_decodeFrame in.pos(): %d in.size(): %d", in.pos(), in.size());
+	debug(1, "QDM2Stream::qdm2_decodeFrame in.pos(): %ld in.size(): %ld", in.pos(), in.size());
 	int ch, i;
 	const int frame_size = (_sFrameSize * _channels);
 
@@ -2499,7 +2499,7 @@ bool QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream &in, QueuingAudioSt
 	}
 
 	if ((in.size() - in.pos()) < _packetSize) {
-		debug(1, "QDM2Stream::qdm2_decodeFrame Insufficient Packet Data in Input Stream Found: %d Need: %d", in.size() - in.pos(), _packetSize);
+		debug(1, "QDM2Stream::qdm2_decodeFrame Insufficient Packet Data in Input Stream Found: %ld Need: %d", in.size() - in.pos(), _packetSize);
 		return false;
 	}
 
