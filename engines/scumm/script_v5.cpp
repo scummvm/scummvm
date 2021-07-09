@@ -2067,11 +2067,19 @@ void ScummEngine_v5::o5_startSound() {
 	const byte *oldaddr = _scriptPointer - 1;
 	int sound = getVarOrDirectByte(PARAM_1);
 
-	// WORKAROUND: In the scene where Largo is talking to Mad Marty, the
-	// Woodtick music often resumes before Largo's theme has finished. As
-	// far as I can tell, this is a script bug.
-	if (_game.id == GID_MONKEY2 && sound == 110 && _sound->isSoundRunning(151)) {
-		debug(1, "Delaying Woodtick music until Largo's theme has finished");
+	// WORKAROUND: There are times when Largo's theme is playing. Once it
+	// has finished, the old music should resume. But the scripts don't
+	// actually check that, they just wait for the scene to end. So it may
+	// work fine, if the subtitles are timed correctly, but it may not.
+	//
+	// The Amiga version cut much of the music, so it shouldn't be needed
+	// for that version.
+	//
+	// Sound 103 is Largo talking to the bartender.
+	// Sound 110 is Largo talking to Mad Marty.
+
+	if (_game.id == GID_MONKEY2 && _game.platform != Common::kPlatformAmiga && (sound == 103 || sound == 110) && _sound->isSoundRunning(151)) {
+		debug(1, "Delaying music until Largo's theme has finished");
 		_scriptPointer = oldaddr;
 		o5_breakHere();
 		return;
