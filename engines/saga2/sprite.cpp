@@ -726,7 +726,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 		uint32 poseBytes = poseStream->size() - as->poseOffset;
 		const int poseSize = 14;
 
-		debugC(1, kDebugLoading, "Pose List: bytes: %d numAnimations: %d  poseOffset: %d calculated offset: %d numPoses: %d",
+		debugC(1, kDebugLoading, "Pose List: bytes: %ld numAnimations: %d  poseOffset: %d calculated offset: %d numPoses: %d",
 			poseStream->size(), as->numAnimations, as->poseOffset, 8 + as->numAnimations * 32, poseBytes / poseSize);
 
 		if (poseBytes % poseSize != 0)
