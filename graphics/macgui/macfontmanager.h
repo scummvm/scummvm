@@ -64,7 +64,21 @@ enum {
 	kMacFontExtend = 64
 };
 
+enum FontCharSet {
+	kCharsUnknown,
+	kCharsLatin,
+	kCharsJapanese
+};
+
 class Font;
+
+struct FontInfo {
+	FontCharSet charset;
+	int fallbackId;
+	Common::String name;
+
+	FontInfo() : charset(kCharsUnknown), fallbackId(-1) {}
+};
 
 class MacFont {
 public:
@@ -161,8 +175,9 @@ private:
 	uint32 _mode;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
 
-	Common::Array<Common::String> _fontNames;
-	Common::HashMap<Common::String, uint16> _fontIds;
+	uint16 _nextFontId;
+	Common::HashMap<int, FontInfo *> _fontInfo;
+	Common::HashMap<Common::String, int> _fontIds;
 
 	int parseFontSlant(Common::String slant);
 
