@@ -307,7 +307,7 @@ public:
 		// bytes, so this should be fine.
 		byte tmpBuf[1024];
 		while (!err() && offset > 0) {
-			offset -= read(tmpBuf, MIN((int32)sizeof(tmpBuf), offset));
+			offset -= read(tmpBuf, MIN((int32)sizeof(tmpBuf), (int32)offset));
 		}
 
 		_eos = false;
