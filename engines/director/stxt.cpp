@@ -130,7 +130,7 @@ void FontStyle::read(Common::ReadStreamEndian &stream, Cast *cast) {
 	b = stream.readUint16();
 
 	if (cast->_fontMap.contains(originalFontId)) {
-		FontInfo *info = cast->_fontMap[originalFontId];
+		FontMapEntry *info = cast->_fontMap[originalFontId];
 		fontId = info->toFont;
 		if (info->sizeMap.contains(originalHeight)) {
 			height = info->sizeMap[height];

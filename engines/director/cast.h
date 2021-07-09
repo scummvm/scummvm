@@ -57,14 +57,14 @@ struct FontXPlatformInfo {
 };
 typedef Common::HashMap<Common::String, FontXPlatformInfo *> FontXPlatformMap;
 
-struct FontInfo {
+struct FontMapEntry {
 	uint16 toFont;
 	bool remapChars;
 	FontSizeMap sizeMap;
 
-	FontInfo() : toFont(0), remapChars(false) {}
+	FontMapEntry() : toFont(0), remapChars(false) {}
 };
-typedef Common::HashMap<uint16, FontInfo *> FontMap;
+typedef Common::HashMap<uint16, FontMapEntry *> FontMap;
 
 class Cast {
 public:
