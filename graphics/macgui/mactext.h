@@ -221,7 +221,7 @@ private:
 	// getStringWidth for mactext version, because we may have the plain bytes mode
 	int getStringWidth(const Font *font, const Common::U32String &str);
 	int getAlignOffset(int row);
-	int getFgColor();
+	MacFontRun getFgColor();
 
 public:
 	void appendTextDefault(const Common::U32String &str, bool skipAdd = false);

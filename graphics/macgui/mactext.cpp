@@ -242,9 +242,6 @@ void MacText::init() {
 	_selStart = -1;
 
 	_defaultFormatting.wm = _wm;
-	_defaultFormatting.fgcolor = _fgcolor;
-	_currentFormatting = _defaultFormatting;
-	_composeSurface->clear(_bgcolor);
 
 	splitString(_str);
 	recalcDims();
@@ -271,11 +268,17 @@ void MacText::init() {
 	_cursorRect = new Common::Rect(0, 0, 1, 1);
 
 	// currently, we are not using fg color to render text. And we are not passing fg color correctly, thus we read it our self.
-	int color = getFgColor();
-	if (color != -1) {
+	MacFontRun colorFontRun = getFgColor();
+	if (!colorFontRun.text.empty()) {
 		debug(9, "Reading fg color though text, instead of the argument");
-		_fgcolor = color;
+		_fgcolor = colorFontRun.fgcolor;
+		colorFontRun.text.clear();
+		_defaultFormatting = colorFontRun;
+		_defaultFormatting.wm = _wm;
 	}
+
+	_currentFormatting = _defaultFormatting;
+	_composeSurface->clear(_bgcolor);
 
 	_cursorSurface = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
 	_cursorSurface->clear(_fgcolor);
@@ -299,16 +302,16 @@ MacText::~MacText() {
 }
 
 // this func returns the fg color of the first character we met in text
-int MacText::getFgColor() {
+MacFontRun MacText::getFgColor() {
 	if (_textLines.empty())
-		return -1;
+		return MacFontRun();
 	for (uint i = 0; i < _textLines.size(); i++) {
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
 			if (!_textLines[i].chunks[j].text.empty())
-				return _textLines[i].chunks[j].fgcolor;
+				return _textLines[i].chunks[j];
 		}
 	}
-	return -1;
+	return MacFontRun();
 }
 
 // we are doing this because we may need to dealing with the plain byte. See ctor of mactext which contains String str instead of U32String str
@@ -930,7 +933,7 @@ void MacText::render(int from, int to) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			debug(0, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
+			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
 				  i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
 				  _textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
 				  (const void *)_textLines[i].chunks[j].getFont());
@@ -1242,7 +1245,7 @@ void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	_currentFormatting = _defaultFormatting;
-	Common::U32String strWithFont = Common::U32String(_defaultFormatting.toString()) + str;
+	Common::U32String strWithFont = Common::U32String(_defaultFormatting.toString(), _encodeType) + str;
 
 	if (!skipAdd) {
 		_str += strWithFont;
@@ -1341,10 +1344,8 @@ bool MacText::draw(bool forceRedraw) {
 	if (_cursorState && !((_inTextSelection || _selectedText.endY != -1) && _active))
 		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
 
-	if (_selectedText.endY != -1) {
-		debug("drawing selectio");
+	if (_selectedText.endY != -1)
 		drawSelection(offset.x, offset.y);
-	}
 
 	return true;
 }
@@ -1976,17 +1977,17 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 // If adjacent chunks have same format, then skip the format definition
 // This happens when a long paragraph is split into several lines
-#define ADDFORMATTING() \
-	if (formatted) { \
-		formatting = _textLines[i].chunks[chunk].toString(); \
-		if (formatting != prevformatting) { \
-			res += formatting; \
-			prevformatting = formatting; \
-		} \
+#define ADDFORMATTING()                                                                      \
+	if (formatted) {                                                                         \
+		formatting = Common::U32String(_textLines[i].chunks[chunk].toString(), _encodeType); \
+		if (formatting != prevformatting) {                                                  \
+			res += formatting;                                                               \
+			prevformatting = formatting;                                                     \
+		}                                                                                    \
 	}
 
 Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
-	Common::U32String res;
+	Common::U32String res("", _encodeType);
 
 	if (endRow == -1)
 		endRow = _textLines.size() - 1;
@@ -2000,7 +2001,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 	startRow = CLIP(startRow, 0, (int)_textLines.size() - 1);
 	endRow = CLIP(endRow, 0, (int)_textLines.size() - 1);
 
-	Common::U32String formatting, prevformatting;
+	Common::U32String formatting("", _encodeType), prevformatting("", _encodeType);
 
 	for (int i = startRow; i <= endRow; i++) {
 		// We requested only part of one line
@@ -2354,7 +2355,7 @@ void MacText::reshuffleParagraph(int *row, int *col) {
 	ppos += *col;
 
 	// Get whole paragraph
-	Common::U32String paragraph = getTextChunk(start, 0, end, getLineCharWidth(end, true), true, false);
+	Common::U32String paragraph = getTextChunk(start, 0, end, getLineCharWidth(end, true), true, true);
 
 	// Remove it from the text
 	for (int i = start; i <= end; i++) {
