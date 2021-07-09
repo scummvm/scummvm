@@ -71,21 +71,21 @@ public:
 
 	SceUID open();		// open the file pointed to by the file path
 
-	bool err() const;
-	void clearErr();
-	bool eos() const;
+	bool err() const override;
+	void clearErr() override;
+	bool eos() const override;
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize);
-	virtual bool flush();
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) override;
+	virtual bool flush() override;
 
-	virtual int64 pos() const;
-	virtual int64 size() const;
-	virtual bool seek(int64 offs, int whence = SEEK_SET);
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	virtual int64 pos() const override;
+	virtual int64 size() const override;
+	virtual bool seek(int64 offs, int whence = SEEK_SET) override;
+	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
 
 	// for suspending
-	int suspend();		/* Suspendable interface (power manager) */
-	int resume();		/* " " */
+	int suspend() override;		/* Suspendable interface (power manager) */
+	int resume() override;		/* " " */
 };
 
 #endif /* PSPSTREAM_H_ */
