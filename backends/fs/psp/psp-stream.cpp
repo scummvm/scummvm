@@ -130,11 +130,11 @@ bool PspIoStream::eos() const {
 	return _eos;
 }
 
-int32 PspIoStream::pos() const {
+int64 PspIoStream::pos() const {
 	return _pos;
 }
 
-int32 PspIoStream::size() const {
+int64 PspIoStream::size() const {
 	return _fileSize;
 }
 
@@ -151,7 +151,7 @@ bool PspIoStream::physicalSeekFromCur(int32 offset) {
 	return true;
 }
 
-bool PspIoStream::seek(int32 offs, int whence) {
+bool PspIoStream::seek(int64 offs, int whence) {
 	DEBUG_ENTER_FUNC();
 	PSP_DEBUG_PRINT_FUNC("offset[0x%x], whence[%d], _pos[0x%x], _physPos[0x%x]\n", offs, whence, _pos, _physicalPos);
 	_eos = false;
