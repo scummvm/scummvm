@@ -1398,7 +1398,6 @@ static ThreadList &threadList = *((ThreadList *)threadListBuffer);
 
 void initSAGAThreads(void) {
 	//  Simply call the Thread List default constructor
-	new (&threadList) ThreadList;
 }
 
 //-------------------------------------------------------------------
@@ -1470,14 +1469,11 @@ void loadSAGAThreads(SaveFileReader &saveGame) {
 void loadSAGAThreads(Common::InSaveFile *in, int32 chunkSize) {
 	debugC(2, kDebugSaveload, "Loading SAGA Threads");
 
-	//  If there is no saved data, simply call the default constructor
 	if (chunkSize == 0) {
-		new (&threadList) ThreadList;
 		return;
 	}
 
 	//  Reconstruct stackList from archived data
-	new (&threadList) ThreadList;
 	threadList.read(in);
 }
 
