@@ -375,21 +375,15 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 	Common::String name;
 	const Font *font = 0;
 
-	if (_fontInfo.contains(macFont.getId())) {
-		if (_fontInfo[macFont.getId()]->fallbackId > -1) {
-			macFont.setId(_fontInfo[macFont.getId()]->fallbackId);
-		}
-	} else {
-		warning("MacFontManager::getFont: No _fontInfo entry for font %d", macFont.getId());
+	int fallbackId = getFontFallbackId(macFont.getId());
+	if (fallbackId > -1) {
+		macFont.setId(fallbackId);
 	}
 
 	if (!_builtInFonts) {
-		if (_fontInfo.contains(macFont.getId())) {
-			if (_fontInfo[macFont.getId()]->lang == Common::JA_JPN && !_japaneseFontsLoaded) {
-				loadJapaneseFonts();
-			}
-		} else {
-			warning("MacFontManager::getFont: No _fontInfo entry for font %d", macFont.getId());
+		Common::Language lang = getFontLanguage(macFont.getId());
+		if (lang == Common::JA_JPN && !_japaneseFontsLoaded) {
+			loadJapaneseFonts();
 		}
 
 		if (macFont.getName().empty()) {
@@ -505,6 +499,7 @@ int MacFontManager::registerFontName(Common::String name, int preferredId) {
 	_fontIds[name] = id;
 	return id;
 }
+
 void MacFont::setName(const char *name) {
 	_name = name;
 }
@@ -536,6 +531,30 @@ int MacFontManager::getFontIdByName(Common::String name) {
 	return 1;
 }
 
+Common::Language MacFontManager::getFontLanguage(uint16 id) {
+	if (!_fontInfo.contains(id)) {
+		warning("MacFontManager::getFontLanguage: No _fontInfo entry for font %d", id);
+		return Common::UNK_LANG;
+	}
+	return _fontInfo[id]->lang;
+}
+
+Common::CodePage MacFontManager::getFontEncoding(uint16 id) {
+	if (!_fontInfo.contains(id)) {
+		warning("MacFontManager::getFontEncoding: No _fontInfo entry for font %d", id);
+		return Common::kCodePageInvalid;
+	}
+	return _fontInfo[id]->encoding;
+}
+
+int MacFontManager::getFontFallbackId(uint16 id) {
+	if (!_fontInfo.contains(id)) {
+		warning("MacFontManager::getFontFallbackId: No _fontInfo entry for font %d", id);
+		return -1;
+	}
+	return _fontInfo[id]->fallbackId;
+}
+
 void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	Common::String name;
 
@@ -549,7 +568,6 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 			return;
 		}
 	}
-
 
 #ifdef USE_FREETYPE2
 	// Checking if it's a TTF font. Restrict it only to regular fonts now

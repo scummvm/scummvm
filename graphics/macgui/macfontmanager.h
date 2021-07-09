@@ -143,6 +143,10 @@ public:
 	const Common::String getFontName(MacFont &font);
 	int getFontIdByName(Common::String name);
 
+	Common::Language getFontLanguage(uint16 id);
+	Common::CodePage getFontEncoding(uint16 id);
+	int getFontFallbackId(uint16 id);
+
 	void loadFonts(Common::SeekableReadStream *stream);
 	void loadFonts(const Common::String &fileName);
 	void loadFonts(Common::MacResManager *fontFile);
