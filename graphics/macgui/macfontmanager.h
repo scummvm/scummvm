@@ -23,6 +23,8 @@
 #ifndef GRAPHICS_MACGUI_MACFONTMANAGER_H
 #define GRAPHICS_MACGUI_MACFONTMANAGER_H
 
+#include "common/language.h"
+
 #include "graphics/fontman.h"
 
 namespace Common {
@@ -64,20 +66,15 @@ enum {
 	kMacFontExtend = 64
 };
 
-enum FontCharSet {
-	kCharsUnknown,
-	kCharsLatin,
-	kCharsJapanese
-};
-
 class Font;
 
 struct FontInfo {
-	FontCharSet charset;
+	Common::Language lang;
+	Common::CodePage encoding;
 	int fallbackId;
 	Common::String name;
 
-	FontInfo() : charset(kCharsUnknown), fallbackId(-1) {}
+	FontInfo() : lang(Common::UNK_LANG), encoding(Common::kCodePageInvalid), fallbackId(-1) {}
 };
 
 class MacFont {
