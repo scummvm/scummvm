@@ -1143,6 +1143,8 @@ void LB::b_saveMovie(int nargs) {
 }
 
 void LB::b_setCallBack(int nargs) {
+	for (int i = 0; i < nargs; i++)
+		g_lingo->pop();
 	warning("STUB: b_setCallBack");
 }
 
