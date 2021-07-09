@@ -68,6 +68,7 @@ static struct FontProto {
 
 	// Japanese (names are Shift JIS encoded)
 	{ 16384,	kCharsJapanese,	-1,		"Osaka" },
+	{ 16396,	kCharsJapanese,	16384,	"\x96\x7B\x96\xBE\x92\xA9\x81\x7C\x82\x6C" }, // Book Mincho - M
 	{ 16433,	kCharsJapanese,	16436,	"\x93\x99\x95\x9D\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Mono Gothic
 	{ 16435,	kCharsJapanese,	16436,	"\x93\x99\x95\x9D\x96\xBE\x92\xA9" }, // Mono Ming
 	{ 16436,	kCharsJapanese,	-1,		"Osaka\x81\x7C\x93\x99\x95\x9D" }, // Osaka Mono
