@@ -47,6 +47,7 @@ class BandList;
 class ActorAppearance;
 class PathRequest;
 class MotionTask;
+class MotionTaskList;
 class GrabInfo;
 class CImageCache;
 class SensorList;
@@ -113,6 +114,7 @@ public:
 	Common::List<MotionTask *>::iterator _nextMT;
 	Common::List<int> _platformLRU;
 	BandList *_bandList;
+	MotionTaskList *_mTaskList;
 	CImageCache *_imageCache;
 	GrabInfo *_mouseInfo;
 	EffectDisplayPrototypeList *_edpList;

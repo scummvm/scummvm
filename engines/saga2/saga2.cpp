@@ -33,8 +33,10 @@
 #include "engines/util.h"
 
 #include "saga2/saga2.h"
+#include "saga2/fta.h"
 
 #include "saga2/gdraw.h"
+#include "saga2/motion.h"
 #include "saga2/mouseimg.h"
 #include "saga2/contain.h"
 #include "saga2/imagcach.h"
@@ -72,6 +74,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_loadedWeapons = 0;
 
 	_imageCache = new CImageCache;
+	_mTaskList = new MotionTaskList;
 }
 
 Saga2Engine::~Saga2Engine() {
@@ -82,6 +85,7 @@ Saga2Engine::~Saga2Engine() {
 	// Dispose your resources here
 	delete _rnd;
 	delete _imageCache;
+	delete _mTaskList;
 }
 
 Common::Error Saga2Engine::run() {
