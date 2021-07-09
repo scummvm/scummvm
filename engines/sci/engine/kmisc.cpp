@@ -247,8 +247,6 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 	TimeDate loc_time;
 	uint16 retval = 0; // Avoid spurious warning
 
-	g_system->getTimeAndDate(loc_time);
-
 	int mode = (argc > 0) ? argv[0].toUint16() : 0;
 
 	// Modes 2 and 3 are supported since 0.629.
@@ -262,6 +260,7 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
 	case KGETTIME_TIME_12HOUR :
+		g_system->getTimeAndDate(loc_time);
 		loc_time.tm_hour %= 12;
 		if (loc_time.tm_hour == 0) {
 			loc_time.tm_hour = 12;
@@ -270,11 +269,13 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelTime, "GetTime(12h) returns %d", retval);
 		break;
 	case KGETTIME_TIME_24HOUR :
+		g_system->getTimeAndDate(loc_time);
 		retval = (loc_time.tm_hour << 11) | (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1);
 		debugC(kDebugLevelTime, "GetTime(24h) returns %d", retval);
 		break;
 	case KGETTIME_DATE :
 	{
+		g_system->getTimeAndDate(loc_time);
 		// SCI0 late: Year since 1920 (0 = 1920, 1 = 1921, etc)
 		// SCI01 and newer: Year since 1980 (0 = 1980, 1 = 1981, etc)
 		// Atari ST SCI0 late versions use the newer base year.
