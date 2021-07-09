@@ -97,14 +97,14 @@ Graphics::BorderOffsets borderOffsets(MVWindowType type) {
 	case MacVenture::kNoGrowDoc:
 		offsets.titleTop = 0;
 		offsets.titleBottom = 0;
-		offsets.titlePos = 10;
+		offsets.titlePos = 0;
 		break;
 	case MacVenture::kMovableDBox:
 		break;
 	case MacVenture::kZoomDoc:
 		offsets.titleTop = 0;
 		offsets.titleBottom = 0;
-		offsets.titlePos = 10;
+		offsets.titlePos = 0;
 
 		offsets.upperScrollHeight = 20;
 		offsets.lowerScrollHeight = 20;
@@ -112,20 +112,20 @@ Graphics::BorderOffsets borderOffsets(MVWindowType type) {
 	case MacVenture::kZoomNoGrow:
 		offsets.titleTop = 0;
 		offsets.titleBottom = 0;
-		offsets.titlePos = 10;
+		offsets.titlePos = 0;
 		break;
 	case MacVenture::kInvWindow:
 		offsets.titleTop = 0;
 		offsets.titleBottom = 0;
-		offsets.titlePos = 10;
-		
+		offsets.titlePos = 0;
+
 		offsets.upperScrollHeight = 20;
 		offsets.lowerScrollHeight = 20;
 		break;
 	case MacVenture::kRDoc4:
 		offsets.titleTop = 0;
 		offsets.titleBottom = 0;
-		offsets.titlePos = 10;
+		offsets.titlePos = 0;
 		break;
 	default:
 		break;
