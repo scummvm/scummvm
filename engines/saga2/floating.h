@@ -191,9 +191,6 @@ private:
  * ===================================================================== */
 
 class LabeledButton : public gImageButton {
-protected:
-	char *label;
-
 public:
 	LabeledButton(gPanelList &list,
 	              const Rect16 &box,
