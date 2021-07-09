@@ -51,6 +51,9 @@ GrabInfo::GrabInfo() {
 
 	textBuf[0] = '\0';
 	displayGauge = false;
+
+	gaugeNumerator = gaugeDenominator = 0;
+	moveCount = 1;
 }
 
 GrabInfo::~GrabInfo() {
