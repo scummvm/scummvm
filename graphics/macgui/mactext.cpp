@@ -270,17 +270,17 @@ void MacText::init() {
 
 	_cursorRect = new Common::Rect(0, 0, 1, 1);
 
-	_cursorSurface = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
-	_cursorSurface->clear(_fgcolor);
-	_cursorSurface2 = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
-	_cursorSurface2->clear(_bgcolor);
-
 	// currently, we are not using fg color to render text. And we are not passing fg color correctly, thus we read it our self.
 	int color = getFgColor();
 	if (color != -1) {
 		debug(9, "Reading fg color though text, instead of the argument");
 		_fgcolor = color;
 	}
+
+	_cursorSurface = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
+	_cursorSurface->clear(_fgcolor);
+	_cursorSurface2 = new ManagedSurface(1, kCursorMaxHeight, _wm->_pixelformat);
+	_cursorSurface2->clear(_bgcolor);
 
 	reallocSurface();
 	setAlignOffset(_textAlignment);
