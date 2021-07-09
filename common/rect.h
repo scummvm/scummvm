@@ -80,11 +80,11 @@ struct Point {
 	/**
 	 * Create a point by dividing a point by the (double) @p divisor value.
 	 */
-	Point operator/(double divisor) const { return Point(x / divisor, y / divisor); }
+	Point operator/(double divisor) const { return Point((int16)(x / divisor), (int16)(y / divisor)); }
 	/**
 	 * Create a point by multiplying a point by the (double) @p multiplier value.
 	 */
-	Point operator*(double multiplier) const { return Point(x * multiplier, y * multiplier); }
+	Point operator*(double multiplier) const { return Point((int16)(x * multiplier), (int16)(y * multiplier)); }
 
 	/**
 	 * Change a point's position by adding @p delta to its x and y coordinates.
@@ -122,7 +122,7 @@ struct Point {
 };
 
 static inline Point operator*(int multiplier, const Point &p) { return Point(p.x * multiplier, p.y * multiplier); }
-static inline Point operator*(double multiplier, const Point &p) { return Point(p.x * multiplier, p.y * multiplier); }
+static inline Point operator*(double multiplier, const Point &p) { return Point((int16)(p.x * multiplier), (int16)(p.y * multiplier)); }
 
 /**
  * Simple class for handling a rectangular zone.
