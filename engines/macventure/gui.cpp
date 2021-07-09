@@ -254,7 +254,7 @@ void Gui::initWindows() {
 	_outConsoleWindow->move(bounds.left - bbs.leftOffset, bounds.top - bbs.topOffset);
 	_outConsoleWindow->setActive(false);
 	_outConsoleWindow->setCallback(outConsoleWindowCallback, this);
-
+	_outConsoleWindow->setTitle("Untitled");
 	// Self Window
 	_selfWindow = _wm.addWindow(false, true, false);
 	
@@ -278,7 +278,7 @@ void Gui::initWindows() {
 
 	_exitsWindow->setActive(false);
 	_exitsWindow->setCallback(exitsWindowCallback, this);
-
+	_exitsWindow->setTitle(findWindowData(kExitsWindow).title);
 	// TODO: In the original, the background is actually a clickable
 	// object that can be used to refer to the room itself. In that case,
 	// the background should be kPatternDarkGray.
@@ -294,12 +294,13 @@ const Graphics::Font &Gui::getCurrentFont() {
 }
 
 void Gui::bringToFront(WindowReference winID) {
-	findWindow(winID)->setActive(true);
+	_wm.setActiveWindow(findWindow(winID)->getId());
 }
 
 void Gui::setWindowTitle(WindowReference winID, Common::String string) {
 	findWindowData(winID).title = string;
 	findWindowData(winID).titleLength = string.size();
+	findWindow(winID)->setTitle(string);
 }
 
 void Gui::updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array<ObjID> &children) {
@@ -378,7 +379,8 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	_windowData->push_back(newData);
 
 	BorderBounds bbs = borderBounds(newData.type);
-	newWindow->setDimensions(newData.bounds);
+	//newWindow->setDimensions(newData.bounds);
+	//newWindow->setActive(false);
 	loadBorders(newWindow, newData.type);
 	newWindow->resize(newData.bounds.width() - bbs.rightScrollbarWidth, newData.bounds.height() - bbs.bottomScrollbarHeight, true);
 	newWindow->move(newData.bounds.left - bbs.leftOffset, newData.bounds.top - bbs.topOffset);
@@ -996,12 +998,13 @@ void Gui::moveDraggedObject(Common::Point target) {
 
 WindowReference Gui::findWindowAtPoint(Common::Point point) {
 	Common::List<WindowData>::iterator it;
-	Graphics::MacWindow *win;
-	for (it = _windowData->begin(); it != _windowData->end(); it++) {
-		win = findWindow(it->refcon);
-		if (win && it->refcon != kDiplomaWindow) { //HACK, diploma should be cosnidered
-			if (win->getDimensions().contains(point)) {
-				return it->refcon;
+	Graphics::MacWindow *win = _wm.findWindowAtPoint(point);
+	if (win != nullptr) {
+		for (it = _windowData->begin(); it != _windowData->end(); it++) {
+			if ( win == findWindow(it->refcon) && it->refcon != kDiplomaWindow) { //HACK, diploma should be cosnidered
+				if (win->getDimensions().contains(point)) {
+					return it->refcon;
+				}
 			}
 		}
 	}
