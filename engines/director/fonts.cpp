@@ -56,7 +56,7 @@ void Cast::loadFontMap(Common::SeekableReadStreamEndian &stream) {
 
 		// Map cast font ID to window manager font ID
 		FontMapEntry *entry = new FontMapEntry;
-		entry->toFont = _vm->_wm->_fontMan->registerFontName(font);
+		entry->toFont = _vm->_wm->_fontMan->registerFontName(font, id);
 		_fontMap[id] = entry;
 
 		debugC(3, kDebugLoading, "Cast::loadFontMap: Mapping font %d (%s) to %d", id, font.c_str(), _fontMap[id]->toFont);
@@ -97,11 +97,11 @@ void Cast::loadFontMapV4(Common::SeekableReadStreamEndian &stream) {
 		FontMapEntry *entry = new FontMapEntry;
 		if (platform == Common::kPlatformWindows && _fontXPlatformMap.contains(name)) {
 			FontXPlatformInfo *xinfo = _fontXPlatformMap[name];
-			entry->toFont = _vm->_wm->_fontMan->registerFontName(xinfo->toFont);
+			entry->toFont = _vm->_wm->_fontMan->registerFontName(xinfo->toFont, id);
 			entry->remapChars = xinfo->remapChars;
 			entry->sizeMap = xinfo->sizeMap;
 		} else {
-			entry->toFont = _vm->_wm->_fontMan->registerFontName(name);
+			entry->toFont = _vm->_wm->_fontMan->registerFontName(name, id);
 		}
 		_fontMap[id] = entry;
 
