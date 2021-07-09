@@ -147,6 +147,7 @@ public:
 
 	int 			_selectedEntry;
 	GridItemTray 	*_tray;
+	String 			_iconDir;
 	
 	GridWidget(GuiObject *boss, int x, int y, int w, int h);
 	GridWidget(GuiObject *boss, const String &name);

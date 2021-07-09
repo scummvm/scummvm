@@ -284,6 +284,8 @@ protected:
 	ButtonWidget	 *_savePathClearButton;
 	StaticTextWidget *_themePath;
 	ButtonWidget	 *_themePathClearButton;
+	StaticTextWidget *_iconPath;
+	ButtonWidget	 *_iconPathClearButton;
 	StaticTextWidget *_extraPath;
 	ButtonWidget	 *_extraPathClearButton;
 #ifdef DYNAMIC_MODULES

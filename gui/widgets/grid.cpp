@@ -295,7 +295,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 
 GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	: ContainerWidget(boss, x, y, w, h), CommandSender(boss) {
-	
+	_iconDir = ConfMan.get("iconpath");
 	loadPlatformIcons();
 	loadFlagIcons();
 
@@ -318,7 +318,7 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 
 GridWidget::GridWidget(GuiObject *boss, const String &name)
 	: ContainerWidget(boss, name), CommandSender(boss) {
-	
+	_iconDir = ConfMan.get("iconpath");
 	loadPlatformIcons();
 	loadFlagIcons();
 
@@ -348,7 +348,7 @@ GridWidget::~GridWidget() {
 }
 
 const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name) {
-	String path = String("./icons/") + name;
+	String path = String::format("%s/%s", _iconDir.c_str(), name.c_str());
 	
 	for (Common::Array<GridItemInfo>::iterator l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
 		if (l->thumbPath == name) {
@@ -359,7 +359,7 @@ const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name
 }
 
 const Graphics::ManagedSurface *GridWidget::languageToSurface(const String &lang) {
-	String path = String::format("./icons/%s.svg", lang.c_str());
+	String path = String::format("%s/%s.svg", _iconDir.c_str(), lang.c_str());
 	return _loadedSurfaces[path];
 }
 
@@ -418,7 +418,7 @@ void GridWidget::reloadThumbnails() {
 	String path;
 	
 	for (Common::Array<GridItemInfo>::iterator iter = _visibleEntries.begin(); iter != _visibleEntries.end(); ++iter) {
-		path = String("./icons/") + iter->thumbPath;
+		path = String::format("%s/%s", _iconDir.c_str(), iter->thumbPath.c_str());
 		if (_loadedSurfaces.contains(path)) {
 			// warning("Thumbnail already loaded, skipping...");
 		} else {
@@ -438,7 +438,7 @@ void GridWidget::reloadThumbnails() {
 void GridWidget::loadFlagIcons() {
 	const Common::LanguageDescription *l =Common::g_languages;
 	for (; l->code; ++l) {
-		String path = String::format("./icons/%s.svg", l->code);
+		String path = String::format("%s/%s.svg", _iconDir.c_str(), l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
@@ -456,7 +456,6 @@ void GridWidget::loadPlatformIcons() {
 		delete *iter;
 	}
 	_platformIcons.clear();
-	String pathPrefix("./icons/");
 	StringArray iconFilenames;
 	
 	// TODO: Can we make a list of all platforms?
@@ -465,7 +464,7 @@ void GridWidget::loadPlatformIcons() {
 	iconFilenames.push_back(String("apple2.png"));
 
 	for (StringArray::iterator i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
-		String fullPath = pathPrefix + (*i);
+		String fullPath = String::format("%s/%s", _iconDir.c_str(), i->c_str());
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(fullPath);
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
