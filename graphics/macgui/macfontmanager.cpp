@@ -372,6 +372,14 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 	Common::String name;
 	const Font *font = 0;
 
+	if (_fontInfo.contains(macFont.getId())) {
+		if (_fontInfo[macFont.getId()]->fallbackId > -1) {
+			macFont.setId(_fontInfo[macFont.getId()]->fallbackId);
+		}
+	} else {
+		warning("MacFontManager::getFont: No _fontInfo entry for font %d", macFont.getId());
+	}
+
 	if (!_builtInFonts) {
 		if (_fontInfo.contains(macFont.getId())) {
 			if (_fontInfo[macFont.getId()]->charset == kCharsJapanese && !_japaneseFontsLoaded) {
@@ -496,9 +504,6 @@ void MacFont::setName(const char *name) {
 }
 
 const Common::String MacFontManager::getFontName(uint16 id, int size, int slant, bool tryGen) {
-	if (_fontInfo[id]->fallbackId > -1)
-		id = _fontInfo[id]->fallbackId ;
-
 	Common::String rawName = _fontInfo[id]->name;
 	Common::String n = cleanFontName(rawName);
 	int extraSlant = parseFontSlant(rawName);

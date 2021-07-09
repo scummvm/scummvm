@@ -93,6 +93,7 @@ public:
 	}
 
 	int getId() const { return _id; };
+	void setId(int id) { _id = id; }
 	int getSize() const { return _size; }
 	int getSlant() const { return _slant; }
 	Common::String getName() { return _name; }
