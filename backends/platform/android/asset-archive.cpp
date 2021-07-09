@@ -89,7 +89,7 @@ uint32 AssetInputStream::read(void *dataPtr, uint32 dataSize) {
 	return readlen;
 }
 
-bool AssetInputStream::seek(int32 offset, int whence) {
+bool AssetInputStream::seek(int64 offset, int whence) {
 	int res = AAsset_seek(_asset, offset, whence);
 	if (res == -1) {
 		return false;
