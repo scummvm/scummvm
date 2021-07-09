@@ -322,7 +322,13 @@ void Cast::loadCast() {
 
 			debugC(2, kDebugLoading, "****** Loading Palette CLUT, #%d", clutList[i]);
 			PaletteV4 p = loadPalette(*pal);
-			g_director->addPalette(clutList[i] & 0xff, p.palette, p.length);
+
+			// for D2, we are using palette cast member id to resolve palette Id, so we are using lowest 1 bit to represent cast id. see Also loadCastChildren
+			if (g_director->getVersion() == 200)
+				g_director->addPalette(clutList[i] & 0xff, p.palette, p.length);
+			else
+				g_director->addPalette(clutList[i], p.palette, p.length);
+
 			delete pal;
 		}
 	}
