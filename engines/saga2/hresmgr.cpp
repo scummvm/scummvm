@@ -54,6 +54,7 @@ hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 	_bytecount = 0;
 	_bytepos = 0;
 	_handle = &_file;
+	_base = nullptr;
 
 	if (!_res->_valid)
 		return;
