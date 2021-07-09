@@ -33,7 +33,15 @@ namespace AGS3 {
 #define U_UTF8          AL_ID('U','T','F','8')
 #define U_CURRENT       AL_ID('c','u','r','.')
 
+/* set_uformat:
+ *  Selects a new text encoding format.
+ */
 extern void set_uformat(int format);
+
+/* get_uformat:
+ *  Returns the current text encoding format.
+ */
+extern int get_uformat();
 extern size_t ustrsize(const char *s);
 
 /* UTF-8 support functions
@@ -44,6 +52,21 @@ int utf8_setc(char *s, int c);
 int utf8_width(const char *s);
 int utf8_cwidth(int c);
 int utf8_isok(int c);
+
+/* ugetc: */
+extern int (*ugetc)(const char *s);
+/* ugetxc: */
+extern int (*ugetx)(char **s);
+/* ugetxc: */
+extern int (*ugetxc)(const char **s);
+/* usetc: */
+extern int (*usetc)(char *s, int c);
+/* uwidth: */
+extern int (*uwidth)(const char *s);
+/* ucwidth: */
+extern int (*ucwidth)(int c);
+/* uisok: */
+extern int (*uisok)(int c);
 
 } // namespace AGS3
 

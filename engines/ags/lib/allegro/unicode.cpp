@@ -20,13 +20,35 @@
  *
  */
 
-#include "ags/lib/allegro/unicode.h"
 #include "common/textconsole.h"
+#include "ags/lib/allegro/unicode.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
+/* ugetc: */
+int (*ugetc)(const char *s) = utf8_getc;
+/* ugetxc: */
+int (*ugetx)(char **s) = utf8_getx;
+/* ugetxc: */
+int (*ugetxc)(const char **s) = (int (*)(const char **)) utf8_getx;
+/* usetc: */
+int (*usetc)(char *s, int c) = utf8_setc;
+/* uwidth: */
+int (*uwidth)(const char *s) = utf8_width;
+/* ucwidth: */
+int (*ucwidth)(int c) = utf8_cwidth;
+/* uisok: */
+int (*uisok)(int c) = utf8_isok;
+
+
 void set_uformat(int format) {
 	// TODO: implementation
+	_G(utype) = format;
+}
+
+int get_uformat(void) {
+	return _G(utype);
 }
 
 size_t ustrsize(const char *s) {

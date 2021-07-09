@@ -206,6 +206,8 @@ public:
 	int _trans_blend_green = 0;
 	int _trans_blend_blue = 0;
 	BlenderMode __blender_mode = kRgbToRgbBlender;
+	/* current format information and worker routines */
+	int _utype = U_UTF8;
 
 	/* default palette structures */
 	PALETTE _black_palette;
