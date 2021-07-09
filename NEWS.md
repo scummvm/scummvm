@@ -23,6 +23,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for AGS Games versions 2.5+.
    - Added support for Nightlong: Union City Conspiracy.
    - Added support for The Journeyman Project 2: Buried in Time.
+   - Added support for Crusader: No Remorse.
 
  New ports:
    - The Nintendo DS port got a major rewrite.
@@ -128,6 +129,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  Ultima:
    - Ultima 4: Added several debugger commands.
    - Ultima 4: Allow Enter key to exit ZStats display.
+   - Ultima 8: Fixed several animation bugs for events and objects.
+   - Ultima 8: Restored original text for the Spell of Resurrection book.
 
  Xeen:
    - Fixed occasional border corruption during fights.
