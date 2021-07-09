@@ -110,7 +110,7 @@ void GetClientHandler::prepareHeaders() {
 		setHeader("Content-Type", "text/html; charset=UTF-8");
 
 	if (!_specialHeaders.contains("Content-Length") && _stream)
-		setHeader("Content-Length", Common::String::format("%u", _stream->size()));
+		setHeader("Content-Length", Common::String::format("%lu", _stream->size()));
 
 	_headers = Common::String::format("HTTP/1.1 %ld %s\r\n", _responseCode, responseMessage(_responseCode));
 	for (Common::HashMap<Common::String, Common::String>::iterator i = _specialHeaders.begin(); i != _specialHeaders.end(); ++i)
