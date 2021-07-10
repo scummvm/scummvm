@@ -135,6 +135,8 @@ public:
 	//  list.
 	void newTaskStack(TaskStack *p);
 
+	void newTaskStack(TaskStack *p, TaskID id);
+
 	//  Place a TaskStack back into the inactive list.
 	void deleteTaskStack(TaskStack *p);
 
@@ -229,7 +231,7 @@ void TaskStackList::read(Common::InSaveFile *in) {
 		debugC(3, kDebugSaveload, "Loading Task Stack %d", id);
 
 		ts = new TaskStack;
-		_list[id] = ts;
+		newTaskStack(ts, id);
 
 		ts->read(in);
 
@@ -324,6 +326,12 @@ void TaskStackList::newTaskStack(TaskStack *p) {
 
 			return;
 		}
+}
+
+void TaskStackList::newTaskStack(TaskStack *p, TaskID id) {
+	if (_list[id])
+		error("Task already exists");
+	_list[id] = p;
 }
 
 //----------------------------------------------------------------------
@@ -498,7 +506,7 @@ void loadTaskStacks(SaveFileReader &saveGame) {
 }
 
 void loadTaskStacks(Common::InSaveFile *in, int32 chunkSize) {
-	debugC(2, kDebugSaveload, "Saving Task Stacks");
+	debugC(2, kDebugSaveload, "Loading Task Stacks");
 
 	//  If there is no saved data, simply call the default constructor
 	if (chunkSize == 0) {
