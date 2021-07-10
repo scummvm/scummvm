@@ -243,7 +243,7 @@ void volumeChanged(void) {
 	if (audio->getVolume(kVolMusic)) {
 		resumeMusic();
 
-		audio->_music->setVolume(audio->getVolume(kVolMusic));
+		audio->_music->syncSoundSettings();
 	} else
 		suspendMusic();
 }
@@ -553,7 +553,7 @@ audioInterface::~audioInterface() {
 }
 
 void audioInterface::initAudioInterface(hResContext *musicContext) {
-	_music = new Music(musicContext, _mixer);
+	_music = new Music(musicContext);
 }
 
 bool audioInterface::playFlag(void) {

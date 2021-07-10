@@ -28,10 +28,9 @@
 #include "saga2/music.h"
 #include "saga2/hresmgr.h"
 
-#include "audio/audiostream.h"
 #include "audio/mididrv.h"
+#include "audio/mididrv_ms.h"
 #include "audio/midiparser.h"
-#include "audio/midiparser_qt.h"
 #include "audio/miles.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -39,131 +38,69 @@
 
 namespace Saga2 {
 
-#define BUFFER_SIZE 4096
-#define MUSIC_SUNSPOT 26
+Music::Music(hResContext *musicRes) : _musicContext(musicRes), _parser(0) {
+	static const char *opl2InstDefFilename = "SAMPLE.AD";
+	static const char *opl3InstDefFilename = "SAMPLE.OPL";
 
-MusicDriver::MusicDriver() {
+	// TODO Confirm this
+	_musicType = MT_GM;
+
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driverType = MidiDriver::getMusicType(dev);
 
 	switch (_driverType) {
 	case MT_ADLIB:
-		if (Common::File::exists("SAMPLE.AD") && Common::File::exists("SAMPLE.OPL")) {
-			_milesAudioMode = true;
-			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
-			warning("*** YES MILES FILES");
+		if (Common::File::exists(opl2InstDefFilename) && Common::File::exists(opl3InstDefFilename)) {
+			_driver = (MidiDriver_Multisource *)Audio::MidiDriver_Miles_AdLib_create(opl2InstDefFilename, opl3InstDefFilename);
 		} else {
-			_milesAudioMode = false;
-			MidiPlayer::createDriver();
-
-			warning("*** NO MILES FILES");
+			error("Could not find AdLib instrument definition files %s and %s", opl2InstDefFilename, opl3InstDefFilename);
 		}
 		break;
 	case MT_MT32:
-		_milesAudioMode = true;
-		_driver = Audio::MidiDriver_Miles_MT32_create("");
+	case MT_GM:
+		_driver = Audio::MidiDriver_Miles_MIDI_create(_musicType, "");
 		break;
 	default:
-		_milesAudioMode = false;
-		MidiPlayer::createDriver();
+		_driver = new MidiDriver_NULL_Multisource();
 		break;
 	}
 
-	int retValue = _driver->open();
-	if (retValue == 0) {
-		if (_driverType != MT_ADLIB) {
-			if (_driverType == MT_MT32 || _nativeMT32)
-				_driver->sendMT32Reset();
-			else
-				_driver->sendGMReset();
-		}
+	if (_driver) {
+		_driver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+		if (_driver->open() != 0)
+			error("Failed to open MIDI driver.");
 
 		_driver->setTimerCallback(this, &timerCallback);
-	}
-}
-
-void MusicDriver::send(uint32 b) {
-	if (_milesAudioMode) {
-		_driver->send(b);
-		return;
+		_driver->setSourceNeutralVolume(255);
 	}
 
-	if ((b & 0xF0) == 0xC0 && !_nativeMT32) {
-		// Remap MT32 instruments to General Midi
-		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
-	}
-	Audio::MidiPlayer::send(b);
-}
-
-void MusicDriver::sendToChannel(byte channel, uint32 b) {
-	if (!_channelsTable[channel]) {
-		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-		// If a new channel is allocated during the playback, make sure
-		// its volume is correctly initialized.
-		if (_channelsTable[channel])
-			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
-	}
-
-	if (_channelsTable[channel])
-		_channelsTable[channel]->send(b);
-}
-
-void MusicDriver::metaEvent(byte type, byte *data, uint16 length) {
-	// TODO: Seems SAGA does not want / need to handle end-of-track events?
-}
-
-void MusicDriver::play(byte *data, uint32 size, bool loop) {
-	if (size < 4) {
-		error("Music::play() wrong music resource size");
-	}
-
-	// Check if the game is using XMIDI or SMF music
-	if (!memcmp(data, "FORM", 4)) {
-		_parser = MidiParser::createParser_XMIDI();
-	} else {
-		error("MusicDriver::play(): Unsupported music format");
-	}
-
-	if (!_parser->loadMusic(data, size))
-		error("Music::play() wrong music resource");
-
-	_parser->setTrack(0);
-	_parser->setMidiDriver(this);
-	_parser->setTimerRate(_driver->getBaseTempo());
-	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-	_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
-
-	// Handle music looping
-	_parser->property(MidiParser::mpAutoLoop, loop);
-
-	_isPlaying = true;
-}
-
-void MusicDriver::pause() {
-	_isPlaying = false;
-}
-
-void MusicDriver::resume() {
-	_isPlaying = true;
-}
-
-
-Music::Music(hResContext *musicRes, Audio::Mixer *mixer) : _mixer(mixer), _player(0), _musicContext(musicRes) {
-	_currentVolume = 0;
+	_currentVolume = 255;
 	_currentMusicBuffer = nullptr;
-
-	_player = new MusicDriver();
 
 	_trackNumber = 0;
 }
 
 Music::~Music() {
-	_mixer->stopHandle(_musicHandle);
-	delete _player;
+	if (_parser) {
+		_parser->stopPlaying();
+		delete _parser;
+	}
+	if (_driver) {
+		_driver->setTimerCallback(0, 0);
+		_driver->close();
+		delete _driver;
+	}
+}
+
+void Music::setVolume(int volume) {
+	if (_driver)
+		_driver->setSourceVolume(0, volume);
+
+	_currentVolume = volume;
 }
 
 bool Music::isPlaying() {
-	return _mixer->isSoundHandleActive(_musicHandle) || _player->isPlaying();
+	return _parser ? _parser->isPlaying() : false;
 }
 
 void Music::play(uint32 resourceId, MusicFlags flags) {
@@ -173,33 +110,53 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		return;
 
 	_trackNumber = resourceId;
-	_mixer->stopHandle(_musicHandle);
-	_player->stop();
+	if (_parser)
+		_parser->stopPlaying();
 
 	delete _currentMusicBuffer;
 
 	_currentMusicBuffer = (byte *)LoadResource(_musicContext, resourceId, "music data");
 	uint32 size = _musicContext->size(resourceId);
 
-	_player->play(_currentMusicBuffer, size, (flags & MUSIC_LOOP));
+	_parser = MidiParser::createParser_XMIDI(0, 0, 0);
+
+	_parser->setMidiDriver(_driver);
+	_parser->setTimerRate(_driver->getBaseTempo());
+	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+	_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+
+	// Handle music looping
+	_parser->property(MidiParser::mpAutoLoop, flags & MUSIC_LOOP);
+	if (!_parser->loadMusic(_currentMusicBuffer, size))
+		error("Music::play() wrong music resource");
 }
 
 void Music::pause() {
-	_player->pause();
-	_player->setVolume(0);
+	if (_parser)
+		_parser->pausePlaying();
 }
 
 void Music::resume() {
-	_player->resume();
+	if (_parser)
+		_parser->resumePlaying();
 }
 
 void Music::stop() {
-	_player->stop();
+	if (_parser)
+		_parser->stopPlaying();
 }
 
-void Music::setVolume(int volume) {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
-	_player->setVolume(volume);
+void Music::syncSoundSettings() {
+	if (_driver)
+		_driver->syncSoundSettings();
 }
 
+void Music::onTimer() {
+	if (_parser)
+		_parser->onTimer();
+}
+
+void Music::timerCallback(void *data) {
+	((Music *)data)->onTimer();
+}
 } // End of namespace Saga
