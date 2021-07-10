@@ -2031,6 +2031,14 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32319665), // Windows GOG, Humble Bundle
 	GAME_ENTRY_STEAM("sumatra", "sumatra fate of yandi.exe", "57c868b1a81c0335ab60970292cd79d8", 170088886),
 	GAME_ENTRY("superjazzman", "sjm.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
+	GAME_ENTRY("symploke1", "Symploke.exe", "ff20c8c9dda8379607db87e7726909c6", 29996616), // Videojuegos Fermin website (Spanish)
+	GAME_ENTRY("symploke1", "symploke1.exe", "ff20c8c9dda8379607db87e7726909c6", 57363019), // Steam (English), same as Videojuegos Fermin website (English)
+	GAME_ENTRY("symploke1", "symploke1.exe", "ff20c8c9dda8379607db87e7726909c6", 29996469), // Steam (Spanish)
+	GAME_ENTRY("symploke1", "symploke1.exe", "ff20c8c9dda8379607db87e7726909c6", 57363019), // Steam demo
+	GAME_ENTRY("symploke2", "symploke2.exe", "ff20c8c9dda8379607db87e7726909c6", 184247323), // Steam (English)
+	GAME_ENTRY("symploke2", "symploke2.exe", "ff20c8c9dda8379607db87e7726909c6", 124539110), // Steam (Spanish)
+	GAME_ENTRY("symploke3", "symploke3.exe", "c7acc0fba53cb6a656c9cbc788868a2d", 284040264), // Steam (English)
+	GAME_ENTRY("symploke3", "symploke3.exe", "c7acc0fba53cb6a656c9cbc788868a2d", 284098408), // Steam (Spanish)
 	GAME_ENTRY("tales", "tales.exe", "4f6c7ec127e8b0ce077abb357903612f", 112930701),
 	GAME_ENTRY_STEAM("tales", "tales.exe", "7b5842e8954354ef6e21dc1837073182", 150969855),
 	GAME_ENTRY_STEAM("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447900356),
@@ -3414,10 +3422,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("sword", "Sword.exe", "0500aacb6c176d47ac0f8158f055db83", 1847692),
 	GAME_ENTRY("sydneyfindsemployment", "sydney.exe", "06a03fe35791b0578068ab1873455463", 17351738),
 	GAME_ENTRY("sydneytreadsthecatwalk", "sydney two.exe", "615e806856b7730afadf1fea9a756b70", 31480339),
-	GAME_ENTRY("symploke1", "Symploke.exe", "ff20c8c9dda8379607db87e7726909c6", 29996616),
-	GAME_ENTRY("symploke1", "symploke1.exe", "ff20c8c9dda8379607db87e7726909c6", 57363019),
-	GAME_ENTRY("symploke2", "symploke2.exe", "ff20c8c9dda8379607db87e7726909c6", 184247323),
-	GAME_ENTRY("symploke3", "symploke3.exe", "c7acc0fba53cb6a656c9cbc788868a2d", 284040264),
 	GAME_ENTRY("taleofalegacy", "A Tale of a Legacy.exe", "387ff720e746ae46e93f463fd58d77a4", 347029015),
 	GAME_ENTRY("talesofchickenry", "Chickenry.exe", "aabdafae8b57dfc48fdf158a72326c23", 50338519),
 	GAME_ENTRY("tao", "Tao through space and time AGS.exe", "7a3096ac0237cb6aa8e1718e28caf039", 35930047),
