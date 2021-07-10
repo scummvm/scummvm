@@ -145,6 +145,7 @@ private:
 	uint32 basetime;                            // timer alarm was set
 	uint32 duration;                            // duration of alarm
 public:
+	Alarm() : basetime(0), duration(0) {}
 	void set(uint32 duration);
 	bool check(void);
 	uint32 elapsed(void);                    // time elapsed since alarm set
