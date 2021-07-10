@@ -64,6 +64,10 @@ gPanel::gPanel(gWindow &win, const Rect16 &box, AppFunc *cmd)
 	ghosted = 0;
 	selected = 0;
 	imageLabel = 0;
+	title = nullptr;
+	id = 0;
+	wantMousePoll = 0;
+	userData = nullptr;
 }
 
 gPanel::gPanel(gPanelList &list, const Rect16 &box,
@@ -77,6 +81,8 @@ gPanel::gPanel(gPanelList &list, const Rect16 &box,
 	imageLabel = 0;
 	command = cmd;
 	id = ident;
+	wantMousePoll = 0;
+	userData = nullptr;
 }
 
 gPanel::gPanel(gPanelList &list, const Rect16 &box,
@@ -90,6 +96,8 @@ gPanel::gPanel(gPanelList &list, const Rect16 &box,
 	imageLabel = 1;
 	command = cmd;
 	id = ident;
+	wantMousePoll = 0;
+	userData = nullptr;
 }
 
 gPanel::gPanel(gPanelList &list, const StaticRect &box,
@@ -103,6 +111,8 @@ gPanel::gPanel(gPanelList &list, const StaticRect &box,
 	imageLabel = 0;
 	command = cmd;
 	id = ident;
+	wantMousePoll = 0;
+	userData = nullptr;
 }
 
 //  Dummy virtual functions
