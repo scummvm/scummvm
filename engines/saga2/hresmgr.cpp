@@ -337,6 +337,8 @@ hResource::hResource(const char *resname, const char desc[]) {
 	_valid = false;
 	_base = nullptr;
 	_parent = nullptr;
+	_table = nullptr;
+	_firstGroupOffset = 0;
 	_numEntries = 0;
 	_filename = resname;
 
@@ -361,7 +363,6 @@ hResource::hResource(const char *resname, const char desc[]) {
 
 	if (_base == nullptr || _table == nullptr)
 		return;
-
 
 	debugC(1, kDebugResources, "Reading %d entries:", _numEntries);
 	for (int i = 0; i < _numEntries; ++i)
