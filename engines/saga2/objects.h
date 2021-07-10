@@ -867,6 +867,7 @@ class ActiveRegion {
 
 public:
 
+	ActiveRegion() : anchor(0), worldID(0) {}
 	void update(void);
 
 	//  Return the current region in tile point coords
