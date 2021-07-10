@@ -117,7 +117,7 @@ public:
 
 	hResContext();
 	hResContext(hResContext *sire, hResID id, const char []);
-	~hResContext();
+	virtual ~hResContext();
 
 	uint32      getResID(void) {
 		return _base->id;
@@ -159,7 +159,7 @@ class hResource : public hResContext {
 
 public:
 	hResource(const char *resname, const char []);
-	~hResource();
+	virtual ~hResource();
 
 	hResContext *newContext(hResID id, const char []);
 	void        disposeContext(hResContext *con);
