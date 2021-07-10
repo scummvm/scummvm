@@ -27,7 +27,6 @@
 
 #include "audio/mididrv.h"
 #include "audio/mididrv_ms.h"
-#include "audio/midiplayer.h"
 #include "audio/midiparser.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
