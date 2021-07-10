@@ -259,8 +259,34 @@ struct ResourceObjectPrototype {
 
 	uint8           reserved[7];
 
-	//  Default constructor -- do nothing
-	ResourceObjectPrototype(void) {}
+	ResourceObjectPrototype() {
+		classType = 0;
+		script = 0;
+		nameIndex = 0;
+		iconSprite = 0;
+		groundSprite = 0;
+
+		for (int i = 0; i < 4; ++i)
+			colorMap[i] = 0;
+
+		mass = bulk = crossSection = height = toughness = breakType = 0;
+		maxCapacity = 0;
+		lockType = 0;
+		acceptableItems = 0;
+		weaponDamage = weaponFireRate = maximumRange = missileType = 0;
+		whereWearable = 0;
+		damageAbsorbtion = damageDivider = defenseBonus = 0;
+		maxCharges = chargeType = 0;
+		flags = 0;
+		price = 0;
+		heldSpriteBase = 0;
+		resistance = 0;
+		immunity = 0;
+		soundFXClass = 0;
+
+		for (int i = 0; i < 7; ++i)
+			reserved[i] = 0;
+	}
 
 	//  Copy constructor
 	ResourceObjectPrototype(ResourceObjectPrototype &proto) {
