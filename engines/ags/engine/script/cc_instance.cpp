@@ -1492,6 +1492,7 @@ bool ccInstance::ResolveScriptImports(PScript scri) {
 	}
 
 	resolved_imports = new int[numimports];
+	int errors = 0;
 	for (int i = 0; i < scri->numimports; ++i) {
 		if (scri->imports[i] == nullptr) {
 			resolved_imports[i] = -1;
@@ -1500,11 +1501,14 @@ bool ccInstance::ResolveScriptImports(PScript scri) {
 
 		resolved_imports[i] = _GP(simp).get_index_of(scri->imports[i]);
 		if (resolved_imports[i] < 0) {
-			cc_error("unresolved import '%s' in %s", scri->imports[i], scri->numSections > 0 ? scri->sectionNames[0] : "<unknown>");
-			return false;
+			AGS::Shared::Debug::Printf(kDbgMsg_Info, "unresolved import '%s' in %s", scri->imports[i], scri->numSections > 0 ? scri->sectionNames[0] : "<unknown>");
+			errors++;
 		}
 	}
-	return true;
+
+	if (errors > 0)
+		cc_error("unresolved imports, quitting.");
+	return errors == 0;
 }
 
 // TODO: it is possible to deduce global var's size at start with
