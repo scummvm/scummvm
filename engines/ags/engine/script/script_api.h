@@ -82,7 +82,7 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 	return RuntimeScriptValue()
 
 //-----------------------------------------------------------------------------
-// Calls to ScriptSprintf
+// Calls to ScriptSprintf with automatic translation
 
 #define API_SCALL_SCRIPT_SPRINTF(FUNCTION, PARAM_COUNT) \
 	ASSERT_PARAM_COUNT(FUNCTION, PARAM_COUNT); \
@@ -93,6 +93,15 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 	ASSERT_OBJ_PARAM_COUNT(METHOD, PARAM_COUNT); \
 	char ScSfBuffer[STD_BUFFER_SIZE]; \
 	const char *scsf_buffer = ScriptSprintf(ScSfBuffer, STD_BUFFER_SIZE, get_translation(params[PARAM_COUNT - 1].Ptr), params + PARAM_COUNT, param_count - PARAM_COUNT)
+
+//-----------------------------------------------------------------------------
+// Calls to ScriptSprintf without translation
+
+#define API_SCALL_SCRIPT_SPRINTF_PURE(FUNCTION, PARAM_COUNT) \
+    ASSERT_PARAM_COUNT(FUNCTION, PARAM_COUNT); \
+    char ScSfBuffer[STD_BUFFER_SIZE]; \
+    const char *scsf_buffer = ScriptSprintf(ScSfBuffer, STD_BUFFER_SIZE, params[PARAM_COUNT - 1].Ptr, params + PARAM_COUNT, param_count - PARAM_COUNT)
+
 
 //-----------------------------------------------------------------------------
 // Calls to ScriptSprintfV (unsafe plugin variant)
