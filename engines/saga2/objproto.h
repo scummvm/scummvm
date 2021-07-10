@@ -128,7 +128,7 @@ public:
 		return *this;
 	}
 
-	Location() {}
+	Location() : context(0) {}
 
 	Location(int16 nu, int16 nv, int16 nz, ObjectID con) {
 		u = nu;
