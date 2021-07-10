@@ -96,7 +96,7 @@ jobs:
 #          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\bin\\*.pdb
   xcode:
     name: Xcode
-    runs-on: macOS-latest
+    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
@@ -148,7 +148,7 @@ jobs:
             sdlConfig: sdl2-config
             configFlags: --enable-c++11
             aptPackages: 'libsdl2-dev libsdl2-net-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libglew-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
-          - platform: ubuntu-16.04
+          - platform: ubuntu-18.04
             sdlConfig: sdl-config
             configFlags: --disable-c++11
             aptPackages: 'libsdl1.2-dev libsdl-net1.2-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libglew-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
