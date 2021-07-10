@@ -340,6 +340,7 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 
 GridWidget::~GridWidget() {
 	_platformIcons.clear();
+	_languageIcons.clear();
 	_loadedSurfaces.clear();
 	_gridItems.clear();
 	_allEntries.clear();
@@ -357,9 +358,10 @@ const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name
 	return nullptr;
 }
 
-const Graphics::ManagedSurface *GridWidget::languageToSurface(const String &lang) {
-	String path = String::format("%s/%s.svg", _iconDir.c_str(), lang.c_str());
-	return _loadedSurfaces[path];
+const Graphics::ManagedSurface *GridWidget::languageToSurface(Common::Language languageCode) {
+	if (languageCode == Common::Language::UNK_LANG)
+		return nullptr;
+	return _languageIcons[languageCode];
 }
 
 const Graphics::ManagedSurface *GridWidget::platformToSurface(Common::Platform platformCode) {
@@ -437,11 +439,11 @@ void GridWidget::loadFlagIcons() {
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
-			_loadedSurfaces[path] = scGfx;
+			_languageIcons.push_back(scGfx);
 			gfx->free();
 			delete gfx;
 		} else {
-			_loadedSurfaces[path] = nullptr;
+			_languageIcons.push_back(nullptr);
 		}
 	}
 }
