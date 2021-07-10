@@ -157,7 +157,6 @@ void TextAsset::decodeHuffman() {
 			_decoded += Common::String(c);
 		}
 	}
-	_decoded += '\0';
 	debugC(3, kMVDebugText, "Decoded string [%d] (new encoding): %s", _id, _decoded.c_str());
 }
 Common::String TextAsset::getNoun(ObjID subval) {
