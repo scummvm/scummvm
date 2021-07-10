@@ -99,22 +99,17 @@ public:
 	bool notifiedOfAttack;
 
 	//  Constructor
-	PlayerActor(ObjectID a) :
-		actorID(a),
-		portraitType(0),
-		flags(0),
-		readyNode(NULL),
-		vitalityMemory(0) {
-		int     i;
+	PlayerActor(ObjectID a) :  actorID(a), portraitType(0), flags(0), readyNode(NULL),
+			vitalityMemory(0), notifiedOfAttack(false) {
 
 		assert(ActorAttributes::skillFracPointsPerLevel > 0);    // this is used in a divide
 
 		memset(&baseStats, 0, sizeof(baseStats));
 
-		for (i = 0; i < numManas; i++)
+		for (int i = 0; i < numManas; i++)
 			manaMemory[i] = 0;
 
-		for (i = 0; i < numSkills; i++) {
+		for (int i = 0; i < numSkills; i++) {
 			attribRecPools[i] = 0;
 			attribMemPools[i] = 0;
 		}
