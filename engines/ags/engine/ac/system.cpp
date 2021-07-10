@@ -27,11 +27,13 @@
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_debug.h"
+#include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/system.h"
 #include "ags/engine/ac/dynobj/script_system.h"
 #include "ags/engine/debugging/debug_log.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/graphics_mode.h"
@@ -47,6 +49,8 @@
 #include "ags/events.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 bool System_HasInputFocus() {
 	return !_G(switched_away);
@@ -330,7 +334,11 @@ RuntimeScriptValue Sc_System_SaveConfigToFile(const RuntimeScriptValue *params, 
 	API_SCALL_VOID(save_config_file);
 }
 
-
+RuntimeScriptValue Sc_System_Log(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_SCRIPT_SPRINTF(Sc_System_Log, 2);
+	Debug::Printf(kDbgGroup_Script, (MessageType)params[0].IValue, "%s", scsf_buffer);
+	return RuntimeScriptValue((int32_t)0);
+}
 
 
 void RegisterSystemAPI() {
@@ -363,6 +371,7 @@ void RegisterSystemAPI() {
 	ccAddExternalStaticFunction("System::set_Windowed", Sc_System_SetWindowed);
 
 	ccAddExternalStaticFunction("System::SaveConfigToFile", Sc_System_SaveConfigToFile);
+	ccAddExternalStaticFunction("System::Log^102", Sc_System_Log);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
