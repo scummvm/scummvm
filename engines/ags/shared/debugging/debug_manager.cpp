@@ -138,8 +138,9 @@ DebugGroup DebugManager::RegisterGroup(const String &id, const String &out_name)
 }
 
 void DebugManager::RegisterGroup(const DebugGroup &group) {
-	_groups.push_back(group);
-	_groupByStrLookup[group.UID.SID] = group.UID;
+	if (_groups.size() <= group.UID.ID)
+		_groups.resize(group.UID.ID + 1);
+	_groups[group.UID.ID] = group;	_groupByStrLookup[group.UID.SID] = group.UID;
 }
 
 PDebugOutput DebugManager::RegisterOutput(const String &id, IOutputHandler *handler, MessageType def_verbosity, bool enabled) {
