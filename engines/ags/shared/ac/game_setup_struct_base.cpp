@@ -255,4 +255,19 @@ Size ResolutionTypeToSize(GameResolutionType resolution, bool letterbox) {
 	return Size();
 }
 
+const char *GetScriptAPIName(ScriptAPIVersion v) {
+	switch (v) {
+	case kScriptAPI_v321: return "v3.2.1";
+	case kScriptAPI_v330: return "v3.3.0";
+	case kScriptAPI_v334: return "v3.3.4";
+	case kScriptAPI_v335: return "v3.3.5";
+	case kScriptAPI_v340: return "v3.4.0";
+	case kScriptAPI_v341: return "v3.4.1";
+	case kScriptAPI_v350: return "v3.5.0-alpha";
+	case kScriptAPI_v3507: return "v3.5.0-final";
+	case kScriptAPI_v351: return "v3.5.1";
+	}
+	return "unknown";
+}
+
 } // namespace AGS3
