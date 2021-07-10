@@ -195,6 +195,10 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 	PicButtonWidget *playButton = new PicButtonWidget(this, (buttonWidth / 3), buttonHeight / 3, (buttonWidth / 3) + buttonWidth * 2, buttonHeight, U32String("Play"), kPlayButtonCmd);
 	PicButtonWidget *loadButton = new PicButtonWidget(this, (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Saves"), kLoadButtonCmd);
 	PicButtonWidget *editButton = new PicButtonWidget(this, buttonWidth + 2 * (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Edit"), kEditButtonCmd);
+	
+	playButton->useThemeTransparency(true);
+	loadButton->useThemeTransparency(true);
+	editButton->useThemeTransparency(true);
 
 	playButton->setGfxFromTheme("button_play.bmp", 0, false);
 	loadButton->setGfxFromTheme("button_load.bmp", 0, false);
