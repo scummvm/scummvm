@@ -57,16 +57,16 @@ enum {
 
 /* GridItemInfo */
 struct GridItemInfo {
+	int 		entryID;
 	String 		engineid;
 	String 		gameid;
-	String 		language;
 	String 		title;
-	Common::Platform 	platform;
 	String 		thumbPath;
-	int 		entryID;
+	Common::Language	language;
+	Common::Platform 	platform;
 
 	GridItemInfo(int id, const String &eid, const String &gid
-		,const String &t, const String &l, Common::Platform p)
+		,const String &t, Common::Language l, Common::Platform p)
 		: entryID(id), gameid(gid), engineid(eid), title(t), language(l), platform(p) {
 		thumbPath = String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
@@ -91,6 +91,7 @@ public:
 class GridWidget : public ContainerWidget, public CommandSender {
 protected:
 	Common::Array<const Graphics::ManagedSurface *> _platformIcons;
+	Common::Array<const Graphics::ManagedSurface *> _languageIcons;
 	
 	// Images are mapped by filename -> surface.
 	Common::HashMap<String, const Graphics::ManagedSurface *> _loadedSurfaces;
@@ -136,7 +137,7 @@ public:
 	~GridWidget();
 
 	const Graphics::ManagedSurface *filenameToSurface(const String &name);
-	const Graphics::ManagedSurface *languageToSurface(const String &lang);
+	const Graphics::ManagedSurface *languageToSurface(Common::Language languageCode);
 	const Graphics::ManagedSurface *platformToSurface(Common::Platform platformCode);
 
 	/// Update _visibleEntries from _allEntries and returns true if reload is required.
