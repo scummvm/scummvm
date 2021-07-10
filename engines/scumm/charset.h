@@ -287,8 +287,11 @@ protected:
 	byte getTextColor();
 	byte getTextShadowColor();
 
+	Graphics::Surface *_glyphSurface;
+
 public:
 	CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile);
+	~CharsetRendererMac() override;
 
 	void setCurID(int32 id) override;
 	int getFontHeight() override;
