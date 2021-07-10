@@ -1776,8 +1776,28 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	_lastTop = _top;
 }
 
+byte CharsetRendererMac::getTextColor() {
+	if (_vm->_renderMode == Common::kRenderMacintoshBW) {
+		if (_color == 0 || _color == 15)
+			return _color;
+		return 15;
+	}
+	return _color;
+}
+
+byte CharsetRendererMac::getTextShadowColor() {
+	if (_vm->_renderMode == Common::kRenderMacintoshBW) {
+		if (getTextColor() == 0)
+			return 15;
+		return 0;
+	}
+	return _shadowColor;
+}
+
 void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int x, int y) {
 	if (shadow) {
+		byte shadowColor = getTextShadowColor();
+
 		if (_vm->_game.id == GID_LOOM) {
 			// Shadowing is a bit of guesswork. It doesn't look
 			// like it's using the Mac's built-in form of shadowed
@@ -1790,31 +1810,41 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 3, y + 3, 0);
 
 			if (color != -1) {
-				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y, _shadowColor);
-				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x, y + 2, _shadowColor);
-				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 3, y + 3, _shadowColor);
+				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y, shadowColor);
+				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x, y + 2, shadowColor);
+				_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 3, y + 3, shadowColor);
 			}
 		} else {
 			// Indy 3 uses simpler shadowing, and doesn't need the
 			// "draw only on text surface" hack.
 
 			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
-			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y + 2, _shadowColor);
+			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
 		}			
 	}
 
 	_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
 
-	if (color != -1)
+	if (color != -1) {
+		if (color != -1) {
+			color = getTextColor();
+		}
+
 		_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 1, y + 1, color);
+	}
 }
 
 void CharsetRendererMac::printCharToTextBox(int chr, int color, int x, int y) {
-	_macFonts[_curId].drawChar(_vm->_macIndy3TextBox, chr, x + 5, y + 11, _color);
+	if (_vm->_renderMode == Common::kRenderMacintoshBW)
+		color = 15;
+
+	_macFonts[_curId].drawChar(_vm->_macIndy3TextBox, chr, x + 5, y + 11, color);
 }
 
 void CharsetRendererMac::drawChar(int chr, Graphics::Surface &s, int x, int y) {
-	_macFonts[_curId].drawChar(&s, chr, x, y, _color);
+	byte color = getTextColor();
+
+	_macFonts[_curId].drawChar(&s, chr, x, y, color);
 }
 
 void CharsetRendererMac::setColor(byte color) {
