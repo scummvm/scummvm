@@ -30,6 +30,14 @@
 				rgb = '239, 196, 24'
 		/>
 
+		<color name = 'thumb_color'
+				rgb = '42, 38, 35'
+		/>
+
+		<color name = 'griditem_highlight_color'
+				rgb = '180, 83, 0'
+		/>
+
 		<!-- Idle button/slider -->
 		<color name = 'darkred'
 				rgb = '169, 42, 12'
@@ -123,6 +131,9 @@
 		<bitmap filename = 'editbtn_small.bmp'/>
 		<bitmap filename = 'switchbtn_small.bmp'/>
 		<bitmap filename = 'fastreplay_small.bmp'/>
+		<bitmap filename = 'button_play.bmp'/>
+		<bitmap filename = 'button_load.bmp'/>
+		<bitmap filename = 'button_options.bmp'/>
 	</bitmaps>
 
 	<fonts>
@@ -1002,6 +1013,33 @@
 					gradient_end = 'xtrabrightred'
 					fill = 'gradient'
 					shadow = '7'
+		/>
+	</drawdata>
+
+	<!-- Background of the thumbnail -->
+	<drawdata id = 'thumb_bg' cache = 'false'>
+		<drawstep	func = 'roundedsq'
+					radius = 5
+					fill = 'background'
+					bg_color = 'thumb_color'
+					/>
+	</drawdata>
+
+	<drawdata id = 'griditem_bg' cache = 'false'>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					fill = 'background'
+					bg_color = 'xtrabrightred'
+		/>
+	</drawdata>
+
+	<drawdata id = 'griditem_hover_bg' cache = 'false'>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '2'
+					fg_color = 'black'
+					fill = 'background'
+					bg_color = 'xtrabrightred'
 		/>
 	</drawdata>
 
