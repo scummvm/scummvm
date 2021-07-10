@@ -696,6 +696,7 @@ class DirMaskGroup {
 	void computeMask(uint8 objSection);
 
 public:
+	DirMaskGroup() : crossSection(0) {}
 	DirMask &operator[](int16 index) {
 		return dMask[index];
 	}
