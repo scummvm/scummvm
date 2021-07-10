@@ -90,8 +90,8 @@ public:
 /* GridWidget */
 class GridWidget : public ContainerWidget, public CommandSender {
 protected:
-	Common::Array<const Graphics::ManagedSurface *> _platformIcons;
-	Common::Array<const Graphics::ManagedSurface *> _languageIcons;
+	Common::HashMap<int, const Graphics::ManagedSurface *> _platformIcons;
+	Common::HashMap<int, const Graphics::ManagedSurface *> _languageIcons;
 	
 	// Images are mapped by filename -> surface.
 	Common::HashMap<String, const Graphics::ManagedSurface *> _loadedSurfaces;

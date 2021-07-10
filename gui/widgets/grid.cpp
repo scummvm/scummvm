@@ -439,11 +439,11 @@ void GridWidget::loadFlagIcons() {
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
-			_languageIcons.push_back(scGfx);
+			_languageIcons[l->id] = scGfx;
 			gfx->free();
 			delete gfx;
 		} else {
-			_languageIcons.push_back(nullptr);
+			_languageIcons[l->id] = nullptr;
 		}
 	}
 }
@@ -455,11 +455,11 @@ void GridWidget::loadPlatformIcons() {
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
-			_platformIcons.push_back(scGfx);
+			_platformIcons[l->id] = scGfx;
 			gfx->free();
 			delete gfx;
 		} else {
-			_platformIcons.push_back(nullptr);
+			_platformIcons[l->id] = nullptr;
 		}
 	}
 }
