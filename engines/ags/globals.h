@@ -138,6 +138,7 @@ struct NonBlockingScriptFunction;
 struct ObjectCache;
 struct OnScreenWindow;
 struct PluginObjectReader;
+struct Point;
 struct ResourcePaths;
 struct RGB_MAP;
 struct RoomCameraDrawData;
@@ -589,10 +590,11 @@ public:
 	 * @{
 	 */
 
-	// Dirty rects for the main viewport background (black screen);
+	// Dirty rects for the game screen background (black screen);
 	// these are used when the room viewport does not cover whole screen,
 	// so that we know when to paint black after mouse cursor and gui.
 	DirtyRects *_BlackRects;
+	Point *_GlobalOffs;
 	// Dirty rects object for the single room camera
 	std::vector<DirtyRects> *_RoomCamRects;
 	// Saved room camera offsets to know if we must invalidate whole surface.

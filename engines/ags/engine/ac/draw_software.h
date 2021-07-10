@@ -87,6 +87,8 @@ struct DirtyRects {
 	void Reset();
 };
 
+// Sets global viewport offset (used for legacy letterbox)
+void set_invalidrects_globaloffs(int x, int y);
 // Inits dirty rects array for the given room camera/viewport pair
 // View_index indicates the room viewport (>= 0) or the main viewport (-1)
 void init_invalid_regions(int view_index, const Size &surf_size, const Rect &viewport);
@@ -100,6 +102,7 @@ void set_invalidrects_cameraoffs(int view_index, int x, int y);
 void invalidate_all_rects();
 // Mark the whole camera surface dirty
 void invalidate_all_camera_rects(int view_index);
+// Mark certain rectangle dirty; in_room tells if coordinates are room viewport or screen coords
 void invalidate_rect_ds(int x1, int y1, int x2, int y2, bool in_room);
 // Paints the black screen background in the regions marked as dirty
 void update_black_invreg_and_reset(AGS::Shared::Bitmap *ds);

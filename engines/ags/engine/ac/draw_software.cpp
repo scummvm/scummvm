@@ -122,6 +122,10 @@ void dispose_invalid_regions(bool /* room_only */) {
 	_GP(RoomCamPositions).clear();
 }
 
+void set_invalidrects_globaloffs(int x, int y) {
+	_GP(GlobalOffs) = Point(x, y);
+}
+
 void init_invalid_regions(int view_index, const Size &surf_size, const Rect &viewport) {
 	if (view_index < 0) {
 		_GP(BlackRects).Init(surf_size, viewport);
@@ -273,6 +277,7 @@ void invalidate_rect_ds(DirtyRects &rects, int x1, int y1, int x2, int y2, bool 
 		y1 = rects.Screen2DirtySurf.Y.ScalePt(y1);
 		y2 = rects.Screen2DirtySurf.Y.ScalePt(y2);
 	} else {
+		// Transform only from camera pos to room background
 		x1 -= rects.Room2Screen.X.GetSrcOffset();
 		y1 -= rects.Room2Screen.Y.GetSrcOffset();
 		x2 -= rects.Room2Screen.X.GetSrcOffset();
@@ -283,6 +288,13 @@ void invalidate_rect_ds(DirtyRects &rects, int x1, int y1, int x2, int y2, bool 
 }
 
 void invalidate_rect_ds(int x1, int y1, int x2, int y2, bool in_room) {
+	if (!in_room) { // convert from game viewport to global screen coords
+		x1 += _GP(GlobalOffs).X;
+		x2 += _GP(GlobalOffs).X;
+		y1 += _GP(GlobalOffs).Y;
+		y2 += _GP(GlobalOffs).Y;
+	}
+
 	for (auto &rects : _GP(RoomCamRects))
 		invalidate_rect_ds(rects, x1, y1, x2, y2, in_room);
 }

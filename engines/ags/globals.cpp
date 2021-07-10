@@ -176,6 +176,7 @@ Globals::Globals() {
 
 	// draw_software.cpp globals
 	_BlackRects = new DirtyRects();
+	_GlobalOffs = new Point();
 	_RoomCamRects = new std::vector<DirtyRects>();
 	_RoomCamPositions = new std::vector<std::pair<int, int> >();
 
@@ -406,6 +407,7 @@ Globals::~Globals() {
 
 	// draw_software.cpp globals
 	delete _BlackRects;
+	delete _GlobalOffs;
 	delete _RoomCamRects;
 	delete _RoomCamPositions;
 
