@@ -61,6 +61,18 @@ void GUITextBox::Draw(Bitmap *ds) {
 	DrawTextBoxContents(ds, text_color);
 }
 
+// TODO: a shared utility function
+static void Backspace(String &text) {
+	if (get_uformat() == U_UTF8) {// Find where the last utf8 char begins
+		const char *ptr_end = text.GetCStr() + text.GetLength();
+		const char *ptr = ptr_end - 1;
+		for (; ptr > text.GetCStr() && ((*ptr & 0xC0) == 0x80); --ptr);
+		text.ClipRight(ptr_end - ptr);
+	} else {
+		text.ClipRight(1);
+	}
+}
+
 void GUITextBox::OnKeyPress(const KeyInput &ki) {
 	eAGSKeyCode keycode = ki.Key;
 
@@ -71,7 +83,7 @@ void GUITextBox::OnKeyPress(const KeyInput &ki) {
 	NotifyParentChanged();
 	// backspace, remove character
 	if (keycode == eAGSKeyCodeBackspace) {
-		Text.ClipRight(1);
+		Backspace(Text);
 		return;
 	}
 	// return/enter
@@ -83,7 +95,7 @@ void GUITextBox::OnKeyPress(const KeyInput &ki) {
 	Text.AppendChar(keycode);
 	// if the new string is too long, remove the new character
 	if (wgettextwidth(Text.GetCStr(), Font) > (Width - (6 + get_fixed_pixel_size(5))))
-		Text.ClipRight(1);
+		Backspace(Text);
 }
 
 void GUITextBox::SetShowBorder(bool on) {
