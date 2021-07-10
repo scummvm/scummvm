@@ -262,7 +262,7 @@ public:
 	void acquireCluesByRelations();
 
 	int soundVolume() const;
-	int soundPan() const;
+	int soundPan(uint8 overrideRange = 35) const;
 
 	bool isObstacleBetween(const Vector3 &target);
 

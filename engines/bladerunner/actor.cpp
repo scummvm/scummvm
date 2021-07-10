@@ -1579,9 +1579,12 @@ int Actor::soundVolume() const {
 	return (35 * CLIP<int>(100 - (dist / 12), 0, 100)) / 100; // map [0..1200] to [35..0]
 }
 
-int Actor::soundPan() const {
+// overrideRange argument was added to allow for more accurate sound balance on occasion (if required)
+int Actor::soundPan(uint8 overrideRange) const {
 	Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
-	return (35 * (2 * CLIP<int>(screenPosition.x, 0, 640) - 640)) / 640; // map [0..640] to [-35..35]
+	// By default map [0..640] to [-overrideRange..overrideRange] (default range [-35..35])
+	CLIP<int>(overrideRange, 35, 100);
+	return (overrideRange * (2 * CLIP<int>(screenPosition.x, 0, 640) - 640)) / 640;
 }
 
 bool Actor::isObstacleBetween(const Vector3 &target) {

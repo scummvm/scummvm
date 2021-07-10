@@ -22,6 +22,7 @@
 
 #include "bladerunner/script/ai_script.h"
 #include "bladerunner/vector.h"
+#include "bladerunner/actor.h"
 
 namespace BladeRunner {
 
@@ -48,7 +49,7 @@ enum kMaggieStates {
 AIScriptMaggie::AIScriptMaggie(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_varTimesToLoopWhenHappyB = 0;
 	_varTimesToBarkWhenHappyA = 0;
-	var_45F400 = 0;
+	_varMaggieSoundPan = 0;
 	var_45F404 = 0;
 	var_45F408 = 0;
 }
@@ -60,7 +61,7 @@ void AIScriptMaggie::Initialize() {
 	_animationNext = 0;
 	_varTimesToLoopWhenHappyB = 0;
 	_varTimesToBarkWhenHappyA = 0;
-	var_45F400 = 0; // only assigned to 0. Never checked. Unused.
+	_varMaggieSoundPan = 0;
 	var_45F404 = 0; // only assigned to 0. Never checked. Unused.
 	var_45F408 = 0; // only assigned to 0. Never checked. Unused.
 	Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Default);
@@ -103,13 +104,17 @@ void AIScriptMaggie::TimerExpired(int timer) {
 				AI_Movement_Track_Append(kActorMaggie, randomWaypointMA02(), 0);
 				AI_Movement_Track_Repeat(kActorMaggie);
 			} else {
-				Actor_Change_Animation_Mode(kActorMaggie, 54);
+				Actor_Change_Animation_Mode(kActorMaggie, 54); // sitting in place
 			}
 			return; //true
 		}
 
 		if (goal == kGoalMaggieMA02SitDown) {
+			// if in process of laying down or already laying down
 			AI_Countdown_Timer_Reset(kActorMaggie, kActorTimerAIScriptCustomTask0);
+			// Changing animation mode to 55 (sleeping) is effective only if state is at kMaggieStateLayingIdle.
+			// So if current Maggie is currenty in *the process* of laying down,
+			// this won't do anything. But since we reset the timer, it will be effective in a next call.
 			Actor_Change_Animation_Mode(kActorMaggie, 55);
 			return; //true
 		}
@@ -378,7 +383,12 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalMaggieKP05Explode:
 		AI_Movement_Track_Flush(kActorMaggie);
 		Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Sound_Play(kSfxDOGEXPL1, 50, 0, 0, 100);
+#else
+		_varMaggieSoundPan = _vm->_actors[kActorMaggie]->soundPan(75);
+		Sound_Play(kSfxDOGEXPL1, 50, _varMaggieSoundPan, _varMaggieSoundPan, 100);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieDead);
 		Actor_Change_Animation_Mode(kActorMaggie, 51);
 		if (Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMaggie) < 144) {
@@ -532,6 +542,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case kMaggieStateHappyB:
+		// Not actually barking in this case
 		*animation = kModelAnimationMaggieBarking;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieBarking)) {
@@ -545,10 +556,16 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case kMaggieStateHappyA:
+		// Barking in this case
 		*animation = kModelAnimationMaggieBarkingOrHeadUp;
 		if (_animationFrame == 1) {
 			// one of kSfxDOGBARK1, kSfxDOGBARK3
+#if BLADERUNNER_ORIGINAL_BUGS
 			Sound_Play(Random_Query(kSfxDOGBARK1, kSfxDOGBARK3), 50, 0, 0, 50);
+#else
+			_varMaggieSoundPan = _vm->_actors[kActorMaggie]->soundPan(75);
+			Sound_Play(Random_Query(kSfxDOGBARK1, kSfxDOGBARK3), 50, _varMaggieSoundPan, _varMaggieSoundPan, 50);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
@@ -645,7 +662,12 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 	case 51:
 		_animationState = kMaggieStateExploding;
 		_animationFrame = 0;
+#if BLADERUNNER_ORIGINAL_BUGS
 		Sound_Play(kSfxDOGHURT1, 50, 0, 0, 50);
+#else
+		_varMaggieSoundPan = _vm->_actors[kActorMaggie]->soundPan(75);
+		Sound_Play(kSfxDOGHURT1, 50, _varMaggieSoundPan, _varMaggieSoundPan, 50);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		break;
 
 	case kAnimationModeFeeding:
@@ -697,7 +719,16 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 			_animationState = kMaggieStateHappyB;
 		}
 		_varTimesToLoopWhenHappyB = Random_Query(2, 6);
-		Sound_Play(kSfxDOGTAIL1, 50, 0, 0, 50);
+		_varMaggieSoundPan = _vm->_actors[kActorMaggie]->soundPan(75);
+		if (_vm->_cutContent) {
+			Sound_Play(Random_Query(kSfxDOGTAIL1, kSfxDOGTAIL2), 50, _varMaggieSoundPan, _varMaggieSoundPan, 50);
+		} else {
+#if BLADERUNNER_ORIGINAL_BUGS
+			Sound_Play(kSfxDOGTAIL1, 50, 0, 0, 50);
+#else
+			Sound_Play(kSfxDOGTAIL1, 50, _varMaggieSoundPan, _varMaggieSoundPan, 50);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		}
 		break;
 
 	case 88:

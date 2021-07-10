@@ -473,9 +473,9 @@ END_SCRIPT
 DECLARE_SCRIPT(Maggie)
 	int _varTimesToLoopWhenHappyB;
 	int _varTimesToBarkWhenHappyA;
-	int var_45F400; // only set to 0. unused
-	int var_45F404; // only set to 0. unused
-	int var_45F408; // only set to 0. unused
+	int _varMaggieSoundPan; // Repurposed - Original: unused only set to 0 (var_45F400)
+	int var_45F404;     // only set to 0. unused
+	int var_45F408;     // only set to 0. unused
 
 	int randomWaypointMA02();
 	float distanceToActor(int actorId, float x, float y, float z);
