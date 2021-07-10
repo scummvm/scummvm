@@ -50,14 +50,6 @@
 */
 
 #include "ags/shared/core/platform.h"
-
-//include <sys/types.h>
-//include <sys/stat.h>
-#if !AGS_PLATFORM_OS_WINDOWS
-//include <dirent.h>
-//include <unistd.h>
-#endif
-
 #include "ags/lib/allegro.h" // file path functions
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/stream.h"
@@ -70,8 +62,7 @@ using namespace AGS::Shared;
 // TODO: rewrite all this in a cleaner way perhaps, and move to our file or path utilities unit
 //
 
-#if !defined (AGS_CASE_SENSITIVE_FILESYSTEM)
-//include <string.h>
+#if !defined(AGS_CASE_SENSITIVE_FILESYSTEM)
 /* File Name Concatenator basically on Windows / DOS */
 char *ci_find_file(const char *dir_name, const char *file_name) {
 	char *diamond = NULL;
@@ -119,6 +110,15 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 
 		fix_filename_case(filename);
 		fix_filename_slashes(filename);
+	}
+
+	if (directory && filename) {
+		char buf[1024];
+		snprintf(buf, sizeof buf, "%s/%s", directory, filename);
+		lstat(buf, &statbuf);
+		if (S_ISREG(statbuf.st_mode) || S_ISLNK(statbuf.st_mode)) {
+			diamond = strdup(buf); goto out;
+		}
 	}
 
 	if (directory == nullptr) {
@@ -173,20 +173,20 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 				append_filename(diamond, directory, entry->d_name, strlen(directory) + strlen(entry->d_name) + 2);
 				break;
 			}
-		}
-	}
+}
+}
 	closedir(rough);
 
 	fchdir(dirfd(prevdir));
 	closedir(prevdir);
 
+out:;
 	free(directory);
 	free(filename);
 
 	return diamond;
 }
 #endif
-
 
 /* Case Insensitive fopen */
 Stream *ci_fopen(const char *file_name, FileOpenMode open_mode, FileWorkMode work_mode) {
