@@ -25,6 +25,9 @@
 #include "common/memstream.h"
 #include "common/zlib.h"
 
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macfontmanager.h"
+
 #include "director/director.h"
 #include "director/movie.h"
 #include "director/util.h"
@@ -748,6 +751,19 @@ Common::Platform platformFromID(uint16 id) {
 		break;
 	}
 	return Common::kPlatformUnknown;
+}
+
+Common::CodePage detectEncoding(Common::Platform platform, uint16 fontId) {
+	Common::Language lang = g_director->_wm->_fontMan->getFontLanguage(fontId);
+	switch (lang) {
+	case Common::JA_JPN:
+		return Common::kWindows932; // Shift JIS
+	default:
+		break;
+	}
+	return (platform == Common::kPlatformWindows)
+				? Common::kWindows1252
+				: Common::kMacCentralEurope;
 }
 
 } // End of namespace Director
