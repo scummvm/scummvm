@@ -95,15 +95,19 @@ GameObject *GetOwner(GameObject *go) {
 // This call looks up a spells object prototype. It can accept either
 //   an object ID or a spell ID
 SkillProto *skillProtoFromID(int16 spellOrObjectID) {
-	if (spellOrObjectID >= MAX_SPELLS)
+	if (spellOrObjectID > MAX_SPELLS)
 		return (SkillProto *)GameObject::protoAddress(spellOrObjectID);
+
+	if (spellOrObjectID >= totalSpellBookPages)
+		error("Wrong spellID: %d > %d", spellOrObjectID, totalSpellBookPages);
+
 	return spellBook[spellOrObjectID].getProto();
 }
 
 //-----------------------------------------------------------------------
 // initialization call to connect skill prototypes with their spells
 void initializeSkill(SkillProto *oNo, SpellID sNo) {
-	if (sNo > 0 && sNo < MAX_SPELLS) {
+	if (sNo > 0 && sNo < totalSpellBookPages) {
 		if (spellBook[sNo].getProto() != NULL)
 			error("Duplicate prototype for spell %d", sNo);
 		spellBook[sNo].setProto(oNo);
