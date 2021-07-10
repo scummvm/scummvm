@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-09 17:34+0000\n"
-"PO-Revision-Date: 2021-07-03 09:11+0000\n"
+"PO-Revision-Date: 2021-07-10 05:01+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6923,17 +6923,13 @@ msgstr ""
 "die Auflösung auf 320x200 begrenzt wird."
 
 #: engines/scumm/scumm.cpp:1335
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable. Music and high-"
-#| "resolution\n"
-#| "versions of font and cursor will be disabled."
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
-"Die Programmdatei für die Macintosh-Version von \"Loom\" nicht gefunden.\n"
-"Musik und hochauflösende Schriften werden deaktiviert."
+"Die Programmdatei für die Macintosh-Version von \"Indy\" wurde nicht "
+"gefunden.\n"
+"Hochauflösende Schriften werden deaktiviert."
 
 #: engines/scumm/scumm.cpp:1361
 msgid ""
@@ -7717,16 +7713,12 @@ msgstr ""
 "hinzugefügt wurde."
 
 #: engines/wintermute/wintermute.cpp:182
-#, fuzzy
-#| msgid ""
-#| "This game requires 3D capabilities that are out ScummVM scope. As such, "
-#| "it is likely to be unplayable totally or partially."
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
-"Dieses Spiel benötigt 3D-Funktionen, die nicht zu ScummVM gehören. Daher "
-"wird das Spiel teilweise oder gar nicht spielbar sein."
+"Dieses Spiel benötigt 3D-Funktionen, die nicht verfügbar sind. Daher wird "
+"das Spiel teilweise oder gar nicht spielbar sein."
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
@@ -8216,15 +8208,11 @@ msgstr "Dialog-Antwort 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1569
-#, fuzzy
-#| msgid "Spin slower"
 msgid "Spin wheel slower"
 msgstr "Langsamer drehen"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1577
-#, fuzzy
-#| msgid "Spin faster"
 msgid "Spin wheel faster"
 msgstr "Schneller drehen"
 
