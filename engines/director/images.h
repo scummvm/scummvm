@@ -61,7 +61,7 @@ private:
 
 class BITDDecoder : public Image::ImageDecoder {
 public:
-	BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const byte *palette);
+	BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const byte *palette, FileVersion version);
 	~BITDDecoder() override;
 
 	// ImageDecoder API
@@ -71,13 +71,14 @@ public:
 	const byte *getPalette() const override { return _palette; }
 	void loadPalette(Common::SeekableReadStream &stream);
 	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
-	void convertPixelIntoSurface(void* surfacePointer, uint fromBpp, uint toBpp, int red, int green, int blue);
+	void convertPixelIntoSurface(void *surfacePointer, uint fromBpp, uint toBpp, int red, int green, int blue);
 
 private:
 	Graphics::Surface *_surface;
 	const byte *_palette;
 	uint8 _paletteColorCount;
 	uint16 _bitsPerPixel;
+	FileVersion _version;
 	uint16 _pitch;
 };
 

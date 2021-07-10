@@ -104,9 +104,10 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 * BITD
 ****************************/
 
-BITDDecoder::BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const byte *palette) {
+BITDDecoder::BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const byte *palette, FileVersion version) {
 	_surface = new Graphics::Surface();
 	_pitch = pitch;
+	_version = version;
 
 	if (_pitch < w) {
 		warning("BITDDecoder: pitch is too small: %d < %d", _pitch, w);
@@ -183,7 +184,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
 	// logic above does not fit the situation when _bitsPerPixel == 1, need to fix.
-	if ((stream.size() == _pitch * _surface->h * _bitsPerPixel / 8) || (_bitsPerPixel != 1 && g_director->getVersion() == 200 && stream.size() >= _surface->h * _surface->w * _bitsPerPixel / 8)) {
+	if ((stream.size() == _pitch * _surface->h * _bitsPerPixel / 8) || (_bitsPerPixel != 1 && _version < kFileVer300 && stream.size() >= _surface->h * _surface->w * _bitsPerPixel / 8)) {
 		debugC(6, kDebugImages, "Skipping compression");
 		for (int i = 0; i < stream.size(); i++) {
 			pixels.push_back((int)stream.readByte());

@@ -324,7 +324,7 @@ void Cast::loadCast() {
 			PaletteV4 p = loadPalette(*pal);
 
 			// for D2, we are using palette cast member id to resolve palette Id, so we are using lowest 1 bit to represent cast id. see Also loadCastChildren
-			if (g_director->getVersion() == 200)
+			if (_version < kFileVer300)
 				g_director->addPalette(clutList[i] & 0xff, p.palette, p.length);
 			else
 				g_director->addPalette(clutList[i], p.palette, p.length);
@@ -579,7 +579,7 @@ void Cast::loadCastChildren() {
 
 			if (w > 0 && h > 0) {
 				if (_version < kFileVer600) {
-					img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch, _vm->getPalette());
+					img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch, _vm->getPalette(), static_cast<FileVersion>(_version));
 				} else {
 					img = new Image::BitmapDecoder();
 				}
