@@ -48,6 +48,7 @@ enum GameInitErrorType {
 	kGameInitErr_EntityInitFail,
 	kGameInitErr_TooManyPlugins,
 	kGameInitErr_PluginNameInvalid,
+	kGameInitErr_NoGlobalScript,
 	kGameInitErr_ScriptLinkFailed
 };
 

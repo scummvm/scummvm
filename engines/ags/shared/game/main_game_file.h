@@ -67,7 +67,6 @@ enum MainGameFileErrorType {
 	kMGFErr_TooManyCursors,
 	kMGFErr_InvalidPropertySchema,
 	kMGFErr_InvalidPropertyValues,
-	kMGFErr_NoGlobalScript,
 	kMGFErr_CreateGlobalScriptFailed,
 	kMGFErr_CreateDialogScriptFailed,
 	kMGFErr_CreateScriptModuleFailed,

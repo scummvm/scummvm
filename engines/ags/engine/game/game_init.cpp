@@ -75,6 +75,8 @@ String GetGameInitErrorText(GameInitErrorType err) {
 		return "Too many plugins for this engine to handle.";
 	case kGameInitErr_PluginNameInvalid:
 		return "Plugin name is invalid.";
+	case kGameInitErr_NoGlobalScript:
+		return "No global script in game.";
 	case kGameInitErr_ScriptLinkFailed:
 		return "Script link failed.";
 	}
@@ -366,6 +368,8 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	// NOTE: we must do this after plugins, because some plugins may export
 	// script symbols too.
 	//
+	if (!ents.GlobalScript)
+		return new GameInitError(kGameInitErr_NoGlobalScript);
 	_GP(gamescript) = ents.GlobalScript;
 	_GP(dialogScriptsScript) = ents.DialogScript;
 	_G(numScriptModules) = ents.ScriptModules.size();
