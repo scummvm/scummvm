@@ -763,31 +763,53 @@ uint16 Actor::setActivityU8(int activity) {
 }
 
 uint16 Actor::setActivityCru(int activity) {
-	if (isDead())
+	if (isDead() || World::get_instance()->getControlledNPCNum() == _objId
+		|| hasActorFlags(ACT_WEAPONREADY) || activity == 0)
+		return 0;
+
+	if ((World::get_instance()->getGameDifficulty() == 4) && (getRandom() % 2 == 0)) {
+		if (activity == 5)
+			activity = 0xa;
+		if (activity == 9)
+			activity = 0xb;
+	}
+
+	if (_currentActivityNo == activity || (isInCombat() && activity != 0xc))
 		return 0;
 
 	_lastActivityNo = _currentActivityNo;
 	_currentActivityNo = activity;
 
+	if (isInCombat())
+		clearInCombat();
+
+	if (!hasFlags(FLG_FASTAREA))
+		return 0;
+
+	Kernel *kernel = Kernel::get_instance();
+
+	static const uint16 PROCSTYPES_TO_KILL[] = { 0x204, 0x258, 0xf0, 0x255, 0x257, 0x259, 0x25f, 0x25e };
+	for (int i = 0; i < ARRAYSIZE(PROCSTYPES_TO_KILL); i++) {
+		kernel->killProcesses(_objId, PROCSTYPES_TO_KILL[i], true);
+	}
+
 	switch (activity) {
 	case 1: // stand
 		return doAnim(Animation::stand, dir_current);
-	case 3: // pace
-		return Kernel::get_instance()->addProcess(new PaceProcess(this));
 	case 2: // loiter
-		Kernel::get_instance()->addProcess(new LoiterProcess(this));
-		return Kernel::get_instance()->addProcess(new DelayProcess(1));
+		return kernel->addProcess(new LoiterProcess(this));
+	case 3: // pace
+		return kernel->addProcess(new PaceProcess(this));
 	case 4:
 	case 6:
 	    // Does nothing in game..
 	    break;
 	case 7:
 		if (_lastActivityNo != 7)
-			return Kernel::get_instance()->addProcess(new SurrenderProcess(this));
+			return kernel->addProcess(new SurrenderProcess(this));
 	    break;
 	case 8:
-		return Kernel::get_instance()->addProcess(new GuardProcess(this));
-	    break;
+		return kernel->addProcess(new GuardProcess(this));
 	case 5:
 	case 9:
 	case 0xa:
@@ -799,7 +821,7 @@ uint16 Actor::setActivityCru(int activity) {
 	case 0xd:
 		// Only in No Regret
 		setActorFlag(ACT_INCOMBAT);
-		return Kernel::get_instance()->addProcess(new RollingThunderProcess(this));
+		return kernel->addProcess(new RollingThunderProcess(this));
 	case 0x70:
 		return setActivity(getDefaultActivity(0));
 	case 0x71:
