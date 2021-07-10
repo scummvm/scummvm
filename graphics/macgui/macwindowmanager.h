@@ -228,12 +228,12 @@ public:
 	 * @param x x coordinate of point
 	 * @param y y coordiante of point
 	 */ 
-	MacWindow* findWindowAtPoint(int16 x, int16 y);
+	MacWindow *findWindowAtPoint(int16 x, int16 y);
 	/**
 	 * Return Top Window containing a point
 	 * @param point Point
 	 */ 
-	MacWindow* findWindowAtPoint(Common::Point point);
+	MacWindow *findWindowAtPoint(Common::Point point);
 
 	/**
 	 * Mark a window for removal.
