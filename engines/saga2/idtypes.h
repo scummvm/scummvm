@@ -76,7 +76,7 @@ struct MetaTileID {
 	int16           index;          //  index into metatile array
 
 	//  Default constructor
-	MetaTileID(void) {}
+	MetaTileID(void) : map(0), index(0) {}
 
 	//  Copy constructor
 	MetaTileID(const MetaTileID &id) : map(id.map), index(id.index) {}
@@ -128,7 +128,7 @@ struct ActiveItemID {
 	//      next 13 bits index
 
 	//  Default constructor
-	ActiveItemID(void) {}
+	ActiveItemID(void) : val(0) {}
 
 	//  Copy constructor
 	ActiveItemID(const ActiveItemID &id) : val(id.val) {
