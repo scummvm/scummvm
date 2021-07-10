@@ -2409,6 +2409,7 @@ static void spush(const TilePoint &tp, int cost, int direction) {
 	newItem.z = tp.z;
 	newItem.cost = cost;
 	newItem.direction = direction;
+	newItem.platform = 0;
 
 	squeue.insert(newItem);
 }
