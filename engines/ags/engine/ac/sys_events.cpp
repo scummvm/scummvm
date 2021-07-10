@@ -64,6 +64,14 @@ static void(*_on_switchout_callback)(void) = nullptr;
 // KEYBOARD INPUT
 // ----------------------------------------------------------------------------
 
+KeyInput ags_keycode_from_scummvm(const Common::Event &event) {
+	KeyInput ki;
+
+	ki.Key = ::AGS::g_events->scummvm_key_to_ags_key(event);
+
+	return ki;
+}
+
 bool ags_keyevent_ready() {
 	return ::AGS::g_events->keyEventPending();
 }

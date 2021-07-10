@@ -369,18 +369,17 @@ void IAGSEngine::BlitSpriteRotated(int32 x, int32 y, BITMAP *bmp, int32 angle) {
 extern void domouse(int);
 
 void IAGSEngine::PollSystem() {
-
 	domouse(DOMOUSE_NOCURSOR);
 	update_polled_stuff_if_runtime();
 	int mbut, mwheelz;
 	if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && !_GP(play).IsIgnoringInput())
 		pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut);
-	int kp;
+	KeyInput kp;
 	if (run_service_key_controls(kp) && !_GP(play).IsIgnoringInput()) {
-		pl_run_plugin_hooks(AGSE_KEYPRESS, kp);
+		pl_run_plugin_hooks(AGSE_KEYPRESS, kp.Key);
 	}
-
 }
+
 AGSCharacter *IAGSEngine::GetCharacter(int32 charnum) {
 	if (charnum >= _GP(game).numcharacters)
 		quit("!AGSEngine::GetCharacter: invalid character request");

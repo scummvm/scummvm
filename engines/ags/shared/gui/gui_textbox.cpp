@@ -61,7 +61,9 @@ void GUITextBox::Draw(Bitmap *ds) {
 	DrawTextBoxContents(ds, text_color);
 }
 
-void GUITextBox::OnKeyPress(int keycode) {
+void GUITextBox::OnKeyPress(const KeyInput &ki) {
+	eAGSKeyCode keycode = ki.Key;
+
 	// other key, continue
 	if ((keycode >= 128) && (!font_supports_extended_characters(Font)))
 		return;

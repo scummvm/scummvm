@@ -311,7 +311,7 @@ bool EventsManager::ags_key_to_scancode(AGS3::eAGSKeyCode key, Common::KeyCode(&
 	return false;
 }
 
-AGS3::eAGSKeyCode EventsManager::ags_keycode_from_scummvm(const Common::Event &event) {
+AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &event) {
 	if (event.type != Common::EVENT_KEYDOWN)
 		return AGS3::eAGSKeyCodeNone;
 

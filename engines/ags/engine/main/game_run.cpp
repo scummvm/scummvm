@@ -245,7 +245,7 @@ int old_key_mod = 0; // for saving previous key mods
 
 // Runs service key controls, returns false if service key combinations were handled
 // and no more processing required, otherwise returns true and provides current keycode and key shifts.
-bool run_service_key_controls(int &out_key) {
+bool run_service_key_controls(KeyInput &out_key) {
 	bool handled = false;
 	const bool key_valid = ags_keyevent_ready();
 	const Common::Event key_evt = key_valid ? ags_get_next_keyevent() : Common::Event();
@@ -305,7 +305,8 @@ bool run_service_key_controls(int &out_key) {
 		return false; // rest of engine currently does not use pressed mod keys
 	// change this when it's no longer true (but be mindful about key-skipping!)
 
-	int agskey = ::AGS::EventsManager::ags_keycode_from_scummvm(key_evt);
+	KeyInput ki = ags_keycode_from_scummvm(key_evt);
+	eAGSKeyCode agskey = ki.Key;
 	if (agskey == eAGSKeyCodeNone)
 		return false; // should skip this key event
 
@@ -390,7 +391,7 @@ bool run_service_key_controls(int &out_key) {
 	}
 
 	// No service operation triggered? return active keypress and mods to caller
-	out_key = agskey;
+	out_key = ki;
 	return true;
 }
 
@@ -408,10 +409,11 @@ bool run_service_mb_controls(int &mbut, int &mwheelz) {
 // Runs default keyboard handling
 static void check_keyboard_controls() {
 	// First check for service engine's combinations (mouse lock, display mode switch, and so forth)
-	int kgn;
-	if (!run_service_key_controls(kgn)) {
+	KeyInput ki;
+	if (!run_service_key_controls(ki)) {
 		return;
 	}
+	eAGSKeyCode kgn = ki.Key;
 	// Then, check cutscene skip
 	check_skip_cutscene_keypress(kgn);
 	if (_GP(play).fast_forward) {
@@ -487,7 +489,7 @@ static void check_keyboard_controls() {
 
 				keywasprocessed = 1;
 
-				guitex->OnKeyPress(kgn);
+				guitex->OnKeyPress(ki);
 
 				if (guitex->IsActivated) {
 					guitex->IsActivated = false;
@@ -498,9 +500,9 @@ static void check_keyboard_controls() {
 	}
 
 	if (!keywasprocessed) {
-		kgn = AGSKeyToScriptKey(kgn);
-		debug_script_log("Running on_key_press keycode %d", kgn);
-		setevent(EV_TEXTSCRIPT, TS_KEYPRESS, kgn);
+		int sckey = AGSKeyToScriptKey(kgn);
+		debug_script_log("Running on_key_press keycode %d", sckey);
+		setevent(EV_TEXTSCRIPT, TS_KEYPRESS, sckey);
 	}
 
 	// RunTextScriptIParam(_G(gameinst),"on_key_press",kgn);

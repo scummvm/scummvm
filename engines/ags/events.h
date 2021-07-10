@@ -53,7 +53,7 @@ public:
 	/*
 	 * Converts a ScummVM event to the ags keycode
 	 */
-	static AGS3::eAGSKeyCode ags_keycode_from_scummvm(const Common::Event &event);
+	static AGS3::eAGSKeyCode scummvm_key_to_ags_key(const Common::Event &event);
 
 public:
 	EventsManager();

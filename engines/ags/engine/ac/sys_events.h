@@ -66,8 +66,7 @@ inline int make_merged_mod(int mod) {
 	return m_mod;
 }
 
-extern eAGSKeyCode ags_keycode_from_ScummVM(const Common::Event &event);
-extern bool ags_key_to_scummvm_keycode(eAGSKeyCode key, Common::KeyCode(&scan)[3]);
+extern KeyInput ags_keycode_from_scummvm(const Common::Event &event);
 
 // Tells if there are any buffered key events
 extern bool ags_keyevent_ready();

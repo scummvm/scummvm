@@ -112,9 +112,10 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 
 		if (canAbort) {
 			// Check for whether user aborted video
-			int key, mbut, mwheelz;
+			KeyInput key;
+			int mbut, mwheelz;
 			if (run_service_key_controls(key)) {
-				if (key == 27 && canAbort)
+				if (key.Key == 27 && canAbort)
 					return true;
 				if (canAbort >= 2)
 					return true;  // skip on any key

@@ -816,21 +816,26 @@ bool DialogOptions::Run() {
 		run_function_on_non_blocking_thread(&_GP(runDialogOptionRepExecFunc));
 	}
 
-	int gkey;
-	if (run_service_key_controls(gkey) && !_GP(play).IsIgnoringInput()) {
+	KeyInput ki;
+	if (run_service_key_controls(ki) && !_GP(play).IsIgnoringInput()) {
+		eAGSKeyCode gkey = ki.Key;
 		if (parserInput) {
 			wantRefresh = true;
-			// type into the parser
+			// type into the parser 
+			// TODO: find out what are these key commands, and are these documented?
 			if ((gkey == eAGSKeyCodeF3) || ((gkey == eAGSKeyCodeSpace) && (parserInput->Text.GetLength() == 0))) {
 				// write previous contents into textbox (F3 or Space when box is empty)
-				for (unsigned int i = parserInput->Text.GetLength(); i < strlen(_GP(play).lastParserEntry); i++) {
-					parserInput->OnKeyPress(_GP(play).lastParserEntry[i]);
+				size_t last_len = strlen(_GP(play).lastParserEntry);
+
+				for (unsigned int i = parserInput->Text.GetLength(); i < last_len; i++) {
+					ki.Key = (eAGSKeyCode)_GP(play).lastParserEntry[i];
+					parserInput->OnKeyPress(ki);
 				}
 				//ags_domouse(DOMOUSE_DISABLE);
 				Redraw();
 				return true; // continue running loop
 			} else if ((gkey >= eAGSKeyCodeSpace) || (gkey == eAGSKeyCodeReturn) || (gkey == eAGSKeyCodeBackspace)) {
-				parserInput->OnKeyPress(gkey);
+				parserInput->OnKeyPress(ki);
 				if (!parserInput->IsActivated) {
 					//ags_domouse(DOMOUSE_DISABLE);
 					Redraw();
@@ -844,10 +849,10 @@ bool DialogOptions::Run() {
 		}
 		// Allow selection of options by keyboard shortcuts
 		else if (_GP(game).options[OPT_DIALOGNUMBERED] >= kDlgOptKeysOnly &&
-		         gkey >= '1' && gkey <= '9') {
-			gkey -= '1';
-			if (gkey < numdisp) {
-				chose = disporder[gkey];
+			gkey >= '1' && gkey <= '9') {
+			int numkey = gkey - '1';
+			if (numkey < numdisp) {
+				chose = disporder[numkey];
 				return false; // end dialog options running loop
 			}
 		}
@@ -857,8 +862,8 @@ bool DialogOptions::Run() {
 	if (new_custom_render); // do not automatically detect option under mouse
 	else if (usingCustomRendering) {
 		if ((_G(mousex) >= dirtyx) && (_G(mousey) >= dirtyy) &&
-		        (_G(mousex) < dirtyx + tempScrn->GetWidth()) &&
-		        (_G(mousey) < dirtyy + tempScrn->GetHeight())) {
+			(_G(mousex) < dirtyx + tempScrn->GetWidth()) &&
+			(_G(mousey) < dirtyy + tempScrn->GetHeight())) {
 			_GP(getDialogOptionUnderCursorFunc).params[0].SetDynamicObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
 			run_function_on_non_blocking_thread(&_GP(getDialogOptionUnderCursorFunc));
 
@@ -870,24 +875,23 @@ bool DialogOptions::Run() {
 			_GP(ccDialogOptionsRendering).activeOptionID = -1;
 		}
 	} else if (_G(mousex) >= dialog_abs_x && _G(mousex) < (dialog_abs_x + areawid) &&
-	           _G(mousey) >= dlgyp && _G(mousey) < curyp) {
+		_G(mousey) >= dlgyp && _G(mousey) < curyp) {
 		mouseison = numdisp - 1;
 		for (int i = 0; i < numdisp; ++i) {
 			if (_G(mousey) < dispyp[i]) {
-				mouseison = i - 1;
-				break;
+				mouseison = i - 1; break;
 			}
 		}
 		if ((mouseison < 0) | (mouseison >= numdisp)) mouseison = -1;
 	}
 
 	if (parserInput != nullptr) {
-		int relativeMousey = _G(mousey);
+		int relative_mousey = _G(mousey);
 		if (usingCustomRendering)
-			relativeMousey -= dirtyy;
+			relative_mousey -= dirtyy;
 
-		if ((relativeMousey > parserInput->Y) &&
-		        (relativeMousey < parserInput->Y + parserInput->Height))
+		if ((relative_mousey > parserInput->Y) &&
+			(relative_mousey < parserInput->Y + parserInput->Height))
 			mouseison = DLG_OPTION_PARSER;
 
 		if (parserInput->IsActivated)
@@ -897,7 +901,7 @@ bool DialogOptions::Run() {
 	int mouseButtonPressed = MouseNone;
 	int mouseWheelTurn = 0;
 	if (run_service_mb_controls(mouseButtonPressed, mouseWheelTurn) && mouseButtonPressed >= 0 &&
-	        !_GP(play).IsIgnoringInput()) {
+		!_GP(play).IsIgnoringInput()) {
 		if (mouseison < 0 && !new_custom_render) {
 			if (usingCustomRendering) {
 				_GP(runDialogOptionMouseClickHandlerFunc).params[0].SetDynamicObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
@@ -970,8 +974,7 @@ bool DialogOptions::Run() {
 
 	update_polled_stuff_if_runtime();
 
-	if (!runGameLoopsInBackground && (_GP(play).fast_forward == 0)) {
-		// note if runGameLoopsInBackground then it's called inside UpdateGameOnce
+	if (!runGameLoopsInBackground && (_GP(play).fast_forward == 0)) { // note if runGameLoopsInBackground then it's called inside UpdateGameOnce
 		WaitForNextFrame();
 	}
 

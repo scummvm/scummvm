@@ -51,7 +51,8 @@ void UpdateGameOnce(bool checkControls = false, IDriverDependantBitmap *extraBit
 float get_current_fps();
 // Runs service key controls, returns false if no key was pressed or key input was claimed by the engine,
 // otherwise returns true and provides a keycode.
-bool run_service_key_controls(int &kgn);
+struct KeyInput;
+bool run_service_key_controls(KeyInput &kgn);
 // Runs service mouse controls, returns false if mouse input was claimed by the engine,
 // otherwise returns true and provides mouse button code.
 bool run_service_mb_controls(int &mbut, int &mwheelz);

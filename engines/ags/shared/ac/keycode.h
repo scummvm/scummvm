@@ -24,6 +24,7 @@
 #define AGS_SHARED_AC_KEYCODE_H
 
 #include "ags/shared/core/platform.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 
@@ -251,6 +252,15 @@ enum eAGSKeyCode {
 	*/
 };
 
+// Combined key code and a textual representation in UTF-8
+struct KeyInput {
+	const static size_t UTF8_ARR_SIZE = 5;
+
+	eAGSKeyCode Key = eAGSKeyCodeNone;
+	char        Text[UTF8_ARR_SIZE] = { 0 };
+
+	KeyInput() = default;
+};
 
 // Converts eAGSKeyCode to script API code, for "on_key_press" and similar callbacks
 int AGSKeyToScriptKey(int keycode);
