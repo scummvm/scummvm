@@ -1349,6 +1349,7 @@ static void push(
 	newItem.platform = platform;
 	newItem.cost = cost;
 	newItem.direction = direction;
+	newItem.pad = 0;
 
 	if (queue.insert(newItem)) {
 		cellPtr->direction = direction;
