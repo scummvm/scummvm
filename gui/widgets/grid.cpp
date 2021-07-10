@@ -99,7 +99,7 @@ void GridItemWidget::drawWidget() {
 		for (int i = 0; i < linesInThumb; ++i) {
 			g_gui.theme()->drawText(Common::Rect(_x, _y + ((thumbHeight - (linesInThumb - 2 * i) * kLineHeight)) / 2,
 							_x + thumbWidth, _y + ((thumbHeight - (linesInThumb - 2 * i) * kLineHeight)) / 2 + kLineHeight),
-							titleLines[i], GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter,
+							titleLines[i], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter,
 							ThemeEngine::kTextInversionNone, 0, true, ThemeEngine::kFontStyleNormal,
 							ThemeEngine::kFontColorAlternate, false);
 		}
@@ -125,12 +125,12 @@ void GridItemWidget::drawWidget() {
 			titleLines.push_back(U32String());
 		} else if (titleLines.size() > 2) {
 			titleLines[1].erase(titleLines[1].size() - 3);
-			titleLines[1]+=U32String("...");
+			titleLines[1] += U32String("...");
 		}
 		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight),
-								titleLines[0], GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter);
+								titleLines[0], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter);
 		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight + kLineHeight, _x + thumbWidth, _y + thumbHeight + 2 * kLineHeight),
-								titleLines[1], GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignCenter);
+								titleLines[1], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter);
 	}
 }
 
@@ -433,7 +433,7 @@ void GridWidget::reloadThumbnails() {
 }
 
 void GridWidget::loadFlagIcons() {
-	const Common::LanguageDescription *l =Common::g_languages;
+	const Common::LanguageDescription *l = Common::g_languages;
 	for (; l->code; ++l) {
 		String path = String::format("%s/%s.svg", _iconDir.c_str(), l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
