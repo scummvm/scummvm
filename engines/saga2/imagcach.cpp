@@ -31,31 +31,24 @@
 
 namespace Saga2 {
 
-#if DEBUG
-extern char *idname(long s);
-#endif
-
 CImageNode::CImageNode(hResContext *con, uint32 resID) {
 	if (con) {
-#if DEBUG
-		char            descr[32];
-
-		sprintf(descr, "CImage '%s'", idname(resID));
-
-		image           = LoadResource(con, resID, descr);
-#else
 		image           = LoadResource(con, resID, "CImageNode Allocation");
-#endif
 		resourceID      = resID;
 		contextID       = con->getResID();
 		requested       = 0;    // zero request for this node at creation
+	} else {
+		image = nullptr;
+		resourceID = 0;
+		contextID = 0;
+		requested = 0;
 	}
 }
 
 CImageNode::~CImageNode(void) {
 	if (image) {
 		free(image);
-		image = NULL;
+		image = nullptr;
 	}
 }
 
