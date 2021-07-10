@@ -1319,6 +1319,8 @@ public:
 	String _trans_name, _trans_filename;
 	long _lang_offs_start = 0;
 	char _transFileName[MAX_PATH] = { 0 };
+	std::vector<uint16> _wcsbuf; // widechar buffer
+	std::vector<char> _mbbuf;  // utf8 buffer
 
 	/**@}*/
 
