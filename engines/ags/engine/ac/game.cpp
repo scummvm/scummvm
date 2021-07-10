@@ -307,7 +307,7 @@ bool SetSaveGameDirectoryPath(const String &newFolder, bool explicit_path) {
 		FSLocation fsloc;
 		if (!MakeSaveGameDir(newFolder, fsloc))
 			return false;
-		if (!Directory::CreateAllDirectories(fsloc.BaseDir, fsloc.FullDir)) {
+		if (!Directory::CreateAllDirectories(fsloc.BaseDir, fsloc.SubDir)) {
 			debug_script_warn("SetSaveGameDirectory: failed to create all subdirectories: %s", fsloc.FullDir.GetCStr());
 			return false;
 		}

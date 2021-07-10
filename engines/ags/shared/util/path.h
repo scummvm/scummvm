@@ -31,6 +31,8 @@
 
 #include "ags/shared/util/string.h"
 
+#define PATH_ALT_SEPARATOR ('\\')
+
 namespace AGS3 {
 namespace AGS {
 namespace Shared {

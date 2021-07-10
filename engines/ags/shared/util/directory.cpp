@@ -39,27 +39,33 @@ bool CreateDirectory(const String &path) {
 	return Common::FSNode(path.GetCStr()).createDirectory();
 }
 
-bool CreateAllDirectories(const String &parent, const String &path) {
-	if (path == SAVE_FOLDER_PREFIX)
+bool CreateAllDirectories(const String &parent, const String &sub_dirs) {
+	if (sub_dirs == SAVE_FOLDER_PREFIX)
 		// ScummVM save folder doesn't need creating
 		return true;
 
-	if (!ags_directory_exists(parent.GetCStr()))
-		return false;
-	if (path.IsEmpty())
-		return true;
-	if (!Path::IsSameOrSubDir(parent, path))
-		return false;
+	if (parent.IsEmpty() || !ags_directory_exists(parent.GetCStr()))
+		return false; // no sense, or base dir not exist
+	if (sub_dirs.IsEmpty())
+		return true; // nothing to create, so fine
 
-	String sub_path = Path::MakeRelativePath(parent, path);
-	String make_path = parent;
-	std::vector<String> dirs = sub_path.Split('/');
-	for (const String &dir : dirs) {
-		if (dir.IsEmpty() || dir.Compare(".") == 0) continue;
-		make_path.AppendChar('/');
-		make_path.Append(dir);
+	String make_path = String::FromFormat("%s/", parent.GetCStr());
+	for (const char *sect = sub_dirs.GetCStr();
+		sect < sub_dirs.GetCStr() + sub_dirs.GetLength();) {
+		const char *cur = sect + 1;
+		for (; *cur && *cur != '/' && *cur != PATH_ALT_SEPARATOR; ++cur);
+		// Skip empty dirs (duplicated separators etc)
+		if ((cur - sect == 1) && (*cur == '.' || *cur == '/' || *cur == PATH_ALT_SEPARATOR)) {
+			sect = cur;
+			continue;
+		}
+		// In case of ".." just fail
+		if (strncmp(sect, "..", cur - sect) == 0)
+			return false;
+		make_path.Append(sect, cur - sect);
 		if (!CreateDirectory(make_path))
 			return false;
+		sect = cur;
 	}
 	return true;
 }

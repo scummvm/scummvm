@@ -228,7 +228,7 @@ String PathFromInstallDir(const String &path) {
 }
 
 String PreparePathForWriting(const FSLocation &fsloc, const String &filename) {
-	if (Directory::CreateAllDirectories(fsloc.BaseDir, fsloc.FullDir))
+	if (Directory::CreateAllDirectories(fsloc.BaseDir, fsloc.SubDir))
 		return Path::ConcatPaths(fsloc.FullDir, filename);
 	return "";
 }
@@ -377,7 +377,7 @@ bool ResolveWritePathAndCreateDirs(const String &sc_path, ResolvedPath &rp) {
 		return false;
 
 	if (!rp.Loc.SubDir.IsEmpty() &&
-			!Directory::CreateAllDirectories(rp.Loc.BaseDir, rp.Loc.FullDir)) {
+			!Directory::CreateAllDirectories(rp.Loc.BaseDir, rp.Loc.SubDir)) {
 		debug_script_warn("ResolveScriptPath: failed to create all subdirectories: %s", rp.FullPath.GetCStr());
 		return false;
 	}

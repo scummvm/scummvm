@@ -419,13 +419,26 @@ void String::Compact() {
 }
 
 void String::Append(const String &str) {
-	size_t length = str._len;
 	if (str._len > 0) {
-		ReserveAndShift(false, length);
-		memcpy(_cstr + _len, str._cstr, length);
-		_len += length;
+		ReserveAndShift(false, str._len);
+		memcpy(_cstr + _len, str._cstr, str._len);
+		_len += str._len;
 		_cstr[_len] = 0;
 	}
+}
+
+void String::Append(const char *cstr, size_t len) {
+	if (len == 0)
+		return;
+	// Test for null-terminator in the range
+	const char *ptr = cstr;
+	for (; *ptr && (size_t)(ptr - cstr) < len; ++ptr);
+	if ((size_t)(ptr - cstr) < len)
+		len = ptr - cstr;
+	ReserveAndShift(false, len);
+	memcpy(_cstr + _len, cstr, len);
+	_len += len;
+	_cstr[_len] = 0;
 }
 
 void String::AppendChar(char c) {
