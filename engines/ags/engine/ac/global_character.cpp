@@ -367,6 +367,11 @@ int MoveCharacterBlocking(int chaa, int xx, int yy, int direct) {
 		MoveCharacter(chaa, xx, yy);
 
 	GameLoopUntilNotMoving(&_GP(game).chars[chaa].walking);
+
+	// TODO: See https://github.com/adventuregamestudio/ags/issues/1331#issuecomment-877524051
+	// To summarize, looks like there was a whole system of returned values, which was later
+	// just scrapped, so the ways to restore it is either extensive testing of all these
+	// functions using pre-2.72 editor/engine, or reverse engineer the code maybe.
 	return 1;
 }
 
