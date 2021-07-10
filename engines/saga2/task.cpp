@@ -48,6 +48,7 @@ bool actorTasksPaused;
 
 //  Reconstruct a Task from an archive buffer
 void *constructTask(TaskID id, void *buf);
+void readTask(TaskID id, Common::InSaveFile *in);
 
 //  Return the number of bytes necessary to create an archive of the
 //  specified Task
@@ -55,6 +56,7 @@ int32 taskArchiveSize(Task *t);
 
 //  Create an archive of the specified Task in the specified buffer
 void *archiveTask(Task *t, void *buf);
+void writeTask(Task *t, Common::OutSaveFile *out);
 
 #if DEBUG
 //  Debugging function used to check the integrity of the global task
@@ -540,12 +542,16 @@ public:
 	//  Reconstruct from an archive buffer
 	void *restore(void *buf);
 
+	void read(Common::InSaveFile *in);
+
 	//  Return the number of bytes necessary to archive this task list
 	//  in a buffer
 	int32 archiveSize(void);
 
 	//  Create an archive of the task list in an archive buffer
 	void *archive(void *buf);
+
+	void write(Common::OutSaveFile *out);
 
 	//  Place a Task from the inactive list into the active
 	//  list.
@@ -585,6 +591,13 @@ TaskList::TaskList(void) {
 //	TaskList destructor
 
 TaskList::~TaskList(void) {
+	for (int i = 0; i < numTasks; i++) {
+		if (_list[i] == nullptr)
+			continue;
+
+		delete _list[i];
+		_list[i] = nullptr;
+	}
 }
 
 //----------------------------------------------------------------------
@@ -621,6 +634,25 @@ void *TaskList::restore(void *buf) {
 		tp->getTask()->fixup();
 #endif
 	return buf;
+}
+
+void TaskList::read(Common::InSaveFile *in) {
+	int16 taskCount;
+
+	//  Get the count of tasks and increment the buffer pointer
+	taskCount = in->readSint16LE();
+	debugC(3, kDebugSaveload, "... taskCount = %d", taskCount);
+
+	//  Iterate through the archive data, reconstructing the Tasks
+	for (int i = 0; i < taskCount; i++) {
+		TaskID id;
+
+		//  Retreive the Task's id number
+		id = in->readSint16LE();
+		debugC(3, kDebugSaveload, "Loading Task %d", i);
+
+		readTask(id, in);
+	}
 }
 
 //----------------------------------------------------------------------
@@ -672,6 +704,29 @@ void *TaskList::archive(void *buf) {
 	}
 #endif
 	return buf;
+}
+
+void TaskList::write(Common::OutSaveFile *out) {
+	int16 taskCount = 0;
+
+	//  Count the active tasks
+	for (int i = 0 ; i < numTasks; ++i)
+		if (_list[i])
+			taskCount++;
+
+	//  Store the task count in the archive buffer
+	out->writeSint16LE(taskCount);
+	debugC(3, kDebugSaveload, "... taskCount = %d", taskCount);
+
+	for (int i = 0; i < numTasks; ++i) {
+		if (_list[i] == nullptr)
+			continue;
+
+		debugC(3, kDebugSaveload, "Saving Task %d", i);
+
+		out->writeSint16LE(i);
+		writeTask(_list[i], out);
+	}
 }
 
 void TaskList::newTask(Task *t) {
@@ -782,6 +837,19 @@ void saveTasks(SaveFileConstructor &saveGame) {
 	free(archiveBuffer);
 }
 
+void saveTasks(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving Tasks");
+
+	int32 archiveBufSize;
+
+	archiveBufSize = taskList.archiveSize();
+
+	out->write("TASK", 4);
+	out->writeUint32LE(archiveBufSize);
+
+	taskList.write(out);
+}
+
 //----------------------------------------------------------------------
 //	Load the taskList from a save file
 
@@ -813,6 +881,18 @@ void loadTasks(SaveFileReader &saveGame) {
 	assert(bufferPtr == &((char *)archiveBuffer)[archiveBufSize]);
 
 	free(archiveBuffer);
+}
+
+void loadTasks(Common::InSaveFile *in, int32 chunkSize) {
+	debugC(2, kDebugSaveload, "Loading Tasks");
+
+	//  If there is no saved data, simply call the default constructor
+	if (chunkSize == 0) {
+		return;
+	}
+
+	//  Reconstruct taskList from archived data
+	taskList.read(in);
 }
 
 //----------------------------------------------------------------------
@@ -911,6 +991,88 @@ void *constructTask(TaskID id, void *buf) {
 	return buf;
 }
 
+void readTask(TaskID id, Common::InSaveFile *in) {
+	int16 type;
+
+	//  Get the Task type
+	type = in->readSint16LE();
+
+	//  Reconstruct the Task based upon the type
+	switch (type) {
+	case wanderTask:
+		new WanderTask(in, id);
+		break;
+
+	case tetheredWanderTask:
+		new TetheredWanderTask(in, id);
+		break;
+
+	case gotoLocationTask:
+		new GotoLocationTask(in, id);
+		break;
+
+	case gotoRegionTask:
+		new GotoRegionTask(in, id);
+		break;
+
+	case gotoObjectTask:
+		new GotoObjectTask(in, id);
+		break;
+
+	case gotoActorTask:
+		new GotoActorTask(in, id);
+		break;
+
+	case goAwayFromObjectTask:
+		new GoAwayFromObjectTask(in, id);
+		break;
+
+	case goAwayFromActorTask:
+		new GoAwayFromActorTask(in, id);
+		break;
+
+	case huntToBeNearLocationTask:
+		new HuntToBeNearLocationTask(in, id);
+		break;
+
+	case huntToBeNearObjectTask:
+		new HuntToBeNearObjectTask(in, id);
+		break;
+
+	case huntToPossessTask:
+		new HuntToPossessTask(in, id);
+		break;
+
+	case huntToBeNearActorTask:
+		new HuntToBeNearActorTask(in, id);
+		break;
+
+	case huntToKillTask:
+		new HuntToKillTask(in, id);
+		break;
+
+	case huntToGiveTask:
+		new HuntToGiveTask(in, id);
+		break;
+
+	case bandTask:
+		new BandTask(in, id);
+		break;
+
+	case bandAndAvoidEnemiesTask:
+		new BandAndAvoidEnemiesTask(in, id);
+		break;
+
+	case followPatrolRouteTask:
+		new FollowPatrolRouteTask(in, id);
+		break;
+
+	case attendTask:
+		new AttendTask(in, id);
+		break;
+	}
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes necessary to create an archive of the
 //	specified Task
@@ -934,6 +1096,14 @@ void *archiveTask(Task *t, void *buf) {
 	return buf;
 }
 
+void writeTask(Task *t, Common::OutSaveFile *out) {
+	//  Store the task's type
+	out->writeSint16LE(t->getType());
+
+	//  Store the task
+	t->write(out);
+}
+
 /* ===================================================================== *
    Task member functions
  * ===================================================================== */
@@ -950,12 +1120,11 @@ Task::Task(void **buf, TaskID id) {
 	*buf = (TaskStackID *)bufferPtr + 1;
 }
 
-//----------------------------------------------------------------------
-//	Fixup the Task pointers
-
-void Task::fixup(void) {
-	//  Convert the stack ID to a stack pointer
-	stack = getTaskStackAddress(*((TaskStackID *)&stack));
+Task::Task(Common::InSaveFile *in, TaskID id) {
+	//  Place the stack ID into the stack pointer field
+	int16 stackID = in->readSint16LE();
+	stack = getTaskStackAddress(stackID);
+	newTask(this, id);
 }
 
 //----------------------------------------------------------------------
@@ -973,6 +1142,10 @@ void *Task::archive(void *buf) const {
 	*((TaskStackID *)buf) = getTaskStackID(stack);
 
 	return (TaskStackID *)buf + 1;
+}
+
+void Task::write(Common::OutSaveFile *out) const {
+	out->writeSint16LE(getTaskStackID(stack));
 }
 
 /* ===================================================================== *
@@ -994,6 +1167,14 @@ WanderTask::WanderTask(void **buf, TaskID id) : Task(buf, id) {
 	bufferPtr = (int16 *)bufferPtr + 1;
 
 	*buf = bufferPtr;
+}
+
+WanderTask::WanderTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
+	//  Restore the paused flag
+	paused = in->readByte();
+
+	//  Restore the counter
+	counter = in->readSint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -1022,6 +1203,17 @@ void *WanderTask::archive(void *buf) const {
 	buf = (int16 *)buf + 1;
 
 	return buf;
+}
+
+void WanderTask::write(Common::OutSaveFile *out) const {
+	//  Let the base class archive its data
+	Task::write(out);
+
+	//  Store the paused flag
+	out->writeByte(paused);
+
+	//  Store the counter
+	out->writeSint16LE(counter);
 }
 
 //----------------------------------------------------------------------
@@ -1125,19 +1317,20 @@ TetheredWanderTask::TetheredWanderTask(void **buf, TaskID id) : WanderTask(buf, 
 	*buf = bufferPtr;
 }
 
-//----------------------------------------------------------------------
-//	Fixup the subtask pointers
+TetheredWanderTask::TetheredWanderTask(Common::InSaveFile *in, TaskID id) : WanderTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading TetheredWanderTask");
 
-void TetheredWanderTask::fixup(void) {
-	//  Let the base class fixup it's pointers
-	WanderTask::fixup();
+	//  Restore the tether coordinates
+	minU = in->readSint16LE();
+	minV = in->readSint16LE();
+	maxU = in->readSint16LE();
+	maxV = in->readSint16LE();
 
-	TaskID      gotoTetherID = *((TaskID *)&gotoTether);
-
-	//  Restore the gotoTether pointer
-	gotoTether =    gotoTetherID != NoTask
-	                ? (GotoRegionTask *)getTaskAddress(gotoTetherID)
-	                :   NULL;
+	//  Put the gotoTether ID into the gotoTether pointer field
+	int gotoTetherID = in->readSint16LE();
+	gotoTether = gotoTetherID != NoTask
+	             ? (GotoRegionTask *)getTaskAddress(gotoTetherID)
+	             :   NULL;
 }
 
 //----------------------------------------------------------------------
@@ -1173,6 +1366,25 @@ void *TetheredWanderTask::archive(void *buf) const {
 	                           :   NoTask;
 
 	return (TaskID *)bufferPtr + 1;
+}
+
+void TetheredWanderTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving TetheredWanderTask");
+
+	//  Let the base class archive its data
+	WanderTask::write(out);
+
+	//  Archive tether coordinates
+	out->writeSint16LE(minU);
+	out->writeSint16LE(minV);
+	out->writeSint16LE(maxU);
+	out->writeSint16LE(maxV);
+
+	//  Archive gotoTether ID
+	if (gotoTether != NULL)
+		out->writeSint16LE(getTaskID(gotoTether));
+	else
+		out->writeSint16LE(NoTask);
 }
 
 #if DEBUG
@@ -1304,19 +1516,15 @@ GotoTask::GotoTask(void **buf, TaskID id) : Task(buf, id) {
 	*buf = (bool *)bufferPtr + 1;
 }
 
-//----------------------------------------------------------------------
-//	Fixup the subtask pointers
+GotoTask::GotoTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
+	//  Get the wander TaskID
+	TaskID wanderID = in->readSint16LE();
+	wander = wanderID != NoTask
+	         ? (WanderTask *)getTaskAddress(wanderID)
+	         :   NULL;
 
-void GotoTask::fixup(void) {
-	//  Let the base class fixup its pointers
-	Task::fixup();
-
-	TaskID  wanderID = *((TaskID *)&wander);
-
-	//  Convert wanderID to a Task pointer
-	wander =    wanderID != NoTask
-	            ? (WanderTask *)getTaskAddress(wanderID)
-	            :   NULL;
+	//  Restore prevRunState
+	prevRunState = in->readByte();
 }
 
 //----------------------------------------------------------------------
@@ -1346,6 +1554,21 @@ void *GotoTask::archive(void *buf) const {
 	buf = (bool *)buf + 1;
 
 	return buf;
+}
+
+void GotoTask::write(Common::OutSaveFile *out) const {
+	//  Let the base class archive its data
+	Task::write(out);
+
+	//  Convert the wander Task pointer to a TaskID and store it
+	//  in the buffer
+	if (wander != NULL)
+		out->writeSint16LE(getTaskID(wander));
+	else
+		out->writeSint16LE(NoTask);
+
+	//  Store prevRunState
+	out->writeByte(prevRunState);
 }
 
 #if DEBUG
@@ -1489,6 +1712,16 @@ GotoLocationTask::GotoLocationTask(void **buf, TaskID id) : GotoTask(buf, id) {
 	*buf = bufferPtr;
 }
 
+GotoLocationTask::GotoLocationTask(Common::InSaveFile *in, TaskID id) : GotoTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading GotoLocationTask");
+
+	//  Restore the target location
+	targetLoc.load(in);
+
+	//  Restore the runThreshold
+	runThreshold = in->readByte();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -1515,6 +1748,19 @@ void *GotoLocationTask::archive(void *buf) const {
 	buf = (uint8 *)buf + 1;
 
 	return buf;
+}
+
+void GotoLocationTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving GotoLocationTask");
+
+	//  Let the base class archive its data
+	GotoTask::write(out);
+
+	//  Archive the target location
+	targetLoc.write(out);
+
+	//  Archive the run threshold
+	out->writeByte(runThreshold);
 }
 
 //----------------------------------------------------------------------
@@ -1588,6 +1834,16 @@ GotoRegionTask::GotoRegionTask(void **buf, TaskID id) : GotoTask(buf, id) {
 	*buf = bufferPtr;
 }
 
+GotoRegionTask::GotoRegionTask(Common::InSaveFile *in, TaskID id) : GotoTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading GotoRegionTask");
+
+	//  Restore the region coordinates
+	regionMinU = in->readSint16LE();
+	regionMinV = in->readSint16LE();
+	regionMaxU = in->readSint16LE();
+	regionMaxV = in->readSint16LE();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -1616,6 +1872,18 @@ void *GotoRegionTask::archive(void *buf) const {
 	*bufferPtr++ = regionMaxV;
 
 	return bufferPtr;
+}
+
+void GotoRegionTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving GotoRegionTask");
+
+	//  Let the base class archive its data
+	GotoTask::write(out);
+	//  Archive the region coordinates
+	out->writeSint16LE(regionMinU);
+	out->writeSint16LE(regionMinV);
+	out->writeSint16LE(regionMaxU);
+	out->writeSint16LE(regionMaxV);
 }
 
 //----------------------------------------------------------------------
@@ -1694,6 +1962,20 @@ GotoObjectTargetTask::GotoObjectTargetTask(void **buf, TaskID id) : GotoTask(buf
 	*buf = (TilePoint *)bufferPtr + 1;
 }
 
+GotoObjectTargetTask::GotoObjectTargetTask(Common::InSaveFile *in, TaskID id) : GotoTask(in, id) {
+	//  Restore lastTestedLoc and increment pointer
+	lastTestedLoc.load(in);
+
+	//  Restore sightCtr and increment pointer
+	sightCtr = in->readSint16LE();
+
+	//  Restore the flags and increment pointer
+	flags = in->readByte();
+
+	//  Restore lastKnownLoc
+	lastKnownLoc.load(in);
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -1729,6 +2011,23 @@ void *GotoObjectTargetTask::archive(void *buf) const {
 	*((TilePoint *)buf) = lastKnownLoc;
 
 	return (TilePoint *)buf + 1;
+}
+
+void GotoObjectTargetTask::write(Common::OutSaveFile *out) const {
+	//  Let the base class archive its data
+	GotoTask::write(out);
+
+	//  Archive lastTestedLoc and increment pointer
+	lastTestedLoc.write(out);
+
+	//  Archive sightCtr and increment pointer
+	out->writeSint16LE(sightCtr);
+
+	//  Archive the flags and increment pointer
+	out->writeByte(flags);
+
+	//  Archive lastKnownLoc
+	lastKnownLoc.write(out);
 }
 
 //----------------------------------------------------------------------
@@ -1835,6 +2134,18 @@ GotoObjectTask::GotoObjectTask(void **buf, TaskID id) :
 	*buf = bufferPtr + 1;
 }
 
+GotoObjectTask::GotoObjectTask(Common::InSaveFile *in, TaskID id) :
+	GotoObjectTargetTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading GotoObjectTask");
+
+	ObjectID targetID = in->readUint16LE();
+
+	//  Restore the targetObj pointer
+	targetObj = targetID != Nothing
+	            ?   GameObject::objectAddress(targetID)
+	            :   NULL;
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -1855,6 +2166,18 @@ void *GotoObjectTask::archive(void *buf) const {
 	                       :   Nothing;
 
 	return (ObjectID *)buf + 1;
+}
+
+void GotoObjectTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving GotoObjectTask");
+
+	//  Let the base class archive its data
+	GotoObjectTargetTask::write(out);
+
+	if (targetObj != NULL)
+		out->writeUint16LE(targetObj->thisID());
+	else
+		out->writeUint16LE(Nothing);
 }
 
 //----------------------------------------------------------------------
@@ -1909,6 +2232,16 @@ GotoActorTask::GotoActorTask(void **buf, TaskID id) :
 	*buf = bufferPtr + 1;
 }
 
+GotoActorTask::GotoActorTask(Common::InSaveFile *in, TaskID id) :
+	GotoObjectTargetTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading GotoActorTask");
+	//  Restore the targetObj pointer
+	ObjectID targetID = in->readUint16LE();
+	targetActor =   targetID != Nothing
+	                ? (Actor *)GameObject::objectAddress(targetID)
+	                :   NULL;
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -1929,6 +2262,18 @@ void *GotoActorTask::archive(void *buf) const {
 	                       :   Nothing;
 
 	return (ObjectID *)buf + 1;
+}
+
+void GotoActorTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving GotoActorTask");
+
+	//  Let the base class archive its data
+	GotoObjectTargetTask::write(out);
+
+	if (targetActor != NULL)
+		out->writeUint16LE(targetActor->thisID());
+	else
+		out->writeUint16LE(Nothing);
 }
 
 //----------------------------------------------------------------------
@@ -1987,22 +2332,15 @@ GoAwayFromTask::GoAwayFromTask(void **buf, TaskID id) : Task(buf, id) {
 	*buf = bufferPtr;
 }
 
-//----------------------------------------------------------------------
-//	Fixup the subtask pointer
-
-void GoAwayFromTask::fixup(void) {
-	//  Let the base class fixup its pointers
-	Task::fixup();
-
-	TaskID      goTaskID;
-
+GoAwayFromTask::GoAwayFromTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	//  Get the subtask ID
-	goTaskID = *((TaskID *)&goTask);
+	TaskID goTaskID = in->readSint16LE();
+	goTask = goTaskID != NoTask
+	         ? (GotoLocationTask *)getTaskAddress(goTaskID)
+	         :   NULL;
 
-	//  Convert the subtask ID to a pointer
-	goTask =    goTaskID != NoTask
-	            ? (GotoLocationTask *)getTaskAddress(goTaskID)
-	            :   NULL;
+	//  Restore the flags
+	flags = in->readByte();
 }
 
 //----------------------------------------------------------------------
@@ -2029,6 +2367,20 @@ void *GoAwayFromTask::archive(void *buf) const {
 	buf = (uint8 *)buf + 1;
 
 	return buf;
+}
+
+void GoAwayFromTask::write(Common::OutSaveFile *out) const {
+	//  Let the base class archive its data
+	Task::write(out);
+
+	//  Store the subTask's ID
+	if (goTask != NULL)
+		out->writeSint16LE(getTaskID(goTask));
+	else
+		out->writeSint16LE(NoTask);
+
+	//  Store the flags
+	out->writeByte(flags);
 }
 
 #if DEBUG
@@ -2130,6 +2482,19 @@ GoAwayFromObjectTask::GoAwayFromObjectTask(void **buf, TaskID id) :
 	*buf = bufferPtr;
 }
 
+GoAwayFromObjectTask::GoAwayFromObjectTask(Common::InSaveFile *in, TaskID id) :
+	GoAwayFromTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading GoAwayFromObjectTask");
+
+	//  Get the object's ID
+	ObjectID objectID = in->readUint16LE();
+
+	//  Convert the ID to an object pointer
+	obj = objectID != Nothing
+		? GameObject::objectAddress(objectID)
+		: NULL;
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -2155,6 +2520,19 @@ void *GoAwayFromObjectTask::archive(void *buf) const {
 	buf = (ObjectID *)buf + 1;
 
 	return buf;
+}
+
+void GoAwayFromObjectTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving GoAwayFromObjectTask");
+
+	//  Let the base class archive its data
+	GoAwayFromTask::write(out);
+
+	//  Store the object's ID
+	if (obj != NULL)
+		out->writeUint16LE(obj->thisID());
+	else
+		out->writeUint16LE(Nothing);
 }
 
 //----------------------------------------------------------------------
@@ -2218,6 +2596,13 @@ GoAwayFromActorTask::GoAwayFromActorTask(void **buf, TaskID id) : GoAwayFromTask
 	*buf = constructTarget(targetMem, *buf);
 }
 
+GoAwayFromActorTask::GoAwayFromActorTask(Common::InSaveFile *in, TaskID id) : GoAwayFromTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading GoAwayFromActorTask");
+
+	//  Restore the target
+	readTarget(targetMem, in);
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -2237,6 +2622,16 @@ void *GoAwayFromActorTask::archive(void *buf) const {
 	buf = archiveTarget(getTarget(), buf);
 
 	return buf;
+}
+
+void GoAwayFromActorTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving GoAwayFromActorTask");
+
+	//  Let the base class archive its data
+	GoAwayFromTask::write(out);
+
+	//  Store the target
+	writeTarget(getTarget(), out);
 }
 
 //----------------------------------------------------------------------
@@ -2310,15 +2705,13 @@ HuntTask::HuntTask(void **buf, TaskID id) : Task(buf, id) {
 	*buf = bufferPtr;
 }
 
-//----------------------------------------------------------------------
-//	Fixup the subtask pointers
+HuntTask::HuntTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
+	//  Restore the flags
+	huntFlags = in->readByte();
 
-void HuntTask::fixup(void) {
-	//  Let the base class fixup its pointers
-	Task::fixup();
-
+	//  If the flags say we have a sub task, restore it too
 	if (huntFlags & (huntGoto | huntWander)) {
-		TaskID  subTaskID = *((TaskID *)&subTask);
+		TaskID subTaskID = in->readSint16LE();
 		subTask = getTaskAddress(subTaskID);
 	}
 }
@@ -2354,6 +2747,18 @@ void *HuntTask::archive(void *buf) const {
 	}
 
 	return buf;
+}
+
+void HuntTask::write(Common::OutSaveFile *out) const {
+	//  Let the base class archive its data
+	Task::write(out);
+
+	//  Store the flags
+	out->writeByte(huntFlags);
+
+	//  If the flags say we have a sub task, store it too
+	if (huntFlags & (huntGoto | huntWander))
+		out->writeSint16LE(getTaskID(subTask));
 }
 
 #if DEBUG
@@ -2496,6 +2901,14 @@ HuntLocationTask::HuntLocationTask(void **buf, TaskID id) : HuntTask(buf, id) {
 	*buf = constructTarget(targetMem, bufferPtr);
 }
 
+HuntLocationTask::HuntLocationTask(Common::InSaveFile *in, TaskID id) : HuntTask(in, id) {
+	//  Restore the currentTarget location
+	currentTarget.load(in);
+
+	//  Restore the target
+	readTarget(targetMem, in);
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -2519,6 +2932,17 @@ void *HuntLocationTask::archive(void *buf) const {
 
 	//  Store the target
 	return archiveTarget(getTarget(), buf);
+}
+
+void HuntLocationTask::write(Common::OutSaveFile *out) const {
+	//  Let the base class archive its data
+	HuntTask::write(out);
+
+	//  Store the current target location
+	currentTarget.write(out);
+
+	//  Store the target
+	writeTarget(getTarget(), out);
 }
 
 //----------------------------------------------------------------------
@@ -2566,6 +2990,17 @@ HuntToBeNearLocationTask::HuntToBeNearLocationTask(void **buf, TaskID id) :
 	*buf = (uint8 *)bufferPtr + 1;
 }
 
+HuntToBeNearLocationTask::HuntToBeNearLocationTask(Common::InSaveFile *in, TaskID id) :
+	HuntLocationTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading HuntToBeNearLocationTask");
+
+	//  Restore the range
+	range = in->readUint16LE();
+
+	//  Restore the evaluation counter
+	targetEvaluateCtr = in->readByte();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -2591,6 +3026,19 @@ void *HuntToBeNearLocationTask::archive(void *buf) const {
 	*((uint8 *)buf) = targetEvaluateCtr;
 
 	return (uint8 *)buf + 1;
+}
+
+void HuntToBeNearLocationTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving HuntToBeNearLocationTask");
+
+	//  Let the base class archive its data
+	HuntLocationTask::write(out);
+
+	//  Store the range
+	out->writeUint16LE(range);
+
+	//  Store the evaluation counter
+	out->writeByte(targetEvaluateCtr);
 }
 
 //----------------------------------------------------------------------
@@ -2692,6 +3140,19 @@ HuntObjectTask::HuntObjectTask(void **buf, TaskID id) : HuntTask(buf, id) {
 	*buf = constructTarget(targetMem, bufferPtr);
 }
 
+HuntObjectTask::HuntObjectTask(Common::InSaveFile *in, TaskID id) : HuntTask(in, id) {
+	//  Restore the current target ID
+	ObjectID currentTargetID = in->readUint16LE();
+
+	//  Convert the ID to a GameObject pointer
+	currentTarget = currentTargetID != Nothing
+	                ?   GameObject::objectAddress(currentTargetID)
+	                :   NULL;
+
+	//  Reconstruct the object target
+	readTarget(targetMem, in);
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -2722,6 +3183,20 @@ void *HuntObjectTask::archive(void *buf) const {
 
 	//  Store the object target
 	return archiveTarget(getTarget(), buf);
+}
+
+void HuntObjectTask::write(Common::OutSaveFile *out) const {
+	//  Let the base class archive its data
+	HuntTask::write(out);
+
+	//  Store the ID
+	if (currentTarget != NULL)
+		out->writeByte(currentTarget->thisID());
+	else
+		out->writeByte(Nothing);
+
+	//  Store the object target
+	writeTarget(getTarget(), out);
 }
 
 //----------------------------------------------------------------------
@@ -2772,6 +3247,17 @@ HuntToBeNearObjectTask::HuntToBeNearObjectTask(void **buf, TaskID id) :
 	*buf = (uint8 *)bufferPtr + 1;
 }
 
+HuntToBeNearObjectTask::HuntToBeNearObjectTask(Common::InSaveFile *in, TaskID id) :
+	HuntObjectTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading HuntToBeNearObjectTask");
+
+	//  Restore the range
+	range = in->readUint16LE();
+
+	//  Restore the evaluation counter
+	targetEvaluateCtr = in->readByte();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -2797,6 +3283,19 @@ void *HuntToBeNearObjectTask::archive(void *buf) const {
 	*((uint8 *)buf) = targetEvaluateCtr;
 
 	return (uint8 *)buf + 1;
+}
+
+void HuntToBeNearObjectTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving HuntToBeNearObjectTask");
+
+	//  Let the base class archive its data
+	HuntObjectTask::write(out);
+
+	//  Store the range
+	out->writeUint16LE(range);
+
+	//  Store the evaluation counter
+	out->writeByte(targetEvaluateCtr);
 }
 
 //----------------------------------------------------------------------
@@ -2912,6 +3411,16 @@ HuntToPossessTask::HuntToPossessTask(void **buf, TaskID id) : HuntObjectTask(buf
 	*buf = (bool *)bufferPtr + 1;
 }
 
+HuntToPossessTask::HuntToPossessTask(Common::InSaveFile *in, TaskID id) : HuntObjectTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading HuntToPossessTask");
+
+	//  Restore evaluation counter
+	targetEvaluateCtr = in->readByte();
+
+	//  Restore grab flag
+	grabFlag = in->readByte();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -2937,6 +3446,19 @@ void *HuntToPossessTask::archive(void *buf) const {
 	*((bool *)buf) = grabFlag;
 
 	return (bool *)buf + 1;
+}
+
+void HuntToPossessTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving HuntToPossessTask");
+
+	//  Let the base class archive its data
+	HuntObjectTask::write(out);
+
+	//  Store the evaluation counter
+	out->writeByte(targetEvaluateCtr);
+
+	//  Store the grab flag
+	out->writeByte(grabFlag);
 }
 
 //----------------------------------------------------------------------
@@ -3075,6 +3597,22 @@ HuntActorTask::HuntActorTask(void **buf, TaskID id) : HuntTask(buf, id) {
 	*buf = constructTarget(targetMem, bufferPtr);
 }
 
+HuntActorTask::HuntActorTask(Common::InSaveFile *in, TaskID id) : HuntTask(in, id) {
+	//  Restore the flags
+	flags = in->readByte();
+
+	//  Restore the current target ID
+	ObjectID currentTargetID = in->readUint16LE();
+
+	//  Convert the ID to a GameObject pointer
+	currentTarget = currentTargetID != Nothing
+	                ? (Actor *)GameObject::objectAddress(currentTargetID)
+	                :   NULL;
+
+	//  Reconstruct the object target
+	readTarget(targetMem, in);
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -3110,6 +3648,23 @@ void *HuntActorTask::archive(void *buf) const {
 
 	//  Store the object target
 	return archiveTarget(getTarget(), buf);
+}
+
+void HuntActorTask::write(Common::OutSaveFile *out) const {
+	//  Let the base class archive its data
+	HuntTask::write(out);
+
+	//  Store the flags
+	out->writeByte(flags);
+
+	//  Store the ID
+	if (currentTarget != NULL)
+		out->writeUint16LE(currentTarget->thisID());
+	else
+		out->writeUint16LE(Nothing);
+
+	//  Store the object target
+	writeTarget(getTarget(), out);
 }
 
 //----------------------------------------------------------------------
@@ -3173,19 +3728,23 @@ HuntToBeNearActorTask::HuntToBeNearActorTask(void **buf, TaskID id) :
 	*buf = (uint8 *)bufferPtr + 1;
 }
 
-//----------------------------------------------------------------------
-//	Fixup the subtask pointers
+HuntToBeNearActorTask::HuntToBeNearActorTask(Common::InSaveFile *in, TaskID id) :
+	HuntActorTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading HuntToBeNearActorTask");
 
-void HuntToBeNearActorTask::fixup(void) {
-	//  Let the base class fixup its pointers
-	HuntActorTask::fixup();
-
-	TaskID      goAwayID = *((TaskID *)&goAway);
+	//  Get the goAway task ID
+	TaskID goAwayID = in->readSint16LE();
 
 	//  Convert the task ID to a task pointer
-	goAway =    goAwayID != NoTask
-	            ? (GoAwayFromObjectTask *)getTaskAddress(goAwayID)
-	            :   NULL;
+	goAway = goAwayID != NoTask
+	         ? (GoAwayFromObjectTask *)getTaskAddress(goAwayID)
+	         :   NULL;
+
+	//  Restore the range
+	range = in->readUint16LE();
+
+	//  Restore the evaluation counter
+	targetEvaluateCtr = in->readByte();
 }
 
 //----------------------------------------------------------------------
@@ -3223,6 +3782,25 @@ void *HuntToBeNearActorTask::archive(void *buf) const {
 	*((uint8 *)buf) = targetEvaluateCtr;
 
 	return (uint8 *)buf + 1;
+}
+
+void HuntToBeNearActorTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving HuntToBeNearActorTask");
+
+	//  Let the base class archive its data
+	HuntActorTask::write(out);
+
+	//  Store the task ID
+	if (goAway != NULL)
+		out->writeSint16LE(getTaskID(goAway));
+	else
+		out->writeSint16LE(NoTask);
+
+	//  Store the range
+	out->writeUint16LE(range);
+
+	//  Store the evaluation counter
+	out->writeByte(targetEvaluateCtr);
 }
 
 #if DEBUG
@@ -3418,6 +3996,15 @@ HuntToKillTask::HuntToKillTask(void **buf, TaskID id) : HuntActorTask(buf, id) {
 	*buf = bufferPtr;
 }
 
+HuntToKillTask::HuntToKillTask(Common::InSaveFile *in, TaskID id) : HuntActorTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading HuntToKillTask");
+
+	//  Restore the evaluation counter
+	targetEvaluateCtr = in->readByte();
+	specialAttackCtr = in->readByte();
+	flags = in->readByte();
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -3443,6 +4030,18 @@ void *HuntToKillTask::archive(void *buf) const {
 	buf = (uint8 *)buf + 3;
 
 	return buf;
+}
+
+void HuntToKillTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving HuntToKillTask");
+
+	//  Let the base class archive its data
+	HuntActorTask::write(out);
+
+	//  Store the evaluation counter
+	out->writeByte(targetEvaluateCtr);
+	out->writeByte(specialAttackCtr);
+	out->writeByte(flags);
 }
 
 //----------------------------------------------------------------------
@@ -3788,6 +4387,18 @@ HuntToGiveTask::HuntToGiveTask(void **buf, TaskID id) : HuntActorTask(buf, id) {
 	*buf = bufferPtr;
 }
 
+HuntToGiveTask::HuntToGiveTask(Common::InSaveFile *in, TaskID id) : HuntActorTask(in, id) {
+	debugC(3, kDebugSaveload, "... Loading HuntToGiveTask");
+
+	//  Get the object ID
+	ObjectID objToGiveID = in->readUint16LE();
+
+	//  Convert the object ID to a pointer
+	objToGive = objToGiveID != Nothing
+	            ?   GameObject::objectAddress(objToGiveID)
+	            :   NULL;
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -3813,6 +4424,19 @@ void *HuntToGiveTask::archive(void *buf) const {
 	*((ObjectID *)buf) = objToGiveID;
 
 	return (ObjectID *)buf + 1;
+}
+
+void HuntToGiveTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving HuntToGiveTask");
+
+	//  Let base class archive its data
+	HuntActorTask::write(out);
+
+	//  Store the ID
+	if (objToGive != NULL)
+		out->writeUint16LE(objToGive->thisID());
+	else
+		out->writeUint16LE(Nothing);
 }
 
 //----------------------------------------------------------------------
@@ -3937,19 +4561,21 @@ BandTask::BandTask(void **buf, TaskID id) : HuntTask(buf, id) {
 	*buf = bufferPtr;
 }
 
-//----------------------------------------------------------------------
-//	Fixup the subtask pointers
+BandTask::BandTask(Common::InSaveFile *in, TaskID id) : HuntTask(in, id) {
+	TaskID attendID = in->readSint16LE();
+	debugC(3, kDebugSaveload, "... Loading BandTask");
 
-void BandTask::fixup(void) {
-	//  Let the base class fixup its pointers
-	HuntTask::fixup();
-
-	TaskID      attendID = *((TaskID *)&attend);
 
 	//  Convert the TaskID to a Task pointer
-	attend =    attendID != NoTask
-	            ? (AttendTask *)getTaskAddress(attendID)
-	            :   NULL;
+	attend = attendID != NoTask
+	         ? (AttendTask *)getTaskAddress(attendID)
+	         :   NULL;
+
+	//  Restore the current target location
+	currentTarget.load(in);
+
+	//  Restore the target evaluation counter
+	targetEvaluateCtr = in->readByte();
 }
 
 //----------------------------------------------------------------------
@@ -3983,6 +4609,25 @@ void *BandTask::archive(void *buf) const {
 	buf = (uint8 *)buf + 1;
 
 	return buf;
+}
+
+void BandTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving BandTask");
+
+	//  Let the base class archive its data
+	HuntTask::write(out);
+
+	//  Store the attend task ID
+	if (attend != NULL)
+		out->writeSint16LE(getTaskID(attend));
+	else
+		out->writeSint16LE(NoTask);
+
+	//  Store the current target location
+	currentTarget.write(out);
+
+	//  Store the target evaluation counter
+	out->writeByte(targetEvaluateCtr);
 }
 
 #if DEBUG
@@ -4332,19 +4977,28 @@ FollowPatrolRouteTask::FollowPatrolRouteTask(void **buf, TaskID id) : Task(buf, 
 	*buf = bufferPtr;
 }
 
-//----------------------------------------------------------------------
-//	Fixup the subtask pointers
+FollowPatrolRouteTask::FollowPatrolRouteTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
+	debugC(3, kDebugSaveload, "... Loading FollowPatrolRouteTask");
 
-void FollowPatrolRouteTask::fixup(void) {
-	//  Let the base class fixup its pointers
-	Task::fixup();
-
-	TaskID      gotoWayPointID = *((TaskID *)&gotoWayPoint);
+	//  Get the gotoWayPoint TaskID
+	TaskID gotoWayPointID = in->readSint16LE();
 
 	//  Convert the TaskID to a Task pointer
-	gotoWayPoint =  gotoWayPointID != NoTask
-	                ? (GotoLocationTask *)getTaskAddress(gotoWayPointID)
-	                :   NULL;
+	gotoWayPoint = gotoWayPointID != NoTask
+	               ? (GotoLocationTask *)getTaskAddress(gotoWayPointID)
+	               :   NULL;
+
+	//  Restore the patrol route iterator
+	patrolIter.read(in);
+
+	//  Restore the last waypoint number
+	lastWayPointNum = in->readSint16LE();
+
+	//  Restore the paused flag
+	paused = in->readByte();
+
+	//  Restore the paused counter
+	counter = in->readSint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -4395,6 +5049,31 @@ void *FollowPatrolRouteTask::archive(void *buf) const {
 	buf = (int16 *)buf + 1;
 
 	return buf;
+}
+
+void FollowPatrolRouteTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving FollowPatrolRouteTask");
+
+	//  Let the base class archive its data
+	Task::write(out);
+
+	//  Store the gotoWayPoint ID
+	if (gotoWayPoint != NULL)
+		out->writeSint16LE(getTaskID(gotoWayPoint));
+	else
+		out->writeSint16LE(NoTask);
+
+	//  Store the PatrolRouteIterator
+	patrolIter.write(out);
+
+	//  Store the last waypoint number
+	out->writeSint16LE(lastWayPointNum);
+
+	//  Store the paused flag
+	out->writeByte(paused);
+
+	//  Store the paused counter
+	out->writeSint16LE(counter);
 }
 
 #if DEBUG
@@ -4550,6 +5229,18 @@ AttendTask::AttendTask(void **buf, TaskID id) : Task(buf, id) {
 	*buf = bufferPtr;
 }
 
+AttendTask::AttendTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
+	debugC(3, kDebugSaveload, "... Loading AttendTask");
+
+	//  Get the object ID
+	ObjectID objID = in->readUint16LE();
+
+	//  Convert the object ID to a pointer
+	obj = objID != Nothing
+		? GameObject::objectAddress(objID)
+		: NULL;
+}
+
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in
 //	a buffer
@@ -4574,6 +5265,19 @@ void *AttendTask::archive(void *buf) const {
 	*((ObjectID *)buf) = objID;
 
 	return (ObjectID *)buf + 1;
+}
+
+void AttendTask::write(Common::OutSaveFile *out) const {
+	debugC(3, kDebugSaveload, "... Saving AttendTask");
+
+	//  Let the base class archive its data
+	Task::write(out);
+
+	//  Store the object ID
+	if (obj != NULL)
+		out->writeUint16LE(obj->thisID());
+	else
+		out->writeUint16LE(Nothing);
 }
 
 //----------------------------------------------------------------------

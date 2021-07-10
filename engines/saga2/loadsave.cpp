@@ -158,9 +158,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveSAGAThreads(out);
 	saveMotionTasks(out);
 	saveTaskStacks(out);
+	saveTasks(out);
 
 #if 0
-	saveTasks(saveGame);
 	saveTileTasks(saveGame);
 	saveSpeechTasks(saveGame);
 	saveActiveRegions(saveGame);
@@ -322,15 +322,15 @@ void loadSavedGameState(int16 saveNo) {
 			} else
 				error("TaskStacks loaded prematurely");
 			break;
-#if 0
 
 		case MKTAG('T', 'A', 'S', 'K'):
 			if (loadFlags & loadTaskStacksFlag) {
-				loadTasks(saveGame);
+				loadTasks(in, chunkSize);
 				loadFlags |= loadTasksFlag;
 			} else
 				error("Tasks loaded prematurely");
 			break;
+#if 0
 
 		case MKTAG('T', 'A', 'C', 'T'):
 			if (loadFlags & loadWorldsFlag) {

@@ -103,6 +103,20 @@ PatrolRouteIterator::PatrolRouteIterator(uint8 map, int16 rte, uint8 type, int16
 	_vertexNo = clamp(0, startingPoint, route.vertices() - 1);
 }
 
+void PatrolRouteIterator::read(Common::InSaveFile *in) {
+	_routeNo = in->readSint16LE();
+	_vertexNo = in->readSint16LE();
+	_mapNum = in->readByte();
+	_flags = in->readByte();
+}
+
+void PatrolRouteIterator::write(Common::OutSaveFile *out) const {
+	out->writeSint16LE(_routeNo);
+	out->writeSint16LE(_vertexNo);
+	out->writeByte(_mapNum);
+	out->writeByte(_flags);
+}
+
 //-----------------------------------------------------------------------
 //	Increment the waypoint index
 void PatrolRouteIterator::increment(void) {

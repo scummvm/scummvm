@@ -124,6 +124,9 @@ public:
 	PatrolRouteIterator(uint8 map, int16 rte, uint8 type);
 	PatrolRouteIterator(uint8 map, int16 rte, uint8 type, int16 startingPoint);
 
+	void read(Common::InSaveFile *in);
+	void write(Common::OutSaveFile *out) const;
+
 private:
 	void increment(void);		// Increment waypoint index
 	void decrement(void);		// Decrement waypoint index
