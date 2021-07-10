@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "graphics/macega.h"
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/usage_bits.h"
@@ -29,6 +30,7 @@
 namespace Scumm {
 
 void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height) {
+
 	const byte *pixels = vs->getPixels(x, top);
 	const byte *ts = (byte *)_textSurface.getBasePtr(x * 2, y * 2);
 	byte *mac = (byte *)_macScreen->getBasePtr(x * 2, y * 2);
@@ -37,22 +39,42 @@ void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, i
 	int tsPitch = _textSurface.pitch;
 	int macPitch = _macScreen->pitch;
 
-	for (int h = 0; h < height; h++) {
-		for (int w = 0; w < width; w++) {
-			if (ts[2 * w] == CHARSET_MASK_TRANSPARENCY)
-				mac[2 * w] = pixels[w];
-			if (ts[2 * w + 1] == CHARSET_MASK_TRANSPARENCY)
-				mac[2 * w + 1] = pixels[w];
-			if (ts[2 * w + tsPitch] == CHARSET_MASK_TRANSPARENCY)
-				mac[2 * w + macPitch] = pixels[w];
-			if (ts[2 * w + tsPitch + 1] == CHARSET_MASK_TRANSPARENCY)
-				mac[2 * w + macPitch + 1] = pixels[w];
-		}
+	if (_renderMode == Common::kRenderMacintoshBW) {
+		for (int h = 0; h < height; h++) {
+			for (int w = 0; w < width; w++) {
+				if (ts[2 * w] == CHARSET_MASK_TRANSPARENCY)
+					mac[2 * w] = Graphics::macEGADither[pixels[w]][0];
+				if (ts[2 * w + 1] == CHARSET_MASK_TRANSPARENCY)
+					mac[2 * w + 1] = Graphics::macEGADither[pixels[w]][1];
+				if (ts[2 * w + tsPitch] == CHARSET_MASK_TRANSPARENCY)
+					mac[2 * w + macPitch] = Graphics::macEGADither[pixels[w]][2];
+				if (ts[2 * w + tsPitch + 1] == CHARSET_MASK_TRANSPARENCY)
+					mac[2 * w + macPitch + 1] = Graphics::macEGADither[pixels[w]][3];
+			}
 
-		pixels += pixelsPitch;
-		ts += tsPitch * 2;
-		mac += macPitch * 2;
+			pixels += pixelsPitch;
+			ts += tsPitch * 2;
+			mac += macPitch * 2;
+		}
+	} else {
+		for (int h = 0; h < height; h++) {
+			for (int w = 0; w < width; w++) {
+				if (ts[2 * w] == CHARSET_MASK_TRANSPARENCY)
+					mac[2 * w] = pixels[w];
+				if (ts[2 * w + 1] == CHARSET_MASK_TRANSPARENCY)
+					mac[2 * w + 1] = pixels[w];
+				if (ts[2 * w + tsPitch] == CHARSET_MASK_TRANSPARENCY)
+					mac[2 * w + macPitch] = pixels[w];
+				if (ts[2 * w + tsPitch + 1] == CHARSET_MASK_TRANSPARENCY)
+					mac[2 * w + macPitch + 1] = pixels[w];
+			}
+
+			pixels += pixelsPitch;
+			ts += tsPitch * 2;
+			mac += macPitch * 2;
+		}
 	}
+
 
 	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2, width * 2, height * 2);
 }
