@@ -83,7 +83,7 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 }
 
 #else
-/* Case Insensitive File Find - Only used on UNIX platforms */
+/* Case Sensitive File Find - only used on UNIX platforms */
 char *ci_find_file(const char *dir_name, const char *file_name) {
 	struct stat   statbuf;
 	struct dirent *entry = nullptr;
@@ -94,7 +94,7 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 	char *filename = nullptr;
 
 	if (dir_name == nullptr && file_name == nullptr)
-		goto out;
+		return nullptr;
 
 	if (dir_name != nullptr) {
 		directory = (char *)malloc(strlen(dir_name) + 1);
@@ -112,7 +112,14 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 		fix_filename_slashes(filename);
 	}
 
-	if (directory && filename) {
+	// the ".." check here prevents file system traversal -
+	// since only in this fast-path it's possible a potentially evil
+	// script could try to break out of the directories it's restricted
+	// to, whereas the latter chdir/opendir approach checks file by file
+	// in the directory. it's theoretically possible a valid filename
+	// could contain "..", but in that case it will just fallback to the
+	// slower method later on and succeed.
+	if (directory && filename && !strstr(filename, "..")) {
 		char buf[1024];
 		snprintf(buf, sizeof buf, "%s/%s", directory, filename);
 		lstat(buf, &statbuf);
@@ -154,12 +161,12 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 
 	if (chdir(directory) == -1) {
 		fprintf(stderr, "ci_find_file: cannot change to directory: %s\n", directory);
-		goto out;
+		goto out_pd;
 	}
 
 	if ((rough = opendir(directory)) == nullptr) {
 		fprintf(stderr, "ci_find_file: cannot open directory: %s\n", directory);
-		goto out;
+		goto out_pd;
 	}
 
 	while ((entry = readdir(rough)) != nullptr) {
@@ -177,10 +184,11 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 	}
 	closedir(rough);
 
+out_pd:;
 	fchdir(dirfd(prevdir));
 	closedir(prevdir);
 
-out:
+out:;
 	if (directory) free(directory);
 	if (filename) free(filename);
 
