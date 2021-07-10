@@ -299,6 +299,11 @@ void invalidate_rect_ds(int x1, int y1, int x2, int y2, bool in_room) {
 		invalidate_rect_ds(rects, x1, y1, x2, y2, in_room);
 }
 
+void invalidate_rect_global(int x1, int y1, int x2, int y2) {
+	for (auto &rects : _GP(RoomCamRects))
+		invalidate_rect_ds(rects, x1, y1, x2, y2, false);
+}
+
 // Note that this function is denied to perform any kind of scaling or other transformation
 // other than blitting with offset. This is mainly because destination could be a 32-bit virtual screen
 // while room background was 16-bit and Allegro lib does not support stretching between colour depths.

@@ -563,6 +563,10 @@ void invalidate_sprite(int x1, int y1, IDriverDependantBitmap *pic, bool in_room
 	invalidate_rect_ds(x1, y1, x1 + pic->GetWidth(), y1 + pic->GetHeight(), in_room);
 }
 
+void invalidate_sprite_glob(int x1, int y1, IDriverDependantBitmap *pic) {
+	invalidate_rect_global(x1, y1, x1 + pic->GetWidth(), y1 + pic->GetHeight());
+}
+
 void mark_current_background_dirty() {
 	_G(current_background_is_dirty) = true;
 }
@@ -1863,7 +1867,7 @@ void draw_fps(const Rect &viewport) {
 		ddb = _G(gfxDriver)->CreateDDBFromBitmap(fpsDisplay, false);
 	int yp = viewport.GetHeight() - fpsDisplay->GetHeight();
 	_G(gfxDriver)->DrawSprite(1, yp, ddb);
-	invalidate_sprite(1, yp, ddb, false);
+	invalidate_sprite_glob(1, yp, ddb);
 }
 
 // Draw GUI and overlays of all kinds, anything outside the room space
@@ -2204,7 +2208,7 @@ void construct_engine_overlay() {
 			_G(gfxDriver)->UpdateDDBFromBitmap(_G(debugConsole), _G(debugConsoleBuffer), false);
 
 		_G(gfxDriver)->DrawSprite(0, 0, _G(debugConsole));
-		invalidate_sprite(0, 0, _G(debugConsole), false);
+		invalidate_sprite_glob(0, 0, _G(debugConsole));
 	}
 
 	if (_G(display_fps) != kFPS_Hide)

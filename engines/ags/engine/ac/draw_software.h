@@ -104,6 +104,8 @@ void invalidate_all_rects();
 void invalidate_all_camera_rects(int view_index);
 // Mark certain rectangle dirty; in_room tells if coordinates are room viewport or screen coords
 void invalidate_rect_ds(int x1, int y1, int x2, int y2, bool in_room);
+// Mark rectangle dirty, treat pos as global screen coords (not offset by legacy letterbox mode)
+void invalidate_rect_global(int x1, int y1, int x2, int y2);
 // Paints the black screen background in the regions marked as dirty
 void update_black_invreg_and_reset(AGS::Shared::Bitmap *ds);
 // Copies the room regions marked as dirty from source (src) to destination (ds) with the given offset (x, y)
