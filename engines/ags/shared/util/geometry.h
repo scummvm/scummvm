@@ -283,6 +283,11 @@ struct Rect {
 	inline static Rect MoveBy(const Rect &r, int x, int y) {
 		return Rect(r.Left + x, r.Top + y, r.Right + x, r.Bottom + y);
 	}
+
+	inline bool operator ==(const Rect &r) const {
+		return Left == r.Left && Top == r.Top &&
+			Right == r.Right && Bottom == r.Bottom;
+	}
 };
 
 // Helper factory function
