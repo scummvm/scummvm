@@ -868,7 +868,32 @@ void GUI_EoB_SegaCD::drawSaveSlotButton(int slot, int redrawBox, bool highlight)
 
 	_screen->sega_getRenderer()->fillRectWithTiles(0, (_saveSlotX >> 3) + (_saveSlotX ? 1 : 2), (_saveSlotY >> 3) + (_saveSlotY ? 6 : 7) + (slot << 1), 3, 2, 0x41E7 + slot * 12 + (redrawBox == 2 ? 6 : 0), true);
 	_screen->sega_clearTextBuffer(0);
-	_vm->_txt->printShadedText(slot < 5 ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0], 0, (slot << 4) + (slot < 5 ? 0 : 2), highlight ? 0x55 : 0xFF, 0xCC, 121, 80, 0, false);
+	Common::String s1;
+	Common::String s2(slot < 5 ? _saveSlotStringsTemp[slot] : _vm->_saveLoadStrings[0]);
+
+	if (_vm->gameFlags().lang == Common::JA_JPN) {
+		if (s2.contains('\r')) {
+			// Savegame generated from ingame menu. The first part of the auto-generated save description (character name)
+			// is not a 2-byte encoding, but rather a special 1-byte encoding. We cut that part off and print it separately,
+			// since we have to notify the glyph renderer of the special encoding.
+			uint len = s2.findFirstOf('\r');
+			s1 = s2.substr(0, len);
+			s2.erase(0, len);
+			while (len--)
+				s2.insertChar(' ', 0);
+		} else {
+			// Savegame generated via the GMM save dialog. The Japanese font only has upper case ASCII glyphs, so we have to uppercase the string.
+			s2.toUppercase();
+		}		
+	}
+
+	_vm->_txt->printShadedText(s2.c_str(), 0, (slot << 4) + (slot < 5 ? 0 : 2), highlight ? 0x55 : 0xFF, 0xCC, 121, 80, 0, false);
+	if (!s1.empty()) {
+		int cs = _screen->setFontStyles(_screen->_currentFont, Font::kStyleForceOneByte);
+		_vm->_txt->printShadedText(s1.c_str(), 0, (slot << 4) + (slot < 5 ? 0 : 2), highlight ? 0x55 : 0xFF, 0xCC, 121, 80, 0, false);
+		_screen->setFontStyles(_screen->_currentFont, cs);
+	}
+
 	_screen->sega_loadTextBufferToVRAM(0, 0x5560, 4800);
 	_screen->sega_getRenderer()->render(0, (_saveSlotX >> 3) + (_saveSlotX ? 1 : 2), (_saveSlotY >> 3) + (_saveSlotY ? 6 : 7) + (slot << 1), 21, 2);
 }

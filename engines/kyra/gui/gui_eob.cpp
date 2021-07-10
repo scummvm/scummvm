@@ -3187,7 +3187,13 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 
 			Graphics::Surface thumb;
 			createScreenThumbnail(thumb);
-			Common::Error err = _vm->saveGameStateIntern(_savegameOffset + slot, _saveSlotStringsTemp[slot], &thumb);
+			char temp[26];
+			Common::strlcpy(temp, _saveSlotStringsTemp[slot], 26);
+			// Ingame auto-generated Japanese EOB SegaCD savegame descriptions have a special 1-byte encoding that
+			// does not survive this conversion. And the rest of the characters in these descriptions do not require it.
+			if (!(_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang == Common::JA_JPN && Common::String(temp).contains('\r')))
+				Util::convertDOSToISO(temp);
+			Common::Error err = _vm->saveGameStateIntern(_savegameOffset + slot, temp, &thumb);
 			thumb.free();
 
 			if (err.getCode() == Common::kNoError)
