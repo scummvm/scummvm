@@ -51,6 +51,7 @@ enum MFLError {
 	kMFLErrLibVersion = -2, // library version unsupported
 	kMFLErrNoLibBase = -3, // file is not library base (head)
 	kMFLErrLibAssetCount = -4, // too many assets in library
+	kMFLErrAssetNameLong = -5  // asset name is too long (old formats only)
 };
 
 enum MFLVersion {
