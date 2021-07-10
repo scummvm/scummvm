@@ -883,7 +883,7 @@ Datum TextCastMember::getField(int field) {
 		d = _hilite;
 		break;
 	case kTheText:
-		d = getText();
+		d = getText().encode(Common::kMacCentralEurope); // FIXME: Properly handle encoding
 		break;
 	case kTheTextAlign:
 		d.type = STRING;
@@ -944,7 +944,7 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		}
 		break;
 	case kTheText:
-		setText(d.asString().c_str());
+		setText(Common::U32String(d.asString(), Common::kMacCentralEurope)); // FIXME: Properly handle encoding
 		return true;
 	case kTheTextAlign:
 		{

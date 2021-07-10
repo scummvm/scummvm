@@ -730,7 +730,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 			dims.right = MIN<int>(dims.right, dims.left + _initialRect.width());
 			dims.bottom = MIN<int>(dims.bottom, dims.top + _initialRect.height());
 		}
-		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow, Common::kMacCentralEurope, _textType == kTextTypeFixed);
+		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed);
 		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
 		((Graphics::MacText *)widget)->setEditable(_editable);
 		((Graphics::MacText *)widget)->draw();
@@ -772,13 +772,13 @@ void TextCastMember::importRTE(byte *text) {
 	//child2 is positional?
 }
 
-void TextCastMember::setText(const char *text) {
+void TextCastMember::setText(const Common::U32String &text) {
 	// Do nothing if text did not change
 	if (_ptext.equals(text))
 		return;
 
 	// If text has changed, use the cached formatting from first STXT in this castmember.
-	Common::String formatting = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo3);
+	Common::U32String formatting = Common::U32String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo3);
 	_ptext = text;
 	_ftext = formatting + text;
 
@@ -811,7 +811,7 @@ int TextCastMember::getTextSize() {
 	return 0;
 }
 
-Common::String TextCastMember::getText() {
+Common::U32String TextCastMember::getText() {
 	return _ptext;
 }
 
@@ -838,7 +838,7 @@ void TextCastMember::setEditable(bool editable) {
 
 void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
 	if (widget && _type == kCastText) {
-		_ptext = ((Graphics::MacText *)widget)->getEditedString().encode();
+		_ptext = ((Graphics::MacText *)widget)->getEditedString();
 	}
 }
 

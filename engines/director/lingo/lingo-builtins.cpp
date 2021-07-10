@@ -1670,7 +1670,7 @@ void LB::b_installMenu(int nargs) {
 	}
 	TextCastMember *field = static_cast<TextCastMember *>(member);
 
-	Common::String menuStxt = g_lingo->_compiler->codePreprocessor(field->getText().c_str(), field->getCast()->_lingoArchive, kNoneScript, memberID, true);
+	Common::String menuStxt = g_lingo->_compiler->codePreprocessor(field->getText().encode(Common::kMacCentralEurope).c_str(), field->getCast()->_lingoArchive, kNoneScript, memberID, true); // FIXME: Properly handle encoding
 	Common::String line;
 	int linenum = -1; // We increment it before processing
 

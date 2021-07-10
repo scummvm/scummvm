@@ -53,8 +53,8 @@ public:
 
 public:
 	Cast *_cast;
-	Common::String _ftext;
-	Common::String _ptext;
+	Common::U32String _ftext;
+	Common::U32String _ptext;
 	TextType _textType;
 	TextAlignType _textAlign;
 	SizeType _textShadow;

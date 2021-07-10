@@ -219,7 +219,7 @@ public:
 	TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version, uint8 flags1 = 0, bool asButton = false);
 	virtual void setColors(uint32 *fgcolor, uint32 *bgcolor) override;
 
-	void setText(const char *text);
+	void setText(const Common::U32String &text);
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) override;
 
 	virtual bool isEditable() override;
@@ -263,12 +263,12 @@ public:
 	bool _editable;
 	int _lineSpacing;
 
-	Common::String _ftext;
-	Common::String _ptext;
+	Common::U32String _ftext;
+	Common::U32String _ptext;
 	void importStxt(const Stxt *stxt);
 	void importRTE(byte *text);
 
-	Common::String getText();
+	Common::U32String getText();
 
 private:
 	uint32 _bgcolor;

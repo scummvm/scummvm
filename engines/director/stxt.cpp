@@ -59,47 +59,52 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 		text += ch;
 	}
 	debugC(3, kDebugText, "Stxt init: offset: %d strLen: %d dataLen: %d textlen: %u", offset, strLen, dataLen, text.size());
-	if (strLen < 200)
-		debugC(3, kDebugText, "text: '%s'", Common::toPrintable(text).c_str());
-
-	_ptext = text;
 
 	uint16 formattingCount = textStream.readUint16();
 	uint32 prevPos = 0;
 
+	debugC(3, kDebugText, "Stxt init: formattingCount: %u", formattingCount);
+
+	Common::U32String logText;
+
 	while (formattingCount) {
-		debugC(3, kDebugText, "Stxt init: formattingCount: %u", formattingCount);
-		_style.read(textStream, _cast);
+		FontStyle nextStyle;
+		nextStyle.read(textStream, _cast);
 
 		assert(prevPos <= _style.formatStartOffset);  // If this is triggered, we have to implement sorting
 
+		Common::String textPart;
 		while (prevPos != _style.formatStartOffset) {
-			// We should theoretically handle the cross-platform character mappings stored in _cast->_charMap here.
-			// However, Director 4 seems to ignore these mappings despite storing them.
-			// Maybe they're handled in a later version?
-
 			char f = text.firstChar();
-			_ftext += text.firstChar();
+			textPart += f;
 			text.deleteChar(0);
 
 			if (f == '\001')	// Insert two \001s as a replacement
 				_ftext += '\001';
 
 			prevPos++;
-
-			debugCN(4, kDebugText, "%c", f);
 		}
+		Common::CodePage encoding = detectEncoding(cast->_platform, _style.fontId);
+		Common::U32String u32TextPart(textPart, encoding);
+		_ptext += u32TextPart;
+		_ftext += u32TextPart;
+		logText += u32TextPart;
 
-		debugCN(4, kDebugText, "*");
-
-		_ftext += Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _style.fontId, _style.textSlant, _style.fontSize, _style.r, _style.g, _style.b);
+		_style = nextStyle;
+		Common::String format = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _style.fontId, _style.textSlant, _style.fontSize, _style.r, _style.g, _style.b);
+		_ftext += format;
+		logText += Common::toPrintable(format);
 
 		formattingCount--;
 	}
 
-	_ftext += text;
+	Common::CodePage encoding = detectEncoding(cast->_platform, _style.fontId);
+	Common::U32String u32Text(text, encoding);
+	_ptext += u32Text;
+	_ftext += u32Text;
+	logText += u32Text;
 
-	debugC(4, kDebugText, "#### text:\n%s\n####", Common::toPrintable(_ftext).c_str());
+	debugC(4, kDebugText, "#### text:\n%s\n####", logText.encode().c_str());
 }
 
 FontStyle::FontStyle() {
