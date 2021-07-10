@@ -189,7 +189,7 @@ bool SymbianStdioStream::eos() const {
 	return entry->_eofReached != 0;
 }
 
-int32 SymbianStdioStream::pos() const {
+int64 SymbianStdioStream::pos() const {
 	TInt pos = 0;
 	TSymbianFileEntry* entry = ((TSymbianFileEntry *)(_handle));
 
@@ -201,7 +201,7 @@ int32 SymbianStdioStream::pos() const {
 	return pos;
 }
 
-int32 SymbianStdioStream::size() const {
+int64 SymbianStdioStream::size() const {
 
 	TInt length = 0;
 	((TSymbianFileEntry *)(_handle))->_fileHandle.Size(length);
@@ -209,7 +209,7 @@ int32 SymbianStdioStream::size() const {
 	return length;
 }
 
-bool SymbianStdioStream::seek(int32 offs, int whence) {
+bool SymbianStdioStream::seek(int64 offs, int whence) {
 	assert(_handle);
 
 	TSeek seekMode = ESeekStart;
