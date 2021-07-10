@@ -141,10 +141,10 @@ void resumeTimer(void);                  // resume game clock
 //  work correctly even if the game counter wraps around.
 
 class Alarm {
-private:
+public:
 	uint32 basetime;                            // timer alarm was set
 	uint32 duration;                            // duration of alarm
-public:
+
 	void set(uint32 duration);
 	bool check(void);
 	uint32 elapsed(void);                    // time elapsed since alarm set
