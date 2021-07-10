@@ -654,6 +654,14 @@ struct QueueItem {
 	uint8           pad;
 	int16           cost;                   // Cost to get to this cell
 
+	QueueItem() {
+		z = 0;
+		u = v = 0;
+		platform = 0;
+		pad = 0;
+		cost = 0;
+	}
+
 	operator int() {
 		return cost;
 	}
