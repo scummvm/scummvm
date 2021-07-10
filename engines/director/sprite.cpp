@@ -127,7 +127,7 @@ bool Sprite::shouldHilite() {
 		return false;
 
 	if (_ink == kInkTypeMatte) {
-		if (g_director->getVersion() < 300)
+		if (g_director->getCurrentMovie()->_version < kFileVer300)
 			return true;
 		if (isQDShape())
 			return true;
