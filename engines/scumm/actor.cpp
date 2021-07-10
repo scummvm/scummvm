@@ -613,9 +613,6 @@ int Actor::actorWalkStep() {
 		_pos.y = (tmpY / (1 << 16));
 	}
 
-	if (_number == 10)
-	debug("ACTOR: %02d, X: %02d, Y: %02d", _number, _pos.x, _pos.y);
-
 	if (ABS(_pos.x - _walkdata.cur.x) > distX) {
 		_pos.x = _walkdata.next.x;
 	}
