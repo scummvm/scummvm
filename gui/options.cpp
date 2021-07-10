@@ -2157,7 +2157,7 @@ void GlobalOptionsDialog::build() {
 		_themePath->setLabel(themePath);
 	}
 
-	if (iconPath.empty() || !ConfMan.hasKey("iconPath", _domain)) {
+	if (iconPath.empty() || !ConfMan.hasKey("iconpath", _domain)) {
 		_iconPath->setLabel(_c("None", "path"));
 	} else {
 		_iconPath->setLabel(iconPath);
