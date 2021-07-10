@@ -228,7 +228,7 @@ frameSmoother::frameSmoother(int32 fps, uint32 perSec, uint32 now)
 	historySize = fps * 5;
 	frameHistory = new float[historySize];
 
-	for (int i = 0; i < historySize; i++)
+	for (uint32 i = 0; i < historySize; i++)
 		frameHistory[i] = 0;
 
 	for (int i = 0; i < 5; i++)
