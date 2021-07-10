@@ -236,19 +236,19 @@ String PreparePathForWriting(const FSLocation &fsloc, const String &filename) {
 FSLocation GetGlobalUserConfigDir() {
 	String dir = _G(platform)->GetUserGlobalConfigDirectory();
 	if (Path::IsRelativePath(dir)) // relative dir is resolved relative to the game data dir
-		return FSLocation(_GP(ResPaths).DataDir, Path::ConcatPaths(_GP(ResPaths).DataDir, dir));
-	return FSLocation(dir, dir);
+		return FSLocation(_GP(ResPaths).DataDir, dir);
+	return FSLocation(dir);
 }
 
 FSLocation GetGameUserConfigDir() {
 	String dir = _G(platform)->GetUserConfigDirectory();
 	if (Path::IsRelativePath(dir)) // relative dir is resolved relative to the game data dir
-		return FSLocation(_GP(ResPaths).DataDir, Path::ConcatPaths(_GP(ResPaths).DataDir, dir));
+		return FSLocation(_GP(ResPaths).DataDir, dir);
 	else if (_GP(usetup).local_user_conf) // directive to use game dir location
 		return FSLocation(_GP(ResPaths).DataDir);
 	// For absolute dir, we assume it's a special directory prepared for AGS engine
 	// and therefore amend it with a game own subdir
-	return FSLocation(dir, Path::ConcatPaths(dir, _GP(game).saveGameFolderName));
+	return FSLocation(dir, _GP(game).saveGameFolderName);
 }
 
 // A helper function that deduces a data directory either using default system location,
@@ -258,17 +258,17 @@ static FSLocation MakeGameDataDir(const String &default_dir, const String &user_
 	if (user_option.IsEmpty()) {
 		String dir = default_dir;
 		if (Path::IsRelativePath(dir)) // relative dir is resolved relative to the game data dir
-			return FSLocation(_GP(ResPaths).DataDir, Path::ConcatPaths(_GP(ResPaths).DataDir, dir));
+			return FSLocation(_GP(ResPaths).DataDir, dir);
 		// For absolute dir, we assume it's a special directory prepared for AGS engine
 		// and therefore amend it with a game own subdir
-		return FSLocation(dir, Path::ConcatPaths(dir, _GP(game).saveGameFolderName));
+		return FSLocation(dir, _GP(game).saveGameFolderName);
 	}
 	// If this location is set up by user config, then use it as is (resolving relative path if necessary)
 	String dir = user_option;
 	if (Path::IsSameOrSubDir(_GP(ResPaths).DataDir, dir)) // check if it's inside game dir
 		return FSLocation(_GP(ResPaths).DataDir, Path::MakeRelativePath(_GP(ResPaths).DataDir, dir));
 	dir = Path::MakeAbsolutePath(dir);
-	return FSLocation(dir, dir);
+	return FSLocation(dir);
 }
 
 FSLocation GetGameAppDataDir() {
@@ -290,8 +290,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	}
 
 	if (is_absolute) {
-		rp.FullPath = orig_sc_path;
-		debugC(::AGS::kDebugFilePath, "Full path detected");
+		rp = ResolvedPath(orig_sc_path);
 		return true;
 	}
 
@@ -361,28 +360,24 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 
 	String full_path = String::FromFormat("%s%s", parent_dir.BaseDir.GetCStr(), child_path.GetCStr());
 	// don't allow write operations for relative paths outside game dir
+	ResolvedPath test_rp = ResolvedPath(parent_dir, child_path, alt_path);
 	if (!read_only) {
-		if (!Path::IsSameOrSubDir(parent_dir.FullDir, full_path)) {
+		if (!Path::IsSameOrSubDir(test_rp.Loc.FullDir, test_rp.FullPath)) {
 			debug_script_warn("Attempt to access file '%s' denied (outside of game directory)", sc_path.GetCStr());
 			return false;
 		}
 	}
 
-	rp.BaseDir = parent_dir.BaseDir;
-	rp.FullPath = full_path;
-	rp.AltPath = alt_path;
-
-	debugC(::AGS::kDebugFilePath, "Resolved path: %s", full_path.GetCStr());
-	if (!alt_path.IsEmpty())
-		debugC(::AGS::kDebugFilePath, "Alternative path: %s", alt_path.GetCStr());
-
+	rp = test_rp;
 	return true;
 }
 
 bool ResolveWritePathAndCreateDirs(const String &sc_path, ResolvedPath &rp) {
 	if (!ResolveScriptPath(sc_path, false, rp))
 		return false;
-	if (!Directory::CreateAllDirectories(rp.BaseDir, Path::GetDirectoryPath(rp.FullPath))) {
+
+	if (!rp.Loc.SubDir.IsEmpty() &&
+			!Directory::CreateAllDirectories(rp.Loc.BaseDir, rp.Loc.FullDir)) {
 		debug_script_warn("ResolveScriptPath: failed to create all subdirectories: %s", rp.FullPath.GetCStr());
 		return false;
 	}

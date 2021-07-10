@@ -33,7 +33,7 @@
 #ifndef AGS_ENGINE_AC_PATH_HELPER_H
 #define AGS_ENGINE_AC_PATH_HELPER_H
 
-#include "ags/shared/util/string.h"
+#include "ags/shared/util/path.h"
 
 namespace AGS3 {
 
@@ -57,12 +57,15 @@ String PathFromInstallDir(const String &path);
 // The meaning of this is that engine is only allowed to create
 // sub-path subdirectories, and only if secure path exists.
 struct FSLocation {
-	String BaseDir; // parent part of the full path that is not our responsibility
-	String FullDir; // full path to the directory
+	String BaseDir; // base directory, which we assume already exists; not our responsibility
+	String SubDir;  // sub-directory, relative to BaseDir
+	String FullDir; // full path to location
 	FSLocation() {}
 	FSLocation(const String &base) : BaseDir(base), FullDir(base) {
 	}
-	FSLocation(const String &base, const String &full) : BaseDir(base), FullDir(full) {
+	FSLocation(const String &base, const String &subdir)
+		: BaseDir(base), SubDir(subdir),
+		FullDir(AGS::Shared::Path::ConcatPaths(base, subdir)) {
 	}
 };
 // Makes sure that given system location is available, makes directories if have to (and if it's allowed to)
@@ -81,9 +84,16 @@ FSLocation GetGameUserDataDir();
 
 // ResolvedPath describes an actual location pointed by a user path (e.g. from script)
 struct ResolvedPath {
-	String BaseDir;  // base directory, which we assume already exists
+	FSLocation Loc;  // location (directory)
 	String FullPath; // full path, including filename
-	String AltPath;  // alternative full path, for backwards compatibility
+	String AltPath;  // alternative read-only full path, for backwards compatibility
+	ResolvedPath() = default;
+	ResolvedPath(const String & file, const String & alt = "")
+		: FullPath(file), AltPath(alt) {
+	}
+	ResolvedPath(const FSLocation & loc, const String & file, const String & alt = "")
+		: Loc(loc), FullPath(AGS::Shared::Path::ConcatPaths(loc.FullDir, file)), AltPath(alt) {
+	}
 };
 // Resolves a file path provided by user (e.g. script) into actual file path,
 // by substituting special keywords with actual platform-specific directory names.
