@@ -448,6 +448,7 @@ CPlaqText::CPlaqText(gPanelList     &list,
 	buttonFont      = font;
 	textRect        = box;
 	textPosition    = textPos;
+	oldFont         = nullptr;
 }
 
 void CPlaqText::enable(bool abled) {
@@ -699,16 +700,16 @@ CStatusLine::CStatusLine(gPanelList         &list,
                          int32           /*frameTime*/,
                          int16           ident,
                          AppFunc         *cmd) :
-	CPlaqText(list, box, msg, font, textPos, pal, ident, cmd)
-
-{
-	int         i;
+	CPlaqText(list, box, msg, font, textPos, pal, ident, cmd) {
 
 	lineDisplayed = false;
 	queueHead = queueTail = 0;
 
-	for (i = 0; i < ARRAYSIZE(lineQueue); i++)
+	for (int i = 0; i < ARRAYSIZE(lineQueue); i++) {
 		lineQueue[i].text = nullptr;
+		lineQueue[i].frameTime = 0;
+	}
+
 }
 
 CStatusLine::~CStatusLine(void) {
