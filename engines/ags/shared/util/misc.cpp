@@ -119,11 +119,15 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 	// in the directory. it's theoretically possible a valid filename
 	// could contain "..", but in that case it will just fallback to the
 	// slower method later on and succeed.
-	if (directory && filename && !strstr(filename, "..")) {
+	if (filename && !strstr(filename, "..")) {
 		char buf[1024];
-		snprintf(buf, sizeof buf, "%s/%s", directory, filename);
-		lstat(buf, &statbuf);
-		if (S_ISREG(statbuf.st_mode) || S_ISLNK(statbuf.st_mode)) {
+		if (!directory && filename[0] == '/')
+			snprintf(buf, sizeof buf, "%s", filename);
+		else
+			snprintf(buf, sizeof buf, "%s/%s", directory ? directory : ".", filename);
+
+		if (lstat(buf, &statbuf) == 0 &&
+			(S_ISREG(statbuf.st_mode) || S_ISLNK(statbuf.st_mode))) {
 			diamond = strdup(buf); goto out;
 		}
 	}
@@ -170,9 +174,9 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 	}
 
 	while ((entry = readdir(rough)) != nullptr) {
-		lstat(entry->d_name, &statbuf);
-		if (S_ISREG(statbuf.st_mode) || S_ISLNK(statbuf.st_mode)) {
-			if (strcasecmp(filename, entry->d_name) == 0) {
+		if (strcasecmp(filename, entry->d_name) == 0) {
+			if (lstat(entry->d_name, &statbuf) == 0 &&
+				(S_ISREG(statbuf.st_mode) || S_ISLNK(statbuf.st_mode))) {
 #if AGS_PLATFORM_DEBUG
 				fprintf(stderr, "ci_find_file: Looked for %s in rough %s, found diamond %s.\n", filename, directory, entry->d_name);
 #endif // AGS_PLATFORM_DEBUG
