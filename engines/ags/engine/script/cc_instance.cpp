@@ -1500,7 +1500,7 @@ bool ccInstance::ResolveScriptImports(PScript scri) {
 
 		resolved_imports[i] = _GP(simp).get_index_of(scri->imports[i]);
 		if (resolved_imports[i] < 0) {
-			cc_error("unresolved import '%s'", scri->imports[i]);
+			cc_error("unresolved import '%s' in %s", scri->imports[i], scri->numSections > 0 ? scri->sectionNames[0] : "<unknown>");
 			return false;
 		}
 	}
