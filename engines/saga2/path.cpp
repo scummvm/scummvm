@@ -711,7 +711,10 @@ private:
 	int16           arraySize;
 
 public:
-	MaskComputer(void) : arraySize(0) {}
+	MaskComputer(void) : arraySize(0) {
+		for (int i = 0; i < 8; i++)
+			ptrArray[i] = nullptr;
+	}
 
 	DirMaskGroup *computeMask(uint8 objSection);
 };
@@ -2199,8 +2202,10 @@ WanderPathRequest::WanderPathRequest(
 		tetherMinV = mTask->tetherMinV;
 		tetherMaxU = mTask->tetherMaxU;
 		tetherMaxV = mTask->tetherMaxV;
-	} else
+	} else {
 		tethered = false;
+		tetherMinU = tetherMinV = tetherMaxU = tetherMaxV = 0;
+	}
 }
 
 //  Initialize the static data members
