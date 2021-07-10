@@ -691,7 +691,7 @@ void MacWindowManager::setActiveWindow(int id) {
 	_fullRefresh = true;
 }
 
-MacWindow* MacWindowManager::findWindowAtPoint(int16 x, int16 y) {
+MacWindow *MacWindowManager::findWindowAtPoint(int16 x, int16 y) {
 	Common::List<Graphics::BaseMacWindow *>::iterator it;
 	Graphics::MacWindow* win = nullptr;
 
@@ -704,7 +704,7 @@ MacWindow* MacWindowManager::findWindowAtPoint(int16 x, int16 y) {
 	return win;
 }
 
-MacWindow* MacWindowManager::findWindowAtPoint(Common::Point point) {
+MacWindow *MacWindowManager::findWindowAtPoint(Common::Point point) {
 	Common::List<Graphics::BaseMacWindow *>::iterator it;
 	Graphics::MacWindow* win = nullptr;
 
