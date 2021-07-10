@@ -83,7 +83,7 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 }
 
 #else
-/* Case Insensitive File Find */
+/* Case Insensitive File Find - Only used on UNIX platforms */
 char *ci_find_file(const char *dir_name, const char *file_name) {
 	struct stat   statbuf;
 	struct dirent *entry = nullptr;
@@ -94,7 +94,7 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 	char *filename = nullptr;
 
 	if (dir_name == nullptr && file_name == nullptr)
-		return nullptr;
+		goto out;
 
 	if (dir_name != nullptr) {
 		directory = (char *)malloc(strlen(dir_name) + 1);
@@ -128,7 +128,7 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 
 		match = get_filename(filename);
 		if (match == nullptr)
-			return nullptr;
+			goto out;
 
 		match_len = strlen(match);
 		dir_len = (match - filename);
@@ -149,17 +149,17 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 
 	if ((prevdir = opendir(".")) == nullptr) {
 		fprintf(stderr, "ci_find_file: cannot open current working directory\n");
-		return nullptr;
+		goto out;
 	}
 
 	if (chdir(directory) == -1) {
 		fprintf(stderr, "ci_find_file: cannot change to directory: %s\n", directory);
-		return nullptr;
+		goto out;
 	}
 
 	if ((rough = opendir(directory)) == nullptr) {
 		fprintf(stderr, "ci_find_file: cannot open directory: %s\n", directory);
-		return nullptr;
+		goto out;
 	}
 
 	while ((entry = readdir(rough)) != nullptr) {
@@ -173,16 +173,16 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 				append_filename(diamond, directory, entry->d_name, strlen(directory) + strlen(entry->d_name) + 2);
 				break;
 			}
-}
-}
+		}
+	}
 	closedir(rough);
 
 	fchdir(dirfd(prevdir));
 	closedir(prevdir);
 
-out:;
-	free(directory);
-	free(filename);
+out:
+	if (directory) free(directory);
+	if (filename) free(filename);
 
 	return diamond;
 }
