@@ -880,7 +880,7 @@ void MidiDriver_Miles_Midi::applySourceVolume(uint8 source) {
 		// Apply the new source volume to this channel if this source is active
 		// on this channel, or if it was active on the channel before it was
 		// locked.
-		if (channel.currentData->source == source) {
+		if (source == 0xFF || channel.currentData->source == source) {
 			channelData = channel.currentData;
 		} else if (channel.locked && channel.unlockData->source == source) {
 			channelData = channel.unlockData;
@@ -888,7 +888,7 @@ void MidiDriver_Miles_Midi::applySourceVolume(uint8 source) {
 		}
 
 		if (channelData && channelData->volume != 0xFF)
-			controlChange(i, MIDI_CONTROLLER_VOLUME, channelData->volume, source, *channelData, channelLockedByOtherSource);
+			controlChange(i, MIDI_CONTROLLER_VOLUME, channelData->volume, channelData->source, *channelData, channelLockedByOtherSource);
 	}
 }
 
