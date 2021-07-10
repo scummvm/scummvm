@@ -75,6 +75,10 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 
 	_imageCache = new CImageCache;
 	_mTaskList = new MotionTaskList;
+
+	_edpList = nullptr;
+	_sdpList = nullptr;
+	_containerList = nullptr;
 }
 
 Saga2Engine::~Saga2Engine() {

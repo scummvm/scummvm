@@ -775,7 +775,11 @@ struct RipTable {
 	};
 
 	//  Constructor
-	RipTable(void) : metaID(NoMetaTile) {}
+	RipTable(void) : metaID(NoMetaTile), ripID(0) {
+		for (int i = 0; i < kPlatformWidth; i++)
+			for (int j = 0; j < kPlatformWidth; j++)
+				zTable[i][j] = 0;
+	}
 
 	//  Return a pointer to a rip table, given the rip table's ID
 	static RipTable *ripTableAddress(RipTableID id);
