@@ -132,6 +132,8 @@ Programmcodes finden Sie auf Englisch unter:
  Ultima:
    - Ultima 4: Erweiterung des Debuggers um mehrere Befehle.
    - Ultima 4: Die Return-Taste kann nun dazu genutzt werden, die ZStats-Anzeige zu verlassen.
+   - Ultima 8: Mehrere Animations-Fehler für Events und Objekte korrigiert.
+   - Ultima 8: Ursprünglichen Text für das Buch "Spell of Resurrection" wiederhergestellt.
 
  Xeen:
    - Gelegentliche Grafikfehler in Kampf-Szenen korrigiert.
