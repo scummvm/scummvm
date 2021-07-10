@@ -46,8 +46,8 @@ enum kMaggieStates {
 };
 
 AIScriptMaggie::AIScriptMaggie(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	var_45F3F8 = 0;
-	var_45F3FC = 0;
+	_varTimesToLoopWhenHappyB = 0;
+	_varTimesToBarkWhenHappyA = 0;
 	var_45F400 = 0;
 	var_45F404 = 0;
 	var_45F408 = 0;
@@ -58,8 +58,8 @@ void AIScriptMaggie::Initialize() {
 	_animationFrame = 0;
 	_animationStateNext = 0;
 	_animationNext = 0;
-	var_45F3F8 = 0;
-	var_45F3FC = 0;
+	_varTimesToLoopWhenHappyB = 0;
+	_varTimesToBarkWhenHappyA = 0;
 	var_45F400 = 0; // only assigned to 0. Never checked. Unused.
 	var_45F404 = 0; // only assigned to 0. Never checked. Unused.
 	var_45F408 = 0; // only assigned to 0. Never checked. Unused.
@@ -199,12 +199,12 @@ void AIScriptMaggie::ClickedByPlayer() {
 		return; // true
 	}
 
-	if (goal == 10) {
+	if (goal == kGoalMaggieMA02SitDown) {
 		Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeIdle);
 		return; // true
 	}
 
-	if (goal == 11) {
+	if (goal == kGoalMaggieMA02Sleep) {
 		Actor_Change_Animation_Mode(kActorMaggie, 54);
 		return; // true
 	}
@@ -329,12 +329,19 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalMaggieMA02Sleep:
+		// When setting Maggie's *goal* to sleep, we expect it to be enforced
+		// However, Actor_Change_Animation_Mode is not enforceable and could be ignored.
+		// The goal change here is *NOT* done in order to play the animation.
+		// It is to set the animation State, and by explicitly setting it, it overrides playing the animation transition.
+		// Actor_Change_Animation_Mode) is called to store the _animationMode on Maggie's actor object (see: Actor::changeAnimationMode())
 		Actor_Change_Animation_Mode(kActorMaggie, 55);
-		// TODO Why set _animationState and frame explicitly here,
-		//      when the Actor_Change_Animation_Mode() should take care of it?
-		//      does this not negate the "transition" animation?
 		_animationState = kMaggieStateSleeping;
+#if BLADERUNNER_ORIGINAL_BUGS
 		_animationFrame = 0;
+#else
+		// We actually need the final frame here to avoid Maggie glitching here
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieToggleLaySleepingWakeUp) - 1;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 
 	case 400:
@@ -529,8 +536,8 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieBarking)) {
 			_animationFrame = 0;
-			--var_45F3F8;
-			if (var_45F3F8 <= 0) {
+			--_varTimesToLoopWhenHappyB;
+			if (_varTimesToLoopWhenHappyB <= 0) {
 				Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeIdle);
 				*animation = kModelAnimationMaggieStandingIdle;
 			}
@@ -545,8 +552,8 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 		}
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			--var_45F3FC;
-			if (var_45F3FC <= 0) {
+			--_varTimesToBarkWhenHappyA;
+			if (_varTimesToBarkWhenHappyA <= 0) {
 				Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeIdle);
 				*animation = kModelAnimationMaggieStandingIdle;
 				_animationState = kMaggieStateIdle;
@@ -587,20 +594,11 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 }
 
 bool AIScriptMaggie::ChangeAnimationMode(int mode) {
-	if (mode == kAnimationModeWalk) {
-		if (Game_Flag_Query(kFlagMaggieHasBomb)) {
-			_animationState = kMaggieStateBombWalk;
-			_animationFrame = 0;
-		} else {
-			_animationState = kMaggieStateWalking;
-			_animationFrame = 0;
-		}
-		return true;
-	}
-	if (mode == kAnimationModeIdle) {
+	switch (mode) {
+	case kAnimationModeIdle:
 		if (Game_Flag_Query(kFlagMaggieHasBomb)) {
 			_animationState = kMaggieStateBombIdle;
-			_animationFrame = kMaggieStateIdle;
+			_animationFrame = 0;
 		} else {
 			switch (_animationState) {
 			case kMaggieStateGoingToSleep:
@@ -609,7 +607,7 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 				_animationState = kMaggieStateWakingUp;
 				break;
 
-			case kMaggieStateIdle:
+			case kMaggieStateLayingIdle:
 				_animationState = kMaggieStateStandingUp;
 				_animationFrame = 0;
 				break;
@@ -632,10 +630,18 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 				break;
 			}
 		}
-		return true;
-	}
+		break;
 
-	switch (mode) {
+	case kAnimationModeWalk:
+		if (Game_Flag_Query(kFlagMaggieHasBomb)) {
+			_animationState = kMaggieStateBombWalk;
+			_animationFrame = 0;
+		} else {
+			_animationState = kMaggieStateWalking;
+			_animationFrame = 0;
+		}
+		break;
+
 	case 51:
 		_animationState = kMaggieStateExploding;
 		_animationFrame = 0;
@@ -657,7 +663,11 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 			if (_animationState > kMaggieStateIdle) {
 				if (_animationState == kMaggieStateSleeping) {
 					_animationState = kMaggieStateWakingUp;
+#if BLADERUNNER_ORIGINAL_BUGS
+					// Don't start from frame 0 here, since the animation has to play backwards,
+					// and being on kMaggieStateSleeping state means we are already at the proper (end) frame
 					_animationFrame = 0;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 				}
 			} else {
 				_animationState = kMaggieStateLayingDown;
@@ -678,7 +688,7 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 			_animationState = kMaggieStateHappyA;
 		}
-		var_45F3FC = Random_Query(2, 6);
+		_varTimesToBarkWhenHappyA = Random_Query(2, 6);
 		break;
 
 	case 57:
@@ -686,7 +696,7 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 			_animationState = kMaggieStateHappyB;
 		}
-		var_45F3F8 = Random_Query(2, 6);
+		_varTimesToLoopWhenHappyB = Random_Query(2, 6);
 		Sound_Play(kSfxDOGTAIL1, 50, 0, 0, 50);
 		break;
 
