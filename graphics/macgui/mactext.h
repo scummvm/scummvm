@@ -94,6 +94,10 @@ struct MacFontRun {
 
 	const Common::String toString();
 	bool equals(MacFontRun &to);
+
+	Common::CodePage getEncoding();
+	bool plainByteMode();
+	Common::String getEncodedText();
 };
 
 struct MacTextLine {
@@ -146,11 +150,9 @@ struct SelectedText {
 class MacText : public MacWidget {
 public:
 	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true);
-	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, Common::CodePage encodeType = Common::kMacCentralEurope, bool fixedDims = true);
 	// 0 pixels between the lines by default
 
 	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
-	MacText(const Common::String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, Common::CodePage encodeType = Common::kMacCentralEurope, bool fixedDims = true);
 
 	MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
 
@@ -189,7 +191,6 @@ public:
 	void setTextColor(uint32 color, uint32 start, uint32 end);
 
 	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
-	void appendText(const Common::String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
 	void appendText(const Common::U32String &str, const Font *font, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
 
@@ -219,7 +220,7 @@ private:
 	void deletePreviousCharInternal(int *row, int *col);
 	void insertTextFromClipboard();
 	// getStringWidth for mactext version, because we may have the plain bytes mode
-	int getStringWidth(const Font *font, const Common::U32String &str);
+	int getStringWidth(MacFontRun &format, const Common::U32String &str);
 	int getAlignOffset(int row);
 	MacFontRun getFgColor();
 
@@ -236,7 +237,6 @@ public:
 	int getTextMaxWidth() { return _textMaxWidth; }
 
 	void setText(const Common::U32String &str);
-	void setText(const Common::String &str);
 
 	void setFixDims(bool fixed) { _fixedDims = fixed; }
 	bool getFixDims() { return _fixedDims; }
@@ -346,10 +346,6 @@ protected:
 	MacFontRun _currentFormatting;
 
 	bool _macFontMode;
-
-	bool _plainByteMode;
-
-	Common::CodePage _encodeType;
 
 private:
 	ManagedSurface *_cursorSurface;

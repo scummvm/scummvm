@@ -47,7 +47,7 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 		MacWindow(wm->getLastId(), true, true, true, wm), _bgcolor(bgcolor), _maxWidth(maxWidth), _menu(menu) {
 
 	_font = font;
-	_mactext = new MacText("", _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);
+	_mactext = new MacText(Common::U32String(""), _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);
 
 	_fontRef = wm->_fontMan->getFont(*font);
 
