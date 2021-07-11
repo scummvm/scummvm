@@ -188,8 +188,6 @@ void b_version(int nargs);
 void b_cast(int nargs);
 void b_script(int nargs);
 
-void b_fplay(int nargs);
-
 void b_numberofchars(int nargs);
 void b_numberofitems(int nargs);
 void b_numberoflines(int nargs);

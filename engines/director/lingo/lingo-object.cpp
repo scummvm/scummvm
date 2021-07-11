@@ -37,6 +37,7 @@
 
 #include "director/lingo/xlibs/fileio.h"
 #include "director/lingo/xlibs/flushxobj.h"
+#include "director/lingo/xlibs/fplayxobj.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
 #include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/winxobj.h"
@@ -111,6 +112,7 @@ static struct XLibProto {
 } xlibs[] = {
 	{ "FileIO",					FileIO::initialize,					kXObj | kFactoryObj,	200 },	// D2
 	{ "FlushXObj",				FlushXObj::initialize,				kXObj,					400 },	// D4
+	{ "FPlayXObj",				FPlayXObj::initialize,				kXObj,					200 },	// D2
 	{ "PalXObj",				PalXObj:: initialize,				kXObj,					400 }, 	// D4
 	{ "LabelDrv",				LabelDrvXObj:: initialize,			kXObj,					400 }, 	// D4
 	{ "winXObj",				RearWindowXObj::initialize,			kXObj,					400 },	// D4

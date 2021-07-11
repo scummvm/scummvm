@@ -155,7 +155,6 @@ static BuiltinProto builtins[] = {
 	{ "pause",			LB::b_pause,		0, 0, 200, CBLTIN },	// D2 c
 	{ "play",			LB::b_play,			0, 2, 200, CBLTIN },	// D2 c
 	{ "playAccel",		LB::b_playAccel,	-1,0, 200, CBLTIN },	// D2
-	{"fplay",			LB::b_fplay,		-1,0, 200, CBLTIN },                      // D2
 		// play done													// D2
 	{ "preLoad",		LB::b_preLoad,		-1,0, 300, CBLTIN },	//		D3.1 c
 	{ "preLoadCast",	LB::b_preLoadCast,	-1,0, 300, CBLTIN },	//		D3.1 c
@@ -2398,12 +2397,6 @@ void LB::b_version(int nargs) {
 		res = Common::String::format("%d.%d", major, minor);
 	}
 	g_lingo->push(res);
-}
-
-void LB::b_fplay(int nargs) {
-	for (int i = 0; i < nargs; i++)
-		g_lingo->pop();
-	warning("STUB: b_fplay");
 }
 
 ///////////////////
