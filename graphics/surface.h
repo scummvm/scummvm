@@ -428,7 +428,7 @@ public:
 	 * @param scale number of pixels per single character. Default is -1, fit whole surface to maxwidth
 	 * @param maxwidth horizontal size of the print out in characters. Default is 160. Note that 2 characters
 	 *                 are taken by the frame
-	 * @param palette ˚palette to use for 1bpp pixels. If omitted, we assume grayscale palette
+	 * @param palette palette to use for 1bpp pixels. If omitted, we assume grayscale palette
 	 *
 	 */
 	void debugPrint(int debuglevel = 0, int width = 0, int height = 0, int x = 0, int y = 0, int scale = -1, int maxwidth = 160, const byte *palette = NULL) const;
