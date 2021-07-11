@@ -65,8 +65,11 @@ def checkMacro(macro, active_conf = active_config):
 
 def processModule_mk(folder, mmp_file, active_conf = active_config):
    pth = os.path.join('..\..\..', folder)
-   with open(os.path.join(pth, "module.mk")) as ff:
-      f = ff.readlines()
+   try:
+      with open(os.path.join(pth, "module.mk")) as ff:
+         f = ff.readlines()
+   except IOError: #folder added in newer version
+      return
    pth = os.path.join('..\..\..\..', folder)
    SafeWriteFile(mmp_file, "\nSOURCEPATH  %s\n" %pth, 'a')
 

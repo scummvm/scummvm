@@ -26,6 +26,10 @@ import multiprocessing as mp
 
 from common_names import *
 
+#workaround for "threading bug in strptime"
+#see - https://stackoverflow.com/questions/32245560/module-object-has-no-attribute-strptime-with-several-threads-python/46401422
+import _strptime
+
 prj_template = "PRJ_MMPFILES\n%s"
 prj_path = "paralell_build"
 
