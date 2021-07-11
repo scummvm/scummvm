@@ -151,6 +151,7 @@ public:
 	void loadEXEv7(Common::SeekableReadStream *stream);
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
 	void loadMac(const Common::String movie);
+	void loadStartMovieXLibs();
 
 	// lingo/lingo-object.cpp
 	Common::String asString() override;

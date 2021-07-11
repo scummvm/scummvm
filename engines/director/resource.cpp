@@ -76,6 +76,12 @@ Common::Error Window::loadInitialMovie() {
 		_currentMovie->loadSharedCastsFrom(sharedCastPath);
 	_currentMovie->setArchive(_mainArchive);
 
+	// XLibs are usually loaded in the initial movie.
+	// These may not be present if a --start-movie is specified, so
+	// we sometimes need to load them manually.
+	if (!g_director->getStartMovie().startMovie.empty())
+		loadStartMovieXLibs();
+
 	return Common::kNoError;
 }
 
@@ -379,6 +385,12 @@ void Window::loadMac(const Common::String movie) {
 			delete _currentMovie;
 			_currentMovie = nullptr;
 		}
+	}
+}
+
+void Window::loadStartMovieXLibs() {
+	if (strcmp(g_director->getGameId(), "warlock") == 0 && g_director->getPlatform() == Common::kPlatformMacintosh) {
+		g_lingo->openXLib("FPlayXObj", kXObj);
 	}
 }
 
