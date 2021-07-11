@@ -40,6 +40,20 @@ void Point16::write(Common::OutSaveFile *out) {
 	out->writeSint16LE(y);
 }
 
+void Rect16::read(Common::InSaveFile *in) {
+	x = in->readSint16LE();
+	y = in->readSint16LE();
+	width = in->readSint16LE();
+	height = in->readSint16LE();
+}
+
+void Rect16::write(Common::OutSaveFile *out) {
+	out->writeSint16LE(x);
+	out->writeSint16LE(y);
+	out->writeSint16LE(width);
+	out->writeSint16LE(height);
+}
+
 Rect16 bound(const Rect16 a, const Rect16 b) {
 	int16               x1, x2, y1, y2;
 

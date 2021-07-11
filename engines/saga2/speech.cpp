@@ -185,6 +185,56 @@ void *Speech::restore(void *buf) {
 	return buf;
 }
 
+void Speech::read(Common::InSaveFile *in) {
+	//  Restore the sample count and character count
+	sampleCount = in->readSint16LE();
+	charCount = in->readSint16LE();
+
+	//  Restore the text boundaries
+	bounds.read(in);
+
+	//  Restore the pen color and outline color
+	penColor = in->readUint16LE();
+	outlineColor = in->readUint16LE();
+
+	//  Restore the object ID
+	objID = in->readUint16LE();
+
+	//  Restore the thread ID
+	thread = in->readSint16LE();
+
+	//  Restore the flags
+	speechFlags = in->readSint16LE();
+
+	debugC(4, kDebugSaveload, "...... sampleCount = %d", sampleCount);
+	debugC(4, kDebugSaveload, "...... charCount = %d", charCount);
+	debugC(4, kDebugSaveload, "...... penColor = %d", penColor);
+	debugC(4, kDebugSaveload, "...... outlineColor = %d", outlineColor);
+	debugC(4, kDebugSaveload, "...... bounds = (%d, %d, %d, %d)",
+	       bounds.x, bounds.y, bounds.width, bounds.height);
+	debugC(4, kDebugSaveload, "...... objID = %d", objID);
+	debugC(4, kDebugSaveload, "...... thread = %d", thread);
+	debugC(4, kDebugSaveload, "...... speechFlags = %d", speechFlags);
+
+	//  Restore the sample ID's
+	for (int i = 0; i < sampleCount; i++) {
+		sampleID[i] = in->readUint32LE();
+		debugC(4, kDebugSaveload, "...... sampleID[%d] = %d", i, sampleID[i]);
+	}
+
+	//  Restore the text
+	in->read(speechBuffer, charCount);
+	speechBuffer[charCount] = '\0';
+	debugC(4, kDebugSaveload, "...... speechBuffer = %s", speechBuffer);
+
+	//  Requeue the speech if needed
+	if (speechFlags & spQueued) {
+		//  Add to the active list
+		speechList.remove(this);
+		speechList._list.push_back(this);
+	}
+}
+
 //-----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this SpeechTask
 
@@ -244,6 +294,48 @@ void *Speech::archive(void *buf) {
 	buf = (char *)buf + charCount;
 
 	return buf;
+}
+
+void Speech::write(Common::OutSaveFile *out) {
+	//  Store the sample count and character count
+	out->writeSint16LE(sampleCount);
+	out->writeSint16LE(charCount);
+
+	//  Store the text boundaries
+	bounds.write(out);
+
+	//  Store the pen color and outline color
+	out->writeUint16LE(penColor);
+	out->writeUint16LE(outlineColor);
+
+	//  Store the object's ID
+	out->writeUint16LE(objID);
+
+	//  Store the thread ID
+	out->writeSint16LE(thread);
+
+	//  Store the flags.  NOTE:  Make sure this speech is not stored
+	//  as being active
+	out->writeSint16LE(speechFlags & ~spActive);
+
+	debugC(4, kDebugSaveload, "...... sampleCount = %d", sampleCount);
+	debugC(4, kDebugSaveload, "...... charCount = %d", charCount);
+	debugC(4, kDebugSaveload, "...... penColor = %d", penColor);
+	debugC(4, kDebugSaveload, "...... outlineColor = %d", outlineColor);
+	debugC(4, kDebugSaveload, "...... bounds = (%d, %d, %d, %d)",
+	       bounds.x, bounds.y, bounds.width, bounds.height);
+	debugC(4, kDebugSaveload, "...... objID = %d", objID);
+	debugC(4, kDebugSaveload, "...... thread = %d", thread);
+	debugC(4, kDebugSaveload, "...... speechFlags = %d", speechFlags);
+
+	for (int i = 0; i < sampleCount; i++) {
+		out->writeUint32LE(sampleID[i]);
+		debugC(4, kDebugSaveload, "...... sampleID[%d] = %d", i, sampleID[i]);
+	}
+
+	//  Store the text
+	out->write(speechBuffer, charCount);
+	debugC(4, kDebugSaveload, "...... speechBuffer = %s", speechBuffer);
 }
 
 //-----------------------------------------------------------------------
@@ -963,6 +1055,26 @@ SpeechTaskList::SpeechTaskList(void **buf) {
 	*buf = bufferPtr;
 }
 
+SpeechTaskList::SpeechTaskList(Common::InSaveFile *in) {
+	int16 count;
+
+	lockFlag = false;
+
+	//  Get the speech count
+	count = in->readSint16LE();
+	debugC(3, kDebugSaveload, "... count = %d", count);
+
+	//  Restore the speeches
+	for (int i = 0; i < count; i++) {
+		Speech *sp = new Speech;
+		assert(sp != NULL);
+		debugC(3, kDebugSaveload, "Loading Speech %d", i++);
+
+		_inactiveList.push_back(sp);
+		sp->read(in);
+	}
+}
+
 //-----------------------------------------------------------------------
 //	Return the number of bytes needed to archive the speech tasks
 
@@ -1009,6 +1121,31 @@ void *SpeechTaskList::archive(void *buf) {
 	}
 
 	return buf;
+}
+
+void SpeechTaskList::write(Common::OutSaveFile *out) {
+	int i = 0;
+	int16 count = 0;
+
+	count += _list.size() + _inactiveList.size();
+
+	//  Store speech count
+	out->writeSint16LE(count);
+	debugC(3, kDebugSaveload, "... count = %d", count);
+
+	//  Store active speeches
+	for (Common::List<Speech *>::iterator it = _list.begin();
+			it != _list.end(); ++it) {
+		debugC(3, kDebugSaveload, "Saving Speech %d (active)", i++);
+		(*it)->write(out);
+	}
+
+	//  Store inactive speeches
+	for (Common::List<Speech *>::iterator it = _inactiveList.begin();
+			it != _inactiveList.end(); ++it) {
+		debugC(3, kDebugSaveload, "Saving Speech %d (inactive)", i++);
+		(*it)->write(out);
+	}
 }
 
 //-----------------------------------------------------------------------
@@ -1183,6 +1320,19 @@ void saveSpeechTasks(SaveFileConstructor &saveGame) {
 	free(archiveBuffer);
 }
 
+void saveSpeechTasks(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving Speech Tasks");
+
+	int32 archiveBufSize;
+
+	archiveBufSize = speechList.archiveSize();
+
+	out->write("SPCH", 4);
+	out->writeUint32LE(archiveBufSize);
+
+	speechList.write(out);
+}
+
 //-----------------------------------------------------------------------
 //	Load the speech tasks from a save file
 
@@ -1209,6 +1359,19 @@ void loadSpeechTasks(SaveFileReader &saveGame) {
 	new (&speechList) SpeechTaskList(&bufferPtr);
 
 	free(archiveBuffer);
+}
+
+void loadSpeechTasks(Common::InSaveFile *in, int32 chunkSize) {
+	debugC(2, kDebugSaveload, "Loading Speech Tasks");
+
+	//  If there is no saved data, simply call the default constructor
+	if (chunkSize == 0) {
+		new (&speechList) SpeechTaskList;
+		return;
+	}
+
+	//  Reconstruct stackList from archived data
+	new (&speechList) SpeechTaskList(in);
 }
 
 //-----------------------------------------------------------------------

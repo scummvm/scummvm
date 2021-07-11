@@ -314,6 +314,9 @@ public:
 		height = r.height;
 	}
 
+	void read(Common::InSaveFile *in);
+	void write(Common::OutSaveFile *out);
+
 	//  Rect16 operators
 
 	friend int     operator==(Rect16 a, Rect16 b) {
