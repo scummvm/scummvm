@@ -153,6 +153,9 @@
 				<widget name = 'LoadGameButton'
 						height = 'Globals.Button.Height'
 				/>
+				<widget name = 'RecorderButton'
+						height = 'Globals.Button.Height'
+				/>
 				<widget name = 'AddGameButton'
 						height = 'Globals.Button.Height'
 				/>
