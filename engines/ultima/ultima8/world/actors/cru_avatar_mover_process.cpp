@@ -311,10 +311,14 @@ void CruAvatarMoverProcess::handleNormalMode() {
 		// if we were running, slow to a walk before stopping
 		// (even in stasis)
 		Animation::Sequence nextanim;
-		if (rebelBase)
+		if (rebelBase) {
 			nextanim = Animation::stand;
-		else
+		} else {
 			nextanim = Animation::stopRunningAndDrawSmallWeapon;
+			// Robots don't slow down from  running
+			if (!avatar->hasAnim(nextanim))
+				nextanim = Animation::stand;
+		}
 		waitFor(avatar->doAnim(nextanim, direction));
 		avatar->setInCombat(0);
 		return;
