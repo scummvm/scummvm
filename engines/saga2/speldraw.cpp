@@ -66,6 +66,7 @@ EffectDisplayPrototype::EffectDisplayPrototype(
 	breadth = newBreadth;
 	init    = newInit;
 	next = nullptr;
+	ID = spellNone;
 }
 
 /* ===================================================================== *
@@ -141,6 +142,9 @@ SpellDisplayPrototype::SpellDisplayPrototype(
 	secondarySpriteID = spID; // RES_ID( x, y, z, 0 ) to get sprites
 	secondarySpriteNo = sco; // sprites available
 	//effCount=eco;      // effectrons to allocate
+
+	ID = spellNone;
+	implementAge = 0;
 }
 
 SpellDisplayPrototype *SpellDisplayPrototypeList::operator[](SpellID s) {

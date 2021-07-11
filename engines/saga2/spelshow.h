@@ -111,10 +111,6 @@ typedef void SpellInitFunction(Effectron *);
 //
 
 class EffectDisplayPrototype {
-
-#ifdef __WATCOMC__
-#pragma off (unreferenced) ;
-#endif
 	static SPELLLOCATIONFUNCTION(nullLocation) {
 		return TilePoint(0, 0, 0);
 	}
@@ -132,9 +128,6 @@ class EffectDisplayPrototype {
 	}
 	static SPELLINITFUNCTION(nullInit) {
 	}
-#ifdef __WATCOMC__
-#pragma on (unreferenced) ;
-#endif
 
 	EffectID                ID;
 public:
