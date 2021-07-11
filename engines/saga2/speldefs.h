@@ -191,12 +191,14 @@ public:
 		loc = tp;
 		next = nullptr;
 		tag = nullptr;
+		obj = nullptr;
 	}
 	SpellTarget(ActiveItem *ai) {
 		type = spellTargetTAG;
 		tag = ai;
 		next = nullptr;
 		tag = nullptr;
+		obj = nullptr;
 	}
 	SpellTarget(StorageSpellTarget &sst);
 
