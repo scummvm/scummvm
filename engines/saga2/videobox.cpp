@@ -50,6 +50,9 @@ CVideoBox::CVideoBox(const Rect16 &box,
 
 	// null out the decRes pointer
 	decRes = NULL;
+
+	rInfo.result = -1;
+	rInfo.running = false;
 }
 
 CVideoBox::~CVideoBox(void) {
