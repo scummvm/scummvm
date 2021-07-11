@@ -790,9 +790,7 @@ class HuntTask : public Task {
 
 public:
 	//  Constructor -- initial construction
-	HuntTask(TaskStack *ts) :
-		Task(ts),
-		huntFlags(0) {
+	HuntTask(TaskStack *ts) : Task(ts), huntFlags(0), subTask(nullptr) {
 		debugC(2, kDebugTasks, " - HuntTask");
 		_type = "HuntTask";
 	}
@@ -1381,7 +1379,7 @@ public:
 		int             bandIndex;
 
 	public:
-		BandingRepulsorIterator(Actor *actor) : a(actor) {}
+		BandingRepulsorIterator(Actor *actor) : a(actor), band(nullptr), bandIndex(0) {}
 
 		bool first(
 		    TilePoint   &repulsorVector,
@@ -1406,7 +1404,9 @@ public:
 
 	public:
 		BandAndAvoidEnemiesRepulsorIterator(Actor *actor) :
-			BandingRepulsorIterator(actor) {
+				BandingRepulsorIterator(actor), numActors(0), actorIndex(0), iteratingThruEnemies(false) {
+			for (int i = 0; i < 6; i++)
+				actorArray[i] = 0;
 		}
 
 	private:
@@ -1565,7 +1565,7 @@ public:
 		Task(ts),
 		gotoWayPoint(NULL),
 		patrolIter(iter),
-		lastWayPointNum(stopAt) {
+		lastWayPointNum(stopAt), counter(0) {
 		debugC(2, kDebugTasks, " - FollowPatrolRouteTask");
 		_type = "FollowPatrolRouteTask";
 		followPatrolRoute();
