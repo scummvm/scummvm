@@ -479,6 +479,10 @@ public:
 	}
 
 private:
+	String GetOldBlockName(int block_id) const override {
+		return GetRoomBlockName((RoomFileBlock)block_id);
+	}
+
 	HError ReadBlock(int block_id, const String &ext_id,
 		soff_t block_len, bool &read_next) override {
 		return ReadRoomBlock(_room, _in, (RoomFileBlock)block_id, ext_id, block_len, _dataVer);
