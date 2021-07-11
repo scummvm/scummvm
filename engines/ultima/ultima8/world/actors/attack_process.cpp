@@ -159,10 +159,13 @@ void AttackProcess::run() {
 	Actor *a = getActor(_itemNum);
 	Actor *target = getActor(_target);
 
-	if (!a || !a->hasFlags(Item::FLG_FASTAREA) || a->isDead() || !_tacticDatReadStream) {
+	if (!a || a->isDead() || !_tacticDatReadStream) {
 		terminate();
 		return;
 	}
+	
+	if (!a->hasFlags(Item::FLG_FASTAREA))
+		return;
 
 	if (_tactic == 0) {
 		genericAttack();
