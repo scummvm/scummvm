@@ -1545,7 +1545,7 @@ void Actor::write(Common::OutSaveFile *out) {
 
 	if (flags & hasAssignment)
 		writeAssignment(this, out);
-	
+
 	debugC(4, kDebugSaveload, "... faction = %d", faction);
 	debugC(4, kDebugSaveload, "... colorScheme = %d", colorScheme);
 	debugC(4, kDebugSaveload, "... appearanceID = %d", appearanceID);
@@ -3777,13 +3777,9 @@ void loadActors(SaveFileReader &saveGame) {
 
 	saveGame.read(archiveBuffer, archiveBufSize);
 
-	for (i = 0, bufferPtr = archiveBuffer;
-	        i < actorCount;
-	        i++)
+	for (i = 0, bufferPtr = archiveBuffer; i < actorCount; i++)
 		//  Initilize actors with archive data
 		new (&actorList[i]) Actor(&bufferPtr);
-
-	assert(bufferPtr == &((char *)archiveBuffer)[archiveBufSize]);
 
 	//  Deallocate the archive buffer
 	free(archiveBuffer);
