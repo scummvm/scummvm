@@ -870,6 +870,9 @@ public:
 	ActiveRegion() : anchor(0), worldID(0) {}
 	void update(void);
 
+	void read(Common::InSaveFile *in);
+	void write(Common::OutSaveFile *out);
+
 	//  Return the current region in tile point coords
 	TileRegion getRegion(void) {
 		TileRegion      tReg;
@@ -896,7 +899,9 @@ ActiveRegion *getActiveRegion(PlayerActorID id);
 
 void initActiveRegions(void);
 void saveActiveRegions(SaveFileConstructor &saveGame);
+void saveActiveRegions(Common::OutSaveFile *out);
 void loadActiveRegions(SaveFileReader &saveGame);
+void loadActiveRegions(Common::InSaveFile *in);
 inline void cleanupActiveRegions(void) {}
 
 /* ======================================================================= *

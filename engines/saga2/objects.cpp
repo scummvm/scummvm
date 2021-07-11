@@ -3347,6 +3347,32 @@ void Sector::write(Common::OutSaveFile *out) {
 //-------------------------------------------------------------------
 //	Update this active region
 
+void ActiveRegion::read(Common::InSaveFile *in) {
+	anchor = in->readUint16LE();
+	anchorLoc.load(in);
+	worldID = in->readUint16LE();
+	region.read(in);
+
+	debugC(4, kDebugSaveload, "... anchor = %d", anchor);
+	debugC(4, kDebugSaveload, "... anchorLoc = (%d, %d, %d)", anchorLoc.u, anchorLoc.v, anchorLoc.z);
+	debugC(4, kDebugSaveload, "... worldID = %d", worldID);
+	debugC(4, kDebugSaveload, "... region = (min: (%d, %d, %d), max: (%d, %d, %d))",
+	       region.min.u, region.min.v, region.min.z, region.max.u, region.max.v, region.max.z);
+}
+
+void ActiveRegion::write(Common::OutSaveFile *out) {
+	out->writeUint16LE(anchor);
+	anchorLoc.write(out);
+	out->writeUint16LE(worldID);
+	region.write(out);
+
+	debugC(4, kDebugSaveload, "... anchor = %d", anchor);
+	debugC(4, kDebugSaveload, "... anchorLoc = (%d, %d, %d)", anchorLoc.u, anchorLoc.v, anchorLoc.z);
+	debugC(4, kDebugSaveload, "... worldID = %d", worldID);
+	debugC(4, kDebugSaveload, "... region = (min: (%d, %d, %d), max: (%d, %d, %d))",
+	       region.min.u, region.min.v, region.min.z, region.max.u, region.max.v, region.max.z);
+}
+
 void ActiveRegion::update(void) {
 	GameObject  *obj = GameObject::objectAddress(anchor);
 	GameWorld   *world = (GameWorld *)GameObject::objectAddress(worldID);
@@ -3504,11 +3530,32 @@ void saveActiveRegions(SaveFileConstructor &saveGame) {
 	    sizeof(activeRegionList));
 }
 
+void saveActiveRegions(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving ActiveRegions");
+
+	out->write("AREG", 4);
+	out->writeUint32LE(sizeof(activeRegionList));
+
+	for (int i = 0; i < playerActors; ++i) {
+		debugC(3, kDebugSaveload, "Saving Active Region %d", i);
+		activeRegionList[i].write(out);
+	}
+}
+
 //-------------------------------------------------------------------
 //	Load the active regions from a save file
 
 void loadActiveRegions(SaveFileReader &saveGame) {
 	saveGame.read(&activeRegionList, sizeof(activeRegionList));
+}
+
+void loadActiveRegions(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading ActiveRegions");
+
+	for (int i = 0; i < playerActors; ++i) {
+		debugC(3, kDebugSaveload, "Loading Active Region %d", i);
+		activeRegionList[i].read(in);
+	}
 }
 
 /* ======================================================================= *

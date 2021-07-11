@@ -222,6 +222,16 @@ const extern StaticTilePoint Nowhere;
 struct TileRegion {
 	TilePoint	min,
 				max;
+
+	void read(Common::InSaveFile *in) {
+		min.load(in);
+		max.load(in);
+	}
+
+	void write(Common::OutSaveFile *out) {
+		min.write(out);
+		max.write(out);
+	}
 };
 
 /* ============================================================================ *
