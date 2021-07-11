@@ -140,6 +140,12 @@ private:
 		return GetTraBlockName((TraFileBlock)block_id);
 	}
 
+	soff_t GetOverLeeway(int block_id) const override {
+		// TRA files made by pre-3.0 editors have a block length miscount by 1 byte
+		if (block_id == kTraFblk_GameID) return 1;
+		return 0;
+	}
+
 	HError ReadBlock(int block_id, const String &ext_id,
 		soff_t block_len, bool &read_next) override {
 		return ReadTraBlock(_tra, _in, (TraFileBlock)block_id, ext_id, block_len);

@@ -99,6 +99,12 @@ public:
 		return String::FromFormat("id:%d", blockId);
 	}
 
+	// Provides a leeway for over-reading (reading past the reported block length):
+	// the parser will not error if the mistake is in this range of bytes
+	virtual soff_t GetOverLeeway(int block_id) const {
+		return 0;
+	}
+
 	// Gets a stream
 	inline Stream *GetStream() {
 		return _in;
