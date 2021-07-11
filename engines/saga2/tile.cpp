@@ -1874,7 +1874,7 @@ void saveAutoMap(SaveFileConstructor &saveGame) {
 	//  for each map metatile slot
 	archiveBufSize = (totalMapSize + 7) >> 3;
 
-	archiveBuffer = (uint8 *)malloc(archiveBufSize);
+	archiveBuffer = (uint8 *)calloc(1, archiveBufSize);
 	if (archiveBuffer == nullptr)
 		error("Unable to allocate auto map archive buffer");
 
