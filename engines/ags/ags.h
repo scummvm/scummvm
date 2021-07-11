@@ -49,8 +49,8 @@ namespace AGS {
  * @brief Engine to run Adventure Game Studio games.
  */
 
-/* Synced up to upstream: AGS 3.5.1.8
- * 811f6c126fcff1cc5a0db8b6e0a1b9fca2550235
+/* Synced up to upstream:
+ * 4e2df949ff36bbb6d08e402586dc8c2bb02ecad9
  */
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200

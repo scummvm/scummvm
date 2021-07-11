@@ -34,7 +34,6 @@
 #include "ags/engine/ac/string.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
-#include "ags/shared/util/misc.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/core/asset_manager.h"
@@ -477,12 +476,12 @@ bool DoesAssetExistInLib(const AssetPath &path) {
 }
 
 String find_assetlib(const String &filename) {
-	String libname = cbuf_to_string_and_free(ci_find_file(_GP(ResPaths).DataDir.GetCStr(), filename.GetCStr()));
+	String libname = File::FindFileCI(_GP(ResPaths).DataDir, filename);
 	if (AssetManager::IsDataFile(libname))
 		return libname;
 	if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).DataDir2) != 0) {
 		// Hack for running in Debugger
-		libname = cbuf_to_string_and_free(ci_find_file(_GP(ResPaths).DataDir2.GetCStr(), filename.GetCStr()));
+		libname = File::FindFileCI(_GP(ResPaths).DataDir2, filename);
 		if (AssetManager::IsDataFile(libname))
 			return libname;
 	}

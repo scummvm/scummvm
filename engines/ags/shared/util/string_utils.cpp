@@ -30,13 +30,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-String cbuf_to_string_and_free(char *char_buf) {
-	String s = char_buf;
-	free(char_buf);
-	return s;
-}
-
-
 namespace AGS {
 namespace Shared {
 

@@ -37,10 +37,6 @@ using namespace AGS; // FIXME later
 
 //=============================================================================
 
-// Converts char* to string and frees original malloc-ed array;
-// This is used when we get a malloc'd char array from some utility function.
-Shared::String cbuf_to_string_and_free(char *char_buf);
-
 namespace AGS {
 namespace Shared {
 namespace StrUtil {

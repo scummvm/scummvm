@@ -32,7 +32,6 @@
 #include "ags/shared/ac/words_dictionary.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/game/tra_file.h"
-#include "ags/shared/util/misc.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/globals.h"

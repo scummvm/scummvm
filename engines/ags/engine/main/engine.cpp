@@ -78,10 +78,7 @@
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/error.h"
-#include "ags/shared/util/misc.h"
 #include "ags/shared/util/path.h"
-//#include "ags/engine/media/audio/audio_core.h"
-//#include "ags/engine/platform/util/pe.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
 

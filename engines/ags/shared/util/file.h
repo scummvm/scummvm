@@ -82,6 +82,14 @@ inline Stream *OpenFileRead(const String &filename) {
 inline Stream *OpenFileWrite(const String &filename) {
 	return OpenFile(filename, kFile_Create, kFile_Write);
 }
+
+// Case insensitive find file
+String FindFileCI(const String &dir_name, const String &file_name);
+// Case insensitive file open: looks up for the file using FindFileCI
+Stream *OpenFileCI(const String &file_name,
+	FileOpenMode open_mode = kFile_Open,
+	FileWorkMode work_mode = kFile_Read);
+
 } // namespace File
 
 } // namespace Shared
