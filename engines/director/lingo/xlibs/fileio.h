@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DIRECTOR_LINGO_XOBJECT_FILEIO_H
-#define DIRECTOR_LINGO_XOBJECT_FILEIO_H
+#ifndef DIRECTOR_LINGO_XLIBS_FILEIO_H
+#define DIRECTOR_LINGO_XLIBS_FILEIO_H
 
 namespace Common {
 class SeekableReadStream;
