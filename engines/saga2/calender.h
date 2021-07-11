@@ -80,6 +80,9 @@ public:
 	void set(uint16 dur);
 	bool check(void);
 	uint16 elapsed(void);
+
+	void write(Common::OutSaveFile *out);
+	void read(Common::InSaveFile *in);
 };
 
 /* ===================================================================== *

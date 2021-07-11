@@ -48,8 +48,10 @@ void checkTimers(void);
 void initTimers(void);
 //  Save the active Timers in a save file
 void saveTimers(SaveFileConstructor &saveGame);
+void saveTimers(Common::OutSaveFile *out);
 //  Load Timers from a save file
 void loadTimers(SaveFileReader &saveGame);
+void loadTimers(Common::InSaveFile *in);
 //  Cleanup the active Timers
 void cleanupTimers(void);
 
@@ -67,6 +69,8 @@ public:
 	//  Constructor -- reconstruct from archive buffer
 	TimerList(void **buf);
 
+	TimerList(Common::InSaveFile *in);
+
 	~TimerList();
 
 	//  Return the number of bytes needed to archive this object in
@@ -77,6 +81,8 @@ public:
 
 	//  Archive this object in a buffer
 	void *archive(void *buf);
+
+	void write(Common::OutSaveFile *out);
 
 	GameObject *getObject(void) {
 		return _obj;
@@ -109,6 +115,9 @@ public:
 
 	//  Constructor -- reconstruct from archive buffer
 	Timer(void **buf);
+
+	Timer(Common::InSaveFile *in);
+
 	~Timer();
 
 	//  Return the number of bytes needed to archive this object in
@@ -117,6 +126,8 @@ public:
 
 	//  Archive this object in a buffer
 	void *archive(void *buf);
+
+	void write(Common::OutSaveFile *out);
 
 	GameObject *getObject(void) {
 		return _obj;

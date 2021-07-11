@@ -137,6 +137,16 @@ int CalenderTime::lightLevel(int maxLevel) {
    FrameAlarm member functions
  * ===================================================================== */
 
+void FrameAlarm::write(Common::OutSaveFile *out) {
+	out->writeUint16LE(baseFrame);
+	out->writeUint16LE(duration);
+}
+
+void FrameAlarm::read(Common::InSaveFile *in) {
+	baseFrame = in->readUint16LE();
+	duration = in->readUint16LE();
+}
+
 void FrameAlarm::set(uint16 dur) {
 	baseFrame = calender.frameInDay();
 	duration = dur;

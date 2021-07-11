@@ -241,6 +241,72 @@ void saveTimers(SaveFileConstructor &saveGame) {
 #endif
 }
 
+static int getTimerListID(TimerList *t) {
+	int i = 0;
+	for (Common::List<TimerList *>::iterator it = g_vm->_timerLists.begin(); it != g_vm->_timerLists.end(); it++, i++) {
+		if ((*it) == t)
+			return i;
+	}
+	return -1;
+}
+
+static int getTimerID(Timer *t) {
+	int i = 0;
+	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); it++, i++) {
+		if ((*it) == t)
+			return i;
+	}
+	return -1;
+}
+
+void saveTimers(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving Timers");
+
+	int16 timerListCount = 0,
+	      timerCount = 0;
+
+	int32 archiveBufSize = 0;
+
+	//  Add the sizes of the timer list count an timer count
+	archiveBufSize += sizeof(timerListCount) + sizeof(timerCount);
+
+	//  Tally the timer lists
+	timerListCount = g_vm->_timerLists.size();
+
+	//  Add the total archive size of all of the timer lists
+	archiveBufSize += timerListCount * TimerList::archiveSize();
+
+	//  Tally the timers
+	timerCount = g_vm->_timers.size();
+
+	debugC(3, kDebugSaveload, "... timerListCount = %d", timerListCount);
+	debugC(3, kDebugSaveload, "... timerCount = %d", timerCount);
+
+	//  Add the total archive size of all of the timers
+	archiveBufSize += timerCount * Timer::archiveSize();
+
+	out->write("TIMR", 4);
+	out->writeUint32LE(archiveBufSize);
+
+	//  Store the timer list count and timer count
+	out->writeSint16LE(timerListCount);
+	out->writeSint16LE(timerCount);
+
+	//  Archive all timer lists
+	for (Common::List<TimerList *>::iterator it = g_vm->_timerLists.begin(); it != g_vm->_timerLists.end(); it++) {
+		debugC(3, kDebugSaveload, "Saving TimerList %d", getTimerListID(*it));
+		(*it)->write(out);
+	}
+
+	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); it++) {
+		if ((*it)->_active == false)
+			continue;
+		debugC(3, kDebugSaveload, "Saving Timer %d", getTimerID(*it));
+
+		(*it)->write(out);
+	}
+}
+
 //----------------------------------------------------------------------
 //	Load the Timers from a save file
 
@@ -298,6 +364,46 @@ void loadTimers(SaveFileReader &saveGame) {
 #endif
 }
 
+void loadTimers(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading Timers");
+
+	int16 timerListCount,
+	      timerCount;
+
+	//  Get the timer list count and timer count
+	timerListCount = in->readSint16LE();
+	timerCount = in->readSint16LE();
+
+	debugC(3, kDebugSaveload, "... timerListCount = %d", timerListCount);
+	debugC(3, kDebugSaveload, "... timerCount = %d", timerCount);
+
+	//  Restore all timer lists
+	for (int i = 0; i < timerListCount; i++) {
+		debugC(3, kDebugSaveload, "Loading TimerList %d", i);
+		new TimerList(in);
+	}
+
+	//  Restore all timers
+	for (int i = 0; i < timerCount; i++) {
+		Timer       *timer;
+		TimerList   *timerList;
+
+		debugC(3, kDebugSaveload, "Loading Timer %d", i);
+
+		timer = new Timer(in);
+
+		assert(timer != NULL);
+
+		//  Get the objects's timer list
+		timerList = fetchTimerList(timer->getObject());
+
+		assert(timerList != NULL);
+
+		//  Append this timer to the objects's timer list
+		timerList->_timers.push_back(timer);
+	}
+}
+
 //----------------------------------------------------------------------
 //	Cleanup the active Timers
 
@@ -342,6 +448,17 @@ TimerList::TimerList(void **buf) {
 	g_vm->_timerLists.push_back(this);
 }
 
+TimerList::TimerList(Common::InSaveFile *in) {
+	ObjectID id = in->readUint16LE();
+
+	assert(isObject(id) || isActor(id));
+
+	//  Restore the object pointer
+	_obj = GameObject::objectAddress(id);
+
+	g_vm->_timerLists.push_back(this);
+}
+
 TimerList::~TimerList() {
 	debugC(1, kDebugTimers, "Deleting timer list %p for %p (%s))",
 		   (void *)this, (void *)_obj, _obj->objName());
@@ -357,6 +474,11 @@ void *TimerList::archive(void *buf) {
 	buf = (ObjectID *)buf + 1;
 
 	return buf;
+}
+
+void TimerList::write(Common::OutSaveFile *out) {
+	//  Store the object's ID
+	out->writeUint16LE(_obj->thisID());
 }
 
 /* ===================================================================== *
@@ -390,6 +512,26 @@ Timer::Timer(void **buf) {
 	bufferPtr = (FrameAlarm *)bufferPtr + 1;
 
 	*buf = bufferPtr;
+
+	g_vm->_timers.push_back(this);
+}
+
+Timer::Timer(Common::InSaveFile *in) {
+	ObjectID id = in->readUint16LE();
+
+	assert(isObject(id) || isActor(id));
+
+	//  Restore the object pointer
+	_obj = GameObject::objectAddress(id);
+
+	//  Restore the timer's ID
+	_id = in->readSint16LE();
+
+	//  Restore the frame interval
+	_interval = in->readSint16LE();
+
+	//  Restore the alarm
+	_alarm.read(in);
 
 	g_vm->_timers.push_back(this);
 }
@@ -430,6 +572,20 @@ void *Timer::archive(void *buf) {
 	buf = (FrameAlarm *)buf + 1;
 
 	return buf;
+}
+
+void Timer::write(Common::OutSaveFile *out) {
+	//  Store the obj's ID
+	out->writeUint16LE(_obj->thisID());
+
+	//  Store the timer's ID
+	out->writeSint16LE(_id);
+
+	//  Store the frame interval
+	out->writeSint16LE(_interval);
+
+	//  Store the alarm
+	_alarm.write(out);
 }
 
 } // end of namespace Saga2

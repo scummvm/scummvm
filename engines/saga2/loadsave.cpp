@@ -162,9 +162,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveTileTasks(out);
 	saveSpeechTasks(out);
 	saveActiveRegions(out);
+	saveTimers(out);
 
 #if 0
-	saveTimers(saveGame);
 	saveSensors(saveGame);
 	saveTempActorCount(saveGame);
 	saveMissions(saveGame);
@@ -351,15 +351,15 @@ void loadSavedGameState(int16 saveNo) {
 			loadActiveRegions(in);
 			loadFlags |= loadActiveRegionsFlag;
 			break;
-#if 0
 
 		case MKTAG('T', 'I', 'M', 'R'):
 			if (loadFlags & loadActorsFlag) {
-				loadTimers(saveGame);
+				loadTimers(in);
 				loadFlags |= loadTimersFlag;
 			} else
 				error("Timers loaded prematurely");
 			break;
+#if 0
 
 		case MKTAG('S', 'E', 'N', 'S'):
 			if (loadFlags & loadActorsFlag) {
