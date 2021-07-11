@@ -86,13 +86,12 @@ void DirectorEngine::processEvents() {
 }
 
 bool Window::processEvent(Common::Event &event) {
-	if (MacWindow::processEvent(event))
-		return true;
+	bool flag = MacWindow::processEvent(event);
 
 	if (_currentMovie && _currentMovie->processEvent(event))
-		return true;
+		flag = true;
 
-	return false;
+	return flag;
 }
 
 bool Movie::processEvent(Common::Event &event) {
