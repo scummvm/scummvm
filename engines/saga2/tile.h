@@ -612,6 +612,8 @@ public:
 	//  Reconstruct the TileActivityTaskList from an archive buffer
 	TileActivityTaskList(void **buf);
 
+	TileActivityTaskList(Common::SeekableReadStream *stream);
+
 	//  Return the number of bytes needed to archive this
 	//  TileActivityTaskList
 	int32 archiveSize(void);
@@ -619,6 +621,9 @@ public:
 	//  Create an archive of this TileActivityTaskList in the specified
 	//  archive buffer
 	Common::MemorySeekableReadWriteStream *archive(Common::MemorySeekableReadWriteStream *stream);
+
+	void read(Common::InSaveFile *in);
+	void write(Common::OutSaveFile *out);
 
 	//  Cleanup this list
 	void cleanup(void);
@@ -1002,9 +1007,11 @@ void initTileTasks(void);
 
 //  Save the tile activity task list to a save file
 void saveTileTasks(SaveFileConstructor &saveGame);
+void saveTileTasks(Common::OutSaveFile *out);
 
 //  Load the tile activity task list from a save file
 void loadTileTasks(SaveFileReader &saveGame);
+void loadTileTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the tile activity task list
 void cleanupTileTasks(void);

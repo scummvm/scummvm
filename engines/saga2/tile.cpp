@@ -1098,6 +1098,10 @@ TileActivityTaskList::TileActivityTaskList(void **buf) {
 #endif
 }
 
+TileActivityTaskList::TileActivityTaskList(Common::SeekableReadStream *stream) {
+	read(stream);
+}
+
 //-----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this
 //	TileActivityTaskList
@@ -1132,6 +1136,54 @@ Common::MemorySeekableReadWriteStream *TileActivityTaskList::archive(Common::Mem
 	}
 
 	return stream;
+}
+
+void TileActivityTaskList::read(Common::InSaveFile *in) {
+	int16 taskCount;
+
+	//  Retreive the task count
+	taskCount = in->readSint16LE();
+	debugC(3, kDebugSaveload, "... taskCount = %d", taskCount);
+
+	for (int i = 0; i < taskCount; i++) {
+		ActiveItem  *tai;
+		uint8       activityType;
+
+		int16 val = in->readSint16LE();
+		tai = ActiveItem::activeItemAddress(ActiveItemID(val));
+		debugC(4, kDebugSaveload, "...... activeItemID = %d", val);
+
+		activityType = in->readByte();
+		debugC(4, kDebugSaveload, "...... activityType = %d", activityType);
+
+		if (tai != nullptr) {
+			TileActivityTask *tat;
+
+			tat = newTask(tai);
+			if (tat != nullptr)
+				tat->activityType = activityType;
+		}
+	}
+}
+
+void TileActivityTaskList::write(Common::OutSaveFile *out) {
+	int16 taskCount = _list.size();
+
+	//  Store the task count
+	out->writeSint16LE(taskCount);
+	debugC(3, kDebugSaveload, "... taskCount = %d", taskCount);
+
+	for (Common::List<TileActivityTask *>::iterator it = _list.begin(); it != _list.end(); ++it) {
+		ActiveItem  *ai = (*it)->tai;
+
+		//  Store the activeItemID
+		out->writeSint16LE(ai->thisID().val);
+		debugC(4, kDebugSaveload, "...... activeItemID = %d", ai->thisID().val);
+
+		//  Store the task type
+		out->writeByte((*it)->activityType);
+		debugC(4, kDebugSaveload, "...... activityType = %d", (*it)->activityType);
+	}
 }
 
 //-----------------------------------------------------------------------
@@ -1384,6 +1436,18 @@ void saveTileTasks(SaveFileConstructor &saveGame) {
 	delete stream;
 }
 
+void saveTileTasks(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving TileActivityTasks");
+
+	int32   archiveBufSize;
+	archiveBufSize = aTaskList.archiveSize();
+
+	out->write("TACT", 4);
+	out->writeUint32LE(archiveBufSize);
+
+	aTaskList.write(out);
+}
+
 //-----------------------------------------------------------------------
 //	Load the tile activity task list from a save file
 
@@ -1410,6 +1474,17 @@ void loadTileTasks(SaveFileReader &saveGame) {
 	new (&aTaskList) TileActivityTaskList(&bufferPtr);
 
 	free(archiveBuffer);
+}
+
+void loadTileTasks(Common::InSaveFile *in, int32 chunkSize) {
+	debugC(2, kDebugSaveload, "Loading TileActivityTasks");
+
+	//  If there is no saved data, simply call the default constructor
+	if (chunkSize == 0)
+		return;
+
+	//  Reconstruct aTaskList from archived data
+	aTaskList.read(in);
 }
 
 
