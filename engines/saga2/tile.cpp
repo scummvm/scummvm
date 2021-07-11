@@ -4970,10 +4970,8 @@ uint16 lineDist(
 			dist = v - u2 * u / v2;
 	} else if (u2 == 0)
 		dist = v;
-	else if (v2 == 0)
+	else // here v2 == 0
 		dist = u;
-	else
-		dist = lineFar;
 
 	return ABS(dist);
 }
