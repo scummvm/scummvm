@@ -63,7 +63,6 @@ Symbol::Symbol() {
 	*refCount = 1;
 	nargs = 0;
 	maxArgs = 0;
-	parens = true;
 	targetType = kNoneObj;
 	argNames = nullptr;
 	varNames = nullptr;
@@ -81,7 +80,6 @@ Symbol::Symbol(const Symbol &s) {
 	*refCount += 1;
 	nargs = s.nargs;
 	maxArgs = s.maxArgs;
-	parens = s.parens;
 	targetType = s.targetType;
 	argNames = s.argNames;
 	varNames = s.varNames;
@@ -103,7 +101,6 @@ Symbol& Symbol::operator=(const Symbol &s) {
 	*refCount += 1;
 	nargs = s.nargs;
 	maxArgs = s.maxArgs;
-	parens = s.parens;
 	targetType = s.targetType;
 	argNames = s.argNames;
 	varNames = s.varNames;

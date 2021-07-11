@@ -84,7 +84,6 @@ struct Symbol {	/* symbol table entry */
 
 	int nargs;		/* number of arguments */
 	int maxArgs;	/* maximal number of arguments, for builtins */
-	bool parens;	/* whether parens required or not, for builitins */
 	int targetType;	/* valid target objects, for method builtins */
 
 	Common::Array<Common::String> *argNames;
