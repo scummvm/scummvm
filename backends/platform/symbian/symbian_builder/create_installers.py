@@ -27,11 +27,11 @@ from common_names import *
 
 def makesis(pkg, path):
    print "pkg: %s" %pkg
-   t = "makesis -c %s" %pkg
-   cmd = subprocess.Popen(t, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=path, shell=True)
+   cmd = subprocess.Popen("makesis -v %s" %pkg, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=path, shell=True)
    out, err = cmd.communicate()
-   SafeWriteFile(build_log, out)
-   SafeWriteFile(build_err, err)
+   #After cmd.communicate() we have ugly 'crcrlf' line endings
+   AppendToFile(build_log, out.replace(u"\r", u""))
+   AppendToFile(build_err, err.replace(u"\r", u""))
 
 def create_installers(path):
    t = os.listdir(path)
