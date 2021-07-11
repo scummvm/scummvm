@@ -556,16 +556,6 @@ void CPortrait::ORset(uint16 brotherID, PortraitType type) { // brotherID = post
 	setPortrait(brotherID);
 }
 
-size_t appendToStr(char *dst, const char *src, size_t srcLen, size_t maxCpyLen) {
-	size_t      cpyLen;
-
-	cpyLen = MIN(srcLen, maxCpyLen);
-	memcpy(dst, src, cpyLen);
-	dst[cpyLen] = '\0';
-
-	return cpyLen;
-}
-
 void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 	static char asleepStr[]         = ASLEEP_STATE;
 	static char paralysedStr[]      = PARALY_STATE;
@@ -582,7 +572,6 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 	PlayerActor     *pa = getPlayerActorAddress(brotherID);
 	Actor           *a = pa->getActor();
 	ActorAttributes &stats = pa->getBaseStats();
-	size_t          length = 0;
 
 	buf[size - 1] = '\0';
 
@@ -594,96 +583,43 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 	buf[0] = '\0';
 
 	if (a->enchantmentFlags & (1 << actorAsleep)) {
-		length +=   appendToStr(
-		                &buf[length],
-		                asleepStr,
-		                ARRAYSIZE(asleepStr) - 1,
-		                size - length - 1);
+		Common::strlcat(buf, asleepStr, size);
 	} else if (a->enchantmentFlags & (1 << actorParalyzed)) {
-		length +=   appendToStr(
-		                &buf[length],
-		                paralysedStr,
-		                ARRAYSIZE(paralysedStr) - 1,
-		                size - length - 1);
+		Common::strlcat(buf, paralysedStr, size);
 	} else if (a->enchantmentFlags & (1 << actorBlind)) {
-		length +=   appendToStr(
-		                &buf[length],
-		                blindStr,
-		                ARRAYSIZE(blindStr) - 1,
-		                size - length - 1);
+		Common::strlcat(buf, blindStr, size);
 	} else if (a->enchantmentFlags & (1 << actorFear)) {
-		length +=   appendToStr(
-		                &buf[length],
-		                afraidStr,
-		                ARRAYSIZE(afraidStr) - 1,
-		                size - length - 1);
+		Common::strlcat(buf, afraidStr, size);
 	} else if (pa->isAggressive()) {
-		length +=   appendToStr(
-		                &buf[length],
-		                angryStr,
-		                ARRAYSIZE(angryStr) - 1,
-		                size - length - 1);
+		Common::strlcat(buf, angryStr, size);
 	}
 
 	if (stats.vitality >= a->effectiveStats.vitality * 3) {
-		if (length != 0)
-			length +=   appendToStr(
-			                &buf[length],
-			                commaStr,
-			                ARRAYSIZE(commaStr) - 1,
-			                size - length - 1);
-		length +=   appendToStr(
-		                &buf[length],
-		                badlyWoundedStr,
-		                ARRAYSIZE(badlyWoundedStr) - 1,
-		                size - length - 1);
+		if (buf[0] != '\0')	// strlen(buf) > 0
+			Common::strlcat(buf, commaStr, size);
+
+		Common::strlcat(buf, badlyWoundedStr, size);
 	} else if (stats.vitality * 2 > a->effectiveStats.vitality * 3) {
-		if (length != 0)
-			length +=   appendToStr(
-			                &buf[length],
-			                commaStr,
-			                ARRAYSIZE(commaStr) - 1,
-			                size - length - 1);
-		length +=   appendToStr(
-		                &buf[length],
-		                hurtStr,
-		                ARRAYSIZE(hurtStr) - 1,
-		                size - length - 1);
+		if (buf[0] != '\0')	// strlen(buf) > 0
+			Common::strlcat(buf, commaStr, size);
+
+		Common::strlcat(buf, hurtStr, size);
 	}
 
 	if (a->enchantmentFlags & (1 << actorPoisoned)) {
-		if (length != 0)
-			length +=   appendToStr(
-			                &buf[length],
-			                commaStr,
-			                ARRAYSIZE(commaStr) - 1,
-			                size - length - 1);
-		length +=   appendToStr(
-		                &buf[length],
-		                poisonedStr,
-		                ARRAYSIZE(poisonedStr) - 1,
-		                size - length - 1);
+		if (buf[0] != '\0')	// strlen(buf) > 0
+			Common::strlcat(buf, commaStr, size);
+
+		Common::strlcat(buf, poisonedStr, size);
 	} else if (a->enchantmentFlags & (1 << actorDiseased)) {
-		if (length != 0)
-			length +=   appendToStr(
-			                &buf[length],
-			                commaStr,
-			                ARRAYSIZE(commaStr) - 1,
-			                size - length - 1);
-		length +=   appendToStr(
-		                &buf[length],
-		                diseasedStr,
-		                ARRAYSIZE(diseasedStr) - 1,
-		                size - length - 1);
+		if (buf[0] != '\0')	// strlen(buf) > 0
+			Common::strlcat(buf, commaStr, size);
+
+		Common::strlcat(buf, diseasedStr, size);
 	}
 
-	if (length == 0) {
-		length +=   appendToStr(
-		                &buf[length],
-		                normalStr,
-		                ARRAYSIZE(normalStr) - 1,
-		                size - length - 1);
-	}
+	if (buf[0] == '\0')	// strlen(buf) == 0
+		Common::strlcat(buf, normalStr, size);
 }
 
 /* ===================================================================== *
