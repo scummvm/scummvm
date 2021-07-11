@@ -49,7 +49,7 @@ void EventsManager::pollEvents() {
 			_G(want_exit) = true;
 			_G(abort_engine) = true;
 			_G(check_dynamic_sprites_at_exit) = false;
-			break;
+			return;
 
 		case Common::EVENT_JOYAXIS_MOTION:
 			assert(e.joystick.axis < 32);

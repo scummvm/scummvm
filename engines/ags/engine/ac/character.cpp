@@ -2673,6 +2673,9 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 	_G(our_eip) = 155;
 	_display_at(tdxp, tdyp, bwidth, texx, DISPLAYTEXT_SPEECH, textcol, isThought, allowShrink, overlayPositionFixed);
+	if (_G(abort_engine))
+		return;
+
 	_G(our_eip) = 156;
 	if ((_GP(play).in_conversation > 0) && (_GP(game).options[OPT_SPEECHTYPE] == 3))
 		closeupface = nullptr;

@@ -543,7 +543,7 @@ void post_script_cleanup() {
 			quitprintf("undefined post script action found: %d", copyof.postScriptActions[ii]);
 		}
 		// if the room changed in a conversation, for example, abort
-		if (old_room_number != _G(displayed_room)) {
+		if (old_room_number != _G(displayed_room) || _G(abort_engine)) {
 			return;
 		}
 	}

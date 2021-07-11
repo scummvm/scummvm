@@ -290,7 +290,7 @@ int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionInde
 		}
 	}
 
-	if (_G(in_new_room) > 0)
+	if (_G(in_new_room) > 0 || _G(abort_engine))
 		return RUN_DIALOG_STOP_DIALOG;
 
 	if (_G(said_speech_line) > 0) {

@@ -769,6 +769,8 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	_G(our_eip) = 7;
 
 	update_polled_stuff_if_runtime();
+	if (_G(abort_engine))
+		return;
 
 	game_loop_update_background_animation();
 
@@ -783,6 +785,8 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	game_loop_update_fps();
 
 	update_polled_stuff_if_runtime();
+	if (_G(abort_engine))
+		return;
 
 	WaitForNextFrame();
 }
@@ -993,9 +997,8 @@ void update_polled_stuff_if_runtime() {
 	if (_G(want_exit)) {
 		_G(want_exit) = 0;
 		quit("||exit!");
-	}
 
-	if (_G(editor_debugging_initialized))
+	} else if (_G(editor_debugging_initialized))
 		check_for_messages_from_editor();
 }
 
