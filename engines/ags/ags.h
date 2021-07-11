@@ -67,8 +67,6 @@ private:
 public:
 	EventsManager *_events;
 	Music *_music;
-	Graphics::Screen *_rawScreen;
-	::AGS3::BITMAP *_screen;
 	::AGS3::GFX_DRIVER *_gfxDriver;
 	::AGS3::AGS::Engine::Mutex _sMutex;
 	::AGS3::AGS::Engine::Mutex _soundCacheMutex;
@@ -165,7 +163,6 @@ public:
 };
 
 extern AGSEngine *g_vm;
-#define screen ::AGS::g_vm->_screen
 #define gfx_driver ::AGS::g_vm->_gfxDriver
 #define SHOULD_QUIT ::AGS::g_vm->shouldQuit()
 

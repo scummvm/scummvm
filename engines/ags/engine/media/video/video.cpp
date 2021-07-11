@@ -72,7 +72,7 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 
 	update_polled_stuff_if_runtime();
 
-	Graphics::Screen &scr = *::AGS::g_vm->_rawScreen;
+	Graphics::Screen scr;
 	bool stretchVideo = (flags % 10) != 0;
 	int canAbort = skip;
 	bool ignoreAudio = (flags >= 10);

@@ -71,8 +71,7 @@ AGSEngine *g_vm;
 
 AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc), _randomSource("AGS"), _events(nullptr), _music(nullptr),
-	_rawScreen(nullptr), _screen(nullptr), _gfxDriver(nullptr),
-	_globals(nullptr), _forceTextAA(false) {
+	_gfxDriver(nullptr), _globals(nullptr), _forceTextAA(false) {
 	g_vm = this;
 
 	_events = new EventsManager();
@@ -93,8 +92,6 @@ AGSEngine::~AGSEngine() {
 		                           _G(our_eip), _G(EngineVersion).LongString.GetCStr());
 	}
 
-	delete _screen;
-	delete _rawScreen;
 	delete _events;
 	delete _music;
 	delete _globals;
@@ -223,9 +220,6 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h, int colorDepth) {
 	//Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 
 	initGraphics(w, h, &format);
-
-	_rawScreen = new Graphics::Screen();
-	_screen = new ::AGS3::BITMAP(_rawScreen);
 }
 
 bool AGSEngine::isUnsupportedPre25() const {

@@ -167,6 +167,7 @@ typedef std::vector<ALSpriteBatch> ALSpriteBatches;
 class ScummVMRendererGraphicsDriver : public GraphicsDriverBase {
 public:
 	ScummVMRendererGraphicsDriver();
+	~ScummVMRendererGraphicsDriver() override;
 
 	const char *GetDriverName() override {
 		return "SDL 2D Software renderer";
@@ -226,13 +227,14 @@ public:
 	bool GetStageMatrixes(RenderMatrixes &rm) override {
 		return false; /* not supported */
 	}
-	~ScummVMRendererGraphicsDriver() override;
 
 	typedef std::shared_ptr<ScummVMRendererGfxFilter> PSDLRenderFilter;
 
 	void SetGraphicsFilter(PSDLRenderFilter filter);
 
 private:
+	Graphics::Screen *_screen = nullptr;
+	bool _useVirtScreenDirectly = false;
 	PSDLRenderFilter _filter;
 
 	bool _hasGamma = false;
@@ -277,10 +279,10 @@ private:
 	void highcolor_fade_out(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue);
 	void __fade_from_range(PALETTE source, PALETTE dest, int speed, int from, int to);
 	void __fade_out_range(int speed, int from, int to, int targetColourRed, int targetColourGreen, int targetColourBlue);
-	// Copy raw screen bitmap pixels to the SDL texture
-	void BlitToTexture();
-	// Render SDL texture on screen
-	void Present();
+	// Copy raw screen bitmap pixels to the screen
+	void BlitToScreen();
+	// Render bitmap on screen
+	void Present() { BlitToScreen(); }
 };
 
 

@@ -57,6 +57,11 @@ ScummVMRendererGraphicsDriver::ScummVMRendererGraphicsDriver() {
 	ScummVMRendererGraphicsDriver::InitSpriteBatch(0, _spriteBatchDesc[0]);
 }
 
+ScummVMRendererGraphicsDriver::~ScummVMRendererGraphicsDriver() {
+	delete _screen;
+	ScummVMRendererGraphicsDriver::UnInit();
+}
+
 bool ScummVMRendererGraphicsDriver::IsModeSupported(const DisplayMode &mode) {
 	if (mode.Width <= 0 || mode.Height <= 0 || mode.ColorDepth <= 0) {
 		warning("Invalid resolution parameters: %d x %d x %d",
@@ -135,30 +140,7 @@ void ScummVMRendererGraphicsDriver::CreateVirtualScreen() {
 	virtualScreen = _origVirtualScreen.get();
 	_stageVirtualScreen = virtualScreen;
 
-#ifdef TODO
-	_screenTex = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, vscreen_w, vscreen_h);
 
-	// Fake bitmap that will wrap over texture pixels for simplier conversion
-	_fakeTexBitmap = reinterpret_cast<BITMAP *>(new char[sizeof(BITMAP) + (sizeof(char *) * vscreen_h)]);
-	_fakeTexBitmap->w = vscreen_w;
-	_fakeTexBitmap->cr = vscreen_w;
-	_fakeTexBitmap->h = vscreen_h;
-	_fakeTexBitmap->cb = vscreen_h;
-	_fakeTexBitmap->clip = true;
-	_fakeTexBitmap->cl = 0;
-	_fakeTexBitmap->ct = 0;
-	_fakeTexBitmap->id = 0;
-	_fakeTexBitmap->extra = nullptr;
-	_fakeTexBitmap->x_ofs = 0;
-	_fakeTexBitmap->y_ofs = 0;
-	_fakeTexBitmap->dat = nullptr;
-
-	auto tmpbitmap = create_bitmap_ex(32, 1, 1);
-	_fakeTexBitmap->vtable = tmpbitmap->vtable;
-	_fakeTexBitmap->write_bank = tmpbitmap->write_bank;
-	_fakeTexBitmap->read_bank = tmpbitmap->read_bank;
-	destroy_bitmap(tmpbitmap);
-#endif
 	_lastTexPixels = nullptr;
 	_lastTexPitch = -1;
 }
@@ -166,13 +148,7 @@ void ScummVMRendererGraphicsDriver::CreateVirtualScreen() {
 void ScummVMRendererGraphicsDriver::DestroyVirtualScreen() {
 	delete[] _fakeTexBitmap; // don't use destroy_bitmap(), because it's a fake structure
 	_fakeTexBitmap = nullptr;
-#ifdef TODO
-	if (_screenTex != nullptr) {
-		SDL_DestroyTexture(_screenTex);
-	}
 
-	_screenTex = nullptr;
-#endif
 	_origVirtualScreen.reset();
 	virtualScreen = nullptr;
 	_stageVirtualScreen = nullptr;
@@ -199,20 +175,10 @@ void ScummVMRendererGraphicsDriver::ClearRectangle(int x1, int y1, int x2, int y
 	// See SDL_RenderDrawRect
 }
 
-ScummVMRendererGraphicsDriver::~ScummVMRendererGraphicsDriver() {
-	ScummVMRendererGraphicsDriver::UnInit();
-}
-
 void ScummVMRendererGraphicsDriver::UnInit() {
 	OnUnInit();
 	ReleaseDisplayMode();
 	DestroyVirtualScreen();
-#ifdef TODO
-	if (_renderer) {
-		SDL_DestroyRenderer(_renderer);
-		_renderer = nullptr;
-	}
-#endif
 
 	sys_window_destroy();
 }
@@ -405,36 +371,33 @@ void ScummVMRendererGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch
 	}
 }
 
-void ScummVMRendererGraphicsDriver::BlitToTexture() {
+void ScummVMRendererGraphicsDriver::BlitToScreen() {
 	const Graphics::Surface &src =
 		virtualScreen->GetAllegroBitmap()->getSurface();
 
-	// Blit the entire surface to the screen, ignoring the alphas
-	Graphics::Surface srcCopy = src;
-	srcCopy.format.aLoss = 8;
+	if (!_screen && !_useVirtScreenDirectly) {
+		// Check whether whether the AGS surface format matches the screen
+		_useVirtScreenDirectly = src.format == g_system->getScreenFormat();
 
-	::AGS::g_vm->_screen->getSurface().blitFrom(srcCopy);
-}
+		if (!_useVirtScreenDirectly)
+			_screen = new Graphics::Screen();
+	}
 
-void ScummVMRendererGraphicsDriver::Present() {
-	BlitToTexture();
+	if (_screen) {
+		// Blit the surface to the temporary screen, ignoring the alphas.
+		// This takes care of converting to the screen format
+		Graphics::Surface srcCopy = src;
+		srcCopy.format.aLoss = 8;
 
-	::AGS::g_vm->_rawScreen->update();
+		_screen->blitFrom(srcCopy);
+		_screen->update();
 
-#if DEPRECATED
-	SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_NONE);
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderFillRect(_renderer, nullptr);
-
-	SDL_Rect dst;
-	dst.x = _dstRect.Left;
-	dst.y = _dstRect.Top;
-	dst.w = _dstRect.GetWidth();
-	dst.h = _dstRect.GetHeight();
-	SDL_RenderCopyEx(_renderer, _screenTex, nullptr, &dst, 0.0, nullptr, _renderFlip);
-
-	SDL_RenderPresent(_renderer);
-#endif
+	} else {
+		// Blit the virtual surface directly to the screen
+		g_system->copyRectToScreen(src.getPixels(), src.pitch,
+			0, 0, src.w, src.h);
+		g_system->updateScreen();
+	}
 }
 
 void ScummVMRendererGraphicsDriver::Render(int /*xoff*/, int /*yoff*/, GlobalFlipType flip) {
