@@ -234,7 +234,8 @@ void CAutoMap::locateRegion(void) {
 	}
 
 	free(trRes);
-	if (areaRes) auxResFile->disposeContext(areaRes);
+
+	auxResFile->disposeContext(areaRes);
 
 	baseCoords.u = centerCoords.u - summaryRadius;
 	baseCoords.v = centerCoords.v - summaryRadius;
