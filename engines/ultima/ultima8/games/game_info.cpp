@@ -60,7 +60,8 @@ static const GameLangDesc gamelangs[] = {
 };
 
 
-GameInfo::GameInfo() : _type(GAME_UNKNOWN), version(0), _language(GAMELANG_UNKNOWN) {
+GameInfo::GameInfo() : _type(GAME_UNKNOWN), version(0), _language(GAMELANG_UNKNOWN),
+		_ucOffVariant(GAME_UC_DEFAULT) {
 	for (int i = 0; i < 16; ++i)
 		_md5[i] = 0;
 }

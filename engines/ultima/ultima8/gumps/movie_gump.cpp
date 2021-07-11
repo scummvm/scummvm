@@ -101,7 +101,7 @@ static Common::SeekableReadStream *_tryLoadCruSubtitle(const Std::string &filena
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MovieGump)
 
-MovieGump::MovieGump() : ModalGump(), _player(nullptr), _subtitleWidget(0) {
+MovieGump::MovieGump() : ModalGump(), _player(nullptr), _subtitleWidget(0), _lastFrameNo(-1) {
 
 }
 
