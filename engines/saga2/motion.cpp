@@ -4860,7 +4860,7 @@ void MotionTask::updatePositions(void) {
 						mt->o.directObject->useOn(
 						    a->thisID(),
 						    mt->o.indirectObject->thisID());
-						if (mt && mt->motionType == motionTypeUseObjectOnObject)
+						if (mt->motionType == motionTypeUseObjectOnObject)
 							moveTaskDone = true;
 						else
 							g_vm->_nextMT = it;
@@ -4872,7 +4872,7 @@ void MotionTask::updatePositions(void) {
 				mt->o.directObject->useOn(
 				    a->thisID(),
 				    mt->o.indirectObject->thisID());
-				if (mt && mt->motionType == motionTypeUseObjectOnObject)
+				if (mt->motionType == motionTypeUseObjectOnObject)
 					moveTaskDone = true;
 				else
 					g_vm->_nextMT = it;
@@ -4913,7 +4913,7 @@ void MotionTask::updatePositions(void) {
 				//  The actor will now be uniterruptable
 				a->setActionPoints(2);
 				mt->o.directObject->useOn(a->thisID(), mt->o.TAI);
-				if (mt && mt->motionType == motionTypeUseObjectOnTAI)
+				if (mt->motionType == motionTypeUseObjectOnTAI)
 					moveTaskDone = true;
 				else
 					g_vm->_nextMT = it;
@@ -4933,7 +4933,7 @@ void MotionTask::updatePositions(void) {
 				//  The actor will now be uniterruptable
 				a->setActionPoints(2);
 				mt->o.directObject->useOn(a->thisID(), mt->targetLoc);
-				if (mt && mt->motionType == motionTypeUseObjectOnLocation)
+				if (mt->motionType == motionTypeUseObjectOnLocation)
 					moveTaskDone = true;
 				else
 					g_vm->_nextMT = it;
@@ -4993,7 +4993,7 @@ void MotionTask::updatePositions(void) {
 					mt->o.directObject->drop(a->thisID(),
 					                       mt->targetLoc,
 					                       mt->moveCount);
-					if (mt && mt->motionType == motionTypeDropObject)
+					if (mt->motionType == motionTypeDropObject)
 						moveTaskDone = true;
 					else
 						g_vm->_nextMT = it;
@@ -5004,7 +5004,7 @@ void MotionTask::updatePositions(void) {
 				mt->o.directObject->drop(a->thisID(),
 				                       mt->targetLoc,
 				                       mt->moveCount);
-				if (mt && mt->motionType == motionTypeDropObject)
+				if (mt->motionType == motionTypeDropObject)
 					moveTaskDone = true;
 				else
 					g_vm->_nextMT = it;
@@ -5028,7 +5028,7 @@ void MotionTask::updatePositions(void) {
 					    a->thisID(),
 					    mt->o.indirectObject->thisID(),
 					    mt->moveCount);
-					if (mt && mt->motionType == motionTypeDropObjectOnObject)
+					if (mt->motionType == motionTypeDropObjectOnObject)
 						moveTaskDone = true;
 					else
 						g_vm->_nextMT = it;
@@ -5040,7 +5040,7 @@ void MotionTask::updatePositions(void) {
 				    a->thisID(),
 				    mt->o.indirectObject->thisID(),
 				    mt->moveCount);
-				if (mt && mt->motionType == motionTypeDropObjectOnObject)
+				if (mt->motionType == motionTypeDropObjectOnObject)
 					moveTaskDone = true;
 				else
 					g_vm->_nextMT = it;
@@ -5066,7 +5066,7 @@ void MotionTask::updatePositions(void) {
 				    a->thisID(),
 				    mt->o.TAI,
 				    mt->targetLoc);
-				if (mt && mt->motionType == motionTypeDropObjectOnTAI)
+				if (mt->motionType == motionTypeDropObjectOnTAI)
 					moveTaskDone = true;
 				else
 					g_vm->_nextMT = it;
