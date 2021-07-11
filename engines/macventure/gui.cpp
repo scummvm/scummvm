@@ -1144,7 +1144,7 @@ void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point cli
 
 void Gui::handleDragRelease(bool shiftPressed, bool isDoubleClick) {
 	if (_draggedObj.id != 0) {
-		WindowReference destinationWindow = findWindowAtPoint(_draggedObj.pos);
+		WindowReference destinationWindow = findWindowAtPoint(_draggedObj.pos - _draggedObj.mouseOffset);
 		if (destinationWindow == kNoWindow) {
 			return;
 		}
