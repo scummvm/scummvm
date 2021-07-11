@@ -23,6 +23,7 @@
 #include "twine/flamovies.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "graphics/managed_surface.h"
 #include "image/gif.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
@@ -282,8 +283,9 @@ void FlaMovies::prepareGIF(int index) {
 	}
 	const Graphics::Surface *surface = decoder.getSurface();
 	_engine->setPalette(0, decoder.getPaletteColorCount(), decoder.getPalette());
-	g_system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, surface->w, surface->h);
-	g_system->updateScreen();
+	Graphics::ManagedSurface& target = _engine->frontVideoBuffer;
+	const Common::Rect surfaceBounds(0, 0, surface->w, surface->h);
+	target.transBlitFrom(surface, surfaceBounds, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
 	debug(2, "Show gif with id %i from %s", index, Resources::HQR_FLAGIF_FILE);
 	delete stream;
 	_engine->delaySkip(5000);
