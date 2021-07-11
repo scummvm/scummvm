@@ -2378,19 +2378,16 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		if (viewWasLocked)
 			charFrameWas = speakingChar->frame;
 
-		// if the current loop doesn't exist in talking view, use loop 0
-		if (speakingChar->loop >= _G(views)[speakingChar->view].numLoops)
+		// If speech view is missing a loop or the loop does not have frames - use loop 0
+		if (speakingChar->loop >= _G(views)[speakingChar->view].numLoops ||
+				_G(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1) {
+			String err = String::FromFormat("Character %s speech view %d does not have necessary loop %d or it has no frames",
+				speakingChar->scrname, speakingChar->view + 1, speakingChar->loop);
+			// is there even a fallback loop?
+			if (_G(views)[speakingChar->view].numLoops == 0 || _G(views)[speakingChar->view].loops[0].numFrames == 0)
+				quitprintf("!%s; and there's no valid loop to fall back.", err.GetCStr());
+			debug_script_warn("WARNING: %s; switching to loop 0.", err.GetCStr());
 			speakingChar->loop = 0;
-
-		if ((speakingChar->view < 0) ||
-		        (speakingChar->loop >= _G(views)[speakingChar->view].numLoops) ||
-		        (_G(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1)) {
-#if AGS_PLATFORM_SCUMMVM
-			// WORKAROUND: Fix crash in Fatman intro by ignoring invalid speeches
-			return;
-#else
-			quitprintf("Unable to display speech because the character %s has an invalid view frame (View %d, loop %d, frame %d)", speakingChar->scrname, speakingChar->view + 1, speakingChar->loop, speakingChar->frame);
-#endif
 		}
 
 		_G(our_eip) = 1504;
@@ -2621,23 +2618,19 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			speakingChar->frame = 0;
 			speakingChar->flags |= CHF_FIXVIEW;
 
-			if (speakingChar->loop >= _G(views)[speakingChar->view].numLoops) {
-				// current character loop is outside the normal talking directions
+			// If speech view is missing a loop or the loop does not have frames - use loop 0
+			if (speakingChar->loop >= _G(views)[speakingChar->view].numLoops ||
+				_G(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1) {
+				String err = String::FromFormat("Character %s speech view %d does not have necessary loop %d or it has no frames",
+					speakingChar->scrname, speakingChar->view + 1, speakingChar->loop);
+				// is there even a fallback loop?
+				if (_G(views)[speakingChar->view].numLoops == 0 || _G(views)[speakingChar->view].loops[0].numFrames == 0)
+					quitprintf("!%s; and there's no valid loop to fall back.", err.GetCStr());
+				debug_script_warn("WARNING: %s; switching to loop 0.", err.GetCStr());
 				speakingChar->loop = 0;
 			}
 
 			_G(facetalkBlinkLoop) = speakingChar->loop;
-
-			if (speakingChar->on && // don't bother checking if character is not visible (also fixes 'Trilby's Notes' legacy game)
-			        ((speakingChar->loop >= _G(views)[speakingChar->view].numLoops) ||
-			         (_G(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1))) {
-#if AGS_PLATFORM_SCUMMVM
-				// WORKAROUND: Fix crash in Fatman intro by ignoring invalid speeches
-				return;
-#else
-				quitprintf("!Unable to display speech because the character %s has an invalid speech view (View %d, loop %d, frame %d)", speakingChar->scrname, speakingChar->view + 1, speakingChar->loop, speakingChar->frame);
-#endif
-			}
 
 			// set up the speed of the first frame
 			speakingChar->wait = GetCharacterSpeechAnimationDelay(speakingChar) +
