@@ -3534,7 +3534,9 @@ void saveActiveRegions(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving ActiveRegions");
 
 	out->write("AREG", 4);
-	out->writeUint32LE(sizeof(activeRegionList));
+
+	const int saveSize = ActiveRegion::kActiveRegionSize * playerActors;
+	out->writeUint32LE(saveSize);
 
 	for (int i = 0; i < playerActors; ++i) {
 		debugC(3, kDebugSaveload, "Saving Active Region %d", i);

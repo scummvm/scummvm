@@ -867,6 +867,10 @@ class ActiveRegion {
 
 public:
 
+	enum {
+		kActiveRegionSize = 22
+	};
+
 	ActiveRegion() : anchor(0), worldID(0) {}
 	void update(void);
 
