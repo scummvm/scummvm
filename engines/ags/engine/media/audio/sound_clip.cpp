@@ -96,7 +96,14 @@ bool SoundClipWaveBase::is_playing() const {
 }
 
 void SoundClipWaveBase::seek(int offset) {
-	warning("TODO: SoundClipWaveBase::seek");
+	Audio::SeekableAudioStream *stream =
+		dynamic_cast<Audio::SeekableAudioStream *>(_stream);
+
+	if (stream) {
+		stream->seek(Audio::Timestamp(offset));
+	} else {
+		warning("Audio stream did not support seeking");
+	}
 }
 
 int SoundClipWaveBase::get_pos() {
@@ -108,8 +115,15 @@ int SoundClipWaveBase::get_pos_ms() {
 }
 
 int SoundClipWaveBase::get_length_ms() {
-	warning("TODO: SoundClipWaveBase::get_length_ms");
-	return 0;
+	Audio::SeekableAudioStream *stream =
+		dynamic_cast<Audio::SeekableAudioStream *>(_stream);
+
+	if (stream) {
+		return stream->getLength().msecs();
+	} else {
+		warning("Unable to determine audio stream length");
+		return 0;
+	}
 }
 
 void SoundClipWaveBase::set_volume(int volume) {
