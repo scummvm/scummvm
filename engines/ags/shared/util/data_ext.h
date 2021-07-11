@@ -77,6 +77,7 @@ enum DataExtFlags {
 enum DataExtErrorType {
 	kDataExtErr_NoError,
 	kDataExtErr_UnexpectedEOF,
+	kDataExtErr_BlockNotFound,
 	kDataExtErr_BlockDataOverlapping
 };
 
@@ -84,14 +85,69 @@ String GetDataExtErrorText(DataExtErrorType err);
 typedef TypedCodeError<DataExtErrorType, GetDataExtErrorText> DataExtError;
 
 
-// Tries to opens a next block from the stream, fills in identifier and length on success
-HError OpenExtBlock(Stream *in, int flags, int &block_id, String &ext_id, soff_t &block_len);
-// Type of function that reads a single data block and tells whether to continue reading
-typedef HError(*PfnReadExtBlock)(Stream *in, int block_id, const String &ext_id,
-	soff_t block_len, bool &read_next);
-// Parses stream as a block list, passing each found block into callback;
-// does not read any actual data itself
-HError ReadExtData(PfnReadExtBlock reader, int flags, Stream *in);
+// DataExtReader parses a generic extendable block list and
+// does format checks, but does not read any data itself.
+// Use it to open blocks, and assert reading correctness.
+class DataExtParser {
+public:
+	DataExtParser(Stream *in, int flags) : _in(in), _flags(flags) {
+	}
+	virtual ~DataExtParser() = default;
+
+	// Returns the conventional string ID for an old-style block with numeric ID
+	virtual String GetOldBlockName(int blockId) const {
+		return String::FromFormat("id:%d", blockId);
+	}
+
+	// Gets a stream
+	inline Stream *GetStream() {
+		return _in;
+	}
+	// Tells if the end of the block list was reached
+	inline bool AtEnd() const {
+		return _block_id < 0;
+	}
+	// Tries to opens a next standard block from the stream,
+	// fills in identifier and length on success
+	HError OpenBlock();
+	// Skips current block
+	void   SkipBlock();
+	// Asserts current stream position after a block was read
+	HError PostAssert();
+	// Parses a block list in search for a particular block,
+	// if found opens it.
+	HError FindOne(int id);
+
+protected:
+	Stream *_in = nullptr;
+	int _flags = 0;
+
+	int _block_id = -1;
+	String _ext_id;
+	soff_t _block_start = 0;
+	soff_t _block_len = 0;
+};
+
+// DataExtReader is a virtual base class of a block list reader; provides
+// a helper method for reading all the blocks one by one, but leaves data
+// reading for the child classes. A child class must override ReadBlock method.
+// TODO: don't extend Parser, but have it as a member?
+class DataExtReader : protected DataExtParser {
+public:
+	virtual ~DataExtReader() = default;
+
+	// Parses a block list, calls ReadBlock for each found block
+	HError Read();
+
+protected:
+	DataExtReader(Stream *in, int flags) : DataExtParser(in, flags) {
+	}
+	// Reads a single data block and tell whether to continue reading;
+	// default implementation skips the block
+	virtual HError ReadBlock(int block_id, const String &ext_id,
+		soff_t block_len, bool &read_next) = 0;
+};
+
 
 // Type of function that writes a single data block.
 typedef void(*PfnWriteExtBlock)(Stream *out);

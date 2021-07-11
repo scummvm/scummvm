@@ -456,23 +456,43 @@ HError ReadRoomBlock(RoomStruct *room, Stream *in, RoomFileBlock block, const St
 		String::FromFormat("Type: %s", ext_id.GetCStr()));
 }
 
-// This reader will process all blocks inside ReadRoomBlock() function,
-// and read compatible data into the given RoomStruct
-static RoomStruct *reader_room;
-static RoomFileVersion reader_data_ver;
+// RoomBlockReader reads whole room data, block by block
+class RoomBlockReader : public DataExtReader {
+public:
+	RoomBlockReader(RoomStruct *room, RoomFileVersion data_ver, Stream *in)
+		: DataExtReader(in,
+			kDataExt_NumID8 | ((data_ver < kRoomVersion_350) ? kDataExt_File32 : kDataExt_File64))
+		, _room(room)
+		, _dataVer(data_ver) {
+	}
 
-static HError ReadRoomDataReader(Stream *in, int block_id,
-	const String &ext_id, soff_t block_len, bool &read_next) {
-	return (HError)ReadRoomBlock(reader_room, in, (RoomFileBlock)block_id, ext_id, block_len, reader_data_ver);
-}
+	// Helper function that extracts legacy room script
+	HError ReadRoomScript(String &script) {
+		HError err = FindOne(kRoomFblk_Script);
+		if (!err)
+			return err;
+		char *buf = nullptr;
+		err = ReadScriptBlock(buf, _in, _dataVer);
+		script = buf;
+		delete buf;
+		return err;
+	}
+
+private:
+	HError ReadBlock(int block_id, const String &ext_id,
+		soff_t block_len, bool &read_next) override {
+		return ReadRoomBlock(_room, _in, (RoomFileBlock)block_id, ext_id, block_len, _dataVer);
+	}
+
+	RoomStruct *_room{};
+	RoomFileVersion _dataVer{};
+};
+
 
 HRoomFileError ReadRoomData(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	room->DataVersion = data_ver;
-	reader_data_ver = data_ver;
-	reader_room = room;
-
-	HError err = ReadExtData(ReadRoomDataReader,
-		kDataExt_NumID8 | ((data_ver < kRoomVersion_350) ? kDataExt_File32 : kDataExt_File64), in);
+	RoomBlockReader reader(room, data_ver, in);
+	HError err = reader.Read();
 	return err ? HRoomFileError::None() :
 		new RoomFileError(kRoomFileErr_BlockListFailed, err);
 }
@@ -627,15 +647,11 @@ HError ExtractScriptTextReader(Stream *in, int block_id,
 }
 
 HRoomFileError ExtractScriptText(String &script, Stream *in, RoomFileVersion data_ver) {
-	// This reader would only process kRoomFblk_Script and exit as soon as one is found
-	reader_script = &script;
-	reader_ver = data_ver;
-
-	HError err = ReadExtData(ExtractScriptTextReader,
-		kDataExt_NumID8 | ((data_ver < kRoomVersion_350) ? kDataExt_File32 : kDataExt_File64), in);
-	if (err && script.IsEmpty())
-		new RoomFileError(kRoomFileErr_BlockNotFound);
-	return err ? HRoomFileError::None() : new RoomFileError(kRoomFileErr_BlockListFailed, err);
+	RoomBlockReader reader(nullptr, data_ver, in);
+	HError err = reader.ReadRoomScript(script);
+	if (!err)
+		new RoomFileError(kRoomFileErr_BlockListFailed, err);
+	return HRoomFileError::None();
 }
 
 void WriteInteractionScripts(const InteractionScripts *interactions, Stream *out) {

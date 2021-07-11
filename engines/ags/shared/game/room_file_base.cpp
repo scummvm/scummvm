@@ -107,21 +107,6 @@ String GetRoomBlockName(RoomFileBlock id) {
 	return "unknown";
 }
 
-// This reader will delegate block reading to the provided user function
-static PfnReadRoomBlock reader_reader;
-static RoomFileVersion reader_ver;
-static HError ReadRoomDataReader(Stream *in, int block_id, const String &ext_id,
-		soff_t block_len, bool &read_next) {
-	return reader_reader(in, (RoomFileBlock)block_id, ext_id, block_len, reader_ver, read_next);
-}
-
-HRoomFileError ReadRoomData(PfnReadRoomBlock reader, Stream *in, RoomFileVersion data_ver) {
-	reader_reader = reader;
-	reader_ver = data_ver;
-	HError err = ReadExtData(ReadRoomDataReader,
-		kDataExt_NumID8 | ((data_ver < kRoomVersion_350) ? kDataExt_File32 : kDataExt_File64), in);
-	return err ? HRoomFileError::None() : new RoomFileError(kRoomFileErr_BlockListFailed, err);
-}
 
 static PfnWriteRoomBlock writer_writer;
 static const RoomStruct *writer_room;
