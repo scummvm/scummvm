@@ -32,10 +32,15 @@ clean: dsclean
 dsclean:
 	$(RM) scummvm.nds
 	$(RM_REC) romfs
+	$(RM_REC) dsdist
 
-.PHONY: dsclean
+dsdist: scummvm.nds $(DIST_FILES_DOCS)
+	rm -rf dsdist
+	mkdir -p dsdist
+	cp scummvm.nds dsdist/
+	cp $(DIST_FILES_DOCS) dsdist/
 
-# TODO: Add a 'dsdist' target ?
+.PHONY: dsclean dsdist
 
 %.nds: %.elf romfs
 	ndstool -c $@ -9 $< -b $(srcdir)/backends/platform/ds/logo.bmp "$(@F);ScummVM $(VERSION);DS Port" -d romfs
