@@ -259,7 +259,7 @@ bool PlaybackFile::processChunk(ChunkHeader &nextChunk) {
 		}
 		break;
 	default:
-			return false;
+		return false;
 	}
 	return true;
 }

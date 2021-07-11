@@ -284,11 +284,12 @@ void EventRecorder::RegisterEventSource() {
 }
 
 uint32 EventRecorder::getRandomSeed(const Common::String &name) {
+	if (_recordMode == kRecorderPlayback) {
+		return _playbackFile->getHeader().randomSourceRecords[name];
+	}
 	uint32 result = g_system->getMillis();
 	if (_recordMode == kRecorderRecord) {
 		_playbackFile->getHeader().randomSourceRecords[name] = result;
-	} else if (_recordMode == kRecorderPlayback) {
-		result = _playbackFile->getHeader().randomSourceRecords[name];
 	}
 	return result;
 }
