@@ -138,18 +138,28 @@ TimerList *fetchTimerList(GameObject *obj) {
 	return nullptr;
 }
 
+void deleteTimer(Timer *t) {
+	g_vm->_timers.remove(t);
+}
+
 //----------------------------------------------------------------------
 //	Check all active Timers
 void checkTimers(void) {
-	Common::List<Timer *>::iterator nextIt;
+	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); it++) {
+		if ((*it)->_active == false)
+			continue;
 
-	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); it = nextIt) {
-		nextIt = it;
-		++nextIt;
 		if ((*it)->check()) {
 			debugC(2, kDebugTimers, "Timer tick for %p (%s): %p (duration %d)", (void *)(*it)->getObject(), (*it)->getObject()->objName(), (void *)(*it), (*it)->getInterval());
 			(*it)->reset();
 			(*it)->getObject()->timerTick((*it)->thisID());
+		}
+	}
+
+	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); it++) {
+		if ((*it)->_active == false) {
+			delete *it;
+			it = g_vm->_timers.erase(it);
 		}
 	}
 }
@@ -387,7 +397,6 @@ Timer::Timer(void **buf) {
 Timer::~Timer() {
 	debugC(1, kDebugTimers, "Deleting timer %p (obj %p)",
 		   (void *)this, (void *)_obj);
-	g_vm->_timers.remove(this);
 }
 
 //----------------------------------------------------------------------

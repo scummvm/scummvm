@@ -33,10 +33,13 @@
 
 namespace Saga2 {
 
+class Timer;
 class TimerList;
 
 //  Fetch a specified actor's TimerList
 TimerList *fetchTimerList(GameObject *obj);
+
+void deleteTimer(Timer *t);
 
 //  Check all active Timers
 void checkTimers(void);
@@ -93,8 +96,10 @@ class Timer {
 	FrameAlarm _alarm;
 
 public:
+	bool _active;
+
 	//  Constructor -- initial construction
-	Timer(GameObject *o, TimerID timerID, int16 frameInterval) : _obj(o), _id(timerID), _interval(frameInterval) {
+	Timer(GameObject *o, TimerID timerID, int16 frameInterval) : _obj(o), _id(timerID), _interval(frameInterval), _active(true) {
 		_alarm.set(_interval);
 		debugC(1, kDebugTimers, "Creating timer %p for %p (%s)",
 		       (void *)this, (void *)o, o->objName());
