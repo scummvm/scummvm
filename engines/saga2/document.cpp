@@ -430,25 +430,26 @@ bool CDocument::checkForImage(char      *string,
 				                                      "book internal image");
 				numEat = 8;
 			}
+
+			// get the size of the image
+			imageSizes[offPageIndex] = ((ImageHeader *)images[offPageIndex])->size;
+
+			// tie off the end
+			strIndex[0] = 0;
+
+			// and string them together
+			strcat(&strIndex[0], &strIndex[2 + 1 + numEat]);
+
+			// set new line length
+			offset = index;
+
+			// set the line offset
+			lineOffset[offPageIndex] =
+				imageSizes[offPageIndex].y / (textHeight + 1) +
+				textPictureOffset;
+		} else {
+			warning("CDocument: Document overflow");
 		}
-
-		// get the size of the image
-		imageSizes[offPageIndex] =
-		    ((ImageHeader *)images[offPageIndex])->size;
-
-		// tie off the end
-		strIndex[0] = 0;
-
-		// and string them together
-		strcat(&strIndex[0], &strIndex[2 + 1 + numEat]);
-
-		// set new line length
-		offset = index;
-
-		// set the line offset
-		lineOffset[offPageIndex] =
-		    imageSizes[offPageIndex].y / (textHeight + 1) +
-		    textPictureOffset;
 
 		// set the new page flag
 		return true;
