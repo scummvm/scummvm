@@ -73,6 +73,7 @@ SpellDisplayPrototype::SpellDisplayPrototype(ResourceSpellItem *rsi) {
 	colorMap[1] = rsi->cm1;
 	colorMap[2] = 0;
 	colorMap[3] = 0;
+	ID = spellNone;
 }
 
 /* ===================================================================== *
@@ -288,7 +289,8 @@ StorageSpellTarget::StorageSpellTarget() {
 	tag = NoActiveItem;
 }
 
-StorageSpellInstance::StorageSpellInstance() {
+StorageSpellInstance::StorageSpellInstance() : implementAge(0), effect(0), dProto(spellNone), caster(0),
+	world(0), age(0), spell(spellNone), maxAge(0), effSeq(0), eListSize(0) {
 }
 
 SpellTarget::SpellTarget(StorageSpellTarget &sst) {
