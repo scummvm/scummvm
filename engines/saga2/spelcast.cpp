@@ -72,6 +72,10 @@ SpellStuff::SpellStuff() {
 	targets = NULL;
 	manaType = sManaIDSkill;
 	manaUse = 0;
+	shape = eAreaInvisible;
+	size = 0;
+	range = 0;
+	sound = 0;
 }
 
 //-----------------------------------------------------------------------
@@ -779,6 +783,12 @@ Effectron::Effectron() {
 	age = 0;
 	pos = 0;
 	flags = effectronDead;
+	parent = nullptr;
+	partno = 0;
+	totalSteps = stepNo = 0;
+	hgt = 0;
+	brd = 0;
+	spr = 0;
 }
 
 //-----------------------------------------------------------------------
@@ -788,6 +798,13 @@ Effectron::Effectron(uint16 newPos, uint16 newDir) {
 	age = 0;
 	pos = (newDir << 16) + newPos;
 	flags = 0;
+	flags = effectronDead;
+	parent = nullptr;
+	partno = 0;
+	totalSteps = stepNo = 0;
+	hgt = 0;
+	brd = 0;
+	spr = 0;
 }
 
 //-----------------------------------------------------------------------
