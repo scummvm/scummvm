@@ -1409,9 +1409,11 @@ void initTempActorCount(void);
 
 //  Save the array of temp actor counts
 void saveTempActorCount(SaveFileConstructor &saveGame);
+void saveTempActorCount(Common::OutSaveFile *out);
 
 //  Load the array of temp actor counts
 void loadTempActorCount(SaveFileReader &saveGame);
+void loadTempActorCount(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the array to temp actor counts
 void cleanupTempActorCount(void);

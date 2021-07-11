@@ -2802,12 +2802,32 @@ void saveTempActorCount(SaveFileConstructor &saveGame) {
 	    actorProtoCount * sizeof(uint16));
 }
 
+void saveTempActorCount(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving TempActorCount");
+
+	out->write("ACNT", 4);
+	out->writeUint32LE(actorProtoCount * sizeof(uint16));
+
+	for (int i = 0; i < actorProtoCount; ++i)
+		out->writeUint16LE(tempActorCount[i]);
+}
+
 //-------------------------------------------------------------------
 //	Load the array of temp actor counts
 
 void loadTempActorCount(SaveFileReader &saveGame) {
 	tempActorCount = new uint16[saveGame.getChunkSize()];
 	saveGame.read(tempActorCount, saveGame.getChunkSize());
+}
+
+void loadTempActorCount(Common::InSaveFile *in, int32 chunkSize) {
+	debugC(2, kDebugSaveload, "Loading TempActorCount");
+
+	int count = chunkSize / sizeof(uint16);
+	tempActorCount = new uint16[count];
+
+	for (int i = 0; i < count; ++i)
+		tempActorCount[i] = in->readUint16LE();
 }
 
 //-------------------------------------------------------------------
