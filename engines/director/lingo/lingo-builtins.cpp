@@ -80,14 +80,7 @@ namespace Director {
 		return; \
 	}
 
-static struct BuiltinProto {
-	const char *name;
-	void (*func)(int);
-	int minArgs;	// -1 -- arglist
-	int maxArgs;
-	int version;
-	SymbolType type;
-} builtins[] = {
+static BuiltinProto builtins[] = {
 	// Math
 	{ "abs",			LB::b_abs,			1, 1, 200, FBLTIN },	// D2 function
 	{ "atan",			LB::b_atan,			1, 1, 400, FBLTIN },	//			D4 f
@@ -271,7 +264,11 @@ static struct BuiltinProto {
 };
 
 void Lingo::initBuiltIns() {
-	for (BuiltinProto *blt = builtins; blt->name; blt++) {
+	initBuiltIns(builtins);
+}
+
+void Lingo::initBuiltIns(BuiltinProto protos[]) {
+	for (BuiltinProto *blt = protos; blt->name; blt++) {
 		if (blt->version > _vm->getVersion())
 			continue;
 
