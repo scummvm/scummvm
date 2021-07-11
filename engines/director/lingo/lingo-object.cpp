@@ -110,7 +110,7 @@ static struct XLibProto {
 	int type;
 	int version;
 } xlibs[] = {
-	{ "FileIO",					FileIO::initialize,					kXObj | kFactoryObj,	200 },	// D2
+	{ "FileIO",					FileIO::initialize,					kXObj | kXtraObj,		200 },	// D2
 	{ "FlushXObj",				FlushXObj::initialize,				kXObj,					400 },	// D4
 	{ "FPlayXObj",				FPlayXObj::initialize,				kXObj,					200 },	// D2
 	{ "PalXObj",				PalXObj:: initialize,				kXObj,					400 }, 	// D4
