@@ -69,10 +69,7 @@ bool ScummVMRendererGraphicsDriver::IsModeSupported(const DisplayMode &mode) {
 }
 
 int ScummVMRendererGraphicsDriver::GetDisplayDepthForNativeDepth(int native_color_depth) const {
-	// TODO: check for device caps to know which depth is supported?
-	if (native_color_depth > 8)
-		return 32;
-	return native_color_depth;
+	return 32;
 }
 
 IGfxModeList *ScummVMRendererGraphicsDriver::GetSupportedModeList(int color_depth) {
