@@ -186,6 +186,7 @@ public:
 	ColorScheme **_schemes;
 
 	ColorSchemeList(int count, Common::SeekableReadStream *stream);
+	~ColorSchemeList();
 };
 
 /* ===================================================================== *

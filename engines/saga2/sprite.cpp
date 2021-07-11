@@ -645,6 +645,13 @@ ColorSchemeList::ColorSchemeList(int count, Common::SeekableReadStream *stream) 
 		_schemes[i] = new ColorScheme(stream);
 }
 
+ColorSchemeList::~ColorSchemeList() {
+	for (int i = 0; i < _count; ++i)
+		delete _schemes[i];
+
+	free(_schemes);
+}
+
 ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	int16           bank;
 	int schemeListSize;
