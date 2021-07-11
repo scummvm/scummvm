@@ -5196,101 +5196,99 @@ supported:
 
 	}
 
-	for (;;) {
-		//  Otherwise, begin a fall sequence...
-		tPos = newPos;
+	//  Otherwise, begin a fall sequence...
+	tPos = newPos;
 
-		//  Attempt to solve cases where he gets stuck in falling,
-		//  by checking the contact of what he's about to fall on.
-		if (tPos.z > tHeight) tPos.z--;
-		//  See if we fell on something.
-		if (checkContact(object, tPos) == blockageNone) {
+	//  Attempt to solve cases where he gets stuck in falling,
+	//  by checking the contact of what he's about to fall on.
+	if (tPos.z > tHeight) tPos.z--;
+	//  See if we fell on something.
+	if (checkContact(object, tPos) == blockageNone) {
 falling:
-			if (motionType != motionTypeWalk
-			        ||  newPos.z > gravity * 4
-			        ||  tHeight >= 0) {
-				motionType = motionTypeThrown;
+		if (motionType != motionTypeWalk
+				||  newPos.z > gravity * 4
+				||  tHeight >= 0) {
+			motionType = motionTypeThrown;
 
-//				newPos = tPos;
-				object->move(tPos);
-				return true;
-			} else {
-				newPos = tPos;
-				return false;
-			}
-		}
-
-		//  If we fall on something, reduce velocity due to impact.
-		//  Try a couple of probes to see if we can fall in
-		//  other directions.
-		objCrossSection = object->proto()->crossSection;
-
-		tPos.u += objCrossSection;
-		if (!checkBlocked(object, tPos)
-		        &&  !checkContact(object, tPos))
-			goto falling;
-
-		tPos.u -= objCrossSection * 2;
-		if (!checkBlocked(object, tPos)
-		        &&  !checkContact(object, tPos))
-			goto falling;
-
-		tPos.u += objCrossSection;
-		tPos.v += objCrossSection;
-		if (!checkBlocked(object, tPos)
-		        &&  !checkContact(object, tPos))
-			goto falling;
-
-		tPos.v -= objCrossSection * 2;
-		if (!checkBlocked(object, tPos)
-		        &&  !checkContact(object, tPos))
-			goto falling;
-
-		//  There is no support for the object and there is no place to fall
-		//  so cheat and pretend this whole mess never happened.
-		tPos = newPos;
-
-		tPos.u += objCrossSection;
-		tHeight = tileSlopeHeight(tPos, object, &sti);
-		if (tHeight <= tPos.z + kMaxStepHeight
-		        &&  tHeight >= tPos.z - gravity * 4) {
+//			newPos = tPos;
+			object->move(tPos);
+			return true;
+		} else {
 			newPos = tPos;
-			goto supported;
+			return false;
 		}
-
-		tPos.u -= objCrossSection * 2;
-		tHeight = tileSlopeHeight(tPos, object, &sti);
-		if (tHeight <= tPos.z + kMaxStepHeight
-		        &&  tHeight >= tPos.z - gravity * 4) {
-			newPos = tPos;
-			goto supported;
-		}
-
-		tPos.u += objCrossSection;
-		tPos.v += objCrossSection;
-		tHeight = tileSlopeHeight(tPos, object, &sti);
-		if (tHeight <= tPos.z + kMaxStepHeight
-		        &&  tHeight >= tPos.z - gravity * 4) {
-			newPos = tPos;
-			goto supported;
-		}
-
-		tPos.v -= objCrossSection * 2;
-		tHeight = tileSlopeHeight(tPos, object, &sti);
-		if (tHeight <= tPos.z + kMaxStepHeight
-		        &&  tHeight >= tPos.z - gravity * 4) {
-			newPos = tPos;
-			goto supported;
-		}
-
-		//  If we STILL cannot find support for the object, change its
-		//  position and try again.  This should be very rare.
-		newPos.z--;
-		object->move(newPos);
-		unstickObject(object);
-		newPos = object->getLocation();
-		return true;
 	}
+
+	//  If we fall on something, reduce velocity due to impact.
+	//  Try a couple of probes to see if we can fall in
+	//  other directions.
+	objCrossSection = object->proto()->crossSection;
+
+	tPos.u += objCrossSection;
+	if (!checkBlocked(object, tPos)
+			&&  !checkContact(object, tPos))
+		goto falling;
+
+	tPos.u -= objCrossSection * 2;
+	if (!checkBlocked(object, tPos)
+			&&  !checkContact(object, tPos))
+		goto falling;
+
+	tPos.u += objCrossSection;
+	tPos.v += objCrossSection;
+	if (!checkBlocked(object, tPos)
+			&&  !checkContact(object, tPos))
+		goto falling;
+
+	tPos.v -= objCrossSection * 2;
+	if (!checkBlocked(object, tPos)
+			&&  !checkContact(object, tPos))
+		goto falling;
+
+	//  There is no support for the object and there is no place to fall
+	//  so cheat and pretend this whole mess never happened.
+	tPos = newPos;
+
+	tPos.u += objCrossSection;
+	tHeight = tileSlopeHeight(tPos, object, &sti);
+	if (tHeight <= tPos.z + kMaxStepHeight
+			&&  tHeight >= tPos.z - gravity * 4) {
+		newPos = tPos;
+		goto supported;
+	}
+
+	tPos.u -= objCrossSection * 2;
+	tHeight = tileSlopeHeight(tPos, object, &sti);
+	if (tHeight <= tPos.z + kMaxStepHeight
+			&&  tHeight >= tPos.z - gravity * 4) {
+		newPos = tPos;
+		goto supported;
+	}
+
+	tPos.u += objCrossSection;
+	tPos.v += objCrossSection;
+	tHeight = tileSlopeHeight(tPos, object, &sti);
+	if (tHeight <= tPos.z + kMaxStepHeight
+			&&  tHeight >= tPos.z - gravity * 4) {
+		newPos = tPos;
+		goto supported;
+	}
+
+	tPos.v -= objCrossSection * 2;
+	tHeight = tileSlopeHeight(tPos, object, &sti);
+	if (tHeight <= tPos.z + kMaxStepHeight
+			&&  tHeight >= tPos.z - gravity * 4) {
+		newPos = tPos;
+		goto supported;
+	}
+
+	//  If we STILL cannot find support for the object, change its
+	//  position and try again.  This should be very rare.
+	newPos.z--;
+	object->move(newPos);
+	unstickObject(object);
+	newPos = object->getLocation();
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -5461,7 +5459,7 @@ void saveMotionTasks(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving MotionTasks");
 
 	int32   archiveBufSize;
-	
+
 	archiveBufSize = g_vm->_mTaskList->archiveSize();
 
 	out->write("MOTN", 4);
