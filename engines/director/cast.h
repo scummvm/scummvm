@@ -96,6 +96,10 @@ public:
 	const Stxt *getStxt(int castId);
 	Common::String getVideoPath(int castId);
 
+	// release all castmember's widget, should be called when we are changing movie.
+	// because widget is handled by channel, thus we should clear all of those run-time info when we are switching the movie. (because we will create new widgets for cast)
+	void releaseCastMemberWidget();
+
 	void dumpScript(const char *script, ScriptType type, uint16 id);
 	PaletteV4 loadPalette(Common::SeekableReadStreamEndian &stream);
 

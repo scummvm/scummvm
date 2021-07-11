@@ -125,6 +125,12 @@ CastMember *Cast::getCastMember(int castId) {
 	return result;
 }
 
+void Cast::releaseCastMemberWidget() {
+	if (_loadedCast)
+		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
+			it->_value->releaseWidget();
+}
+
 CastMember *Cast::getCastMemberByName(const Common::String &name) {
 	CastMember *result = nullptr;
 
