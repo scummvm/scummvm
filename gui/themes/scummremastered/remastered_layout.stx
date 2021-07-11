@@ -172,6 +172,9 @@
 					<widget name = 'LoadGameButton'
 							type = 'Button'
 					/>
+					<widget name = 'RecorderButton'
+							type = 'Button'
+					/>
 					<space size = '10' />
 					<widget name = 'AddGameButton'
 							type = 'Button'

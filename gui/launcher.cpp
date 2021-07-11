@@ -144,12 +144,11 @@ void LauncherDialog::build() {
 	_startButton =
 		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), _("Start selected game"), kStartCmd);
 
-	DropdownButtonWidget *loadButton =
-	        new DropdownButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load saved game for selected game"), kLoadGameCmd);
+	_loadButton =
+			new ButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load saved game for selected game"), kLoadGameCmd);
 #ifdef ENABLE_EVENTRECORDER
-	loadButton->appendEntry(_("Record..."), kRecordGameCmd);
+	new ButtonWidget(this, "Launcher.RecorderButton", _("~R~ecorder..."), _("Record gameplay or playback recordings"), kRecordGameCmd);
 #endif
-	_loadButton = loadButton;
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	if (g_system->getOverlayWidth() > 320) {
