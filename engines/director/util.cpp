@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "common/keyboard.h"
 #include "common/memstream.h"
+#include "common/tokenizer.h"
 #include "common/zlib.h"
 
 #include "graphics/macgui/macwindowmanager.h"
@@ -327,12 +328,26 @@ Common::String getPath(Common::String path, Common::String cwd) {
 
 bool testPath(Common::String &path, bool directory) {
 	if (directory) {
-		// TOOD: This directory-searching branch only works for one level from the
-		// current directory, but it fixes current game loading issues.
-		if (path.contains('/'))
-			return false;
+		Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
 
-		Common::FSNode d = Common::FSNode(*g_director->getGameDataDir()).getChild(path);
+		// check for the game data dir
+		if (!path.contains("/") && path.equalsIgnoreCase(d.getName())) {
+			path = "";
+			return true;
+		}
+
+		Common::StringTokenizer directory_list(path, "/");
+
+		if (d.getChild(directory_list.nextToken()).exists()) {
+			// then this part is for the "relative to current directory"
+			// we find the child directory recursively
+			directory_list.reset();
+			while (!directory_list.empty() && d.exists())
+				d = d.getChild(directory_list.nextToken());
+		} else {
+			return false;
+		}
+
 		return d.exists();
 	}
 
@@ -347,9 +362,6 @@ bool testPath(Common::String &path, bool directory) {
 
 Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts, bool directory) {
 	Common::String initialPath(path);
-
-	if (testPath(initialPath, directory))
-		return initialPath;
 
 	if (recursive) // first level
 		initialPath = convertPath(initialPath);

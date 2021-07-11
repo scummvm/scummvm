@@ -1051,25 +1051,13 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 
 	int fileNum = g_lingo->pop().asInt() - 1;
 	Common::String path = pathMakeRelative(g_lingo->pop().asString(), true, false, true);
-	Common::StringTokenizer directory_list(path, "/");
+	// for directory, we either return the correct path, which we can access recursively.
+	// or we get a wrong path, which will lead us to a non-exist file node
 
+	Common::StringTokenizer directory_list(path, "/");
 	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
-	if (d.getChild(directory_list.nextToken()).exists()) {
-		// then this part is for the "relative to current directory"
-		// we find the child directory recursively
-		directory_list.reset();
-		while (!directory_list.empty() && d.exists())
-			d = d.getChild(directory_list.nextToken());
-	} else {
-		// we first match the path with game data dir
-		while (!directory_list.empty())
-			if (directory_list.nextToken().equalsIgnoreCase(d.getName()))
-				break;
-		// then we go deep to the end of path
-		// skip the current directory which is the game data directory
-		directory_list.nextToken();
-		while (!directory_list.empty() && d.exists())
-			d = d.getChild(directory_list.nextToken());
+	while (d.exists() && !directory_list.empty()) {
+		d = d.getChild(directory_list.nextToken());
 	}
 
 	Datum r;
