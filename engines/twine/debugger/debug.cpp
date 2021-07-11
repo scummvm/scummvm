@@ -36,15 +36,8 @@
 namespace TwinE {
 
 void Debug::debugFillButton(int32 x, int32 y, int32 width, int32 height, int8 color) {
-	uint8 *ptr = (uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y);
-	const int32 offset = _engine->width() - width;
-
-	for (int32 i = 0; i < height; i++) {
-		for (int32 j = 0; j < width; j++) {
-			*ptr++ = color;
-		}
-		ptr += offset;
-	}
+	const Common::Rect rect(x, y, x + width, y + height);
+	_engine->_interface->drawFilledRect(rect, color);
 }
 
 void Debug::debugDrawButton(const Common::Rect &rect, const char *text, int32 textLeft, int32 textTop, int32 isActive, int8 color) {
