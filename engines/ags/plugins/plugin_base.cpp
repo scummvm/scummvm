@@ -42,6 +42,7 @@
 #include "ags/plugins/ags_sprite_font/ags_sprite_font_clifftop.h"
 #include "ags/plugins/ags_tcp_ip/ags_tcp_ip.h"
 #include "ags/plugins/ags_wadjet_util/ags_wadjet_util.h"
+#include "ags/plugins/ags_waves/ags_waves.h"
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -126,6 +127,9 @@ void *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("AGSWadjetUtil"))
 		return new AGSWadjetUtil::AGSWadjetUtil();
+
+	if (fname.equalsIgnoreCase("agswaves"))
+		return new AGSWaves::AGSWaves();
 
 	debug("Plugin '%s' is not yet supported", fname.c_str());
 	return nullptr;
