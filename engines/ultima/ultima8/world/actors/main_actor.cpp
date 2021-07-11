@@ -349,6 +349,17 @@ const ShapeInfo *MainActor::getShapeInfoFromGameInstance() const {
 	return _kneelingShapeInfo;
 }
 
+void MainActor::move(int32 x, int32 y, int32 z) {
+	Actor::move(x, y, z);
+	if (_shieldSpriteProc != 0) {
+		SpriteProcess *sprite = dynamic_cast<SpriteProcess *>(
+			Kernel::get_instance()->getProcess(_shieldSpriteProc));
+		if (sprite) {
+			sprite->move(x, y, z);
+		}
+	}
+}
+
 void MainActor::teleport(int mapNum, int32 x, int32 y, int32 z) {
 	World *world = World::get_instance();
 

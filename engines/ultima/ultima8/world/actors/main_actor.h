@@ -51,6 +51,8 @@ public:
 	//! when Crusader is kneeling.
 	const ShapeInfo *getShapeInfoFromGameInstance() const override;
 
+	void move(int32 X, int32 Y, int32 Z) override;
+
 	//! Add item to avatar's inventory, but with some extra logic to do things like combine
 	//! ammo and credits, use batteries, etc.
 	int16 addItemCru(Item *item, bool showtoast);

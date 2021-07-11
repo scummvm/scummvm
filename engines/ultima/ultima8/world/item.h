@@ -72,7 +72,7 @@ public:
 
 	//! Move an item. This moves an item to the new location, and updates
 	//! CurrentMap and fastArea if necessary.
-	void move(int32 x, int32 y, int32 z);
+	virtual void move(int32 x, int32 y, int32 z);
 
 	//! Move, but with a point struct.
 	void move(const Point3 &pt);
