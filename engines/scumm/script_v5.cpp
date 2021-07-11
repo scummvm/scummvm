@@ -1698,7 +1698,15 @@ void ScummEngine_v5::o5_roomOps() {
 			}
 			assertRange(0, a, 256, "o5_roomOps: 4: room color slot");
 			_shadowPalette[b] = a;
-			setDirtyColors(b, b);
+
+			// In b/w Mac rendering mode, the shadow palette is
+			// handled by the renderer itself. See comment in
+			// mac_drawStripToScreen().
+
+			if (_renderMode == Common::kRenderMacintoshBW) {
+				_fullRedraw = true;
+			} else
+				setDirtyColors(b, b);
 		} else {
 			a = getVarOrDirectWord(PARAM_1);
 			b = getVarOrDirectWord(PARAM_2);

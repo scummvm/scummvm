@@ -39,17 +39,30 @@ void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, i
 	int tsPitch = _textSurface.pitch;
 	int macPitch = _macScreen->pitch;
 
+	// In b/w Mac rendering mode, the shadow palette is implemented here,
+	// and not as a palette manipulation. See special cases in o5_roomOps()
+	// and updatePalette().
+	//
+	// This is used at the very least for the lightning flashes at Castle
+	// Brunwald in Indy 3, as well as the scene where the dragon finds
+	// Rusty in Loom.
+	//
+	// Interestingly, the original Mac interpreter does not seem to do
+	// this, and instead just renders the scene as if the palette was
+	// unmodified. At least, that's what Mini vMac did when I tried it.
+
 	if (_renderMode == Common::kRenderMacintoshBW) {
 		for (int h = 0; h < height; h++) {
 			for (int w = 0; w < width; w++) {
+				int color = _shadowPalette[pixels[w]];
 				if (ts[2 * w] == CHARSET_MASK_TRANSPARENCY)
-					mac[2 * w] = Graphics::macEGADither[pixels[w]][0];
+					mac[2 * w] = Graphics::macEGADither[color][0];
 				if (ts[2 * w + 1] == CHARSET_MASK_TRANSPARENCY)
-					mac[2 * w + 1] = Graphics::macEGADither[pixels[w]][1];
+					mac[2 * w + 1] = Graphics::macEGADither[color][1];
 				if (ts[2 * w + tsPitch] == CHARSET_MASK_TRANSPARENCY)
-					mac[2 * w + macPitch] = Graphics::macEGADither[pixels[w]][2];
+					mac[2 * w + macPitch] = Graphics::macEGADither[color][2];
 				if (ts[2 * w + tsPitch + 1] == CHARSET_MASK_TRANSPARENCY)
-					mac[2 * w + macPitch + 1] = Graphics::macEGADither[pixels[w]][3];
+					mac[2 * w + macPitch + 1] = Graphics::macEGADither[color][3];
 			}
 
 			pixels += pixelsPitch;
