@@ -1132,7 +1132,7 @@ int uoffset(const char *s, int index) {
 		}
 	}
 
-	return (long)s - (long)orig;
+	return (intptr_t)s - (intptr_t)orig;
 }
 
 char *ustrlwr(char *s) {
@@ -1209,7 +1209,7 @@ int ustrsizez(const char *s) {
 	do {
 	} while (ugetxc(&s) != 0);
 
-	return (long)s - (long)orig;
+	return (intptr_t)s - (intptr_t)orig;
 }
 
 } // namespace AGS3
