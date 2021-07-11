@@ -61,7 +61,7 @@ void WaitForNextFrame() {
 	if (frameDuration <= std::chrono::milliseconds::zero()) {
 		_G(next_frame_timestamp) = now;
 		// suspend while the game is being switched out
-		while (_G(game_update_suspend) > 0) {
+		while (_G(game_update_suspend)) {
 			sys_evt_process_pending();
 			_G(platform)->YieldCPU();
 		}
@@ -81,7 +81,7 @@ void WaitForNextFrame() {
 	_G(next_frame_timestamp) += frameDuration;
 
 	// suspend while the game is being switched out
-	while (_G(game_update_suspend) > 0) {
+	while (_G(game_update_suspend)) {
 		sys_evt_process_pending();
 		_G(platform)->YieldCPU();
 	}

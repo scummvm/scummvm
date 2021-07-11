@@ -432,8 +432,8 @@ void String::Append(const char *cstr, size_t len) {
 		return;
 	// Test for null-terminator in the range
 	const char *ptr = cstr;
-	for (; *ptr && (size_t)(ptr - cstr) < len; ++ptr);
-	if ((size_t)(ptr - cstr) < len)
+	for (; *ptr && (static_cast<size_t>(ptr - cstr) < len); ++ptr);
+	if (static_cast<size_t>(ptr - cstr) < len)
 		len = ptr - cstr;
 	ReserveAndShift(false, len);
 	memcpy(_cstr + _len, cstr, len);
