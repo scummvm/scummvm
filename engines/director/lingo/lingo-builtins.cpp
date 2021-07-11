@@ -2363,7 +2363,7 @@ void LB::b_empty(int nargs) {
 }
 
 void LB::b_enter(int nargs) {
-	g_lingo->push(Datum(Common::String("\n")));
+	g_lingo->push(Datum(Common::String("\03")));
 }
 
 void LB::b_false(int nargs) {
@@ -2375,7 +2375,7 @@ void LB::b_quote(int nargs) {
 }
 
 void LB::b_returnconst(int nargs) {
-	g_lingo->push(Datum(Common::String("\n")));
+	g_lingo->push(Datum(Common::String("\r")));
 }
 
 void LB::b_tab(int nargs) {
