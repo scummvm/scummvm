@@ -88,7 +88,6 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 	struct stat   statbuf;
 	struct dirent *entry = nullptr;
 	DIR *rough = nullptr;
-	DIR *prevdir = nullptr;
 	char *diamond = nullptr;
 	char *directory = nullptr;
 	char *filename = nullptr;
@@ -158,19 +157,9 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 		filename[match_len] = '\0';
 	}
 
-	if ((prevdir = opendir(".")) == nullptr) {
-		fprintf(stderr, "ci_find_file: cannot open current working directory\n");
-		goto out;
-	}
-
-	if (chdir(directory) == -1) {
-		fprintf(stderr, "ci_find_file: cannot change to directory: %s\n", directory);
-		goto out_pd;
-	}
-
 	if ((rough = opendir(directory)) == nullptr) {
 		fprintf(stderr, "ci_find_file: cannot open directory: %s\n", directory);
-		goto out_pd;
+		goto out;
 	}
 
 	while ((entry = readdir(rough)) != nullptr) {
@@ -187,10 +176,6 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 		}
 	}
 	closedir(rough);
-
-out_pd:;
-	fchdir(dirfd(prevdir));
-	closedir(prevdir);
 
 out:;
 	if (directory) free(directory);
