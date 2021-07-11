@@ -258,7 +258,7 @@ Common::Error TwinEEngine::run() {
 	initAll();
 	initEngine();
 	_sound->stopSamples();
-	_screens->copyScreen(frontVideoBuffer, workVideoBuffer);
+	saveFrontBuffer();
 
 	_menu->init();
 	_holomap->loadLocations();
@@ -1057,6 +1057,22 @@ bool TwinEEngine::delaySkip(uint32 time) {
 	return false;
 }
 
+void TwinEEngine::saveFrontBuffer() {
+	_screens->copyScreen(frontVideoBuffer, workVideoBuffer);
+}
+
+void TwinEEngine::restoreFrontBuffer() {
+	_screens->copyScreen(workVideoBuffer, frontVideoBuffer);
+}
+
+void TwinEEngine::blitWorkToFront(const Common::Rect &rect) {
+	_interface->blitBox(rect, workVideoBuffer, frontVideoBuffer);
+}
+
+void TwinEEngine::blitFrontToWork(const Common::Rect &rect) {
+	_interface->blitBox(rect, frontVideoBuffer, workVideoBuffer);
+}
+
 void TwinEEngine::setPalette(const uint32 *palette) {
 	uint8 pal[NUMOFCOLORS * 3];
 	uint8 *out = pal;
@@ -1096,7 +1112,7 @@ void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom
 	frontVideoBuffer.addDirtyRect(Common::Rect(left, top, right, bottom));
 }
 
-void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, const uint32 *palette) {
+void TwinEEngine::crossFade(const uint32 *palette) {
 	Graphics::ManagedSurface backupSurface;
 	Graphics::ManagedSurface newSurface;
 	Graphics::ManagedSurface tempSurface;

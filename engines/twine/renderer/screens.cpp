@@ -95,7 +95,7 @@ bool Screens::loadImageDelay(int32 index, int32 paletteIndex, int32 seconds) {
 
 void Screens::fadeIn(const uint32 *pal) {
 	if (_engine->cfgfile.CrossFade) {
-		_engine->crossFade(_engine->frontVideoBuffer, pal);
+		_engine->crossFade(pal);
 	} else {
 		fadeToPal(pal);
 	}

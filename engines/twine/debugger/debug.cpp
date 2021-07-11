@@ -194,7 +194,7 @@ void Debug::debugResetButton(int32 type) {
 
 void Debug::debugRedrawScreen() {
 	_engine->_redraw->redrawEngineActions(true);
-	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+	_engine->saveFrontBuffer();
 	debugDrawWindows();
 }
 
@@ -421,7 +421,7 @@ void Debug::debugProcessWindow() {
 	int32 count = 0;
 
 	ScopedCursor cursor(_engine);
-	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+	_engine->saveFrontBuffer();
 
 	debugResetButtonsState();
 	if (numDebugWindows == 0) {
@@ -441,7 +441,7 @@ void Debug::debugProcessWindow() {
 			int type = 0;
 			if ((type = debugProcessButton(point.x, point.y)) != NO_ACTION) { // process menu item
 				if (debugTypeUseMenu(type)) {
-					_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+					_engine->restoreFrontBuffer();
 					_engine->copyBlockPhys(205, 55, 634, 474);
 				}
 

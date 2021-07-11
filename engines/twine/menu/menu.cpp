@@ -288,7 +288,7 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 			}
 		}
 	} else {
-		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
+		_engine->blitWorkToFront(rect);
 		_engine->_interface->drawTransparentBox(rect, 4);
 	}
 
@@ -412,7 +412,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 
 	// if we are running the game already, the buttons are just rendered on top of the scene
 	if (_engine->_scene->isGameRunning()) {
-		_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+		_engine->restoreFrontBuffer();
 	} else {
 		_engine->_screens->loadMenuImage(false);
 	}
@@ -611,7 +611,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 }
 
 int32 Menu::advoptionsMenu() {
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->restoreFrontBuffer();
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
@@ -635,7 +635,7 @@ int32 Menu::advoptionsMenu() {
 }
 
 int32 Menu::savemanageMenu() {
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->restoreFrontBuffer();
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
@@ -660,7 +660,7 @@ int32 Menu::savemanageMenu() {
 }
 
 int32 Menu::volumeMenu() {
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->restoreFrontBuffer();
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
@@ -685,14 +685,14 @@ int32 Menu::volumeMenu() {
 void Menu::inGameOptionsMenu() {
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
-	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+	_engine->saveFrontBuffer();
 	optionsMenu();
 	_engine->_text->initSceneTextBank();
 	optionsMenuState.setButtonTextId(0, TextId::kReturnMenu);
 }
 
 int32 Menu::optionsMenu() {
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->restoreFrontBuffer();
 
 	_engine->_sound->stopSamples();
 	_engine->_music->playTrackMusic(9); // LBA's Theme
@@ -793,7 +793,7 @@ EngineState Menu::run() {
 }
 
 int32 Menu::giveupMenu() {
-	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+	_engine->saveFrontBuffer();
 	_engine->_sound->pauseSamples();
 
 	MenuSettings *localMenu;
@@ -1042,7 +1042,7 @@ void Menu::processBehaviourMenu() {
 
 	_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, ANGLE_17, &moveMenu);
 
-	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+	_engine->saveFrontBuffer();
 
 	TextBankId tmpTextBank = _engine->_scene->sceneTextBank;
 	_engine->_scene->sceneTextBank = TextBankId::None;
@@ -1174,7 +1174,7 @@ void Menu::processInventoryMenu() {
 	int32 tmpAlphaLight = _engine->_scene->alphaLight;
 	int32 tmpBetaLight = _engine->_scene->betaLight;
 
-	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+	_engine->saveFrontBuffer();
 
 	_engine->_renderer->setLightVector(ANGLE_315, ANGLE_334, ANGLE_0);
 

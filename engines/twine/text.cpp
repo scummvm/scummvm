@@ -272,7 +272,7 @@ int32 Text::getTextSize(const char *dialogue) {
 }
 
 void Text::initDialogueBox() {
-	_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->blitWorkToFront(_dialTextBox);
 
 	if (drawTextBoxBackground) {
 		_engine->_menu->drawBox(_dialTextBox);
@@ -283,11 +283,11 @@ void Text::initDialogueBox() {
 
 	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
-	_engine->_interface->blitBox(_dialTextBox, _engine->frontVideoBuffer, _engine->workVideoBuffer);
+	_engine->blitFrontToWork(_dialTextBox);
 }
 
 void Text::initInventoryDialogueBox() {
-	_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->blitWorkToFront(_dialTextBox);
 	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
 }
@@ -656,7 +656,7 @@ bool Text::drawTextProgressive(TextId index, bool playVox, bool loop) {
 	_engine->exitSceneryView();
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
-	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+	_engine->saveFrontBuffer();
 	const bool aborted = displayText(index, _engine->cfgfile.FlagDisplayText, playVox, loop);
 	_engine->_interface->loadClip();
 	return aborted;

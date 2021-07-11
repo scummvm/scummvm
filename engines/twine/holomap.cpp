@@ -585,7 +585,7 @@ void Holomap::processHolomap() {
 		// TODO: text afterwards on top (not before as it is currently implemented)?
 		// pos 0x140,0x19?
 
-		//_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+		//_engine->restoreFrontBuffer();
 		if (fadeInPalette) {
 			fadeInPalette = false;
 			// TODO: this does a flip - which puts stuff onto the screen that shouldn't be there

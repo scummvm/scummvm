@@ -304,7 +304,6 @@ int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spr
 	return -1;
 }
 
-// cseg01:00018168
 int32 Extra::findExtraKey() const {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		const ExtraListStruct *extra = &extraList[i];
@@ -316,8 +315,7 @@ int32 Extra::findExtraKey() const {
 	return -1;
 }
 
-// cseg01:00018250
-int32 Extra::addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx) { // addMagicBallAimingAtKey
+int32 Extra::addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx) {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];
 		if (extra->info0 != -1) {
@@ -341,7 +339,7 @@ int32 Extra::addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int3
 	return -1;
 }
 
-void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle) { // ThrowMagicBall
+void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle) {
 	int32 ballSprite = -1;
 	int32 ballStrength = 0;
 	int32 extraIdx = -1;
@@ -549,7 +547,7 @@ void Extra::processExtras() {
 			continue;
 		}
 		const int32 deltaT = _engine->lbaTime - extra->spawnTime;
-		//
+
 		if (extra->type & ExtraType::EXPLOSION) {
 			extra->info0 = _engine->_collision->getAverageValue(SPRITEHQR_EXPLOSION_FIRST_FRAME, 100, 30, deltaT);
 			continue;
@@ -594,7 +592,7 @@ void Extra::processExtras() {
 				continue;
 			}
 		}
-		//
+
 		if (extra->type & ExtraType::BONUS) {
 			if (_engine->lbaTime - extra->spawnTime > 40) {
 				extra->type &= ~ExtraType::BONUS;

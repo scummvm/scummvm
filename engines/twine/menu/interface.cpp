@@ -174,6 +174,9 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 }
 
 void Interface::drawFilledRect(const Common::Rect &rect, uint8 colorIndex) {
+	if (rect.isValidRect()) {
+		return;
+	}
 	_engine->frontVideoBuffer.fillRect(Common::Rect(rect.left, rect.top, rect.right + 1, rect.bottom + 1), colorIndex);
 }
 

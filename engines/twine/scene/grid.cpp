@@ -123,23 +123,23 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 	const uint8 *inPtr = (const uint8 *)buffer.getBasePtr(left, absY);
 
 	do {
-		int32 vc3 = *(ptr++);
+		int32 height = *(ptr++);
 
 		do {
-			int32 temp = *(ptr++); // skip size
-			outPtr += temp;
-			inPtr += temp;
+			int32 width = *(ptr++); // skip size
+			outPtr += width;
+			inPtr += width;
 
-			absX += temp;
+			absX += width;
 
-			vc3--;
-			if (!vc3) {
+			height--;
+			if (!height) {
 				break;
 			}
 
-			temp = *(ptr++); // copy size
+			width = *(ptr++); // copy size
 
-			for (int32 j = 0; j < temp; j++) {
+			for (int32 j = 0; j < width; j++) {
 				if (absX >= _engine->_interface->textWindow.left && absX <= _engine->_interface->textWindow.right) {
 					*outPtr = *inPtr;
 				}
@@ -148,7 +148,7 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 				outPtr++;
 				inPtr++;
 			}
-		} while (--vc3);
+		} while (--height);
 
 		absX = left;
 

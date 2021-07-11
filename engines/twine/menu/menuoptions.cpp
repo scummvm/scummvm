@@ -149,7 +149,7 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyR
 	if (selected) {
 		_engine->_interface->drawFilledRect(rect, COLOR_91);
 	} else {
-		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
+		_engine->blitWorkToFront(rect);
 		_engine->_interface->drawTransparentBox(rect, 4);
 	}
 
@@ -348,7 +348,7 @@ bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize)
 }
 
 bool MenuOptions::newGameMenu() {
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->restoreFrontBuffer();
 	if (!enterText(TextId::kEnterYourName, saveGameName, sizeof(saveGameName))) {
 		return false;
 	}
@@ -400,7 +400,7 @@ int MenuOptions::chooseSave(TextId textIdx, bool showEmptySlots) {
 }
 
 bool MenuOptions::continueGameMenu() {
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->restoreFrontBuffer();
 	const int slot = chooseSave(TextId::kContinueGame);
 	if (slot >= 0) {
 		debug("Load slot %i", slot);
@@ -416,7 +416,7 @@ bool MenuOptions::continueGameMenu() {
 }
 
 bool MenuOptions::deleteSaveMenu() {
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->restoreFrontBuffer();
 	const int slot = chooseSave(TextId::kDeleteSaveGame);
 	if (slot >= 0) {
 		_engine->wipeSaveSlot(slot);
@@ -426,7 +426,7 @@ bool MenuOptions::deleteSaveMenu() {
 }
 
 bool MenuOptions::saveGameMenu() {
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->restoreFrontBuffer();
 	const int slot = chooseSave(TextId::kCreateSaveGame, true);
 	if (slot >= 0) {
 		// TODO: enter description

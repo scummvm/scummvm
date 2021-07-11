@@ -140,7 +140,7 @@ void Redraw::flipRedrawAreas() {
 
 void Redraw::blitBackgroundAreas() {
 	for (int32 i = 0; i < numOfRedrawBox; i++) {
-		_engine->_interface->blitBox(_currentRedrawList[i], _engine->workVideoBuffer, _engine->frontVideoBuffer);
+		_engine->blitWorkToFront(_currentRedrawList[i]);
 	}
 }
 
@@ -389,7 +389,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		addRedrawArea(_engine->_interface->textWindow);
 
 		if (actor->staticFlags.bIsBackgrounded && bgRedraw) {
-			_engine->_interface->blitBox(_engine->_interface->textWindow, _engine->frontVideoBuffer, _engine->workVideoBuffer);
+			_engine->blitFrontToWork(_engine->_interface->textWindow);
 		}
 
 		_engine->_debugScene->drawClip(renderRect);
@@ -447,7 +447,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 		addRedrawArea(_engine->_interface->textWindow);
 
 		if (actor->staticFlags.bIsBackgrounded && bgRedraw) {
-			_engine->_interface->blitBox(_engine->_interface->textWindow, _engine->frontVideoBuffer, _engine->workVideoBuffer);
+			_engine->blitFrontToWork(_engine->_interface->textWindow);
 		}
 
 		_engine->_debugScene->drawClip(renderRect);
@@ -685,7 +685,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		_engine->_screens->clearScreen();
 		_engine->_grid->redrawGrid();
 		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->projPosScreen.x, _engine->_renderer->projPosScreen.y);
-		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+		_engine->saveFrontBuffer();
 
 		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {
 			_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
@@ -712,7 +712,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 	// make celling grid fade
 	// need to be here to fade after drawing all actors in scene
 	if (_engine->_scene->needChangeScene == -2) {
-		_engine->crossFade(_engine->frontVideoBuffer, _engine->_screens->paletteRGBA);
+		_engine->crossFade(_engine->_screens->paletteRGBA);
 		_engine->_scene->needChangeScene = -1;
 	}
 

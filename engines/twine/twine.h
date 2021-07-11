@@ -304,6 +304,11 @@ public:
 	/** Main game video buffer */
 	TwineScreen frontVideoBuffer;
 
+	void blitWorkToFront(const Common::Rect &rect);
+	void blitFrontToWork(const Common::Rect &rect);
+	void restoreFrontBuffer();
+	void saveFrontBuffer();
+
 	int32 loopInventoryItem = 0;
 	int32 loopActorStep = 0;
 
@@ -352,10 +357,9 @@ public:
 	void copyBlockPhys(const Common::Rect &rect);
 
 	/** Cross fade feature
-	 * @param buffer screen buffer
 	 * @param palette new palette to cross fade
 	 */
-	void crossFade(const Graphics::ManagedSurface &buffer, const uint32 *palette);
+	void crossFade(const uint32 *palette);
 
 	/** Handle keyboard pressed keys */
 	void readKeys();
