@@ -162,6 +162,79 @@ bool ActiveMission::removeKnowledgeID(ObjectID actor, uint16 knowledgeID) {
 //-----------------------------------------------------------------------
 //	Add record of knowledge creation to mission
 
+void ActiveMission::read(Common::InSaveFile *in) {
+	_data.missionID = in->readUint16LE();
+	_data.generatorID = in->readUint16LE();
+	_data.missionScript = in->readUint16LE();
+	_data.missionFlags = in->readUint16LE();
+
+	debugC(4, kDebugSaveload, "... missionID = %d", _data.missionID);
+	debugC(4, kDebugSaveload, "... generatorID = %d", _data.generatorID);
+	debugC(4, kDebugSaveload, "... missionScript = %d", _data.missionScript);
+	debugC(4, kDebugSaveload, "... missionFlags = %d", _data.missionFlags);
+	
+	for (int i = 0; i < ARRAYSIZE(_data.missionVars); ++i) {
+		_data.missionVars[i] = in->readByte();
+		debugC(5, kDebugSaveload, "... missionVars[%d] = %d", i, _data.missionVars[i]);
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_data.missionObjectList); ++i) {
+		_data.missionObjectList[i] = in->readUint16LE();
+		debugC(5, kDebugSaveload, "... missionObjectList[%d] = %d", i, _data.missionObjectList[i]);
+	}
+	
+	for (int i = 0; i < ARRAYSIZE(_data.missionKnowledgeList); ++i) {
+		_data.missionKnowledgeList[i].id = in->readUint16LE();
+
+		_data.missionKnowledgeList[i].kID = in->readUint16LE();
+
+		debugC(5, kDebugSaveload, "... missionKnowledgeList[%d].id = %d", i, _data.missionKnowledgeList[i].id);
+		debugC(5, kDebugSaveload, "... missionKnowledgeList[%d].kID = %d", i, _data.missionKnowledgeList[i].kID);
+	}
+
+	_data.numObjectIDs = in->readUint16LE();
+	_data.numKnowledgeIDs = in->readUint16LE();
+
+	debugC(4, kDebugSaveload, "... numObjectIDs = %d", _data.numObjectIDs);
+	debugC(4, kDebugSaveload, "... numKnowledgeIDs = %d", _data.numKnowledgeIDs);
+}
+
+void ActiveMission::write(Common::OutSaveFile *out) {
+	out->writeUint16LE(_data.missionID);
+	out->writeUint16LE(_data.generatorID);
+	out->writeUint16LE(_data.missionScript);
+	out->writeUint16LE(_data.missionFlags);
+
+	debugC(4, kDebugSaveload, "... missionID = %d", _data.missionID);
+	debugC(4, kDebugSaveload, "... generatorID = %d", _data.generatorID);
+	debugC(4, kDebugSaveload, "... missionScript = %d", _data.missionScript);
+	debugC(4, kDebugSaveload, "... missionFlags = %d", _data.missionFlags);
+	
+	for (int i = 0; i < ARRAYSIZE(_data.missionVars); ++i) {
+		out->writeByte(_data.missionVars[i]);
+		debugC(5, kDebugSaveload, "... missionVars[%d] = %d", i, _data.missionVars[i]);
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_data.missionObjectList); ++i) {
+		out->writeUint16LE(_data.missionObjectList[i]);
+		debugC(5, kDebugSaveload, "... missionObjectList[%d] = %d", i, _data.missionObjectList[i]);
+	}
+	
+	for (int i = 0; i < ARRAYSIZE(_data.missionKnowledgeList); ++i) {
+		out->writeUint16LE(_data.missionKnowledgeList[i].id);
+		out->writeUint16LE(_data.missionKnowledgeList[i].kID);
+
+		debugC(5, kDebugSaveload, "... missionKnowledgeList[%d].id = %d", i, _data.missionKnowledgeList[i].id);
+		debugC(5, kDebugSaveload, "... missionKnowledgeList[%d].kID = %d", i, _data.missionKnowledgeList[i].kID);
+	}
+
+	out->writeUint16LE(_data.numObjectIDs);
+	out->writeUint16LE(_data.numKnowledgeIDs);
+
+	debugC(4, kDebugSaveload, "... numObjectIDs = %d", _data.numObjectIDs);
+	debugC(4, kDebugSaveload, "... numKnowledgeIDs = %d", _data.numKnowledgeIDs);
+}
+
 void ActiveMission::cleanup(void) {
 	int             i;
 
@@ -205,11 +278,32 @@ void saveMissions(SaveFileConstructor &saveGame) {
 	    sizeof(activeMissions));
 }
 
+void saveMissions(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving Missions");
+
+	out->write("MISS", 4);
+	out->writeUint32LE(ActiveMission::kActiveMissionSize);
+
+	for (int i = 0; i < ARRAYSIZE(activeMissions); ++i) {
+		debugC(3, kDebugSaveload, "Saving Mission %d", i);
+		activeMissions[i].write(out);
+	}
+}
+
 //-----------------------------------------------------------------------
 //	Restore the active missions
 
 void loadMissions(SaveFileReader &saveGame) {
 	saveGame.read(&activeMissions, sizeof(activeMissions));
+}
+
+void loadMissions(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading Missions");
+
+	for (int i = 0; i < ARRAYSIZE(activeMissions); ++i) {
+		activeMissions[i].read(in);
+		debugC(3, kDebugSaveload, "Loading Mission %d", i);
+	}
 }
 
 } // end if namespace Saga2

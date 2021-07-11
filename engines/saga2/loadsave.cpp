@@ -165,9 +165,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveTimers(out);
 	saveSensors(out);
 	saveTempActorCount(out);
+	saveMissions(out);
 
 #if 0
-	saveMissions(saveGame);
 	saveFactionTallies(saveGame);
 	saveTileModeState(saveGame);
 	saveSpellState(saveGame);
@@ -372,12 +372,12 @@ void loadSavedGameState(int16 saveNo) {
 			loadTempActorCount(in, chunkSize);
 			loadFlags |= loadTempActorCountFlag;
 			break;
-#if 0
 
 		case MKTAG('M', 'I', 'S', 'S'):
-			loadMissions(saveGame);
+			loadMissions(in);
 			loadFlags |= loadMissionsFlag;
 			break;
+#if 0
 
 		case MKTAG('F', 'A', 'C', 'T'):
 			loadFactionTallies(saveGame);
