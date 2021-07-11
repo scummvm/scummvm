@@ -383,7 +383,7 @@ bool ActorProto::acceptDamageAction(
 	assert(isObject(enactor) || isActor(enactor));
 
 	int8        pdm = 0; //=perDieMod+(resistant ? -2 : 0);
-	int16       damage = 0;
+	int16       damageScore = 0;
 	Actor       *a = (Actor *)GameObject::objectAddress(dObj);
 	Actor       *enactorPtr;
 	int16       &vitality = a->effectiveStats.vitality;
@@ -392,21 +392,21 @@ bool ActorProto::acceptDamageAction(
 
 
 	if (!a->isImmuneTo((effectImmuneTypes) dType)) {
-		damage = absDamage;
+		damageScore = absDamage;
 
 		if (dice)
 			for (int d = 0; d < ABS(dice); d++)
-				damage += (g_vm->_rnd->getRandomNumber(sides - 1) + pdm + 1) * (dice > 0 ? 1 : -1);
+				damageScore += (g_vm->_rnd->getRandomNumber(sides - 1) + pdm + 1) * (dice > 0 ? 1 : -1);
 	}
 
-	if (damage > 0 && resistant)
-		damage /= 2;
+	if (damageScore > 0 && resistant)
+		damageScore /= 2;
 
-	if (damage > 0 && isMagicDamage(dType) && makeSavingThrow())
-		damage /= 2;
+	if (damageScore > 0 && isMagicDamage(dType) && makeSavingThrow())
+		damageScore /= 2;
 
-	if (damage < 0)
-		return acceptHealing(dObj, enactor, -damage);
+	if (damageScore < 0)
+		return acceptHealing(dObj, enactor, -damageScore);
 
 	//  Apply applicable armor adjustments
 	if (dType == kDamageImpact
@@ -415,11 +415,11 @@ bool ActorProto::acceptDamageAction(
 		ArmorAttributes     armorAttribs;
 
 		a->totalArmorAttributes(armorAttribs);
-		damage /= armorAttribs.damageDivider;
-		damage = MAX(damage - armorAttribs.damageAbsorbtion, 0);
+		damageScore /= armorAttribs.damageDivider;
+		damageScore = MAX(damageScore - armorAttribs.damageAbsorbtion, 0);
 	}
 
-	if (damage == 0) return false;
+	if (damageScore == 0) return false;
 
 	if (isActor(enactor))
 		enactorPtr = (Actor *)GameObject::objectAddress(enactor);
@@ -436,26 +436,26 @@ bool ActorProto::acceptDamageAction(
 		Location        al = Location(a->getLocation(), a->IDParent());
 		if (gruntStyle > 0
 		        && ((flags & ResourceObjectPrototype::objPropNoSurface)
-		            || (damage > 2 && (int16)g_vm->_rnd->getRandomNumber(vitality - 1) < (damage * 2))))
+		            || (damageScore > 2 && (int16)g_vm->_rnd->getRandomNumber(vitality - 1) < (damageScore * 2))))
 			makeGruntSound(gruntStyle, al);
 
 		if (enactorPtr != NULL) {
 			enactorPtr->handleSuccessfulStrike(
 			    a,
-			    damage < vitality ? damage : vitality);
+			    damageScore < vitality ? damageScore : vitality);
 		}
 
 		//  If we've just lost all vitality, we're dead, else make a
 		//  morale check
-		if (damage >= vitality) {
+		if (damageScore >= vitality) {
 			MotionTask::die(*a);
 			AddFactionTally(a->faction, factionNumKills, 1);
 			if (enactorPtr != NULL)
 				enactorPtr->handleSuccessfulKill(a);
 		} else
-			a->handleDamageTaken(damage);
+			a->handleDamageTaken(damageScore);
 
-		vitality -= damage;
+		vitality -= damageScore;
 
 		if (actorToPlayerID(a, pID)) {
 			updateBrotherControls(pID);
@@ -465,7 +465,7 @@ bool ActorProto::acceptDamageAction(
 				                    oldVitality;
 
 				baseVitality = a->getBaseStats()->vitality;
-				oldVitality = vitality + damage;
+				oldVitality = vitality + damageScore;
 
 				if (baseVitality >= vitality * 3
 				        &&  baseVitality < oldVitality * 3) {
@@ -477,7 +477,7 @@ bool ActorProto::acceptDamageAction(
 			}
 		}
 
-		WriteStatusF(5, "Damage: %d", damage);
+		WriteStatusF(5, "Damage: %d", damageScore);
 	}
 
 	return true;

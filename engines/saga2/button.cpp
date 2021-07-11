@@ -502,8 +502,8 @@ gCompButton::~gCompButton(void) {
 	}
 }
 
-void gCompButton::dim(bool enable) {
-	if (enable) {
+void gCompButton::dim(bool enableFlag) {
+	if (enableFlag) {
 		if (!dimmed) dimmed = true;
 	} else {
 		if (dimmed) dimmed = false;
