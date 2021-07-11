@@ -163,9 +163,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveSpeechTasks(out);
 	saveActiveRegions(out);
 	saveTimers(out);
+	saveSensors(out);
 
 #if 0
-	saveSensors(saveGame);
 	saveTempActorCount(saveGame);
 	saveMissions(saveGame);
 	saveFactionTallies(saveGame);
@@ -359,15 +359,15 @@ void loadSavedGameState(int16 saveNo) {
 			} else
 				error("Timers loaded prematurely");
 			break;
-#if 0
 
 		case MKTAG('S', 'E', 'N', 'S'):
 			if (loadFlags & loadActorsFlag) {
-				loadSensors(saveGame);
+				loadSensors(in);
 				loadFlags |= loadSensorsFlag;
 			} else
 				error("Sensors loaded prematurely");
 			break;
+#if 0
 
 		case MKTAG('A', 'C', 'N', 'T'):
 			loadTempActorCount(saveGame);
