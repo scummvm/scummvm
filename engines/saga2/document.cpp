@@ -473,7 +473,7 @@ void CDocument::makePages(void) {
 	bool    newPage         = false;
 
 
-	while (offset >= 0 && pageIndex <= maxPages) {
+	while (offset >= 0 && pageIndex < maxPages) {
 		while (offset >= 0 &&
 		        lineIndex < linesPerPage &&
 		        !newPage) {
