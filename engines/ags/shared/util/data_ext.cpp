@@ -36,6 +36,8 @@ String GetDataExtErrorText(DataExtErrorType err) {
 		return "Unexpected end of file.";
 	case kDataExtErr_BlockDataOverlapping:
 		return "Block data overlapping.";
+	case kDataExtErr_BlockNotFound:
+		return "Block not found.";
 	}
 	return "Unknown error.";
 }
