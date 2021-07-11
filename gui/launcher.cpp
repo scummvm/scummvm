@@ -156,7 +156,6 @@ void LauncherDialog::build() {
 		DropdownButtonWidget *addButton =
 			new DropdownButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd);
 		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
-		_addButton = addButton;
 
 		_editButton =
 			new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), _("Change game options"), kEditGameCmd);
@@ -166,7 +165,6 @@ void LauncherDialog::build() {
 		DropdownButtonWidget *addButton =
 			new DropdownButtonWidget(this, "Launcher.AddGameButton", _c("~A~dd Game...", "lowres"), _("Add games to the list"), kAddGameCmd);
 		addButton->appendEntry(_c("Mass Add...", "lowres"), kMassAddGameCmd);
-		_addButton = addButton;
 
 		_editButton =
 		new ButtonWidget(this, "Launcher.EditGameButton", _c("~E~dit Game...", "lowres"), _("Change game options"), kEditGameCmd);

@@ -59,7 +59,6 @@ public:
 protected:
 	EditTextWidget  *_searchWidget;
 	ListWidget		*_list;
-	ButtonWidget	*_addButton;
 	Widget			*_startButton;
 	ButtonWidget	*_loadButton;
 	Widget			*_editButton;
