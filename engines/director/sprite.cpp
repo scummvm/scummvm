@@ -126,23 +126,31 @@ bool Sprite::shouldHilite() {
 	if (_puppet)
 		return false;
 
-	if (_ink == kInkTypeMatte) {
-		if (g_director->getCurrentMovie()->_version < kFileVer300)
-			return true;
-		if (isQDShape())
-			return true;
-	}
-
 	if (_cast) {
-		// we have our own check for button, thus we don't need it here
-		if (_cast->_type == kCastButton)
+		// Restrict to bitmap cast members.
+		// Buttons also hilite on click, but they have their own check.
+		if (_cast->_type != kCastBitmap)
 			return false;
-		CastMemberInfo *castInfo = _cast->getInfo();
-		if (castInfo)
-			return castInfo->autoHilite;
+
+		if (g_director->getVersion() >= 300) {
+			// The Auto Hilite flag was introduced in D3.
+
+			CastMemberInfo *castInfo = _cast->getInfo();
+			if (castInfo)
+				return castInfo->autoHilite;
+
+			// If there's no cast info, fall back to the old matte check.
+			// In D4 or above, there should always be a cast info,
+			// but in D3, it is not present unless you set a cast member's
+			// name, script, etc.
+		}
+	} else {
+		// QuickDraw shapes may also hilite on click.
+		if (!isQDShape())
+			return false;
 	}
 
-	return false;
+	return _ink == kInkTypeMatte;
 }
 
 uint16 Sprite::getPattern() {
