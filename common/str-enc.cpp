@@ -715,6 +715,8 @@ getConversionTable(CodePage page) {
 		return kWindows1257ConversionTable;
 	case kMacCentralEurope:
 		return kMacCentralEuropeConversionTable;
+	case kMacRoman:
+		return kMacRomanConversionTable;
 	case kISO8859_1:
 		return kLatin1ConversionTable;
 	case kISO8859_2:
