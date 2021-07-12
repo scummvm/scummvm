@@ -113,7 +113,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	if (_parser)
 		_parser->stopPlaying();
 
-	delete _currentMusicBuffer;
+	free(_currentMusicBuffer);
 
 	_currentMusicBuffer = (byte *)LoadResource(_musicContext, resourceId, "music data");
 	uint32 size = _musicContext->size(resourceId);
