@@ -1125,9 +1125,11 @@ void initFactionTallies(void);
 
 //  Save the faction tallies to a save file
 void saveFactionTallies(SaveFileConstructor &saveGame);
+void saveFactionTallies(Common::OutSaveFile *out);
 
 //  Load the faction tallies from a save file
 void loadFactionTallies(SaveFileReader &saveGame);
+void loadFactionTallies(Common::InSaveFile *in);
 
 //  Cleanup the faction tally table
 inline void cleanupFactionTallies(void) { /* Nothing to do */ }

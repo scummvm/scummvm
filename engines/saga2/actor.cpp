@@ -3884,11 +3884,32 @@ void saveFactionTallies(SaveFileConstructor &saveGame) {
 	    sizeof(factionTable));
 }
 
+void saveFactionTallies(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving Faction Tallies");
+
+	out->write("FACT", 4);
+	out->writeUint32LE(maxFactions * factionNumColumns * sizeof(int16));
+
+	for (int i = 0; i < maxFactions; ++i) {
+		for (int j = 0; j < factionNumColumns; ++j)
+			out->writeSint16LE(factionTable[i][j]);
+	}
+}
+
 //-------------------------------------------------------------------
 //	Load the faction tallies from a save file
 
 void loadFactionTallies(SaveFileReader &saveGame) {
 	saveGame.read(&factionTable, sizeof(factionTable));
+}
+
+void loadFactionTallies(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading Faction Tallies");
+
+	for (int i = 0; i < maxFactions; ++i) {
+		for (int j = 0; j < factionNumColumns; ++j)
+			factionTable[i][j] = in->readSint16LE();
+	}
 }
 
 }
