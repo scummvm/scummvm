@@ -483,7 +483,7 @@ int MacFontManager::registerFontName(Common::String name, int preferredId) {
 		id = preferredId;
 	} else {
 		// Preferred ID is already registered, find an unused one.
-		id = 0;
+		id = 100;
 		while (_fontInfo.contains(id))
 			id++;
 	}
