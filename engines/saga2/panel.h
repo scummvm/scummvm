@@ -402,6 +402,7 @@ public:
 class gControl : public gPanel {
 public:
 	uint8               accelKey;
+	gPanelList *_list;
 
 	gControl(gPanelList &, const Rect16 &, const char *, uint16, AppFunc *cmd = NULL);
 	gControl(gPanelList &, const Rect16 &, gPixelMap &, uint16, AppFunc *cmd = NULL);
