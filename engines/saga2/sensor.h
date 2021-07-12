@@ -119,10 +119,14 @@ public:
 public:
 	//  Constructor -- initial construction
 	SensorList(GameObject *o) : obj(o) {
+		debugC(1, kDebugSensors, "Adding SensorList %p to %p (%s)",
+		       (void *)this, (void *)o, o->objName());
 		newSensorList(this);
 	}
 
 	~SensorList() {
+		debugC(1, kDebugSensors, "Deleting SensorList %p of %p (%s)",
+		       (void *)this, (void *)obj, obj->objName());
 		deleteSensorList(this);
 	}
 
@@ -162,6 +166,8 @@ public:
 public:
 	//  Constructor -- initial construction
 	Sensor(GameObject *o, SensorID sensorID, int16 rng) : obj(o), id(sensorID), range(rng) {
+		debugC(1, kDebugSensors, "Adding Sensor %p to %p (%s)",
+		       (void *)this, (void *)o, o->objName());
 		newSensor(this);
 	}
 
@@ -172,6 +178,8 @@ public:
 
 	//  Virtural destructor
 	virtual ~Sensor(void) {
+		debugC(1, kDebugSensors, "Deleting Sensor %p to %p (%s)",
+		       (void *)this, (void *)obj, obj->objName());
 		deleteSensor(this);
 	}
 
