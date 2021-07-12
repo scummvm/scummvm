@@ -259,6 +259,10 @@ enum {
 	kMaxWeapons = 256
 };
 
+enum {
+	kActorCount = 575
+};
+
 //
 // Damage effects - these are the types of damage in the world
 //    Damage being defined as a change in effective vitality

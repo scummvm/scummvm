@@ -78,7 +78,6 @@ GameObject          *objectList = nullptr;     // list of all objects
 const int16         objectCount = 4971;        // count of objects
 
 Actor               *actorList = nullptr;      // list of all actors
-int16               actorCount;
 
 GameWorld           *worldList = nullptr;      // list of all worlds
 int16               worldCount;             // number of worlds
@@ -406,7 +405,7 @@ GameObject *GameObject::objectAddress(ObjectID id) {
 		return worldList != nullptr ? &worldList[id - WorldBaseID] : nullptr;
 	}
 
-	if (id - ActorBaseID >= actorCount)
+	if (id - ActorBaseID >= kActorCount)
 		error("Invalid object ID: %d!", id);
 
 	return actorList != nullptr ? &actorList[id - ActorBaseID] : nullptr;
@@ -432,7 +431,7 @@ ObjectID GameObject::thisID(void) {         // calculate our own id
 	if (id < objectCount) return id;
 
 	id = (Actor *)this - actorList;
-	if (id < actorCount) return id + ActorBaseID;
+	if (id < kActorCount) return id + ActorBaseID;
 
 	id = (GameWorld *)this - worldList;
 	if (id < worldCount) return id + WorldBaseID;
@@ -3153,7 +3152,7 @@ void initObjects(void) {
 
 	//  Make a pass over the actor list appending each actor to their
 	//  parent's child list
-	for (i = 0; i < actorCount; i++) {
+	for (i = 0; i < kActorCount; i++) {
 		Actor       *a = &actorList[i];
 
 		if (a->_data.parentID == Nothing) {
@@ -4786,7 +4785,7 @@ void doBackgroundSimulation(void) {
 	//  Calculate how many actors and/or objects we want to
 	//  update in this cycle
 	objectUpdateCount = objectCount / objectCycleTime;
-	actorUpdateCount = actorCount / actorCycleTime;
+	actorUpdateCount = kActorCount / actorCycleTime;
 
 	//  do background processing on a few objects, based on clock time.
 	while (objectUpdateCount--) {
@@ -4826,7 +4825,7 @@ void doBackgroundSimulation(void) {
 		a = &actorList[actorIndex++];
 
 		//  Wrap the counter around to the beginning if needed
-		if (actorIndex >= actorCount) actorIndex = 0;
+		if (actorIndex >= kActorCount) actorIndex = 0;
 
 		//  If actor is not deleted, then tell that actor to do
 		//  a background update

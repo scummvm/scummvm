@@ -700,6 +700,7 @@ public:
 
 	Actor           *leader;                // This actor's leader
 	Band            *followers;             // This actor's band of followers
+	BandID          _followersID;
 
 	ObjectID        armorObjects[ARMOR_COUNT];    //  armor objects being worn
 

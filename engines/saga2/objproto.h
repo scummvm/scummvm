@@ -43,8 +43,7 @@ class gameObject;
  * ===================================================================== */
 
 extern const int16 objectCount;  //  Number of elements in the object list
-extern int16 actorCount,         //  Number of elements in the actor list
-             worldCount;         //  Number of elements in the world list
+extern int16 worldCount;         //  Number of elements in the world list
 
 #define Permanent ((uint8)255)
 
@@ -59,7 +58,7 @@ inline bool isObject(ObjectID id) {
 }
 
 inline bool isActor(ObjectID id) {
-	return (id >= ActorBaseID && id < ActorBaseID + actorCount);
+	return (id >= ActorBaseID && id < ActorBaseID + kActorCount);
 }
 
 inline bool isWorld(ObjectID id) {

@@ -72,7 +72,6 @@ extern ProtoObj     *objectProtos;
 extern ActorProto   *actorProtos;
 
 extern Actor        *actorList;
-extern int16        actorCount;
 
 extern int32        actorListSize;
 
@@ -1046,6 +1045,7 @@ void Actor::init(
 	currentRecoveryPoints   = 0;
 	leader              = NULL;
 	followers           = NULL;
+	_followersID = NoBand;
 	for (i = 0; i < ARMOR_COUNT; i++)
 		armorObjects[i] = Nothing;
 	currentTarget       = NULL;
@@ -1113,6 +1113,7 @@ Actor::Actor(void) {
 	currentRecoveryPoints   = 0;
 	leader              = nullptr;
 	followers           = nullptr;
+	_followersID = NoBand;
 	for (int i = 0; i < ARMOR_COUNT; i++)
 		armorObjects[i] = Nothing;
 	currentTarget       = nullptr;
@@ -1181,6 +1182,7 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	currentRecoveryPoints   = 0;
 	leader              = NULL;
 	followers           = NULL;
+	_followersID = NoBand;
 	for (i = 0; i < ARMOR_COUNT; i++)
 		armorObjects[i] = Nothing;
 	currentTarget       = NULL;
@@ -1242,6 +1244,7 @@ Actor::Actor(void **buf) : GameObject(buf) {
 	followers           =   a->followersID != NoBand
 	                        ?   getBandAddress(a->followersID)
 	                        :   NULL;
+	_followersID = NoBand;
 	for (i = 0; i < ARMOR_COUNT; i++)
 		armorObjects[i] = a->armorObjects[i];
 	currentTarget       =   a->currentTargetID != Nothing
@@ -1320,10 +1323,10 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	         ? (Actor *)GameObject::objectAddress(leaderID)
 	         :   nullptr;
 
-	int followersID = in->readSint16LE();
+	_followersID = in->readSint16LE();
 
-	followers = followersID != NoBand
-	            ?   getBandAddress(followersID)
+	followers = _followersID != NoBand
+	            ?   getBandAddress(_followersID)
 	            :   nullptr;
 
 	for (int i = 0; i < ARRAYSIZE(armorObjects); ++i)
@@ -1380,7 +1383,7 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	debugC(4, kDebugSaveload, "... recPointsPerUpdate = %d", recPointsPerUpdate);
 	debugC(4, kDebugSaveload, "... currentRecoveryPoints = %d", currentRecoveryPoints);
 	debugC(4, kDebugSaveload, "... leaderID = %d", leaderID);
-	debugC(4, kDebugSaveload, "... followersID = %d", followersID);
+	debugC(4, kDebugSaveload, "... followersID = %d", _followersID);
 //	debugC(4, kDebugSaveload, "... armorObjects = %d", armorObjects);
 	debugC(4, kDebugSaveload, "... currentTargetID = %d", currentTargetID);
 //	debugC(4, kDebugSaveload, "... scriptVar = %d", scriptVar);
@@ -1605,7 +1608,7 @@ Actor *Actor::newActor(
 		int16       i;
 
 		//  Search actor list for first scavangable actor
-		for (i = playerActors; i < actorCount; i++) {
+		for (i = playerActors; i < kActorCount; i++) {
 			a = &actorList[i];
 
 			if ((a->flags & temporary)
@@ -1617,7 +1620,7 @@ Actor *Actor::newActor(
 		//  REM: If things start getting really tight, we can
 		//  start recycling common objects...
 
-		if (i >= actorCount)
+		if (i >= kActorCount)
 			return nullptr;
 	} else {
 		actorLimboCount--;
@@ -3559,12 +3562,11 @@ void updateActorStates(void) {
 	static const int32  evalRateMask = evalRate - 1;
 	static int32        baseActorIndex = evalRateMask;
 	extern Actor        *actorList;
-	extern int16        actorCount;
 
 	int32               actorIndex;
 
 	actorIndex = baseActorIndex = (baseActorIndex + 1) & evalRateMask;
-	while (actorIndex < actorCount) {
+	while (actorIndex < kActorCount) {
 		Actor   *a = &actorList[actorIndex];
 
 		if (isWorld(a->IDParent()))
@@ -3574,7 +3576,7 @@ void updateActorStates(void) {
 	}
 
 	updatesViaScript = 0;
-	for (actorIndex = 0; actorIndex < actorCount; actorIndex++) {
+	for (actorIndex = 0; actorIndex < kActorCount; actorIndex++) {
 		Actor   *a = &actorList[actorIndex];
 
 		if (isWorld(a->IDParent()) && a->isActivated())
@@ -3649,12 +3651,9 @@ void initActors(void) {
 	if (resourceActorCount < 1)
 		error("Unable to load Actors");
 
-	//  Add extra space for alias actors
-	actorCount = resourceActorCount + extraActors;
-
 	//  Allocate memory for the actor list
-	actorListSize = actorCount * sizeof(Actor);
-	actorList = new Actor[actorCount]();
+	actorListSize = kActorCount * sizeof(Actor);
+	actorList = new Actor[kActorCount]();
 
 	if (!actorList)
 		error("Unable to load Actors");
@@ -3678,7 +3677,7 @@ void initActors(void) {
 	}
 
 	//  Place all of the extra actors in actor limbo
-	for (; i < actorCount; i++) {
+	for (; i < kActorCount; i++) {
 		Actor       *a = &actorList[i];
 
 		new (a) Actor;
@@ -3703,7 +3702,7 @@ void saveActors(SaveFileConstructor &saveGame) {
 	//  Add size of actor count
 	archiveBufSize += sizeof(int16);
 
-	for (i = 0; i < actorCount; i++)
+	for (i = 0; i < kActorCount; i++)
 		archiveBufSize += actorList[i].archiveSize();
 
 	archiveBuffer = malloc(archiveBufSize);
@@ -3713,10 +3712,10 @@ void saveActors(SaveFileConstructor &saveGame) {
 	bufferPtr = (int16 *)archiveBuffer;
 
 	//  Store the number of actors in the archive buffer
-	*bufferPtr++ = actorCount;
+	*bufferPtr++ = kActorCount;
 
 	//  Store the actor data in the archive buffer
-	for (i = 0; i < actorCount; i++)
+	for (i = 0; i < kActorCount; i++)
 		bufferPtr = (int16 *)actorList[i].archive(bufferPtr);
 
 	//  Write the archive buffer to the save file
@@ -3738,16 +3737,16 @@ void saveActors(Common::OutSaveFile *out) {
 	//  Add size of actor count
 	archiveBufSize += sizeof(int16);
 
-	for (int i = 0; i < actorCount; i++)
+	for (int i = 0; i < kActorCount; i++)
 		archiveBufSize += actorList[i].archiveSize();
 
 	out->write("ACTR", 4);
 	out->writeUint32LE(archiveBufSize);
-	out->writeSint16LE(actorCount);
+	out->writeSint16LE(kActorCount);
 
-	debugC(3, kDebugSaveload, "... actorCount = %d", actorCount);
+	debugC(3, kDebugSaveload, "... kActorCount = %d", kActorCount);
 
-	for (int i = 0; i < actorCount; ++i)
+	for (int i = 0; i < kActorCount; ++i)
 		actorList[i].write(out);
 }
 
@@ -3761,11 +3760,11 @@ void loadActors(SaveFileReader &saveGame) {
 	void    *bufferPtr;
 
 	//  Read in the actor count
-	saveGame.read(&actorCount, sizeof(actorCount));
+	//saveGame.read(&actorCount, sizeof(kActorCount));
 
 	//  Allocate the actor array
-	actorListSize = actorCount * sizeof(Actor);
-	actorList = new Actor[actorCount]();
+	actorListSize = kActorCount * sizeof(Actor);
+	actorList = new Actor[kActorCount]();
 	if (actorList == NULL)
 		error("Unable to load Actors");
 
@@ -3777,7 +3776,7 @@ void loadActors(SaveFileReader &saveGame) {
 
 	saveGame.read(archiveBuffer, archiveBufSize);
 
-	for (i = 0, bufferPtr = archiveBuffer; i < actorCount; i++)
+	for (i = 0, bufferPtr = archiveBuffer; i < kActorCount; i++)
 		//  Initilize actors with archive data
 		new (&actorList[i]) Actor(&bufferPtr);
 
@@ -3789,17 +3788,17 @@ void loadActors(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading actors");
 
 	//  Read in the actor count
-	actorCount = in->readSint16LE();
+	in->readSint16LE();
 
-	debugC(3, kDebugSaveload, "... actorCount = %d", actorCount);
+	debugC(3, kDebugSaveload, "... kActorCount = %d", kActorCount);
 
 	//  Allocate the actor array
-	actorListSize = actorCount * sizeof(Actor);
-	actorList = new Actor[actorCount]();
+	actorListSize = kActorCount * sizeof(Actor);
+	actorList = new Actor[kActorCount]();
 	if (actorList == NULL)
 		error("Unable to load Actors");
 
-	for (int i = 0; i < actorCount; i++)
+	for (int i = 0; i < kActorCount; i++)
 		//  Initilize actors with archive data
 		new (&actorList[i]) Actor(in);
 
@@ -3812,7 +3811,7 @@ void cleanupActors(void) {
 	if (actorList != NULL) {
 		int16       i;
 
-		for (i = 0; i < actorCount; i++)
+		for (i = 0; i < kActorCount; i++)
 			actorList[i].~Actor();
 
 		delete[] actorList;
