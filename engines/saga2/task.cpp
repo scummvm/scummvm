@@ -1923,6 +1923,8 @@ HuntTask::HuntTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	if (huntFlags & (huntGoto | huntWander)) {
 		TaskID subTaskID = in->readSint16LE();
 		subTask = getTaskAddress(subTaskID);
+	} else {
+		subTask = nullptr;
 	}
 }
 
