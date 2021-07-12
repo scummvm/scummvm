@@ -222,6 +222,16 @@ void Sprite::setCast(CastMemberID memberID) {
 			_width = dims.width();
 			_height = dims.height();
 		}
+
+		// check whether the sprite type match the cast type
+		// if it doesn't match, then we treat it as transparent
+		// this happens in warlock-mac data/stambul/c up
+		if (_spriteType == kBitmapSprite && _cast->_type != kCastBitmap) {
+			warning("Sprite::setCast(): sprite type doesn't match cast type, setting cast member to null");
+			_cast = nullptr;
+			_castId = CastMemberID();
+		}
+
 	} else {
 		warning("Sprite::setCast(): %s has null member", memberID.asString().c_str());
 	}
