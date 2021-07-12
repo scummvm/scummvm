@@ -1905,12 +1905,12 @@ void saveContainerNodes(Common::OutSaveFile *out) {
 
 	//  Store the nodes
 	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
-		debugC(3, kDebugSaveload, "Saving ContainerNode %d", i++);
-
 		ContainerNode *n = *it;
 
-		if (n->getType() != ContainerNode::readyType)
+		if (n->getType() != ContainerNode::readyType) {
+			debugC(3, kDebugSaveload, "Saving ContainerNode %d", i++);
 			n->write(out);
+		}
 	}
 }
 

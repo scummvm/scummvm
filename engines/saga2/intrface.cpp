@@ -2631,7 +2631,7 @@ void loadUIState(SaveFileReader &saveGame) {
 }
 
 void loadUIState(Common::InSaveFile *in) {
-	debugC(2, kDebugSaveload, "Saving UIState");
+	debugC(2, kDebugSaveload, "Loading UIState");
 
 	indivControlsFlag = in->readByte();
 	indivBrother = in->readUint16LE();
