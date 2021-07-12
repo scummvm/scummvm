@@ -585,7 +585,7 @@ public:
 	const char *TRAINING_TEXT() {
 		return "\r\x3""c\x8E\xA1\xE3\xE7\xA5\xAD\xA8\xA5\n"						// "\r\x3""cОбучение\n"
 			   "\n"                                                             // "\n"
-			   "%s\x3""l\v090\t000\x87\xAE\xAB\x3""r\t000%s\x2\x3""c\v122\t021" // "%s\x3""l\v090\t000Зол\x3""r\t000%s\x2\x3""c\v122\t021"
+			   "%s\x3""l\v090\t000\x87\xAE\xAB\x3""r\t000%s\x2\x3""c\v122\t025" // "%s\x3""l\v090\t000Зол\x3""r\t000%s\x2\x3""c\v122\t025"
 			   "\f37\x8E\fd\xA1\xE3\xE7\xA5\xAD\xA8\xA5\t060ESC\x1";            // "\f37О\fdбучение\t060ESC\x1";
 	}
 
