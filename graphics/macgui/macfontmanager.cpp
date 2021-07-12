@@ -508,7 +508,7 @@ void MacFont::setName(const char *name) {
 }
 
 const Common::String MacFontManager::getFontName(uint16 id, int size, int slant, bool tryGen) {
-	Common::String rawName = _fontInfo[id]->name;
+	Common::String rawName = getFontName(id);
 	Common::String n = cleanFontName(rawName);
 	int extraSlant = parseFontSlant(rawName);
 	// let's try parse slant from name
@@ -556,6 +556,14 @@ int MacFontManager::getFontFallbackId(uint16 id) {
 		return -1;
 	}
 	return _fontInfo[id]->fallbackId;
+}
+
+Common::String MacFontManager::getFontName(uint16 id) {
+	if (!_fontInfo.contains(id)) {
+		warning("MacFontManager::getFontFallbackId: No _fontInfo entry for font %d", id);
+		return "";
+	}
+	return _fontInfo[id]->name;
 }
 
 void MacFontManager::generateFontSubstitute(MacFont &macFont) {

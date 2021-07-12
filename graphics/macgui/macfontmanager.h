@@ -146,6 +146,7 @@ public:
 	Common::Language getFontLanguage(uint16 id);
 	Common::CodePage getFontEncoding(uint16 id);
 	int getFontFallbackId(uint16 id);
+	Common::String getFontName(uint16 id);
 
 	void loadFonts(Common::SeekableReadStream *stream);
 	void loadFonts(const Common::String &fileName);
