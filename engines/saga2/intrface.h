@@ -90,7 +90,9 @@ void updateIndicators(void);
 
 void initUIState(void);
 void saveUIState(SaveFileConstructor &saveGame);
+void saveUIState(Common::OutSaveFile *out);
 void loadUIState(SaveFileReader &saveGame);
+void loadUIState(Common::InSaveFile *in);
 void cleanupUIState(void);
 
 //  Varargs function to write to the status line.

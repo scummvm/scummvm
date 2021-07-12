@@ -2577,6 +2577,10 @@ APPFUNC(cmdManaInd) {
 struct UIStateArchive {
 	bool    indivControlsFlag;
 	uint16  indivBrother;
+
+	enum {
+		kUIStateArchiveSize = 3
+	};
 };
 
 bool isIndivMode(void) {
@@ -2602,6 +2606,19 @@ void saveUIState(SaveFileConstructor &saveGame) {
 	    sizeof(archive));
 }
 
+void saveUIState(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving UIState");
+
+	out->write("UIST", 4);
+	out->writeUint32LE(UIStateArchive::kUIStateArchiveSize);
+
+	out->writeByte(indivControlsFlag);
+	out->writeUint16LE(indivBrother);
+
+	debugC(3, kDebugSaveload, "... indivControlsFlag = %d", indivControlsFlag);
+	debugC(3, kDebugSaveload, "... indivBrother = %d", indivBrother);
+}
+
 void loadUIState(SaveFileReader &saveGame) {
 	UIStateArchive      archive;
 
@@ -2609,6 +2626,18 @@ void loadUIState(SaveFileReader &saveGame) {
 
 	indivControlsFlag = archive.indivControlsFlag;
 	indivBrother = archive.indivBrother;
+
+	updateAllUserControls();
+}
+
+void loadUIState(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Saving UIState");
+
+	indivControlsFlag = in->readByte();
+	indivBrother = in->readUint16LE();
+
+	debugC(3, kDebugSaveload, "... indivControlsFlag = %d", indivControlsFlag);
+	debugC(3, kDebugSaveload, "... indivBrother = %d", indivBrother);
 
 	updateAllUserControls();
 }
