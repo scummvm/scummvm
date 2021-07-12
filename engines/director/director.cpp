@@ -155,7 +155,7 @@ Common::Error DirectorEngine::run() {
 	if (debugChannelSet(-1, kDebug32bpp))
 		wmMode |= Graphics::kWMMode32bpp;
 
-	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns);
+	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns, getLanguage());
 	_wm->setEngine(this);
 
 	_pixelformat = _wm->_pixelformat;
