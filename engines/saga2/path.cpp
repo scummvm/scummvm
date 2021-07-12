@@ -660,6 +660,7 @@ struct QueueItem {
 		platform = 0;
 		pad = 0;
 		cost = 0;
+		direction = 0;
 	}
 
 	operator int() {
