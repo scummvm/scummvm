@@ -333,8 +333,7 @@ bool SNDDecoder::processBufferCommand(Common::SeekableReadStreamEndian &stream) 
 	uint16 bits = 8;
 	if (encoding == 0x00) {
 		// Standard sound header
-		uint16 dataLength = param;
-		frameCount = dataLength / _channels;
+		frameCount = param / _channels;
 	} else if (encoding == 0xff) {
 		// Extended sound header
 		_channels = param;
