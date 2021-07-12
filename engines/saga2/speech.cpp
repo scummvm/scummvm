@@ -24,8 +24,6 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/saga2.h"
 #include "saga2/fta.h"
 #include "saga2/fontlib.h"
@@ -35,7 +33,6 @@
 #include "saga2/grabinfo.h"
 #include "saga2/player.h"
 #include "saga2/annoy.h"
-#include "saga2/savefile.h"
 #include "saga2/cmisc.h"
 #include "saga2/tilemode.h"
 

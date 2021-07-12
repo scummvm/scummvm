@@ -24,11 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/saga2.h"
 #include "saga2/loadsave.h"
-#include "saga2/savefile.h"
 #include "saga2/objects.h"
 #include "saga2/tile.h"
 #include "saga2/script.h"
@@ -48,6 +45,31 @@
 #include "saga2/imagcach.h"
 
 namespace Saga2 {
+
+const ChunkID   gameID = MKTAG('F', 'T', 'A', '2');
+
+void SaveFileHeader::read(Common::InSaveFile *in) {
+	char fileName[SaveFileHeader::kSaveNameSize];
+	gameID = in->readUint32BE();;
+	in->read(fileName, SaveFileHeader::kSaveNameSize);
+	saveName = fileName;
+}
+
+void SaveFileHeader::write(Common::OutSaveFile *out) {
+	out->writeUint32BE(gameID);
+	out->write(saveName.c_str(), saveName.size());
+
+	int remainingBytes = SaveFileHeader::kHeaderSize - saveName.size() - 4;
+
+	for (int i = 0; i < remainingBytes; ++i)
+		out->writeByte(0);
+
+	debugC(1, kDebugSaveload, "Writing game header: gameID = %s, saveName = %s", tag2str(gameID), saveName.c_str());
+}
+
+Common::String getSaveFileName(int16 saveNo) {
+	return Common::String::format("%3.3d.SAV", saveNo);
+}
 
 /* ===================================================================== *
    Functions
@@ -181,6 +203,38 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	resumeTimer();
 
 	return Common::kNoError;
+}
+
+bool firstChunk(Common::InSaveFile *in, ChunkID &chunk, int32 &size) {
+	if (!in->seek(SaveFileHeader::kHeaderSize, SEEK_SET))
+		error("Error seeking first save game chunk");
+
+	if (in->size() - in->pos() < 8) {
+		debugC(1, kDebugSaveload, "Reached EOF on first Chunk %s", tag2str(chunk));
+		return false;
+	}
+
+	chunk = in->readUint32BE();
+	size = in->readUint32LE();
+
+	debugC(1, kDebugSaveload, "First Chunk loaded: chunkID = %s, size = %d", tag2str(chunk), size);
+
+	return true;
+}
+
+bool nextChunk(Common::InSaveFile *in, ChunkID &chunk, int32 &size) {
+	if (in->size() - in->pos() < 8) {
+		debugC(1, kDebugSaveload, "Reached EOF at %s", tag2str(chunk));
+		return false;
+	}
+
+	chunk = in->readUint32BE();
+	size = in->readUint32LE();
+
+	debugC(1, kDebugSaveload, "Next Chunk loaded: chunkID = %s, size = %d", tag2str(chunk), size);
+
+	//  Return success
+	return true;
 }
 
 //----------------------------------------------------------------------

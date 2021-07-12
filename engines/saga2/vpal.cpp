@@ -24,9 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "common/debug.h"
+#include "common/savefile.h"
 #include "graphics/palette.h"
 
 #include "saga2/saga2.h"
@@ -35,7 +34,6 @@
 #include "saga2/palette.h"
 #include "saga2/display.h"
 #include "saga2/hresmgr.h"
-#include "saga2/savefile.h"
 
 namespace Saga2 {
 
@@ -87,8 +85,6 @@ static gPalette         oldPalette,         //  Palette at start of fade
 static int32            startTime,          //  Time index of start of fade
        totalTime;          //  Total fade duration
 
-
-static PaletteStateArchive  archive;        //  Used for loading and saving
 //  palette state
 
 /* ===================================================================== *

@@ -27,7 +27,6 @@
 #ifndef SAGA2_ACTOR_H
 #define SAGA2_ACTOR_H
 
-#include "common/savefile.h"
 #include "saga2/objects.h"
 
 namespace Saga2 {

@@ -24,8 +24,6 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "common/config-manager.h"
 #include "audio/mixer.h"
 
@@ -46,7 +44,6 @@
 #include "saga2/palette.h"
 
 #include "saga2/fontlib.h"
-#include "saga2/savefile.h"
 
 namespace Saga2 {
 

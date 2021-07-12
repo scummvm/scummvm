@@ -24,8 +24,6 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "common/debug.h"
 
 #include "saga2/saga2.h"
@@ -42,7 +40,6 @@
 #include "saga2/localize.h"
 #include "saga2/intrface.h"
 #include "saga2/contain.h"
-#include "saga2/savefile.h"
 #include "saga2/combat.h"
 
 //  Include files needed for SAGA script dispatch

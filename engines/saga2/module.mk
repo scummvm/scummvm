@@ -55,7 +55,6 @@ MODULE_OBJS := \
 	rect.o \
 	saga2.o \
 	sagafunc.o \
-	savefile.o \
 	sensor.o \
 	shorten.o \
 	speech.o \

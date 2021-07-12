@@ -24,8 +24,6 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "common/debug.h"
 
 #include "saga2/saga2.h"
@@ -35,7 +33,6 @@
 #include "saga2/tile.h"
 #include "saga2/mission.h"
 #include "saga2/hresmgr.h"
-#include "saga2/savefile.h"
 
 namespace Saga2 {
 
