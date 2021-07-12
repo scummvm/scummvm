@@ -146,14 +146,14 @@ uint32 Archive::getOffset(uint32 tag, uint16 id) const {
 	return resMap[id].offset;
 }
 
-uint16 Archive::findResourceID(uint32 tag, const Common::String &resName) const {
+uint16 Archive::findResourceID(uint32 tag, const Common::String &resName, bool ignoreCase) const {
 	if (!_types.contains(tag) || resName.empty())
 		return 0xFFFF;
 
 	const ResourceMap &resMap = _types[tag];
 
 	for (ResourceMap::const_iterator it = resMap.begin(); it != resMap.end(); it++)
-		if (it->_value.name.matchString(resName))
+		if (it->_value.name.matchString(resName, ignoreCase))
 			return it->_key;
 
 	return 0xFFFF;
