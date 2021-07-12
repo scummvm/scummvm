@@ -104,7 +104,7 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 			if (soundCast->_type != kCastSound) {
 				warning("DirectorSound::playCastMember: attempted to play a non-SoundCastMember %s", memberID.asString().c_str());
 			} else {
-				if (!allowRepeat && lastPlayingCast(soundChannel) == memberID)
+				if (!allowRepeat && lastPlayingCast(soundChannel) == memberID && isChannelActive(soundChannel))
 					return;
 				bool looping = ((SoundCastMember *)soundCast)->_looping;
 				AudioDecoder *ad = ((SoundCastMember *)soundCast)->_audio;
