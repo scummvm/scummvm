@@ -1567,6 +1567,14 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 		_bootParam = -7873;
 	}
 
+	// This boot param does not exist in the DOS version, but skips straight
+	// to the difficulty selection screen in the Mac versions. (One of them
+	// didn't show the difficulty selection screen at all, but we patch the
+	// boot script to enable that.)
+	if (!_copyProtection && _game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh && _bootParam == 0) {
+		_bootParam = -7873;
+	}
+
 	if (!_copyProtection && _game.id == GID_SAMNMAX && _bootParam == 0) {
 		_bootParam = -1;
 	}
