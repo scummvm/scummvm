@@ -33,63 +33,7 @@
 
 namespace Saga2 {
 
-/* ===================================================================== *
-   BandList class
- * ===================================================================== */
-
-const int kNumBands = 32;
-
-//  Manages the memory used for the Band's.  There will only be one
-//  global instantiation of this class
-class BandList {
-public:
-	Band *_list[kNumBands];
-
-	//  Constructor -- initial construction
-	BandList(void);
-
-	//  Destructor
-	~BandList(void);
-
-	//  Reconstruct from an archive buffer
-	void *restore(void *buf);
-
-	void read(Common::InSaveFile *in);
-
-	//  Return the number of bytes necessary to archive this task list
-	//  in a buffer
-	int32 archiveSize(void);
-
-	//  Create an archive of the task list in an archive buffer
-	void *archive(void *buf);
-
-	void write(Common::OutSaveFile *out);
-
-	//  Place a Band from the inactive list into the active
-	//  list.
-	Band *newBand(void);
-	Band *newBand(BandID id);
-
-	void addBand(Band *band);
-
-	//  Place a Band back into the inactive list.
-	void deleteBand(Band *p);
-
-	//  Return the specified Band's ID
-	BandID getBandID(Band *b) {
-		for (int i = 0; i < kNumBands; i++)
-			if (_list[i] == b)
-				return i;
-
-		error("BandList::getBandID(): Unknown band");
-	}
-
-	//  Return a pointer to a Band given a BandID
-	Band *getBandAddress(BandID id) {
-		assert(id >= 0 && id < kNumBands);
-		return _list[id];
-	}
-};
+extern Actor *actorList;
 
 //----------------------------------------------------------------------
 //	BandList constructor -- simply place each element of the array in
@@ -312,7 +256,6 @@ Band *getBandAddress(BandID id) {
 //	Initialize the bandList
 
 void initBands(void) {
-	g_vm->_bandList = new BandList();
 }
 
 //----------------------------------------------------------------------
@@ -392,14 +335,24 @@ void loadBands(Common::InSaveFile *in, int32 chunkSize) {
 	//  Reconstruct taskList from archived data
 	g_vm->_bandList = new BandList;
 	g_vm->_bandList->read(in);
+
+	// Reconstruct followers for actors
+	for (int i = 0; i < kActorCount; ++i) {
+		BandID id = actorList[i]._followersID;
+		actorList[i].followers = id != NoBand
+	                             ?   getBandAddress(id)
+	                             :   nullptr;
+	}
 }
 
 //----------------------------------------------------------------------
 //	Cleanup the bandList
 
 void cleanupBands(void) {
-	delete g_vm->_bandList;
-	g_vm->_bandList = nullptr;
+	for (int i = 0; i < BandList::kNumBands; i++) {
+		if (g_vm->_bandList->_list[i])
+			delete g_vm->_bandList->_list[i];
+	}
 }
 
 /* ===================================================================== *

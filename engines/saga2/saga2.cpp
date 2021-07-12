@@ -35,11 +35,12 @@
 #include "saga2/saga2.h"
 #include "saga2/fta.h"
 
-#include "saga2/gdraw.h"
-#include "saga2/motion.h"
-#include "saga2/mouseimg.h"
+#include "saga2/band.h"
 #include "saga2/contain.h"
+#include "saga2/gdraw.h"
 #include "saga2/imagcach.h"
+#include "saga2/mouseimg.h"
+#include "saga2/motion.h"
 
 namespace Saga2 {
 
@@ -75,6 +76,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 
 	_imageCache = new CImageCache;
 	_mTaskList = new MotionTaskList;
+	_bandList = new BandList();
 
 	_edpList = nullptr;
 	_sdpList = nullptr;
@@ -90,6 +92,7 @@ Saga2Engine::~Saga2Engine() {
 	delete _rnd;
 	delete _imageCache;
 	delete _mTaskList;
+	delete _bandList;
 }
 
 Common::Error Saga2Engine::run() {

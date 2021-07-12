@@ -61,6 +61,66 @@ void loadBands(Common::InSaveFile *in, int32 chunkSize);
 void cleanupBands(void);
 
 /* ===================================================================== *
+   BandList class
+ * ===================================================================== */
+
+//  Manages the memory used for the Band's.  There will only be one
+//  global instantiation of this class
+class BandList {
+public:
+	enum {
+		kNumBands = 32
+	};
+
+	Band *_list[kNumBands];
+
+	//  Constructor -- initial construction
+	BandList(void);
+
+	//  Destructor
+	~BandList(void);
+
+	//  Reconstruct from an archive buffer
+	void *restore(void *buf);
+
+	void read(Common::InSaveFile *in);
+
+	//  Return the number of bytes necessary to archive this task list
+	//  in a buffer
+	int32 archiveSize(void);
+
+	//  Create an archive of the task list in an archive buffer
+	void *archive(void *buf);
+
+	void write(Common::OutSaveFile *out);
+
+	//  Place a Band from the inactive list into the active
+	//  list.
+	Band *newBand(void);
+	Band *newBand(BandID id);
+
+	void addBand(Band *band);
+
+	//  Place a Band back into the inactive list.
+	void deleteBand(Band *p);
+
+	//  Return the specified Band's ID
+	BandID getBandID(Band *b) {
+		for (int i = 0; i < kNumBands; i++)
+			if (_list[i] == b)
+				return i;
+
+		error("BandList::getBandID(): Unknown band");
+	}
+
+	//  Return a pointer to a Band given a BandID
+	Band *getBandAddress(BandID id) {
+		assert(id >= 0 && id < kNumBands);
+		return _list[id];
+	}
+};
+
+/* ===================================================================== *
    Band class
  * ===================================================================== */
 
