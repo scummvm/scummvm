@@ -360,6 +360,9 @@ bool testPath(Common::String &path, bool directory) {
 	return false;
 }
 
+// if we are finding the file path, then this func will return exactly the executable file path
+// if we are finding the directory path, then we will get the path relative to the game data dir.
+// e.g. if we have game data dir as SSwarlock, then "A:SSwarlock" -> "", "A:SSwarlock:Nav" -> "Nav"
 Common::String pathMakeRelative(Common::String path, bool recursive, bool addexts, bool directory) {
 	Common::String initialPath(path);
 
