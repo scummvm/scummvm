@@ -40,12 +40,6 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 	init();
 }
 
-MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, Common::CodePage encodeType) : MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment, 0, 0, 0, 0, 0, encodeType), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0, true)) {
-
-	_buttonType = buttonType;
-	init();
-}
-
 void MacButton::init() {
 	_invertInner = false;
 	_checkBoxType = 0;

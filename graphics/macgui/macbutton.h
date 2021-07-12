@@ -48,7 +48,6 @@ enum CheckBoxType {
 class MacButton : public MacText {
 public:
 	MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor);
-	MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, Common::CodePage encodeType = Common::kMacCentralEurope);
 
 	virtual void setActive(bool active) override;
 
