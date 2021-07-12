@@ -88,7 +88,7 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 		Common::U32String u32TextPart(textPart, encoding);
 		_ptext += u32TextPart;
 		_ftext += u32TextPart;
-		logText += u32TextPart;
+		logText += Common::toPrintable(u32TextPart);
 
 		Common::String format = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _style.fontId, _style.textSlant, _style.fontSize, _style.r, _style.g, _style.b);
 		_ftext += format;
@@ -101,9 +101,9 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 	Common::U32String u32Text(text, encoding);
 	_ptext += u32Text;
 	_ftext += u32Text;
-	logText += u32Text;
+	logText += Common::toPrintable(u32Text);
 
-	debugC(4, kDebugText, "#### text:\n%s\n####", logText.encode().c_str());
+	debugC(4, kDebugText, "#### text:\n%s\n####", logText.encode(Common::kUtf8).c_str());
 }
 
 FontStyle::FontStyle() {
