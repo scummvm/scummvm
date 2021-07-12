@@ -1199,7 +1199,7 @@ void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	_currentFormatting = _defaultFormatting;
-	Common::U32String strWithFont = Common::U32String(_defaultFormatting.toString(), _encodeType) + str;
+	Common::U32String strWithFont = Common::U32String(_defaultFormatting.toString()) + str;
 
 	if (!skipAdd) {
 		_str += strWithFont;
@@ -1933,7 +1933,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 // This happens when a long paragraph is split into several lines
 #define ADDFORMATTING()                                                                      \
 	if (formatted) {                                                                         \
-		formatting = Common::U32String(_textLines[i].chunks[chunk].toString(), _encodeType); \
+		formatting = Common::U32String(_textLines[i].chunks[chunk].toString()); \
 		if (formatting != prevformatting) {                                                  \
 			res += formatting;                                                               \
 			prevformatting = formatting;                                                     \
@@ -1941,7 +1941,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	}
 
 Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted, bool newlines) {
-	Common::U32String res("", _encodeType);
+	Common::U32String res("");
 
 	if (endRow == -1)
 		endRow = _textLines.size() - 1;
@@ -1955,7 +1955,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 	startRow = CLIP(startRow, 0, (int)_textLines.size() - 1);
 	endRow = CLIP(endRow, 0, (int)_textLines.size() - 1);
 
-	Common::U32String formatting("", _encodeType), prevformatting("", _encodeType);
+	Common::U32String formatting(""), prevformatting("");
 
 	for (int i = startRow; i <= endRow; i++) {
 		// We requested only part of one line
