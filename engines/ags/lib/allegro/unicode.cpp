@@ -1177,7 +1177,7 @@ const char *ustrstr(const char *s1, const char *s2) {
 	len = ustrlen(s2);
 	while (ugetc(s1)) {
 		if (ustrncmp(s1, s2, len) == 0)
-			return (char *)s1;
+			return s1;
 
 		s1 += uwidth(s1);
 	}
