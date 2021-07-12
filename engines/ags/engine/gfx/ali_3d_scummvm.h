@@ -234,7 +234,6 @@ public:
 
 private:
 	Graphics::Screen *_screen = nullptr;
-	bool _useVirtScreenDirectly = false;
 	PSDLRenderFilter _filter;
 
 	bool _hasGamma = false;

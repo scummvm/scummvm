@@ -374,29 +374,85 @@ void ScummVMRendererGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch
 void ScummVMRendererGraphicsDriver::BlitToScreen() {
 	const Graphics::Surface &src =
 		virtualScreen->GetAllegroBitmap()->getSurface();
+	int i;
+	const uint32 *srcP;
+	uint32 *destP;
 
-	if (!_screen && !_useVirtScreenDirectly) {
-		// Check whether whether the AGS surface format matches the screen
-		_useVirtScreenDirectly = src.format == g_system->getScreenFormat();
+	enum {
+		kRenderInitial, kRenderDirect, kRenderToABGR, kRenderToRGBA,
+		kRenderOther
+	} renderMode;
 
-		if (!_useVirtScreenDirectly)
-			_screen = new Graphics::Screen();
+	// Check for rendering to use. The virtual screen can change, so I'm
+	// playing it safe and checking the render mode for each frame
+	const Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+
+	if (src.format == screenFormat) {
+		// The virtual surface can be directly blitted to the screen
+		renderMode = kRenderDirect;
+	} else if (src.format != Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)) {
+		// Not a 32-bit surface, so will have to use an intermediate
+		// surface to correct the virtual screen to the correct format
+		renderMode = kRenderOther;
+	} else if (screenFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) {
+		renderMode = kRenderToRGBA;
+	} else if (screenFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) {
+		renderMode = kRenderToABGR;
+	} else {
+		renderMode = kRenderOther;
 	}
 
-	if (_screen) {
+	if (renderMode != kRenderDirect && !_screen)
+		_screen = new Graphics::Screen();
+
+	switch (renderMode) {
+	case kRenderToABGR:
+		// ARGB to ABGR
+		assert(src.w == _screen->w && src.h == _screen->h);
+		srcP = (const uint32 *)src.getPixels();
+		destP = (uint32 *)_screen->getPixels();
+		for (i = 0; i < src.w * src.h; ++i, ++srcP, ++destP) {
+			*destP = (*srcP & 0xff00ff00) |
+				((*srcP & 0xff) << 16) |
+				((*srcP >> 16) & 0xff);
+		}
+		break;
+
+	case kRenderToRGBA:
+		// ARGB to RGBA
+		assert(src.w == _screen->w && src.h == _screen->h);
+		srcP = (const uint32 *)src.getPixels();
+		destP = (uint32 *)_screen->getPixels();
+		for (i = 0; i < src.w * src.h; ++i, ++srcP, ++destP) {
+			*destP = ((*srcP & 0xffffff) << 8) |
+				((*srcP >> 24) & 0xff);
+		}
+		break;
+
+	case kRenderOther: {
 		// Blit the surface to the temporary screen, ignoring the alphas.
 		// This takes care of converting to the screen format
 		Graphics::Surface srcCopy = src;
 		srcCopy.format.aLoss = 8;
 
 		_screen->blitFrom(srcCopy);
-		_screen->update();
+		break;
+	}
 
-	} else {
+	case kRenderDirect:
 		// Blit the virtual surface directly to the screen
 		g_system->copyRectToScreen(src.getPixels(), src.pitch,
 			0, 0, src.w, src.h);
 		g_system->updateScreen();
+		return;
+
+	default:
+		break;
+	}
+
+	if (_screen) {
+		_screen->addDirtyRect(Common::Rect(0, 0, src.w, src.h));
+		_screen->update();
 	}
 }
 

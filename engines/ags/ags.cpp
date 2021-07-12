@@ -217,7 +217,6 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h, int colorDepth) {
 	Graphics::PixelFormat format;
 	if (!getPixelFormat(colorDepth, format))
 		error("Unsupported color depth %d", colorDepth);
-	//Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 
 	initGraphics(w, h, &format);
 }
