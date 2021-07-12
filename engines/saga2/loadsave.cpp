@@ -172,10 +172,7 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveAutoMap(out);
 	saveUIState(out);
 	savePaletteState(out);
-
-#if 0
-	saveContainerNodes(saveGame);
-#endif
+	saveContainerNodes(out);
 
 	out->finalize();
 
@@ -416,16 +413,14 @@ void loadSavedGameState(int16 saveNo) {
 			loadPaletteState(in);
 			loadFlags |= loadPaletteStateFlag;
 			break;
-#if 0
 
 		case MKTAG('C', 'O', 'N', 'T'):
 			if (loadFlags & loadObjectsFlag) {
-				loadContainerNodes(saveGame);
+				loadContainerNodes(in);
 				loadFlags |= loadContainerNodesFlag;
 			} else
 				error("ContainerNodes loaded prematurely");
 			break;
-#endif
 		}
 
 		notEOF = nextChunk(in, id, chunkSize);

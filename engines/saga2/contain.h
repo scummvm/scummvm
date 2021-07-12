@@ -452,6 +452,9 @@ public:
 	void *restore(void *buf);
 	void *archive(void *buf);
 
+	void read(Common::InSaveFile *in);
+	void write(Common::OutSaveFile *out);
+
 	//  Hide or show this container window.
 	void hide(void);
 	void show(void);
@@ -542,7 +545,9 @@ void cleanupContainers(void);
 
 void initContainerNodes(void);
 void saveContainerNodes(SaveFileConstructor &saveGame);
+void saveContainerNodes(Common::OutSaveFile *out);
 void loadContainerNodes(SaveFileReader &saveGame);
+void loadContainerNodes(Common::InSaveFile *in);
 void cleanupContainerNodes(void);
 
 extern void updateContainerWindows(void);

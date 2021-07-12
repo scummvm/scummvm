@@ -1468,6 +1468,47 @@ void *ContainerNode::archive(void *buf) {
 	return &a[1];
 }
 
+void ContainerNode::read(Common::InSaveFile *in) {
+	//  Restore fields
+	object = in->readUint16LE();
+	type = in->readByte();
+	owner = in->readByte();
+	position.read(in);
+	mindType = in->readByte();
+	window = NULL;
+	action = 0;
+
+	bool shown = in->readByte();
+
+	//  If this container was shown, re-show it
+	if (shown)
+		markForShow();
+
+	debugC(4, kDebugSaveload, "... object = %d", object);
+	debugC(4, kDebugSaveload, "... type = %d", type);
+	debugC(4, kDebugSaveload, "... owner = %d", owner);
+	debugC(4, kDebugSaveload, "... position = (%d, %d, %d, %d)", position.x, position.y, position.width, position.height);
+	debugC(4, kDebugSaveload, "... mindType = %d", mindType);
+	debugC(4, kDebugSaveload, "... shown = %d", shown);
+}
+
+void ContainerNode::write(Common::OutSaveFile *out) {
+	//  Store fields
+	out->writeUint16LE(object);
+	out->writeByte(type);
+	out->writeByte(owner);
+	position.write(out);
+	out->writeByte(mindType);
+	out->writeByte(window != NULL);
+
+	debugC(4, kDebugSaveload, "... object = %d", object);
+	debugC(4, kDebugSaveload, "... type = %d", type);
+	debugC(4, kDebugSaveload, "... owner = %d", owner);
+	debugC(4, kDebugSaveload, "... position = (%d, %d, %d, %d)", position.x, position.y, position.width, position.height);
+	debugC(4, kDebugSaveload, "... mindType = %d", mindType);
+	debugC(4, kDebugSaveload, "... shown = %d", window != NULL);
+}
+
 //  Close the container window, but leave the node.
 void ContainerNode::hide(void) {
 	//  close the window, but don't close the object.
@@ -1831,6 +1872,48 @@ void saveContainerNodes(SaveFileConstructor &saveGame) {
 	free(archiveBuffer);
 }
 
+void saveContainerNodes(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving Container Nodes");
+
+	int i = 0;
+	int16 numNodes = 0;
+	int32 archiveBufSize;
+
+	//  Make sure there are no pending container view actions
+	g_vm->_containerList->doDeferredActions();
+
+	archiveBufSize = sizeof(numNodes);
+
+	//  Count the number of nodes to save
+	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
+		ContainerNode *n = *it;
+
+		if (n->getType() != ContainerNode::readyType)
+			numNodes++;
+	}
+
+	//  Compute size of archive buffer
+	archiveBufSize += numNodes * ContainerNode::archiveSize();
+
+	out->write("CONT", 4);
+	out->writeUint32LE(archiveBufSize);
+
+	//  Store the number of nodes to save
+	out->writeSint16LE(numNodes);
+
+	debugC(3, kDebugSaveload, "... numNodes = %d", numNodes);
+
+	//  Store the nodes
+	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
+		debugC(3, kDebugSaveload, "Saving ContainerNode %d", i++);
+
+		ContainerNode *n = *it;
+
+		if (n->getType() != ContainerNode::readyType)
+			n->write(out);
+	}
+}
+
 void loadContainerNodes(SaveFileReader &saveGame) {
 	ContainerNode       *node;
 	Common::List<ContainerNode *> tempList;
@@ -1868,6 +1951,32 @@ void loadContainerNodes(SaveFileReader &saveGame) {
 
 	//  Free the archive buffer
 	free(archiveBuffer);
+}
+
+void loadContainerNodes(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading Container Nodes");
+
+	ContainerNode *node;
+	Common::List<ContainerNode *> tempList;
+	int16 numNodes;
+
+	//  Read in the number of container nodes to restore
+	numNodes = in->readSint16LE();
+	debugC(3, kDebugSaveload, "... numNodes = %d", numNodes);
+
+	for (int i = 0; i < numNodes; i++) {
+		debugC(3, kDebugSaveload, "Loading ContainerNode %d", i);
+
+		node = new ContainerNode;
+
+		//  Restore the state of the node
+		node->read(in);
+
+		//  Add it back to the container list
+		g_vm->_containerList->add(node);
+	}
+
+	assert(tempList.empty());
 }
 
 void cleanupContainerNodes(void) {
