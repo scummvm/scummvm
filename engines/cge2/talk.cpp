@@ -114,6 +114,10 @@ uint16 Font::width(const char *text) {
 
 Talk::Talk(CGE2Engine *vm, const char *text, TextBoxStyle mode, ColorBank color, bool wideSpace)
 	: Sprite(vm), _mode(mode), _created(false), _wideSpace(wideSpace), _vm(vm) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled_new"))
+		ttsMan->say(text);
+
 	_color = _vm->_font->_colorSet[color];
 
 	if (color == kCBRel)

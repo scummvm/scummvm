@@ -184,8 +184,8 @@ bool CGE2Engine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error CGE2Engine::run() {
-    // if (_ttsMan != nullptr)
-	// 	_ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
+    if (_ttsMan != nullptr)
+		_ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
 	syncSoundSettings();
 	initGraphics(kScrWidth, kScrHeight);
 

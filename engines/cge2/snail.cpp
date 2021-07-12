@@ -31,6 +31,7 @@
 #include "cge2/text.h"
 #include "cge2/sound.h"
 #include "cge2/events.h"
+#include "common/config-manager.h"
 
 namespace CGE2 {
 
@@ -656,7 +657,8 @@ void CGE2Engine::snSay(Sprite *spr, int val) {
 				i -= 100;
 			int16 oldRepeat = _sound->getRepeat();
 			_sound->setRepeat(1);
-			snSound(spr, i, Audio::Mixer::kSpeechSoundType);
+			if (!ConfMan.getBool("tts_enabled_new") && Common::getLanguageCode(getLanguage()) == "pl")
+				snSound(spr, i, Audio::Mixer::kSpeechSoundType);
 			_sound->setRepeat(oldRepeat);
 			_soundStat._wait = &_sound->_smpinf._counter;
 		}
