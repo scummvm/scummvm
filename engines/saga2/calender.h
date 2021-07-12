@@ -61,6 +61,9 @@ public:
 	            hour,
 	            frameInHour;
 
+	void read(Common::InSaveFile *in);
+	void write(Common::OutSaveFile *out);
+
 	void update(void);
 	int lightLevel(int maxLevel);
 

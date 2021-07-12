@@ -637,10 +637,41 @@ void saveTileModeState(SaveFileConstructor &saveGame) {
 	}
 }
 
+void saveTileModeState(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving TileModeState");
+
+	int32 size = 0;
+
+	assert(uiKeysEnabled);
+
+	//  Compute the number of bytes needed
+	size += sizeof(aggressiveActFlag)
+	        +   sizeof(inCombat)
+	        +   sizeof(combatPaused);
+	if (aggressiveActFlag)
+		size += sizeof(timeOfLastAggressiveAct);
+
+	out->write("TMST", 4);
+	out->writeUint32LE(size);
+
+	out->writeByte(aggressiveActFlag);
+	out->writeByte(inCombat);
+	out->writeByte(combatPaused);
+
+	debugC(3, kDebugSaveload, "... aggressiveActFlag = %d", aggressiveActFlag);
+	debugC(3, kDebugSaveload, "... inCombat = %d", inCombat);
+	debugC(3, kDebugSaveload, "... combatPaused = %d", combatPaused);
+
+	if (aggressiveActFlag)
+		timeOfLastAggressiveAct.write(out);
+}
+
 //-----------------------------------------------------------------------
 //	Load the tile mode state from a save file
 
 void loadTileModeState(SaveFileReader &saveGame) {
+	debugC(2, kDebugSaveload, "Loading TileModeState");
+
 	assert(uiKeysEnabled);
 
 	//  Simply read in the data
@@ -652,6 +683,24 @@ void loadTileModeState(SaveFileReader &saveGame) {
 		    &timeOfLastAggressiveAct,
 		    sizeof(timeOfLastAggressiveAct));
 	}
+	tileLockFlag = false;
+}
+
+void loadTileModeState(Common::InSaveFile *in) {
+	assert(uiKeysEnabled);
+
+	//  Simply read in the data
+	aggressiveActFlag = in->readByte();
+	inCombat = in->readByte();
+	combatPaused = in->readByte();
+
+	debugC(3, kDebugSaveload, "... aggressiveActFlag = %d", aggressiveActFlag);
+	debugC(3, kDebugSaveload, "... inCombat = %d", inCombat);
+	debugC(3, kDebugSaveload, "... combatPaused = %d", combatPaused);
+
+	if (aggressiveActFlag)
+		timeOfLastAggressiveAct.read(in);
+
 	tileLockFlag = false;
 }
 

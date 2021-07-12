@@ -50,9 +50,11 @@ void initTileModeState(void);
 
 //  Save the tile mode state to a save file
 void saveTileModeState(SaveFileConstructor &saveGame);
+void saveTileModeState(Common::OutSaveFile *out);
 
 //  Load the tile mode state from a save file
 void loadTileModeState(SaveFileReader &saveGame);
+void loadTileModeState(Common::InSaveFile *in);
 
 //  Cleanup the tile mode state
 inline void cleanupTileModeState(void) { /* do nothing */ }

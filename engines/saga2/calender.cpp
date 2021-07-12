@@ -52,6 +52,42 @@ const uint16 GAME_START_HOUR = 5;
    FrameAlarm member functions
  * ===================================================================== */
 
+void CalenderTime::read(Common::InSaveFile *in) {
+	years = in->readUint16LE();
+	weeks = in->readUint16LE();
+	days = in->readUint16LE();
+	dayInYear = in->readUint16LE();
+	dayInWeek = in->readUint16LE();
+	hour = in->readUint16LE();
+	frameInHour = in->readUint16LE();
+
+	debugC(3, kDebugSaveload, "... years = %d", years);
+	debugC(3, kDebugSaveload, "... weeks = %d", weeks);
+	debugC(3, kDebugSaveload, "... days = %d", days);
+	debugC(3, kDebugSaveload, "... dayInYear = %d", dayInYear);
+	debugC(3, kDebugSaveload, "... dayInWeek = %d", dayInWeek);
+	debugC(3, kDebugSaveload, "... hour = %d", hour);
+	debugC(3, kDebugSaveload, "... frameInHour = %d", frameInHour);
+}
+
+void CalenderTime::write(Common::OutSaveFile *out) {
+	out->writeUint16LE(years);
+	out->writeUint16LE(weeks);
+	out->writeUint16LE(days);
+	out->writeUint16LE(dayInYear);
+	out->writeUint16LE(dayInWeek);
+	out->writeUint16LE(hour);
+	out->writeUint16LE(frameInHour);
+
+	debugC(3, kDebugSaveload, "... years = %d", years);
+	debugC(3, kDebugSaveload, "... weeks = %d", weeks);
+	debugC(3, kDebugSaveload, "... days = %d", days);
+	debugC(3, kDebugSaveload, "... dayInYear = %d", dayInYear);
+	debugC(3, kDebugSaveload, "... dayInWeek = %d", dayInWeek);
+	debugC(3, kDebugSaveload, "... hour = %d", hour);
+	debugC(3, kDebugSaveload, "... frameInHour = %d", frameInHour);
+}
+
 void CalenderTime::update(void) {
 	const char *text = NULL;
 
@@ -250,22 +286,10 @@ void saveCalender(Common::OutSaveFile *out) {
 	out->writeUint32LE(sizeof(calenderPaused) + sizeof(calender));
 
 	out->writeByte(calenderPaused);
-	out->writeUint16LE(calender.years);
-	out->writeUint16LE(calender.weeks);
-	out->writeUint16LE(calender.days);
-	out->writeUint16LE(calender.dayInYear);
-	out->writeUint16LE(calender.dayInWeek);
-	out->writeUint16LE(calender.hour);
-	out->writeUint16LE(calender.frameInHour);
 
 	debugC(3, kDebugSaveload, "... calenderPaused = %d", calenderPaused);
-	debugC(3, kDebugSaveload, "... calender.years = %d", calender.years);
-	debugC(3, kDebugSaveload, "... calender.weeks = %d", calender.weeks);
-	debugC(3, kDebugSaveload, "... calender.days = %d", calender.days);
-	debugC(3, kDebugSaveload, "... calender.dayInYear = %d", calender.dayInYear);
-	debugC(3, kDebugSaveload, "... calender.dayInWeek = %d", calender.dayInWeek);
-	debugC(3, kDebugSaveload, "... calender.hour = %d", calender.hour);
-	debugC(3, kDebugSaveload, "... calender.frameInHour = %d", calender.frameInHour);
+
+	calender.write(out);
 }
 
 //-----------------------------------------------------------------------
@@ -283,22 +307,10 @@ void loadCalender(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading calender");
 
 	calenderPaused = in->readByte();
-	calender.years = in->readUint16LE();
-	calender.weeks = in->readUint16LE();
-	calender.days = in->readUint16LE();
-	calender.dayInYear = in->readUint16LE();
-	calender.dayInWeek = in->readUint16LE();
-	calender.hour = in->readUint16LE();
-	calender.frameInHour = in->readUint16LE();
 
 	debugC(3, kDebugSaveload, "... calenderPaused = %d", calenderPaused);
-	debugC(3, kDebugSaveload, "... calender.years = %d", calender.years);
-	debugC(3, kDebugSaveload, "... calender.weeks = %d", calender.weeks);
-	debugC(3, kDebugSaveload, "... calender.days = %d", calender.days);
-	debugC(3, kDebugSaveload, "... calender.dayInYear = %d", calender.dayInYear);
-	debugC(3, kDebugSaveload, "... calender.dayInWeek = %d", calender.dayInWeek);
-	debugC(3, kDebugSaveload, "... calender.hour = %d", calender.hour);
-	debugC(3, kDebugSaveload, "... calender.frameInHour = %d", calender.frameInHour);
+
+	calender.read(in);
 }
 
 CalenderTime    calender;

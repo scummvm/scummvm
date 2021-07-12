@@ -167,9 +167,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveTempActorCount(out);
 	saveMissions(out);
 	saveFactionTallies(out);
+	saveTileModeState(out);
 
 #if 0
-	saveTileModeState(saveGame);
 	saveSpellState(saveGame);
 	saveAutoMap(saveGame);
 	saveUIState(saveGame);
@@ -382,15 +382,15 @@ void loadSavedGameState(int16 saveNo) {
 			loadFactionTallies(in);
 			loadFlags |= loadFactionTalliesFlag;
 			break;
-#if 0
 
 		case MKTAG('T', 'M', 'S', 'T'):
 			if (loadFlags & loadActorsFlag) {
-				loadTileModeState(saveGame);
+				loadTileModeState(in);
 				loadFlags |= loadTileModeStateFlag;
 			} else
 				error("TileMode state loaded prematurely");
 			break;
+#if 0
 
 		case MKTAG('S', 'P', 'E', 'L'):
 			loadSpellState(saveGame);
