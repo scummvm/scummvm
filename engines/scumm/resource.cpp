@@ -20,7 +20,9 @@
  *
  */
 
+#include "common/md5.h"
 #include "common/str.h"
+#include "common/memstream.h"
 #include "common/macresman.h"
 #ifndef MACOSX
 #include "common/config-manager.h"
@@ -699,6 +701,8 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 	_fileHandle->read(_res->createResource(type, idx, size), size);
 
 	applyWorkaroundIfNeeded(type, idx);
+
+	// NB: The workaround may have changed the resource size, so don't rely on 'size' after this.
 
 	// dump the resource if requested
 	if (_dumpScripts && type == rtScript) {
@@ -1645,13 +1649,14 @@ const char *nameOfResType(ResType type) {
 	}
 }
 
-
 void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
+	int size = getResourceSize(type, idx);
+
 	// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
 	// if we trim to 200 pixels, we can show only 6 items
 	// therefore we patch the inventory script (20)
 	// replacing the 5 occurences of 10 as limit to 6
-	if (_game.platform == Common::kPlatformFMTowns && _game.id == GID_ZAK && ConfMan.getBool("trim_fmtowns_to_200_pixels"))
+	if (_game.platform == Common::kPlatformFMTowns && _game.id == GID_ZAK && ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
 		if (type == rtScript && idx == 20) {
 			byte *ptr = getResourceAddress(rtScript, idx);
 			for (int cnt = 5; cnt; ptr++) {
@@ -1661,6 +1666,68 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 				}
 			}
 		}
+	}
+
+	// WORKAROUND: The Mac version of Monkey Island 2 that was distributed
+	// on CD as the LucasArts Adventure Game Pack II is missing the part of
+	// the boot script that shows the copy protection and difficulty
+	// selection screen. Presumably it didn't include the code wheel. In
+	// fact, none of the games on this CD have any copy protection.
+	//
+	// The games on the first Game Pack CD does have copy protection, but
+	// since I only own the discs I can neither confirm nor deny if the
+	// necessary documentation was included.
+	//
+	// However, this means that there is no way to pick the difficulty
+	// level. Since ScummVM bypasses the copy protection check, there is
+	// no harm in showing the screen by simply re-inserging the missing
+	// part of the script.
+
+	else if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh && type == rtScript && idx == 1 && size == 6718) {
+		byte *unpatchedScript = getResourceAddress(type, idx);
+
+		const byte patch[] = {
+0x48, 0x00, 0x40, 0x00, 0x00, 0x13, 0x00,	// if (Local[0] == 0) {
+0x33, 0x03, 0x00, 0x00, 0xc8, 0x00,		//     SetScreen(0,200);
+0x0a, 0x82, 0xff,				//     startScript(130,[]);
+0x80,						//     breakHere();
+0x68, 0x00, 0x00, 0x82,				//     VAR_RESULT = isScriptRunning(130);
+0x28, 0x00, 0x00, 0xf6, 0xff,			//     unless (!VAR_RESULT) goto 0955;
+						// }
+0x48, 0x00, 0x40, 0x3f, 0xe1, 0x1d, 0x00,	// if (Local[0] == -7873) [
+0x1a, 0x32, 0x00, 0x3f, 0x01,			//     VAR_MAINMENU_KEY = 319;
+0x33, 0x03, 0x00, 0x00, 0xc8, 0x00,		//     SetScreen(0,200);
+0x0a, 0x82, 0xff,				//     startScript(130,[]);
+0x80,						//     breakHere();
+0x68, 0x00, 0x00, 0x82,				//     VAR_RESULT = isScriptRunning(130);
+0x28, 0x00, 0x00, 0xf6,	0xff,			//     unless (!VAR_RESULT) goto 0955;
+0x1a, 0x00, 0x40, 0x00, 0x00			//     Local[0] = 0;
+						// }
+		};
+
+		byte *patchedScript = new byte[6780];
+
+		memcpy(patchedScript, unpatchedScript, 2350);
+		memcpy(patchedScript + 2350, patch, sizeof(patch));
+		memcpy(patchedScript + 2350 + sizeof(patch), unpatchedScript + 2350, 6718 - 2350);
+
+		WRITE_BE_UINT32(patchedScript + 4, 6780);
+
+		Common::MemoryReadStream stream(patchedScript, 6780);
+
+		// Just to be completely safe, check that the patched script now
+		// matches the boot script from the other known Mac version.
+		// Only if it does can we replace the unpatched script.
+
+		Common::String md5 = Common::computeStreamMD5AsString(stream);
+		if (md5 == "92b1cb7902b57d02b8e7434903d8508b") {
+			byte *newResource = _res->createResource(type, idx, 6780);
+			memcpy(newResource, patchedScript, 6780);
+		} else
+			warning("Could not patch MI2 Mac boot script: Bad checksum '%s'", md5.c_str());
+
+		delete[] patchedScript;
+	}
 }
 
 
