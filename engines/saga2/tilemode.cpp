@@ -153,7 +153,10 @@ static struct _delayedNavigation {
 	bool        pathFindFlag;
 	Alarm       delay;
 
-	_delayedNavigation(void) : pathFindFlag(false) {}
+	_delayedNavigation(void) : pathFindFlag(false) {
+		delay.basetime = 0;
+		delay.duration = 0;
+	}
 
 } delayedNavigation;
 static bool navigationDelayed = false;
