@@ -236,6 +236,8 @@ frameSmoother::frameSmoother(int32 fps, uint32 perSec, uint32 now)
 
 	dif5Sec = 0;
 	avg5Sec = 0;
+	secDif = 0;
+	secAvg = 0;
 }
 
 } // end of namespace Saga2

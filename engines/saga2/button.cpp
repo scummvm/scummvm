@@ -709,6 +709,7 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, void **new
 		max     = 0;
 		min     = 0;
 		current = 0;
+		response = false;
 		return;
 	}
 
