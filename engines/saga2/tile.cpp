@@ -1650,7 +1650,7 @@ void saveAutoMap(Common::OutSaveFile *out) {
 	out->write("AMAP", 4);
 	out->writeUint32LE(archiveBufSize);
 
-	archiveBuffer = (uint8 *)malloc(archiveBufSize);
+	archiveBuffer = (uint8 *)calloc(archiveBufSize, 1);
 	if (archiveBuffer == nullptr)
 		error("Unable to allocate auto map archive buffer");
 
