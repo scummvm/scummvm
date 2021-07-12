@@ -1434,40 +1434,6 @@ ContainerNode::~ContainerNode() {
 	g_vm->_containerList->remove(this);
 }
 
-//  Restore the state of this ContainerNode from archive buffer
-void *ContainerNode::restore(void *buf) {
-	Archive     *a = (Archive *)buf;
-
-	//  Restore fields
-	object      = a->object;
-	type        = a->type;
-	owner       = a->owner;
-	position    = a->position;
-	mindType    = a->mindType;
-	window      = NULL;
-	action      = 0;
-
-	//  If this container was shown, re-show it
-	if (a->shown) markForShow();
-
-	return &a[1];
-}
-
-//  Store the state of this ContainerNode into archive buffer
-void *ContainerNode::archive(void *buf) {
-	Archive     *a = (Archive *)buf;
-
-	//  Store fields
-	a->object   = object;
-	a->type     = type;
-	a->owner    = owner;
-	a->position = position;
-	a->mindType = mindType;
-	a->shown    = window != NULL;
-
-	return &a[1];
-}
-
 void ContainerNode::read(Common::InSaveFile *in) {
 	//  Restore fields
 	object = in->readUint16LE();
@@ -1821,57 +1787,6 @@ void initContainerNodes(void) {
 #endif
 }
 
-void saveContainerNodes(SaveFileConstructor &saveGame) {
-	int16               numNodes = 0;
-	void                *archiveBuffer,
-	                    *bufferPtr;
-	int32               archiveBufSize;
-
-	//  Make sure there are no pending container view actions
-	g_vm->_containerList->doDeferredActions();
-
-	archiveBufSize = sizeof(numNodes);
-
-	//  Count the number of nodes to save
-	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
-		ContainerNode *n = *it;
-
-		if (n->getType() != ContainerNode::readyType)
-			numNodes++;
-	}
-
-	//  Compute size of archive buffer
-	archiveBufSize += numNodes * ContainerNode::archiveSize();
-
-	//  Allocate the archive buffer
-	archiveBuffer = malloc(archiveBufSize);
-	if (archiveBuffer == NULL)
-		error("Unable to allocate ContainerNode archive buffer\n");
-
-	bufferPtr = archiveBuffer;
-
-	//  Store the number of nodes to save
-	*((int16 *)bufferPtr) = numNodes;
-	bufferPtr = (int16 *)bufferPtr + 1;
-
-	//  Store the nodes
-	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
-		ContainerNode *n = *it;
-
-		if (n->getType() != ContainerNode::readyType)
-			bufferPtr = n->archive(bufferPtr);
-	}
-
-	//  Write the archive data to the save file
-	saveGame.writeChunk(
-	    MakeID('C', 'O', 'N', 'T'),
-	    archiveBuffer,
-	    archiveBufSize);
-
-	//  Free the archive buffer
-	free(archiveBuffer);
-}
-
 void saveContainerNodes(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving Container Nodes");
 
@@ -1912,45 +1827,6 @@ void saveContainerNodes(Common::OutSaveFile *out) {
 			n->write(out);
 		}
 	}
-}
-
-void loadContainerNodes(SaveFileReader &saveGame) {
-	ContainerNode       *node;
-	Common::List<ContainerNode *> tempList;
-	int16               i,
-	                    numNodes;
-	void                *archiveBuffer,
-	                    *bufferPtr;
-	int32               archiveBufSize;
-
-	//  Read in the number of container nodes to restore
-	saveGame.read(&numNodes, sizeof(numNodes));
-
-	//  Allocate archive buffer
-	archiveBufSize = saveGame.bytesLeftInChunk();
-	archiveBuffer = malloc(archiveBufSize);
-	if (archiveBuffer == NULL)
-		error("Unable to allocate ContainerNode archive buffer\n");
-
-	//  Read in node data
-	saveGame.read(archiveBuffer, archiveBufSize);
-
-	bufferPtr = archiveBuffer;
-
-	for (i = 0; i < numNodes; i++) {
-		node = new ContainerNode;
-
-		//  Restore the state of the node
-		bufferPtr = node->restore(bufferPtr);
-
-		//  Add it back to the container list
-		g_vm->_containerList->add(node);
-	}
-
-	assert(tempList.empty());
-
-	//  Free the archive buffer
-	free(archiveBuffer);
 }
 
 void loadContainerNodes(Common::InSaveFile *in) {

@@ -50,8 +50,6 @@ class PlayerActor {
 	friend class Actor;
 
 	friend void initPlayerActors(void);
-	friend void savePlayerActors(SaveFileConstructor &);
-	friend void loadPlayerActors(SaveFileReader &);
 	friend void cleanupPlayerActors(void);
 
 	ObjectID        actorID;            // ID of player's actor
@@ -296,13 +294,7 @@ void handleEndOfCombat(void);
 //  Initialize the player actor list
 void initPlayerActors(void);
 
-
-//  Store the player actor list in a save file
-void savePlayerActors(SaveFileConstructor &saveGame);
 void savePlayerActors(Common::OutSaveFile *out);
-
-//  Load the player list data from a save file
-void loadPlayerActors(SaveFileReader &saveGame);
 void loadPlayerActors(Common::InSaveFile *in);
 
 //  Cleanup the player actor list
@@ -315,12 +307,7 @@ void cleanupPlayerActors(void);
 //  Initialize the center actor ID and view object ID
 void initCenterActor(void);
 
-//  Save the center actor ID and the view object ID to a save file
-void saveCenterActor(SaveFileConstructor &saveGame);
 void saveCenterActor(Common::OutSaveFile *out);
-
-//  Load the center actor ID and the view object ID from the save file
-void loadCenterActor(SaveFileReader &saveGame);
 void loadCenterActor(Common::InSaveFile *in);
 
 //  Do nothing

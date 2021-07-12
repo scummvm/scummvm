@@ -258,16 +258,10 @@ private:
 
 	};
 
-	//  Reconstruct this MotionTask from an archive buffer
-	void *restore(void *buf);
-
 	void read(Common::InSaveFile *in);
 
 	//  Return the number of bytes needed to archive this MotionTask
 	int32 archiveSize(void);
-
-	//  Archive this MotionTask in a buffer
-	void *archive(void *buf);
 
 	void write(Common::OutSaveFile *out);
 
@@ -549,9 +543,6 @@ public:
 	//  Default constructor
 	MotionTaskList(void);
 
-	//  Reconstruct motion task list from archive buffer
-	MotionTaskList(void **buf);
-
 	MotionTaskList(Common::SeekableReadStream *stream);
 
 	void read(Common::InSaveFile *in);
@@ -559,9 +550,6 @@ public:
 	//  Return the number of bytes needed to archive the motion tasks
 	//  in a buffer
 	int32 archiveSize(void);
-
-	//  Create an archive of the motion tasks in the specified buffer
-	void *archive(void *buf);
 
 	void write(Common::OutSaveFile *out);
 
@@ -630,12 +618,7 @@ void resumeInterruptableMotions(void);
 //  Initialize the motion task list
 void initMotionTasks(void);
 
-//  Save the motion task list to a save file
-void saveMotionTasks(SaveFileConstructor &saveGame);
 void saveMotionTasks(Common::OutSaveFile *out);
-
-//  Load the motion task list from a save file
-void loadMotionTasks(SaveFileReader &saveGame);
 void loadMotionTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the motion task list

@@ -132,59 +132,6 @@ inline uint32 extendID(int16 smallID) {
    Speech member functions
  * ===================================================================== */
 
-//-----------------------------------------------------------------------
-//	Reconstruct this SpeechTask from an archive buffer
-
-void *Speech::restore(void *buf) {
-	int16   i;
-
-	//  Restore the sample count and character count
-	sampleCount = *((int16 *)buf);
-	charCount   = *((int16 *)buf + 1);
-	buf = (int16 *)buf + 2;
-
-	//  Restore the text boundaries
-	bounds = *((Rect16 *)buf);
-	buf = (Rect16 *)buf + 1;
-
-	//  Restore the pen color and outline color
-	penColor        = *((uint16 *)buf);
-	outlineColor    = *((uint16 *)buf + 1);
-	buf = (uint16 *)buf + 2;
-
-	//  Restore the object ID
-	objID = *((ObjectID *)buf);
-	buf = (ObjectID *)buf + 1;
-
-	//  Restore the thread ID
-	thread = *((ThreadID *)buf);
-	buf = (ThreadID *)buf + 1;
-
-	//  Restore the flags
-	speechFlags = *((int16 *)buf);
-	buf = (int16 *)buf + 1;
-
-	//  Restore the sample ID's
-	for (i = 0; i < sampleCount; i++) {
-		sampleID[i] = *((uint32 *)buf);
-		buf = (uint32 *)buf + 1;
-	}
-
-	//  Restore the text
-	memcpy(speechBuffer, buf, charCount);
-	buf = (char *)buf + charCount;
-	speechBuffer[charCount] = '\0';
-
-	//  Requeue the speech if needed
-	if (speechFlags & spQueued) {
-		//  Add to the active list
-		speechList.remove(this);
-		speechList._list.push_back(this);
-	}
-
-	return buf;
-}
-
 void Speech::read(Common::InSaveFile *in) {
 	//  Restore the sample count and character count
 	sampleCount = in->readSint16LE();
@@ -249,51 +196,6 @@ int32 Speech::archiveSize(void) {
 	            +   sizeof(speechFlags)
 	            +   sizeof(uint32) * sampleCount
 	            +   sizeof(char) * charCount;
-}
-
-//-----------------------------------------------------------------------
-//	Archive this SpeechTask in a buffer
-
-void *Speech::archive(void *buf) {
-	int16   i;
-
-	//  Store the sample count and character count
-	*((int16 *)buf)        = sampleCount;
-	*((int16 *)buf + 1)    = charCount;
-	buf = (int16 *)buf + 2;
-
-	//  Store the text boundaries
-	*((Rect16 *)buf) = bounds;
-	buf = (Rect16 *)buf + 1;
-
-	//  Store the pen color and outline color
-	*((uint16 *)buf)       = penColor;
-	*((uint16 *)buf + 1)   = outlineColor;
-	buf = (uint16 *)buf + 2;
-
-	//  Store the object's ID
-	*((ObjectID *)buf) = objID;
-	buf = (ObjectID *)buf + 1;
-
-	//  Store the thread ID
-	*((ThreadID *)buf) = thread;
-	buf = (ThreadID *)buf + 1;
-
-	//  Store the flags.  NOTE:  Make sure this speech is not stored
-	//  as being active
-	*((int16 *)buf) = speechFlags & ~spActive;
-	buf = (int16 *)buf + 1;
-
-	for (i = 0; i < sampleCount; i++) {
-		*((uint32 *)buf) = sampleID[i];
-		buf = (uint32 *)buf + 1;
-	}
-
-	//  Store the text
-	memcpy(buf, speechBuffer, charCount);
-	buf = (char *)buf + charCount;
-
-	return buf;
 }
 
 void Speech::write(Common::OutSaveFile *out) {
@@ -1028,33 +930,6 @@ SpeechTaskList::SpeechTaskList(void) {
 	lockFlag = false;
 }
 
-//-----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-SpeechTaskList::SpeechTaskList(void **buf) {
-	void        *bufferPtr = *buf;
-
-	int16       i,
-	            count;
-
-	lockFlag = false;
-
-	//  Get the speech count
-	count = *((int16 *)bufferPtr);
-	bufferPtr = (int16 *)bufferPtr + 1;
-
-	//  Restore the speeches
-	for (i = 0; i < count; i++) {
-		Speech *sp = new Speech;
-		assert(sp != NULL);
-
-		_inactiveList.push_back(sp);
-		bufferPtr = sp->restore(bufferPtr);
-	}
-
-	*buf = bufferPtr;
-}
-
 SpeechTaskList::SpeechTaskList(Common::InSaveFile *in) {
 	int16 count;
 
@@ -1094,33 +969,6 @@ int32 SpeechTaskList::archiveSize(void) {
 	}
 
 	return size;
-}
-
-//-----------------------------------------------------------------------
-//	Create an archive of the speech tasks in an archive buffer
-
-void *SpeechTaskList::archive(void *buf) {
-	int16       count = 0;
-
-	count += _list.size() + _inactiveList.size();
-
-	//  Store speech count
-	*((int16 *)buf) = count;
-	buf = (int16 *)buf + 1;
-
-	//  Store active speeches
-	for (Common::List<Speech *>::iterator it = _list.begin();
-			it != _list.end(); ++it) {
-		buf = (*it)->archive(buf);
-	}
-
-	//  Store inactive speeches
-	for (Common::List<Speech *>::iterator it = _inactiveList.begin();
-			it != _inactiveList.end(); ++it) {
-		buf = (*it)->archive(buf);
-	}
-
-	return buf;
 }
 
 void SpeechTaskList::write(Common::OutSaveFile *out) {
@@ -1297,29 +1145,6 @@ void initSpeechTasks(void) {
 	new (&speechList) SpeechTaskList;
 }
 
-//-----------------------------------------------------------------------
-//	Save the speech tasks in a save file
-
-void saveSpeechTasks(SaveFileConstructor &saveGame) {
-	int32   archiveBufSize;
-	void    *archiveBuffer;
-
-	archiveBufSize = speechList.archiveSize();
-
-	archiveBuffer = malloc(archiveBufSize);
-	if (archiveBuffer == NULL)
-		error("Unable to allocate speech task archive buffer");
-
-	speechList.archive(archiveBuffer);
-
-	saveGame.writeChunk(
-	    MakeID('S', 'P', 'C', 'H'),
-	    archiveBuffer,
-	    archiveBufSize);
-
-	free(archiveBuffer);
-}
-
 void saveSpeechTasks(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving Speech Tasks");
 
@@ -1331,34 +1156,6 @@ void saveSpeechTasks(Common::OutSaveFile *out) {
 	out->writeUint32LE(archiveBufSize);
 
 	speechList.write(out);
-}
-
-//-----------------------------------------------------------------------
-//	Load the speech tasks from a save file
-
-void loadSpeechTasks(SaveFileReader &saveGame) {
-	//  If there is no saved data, simply call the default constructor
-	if (saveGame.getChunkSize() == 0) {
-		new (&speechList) SpeechTaskList;
-		return;
-	}
-
-	void    *archiveBuffer;
-	void    *bufferPtr;
-
-	archiveBuffer = malloc(saveGame.getChunkSize());
-	if (archiveBuffer == NULL)
-		error("Unable to allocate speech task archive buffer");
-
-	//  Read the archived task stack data
-	saveGame.read(archiveBuffer, saveGame.getChunkSize());
-
-	bufferPtr = archiveBuffer;
-
-	//  Reconstruct stackList from archived data
-	new (&speechList) SpeechTaskList(&bufferPtr);
-
-	free(archiveBuffer);
 }
 
 void loadSpeechTasks(Common::InSaveFile *in, int32 chunkSize) {

@@ -82,57 +82,6 @@ void deleteSensor(Sensor *p) {
 	g_vm->_sensorList.remove(p);
 }
 
-//----------------------------------------------------------------------
-//	Reconstruct a Sensor from an archive buffer
-
-void *constructSensor(int16 ctr, void *buf) {
-	int16           type;
-	Sensor          *sensor = nullptr;
-	SensorList      *sl;
-
-	//  Get the sensor type
-	type = *((int16 *)buf);
-	buf = (int16 *)buf + 1;
-
-	switch (type) {
-	case protaganistSensor:
-		sensor = new ProtaganistSensor(&buf, ctr);
-		break;
-
-	case specificObjectSensor:
-		sensor = new SpecificObjectSensor(&buf, ctr);
-		break;
-
-	case objectPropertySensor:
-		sensor = new ObjectPropertySensor(&buf, ctr);
-		break;
-
-	case specificActorSensor:
-		sensor = new SpecificActorSensor(&buf, ctr);
-		break;
-
-	case actorPropertySensor:
-		sensor = new ActorPropertySensor(&buf, ctr);
-		break;
-
-	case eventSensor:
-		sensor = new EventSensor(&buf, ctr);
-		break;
-	}
-
-	assert(sensor != nullptr);
-
-	//  Get the sensor list
-	sl = fetchSensorList(sensor->getObject());
-
-	assert(sl != nullptr);
-
-	//  Append this Sensor to the sensor list
-	sl->_list.push_back(sensor);
-
-	return buf;
-}
-
 void readSensor(int16 ctr, Common::InSaveFile *in) {
 	int16 type;
 	Sensor *sensor = nullptr;
@@ -188,22 +137,6 @@ int32 sensorArchiveSize(Sensor *sensor) {
 
 	return      sizeof(int16)                //  Type
 	            +   sensor->archiveSize();
-}
-
-//----------------------------------------------------------------------
-//	Archive the specified Sensor in an archive buffer
-
-void *archiveSensor(Sensor *sensor, void *buf) {
-	assert(sensor != NULL);
-
-	//  Store the sensor type
-	*((int16 *)buf) = sensor->getType();
-	buf = (int16 *)buf + 1;
-
-	//  Let the sensor store its data in the buffer
-	buf = sensor->archive(buf);
-
-	return buf;
 }
 
 void writeSensor(Sensor *sensor, Common::OutSaveFile *out) {
@@ -280,76 +213,6 @@ void initSensors(void) {
 	assert(sizeof(EventSensor) <= maxSensorSize);
 }
 
-//----------------------------------------------------------------------
-//	Save all active sensors in a save file
-
-void saveSensors(SaveFileConstructor &saveGame) {
-	warning("STUB: saveSensort()");
-#if 0
-	int16                   g_vm->_sensorListCount = 0,
-	                        sensorCount = 0;
-
-	SensorListHolder        *listHolder;
-	SensorHolder            *sensorHolder;
-
-	void                    *archiveBuffer,
-	                        *bufferPtr;
-	int32                   archiveBufSize = 0;
-
-	//  Add the sizes of the sensor list count an sensor count
-	archiveBufSize += sizeof(g_vm->_sensorListCount) + sizeof(sensorCount);
-
-	//  Tally the sensor lists
-	for (listHolder = (SensorListHolder *)g_vm->_sensorListList.first();
-	        listHolder != NULL;
-	        listHolder = (SensorListHolder *)listHolder->next())
-		g_vm->_sensorListCount++;
-
-	//  Add the total archive size of all of the sensor lists
-	archiveBufSize += g_vm->_sensorListCount * SensorList::archiveSize();
-
-	//  Tally the sensors and add the archive size of each
-	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it) {
-		sensorCount++;
-		archiveBufSize += sizeof((*it)->checkCtr) + sensorArchiveSize(*it);
-	}
-
-	//  Allocate an archive buffer
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
-	if (archiveBuffer == NULL)
-		error("Unable to allocate sensor archive buffer");
-
-	bufferPtr = archiveBuffer;
-
-	//  Store the sensor list count and sensor count
-	*((int16 *)bufferPtr)      = g_vm->_sensorListCount;
-	*((int16 *)bufferPtr + 1)  = sensorCount;
-	bufferPtr = (int16 *)bufferPtr + 2;
-
-	//  Archive all sensor lists
-	for (Common::List<SensorList *>::iterator it = g_vm->_sensorListList.begin(); it != g_vm->_sensorListList.end(); ++it) {
-		bufferPtr = (*it)->archive(bufferPtr);
-
-	//  Archive all sensors
-	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it) {
-		*((int16 *)bufferPtr) = (*it)->checkCtr;
-		bufferPtr = (int16 *)bufferPtr + 1;
-
-		bufferPtr = archiveSensor(*it, bufferPtr);
-	}
-
-	assert(bufferPtr == &((uint8 *)archiveBuffer)[archiveBufSize]);
-
-	//  Write the data to the save file
-	saveGame.writeChunk(
-	    MakeID('S', 'E', 'N', 'S'),
-	    archiveBuffer,
-	    archiveBufSize);
-
-	RDisposePtr(archiveBuffer);
-#endif
-}
-
 static int getSensorListID(SensorList *t) {
 	int i = 0;
 	for (Common::List<SensorList *>::iterator it = g_vm->_sensorListList.begin(); it != g_vm->_sensorListList.end(); it++, i++) {
@@ -418,54 +281,6 @@ void saveSensors(Common::OutSaveFile *out) {
 	}
 }
 
-//----------------------------------------------------------------------
-//	Load sensors from a save file
-
-void loadSensors(SaveFileReader &saveGame) {
-	warning("STUB: loadSensort()");
-#if 0
-	int16       i,
-	            g_vm->_sensorListCount,
-	            sensorCount;
-
-	void        *archiveBuffer,
-	            *bufferPtr;
-
-	//  Allocate a buffer in which to read the archive data
-	archiveBuffer = RNewPtr(saveGame.getChunkSize(), NULL, "archive buffer");
-	if (archiveBuffer == NULL)
-		error("Unable to allocate sensor archive buffer");
-
-	//  Read the data
-	saveGame.read(archiveBuffer, saveGame.getChunkSize());
-
-	bufferPtr = archiveBuffer;
-
-	//  Get the sensor list count and sensor count
-	g_vm->_sensorListCount = *((int16 *)bufferPtr);
-	sensorCount     = *((int16 *)bufferPtr + 1);
-	bufferPtr = (int16 *)bufferPtr + 2;
-
-	//  Restore all sensor lists
-	for (i = 0; i < g_vm->_sensorListCount; i++)
-		new SensorList(&bufferPtr);
-
-	//  Restore all sensors
-	for (i = 0; i < sensorCount; i++) {
-		int16       ctr;
-
-		ctr = *((int16 *)bufferPtr);
-		bufferPtr = (int16 *)bufferPtr + 1;
-
-		bufferPtr = constructSensor(ctr, bufferPtr);
-	}
-
-	assert(bufferPtr == &((uint8 *)archiveBuffer)[saveGame.getChunkSize()]);
-
-	RDisposePtr(archiveBuffer);
-#endif
-}
-
 void loadSensors(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading Sensors");
 
@@ -531,21 +346,6 @@ SensorList *fetchSensorList(GameObject *obj) {
    SensorList member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from an archive buffer
-
-SensorList::SensorList(void **buf) {
-	ObjectID        *bufferPtr = (ObjectID *)*buf;
-
-	assert(isObject(*bufferPtr) || isActor(*bufferPtr));
-
-	obj = GameObject::objectAddress(*bufferPtr);
-
-	*buf = bufferPtr + 1;
-
-	newSensorList(this);
-}
-
 SensorList::SensorList(Common::InSaveFile *in) {
 	ObjectID id = in->readUint16LE();
 
@@ -556,16 +356,6 @@ SensorList::SensorList(Common::InSaveFile *in) {
 	newSensorList(this);
 }
 
-//----------------------------------------------------------------------
-//	Archive this object in a buffer
-
-void *SensorList::archive(void *buf) {
-	*((ObjectID *)buf) = obj->thisID();
-	buf = (ObjectID *)buf + 1;
-
-	return buf;
-}
-
 void SensorList::write(Common::OutSaveFile *out) {
 	out->writeUint16LE(obj->thisID());
 }
@@ -573,32 +363,6 @@ void SensorList::write(Common::OutSaveFile *out) {
 /* ===================================================================== *
    Sensor member functions
  * ===================================================================== */
-
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from an archive buffer
-
-Sensor::Sensor(void **buf, int16 ctr) {
-	void        *bufferPtr = *buf;
-
-	assert(isObject(*((ObjectID *)bufferPtr))
-	       ||  isActor(*((ObjectID *)bufferPtr)));
-
-	//  Restore the object pointer
-	obj = GameObject::objectAddress(*((ObjectID *)bufferPtr));
-	bufferPtr = (ObjectID *)bufferPtr + 1;
-
-	//  Restore the ID
-	id = *((SensorID *)bufferPtr);
-	bufferPtr = (SensorID *)bufferPtr + 1;
-
-	//  Restore the range
-	range = *((int16 *)bufferPtr);
-	bufferPtr = (int16 *)bufferPtr + 1;
-
-	*buf = bufferPtr;
-
-	newSensor(this, ctr);
-}
 
 Sensor::Sensor(Common::InSaveFile *in, int16 ctr) {
 	ObjectID objID = in->readUint16LE();
@@ -624,25 +388,6 @@ inline int32 Sensor::archiveSize(void) {
 	return      sizeof(ObjectID)         //  obj ID
 	            +   sizeof(id)
 	            +   sizeof(range);
-}
-
-//----------------------------------------------------------------------
-//	Archive this object in a buffer
-
-void *Sensor::archive(void *buf) {
-	//  Store the object's ID
-	*((ObjectID *)buf) = obj->thisID();
-	buf = (ObjectID *)buf + 1;
-
-	//  Store the sensor ID
-	*((SensorID *)buf) = id;
-	buf = (SensorID *)buf + 1;
-
-	//  Store the range
-	*((int16 *)buf) = range;
-	buf = (int16 *)buf + 1;
-
-	return buf;
 }
 
 void Sensor::write(Common::OutSaveFile *out) {
@@ -796,19 +541,6 @@ bool ObjectSensor::evaluateEvent(const GameEvent &) {
    SpecificObjectSensor member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from an archive buffer
-
-SpecificObjectSensor::SpecificObjectSensor(void **buf, int16 ctr) :
-	ObjectSensor(buf, ctr) {
-	ObjectID    *bufferPtr = (ObjectID *)*buf;
-
-	//  Restore the sought object's ID
-	soughtObjID = *bufferPtr++;
-
-	*buf = bufferPtr;
-}
-
 SpecificObjectSensor::SpecificObjectSensor(Common::InSaveFile *in, int16 ctr) :
 	ObjectSensor(in, ctr) {
 	debugC(3, kDebugSaveload, "Loading SpecificObjectSensor");
@@ -822,20 +554,6 @@ SpecificObjectSensor::SpecificObjectSensor(Common::InSaveFile *in, int16 ctr) :
 
 inline int32 SpecificObjectSensor::archiveSize(void) {
 	return ObjectSensor::archiveSize() + sizeof(soughtObjID);
-}
-
-//----------------------------------------------------------------------
-//	Archive this object in a buffer
-
-void *SpecificObjectSensor::archive(void *buf) {
-	//  Let the base class archive its data
-	buf = ObjectSensor::archive(buf);
-
-	//  Store the sought object's ID
-	*((ObjectID *)buf) = soughtObjID;
-	buf = (ObjectID *)buf + 1;
-
-	return buf;
 }
 
 void SpecificObjectSensor::write(Common::OutSaveFile *out) {
@@ -908,19 +626,6 @@ bool SpecificObjectSensor::isObjectSought(GameObject *obj_) {
    ObjectPropertySensor member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from an archive buffer
-
-ObjectPropertySensor::ObjectPropertySensor(void **buf, int16 ctr) :
-	ObjectSensor(buf, ctr) {
-	ObjectPropertyID    *bufferPtr = (ObjectPropertyID *)*buf;
-
-	//  Restore the object property ID
-	objectProperty = *bufferPtr++;
-
-	*buf = bufferPtr;
-}
-
 ObjectPropertySensor::ObjectPropertySensor(Common::InSaveFile *in, int16 ctr) :
 	ObjectSensor(in, ctr) {
 	debugC(3, kDebugSaveload, "Loading ObjectPropertySensor");
@@ -934,20 +639,6 @@ ObjectPropertySensor::ObjectPropertySensor(Common::InSaveFile *in, int16 ctr) :
 
 inline int32 ObjectPropertySensor::archiveSize(void) {
 	return ObjectSensor::archiveSize() + sizeof(objectProperty);
-}
-
-//----------------------------------------------------------------------
-//	Archive this object in a buffer
-
-void *ObjectPropertySensor::archive(void *buf) {
-	//  Let the base class archive its data
-	buf = ObjectSensor::archive(buf);
-
-	//  Store the object property's ID
-	*((ObjectPropertyID *)buf) = objectProperty;
-	buf = (ObjectPropertyID *)buf + 1;
-
-	return buf;
 }
 
 void ObjectPropertySensor::write(Common::OutSaveFile *out) {
@@ -994,20 +685,6 @@ bool ActorSensor::isObjectSought(GameObject *obj_) {
    SpecificActorSensor member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from an archive buffer
-
-SpecificActorSensor::SpecificActorSensor(void **buf, int16 ctr) : ActorSensor(buf, ctr) {
-	ObjectID        *bufferPtr = (ObjectID *)*buf;
-
-	assert(isActor(*bufferPtr));
-
-	//  Restore the sought actor pointer
-	soughtActor = (Actor *)GameObject::objectAddress(*bufferPtr++);
-
-	*buf = bufferPtr;
-}
-
 SpecificActorSensor::SpecificActorSensor(Common::InSaveFile *in, int16 ctr) : ActorSensor(in, ctr) {
 	debugC(3, kDebugSaveload, "Loading SpecificActorSensor");
 	ObjectID actorID = in->readUint16LE();
@@ -1023,20 +700,6 @@ SpecificActorSensor::SpecificActorSensor(Common::InSaveFile *in, int16 ctr) : Ac
 
 inline int32 SpecificActorSensor::archiveSize(void) {
 	return ActorSensor::archiveSize() + sizeof(ObjectID);
-}
-
-//----------------------------------------------------------------------
-//	Archive this object in a buffer
-
-void *SpecificActorSensor::archive(void *buf) {
-	//  Let the base class archive its data
-	buf = ActorSensor::archive(buf);
-
-	//  Store the sought actor's ID
-	*((ObjectID *)buf) = soughtActor->thisID();
-	buf = (ObjectID *)buf + 1;
-
-	return buf;
 }
 
 void SpecificActorSensor::write(Common::OutSaveFile *out) {
@@ -1100,18 +763,6 @@ bool SpecificActorSensor::isActorSought(Actor *a) {
    ActorPropertySensor member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from an archive buffer
-
-ActorPropertySensor::ActorPropertySensor(void **buf, int16 ctr) : ActorSensor(buf, ctr) {
-	ActorPropertyID     *bufferPtr = (ActorPropertyID *)*buf;
-
-	//  Restore the actor property's ID
-	actorProperty = *bufferPtr++;
-
-	*buf = bufferPtr;
-}
-
 ActorPropertySensor::ActorPropertySensor(Common::InSaveFile *in, int16 ctr) : ActorSensor(in, ctr) {
 	debugC(3, kDebugSaveload, "Loading ActorPropertySensor");
 	//  Restore the actor property's ID
@@ -1123,20 +774,6 @@ ActorPropertySensor::ActorPropertySensor(Common::InSaveFile *in, int16 ctr) : Ac
 
 inline int32 ActorPropertySensor::archiveSize(void) {
 	return ActorSensor::archiveSize() + sizeof(actorProperty);
-}
-
-//----------------------------------------------------------------------
-//	Archive this object in a buffer
-
-void *ActorPropertySensor::archive(void *buf) {
-	//  Let the base class archive its data
-	buf = ActorSensor::archive(buf);
-
-	//  Store the actor property's ID
-	*((ActorPropertyID *)buf) = actorProperty;
-	buf = (ActorPropertyID *)buf + 1;
-
-	return buf;
 }
 
 void ActorPropertySensor::write(Common::OutSaveFile *out) {
@@ -1179,18 +816,6 @@ EventSensor::EventSensor(
 	eventType(type) {
 }
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from an archive buffer
-
-EventSensor::EventSensor(void **buf, int16 ctr) : Sensor(buf, ctr) {
-	int16       *bufferPtr = (int16 *)*buf;
-
-	//  Restore the event type
-	eventType = *bufferPtr++;
-
-	*buf = bufferPtr;
-}
-
 EventSensor::EventSensor(Common::InSaveFile *in, int16 ctr) : Sensor(in, ctr) {
 	debugC(3, kDebugSaveload, "Loading EventSensor");
 	//  Restore the event type
@@ -1202,20 +827,6 @@ EventSensor::EventSensor(Common::InSaveFile *in, int16 ctr) : Sensor(in, ctr) {
 
 inline int32 EventSensor::archiveSize(void) {
 	return Sensor::archiveSize() + sizeof(eventType);
-}
-
-//----------------------------------------------------------------------
-//	Archive this object in a buffer
-
-void *EventSensor::archive(void *buf) {
-	//  Let the base class archive its data
-	buf = Sensor::archive(buf);
-
-	//  Store the event type
-	*((int16 *)buf) = eventType;
-	buf = (int16 *)buf + 1;
-
-	return buf;
 }
 
 void EventSensor::write(Common::OutSaveFile *out) {

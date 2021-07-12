@@ -31,9 +31,6 @@
 
 namespace Saga2 {
 
-class SaveFileConstructor;
-class SaveFileReader;
-
 //  Function to enable/disable user interface keys
 bool enableUIKeys(bool enabled);
 
@@ -48,12 +45,7 @@ void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID);
 //  Initialize the tile mode state
 void initTileModeState(void);
 
-//  Save the tile mode state to a save file
-void saveTileModeState(SaveFileConstructor &saveGame);
 void saveTileModeState(Common::OutSaveFile *out);
-
-//  Load the tile mode state from a save file
-void loadTileModeState(SaveFileReader &saveGame);
 void loadTileModeState(Common::InSaveFile *in);
 
 //  Cleanup the tile mode state

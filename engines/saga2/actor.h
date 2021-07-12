@@ -728,9 +728,6 @@ public:
 	//  Constructor - initial actor construction
 	Actor(const ResourceActor &res);
 
-	//  Reconstruct from archive buffer
-	Actor(void **buf);
-
 	Actor(Common::InSaveFile *in);
 
 	//  Destructor
@@ -738,9 +735,6 @@ public:
 
 	//  Return the number of bytes needed to archive this actor
 	int32 archiveSize(void);
-
-	//  Archive this actor in a buffer
-	void *archive(void *buf);
 
 	void write(Common::OutSaveFile *out);
 
@@ -1125,11 +1119,9 @@ int16 AddFactionTally(int faction, enum factionTallyTypes act, int amt);
 void initFactionTallies(void);
 
 //  Save the faction tallies to a save file
-void saveFactionTallies(SaveFileConstructor &saveGame);
 void saveFactionTallies(Common::OutSaveFile *out);
 
 //  Load the faction tallies from a save file
-void loadFactionTallies(SaveFileReader &saveGame);
 void loadFactionTallies(Common::InSaveFile *in);
 
 //  Cleanup the faction tally table

@@ -86,12 +86,7 @@ TaskStack *getTaskStackAddress(TaskStackID id);
 //  Initialize the task stack list
 void initTaskStacks(void);
 
-//  Save the task stack list to a save file
-void saveTaskStacks(SaveFileConstructor &saveGame);
 void saveTaskStacks(Common::OutSaveFile *out);
-
-//  Load the task stack list from a save file
-void loadTaskStacks(SaveFileReader &saveGame);
 void loadTaskStacks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the task stacks
@@ -113,12 +108,7 @@ Task *getTaskAddress(TaskID id);
 //  Initialize the task list
 void initTasks(void);
 
-//  Save the task list to a save file
-void saveTasks(SaveFileConstructor &saveGame);
 void saveTasks(Common::OutSaveFile *out);
-
-//  Load the task list from a save file
-void loadTasks(SaveFileReader &saveGame);
 void loadTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the task list
@@ -148,9 +138,6 @@ public:
 		newTask(this, id);
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	Task(void **buf, TaskID id);
-
 	Task(Common::InSaveFile *in, TaskID id);
 
 	//  Virtual destructor -- do nothing
@@ -161,9 +148,6 @@ public:
 	//  Return the number of bytes necessary to archive this Task
 	//  in a buffer
 	virtual int32 archiveSize(void) const;
-
-	//  Create an archive of this task in a buffer
-	virtual void *archive(void *buf) const;
 
 	virtual void write(Common::OutSaveFile *out) const;
 
@@ -199,17 +183,11 @@ public:
 		wander();
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	WanderTask(void **buf, TaskID id);
-
 	WanderTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -275,17 +253,11 @@ public:
 		_type = "TetheredWanderTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	TetheredWanderTask(void **buf, TaskID id);
-
 	TetheredWanderTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -325,9 +297,6 @@ public:
 		_type = "GotoTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	GotoTask(void **buf, TaskID id);
-
 	GotoTask(Common::InSaveFile *in, TaskID id);
 
 	//  Fixup the subtask pointer
@@ -336,9 +305,6 @@ public:
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -380,17 +346,11 @@ public:
 		_type = "GotoLocationTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	GotoLocationTask(void **buf, TaskID id);
-
 	GotoLocationTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -442,17 +402,11 @@ public:
 		_type = "GotoRegionTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	GotoRegionTask(void **buf, TaskID id);
-
 	GotoRegionTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -505,17 +459,11 @@ public:
 		_type = "GotoObjectTargetTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	GotoObjectTargetTask(void **buf, TaskID id);
-
 	GotoObjectTargetTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -556,17 +504,11 @@ public:
 		_type = "GotoObjectTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	GotoObjectTask(void **buf, TaskID id);
-
 	GotoObjectTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -600,17 +542,11 @@ public:
 		debugC(2, kDebugTasks, " - GotoActorTask");
 		_type = "GotoActorTask";
 	}
-	//  Constructor -- reconstruct from archive buffer
-	GotoActorTask(void **buf, TaskID id);
-
 	GotoActorTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -660,17 +596,11 @@ public:
 		_type = "GoAwayFromTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	GoAwayFromTask(void **buf, TaskID id);
-
 	GoAwayFromTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -704,17 +634,11 @@ public:
 		_type = "GoAwayFromObjectTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	GoAwayFromObjectTask(void **buf, TaskID id);
-
 	GoAwayFromObjectTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -746,17 +670,11 @@ public:
 	    const ActorTarget   &at,
 	    bool                runFlag = false);
 
-	//  Constructor -- reconstruct from archive buffer
-	GoAwayFromActorTask(void **buf, TaskID id);
-
 	GoAwayFromActorTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -795,17 +713,11 @@ public:
 		_type = "HuntTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	HuntTask(void **buf, TaskID id);
-
 	HuntTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -850,17 +762,11 @@ public:
 	//  Constructor -- initial construction
 	HuntLocationTask(TaskStack *ts, const Target &t);
 
-	//  Constructor -- reconstruct from archive buffer
-	HuntLocationTask(void **buf, TaskID id);
-
 	HuntLocationTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -899,17 +805,11 @@ public:
 		_type = "HuntToBeNearLocationTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	HuntToBeNearLocationTask(void **buf, TaskID id);
-
 	HuntToBeNearLocationTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -949,17 +849,11 @@ public:
 	//  Constructor -- initial construction
 	HuntObjectTask(TaskStack *ts, const ObjectTarget &ot);
 
-	//  Constructor -- reconstruct from archive buffer
-	HuntObjectTask(void **buf, TaskID id);
-
 	HuntObjectTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -1000,17 +894,11 @@ public:
 		_type = "HuntToBeNearObjectTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	HuntToBeNearObjectTask(void **buf, TaskID id);
-
 	HuntToBeNearObjectTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -1060,17 +948,11 @@ public:
 		_type = "HuntToPossessTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	HuntToPossessTask(void **buf, TaskID id);
-
 	HuntToPossessTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -1113,17 +995,11 @@ public:
 	    const ActorTarget   &at,
 	    bool                trackFlag);
 
-	//  Constructor -- reconstruct from archive buffer
-	HuntActorTask(void **buf, TaskID id);
-
 	HuntActorTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -1176,17 +1052,11 @@ public:
 		_type = "HuntToBeNearActorTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	HuntToBeNearActorTask(void **buf, TaskID id);
-
 	HuntToBeNearActorTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -1248,17 +1118,11 @@ public:
 	    const ActorTarget   &at,
 	    bool                trackFlag = false);
 
-	//  Constructor -- reconstruct from archive buffer
-	HuntToKillTask(void **buf, TaskID id);
-
 	HuntToKillTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -1310,17 +1174,11 @@ public:
 		_type = "HuntToGiveTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	HuntToGiveTask(void **buf, TaskID id);
-
 	HuntToGiveTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -1439,17 +1297,11 @@ public:
 		_type = "BandTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	BandTask(void **buf, TaskID id);
-
 	BandTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -1525,9 +1377,6 @@ public:
 	//  Constructor -- initial constructor
 	BandAndAvoidEnemiesTask(TaskStack *ts) : BandTask(ts) {}
 
-	//  Constructor -- reconstruct from archive buffer
-	BandAndAvoidEnemiesTask(void **buf, TaskID id) : BandTask(buf, id) {}
-
 	BandAndAvoidEnemiesTask(Common::InSaveFile *in, TaskID id) : BandTask(in, id) {}
 
 	//  Return an integer representing the type of this task
@@ -1571,17 +1420,11 @@ public:
 		followPatrolRoute();
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	FollowPatrolRouteTask(void **buf, TaskID id);
-
 	FollowPatrolRouteTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -1630,17 +1473,11 @@ public:
 		_type = "AttendTask";
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	AttendTask(void **buf, TaskID id);
-
 	AttendTask(Common::InSaveFile *in, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -1676,18 +1513,12 @@ public:
 		subTask(NULL) {
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	DefendTask(void **buf, TaskID id);
-
 	//  Fixup the subtask pointer
 	void fixup(void);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -1724,15 +1555,9 @@ public:
 		flags(0) {
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	ParryTask(void **buf, TaskID id);
-
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void) const;
-
-	//  Create an archive of this object in a buffer
-	void *archive(void *buf) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -1778,9 +1603,6 @@ public:
 		newTaskStack(this);
 	}
 
-	//  Constructor -- reconstruct from archive buffer
-	TaskStack(void **buf);
-
 	//  Destructor
 	~TaskStack(void) {
 		deleteTaskStack(this);
@@ -1794,9 +1616,6 @@ public:
 		            +   sizeof(evalCount)
 		            +   sizeof(evalRate);
 	}
-
-	//  Create an archive of this TaskStack in a buffer
-	void *archive(void *buf);
 
 	void write(Common::OutSaveFile *out);
 

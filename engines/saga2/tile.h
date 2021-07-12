@@ -618,10 +618,6 @@ public:
 	//  TileActivityTaskList
 	int32 archiveSize(void);
 
-	//  Create an archive of this TileActivityTaskList in the specified
-	//  archive buffer
-	Common::MemorySeekableReadWriteStream *archive(Common::MemorySeekableReadWriteStream *stream);
-
 	void read(Common::InSaveFile *in);
 	void write(Common::OutSaveFile *out);
 
@@ -1005,12 +1001,7 @@ void initPlatformCache(void);
 //  Initialize the tile activity task list
 void initTileTasks(void);
 
-//  Save the tile activity task list to a save file
-void saveTileTasks(SaveFileConstructor &saveGame);
 void saveTileTasks(Common::OutSaveFile *out);
-
-//  Load the tile activity task list from a save file
-void loadTileTasks(SaveFileReader &saveGame);
 void loadTileTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the tile activity task list
@@ -1019,23 +1010,17 @@ void cleanupTileTasks(void);
 TilePoint getClosestPointOnTAI(ActiveItem *TAI, GameObject *obj);
 
 void initActiveItemStates(void);
-void saveActiveItemStates(SaveFileConstructor &saveGame);
 void saveActiveItemStates(Common::OutSaveFile *out);
-void loadActiveItemStates(SaveFileReader &saveGame);
 void loadActiveItemStates(Common::InSaveFile *in);
 void cleanupActiveItemStates(void);
 
 void initTileCyclingStates(void);
-void saveTileCyclingStates(SaveFileConstructor &saveGame);
 void saveTileCyclingStates(Common::OutSaveFile *out);
-void loadTileCyclingStates(SaveFileReader &saveGame);
 void loadTileCyclingStates(Common::InSaveFile *in);
 void cleanupTileCyclingStates(void);
 
 void initAutoMap(void);
-void saveAutoMap(SaveFileConstructor &saveGame);
 void saveAutoMap(Common::OutSaveFile *out);
-void loadAutoMap(SaveFileReader &saveGame);
 void loadAutoMap(Common::InSaveFile *in, int32 chunkSize);
 inline void cleanupAutoMap(void) { /* nothing to do */ }
 

@@ -225,7 +225,7 @@ void loadSavedGameState(int16 saveNo) {
 	pauseTimer();
 
 	Common::InSaveFile *in = g_vm->getSaveFileManager()->openForLoading(getSaveFileName(saveNo));
-	//SaveFileReader  saveGame(saveNo);
+
 	ChunkID         id;
 	int32           chunkSize;
 	bool            notEOF;

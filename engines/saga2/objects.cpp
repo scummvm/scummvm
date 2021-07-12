@@ -233,38 +233,6 @@ GameObject::GameObject(const ResourceGameObject &res) {
 	_data.obj = this;
 }
 
-//-----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-GameObject::GameObject(void **buf) {
-	GameObjectArchive   *a = (GameObjectArchive *)*buf;
-
-	//  Convert the protoype index into an object proto pointer
-	prototype       =   a->protoIndex != -1
-	                    ?   &objectProtos[a->protoIndex]
-	                    :   nullptr;
-
-	_data.projectDummy = 0;
-	_data.location        = a->location;
-	_data.nameIndex       = a->nameIndex;
-	_data.parentID        = a->parentID;
-	_data.siblingID       = a->siblingID;
-	_data.childID         = a->childID;
-	_data.script          = a->script;
-	_data.objectFlags     = a->objectFlags;
-	_data.hitPoints       = a->hitPoints;
-	_data.bParam          = a->bParam;
-	_data.massCount       = a->misc;
-	_data.missileFacing   = a->missileFacing;
-	_data.currentTAG      = a->currentTAG;
-	_data.sightCtr        = a->sightCtr;
-	memset(&_data.reserved, 0, sizeof(_data.reserved));
-
-	_data.obj = this;
-
-	*buf = &a[1];
-}
-
 GameObject::GameObject(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "Loading object %d", thisID());
 
@@ -305,32 +273,6 @@ void GameObject::read(Common::InSaveFile *in) {
 
 int32 GameObject::archiveSize(void) {
 	return sizeof(GameObjectArchive);
-}
-
-//-----------------------------------------------------------------------
-//	Archive this object in a buffer
-
-void *GameObject::archive(void *buf) {
-	GameObjectArchive   *a = (GameObjectArchive *)buf;
-
-	//  Convert the prototype pointer to a prototype index
-	a->protoIndex   = prototype != nullptr ? prototype - objectProtos : -1;
-
-	a->location     = _data.location;
-	a->nameIndex    = _data.nameIndex;
-	a->parentID     = _data.parentID;
-	a->siblingID    = _data.siblingID;
-	a->childID      = _data.childID;
-	a->script       = _data.script;
-	a->objectFlags  = _data.objectFlags;
-	a->hitPoints    = _data.hitPoints;
-	a->bParam       = _data.bParam;
-	a->misc         = _data.massCount;
-	a->missileFacing = _data.missileFacing;
-	a->currentTAG   = _data.currentTAG;
-	a->sightCtr     = _data.sightCtr;
-
-	return &a[1];
 }
 
 void GameObject::write(Common::OutSaveFile *out) {
@@ -2408,40 +2350,6 @@ GameWorld::GameWorld(int16 map) {
 	}
 }
 
-//-------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-GameWorld::GameWorld(void **buf) {
-	warning("STUB:GameWorld::GameWorld()");
-#if 0
-	int16   *bufferPtr = (int16 *)*buf;
-
-	size.u = size.v = *bufferPtr++;
-	mapNum = *bufferPtr++;
-
-	if (size.u != 0) {
-		int32   sectorArrayBytes;
-
-		sectorArraySize = size.u / kSectorSize;
-		sectorArrayBytes =
-		    sectorArraySize * sectorArraySize * sizeof(Sector),
-		    sectorArray = new Sector[sectorArrayBytes]();
-
-		if (sectorArray == nullptr)
-			error("Unable to allocate world %d sector array", mapNum);
-
-		memcpy(sectorArray, bufferPtr, sectorArrayBytes);
-
-		bufferPtr = (int16 *)((int8 *)bufferPtr + sectorArrayBytes);
-	} else {
-		sectorArraySize = 0;
-		sectorArray = nullptr;
-	}
-
-	*buf = bufferPtr;
-#endif
-}
-
 GameWorld::GameWorld(Common::SeekableReadStream *stream) {
 	size.u = size.v = stream->readSint16LE();
 	mapNum = stream->readSint16LE();
@@ -2487,22 +2395,6 @@ int32 GameWorld::archiveSize(void) {
 	            +   sectorArraySize * sectorArraySize * sizeof(Sector);
 
 	return bytes;
-}
-
-//-------------------------------------------------------------------
-//	Make an archive of this world
-
-void *GameWorld::archive(void *buf) {
-	int16   *bufferPtr = (int16 *)buf;
-	int32   sectorArrayBytes =
-	    sectorArraySize * sectorArraySize * sizeof(Sector);
-
-	*bufferPtr++ = size.u;
-	*bufferPtr++ = mapNum;
-	memcpy(bufferPtr, sectorArray, sectorArrayBytes);
-
-	warning("FIXME: Unsafe pointer arithmetics in GameWorld::archive()");
-	return (void *)(bufferPtr + sectorArrayBytes);
 }
 
 //-------------------------------------------------------------------
@@ -2792,15 +2684,6 @@ void initTempActorCount(void) {
 		tempActorCount[i] = 0;
 }
 
-//-------------------------------------------------------------------
-//	Save the array of temp actor counts
-void saveTempActorCount(SaveFileConstructor &saveGame) {
-	saveGame.writeChunk(
-	    MakeID('A', 'C', 'N', 'T'),
-	    tempActorCount,
-	    actorProtoCount * sizeof(uint16));
-}
-
 void saveTempActorCount(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving TempActorCount");
 
@@ -2809,14 +2692,6 @@ void saveTempActorCount(Common::OutSaveFile *out) {
 
 	for (int i = 0; i < actorProtoCount; ++i)
 		out->writeUint16LE(tempActorCount[i]);
-}
-
-//-------------------------------------------------------------------
-//	Load the array of temp actor counts
-
-void loadTempActorCount(SaveFileReader &saveGame) {
-	tempActorCount = new uint16[saveGame.getChunkSize()];
-	saveGame.read(tempActorCount, saveGame.getChunkSize());
 }
 
 void loadTempActorCount(Common::InSaveFile *in, int32 chunkSize) {
@@ -2883,46 +2758,6 @@ void initWorlds(void) {
 	setCurrentMap(currentWorld->mapNum);
 }
 
-//-------------------------------------------------------------------
-//	Save the worlds to a save game file
-
-void saveWorlds(SaveFileConstructor &saveGame) {
-	int16       i;
-	int32       archiveBufSize = 0;
-	void        *archiveBuffer;
-	void        *bufferPtr;
-
-	//  Accumulate size of archive buffer
-
-	//  Add size of the current world's ID
-	archiveBufSize += sizeof(ObjectID);
-
-	for (i = 0; i < worldCount; i++)
-		archiveBufSize += worldList[i].archiveSize();
-
-	archiveBuffer = malloc(archiveBufSize);
-	if (archiveBuffer == nullptr)
-		error("Unable to allocate world archive buffer");
-
-	bufferPtr = archiveBuffer;
-
-	//  Store the current world's ID
-	*((ObjectID *)bufferPtr) = currentWorld->thisID();
-	bufferPtr = (ObjectID *)bufferPtr + 1;
-
-	//  Store the world data in the archive buffer
-	for (i = 0; i < worldCount; i++)
-		bufferPtr = worldList[i].archive(bufferPtr);
-
-	//  Write the archive buffer to the save file
-	saveGame.writeChunk(
-	    MakeID('W', 'R', 'L', 'D'),
-	    archiveBuffer,
-	    archiveBufSize);
-
-	free(archiveBuffer);
-}
-
 void saveWorlds(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving worlds");
 
@@ -2960,48 +2795,6 @@ void saveWorlds(Common::OutSaveFile *out) {
 			debugC(4, kDebugSaveload, "...... sectArray[%d].childID = %d", j, sectArray[j].childID);
 		}
 	}
-}
-
-//-------------------------------------------------------------------
-//	Load the worlds from a save game file
-
-void loadWorlds(SaveFileReader &saveGame) {
-	int16       i;
-	ObjectID    currentWorldID;
-	void        *archiveBuffer;
-	void        *bufferPtr;
-
-	//  worldCount must be set by the map data initialization
-	worldListSize = worldCount * sizeof(GameWorld);
-
-	worldList = new GameWorld[worldListSize]();
-	if (worldList == nullptr)
-		error("Unable to allocate world list");
-
-	archiveBuffer = malloc(saveGame.getChunkSize());
-	if (archiveBuffer == nullptr)
-		error("Unable to allocate world data buffer");
-
-	saveGame.read(archiveBuffer, saveGame.getChunkSize());
-
-	bufferPtr = archiveBuffer;
-
-	//  Get the current world's ID
-	currentWorldID = *((ObjectID *)bufferPtr);
-	bufferPtr = (ObjectID *)bufferPtr + 1;
-
-	//  Iterate through the world data, initializing the world list
-	for (i = 0;
-	        i < worldCount;
-	        i++)
-		//  Restore the world's data
-		new (&worldList[i]) GameWorld(&bufferPtr);
-
-	free(archiveBuffer);
-
-	//  Reset the current world
-	currentWorld = (GameWorld *)GameObject::objectAddress(currentWorldID);
-	setCurrentMap(currentWorld->mapNum);
 }
 
 void loadWorlds(Common::InSaveFile *in) {
@@ -3167,54 +2960,6 @@ void initObjects(void) {
 #endif
 }
 
-//-------------------------------------------------------------------
-//	Save the object list to a save file
-
-void saveObjects(SaveFileConstructor &saveGame) {
-	int16       i;
-	void        *archiveBuffer,
-	            *bufferPtr;
-	int32       archiveBufSize;
-	GameObject  *currentObj;
-
-	archiveBufSize =        sizeof(objectLimboCount)
-	                        +   sizeof(actorLimboCount)
-	                        +   sizeof(importantLimboCount)
-	                        +   objectListSize;
-
-	archiveBuffer = malloc(archiveBufSize);
-	if (archiveBuffer == nullptr)
-		error("Cannot allocate object list archive buffer");
-
-	bufferPtr = archiveBuffer;
-
-	//  Store the limbo counts
-	*((int16 *)bufferPtr)      = objectLimboCount;
-	*((int16 *)bufferPtr + 1) = actorLimboCount;
-	*((int16 *)bufferPtr + 2) = importantLimboCount;
-	bufferPtr = (int16 *)bufferPtr + 3;
-
-	//  Store the object list
-	memcpy(bufferPtr, objectList, objectListSize);
-
-	//  Convert the prototype pointers to prototype indexes
-	for (i = 0, currentObj = (GameObject *)bufferPtr;
-	        i < objectCount;
-	        i++, currentObj++) {
-		*((int16 *)&currentObj->prototype) =
-		    currentObj->prototype != nullptr
-		    ?   currentObj->prototype - objectProtos
-		    :   -1;
-	}
-
-	saveGame.writeChunk(
-	    MakeID('O', 'B', 'J', 'S'),
-	    archiveBuffer,
-	    archiveBufSize);
-
-	free(archiveBuffer);
-}
-
 void saveObjects(Common::OutSaveFile *out) {
 	int32 archiveBufSize;
 
@@ -3234,39 +2979,6 @@ void saveObjects(Common::OutSaveFile *out) {
 	//  Store the object list
 	for (int i = 0; i < objectCount; i++)
 		objectList[i].write(out);
-}
-
-//-------------------------------------------------------------------
-//	Load the object list from a save file
-
-void loadObjects(SaveFileReader &saveGame) {
-	int16       i;
-	GameObject  *obj;
-
-	//  Restore the limbo counts
-	saveGame.read(&objectLimboCount, sizeof(objectLimboCount));
-	saveGame.read(&actorLimboCount, sizeof(actorLimboCount));
-	saveGame.read(&importantLimboCount, sizeof(importantLimboCount));
-
-	//  Restore the object list
-	objectListSize = saveGame.bytesLeftInChunk();
-	//objectCount = objectListSize / sizeof(GameObject);
-
-	objectList = new GameObject[objectCount]();
-	if (objectList == nullptr)
-		error("Unable to load Objects");
-
-	saveGame.read(objectList, objectListSize);
-
-	for (i = 0, obj = (GameObject *)objectList;
-	        i < objectCount;
-	        i++, obj++) {
-		//  convert prototype ID number to actual prototype address
-		obj->prototype =
-		    *((int16 *)&obj->prototype) != -1
-		    ?   &objectProtos[*((int16 *)&obj->prototype)]
-		    :   nullptr;
-	}
 }
 
 void loadObjects(Common::InSaveFile *in) {
@@ -3542,16 +3254,6 @@ void initActiveRegions(void) {
 	}
 }
 
-//-------------------------------------------------------------------
-//	Save the active regions to a save file
-
-void saveActiveRegions(SaveFileConstructor &saveGame) {
-	saveGame.writeChunk(
-	    MakeID('A', 'R', 'E', 'G'),
-	    &activeRegionList,
-	    sizeof(activeRegionList));
-}
-
 void saveActiveRegions(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving ActiveRegions");
 
@@ -3564,13 +3266,6 @@ void saveActiveRegions(Common::OutSaveFile *out) {
 		debugC(3, kDebugSaveload, "Saving Active Region %d", i);
 		activeRegionList[i].write(out);
 	}
-}
-
-//-------------------------------------------------------------------
-//	Load the active regions from a save file
-
-void loadActiveRegions(SaveFileReader &saveGame) {
-	saveGame.read(&activeRegionList, sizeof(activeRegionList));
 }
 
 void loadActiveRegions(Common::InSaveFile *in) {

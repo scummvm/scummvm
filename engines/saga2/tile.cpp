@@ -781,81 +781,6 @@ void initActiveItemStates(void) {
 	}
 }
 
-//-----------------------------------------------------------------------
-//	Save the active item instance states in a save file
-
-void saveActiveItemStates(SaveFileConstructor &saveGame) {
-	int16   i;
-
-	int32   archiveBufSize = 0;
-	void    *archiveBuffer;
-	void    *bufferPtr;
-
-	for (i = 0; i < worldCount; i++) {
-		int32 size = tileRes->size(tagStateID + i);
-		archiveBufSize += sizeof(int16);
-		if (stateArray[i] != nullptr)
-			archiveBufSize += size;
-	}
-
-	archiveBuffer = malloc(archiveBufSize);
-	if (archiveBuffer == nullptr)
-		error("Unable to allocate a state array archive buffer");
-
-	bufferPtr = archiveBuffer;
-
-	for (i = 0; i < worldCount; i++) {
-		if (stateArray[i] != nullptr) {
-			WorldMapData        *mapData = &mapList[i];
-			ActiveItemList      *activeItemList = mapData->activeItemList;
-			int16               activeItemCount = mapData->activeCount,
-			                    j;
-			int32               arraySize = tileRes->size(tagStateID + i);
-			uint8               *bufferedStateArray;
-
-			//  Save the size of the state array
-			WRITE_LE_INT16(bufferPtr, arraySize / sizeof(uint8));
-			bufferPtr = (int16 *)bufferPtr + 1;
-
-			//  Copy the state data to the archive buffer
-			memcpy(bufferPtr, stateArray[i], arraySize);
-			//  Save a pointer to the buffered data
-			bufferedStateArray = (uint8 *)bufferPtr;
-			bufferPtr = (uint8 *)bufferPtr + arraySize;
-
-			for (j = 0; j < activeItemCount; j++) {
-				ActiveItem      *activeItem = activeItemList->_items[j];
-				uint8           *statePtr;
-
-				if (activeItem->_data.itemType != activeTypeInstance)
-					continue;
-
-				//  Get a pointer to the current active item's state
-				//  data in the archive buffer
-				statePtr =
-				    &bufferedStateArray[activeItem->_data.instance.stateIndex];
-
-				//  Set the high bit of the state value based upon the
-				//  active item's locked state
-				if (activeItem->isLocked())
-					*statePtr |= (1 << 7);
-				else
-					*statePtr &= ~(1 << 7);
-			}
-		} else {
-			WRITE_LE_INT16(bufferPtr, 0);
-			bufferPtr = (int16 *)bufferPtr + 1;
-		}
-	}
-
-	saveGame.writeChunk(
-	    MakeID('T', 'A', 'G', 'S'),
-	    archiveBuffer,
-	    archiveBufSize);
-
-	free(archiveBuffer);
-}
-
 void saveActiveItemStates(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving ActiveItemStates");
 
@@ -909,75 +834,6 @@ void saveActiveItemStates(Common::OutSaveFile *out) {
 		} else
 			out->writeSint16LE(0);
 	}
-}
-
-//-----------------------------------------------------------------------
-//	Load the active item instance states from a save file
-
-void loadActiveItemStates(SaveFileReader &saveGame) {
-	int16       i;
-
-	void        *archiveBuffer;
-	void        *bufferPtr;
-
-	stateArray = new byte *[worldCount]();
-
-	if (stateArray == nullptr)
-		error("Unable to allocate the active item state array array");
-
-	archiveBuffer = malloc(saveGame.getChunkSize());
-
-	if (archiveBuffer == nullptr)
-		error("Unable to allocate state array archive buffer");
-
-	saveGame.read(archiveBuffer, saveGame.getChunkSize());
-
-	bufferPtr = archiveBuffer;
-
-	for (i = 0; i < worldCount; i++) {
-		int32   arraySize;
-
-		arraySize = READ_LE_INT16(bufferPtr) * sizeof(uint8);
-		bufferPtr = (int16 *)bufferPtr + 1;
-
-		if (arraySize > 0) {
-			WorldMapData        *mapData = &mapList[i];
-			ActiveItemList      *activeItemList = mapData->activeItemList;
-			int16               activeItemCount = mapData->activeCount,
-			                    j;
-			uint8               *bufferedStateArray = (uint8 *)bufferPtr;
-
-			for (j = 0; j < activeItemCount; j++) {
-				ActiveItem      *activeItem = activeItemList->_items[j];
-				uint8           *statePtr;
-
-				if (activeItem->_data.itemType != activeTypeInstance)
-					continue;
-
-				//  Get a pointer to the current active item's state
-				//  data in the archive buffer
-				statePtr =
-				    &bufferedStateArray[activeItem->_data.instance.stateIndex];
-
-				//  Reset the locked state of the active item based
-				//  upon the high bit of the buffered state value
-				activeItem->setLocked((*statePtr & (1 << 7)) != 0);
-
-				//  Clear the high bit of the state value
-				*statePtr &= ~(1 << 7);
-			}
-
-			stateArray[i] = (byte *)malloc(arraySize);
-			if (stateArray[i] == nullptr)
-				error("Unable to allocate active item state array");
-
-			memcpy(stateArray[i], bufferPtr, arraySize);
-			bufferPtr = (uint8 *)bufferPtr + arraySize;
-		} else
-			stateArray[i] = nullptr;
-	}
-
-	free(archiveBuffer);
 }
 
 void loadActiveItemStates(Common::InSaveFile *in) {
@@ -1113,29 +969,6 @@ int32 TileActivityTaskList::archiveSize(void) {
 		size += sizeof(ActiveItemID) + sizeof(uint8);
 
 	return size;
-}
-
-//-----------------------------------------------------------------------
-//	Create an archive of this TileActivityTaskList in the specified
-//	archive buffer
-
-Common::MemorySeekableReadWriteStream *TileActivityTaskList::archive(Common::MemorySeekableReadWriteStream *stream) {
-	int16 taskCount = _list.size();
-
-	//  Store the task count
-	stream->writeSint16LE(taskCount);
-
-	for (Common::List<TileActivityTask *>::iterator it = _list.begin(); it != _list.end(); ++it) {
-		ActiveItem  *ai = (*it)->tai;
-
-		//  Store the activeItemID
-		stream->writeSint16LE(ai->thisID());
-
-		//  Store the task type
-		stream->writeByte((*it)->activityType);
-	}
-
-	return stream;
 }
 
 void TileActivityTaskList::read(Common::InSaveFile *in) {
@@ -1408,34 +1241,6 @@ void moveActiveTerrain(int32 deltaTime) {
 void initTileTasks(void) {
 }
 
-//-----------------------------------------------------------------------
-//	Save the tile activity task list to a save file
-
-void saveTileTasks(SaveFileConstructor &saveGame) {
-	int32   archiveBufSize;
-	byte *archiveBuffer;
-	Common::MemorySeekableReadWriteStream *stream;
-
-	archiveBufSize = aTaskList.archiveSize();
-
-	archiveBuffer = (byte *)malloc(archiveBufSize);
-	if (archiveBuffer == nullptr)
-		error("Unable to allocate tile activity task archive buffer");
-
-	stream = new Common::MemorySeekableReadWriteStream(archiveBuffer,
-	                                                   archiveBufSize,
-	                                                   DisposeAfterUse::YES);
-
-	aTaskList.archive(stream);
-
-	saveGame.writeChunk(
-	    MakeID('T', 'A', 'C', 'T'),
-	    archiveBuffer,
-	    archiveBufSize);
-
-	delete stream;
-}
-
 void saveTileTasks(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving TileActivityTasks");
 
@@ -1446,34 +1251,6 @@ void saveTileTasks(Common::OutSaveFile *out) {
 	out->writeUint32LE(archiveBufSize);
 
 	aTaskList.write(out);
-}
-
-//-----------------------------------------------------------------------
-//	Load the tile activity task list from a save file
-
-void loadTileTasks(SaveFileReader &saveGame) {
-	//  If there is no saved data, simply call the default constructor
-	if (saveGame.getChunkSize() == 0) {
-		new (&aTaskList) TileActivityTaskList;
-		return;
-	}
-
-	void    *archiveBuffer;
-	void    *bufferPtr;
-
-	archiveBuffer = malloc(saveGame.getChunkSize());
-	if (archiveBuffer == nullptr)
-		error("Unable to allocate tile activity task archive buffer");
-
-	//  Read the archived tile activity task data
-	saveGame.read(archiveBuffer, saveGame.getChunkSize());
-
-	bufferPtr = archiveBuffer;
-
-	//  Reconstruct aTaskList from archived data
-	new (&aTaskList) TileActivityTaskList(&bufferPtr);
-
-	free(archiveBuffer);
 }
 
 void loadTileTasks(Common::InSaveFile *in, int32 chunkSize) {
@@ -1849,69 +1626,6 @@ void initAutoMap(void) {
 
 }
 
-//-----------------------------------------------------------------------
-
-void saveAutoMap(SaveFileConstructor &saveGame) {
-	int32       totalMapSize = 0,
-	            totalMapIndex = 0;
-	int16       i;
-
-	uint8       *archiveBuffer;
-	int32       archiveBufSize;
-
-	for (i = 0; i < worldCount; i++) {
-		MapHeader       *map;
-		int32           mapSize;
-
-		map = mapList[i].map;
-		mapSize = map->size;
-		mapSize *= mapSize;
-
-		totalMapSize += mapSize;
-	}
-
-	//  Compute the number of bytes needed to store the visited bit
-	//  for each map metatile slot
-	archiveBufSize = (totalMapSize + 7) >> 3;
-
-	archiveBuffer = (uint8 *)calloc(1, archiveBufSize);
-	if (archiveBuffer == nullptr)
-		error("Unable to allocate auto map archive buffer");
-
-	for (i = 0; i < worldCount; i++) {
-		MapHeader       *map;
-		int32           mapSize,
-		                mapIndex;
-		uint16          *mapData;
-
-		map = mapList[i].map;
-		mapSize = map->size;
-		mapSize *= mapSize;
-		mapData = map->mapData;
-
-		for (mapIndex = 0; mapIndex < mapSize; mapIndex++) {
-			if (mapData[mapIndex] & metaTileVisited) {
-				//  Set the bit in the archive buffer
-				archiveBuffer[totalMapIndex >> 3] |=
-				    (1 << (totalMapIndex & 7));
-			} else {
-				//  Clear the bit in the archive buffer
-				archiveBuffer[totalMapIndex >> 3] &=
-				    ~(1 << (totalMapIndex & 7));
-			}
-
-			totalMapIndex++;
-		}
-	}
-
-	saveGame.writeChunk(
-	    MakeID('A', 'M', 'A', 'P'),
-	    archiveBuffer,
-	    archiveBufSize);
-
-	free(archiveBuffer);
-}
-
 void saveAutoMap(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving AutoMap");
 
@@ -1971,54 +1685,6 @@ void saveAutoMap(Common::OutSaveFile *out) {
 	}
 
 	out->write(archiveBuffer, archiveBufSize);
-
-	free(archiveBuffer);
-}
-
-//-----------------------------------------------------------------------
-
-void loadAutoMap(SaveFileReader &saveGame) {
-	debugC(2, kDebugSaveload, "Loading AutoMap");
-
-	int32       totalMapIndex = 0;
-	int16       i;
-
-	uint8       *archiveBuffer;
-	int32       archiveBufSize;
-
-	archiveBufSize = saveGame.getChunkSize();
-
-	archiveBuffer = (uint8 *)malloc(archiveBufSize);
-	if (archiveBuffer == nullptr)
-		error("Unable to allocate auto map archive buffer");
-
-	saveGame.read(archiveBuffer, archiveBufSize);
-
-	for (i = 0; i < worldCount; i++) {
-		MapHeader       *map;
-		int32           mapSize,
-		                mapIndex;
-		uint16          *mapData;
-
-		map = mapList[i].map;
-		mapSize = map->size;
-		mapSize *= mapSize;
-		mapData = map->mapData;
-
-		for (mapIndex = 0; mapIndex < mapSize; mapIndex++) {
-			assert((totalMapIndex >> 3) < archiveBufSize);
-
-			//  If the bit is set in the archive buffer, set the visited
-			//  bit in the map data
-			if (archiveBuffer[totalMapIndex >> 3]
-			        & (1 << (totalMapIndex & 7)))
-				mapData[mapIndex] |= metaTileVisited;
-			else
-				mapData[mapIndex] &= ~metaTileVisited;
-
-			totalMapIndex++;
-		}
-	}
 
 	free(archiveBuffer);
 }
@@ -4577,30 +4243,6 @@ void initTileCyclingStates(void) {
 	}
 }
 
-//-----------------------------------------------------------------------
-//	Save the tile cycling state array in a save file
-
-void saveTileCyclingStates(SaveFileConstructor &saveGame) {
-	TileCycleArchive        *archiveBuffer;
-	int16                   i;
-
-	archiveBuffer = new TileCycleArchive[cycleCount]();
-	if (archiveBuffer == nullptr)
-		error("Unable to allocate tile cycle data archive buffer");
-
-	for (i = 0; i < cycleCount; i++) {
-		archiveBuffer[i].counter = cycleList[i].counter;
-		archiveBuffer[i].currentState = cycleList[i].currentState;
-	}
-
-	saveGame.writeChunk(
-	    MakeID('C', 'Y', 'C', 'L'),
-	    archiveBuffer,
-	    sizeof(TileCycleArchive) * cycleCount);
-
-	delete[] archiveBuffer;
-}
-
 void saveTileCyclingStates(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving TileCyclingStates");
 
@@ -4618,31 +4260,6 @@ void saveTileCyclingStates(Common::OutSaveFile *out) {
 		debugC(4, kDebugSaveload, "... counter = %d", cycleList[i].counter);
 		debugC(4, kDebugSaveload, "... currentState = %d", cycleList[i].currentState);
 	}
-}
-
-//-----------------------------------------------------------------------
-//	Load the tile cycling state array from a save file
-
-void loadTileCyclingStates(SaveFileReader &saveGame) {
-	TileCycleArchive        *archiveBuffer;
-	int16                   i;
-
-	initTileCyclingStates();
-
-	assert(saveGame.getChunkSize() == (int)sizeof(TileCycleArchive) * cycleCount);
-
-	archiveBuffer = new TileCycleArchive[cycleCount]();
-	if (archiveBuffer == nullptr)
-		error("Unable to allocate tile cycle data archive buffer");
-
-	saveGame.read(archiveBuffer, sizeof(TileCycleArchive) * cycleCount);
-
-	for (i = 0; i < cycleCount; i++) {
-		cycleList[i].counter = archiveBuffer[i].counter;
-		cycleList[i].currentState = archiveBuffer[i].currentState;
-	}
-
-	delete[] archiveBuffer;
 }
 
 void loadTileCyclingStates(Common::InSaveFile *in) {

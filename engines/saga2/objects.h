@@ -37,8 +37,6 @@ namespace Saga2 {
  * ======================================================================= */
 
 class GameWorld;
-class SaveFileConstructor;
-class SaveFileReader;
 
 const uint16 unlimitedCapacity = maxuint16;
 
@@ -115,22 +113,16 @@ struct ObjectData {
 #include "common/pack-end.h"
 
 void     initActors(void);
-void     saveActors(SaveFileConstructor &);
 void     saveActors(Common::OutSaveFile *out);
-void     loadActors(SaveFileReader &);
 void     loadActors(Common::InSaveFile *in);
 void     cleanupActors(void);
 class GameObject {
 
 	friend void     initWorlds(void);
-	friend void     saveWorlds(SaveFileConstructor &);
-	friend void     loadWorlds(SaveFileReader &);
 	friend void     cleanupWorlds(void);
 
 	friend void     initObjects(void);
-	friend void     saveObjects(SaveFileConstructor &);
 	friend void     saveObjects(Common::OutSaveFile *out);
-	friend void     loadObjects(SaveFileReader &);
 	friend void     loadObjects(Common::InSaveFile *in);
 	friend void     cleanupObjects(void);
 
@@ -187,9 +179,6 @@ public:
 	//  Constructor -- initial construction
 	GameObject(const ResourceGameObject &res);
 
-	//  Constructor -- reconstruct from archive buffer
-	GameObject(void **buf);
-
 	GameObject(Common::InSaveFile *in);
 
 	void read(Common::InSaveFile *in);
@@ -197,9 +186,6 @@ public:
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void);
-
-	//  Archive the object in a buffer
-	void *archive(void *buf);
 
 	void write(Common::OutSaveFile *out);
 
@@ -786,15 +772,11 @@ public:
 	//  Initial constructor
 	GameWorld(int16 map);
 
-	//  Constructor -- reconstruct from archive buffer
-	GameWorld(void **buf);
-
 	GameWorld(Common::SeekableReadStream *stream);
 
 	~GameWorld();
 
 	int32 archiveSize(void);
-	void *archive(void *buf);
 
 	void cleanup(void);
 
@@ -854,8 +836,6 @@ inline int16 GameObject::getMapNum(void) {
 class ActiveRegion {
 
 	friend void initActiveRegions(void);
-	friend void saveActiveRegions(SaveFileConstructor &saveGame);
-	friend void loadActiveRegions(SaveFileReader &saveGame);
 	friend void cleanupActiveRegions(void);
 
 	friend class ActiveRegionObjectIterator;
@@ -902,9 +882,7 @@ void updateActiveRegions(void);
 ActiveRegion *getActiveRegion(PlayerActorID id);
 
 void initActiveRegions(void);
-void saveActiveRegions(SaveFileConstructor &saveGame);
 void saveActiveRegions(Common::OutSaveFile *out);
-void loadActiveRegions(SaveFileReader &saveGame);
 void loadActiveRegions(Common::InSaveFile *in);
 inline void cleanupActiveRegions(void) {}
 
@@ -1408,11 +1386,9 @@ void cleanupObjectSoundFXTable(void);
 void initTempActorCount(void);
 
 //  Save the array of temp actor counts
-void saveTempActorCount(SaveFileConstructor &saveGame);
 void saveTempActorCount(Common::OutSaveFile *out);
 
 //  Load the array of temp actor counts
-void loadTempActorCount(SaveFileReader &saveGame);
 void loadTempActorCount(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the array to temp actor counts
@@ -1431,11 +1407,9 @@ uint16 getTempActorCount(uint16 protoNum);
 void initWorlds(void);
 
 //  Save worlds to the save file
-void saveWorlds(SaveFileConstructor &saveGame);
 void saveWorlds(Common::OutSaveFile *out);
 
 //  Load worlds from the save file
-void loadWorlds(SaveFileReader &saveGame);
 void loadWorlds(Common::InSaveFile *in);
 
 //  Cleanup game worlds
@@ -1445,11 +1419,9 @@ void cleanupWorlds(void);
 void initObjects(void);
 
 //  Save the objects to the save file
-void saveObjects(SaveFileConstructor &saveGame);
 void saveObjects(Common::OutSaveFile *out);
 
 //  Load the objects from the save file
-void loadObjects(SaveFileReader &saveGame);
 void loadObjects(Common::InSaveFile *in);
 
 //  Cleanup object list

@@ -232,11 +232,7 @@ extern SpeechTaskList &speechList;
 void initSpeechTasks(void);
 
 //  Save the speech tasks in a save file
-void saveSpeechTasks(SaveFileConstructor &saveGame);
 void saveSpeechTasks(Common::OutSaveFile *out);
-
-//  Load the speech tasks from a save file
-void loadSpeechTasks(SaveFileReader &saveGame);
 void loadSpeechTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the speech task list

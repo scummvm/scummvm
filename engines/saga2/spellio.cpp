@@ -216,24 +216,10 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 void initSpellState(void) {
 }
 
-// ------------------------------------------------------------------
-// serialize active spells
-
-void saveSpellState(SaveFileConstructor &saveGame) {
-	activeSpells.save(saveGame);
-}
-
 void saveSpellState(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving SpellState");
 
 	activeSpells.write(out);
-}
-
-// ------------------------------------------------------------------
-// read serialized active spells
-
-void loadSpellState(SaveFileReader &saveGame) {
-	activeSpells.load(saveGame);
 }
 
 void loadSpellState(Common::InSaveFile *in) {
@@ -394,21 +380,6 @@ size_t SpellDisplayList::saveSize(void) {
 	return total;
 }
 
-void SpellDisplayList::save(SaveFileConstructor &saveGame) {
-	size_t chunkSize = saveSize();
-
-	saveGame.newChunk(spellInstCountID, chunkSize);
-
-	saveGame.write(&count, sizeof(count));
-	if (count) {
-		for (int i = 0; i < count; i++) {
-			StorageSpellInstance ssi = StorageSpellInstance(*spells[i]);
-			saveGame.write(&ssi, sizeof(ssi));
-			spells[i]->saveEffect(saveGame);
-		}
-	}
-}
-
 void SpellDisplayList::write(Common::OutSaveFile *out) {
 	size_t chunkSize = saveSize();
 
@@ -427,24 +398,6 @@ void SpellDisplayList::write(Common::OutSaveFile *out) {
 			spells[i]->writeEffect(out);
 		}
 	}
-}
-
-void SpellDisplayList::load(SaveFileReader &saveGame) {
-	uint16 tCount;
-
-	saveGame.read(&tCount, sizeof(tCount));
-	assert(tCount < maxCount);
-	if (tCount) {
-		for (int i = 0; i < tCount; i++) {
-			SpellInstance *si;
-			StorageSpellInstance ssi;
-			saveGame.read(&ssi, sizeof(ssi));
-			si = new SpellInstance(ssi);
-			add(si);
-			si->loadEffect(saveGame, ssi.eListSize);
-		}
-	}
-	assert(tCount == count);
 }
 
 void SpellDisplayList::read(Common::InSaveFile *in) {
@@ -490,31 +443,11 @@ size_t SpellInstance::saveSize(void) {
 	return total;
 }
 
-void SpellInstance::saveEffect(SaveFileConstructor &saveGame) {
-	if (eList.count > 0 && !(maxAge > 0 && (age + 1) > maxAge))
-		for (int32 i = 0; i < eList.count; i++) {
-			StorageEffectron se = StorageEffectron(*eList.displayList[i].efx);
-			saveGame.write(&se, sizeof(se));
-		}
-}
-
 void SpellInstance::writeEffect(Common::OutSaveFile *out) {
 	if (eList.count > 0 && !(maxAge > 0 && (age + 1) > maxAge))
 		for (int32 i = 0; i < eList.count; i++) {
 			StorageEffectron se = StorageEffectron(*eList.displayList[i].efx);
 			se.write(out);
-		}
-}
-
-void SpellInstance::loadEffect(SaveFileReader &saveGame, uint16 eListSize) {
-	assert(eListSize == effect->nodeCount);
-	eList.count = effect->nodeCount; //sdp->effCount;
-	if (eList.count)
-		for (int32 i = 0; i < eList.count; i++) {
-			StorageEffectron se;
-			saveGame.read(&se, sizeof(se));
-			Effectron *e = new Effectron(se, this);
-			eList.displayList[i].efx = e;
 		}
 }
 

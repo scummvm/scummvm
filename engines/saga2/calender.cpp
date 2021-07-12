@@ -267,18 +267,6 @@ void initCalender(void) {
 	calender.frameInHour    = 0;
 }
 
-//-----------------------------------------------------------------------
-//	Write the calender data to a save file
-
-void saveCalender(SaveFileConstructor &saveGame) {
-	if (saveGame.newChunk(
-	            MKTAG('C', 'A', 'L', 'E'),
-	            sizeof(calenderPaused) + sizeof(calender))) {
-		saveGame.write(&calenderPaused, sizeof(calenderPaused));
-		saveGame.write(&calender, sizeof(calender));
-	}
-}
-
 void saveCalender(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving calender");
 
@@ -290,17 +278,6 @@ void saveCalender(Common::OutSaveFile *out) {
 	debugC(3, kDebugSaveload, "... calenderPaused = %d", calenderPaused);
 
 	calender.write(out);
-}
-
-//-----------------------------------------------------------------------
-//	Read the calender data from a save file.  Assume the save file is at
-//	the correct chunk.
-
-void loadCalender(SaveFileReader &saveGame) {
-	assert(saveGame.getChunkSize() ==  sizeof(calenderPaused) + sizeof(calender));
-
-	saveGame.read(&calenderPaused, sizeof(calenderPaused));
-	saveGame.read(&calender, sizeof(calender));
 }
 
 void loadCalender(Common::InSaveFile *in) {

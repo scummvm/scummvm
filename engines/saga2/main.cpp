@@ -660,29 +660,6 @@ void initGlobals(void) {
 	backgroundSimulationPaused = false;
 }
 
-//-----------------------------------------------------------------------
-//	Store miscellaneous globals in a save file
-
-void saveGlobals(SaveFileConstructor &saveGame) {
-	GlobalsArchive  archive;
-
-	archive.objectIndex                 = objectIndex;
-	archive.actorIndex                  = actorIndex;
-	archive.brotherBandingEnabled       = brotherBandingEnabled;
-	archive.centerActorIndicatorEnabled = centerActorIndicatorEnabled;
-	archive.interruptableMotionsPaused  = interruptableMotionsPaused;
-	archive.objectStatesPaused          = objectStatesPaused;
-	archive.actorStatesPaused           = actorStatesPaused;
-	archive.actorTasksPaused            = actorTasksPaused;
-	archive.combatBehaviorEnabled       = combatBehaviorEnabled;
-	archive.backgroundSimulationPaused  = backgroundSimulationPaused;
-
-	saveGame.writeChunk(
-	    MakeID('G', 'L', 'O', 'B'),
-	    &archive,
-	    sizeof(archive));
-}
-
 void saveGlobals(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving globals");
 
@@ -710,26 +687,6 @@ void saveGlobals(Common::OutSaveFile *out) {
 	debugC(3, kDebugSaveload, "... actorTasksPaused = %d", actorTasksPaused);
 	debugC(3, kDebugSaveload, "... combatBehaviorEnabled = %d", combatBehaviorEnabled);
 	debugC(3, kDebugSaveload, "... backgroundSimulationPaused = %d", backgroundSimulationPaused);
-}
-
-//-----------------------------------------------------------------------
-//	Restore miscellaneouse globals from a save file
-
-void loadGlobals(SaveFileReader &saveGame) {
-	GlobalsArchive  archive;
-
-	saveGame.read(&archive, sizeof(archive));
-
-	objectIndex                 = archive.objectIndex;
-	actorIndex                  = archive.actorIndex;
-	brotherBandingEnabled       = archive.brotherBandingEnabled;
-	centerActorIndicatorEnabled = archive.centerActorIndicatorEnabled;
-	interruptableMotionsPaused  = archive.interruptableMotionsPaused;
-	objectStatesPaused          = archive.objectStatesPaused;
-	actorStatesPaused           = archive.actorStatesPaused;
-	actorTasksPaused            = archive.actorTasksPaused;
-	combatBehaviorEnabled       = archive.combatBehaviorEnabled;
-	backgroundSimulationPaused  = archive.backgroundSimulationPaused;
 }
 
 void loadGlobals(Common::InSaveFile *in) {

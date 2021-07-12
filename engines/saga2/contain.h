@@ -449,8 +449,6 @@ public:
 	static int32 archiveSize(void) {
 		return sizeof(Archive);
 	}
-	void *restore(void *buf);
-	void *archive(void *buf);
 
 	void read(Common::InSaveFile *in);
 	void write(Common::OutSaveFile *out);
@@ -544,9 +542,7 @@ void initContainers(void);
 void cleanupContainers(void);
 
 void initContainerNodes(void);
-void saveContainerNodes(SaveFileConstructor &saveGame);
 void saveContainerNodes(Common::OutSaveFile *out);
-void loadContainerNodes(SaveFileReader &saveGame);
 void loadContainerNodes(Common::InSaveFile *in);
 void cleanupContainerNodes(void);
 

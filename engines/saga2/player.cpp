@@ -938,54 +938,6 @@ void initPlayerActors(void) {
 	readyContainerSetup();
 }
 
-//-----------------------------------------------------------------------
-//	Save the player list data to a save file
-
-void savePlayerActors(SaveFileConstructor &saveGame) {
-	int16                   i;
-	PlayerActorArchive      archiveBuffer[playerActors];
-
-	for (i = 0; i < playerActors; i++) {
-		PlayerActor         *p = &playerList[i];
-		PlayerActorArchive  *a = &archiveBuffer[i];
-
-		//  Store the portrait type
-		a->portraitType = p->portraitType;
-
-		//  Store the flags
-		a->flags = p->flags;
-
-		//  Store the base stats
-		memcpy(&a->baseStats, &p->baseStats, sizeof(a->baseStats));
-
-		//  Store accumulation arrays
-		memcpy(
-		    &a->manaMemory,
-		    &p->manaMemory,
-		    sizeof(a->manaMemory));
-		memcpy(
-		    &a->attribRecPools,
-		    &p->attribRecPools,
-		    sizeof(a->attribRecPools));
-		memcpy(
-		    &a->attribMemPools,
-		    &p->attribMemPools,
-		    sizeof(a->attribMemPools));
-
-		//  Store the vitality memory
-		a->vitalityMemory = p->vitalityMemory;
-
-		//  Store the attack notification flag
-		a->notifiedOfAttack = p->notifiedOfAttack;
-	}
-
-	//  Write the player actor chunk
-	saveGame.writeChunk(
-	    MakeID('P', 'L', 'Y', 'R'),
-	    archiveBuffer,
-	    sizeof(archiveBuffer));
-}
-
 void savePlayerActors(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving PlayerActors");
 
@@ -1029,52 +981,6 @@ void savePlayerActors(Common::OutSaveFile *out) {
 		debugC(4, kDebugSaveload, "... playerList[%d].vitalityMemory = %d", i, p->vitalityMemory);
 		debugC(4, kDebugSaveload, "... playerList[%d].notifiedOfAttack = %d", i, p->notifiedOfAttack);
 	}
-}
-
-//-----------------------------------------------------------------------
-//	Load the player list data from a save file
-
-void loadPlayerActors(SaveFileReader &saveGame) {
-	int16                   i;
-	PlayerActorArchive      archiveBuffer[playerActors];
-
-	saveGame.read(archiveBuffer, sizeof(archiveBuffer));
-
-	for (i = 0; i < playerActors; i++) {
-		PlayerActor         *p = &playerList[i];
-		PlayerActorArchive  *a = &archiveBuffer[i];
-
-		//  Restore the portrait type
-		p->portraitType = a->portraitType;
-
-		//  Restore the flags
-		p->flags = a->flags;
-
-		//  Restore the base stats
-		memcpy(&p->baseStats, &a->baseStats, sizeof(p->baseStats));
-
-		//  Restore the accumulation arrays
-		memcpy(
-		    &p->manaMemory,
-		    &a->manaMemory,
-		    sizeof(p->manaMemory));
-		memcpy(
-		    &p->attribRecPools,
-		    &a->attribRecPools,
-		    sizeof(p->attribRecPools));
-		memcpy(
-		    &p->attribMemPools,
-		    &a->attribMemPools,
-		    sizeof(p->attribMemPools));
-
-		//  Restore the vitality memory
-		p->vitalityMemory = a->vitalityMemory;
-
-		//  Restore the attack notification flag
-		p->notifiedOfAttack = a->notifiedOfAttack;
-	}
-
-	readyContainerSetup();
 }
 
 void loadPlayerActors(Common::InSaveFile *in) {
@@ -1148,19 +1054,6 @@ void initCenterActor(void) {
 	updateBrotherRadioButtons(FTA_JULIAN);
 }
 
-//-----------------------------------------------------------------------
-//	Save the center actor ID and the view object ID to a save file
-
-void saveCenterActor(SaveFileConstructor &saveGame) {
-	CenterActorArchive  a;
-
-	//  Store the center actor and view object
-	a.centerActor       = centerActor;
-	a.viewCenterObject  = viewCenterObject;
-
-	saveGame.writeChunk(MakeID('C', 'N', 'T', 'R'), &a, sizeof(a));
-}
-
 void saveCenterActor(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving CenterActor");
 
@@ -1174,19 +1067,6 @@ void saveCenterActor(Common::OutSaveFile *out) {
 
 	debugC(3, kDebugSaveload, "... centerActor = %d", centerActor);
 	debugC(3, kDebugSaveload, "... viewCenterObject = %d", viewCenterObject);
-}
-
-//-----------------------------------------------------------------------
-//	Load the center actor ID and the view object ID from the save file
-
-void loadCenterActor(SaveFileReader &saveGame) {
-	CenterActorArchive  a;
-
-	saveGame.read(&a, sizeof(a));
-
-	//  Restore the center actor and view object
-	centerActor         = a.centerActor;
-	viewCenterObject    = a.viewCenterObject;
 }
 
 void loadCenterActor(Common::InSaveFile *in) {

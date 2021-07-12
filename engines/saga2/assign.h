@@ -64,9 +64,6 @@ public:
 	//  Constructor
 	ActorAssignment(Actor *a, uint16 until);
 
-	//  Constructor -- reconstruct from archive buffer
-	ActorAssignment(Actor *a, void **buf);
-
 	ActorAssignment(Actor *a, Common::SeekableReadStream *stream);
 
 	//  Destructor
@@ -75,10 +72,6 @@ public:
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
 	virtual int32 archiveSize(void) const;
-
-	//  Write the data from this assignment object to a buffer in order
-	//  to save it on disk
-	virtual void *archive(void *buf) const;
 
 	virtual void write(Common::OutSaveFile *out) const;
 
@@ -135,18 +128,11 @@ public:
 	    int16 start = -1,
 	    int16 end = -1);
 
-	//  Constructor -- constructs from archive buffer
-	PatrolRouteAssignment(Actor *a, void **buf);
-
 	PatrolRouteAssignment(Actor *a, Common::SeekableReadStream *stream);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
 	int32 archiveSize(void) const;
-
-	//  Write the data from this assignment object to a buffer in order
-	//  to save it on disk
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -210,18 +196,11 @@ public:
 	}
 
 
-	//  Constructor -- constructs from archive buffer
-	HuntToBeNearLocationAssignment(Actor *a, void **buf);
-
 	HuntToBeNearLocationAssignment(Actor *a, Common::SeekableReadStream *stream);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
 	int32 archiveSize(void) const;
-
-	//  Write the data from this assignment object to a buffer in order
-	//  to save it on disk
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -296,18 +275,11 @@ public:
 		initialize(at, r, trackFlag);
 	}
 
-	//  Constructor -- reconstructs from archive buffer
-	HuntToBeNearActorAssignment(Actor *a, void **buf);
-
 	HuntToBeNearActorAssignment(Actor *a, Common::SeekableReadStream *stream);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
 	int32 archiveSize(void) const;
-
-	//  Write the data from this assignment object to a buffer in order
-	//  to save it on disk
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -376,16 +348,9 @@ public:
 		initialize(at, trackFlag, false);
 	}
 
-	//  Constructor -- reconstructs from archive buffer
-	HuntToKillAssignment(Actor *a, void **buf);
-
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
 	int32 archiveSize(void) const;
-
-	//  Write the data from this assignment object to a buffer in order
-	//  to save it on disk
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -427,17 +392,11 @@ public:
 		maxV(reg.max.v) {
 	}
 
-	TetheredAssignment(Actor *a, void **buf);
-
 	TetheredAssignment(Actor *a, Common::SeekableReadStream *stream);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
 	int32 archiveSize(void) const;
-
-	//  Write the data from this assignment object to a buffer in order
-	//  to save it on disk
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 };
@@ -450,9 +409,6 @@ class TetheredWanderAssignment : public TetheredAssignment {
 public:
 	//  Constructor -- initial assignment construction
 	TetheredWanderAssignment(Actor *a, uint16 until, const TileRegion &reg);
-
-	//  Constructor -- constructs from archive buffer
-	TetheredWanderAssignment(Actor *a, void **buf) : TetheredAssignment(a, buf) {}
 
 	TetheredWanderAssignment(Actor *a, Common::SeekableReadStream *stream) : TetheredAssignment(a, stream) {}
 
@@ -475,18 +431,11 @@ public:
 	//  Constructor -- initial assignment construction
 	AttendAssignment(Actor *a, uint16 until, GameObject *o);
 
-	//  Constructor -- constructs from archive buffer
-	AttendAssignment(Actor *a, void **buf);
-
 	AttendAssignment(Actor *a, Common::SeekableReadStream *stream);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
 	int32 archiveSize(void) const;
-
-	//  Write the data from this assignment object to a buffer in order
-	//  to save it on disk
-	void *archive(void *buf) const;
 
 	void write(Common::OutSaveFile *out) const;
 
@@ -502,15 +451,9 @@ protected:
    Prototypes
  * ===================================================================== */
 
-//  Reconstruct the ActorAssignment object from the archive buffer
-void *constructAssignment(Actor *a, void *buf);
-
 //  Return the number of bytes necessary to archive this actor's
 //  assignment in an archive buffer
 int32 assignmentArchiveSize(Actor *a);
-
-//  Write the specified actor's assignment to an archive buffer
-void *archiveAssignment(Actor *a, void *buf);
 
 void writeAssignment(Actor *a, Common::OutSaveFile *out);
 void readAssignment(Actor *a, Common::InSaveFile *in);

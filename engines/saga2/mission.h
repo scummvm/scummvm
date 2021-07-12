@@ -70,8 +70,6 @@ struct ActiveMissionData {
 class ActiveMission {
 
 	friend void initMissions(void);
-	friend void saveMissions(SaveFileConstructor &saveGame);
-	friend void loadMissions(SaveFileReader &saveGame);
 	friend void cleanupMissions(void);
 
 public:
@@ -120,12 +118,7 @@ public:
 //  Initialize the active mission list
 void initMissions(void);
 
-//  Save the active missions
-void saveMissions(SaveFileConstructor &saveGame);
 void saveMissions(Common::OutSaveFile *out);
-
-//  Restore the active missions
-void loadMissions(SaveFileReader &saveGame);
 void loadMissions(Common::InSaveFile *in);
 
 //  Cleanup the active mission list

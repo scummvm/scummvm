@@ -1192,83 +1192,6 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	evalActorEnchantments(this);
 }
 
-//-----------------------------------------------------------------------
-//	Reconstruct from archive buffer
-
-Actor::Actor(void **buf) : GameObject(buf) {
-	void    *bufferPtr = *buf;
-	int     i;
-
-	//  Fixup the prototype pointer to point to an actor prototype
-	prototype   =   prototype != NULL
-	                ? (ProtoObj *)&actorProtos[prototype - objectProtos]
-	                :   NULL;
-
-	ActorArchive    *a = (ActorArchive *)bufferPtr;
-
-	//  Read individual fields from buffer
-	faction             = a->faction;
-	colorScheme         = a->colorScheme;
-	appearanceID        = a->appearanceID;
-	attitude            = a->attitude;
-	mood                = a->mood;
-	disposition         = a->disposition;
-	currentFacing       = a->currentFacing;
-	tetherLocU          = a->tetherLocU;
-	tetherLocV          = a->tetherLocV;
-	tetherDist          = a->tetherDist;
-	leftHandObject      = a->leftHandObject;
-	rightHandObject     = a->rightHandObject;
-	memcpy(&knowledge, &a->knowledge, sizeof(knowledge));
-	schedule            = a->schedule;
-	*((uint32 *)conversationMemory) = *((uint32 *)a->conversationMemory);
-	currentAnimation    = a->currentAnimation;
-	currentPose         = a->currentPose;
-	animationFlags      = a->animationFlags;
-	flags               = a->flags;
-	memcpy(&poseInfo, &a->poseInfo, sizeof(poseInfo));
-	cycleCount          = a->cycleCount;
-	kludgeCount         = a->kludgeCount;
-	enchantmentFlags    = a->enchantmentFlags;
-	currentGoal         = a->currentGoal;
-	deactivationCounter = a->deactivationCounter;
-	memcpy(&effectiveStats, &a->effectiveStats, sizeof(effectiveStats));
-	actionCounter       = a->actionCounter;
-	effectiveResistance = a->effectiveResistance;
-	effectiveImmunity   = a->effectiveImmunity;
-	recPointsPerUpdate      = a->recPointsPerUpdate;
-	currentRecoveryPoints   = a->currentRecoveryPoints;
-	leader              =   a->leaderID != Nothing
-	                        ? (Actor *)GameObject::objectAddress(a->leaderID)
-	                        :   NULL;
-	followers           =   a->followersID != NoBand
-	                        ?   getBandAddress(a->followersID)
-	                        :   NULL;
-	_followersID = NoBand;
-	for (i = 0; i < ARMOR_COUNT; i++)
-		armorObjects[i] = a->armorObjects[i];
-	currentTarget       =   a->currentTargetID != Nothing
-	                        ?   GameObject::objectAddress(a->currentTargetID)
-	                        :   NULL;
-	for (i = 0; i < actorScriptVars; i++)
-		scriptVar[i] = a->scriptVar[i];
-
-	bufferPtr = &a[1];
-
-	if (flags & hasAssignment) {
-		bufferPtr = constructAssignment(this, bufferPtr);
-	} else {
-		_assignment = nullptr;
-	}
-
-	appearance      = NULL;
-	moveTask        = NULL;
-	curTask         = NULL;
-
-	//  Return address of memory after actor archive
-	*buf = bufferPtr;
-}
-
 Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	debugC(3, kDebugSaveload, "Loading actor %d", thisID());
 
@@ -1412,81 +1335,13 @@ int32 Actor::archiveSize(void) {
 	return size;
 }
 
-//-----------------------------------------------------------------------
-//	Archive this actor in a buffer
-
-void *Actor::archive(void *buf) {
-	int         i;
-	ProtoObj    *holdProto = prototype;
-
-	//  Modify the protoype temporarily so the GameObject::archive()
-	//  will store the index correctly
-	if (prototype != NULL)
-		prototype = &objectProtos[(ActorProto *)prototype - actorProtos];
-
-	//  Let the base class archive its data
-	buf = GameObject::archive(buf);
-
-	//  Restore the prototype pointer
-	prototype = holdProto;
-
-	ActorArchive    *a = (ActorArchive *)buf;
-
-	//  Store individual fields in buffer
-	a->faction          = faction;
-	a->colorScheme      = colorScheme;
-	a->appearanceID     = appearanceID;
-	a->attitude         = attitude;
-	a->mood             = mood;
-	a->disposition      = disposition;
-	a->currentFacing    = currentFacing;
-	a->tetherLocU       = tetherLocU;
-	a->tetherLocV       = tetherLocV;
-	a->tetherDist       = tetherDist;
-	a->leftHandObject   = leftHandObject;
-	a->rightHandObject  = rightHandObject;
-	memcpy(&a->knowledge, &knowledge, sizeof(a->knowledge));
-	a->schedule         = schedule;
-	*((uint32 *)a->conversationMemory) = *((uint32 *)conversationMemory);
-	a->currentAnimation = currentAnimation;
-	a->currentPose      = currentPose;
-	a->animationFlags   = animationFlags;
-	a->flags            = flags;
-	memcpy(&a->poseInfo, &poseInfo, sizeof(a->poseInfo));
-	a->cycleCount       = cycleCount;
-	a->kludgeCount      = kludgeCount;
-	a->enchantmentFlags = enchantmentFlags;
-	a->currentGoal      = currentGoal;
-	a->deactivationCounter = deactivationCounter;
-	memcpy(&a->effectiveStats, &effectiveStats, sizeof(a->effectiveStats));
-	a->actionCounter    = actionCounter;
-	a->effectiveResistance = effectiveResistance;
-	a->effectiveImmunity = effectiveImmunity;
-	a->recPointsPerUpdate       = recPointsPerUpdate;
-	a->currentRecoveryPoints    = currentRecoveryPoints;
-	a->leaderID         = leader != NULL ? leader->thisID() : Nothing;
-	a->followersID      = followers != NULL ? getBandID(followers) : NoBand;
-	for (i = 0; i < ARRAYSIZE(a->armorObjects); i++)
-		a->armorObjects[i] = armorObjects[i];
-	a->currentTargetID  = currentTarget != NULL ? currentTarget->thisID() : Nothing;
-	for (i = 0; i < actorScriptVars; i++)
-		a->scriptVar[i] = scriptVar[i];
-
-	buf = &a[1];
-
-	if (flags & hasAssignment)
-		buf = archiveAssignment(this, buf);
-
-	return buf;
-}
-
 void Actor::write(Common::OutSaveFile *out) {
 	ProtoObj    *holdProto = prototype;
 
 	debugC(3, kDebugSaveload, "Saving actor %d", thisID());
 
 	warning("STUB: Actor::write: Pointer arithmetic");
-	//  Modify the protoype temporarily so the GameObject::archive()
+	//  Modify the protoype temporarily so the GameObject::write()
 	//  will store the index correctly
 	if (prototype != NULL)
 		prototype = &objectProtos[(ActorProto *)prototype - actorProtos];
@@ -3688,45 +3543,6 @@ void initActors(void) {
 	actorList[2].disposition = dispositionPlayer + 2;
 }
 
-//-------------------------------------------------------------------
-//	Save actor list to a save file
-
-void saveActors(SaveFileConstructor &saveGame) {
-	int16   i;
-	int32   archiveBufSize = 0;
-	void    *archiveBuffer;
-	int16   *bufferPtr;
-
-	//  Accumulate size of archive buffer
-
-	//  Add size of actor count
-	archiveBufSize += sizeof(int16);
-
-	for (i = 0; i < kActorCount; i++)
-		archiveBufSize += actorList[i].archiveSize();
-
-	archiveBuffer = malloc(archiveBufSize);
-	if (archiveBuffer == NULL)
-		error("Unable to allocate actor archive buffer");
-
-	bufferPtr = (int16 *)archiveBuffer;
-
-	//  Store the number of actors in the archive buffer
-	*bufferPtr++ = kActorCount;
-
-	//  Store the actor data in the archive buffer
-	for (i = 0; i < kActorCount; i++)
-		bufferPtr = (int16 *)actorList[i].archive(bufferPtr);
-
-	//  Write the archive buffer to the save file
-	saveGame.writeChunk(
-	    MakeID('A', 'C', 'T', 'R'),
-	    archiveBuffer,
-	    archiveBufSize);
-
-	free(archiveBuffer);
-}
-
 void saveActors(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving actors");
 
@@ -3748,40 +3564,6 @@ void saveActors(Common::OutSaveFile *out) {
 
 	for (int i = 0; i < kActorCount; ++i)
 		actorList[i].write(out);
-}
-
-//-------------------------------------------------------------------
-//	Load the actor list from a save file
-
-void loadActors(SaveFileReader &saveGame) {
-	int16   i;
-	int32   archiveBufSize;
-	void    *archiveBuffer;
-	void    *bufferPtr;
-
-	//  Read in the actor count
-	//saveGame.read(&actorCount, sizeof(kActorCount));
-
-	//  Allocate the actor array
-	actorListSize = kActorCount * sizeof(Actor);
-	actorList = new Actor[kActorCount]();
-	if (actorList == NULL)
-		error("Unable to load Actors");
-
-	//  Allocate memory for the archive buffer
-	archiveBufSize = saveGame.bytesLeftInChunk();
-	archiveBuffer = malloc(archiveBufSize);
-	if (archiveBuffer == NULL)
-		error("Unable to load Actors");
-
-	saveGame.read(archiveBuffer, archiveBufSize);
-
-	for (i = 0, bufferPtr = archiveBuffer; i < kActorCount; i++)
-		//  Initilize actors with archive data
-		new (&actorList[i]) Actor(&bufferPtr);
-
-	//  Deallocate the archive buffer
-	free(archiveBuffer);
 }
 
 void loadActors(Common::InSaveFile *in) {
@@ -3873,16 +3655,6 @@ void initFactionTallies(void) {
 	memset(&factionTable, 0, sizeof(factionTable));
 }
 
-//-------------------------------------------------------------------
-//	Save the faction tallies to a save file
-
-void saveFactionTallies(SaveFileConstructor &saveGame) {
-	saveGame.writeChunk(
-	    MakeID('F', 'A', 'C', 'T'),
-	    &factionTable,
-	    sizeof(factionTable));
-}
-
 void saveFactionTallies(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving Faction Tallies");
 
@@ -3893,13 +3665,6 @@ void saveFactionTallies(Common::OutSaveFile *out) {
 		for (int j = 0; j < factionNumColumns; ++j)
 			out->writeSint16LE(factionTable[i][j]);
 	}
-}
-
-//-------------------------------------------------------------------
-//	Load the faction tallies from a save file
-
-void loadFactionTallies(SaveFileReader &saveGame) {
-	saveGame.read(&factionTable, sizeof(factionTable));
 }
 
 void loadFactionTallies(Common::InSaveFile *in) {

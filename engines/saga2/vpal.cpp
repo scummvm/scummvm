@@ -341,23 +341,6 @@ void quickRestorePalette(void) {
 }
 
 
-//----------------------------------------------------------------------
-//	Save the current state of the current palette and fade up/down in
-//	a save file.
-
-void savePaletteState(SaveFileConstructor &saveGame) {
-	memcpy(&archive.currentPalette, &currentPalette, sizeof(gPalette));
-	memcpy(&archive.oldPalette, &oldPalette, sizeof(gPalette));
-	memcpy(&archive.destPalette, &destPalette, sizeof(gPalette));
-	archive.startTime = startTime;
-	archive.totalTime = totalTime;
-
-	saveGame.writeChunk(
-	    MakeID('P', 'A', 'L', 'E'),
-	    &archive,
-	    sizeof(archive));
-}
-
 void savePaletteState(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving Palette States");
 
@@ -372,24 +355,6 @@ void savePaletteState(Common::OutSaveFile *out) {
 
 	debugC(3, kDebugSaveload, "... startTime = %d", startTime);
 	debugC(3, kDebugSaveload, "... totalTime = %d", totalTime);
-}
-
-//----------------------------------------------------------------------
-//	Load and set the current state of the current palette and fade
-//	up/down from a save file.
-
-void loadPaletteState(SaveFileReader &saveGame) {
-	gPalette                tempPalette;
-
-	saveGame.read(&archive, sizeof(archive));
-
-	memcpy(&tempPalette, &archive.currentPalette, sizeof(gPalette));
-	memcpy(&oldPalette, &archive.oldPalette, sizeof(gPalette));
-	memcpy(&destPalette, &archive.destPalette, sizeof(gPalette));
-	startTime = archive.startTime;
-	totalTime = archive.totalTime;
-
-	setCurrentPalette(&tempPalette);
 }
 
 void loadPaletteState(Common::InSaveFile *in) {

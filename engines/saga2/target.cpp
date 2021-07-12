@@ -43,52 +43,6 @@ void deleteTarget(Target *t) {
 	if (t) delete t;
 }
 
-void *constructTarget(void *mem, void *buf) {
-	int16   type = *((int16 *)buf);
-
-	buf = (int16 *)buf + 1;
-
-	switch (type) {
-	case locationTarget:
-		new (mem) LocationTarget(&buf);
-		break;
-
-	case specificTileTarget:
-		new (mem) SpecificTileTarget(&buf);
-		break;
-
-	case tilePropertyTarget:
-		new (mem) TilePropertyTarget(&buf);
-		break;
-
-	case specificMetaTileTarget:
-		new (mem) SpecificMetaTileTarget(&buf);
-		break;
-
-	case metaTilePropertyTarget:
-		new (mem) MetaTilePropertyTarget(&buf);
-		break;
-
-	case specificObjectTarget:
-		new (mem)  SpecificObjectTarget(&buf);
-		break;
-
-	case objectPropertyTarget:
-		new (mem)  ObjectPropertyTarget(&buf);
-		break;
-
-	case specificActorTarget:
-		new (mem) SpecificActorTarget(&buf);
-		break;
-
-	case actorPropertyTarget:
-		new (mem) ActorPropertyTarget(&buf);
-		break;
-	}
-
-	return buf;
-}
-
 void readTarget(void *mem, Common::InSaveFile *in) {
 	int16 type = in->readSint16LE();
 
@@ -140,16 +94,6 @@ void writeTarget(const Target *t, Common::OutSaveFile *out) {
 int32 targetArchiveSize(const Target *t) {
 	return sizeof(int16) + t->archiveSize();
 }
-
-void *archiveTarget(const Target *t, void *buf) {
-	*((int16 *)buf) = t->getType();
-	buf = (int16 *)buf + 1;
-
-	buf = t->archive(buf);
-
-	return buf;
-}
-
 
 //  Insert a location into a TargetLocationArray, using a simple
 //  insertion sort
@@ -205,18 +149,6 @@ bool Target::isActorTarget(void) const {
    LocationTarget member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-LocationTarget::LocationTarget(void **buf) {
-	TilePoint   *bufferPtr = (TilePoint *)*buf;
-
-	//  Restore the targe location
-	loc = *bufferPtr;
-
-	*buf = &bufferPtr[1];
-}
-
 LocationTarget::LocationTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... LocationTarget");
 
@@ -230,16 +162,6 @@ LocationTarget::LocationTarget(Common::SeekableReadStream *stream) {
 
 inline int32 LocationTarget::archiveSize(void) const {
 	return sizeof(loc);
-}
-
-//----------------------------------------------------------------------
-//	Create an archive of this object in the specified buffer
-
-void *LocationTarget::archive(void *buf) const {
-	//  Store the target location
-	*((TilePoint *)buf) = loc;
-
-	return (TilePoint *)buf + 1;
 }
 
 void LocationTarget::write(Common::OutSaveFile *out) const {
@@ -411,18 +333,6 @@ int16 TileTarget::where(
    SpecificTileTarget member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-SpecificTileTarget::SpecificTileTarget(void **buf) {
-	TileID  *bufferPtr = (TileID *)*buf;
-
-	//  Restore the tile ID
-	tile = *bufferPtr++;
-
-	*buf = bufferPtr;
-}
-
 SpecificTileTarget::SpecificTileTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... SpecificTileTarget");
 
@@ -436,16 +346,6 @@ SpecificTileTarget::SpecificTileTarget(Common::SeekableReadStream *stream) {
 
 inline int32 SpecificTileTarget::archiveSize(void) const {
 	return sizeof(tile);
-}
-
-//----------------------------------------------------------------------
-//	Create an archive of this object in the specified buffer
-
-void *SpecificTileTarget::archive(void *buf) const {
-	//  Store the tile ID
-	*((TileID *)buf) = tile;
-
-	return (TileID *)buf + 1;
 }
 
 void SpecificTileTarget::write(Common::OutSaveFile *out) const {
@@ -493,18 +393,6 @@ bool SpecificTileTarget::isTarget(StandingTileInfo &sti) const {
    TilePropertyTarget member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-TilePropertyTarget::TilePropertyTarget(void **buf) {
-	TilePropertyID  *bufferPtr = (TilePropertyID *)*buf;
-
-	//  Restore the TilePropertyID
-	tileProp = *bufferPtr;
-
-	*buf = &bufferPtr[1];
-}
-
 TilePropertyTarget::TilePropertyTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... TilePropertyTarget");
 
@@ -518,15 +406,6 @@ TilePropertyTarget::TilePropertyTarget(Common::SeekableReadStream *stream) {
 
 inline int32 TilePropertyTarget::archiveSize(void) const {
 	return sizeof(tileProp);
-}
-
-//----------------------------------------------------------------------
-//	Create an archive of this object in the specified buffer
-
-void *TilePropertyTarget::archive(void *buf) const {
-	*((TilePropertyID *)buf) = tileProp;
-
-	return (TilePropertyID *)buf + 1;
 }
 
 void TilePropertyTarget::write(Common::OutSaveFile *out) const {
@@ -682,19 +561,6 @@ int16 MetaTileTarget::where(
    SpecificMetaTileTarget member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-SpecificMetaTileTarget::SpecificMetaTileTarget(void **buf) {
-	MetaTileID  *bufferPtr = (MetaTileID *)*buf;
-
-	//  Restore the MetaTileID
-	meta.map = bufferPtr->map;
-	meta.index = bufferPtr->index;
-
-	*buf = &bufferPtr[1];
-}
-
 SpecificMetaTileTarget::SpecificMetaTileTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... SpecificMetaTileTarget");
 
@@ -709,19 +575,6 @@ SpecificMetaTileTarget::SpecificMetaTileTarget(Common::SeekableReadStream *strea
 
 inline int32 SpecificMetaTileTarget::archiveSize(void) const {
 	return sizeof(MetaTileID);
-}
-
-//----------------------------------------------------------------------
-//	Create an archive of this object in the specified buffer
-
-void *SpecificMetaTileTarget::archive(void *buf) const {
-	MetaTileID  *bufferPtr = (MetaTileID *)buf;
-
-	//  Store the MetaTileID
-	bufferPtr->map = meta.map;
-	bufferPtr->index = meta.index;
-
-	return &bufferPtr[1];
 }
 
 void SpecificMetaTileTarget::write(Common::OutSaveFile *out) const {
@@ -773,18 +626,6 @@ bool SpecificMetaTileTarget::isTarget(
    MetaTilePropertyTarget member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-MetaTilePropertyTarget::MetaTilePropertyTarget(void **buf) {
-	MetaTilePropertyID  *bufferPtr = (MetaTilePropertyID *)*buf;
-
-	//  Restore the MetaTilePropertyID
-	metaProp = *bufferPtr;
-
-	*buf = &bufferPtr[1];
-}
-
 MetaTilePropertyTarget::MetaTilePropertyTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... MetaTilePropertyTarget");
 
@@ -798,16 +639,6 @@ MetaTilePropertyTarget::MetaTilePropertyTarget(Common::SeekableReadStream *strea
 
 inline int32 MetaTilePropertyTarget::archiveSize(void) const {
 	return sizeof(metaProp);
-}
-
-//----------------------------------------------------------------------
-//	Create an archive of this object in the specified buffer
-
-void *MetaTilePropertyTarget::archive(void *buf) const {
-	//  Store the MetaTilePropertyID
-	*((MetaTilePropertyID *)buf) = metaProp;
-
-	return (MetaTilePropertyID *)buf + 1;
 }
 
 void MetaTilePropertyTarget::write(Common::OutSaveFile *out) const {
@@ -1070,18 +901,6 @@ int16 ObjectTarget::object(
    SpecificObjectTarget member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-SpecificObjectTarget::SpecificObjectTarget(void **buf) {
-	ObjectID    *bufferPtr = (ObjectID *)*buf;
-
-	//  Restore the ObjectID
-	obj = *bufferPtr;
-
-	*buf = &bufferPtr[1];
-}
-
 SpecificObjectTarget::SpecificObjectTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... SpecificObjectTarget");
 
@@ -1095,16 +914,6 @@ SpecificObjectTarget::SpecificObjectTarget(Common::SeekableReadStream *stream) {
 
 inline int32 SpecificObjectTarget::archiveSize(void) const {
 	return sizeof(obj);
-}
-
-//----------------------------------------------------------------------
-//	Create an archive of this object in the specified buffer
-
-void *SpecificObjectTarget::archive(void *buf) const {
-	//  Store the ObjectID
-	*((ObjectID *)buf) = obj;
-
-	return (ObjectID *)buf + 1;
 }
 
 void SpecificObjectTarget::write(Common::OutSaveFile *out) const {
@@ -1243,18 +1052,6 @@ int16 SpecificObjectTarget::object(
    ObjectPropertyTarget member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-ObjectPropertyTarget::ObjectPropertyTarget(void **buf) {
-	ObjectPropertyID    *bufferPtr = (ObjectPropertyID *)*buf;
-
-	//  Restore the ObjectPropertyID
-	objProp = *bufferPtr;
-
-	*buf = &bufferPtr[1];
-}
-
 ObjectPropertyTarget::ObjectPropertyTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... ObjectPropertyTarget");
 
@@ -1268,16 +1065,6 @@ ObjectPropertyTarget::ObjectPropertyTarget(Common::SeekableReadStream *stream) {
 
 inline int32 ObjectPropertyTarget::archiveSize(void) const {
 	return sizeof(objProp);
-}
-
-//----------------------------------------------------------------------
-//	Create an archive of this object in the specified buffer
-
-void *ObjectPropertyTarget::archive(void *buf) const {
-	//  Store the ObjectPropertyID
-	*((ObjectPropertyID *)buf) = objProp;
-
-	return (ObjectPropertyID *)buf + 1;
 }
 
 void ObjectPropertyTarget::write(Common::OutSaveFile *out) const {
@@ -1357,24 +1144,6 @@ int16 ActorTarget::actor(
    SpecificActorTarget member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-SpecificActorTarget::SpecificActorTarget(void **buf) {
-	ObjectID    *bufferPtr = (ObjectID *)*buf;
-	ObjectID    actorID;
-
-	//  Get the actor's ID
-	actorID = *bufferPtr;
-
-	//  Convert the actor ID into an Actor pointer
-	a = actorID != Nothing
-	    ? (Actor *)GameObject::objectAddress(actorID)
-	    :   NULL;
-
-	*buf = bufferPtr + 1;
-}
-
 SpecificActorTarget::SpecificActorTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... SpecificActorTarget");
 
@@ -1395,19 +1164,6 @@ SpecificActorTarget::SpecificActorTarget(Common::SeekableReadStream *stream) {
 
 inline int32 SpecificActorTarget::archiveSize(void) const {
 	return sizeof(ObjectID);
-}
-
-//----------------------------------------------------------------------
-//	Create an archive of this object in the specified buffer
-
-void *SpecificActorTarget::archive(void *buf) const {
-	//  Convert the actor pointer to an actor ID;
-	ObjectID    actorID = a != NULL ? a->thisID() : Nothing;
-
-	//  Store the actor ID
-	*((ObjectID *)buf) = actorID;
-
-	return (ObjectID *)buf + 1;
 }
 
 void SpecificActorTarget::write(Common::OutSaveFile *out) const {
@@ -1579,18 +1335,6 @@ int16 SpecificActorTarget::actor(
    ActorPropertyTarget member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-ActorPropertyTarget::ActorPropertyTarget(void **buf) {
-	ActorPropertyID *bufferPtr = (ActorPropertyID *)*buf;
-
-	//  Restore the ActorPropertyID
-	actorProp = *bufferPtr;
-
-	*buf = &bufferPtr[1];
-}
-
 ActorPropertyTarget::ActorPropertyTarget(Common::SeekableReadStream *stream) {
 	debugC(5, kDebugSaveload, "...... ActorPropertyTarget");
 
@@ -1604,16 +1348,6 @@ ActorPropertyTarget::ActorPropertyTarget(Common::SeekableReadStream *stream) {
 
 inline int32 ActorPropertyTarget::archiveSize(void) const {
 	return sizeof(actorProp);
-}
-
-//----------------------------------------------------------------------
-//	Create an archive of this object in the specified buffer
-
-void *ActorPropertyTarget::archive(void *buf) const {
-	//  Store the ActorPropertyID
-	*((ActorPropertyID *)buf) = actorProp;
-
-	return (ActorPropertyID *)buf + 1;
 }
 
 void ActorPropertyTarget::write(Common::OutSaveFile *out) const {

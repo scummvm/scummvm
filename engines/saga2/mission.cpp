@@ -172,7 +172,7 @@ void ActiveMission::read(Common::InSaveFile *in) {
 	debugC(4, kDebugSaveload, "... generatorID = %d", _data.generatorID);
 	debugC(4, kDebugSaveload, "... missionScript = %d", _data.missionScript);
 	debugC(4, kDebugSaveload, "... missionFlags = %d", _data.missionFlags);
-	
+
 	for (int i = 0; i < ARRAYSIZE(_data.missionVars); ++i) {
 		_data.missionVars[i] = in->readByte();
 		debugC(5, kDebugSaveload, "... missionVars[%d] = %d", i, _data.missionVars[i]);
@@ -182,7 +182,7 @@ void ActiveMission::read(Common::InSaveFile *in) {
 		_data.missionObjectList[i] = in->readUint16LE();
 		debugC(5, kDebugSaveload, "... missionObjectList[%d] = %d", i, _data.missionObjectList[i]);
 	}
-	
+
 	for (int i = 0; i < ARRAYSIZE(_data.missionKnowledgeList); ++i) {
 		_data.missionKnowledgeList[i].id = in->readUint16LE();
 
@@ -209,7 +209,7 @@ void ActiveMission::write(Common::OutSaveFile *out) {
 	debugC(4, kDebugSaveload, "... generatorID = %d", _data.generatorID);
 	debugC(4, kDebugSaveload, "... missionScript = %d", _data.missionScript);
 	debugC(4, kDebugSaveload, "... missionFlags = %d", _data.missionFlags);
-	
+
 	for (int i = 0; i < ARRAYSIZE(_data.missionVars); ++i) {
 		out->writeByte(_data.missionVars[i]);
 		debugC(5, kDebugSaveload, "... missionVars[%d] = %d", i, _data.missionVars[i]);
@@ -219,7 +219,7 @@ void ActiveMission::write(Common::OutSaveFile *out) {
 		out->writeUint16LE(_data.missionObjectList[i]);
 		debugC(5, kDebugSaveload, "... missionObjectList[%d] = %d", i, _data.missionObjectList[i]);
 	}
-	
+
 	for (int i = 0; i < ARRAYSIZE(_data.missionKnowledgeList); ++i) {
 		out->writeUint16LE(_data.missionKnowledgeList[i].id);
 		out->writeUint16LE(_data.missionKnowledgeList[i].kID);
@@ -268,16 +268,6 @@ void initMissions(void) {
 		activeMissions[i]._data.missionFlags &= ~inUse;
 }
 
-//-----------------------------------------------------------------------
-//	Save the active missions
-
-void saveMissions(SaveFileConstructor &saveGame) {
-	saveGame.writeChunk(
-	    MakeID('M', 'I', 'S', 'S'),
-	    &activeMissions,
-	    sizeof(activeMissions));
-}
-
 void saveMissions(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving Missions");
 
@@ -288,13 +278,6 @@ void saveMissions(Common::OutSaveFile *out) {
 		debugC(3, kDebugSaveload, "Saving Mission %d", i);
 		activeMissions[i].write(out);
 	}
-}
-
-//-----------------------------------------------------------------------
-//	Restore the active missions
-
-void loadMissions(SaveFileReader &saveGame) {
-	saveGame.read(&activeMissions, sizeof(activeMissions));
 }
 
 void loadMissions(Common::InSaveFile *in) {

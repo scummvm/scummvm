@@ -610,33 +610,6 @@ void initTileModeState(void) {
 	combatPaused = false;
 }
 
-//-----------------------------------------------------------------------
-//	Save the tile mode state to a save file
-
-void saveTileModeState(SaveFileConstructor &saveGame) {
-	int32       size = 0;
-
-	assert(uiKeysEnabled);
-
-	//  Compute the number of bytes needed
-	size +=     sizeof(aggressiveActFlag)
-	            +   sizeof(inCombat)
-	            +   sizeof(combatPaused);
-	if (aggressiveActFlag)
-		size += sizeof(timeOfLastAggressiveAct);
-
-	//  Create the chunk and write the data
-	saveGame.newChunk(MakeID('T', 'M', 'S', 'T'), size);
-	saveGame.write(&aggressiveActFlag, sizeof(aggressiveActFlag));
-	saveGame.write(&inCombat, sizeof(inCombat));
-	saveGame.write(&combatPaused, sizeof(combatPaused));
-	if (aggressiveActFlag) {
-		saveGame.write(
-		    &timeOfLastAggressiveAct,
-		    sizeof(timeOfLastAggressiveAct));
-	}
-}
-
 void saveTileModeState(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving TileModeState");
 
@@ -664,26 +637,6 @@ void saveTileModeState(Common::OutSaveFile *out) {
 
 	if (aggressiveActFlag)
 		timeOfLastAggressiveAct.write(out);
-}
-
-//-----------------------------------------------------------------------
-//	Load the tile mode state from a save file
-
-void loadTileModeState(SaveFileReader &saveGame) {
-	debugC(2, kDebugSaveload, "Loading TileModeState");
-
-	assert(uiKeysEnabled);
-
-	//  Simply read in the data
-	saveGame.read(&aggressiveActFlag, sizeof(aggressiveActFlag));
-	saveGame.read(&inCombat, sizeof(inCombat));
-	saveGame.read(&combatPaused, sizeof(combatPaused));
-	if (aggressiveActFlag) {
-		saveGame.read(
-		    &timeOfLastAggressiveAct,
-		    sizeof(timeOfLastAggressiveAct));
-	}
-	tileLockFlag = false;
 }
 
 void loadTileModeState(Common::InSaveFile *in) {

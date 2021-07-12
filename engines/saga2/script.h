@@ -124,12 +124,7 @@ enum builtinTypes {
 //  Load the SAGA data segment from the resource file
 void initSAGADataSeg(void);
 
-//  Save the SAGA data segment to a save file
-void saveSAGADataSeg(SaveFileConstructor &saveGame);
 void saveSAGADataSeg(Common::OutSaveFile *out);
-
-//  Load the SAGA data segment from a save file
-void loadSAGADataSeg(SaveFileReader &saveGame);
 void loadSAGADataSeg(Common::InSaveFile *in);
 
 //  Dispose of the SAGA data segment -- do nothing
@@ -144,12 +139,7 @@ class Thread;
 //  Initialize the SAGA thread list
 void initSAGAThreads(void);
 
-//  Save the active SAGA threads to a save file
-void saveSAGAThreads(SaveFileConstructor &saveGame);
 void saveSAGAThreads(Common::OutSaveFile *out);
-
-//  Load the active SAGA threads from a save file
-void loadSAGAThreads(SaveFileReader &saveGame);
 void loadSAGAThreads(Common::InSaveFile *in, int32 chunkSize);
 
 //  Dispose of the active SAGA threads

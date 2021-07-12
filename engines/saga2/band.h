@@ -51,11 +51,7 @@ Band *getBandAddress(BandID id);
 
 //  Initialize the band list
 void initBands(void);
-//  Save the active band structures in a save file
-void saveBands(SaveFileConstructor &saveGame);
 void saveBands(Common::OutSaveFile *out);
-//  Load the band structures from a save file
-void loadBands(SaveFileReader &saveGame);
 void loadBands(Common::InSaveFile *in, int32 chunkSize);
 //  Cleanup the band list
 void cleanupBands(void);
@@ -80,17 +76,11 @@ public:
 	//  Destructor
 	~BandList(void);
 
-	//  Reconstruct from an archive buffer
-	void *restore(void *buf);
-
 	void read(Common::InSaveFile *in);
 
 	//  Return the number of bytes necessary to archive this task list
 	//  in a buffer
 	int32 archiveSize(void);
-
-	//  Create an archive of the task list in an archive buffer
-	void *archive(void *buf);
 
 	void write(Common::OutSaveFile *out);
 
@@ -135,9 +125,6 @@ public:
 	Band();
 	Band(Actor *l);
 
-	//  Constructor -- reconstruct from archive buffer
-	Band(void **buf);
-
 	Band(Common::InSaveFile *in);
 
 	~Band() { deleteBand(this); }
@@ -145,9 +132,6 @@ public:
 	//  Return the number of bytes needed to archive this object in a
 	//  buffer
 	int32 archiveSize(void);
-
-	//  Archive this object in a buffer
-	void *archive(void *buf);
 
 	void write(Common::OutSaveFile *out);
 

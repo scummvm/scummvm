@@ -2594,18 +2594,6 @@ void initUIState(void) {
 	//updateAllUserControls();
 }
 
-void saveUIState(SaveFileConstructor &saveGame) {
-	UIStateArchive      archive;
-
-	archive.indivControlsFlag = indivControlsFlag;
-	archive.indivBrother = indivBrother;
-
-	saveGame.writeChunk(
-	    MakeID('U', 'I', 'S', 'T'),
-	    &archive,
-	    sizeof(archive));
-}
-
 void saveUIState(Common::OutSaveFile *out) {
 	debugC(2, kDebugSaveload, "Saving UIState");
 
@@ -2617,17 +2605,6 @@ void saveUIState(Common::OutSaveFile *out) {
 
 	debugC(3, kDebugSaveload, "... indivControlsFlag = %d", indivControlsFlag);
 	debugC(3, kDebugSaveload, "... indivBrother = %d", indivBrother);
-}
-
-void loadUIState(SaveFileReader &saveGame) {
-	UIStateArchive      archive;
-
-	saveGame.read(&archive, sizeof(archive));
-
-	indivControlsFlag = archive.indivControlsFlag;
-	indivBrother = archive.indivBrother;
-
-	updateAllUserControls();
 }
 
 void loadUIState(Common::InSaveFile *in) {
