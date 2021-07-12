@@ -116,8 +116,8 @@ public:
 	~BitmapCastMember();
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) override;
 
-	void createMatte();
-	Graphics::Surface *getMatte();
+	void createMatte(Common::Rect &bbox);
+	Graphics::Surface *getMatte(Common::Rect &bbox);
 
 	bool hasField(int field) override;
 	Datum getField(int field) override;

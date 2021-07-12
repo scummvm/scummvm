@@ -184,7 +184,7 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	// scale for drawing a different size sprite
-	if (bbox.width() < _initialRect.width() || bbox.height() < _initialRect.height()) {
+	if (bbox.width() != _initialRect.width() || bbox.height() != _initialRect.height()) {
 
 		int scaleX = SCALE_THRESHOLD * _initialRect.width() / bbox.width();
 		int scaleY = SCALE_THRESHOLD * _initialRect.height() / bbox.height();
@@ -210,12 +210,33 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 	return widget;
 }
 
-void BitmapCastMember::createMatte() {
+void BitmapCastMember::createMatte(Common::Rect &bbox) {
 	// Like background trans, but all white pixels NOT ENCLOSED by coloured pixels
 	// are transparent
 	Graphics::Surface tmp;
-	tmp.create(_initialRect.width(), _initialRect.height(), g_director->_pixelformat);
-	tmp.copyFrom(*_img->getSurface());
+	tmp.create(bbox.width(), bbox.height(), g_director->_pixelformat);
+
+	if (bbox.width() != _initialRect.width() || bbox.height() != _initialRect.height()) {
+
+		int scaleX = SCALE_THRESHOLD * _initialRect.width() / bbox.width();
+		int scaleY = SCALE_THRESHOLD * _initialRect.height() / bbox.height();
+
+		for (int y = 0, scaleYCtr = 0; y < bbox.height(); y++, scaleYCtr += scaleY) {
+			if (g_director->_wm->_pixelformat.bytesPerPixel == 1) {
+				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
+					const byte *src = (const byte *)_img->getSurface()->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
+					*(byte *)tmp.getBasePtr(x, y) = *src;
+				}
+			} else {
+				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
+					const int *src = (const int *)_img->getSurface()->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
+					*(int *)tmp.getBasePtr(x, y) = *src;
+				}
+			}
+		}
+	} else {
+		tmp.copyFrom(*_img->getSurface());
+	}
 
 	_noMatte = true;
 
@@ -266,10 +287,16 @@ void BitmapCastMember::createMatte() {
 	tmp.free();
 }
 
-Graphics::Surface *BitmapCastMember::getMatte() {
+Graphics::Surface *BitmapCastMember::getMatte(Common::Rect &bbox) {
 	// Lazy loading of mattes
 	if (!_matte && !_noMatte) {
-		createMatte();
+		createMatte(bbox);
+	}
+
+	// check for the scale matte
+	Graphics::Surface *surface = _matte ? _matte->getMask() : nullptr;
+	if (surface && (surface->w != bbox.width() || surface->h != bbox.height())) {
+		createMatte(bbox);
 	}
 
 	return _matte ? _matte->getMask() : nullptr;

@@ -105,12 +105,14 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		_sprite->_ink == kInkTypeNotGhost ||
 		_sprite->_blend > 0;
 
+	Common::Rect bbox(getBbox());
+
 	if (needsMatte || forceMatte) {
 		// Mattes are only supported in bitmaps for now. Shapes don't need mattes,
 		// as they already have all non-enclosed white pixels transparent.
 		// Matte on text has a trivial enough effect to not worry about implementing.
 		if (_sprite->_cast->_type == kCastBitmap) {
-			return ((BitmapCastMember *)_sprite->_cast)->getMatte();
+			return ((BitmapCastMember *)_sprite->_cast)->getMatte(bbox);
 		} else {
 			return nullptr;
 		}
@@ -119,7 +121,6 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		CastMember *member = g_director->getCurrentMovie()->getCastMember(maskID);
 
 		if (member && member->_initialRect == _sprite->_cast->_initialRect) {
-			Common::Rect bbox(getBbox());
 			Graphics::MacWidget *widget = member->createWidget(bbox, this);
 			if (_mask)
 				delete _mask;
@@ -197,7 +198,7 @@ bool Channel::isMouseIn(const Common::Point &pos) {
 
 	if (_sprite->_ink == kInkTypeMatte) {
 		if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap) {
-			Graphics::Surface *matte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
+			Graphics::Surface *matte = ((BitmapCastMember *)_sprite->_cast)->getMatte(bbox);
 			return matte ? !(*(byte *)(matte->getBasePtr(pos.x - bbox.left, pos.y - bbox.top))) : true;
 		}
 	}
@@ -216,9 +217,9 @@ bool Channel::isMatteIntersect(Channel *channel) {
 	Graphics::Surface *yourMatte = nullptr;
 
 	if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap)
-		myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
+		myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte(myBbox);
 	if (channel->_sprite->_cast && channel->_sprite->_cast->_type == kCastBitmap)
-		yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte();
+		yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte(yourBbox);
 
 	if (myMatte && yourMatte) {
 		for (int i = intersectRect.top; i < intersectRect.bottom; i++) {
@@ -246,9 +247,9 @@ bool Channel::isMatteWithin(Channel *channel) {
 	Graphics::Surface *yourMatte = nullptr;
 
 	if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap)
-		myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte();
+		myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte(myBbox);
 	if (channel->_sprite->_cast && channel->_sprite->_cast->_type == kCastBitmap)
-		yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte();
+		yourMatte = ((BitmapCastMember *)channel->_sprite->_cast)->getMatte(yourBbox);
 
 	if (myMatte && yourMatte) {
 		for (int i = intersectRect.top; i < intersectRect.bottom; i++) {
