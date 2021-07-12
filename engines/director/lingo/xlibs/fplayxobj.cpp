@@ -20,15 +20,21 @@
  *
  */
 
- /*************************************
+/*************************************
   *
   * USED IN:
   * Spaceship Warlock Mac
   *
   *************************************/
 
+#include "director/director.h"
+#include "director/archive.h"
+#include "director/sound.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/xlibs/fplayxobj.h"
+
+#include "audio/audiostream.h"
 
 namespace Director {
 
@@ -53,8 +59,57 @@ void FPlayXObj::initialize(int type) {
 }
 
 void FPlayXObj::b_fplay(int nargs) {
-	g_lingo->printSTUBWithArglist("b_fplay", nargs);
-	g_lingo->dropStack(nargs);
+	if (nargs == 0) {
+		warning("FPlayXObj::b_fplay requires at least one argument");
+		return;
+	}
+
+	if (nargs > 1) {
+		g_lingo->dropStack(nargs - 1);
+		warning("FPlayXObj::b_fplay unhandled %d arguments", nargs - 1);
+	}
+
+	Datum d = g_lingo->pop();
+	DirectorSound *sound = g_director->getSoundManager();
+	Common::String sndName = d.asString();
+
+	if (sndName.equalsIgnoreCase("stop")) {
+		sound->stopSound(1);
+		return;
+	}
+
+	uint32 tag = MKTAG('s', 'n', 'd', ' ');
+	uint id;
+	Archive *archive = nullptr;
+
+	// iterate opened ResFiles
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+		id = it->_value->findResourceID(tag, sndName, true);
+		if (id != 0xFFFF) {
+			archive = it->_value;
+			break;
+		}
+	}
+
+	if (id == 0xFFFF) {
+		warning("FPlayXObj::b_fplay can not find sound %s", sndName.c_str());
+		return;
+	}
+
+	Common::SeekableReadStreamEndian *sndData = archive->getResource(tag, id);
+	if (sndData != nullptr) {
+		SNDDecoder *ad = new SNDDecoder();
+		ad->loadStream(*sndData);
+		delete sndData;
+		Audio::AudioStream *as = ad->getAudioStream();
+
+		if (!as) {
+			warning("FPlayXObj::b_fplay: failed to get audio stream");
+			return;
+		}
+		sound->playStream(*as, 1);
+		//		delete audio;
+	}
 }
 
 void FPlayXObj::b_sndinfo(int nargs) {
