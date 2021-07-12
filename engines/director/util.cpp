@@ -778,7 +778,7 @@ Common::CodePage detectEncoding(Common::Platform platform, uint16 fontId) {
 	}
 	return (platform == Common::kPlatformWindows)
 				? Common::kWindows1252
-				: Common::kMacCentralEurope;
+				: Common::kMacRoman;
 }
 
 } // End of namespace Director
