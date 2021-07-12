@@ -502,7 +502,6 @@ void cleanupGameState(void) {
 	cleanupObjects();
 	cleanupActors();
 	cleanupWorlds();
-	cleanupAudio();
 	cleanupTimer();
 	cleanupGlobals();
 }
