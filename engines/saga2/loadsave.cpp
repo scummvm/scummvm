@@ -169,9 +169,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveFactionTallies(out);
 	saveTileModeState(out);
 	saveSpellState(out);
+	saveAutoMap(out);
 
 #if 0
-	saveAutoMap(saveGame);
 	saveUIState(saveGame);
 	savePaletteState(saveGame);
 	saveContainerNodes(saveGame);
@@ -395,15 +395,15 @@ void loadSavedGameState(int16 saveNo) {
 			loadSpellState(in);
 			loadFlags |= loadSpellStateFlag;
 			break;
-#if 0
 
 		case MKTAG('A', 'M', 'A', 'P'):
 			if (loadFlags & loadWorldsFlag) {
-				loadAutoMap(saveGame);
+				loadAutoMap(in, chunkSize);
 				loadFlags |= loadAutoMapFlag;
 			} else
 				error("Auto map loaded prematurely");
 			break;
+#if 0
 
 		case MKTAG('U', 'I', 'S', 'T'):
 			if (loadFlags & loadPlayerActorsFlag) {

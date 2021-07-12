@@ -1912,9 +1912,74 @@ void saveAutoMap(SaveFileConstructor &saveGame) {
 	free(archiveBuffer);
 }
 
+void saveAutoMap(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Saving AutoMap");
+
+	int32 totalMapSize = 0,
+	      totalMapIndex = 0;
+
+	uint8 *archiveBuffer;
+	int32 archiveBufSize;
+
+	for (int i = 0; i < worldCount; i++) {
+		MapHeader       *map;
+		int32           mapSize;
+
+		map = mapList[i].map;
+		mapSize = map->size;
+		mapSize *= mapSize;
+
+		totalMapSize += mapSize;
+	}
+
+	//  Compute the number of bytes needed to store the visited bit
+	//  for each map metatile slot
+	archiveBufSize = (totalMapSize + 7) >> 3;
+
+	out->write("AMAP", 4);
+	out->writeUint32LE(archiveBufSize);
+
+	archiveBuffer = (uint8 *)malloc(archiveBufSize);
+	if (archiveBuffer == nullptr)
+		error("Unable to allocate auto map archive buffer");
+
+	for (int i = 0; i < worldCount; i++) {
+		MapHeader *map;
+		int32 mapSize,
+		      mapIndex;
+
+		uint16 *mapData;
+
+		map = mapList[i].map;
+		mapSize = map->size;
+		mapSize *= mapSize;
+		mapData = map->mapData;
+
+		for (mapIndex = 0; mapIndex < mapSize; mapIndex++) {
+			if (mapData[mapIndex] & metaTileVisited) {
+				//  Set the bit in the archive buffer
+				archiveBuffer[totalMapIndex >> 3] |=
+				    (1 << (totalMapIndex & 7));
+			} else {
+				//  Clear the bit in the archive buffer
+				archiveBuffer[totalMapIndex >> 3] &=
+				    ~(1 << (totalMapIndex & 7));
+			}
+
+			totalMapIndex++;
+		}
+	}
+
+	out->write(archiveBuffer, archiveBufSize);
+
+	free(archiveBuffer);
+}
+
 //-----------------------------------------------------------------------
 
 void loadAutoMap(SaveFileReader &saveGame) {
+	debugC(2, kDebugSaveload, "Loading AutoMap");
+
 	int32       totalMapIndex = 0;
 	int16       i;
 
@@ -1934,6 +1999,49 @@ void loadAutoMap(SaveFileReader &saveGame) {
 		int32           mapSize,
 		                mapIndex;
 		uint16          *mapData;
+
+		map = mapList[i].map;
+		mapSize = map->size;
+		mapSize *= mapSize;
+		mapData = map->mapData;
+
+		for (mapIndex = 0; mapIndex < mapSize; mapIndex++) {
+			assert((totalMapIndex >> 3) < archiveBufSize);
+
+			//  If the bit is set in the archive buffer, set the visited
+			//  bit in the map data
+			if (archiveBuffer[totalMapIndex >> 3]
+			        & (1 << (totalMapIndex & 7)))
+				mapData[mapIndex] |= metaTileVisited;
+			else
+				mapData[mapIndex] &= ~metaTileVisited;
+
+			totalMapIndex++;
+		}
+	}
+
+	free(archiveBuffer);
+}
+
+void loadAutoMap(Common::InSaveFile *in, int32 chunkSize) {
+	int32       totalMapIndex = 0;
+	uint8       *archiveBuffer;
+	int32       archiveBufSize;
+
+	archiveBufSize = chunkSize;
+
+	archiveBuffer = (uint8 *)malloc(archiveBufSize);
+	if (archiveBuffer == nullptr)
+		error("Unable to allocate auto map archive buffer");
+
+	in->read(archiveBuffer, archiveBufSize);
+
+	for (int i = 0; i < worldCount; i++) {
+		MapHeader *map;
+		int32 mapSize,
+		      mapIndex;
+
+		uint16 *mapData;
 
 		map = mapList[i].map;
 		mapSize = map->size;

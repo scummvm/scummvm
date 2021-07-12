@@ -1034,7 +1034,9 @@ void cleanupTileCyclingStates(void);
 
 void initAutoMap(void);
 void saveAutoMap(SaveFileConstructor &saveGame);
+void saveAutoMap(Common::OutSaveFile *out);
 void loadAutoMap(SaveFileReader &saveGame);
+void loadAutoMap(Common::InSaveFile *in, int32 chunkSize);
 inline void cleanupAutoMap(void) { /* nothing to do */ }
 
 //  Determine if a platform is ripped
