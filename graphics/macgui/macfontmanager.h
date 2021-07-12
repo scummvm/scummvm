@@ -71,10 +71,10 @@ class Font;
 struct FontInfo {
 	Common::Language lang;
 	Common::CodePage encoding;
-	int fallbackId;
+	int aliasForId;
 	Common::String name;
 
-	FontInfo() : lang(Common::UNK_LANG), encoding(Common::kCodePageInvalid), fallbackId(-1) {}
+	FontInfo() : lang(Common::UNK_LANG), encoding(Common::kCodePageInvalid), aliasForId(-1) {}
 };
 
 class MacFont {
@@ -145,7 +145,7 @@ public:
 
 	Common::Language getFontLanguage(uint16 id);
 	Common::CodePage getFontEncoding(uint16 id);
-	int getFontFallbackId(uint16 id);
+	int getFontAliasForId(uint16 id);
 	Common::String getFontName(uint16 id);
 
 	void loadFonts(Common::SeekableReadStream *stream);

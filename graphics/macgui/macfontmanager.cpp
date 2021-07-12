@@ -38,48 +38,59 @@ static struct FontProto {
 	int id;
 	Common::Language lang;
 	Common::CodePage encoding;
-	int fallbackId;
 	const char *name;
 } defaultFonts[] = {
-	// Latin
-	{ 0,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Chicago" }, // system font
-	{ 1,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Geneva" }, // application font
-	{ 2,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"New York" },
-	{ 3,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Geneva" },
-	{ 4,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Monaco" },
-	{ 5,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Venice" },
-	{ 6,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"London" },
-	{ 7,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Athens" },
-	{ 8,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"San Francisco" },
-	{ 9,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Toronto" },
-	{ 11,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Cairo" },
-	{ 12,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Los Angeles" },
-	{ 13,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Zapf Dingbats" },
-	{ 14,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Bookman" },
-	{ 15,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Helvetica Narrow" },
-	{ 16,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Palatino" },
-	{ 18,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Zapf Chancery" },
-	{ 20,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Times" }, // 20
-	{ 21,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Helvetica" },
-	{ 22,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Courier" },
-	{ 23,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Symbol" },
-	{ 24,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Taliesin" }, // mobile?
-	{ 33,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Avant Garde" },
-	{ 34,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"New Century Schoolbook" },
+	{ 2,		Common::UNK_LANG,	Common::kMacRoman,	"New York" },
+	{ 3,		Common::UNK_LANG,	Common::kMacRoman,	"Geneva" },
+	{ 4,		Common::UNK_LANG,	Common::kMacRoman,	"Monaco" },
+	{ 5,		Common::UNK_LANG,	Common::kMacRoman,	"Venice" },
+	{ 6,		Common::UNK_LANG,	Common::kMacRoman,	"London" },
+	{ 7,		Common::UNK_LANG,	Common::kMacRoman,	"Athens" },
+	{ 8,		Common::UNK_LANG,	Common::kMacRoman,	"San Francisco" },
+	{ 9,		Common::UNK_LANG,	Common::kMacRoman,	"Toronto" },
+	{ 11,		Common::UNK_LANG,	Common::kMacRoman,	"Cairo" },
+	{ 12,		Common::UNK_LANG,	Common::kMacRoman,	"Los Angeles" },
+	{ 13,		Common::UNK_LANG,	Common::kMacRoman,	"Zapf Dingbats" },
+	{ 14,		Common::UNK_LANG,	Common::kMacRoman,	"Bookman" },
+	{ 15,		Common::UNK_LANG,	Common::kMacRoman,	"Helvetica Narrow" },
+	{ 16,		Common::UNK_LANG,	Common::kMacRoman,	"Palatino" },
+	{ 18,		Common::UNK_LANG,	Common::kMacRoman,	"Zapf Chancery" },
+	{ 20,		Common::UNK_LANG,	Common::kMacRoman,	"Times" }, // 20
+	{ 21,		Common::UNK_LANG,	Common::kMacRoman,	"Helvetica" },
+	{ 22,		Common::UNK_LANG,	Common::kMacRoman,	"Courier" },
+	{ 23,		Common::UNK_LANG,	Common::kMacRoman,	"Symbol" },
+	{ 24,		Common::UNK_LANG,	Common::kMacRoman,	"Taliesin" }, // mobile?
+	{ 33,		Common::UNK_LANG,	Common::kMacRoman,	"Avant Garde" },
+	{ 34,		Common::UNK_LANG,	Common::kMacRoman,	"New Century Schoolbook" },
+	{ 16383,	Common::UNK_LANG,	Common::kMacRoman,	"Chicago" },
 
 	// Japanese (names are Shift JIS encoded)
-	{ 16384,	Common::JA_JPN,		Common::kUtf8,		-1,		"Osaka" },
-	{ 16396,	Common::JA_JPN,		Common::kUtf8,		16384,	"\x96\x7B\x96\xBE\x92\xA9\x81\x7C\x82\x6C" }, // Book Mincho - M
-	{ 16433,	Common::JA_JPN,		Common::kUtf8,		16436,	"\x93\x99\x95\x9D\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Mono Gothic
-	{ 16435,	Common::JA_JPN,		Common::kUtf8,		16436,	"\x93\x99\x95\x9D\x96\xBE\x92\xA9" }, // Mono Ming
-	{ 16436,	Common::JA_JPN,		Common::kUtf8,		-1,		"Osaka\x81\x7C\x93\x99\x95\x9D" }, // Osaka Mono
-	{ 16436,	Common::JA_JPN,		Common::kUtf8,		-1,		"OsakaMono" }, // redundant entry is to register English name
-	{ 16640,	Common::JA_JPN,		Common::kUtf8,		16384,	"\x92\x86\x83\x53\x83\x56\x83\x62\x83\x4E\x91\xCC" }, // Medium Gothic
-	{ 16641,	Common::JA_JPN,		Common::kUtf8,		16384,	"\x8D\xD7\x96\xBE\x92\xA9\x91\xCC" }, // Ming
-	{ 16700,	Common::JA_JPN,		Common::kUtf8,		16384,	"\x95\xBD\x90\xAC\x96\xBE\x92\xA9" }, // Heisi Mincho
-	{ 16701,	Common::JA_JPN,		Common::kUtf8,		16384,	"\x95\xBD\x90\xAC\x8A\x70\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Heisei Kaku Gothic
+	{ 16384,	Common::JA_JPN,		Common::kUtf8,		"Osaka" },
+	{ 16436,	Common::JA_JPN,		Common::kUtf8,		"Osaka\x81\x7C\x93\x99\x95\x9D" }, // Osaka Mono
 
-	{ -1,		Common::UNK_LANG,	Common::kCodePageInvalid,	-1,		NULL }
+	{ -1,		Common::UNK_LANG,	Common::kCodePageInvalid,	NULL }
+};
+
+static struct AliasProto {
+	int id;
+	int aliasForId;
+	const char *name;
+} defaultAliases[] = {
+	// Latin
+	{ 0,		16383,	"System" }, // system font - Chicago by default
+	{ 1,		3,		"Application" }, // application font - Geneva by default
+
+	// Japanese (names are Shift JIS encoded)
+	{ 16396,	16384,	"\x96\x7B\x96\xBE\x92\xA9\x81\x7C\x82\x6C" }, // Book Mincho - M
+	{ 16433,	16436,	"\x93\x99\x95\x9D\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Mono Gothic
+	{ 16435,	16436,	"\x93\x99\x95\x9D\x96\xBE\x92\xA9" }, // Mono Ming
+	{ 16436,	16436,	"OsakaMono" },
+	{ 16640,	16384,	"\x92\x86\x83\x53\x83\x56\x83\x62\x83\x4E\x91\xCC" }, // Medium Gothic
+	{ 16641,	16384,	"\x8D\xD7\x96\xBE\x92\xA9\x91\xCC" }, // Ming
+	{ 16700,	16384,	"\x95\xBD\x90\xAC\x96\xBE\x92\xA9" }, // Heisi Mincho
+	{ 16701,	16384,	"\x95\xBD\x90\xAC\x8A\x70\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Heisei Kaku Gothic
+
+	{ -1,		-1,		NULL }
 };
 
 static const char *const fontStyleSuffixes[] = {
@@ -121,12 +132,22 @@ MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
 			FontInfo *info = new FontInfo;
 			info->lang = font->lang;
 			info->encoding = font->encoding;
-			info->fallbackId = font->fallbackId;
 			info->name = font->name;
 			_fontInfo[font->id] = info;
 		}
 		if (!_fontIds.contains(font->name)) {
 			_fontIds[font->name] = font->id;
+		}
+	}
+	for (AliasProto *alias = defaultAliases; alias->name; alias++) {
+		if (!_fontInfo.contains(alias->id)) {
+			FontInfo *info = new FontInfo;
+			info->aliasForId = alias->aliasForId;
+			info->name = alias->name;
+			_fontInfo[alias->id] = info;
+		}
+		if (!_fontIds.contains(alias->name)) {
+			_fontIds[alias->name] = alias->id;
 		}
 	}
 
@@ -373,9 +394,9 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 	Common::String name;
 	const Font *font = 0;
 
-	int fallbackId = getFontFallbackId(macFont.getId());
-	if (fallbackId > -1) {
-		macFont.setId(fallbackId);
+	int aliasForId = getFontAliasForId(macFont.getId());
+	if (aliasForId > -1) {
+		macFont.setId(aliasForId);
 	}
 
 	if (!_builtInFonts) {
@@ -537,6 +558,9 @@ Common::Language MacFontManager::getFontLanguage(uint16 id) {
 		warning("MacFontManager::getFontLanguage: No _fontInfo entry for font %d", id);
 		return Common::UNK_LANG;
 	}
+	if (_fontInfo[id]->aliasForId > -1) {
+		return getFontLanguage(_fontInfo[id]->aliasForId);
+	}
 	return _fontInfo[id]->lang;
 }
 
@@ -545,21 +569,27 @@ Common::CodePage MacFontManager::getFontEncoding(uint16 id) {
 		warning("MacFontManager::getFontEncoding: No _fontInfo entry for font %d", id);
 		return Common::kCodePageInvalid;
 	}
+	if (_fontInfo[id]->aliasForId > -1) {
+		return getFontEncoding(_fontInfo[id]->aliasForId);
+	}
 	return _fontInfo[id]->encoding;
 }
 
-int MacFontManager::getFontFallbackId(uint16 id) {
+int MacFontManager::getFontAliasForId(uint16 id) {
 	if (!_fontInfo.contains(id)) {
-		warning("MacFontManager::getFontFallbackId: No _fontInfo entry for font %d", id);
+		warning("MacFontManager::getFontAliasForId: No _fontInfo entry for font %d", id);
 		return -1;
 	}
-	return _fontInfo[id]->fallbackId;
+	return _fontInfo[id]->aliasForId;
 }
 
 Common::String MacFontManager::getFontName(uint16 id) {
 	if (!_fontInfo.contains(id)) {
-		warning("MacFontManager::getFontFallbackId: No _fontInfo entry for font %d", id);
+		warning("MacFontManager::getFontAliasForId: No _fontInfo entry for font %d", id);
 		return "";
+	}
+	if (_fontInfo[id]->aliasForId > -1) {
+		return getFontName(_fontInfo[id]->aliasForId);
 	}
 	return _fontInfo[id]->name;
 }
