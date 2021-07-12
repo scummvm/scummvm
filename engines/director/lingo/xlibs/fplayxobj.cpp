@@ -60,13 +60,25 @@ void FPlayXObj::initialize(int type) {
 
 void FPlayXObj::b_fplay(int nargs) {
 	if (nargs == 0) {
-		warning("FPlayXObj::b_fplay requires at least one argument");
+		warning("FPlayXObj::b_fplay: requires at least one argument");
 		return;
 	}
 
-	if (nargs > 1) {
-		g_lingo->dropStack(nargs - 1);
-		warning("FPlayXObj::b_fplay unhandled %d arguments", nargs - 1);
+	if (nargs > 2) {
+		g_lingo->dropStack(nargs - 2);
+		warning("FPlayXObj::b_fplay: unhandled %d arguments", nargs - 2);
+	}
+
+	Common::String mode;
+	if (nargs == 2)
+		mode = g_lingo->pop().asString();
+
+	bool loop = false;
+	if (!mode.empty()) {
+		if (mode.equalsIgnoreCase("continuous"))
+			loop = true;
+		else
+			warning("FPlayXObj::b_fplay: unhandled mode %s", mode.c_str());
 	}
 
 	Datum d = g_lingo->pop();
@@ -92,7 +104,7 @@ void FPlayXObj::b_fplay(int nargs) {
 	}
 
 	if (id == 0xFFFF) {
-		warning("FPlayXObj::b_fplay can not find sound %s", sndName.c_str());
+		warning("FPlayXObj::b_fplay: can not find sound %s", sndName.c_str());
 		return;
 	}
 
@@ -101,14 +113,19 @@ void FPlayXObj::b_fplay(int nargs) {
 		SNDDecoder *ad = new SNDDecoder();
 		ad->loadStream(*sndData);
 		delete sndData;
-		Audio::AudioStream *as = ad->getAudioStream();
+
+		Audio::AudioStream *as;
+		if (loop)
+			as = ad->getLoopingAudioStream();
+		else
+			as = ad->getAudioStream();
 
 		if (!as) {
 			warning("FPlayXObj::b_fplay: failed to get audio stream");
 			return;
 		}
 		sound->playStream(*as, 1);
-		//		delete audio;
+		delete ad;
 	}
 }
 
