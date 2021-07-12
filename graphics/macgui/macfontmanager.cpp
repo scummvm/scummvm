@@ -55,7 +55,7 @@ static struct FontProto {
 	{ 15,		Common::UNK_LANG,	Common::kMacRoman,	"Helvetica Narrow" },
 	{ 16,		Common::UNK_LANG,	Common::kMacRoman,	"Palatino" },
 	{ 18,		Common::UNK_LANG,	Common::kMacRoman,	"Zapf Chancery" },
-	{ 20,		Common::UNK_LANG,	Common::kMacRoman,	"Times" }, // 20
+	{ 20,		Common::UNK_LANG,	Common::kMacRoman,	"Times" },
 	{ 21,		Common::UNK_LANG,	Common::kMacRoman,	"Helvetica" },
 	{ 22,		Common::UNK_LANG,	Common::kMacRoman,	"Courier" },
 	{ 23,		Common::UNK_LANG,	Common::kMacRoman,	"Symbol" },
@@ -78,14 +78,18 @@ struct AliasProto {
 };
 
 static AliasProto defaultAliases[] = {
-	// Japanese (names are Shift JIS encoded)
+	// English names for Japanese fonts
+	{ 16436,	16436,	"OsakaMono" },
+
+	// Missing Japanese fonts
+	// These technically should be separate fonts, not just aliases for Osaka.
+	// However, we don't have a free source for these right now.
 	{ 16396,	16384,	"\x96\x7B\x96\xBE\x92\xA9\x81\x7C\x82\x6C" }, // Book Mincho - M
 	{ 16433,	16436,	"\x93\x99\x95\x9D\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Mono Gothic
 	{ 16435,	16436,	"\x93\x99\x95\x9D\x96\xBE\x92\xA9" }, // Mono Ming
-	{ 16436,	16436,	"OsakaMono" },
 	{ 16640,	16384,	"\x92\x86\x83\x53\x83\x56\x83\x62\x83\x4E\x91\xCC" }, // Medium Gothic
 	{ 16641,	16384,	"\x8D\xD7\x96\xBE\x92\xA9\x91\xCC" }, // Ming
-	{ 16700,	16384,	"\x95\xBD\x90\xAC\x96\xBE\x92\xA9" }, // Heisi Mincho
+	{ 16700,	16384,	"\x95\xBD\x90\xAC\x96\xBE\x92\xA9" }, // Heisei Mincho
 	{ 16701,	16384,	"\x95\xBD\x90\xAC\x8A\x70\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Heisei Kaku Gothic
 
 	{ -1,		-1,		NULL }
