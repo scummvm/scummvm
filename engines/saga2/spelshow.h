@@ -316,7 +316,9 @@ public:
 	void init(void);
 	void initEffect(TilePoint);
 	void loadEffect(SaveFileReader &saveGame, uint16 eListSize);
+	void readEffect(Common::InSaveFile *in, uint16 eListSize);
 	void saveEffect(SaveFileConstructor &saveGame);
+	void writeEffect(Common::OutSaveFile *out);
 	void termEffect(void);
 	size_t saveSize(void);
 
@@ -350,7 +352,9 @@ public :
 	void updateStates(int32 deltaTime);
 
 	void save(SaveFileConstructor &saveGame);
+	void write(Common::OutSaveFile *out);
 	void load(SaveFileReader &saveGame);
+	void read(Common::InSaveFile *in);
 	void wipe(void);
 	size_t saveSize(void);
 };
