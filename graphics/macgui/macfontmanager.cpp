@@ -542,7 +542,7 @@ int MacFontManager::registerFontName(Common::String name, int preferredId) {
 
 	FontInfo *info = new FontInfo;
 	info->name = name;
-	if (preferredId >= 16000) {
+	if (preferredId >= 0x4000) {
 		info->lang = Common::JA_JPN;
 		info->encoding = Common::kWindows932; // default to Shift JIS
 	} else {
