@@ -42,42 +42,42 @@ static struct FontProto {
 	const char *name;
 } defaultFonts[] = {
 	// Latin
-	{ 0,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Chicago" }, // system font
-	{ 1,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Geneva" }, // application font
-	{ 2,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"New York" },
-	{ 3,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Geneva" },
-	{ 4,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Monaco" },
-	{ 5,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Venice" },
-	{ 6,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"London" },
-	{ 7,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Athens" },
-	{ 8,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"San Francisco" },
-	{ 9,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Toronto" },
-	{ 11,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Cairo" },
-	{ 12,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Los Angeles" },
-	{ 13,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Zapf Dingbats" },
-	{ 14,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Bookman" },
-	{ 15,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Helvetica Narrow" },
-	{ 16,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Palatino" },
-	{ 18,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Zapf Chancery" },
-	{ 20,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Times" }, // 20
-	{ 21,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Helvetica" },
-	{ 22,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Courier" },
-	{ 23,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Symbol" },
-	{ 24,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Taliesin" }, // mobile?
-	{ 33,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"Avant Garde" },
-	{ 34,		Common::UNK_LANG,	Common::kMacCentralEurope,	-1,		"New Century Schoolbook" },
+	{ 0,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Chicago" }, // system font
+	{ 1,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Geneva" }, // application font
+	{ 2,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"New York" },
+	{ 3,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Geneva" },
+	{ 4,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Monaco" },
+	{ 5,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Venice" },
+	{ 6,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"London" },
+	{ 7,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Athens" },
+	{ 8,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"San Francisco" },
+	{ 9,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Toronto" },
+	{ 11,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Cairo" },
+	{ 12,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Los Angeles" },
+	{ 13,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Zapf Dingbats" },
+	{ 14,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Bookman" },
+	{ 15,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Helvetica Narrow" },
+	{ 16,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Palatino" },
+	{ 18,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Zapf Chancery" },
+	{ 20,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Times" }, // 20
+	{ 21,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Helvetica" },
+	{ 22,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Courier" },
+	{ 23,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Symbol" },
+	{ 24,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Taliesin" }, // mobile?
+	{ 33,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"Avant Garde" },
+	{ 34,		Common::UNK_LANG,	Common::kMacRoman,	-1,		"New Century Schoolbook" },
 
 	// Japanese (names are Shift JIS encoded)
-	{ 16384,	Common::JA_JPN,		Common::kUtf8,				-1,		"Osaka" },
-	{ 16396,	Common::JA_JPN,		Common::kUtf8,				16384,	"\x96\x7B\x96\xBE\x92\xA9\x81\x7C\x82\x6C" }, // Book Mincho - M
-	{ 16433,	Common::JA_JPN,		Common::kUtf8,				16436,	"\x93\x99\x95\x9D\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Mono Gothic
-	{ 16435,	Common::JA_JPN,		Common::kUtf8,				16436,	"\x93\x99\x95\x9D\x96\xBE\x92\xA9" }, // Mono Ming
-	{ 16436,	Common::JA_JPN,		Common::kUtf8,				-1,		"Osaka\x81\x7C\x93\x99\x95\x9D" }, // Osaka Mono
-	{ 16436,	Common::JA_JPN,		Common::kUtf8,				-1,		"OsakaMono" }, // redundant entry is to register English name
-	{ 16640,	Common::JA_JPN,		Common::kUtf8,				16384,	"\x92\x86\x83\x53\x83\x56\x83\x62\x83\x4E\x91\xCC" }, // Medium Gothic
-	{ 16641,	Common::JA_JPN,		Common::kUtf8,				16384,	"\x8D\xD7\x96\xBE\x92\xA9\x91\xCC" }, // Ming
-	{ 16700,	Common::JA_JPN,		Common::kUtf8,				16384,	"\x95\xBD\x90\xAC\x96\xBE\x92\xA9" }, // Heisi Mincho
-	{ 16701,	Common::JA_JPN,		Common::kUtf8,				16384,	"\x95\xBD\x90\xAC\x8A\x70\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Heisei Kaku Gothic
+	{ 16384,	Common::JA_JPN,		Common::kUtf8,		-1,		"Osaka" },
+	{ 16396,	Common::JA_JPN,		Common::kUtf8,		16384,	"\x96\x7B\x96\xBE\x92\xA9\x81\x7C\x82\x6C" }, // Book Mincho - M
+	{ 16433,	Common::JA_JPN,		Common::kUtf8,		16436,	"\x93\x99\x95\x9D\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Mono Gothic
+	{ 16435,	Common::JA_JPN,		Common::kUtf8,		16436,	"\x93\x99\x95\x9D\x96\xBE\x92\xA9" }, // Mono Ming
+	{ 16436,	Common::JA_JPN,		Common::kUtf8,		-1,		"Osaka\x81\x7C\x93\x99\x95\x9D" }, // Osaka Mono
+	{ 16436,	Common::JA_JPN,		Common::kUtf8,		-1,		"OsakaMono" }, // redundant entry is to register English name
+	{ 16640,	Common::JA_JPN,		Common::kUtf8,		16384,	"\x92\x86\x83\x53\x83\x56\x83\x62\x83\x4E\x91\xCC" }, // Medium Gothic
+	{ 16641,	Common::JA_JPN,		Common::kUtf8,		16384,	"\x8D\xD7\x96\xBE\x92\xA9\x91\xCC" }, // Ming
+	{ 16700,	Common::JA_JPN,		Common::kUtf8,		16384,	"\x95\xBD\x90\xAC\x96\xBE\x92\xA9" }, // Heisi Mincho
+	{ 16701,	Common::JA_JPN,		Common::kUtf8,		16384,	"\x95\xBD\x90\xAC\x8A\x70\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Heisei Kaku Gothic
 
 	{ -1,		Common::UNK_LANG,	Common::kCodePageInvalid,	-1,		NULL }
 };
@@ -494,7 +494,7 @@ int MacFontManager::registerFontName(Common::String name, int preferredId) {
 		info->lang = Common::JA_JPN;
 		info->encoding = Common::kWindows932; // default to Shift JIS
 	} else {
-		info->encoding = Common::kMacCentralEurope;
+		info->encoding = Common::kMacRoman;
 	}
 	_fontInfo[id] = info;
 	_fontIds[name] = id;
