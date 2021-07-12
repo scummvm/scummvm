@@ -171,9 +171,9 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveSpellState(out);
 	saveAutoMap(out);
 	saveUIState(out);
+	savePaletteState(out);
 
 #if 0
-	savePaletteState(saveGame);
 	saveContainerNodes(saveGame);
 #endif
 
@@ -411,12 +411,12 @@ void loadSavedGameState(int16 saveNo) {
 			} else
 				error("UI state loaded prematurely");
 			break;
-#if 0
 
 		case MKTAG('P', 'A', 'L', 'E'):
-			loadPaletteState(saveGame);
+			loadPaletteState(in);
 			loadFlags |= loadPaletteStateFlag;
 			break;
+#if 0
 
 		case MKTAG('C', 'O', 'N', 'T'):
 			if (loadFlags & loadObjectsFlag) {

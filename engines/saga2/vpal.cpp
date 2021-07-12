@@ -58,6 +58,10 @@ struct PaletteStateArchive {
 	                    destPalette;
 	int32               startTime,
 	                    totalTime;
+
+	enum {
+		kPaletteStateArchiveSize = 2312
+	};
 };
 
 /* ===================================================================== *
@@ -103,6 +107,21 @@ void assertCurrentPalette(void) {
 	}
 }
 
+void gPalette::read(Common::InSaveFile *in) {
+	for (int i = 0; i < 256; ++i) {
+		entry[i].r = in->readByte();
+		entry[i].g = in->readByte();
+		entry[i].b = in->readByte();
+	}
+}
+
+void gPalette::write(Common::OutSaveFile *out) {
+	for (int i = 0; i < 256; ++i) {
+		out->writeByte(entry[i].r);
+		out->writeByte(entry[i].g);
+		out->writeByte(entry[i].b);
+	}
+}
 
 //----------------------------------------------------------------------
 //	Initialize global palette resources
@@ -339,6 +358,22 @@ void savePaletteState(SaveFileConstructor &saveGame) {
 	    sizeof(archive));
 }
 
+void savePaletteState(Common::OutSaveFile *out) {
+	debugC(2, kDebugSaveload, "Loading Palette States");
+
+	out->write("PALE", 4);
+	out->writeUint32LE(PaletteStateArchive::kPaletteStateArchiveSize);
+
+	currentPalette.write(out);
+	oldPalette.write(out);
+	destPalette.write(out);
+	out->writeSint32LE(startTime);
+	out->writeSint32LE(totalTime);
+
+	debugC(3, kDebugSaveload, "... startTime = %d", startTime);
+	debugC(3, kDebugSaveload, "... totalTime = %d", totalTime);
+}
+
 //----------------------------------------------------------------------
 //	Load and set the current state of the current palette and fade
 //	up/down from a save file.
@@ -353,6 +388,23 @@ void loadPaletteState(SaveFileReader &saveGame) {
 	memcpy(&destPalette, &archive.destPalette, sizeof(gPalette));
 	startTime = archive.startTime;
 	totalTime = archive.totalTime;
+
+	setCurrentPalette(&tempPalette);
+}
+
+void loadPaletteState(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading Palette States");
+
+	gPalette tempPalette;
+
+	tempPalette.read(in);
+	oldPalette.read(in);
+	destPalette.read(in);
+	startTime = in->readSint32LE();
+	totalTime = in->readSint32LE();
+
+	debugC(3, kDebugSaveload, "... startTime = %d", startTime);
+	debugC(3, kDebugSaveload, "... totalTime = %d", totalTime);
 
 	setCurrentPalette(&tempPalette);
 }

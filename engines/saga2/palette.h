@@ -77,9 +77,11 @@ void initPaletteState(void);
 //  Save the current state of the current palette and fade up/down in
 //  a save file.
 void savePaletteState(SaveFileConstructor &saveGame);
+void savePaletteState(Common::OutSaveFile *out);
 //  Load and set the current state of the current palette and fade
 //  up/down from a save file.
 void loadPaletteState(SaveFileReader &saveGame);
+void loadPaletteState(Common::InSaveFile *in);
 //  Cleanup the palette
 inline void cleanupPaletteState(void) { /* do nothing */ }
 
