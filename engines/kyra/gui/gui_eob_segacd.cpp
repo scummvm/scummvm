@@ -884,7 +884,7 @@ void GUI_EoB_SegaCD::drawSaveSlotButton(int slot, int redrawBox, bool highlight)
 		} else {
 			// Savegame generated via the GMM save dialog. The Japanese font only has upper case ASCII glyphs, so we have to uppercase the string.
 			s2.toUppercase();
-		}		
+		}
 	}
 
 	_vm->_txt->printShadedText(s2.c_str(), 0, (slot << 4) + (slot < 5 ? 0 : 2), highlight ? 0x55 : 0xFF, 0xCC, 121, 80, 0, false);

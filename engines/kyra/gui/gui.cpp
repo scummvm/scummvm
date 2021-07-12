@@ -116,12 +116,13 @@ void GUI::updateSaveSlotsList(Common::String targetName, bool force) {
 			in = _vm->openSaveForReading(_vm->getSavegameFilename(targetName, _saveSlots[i]).c_str(), header, targetName == _vm->_targetName);
 			char **listEntry = &_savegameList[allowEmptySlots ? _saveSlots[i] : i];
 			if (in) {
-				*listEntry = new char[header.description.size() + 1];
-				Common::strlcpy(*listEntry, header.description.c_str(), header.description.size() + 1);
+				uint buffSize = header.description.size() + 1;
+				*listEntry = new char[buffSize];
+				Common::strlcpy(*listEntry, header.description.c_str(), buffSize);
 				// Ingame auto-generated Japanese EOB SegaCD savegame descriptions have a special 1-byte encoding that
 				// does not survive this conversion. And the rest of the characters in these descriptions do not require it.
 				if (!(_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang == Common::JA_JPN && Common::String(*listEntry).contains('\r')))
-					Util::convertISOToDOS(*listEntry);
+					Util::convertUTF8ToDOS(*listEntry, buffSize);
 				delete in;
 			} else {
 				*listEntry = 0;

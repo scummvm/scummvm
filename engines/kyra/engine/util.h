@@ -35,17 +35,11 @@ public:
 	static Common::String decodeString1(const Common::String &src);
 	static Common::String decodeString2(const Common::String &src);
 
-
-	// Since our current GUI font uses ISO-8859-1, this
-	// conversion functionallty uses that as a base.
-	static void convertDOSToISO(char *str);
-	static void convertISOToDOS(char *str);
+	static void convertDOSToUTF8(char *str, int bufferSize);
+	static void convertUTF8ToDOS(char *str, int bufferSize);
+	static Common::String convertUTF8ToDOS(Common::String &str);
+	static Common::String convertISOToUTF8(Common::String &str);
 	static void convertISOToDOS(char &c);
-	static Common::String convertISOToDOS(const Common::String &str);
-
-private:
-	static const uint8 _charMapDOSToISO[128];
-	static const uint8 _charMapISOToDOS[128];
 };
 
 } // End of namespace Kyra

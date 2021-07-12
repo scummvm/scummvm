@@ -29,7 +29,7 @@
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
-#define CURRENT_SAVE_VERSION 19
+#define CURRENT_SAVE_VERSION 20
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)
@@ -66,7 +66,7 @@ WARN_UNUSED_RESULT KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHea
 			in->read(descriptionBuffer, descriptionSize[i]);
 			descriptionBuffer[descriptionSize[i]] = 0;
 
-			Util::convertDOSToISO(descriptionBuffer);
+			Util::convertDOSToUTF8(descriptionBuffer, 81);
 
 			type = in->readUint32BE();
 			header.version = in->readUint16LE();
@@ -119,6 +119,9 @@ WARN_UNUSED_RESULT KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHea
 		for (char c = 0; (c = in->readByte()) != 0;)
 			header.description += c;
 	}
+
+	if (header.version < 20)
+		header.description = Util::convertISOToUTF8(header.description);
 
 	if (header.version >= 2)
 		header.flags = in->readUint32BE();

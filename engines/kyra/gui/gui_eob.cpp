@@ -3192,7 +3192,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 			// Ingame auto-generated Japanese EOB SegaCD savegame descriptions have a special 1-byte encoding that
 			// does not survive this conversion. And the rest of the characters in these descriptions do not require it.
 			if (!(_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang == Common::JA_JPN && Common::String(temp).contains('\r')))
-				Util::convertDOSToISO(temp);
+				Util::convertDOSToUTF8(temp, 26);
 			Common::Error err = _vm->saveGameStateIntern(_savegameOffset + slot, temp, &thumb);
 			thumb.free();
 
@@ -4599,12 +4599,16 @@ void GUI_EoB::setupSaveMenuSlots() {
 				memset(_saveSlotStringsTemp[i], 0, 25);
 				Common::strlcpy(_saveSlotStringsTemp[i], _savegameList[i + _savegameOffset], 25);
 
-				if (_vm->gameFlags().platform == Common::kPlatformPC98 || _vm->gameFlags().platform == Common::kPlatformFMTowns || (_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang != Common::JA_JPN)) {
-					// Clean out special characters from GMM save dialog which might get misinterpreted as SJIS
-					for (uint ii = 0; ii < strlen(_saveSlotStringsTemp[i]); ++ii) {
-						if (_saveSlotStringsTemp[i][ii] < 32 && _saveSlotStringsTemp[i][ii] != '\r') // due to the signed char type this will also clean up everything >= 0x80
-							_saveSlotStringsTemp[i][ii] = ' ';
-					}
+				if (!(_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().platform == Common::kPlatformSegaCD &&
+					Common::String(_saveSlotStringsTemp[i]).contains('\r')) && (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().platform == Common::kPlatformSegaCD)) {
+						// Strip special characters from GMM save dialog which might get misinterpreted as SJIS
+						// Special case for Japanese SegaCD: Only the save descriptions from GMM should be stripped. The auto-generated descriptions from the ingame save dialog
+						// have a special 1-byte encoding that must be kept. It is easy to distinguish between GMM descriptions and ingame descriptions due to the '\r' characters
+						// that the auto-generated strings always and the GMM strings never have.
+						for (uint ii = 0; ii < strlen(_saveSlotStringsTemp[i]); ++ii) {
+							if (_saveSlotStringsTemp[i][ii] < 32 && _saveSlotStringsTemp[i][ii] != '\r') // due to the signed char type this will also clean up everything >= 0x80
+								_saveSlotStringsTemp[i][ii] = ' ';
+						}
 				}
 
 				_saveSlotIdTemp[i] = i + _savegameOffset;
