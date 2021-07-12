@@ -114,6 +114,8 @@ public:
 	virtual int16 getOverlayHeight() override final;
 	virtual int16 getOverlayWidth() override final;
 
+	virtual float getHiDPIScreenFactor() const override final;
+
 	virtual bool showMouse(bool visible) override final;
 	virtual void warpMouse(int x, int y) override final;
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override final;
