@@ -359,7 +359,7 @@ void savePaletteState(SaveFileConstructor &saveGame) {
 }
 
 void savePaletteState(Common::OutSaveFile *out) {
-	debugC(2, kDebugSaveload, "Loading Palette States");
+	debugC(2, kDebugSaveload, "Saving Palette States");
 
 	out->write("PALE", 4);
 	out->writeUint32LE(PaletteStateArchive::kPaletteStateArchiveSize);
