@@ -112,7 +112,7 @@ extern char *ustrupr(char *s);
 /* ustrstr:
  *  Unicode-aware version of the ANSI strstr() function.
  */
-extern char *ustrstr(const char *s1, const char *s2);
+extern const char *ustrstr(const char *s1, const char *s2);
 /* usetat:
  *  Modifies the character at the specified index within the string,
  *  handling adjustments for variable width data. Returns how far the

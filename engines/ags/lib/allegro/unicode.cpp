@@ -1169,7 +1169,7 @@ char *ustrupr(char *s) {
 	return s;
 }
 
-char *ustrstr(const char *s1, const char *s2) {
+const char *ustrstr(const char *s1, const char *s2) {
 	int len;
 	assert(s1);
 	assert(s2);

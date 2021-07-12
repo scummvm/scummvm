@@ -212,7 +212,7 @@ int StrContains(const char *s1, const char *s2) {
 	ustrlwr(tempbuf1);
 	ustrlwr(tempbuf2);
 
-	char *offs = ustrstr(tempbuf1, tempbuf2);
+	char *offs = const_cast<char *>(ustrstr(tempbuf1, tempbuf2));
 
 	if (offs == nullptr) {
 		free(tempbuf1);
