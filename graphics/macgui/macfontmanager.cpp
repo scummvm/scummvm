@@ -305,8 +305,6 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 				familyName = cleanFontName(familyName);
 			}
 
-			registerFontName(familyName);
-
 			Graphics::MacFontFamily *fontFamily = new MacFontFamily();
 			fontFamily->load(*fond);
 
