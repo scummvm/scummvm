@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-11 08:17+0000\n"
-"PO-Revision-Date: 2021-05-28 18:25+0000\n"
+"PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
@@ -271,18 +271,16 @@ msgstr "图像"
 
 #: gui/editgamedialog.cpp:207 gui/options.cpp:1784 gui/options.cpp:1939
 msgid "GFX"
-msgstr ""
+msgstr "图像"
 
 #: gui/editgamedialog.cpp:213
-#, fuzzy
 msgid "Override global graphic settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆盖全局图像设置"
 
 #: gui/editgamedialog.cpp:215
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆盖全局图像设置"
 
 #: gui/editgamedialog.cpp:225 gui/options.cpp:1950
 msgid "Shader"
@@ -300,11 +298,11 @@ msgstr "覆盖全局着色器设置"
 
 #: gui/editgamedialog.cpp:244 gui/options.cpp:1984 engines/dialogs.cpp:316
 msgid "Keymaps"
-msgstr ""
+msgstr "键盘布局"
 
 #: gui/editgamedialog.cpp:251 gui/options.cpp:1991 engines/dialogs.cpp:323
 msgid "Backend"
-msgstr ""
+msgstr "后端"
 
 #: gui/editgamedialog.cpp:254
 #, fuzzy
@@ -1165,173 +1163,173 @@ msgstr "真Roland MT-32(关闭GM模拟)"
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
-msgstr ""
+msgstr "检查是否要使用真正的硬件Roland兼容的声音设备连接到您的计算机"
 
 #: gui/options.cpp:1594
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
-msgstr ""
+msgstr "打开Roland MT-32（无GM仿真）"
 
 #: gui/options.cpp:1597
 msgid "Roland GS device (enable MT-32 mappings)"
-msgstr ""
+msgstr "Roland GS 设备（打开MT-32映射）"
 
 #: gui/options.cpp:1597
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
-msgstr ""
+msgstr "检查是否要启用修补程序映射来模拟Roland GS设备上的MT-32"
 
 #: gui/options.cpp:1606
 msgid "Don't use Roland MT-32 music"
-msgstr ""
+msgstr "不适用Roland MT-32 音乐"
 
 #: gui/options.cpp:1633
 msgid "Text and speech:"
-msgstr ""
+msgstr "文字和语音："
 
 #: gui/options.cpp:1637 gui/options.cpp:1647
 msgid "Speech"
-msgstr ""
+msgstr "语音"
 
 #: gui/options.cpp:1638 gui/options.cpp:1648
 msgid "Subtitles"
-msgstr ""
+msgstr "字幕"
 
 #: gui/options.cpp:1639
 msgid "Both"
-msgstr ""
+msgstr "全部（字幕和语音）"
 
 #: gui/options.cpp:1641
 msgid "Subtitle speed:"
-msgstr ""
+msgstr "字幕速度："
 
 #: gui/options.cpp:1643
 msgctxt "lowres"
 msgid "Text and speech:"
-msgstr ""
+msgstr "文字和语音："
 
 #: gui/options.cpp:1647
 msgid "Spch"
-msgstr ""
+msgstr "语音"
 
 #: gui/options.cpp:1648
 msgid "Subs"
-msgstr ""
+msgstr "字幕"
 
 #: gui/options.cpp:1649
 msgctxt "lowres"
 msgid "Both"
-msgstr ""
+msgstr "全部"
 
 #: gui/options.cpp:1649
 msgid "Show subtitles and play speech"
-msgstr ""
+msgstr "显示字幕并播放语音"
 
 #: gui/options.cpp:1651
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr ""
+msgstr "字幕速度："
 
 #: gui/options.cpp:1667
 msgid "Music volume:"
-msgstr ""
+msgstr "音乐音量："
 
 #: gui/options.cpp:1669
 msgctxt "lowres"
 msgid "Music volume:"
-msgstr ""
+msgstr "音乐音量："
 
 #: gui/options.cpp:1676
 msgid "Mute all"
-msgstr ""
+msgstr "屏蔽全部"
 
 #: gui/options.cpp:1679
 msgid "SFX volume:"
-msgstr ""
+msgstr "特殊效果音量："
 
 #: gui/options.cpp:1679 gui/options.cpp:1681 gui/options.cpp:1682
 msgid "Special sound effects volume"
-msgstr ""
+msgstr "特殊音效音量"
 
 #: gui/options.cpp:1681
 msgctxt "lowres"
 msgid "SFX volume:"
-msgstr ""
+msgstr "特殊效果音量："
 
 #: gui/options.cpp:1689
 msgid "Speech volume:"
-msgstr ""
+msgstr "语音音量："
 
 #: gui/options.cpp:1691
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr ""
+msgstr "语音音量："
 
 #: gui/options.cpp:1962
 msgid "Control"
-msgstr ""
+msgstr "控制"
 
 #: gui/options.cpp:2044
 msgctxt "lowres"
 msgid "Misc"
-msgstr ""
+msgstr "杂项"
 
 #: gui/options.cpp:2056
 msgid "Cloud"
-msgstr ""
+msgstr "云端"
 
 #: gui/options.cpp:2058
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "云端"
 
 #: gui/options.cpp:2072
 msgid "LAN"
-msgstr ""
+msgstr "本地局域网"
 
 #: gui/options.cpp:2074
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "本地局域网"
 
 #: gui/options.cpp:2082
 msgid "Accessibility"
-msgstr ""
+msgstr "访问性"
 
 #: gui/options.cpp:2084
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "访问性"
 
 #: gui/options.cpp:2093
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "取消更改并关闭对话框"
 
 #: gui/options.cpp:2094
 msgid "Apply"
-msgstr ""
+msgstr "应用"
 
 #: gui/options.cpp:2094
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "应用更改并保留对话框"
 
 #: gui/options.cpp:2095
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "应用更改并关闭对话框"
 
 #: gui/options.cpp:2182
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "FluidSynth设置"
 
 #: gui/options.cpp:2201
 msgid "Theme Path:"
-msgstr ""
+msgstr "主题路径："
 
 #: gui/options.cpp:2203
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr ""
+msgstr "主题路径："
 
 #: gui/options.cpp:2209 gui/options.cpp:2211 gui/options.cpp:2212
 msgid "Specifies path to additional data used by all games or ScummVM"
