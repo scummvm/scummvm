@@ -371,12 +371,41 @@ void ScummVMRendererGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch
 	}
 }
 
+void ScummVMRendererGraphicsDriver::copySurface(const Graphics::Surface &src, bool mode) {
+	assert(src.w == _screen->w && src.h == _screen->h && src.pitch == _screen->pitch);
+	const uint32 *srcP = (const uint32 *)src.getPixels();
+	uint32 *destP = (uint32 *)_screen->getPixels();
+	uint32 pixel;
+	int x1 = 9999, y1 = 9999, x2 = -1, y2 = -1;
+
+	for (int y = 0; y < src.h; ++y) {
+		for (int x = 0; x < src.w; ++x, ++srcP, ++destP) {
+			if (!mode) {
+				pixel = (*srcP & 0xff00ff00) |
+					((*srcP & 0xff) << 16) |
+					((*srcP >> 16) & 0xff);
+			} else {
+				pixel = ((*srcP & 0xffffff) << 8) |
+					((*srcP >> 24) & 0xff);
+			}
+
+			if (*destP != pixel) {
+				*destP = pixel;
+				x1 = MIN(x1, x);
+				y1 = MIN(y1, y);
+				x2 = MAX(x2, x);
+				y2 = MAX(y2, y);
+			}
+		}
+	}
+
+	if (x2 != -1)
+		_screen->addDirtyRect(Common::Rect(x1, y1, x2 + 1, y2 + 1));
+}
+
 void ScummVMRendererGraphicsDriver::BlitToScreen() {
 	const Graphics::Surface &src =
 		virtualScreen->GetAllegroBitmap()->getSurface();
-	int i;
-	const uint32 *srcP;
-	uint32 *destP;
 
 	enum {
 		kRenderInitial, kRenderDirect, kRenderToABGR, kRenderToRGBA,
@@ -408,25 +437,12 @@ void ScummVMRendererGraphicsDriver::BlitToScreen() {
 	switch (renderMode) {
 	case kRenderToABGR:
 		// ARGB to ABGR
-		assert(src.w == _screen->w && src.h == _screen->h);
-		srcP = (const uint32 *)src.getPixels();
-		destP = (uint32 *)_screen->getPixels();
-		for (i = 0; i < src.w * src.h; ++i, ++srcP, ++destP) {
-			*destP = (*srcP & 0xff00ff00) |
-				((*srcP & 0xff) << 16) |
-				((*srcP >> 16) & 0xff);
-		}
+		copySurface(src, false);
 		break;
 
 	case kRenderToRGBA:
 		// ARGB to RGBA
-		assert(src.w == _screen->w && src.h == _screen->h);
-		srcP = (const uint32 *)src.getPixels();
-		destP = (uint32 *)_screen->getPixels();
-		for (i = 0; i < src.w * src.h; ++i, ++srcP, ++destP) {
-			*destP = ((*srcP & 0xffffff) << 8) |
-				((*srcP >> 24) & 0xff);
-		}
+		copySurface(src, true);
 		break;
 
 	case kRenderOther: {
@@ -450,10 +466,8 @@ void ScummVMRendererGraphicsDriver::BlitToScreen() {
 		break;
 	}
 
-	if (_screen) {
-		_screen->addDirtyRect(Common::Rect(0, 0, src.w, src.h));
+	if (_screen)
 		_screen->update();
-	}
 }
 
 void ScummVMRendererGraphicsDriver::Render(int /*xoff*/, int /*yoff*/, GlobalFlipType flip) {

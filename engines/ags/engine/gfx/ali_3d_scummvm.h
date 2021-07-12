@@ -280,6 +280,7 @@ private:
 	void __fade_out_range(int speed, int from, int to, int targetColourRed, int targetColourGreen, int targetColourBlue);
 	// Copy raw screen bitmap pixels to the screen
 	void BlitToScreen();
+	void copySurface(const Graphics::Surface &src, bool mode);
 	// Render bitmap on screen
 	void Present() { BlitToScreen(); }
 };
