@@ -155,7 +155,7 @@ static const byte macCursorCrossBar[] = {
 
 static void menuTimerHandler(void *refCon);
 
-MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
+MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::Language language) {
 	_screen = nullptr;
 	_screenCopy = nullptr;
 	_desktopBmp = nullptr;
@@ -169,6 +169,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	_hoveredWidget = nullptr;
 
 	_mode = mode;
+	_language = language;
 
 	_menu = 0;
 	_menuDelay = 0;
@@ -210,7 +211,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 		memcpy(_palette, palette, _paletteSize * 3);
 	}
 
-	_fontMan = new MacFontManager(mode);
+	_fontMan = new MacFontManager(mode, language);
 
 	_cursor = nullptr;
 	_cursorType = _tempType = kMacCursorArrow;

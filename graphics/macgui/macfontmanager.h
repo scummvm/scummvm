@@ -117,8 +117,10 @@ private:
 
 class MacFontManager {
 public:
-	MacFontManager(uint32 mode);
+	MacFontManager(uint32 mode, Common::Language language);
 	~MacFontManager();
+
+	void setLocalizedFonts();
 
 	/**
 	 * Accessor method to check the presence of built-in fonts.
@@ -178,6 +180,7 @@ private:
 	bool _builtInFonts;
 	bool _japaneseFontsLoaded;
 	uint32 _mode;
+	Common::Language _language;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
 
 	Common::HashMap<int, FontInfo *> _fontInfo;

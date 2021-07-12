@@ -71,15 +71,13 @@ static struct FontProto {
 	{ -1,		Common::UNK_LANG,	Common::kCodePageInvalid,	NULL }
 };
 
-static struct AliasProto {
+struct AliasProto {
 	int id;
 	int aliasForId;
 	const char *name;
-} defaultAliases[] = {
-	// Latin
-	{ 0,		16383,	"System" }, // system font - Chicago by default
-	{ 1,		3,		"Application" }, // application font - Geneva by default
+};
 
+static AliasProto defaultAliases[] = {
 	// Japanese (names are Shift JIS encoded)
 	{ 16396,	16384,	"\x96\x7B\x96\xBE\x92\xA9\x81\x7C\x82\x6C" }, // Book Mincho - M
 	{ 16433,	16436,	"\x93\x99\x95\x9D\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Mono Gothic
@@ -90,6 +88,18 @@ static struct AliasProto {
 	{ 16700,	16384,	"\x95\xBD\x90\xAC\x96\xBE\x92\xA9" }, // Heisi Mincho
 	{ 16701,	16384,	"\x95\xBD\x90\xAC\x8A\x70\x83\x53\x83\x56\x83\x62\x83\x4E" }, // Heisei Kaku Gothic
 
+	{ -1,		-1,		NULL }
+};
+
+static AliasProto latinModeAliases[] = {
+	{ 0,		16383,	"System" }, // Chicago
+	{ 1,		3,		"Application" }, // Geneva
+	{ -1,		-1,		NULL }
+};
+
+static AliasProto japaneseModeAliases[] = {
+	{ 0,		16384,	"System" }, // Osaka
+	{ 1,		16384,	"Application" }, // Osaka
 	{ -1,		-1,		NULL }
 };
 
@@ -126,7 +136,7 @@ Common::String cleanFontName(const Common::String fontname) {
 	return f;
 }
 
-MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
+MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(mode), _language(language) {
 	for (FontProto *font = defaultFonts; font->name; font++) {
 		if (!_fontInfo.contains(font->id)) {
 			FontInfo *info = new FontInfo;
@@ -150,6 +160,7 @@ MacFontManager::MacFontManager(uint32 mode) : _mode(mode) {
 			_fontIds[alias->name] = alias->id;
 		}
 	}
+	setLocalizedFonts();
 
 	if (_mode & MacGUIConstants::kWMModeForceBuiltinFonts) {
 		_builtInFonts = true;
@@ -166,6 +177,26 @@ MacFontManager::~MacFontManager() {
 		delete it->_value;
 	for (Common::HashMap<int, Common::SeekableReadStream *>::iterator it = _ttfData.begin(); it != _ttfData.end(); it++)
 		delete it->_value;
+}
+
+void MacFontManager::setLocalizedFonts() {
+	AliasProto *aliases = latinModeAliases;
+	if (_language == Common::JA_JPN) {
+		aliases = japaneseModeAliases;
+		loadJapaneseFonts();
+	}
+	for (AliasProto *alias = aliases; alias->name; alias++) {
+		if (_fontInfo.contains(alias->id)) {
+			// Overwrite the font info that's already registered in case
+			// we're switching languages or something.
+			delete _fontInfo[alias->id];
+		}
+		FontInfo *info = new FontInfo;
+		info->aliasForId = alias->aliasForId;
+		info->name = alias->name;
+		_fontInfo[alias->id] = info;
+		_fontIds[alias->name] = alias->id;
+	}
 }
 
 void MacFontManager::loadFontsBDF() {

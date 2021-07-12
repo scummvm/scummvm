@@ -141,7 +141,7 @@ typedef void (* MacDrawPixPtr)(int, int, int, void *);
  */
 class MacWindowManager {
 public:
-	MacWindowManager(uint32 mode = 0, MacPatterns *patterns = nullptr);
+	MacWindowManager(uint32 mode = 0, MacPatterns *patterns = nullptr, Common::Language language = Common::UNK_LANG);
 	~MacWindowManager();
 
 	MacDrawPixPtr getDrawPixel();
@@ -335,6 +335,7 @@ public:
 public:
 	MacFontManager *_fontMan;
 	uint32 _mode;
+	Common::Language _language;
 
 	Common::Point _lastClickPos;
 	Common::Point _lastMousePos;
