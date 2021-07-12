@@ -37,7 +37,7 @@
 #include "saga2/mouseimg.h"
 #include "saga2/patrol.h"
 #include "saga2/weapons.h"
-#include "saga2/loadsave.h"
+#include "saga2/saveload.h"
 #include "saga2/display.h"
 #include "saga2/tile.h"
 

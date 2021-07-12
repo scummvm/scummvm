@@ -30,7 +30,6 @@ MODULE_OBJS := \
 	interp.o \
 	intrface.o \
 	loadmsg.o \
-	loadsave.o \
 	magic.o \
 	main.o \
 	mainmap.o \
@@ -55,6 +54,7 @@ MODULE_OBJS := \
 	rect.o \
 	saga2.o \
 	sagafunc.o \
+	saveload.o \
 	sensor.o \
 	shorten.o \
 	speech.o \

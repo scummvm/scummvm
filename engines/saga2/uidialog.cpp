@@ -31,7 +31,7 @@
 #include "saga2/intrface.h"
 #include "saga2/grequest.h"
 #include "saga2/gtextbox.h"
-#include "saga2/loadsave.h"
+#include "saga2/saveload.h"
 #include "saga2/script.h"
 #include "saga2/audio.h"
 

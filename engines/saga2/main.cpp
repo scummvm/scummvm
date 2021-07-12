@@ -41,7 +41,7 @@
 #include "saga2/display.h"
 #include "saga2/tower.h"
 #include "saga2/tromode.h"
-#include "saga2/loadsave.h"
+#include "saga2/saveload.h"
 #include "saga2/gamerate.h"
 #include "saga2/msgbox.h"
 
