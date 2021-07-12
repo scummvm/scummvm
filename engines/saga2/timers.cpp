@@ -325,6 +325,8 @@ Timer::Timer(Common::InSaveFile *in) {
 	//  Restore the alarm
 	_alarm.read(in);
 
+	_active = true;
+
 	g_vm->_timers.push_back(this);
 }
 
