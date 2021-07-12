@@ -91,7 +91,7 @@ void FPlayXObj::b_fplay(int nargs) {
 	}
 
 	uint32 tag = MKTAG('s', 'n', 'd', ' ');
-	uint id;
+	uint id = 0xFFFF;
 	Archive *archive = nullptr;
 
 	// iterate opened ResFiles
