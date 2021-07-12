@@ -68,8 +68,8 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 	Common::U32String logText;
 
 	while (formattingCount) {
-		FontStyle nextStyle;
-		nextStyle.read(textStream, _cast);
+		uint16 currentFont = _style.fontId;
+		_style.read(textStream, _cast);
 
 		assert(prevPos <= _style.formatStartOffset);  // If this is triggered, we have to implement sorting
 
@@ -84,13 +84,12 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 
 			prevPos++;
 		}
-		Common::CodePage encoding = detectEncoding(cast->_platform, _style.fontId);
+		Common::CodePage encoding = detectEncoding(cast->_platform, currentFont);
 		Common::U32String u32TextPart(textPart, encoding);
 		_ptext += u32TextPart;
 		_ftext += u32TextPart;
 		logText += u32TextPart;
 
-		_style = nextStyle;
 		Common::String format = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _style.fontId, _style.textSlant, _style.fontSize, _style.r, _style.g, _style.b);
 		_ftext += format;
 		logText += Common::toPrintable(format);
