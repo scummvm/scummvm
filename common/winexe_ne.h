@@ -70,6 +70,9 @@ public:
 	/** Get a string from a string resource. */
 	String loadString(uint32 stringID);
 
+protected:
+	VersionInfo *parseVersionInfo(SeekableReadStream *stream);
+
 private:
 	/** A resource. */
 	struct Resource {

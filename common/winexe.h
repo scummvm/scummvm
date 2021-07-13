@@ -158,14 +158,17 @@ public:
 		uint32 fileDate[2];
 
 		VersionHash hash;
-	};
 
-	static VersionInfo *parseVersionInfo(SeekableReadStream *stream);
+		bool readVSVersionInfo(SeekableReadStream *res);
+	};
 
 	VersionInfo *getVersionResource(const WinResourceID &id);
 
 	/** Get a string from a string resource. */
 	virtual String loadString(uint32 stringID) = 0;
+
+protected:
+	virtual VersionInfo *parseVersionInfo(SeekableReadStream *stream) = 0;
 };
 
 /** @} */
