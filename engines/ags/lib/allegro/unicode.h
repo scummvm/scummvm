@@ -36,12 +36,22 @@ namespace AGS3 {
 
 /* UTF-8 support functions
  */
-int utf8_getc(const char *s);
-int utf8_getx(char **s);
-int utf8_setc(char *s, int c);
-int utf8_width(const char *s);
-int utf8_cwidth(int c);
-int utf8_isok(int c);
+extern int utf8_getc(const char *s);
+extern int utf8_getx(char **s);
+extern int utf8_setc(char *s, int c);
+extern int utf8_width(const char *s);
+extern int utf8_cwidth(int c);
+extern int utf8_isok(int c);
+
+/**
+ * ASCII support functions
+ */
+extern int ascii_getc(const char *s);
+extern int ascii_getx(char **s);
+extern int ascii_setc(char *s, int c);
+extern int ascii_width(const char *s);
+extern int ascii_cwidth(int c);
+extern int ascii_isok(int c);
 
 /* ugetc: */
 extern int (*ugetc)(const char *s);
@@ -61,7 +71,7 @@ extern int (*uisok)(int c);
 /* set_uformat:
  *  Selects a new text encoding format.
  */
-extern void set_uformat(int format);
+extern void set_uformat(int type);
 
 /* get_uformat:
  *  Returns the current text encoding format.

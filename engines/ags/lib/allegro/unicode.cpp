@@ -41,10 +41,54 @@ int (*ucwidth)(int c) = utf8_cwidth;
 /* uisok: */
 int (*uisok)(int c) = utf8_isok;
 
+struct UTYPE_INFO {
+	int id;
+	AL_METHOD(int, u_getc, (const char *s));
+	AL_METHOD(int, u_getx, (char **s));
+	AL_METHOD(int, u_setc, (char *s, int c));
+	AL_METHOD(int, u_width, (const char *s));
+	AL_METHOD(int, u_cwidth, (int c));
+	AL_METHOD(int, u_isok, (int c));
+	int u_width_max;
+};
 
-void set_uformat(int format) {
-	// TODO: implementation
-	_G(utype) = format;
+static UTYPE_INFO utypes[] =
+{
+	{ U_ASCII,    ascii_getc,    ascii_getx,    ascii_setc,    ascii_width,   ascii_cwidth,   ascii_isok,    1    },
+	{ U_UTF8,     utf8_getc,     utf8_getx,     utf8_setc,     utf8_width,    utf8_cwidth,    utf8_isok,     4     }
+};
+
+
+/* _find_utype:
+ *  Helper for locating a string type description.
+ */
+static UTYPE_INFO *find_utype(int type) {
+	int i;
+
+	if (type == U_CURRENT)
+		type = _G(utype);
+
+	for (i = 0; i < (int)(sizeof(utypes) / sizeof(UTYPE_INFO)); i++)
+		if (utypes[i].id == type)
+			return &utypes[i];
+
+	return NULL;
+}
+
+void set_uformat(int type) {
+	UTYPE_INFO *info = find_utype(type);
+	assert(info);
+
+	if (info) {
+		_G(utype) = info->id;
+		ugetc = info->u_getc;
+		ugetx = (int (*)(char **)) info->u_getx;
+		ugetxc = (int (*)(AL_CONST char **)) info->u_getx;
+		usetc = info->u_setc;
+		uwidth = info->u_width;
+		ucwidth = info->u_cwidth;
+		uisok = info->u_isok;
+	}
 }
 
 int get_uformat(void) {
@@ -175,6 +219,34 @@ int utf8_cwidth(int c) {
 int utf8_isok(int c) {
 	return true;
 }
+
+
+int ascii_getc(const char *s) {
+	return *((unsigned char *)s);
+}
+
+int ascii_getx(char **s) {
+	return *((unsigned char *)((*s)++));
+}
+
+int ascii_setc(char *s, int c) {
+	*s = c;
+	return 1;
+}
+
+int ascii_width(const char *s) {
+	return 1;
+}
+
+int ascii_cwidth(int c) {
+	return 1;
+}
+
+int ascii_isok(int c) {
+	return ((c >= 0) && (c <= 255));
+}
+
+
 
 int ustrlen(const char *s) {
 	int c = 0;
