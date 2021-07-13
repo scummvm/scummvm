@@ -918,7 +918,7 @@ void VideoPlayer::copyPalette(const Video &video, int16 palStart, int16 palEnd) 
 	palStart =  palStart      * 3;
 	palEnd   = (palEnd   + 1) * 3;
 
-	for (int i = palStart; i <= palEnd; i++)
+	for (int i = palStart; i < palEnd; i++)
 		((char *)(_vm->_global->_pPaletteDesc->vgaPal))[i] = video.decoder->getPalette()[i] >> 2;
 }
 
