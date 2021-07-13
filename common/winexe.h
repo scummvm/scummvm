@@ -162,6 +162,8 @@ public:
 
 	static VersionInfo *parseVersionInfo(SeekableReadStream *stream);
 
+	VersionInfo *getVersionResource(const WinResourceID &id);
+
 	/** Get a string from a string resource. */
 	virtual String loadString(uint32 stringID) = 0;
 };

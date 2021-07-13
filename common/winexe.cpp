@@ -206,6 +206,18 @@ WinResources *WinResources::createFromEXE(SeekableReadStream *stream) {
 	return nullptr;
 }
 
+WinResources::VersionInfo *WinResources::getVersionResource(const WinResourceID &id) {
+		VersionInfo *info = nullptr;
+
+		SeekableReadStream *res = getResource(kWinVersion, id);
+		if (res) {
+			info = parseVersionInfo(res);
+			delete res;
+		}
+
+		return info;
+}
+
 WinResources::VersionInfo *WinResources::parseVersionInfo(SeekableReadStream *res) {
 	VersionInfo *info = new VersionInfo;
 

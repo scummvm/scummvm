@@ -476,12 +476,9 @@ uint32 BuriedEngine::getVersion() {
 		return MAKEVERSION(1, 1, 0, 0);
 	}
 
-	Common::SeekableReadStream *res = _mainEXE->getResource(Common::kWinVersion, 1);
-	Common::WinResources::VersionInfo *versionInfo = _mainEXE->parseVersionInfo(res);
-
+	Common::WinResources::VersionInfo *versionInfo = _mainEXE->getVersionResource(1);
 	uint32 result = MAKEVERSION(versionInfo->fileVersion[0], versionInfo->fileVersion[1], versionInfo->fileVersion[2], versionInfo->fileVersion[3]);
 	delete versionInfo;
-	delete res;
 
 	return result;
 }
