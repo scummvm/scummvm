@@ -295,7 +295,7 @@ private:
 	MilesMT32SysExQueueEntry _milesSysExQueues[MILES_CONTROLLER_SYSEX_QUEUE_COUNT];
 };
 
-extern MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *streamAdLib = nullptr, Common::SeekableReadStream *streamOPL3 = nullptr);
+extern MidiDriver_Multisource *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *streamAdLib = nullptr, Common::SeekableReadStream *streamOPL3 = nullptr);
 
 extern MidiDriver_Miles_Midi *MidiDriver_Miles_MT32_create(const Common::String &instrumentDataFilename);
 

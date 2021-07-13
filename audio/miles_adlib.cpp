@@ -1105,7 +1105,7 @@ void MidiDriver_Miles_AdLib::setRegister(int reg, int value) {
 	}
 }
 
-MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *streamAdLib, Common::SeekableReadStream *streamOPL3) {
+MidiDriver_Multisource *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *streamAdLib, Common::SeekableReadStream *streamOPL3) {
 	// Load adlib instrument data from file SAMPLE.AD (OPL3: SAMPLE.OPL)
 	Common::String              timbreFilename;
 	Common::SeekableReadStream *timbreStream = nullptr;
