@@ -253,7 +253,7 @@ Intrinsic RegretIntrinsics[] = {
 	Item::I_isOn, // Intrinsic0CF()
 	// 00D0
 	Actor::I_isInCombat, // Intrinsic0D0()
-	0, // Actor::I_getNPCDataField0x4()
+	Actor::I_getLastActivityNo, // Actor::I_getNPCDataFi2eld0x4()
 	Actor::I_setCombatTactic, // Intrinsic0D2()
 	Actor::I_setDead, // Intrinsic0D3()
 	CameraProcess::I_getCameraY, // Intrinsic0D4()
@@ -656,7 +656,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_getQHi,
 	Item::I_isOn,
 	Actor::I_isInCombat,
-	0,
+	Actor::I_getLastActivityNo,
 	Actor::I_setCombatTactic,
 	Actor::I_setDead,
 	CameraProcess::I_getCameraY,
@@ -733,6 +733,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_andStatus,
 	Actor::I_getNpcNum,
 	Item::I_andStatus,
+	// 0130
 	Actor::I_getDir,
 	Actor::I_setDead,
 	Actor::I_getNpcNum,
@@ -749,6 +750,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_andStatus,
 	Actor::I_getNpcNum,
 	Item::I_andStatus,
+	// 0140
 	Actor::I_getNpcNum,
 	Item::I_andStatus,
 	Actor::I_getNpcNum,
@@ -765,6 +767,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Actor::I_clrInCombat,
 	Item::I_getTypeFlag,
 	Actor::I_getNpcNum,
+	// 0150
 	Item::I_hurl,
 	Item::I_getCY,
 	Item::I_getCZ,
