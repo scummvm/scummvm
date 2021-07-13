@@ -25,6 +25,7 @@
 #include "engines/advancedDetector.h"
 
 #include "common/file.h"
+#include "common/winexe.h"
 
 #include "director/detection.h"
 #include "director/director.h"
@@ -255,7 +256,19 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 		s_fallbackFileNameBuffer[50] = '\0';
 		desc->desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
 
-		Common::String extra = Common::String::format("v%d.%02d", desc->version / 100, desc->version % 100);
+		Common::String extra;
+		Common::WinResources *exe = Common::WinResources::createFromEXE(&f);
+		if (exe) {
+			Common::WinResources::VersionInfo *versionInfo = exe->getVersionResource(1);
+			if (versionInfo) {
+				extra = Common::String::format("v%d.%d.%dr%d", versionInfo->fileVersion[0], versionInfo->fileVersion[1], versionInfo->fileVersion[2], versionInfo->fileVersion[3]);
+				delete versionInfo;
+			}
+			delete exe;
+		}
+		if (extra.empty()) {
+			extra = Common::String::format("v%d.%02d", desc->version / 100, desc->version % 100);
+		}
 		Common::strlcpy(s_fallbackExtraBuf, extra.c_str(), sizeof(s_fallbackExtraBuf) - 1);
 		desc->desc.extra = s_fallbackExtraBuf;
 
