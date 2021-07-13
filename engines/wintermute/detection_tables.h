@@ -5387,6 +5387,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("war", "",
 		WME_ENTRY1s("data.dcp", "003e317cda6d0137bbd5e5d7f089ee4d", 32591890), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
+	// The Way Of Love: Sub Zero (Retail) (Persian)
+	WME_WINENTRY("wayoflove", "",
+		WME_ENTRY2s("data.dcp", "e86fcca7d5044998945a6e1e7a874430", 1650426981,
+					"language.dcp", "91b100d10719bcfc355739a41f4eca4b", 662313), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+
 	// The Way Of Love: Sub Zero (English)
 	WME_WINENTRY("wayoflove", "",
 		WME_ENTRY2s("data.dcp", "201d74cce6b89ce6d5b61a24b5e88809", 1224687223,
