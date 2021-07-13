@@ -68,22 +68,7 @@ struct InfoEntry {
 		return *this;
 	}
 
-	Common::String readString(bool pascal = true) {
-		Common::String res;
-
-		if (len == 0)
-			return res;
-
-		int start = pascal ? 1 : 0;
-
-		for (uint i = start; i < len; i++)
-			if (data[i] == '\r')
-				res += '\n';
-			else if (data[i] >= 0x20)
-				res += data[i];
-
-		return res;
-	}
+	Common::String readString(bool pascal = true);
 };
 
 struct InfoEntries {
