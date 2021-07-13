@@ -369,7 +369,8 @@ void Cast::loadCast() {
 
 	// External sound files
 	if (_castArchive->hasResource(MKTAG('S', 'T', 'R', ' '), -1)) {
-		debug("STUB: Unhandled 'STR ' resource");
+		loadExternalSound(*(r = _castArchive->getFirstResource(MKTAG('S', 'T', 'R', ' '))));
+		delete r;
 	}
 
 	Common::Array<uint16> vwci = _castArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
@@ -774,6 +775,24 @@ void Cast::loadCastDataVWCR(Common::SeekableReadStreamEndian &stream) {
 			break;
 		}
 		stream.seek(returnPos);
+	}
+}
+
+void Cast::loadExternalSound(Common::SeekableReadStreamEndian &stream) {
+	Common::String str = stream.readString();
+	str.trim();
+	debugC(1, kDebugLoading, "****** Loading External Sound File %s", str.c_str());
+
+	Common::String resPath = g_director->getCurrentPath() + str;
+
+	if (!g_director->_openResFiles.contains(resPath)) {
+		MacArchive *resFile = new MacArchive();
+
+		if (resFile->openFile(resPath)) {
+			g_director->_openResFiles.setVal(resPath, resFile);
+		} else {
+			delete resFile;
+		}
 	}
 }
 
