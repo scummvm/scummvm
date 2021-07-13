@@ -439,7 +439,7 @@ void GridWidget::loadFlagIcons() {
 		String path = String::format("flags/%s.svg", l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
-			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
+			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 128);
 			_languageIcons[l->id] = scGfx;
 			gfx->free();
 			delete gfx;
@@ -451,11 +451,11 @@ void GridWidget::loadFlagIcons() {
 
 void GridWidget::loadPlatformIcons() {
 	const Common::PlatformDescription *l = Common::g_platforms;
-	for (; l->abbrev; ++l) {
-		String path = String::format("platforms/%s.png", l->abbrev);
+	for (; l->code; ++l) {
+		String path = String::format("platforms/%s.png", l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
-			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
+			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 128);
 			_platformIcons[l->id] = scGfx;
 			gfx->free();
 			delete gfx;
