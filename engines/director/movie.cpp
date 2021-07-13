@@ -381,4 +381,21 @@ Symbol Movie::getHandler(const Common::String &name) {
 	return Symbol();
 }
 
+Common::String InfoEntry::readString(bool pascal) {
+	Common::String res;
+
+	if (len == 0)
+		return res;
+
+	int start = pascal ? 1 : 0;
+
+	for (uint i = start; i < len; i++)
+		if (data[i] == '\r')
+			res += '\n';
+		else if (data[i] >= 0x20)
+			res += data[i];
+
+	return res;
+}
+
 } // End of namespace Director
