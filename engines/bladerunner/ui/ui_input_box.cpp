@@ -88,9 +88,10 @@ void UIInputBox::hide() {
 }
 
 void UIInputBox::handleKeyDown(const Common::KeyState &kbd) {
+	char kc = Common::U32String(Common::String::format("%c", kbd.ascii), Common::kISO8859_1).encode(Common::kDos850).firstChar();
 	if (_isVisible) {
-		if (charIsValid(kbd) && _text.size() < _maxLength) {
-			_text += kbd.ascii;
+		if (charIsValid(kc) && _text.size() < _maxLength) {
+			_text += kc;
 		} else if (kbd.keycode == Common::KEYCODE_BACKSPACE) {
 			_text.deleteLastChar();
 		} else if (kbd.keycode == Common::KEYCODE_RETURN && !_text.empty()) {
@@ -101,18 +102,18 @@ void UIInputBox::handleKeyDown(const Common::KeyState &kbd) {
 	}
 }
 
-bool UIInputBox::charIsValid(const Common::KeyState &kbd) {
-	return kbd.ascii >= ' '
-		&& kbd.ascii != '<'
-		&& kbd.ascii != '>'
-		&& kbd.ascii != ':'
-		&& kbd.ascii != '"'
-		&& kbd.ascii != '/'
-		&& kbd.ascii != '\\'
-		&& kbd.ascii != '|'
-		&& kbd.ascii != '?'
-		&& kbd.ascii != '*'
-		&& kbd.ascii <= '~';// || kbd.ascii == '¡' || kbd.ascii == 'ß');
+bool UIInputBox::charIsValid(char kc) {
+	return kc >= ' '
+		&& kc != '<'
+		&& kc != '>'
+		&& kc != ':'
+		&& kc != '"'
+		&& kc != '/'
+		&& kc != '\\'
+		&& kc != '|'
+		&& kc != '?'
+		&& kc != '*'
+		&& kc <= '~';// || kc == '¡' || kc == 'ß');
 }
 
 } // End of namespace BladeRunner
