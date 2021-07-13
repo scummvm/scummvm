@@ -214,6 +214,9 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 		case MKTAG('P', 'J', '0', '0'):
 			desc->version = 700;
 			break;
+		case MKTAG('P', 'J', '0', '1'):
+			desc->version = 800;
+			break;
 		default:
 			// Prior to version 4, there was no tag here. So we'll use a bit of a
 			// heuristic to detect. The first field is the entry count, of which
