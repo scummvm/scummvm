@@ -111,7 +111,7 @@ void StartCrusaderProcess::run() {
 		// teleport, so undo the flag that normally stops that.
 		avatar->setJustTeleported(false);
 
-		Process *fader = new PaletteFaderProcess(0x003F3F3F, true, 0x7FFF, 60, false);
+		Process *fader = new PaletteFaderProcess(0x00FFFFFF, true, 0x7FFF, 60, false);
 		Kernel::get_instance()->addProcess(fader);
 	}
 
