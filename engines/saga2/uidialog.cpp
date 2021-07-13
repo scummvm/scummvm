@@ -751,14 +751,11 @@ int16 FileDialog(int16 fileProcess) {
 		GameMode::update();
 
 	win->invalidate();
-	//win->draw();
-	//G_BASE.setActive(textBox);
 
 	EventLoop(rInfo.running, true);
 
-
 	// remove the window all attatched controls
-	if (win) delete win;
+	delete win;
 	win = nullptr;
 
 	// unload all image arrays
@@ -938,7 +935,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	g_vm->saveConfig();
 
 	// remove the window all attatched controls
-	if (win) delete win;
+	delete win;
 	win = nullptr;
 
 	// unload all image arrays
