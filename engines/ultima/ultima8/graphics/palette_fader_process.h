@@ -59,9 +59,10 @@ public:
 	INTRINSIC(I_lightningBolt);
 	INTRINSIC(I_fadeToGreyScale);
 	INTRINSIC(I_fadeToGivenColor);
+	INTRINSIC(I_fadeToGamePal);
 	INTRINSIC(I_jumpToGreyScale);
 	INTRINSIC(I_jumpToAllBlack);
-	INTRINSIC(I_jumpToAllGrey);
+	INTRINSIC(I_jumpToAllWhite);
 	INTRINSIC(I_jumpToAllGivenColor);
 	INTRINSIC(I_jumpToNormalPalette);
 

@@ -164,7 +164,7 @@ Intrinsic RemorseIntrinsics[] = {
 	PaletteFaderProcess::I_fadeToBlack, // void Intrinsic077(void)
 	MainActor::I_clrKeycards, // void Intrinsic078(void)
 	MainActor::I_teleportToEgg, // different than U8's? void Intrinsic079(6 bytes)
-	PaletteFaderProcess::I_fadeFromBlack, // void Intrinsic07A(void)
+	PaletteFaderProcess::I_fadeToGamePal, // void Intrinsic07A(void)
 	Actor::I_clrImmortal, // based on disasm
 	Actor::I_getHp, // void Intrinsic07C(4 bytes)
 	Actor::I_setActivity, // void Intrinsic07D(6 bytes)
@@ -199,8 +199,8 @@ Intrinsic RemorseIntrinsics[] = {
 	World::I_resetVargasShield, // void Intrinsic098(void)
 	Item::I_andStatus, // void Intrinsic099(6 bytes)
 	PaletteFaderProcess::I_jumpToNormalPalette, // TODO: should also stop cycle process?
-	PaletteFaderProcess::I_fadeFromBlack, // fade to game pal with number of steps
-	PaletteFaderProcess::I_fadeFromBlack, // fade from black with nsteps and another unknown param
+	PaletteFaderProcess::I_fadeToGamePal, // fade to game pal with number of steps
+	PaletteFaderProcess::I_fadeToGamePal, // fade from black with nsteps and another unknown param
 	PaletteFaderProcess::I_fadeToBlack, // fade to black with number of steps
 	PaletteFaderProcess::I_fadeToBlack, // fade to black with nsteps and another unknown param
 	PaletteFaderProcess::I_fadeToGivenColor,
@@ -266,7 +266,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_getLastAnimSet, // void Intrinsic0D7(4 bytes)
 	Actor::I_setDead,
 	Item::I_getQLo, // based on same coff set as 02B
-	PaletteFaderProcess::I_jumpToAllGrey,
+	PaletteFaderProcess::I_jumpToAllWhite,
 	Actor::I_setActivity, // void Intrinsic0DB(6 bytes)
 	Item::I_isOn,
 	Actor::I_getLastActivityNo, // void Intrinsic0DD(4 bytes)
@@ -502,7 +502,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	PaletteFaderProcess::I_fadeToBlack,
 	MainActor::I_clrKeycards,
 	MainActor::I_teleportToEgg,
-	PaletteFaderProcess::I_fadeFromBlack,
+	PaletteFaderProcess::I_fadeToGamePal,
 	Actor::I_setImmortal,
 	Actor::I_getHp,
 	Actor::I_setActivity,
@@ -537,8 +537,8 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	World::I_resetVargasShield,
 	Item::I_andStatus,
 	PaletteFaderProcess::I_jumpToNormalPalette,
-	PaletteFaderProcess::I_fadeFromBlack,
-	PaletteFaderProcess::I_fadeFromBlack,
+	PaletteFaderProcess::I_fadeToGamePal,
+	PaletteFaderProcess::I_fadeToGamePal,
 	PaletteFaderProcess::I_fadeToBlack,
 	PaletteFaderProcess::I_fadeToBlack,
 	// 0xA0
@@ -603,7 +603,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	Actor::I_getLastAnimSet,
 	Actor::I_setDead,
 	Item::I_getQLo,
-	PaletteFaderProcess::I_jumpToAllGrey,
+	PaletteFaderProcess::I_jumpToAllWhite,
 	Actor::I_setActivity,
 	Item::I_isOn,
 	Actor::I_getLastActivityNo,
@@ -829,7 +829,7 @@ Intrinsic RemorseEsIntrinsics[] = {
 	PaletteFaderProcess::I_fadeToBlack,
 	MainActor::I_clrKeycards,
 	MainActor::I_teleportToEgg,
-	PaletteFaderProcess::I_fadeFromBlack,
+	PaletteFaderProcess::I_fadeToGamePal,
 	Actor::I_setImmortal,
 	Actor::I_getHp,
 	Actor::I_setActivity,
@@ -862,8 +862,8 @@ Intrinsic RemorseEsIntrinsics[] = {
 	World::I_resetVargasShield,
 	Item::I_andStatus,
 	PaletteFaderProcess::I_jumpToNormalPalette,
-	PaletteFaderProcess::I_fadeFromBlack,
-	PaletteFaderProcess::I_fadeFromBlack,
+	PaletteFaderProcess::I_fadeToGamePal,
+	PaletteFaderProcess::I_fadeToGamePal,
 	PaletteFaderProcess::I_fadeToBlack,
 	PaletteFaderProcess::I_fadeToBlack,
 	PaletteFaderProcess::I_fadeToGivenColor,
@@ -937,7 +937,7 @@ Intrinsic RemorseEsIntrinsics[] = {
 	Actor::I_getLastAnimSet,
 	Actor::I_setDead,
 	Item::I_getQLo,
-	PaletteFaderProcess::I_jumpToAllGrey,
+	PaletteFaderProcess::I_jumpToAllWhite,
 	Item::I_equip,
 	Actor::I_setActivity,
 	Item::I_isOn,

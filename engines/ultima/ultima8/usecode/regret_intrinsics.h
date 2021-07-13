@@ -153,7 +153,7 @@ Intrinsic RegretIntrinsics[] = {
 	Ultima8Engine::I_setCruStasis, // Intrinsic070()
 	Ultima8Engine::I_clrCruStasis, // Intrinsic071()
 	PaletteFaderProcess::I_jumpToAllGivenColor, // Intrinsic072() PaletteFaderProcess::I_jumpToColor
-	PaletteFaderProcess::I_fadeFromBlack, // Intrinsic073()
+	PaletteFaderProcess::I_fadeToGamePal, // Intrinsic073()
 	Actor::I_isDead, // Intrinsic074()
 	Actor::I_getNpcNum, // Intrinsic075()
 	UCMachine::I_false, // Intrinsic076() - null intrinsic
@@ -174,7 +174,7 @@ Intrinsic RegretIntrinsics[] = {
 	0, // I_clearUnkFlagA4()
 	MainActor::I_switchMap, // Intrinsic085()
 	MainActor::I_teleportToEgg, // Intrinsic086()
-	PaletteFaderProcess::I_fadeFromBlack, // Intrinsic087()
+	PaletteFaderProcess::I_fadeToGamePal, // Intrinsic087()
 	Actor::I_clrImmortal, // Intrinsic088()
 	Actor::I_setActivity, // Intrinsic089()
 	Item::I_getQuality, // Intrinsic08A()
@@ -377,7 +377,7 @@ Intrinsic RegretIntrinsics[] = {
 	Actor::I_isDead, // Intrinsic143()
 	Actor::I_setDead, // Intrinsic144()
 	Game::I_playCredits, // Intrinsic145()
-	PaletteFaderProcess::I_jumpToAllGrey, // Intrinsic146()
+	PaletteFaderProcess::I_jumpToAllWhite, // Intrinsic146()
 	Item::I_getFamilyOfType, // Intrinsic147()
 	Actor::I_getNpcNum, // Intrinsic148()
 	Item::I_getQLo, // Intrinsic149()
@@ -540,7 +540,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Ultima8Engine::I_setCruStasis,
 	Ultima8Engine::I_clrCruStasis,
 	PaletteFaderProcess::I_jumpToAllGivenColor,
-	PaletteFaderProcess::I_fadeFromBlack,
+	PaletteFaderProcess::I_fadeToGamePal,
 	Actor::I_isDead,
 	Actor::I_getNpcNum,
 	UCMachine::I_false,  // null intrinsic (returns 0)
@@ -560,7 +560,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	0, // clr unk flag A4
 	Game::I_playDemoScreen,
 	MainActor::I_teleportToEgg,
-	PaletteFaderProcess::I_fadeFromBlack,
+	PaletteFaderProcess::I_fadeToGamePal,
 	Actor::I_clrImmortal,
 	Actor::I_setActivity,
 	// 0090
@@ -602,7 +602,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	PaletteFaderProcess::I_fadeToGivenColor,
 	Actor::I_setDead,
 	Game::I_playCredits,
-	PaletteFaderProcess::I_jumpToAllGrey,
+	PaletteFaderProcess::I_jumpToAllWhite,
 	Actor::I_isFalling,
 	Item::I_getFamilyOfType,
 	Actor::I_getNpcNum,

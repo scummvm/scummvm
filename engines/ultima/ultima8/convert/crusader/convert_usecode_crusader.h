@@ -170,7 +170,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 PaletteFaderProcess::I_fadeToBlack(void)", // fade to black, no args (40 frames)
 	"void MainActor::I_clrKeycards(void)",
 	"int16 MainActor::I_teleportToEgg(int, int, int)",
-	"int16 PaletteFaderProcess::I_fadeFromBlack(void)", // from black, no arg (40 frames)
+	"int16 PaletteFaderProcess::I_fadeToGamePal(void)", // from black, no arg (40 frames)
 	"void Actor::I_clrImmortal(Actor *)", // same coff as 130
 	"int16 Actor::I_getHp(Actor *)",
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
@@ -205,8 +205,8 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void I_resetVargasShieldTo500(void)",
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"void PaletteFaderProcess::I_jumpToNormalPalette(void)",
-	"int16 PaletteFaderProcess::I_fadeFromBlack(nsteps)",
-	"int16 PaletteFaderProcess::I_fadeFromBlackWithParam(nsteps, unk)",
+	"int16 PaletteFaderProcess::I_fadeToGamePal(nsteps)",
+	"int16 PaletteFaderProcess::I_fadeToGamePalWithParam(nsteps, unk)",
 	"int16 PaletteFaderProcess::I_fadeToBlack(nsteps)",
 	"int16 PaletteFaderProcess::I_fadeToBlackWithParam(nsteps, unk)",
 	"int16 PaletteFaderProcess::I_fadeToColor(r, g, b, nsteps, unk)",

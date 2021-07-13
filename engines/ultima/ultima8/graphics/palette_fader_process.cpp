@@ -49,7 +49,7 @@ PaletteFaderProcess::PaletteFaderProcess(PalTransforms trans,
 PaletteFaderProcess::PaletteFaderProcess(uint32 col32, bool from,
 		int priority, int frames, bool current) : _priority(priority),
 	_counter(frames), _maxCounter(frames) {
-	PaletteManager  *pm = PaletteManager::get_instance();
+	PaletteManager *pm = PaletteManager::get_instance();
 	Palette *pal = pm->getPalette(PaletteManager::Pal_Game);
 	if (!from) {
 		if (current)
@@ -228,9 +228,9 @@ static const int16 GreyFadeMatrix[] = {612, 1202, 233, 0,
 					612, 1202, 233, 0
 };
 
-static const int16 AllGreyMatrix[] = {0, 0, 0, 0x3ff,
-					0, 0, 0, 0x3ff,
-					0, 0, 0, 0x3ff
+static const int16 AllWhiteMatrix[] = {0, 0, 0, 0x7ff,
+					0, 0, 0, 0x7ff,
+					0, 0, 0, 0x7ff
 };
 
 static const int16 AllBlackMatrix[] = {0, 0, 0, 0,
@@ -252,9 +252,10 @@ uint32 PaletteFaderProcess::I_fadeToGivenColor(const uint8 *args,
 	if (_fader && _fader->_priority > 0x7FFF) return 0;
 	else if (_fader) _fader->terminate();
 
+	// TODO: guessing that color order should be same as other one below?
+	ARG_UINT8(b);
 	ARG_UINT8(r);
 	ARG_UINT8(g);
-	ARG_UINT8(b);
 	ARG_UINT16(nsteps);
 	ARG_UINT16(unk);
 
@@ -266,6 +267,29 @@ uint32 PaletteFaderProcess::I_fadeToGivenColor(const uint8 *args,
 	return Kernel::get_instance()->addProcess(_fader);
 }
 
+uint32 PaletteFaderProcess::I_fadeToGamePal(const uint8 *args,
+		unsigned int argsize) {
+	if (_fader && _fader->_priority > 0x7FFF)
+		return 0;
+	else if (_fader && !_fader->is_terminated())
+		_fader->terminate();
+
+	int nsteps = (GAME_IS_U8 ? 30 : 20);
+	if (argsize > 0) {
+		ARG_UINT16(n);
+		nsteps = n;
+		if (argsize > 2) {
+			ARG_UINT16(unk);
+			warning("PaletteFaderProcess::I_fadeToGamePalWithParam: Ignoring param %d", unk);
+		}
+	}
+
+	int16 curmatrix[12];
+	PaletteManager *pm = PaletteManager::get_instance();
+	pm->getTransformMatrix(curmatrix, PaletteManager::Pal_Game);
+	_fader = new PaletteFaderProcess(curmatrix, NoFadeMatrix, 0x7FFF, nsteps);
+	return Kernel::get_instance()->addProcess(_fader);
+}
 
 uint32 PaletteFaderProcess::I_jumpToGreyScale(const uint8 * /*args*/,
 		unsigned int /*argsize*/) {
@@ -287,13 +311,13 @@ uint32 PaletteFaderProcess::I_jumpToAllBlack(const uint8 * /*args*/,
 	return 0;
 }
 
-uint32 PaletteFaderProcess::I_jumpToAllGrey(const uint8 * /*args*/,
+uint32 PaletteFaderProcess::I_jumpToAllWhite(const uint8 * /*args*/,
 		unsigned int /*argsize*/) {
 	if (_fader && _fader->_priority > 0x7FFF) return 0;
 	else if (_fader) _fader->terminate();
 
 	PaletteManager::get_instance()->transformPalette(PaletteManager::Pal_Game,
-													 AllGreyMatrix);
+													 AllWhiteMatrix);
 	return 0;
 }
 
@@ -302,13 +326,14 @@ uint32 PaletteFaderProcess::I_jumpToAllGivenColor(const uint8 *args,
 	if (_fader && _fader->_priority > 0x7FFF) return 0;
 	else if (_fader) _fader->terminate();
 
+	ARG_UINT8(b);
 	ARG_UINT8(r);
 	ARG_UINT8(g);
-	ARG_UINT8(b);
 
-	const int16 r16 = static_cast<int16>(r) << 4;
-	const int16 g16 = static_cast<int16>(g) << 4;
-	const int16 b16 = static_cast<int16>(b) << 4;
+	// Transform matrix goes 0~2048, scale 0-63 vals from input
+	const int16 r16 = static_cast<int16>(r) * 32;
+	const int16 g16 = static_cast<int16>(g) * 32;
+	const int16 b16 = static_cast<int16>(b) * 32;
 
 	const int16 color_matrix[] = {0, 0, 0, r16,
 						0, 0, 0, g16,
