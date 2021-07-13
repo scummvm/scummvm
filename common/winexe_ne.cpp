@@ -37,14 +37,15 @@ NEResources::~NEResources() {
 
 void NEResources::clear() {
 	if (_exe) {
-		delete _exe;
+		if (_disposeFileHandle == DisposeAfterUse::YES)
+			delete _exe;
 		_exe = nullptr;
 	}
 
 	_resources.clear();
 }
 
-bool NEResources::loadFromEXE(SeekableReadStream *stream) {
+bool NEResources::loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
 	clear();
 
 	if (!stream)
