@@ -112,7 +112,7 @@ void KIASectionSave::open() {
 		}
 
 		for (uint i = 0; i < _saveList.size(); ++i) {
-			_scrollBox->addLine(_saveList[i].getDescription(), i, 0);
+			_scrollBox->addLine(_saveList[i].getDescription().encode(Common::kDos850), i, 0);
 		}
 
 		if (ableToSaveGame) {
@@ -296,7 +296,7 @@ void KIASectionSave::scrollBoxCallback(void *callbackData, void *source, int lin
 		if (self->_selectedLineId == self->_newSaveLineId) {
 			self->_inputBox->setText("");
 		} else {
-			self->_inputBox->setText(self->_saveList[self->_selectedLineId].getDescription());
+			self->_inputBox->setText(self->_saveList[self->_selectedLineId].getDescription().encode(Common::kDos850));
 		}
 
 		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSPNBEEP3), 40, 0, 0, 50, 0);
