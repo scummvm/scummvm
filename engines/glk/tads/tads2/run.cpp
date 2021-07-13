@@ -1571,8 +1571,11 @@ resume_from_error:
 					(prpnum)0, binum, nargc);
 				(*ctx->runcxbi[binum])((struct bifcxdef *)ctx->runcxbcx,
 					nargc);
-				dbgleave(ctx->runcxdbg,
-					ctx->runcxsp != stkp ? DBGEXVAL : DBGEXRET);
+				if (ctx->runcxsp != stkp) {
+					dbgleave(ctx->runcxdbg, DBGEXVAL);
+				} else {
+					dbgleave(ctx->runcxdbg, DBGEXRET);
+				}
 
 				p = runcprst(ctx, ofs, target, targprop);
 				p += 2;
