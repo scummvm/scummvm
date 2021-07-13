@@ -405,7 +405,7 @@ void KIASectionSave::save() {
 	}
 
 	BladeRunner::SaveFileHeader header;
-	header._name = _inputBox->getText();
+	header._name = Common::U32String(_inputBox->getText()).encode(Common::kUtf8);
 	header._playTime = _vm->getTotalPlayTime();
 
 	BladeRunner::SaveFileManager::writeHeader(*saveFile, header);
