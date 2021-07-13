@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-13 07:53+0000\n"
+"POT-Creation-Date: 2021-07-13 13:55+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -438,7 +438,7 @@ msgid "Statistics"
 msgstr ""
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
-#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:631 gui/options.cpp:2116
+#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2116
 #: gui/options.cpp:2122 gui/options.cpp:2130 gui/options.cpp:2161
 #: gui/options.cpp:2204 gui/options.cpp:2212 gui/options.cpp:2221
 #: gui/options.cpp:2484 gui/options.cpp:2490 gui/options.cpp:2497
@@ -449,7 +449,7 @@ msgid "None"
 msgstr "Bat ere ez"
 
 #: gui/editgamedialog.cpp:403 gui/editgamedialog.cpp:510
-#: gui/editgamedialog.cpp:635 gui/options.cpp:2110 gui/options.cpp:2478
+#: gui/editgamedialog.cpp:641 gui/options.cpp:2110 gui/options.cpp:2478
 #: gui/options.cpp:2760 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Lehenetsia"
@@ -466,7 +466,11 @@ msgstr "Direktorio gehigarria aukeratu"
 msgid "Select directory for saved games"
 msgstr "Partida gordeen direktorioa aukeratu"
 
-#: gui/editgamedialog.cpp:621
+#: gui/editgamedialog.cpp:622 gui/options.cpp:2696
+msgid "The chosen directory cannot be written to. Please select another one."
+msgstr "Aukeraturiko direktorioan ezin da idatzi. Mesedez, aukeratu beste bat."
+
+#: gui/editgamedialog.cpp:627
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -475,7 +479,7 @@ msgstr ""
 "direktorioekin. Gordetako jokoak sinkronizatzeko, erabili lehenetsitako "
 "direktorioa."
 
-#: gui/editgamedialog.cpp:647
+#: gui/editgamedialog.cpp:653
 msgid "This game ID is already taken. Please choose another one."
 msgstr "ID hau jada erabilia izaten ari da. Mesedez, aukeratu beste bat."
 
@@ -1719,10 +1723,6 @@ msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
-
-#: gui/options.cpp:2696
-msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "Aukeraturiko direktorioan ezin da idatzi. Mesedez, aukeratu beste bat."
 
 #: gui/options.cpp:2705
 msgid "Select directory for GUI themes"

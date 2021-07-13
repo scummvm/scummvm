@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-13 07:53+0000\n"
+"POT-Creation-Date: 2021-07-13 13:55+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -429,7 +429,7 @@ msgid "Statistics"
 msgstr ""
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
-#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:631 gui/options.cpp:2116
+#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2116
 #: gui/options.cpp:2122 gui/options.cpp:2130 gui/options.cpp:2161
 #: gui/options.cpp:2204 gui/options.cpp:2212 gui/options.cpp:2221
 #: gui/options.cpp:2484 gui/options.cpp:2490 gui/options.cpp:2497
@@ -440,7 +440,7 @@ msgid "None"
 msgstr "לא נבחר"
 
 #: gui/editgamedialog.cpp:403 gui/editgamedialog.cpp:510
-#: gui/editgamedialog.cpp:635 gui/options.cpp:2110 gui/options.cpp:2478
+#: gui/editgamedialog.cpp:641 gui/options.cpp:2110 gui/options.cpp:2478
 #: gui/options.cpp:2760 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "ברירת מחדל"
@@ -457,7 +457,11 @@ msgstr "בחר תיקיה על קבצי משחק נוספים"
 msgid "Select directory for saved games"
 msgstr "בחירת תיקיה לשמירת משחקים"
 
-#: gui/editgamedialog.cpp:621
+#: gui/editgamedialog.cpp:622 gui/options.cpp:2696
+msgid "The chosen directory cannot be written to. Please select another one."
+msgstr "לא ניתן לכתוב את הספרייה שנבחרה. בחר אחד אחר."
+
+#: gui/editgamedialog.cpp:627
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -465,7 +469,7 @@ msgstr ""
 "סינכרון שמירות משחק לא עובד עם תיקיות אחרות מברירת המחדל. בשביל לסכרן משחקים "
 "יש להשתמש בתיקית ברירת המחדל."
 
-#: gui/editgamedialog.cpp:647
+#: gui/editgamedialog.cpp:653
 msgid "This game ID is already taken. Please choose another one."
 msgstr "מזהה המשחק כבר תפוס. נא לבחור מזהה אחר."
 
@@ -1667,10 +1671,6 @@ msgid ""
 msgstr ""
 "\n"
 "הגדרות שונות ישוחזרו."
-
-#: gui/options.cpp:2696
-msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "לא ניתן לכתוב את הספרייה שנבחרה. בחר אחד אחר."
 
 #: gui/options.cpp:2705
 msgid "Select directory for GUI themes"

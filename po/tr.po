@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-13 07:53+0000\n"
+"POT-Creation-Date: 2021-07-13 13:55+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -437,7 +437,7 @@ msgid "Statistics"
 msgstr ""
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
-#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:631 gui/options.cpp:2116
+#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2116
 #: gui/options.cpp:2122 gui/options.cpp:2130 gui/options.cpp:2161
 #: gui/options.cpp:2204 gui/options.cpp:2212 gui/options.cpp:2221
 #: gui/options.cpp:2484 gui/options.cpp:2490 gui/options.cpp:2497
@@ -448,7 +448,7 @@ msgid "None"
 msgstr "Yok"
 
 #: gui/editgamedialog.cpp:403 gui/editgamedialog.cpp:510
-#: gui/editgamedialog.cpp:635 gui/options.cpp:2110 gui/options.cpp:2478
+#: gui/editgamedialog.cpp:641 gui/options.cpp:2110 gui/options.cpp:2478
 #: gui/options.cpp:2760 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Varsayılan"
@@ -465,7 +465,11 @@ msgstr "Oyun ek klasörünü seç"
 msgid "Select directory for saved games"
 msgstr "Kaydedilmiş oyunların klasörünü seç"
 
-#: gui/editgamedialog.cpp:621
+#: gui/editgamedialog.cpp:622 gui/options.cpp:2696
+msgid "The chosen directory cannot be written to. Please select another one."
+msgstr "Seçilmiş klasörün üzerine yazılamıyor. Başka seçin."
+
+#: gui/editgamedialog.cpp:627
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -473,7 +477,7 @@ msgstr ""
 "Varsayılan olmayan klasörler ile kaydedilmiş oyun senkronizasyonu çalışmaz. "
 "Lütfen varsayılan klasörü kullanın."
 
-#: gui/editgamedialog.cpp:647
+#: gui/editgamedialog.cpp:653
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Bu oyun kimliği önceden alınmış. Lütfen başkasını seçin."
 
@@ -1712,10 +1716,6 @@ msgid ""
 msgstr ""
 "\n"
 "Farklı ayarlar yeniden yapılandırılamadı."
-
-#: gui/options.cpp:2696
-msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "Seçilmiş klasörün üzerine yazılamıyor. Başka seçin."
 
 #: gui/options.cpp:2705
 msgid "Select directory for GUI themes"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-13 07:53+0000\n"
+"POT-Creation-Date: 2021-07-13 13:55+0000\n"
 "PO-Revision-Date: 2021-07-08 12:39+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -435,7 +435,7 @@ msgid "Statistics"
 msgstr "Статистика"
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
-#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:631 gui/options.cpp:2116
+#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2116
 #: gui/options.cpp:2122 gui/options.cpp:2130 gui/options.cpp:2161
 #: gui/options.cpp:2204 gui/options.cpp:2212 gui/options.cpp:2221
 #: gui/options.cpp:2484 gui/options.cpp:2490 gui/options.cpp:2497
@@ -446,7 +446,7 @@ msgid "None"
 msgstr "Не завдано"
 
 #: gui/editgamedialog.cpp:403 gui/editgamedialog.cpp:510
-#: gui/editgamedialog.cpp:635 gui/options.cpp:2110 gui/options.cpp:2478
+#: gui/editgamedialog.cpp:641 gui/options.cpp:2110 gui/options.cpp:2478
 #: gui/options.cpp:2760 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "За умовчанням"
@@ -463,7 +463,11 @@ msgstr "Виберіть додаткову папку гри"
 msgid "Select directory for saved games"
 msgstr "Виберіть папку для збережених ігор"
 
-#: gui/editgamedialog.cpp:621
+#: gui/editgamedialog.cpp:622 gui/options.cpp:2696
+msgid "The chosen directory cannot be written to. Please select another one."
+msgstr "Не можу писати у вибрану папку. Будь ласка, вкажіть іншу."
+
+#: gui/editgamedialog.cpp:627
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -472,7 +476,7 @@ msgstr ""
 "хочете, щоб ваші збережені ігри синхронізувалися, використовуйте папку за "
 "замовченням."
 
-#: gui/editgamedialog.cpp:647
+#: gui/editgamedialog.cpp:653
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Цей ID гри вже використовується. Будь ласка, виберіть інший."
 
@@ -1704,10 +1708,6 @@ msgid ""
 msgstr ""
 "\n"
 "Різні налаштування буде поновлено."
-
-#: gui/options.cpp:2696
-msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "Не можу писати у вибрану папку. Будь ласка, вкажіть іншу."
 
 #: gui/options.cpp:2705
 msgid "Select directory for GUI themes"

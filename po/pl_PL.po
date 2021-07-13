@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-13 07:53+0000\n"
+"POT-Creation-Date: 2021-07-13 13:55+0000\n"
 "PO-Revision-Date: 2021-05-17 17:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -440,7 +440,7 @@ msgid "Statistics"
 msgstr ""
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
-#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:631 gui/options.cpp:2116
+#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2116
 #: gui/options.cpp:2122 gui/options.cpp:2130 gui/options.cpp:2161
 #: gui/options.cpp:2204 gui/options.cpp:2212 gui/options.cpp:2221
 #: gui/options.cpp:2484 gui/options.cpp:2490 gui/options.cpp:2497
@@ -451,7 +451,7 @@ msgid "None"
 msgstr "Brak"
 
 #: gui/editgamedialog.cpp:403 gui/editgamedialog.cpp:510
-#: gui/editgamedialog.cpp:635 gui/options.cpp:2110 gui/options.cpp:2478
+#: gui/editgamedialog.cpp:641 gui/options.cpp:2110 gui/options.cpp:2478
 #: gui/options.cpp:2760 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Domyślnie"
@@ -468,7 +468,11 @@ msgstr "Wybierz dodatkowy katalog gry"
 msgid "Select directory for saved games"
 msgstr "Wybierz katalog dla zapisów"
 
-#: gui/editgamedialog.cpp:621
+#: gui/editgamedialog.cpp:622 gui/options.cpp:2696
+msgid "The chosen directory cannot be written to. Please select another one."
+msgstr "Ten katalog jest zabezpieczony przed zapisem. Wybierz inny."
+
+#: gui/editgamedialog.cpp:627
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -476,7 +480,7 @@ msgstr ""
 "Synchronizacja zapisanych stanów działa wyłącznie przy standardowych "
 "ścieżkach. Aby z niej korzystać należy używać domyślnych katalogów."
 
-#: gui/editgamedialog.cpp:647
+#: gui/editgamedialog.cpp:653
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Identyfikator jest już zajęty. Wybierz inny."
 
@@ -1698,10 +1702,6 @@ msgid ""
 msgstr ""
 "\n"
 "Różne ustawienia zostaną przywrócone."
-
-#: gui/options.cpp:2696
-msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "Ten katalog jest zabezpieczony przed zapisem. Wybierz inny."
 
 #: gui/options.cpp:2705
 msgid "Select directory for GUI themes"
