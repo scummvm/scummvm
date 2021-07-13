@@ -118,6 +118,7 @@ public:
 
 	void createMatte(Common::Rect &bbox);
 	Graphics::Surface *getMatte(Common::Rect &bbox);
+	void copyStretchImg(Graphics::Surface *surface, const Common::Rect &bbox);
 
 	bool hasField(int field) override;
 	Datum getField(int field) override;

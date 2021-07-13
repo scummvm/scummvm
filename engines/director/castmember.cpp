@@ -184,6 +184,12 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	// scale for drawing a different size sprite
+	copyStretchImg(widget->getSurface()->surfacePtr(), bbox);
+
+	return widget;
+}
+
+void BitmapCastMember::copyStretchImg(Graphics::Surface *surface, const Common::Rect &bbox) {
 	if (bbox.width() != _initialRect.width() || bbox.height() != _initialRect.height()) {
 
 		int scaleX = SCALE_THRESHOLD * _initialRect.width() / bbox.width();
@@ -193,21 +199,18 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 			if (g_director->_wm->_pixelformat.bytesPerPixel == 1) {
 				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
 					const byte *src = (const byte *)_img->getSurface()->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
-					*(byte *)widget->getSurface()->getBasePtr(x, y) = *src;
+					*(byte *)surface->getBasePtr(x, y) = *src;
 				}
 			} else {
 				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
 					const int *src = (const int *)_img->getSurface()->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
-					*(int *)widget->getSurface()->getBasePtr(x, y) = *src;
+					*(int *)surface->getBasePtr(x, y) = *src;
 				}
 			}
 		}
-
 	} else {
-		widget->getSurface()->blitFrom(*_img->getSurface());
+		surface->copyFrom(*_img->getSurface());
 	}
-
-	return widget;
 }
 
 void BitmapCastMember::createMatte(Common::Rect &bbox) {
@@ -216,27 +219,7 @@ void BitmapCastMember::createMatte(Common::Rect &bbox) {
 	Graphics::Surface tmp;
 	tmp.create(bbox.width(), bbox.height(), g_director->_pixelformat);
 
-	if (bbox.width() != _initialRect.width() || bbox.height() != _initialRect.height()) {
-
-		int scaleX = SCALE_THRESHOLD * _initialRect.width() / bbox.width();
-		int scaleY = SCALE_THRESHOLD * _initialRect.height() / bbox.height();
-
-		for (int y = 0, scaleYCtr = 0; y < bbox.height(); y++, scaleYCtr += scaleY) {
-			if (g_director->_wm->_pixelformat.bytesPerPixel == 1) {
-				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
-					const byte *src = (const byte *)_img->getSurface()->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
-					*(byte *)tmp.getBasePtr(x, y) = *src;
-				}
-			} else {
-				for (int x = 0, scaleXCtr = 0; x < bbox.width(); x++, scaleXCtr += scaleX) {
-					const int *src = (const int *)_img->getSurface()->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD);
-					*(int *)tmp.getBasePtr(x, y) = *src;
-				}
-			}
-		}
-	} else {
-		tmp.copyFrom(*_img->getSurface());
-	}
+	copyStretchImg(&tmp, bbox);
 
 	_noMatte = true;
 
