@@ -222,7 +222,7 @@ int utf8_isok(int c) {
 
 
 int ascii_getc(const char *s) {
-	return *((unsigned char *)s);
+	return *((const unsigned char *)s);
 }
 
 int ascii_getx(char **s) {
