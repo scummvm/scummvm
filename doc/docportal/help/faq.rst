@@ -159,7 +159,7 @@ Start by checking out our :doc:`../advanced_topics/understand_graphics` page. It
 
 Can I just make the image larger (for example, 1 pixel becomes 4 pixels) without any smoothing or antialiasing?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Yes. Using the **Normal (no scaling)** graphics mode in conjunction with pixel-perfect scaling will result in a larger image without any smoothing. The **2x** and **3x** graphics modes also do not involve any filtering.  Also check that **Filter graphics** is not enabled.
+Yes. Using the **OpenGL** graphics mode or the **SDL Surface** graphics mode with **Normal** scaler in conjunction with pixel-perfect stretch will result in a larger image without any smoothing. The **Normal** scaler also has options to scale by **2x**, **3x**, or **4x**. Also check that **Filter graphics** is not enabled. If you want to use aspect ratio correction, it is recommended to use the **OpenGL** graphics mode with the **Even pixels scaling** stretch mode.
 
 
 The game colors are messed up, how do I fix them?
