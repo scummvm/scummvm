@@ -268,6 +268,7 @@ public:
 	}
 
 	TileBank(Common::SeekableReadStream *stream);
+	~TileBank();
 
 	TileInfo *tile(uint16 index) {
 		return &_tileArray[index];

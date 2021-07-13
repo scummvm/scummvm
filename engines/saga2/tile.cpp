@@ -1299,6 +1299,10 @@ TileBank::TileBank(Common::SeekableReadStream *stream) {
 	}
 }
 
+TileBank::~TileBank() {
+	delete[] _tileArray;
+}
+
 MapHeader::MapHeader(Common::SeekableReadStream *stream) {
 	size = stream->readSint16LE();
 	edgeType = stream->readSint16LE();
