@@ -2039,7 +2039,8 @@ TaskResult HuntTask::update(void) {
 		}
 
 		//  If there is a subtask, update it
-		if (huntFlags & (huntGoto | huntWander)) subTask->update();
+		if ((huntFlags & (huntGoto | huntWander)) && subTask)
+			subTask->update();
 
 		//  If we're not at the target, we know the hunt task is not
 		//  done
@@ -2060,6 +2061,7 @@ void HuntTask::removeWanderTask(void) {
 void HuntTask::removeGotoTask(void) {
 	subTask->abortTask();
 	delete subTask;
+	subTask = nullptr;
 	huntFlags &= ~huntGoto;
 }
 
