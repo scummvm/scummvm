@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/mutex.h"
 #include "audio/mididrv.h"
+#include "audio/mididrv_ms.h"
 #include "audio/mixer.h"
 #include "audio/miles.h"
 
@@ -62,7 +63,7 @@ public:
 	void setBackgroundDelay(uint16 delay);
 
 	// Volume
-	void setUserVolume(uint16 volume);
+	virtual void setUserVolume(uint16 volume);
 	void setGameVolume(uint16 volume, uint16 time);
 
 private:
@@ -150,10 +151,12 @@ public:
 	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
 	void stopAllNotes(bool stopSustainedNotes) override;
 	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) override {
-		if (_milesMidiDriver)
-			_milesMidiDriver->processXMIDITimbreChunk(timbreListPtr, timbreListSize);
+		if (_milesXmidiTimbres)
+			_milesXmidiTimbres->processXMIDITimbreChunk(timbreListPtr, timbreListSize);
 	};
 	bool isReady() override;
+
+	void setUserVolume(uint16 volume) override;
 
 protected:
 	void updateVolume() override;
@@ -164,7 +167,8 @@ private:
 	// Output music type
 	uint8 _musicType;
 
-	Audio::MidiDriver_Miles_Midi *_milesMidiDriver;
+	MidiDriver_Multisource *_multisourceDriver;
+	MidiDriver_Miles_Xmidi_Timbres *_milesXmidiTimbres;
 };
 
 class MusicPlayerMac_t7g : public MusicPlayerMidi {
