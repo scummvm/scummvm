@@ -44,6 +44,7 @@ const RenderModeDescription g_renderModes[] = {
 	{ "2gs", "Apple IIgs", kRenderApple2GS },
 	{ "atari", "Atari ST", kRenderAtariST },
 	{ "macintosh", "Macintosh", kRenderMacintosh },
+	// I18N: Macintosh black-and-white
 	{ "macintoshbw", _s("Macintosh b/w"), kRenderMacintoshBW },
 	{nullptr, nullptr, kRenderDefault}
 };
