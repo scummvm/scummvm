@@ -1221,6 +1221,10 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 	default:
 		if (((keystate.ascii <= 255) && (Common::isAlnum(keystate.ascii))) || (keystate.ascii == ' ') ||
 		    (keystate.ascii == '-') || (keystate.ascii == '_')) {
+			// This conversion actually works if the isAlnum() check is removed (which locks out all characters > 127).
+			// However, some glyphs seem to missing from the font, so it might be best to keep the limitation...
+			keystate.ascii = Common::U32String(Common::String::format("%c", keystate.ascii), Common::kISO8859_1).encode(_vm->getLanguage() == Common::JA_JPN ? Common::kWindows932 : Common::kDos850).firstChar();
+
 			if (_textInputStringLength < save_title_size - 1) {
 				ch[0] = keystate.ascii;
 				tempWidth = _vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal);
@@ -1367,25 +1371,30 @@ void Interface::setSave(PanelButton *panelButton) {
 	_savePanel.currentButton = NULL;
 	uint titleNumber;
 	char *fileName;
+
+	char desc[28];
+	Common::strlcpy(desc, Common::U32String(_textInputString, Common::kDos850).encode(Common::kUtf8).c_str(), sizeof(desc));
+
 	switch (panelButton->id) {
 		case kTextSave:
 			if (_textInputStringLength == 0) {
 				break;
 			}
+
 			if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0)) {
-				if (_vm->locateSaveFile(_textInputString, titleNumber)) {
+				if (_vm->locateSaveFile(desc, titleNumber)) {
 					fileName = _vm->calcSaveFileName(_vm->getSaveFile(titleNumber)->slotNumber);
-					_vm->save(fileName, _textInputString);
+					_vm->save(fileName, desc);
 					_optionSaveFileTitleNumber = titleNumber;
 				} else {
 					fileName = _vm->calcSaveFileName(_vm->getNewSaveSlotNumber());
-					_vm->save(fileName, _textInputString);
+					_vm->save(fileName, desc);
 					_vm->fillSaveList();
 					calcOptionSaveSlider();
 				}
 			} else {
 				fileName = _vm->calcSaveFileName(_vm->getSaveFile(_optionSaveFileTitleNumber)->slotNumber);
-				_vm->save(fileName, _textInputString);
+				_vm->save(fileName, desc);
 			}
 			resetSaveReminder();
 

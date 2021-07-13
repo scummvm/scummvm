@@ -151,7 +151,14 @@ void SagaEngine::fillSaveList() {
 					i++;
 					continue;
 				}
-				strcpy(_saveFiles[_saveFilesCount].name, _saveHeader.name);
+
+				Common::CodePage cp = Common::kDos850;
+				if (getGameId() == GID_ITE) {
+					if (getLanguage() == Common::JA_JPN)
+						cp = Common::kWindows932;
+				}
+
+				Common::strlcpy(_saveFiles[_saveFilesCount].name, Common::U32String(_saveHeader.name).encode(cp).c_str(), sizeof(SaveFileData::name));
 				_saveFiles[_saveFilesCount].slotNumber = slotNumber;
 				delete in;
 				_saveFilesCount++;
