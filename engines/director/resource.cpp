@@ -292,8 +292,10 @@ void Window::loadEXEv3(Common::SeekableReadStream *stream) {
 }
 
 void Window::loadEXEv4(Common::SeekableReadStream *stream) {
-	if (stream->readUint32BE() != MKTAG('P', 'J', '9', '3'))
-		error("Invalid projector tag found in v4 EXE");
+	uint32 ver = stream->readUint32BE();
+
+	if (ver != MKTAG('P', 'J', '9', '3'))
+		error("Invalid projector tag found in v4 EXE [%s]", tag2str(ver));
 
 	uint32 rifxOffset = stream->readUint32LE();
 	/* uint32 fontMapOffset = */ stream->readUint32LE();
@@ -332,8 +334,10 @@ void Window::loadEXEv5(Common::SeekableReadStream *stream) {
 }
 
 void Window::loadEXEv7(Common::SeekableReadStream *stream) {
-	if (stream->readUint32LE() != MKTAG('P', 'J', '0', '0'))
-		error("Invalid projector tag found in v7 EXE");
+	uint32 ver = stream->readUint32LE();
+
+	if (ver != MKTAG('P', 'J', '0', '0') && ver != MKTAG('P', 'J', '0', '1'))
+		error("Invalid projector tag found in v7 EXE [%s]", tag2str(ver));
 
 	uint32 rifxOffset = stream->readUint32LE();
 	stream->readUint32LE(); // unknown
