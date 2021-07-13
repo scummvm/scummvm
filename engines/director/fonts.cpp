@@ -340,10 +340,11 @@ bool Cast::readFXmpLine(Common::SeekableReadStreamEndian &stream) {
 			}
 			byte toChar = atoi(tok.str.c_str());
 
-			// TODO: We should fill _charMap with mappings matching the current platform.
-			// We only have Mac fonts right now, though, so we'll always use the Win => Mac mappings.
-			if (fromPlatform == Common::kPlatformWindows) {
-				_charMap[fromChar] = toChar;
+			if (fromPlatform == Common::kPlatformMacintosh) {
+				_macCharsToWin[fromChar] = toChar;
+				debugC(3, kDebugLoading, "Cast::readFXmpLine: Mapping Mac char %d to Win char %d", fromChar, toChar);
+			} else {
+				_winCharsToMac[fromChar] = toChar;
 				debugC(3, kDebugLoading, "Cast::readFXmpLine: Mapping Win char %d to Mac char %d", fromChar, toChar);
 			}
 
