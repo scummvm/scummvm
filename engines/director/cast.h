@@ -117,7 +117,8 @@ public:
 	Common::Platform _platform;
 	uint16 _castLibID;
 
-	CharMap _charMap;
+	CharMap _macCharsToWin;
+	CharMap _winCharsToMac;
 	FontXPlatformMap _fontXPlatformMap;
 	FontMap _fontMap;
 
