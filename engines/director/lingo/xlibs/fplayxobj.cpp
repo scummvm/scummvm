@@ -46,9 +46,11 @@ static BuiltinProto builtins[] = {
 	{ "Volume",			FPlayXObj::b_volume,	-1,0, 200, FBLTIN },
 	{ "FileName",		FPlayXObj::b_filename,	-1,0, 200, FBLTIN },
 	{ "InputLevel",		FPlayXObj::b_inputlevel,-1,0, 200, FBLTIN },
-	{ "FSound",			FPlayXObj::b_fsound,	-1,0, 200, FBLTIN },
+	{ "FSound",			FPlayXObj::b_fsound,	 0,0, 200, FBLTIN },
 	{ 0, 0, 0, 0, 0, VOIDSYM }
 };
+
+static char currentSound[20];
 
 void FPlayXObj::initialize(int type) {
 	if (!g_lingo->_builtinCmds.contains("FPlay")) {
@@ -124,6 +126,10 @@ void FPlayXObj::b_fplay(int nargs) {
 			warning("FPlayXObj::b_fplay: failed to get audio stream");
 			return;
 		}
+
+		// update current playing sound
+		strcpy(currentSound, sndName.c_str());
+
 		sound->playStream(*as, 1);
 		delete ad;
 	}
@@ -160,9 +166,17 @@ void FPlayXObj::b_inputlevel(int nargs) {
 }
 
 void FPlayXObj::b_fsound(int nargs) {
-	g_lingo->printSTUBWithArglist("b_fsound", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
+	if (nargs != 0) {
+		warning("FPlayXObj::b_fsound: unhandled arguments");
+		g_lingo->dropStack(nargs);
+	}
+
+	DirectorSound *sound = g_director->getSoundManager();
+	if (sound->isChannelActive(1)) {
+		g_lingo->push(Datum(Common::String(currentSound)));
+	} else {
+		g_lingo->push(Datum("done"));
+	}
 }
 
 } // End of namespace Director
