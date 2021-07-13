@@ -616,7 +616,13 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
-			_savePathWidget->setLabel(dir.getPath());
+			if (dir.isWritable()) {
+				_savePathWidget->setLabel(dir.getPath());
+			} else {
+				MessageDialog error(_("The chosen directory cannot be written to. Please select another one."));
+				error.runModal();
+				return;
+			}
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 			MessageDialog warningMessage(_("Saved games sync feature doesn't work with non-default directories. If you want your saved games to sync, use default directory."));
 			warningMessage.runModal();
