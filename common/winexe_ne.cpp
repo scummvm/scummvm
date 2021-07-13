@@ -234,4 +234,34 @@ String NEResources::loadString(uint32 stringID) {
 	return string;
 }
 
+WinResources::VersionInfo *NEResources::parseVersionInfo(SeekableReadStream *res) {
+	VersionInfo *info = new VersionInfo;
+
+	while (res->pos() < res->size() && !res->eos()) {
+		while (res->pos() % 4 && !res->eos()) // Pad to 4
+			res->readByte();
+
+		/* uint16 len = */ res->readUint16LE();
+		/* uint16 valLen = */ res->readUint16LE();
+		uint16 c;
+
+		Common::String key;
+		while ((c = res->readByte()) != 0 && !res->eos())
+			key += c;
+
+		while (res->pos() % 4 && !res->eos()) // Pad to 4
+			res->readByte();
+
+		if (res->eos())
+			break;
+
+		if (key == "VS_VERSION_INFO") {
+			if (!info->readVSVersionInfo(res))
+				return info;
+		}
+	}
+
+	return info;
+}
+
 } // End of namespace Common

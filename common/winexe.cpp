@@ -218,69 +218,6 @@ WinResources::VersionInfo *WinResources::getVersionResource(const WinResourceID 
 		return info;
 }
 
-WinResources::VersionInfo *WinResources::parseVersionInfo(SeekableReadStream *res) {
-	VersionInfo *info = new VersionInfo;
-
-	while (res->pos() < res->size() && !res->eos()) {
-		while (res->pos() % 4 && !res->eos()) // Pad to 4
-			res->readByte();
-
-		/* uint16 len = */ res->readUint16LE();
-		uint16 valLen = res->readUint16LE();
-		uint16 type = res->readUint16LE();
-		uint16 c;
-
-		Common::U32String key;
-		while ((c = res->readUint16LE()) != 0 && !res->eos())
-			key += c;
-
-		while (res->pos() % 4 && !res->eos()) // Pad to 4
-			res->readByte();
-
-		if (res->eos())
-			break;
-
-		if (type != 0) {	// text
-			Common::U32String value;
-			for (int j = 0; j < valLen; j++)
-				value += res->readUint16LE();
-
-			info->hash.setVal(key.encode(), value);
-		} else {
-			if (key == "VS_VERSION_INFO") {
-				// Signature check
-				if (res->readUint32LE() != 0xFEEF04BD)
-					return info;
-
-				res->readUint32LE(); // struct version
-
-				// The versions are stored a bit weird
-				info->fileVersion[1] = res->readUint16LE();
-				info->fileVersion[0] = res->readUint16LE();
-				info->fileVersion[3] = res->readUint16LE();
-				info->fileVersion[2] = res->readUint16LE();
-				info->productVersion[1] = res->readUint16LE();
-				info->productVersion[0] = res->readUint16LE();
-				info->productVersion[3] = res->readUint16LE();
-				info->productVersion[2] = res->readUint16LE();
-
-				info->fileFlagsMask = res->readUint32LE();
-				info->fileFlags = res->readUint32LE();
-				info->fileOS = res->readUint32LE();
-				info->fileType = res->readUint32LE();
-				info->fileSubtype = res->readUint32LE();
-				info->fileDate[0] = res->readUint32LE();
-				info->fileDate[1] = res->readUint32LE();
-
-				info->hash.setVal("File:", Common::String::format("%d.%d.%d.%d", info->fileVersion[0], info->fileVersion[1], info->fileVersion[2], info->fileVersion[3]));
-				info->hash.setVal("Prod:", Common::String::format("%d.%d.%d.%d", info->productVersion[0], info->productVersion[1], info->productVersion[2], info->productVersion[3]));
-			}
-		}
-	}
-
-	return info;
-}
-
 WinResources::VersionInfo::VersionInfo() {
 	fileVersion[0] = fileVersion[1] = fileVersion[2] = fileVersion[3] = 0;
 	productVersion[0] = productVersion[1] = productVersion[2] = productVersion[3] = 0;
@@ -290,6 +227,38 @@ WinResources::VersionInfo::VersionInfo() {
 	fileType = 0;
 	fileSubtype = 0;
 	fileDate[0] = fileDate[1] = 0;
+}
+
+
+bool WinResources::VersionInfo::readVSVersionInfo(SeekableReadStream *res) {
+	// Signature check
+	if (res->readUint32LE() != 0xFEEF04BD)
+		return false;
+
+	res->readUint32LE(); // struct version
+
+	// The versions are stored a bit weird
+	fileVersion[1] = res->readUint16LE();
+	fileVersion[0] = res->readUint16LE();
+	fileVersion[3] = res->readUint16LE();
+	fileVersion[2] = res->readUint16LE();
+	productVersion[1] = res->readUint16LE();
+	productVersion[0] = res->readUint16LE();
+	productVersion[3] = res->readUint16LE();
+	productVersion[2] = res->readUint16LE();
+
+	fileFlagsMask = res->readUint32LE();
+	fileFlags = res->readUint32LE();
+	fileOS = res->readUint32LE();
+	fileType = res->readUint32LE();
+	fileSubtype = res->readUint32LE();
+	fileDate[0] = res->readUint32LE();
+	fileDate[1] = res->readUint32LE();
+
+	hash.setVal("File:", Common::U32String::format("%d.%d.%d.%d", fileVersion[0], fileVersion[1], fileVersion[2], fileVersion[3]));
+	hash.setVal("Prod:", Common::U32String::format("%d.%d.%d.%d", productVersion[0], productVersion[1], productVersion[2], productVersion[3]));
+
+	return true;
 }
 
 } // End of namespace Common
