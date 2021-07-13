@@ -327,6 +327,11 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 	return 0;
 }
 
+bool MainActor::removeItemCru(Item *item) {
+	warning("TODO: Implement MainActor::removeItemCru");
+	return false;
+}
+
 const ShapeInfo *MainActor::getShapeInfoFromGameInstance() const {
 	const ShapeInfo *info = Item::getShapeInfoFromGameInstance();
 
@@ -926,6 +931,21 @@ uint32 MainActor::I_switchMap(const uint8 *args,
 	}
 	return 0;
 }
+
+uint32 MainActor::I_removeItemCru(const uint8 *args,
+								 unsigned int /*argsize*/) {
+	MainActor *av = getMainActor();
+	ARG_ITEM_FROM_ID(item);
+
+	if (!av || !item)
+		return 0;
+
+	if (av->removeItemCru(item))
+		return 1;
+
+	return 0;
+}
+
 
 void MainActor::useInventoryItem(uint32 shapenum) {
 	Item *item = getFirstItemWithShape(shapenum, true);

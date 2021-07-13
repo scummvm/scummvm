@@ -83,6 +83,7 @@ public:
 	bool loadLists(Common::ReadStream *rs, uint32 version);
 
 	INTRINSIC(I_true);
+	INTRINSIC(I_false);
 	INTRINSIC(I_dummyProcess);
 	INTRINSIC(I_getName);
 	INTRINSIC(I_urandom);

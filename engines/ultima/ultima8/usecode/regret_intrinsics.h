@@ -85,7 +85,7 @@ Intrinsic RegretIntrinsics[] = {
 	MainActor::I_getMana, // Intrinsic030()
 	Item::I_getFamily, // Intrinsic031()
 	Actor::I_destroyContents, // Intrinsic032()
-	0, // Intrinsic033() Item::I_SetVolumeForItemSFX
+	0, // Intrinsic033() AudioProcess::I_setVolumeForItemSFX
 	Item::I_getDirToItem, // Intrinsic034()
 	AudioProcess::I_isSFXPlayingForObject, // Intrinsic035()
 	Item::I_getRangeIfVisible, // Intrinsic036()
@@ -97,7 +97,7 @@ Intrinsic RegretIntrinsics[] = {
 	MainActor::I_addItemCru, // Intrinsic03C()
 	Actor::I_getMap, // Intrinsic03D()
 	Item::I_cast, // Intrinsic03E()
-	0, // Intrinsic03F()
+	0, // Intrinsic03F() - CameraProcess::I_somethingAboutCameraUpdate, not needed
 	// 0040
 	AudioProcess::I_stopSFXCru, // Intrinsic040()
 	Item::I_isOn, // Intrinsic041()
@@ -144,7 +144,7 @@ Intrinsic RegretIntrinsics[] = {
 	Kernel::I_getNumProcesses, // Intrinsic068()
 	Item::I_getCY, // Intrinsic069()
 	0, // Intrinsic06A() I_isAnimDisabled
-	0, // Intrinsic06B()
+	0, // Intrinsic06B() I_resetKeyboardState?
 	MusicProcess::I_pauseMusic, // Intrinsic06C()
 	MovieGump::I_playMovieCutsceneRegret, // Intrinsic06D()
 	MusicProcess::I_unpauseMusic, // Intrinsic06E()
@@ -152,11 +152,11 @@ Intrinsic RegretIntrinsics[] = {
 	// 0070
 	Ultima8Engine::I_setCruStasis, // Intrinsic070()
 	Ultima8Engine::I_clrCruStasis, // Intrinsic071()
-	0, // Intrinsic072() PaletteFaderProcess::I_jumpToColor
+	PaletteFaderProcess::I_jumpToAllGivenColor, // Intrinsic072() PaletteFaderProcess::I_jumpToColor
 	PaletteFaderProcess::I_fadeFromBlack, // Intrinsic073()
 	Actor::I_isDead, // Intrinsic074()
 	Actor::I_getNpcNum, // Intrinsic075()
-	0, // Intrinsic076() - null intrinsic
+	UCMachine::I_false, // Intrinsic076() - null intrinsic
 	UCMachine::I_true, // Actually Game::I_isViolenceEnabled
 	Item::I_unequip, // Intrinsic078()
 	Item::I_andStatus, // Intrinsic079()
@@ -172,7 +172,7 @@ Intrinsic RegretIntrinsics[] = {
 	PaletteFaderProcess::I_jumpToAllBlack, // Intrinsic082()
 	0, // I_setUnkFlagA4()
 	0, // I_clearUnkFlagA4()
-	0, // Intrinsic085()
+	MainActor::I_switchMap, // Intrinsic085()
 	MainActor::I_teleportToEgg, // Intrinsic086()
 	PaletteFaderProcess::I_fadeFromBlack, // Intrinsic087()
 	Actor::I_clrImmortal, // Intrinsic088()
@@ -223,8 +223,8 @@ Intrinsic RegretIntrinsics[] = {
 	Item::I_hurl, // Intrinsic0B2()
 	Item::I_andStatus, // Intrinsic0B3()
 	Item::I_getDirToCoords, // Intrinsic0B4()
-	0, // MainActor::I_addItemSimple()
-	0, // I_updateInventoryUI() - probably not needed?
+	MainActor::I_removeItemCru, // Intrinsic0B5()
+	UCMachine::I_true, // I_updateInventoryUI() - probably not needed?
 	Actor::I_getNpcNum, // Intrinsic0B7()
 	Item::I_getCY, // Intrinsic0B8()
 	Item::I_isOn, // Intrinsic0B9()
@@ -237,7 +237,7 @@ Intrinsic RegretIntrinsics[] = {
 	// 00C0
 	ComputerGump::I_readComputer, // Intrinsic0C0()
 	UCMachine::I_numToStr, // Intrinsic0C1()
-	0, // Intrinsic0C2() - return 0
+	UCMachine::I_false, // Intrinsic0C2() - return 0
 	Actor::I_getDir, // Intrinsic0C3()
 	Item::I_getQHi, // Intrinsic0C4()
 	Item::I_setQuality, // Intrinsic0C5()
@@ -322,7 +322,7 @@ Intrinsic RegretIntrinsics[] = {
 	// 0110
 	Item::I_isOn, // Intrinsic110()
 	MainActor::I_hasKeycard, // Intrinsic111()
-	0, // Intrinsic112() - null function (return 0)
+	UCMachine::I_false, // Intrinsic112() - null function (return 0)
 	Actor::I_isDead, // Intrinsic113()
 	Actor::I_clrImmortal, // Intrinsic114()
 	UCMachine::I_numToStr, // Intrinsic115()
@@ -389,7 +389,7 @@ Intrinsic RegretIntrinsics[] = {
 	Egg::I_getEggXRange, // Intrinsic14F()
 	// 0150
 	Actor::I_clrInCombat, // Intrinsic150()
-	0, // Intrinsic151() PaletteFaderProcess::I_jumpToColor
+	PaletteFaderProcess::I_jumpToAllGivenColor, // Intrinsic151() PaletteFaderProcess::I_jumpToColor
 	Item::I_setFrame, // Intrinsic152()
 	UCMachine::I_numToStr, // Intrinsic153()
 	Actor::I_getDir, // Intrinsic154()
@@ -427,6 +427,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Actor::I_getUnkByte,
 	Item::I_getX,
 	Item::I_getY,
+	// 0010
 	AudioProcess::I_playSFXCru,
 	Item::I_getShape,
 	Item::I_explode,
@@ -443,6 +444,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_push,
 	Item::I_getEtherealTop,
 	Item::I_getQLo,
+	// 0020
 	Item::I_setQLo,
 	Item::I_getQHi,
 	Item::I_setQHi,
@@ -459,6 +461,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_isCompletelyOn,
 	Item::I_popToContainer,
 	Actor::I_getHp,
+	// 0030
 	MainActor::I_getMana,
 	Item::I_getFamily,
 	Actor::I_destroyContents,
@@ -475,6 +478,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Kernel::I_resetRef,
 	Egg::I_getEggId,
 	MainActor::I_addItemCru,
+	// 0040
 	Actor::I_getMap,
 	Item::I_cast,
 	0,
@@ -491,6 +495,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_getQHi,
 	Item::I_isOn,
 	Item::I_getQHi,
+	// 0050
 	Item::I_isOn,
 	Item::I_getQHi,
 	Actor::I_getCurrentActivityNo,
@@ -507,6 +512,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_use,
 	Item::I_setUnkEggType,
 	MusicProcess::I_playMusic,
+	// 0060
 	Item::I_getSurfaceWeight,
 	Item::I_isCentreOn,
 	Item::I_setFrame,
@@ -523,22 +529,24 @@ Intrinsic RegretDemoIntrinsics[] = {
 	0,
 	0,
 	CruStatusGump::I_hideStatusGump,
+	// 0070
 	Actor::I_turnToward,
 	ComputerGump::I_readComputer,
 	MovieGump::I_playMovieCutsceneRegret,
-	0,
+	UCMachine::I_true, // update inventory ui updates (not needed)
 	MusicProcess::I_pauseMusic,
 	MusicProcess::I_unpauseMusic,
 	Item::I_isInNpc,
 	Ultima8Engine::I_setCruStasis,
 	Ultima8Engine::I_clrCruStasis,
-	0, // jump to color
+	PaletteFaderProcess::I_jumpToAllGivenColor,
 	PaletteFaderProcess::I_fadeFromBlack,
 	Actor::I_isDead,
 	Actor::I_getNpcNum,
-	0,
+	UCMachine::I_false,  // null intrinsic (returns 0)
 	UCMachine::I_true,
 	Item::I_unequip,
+	// 0080
 	Item::I_andStatus,
 	Item::I_move,
 	Ultima8Engine::I_getUnkCrusaderFlag,
@@ -555,6 +563,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	PaletteFaderProcess::I_fadeFromBlack,
 	Actor::I_clrImmortal,
 	Actor::I_setActivity,
+	// 0090
 	Item::I_getQuality,
 	Item::I_setQuality,
 	MainActor::I_getMaxEnergy,
@@ -571,6 +580,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_hurl,
 	Actor::I_getNpcNum,
 	Ultima8Engine::I_moveKeyDownRecently,
+	// 00A0
 	MainActor::I_teleportToEgg,
 	Actor::I_createActor,
 	Actor::I_clrInCombat,
@@ -587,6 +597,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_overlaps,
 	Item::I_isOn,
 	Egg::I_getEggXRange,
+	// 00B0
 	World::I_clrAlertActive,
 	PaletteFaderProcess::I_fadeToGivenColor,
 	Actor::I_setDead,
@@ -603,6 +614,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	World::I_setAlertActive,
 	Ultima8Engine::I_getAvatarInStasis,
 	MainActor::I_addItemCru,
+	// 00C0
 	Actor::I_getLastAnimSet,
 	Item::I_getCY,
 	CurrentMap::I_canExistAt,
@@ -619,6 +631,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	0,
 	Actor::I_getNpcNum,
 	Item::I_getCY,
+	// 00D0
 	Item::I_isOn,
 	Item::I_getFootpadData,
 	Actor::I_isDead,
@@ -627,7 +640,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	KeypadGump::I_showKeypad,
 	Item::I_andStatus,
 	UCMachine::I_numToStr,
-	0,
+	UCMachine::I_false, // null intrinsic
 	Actor::I_getDir,
 	Item::I_getQHi,
 	Item::I_setQuality,
@@ -635,6 +648,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_hurl,
 	Actor::I_addHp,
 	CruHealerProcess::I_create,
+	// 00E0
 	Item::I_equip,
 	Item::I_setBroken,
 	Item::I_isOn,
@@ -651,6 +665,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Actor::I_getDefaultActivity0,
 	Actor::I_getDefaultActivity1,
 	Actor::I_getDefaultActivity2,
+	// 00F0
 	Actor::I_getLastAnimSet,
 	Item::I_getQLo,
 	Item::I_getQHi,
@@ -667,6 +682,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Actor::I_getNpcNum,
 	Item::I_hurl,
 	Actor::I_getNpcNum,
+	// 0100
 	Item::I_hurl,
 	Actor::I_getNpcNum,
 	Item::I_hurl,
@@ -683,6 +699,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Actor::I_setDead,
 	Item::I_getQLo,
 	Actor::I_setDead,
+	// 0110
 	Actor::I_getMaxHp,
 	Actor::I_setHp,
 	Item::I_getQLo,
@@ -699,6 +716,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_isOn,
 	Item::I_getQHi,
 	Item::I_isOn,
+	// 0120
 	Item::I_getQHi,
 	Item::I_hurl,
 	Actor::I_getNpcNum,
@@ -706,7 +724,7 @@ Intrinsic RegretDemoIntrinsics[] = {
 	Item::I_hurl,
 	Item::I_isOn,
 	MainActor::I_hasKeycard,
-	0,
+	UCMachine::I_false, // null intrinsic
 	Actor::I_isDead,
 	Actor::I_clrImmortal,
 	UCMachine::I_numToStr,

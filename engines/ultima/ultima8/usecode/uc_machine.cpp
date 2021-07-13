@@ -2411,6 +2411,10 @@ uint32 UCMachine::I_true(const uint8 * /*args*/, unsigned int /*argsize*/) {
 	return 1;
 }
 
+uint32 UCMachine::I_false(const uint8 * /*args*/, unsigned int /*argsize*/) {
+	return 1;
+}
+
 uint32 UCMachine::I_dummyProcess(const uint8 * /*args*/, unsigned int /*argsize*/) {
 	return Kernel::get_instance()->addProcess(new DelayProcess(4));
 }
