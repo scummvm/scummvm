@@ -56,7 +56,7 @@ using namespace AGS::Engine;
 
 extern void ags_domouse(int str);
 
-// The _GP(mouse). functions are static so the script doesn't pass
+// The mouse functions are static so the script doesn't pass
 // in an object parameter
 void Mouse_SetVisible(int isOn) {
 	if (isOn)

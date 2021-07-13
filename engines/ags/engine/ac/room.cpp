@@ -171,7 +171,7 @@ const char *Room_GetMessages(int index) {
 
 // Makes sure that room background and walk-behind mask are matching room size
 // in game resolution coordinates; in other words makes graphics appropriate
-// for display in the _GP(game).
+// for display in the game.
 void convert_room_background_to_game_res() {
 	if (!_GP(game).AllowRelativeRes() || !_GP(thisroom).IsRelativeRes())
 		return;

@@ -880,7 +880,7 @@ Bitmap *create_savegame_screenshot() {
 		usehit = viewport.GetHeight();
 
 	if ((_GP(play).screenshot_width < 16) || (_GP(play).screenshot_height < 16))
-		quit("!Invalid _GP(game).screenshot_width/height, must be from 16x16 to screen res");
+		quit("!Invalid game.screenshot_width/height, must be from 16x16 to screen res");
 
 	Bitmap *screenshot = CopyScreenIntoBitmap(usewid, usehit);
 	screenshot->GetAllegroBitmap()->makeOpaque();
@@ -903,7 +903,7 @@ void save_game(int slotn, const char *descript) {
 	}
 
 	if (_G(platform)->GetDiskFreeSpaceMB() < 2) {
-		Display("ERROR: There is not enough disk space free to save the _GP(game). Clear some disk space and try again.");
+		Display("ERROR: There is not enough disk space free to save the game. Clear some disk space and try again.");
 		return;
 	}
 

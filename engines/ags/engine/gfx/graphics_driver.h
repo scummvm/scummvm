@@ -167,7 +167,7 @@ public:
 	// the final resolution, as opposed to drawing to native-resolution buffer
 	// and scaling to final frame. The effect may be that sprites that are
 	// drawn with additional fractional scaling will appear more detailed than
-	// the rest of the _GP(game). The effect is stronger for the low-res games being
+	// the rest of the game. The effect is stronger for the low-res games being
 	// rendered in the high-res mode.
 	virtual void RenderSpritesAtScreenResolution(bool enabled, int supersampling = 1) = 0;
 	// TODO: move fade-in/out/boxout functions out of the graphics driver!! make everything render through

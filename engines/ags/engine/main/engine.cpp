@@ -537,7 +537,7 @@ int engine_check_disk_space() {
 
 int engine_check_font_was_loaded() {
 	if (!font_first_renderer_loaded()) {
-		_G(platform)->DisplayAlert("No game fonts found. At least one font is required to run the _GP(game).");
+		_G(platform)->DisplayAlert("No game fonts found. At least one font is required to run the game.");
 		_G(proper_exit) = 1;
 		return EXIT_ERROR;
 	}

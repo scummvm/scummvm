@@ -359,7 +359,7 @@ void GUIListBox::ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) {
 		Items[i] = StrUtil::ReadString(in);
 	// TODO: investigate this, it might be unreasonable to save and read
 	// savegame index like that because list of savegames may easily change
-	// in between writing and restoring the _GP(game). Perhaps clearing and forcing
+	// in between writing and restoring the game. Perhaps clearing and forcing
 	// this list to update on load somehow may make more sense.
 	if (ListBoxFlags & kListBox_SvgIndex)
 		for (int i = 0; i < ItemCount; ++i)
