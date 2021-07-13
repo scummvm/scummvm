@@ -77,7 +77,7 @@ Cast::Cast(Movie *movie, uint16 castLibID, bool isShared) {
 
 	_castArchive = nullptr;
 	_version = 0;
-	_platform = g_director->getPlatform();
+	_platform = Common::kPlatformMacintosh;
 
 	_stageColor = 0;
 

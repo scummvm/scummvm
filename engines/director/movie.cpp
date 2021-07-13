@@ -66,6 +66,7 @@ Movie::Movie(Window *window) {
 	_currentHandlingChannelId = 0;
 
 	_version = 0;
+	_platform = Common::kPlatformMacintosh;
 	_allowOutdatedLingo = false;
 
 	_movieArchive = nullptr;
