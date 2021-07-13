@@ -359,7 +359,7 @@ void GroovieEngine::syncSoundSettings() {
 	// we have to use just one volume setting for videos.
 	// We use "speech" because most users will want to change the videos
 	// volume when they can't hear the speech because of the music.
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType,
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType,
 		mute ? 0 : ConfMan.getInt("speech_volume"));
 }
 

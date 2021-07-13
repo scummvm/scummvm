@@ -533,7 +533,7 @@ void VDXPlayer::chunkSound(Common::ReadStream *in) {
 	if (!_audioStream) {
 		_audioStream = Audio::makeQueuingAudioStream(22050, false);
 		Audio::SoundHandle sound_handle;
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
+		g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &sound_handle, _audioStream);
 	}
 
 	byte *data = (byte *)malloc(60000);
