@@ -258,10 +258,11 @@ void GridItemTray::handleMouseMoved(int x, int y, int button) {
 Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 	Graphics::ManagedSurface *surf = nullptr;
 	const Graphics::Surface *srcSurface = nullptr;
+	const String path = String::format("%s/%s", ConfMan.get("iconpath").c_str(), name.c_str());
 	if (name.hasSuffix(".png")) {
 #ifdef USE_PNG
 		Image::PNGDecoder decoder;
-		Common::FSNode fileNode(name);
+		Common::FSNode fileNode(path);
 		Common::SeekableReadStream *stream = fileNode.createReadStream();
 		if (stream) {
 			if (!decoder.loadStream(*stream))
@@ -282,7 +283,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 #endif
 	} else if (name.hasSuffix(".svg")) {
 		Graphics::SVGBitmap *image = nullptr;
-		Common::FSNode fileNode(name);
+		Common::FSNode fileNode(path);
 		Common::SeekableReadStream *stream = fileNode.createReadStream();
 		if (stream) {
 			image = new Graphics::SVGBitmap(stream);
@@ -352,11 +353,9 @@ GridWidget::~GridWidget() {
 }
 
 const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name) {
-	String path = String::format("%s/%s", _iconDir.c_str(), name.c_str());
-	
 	for (Common::Array<GridItemInfo>::iterator l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
 		if (l->thumbPath == name) {
-			return _loadedSurfaces[path];
+			return _loadedSurfaces[name];
 		}
 	}
 	return nullptr;
@@ -418,19 +417,17 @@ void GridWidget::reloadThumbnails() {
 	Graphics::ManagedSurface *surf = nullptr;
 	String gameid;
 	String engineid;
-	String path;
 	
 	for (Common::Array<GridItemInfo>::iterator iter = _visibleEntries.begin(); iter != _visibleEntries.end(); ++iter) {
-		path = String::format("%s/%s", _iconDir.c_str(), iter->thumbPath.c_str());
-		if (!_loadedSurfaces.contains(path)) {
-			surf = loadSurfaceFromFile(path);
+		if (!_loadedSurfaces.contains(iter->thumbPath)) {
+			surf = loadSurfaceFromFile(iter->thumbPath);
 			if (surf) {
 				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512));
-				_loadedSurfaces[path] = scSurf;
+				_loadedSurfaces[iter->thumbPath] = scSurf;
 				surf->free();
 				delete surf;
 			} else {
-				_loadedSurfaces[path] = nullptr;
+				_loadedSurfaces[iter->thumbPath] = nullptr;
 			}
 		}
 	}
@@ -439,7 +436,7 @@ void GridWidget::reloadThumbnails() {
 void GridWidget::loadFlagIcons() {
 	const Common::LanguageDescription *l = Common::g_languages;
 	for (; l->code; ++l) {
-		String path = String::format("%s/%s.svg", _iconDir.c_str(), l->code);
+		String path = String::format("flags/%s.svg", l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
@@ -455,7 +452,7 @@ void GridWidget::loadFlagIcons() {
 void GridWidget::loadPlatformIcons() {
 	const Common::PlatformDescription *l = Common::g_platforms;
 	for (; l->abbrev; ++l) {
-		String path = String::format("%s/%s.png", _iconDir.c_str(), l->abbrev);
+		String path = String::format("platforms/%s.png", l->abbrev);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
