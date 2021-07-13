@@ -927,7 +927,7 @@ void Gui::updateExit(ObjID obj) {
 
 void Gui::printText(const Common::String &text) {
 	debugC(1, kMVDebugGUI, "Print Text: %s", text.c_str());
-	_consoleText->printLine(text, _outConsoleWindow->getDimensions().width());
+	_consoleText->printLine(text, _outConsoleWindow->getInnerDimensions().width());
 }
 
 void Gui::showPrebuiltDialog(PrebuiltDialogs type) {
