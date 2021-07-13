@@ -184,6 +184,28 @@ WinResources *WinResources::createFromEXE(const String &fileName) {
 	return nullptr;
 }
 
+WinResources *WinResources::createFromEXE(SeekableReadStream *stream) {
+	WinResources *exe;
+
+	// First try loading via the NE code
+	stream->seek(0);
+	exe = new Common::NEResources();
+	if (exe->loadFromEXE(stream, DisposeAfterUse::NO)) {
+		return exe;
+	}
+	delete exe;
+
+	// Then try loading via the PE code
+	stream->seek(0);
+	exe = new Common::PEResources();
+	if (exe->loadFromEXE(stream, DisposeAfterUse::NO)) {
+		return exe;
+	}
+	delete exe;
+
+	return nullptr;
+}
+
 WinResources::VersionInfo *WinResources::parseVersionInfo(SeekableReadStream *res) {
 	VersionInfo *info = new VersionInfo;
 

@@ -25,6 +25,7 @@
 
 #include "common/hash-str.h"
 #include "common/str.h"
+#include "common/types.h"
 
 namespace Common {
 
@@ -119,7 +120,7 @@ public:
 	virtual bool loadFromCompressedEXE(const String &fileName);
 
 	/** Load from a stream. */
-	virtual bool loadFromEXE(SeekableReadStream *stream) = 0;
+	virtual bool loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle = DisposeAfterUse::YES) = 0;
 
 	/** Return a list of IDs for a given type. */
 	virtual const Array<WinResourceID> getIDList(const WinResourceID &type) const = 0;
@@ -139,6 +140,7 @@ public:
 	}
 
 	static WinResources *createFromEXE(const String &fileName);
+	static WinResources *createFromEXE(SeekableReadStream *stream);
 
 	typedef Common::HashMap<Common::String, Common::U32String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VersionHash;
 

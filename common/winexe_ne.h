@@ -59,7 +59,7 @@ public:
 	using WinResources::loadFromEXE;
 
 	/** Load from a stream. */
-	bool loadFromEXE(SeekableReadStream *stream);
+	bool loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle = DisposeAfterUse::YES);
 
 	/** Return a list of resources for a given type. */
 	const Array<WinResourceID> getIDList(const WinResourceID &type) const;
@@ -86,6 +86,7 @@ private:
 	};
 
 	SeekableReadStream *_exe;        ///< Current file.
+	DisposeAfterUse::Flag _disposeFileHandle;
 
 	/** All resources. */
 	List<Resource> _resources;

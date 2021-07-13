@@ -40,10 +40,12 @@ PEResources::~PEResources() {
 void PEResources::clear() {
 	_sections.clear();
 	_resources.clear();
-	delete _exe; _exe = nullptr;
+	if (_disposeFileHandle == DisposeAfterUse::YES)
+		delete _exe;
+	_exe = nullptr;
 }
 
-bool PEResources::loadFromEXE(SeekableReadStream *stream) {
+bool PEResources::loadFromEXE(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
 	clear();
 
 	if (!stream)
