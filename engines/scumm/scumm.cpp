@@ -562,6 +562,12 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 			_renderMode = Common::kRenderDefault;
 		break;
 
+	case Common::kRenderMacintoshBW:
+		if (_game.platform != Common::kPlatformMacintosh || (_game.id != GID_LOOM && _game.id != GID_INDY3)) {
+			_renderMode = Common::kRenderDefault;
+		}
+		break;
+
 	default:
 		break;
 	}
@@ -1384,6 +1390,10 @@ Common::Error ScummEngine::init() {
 "instruments from. Music will be disabled."), _("OK"));
 				dialog.runModal();
 			}
+		}
+
+		if (!_macScreen && _renderMode == Common::kRenderMacintoshBW) {
+			_renderMode = Common::kRenderDefault;
 		}
 	}
 
