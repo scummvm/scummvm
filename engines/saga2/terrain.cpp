@@ -27,15 +27,13 @@
 #include "saga2/saga2.h"
 #include "saga2/idtypes.h"
 #include "saga2/tile.h"
+#include "saga2/tileline.h"
 #include "saga2/actor.h"
 
 namespace Saga2 {
 
 
 extern WorldMapData     *mapList;
-
-#define VISUAL1 1
-#define VISUAL2 0
 
 static int16        prevMapNum;
 static TilePoint    prevCoords = Nowhere;
@@ -316,31 +314,17 @@ uint32 volumeTerrain(
 	volume.min.z = pos.z;
 	volume.max.z = pos.z + objHeight;
 
-	/*
-	#if VISUAL1
-	    void TPLine( const TilePoint &start, const TilePoint &stop, int16 color );
-	    {
-	            TilePoint   minUminV(volume.min.u,
-	                                 volume.min.v,
-	                                 volume.min.z );
-	            TilePoint   maxUminV(volume.max.u,
-	                                 volume.min.v,
-	                                 volume.min.z );
-	            TilePoint   maxUmaxV(volume.max.u,
-	                                 volume.max.v,
-	                                 volume.min.z );
-	            TilePoint   minUmaxV(volume.min.u,
-	                                 volume.max.v,
-	                                 volume.min.z );
+	if (debugChannelSet(-1, kDebugTiles)) {
+		TilePoint minUminV(volume.min.u, volume.min.v, volume.min.z);
+		TilePoint maxUminV(volume.max.u, volume.min.v, volume.min.z);
+		TilePoint maxUmaxV(volume.max.u, volume.max.v, volume.min.z);
+		TilePoint minUmaxV(volume.min.u, volume.max.v, volume.min.z);
 
-	            TPLine( minUminV, maxUminV, 7 );
-	            TPLine( maxUminV, maxUmaxV, 7 );
-	            TPLine( maxUmaxV, minUmaxV, 7 );
-	            TPLine( minUmaxV, minUminV, 7 );
-
-	    }
-	#endif
-	*/
+		TPLine(minUminV, maxUminV, 7);
+		TPLine(maxUminV, maxUmaxV, 7);
+		TPLine(maxUmaxV, minUmaxV, 7);
+		TPLine(minUmaxV, minUminV, 7);
+	}
 
 	terrain = volumeTerrain(mapNum, volume);
 
@@ -382,11 +366,8 @@ uint32 lineTerrain(
 	int32       curZ,
 	            zStep;
 
-#if DEBUG && VISUAL2
 	TilePoint   prevPoint = from;
 	TilePoint   tempPoint;
-	void TPLine(const TilePoint & start, const TilePoint & stop);
-#endif
 
 	//  Calculate starting subtile coordinates
 	curSubTile.u = from.u >> kSubTileShift;
@@ -458,13 +439,14 @@ uint32 lineTerrain(
 
 			subTileMask_ |= (uMask[curSubTile.u & kSubTileMask] &
 			                vMask[curSubTile.v & kSubTileMask]);
-#if DEBUG && VISUAL2
-			tempPoint.u = curSubTile.u << kTileSubShift;
-			tempPoint.v = curSubTile.v << kTileSubShift;
-			tempPoint.z = curSubTile.z;
-			TPLine(prevPoint, tempPoint);
-			prevPoint = tempPoint;
-#endif
+
+			if (debugChannelSet(-1, kDebugTiles)) {
+				tempPoint.u = curSubTile.u << kTileSubShift;
+				tempPoint.v = curSubTile.v << kTileSubShift;
+				tempPoint.z = curSubTile.z;
+				TPLine(prevPoint, tempPoint);
+				prevPoint = tempPoint;
+			}
 
 			errorTerm += vDiff;
 			if (errorTerm >= uDiff) {
@@ -489,14 +471,15 @@ uint32 lineTerrain(
 
 				subTileMask_ |= (uMask[curSubTile.u & kSubTileMask] &
 				                vMask[curSubTile.v & kSubTileMask]);
-#if DEBUG && VISUAL2
-				tempPoint.u = curSubTile.u << kTileSubShift;
-				tempPoint.v = curSubTile.v << kTileSubShift;
-				tempPoint.z = curSubTile.z;
-				TPLine(prevPoint, tempPoint);
-				prevPoint = tempPoint;
-#endif
 
+				if (debugChannelSet(-1, kDebugTiles)) {
+					tempPoint.u = curSubTile.u << kTileSubShift;
+					tempPoint.v = curSubTile.v << kTileSubShift;
+					tempPoint.z = curSubTile.z;
+					TPLine(prevPoint, tempPoint);
+					prevPoint = tempPoint;
+				warning("***************************");
+				}
 			}
 		}
 	} else {
@@ -528,13 +511,13 @@ uint32 lineTerrain(
 			subTileMask_ |= (uMask[curSubTile.u & kSubTileMask] &
 			                vMask[curSubTile.v & kSubTileMask]);
 
-#if DEBUG && VISUAL2
-			tempPoint.u = curSubTile.u << kTileSubShift;
-			tempPoint.v = curSubTile.v << kTileSubShift;
-			tempPoint.z = curSubTile.z;
-			TPLine(prevPoint, tempPoint);
-			prevPoint = tempPoint;
-#endif
+			if (debugChannelSet(-1, kDebugTiles)) {
+				tempPoint.u = curSubTile.u << kTileSubShift;
+				tempPoint.v = curSubTile.v << kTileSubShift;
+				tempPoint.z = curSubTile.z;
+				TPLine(prevPoint, tempPoint);
+				prevPoint = tempPoint;
+			}
 
 			errorTerm += uDiff;
 			if (errorTerm >= vDiff) {
@@ -559,14 +542,14 @@ uint32 lineTerrain(
 
 				subTileMask_ |= (uMask[curSubTile.u & kSubTileMask] &
 				                vMask[curSubTile.v & kSubTileMask]);
-#if DEBUG && VISUAL2
-				tempPoint.u = curSubTile.u << kTileSubShift;
-				tempPoint.v = curSubTile.v << kTileSubShift;
-				tempPoint.z = curSubTile.z;
-				TPLine(prevPoint, tempPoint);
-				prevPoint = tempPoint;
-#endif
 
+				if (debugChannelSet(-1, kDebugTiles)) {
+					tempPoint.u = curSubTile.u << kTileSubShift;
+					tempPoint.v = curSubTile.v << kTileSubShift;
+					tempPoint.z = curSubTile.z;
+					TPLine(prevPoint, tempPoint);
+					prevPoint = tempPoint;
+				}
 			}
 		}
 	}

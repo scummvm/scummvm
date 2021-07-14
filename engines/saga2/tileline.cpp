@@ -25,10 +25,10 @@
  */
 
 #include "saga2/saga2.h"
+#include "saga2/tile.h"
+#include "saga2/tileline.h"
 
 namespace Saga2 {
-
-#if DEBUG
 
 void TPTriangle(const TilePoint &tp1, const TilePoint &tp2, const TilePoint &tp3, int16 color) {
 	TPLine(tp1, tp2, color);
@@ -73,8 +73,6 @@ void TPLine(const TilePoint &start, const TilePoint &stop) {
 	g_vm->_mainPort.drawTo(stopPt);
 }
 
-void TPLine(const TilePoint &start, const TilePoint &stop, int16 color);
-
 void TPLine(const TilePoint &start, const TilePoint &stop, int16 color) {
 	Point16         startPt,
 	                stopPt;
@@ -91,6 +89,5 @@ void TPLine(const TilePoint &start, const TilePoint &stop, int16 color) {
 	g_vm->_mainPort.moveTo(startPt);
 	g_vm->_mainPort.drawTo(stopPt);
 }
-#endif
 
 } // end of namespace Saga2
