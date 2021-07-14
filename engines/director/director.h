@@ -226,6 +226,7 @@ public:
 	Graphics::MacDrawPixPtr getInkDrawPixel();
 
 	void loadKeyCodes();
+	Common::CodePage getPlatformEncoding();
 
 	Archive *createArchive();
 

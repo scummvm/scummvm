@@ -84,7 +84,7 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 
 			prevPos++;
 		}
-		Common::CodePage encoding = detectEncoding(cast->_platform, currentFont);
+		Common::CodePage encoding = detectFontEncoding(cast->_platform, currentFont);
 		Common::U32String u32TextPart(textPart, encoding);
 		_ptext += u32TextPart;
 		_ftext += u32TextPart;
@@ -97,7 +97,7 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 		formattingCount--;
 	}
 
-	Common::CodePage encoding = detectEncoding(cast->_platform, _style.fontId);
+	Common::CodePage encoding = detectFontEncoding(cast->_platform, _style.fontId);
 	Common::U32String u32Text(text, encoding);
 	_ptext += u32Text;
 	_ftext += u32Text;
