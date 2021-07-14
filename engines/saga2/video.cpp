@@ -43,7 +43,7 @@ static bool nameCheck(char name[], const char ext[]) {
 void Saga2Engine::startVideo(const char *fileName, int x, int y) {
 	char file[260];
 	strcpy(file, "video/");
-	strncat(file, fileName, 260);
+	Common::strlcat(file, fileName, 260);
 	nameCheck(file, VIDEO_EXT);
 
 	if (!_smkDecoder)
