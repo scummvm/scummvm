@@ -26,15 +26,36 @@
 
 namespace Director {
 
-bool isspec(char c) {
-	return strchr("-+*/%%^:,()><&[]=", c) != NULL;
+bool isspec(Common::u32char_type_t c) {
+	switch (c) {
+	case '-':
+	case '+':
+	case '*':
+	case '/':
+	case '%':
+	case '^':
+	case ':':
+	case ',':
+	case '(':
+	case ')':
+	case '>':
+	case '<':
+	case '&':
+	case '[':
+	case ']':
+	case '=':
+		return true;
+	default:
+		break;
+	}
+	return false;
 }
 
-static Common::String nexttok(const char *s, const char **newP = nullptr) {
-	Common::String res;
+static Common::U32String nexttok(const Common::u32char_type_t *s, const Common::u32char_type_t **newP = nullptr) {
+	Common::U32String res;
 
 	// Scan first non-whitespace
-	while (*s && (*s == ' ' || *s == '\t' || *s == '\xC2')) // If we see a whitespace
+	while (*s && (*s == ' ' || *s == '\t' || *s == CONTINUATION)) // If we see a whitespace
 		s++;
 
 	if (*s == '"') { // If it is a string then scan till end quote
@@ -60,15 +81,17 @@ static Common::String nexttok(const char *s, const char **newP = nullptr) {
 	return res;
 }
 
-Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, CastMemberID id, bool simple) {
-	Common::String res;
+Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, bool simple) {
+	const Common::u32char_type_t *s = code.c_str();
+	Common::U32String res;
 
-	// We start from processing the continuation synbols
-	// \xC2\n  ->  \xC2
+	// We start from processing the continuation symbols
+	// (The continuation symbol is \xC2 in Mac Roman, \xAC in Unicode.)
+	// \xAC\n  ->  \xAC
 	// This will greatly simplify newline processing, still leaving
 	// the line number tracking intact
 	while (*s) {
-		if (*s == '\xC2') {
+		if (*s == CONTINUATION) {
 			res += *s++;
 			if (!*s)	// Who knows, maybe it is the last symbol in the script
 				break;
@@ -78,7 +101,7 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 		res += *s++;
 	}
 
-	Common::String tmp(res);
+	Common::U32String tmp(res);
 	res.clear();
 	s = tmp.c_str();
 
@@ -89,7 +112,7 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 			inString = !inString;
 
 		if (!inString && *s == '-' && *(s + 1) == '-') { // At the end of the line we will have \0
-			while (*s && *s != '\n')
+			while (*s && *s != '\r' && *s != '\n')
 				s++;
 		}
 
@@ -108,10 +131,10 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 	// Strip trailing whitespaces
 	s = tmp.c_str();
 	while (*s) {
-		if (*s == ' ' || *s == '\t' || *s == '\xC2') { // If we see a whitespace
-			const char *ps = s; // Remember where we saw it
+		if (*s == ' ' || *s == '\t' || *s == CONTINUATION) { // If we see a whitespace
+			const Common::u32char_type_t *ps = s; // Remember where we saw it
 
-			while (*ps == ' ' || *ps == '\t' || *ps == '\xC2') // Scan until end of whitespaces
+			while (*ps == ' ' || *ps == '\t' || *ps == CONTINUATION) // Scan until end of whitespaces
 				ps++;
 
 			if (*ps) {	// Not end of the string
@@ -139,9 +162,11 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 	s = tmp.c_str();
 	res.clear();
 
-	Common::String line, tok, res1;
+	Common::U32String line, tok, res1;
 	int linenumber = 1;
 	bool defFound = false;
+
+	const Common::U32String macro("macro"), factory("factory"), on("on");
 
 	while (*s) {
 		line.clear();
@@ -152,14 +177,14 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 			res1 += *s;
 			line += tolower(*s++);
 
-			if (*s == '\xc2')
+			if (*s == CONTINUATION)
 				linenumber++;
 		}
-		debugC(2, kDebugParse | kDebugPreprocess, "line: '%s'", line.c_str());
+		debugC(2, kDebugParse | kDebugPreprocess, "line: '%s'", line.encode().c_str());
 
 		if (!defFound && (type == kMovieScript || type == kCastScript) && (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo)) {
 			tok = nexttok(line.c_str());
-			if (tok.equals("macro") || tok.equals("factory") || tok.equals("on")) {
+			if (tok.equals(macro) || tok.equals(factory) || tok.equals(on)) {
 				defFound = true;
 			} else {
 				debugC(2, kDebugParse | kDebugPreprocess, "skipping line before first definition");
@@ -183,7 +208,7 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 	// Make the parser happier when there is no newline at the end
 	res += '\n';
 
-	debugC(2, kDebugParse | kDebugPreprocess, "#############\n%s\n#############", res.c_str());
+	debugC(2, kDebugParse | kDebugPreprocess, "#############\n%s\n#############", res.encode().c_str());
 
 	return res;
 }

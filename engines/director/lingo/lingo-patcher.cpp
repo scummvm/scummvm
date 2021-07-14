@@ -147,7 +147,7 @@ struct ScriptPatch {
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, 0, nullptr, nullptr}
 };
 
-Common::String LingoCompiler::patchLingoCode(Common::String &line, LingoArchive *archive, ScriptType type, CastMemberID id, int linenum) {
+Common::U32String LingoCompiler::patchLingoCode(const Common::U32String &line, LingoArchive *archive, ScriptType type, CastMemberID id, int linenum) {
 	if (!archive)
 		return line;
 
@@ -171,10 +171,10 @@ Common::String LingoCompiler::patchLingoCode(Common::String &line, LingoArchive 
 		}
 
 		// Now do a safeguard
-		if (!line.contains(patch->orig)) {
+		if (!line.contains(Common::U32String(patch->orig))) {
 			warning("Lingo::patchLingoCode(): Unmatched patch for '%s', '%s' %s:%s @ %d. Expecting '%s' but got '%s'",
 					patch->gameId, patch->movie, scriptType2str(type), id.asString().c_str(), linenum,
-					patch->orig, line.c_str());
+					patch->orig, line.encode().c_str());
 			return line;
 		}
 
@@ -182,7 +182,7 @@ Common::String LingoCompiler::patchLingoCode(Common::String &line, LingoArchive 
 		warning("Lingo::patchLingoCode(): Applied a patch for '%s', '%s' %s:%s @ %d. \"%s\" -> \"%s\"",
 				patch->gameId, patch->movie, scriptType2str(type), id.asString().c_str(), linenum,
 				patch->orig, patch->replace);
-		return patch->replace;
+		return Common::U32String(patch->replace);
 	}
 
 	return line;

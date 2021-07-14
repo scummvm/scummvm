@@ -238,7 +238,7 @@ struct LingoArchive {
 	ScriptContext *getScriptContext(ScriptType type, uint16 id);
 	Common::String getName(uint16 id);
 
-	void addCode(const char *code, ScriptType type, uint16 id, const char *scriptName = nullptr);
+	void addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr);
 	void addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName, uint16 version);
 	void addNamesV4(Common::SeekableReadStreamEndian &stream);
 };

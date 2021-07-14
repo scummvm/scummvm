@@ -535,7 +535,7 @@ void LB::b_value(int nargs) {
 	}
 	Common::String code = "scummvm_returnNumber " + expr;
 	// Compile the code to an anonymous function and call it
-	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code.c_str());
+	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code);
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
 	LC::call(sym, 0, true);
 }
@@ -1658,7 +1658,8 @@ void LB::b_installMenu(int nargs) {
 	}
 	TextCastMember *field = static_cast<TextCastMember *>(member);
 
-	Common::String menuStxt = g_lingo->_compiler->codePreprocessor(field->getText().encode(Common::kMacRoman).c_str(), field->getCast()->_lingoArchive, kNoneScript, memberID, true); // FIXME: Properly handle encoding
+	// TODO: We should process the U32String instead of encoding it to Mac Roman first
+	Common::String menuStxt = g_lingo->_compiler->codePreprocessor(field->getText(), field->getCast()->_lingoArchive, kNoneScript, memberID, true).encode(Common::kMacRoman);
 	Common::String line;
 	int linenum = -1; // We increment it before processing
 
@@ -1738,7 +1739,7 @@ void LB::b_installMenu(int nargs) {
 				while (mainArchive->getScriptContext(kEventScript, commandId)) {
 					commandId++;
 				}
-				mainArchive->addCode(command.c_str(), kEventScript, commandId);
+				mainArchive->addCode(command.decode(Common::kMacRoman), kEventScript, commandId);
 				submenuText += Common::String::format("[%d];", commandId);
 			} else {
 				submenuText += ';';

@@ -246,9 +246,9 @@ Symbol Lingo::getHandler(const Common::String &name) {
 	return Symbol();
 }
 
-void LingoArchive::addCode(const char *code, ScriptType type, uint16 id, const char *scriptName) {
+void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName) {
 	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d in '%s%s'\n"
-			"***********\n%s\n\n***********", scriptType2str(type), type, id, g_director->getCurrentPath().c_str(), cast->getMacName().c_str(), code);
+			"***********\n%s\n\n***********", scriptType2str(type), type, id, g_director->getCurrentPath().c_str(), cast->getMacName().c_str(), code.encode().c_str());
 
 	if (getScriptContext(type, id)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
@@ -1022,7 +1022,7 @@ void Lingo::runTests() {
 
 			debug(">> Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
 
-			mainArchive->addCode(script, kTestScript, counter);
+			mainArchive->addCode(Common::U32String(script, Common::kMacRoman), kTestScript, counter);
 
 			if (!debugChannelSet(-1, kDebugCompileOnly)) {
 				if (!_compiler->_hadError)
@@ -1166,7 +1166,7 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 			}
 			switch (member->_type) {
 			case kCastText:
-				((TextCastMember *)member)->setText(Common::U32String(value.asString(), Common::kMacRoman)); // FIXME: Properly handle encoding
+				((TextCastMember *)member)->setText(value.asString());
 				break;
 			default:
 				warning("varAssign: Unhandled cast type %d", member->_type);
@@ -1287,7 +1287,7 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 			switch (member->_type) {
 			case kCastText:
 				result.type = STRING;
-				result.u.s = new Common::String(((TextCastMember *)member)->getText().encode(Common::kMacRoman)); // FIXME: Properly handle encoding
+				result.u.s = new Common::String(((TextCastMember *)member)->getText().encode(Common::kUtf8));
 				break;
 			default:
 				warning("varFetch: Unhandled cast type %d", member->_type);

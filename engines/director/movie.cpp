@@ -236,7 +236,7 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 		_cast->dumpScript(_script.c_str(), kMovieScript, 0);
 
 	if (!_script.empty())
-		_cast->_lingoArchive->addCode(_script.c_str(), kMovieScript, 0);
+		_cast->_lingoArchive->addCode(_script, kMovieScript, 0);
 
 	_changedBy = fileInfo.strings[1].readString();
 	_createdBy = fileInfo.strings[2].readString();
@@ -388,13 +388,45 @@ Common::String InfoEntry::readString(bool pascal) {
 	if (len == 0)
 		return res;
 
-	int start = pascal ? 1 : 0;
+	uint start = pascal ? 1 : 0; // skip length for Pascal string
 
-	for (uint i = start; i < len; i++)
-		if (data[i] == '\r')
-			res += '\n';
-		else if (data[i] >= 0x20)
-			res += data[i];
+	Common::String encodedStr;
+	if (g_director->getLanguage() == Common::JA_JPN) {
+		for (uint i = start; i < len; i++) {
+			if (!Common::isCntrl(data[i]) || Common::isSpace(data[i]))
+				encodedStr += data[i];
+		}
+		res = encodedStr.decode(Common::kWindows932).encode(Common::kUtf8);
+	} else {
+		// FIXME: Get the platform and FXmp from the cast which contains this, not the current movie.
+		if (g_director->getCurrentMovie()->_platform == Common::kPlatformWindows) {
+			/**
+			 * Director for Windows stores these strings in a screwed up version of Mac Roman
+			 * We need to map this screwed up Mac Roman back to Windows-1252 before using it.
+			 * Comment from FXmp:
+			 *   Note: Some characters are not available in both character sets.
+			 *   However, the bi-directional mapping table below preserves these
+			 *   characters even if they are mapped to a different platform and
+			 *   later re-mapped back to the original platform.
+			 */
+			CharMap &charMap = g_director->getCurrentMovie()->getCast()->_macCharsToWin;
+			for (uint i = start; i < len; i++) {
+				if (!Common::isCntrl(data[i]) || Common::isSpace(data[i])) {
+					if (charMap.contains(data[i]))
+						encodedStr += charMap[data[i]];
+					else
+						encodedStr += data[i];
+				}
+			}
+			res = encodedStr.decode(Common::kWindows1252).encode(Common::kUtf8);
+		} else {
+			for (uint i = start; i < len; i++) {
+				if (!Common::isCntrl(data[i]) || Common::isSpace(data[i]))
+					encodedStr += data[i];
+			}
+			res = encodedStr.decode(Common::kMacRoman).encode(Common::kUtf8);
+		}
+	}
 
 	return res;
 }

@@ -69,12 +69,13 @@ static void count() {
 	char *p = yytext;
 
 	while (*p) {
-		if (*p == '\n' || *p == '\xC2') {
+		if (*p == '\n') {
 			compiler->_linenumber++;
 			compiler->_colnumber = 0;
-
-			if (*p == '\n')
-				pushLine(compiler->_bytenumber + 1);
+			pushLine(compiler->_bytenumber + 1);
+		} else if (*p == '\xC2' && *(p + 1) == '\xAC') { // continuation
+			compiler->_linenumber++;
+			compiler->_colnumber = 0;
 		} else {
 			compiler->_colnumber++;
 		}
@@ -87,13 +88,58 @@ static Common::String *cleanupString(const char *s) {
 	Common::String *res = new Common::String;
 
 	while (*s) {
-		if (*s == '\xC2') {
-			s++;
-			*res += ' ';
+		if (*s == '\xC2' && *(s + 1) == '\xAC') { // continuation
+			s += 2;
+			*res += ' '; // replace with space
 			continue;
 		}
 		*res += *s;
 		s++;
+	}
+
+	return res;
+}
+
+static void skipWhitespace(const char **ptr) {
+	while (true) {
+		if (**ptr == ' ' || **ptr == '\t') {
+			*ptr += 1;
+		} else if (**ptr == '\xC2' && *(*ptr + 1) == '\xAC') { // continuation
+			*ptr += 2;
+		} else {
+			break;
+		}
+	}
+}
+
+static Common::String *readUntilWhitespace(const char **ptr) {
+	Common::String *res = new Common::String;
+
+	while (true) {
+		if (**ptr == ' ' || **ptr == '\t') {
+			break;
+		}
+		if (**ptr == '\xC2' && *(*ptr + 1) == '\xAC') { // continuation
+			break;
+		}
+		*res += **ptr;
+		*ptr += 1;
+	}
+
+	return res;
+}
+
+static Common::String *readUntilNull(const char **ptr) {
+	Common::String *res = new Common::String;
+
+	while (**ptr) {
+		if (**ptr == '\xC2' && *(*ptr + 1) == '\xAC') { // continuation
+			*ptr += 2;
+			*res += ' '; // replace with space
+			continue;
+		}
+		*res += **ptr;
+		*ptr += 1;
 	}
 
 	return res;
@@ -106,8 +152,8 @@ constfloat [[:digit:]]+\.[[:digit:]]*
 constinteger [[:digit:]]+
 conststring \"[^\"\r\n]*\"
 operator [-+*/%^:,()><&\[\]]
-newline [ \t\xC2]*[\n\r]
-spc [ \t\xC2]
+newline (" "|\t|\xC2\xAC)*[\n\r]
+spc (" "|\t|\xC2\xAC)
 eventname (keyDown|keyUp|mouseDown|mouseUp|timeOut)
 unparsedstmt [^\r\n]*
 
@@ -135,8 +181,7 @@ end({spc}+{identifier})?	{
 		count();
 
 		const char *ptr = &yytext[3]; // Skip 'end '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
+		skipWhitespace(&ptr);
 
 		if (!scumm_stricmp(ptr, "if"))
 			return tENDIF;
@@ -202,22 +247,18 @@ when{spc}+{eventname}{spc}+then{spc}+{unparsedstmt}	{
 		count();
 
 		const char *ptr =  &yytext[5]; // Skip 'when '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
+		skipWhitespace(&ptr);
 
-		Common::String eventName;
-		while (*ptr != ' ' && *ptr != '\t' && *ptr != '\xC2')
-			eventName += *ptr++;
+		Common::String *eventName = readUntilWhitespace(&ptr);
 
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
+		skipWhitespace(&ptr);
 		ptr += 5; // Skip 'then '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
+		skipWhitespace(&ptr);
 
-		Common::String stmt;
-		while (*ptr)
-			stmt += *ptr++;
+		Common::String *stmt = readUntilNull(&ptr);
 
-		yylval.w.eventName = new Common::String(eventName);
-		yylval.w.stmt = new Common::String(stmt);
+		yylval.w.eventName = eventName;
+		yylval.w.stmt = stmt;
 		return tWHEN;
 	}
 while		{ count(); return tWHILE; }
