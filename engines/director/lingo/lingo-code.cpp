@@ -884,7 +884,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 	if (endChunk < 1 || startChunk == -30000)
 		endChunk = startChunk;
 
-	Common::String str = src.eval().asString();
+	Common::U32String str = g_lingo->evalChunkRef(src);
 
 	// these hold the bounds of the last chunk in the expression
 	int chunkNum = 0;
@@ -944,7 +944,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 	case kChunkItem:
 	case kChunkLine:
 		{
-			char delimiter = (type == kChunkItem) ? g_lingo->_itemDelimiter : '\n';
+			Common::u32char_type_t delimiter = (type == kChunkItem) ? g_lingo->_itemDelimiter : '\n';
 
 			int idx = 0;
 			while (true) {
@@ -1605,7 +1605,7 @@ void LC::c_delete() {
 	if (start < 0)
 		return;
 
-	Common::String text = g_lingo->varFetch(field).asString();
+	Common::U32String text = g_lingo->evalChunkRef(field);
 	if (d.type == CHUNKREF) {
 		switch (d.u.cref->type) {
 		case kChunkChar:
@@ -1623,12 +1623,12 @@ void LC::c_delete() {
 		}
 	}
 
-	Common::String res = text.substr(0, start);
+	Common::U32String res = text.substr(0, start);
 	if (end >= 0) {
 		res += text.substr(end);
 	}
 	Datum s;
-	s.u.s = new Common::String(res);
+	s.u.s = new Common::String(res, Common::kUtf8);
 	s.type = STRING;
 	g_lingo->varAssign(field, s);
 }

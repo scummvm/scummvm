@@ -1176,10 +1176,10 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 		break;
 	case CHUNKREF:
 		{
-			Common::String src = var.u.cref->source.eval().asString();
-			Common::String res;
+			Common::U32String src = evalChunkRef(var.u.cref->source);
+			Common::U32String res;
 			if (var.u.cref->start >= 0) {
-				res = src.substr(0, var.u.cref->start) + value.asString() + src.substr(var.u.cref->end);
+				res = src.substr(0, var.u.cref->start) + value.asString().decode(Common::kUtf8) + src.substr(var.u.cref->end);
 			} else {
 				// non-existent chunk - insert more chars, items, or lines
 				res = src;
@@ -1208,7 +1208,7 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 				}
 				res += value.asString();
 			}
-			varAssign(var.u.cref->source, res);
+			varAssign(var.u.cref->source, res.encode(Common::kUtf8));
 		}
 		break;
 	default:
@@ -1273,41 +1273,63 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 		break;
 	case FIELDREF:
 	case CASTREF:
+	case CHUNKREF:
+		{
+			result.type = STRING;
+			result.u.s = new Common::String(evalChunkRef(var), Common::kUtf8);
+		}
+		break;
+	default:
+		warning("varFetch: fetch from non-variable");
+		break;
+	}
+
+	return result;
+}
+
+Common::U32String Lingo::evalChunkRef(const Datum &var) {
+	Common::U32String result;
+
+	switch (var.type) {
+	case VARREF:
+	case GLOBALREF:
+	case LOCALREF:
+	case PROPREF:
+		result = varFetch(var).asString().decode(Common::kUtf8);
+		break;
+	case FIELDREF:
+	case CASTREF:
 		{
 			Movie *movie = g_director->getCurrentMovie();
 			if (!movie) {
-				warning("varFetch: Assigning to a reference to an empty movie");
+				warning("evalChunkRef: Assigning to a reference to an empty movie");
 				return result;
 			}
 			CastMember *member = movie->getCastMember(*var.u.cast);
 			if (!member) {
-				warning("varFetch: Unknown %s", var.u.cast->asString().c_str());
+				warning("evalChunkRef: Unknown %s", var.u.cast->asString().c_str());
 				return result;
 			}
 			switch (member->_type) {
 			case kCastText:
-				result.type = STRING;
-				result.u.s = new Common::String(((TextCastMember *)member)->getText().encode(Common::kUtf8));
+				result = ((TextCastMember *)member)->getText();
 				break;
 			default:
-				warning("varFetch: Unhandled cast type %d", member->_type);
+				warning("evalChunkRef: Unhandled cast type %d", member->_type);
 				break;
 			}
 		}
 		break;
 	case CHUNKREF:
 		{
-			Common::String src = var.u.cref->source.eval().asString();
-			result.type = STRING;
-			if (var.u.cref->start < 0) {
-				result.u.s = new Common::String("");
-			} else {
-				result.u.s = new Common::String(src.substr(var.u.cref->start, var.u.cref->end - var.u.cref->start));
+			Common::U32String src = evalChunkRef(var.u.cref->source);
+			if (var.u.cref->start >= 0) {
+				result = src.substr(var.u.cref->start, var.u.cref->end - var.u.cref->start);
 			}
 		}
 		break;
 	default:
-		warning("varFetch: fetch from non-variable");
+		result = var.asString().decode(Common::kUtf8);
 		break;
 	}
 

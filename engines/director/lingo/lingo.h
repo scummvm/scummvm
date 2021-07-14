@@ -290,6 +290,7 @@ public:
 	void cleanLocalVars();
 	void varAssign(const Datum &var, const Datum &value);
 	Datum varFetch(const Datum &var, bool silent = false);
+	Common::U32String evalChunkRef(const Datum &var);
 	Datum findVarV4(int varType, const Datum &id);
 	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib);
 
