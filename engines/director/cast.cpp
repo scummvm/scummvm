@@ -1198,4 +1198,37 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	_castsInfo[id] = ci;
 }
 
+Common::CodePage Cast::getPlatformEncoding() {
+	return getEncoding(_platform, _vm->getLanguage());
+}
+
+Common::U32String Cast::decodeString(const Common::String &str) {
+	Common::CodePage encoding = getPlatformEncoding();
+
+	Common::String fixedStr;
+	if (encoding == Common::kWindows1252) {
+		/**
+		 * Director for Windows stores strings in a screwed up version of Mac Roman
+		 * where characters map directly to Windows-1252 characters.
+		 * We need to map this screwed up Mac Roman back to Windows-1252 before using it.
+		 * Comment from FXmp:
+		 *   Note: Some characters are not available in both character sets.
+		 *   However, the bi-directional mapping table below preserves these
+		 *   characters even if they are mapped to a different platform and
+		 *   later re-mapped back to the original platform.
+		 */
+
+		for (uint i = 0; i < str.size(); i++) {
+			if (_macCharsToWin.contains(str[i]))
+				fixedStr += _macCharsToWin[str[i]];
+			else
+				fixedStr += str[i];
+		}
+	} else {
+		fixedStr = str;
+	}
+
+	return fixedStr.decode(encoding);
+}
+
 } // End of namespace Director

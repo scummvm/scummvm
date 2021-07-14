@@ -50,7 +50,7 @@ typedef Common::HashMap<byte, byte> CharMap;
 typedef Common::HashMap<uint16, uint16> FontSizeMap;
 struct FontXPlatformInfo {
 	Common::String toFont;
-	bool remapChars;
+		bool remapChars;
 	FontSizeMap sizeMap;
 
 	FontXPlatformInfo() : remapChars(false) {}
@@ -103,6 +103,9 @@ public:
 
 	void dumpScript(const char *script, ScriptType type, uint16 id);
 	PaletteV4 loadPalette(Common::SeekableReadStreamEndian &stream);
+
+	Common::CodePage getPlatformEncoding();
+	Common::U32String decodeString(const Common::String &str);
 
 private:
 	void loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id);

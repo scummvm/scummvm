@@ -231,4 +231,8 @@ Common::Error DirectorEngine::run() {
 	return Common::kNoError;
 }
 
+Common::CodePage DirectorEngine::getPlatformEncoding() {
+	return getEncoding(getPlatform(), getLanguage());
+}
+
 } // End of namespace Director
