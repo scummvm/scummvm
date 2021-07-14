@@ -1713,21 +1713,38 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 
 		WRITE_BE_UINT32(patchedScript + 4, 6780);
 
-		Common::MemoryReadStream stream(patchedScript, 6780);
-
 		// Just to be completely safe, check that the patched script now
 		// matches the boot script from the other known Mac version.
 		// Only if it does can we replace the unpatched script.
 
-		Common::String md5 = Common::computeStreamMD5AsString(stream);
-		if (md5 == "92b1cb7902b57d02b8e7434903d8508b") {
+		if (verifyMI2MacBootScript(patchedScript, 6780)) {
 			byte *newResource = _res->createResource(type, idx, 6780);
 			memcpy(newResource, patchedScript, 6780);
 		} else
-			warning("Could not patch MI2 Mac boot script: Bad checksum '%s'", md5.c_str());
+			warning("Could not patch MI2 Mac boot script");
 
 		delete[] patchedScript;
 	}
+}
+
+bool ScummEngine::verifyMI2MacBootScript() {
+	return verifyMI2MacBootScript(getResourceAddress(rtScript, 1), getResourceSize(rtScript, 1));
+}
+
+bool ScummEngine::verifyMI2MacBootScript(byte *buf, int size) {
+	if (size == 6780) {
+		Common::MemoryReadStream stream(buf, size);
+		Common::String md5 = Common::computeStreamMD5AsString(stream);
+
+		if (md5 != "92b1cb7902b57d02b8e7434903d8508b") {
+			warning("Unexpected MI2 Mac boot script checksum: %s", md5.c_str());
+			return false;
+		}
+	} else {
+		warning("Unexpected MI2 Mac boot script length: %d", size);
+		return false;
+	}
+	return true;
 }
 
 
