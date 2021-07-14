@@ -1079,8 +1079,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		switch (constType) {
 		case 1: // String type
 			{
-				constant.type = STRING;
-				constant.u.s = new Common::String();
+				Common::String str;
 				uint32 pointer = value;
 				if (pointer + 4 > constsStoreSize) {
 					error("Constant string is too small");
@@ -1094,12 +1093,10 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 					break;
 				}
 				while (pointer < end) {
-					if (constsStore[pointer] == '\r') {
-						*constant.u.s += '\n';
-					} else if (constsStore[pointer] == '\0') {
+					if (constsStore[pointer] == '\0') {
 						break;
 					} else {
-						*constant.u.s += constsStore[pointer];
+						str += constsStore[pointer];
 					}
 					pointer += 1;
 				}
@@ -1107,6 +1104,9 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 					warning("Constant string has no null terminator");
 					break;
 				}
+				Common::CodePage encoding = g_director->getPlatformEncoding();
+				constant.type = STRING;
+				constant.u.s = new Common::String(str.decode(encoding), Common::kUtf8);
 			}
 			break;
 		case 4: // Integer type
