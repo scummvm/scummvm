@@ -25,6 +25,8 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 
+#include "audio/audiostream.h"
+
 #include "graphics/macgui/mactext.h"
 
 #ifdef USE_PNG
@@ -89,6 +91,9 @@ Score::~Score() {
 	if (_labels)
 		for (Common::SortedArray<Label *>::iterator it = _labels->begin(); it != _labels->end(); ++it)
 			delete *it;
+
+	for (uint i = 0; i < _sampleSounds.size(); i++)
+		delete _sampleSounds[i];
 
 	delete _labels;
 }
@@ -663,8 +668,75 @@ void Score::playSoundChannel(uint16 frameId) {
 
 	debugC(5, kDebugLoading, "playSoundChannel(): Sound1 %s Sound2 %s", frame->_sound1.asString().c_str(), frame->_sound2.asString().c_str());
 	DirectorSound *sound = _vm->getSoundManager();
-	sound->playCastMember(frame->_sound1, 1, false);
-	sound->playCastMember(frame->_sound2, 2, false);
+
+	// 0x0f represent sample sound
+	if (frame->_soundType1 == 0x0f) {
+		if (_sampleSounds.empty())
+			loadSampleSounds(0x0f);
+
+		if ((uint)frame->_sound1.member <= _sampleSounds.size()) {
+			sound->playStream(*(_sampleSounds[frame->_sound1.member - 1]->getAudioStream()), 1);
+		}
+	} else {
+		sound->playCastMember(frame->_sound1, 1, false);
+	}
+
+	if (frame->_soundType2 == 0x0f) {
+		if (_sampleSounds.empty())
+			loadSampleSounds(0x0f);
+
+		if ((uint)frame->_sound2.member <= _sampleSounds.size())
+			sound->playStream(*(_sampleSounds[frame->_sound2.member - 1]->getAudioStream()), 2);
+	} else {
+		sound->playCastMember(frame->_sound2, 2, false);
+	}
+}
+
+void Score::loadSampleSounds(uint type) {
+	// trying to load external sample sounds
+	// lazy loading
+	uint32 tag = MKTAG('C', 'S', 'N', 'D');
+	uint id = 0xFF;
+	Archive *archive = nullptr;
+
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+		Common::Array<uint16> idList = it->_value->getResourceIDList(tag);
+		for (uint j = 0; j < idList.size(); j++) {
+			if ((idList[j] & 0xFF) == type) {
+				id = idList[j];
+				archive = it->_value;
+				break;
+			}
+		}
+	}
+
+	if (id == 0xFF) {
+		warning("Score::loadSampleSounds: can not find CSND resource with id %d", type);
+		return;
+	}
+
+	Common::SeekableReadStreamEndian *csndData = archive->getResource(tag, id);
+
+	/*uint32 flag = */ csndData->readUint32();
+
+	// the flag should be 0x604E
+	// i'm not sure what's that mean, but it occurs in those csnd files
+
+	// contains how many csnd data
+	uint16 num = csndData->readUint16();
+
+	// read the offset first;
+	Common::Array<uint32> offset(num);
+	for (uint i = 0; i < num; i++)
+		offset[i] = csndData->readUint32();
+
+	for (uint i = 0; i < num; i++) {
+		csndData->seek(offset[i]);
+
+		SNDDecoder *ad = new SNDDecoder();
+		ad->loadExternalSoundStream(*csndData);
+		_sampleSounds.push_back(ad);
+	}
 }
 
 void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version) {

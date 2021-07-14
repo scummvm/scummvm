@@ -52,6 +52,7 @@ class Cursor;
 class Channel;
 class Sprite;
 class CastMember;
+class AudioDecoder;
 
 enum RenderMode {
 	kRenderModeNormal,
@@ -71,6 +72,7 @@ public:
 	void loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version);
 	void loadLabels(Common::SeekableReadStreamEndian &stream);
 	void loadActions(Common::SeekableReadStreamEndian &stream);
+	void loadSampleSounds(uint type);
 
 	static int compareLabels(const void *a, const void *b);
 	uint16 getLabel(Common::String &label);
@@ -128,6 +130,7 @@ public:
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
+	Common::Array<AudioDecoder *> _sampleSounds;
 
 	byte _currentFrameRate;
 
