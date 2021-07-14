@@ -1404,6 +1404,8 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 
 	World *world = World::get_instance();
 
+	world->getCurrentMap()->removeTargetItem(this);
+
     if (world->getControlledNPCNum() == _objId) {
 		TargetReticleProcess::get_instance()->avatarMoved();
 		if (_objId != 1) {
@@ -2334,7 +2336,7 @@ uint32 Actor::I_isEnemy(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Actor::I_isDead(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
-	if (!actor) return 0;
+	if (!actor) return 1;
 
 	if (actor->isDead())
 		return 1;
