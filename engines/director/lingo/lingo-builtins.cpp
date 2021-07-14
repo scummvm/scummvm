@@ -459,20 +459,19 @@ void LB::b_chars(int nargs) {
 	int to = d3.asInt();
 	int from = d2.asInt();
 
-	Common::String src = s.asString();
+	Common::U32String src = s.asString().decode(Common::kUtf8);
 
-	int len = strlen(src.c_str());
+	int len = src.size();
 	int f = MAX(0, MIN(len, from - 1));
 	int t = MAX(0, MIN(len, to));
 
-	Common::String result;
+	Common::String res;
 	if (f > t) {
-		result = Common::String("");
+		res = Common::String("");
 	} else {
-		result = Common::String(&(src.c_str()[f]), &(src.c_str()[t]));
+		res = src.substr(f, t - f).encode(Common::kUtf8);
 	}
 
-	Datum res(result);
 	g_lingo->push(res);
 }
 
@@ -481,9 +480,19 @@ void LB::b_charToNum(int nargs) {
 
 	TYPECHECK(d, STRING);
 
-	int chr = (uint8)d.u.s->c_str()[0];
+	Common::U32String src = d.asString().decode(Common::kUtf8);
+	if (src.size() == 0) {
+		g_lingo->push(0);
+		return;
+	}
 
-	Datum res(chr);
+	Common::U32String ch = src.substr(0, 1);
+	Common::String encodedCh = ch.encode(g_director->getPlatformEncoding());
+	int res = 0;
+	while (encodedCh.size()) {
+		res = (res << 8) | (byte)encodedCh.firstChar();
+		encodedCh.deleteChar(0);
+	}
 	g_lingo->push(res);
 }
 
@@ -491,20 +500,28 @@ void LB::b_length(int nargs) {
 	Datum d = g_lingo->pop();
 	TYPECHECK(d, STRING);
 
-	int len = strlen(d.asString().c_str());
-
-	Datum res(len);
+	Common::U32String src = d.asString().decode(Common::kUtf8);
+	int res = src.size();
 	g_lingo->push(res);
 }
 
 void LB::b_numToChar(int nargs) {
-	Datum d = g_lingo->pop();
+	int num = g_lingo->pop().asInt();
+	if (num == 0) {
+		g_lingo->push(Common::String());
+		return;
+	}
 
-	char result[2];
-	result[0] = (char)d.asInt();
-	result[1] = 0;
+	Common::String encodedCh;
+	while (num) {
+		encodedCh.insertChar((char)(num & 0xFF), 0);
+		num >>= 8;
+	}
+	Common::U32String ch = encodedCh.decode(g_director->getPlatformEncoding());
+	while (ch.size() > 1) // we only want one character
+		ch.deleteChar(0);
 
-	g_lingo->push(Datum(Common::String(result)));
+	g_lingo->push(ch.encode(Common::kUtf8));
 }
 
 void LB::b_offset(int nargs) {
