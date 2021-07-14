@@ -625,22 +625,6 @@ extern bool         brotherBandingEnabled,
        combatBehaviorEnabled,
        backgroundSimulationPaused;
 
-//	This structure is used archiving any globals which will need to be saved
-//	in a save game file.
-
-struct GlobalsArchive {
-	int32           objectIndex,
-	                actorIndex;
-	bool            brotherBandingEnabled,
-	                centerActorIndicatorEnabled,
-	                interruptableMotionsPaused,
-	                objectStatesPaused,
-	                actorStatesPaused,
-	                actorTasksPaused,
-	                combatBehaviorEnabled,
-	                backgroundSimulationPaused;
-};
-
 //-----------------------------------------------------------------------
 //	Assign initial values to miscellaneous globals
 
@@ -657,22 +641,22 @@ void initGlobals(void) {
 	backgroundSimulationPaused = false;
 }
 
-void saveGlobals(Common::OutSaveFile *out) {
+void saveGlobals(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving globals");
 
-	out->write("GLOB", 4);
-	out->writeUint32LE(sizeof(GlobalsArchive));
-
+	outS->write("GLOB", 4);
+	CHUNK_BEGIN;
 	out->writeUint32LE(objectIndex);
 	out->writeUint32LE(actorIndex);
-	out->writeByte(brotherBandingEnabled);
-	out->writeByte(centerActorIndicatorEnabled);
-	out->writeByte(interruptableMotionsPaused);
-	out->writeByte(objectStatesPaused);
-	out->writeByte(actorStatesPaused);
-	out->writeByte(actorTasksPaused);
-	out->writeByte(combatBehaviorEnabled);
-	out->writeByte(backgroundSimulationPaused);
+	out->writeUint16LE(brotherBandingEnabled);
+	out->writeUint16LE(centerActorIndicatorEnabled);
+	out->writeUint16LE(interruptableMotionsPaused);
+	out->writeUint16LE(objectStatesPaused);
+	out->writeUint16LE(actorStatesPaused);
+	out->writeUint16LE(actorTasksPaused);
+	out->writeUint16LE(combatBehaviorEnabled);
+	out->writeUint16LE(backgroundSimulationPaused);
+	CHUNK_END;
 
 	debugC(3, kDebugSaveload, "... objectIndex = %d", objectIndex);
 	debugC(3, kDebugSaveload, "... actorIndex = %d", actorIndex);
@@ -691,14 +675,14 @@ void loadGlobals(Common::InSaveFile *in) {
 
 	objectIndex = in->readUint32LE();
 	actorIndex = in->readUint32LE();
-	brotherBandingEnabled = in->readByte();
-	centerActorIndicatorEnabled = in->readByte();
-	interruptableMotionsPaused = in->readByte();
-	objectStatesPaused = in->readByte();
-	actorStatesPaused = in->readByte();
-	actorTasksPaused = in->readByte();
-	combatBehaviorEnabled = in->readByte();
-	backgroundSimulationPaused = in->readByte();
+	brotherBandingEnabled = in->readUint16LE();
+	centerActorIndicatorEnabled = in->readUint16LE();
+	interruptableMotionsPaused = in->readUint16LE();
+	objectStatesPaused = in->readUint16LE();
+	actorStatesPaused = in->readUint16LE();
+	actorTasksPaused = in->readUint16LE();
+	combatBehaviorEnabled = in->readUint16LE();
+	backgroundSimulationPaused = in->readUint16LE();
 
 	debugC(3, kDebugSaveload, "... objectIndex = %d", objectIndex);
 	debugC(3, kDebugSaveload, "... actorIndex = %d", actorIndex);

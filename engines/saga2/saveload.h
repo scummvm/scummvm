@@ -27,7 +27,15 @@
 #ifndef SAGA2_LOADSAVE_H
 #define SAGA2_LOADSAVE_H
 
+#include "common/memstream.h"
+
 namespace Saga2 {
+
+#define CHUNK_BEGIN Common::MemoryWriteStreamDynamic *out = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES)
+
+#define CHUNK_END outS->writeUint32LE(out->size()); \
+	outS->write(out->getData(), out->size()); \
+	delete out
 
 /* ===================================================================== *
    SaveFileHeader class

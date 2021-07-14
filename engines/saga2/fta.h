@@ -189,7 +189,7 @@ void cleanupPathFinder(void);
  * ===================================================================== */
 
 void initGlobals(void);
-void saveGlobals(Common::OutSaveFile *out);
+void saveGlobals(Common::OutSaveFile *outS);
 void loadGlobals(Common::InSaveFile *in);
 inline void cleanupGlobals(void) {}      // do nothing
 

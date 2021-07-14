@@ -38,6 +38,10 @@ namespace Video {
 class SmackerDecoder;
 }
 
+namespace Common {
+class MemoryWriteStreamDynamic;
+}
+
 namespace Saga2 {
 
 class ContainerList;
