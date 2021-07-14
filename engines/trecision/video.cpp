@@ -585,6 +585,8 @@ void AnimManager::syncGameStream(Common::Serializer &ser) {
 			ser.syncAsUint16LE(cur->_atFrame[j]._index);
 		}
 	}
+
+	patchAnimTab();
 }
 
 void AnimManager::loadAnimTab(Common::SeekableReadStreamEndian *stream) {
@@ -610,6 +612,13 @@ void AnimManager::loadAnimTab(Common::SeekableReadStreamEndian *stream) {
 			_animTab[i]._atFrame[j]._index = stream->readUint16();
 		}
 	}
+
+	patchAnimTab();
+}
+
+void AnimManager::patchAnimTab() {
+	_animTab[22]._lim[3].left = 308;  // Patch the brazier animation rect in kRoom28 - bug #12628
+	_animTab[34]._lim[0].right = 200;	// Patch the terrorist animation rect in kRoom35
 }
 
 } // namespace Trecision

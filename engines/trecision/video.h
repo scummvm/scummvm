@@ -88,6 +88,7 @@ private:
 	void drawSmkIconFrame(uint16 startIcon, uint16 iconNum);
 	void drawSmkActionFrame();
 	void swapCD(int cd);
+	void patchAnimTab();
 
 public:
 	Common::Rect _animRect;
