@@ -91,7 +91,7 @@ void GridItemWidget::drawWidget() {
 	// Draw Thumbnail Background
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _grid->getThumbnailWidth(), _y + thumbHeight), 
 										ThemeEngine::WidgetBackground::kThumbnailBackground);
-	
+
 	// Draw Thumbnail
 	if (_thumbGfx.empty()) {
 		// Draw Title when thumbnail is missing
@@ -184,18 +184,18 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid)
 	: Dialog(x, y, w, h), CommandSender(boss) {
-		
+
 	_entryID = entryID;
 	_boss = boss;
 	_grid = grid;
-	
+
 	int buttonWidth = w / 3;
 	int buttonHeight = h / 3;
 
 	PicButtonWidget *playButton = new PicButtonWidget(this, (buttonWidth / 3), buttonHeight / 3, (buttonWidth / 3) + buttonWidth * 2, buttonHeight, U32String("Play"), kPlayButtonCmd);
 	PicButtonWidget *loadButton = new PicButtonWidget(this, (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Saves"), kLoadButtonCmd);
 	PicButtonWidget *editButton = new PicButtonWidget(this, buttonWidth + 2 * (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Edit"), kEditButtonCmd);
-	
+
 	playButton->useThemeTransparency(true);
 	loadButton->useThemeTransparency(true);
 	editButton->useThemeTransparency(true);
@@ -267,7 +267,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 		if (stream) {
 			if (!decoder.loadStream(*stream))
 				warning("Error decoding PNG");
-			
+
 			srcSurface = decoder.getSurface();
 			delete stream;
 			if (!srcSurface) {
@@ -276,7 +276,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 			if (srcSurface && srcSurface->format.bytesPerPixel != 1) {
 				surf = new Graphics::ManagedSurface(srcSurface->convertTo(g_system->getOverlayFormat()));
 			}
-				
+
 		}
 #else
 		error("No PNG support compiled");
@@ -307,10 +307,10 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
-	
+
 	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
 	_gridItemWidth = _thumbnailWidth;
-	
+
 	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 200);
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
@@ -330,10 +330,10 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
-	
+
 	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
 	_gridItemWidth = _thumbnailWidth;
-	
+
 	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 200);
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
@@ -387,10 +387,10 @@ bool GridWidget::calcVisibleEntries() {
 	bool needsReload = false;
 
 	int nFirstVisibleItem = 0, nItemsOnScreen = 0;
-	
+
 	nFirstVisibleItem = _itemsPerRow * (-_scrollPos / (_gridItemHeight + _gridYSpacing));
 	nFirstVisibleItem = (nFirstVisibleItem < 0) ? 0 : nFirstVisibleItem;
-	
+
 	nItemsOnScreen = (3 + (_scrollWindowHeight / (_gridItemHeight + _gridYSpacing))) * (_itemsPerRow);
 
 	if (nFirstVisibleItem != _firstVisibleItem || nItemsOnScreen != _itemsOnScreen) {
@@ -417,7 +417,7 @@ void GridWidget::reloadThumbnails() {
 	Graphics::ManagedSurface *surf = nullptr;
 	String gameid;
 	String engineid;
-	
+
 	for (Common::Array<GridItemInfo>::iterator iter = _visibleEntries.begin(); iter != _visibleEntries.end(); ++iter) {
 		if (!_loadedSurfaces.contains(iter->thumbPath)) {
 			surf = loadSurfaceFromFile(iter->thumbPath);
@@ -492,7 +492,7 @@ void GridWidget::assignEntriesToItems() {
 	// Start assigning from the second row as the first row is supposed
 	// to be offscreen.
 	Common::Array<GridItemWidget *>::iterator it = _gridItems.begin() + _itemsPerRow;
-	
+
 	for (int k = 0; k < _itemsOnScreen; ++k) {
 		GridItemWidget *item = *it;
 		if (entry != _visibleEntries.end()) {
@@ -526,11 +526,11 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	case kSetPositionCmd:
 		if (-_scrollPos != (int)data) {
 			_scrollPos = -data;
-			
+
 			if (calcVisibleEntries()) {
 				reloadThumbnails();
 			}
-			
+
 			int row = 0;
 			int col = 0;
 
@@ -560,7 +560,7 @@ void GridWidget::reflowLayout() {
 
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
-	
+
 	int oldThumbnailHeight = _thumbnailHeight;
 	int oldThumbnailWidth = _thumbnailWidth;
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
@@ -576,16 +576,16 @@ void GridWidget::reflowLayout() {
 	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
 
 	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
-	
+
 	_trayHeight = kLineHeight * 3;
 	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight * _isTitlesVisible);
 	_gridItemWidth = _thumbnailWidth;
 
 	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
 	_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
-	
+
 	_rows = ceil(_allEntries.size() / (float)_itemsPerRow);
-	
+
 	_innerHeight = _trayHeight + _gridYSpacing + _rows * (_gridItemHeight + _gridYSpacing);
 	_innerWidth = (2 * _minGridXSpacing) + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
 
@@ -597,7 +597,7 @@ void GridWidget::reflowLayout() {
 
 
 	_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h, false);
-	
+
 	if (calcVisibleEntries()) {
 		reloadThumbnails();
 	}
@@ -608,7 +608,7 @@ void GridWidget::reflowLayout() {
 							  		_gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing) - ((-_scrollPos) % (_gridItemHeight + _gridYSpacing)),
 									_gridItemWidth, 
 									_gridItemHeight);
-		
+
 		_gridItems.push_back(newItem);
 
 		if (++col >= _itemsPerRow) {
@@ -631,7 +631,7 @@ void GridWidget::scrollBarRecalc() {
 	_scrollBar->_entriesPerPage = _scrollWindowHeight - _gridYSpacing;
 	_scrollBar->_currentPos = -_scrollPos;
 	_scrollBar->_singleStep = kLineHeight;
-	
+
 	_scrollBar->checkBounds(_scrollBar->_currentPos);
 	_scrollPos = _scrollBar->_currentPos;
 	_scrollBar->recalc();

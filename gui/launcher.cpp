@@ -645,7 +645,6 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
-
 void LauncherDialog::reflowLayout() {
 	if (getType() == kLauncherDisplayGrid && !g_gui.xmlEval()->getVar("Globals.GridSupported", 0)) {
 		setResult(kSwitchLauncherDialog);
@@ -824,7 +823,7 @@ int LauncherChooser::runModal() {
 LauncherSimple::LauncherSimple(const U32String &title)
 	: LauncherDialog(title),
 	_list (nullptr), _addButton(nullptr), _startButton(nullptr),
-	_loadButton(nullptr), _editButton(nullptr),	_removeButton(nullptr) {
+	_loadButton(nullptr), _editButton(nullptr), _removeButton(nullptr) {
 
 	build();
 }
@@ -1083,7 +1082,7 @@ void LauncherSimple::updateButtons() {
 LauncherGrid::LauncherGrid(const U32String &title)
 	: LauncherDialog(title),
 	_grid (nullptr), _addButton(nullptr), _startButton(nullptr),
-	_loadButton(nullptr), _editButton(nullptr),	_removeButton(nullptr) {
+	_loadButton(nullptr), _editButton(nullptr), _removeButton(nullptr) {
 
 	build();
 }
@@ -1172,7 +1171,7 @@ void LauncherGrid::updateListing() {
 		Common::String language = "XX";
 		Common::String platform;
 		iter->domain->tryGetVal("engineid", engineid);
-		iter->domain->tryGetVal("language",language);
+		iter->domain->tryGetVal("language", language);
 		iter->domain->tryGetVal("platform", platform);
 		gridList.push_back(GridItemInfo(k++, engineid, gameid, title, Common::parseLanguage(language), Common::parsePlatform(platform)));
 	}

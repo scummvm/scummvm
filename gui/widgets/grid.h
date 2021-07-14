@@ -79,7 +79,7 @@ class GridItemTray: public Dialog, public CommandSender {
 	GuiObject 		*_boss;
 public:
 	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid);
-	
+
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;
@@ -92,7 +92,7 @@ class GridWidget : public ContainerWidget, public CommandSender {
 protected:
 	Common::HashMap<int, const Graphics::ManagedSurface *> _platformIcons;
 	Common::HashMap<int, const Graphics::ManagedSurface *> _languageIcons;
-	
+
 	// Images are mapped by filename -> surface.
 	Common::HashMap<String, const Graphics::ManagedSurface *> _loadedSurfaces;
 
@@ -120,18 +120,18 @@ public:
 	int				_gridXSpacing;
 	int				_gridYSpacing;
 	int				_trayHeight;
-	
+
 	int				_rows;
 	int				_itemsPerRow;
 	int				_firstVisibleItem;
 	int				_itemsOnScreen;
-	
+
 	bool 			_isTitlesVisible;
 
 	int 			_selectedEntry;
 	GridItemTray 	*_tray;
 	String 			_iconDir;
-	
+
 	GridWidget(GuiObject *boss, int x, int y, int w, int h);
 	GridWidget(GuiObject *boss, const String &name);
 	~GridWidget();
@@ -144,11 +144,11 @@ public:
 	bool calcVisibleEntries();
 	void setEntryList(Common::Array<GridItemInfo> *list);
 	void setTitlesVisible(bool vis);
-	
+
 	void reloadThumbnails();
 	void loadFlagIcons();
 	void loadPlatformIcons();
-	
+
 	void destroyItems();
 	void updateGrid();
 	void move(int x, int y);
@@ -161,9 +161,9 @@ public:
 
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
-	
+
 	void reflowLayout() override;
-	
+
 	void openTray(int x, int y, int entryID);
 	void scrollBarRecalc();
 };
