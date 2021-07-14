@@ -944,7 +944,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 	case kChunkItem:
 	case kChunkLine:
 		{
-			Common::u32char_type_t delimiter = (type == kChunkItem) ? g_lingo->_itemDelimiter : '\n';
+			Common::u32char_type_t delimiter = (type == kChunkItem) ? g_lingo->_itemDelimiter : '\r';
 
 			int idx = 0;
 			while (true) {
