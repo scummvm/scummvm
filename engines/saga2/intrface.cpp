@@ -1891,7 +1891,8 @@ void setIndivBtns(uint16 brotherID) {    // top = 0, mid = 1, bot = 2
 	setEnchantmentDisplay();
 
 	// point the read containers to the correct brother
-	if (brotherID > playerActors) brotherID = playerActors;
+	if (brotherID >= playerActors)
+		brotherID = playerActors - 1;
 
 	indivCviewTop->setContainer(GameObject::objectAddress(ActorBaseID + brotherID));
 	indivCviewTop->ghost(TrioCviews[brotherID]->isGhosted());
