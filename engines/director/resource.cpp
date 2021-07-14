@@ -175,7 +175,7 @@ void Window::loadEXE(const Common::String movie) {
 		iniStream->read(script, iniStream->size());
 
 		_currentMovie = new Movie(this);
-		_currentMovie->getMainLingoArch()->addCode(script, kMovieScript, 0);
+		_currentMovie->getMainLingoArch()->addCode(Common::U32String(script, Common::kWindows1252), kMovieScript, 0);
 		_currentMovie->processEvent(kEventStartUp);
 		delete _currentMovie;
 		_currentMovie = nullptr;

@@ -25,6 +25,8 @@
 
 namespace Director {
 
+#define CONTINUATION (0xAC)
+
 enum MovieFlag {
 	kMovieFlagAllowOutdatedLingo	= (1 << 8)
 };

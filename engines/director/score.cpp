@@ -936,15 +936,8 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 
 		stream.seek(stringPos);
 
-		Common::String script;
-		for (uint16 j = stringPos; j < nextStringPos; j++) {
-			byte ch = stream.readByte();
-			if (ch == 0x0d) {
-				ch = '\n';
-			}
-			script += ch;
-		}
-		_actions[i] = script;
+		Common::String script = stream.readString(0, nextStringPos - stringPos);
+		_actions[i] = script.decode(Common::kMacRoman).encode(Common::kUtf8);
 
 		debugC(3, kDebugLoading, "Action index: %d id: %d nextId: %d subId: %d, code: %s", i, id, nextId, subId, _actions[i].c_str());
 
@@ -983,8 +976,9 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 		if (!scriptRefs[j->_key]) {
 			// Check if it is empty
 			bool empty = true;
-			for (const char *ptr = j->_value.c_str(); *ptr; ptr++)
-				if (!(*ptr == ' ' || *ptr == '-' || *ptr == '\n' || *ptr == '\r' || *ptr == '\t' || *ptr == '\xc2')) {
+			Common::U32String u32Script(j->_value);
+			for (const Common::u32char_type_t *ptr = u32Script.c_str(); *ptr; ptr++)
+				if (!(*ptr == ' ' || *ptr == '-' || *ptr == '\n' || *ptr == '\r' || *ptr == '\t' || *ptr == CONTINUATION)) {
 					empty = false;
 					break;
 				}
@@ -995,7 +989,7 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 			continue;
 		}
 		if (!j->_value.empty()) {
-			_movie->getMainLingoArch()->addCode(j->_value.c_str(), kScoreScript, j->_key);
+			_movie->getMainLingoArch()->addCode(j->_value, kScoreScript, j->_key);
 
 			processImmediateFrameScript(j->_value, j->_key);
 		}

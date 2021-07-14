@@ -676,7 +676,7 @@ bool CastMember::setField(int field, const Datum &d) {
 			warning("CastMember::setField(): CastMember info for %d not found", _castId);
 			return false;
 		}
-		_cast->_lingoArchive->addCode(d.u.s->c_str(), kCastScript, _castId);
+		_cast->_lingoArchive->addCode(*d.u.s, kCastScript, _castId);
 		castInfo->script = d.asString();
 		return true;
 	case kTheWidth:
@@ -883,7 +883,7 @@ Datum TextCastMember::getField(int field) {
 		d = _hilite;
 		break;
 	case kTheText:
-		d = getText().encode(Common::kMacRoman); // FIXME: Properly handle encoding
+		d = getText().encode(Common::kUtf8);
 		break;
 	case kTheTextAlign:
 		d.type = STRING;
@@ -944,7 +944,7 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		}
 		break;
 	case kTheText:
-		setText(Common::U32String(d.asString(), Common::kMacRoman)); // FIXME: Properly handle encoding
+		setText(d.asString());
 		return true;
 	case kTheTextAlign:
 		{

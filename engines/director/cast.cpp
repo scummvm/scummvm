@@ -1065,17 +1065,7 @@ void Cast::loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	/*uint32 unk1 = */ stream.readUint32();
 	uint32 strLen = stream.readUint32();
 	/*uin32 dataLen = */ stream.readUint32();
-	Common::String script;
-
-	for (uint32 i = 0; i < strLen; i++) {
-		byte ch = stream.readByte();
-
-		// Convert Mac line endings
-		if (ch == 0x0d)
-			ch = '\n';
-
-		script += ch;
-	}
+	Common::String script = stream.readString(0, strLen);
 
 	// Check if this is a script. It must start with a comment.
 	// See D2 Interactivity Manual pp.46-47 (Ch.2.11. Using a macro)
@@ -1088,7 +1078,7 @@ void Cast::loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	if (script.contains("\nmenu:") || script.hasPrefix("menu:"))
 		return;
 
-	_lingoArchive->addCode(script.c_str(), kMovieScript, id);
+	_lingoArchive->addCode(script.decode(Common::kMacRoman), kMovieScript, id);
 }
 
 void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {
@@ -1191,7 +1181,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			if (ConfMan.getBool("dump_scripts"))
 				dumpScript(ci->script.c_str(), scriptType, id);
 
-			_lingoArchive->addCode(ci->script.c_str(), scriptType, id, ci->name.c_str());
+			_lingoArchive->addCode(ci->script, scriptType, id, ci->name.c_str());
 		}
 	}
 
