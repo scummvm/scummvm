@@ -841,7 +841,7 @@ void LauncherSimple::selectTarget(const String &target) {
 	}
 }
 
-int LauncherSimple::getSelected() { return _list->getSelected(); }
+const int LauncherSimple::getSelected() { return _list->getSelected(); }
 
 void LauncherSimple::build() {
 #ifndef DISABLE_FANCY_THEMES
@@ -1193,7 +1193,7 @@ void LauncherGrid::updateButtons() {
 }
 
 void LauncherGrid::selectTarget(const String &target) {}
-int LauncherGrid::getSelected() { return _grid->getSelected(); }
+const int LauncherGrid::getSelected() { return _grid->getSelected(); }
 
 void LauncherGrid::build() {
 	_grid = nullptr;
