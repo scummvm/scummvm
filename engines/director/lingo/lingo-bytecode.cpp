@@ -1104,9 +1104,8 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 					warning("Constant string has no null terminator");
 					break;
 				}
-				Common::CodePage encoding = g_director->getPlatformEncoding();
 				constant.type = STRING;
-				constant.u.s = new Common::String(str.decode(encoding), Common::kUtf8);
+				constant.u.s = new Common::String(archive->cast->decodeString(str), Common::kUtf8);
 			}
 			break;
 		case 4: // Integer type
