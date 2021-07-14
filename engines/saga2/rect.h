@@ -27,6 +27,8 @@
 #ifndef SAGA2_RECT_H
 #define SAGA2_RECT_H
 
+#include "common/memstream.h"
+
 namespace Saga2 {
 
 struct StaticPoint16 {
@@ -55,7 +57,7 @@ public:
 	}
 
 	void load(Common::SeekableReadStream *stream);
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	// Point16 operators
 	friend Point16 operator+ (Point16 a, Point16 b) {
@@ -315,7 +317,7 @@ public:
 	}
 
 	void read(Common::InSaveFile *in);
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Rect16 operators
 

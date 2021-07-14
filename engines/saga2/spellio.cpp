@@ -33,6 +33,7 @@
 #include "saga2/rect.h"
 #include "saga2/spellio.h"
 #include "saga2/spelshow.h"
+#include "saga2/saveload.h"
 
 namespace Saga2 {
 
@@ -213,10 +214,9 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 void initSpellState(void) {
 }
 
-void saveSpellState(Common::OutSaveFile *out) {
+void saveSpellState(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving SpellState");
-
-	activeSpells.write(out);
+	activeSpells.write(outS);
 }
 
 void loadSpellState(Common::InSaveFile *in) {
@@ -294,7 +294,7 @@ void StorageSpellTarget::read(Common::InSaveFile *in) {
 	tag = ActiveItemID(tagID);
 }
 
-void StorageSpellTarget::write(Common::OutSaveFile *out) {
+void StorageSpellTarget::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeSint16LE(type);
 	loc.write(out);
 	out->writeUint16LE(obj);
@@ -320,7 +320,7 @@ void StorageSpellInstance::read(Common::InSaveFile *in) {
 	eListSize = in->readSint16LE();
 }
 
-void StorageSpellInstance::write(Common::OutSaveFile *out) {
+void StorageSpellInstance::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeSint32LE(implementAge);
 	out->writeUint16LE(effect);
 	warning("StorageSpellInstance::write: Check SpellID size");
@@ -377,12 +377,9 @@ size_t SpellDisplayList::saveSize(void) {
 	return total;
 }
 
-void SpellDisplayList::write(Common::OutSaveFile *out) {
-	size_t chunkSize = saveSize();
-
-	out->write("SPEL", 4);
-	out->writeUint32LE(chunkSize);
-
+void SpellDisplayList::write(Common::OutSaveFile *outS) {
+	outS->write("SPEL", 4);
+	CHUNK_BEGIN;
 	out->writeUint16LE(count);
 
 	debugC(3, kDebugSaveload, "... count = %d", count);
@@ -395,6 +392,7 @@ void SpellDisplayList::write(Common::OutSaveFile *out) {
 			spells[i]->writeEffect(out);
 		}
 	}
+	CHUNK_END;
 }
 
 void SpellDisplayList::read(Common::InSaveFile *in) {
@@ -440,7 +438,7 @@ size_t SpellInstance::saveSize(void) {
 	return total;
 }
 
-void SpellInstance::writeEffect(Common::OutSaveFile *out) {
+void SpellInstance::writeEffect(Common::MemoryWriteStreamDynamic *out) {
 	if (eList.count > 0 && !(maxAge > 0 && (age + 1) > maxAge))
 		for (int32 i = 0; i < eList.count; i++) {
 			StorageEffectron se = StorageEffectron(*eList.displayList[i].efx);
@@ -520,7 +518,7 @@ void StorageEffectron::read(Common::InSaveFile *in) {
 	age = in->readSint32LE();
 }
 
-void StorageEffectron::write(Common::OutSaveFile *out) {
+void StorageEffectron::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeUint32LE(flags);
 	size.write(out);
 	hitBox.write(out);

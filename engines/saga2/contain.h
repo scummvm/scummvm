@@ -451,7 +451,7 @@ public:
 	}
 
 	void read(Common::InSaveFile *in);
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Hide or show this container window.
 	void hide(void);
@@ -542,7 +542,7 @@ void initContainers(void);
 void cleanupContainers(void);
 
 void initContainerNodes(void);
-void saveContainerNodes(Common::OutSaveFile *out);
+void saveContainerNodes(Common::OutSaveFile *outS);
 void loadContainerNodes(Common::InSaveFile *in);
 void cleanupContainerNodes(void);
 

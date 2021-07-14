@@ -87,7 +87,7 @@ inline int32 ActorAssignment::archiveSize(void) const {
 	return sizeof(startFrame) + sizeof(endFrame);
 }
 
-void ActorAssignment::write(Common::OutSaveFile *out) const {
+void ActorAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeUint16LE(startFrame);
 	out->writeUint16LE(endFrame);
 }
@@ -208,7 +208,7 @@ inline int32 PatrolRouteAssignment::archiveSize(void) const {
 	            +   sizeof(flags);
 }
 
-void PatrolRouteAssignment::write(Common::OutSaveFile *out) const {
+void PatrolRouteAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving PatrolRouteAssignment");
 
 	//  Let the base class write its data to the buffer
@@ -349,7 +349,7 @@ inline int32 HuntToBeNearLocationAssignment::archiveSize(void) const {
 	            +   sizeof(range);
 }
 
-void HuntToBeNearLocationAssignment::write(Common::OutSaveFile *out) const {
+void HuntToBeNearLocationAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving HuntToBeNearLocationAssignment");
 
 	//  Let the base class archive its data
@@ -452,7 +452,7 @@ inline int32 HuntToBeNearActorAssignment::archiveSize(void) const {
 	            +   sizeof(flags);
 }
 
-void HuntToBeNearActorAssignment::write(Common::OutSaveFile *out) const {
+void HuntToBeNearActorAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving HuntToBeNearActorAssignment");
 
 	//  Let the base class archive its data
@@ -547,7 +547,7 @@ inline int32 HuntToKillAssignment::archiveSize(void) const {
 	            +   sizeof(flags);
 }
 
-void HuntToKillAssignment::write(Common::OutSaveFile *out) const {
+void HuntToKillAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving HuntToKillAssignment");
 
 	//  Let the base class archive its data
@@ -637,7 +637,7 @@ inline int32 TetheredAssignment::archiveSize(void) const {
 	            +   sizeof(maxV);
 }
 
-void TetheredAssignment::write(Common::OutSaveFile *out) const {
+void TetheredAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving TetheredAssignment");
 
 	//  Let the base class archive its data
@@ -712,7 +712,7 @@ inline int32 AttendAssignment::archiveSize(void) const {
 	            +   sizeof(ObjectID);
 }
 
-void AttendAssignment::write(Common::OutSaveFile *out) const {
+void AttendAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving AttendAssignment");
 
 	//  Let the base class write its data to the buffer
@@ -784,7 +784,7 @@ int32 assignmentArchiveSize(Actor *a) {
 	return assign != NULL ? sizeof(int16) + assign->archiveSize() : 0;
 }
 
-void writeAssignment(Actor *a, Common::OutSaveFile *out) {
+void writeAssignment(Actor *a, Common::MemoryWriteStreamDynamic *out) {
 	ActorAssignment *assign = a->getAssignment();
 
 	if (assign != NULL) {

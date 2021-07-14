@@ -111,8 +111,6 @@ public:
 
 private:
 	//  Reconstruct this SpeechTask from an archive buffer
-	void *restore(void *buf);
-
 	void read(Common::InSaveFile *in);
 
 	//  Return the number of bytes needed to archive this SpeechTask
@@ -121,7 +119,7 @@ private:
 	//  Archive this SpeechTask in a buffer
 	void *archive(void *buf);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	bool setupActive(void);                  // render speech into temp image
 	bool displayText(void);
@@ -197,7 +195,7 @@ public:
 	//  Create an archive of the speech tasks in an archive buffer
 	void *archive(void *buf);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Cleanup the speech tasks
 	void cleanup(void);
@@ -232,7 +230,7 @@ extern SpeechTaskList &speechList;
 void initSpeechTasks(void);
 
 //  Save the speech tasks in a save file
-void saveSpeechTasks(Common::OutSaveFile *out);
+void saveSpeechTasks(Common::OutSaveFile *outS);
 void loadSpeechTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the speech task list

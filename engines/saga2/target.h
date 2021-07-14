@@ -57,7 +57,7 @@ class Target;
 void deleteTarget(Target *t);
 
 void readTarget(void *mem, Common::InSaveFile *in);
-void writeTarget(const Target *t, Common::OutSaveFile *out);
+void writeTarget(const Target *t, Common::MemoryWriteStreamDynamic *out);
 int32 targetArchiveSize(const Target *t);
 
 /* ===================================================================== *
@@ -142,7 +142,7 @@ public:
 	//  a buffer
 	virtual int32 archiveSize(void) const = 0;
 
-	virtual void write(Common::OutSaveFile *out) const = 0;
+	virtual void write(Common::MemoryWriteStreamDynamic *out) const = 0;
 
 	//  Return an integer representing the type of target
 	virtual int16 getType(void) const = 0;
@@ -194,7 +194,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -256,7 +256,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -290,7 +290,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -342,7 +342,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -378,7 +378,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -458,7 +458,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -509,7 +509,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -564,7 +564,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;
@@ -623,7 +623,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of target
 	int16 getType(void) const;

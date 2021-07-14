@@ -124,7 +124,7 @@ struct StorageSpellTarget {
 	StorageSpellTarget(SpellTarget &st);
 
 	void read(Common::InSaveFile *in);
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 };
 
 //-------------------------------------------------------------------
@@ -148,7 +148,7 @@ struct StorageSpellInstance {
 	StorageSpellInstance(SpellInstance &si);
 
 	void read(Common::InSaveFile *in);
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 };
 
 //-------------------------------------------------------------------
@@ -181,7 +181,7 @@ struct StorageEffectron {
 	StorageEffectron(Effectron &e);
 
 	void read(Common::InSaveFile *in);
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 };
 
 } // end of namespace Saga2

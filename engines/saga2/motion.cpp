@@ -384,7 +384,7 @@ int32 MotionTaskList::archiveSize(void) {
 	return size;
 }
 
-void MotionTaskList::write(Common::OutSaveFile *out) {
+void MotionTaskList::write(Common::MemoryWriteStreamDynamic *out) {
 	int16 motionTaskCount = _list.size();
 
 	//  Store the motion task count
@@ -825,7 +825,7 @@ int32 MotionTask::archiveSize(void) {
 	return size;
 }
 
-void MotionTask::write(Common::OutSaveFile *out) {
+void MotionTask::write(Common::MemoryWriteStreamDynamic *out) {
 	ObjectID    objectID;
 
 	//  Store the motion type and previous motion type
@@ -4809,17 +4809,13 @@ void initMotionTasks(void) {
 	//new (g_vm->_mTaskList) MotionTaskList;
 }
 
-void saveMotionTasks(Common::OutSaveFile *out) {
+void saveMotionTasks(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving MotionTasks");
 
-	int32   archiveBufSize;
-
-	archiveBufSize = g_vm->_mTaskList->archiveSize();
-
-	out->write("MOTN", 4);
-	out->writeUint32LE(archiveBufSize);
-
+	outS->write("MOTN", 4);
+	CHUNK_BEGIN;
 	g_vm->_mTaskList->write(out);
+	CHUNK_END;
 }
 
 void loadMotionTasks(Common::InSaveFile *in, int32 chunkSize) {

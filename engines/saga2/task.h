@@ -86,7 +86,7 @@ TaskStack *getTaskStackAddress(TaskStackID id);
 //  Initialize the task stack list
 void initTaskStacks(void);
 
-void saveTaskStacks(Common::OutSaveFile *out);
+void saveTaskStacks(Common::OutSaveFile *outS);
 void loadTaskStacks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the task stacks
@@ -108,7 +108,7 @@ Task *getTaskAddress(TaskID id);
 //  Initialize the task list
 void initTasks(void);
 
-void saveTasks(Common::OutSaveFile *out);
+void saveTasks(Common::OutSaveFile *outS);
 void loadTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the task list
@@ -153,7 +153,7 @@ public:
 	//  in a buffer
 	virtual int32 archiveSize(void) const;
 
-	virtual void write(Common::OutSaveFile *out) const;
+	virtual void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	virtual int16 getType(void) const = 0;
@@ -193,7 +193,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -268,7 +268,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
@@ -317,7 +317,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
@@ -363,7 +363,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -419,7 +419,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -476,7 +476,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 private:
 	TilePoint destination(void);
@@ -521,7 +521,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -559,7 +559,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -619,7 +619,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
@@ -657,7 +657,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -693,7 +693,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -740,7 +740,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
@@ -789,7 +789,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 protected:
 	bool targetHasChanged(GotoTask *gotoTarget);
@@ -832,7 +832,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -876,7 +876,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 protected:
 	bool targetHasChanged(GotoTask *gotoTarget);
@@ -921,7 +921,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -975,7 +975,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -1022,7 +1022,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 protected:
 	bool targetHasChanged(GotoTask *gotoTarget);
@@ -1084,7 +1084,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
@@ -1150,7 +1150,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -1206,7 +1206,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -1334,7 +1334,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
@@ -1462,7 +1462,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 #if DEBUG
 	//  Debugging function used to mark this task and any sub tasks as
@@ -1515,7 +1515,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -1653,7 +1653,7 @@ public:
 		            +   sizeof(evalRate);
 	}
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	void read(Common::InSaveFile *in);
 

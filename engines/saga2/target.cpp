@@ -85,7 +85,7 @@ void readTarget(void *mem, Common::InSaveFile *in) {
 	}
 }
 
-void writeTarget(const Target *t, Common::OutSaveFile *out) {
+void writeTarget(const Target *t, Common::MemoryWriteStreamDynamic *out) {
 	out->writeSint16LE(t->getType());
 
 	t->write(out);
@@ -164,7 +164,7 @@ inline int32 LocationTarget::archiveSize(void) const {
 	return sizeof(loc);
 }
 
-void LocationTarget::write(Common::OutSaveFile *out) const {
+void LocationTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the target location
 	loc.write(out);
 }
@@ -348,7 +348,7 @@ inline int32 SpecificTileTarget::archiveSize(void) const {
 	return sizeof(tile);
 }
 
-void SpecificTileTarget::write(Common::OutSaveFile *out) const {
+void SpecificTileTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the tile ID
 	out->writeUint16LE(tile);
 }
@@ -408,7 +408,7 @@ inline int32 TilePropertyTarget::archiveSize(void) const {
 	return sizeof(tileProp);
 }
 
-void TilePropertyTarget::write(Common::OutSaveFile *out) const {
+void TilePropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeSint16LE(tileProp);
 }
 
@@ -577,7 +577,7 @@ inline int32 SpecificMetaTileTarget::archiveSize(void) const {
 	return sizeof(MetaTileID);
 }
 
-void SpecificMetaTileTarget::write(Common::OutSaveFile *out) const {
+void SpecificMetaTileTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the MetaTileID
 	out->writeSint16LE(meta.map);
 	out->writeSint16LE(meta.index);
@@ -641,7 +641,7 @@ inline int32 MetaTilePropertyTarget::archiveSize(void) const {
 	return sizeof(metaProp);
 }
 
-void MetaTilePropertyTarget::write(Common::OutSaveFile *out) const {
+void MetaTilePropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the MetaTilePropertyID
 	out->writeSint16LE(metaProp);
 }
@@ -916,7 +916,7 @@ inline int32 SpecificObjectTarget::archiveSize(void) const {
 	return sizeof(obj);
 }
 
-void SpecificObjectTarget::write(Common::OutSaveFile *out) const {
+void SpecificObjectTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the ObjectID
 	out->writeUint16LE(obj);
 }
@@ -1067,7 +1067,7 @@ inline int32 ObjectPropertyTarget::archiveSize(void) const {
 	return sizeof(objProp);
 }
 
-void ObjectPropertyTarget::write(Common::OutSaveFile *out) const {
+void ObjectPropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the ObjectPropertyID
 	out->writeSint16LE(objProp);
 }
@@ -1166,7 +1166,7 @@ inline int32 SpecificActorTarget::archiveSize(void) const {
 	return sizeof(ObjectID);
 }
 
-void SpecificActorTarget::write(Common::OutSaveFile *out) const {
+void SpecificActorTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Convert the actor pointer to an actor ID;
 	ObjectID actorID = a != NULL ? a->thisID() : Nothing;
 
@@ -1350,7 +1350,7 @@ inline int32 ActorPropertyTarget::archiveSize(void) const {
 	return sizeof(actorProp);
 }
 
-void ActorPropertyTarget::write(Common::OutSaveFile *out) const {
+void ActorPropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store the ActorPropertyID
 	out->writeSint16LE(actorProp);
 }

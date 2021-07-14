@@ -935,14 +935,11 @@ void initPlayerActors(void) {
 	readyContainerSetup();
 }
 
-void savePlayerActors(Common::OutSaveFile *out) {
+void savePlayerActors(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving PlayerActors");
 
-	const int archiveSize = playerActors * 38;
-
-	out->write("PLYR", 4);
-	out->writeUint32LE(archiveSize);
-
+	outS->write("PLYR", 4);
+	CHUNK_BEGIN;
 	for (int i = 0; i < playerActors; i++) {
 		debugC(3, kDebugSaveload, "Saving PlayerActor %d", i);
 
@@ -978,6 +975,7 @@ void savePlayerActors(Common::OutSaveFile *out) {
 		debugC(4, kDebugSaveload, "... playerList[%d].vitalityMemory = %d", i, p->vitalityMemory);
 		debugC(4, kDebugSaveload, "... playerList[%d].notifiedOfAttack = %d", i, p->notifiedOfAttack);
 	}
+	CHUNK_END;
 }
 
 void loadPlayerActors(Common::InSaveFile *in) {

@@ -263,7 +263,7 @@ private:
 	//  Return the number of bytes needed to archive this MotionTask
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	// motion task is finished.
 	void remove(int16 returnVal = motionInterrupted);
@@ -551,7 +551,7 @@ public:
 	//  in a buffer
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Cleanup the motion tasks
 	void cleanup(void);

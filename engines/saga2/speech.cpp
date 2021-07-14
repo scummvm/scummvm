@@ -195,7 +195,7 @@ int32 Speech::archiveSize(void) {
 	            +   sizeof(char) * charCount;
 }
 
-void Speech::write(Common::OutSaveFile *out) {
+void Speech::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Store the sample count and character count
 	out->writeSint16LE(sampleCount);
 	out->writeSint16LE(charCount);
@@ -968,7 +968,7 @@ int32 SpeechTaskList::archiveSize(void) {
 	return size;
 }
 
-void SpeechTaskList::write(Common::OutSaveFile *out) {
+void SpeechTaskList::write(Common::MemoryWriteStreamDynamic *out) {
 	int i = 0;
 	int16 count = 0;
 
@@ -1142,17 +1142,13 @@ void initSpeechTasks(void) {
 	new (&speechList) SpeechTaskList;
 }
 
-void saveSpeechTasks(Common::OutSaveFile *out) {
+void saveSpeechTasks(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Speech Tasks");
 
-	int32 archiveBufSize;
-
-	archiveBufSize = speechList.archiveSize();
-
-	out->write("SPCH", 4);
-	out->writeUint32LE(archiveBufSize);
-
+	outS->write("SPCH", 4);
+	CHUNK_BEGIN;
 	speechList.write(out);
+	CHUNK_END;
 }
 
 void loadSpeechTasks(Common::InSaveFile *in, int32 chunkSize) {

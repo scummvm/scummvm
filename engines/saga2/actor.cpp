@@ -1199,7 +1199,7 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 
 	faction = in->readByte();
 	colorScheme = in->readByte();
-	appearanceID = in->readSint32LE();
+	appearanceID = in->readSint32BE();
 	attitude = in->readSByte();
 	mood = in->readSByte();
 
@@ -1332,7 +1332,7 @@ int32 Actor::archiveSize(void) {
 	return size;
 }
 
-void Actor::write(Common::OutSaveFile *out) {
+void Actor::write(Common::MemoryWriteStreamDynamic *out) {
 	ProtoObj    *holdProto = prototype;
 
 	debugC(3, kDebugSaveload, "Saving actor %d", thisID());
@@ -1343,14 +1343,14 @@ void Actor::write(Common::OutSaveFile *out) {
 	if (prototype != NULL)
 		prototype = &objectProtos[(ActorProto *)prototype - actorProtos];
 
-	GameObject::write(out);
+	GameObject::write(out, false);
 
 	//  Restore the prototype pointer
 	prototype = holdProto;
 
 	out->writeByte(faction);
 	out->writeByte(colorScheme);
-	out->writeSint32LE(appearanceID);
+	out->writeSint32BE(appearanceID);
 	out->writeSByte(attitude);
 	out->writeSByte(mood);
 
@@ -3540,27 +3540,18 @@ void initActors(void) {
 	actorList[2].disposition = dispositionPlayer + 2;
 }
 
-void saveActors(Common::OutSaveFile *out) {
+void saveActors(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving actors");
 
-	int32   archiveBufSize = 0;
-
-	//  Accumulate size of archive buffer
-
-	//  Add size of actor count
-	archiveBufSize += sizeof(int16);
-
-	for (int i = 0; i < kActorCount; i++)
-		archiveBufSize += actorList[i].archiveSize();
-
-	out->write("ACTR", 4);
-	out->writeUint32LE(archiveBufSize);
+	outS->write("ACTR", 4);
+	CHUNK_BEGIN;
 	out->writeSint16LE(kActorCount);
 
 	debugC(3, kDebugSaveload, "... kActorCount = %d", kActorCount);
 
 	for (int i = 0; i < kActorCount; ++i)
 		actorList[i].write(out);
+	CHUNK_END;
 }
 
 void loadActors(Common::InSaveFile *in) {

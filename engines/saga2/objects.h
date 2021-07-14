@@ -113,7 +113,7 @@ struct ObjectData {
 #include "common/pack-end.h"
 
 void     initActors(void);
-void     saveActors(Common::OutSaveFile *out);
+void     saveActors(Common::OutSaveFile *outS);
 void     loadActors(Common::InSaveFile *in);
 void     cleanupActors(void);
 class GameObject {
@@ -181,13 +181,13 @@ public:
 
 	GameObject(Common::InSaveFile *in);
 
-	void read(Common::InSaveFile *in);
+	void read(Common::InSaveFile *in, bool expandProto);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out, bool expandProto);
 
 	//  returns the address of the object based on the ID, and this
 	//  includes accounting for actors.
@@ -736,7 +736,7 @@ public:
 	void activate(void);
 	void deactivate(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 	void read(Common::InSaveFile *in);
 };
 
@@ -855,7 +855,7 @@ public:
 	void update(void);
 
 	void read(Common::InSaveFile *in);
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return the current region in tile point coords
 	TileRegion getRegion(void) {
@@ -882,7 +882,7 @@ void updateActiveRegions(void);
 ActiveRegion *getActiveRegion(PlayerActorID id);
 
 void initActiveRegions(void);
-void saveActiveRegions(Common::OutSaveFile *out);
+void saveActiveRegions(Common::OutSaveFile *outS);
 void loadActiveRegions(Common::InSaveFile *in);
 inline void cleanupActiveRegions(void) {}
 
@@ -1386,7 +1386,7 @@ void cleanupObjectSoundFXTable(void);
 void initTempActorCount(void);
 
 //  Save the array of temp actor counts
-void saveTempActorCount(Common::OutSaveFile *out);
+void saveTempActorCount(Common::OutSaveFile *outS);
 
 //  Load the array of temp actor counts
 void loadTempActorCount(Common::InSaveFile *in, int32 chunkSize);
@@ -1407,7 +1407,7 @@ uint16 getTempActorCount(uint16 protoNum);
 void initWorlds(void);
 
 //  Save worlds to the save file
-void saveWorlds(Common::OutSaveFile *out);
+void saveWorlds(Common::OutSaveFile *outS);
 
 //  Load worlds from the save file
 void loadWorlds(Common::InSaveFile *in);
@@ -1419,7 +1419,7 @@ void cleanupWorlds(void);
 void initObjects(void);
 
 //  Save the objects to the save file
-void saveObjects(Common::OutSaveFile *out);
+void saveObjects(Common::OutSaveFile *outS);
 
 //  Load the objects from the save file
 void loadObjects(Common::InSaveFile *in);

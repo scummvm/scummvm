@@ -614,7 +614,7 @@ void ActorPose::load(Common::SeekableReadStream *stream) {
 	rightObjectOffset.load(stream);
 }
 
-void ActorPose::write(Common::OutSaveFile *out) {
+void ActorPose::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeUint16LE(flags);
 
 	out->writeByte(actorFrameIndex);

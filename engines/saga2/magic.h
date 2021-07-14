@@ -100,7 +100,7 @@ bool implementSpell(GameObject *enactor, GameObject *target, SkillProto *spell);
 
 // spell saving & loading
 void initSpellState(void);
-void saveSpellState(Common::OutSaveFile *out);
+void saveSpellState(Common::OutSaveFile *outS);
 void loadSpellState(Common::InSaveFile *in);
 void cleanupSpellState(void);
 

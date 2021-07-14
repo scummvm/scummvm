@@ -28,6 +28,7 @@
 #define SAGA2_ACTOR_H
 
 #include "saga2/objects.h"
+#include "saga2/saveload.h"
 
 namespace Saga2 {
 
@@ -194,7 +195,7 @@ struct ActorAttributes {
 		violetMana = in->readSint16LE();
 	}
 
-	void write(Common::OutSaveFile *out) {
+	void write(Common::MemoryWriteStreamDynamic *out) {
 		out->writeByte(archery);
 		out->writeByte(swordcraft);
 		out->writeByte(shieldcraft);
@@ -735,7 +736,7 @@ public:
 	//  Return the number of bytes needed to archive this actor
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	static Actor *newActor(
 	    int16   protoNum,

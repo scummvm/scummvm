@@ -110,7 +110,7 @@ void PatrolRouteIterator::read(Common::InSaveFile *in) {
 	_flags = in->readByte();
 }
 
-void PatrolRouteIterator::write(Common::OutSaveFile *out) const {
+void PatrolRouteIterator::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeSint16LE(_routeNo);
 	out->writeSint16LE(_vertexNo);
 	out->writeByte(_mapNum);

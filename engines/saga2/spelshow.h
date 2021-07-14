@@ -316,7 +316,7 @@ public:
 	void init(void);
 	void initEffect(TilePoint);
 	void readEffect(Common::InSaveFile *in, uint16 eListSize);
-	void writeEffect(Common::OutSaveFile *out);
+	void writeEffect(Common::MemoryWriteStreamDynamic *out);
 	void termEffect(void);
 	size_t saveSize(void);
 
@@ -349,7 +349,7 @@ public :
 	void buildList(void);
 	void updateStates(int32 deltaTime);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::OutSaveFile *outD);
 	void read(Common::InSaveFile *in);
 	void wipe(void);
 	size_t saveSize(void);

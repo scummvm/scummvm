@@ -1455,7 +1455,7 @@ void ContainerNode::read(Common::InSaveFile *in) {
 	debugC(4, kDebugSaveload, "... shown = %d", shown);
 }
 
-void ContainerNode::write(Common::OutSaveFile *out) {
+void ContainerNode::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Store fields
 	out->writeUint16LE(object);
 	out->writeByte(type);
@@ -1784,17 +1784,14 @@ void initContainerNodes(void) {
 #endif
 }
 
-void saveContainerNodes(Common::OutSaveFile *out) {
+void saveContainerNodes(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Container Nodes");
 
 	int i = 0;
 	int16 numNodes = 0;
-	int32 archiveBufSize;
 
 	//  Make sure there are no pending container view actions
 	g_vm->_containerList->doDeferredActions();
-
-	archiveBufSize = sizeof(numNodes);
 
 	//  Count the number of nodes to save
 	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
@@ -1804,12 +1801,8 @@ void saveContainerNodes(Common::OutSaveFile *out) {
 			numNodes++;
 	}
 
-	//  Compute size of archive buffer
-	archiveBufSize += numNodes * ContainerNode::archiveSize();
-
-	out->write("CONT", 4);
-	out->writeUint32LE(archiveBufSize);
-
+	outS->write("CONT", 4);
+	CHUNK_BEGIN;
 	//  Store the number of nodes to save
 	out->writeSint16LE(numNodes);
 
@@ -1824,6 +1817,7 @@ void saveContainerNodes(Common::OutSaveFile *out) {
 			n->write(out);
 		}
 	}
+	CHUNK_END;
 }
 
 void loadContainerNodes(Common::InSaveFile *in) {

@@ -135,7 +135,7 @@ struct ActorPose {
 	ActorPose(Common::SeekableReadStream *stream);
 	void load(Common::SeekableReadStream *stream);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 };
 
 //  A choreographed sequence of frames

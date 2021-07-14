@@ -73,7 +73,7 @@ public:
 	//  assignment
 	virtual int32 archiveSize(void) const;
 
-	virtual void write(Common::OutSaveFile *out) const;
+	virtual void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Construct a TaskStack for this assignment
 	TaskStack *createTask(void);
@@ -134,7 +134,7 @@ public:
 	//  assignment
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this assignment
 	int16 type(void) const;
@@ -202,7 +202,7 @@ public:
 	//  assignment
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	int16 type(void) const;
 
@@ -281,7 +281,7 @@ public:
 	//  assignment
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	int16 type(void) const;
 
@@ -352,7 +352,7 @@ public:
 	//  assignment
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Determine if assignment's time limit is up or if the actor is
 	//  already dead
@@ -398,7 +398,7 @@ public:
 	//  assignment
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 };
 
 /* ===================================================================== *
@@ -437,7 +437,7 @@ public:
 	//  assignment
 	int32 archiveSize(void) const;
 
-	void write(Common::OutSaveFile *out) const;
+	void write(Common::MemoryWriteStreamDynamic *out) const;
 
 	//  Return an integer representing the type of this assignment
 	int16 type(void) const;
@@ -455,7 +455,7 @@ protected:
 //  assignment in an archive buffer
 int32 assignmentArchiveSize(Actor *a);
 
-void writeAssignment(Actor *a, Common::OutSaveFile *out);
+void writeAssignment(Actor *a, Common::MemoryWriteStreamDynamic *out);
 void readAssignment(Actor *a, Common::InSaveFile *in);
 
 }

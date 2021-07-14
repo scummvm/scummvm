@@ -49,7 +49,7 @@ void readTask(TaskID id, Common::InSaveFile *in);
 //  specified Task
 int32 taskArchiveSize(Task *t);
 
-void writeTask(Task *t, Common::OutSaveFile *out);
+void writeTask(Task *t, Common::MemoryWriteStreamDynamic *out);
 
 #if DEBUG
 //  Debugging function used to check the integrity of the global task
@@ -116,7 +116,7 @@ public:
 	//  TaskStackList
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Place a TaskStack from the inactive list into the active
 	//  list.
@@ -212,7 +212,7 @@ int32 TaskStackList::archiveSize(void) {
 	return size;
 }
 
-void TaskStackList::write(Common::OutSaveFile *out) {
+void TaskStackList::write(Common::MemoryWriteStreamDynamic *out) {
 	int16 taskStackCount = 0;
 
 	//  Count the active task stacks
@@ -356,17 +356,13 @@ TaskStack *getTaskStackAddress(TaskStackID id) {
 void initTaskStacks(void) {
 }
 
-void saveTaskStacks(Common::OutSaveFile *out) {
+void saveTaskStacks(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Task Stacks");
 
-	int32 archiveBufSize;
-
-	archiveBufSize = stackList.archiveSize();
-
-	out->write("TSTK", 4);
-	out->writeUint32LE(archiveBufSize);
-
+	outS->write("TSTK", 4);
+	CHUNK_BEGIN;
 	stackList.write(out);
+	CHUNK_END;
 }
 
 void loadTaskStacks(Common::InSaveFile *in, int32 chunkSize) {
@@ -417,7 +413,7 @@ public:
 	//  in a buffer
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Place a Task from the inactive list into the active
 	//  list.
@@ -509,7 +505,7 @@ int32 TaskList::archiveSize(void) {
 	return size;
 }
 
-void TaskList::write(Common::OutSaveFile *out) {
+void TaskList::write(Common::MemoryWriteStreamDynamic *out) {
 	int16 taskCount = 0;
 
 	//  Count the active tasks
@@ -612,17 +608,13 @@ void initTasks(void) {
 	new (&taskList) TaskList;
 }
 
-void saveTasks(Common::OutSaveFile *out) {
+void saveTasks(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Tasks");
 
-	int32 archiveBufSize;
-
-	archiveBufSize = taskList.archiveSize();
-
-	out->write("TASK", 4);
-	out->writeUint32LE(archiveBufSize);
-
+	outS->write("TASK", 4);
+	CHUNK_BEGIN;
 	taskList.write(out);
+	CHUNK_END;
 }
 
 void loadTasks(Common::InSaveFile *in, int32 chunkSize) {
@@ -736,7 +728,7 @@ int32 taskArchiveSize(Task *t) {
 	            +   t->archiveSize();
 }
 
-void writeTask(Task *t, Common::OutSaveFile *out) {
+void writeTask(Task *t, Common::MemoryWriteStreamDynamic *out) {
 	//  Store the task's type
 	out->writeSint16LE(t->getType());
 
@@ -770,7 +762,7 @@ inline int32 Task::archiveSize(void) const {
 	return sizeof(TaskStackID);      //  stack's ID
 }
 
-void Task::write(Common::OutSaveFile *out) const {
+void Task::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeSint16LE(getTaskStackID(stack));
 }
 
@@ -796,7 +788,7 @@ int32 WanderTask::archiveSize(void) const {
 	            +   sizeof(counter);
 }
 
-void WanderTask::write(Common::OutSaveFile *out) const {
+void WanderTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Let the base class archive its data
 	Task::write(out);
 
@@ -927,7 +919,7 @@ inline int32 TetheredWanderTask::archiveSize(void) const {
 	            +   sizeof(TaskID);      //  gotoTether ID
 }
 
-void TetheredWanderTask::write(Common::OutSaveFile *out) const {
+void TetheredWanderTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving TetheredWanderTask");
 
 	//  Let the base class archive its data
@@ -1090,7 +1082,7 @@ inline int32 GotoTask::archiveSize(void) const {
 	            +   sizeof(prevRunState);
 }
 
-void GotoTask::write(Common::OutSaveFile *out) const {
+void GotoTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Let the base class archive its data
 	Task::write(out);
 
@@ -1249,7 +1241,7 @@ inline int32 GotoLocationTask::archiveSize(void) const {
 	            +   sizeof(runThreshold);
 }
 
-void GotoLocationTask::write(Common::OutSaveFile *out) const {
+void GotoLocationTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving GotoLocationTask");
 
 	//  Let the base class archive its data
@@ -1340,7 +1332,7 @@ inline int32 GotoRegionTask::archiveSize(void) const {
 	            +   sizeof(regionMaxV);
 }
 
-void GotoRegionTask::write(Common::OutSaveFile *out) const {
+void GotoRegionTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving GotoRegionTask");
 
 	//  Let the base class archive its data
@@ -1430,7 +1422,7 @@ inline int32 GotoObjectTargetTask::archiveSize(void) const {
 	            +   sizeof(lastKnownLoc);
 }
 
-void GotoObjectTargetTask::write(Common::OutSaveFile *out) const {
+void GotoObjectTargetTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Let the base class archive its data
 	GotoTask::write(out);
 
@@ -1556,7 +1548,7 @@ inline int32 GotoObjectTask::archiveSize(void) const {
 	return GotoObjectTargetTask::archiveSize() + sizeof(ObjectID);
 }
 
-void GotoObjectTask::write(Common::OutSaveFile *out) const {
+void GotoObjectTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving GotoObjectTask");
 
 	//  Let the base class archive its data
@@ -1623,7 +1615,7 @@ inline int32 GotoActorTask::archiveSize(void) const {
 	return GotoObjectTargetTask::archiveSize() + sizeof(ObjectID);
 }
 
-void GotoActorTask::write(Common::OutSaveFile *out) const {
+void GotoActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving GotoActorTask");
 
 	//  Let the base class archive its data
@@ -1701,7 +1693,7 @@ inline int32 GoAwayFromTask::archiveSize(void) const {
 	return Task::archiveSize() + sizeof(TaskID) + sizeof(flags);
 }
 
-void GoAwayFromTask::write(Common::OutSaveFile *out) const {
+void GoAwayFromTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Let the base class archive its data
 	Task::write(out);
 
@@ -1816,7 +1808,7 @@ int32 GoAwayFromObjectTask::archiveSize(void) const {
 	return GoAwayFromTask::archiveSize() + sizeof(ObjectID);
 }
 
-void GoAwayFromObjectTask::write(Common::OutSaveFile *out) const {
+void GoAwayFromObjectTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving GoAwayFromObjectTask");
 
 	//  Let the base class archive its data
@@ -1897,7 +1889,7 @@ int32 GoAwayFromActorTask::archiveSize(void) const {
 	return GoAwayFromTask::archiveSize() + targetArchiveSize(getTarget());
 }
 
-void GoAwayFromActorTask::write(Common::OutSaveFile *out) const {
+void GoAwayFromActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving GoAwayFromActorTask");
 
 	//  Let the base class archive its data
@@ -1996,7 +1988,7 @@ inline int32 HuntTask::archiveSize(void) const {
 	return size;
 }
 
-void HuntTask::write(Common::OutSaveFile *out) const {
+void HuntTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Let the base class archive its data
 	Task::write(out);
 
@@ -2154,7 +2146,7 @@ inline int32 HuntLocationTask::archiveSize(void) const {
 	            +   targetArchiveSize(getTarget());
 }
 
-void HuntLocationTask::write(Common::OutSaveFile *out) const {
+void HuntLocationTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Let the base class archive its data
 	HuntTask::write(out);
 
@@ -2214,7 +2206,7 @@ inline int32 HuntToBeNearLocationTask::archiveSize(void) const {
 	            +   sizeof(targetEvaluateCtr);
 }
 
-void HuntToBeNearLocationTask::write(Common::OutSaveFile *out) const {
+void HuntToBeNearLocationTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving HuntToBeNearLocationTask");
 
 	//  Let the base class archive its data
@@ -2329,7 +2321,7 @@ inline int32 HuntObjectTask::archiveSize(void) const {
 	            +   targetArchiveSize(getTarget());
 }
 
-void HuntObjectTask::write(Common::OutSaveFile *out) const {
+void HuntObjectTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Let the base class archive its data
 	HuntTask::write(out);
 
@@ -2395,7 +2387,7 @@ inline int32 HuntToBeNearObjectTask::archiveSize(void) const {
 	            +   sizeof(targetEvaluateCtr);
 }
 
-void HuntToBeNearObjectTask::write(Common::OutSaveFile *out) const {
+void HuntToBeNearObjectTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving HuntToBeNearObjectTask");
 
 	//  Let the base class archive its data
@@ -2525,7 +2517,7 @@ inline int32 HuntToPossessTask::archiveSize(void) const {
 	            +   sizeof(grabFlag);
 }
 
-void HuntToPossessTask::write(Common::OutSaveFile *out) const {
+void HuntToPossessTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving HuntToPossessTask");
 
 	//  Let the base class archive its data
@@ -2677,7 +2669,7 @@ inline int32 HuntActorTask::archiveSize(void) const {
 	            +   targetArchiveSize(getTarget());
 }
 
-void HuntActorTask::write(Common::OutSaveFile *out) const {
+void HuntActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Let the base class archive its data
 	HuntTask::write(out);
 
@@ -2772,7 +2764,7 @@ inline int32 HuntToBeNearActorTask::archiveSize(void) const {
 	            +   sizeof(targetEvaluateCtr);
 }
 
-void HuntToBeNearActorTask::write(Common::OutSaveFile *out) const {
+void HuntToBeNearActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving HuntToBeNearActorTask");
 
 	//  Let the base class archive its data
@@ -2990,7 +2982,7 @@ inline int32 HuntToKillTask::archiveSize(void) const {
 	            +   sizeof(flags);
 }
 
-void HuntToKillTask::write(Common::OutSaveFile *out) const {
+void HuntToKillTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving HuntToKillTask");
 
 	//  Let the base class archive its data
@@ -3348,7 +3340,7 @@ inline int32 HuntToGiveTask::archiveSize(void) const {
 	            +   sizeof(ObjectID);                //  objToGive ID
 }
 
-void HuntToGiveTask::write(Common::OutSaveFile *out) const {
+void HuntToGiveTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving HuntToGiveTask");
 
 	//  Let base class archive its data
@@ -3499,7 +3491,7 @@ inline int32 BandTask::archiveSize(void) const {
 	            +   sizeof(targetEvaluateCtr);
 }
 
-void BandTask::write(Common::OutSaveFile *out) const {
+void BandTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving BandTask");
 
 	//  Let the base class archive its data
@@ -3882,7 +3874,7 @@ inline int32 FollowPatrolRouteTask::archiveSize(void) const {
 	            +   sizeof(counter);
 }
 
-void FollowPatrolRouteTask::write(Common::OutSaveFile *out) const {
+void FollowPatrolRouteTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving FollowPatrolRouteTask");
 
 	//  Let the base class archive its data
@@ -4065,7 +4057,7 @@ inline int32 AttendTask::archiveSize(void) const {
 }
 
 
-void AttendTask::write(Common::OutSaveFile *out) const {
+void AttendTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	debugC(3, kDebugSaveload, "... Saving AttendTask");
 
 	//  Let the base class archive its data
@@ -4133,7 +4125,7 @@ bool AttendTask::operator == (const Task &t) const {
    TaskStack member functions
  * ===================================================================== */
 
-void TaskStack::write(Common::OutSaveFile *out) {
+void TaskStack::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Store the stack bottom TaskID
 	out->writeSint16LE(stackBottomID);
 
