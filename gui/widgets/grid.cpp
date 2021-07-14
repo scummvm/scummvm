@@ -109,14 +109,14 @@ void GridItemWidget::drawWidget() {
 	// Draw Platform Icon
 	const Graphics::ManagedSurface *platGfx = _grid->platformToSurface(_activeEntry->platform);
 	if (platGfx) {
-		g_gui.theme()->drawSurface(Common::Point(_x + thumbWidth - 32, _y + thumbHeight - 32), 
+		g_gui.theme()->drawSurface(Common::Point(_x + thumbWidth - platGfx->w, _y + thumbHeight - platGfx->h), 
 									*platGfx, true);
 	}
 
 	// Draw Flag
 	const Graphics::ManagedSurface *flagGfx = _grid->languageToSurface(_activeEntry->language);
 	if (flagGfx)
-		g_gui.theme()->drawSurface(Common::Point(_x + thumbWidth - flagGfx -> w - 5, _y + 5), 
+		g_gui.theme()->drawSurface(Common::Point(_x + thumbWidth - flagGfx->w - 5, _y + 5), 
 									*flagGfx, true);
 
 	// Draw Title
@@ -439,7 +439,7 @@ void GridWidget::loadFlagIcons() {
 		String path = String::format("flags/%s.svg", l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
-			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 128);
+			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _thumbnailWidth, 32);
 			_languageIcons[l->id] = scGfx;
 			gfx->free();
 			delete gfx;
@@ -455,7 +455,7 @@ void GridWidget::loadPlatformIcons() {
 		String path = String::format("platforms/%s.png", l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
-			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 128);
+			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _thumbnailWidth, 32);
 			_platformIcons[l->id] = scGfx;
 			gfx->free();
 			delete gfx;
