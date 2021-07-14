@@ -69,6 +69,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Lure:
    - Fixed fire animation in first room when loading saves.
+   - Fixed AdLib support.
    - Fixed MT-32 support.
 
  Pegasus:
