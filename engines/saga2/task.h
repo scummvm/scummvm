@@ -125,12 +125,13 @@ class Task {
 protected:
 	//  A pointer to this task's stack
 	TaskStack   *stack;
+	TaskStackID _stackID;
 
 public:
 	Common::String _type;
 
 	//  Constructor -- initial construction
-	Task(TaskStack *ts) : stack(ts) {
+	Task(TaskStack *ts) : stack(ts), _stackID(NoTaskStack) {
 		newTask(this);
 	}
 
@@ -144,6 +145,9 @@ public:
 	virtual ~Task(void) {
 		deleteTask(this);
 	}
+
+	//	Fixup any subtask pointers
+	virtual void fixup(void);
 
 	//  Return the number of bytes necessary to archive this Task
 	//  in a buffer
@@ -234,6 +238,7 @@ class TetheredWanderTask : public WanderTask {
 
 	//  Pointer to subtask for going to the tether region
 	GotoRegionTask  *gotoTether;
+	TaskID _gotoTetherID;
 
 public:
 	//  Constructor
@@ -248,12 +253,16 @@ public:
 		minV(vMin),
 		maxU(uMax),
 		maxV(vMax),
-		gotoTether(NULL) {
+		gotoTether(NULL),
+		_gotoTetherID(NoTask) {
 		debugC(2, kDebugTasks, " - TetheredWanderTask");
 		_type = "TetheredWanderTask";
 	}
 
 	TetheredWanderTask(Common::InSaveFile *in, TaskID id);
+
+	//	Fixup the subtask pointers
+	void fixup(void);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -285,6 +294,7 @@ public:
 
 class GotoTask : public Task {
 	WanderTask  *wander;
+	TaskID _wanderID;
 	bool        prevRunState;
 
 public:
@@ -292,6 +302,7 @@ public:
 	GotoTask(TaskStack *ts) :
 		Task(ts),
 		wander(NULL),
+		_wanderID(NoTask),
 		prevRunState(false) {
 		debugC(2, kDebugTasks, " - GotoTask");
 		_type = "GotoTask";
@@ -571,6 +582,7 @@ private:
 
 class GoAwayFromTask : public Task {
 	GotoLocationTask        *goTask;
+	TaskID _goTaskID;
 
 	uint8                   flags;
 
@@ -583,6 +595,7 @@ public:
 	GoAwayFromTask(TaskStack *ts) :
 		Task(ts),
 		goTask(NULL),
+		_goTaskID(NoTask),
 		flags(0) {
 		debugC(2, kDebugTasks, " - GoAwayFromTask1");
 		_type = "GoAwayFromTask";
@@ -591,12 +604,16 @@ public:
 	GoAwayFromTask(TaskStack *ts, bool runFlag) :
 		Task(ts),
 		goTask(NULL),
+		_goTaskID(NoTask),
 		flags(runFlag ? run : 0) {
 		debugC(2, kDebugTasks, " - GoAwayFromTask2");
 		_type = "GoAwayFromTask";
 	}
 
 	GoAwayFromTask(Common::InSaveFile *in, TaskID id);
+
+	//	Fixup the subtask pointer
+	void fixup(void);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -698,6 +715,7 @@ private:
 
 class HuntTask : public Task {
 	Task            *subTask;   //  This will either be a wander task of a
+	TaskID _subTaskID;
 	//  goto task
 	uint8           huntFlags;
 
@@ -708,12 +726,15 @@ class HuntTask : public Task {
 
 public:
 	//  Constructor -- initial construction
-	HuntTask(TaskStack *ts) : Task(ts), huntFlags(0), subTask(nullptr) {
+	HuntTask(TaskStack *ts) : Task(ts), huntFlags(0), subTask(nullptr), _subTaskID(NoTask) {
 		debugC(2, kDebugTasks, " - HuntTask");
 		_type = "HuntTask";
 	}
 
 	HuntTask(Common::InSaveFile *in, TaskID id);
+
+	//	Fixup the subtask pointer
+	void fixup(void);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -1023,6 +1044,7 @@ protected:
 
 class HuntToBeNearActorTask : public HuntActorTask {
 	GoAwayFromObjectTask    *goAway;    //  The 'go away' sub task pointer
+	TaskID _goAwayID;
 	uint16                  range;      //  Maximum range
 
 	uint8                   targetEvaluateCtr;
@@ -1046,6 +1068,7 @@ public:
 	    bool                trackFlag = false) :
 		HuntActorTask(ts, at, trackFlag),
 		goAway(NULL),
+		_goAwayID(NoTask),
 		range(MAX<uint16>(r, 16)),
 		targetEvaluateCtr(0) {
 		debugC(2, kDebugTasks, " - HuntToBeNearActorTask");
@@ -1053,6 +1076,9 @@ public:
 	}
 
 	HuntToBeNearActorTask(Common::InSaveFile *in, TaskID id);
+
+	//	Fixup the subtask pointer
+	void fixup(void);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -1205,6 +1231,7 @@ class AttendTask;
 
 class BandTask : public HuntTask {
 	AttendTask          *attend;
+	TaskID _attendID;
 
 	TilePoint           currentTarget;
 	uint8               targetEvaluateCtr;
@@ -1291,6 +1318,7 @@ public:
 	BandTask(TaskStack *ts) :
 		HuntTask(ts),
 		attend(NULL),
+		_attendID(NoTask),
 		currentTarget(Nowhere),
 		targetEvaluateCtr(0) {
 		debugC(2, kDebugTasks, " - BandTask");
@@ -1298,6 +1326,9 @@ public:
 	}
 
 	BandTask(Common::InSaveFile *in, TaskID id);
+
+	//	Fixup the subtask pointer
+	void fixup(void);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -1396,6 +1427,7 @@ protected:
 
 class FollowPatrolRouteTask : public Task {
 	GotoLocationTask        *gotoWayPoint;  //  A goto waypoint sub task
+	TaskID _gotoWayPointID;
 	//  pointer.
 	PatrolRouteIterator     patrolIter;     //  The patrol route iterator.
 	int16                   lastWayPointNum;    //  Waypoint at which to end
@@ -1413,6 +1445,7 @@ public:
 	    int16               stopAt = -1) :
 		Task(ts),
 		gotoWayPoint(NULL),
+		_gotoWayPointID(NoTask),
 		patrolIter(iter),
 		lastWayPointNum(stopAt), counter(0) {
 		debugC(2, kDebugTasks, " - FollowPatrolRouteTask");
@@ -1421,6 +1454,9 @@ public:
 	}
 
 	FollowPatrolRouteTask(Common::InSaveFile *in, TaskID id);
+
+	//	Fixup the subtask pointer
+	void fixup(void);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer

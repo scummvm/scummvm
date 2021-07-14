@@ -483,6 +483,14 @@ void TaskList::read(Common::InSaveFile *in) {
 
 		readTask(id, in);
 	}
+
+	//	Iterate through the Tasks to fixup the subtask pointers
+	for (int i = 0; i < numTasks; ++i) {
+		if (_list[i] == nullptr)
+			continue;
+
+		_list[i]->fixup();
+	}
 }
 
 //----------------------------------------------------------------------
@@ -742,9 +750,16 @@ void writeTask(Task *t, Common::OutSaveFile *out) {
 
 Task::Task(Common::InSaveFile *in, TaskID id) {
 	//  Place the stack ID into the stack pointer field
-	int16 stackID = in->readSint16LE();
-	stack = getTaskStackAddress(stackID);
+	_stackID = in->readSint16LE();
 	newTask(this, id);
+}
+
+//----------------------------------------------------------------------
+//	Fixup the Task pointers
+
+void Task::fixup(void) {
+	//	Convert the stack ID to a stack pointer
+	stack = getTaskStackAddress(_stackID);
 }
 
 //----------------------------------------------------------------------
@@ -884,10 +899,20 @@ TetheredWanderTask::TetheredWanderTask(Common::InSaveFile *in, TaskID id) : Wand
 	maxV = in->readSint16LE();
 
 	//  Put the gotoTether ID into the gotoTether pointer field
-	int gotoTetherID = in->readSint16LE();
-	gotoTether = gotoTetherID != NoTask
-	             ? (GotoRegionTask *)getTaskAddress(gotoTetherID)
-	             :   NULL;
+	_gotoTetherID = in->readSint16LE();
+}
+
+//----------------------------------------------------------------------
+//	Fixup the subtask pointers
+
+void TetheredWanderTask::fixup(void) {
+	//	Let the base class fixup it's pointers
+	WanderTask::fixup();
+
+	//	Restore the gotoTether pointer
+	gotoTether = _gotoTetherID != NoTask
+				 ?	(GotoRegionTask *)getTaskAddress(_gotoTetherID)
+				 :	NULL;
 }
 
 //----------------------------------------------------------------------
@@ -1036,13 +1061,23 @@ TaskResult TetheredWanderTask::handleWander(void) {
 
 GotoTask::GotoTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	//  Get the wander TaskID
-	TaskID wanderID = in->readSint16LE();
-	wander = wanderID != NoTask
-	         ? (WanderTask *)getTaskAddress(wanderID)
-	         :   NULL;
+	_wanderID = in->readSint16LE();
 
 	//  Restore prevRunState
 	prevRunState = in->readByte();
+}
+
+//----------------------------------------------------------------------
+//	Fixup the subtask pointers
+
+void GotoTask::fixup(void) {
+	//	Let the base class fixup its pointers
+	Task::fixup();
+
+	//	Convert wanderID to a Task pointer
+	wander = _wanderID != NoTask
+	         ? (WanderTask *)getTaskAddress(_wanderID)
+	         :   NULL;
 }
 
 //----------------------------------------------------------------------
@@ -1640,13 +1675,22 @@ bool GotoActorTask::run(void) {
 
 GoAwayFromTask::GoAwayFromTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	//  Get the subtask ID
-	TaskID goTaskID = in->readSint16LE();
-	goTask = goTaskID != NoTask
-	         ? (GotoLocationTask *)getTaskAddress(goTaskID)
-	         :   NULL;
+	_goTaskID = in->readSint16LE();
 
 	//  Restore the flags
 	flags = in->readByte();
+}
+
+//----------------------------------------------------------------------
+//	Fixup the subtask pointer
+
+void GoAwayFromTask::fixup(void) {
+		//	Let the base class fixup its pointers
+	Task::fixup();
+
+	goTask = _goTaskID != NoTask
+	         ? (GotoLocationTask *)getTaskAddress(_goTaskID)
+	         :   NULL;
 }
 
 //----------------------------------------------------------------------
@@ -1920,12 +1964,23 @@ HuntTask::HuntTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	huntFlags = in->readByte();
 
 	//  If the flags say we have a sub task, restore it too
-	if (huntFlags & (huntGoto | huntWander)) {
-		TaskID subTaskID = in->readSint16LE();
-		subTask = getTaskAddress(subTaskID);
-	} else {
+	if (huntFlags & (huntGoto | huntWander))
+		_subTaskID = in->readSint16LE();
+	else
+		_subTaskID = NoTask;
+}
+
+//----------------------------------------------------------------------
+//	Fixup the subtask pointers
+
+void HuntTask::fixup( void ) {
+	//	Let the base class fixup its pointers
+	Task::fixup();
+
+	if (huntFlags & (huntGoto | huntWander))
+		subTask = getTaskAddress(_subTaskID);
+	else
 		subTask = nullptr;
-	}
 }
 
 //----------------------------------------------------------------------
@@ -2684,18 +2739,26 @@ HuntToBeNearActorTask::HuntToBeNearActorTask(Common::InSaveFile *in, TaskID id) 
 	debugC(3, kDebugSaveload, "... Loading HuntToBeNearActorTask");
 
 	//  Get the goAway task ID
-	TaskID goAwayID = in->readSint16LE();
-
-	//  Convert the task ID to a task pointer
-	goAway = goAwayID != NoTask
-	         ? (GoAwayFromObjectTask *)getTaskAddress(goAwayID)
-	         :   NULL;
+	_goAwayID = in->readSint16LE();
 
 	//  Restore the range
 	range = in->readUint16LE();
 
 	//  Restore the evaluation counter
 	targetEvaluateCtr = in->readByte();
+}
+
+//----------------------------------------------------------------------
+//	Fixup the subtask pointers
+
+void HuntToBeNearActorTask::fixup(void) {
+		//	Let the base class fixup its pointers
+	HuntActorTask::fixup();
+
+	//  Convert the task ID to a task pointer
+	goAway = _goAwayID != NoTask
+	         ? (GoAwayFromObjectTask *)getTaskAddress(_goAwayID)
+	         :   NULL;
 }
 
 //----------------------------------------------------------------------
@@ -3401,20 +3464,28 @@ bool BandTask::BandingRepulsorIterator::next(
 }
 
 BandTask::BandTask(Common::InSaveFile *in, TaskID id) : HuntTask(in, id) {
-	TaskID attendID = in->readSint16LE();
 	debugC(3, kDebugSaveload, "... Loading BandTask");
 
-
-	//  Convert the TaskID to a Task pointer
-	attend = attendID != NoTask
-	         ? (AttendTask *)getTaskAddress(attendID)
-	         :   NULL;
+	_attendID = in->readSint16LE();
 
 	//  Restore the current target location
 	currentTarget.load(in);
 
 	//  Restore the target evaluation counter
 	targetEvaluateCtr = in->readByte();
+}
+
+//----------------------------------------------------------------------
+//	Fixup the subtask pointers
+
+void BandTask::fixup(void) {
+	//	Let the base class fixup its pointers
+	HuntTask::fixup();
+
+	//  Convert the TaskID to a Task pointer
+	attend = _attendID != NoTask
+	         ? (AttendTask *)getTaskAddress(_attendID)
+	         :   NULL;
 }
 
 //----------------------------------------------------------------------
@@ -3769,12 +3840,8 @@ FollowPatrolRouteTask::FollowPatrolRouteTask(Common::InSaveFile *in, TaskID id) 
 	debugC(3, kDebugSaveload, "... Loading FollowPatrolRouteTask");
 
 	//  Get the gotoWayPoint TaskID
-	TaskID gotoWayPointID = in->readSint16LE();
+	_gotoWayPointID = in->readSint16LE();
 
-	//  Convert the TaskID to a Task pointer
-	gotoWayPoint = gotoWayPointID != NoTask
-	               ? (GotoLocationTask *)getTaskAddress(gotoWayPointID)
-	               :   NULL;
 
 	//  Restore the patrol route iterator
 	patrolIter.read(in);
@@ -3787,6 +3854,19 @@ FollowPatrolRouteTask::FollowPatrolRouteTask(Common::InSaveFile *in, TaskID id) 
 
 	//  Restore the paused counter
 	counter = in->readSint16LE();
+}
+
+//----------------------------------------------------------------------
+//	Fixup the subtask pointers
+
+void FollowPatrolRouteTask::fixup(void) {
+	//	Let the base class fixup its pointers
+	Task::fixup();
+
+	//  Convert the TaskID to a Task pointer
+	gotoWayPoint = _gotoWayPointID != NoTask
+	               ? (GotoLocationTask *)getTaskAddress(_gotoWayPointID)
+	               :   NULL;
 }
 
 //----------------------------------------------------------------------
