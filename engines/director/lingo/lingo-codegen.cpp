@@ -110,13 +110,6 @@ ScriptContext *LingoCompiler::compileLingo(const char *code, LingoArchive *archi
 	_linenumber = _colnumber = 1;
 	_hadError = false;
 
-	if (!strncmp(code, "menu:", 5) || scumm_strcasestr(code, "\nmenu:")) {
-		debugC(1, kDebugCompile, "Parsing menu");
-		parseMenu(code);
-
-		return nullptr;
-	}
-
 	// Preprocess the code for ease of the parser
 	Common::String codeNorm = codePreprocessor(code, archive, type, id);
 	code = codeNorm.c_str();
@@ -381,10 +374,6 @@ void LingoCompiler::updateLoopJumps(uint nextTargetPos, uint exitTargetPos) {
 		WRITE_UINT32(&jmpOffset, exitTargetPos - exitRepeatPos);
 		(*_currentAssembly)[exitRepeatPos + 1] = jmpOffset; 
 	}
-}
-
-void LingoCompiler::parseMenu(const char *code) {
-	warning("STUB: parseMenu");
 }
 
 /* ScriptNode */

@@ -126,7 +126,6 @@ public:
 
 private:
 	int parse(const char *code);
-	void parseMenu(const char *code);
 
 public:
 	// lingo-preprocessor.cpp
