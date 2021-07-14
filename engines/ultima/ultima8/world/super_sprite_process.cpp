@@ -493,7 +493,7 @@ bool SuperSpriteProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!Process::loadData(rs, version)) return false;
 
 	_shape = static_cast<int>(rs->readUint32LE());
-	_frame = rs->readUint16LE();
+	_frame = rs->readUint32LE();
 	_nowpt.loadData(rs, version);
 	_nextpt.loadData(rs, version);
 	_pt3.loadData(rs, version);
