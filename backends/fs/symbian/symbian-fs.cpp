@@ -71,7 +71,7 @@ SymbianFilesystemNode::SymbianFilesystemNode(const Common::String &path) {
 	TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
 	fname.Copy(ptr);
 
-	if (dynamic_cast<OSystem_SDL_Symbian *>(g_system)->FsSession().Entry(fname, fileAttribs) == KErrNone) {
+	if (FsSession().Entry(fname, fileAttribs) == KErrNone) {
 		_isValid = true;
 		_isDirectory = fileAttribs.IsDir();
 	} else {
@@ -88,7 +88,7 @@ bool SymbianFilesystemNode::exists() const {
 	TFileName fname;
 	TPtrC8 ptr((const unsigned char*) _path.c_str(), _path.size());
 	fname.Copy(ptr);
-	bool fileExists = BaflUtils::FileExists(dynamic_cast<OSystem_SDL_Symbian *> (g_system)->FsSession(), fname);
+	bool fileExists = BaflUtils::FileExists(FsSession(), fname);
 	if (!fileExists) {
 		TParsePtrC parser(fname);
 		if (parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent()) {
@@ -126,8 +126,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 	if (_isPseudoRoot) {
 		// Drives enumeration
-		// TODO: check if can use static_cast in next release
-		RFs& fs = dynamic_cast<OSystem_SDL_Symbian *>(g_system)->FsSession();
+		RFs& fs = FsSession();
 		TInt driveNumber;
 		TChar driveLetter;
 		TUint driveLetterValue;
@@ -172,8 +171,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		if (_path.lastChar() != '\\')
 			fname.Append('\\');
 
-		// TODO: check if can use static_cast in next release
-		if (dynamic_cast<OSystem_SDL_Symbian *>(g_system)->FsSession().GetDir(fname, KEntryAttNormal|KEntryAttDir, 0, dirPtr) == KErrNone) {
+		if (FsSession().GetDir(fname, KEntryAttNormal|KEntryAttDir, 0, dirPtr) == KErrNone) {
 			CleanupStack::PushL(dirPtr);
 			TInt cnt = dirPtr->Count();
 			for (TInt loop = 0; loop < cnt; loop++) {

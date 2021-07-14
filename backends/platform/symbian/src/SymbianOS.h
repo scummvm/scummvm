@@ -37,11 +37,6 @@ public:
 	virtual Common::String getDefaultConfigFileName() override;
 	virtual bool hasFeature(Feature f) override;
 
-	/**
-	 * Returns reference to File session
-	 */
-	RFs& FsSession();
-
 	void quitWithErrorMsg(const char *msg);
 
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
@@ -49,8 +44,9 @@ public:
 	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 protected:
-	RFs &_RFs;
 	TFileName _localpath;
 };
 
+RFs& FsSession();
+	
 #endif

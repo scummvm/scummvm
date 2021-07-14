@@ -70,22 +70,22 @@ TSymbianFileEntry*	CreateSymbianFileEntry(const char* name, const char* mode) {
 
 		switch (mode[0]) {
 		case 'a':
-			if (fileEntry->_fileHandle.Open(dynamic_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
-				if (fileEntry->_fileHandle.Create(dynamic_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
+			if (fileEntry->_fileHandle.Open(FsSession(), tempFileName, fileMode) != KErrNone) {
+				if (fileEntry->_fileHandle.Create(FsSession(), tempFileName, fileMode) != KErrNone) {
 					delete fileEntry;
 					fileEntry = NULL;
 				}
 			}
 			break;
 		case 'r':
-			if (fileEntry->_fileHandle.Open(dynamic_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
+			if (fileEntry->_fileHandle.Open(FsSession(), tempFileName, fileMode) != KErrNone) {
 				delete fileEntry;
 				fileEntry = NULL;
 			}
 			break;
 
 		case 'w':
-			if (fileEntry->_fileHandle.Replace(dynamic_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
+			if (fileEntry->_fileHandle.Replace(FsSession(), tempFileName, fileMode) != KErrNone) {
 				delete fileEntry;
 				fileEntry = NULL;
 			}
