@@ -318,7 +318,7 @@ bool AudioProcess::isSFXPlayingForObject(int sfxNum, ObjId objId) {
 	AudioMixer *mixer = AudioMixer::get_instance();
 	Std::list<SampleInfo>::iterator it;
 	for (it = _sampleInfo.begin(); it != _sampleInfo.end(); ++it) {
-		if (it->_sfxNum == sfxNum && (objId == it->_objId) && mixer->isPlaying(it->_channel))
+		if ((it->_sfxNum == sfxNum || sfxNum == -1) && (objId == it->_objId) && mixer->isPlaying(it->_channel))
 			return true;
 	}
 
