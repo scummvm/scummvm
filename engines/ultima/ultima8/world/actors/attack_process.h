@@ -119,6 +119,9 @@ private:
 	 * that's on startup, but some make regular sounds (see readyForNextSound) */
 	void checkRandomAttackSound(int now, uint32 shapeno);
 
+	/** Check if it's time to make a new sound, Regret version. */
+	void checkRandomAttackSoundRegret(const Actor *actor);
+
 	uint16 _target; // TODO: this is stored in NPC in game, does it matter?
 	uint16 _tactic;
 	uint16 _block;
@@ -160,6 +163,10 @@ private:
 
 	int32 _soundTimestamp; /// 0x84/0x86 in orig - time a sound was last played
 	int32 _fireTimestamp; /// 0x90/0x92 in orig - time NPC last fired
+
+	// Used in No Regret only, to avoid replaying the same sfx for attack twice in a row.
+	static int16 _lastAttackSound;
+	static int16 _lastLastAttackSound;
 
 };
 

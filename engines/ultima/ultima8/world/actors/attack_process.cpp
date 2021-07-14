@@ -43,13 +43,31 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(AttackProcess)
 
-static const int16 ATTACK_SFX_1[] = {0x15, 0x78, 0x80, 0x83, 0xDC, 0xDD};
-static const int16 ATTACK_SFX_2[] = {0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xE7};
-static const int16 ATTACK_SFX_3[] = {0xFC, 0xFD, 0xFE, 0xC8};
-static const int16 ATTACK_SFX_4[] = {0xCC, 0xCD, 0xCE, 0xCF};
-static const int16 ATTACK_SFX_5[] = {0xC7, 0xCA, 0xC9};
-static const int16 ATTACK_SFX_6[] = {0x82, 0x84, 0x85};
-static const int16 ATTACK_SFX_7[] = {0x9B, 0x9C, 0x9D, 0x9E, 0x9F};
+// These sound number arrays are in the order they appear in the original exes
+
+static const int16 REM_SFX_1[] = {0x15, 0x78, 0x80, 0x83, 0xDC, 0xDD};
+static const int16 REM_SFX_2[] = {0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xE7};
+static const int16 REM_SFX_3[] = {0xFC, 0xFD, 0xFE, 0xC8};
+static const int16 REM_SFX_4[] = {0xCC, 0xCD, 0xCE, 0xCF};
+static const int16 REM_SFX_5[] = {0xC7, 0xCA, 0xC9};
+static const int16 REM_SFX_6[] = {0x82, 0x84, 0x85};
+static const int16 REM_SFX_7[] = {0x9B, 0x9C, 0x9D, 0x9E, 0x9F};
+
+static const int16 REG_SFX_1[] = { 0xD2, 0xD3, 0xD4, 0xD5, 0xE5, 0x100 };
+static const int16 REG_SFX_2[] = { 0x9, 0x79, 0x7A, 0x7B, 0x7C, 0x7D };
+static const int16 REG_SFX_3[] = { 0x7E, 0x7F, 0x90, 0xB6, 0xC2, 0xD0 };
+static const int16 REG_SFX_4[] = { 0x101, 0x102, 0x103, 0x104, 0x105, 0x106 };
+static const int16 REG_SFX_5[] = { 0x108, 0x109, 0x1AB, 0x1AC, 0x1AD, 0x1AF, 0x1AE };
+static const int16 REG_SFX_6[] = { 0x1B0, 0x1B1, 0x1B2, 0x1B3, 0x1B4 };
+static const int16 REG_SFX_7[] = { 0x1B5, 0x1B6, 0x1B7, 0x1B8, 0x1B9, 0x1BA, 0x1BB };
+static const int16 REG_SFX_8[] = { 0x1C1, 0x1C0, 0x1BF, 0x1BE, 0x1BD, 0x1BC };
+static const int16 REG_SFX_9[] = { 0x1C2, 0x1C3, 0x1C4, 0x1C5, 0x1C6, 0x1C7 };
+static const int16 REG_SFX_10[] = { 0x1C8, 0x1C9, 0x1CA, 0x1CB, 0x1CC, 0x1CD };
+static const int16 REG_SFX_11[] = { 0x1D0, 0x1D1, 0x1D2, 0x1D3, 0x1D4, 0x1D5 };
+static const int16 REG_SFX_12[] = { 0x1D7, 0x1D8, 0x1D9, 0x1DA, 0x1DB, 0x1DC };
+static const int16 REG_SFX_13[] = { 0x1DD, 0x1DE, 0x1DF, 0x1E0, 0x1E1, 0x1E2, 0x1E3 };
+static const int16 REG_SFX_14[] = { 0x9B, 0x9C, 0x9D, 0x9E, 0x9F };
+static const int16 REG_SFX_15[] = { 0x1E7, 0x1E8, 0x1E9, 0x1EA, 0x1ED };
 
 #define RANDOM_ELEM(array) (array[getRandom() % ARRAYSIZE(array)])
 
@@ -58,6 +76,9 @@ static const int16 ATTACK_SFX_7[] = {0x9B, 0x9C, 0x9D, 0x9E, 0x9F};
 static const int MAGIC_DATA_OFF = 33000;
 
 const uint16 AttackProcess::ATTACK_PROCESS_TYPE = 0x259;
+
+int16 AttackProcess::_lastAttackSound = -1;
+int16 AttackProcess::_lastLastAttackSound = -1;
 
 static uint16 someSleepGlobal = 0;
 
@@ -163,7 +184,7 @@ void AttackProcess::run() {
 		terminate();
 		return;
 	}
-	
+
 	if (!a->hasFlags(Item::FLG_FASTAREA))
 		return;
 
@@ -757,9 +778,91 @@ void AttackProcess::genericAttack() {
 	}
 }
 
+void AttackProcess::checkRandomAttackSoundRegret(const Actor *actor) {
+	AudioProcess *audio = AudioProcess::get_instance();
+
+	if (World::get_instance()->getControlledNPCNum() != 1)
+		return;
+
+	if (actor->isDead())
+		return;
+
+	if (audio->isSFXPlayingForObject(-1, actor->getObjId()))
+		return;
+
+	uint32 shapeno = actor->getShape();
+	int16 sndno = -1;
+	// The order here is pretty random, how it comes out of the disasm.
+	switch (shapeno) {
+	  case 0x4e0:
+		  sndno = RANDOM_ELEM(REG_SFX_8);
+		  break;
+	  case 899:
+		  sndno = RANDOM_ELEM(REG_SFX_14);
+		  break;
+	  case 900:
+		  sndno = RANDOM_ELEM(REG_SFX_7);
+		  break;
+	  case 0x4d1:
+	  case 0x528:
+		  sndno = RANDOM_ELEM(REG_SFX_3);
+		  break;
+	  case 0x344:
+		  sndno = RANDOM_ELEM(REG_SFX_13);
+		  break;
+	  case 0x371:
+	  case 0x62f:
+	  case 0x630:
+		  sndno = RANDOM_ELEM(REG_SFX_2);
+		  break;
+	  case 0x2f5:
+		  sndno = RANDOM_ELEM(REG_SFX_9);
+		  break;
+	  case 0x2f6:
+		  sndno = RANDOM_ELEM(REG_SFX_12);
+		  break;
+	  case 0x2f7:
+	  case 0x595:
+		  sndno = RANDOM_ELEM(REG_SFX_11);
+		  break;
+	  case 0x2df:
+		  sndno = RANDOM_ELEM(REG_SFX_6);
+		  break;
+	  case 0x597:
+		  sndno = RANDOM_ELEM(REG_SFX_10);
+		  break;
+	  case 0x5b1:
+		  sndno = RANDOM_ELEM(REG_SFX_15);
+		  break;
+	  case 0x5ff:
+	  case 0x5d7:
+		  sndno = RANDOM_ELEM(REG_SFX_5);
+		  break;
+	  case 0x1b4:
+	  case 0x625:
+		  sndno = RANDOM_ELEM(REG_SFX_4);
+		  break;
+	  case 0x5f0:
+	  case 0x308:
+		  sndno = RANDOM_ELEM(REG_SFX_1);
+		  break;
+	  default:
+		  break;
+	}
+
+	if (sndno != -1 && _lastAttackSound != sndno && _lastLastAttackSound != sndno) {
+		_lastLastAttackSound = _lastAttackSound;
+		_lastAttackSound = sndno;
+		_soundNo = sndno;
+		audio->playSFX(sndno, 0x80, actor->getObjId(), 1);
+	}
+}
+
 void AttackProcess::checkRandomAttackSound(int now, uint32 shapeno) {
-	if (GAME_IS_REGRET)
-		warning("TODO: checkRandomAttackSound: Update for No Regret");
+	if (GAME_IS_REGRET) {
+		checkRandomAttackSoundRegret(getActor(_itemNum));
+		return;
+	}
 	AudioProcess *audio = AudioProcess::get_instance();
 	int16 attacksound = -1;
 	if (!_playedStartSound) {
@@ -767,21 +870,21 @@ void AttackProcess::checkRandomAttackSound(int now, uint32 shapeno) {
 		if (randomOf(3) == 0) {
 			switch(shapeno) {
 				case 0x371:
-					attacksound = RANDOM_ELEM(ATTACK_SFX_3);
+					attacksound = RANDOM_ELEM(REM_SFX_3);
 					break;
 				case 0x1b4:
-					attacksound = RANDOM_ELEM(ATTACK_SFX_5);
+					attacksound = RANDOM_ELEM(REM_SFX_5);
 					break;
 				case 0x2fd:
 				case 0x319:
-					attacksound = RANDOM_ELEM(ATTACK_SFX_1);
+					attacksound = RANDOM_ELEM(REM_SFX_1);
 					break;
 				case 900:
-					attacksound = RANDOM_ELEM(ATTACK_SFX_2);
+					attacksound = RANDOM_ELEM(REM_SFX_2);
 					break;
 				case 0x4d1:
 				case 0x528:
-					attacksound = RANDOM_ELEM(ATTACK_SFX_4);
+					attacksound = RANDOM_ELEM(REM_SFX_4);
 					break;
 				default:
 					break;
@@ -790,9 +893,9 @@ void AttackProcess::checkRandomAttackSound(int now, uint32 shapeno) {
 	} else {
 		if (readyForNextSound(now)) {
 			if (shapeno == 0x2df)
-				attacksound = RANDOM_ELEM(ATTACK_SFX_6);
+				attacksound = RANDOM_ELEM(REM_SFX_6);
 			else if (shapeno == 899)
-				attacksound = RANDOM_ELEM(ATTACK_SFX_7);
+				attacksound = RANDOM_ELEM(REM_SFX_7);
 		}
 	}
 
