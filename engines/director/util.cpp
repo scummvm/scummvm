@@ -784,8 +784,4 @@ Common::CodePage detectFontEncoding(Common::Platform platform, uint16 fontId) {
 	return getEncoding(platform, g_director->_wm->_fontMan->getFontLanguage(fontId));
 }
 
-Common::CodePage DirectorEngine::getPlatformEncoding() {
-	return getEncoding(getPlatform(), getLanguage());
-}
-
 } // End of namespace Director
