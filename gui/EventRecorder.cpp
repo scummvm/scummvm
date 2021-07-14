@@ -232,7 +232,9 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 	if ((_recordMode != kRecorderPlayback) || !_initialized)
 		return false;
 
-	if ((_nextEvent.recordedtype == Common::kRecorderEventTypeTimer) || (_nextEvent.type == Common::EVENT_INVALID)) {
+	if (_nextEvent.recordedtype == Common::kRecorderEventTypeTimer
+	 || _nextEvent.recordedtype == Common::kRecorderEventTypeTimeDate
+	 || _nextEvent.type == Common::EVENT_INVALID) {
 		return false;
 	}
 
