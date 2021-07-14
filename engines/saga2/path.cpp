@@ -1966,15 +1966,18 @@ PathResult PathRequest::findPath(void) {
 				} else if (cornerHeight[0] == 0 && cornerHeight[3] == 0) {
 					stairDir = 7;
 					stairHeight = pti.surfaceHeight + cornerHeight[1];
-				} else continue;
+				} else
+					continue;
 
 				//  Do not go onto the stair at a right angle
 
 				if (stairDir == 1 || stairDir == 5) {
-					if (dir == 3 || dir == 7) continue;
+					if (dir == 3 || dir == 7)
+						continue;
 				} else if (stairDir == 3 || stairDir == 7) {
-					if (dir == 1 || dir == 5) continue;
-				} else continue;
+					if (dir == 1 || dir == 5)
+						continue;
+				}
 
 				//  Add any additional costs for travelling on these
 				//  stairs.
