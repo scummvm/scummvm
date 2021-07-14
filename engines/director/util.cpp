@@ -768,9 +768,8 @@ Common::Platform platformFromID(uint16 id) {
 	return Common::kPlatformUnknown;
 }
 
-Common::CodePage detectEncoding(Common::Platform platform, uint16 fontId) {
-	Common::Language lang = g_director->_wm->_fontMan->getFontLanguage(fontId);
-	switch (lang) {
+Common::CodePage getEncoding(Common::Platform platform, Common::Language language) {
+	switch (language) {
 	case Common::JA_JPN:
 		return Common::kWindows932; // Shift JIS
 	default:
@@ -779,6 +778,14 @@ Common::CodePage detectEncoding(Common::Platform platform, uint16 fontId) {
 	return (platform == Common::kPlatformWindows)
 				? Common::kWindows1252
 				: Common::kMacRoman;
+}
+
+Common::CodePage detectFontEncoding(Common::Platform platform, uint16 fontId) {
+	return getEncoding(platform, g_director->_wm->_fontMan->getFontLanguage(fontId));
+}
+
+Common::CodePage DirectorEngine::getPlatformEncoding() {
+	return getEncoding(getPlatform(), getLanguage());
 }
 
 } // End of namespace Director
