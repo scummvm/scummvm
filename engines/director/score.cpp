@@ -675,7 +675,7 @@ void Score::playSoundChannel(uint16 frameId) {
 			loadSampleSounds(0x0f);
 
 		if ((uint)frame->_sound1.member <= _sampleSounds.size()) {
-			sound->playStream(*(_sampleSounds[frame->_sound1.member - 1]->getAudioStream()), 1);
+			sound->playExternalSound(_sampleSounds[frame->_sound1.member - 1], 1, frame->_sound1.member);
 		}
 	} else {
 		sound->playCastMember(frame->_sound1, 1, false);
@@ -686,7 +686,7 @@ void Score::playSoundChannel(uint16 frameId) {
 			loadSampleSounds(0x0f);
 
 		if ((uint)frame->_sound2.member <= _sampleSounds.size())
-			sound->playStream(*(_sampleSounds[frame->_sound2.member - 1]->getAudioStream()), 2);
+			sound->playExternalSound(_sampleSounds[frame->_sound2.member - 1], 2, frame->_sound2.member);
 	} else {
 		sound->playCastMember(frame->_sound2, 2, false);
 	}

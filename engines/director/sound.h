@@ -34,6 +34,8 @@ namespace Audio {
 
 namespace Director {
 
+class AudioDecoder;
+
 struct FadeParams {
 	int startVol;
 	int targetVol;
@@ -74,6 +76,7 @@ public:
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
 	void playCastMember(CastMemberID memberID, uint8 soundChannel, bool allowRepeat = true);
+	void playExternalSound(AudioDecoder *ad, uint8 soundChannel, uint8 externalSoundID);
 	void systemBeep();
 
 	void registerFade(uint8 soundChannel, bool fadeIn, int ticks);

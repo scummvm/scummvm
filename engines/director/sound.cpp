@@ -228,6 +228,19 @@ bool DirectorSound::isChannelValid(uint8 soundChannel) {
 	return true;
 }
 
+void DirectorSound::playExternalSound(AudioDecoder *ad, uint8 soundChannel, uint8 externalSoundID) {
+	if (!isChannelValid(soundChannel))
+		return;
+
+	// use castMemberID info to check, castLib -1 represent for externalSound
+	// this should be amended by some kind of union which contains CastMemberID and externalSound info
+	if (isChannelActive(soundChannel) && lastPlayingCast(soundChannel) == CastMemberID(externalSoundID, -1))
+		return;
+
+	playStream(*(ad->getAudioStream()), soundChannel);
+	_channels[soundChannel - 1].lastPlayingCast = CastMemberID(externalSoundID, -1);
+}
+
 CastMemberID DirectorSound::lastPlayingCast(uint8 soundChannel) {
 	if (!isChannelValid(soundChannel))
 		return CastMemberID(0, 0);
