@@ -109,6 +109,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      16-color Macintosh version of Indiana Jones and the Last Crusade.
    - Fixed missing instruments in the m68k Mac versions of Monkey Island 2
      and Indiana Jones and the Fate of Atlantis.
+   - Added "Macintosh b/w" render mode for the 16-color Macintosh versions of
+     Loom and Indiana Jones and the Last Crusade.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
