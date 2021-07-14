@@ -41,6 +41,7 @@
 #include "saga2/dispnode.h"
 #include "saga2/uidialog.h"
 #include "saga2/contain.h"
+#include "saga2/saveload.h"
 
 namespace Saga2 {
 
@@ -610,26 +611,16 @@ void initTileModeState(void) {
 	combatPaused = false;
 }
 
-void saveTileModeState(Common::OutSaveFile *out) {
+void saveTileModeState(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving TileModeState");
-
-	int32 size = 0;
 
 	assert(uiKeysEnabled);
 
-	//  Compute the number of bytes needed
-	size += sizeof(aggressiveActFlag)
-	        +   sizeof(inCombat)
-	        +   sizeof(combatPaused);
-	if (aggressiveActFlag)
-		size += sizeof(timeOfLastAggressiveAct);
-
-	out->write("TMST", 4);
-	out->writeUint32LE(size);
-
-	out->writeByte(aggressiveActFlag);
-	out->writeByte(inCombat);
-	out->writeByte(combatPaused);
+	outS->write("TMST", 4);
+	CHUNK_BEGIN;
+	out->writeUint16LE(aggressiveActFlag);
+	out->writeUint16LE(inCombat);
+	out->writeUint16LE(combatPaused);
 
 	debugC(3, kDebugSaveload, "... aggressiveActFlag = %d", aggressiveActFlag);
 	debugC(3, kDebugSaveload, "... inCombat = %d", inCombat);
@@ -637,15 +628,16 @@ void saveTileModeState(Common::OutSaveFile *out) {
 
 	if (aggressiveActFlag)
 		timeOfLastAggressiveAct.write(out);
+	CHUNK_END;
 }
 
 void loadTileModeState(Common::InSaveFile *in) {
 	assert(uiKeysEnabled);
 
 	//  Simply read in the data
-	aggressiveActFlag = in->readByte();
-	inCombat = in->readByte();
-	combatPaused = in->readByte();
+	aggressiveActFlag = in->readUint16LE();
+	inCombat = in->readUint16LE();
+	combatPaused = in->readUint16LE();
 
 	debugC(3, kDebugSaveload, "... aggressiveActFlag = %d", aggressiveActFlag);
 	debugC(3, kDebugSaveload, "... inCombat = %d", inCombat);

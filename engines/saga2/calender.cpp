@@ -28,6 +28,8 @@
 #include "saga2/calender.h"
 #include "saga2/intrface.h"
 #include "saga2/localize.h"
+#include "saga2/saveload.h"
+
 
 namespace Saga2 {
 
@@ -67,7 +69,7 @@ void CalenderTime::read(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "... frameInHour = %d", frameInHour);
 }
 
-void CalenderTime::write(Common::OutSaveFile *out) {
+void CalenderTime::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeUint16LE(years);
 	out->writeUint16LE(weeks);
 	out->writeUint16LE(days);
@@ -264,23 +266,21 @@ void initCalender(void) {
 	calender.frameInHour    = 0;
 }
 
-void saveCalender(Common::OutSaveFile *out) {
+void saveCalender(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving calender");
 
-	out->write("CALE", 4);
-	out->writeUint32LE(sizeof(calenderPaused) + sizeof(calender));
-
-	out->writeByte(calenderPaused);
-
+	outS->write("CALE", 4);
+	CHUNK_BEGIN;
+	out->writeUint16LE(calenderPaused);
 	debugC(3, kDebugSaveload, "... calenderPaused = %d", calenderPaused);
-
 	calender.write(out);
+	CHUNK_END;
 }
 
 void loadCalender(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading calender");
 
-	calenderPaused = in->readByte();
+	calenderPaused = in->readUint16LE();
 
 	debugC(3, kDebugSaveload, "... calenderPaused = %d", calenderPaused);
 

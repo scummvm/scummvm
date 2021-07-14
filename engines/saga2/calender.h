@@ -59,7 +59,7 @@ public:
 	            frameInHour;
 
 	void read(Common::InSaveFile *in);
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	void update(void);
 	int lightLevel(int maxLevel);
@@ -97,7 +97,7 @@ uint32 operator - (const CalenderTime &time1, const CalenderTime &time2);
 
 void initCalender(void);
 
-void saveCalender(Common::OutSaveFile *out);
+void saveCalender(Common::OutSaveFile *outS);
 void loadCalender(Common::InSaveFile *in);
 
 bool isDayTime(void);
