@@ -87,7 +87,7 @@ public:
 	ShortenGolombReader(Common::ReadStream *stream, int version);
 	~ShortenGolombReader() {}
 	uint32 getUint32(uint32 numBits);    // UINT_GET
-	int32 getURice(uint32 numBits);      // uvar_get
+	uint32 getURice(uint32 numBits);     // uvar_get
 	int32 getSRice(uint32 numBits);      // var_get
 private:
 	int _version;
@@ -112,8 +112,8 @@ ShortenGolombReader::ShortenGolombReader(Common::ReadStream *stream, int version
 	}
 }
 
-int32 ShortenGolombReader::getURice(uint32 numBits) {
-	int32 result = 0;
+uint32 ShortenGolombReader::getURice(uint32 numBits) {
+	uint32 result = 0;
 
 	if (!_nbitget) {
 		_buf = _stream->readUint32BE();
@@ -144,12 +144,12 @@ int32 ShortenGolombReader::getURice(uint32 numBits) {
 }
 
 int32 ShortenGolombReader::getSRice(uint32 numBits) {
-	uint32 uvar = (uint32) getURice(numBits + 1);
+	uint32 uvar = getURice(numBits + 1);
 	return (uvar & 1) ? (int32) ~(uvar >> 1) : (int32) (uvar >> 1);
 }
 
 uint32 ShortenGolombReader::getUint32(uint32 numBits) {
-	return (_version == 0) ? (uint32)getURice(numBits) : (uint32)getURice(getURice(2));
+	return (_version == 0) ? getURice(numBits) : getURice(getURice(2));
 }
 
 // ---------------------------------------------------------------------------
