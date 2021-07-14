@@ -156,12 +156,16 @@ union YYSTYPE
 	int i;
 	double f;
 	Director::ChunkType chunktype;
+	struct {
+		Common::String *eventName;
+		Common::String *stmt;
+	} w;
 
 	Director::IDList *idlist;
 	Director::Node *node;
 	Director::NodeList *nodelist;
 
-#line 165 "engines/director/lingo/lingo-gr.h"
+#line 169 "engines/director/lingo/lingo-gr.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

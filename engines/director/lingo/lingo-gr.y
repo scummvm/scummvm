@@ -114,6 +114,10 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 	int i;
 	double f;
 	Director::ChunkType chunktype;
+	struct {
+		Common::String *eventName;
+		Common::String *stmt;
+	} w;
 
 	Director::IDList *idlist;
 	Director::Node *node;
@@ -139,6 +143,8 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %token tSOUND tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tMETHOD tENDIF tENDREPEAT tENDTELL
 %token tASSERTERROR
+
+%type<w> tWHEN
 
 // TOP-LEVEL STUFF
 %type<node> script scriptpart
@@ -363,7 +369,6 @@ ID: CMDID
 	| tSET			{ $$ = new Common::String("set"); }
 	| tTELL			{ $$ = new Common::String("tell"); }
 	| tTHEN			{ $$ = new Common::String("then"); }
-	| tWHEN			{ $$ = new Common::String("when"); }
 	;
 
 idlist: /* empty */					{ $$ = new IDList; }
@@ -556,7 +561,7 @@ tell: tTELL expr tTO stmtoneliner				{
 		$$ = new TellNode($expr, $stmtlist); }
 	;
 
-when: tWHEN ID tTHEN expr			{ $$ = new WhenNode($ID, $expr); } ;
+when: tWHEN							{ $$ = new WhenNode($tWHEN.eventName, $tWHEN.stmt); } ;
 
 stmtlist: /* empty */				{ $$ = new NodeList; }
 	| nonemptystmtlist

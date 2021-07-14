@@ -576,9 +576,9 @@ struct TellNode : StmtNode {
 
 struct WhenNode : StmtNode {
 	Common::String *event;
-	Node *code;
+	Common::String *code;
 
-	WhenNode(Common::String *eventIn, Node *codeIn)
+	WhenNode(Common::String *eventIn, Common::String *codeIn)
 		: StmtNode(kWhenNode), event(eventIn), code(codeIn) {}
 	virtual ~WhenNode() {
 		delete event;

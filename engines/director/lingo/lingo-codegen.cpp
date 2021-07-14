@@ -1006,7 +1006,8 @@ bool LingoCompiler::visitTellNode(TellNode *node) {
 /* WhenNode */
 
 bool LingoCompiler::visitWhenNode(WhenNode *node) {
-	COMPILE(node->code);
+	code1(LC::c_stringpush);
+	codeString(node->code->c_str());
 	code1(LC::c_whencode);
 	codeString(node->event->c_str());
 	return true;

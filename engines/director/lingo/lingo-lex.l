@@ -108,6 +108,8 @@ conststring \"[^\"\r\n]*\"
 operator [-+*/%^:,()><&\[\]]
 newline [ \t\xC2]*[\n\r]
 spc [ \t\xC2]
+eventname (keyDown|keyUp|mouseDown|mouseUp|timeOut)
+unparsedstmt [^\r\n]*
 
 %%
 
@@ -196,7 +198,28 @@ the			{ count(); return tTHE; }
 then		{ count(); return tTHEN; }
 time		{ count(); return tTIME; }
 to			{ count(); return tTO; }
-when		{ count(); return tWHEN; }
+when{spc}+{eventname}{spc}+then{spc}+{unparsedstmt}	{
+		count();
+
+		const char *ptr =  &yytext[5]; // Skip 'when '
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
+
+		Common::String eventName;
+		while (*ptr != ' ' && *ptr != '\t' && *ptr != '\xC2')
+			eventName += *ptr++;
+
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
+		ptr += 5; // Skip 'then '
+		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
+
+		Common::String stmt;
+		while (*ptr)
+			stmt += *ptr++;
+
+		yylval.w.eventName = new Common::String(eventName);
+		yylval.w.stmt = new Common::String(stmt);
+		return tWHEN;
+	}
 while		{ count(); return tWHILE; }
 window		{ count(); return tWINDOW; }
 with		{ count(); return tWITH; }

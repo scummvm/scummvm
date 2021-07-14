@@ -26,8 +26,6 @@
 
 namespace Director {
 
-Common::String preprocessWhen(Common::String in, bool *changed);
-
 bool isspec(char c) {
 	return strchr("-+*/%%^:,()><&[]=", c) != NULL;
 }
@@ -60,34 +58,6 @@ static Common::String nexttok(const char *s, const char **newP = nullptr) {
 		*newP = s;
 
 	return res;
-}
-
-static const char *findtokstart(const char *start, const char *token) {
-	// First, determine, if we sit inside of a string
-	//
-	// Since we do not have escaping characters, simple count is enough
-	int numquotes = 0;
-	const char *ptr = start;
-
-	while (*ptr && ptr <= token) {
-		if (*ptr == '"')
-			numquotes++;
-		ptr++;
-	}
-
-	// We're inside of quote. Scan backwards
-	if (numquotes % 2) {
-		while (*ptr != '"')
-			ptr--;
-
-		return ptr;
-	}
-
-	// If we're in the middle of a word
-	while (ptr > start && Common::isAlnum(*(ptr - 1)))
-		ptr--;
-
-	return ptr;
 }
 
 Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, CastMemberID id, bool simple) {
@@ -202,9 +172,6 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 
 		res1 = patchLingoCode(res1, archive, type, id, linenumber);
 
-		bool changed = false;
-		res1 = preprocessWhen(res1, &changed);
-
 		res += res1;
 
 		linenumber++;	// We do it here because of 'continue' statements
@@ -217,76 +184,6 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 	res += '\n';
 
 	debugC(2, kDebugParse | kDebugPreprocess, "#############\n%s\n#############", res.c_str());
-
-	return res;
-}
-
-// when ID then statement -> when ID then "statement"
-Common::String preprocessWhen(Common::String in, bool *changed) {
-	Common::String res, next;
-	const char *ptr = in.c_str();
-	const char *beg = ptr;
-	const char *nextPtr;
-
-	while ((ptr = scumm_strcasestr(beg, "when")) != NULL) {
-		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
-			res += *beg++;
-			continue;
-		}
-
-		ptr += 4; // end of 'play'
-		res += Common::String(beg, ptr);
-
-		if (!*ptr)	// If it is end of the line
-			break;
-
-		if (Common::isAlnum(*ptr)) { // If it is in the middle of the word
-			beg = ptr;
-			continue;
-		}
-
-		*changed = true;
-
-		res += ' ';
-		next = nexttok(ptr, &nextPtr);	// ID
-		res += next;
-
-		res += ' ';
-		next = nexttok(nextPtr, &nextPtr);	// then
-		res += next;
-
-		res += ' ';
-		res += '"';
-
-		// now we need to preprocess quotes
-		bool skipQuote = false;
-		while (*nextPtr) {
-			if (*nextPtr == '"') {
-				res += "\" & QUOTE ";
-
-				if (*(nextPtr + 1))
-					res += "& \"";
-				else
-					skipQuote = true;	// we do not want the last quote
-			} else {
-				res += *nextPtr;
-			}
-
-			nextPtr++;
-		}
-
-		if (!skipQuote)
-			res += '"';
-
-		beg = nextPtr;
-
-		break;
-	}
-
-	res += Common::String(beg);
-
-	if (in.size() != res.size())
-		debugC(2, kDebugParse | kDebugPreprocess, "WHEN: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }
