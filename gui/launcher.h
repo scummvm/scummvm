@@ -157,7 +157,7 @@ protected:
 	 * @target	name of target to select
 	 */
 	virtual void selectTarget(const String &target) = 0;
-	virtual int getSelected() = 0;
+	virtual const int getSelected() = 0;
 private:
 	bool checkModifier(int modifier);
 };
@@ -190,7 +190,7 @@ protected:
 	void updateListing() override;
 	void updateButtons() override;
 	void selectTarget(const String &target) override;
-	int getSelected() override;
+	const int getSelected() override;
 	void build() override;
 private:
 	ListWidget 		*_list;
@@ -215,7 +215,7 @@ protected:
 	void updateListing() override;
 	void updateButtons() override;
 	void selectTarget(const String &target) override;
-	int getSelected() override;
+	const int getSelected() override;
 	void build() override;
 private:
 	GridWidget		*_grid;
