@@ -25,11 +25,20 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruAmmoGump)
+
+static const int REM_FONT_NUM = 15;
+static const int REG_FONT_NUM = 8;
+
+static const int REM_XOFF = 22;
+static const int REG_XOFF = 38;
+static const int REM_YOFF = 3;
+static const int REG_YOFF = 6;
 
 CruAmmoGump::CruAmmoGump() : CruStatGump(), _clipsText(nullptr), _bulletsText(nullptr) {
 
@@ -73,13 +82,17 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 
 	// Only paint if this weapon has bullets that get used up.
 	if (bullets >= 0 && a == getControlledActor()) {
+		const int xoff = GAME_IS_REMORSE ? REM_XOFF : REG_XOFF;
+		const int yoff = GAME_IS_REMORSE ? REM_YOFF : REG_YOFF;
+		const int fontno = GAME_IS_REMORSE ? REM_FONT_NUM : REG_FONT_NUM;
+
 		const Std::string bulletstr = Std::string::format("%d", bullets);
 		if (!_bulletsText || !bulletstr.equals(_bulletsText->getText())) {
 			if (_bulletsText) {
 				RemoveChild(_bulletsText);
 				_bulletsText->Close();
 			}
-			_bulletsText = new TextWidget(22, _dims.height() / 2 - 3, bulletstr, true, 15);
+			_bulletsText = new TextWidget(xoff, _dims.height() / 2 - yoff, bulletstr, true, fontno);
 			_bulletsText->InitGump(this, false);
 		}
 
@@ -98,7 +111,7 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 				RemoveChild(_clipsText);
 				_clipsText->Close();
 			}
-			_clipsText = new TextWidget(_dims.width() / 2 + 22, _dims.height() / 2 - 3, clipstr, true, 15);
+			_clipsText = new TextWidget(_dims.width() / 2 + xoff, _dims.height() / 2 - yoff, clipstr, true, fontno);
 			_clipsText->InitGump(this, false);
 		}
 		CruStatGump::PaintThis(surf, lerp_factor, scaled);
