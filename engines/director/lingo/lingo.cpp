@@ -1201,7 +1201,7 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 					break;
 				case kChunkLine:
 					while (numberOfChunks < var.u.cref->startChunk ) {
-						res += '\n';
+						res += '\r';
 						numberOfChunks++;
 					}
 					break;
