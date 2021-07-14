@@ -848,8 +848,8 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 
 	if (!activePanel /* && !ms.right */) {
 		//  If the point is within the window
-
-		for (Common::List<gWindow *>::iterator it = windowList.begin(); it != windowList.end(); ++it) {
+		Common::List<gWindow *>::iterator it;
+		for (it = windowList.begin(); it != windowList.end(); ++it) {
 			w = *it;
 			if (w->extent.ptInside(_curMouseState.pos) || w->isModal()) {
 				//  Set up the pick position relative to the window
@@ -866,7 +866,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 			}
 		}
 
-		if (w == NULL) {
+		if (it == windowList.end()) {
 			prevState = _curMouseState;
 			return;
 		}
