@@ -185,7 +185,8 @@ void CruMusicProcess::playMusic_internal(int track) {
 		assert(filesystem);
 		Common::SeekableReadStream *rs = filesystem->ReadFile(fname);
 		if (!rs) {
-			error("Couldn't load AMF file: %s", fname.c_str());
+			// This happens in No Regret demo.
+			warning("Couldn't load AMF file: %s", fname.c_str());
 			return;
 		}
 
