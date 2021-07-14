@@ -699,6 +699,8 @@ public:
 	const byte *findResourceData(uint32 tag, const byte *ptr);
 	const byte *findResource(uint32 tag, const byte *ptr);
 	void applyWorkaroundIfNeeded(ResType type, int idx);
+	bool verifyMI2MacBootScript();
+	bool verifyMI2MacBootScript(byte *buf, int size);
 	int getResourceDataSize(const byte *ptr) const;
 	void dumpResource(const char *tag, int index, const byte *ptr, int length = -1);
 

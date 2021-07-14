@@ -2881,6 +2881,23 @@ void ScummEngine::restart() {
 void ScummEngine::runBootscript() {
 	int args[NUM_SCRIPT_LOCAL];
 	memset(args, 0, sizeof(args));
+
+	// There are two known versions of Monkey Island 2 for the Mac. This
+	// boot param only exists in the floppy release. The version that was
+	// distributed on CD has a different boot script which doesn't show
+	// the copy protection (or difficulty selection) screen at all. We try
+	// to patch the script to put these features back, and use the boot
+	// param to bypass the copy protection screen (since ScummVM already
+	// disables the copy protection check in it).
+	//
+	// But if the script patching somehow failed, clear the boot param to
+	// avoid errors.
+
+	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh && _bootParam == -7873 && !verifyMI2MacBootScript()) {
+		warning("Unknown MI2 Mac boot script. Using default boot param");
+		_bootParam = 0;
+	}
+
 	args[0] = _bootParam;
 	if (_game.id == GID_MANIAC && (_game.features & GF_DEMO) && (_game.platform != Common::kPlatformC64))
 		runScript(9, 0, 0, args);
