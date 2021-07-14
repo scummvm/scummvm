@@ -104,6 +104,7 @@ public:
 	~SNDDecoder();
 
 	bool loadStream(Common::SeekableReadStreamEndian &stream);
+	void loadExternalSoundStream(Common::SeekableReadStreamEndian &stream);
 	bool processCommands(Common::SeekableReadStreamEndian &stream);
 	bool processBufferCommand(Common::SeekableReadStreamEndian &stream);
 	Audio::RewindableAudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);

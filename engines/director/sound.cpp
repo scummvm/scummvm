@@ -130,6 +130,40 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 	}
 }
 
+void SNDDecoder::loadExternalSoundStream(Common::SeekableReadStreamEndian &stream) {
+	_size = stream.readUint32BE();
+
+	uint16 sampleRateFlag = stream.readUint16();
+	/*uint16 unk2 = */ stream.readUint16();
+
+	_data = (byte *)malloc(_size);
+	stream.read(_data, _size);
+
+	switch (sampleRateFlag) {
+	case 1:
+		_rate = 22254;
+		break;
+	case 2:
+		_rate = 11127;
+		break;
+	case 3:
+		_rate = 7300;
+		break;
+	case 4:
+		_rate = 5500;
+		break;
+	default:
+		warning("DirectorSound::loadExternalSoundStream: Can't handle sampleRateFlag %d, using default one", sampleRateFlag);
+		_rate = 5500;
+		break;
+	}
+
+	// this may related to the unk2 flag
+	// TODO: figure out how to read audio flags
+	_flags = Audio::FLAG_UNSIGNED;
+	_channels = 1;
+}
+
 void DirectorSound::registerFade(uint8 soundChannel, bool fadeIn, int ticks) {
 	if (!isChannelValid(soundChannel))
 		return;
