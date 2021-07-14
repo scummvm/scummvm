@@ -1281,7 +1281,7 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, WidgetBackground b
 	case kGridItemBackground:
 		drawDD(kDDGridItemIdle, r);
 		break;
-	
+
 	case kGridItemHighlight:
 		drawDD(kDDGridItemHover, r);
 		break;
