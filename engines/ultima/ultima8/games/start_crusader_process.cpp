@@ -97,6 +97,10 @@ void StartCrusaderProcess::run() {
 			0x038E, 0x0388, 0x038A, 0x038D, 0x038B, 0x0386,
 			// Ammo
 			0x033D, 0x033E, 0x033F, 0x0340, 0x0341
+			// No Regret Weapons
+			0x5F6, 0x5F5, 0x198,
+			// No Regret Ammo
+			0x615, 0x614
 		};
 		for (int i = 0; i < ARRAYSIZE(wpnshapes); i++) {
 			for (int j = 0; j < 5; j++) {
@@ -110,6 +114,12 @@ void StartCrusaderProcess::run() {
 		// The first level 0x1e teleporter in No Remorse goes straight to another
 		// teleport, so undo the flag that normally stops that.
 		avatar->setJustTeleported(false);
+
+		if (GAME_IS_REGRET) {
+			avatar->setInCombat(0);
+			avatar->setDir(Direction::dir_south);
+			avatar->setActorFlag(Actor::ACT_WEAPONREADY);
+		}
 
 		Process *fader = new PaletteFaderProcess(0x00FFFFFF, true, 0x7FFF, 60, false);
 		Kernel::get_instance()->addProcess(fader);

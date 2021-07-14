@@ -65,9 +65,10 @@ bool isCastAnimU8(const Sequence anim) {
 }
 
 bool isCombatAnimCru(const Sequence anim) {
-	switch (anim) {
+	switch (anim & ~crusaderAbsoluteAnimFlag) {
 	case combatStand:
 	case combatStandSmallWeapon:
+	case combatStandLargeWeapon:
 	case readyWeapon:
 	case advance:
 	case retreat:
