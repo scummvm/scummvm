@@ -89,6 +89,12 @@ class MessageBuffer;
 } // namespace Engine
 } // namespace AGS
 
+namespace Plugins {
+namespace Core {
+class EngineExports;
+} // namespace Core
+} // namespace Plugins
+
 class Navigation;
 class SplitLines;
 class SpriteCache;
@@ -693,6 +699,7 @@ public:
 	 * @{
 	 */
 
+	Plugins::Core::EngineExports *_engineExports;
 	GameSetupStruct *_game;
 	GameState *_play;
 	SpriteCache *_spriteset;

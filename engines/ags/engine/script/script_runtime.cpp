@@ -173,7 +173,7 @@ int call_function(intptr_t addr, const RuntimeScriptValue *object, int numparm, 
 		return -1;
 	} else {
 		// Build the parameters
-		ScriptMethodParams params;
+		Plugins::ScriptMethodParams params;
 		for (int i = 0; i < numparm; ++i)
 			params.push_back(parm_value[i]);
 

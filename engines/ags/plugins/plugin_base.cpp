@@ -152,6 +152,12 @@ const char *pluginError() {
 
 /*------------------------------------------------------------------*/
 
+Common::String ScriptMethodParams::format(int formatIndex) {
+	error("TODO: Implement ScriptMethodParams::format");
+}
+
+/*------------------------------------------------------------------*/
+
 PluginBase::PluginBase() {
 	DLL_METHOD(AGS_PluginV2);
 	DLL_METHOD(AGS_EditorStartup);

@@ -25,6 +25,7 @@
 
 #include "ags/lib/allegro.h"
 #include "ags/plugins/ags_plugin.h"
+#include "ags/plugins/plugin_base.h"
 #include "common/algorithm.h"
 
 namespace AGS3 {

@@ -500,12 +500,6 @@ RuntimeScriptValue Sc_DrawingSurface_GetWidth(void *self, const RuntimeScriptVal
 //
 //=============================================================================
 
-// void (ScriptDrawingSurface *sds, int xx, int yy, int font, const char* texx, ...)
-void ScPl_DrawingSurface_DrawString(ScriptDrawingSurface *sds, int xx, int yy, int font, const char *texx, ...) {
-	API_PLUGIN_SCRIPT_SPRINTF(texx);
-	DrawingSurface_DrawString(sds, xx, yy, font, scsf_buffer);
-}
-
 void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion compat_api) {
 	ccAddExternalObjectFunction("DrawingSurface::Clear^1", Sc_DrawingSurface_Clear);
 	ccAddExternalObjectFunction("DrawingSurface::CreateCopy^0", Sc_DrawingSurface_CreateCopy);
@@ -530,32 +524,6 @@ void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion compa
 	ccAddExternalObjectFunction("DrawingSurface::get_UseHighResCoordinates", Sc_DrawingSurface_GetUseHighResCoordinates);
 	ccAddExternalObjectFunction("DrawingSurface::set_UseHighResCoordinates", Sc_DrawingSurface_SetUseHighResCoordinates);
 	ccAddExternalObjectFunction("DrawingSurface::get_Width", Sc_DrawingSurface_GetWidth);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("DrawingSurface::Clear^1", (void *)DrawingSurface_Clear);
-	ccAddExternalFunctionForPlugin("DrawingSurface::CreateCopy^0", (void *)DrawingSurface_CreateCopy);
-	ccAddExternalFunctionForPlugin("DrawingSurface::DrawCircle^3", (void *)DrawingSurface_DrawCircle);
-	ccAddExternalFunctionForPlugin("DrawingSurface::DrawImage^6", (void *)DrawingSurface_DrawImage);
-	ccAddExternalFunctionForPlugin("DrawingSurface::DrawLine^5", (void *)DrawingSurface_DrawLine);
-	ccAddExternalFunctionForPlugin("DrawingSurface::DrawMessageWrapped^5", (void *)DrawingSurface_DrawMessageWrapped);
-	ccAddExternalFunctionForPlugin("DrawingSurface::DrawPixel^2", (void *)DrawingSurface_DrawPixel);
-	ccAddExternalFunctionForPlugin("DrawingSurface::DrawRectangle^4", (void *)DrawingSurface_DrawRectangle);
-	ccAddExternalFunctionForPlugin("DrawingSurface::DrawString^104", (void *)ScPl_DrawingSurface_DrawString);
-	if (base_api < kScriptAPI_v350)
-		ccAddExternalFunctionForPlugin("DrawingSurface::DrawStringWrapped^6", (void *)DrawingSurface_DrawStringWrapped_Old);
-	else
-		ccAddExternalFunctionForPlugin("DrawingSurface::DrawStringWrapped^6", (void *)DrawingSurface_DrawStringWrapped);
-	ccAddExternalFunctionForPlugin("DrawingSurface::DrawSurface^2", (void *)DrawingSurface_DrawSurface);
-	ccAddExternalFunctionForPlugin("DrawingSurface::DrawTriangle^6", (void *)DrawingSurface_DrawTriangle);
-	ccAddExternalFunctionForPlugin("DrawingSurface::GetPixel^2", (void *)DrawingSurface_GetPixel);
-	ccAddExternalFunctionForPlugin("DrawingSurface::Release^0", (void *)DrawingSurface_Release);
-	ccAddExternalFunctionForPlugin("DrawingSurface::get_DrawingColor", (void *)DrawingSurface_GetDrawingColor);
-	ccAddExternalFunctionForPlugin("DrawingSurface::set_DrawingColor", (void *)DrawingSurface_SetDrawingColor);
-	ccAddExternalFunctionForPlugin("DrawingSurface::get_Height", (void *)DrawingSurface_GetHeight);
-	ccAddExternalFunctionForPlugin("DrawingSurface::get_UseHighResCoordinates", (void *)DrawingSurface_GetUseHighResCoordinates);
-	ccAddExternalFunctionForPlugin("DrawingSurface::set_UseHighResCoordinates", (void *)DrawingSurface_SetUseHighResCoordinates);
-	ccAddExternalFunctionForPlugin("DrawingSurface::get_Width", (void *)DrawingSurface_GetWidth);
 }
 
 } // namespace AGS3

@@ -24,6 +24,7 @@
 #include "ags/lib/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/plugins/ags_plugin.h"
+#include "ags/plugins/core/core.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
 #include "ags/engine/ac/character_cache.h"
@@ -804,6 +805,9 @@ void pl_stop_plugins() {
 void pl_startup_plugins() {
 	int i;
 	for (i = 0; i < numPlugins; i++) {
+		if (i == 0)
+			_GP(engineExports).AGS_EngineStartup(&plugins[0].eiface);
+
 		if (plugins[i].available)
 			plugins[i].engineStartup(&plugins[i].eiface);
 	}

@@ -102,42 +102,61 @@ inline int32 PARAM_FROM_FLOAT(float x) {
 	T8 N8 = (T8)params[7]; \
 	T9 N9 = (T9)params[8]
 
+class ScriptMethodParams;
 
 using string = const char *;
 typedef uint32 HWND;
 
 typedef void (*PluginMethod)(ScriptMethodParams &params);
 
+class ScriptMethodParams : public Common::Array<intptr_t> {
+public:
+	NumberPtr _result;
+
+	/**
+	 * Form of Common::String::format for the parameters array.
+	 * @param formatIndex	Param index of the format specifier string
+	 */
+	Common::String format(int formatIndex);
+};
+
+/**
+ * Shared base class for plugins and classes exposed to plugins
+ */
+class ScriptContainer {
+protected:
+	static inline void registerFunction(IAGSEngine *engine, const char *name, PluginMethod fn) {
+		engine->RegisterScriptFunction(name, (void *)fn);
+	}
+};
+
+
 /**
  * Base class for the implementation of AGS plugins
  */
-class PluginBase {
+class PluginBase: public ScriptContainer {
 protected:
-Common::HashMap<Common::String, void *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _methods;
+	Common::HashMap<Common::String, void *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _methods;
 
-static int    AGS_PluginV2() {
-	return 1;
-}
-static int    AGS_EditorStartup(IAGSEditor *);
-static void   AGS_EditorShutdown();
-static void   AGS_EditorProperties(HWND);
-static int    AGS_EditorSaveGame(char *, int);
-static void   AGS_EditorLoadGame(char *, int);
-static void   AGS_EngineStartup(IAGSEngine *);
-static void   AGS_EngineShutdown();
-static int64 AGS_EngineOnEvent(int, NumberPtr);
-static int    AGS_EngineDebugHook(const char *, int, int);
-static void   AGS_EngineInitGfx(const char *driverID, void *data);
-
-static inline void registerFunction(IAGSEngine *engine, const char *name, PluginMethod fn) {
-	engine->RegisterScriptFunction(name, (void *)fn);
-}
+	static int    AGS_PluginV2() {
+		return 1;
+	}
+	static int    AGS_EditorStartup(IAGSEditor *);
+	static void   AGS_EditorShutdown();
+	static void   AGS_EditorProperties(HWND);
+	static int    AGS_EditorSaveGame(char *, int);
+	static void   AGS_EditorLoadGame(char *, int);
+	static void   AGS_EngineStartup(IAGSEngine *);
+	static void   AGS_EngineShutdown();
+	static int64 AGS_EngineOnEvent(int, NumberPtr);
+	static int    AGS_EngineDebugHook(const char *, int, int);
+	static void   AGS_EngineInitGfx(const char *driverID, void *data);
 public:
-PluginBase();
+	PluginBase();
 
-void *operator[](const Common::String &methodName) const {
-	return _methods[methodName];
-}
+	void *operator[](const Common::String &methodName) const {
+		return _methods[methodName];
+	}
 };
 
 extern void *pluginOpen(const char *filename);

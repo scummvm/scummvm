@@ -94,6 +94,7 @@
 #include "ags/engine/script/system_imports.h"
 #include "ags/lib/std/limits.h"
 #include "ags/plugins/plugin_object_reader.h"
+#include "ags/plugins/core/core.h"
 #include "common/file.h"
 
 namespace AGS3 {
@@ -206,6 +207,7 @@ Globals::Globals() {
 	_myScriptStringImpl = new ScriptString();
 	_guis = new std::vector<AGS::Shared::GUIMain>();
 	_play = new GameState();
+	_engineExports = new Plugins::Core::EngineExports();
 	_game = new GameSetupStruct();
 	_spriteset = new SpriteCache(_game->SpriteInfos);
 	_thisroom = new AGS::Shared::RoomStruct();

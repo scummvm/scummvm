@@ -37,11 +37,6 @@
 
 namespace AGS3 {
 
-class ScriptMethodParams : public Common::Array<intptr_t> {
-public:
-	NumberPtr _result;
-};
-
 // If the plugin isn't using DDraw, don't require the headers
 #ifndef DIRECTDRAW_VERSION
 typedef void *LPDIRECTDRAW2;
