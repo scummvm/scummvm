@@ -483,8 +483,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheItemDelimiter:
 		{
-			Common::U32String ch;
-			ch.setChar(0, g_lingo->_itemDelimiter);
+			Common::U32String ch(g_lingo->_itemDelimiter);
 			d.type = STRING;
 			d.u.s = new Common::String(ch, Common::kUtf8);
 		}
