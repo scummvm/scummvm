@@ -982,7 +982,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1("lingotests", 0),
 			Common::EN_ANY,
-			Common::kPlatformWindows,
+			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
