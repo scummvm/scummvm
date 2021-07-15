@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-15 11:58+0000\n"
+"POT-Creation-Date: 2021-07-15 12:43+0000\n"
 "PO-Revision-Date: 2021-05-15 04:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2180,7 +2180,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "런처로 돌아가기(~R~)"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:767
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2199,7 +2199,7 @@ msgstr "런처로 돌아가기(~R~)"
 msgid "Save game:"
 msgstr "게임 저장:"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:767
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -3787,7 +3787,7 @@ msgstr ""
 "다른 AGI (Sierra) 게임에서 이런 파일을 가지고 있다면, 게임 디렉토리로 복사하"
 "십시오"
 
-#: engines/agi/saveload.cpp:781 engines/avalanche/parser.cpp:1907
+#: engines/agi/saveload.cpp:780 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:274
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
@@ -3803,7 +3803,7 @@ msgstr ""
 msgid "Restore game:"
 msgstr "게임 불러오기:"
 
-#: engines/agi/saveload.cpp:781 engines/avalanche/parser.cpp:1907
+#: engines/agi/saveload.cpp:780 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:274
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442

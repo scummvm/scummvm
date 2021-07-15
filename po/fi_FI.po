@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-15 11:58+0000\n"
+"POT-Creation-Date: 2021-07-15 12:43+0000\n"
 "PO-Revision-Date: 2021-06-30 13:44+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -2216,7 +2216,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Palaa p~e~livalitsimeen"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:767
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2235,7 +2235,7 @@ msgstr "Palaa p~e~livalitsimeen"
 msgid "Save game:"
 msgstr "Tallenna peli:"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:767
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -3823,7 +3823,7 @@ msgstr ""
 "Jos tämä tiedosto on muissa Sierra AGI -peleissä, voit kopioida sen pelin "
 "kansioon"
 
-#: engines/agi/saveload.cpp:781 engines/avalanche/parser.cpp:1907
+#: engines/agi/saveload.cpp:780 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:274
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
@@ -3839,7 +3839,7 @@ msgstr ""
 msgid "Restore game:"
 msgstr "Lataa pelitallenne:"
 
-#: engines/agi/saveload.cpp:781 engines/avalanche/parser.cpp:1907
+#: engines/agi/saveload.cpp:780 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:274
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
