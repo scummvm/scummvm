@@ -132,17 +132,20 @@ Common::Error Saga2Engine::saveGameStream(Common::WriteStream *stream, bool isAu
 Common::Error Saga2Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	pauseTimer();
 
-	Common::OutSaveFile *out = getSaveFileManager()->openForSaving(getSaveFileName(slot), false);
-	if (!out)
+	Common::OutSaveFile *outS = getSaveFileManager()->openForSaving(getSaveFileName(slot), false);
+	if (!outS)
 		return Common::kCreatingFileFailed;
 
-	saveGame(out, desc);
+	saveGame(outS, desc);
 
-	getMetaEngine()->appendExtendedSave(out, g_vm->getTotalPlayTime() / 1000, desc, false);
+	outS->write("SCVM", 4);
+	CHUNK_BEGIN;
+	getMetaEngine()->appendExtendedSaveToStream(out, g_vm->getTotalPlayTime() / 1000, desc, false);
+	CHUNK_END;
 
-	out->finalize();
+	outS->finalize();
 
-	delete out;
+	delete outS;
 
 	resumeTimer();
 
