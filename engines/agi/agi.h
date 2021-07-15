@@ -875,8 +875,7 @@ public:
 	void setVar(int16 varNr, byte newValue);
 
 private:
-	void setVolumeViaScripts(byte newVolume);
-	void setVolumeViaSystemSetting();
+	void applyVolumeToMixer();
 
 public:
 	void syncSoundSettings() override;

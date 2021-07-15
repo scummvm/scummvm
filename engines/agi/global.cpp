@@ -60,7 +60,7 @@ void AgiEngine::setVar(int16 varNr, byte newValue) {
 		setVarSecondsTrigger(newValue);
 		break;
 	case VM_VAR_VOLUME:
-		setVolumeViaScripts(newValue);
+		applyVolumeToMixer();
 		break;
 	default:
 		break;
@@ -85,11 +85,11 @@ byte AgiEngine::getVar(int16 varNr) {
 	return _game.vars[varNr];
 }
 
-// sets volume based on script value
-// 0 - maximum volume
-// 15 - mute
-void AgiEngine::setVolumeViaScripts(byte newVolume) {
-	newVolume = CLIP<byte>(newVolume, 0, 15);
+// sets volume to mixer using game variable for volume where 0 is maximum volume to 15 being mute
+void AgiEngine::applyVolumeToMixer() {
+	debug(2, "applyVolumeToMixer() volume: %d _veryFirstInitialCycle: %d getFeatures(): %d gameId: %d", _game.vars[VM_VAR_VOLUME], _veryFirstInitialCycle, getFeatures(), getGameID());
+
+	byte gameVolume = CLIP<byte>(_game.vars[VM_VAR_VOLUME], 0, 15);
 
 	if (_veryFirstInitialCycle) {
 		// WORKAROUND:
@@ -102,10 +102,9 @@ void AgiEngine::setVolumeViaScripts(byte newVolume) {
 		// See bug #7035
 		if (getFeatures() & GF_FANMADE) {
 			// We only check for fan games, Sierra always did it properly of course
-			if (newVolume == 15) {
-				// Volume gets set to mute at the start?
-				// Probably broken fan game detected, set flag
-				debug("Broken volume in fan game detected, enabling workaround");
+			if (gameVolume == 15) {
+				// Volume gets set to mute at the start? Probably broken fan game detected so set flag
+				debug(1, "Broken volume in fan game detected, enabling workaround");
 				_setVolumeBrokenFangame = true;
 			}
 		}
@@ -114,61 +113,28 @@ void AgiEngine::setVolumeViaScripts(byte newVolume) {
 	if (!_setVolumeBrokenFangame) {
 		// In AGI 15 is mute, 0 is loudest
 		// Some fan games set this incorrectly as 15 for loudest, 0 for mute
-		newVolume = 15 - newVolume; // turn volume around
+		gameVolume = 15 - gameVolume; // turn volume around
 	}
 
-	int scummVMVolume = newVolume * Audio::Mixer::kMaxMixerVolume / 15;
-	bool scummVMMute = false;
+	int musicVolume = ConfMan.getInt("music_volume");
+	int soundEffectVolume = ConfMan.getInt("sfx_volume");
 
-	// Set ScummVM setting
-	// We do not set "mute". In case "mute" is set, we will not apply the scripts wishes
-	ConfMan.setInt("music_volume", scummVMVolume);
-	ConfMan.setInt("sfx_volume", scummVMVolume);
+	musicVolume *= gameVolume;
+	musicVolume /= 15;
 
-	if (ConfMan.hasKey("mute"))
-		scummVMMute = ConfMan.getBool("mute");
+	soundEffectVolume *= gameVolume;
+	soundEffectVolume /= 15;
 
-	if (!scummVMMute) {
-		// Also change volume directly
-		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, scummVMVolume);
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, scummVMVolume);
-	}
-}
+	musicVolume = CLIP<int>(musicVolume, 0, Audio::Mixer::kMaxMixerVolume);
+	soundEffectVolume = CLIP<int>(soundEffectVolume, 0, Audio::Mixer::kMaxMixerVolume);
 
-void AgiEngine::setVolumeViaSystemSetting() {
-	int scummVMVolumeMusic = ConfMan.getInt("music_volume");
-	int scummVMVolumeSfx = ConfMan.getInt("sfx_volume");
-	bool scummVMMute = false;
-	int internalVolume = 0;
-
-	if (ConfMan.hasKey("mute"))
-		scummVMMute = ConfMan.getBool("mute");
-
-	// Clip user system setting
-	scummVMVolumeMusic = CLIP<int>(scummVMVolumeMusic, 0, Audio::Mixer::kMaxMixerVolume);
-	scummVMVolumeSfx = CLIP<int>(scummVMVolumeSfx, 0, Audio::Mixer::kMaxMixerVolume);
-
-	if (scummVMMute) {
-		scummVMVolumeMusic = 0;
-		scummVMVolumeSfx = 0;
+	bool soundIsMuted = false;
+	if (ConfMan.hasKey("mute")) {
+		soundIsMuted = ConfMan.getBool("mute");
 	}
 
-	// Now actually set it
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, scummVMVolumeSfx);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, scummVMVolumeMusic);
-
-	// Take lowest volume to the scripts
-	if (scummVMVolumeMusic < scummVMVolumeSfx) {
-		internalVolume = scummVMVolumeMusic;
-	} else {
-		internalVolume = scummVMVolumeSfx;
-	}
-	// Change it to 0-15 range
-	internalVolume = (internalVolume + 1) * 15 / Audio::Mixer::kMaxMixerVolume;
-	// Reverse it
-	internalVolume = 15 - internalVolume;
-	// Put it into the VM variable. Directly set it, otherwise it would call a volume set call
-	_game.vars[VM_VAR_VOLUME] = internalVolume;
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundIsMuted ? 0 : musicVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundIsMuted ? 0 : soundEffectVolume);
 }
 
 void AgiEngine::resetGetVarSecondsHeuristic() {
