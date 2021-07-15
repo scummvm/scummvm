@@ -525,6 +525,11 @@ public:
 	void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc, bool isAutosave);
 
 	/**
+	 * Write the extended savegame header to the given WriteStream.
+	 */
+	void appendExtendedSaveToStream(Common::WriteStream *saveFile, uint32 playtime, Common::String desc, bool isAutosave);
+
+	/**
 	 * Parse the extended savegame header to retrieve the SaveStateDescriptor information.
 	 */
 	static void parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc);

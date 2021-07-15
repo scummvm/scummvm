@@ -170,6 +170,13 @@ bool MetaEngine::hasFeature(MetaEngineFeature f) const {
 
 void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime,
 		Common::String desc, bool isAutosave) {
+	appendExtendedSaveToStream(saveFile, playtime, desc, isAutosave);
+
+	saveFile->finalize();
+}
+
+void MetaEngine::appendExtendedSaveToStream(Common::WriteStream *saveFile, uint32 playtime,
+		Common::String desc, bool isAutosave) {
 	ExtendedSavegameHeader header;
 
 	uint headerPos = saveFile->pos();
@@ -200,8 +207,6 @@ void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playti
 	thumb.free();
 
 	saveFile->writeUint32LE(headerPos);	// Store where the header starts
-
-	saveFile->finalize();
 }
 
 void MetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
