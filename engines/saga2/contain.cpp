@@ -1847,12 +1847,17 @@ void loadContainerNodes(Common::InSaveFile *in) {
 }
 
 void cleanupContainerNodes(void) {
+	Common::Array<ContainerNode *> deletionArray;
+
 	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
 		if (n->getType() != ContainerNode::readyType)
-			delete n;
+			deletionArray.push_back(*it);
 	}
+
+	for (uint i = 0; i < deletionArray.size(); ++i)
+		delete deletionArray[i];
 }
 
 void updateContainerWindows(void) {
