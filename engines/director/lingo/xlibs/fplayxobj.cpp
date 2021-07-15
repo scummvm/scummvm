@@ -28,9 +28,7 @@
   *************************************/
 
 #include "director/director.h"
-#include "director/archive.h"
 #include "director/sound.h"
-#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/xlibs/fplayxobj.h"
 
@@ -50,8 +48,6 @@ static BuiltinProto builtins[] = {
 	{ 0, 0, 0, 0, 0, VOIDSYM }
 };
 
-static char currentSound[20];
-
 void FPlayXObj::initialize(int type) {
 	if (!g_lingo->_builtinCmds.contains("FPlay")) {
 		g_lingo->initBuiltIns(builtins);
@@ -66,73 +62,13 @@ void FPlayXObj::b_fplay(int nargs) {
 		return;
 	}
 
-	if (nargs > 2) {
-		g_lingo->dropStack(nargs - 2);
-		warning("FPlayXObj::b_fplay: unhandled %d arguments", nargs - 2);
+	Common::Array<Common::String> arr(nargs);
+	for (int i = nargs - 1; i >= 0; i--) {
+		arr[i] = g_lingo->pop().asString();
 	}
 
-	Common::String mode;
-	if (nargs == 2)
-		mode = g_lingo->pop().asString();
-
-	bool loop = false;
-	if (!mode.empty()) {
-		if (mode.equalsIgnoreCase("continuous"))
-			loop = true;
-		else
-			warning("FPlayXObj::b_fplay: unhandled mode %s", mode.c_str());
-	}
-
-	Datum d = g_lingo->pop();
 	DirectorSound *sound = g_director->getSoundManager();
-	Common::String sndName = d.asString();
-
-	if (sndName.equalsIgnoreCase("stop")) {
-		sound->stopSound(1);
-		return;
-	}
-
-	uint32 tag = MKTAG('s', 'n', 'd', ' ');
-	uint id = 0xFFFF;
-	Archive *archive = nullptr;
-
-	// iterate opened ResFiles
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
-		id = it->_value->findResourceID(tag, sndName, true);
-		if (id != 0xFFFF) {
-			archive = it->_value;
-			break;
-		}
-	}
-
-	if (id == 0xFFFF) {
-		warning("FPlayXObj::b_fplay: can not find sound %s", sndName.c_str());
-		return;
-	}
-
-	Common::SeekableReadStreamEndian *sndData = archive->getResource(tag, id);
-	if (sndData != nullptr) {
-		SNDDecoder *ad = new SNDDecoder();
-		ad->loadStream(*sndData);
-		delete sndData;
-
-		Audio::AudioStream *as;
-		if (loop)
-			as = ad->getLoopingAudioStream();
-		else
-			as = ad->getAudioStream();
-
-		if (!as) {
-			warning("FPlayXObj::b_fplay: failed to get audio stream");
-			return;
-		}
-
-		// update current playing sound
-		strcpy(currentSound, sndName.c_str());
-
-		sound->playStream(*as, 1);
-		delete ad;
-	}
+	sound->playFPlaySound(arr);
 }
 
 void FPlayXObj::b_sndinfo(int nargs) {
@@ -173,7 +109,7 @@ void FPlayXObj::b_fsound(int nargs) {
 
 	DirectorSound *sound = g_director->getSoundManager();
 	if (sound->isChannelActive(1)) {
-		g_lingo->push(Datum(Common::String(currentSound)));
+		g_lingo->push(Datum(sound->getCurrentSound()));
 	} else {
 		g_lingo->push(Datum("done"));
 	}
