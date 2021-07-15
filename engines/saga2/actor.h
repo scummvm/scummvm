@@ -1119,7 +1119,7 @@ int16 AddFactionTally(int faction, enum factionTallyTypes act, int amt);
 void initFactionTallies(void);
 
 //  Save the faction tallies to a save file
-void saveFactionTallies(Common::OutSaveFile *out);
+void saveFactionTallies(Common::OutSaveFile *outS);
 
 //  Load the faction tallies from a save file
 void loadFactionTallies(Common::InSaveFile *in);

@@ -3643,16 +3643,16 @@ void initFactionTallies(void) {
 	memset(&factionTable, 0, sizeof(factionTable));
 }
 
-void saveFactionTallies(Common::OutSaveFile *out) {
+void saveFactionTallies(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Faction Tallies");
 
-	out->write("FACT", 4);
-	out->writeUint32LE(maxFactions * factionNumColumns * sizeof(int16));
-
+	outS->write("FACT", 4);
+	CHUNK_BEGIN;
 	for (int i = 0; i < maxFactions; ++i) {
 		for (int j = 0; j < factionNumColumns; ++j)
 			out->writeSint16LE(factionTable[i][j]);
 	}
+	CHUNK_END;
 }
 
 void loadFactionTallies(Common::InSaveFile *in) {
