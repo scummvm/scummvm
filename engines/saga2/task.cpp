@@ -475,7 +475,7 @@ void TaskList::read(Common::InSaveFile *in) {
 
 		//  Retreive the Task's id number
 		id = in->readSint16LE();
-		debugC(3, kDebugSaveload, "Loading Task %d", i);
+		debugC(3, kDebugSaveload, "Loading Task %d (%d)", i, id);
 
 		readTask(id, in);
 	}
@@ -773,7 +773,7 @@ void Task::write(Common::MemoryWriteStreamDynamic *out) const {
 
 WanderTask::WanderTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	//  Restore the paused flag
-	paused = in->readByte();
+	paused = in->readUint16LE();
 
 	//  Restore the counter
 	counter = in->readSint16LE();
@@ -794,7 +794,7 @@ void WanderTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	Task::write(out);
 
 	//  Store the paused flag
-	out->writeByte(paused);
+	out->writeUint16LE(paused);
 
 	//  Store the counter
 	out->writeSint16LE(counter);
@@ -1059,7 +1059,7 @@ GotoTask::GotoTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	wander = nullptr;
 
 	//  Restore prevRunState
-	prevRunState = in->readByte();
+	prevRunState = in->readUint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -1097,7 +1097,7 @@ void GotoTask::write(Common::MemoryWriteStreamDynamic *out) const {
 		out->writeSint16LE(NoTask);
 
 	//  Store prevRunState
-	out->writeByte(prevRunState);
+	out->writeUint16LE(prevRunState);
 }
 
 #if DEBUG
@@ -2509,7 +2509,7 @@ HuntToPossessTask::HuntToPossessTask(Common::InSaveFile *in, TaskID id) : HuntOb
 	targetEvaluateCtr = in->readByte();
 
 	//  Restore grab flag
-	grabFlag = in->readByte();
+	grabFlag = in->readUint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -2532,7 +2532,7 @@ void HuntToPossessTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeByte(targetEvaluateCtr);
 
 	//  Store the grab flag
-	out->writeByte(grabFlag);
+	out->writeUint16LE(grabFlag);
 }
 
 //----------------------------------------------------------------------
@@ -3849,7 +3849,7 @@ FollowPatrolRouteTask::FollowPatrolRouteTask(Common::InSaveFile *in, TaskID id) 
 	lastWayPointNum = in->readSint16LE();
 
 	//  Restore the paused flag
-	paused = in->readByte();
+	paused = in->readUint16LE();
 
 	//  Restore the paused counter
 	counter = in->readSint16LE();
@@ -3900,7 +3900,7 @@ void FollowPatrolRouteTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeSint16LE(lastWayPointNum);
 
 	//  Store the paused flag
-	out->writeByte(paused);
+	out->writeUint16LE(paused);
 
 	//  Store the paused counter
 	out->writeSint16LE(counter);
