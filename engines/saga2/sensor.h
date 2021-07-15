@@ -79,7 +79,7 @@ void assertEvent(const GameEvent &ev);
 
 //  Initialize the sensors
 void initSensors(void);
-void saveSensors(Common::OutSaveFile *out);
+void saveSensors(Common::OutSaveFile *outS);
 void loadSensors(Common::InSaveFile *in);
 //  Cleanup the active sensors
 void cleanupSensors(void);
@@ -134,7 +134,7 @@ public:
 		return sizeof(ObjectID);
 	}
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	GameObject *getObject(void) {
 		return obj;
@@ -170,11 +170,7 @@ public:
 		deleteSensor(this);
 	}
 
-	//  Return the number of bytes needed to archive this object in
-	//  a buffer
-	virtual int32 archiveSize(void);
-
-	virtual void write(Common::OutSaveFile *out);
+	virtual void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
 	virtual int16 getType(void) = 0;
@@ -269,7 +265,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
 	int16 getType(void);
@@ -306,7 +302,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
 	int16 getType(void);
@@ -361,7 +357,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
 	int16 getType(void);
@@ -398,7 +394,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
 	int16 getType(void);
@@ -429,7 +425,7 @@ public:
 	//  a buffer
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Return an integer representing the type of this sensor
 	int16 getType(void);

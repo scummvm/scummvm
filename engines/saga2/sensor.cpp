@@ -125,18 +125,7 @@ void readSensor(int16 ctr, Common::InSaveFile *in) {
 	sl->_list.push_back(sensor);
 }
 
-//----------------------------------------------------------------------
-//	Return the number of bytes needed to archive the specified Sensor in
-//	an archive buffer
-
-int32 sensorArchiveSize(Sensor *sensor) {
-	assert(sensor != NULL);
-
-	return      sizeof(int16)                //  Type
-	            +   sensor->archiveSize();
-}
-
-void writeSensor(Sensor *sensor, Common::OutSaveFile *out) {
+void writeSensor(Sensor *sensor, Common::MemoryWriteStreamDynamic *out) {
 	assert(sensor != NULL);
 
 	//  Store the sensor type
@@ -229,32 +218,20 @@ static int getSensorID(Sensor *t) {
 }
 
 
-void saveSensors(Common::OutSaveFile *out) {
+void saveSensors(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Sensors");
 
 	int16 sensorListCount = 0,
 	      sensorCount = 0;
 
-	int32 archiveBufSize = 0;
-
-	//  Add the sizes of the sensor list count an sensor count
-	archiveBufSize += sizeof(sensorListCount) + sizeof(sensorCount);
-
 	//  Tally the sensor lists
 	sensorListCount = g_vm->_sensorListList.size();
 
-	//  Add the total archive size of all of the sensor lists
-	archiveBufSize += sensorListCount * SensorList::archiveSize();
-
 	//  Tally the sensors and add the archive size of each
-	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it) {
-		sensorCount++;
-		archiveBufSize += sizeof((*it)->checkCtr) + sensorArchiveSize(*it);
-	}
+	sensorCount = g_vm->_sensorList.size();
 
-	out->write("SENS", 4);
-	out->writeUint32LE(archiveBufSize);
-
+	outS->write("SENS", 4);
+	CHUNK_BEGIN;
 	//  Store the sensor list count and sensor count
 	out->writeSint16LE(sensorListCount);
 	out->writeSint16LE(sensorCount);
@@ -276,6 +253,7 @@ void saveSensors(Common::OutSaveFile *out) {
 
 		writeSensor(*it, out);
 	}
+	CHUNK_END;
 }
 
 void loadSensors(Common::InSaveFile *in) {
@@ -353,7 +331,7 @@ SensorList::SensorList(Common::InSaveFile *in) {
 	newSensorList(this);
 }
 
-void SensorList::write(Common::OutSaveFile *out) {
+void SensorList::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeUint16LE(obj->thisID());
 }
 
@@ -381,13 +359,7 @@ Sensor::Sensor(Common::InSaveFile *in, int16 ctr) {
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in a buffer
 
-inline int32 Sensor::archiveSize(void) {
-	return      sizeof(ObjectID)         //  obj ID
-	            +   sizeof(id)
-	            +   sizeof(range);
-}
-
-void Sensor::write(Common::OutSaveFile *out) {
+void Sensor::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Store the object's ID
 	out->writeUint16LE(obj->thisID());
 
@@ -546,14 +518,7 @@ SpecificObjectSensor::SpecificObjectSensor(Common::InSaveFile *in, int16 ctr) :
 	soughtObjID = in->readUint16LE();
 }
 
-//----------------------------------------------------------------------
-//	Return the number of bytes needed to archive this object in a buffer
-
-inline int32 SpecificObjectSensor::archiveSize(void) {
-	return ObjectSensor::archiveSize() + sizeof(soughtObjID);
-}
-
-void SpecificObjectSensor::write(Common::OutSaveFile *out) {
+void SpecificObjectSensor::write(Common::MemoryWriteStreamDynamic *out) {
 	debugC(3, kDebugSaveload, "Saving SpecificObjectSensor");
 
 	//  Let the base class archive its data
@@ -631,14 +596,7 @@ ObjectPropertySensor::ObjectPropertySensor(Common::InSaveFile *in, int16 ctr) :
 	objectProperty = in->readSint16LE();;
 }
 
-//----------------------------------------------------------------------
-//	Return the number of bytes needed to archive this object in a buffer
-
-inline int32 ObjectPropertySensor::archiveSize(void) {
-	return ObjectSensor::archiveSize() + sizeof(objectProperty);
-}
-
-void ObjectPropertySensor::write(Common::OutSaveFile *out) {
+void ObjectPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
 	debugC(3, kDebugSaveload, "Saving ObjectPropertySensor");
 
 	//  Let the base class archive its data
@@ -692,14 +650,7 @@ SpecificActorSensor::SpecificActorSensor(Common::InSaveFile *in, int16 ctr) : Ac
 	soughtActor = (Actor *)GameObject::objectAddress(actorID);
 }
 
-//----------------------------------------------------------------------
-//	Return the number of bytes needed to archive this object in a buffer
-
-inline int32 SpecificActorSensor::archiveSize(void) {
-	return ActorSensor::archiveSize() + sizeof(ObjectID);
-}
-
-void SpecificActorSensor::write(Common::OutSaveFile *out) {
+void SpecificActorSensor::write(Common::MemoryWriteStreamDynamic *out) {
 	debugC(3, kDebugSaveload, "Saving SpecificActorSensor");
 
 	//  Let the base class archive its data
@@ -766,14 +717,7 @@ ActorPropertySensor::ActorPropertySensor(Common::InSaveFile *in, int16 ctr) : Ac
 	actorProperty = in->readSint16LE();
 }
 
-//----------------------------------------------------------------------
-//	Return the number of bytes needed to archive this object in a buffer
-
-inline int32 ActorPropertySensor::archiveSize(void) {
-	return ActorSensor::archiveSize() + sizeof(actorProperty);
-}
-
-void ActorPropertySensor::write(Common::OutSaveFile *out) {
+void ActorPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
 	debugC(3, kDebugSaveload, "Saving ActorPropertySensor");
 
 	//  Let the base class archive its data
@@ -822,11 +766,7 @@ EventSensor::EventSensor(Common::InSaveFile *in, int16 ctr) : Sensor(in, ctr) {
 //----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this object in a buffer
 
-inline int32 EventSensor::archiveSize(void) {
-	return Sensor::archiveSize() + sizeof(eventType);
-}
-
-void EventSensor::write(Common::OutSaveFile *out) {
+void EventSensor::write(Common::MemoryWriteStreamDynamic *out) {
 	debugC(3, kDebugSaveload, "Saving EventSensor");
 
 	//  Let the base class archive its data
