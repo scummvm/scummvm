@@ -70,6 +70,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Lure:
    - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands korrekt abgespielt.
+   - Unterstützung für AdLib korrigiert.
    - Unterstützung für MT-32 korrigiert.
 
  Pegasus:
