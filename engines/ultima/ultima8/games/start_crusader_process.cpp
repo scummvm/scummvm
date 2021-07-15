@@ -117,7 +117,7 @@ void StartCrusaderProcess::run() {
 
 		if (GAME_IS_REGRET) {
 			avatar->setInCombat(0);
-			avatar->setDir(Direction::dir_south);
+			avatar->setDir(dir_south);
 			avatar->setActorFlag(Actor::ACT_WEAPONREADY);
 		}
 
