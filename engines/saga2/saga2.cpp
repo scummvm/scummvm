@@ -129,10 +129,14 @@ Common::Error Saga2Engine::saveGameStream(Common::WriteStream *stream, bool isAu
 	return Common::kNoError;
 }
 
+Common::String Saga2Engine::getSavegameFile(int slot) {
+	return getMetaEngine()->getSavegameFile(slot, _targetName.c_str());
+}
+
 Common::Error Saga2Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	pauseTimer();
 
-	Common::OutSaveFile *outS = getSaveFileManager()->openForSaving(getSaveFileName(slot), false);
+	Common::OutSaveFile *outS = getSaveFileManager()->openForSaving(getSavegameFile(slot), false);
 	if (!outS)
 		return Common::kCreatingFileFailed;
 

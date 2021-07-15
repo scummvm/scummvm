@@ -91,6 +91,9 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 	Common::Error loadGameState(int slot) override;
+
+	Common::String getSavegameFile(int num);
+
 	void syncGameStream(Common::Serializer &s);
 
 	void loadExeResources();

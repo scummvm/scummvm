@@ -71,8 +71,6 @@ void cleanupGameState(void);
 
 void checkRestartGame(const char *exeName);
 void loadRestartGame(void);
-void getSaveFileName(int16 saveNo, char *fileName);
-Common::String getSaveFileName(int16 saveNo);
 
 } // end of namespace Saga2
 

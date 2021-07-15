@@ -67,10 +67,6 @@ void SaveFileHeader::write(Common::OutSaveFile *out) {
 	debugC(1, kDebugSaveload, "Writing game header: gameID = %s, saveName = %s", tag2str(gameID), saveName.c_str());
 }
 
-Common::String getSaveFileName(int16 saveNo) {
-	return Common::String::format("%3.3d.SAV", saveNo);
-}
-
 /* ===================================================================== *
    Functions
  * ===================================================================== */
@@ -264,7 +260,7 @@ void loadSavedGameState(int16 saveNo) {
 
 	pauseTimer();
 
-	Common::InSaveFile *in = g_vm->getSaveFileManager()->openForLoading(getSaveFileName(saveNo));
+	Common::InSaveFile *in = g_vm->getSaveFileManager()->openForLoading(g_vm->getSavegameFile(saveNo));
 
 	ChunkID         id;
 	int32           chunkSize;
@@ -561,7 +557,7 @@ void cleanupGameState(void) {
 void checkRestartGame(const char *exeName) {
 #if 0
 	char saveRestart[260];
-	getSaveFileName(999, saveRestart);
+	g_vm->getSavegameFile(999, saveRestart);
 	if (!fileExists(saveRestart) ||
 	        (getFileDate(exeName) > getFileDate(saveRestart)))
 		saveGameState(999, saveRestart);

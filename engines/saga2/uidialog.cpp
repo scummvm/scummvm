@@ -85,13 +85,6 @@ extern audioInterface   *audio;
 extern bool fullInitialized;
 
 /* ===================================================================== *
-   External functions
- * ===================================================================== */
-
-void getSaveFileName(int16 saveNo, char *fileName);
-
-
-/* ===================================================================== *
    Dialog Controls
  * ===================================================================== */
 
@@ -620,10 +613,11 @@ void destroyFileFields(char **strings) {
 }
 
 bool getSaveName(int8 saveNo, SaveFileHeader &header) {
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(getSaveFileName(saveNo));
+	Common::String fname = g_vm->getSavegameFile(saveNo);
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fname);
 
 	if (!in) {
-		debugC(1, kDebugSaveload, "Unable to load save %d (%s)", saveNo, getSaveFileName(saveNo).c_str());
+		debugC(1, kDebugSaveload, "Unable to load save %d (%s)", saveNo, fname.c_str());
 		return false;
 	}
 
