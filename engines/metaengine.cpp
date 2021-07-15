@@ -176,10 +176,10 @@ void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playti
 }
 
 void MetaEngine::appendExtendedSaveToStream(Common::WriteStream *saveFile, uint32 playtime,
-		Common::String desc, bool isAutosave) {
+		Common::String desc, bool isAutosave, uint32 posoffset) {
 	ExtendedSavegameHeader header;
 
-	uint headerPos = saveFile->pos();
+	uint headerPos = saveFile->pos() + posoffset;
 
 	strcpy(header.id, "SVMCR");
 	header.version = EXTENDED_SAVE_VERSION;
