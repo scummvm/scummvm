@@ -1441,7 +1441,7 @@ void ContainerNode::read(Common::InSaveFile *in) {
 	window = NULL;
 	action = 0;
 
-	bool shown = in->readByte();
+	bool shown = in->readUint16LE();
 
 	//  If this container was shown, re-show it
 	if (shown)
@@ -1462,7 +1462,7 @@ void ContainerNode::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeByte(owner);
 	position.write(out);
 	out->writeByte(mindType);
-	out->writeByte(window != NULL);
+	out->writeUint16LE(window != NULL);
 
 	debugC(4, kDebugSaveload, "... object = %d", object);
 	debugC(4, kDebugSaveload, "... type = %d", type);

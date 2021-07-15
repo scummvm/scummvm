@@ -2598,7 +2598,7 @@ void saveUIState(Common::OutSaveFile *out) {
 	out->write("UIST", 4);
 	out->writeUint32LE(UIStateArchive::kUIStateArchiveSize);
 
-	out->writeByte(indivControlsFlag);
+	out->writeUint16LE(indivControlsFlag);
 	out->writeUint16LE(indivBrother);
 
 	debugC(3, kDebugSaveload, "... indivControlsFlag = %d", indivControlsFlag);
@@ -2608,7 +2608,7 @@ void saveUIState(Common::OutSaveFile *out) {
 void loadUIState(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading UIState");
 
-	indivControlsFlag = in->readByte();
+	indivControlsFlag = in->readUint16LE();
 	indivBrother = in->readUint16LE();
 
 	debugC(3, kDebugSaveload, "... indivControlsFlag = %d", indivControlsFlag);
