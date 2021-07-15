@@ -33,8 +33,8 @@
 
 namespace CGE2 {
 
-const char *_iWantToStopPlayingAlready;
-const char *_thisIsAMistakeKeepPlaying;
+const char *_iWantToStopPlayingAlready = "";
+const char *_thisIsAMistakeKeepPlaying = "";
 
 Choice::Choice(CGE2Engine *vm) : _vm(vm), _text(nullptr) {}
 

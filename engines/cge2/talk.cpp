@@ -262,8 +262,8 @@ InfoLine::InfoLine(CGE2Engine *vm, uint16 w, ColorBank color)
 
 void InfoLine::update(const char *text) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-    if (text) {
-        if (lastText != text) {
+	if (text) {
+        if (strcmp(lastText,text) != 0) {
             if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
                 ttsMan->say(text);
             lastText = text;
