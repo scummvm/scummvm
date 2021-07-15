@@ -976,7 +976,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	} else {
 		if (deferredSaveFlag) {
 #ifdef IMMEDIATE_SAVE
-			saveGameState(deferredLoadID, deferredSaveName);
+			g_vm->saveGameState(deferredLoadID, deferredSaveName, false);
 #endif
 		}
 		mainWindow->invalidate(&optionsWindowRect);
@@ -1653,7 +1653,7 @@ APPFUNC(cmdFileSave) {
 
 #ifndef IMMEDIATE_SAVE
 		// save game
-		saveGameState(saveIndex, textBox->getLine(saveIndex));
+		g_vm->saveGameState(saveIndex, textBox->getLine(saveIndex), false);
 #else
 		deferredLoadID = saveIndex;
 		deferredSaveFlag = true;

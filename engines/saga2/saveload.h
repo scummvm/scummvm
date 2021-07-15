@@ -61,7 +61,7 @@ struct SaveFileHeader {
 void initGameState(void);
 
 //  Save the current game state
-Common::Error saveGameState(int16 saveNo, char *saveName);
+void saveGame(Common::OutSaveFile *out, Common::String saveName);
 
 //  Load a previously saved game state
 void loadSavedGameState(int16 saveNo);

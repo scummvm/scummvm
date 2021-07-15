@@ -129,6 +129,32 @@ Common::Error Saga2Engine::saveGameStream(Common::WriteStream *stream, bool isAu
 	return Common::kNoError;
 }
 
+Common::Error Saga2Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	pauseTimer();
+
+	Common::OutSaveFile *out = getSaveFileManager()->openForSaving(getSaveFileName(slot), false);
+	if (!out)
+		return Common::kCreatingFileFailed;
+
+	saveGame(out, desc);
+
+	getMetaEngine()->appendExtendedSave(out, g_vm->getTotalPlayTime() / 1000, desc, false);
+
+	out->finalize();
+
+	delete out;
+
+	resumeTimer();
+
+	return Common::kNoError;
+}
+
+Common::Error Saga2Engine::loadGameState(int slot) {
+	loadSavedGameState(slot);
+
+	return Common::kNoError;
+}
+
 void Saga2Engine::syncGameStream(Common::Serializer &s) {
 	// Use methods of Serializer to save/load fields
 	int dummy = 0;

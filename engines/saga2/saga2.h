@@ -89,6 +89,8 @@ public:
 	bool canSaveGameStateCurrently() override { return true; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+	Common::Error loadGameState(int slot) override;
 	void syncGameStream(Common::Serializer &s);
 
 	void loadExeResources();

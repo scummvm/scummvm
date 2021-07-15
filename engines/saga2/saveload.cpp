@@ -150,14 +150,8 @@ void initGameState(void) {
 //----------------------------------------------------------------------
 //	Save the current game state
 
-Common::Error saveGameState(int16 saveNo, char *saveName) {
-	pauseTimer();
-
+void saveGame(Common::OutSaveFile *out, Common::String saveName) {
 	debugC(1, kDebugSaveload, "Saving game");
-
-	Common::OutSaveFile *out = g_vm->getSaveFileManager()->openForSaving(getSaveFileName(saveNo), false);
-	if (!out)
-		return Common::kCreatingFileFailed;
 
 	SaveFileHeader header;
 	header.gameID = gameID;
@@ -195,14 +189,6 @@ Common::Error saveGameState(int16 saveNo, char *saveName) {
 	saveUIState(out);
 	savePaletteState(out);
 	saveContainerNodes(out);
-
-	out->finalize();
-
-	delete out;
-
-	resumeTimer();
-
-	return Common::kNoError;
 }
 
 bool firstChunk(Common::InSaveFile *in, ChunkID &chunk, int32 &size) {
@@ -477,10 +463,10 @@ void loadSavedGameState(int16 saveNo) {
 			break;
 		}
 
+		if (loadFlags & loadContainerNodesFlag)
+			break;
 		notEOF = nextChunk(in, id, chunkSize);
 	}
-
-	delete in;
 
 	if (!(loadFlags & loadGlobalsFlag))
 		error("Globals not loaded");
@@ -521,6 +507,12 @@ void loadSavedGameState(int16 saveNo) {
 	if (!(loadFlags & loadActiveRegionsFlag))
 		error("Active Regions not loaded");
 
+	ExtendedSavegameHeader header;
+	if (MetaEngine::readSavegameHeader(in, &header)) {
+		g_vm->setTotalPlayTime(header.playtime * 1000);
+	}
+
+	delete in;
 
 	resumeTimer();
 }

@@ -30,11 +30,35 @@ public:
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	Common::String getSavegameFile(int saveGameIdx, const char *target) const override;
 };
+
+bool Saga2MetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
+		(f == kSavesUseExtendedFormat);
+}
 
 Common::Error Saga2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Saga2::Saga2Engine(syst);
 	return Common::kNoError;
+}
+
+Common::String Saga2MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
+	if (saveGameIdx == kSavegameFilePattern) {
+		// Pattern requested
+		return Common::String::format("###.SAV");
+	} else {
+		// Specific filename requested
+		return Common::String::format("%3.3d.SAV", saveGameIdx);
+	}
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SAGA2)
