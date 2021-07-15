@@ -85,6 +85,9 @@ Common::Platform platformFromID(uint16 id);
 Common::CodePage getEncoding(Common::Platform platform, Common::Language language);
 Common::CodePage detectFontEncoding(Common::Platform platform, uint16 fontId);
 
+int charToNum(Common::u32char_type_t ch);
+Common::u32char_type_t numToChar(int num);
+
 } // End of namespace Director
 
 #endif

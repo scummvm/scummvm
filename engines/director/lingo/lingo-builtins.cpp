@@ -480,20 +480,13 @@ void LB::b_charToNum(int nargs) {
 
 	TYPECHECK(d, STRING);
 
-	Common::U32String src = d.asString().decode(Common::kUtf8);
-	if (src.size() == 0) {
+	Common::U32String str = d.asString().decode(Common::kUtf8);
+	if (str.size() == 0) {
 		g_lingo->push(0);
 		return;
 	}
 
-	Common::U32String ch = src.substr(0, 1);
-	Common::String encodedCh = ch.encode(g_director->getPlatformEncoding());
-	int res = 0;
-	while (encodedCh.size()) {
-		res = (res << 8) | (byte)encodedCh.firstChar();
-		encodedCh.deleteChar(0);
-	}
-	g_lingo->push(res);
+	g_lingo->push(charToNum(str[0]));
 }
 
 void LB::b_length(int nargs) {
@@ -507,21 +500,7 @@ void LB::b_length(int nargs) {
 
 void LB::b_numToChar(int nargs) {
 	int num = g_lingo->pop().asInt();
-	if (num == 0) {
-		g_lingo->push(Common::String());
-		return;
-	}
-
-	Common::String encodedCh;
-	while (num) {
-		encodedCh.insertChar((char)(num & 0xFF), 0);
-		num >>= 8;
-	}
-	Common::U32String ch = encodedCh.decode(g_director->getPlatformEncoding());
-	while (ch.size() > 1) // we only want one character
-		ch.deleteChar(0);
-
-	g_lingo->push(ch.encode(Common::kUtf8));
+	g_lingo->push(Common::U32String(numToChar(num)).encode(Common::kUtf8));
 }
 
 void LB::b_offset(int nargs) {
