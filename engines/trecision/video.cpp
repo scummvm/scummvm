@@ -617,8 +617,8 @@ void AnimManager::loadAnimTab(Common::SeekableReadStreamEndian *stream) {
 }
 
 void AnimManager::patchAnimTab() {
-	_animTab[22]._lim[3].left = 308;  // Patch the brazier animation rect in kRoom28 - bug #12628
-	_animTab[34]._lim[0].right = 200;	// Patch the terrorist animation rect in kRoom35
+	_animTab[aBKG28]._lim[3].left = 308; // Patch the brazier animation rect in kRoom28 - bug #12628
+	_animTab[aBKG35]._lim[0].right = 200; // Patch the terrorist animation rect in kRoom35
 }
 
 } // namespace Trecision
