@@ -49,15 +49,7 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 	}
 	uint32 strLen = textStream.readUint32();
 	uint32 dataLen = textStream.readUint32();
-	Common::String text;
-
-	for (uint32 i = 0; i < strLen; i++) {
-		byte ch = textStream.readByte();
-		if (ch == 0x0d) {
-			ch = '\n';
-		}
-		text += ch;
-	}
+	Common::String text = textStream.readString(0, strLen);
 	debugC(3, kDebugText, "Stxt init: offset: %d strLen: %d dataLen: %d textlen: %u", offset, strLen, dataLen, text.size());
 
 	uint16 formattingCount = textStream.readUint16();
