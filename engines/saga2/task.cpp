@@ -743,6 +743,7 @@ void writeTask(Task *t, Common::MemoryWriteStreamDynamic *out) {
 Task::Task(Common::InSaveFile *in, TaskID id) {
 	//  Place the stack ID into the stack pointer field
 	_stackID = in->readSint16LE();
+	stack = nullptr;
 	newTask(this, id);
 }
 
@@ -892,6 +893,7 @@ TetheredWanderTask::TetheredWanderTask(Common::InSaveFile *in, TaskID id) : Wand
 
 	//  Put the gotoTether ID into the gotoTether pointer field
 	_gotoTetherID = in->readSint16LE();
+	gotoTether = nullptr;
 }
 
 //----------------------------------------------------------------------
@@ -1054,6 +1056,7 @@ TaskResult TetheredWanderTask::handleWander(void) {
 GotoTask::GotoTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	//  Get the wander TaskID
 	_wanderID = in->readSint16LE();
+	wander = nullptr;
 
 	//  Restore prevRunState
 	prevRunState = in->readByte();
@@ -1668,6 +1671,7 @@ bool GotoActorTask::run(void) {
 GoAwayFromTask::GoAwayFromTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	//  Get the subtask ID
 	_goTaskID = in->readSint16LE();
+	goTask = nullptr;
 
 	//  Restore the flags
 	flags = in->readByte();
@@ -1954,6 +1958,7 @@ TilePoint GoAwayFromActorTask::getRepulsionVector(void) {
 HuntTask::HuntTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	//  Restore the flags
 	huntFlags = in->readByte();
+	subTask = nullptr;
 
 	//  If the flags say we have a sub task, restore it too
 	if (huntFlags & (huntGoto | huntWander))
@@ -2732,6 +2737,7 @@ HuntToBeNearActorTask::HuntToBeNearActorTask(Common::InSaveFile *in, TaskID id) 
 
 	//  Get the goAway task ID
 	_goAwayID = in->readSint16LE();
+	goAway = nullptr;
 
 	//  Restore the range
 	range = in->readUint16LE();
@@ -3459,6 +3465,7 @@ BandTask::BandTask(Common::InSaveFile *in, TaskID id) : HuntTask(in, id) {
 	debugC(3, kDebugSaveload, "... Loading BandTask");
 
 	_attendID = in->readSint16LE();
+	attend = nullptr;
 
 	//  Restore the current target location
 	currentTarget.load(in);
@@ -3833,7 +3840,7 @@ FollowPatrolRouteTask::FollowPatrolRouteTask(Common::InSaveFile *in, TaskID id) 
 
 	//  Get the gotoWayPoint TaskID
 	_gotoWayPointID = in->readSint16LE();
-
+	gotoWayPoint = nullptr;
 
 	//  Restore the patrol route iterator
 	patrolIter.read(in);
