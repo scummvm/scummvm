@@ -762,4 +762,17 @@ Common::u32char_type_t numToChar(int num) {
 	return str.lastChar();
 }
 
+int compareStrings(const Common::String &s1, const Common::String &s2) {
+	Common::U32String u32S1 = s1.decode(Common::kUtf8);
+	Common::U32String u32S2 = s2.decode(Common::kUtf8);
+	const Common::u32char_type_t *p1 = u32S1.c_str();
+	const Common::u32char_type_t *p2 = u32S2.c_str();
+	uint32 c1, c2;
+	while ((c1 = charToNum(*p1)) && (c2 = charToNum(*p2)) && c1 == c2) {
+		p1++;
+		p2++;
+	}
+	return c1 - c2;
+}
+
 } // End of namespace Director
