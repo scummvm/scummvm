@@ -968,7 +968,7 @@ void savePlayerActors(Common::OutSaveFile *outS) {
 		out->writeByte(p->vitalityMemory);
 
 		//  Store the attack notification flag
-		out->writeByte(p->notifiedOfAttack);
+		out->writeUint16LE(p->notifiedOfAttack);
 
 		debugC(4, kDebugSaveload, "... playerList[%d].portraitType = %d", i, p->portraitType);
 		debugC(4, kDebugSaveload, "... playerList[%d].flags = %d", i, p->flags);
@@ -1009,7 +1009,7 @@ void loadPlayerActors(Common::InSaveFile *in) {
 		p->vitalityMemory = in->readByte();
 
 		//  Restore the attack notification flag
-		p->notifiedOfAttack = in->readByte();
+		p->notifiedOfAttack = in->readUint16LE();
 
 		debugC(4, kDebugSaveload, "... playerList[%d].portraitType = %d", i, p->portraitType);
 		debugC(4, kDebugSaveload, "... playerList[%d].flags = %d", i, p->flags);
