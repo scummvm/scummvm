@@ -274,6 +274,67 @@ void DirectorSound::systemBeep() {
 	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 500, 150);
 }
 
+void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayList) {
+
+	for (uint i = 0; i < fplayList.size(); i++)
+		_fplayQueue.push(fplayList[i]);
+
+	Common::String sndName = _fplayQueue.pop();
+	if (sndName.equalsIgnoreCase("stop")) {
+		stopSound(1);
+		_currentSoundName = "";
+
+		if (_fplayQueue.empty())
+			return;
+		else
+			sndName = _fplayQueue.pop();
+	}
+
+	uint32 tag = MKTAG('s', 'n', 'd', ' ');
+	uint id = 0xFFFF;
+	Archive *archive = nullptr;
+
+	// iterate opened ResFiles
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+		id = it->_value->findResourceID(tag, sndName, true);
+		if (id != 0xFFFF) {
+			archive = it->_value;
+			break;
+		}
+	}
+
+	if (id == 0xFFFF) {
+		warning("DirectorSound:playFPlaySound: can not find sound %s", sndName.c_str());
+		return;
+	}
+
+	Common::SeekableReadStreamEndian *sndData = archive->getResource(tag, id);
+	if (sndData != nullptr) {
+		SNDDecoder *ad = new SNDDecoder();
+		ad->loadStream(*sndData);
+		delete sndData;
+
+		Audio::AudioStream *as;
+		if (!_fplayQueue.empty() && _fplayQueue.front().equalsIgnoreCase("continuous")) {
+			_fplayQueue.pop();
+			as = ad->getLoopingAudioStream();
+		} else {
+			as = ad->getAudioStream();
+		}
+
+		if (!as) {
+			warning("DirectorSound:playFPlaySound: failed to get audio stream");
+			return;
+		}
+
+		// update current playing sound
+		_currentSoundName = sndName;
+
+		playStream(*as, 1);
+		delete ad;
+	}
+}
+
 Audio::AudioStream *AudioDecoder::getLoopingAudioStream() {
 	Audio::RewindableAudioStream *target = getAudioStream(DisposeAfterUse::YES);
 	if (!target)

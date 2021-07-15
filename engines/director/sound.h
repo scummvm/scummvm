@@ -67,6 +67,10 @@ private:
 	Audio::PCSpeaker *_speaker;
 	Audio::SoundHandle _pcSpeakerHandle;
 
+	// these two were used in fplay xobj
+	Common::Queue<Common::String> _fplayQueue;
+	Common::String _currentSoundName;
+
 public:
 	DirectorSound(DirectorEngine *vm);
 	~DirectorSound();
@@ -77,7 +81,10 @@ public:
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
 	void playCastMember(CastMemberID memberID, uint8 soundChannel, bool allowRepeat = true);
 	void playExternalSound(AudioDecoder *ad, uint8 soundChannel, uint8 externalSoundID);
+	void playFPlaySound(const Common::Array<Common::String> &fplayList);
 	void systemBeep();
+
+	Common::String getCurrentSound() { return _currentSoundName; }
 
 	void registerFade(uint8 soundChannel, bool fadeIn, int ticks);
 	bool fadeChannel(uint8 soundChannel);
