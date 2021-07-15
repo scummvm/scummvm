@@ -32,8 +32,6 @@ namespace Director {
 int castNumToNum(const char *str);
 char *numToCastNum(int num);
 
-Common::String toLowercaseMac(const Common::String &s);
-
 Common::String convertPath(Common::String &path);
 
 Common::String unixToMacPath(const Common::String &path);
