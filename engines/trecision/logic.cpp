@@ -378,59 +378,51 @@ bool LogicManager::startPlayDialog() {
 	return dialogHandled;
 }
 
+void LogicManager::handleChangeRoomObjects() {
+	switch (_vm->_curRoom) {
+	case kRoom2E:
+		if (_vm->isObjectVisible(oPULSANTEADS2D) || _vm->isObjectVisible(oPULSANTEADA2D)) {
+			const bool flag = _vm->isObjectVisible(oPULSANTEADS2D);
+			_vm->_animMgr->_animTab[aBKG2E].toggleAnimArea(1, !flag);
+			_vm->setObjectVisible(oCAMPO2E, !flag);
+			_vm->setObjectVisible(oCARTELLOA2E, !flag);
+			_vm->setObjectVisible(oCARTELLOS2E, flag);
+		}
+		break;
+	case kRoom2C:
+		if (_vm->isObjectVisible(oPULSANTEACS2D) || _vm->isObjectVisible(oPULSANTEACA2D)) {
+			const bool flag = _vm->isObjectVisible(oPULSANTEACS2D);
+			_vm->_animMgr->_animTab[aBKG2C].toggleAnimArea(1, !flag);
+			_vm->setObjectVisible(oCAMPO2C, !flag);
+			_vm->setObjectVisible(oCARTELLOA2C, !flag);
+			_vm->setObjectVisible(oCARTELLOS2C, flag);
+		}
+		break;
+	case kRoom28:
+		if (_vm->isObjectVisible(oPULSANTEBBS2D) || _vm->isObjectVisible(oPULSANTEBBA2D)) {
+			const bool flag = _vm->isObjectVisible(oPULSANTEBBS2D);
+			_vm->_animMgr->_animTab[aBKG28].toggleAnimArea(2, !flag);
+			_vm->setObjectAnim(oCESPUGLIO28, flag ? a283 : a282);
+			_vm->setObjectVisible(oSERPENTETM28, flag);
+			_vm->setObjectVisible(oSERPENTEAM28, flag);
+		}
+
+		if (_vm->isObjectVisible(oPULSANTEABS2D) || _vm->isObjectVisible(oPULSANTEABA2D)) {
+			const bool flag = _vm->isObjectVisible(oPULSANTEABS2D);
+			_vm->_animMgr->_animTab[aBKG28].toggleAnimArea(1, !flag);
+			_vm->_animMgr->_animTab[aBKG28].toggleAnimArea(3, !flag);
+			_vm->setObjectVisible(oCAMPO28, !flag);
+			_vm->setObjectVisible(oCARTELLOA28, !flag);
+			_vm->setObjectVisible(oCARTELLOS28, flag);
+			if (flag)
+				_vm->read3D("282.3d");
+		}
+		break;
+	}
+}
+
 void LogicManager::endChangeRoom() {
-	//	Specific management of magnetic fields
-	if (_vm->_curRoom == kRoom2E && _vm->isObjectVisible(oPULSANTEADS2D)) {
-		_vm->_animMgr->_animTab[aBKG2E].toggleAnimArea(1, false);
-		_vm->setObjectVisible(oCAMPO2E, false);
-		_vm->setObjectVisible(oCARTELLOA2E, false);
-		_vm->setObjectVisible(oCARTELLOS2E, true);
-	} else if (_vm->_curRoom == kRoom2E && _vm->isObjectVisible(oPULSANTEADA2D)) {
-		_vm->_animMgr->_animTab[aBKG2E].toggleAnimArea(1, true);
-		_vm->setObjectVisible(oCAMPO2E, true);
-		_vm->setObjectVisible(oCARTELLOA2E, true);
-		_vm->setObjectVisible(oCARTELLOS2E, false);
-	}
-
-	if (_vm->_curRoom == kRoom2C && _vm->isObjectVisible(oPULSANTEACS2D)) {
-		_vm->_animMgr->_animTab[aBKG2C].toggleAnimArea(1, false);
-		_vm->setObjectVisible(oCAMPO2C, false);
-		_vm->setObjectVisible(oCARTELLOA2C, false);
-		_vm->setObjectVisible(oCARTELLOS2C, true);
-	} else if (_vm->_curRoom == kRoom2C && _vm->isObjectVisible(oPULSANTEACA2D)) {
-		_vm->_animMgr->_animTab[aBKG2C].toggleAnimArea(1, true);
-		_vm->setObjectVisible(oCAMPO2C, true);
-		_vm->setObjectVisible(oCARTELLOS2C, false);
-		_vm->setObjectVisible(oCARTELLOA2C, true);
-	}
-
-	if (_vm->_curRoom == kRoom28 && _vm->isObjectVisible(oPULSANTEBBS2D)) {
-		_vm->_animMgr->_animTab[aBKG28].toggleAnimArea(2, false);
-		_vm->setObjectAnim(oCESPUGLIO28, a283);
-		_vm->setObjectVisible(oSERPENTETM28, true);
-		_vm->setObjectVisible(oSERPENTEAM28, true);
-	} else if (_vm->_curRoom == kRoom28 && _vm->isObjectVisible(oPULSANTEBBA2D)) {
-		_vm->_animMgr->_animTab[aBKG28].toggleAnimArea(2, true);
-		_vm->setObjectAnim(oCESPUGLIO28, a282);
-		_vm->setObjectVisible(oSERPENTETM28, false);
-		_vm->setObjectVisible(oSERPENTEAM28, false);
-	}
-
-	if (_vm->_curRoom == kRoom28 && _vm->isObjectVisible(oPULSANTEABS2D)) {
-		_vm->_animMgr->_animTab[aBKG28].toggleAnimArea(1, false);
-		_vm->_animMgr->_animTab[aBKG28].toggleAnimArea(3, false);
-		_vm->setObjectVisible(oCAMPO28, false);
-		_vm->setObjectVisible(oCARTELLOA28, false);
-		_vm->setObjectVisible(oCARTELLOS28, true);
-		_vm->read3D("282.3d");
-	} else if (_vm->_curRoom == kRoom28 && _vm->isObjectVisible(oPULSANTEABA2D)) {
-		_vm->_animMgr->_animTab[aBKG28].toggleAnimArea(1, true);
-		_vm->_animMgr->_animTab[aBKG28].toggleAnimArea(3, true);
-		_vm->setObjectVisible(oCAMPO28, true);
-		_vm->setObjectVisible(oCARTELLOA28, true);
-		_vm->setObjectVisible(oCARTELLOS28, false);
-	}
-	// End of specific management for the magnetic fields
+	handleChangeRoomObjects();
 
 	// Actions
 	startCharacterAnimations();

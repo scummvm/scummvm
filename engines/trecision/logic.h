@@ -95,6 +95,7 @@ private:
 	void handleClickCloseup();
 	void handleClickGameArea();
 	void handleClickInventoryArea();
+	void handleChangeRoomObjects();
 };
 // end of class
 
