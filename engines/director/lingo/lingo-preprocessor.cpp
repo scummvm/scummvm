@@ -27,28 +27,10 @@
 namespace Director {
 
 bool isspec(Common::u32char_type_t c) {
-	switch (c) {
-	case '-':
-	case '+':
-	case '*':
-	case '/':
-	case '%':
-	case '^':
-	case ':':
-	case ',':
-	case '(':
-	case ')':
-	case '>':
-	case '<':
-	case '&':
-	case '[':
-	case ']':
-	case '=':
-		return true;
-	default:
-		break;
-	}
-	return false;
+	if (c > 127)
+		return false;
+
+	return strchr("-+*/%^:,()><&[]=", (char)c) != NULL;
 }
 
 static Common::U32String nexttok(const Common::u32char_type_t *s, const Common::u32char_type_t **newP = nullptr) {
