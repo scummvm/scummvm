@@ -483,8 +483,11 @@ bool Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (_window->render())
 		updated = true;
 
+	// sound stuff
 	if (_frames[frameId]->_sound1.member || _frames[frameId]->_sound2.member)
 		playSoundChannel(frameId);
+	// this is currently only used in FPlayXObj
+	playQueuedSound();
 
 	if (_cursorDirty) {
 		renderCursor(_movie->getWindow()->getMousePos());
@@ -709,6 +712,11 @@ void Score::playSoundChannel(uint16 frameId) {
 	} else {
 		sound->playCastMember(frame->_sound2, 2, false);
 	}
+}
+
+void Score::playQueuedSound() {
+	DirectorSound *sound = _vm->getSoundManager();
+	sound->playFPlaySound();
 }
 
 void Score::loadSampleSounds(uint type) {

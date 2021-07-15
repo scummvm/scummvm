@@ -82,6 +82,7 @@ public:
 	void playCastMember(CastMemberID memberID, uint8 soundChannel, bool allowRepeat = true);
 	void playExternalSound(AudioDecoder *ad, uint8 soundChannel, uint8 externalSoundID);
 	void playFPlaySound(const Common::Array<Common::String> &fplayList);
+	void playFPlaySound();
 	void systemBeep();
 
 	Common::String getCurrentSound() { return _currentSoundName; }

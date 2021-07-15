@@ -274,10 +274,12 @@ void DirectorSound::systemBeep() {
 	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 500, 150);
 }
 
-void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayList) {
-
-	for (uint i = 0; i < fplayList.size(); i++)
-		_fplayQueue.push(fplayList[i]);
+void DirectorSound::playFPlaySound() {
+	if (_fplayQueue.empty())
+		return;
+	// only when the previous sound is finished, shall we play next one
+	if (isChannelActive(1))
+		return;
 
 	Common::String sndName = _fplayQueue.pop();
 	if (sndName.equalsIgnoreCase("stop")) {
@@ -333,6 +335,18 @@ void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayLis
 		playStream(*as, 1);
 		delete ad;
 	}
+}
+
+void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayList) {
+
+	for (uint i = 0; i < fplayList.size(); i++)
+		_fplayQueue.push(fplayList[i]);
+
+	// stop the previous sound, because new one is comming
+	if (isChannelActive(1))
+		stopSound(1);
+
+	playFPlaySound();
 }
 
 Audio::AudioStream *AudioDecoder::getLoopingAudioStream() {

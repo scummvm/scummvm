@@ -116,6 +116,7 @@ private:
 	void update();
 
 	void playSoundChannel(uint16 frameId);
+	void playQueuedSound();
 
 	void screenShot();
 
