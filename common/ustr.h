@@ -95,6 +95,9 @@ public:
 	/** Construct a copy of the given string. */
 	U32String(const String &str, CodePage page = kUtf8);
 
+	/** Construct a string consisting of the given character. */
+	explicit U32String(value_type c);
+
 	/** Assign a given string to this string. */
 	U32String &operator=(const U32String &str);
 
