@@ -1049,16 +1049,15 @@ void initCenterActor(void) {
 	updateBrotherRadioButtons(FTA_JULIAN);
 }
 
-void saveCenterActor(Common::OutSaveFile *out) {
+void saveCenterActor(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving CenterActor");
 
-	const int32 centerActorArchiveSize = 4;
-
-	out->write("CNTR", 4);
-	out->writeUint32LE(centerActorArchiveSize);
+	outS->write("CNTR", 4);
+	CHUNK_BEGIN;
 	//  Store the center actor and view object
 	out->writeSint16LE(centerActor);
 	out->writeUint16LE(viewCenterObject);
+	CHUNK_END;
 
 	debugC(3, kDebugSaveload, "... centerActor = %d", centerActor);
 	debugC(3, kDebugSaveload, "... viewCenterObject = %d", viewCenterObject);

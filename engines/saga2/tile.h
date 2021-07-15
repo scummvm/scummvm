@@ -611,16 +611,10 @@ public:
 	TileActivityTaskList(void);
 
 	//  Reconstruct the TileActivityTaskList from an archive buffer
-	TileActivityTaskList(void **buf);
-
 	TileActivityTaskList(Common::SeekableReadStream *stream);
 
-	//  Return the number of bytes needed to archive this
-	//  TileActivityTaskList
-	int32 archiveSize(void);
-
 	void read(Common::InSaveFile *in);
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Cleanup this list
 	void cleanup(void);
@@ -1002,7 +996,7 @@ void initPlatformCache(void);
 //  Initialize the tile activity task list
 void initTileTasks(void);
 
-void saveTileTasks(Common::OutSaveFile *out);
+void saveTileTasks(Common::OutSaveFile *outS);
 void loadTileTasks(Common::InSaveFile *in, int32 chunkSize);
 
 //  Cleanup the tile activity task list
@@ -1016,7 +1010,7 @@ void loadActiveItemStates(Common::InSaveFile *in);
 void cleanupActiveItemStates(void);
 
 void initTileCyclingStates(void);
-void saveTileCyclingStates(Common::OutSaveFile *out);
+void saveTileCyclingStates(Common::OutSaveFile *outS);
 void loadTileCyclingStates(Common::InSaveFile *in);
 void cleanupTileCyclingStates(void);
 

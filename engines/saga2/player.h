@@ -307,7 +307,7 @@ void cleanupPlayerActors(void);
 //  Initialize the center actor ID and view object ID
 void initCenterActor(void);
 
-void saveCenterActor(Common::OutSaveFile *out);
+void saveCenterActor(Common::OutSaveFile *outS);
 void loadCenterActor(Common::InSaveFile *in);
 
 //  Do nothing

@@ -904,44 +904,6 @@ TileActivityTaskList::TileActivityTaskList(void) {
 //-----------------------------------------------------------------------
 //	Reconstruct the TileActivityTaskList from an archive buffer
 
-TileActivityTaskList::TileActivityTaskList(void **buf) {
-	warning("STUB: TileActivityTaskList::TileActivityTaskList(void **buf)");
-#if 0
-	void        *bufferPtr = *buf;
-
-	int16       taskCount;
-
-	for (uint i = 0; i < ARRAYSIZE(array); i++) {
-		free.addTail(array[i]);
-	}
-
-	//  Retreive the task count
-	taskCount = READ_LE_INT16(bufferPtr);
-	bufferPtr = (int16 *)bufferPtr + 1;
-
-	for (int i = 0; i < taskCount; i++) {
-		ActiveItem  *tai;
-		uint8       activityType;
-
-		tai = ActiveItem::activeItemAddress(*((ActiveItemID *)bufferPtr));
-		bufferPtr = (ActiveItemID *)bufferPtr + 1;
-
-		activityType = *((uint8 *)bufferPtr);
-		bufferPtr = (uint8 *)bufferPtr + 1;
-
-		if (tai != nullptr) {
-			TileActivityTask    *tat;
-
-			tat = newTask(tai);
-			if (tat != nullptr)
-				tat->activityType = activityType;
-		}
-	}
-
-	*buf = bufferPtr;
-#endif
-}
-
 TileActivityTaskList::TileActivityTaskList(Common::SeekableReadStream *stream) {
 	read(stream);
 }
@@ -949,15 +911,6 @@ TileActivityTaskList::TileActivityTaskList(Common::SeekableReadStream *stream) {
 //-----------------------------------------------------------------------
 //	Return the number of bytes needed to archive this
 //	TileActivityTaskList
-
-int32 TileActivityTaskList::archiveSize(void) {
-	int32 size = sizeof(int16);
-
-	for (Common::List<TileActivityTask *>::iterator it = _list.begin(); it != _list.end(); ++it)
-		size += sizeof(ActiveItemID) + sizeof(uint8);
-
-	return size;
-}
 
 void TileActivityTaskList::read(Common::InSaveFile *in) {
 	int16 taskCount;
@@ -987,7 +940,7 @@ void TileActivityTaskList::read(Common::InSaveFile *in) {
 	}
 }
 
-void TileActivityTaskList::write(Common::OutSaveFile *out) {
+void TileActivityTaskList::write(Common::MemoryWriteStreamDynamic *out) {
 	int16 taskCount = _list.size();
 
 	//  Store the task count
@@ -1229,16 +1182,13 @@ void moveActiveTerrain(int32 deltaTime) {
 void initTileTasks(void) {
 }
 
-void saveTileTasks(Common::OutSaveFile *out) {
+void saveTileTasks(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving TileActivityTasks");
 
-	int32   archiveBufSize;
-	archiveBufSize = aTaskList.archiveSize();
-
-	out->write("TACT", 4);
-	out->writeUint32LE(archiveBufSize);
-
+	outS->write("TACT", 4);
+	CHUNK_BEGIN;
 	aTaskList.write(out);
+	CHUNK_END;
 }
 
 void loadTileTasks(Common::InSaveFile *in, int32 chunkSize) {
@@ -4235,14 +4185,10 @@ void initTileCyclingStates(void) {
 	}
 }
 
-void saveTileCyclingStates(Common::OutSaveFile *out) {
+void saveTileCyclingStates(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving TileCyclingStates");
-
-	const int tileCycleArchiveSize = 4 + 1;
-
-	out->write("CYCL", 4);
-	out->writeUint32LE(tileCycleArchiveSize * cycleCount);
-
+	outS->write("CYCL", 4);
+	CHUNK_BEGIN;
 	for (int i = 0; i < cycleCount; i++) {
 		debugC(3, kDebugSaveload, "Saving TileCyclingState %d", i);
 
@@ -4252,6 +4198,7 @@ void saveTileCyclingStates(Common::OutSaveFile *out) {
 		debugC(4, kDebugSaveload, "... counter = %d", cycleList[i].counter);
 		debugC(4, kDebugSaveload, "... currentState = %d", cycleList[i].currentState);
 	}
+	CHUNK_END;
 }
 
 void loadTileCyclingStates(Common::InSaveFile *in) {

@@ -124,7 +124,7 @@ enum builtinTypes {
 //  Load the SAGA data segment from the resource file
 void initSAGADataSeg(void);
 
-void saveSAGADataSeg(Common::OutSaveFile *out);
+void saveSAGADataSeg(Common::OutSaveFile *outS);
 void loadSAGADataSeg(Common::InSaveFile *in);
 
 //  Dispose of the SAGA data segment -- do nothing

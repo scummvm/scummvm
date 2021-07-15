@@ -1685,12 +1685,13 @@ void initSAGADataSeg(void) {
 	scriptRes->read(dataSegment, dataSegSize);
 }
 
-void saveSAGADataSeg(Common::OutSaveFile *out) {
+void saveSAGADataSeg(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Data Segment");
 
-	out->write("SDTA", 4);
-	out->writeUint32LE(dataSegSize);
+	outS->write("SDTA", 4);
+	CHUNK_BEGIN;
 	out->write(dataSegment, dataSegSize);
+	CHUNK_END;
 }
 
 void loadSAGADataSeg(Common::InSaveFile *in) {
