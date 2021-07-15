@@ -76,7 +76,7 @@ void setPaletteToBlack(void);
 void initPaletteState(void);
 //  Save the current state of the current palette and fade up/down in
 //  a save file.
-void savePaletteState(Common::OutSaveFile *out);
+void savePaletteState(Common::OutSaveFile *outS);
 //  Load and set the current state of the current palette and fade
 //  up/down from a save file.
 void loadPaletteState(Common::InSaveFile *in);

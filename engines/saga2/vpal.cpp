@@ -34,6 +34,7 @@
 #include "saga2/palette.h"
 #include "saga2/display.h"
 #include "saga2/hresmgr.h"
+#include "saga2/saveload.h"
 
 namespace Saga2 {
 
@@ -45,22 +46,6 @@ const uint32            paletteID   = MKTAG('P', 'A', 'L',  0);
 
 extern hResContext      *tileRes;           // tile resource handle
 extern volatile int32   gameTime;
-
-/* ===================================================================== *
-   Local struct
- * ===================================================================== */
-
-struct PaletteStateArchive {
-	gPalette            currentPalette,
-	                    oldPalette,
-	                    destPalette;
-	int32               startTime,
-	                    totalTime;
-
-	enum {
-		kPaletteStateArchiveSize = 2312
-	};
-};
 
 /* ===================================================================== *
    Exports
@@ -111,7 +96,7 @@ void gPalette::read(Common::InSaveFile *in) {
 	}
 }
 
-void gPalette::write(Common::OutSaveFile *out) {
+void gPalette::write(Common::MemoryWriteStreamDynamic *out) {
 	for (int i = 0; i < 256; ++i) {
 		out->writeByte(entry[i].r);
 		out->writeByte(entry[i].g);
@@ -337,17 +322,18 @@ void quickRestorePalette(void) {
 }
 
 
-void savePaletteState(Common::OutSaveFile *out) {
+void savePaletteState(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Palette States");
 
-	out->write("PALE", 4);
-	out->writeUint32LE(PaletteStateArchive::kPaletteStateArchiveSize);
+	outS->write("PALE", 4);
 
+	CHUNK_BEGIN;
 	currentPalette.write(out);
 	oldPalette.write(out);
 	destPalette.write(out);
 	out->writeSint32LE(startTime);
 	out->writeSint32LE(totalTime);
+	CHUNK_END;
 
 	debugC(3, kDebugSaveload, "... startTime = %d", startTime);
 	debugC(3, kDebugSaveload, "... totalTime = %d", totalTime);

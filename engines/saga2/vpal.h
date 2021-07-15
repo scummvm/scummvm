@@ -45,7 +45,7 @@ struct gPalette {
 	gPaletteEntry   entry[256];
 
 	void read(Common::InSaveFile *in);
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 };
 
 /* ===================================================================== *

@@ -2572,15 +2572,6 @@ APPFUNC(cmdManaInd) {
 	}
 }
 
-struct UIStateArchive {
-	bool    indivControlsFlag;
-	uint16  indivBrother;
-
-	enum {
-		kUIStateArchiveSize = 3
-	};
-};
-
 bool isIndivMode(void) {
 	return indivControlsFlag;
 }
@@ -2592,14 +2583,15 @@ void initUIState(void) {
 	//updateAllUserControls();
 }
 
-void saveUIState(Common::OutSaveFile *out) {
+void saveUIState(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving UIState");
 
-	out->write("UIST", 4);
-	out->writeUint32LE(UIStateArchive::kUIStateArchiveSize);
+	outS->write("UIST", 4);
 
+	CHUNK_BEGIN;
 	out->writeUint16LE(indivControlsFlag);
 	out->writeUint16LE(indivBrother);
+	CHUNK_END;
 
 	debugC(3, kDebugSaveload, "... indivControlsFlag = %d", indivControlsFlag);
 	debugC(3, kDebugSaveload, "... indivBrother = %d", indivBrother);

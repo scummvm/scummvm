@@ -45,7 +45,7 @@ void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID);
 //  Initialize the tile mode state
 void initTileModeState(void);
 
-void saveTileModeState(Common::OutSaveFile *out);
+void saveTileModeState(Common::OutSaveFile *outS);
 void loadTileModeState(Common::InSaveFile *in);
 
 //  Cleanup the tile mode state

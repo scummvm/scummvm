@@ -1015,7 +1015,7 @@ void loadTileCyclingStates(Common::InSaveFile *in);
 void cleanupTileCyclingStates(void);
 
 void initAutoMap(void);
-void saveAutoMap(Common::OutSaveFile *out);
+void saveAutoMap(Common::OutSaveFile *outS);
 void loadAutoMap(Common::InSaveFile *in, int32 chunkSize);
 inline void cleanupAutoMap(void) { /* nothing to do */ }
 

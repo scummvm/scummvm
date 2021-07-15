@@ -1568,7 +1568,7 @@ void initAutoMap(void) {
 
 }
 
-void saveAutoMap(Common::OutSaveFile *out) {
+void saveAutoMap(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving AutoMap");
 
 	int32 totalMapSize = 0,
@@ -1592,8 +1592,7 @@ void saveAutoMap(Common::OutSaveFile *out) {
 	//  for each map metatile slot
 	archiveBufSize = (totalMapSize + 7) >> 3;
 
-	out->write("AMAP", 4);
-	out->writeUint32LE(archiveBufSize);
+	outS->write("AMAP", 4);
 
 	archiveBuffer = (uint8 *)calloc(archiveBufSize, 1);
 	if (archiveBuffer == nullptr)
@@ -1626,7 +1625,9 @@ void saveAutoMap(Common::OutSaveFile *out) {
 		}
 	}
 
+	CHUNK_BEGIN;
 	out->write(archiveBuffer, archiveBufSize);
+	CHUNK_END;
 
 	free(archiveBuffer);
 }
