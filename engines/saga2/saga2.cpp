@@ -140,7 +140,9 @@ Common::Error Saga2Engine::saveGameState(int slot, const Common::String &desc, b
 
 	outS->write("SCVM", 4);
 	CHUNK_BEGIN;
-	getMetaEngine()->appendExtendedSaveToStream(out, g_vm->getTotalPlayTime() / 1000, desc, false);
+	uint32 pos = outS->pos() + 4;
+
+	getMetaEngine()->appendExtendedSaveToStream(out, g_vm->getTotalPlayTime() / 1000, desc, false, pos);
 	CHUNK_END;
 
 	outS->finalize();
