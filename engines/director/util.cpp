@@ -742,4 +742,24 @@ Common::CodePage detectFontEncoding(Common::Platform platform, uint16 fontId) {
 	return getEncoding(platform, g_director->_wm->_fontMan->getFontLanguage(fontId));
 }
 
+int charToNum(Common::u32char_type_t ch) {
+	Common::String encodedCh = Common::U32String(ch).encode(g_director->getPlatformEncoding());
+	int res = 0;
+	while (encodedCh.size()) {
+		res = (res << 8) | (byte)encodedCh.firstChar();
+		encodedCh.deleteChar(0);
+	}
+	return res;
+}
+
+Common::u32char_type_t numToChar(int num) {
+	Common::String encodedCh;
+	while (num) {
+		encodedCh.insertChar((char)(num & 0xFF), 0);
+		num >>= 8;
+	}
+	Common::U32String str = encodedCh.decode(g_director->getPlatformEncoding());
+	return str.lastChar();
+}
+
 } // End of namespace Director
