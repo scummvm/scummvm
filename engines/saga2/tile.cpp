@@ -778,21 +778,11 @@ void initActiveItemStates(void) {
 	}
 }
 
-void saveActiveItemStates(Common::OutSaveFile *out) {
+void saveActiveItemStates(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving ActiveItemStates");
 
-	int32 archiveBufSize = 0;
-
-	for (int i = 0; i < worldCount; i++) {
-		int32 size = tileRes->size(tagStateID + i);
-		archiveBufSize += sizeof(int16);
-		if (stateArray[i] != nullptr)
-			archiveBufSize += size;
-	}
-
-	out->write("TAGS", 4);
-	out->writeUint32LE(archiveBufSize);
-
+	outS->write("TAGS", 4);
+	CHUNK_BEGIN;
 	for (int i = 0; i < worldCount; i++) {
 		debugC(3, kDebugSaveload, "Saving ActiveItemState %d", i);
 
@@ -831,6 +821,7 @@ void saveActiveItemStates(Common::OutSaveFile *out) {
 		} else
 			out->writeSint16LE(0);
 	}
+	CHUNK_END;
 }
 
 void loadActiveItemStates(Common::InSaveFile *in) {

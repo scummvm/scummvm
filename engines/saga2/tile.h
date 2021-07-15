@@ -1011,7 +1011,7 @@ void cleanupTileTasks(void);
 TilePoint getClosestPointOnTAI(ActiveItem *TAI, GameObject *obj);
 
 void initActiveItemStates(void);
-void saveActiveItemStates(Common::OutSaveFile *out);
+void saveActiveItemStates(Common::OutSaveFile *outS);
 void loadActiveItemStates(Common::InSaveFile *in);
 void cleanupActiveItemStates(void);
 
