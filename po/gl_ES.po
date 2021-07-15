@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-15 11:55+0000\n"
+"POT-Creation-Date: 2021-07-15 11:58+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -168,7 +168,7 @@ msgstr ""
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
 #: engines/scumm/scumm.cpp:1342 engines/scumm/scumm.cpp:1368
-#: engines/scumm/scumm.cpp:1390 engines/scumm/scumm.cpp:2075
+#: engines/scumm/scumm.cpp:1390 engines/scumm/scumm.cpp:2083
 #: engines/sky/compact.cpp:142 engines/sword1/animation.cpp:532
 #: engines/sword1/animation.cpp:553 engines/sword1/animation.cpp:569
 #: engines/sword1/animation.cpp:577 engines/sword1/control.cpp:889
@@ -3973,7 +3973,7 @@ msgstr "Restaurar"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2653
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2661
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3984,7 +3984,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2643
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2651
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3995,7 +3995,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2666
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2674
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6979,7 +6979,7 @@ msgstr ""
 "Erro ao buscar o executable de Monkey Island para Macintosh\n"
 "do que empregar os instrumentos. A música desactivarase."
 
-#: engines/scumm/scumm.cpp:2073
+#: engines/scumm/scumm.cpp:2081
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6988,7 +6988,7 @@ msgstr ""
 "A compatibilidade nativa con MIDI precisa a actualización de Roland\n"
 "de LucasArts, mais falla %s. Empregarase AdLib."
 
-#: engines/scumm/scumm.cpp:2951
+#: engines/scumm/scumm.cpp:2976
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
