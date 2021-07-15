@@ -196,7 +196,7 @@ void ActiveMission::read(Common::InSaveFile *in) {
 	debugC(4, kDebugSaveload, "... numKnowledgeIDs = %d", _data.numKnowledgeIDs);
 }
 
-void ActiveMission::write(Common::OutSaveFile *out) {
+void ActiveMission::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeUint16LE(_data.missionID);
 	out->writeUint16LE(_data.generatorID);
 	out->writeUint16LE(_data.missionScript);
@@ -265,16 +265,16 @@ void initMissions(void) {
 		activeMissions[i]._data.missionFlags &= ~inUse;
 }
 
-void saveMissions(Common::OutSaveFile *out) {
+void saveMissions(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Missions");
 
-	out->write("MISS", 4);
-	out->writeUint32LE(ActiveMission::kActiveMissionSize);
-
+	outS->write("MISS", 4);
+	CHUNK_BEGIN;
 	for (int i = 0; i < ARRAYSIZE(activeMissions); ++i) {
 		debugC(3, kDebugSaveload, "Saving Mission %d", i);
 		activeMissions[i].write(out);
 	}
+	CHUNK_END;
 }
 
 void loadMissions(Common::InSaveFile *in) {

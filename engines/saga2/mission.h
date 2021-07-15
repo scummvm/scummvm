@@ -74,10 +74,6 @@ class ActiveMission {
 
 public:
 
-	enum {
-		kActiveMissionSize = 236
-	};
-
 	ActiveMissionData _data;
 
 public:
@@ -86,7 +82,7 @@ public:
 	static ActiveMission *missionAddress(int index);
 
 	void read(Common::InSaveFile *in);
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	void cleanup(void);
 
