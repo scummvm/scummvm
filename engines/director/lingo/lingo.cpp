@@ -1068,7 +1068,7 @@ int Datum::compareTo(Datum &d) const {
 			return 1;
 		}
 	} else if (alignType == STRING) {
-		return asString().compareTo(d.asString());
+		return compareStrings(asString(), d.asString());
 	} else {
 		warning("Invalid comparison between types %s and %s", type2str(), d.type2str());
 		return 0;
