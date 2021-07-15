@@ -753,8 +753,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	// copy everything over (we should probably only copy over the remaining parts of the screen w/o play screen
 	_gfx->copyDisplayToScreen();
 
-	// Sync volume settings from ScummVM system settings, so that VM volume variable is overwritten
-	setVolumeViaSystemSetting();
+	applyVolumeToMixer();
 
 	return errOK;
 }
