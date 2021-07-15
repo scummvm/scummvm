@@ -807,8 +807,8 @@ void LC::c_contains() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	Common::String s1 = toLowercaseMac(d1.asString());
-	Common::String s2 = toLowercaseMac(d2.asString());
+	Common::String s1 = g_lingo->normalizeString(d1.asString());
+	Common::String s2 = g_lingo->normalizeString(d2.asString());
 
 	int res = s1.contains(s2) ? 1 : 0;
 
@@ -819,8 +819,8 @@ void LC::c_starts() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	Common::String s1 = toLowercaseMac(d1.asString());
-	Common::String s2 = toLowercaseMac(d2.asString());
+	Common::String s1 = g_lingo->normalizeString(d1.asString());
+	Common::String s2 = g_lingo->normalizeString(d2.asString());
 
 	int res = s1.hasPrefix(s2) ? 1 : 0;
 

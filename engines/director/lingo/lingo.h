@@ -152,7 +152,7 @@ struct Datum {	/* interpreter stack type */
 	const char *type2str(bool isk = false) const;
 
 	int equalTo(Datum &d, bool ignoreCase = false) const;
-	int compareTo(Datum &d, bool ignoreCase = false) const;
+	int compareTo(Datum &d) const;
 };
 
 struct ChunkReference {
@@ -294,6 +294,8 @@ public:
 	Datum findVarV4(int varType, const Datum &id);
 	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib);
 
+	Common::String normalizeString(const Common::String &str);
+
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
 
 	void printAllVars();
@@ -426,6 +428,10 @@ public:
 public:
 	void executeImmediateScripts(Frame *frame);
 	void executePerFrameHook(int frame, int subframe);
+
+private:
+	Common::HashMap<uint32, Common::U32String> _charNormalizations;
+	void initCharNormalizations();
 };
 
 extern Lingo *g_lingo;
