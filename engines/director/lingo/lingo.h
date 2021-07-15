@@ -294,8 +294,6 @@ public:
 	Datum findVarV4(int varType, const Datum &id);
 	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib);
 
-	Common::String normalizeString(const Common::String &str);
-
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
 
 	void printAllVars();
@@ -429,9 +427,13 @@ public:
 	void executeImmediateScripts(Frame *frame);
 	void executePerFrameHook(int frame, int subframe);
 
+	// lingo-utils.cpp
 private:
 	Common::HashMap<uint32, Common::U32String> _charNormalizations;
 	void initCharNormalizations();
+
+public:
+	Common::String normalizeString(const Common::String &str);
 };
 
 extern Lingo *g_lingo;
