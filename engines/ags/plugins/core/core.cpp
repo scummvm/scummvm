@@ -27,7 +27,15 @@ namespace Plugins {
 namespace Core {
 
 void EngineExports::AGS_EngineStartup(IAGSEngine *engine) {
+	_audioChannel.AGS_EngineStartup(engine);
+	_audioClip.AGS_EngineStartup(engine);
+	_button.AGS_EngineStartup(engine);
+	_character.AGS_EngineStartup(engine);
+	_dateTime.AGS_EngineStartup(engine);
+	_dialog.AGS_EngineStartup(engine);
+	_dialogOptionsRenderingInfo.AGS_EngineStartup(engine);
 	_drawingSurface.AGS_EngineStartup(engine);
+	_dynamicSprite.AGS_EngineStartup(engine);
 }
 
 } // namespace Core

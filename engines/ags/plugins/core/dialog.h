@@ -20,37 +20,28 @@
  *
  */
 
-#ifndef AGS_PLUGINS_CORE_CORE_H
-#define AGS_PLUGINS_CORE_CORE_H
+#ifndef AGS_PLUGINS_CORE_DIALOG_H
+#define AGS_PLUGINS_CORE_DIALOG_H
 
-#include "ags/plugins/core/audio_channel.h"
-#include "ags/plugins/core/audio_clip.h"
-#include "ags/plugins/core/button.h"
-#include "ags/plugins/core/character.h"
-#include "ags/plugins/core/date_time.h"
-#include "ags/plugins/core/dialog.h"
-#include "ags/plugins/core/dialog_options_rendering_info.h"
-#include "ags/plugins/core/drawing_surface.h"
-#include "ags/plugins/core/dynamic_sprite.h"
+#include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
-class EngineExports {
-private:
-	AudioChannel _audioChannel;
-	AudioClip _audioClip;
-	Button _button;
-	Character _character;
-	DateTime _dateTime;
-	Dialog _dialog;
-	DialogOptionsRenderingInfo _dialogOptionsRenderingInfo;
-	DrawingSurface _drawingSurface;
-	DynamicSprite _dynamicSprite;
-
+class Dialog : public ScriptContainer {
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	static void AGS_EngineStartup(IAGSEngine *engine);
+
+	static void GetID(ScriptMethodParams &params);
+	static void GetOptionCount(ScriptMethodParams &params);
+	static void GetShowTextParser(ScriptMethodParams &params);
+	static void DisplayOptions(ScriptMethodParams &params);
+	static void GetOptionState(ScriptMethodParams &params);
+	static void GetOptionText(ScriptMethodParams &params);
+	static void HasOptionBeenChosen(ScriptMethodParams &params);
+	static void SetOptionState(ScriptMethodParams &params);
+	static void Start(ScriptMethodParams &params);
 };
 
 } // namespace Core

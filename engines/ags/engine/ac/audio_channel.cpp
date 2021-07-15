@@ -294,22 +294,6 @@ void RegisterAudioChannelAPI() {
 	ccAddExternalObjectFunction("AudioChannel::set_Speed", Sc_AudioChannel_SetSpeed);
 	// For compatibility with  Ahmet Kamil's (aka Gord10) custom engine
 	ccAddExternalObjectFunction("AudioChannel::SetSpeed^1", Sc_AudioChannel_SetSpeed);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("AudioChannel::Seek^1", (void *)AudioChannel_Seek);
-	ccAddExternalFunctionForPlugin("AudioChannel::SetRoomLocation^2", (void *)AudioChannel_SetRoomLocation);
-	ccAddExternalFunctionForPlugin("AudioChannel::Stop^0", (void *)AudioChannel_Stop);
-	ccAddExternalFunctionForPlugin("AudioChannel::get_ID", (void *)AudioChannel_GetID);
-	ccAddExternalFunctionForPlugin("AudioChannel::get_IsPlaying", (void *)AudioChannel_GetIsPlaying);
-	ccAddExternalFunctionForPlugin("AudioChannel::get_LengthMs", (void *)AudioChannel_GetLengthMs);
-	ccAddExternalFunctionForPlugin("AudioChannel::get_Panning", (void *)AudioChannel_GetPanning);
-	ccAddExternalFunctionForPlugin("AudioChannel::set_Panning", (void *)AudioChannel_SetPanning);
-	ccAddExternalFunctionForPlugin("AudioChannel::get_PlayingClip", (void *)AudioChannel_GetPlayingClip);
-	ccAddExternalFunctionForPlugin("AudioChannel::get_Position", (void *)AudioChannel_GetPosition);
-	ccAddExternalFunctionForPlugin("AudioChannel::get_PositionMs", (void *)AudioChannel_GetPositionMs);
-	ccAddExternalFunctionForPlugin("AudioChannel::get_Volume", (void *)AudioChannel_GetVolume);
-	ccAddExternalFunctionForPlugin("AudioChannel::set_Volume", (void *)AudioChannel_SetVolume);
 }
 
 } // namespace AGS3

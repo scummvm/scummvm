@@ -33,27 +33,27 @@ class DrawingSurface : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-	static void DrawingSurface_Clear(ScriptMethodParams &params);
-	static void DrawingSurface_CreateCopy(ScriptMethodParams &params);
-	static void DrawingSurface_DrawCircle(ScriptMethodParams &params);
-	static void DrawingSurface_DrawImage(ScriptMethodParams &params);
-	static void DrawingSurface_DrawLine(ScriptMethodParams &params);
-	static void DrawingSurface_DrawMessageWrapped(ScriptMethodParams &params);
-	static void DrawingSurface_DrawPixel(ScriptMethodParams &params);
-	static void DrawingSurface_DrawRectangle(ScriptMethodParams &params);
-	static void ScPl_DrawingSurface_DrawString(ScriptMethodParams &params);
-	static void DrawingSurface_DrawStringWrapped_Old(ScriptMethodParams &params);
-	static void DrawingSurface_DrawStringWrapped(ScriptMethodParams &params);
-	static void DrawingSurface_DrawSurface(ScriptMethodParams &params);
-	static void DrawingSurface_DrawTriangle(ScriptMethodParams &params);
-	static void DrawingSurface_GetPixel(ScriptMethodParams &params);
-	static void DrawingSurface_Release(ScriptMethodParams &params);
-	static void DrawingSurface_GetDrawingColor(ScriptMethodParams &params);
-	static void DrawingSurface_SetDrawingColor(ScriptMethodParams &params);
-	static void DrawingSurface_GetHeight(ScriptMethodParams &params);
-	static void DrawingSurface_GetUseHighResCoordinates(ScriptMethodParams &params);
-	static void DrawingSurface_SetUseHighResCoordinates(ScriptMethodParams &params);
-	static void DrawingSurface_GetWidth(ScriptMethodParams &params);	
+	static void Clear(ScriptMethodParams &params);
+	static void CreateCopy(ScriptMethodParams &params);
+	static void DrawCircle(ScriptMethodParams &params);
+	static void DrawImage(ScriptMethodParams &params);
+	static void DrawLine(ScriptMethodParams &params);
+	static void DrawMessageWrapped(ScriptMethodParams &params);
+	static void DrawPixel(ScriptMethodParams &params);
+	static void DrawRectangle(ScriptMethodParams &params);
+	static void ScPl_DrawString(ScriptMethodParams &params);
+	static void DrawStringWrapped_Old(ScriptMethodParams &params);
+	static void DrawStringWrapped(ScriptMethodParams &params);
+	static void DrawSurface(ScriptMethodParams &params);
+	static void DrawTriangle(ScriptMethodParams &params);
+	static void GetPixel(ScriptMethodParams &params);
+	static void Release(ScriptMethodParams &params);
+	static void GetDrawingColor(ScriptMethodParams &params);
+	static void SetDrawingColor(ScriptMethodParams &params);
+	static void GetHeight(ScriptMethodParams &params);
+	static void GetUseHighResCoordinates(ScriptMethodParams &params);
+	static void SetUseHighResCoordinates(ScriptMethodParams &params);
+	static void GetWidth(ScriptMethodParams &params);
 };
 
 } // namespace Core

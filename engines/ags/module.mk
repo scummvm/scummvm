@@ -287,7 +287,15 @@ MODULE_OBJS = \
 	plugins/plugin_base.o \
 	plugins/plugin_object_reader.o \
 	plugins/core/core.o \
+	plugins/core/audio_channel.o \
+	plugins/core/audio_clip.o \
+	plugins/core/button.o \
+	plugins/core/character.o \
+	plugins/core/date_time.o \
+	plugins/core/dialog.o \
+	plugins/core/dialog_options_rendering_info.o \
 	plugins/core/drawing_surface.o \
+	plugins/core/dynamic_sprite.o \
 	plugins/ags_agi/ags_agi.o \
 	plugins/ags_blend/ags_blend.o \
 	plugins/ags_clipboard/ags_clipboard.o \

@@ -439,27 +439,6 @@ void RegisterButtonAPI() {
 	ccAddExternalObjectFunction("Button::get_TextColor", Sc_Button_GetTextColor);
 	ccAddExternalObjectFunction("Button::set_TextColor", Sc_Button_SetTextColor);
 	ccAddExternalObjectFunction("Button::get_View", Sc_Button_GetView);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("Button::Animate^4", (void *)Button_Animate);
-	ccAddExternalFunctionForPlugin("Button::GetText^1", (void *)Button_GetText);
-	ccAddExternalFunctionForPlugin("Button::SetText^1", (void *)Button_SetText);
-	ccAddExternalFunctionForPlugin("Button::get_ClipImage", (void *)Button_GetClipImage);
-	ccAddExternalFunctionForPlugin("Button::set_ClipImage", (void *)Button_SetClipImage);
-	ccAddExternalFunctionForPlugin("Button::get_Font", (void *)Button_GetFont);
-	ccAddExternalFunctionForPlugin("Button::set_Font", (void *)Button_SetFont);
-	ccAddExternalFunctionForPlugin("Button::get_Graphic", (void *)Button_GetGraphic);
-	ccAddExternalFunctionForPlugin("Button::get_MouseOverGraphic", (void *)Button_GetMouseOverGraphic);
-	ccAddExternalFunctionForPlugin("Button::set_MouseOverGraphic", (void *)Button_SetMouseOverGraphic);
-	ccAddExternalFunctionForPlugin("Button::get_NormalGraphic", (void *)Button_GetNormalGraphic);
-	ccAddExternalFunctionForPlugin("Button::set_NormalGraphic", (void *)Button_SetNormalGraphic);
-	ccAddExternalFunctionForPlugin("Button::get_PushedGraphic", (void *)Button_GetPushedGraphic);
-	ccAddExternalFunctionForPlugin("Button::set_PushedGraphic", (void *)Button_SetPushedGraphic);
-	ccAddExternalFunctionForPlugin("Button::get_Text", (void *)Button_GetText_New);
-	ccAddExternalFunctionForPlugin("Button::set_Text", (void *)Button_SetText);
-	ccAddExternalFunctionForPlugin("Button::get_TextColor", (void *)Button_GetTextColor);
-	ccAddExternalFunctionForPlugin("Button::set_TextColor", (void *)Button_SetTextColor);
 }
 
 } // namespace AGS3

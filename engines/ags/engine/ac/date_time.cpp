@@ -127,17 +127,6 @@ void RegisterDateTimeAPI() {
 	ccAddExternalObjectFunction("DateTime::get_RawTime", Sc_DateTime_GetRawTime);
 	ccAddExternalObjectFunction("DateTime::get_Second", Sc_DateTime_GetSecond);
 	ccAddExternalObjectFunction("DateTime::get_Year", Sc_DateTime_GetYear);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("DateTime::get_Now", (void *)DateTime_Now);
-	ccAddExternalFunctionForPlugin("DateTime::get_DayOfMonth", (void *)DateTime_GetDayOfMonth);
-	ccAddExternalFunctionForPlugin("DateTime::get_Hour", (void *)DateTime_GetHour);
-	ccAddExternalFunctionForPlugin("DateTime::get_Minute", (void *)DateTime_GetMinute);
-	ccAddExternalFunctionForPlugin("DateTime::get_Month", (void *)DateTime_GetMonth);
-	ccAddExternalFunctionForPlugin("DateTime::get_RawTime", (void *)DateTime_GetRawTime);
-	ccAddExternalFunctionForPlugin("DateTime::get_Second", (void *)DateTime_GetSecond);
-	ccAddExternalFunctionForPlugin("DateTime::get_Year", (void *)DateTime_GetYear);
 }
 
 } // namespace AGS3

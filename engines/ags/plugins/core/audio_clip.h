@@ -20,37 +20,26 @@
  *
  */
 
-#ifndef AGS_PLUGINS_CORE_CORE_H
-#define AGS_PLUGINS_CORE_CORE_H
+#ifndef AGS_PLUGINS_CORE_AUDIO_CLIP_H
+#define AGS_PLUGINS_CORE_AUDIO_CLIP_H
 
-#include "ags/plugins/core/audio_channel.h"
-#include "ags/plugins/core/audio_clip.h"
-#include "ags/plugins/core/button.h"
-#include "ags/plugins/core/character.h"
-#include "ags/plugins/core/date_time.h"
-#include "ags/plugins/core/dialog.h"
-#include "ags/plugins/core/dialog_options_rendering_info.h"
-#include "ags/plugins/core/drawing_surface.h"
-#include "ags/plugins/core/dynamic_sprite.h"
+#include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
-class EngineExports {
-private:
-	AudioChannel _audioChannel;
-	AudioClip _audioClip;
-	Button _button;
-	Character _character;
-	DateTime _dateTime;
-	Dialog _dialog;
-	DialogOptionsRenderingInfo _dialogOptionsRenderingInfo;
-	DrawingSurface _drawingSurface;
-	DynamicSprite _dynamicSprite;
-
+class AudioClip : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
+
+	static void Play(ScriptMethodParams &params);
+	static void PlayFrom(ScriptMethodParams &params);
+	static void PlayQueued(ScriptMethodParams &params);
+	static void Stop(ScriptMethodParams &params);
+	static void GetFileType(ScriptMethodParams &params);
+	static void GetIsAvailable(ScriptMethodParams &params);
+	static void GetType(ScriptMethodParams &params);
 };
 
 } // namespace Core

@@ -20,37 +20,27 @@
  *
  */
 
-#ifndef AGS_PLUGINS_CORE_CORE_H
-#define AGS_PLUGINS_CORE_CORE_H
+#ifndef AGS_PLUGINS_CORE_DATE_TIME_H
+#define AGS_PLUGINS_CORE_DATE_TIME_H
 
-#include "ags/plugins/core/audio_channel.h"
-#include "ags/plugins/core/audio_clip.h"
-#include "ags/plugins/core/button.h"
-#include "ags/plugins/core/character.h"
-#include "ags/plugins/core/date_time.h"
-#include "ags/plugins/core/dialog.h"
-#include "ags/plugins/core/dialog_options_rendering_info.h"
-#include "ags/plugins/core/drawing_surface.h"
-#include "ags/plugins/core/dynamic_sprite.h"
+#include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
-class EngineExports {
-private:
-	AudioChannel _audioChannel;
-	AudioClip _audioClip;
-	Button _button;
-	Character _character;
-	DateTime _dateTime;
-	Dialog _dialog;
-	DialogOptionsRenderingInfo _dialogOptionsRenderingInfo;
-	DrawingSurface _drawingSurface;
-	DynamicSprite _dynamicSprite;
-
+class DateTime : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
+
+	static void Now(ScriptMethodParams &params);
+	static void GetDayOfMonth(ScriptMethodParams &params);
+	static void GetHour(ScriptMethodParams &params);
+	static void GetMinute(ScriptMethodParams &params);
+	static void GetMonth(ScriptMethodParams &params);
+	static void GetRawTime(ScriptMethodParams &params);
+	static void GetSecond(ScriptMethodParams &params);
+	static void GetYear(ScriptMethodParams &params);
 };
 
 } // namespace Core

@@ -269,27 +269,6 @@ void RegisterDialogOptionsRenderingAPI() {
 	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_Y", Sc_DialogOptionsRendering_SetY);
 	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_HasAlphaChannel", Sc_DialogOptionsRendering_GetHasAlphaChannel);
 	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_HasAlphaChannel", Sc_DialogOptionsRendering_SetHasAlphaChannel);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::get_ActiveOptionID", (void *)DialogOptionsRendering_GetActiveOptionID);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::set_ActiveOptionID", (void *)DialogOptionsRendering_SetActiveOptionID);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::get_DialogToRender", (void *)DialogOptionsRendering_GetDialogToRender);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::get_Height", (void *)DialogOptionsRendering_GetHeight);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::set_Height", (void *)DialogOptionsRendering_SetHeight);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::get_ParserTextBoxX", (void *)DialogOptionsRendering_GetParserTextboxX);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::set_ParserTextBoxX", (void *)DialogOptionsRendering_SetParserTextboxX);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::get_ParserTextBoxY", (void *)DialogOptionsRendering_GetParserTextboxY);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::set_ParserTextBoxY", (void *)DialogOptionsRendering_SetParserTextboxY);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::get_ParserTextBoxWidth", (void *)DialogOptionsRendering_GetParserTextboxWidth);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::set_ParserTextBoxWidth", (void *)DialogOptionsRendering_SetParserTextboxWidth);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::get_Surface", (void *)DialogOptionsRendering_GetSurface);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::get_Width", (void *)DialogOptionsRendering_GetWidth);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::set_Width", (void *)DialogOptionsRendering_SetWidth);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::get_X", (void *)DialogOptionsRendering_GetX);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::set_X", (void *)DialogOptionsRendering_SetX);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::get_Y", (void *)DialogOptionsRendering_GetY);
-	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::set_Y", (void *)DialogOptionsRendering_SetY);
 }
 
 } // namespace AGS3

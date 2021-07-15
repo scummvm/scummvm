@@ -20,37 +20,32 @@
  *
  */
 
-#ifndef AGS_PLUGINS_CORE_CORE_H
-#define AGS_PLUGINS_CORE_CORE_H
+#ifndef AGS_PLUGINS_CORE_AUDIO_CHANNEL_H
+#define AGS_PLUGINS_CORE_AUDIO_CHANNEL_H
 
-#include "ags/plugins/core/audio_channel.h"
-#include "ags/plugins/core/audio_clip.h"
-#include "ags/plugins/core/button.h"
-#include "ags/plugins/core/character.h"
-#include "ags/plugins/core/date_time.h"
-#include "ags/plugins/core/dialog.h"
-#include "ags/plugins/core/dialog_options_rendering_info.h"
-#include "ags/plugins/core/drawing_surface.h"
-#include "ags/plugins/core/dynamic_sprite.h"
+#include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
-class EngineExports {
-private:
-	AudioChannel _audioChannel;
-	AudioClip _audioClip;
-	Button _button;
-	Character _character;
-	DateTime _dateTime;
-	Dialog _dialog;
-	DialogOptionsRenderingInfo _dialogOptionsRenderingInfo;
-	DrawingSurface _drawingSurface;
-	DynamicSprite _dynamicSprite;
-
+class AudioChannel : public ScriptContainer {
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	static void AGS_EngineStartup(IAGSEngine *engine);
+
+	static void Seek(ScriptMethodParams &params);
+	static void SetRoomLocation(ScriptMethodParams &params);
+	static void Stop(ScriptMethodParams &params);
+	static void GetID(ScriptMethodParams &params);
+	static void GetIsPlaying(ScriptMethodParams &params);
+	static void GetLengthMs(ScriptMethodParams &params);
+	static void GetPanning(ScriptMethodParams &params);
+	static void SetPanning(ScriptMethodParams &params);
+	static void GetPlayingClip(ScriptMethodParams &params);
+	static void GetPosition(ScriptMethodParams &params);
+	static void GetPositionMs(ScriptMethodParams &params);
+	static void GetVolume(ScriptMethodParams &params);
+	static void SetVolume(ScriptMethodParams &params);
 };
 
 } // namespace Core

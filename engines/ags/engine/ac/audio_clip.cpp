@@ -129,16 +129,6 @@ void RegisterAudioClipAPI() {
 	ccAddExternalObjectFunction("AudioClip::get_FileType", Sc_AudioClip_GetFileType);
 	ccAddExternalObjectFunction("AudioClip::get_IsAvailable", Sc_AudioClip_GetIsAvailable);
 	ccAddExternalObjectFunction("AudioClip::get_Type", Sc_AudioClip_GetType);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("AudioClip::Play^2", (void *)AudioClip_Play);
-	ccAddExternalFunctionForPlugin("AudioClip::PlayFrom^3", (void *)AudioClip_PlayFrom);
-	ccAddExternalFunctionForPlugin("AudioClip::PlayQueued^2", (void *)AudioClip_PlayQueued);
-	ccAddExternalFunctionForPlugin("AudioClip::Stop^0", (void *)AudioClip_Stop);
-	ccAddExternalFunctionForPlugin("AudioClip::get_FileType", (void *)AudioClip_GetFileType);
-	ccAddExternalFunctionForPlugin("AudioClip::get_IsAvailable", (void *)AudioClip_GetIsAvailable);
-	ccAddExternalFunctionForPlugin("AudioClip::get_Type", (void *)AudioClip_GetType);
 }
 
 } // namespace AGS3
