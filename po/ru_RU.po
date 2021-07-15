@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-15 21:11+0000\n"
-"PO-Revision-Date: 2021-07-07 23:33+0000\n"
-"Last-Translator: lolbot-iichan <lolbot_iichan@mail.ru>\n"
+"PO-Revision-Date: 2021-07-15 23:21+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -2116,7 +2116,7 @@ msgstr "PC-9801 (16 цветов)"
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:48
 msgid "Macintosh b/w"
-msgstr ""
+msgstr "Macintosh (ч/б)"
 
 #: common/rendermode.cpp:75
 msgctxt "lowres"
