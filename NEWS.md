@@ -112,6 +112,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      and Indiana Jones and the Fate of Atlantis.
    - Added "Macintosh b/w" render mode for the 16-color Macintosh versions of
      Loom and Indiana Jones and the Last Crusade.
+   - Enabled difficulty selection in the version of Monkey Island 2 that was
+     included on the LucasArts Mac CD Game Pack II compilation. (It had been
+     disabled along with the copy protection.)
 
  Tinsel:
    - Enabled the Return to Launcher feature.
