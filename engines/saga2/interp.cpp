@@ -33,6 +33,7 @@
 #include "saga2/tile.h"
 #include "saga2/mission.h"
 #include "saga2/hresmgr.h"
+#include "saga2/saveload.h"
 
 namespace Saga2 {
 
@@ -1159,7 +1160,7 @@ public:
 	//  in an archive buffer
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Cleanup the active threads
 	void cleanup(void);
@@ -1221,7 +1222,7 @@ int32 ThreadList::archiveSize(void) {
 	return size;
 }
 
-void ThreadList::write(Common::OutSaveFile *out) {
+void ThreadList::write(Common::MemoryWriteStreamDynamic *out) {
 	int16 threadCount = 0;
 	Thread *th;
 
@@ -1326,16 +1327,13 @@ void initSAGAThreads(void) {
 	//  Simply call the Thread List default constructor
 }
 
-void saveSAGAThreads(Common::OutSaveFile *out) {
+void saveSAGAThreads(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving SAGA Threads");
 
-	int32   archiveBufSize;
-
-	archiveBufSize = threadList.archiveSize();
-
-	out->write("SAGA", 4);
-	out->writeUint32LE(archiveBufSize);
+	outS->write("SAGA", 4);
+	CHUNK_BEGIN;
 	threadList.write(out);
+	CHUNK_END;
 }
 
 void loadSAGAThreads(Common::InSaveFile *in, int32 chunkSize) {
@@ -1477,7 +1475,7 @@ int32 Thread::archiveSize(void) {
 	            + (stackBase + stackSize) - stackPtr;
 }
 
-void Thread::write(Common::OutSaveFile *out) {
+void Thread::write(Common::MemoryWriteStreamDynamic *out) {
 	int16   stackOffset;
 
 	out->writeUint16LE(programCounter.segment);

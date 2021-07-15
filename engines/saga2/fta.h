@@ -142,7 +142,7 @@ public:
 	bool check(void);
 	uint32 elapsed(void);                    // time elapsed since alarm set
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 	void read(Common::InSaveFile *in);
 };
 

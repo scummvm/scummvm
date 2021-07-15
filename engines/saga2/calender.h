@@ -81,7 +81,7 @@ public:
 	bool check(void);
 	uint16 elapsed(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 	void read(Common::InSaveFile *in);
 };
 

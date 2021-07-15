@@ -46,7 +46,7 @@ void checkTimers(void);
 
 //  Initialize the Timers
 void initTimers(void);
-void saveTimers(Common::OutSaveFile *out);
+void saveTimers(Common::OutSaveFile *outS);
 void loadTimers(Common::InSaveFile *in);
 //  Cleanup the active Timers
 void cleanupTimers(void);
@@ -72,7 +72,7 @@ public:
 		return sizeof(ObjectID);
 	}
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	GameObject *getObject(void) {
 		return _obj;
@@ -111,7 +111,7 @@ public:
 	//  a buffer
 	static int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	GameObject *getObject(void) {
 		return _obj;

@@ -30,6 +30,7 @@
 #include "saga2/fta.h"
 #include "saga2/timers.h"
 #include "saga2/objects.h"
+#include "saga2/saveload.h"
 
 namespace Saga2 {
 
@@ -79,7 +80,7 @@ void loadTimer(Common::InSaveFile *in) {
    Alarms
  * ====================================================================== */
 
-void Alarm::write(Common::OutSaveFile *out) {
+void Alarm::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeUint32LE(basetime);
 	out->writeUint32LE(duration);
 }
@@ -170,22 +171,14 @@ static int getTimerID(Timer *t) {
 	return -1;
 }
 
-void saveTimers(Common::OutSaveFile *out) {
+void saveTimers(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Timers");
 
 	int16 timerListCount = 0,
 	      timerCount = 0;
 
-	int32 archiveBufSize = 0;
-
-	//  Add the sizes of the timer list count an timer count
-	archiveBufSize += sizeof(timerListCount) + sizeof(timerCount);
-
 	//  Tally the timer lists
 	timerListCount = g_vm->_timerLists.size();
-
-	//  Add the total archive size of all of the timer lists
-	archiveBufSize += timerListCount * TimerList::archiveSize();
 
 	//  Tally the timers
 	timerCount = g_vm->_timers.size();
@@ -193,12 +186,8 @@ void saveTimers(Common::OutSaveFile *out) {
 	debugC(3, kDebugSaveload, "... timerListCount = %d", timerListCount);
 	debugC(3, kDebugSaveload, "... timerCount = %d", timerCount);
 
-	//  Add the total archive size of all of the timers
-	archiveBufSize += timerCount * Timer::archiveSize();
-
-	out->write("TIMR", 4);
-	out->writeUint32LE(archiveBufSize);
-
+	outS->write("TIMR", 4);
+	CHUNK_BEGIN;
 	//  Store the timer list count and timer count
 	out->writeSint16LE(timerListCount);
 	out->writeSint16LE(timerCount);
@@ -216,6 +205,7 @@ void saveTimers(Common::OutSaveFile *out) {
 
 		(*it)->write(out);
 	}
+	CHUNK_END;
 }
 
 void loadTimers(Common::InSaveFile *in) {
@@ -299,7 +289,7 @@ TimerList::~TimerList() {
 	g_vm->_timerLists.remove(this);
 }
 
-void TimerList::write(Common::OutSaveFile *out) {
+void TimerList::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Store the object's ID
 	out->writeUint16LE(_obj->thisID());
 }
@@ -345,7 +335,7 @@ int32 Timer::archiveSize(void) {
 	            +   sizeof(FrameAlarm);
 }
 
-void Timer::write(Common::OutSaveFile *out) {
+void Timer::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Store the obj's ID
 	out->writeUint16LE(_obj->thisID());
 

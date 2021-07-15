@@ -139,7 +139,7 @@ class Thread;
 //  Initialize the SAGA thread list
 void initSAGAThreads(void);
 
-void saveSAGAThreads(Common::OutSaveFile *out);
+void saveSAGAThreads(Common::OutSaveFile *outS);
 void loadSAGAThreads(Common::InSaveFile *in, int32 chunkSize);
 
 //  Dispose of the active SAGA threads
@@ -254,7 +254,7 @@ public:
 	//  Create an archive of this thread in an archive buffer
 	void *archive(void *buf);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Dispatch all asynchronous threads
 	static void dispatch(void);

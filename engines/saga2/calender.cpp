@@ -172,7 +172,7 @@ int CalenderTime::lightLevel(int maxLevel) {
    FrameAlarm member functions
  * ===================================================================== */
 
-void FrameAlarm::write(Common::OutSaveFile *out) {
+void FrameAlarm::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeUint16LE(baseFrame);
 	out->writeUint16LE(duration);
 }
