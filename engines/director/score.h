@@ -56,10 +56,7 @@ class AudioDecoder;
 
 enum RenderMode {
 	kRenderModeNormal,
-	kRenderForceUpdate,
-	kRenderUpdateStageOnly,
-	kRenderNoUnrender,
-	kRenderNoWindowRender
+	kRenderForceUpdate
 };
 
 class Score {
