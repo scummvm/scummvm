@@ -228,9 +228,9 @@ void setupMousePointer(void) {
 	imageOffset.y = 0;
 
 	//  Set the combined image as the new mouse cursor
-	pointer.hide();
-	pointer.setImage(combinedImage, mouseImageOffset.x - imageOffset.x, mouseImageOffset.y - imageOffset.y);
-	pointer.show();
+	g_vm->_pointer->hide();
+	g_vm->_pointer->setImage(combinedImage, mouseImageOffset.x - imageOffset.x, mouseImageOffset.y - imageOffset.y);
+	g_vm->_pointer->show();
 }
 
 //-----------------------------------------------------------------------
@@ -302,7 +302,7 @@ void setNewText(char *text) {
 
 	//  Compute relative position of text
 	Point16 mousePos;
-	pointer.getImageCurPos(mousePos);
+	g_vm->_pointer->getImageCurPos(mousePos);
 
 	int mouseImageCenter = mousePos.x + mouseImageOffset.x + mouseImage->size.x / 2;
 	textImageCenteredCol = textImage.size.x / 2;

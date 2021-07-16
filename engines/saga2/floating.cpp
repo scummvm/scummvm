@@ -249,10 +249,10 @@ void DecoratedWindow::removeDecorations(void) {
 //  Redraw all of the decorations, on the main port only...
 
 void DecoratedWindow::draw(void) {               // redraw the window
-	pointer.hide();
+	g_vm->_pointer->hide();
 	if (displayEnabled())
 		drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
-	pointer.show();
+	g_vm->_pointer->show();
 }
 
 //  Return true if window floats above animated are
@@ -416,10 +416,10 @@ void gButton::draw(void) {
 	gPort           &port = window.windowPort;
 	Rect16          rect = window.getExtent();
 
-	pointer.hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
 	if (displayEnabled())
 		drawClipped(port, Point16(0, 0), Rect16(0, 0, rect.width, rect.height));
-	pointer.show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, extent);              // show mouse pointer
 }
 
 
@@ -686,11 +686,11 @@ void updateWindowSection(const Rect16 &r) {
 	//  Now, blit the temporary bitmap to the main screen.
 
 	g_vm->_mainPort.setMode(drawModeReplace);
-	pointer.hide(g_vm->_mainPort, clip);
+	g_vm->_pointer->hide(g_vm->_mainPort, clip);
 	g_vm->_mainPort.bltPixels(tempMap,
 	                   0, 0,
 	                   clip.x, clip.y, clip.width, clip.height);
-	pointer.show(g_vm->_mainPort, clip);
+	g_vm->_pointer->show(g_vm->_mainPort, clip);
 	g_vm->_mainPort.setMode(drawModeMatte);
 	delete[] tempMap.data;
 }

@@ -91,15 +91,15 @@ void niceScreenStartup(void) {
 	disablePaletteChanges();
 	mainEnable();
 	closeLoadMode();
-	pointer.move(Point16(320, 240));
-	//pointer.hide();
+	g_vm->_pointer->move(Point16(320, 240));
+	//g_vm->_pointer->hide();
 	enablePaletteChanges();
 	displayUpdate();
 	dayNightUpdate();
 	fadeUp();
-	pointer.manditoryShow();                        //  hide mouse pointer
+	g_vm->_pointer->manditoryShow();                        //  hide mouse pointer
 	reDrawScreen();
-	//pointer.show();
+	//g_vm->_pointer->show();
 	updateAllUserControls();
 	reDrawScreen();
 	g_vm->_mouseInfo->replaceObject();

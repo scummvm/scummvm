@@ -157,7 +157,6 @@ void drawFloatingWindows(gPort &, const Point16 &, const Rect16 &clip);
    Imports
  * ===================================================================== */
 
-extern gMousePointer pointer;                   // the actual pointer
 extern gPort        backPort;
 
 extern int16        worldCount;     //  Used as map count as well

@@ -52,12 +52,7 @@ namespace Saga2 {
 #define VIDEO_Y 0
 
 extern bool gameRunning;
-extern gMousePointer    pointer;
-extern MouseExtState mouseQueue[];
 extern bool allPlayerActorsDead;
-
-extern int16        queueIn,
-       queueOut;
 
 int16 OptionsDialog(bool disableSaveResume = false);
 void SystemEventLoop(void);
@@ -163,7 +158,7 @@ void TroModeExternEvent(void) {
 
 static void TroModeSetup(void) {
 	suspendAudio();
-	pointer.hide();
+	g_vm->_pointer->hide();
 	quickSavePalette();
 	blackOut();
 	displayDisable(PlayingVideo);
@@ -182,8 +177,8 @@ static void TroModeCleanup(void) {
 	blackOut();
 	quickRestorePalette();
 	resumeAudio();
-	pointer.show();
-//	pointer.manditoryShow();                     //  hide mouse pointer
+	g_vm->_pointer->show();
+//	g_vm->_pointer->manditoryShow();                     //  hide mouse pointer
 	resetInputDevices();
 }
 

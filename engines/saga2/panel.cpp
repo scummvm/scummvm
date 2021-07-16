@@ -36,7 +36,6 @@
 namespace Saga2 {
 
 //extern vDisplayPage   *drawPage;
-extern gMousePointer pointer;           // the actual pointer
 extern char iniFile[];
 extern vDisplayPage protoPage;
 
@@ -244,9 +243,9 @@ void gPanel::drawTitle(enum text_positions placement) {
 		port.setStyle(textStyleUnderBar);    // set style to do underbars
 		port.moveTo(r.x, r.y);           // move to new text pos
 
-		pointer.hide(*globalPort, r);        // hide the pointer
+		g_vm->_pointer->hide(*globalPort, r);        // hide the pointer
 		port.drawText(title, -1);            // draw the text
-		pointer.show(*globalPort, r);        // hide the pointer
+		g_vm->_pointer->show(*globalPort, r);        // hide the pointer
 	}
 }
 
@@ -441,10 +440,10 @@ bool gWindow::open(void) {
 	G_BASE.activeWindow = this;
 	G_BASE.setActive(NULL);
 
-//	pointer.hide();
+//	g_vm->_pointer->hide();
 //	if (backSave) backSave->save( *globalPort );
-//	pointer.setImage( *pointerImage, pointerOffset.x, pointerOffset.y );
-//	pointer.show();
+//	g_vm->_pointer->setImage( *pointerImage, pointerOffset.x, pointerOffset.y );
+//	g_vm->_pointer->show();
 
 	openFlag = true;
 
@@ -600,9 +599,9 @@ void gWindow::setPointer( gPixelMap &map, int x, int y )
 
     if (this == G_BASE.activeWindow)
     {
-        pointer.hide();
-        pointer.setImage( *pointerImage, pointerOffset.x, pointerOffset.y );
-        pointer.show();
+        g_vm->_pointer->hide();
+        g_vm->_pointer->setImage( *pointerImage, pointerOffset.x, pointerOffset.y );
+        g_vm->_pointer->show();
     }
 }
 */
@@ -675,12 +674,12 @@ gPanel *gControl::keyTest(int16 key) {
 //  drawClipped with the main port.
 
 void gControl::draw(void) {
-	pointer.hide(window.windowPort, extent);
+	g_vm->_pointer->hide(window.windowPort, extent);
 	if (displayEnabled())
 		drawClipped(*globalPort,
 		            Point16(-window.extent.x, -window.extent.y),
 		            window.extent);
-	pointer.show(window.windowPort, extent);
+	g_vm->_pointer->show(window.windowPort, extent);
 }
 
 /* ===================================================================== *
@@ -1120,7 +1119,7 @@ int16 rightButtonState(void) {
 void LockUI(bool state) {
 	if (state == true) {
 		if (lockUINest <= 0) {
-			pointer.hide();
+			g_vm->_pointer->hide();
 			enableUIKeys(false);
 			G_BASE.setActive(NULL);
 		}
@@ -1130,7 +1129,7 @@ void LockUI(bool state) {
 		assert(lockUINest >= 0);
 		if (lockUINest <= 0) {
 			enableUIKeys(true);
-			pointer.show();
+			g_vm->_pointer->show();
 		}
 	}
 }

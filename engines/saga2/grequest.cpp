@@ -34,7 +34,6 @@ namespace Saga2 {
 extern gFont        *mainFont;
 extern vDisplayPage *drawPage;
 extern gToolBase    G_BASE;
-extern gMousePointer pointer;                   // the actual pointer
 
 const int           maxLines = 16,
                     maxButtons = 16,

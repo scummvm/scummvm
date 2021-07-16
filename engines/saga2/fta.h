@@ -226,8 +226,6 @@ extern int16            extendedThreadLevel;
 
 extern bool         gameRunning;            // true while game running
 
-extern gMousePointer pointer;               // the mouse pointer
-
 extern volatile int32 gameTime;             // current timer
 
 //  Resource files

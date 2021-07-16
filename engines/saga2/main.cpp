@@ -73,11 +73,7 @@ bool cliSpeechText      = false;
 bool cliDrawInv         = false;
 uint32 cliMemory        = 0;
 
-//  User-interface variables
-gMouseState             mouseState;
-
 //  Display variables
-gMousePointer           pointer(g_vm->_mainPort);   // the actual pointer
 BackWindow              *mainWindow;            // main window...
 
 //  Memory allocation heap
@@ -418,19 +414,6 @@ bool readCommandLine(int argc, char *argv[]) {
 /* MOUSE EVENT QUEUE                                                */
 /*                                                                  */
 /********************************************************************/
-
-// ------------------------------------------------------------------------
-// Mouse handling
-
-gMouseState     prevState;
-MouseExtState   mouseQueue[64];
-
-int16           queueIn = 0,
-                queueOut = 0;
-
-inline int BUMP(int x) {
-	return (x + 1) & 63;
-}
 
 // ------------------------------------------------------------------------
 // clears any queued input (mouse AND keyboard)

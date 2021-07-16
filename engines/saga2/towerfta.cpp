@@ -313,7 +313,7 @@ TERMINATOR(termGUIMessagers) {
 INITIALIZER(initMousePointer) {
 	//pointer.hide();
 	setMouseImage(kMouseArrowImage, 0, 0);
-	return pointer.init(640, 480);
+	return g_vm->_pointer->init(640, 480);
 }
 
 TERMINATOR(termMousePointer) {

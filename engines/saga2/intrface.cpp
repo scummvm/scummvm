@@ -469,9 +469,9 @@ void CPlaqText::draw(void) {
 	port.setMode(drawModeMatte);
 	port.setFont(buttonFont);
 
-	pointer.hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
 	drawClipped(port, Point16(0, 0), Rect16(0, 0, rect.width, rect.height));
-	pointer.show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, extent);              // show mouse pointer
 
 	// reset the old font
 	port.setFont(oldFont);
@@ -969,9 +969,9 @@ void CManaIndicator::draw(void) {
 	// setup the port
 	port.setMode(drawModeMatte);
 
-	pointer.hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
 	drawClipped(port, Point16(0, 0), Rect16(0, 0, xSize, ySize));
-	pointer.show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, extent);              // show mouse pointer
 
 
 }
@@ -1003,7 +1003,7 @@ void CManaIndicator::drawClipped(gPort &port,
 	}
 
 	// otherwise continue with the update
-	pointer.hide();
+	g_vm->_pointer->hide();
 
 	// create a temporary gPort to blit stuff to
 	gPort       tempPort;
@@ -1123,7 +1123,7 @@ void CManaIndicator::drawClipped(gPort &port,
 	if (tempMap.data)
 		delete[] tempMap.data;
 
-	pointer.show();
+	g_vm->_pointer->show();
 }
 
 bool CManaIndicator::needUpdate(PlayerActor *player) {

@@ -629,13 +629,13 @@ void CDocument::renderText(void) {
 
 		port.setMode(drawModeMatte);
 
-		pointer.hide();
+		g_vm->_pointer->hide();
 
 		port.bltPixels(*tPort.map, 0, 0,
 		               bltRect.x, bltRect.y,
 		               bltRect.width, bltRect.height);
 
-		pointer.show();
+		g_vm->_pointer->show();
 
 		DisposeTempPort(tPort);              // dispose of temporary pixelmap
 	}
@@ -645,9 +645,9 @@ void CDocument::drawClipped(
     gPort         &port,
     const Point16 &offset,
     const Rect16  &clipRect) {
-	pointer.hide();
+	g_vm->_pointer->hide();
 	ModalWindow::drawClipped(port, offset, clipRect);
-	pointer.show();
+	g_vm->_pointer->show();
 }
 
 void CDocument::draw(void) {         // redraw the window

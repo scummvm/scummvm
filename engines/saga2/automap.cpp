@@ -388,7 +388,7 @@ void CAutoMap::drawClipped(
 	WindowDecoration *dec;
 	int16           i;
 
-	pointer.hide();
+	g_vm->_pointer->hide();
 
 
 	//  For each "decorative panel" within the frame of the window
@@ -418,7 +418,7 @@ void CAutoMap::drawClipped(
 	               sumMapArea.width, sumMapArea.height);
 
 	// show the cursor again
-	pointer.show();
+	g_vm->_pointer->show();
 }
 
 // ------------------------------------------------------------------------

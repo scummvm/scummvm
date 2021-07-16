@@ -81,6 +81,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_bandList = new BandList();
 	_mainDisplayList = new DisplayNodeList;
 	_activeSpells = new SpellDisplayList(kMaxActiveSpells);
+	_pointer = new gMousePointer(_mainPort);
 
 	_edpList = nullptr;
 	_sdpList = nullptr;
@@ -99,6 +100,7 @@ Saga2Engine::~Saga2Engine() {
 	delete _bandList;
 	delete _mainDisplayList;
 	delete _activeSpells;
+	delete _pointer;
 }
 
 Common::Error Saga2Engine::run() {

@@ -236,9 +236,9 @@ void SimpleWindow::update(const Rect16 &) {
 }
 
 void SimpleWindow::draw(void) {
-	pointer.hide(g_vm->_mainPort, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(g_vm->_mainPort, extent);              // hide mouse pointer
 	drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
-	pointer.show(g_vm->_mainPort, extent);              // show mouse pointer
+	g_vm->_pointer->show(g_vm->_mainPort, extent);              // show mouse pointer
 }
 
 void SimpleWindow::drawClipped(
@@ -257,14 +257,14 @@ void SimpleWindow::drawClipped(
 	box.height -= 100;
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
-	pointer.hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
 
 	DrawOutlineFrame(port,  extent, windowColor);
 	writeWrappedPlaqText(port, box, mbButtonFont, textPos, pal, false, title);
 
 	gWindow::drawClipped(port, p, r);
 
-	pointer.show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, extent);              // show mouse pointer
 }
 
 /* ===================================================================== *
@@ -398,11 +398,11 @@ void SimpleButton::draw(void) {
 	Rect16  rect = window->getExtent();
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
-	pointer.hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
 	drawClipped(port,
 	            Point16(0, 0),
 	            Rect16(0, 0, rect.width, rect.height));
-	pointer.show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, extent);              // show mouse pointer
 }
 
 void SimpleButton::drawClipped(
@@ -419,14 +419,14 @@ void SimpleButton::drawClipped(
 	box.y += base.y;
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
-	pointer.hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
 
 	SimpleWindow::DrawOutlineFrame(port,                     // draw outer frame
 	                               box,
 	                               buttonColor);
 
 	drawTitle((enum text_positions)0);
-	pointer.show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, extent);              // show mouse pointer
 }
 
 } // end of namespace Saga2

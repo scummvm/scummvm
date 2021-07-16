@@ -208,11 +208,11 @@ void gCompImage::draw(void) {
 	Rect16  rect = window.getExtent();
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
-	pointer.hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
 	drawClipped(port,
 	            Point16(0, 0),
 	            Rect16(0, 0, rect.width, rect.height));
-	pointer.show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, extent);              // show mouse pointer
 }
 
 void *gCompImage::getCurrentCompImage(void) {
@@ -575,9 +575,9 @@ void gCompButton::draw(void) {
 	Rect16  rect = window.getExtent();
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
-	pointer.hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
 	drawClipped(port, Point16(0, 0), Rect16(0, 0, rect.width, rect.height));
-	pointer.show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, extent);              // show mouse pointer
 }
 
 void *gCompButton::getCurrentCompImage(void) {
@@ -849,9 +849,9 @@ void gSlider::draw(void) {
 	Point16 offset  = Point16(0, 0);
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
-	pointer.hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
 	drawClipped(port, offset, Rect16(0, 0, imageRect.width, imageRect.height));
-	pointer.show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, extent);              // show mouse pointer
 }
 
 
