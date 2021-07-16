@@ -64,7 +64,11 @@ bool gMousePointer::init(Point16 pointerLimits) {
 
 //  Private routine to draw the mouse pointer image
 void gMousePointer::draw(void) {
-	CursorMan.showMouse(true);
+	if (hideCount < 1) {
+		CursorMan.showMouse(true);
+		shown = 1;
+	} else
+		shown = 0;
 }
 
 //  Private routine to restore the mouse pointer image
@@ -72,9 +76,7 @@ void gMousePointer::restore(void) {
 	if (shown) {
 		//  blit from the saved map to the current position.
 
-		videoPort->displayPage->writePixels(saveExtent,
-		                                    saveMap.data,
-		                                    saveMap.size.x);
+		CursorMan.showMouse(false);
 
 		//  A height of zero means backsave is invalid
 
@@ -108,7 +110,6 @@ void gMousePointer::show(gPort &port, Rect16 r) {
 	if (saveExtent.overlap(r)) {
 		if (--hideCount == 0) {
 			draw();
-			CursorMan.showMouse(true);
 		}
 
 	}
