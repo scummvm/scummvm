@@ -137,7 +137,6 @@ extern StaticPoint16 fineScroll;             // current scroll pos
 extern hResContext  *imageRes;              // image resource handle
 extern PlayerActor  playerList[];   //  Master list of all PlayerActors
 extern SpellStuff   spellBook[];
-extern DisplayNodeList      mainDisplayList;
 extern ObjectID     pickedObject;
 
 const uint32    imageGroupID = MKTAG('I', 'M', 'A', 'G');
@@ -3006,7 +3005,7 @@ void loadObjects(Common::InSaveFile *in) {
 void cleanupObjects(void) {
 	if (objectList != nullptr)
 		delete[] objectList;
-	mainDisplayList.reset();
+	g_vm->_mainDisplayList->reset();
 }
 
 void setCurrentWorld(ObjectID worldID) {

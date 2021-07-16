@@ -37,6 +37,7 @@
 
 #include "saga2/band.h"
 #include "saga2/contain.h"
+#include "saga2/dispnode.h"
 #include "saga2/gdraw.h"
 #include "saga2/imagcach.h"
 #include "saga2/mouseimg.h"
@@ -77,6 +78,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_imageCache = new CImageCache;
 	_mTaskList = new MotionTaskList;
 	_bandList = new BandList();
+	_mainDisplayList = new DisplayNodeList;
 
 	_edpList = nullptr;
 	_sdpList = nullptr;
@@ -93,6 +95,7 @@ Saga2Engine::~Saga2Engine() {
 	delete _imageCache;
 	delete _mTaskList;
 	delete _bandList;
+	delete _mainDisplayList;
 }
 
 Common::Error Saga2Engine::run() {

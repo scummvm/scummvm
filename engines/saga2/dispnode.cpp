@@ -41,7 +41,6 @@ const int16     baseBubbleSpriteIndex = 111,
 uint8           bubbleColorTable[] = { 1, 0, 0, 0 };
 
 DisplayNode                     *DisplayNodeList::head;
-DisplayNodeList                 mainDisplayList;
 
 SpellDisplayList                activeSpells(maxActiveSpells);
 
@@ -95,7 +94,7 @@ uint8 identityColors[256] = {
 //	build the list of stuff to draw (like guns)
 
 void buildDisplayList(void) {
-	mainDisplayList.buildObjects(true);
+	g_vm->_mainDisplayList->buildObjects(true);
 	activeSpells.buildList();
 }
 
@@ -103,7 +102,7 @@ void buildDisplayList(void) {
 //	Update all objects which have no motion task
 
 void updateObjectAppearances(int32 deltaTime) {
-	mainDisplayList.updateOStates(deltaTime);
+	g_vm->_mainDisplayList->updateOStates(deltaTime);
 #ifdef WEWANTSPELLSTOSTOPINCOMBAT
 	if (!InCombatPauseKludge())
 #endif
@@ -114,7 +113,7 @@ void updateObjectAppearances(int32 deltaTime) {
 //	Draw all sprites on the display list
 
 void drawDisplayList(void) {
-	mainDisplayList.draw();
+	g_vm->_mainDisplayList->draw();
 }
 
 void  DisplayNodeList::init(uint16 s) {
