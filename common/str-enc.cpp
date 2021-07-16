@@ -725,6 +725,8 @@ getConversionTable(CodePage page) {
 		return kISO5ConversionTable;
 	case kDos850:
 		return kDos850ConversionTable;
+	case kDos862:
+		return kDos862ConversionTable;
 	case kDos866:
 		return kDos866ConversionTable;
 	case kASCII:

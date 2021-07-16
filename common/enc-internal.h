@@ -41,6 +41,7 @@ extern const uint16 kLatin2ConversionTable[128];
 extern const uint16 kISO5ConversionTable[128];
 extern const uint16 kASCIIConversionTable[128];
 extern const uint16 kDos850ConversionTable[128];
+extern const uint16 kDos862ConversionTable[128];
 extern const uint16 kDos866ConversionTable[128];
 
 }
