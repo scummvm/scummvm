@@ -33,10 +33,7 @@
 namespace Saga2 {
 
 // definitions
-Rect16  editBaseRect(7,
-                     45,
-                     314,
-                     111);
+StaticRect editBaseRect = {7, 45, 314, 111};
 
 /* ===================================================================== *
    Imports

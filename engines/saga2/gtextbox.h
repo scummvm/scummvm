@@ -54,7 +54,7 @@ const int16 blinkColor0 = 137;
 const int16 blinkColor1 = 232;
 const int16 blinkWide   = 1;
 
-extern  Rect16  editBaseRect;
+extern StaticRect editBaseRect;
 
 
 /* ===================================================================== *
