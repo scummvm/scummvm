@@ -380,7 +380,7 @@ static const StaticRect phiBtnRect = {531, 451, 44, 9};
 static const StaticRect kevBtnRect = {580, 451, 44, 9};
 
 
-textPallete genericTextPal(9 + 15, 20, 14, 11, 23, 17);
+StaticTextPallete genericTextPal = {9 + 15, 20, 14, 11, 23, 17};
 /*  uint8   dlPen;
     uint8   urPen;
     uint8   inPen;
@@ -629,7 +629,7 @@ CStatusLine::CStatusLine(gPanelList         &list,
                          const char            *msg,
                          gFont           *font,
                          int16           textPos,
-                         textPallete     &pal,
+                         textPallete     pal,
                          int32           /*frameTime*/,
                          int16           ident,
                          AppFunc         *cmd) :
@@ -714,11 +714,6 @@ void CStatusLine::clear(void) {
 }
 
 /* ===================================================================== *
-    CMassWeightInterface: Static list of indicators
- * ===================================================================== */
-Common::List<CMassWeightIndicator *> CMassWeightIndicator::indList;
-
-/* ===================================================================== *
     CMassWeightInterface: mass and weight allowence indicators
  * ===================================================================== */
 
@@ -794,11 +789,11 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 		containerObject = nullptr;
 	}
 
-	indList.push_back(this);
+	g_vm->_indList.push_back(this);
 }
 
 CMassWeightIndicator::~CMassWeightIndicator(void) {
-	indList.remove(this);
+	g_vm->_indList.remove(this);
 
 	unloadImageRes(pieIndImag, numPieIndImages);
 	g_vm->_imageCache->releaseImage(massBulkImag);
@@ -834,7 +829,7 @@ void CMassWeightIndicator::recalculate(void) {
 **/
 void CMassWeightIndicator::update(void) {
 	if (bRedraw == true) {
-		for (Common::List<CMassWeightIndicator *>::iterator it = indList.begin(); it != indList.end(); ++it) {
+		for (Common::List<CMassWeightIndicator *>::iterator it = g_vm->_indList.begin(); it != g_vm->_indList.end(); ++it) {
 			(*it)->recalculate();
 			(*it)->invalidate();
 		}

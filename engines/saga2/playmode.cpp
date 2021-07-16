@@ -53,7 +53,7 @@ extern gToolBase    G_BASE;
 
 extern APPFUNC(cmdClickSpeech);
 extern PlayerActor  playerList[];           // a list of the players (brothers)
-extern textPallete  genericTextPal;
+extern StaticTextPallete genericTextPal;
 
 APPFUNC(cmdHealthStar);
 

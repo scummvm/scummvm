@@ -52,6 +52,7 @@ class ActorAppearance;
 class PathRequest;
 class MotionTask;
 class MotionTaskList;
+class CMassWeightIndicator;
 class GrabInfo;
 class CImageCache;
 class SensorList;
@@ -124,6 +125,7 @@ public:
 	Common::List<SensorList *> _sensorListList;
 	Common::List<Sensor *> _sensorList;
 	Common::List<MotionTask *>::iterator _nextMT;
+	Common::List<CMassWeightIndicator *> _indList;
 	Common::List<int> _platformLRU;
 	BandList *_bandList;
 	MotionTaskList *_mTaskList;

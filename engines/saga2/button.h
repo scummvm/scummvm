@@ -42,6 +42,14 @@ class hResContext;
     Misc. Structs and classes
  * ======================================================================= */
 
+struct StaticTextPallete {
+	uint8 dlPen;
+	uint8 urPen;
+	uint8 inPen;
+	uint8 dlHilitePen;
+	uint8 urHilitePen;
+	uint8 inHilitePen;
+};
 
 struct textPallete {
 	uint8   dlPen;
@@ -58,6 +66,15 @@ struct textPallete {
 
 	textPallete(uint8 dlP, uint8 urP, uint8 inP, uint8 dlHP, uint8 urHP, uint8 inHP) {
 		set(dlP, urP, inP, dlHP, urHP, inHP);
+	}
+
+	textPallete(StaticTextPallete pal) {
+		dlPen = pal.dlPen;
+		urPen = pal.urPen;
+		inPen = pal.inPen;
+		dlHilitePen = pal.dlHilitePen;
+		urHilitePen = pal.urHilitePen;
+		inHilitePen = pal.inHilitePen;
 	}
 
 	void set(uint8 dlP, uint8 urP, uint8 inP, uint8 dlHP, uint8 urHP, uint8 inHP) {

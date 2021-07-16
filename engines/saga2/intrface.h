@@ -239,7 +239,7 @@ private:
 
 public:
 	CStatusLine(gPanelList &, const Rect16 &, const char *, gFont *,
-	            int16, textPallete &, int32, int16, AppFunc *cmd = NULL);
+	            int16, textPallete, int32, int16, AppFunc *cmd = NULL);
 	~CStatusLine(void);
 
 	void setLine(char *, uint32 frameTime);
@@ -293,7 +293,6 @@ public:
 
 class CMassWeightIndicator {
 private:
-	static Common::List<CMassWeightIndicator *> indList;
 	GameObject *containerObject;
 
 public:
