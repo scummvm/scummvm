@@ -139,17 +139,12 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 #endif
 
 	// Retrieve a list of working fullscreen modes
+	Common::Rect desktopRes = _window->getDesktopResolution();
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	const int display = _window->getDisplayIndex();
-	const int numModes = SDL_GetNumDisplayModes(display);
-	for (int i = 0; i < numModes; ++i) {
-		SDL_DisplayMode mode;
-		if (SDL_GetDisplayMode(display, i, &mode)) {
-			continue;
-		}
-
-		_fullscreenVideoModes.push_back(VideoMode(mode.w, mode.h));
-	}
+	// With SDL2 we use the SDL_WINDOW_FULLSCREEN_DESKTOP flag.
+	// Thus SDL always use the desktop resolution and it is useless to try to use something else.
+	// Do nothing here as adding the desktop resolution to _fullscreenVideoModes is done as a fallback.
+	_fullscreenVideoModes.push_back(VideoMode(desktopRes.width(), desktopRes.height()));
 #else
 	const SDL_Rect *const *availableModes = SDL_ListModes(NULL, SDL_OPENGL | SDL_FULLSCREEN);
 	// TODO: NULL means that there are no fullscreen modes supported. We
@@ -175,8 +170,6 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 			++i;
 		}
 	}
-
-	Common::Rect desktopRes = _window->getDesktopResolution();
 
 	// In case SDL is fine with every mode we will force the desktop mode.
 	// TODO? We could also try to add some default resolutions here.
@@ -603,8 +596,8 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			// In case we are in fullscreen we will choose the previous
 			// or next mode.
 
-			// In case no modes are available we do nothing.
-			if (_fullscreenVideoModes.empty()) {
+			// In case no modes are available or we only have one mode we do nothing.
+			if (_fullscreenVideoModes.size() < 2) {
 				return true;
 			}
 
