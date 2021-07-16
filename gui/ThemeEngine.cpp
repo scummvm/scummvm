@@ -526,14 +526,14 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 	if (!language.empty()) {
 #ifdef USE_TRANSLATION
 		Common::String cl = TransMan.getCurrentLanguage();
+#else
+		Common::String cl("C");
+#endif
 		if (!cl.matchString(language, true))
 			return true;	// Skip
 
 		if (_texts[textId] != nullptr)	// We already loaded something
 			return true;
-#else
-		return true;	// Safely ignore
-#endif
 	}
 
 	if (_texts[textId] != nullptr)
