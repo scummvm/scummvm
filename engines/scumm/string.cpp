@@ -486,7 +486,7 @@ bool ScummEngine::newLine() {
 	return true;
 }
 
-void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) {
+void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) const {
 	// Provides custom made BiDi mechanism.
 	// Reverses texts on each line marked by control characters (considering different control characters used in verbs panel)
 	// While preserving original order of numbers (also negative numbers and comma separated)
@@ -2073,6 +2073,40 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 
 	// Default: just copy the string
 	memcpy(trans_buff, text, resStrLen(text) + 1);
+}
+
+bool ScummEngine::reverseIfNeeded(const byte *text, byte *reverseBuf) const {
+	if (_language != Common::HE_ISR)
+		return false;
+	if (_game.id != GID_LOOM && _game.id != GID_ZAK)
+		return false;
+	strcpy(reinterpret_cast<char *>(reverseBuf), reinterpret_cast<const char *>(text));
+	fakeBidiString(reverseBuf, true);
+	return true;
+}
+
+Common::CodePage ScummEngine::getDialogCodePage() const {
+	switch (_language) {
+	case Common::KO_KOR:
+		return Common::kWindows949;
+	case Common::JA_JPN:
+		return Common::kWindows932;
+	case Common::ZH_TWN:
+	case Common::ZH_CNA:
+		return Common::kWindows950;
+	case Common::RU_RUS:
+		return Common::kDos866;
+	case Common::HE_ISR:
+		switch (_game.id) {
+		case GID_LOOM:
+		case GID_ZAK:
+			return Common::kDos862;
+		default:
+			return Common::kWindows1255;
+		}
+	default:
+		return Common::kCodePageInvalid;
+	}
 }
 
 } // End of namespace Scumm

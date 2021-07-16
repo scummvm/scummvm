@@ -430,6 +430,7 @@ void InfoDialog::reflowLayout() {
 
 const Common::U32String InfoDialog::queryResString(int stringno) {
 	byte buf[256];
+	byte reverseBuf[256];
 	const byte *result;
 
 	if (stringno == 0)
@@ -457,6 +458,8 @@ const Common::U32String InfoDialog::queryResString(int stringno) {
 		return _(string_map_table_v345[stringno - 1].string);
 	}
 
+	if (_vm->reverseIfNeeded(result, reverseBuf))
+		result = reverseBuf;
 	// Convert to a proper string (take care of FF codes)
 	byte chr;
 	String tmp;
@@ -468,16 +471,7 @@ const Common::U32String InfoDialog::queryResString(int stringno) {
 		}
 	}
 
-	Common::CodePage convertFromCodePage = Common::kCodePageInvalid;
-	if (_vm->_language == Common::KO_KOR)
-		convertFromCodePage = Common::kWindows949;
-	else if (_vm->_language == Common::JA_JPN)
-		convertFromCodePage = Common::kWindows932;
-	else if (_vm->_language == Common::ZH_TWN || _vm->_language == Common::ZH_CNA)
-		convertFromCodePage = Common::kWindows950;
-	else if (_vm->_language == Common::RU_RUS)
-		convertFromCodePage = Common::kDos866;
-
+	const Common::CodePage convertFromCodePage = _vm->getDialogCodePage();
 	return convertFromCodePage == Common::kCodePageInvalid ? _(tmp) : U32String(tmp, convertFromCodePage);
 }
 
