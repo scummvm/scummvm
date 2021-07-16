@@ -50,6 +50,8 @@ public:
 	Extent16        size;                   // image size
 	uint8           *data;
 
+	gPixelMap() : data(nullptr) {}
+
 	//  Compute the number of bytes in the pixel map
 	int32 bytes(void) {
 		return size.x * size.y;
