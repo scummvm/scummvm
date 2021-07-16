@@ -31,6 +31,7 @@
 #include "ultima/ultima8/graphics/fade_to_modal_process.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
@@ -285,8 +286,53 @@ void MovieGump::loadTXTSubs(Common::SeekableReadStream *rs) {
 	}
 }
 
+// Some fourCCs used in IFF files
+static const uint32 IFF_MAGIC   = 0x464F524D;  // 'FORM'
+static const uint32 IFF_LANG    = 0x4C414E47;  // 'LANG'
+static const uint32 IFF_LANG_FR = 0x4652454E;  // 'FREN'
+static const uint32 IFF_LANG_EN = 0x454E474C;  // 'ENGL'
+static const uint32 IFF_LANG_DE = 0x4745524D;  // 'GERM'
+
 void MovieGump::loadIFFSubs(Common::SeekableReadStream *rs) {
-	warning("TODO: load IFF subtitle data");
+	uint32 magic = rs->readUint32BE();
+	if (magic != IFF_MAGIC) {
+		warning("Error loading IFF file, invalid magic.");
+		return;
+	}
+
+	rs->skip(2);
+	uint16 totalsize = rs->readUint16BE();
+	if (totalsize != rs->size() - rs->pos()) {
+		warning("Error loading IFF file: size invalid.");
+		return;
+	}
+
+	uint32 lang_magic = rs->readUint32BE();
+	if (lang_magic != IFF_LANG) {
+		warning("Error loading IFF file: invalid magic.");
+		return;
+	}
+
+	const Common::Language lang = Ultima8Engine::get_instance()->getLanguage();
+	while (rs->pos() < rs->size()) {
+		uint32 lang_code = rs->readUint32BE();
+		uint32 lang_len = rs->readUint32BE();
+		uint32 lang_end = rs->pos() + lang_len;
+		if ((lang == Common::FR_FRA && lang_code == IFF_LANG_FR)
+			|| (lang == Common::DE_DEU && lang_code == IFF_LANG_DE)
+			|| (lang == Common::EN_ANY && lang_code == IFF_LANG_EN)) {
+			while (rs->pos() < lang_end) {
+				// Take care of the mix of LE and BE.
+				uint16 frameoff = rs->readUint16LE();
+				rs->skip(1); // what's this?
+				uint32 slen = rs->readUint16BE();
+				const Common::String line = rs->readString('\0', slen);
+				_subtitles[frameoff] = line;
+			}
+		} else {
+			rs->skip(lang_len);
+		}
+	}
 }
 
 bool MovieGump::loadData(Common::ReadStream *rs) {
