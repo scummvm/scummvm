@@ -238,6 +238,18 @@ public:
 	                qualifier;              // qualifier from keyboard
 
 	uint32          timeStamp;              // time of message
+
+	gPanelMessage() {
+		leftButton = 0;
+		rightButton = 0;
+		inPanel = 0;
+		pointerEnter = 0;
+		pointerLeave = 0;
+		doubleClick = 0;
+		key = 0;
+		qualifier = 0;
+		timeStamp = 0;
+	}
 };
 
 /* ===================================================================== *
@@ -487,6 +499,16 @@ class gToolBase {
 
 public:
 	bool            mouseHintSet;           // true if mouse hint is up.
+
+	gToolBase() {
+		mouseWindow = nullptr;
+		activeWindow = nullptr;
+		mousePanel = nullptr;
+		activePanel = nullptr;
+		leftDrag = 0;
+		rightDrag = 0;
+		lastMouseMoveTime = 0;
+	}
 
 private:
 	void setMsgQ(gPanelMessage &msg_, gPanel *panel) {

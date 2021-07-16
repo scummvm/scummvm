@@ -108,6 +108,11 @@ struct gMouseState {
 	Point16         pos;
 	uint8           right,
 	                left;
+
+	gMouseState() {
+		right = 0;
+		left = 0;
+	}
 };
 
 } // end of namespace Saga2
