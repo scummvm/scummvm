@@ -66,7 +66,7 @@ const int maxMouseTextLen = 80;
 
 static char mouseText[maxMouseTextLen] = { "" };  //  Current mouse text string
 
-static StaticPoint16 mouseImageOffset;           //  Hotspot on mouse image
+static StaticPoint16 mouseImageOffset = {0, 0};           //  Hotspot on mouse image
 
 static gPixelMap  *mouseImage = nullptr;  //  Current mouse cursor image
 
@@ -114,7 +114,7 @@ static struct MouseCurosrs {
 gStaticImage *mouseCursors[kMouseMax];
 
 static uint8 gaugeImageBuffer[gaugeImageWidth * gaugeImageHeight];
-static gPixelMap *gaugeImage;
+static gPixelMap *gaugeImage = nullptr;
 
 static bool showGauge = false;
 
