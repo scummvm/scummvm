@@ -85,7 +85,8 @@ public:
 	void playExternalSound(AudioDecoder *ad, uint8 soundChannel, uint8 externalSoundID);
 	void playFPlaySound(const Common::Array<Common::String> &fplayList);
 	void playFPlaySound();
-	void setSouldLevel(uint8 soundChannel, uint8 soundLevel);
+	void setSouldLevel(int channel, uint8 soundLevel);
+	uint8 getSoundLevel(uint8 soundChannel);
 	void setSoundEnabled(bool enabled);
 	void systemBeep();
 
@@ -103,6 +104,7 @@ public:
 
 private:
 	uint8 getChannelVolume(uint8 soundChannel);
+	void setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel);
 	bool isChannelValid(uint8 soundChannel);
 	void cancelFade(uint8 soundChannel);
 };

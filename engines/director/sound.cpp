@@ -368,6 +368,31 @@ void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayLis
 	playFPlaySound();
 }
 
+void DirectorSound::setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel) {
+	// we have 8 level of sounds, and in ScummVM, we have range 0 to 255, thus 1 level represent 32
+	_channels[soundChannel - 1].volume = soundLevel * 32;
+	if (_enable && isChannelActive(soundChannel))
+		_mixer->setChannelVolume(_channels[soundChannel - 1].handle, _channels[soundChannel - 1].volume);
+}
+
+// -1 represent all the sound channel
+void DirectorSound::setSouldLevel(int channel, uint8 soundLevel) {
+	if (channel != -1) {
+		if (!isChannelValid(channel))
+			return;
+		setSoundLevelInternal(channel, soundLevel);
+	} else {
+		for (uint i = 0; i < _channels.size(); i++)
+			setSoundLevelInternal(i + 1, soundLevel);
+	}
+}
+
+uint8 DirectorSound::getSoundLevel(uint8 soundChannel) {
+	if (!isChannelValid(soundChannel))
+		return 0;
+	return _channels[soundChannel - 1].volume / 32;
+}
+
 Audio::AudioStream *AudioDecoder::getLoopingAudioStream() {
 	Audio::RewindableAudioStream *target = getAudioStream(DisposeAfterUse::YES);
 	if (!target)
