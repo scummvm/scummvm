@@ -359,8 +359,8 @@ private:
 	};
 
 	static int      dragMode;               // current dragging mode
-	static Rect16   dragExtent;             // dragging extent
-	static Point16  dragOffset;             // offset to window origin
+	static StaticRect  dragExtent;             // dragging extent
+	static StaticPoint16 dragOffset;             // offset to window origin
 
 	void shadow(void);
 

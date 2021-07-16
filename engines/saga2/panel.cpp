@@ -382,9 +382,9 @@ gPanel *gPanelList::keyTest(int16 key) {
 
 //  gWindow static variables
 
-int             gWindow::dragMode;              // current dragging mode
-Rect16          gWindow::dragExtent;            // dragging extent
-Point16         gWindow::dragOffset;            // offset to window origin
+int           gWindow::dragMode = 0;              // current dragging mode
+StaticRect    gWindow::dragExtent = {0, 0, 0, 0};            // dragging extent
+StaticPoint16 gWindow::dragOffset = {0, 0};            // offset to window origin
 
 gWindow::gWindow(const Rect16 &box, uint16 ident, const char saveName[], AppFunc *cmd)
 	: gPanelList(*this, box, NULL, ident, cmd)
