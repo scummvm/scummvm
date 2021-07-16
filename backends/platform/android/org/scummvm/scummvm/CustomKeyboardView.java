@@ -30,7 +30,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
-import android.os.Build;
+//import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -49,11 +49,13 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.collection.ArraySet;
 import androidx.core.content.res.ResourcesCompat;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -200,6 +202,10 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     private int mLastCodeY;
     private int mCurrentKey = NOT_A_KEY;
     private int mDownKey = NOT_A_KEY;
+
+    // New auxilliary set to keep track of any keys that were not released at the time of closing the keyboard
+    private ArraySet<Integer> mKeysDownCodesSet;
+
     private long mLastKeyTime;
     private long mCurrentKeyTime;
     private int[] mKeyIndices = new int[12];
@@ -433,6 +439,8 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         mAccessibilityManager = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
+        mKeysDownCodesSet = new ArraySet();
+
         resetMultiTap();
     }
 
@@ -529,7 +537,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
             showPreview(NOT_A_KEY);
         }
         // Remove any pending messages
-        removeMessages();
+        clearMessages();
         mKeyboard = keyboard;
         List<CustomKeyboard.CustomKey> keys = mKeyboard.getKeys();
 //        mKeys = keys.toArray(new CustomKeyboard.Key[keys.size()]);
@@ -899,6 +907,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 if (mInMultiTap) {
                     if (mTapCount != -1) {
                         mKeyboardActionListener.onKey(CustomKeyboard.KEYCODE_DELETE, KEY_DELETE);
+                        if (code != NOT_A_KEY) {
+                            mKeysDownCodesSet.add(CustomKeyboard.KEYCODE_DELETE);
+                        }
                     } else {
                         mTapCount = 0;
                     }
@@ -907,9 +918,15 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 //Log.d(ScummVM.LOG_TAG, "CustomKeyboardView:: detectAndSendKey - (key.text is null) code = " + code + " x: " + x + " y: " + y);
                 if (!isReleaseKey) {
                     mKeyboardActionListener.onKey(code, codes);
+                    if (code != NOT_A_KEY) {
+                        mKeysDownCodesSet.add(code);
+                    }
                 }
                 if (!isRepeated || isReleaseKey) {
                     mKeyboardActionListener.onRelease(code);
+                    if (code != NOT_A_KEY && mKeysDownCodesSet.contains(code)) {
+                        mKeysDownCodesSet.remove(code);
+                    }
                 }
             }
             mLastSentIndex = index;
@@ -1177,6 +1194,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 mMiniKeyboard.setOnKeyboardActionListener(new OnKeyboardActionListener() {
                     public void onKey(int primaryCode, int[] keyCodes) {
                         mKeyboardActionListener.onKey(primaryCode, keyCodes);
+                        if (primaryCode != NOT_A_KEY) {
+                            mKeysDownCodesSet.add(primaryCode);
+                        }
                         dismissPopupKeyboard();
                     }
 
@@ -1194,6 +1214,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                     }
                     public void onRelease(int primaryCode) {
                         mKeyboardActionListener.onRelease(primaryCode);
+                        if (primaryCode != NOT_A_KEY && mKeysDownCodesSet.contains(primaryCode)) {
+                            mKeysDownCodesSet.remove(primaryCode);
+                        }
                     }
                 });
                 //mInputView.setSuggest(mSuggest);
@@ -1403,7 +1426,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                             // if (mRepeatKeyIndex != NOT_A_KEY)
                             // New - handle the case where the user holds their finger and moves out of the key button
                             // Unfortunately, we will also get a "release" event on MotionEvent.ACTION_UP but that is safe since it is ignored
-                            removeMessages();
+                            clearMessages();
                             if (mRepeatKeyIndex >= 0 && !mMiniKeyboardOnScreen && !mAbortKey) {
                                 //Log.d(ScummVM.LOG_TAG, "CustomKeyboardView:: onModifiedTouchEvent - MotionEvent.ACTION_MOVE Final Rep");
                                 detectAndSendKey(mCurrentKey, touchX, touchY, eventTime, true, true);
@@ -1429,7 +1452,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 break;
 
             case MotionEvent.ACTION_UP:
-                removeMessages();
+                clearMessages();
                 if (keyIndex == mCurrentKey) {
                     mCurrentKeyTime += eventTime - mLastMoveTime;
                 } else {
@@ -1459,7 +1482,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 mRepeatKeyIndex = NOT_A_KEY;
                 break;
             case MotionEvent.ACTION_CANCEL:
-                removeMessages();
+                clearMessages();
                 dismissPopupKeyboard();
                 mAbortKey = true;
                 showPreview(NOT_A_KEY);
@@ -1474,7 +1497,6 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 //    @UnsupportedAppUsage
     private boolean repeatKey() {
         CustomKeyboard.CustomKey key = mKeys[mRepeatKeyIndex];
-        //Log.d(ScummVM.LOG_TAG, "CustomKeyboardView:: repeatKey");
         detectAndSendKey(mCurrentKey, key.x, key.y, mLastTapTime, true, false);
         return true;
     }
@@ -1499,19 +1521,29 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         if (mPreviewPopup.isShowing()) {
             mPreviewPopup.dismiss();
         }
-        removeMessages();
+        clearMessages();
 
         dismissPopupKeyboard();
         mBuffer = null;
         mCanvas = null;
         mMiniKeyboardCache.clear();
+
+        // Send onRelease to listener for a key that has sent down but on the time of closing has not sent release
+        Iterator<Integer> it = mKeysDownCodesSet.iterator();
+        while (it.hasNext()) {
+            int keyCode = it.next();
+            mKeyboardActionListener.onRelease(keyCode);
+            //Log.d(ScummVM.LOG_TAG, "CustomKeyboardView closing - Send release for: " + keyCode);
+        }
+        mKeysDownCodesSet.clear();
     }
 
-    private void removeMessages() {
+    private void clearMessages() {
         if (mHandler != null) {
             mHandler.removeMessages(MSG_REPEAT);
             mHandler.removeMessages(MSG_LONGPRESS);
             mHandler.removeMessages(MSG_SHOW_PREVIEW);
+            mHandler.removeCallbacksAndMessages(null);
         }
     }
 
