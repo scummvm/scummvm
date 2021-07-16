@@ -480,14 +480,19 @@ bool Window::step() {
 		debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 		g_lingo->resetLingo();
-		if (sharedCast && sharedCast->_castArchive
-				&& sharedCast->_castArchive->getPathName().equalsIgnoreCase(_currentPath + _vm->_sharedCastFile)) {
-			// if we are not deleting shared cast, then we need to clear those previous widget pointer
-			sharedCast->releaseCastMemberWidget();
-			_currentMovie->_sharedCast = sharedCast;
+		Common::String sharedCastPath = getSharedCastPath();
+		if (!sharedCastPath.empty()) {
+			if (sharedCast && sharedCast->_castArchive
+					&& sharedCast->_castArchive->getPathName().equalsIgnoreCase(sharedCastPath)) {
+				// if we are not deleting shared cast, then we need to clear those previous widget pointer
+				sharedCast->releaseCastMemberWidget();
+				_currentMovie->_sharedCast = sharedCast;
+			} else {
+				delete sharedCast;
+				_currentMovie->loadSharedCastsFrom(sharedCastPath);
+			}
 		} else {
 			delete sharedCast;
-			_currentMovie->loadSharedCastsFrom(_currentPath + _vm->_sharedCastFile);
 		}
 
 		_nextMovie.movie.clear();
@@ -539,6 +544,34 @@ bool Window::step() {
 	}
 
 	return false;
+}
+
+Common::String Window::getSharedCastPath() {
+	Common::Array<Common::String> namesToTry;
+	if (_vm->getVersion() < 400) {
+		if (g_director->getPlatform() == Common::kPlatformWindows) {
+			namesToTry.push_back("SHARDCST.MMM");
+		} else {
+			namesToTry.push_back("Shared Cast");
+		}
+	} else if (_vm->getVersion() < 500) {
+		namesToTry.push_back("Shared.dir");
+		namesToTry.push_back("Shared.dxr");
+	} else {
+		// TODO: Does D5 actually support D4-style shared cast?
+		namesToTry.push_back("Shared.cst");
+		namesToTry.push_back("Shared.cxt");
+	}
+
+	for (uint i = 0; i < namesToTry.size(); i++) {
+		Common::File f;
+		if (f.open(_currentPath + namesToTry[i])) {
+			f.close();
+			return _currentPath + namesToTry[i];
+		}
+	}
+
+	return Common::String();
 }
 
 } // End of namespace Director

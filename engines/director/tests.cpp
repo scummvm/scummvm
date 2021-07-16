@@ -160,8 +160,6 @@ Common::HashMap<Common::String, Movie *> *Window::scanMovies(const Common::Strin
 			debugC(2, kDebugLoading, "File: %s", i->getName().c_str());
 
 			if (Common::matchString(i->getName().c_str(), sharedMMMname, true)) {
-				_vm->_sharedCastFile = i->getName();
-
 				debugC(2, kDebugLoading, "Shared cast detected: %s", i->getName().c_str());
 				continue;
 			}

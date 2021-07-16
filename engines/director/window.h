@@ -129,6 +129,8 @@ public:
 
 	bool step();
 
+	Common::String getSharedCastPath();
+
 	// events.cpp
 	virtual bool processEvent(Common::Event &event) override;
 
