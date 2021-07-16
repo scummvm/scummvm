@@ -158,7 +158,7 @@ void SagaEngine::fillSaveList() {
 						cp = Common::kWindows932;
 				}
 
-				Common::strlcpy(_saveFiles[_saveFilesCount].name, Common::U32String(_saveHeader.name).encode(cp).c_str(), sizeof(SaveFileData::name));
+				Common::strlcpy(_saveFiles[_saveFilesCount].name, Common::U32String(_saveHeader.name).encode(cp).c_str(), sizeof(_saveFiles[_saveFilesCount].name));
 				_saveFiles[_saveFilesCount].slotNumber = slotNumber;
 				delete in;
 				_saveFilesCount++;
