@@ -94,7 +94,6 @@ StaticTilePoint SquareSpellVectors[32] = {
 extern hResContext              *spriteRes;             // sprite resource handle
 extern hResContext              *schemeRes;             // sprite resource handle
 extern ColorTable               identityColors;
-extern SpellDisplayList         activeSpells;
 
 /* ===================================================================== *
    Global data
@@ -147,7 +146,7 @@ void initMagic(void) {
 
 
 void cleanupMagic(void) {
-	activeSpells.cleanup();
+	g_vm->_activeSpells->cleanup();
 	for (int i = 0; i < maxSpells; i++) {
 		spellBook[i].killEffects();
 	}

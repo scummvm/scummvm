@@ -42,6 +42,7 @@
 #include "saga2/imagcach.h"
 #include "saga2/mouseimg.h"
 #include "saga2/motion.h"
+#include "saga2/spelshow.h"
 
 namespace Saga2 {
 
@@ -79,6 +80,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_mTaskList = new MotionTaskList;
 	_bandList = new BandList();
 	_mainDisplayList = new DisplayNodeList;
+	_activeSpells = new SpellDisplayList(kMaxActiveSpells);
 
 	_edpList = nullptr;
 	_sdpList = nullptr;
@@ -96,6 +98,7 @@ Saga2Engine::~Saga2Engine() {
 	delete _mTaskList;
 	delete _bandList;
 	delete _mainDisplayList;
+	delete _activeSpells;
 }
 
 Common::Error Saga2Engine::run() {

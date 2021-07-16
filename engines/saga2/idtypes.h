@@ -449,6 +449,12 @@ enum {
 	kTileRectHeight = 428 - 8
 };
 
+//  Horribly kludged hard-coded sprite index numbers for bubble sprites
+enum {
+	kMaxActiveSpells = 8,
+	kBaseBubbleSpriteIndex = 111,
+	kBubbleSpriteCount = 8
+};
 
 } // end of namespace Saga2
 

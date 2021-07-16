@@ -37,14 +37,6 @@
 
 namespace Saga2 {
 
-const ChunkID   spellInstCountID = MakeID('S', 'P', 'E', 'L');
-
-/* ===================================================================== *
-   Imports
- * ===================================================================== */
-
-extern SpellDisplayList         activeSpells;
-
 /* ===================================================================== *
    partial SpellDisplayPrototype implementation
  * ===================================================================== */
@@ -216,20 +208,20 @@ void initSpellState(void) {
 
 void saveSpellState(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving SpellState");
-	activeSpells.write(outS);
+	g_vm->_activeSpells->write(outS);
 }
 
 void loadSpellState(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading SpellState");
 
-	activeSpells.read(in);
+	g_vm->_activeSpells->read(in);
 }
 
 // ------------------------------------------------------------------
 // cleanup active spells
 
 void cleanupSpellState(void) {
-	activeSpells.wipe();
+	g_vm->_activeSpells->wipe();
 }
 
 // ------------------------------------------------------------------

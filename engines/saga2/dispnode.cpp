@@ -33,16 +33,9 @@
 
 namespace Saga2 {
 
-const uint16 maxActiveSpells = 8;
-
-//  Horribly kludged hard-coded sprite index numbers for bubble sprites
-const int16     baseBubbleSpriteIndex = 111,
-                bubbleSpriteCount = 8;
-uint8           bubbleColorTable[] = { 1, 0, 0, 0 };
+uint8 bubbleColorTable[] = { 1, 0, 0, 0 };
 
 DisplayNode                     *DisplayNodeList::head;
-
-SpellDisplayList                activeSpells(maxActiveSpells);
 
 bool                            centerActorIndicatorEnabled;
 
@@ -95,7 +88,7 @@ uint8 identityColors[256] = {
 
 void buildDisplayList(void) {
 	g_vm->_mainDisplayList->buildObjects(true);
-	activeSpells.buildList();
+	g_vm->_activeSpells->buildList();
 }
 
 //-----------------------------------------------------------------------
@@ -106,7 +99,7 @@ void updateObjectAppearances(int32 deltaTime) {
 #ifdef WEWANTSPELLSTOSTOPINCOMBAT
 	if (!InCombatPauseKludge())
 #endif
-		activeSpells.updateStates(deltaTime);
+		g_vm->_activeSpells->updateStates(deltaTime);
 }
 
 //-----------------------------------------------------------------------
@@ -505,12 +498,12 @@ void DisplayNode::drawObject(void) {
 			    bubbleColorTable,
 			    ARRAYSIZE(bubbleColorTable));
 
-			if (a->kludgeCount < 0 || ++a->kludgeCount >= bubbleSpriteCount)
+			if (a->kludgeCount < 0 || ++a->kludgeCount >= kBubbleSpriteCount)
 				a->kludgeCount = 0;
 
 			sc = &scList[0];
 			sc->sp = spellSprites->sprite(
-			             baseBubbleSpriteIndex + a->kludgeCount);
+			             kBaseBubbleSpriteIndex + a->kludgeCount);
 			sc->offset.x = scList->offset.y = 0;
 			sc->colorTable = mainColors;
 			sc->flipped = false;

@@ -57,7 +57,6 @@ const int32 spellFailSound = 42;
  * ===================================================================== */
 
 extern WorldMapData                     *mapList;
-extern SpellDisplayList                 activeSpells;
 extern SpellStuff                       spellBook[];
 extern Point32                          lastMousePos;           // Last mouse position over map
 
@@ -305,7 +304,7 @@ bool implementSpell(GameObject *enactor, Location   &target, SkillProto *spell) 
 		}
 	}
 
-	activeSpells.add(new SpellInstance(GetOwner(enactor), target, sProto.getDisplayID()));
+	g_vm->_activeSpells->add(new SpellInstance(GetOwner(enactor), target, sProto.getDisplayID()));
 	sProto.playSound(enactor);
 	return true;
 }
@@ -345,7 +344,7 @@ bool implementSpell(GameObject *enactor, ActiveItem *target, SkillProto *spell) 
 		}
 	}
 
-	activeSpells.add(new SpellInstance(GetOwner(enactor), l, sProto.getDisplayID()));
+	g_vm->_activeSpells->add(new SpellInstance(GetOwner(enactor), l, sProto.getDisplayID()));
 	sProto.playSound(enactor);
 	return true;
 }
@@ -383,7 +382,7 @@ bool implementSpell(GameObject *enactor, GameObject *target, SkillProto *spell) 
 		}
 	}
 
-	activeSpells.add(new SpellInstance(GetOwner(enactor), target, sProto.getDisplayID()));
+	g_vm->_activeSpells->add(new SpellInstance(GetOwner(enactor), target, sProto.getDisplayID()));
 	sProto.playSound(enactor);
 	return true;
 }

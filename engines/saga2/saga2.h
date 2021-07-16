@@ -59,6 +59,7 @@ class Sensor;
 class EffectDisplayPrototypeList;
 class SpellDisplayPrototypeList;
 class DisplayNodeList;
+class SpellDisplayList;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -132,6 +133,7 @@ public:
 	SpellDisplayPrototypeList *_sdpList;
 	ContainerList *_containerList;
 	DisplayNodeList *_mainDisplayList;
+	SpellDisplayList *_activeSpells;
 
 	gDisplayPort _mainPort;
 
