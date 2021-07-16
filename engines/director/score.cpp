@@ -370,12 +370,26 @@ void Score::update() {
 	_vm->_skipFrameAdvance = false;
 
 	if (_currentFrame >= _frames.size()) {
-		if (debugChannelSet(-1, kDebugNoLoop)) {
-			_playState = kPlayStopped;
-			return;
-		}
+		Window *window = _vm->getCurrentWindow();
+		if (!window->_movieStack.empty()) {
+			MovieReference ref = window->_movieStack.back();
+			window->_movieStack.pop_back();
+			if (!ref.movie.empty()) {
+				_playState = kPlayStopped;
+				window->setNextMovie(ref.movie);
+				window->_nextMovie.frameI = ref.frameI;
+				return;
+			}
 
-		_currentFrame = 1;
+			_currentFrame = ref.frameI;
+		} else {
+			if (debugChannelSet(-1, kDebugNoLoop)) {
+				_playState = kPlayStopped;
+				return;
+			}
+
+			_currentFrame = 1;
+		}
 	}
 
 	Common::SortedArray<Label *>::iterator i;
