@@ -52,7 +52,6 @@ namespace Saga2 {
 #define VIDEO_Y 0
 
 extern bool gameRunning;
-extern gMouseState  prevState;
 extern gMousePointer    pointer;
 extern MouseExtState mouseQueue[];
 extern bool allPlayerActorsDead;

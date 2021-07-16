@@ -67,8 +67,6 @@ class gWindow;
                       Input dispatching functions
  * ===================================================================== */
 
-void HandleMouse(gMouseState &mouse);
-void HandleKeyStroke(int key, int qual);
 void HandleTimerTick(long newTick);
 void EventLoop(bool &running, bool modal = false);
 

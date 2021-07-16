@@ -158,7 +158,6 @@ void drawFloatingWindows(gPort &, const Point16 &, const Rect16 &clip);
  * ===================================================================== */
 
 extern gMousePointer pointer;                   // the actual pointer
-extern gMouseState  mouseState;
 extern gPort        backPort;
 
 extern int16        worldCount;     //  Used as map count as well
@@ -2836,64 +2835,6 @@ inline void drawMetaTiles(void) {
 }
 
 /* ===================================================================== *
-   Mouse Pointer Fixup Routine
- * ===================================================================== */
-
-//  This routine draws an image of the mouse pointer onto the
-//  back buffer, and also updates the mouse pointer's backsave
-//  buffer with the new data underneath it.
-//
-//  Since the blitting of the backsave buffer takes so long,
-//  it would cause annoying flicker to have to hide the mouse
-//  pointer during the blit. Instead, we go ahead and over-write
-//  the image of the mouse pointer with the image of the new
-//  mouse pointer.
-
-inline void drawTileMousePointer(void) {
-	gPixelMap       *currentPtr,
-	                *saveMap;
-	Point16         offset;
-	Rect16          saveExtent,
-	                blitExtent;
-
-	//  Get the image of the pointer and the hotspot offset
-	currentPtr = pointer.getImage(offset);
-
-	//  If pointer exists, and is in a visible state
-	if (currentPtr && pointer.isShown()) {
-		//  Get address of pointer's backsave rect
-		saveMap = pointer.getSaveMap(saveExtent);
-
-		//  If the pointer overlaps the tile scrolling area
-		if (saveExtent.overlap(Rect16(kTileRectX, kTileRectY, kTileRectWidth, kTileRectHeight))) {
-			//  get the intersecting area
-			blitExtent = intersect(saveExtent, Rect16(kTileRectX, kTileRectY, kTileRectWidth, kTileRectHeight));
-
-			mouseSavePort.setMap(saveMap);
-
-			//  Blit the tile data into the backsave buffer
-			mouseSavePort.bltPixels(
-			    tileDrawMap,
-			    blitExtent.x - kTileRectX + fineScroll.x,
-			    blitExtent.y - kTileRectY + fineScroll.y,
-			    blitExtent.x - saveExtent.x,
-			    blitExtent.y - saveExtent.y,
-			    blitExtent.width,
-			    blitExtent.height);
-
-			//  Blit the mouse pointer onto the tile map
-			int x, y;
-
-			x = mouseState.pos.x + offset.x + fineScroll.x - kTileRectX;
-			y = mouseState.pos.y + offset.y + fineScroll.y - kTileRectY;
-
-//			if ( x >=0 && y >=0 )
-			TBlit(&tileDrawMap, currentPtr, x, y);
-		}
-	}
-}
-
-/* ===================================================================== *
    Tile masking
  * ===================================================================== */
 
@@ -4497,10 +4438,6 @@ void drawMainDisplay(void) {
 	drawFloatingWindows(backPort,
 	                    Point16(kTileRectX - fineScroll.x, kTileRectY),
 	                    rect);
-
-	//  Render the image of the mouse pointer on everything else
-	drawTileMousePointer();
-
 	//  Blit it all onto the screen
 	drawPage->writePixels(
 	    rect,
