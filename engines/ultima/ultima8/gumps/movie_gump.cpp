@@ -164,8 +164,9 @@ void MovieGump::run() {
 				TextWidget *subtitle = dynamic_cast<TextWidget *>(getGump(_subtitleWidget));
 				if (subtitle)
 					subtitle->Close();
-				// Create a new TextWidget
-				TextWidget *widget = new TextWidget(0, 0, _subtitles[f], true, 4, 640, 10);
+				// Create a new TextWidget. No Regret uses font 3
+				int subtitle_font = GAME_IS_REMORSE ? 4 : 3;
+				TextWidget *widget = new TextWidget(0, 0, _subtitles[f], true, subtitle_font, 640, 10);
 				widget->InitGump(this);
 				widget->setRelativePosition(BOTTOM_CENTER, 0, -10);
 				// Subtitles should be white.
@@ -268,15 +269,18 @@ void MovieGump::loadSubtitles(Common::SeekableReadStream *rs) {
 
 void MovieGump::loadTXTSubs(Common::SeekableReadStream *rs) {
 	int frameno = 0;
-	Common::String subtitles;
 	while (!rs->eos()) {
 		Common::String line = rs->readLine();
 		if (line.hasPrefix("@frame ")) {
+			if (frameno != 0) {
+				// two @frame directives in a row means that the last
+				// subtitle should be turned *off* at the first frame
+				_subtitles[frameno] = "";
+			}
 			frameno = atoi(line.c_str() + 7);
-			subtitles += '\n';
 		} else {
 			_subtitles[frameno] = line;
-			subtitles += line;
+			frameno = 0;
 		}
 	}
 }
