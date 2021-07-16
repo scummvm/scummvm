@@ -357,7 +357,6 @@ void DirectorSound::playFPlaySound() {
 }
 
 void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayList) {
-
 	for (uint i = 0; i < fplayList.size(); i++)
 		_fplayQueue.push(fplayList[i]);
 
@@ -377,6 +376,11 @@ void DirectorSound::setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel) 
 
 // -1 represent all the sound channel
 void DirectorSound::setSouldLevel(int channel, uint8 soundLevel) {
+	if (soundLevel >= 8) {
+		warning("DirectorSound::setSoundLevel: soundLevel %d out of bounds", soundLevel);
+		return;
+	}
+
 	if (channel != -1) {
 		if (!isChannelValid(channel))
 			return;
