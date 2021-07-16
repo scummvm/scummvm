@@ -2,7 +2,6 @@ MODULE := engines/saga2
 
 MODULE_OBJS := \
 	actor.o \
-	arrowptr.o \
 	assign.o \
 	audio.o \
 	automap.o \
