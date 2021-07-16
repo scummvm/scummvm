@@ -66,12 +66,12 @@ const int maxMouseTextLen = 80;
 
 static char mouseText[maxMouseTextLen] = { "" };  //  Current mouse text string
 
-static Point16 mouseImageOffset;           //  Hotspot on mouse image
+static StaticPoint16 mouseImageOffset;           //  Hotspot on mouse image
 
-static gPixelMap  *mouseImage = mouseCursors[kMouseArrowImage];  //  Current mouse cursor image
+static gPixelMap  *mouseImage = nullptr;  //  Current mouse cursor image
 
-static gStaticImage textImage(0, 0, nullptr),   //  Current mouse text image
-       combinedImage(0, 0, nullptr);  //   Combine mouse text
+static gPixelMap *textImage = nullptr;   //  Current mouse text image
+static gPixelMap *combinedImage = nullptr;  //   Combine mouse text
 //  and image
 
 static int textImageCenteredCol;       //  The pixel column in the text
@@ -114,7 +114,7 @@ static struct MouseCurosrs {
 gStaticImage *mouseCursors[kMouseMax];
 
 static uint8 gaugeImageBuffer[gaugeImageWidth * gaugeImageHeight];
-static gStaticImage gaugeImage(gaugeImageWidth, gaugeImageHeight, gaugeImageBuffer);
+static gPixelMap *gaugeImage;
 
 static bool showGauge = false;
 
@@ -128,11 +128,24 @@ static bool showGauge = false;
 void initCursors() {
 	for (int i = 0; i < kMouseMax; i++)
 		mouseCursors[i] = new gStaticImage(mouseCursorData[i].w, mouseCursorData[i].h, *mouseCursorData[i].data);
+
+	mouseImage = mouseCursors[kMouseArrowImage];
+	gaugeImage = new gPixelMap;
+	gaugeImage->size.x = gaugeImageWidth;
+	gaugeImage->size.y = gaugeImageHeight;
+	gaugeImage->data = gaugeImageBuffer;
+
+	textImage = new gPixelMap;
+	combinedImage = new gPixelMap;
 }
 
 void freeCursors() {
 	for (int i = 0; i < kMouseMax; i++)
 		delete mouseCursors[i];
+
+	delete gaugeImage;
+	delete textImage;
+	delete combinedImage;
 }
 
 void createStackedImage(gPixelMap *newImage, int *newImageCenter, gPixelMap **imageArray, int *imageCenterArray, int images) {
@@ -193,8 +206,8 @@ inline void disposeStackedImage(gPixelMap *image) {
 //	image.
 
 void cleanupMousePointer(void) {
-	if (combinedImage.data != nullptr)
-		disposeStackedImage(&combinedImage);
+	if (combinedImage->data != nullptr)
+		disposeStackedImage(combinedImage);
 }
 
 void setupMousePointer(void) {
@@ -208,28 +221,28 @@ void setupMousePointer(void) {
 	imageCenterArray[0] = mouseImage->size.x / 2;
 
 	if (mouseText[0] != '\0') {
-		imageArray[imageIndex] = &textImage;
+		imageArray[imageIndex] = textImage;
 		imageCenterArray[imageIndex] = textImageCenteredCol;
 		imageIndex++;
 	}
 
 	if (showGauge) {
-		imageArray[imageIndex] = &gaugeImage;
-		imageCenterArray[imageIndex] = gaugeImage.size.x / 2;
+		imageArray[imageIndex] = gaugeImage;
+		imageCenterArray[imageIndex] = gaugeImage->size.x / 2;
 		imageIndex++;
 	}
 
-	if (combinedImage.data != nullptr)
-		disposeStackedImage(&combinedImage);
+	if (combinedImage->data != nullptr)
+		disposeStackedImage(combinedImage);
 
-	createStackedImage(&combinedImage, &combinedImageCenter, imageArray, imageCenterArray, imageIndex);
+	createStackedImage(combinedImage, &combinedImageCenter, imageArray, imageCenterArray, imageIndex);
 
 	imageOffset.x = combinedImageCenter - mouseImage->size.x / 2;
 	imageOffset.y = 0;
 
 	//  Set the combined image as the new mouse cursor
 	g_vm->_pointer->hide();
-	g_vm->_pointer->setImage(combinedImage, mouseImageOffset.x - imageOffset.x, mouseImageOffset.y - imageOffset.y);
+	g_vm->_pointer->setImage(*combinedImage, mouseImageOffset.x - imageOffset.x, mouseImageOffset.y - imageOffset.y);
 	g_vm->_pointer->show();
 }
 
@@ -260,11 +273,13 @@ inline void disposeText(void) {
 
 	//  Free the memory previously allocated to hold the text image
 	//  bitmap
-	if (textImage.data != nullptr) {
-		free(textImage.data);
-		textImage.data = nullptr;
+	if (textImage == nullptr)
+		return;
+
+	if (textImage->data != nullptr) {
+		free(textImage->data);
+		textImage->data = nullptr;
 	}
-	textImage.size.x = textImage.size.y = 0;
 }
 
 //-----------------------------------------------------------------------
@@ -277,19 +292,19 @@ void setNewText(char *text) {
 	Common::strlcpy(mouseText, text, maxMouseTextLen);
 
 	//  Compute the size of the text bitmap
-	textImage.size.y = mainFont->height + 2;
-	textImage.size.x = TextWidth(mainFont, text, -1, 0) + 2;
+	textImage->size.y = mainFont->height + 2;
+	textImage->size.x = TextWidth(mainFont, text, -1, 0) + 2;
 
 	//  Allocate a new buffer for the text image bitmap
-	int16 textImageBytes = textImage.bytes();
+	int16 textImageBytes = textImage->bytes();
 
-	textImage.data = (uint8 *)malloc(textImageBytes);
-	memset(textImage.data, 0, textImageBytes);
+	textImage->data = (uint8 *)malloc(textImageBytes);
+	memset(textImage->data, 0, textImageBytes);
 
 	gPort textImagePort;  //  gPort used to draw text onto bitmap
 
 	//  Intialize the text image port
-	textImagePort.setMap(&textImage);
+	textImagePort.setMap(textImage);
 	textImagePort.setMode(drawModeReplace);
 	textImagePort.setColor(11);
 	textImagePort.setOutlineColor(24);
@@ -305,11 +320,11 @@ void setNewText(char *text) {
 	g_vm->_pointer->getImageCurPos(mousePos);
 
 	int mouseImageCenter = mousePos.x + mouseImageOffset.x + mouseImage->size.x / 2;
-	textImageCenteredCol = textImage.size.x / 2;
+	textImageCenteredCol = textImage->size.x / 2;
 	if (mouseImageCenter - textImageCenteredCol < 5) {
 		textImageCenteredCol = mouseImageCenter - 5;
-	} else if (mouseImageCenter + (textImage.size.x - textImageCenteredCol) >= screenWidth - 5) {
-		textImageCenteredCol = textImage.size.x - ((screenWidth - 5) - mouseImageCenter);
+	} else if (mouseImageCenter + (textImage->size.x - textImageCenteredCol) >= screenWidth - 5) {
+		textImageCenteredCol = textImage->size.x - ((screenWidth - 5) - mouseImageCenter);
 	}
 }
 
