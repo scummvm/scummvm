@@ -2637,11 +2637,7 @@ void GlobalOptionsDialog::apply() {
 	if (ttsMan) {
 #ifdef USE_TRANSLATION
 		if (newLang != oldLang) {
-			if (newLang == "C")
-				ttsMan->setLanguage("en");
-			else {
-				ttsMan->setLanguage(newLang);
-			}
+			ttsMan->setLanguage(newLang);
 			_ttsVoiceSelectionPopUp->setSelected(0);
 		}
 #else

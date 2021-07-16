@@ -172,7 +172,7 @@ String TranslationManager::getCurrentCharset() const {
 
 String TranslationManager::getCurrentLanguage() const {
 	if (_currentLang == -1)
-		return "C";
+		return "en";
 	return _langs[_currentLang];
 }
 
@@ -211,7 +211,7 @@ String TranslationManager::getLangById(int id) const {
 	case kTranslationAutodetectId:
 		return "";
 	case kTranslationBuiltinId:
-		return "C";
+		return "en";
 	default:
 		if (id >= 0 && id - 1 < (int)_langs.size())
 			return _langs[id - 1];
