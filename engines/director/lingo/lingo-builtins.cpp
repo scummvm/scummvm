@@ -1268,7 +1268,7 @@ void LB::b_play(int nargs) {
 		// fall through
 	case 1:
 		frame = g_lingo->pop();
-		if (!(frame.type == INT && frame.u.i == 0) && nargs == 1)
+		if (!(frame.type == INT && frame.u.i == 0 && nargs == 1))
 			break;
 		// fall through
 	case 0:

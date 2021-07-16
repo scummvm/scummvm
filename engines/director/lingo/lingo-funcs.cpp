@@ -294,6 +294,9 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 		return;
 	}
 
+	if (movie.type != VOID) {
+		ref.movie = unixToMacPath(_vm->getCurrentMovie()->_movieArchive->getPathName());
+	}
 	ref.frameI = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
 
 	// if we are issuing play command from script channel script. then play done should return to next frame
