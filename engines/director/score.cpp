@@ -468,7 +468,9 @@ void Score::update() {
 		_nextFrameTime += 1000;
 }
 
-void Score::renderFrame(uint16 frameId, RenderMode mode) {
+bool Score::renderFrame(uint16 frameId, RenderMode mode) {
+	bool updated = false;
+
 	if (!renderTransition(frameId))
 		renderSprites(frameId, mode);
 
@@ -478,8 +480,8 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 		g_director->setPalette(resolvePaletteId(currentPalette));
 	}
 
-	if (mode != kRenderNoWindowRender)
-		_window->render();
+	if (_window->render())
+		updated = true;
 
 	if (_frames[frameId]->_sound1.member || _frames[frameId]->_sound2.member)
 		playSoundChannel(frameId);
@@ -487,7 +489,10 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (_cursorDirty) {
 		renderCursor(_movie->getWindow()->getMousePos());
 		_cursorDirty = false;
+		updated = true;
 	}
+
+	return updated;
 }
 
 bool Score::renderTransition(uint16 frameId) {

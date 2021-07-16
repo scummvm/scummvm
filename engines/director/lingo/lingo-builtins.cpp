@@ -2135,11 +2135,7 @@ void LB::b_updateStage(int nargs) {
 	}
 
 	Score *score = movie->getScore();
-	if (movie->_videoPlayback) {
-		movie->getScore()->renderFrame(movie->getScore()->getCurrentFrame(), kRenderNoWindowRender);
-	}
-
-	if (movie->getWindow()->render())
+	if (score->renderFrame(score->getCurrentFrame()))
 		g_director->draw();
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly)) {
