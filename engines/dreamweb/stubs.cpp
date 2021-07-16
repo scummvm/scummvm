@@ -966,7 +966,7 @@ void DreamWebEngine::useTimedText() {
 	printDirect(string, _timedTemp._x, _timedTemp._y, 237, true);
 	const char *theText = (const char *)string;
 	if (_lastText != theText) {
-		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !hasSpeech()) {
+		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_new")) {
 			_ttsMan->say(theText);
 		}
 	}

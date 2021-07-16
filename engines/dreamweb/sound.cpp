@@ -186,6 +186,9 @@ void DreamWebSound::stopSound(uint8 channel) {
 }
 
 bool DreamWebSound::loadSpeech(const Common::String &filename) {
+	if (ConfMan.getBool("tts_enabled_new"))
+		return false;
+
 	if (!_vm->hasSpeech())
 		return false;
 
