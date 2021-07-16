@@ -653,26 +653,6 @@ void RegisterFileAPI() {
 	ccAddExternalObjectFunction("File::get_EOF", Sc_File_GetEOF);
 	ccAddExternalObjectFunction("File::get_Error", Sc_File_GetError);
 	ccAddExternalObjectFunction("File::get_Position", Sc_File_GetPosition);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("File::Delete^1", (void *)File_Delete);
-	ccAddExternalFunctionForPlugin("File::Exists^1", (void *)File_Exists);
-	ccAddExternalFunctionForPlugin("File::Open^2", (void *)sc_OpenFile);
-	ccAddExternalFunctionForPlugin("File::Close^0", (void *)File_Close);
-	ccAddExternalFunctionForPlugin("File::ReadInt^0", (void *)File_ReadInt);
-	ccAddExternalFunctionForPlugin("File::ReadRawChar^0", (void *)File_ReadRawChar);
-	ccAddExternalFunctionForPlugin("File::ReadRawInt^0", (void *)File_ReadRawInt);
-	ccAddExternalFunctionForPlugin("File::ReadRawLine^1", (void *)File_ReadRawLine);
-	ccAddExternalFunctionForPlugin("File::ReadRawLineBack^0", (void *)File_ReadRawLineBack);
-	ccAddExternalFunctionForPlugin("File::ReadString^1", (void *)File_ReadString);
-	ccAddExternalFunctionForPlugin("File::ReadStringBack^0", (void *)File_ReadStringBack);
-	ccAddExternalFunctionForPlugin("File::WriteInt^1", (void *)File_WriteInt);
-	ccAddExternalFunctionForPlugin("File::WriteRawChar^1", (void *)File_WriteRawChar);
-	ccAddExternalFunctionForPlugin("File::WriteRawLine^1", (void *)File_WriteRawLine);
-	ccAddExternalFunctionForPlugin("File::WriteString^1", (void *)File_WriteString);
-	ccAddExternalFunctionForPlugin("File::get_EOF", (void *)File_GetEOF);
-	ccAddExternalFunctionForPlugin("File::get_Error", (void *)File_GetError);
 }
 
 } // namespace AGS3

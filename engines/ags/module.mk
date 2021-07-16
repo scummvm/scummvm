@@ -296,6 +296,8 @@ MODULE_OBJS = \
 	plugins/core/dialog_options_rendering_info.o \
 	plugins/core/drawing_surface.o \
 	plugins/core/dynamic_sprite.o \
+	plugins/core/file.o \
+	plugins/core/game.o \
 	plugins/ags_agi/ags_agi.o \
 	plugins/ags_blend/ags_blend.o \
 	plugins/ags_clipboard/ags_clipboard.o \
