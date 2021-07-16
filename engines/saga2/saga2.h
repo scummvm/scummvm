@@ -62,6 +62,7 @@ class SpellDisplayPrototypeList;
 class DisplayNodeList;
 class SpellDisplayList;
 class gMousePointer;
+class ActiveRegion;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -138,6 +139,7 @@ public:
 	DisplayNodeList *_mainDisplayList;
 	SpellDisplayList *_activeSpells;
 	gMousePointer *_pointer;
+	ActiveRegion *_activeRegionList;
 
 	gDisplayPort _mainPort;
 

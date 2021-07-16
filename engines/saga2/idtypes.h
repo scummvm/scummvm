@@ -456,6 +456,12 @@ enum {
 	kBubbleSpriteCount = 8
 };
 
+enum {
+	kPlayerActors = 3,
+	kMinAutoAggressionVitality = 5,
+	BASE_REC_RATE = 1
+};
+
 } // end of namespace Saga2
 
 #endif

@@ -82,6 +82,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_mainDisplayList = new DisplayNodeList;
 	_activeSpells = new SpellDisplayList(kMaxActiveSpells);
 	_pointer = new gMousePointer(_mainPort);
+	_activeRegionList = new ActiveRegion[kPlayerActors];
 
 	_edpList = nullptr;
 	_sdpList = nullptr;
@@ -101,6 +102,7 @@ Saga2Engine::~Saga2Engine() {
 	delete _mainDisplayList;
 	delete _activeSpells;
 	delete _pointer;
+	delete[] _activeRegionList;
 }
 
 Common::Error Saga2Engine::run() {

@@ -35,11 +35,6 @@ namespace Saga2 {
 #define FTA_PHILIP  (PlayerActorID)1
 #define FTA_KEVIN   (PlayerActorID)2
 
-const int playerActors  = 3;
-const int BASE_REC_RATE = 1;
-
-const int minAutoAggressionVitality = 5;
-
 /* ======================================================================= *
    PlayerActor -- data specific to possible center actors
  * ======================================================================= */

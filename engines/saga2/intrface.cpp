@@ -1886,8 +1886,8 @@ void setIndivBtns(uint16 brotherID) {    // top = 0, mid = 1, bot = 2
 	setEnchantmentDisplay();
 
 	// point the read containers to the correct brother
-	if (brotherID >= playerActors)
-		brotherID = playerActors - 1;
+	if (brotherID >= kPlayerActors)
+		brotherID = kPlayerActors - 1;
 
 	indivCviewTop->setContainer(GameObject::objectAddress(ActorBaseID + brotherID));
 	indivCviewTop->ghost(TrioCviews[brotherID]->isGhosted());
@@ -2212,7 +2212,7 @@ void toggleAgression(PlayerActorID bro, bool all) {
 	int16   wasAggressive = isAggressive(bro);
 
 	if (all) {
-		for (int i = 0; i < playerActors; i++)
+		for (int i = 0; i < kPlayerActors; i++)
 			setAggression(i, !wasAggressive);
 	} else setAggression(bro, !wasAggressive);
 }
@@ -2228,7 +2228,7 @@ APPFUNC(cmdAggressive) {
 
 //		if (rightButtonState())
 //		{
-//			for (int i = 0; i < playerActors; i++)
+//			for (int i = 0; i < kPlayerActors; i++)
 //				setAggression( i, !wasAggressive );
 //		}
 //		else setAggression( transBroID, !wasAggressive );
@@ -2294,7 +2294,7 @@ APPFUNC(cmdCenter) {
 
 	if (ev.eventType == gEventNewValue) {
 		if (rightButtonState())
-			setCenterBrother((transBroID + 1) % playerActors);
+			setCenterBrother((transBroID + 1) % kPlayerActors);
 		else setCenterBrother(transBroID);
 	}
 	if (ev.eventType == gEventMouseMove) {
@@ -2313,7 +2313,7 @@ void toggleBanding(PlayerActorID bro, bool all) {
 	int16   wasBanded = isBanded(bro);
 
 	if (all) {
-		for (int i = 0; i < playerActors; i++)
+		for (int i = 0; i < kPlayerActors; i++)
 			setBanded(i, !wasBanded);
 	} else setBanded(bro, !wasBanded);
 }
@@ -2327,7 +2327,7 @@ APPFUNC(cmdBand) {
 //
 //		if (rightButtonState())
 //		{
-//			for (int i = 0; i < playerActors; i++)
+//			for (int i = 0; i < kPlayerActors; i++)
 //				setBanded( i, !wasBanded );
 //		}
 //		else setBanded( transBroID, !wasBanded );

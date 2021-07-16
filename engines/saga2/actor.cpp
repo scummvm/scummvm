@@ -1460,7 +1460,7 @@ Actor *Actor::newActor(
 		int16       i;
 
 		//  Search actor list for first scavangable actor
-		for (i = playerActors; i < kActorCount; i++) {
+		for (i = kPlayerActors; i < kActorCount; i++) {
 			a = &actorList[i];
 
 			if ((a->flags & temporary)

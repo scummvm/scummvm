@@ -3216,38 +3216,34 @@ void ActiveRegion::update(void) {
    ActiveRegion array
  * ======================================================================= */
 
-//	Global active region array
-
-static ActiveRegion activeRegionList[playerActors];
-
 //-------------------------------------------------------------------
 //	Iterate through the active regions, updating each
 
 void updateActiveRegions(void) {
 	int16   i;
 
-	for (i = 0; i < ARRAYSIZE(activeRegionList); i++)
-		activeRegionList[i].update();
+	for (i = 0; i < kPlayerActors; i++)
+		g_vm->_activeRegionList[i].update();
 }
 
 //-------------------------------------------------------------------
 //	Return a pointer to an active region given its PlayerActor's ID
 
 ActiveRegion *getActiveRegion(PlayerActorID id) {
-	return &activeRegionList[id];
+	return &g_vm->_activeRegionList[id];
 }
 
 //-------------------------------------------------------------------
 //	Initialize the state of the active regions
 
 void initActiveRegions(void) {
-	static PlayerActorID    playerIDArray[playerActors] =
+	static PlayerActorID    playerIDArray[kPlayerActors] =
 	{ FTA_JULIAN, FTA_PHILIP, FTA_KEVIN };
 
 	int16   i;
 
-	for (i = 0; i < playerActors; i++) {
-		ActiveRegion    *reg = &activeRegionList[i];
+	for (i = 0; i < kPlayerActors; i++) {
+		ActiveRegion    *reg = &g_vm->_activeRegionList[i];
 		ObjectID        actorID = getPlayerActorAddress(playerIDArray[i])->getActorID();
 
 		reg->anchor = actorID;
@@ -3263,9 +3259,9 @@ void saveActiveRegions(Common::OutSaveFile *outS) {
 
 	outS->write("AREG", 4);
 	CHUNK_BEGIN;
-	for (int i = 0; i < playerActors; ++i) {
+	for (int i = 0; i < kPlayerActors; ++i) {
 		debugC(3, kDebugSaveload, "Saving Active Region %d", i);
-		activeRegionList[i].write(out);
+		g_vm->_activeRegionList[i].write(out);
 	}
 	CHUNK_END;
 }
@@ -3273,9 +3269,9 @@ void saveActiveRegions(Common::OutSaveFile *outS) {
 void loadActiveRegions(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading ActiveRegions");
 
-	for (int i = 0; i < playerActors; ++i) {
+	for (int i = 0; i < kPlayerActors; ++i) {
 		debugC(3, kDebugSaveload, "Loading Active Region %d", i);
-		activeRegionList[i].read(in);
+		g_vm->_activeRegionList[i].read(in);
 	}
 }
 
@@ -3745,12 +3741,12 @@ bool ActiveRegionObjectIterator::nextActiveRegion(void) {
 	TilePoint           currentRegionSize;
 
 	do {
-		if (++activeRegionIndex >= ARRAYSIZE(activeRegionList))
+		if (++activeRegionIndex >= kPlayerActors)
 			return false;
 
 		int16               prevRegionIndex;
 
-		currentRegion = &activeRegionList[activeRegionIndex];
+		currentRegion = &g_vm->_activeRegionList[activeRegionIndex];
 
 		sectorBitMask = 0;
 		currentRegionSize.u =       currentRegion->region.max.u
@@ -3764,7 +3760,7 @@ bool ActiveRegionObjectIterator::nextActiveRegion(void) {
 		        prevRegionIndex++) {
 			ActiveRegion    *prevRegion;
 
-			prevRegion = &activeRegionList[prevRegionIndex];
+			prevRegion = &g_vm->_activeRegionList[prevRegionIndex];
 
 			//  Determine if the current region and the previous region
 			//  overlap.
@@ -3925,7 +3921,7 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 
 ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 	assert(activeRegionIndex >= 0);
-	assert(activeRegionIndex < ARRAYSIZE(activeRegionList));
+	assert(activeRegionIndex < kPlayerActors);
 
 	ObjectID        currentObjectID;
 
@@ -4314,7 +4310,7 @@ void readyContainerSetup(void) {
 
 	indivReadyNode = CreateReadyContainerNode(0);
 
-	for (i = 0; i < kNumViews && i < playerActors ; i++) {
+	for (i = 0; i < kNumViews && i < kPlayerActors ; i++) {
 		playerList[i].readyNode = CreateReadyContainerNode(i);
 
 		TrioCviews[i] = new ReadyContainerView(
@@ -4375,7 +4371,7 @@ void cleanupReadyContainers(void) {
 		unloadImageRes(backImages, numReadyContRes);
 	}
 
-	for (int16 i = 0; i < kNumViews && i < playerActors ; i++) {
+	for (int16 i = 0; i < kNumViews && i < kPlayerActors ; i++) {
 		delete TrioCviews[i];
 		TrioCviews[i] = nullptr;
 

@@ -68,7 +68,7 @@ static PlayerActorID    centerActor;        //  Index of the current center
 bool                    brotherBandingEnabled;
 
 //  Master list of all playerActor structures
-PlayerActor playerList[playerActors] = {
+PlayerActor playerList[kPlayerActors] = {
 	PlayerActor(ActorBaseID +  0),       //  Julian
 	PlayerActor(ActorBaseID +  1),       //  Philip
 	PlayerActor(ActorBaseID +  2),       //  Kevin
@@ -546,7 +546,7 @@ PlayerActorID getCenterActorPlayerID(void) {
 void setCenterActor(PlayerActorID newCenter) {
 	extern void setEnchantmentDisplay(void);
 
-	assert(newCenter < playerActors);
+	assert(newCenter < kPlayerActors);
 
 	Actor                       *a = playerList[newCenter].getActor();
 	PlayerActorIterator         iter;
@@ -600,7 +600,7 @@ void setCenterActor(Actor *newCenter) {
 //	Set a new center actor based upon a PlayerActor address
 
 void setCenterActor(PlayerActor *newCenter) {
-	assert(newCenter >= playerList && newCenter < &playerList[playerActors]);
+	assert(newCenter >= playerList && newCenter < &playerList[kPlayerActors]);
 	setCenterActor(newCenter - playerList);
 }
 
@@ -619,7 +619,7 @@ TilePoint centerActorCoords(void) {
 //	Set or clear a player's aggressive state
 
 void setAggression(PlayerActorID player, bool aggression) {
-	assert(player >= 0 && player < playerActors);
+	assert(player >= 0 && player < kPlayerActors);
 
 	Actor       *a = playerList[player].getActor();
 
@@ -642,7 +642,7 @@ void setAggression(PlayerActorID player, bool aggression) {
 //	Determine if player actor is in an aggressive state
 
 bool isAggressive(PlayerActorID player) {
-	assert(player >= 0 && player < playerActors);
+	assert(player >= 0 && player < kPlayerActors);
 	return playerList[player].isAggressive();
 }
 
@@ -654,12 +654,12 @@ void autoAdjustAggression(void) {
 	PlayerActorID       i;
 
 	//  Iterate through all player actors
-	for (i = 0; i < playerActors; i++) {
+	for (i = 0; i < kPlayerActors; i++) {
 		if (i == centerActor || isBanded(i)) {
 			bool            enemiesPresent = false;
 			Actor           *actor = playerList[i].getActor();
 
-			if (actor->getStats()->vitality >= minAutoAggressionVitality) {
+			if (actor->getStats()->vitality >= kMinAutoAggressionVitality) {
 				GameObject      *obj;
 				ActiveRegion    *activeReg = getActiveRegion(i);
 				TileRegion      region = activeReg->getRegion();
@@ -694,7 +694,7 @@ void autoAdjustAggression(void) {
 //	Set a player actor's banding
 
 void setBanded(PlayerActorID player, bool banded) {
-	assert(player >= 0 && player < playerActors);
+	assert(player >= 0 && player < kPlayerActors);
 
 	if (playerList[player].getActor()->isDead()) return;
 
@@ -712,7 +712,7 @@ void setBanded(PlayerActorID player, bool banded) {
 //	Determine if a player actor is banded
 
 bool isBanded(PlayerActorID player) {
-	assert(player >= 0 && player < playerActors);
+	assert(player >= 0 && player < kPlayerActors);
 	return playerList[player].isBanded();
 }
 
@@ -782,7 +782,7 @@ bool actorIDToPlayerID(ObjectID id, PlayerActorID &result) {
 }
 
 void handlePlayerActorDeath(PlayerActorID id) {
-	assert(id >= 0 && id < playerActors);
+	assert(id >= 0 && id < kPlayerActors);
 
 	if (getCenterActor()->isDead()) {
 		PlayerActor                 *newCenter;
@@ -871,7 +871,7 @@ void handleEndOfCombat(void) {
 	PlayerActorID       i;
 
 	//  Iterate through all player actors
-	for (i = 0; i < playerActors; i++)
+	for (i = 0; i < kPlayerActors; i++)
 		playerList[i].resetAttackNotification();
 }
 
@@ -900,7 +900,7 @@ struct PlayerActorArchive {
 void initPlayerActors(void) {
 	PlayerActorID   i;
 
-	for (i = 0; i < playerActors; i++) {
+	for (i = 0; i < kPlayerActors; i++) {
 		PlayerActor     *p = &playerList[i];
 		Actor           *a = p->getActor();
 		ActorProto      *proto = (ActorProto *)a->proto();
@@ -940,7 +940,7 @@ void savePlayerActors(Common::OutSaveFile *outS) {
 
 	outS->write("PLYR", 4);
 	CHUNK_BEGIN;
-	for (int i = 0; i < playerActors; i++) {
+	for (int i = 0; i < kPlayerActors; i++) {
 		debugC(3, kDebugSaveload, "Saving PlayerActor %d", i);
 
 		PlayerActor *p = &playerList[i];
@@ -981,7 +981,7 @@ void savePlayerActors(Common::OutSaveFile *outS) {
 void loadPlayerActors(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading PlayerActors");
 
-	for (int i = 0; i < playerActors; i++) {
+	for (int i = 0; i < kPlayerActors; i++) {
 		debugC(3, kDebugSaveload, "Loading PlayerActor %d", i);
 
 		PlayerActor *p = &playerList[i];
@@ -1083,7 +1083,7 @@ PlayerActor *PlayerActorIterator::first(void) {
 }
 
 PlayerActor *PlayerActorIterator::next(void) {
-	return (index < playerActors) ? &playerList[index++] : NULL;
+	return (index < kPlayerActors) ? &playerList[index++] : NULL;
 }
 
 //-----------------------------------------------------------------------
@@ -1095,18 +1095,18 @@ PlayerActor *LivingPlayerActorIterator::first(void) {
 }
 
 PlayerActor *LivingPlayerActorIterator::next(void) {
-	if (index >= playerActors)
+	if (index >= kPlayerActors)
 		return nullptr;
 
 	Actor       *a = playerList[index].getActor();
 
 	while (a == nullptr || a->isDead()) {
-		if (++index >= playerActors)
+		if (++index >= kPlayerActors)
 			break;
 		a = playerList[index].getActor();
 	}
 
-	return (index < playerActors) ? &playerList[index++] : nullptr;
+	return (index < kPlayerActors) ? &playerList[index++] : nullptr;
 }
 
 } // end of namespace Saga2
