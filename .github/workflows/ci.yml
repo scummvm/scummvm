@@ -133,6 +133,11 @@ jobs:
         run: |
           ./devtools/create_project/xcode/build/Release/create_project . --xcode --enable-all-engines ${{ matrix.configflags }}
           ls
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ matrix.platform }}
+          max-size: 1G
       - name: Build scummvm
         run: |
           xcodebuild build -project scummvm.xcodeproj ${{ matrix.buildFlags }}
@@ -161,6 +166,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install ${{ matrix.aptPackages }}
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ matrix.platform }}
+          max-size: 1G
       - name: Call configure
         run: |
           ./configure --enable-all-engines ${{ matrix.configflags }}
