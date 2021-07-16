@@ -38,6 +38,7 @@ namespace Saga2 {
 
 extern  gPort       backPort;
 void    TileToScreenCoords(const TilePoint &tp, Point16 &p);
+void    TileToScreenCoords(const TilePoint &tp, StaticPoint16 &p);
 void    updateSpeech();
 extern  TilePoint centerActorCoords(void);
 bool    isVisible(GameObject *obj);
@@ -125,7 +126,7 @@ private:
 	bool displayText(void);
 	int16 fits(int16 space);
 	void setWidth(void);
-	bool calcPosition(Point16 &p);       // calculate position
+	bool calcPosition(StaticPoint16 &p);       // calculate position
 	void remove(void);                   //  Remove from active list
 
 public:

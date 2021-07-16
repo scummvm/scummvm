@@ -1030,6 +1030,7 @@ inline bool platformRipped(Platform *pl) {
 //  Compute visible area in U/V coords
 TilePoint XYToUV(const Point32 &pt);
 void TileToScreenCoords(const TilePoint &tp, Point16 &p);
+void TileToScreenCoords(const TilePoint &tp, StaticPoint16 &p);
 
 //  Determine height of point on a tile based on four corner heights
 int16 ptHeight(const TilePoint &tp, uint8 *cornerHeight);

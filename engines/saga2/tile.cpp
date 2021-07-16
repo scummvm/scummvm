@@ -1721,6 +1721,14 @@ void TileToScreenCoords(const TilePoint &tp, Point16 &p) {
 	p.y = mapHeight - tileScroll.y - ((int32)tp.u + (int32)tp.v) - tp.z;
 }
 
+void TileToScreenCoords(const TilePoint &tp, StaticPoint16 &p) {
+	int32       mapHeight = mapList[currentMapNum].mapHeight;
+
+	//  screen coords of the point
+	p.x = (((int32)tp.u - (int32)tp.v) << 1) - tileScroll.x + mapHeight;
+	p.y = mapHeight - tileScroll.y - ((int32)tp.u + (int32)tp.v) - tp.z;
+}
+
 TilePoint::TilePoint(Common::SeekableReadStream *stream) {
 	u = stream->readSint16LE();
 	v = stream->readSint16LE();
