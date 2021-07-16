@@ -38,6 +38,7 @@ void EngineExports::AGS_EngineStartup(IAGSEngine *engine) {
 	_dynamicSprite.AGS_EngineStartup(engine);
 	_file.AGS_EngineStartup(engine);
 	_game.AGS_EngineStartup(engine);
+	_globalAPI.AGS_EngineStartup(engine);
 }
 
 } // namespace Core

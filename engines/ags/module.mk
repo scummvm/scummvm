@@ -298,6 +298,7 @@ MODULE_OBJS = \
 	plugins/core/dynamic_sprite.o \
 	plugins/core/file.o \
 	plugins/core/game.o \
+	plugins/core/global_api.o \
 	plugins/ags_agi/ags_agi.o \
 	plugins/ags_blend/ags_blend.o \
 	plugins/ags_clipboard/ags_clipboard.o \

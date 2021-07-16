@@ -34,6 +34,7 @@
 #include "ags/plugins/core/dynamic_sprite.h"
 #include "ags/plugins/core/file.h"
 #include "ags/plugins/core/game.h"
+#include "ags/plugins/core/global_api.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -52,6 +53,7 @@ private:
 	DynamicSprite _dynamicSprite;
 	File _file;
 	Game _game;
+	GlobalAPI _globalAPI;
 
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
