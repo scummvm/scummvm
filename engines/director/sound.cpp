@@ -54,6 +54,8 @@ DirectorSound::DirectorSound(DirectorEngine *vm) : _vm(vm) {
 	_speaker = new Audio::PCSpeaker();
 	_mixer->playStream(Audio::Mixer::kSFXSoundType,
 		&_pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
+
+	_enable = true;
 }
 
 DirectorSound::~DirectorSound() {
@@ -75,15 +77,20 @@ void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
 	Audio::RewindableAudioStream *sound = af.getAudioStream(DisposeAfterUse::YES);
 
 	cancelFade(soundChannel);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, sound, -1, _channels[soundChannel - 1].volume);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, sound, -1, getChannelVolume(soundChannel));
 }
 
 void DirectorSound::playMCI(Audio::AudioStream &stream, uint32 from, uint32 to) {
 	Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(&stream);
 	Audio::SubSeekableAudioStream *subSeekStream = new Audio::SubSeekableAudioStream(seekStream, Audio::Timestamp(from, seekStream->getRate()), Audio::Timestamp(to, seekStream->getRate()));
 
+	// TODO: make sound enable settings work on this one
 	_mixer->stopHandle(_scriptSound);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_scriptSound, subSeekStream);
+}
+
+uint8 DirectorSound::getChannelVolume(uint8 soundChannel) {
+	return _enable ? _channels[soundChannel - 1].volume : 0;
 }
 
 void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
@@ -92,7 +99,7 @@ void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 
 	cancelFade(soundChannel);
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, &stream, -1, _channels[soundChannel - 1].volume);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, &stream, -1, getChannelVolume(soundChannel));
 }
 
 void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bool allowRepeat) {
@@ -128,6 +135,14 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 			warning("DirectorSound::playCastMember: couldn't find %s", memberID.asString().c_str());
 		}
 	}
+}
+
+void DirectorSound::setSoundEnabled(bool enabled) {
+	if (_enable == enabled)
+		return;
+	if (!enabled)
+		stopSound();
+	_enable = enabled;
 }
 
 void SNDDecoder::loadExternalSoundStream(Common::SeekableReadStreamEndian &stream) {
@@ -166,6 +181,10 @@ void SNDDecoder::loadExternalSoundStream(Common::SeekableReadStreamEndian &strea
 
 void DirectorSound::registerFade(uint8 soundChannel, bool fadeIn, int ticks) {
 	if (!isChannelValid(soundChannel))
+		return;
+
+	// sound enable is not working on fade sounds, so we just return directly when sounds are not enabling
+	if (!_enable)
 		return;
 
 	cancelFade(soundChannel);

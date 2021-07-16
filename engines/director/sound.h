@@ -71,6 +71,8 @@ private:
 	Common::Queue<Common::String> _fplayQueue;
 	Common::String _currentSoundName;
 
+	bool _enable;
+
 public:
 	DirectorSound(DirectorEngine *vm);
 	~DirectorSound();
@@ -83,7 +85,11 @@ public:
 	void playExternalSound(AudioDecoder *ad, uint8 soundChannel, uint8 externalSoundID);
 	void playFPlaySound(const Common::Array<Common::String> &fplayList);
 	void playFPlaySound();
+	void setSouldLevel(uint8 soundChannel, uint8 soundLevel);
+	void setSoundEnabled(bool enabled);
 	void systemBeep();
+
+	bool getSoundEnabled() { return _enable; }
 
 	Common::String getCurrentSound() { return _currentSoundName; }
 
@@ -96,6 +102,7 @@ public:
 	void stopSound();
 
 private:
+	uint8 getChannelVolume(uint8 soundChannel);
 	bool isChannelValid(uint8 soundChannel);
 	void cancelFade(uint8 soundChannel);
 };
