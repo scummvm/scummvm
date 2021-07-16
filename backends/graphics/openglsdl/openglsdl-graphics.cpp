@@ -636,6 +636,13 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			// window. Then we apply the direction change.
 			int windowWidth = 0, windowHeight = 0;
 			getWindowSizeFromSdl(&windowWidth, &windowHeight);
+			// FIXME HACK. I don't like this at all, but macOS requires window size in LoDPI
+	#ifdef __APPLE__
+			uint scale;
+			getDpiScalingFactor(&scale);
+			windowWidth /= scale;
+			windowHeight /= scale;
+	#endif
 			_graphicsScale = MAX<int>(windowWidth / _lastRequestedWidth, windowHeight / _lastRequestedHeight);
 			_graphicsScale = MAX<int>(_graphicsScale + direction, 1);
 
