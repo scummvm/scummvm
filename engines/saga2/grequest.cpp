@@ -33,7 +33,6 @@ namespace Saga2 {
 
 extern gFont        *mainFont;
 extern vDisplayPage *drawPage;
-extern gToolBase    G_BASE;
 
 const int           maxLines = 16,
                     maxButtons = 16,

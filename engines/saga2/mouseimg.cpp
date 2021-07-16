@@ -346,11 +346,9 @@ void setMouseText(char *text) {
 //  Formatted version of setMouseText, for gTools use...
 
 void setMouseTextF(char *format, ...) {
-	extern gToolBase G_BASE;
-
 	if (format == nullptr) {
 		setMouseText(nullptr);
-		G_BASE.mouseHintSet = true;
+		g_vm->_toolBase->mouseHintSet = true;
 	} else {
 		char        lineBuf[128];
 		va_list     argptr;
@@ -360,7 +358,7 @@ void setMouseTextF(char *format, ...) {
 		va_end(argptr);
 
 		setMouseText(lineBuf);
-		G_BASE.mouseHintSet = true;
+		g_vm->_toolBase->mouseHintSet = true;
 	}
 }
 

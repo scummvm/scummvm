@@ -49,7 +49,6 @@ extern gPixelMap    tileDrawMap;
 extern gPort        tileDrawPort;
 extern BackWindow   *mainWindow;
 extern SpriteSet    *objectSprites;        // object sprites
-extern gToolBase    G_BASE;
 
 extern APPFUNC(cmdClickSpeech);
 extern PlayerActor  playerList[];           // a list of the players (brothers)

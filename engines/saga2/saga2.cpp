@@ -42,6 +42,7 @@
 #include "saga2/imagcach.h"
 #include "saga2/mouseimg.h"
 #include "saga2/motion.h"
+#include "saga2/panel.h"
 #include "saga2/spelshow.h"
 
 namespace Saga2 {
@@ -83,6 +84,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_activeSpells = new SpellDisplayList(kMaxActiveSpells);
 	_pointer = new gMousePointer(_mainPort);
 	_activeRegionList = new ActiveRegion[kPlayerActors];
+	_toolBase = new gToolBase;
 
 	_edpList = nullptr;
 	_sdpList = nullptr;
@@ -103,6 +105,7 @@ Saga2Engine::~Saga2Engine() {
 	delete _activeSpells;
 	delete _pointer;
 	delete[] _activeRegionList;
+	delete _toolBase;
 }
 
 Common::Error Saga2Engine::run() {

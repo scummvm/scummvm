@@ -52,8 +52,6 @@ void updateWindowSection(const Rect16 &r);
    Imports
  * ===================================================================== */
 
-extern gToolBase    G_BASE;
-
 //  These externs are imported because the window update routines
 //  need to know about the scrolling tile area.
 
@@ -680,7 +678,7 @@ void updateWindowSection(const Rect16 &r) {
 	//  For each window, both background and float, that overlaps
 	//  the clip, draw the window's imagery
 	if (userControlsSetup) {
-		for (Common::List<gWindow *>::iterator it = G_BASE.bottomWindowIterator(); it != G_BASE.topWindowIterator(); --it)
+		for (Common::List<gWindow *>::iterator it = g_vm->_toolBase->bottomWindowIterator(); it != g_vm->_toolBase->topWindowIterator(); --it)
 			(*it)->drawClipped(tempPort, offset, clip);
 	}
 	//  Now, blit the temporary bitmap to the main screen.
@@ -731,7 +729,7 @@ void drawFloatingWindows(gPort &port, const Point16 &offset, const Rect16 &clip)
 		}
 	}
 
-	for (Common::List<gWindow *>::iterator it = G_BASE.bottomWindowIterator(); it != G_BASE.topWindowIterator(); --it) {
+	for (Common::List<gWindow *>::iterator it = g_vm->_toolBase->bottomWindowIterator(); it != g_vm->_toolBase->topWindowIterator(); --it) {
 		dw = (DecoratedWindow *)(*it);
 		if (!dw->isBackdrop())
 			dw->drawClipped(port, offset, clip);

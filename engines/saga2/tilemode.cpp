@@ -179,7 +179,6 @@ GameMode            TileMode = {
 
 const int           runThreshhold = 32;
 
-extern gToolBase    G_BASE;
 extern Alarm        frameAlarm;             // 10 fps frame rate
 Alarm               updateAlarm,            // max coord update rate
                     pathFindAlarm;          // mouse click rate for path find
@@ -695,7 +694,7 @@ void TileModeCleanup(void) {
 	delete tileMapControl;
 
 //	This Fixes the mousePanel That's not set up
-	G_BASE.mousePanel = NULL;
+	g_vm->_toolBase->mousePanel = NULL;
 
 	mainWindow->removeDecorations();
 }
@@ -781,7 +780,7 @@ void TileModeHandleTask(void) {
 		}
 
 
-		if (G_BASE.isMousePanel(tileMapControl)) {
+		if (g_vm->_toolBase->isMousePanel(tileMapControl)) {
 			//  If mouse is near edge of screen, then run.
 			runFlag =       lastMousePos.x < runThreshhold
 			                ||  lastMousePos.x >= kTileRectWidth - runThreshhold

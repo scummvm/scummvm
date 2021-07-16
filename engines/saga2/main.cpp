@@ -54,7 +54,6 @@ namespace Saga2 {
 // enable the following to display event loop processing
 #define DEBUG_LOOP 0
 
-extern gToolBase        G_BASE;
 extern char            *gameTimeStr;
 extern bool             underground;
 extern char             commandLineHelp[];
@@ -294,10 +293,10 @@ void processEventLoop(bool updateScreen) {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 		case Common::EVENT_MOUSEMOVE:
-			G_BASE.handleMouse(event, g_system->getMillis());
+			g_vm->_toolBase->handleMouse(event, g_system->getMillis());
 			break;
 		case Common::EVENT_KEYDOWN:
-			G_BASE.handleKeyStroke(event);
+			g_vm->_toolBase->handleKeyStroke(event);
 			break;
 		case Common::EVENT_QUIT:
 			if (verifyUserExit())
@@ -312,7 +311,7 @@ void processEventLoop(bool updateScreen) {
 	debugC(1, kDebugEventLoop, "EventLoop: timer update");
 	//  Handle the timer events
 	//  REM: Causing code corruption in windows for some reason...
-	G_BASE.handleTimerTick(gameTime >> 2);
+	g_vm->_toolBase->handleTimerTick(gameTime >> 2);
 
 	//  Handle updating of the display.
 	debugC(1, kDebugEventLoop, "EventLoop: display update");
