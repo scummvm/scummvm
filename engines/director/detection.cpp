@@ -48,6 +48,7 @@ static struct CustomTarget {
 };
 
 static const DebugChannelDef debugFlagList[] = {
+	{Director::kDebug32bpp, "32bpp", "Work in 32bpp mode"},
 	{Director::kDebugCompile, "compile", "Lingo Compilation"},
 	{Director::kDebugCompileOnly, "compileonly", "Skip Lingo code execution"},
 	{Director::kDebugDesktop, "desktop", "Show the Classic Mac desktop"},
