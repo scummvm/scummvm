@@ -70,7 +70,7 @@ void Keymap::addAction(Action *action) {
 void Keymap::registerMapping(Action *action, const HardwareInput &hwInput) {
 	ActionArray &actionArray = _hwActionMap.getOrCreateVal(hwInput);
 
-	// Don't allow an input to map to the same action multiple times
+	// Don't allow an input to map to the same action multiple times.
 	ActionArray::const_iterator found = find(actionArray.begin(), actionArray.end(), action);
 	if (found == actionArray.end()) {
 		actionArray.push_back(action);
@@ -78,7 +78,7 @@ void Keymap::registerMapping(Action *action, const HardwareInput &hwInput) {
 }
 
 void Keymap::unregisterMapping(Action *action) {
-	// Remove the action from all the input mappings
+	// Remove the action from all the input mappings.
 	for (HardwareActionMap::iterator itInput = _hwActionMap.begin(); itInput != _hwActionMap.end(); itInput++) {
 		for (ActionArray::iterator itAction = itInput->_value.begin(); itAction != itInput->_value.end(); itAction++) {
 			if (*itAction == action) {
@@ -120,7 +120,7 @@ Array<HardwareInput> Keymap::getActionMapping(Action *action) const {
 		}
 	}
 
-	// Sort the inputs by type and then id for the remap dialog
+	// Sort the inputs by type and then id for the remap dialog.
 	Common::sort(inputs.begin(), inputs.end(), HardwareInputTypeIdComparator());
 
 	return inputs;
@@ -148,7 +148,7 @@ Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &ac
 
 		if (normalizedKeystate.flags & KBD_NON_STICKY) {
 			// If no matching actions and non-sticky keyboard modifiers are down,
-			// check again for matches without the exact keyboard modifiers
+			// check again for matches without the exact keyboard modifiers.
 			for (HardwareActionMap::const_iterator itInput = _hwActionMap.begin(); itInput != _hwActionMap.end(); ++itInput) {
 				if (itInput->_key.type == kHardwareInputTypeKeyboard && itInput->_key.key.keycode == normalizedKeystate.keycode) {
 					int flags = itInput->_key.key.flags;
@@ -159,7 +159,7 @@ Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &ac
 				}
 			}
 
-			// Lastly check again for matches no non-sticky keyboard modifiers
+			// Lastly check again for matches no non-sticky keyboard modifiers.
 			normalizedKeystate.flags &= ~KBD_NON_STICKY;
 			hardwareInput = HardwareInput::createKeyboard("", normalizedKeystate, U32String());
 			actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
@@ -219,7 +219,7 @@ Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &ac
 			HardwareInput hardwareInput = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, positiveHalf, U32String());
 			actions.push_back(_hwActionMap.getValOrDefault(hardwareInput));
 		} else {
-			// Axis position zero is part of both half axes, and triggers actions bound to both
+			// Axis position zero is part of both half axes, and triggers actions bound to both.
 			HardwareInput hardwareInputPos = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, true, U32String());
 			HardwareInput hardwareInputNeg = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, false, U32String());
 			actions.push_back(_hwActionMap.getValOrDefault(hardwareInputPos));
@@ -263,7 +263,7 @@ StringArray Keymap::getActionDefaultMappings(Action *action) {
 			return StringArray(1, it->_value);
 		}
 
-		// If no keymap-specific default mapping was found, look for a standard action binding
+		// If no keymap-specific default mapping was found, look for a standard action binding.
 		it = _backendDefaultBindings->findDefaultBinding(kStandardActionsKeymapName, action->id);
 		if (it != _backendDefaultBindings->end()) {
 			if (it->_value.empty()) {
@@ -293,14 +293,14 @@ void Keymap::loadMappings() {
 
 		StringArray hwInputIds;
 		if (_configDomain->contains(confKey)) {
-			// The configuration value is a list of space separated hardware input ids
+			// The configuration value is a list of space separated hardware input ids.
 			StringTokenizer hwInputTokenizer = _configDomain->getVal(confKey);
 
 			while (!hwInputTokenizer.empty()) {
 				hwInputIds.push_back(hwInputTokenizer.nextToken());
 			}
 		} else {
-			// If the configuration key was not found, use the default mapping
+			// If the configuration key was not found, use the default mapping.
 			hwInputIds = getActionDefaultMappings(action);
 		}
 
@@ -315,7 +315,7 @@ void Keymap::registerMappings(Action *action, const StringArray &hwInputIds) {
 			HardwareInput hwInput = _hardwareInputSet->findHardwareInput(hwInputIds[i]);
 
 			if (hwInput.type == kHardwareInputTypeInvalid) {
-				// Silently ignore unknown hardware ids because the current device may not have inputs matching the defaults
+				// Silently ignore unknown hardware ids because the current device may not have inputs matching the defaults.
 				debug(1, "HardwareInput with ID '%s' not known", hwInputIds[i].c_str());
 				continue;
 			}
@@ -336,12 +336,12 @@ void Keymap::saveMappings() {
 		Array<HardwareInput> mappedInputs = getActionMapping(action);
 
 		if (areMappingsIdentical(mappedInputs, getActionDefaultMappings(action))) {
-			// If the current mapping is the default, don't write anything to the config manager
+			// If the current mapping is the default, don't write anything to the config manager.
 			_configDomain->erase(prefix + action->id);
 			continue;
 		}
 
-		// The configuration value is a list of space separated hardware input ids
+		// The configuration value is a list of space separated hardware input ids.
 		String confValue;
 		for (uint j = 0; j < mappedInputs.size(); j++) {
 			if (!confValue.empty()) {
@@ -356,12 +356,12 @@ void Keymap::saveMappings() {
 }
 
 bool Keymap::areMappingsIdentical(const Array<HardwareInput> &mappingsA, const StringArray &mappingsB) {
-	// Assumes array values are not duplicated, but registerMapping and addDefaultInputMapping ensure that
+	// Assumes array values are not duplicated, but registerMapping and addDefaultInputMapping ensure that.
 
 	uint foundCount = 0;
 	uint validDefaultMappings = 0;
 	for (uint i = 0; i < mappingsB.size(); i++) {
-		// We resolve the hardware input to make sure it is not a default for some hardware we don't have currently
+		// We resolve the hardware input to make sure it is not a default for some hardware we don't have currently.
 		HardwareInput mappingB = _hardwareInputSet->findHardwareInput(mappingsB[i]);
 		if (mappingB.type == kHardwareInputTypeInvalid) continue;
 		validDefaultMappings++;
@@ -370,11 +370,11 @@ bool Keymap::areMappingsIdentical(const Array<HardwareInput> &mappingsA, const S
 			if (mappingsA[j].id == mappingB.id) {
 				foundCount++;
 				break;
-			}
-		}
-	}
+			    }
+		    }
+	    }
 
 	return foundCount == mappingsA.size() && foundCount == validDefaultMappings;
-}
+    }
 
-} // End of namespace Common
+} // End of namespace Common.
