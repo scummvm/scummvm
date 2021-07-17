@@ -104,12 +104,12 @@ public:
 
 	/**
 	 * Reset an action's mapping to its defaults
-	 * @param action
+	 * @param action.
 	 */
 	void resetMapping(Action *action);
 
 	/**
-	 * Find the hardware input an action is mapped to, if any
+	 * Find the hardware input an action is mapped to, if any.
 	 */
 	Array<HardwareInput> getActionMapping(Action *action) const;
 
@@ -117,21 +117,21 @@ public:
 	 * Find the Actions that a hardware input is mapped to
 	 * @param hardwareInput	the input that is mapped to the required Action
 	 * @param actions an array containing pointers to the actions
-	 * @return	the matching status for the retieved actions
+	 * @return the matching status for the retieved actions.
 	 */
 	KeymapMatch getMappedActions(const Event &event, ActionArray &actions) const;
 
 	/**
-	 * Adds a new Action to this Map
+	 * Adds a new Action to this Map.
 	 *
 	 * Takes ownership of the action.
 	 *
-	 * @param action the Action to add
+	 * @param action the Action to add.
 	 */
 	void addAction(Action *action);
 
 	/**
-	 * Get the list of all the Actions contained in this Keymap
+	 * Get the list of all the Actions contained in this Keymap.
 	 */
 	const ActionArray &getActions() const { return _actions; }
 
@@ -144,8 +144,8 @@ public:
 	StringArray getActionDefaultMappings(Action *action);
 
 	/**
-	 * Load this keymap's mappings from the config manager.
-	 * @param hwInputs	the set to retrieve hardware input pointers from
+	 * Load this keymap's mappings from the config manager
+	 * @param hwInputs the set to retrieve hardware input pointers.
 	 */
 	void loadMappings();
 
@@ -160,12 +160,12 @@ public:
 	KeymapType getType() const { return _type; }
 
 	/**
-	 * Defines if the keymap is considered when mapping events
+	 * Defines if the keymap is considered when mapping events.
 	 */
 	bool isEnabled() const { return _enabled; }
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
-	/** Helper to return an array with a single keymap element */
+	/** Helper to return an array with a single keymap element. */
 	static Array<Keymap *> arrayOf(Keymap *keymap) {
 		return Array<Keymap *>(1, keymap);
 	}
@@ -191,10 +191,10 @@ private:
 	ConfigManager::Domain *_configDomain;
 	HardwareInputSet *_hardwareInputSet;
 	const KeymapperDefaultBindings *_backendDefaultBindings;
-};
+    };
 
 typedef Array<Keymap *> KeymapArray;
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef COMMON_KEYMAP_H

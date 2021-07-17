@@ -33,23 +33,23 @@ namespace Common {
 class KeymapperDefaultBindings : public HashMap<String, String> {
 public:
 	/**
-	 * This sets a default hwInput for a given Keymap Action
-	 * @param keymapId String representing Keymap id (Keymap.name)
-	 * @param actionId String representing Action id (Action.id)
-	 * @param hwInputId String representing the HardwareInput id (HardwareInput.id)
+	 * This sets a default hwInput for a given Keymap Action.
+	 * @param keymapId String representing Keymap id (Keymap.name).
+	 * @param actionId String representing Action id (Action.id).
+	 * @param hwInputId String representing the HardwareInput id (HardwareInput.id).
 	 */
 	void setDefaultBinding(String keymapId, String actionId, String hwInputId) { setVal(keymapId + "_" + actionId, hwInputId); }
 	/**
-	 * This retrieves the assigned default hwKey for a given Keymap Action
-	 * @param keymapId String representing Keymap id (Keymap.name)
-	 * @param actionId String representing Action id (Action.id)
-	 * @return String representing the HardwareInput id (HardwareInput.id)
+	 * This retrieves the assigned default hwKey for a given Keymap Action.
+	 * @param keymapId String representing Keymap id (Keymap.name).
+	 * @param actionId String representing Action id (Action.id).
+	 * @return String representing the HardwareInput id (HardwareInput.id).
 	 */
 	const_iterator findDefaultBinding(String keymapId, String actionId) const {
 		return find(keymapId + "_" + actionId);
-	}
-};
+	    }
+    };
 
-} //namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef KEYMAPPER_DEFAULTS_H

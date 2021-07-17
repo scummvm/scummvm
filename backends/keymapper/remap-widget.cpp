@@ -122,7 +122,7 @@ void RemapWidget::reflowActionWidgets() {
 		if (previousKeymap != row.keymap) {
 			previousKeymap = row.keymap;
 
-			// Insert a keymap separator
+			// Insert a keymap separator.
 			x = 2 * spacing + keyButtonWidth;
 
 			KeymapTitleRow keymapTitle = _keymapSeparators[row.keymap];
@@ -209,7 +209,7 @@ void RemapWidget::resetKeymap(uint actionIndex) {
 
 void RemapWidget::startRemapping(uint actionIndex) {
 	if (_remapInputWatcher->isWatching()) {
-		// Handle a second click on the button as a stop to remapping
+		// Handle a second click on the button as a stop to remapping.
 		stopRemapping();
 		return;
 	}
@@ -315,11 +315,11 @@ void RemapWidget::refreshKeymap() {
 			keymapTitle.descriptionText = new GUI::StaticTextWidget(widgetsBoss(), 0, 0, 0, 0, row.keymap->getDescription(), Graphics::kTextAlignStart);
 			keymapTitle.resetButton = new GUI::ButtonWidget(widgetsBoss(), 0, 0, 0, 0, U32String(), U32String(), kResetKeymapCmd + i);
 
-			// I18N: Button to reset keymap mappings to defaults
+			// I18N: Button to reset keymap mappings to defaults.
 			keymapTitle.resetButton->setLabel(_("Reset"));
 			keymapTitle.resetButton->setTooltip(_("Reset to defaults"));
-		}
-	}
-}
+		    }
+	    }
+    }
 
-} // End of namespace Common
+} // End of namespace Common.

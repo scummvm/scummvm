@@ -30,7 +30,7 @@
 
 namespace Common {
 
-// These magic numbers are provided by fuzzie and WebOS
+// These magic numbers are provided by fuzzie and WebOS.
 static const uint32 kDelayKeyboardEventMillis = 250;
 static const uint32 kDelayMouseEventMillis = 50;
 
@@ -128,7 +128,7 @@ void Keymapper::reloadKeymapMappings(Keymap *keymap) {
 }
 
 void Keymapper::cleanupGameKeymaps() {
-	// Flush all game specific keymaps
+	// Flush all game specific keymaps.
 	KeymapArray::iterator it = _keymaps.begin();
 	while (it != _keymaps.end()) {
 		if ((*it)->getType() == Keymap::kKeymapTypeGame) {
@@ -215,7 +215,7 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 	}
 
 	if (!matchedAction) {
-		// if it didn't get mapped, just pass it through
+		// If it didn't get mapped, just pass it through.
 		mappedEvents.push_back(ev);
 	}
 
@@ -282,8 +282,8 @@ Event Keymapper::executeAction(const Action *action, const Event &incomingEvent)
 	        || outgoingEvent.type == EVENT_CUSTOM_BACKEND_ACTION_AXIS) {
 		if (incomingEvent.type == EVENT_JOYAXIS_MOTION) {
 			// At the moment only half-axes can be bound to actions, hence taking
-			//  the absolute value. If full axes were to be mappable, the action
-			//  could carry the information allowing to distinguish cases here.
+			// the absolute value. If full axes were to be mappable, the action
+			// could carry the information allowing to distinguish cases here.
 			outgoingEvent.joystick.position = ABS(incomingEvent.joystick.position);
 		} else if (incomingType == kIncomingEventStart) {
 			outgoingEvent.joystick.position = JOYAXIS_MAX;
@@ -306,7 +306,7 @@ Event Keymapper::executeAction(const Action *action, const Event &incomingEvent)
 
 	EventType convertedType = convertStartToEnd(outgoingEvent.type);
 
-	// hardware keys need to send up instead when they are up
+	// Hardware keys need to send up instead when they are up.
 	if (incomingType == kIncomingEventEnd) {
 		outgoingEvent.type = convertedType;
 	}
@@ -324,15 +324,15 @@ Event Keymapper::executeAction(const Action *action, const Event &incomingEvent)
 	}
 
 	// Check if the event is coming from a non-key hardware event
-	// that is mapped to a key event
+	// that is mapped to a key event.
 	if (incomingType == kIncomingEventInstant && convertedType != EVENT_INVALID) {
 		// WORKAROUND: Delay the down events coming from non-key hardware events
 		// with a zero delay. This is to prevent DOWN1 DOWN2 UP1 UP2.
 		_delayedEventSource->scheduleEvent(outgoingEvent, 0);
 
-		// non-keys need to send up as well
-		// WORKAROUND: Delay the up events coming from non-key hardware events
-		// This is for engines that run scripts that check on key being down
+		// non-keys need to send up as well.
+		// WORKAROUND: Delay the up events coming from non-key hardware events.
+		// This is for engines that run scripts that check on key being down.
 		outgoingEvent.type = convertedType;
 		const uint32 delay = (convertedType == EVENT_KEYUP ? kDelayKeyboardEventMillis : kDelayMouseEventMillis);
 		_delayedEventSource->scheduleEvent(outgoingEvent, delay);
@@ -383,7 +383,7 @@ HardwareInput Keymapper::findHardwareInput(const Event &event) {
 
 void Keymapper::hardcodedEventMapping(Event ev) {
 	// TODO: Either add support for long presses to the keymapper
-	// or move this elsewhere as an event observer + source
+	// or move this elsewhere as an event observer + source.
 #ifdef ENABLE_VKEYBD
 	// Trigger virtual keyboard on long press of more than 1 second
 	// of middle mouse button.
@@ -434,16 +434,16 @@ bool DelayedEventSource::pollEvent(Event &event) {
 
 		if (!_delayedEvents.empty()) {
 			_delayedEffectiveTime += _delayedEvents.front().timerOffset;
-		}
+		    }
 
 		return true;
-	}
+	    }
 
 	return false;
-}
+    }
 
 bool DelayedEventSource::allowMapping() const {
-	return false; // Events from this source have already been mapped, and should not be mapped again
-}
+	return false; // Events from this source have already been mapped, and should not be mapped again.
+    }
 
-} // End of namespace Common
+} // End of namespace Common.

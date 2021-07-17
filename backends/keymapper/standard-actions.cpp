@@ -40,4 +40,4 @@ const char *kStandardActionSave          = "SAVE";
 const char *kStandardActionOpenSettings  = "OPTS";
 const char *kStandardActionEE            = "WTF";
 
-} //namespace Common
+} // End of namespace Common.

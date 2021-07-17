@@ -54,6 +54,6 @@ extern const char *kStandardActionSave;
 extern const char *kStandardActionOpenSettings;
 extern const char *kStandardActionEE;
 
-} //namespace Common
+} // End of namespace Common.
 
 #endif // BACKENDS_KEYMAPPER_STANDARD_ACTIONS_H
