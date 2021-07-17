@@ -1724,6 +1724,30 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 			warning("Could not patch MI2 Mac boot script");
 
 		delete[] patchedScript;
+	} else
+
+	// There is a cracked version of Maniac Mansion v2 that attempts to
+	// remove the security door copy protection. With it, any code is
+	// accepted as long as you get the last digit wrong. Unfortunately,
+	// it changes a script that is used by all keypads in the game, which
+	// means some puzzles are completely nerfed.
+	//
+	// Even worse, this is the version that GOG (and apparently Steam as
+	// well) are selling. No, seriously! I've reported this as a bug, but
+	// it remains unclear whether or not they will fix it.
+
+	if (_game.id == GID_MANIAC && _game.version == 2 && _game.platform == Common::kPlatformDOS && type == rtScript && idx == 44 && size == 199) {
+		byte *data = getResourceAddress(type, idx);
+
+		if (data[184] == 0) {
+			Common::MemoryReadStream stream(data, size);
+			Common::String md5 = Common::computeStreamMD5AsString(stream);
+
+			if (md5 == "11adc9b47497b26ac2b9627e0982b3fe") {
+				warning("Removing bad copy protection crack from keypad script");
+				data[184] = 1;
+			}
+		}
 	}
 }
 
