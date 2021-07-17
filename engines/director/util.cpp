@@ -726,6 +726,10 @@ Common::Platform platformFromID(uint16 id) {
 	return Common::kPlatformUnknown;
 }
 
+bool isButtonSprite(SpriteType spriteType) {
+	return spriteType == kButtonSprite || spriteType == kCheckboxSprite || spriteType == kRadioButtonSprite;
+}
+
 Common::CodePage getEncoding(Common::Platform platform, Common::Language language) {
 	switch (language) {
 	case Common::JA_JPN:

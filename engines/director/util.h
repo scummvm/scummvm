@@ -52,6 +52,8 @@ Common::String convertMacFilename(const char *name);
 
 Common::String dumpScriptName(const char *prefix, int type, int id, const char *ext);
 
+bool isButtonSprite(SpriteType spriteType);
+
 bool processQuitEvent(bool click = false); // events.cpp
 
 class RandomState {
