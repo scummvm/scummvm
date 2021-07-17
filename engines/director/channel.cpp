@@ -121,7 +121,7 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		CastMember *member = g_director->getCurrentMovie()->getCastMember(maskID);
 
 		if (member && member->_initialRect == _sprite->_cast->_initialRect) {
-			Graphics::MacWidget *widget = member->createWidget(bbox, this);
+			Graphics::MacWidget *widget = member->createWidget(bbox, this, _sprite->_spriteType);
 			if (_mask)
 				delete _mask;
 			_mask = new Graphics::ManagedSurface();
@@ -497,7 +497,7 @@ void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
 		Common::Rect bbox(getBbox());
 		_sprite->_cast->setModified(false);
 
-		_widget = _sprite->_cast->createWidget(bbox, this);
+		_widget = _sprite->_cast->createWidget(bbox, this, _sprite->_spriteType);
 		if (_widget) {
 			_widget->_priority = _priority;
 			_widget->draw();
