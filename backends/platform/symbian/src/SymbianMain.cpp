@@ -71,9 +71,17 @@ int main(int argc, char *argv[]) {
 		if (newfp) {
 			*stderr = *newfp;
 		}
+// This line was added, we still need to test (07/17/2021).
+#else
+		setbuf(stderr, NULL);
 #endif
 	}
-	setbuf(stderr, NULL);	/** No buffering. */
+	//setbuf(stderr, NULL); /** No buffering. */
+	
+// There is still testing, it is optional.
+//#if (debug)
+	//setbuf(stderr, (char*)NULL, _IONBF, 0);
+//#endif
 
 	// Create our OSystem instance.
 	g_system = new OSystem_SDL_Symbian();
