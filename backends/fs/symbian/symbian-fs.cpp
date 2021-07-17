@@ -122,10 +122,10 @@ AbstractFSNode *SymbianFilesystemNode::getChild(const Common::String &n) const {
 bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
 
-	//TODO: honor the hidden flag
+	//TODO: honor the hidden flag.
 
 	if (_isPseudoRoot) {
-		// Drives enumeration
+		// Drives enumeration.
 		RFs &fs = FsSession();
 		TInt driveNumber;
 		TChar driveLetter;
@@ -144,7 +144,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 			driveLetterValue = driveLetter;
 
 			if (volumeInfo.iName.Length() > 0) {
-				driveLabel8.Copy(volumeInfo.iName); // 16 to 8bit des // enabling this line alone gives KERN-EXEC 3 with non-optimized GCC? WHY? grrr
+				driveLabel8.Copy(volumeInfo.iName); // 16 to 8bit des // Enabling this line alone gives KERN-EXEC 3 with non-optimized GCC? WHY? Grrr...
 				driveString8.Format(_L8("Drive %c: (%S)"), driveLetterValue, &driveLabel8);
 			} else {
 				driveString8.Format(_L8("Drive %c:"), driveLetterValue);
@@ -189,7 +189,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 				entry._path +=(char *)nameBuf.PtrZ();
 				entry._isDirectory = fileentry.IsDir();
 
-				// Honor the chosen mode
+				// Honor the chosen mode.
 				if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
 					(mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
 					continue;
