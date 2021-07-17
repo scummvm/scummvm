@@ -1,17 +1,14 @@
 # ============================================================================
 #  Name	 : help.mk
 #  Part of  : ScummVM
-#
 #  Description: This is file for creating .hlp file
-#
 # ============================================================================
-
 
 makmake :
 	cshlpcmp ScummVM.xml
 
 ifeq (WINS,$(findstring WINS, $(PLATFORM)))
-	copy ScummVM.hlp $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help
+	copy ScummVM.hlp $(EPOCROOT)epoc32\$(PLATFORM)\!\resource\help
 endif
 
 clean :
@@ -19,8 +16,7 @@ clean :
 	del ScummVM.hlp.hrh
 
 ifeq (WINS,$(findstring WINS, $(PLATFORM)))
-	copy ScummVM.hlp $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help
+	copy ScummVM.hlp $(EPOCROOT)epoc32\$(PLATFORM)\!\resource\help
 endif
 
 bld freeze lib cleanlib final resource savespace releasables :
-
