@@ -224,12 +224,6 @@ enum {
 	objPropIDCount
 };
 
-extern const ObjectProperty *objPropArray[objPropIDCount];
-
-inline const ObjectProperty *getObjProp(ObjectPropertyID id) {
-	return objPropArray[id];
-}
-
 /* ===================================================================== *
    Actor properties
  * ===================================================================== */
@@ -244,21 +238,13 @@ typedef PropertyOr< Actor >             ActorPropertyOr;
 typedef int16 ActorPropertyID;
 
 enum {
-#ifdef FTA
 	actorPropIDDead,
-#endif
 	actorPropIDCenterActor,
 	actorPropIDPlayerActor,
 	actorPropIDEnemy,
 
 	actorPropIDCount
 };
-
-extern const ActorProperty *actorPropArray[actorPropIDCount];
-
-inline const ActorProperty *getActorProp(ActorPropertyID id) {
-	return actorPropArray[id];
-}
 
 /* ===================================================================== *
    Tile properties
@@ -278,12 +264,6 @@ enum {
 
 	tilePropIDCount
 };
-
-extern const TileProperty *tilePropArray[tilePropIDCount];
-
-inline const TileProperty *getTileProp(TilePropertyID id) {
-	return tilePropArray[id];
-}
 
 /* ===================================================================== *
    MetaTile properties
@@ -394,11 +374,62 @@ enum {
 	metaTilePropIDCount
 };
 
-extern const MetaTileProperty *metaTilePropArray[metaTilePropIDCount];
+bool objIsObject(GameObject *obj);
 
-inline const MetaTileProperty *getMetaTileProp(MetaTilePropertyID id) {
-	return metaTilePropArray[id];
-}
+bool objIsActor(GameObject *obj);
+
+bool objIsWorld(GameObject *obj);
+
+bool objIsLocked(GameObject *obj);
+
+bool objIsUnlocked(GameObject *obj);
+
+bool objIsKey(GameObject *obj);
+
+bool objIsPlayerActor(GameObject *obj);
+
+bool objIsEnemy(GameObject *obj);
+
+bool actorIsDead(Actor *a);
+
+bool actorIsCenterActor(Actor *a);
+
+bool actorIsPlayerActor(Actor *a);
+
+bool actorIsEnemy(Actor *a);
+
+bool tileHasWater(TileInfo *ti);
+
+bool metaTileHasWater(MetaTile *mt, int16 mapNum, const TilePoint &mCoords);
+
+class Properties {
+private:
+	Common::Array<ObjectProperty *> _objPropArray;
+	Common::Array<ActorProperty *> _actorPropArray;
+	Common::Array<TileProperty *> _tilePropArray;
+	Common::Array<MetaTileProperty *> _metaTilePropArray;
+
+public:
+
+	Properties();
+	~Properties();
+
+	const ObjectProperty *getObjProp(ObjectPropertyID id) {
+		return _objPropArray[id];
+	}
+
+	const ActorProperty *getActorProp(ActorPropertyID id) {
+		return _actorPropArray[id];
+	}
+
+	const TileProperty *getTileProp(TilePropertyID id) {
+		return _tilePropArray[id];
+	}
+
+	const MetaTileProperty *getMetaTileProp(MetaTilePropertyID id) {
+		return _metaTilePropArray[id];
+	}
+};
 
 } // end of namespace Saga2
 

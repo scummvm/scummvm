@@ -619,7 +619,7 @@ int16 ObjectPropertySensor::getType(void) {
 bool ObjectPropertySensor::isObjectSought(GameObject *obj_) {
 	assert(isObject(obj_) || isActor(obj_));
 
-	return obj_->hasProperty(*getObjProp(objectProperty));
+	return obj_->hasProperty(*g_vm->_properties->getObjProp(objectProperty));
 }
 
 /* ===================================================================== *
@@ -738,7 +738,7 @@ int16 ActorPropertySensor::getType(void) {
 //	Determine if an actor meets the search criteria
 
 bool ActorPropertySensor::isActorSought(Actor *a) {
-	return a->hasProperty(*getActorProp(actorProperty));
+	return a->hasProperty(*g_vm->_properties->getActorProp(actorProperty));
 }
 
 /* ===================================================================== *

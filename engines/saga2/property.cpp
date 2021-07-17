@@ -33,123 +33,79 @@
 namespace Saga2 {
 
 //  Determine if this object is just an object
-static bool objIsObject(GameObject *obj) {
+bool objIsObject(GameObject *obj) {
 	return isObject(obj);
 }
 
 //  Determine if this object is an actor
-static bool objIsActor(GameObject *obj) {
+bool objIsActor(GameObject *obj) {
 	return isActor(obj);
 }
 
 //  Determine if this object is a world
-static bool objIsWorld(GameObject *obj) {
+bool objIsWorld(GameObject *obj) {
 	return isWorld(obj);
 }
 
 //  Determine if this object is locked
-static bool objIsLocked(GameObject *obj) {
+bool objIsLocked(GameObject *obj) {
 	return obj->isLocked();
 }
 
 //  Determine if this object is unlocked
-static bool objIsUnlocked(GameObject *obj) {
+bool objIsUnlocked(GameObject *obj) {
 	return !obj->isLocked();
 }
 
 //  Determine if this object is a key
-static bool objIsKey(GameObject *obj) {
+bool objIsKey(GameObject *obj) {
 	return obj->proto()->classType == protoClassKey;
 }
 
 //  Determine if this object is a player actor
-static bool objIsPlayerActor(GameObject *obj) {
+bool objIsPlayerActor(GameObject *obj) {
 	return      isActor(obj)
 	            &&  isPlayerActor((Actor *)obj);
 }
 
 //  Determine if this object is an enemy of the protaganists
-static bool objIsEnemy(GameObject *obj) {
+bool objIsEnemy(GameObject *obj) {
 	return      isActor(obj)
 	            &&  isEnemy((Actor *)obj);
 }
-
-const SimpleObjectProperty objPropObject(objIsObject);
-const SimpleObjectProperty objPropActor(objIsActor);
-const SimpleObjectProperty objPropWorld(objIsWorld);
-const SimpleObjectProperty objPropLocked(objIsLocked);
-const SimpleObjectProperty objPropUnlocked(objIsUnlocked);
-const SimpleObjectProperty objPropKey(objIsKey);
-const SimpleObjectProperty objPropPlayerActor(objIsPlayerActor);
-const SimpleObjectProperty objPropEnemy(objIsEnemy);
-
-const ObjectProperty *objPropArray[objPropIDCount] = {
-	&objPropObject,
-	&objPropActor,
-	&objPropWorld,
-	&objPropLocked,
-	&objPropUnlocked,
-	&objPropKey,
-	&objPropPlayerActor,
-	&objPropEnemy,
-};
 
 /* ===================================================================== *
    Actor properties
  * ===================================================================== */
 
-#ifdef FTA
 //  Determine if this actor is dead
-static bool actorIsDead(Actor *a) {
+bool actorIsDead(Actor *a) {
 	return a->isDead();
 }
-#endif
 
 //  Determine if this actor is the center actor
-static bool actorIsCenterActor(Actor *a) {
+bool actorIsCenterActor(Actor *a) {
 	return a == getCenterActor();
 }
 
 //  Determine if this actor is a player actor
-static bool actorIsPlayerActor(Actor *a) {
+bool actorIsPlayerActor(Actor *a) {
 	return isPlayerActor(a);
 }
 
 //  Determine if this actor is an enemy of the protaganists
-static bool actorIsEnemy(Actor *a) {
+bool actorIsEnemy(Actor *a) {
 	return isEnemy(a);
 }
-
-#ifdef FTA
-const SimpleActorProperty actorPropDead(actorIsDead);
-#endif
-const SimpleActorProperty actorPropCenterActor(actorIsCenterActor);
-const SimpleActorProperty actorPropPlayerActor(actorIsPlayerActor);
-const SimpleActorProperty actorPropEnemy(actorIsEnemy);
-
-const ActorProperty *actorPropArray[actorPropIDCount] = {
-#ifdef FTA
-	&actorPropDead,
-#endif
-	&actorPropCenterActor,
-	&actorPropPlayerActor,
-	&actorPropEnemy,
-};
 
 /* ===================================================================== *
    Tile properties
  * ===================================================================== */
 
 //  Determine if this tile has water
-static bool tileHasWater(TileInfo *ti) {
+bool tileHasWater(TileInfo *ti) {
 	return (ti->combinedTerrainMask() & terrainWater) ? true : false;
 }
-
-const SimpleTileProperty tilePropHasWater(tileHasWater);
-
-const TileProperty *tilePropArray[tilePropIDCount] = {
-	&tilePropHasWater,
-};
 
 /* ===================================================================== *
    MetaTile properties
@@ -230,7 +186,7 @@ bool MetaTilePropertyOr::operator()(
 
 
 //  Determine if this MetaTile has water
-static bool metaTileHasWater(
+bool metaTileHasWater(
     MetaTile *mt,
     int16 mapNum,
     const TilePoint &mCoords) {
@@ -264,10 +220,54 @@ static bool metaTileHasWater(
 	return false;
 }
 
-const SimpleMetaTileProperty metaTilePropHasWater(metaTileHasWater);
+Properties::Properties() {
+	_objPropArray.push_back(new SimpleObjectProperty(objIsObject));
+	_objPropArray.push_back(new SimpleObjectProperty(objIsActor));
+	_objPropArray.push_back(new SimpleObjectProperty(objIsWorld));
+	_objPropArray.push_back(new SimpleObjectProperty(objIsLocked));
+	_objPropArray.push_back(new SimpleObjectProperty(objIsUnlocked));
+	_objPropArray.push_back(new SimpleObjectProperty(objIsKey));
+	_objPropArray.push_back(new SimpleObjectProperty(objIsPlayerActor));
+	_objPropArray.push_back(new SimpleObjectProperty(objIsEnemy));
 
-const MetaTileProperty *metaTilePropArray[metaTilePropIDCount] = {
-	&metaTilePropHasWater,
-};
+	_actorPropArray.push_back(new SimpleActorProperty(actorIsDead));
+	_actorPropArray.push_back(new SimpleActorProperty(actorIsCenterActor));
+	_actorPropArray.push_back(new SimpleActorProperty(actorIsPlayerActor));
+	_actorPropArray.push_back(new SimpleActorProperty(actorIsEnemy));
+
+	_tilePropArray.push_back(new SimpleTileProperty(tileHasWater));
+
+	_metaTilePropArray.push_back(new SimpleMetaTileProperty(metaTileHasWater));
+}
+
+Properties::~Properties() {
+	for (uint i = 0; i < _objPropArray.size(); ++i) {
+		if (_objPropArray[i])
+			delete _objPropArray[i];
+	}
+
+	_objPropArray.clear();
+
+	for (uint i = 0; i < _actorPropArray.size(); ++i) {
+		if (_actorPropArray[i])
+			delete _actorPropArray[i];
+	}
+
+	_actorPropArray.clear();
+
+	for (uint i = 0; i < _tilePropArray.size(); ++i) {
+		if (_tilePropArray[i])
+			delete _tilePropArray[i];
+	}
+
+	_tilePropArray.clear();
+
+	for (uint i = 0; i < _metaTilePropArray.size(); ++i) {
+		if (_metaTilePropArray[i])
+			delete _metaTilePropArray[i];
+	}
+
+	_metaTilePropArray.clear();
+}
 
 } // end of namespace Saga2

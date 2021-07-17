@@ -85,6 +85,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_pointer = new gMousePointer(_mainPort);
 	_activeRegionList = new ActiveRegion[kPlayerActors];
 	_toolBase = new gToolBase;
+	_properties = new Properties;
 
 	_edpList = nullptr;
 	_sdpList = nullptr;

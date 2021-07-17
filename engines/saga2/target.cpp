@@ -445,7 +445,7 @@ bool TilePropertyTarget::operator == (const Target &t) const {
 }
 
 bool TilePropertyTarget::isTarget(StandingTileInfo &sti) const {
-	return sti.surfaceTile->hasProperty(*getTileProp(tileProp));
+	return sti.surfaceTile->hasProperty(*g_vm->_properties->getTileProp(tileProp));
 }
 
 /* ===================================================================== *
@@ -682,7 +682,7 @@ bool MetaTilePropertyTarget::isTarget(
     MetaTile *mt,
     int16 mapNum,
     const TilePoint &tp) const {
-	return mt->hasProperty(*getMetaTileProp(metaProp), mapNum, tp);
+	return mt->hasProperty(*g_vm->_properties->getMetaTileProp(metaProp), mapNum, tp);
 }
 
 /* ===================================================================== *
@@ -1105,7 +1105,7 @@ bool ObjectPropertyTarget::operator == (const Target &t) const {
 }
 
 bool ObjectPropertyTarget::isTarget(GameObject *testObj) const {
-	return testObj->hasProperty(*getObjProp(objProp));
+	return testObj->hasProperty(*g_vm->_properties->getObjProp(objProp));
 }
 
 /* ===================================================================== *
@@ -1388,7 +1388,7 @@ bool ActorPropertyTarget::operator == (const Target &t) const {
 }
 
 bool ActorPropertyTarget::isTarget(Actor *testActor) const {
-	return testActor->hasProperty(*getActorProp(actorProp));
+	return testActor->hasProperty(*g_vm->_properties->getActorProp(actorProp));
 }
 
 } // end of namespace Saga2
