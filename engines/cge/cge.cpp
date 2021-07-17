@@ -27,6 +27,7 @@
 #include "common/error.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/text-to-speech.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "gui/message.h"
@@ -222,6 +223,9 @@ Common::Error CGEEngine::run() {
 			g_system->delayMillis(10);
 			GUI::MessageDialog dialog(msg);
 			dialog.runModal();
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+				ttsMan->say(msg);
 		}
 	}
 
