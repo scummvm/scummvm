@@ -93,6 +93,6 @@ HardwareInput InputWatcher::checkForCapturedInput() {
 	HardwareInput hwInput = _hwInput;
 	_hwInput = HardwareInput();
 	return hwInput;
-}
+    }
 
-} // End of namespace Common
+} // End of namespace Common.
