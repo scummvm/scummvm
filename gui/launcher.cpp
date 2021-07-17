@@ -47,7 +47,7 @@
 #include "gui/saveload.h"
 #include "gui/unknown-game-dialog.h"
 #include "gui/widgets/edittext.h"
-#include "gui/widgets/list.h"
+#include "gui/widgets/groupedlist.h"
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/grid.h"
@@ -910,7 +910,7 @@ void LauncherSimple::build() {
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
 	// Add list with game titles
-	_list = new ListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
+	_list = new GroupedListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
 	_list->setEditable(false);
 	_list->enableDictionarySelect(true);
 	_list->setNumberingMode(kListNumberingOff);
@@ -935,6 +935,7 @@ void LauncherSimple::build() {
 
 void LauncherSimple::updateListing() {
 	U32StringArray l;
+	U32StringArray attrs;
 	ListWidget::ColorList colors;
 	ThemeEngine::FontColor color;
 	int numEntries = ConfMan.getInt("gui_list_max_scan_entries");
@@ -989,14 +990,15 @@ void LauncherSimple::updateListing() {
 				// description += Common::String::format(" (%s)", _("Not found"));
 			}
 		}
-
+		// TEST: currently testing the grouping with just the first letter.
+		attrs.push_back(iter->description.substr(0, 1));
 		l.push_back(iter->description);
 		colors.push_back(color);
 		_domains.push_back(iter->key);
 	}
 
 	const int oldSel = _list->getSelected();
-	_list->setList(l, &colors);
+	_list->setList(l, &colors, &attrs);
 	if (oldSel < (int)l.size())
 		_list->setSelected(oldSel);	// Restore the old selection
 	else if (oldSel != -1)

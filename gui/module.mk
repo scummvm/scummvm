@@ -34,6 +34,7 @@ MODULE_OBJS := \
 	widgets/editable.o \
 	widgets/edittext.o \
 	widgets/list.o \
+	widgets/groupedlist.o \
 	widgets/popup.o \
 	widgets/grid.o \
 	widgets/scrollbar.o \
