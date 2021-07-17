@@ -66,6 +66,8 @@ class ActiveRegion;
 class gToolBase;
 class Properties;
 class PlayerActor;
+class ProtoObj;
+class ActorProto;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -124,6 +126,8 @@ public:
 	weaponID _loadedWeapons;
 	Common::Array<char *> _nameList;
 	Common::Array<PlayerActor *> _playerList;
+	Common::Array<ProtoObj *> _objectProtos;
+	Common::Array<ActorProto *> _actorProtos;
 	Common::List<TimerList *> _timerLists;
 	Common::List<Timer *> _timers;
 	Common::List<ActorAppearance *> _appearanceLRU;

@@ -65,9 +65,6 @@ extern uint8 identityColors[256];
 
 extern hResContext  *listRes;               // object list resource handle
 
-extern ProtoObj     *objectProtos;
-extern ActorProto   *actorProtos;
-
 extern Actor        *actorList;
 
 extern int32        actorListSize;
@@ -972,7 +969,7 @@ void Actor::init(
 	debugC(1, kDebugActors, "Actor init flags: %d, permanent: %d", initFlags, initFlags & actorPermanent);
 
 	//  Fixup the prototype pointer to point to an actor prototype
-	prototype           = (ProtoObj *)&actorProtos[protoIndex];
+	prototype           = (ProtoObj *)g_vm->_actorProtos[protoIndex];
 
 	//  Initialize object fields
 //	nameIndex = 0;
@@ -1121,7 +1118,7 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 
 	//  Fixup the prototype pointer to point to an actor prototype
 	prototype   =   prototype != NULL
-	                ? (ProtoObj *)&actorProtos[prototype - objectProtos]
+	                ? (ProtoObj *)g_vm->_actorProtos[getProtoNum()]
 	                :   NULL;
 
 	//  Copy the resource fields
@@ -1192,7 +1189,7 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 
 	//  Fixup the prototype pointer to point to an actor prototype
 	prototype   =   prototype != nullptr
-	                ? (ProtoObj *)&actorProtos[prototype - objectProtos]
+	                ? (ProtoObj *)g_vm->_actorProtos[getProtoNum()]
 	                :   nullptr;
 
 	faction = in->readByte();
@@ -1335,11 +1332,10 @@ void Actor::write(Common::MemoryWriteStreamDynamic *out) {
 
 	debugC(3, kDebugSaveload, "Saving actor %d", thisID());
 
-	warning("STUB: Actor::write: Pointer arithmetic");
 	//  Modify the protoype temporarily so the GameObject::write()
 	//  will store the index correctly
 	if (prototype != NULL)
-		prototype = &objectProtos[(ActorProto *)prototype - actorProtos];
+		prototype = g_vm->_objectProtos[getProtoNum()];
 
 	GameObject::write(out, false);
 
@@ -1503,7 +1499,7 @@ Actor *Actor::newActor(
 
 void Actor::deleteActor(void) {
 	if (flags & temporary) {
-		uint16      protoNum = (ActorProto *)prototype - actorProtos;
+		uint16      protoNum = getProtoNum();
 
 		decTempActorCount(protoNum);
 		debugC(1, kDebugActors, "Actors: Deleting temp actor %d (%s) new count:%d", thisID() - 32768, objName(), getTempActorCount(protoNum));

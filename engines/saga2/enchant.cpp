@@ -33,7 +33,6 @@
 
 namespace Saga2 {
 
-extern ProtoObj     *objectProtos;          // object prototypes
 extern int16        objectProtoCount;       // object prototype count
 
 int enchantmentProto = -1;
@@ -55,7 +54,7 @@ ObjectID EnchantObject(
 	assert(enchantmentProto >= 0);
 	assert(enchantmentProto <  objectProtoCount);
 
-	enchProto = &objectProtos[enchantmentProto];
+	enchProto = g_vm->_objectProtos[enchantmentProto];
 
 	ench = GameObject::newObject(); //Create Enchantment
 	if (ench == NULL) return Nothing;

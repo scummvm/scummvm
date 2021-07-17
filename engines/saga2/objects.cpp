@@ -65,8 +65,6 @@ const uint32        nameListID  = MKTAG('N', 'A', 'M', 'E'),
 
 uint32              nameListCount;
 
-ProtoObj            *objectProtos = nullptr;   // object prototypes
-ActorProto          *actorProtos = nullptr;    // actor prototypes
 uint16              *tempActorCount = nullptr; // array of temporary actor counts
 
 int16               objectProtoCount,       // object prototype count
@@ -209,7 +207,7 @@ GameObject::GameObject(void) {
 //	Constructor -- initial object construction
 
 GameObject::GameObject(const ResourceGameObject &res) {
-	prototype           = &objectProtos[res.protoIndex];
+	prototype           = g_vm->_objectProtos[res.protoIndex];
 	_data.projectDummy = 0;
 	_data.location            = res.location;
 	_data.nameIndex           = res.nameIndex;
@@ -243,7 +241,7 @@ void GameObject::read(Common::InSaveFile *in, bool expandProto) {
 		in->readSint16LE();
 	//  Convert the protoype index into an object proto pointer
 	prototype = pInd != -1
-	            ?   &objectProtos[pInd]
+	            ?   g_vm->_objectProtos[pInd]
 	            :   nullptr;
 
 	_data.projectDummy = 0;
@@ -292,8 +290,7 @@ int32 GameObject::archiveSize(void) {
 void GameObject::write(Common::MemoryWriteStreamDynamic *out, bool expandProto) {
 	debugC(2, kDebugSaveload, "Saving object %d", thisID());
 
-	warning("STUB: GameObject::write: Pointer arithmetic");
-	int16 pInd = prototype != nullptr ? prototype - objectProtos : -1;
+	int16 pInd = prototype != nullptr ? getProtoNum() : -1;
 	out->writeSint16LE(pInd);
 	if (expandProto)
 		out->writeSint16LE(0);
@@ -2146,9 +2143,17 @@ bool GameObject::canSenseObjectProperty(
 //  Given an object, returns the prototype number
 
 int32 GameObject::getProtoNum(void) {
-	if (isActor(this))
-		return (ActorProto *)prototype - actorProtos;
-	else return prototype - objectProtos;
+	for (uint i = 0; i < g_vm->_actorProtos.size(); ++i) {
+		if (prototype == g_vm->_actorProtos[i])
+			return i;
+	}
+
+	for (uint i = 0; i < g_vm->_objectProtos.size(); ++i) {
+		if (prototype == g_vm->_objectProtos[i])
+			return i;
+	}
+
+	return -1;
 }
 
 //-------------------------------------------------------------------
@@ -2156,12 +2161,12 @@ int32 GameObject::getProtoNum(void) {
 
 void GameObject::setProtoNum(int32 nProto) {
 	if (isActor(this))
-		prototype = &actorProtos[nProto];
+		prototype = g_vm->_actorProtos[nProto];
 	else {
 		ObjectID    oldParentID = _data.parentID;
 		bool        wasStacked = unstack(); //  Unstack if it was in a stack
 
-		prototype = &objectProtos[nProto];
+		prototype = g_vm->_objectProtos[nProto];
 
 		if (wasStacked) {
 			ObjectID    pos = possessor();
@@ -2466,8 +2471,6 @@ void initPrototypes(void) {
 	if (objectProtoCount < 1)
 		error("Unable to load Object Prototypes");
 
-	objectProtos = (ProtoObj *)malloc(objectProtoCount * sizeof (ProtoObj));
-
 	if ((stream = loadResourceToStream(listRes, objProtoID, "object prototypes")) == nullptr)
 		error("Unable to load Object Prototypes");
 
@@ -2476,131 +2479,133 @@ void initPrototypes(void) {
 
 	for (int i = 0; i < objectProtoCount; i++) {
 		ResourceObjectPrototype ro;
-		ProtoObj    *pr = &objectProtos[i];
+		ProtoObj *pr;
 
 		ro.load(stream);
 
 		switch (ro.classType) {
 		case protoClassInventory:
-			new (pr) InventoryProto(ro);
+			pr = new InventoryProto(ro);
 			break;
 		case protoClassPhysContainer:
-			new (pr) PhysicalContainerProto(ro);
+			pr = new PhysicalContainerProto(ro);
 			break;
 		case protoClassKey:
-			new (pr) KeyProto(ro);
+			pr = new KeyProto(ro);
 			break;
 
 		case protoClassBottle:
-			new (pr) BottleProto(ro);
+			pr = new BottleProto(ro);
 			break;
 
 		case protoClassFood:                        // Food ProtoType
-			new (pr) FoodProto(ro);
+			pr = new FoodProto(ro);
 			break;
 
 		case protoClassBludgeoningWeapon:
-			new (pr) BludgeoningWeaponProto(ro);
+			pr = new BludgeoningWeaponProto(ro);
 			break;
 
 		case protoClassSlashingWeapon:
-			new (pr) SlashingWeaponProto(ro);
+			pr = new SlashingWeaponProto(ro);
 			break;
 
 		case protoClassBow:
-			new (pr) BowProto(ro);
+			pr = new BowProto(ro);
 			break;
 
 		case protoClassWeaponWand:
-			new (pr) WeaponWandProto(ro);
+			pr = new WeaponWandProto(ro);
 			break;
 
 		case protoClassArrow:
-			new (pr) ArrowProto(ro);
+			pr = new ArrowProto(ro);
 			break;
 
 		case protoClassShield:
-			new (pr) ShieldProto(ro);
+			pr = new ShieldProto(ro);
 			break;
 
 		case protoClassArmor:
-			new (pr) ArmorProto(ro);
+			pr = new ArmorProto(ro);
 			break;
 
 		case protoClassTool:
-			new (pr) ToolProto(ro);
+			pr = new ToolProto(ro);
 			break;
 
 		case protoClassBookDoc:
-			new (pr) BookProto(ro);
+			pr = new BookProto(ro);
 			break;
 
 		case protoClassScrollDoc:
-			new (pr) ScrollProto(ro);
+			pr = new ScrollProto(ro);
 			break;
 
 		case protoClassMap:
-			new (pr) AutoMapProto(ro);
+			pr = new AutoMapProto(ro);
 			break;
 
 		case protoClassIdea:
-			new (pr) IdeaProto(ro);
+			pr = new IdeaProto(ro);
 			break;
 
 		case protoClassMemory:
-			new (pr) MemoryProto(ro);
+			pr = new MemoryProto(ro);
 			break;
 
 		case protoClassPsych:
-			new (pr) PsychProto(ro);
+			pr = new PsychProto(ro);
 			break;
 
 		case protoClassSkill:
-			new (pr) SkillProto(ro);
+			pr = new SkillProto(ro);
 			initializeSkill((SkillProto *) pr, ((SkillProto *) pr)->getSpellID());
 			//initializeSkill(i,((SkillProto *) pr)->getSpellID());
 			break;
 
 		case protoClassIdeaContainer:
-			new (pr) IdeaContainerProto(ro);
+			pr = new IdeaContainerProto(ro);
 			break;
 
 		case protoClassMemoryContainer:
-			new (pr) MemoryContainerProto(ro);
+			pr = new MemoryContainerProto(ro);
 			break;
 
 		case protoClassPsychContainer:
-			new (pr) PsychContainerProto(ro);
+			pr = new PsychContainerProto(ro);
 			break;
 
 		case protoClassSkillContainer:
-			new (pr) SkillContainerProto(ro);
+			pr = new SkillContainerProto(ro);
 			break;
 
 		case protoClassEnchantment:
-			new (pr) EnchantmentProto(ro);
+			pr = new EnchantmentProto(ro);
 			enchantmentProto = i;
 			break;
 
 		case protoClassMonsterGenerator:
-			new (pr) MonsterGeneratorProto(ro);
+			pr = new MonsterGeneratorProto(ro);
 			break;
 
 		//  REM: add this in when we change the database.
 		case protoClassEncounterGenerator:
-			new (pr) EncounterGeneratorProto(ro);
+			pr = new EncounterGeneratorProto(ro);
 			break;
 
 		case protoClassMissionGenerator:
-			new (pr) MissionGeneratorProto(ro);
+			pr = new MissionGeneratorProto(ro);
 			break;
 
 		default:
 			//  Unrecognized prototypes now default to
 			//  an inventory item.
-			new (pr) InventoryProto(ro);
+			pr = new InventoryProto(ro);
 			break;
 		}
+
+		g_vm->_objectProtos.push_back(pr);
 	}
 
 	listRes->rest();
@@ -2614,18 +2619,15 @@ void initPrototypes(void) {
 	if (actorProtoCount < 1)
 		error("Unable to load Actor Prototypes");
 
-	actorProtos = (ActorProto *)malloc(actorProtoCount * sizeof(ActorProto));
-
 	if ((stream = loadResourceToStream(listRes, actorProtoID, "actor prototypes")) == nullptr)
 		error("Unable to load Actor Prototypes");
 
 	for (int i = 0; i < actorProtoCount; i++) {
 		ResourceActorPrototype  ra;
-		ActorProto              *pr = &actorProtos[i];
-
 		ra.load(stream);
 
-		new (pr) ActorProto(ra);
+		ActorProto *pr = new ActorProto(ra);
+		g_vm->_actorProtos.push_back(pr);
 	}
 
 	listRes->rest();
@@ -2643,15 +2645,19 @@ void cleanupPrototypes(void) {
 		g_vm->_nameList.clear();
 	}
 
-	if (actorProtos != nullptr) {
-		free(actorProtos);
-		actorProtos = nullptr;
+	for (uint i = 0; i < g_vm->_actorProtos.size(); ++i) {
+		if (g_vm->_actorProtos[i])
+			delete g_vm->_actorProtos[i];
 	}
 
-	if (objectProtos != nullptr) {
-		free(objectProtos);
-		objectProtos = nullptr;
+	g_vm->_actorProtos.clear();
+
+	for (uint i = 0; i < g_vm->_objectProtos.size(); ++i) {
+		if (g_vm->_objectProtos[i])
+			delete g_vm->_objectProtos[i];
 	}
+
+	g_vm->_objectProtos.clear();
 }
 
 //-------------------------------------------------------------------

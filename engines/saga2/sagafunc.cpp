@@ -2061,8 +2061,7 @@ int16 scriptActorDeductPayment(int16 *args) {
 	OBJLOG(DeductPayment);
 	Actor           *a = (Actor *)thisThread->thisObject;
 
-	extern ProtoObj *objectProtos;
-	ProtoObj    *currencyProto = &objectProtos[args[0]];
+	ProtoObj    *currencyProto = g_vm->_objectProtos[args[0]];
 	int32       paymentAmount = args[1];
 	int32       paymentFound = 0;
 	GameObject  *obj, *delObj = NULL;
@@ -2140,8 +2139,7 @@ int16 scriptActorCountPayment(int16 *args) {
 	OBJLOG(CountPayment);
 	Actor           *a = (Actor *)thisThread->thisObject;
 
-	extern ProtoObj *objectProtos;
-	ProtoObj    *currencyProto = &objectProtos[args[0]];
+	ProtoObj    *currencyProto = g_vm->_objectProtos[args[0]];
 	int32       paymentFound = 0;
 	GameObject  *obj;
 	ObjectID    id;
@@ -3739,12 +3737,11 @@ int16 scriptNumTempActors(int16 *args) {
 
 int16 scriptGetObjectBasePrice(int16 *args) {
 	MONOLOG(GetBaseObjectPrice);
-	extern ProtoObj *objectProtos;
 
 	assert(args[0] >= 0);
 	assert(args[0] < objectProtoCount);
 
-	return objectProtos[args[0]].price;
+	return g_vm->_objectProtos[args[0]]->price;
 }
 
 //-----------------------------------------------------------------------
