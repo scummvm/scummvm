@@ -117,6 +117,13 @@ Programmcodes finden Sie auf Englisch unter:
      und Indiana Jones and the Fate of Atlantis korrigiert.
    - Neuen Render-Modus "Macintosh (schwarz-weiß)" für die 16-Farben-Macintosh-Version
      von Loom und Indiana Jones and the Last Crusade hinzugefügt.
+   - Die Auswahl der Spiel-Schwierigkeit in der Version von Monkey Island 2-Version, die in der
+     LucasArts Mac CD Game Pack II-Compilation enthalten war, wurde aktiviert. (Die Auswahl der
+     Spiel-Schwierigkeit wurde zusammen mit dem Kopierschutz entfernt.)
+   - Fehlerhaften Crack im Keypad-Skript von Maniac Mansion korrigiert.
+     Das bedeutet, dass die GOG- (und Steam?)-Versionen keine falschen Ziffern,
+     z.B. für Ednas Telefon-Nummer, mehr akzeptieren. (Warum werden hier überhaupt
+     gecrackte Versionen verkauft?!)
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
