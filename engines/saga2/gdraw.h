@@ -45,12 +45,23 @@ typedef uint8       gPen;               // a pen index number
 
 //  A general purpose image
 
+struct StaticPixelMap {
+	StaticPoint16 size;
+	uint8 *data;
+
+	int32 bytes() {
+		return size.x * size.y;
+	}
+};
+
 class gPixelMap {
 public:
 	Extent16        size;                   // image size
 	uint8           *data;
 
 	gPixelMap() : data(nullptr) {}
+
+	gPixelMap(StaticPixelMap m) : size(m.size), data(m.data) {}
 
 	//  Compute the number of bytes in the pixel map
 	int32 bytes(void) {

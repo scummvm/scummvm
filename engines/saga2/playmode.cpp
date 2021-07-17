@@ -127,7 +127,7 @@ ContainerView       *invContainer;          // TEST inventory container
 
 //  Drag and Drop variables
 
-gPixelMap           objPointerMap;          // bitmap for pointer
+static StaticPixelMap objPointerMap = {{0, 0}, nullptr};          // bitmap for pointer
 
 //  Resource handle for UI imagery
 
