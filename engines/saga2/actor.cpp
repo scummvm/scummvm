@@ -74,8 +74,6 @@ extern int32        actorListSize;
 
 extern int16        actorLimboCount;
 
-extern PlayerActor  playerList[];   //  Master list of all PlayerActors
-
 bool unstickObject(GameObject *obj);
 
 extern ObjectSoundFXs   *objectSoundFXTable;    // the global object sound effects table
@@ -798,15 +796,15 @@ void ActorProto::doBackgroundUpdate(GameObject *obj) {
 
 			switch (actorID) {
 			case ActorBaseID + FTA_JULIAN:
-				playerList[FTA_JULIAN].recoveryUpdate();
+				g_vm->_playerList[FTA_JULIAN]->recoveryUpdate();
 				break;
 
 			case ActorBaseID + FTA_PHILIP:
-				playerList[FTA_PHILIP].recoveryUpdate();
+				g_vm->_playerList[FTA_PHILIP]->recoveryUpdate();
 				break;
 
 			case ActorBaseID + FTA_KEVIN:
-				playerList[FTA_KEVIN].recoveryUpdate();
+				g_vm->_playerList[FTA_KEVIN]->recoveryUpdate();
 				break;
 
 			default:
@@ -1758,7 +1756,7 @@ ActorAttributes *Actor::getBaseStats(void) {
 	if (disposition < dispositionPlayer)
 		return &((ActorProto *)prototype)->baseStats;
 	else
-		return &playerList[disposition - dispositionPlayer].baseStats;
+		return &g_vm->_playerList[disposition - dispositionPlayer]->baseStats;
 }
 
 //-----------------------------------------------------------------------

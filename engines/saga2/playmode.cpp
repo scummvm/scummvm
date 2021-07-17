@@ -51,7 +51,6 @@ extern BackWindow   *mainWindow;
 extern SpriteSet    *objectSprites;        // object sprites
 
 extern APPFUNC(cmdClickSpeech);
-extern PlayerActor  playerList[];           // a list of the players (brothers)
 extern StaticTextPallete genericTextPal;
 
 APPFUNC(cmdHealthStar);

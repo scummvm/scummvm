@@ -65,6 +65,7 @@ class gMousePointer;
 class ActiveRegion;
 class gToolBase;
 class Properties;
+class PlayerActor;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -122,6 +123,7 @@ public:
 	WeaponStuff _weaponRack[kMaxWeapons];
 	weaponID _loadedWeapons;
 	Common::Array<char *> _nameList;
+	Common::Array<PlayerActor *> _playerList;
 	Common::List<TimerList *> _timerLists;
 	Common::List<Timer *> _timers;
 	Common::List<ActorAppearance *> _appearanceLRU;

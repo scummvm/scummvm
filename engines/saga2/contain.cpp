@@ -56,7 +56,6 @@ extern ReadyContainerView   *TrioCviews[kNumViews];
 extern ReadyContainerView   *indivCviewTop, *indivCviewBot;
 extern SpellStuff   spellBook[];
 extern SpriteSet    *objectSprites;        // object sprites
-extern PlayerActor  playerList[];   //  Master list of all PlayerActors
 extern Alarm        containerObjTextAlarm;
 extern bool         gameSetupComplete;
 

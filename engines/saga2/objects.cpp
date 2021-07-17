@@ -135,7 +135,6 @@ bool                massAndBulkCount;
 extern BackWindow   *mainWindow;
 extern StaticPoint16 fineScroll;             // current scroll pos
 extern hResContext  *imageRes;              // image resource handle
-extern PlayerActor  playerList[];   //  Master list of all PlayerActors
 extern SpellStuff   spellBook[];
 extern ObjectID     pickedObject;
 
@@ -614,7 +613,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			        brotherID == ActorBaseID + FTA_PHILIP  ||
 			        brotherID == ActorBaseID + FTA_KEVIN) {
 				// get base 0 level
-				level = playerList[brotherID - ActorBaseID].getSkillLevel(sProto);
+				level = g_vm->_playerList[brotherID - ActorBaseID]->getSkillLevel(sProto);
 
 				// normalize and output
 				sprintf(nameBuf, "%s-%d", objName(), ++level);
@@ -4311,7 +4310,7 @@ void readyContainerSetup(void) {
 	indivReadyNode = CreateReadyContainerNode(0);
 
 	for (i = 0; i < kNumViews && i < kPlayerActors ; i++) {
-		playerList[i].readyNode = CreateReadyContainerNode(i);
+		g_vm->_playerList[i]->readyNode = CreateReadyContainerNode(i);
 
 		TrioCviews[i] = new ReadyContainerView(
 		                      *trioControls,
@@ -4319,7 +4318,7 @@ void readyContainerSetup(void) {
 		                             trioReadyContInfo[i].yPos + 8,
 		                             iconOriginX * 2 + iconWidth * trioReadyContInfo[i].cols + iconSpacingY * (trioReadyContInfo[i].cols - 1),
 		                             iconOriginY + (iconOriginY * trioReadyContInfo[i].rows) + (trioReadyContInfo[i].rows * iconHeight) - 23),
-		                      *playerList[i].readyNode,
+		                      *g_vm->_playerList[i]->readyNode,
 		                      backImages,
 		                      numReadyContRes,
 		                      trioReadyContInfo[i].rows,
@@ -4375,8 +4374,8 @@ void cleanupReadyContainers(void) {
 		delete TrioCviews[i];
 		TrioCviews[i] = nullptr;
 
-		delete playerList[i].readyNode;
-		playerList[i].readyNode = nullptr;
+		delete g_vm->_playerList[i]->readyNode;
+		g_vm->_playerList[i]->readyNode = nullptr;
 	}
 	delete indivReadyNode;
 

@@ -46,7 +46,6 @@ namespace Saga2 {
  * ===================================================================== */
 extern ReadyContainerView   *TrioCviews[kNumViews];
 extern ReadyContainerView   *indivCviewTop, *indivCviewBot;
-extern PlayerActor          playerList[];   //  Master list of all PlayerActors
 extern gPanelList           *trioControls, *indivControls;
 extern gPanelList           *playControls;
 extern const uint32         imageGroupID;
@@ -817,8 +816,8 @@ void CMassWeightIndicator::recalculate(void) {
 		setMassPie(retMass = getWeightRatio(containerObject, mass, false));
 		setBulkPie(retBulk = getBulkRatio(containerObject, bulk, false));
 	} else {
-		setMassPie(retMass = getWeightRatio(playerList[getCenterActorPlayerID()].getActor(), mass, false));
-		setBulkPie(retBulk = getBulkRatio(playerList[getCenterActorPlayerID()].getActor(), bulk, false));
+		setMassPie(retMass = getWeightRatio(g_vm->_playerList[getCenterActorPlayerID()]->getActor(), mass, false));
+		setBulkPie(retBulk = getBulkRatio(g_vm->_playerList[getCenterActorPlayerID()]->getActor(), bulk, false));
 	}
 }
 
@@ -984,7 +983,7 @@ void CManaIndicator::drawClipped(gPort &port,
 
 	// Do an update to the mana star info if needed,
 	// if not, do not draw stuff
-	calcDraw = update(&playerList[getCenterActorPlayerID()]);
+	calcDraw = update(g_vm->_playerList[getCenterActorPlayerID()]);
 
 	if (!calcDraw) {
 		if (!extent.overlap(clipRect)) return;
@@ -1353,16 +1352,16 @@ void CHealthIndicator::updateStar(gCompImage *starCtl, int32 bro, int32 baseVita
 void CHealthIndicator::update(void) {
 	if (indivControlsFlag) {
 		// get the stats for the selected brother
-		int16 baseVitality  = playerList[translatePanID(uiIndiv)].getBaseStats().vitality;
-		int16 currVitality  = playerList[translatePanID(uiIndiv)].getEffStats()->vitality;
+		int16 baseVitality  = g_vm->_playerList[translatePanID(uiIndiv)]->getBaseStats().vitality;
+		int16 currVitality  = g_vm->_playerList[translatePanID(uiIndiv)]->getEffStats()->vitality;
 
 		updateStar(indivStarBtn, uiIndiv, baseVitality, currVitality);
 	} else {
 
 		for (uint16 i = 0; i < numControls; i++) {
 			// get the stats for the selected brother
-			int16 baseVitality  = playerList[i].getBaseStats().vitality;
-			int16 currVitality  = playerList[i].getEffStats()->vitality;
+			int16 baseVitality  = g_vm->_playerList[i]->getBaseStats().vitality;
+			int16 currVitality  = g_vm->_playerList[i]->getEffStats()->vitality;
 
 			updateStar(starBtns[i], i, baseVitality, currVitality);
 		}
@@ -1769,7 +1768,7 @@ void updateIndicators(void) {
 
 	// mana indicator update check
 	if (isIndivMode()) {
-		if (ManaIndicator->needUpdate(&playerList[getCenterActorPlayerID()])) {
+		if (ManaIndicator->needUpdate(g_vm->_playerList[getCenterActorPlayerID()])) {
 			// redraw the region that is not covered by any other window
 			ManaIndicator->invalidate();
 		}
@@ -1897,7 +1896,7 @@ void setIndivBtns(uint16 brotherID) {    // top = 0, mid = 1, bot = 2
 	// now set the indicators for mass and bulk
 	uint16 pieWeightRatio   = MassWeightIndicator->getMassPieDiv();
 	uint16 pieBulkRatio     = MassWeightIndicator->getBulkPieDiv();
-	PlayerActor *brother    = &playerList[brotherID];
+	PlayerActor *brother    = g_vm->_playerList[brotherID];
 
 	MassWeightIndicator->setMassPie(getWeightRatio(brother->getActor(), pieWeightRatio, false));
 	MassWeightIndicator->setBulkPie(getBulkRatio(brother->getActor(), pieBulkRatio, false));
@@ -1944,7 +1943,7 @@ void setCenterBrother(uint16 whichBrother) {
 	g_vm->_mouseInfo->replaceObject();
 
 	// set the new center actor
-	setCenterActor(&playerList[whichBrother]);
+	setCenterActor(g_vm->_playerList[whichBrother]);
 }
 
 uint16 translatePanID(uint16 panID) {
@@ -2409,8 +2408,8 @@ APPFUNC(cmdHealthStar) {
 		}
 
 		// get the stats for the selected brother
-		int16 baseVitality = playerList[transBroID].getBaseStats().vitality;
-		int16 currVitality = playerList[transBroID].getEffStats()->vitality;
+		int16 baseVitality = g_vm->_playerList[transBroID]->getBaseStats().vitality;
+		int16 currVitality = g_vm->_playerList[transBroID]->getEffStats()->vitality;
 
 		char buf[40];
 
@@ -2438,7 +2437,7 @@ APPFUNC(cmdMassInd) {
 			if (ev.panel->id > 1) {
 				containerObject = (GameObject *)win->userData;
 			} else {
-				containerObject = (GameObject *)playerList[getCenterActorPlayerID()].getActor();
+				containerObject = (GameObject *)g_vm->_playerList[getCenterActorPlayerID()]->getActor();
 			}
 
 			assert(containerObject);
@@ -2476,7 +2475,7 @@ APPFUNC(cmdBulkInd) {
 			if (ev.panel->id > 1) {
 				containerObject = (GameObject *)win->userData;
 			} else {
-				containerObject = (GameObject *)playerList[getCenterActorPlayerID()].getActor();
+				containerObject = (GameObject *)g_vm->_playerList[getCenterActorPlayerID()]->getActor();
 			}
 
 			assert(containerObject);
@@ -2503,7 +2502,7 @@ APPFUNC(cmdManaInd) {
 			int     numManaRegions = ManaIndicator->getNumManaRegions();
 			int     i;
 			int     curMana = 0, baseMana = 0;
-			PlayerActor *player             = &playerList[getCenterActorPlayerID()];
+			PlayerActor *player             = g_vm->_playerList[getCenterActorPlayerID()];
 			ActorAttributes *stats          = player->getEffStats();
 			ActorAttributes baseStatsRef    = player->getBaseStats();
 			Point16 pos = ev.mouse;
@@ -2610,7 +2609,7 @@ void cleanupUIState(void) {
 }
 
 void gArmorIndicator::setValue(PlayerActorID brotherID) {
-	Actor *bro = playerList[brotherID].getActor();
+	Actor *bro = g_vm->_playerList[brotherID]->getActor();
 	bro->totalArmorAttributes(attr);
 	invalidate();
 }
@@ -2715,7 +2714,7 @@ void gEnchantmentDisplay::pointerMove(gPanelMessage &msg) {
 }
 
 void gEnchantmentDisplay::setValue(PlayerActorID pID) {
-	Actor           *a = playerList[pID].getActor();
+	Actor           *a = g_vm->_playerList[pID]->getActor();
 	uint8           newIconFlags[iconCount];
 	EnchantmentIterator iter(a);
 	ContainerIterator   cIter(a);
