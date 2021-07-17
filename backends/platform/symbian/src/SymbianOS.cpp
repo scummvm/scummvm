@@ -190,7 +190,7 @@ void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size
 }
 
 /** Provide access to file server session. Lifetime managed bu UI framework. */
-RFs& FsSession() {
+RFs &FsSession() {
 	return CEikonEnv::Static()->FsSession();
 }
 

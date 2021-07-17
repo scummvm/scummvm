@@ -126,7 +126,7 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 	if (_isPseudoRoot) {
 		// Drives enumeration
-		RFs& fs = FsSession();
+		RFs &fs = FsSession();
 		TInt driveNumber;
 		TChar driveLetter;
 		TUint driveLetterValue;

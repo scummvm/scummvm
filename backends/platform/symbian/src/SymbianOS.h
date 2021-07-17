@@ -47,6 +47,6 @@ protected:
 	TFileName _localpath;
 };
 
-RFs& FsSession();
+RFs &FsSession();
 	
 #endif
