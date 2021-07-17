@@ -48,13 +48,13 @@ public:
 	Keymapper(EventManager *eventMan);
 	~Keymapper();
 
-	// EventMapper interface
+	// EventMapper interface.
 	virtual List<Event> mapEvent(const Event &ev);
 
 	/**
-	 * Registers a HardwareInputSet and platform-specific default mappings with the Keymapper
+	 * Registers a HardwareInputSet and platform-specific default mappings with the Keymapper.
 	 *
-	 * Transfers ownership to the Keymapper
+	 * Transfers ownership to the Keymapper.
 	 */
 	void registerHardwareInputSet(HardwareInputSet *inputs, KeymapperDefaultBindings *backendDefaultBindings);
 
@@ -63,14 +63,14 @@ public:
 	 * If a saved key setup exists for it in the ini file it will be used.
 	 * Else, the key setup will be automatically mapped.
 	 *
-	 * Transfers ownership of the keymap to the Keymapper
+	 * Transfers ownership of the keymap to the Keymapper.
 	 */
 	void addGlobalKeymap(Keymap *keymap);
 
 	/**
 	 * Add a keymap to the game domain.
 	 *
-	 * Transfers ownership of the keymap to the Keymapper
+	 * Transfers ownership of the keymap to the Keymapper.
 	 *
 	 * @see addGlobalKeyMap
 	 * @note initGame() should be called before any game keymaps are added.
@@ -86,40 +86,40 @@ public:
 	/**
 	 * Obtain a keymap of the given name from the keymapper.
 	 * Game keymaps have priority over global keymaps
-	 * @param id		name of the keymap to return
+	 * @param id name of the keymap to return.
 	 */
 	Keymap *getKeymap(const String &id) const;
 
 	/**
-	 * Obtain a list of all the keymaps registered with the keymapper
+	 * Obtain a list of all the keymaps registered with the keymapper.
 	 */
 	const KeymapArray &getKeymaps() const { return _keymaps; }
 
 	/**
-	 * reload the mappings for all the keymaps from the configuration manager
+	 * Reload the mappings for all the keymaps from the configuration manager.
 	 */
 	void reloadAllMappings();
 
 	/**
-	 * Set which kind of keymap is currently used to map events
+	 * Set which kind of keymap is currently used to map events.
 	 *
-	 * Keymaps with the global type are always enabled
+	 * Keymaps with the global type are always enabled.
 	 */
 	void setEnabledKeymapType(Keymap::KeymapType type);
 	Keymap::KeymapType enabledKeymapType() const { return _enabledKeymapType; }
 
 	/**
-	 * Enable/disable the keymapper
+	 * Enable/disable the keymapper.
 	 */
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
 	/**
-	 * Clear all the keymaps and hardware input sets
+	 * Clear all the keymaps and hardware input sets.
 	 */
 	void clear();
 
 	/**
-	 * Return a HardwareInput pointer for the given event
+	 * Return a HardwareInput pointer for the given event.
 	 */
 	HardwareInput findHardwareInput(const Event &event);
 
@@ -161,7 +161,7 @@ private:
 };
 
 /**
- * RAII helper to temporarily enable a keymap type
+ * RAII helper to temporarily enable a keymap type.
  */
 class KeymapTypeEnabler {
 public:
@@ -183,12 +183,12 @@ private:
 
 class DelayedEventSource : public EventSource {
 public:
-	// EventSource API
+	// EventSource API.
 	bool pollEvent(Event &event) override;
 	bool allowMapping() const override;
 
 	/**
-	 * Schedule an event to be produced after the specified delay
+	 * Schedule an event to be produced after the specified delay.
 	 */
 	void scheduleEvent(const Event &ev, uint32 delayMillis);
 
@@ -197,12 +197,12 @@ private:
 		const uint32 timerOffset;
 		const Event event;
 		DelayedEventsEntry(const uint32 offset, const Event ev) : timerOffset(offset), event(ev) { }
-	};
+	    };
 
 	Queue<DelayedEventsEntry> _delayedEvents;
 	uint32 _delayedEffectiveTime;
-};
+    };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef COMMON_KEYMAPPER_H
