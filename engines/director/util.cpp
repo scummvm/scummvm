@@ -227,7 +227,7 @@ Common::String convertPath(Common::String &path) {
 	Common::String res;
 	uint32 idx = 0;
 
-	if (path.hasPrefix("::")) { // Root of the filesystem
+	if (path.hasPrefix("::")) { // Parent directory
 		res = "..\\";
 		idx = 2;
 	} else if (path.hasPrefix("@:")) { // Root of the game
