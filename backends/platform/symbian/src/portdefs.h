@@ -37,8 +37,8 @@
 #pragma GCC diagnostic ignored "-Wnarrowing"
 #endif
 #include <e32def.h>
-#if !defined(__IGNORE__E32STD_H__) // TKey type from system header
-#include <e32std.h> // doesn't meets with lua ones.
+#if !defined(__IGNORE__E32STD_H__) // TKey type from system header.
+#include <e32std.h> // Doesn't meets with lua ones.
 #endif
 #if (__GNUC__ && __cplusplus)
 #pragma GCC diagnostic pop
@@ -47,15 +47,14 @@
 
 #include <libc\math.h>
 
-/* define pi */
+/** Define pi. */
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
-#endif  /*  M_PI  */
+#endif  /*M_PI*/
 
-
-// Enable Symbians own datatypes
-// This is done for two reasons
-// a) uint is already defined by Symbians libc component
+// Enable Symbians own datatypes.
+// This is done for two reasons:
+// a) uint is already defined by Symbians libc component.
 // b) Symbian is using its "own" datatyping, and the Scummvm port
 //    should follow this to ensure the best compability possible.
 typedef unsigned char byte;
@@ -83,7 +82,7 @@ namespace std
 
 // Hide the macro "remove" defined in unistd.h from anywere except where
 // we explicitly require it. This lets us use the name "remove" in engines.
-// Must be after including unistd.h .
+// Must be after including unistd.h
 #ifndef SYMBIAN_USE_SYSTEM_REMOVE
 #undef remove
 #endif
@@ -92,7 +91,7 @@ namespace std
 #define USE_CXX11
 #define NO_CXX11_INITIALIZER_LIST
 #define NO_CXX11_NULLPTR_T
-#endif //USE_CXX11
+#endif  //USE_CXX11
 
 #define DISABLE_COMMAND_LINE
 #define USE_RGB_COLOR
@@ -100,12 +99,12 @@ namespace std
 
 #ifndef SYMBIAN_DYNAMIC_PLUGIN
 #define DETECTION_STATIC
-#endif //DETECTION_STATIC
+#endif  //DETECTION_STATIC
 
-// hack in some tricks to work around not having these fcns for Symbian
+// Hack in some tricks to work around not having these fcns for Symbian
 // and we _really_ don't wanna link with any other windows LIBC library!
 #if defined(__GCC32__)
-	// taken from public domain http://www.opensource.apple.com/darwinsource/WWDC2004/gcc_legacy-939/gcc/floatlib.c
+	// Taken from public domain http://www.opensource.apple.com/darwinsource/WWDC2004/gcc_legacy-939/gcc/floatlib.c
 	#define SIGNBIT		0x80000000
 	#define HIDDEN		(1 << 23)
 	#define EXCESSD		1022
@@ -123,7 +122,7 @@ namespace std
 	    long long ll;
 	};
 
-	/* convert double float to double int (dfdi) */
+	/** Convert double float to double int (dfdi). */
 	long long inline
 	scumm_fixdfdi (double a1) { // __fixdfdi (double a1)
 	    union double_long dl1;
@@ -145,7 +144,7 @@ namespace std
 		return l;
 	    }
 
-	    /* shift down until exp = 0 or l = 0 */
+	    /*Shift down until exp = 0 or l = 0*/
 	    if (exp < 0 && exp > -64 && l)
 			l >>= -exp;
 	    else
@@ -154,7 +153,7 @@ namespace std
 	    return (SIGND (dl1) ? -l : l);
 	}
 
-	/*	okay, okay: I admit it: I absolutely have _NO_ idea why __fixdfdi does not get linked in by gcc from libgcc.a
+	/**	Okay, okay: I admit it: I absolutely have _NO_ idea why __fixdfdi does not get linked in by gcc from libgcc.a
 		because I know it's in there: I checked with `ar x _fixdfdi.o libgcc.a` and the symbol is in there, so I'm lost
 		and had to fix it this way. I tried all gcc and ld options I could find: no hope :( If someone can enlighten me:
 		feel free to let me know at sumthinwicked@users.sf.net! Much obliged.
@@ -171,13 +170,12 @@ namespace std
 	void*	symbian_malloc	(size_t _size);
 
 	#define malloc symbian_malloc
-#else // GCCE and the rest
+#else // GCCE and the rest.
 	extern "C" int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...);
 	extern "C" int symbian_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
 	#define snprintf(buf,len,args...) symbian_snprintf(buf,len,args)
 	#define vsnprintf(buf,len,format,valist) symbian_vsnprintf(buf,len,format,valist)
 #endif
-
 
 #ifndef signbit
 #define signbit(x)     \
@@ -202,9 +200,8 @@ extern "C"{
 	long long int strtoll(const char* start, char** end, int radix);
 }
 
-
 #ifndef __WINS__
-// yuv2rgb functions from theorarm
+// yuv2rgb functions from theorarm.
 extern "C"{
 #ifdef COMMON_INTTYPES_H // That header has own inttypes declaration.
 #define HAVE_INTTYPES_H  // So we switch off it to avoid conflict declarations.
@@ -221,7 +218,7 @@ extern "C"{
 #define USE_ARM_COSTUME_ASM
 #endif
 
-// Symbian bsearch implementation is flawed
+// Symbian bsearch implementation is flawed.
 void *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));
 #define bsearch	scumm_bsearch
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
@@ -236,7 +233,7 @@ void *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size
 # define va_copy(dst, src) __builtin_va_copy(dst, src)
 #endif
 
-// we cannot include SymbianOS.h everywhere, but this works too (functions code is in SymbianOS.cpp)
+// We cannot include SymbianOS.h everywhere, but this works too (functions code is in SymbianOS.cpp).
 namespace Symbian {
 extern char* GetExecutablePath();
 }
