@@ -336,6 +336,9 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 		_delta = Common::Point(0, 0);
 	}
 
+	// FIXME: organize the logic here.
+	// for the dirty puppet sprites, we will always replaceWidget since previousCastId is 0, but we shouldn't replace the widget of there are only position changing
+	// e.g. we won't want a puppet editable text sprite changing because that will cause the loss of text.
 	if (replace) {
 		_sprite->updateCast();
 		replaceWidget(previousCastId, dimsChanged || spriteTypeChanged);
