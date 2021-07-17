@@ -29,7 +29,7 @@ class OSystem;
 
 namespace Common {
 class WriteStream;
-} // End of namespace Common
+} // End of namespace Common.
 
 namespace Backends {
 namespace Log {
@@ -69,7 +69,7 @@ public:
 	 * notice to indicate that the log was opened successfully.
 	 *
 	 * @param stream Stream where to output the log contents.
-	 *               Note that the stream will be deleted by the logger.
+	 * Note that the stream will be deleted by the logger.
 	 */
 	void open(Common::WriteStream *stream);
 
@@ -86,7 +86,7 @@ public:
 	 * Prints a message to the log stream.
 	 *
 	 * This has optional support to output a timestamp on every new line.
-	 * The timestamp will look like: "[YYYY-MM-DD HH:MM:SS] ".
+	 * The timestamp will look like: "[YYYY-MM-DD HH:MM:SS]".
 	 * Printing of a timestamp is done by default.
 	 *
 	 * It might be noteworthy that this function does not append a new line
@@ -95,14 +95,14 @@ public:
 	 * In case no stream is associated with this logger, this function will
 	 * quit immediatly.
 	 *
-	 * @param message            The message to write.
+	 * @param message The message to write.
 	 * @param printTimeOnNewline Whether to print a timestamp on the start of
-	 *                           a new line.
+	 * a new line.
 	 */
 	void print(const char *message, const bool printTimeOnNewline = true);
 private:
 	/**
-	 * Prints a time stamp in the form: "[YYYY-MM-DD HH:MM:SS] ".
+	 * Prints a time stamp in the form: "[YYYY-MM-DD HH:MM:SS]".
 	 */
 	void printTimeStamp();
 
@@ -120,9 +120,10 @@ private:
 	 * Whether we are at the start of a line.
 	 */
 	bool _startOfLine;
-};
-
-} // End of namespace Log
-} // End of namespace Backends
+        };
+	
+    } // End of namespace Log.
+	
+} // End of namespace Backends.
 
 #endif
