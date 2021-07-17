@@ -148,6 +148,7 @@ public:
 	Properties *_properties;
 
 	gDisplayPort _mainPort;
+	gPort _backPort;
 
 	bool _autoAggression;
 	bool _autoWeapon;

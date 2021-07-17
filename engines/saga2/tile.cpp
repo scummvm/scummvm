@@ -157,8 +157,6 @@ void drawFloatingWindows(gPort &, const Point16 &, const Rect16 &clip);
    Imports
  * ===================================================================== */
 
-extern gPort        backPort;
-
 extern int16        worldCount;     //  Used as map count as well
 
 extern ObjectID     viewCenterObject;       // ID of object that view tracks
@@ -4442,7 +4440,7 @@ void drawMainDisplay(void) {
 	Rect16 rect(kTileRectX, kTileRectY, kTileRectWidth, kTileRectHeight);
 
 	//  Render floating windows
-	drawFloatingWindows(backPort,
+	drawFloatingWindows(g_vm->_backPort,
 	                    Point16(kTileRectX - fineScroll.x, kTileRectY),
 	                    rect);
 	//  Blit it all onto the screen

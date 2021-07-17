@@ -494,8 +494,8 @@ bool Speech::displayText(void) {
 		return false;
 
 	//  Blit to the port
-	backPort.setMode(drawModeMatte);
-	backPort.bltPixels(speechImage,
+	g_vm->_backPort.setMode(drawModeMatte);
+	g_vm->_backPort.bltPixels(speechImage,
 	                   0, 0,
 	                   p.x + fineScroll.x,
 	                   p.y + fineScroll.y,

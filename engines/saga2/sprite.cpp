@@ -60,8 +60,6 @@ extern gPixelMap    tileDrawMap;
 //  Color map ranges
 extern uint8        *ColorMapRanges;
 
-extern gPort        backPort;
-
 /* ===================================================================== *
    Exports
  * ===================================================================== */

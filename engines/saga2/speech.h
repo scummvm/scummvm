@@ -36,7 +36,6 @@ namespace Saga2 {
 #define CHARSPERSECOND  22
 #define SHORTEST_DURATION   TICKSPERSECOND
 
-extern  gPort       backPort;
 void    TileToScreenCoords(const TilePoint &tp, Point16 &p);
 void    TileToScreenCoords(const TilePoint &tp, StaticPoint16 &p);
 void    updateSpeech();

@@ -47,7 +47,6 @@ extern int16        currentMapNum;
 extern WorldMapData *mapList;
 
 extern StaticPoint16 fineScroll;
-extern gPort        backPort;
 
 extern SpriteSet    *objectSprites,        // object sprites
                     *spellSprites;        // spell effect sprites
@@ -771,7 +770,7 @@ void DisplayNode::drawObject(void) {
 	effectFlags |= sprFXTerrainMask;
 
 	DrawCompositeMaskedSprite(
-	    backPort,
+	    g_vm->_backPort,
 	    scList,
 	    partCount,
 	    drawPos,
@@ -802,7 +801,7 @@ void DisplayNode::drawObject(void) {
 		indicatorCoords.x = hitBox.x + fineScroll.x + (hitBox.width - indicator.size.x) / 2;
 		indicatorCoords.y = hitBox.y + fineScroll.y - indicator.size.y - 2;
 
-		TBlit(backPort.map, &indicator, indicatorCoords.x, indicatorCoords.y);
+		TBlit(g_vm->_backPort.map, &indicator, indicatorCoords.x, indicatorCoords.y);
 	}
 }
 
@@ -1000,7 +999,7 @@ void Effectron::drawEffect(void) {
 	                                  0) <= 5);
 
 	DrawCompositeMaskedSprite(
-	    backPort,
+	    g_vm->_backPort,
 	    scList,
 	    1,
 	    drawPos,

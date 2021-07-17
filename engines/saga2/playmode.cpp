@@ -111,12 +111,6 @@ GameMode            PlayMode = {
 Alarm               frameAlarm;             // 10 fps frame rate
 
 /* ===================================================================== *
-   Display setup (move to another file later)
- * ===================================================================== */
-
-gPort               backPort;               // background port
-
-/* ===================================================================== *
    User controls
  * ===================================================================== */
 
@@ -178,7 +172,7 @@ void PlayModeSetup(void) {
 	}
 
 	//  Setup the drawing port for the background map
-	backPort.setMap(&tileDrawMap);
+	g_vm->_backPort.setMap(&tileDrawMap);
 
 	//  Allocate bitmap for drag & drop mouse pointer
 	objPointerMap.size.x = objPointerMap.size.y = 32;
