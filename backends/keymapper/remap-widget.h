@@ -96,8 +96,8 @@ protected:
 
 	Array<ActionRow> _actions;
 	HashMap<Keymap *, KeymapTitleRow> _keymapSeparators;
-};
+    };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef REMAP_WIDGET_H
