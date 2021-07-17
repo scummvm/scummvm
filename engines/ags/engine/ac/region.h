@@ -28,6 +28,7 @@
 namespace AGS3 {
 
 ScriptRegion *GetRegionAtRoom(int xx, int yy);
+ScriptRegion *GetRegionAtScreen(int x, int y);
 void    Region_SetLightLevel(ScriptRegion *ssr, int brightness);
 int     Region_GetLightLevel(ScriptRegion *ssr);
 int     Region_GetTintEnabled(ScriptRegion *srr);
@@ -43,6 +44,7 @@ int     Region_GetID(ScriptRegion *ssr);
 void    Region_RunInteraction(ScriptRegion *ssr, int mood);
 
 void    generate_light_table();
+void    Region_TintNoLum(ScriptRegion *srr, int red, int green, int blue, int amount);
 
 } // namespace AGS3
 

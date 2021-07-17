@@ -33,7 +33,17 @@ class ViewFrame : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void GetFlipped(ScriptMethodParams &params);
+	static void GetFrame(ScriptMethodParams &params);
+	static void GetGraphic(ScriptMethodParams &params);
+	static void SetGraphic(ScriptMethodParams &params);
+	static void GetLinkedAudio(ScriptMethodParams &params);
+	static void SetLinkedAudio(ScriptMethodParams &params);
+	static void GetLoop(ScriptMethodParams &params);
+	static void GetSound(ScriptMethodParams &params);
+	static void SetSound(ScriptMethodParams &params);
+	static void GetSpeed(ScriptMethodParams &params);
+	static void GetView(ScriptMethodParams &params);
 };
 
 } // namespace Core

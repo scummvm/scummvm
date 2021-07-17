@@ -28,6 +28,72 @@ namespace Plugins {
 namespace Core {
 
 void ViewFrame::AGS_EngineStartup(IAGSEngine *engine) {
+	SCRIPT_METHOD_EXT(ViewFrame::get_Flipped, GetFlipped);
+	SCRIPT_METHOD_EXT(ViewFrame::get_Frame, GetFrame);
+	SCRIPT_METHOD_EXT(ViewFrame::get_Graphic, GetGraphic);
+	SCRIPT_METHOD_EXT(ViewFrame::set_Graphic, SetGraphic);
+	SCRIPT_METHOD_EXT(ViewFrame::get_LinkedAudio, GetLinkedAudio);
+	SCRIPT_METHOD_EXT(ViewFrame::set_LinkedAudio, SetLinkedAudio);
+	SCRIPT_METHOD_EXT(ViewFrame::get_Loop, GetLoop);
+	SCRIPT_METHOD_EXT(ViewFrame::get_Sound, GetSound);
+	SCRIPT_METHOD_EXT(ViewFrame::set_Sound, SetSound);
+	SCRIPT_METHOD_EXT(ViewFrame::get_Speed, GetSpeed);
+	SCRIPT_METHOD_EXT(ViewFrame::get_View, GetView);
+}
+
+void ViewFrame::GetFlipped(ScriptMethodParams &params) {
+	PARAMS1(ScriptViewFrame *, svf);
+	params._result = AGS3::ViewFrame_GetFlipped(svf);
+}
+
+void ViewFrame::GetFrame(ScriptMethodParams &params) {
+	PARAMS1(ScriptViewFrame *, svf);
+	params._result = AGS3::ViewFrame_GetFrame(svf);
+}
+
+void ViewFrame::GetGraphic(ScriptMethodParams &params) {
+	PARAMS1(ScriptViewFrame *, svf);
+	params._result = AGS3::ViewFrame_GetGraphic(svf);
+}
+
+void ViewFrame::SetGraphic(ScriptMethodParams &params) {
+	PARAMS2(ScriptViewFrame *, svf, int, newPic);
+	AGS3::ViewFrame_SetGraphic(svf, newPic);
+}
+
+void ViewFrame::GetLinkedAudio(ScriptMethodParams &params) {
+	PARAMS1(ScriptViewFrame *, svf);
+	params._result = AGS3::ViewFrame_GetLinkedAudio(svf);
+}
+
+void ViewFrame::SetLinkedAudio(ScriptMethodParams &params) {
+	PARAMS2(ScriptViewFrame *, svf, ScriptAudioClip *, clip);
+	AGS3::ViewFrame_SetLinkedAudio(svf, clip);
+}
+
+void ViewFrame::GetLoop(ScriptMethodParams &params) {
+	PARAMS1(ScriptViewFrame *, svf);
+	params._result = AGS3::ViewFrame_GetLoop(svf);
+}
+
+void ViewFrame::GetSound(ScriptMethodParams &params) {
+	PARAMS1(ScriptViewFrame *, svf);
+	params._result = AGS3::ViewFrame_GetSound(svf);
+}
+
+void ViewFrame::SetSound(ScriptMethodParams &params) {
+	PARAMS2(ScriptViewFrame *, svf, int, newSound);
+	AGS3::ViewFrame_SetSound(svf, newSound);
+}
+
+void ViewFrame::GetSpeed(ScriptMethodParams &params) {
+	PARAMS1(ScriptViewFrame *, svf);
+	params._result = AGS3::ViewFrame_GetSpeed(svf);
+}
+
+void ViewFrame::GetView(ScriptMethodParams &params) {
+	PARAMS1(ScriptViewFrame *, svf);
+	params._result = AGS3::ViewFrame_GetView(svf);
 }
 
 } // namespace Core

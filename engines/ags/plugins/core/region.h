@@ -33,7 +33,20 @@ class Region : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void GetRegionAtRoom(ScriptMethodParams &params);
+	static void GetRegionAtScreen(ScriptMethodParams &params);
+	static void TintNoLum(ScriptMethodParams &params);
+	static void RunInteraction(ScriptMethodParams &params);
+	static void GetEnabled(ScriptMethodParams &params);
+	static void SetEnabled(ScriptMethodParams &params);
+	static void GetID(ScriptMethodParams &params);
+	static void GetLightLevel(ScriptMethodParams &params);
+	static void SetLightLevel(ScriptMethodParams &params);
+	static void GetTintEnabled(ScriptMethodParams &params);
+	static void GetTintBlue(ScriptMethodParams &params);
+	static void GetTintGreen(ScriptMethodParams &params);
+	static void GetTintRed(ScriptMethodParams &params);
+	static void GetTintSaturation(ScriptMethodParams &params);
 };
 
 } // namespace Core

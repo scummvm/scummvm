@@ -33,7 +33,19 @@ class Room : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void GetDrawingSurfaceForBackground(ScriptMethodParams &params);
+	static void GetProperty(ScriptMethodParams &params);
+	static void GetTextProperty(ScriptMethodParams &params);
+	static void GetBottomEdge(ScriptMethodParams &params);
+	static void GetColorDepth(ScriptMethodParams &params);
+	static void GetHeight(ScriptMethodParams &params);
+	static void GetLeftEdge(ScriptMethodParams &params);
+	static void GetMessages(ScriptMethodParams &params);
+	static void GetMusicOnLoad(ScriptMethodParams &params);
+	static void GetObjectCount(ScriptMethodParams &params);
+	static void GetRightEdge(ScriptMethodParams &params);
+	static void GetTopEdge(ScriptMethodParams &params);
+	static void GetWidth(ScriptMethodParams &params);
 };
 
 } // namespace Core

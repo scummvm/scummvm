@@ -33,7 +33,15 @@ class Overlay : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void CreateGraphical(ScriptMethodParams &params);
+	static void ScPl_CreateTextual(ScriptMethodParams &params);
+	static void ScPl_SetText(ScriptMethodParams &params);
+	static void Remove(ScriptMethodParams &params);
+	static void GetValid(ScriptMethodParams &params);
+	static void GetX(ScriptMethodParams &params);
+	static void SetX(ScriptMethodParams &params);
+	static void GetY(ScriptMethodParams &params);
+	static void SetY(ScriptMethodParams &params);
 };
 
 } // namespace Core

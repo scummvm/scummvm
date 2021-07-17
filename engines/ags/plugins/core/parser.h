@@ -33,7 +33,10 @@ class Parser : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void FindWordID(ScriptMethodParams &params);
+	static void ParseText(ScriptMethodParams &params);
+	static void SaidUnknownWord(ScriptMethodParams &params);
+	static void Said(ScriptMethodParams &params);
 };
 
 } // namespace Core

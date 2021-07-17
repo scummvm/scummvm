@@ -33,7 +33,18 @@ class Slider : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void GetBackgroundGraphic(ScriptMethodParams &params);
+	static void SetBackgroundGraphic(ScriptMethodParams &params);
+	static void GetHandleGraphic(ScriptMethodParams &params);
+	static void SetHandleGraphic(ScriptMethodParams &params);
+	static void GetHandleOffset(ScriptMethodParams &params);
+	static void SetHandleOffset(ScriptMethodParams &params);
+	static void GetMax(ScriptMethodParams &params);
+	static void SetMax(ScriptMethodParams &params);
+	static void GetMin(ScriptMethodParams &params);
+	static void SetMin(ScriptMethodParams &params);
+	static void GetValue(ScriptMethodParams &params);
+	static void SetValue(ScriptMethodParams &params);
 };
 
 } // namespace Core

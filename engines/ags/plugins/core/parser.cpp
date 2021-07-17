@@ -28,6 +28,29 @@ namespace Plugins {
 namespace Core {
 
 void Parser::AGS_EngineStartup(IAGSEngine *engine) {
+	SCRIPT_METHOD_EXT(Parser::FindWordID^1, FindWordID);
+	SCRIPT_METHOD_EXT(Parser::ParseText^1, ParseText);
+	SCRIPT_METHOD_EXT(Parser::SaidUnknownWord^0, SaidUnknownWord);
+	SCRIPT_METHOD_EXT(Parser::Said^1, Said);
+}
+
+void Parser::FindWordID(ScriptMethodParams &params) {
+	PARAMS1(const char *, wordToFind);
+	params._result = AGS3::Parser_FindWordID(wordToFind);
+}
+
+void Parser::ParseText(ScriptMethodParams &params) {
+	PARAMS1(const char *, text);
+	AGS3::Parser_FindWordID(text);
+}
+
+void Parser::SaidUnknownWord(ScriptMethodParams &params) {
+	AGS3::Parser_SaidUnknownWord();
+}
+
+void Parser::Said(ScriptMethodParams &params) {
+	PARAMS1(const char *, checkWords);
+	params._result = AGS3::Parser_FindWordID(checkWords);
 }
 
 } // namespace Core

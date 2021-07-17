@@ -336,12 +336,6 @@ RuntimeScriptValue Sc_Overlay_SetY(void *self, const RuntimeScriptValue *params,
 //
 //=============================================================================
 
-// ScriptOverlay* (int x, int y, int width, int font, int colour, const char* text, ...)
-ScriptOverlay *ScPl_Overlay_CreateTextual(int x, int y, int width, int font, int colour, const char *text, ...) {
-	API_PLUGIN_SCRIPT_SPRINTF(text);
-	return Overlay_CreateTextual(x, y, width, font, colour, scsf_buffer);
-}
-
 // void (ScriptOverlay *scover, int wii, int fontid, int clr, char*texx, ...)
 void ScPl_Overlay_SetText(ScriptOverlay *scover, int wii, int fontid, int clr, char *texx, ...) {
 	API_PLUGIN_SCRIPT_SPRINTF(texx);
@@ -359,18 +353,6 @@ void RegisterOverlayAPI() {
 	ccAddExternalObjectFunction("Overlay::set_X", Sc_Overlay_SetX);
 	ccAddExternalObjectFunction("Overlay::get_Y", Sc_Overlay_GetY);
 	ccAddExternalObjectFunction("Overlay::set_Y", Sc_Overlay_SetY);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("Overlay::CreateGraphical^4", (void *)Overlay_CreateGraphical);
-	ccAddExternalFunctionForPlugin("Overlay::CreateTextual^106", (void *)ScPl_Overlay_CreateTextual);
-	ccAddExternalFunctionForPlugin("Overlay::SetText^104", (void *)ScPl_Overlay_SetText);
-	ccAddExternalFunctionForPlugin("Overlay::Remove^0", (void *)Overlay_Remove);
-	ccAddExternalFunctionForPlugin("Overlay::get_Valid", (void *)Overlay_GetValid);
-	ccAddExternalFunctionForPlugin("Overlay::get_X", (void *)Overlay_GetX);
-	ccAddExternalFunctionForPlugin("Overlay::set_X", (void *)Overlay_SetX);
-	ccAddExternalFunctionForPlugin("Overlay::get_Y", (void *)Overlay_GetY);
-	ccAddExternalFunctionForPlugin("Overlay::set_Y", (void *)Overlay_SetY);
 }
 
 } // namespace AGS3

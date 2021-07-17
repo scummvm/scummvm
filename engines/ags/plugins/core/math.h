@@ -33,7 +33,24 @@ class Math : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void ArcCos(ScriptMethodParams &params);
+	static void ArcSin(ScriptMethodParams &params);
+	static void ArcTan(ScriptMethodParams &params);
+	static void ArcTan2(ScriptMethodParams &params);
+	static void Cos(ScriptMethodParams &params);
+	static void Cosh(ScriptMethodParams &params);
+	static void DegreesToRadians(ScriptMethodParams &params);
+	static void Exp(ScriptMethodParams &params);
+	static void Log(ScriptMethodParams &params);
+	static void Log10(ScriptMethodParams &params);
+	static void RadiansToDegrees(ScriptMethodParams &params);
+	static void RaiseToPower(ScriptMethodParams &params);
+	static void Sin(ScriptMethodParams &params);
+	static void Sinh(ScriptMethodParams &params);
+	static void Sqrt(ScriptMethodParams &params);
+	static void Tan(ScriptMethodParams &params);
+	static void Tanh(ScriptMethodParams &params);
+	static void GetPi(ScriptMethodParams &params);
 };
 
 } // namespace Core

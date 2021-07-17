@@ -33,7 +33,28 @@ class System : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void GetAudioChannelCount(ScriptMethodParams &params);
+	static void GetAudioChannels(ScriptMethodParams &params);
+	static void GetCapsLock(ScriptMethodParams &params);
+	static void GetColorDepth(ScriptMethodParams &params);
+	static void GetGamma(ScriptMethodParams &params);
+	static void SetGamma(ScriptMethodParams &params);
+	static void GetHardwareAcceleration(ScriptMethodParams &params);
+	static void GetNumLock(ScriptMethodParams &params);
+	static void GetOS(ScriptMethodParams &params);
+	static void GetRuntimeInfo(ScriptMethodParams &params);
+	static void GetScreenHeight(ScriptMethodParams &params);
+	static void GetScreenWidth(ScriptMethodParams &params);
+	static void GetScrollLock(ScriptMethodParams &params);
+	static void GetSupportsGammaControl(ScriptMethodParams &params);
+	static void GetVersion(ScriptMethodParams &params);
+	static void GetViewportHeight(ScriptMethodParams &params);
+	static void GetViewportWidth(ScriptMethodParams &params);
+	static void GetVolume(ScriptMethodParams &params);
+	static void SetVolume(ScriptMethodParams &params);
+	static void GetVsync(ScriptMethodParams &params);
+	static void SetVsync(ScriptMethodParams &params);
+	static void GetWindowed(ScriptMethodParams &params);
 };
 
 } // namespace Core

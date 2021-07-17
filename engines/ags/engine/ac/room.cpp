@@ -1177,22 +1177,6 @@ void RegisterRoomAPI() {
 	ccAddExternalStaticFunction("Room::get_RightEdge",                      Sc_Room_GetRightEdge);
 	ccAddExternalStaticFunction("Room::get_TopEdge",                        Sc_Room_GetTopEdge);
 	ccAddExternalStaticFunction("Room::get_Width",                          Sc_Room_GetWidth);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("Room::GetDrawingSurfaceForBackground^1", (void *)Room_GetDrawingSurfaceForBackground);
-	ccAddExternalFunctionForPlugin("Room::GetProperty^1", (void *)Room_GetProperty);
-	ccAddExternalFunctionForPlugin("Room::GetTextProperty^1", (void *)Room_GetTextProperty);
-	ccAddExternalFunctionForPlugin("Room::get_BottomEdge", (void *)Room_GetBottomEdge);
-	ccAddExternalFunctionForPlugin("Room::get_ColorDepth", (void *)Room_GetColorDepth);
-	ccAddExternalFunctionForPlugin("Room::get_Height", (void *)Room_GetHeight);
-	ccAddExternalFunctionForPlugin("Room::get_LeftEdge", (void *)Room_GetLeftEdge);
-	ccAddExternalFunctionForPlugin("Room::geti_Messages", (void *)Room_GetMessages);
-	ccAddExternalFunctionForPlugin("Room::get_MusicOnLoad", (void *)Room_GetMusicOnLoad);
-	ccAddExternalFunctionForPlugin("Room::get_ObjectCount", (void *)Room_GetObjectCount);
-	ccAddExternalFunctionForPlugin("Room::get_RightEdge", (void *)Room_GetRightEdge);
-	ccAddExternalFunctionForPlugin("Room::get_TopEdge", (void *)Room_GetTopEdge);
-	ccAddExternalFunctionForPlugin("Room::get_Width", (void *)Room_GetWidth);
 }
 
 } // namespace AGS3

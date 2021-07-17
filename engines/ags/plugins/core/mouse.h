@@ -33,7 +33,26 @@ class Mouse : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void ChangeCursorGraphic(ScriptMethodParams &params);
+	static void ChangeCursorHotspot(ScriptMethodParams &params);
+	static void Mouse_ChangeModeView(ScriptMethodParams &params);
+	static void disable_cursor_mode(ScriptMethodParams &params);
+	static void enable_cursor_mode(ScriptMethodParams &params);
+	static void Mouse_GetModeGraphic(ScriptMethodParams &params);
+	static void IsButtonDown(ScriptMethodParams &params);
+	static void IsModeEnabled(ScriptMethodParams &params);
+	static void SaveCursorForLocationChange(ScriptMethodParams &params);
+	static void SetNextCursor(ScriptMethodParams &params);
+	static void SetPreviousCursor(ScriptMethodParams &params);
+	static void SetMouseBounds(ScriptMethodParams &params);
+	static void SetMousePosition(ScriptMethodParams &params);
+	static void RefreshMouse(ScriptMethodParams &params);
+	static void set_default_cursor(ScriptMethodParams &params);
+	static void set_mouse_cursor(ScriptMethodParams &params);
+	static void GetCursorMode(ScriptMethodParams &params);
+	static void set_cursor_mode(ScriptMethodParams &params);
+	static void Mouse_GetVisible(ScriptMethodParams &params);
+	static void Mouse_SetVisible(ScriptMethodParams &params);
 };
 
 } // namespace Core

@@ -33,7 +33,25 @@ class String : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void IsNullOrEmpty(ScriptMethodParams &params);
+	static void Append(ScriptMethodParams &params);
+	static void AppendChar(ScriptMethodParams &params);
+	static void CompareTo(ScriptMethodParams &params);
+	static void StrContains(ScriptMethodParams &params);
+	static void Copy(ScriptMethodParams &params);
+	static void EndsWith(ScriptMethodParams &params);
+	static void ScPl_String_Format(ScriptMethodParams &params);
+	static void LowerCase(ScriptMethodParams &params);
+	static void Replace(ScriptMethodParams &params);
+	static void ReplaceCharAt(ScriptMethodParams &params);
+	static void StartsWith(ScriptMethodParams &params);
+	static void Substring(ScriptMethodParams &params);
+	static void Truncate(ScriptMethodParams &params);
+	static void UpperCase(ScriptMethodParams &params);
+	static void StringToFloat(ScriptMethodParams &params);
+	static void StringToInt(ScriptMethodParams &params);
+	static void GetChars(ScriptMethodParams &params);
+	static void strlen(ScriptMethodParams &params);
 };
 
 } // namespace Core

@@ -250,20 +250,6 @@ void RegisterViewFrameAPI() {
 	ccAddExternalObjectFunction("ViewFrame::set_Sound", Sc_ViewFrame_SetSound);
 	ccAddExternalObjectFunction("ViewFrame::get_Speed", Sc_ViewFrame_GetSpeed);
 	ccAddExternalObjectFunction("ViewFrame::get_View", Sc_ViewFrame_GetView);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("ViewFrame::get_Flipped", (void *)ViewFrame_GetFlipped);
-	ccAddExternalFunctionForPlugin("ViewFrame::get_Frame", (void *)ViewFrame_GetFrame);
-	ccAddExternalFunctionForPlugin("ViewFrame::get_Graphic", (void *)ViewFrame_GetGraphic);
-	ccAddExternalFunctionForPlugin("ViewFrame::set_Graphic", (void *)ViewFrame_SetGraphic);
-	ccAddExternalFunctionForPlugin("ViewFrame::get_LinkedAudio", (void *)ViewFrame_GetLinkedAudio);
-	ccAddExternalFunctionForPlugin("ViewFrame::set_LinkedAudio", (void *)ViewFrame_SetLinkedAudio);
-	ccAddExternalFunctionForPlugin("ViewFrame::get_Loop", (void *)ViewFrame_GetLoop);
-	ccAddExternalFunctionForPlugin("ViewFrame::get_Sound", (void *)ViewFrame_GetSound);
-	ccAddExternalFunctionForPlugin("ViewFrame::set_Sound", (void *)ViewFrame_SetSound);
-	ccAddExternalFunctionForPlugin("ViewFrame::get_Speed", (void *)ViewFrame_GetSpeed);
-	ccAddExternalFunctionForPlugin("ViewFrame::get_View", (void *)ViewFrame_GetView);
 }
 
 } // namespace AGS3

@@ -432,13 +432,6 @@ RuntimeScriptValue Sc_strlen(void *self, const RuntimeScriptValue *params, int32
 //
 //=============================================================================
 
-// const char* (const char *texx, ...)
-const char *ScPl_String_Format(const char *texx, ...) {
-	API_PLUGIN_SCRIPT_SPRINTF(texx);
-	return CreateNewScriptString(scsf_buffer);
-}
-
-
 void RegisterStringAPI() {
 	ccAddExternalStaticFunction("String::IsNullOrEmpty^1", Sc_String_IsNullOrEmpty);
 	ccAddExternalObjectFunction("String::Append^1", Sc_String_Append);
@@ -460,29 +453,6 @@ void RegisterStringAPI() {
 	ccAddExternalObjectFunction("String::get_AsInt", Sc_StringToInt);
 	ccAddExternalObjectFunction("String::geti_Chars", Sc_String_GetChars);
 	ccAddExternalObjectFunction("String::get_Length", Sc_strlen);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("String::IsNullOrEmpty^1", (void *)String_IsNullOrEmpty);
-	ccAddExternalFunctionForPlugin("String::Append^1", (void *)String_Append);
-	ccAddExternalFunctionForPlugin("String::AppendChar^1", (void *)String_AppendChar);
-	ccAddExternalFunctionForPlugin("String::CompareTo^2", (void *)String_CompareTo);
-	ccAddExternalFunctionForPlugin("String::Contains^1", (void *)StrContains);
-	ccAddExternalFunctionForPlugin("String::Copy^0", (void *)String_Copy);
-	ccAddExternalFunctionForPlugin("String::EndsWith^2", (void *)String_EndsWith);
-	ccAddExternalFunctionForPlugin("String::Format^101", (void *)ScPl_String_Format);
-	ccAddExternalFunctionForPlugin("String::IndexOf^1", (void *)StrContains);
-	ccAddExternalFunctionForPlugin("String::LowerCase^0", (void *)String_LowerCase);
-	ccAddExternalFunctionForPlugin("String::Replace^3", (void *)String_Replace);
-	ccAddExternalFunctionForPlugin("String::ReplaceCharAt^2", (void *)String_ReplaceCharAt);
-	ccAddExternalFunctionForPlugin("String::StartsWith^2", (void *)String_StartsWith);
-	ccAddExternalFunctionForPlugin("String::Substring^2", (void *)String_Substring);
-	ccAddExternalFunctionForPlugin("String::Truncate^1", (void *)String_Truncate);
-	ccAddExternalFunctionForPlugin("String::UpperCase^0", (void *)String_UpperCase);
-	ccAddExternalFunctionForPlugin("String::get_AsFloat", (void *)StringToFloat);
-	ccAddExternalFunctionForPlugin("String::get_AsInt", (void *)StringToInt);
-	ccAddExternalFunctionForPlugin("String::geti_Chars", (void *)String_GetChars);
-	ccAddExternalFunctionForPlugin("String::get_Length", (void *)strlen);
 }
 
 } // namespace AGS3

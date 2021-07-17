@@ -268,27 +268,6 @@ void RegisterMathAPI() {
 	ccAddExternalStaticFunction("Maths::Tan^1", Sc_Math_Tan);
 	ccAddExternalStaticFunction("Maths::Tanh^1", Sc_Math_Tanh);
 	ccAddExternalStaticFunction("Maths::get_Pi", Sc_Math_GetPi);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("Maths::ArcCos^1", (void *)Math_ArcCos);
-	ccAddExternalFunctionForPlugin("Maths::ArcSin^1", (void *)Math_ArcSin);
-	ccAddExternalFunctionForPlugin("Maths::ArcTan^1", (void *)Math_ArcTan);
-	ccAddExternalFunctionForPlugin("Maths::ArcTan2^2", (void *)Math_ArcTan2);
-	ccAddExternalFunctionForPlugin("Maths::Cos^1", (void *)Math_Cos);
-	ccAddExternalFunctionForPlugin("Maths::Cosh^1", (void *)Math_Cosh);
-	ccAddExternalFunctionForPlugin("Maths::DegreesToRadians^1", (void *)Math_DegreesToRadians);
-	ccAddExternalFunctionForPlugin("Maths::Exp^1", (void *)Math_Exp);
-	ccAddExternalFunctionForPlugin("Maths::Log^1", (void *)Math_Log);
-	ccAddExternalFunctionForPlugin("Maths::Log10^1", (void *)Math_Log10);
-	ccAddExternalFunctionForPlugin("Maths::RadiansToDegrees^1", (void *)Math_RadiansToDegrees);
-	ccAddExternalFunctionForPlugin("Maths::RaiseToPower^2", (void *)Math_RaiseToPower);
-	ccAddExternalFunctionForPlugin("Maths::Sin^1", (void *)Math_Sin);
-	ccAddExternalFunctionForPlugin("Maths::Sinh^1", (void *)Math_Sinh);
-	ccAddExternalFunctionForPlugin("Maths::Sqrt^1", (void *)Math_Sqrt);
-	ccAddExternalFunctionForPlugin("Maths::Tan^1", (void *)Math_Tan);
-	ccAddExternalFunctionForPlugin("Maths::Tanh^1", (void *)Math_Tanh);
-	ccAddExternalFunctionForPlugin("Maths::get_Pi", (void *)Math_GetPi);
 }
 
 } // namespace AGS3

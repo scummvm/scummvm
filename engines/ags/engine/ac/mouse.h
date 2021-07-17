@@ -41,10 +41,12 @@ void Mouse_ChangeModeView(int curs, int newview);
 void SetMousePosition(int newx, int newy);
 int GetCursorMode();
 void SetNextCursor();
+void SetPreviousCursor();
 // permanently change cursor graphic
 void ChangeCursorGraphic(int curs, int newslot);
 void ChangeCursorHotspot(int curs, int x, int y);
 int IsButtonDown(int which);
+int IsModeEnabled(int which);
 void SetMouseBounds(int x1, int y1, int x2, int y2);
 void RefreshMouse();
 // mouse cursor functions:
