@@ -29,7 +29,7 @@ def makesis(pkg, path):
    print "pkg: %s" %pkg
    cmd = subprocess.Popen("makesis -v %s" %pkg, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=path, shell=True)
    out, err = cmd.communicate()
-   #After cmd.communicate() we have ugly 'crcrlf' line endings
+   # After cmd.communicate() we have ugly 'crcrlf' line endings.
    AppendToFile(build_log, out.replace(u"\r", u""))
    AppendToFile(build_err, err.replace(u"\r", u""))
 
