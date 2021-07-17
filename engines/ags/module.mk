@@ -299,6 +299,25 @@ MODULE_OBJS = \
 	plugins/core/file.o \
 	plugins/core/game.o \
 	plugins/core/global_api.o \
+	plugins/core/gui.o \
+	plugins/core/gui_control.o \
+	plugins/core/hotspot.o \
+	plugins/core/inventory_item.o \
+	plugins/core/inv_window.o \
+	plugins/core/label.o \
+	plugins/core/listbox.o \
+	plugins/core/math.o \
+	plugins/core/mouse.o \
+	plugins/core/object.o \
+	plugins/core/overlay.o \
+	plugins/core/parser.o \
+	plugins/core/region.o \
+	plugins/core/room.o \
+	plugins/core/slider.o \
+	plugins/core/string.o \
+	plugins/core/system.o \
+	plugins/core/textbox.o \
+	plugins/core/view_frame.o \
 	plugins/ags_agi/ags_agi.o \
 	plugins/ags_blend/ags_blend.o \
 	plugins/ags_clipboard/ags_clipboard.o \
