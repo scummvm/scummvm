@@ -39,7 +39,6 @@ public:
 	TUid AppDllUid() const;
 };
 
-
 #include <eikdoc.h>
 
 class CScummVMDoc : public CEikDocument {

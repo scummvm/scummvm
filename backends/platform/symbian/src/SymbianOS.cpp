@@ -31,7 +31,7 @@
 #include <eikenv.h> // for CEikonEnv::Static()
 
 #if (__GNUC__ && __cplusplus)
-//If a pop has no matching push, the command-line options are restored.
+// If a pop has no matching push, the command-line options are restored.
 #pragma GCC diagnostic pop
 #endif
 
@@ -57,10 +57,10 @@
 ////////// extern "C" ///////////////////////////////////////////////////
 namespace Symbian {
 
-// make this easily available everywhere
+// Make this easily available everywhere.
 char *GetExecutablePath() {
 	return CSDLApp::GetExecutablePathCStr();
-}
+    }
 
 } // namespace Symbian {
 
@@ -77,13 +77,13 @@ void OSystem_SDL_Symbian::init() {
 }
 
 void OSystem_SDL_Symbian::initBackend() {
-	// Calculate the default savepath
+	// Calculate the default savepath.
 	Common::String savePath;
 	savePath = Symbian::GetExecutablePath();
 	savePath += DEFAULT_SAVE_PATH "\\";
 	_savefileManager = new DefaultSaveFileManager(savePath);
 
-	// If savepath has not already been set then set it
+	// If savepath has not already been set then set it.
 	if (!ConfMan.hasKey("savepath")) {
 		ConfMan.set("savepath", savePath);
 	}
@@ -104,7 +104,7 @@ void OSystem_SDL_Symbian::initBackend() {
 	if (!ConfMan.hasKey("debuglevel"))
 		printf("debuglevel not set!\n");
 #endif
-	// Ensure that the current set path (might have been altered by the user) exists
+	// Ensure that the current set path (might have been altered by the user) exists.
 	Common::String currentPath = ConfMan.get("savepath");
 	TFileName fname;
 	TPtrC8 ptr((const unsigned char*)currentPath.c_str(), currentPath.size());
@@ -112,25 +112,24 @@ void OSystem_SDL_Symbian::initBackend() {
 	BaflUtils::EnsurePathExistsL(FsSession(), fname);
 
 	ConfMan.setBool("FM_high_quality", false);
-#if !defined(S60) || defined(S60V3) // S60 has low quality as default
+#if !defined(S60) || defined(S60V3) // S60 has low quality as default.
 	ConfMan.setBool("FM_medium_quality", true);
 #else
 	ConfMan.setBool("FM_medium_quality", false);
 #endif
 	// Symbian OS  should have joystick_num set to 0 in the ini file,
-	// but uiq devices might refuse opening the joystick
+	// but uiq devices might refuse opening the joystick.
 	ConfMan.setInt("joystick_num", 0);
 	ConfMan.setBool("fullscreen", true);
 	ConfMan.flushToDisk();
 
 	if (_mixerManager == nullptr) {
 		_mixerManager = new SymbianSdlMixerManager();
-
-		// Setup and start mixer
+		// Setup and start mixer.
 		_mixerManager->init();
 	}
 
-	// Call parent implementation of this method
+	// Call parent implementation of this method.
 	OSystem_SDL::initBackend();
 }
 
@@ -168,10 +167,9 @@ Common::KeymapperDefaultBindings *OSystem_SDL_Symbian::getKeymapperDefaultBindin
 	return keymapperDefaultBindings;
 }
 
-
-// Symbian bsearch implementation is flawed
+// Symbian bsearch implementation is flawed.
 void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
-	// Perform binary search
+	// Perform binary search.
 	size_t lo = 0;
 	size_t hi = nmemb;
 	while (lo < hi) {

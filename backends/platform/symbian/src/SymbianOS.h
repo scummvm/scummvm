@@ -31,7 +31,7 @@ class OSystem_SDL_Symbian : public OSystem_SDL {
 public:
 	OSystem_SDL_Symbian();
 
-	// Override from OSystem_SDL
+	// Override from OSystem_SDL.
 	virtual void init() override;
 	virtual void initBackend() override;
 	virtual Common::String getDefaultConfigFileName() override;

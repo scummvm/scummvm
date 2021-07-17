@@ -94,10 +94,10 @@ void CScummVMUi::ConstructL() {
 	CleanupClosePushL(lsSession);
 	lsSession.StartApp(*cmdLine, iThreadId);
 
-	CleanupStack::PopAndDestroy();//close lsSession
+	CleanupStack::PopAndDestroy(); // Close lsSession.
 	CleanupStack::PopAndDestroy(cmdLine);
 
-	User::After(500000);// Let the application start
+	User::After(500000); // Let the application start.
 
 	TApaTaskList taskList(iEikonEnv->WsSession());
 
@@ -109,7 +109,7 @@ void CScummVMUi::ConstructL() {
 	iExeWgId=exeTask.WgId();
 	exeTask.BringToForeground();
 
-	if (iExeWgId == myTask.WgId()) { // Should n't be the same
+	if (iExeWgId == myTask.WgId()) { // Should n't be the same.
 		Exit();
 	}
 	if (iThreadWatch.Open(iThreadId) == KErrNone) {
