@@ -187,7 +187,7 @@ protected:
 #elif defined(_WIN32)
 		96.0f;
 #else
-		90.0f; // ScummVM default
+		90.0f; // ScummVM default.
 #endif
 		if (defaultDpi)
 			*defaultDpi = systemDpi;
@@ -204,7 +204,7 @@ protected:
 	}
 
 	/**
-	 * Returns the scaling mode based on the display DPI
+	 * Returns the scaling mode based on the display DPI.
 	 */
 	void getDpiScalingFactor(uint *scale) const {
 		float dpi, defaultDpi, ratio;
