@@ -74,7 +74,8 @@ int main(int argc, char *argv[]) {
 #endif
 	}
 	setbuf(stderr, NULL);	/** No buffering. */
-
+	printf("%s\n", "Debug: STDOUT and STDERR redirected to text files.");
+	
 	// Create our OSystem instance.
 	g_system = new OSystem_SDL_Symbian();
 	assert(g_system);
