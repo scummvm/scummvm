@@ -132,6 +132,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("GameMapGump::stopHighlightItems", WRAP_METHOD(Debugger, cmdStopHighlightItems));
 	registerCmd("GameMapGump::toggleHighlightItems", WRAP_METHOD(Debugger, cmdToggleHighlightItems));
 	registerCmd("GameMapGump::dumpMap", WRAP_METHOD(Debugger, cmdDumpMap));
+	registerCmd("GameMapGump::dumpAllMaps", WRAP_METHOD(Debugger, cmdDumpAllMaps));
 	registerCmd("GameMapGump::incrementSortOrder", WRAP_METHOD(Debugger, cmdIncrementSortOrder));
 	registerCmd("GameMapGump::decrementSortOrder", WRAP_METHOD(Debugger, cmdDecrementSortOrder));
 
@@ -654,46 +655,33 @@ bool Debugger::cmdToggleHighlightItems(int argc, const char **argv) {
 	return false;
 }
 
-bool Debugger::cmdDumpMap(int argc, const char **argv) {
-	// Save because we're going to potentially break the game by enlarging
-	// the fast area and available object IDs.
-	int slot = Ultima8Engine::get_instance()->getAutosaveSlot();
-	if (!Ultima8Engine::get_instance()->saveGame(slot, "Pre-dumpMap save")) {
-		debugPrintf("Could not dump map: pre-dumpMap save failed\n");
-		return false;
-	}
-
+void Debugger::dumpCurrentMap() {
 	// Increase number of available object IDs.
 	ObjectManager::get_instance()->allow64kObjects();
 
-	// Actual size
-	int32 awidth = 8192;
-	int32 aheight = 8192;
-
-	int32 xpos = 0;
-	int32 ypos = 0;
-
+	// top/bottom/left/right render coordinates
 	int32 left = 16384;
 	int32 right = -16384;
 	int32 top = 16384;
 	int32 bot = -16384;
 
-	int32 camheight = 256;
+	const int32 camheight = 256;
+	const CurrentMap *curmap = World::get_instance()->getCurrentMap();
+	const int32 chunksize = curmap->getChunkSize();
 
-	// Work out the map limit we do this very coarsly
-	// Now render the map
-	for (int32 y = 0; y < 64; y++) {
-		for (int32 x = 0; x < 64; x++) {
-			const Std::list<Item *> *list =
-				World::get_instance()->getCurrentMap()->getItemList(x, y);
+	// Work out the map limits in chunks
+	for (int32 y = 0; y < MAP_NUM_CHUNKS; y++) {
+		for (int32 x = 0; x < MAP_NUM_CHUNKS; x++) {
+			const Std::list<Item *> *list = curmap->getItemList(x, y);
 
 			// Should iterate the items!
 			// (items could extend outside of this chunk and they have height)
 			if (list && list->size() != 0) {
-				int32 l = (x * 512 - y * 512) / 4 - 128;
-				int32 r = (x * 512 - y * 512) / 4 + 128;
-				int32 t = (x * 512 + y * 512) / 8 - 256;
-				int32 b = (x * 512 + y * 512) / 8;
+				// Bounds of render coordinates for items in this chunk
+				int32 l = (x * chunksize - y * chunksize) / 4 - (chunksize / 4);
+				int32 r = (x * chunksize - y * chunksize) / 4 + (chunksize / 4);
+				int32 t = (x * chunksize + y * chunksize) / 8 - (chunksize / 2);
+				int32 b = (x * chunksize + y * chunksize) / 8;
 
 				t -= 256; // approx. adjustment for height of items in chunk
 
@@ -706,32 +694,34 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	}
 
 	if (right == -16384) {
-		return false;
+		debugPrintf("Map seems empty, nothing to dump.\n");
+		// No objects?
+		return;
 	}
 
 	// camera height
 	bot += camheight;
 	top += camheight;
 
-	awidth = right - left;
-	aheight = bot - top;
+	const int32 awidth = right - left;
+	const int32 aheight = bot - top;
 
-	ypos = top;
-	xpos = left;
+	//
+	// If you are doing a once-off dump and get this error, try building ScummVM
+	// with int32 size for Surfaces.  It breaks other engines but this is just a
+	// once-off type debugging feature anyway.
+	//
+	// Most U8 maps can be dumped without needing int32, but most Crusader maps
+	// need a patch to work.
+	//
+	Graphics::Surface nullsurface;
+	if ((sizeof(nullsurface.pitch) == 2 && awidth > 8191) ||
+		(sizeof(nullsurface.h) == 2 && aheight > 32767 )) {
+		warning("WARN: Can't dump map, image will not fit into 16 bit dimensions.");
+		return;
+	}
 
-	// Buffer Size
-	int32 bwidth = awidth;
-	//int32 bheight = 256;
-
-	// Original version of this command wrote the image out in rows to save memory
-	// This version can only write out a full texture
-	int32 bheight = aheight;
-
-	// Tile size
-	int32 twidth = bwidth / 8;
-	int32 theight = 256;
-
-	GameMapGump *g = new GameMapGump(0, 0, twidth, theight);
+	GameMapGump *g = new GameMapGump(0, 0, awidth, aheight);
 
 	// HACK: Setting both INVISIBLE and TRANSPARENT flags on the Avatar
 	// will make him completely invisible.
@@ -741,50 +731,28 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	CurrentMap *currentMap = World::get_instance()->getCurrentMap();
 	currentMap->setWholeMapFast();
 
-	RenderSurface *s = RenderSurface::CreateSecondaryRenderSurface(bwidth,
-		bheight);
+	RenderSurface *s = RenderSurface::CreateSecondaryRenderSurface(awidth,
+		aheight);
 
 	debugPrintf("Rendering map...\n");
 
+	// Camera coordinates in world-coords (in the middle of the map)
+	int32 midx = left + (right - left) / 2;
+	int32 midy = top + (bot - top) / 2;
+	int32 cx = midx * 2 + midy * 4;
+	int32 cy = midy * 4 - midx * 2;
+
 	// Now render the map
-	for (int32 y = 0; y < aheight; y += theight) {
-		for (int32 x = 0; x < awidth; x += twidth) {
-			// Work out 'effective' and world coords
-			int32 ex = xpos + x + twidth / 2;
-			int32 ey = ypos + y + theight / 2;
-			int32 wx = ex * 2 + ey * 4;
-			int32 wy = ey * 4 - ex * 2;
-
-			s->SetOrigin(x, y % bheight);
-			CameraProcess::SetCameraProcess(new CameraProcess(wx + 4 * camheight, wy + 4 * camheight, camheight));
-			g->Paint(s, 256, false);
-
-		}
-
-		// Write out the current buffer
-		//if (((y + theight) % bheight) == 0) {
-		//	for (int i = 0; i < bwidth * bheight; ++i) {
-		//		// Convert to correct pixel format
-		//		uint8 r, g, b;
-		//		UNPACK_RGB8(t->buffer[i], r, g, b);
-		//		uint8 *buf = reinterpret_cast<uint8 *>(&t->buffer[i]);
-		//		buf[0] = b;
-		//		buf[1] = g;
-		//		buf[2] = r;
-		//		buf[3] = 0xFF;
-		//	}
-
-		//	pngw->writeRows(bheight, t);
-
-		//	// clear buffer for next set
-		//	t->clear();
-		//}
-	}
+	s->BeginPainting();
+	s->SetOrigin(0, 0);
+	CameraProcess::SetCameraProcess(new CameraProcess(cx + camheight * 4, cy + camheight * 4, camheight));
+	g->Paint(s, 256, false);
+	s->EndPainting();
 
 #ifdef USE_PNG
-	Std::string filename = Common::String::format("map_%02d.png", currentMap->getNum());
+	Std::string filename = Common::String::format("map_%03d.png", currentMap->getNum());
 #else
-	Std::string filename = Common::String::format("map_%02d.bmp", currentMap->getNum());
+	Std::string filename = Common::String::format("map_%03d.bmp", currentMap->getNum());
 #endif
 
 	Common::DumpFile dumpFile;
@@ -806,10 +774,55 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 	delete g;
 	delete s;
 
+}
+
+bool Debugger::cmdDumpMap(int argc, const char **argv) {
+	// Save because we're going to potentially break the game by enlarging
+	// the fast area and available object IDs.
+	int slot = Ultima8Engine::get_instance()->getAutosaveSlot();
+	if (!Ultima8Engine::get_instance()->saveGame(slot, "Pre-dumpMap save")) {
+		debugPrintf("Could not dump map: pre-dumpMap save failed\n");
+		return false;
+	}
+
+	if (argc > 1) {
+		int mapno = atoi(argv[1]);
+		debugPrintf("Switching to map %d\n", mapno);
+		bool success = World::get_instance()->switchMap(mapno);
+		if (!success) {
+			debugPrintf("Dump failed: switch to map %d FAILED\n", mapno);
+			return false;
+		}
+	}
+	dumpCurrentMap();
+
 	// Reload
 	Ultima8Engine::get_instance()->loadGameState(slot);
 	return false;
 }
+
+
+bool Debugger::cmdDumpAllMaps(int argc, const char **argv) {
+	// Save because we're going to potentially break the game by enlarging
+	// the fast area and available object IDs and changing maps
+	int slot = Ultima8Engine::get_instance()->getAutosaveSlot();
+	if (!Ultima8Engine::get_instance()->saveGame(slot, "Pre-dumpMap save")) {
+		debugPrintf("Could not dump map: pre-dumpMap save failed\n");
+		return false;
+	}
+
+	for (int i = 0; i < 256; i++) {
+		if (World::get_instance()->switchMap(i)) {
+			debugPrintf("Dumping map %d...\n", i);
+			dumpCurrentMap();
+		}
+	}
+
+	// Reload
+	Ultima8Engine::get_instance()->loadGameState(slot);
+	return false;
+}
+
 
 bool Debugger::cmdIncrementSortOrder(int argc, const char **argv) {
 	int32 count = argc > 1 ? strtol(argv[1], 0, 0) : 1;

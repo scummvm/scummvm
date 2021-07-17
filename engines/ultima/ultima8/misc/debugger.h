@@ -197,6 +197,7 @@ private:
 	bool cmdStopHighlightItems(int argc, const char **argv);
 	bool cmdToggleHighlightItems(int argc, const char **argv);
 	bool cmdDumpMap(int argc, const char **argvv);
+	bool cmdDumpAllMaps(int argc, const char **argv);
 	bool cmdIncrementSortOrder(int argc, const char **argv);
 	bool cmdDecrementSortOrder(int argc, const char **argv);
 
@@ -275,6 +276,8 @@ private:
 #ifdef DEBUG
 	bool cmdVisualDebugPathfinder(int argc, const char **argv);
 #endif
+
+	void dumpCurrentMap(); // helper function
 
 public:
 	Debugger();
