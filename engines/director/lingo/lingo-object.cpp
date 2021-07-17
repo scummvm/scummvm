@@ -937,11 +937,10 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		return true;
 	case kTheHilite:
 		// TODO: Understand how texts can be selected programmatically as well.
-		if (_type == kCastButton) {
-			_hilite = (bool)d.asInt();
-			_modified = true;
-			return true;
-		}
+		// since hilite won't affect text castmember, and we may have button info in text cast in D2/3. so don't check type here
+		_hilite = (bool)d.asInt();
+		_modified = true;
+		return true;
 		break;
 	case kTheText:
 		setText(d.asString());
