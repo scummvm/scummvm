@@ -1,5 +1,5 @@
 /* ScummVM - Graphic Adventure Engine
- * Copyright (C) 2020 Stryzhniou Fiodar
+ * Copyright (C) 2020-2021 Stryzhniou Fiodar
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -21,12 +21,12 @@
  *
  */
 
-START BITMAP    ScummVM.mbm
+START BITMAP            ScummVM.mbm
 TARGETPATH              \Resource\Apps
 SOURCEPATH              ..\res
 // Source Color-depth Source-bitmap-list
 // c denotes whether the bitmap is a color bitmap and the digits represent the
-// color-depth of the bitmap and the bitmap mask respectively
+// color-depth of the bitmap and the bitmap mask respectively.
 SOURCE  c24             ScummSmall.bmp
 SOURCE  8               ScummSmallMask.bmp
 SOURCE  c24             ScummLarge.bmp
@@ -37,8 +37,7 @@ END
 
 CAPABILITY LocalServices ReadUserData
 
-
-// *** Static Libraries
+// Static Libraries.
 STATICLIBRARY	scummvm_base.lib
 STATICLIBRARY	scummvm_codecs.lib
 STATICLIBRARY	scummvm_lua.lib
@@ -56,8 +55,7 @@ STATICLIBRARY	zlib.lib
 STATICLIBRARY	esdl.lib
 STATICLIBRARY	openlibm.lib
 
-// *** SOURCE files
-
+// SOURCE files.
 SOURCEPATH ..\..\..\..\base
 
 //START_AUTO_OBJECTS_BASE_// Updated @ Fri Nov  1 17:47:21 2013
@@ -69,7 +67,7 @@ SOURCE version.cpp
 
 SOURCEPATH ..\..\..\..
 
-// backend EPOC/SDL/ESDL specific includes
+// Backend EPOC/SDL/ESDL specific includes.
 SOURCE backends\platform\sdl\sdl.cpp
 SOURCE backends\audiocd\sdl\sdl-audiocd.cpp
 SOURCE backends\audiocd\default\default-audiocd.cpp
@@ -80,26 +78,26 @@ SOURCE backends\platform\symbian\src\ScummApp.cpp
 SOURCE backends\platform\symbian\src\SymbianMain.cpp
 SOURCE gui\Dialog.cpp
 
-// Common error
+// Common error.
 source common\error.cpp
 source common\quicktime.cpp
 
-// Special for graphics
+// Special for graphics.
 source backends\graphics\surfacesdl\surfacesdl-graphics.cpp
 source engines\obsolete.cpp
 
-// *** Dynamic Libraries
+// Dynamic Libraries.
 LIBRARY cone.lib  eikcore.lib euser.lib apparc.lib
 LIBRARY fbscli.lib estlib.lib apgrfx.lib gdi.lib
 LIBRARY hal.lib bitgdi.lib mediaclientaudiostream.lib
 LIBRARY efsrv.lib ws32.lib avkon.lib bafl.lib esock.lib
-LIBRARY  remconcoreapi.lib remconinterfacebase.lib apmime.lib drtaeabi.lib // libcurl.dll
+LIBRARY remconcoreapi.lib remconinterfacebase.lib apmime.lib drtaeabi.lib // libcurl.dll
 
 SOURCEPATH ..\..\sdl
 SOURCE sdl-window.cpp
 
-//These files compiled if particular engines or features enabled.
-//So we compile them with app build.
+// These files compiled if particular engines or features enabled.
+// So we compile them with app build.
 SOURCEPATH  ..\..\..\..\video
 SOURCE coktel_decoder.cpp //GOB and SCI32 games
 
