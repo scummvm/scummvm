@@ -387,11 +387,13 @@ void Channel::setEditable(bool editable) {
 void Channel::updateGlobalAttr() {
 	if (!_sprite->_cast)
 		return;
+
 	// update text info, including selEnd and selStart
 	if (_sprite->_cast->_type == kCastText && _sprite->_editable && _widget)
 		((Graphics::MacText *)_widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
+
 	// update button info, including checkBoxType
-	if (_sprite->_cast->_type == kCastButton && _widget)
+	if ((_sprite->_cast->_type == kCastButton || isButtonSprite(_sprite->_spriteType)) && _widget)
 		((Graphics::MacButton *)_widget)->setCheckBoxType(g_director->getCurrentMovie()->_checkBoxType);
 }
 

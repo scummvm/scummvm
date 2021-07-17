@@ -733,7 +733,17 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 	Graphics::MacWidget *widget = nullptr;
 	Common::Rect dims(bbox);
 
-	switch (_type) {
+	CastType type = _type;
+	ButtonType buttonType;
+
+	// WORKAROUND: In D2/D3 there can be text casts that have button
+	// information set in the sprite.
+	if (type == kCastText && isButtonSprite(spriteType)) {
+		type = kCastButton;
+		buttonType = ButtonType(spriteType - 8);
+	}
+
+	switch (type) {
 	case kCastText:
 		// for mactext, we can expand now, but we can't shrink. so we may pass the small size when we have adjustToFit text style
 		if (_textType == kTextTypeAdjustToFit) {
@@ -758,7 +768,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 	case kCastButton:
 		// note that we use _initialRect for the dimensions of the button;
 		// the values provided in the sprite bounding box are ignored
-		widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
+		widget = new Graphics::MacButton(Graphics::MacButtonType(buttonType), getAlignment(), g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
 		widget->_focusable = true;
 
 		((Graphics::MacButton *)widget)->setHilite(_hilite);

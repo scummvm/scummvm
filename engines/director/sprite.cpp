@@ -233,19 +233,6 @@ void Sprite::setCast(CastMemberID memberID) {
 			}
 		}
 
-		if (_cast->_type == kCastText &&
-			(_spriteType == kButtonSprite ||
-				 _spriteType == kCheckboxSprite ||
-				 _spriteType == kRadioButtonSprite)) {
-			// WORKAROUND: In D2/D3 there can be text casts that have button
-			// information set in the sprite.
-			warning("Sprite::setCast(): Working around D2/3 button glitch");
-			// FIXME: We should not override the cast member's type here.
-			// We should only change how the sprite renders.
-			_cast->_type = kCastButton;
-			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
-		}
-
 		// TODO: Respect sprite width/height settings. Need to determine how to read
 		// them properly.
 		Common::Rect dims = _cast->getInitialRect();
