@@ -115,8 +115,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Enabled difficulty selection in the version of Monkey Island 2 that was
      included on the LucasArts Mac CD Game Pack II compilation. (It had been
      disabled along with the copy protection.)
-   - Repair clumsy crack in Maniac Mansion (enhanced)'s keypad script. This
-     means that the GOG (and Steam?) versions no longer will accept incorrect
+   - Repair clumsy crack in Maniac Mansion (enhanced)'s keypad script.
+     This means that the GOG (and Steam?) versions no longer will accept
      incorrect numbers, e.g. for Edna's phone number. (Why are they selling
      a cracked version anyway?!)
 
