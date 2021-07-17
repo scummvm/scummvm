@@ -607,23 +607,6 @@ void RegisterInventoryWindowAPI() {
 	ccAddExternalObjectFunction("InvWindow::get_RowCount", Sc_InvWindow_GetRowCount);
 	ccAddExternalObjectFunction("InvWindow::get_TopItem", Sc_InvWindow_GetTopItem);
 	ccAddExternalObjectFunction("InvWindow::set_TopItem", Sc_InvWindow_SetTopItem);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("InvWindow::ScrollDown^0", (void *)InvWindow_ScrollDown);
-	ccAddExternalFunctionForPlugin("InvWindow::ScrollUp^0", (void *)InvWindow_ScrollUp);
-	ccAddExternalFunctionForPlugin("InvWindow::get_CharacterToUse", (void *)InvWindow_GetCharacterToUse);
-	ccAddExternalFunctionForPlugin("InvWindow::set_CharacterToUse", (void *)InvWindow_SetCharacterToUse);
-	ccAddExternalFunctionForPlugin("InvWindow::geti_ItemAtIndex", (void *)InvWindow_GetItemAtIndex);
-	ccAddExternalFunctionForPlugin("InvWindow::get_ItemCount", (void *)InvWindow_GetItemCount);
-	ccAddExternalFunctionForPlugin("InvWindow::get_ItemHeight", (void *)InvWindow_GetItemHeight);
-	ccAddExternalFunctionForPlugin("InvWindow::set_ItemHeight", (void *)InvWindow_SetItemHeight);
-	ccAddExternalFunctionForPlugin("InvWindow::get_ItemWidth", (void *)InvWindow_GetItemWidth);
-	ccAddExternalFunctionForPlugin("InvWindow::set_ItemWidth", (void *)InvWindow_SetItemWidth);
-	ccAddExternalFunctionForPlugin("InvWindow::get_ItemsPerRow", (void *)InvWindow_GetItemsPerRow);
-	ccAddExternalFunctionForPlugin("InvWindow::get_RowCount", (void *)InvWindow_GetRowCount);
-	ccAddExternalFunctionForPlugin("InvWindow::get_TopItem", (void *)InvWindow_GetTopItem);
-	ccAddExternalFunctionForPlugin("InvWindow::set_TopItem", (void *)InvWindow_SetTopItem);
 }
 
 } // namespace AGS3

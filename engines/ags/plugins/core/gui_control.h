@@ -33,7 +33,33 @@ class GUIControl : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void BringToFront(ScriptMethodParams &params);
+	static void GetGUIControlAtLocation(ScriptMethodParams &params);
+	static void SendToBack(ScriptMethodParams &params);
+	static void SetPosition(ScriptMethodParams &params);
+	static void SetSize(ScriptMethodParams &params);
+	static void GetAsButton(ScriptMethodParams &params);
+	static void GetAsInvWindow(ScriptMethodParams &params);
+	static void GetAsLabel(ScriptMethodParams &params);
+	static void GetAsListBox(ScriptMethodParams &params);
+	static void GetAsSlider(ScriptMethodParams &params);
+	static void GetAsTextBox(ScriptMethodParams &params);
+	static void GetClickable(ScriptMethodParams &params);
+	static void SetClickable(ScriptMethodParams &params);
+	static void GetEnabled(ScriptMethodParams &params);
+	static void SetEnabled(ScriptMethodParams &params);
+	static void GetHeight(ScriptMethodParams &params);
+	static void SetHeight(ScriptMethodParams &params);
+	static void GetID(ScriptMethodParams &params);
+	static void GetOwningGUI(ScriptMethodParams &params);
+	static void GetVisible(ScriptMethodParams &params);
+	static void SetVisible(ScriptMethodParams &params);
+	static void GetWidth(ScriptMethodParams &params);
+	static void SetWidth(ScriptMethodParams &params);
+	static void GetX(ScriptMethodParams &params);
+	static void SetX(ScriptMethodParams &params);
+	static void GetY(ScriptMethodParams &params);
+	static void SetY(ScriptMethodParams &params);
 };
 
 } // namespace Core

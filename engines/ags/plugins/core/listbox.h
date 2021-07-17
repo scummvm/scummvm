@@ -33,7 +33,31 @@ class Listbox : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void AddItem(ScriptMethodParams &params);
+	static void Clear(ScriptMethodParams &params);
+	static void FillDirList(ScriptMethodParams &params);
+	static void FillSaveGameList(ScriptMethodParams &params);
+	static void GetItemAtLocation(ScriptMethodParams &params);
+	static void GetItemText(ScriptMethodParams &params);
+	static void InsertItemAt(ScriptMethodParams &params);
+	static void RemoveItem(ScriptMethodParams &params);
+	static void ScrollDown(ScriptMethodParams &params);
+	static void ScrollUp(ScriptMethodParams &params);
+	static void SetItemText(ScriptMethodParams &params);
+	static void GetFont(ScriptMethodParams &params);
+	static void SetFont(ScriptMethodParams &params);
+	static void GetHideBorder(ScriptMethodParams &params);
+	static void SetHideBorder(ScriptMethodParams &params);
+	static void GetHideScrollArrows(ScriptMethodParams &params);
+	static void SetHideScrollArrows(ScriptMethodParams &params);
+	static void GetItemCount(ScriptMethodParams &params);
+	static void GetItems(ScriptMethodParams &params);
+	static void GetRowCount(ScriptMethodParams &params);
+	static void GetSaveGameSlots(ScriptMethodParams &params);
+	static void GetSelectedIndex(ScriptMethodParams &params);
+	static void SetSelectedIndex(ScriptMethodParams &params);
+	static void GetTopItem(ScriptMethodParams &params);
+	static void SetTopItem(ScriptMethodParams &params);
 };
 
 } // namespace Core

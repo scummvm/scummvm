@@ -33,7 +33,19 @@ class Hotspot : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void GetHotspotAtRoom(ScriptMethodParams &params);
+	static void GetHotspotAtScreen(ScriptMethodParams &params);
+	static void GetName(ScriptMethodParams &params);
+	static void GetProperty(ScriptMethodParams &params);
+	static void GetPropertyText(ScriptMethodParams &params);
+	static void GetTextProperty(ScriptMethodParams &params);
+	static void RunInteraction(ScriptMethodParams &params);
+	static void GetEnabled(ScriptMethodParams &params);
+	static void SetEnabled(ScriptMethodParams &params);
+	static void GetID(ScriptMethodParams &params);
+	static void GetName_New(ScriptMethodParams &params);
+	static void GetWalkToX(ScriptMethodParams &params);
+	static void GetWalkToY(ScriptMethodParams &params);
 };
 
 } // namespace Core

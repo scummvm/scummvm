@@ -33,7 +33,13 @@ class Label : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void GetText(ScriptMethodParams &params);
+	static void SetText(ScriptMethodParams &params);
+	static void GetFont(ScriptMethodParams &params);
+	static void SetFont(ScriptMethodParams &params);
+	static void GetText_New(ScriptMethodParams &params);
+	static void GetColor(ScriptMethodParams &params);
+	static void SetColor(ScriptMethodParams &params);
 };
 
 } // namespace Core

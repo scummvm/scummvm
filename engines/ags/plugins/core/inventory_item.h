@@ -33,7 +33,20 @@ class InventoryItem : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void GetInvAtLocation(ScriptMethodParams &params);
+	static void CheckInteractionAvailable(ScriptMethodParams &params);
+	static void GetName(ScriptMethodParams &params);
+	static void GetProperty(ScriptMethodParams &params);
+	static void GetPropertyText(ScriptMethodParams &params);
+	static void GetTextProperty(ScriptMethodParams &params);
+	static void RunInteraction(ScriptMethodParams &params);
+	static void SetName(ScriptMethodParams &params);
+	static void GetCursorGraphic(ScriptMethodParams &params);
+	static void SetCursorGraphic(ScriptMethodParams &params);
+	static void GetGraphic(ScriptMethodParams &params);
+	static void SetGraphic(ScriptMethodParams &params);
+	static void GetID(ScriptMethodParams &params);
+	static void GetName_New(ScriptMethodParams &params);
 };
 
 } // namespace Core

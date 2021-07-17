@@ -28,6 +28,49 @@ namespace Plugins {
 namespace Core {
 
 void Label::AGS_EngineStartup(IAGSEngine *engine) {
+	SCRIPT_METHOD_EXT(Label::GetText^1, GetText);
+	SCRIPT_METHOD_EXT(Label::SetText^1, SetText);
+	SCRIPT_METHOD_EXT(Label::get_Font, GetFont);
+	SCRIPT_METHOD_EXT(Label::set_Font, SetFont);
+	SCRIPT_METHOD_EXT(Label::get_Text, GetText_New);
+	SCRIPT_METHOD_EXT(Label::set_Text, SetText);
+	SCRIPT_METHOD_EXT(Label::get_TextColor, GetColor);
+	SCRIPT_METHOD_EXT(Label::set_TextColor, SetColor);
+}
+
+void Label::GetText(ScriptMethodParams &params) {
+	PARAMS2(GUILabel *, labl, char *, buffer);
+	AGS3::Label_GetText(labl, buffer);
+}
+
+void Label::SetText(ScriptMethodParams &params) {
+	PARAMS2(GUILabel *, labl, const char *, newtx);
+	AGS3::Label_SetText(labl, newtx);
+}
+
+void Label::GetFont(ScriptMethodParams &params) {
+	PARAMS1(GUILabel *, labl);
+	params._result = AGS3::Label_GetFont(labl);
+}
+
+void Label::SetFont(ScriptMethodParams &params) {
+	PARAMS2(GUILabel *, guil, int, fontnum);
+	AGS3::Label_SetFont(guil, fontnum);
+}
+
+void Label::GetText_New(ScriptMethodParams &params) {
+	PARAMS1(GUILabel *, labl);
+	params._result = AGS3::Label_GetText_New(labl);
+}
+
+void Label::GetColor(ScriptMethodParams &params) {
+	PARAMS1(GUILabel *, labl);
+	params._result = AGS3::Label_GetColor(labl);
+}
+
+void Label::SetColor(ScriptMethodParams &params) {
+	PARAMS2(GUILabel *, labl, int, colr);
+	AGS3::Label_SetColor(labl, colr);
 }
 
 } // namespace Core

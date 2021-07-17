@@ -33,7 +33,20 @@ class InvWindow : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void ScrollDown(ScriptMethodParams &params);
+	static void ScrollUp(ScriptMethodParams &params);
+	static void GetCharacterToUse(ScriptMethodParams &params);
+	static void SetCharacterToUse(ScriptMethodParams &params);
+	static void GetItemAtIndex(ScriptMethodParams &params);
+	static void GetItemCount(ScriptMethodParams &params);
+	static void GetItemHeight(ScriptMethodParams &params);
+	static void SetItemHeight(ScriptMethodParams &params);
+	static void GetItemWidth(ScriptMethodParams &params);
+	static void SetItemWidth(ScriptMethodParams &params);
+	static void GetItemsPerRow(ScriptMethodParams &params);
+	static void GetRowCount(ScriptMethodParams &params);
+	static void GetTopItem(ScriptMethodParams &params);
+	static void SetTopItem(ScriptMethodParams &params);
 };
 
 } // namespace Core

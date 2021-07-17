@@ -33,7 +33,31 @@ class GUI : public ScriptContainer {
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);
 
-//	static void Now(ScriptMethodParams &params);
+	static void Centre(ScriptMethodParams &params);
+	static void GetGUIAtLocation(ScriptMethodParams &params);
+	static void SetPosition(ScriptMethodParams &params);
+	static void SetSize(ScriptMethodParams &params);
+	static void GetBackgroundGraphic(ScriptMethodParams &params);
+	static void SetBackgroundGraphic(ScriptMethodParams &params);
+	static void GetClickable(ScriptMethodParams &params);
+	static void SetClickable(ScriptMethodParams &params);
+	static void GetControlCount(ScriptMethodParams &params);
+	static void GetiControls(ScriptMethodParams &params);
+	static void GetHeight(ScriptMethodParams &params);
+	static void SetHeight(ScriptMethodParams &params);
+	static void GetID(ScriptMethodParams &params);
+	static void GetTransparency(ScriptMethodParams &params);
+	static void SetTransparency(ScriptMethodParams &params);
+	static void GetVisible(ScriptMethodParams &params);
+	static void SetVisible(ScriptMethodParams &params);
+	static void GetWidth(ScriptMethodParams &params);
+	static void SetWidth(ScriptMethodParams &params);
+	static void GetX(ScriptMethodParams &params);
+	static void SetX(ScriptMethodParams &params);
+	static void GetY(ScriptMethodParams &params);
+	static void SetY(ScriptMethodParams &params);
+	static void GetZOrder(ScriptMethodParams &params);
+	static void SetZOrder(ScriptMethodParams &params);
 };
 
 } // namespace Core

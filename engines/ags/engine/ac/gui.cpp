@@ -897,34 +897,6 @@ void RegisterGUIAPI() {
 	ccAddExternalObjectFunction("GUI::get_ZOrder", Sc_GUI_GetZOrder);
 	ccAddExternalObjectFunction("GUI::set_ZOrder", Sc_GUI_SetZOrder);
 	ccAddExternalObjectFunction("GUI::get_Shown", Sc_GUI_GetShown);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("GUI::Centre^0", (void *)GUI_Centre);
-	ccAddExternalFunctionForPlugin("GUI::GetAtScreenXY^2", (void *)GetGUIAtLocation);
-	ccAddExternalFunctionForPlugin("GUI::SetPosition^2", (void *)GUI_SetPosition);
-	ccAddExternalFunctionForPlugin("GUI::SetSize^2", (void *)GUI_SetSize);
-	ccAddExternalFunctionForPlugin("GUI::get_BackgroundGraphic", (void *)GUI_GetBackgroundGraphic);
-	ccAddExternalFunctionForPlugin("GUI::set_BackgroundGraphic", (void *)GUI_SetBackgroundGraphic);
-	ccAddExternalFunctionForPlugin("GUI::get_Clickable", (void *)GUI_GetClickable);
-	ccAddExternalFunctionForPlugin("GUI::set_Clickable", (void *)GUI_SetClickable);
-	ccAddExternalFunctionForPlugin("GUI::get_ControlCount", (void *)GUI_GetControlCount);
-	ccAddExternalFunctionForPlugin("GUI::geti_Controls", (void *)GUI_GetiControls);
-	ccAddExternalFunctionForPlugin("GUI::get_Height", (void *)GUI_GetHeight);
-	ccAddExternalFunctionForPlugin("GUI::set_Height", (void *)GUI_SetHeight);
-	ccAddExternalFunctionForPlugin("GUI::get_ID", (void *)GUI_GetID);
-	ccAddExternalFunctionForPlugin("GUI::get_Transparency", (void *)GUI_GetTransparency);
-	ccAddExternalFunctionForPlugin("GUI::set_Transparency", (void *)GUI_SetTransparency);
-	ccAddExternalFunctionForPlugin("GUI::get_Visible", (void *)GUI_GetVisible);
-	ccAddExternalFunctionForPlugin("GUI::set_Visible", (void *)GUI_SetVisible);
-	ccAddExternalFunctionForPlugin("GUI::get_Width", (void *)GUI_GetWidth);
-	ccAddExternalFunctionForPlugin("GUI::set_Width", (void *)GUI_SetWidth);
-	ccAddExternalFunctionForPlugin("GUI::get_X", (void *)GUI_GetX);
-	ccAddExternalFunctionForPlugin("GUI::set_X", (void *)GUI_SetX);
-	ccAddExternalFunctionForPlugin("GUI::get_Y", (void *)GUI_GetY);
-	ccAddExternalFunctionForPlugin("GUI::set_Y", (void *)GUI_SetY);
-	ccAddExternalFunctionForPlugin("GUI::get_ZOrder", (void *)GUI_GetZOrder);
-	ccAddExternalFunctionForPlugin("GUI::set_ZOrder", (void *)GUI_SetZOrder);
 }
 
 } // namespace AGS3
