@@ -1,5 +1,5 @@
 # ScummVM - Graphic Adventure Engine
-# Copyright (C) 2020 Stryzhniou Fiodar
+# Copyright (C) 2020-2021 Stryzhniou Fiodar
 
 # ScummVM is the legal property of its developers, whose names
 # are too numerous to list here. Please refer to the COPYRIGHT
@@ -26,7 +26,7 @@ from collections import defaultdict as defdict
 from common_names import *
 
 
-#ignore unfinished engines in release build
+# Ignore unfinished engines in release build.
 def CheckForRelease(line_):
    if 'no' in line_:
       return build != 'release'
@@ -38,7 +38,7 @@ def CheckForRelease(line_):
 def processengine(path):
    with open(os.path.join(path, "configure.engine")) as f:
       ff = f.readlines()
-   ff = [n for n in ff if not n.startswith('# ')] #exclude comments
+   ff = [n for n in ff if not n.startswith('# ')] # Exclude comments.
    ff = [n for n in ff if len(n) > 2]
    ff = [n.split('"', 2) for n in ff]
    try:
@@ -52,7 +52,7 @@ def processengine(path):
 
    if f[0][2] == 'no' and build == "release":
       return None
-   # print "MACRO   ENABLE_%s  //  LIB:scummvm_%s.lib" %(f[0][1].upper(), f[0][1])
+   #print "MACRO   ENABLE_%s  //  LIB:scummvm_%s.lib" %(f[0][1].upper(), f[0][1])
    buildparam = ["MACRO   ENABLE_%s  //  LIB:scummvm_%s.lib" %(f[0][1].upper(), f[0][1])]
    libname = ["STATICLIBRARY    scummvm_%s.lib" %f[0][1]]
 
@@ -64,7 +64,7 @@ def processengine(path):
 
    for i in f:
       if CheckForRelease(i[2]):
-         # print "   MACRO   ENABLE_%s  //  Subengine" %i[1].upper()
+         #print "   MACRO   ENABLE_%s  //  Subengine" %i[1].upper()
          buildparam += ["   MACRO   ENABLE_%s  //  Subengine" %i[1].upper()]
 
    return [buildparam, libname]
@@ -79,7 +79,7 @@ def processModule_mk(path, buildparams):
    addsrc = None
 
    for i in f:
-#add engine base source code first
+# Add engine base source code first.
       if "MODULE_OBJS" in i:
          if addsrc is None:
             addsrc = True
@@ -88,7 +88,7 @@ def processModule_mk(path, buildparams):
             if "MACRO   %s"%i.strip()[6:] in x:
                addsrc = True
                src += ["// Subengine %s" %x[18:]]
-      elif "KYRARPG_COMMON_OBJ" in i: #special case for kyra engine
+      elif "KYRARPG_COMMON_OBJ" in i: # Special case for kyra engine.
          addsrc = True
       elif "DETECT_OBJS" in i:
          cpp = i.rstrip()
@@ -96,7 +96,7 @@ def processModule_mk(path, buildparams):
          cpp = cpp[9:-2]
          src += ["SOURCE   %s.cpp" %cpp]
       elif addsrc is True:
-         # if i.endswith(".o \\"): # this dont work, why?
+         #if i.endswith(".o \\"): # This dont work, why?
          if ".o \\" in i[-5:]:
             src += ["SOURCE   %s.cpp" %i[1:-5]]
          elif ".o" in i[-3:]:
@@ -106,7 +106,7 @@ def processModule_mk(path, buildparams):
    return src
 
 
-# Add per engine fixes
+# Add per engine fixes.
 libc_engines = ("ags", "bladerunner", "glk", "illusions", "nancy", "stark", "titanic", "ultima")
 def CheckEngine(lst, game):
    if game == "sword25":
@@ -151,9 +151,9 @@ def ProcessDup(src):
 
 def FindDup(files):
    val = {}
-   # print "File duplicates found:\n %s" %files
+   #print "File duplicates found:\n %s" %files
    keys = files.keys()
-   # print "for keys: %s" %keys
+   #print "for keys: %s" %keys
    for k in keys:
       for v in files[k]:
          if len(v) > 0:
@@ -161,19 +161,19 @@ def FindDup(files):
             src = os.path.join(currentEngine, t[0])
             dst = os.path.join(currentEngine, t[1])
             val[t[0]] = t[1]
-            # if(os.path.exists(dst)): # todo: fix possible file duplicates
-               # dst = str(hash(dst)) + dst
-            # print "Rename file %s to %s" %(src, dst)
+            #if(os.path.exists(dst)): # Todo: fix possible file duplicates
+               #dst = str(hash(dst)) + dst
+            #print "Rename file %s to %s" %(src, dst)
             shutil.copyfile(src, dst)
-            t = open(dst) # Fail if file not exist
+            t = open(dst) # Fail if file not exist.
             t.close()
    return val
 
 
 def MakeRenamePair(val, key):
-   # nuvie/core + events.cpp -> nuvie_core + events.cpp -> nuvie/core + nuvie_core_events.cpp -> nuvie/core/nuvie_core_events.cpp
+   #nuvie/core + events.cpp -> nuvie_core + events.cpp -> nuvie/core + nuvie_core_events.cpp -> nuvie/core/nuvie_core_events.cpp
    v = val.replace("/", "_")
-   k = v + "_" + key # nuvie_core_events.cpp
+   k = v + "_" + key #nuvie_core_events.cpp
    newFile = val + "/" + k #nuvie/core/nuvie_core_events.cpp
    oldFile = val + "/" + key
    #if newFile exists: nuvie_core_events.cpp -> (hash)_nuvie_core_events.cpp
@@ -192,7 +192,7 @@ def SafeWriteFile(path, mode, data):
 
 
 def FilterUltima(src):
-   src = [x for x in src if "nuvie" not in x] #Ultima VI
+   src = [x for x in src if "nuvie" not in x] # Ultima VI.
    src = [x for x in src if "ultima4" not in x]
    print "Exclude nuvie and ultima4 engines from detection_tables.h and detection.cpp!"
    return src
@@ -206,8 +206,8 @@ def FilterSrcs(src, engine):
       return FilterGrim(src)
    if "ultima" in engine:
       return FilterUltima(src)
-   # if "" in engine:
-      # return Filter(src)
+   #if "" in engine:
+      #return Filter(src)
    return src
 
 
@@ -270,7 +270,7 @@ LINK_PLUGIN(%s_DETECTION)
    dtable = os.path.join(pt, "detection_table.h")
    macros = os.path.join(local, "macros.mmh")
    engines = os.path.join(local, "engines.mmh")
-#create files and add bld.inf header
+# Create files and add bld.inf header.
    if firstRun is True:
       SafeWriteFile(bldinf, 'w', "PRJ_MMPFILES\n")
       if(build == 'release'):
@@ -300,8 +300,8 @@ currentEngine = None
 pt = '..\..\..\engines'
 local = mmps
 
-# pt = 'e:\Scu\engines'
-# local = pt
+#pt = 'e:\Scu\engines'
+#local = pt
 
 def count_sc_parts():
    t = []
@@ -331,5 +331,3 @@ def create_engine_mmps(arg = 'full'):
 
 if __name__ == "__main__":
    create_engine_mmps()
-
-
