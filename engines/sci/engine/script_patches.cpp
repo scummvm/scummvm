@@ -6845,12 +6845,40 @@ static const uint16 kq7OpeningCartoonPatch[] = {
 	PATCH_END
 };
 
+// In chapter one, moving the top gem in the statue all the way to the right and
+//  exiting the puzzle shows the gems in the wrong position. The script that
+//  determines which cel to display duplicates a chunk of code for every gem
+//  combination but the final copy is missing an entire switch block.
+//
+// We fix this by patching a branch so that one of the many copies of the
+//  missing code is executed for the buggy gem combination.
+//
+// Applies to: All versions
+// Responsible method: collar:init
+static const uint16 kq7StatueGemCelSignature[] = {
+	0x30, SIG_UINT16(0x003b),               // bnt 003b [ incomplete code ]
+	SIG_ADDTOOFFSET(+0x07),
+	0x88, SIG_UINT16(0x0148),               // lsg 0148
+	SIG_ADDTOOFFSET(+0x2e),
+	0xa3, SIG_MAGICDWORD, 0x06,             // sal 06
+	0x3a,                                   // toss
+	0x3a,                                   // toss
+	0x3a,                                   // toss
+	SIG_END
+};
+
+static const uint16 kq7StatueGemCelPatch[] = {
+	0x30, PATCH_UINT16(0x0007),             // bnt 0007 [ copy of missing code ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
 	{  true,     0, "remove hardcoded spin loop",                  1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
 	{  true,    30, "fix allowing too many saves",                 1, kq7TooManySavesSignature,                 kq7TooManySavesPatch },
 	{  true,  1250, "fix opening cartoon",                         1, kq7OpeningCartoonSignature,               kq7OpeningCartoonPatch },
+	{  true,  1250, "fix statue gem cel",                          1, kq7StatueGemCelSignature,                 kq7StatueGemCelPatch },
 	{  true,  5300, "fix snake oil salesman disposal",             1, kq7SnakeOilSalesmanSignature,             kq7SnakeOilSalesmanPatch },
 	{  true,  5301, "fix chicken cartoon",                         1, kq7ChickenCartoonSignature,               kq7ChickenCartoonPatch },
 	{  true,  6100, "fix extra ambrosia",                          1, kq7ExtraAmbrosiaSignature,                kq7ExtraAmbrosiaPatch },
