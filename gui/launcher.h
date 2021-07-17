@@ -55,7 +55,7 @@ enum {
 
 class BrowserDialog;
 class CommandSender;
-class ListWidget;
+class GroupedListWidget;
 class ContainerWidget;
 class EntryContainerWidget;
 class GridWidget;
@@ -193,7 +193,7 @@ protected:
 	const int getSelected() override;
 	void build() override;
 private:
-	ListWidget 		*_list;
+	GroupedListWidget 		*_list;
 	ButtonWidget	*_addButton;
 	Widget			*_startButton;
 	ButtonWidget	*_loadButton;
