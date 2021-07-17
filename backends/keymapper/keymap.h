@@ -45,7 +45,7 @@ class HardwareInputSet;
 class KeymapperDefaultBindings;
 
 struct HardwareInput_EqualTo {
-	bool operator()(const HardwareInput& x, const HardwareInput& y) const {
+	bool operator()(const HardwareInput &x, const HardwareInput &y) const {
 		return (x.type == y.type)
 		        && (x.key.keycode == y.key.keycode)
 		        && (x.key.flags == y.key.flags)
@@ -54,7 +54,7 @@ struct HardwareInput_EqualTo {
 };
 
 struct HardwareInput_Hash {
-	uint operator()(const HardwareInput& x) const {
+	uint operator()(const HardwareInput &x) const {
 		uint hash = 7;
 		hash = 31 * hash + x.type;
 		hash = 31 * hash + x.key.keycode;
