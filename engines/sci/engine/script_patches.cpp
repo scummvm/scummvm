@@ -6872,10 +6872,111 @@ static const uint16 kq7StatueGemCelPatch[] = {
 	PATCH_END
 };
 
+// KQ7 fails to reset most of its global variables when starting a new game. The
+//  script implicitly relies on initial values from the heap. Starting a new
+//  game after returning to the main menu causes the previous game's state to
+//  persist and create various glitches. A simple example is on the first screen
+//  of chapter 1: if a new game is started after playing a later chapter, the
+//  top gem in the statue will be in its solved position. nameGameRoom:init does
+//  reset some globals, but only those whose initial heap values weren't zero.
+//
+// We fix this by writing our own loop to reset all global variables correctly
+//  when starting a new game. We do this by combining the existing loops that
+//  reset flag globals to zero and inventory indexes to -1. All other game
+//  globals are now reset to zero, except for the two objects which must remain.
+//  We also restore a global which must contain the result of kMemoryInfo 0, and
+//  initialize global372 to -1 which Sierra forgot to do. After our reset loop,
+//  nameGameRoom:init proceeds with its initialization of non-zero globals.
+//
+// Applies to: All versions
+// Responsible method: nameGameRoom:init
+static const uint16 kq7InitGameGlobalsSignature[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x04d2),               // ldi 04d2
+	0xa1, 0x65,                             // sag 65 [ redundant write of unused global ]
+	SIG_ADDTOOFFSET(+0x30),
+	0x35, 0xff,                             // ldi ff
+	0xa0, SIG_UINT16(0x0149),               // sag 0149 [ global329 = -1 ]
+	0x35, 0xff,                             // ldi ff
+	0xa0, SIG_UINT16(0x014a),               // sag 014a [ global330 = -1 ]
+	// loop: set all inventory indexes to -1
+	0x35, 0x00,                             // ldi 00
+	0xa5, 0x00,                             // sat 00 [ temp0 = 0 ]
+	0x8d, 0x00,                             // lst 00
+	0x35, 0x10,                             // ldi 10
+	0x22,                                   // lt?    [ temp0 < 16 ]
+	0x31, 0x12,                             // bnt 12
+	0x39, 0xff,                             // pushi ff
+	0x85, 0x00,                             // lat 00
+	0xb0, SIG_UINT16(0x0151),               // sagi 0151 [ global337[temp0] = -1 ]
+	0x39, 0xff,                             // pushi ff
+	0x85, 0x00,                             // lat 00
+	0xb0, SIG_UINT16(0x0161),               // sagi 0161 [ global353[temp0] = -1 ]
+	0xc5, 0x00,                             // +at 00 [ ++temp0 ]
+	0x33, 0xe7,                             // jmp e7 [ iterate ]
+	// loop: set all flag globals to 0
+	0x35, 0x24,                             // ldi 24
+	0xa5, 0x02,                             // sat 02 [ temp2 = 36 ]
+	0x35, 0x00,                             // ldi 00
+	0xa5, 0x00,                             // sat 00 [ temp0 = 0 ]
+	0x8d, 0x00,                             // lst 00
+	0x85, 0x02,                             // lst 02
+	0x22,                                   // lt?    [ temp0 < temp2 (36) ]
+	0x31, 0x09,                             // bnt 09
+	0x76,                                   // push0
+	0x85, 0x00,                             // lat 00
+	0xb1, 0x7f,                             // sagi 7f [ global127[temp0] = 0 ]
+	0xc5, 0x00,                             // +at 00 [ ++temp0 ]
+	0x33, 0xf0,                             // jmp f0 [ iterate ]
+	SIG_END
+};
+
+static const uint16 kq7InitGameGlobalsPatch[] = {
+	0x34, PATCH_UINT16(0x007f),             // ldi 007f
+	0x33, 0x43,                             // jmp 43 [ init loop ]
+	PATCH_ADDTOOFFSET(+0x35),
+	0xa0, PATCH_UINT16(0x014a),             // sag 014a [ global330 = -1 ]
+	0xa0, PATCH_UINT16(0x0174),             // sag 0174 [ global372 = -1 (reset chicken little) ]
+	0x34, PATCH_UINT16(0x7fe8),             // ldi 7feg
+	0xa0, PATCH_UINT16(0x0142),             // sag 0142 [ global332 = kMemoryInfo 0 result ]
+	0x33, 0x2c,                             // jmp 2c   [ continue room init ]
+	// init loop
+	0xa5, 0x00,                             // sat 00 [ temp0 = 127 ]
+	// loop condition
+	0x38, PATCH_UINT16(0x017b),             // pushi 017b
+	0x1a,                                   // eq?    [ global == 379 ]
+	0x2f, 0xb5,                             // bt b5  [ exit loop and init specific globals ]
+	// skip kqResponseCode, it can't be reset
+	0x60,                                   // pprev
+	0x34, PATCH_UINT16(0x0136),             // ldi 0136
+	0x1a,                                   // eq?    [ global == 310 ]
+	0x2f, 0x19,                             // bt 19  [ skip reset ]
+	// skip theUseObjCursor, it can't be reset
+	0x8d, 0x00,                             // lst 00
+	0x34, PATCH_UINT16(0x014c),             // ldi 014c
+	0x1a,                                   // eq?    [ global == 332 ]
+	0x2f, 0x11,                             // bt 11  [ skip reset ]
+	// reset globals 337 through 368 to -1, all others to 0
+	0x39, 0x20,                             // pushi 20
+	0x38, PATCH_UINT16(0x0170),             // pushi 0170
+	0x85, 0x00,                             // lat 00
+	0x04,                                   // sub    [ 368 - temp0 ]
+	0x28,                                   // uge?   [ 32 u>= (368 - temp0) ]
+	0x31, 0x01,                             // bnt 01 [ skip if global not in -1 range ]
+	0x16,                                   // neg    [ acc = -1 ]
+	0x36,                                   // push   [ 0 or -1 ]
+	0x85, 0x00,                             // lat 00
+	0xb1, 0x00,                             // sagi 00 [ global[temp0] = 0 or -1 ]
+	0xc5, 0x00,                             // +at 00  [ ++temp0 ]
+	0x33, 0xd6,                             // jmp d6  [ iterate ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
 	{  true,     0, "remove hardcoded spin loop",                  1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
+	{  true,    20, "fix initializing game globals",               1, kq7InitGameGlobalsSignature,              kq7InitGameGlobalsPatch },
 	{  true,    30, "fix allowing too many saves",                 1, kq7TooManySavesSignature,                 kq7TooManySavesPatch },
 	{  true,  1250, "fix opening cartoon",                         1, kq7OpeningCartoonSignature,               kq7OpeningCartoonPatch },
 	{  true,  1250, "fix statue gem cel",                          1, kq7StatueGemCelSignature,                 kq7StatueGemCelPatch },
