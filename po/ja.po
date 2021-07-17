@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-15 21:11+0000\n"
+"POT-Creation-Date: 2021-07-17 06:27+0000\n"
 "PO-Revision-Date: 2021-07-14 21:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4018,8 +4018,8 @@ msgid ""
 "ScummVM."
 msgstr "ファンの翻訳者は、ScummVMに翻訳が組み込まれる事を望んでいません。"
 
-#: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:56
-#: engines/cge/detection.cpp:62 engines/kyra/detection_tables.h:303
+#: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:57
+#: engines/cge/detection.cpp:63 engines/kyra/detection_tables.h:303
 #: engines/kyra/detection_tables.h:983 engines/lure/detection.cpp:233
 #: engines/mohawk/detection_tables.h:954 engines/mohawk/detection_tables.h:1045
 #: engines/mohawk/detection_tables.h:1060 engines/neverhood/detection.cpp:110
@@ -4044,13 +4044,23 @@ msgstr "終了してもよろしいですか?"
 msgid "Invalid save file name"
 msgstr "無効なセーブファイル名です"
 
-#: engines/cge/detection.cpp:107
+#: engines/cge/detection.cpp:108
 msgid "Color Blind Mode"
 msgstr "色覚特性モード"
 
-#: engines/cge/detection.cpp:108
+#: engines/cge/detection.cpp:109
 msgid "Enable Color Blind Mode by default"
 msgstr "デフォルトで色覚多様性モードを有効化"
+
+#: engines/cge/detection.cpp:119 engines/glk/detection.cpp:239
+msgid "Enable Text to Speech"
+msgstr "音声合成をオンにする"
+
+#: engines/cge/detection.cpp:120 engines/lure/detection.cpp:46
+#: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
+#: engines/twine/metaengine.cpp:160
+msgid "Use TTS to read the descriptions (if TTS is available)"
+msgstr "音声合成を使用して詳細を読み上げる(利用可能な場合のみ)"
 
 #: engines/cine/detection.cpp:61
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -4178,10 +4188,6 @@ msgstr "明るいパレットモードを使用する"
 #: engines/dreamweb/detection.cpp:62
 msgid "Display graphics using the game's bright palette"
 msgstr "ゲームの明るいパレットモードを使用してグラフィックを表示する"
-
-#: engines/glk/detection.cpp:239
-msgid "Enable Text to Speech"
-msgstr "音声合成をオンにする"
 
 #: engines/glk/detection.cpp:240
 msgid "Use TTS to read the text"
@@ -5112,11 +5118,6 @@ msgstr "このパズルを体験版でプレイする事はできません"
 #: engines/sherlock/detection.cpp:120 engines/twine/metaengine.cpp:159
 msgid "TTS Narrator"
 msgstr "音声合成によるナレーション"
-
-#: engines/lure/detection.cpp:46 engines/mads/detection.cpp:115
-#: engines/sherlock/detection.cpp:121 engines/twine/metaengine.cpp:160
-msgid "Use TTS to read the descriptions (if TTS is available)"
-msgstr "音声合成を使用して詳細を読み上げる(利用可能な場合のみ)"
 
 #: engines/made/detection_tables.h:405 engines/made/detection_tables.h:422
 msgid "The game is using unsupported engine"

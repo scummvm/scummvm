@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-15 21:11+0000\n"
+"POT-Creation-Date: 2021-07-17 06:27+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4057,8 +4057,8 @@ msgid ""
 "ScummVM."
 msgstr ""
 
-#: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:56
-#: engines/cge/detection.cpp:62 engines/kyra/detection_tables.h:303
+#: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:57
+#: engines/cge/detection.cpp:63 engines/kyra/detection_tables.h:303
 #: engines/kyra/detection_tables.h:983 engines/lure/detection.cpp:233
 #: engines/mohawk/detection_tables.h:954 engines/mohawk/detection_tables.h:1045
 #: engines/mohawk/detection_tables.h:1060 engines/neverhood/detection.cpp:110
@@ -4090,13 +4090,24 @@ msgstr "   אתה בטוח שברצונך לפרוש ?"
 msgid "Invalid save file name"
 msgstr "שם קובץ לא חוקי לשמירה"
 
-#: engines/cge/detection.cpp:107
+#: engines/cge/detection.cpp:108
 msgid "Color Blind Mode"
 msgstr "מצב עיוור צבע"
 
-#: engines/cge/detection.cpp:108
+#: engines/cge/detection.cpp:109
 msgid "Enable Color Blind Mode by default"
 msgstr "אפשר מצב עיוור צבע כברירת מחדל"
+
+#: engines/cge/detection.cpp:119 engines/glk/detection.cpp:239
+#, fuzzy
+msgid "Enable Text to Speech"
+msgstr "השתמש בטקסט לדיבור"
+
+#: engines/cge/detection.cpp:120 engines/lure/detection.cpp:46
+#: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
+#: engines/twine/metaengine.cpp:160
+msgid "Use TTS to read the descriptions (if TTS is available)"
+msgstr ""
 
 #: engines/cine/detection.cpp:61
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -4216,11 +4227,6 @@ msgstr "השתמש במצב לוח בהיר"
 #: engines/dreamweb/detection.cpp:62
 msgid "Display graphics using the game's bright palette"
 msgstr "הציג גרפיקה באמצעות לוח הצבעים של המשחק"
-
-#: engines/glk/detection.cpp:239
-#, fuzzy
-msgid "Enable Text to Speech"
-msgstr "השתמש בטקסט לדיבור"
 
 #: engines/glk/detection.cpp:240
 #, fuzzy
@@ -5140,11 +5146,6 @@ msgstr ""
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:114
 #: engines/sherlock/detection.cpp:120 engines/twine/metaengine.cpp:159
 msgid "TTS Narrator"
-msgstr ""
-
-#: engines/lure/detection.cpp:46 engines/mads/detection.cpp:115
-#: engines/sherlock/detection.cpp:121 engines/twine/metaengine.cpp:160
-msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
 #: engines/made/detection_tables.h:405 engines/made/detection_tables.h:422
