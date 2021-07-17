@@ -87,7 +87,7 @@ DirectorPlotData Channel::getPlotData() {
 }
 
 Graphics::ManagedSurface *Channel::getSurface() {
-	if (_widget && _sprite->checkSpriteType()) {
+	if (_widget) {
 		return _widget->getSurface();
 	} else {
 		return nullptr;
@@ -490,6 +490,10 @@ void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
 	}
 
 	if (_sprite && _sprite->_cast) {
+		// use sprite type to guide us how to draw the cast
+		// if the type don't match, then we will set it as transparent. i.e. don't create widget
+		if (!_sprite->checkSpriteType())
+			return;
 		Common::Rect bbox(getBbox());
 		_sprite->_cast->setModified(false);
 
