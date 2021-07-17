@@ -734,7 +734,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 	Common::Rect dims(bbox);
 
 	CastType type = _type;
-	ButtonType buttonType;
+	ButtonType buttonType = _buttonType;
 
 	// WORKAROUND: In D2/D3 there can be text casts that have button
 	// information set in the sprite.

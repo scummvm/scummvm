@@ -309,6 +309,9 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	// other situation, e.g. position changing, we will let channel to handle it. So we don't have to replace widget
 	bool dimsChanged = !_sprite->_stretch && !hasTextCastMember(_sprite) && (_sprite->_width != nextSprite->_width || _sprite->_height != nextSprite->_height);
 
+	// if spriteType is changing, then we may need to re-create the widget since spriteType will guide when we creating widget
+	bool spriteTypeChanged = _sprite->_spriteType != nextSprite->_spriteType;
+
 	if (nextSprite) {
 		if (nextSprite->_cast && (_dirty || _sprite->_castId != nextSprite->_castId)) {
 			if (nextSprite->_cast->_type == kCastDigitalVideo) {
@@ -335,7 +338,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 
 	if (replace) {
 		_sprite->updateCast();
-		replaceWidget(previousCastId, dimsChanged);
+		replaceWidget(previousCastId, dimsChanged || spriteTypeChanged);
 	}
 
 	updateTextCast();
