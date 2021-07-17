@@ -187,6 +187,17 @@ void Sprite::setPattern(uint16 pattern) {
 	}
 }
 
+bool Sprite::checkSpriteType() {
+	// check whether the sprite type match the cast type
+	// if it doesn't match, then we treat it as transparent
+	// this happens in warlock-mac data/stambul/c up
+	if (_spriteType == kBitmapSprite && _cast->_type != kCastBitmap) {
+		warning("Sprite::checkSpriteType: Didn't render sprite due to the sprite type mismatch with cast type");
+		return false;
+	}
+	return true;
+}
+
 void Sprite::setCast(CastMemberID memberID) {
 	/**
 	 * There are two things we need to take into account here:
@@ -247,17 +258,6 @@ void Sprite::setCast(CastMemberID memberID) {
 		} else if (_cast->_type != kCastShape && _cast->_type != kCastText) {
 			_width = dims.width();
 			_height = dims.height();
-		}
-
-		// check whether the sprite type match the cast type
-		// if it doesn't match, then we treat it as transparent
-		// this happens in warlock-mac data/stambul/c up
-		if (_spriteType == kBitmapSprite && _cast->_type != kCastBitmap) {
-			warning("Sprite::setCast(): sprite type doesn't match cast type, setting cast member to null");
-			// FIXME: We should still set the cast number but not render
-			// the sprite if the types conflict.
-			_cast = nullptr;
-			_castId = CastMemberID();
 		}
 
 	} else {

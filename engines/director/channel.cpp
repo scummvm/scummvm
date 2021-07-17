@@ -87,7 +87,7 @@ DirectorPlotData Channel::getPlotData() {
 }
 
 Graphics::ManagedSurface *Channel::getSurface() {
-	if (_widget) {
+	if (_widget && _sprite->checkSpriteType()) {
 		return _widget->getSurface();
 	} else {
 		return nullptr;

@@ -70,6 +70,7 @@ public:
 	bool respondsToMouse();
 	bool isActive();
 	bool shouldHilite();
+	bool checkSpriteType();
 
 	uint16 getPattern();
 	void setPattern(uint16 pattern);
