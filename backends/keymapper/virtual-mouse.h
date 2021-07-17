@@ -24,7 +24,6 @@
 #define BACKENDS_KEYMAPPER_VIRTUAL_MOUSE_H
 
 #include "common/scummsys.h"
-
 #include "common/events.h"
 
 namespace Common {
@@ -47,13 +46,13 @@ public:
 	VirtualMouse(EventDispatcher *eventDispatcher);
 	~VirtualMouse() override;
 
-	// EventSource API
+	// EventSource API.
 	bool pollEvent(Event &event) override;
 
-	// EventObserver API
+	// EventObserver API.
 	bool notifyEvent(const Event &event) override;
 
-	/** Add the virtual mouse keymapper actions to a keymap */
+	/** Add the virtual mouse keymapper actions to a keymap. */
 	void addActionsToKeymap(Keymap *keymap);
 
 private:
@@ -84,8 +83,8 @@ private:
 	float _subPixelRemainderY;
 
 	uint32 _lastUpdateMillis;
-};
+    };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef BACKENDS_KEYMAPPER_VIRTUAL_MOUSE_H
