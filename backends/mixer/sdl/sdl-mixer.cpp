@@ -47,7 +47,7 @@ SdlMixerManager::~SdlMixerManager() {
 }
 
 void SdlMixerManager::init() {
-	// Start SDL Audio subsystem
+	// Start SDL Audio subsystem.
 	if (SDL_InitSubSystem(SDL_INIT_AUDIO) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
@@ -62,14 +62,14 @@ void SdlMixerManager::init() {
 #endif
 	debug(1, "Using SDL Audio Driver \"%s\"", sdlDriverName);
 
-	// Get the desired audio specs
+	// Get the desired audio specs.
 	SDL_AudioSpec desired = getAudioSpec(SAMPLES_PER_SEC);
 
 	// Needed as SDL_OpenAudio as of SDL-1.2.14 mutates fields in
 	// "desired" if used directly.
 	SDL_AudioSpec fmt = desired;
 
-	// Start SDL audio with the desired specs
+	// Start SDL audio with the desired specs.
 	if (SDL_OpenAudio(&fmt, &_obtained) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
 
@@ -148,18 +148,18 @@ SDL_AudioSpec SdlMixerManager::getAudioSpec(uint32 outputRate) {
 	if (freq <= 0)
 		freq = outputRate;
 
-	// One SDL "sample" is a complete audio frame (i.e. all channels = 1 sample)
+	// One SDL "sample" is a complete audio frame (i.e. all channels = 1 sample).
 	uint32 samples = 0;
 
 	// Different games and host systems have different performance
 	// characteristics which are not easily measured, so allow advanced users to
 	// tweak their audio buffer size if they are experience excess latency or
-	// drop-outs by setting this value in their ScummVM config file directly
+	// drop-outs by setting this value in their ScummVM config file directly.
 	if (ConfMan.hasKey("audio_buffer_size", Common::ConfigManager::kApplicationDomain))
 		samples = ConfMan.getInt("audio_buffer_size", Common::ConfigManager::kApplicationDomain);
 
 	// 256 is an arbitrary minimum; 32768 is the largest power-of-two value
-	// representable with uint16
+	// representable with uint16.
 	if (samples < 256 || samples > 32768)
 		// By default, hold no more than 45ms worth of samples to avoid
 		// perceptable audio lag (ATSC IS-191). For reference, DOSBox (as of Sep
@@ -180,7 +180,7 @@ SDL_AudioSpec SdlMixerManager::getAudioSpec(uint32 outputRate) {
 }
 
 void SdlMixerManager::startAudio() {
-	// Start the sound system
+	// Start the sound system.
 	SDL_PauseAudio(0);
 }
 

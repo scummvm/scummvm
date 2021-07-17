@@ -37,19 +37,19 @@ public:
 	virtual ~SdlMixerManager();
 
 	/**
-	 * Initialize and setups the mixer
+	 * Initialize and setups the mixer.
 	 */
 	virtual void init();
 
-	// Used by Event recorder
+	// Used by Event recorder.
 
 	/**
-	 * Pauses the audio system
+	 * Pauses the audio system.
 	 */
 	virtual void suspendAudio();
 
 	/**
-	 * Resumes the audio system
+	 * Resumes the audio system.
 	 */
 	virtual int resumeAudio();
 
@@ -61,17 +61,17 @@ protected:
 	SDL_AudioSpec _obtained;
 
 	/**
-	 * Returns the desired audio specification
+	 * Returns the desired audio specification.
 	 */
 	virtual SDL_AudioSpec getAudioSpec(uint32 rate);
 
 	/**
-	 * Starts SDL audio
+	 * Starts SDL audio.
 	 */
 	virtual void startAudio();
 
 	/**
-	 * Handles the audio callback
+	 * Handles the audio callback.
 	 */
 	virtual void callbackHandler(byte *samples, int len);
 

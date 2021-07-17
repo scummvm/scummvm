@@ -26,7 +26,7 @@
 #include "backends/mutex/mutex.h"
 
 /**
- * SDL mutex manager
+ * SDL mutex manager.
  */
 class SdlMutexManager : public MutexManager {
 public:
@@ -35,6 +35,5 @@ public:
 	virtual void unlockMutex(OSystem::MutexRef mutex);
 	virtual void deleteMutex(OSystem::MutexRef mutex);
 };
-
 
 #endif

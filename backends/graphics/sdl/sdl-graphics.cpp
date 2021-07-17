@@ -49,12 +49,12 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window
 void SdlGraphicsManager::activateManager() {
 	_eventSource->setGraphicsManager(this);
 
-	// Register the graphics manager as a event observer
+	// Register the graphics manager as a event observer.
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
 void SdlGraphicsManager::deactivateManager() {
-	// Unregister the event observer
+	// Unregister the event observer.
 	if (g_system->getEventManager()->getEventDispatcher()) {
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 	}
@@ -104,7 +104,7 @@ bool SdlGraphicsManager::setState(const State &state) {
 
 Common::Rect SdlGraphicsManager::getPreferredFullscreenResolution() {
 	// Default to the desktop resolution, unless the user has set a
-	// resolution in the configuration file
+	// resolution in the configuration file.
 	const Common::String &fsres = ConfMan.get("fullscreen_res");
 	if (fsres != "desktop") {
 		uint newW, newH;
@@ -206,7 +206,7 @@ bool SdlGraphicsManager::showMouse(bool visible) {
 	if (visible) {
 		// _cursorX and _cursorY are currently always clipped to the active
 		// area, so we need to ask SDL where the system's mouse cursor is
-		// instead
+		// instead.
 		int x, y;
 		SDL_GetMouseState(&x, &y);
 		if (!_activeArea.drawRect.contains(Common::Point(x, y))) {
@@ -241,12 +241,12 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 		if (_window->mouseIsGrabbed() ||
 			// Keep the mouse inside the game area during dragging to prevent an
 			// event mismatch where the mouseup event gets lost because it is
-			// performed outside of the game area
+			// performed outside of the game area.
 			(_cursorLastInActiveArea && SDL_GetMouseState(nullptr, nullptr) != 0)) {
 			setSystemMousePosition(mouse.x, mouse.y);
 		} else {
 			// Allow the in-game mouse to get a final movement event to the edge
-			// of the window if the mouse was moved out of the game area
+			// of the window if the mouse was moved out of the game area.
 			if (_cursorLastInActiveArea) {
 				_cursorLastInActiveArea = false;
 			} else if (_cursorVisible) {
@@ -254,7 +254,7 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 				// since otherwise if a game lets you skip a cutscene by
 				// clicking and the user moved the mouse outside the active
 				// area, the clicks wouldn't do anything, which would be
-				// confusing
+				// confusing.
 				valid = false;
 			}
 
@@ -298,7 +298,7 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 	// do not reset the window size whenever a game makes a call to change the
 	// size or pixel format of the internal game surface (since a user may have
 	// resized the game window), or when the launcher is visible (since a user
-	// may change the scaler, which should reset the window size)
+	// may change the scaler, which should reset the window size).
 	if (!_window->getSDLWindow() || _lastFlags != flags || _overlayVisible || _allowWindowSizeReset) {
 		const bool fullscreen = (flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FULLSCREEN_DESKTOP)) != 0;
 		if (!fullscreen) {
@@ -330,7 +330,7 @@ void SdlGraphicsManager::saveScreenshot() {
 	if (sdl_g_system)
 		screenshotsPath = sdl_g_system->getScreenshotsPath();
 
-	// Use the name of the running target as a base for screenshot file names
+	// Use the name of the running target as a base for screenshot file names.
 	Common::String currentTarget = ConfMan.getActiveDomainName();
 
 #ifdef USE_PNG
