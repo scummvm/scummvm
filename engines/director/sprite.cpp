@@ -229,7 +229,8 @@ void Sprite::setCast(CastMemberID memberID) {
 			// WORKAROUND: In D2/D3 there can be text casts that have button
 			// information set in the sprite.
 			warning("Sprite::setCast(): Working around D2/3 button glitch");
-
+			// FIXME: We should not override the cast member's type here.
+			// We should only change how the sprite renders.
 			_cast->_type = kCastButton;
 			((TextCastMember *)_cast)->_buttonType = (ButtonType)(_spriteType - 8);
 		}
@@ -253,6 +254,8 @@ void Sprite::setCast(CastMemberID memberID) {
 		// this happens in warlock-mac data/stambul/c up
 		if (_spriteType == kBitmapSprite && _cast->_type != kCastBitmap) {
 			warning("Sprite::setCast(): sprite type doesn't match cast type, setting cast member to null");
+			// FIXME: We should still set the cast number but not render
+			// the sprite if the types conflict.
 			_cast = nullptr;
 			_castId = CastMemberID();
 		}
