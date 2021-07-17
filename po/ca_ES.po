@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-17 06:27+0000\n"
+"POT-Creation-Date: 2021-07-17 06:29+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -1954,7 +1954,7 @@ msgstr "GFX desactivats"
 msgid "Standard renderer"
 msgstr "Pintat estàndard (16bpp)"
 
-#: gui/ThemeEngine.cpp:274 engines/scumm/dialogs.cpp:672
+#: gui/ThemeEngine.cpp:274 engines/scumm/dialogs.cpp:683
 msgid "Standard"
 msgstr "Estàndard"
 
@@ -6292,36 +6292,36 @@ msgstr "~A~nterior"
 msgid "~N~ext"
 msgstr "~S~egüent"
 
-#: engines/scumm/dialogs.cpp:611
+#: engines/scumm/dialogs.cpp:622
 msgid "Speech Only"
 msgstr "Només veus"
 
-#: engines/scumm/dialogs.cpp:612
+#: engines/scumm/dialogs.cpp:623
 msgid "Speech and Subtitles"
 msgstr "Veu i subtítols"
 
-#: engines/scumm/dialogs.cpp:613
+#: engines/scumm/dialogs.cpp:624
 msgid "Subtitles Only"
 msgstr "Només subtítols"
 
-#: engines/scumm/dialogs.cpp:621
+#: engines/scumm/dialogs.cpp:632
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Veus i sub."
 
-#: engines/scumm/dialogs.cpp:667
+#: engines/scumm/dialogs.cpp:678
 msgid "Select a Proficiency Level."
 msgstr "Seleccioneu el nivell de competència."
 
-#: engines/scumm/dialogs.cpp:669
+#: engines/scumm/dialogs.cpp:680
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Consulteu el manual de Loom(TM) per ajuda."
 
-#: engines/scumm/dialogs.cpp:673
+#: engines/scumm/dialogs.cpp:684
 msgid "Practice"
 msgstr "Pràctica"
 
-#: engines/scumm/dialogs.cpp:674
+#: engines/scumm/dialogs.cpp:685
 msgid "Expert"
 msgstr "Expert"
 
