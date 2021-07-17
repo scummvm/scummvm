@@ -166,7 +166,7 @@ void KeypadGump::ChildNotify(Gump *child, uint32 message) {
 			update = false;
 			if (_value == _targetValue || _value == CHEAT_CODE_VAL) {
 				sfxno = SFXNO_CORRECT;
-				SetResult(_value);
+				SetResult(_targetValue);
 			} else {
 				// wrong.
 				sfxno = SFXNO_WRONG;
