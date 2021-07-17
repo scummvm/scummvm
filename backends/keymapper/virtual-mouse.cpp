@@ -56,14 +56,14 @@ VirtualMouse::~VirtualMouse() {
 }
 
 bool VirtualMouse::pollEvent(Event &event) {
-	// Update the virtual mouse once per frame (assuming 60Hz)
+	// Update the virtual mouse once per frame (assuming 60Hz).
 	uint32 curTime = g_system->getMillis(true);
 	if (curTime < _lastUpdateMillis + kUpdateDelay) {
 		return false;
 	}
 	_lastUpdateMillis = curTime;
 
-	// Adjust the speed of the cursor according to the virtual screen resolution
+	// Adjust the speed of the cursor according to the virtual screen resolution.
 	Common::Rect screenSize;
 	if (g_system->isOverlayVisible()) {
 		screenSize = Common::Rect(g_system->getOverlayWidth(), g_system->getOverlayHeight());
@@ -73,7 +73,7 @@ bool VirtualMouse::pollEvent(Event &event) {
 
 	float screenSizeSpeedModifier = screenSize.width() / (float)kDefaultScreenWidth;
 
-	// Compute the movement delta when compared to the previous update
+	// Compute the movement delta when compared to the previous update.
 	float deltaX = _subPixelRemainderX + _mouseVelocityX * _slowModifier * screenSizeSpeedModifier * 10.f;
 	float deltaY = _subPixelRemainderY + _mouseVelocityY * _slowModifier * screenSizeSpeedModifier * 10.f;
 
@@ -90,7 +90,7 @@ bool VirtualMouse::pollEvent(Event &event) {
 		return false;
 	}
 
-	// Send a mouse event
+	// Send a mouse event.
 	Common::Point oldPos = g_system->getEventManager()->getMousePos();
 
 	event.type = Common::EVENT_MOUSEMOVE;
@@ -115,7 +115,7 @@ bool VirtualMouse::notifyEvent(const Event &event) {
 	switch (event.customType) {
 	case kCustomActionVirtualAxisUp:
 		if (event.joystick.position == 0 && _inputAxisPositionY > 0) {
-			return true; // Ignore axis reset events if we are already going in the other direction
+			return true; // Ignore axis reset events if we are already going in the other direction.
 		}
 
 		handleAxisMotion(_inputAxisPositionX, -event.joystick.position);
@@ -204,24 +204,24 @@ void VirtualMouse::handleAxisMotion(int16 axisPositionX, int16 axisPositionY) {
 float VirtualMouse::computeJoystickMouseSpeedFactor() const {
 	switch (ConfMan.getInt("kbdmouse_speed")) {
 	case 0:
-		return 0.25; // 0.25 keyboard pointer speed
+		return 0.25; // 0.25 keyboard pointer speed.
 	case 1:
-		return 0.5;  // 0.5 speed
+		return 0.5;  // 0.5 keyboard pointer speed.
 	case 2:
-		return 0.75; // 0.75 speed
+		return 0.75; // 0.75 keyboard pointer speed.
 	case 3:
-		return 1.0;  // 1.0 speed
+		return 1.0;  // 1.0 keyboard pointer speed.
 	case 4:
-		return 1.25; // 1.25 speed
+		return 1.25; // 1.25 keyboard pointer speed.
 	case 5:
-		return 1.5;  // 1.5 speed
+		return 1.5;  // 1.5 keyboard pointer speed.
 	case 6:
-		return 1.75; // 1.75 speed
+		return 1.75; // 1.75 keyboard pointer speed.
 	case 7:
-		return 2.0;  // 2.0 speed
+		return 2.0;  // 2.0 keyboard pointer speed.
 	default:
 		return 1.0;
-	}
-}
+	    }
+    }
 
-} // End of namespace Common
+} // End of namespace Common.
