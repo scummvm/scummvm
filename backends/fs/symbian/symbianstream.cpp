@@ -29,7 +29,7 @@
 
 #define KInputBufferLength 128
 
-// Symbian libc file functionality in order to provide shared file handles
+// Symbian libc file functionality in order to provide shared file handles.
 class TSymbianFileEntry {
 public:
 	RFile _fileHandle;
@@ -100,7 +100,7 @@ size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry
 	TUint32 totsize = size*numItems;
 	TPtr8 pointer ( (unsigned char*) ptr, totsize);
 
-	// Nothing cached and we want to load at least KInputBufferLength bytes
+	// Nothing cached and we want to load at least KInputBufferLength bytes.
 	if (totsize >= KInputBufferLength) {
 		TUint32 totLength = 0;
 		if (entry->_inputPos != KErrNotFound) {
@@ -118,7 +118,7 @@ size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry
 		pointer.Set((unsigned char*) ptr, totLength, totsize);
 
 	} else {
-		// Nothing in buffer
+		// Nothing in buffer.
 		if (entry->_inputPos == KErrNotFound) {
 			TPtr8 cacheBuffer( (unsigned char*) entry->_inputBuffer, KInputBufferLength);
 			entry->_lastError = entry->_fileHandle.Read(cacheBuffer);
@@ -236,7 +236,7 @@ bool SymbianStdioStream::seek(int64 offs, int whence) {
 	entry->_eofReached = EFalse;
 	entry->_fileHandle.Seek(seekMode, pos);
 
-	return true;	// FIXME: Probably should return a value based on what _fileHandle.Seek returns
+	return true;	// FIXME: Probably should return a value based on what _fileHandle.Seek returns.
 }
 
 uint32 SymbianStdioStream::read(void *ptr, uint32 len) {
