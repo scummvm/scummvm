@@ -19,15 +19,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+
 from __future__ import with_statement
 import os
 from common_names import *
 
-
 active_config = ("USE_LUA", )
 src_dirs = ("common", )
 mmp_name = "scummvm_lua.mmp"
-
 
 mmp_template = """
 TARGET          scummvm_lua.lib
@@ -37,7 +36,6 @@ MACRO           __IGNORE__E32STD_H__
 
 #include        "../%s/build_config.mmh"
 """
-
 
 def processModule_mk(folder, mmp_file, active_conf = active_config):
    pth = os.path.join('..\..\..', folder)
@@ -64,12 +62,10 @@ def processModule_mk(folder, mmp_file, active_conf = active_config):
             src += ["SOURCE   %s.cpp" %tmp[:-2]]
    SafeWriteFile(mmp_file, src, 'a')
 
-
 def parse_lua(platform = "S60v3"):
    mmp_file = os.path.join(mmps, mmp_name)
    SafeWriteFile(mmp_file, mmp_template %platform)
    [processModule_mk(i, mmp_file, active_config) for i in src_dirs]
-
 
 if __name__ == "__main__":
    parse_lua()

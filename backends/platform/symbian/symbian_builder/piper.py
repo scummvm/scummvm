@@ -26,13 +26,12 @@ import multiprocessing as mp
 
 from common_names import *
 
-#workaround for "threading bug in strptime"
-#see - https://stackoverflow.com/questions/32245560/module-object-has-no-attribute-strptime-with-several-threads-python/46401422
+# Workaround for "threading bug in strptime".
+# See - https://stackoverflow.com/questions/32245560/module-object-has-no-attribute-strptime-with-several-threads-python/46401422
 import _strptime
 
 prj_template = "PRJ_MMPFILES\n%s"
 prj_path = "paralell_build"
-
 
 def thread_func(q):
    while True:
@@ -50,11 +49,11 @@ def thread_func(q):
 
       fname = os.path.join(mmps, fileName)
       fname = os.path.join("..", fname)
-      fname = os.path.join("..", fname) # point to mmp file in mmp folder
+      fname = os.path.join("..", fname) # Point to mmp file in mmp folder.
       tmp = os.path.join(pth, "bld.inf")
       SafeWriteFile(tmp, prj_template %fname)
 
-      #Needed because datetime.now() returns the same time for every call
+      # Needed because datetime.now() returns the same time for every call.
       start = time.strftime("%H:%M:%S")
 
       cmd = subprocess.Popen('bldmake bldfiles', stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=pth, shell=True)
@@ -71,12 +70,10 @@ def thread_func(q):
 
       out = out + out1
       err = err + err1
-      #After cmd.communicate() we have ugly 'crcrlf' line endings
+      # After cmd.communicate() we have ugly 'crcrlf' line endings.
       SafeWriteFile(build_log, out.replace(u"\r", u""), mode = 'a')
       SafeWriteFile(build_err, err.replace(u"\r", u""), mode = 'a')
       SafeWriteFile(build_time, "Engine %s build time: %s.\n" %(fileName, str(diff)) , mode = 'a')
-
-
 
 def build_mmp(try_fix = False):
    q = Queue.Queue()
@@ -95,8 +92,7 @@ def build_mmp(try_fix = False):
    threads = [ threading.Thread(target=thread_func, args=(q, )) for i in range(mp.cpu_count()) ]
    for thread in threads:
       thread.start()
-      q.put(None)  # one EOF marker for each thread
-
+      q.put(None) # One EOF marker for each thread.
 
 if __name__ == "__main__":
    build_mmp()

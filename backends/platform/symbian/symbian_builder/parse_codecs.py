@@ -19,6 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+
 from __future__ import with_statement
 import os
 from common_names import *
@@ -41,9 +42,8 @@ TARGET          scummvm_codecs.lib
 TARGETTYPE      lib
 #include "../%s/build_config.mmh"
 
-// compiler must use png.h from libpng.lib instead ScummVM's
+// Compiler must use png.h from libpng.lib instead ScummVM's.
 OPTION			GCCE -I'/Symbian/S60_5th_Edition_SDK_v1.0/epoc32/include/png'
-
 """
 
 def processModule_mk(dir, mmp_file):

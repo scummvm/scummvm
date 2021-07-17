@@ -1,5 +1,5 @@
 # ScummVM - Graphic Adventure Engine
-# Copyright (C) 2020 Stryzhniou Fiodar
+# Copyright (C) 2020-2021 Stryzhniou Fiodar
 
 # ScummVM is the legal property of its developers, whose names
 # are too numerous to list here. Please refer to the COPYRIGHT
@@ -64,4 +64,3 @@ def run(build, pkgs, only_begotten_engine = None):
 
    build_apps(pkgs)
    create_installers(pkgs)
-

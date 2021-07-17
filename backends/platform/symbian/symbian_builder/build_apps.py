@@ -26,13 +26,12 @@ import multiprocessing as mp
 
 from common_names import *
 
-#workaround for "threading bug in strptime"
-#see - https://stackoverflow.com/questions/32245560/module-object-has-no-attribute-strptime-with-several-threads-python/46401422
+# Workaround for "threading bug in strptime".
+# See - https://stackoverflow.com/questions/32245560/module-object-has-no-attribute-strptime-with-several-threads-python/46401422
 import _strptime
 
 prj_template = "PRJ_MMPFILES\n%s"
 prj_path = "paralell_build"
-
 
 def thread_func(q, plats):
    while True:
@@ -52,12 +51,11 @@ def thread_func(q, plats):
       fname = os.path.join(plats, fileName)
       fname = os.path.join("..", fname)
       fname = os.path.join("..", fname)
-      fname = os.path.join("..", fname) # point to mmp file in port specific folder
+      fname = os.path.join("..", fname) # Point to mmp file in port specific folder.
       tmp = os.path.join(pth, "bld.inf")
       SafeWriteFile(tmp, prj_template %fname)
 
-
-      #Needed because datetime.now() returns the same time for every call
+      # Needed because datetime.now() returns the same time for every call.
       start = time.strftime("%H:%M:%S")
 
       cmd = subprocess.Popen('bldmake bldfiles', stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=pth, shell=True)
@@ -72,8 +70,8 @@ def thread_func(q, plats):
 
       out = out + out1
       err = err + err1
-      # I hope it correctly stores logs in parallel tasks
-      # after cmd.communicate() we have ugly 'crcrlf' line endings
+      # I hope it correctly stores logs in parallel tasks.
+      # After cmd.communicate() we have ugly 'crcrlf' line endings.
       AppendToFile(build_log, out.replace(u"\r", u""))
       AppendToFile(build_err, err.replace(u"\r", u""))
       AppendToFile(build_time, "Engine %s build time: %s.\n" %(fileName, str(diff)) )
@@ -90,7 +88,7 @@ def build_apps(plats):
    threads = [ threading.Thread(target=thread_func, args=(q, plats)) for i in range(mp.cpu_count()) ]
    for thread in threads:
       thread.start()
-      q.put(None)  # one EOF marker for each thread
+      q.put(None)  # One EOF marker for each thread.
 
 if __name__ == "__main__":
    build_apps(plats = "S60v3")

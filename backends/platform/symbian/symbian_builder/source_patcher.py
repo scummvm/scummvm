@@ -3,12 +3,11 @@ import os
 from common_names import *
 from collections import defaultdict as defdict
 
-
-#format - engine name : list of source files
+# Format - engine name : list of source files.
 va_macro_src = [("engines\\sci", "resource_patcher.cpp"), ("engines\\ags", "managed_object_pool.h"),
 ("graphics\\macgui", "mactext.cpp")]
 
-#Format: "file to edit" = "parent folder", src, dst
+# Format: "file to edit" = "parent folder", src, dst.
 oneline_patch_src = [
 ("ptr.h", ["common", r'#include <cstddef>', r'//#include <cstddef>']),
 
@@ -22,7 +21,7 @@ def fix_va_string(file):
    print "File to process: %s" %file
    with open(file) as d:
       x = d.read()
-   if "#ARGS" in x: #Already patched
+   if "#ARGS" in x: # Already patched.
       print "Already patched"
       return
    x = x.replace("...", "ARGS...")
@@ -56,7 +55,7 @@ def apply_patch(file, val):
    print "File to process: %s\n" %file
    with open(file) as d:
       x = d.read()
-   if val[-1] in x: #Already patched
+   if val[-1] in x: # Already patched.
       print "Already patched"
       return
    x = x.replace(val[1], val[-1])
@@ -64,7 +63,7 @@ def apply_patch(file, val):
       f.write(x)
 
 def patch_line(file, val):
-   val = val[0] #get nested list
+   val = val[0] # Get nested list.
    folder = val[0]
    if not folder:
       raise "Prent folder for file %s not set!" %file
