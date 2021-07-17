@@ -26,7 +26,7 @@
 #include "backends/mixer/sdl/sdl-mixer.h"
 
 /**
- * SDL mixer manager for Symbian
+ * SDL mixer manager for Symbian.
  */
 class SymbianSdlMixerManager : public SdlMixerManager {
 public:
