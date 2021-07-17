@@ -188,14 +188,39 @@ void Sprite::setPattern(uint16 pattern) {
 }
 
 void Sprite::setCast(CastMemberID memberID) {
-	CastMember *member = _movie->getCastMember(memberID);
+	/**
+	 * There are two things we need to take into account here:
+	 *   1. The cast member's type
+	 *   2. The sprite's type
+	 * If the two types do not align, the sprite should not render.
+	 * 
+	 * Before D4, you needed to manually set a sprite's type along
+	 * with its castNum.
+	 * 
+	 * Starting in D4, setting a sprite's castNum also set its type
+	 * to an appropriate default.
+	 */
+
 	_castId = memberID;
+	_cast = _movie->getCastMember(_castId);
+	if (g_director->getVersion() >= 400)
+		_spriteType = kCastMemberSprite;
 
-	if (memberID.member == 0)
-		return;
-
-	if (member) {
-		_cast = member;
+	if (_cast) {
+		if (g_director->getVersion() >= 400) {
+			// Set the sprite type to be more specific ONLY for bitmap or text.
+			// Others just use the generic kCastMemberSprite in D4.
+			switch (_cast->_type) {
+			case kCastBitmap:
+				_spriteType = kBitmapSprite;
+				break;
+			case kCastText:
+				_spriteType = kTextSprite;
+				break;
+			default:
+				break;
+			}
+		}
 
 		if (_cast->_type == kCastText &&
 			(_spriteType == kButtonSprite ||
@@ -233,7 +258,8 @@ void Sprite::setCast(CastMemberID memberID) {
 		}
 
 	} else {
-		warning("Sprite::setCast(): %s has null member", memberID.asString().c_str());
+		if (_castId.member != 0)
+			warning("Sprite::setCast(): %s is null", memberID.asString().c_str());
 	}
 }
 
