@@ -33,7 +33,7 @@ namespace Common {
 struct HardwareInput;
 
 /**
- * Watches events for inputs that can be bound to actions
+ * Watches events for inputs that can be bound to actions.
  *
  * When the watch mode is enabled, the watcher disables the Keymapper
  * and sets itself as an event observer. Once an event corresponding
@@ -59,8 +59,8 @@ private:
 
 	bool _watching;
 	HardwareInput _hwInput;
-};
+    };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef COMMON_INPUT_WATCHER_H
