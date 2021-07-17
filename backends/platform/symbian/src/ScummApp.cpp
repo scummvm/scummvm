@@ -62,12 +62,12 @@ _asm {
 
 #ifdef EPOC_AS_APP
 
-// this function is called automatically by the SymbianOS to deliver the new CApaApplication object
+// This function is called automatically by the SymbianOS to deliver the new CApaApplication object.
 #if !defined(UIQ3) && !defined(S60V3)
 EXPORT_C
 #endif
 CApaApplication* NewApplication() {
-	// Return pointer to newly created CQMApp
+	// Return pointer to newly created CQMApp.
 	return new CScummApp;
 }
 
@@ -100,7 +100,7 @@ CScummApp::~CScummApp() {
 #include <scummvm.rsg>
 /**
  * Returns the resource id to be used to declare the views supported by this UIQ3 app
- * @return TInt, resource id
+ * @return TInt, resource id.
  */
 TInt CScummApp::ViewResourceId() {
 	return R_SDL_VIEW_UI_CONFIGURATIONS;
@@ -108,15 +108,14 @@ TInt CScummApp::ViewResourceId() {
 #endif
 
 /**
- *   Responsible for returning the unique UID of this application
- * @return unique UID for this application in a TUid
+ * Responsible for returning the unique UID of this application.
+ * @return unique UID for this application in a TUid.
  **/
 TUid CScummApp::AppDllUid() const {
 	return TUid::Uid(ScummUid);
 }
 
-void CScummApp::GetDataFolder(TDes& aDataFolder)
+void CScummApp::GetDataFolder(TDes &aDataFolder)
 {
 	aDataFolder = _L("ScummVM");
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////
