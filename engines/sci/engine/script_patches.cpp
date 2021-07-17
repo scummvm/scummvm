@@ -169,6 +169,7 @@ static const char *const selectorNameTable[] = {
 	"track",        // Phant2
 	"update",       // Phant2
 	"xOff",         // Phant2
+	"eachElementDo",// KQ7
 	"fore",         // KQ7
 	"back",         // KQ7
 	"font",         // KQ7
@@ -294,6 +295,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_track,
 	SELECTOR_update,
 	SELECTOR_xOff,
+	SELECTOR_eachElementDo,
 	SELECTOR_fore,
 	SELECTOR_back,
 	SELECTOR_font,
@@ -6972,11 +6974,39 @@ static const uint16 kq7InitGameGlobalsPatch[] = {
 	PATCH_END
 };
 
+// KQ7 doesn't reset the chapter 6 volcano timers when exiting to the main menu
+//  without saving. The volcano can then erupt on the main menu or in a new game
+//  in the wrong chapter. The quit menu has several copies of the code that
+//  resets the game for the main menu but only one of them stops the timers.
+//
+// We fix this by patching the incomplete code to jump to the complete version.
+//
+// Applies to: PC 2.00 and 2.00b
+// Responsible method: chapInset:dispose
+static const uint16 kq7StopTimersSignature[] = {
+	0x38, SIG_SELECTOR16(eachElementDo),    // pushi eachElementDo [ start of complete reset ]
+	SIG_ADDTOOFFSET(+0xbf),
+	0x38, SIG_SELECTOR16(eachElementDo),    // pushi eachElementDo [ start of incomplete reset ]
+	SIG_ADDTOOFFSET(+0x49),
+	0x33, SIG_MAGICDWORD, 0x2f,             // jmp 2f
+	0x38, SIG_SELECTOR16(eachElementDo),    // pushi eachElementDo [ start of incomplete reset ]
+	SIG_END
+};
+
+static const uint16 kq7StopTimersPatch[] = {
+	PATCH_ADDTOOFFSET(+0xc2),
+	0x32, PATCH_UINT16(0xff3b),             // jmp ff3b [ jump to complete reset ]
+	PATCH_ADDTOOFFSET(+0x4b),
+	0x32, PATCH_UINT16(0xfeed),             // jmp feed [ jump to complete reset ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
 	{  true,     0, "remove hardcoded spin loop",                  1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
 	{  true,    20, "fix initializing game globals",               1, kq7InitGameGlobalsSignature,              kq7InitGameGlobalsPatch },
+	{  true,    25, "fix stopping timers",                         1, kq7StopTimersSignature,                   kq7StopTimersPatch },
 	{  true,    30, "fix allowing too many saves",                 1, kq7TooManySavesSignature,                 kq7TooManySavesPatch },
 	{  true,  1250, "fix opening cartoon",                         1, kq7OpeningCartoonSignature,               kq7OpeningCartoonPatch },
 	{  true,  1250, "fix statue gem cel",                          1, kq7StatueGemCelSignature,                 kq7StatueGemCelPatch },
