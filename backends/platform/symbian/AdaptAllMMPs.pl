@@ -1,13 +1,12 @@
-
 use Cwd;
 
 $buildDir = getcwd();
 chdir("../../../");
 
-# list of project files to process
+# List of project files to process.
 @mmp_files = (
 
-	# Engine Project files
+	# Engine project files.
 	"mmp/scummvm_agi.mmp",
 	"mmp/scummvm_agos.mmp",
 	"mmp/scummvm_cge.mmp",
@@ -47,7 +46,7 @@ chdir("../../../");
 	"mmp/scummvm_tucker.mmp",
 	"mmp/scummvm_voyeur.mmp",
 	"mmp/scummvm_wintermute.mmp",
-	# New engines
+	# New engines.
 	"mmp/scummvm_access.mmp",
 	"mmp/scummvm_avalanche.mmp",
 	"mmp/scummvm_bbvs.mmp",
@@ -60,7 +59,7 @@ chdir("../../../");
 	"mmp/scummvm_sword25.mmp",
 	"mmp/scummvm_testbed.mmp",
 	"mmp/scummvm_zvision.mmp",
-	# Target Platform Project Files
+	# Target platform project files.
 	"S60/ScummVM_S60.mmp",
 	"S60v3/ScummVM_S60v3.mmp",
 	"S60v3/ScummVM_A0000658_S60v3.mmp",
@@ -69,41 +68,39 @@ chdir("../../../");
 	"UIQ2/ScummVM_UIQ2.mmp",
 	"UIQ3/ScummVM_UIQ3.mmp",
 	"UIQ3/ScummVM_A0000658_UIQ3.mmp"
-
 );
 
-# do this first to set all *.mmp & *.inf files to *.*.in states
+# Do this first to set all *.mmp & *.inf files to *.*.in states.
 ResetProjectFiles();
 
 print "
-=======================================================================================
-Updating slave MACRO settings in MMP files from master 'scummvm_base.mmp'
-=======================================================================================
+========================================================================================
+Updating slave MACRO settings in MMP files from master 'scummvm_base.mmp'.
+========================================================================================
 
 ";
 
-# do this first so we have @EnabledDefines and @DisabledDefines for correct inclusion of SOURCE files later
+# Do this first so we have @EnabledDefines and @DisabledDefines for correct inclusion of SOURCE files later.
 UpdateSlaveMacros();
 
 print "
-=======================================================================================
-Preparing to update all the Symbian MMP project files with objects from module.mk files
-=======================================================================================
+========================================================================================
+Preparing to update all the Symbian MMP project files with objects from module.mk files.
+========================================================================================
 
 ";
 
+# Some modules.mk files have #ifndef ENABLE_XXXX blocks:
+my @section_empty = (""); # Section standard: no #ifdef's in module.mk files.
+my @sections_agos = ("", "ENABLE_AGOS2"); # Special sections for engine AGOS.
+my @sections_groovie = ("", "ENABLE_GROOVIE2"); # Special sections for engine GROOVIE.
+my @sections_kyra = ("", "ENABLE_LOL","ENABLE_EOB"); # Special sections for engine KYRA.
+my @sections_mohawk = ("", "ENABLE_CSTIME", "ENABLE_MYST", "ENABLE_RIVEN"); # Special sections for engine MOHAWK.
+my @sections_saga = ("", "ENABLE_IHNM", "ENABLE_SAGA2"); # Special sections for engine SAGA.
+my @sections_sci = ("", "ENABLE_SCI32"); # Special sections for engine SCI.
+my @sections_scumm = ("", "ENABLE_SCUMM_7_8", "ENABLE_HE"); # Special sections for engine SCUMM.
 
-# some modules.mk files have #ifndef ENABLE_XXXX blocks:
-my @section_empty = (""); # section standard: no #ifdef's in module.mk files
-my @sections_agos = ("", "ENABLE_AGOS2"); # special sections for engine AGOS
-my @sections_groovie = ("", "ENABLE_GROOVIE2"); # special sections for engine GROOVIE
-my @sections_kyra = ("", "ENABLE_LOL","ENABLE_EOB"); # special sections for engine KYRA
-my @sections_mohawk = ("", "ENABLE_CSTIME", "ENABLE_MYST", "ENABLE_RIVEN");  # special sections for engine MOHAWK
-my @sections_saga = ("", "ENABLE_IHNM", "ENABLE_SAGA2"); # special sections for engine SAGA
-my @sections_sci = ("", "ENABLE_SCI32");  # special sections for engine SCI
-my @sections_scumm = ("", "ENABLE_SCUMM_7_8", "ENABLE_HE"); # special sections for engine SCUMM
-
-# files excluded from build, case insensitive, will be matched in filename string only
+# Files excluded from build, case insensitive, will be matched in filename string only.
 my @excludes_snd = (
 	"mt32.*",
 	"Analog.cpp",
@@ -134,17 +131,16 @@ my @excludes_graphics = (
 my @excludes_gui = (
 );
 
-# the USE_ARM_* defines not parsed correctly, exclude manually:
+# The USE_ARM_* defines not parsed correctly, exclude manually:
 my @excludes_scumm = (
-	".*ARM.*",		# the *ARM.s files are added in .mmp files based on WINS/ARM build!
+	".*ARM.*",		# The *ARM.s files are added in .mmp files based on WINS/ARM build!
 	# USE_ARM_SMUSH_ASM		codec47ARM.s
 	# USE_ARM_GFX_ASM		gfxARM.s
-	# USE_ARM_COSTUME_ASM	proc3ARM.s			compiled, linked?, but *not* used :P (portdefs.h)
+	# USE_ARM_COSTUME_ASM	proc3ARM.s			Compiled, linked?, but *not* used :P (portdefs.h).
 );
 
-
-#ParseModule(mmpStr,		dirStr,		ifdefArray,				[exclusionsArray])
-ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, these never change anyways...
+#ParseModule(mmpStr,	 dirStr,	 ifdefArray,            [exclusionsArray])
+ParseModule("_base",	"base",		\@section_empty); # Now in ./TRG/ScummVM_TRG.mmp, these never change anyways...
 ParseModule("_base",	"common",	\@section_empty);
 ParseModule("_base",	"gui",		\@section_empty,		\@excludes_gui);
 ParseModule("_base",	"graphics",	\@section_empty,		\@excludes_graphics);
@@ -191,7 +187,7 @@ ParseModule("_tsage",	"tsage",	\@section_empty);
 ParseModule("_tucker",	"tucker",	\@section_empty);
 ParseModule("_voyeur"     ,"voyeur",	\@section_empty);
 ParseModule("_wintermute","wintermute",	\@section_empty);
-##### new engines
+# New engines.
 ParseModule("_access"     ,"access",	\@section_empty);
 ParseModule("_avalanche"     ,"avalanche",	\@section_empty);
 ParseModule("_bbvs"     	,"bbvs",	\@section_empty);
@@ -214,7 +210,7 @@ Done. Enjoy :P
 ##################################################################################################################
 ##################################################################################################################
 
-# parses multiple sections per mmp/module
+# Parses multiple sections per mmp/module.
 sub ParseModule
 {
 	my ($mmp,$module,$sections,$exclusions) = @_;
@@ -230,12 +226,12 @@ sub ParseModule
 
 ##################################################################################################################
 
-# parses all module.mk files in a dir and its subdirs
+# Parses all module.mk files in a dir and its subdirs.
 sub CheckForModuleMK
 {
 	my ($item,$section,@exclusions) = @_;
 
-	# if dir: check subdirs too
+	#if dir: check subdirs too
 	if (-d $item)
 	{
 		#print "$item\n";
@@ -246,12 +242,12 @@ sub CheckForModuleMK
 		closedir DIR;
 
 		foreach $entry (@Files)
-		{
+	    {
 			CheckForModuleMK("$item/$entry", $section, @exclusions);
 		}
 	}
 
-	# if this is a module.mk file
+	# If this is a module.mk file.
 	if (-f $item and $item =~ /.*\/module.mk$/)
 	{
 		my $sec = "";
@@ -270,10 +266,10 @@ sub CheckForModuleMK
 
 		A: foreach $line (@lines)
 		{
-			# all things we need are inside #ifdef sections,
-			# there is nothing we need in #ifndef sections: so ignore these for now
+			# All things we need are inside #ifdef sections,
+			# there is nothing we need in #ifndef sections: so ignore these for now.
 
-			# found a section? reset
+			# Found a section? reset.
 			if ($line =~ /^ifdef (.*)/)
 			{
 				$sec = $1;
@@ -285,20 +281,20 @@ sub CheckForModuleMK
 				$isenable = 0;
 			}
 
-			# found an object? Not uncommented!
+			# Found an object? Not uncommented!
 			if (!($line =~ /^#/) && $line =~ s/\.o/.cpp/)
 			{
-				# handle this section?
+				# Handle this section?
 				if ($sec eq $section)
 				{
 					$ObjectsTotal++;
 
-					$line =~ s/^\s*//g; # remove possible leading whitespace
-					$line =~ s/ \\//; # remove possible trailing ' \'
-					$line =~ s/\//\\/g; # replace / with \
-					chop($line); # remove \n
+					$line =~ s/^\s*//g; # Remove possible leading whitespace.
+					$line =~ s/ \\//; # Remove possible trailing ' \'
+					$line =~ s/\//\\/g; # Replace / with \
+					chop($line); # Remove \n
 
-					# do we need to skip this file? According to our own @exclusions array
+					# Do we need to skip this file? According to our own @exclusions array.
 					foreach $exclusion (@exclusions)
 					{
 						if ($line =~ /$exclusion/i)
@@ -310,7 +306,7 @@ sub CheckForModuleMK
 						}
 					}
 
-					# do we need to do this file? According to MACROs in .MMPs
+					# Do we need to do this file? According to MACROs in .MMPs
 					my $found = 0;
 					foreach $EnableDefine (@EnabledDefines)
 					{
@@ -328,7 +324,7 @@ sub CheckForModuleMK
 							last;
 						}
 					}
-					# always allow non-sections
+					# Always allow non-sections.
 					$found = 1 if ($section eq '');
 					if (!$found)
 					{
@@ -350,7 +346,7 @@ sub CheckForModuleMK
 
 ##################################################################################################################
 
-# update an MMP project file with the new objects
+# Update an MMP project file with the new objects.
 sub UpdateProjectFile
 {
 	my ($mmp,$module,$section) = @_;
@@ -374,7 +370,6 @@ sub UpdateProjectFile
 
 		if ($onestr =~ /$n/)
 		{
-
 			print "      - $name @ $n updating ... ";
 
 			$onestr =~ s/$a.*$b/$a$updated\n$output$b/s;
@@ -385,7 +380,6 @@ sub UpdateProjectFile
 			print "done.\n";
 		}
 	}
-
 	$output = "";
 }
 
@@ -413,51 +407,51 @@ sub UpdateSlaveMacros
 	my $libs_first = "\n// automagically enabled static libs from macros above\n";
 	my $libs_second = "STATICLIBRARY	scummvm_base.lib // must be above USE_* .libs\n";
 	my $macro_counter = 0;
-	my $macros2 = "\n"; # output for in *.mmp MACROS section
-	my $projects = "\n..\\mmp\\scummvm_base.mmp\n"; # output for in BLD.INF projects section
+	my $macros2 = "\n"; # Output for in *.mmp MACROS section.
+	my $projects = "\n..\\mmp\\scummvm_base.mmp\n"; # Output for in BLD.INF projects section.
 
 	foreach $line (split("\n", $macros))
 	{
-		# do we need to add a static .lib?
+		# Do we need to add a static .lib?
 		if ($line =~ /^.*MACRO\s*([0-9A-Z_]*)\s*\/\/\s*LIB\:(.*)$/)
 		{
 			my $macro = $1; my $lib = $2;
 
-			# this macro enabled? then also add the .lib
+			# This macro enabled? then also add the .lib
 			if ($line =~ /^\s*MACRO\s*$macro/m)
 			{
-				# add an USE_ lib? (these need to be added @ the beginning, before _base)
+				# Add an USE_ lib? (These need to be added @ the beginning, before _base).
 				$libs_second .= "STATICLIBRARY	$lib\n" if ($macro =~ /^USE_/);
 
-				# add an ENABLE_ lib? (these need to be added @ the end, after _base)
+				# Add an ENABLE_ lib? (These need to be added @ the end, after _base).
 				if ($macro =~ /^ENABLE_/)
 				{
 					$libs_first .= "STATICLIBRARY	$lib\n";
 
-					# add projects for BLD.INF's
+					# Add projects for BLD.INF's
 					my $projectname = substr("$lib",0,-4);
 					$projects .= "..\\mmp\\$projectname.mmp\n";
 				}
 			}
 			else
 			{
-				# skip lines not beginning with "MACRO" (like "//MACRO")
+				# Skip lines not beginning with "MACRO" (like "//MACRO").
 			}
 			$macro_counter++;
 		}
 
-		# not commented out? then add the macro to output string
+		# Not commented out? then add the macro to output string.
 		if ($line =~ /^\s*MACRO\s*([0-9A-Z_]*)\s*/)
 		{
 			my $macro = $1;
 			$macros2 .= "$line\n";
 			if ($macro =~ /^ENABLE_/)
 			{
-				push @EnabledDefines, $macro; # used in CheckForModuleMK()!!
+				push @EnabledDefines, $macro; # Used in CheckForModuleMK()!!
 			}
 			elsif ($macro =~ /^DISABLE_/)
 			{
-				push @DisabledDefines, $macro; # used in CheckForModuleMK()!!
+				push @DisabledDefines, $macro; # Used in CheckForModuleMK()!!
 			}
 		}
 	}
@@ -483,7 +477,7 @@ sub UpdateSlaveMacros
 		$onestr = join("",@lines);
 
 		my $extralibs = ""; # output
-		# slash in name means it's a phone specific build file: add LIBs
+		# Slash in name means it's a phone specific build file: Add LIBs.
 		$extralibs .= "$libs_first$libs_second" if (-e $fileBLDINF);
 
 		$onestr =~ s/$a.*$b/$a$updated$macros2$extralibs$b/s;
@@ -495,8 +489,8 @@ sub UpdateSlaveMacros
 
 		if (-e $fileBLDINF)
 		{
-			# slash in name means it's a phone specific build file:
-			# this also means we need to update a BLD.INF file here!
+			# Slash in name means it's a phone specific build file:
+			# This also means we need to update a BLD.INF file here!
 			print "Updating projects in $fileBLDINF ... \n";
 
 			open FILE, "$fileBLDINF";	@lines = <FILE>; close FILE;
@@ -515,11 +509,11 @@ sub ResetProjectFiles()
 {
 	my $onestr, @lines;
 	my @mmp_files_plus_one = @mmp_files;
-#	unshift @mmp_files_plus_one, "mmp/scummvm_base.mmp";
+    #unshift @mmp_files_plus_one, "mmp/scummvm_base.mmp";
 
 	print "Resetting project files: ";
 
-	# we don't need to do mmp/scummvm_base.mmp", it was done in BuildPackageUpload.pl before the call to this script
+	# We don't need to do mmp/scummvm_base.mmp", it was done in BuildPackageUpload.pl before the call to this script.
 	foreach $name (@mmp_files_plus_one)
 	{
 		my $file  = "$buildDir/$name";
@@ -529,7 +523,7 @@ sub ResetProjectFiles()
 		$onestr = join("",@lines);
 		open FILE, ">$file"; print FILE $onestr; close FILE;
 
-		# also do BLD.INF if it is there...
+		# Also do BLD.INF if it is there...
 		my $fileBLDINF = $buildDir .'/'. substr($name, 0, rindex($name, "/")) . "/BLD.INF";
 		if (-e "$fileBLDINF.in")
 		{
@@ -539,7 +533,6 @@ sub ResetProjectFiles()
 			open FILE, ">$fileBLDINF"; print FILE $onestr; close FILE;
 		}
 	}
-
 	print "... done.\n";
 }
 
