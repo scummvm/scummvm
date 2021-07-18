@@ -418,32 +418,29 @@ void Gui::loadBorder(Graphics::MacWindow *target, MVWindowType type, bool active
 
 	if (stream) {
 		target->loadBorder(*stream, activeFlag, offsets);
-		delete stream;
 	}
 
 	if (canHaveTitle) {
-		stream = _engine->getBorderFile(type, active);
 		if (stream) {
+			stream->seek(0);
 			target->loadBorder(*stream, activeFlag | Graphics::kWindowBorderTitle, offsets);
-			delete stream;
 		}
 	}
 
 	if (canHaveScrollbar) {
-		stream = _engine->getBorderFile(type, active);
 		if (stream) {
+			stream->seek(0);
 			target->loadBorder(*stream, activeFlag | Graphics::kWindowBorderScrollbar, offsets);
-			delete stream;
 		}
 	}
 
 	if (canHaveTitle && canHaveScrollbar) {
-		stream = _engine->getBorderFile(type, active);
 		if (stream) {
+			stream->seek(0);
 			target->loadBorder(*stream, activeFlag | Graphics::kWindowBorderTitle | Graphics::kWindowBorderScrollbar, offsets);
-			delete stream;
 		}
 	}
+	delete stream;
 }
 
 void Gui::loadGraphics() {
