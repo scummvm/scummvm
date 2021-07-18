@@ -218,7 +218,7 @@ void Gui::clearControls() {
 
 void Gui::initWindows() {
 	Common::Rect bounds;
-	BorderBounds bbs = {0 , 0, 0, 0, 0, 0};
+	BorderBounds bbs(0 , 0, 0, 0, 0, 0);
 	// Game Controls Window
 	_controlsWindow = _wm.addWindow(false, false, false);
 	
