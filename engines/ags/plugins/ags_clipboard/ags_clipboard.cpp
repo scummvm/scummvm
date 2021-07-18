@@ -27,36 +27,22 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSClipboard {
 
-IAGSEngine *AGSClipboard::_engine;
-Common::String *AGSClipboard::_text;
-
-AGSClipboard::AGSClipboard() : PluginBase() {
-	_engine = nullptr;
-	_text = new Common::String();
-
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-	DLL_METHOD(AGS_EngineShutdown);
-}
-
 const char *AGSClipboard::AGS_GetPluginName() {
 	return "AGS Clipboard Plugin v0.4";
 }
 
 void AGSClipboard::AGS_EngineStartup(IAGSEngine *engine) {
-	SCRIPT_METHOD_EXT(Clipboard::PasteText, Clipboard_PasteText);
-	SCRIPT_METHOD_EXT(Clipboard::CopyText^1, Clipboard_CopyText);
-}
+	AGS_EngineStartup(engine);
 
-void AGSClipboard::AGS_EngineShutdown() {
-	delete _text;
+	SCRIPT_METHOD(Clipboard::PasteText, AGSClipboard::Clipboard_PasteText);
+	SCRIPT_METHOD(Clipboard::CopyText^1, AGSClipboard::Clipboard_CopyText);
 }
 
 void AGSClipboard::Clipboard_PasteText(ScriptMethodParams &params) {
 	Common::U32String text = g_system->getTextFromClipboard();
-	*_text = Common::String(text);
+	_text = text;
 
-	params._result = _text->c_str();
+	params._result = _text.c_str();
 }
 
 void AGSClipboard::Clipboard_CopyText(ScriptMethodParams &params) {

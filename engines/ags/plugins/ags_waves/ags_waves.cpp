@@ -26,72 +26,63 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSWaves {
 
-IAGSEngine *AGSWaves::_engine;
-
-AGSWaves::AGSWaves() : PluginBase() {
-	_engine = nullptr;
-
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-}
-
 const char *AGSWaves::AGS_GetPluginName() {
 	return "AGS Waves";
 }
 
 void AGSWaves::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 
-	SCRIPT_METHOD(DrawScreenEffect);
-	SCRIPT_METHOD(SFX_Play);
-	SCRIPT_METHOD(SFX_SetVolume); 
-	SCRIPT_METHOD(SFX_GetVolume);
-	SCRIPT_METHOD(Music_Play);
-	SCRIPT_METHOD(Music_GetVolume);
-	SCRIPT_METHOD(Music_SetVolume);
-	SCRIPT_METHOD(SFX_Stop);
-	SCRIPT_METHOD(SFX_SetPosition);
-	SCRIPT_METHOD(SFX_SetGlobalVolume);
-	SCRIPT_METHOD(Load_SFX);
-	SCRIPT_METHOD(Audio_Apply_Filter);
-	SCRIPT_METHOD(Audio_Remove_Filter);
-	SCRIPT_METHOD(SFX_AllowOverlap);
-	SCRIPT_METHOD(SFX_Filter);
-	SCRIPT_METHOD(DrawBlur); 
-	SCRIPT_METHOD(DrawTunnel);
-	SCRIPT_METHOD(DrawCylinder);
-	SCRIPT_METHOD(DrawForceField);
-	SCRIPT_METHOD(Grayscale);
-	SCRIPT_METHOD(ReadWalkBehindIntoSprite);
-	SCRIPT_METHOD(AdjustSpriteFont);
-	SCRIPT_METHOD(SpriteGradient);
-	SCRIPT_METHOD(Outline);
-	SCRIPT_METHOD(OutlineOnly);
-	SCRIPT_METHOD(SaveVariable);
-	SCRIPT_METHOD(ReadVariable);
-	SCRIPT_METHOD(GameDoOnceOnly);
-	SCRIPT_METHOD(SetGDState);
-	SCRIPT_METHOD(GetGDState);
-	SCRIPT_METHOD(ResetAllGD);
-	SCRIPT_METHOD(SpriteSkew);
-	SCRIPT_METHOD(FireUpdate);
-	SCRIPT_METHOD(WindUpdate);
-	SCRIPT_METHOD(SetWindValues);
-	SCRIPT_METHOD(ReturnWidth);
-	SCRIPT_METHOD(ReturnHeight);
-	SCRIPT_METHOD(ReturnNewHeight);
-	SCRIPT_METHOD(ReturnNewWidth);
-	SCRIPT_METHOD(Warper);
-	SCRIPT_METHOD(SetWarper);
-	SCRIPT_METHOD(RainUpdate);
-	SCRIPT_METHOD(BlendTwoSprites);
-	SCRIPT_METHOD(Blend);
-	SCRIPT_METHOD(Dissolve);
-	SCRIPT_METHOD(ReverseTransparency);
-	SCRIPT_METHOD(NoiseCreator);
-	SCRIPT_METHOD(TintProper);
-	SCRIPT_METHOD(GetWalkbehindBaserine);
-	SCRIPT_METHOD(SetWalkbehindBaserine);
+	SCRIPT_METHOD(DrawScreenEffect, AGSWaves::DrawScreenEffect);
+	SCRIPT_METHOD(SFX_Play, AGSWaves::SFX_Play);
+	SCRIPT_METHOD(SFX_SetVolume, AGSWaves::SFX_SetVolume);
+	SCRIPT_METHOD(SFX_GetVolume, AGSWaves::SFX_GetVolume);
+	SCRIPT_METHOD(Music_Play, AGSWaves::Music_Play);
+	SCRIPT_METHOD(Music_GetVolume, AGSWaves::Music_GetVolume);
+	SCRIPT_METHOD(Music_SetVolume, AGSWaves::Music_SetVolume);
+	SCRIPT_METHOD(SFX_Stop, AGSWaves::SFX_Stop);
+	SCRIPT_METHOD(SFX_SetPosition, AGSWaves::SFX_SetPosition);
+	SCRIPT_METHOD(SFX_SetGlobalVolume, AGSWaves::SFX_SetGlobalVolume);
+	SCRIPT_METHOD(Load_SFX, AGSWaves::Load_SFX);
+	SCRIPT_METHOD(Audio_Apply_Filter, AGSWaves::Audio_Apply_Filter);
+	SCRIPT_METHOD(Audio_Remove_Filter, AGSWaves::Audio_Remove_Filter);
+	SCRIPT_METHOD(SFX_AllowOverlap, AGSWaves::SFX_AllowOverlap);
+	SCRIPT_METHOD(SFX_Filter, AGSWaves::SFX_Filter);
+	SCRIPT_METHOD(DrawBlur, AGSWaves::DrawBlur);
+	SCRIPT_METHOD(DrawTunnel, AGSWaves::DrawTunnel);
+	SCRIPT_METHOD(DrawCylinder, AGSWaves::DrawCylinder);
+	SCRIPT_METHOD(DrawForceField, AGSWaves::DrawForceField);
+	SCRIPT_METHOD(Grayscale, AGSWaves::Grayscale);
+	SCRIPT_METHOD(ReadWalkBehindIntoSprite, AGSWaves::ReadWalkBehindIntoSprite);
+	SCRIPT_METHOD(AdjustSpriteFont, AGSWaves::AdjustSpriteFont);
+	SCRIPT_METHOD(SpriteGradient, AGSWaves::SpriteGradient);
+	SCRIPT_METHOD(Outline, AGSWaves::Outline);
+	SCRIPT_METHOD(OutlineOnly, AGSWaves::OutlineOnly);
+	SCRIPT_METHOD(SaveVariable, AGSWaves::SaveVariable);
+	SCRIPT_METHOD(ReadVariable, AGSWaves::ReadVariable);
+	SCRIPT_METHOD(GameDoOnceOnly, AGSWaves::GameDoOnceOnly);
+	SCRIPT_METHOD(SetGDState, AGSWaves::SetGDState);
+	SCRIPT_METHOD(GetGDState, AGSWaves::GetGDState);
+	SCRIPT_METHOD(ResetAllGD, AGSWaves::ResetAllGD);
+	SCRIPT_METHOD(SpriteSkew, AGSWaves::SpriteSkew);
+	SCRIPT_METHOD(FireUpdate, AGSWaves::FireUpdate);
+	SCRIPT_METHOD(WindUpdate, AGSWaves::WindUpdate);
+	SCRIPT_METHOD(SetWindValues, AGSWaves::SetWindValues);
+	SCRIPT_METHOD(ReturnWidth, AGSWaves::ReturnWidth);
+	SCRIPT_METHOD(ReturnHeight, AGSWaves::ReturnHeight);
+	SCRIPT_METHOD(ReturnNewHeight, AGSWaves::ReturnNewHeight);
+	SCRIPT_METHOD(ReturnNewWidth, AGSWaves::ReturnNewWidth);
+	SCRIPT_METHOD(Warper, AGSWaves::Warper);
+	SCRIPT_METHOD(SetWarper, AGSWaves::SetWarper);
+	SCRIPT_METHOD(RainUpdate, AGSWaves::RainUpdate);
+	SCRIPT_METHOD(BlendTwoSprites, AGSWaves::BlendTwoSprites);
+	SCRIPT_METHOD(Blend, AGSWaves::Blend);
+	SCRIPT_METHOD(Dissolve, AGSWaves::Dissolve);
+	SCRIPT_METHOD(ReverseTransparency, AGSWaves::ReverseTransparency);
+	SCRIPT_METHOD(NoiseCreator, AGSWaves::NoiseCreator);
+	SCRIPT_METHOD(TintProper, AGSWaves::TintProper);
+	SCRIPT_METHOD(GetWalkbehindBaserine, AGSWaves::GetWalkbehindBaserine);
+	SCRIPT_METHOD(SetWalkbehindBaserine, AGSWaves::SetWalkbehindBaserine);
 }
 
 void AGSWaves::DrawScreenEffect(ScriptMethodParams &params) {

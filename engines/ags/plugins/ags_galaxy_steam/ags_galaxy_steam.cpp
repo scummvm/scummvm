@@ -29,32 +29,30 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSGalaxySteam {
 
-AGS2Client::AGS2Client() : PluginBase() {
-	DLL_METHOD(AGS_EngineStartup);
-}
-
 void AGS2Client::AGS_EngineStartup(IAGSEngine *engine) {
-	SCRIPT_METHOD_EXT(AGS2Client::IsAchievementAchieved^1, IsAchievementAchieved);
-	SCRIPT_METHOD_EXT(AGS2Client::SetAchievementAchieved^1, SetAchievementAchieved);
-	SCRIPT_METHOD_EXT(AGS2Client::ResetAchievement^1, ResetAchievement);
-	SCRIPT_METHOD_EXT(AGS2Client::GetIntStat^1, GetIntStat);
-	SCRIPT_METHOD_EXT(AGS2Client::GetFloatStat^1, GetFloatStat);
-	SCRIPT_METHOD_EXT(AGS2Client::GetAverageRateStat^1, GetAverageRateStat);
-	SCRIPT_METHOD_EXT(AGS2Client::SetIntStat^2, SetIntStat);
-	SCRIPT_METHOD_EXT(AGS2Client::SetFloatStat^2, SetFloatStat);
-	SCRIPT_METHOD_EXT(AGS2Client::UpdateAverageRateStat^3, UpdateAverageRateStat);
-	SCRIPT_METHOD_EXT(AGS2Client::ResetStatsAndAchievements^0, ResetStatsAndAchievements);
-	SCRIPT_METHOD_EXT(AGS2Client::get_Initialized, get_Initialized);
-	SCRIPT_METHOD_EXT(AGS2Client::get_CurrentLeaderboardName, get_CurrentLeaderboardName);
-	SCRIPT_METHOD_EXT(AGS2Client::RequestLeaderboard^3, RequestLeaderboard);
-	SCRIPT_METHOD_EXT(AGS2Client::UploadScore^1, UploadScore);
-	SCRIPT_METHOD_EXT(AGS2Client::geti_LeaderboardNames, geti_LeaderboardNames);
-	SCRIPT_METHOD_EXT(AGS2Client::geti_LeaderboardScores, geti_LeaderboardScores);
-	SCRIPT_METHOD_EXT(AGS2Client::get_LeaderboardCount, get_LeaderboardCount);
-	SCRIPT_METHOD_EXT(AGS2Client::GetUserName^0, GetUserName);
-	SCRIPT_METHOD_EXT(AGS2Client::GetCurrentGameLanguage^0, GetCurrentGameLanguage);
-	SCRIPT_METHOD_EXT(AGS2Client::FindLeaderboard^1, FindLeaderboard);
-	SCRIPT_METHOD_EXT(AGS2Client::Initialize^2, Initialize);
+	PluginBase::AGS_EngineStartup(engine);
+
+	SCRIPT_METHOD(AGS2Client::IsAchievementAchieved^1, AGS2Client::IsAchievementAchieved);
+	SCRIPT_METHOD(AGS2Client::SetAchievementAchieved^1, AGS2Client::SetAchievementAchieved);
+	SCRIPT_METHOD(AGS2Client::ResetAchievement^1, AGS2Client::ResetAchievement);
+	SCRIPT_METHOD(AGS2Client::GetIntStat^1, AGS2Client::GetIntStat);
+	SCRIPT_METHOD(AGS2Client::GetFloatStat^1, AGS2Client::GetFloatStat);
+	SCRIPT_METHOD(AGS2Client::GetAverageRateStat^1, AGS2Client::GetAverageRateStat);
+	SCRIPT_METHOD(AGS2Client::SetIntStat^2, AGS2Client::SetIntStat);
+	SCRIPT_METHOD(AGS2Client::SetFloatStat^2, AGS2Client::SetFloatStat);
+	SCRIPT_METHOD(AGS2Client::UpdateAverageRateStat^3, AGS2Client::UpdateAverageRateStat);
+	SCRIPT_METHOD(AGS2Client::ResetStatsAndAchievements^0, AGS2Client::ResetStatsAndAchievements);
+	SCRIPT_METHOD(AGS2Client::get_Initialized, AGS2Client::get_Initialized);
+	SCRIPT_METHOD(AGS2Client::get_CurrentLeaderboardName, AGS2Client::get_CurrentLeaderboardName);
+	SCRIPT_METHOD(AGS2Client::RequestLeaderboard^3, AGS2Client::RequestLeaderboard);
+	SCRIPT_METHOD(AGS2Client::UploadScore^1, AGS2Client::UploadScore);
+	SCRIPT_METHOD(AGS2Client::geti_LeaderboardNames, AGS2Client::geti_LeaderboardNames);
+	SCRIPT_METHOD(AGS2Client::geti_LeaderboardScores, AGS2Client::geti_LeaderboardScores);
+	SCRIPT_METHOD(AGS2Client::get_LeaderboardCount, AGS2Client::get_LeaderboardCount);
+	SCRIPT_METHOD(AGS2Client::GetUserName^0, AGS2Client::GetUserName);
+	SCRIPT_METHOD(AGS2Client::GetCurrentGameLanguage^0, AGS2Client::GetCurrentGameLanguage);
+	SCRIPT_METHOD(AGS2Client::FindLeaderboard^1, AGS2Client::FindLeaderboard);
+	SCRIPT_METHOD(AGS2Client::Initialize^2, AGS2Client::Initialize);
 
 	Common::String gameTarget = ConfMan.getActiveDomainName();
 	const MetaEngine *meta = ::AGS::g_vm->getMetaEngine();
@@ -178,11 +176,6 @@ void AGS2Client::Initialize(ScriptMethodParams &params) {
 
 /*------------------------------------------------------------------*/
 
-AGSGalaxy::AGSGalaxy() : AGS2Client() {
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-}
-
 const char *AGSGalaxy::AGS_GetPluginName() {
 	return "AGSGalaxy";
 }
@@ -190,34 +183,29 @@ const char *AGSGalaxy::AGS_GetPluginName() {
 void AGSGalaxy::AGS_EngineStartup(IAGSEngine *engine) {
 	AGS2Client::AGS_EngineStartup(engine);
 
-	SCRIPT_METHOD_EXT(AGSGalaxy::IsAchievementAchieved^1, IsAchievementAchieved);
-	SCRIPT_METHOD_EXT(AGSGalaxy::SetAchievementAchieved^1, SetAchievementAchieved);
-	SCRIPT_METHOD_EXT(AGSGalaxy::ResetAchievement^1, ResetAchievement);
-	SCRIPT_METHOD_EXT(AGSGalaxy::GetIntStat^1, GetIntStat);
-	SCRIPT_METHOD_EXT(AGSGalaxy::GetFloatStat^1, GetFloatStat);
-	SCRIPT_METHOD_EXT(AGSGalaxy::GetAverageRateStat^1, GetAverageRateStat);
-	SCRIPT_METHOD_EXT(AGSGalaxy::SetIntStat^2, SetIntStat);
-	SCRIPT_METHOD_EXT(AGSGalaxy::SetFloatStat^2, SetFloatStat);
-	SCRIPT_METHOD_EXT(AGSGalaxy::UpdateAverageRateStat^3, UpdateAverageRateStat);
-	SCRIPT_METHOD_EXT(AGSGalaxy::ResetStatsAndAchievements^0, ResetStatsAndAchievements);
-	SCRIPT_METHOD_EXT(AGSGalaxy::get_Initialized, get_Initialized);
-	SCRIPT_METHOD_EXT(AGSGalaxy::get_CurrentLeaderboardName, get_CurrentLeaderboardName);
-	SCRIPT_METHOD_EXT(AGSGalaxy::RequestLeaderboard^3, RequestLeaderboard);
-	SCRIPT_METHOD_EXT(AGSGalaxy::UploadScore^1, UploadScore);
-	SCRIPT_METHOD_EXT(AGSGalaxy::geti_LeaderboardNames, geti_LeaderboardNames);
-	SCRIPT_METHOD_EXT(AGSGalaxy::geti_LeaderboardScores, geti_LeaderboardScores);
-	SCRIPT_METHOD_EXT(AGSGalaxy::get_LeaderboardCount, get_LeaderboardCount);
-	SCRIPT_METHOD_EXT(AGSGalaxy::GetUserName^0, GetUserName);
-	SCRIPT_METHOD_EXT(AGSGalaxy::GetCurrentGameLanguage^0, GetCurrentGameLanguage);
-	SCRIPT_METHOD_EXT(AGSGalaxy::Initialize^2, Initialize);
+	SCRIPT_METHOD(AGSGalaxy::IsAchievementAchieved^1, AGSGalaxy::IsAchievementAchieved);
+	SCRIPT_METHOD(AGSGalaxy::SetAchievementAchieved^1, AGSGalaxy::SetAchievementAchieved);
+	SCRIPT_METHOD(AGSGalaxy::ResetAchievement^1, AGSGalaxy::ResetAchievement);
+	SCRIPT_METHOD(AGSGalaxy::GetIntStat^1, AGSGalaxy::GetIntStat);
+	SCRIPT_METHOD(AGSGalaxy::GetFloatStat^1, AGSGalaxy::GetFloatStat);
+	SCRIPT_METHOD(AGSGalaxy::GetAverageRateStat^1, AGSGalaxy::GetAverageRateStat);
+	SCRIPT_METHOD(AGSGalaxy::SetIntStat^2, AGSGalaxy::SetIntStat);
+	SCRIPT_METHOD(AGSGalaxy::SetFloatStat^2, AGSGalaxy::SetFloatStat);
+	SCRIPT_METHOD(AGSGalaxy::UpdateAverageRateStat^3, AGSGalaxy::UpdateAverageRateStat);
+	SCRIPT_METHOD(AGSGalaxy::ResetStatsAndAchievements^0, AGSGalaxy::ResetStatsAndAchievements);
+	SCRIPT_METHOD(AGSGalaxy::get_Initialized, AGSGalaxy::get_Initialized);
+	SCRIPT_METHOD(AGSGalaxy::get_CurrentLeaderboardName, AGSGalaxy::get_CurrentLeaderboardName);
+	SCRIPT_METHOD(AGSGalaxy::RequestLeaderboard^3, AGSGalaxy::RequestLeaderboard);
+	SCRIPT_METHOD(AGSGalaxy::UploadScore^1, AGSGalaxy::UploadScore);
+	SCRIPT_METHOD(AGSGalaxy::geti_LeaderboardNames, AGSGalaxy::geti_LeaderboardNames);
+	SCRIPT_METHOD(AGSGalaxy::geti_LeaderboardScores, AGSGalaxy::geti_LeaderboardScores);
+	SCRIPT_METHOD(AGSGalaxy::get_LeaderboardCount, AGSGalaxy::get_LeaderboardCount);
+	SCRIPT_METHOD(AGSGalaxy::GetUserName^0, AGSGalaxy::GetUserName);
+	SCRIPT_METHOD(AGSGalaxy::GetCurrentGameLanguage^0, AGSGalaxy::GetCurrentGameLanguage);
+	SCRIPT_METHOD(AGSGalaxy::Initialize^2, AGSGalaxy::Initialize);
 }
 
 /*------------------------------------------------------------------*/
-
-AGSSteam::AGSSteam() : AGS2Client() {
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-}
 
 const char *AGSSteam::AGS_GetPluginName() {
 	return "AGSSteam";
@@ -226,26 +214,26 @@ const char *AGSSteam::AGS_GetPluginName() {
 void AGSSteam::AGS_EngineStartup(IAGSEngine *engine) {
 	AGS2Client::AGS_EngineStartup(engine);
 
-	SCRIPT_METHOD_EXT(AGSteam::IsAchievementAchieved^1, IsAchievementAchieved);
-	SCRIPT_METHOD_EXT(AGSteam::SetAchievementAchieved^1, SetAchievementAchieved);
-	SCRIPT_METHOD_EXT(AGSteam::ResetAchievement^1, ResetAchievement);
-	SCRIPT_METHOD_EXT(AGSteam::GetIntStat^1, GetIntStat);
-	SCRIPT_METHOD_EXT(AGSteam::GetFloatStat^1, GetFloatStat);
-	SCRIPT_METHOD_EXT(AGSteam::GetAverageRateStat^1, GetAverageRateStat);
-	SCRIPT_METHOD_EXT(AGSteam::SetIntStat^2, SetIntStat);
-	SCRIPT_METHOD_EXT(AGSteam::SetFloatStat^2, SetFloatStat);
-	SCRIPT_METHOD_EXT(AGSteam::UpdateAverageRateStat^3, UpdateAverageRateStat);
-	SCRIPT_METHOD_EXT(AGSteam::ResetStatsAndAchievements^0, ResetStatsAndAchievements);
-	SCRIPT_METHOD_EXT(AGSteam::get_Initialized, get_Initialized);
-	SCRIPT_METHOD_EXT(AGSteam::get_CurrentLeaderboardName, get_CurrentLeaderboardName);
-	SCRIPT_METHOD_EXT(AGSteam::RequestLeaderboard^3, RequestLeaderboard);
-	SCRIPT_METHOD_EXT(AGSteam::UploadScore^1, UploadScore);
-	SCRIPT_METHOD_EXT(AGSteam::geti_LeaderboardNames, geti_LeaderboardNames);
-	SCRIPT_METHOD_EXT(AGSteam::geti_LeaderboardScores, geti_LeaderboardScores);
-	SCRIPT_METHOD_EXT(AGSteam::get_LeaderboardCount, get_LeaderboardCount);
-	SCRIPT_METHOD_EXT(AGSteam::GetUserName^0, GetUserName);
-	SCRIPT_METHOD_EXT(AGSteam::GetCurrentGameLanguage^0, GetCurrentGameLanguage);
-	SCRIPT_METHOD_EXT(AGSteam::FindLeaderboard^1, FindLeaderboard);
+	SCRIPT_METHOD(AGSteam::IsAchievementAchieved^1, AGSSteam::IsAchievementAchieved);
+	SCRIPT_METHOD(AGSteam::SetAchievementAchieved^1, AGSSteam::SetAchievementAchieved);
+	SCRIPT_METHOD(AGSteam::ResetAchievement^1, AGSSteam::ResetAchievement);
+	SCRIPT_METHOD(AGSteam::GetIntStat^1, AGSSteam::GetIntStat);
+	SCRIPT_METHOD(AGSteam::GetFloatStat^1, AGSSteam::GetFloatStat);
+	SCRIPT_METHOD(AGSteam::GetAverageRateStat^1, AGSSteam::GetAverageRateStat);
+	SCRIPT_METHOD(AGSteam::SetIntStat^2, AGSSteam::SetIntStat);
+	SCRIPT_METHOD(AGSteam::SetFloatStat^2, AGSSteam::SetFloatStat);
+	SCRIPT_METHOD(AGSteam::UpdateAverageRateStat^3, AGSSteam::UpdateAverageRateStat);
+	SCRIPT_METHOD(AGSteam::ResetStatsAndAchievements^0, AGSSteam::ResetStatsAndAchievements);
+	SCRIPT_METHOD(AGSteam::get_Initialized, AGSSteam::get_Initialized);
+	SCRIPT_METHOD(AGSteam::get_CurrentLeaderboardName, AGSSteam::get_CurrentLeaderboardName);
+	SCRIPT_METHOD(AGSteam::RequestLeaderboard^3, AGSSteam::RequestLeaderboard);
+	SCRIPT_METHOD(AGSteam::UploadScore^1, AGSSteam::UploadScore);
+	SCRIPT_METHOD(AGSteam::geti_LeaderboardNames, AGSSteam::geti_LeaderboardNames);
+	SCRIPT_METHOD(AGSteam::geti_LeaderboardScores, AGSSteam::geti_LeaderboardScores);
+	SCRIPT_METHOD(AGSteam::get_LeaderboardCount, AGSSteam::get_LeaderboardCount);
+	SCRIPT_METHOD(AGSteam::GetUserName^0, AGSSteam::GetUserName);
+	SCRIPT_METHOD(AGSteam::GetCurrentGameLanguage^0, AGSSteam::GetCurrentGameLanguage);
+	SCRIPT_METHOD(AGSteam::FindLeaderboard^1, AGSSteam::FindLeaderboard);
 }
 
 } // namespace AGSGalaxySteam

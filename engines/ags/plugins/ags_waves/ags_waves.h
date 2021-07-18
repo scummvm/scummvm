@@ -23,18 +23,14 @@
 #ifndef AGS_PLUGINS_AGS_WAVES_AGS_WAVES_H
 #define AGS_PLUGINS_AGS_WAVES_AGS_WAVES_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSWaves {
 
 class AGSWaves : public PluginBase {
-private:
-	IAGSEngine *_engine;
-	const char *AGS_GetPluginName();
-	void AGS_EngineStartup(IAGSEngine *engine) override;
-
+	SCRIPT_HASH(AGSWaves)
 private:
 	void DrawScreenEffect(ScriptMethodParams &params);
 	void SFX_Play(ScriptMethodParams &params);
@@ -87,7 +83,11 @@ private:
 	void GetWalkbehindBaserine(ScriptMethodParams &params);
 	void SetWalkbehindBaserine(ScriptMethodParams &params);
 public:
-	AGSWaves();
+	AGSWaves() : PluginBase() {}
+	virtual ~AGSWaves() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 };
 
 } // namespace AGSWaves

@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGS_SPRITE_FONT_AGS_SPRITE_FONT_H
 #define AGS_PLUGINS_AGS_SPRITE_FONT_AGS_SPRITE_FONT_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/ags_sprite_font/sprite_font_renderer.h"
 #include "ags/plugins/ags_sprite_font/variable_width_sprite_font.h"
 
@@ -36,25 +36,25 @@ namespace Plugins {
 namespace AGSSpriteFont {
 
 class AGSSpriteFont : public PluginBase {
+	SCRIPT_HASH(AGSSpriteFont)
 protected:
-IAGSEngine *_engine;
-SpriteFontRenderer *_fontRenderer;
-VariableWidthSpriteFontRenderer *_vWidthRenderer;
-
-protected:
-const char *AGS_GetPluginName();
-void AGS_EngineStartup(IAGSEngine *lpEngine);
-void AGS_EngineShutdown();
+	SpriteFontRenderer *_fontRenderer;
+	VariableWidthSpriteFontRenderer *_vWidthRenderer;
 
 private:
-void SetSpriteFont(ScriptMethodParams &params);
-void SetVariableSpriteFont(ScriptMethodParams &params);
-void SetGlyph(ScriptMethodParams &params);
-void SetSpacing(ScriptMethodParams &params);
-void SetLineHeightAdjust(ScriptMethodParams &params);
+	void SetSpriteFont(ScriptMethodParams &params);
+	void SetVariableSpriteFont(ScriptMethodParams &params);
+	void SetGlyph(ScriptMethodParams &params);
+	void SetSpacing(ScriptMethodParams &params);
+	void SetLineHeightAdjust(ScriptMethodParams &params);
 
 public:
-AGSSpriteFont();
+	AGSSpriteFont() : PluginBase() {}
+	virtual ~AGSSpriteFont() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *lpEngine) override;
+	void AGS_EngineShutdown() override;
 };
 
 } // namespace AGSSpriteFont

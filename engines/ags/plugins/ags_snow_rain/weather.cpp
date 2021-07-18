@@ -49,15 +49,10 @@ void View::syncGame(Serializer &s) {
 
 /*------------------------------------------------------------------*/
 
-Weather::Weather() : _mIsSnow(false) {
+Weather::Weather(bool IsSnow, int32 &scrWidth, int32 &scrHeight, IAGSEngine *&engine) :
+		_mIsSnow(IsSnow), _screenWidth(scrWidth), _screenHeight(scrHeight), _engine(engine) {
 	Initialize();
 }
-
-Weather::Weather(bool IsSnow) : _mIsSnow(IsSnow) {
-	Initialize();
-}
-
-Weather::~Weather() {}
 
 void Weather::Update() {
 	if (_mTargetAmount > _mAmount)

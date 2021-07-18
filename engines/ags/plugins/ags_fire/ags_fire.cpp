@@ -26,30 +26,21 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSFire {
 
-IAGSEngine *AGSFire::_engine;
-
-AGSFire::AGSFire() : PluginBase() {
-	_engine = nullptr;
-
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-}
-
 const char *AGSFire::AGS_GetPluginName() {
 	return "Fire Plugin stub (ags_fire.dll)";
 }
 
 void AGSFire::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 
-	SCRIPT_METHOD(FireAddObject);
-	SCRIPT_METHOD(FirePreHeat);
-	SCRIPT_METHOD(FireDisableSeeding);
-	SCRIPT_METHOD(FireEnableSeeding);
-	SCRIPT_METHOD(FireSetStrength);
-	SCRIPT_METHOD(FireRemoveObject);
-	SCRIPT_METHOD(FireUpdate);
-	SCRIPT_METHOD(FireStop);
+	SCRIPT_METHOD(FireAddObject, AGSFire::FireAddObject);
+	SCRIPT_METHOD(FirePreHeat, AGSFire::FirePreHeat);
+	SCRIPT_METHOD(FireDisableSeeding, AGSFire::FireDisableSeeding);
+	SCRIPT_METHOD(FireEnableSeeding, AGSFire::FireEnableSeeding);
+	SCRIPT_METHOD(FireSetStrength, AGSFire::FireSetStrength);
+	SCRIPT_METHOD(FireRemoveObject, AGSFire::FireRemoveObject);
+	SCRIPT_METHOD(FireUpdate, AGSFire::FireUpdate);
+	SCRIPT_METHOD(FireStop, AGSFire::FireStop);
 }
 
 void AGSFire::FireAddObject(ScriptMethodParams &params) {

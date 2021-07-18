@@ -22,7 +22,7 @@
 
 #include "ags/lib/allegro.h"
 #include "ags/plugins/ags_pal_render/raycast.h"
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_pal_render/ags_pal_render.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -80,7 +80,7 @@ int selectedX;
 int selectedY;
 unsigned char selectedColor;
 
-void Ray_SelectTile(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SelectTile(ScriptMethodParams &params) {
 	PARAMS3(int, x, int, y, unsigned char, color);
 	if (x < 0 || x >= MAP_WIDTH) selectedX = -1;
 	else if (y < 0 || y >= MAP_HEIGHT) selectedY = -1;
@@ -91,23 +91,23 @@ void Ray_SelectTile(ScriptMethodParams &params) {
 	}
 }
 
-void Ray_HasSeenTile(ScriptMethodParams &params) {
+void AGSPalRender::Ray_HasSeenTile(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	if (x < 0 || x >= MAP_WIDTH) params._result = -1;
 	else if (y < 0 || y >= MAP_HEIGHT) params._result = -1;
 	else params._result = seenMap [x][y];
 }
 
-void Ray_SetNoClip(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetNoClip(ScriptMethodParams &params) {
 	PARAMS1(int, value);
 	noclip = value;
 }
 
-void Ray_GetNoClip(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetNoClip(ScriptMethodParams &params) {
 	params._result = noclip;
 }
 
-void Ray_DrawTile(ScriptMethodParams &params) {
+void AGSPalRender::Ray_DrawTile(ScriptMethodParams &params) {
 	PARAMS2(int, spr, int, tile);
 	BITMAP *img = engine->GetSpriteGraphic(spr);
 	uint8 *sprarray = engine->GetRawBitmapSurface(img);
@@ -118,7 +118,7 @@ void Ray_DrawTile(ScriptMethodParams &params) {
 	engine->ReleaseBitmapSurface(img);
 }
 
-void Ray_DrawOntoTile(ScriptMethodParams &params) {
+void AGSPalRender::Ray_DrawOntoTile(ScriptMethodParams &params) {
 	PARAMS2(int, spr, int, tile);
 	BITMAP *img = engine->GetSpriteGraphic(spr);
 	uint8 *sprarray = engine->GetRawBitmapSurface(img);
@@ -129,48 +129,48 @@ void Ray_DrawOntoTile(ScriptMethodParams &params) {
 	engine->ReleaseBitmapSurface(img);
 }
 
-void Ray_GetTileX_At(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetTileX_At(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	if (x < 0 || x >= S_WIDTH  || y < 0 || y >= S_HEIGHT) params._result = -1;
 	else params._result = editorMap [x][y] >> 16;
 }
 
-void Ray_GetTileY_At(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetTileY_At(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	if (x < 0 || x >= S_WIDTH  || y < 0 || y >= S_HEIGHT) params._result = -1;
 	else params._result = editorMap [x][y] & 0x0000FFFF;
 }
 
-void Ray_SetWallAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetWallAt(ScriptMethodParams &params) {
 	PARAMS3(int, x, int, y, int, id);
 	if (x < 0 || x >= MAP_WIDTH) return;
 	if (y < 0 || y >= MAP_HEIGHT) return;
 	worldMap [x][y] = id;
 }
 
-void Ray_GetWallAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetWallAt(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	if (x < 0 || x >= MAP_WIDTH) params._result = -1;
 	else if (y < 0 || y >= MAP_HEIGHT) params._result = -1;
 	else params._result = worldMap [x][y];
 }
 
-void Ray_GetAmbientWeight(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetAmbientWeight(ScriptMethodParams &params) {
 	params._result = ambientweight;
 }
 
-void Ray_SetAmbientLight(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetAmbientLight(ScriptMethodParams &params) {
 	PARAMS1(int, value);
 	ambientlight = MIN(255, MAX(0, value));
 }
 
-void Ray_SetAmbientColor(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetAmbientColor(ScriptMethodParams &params) {
 	PARAMS2(int, color, int, amount);
 	ambientcolor = color;
 	ambientcolorAmount = amount;
 }
 
-void Ray_GetAmbientLight(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetAmbientLight(ScriptMethodParams &params) {
 	params._result = ambientlight;
 }
 double fsqrt(double y) {
@@ -189,12 +189,12 @@ double fsqrt(double y) {
 	return x * y;
 }
 
-void Ray_SetWallHotspot(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetWallHotspot(ScriptMethodParams &params) {
 	PARAMS2(int, id, char, hotsp);
 	wallData[id].hotspotinteract = hotsp;
 }
 
-void Ray_SetWallTextures(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetWallTextures(ScriptMethodParams &params) {
 	PARAMS5(int, id, int, n, int, s, int, w, int, e);
 	wallData[id].texture[0] = n;
 	wallData[id].texture[1] = s;
@@ -202,7 +202,7 @@ void Ray_SetWallTextures(ScriptMethodParams &params) {
 	wallData[id].texture[3] = e;
 }
 
-void Ray_SetWallSolid(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetWallSolid(ScriptMethodParams &params) {
 	PARAMS5(int, id, int, n, int, s, int, w, int, e);
 	wallData[id].solid [0] = MAX(0, MIN(n, 1));
 	wallData[id].solid [1] = MAX(0, MIN(s, 1));
@@ -210,7 +210,7 @@ void Ray_SetWallSolid(ScriptMethodParams &params) {
 	wallData[id].solid [3] = MAX(0, MIN(e, 1));
 }
 
-void Ray_SetWallIgnoreLighting(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetWallIgnoreLighting(ScriptMethodParams &params) {
 	PARAMS5(int, id, int, n, int, s, int, w, int, e);
 	wallData[id].ignorelighting [0] = MAX(0, MIN(n, 1));
 	wallData[id].ignorelighting [1] = MAX(0, MIN(s, 1));
@@ -218,7 +218,7 @@ void Ray_SetWallIgnoreLighting(ScriptMethodParams &params) {
 	wallData[id].ignorelighting [3] = MAX(0, MIN(e, 1));
 }
 
-void Ray_SetWallAlpha(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetWallAlpha(ScriptMethodParams &params) {
 	PARAMS5(int, id, int, n, int, s, int, w, int, e);
 	wallData[id].alpha [0] = MAX(0, MIN(n, 255));
 	wallData[id].alpha [1] = MAX(0, MIN(s, 255));
@@ -226,7 +226,7 @@ void Ray_SetWallAlpha(ScriptMethodParams &params) {
 	wallData[id].alpha [3] = MAX(0, MIN(e, 255));
 }
 
-void Ray_SetWallBlendType(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetWallBlendType(ScriptMethodParams &params) {
 	PARAMS5(int, id, int, n, int, s, int, w, int, e);
 	wallData[id].blendtype [0] = MAX(0, MIN(n, 10));
 	wallData[id].blendtype [1] = MAX(0, MIN(s, 10));
@@ -237,86 +237,83 @@ void Ray_SetWallBlendType(ScriptMethodParams &params) {
 
 
 
-void Ray_GetWallHotspot(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetWallHotspot(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = wallData[id].hotspotinteract;
 }
 
-void Ray_GetWallTexture(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetWallTexture(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, dir);
 	params._result = wallData[id].texture[dir];
 }
 
-void Ray_GetWallSolid(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetWallSolid(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, dir);
 	params._result = wallData[id].solid [dir];
 }
 
-void Ray_GetWallIgnoreLighting(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetWallIgnoreLighting(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, dir);
 	params._result = wallData[id].ignorelighting [dir];
 }
 
-void Ray_GetWallAlpha(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetWallAlpha(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, dir);
 	params._result = wallData[id].alpha [dir];
 }
 
-void Ray_GetWallBlendType(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetWallBlendType(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, dir);
 	params._result = wallData[id].blendtype [dir];
 }
 
 
-
-
-
-void Ray_GetMoveSpeed(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetMoveSpeed(ScriptMethodParams &params) {
 	float mSpeed = (float)moveSpeed;
 	params._result = PARAM_FROM_FLOAT(mSpeed);
 }
 
 
-void Ray_SetMoveSpeed(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetMoveSpeed(ScriptMethodParams &params) {
 	PARAMS1(int32, speedi);
 	float speed = PARAM_TO_FLOAT(speedi);
 	moveSpeed = (double)speed;
 }
 
-void Ray_GetRotSpeed(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetRotSpeed(ScriptMethodParams &params) {
 	float rSpeed = (float)rotSpeed;
 	params._result = PARAM_FROM_FLOAT(rSpeed);
 }
 
-void Ray_SetRotSpeed(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetRotSpeed(ScriptMethodParams &params) {
 	PARAMS1(int32, speedi);
 	float speed = PARAM_TO_FLOAT(speedi);
 	rotSpeed = (double)speed;
 }
 
 
-void Ray_GetLightAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetLightAt(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	params._result = lightMap [x][y];
 }
 
-void Ray_SetLightAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetLightAt(ScriptMethodParams &params) {
 	PARAMS3(int, x, int, y, int, light);
 	lightMap [x][y] = light;
 }
 
-void Ray_SetPlaneY(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetPlaneY(ScriptMethodParams &params) {
 	PARAMS1(int32, yi);
 	float y = PARAM_TO_FLOAT(yi);
 	planeY = (double)y;
 }
 
-void Ray_GetPlaneY(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetPlaneY(ScriptMethodParams &params) {
 	float pY = (float)planeY;
 	params._result = PARAM_FROM_FLOAT(pY);
 }
 
-void Ray_SetPlayerPosition(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetPlayerPosition(ScriptMethodParams &params) {
 	PARAMS2(int32, xi, int32, yi);
 	float x = PARAM_TO_FLOAT(xi);
 	float y = PARAM_TO_FLOAT(yi);
@@ -324,24 +321,24 @@ void Ray_SetPlayerPosition(ScriptMethodParams &params) {
 	posY = (double)y;
 }
 
-void Ray_GetPlayerX(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetPlayerX(ScriptMethodParams &params) {
 
 	float x = (float)posX;
 	params._result = PARAM_FROM_FLOAT(x);
 }
 
-void Ray_GetPlayerY(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetPlayerY(ScriptMethodParams &params) {
 	float y = (float)posY;
 	params._result = PARAM_FROM_FLOAT(y);
 }
 
-void Ray_GetPlayerAngle(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetPlayerAngle(ScriptMethodParams &params) {
 	double bgrad = atan2(dirY, dirX);
 	int bgdeg = (int)(bgrad / PI * 180.0) + 180;
 	params._result = bgdeg % 360;
 }
 
-void Ray_SetPlayerAngle(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetPlayerAngle(ScriptMethodParams &params) {
 	PARAMS1(int, angle);
 	int realangle = angle % 360;
 	if (realangle < 0) realangle += 360;
@@ -377,7 +374,7 @@ void LoadHeightMap(int heightmapSlot) {
 	heightmapOn = true;
 }
 
-void LoadMap(ScriptMethodParams &params) {
+void AGSPalRender::LoadMap(ScriptMethodParams &params) {
 	PARAMS4(int, worldmapSlot, int, lightmapSlot, int, ceilingmapSlot, int, floormapSlot);
 	int tempw = engine->GetSpriteWidth(worldmapSlot);
 	int temph = engine->GetSpriteHeight(worldmapSlot);
@@ -435,104 +432,103 @@ void LoadMap(ScriptMethodParams &params) {
 	//LoadHeightMap (31); //debug only
 }
 
-void Ray_GetSpriteScaleX(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpriteScaleX(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	float scale = (float)sprite[id].uDivW;
 	params._result = PARAM_FROM_FLOAT(scale);
 }
 
-void Ray_SetSpriteScaleX(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSpriteScaleX(ScriptMethodParams &params) {
 	PARAMS2(int, id, int32, scalei);
 	float scale = PARAM_TO_FLOAT(scalei);
 	sprite[id].uDivW = scale;
 }
 
-void Ray_GetSpriteScaleY(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpriteScaleY(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	float scale = (float)sprite[id].uDivH;
 	params._result = PARAM_FROM_FLOAT(scale);
 }
 
-void Ray_SetSpriteScaleY(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSpriteScaleY(ScriptMethodParams &params) {
 	PARAMS2(int, id, int32, scalei);
 	float scale = PARAM_TO_FLOAT(scalei);
 	sprite[id].uDivH = scale;
 }
 
-void Ray_GetSpriteAlpha(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpriteAlpha(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = sprite[id].alpha;
 }
 
-void Ray_SetSpriteAlpha(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSpriteAlpha(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, alpha);
 	sprite[id].alpha = alpha;
 }
 
-void Ray_GetSpritePic(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpritePic(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = sprite[id].texture;
 }
 
-void Ray_SetSpritePic(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSpritePic(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, slot);
 	sprite[id].texture = slot;
 }
 
 
-
-void Ray_GetSpriteAngle(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpriteAngle(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = sprite[id].angle;
 }
 
-void Ray_SetSpriteAngle(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSpriteAngle(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, angle);
 	sprite[id].angle = angle % 360;
 }
 
-void Ray_GetSpriteInteractObj(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpriteInteractObj(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = sprite[id].objectinteract;
 }
 
-void Ray_SetSpriteView(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSpriteView(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, view);
 	sprite[id].view = view;
 }
 
-void Ray_SetSpriteBlendType(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSpriteBlendType(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, type);
 	sprite[id].blendmode = type;
 }
 
-void Ray_GetSpriteBlendType(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpriteBlendType(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = sprite[id].blendmode;
 }
 
 
-void Ray_GetSpriteView(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpriteView(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = sprite[id].view;
 }
 
-void Ray_SetSpriteFrame(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSpriteFrame(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, frame);
 	sprite[id].frame = frame;
 }
 
-void Ray_GetSpriteFrame(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpriteFrame(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = sprite[id].frame;
 }
 
-void Ray_SetSpriteInteractObj(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSpriteInteractObj(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, obj);
 	sprite[id].objectinteract = obj;
 }
 
-void Ray_SetSpritePosition(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSpritePosition(ScriptMethodParams &params) {
 	PARAMS3(int, id, int32, xi, int32, yi);
 	float x = PARAM_TO_FLOAT(xi);
 	float y = PARAM_TO_FLOAT(yi);
@@ -540,32 +536,32 @@ void Ray_SetSpritePosition(ScriptMethodParams &params) {
 	sprite[id].y = y;
 }
 
-void Ray_SetSpriteVertOffset(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSpriteVertOffset(ScriptMethodParams &params) {
 	PARAMS2(int, id, int32, vMovei);
 	float vMove = PARAM_TO_FLOAT(vMovei);
 	sprite[id].vMove = vMove;
 }
 
 
-void Ray_GetSpriteVertOffset(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpriteVertOffset(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	float x = (float)sprite[id].vMove;
 	params._result = PARAM_FROM_FLOAT(x);
 }
 
-void Ray_GetSpriteX(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpriteX(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	float x = (float)sprite[id].x;
 	params._result = PARAM_FROM_FLOAT(x);
 }
 
-void Ray_GetSpriteY(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSpriteY(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	float y = (float)sprite[id].y;
 	params._result = PARAM_FROM_FLOAT(y);
 }
 
-void Ray_InitSprite(ScriptMethodParams &params) {
+void AGSPalRender::Ray_InitSprite(ScriptMethodParams &params) {
 	PARAMS9(int, id, int32, xi, int32, yi, int, slot, unsigned char, alpha, int, blendmode, int32, scale_xi, int32, scale_yi, int32, vMovei);
 	float x = PARAM_TO_FLOAT(xi);
 	float y = PARAM_TO_FLOAT(yi);
@@ -586,7 +582,7 @@ void Ray_InitSprite(ScriptMethodParams &params) {
 //function used to sort the sprites
 void combSort(int *order, double *dist, int amount);
 
-void MakeTextures(ScriptMethodParams &params) {
+void AGSPalRender::MakeTextures(ScriptMethodParams &params) {
 	PARAMS1(int, slot);
 	textureSlot = slot;
 	int sourceWidth = engine->GetSpriteWidth(slot);
@@ -635,33 +631,33 @@ void MakeTextures(ScriptMethodParams &params) {
 
 //double ZBuffer[screenWidth][screenHeight];
 
-void Ray_SetFloorAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetFloorAt(ScriptMethodParams &params) {
 	PARAMS3(int, x, int, y, int, tex);
 	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT || tex > 511) return;
 	else floorMap[x][y] = tex;
 }
 
-void Ray_SetCeilingAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetCeilingAt(ScriptMethodParams &params) {
 	PARAMS3(int, x, int, y, int, tex);
 	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT || tex > 511) return;
 	else ceilingMap[x][y] = tex;
 }
 
-void Ray_GetCeilingAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetCeilingAt(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) params._result = -1;
 	else params._result = ceilingMap [x][y];
 }
 
 
-void Ray_GetFloorAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetFloorAt(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) params._result = -1;
 	else params._result = floorMap [x][y];
 }
 
 
-void Ray_GetLightingAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetLightingAt(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) params._result = -1;
 	else {
@@ -674,7 +670,7 @@ void Ray_GetLightingAt(ScriptMethodParams &params) {
 	}
 }
 
-void Ray_SetLightingAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetLightingAt(ScriptMethodParams &params) {
 	PARAMS3(int, x, int, y, unsigned char, lighting);
 	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) return;
 	else {
@@ -682,7 +678,7 @@ void Ray_SetLightingAt(ScriptMethodParams &params) {
 	}
 }
 
-void Ray_SetSkyBox(ScriptMethodParams &params) {
+void AGSPalRender::Ray_SetSkyBox(ScriptMethodParams &params) {
 	PARAMS1(int, slot);
 	BITMAP *test = engine->GetSpriteGraphic(slot);
 	if (test) {
@@ -690,26 +686,26 @@ void Ray_SetSkyBox(ScriptMethodParams &params) {
 	} else engine->AbortGame("Ray_SetSkybox: No such sprite!");
 }
 
-void Ray_GetSkyBox(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetSkyBox(ScriptMethodParams &params) {
 	//PARAMS1(int, slot);
 	params._result = skybox;
 }
 
-void Ray_GetHotspotAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetHotspotAt(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	if (!interactionmap) params._result = -1;
 	else if (x > S_WIDTH || x < 0 || y > S_HEIGHT || y < 0) params._result = -1;
 	else params._result = interactionmap [x * S_WIDTH + y] & 0x00FF;
 }
 
-void Ray_GetObjectAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetObjectAt(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	if (!interactionmap) params._result = -1;
 	else if (x > S_WIDTH || x < 0 || y > S_HEIGHT || y < 0) params._result = -1;
 	else params._result = interactionmap [x * S_WIDTH + y] >> 8;
 }
 
-void Ray_GetDistanceAt(ScriptMethodParams &params) {
+void AGSPalRender::Ray_GetDistanceAt(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	float falsereturn = -1.0f;
 	if (!ZBuffer) {
@@ -723,7 +719,7 @@ void Ray_GetDistanceAt(ScriptMethodParams &params) {
 	}
 }
 
-void Init_Raycaster(ScriptMethodParams &) {
+void AGSPalRender::Init_Raycaster(ScriptMethodParams &) {
 	if (ZBuffer)
 		return;
 	//if (!worldMap) return;
@@ -748,7 +744,7 @@ void Init_Raycaster(ScriptMethodParams &) {
 }
 
 bool rendering;
-void Raycast_Render(ScriptMethodParams &params) {
+void AGSPalRender::Raycast_Render(ScriptMethodParams &params) {
 	PARAMS1(int, slot);
 	ambientweight = 0;
 	raycastOn = true;
@@ -1387,7 +1383,7 @@ void Raycast_Render(ScriptMethodParams &params) {
 
 }
 
-void QuitCleanup(ScriptMethodParams &) {
+void AGSPalRender::QuitCleanup(ScriptMethodParams &) {
 	if (!rendering) {
 		for (int i = 0; i < S_WIDTH; ++i) {
 			if (transcolorbuffer[i])delete [] transcolorbuffer[i];
@@ -1404,7 +1400,7 @@ void QuitCleanup(ScriptMethodParams &) {
 	}
 }
 
-void MoveForward(ScriptMethodParams &) {
+void AGSPalRender::MoveForward(ScriptMethodParams &) {
 	double newposx = 0;
 	if (dirX > 0) newposx = 0.1 + posX + dirX * moveSpeed;
 	else newposx = -0.1 + posX + dirX * moveSpeed;
@@ -1459,7 +1455,7 @@ void MoveForward(ScriptMethodParams &) {
 	}
 }
 
-void MoveBackward(ScriptMethodParams &) {
+void AGSPalRender::MoveBackward(ScriptMethodParams &) {
 	double newposx = 0;
 	if (dirX > 0) newposx = -0.1 + posX - dirX * moveSpeed;
 	else newposx = 0.1 + posX - dirX * moveSpeed;
@@ -1531,7 +1527,7 @@ void MoveBackward ()
 }
 */
 
-void RotateLeft(ScriptMethodParams &) {
+void AGSPalRender::RotateLeft(ScriptMethodParams &) {
 	double oldDirX = dirX;
 	dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
 	dirY = oldDirX * sin(rotSpeed) + dirY * cos(rotSpeed);
@@ -1540,7 +1536,7 @@ void RotateLeft(ScriptMethodParams &) {
 	planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
 }
 
-void RotateRight(ScriptMethodParams &) {
+void AGSPalRender::RotateRight(ScriptMethodParams &) {
 	double oldDirX = dirX;
 	dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);
 	dirY = oldDirX * sin(-rotSpeed) + dirY * cos(-rotSpeed);

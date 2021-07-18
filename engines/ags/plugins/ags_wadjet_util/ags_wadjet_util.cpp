@@ -27,31 +27,24 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSWadjetUtil {
 
-IAGSEngine *AGSWadjetUtil::_engine;
-
-AGSWadjetUtil::AGSWadjetUtil() : PluginBase() {
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-}
-
 const char *AGSWadjetUtil::AGS_GetPluginName() {
 	return "AGSWadjetUtil";
 }
 
 void AGSWadjetUtil::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 
 	// Register functions
-	SCRIPT_METHOD(IsOnPhone);
-	SCRIPT_METHOD(FakeKeypress);
-	SCRIPT_METHOD(IosSetAchievementValue);
-	SCRIPT_METHOD(IosGetAchievementValue);
-	SCRIPT_METHOD(IosShowAchievements);
-	SCRIPT_METHOD(IosResetAchievements);
-	SCRIPT_METHOD(MobileGetAchievement);
-	SCRIPT_METHOD(MobileSetAchievement);
-	SCRIPT_METHOD(MobileShowAchievements);
-	SCRIPT_METHOD(MobileResetAchievements);
+	SCRIPT_METHOD(IsOnPhone, AGSWadjetUtil::IsOnPhone);
+	SCRIPT_METHOD(FakeKeypress, AGSWadjetUtil::FakeKeypress);
+	SCRIPT_METHOD(IosSetAchievementValue, AGSWadjetUtil::IosSetAchievementValue);
+	SCRIPT_METHOD(IosGetAchievementValue, AGSWadjetUtil::IosGetAchievementValue);
+	SCRIPT_METHOD(IosShowAchievements, AGSWadjetUtil::IosShowAchievements);
+	SCRIPT_METHOD(IosResetAchievements, AGSWadjetUtil::IosResetAchievements);
+	SCRIPT_METHOD(MobileGetAchievement, AGSWadjetUtil::MobileGetAchievement);
+	SCRIPT_METHOD(MobileSetAchievement, AGSWadjetUtil::MobileSetAchievement);
+	SCRIPT_METHOD(MobileShowAchievements, AGSWadjetUtil::MobileShowAchievements);
+	SCRIPT_METHOD(MobileResetAchievements, AGSWadjetUtil::MobileResetAchievements);
 }
 
 void AGSWadjetUtil::IsOnPhone(ScriptMethodParams &params) {

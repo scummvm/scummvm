@@ -30,13 +30,16 @@ namespace Plugins {
 namespace AGSGalaxySteam {
 
 class AGSWadjetEyeSteam : public AGSSteam {
+	SCRIPT_HASH(AGSWadjetEyeSteam)
 private:
-	void AGS_EngineStartup(IAGSEngine *engine) override;
 	void AddAchievement(ScriptMethodParams &params);
 	void AddStat(ScriptMethodParams &params);
 
 public:
-	AGSWadjetEyeSteam();
+	AGSWadjetEyeSteam() : AGSSteam() {}
+	virtual ~AGSWadjetEyeSteam() {}
+
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 };
 
 } // namespace AGSGalaxySteam

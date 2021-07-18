@@ -26,18 +26,6 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSSpriteFont {
 
-VariableWidthFont::VariableWidthFont(void) {
-	Spacing = 0;
-	FontReplaced = 0;
-	SpriteNumber = 0;
-	LineHeightAdjust = 0;
-	LineSpacingAdjust = 0;
-	LineSpacingOverride = 0;
-}
-
-
-VariableWidthFont::~VariableWidthFont(void) {}
-
 void VariableWidthFont::SetGlyph(int character, int x, int y, int width, int height) {
 	characters[character].X = x;
 	characters[character].Y = y;

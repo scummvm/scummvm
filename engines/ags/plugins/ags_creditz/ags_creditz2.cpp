@@ -28,10 +28,6 @@ namespace AGSCreditz {
 
 AGSCreditz2::AGSCreditz2() : AGSCreditz() {
 	_version = VERSION_20;
-
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-	DLL_METHOD(AGS_EngineOnEvent);
 }
 
 const char *AGSCreditz2::AGS_GetPluginName() {
@@ -39,28 +35,28 @@ const char *AGSCreditz2::AGS_GetPluginName() {
 }
 
 void AGSCreditz2::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 	_playSound = (IntFunction)_engine->GetScriptFunctionAddress("PlaySound");
 	engine->RequestEventHook(AGSE_POSTSCREENDRAW);
 
-	SCRIPT_METHOD(RunCreditSequence);
-	SCRIPT_METHOD(SetCredit);
-	SCRIPT_METHOD(GetCredit);
-	SCRIPT_METHOD(CreditsSettings);
-	SCRIPT_METHOD(SequenceSettings);
-	SCRIPT_METHOD(IsSequenceFinished);
-	SCRIPT_METHOD(PauseScrolling);
-	SCRIPT_METHOD(SetCreditImage);
-	SCRIPT_METHOD(ResetSequence);
+	SCRIPT_METHOD(RunCreditSequence, AGSCreditz2::RunCreditSequence);
+	SCRIPT_METHOD(SetCredit, AGSCreditz2::SetCredit);
+	SCRIPT_METHOD(GetCredit, AGSCreditz2::GetCredit);
+	SCRIPT_METHOD(CreditsSettings, AGSCreditz2::CreditsSettings);
+	SCRIPT_METHOD(SequenceSettings, AGSCreditz2::SequenceSettings);
+	SCRIPT_METHOD(IsSequenceFinished, AGSCreditz2::IsSequenceFinished);
+	SCRIPT_METHOD(PauseScrolling, AGSCreditz2::PauseScrolling);
+	SCRIPT_METHOD(SetCreditImage, AGSCreditz2::SetCreditImage);
+	SCRIPT_METHOD(ResetSequence, AGSCreditz2::ResetSequence);
 
-	SCRIPT_METHOD(SetStaticCredit);
-	SCRIPT_METHOD(SetStaticCreditTitle);
-	SCRIPT_METHOD(SetStaticPause);
-	SCRIPT_METHOD(RunStaticCreditSequence);
-	SCRIPT_METHOD(IsStaticSequenceFinished);
-	SCRIPT_METHOD(ShowStaticCredit);
-	SCRIPT_METHOD(SetStaticImage);
-	SCRIPT_METHOD(GetCurrentStaticCredit);
+	SCRIPT_METHOD(SetStaticCredit, AGSCreditz2::SetStaticCredit);
+	SCRIPT_METHOD(SetStaticCreditTitle, AGSCreditz2::SetStaticCreditTitle);
+	SCRIPT_METHOD(SetStaticPause, AGSCreditz2::SetStaticPause);
+	SCRIPT_METHOD(RunStaticCreditSequence, AGSCreditz2::RunStaticCreditSequence);
+	SCRIPT_METHOD(IsStaticSequenceFinished, AGSCreditz2::IsStaticSequenceFinished);
+	SCRIPT_METHOD(ShowStaticCredit, AGSCreditz2::ShowStaticCredit);
+	SCRIPT_METHOD(SetStaticImage, AGSCreditz2::SetStaticImage);
+	SCRIPT_METHOD(GetCurrentStaticCredit, AGSCreditz2::GetCurrentStaticCredit);
 }
 
 int64 AGSCreditz2::AGS_EngineOnEvent(int event, NumberPtr data) {
@@ -215,7 +211,7 @@ void AGSCreditz2::RunStaticCreditSequence(ScriptMethodParams &params) {
 		_state->_creditSequence = sequence;
 		_state->_staticCredits = true;
 		_state->_creditsRunning = true;
-		_state->_current= 1;
+		_state->_currentStatic = 1;
 		_state->_timer = 0;
 		draw();
 
@@ -224,7 +220,7 @@ void AGSCreditz2::RunStaticCreditSequence(ScriptMethodParams &params) {
 		_state->_creditSequence = -1;
 		_state->_stSeqSettings[sequence].finished = false;
 		_state->_creditsRunning = false;
-		_state->_current= 0;
+		_state->_currentStatic = 0;
 		_state->_timer = 0;
 	}
 }

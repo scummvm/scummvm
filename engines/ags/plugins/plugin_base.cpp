@@ -22,7 +22,6 @@
 
 #include "ags/lib/allegro.h"
 #include "ags/plugins/plugin_base.h"
-/*
 #include "ags/plugins/ags_agi/ags_agi.h"
 #include "ags/plugins/ags_blend/ags_blend.h"
 #include "ags/plugins/ags_clipboard/ags_clipboard.h"
@@ -44,7 +43,6 @@
 #include "ags/plugins/ags_tcp_ip/ags_tcp_ip.h"
 #include "ags/plugins/ags_wadjet_util/ags_wadjet_util.h"
 #include "ags/plugins/ags_waves/ags_waves.h"
-*/
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -64,7 +62,7 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 			break;
 		}
 	}
-/*
+
 	if (fname.equalsIgnoreCase("ags_tcp_ip"))
 		return new AGSTcpIp::AGSTcpIp();
 
@@ -132,7 +130,7 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("agswaves"))
 		return new AGSWaves::AGSWaves();
-*/
+
 	debug("Plugin '%s' is not yet supported", fname.c_str());
 	return nullptr;
 }

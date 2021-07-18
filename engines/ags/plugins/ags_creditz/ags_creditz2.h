@@ -30,32 +30,33 @@ namespace Plugins {
 namespace AGSCreditz {
 
 class AGSCreditz2 : public AGSCreditz {
+	SCRIPT_HASH(AGSCreditz2)
 private:
-const char *AGS_GetPluginName();
-void AGS_EngineStartup(IAGSEngine *engine) override;
-int64 AGS_EngineOnEvent(int event, NumberPtr data);
+	void RunCreditSequence(ScriptMethodParams &params);
+	void SetCredit(ScriptMethodParams &params);
+	void GetCredit(ScriptMethodParams &params);
+	void CreditsSettings(ScriptMethodParams &params);
+	void SequenceSettings(ScriptMethodParams &params);
+	void IsSequenceFinished(ScriptMethodParams &params);
+	void PauseScrolling(ScriptMethodParams &params);
+	void SetCreditImage(ScriptMethodParams &params);
+	void ResetSequence(ScriptMethodParams &params);
 
-void RunCreditSequence(ScriptMethodParams &params);
-void SetCredit(ScriptMethodParams &params);
-void GetCredit(ScriptMethodParams &params);
-void CreditsSettings(ScriptMethodParams &params);
-void SequenceSettings(ScriptMethodParams &params);
-void IsSequenceFinished(ScriptMethodParams &params);
-void PauseScrolling(ScriptMethodParams &params);
-void SetCreditImage(ScriptMethodParams &params);
-void ResetSequence(ScriptMethodParams &params);
-
-void SetStaticCredit(ScriptMethodParams &params);
-void SetStaticCreditTitle(ScriptMethodParams &params);
-void SetStaticPause(ScriptMethodParams &params);
-void RunStaticCreditSequence(ScriptMethodParams &params);
-void IsStaticSequenceFinished(ScriptMethodParams &params);
-void ShowStaticCredit(ScriptMethodParams &params);
-void SetStaticImage(ScriptMethodParams &params);
-void GetCurrentStaticCredit(ScriptMethodParams &params);
+	void SetStaticCredit(ScriptMethodParams &params);
+	void SetStaticCreditTitle(ScriptMethodParams &params);
+	void SetStaticPause(ScriptMethodParams &params);
+	void RunStaticCreditSequence(ScriptMethodParams &params);
+	void IsStaticSequenceFinished(ScriptMethodParams &params);
+	void ShowStaticCredit(ScriptMethodParams &params);
+	void SetStaticImage(ScriptMethodParams &params);
+	void GetCurrentStaticCredit(ScriptMethodParams &params);
 
 public:
-AGSCreditz2();
+	AGSCreditz2();
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *engine) override;
+	int64 AGS_EngineOnEvent(int event, NumberPtr data) override;
 };
 
 } // namespace AGSCreditz

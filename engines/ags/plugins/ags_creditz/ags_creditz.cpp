@@ -27,12 +27,7 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSCreditz {
 
-AGSCreditz::Version AGSCreditz::_version;
-State *AGSCreditz::_state;
-IAGSEngine *AGSCreditz::_engine;
-IntFunction AGSCreditz::_playSound;
-
-AGSCreditz::AGSCreditz() {
+AGSCreditz::AGSCreditz() : PluginBase(), Drawing() {
 	_state = new State();
 	_engine = nullptr;
 }
@@ -74,7 +69,7 @@ void AGSCreditz::draw() {
 		} else {
 			// credits
 			if (!_state->_singleStatic.bool_) {
-				if (_state->_current< (int)_state->_stCredits[_state->_creditSequence].size()) {
+				if (_state->_currentStatic < (int)_state->_stCredits[_state->_creditSequence].size()) {
 					if (_state->_stCredits[_state->_creditSequence][_state->_currentStatic].pause > 0) {
 						// Pause
 						if (_state->_timer <= _state->_stCredits[_state->_creditSequence][_state->_currentStatic].pause) {
@@ -93,7 +88,7 @@ void AGSCreditz::draw() {
 								_state->_timer = 0;
 								_state->_currentStatic++;
 								if (_state->_stCredits[_state->_creditSequence][_state->_currentStatic].pause <= 0 &&
-								        _state->_current< (int)_state->_stCredits[_state->_creditSequence].size())
+								        _state->_currentStatic< (int)_state->_stCredits[_state->_creditSequence].size())
 									drawCredit(_state->_creditSequence, _state->_currentStatic);
 								else
 									return;
@@ -109,7 +104,7 @@ void AGSCreditz::draw() {
 								_state->_timer = 0;
 								_state->_currentStatic++;
 								if (_state->_stCredits[_state->_creditSequence][_state->_currentStatic].pause <= 0 &&
-								        (int)_state->_current<= (int)_state->_stCredits[_state->_creditSequence].size())
+								        (int)_state->_currentStatic<= (int)_state->_stCredits[_state->_creditSequence].size())
 									drawCredit(_state->_creditSequence, _state->_currentStatic);
 								else
 									return;
@@ -121,7 +116,7 @@ void AGSCreditz::draw() {
 					_state->_creditsRunning = false;
 					_state->_creditSequence = -1;
 					_state->_timer = 0;
-					_state->_current= 1;
+					_state->_currentStatic= 1;
 					return;
 				}
 			} else {

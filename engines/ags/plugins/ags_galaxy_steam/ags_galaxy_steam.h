@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGS_GALAXY_STEAM_AGS_GALAXY_STEAM_H
 #define AGS_PLUGINS_AGS_GALAXY_STEAM_AGS_GALAXY_STEAM_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -34,6 +34,7 @@ namespace Plugins {
 namespace AGSGalaxySteam {
 
 class AGS2Client : public PluginBase {
+	SCRIPT_HASH(AGS2Client)
 protected:
 	void IsAchievementAchieved(ScriptMethodParams &params);
 	void SetAchievementAchieved(ScriptMethodParams &params);
@@ -57,31 +58,31 @@ protected:
 	void FindLeaderboard(ScriptMethodParams &params);
 	void Initialize(ScriptMethodParams &params);
 
-protected:
-	void AGS_EngineStartup(IAGSEngine *engine) override;
-
 public:
-	AGS2Client();
+	AGS2Client() : PluginBase() {}
+	virtual ~AGS2Client() {}
+
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 };
 
 class AGSGalaxy : public AGS2Client {
-private:
-	const char *AGS_GetPluginName();
-	void AGS_EngineStartup(IAGSEngine *engine) override;
-
+	SCRIPT_HASH(AGSGalaxy)
 public:
-	AGSGalaxy();
+	AGSGalaxy() : AGS2Client() {}
+	virtual ~AGSGalaxy() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 };
 
 class AGSSteam : public AGS2Client {
-private:
-	const char *AGS_GetPluginName();
-
-protected:
-	void AGS_EngineStartup(IAGSEngine *engine) override;
-
+	SCRIPT_HASH(AGSSteam)
 public:
-	AGSSteam();
+	AGSSteam() : AGS2Client() {}
+	virtual ~AGSSteam() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 };
 
 } // namespace AGSGalaxySteam

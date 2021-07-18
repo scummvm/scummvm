@@ -23,39 +23,38 @@
 #ifndef AGS_PLUGINS_AGS_JOY_AGS_JOY_H
 #define AGS_PLUGINS_AGS_JOY_AGS_JOY_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSJoy {
 
 class AGSJoy : public PluginBase {
+	SCRIPT_HASH(AGSJoy)
 private:
-IAGSEngine *_engine;
-private:
-const char *AGS_GetPluginName();
-void AGS_EngineStartup(IAGSEngine *lpEngine);
-
-private:
-void Count(ScriptMethodParams &params);
-void Name(ScriptMethodParams &params);
-void Rescan(ScriptMethodParams &params);
-void Open(ScriptMethodParams &params);
-void IsOpen(ScriptMethodParams &params);
-void Click(ScriptMethodParams &params);
-void Close(ScriptMethodParams &params);
-void Valid(ScriptMethodParams &params);
-void Unplugged(ScriptMethodParams &params);
-void GetName(ScriptMethodParams &params);
-void GetAxis(ScriptMethodParams &params);
-void IsButtonDown(ScriptMethodParams &params);
-void IsJoyBtnDown(ScriptMethodParams &params);
-void Update(ScriptMethodParams &params);
-void DisableEvents(ScriptMethodParams &params);
-void EnableEvents(ScriptMethodParams &params);
+	void Count(ScriptMethodParams &params);
+	void Name(ScriptMethodParams &params);
+	void Rescan(ScriptMethodParams &params);
+	void Open(ScriptMethodParams &params);
+	void IsOpen(ScriptMethodParams &params);
+	void Click(ScriptMethodParams &params);
+	void Close(ScriptMethodParams &params);
+	void Valid(ScriptMethodParams &params);
+	void Unplugged(ScriptMethodParams &params);
+	void GetName(ScriptMethodParams &params);
+	void GetAxis(ScriptMethodParams &params);
+	void IsButtonDown(ScriptMethodParams &params);
+	void IsJoyBtnDown(ScriptMethodParams &params);
+	void Update(ScriptMethodParams &params);
+	void DisableEvents(ScriptMethodParams &params);
+	void EnableEvents(ScriptMethodParams &params);
 
 public:
-AGSJoy();
+	AGSJoy() : PluginBase() {}
+	virtual ~AGSJoy() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *lpEngine) override;
 };
 
 } // namespace AGSJoy

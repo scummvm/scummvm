@@ -46,7 +46,6 @@ const float pisquared = PI * PI;
 const float picubed = PI * PI * PI;
 
 IAGSEngine *engine;
-
 //unsigned char clut[256][256];
 unsigned char clut[65536];
 
@@ -136,23 +135,23 @@ BITMAP *backgroundimage;
 PALSTRUCT objectivepal[256];
 int bgimgspr;
 
-void WriteObjectivePalette(ScriptMethodParams &params) {
+void AGSPalRender::WriteObjectivePalette(ScriptMethodParams &params) {
 	PARAMS4(unsigned char, index, unsigned char, r, unsigned char, b, unsigned char, g);
 	objectivepal[index].r = r;
 	objectivepal[index].b = b;
 	objectivepal[index].g = g;
 }
 
-void ReadObjectivePaletteR(ScriptMethodParams &params) {
+void AGSPalRender::ReadObjectivePaletteR(ScriptMethodParams &params) {
 	PARAMS1(unsigned char, index);
 	params._result = (int)objectivepal[index].r;
 }
 
-void ReadObjectivePaletteB(ScriptMethodParams &params) {
+void AGSPalRender::ReadObjectivePaletteB(ScriptMethodParams &params) {
 	PARAMS1(unsigned char, index);
 	params._result = (int)objectivepal[index].b;
 }
-void ReadObjectivePaletteG(ScriptMethodParams &params) {
+void AGSPalRender::ReadObjectivePaletteG(ScriptMethodParams &params) {
 	PARAMS1(unsigned char, index);
 	params._result = (int)objectivepal[index].g;
 }
@@ -188,7 +187,7 @@ void PreMultiply_Alphas () //Ha ha, this isn't the kind of premultiplcation you'
 }
 */
 
-void GetModifiedBackgroundImage(ScriptMethodParams &params) {
+void AGSPalRender::GetModifiedBackgroundImage(ScriptMethodParams &params) {
 	params._result = bgimgspr;
 }
 
@@ -238,20 +237,20 @@ float FastCos(float x) {
 	return FastSin(x + halfpi);
 }
 
-void AGSFastRoot(ScriptMethodParams &params) {
+void AGSPalRender::AGSFastRoot(ScriptMethodParams &params) {
 	PARAMS1(unsigned short, x);
 	x = root(x);
 	params._result = (int)x;
 }
 
-void AGSFastSin(ScriptMethodParams &params) {
+void AGSPalRender::AGSFastSin(ScriptMethodParams &params) {
 	PARAMS1(int32, xi);
 	float x = PARAM_TO_FLOAT(xi);
 	x = FastSin(x);
 	params._result = PARAM_FROM_FLOAT(x);
 }
 
-void AGSFastCos(ScriptMethodParams &params) {
+void AGSPalRender::AGSFastCos(ScriptMethodParams &params) {
 	PARAMS1(int32, xi);
 	float x = PARAM_TO_FLOAT(xi);
 	x = FastSin(x + halfpi);
@@ -314,51 +313,51 @@ void DrawLens(int ox, int oy) {
 	engine->FreeBitmap(lenswrite);
 }
 
-void SetLensPos(ScriptMethodParams &params) {
+void AGSPalRender::SetLensPos(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	LensOption.x = x;
 	LensOption.y = y;
 }
 
-void GetLensX(ScriptMethodParams &params) {
+void AGSPalRender::GetLensX(ScriptMethodParams &params) {
 	params._result = LensOption.x;
 }
 
-void GetLensY(ScriptMethodParams &params) {
+void AGSPalRender::GetLensY(ScriptMethodParams &params) {
 	params._result =  LensOption.y;
 }
 
-void SetLensDrawn(ScriptMethodParams &params) {
+void AGSPalRender::SetLensDrawn(ScriptMethodParams &params) {
 	PARAMS1(int, toggle);
 	if (toggle > 0) LensOption.draw = 1;
 	else LensOption.draw = 0;
 }
 
-void GetLensDrawn(ScriptMethodParams &params) {
+void AGSPalRender::GetLensDrawn(ScriptMethodParams &params) {
 	params._result = LensOption.draw;
 }
 
-void SetLensOffsetClamp(ScriptMethodParams &params) {
+void AGSPalRender::SetLensOffsetClamp(ScriptMethodParams &params) {
 	PARAMS1(int, clamp);
 	if (clamp < 0) LensOption.clampoffset = LensOption.lenswidth;
 	else LensOption.clampoffset = clamp;
 }
 
-void GetLensOffsetClamp(ScriptMethodParams &params) {
+void AGSPalRender::GetLensOffsetClamp(ScriptMethodParams &params) {
 	params._result = LensOption.clampoffset;
 }
 
-void GetLensLevel(ScriptMethodParams &params) {
+void AGSPalRender::GetLensLevel(ScriptMethodParams &params) {
 	params._result = LensOption.level;
 }
 
-void SetLensLevel(ScriptMethodParams &params) {
+void AGSPalRender::SetLensLevel(ScriptMethodParams &params) {
 	PARAMS1(int, level);
 	if (level < 0 || level > 4) engine->AbortGame("SetLensLevel: Invalid level.");
 	else LensOption.level = level;
 }
 
-void LensInitialize(ScriptMethodParams &params) {
+void AGSPalRender::LensInitialize(ScriptMethodParams &params) {
 	PARAMS5(int, width, int, zoom, int, lensx, int, lensy, int, level);
 	int clamp = -1;
 	if (params.size() > 5)
@@ -404,7 +403,7 @@ void LensInitialize(ScriptMethodParams &params) {
 	else LensOption.level = level;
 }
 
-void ResetRemapping(ScriptMethodParams &) {
+void AGSPalRender::ResetRemapping(ScriptMethodParams &) {
 	for (int j = 0; j < 256; ++j) {
 		cycle_remap [j] = j;
 	}
@@ -418,17 +417,17 @@ int plasmadata3 [MAX_PLASMA_COMPLEXITY];
 int plasmaroottype;
 
 
-void SetPlasmaRootType(ScriptMethodParams &params) {
+void AGSPalRender::SetPlasmaRootType(ScriptMethodParams &params) {
 	PARAMS1(int, real);
 	if (real) plasmaroottype = 1;
 	else plasmaroottype = 0;
 }
 
-void GetPlasmaRootType(ScriptMethodParams &params) {
+void AGSPalRender::GetPlasmaRootType(ScriptMethodParams &params) {
 	params._result = plasmaroottype;
 }
 
-void SetPlasmaType(ScriptMethodParams &params) {
+void AGSPalRender::SetPlasmaType(ScriptMethodParams &params) {
 	PARAMS5(int, component, int, type, int, data, int, data2, int, data3);
 	if (component >= MAX_PLASMA_COMPLEXITY) engine->AbortGame("Plasma too complex!");
 	else {
@@ -445,7 +444,7 @@ void SetPlasmaType(ScriptMethodParams &params) {
 	//4 = Diagonal Bars (data=width)
 }
 
-void ResetPlasmaSettings(ScriptMethodParams &) {
+void AGSPalRender::ResetPlasmaSettings(ScriptMethodParams &) {
 	int i = 0;
 	while (i < MAX_PLASMA_COMPLEXITY) {
 		plasmatype [i] = 0;
@@ -456,7 +455,7 @@ void ResetPlasmaSettings(ScriptMethodParams &) {
 	}
 }
 
-void DrawPlasma(ScriptMethodParams &params) {
+void AGSPalRender::DrawPlasma(ScriptMethodParams &params) {
 	PARAMS3(int, slot, int, palstart, int, palend);
 	BITMAP *plasmaspr = engine->GetSpriteGraphic(slot);
 	if (!plasmaspr) engine->AbortGame("Plasma: Not a sprite I can load.");
@@ -505,7 +504,7 @@ void DrawPlasma(ScriptMethodParams &params) {
 	engine->NotifySpriteUpdated(slot);
 }
 
-void DoFire(ScriptMethodParams &params) {
+void AGSPalRender::DoFire(ScriptMethodParams &params) {
 	PARAMS8(int, spriteId, int, masksprite, int, palstart, int, palend, int, strength, int, seed, int, cutoff, int, windspeed);
 	BITMAP *firespr = engine->GetSpriteGraphic(masksprite);
 	BITMAP *firecolorspr = engine->GetSpriteGraphic(spriteId);
@@ -649,7 +648,7 @@ unsigned char MixColorAdditive (unsigned char fg,unsigned char bg,unsigned char 
 	return result;
 }
 */
-void GetColor565(ScriptMethodParams &params) {
+void AGSPalRender::GetColor565(ScriptMethodParams &params) {
 	PARAMS3(unsigned char, r, unsigned char, g, unsigned char, b);
 	//BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
 	//if (!clutspr) engine->AbortGame ("MixColorAlpha: Can't load CLUT sprite into memory.");
@@ -662,7 +661,7 @@ void GetColor565(ScriptMethodParams &params) {
 	params._result = (int)result;
 }
 
-void CycleRemap(ScriptMethodParams &params) {
+void AGSPalRender::CycleRemap(ScriptMethodParams &params) {
 	PARAMS2(int, start, int, end);
 	if (end > start) {
 		// Rotate left
@@ -682,12 +681,12 @@ void CycleRemap(ScriptMethodParams &params) {
 	}
 }
 
-void GetRemappedSlot(ScriptMethodParams &params) {
+void AGSPalRender::GetRemappedSlot(ScriptMethodParams &params) {
 	PARAMS1(unsigned char, slot);
 	params._result = cycle_remap [slot];
 }
 
-void LoadCLUT(ScriptMethodParams &params) {
+void AGSPalRender::LoadCLUT(ScriptMethodParams &params) {
 	PARAMS1(int, slot);
 	if (engine->GetSpriteWidth(slot) != 256 || engine->GetSpriteHeight(slot) != 256) {
 		params._result = 1;
@@ -706,16 +705,16 @@ void LoadCLUT(ScriptMethodParams &params) {
 	params._result = 0;
 }
 
-void SetReflections(ScriptMethodParams &params) {
+void AGSPalRender::SetReflections(ScriptMethodParams &params) {
 	PARAMS1(int, toggle);
 	drawreflections = toggle;
 }
 
-void IsReflectionsOn(ScriptMethodParams &params) {
+void AGSPalRender::IsReflectionsOn(ScriptMethodParams &params) {
 	params._result = drawreflections;
 }
 
-void GetLuminosityFromPalette(ScriptMethodParams &params) {
+void AGSPalRender::GetLuminosityFromPalette(ScriptMethodParams &params) {
 	PARAMS1(int, slot);
 	AGSColor *pal = engine->GetPalette();
 	int lum = (pal[slot].r +
@@ -731,12 +730,12 @@ void GetLuminosityFromPalette(ScriptMethodParams &params) {
 
 
 
-void SetStarsOriginPoint(ScriptMethodParams &params) {
+void AGSPalRender::SetStarsOriginPoint(ScriptMethodParams &params) {
 	PARAMS2(int, x, int, y);
 	Starfield.originx = x;
 	Starfield.originy = y;
 }
-void InitializeStars(ScriptMethodParams &params) {
+void AGSPalRender::InitializeStars(ScriptMethodParams &params) {
 	PARAMS2(int, slot, int, maxstars);
 	int32 sw, sh = 0;
 	BITMAP *canvas = engine->GetSpriteGraphic(slot);
@@ -756,7 +755,7 @@ void InitializeStars(ScriptMethodParams &params) {
 	}
 }
 
-void IterateStars(ScriptMethodParams &params) {
+void AGSPalRender::IterateStars(ScriptMethodParams &params) {
 	PARAMS1(int, slot);
 	long sw, sh = 0;
 	sw = engine->GetSpriteWidth(slot);
@@ -777,56 +776,56 @@ void IterateStars(ScriptMethodParams &params) {
 		}
 	}
 }
-void GetStarfieldOverscan(ScriptMethodParams &params) {
+void AGSPalRender::GetStarfieldOverscan(ScriptMethodParams &params) {
 	params._result = Starfield.overscan;
 }
-void SetStarfieldOverscan(ScriptMethodParams &params) {
+void AGSPalRender::SetStarfieldOverscan(ScriptMethodParams &params) {
 	PARAMS1(int, overscan);
 	Starfield.overscan = overscan;
 }
 
-void GetStarfieldOriginX(ScriptMethodParams &params) {
+void AGSPalRender::GetStarfieldOriginX(ScriptMethodParams &params) {
 	params._result = Starfield.originx;
 }
 
-void GetStarfieldOriginY(ScriptMethodParams &params) {
+void AGSPalRender::GetStarfieldOriginY(ScriptMethodParams &params) {
 	params._result = Starfield.originy;
 }
 
-void SetStarfieldDepthMultiplier(ScriptMethodParams &params) {
+void AGSPalRender::SetStarfieldDepthMultiplier(ScriptMethodParams &params) {
 	PARAMS1(int, multi);
 	Starfield.depthmultiplier = multi;
 }
 
-void GetStarfieldDepthMultiplier(ScriptMethodParams &params) {
+void AGSPalRender::GetStarfieldDepthMultiplier(ScriptMethodParams &params) {
 	params._result = Starfield.depthmultiplier;
 }
 
-void GetStarfieldMaxStars(ScriptMethodParams &params) {
+void AGSPalRender::GetStarfieldMaxStars(ScriptMethodParams &params) {
 	params._result = Starfield.maxstars;
 }
 
-void SetStarSpriteScaleBoost(ScriptMethodParams &params) {
+void AGSPalRender::SetStarSpriteScaleBoost(ScriptMethodParams &params) {
 	PARAMS2(int, star, int, boost);
 	stars[star].scaleboost = boost;
 }
 
-void GetStarSpriteScaleBoost(ScriptMethodParams &params) {
+void AGSPalRender::GetStarSpriteScaleBoost(ScriptMethodParams &params) {
 	PARAMS1(int, star);
 	params._result = stars[star].scaleboost;
 }
 
-void SetStarMaxRadius(ScriptMethodParams &params) {
+void AGSPalRender::SetStarMaxRadius(ScriptMethodParams &params) {
 	PARAMS2(int, star, int, radius);
 	stars[star].maxrad = radius;
 }
 
-void GetStarMaxRadius(ScriptMethodParams &params) {
+void AGSPalRender::GetStarMaxRadius(ScriptMethodParams &params) {
 	PARAMS1(int, star);
 	params._result = stars[star].maxrad;
 }
 
-void RotateStar(ScriptMethodParams &params) {
+void AGSPalRender::RotateStar(ScriptMethodParams &params) {
 	PARAMS4(int, star, int, angle, int, px, int, py);
 	float rsin = rot_sine_LUT[angle];
 	float rcos = rot_cos_LUT[angle];
@@ -843,25 +842,25 @@ void RotateStar(ScriptMethodParams &params) {
 	i++;
 }
 
-void GetStarX(ScriptMethodParams &params) {
+void AGSPalRender::GetStarX(ScriptMethodParams &params) {
 	PARAMS1(int, i);
 	float starx = (float)stars[i].x;
 	params._result = PARAM_FROM_FLOAT(starx);
 }
 
-void GetStarY(ScriptMethodParams &params) {
+void AGSPalRender::GetStarY(ScriptMethodParams &params) {
 	PARAMS1(int, i);
 	float stary = (float)stars[i].y;
 	params._result = PARAM_FROM_FLOAT(stary);
 }
 
-void GetStarZ(ScriptMethodParams &params) {
+void AGSPalRender::GetStarZ(ScriptMethodParams &params) {
 	PARAMS1(int, i);
 	float starz = (float)stars[i].z;
 	params._result = PARAM_FROM_FLOAT(starz);
 }
 
-void SetStarPosition(ScriptMethodParams &params) {
+void AGSPalRender::SetStarPosition(ScriptMethodParams &params) {
 	PARAMS4(int, star, int32, xi, int32, yi, int32, zi);
 	float x = PARAM_TO_FLOAT(xi);
 	float y = PARAM_TO_FLOAT(yi);
@@ -871,27 +870,27 @@ void SetStarPosition(ScriptMethodParams &params) {
 	stars[star].z = z;
 }
 
-void SetStarColor(ScriptMethodParams &params) {
+void AGSPalRender::SetStarColor(ScriptMethodParams &params) {
 	PARAMS2(int, star, unsigned char, color);
 	stars[star].color = color;
 }
 
-void GetStarColor(ScriptMethodParams &params) {
+void AGSPalRender::GetStarColor(ScriptMethodParams &params) {
 	PARAMS1(int, star);
 	params._result = (int)stars[star].color;
 }
 
-void SetStarSprite(ScriptMethodParams &params) {
+void AGSPalRender::SetStarSprite(ScriptMethodParams &params) {
 	PARAMS2(int, star, int, slot);
 	stars[star].sprite = slot;
 }
 
-void GetStarSprite(ScriptMethodParams &params) {
+void AGSPalRender::GetStarSprite(ScriptMethodParams &params) {
 	PARAMS1(int, star);
 	params._result = stars[star].sprite;
 }
 
-void SetStarSpriteRange(ScriptMethodParams &params) {
+void AGSPalRender::SetStarSpriteRange(ScriptMethodParams &params) {
 	PARAMS3(int, start, int, end, int, slot);
 	int sfix = start;
 	int efix = end;
@@ -901,7 +900,7 @@ void SetStarSpriteRange(ScriptMethodParams &params) {
 		stars[i].sprite = slot;
 }
 
-void DrawStars(ScriptMethodParams &params) {
+void AGSPalRender::DrawStars(ScriptMethodParams &params) {
 	PARAMS2(int, slot, int, maskslot);
 	int32 sw, sh = 0;
 	BITMAP *canvas = engine->GetSpriteGraphic(slot);
@@ -1082,7 +1081,7 @@ void DrawStars(ScriptMethodParams &params) {
 }
 
 
-void CreateTranslucentOverlay(ScriptMethodParams &params) {
+void AGSPalRender::CreateTranslucentOverlay(ScriptMethodParams &params) {
 	PARAMS6(int, id, int, spriteId, int, alpha, int, level, int, ox, int, oy);
 	int mask = 0, blendmode = 0;
 	if (params.size() > 6)
@@ -1103,7 +1102,7 @@ void CreateTranslucentOverlay(ScriptMethodParams &params) {
 	params._result = 0;
 }
 
-void DeleteTranslucentOverlay(ScriptMethodParams &params) {
+void AGSPalRender::DeleteTranslucentOverlay(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	overlay[id].enabled = false;
 	overlay[id].sprite = 0;
@@ -1114,44 +1113,44 @@ void DeleteTranslucentOverlay(ScriptMethodParams &params) {
 	params._result = 0;
 }
 
-void MoveTranslucentOverlay(ScriptMethodParams &params) {
+void AGSPalRender::MoveTranslucentOverlay(ScriptMethodParams &params) {
 	PARAMS3(int, id, int, ox, int, oy);
 	overlay[id].x = ox;
 	overlay[id].y = oy;
 	params._result = 0;
 }
 
-void GetTranslucentOverlayX(ScriptMethodParams &params) {
+void AGSPalRender::GetTranslucentOverlayX(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = overlay[id].x;
 }
 
-void GetTranslucentOverlayY(ScriptMethodParams &params) {
+void AGSPalRender::GetTranslucentOverlayY(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = overlay[id].y;
 }
 
-void GetTranslucentOverlaySprite(ScriptMethodParams &params) {
+void AGSPalRender::GetTranslucentOverlaySprite(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = overlay[id].sprite;
 }
 
-void GetTranslucentOverlayLevel(ScriptMethodParams &params) {
+void AGSPalRender::GetTranslucentOverlayLevel(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = overlay[id].level;
 }
 
-void GetTranslucentOverlayEnabled(ScriptMethodParams &params) {
+void AGSPalRender::GetTranslucentOverlayEnabled(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = overlay[id].enabled;
 }
 
-void GetTranslucentOverlayAlpha(ScriptMethodParams &params) {
+void AGSPalRender::GetTranslucentOverlayAlpha(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = overlay[id].trans;
 }
 
-void SetTranslucentOverlayAlpha(ScriptMethodParams &params) {
+void AGSPalRender::SetTranslucentOverlayAlpha(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, alpha);
 	if (alpha >= 0 && alpha < 256)
 		overlay[id].trans = alpha;
@@ -1160,7 +1159,7 @@ void SetTranslucentOverlayAlpha(ScriptMethodParams &params) {
 	params._result = 0;
 }
 
-void SetTranslucentOverlayEnabled(ScriptMethodParams &params) {
+void AGSPalRender::SetTranslucentOverlayEnabled(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, toggle);
 	if (toggle > 0)
 		overlay[id].enabled = true;
@@ -1169,13 +1168,13 @@ void SetTranslucentOverlayEnabled(ScriptMethodParams &params) {
 	params._result = 0;
 }
 
-void SetCharacterReflected(ScriptMethodParams &params) {
+void AGSPalRender::SetCharacterReflected(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, refl);
 	if (refl > 0) Reflection.Characters[id].reflect = 1;
 	else Reflection.Characters[id].reflect = 0;
 }
 
-void SetObjectReflected(ScriptMethodParams &params) {
+void AGSPalRender::SetObjectReflected(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, refl);
 	if (refl > 0)
 		Reflection.Objects[id].reflect = 1;
@@ -1183,22 +1182,22 @@ void SetObjectReflected(ScriptMethodParams &params) {
 		Reflection.Objects[id].reflect = 0;
 }
 
-void GetCharacterReflected(ScriptMethodParams &params) {
+void AGSPalRender::GetCharacterReflected(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = Reflection.Characters[id].reflect;
 }
 
-void GetObjectReflected(ScriptMethodParams &params) {
+void AGSPalRender::GetObjectReflected(ScriptMethodParams &params) {
 	PARAMS1(int, id);
 	params._result = Reflection.Objects[id].reflect;
 }
 
-void ReplaceCharacterReflectionView(ScriptMethodParams &params) {
+void AGSPalRender::ReplaceCharacterReflectionView(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, view);
 	Reflection.Characters[id].replaceview = view - 1;
 }
 
-void SetObjectReflectionIgnoreScaling(ScriptMethodParams &params) {
+void AGSPalRender::SetObjectReflectionIgnoreScaling(ScriptMethodParams &params) {
 	PARAMS2(int, id, int, wb);
 	if (wb) Reflection.Objects[id].ignorescaling = 1;
 	else    Reflection.Objects[id].ignorescaling = 0;
@@ -1370,7 +1369,7 @@ int DrawReflections(int id, int charobj = 0) {
 }
 
 
-void DrawTransSprite(ScriptMethodParams &params) {
+void AGSPalRender::DrawTransSprite(ScriptMethodParams &params) {
 	PARAMS3(int, spriteId, int, bg, int, translevel);
 	int mask = 0, blendmode = 0, use_objpal = 0;
 	if (params.size() > 3)
@@ -1511,189 +1510,185 @@ int DrawTranslucentOverlay(int spriteId, int translevel, int ox, int oy, int mas
 
 /*------------------------------------------------------------------*/
 
-AGSPalRender::AGSPalRender() : PluginBase() {
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-	DLL_METHOD(AGS_EngineShutdown);
-	DLL_METHOD(AGS_EngineOnEvent);
-}
-
 const char *AGSPalRender::AGS_GetPluginName() {
 	return "PALgorithms Translucent Overlay Renderer";
 }
 
 void AGSPalRender::AGS_EngineStartup(IAGSEngine *lpEngine) {
+	PluginBase::AGS_EngineStartup(lpEngine);
 	engine = lpEngine;
 
 	// Make sure it's got the version with the features we need
 	if (engine->version < 3) {
 		engine->AbortGame("Engine interface is too old, need newer version of AGS.");
 	}
-	engine->RegisterScriptFunction("PALInternal::LoadCLUT^1", (void *)LoadCLUT);
-	engine->RegisterScriptFunction("PALInternal::CycleRemap^2", (void *)CycleRemap);
-	engine->RegisterScriptFunction("PALInternal::GetColor565^3", (void *)GetColor565);
-	engine->RegisterScriptFunction("PALInternal::GetLuminosityFromPalette^1", (void *)GetLuminosityFromPalette);
-	engine->RegisterScriptFunction("PALInternal::FastSin^1", (void *)AGSFastSin);
-	engine->RegisterScriptFunction("PALInternal::FastCos^1", (void *)AGSFastCos);
-	engine->RegisterScriptFunction("PALInternal::FastRoot^1", (void *)AGSFastRoot);
-	engine->RegisterScriptFunction("PALInternal::GetRemappedSlot^1", (void *)GetRemappedSlot);
-	engine->RegisterScriptFunction("PALInternal::ResetRemapping^0", (void *)ResetRemapping);
-	engine->RegisterScriptFunction("PALInternal::GetModifiedBackgroundImage", (void *)GetModifiedBackgroundImage);
-	engine->RegisterScriptFunction("PALInternal::WriteObjectivePalette^4", (void *)WriteObjectivePalette);
-	engine->RegisterScriptFunction("PALInternal::ReadObjectivePaletteR^1", (void *)ReadObjectivePaletteR);
-	engine->RegisterScriptFunction("PALInternal::ReadObjectivePaletteB^1", (void *)ReadObjectivePaletteB);
-	engine->RegisterScriptFunction("PALInternal::ReadObjectivePaletteG^1", (void *)ReadObjectivePaletteG);
 
-	engine->RegisterScriptFunction("Raycast::Render^1", (void *)Raycast_Render);
-	engine->RegisterScriptFunction("Raycast::LoadMap^4", (void *)LoadMap);
-	engine->RegisterScriptFunction("Raycast::Initialize", (void *)Init_Raycaster);
-	engine->RegisterScriptFunction("Raycast::MakeTextures^1", (void *)MakeTextures);
-	engine->RegisterScriptFunction("Raycast::MoveForward^0", (void *)MoveForward);
-	engine->RegisterScriptFunction("Raycast::MoveBackward^0", (void *)MoveBackward);
-	engine->RegisterScriptFunction("Raycast::RotateLeft^0", (void *)RotateLeft);
-	engine->RegisterScriptFunction("Raycast::RotateRight^0", (void *)RotateRight);
-	engine->RegisterScriptFunction("Raycast::SetCameraPosition^2", (void *)Ray_SetPlayerPosition);
-	engine->RegisterScriptFunction("Raycast::GetCameraX^0", (void *)Ray_GetPlayerX);
-	engine->RegisterScriptFunction("Raycast::GetCameraY^0", (void *)Ray_GetPlayerY);
-	engine->RegisterScriptFunction("Raycast::GetCameraAngle^0", (void *)Ray_GetPlayerAngle);
-	engine->RegisterScriptFunction("Raycast::SetCameraAngle^1", (void *)Ray_SetPlayerAngle);
-	engine->RegisterScriptFunction("Raycast::InitSprite^9", (void *)Ray_InitSprite);
-	engine->RegisterScriptFunction("Raycast::UnloadEngine^0", (void *)QuitCleanup);
-	engine->RegisterScriptFunction("Raycast::GetHotspotAtXY^2", (void *)Ray_GetHotspotAt);
-	engine->RegisterScriptFunction("Raycast::GetObjectAtXY^2", (void *)Ray_GetObjectAt);
-	engine->RegisterScriptFunction("Raycast::SetSpriteInteractObj^2", (void *)Ray_SetSpriteInteractObj);
-	engine->RegisterScriptFunction("Raycast::GetSpriteInteractObj^1", (void *)Ray_GetSpriteInteractObj);
-	engine->RegisterScriptFunction("Raycast::SetSpritePosition^3", (void *)Ray_SetSpritePosition);
-	engine->RegisterScriptFunction("Raycast::SetSpriteVertOffset^2", (void *)Ray_SetSpriteVertOffset);
-	engine->RegisterScriptFunction("Raycast::GetSpriteVertOffset^1", (void *)Ray_GetSpriteVertOffset);
-	engine->RegisterScriptFunction("Raycast::GetSpriteX^1", (void *)Ray_GetSpriteX);
-	engine->RegisterScriptFunction("Raycast::GetSpriteY^1", (void *)Ray_GetSpriteY);
-	engine->RegisterScriptFunction("Raycast::SetWallHotspot^2", (void *)Ray_SetWallHotspot);
-	engine->RegisterScriptFunction("Raycast::SetWallTextures^5", (void *)Ray_SetWallTextures);
-	engine->RegisterScriptFunction("Raycast::SetWallSolid^5", (void *)Ray_SetWallSolid);
-	engine->RegisterScriptFunction("Raycast::SetWallIgnoreLighting^5", (void *)Ray_SetWallIgnoreLighting);
-	engine->RegisterScriptFunction("Raycast::SetWallAlpha^5", (void *)Ray_SetWallAlpha);
-	engine->RegisterScriptFunction("Raycast::SetWallBlendType^5", (void *)Ray_SetWallBlendType);
-	engine->RegisterScriptFunction("Raycast::GetMoveSpeed^0", (void *)Ray_GetMoveSpeed);
-	engine->RegisterScriptFunction("Raycast::SetMoveSpeed^1", (void *)Ray_SetMoveSpeed);
-	engine->RegisterScriptFunction("Raycast::GetRotSpeed^0", (void *)Ray_GetRotSpeed);
-	engine->RegisterScriptFunction("Raycast::SetRotSpeed^1", (void *)Ray_SetRotSpeed);
-	engine->RegisterScriptFunction("Raycast::GetWallAt^2", (void *)Ray_GetWallAt);
-	engine->RegisterScriptFunction("Raycast::GetLightAt^2", (void *)Ray_GetLightAt);
-	engine->RegisterScriptFunction("Raycast::SetLightAt^3", (void *)Ray_SetLightAt);
-	engine->RegisterScriptFunction("Raycast::SetWallAt^3", (void *)Ray_SetWallAt);
-	engine->RegisterScriptFunction("Raycast::SetPlaneY^1", (void *)Ray_SetPlaneY);
-	engine->RegisterScriptFunction("Raycast::GetDistanceAt^2", (void *)Ray_GetDistanceAt);
-	engine->RegisterScriptFunction("Raycast::GetSpriteAngle^1", (void *)Ray_GetSpriteAngle);
-	engine->RegisterScriptFunction("Raycast::SetSpriteAngle^2", (void *)Ray_SetSpriteAngle);
-	engine->RegisterScriptFunction("Raycast::SetSpriteView^2", (void *)Ray_SetSpriteView);
-	engine->RegisterScriptFunction("Raycast::GetSpriteView^1", (void *)Ray_GetSpriteView);
-	engine->RegisterScriptFunction("Raycast::SetSpriteFrame^2", (void *)Ray_SetSpriteFrame);
-	engine->RegisterScriptFunction("Raycast::GetSpriteFrame^1", (void *)Ray_GetSpriteFrame);
-	engine->RegisterScriptFunction("Raycast::SetSpritePic^2", (void *)Ray_SetSpritePic);
-	engine->RegisterScriptFunction("Raycast::GetSpritePic^1", (void *)Ray_GetSpritePic);
-	engine->RegisterScriptFunction("Raycast::SetSkyBox^1", (void *)Ray_SetSkyBox);
-	engine->RegisterScriptFunction("Raycast::SetSpriteAlpha^2", (void *)Ray_SetSpriteAlpha);
-	engine->RegisterScriptFunction("Raycast::GetSpriteAlpha^1", (void *)Ray_GetSpriteAlpha);
-	engine->RegisterScriptFunction("Raycast::GetSkyBox^1", (void *)Ray_GetSkyBox);
-	engine->RegisterScriptFunction("Raycast::SetAmbientLight^1", (void *)Ray_SetAmbientLight);
-	engine->RegisterScriptFunction("Raycast::SetAmbientColor^2", (void *)Ray_SetAmbientColor);
-	engine->RegisterScriptFunction("Raycast::GetAmbientLight^0", (void *)Ray_GetAmbientLight);
-	engine->RegisterScriptFunction("Raycast::GetAmbientWeight^0", (void *)Ray_GetAmbientWeight);
-	engine->RegisterScriptFunction("Raycast::GetTileX_At^2", (void *)Ray_GetTileX_At);
-	engine->RegisterScriptFunction("Raycast::GetTileY_At^2", (void *)Ray_GetTileY_At);
-	engine->RegisterScriptFunction("Raycast::DrawTile^2", (void *)Ray_DrawTile);
-	engine->RegisterScriptFunction("Raycast::DrawOntoTile^2", (void *)Ray_DrawOntoTile);
-	engine->RegisterScriptFunction("Raycast::SetNoClip^1", (void *)Ray_SetNoClip);
-	engine->RegisterScriptFunction("Raycast::GetNoClip^0", (void *)Ray_GetNoClip);
-	engine->RegisterScriptFunction("Raycast::GetSpriteScaleX^1", (void *)Ray_GetSpriteScaleX);
-	engine->RegisterScriptFunction("Raycast::SetSpriteScaleX^2", (void *)Ray_SetSpriteScaleX);
-	engine->RegisterScriptFunction("Raycast::GetSpriteScaleY^1", (void *)Ray_GetSpriteScaleY);
-	engine->RegisterScriptFunction("Raycast::SetSpriteScaleY^2", (void *)Ray_SetSpriteScaleY);
-	engine->RegisterScriptFunction("Raycast::GetSpriteBlendType^1", (void *)Ray_GetSpriteBlendType);
-	engine->RegisterScriptFunction("Raycast::SetSpriteBlendType^2", (void *)Ray_SetSpriteBlendType);
+	SCRIPT_METHOD(PALInternal::LoadCLUT^1, AGSPalRender::LoadCLUT);
+	SCRIPT_METHOD(PALInternal::CycleRemap^2, AGSPalRender::CycleRemap);
+	SCRIPT_METHOD(PALInternal::GetColor565^3, AGSPalRender::GetColor565);
+	SCRIPT_METHOD(PALInternal::GetLuminosityFromPalette^1, AGSPalRender::GetLuminosityFromPalette);
+	SCRIPT_METHOD(PALInternal::FastSin^1, AGSPalRender::AGSFastSin);
+	SCRIPT_METHOD(PALInternal::FastCos^1, AGSPalRender::AGSFastCos);
+	SCRIPT_METHOD(PALInternal::FastRoot^1, AGSPalRender::AGSFastRoot);
+	SCRIPT_METHOD(PALInternal::GetRemappedSlot^1, AGSPalRender::GetRemappedSlot);
+	SCRIPT_METHOD(PALInternal::ResetRemapping^0, AGSPalRender::ResetRemapping);
+	SCRIPT_METHOD(PALInternal::GetModifiedBackgroundImage, AGSPalRender::GetModifiedBackgroundImage);
+	SCRIPT_METHOD(PALInternal::WriteObjectivePalette^4, AGSPalRender::WriteObjectivePalette);
+	SCRIPT_METHOD(PALInternal::ReadObjectivePaletteR^1, AGSPalRender::ReadObjectivePaletteR);
+	SCRIPT_METHOD(PALInternal::ReadObjectivePaletteB^1, AGSPalRender::ReadObjectivePaletteB);
+	SCRIPT_METHOD(PALInternal::ReadObjectivePaletteG^1, AGSPalRender::ReadObjectivePaletteG);
+
+	SCRIPT_METHOD(Raycast::Render^1, AGSPalRender::Raycast_Render);
+	SCRIPT_METHOD(Raycast::LoadMap^4, AGSPalRender::LoadMap);
+	SCRIPT_METHOD(Raycast::Initialize, AGSPalRender::Init_Raycaster);
+	SCRIPT_METHOD(Raycast::MakeTextures^1, AGSPalRender::MakeTextures);
+	SCRIPT_METHOD(Raycast::MoveForward^0, AGSPalRender::MoveForward);
+	SCRIPT_METHOD(Raycast::MoveBackward^0, AGSPalRender::MoveBackward);
+	SCRIPT_METHOD(Raycast::RotateLeft^0, AGSPalRender::RotateLeft);
+	SCRIPT_METHOD(Raycast::RotateRight^0, AGSPalRender::RotateRight);
+	SCRIPT_METHOD(Raycast::SetCameraPosition^2, AGSPalRender::Ray_SetPlayerPosition);
+	SCRIPT_METHOD(Raycast::GetCameraX^0, AGSPalRender::Ray_GetPlayerX);
+	SCRIPT_METHOD(Raycast::GetCameraY^0, AGSPalRender::Ray_GetPlayerY);
+	SCRIPT_METHOD(Raycast::GetCameraAngle^0, AGSPalRender::Ray_GetPlayerAngle);
+	SCRIPT_METHOD(Raycast::SetCameraAngle^1, AGSPalRender::Ray_SetPlayerAngle);
+	SCRIPT_METHOD(Raycast::InitSprite^9, AGSPalRender::Ray_InitSprite);
+	SCRIPT_METHOD(Raycast::UnloadEngine^0, AGSPalRender::QuitCleanup);
+	SCRIPT_METHOD(Raycast::GetHotspotAtXY^2, AGSPalRender::Ray_GetHotspotAt);
+	SCRIPT_METHOD(Raycast::GetObjectAtXY^2, AGSPalRender::Ray_GetObjectAt);
+	SCRIPT_METHOD(Raycast::SetSpriteInteractObj^2, AGSPalRender::Ray_SetSpriteInteractObj);
+	SCRIPT_METHOD(Raycast::GetSpriteInteractObj^1, AGSPalRender::Ray_GetSpriteInteractObj);
+	SCRIPT_METHOD(Raycast::SetSpritePosition^3, AGSPalRender::Ray_SetSpritePosition);
+	SCRIPT_METHOD(Raycast::SetSpriteVertOffset^2, AGSPalRender::Ray_SetSpriteVertOffset);
+	SCRIPT_METHOD(Raycast::GetSpriteVertOffset^1, AGSPalRender::Ray_GetSpriteVertOffset);
+	SCRIPT_METHOD(Raycast::GetSpriteX^1, AGSPalRender::Ray_GetSpriteX);
+	SCRIPT_METHOD(Raycast::GetSpriteY^1, AGSPalRender::Ray_GetSpriteY);
+	SCRIPT_METHOD(Raycast::SetWallHotspot^2, AGSPalRender::Ray_SetWallHotspot);
+	SCRIPT_METHOD(Raycast::SetWallTextures^5, AGSPalRender::Ray_SetWallTextures);
+	SCRIPT_METHOD(Raycast::SetWallSolid^5, AGSPalRender::Ray_SetWallSolid);
+	SCRIPT_METHOD(Raycast::SetWallIgnoreLighting^5, AGSPalRender::Ray_SetWallIgnoreLighting);
+	SCRIPT_METHOD(Raycast::SetWallAlpha^5, AGSPalRender::Ray_SetWallAlpha);
+	SCRIPT_METHOD(Raycast::SetWallBlendType^5, AGSPalRender::Ray_SetWallBlendType);
+	SCRIPT_METHOD(Raycast::GetMoveSpeed^0, AGSPalRender::Ray_GetMoveSpeed);
+	SCRIPT_METHOD(Raycast::SetMoveSpeed^1, AGSPalRender::Ray_SetMoveSpeed);
+	SCRIPT_METHOD(Raycast::GetRotSpeed^0, AGSPalRender::Ray_GetRotSpeed);
+	SCRIPT_METHOD(Raycast::SetRotSpeed^1, AGSPalRender::Ray_SetRotSpeed);
+	SCRIPT_METHOD(Raycast::GetWallAt^2, AGSPalRender::Ray_GetWallAt);
+	SCRIPT_METHOD(Raycast::GetLightAt^2, AGSPalRender::Ray_GetLightAt);
+	SCRIPT_METHOD(Raycast::SetLightAt^3, AGSPalRender::Ray_SetLightAt);
+	SCRIPT_METHOD(Raycast::SetWallAt^3, AGSPalRender::Ray_SetWallAt);
+	SCRIPT_METHOD(Raycast::SetPlaneY^1, AGSPalRender::Ray_SetPlaneY);
+	SCRIPT_METHOD(Raycast::GetDistanceAt^2, AGSPalRender::Ray_GetDistanceAt);
+	SCRIPT_METHOD(Raycast::GetSpriteAngle^1, AGSPalRender::Ray_GetSpriteAngle);
+	SCRIPT_METHOD(Raycast::SetSpriteAngle^2, AGSPalRender::Ray_SetSpriteAngle);
+	SCRIPT_METHOD(Raycast::SetSpriteView^2, AGSPalRender::Ray_SetSpriteView);
+	SCRIPT_METHOD(Raycast::GetSpriteView^1, AGSPalRender::Ray_GetSpriteView);
+	SCRIPT_METHOD(Raycast::SetSpriteFrame^2, AGSPalRender::Ray_SetSpriteFrame);
+	SCRIPT_METHOD(Raycast::GetSpriteFrame^1, AGSPalRender::Ray_GetSpriteFrame);
+	SCRIPT_METHOD(Raycast::SetSpritePic^2, AGSPalRender::Ray_SetSpritePic);
+	SCRIPT_METHOD(Raycast::GetSpritePic^1, AGSPalRender::Ray_GetSpritePic);
+	SCRIPT_METHOD(Raycast::SetSkyBox^1, AGSPalRender::Ray_SetSkyBox);
+	SCRIPT_METHOD(Raycast::SetSpriteAlpha^2, AGSPalRender::Ray_SetSpriteAlpha);
+	SCRIPT_METHOD(Raycast::GetSpriteAlpha^1, AGSPalRender::Ray_GetSpriteAlpha);
+	SCRIPT_METHOD(Raycast::GetSkyBox^1, AGSPalRender::Ray_GetSkyBox);
+	SCRIPT_METHOD(Raycast::SetAmbientLight^1, AGSPalRender::Ray_SetAmbientLight);
+	SCRIPT_METHOD(Raycast::SetAmbientColor^2, AGSPalRender::Ray_SetAmbientColor);
+	SCRIPT_METHOD(Raycast::GetAmbientLight^0, AGSPalRender::Ray_GetAmbientLight);
+	SCRIPT_METHOD(Raycast::GetAmbientWeight^0, AGSPalRender::Ray_GetAmbientWeight);
+	SCRIPT_METHOD(Raycast::GetTileX_At^2, AGSPalRender::Ray_GetTileX_At);
+	SCRIPT_METHOD(Raycast::GetTileY_At^2, AGSPalRender::Ray_GetTileY_At);
+	SCRIPT_METHOD(Raycast::DrawTile^2, AGSPalRender::Ray_DrawTile);
+	SCRIPT_METHOD(Raycast::DrawOntoTile^2, AGSPalRender::Ray_DrawOntoTile);
+	SCRIPT_METHOD(Raycast::SetNoClip^1, AGSPalRender::Ray_SetNoClip);
+	SCRIPT_METHOD(Raycast::GetNoClip^0, AGSPalRender::Ray_GetNoClip);
+	SCRIPT_METHOD(Raycast::GetSpriteScaleX^1, AGSPalRender::Ray_GetSpriteScaleX);
+	SCRIPT_METHOD(Raycast::SetSpriteScaleX^2, AGSPalRender::Ray_SetSpriteScaleX);
+	SCRIPT_METHOD(Raycast::GetSpriteScaleY^1, AGSPalRender::Ray_GetSpriteScaleY);
+	SCRIPT_METHOD(Raycast::SetSpriteScaleY^2, AGSPalRender::Ray_SetSpriteScaleY);
+	SCRIPT_METHOD(Raycast::GetSpriteBlendType^1, AGSPalRender::Ray_GetSpriteBlendType);
+	SCRIPT_METHOD(Raycast::SetSpriteBlendType^2, AGSPalRender::Ray_SetSpriteBlendType);
 
 
-	engine->RegisterScriptFunction("Raycast::SetFloorAt^3", (void *)Ray_SetFloorAt);
-	engine->RegisterScriptFunction("Raycast::SetCeilingAt^3", (void *)Ray_SetCeilingAt);
-	engine->RegisterScriptFunction("Raycast::GetCeilingAt^2", (void *)Ray_GetCeilingAt);
-	engine->RegisterScriptFunction("Raycast::GetFloorAt^2", (void *)Ray_GetFloorAt);
-	engine->RegisterScriptFunction("Raycast::GetLightingAt^2", (void *)Ray_GetLightingAt);
-	engine->RegisterScriptFunction("Raycast::SetLightingAt^3", (void *)Ray_SetLightingAt);
-	engine->RegisterScriptFunction("Raycast::GetWallHotspot^1", (void *)Ray_GetWallHotspot);
-	engine->RegisterScriptFunction("Raycast::GetWallTexture^2", (void *)Ray_GetWallTexture);
-	engine->RegisterScriptFunction("Raycast::GetWallSolid^2", (void *)Ray_GetWallSolid);
-	engine->RegisterScriptFunction("Raycast::GetWallIgnoreLighting^2", (void *)Ray_GetWallIgnoreLighting);
-	engine->RegisterScriptFunction("Raycast::GetWallAlpha^2", (void *)Ray_GetWallAlpha);
-	engine->RegisterScriptFunction("Raycast::GetWallBlendType^2", (void *)Ray_GetWallBlendType);
-	engine->RegisterScriptFunction("Raycast::SelectTile^3", (void *)Ray_SelectTile);
-	engine->RegisterScriptFunction("Raycast::HasSeenTile^2", (void *)Ray_HasSeenTile);
+	SCRIPT_METHOD(Raycast::SetFloorAt^3, AGSPalRender::Ray_SetFloorAt);
+	SCRIPT_METHOD(Raycast::SetCeilingAt^3, AGSPalRender::Ray_SetCeilingAt);
+	SCRIPT_METHOD(Raycast::GetCeilingAt^2, AGSPalRender::Ray_GetCeilingAt);
+	SCRIPT_METHOD(Raycast::GetFloorAt^2, AGSPalRender::Ray_GetFloorAt);
+	SCRIPT_METHOD(Raycast::GetLightingAt^2, AGSPalRender::Ray_GetLightingAt);
+	SCRIPT_METHOD(Raycast::SetLightingAt^3, AGSPalRender::Ray_SetLightingAt);
+	SCRIPT_METHOD(Raycast::GetWallHotspot^1, AGSPalRender::Ray_GetWallHotspot);
+	SCRIPT_METHOD(Raycast::GetWallTexture^2, AGSPalRender::Ray_GetWallTexture);
+	SCRIPT_METHOD(Raycast::GetWallSolid^2, AGSPalRender::Ray_GetWallSolid);
+	SCRIPT_METHOD(Raycast::GetWallIgnoreLighting^2, AGSPalRender::Ray_GetWallIgnoreLighting);
+	SCRIPT_METHOD(Raycast::GetWallAlpha^2, AGSPalRender::Ray_GetWallAlpha);
+	SCRIPT_METHOD(Raycast::GetWallBlendType^2, AGSPalRender::Ray_GetWallBlendType);
+	SCRIPT_METHOD(Raycast::SelectTile^3, AGSPalRender::Ray_SelectTile);
+	SCRIPT_METHOD(Raycast::HasSeenTile^2, AGSPalRender::Ray_HasSeenTile);
 
-	engine->RegisterScriptFunction("LensDistort::SetPos^2", (void *)SetLensPos);
-	engine->RegisterScriptFunction("LensDistort::GetX^0", (void *)GetLensX);
-	engine->RegisterScriptFunction("LensDistort::GetY^0", (void *)GetLensY);
-	engine->RegisterScriptFunction("LensDistort::Set^1", (void *)SetLensDrawn);
-	engine->RegisterScriptFunction("LensDistort::IsDrawn^0", (void *)GetLensDrawn);
-	engine->RegisterScriptFunction("LensDistort::SetOffsetClamp^1", (void *)SetLensOffsetClamp);
-	engine->RegisterScriptFunction("LensDistort::GetOffsetClamp^0", (void *)GetLensOffsetClamp);
-	engine->RegisterScriptFunction("LensDistort::GetLevel^0", (void *)GetLensLevel);
-	engine->RegisterScriptFunction("LensDistort::SetLevel^1", (void *)SetLensLevel);
-	engine->RegisterScriptFunction("LensDistort::Initialize^6", (void *)LensInitialize);
+	SCRIPT_METHOD(LensDistort::SetPos^2, AGSPalRender::SetLensPos);
+	SCRIPT_METHOD(LensDistort::GetX^0, AGSPalRender::GetLensX);
+	SCRIPT_METHOD(LensDistort::GetY^0, AGSPalRender::GetLensY);
+	SCRIPT_METHOD(LensDistort::Set^1, AGSPalRender::SetLensDrawn);
+	SCRIPT_METHOD(LensDistort::IsDrawn^0, AGSPalRender::GetLensDrawn);
+	SCRIPT_METHOD(LensDistort::SetOffsetClamp^1, AGSPalRender::SetLensOffsetClamp);
+	SCRIPT_METHOD(LensDistort::GetOffsetClamp^0, AGSPalRender::GetLensOffsetClamp);
+	SCRIPT_METHOD(LensDistort::GetLevel^0, AGSPalRender::GetLensLevel);
+	SCRIPT_METHOD(LensDistort::SetLevel^1, AGSPalRender::SetLensLevel);
+	SCRIPT_METHOD(LensDistort::Initialize^6, AGSPalRender::LensInitialize);
 
-	engine->RegisterScriptFunction("Translucence::CreateOverlay^8", (void *)CreateTranslucentOverlay);
-	engine->RegisterScriptFunction("Translucence::DeleteOverlay^1", (void *)DeleteTranslucentOverlay);
-	engine->RegisterScriptFunction("Translucence::Move^3", (void *)MoveTranslucentOverlay);
-	engine->RegisterScriptFunction("Translucence::GetOverlayX^1", (void *)GetTranslucentOverlayX);
-	engine->RegisterScriptFunction("Translucence::GetOverlayY^1", (void *)GetTranslucentOverlayY);
-	engine->RegisterScriptFunction("Translucence::GetOverlaySprite^1", (void *)GetTranslucentOverlaySprite);
-	engine->RegisterScriptFunction("Translucence::GetOverlayLevel^1", (void *)GetTranslucentOverlayLevel);
-	engine->RegisterScriptFunction("Translucence::GetOverlayEnabled^1", (void *)GetTranslucentOverlayEnabled);
-	engine->RegisterScriptFunction("Translucence::GetOverlayAlpha^1", (void *)GetTranslucentOverlayAlpha);
-	engine->RegisterScriptFunction("Translucence::SetOverlayAlpha^2", (void *)SetTranslucentOverlayAlpha);
-	engine->RegisterScriptFunction("Translucence::SetOverlayEnabled^2", (void *)SetTranslucentOverlayEnabled);
-	engine->RegisterScriptFunction("Translucence::DrawTransSprite^6", (void *)DrawTransSprite);
+	SCRIPT_METHOD(Translucence::CreateOverlay^8, AGSPalRender::CreateTranslucentOverlay);
+	SCRIPT_METHOD(Translucence::DeleteOverlay^1, AGSPalRender::DeleteTranslucentOverlay);
+	SCRIPT_METHOD(Translucence::Move^3, AGSPalRender::MoveTranslucentOverlay);
+	SCRIPT_METHOD(Translucence::GetOverlayX^1, AGSPalRender::GetTranslucentOverlayX);
+	SCRIPT_METHOD(Translucence::GetOverlayY^1, AGSPalRender::GetTranslucentOverlayY);
+	SCRIPT_METHOD(Translucence::GetOverlaySprite^1, AGSPalRender::GetTranslucentOverlaySprite);
+	SCRIPT_METHOD(Translucence::GetOverlayLevel^1, AGSPalRender::GetTranslucentOverlayLevel);
+	SCRIPT_METHOD(Translucence::GetOverlayEnabled^1, AGSPalRender::GetTranslucentOverlayEnabled);
+	SCRIPT_METHOD(Translucence::GetOverlayAlpha^1, AGSPalRender::GetTranslucentOverlayAlpha);
+	SCRIPT_METHOD(Translucence::SetOverlayAlpha^2, AGSPalRender::SetTranslucentOverlayAlpha);
+	SCRIPT_METHOD(Translucence::SetOverlayEnabled^2, AGSPalRender::SetTranslucentOverlayEnabled);
+	SCRIPT_METHOD(Translucence::DrawTransSprite^6, AGSPalRender::DrawTransSprite);
 
-	engine->RegisterScriptFunction("Starfield::GetOverscan^0", (void *)GetStarfieldOverscan);
-	engine->RegisterScriptFunction("Starfield::SetOverscan^1", (void *)SetStarfieldOverscan);
-	engine->RegisterScriptFunction("Starfield::GetOriginX^0", (void *)GetStarfieldOriginX);
-	engine->RegisterScriptFunction("Starfield::GetOriginY^0", (void *)GetStarfieldOriginY);
-	engine->RegisterScriptFunction("Starfield::SetDepthMultiplier^1", (void *)SetStarfieldDepthMultiplier);
-	engine->RegisterScriptFunction("Starfield::GetDepthMultiplier^0", (void *)GetStarfieldDepthMultiplier);
-	engine->RegisterScriptFunction("Starfield::GetMaxStars^0", (void *)GetStarfieldMaxStars);
-	engine->RegisterScriptFunction("Starfield::SetStarSpriteScaleBoost^1", (void *)SetStarSpriteScaleBoost);
-	engine->RegisterScriptFunction("Starfield::GetStarSpriteScaleBoost^0", (void *)GetStarSpriteScaleBoost);
-	engine->RegisterScriptFunction("Starfield::SetStarMaxRadius^2", (void *)SetStarMaxRadius);
-	engine->RegisterScriptFunction("Starfield::GetStarMaxRadius^0", (void *)GetStarMaxRadius);
-	engine->RegisterScriptFunction("Starfield::GetStarX^1", (void *)GetStarX);
-	engine->RegisterScriptFunction("Starfield::GetStarY^1", (void *)GetStarY);
-	engine->RegisterScriptFunction("Starfield::GetStarZ^1", (void *)GetStarZ);
-	engine->RegisterScriptFunction("Starfield::SetStarPosition^4", (void *)SetStarPosition);
-	engine->RegisterScriptFunction("Starfield::RotateStar^4", (void *)RotateStar);
-	engine->RegisterScriptFunction("Starfield::SetStarColor^2", (void *)SetStarColor);
-	engine->RegisterScriptFunction("Starfield::GetStarColor^1", (void *)GetStarColor);
-	engine->RegisterScriptFunction("Starfield::SetStarSprite^2", (void *)SetStarSprite);
-	engine->RegisterScriptFunction("Starfield::GetStarSprite^1", (void *)GetStarSprite);
-	engine->RegisterScriptFunction("Starfield::SetStarSpriteRange^3", (void *)SetStarSpriteRange);
-	engine->RegisterScriptFunction("Starfield::Initialize^2", (void *)InitializeStars);
-	engine->RegisterScriptFunction("Starfield::Iterate^1", (void *)IterateStars);
-	engine->RegisterScriptFunction("Starfield::Draw^2", (void *)DrawStars);
-	engine->RegisterScriptFunction("Starfield::SetOriginPoint^2", (void *)SetStarsOriginPoint);
+	SCRIPT_METHOD(Starfield::GetOverscan^0, AGSPalRender::GetStarfieldOverscan);
+	SCRIPT_METHOD(Starfield::SetOverscan^1, AGSPalRender::SetStarfieldOverscan);
+	SCRIPT_METHOD(Starfield::GetOriginX^0, AGSPalRender::GetStarfieldOriginX);
+	SCRIPT_METHOD(Starfield::GetOriginY^0, AGSPalRender::GetStarfieldOriginY);
+	SCRIPT_METHOD(Starfield::SetDepthMultiplier^1, AGSPalRender::SetStarfieldDepthMultiplier);
+	SCRIPT_METHOD(Starfield::GetDepthMultiplier^0, AGSPalRender::GetStarfieldDepthMultiplier);
+	SCRIPT_METHOD(Starfield::GetMaxStars^0, AGSPalRender::GetStarfieldMaxStars);
+	SCRIPT_METHOD(Starfield::SetStarSpriteScaleBoost^1, AGSPalRender::SetStarSpriteScaleBoost);
+	SCRIPT_METHOD(Starfield::GetStarSpriteScaleBoost^0, AGSPalRender::GetStarSpriteScaleBoost);
+	SCRIPT_METHOD(Starfield::SetStarMaxRadius^2, AGSPalRender::SetStarMaxRadius);
+	SCRIPT_METHOD(Starfield::GetStarMaxRadius^0, AGSPalRender::GetStarMaxRadius);
+	SCRIPT_METHOD(Starfield::GetStarX^1, AGSPalRender::GetStarX);
+	SCRIPT_METHOD(Starfield::GetStarY^1, AGSPalRender::GetStarY);
+	SCRIPT_METHOD(Starfield::GetStarZ^1, AGSPalRender::GetStarZ);
+	SCRIPT_METHOD(Starfield::SetStarPosition^4, AGSPalRender::SetStarPosition);
+	SCRIPT_METHOD(Starfield::RotateStar^4, AGSPalRender::RotateStar);
+	SCRIPT_METHOD(Starfield::SetStarColor^2, AGSPalRender::SetStarColor);
+	SCRIPT_METHOD(Starfield::GetStarColor^1, AGSPalRender::GetStarColor);
+	SCRIPT_METHOD(Starfield::SetStarSprite^2, AGSPalRender::SetStarSprite);
+	SCRIPT_METHOD(Starfield::GetStarSprite^1, AGSPalRender::GetStarSprite);
+	SCRIPT_METHOD(Starfield::SetStarSpriteRange^3, AGSPalRender::SetStarSpriteRange);
+	SCRIPT_METHOD(Starfield::Initialize^2, AGSPalRender::InitializeStars);
+	SCRIPT_METHOD(Starfield::Iterate^1, AGSPalRender::IterateStars);
+	SCRIPT_METHOD(Starfield::Draw^2, AGSPalRender::DrawStars);
+	SCRIPT_METHOD(Starfield::SetOriginPoint^2, AGSPalRender::SetStarsOriginPoint);
 
-	engine->RegisterScriptFunction("Plasma::DoFire^8", (void *)DoFire);
-	engine->RegisterScriptFunction("Plasma::SetPlasmaType^5", (void *)SetPlasmaType);
-	engine->RegisterScriptFunction("Plasma::ResetPlasmaSettings^0", (void *)ResetPlasmaSettings);
-	engine->RegisterScriptFunction("Plasma::DrawPlasma^3", (void *)DrawPlasma);
-	engine->RegisterScriptFunction("Plasma::SetRootType^1", (void *)SetPlasmaRootType);
-	engine->RegisterScriptFunction("Plasma::GetRootType^0", (void *)GetPlasmaRootType);
+	SCRIPT_METHOD(Plasma::DoFire^8, AGSPalRender::DoFire);
+	SCRIPT_METHOD(Plasma::SetPlasmaType^5, AGSPalRender::SetPlasmaType);
+	SCRIPT_METHOD(Plasma::ResetPlasmaSettings^0, AGSPalRender::ResetPlasmaSettings);
+	SCRIPT_METHOD(Plasma::DrawPlasma^3, AGSPalRender::DrawPlasma);
+	SCRIPT_METHOD(Plasma::SetRootType^1, AGSPalRender::SetPlasmaRootType);
+	SCRIPT_METHOD(Plasma::GetRootType^0, AGSPalRender::GetPlasmaRootType);
 
-	engine->RegisterScriptFunction("Reflections::Set^1", (void *)SetReflections);
-	engine->RegisterScriptFunction("Reflections::IsReflecting^0", (void *)IsReflectionsOn);
-	engine->RegisterScriptFunction("Reflections::SetCharacterReflected^2", (void *)SetCharacterReflected);
-	engine->RegisterScriptFunction("Reflections::GetCharacterReflected^1", (void *)GetCharacterReflected);
-	engine->RegisterScriptFunction("Reflections::SetObjectReflected^2", (void *)SetObjectReflected);
-	engine->RegisterScriptFunction("Reflections::GetObjectReflected^1", (void *)GetObjectReflected);
-	engine->RegisterScriptFunction("Reflections::ReplaceCharacterReflectionView^2", (void *)ReplaceCharacterReflectionView);
-	engine->RegisterScriptFunction("Reflections::SetObjectReflectionIgnoreScaling^2", (void *)SetObjectReflectionIgnoreScaling);
+	SCRIPT_METHOD(Reflections::Set^1, AGSPalRender::SetReflections);
+	SCRIPT_METHOD(Reflections::IsReflecting^0, AGSPalRender::IsReflectionsOn);
+	SCRIPT_METHOD(Reflections::SetCharacterReflected^2, AGSPalRender::SetCharacterReflected);
+	SCRIPT_METHOD(Reflections::GetCharacterReflected^1, AGSPalRender::GetCharacterReflected);
+	SCRIPT_METHOD(Reflections::SetObjectReflected^2, AGSPalRender::SetObjectReflected);
+	SCRIPT_METHOD(Reflections::GetObjectReflected^1, AGSPalRender::GetObjectReflected);
+	SCRIPT_METHOD(Reflections::ReplaceCharacterReflectionView^2, AGSPalRender::ReplaceCharacterReflectionView);
+	SCRIPT_METHOD(Reflections::SetObjectReflectionIgnoreScaling^2, AGSPalRender::SetObjectReflectionIgnoreScaling);
+
 	engine->RequestEventHook(AGSE_PRESCREENDRAW);
 	engine->RequestEventHook(AGSE_PREGUIDRAW);
 	engine->RequestEventHook(AGSE_POSTSCREENDRAW);

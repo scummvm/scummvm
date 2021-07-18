@@ -23,33 +23,32 @@
 #ifndef AGS_PLUGINS_AGS_WADJET_UTIL_AGS_WADJET_UTIL_H
 #define AGS_PLUGINS_AGS_WADJET_UTIL_AGS_WADJET_UTIL_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSWadjetUtil {
 
 class AGSWadjetUtil : public PluginBase {
+	SCRIPT_HASH(AGSWadjetUtil)
 private:
-IAGSEngine *_engine;
-private:
-const char *AGS_GetPluginName();
-void AGS_EngineStartup(IAGSEngine *lpEngine);
-
-private:
-void IsOnPhone(ScriptMethodParams &params);
-void FakeKeypress(ScriptMethodParams &params);
-void IosSetAchievementValue(ScriptMethodParams &params);
-void IosGetAchievementValue(ScriptMethodParams &params);
-void IosShowAchievements(ScriptMethodParams &params);
-void IosResetAchievements(ScriptMethodParams &params);
-void MobileGetAchievement(ScriptMethodParams &params);
-void MobileSetAchievement(ScriptMethodParams &params);
-void MobileShowAchievements(ScriptMethodParams &params);
-void MobileResetAchievements(ScriptMethodParams &params);
+	void IsOnPhone(ScriptMethodParams &params);
+	void FakeKeypress(ScriptMethodParams &params);
+	void IosSetAchievementValue(ScriptMethodParams &params);
+	void IosGetAchievementValue(ScriptMethodParams &params);
+	void IosShowAchievements(ScriptMethodParams &params);
+	void IosResetAchievements(ScriptMethodParams &params);
+	void MobileGetAchievement(ScriptMethodParams &params);
+	void MobileSetAchievement(ScriptMethodParams &params);
+	void MobileShowAchievements(ScriptMethodParams &params);
+	void MobileResetAchievements(ScriptMethodParams &params);
 
 public:
-AGSWadjetUtil();
+	AGSWadjetUtil() : PluginBase() {}
+	virtual ~AGSWadjetUtil() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *lpEngine) override;
 };
 
 } // namespace AGSWadjetUtil

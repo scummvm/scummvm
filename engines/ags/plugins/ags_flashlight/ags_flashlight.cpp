@@ -33,141 +33,56 @@ const uint32 Magic = 0xBABE0000;
 const uint32 Version = 2;
 const uint32 SaveMagic = Magic + Version;
 
-int32 AGSFlashlight::AGSFlashlight::screen_width = 320;
-int32 AGSFlashlight::screen_height = 200;
-int32 AGSFlashlight::screen_color_depth = 16;
-
-bool AGSFlashlight::g_BitmapMustBeUpdated = true;
-
-int AGSFlashlight::g_RedTint = 0;
-int AGSFlashlight::g_GreenTint = 0;
-int AGSFlashlight::g_BlueTint = 0;
-
-int AGSFlashlight::g_DarknessLightLevel = 100;
-int AGSFlashlight::g_BrightnessLightLevel = 100;
-int AGSFlashlight::g_DarknessSize = 0;
-int AGSFlashlight::g_DarknessDiameter = 0;
-int AGSFlashlight::g_BrightnessSize = 0;
-
-int32 AGSFlashlight::g_FlashlightX = 0;
-int32 AGSFlashlight::g_FlashlightY = 0;
-int32 AGSFlashlight::g_FlashlightDrawAtX = 0;
-int32 AGSFlashlight::g_FlashlightDrawAtY = 0;
-
-bool AGSFlashlight::g_FlashlightFollowMouse = false;
-
-int AGSFlashlight::g_FollowCharacterId = 0;
-int AGSFlashlight::g_FollowCharacterDx = 0;
-int AGSFlashlight::g_FollowCharacterDy = 0;
-int AGSFlashlight::g_FollowCharacterHorz = 0;
-int AGSFlashlight::g_FollowCharacterVert = 0;
-
-AGSCharacter *AGSFlashlight::g_FollowCharacter = nullptr;
-
-BITMAP *AGSFlashlight::g_LightBitmap = nullptr;
-
-uint32 AGSFlashlight::flashlight_x;
-uint32 AGSFlashlight::flashlight_n;
-
-
-IAGSEngine *AGSFlashlight::_engine;
-
-AGSFlashlight::AGSFlashlight() : PluginBase() {
-	_engine = nullptr;
-	screen_width = 320;
-	screen_height = 200;
-	screen_color_depth = 16;
-
-	g_BitmapMustBeUpdated = true;
-
-	g_RedTint = 0;
-	g_GreenTint = 0;
-	g_BlueTint = 0;
-
-	g_DarknessLightLevel = 100;
-	g_BrightnessLightLevel = 100;
-	g_DarknessSize = 0;
-	g_DarknessDiameter = 0;
-	g_BrightnessSize = 0;
-
-	g_FlashlightX = 0;
-	g_FlashlightY = 0;
-	g_FlashlightDrawAtX = 0;
-	g_FlashlightDrawAtY = 0;
-
-	g_FlashlightFollowMouse = false;
-
-	g_FollowCharacterId = 0;
-	g_FollowCharacterDx = 0;
-	g_FollowCharacterDy = 0;
-	g_FollowCharacterHorz = 0;
-	g_FollowCharacterVert = 0;
-
-	g_FollowCharacter = nullptr;
-	g_LightBitmap = nullptr;
-	flashlight_x = 0;
-	flashlight_n = 0;
-
-
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-	DLL_METHOD(AGS_EngineShutdown);
-	DLL_METHOD(AGS_EngineOnEvent);
-}
-
 const char *AGSFlashlight::AGS_GetPluginName() {
 	return "Flashlight plugin recreation";
 }
 
 void AGSFlashlight::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 
 	if (_engine->version < 13)
 		_engine->AbortGame("Engine interface is too old, need newer version of AGS.");
 
-	SCRIPT_METHOD(SetFlashlightTint);
-	SCRIPT_METHOD(GetFlashlightTintRed);
-	SCRIPT_METHOD(GetFlashlightTintGreen);
-	SCRIPT_METHOD(GetFlashlightTintBlue);
+	SCRIPT_METHOD(SetFlashlightTint, AGSFlashlight::SetFlashlightTint);
+	SCRIPT_METHOD(GetFlashlightTintRed, AGSFlashlight::GetFlashlightTintRed);
+	SCRIPT_METHOD(GetFlashlightTintGreen, AGSFlashlight::GetFlashlightTintGreen);
+	SCRIPT_METHOD(GetFlashlightTintBlue, AGSFlashlight::GetFlashlightTintBlue);
 
-	SCRIPT_METHOD(GetFlashlightMinLightLevel);
-	SCRIPT_METHOD(GetFlashlightMaxLightLevel);
+	SCRIPT_METHOD(GetFlashlightMinLightLevel, AGSFlashlight::GetFlashlightMinLightLevel);
+	SCRIPT_METHOD(GetFlashlightMaxLightLevel, AGSFlashlight::GetFlashlightMaxLightLevel);
 
-	SCRIPT_METHOD(SetFlashlightDarkness);
-	SCRIPT_METHOD(GetFlashlightDarkness);
-	SCRIPT_METHOD(SetFlashlightDarknessSize);
-	SCRIPT_METHOD(GetFlashlightDarknessSize);
+	SCRIPT_METHOD(SetFlashlightDarkness, AGSFlashlight::SetFlashlightDarkness);
+	SCRIPT_METHOD(GetFlashlightDarkness, AGSFlashlight::GetFlashlightDarkness);
+	SCRIPT_METHOD(SetFlashlightDarknessSize, AGSFlashlight::SetFlashlightDarknessSize);
+	SCRIPT_METHOD(GetFlashlightDarknessSize, AGSFlashlight::GetFlashlightDarknessSize);
 
-	SCRIPT_METHOD(SetFlashlightBrightness);
-	SCRIPT_METHOD(GetFlashlightBrightness);
-	SCRIPT_METHOD(SetFlashlightBrightnessSize);
-	SCRIPT_METHOD(GetFlashlightBrightnessSize);
+	SCRIPT_METHOD(SetFlashlightBrightness, AGSFlashlight::SetFlashlightBrightness);
+	SCRIPT_METHOD(GetFlashlightBrightness, AGSFlashlight::GetFlashlightBrightness);
+	SCRIPT_METHOD(SetFlashlightBrightnessSize, AGSFlashlight::SetFlashlightBrightnessSize);
+	SCRIPT_METHOD(GetFlashlightBrightnessSize, AGSFlashlight::GetFlashlightBrightnessSize);
 
-	SCRIPT_METHOD(SetFlashlightPosition);
-	SCRIPT_METHOD(GetFlashlightPositionX);
-	SCRIPT_METHOD(GetFlashlightPositionY);
+	SCRIPT_METHOD(SetFlashlightPosition, AGSFlashlight::SetFlashlightPosition);
+	SCRIPT_METHOD(GetFlashlightPositionX, AGSFlashlight::GetFlashlightPositionX);
+	SCRIPT_METHOD(GetFlashlightPositionY, AGSFlashlight::GetFlashlightPositionY);
 
 
-	SCRIPT_METHOD(SetFlashlightFollowMouse);
-	SCRIPT_METHOD(GetFlashlightFollowMouse);
+	SCRIPT_METHOD(SetFlashlightFollowMouse, AGSFlashlight::SetFlashlightFollowMouse);
+	SCRIPT_METHOD(GetFlashlightFollowMouse, AGSFlashlight::GetFlashlightFollowMouse);
 
-	SCRIPT_METHOD(SetFlashlightFollowCharacter);
-	SCRIPT_METHOD(GetFlashlightFollowCharacter);
-	SCRIPT_METHOD(GetFlashlightCharacterDX);
-	SCRIPT_METHOD(GetFlashlightCharacterDY);
-	SCRIPT_METHOD(GetFlashlightCharacterHorz);
-	SCRIPT_METHOD(GetFlashlightCharacterVert);
+	SCRIPT_METHOD(SetFlashlightFollowCharacter, AGSFlashlight::SetFlashlightFollowCharacter);
+	SCRIPT_METHOD(GetFlashlightFollowCharacter, AGSFlashlight::GetFlashlightFollowCharacter);
+	SCRIPT_METHOD(GetFlashlightCharacterDX, AGSFlashlight::GetFlashlightCharacterDX);
+	SCRIPT_METHOD(GetFlashlightCharacterDY, AGSFlashlight::GetFlashlightCharacterDY);
+	SCRIPT_METHOD(GetFlashlightCharacterHorz, AGSFlashlight::GetFlashlightCharacterHorz);
+	SCRIPT_METHOD(GetFlashlightCharacterVert, AGSFlashlight::GetFlashlightCharacterVert);
 
-	SCRIPT_METHOD(SetFlashlightMask);
-	SCRIPT_METHOD(GetFlashlightMask);
+	SCRIPT_METHOD(SetFlashlightMask, AGSFlashlight::SetFlashlightMask);
+	SCRIPT_METHOD(GetFlashlightMask, AGSFlashlight::GetFlashlightMask);
 
 	_engine->RequestEventHook(AGSE_PREGUIDRAW);
 	_engine->RequestEventHook(AGSE_PRESCREENDRAW);
 	_engine->RequestEventHook(AGSE_SAVEGAME);
 	_engine->RequestEventHook(AGSE_RESTOREGAME);
-}
-
-void AGSFlashlight::AGS_EngineShutdown() {
 }
 
 int64 AGSFlashlight::AGS_EngineOnEvent(int event, NumberPtr data) {

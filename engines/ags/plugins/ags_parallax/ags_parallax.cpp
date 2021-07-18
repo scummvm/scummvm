@@ -32,38 +32,18 @@ const unsigned int Magic = 0xCAFE0000;
 const unsigned int Version = 2;
 const unsigned int SaveMagic = Magic + Version;
 
-IAGSEngine *AGSParallax::_engine;
-int32 AGSParallax::_screenWidth;
-int32 AGSParallax::_screenHeight;
-int32 AGSParallax::_screenColorDepth;
-bool AGSParallax::_enabled;
-Sprite AGSParallax::_sprites[MAX_SPRITES];
-
-
-AGSParallax::AGSParallax() : PluginBase() {
-	_engine = nullptr;
-	_screenWidth = 320;
-	_screenHeight = 200;
-	_screenColorDepth = 32;
-	_enabled = false;
-
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-	DLL_METHOD(AGS_EngineOnEvent);
-}
-
 const char *AGSParallax::AGS_GetPluginName() {
 	return "Parallax plugin recreation";
 }
 
 void AGSParallax::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 
 	if (_engine->version < 13)
 		_engine->AbortGame("Engine interface is too old, need newer version of AGS.");
 
-	SCRIPT_METHOD(pxDrawSprite);
-	SCRIPT_METHOD(pxDeleteSprite);
+	SCRIPT_METHOD(pxDrawSprite, AGSParallax::pxDrawSprite);
+	SCRIPT_METHOD(pxDeleteSprite, AGSParallax::pxDeleteSprite);
 
 	_engine->RequestEventHook(AGSE_PREGUIDRAW);
 	_engine->RequestEventHook(AGSE_PRESCREENDRAW);

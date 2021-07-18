@@ -27,25 +27,18 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSShell {
 
-IAGSEngine *AGSShell::_engine;
-
-AGSShell::AGSShell() : PluginBase() {
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-}
-
 const char *AGSShell::AGS_GetPluginName() {
 	return "AGS shell plugin";
 }
 
 void AGSShell::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 
 	// Make sure it's got the version with the features we need
 	if (_engine->version < 3)
 		_engine->AbortGame("Plugin needs engine version 3 or newer.");
 
-	SCRIPT_METHOD(ShellExecute);
+	SCRIPT_METHOD(ShellExecute, AGSShell::ShellExecute);
 }
 
 void AGSShell::ShellExecute(ScriptMethodParams &params) {

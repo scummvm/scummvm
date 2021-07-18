@@ -77,32 +77,25 @@ namespace AGSBlend {
 
 #pragma endregion
 
-IAGSEngine *AGSBlend::_engine;
-
-AGSBlend::AGSBlend() : PluginBase() {
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-}
-
 const char *AGSBlend::AGS_GetPluginName() {
 	return "AGSBlend";
 }
 
 void AGSBlend::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 
 	// Make sure it's got the version with the features we need
 	if (_engine->version < MIN_ENGINE_VERSION)
 		_engine->AbortGame("Plugin needs engine version " STRINGIFY(MIN_ENGINE_VERSION) " or newer.");
 
 	// Register functions
-	SCRIPT_METHOD(GetAlpha);
-	SCRIPT_METHOD(PutAlpha);
-	SCRIPT_METHOD(DrawAlpha);
-	SCRIPT_METHOD(Blur);
-	SCRIPT_METHOD(HighPass);
-	SCRIPT_METHOD(DrawAdd);
-	SCRIPT_METHOD(DrawSprite);
+	SCRIPT_METHOD(GetAlpha, AGSBlend::GetAlpha);
+	SCRIPT_METHOD(PutAlpha, AGSBlend::PutAlpha);
+	SCRIPT_METHOD(DrawAlpha, AGSBlend::DrawAlpha);
+	SCRIPT_METHOD(Blur, AGSBlend::Blur);
+	SCRIPT_METHOD(HighPass, AGSBlend::HighPass);
+	SCRIPT_METHOD(DrawAdd, AGSBlend::DrawAdd);
+	SCRIPT_METHOD(DrawSprite, AGSBlend::DrawSprite);
 }
 
 //------------------------------------------------------------------------------

@@ -31,10 +31,6 @@ const char *IMAGE_TEXT = "*i*m*a*g*e*";
 
 AGSCreditz1::AGSCreditz1() : AGSCreditz() {
 	_version = VERSION_11;
-
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-	DLL_METHOD(AGS_EngineOnEvent);
 }
 
 const char *AGSCreditz1::AGS_GetPluginName() {
@@ -42,33 +38,33 @@ const char *AGSCreditz1::AGS_GetPluginName() {
 }
 
 void AGSCreditz1::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 	engine->RequestEventHook(AGSE_POSTSCREENDRAW);
 	_engine->GetScreenDimensions(&_state->_screenWidth,
 	                             &_state->_screenHeight, &_state->_screenColorDepth);
 
-	SCRIPT_METHOD(SetCredit);
-	SCRIPT_METHOD(ScrollCredits);
-	SCRIPT_METHOD(GetCredit);
-	SCRIPT_METHOD(IsCreditScrollingFinished);
-	SCRIPT_METHOD_EXT(IsFinished, IsCreditScrollingFinished);
-	SCRIPT_METHOD(SetCreditImage);
-	SCRIPT_METHOD(PauseScroll);
-	SCRIPT_METHOD(ScrollReset);
-	SCRIPT_METHOD(SetEmptyLineHeight);
-	SCRIPT_METHOD(GetEmptyLineHeight);
-	SCRIPT_METHOD(SetStaticCredit);
-	SCRIPT_METHOD(GetStaticCredit);
-	SCRIPT_METHOD(StartEndStaticCredits);
-	SCRIPT_METHOD(GetCurrentStaticCredit);
-	SCRIPT_METHOD(SetDefaultStaticDelay);
-	SCRIPT_METHOD(SetStaticPause);
-	SCRIPT_METHOD(SetStaticCreditTitle);
-	SCRIPT_METHOD(ShowStaticCredit);
-	SCRIPT_METHOD(StaticReset);
-	SCRIPT_METHOD(GetStaticCreditTitle);
-	SCRIPT_METHOD(SetStaticCreditImage);
-	SCRIPT_METHOD(IsStaticCreditsFinished);
+	SCRIPT_METHOD(SetCredit, AGSCreditz1::SetCredit);
+	SCRIPT_METHOD(ScrollCredits, AGSCreditz1::ScrollCredits);
+	SCRIPT_METHOD(GetCredit, AGSCreditz1::GetCredit);
+	SCRIPT_METHOD(IsCreditScrollingFinished, AGSCreditz1::IsCreditScrollingFinished);
+	SCRIPT_METHOD(IsFinished, AGSCreditz1::IsCreditScrollingFinished);
+	SCRIPT_METHOD(SetCreditImage, AGSCreditz1::SetCreditImage);
+	SCRIPT_METHOD(PauseScroll, AGSCreditz1::PauseScroll);
+	SCRIPT_METHOD(ScrollReset, AGSCreditz1::ScrollReset);
+	SCRIPT_METHOD(SetEmptyLineHeight, AGSCreditz1::SetEmptyLineHeight);
+	SCRIPT_METHOD(GetEmptyLineHeight, AGSCreditz1::GetEmptyLineHeight);
+	SCRIPT_METHOD(SetStaticCredit, AGSCreditz1::SetStaticCredit);
+	SCRIPT_METHOD(GetStaticCredit, AGSCreditz1::GetStaticCredit);
+	SCRIPT_METHOD(StartEndStaticCredits, AGSCreditz1::StartEndStaticCredits);
+	SCRIPT_METHOD(GetCurrentStaticCredit, AGSCreditz1::GetCurrentStaticCredit);
+	SCRIPT_METHOD(SetDefaultStaticDelay, AGSCreditz1::SetDefaultStaticDelay);
+	SCRIPT_METHOD(SetStaticPause, AGSCreditz1::SetStaticPause);
+	SCRIPT_METHOD(SetStaticCreditTitle, AGSCreditz1::SetStaticCreditTitle);
+	SCRIPT_METHOD(ShowStaticCredit, AGSCreditz1::ShowStaticCredit);
+	SCRIPT_METHOD(StaticReset, AGSCreditz1::StaticReset);
+	SCRIPT_METHOD(GetStaticCreditTitle, AGSCreditz1::GetStaticCreditTitle);
+	SCRIPT_METHOD(SetStaticCreditImage, AGSCreditz1::SetStaticCreditImage);
+	SCRIPT_METHOD(IsStaticCreditsFinished, AGSCreditz1::IsStaticCreditsFinished);
 }
 
 int64 AGSCreditz1::AGS_EngineOnEvent(int event, NumberPtr data) {
@@ -215,7 +211,7 @@ void AGSCreditz1::StartEndStaticCredits(ScriptMethodParams &params) {
 		_engine->AbortGame("StartEndStaticCredits: Wrong resolution");
 
 	} else {
-		_state->_current= 0;
+		_state->_currentStatic = 0;
 		_engine->GetScreenDimensions(&_state->_screenWidth,
 		                             &_state->_screenHeight, &_state->_screenColorDepth);
 
@@ -271,7 +267,7 @@ void AGSCreditz1::ShowStaticCredit(ScriptMethodParams &params) {
 
 			_state->_staticScreenWidth = (res == 1) ? 320 : 640;
 			_state->_staticWidthMatches = _state->_screenWidth == _state->_staticScreenWidth;
-			_state->_current= ID;
+			_state->_currentStatic = ID;
 
 			// TODO: Final setup
 		}

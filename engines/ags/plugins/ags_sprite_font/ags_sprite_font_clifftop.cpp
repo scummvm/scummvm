@@ -28,10 +28,6 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSSpriteFont {
 
-AGSSpriteFontClifftopGames::AGSSpriteFontClifftopGames() : AGSSpriteFont() {
-	DLL_METHOD(AGS_EngineStartup);
-}
-
 void AGSSpriteFontClifftopGames::AGS_EngineStartup(IAGSEngine *engine) {
 	// Use custom font renderers
 	// They need to be set before calling AGSSpriteFont::AGS_EngineStartup()
@@ -43,7 +39,7 @@ void AGSSpriteFontClifftopGames::AGS_EngineStartup(IAGSEngine *engine) {
 
 	AGSSpriteFont::AGS_EngineStartup(engine);
 
-	SCRIPT_METHOD(SetLineHeightAdjust);
+	SCRIPT_METHOD(SetLineHeightAdjust, AGSSpriteFontClifftopGames::SetLineHeightAdjust);
 }
 
 void AGSSpriteFontClifftopGames::SetLineHeightAdjust(ScriptMethodParams &params) {

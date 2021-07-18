@@ -23,20 +23,17 @@
 #ifndef AGS_PLUGINS_AGS_AGI_AGS_AGI_H
 #define AGS_PLUGINS_AGS_AGI_AGS_AGI_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSAgi {
 
 class AGSAgi : public PluginBase {
+	SCRIPT_HASH(AGSAgi)
 private:
 	int _enabled = 0;
 	int _scaling_mode = 0;
-
-private:
-	const char *AGS_GetPluginName() override;
-	void AGS_EngineStartup(IAGSEngine *engine) override;
 
 private:
 	void SetAGIScalingMode(ScriptMethodParams &params);
@@ -44,7 +41,11 @@ private:
 	void UseAGIScaling(ScriptMethodParams &params);
 
 public:
-	AGSAgi();
+	AGSAgi() : PluginBase() {}
+	virtual ~AGSAgi() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 };
 
 } // namespace AGSAgi

@@ -23,40 +23,37 @@
 #ifndef AGS_PLUGINS_AGSCONTROLLER_AGSCONTROLLER_H
 #define AGS_PLUGINS_AGSCONTROLLER_AGSCONTROLLER_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSController {
 
 class AGSController : public PluginBase {
+	SCRIPT_HASH(AGSController)
 private:
-IAGSEngine *_engine;
+	void Controller_Update();
 
-private:
-const char *AGS_GetPluginName();
-void AGS_EngineStartup(IAGSEngine *engine) override;
-void AGS_EngineShutdown();
-int64 AGS_EngineOnEvent(int event, NumberPtr data);
-
-private:
-void Controller_Update();
-
-void ControllerCount(ScriptMethodParams &params);
-void Controller_Open(ScriptMethodParams &params);
-void Controller_Plugged(ScriptMethodParams &params);
-void Controller_GetAxis(ScriptMethodParams &params);
-void Controller_GetPOV(ScriptMethodParams &params);
-void Controller_IsButtonDown(ScriptMethodParams &params);
-void Controller_Close(ScriptMethodParams &params);
-void Controller_GetName(ScriptMethodParams &params);
-void Controller_Rumble(ScriptMethodParams &params);
-void Controller_IsButtonDownOnce(ScriptMethodParams &params);
-void Controller_PressAnyKey(ScriptMethodParams &params);
-void Controller_BatteryStatus(ScriptMethodParams &params);
-void ClickMouse(ScriptMethodParams &params);
+	void ControllerCount(ScriptMethodParams &params);
+	void Controller_Open(ScriptMethodParams &params);
+	void Controller_Plugged(ScriptMethodParams &params);
+	void Controller_GetAxis(ScriptMethodParams &params);
+	void Controller_GetPOV(ScriptMethodParams &params);
+	void Controller_IsButtonDown(ScriptMethodParams &params);
+	void Controller_Close(ScriptMethodParams &params);
+	void Controller_GetName(ScriptMethodParams &params);
+	void Controller_Rumble(ScriptMethodParams &params);
+	void Controller_IsButtonDownOnce(ScriptMethodParams &params);
+	void Controller_PressAnyKey(ScriptMethodParams &params);
+	void Controller_BatteryStatus(ScriptMethodParams &params);
+	void ClickMouse(ScriptMethodParams &params);
 public:
-AGSController();
+	AGSController() : PluginBase() {}
+	virtual ~AGSController() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *engine) override;
+	int64 AGS_EngineOnEvent(int event, NumberPtr data) override;
 };
 
 } // namespace AGSController

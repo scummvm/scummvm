@@ -23,18 +23,14 @@
 #ifndef AGS_PLUGINS_AGS_FIRE_AGS_FIRE_H
 #define AGS_PLUGINS_AGS_FIRE_AGS_FIRE_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSFire {
 
 class AGSFire : public PluginBase {
-private:
-	IAGSEngine *_engine;
-	const char *AGS_GetPluginName();
-	void AGS_EngineStartup(IAGSEngine *engine) override;
-
+	SCRIPT_HASH(AGSFire)
 private:
 	void FireAddObject(ScriptMethodParams &params);
 	void FirePreHeat(ScriptMethodParams &params);
@@ -46,7 +42,11 @@ private:
 	void FireStop(ScriptMethodParams &params);
 
 public:
-	AGSFire();
+	AGSFire() : PluginBase() {}
+	virtual ~AGSFire() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 };
 
 } // namespace AGSFire

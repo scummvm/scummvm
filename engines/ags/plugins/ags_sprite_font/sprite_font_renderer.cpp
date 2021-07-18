@@ -31,7 +31,6 @@ SpriteFontRenderer::SpriteFontRenderer(IAGSEngine *engine) {
 	_engine = engine;
 }
 
-
 SpriteFontRenderer::~SpriteFontRenderer(void) {
 	for (int i = 0; i < (int)_fonts.size(); i++)
 		delete _fonts[i];

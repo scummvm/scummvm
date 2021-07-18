@@ -30,35 +30,36 @@ namespace Plugins {
 namespace AGSCreditz {
 
 class AGSCreditz1 : public AGSCreditz {
+	SCRIPT_HASH(AGSCreditz1)
 private:
-const char *AGS_GetPluginName();
-void AGS_EngineStartup(IAGSEngine *engine) override;
-int64 AGS_EngineOnEvent(int event, NumberPtr data);
-
-void SetCredit(ScriptMethodParams &params);
-void ScrollCredits(ScriptMethodParams &params);
-void GetCredit(ScriptMethodParams &params);
-void IsCreditScrollingFinished(ScriptMethodParams &params);
-void SetCreditImage(ScriptMethodParams &params);
-void PauseScroll(ScriptMethodParams &params);
-void ScrollReset(ScriptMethodParams &params);
-void SetEmptyLineHeight(ScriptMethodParams &params);
-void GetEmptyLineHeight(ScriptMethodParams &params);
-void SetStaticCredit(ScriptMethodParams &params);
-void GetStaticCredit(ScriptMethodParams &params);
-void StartEndStaticCredits(ScriptMethodParams &params);
-void GetCurrentStaticCredit(ScriptMethodParams &params);
-void SetDefaultStaticDelay(ScriptMethodParams &params);
-void SetStaticPause(ScriptMethodParams &params);
-void SetStaticCreditTitle(ScriptMethodParams &params);
-void ShowStaticCredit(ScriptMethodParams &params);
-void StaticReset(ScriptMethodParams &params);
-void GetStaticCreditTitle(ScriptMethodParams &params);
-void SetStaticCreditImage(ScriptMethodParams &params);
-void IsStaticCreditsFinished(ScriptMethodParams &params);
+	void SetCredit(ScriptMethodParams &params);
+	void ScrollCredits(ScriptMethodParams &params);
+	void GetCredit(ScriptMethodParams &params);
+	void IsCreditScrollingFinished(ScriptMethodParams &params);
+	void SetCreditImage(ScriptMethodParams &params);
+	void PauseScroll(ScriptMethodParams &params);
+	void ScrollReset(ScriptMethodParams &params);
+	void SetEmptyLineHeight(ScriptMethodParams &params);
+	void GetEmptyLineHeight(ScriptMethodParams &params);
+	void SetStaticCredit(ScriptMethodParams &params);
+	void GetStaticCredit(ScriptMethodParams &params);
+	void StartEndStaticCredits(ScriptMethodParams &params);
+	void GetCurrentStaticCredit(ScriptMethodParams &params);
+	void SetDefaultStaticDelay(ScriptMethodParams &params);
+	void SetStaticPause(ScriptMethodParams &params);
+	void SetStaticCreditTitle(ScriptMethodParams &params);
+	void ShowStaticCredit(ScriptMethodParams &params);
+	void StaticReset(ScriptMethodParams &params);
+	void GetStaticCreditTitle(ScriptMethodParams &params);
+	void SetStaticCreditImage(ScriptMethodParams &params);
+	void IsStaticCreditsFinished(ScriptMethodParams &params);
 
 public:
-AGSCreditz1();
+	AGSCreditz1();
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *engine) override;
+	int64 AGS_EngineOnEvent(int event, NumberPtr data) override;
 };
 
 } // namespace AGSCreditz

@@ -27,37 +27,30 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSJoy {
 
-IAGSEngine *AGSJoy::_engine;
-
-AGSJoy::AGSJoy() : PluginBase() {
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-}
-
 const char *AGSJoy::AGS_GetPluginName() {
 	return "AGSJoy";
 }
 
 void AGSJoy::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 
 	// Register functions
-	SCRIPT_METHOD_EXT(JoystickCount, Count);
-	SCRIPT_METHOD_EXT(JoystickName, Name);
-	SCRIPT_METHOD_EXT(JoystickRescan, Rescan);
-	SCRIPT_METHOD_EXT(Joystick::Open, Open);
-	SCRIPT_METHOD_EXT(Joystick::IsOpen, IsOpen);
-	SCRIPT_METHOD_EXT(Joystick::Click, Click);
-	SCRIPT_METHOD_EXT(Joystick::Close, Close);
-	SCRIPT_METHOD_EXT(Joystick::Valid, Valid);
-	SCRIPT_METHOD_EXT(Joystick::Unplugged, Unplugged);
-	SCRIPT_METHOD_EXT(Joystick::GetName, GetName);
-	SCRIPT_METHOD_EXT(Joystick::GetAxis, GetAxis);
-	SCRIPT_METHOD_EXT(Joystick::IsButtonDown, IsButtonDown);
-	SCRIPT_METHOD_EXT(Joystick::IsJoyBtnDown, IsJoyBtnDown);
-	SCRIPT_METHOD_EXT(Joystick::Update, Update);
-	SCRIPT_METHOD_EXT(Joystick::DisableEvents, DisableEvents);
-	SCRIPT_METHOD_EXT(Joystick::EnableEvents, EnableEvents);
+	SCRIPT_METHOD(JoystickCount, AGSJoy::Count);
+	SCRIPT_METHOD(JoystickName, AGSJoy::Name);
+	SCRIPT_METHOD(JoystickRescan, AGSJoy::Rescan);
+	SCRIPT_METHOD(Joystick::Open, AGSJoy::Open);
+	SCRIPT_METHOD(Joystick::IsOpen, AGSJoy::IsOpen);
+	SCRIPT_METHOD(Joystick::Click, AGSJoy::Click);
+	SCRIPT_METHOD(Joystick::Close, AGSJoy::Close);
+	SCRIPT_METHOD(Joystick::Valid, AGSJoy::Valid);
+	SCRIPT_METHOD(Joystick::Unplugged, AGSJoy::Unplugged);
+	SCRIPT_METHOD(Joystick::GetName, AGSJoy::GetName);
+	SCRIPT_METHOD(Joystick::GetAxis, AGSJoy::GetAxis);
+	SCRIPT_METHOD(Joystick::IsButtonDown, AGSJoy::IsButtonDown);
+	SCRIPT_METHOD(Joystick::IsJoyBtnDown, AGSJoy::IsJoyBtnDown);
+	SCRIPT_METHOD(Joystick::Update, AGSJoy::Update);
+	SCRIPT_METHOD(Joystick::DisableEvents, AGSJoy::DisableEvents);
+	SCRIPT_METHOD(Joystick::EnableEvents, AGSJoy::EnableEvents);
 }
 
 void AGSJoy::Count(ScriptMethodParams &params) {

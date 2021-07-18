@@ -29,8 +29,6 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSSock {
 
-IAGSEngine *AGSSock::_engine;
-
 struct SockData : public IAGSScriptManagedObject, public Common::Array<byte> {
 public:
 	int Dispose(const char *address, bool force) override {
@@ -88,68 +86,61 @@ public:
 	}
 };
 
-AGSSock::AGSSock() : PluginBase() {
-	_engine = nullptr;
-
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-}
 
 const char *AGSSock::AGS_GetPluginName() {
 	return "AGS Sock";
 }
 
 void AGSSock::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 
-	SCRIPT_METHOD_EXT(SockData::Create^2, SockData_Create);
-	SCRIPT_METHOD_EXT(SockData::CreateEmpty^0, SockData_CreateEmpty);
-	SCRIPT_METHOD_EXT(SockData::CreateFromString^1, SockData_CreateFromString);
-	SCRIPT_METHOD_EXT(SockData::get_Size, SockData_get_Size);
-	SCRIPT_METHOD_EXT(SockData::set_Size, SockData_set_Size);
-	SCRIPT_METHOD_EXT(SockData::geti_Chars, SockData_geti_Chars);
-	SCRIPT_METHOD_EXT(SockData::seti_Chars, SockData_seti_Chars);
-	SCRIPT_METHOD_EXT(SockData::AsString^0, SockData_AsString);
-	SCRIPT_METHOD_EXT(SockData::Clear^0, SockData_Clear);
-	SCRIPT_METHOD_EXT(SockAddr::Create^1, SockAddr_Create);
-	SCRIPT_METHOD_EXT(SockAddr::CreateFromString^2, SockAddr_CreateFromString);
-	SCRIPT_METHOD_EXT(SockAddr::CreateFromData^1, SockAddr_CreateFromData);
-	SCRIPT_METHOD_EXT(SockAddr::CreateIP^2, SockAddr_CreateIP);
-	SCRIPT_METHOD_EXT(SockAddr::CreateIPv6^2, SockAddr_CreateIPv6);
-	SCRIPT_METHOD_EXT(SockAddr::get_Port, SockAddr_get_Port);
-	SCRIPT_METHOD_EXT(SockAddr::set_Port, SockAddr_set_Port);
-	SCRIPT_METHOD_EXT(SockAddr::get_Address, SockAddr_get_Address);
-	SCRIPT_METHOD_EXT(SockAddr::set_Address, SockAddr_set_Address);
-	SCRIPT_METHOD_EXT(SockAddr::get_IP, SockAddr_get_IP);
-	SCRIPT_METHOD_EXT(SockAddr::set_IP, SockAddr_set_IP);
-	SCRIPT_METHOD_EXT(SockAddr::GetData^0, SockAddr_GetData);
-	SCRIPT_METHOD_EXT(Socket::Create^3, Socket_Create);
-	SCRIPT_METHOD_EXT(Socket::CreateUDP^0, Socket_CreateUDP);
-	SCRIPT_METHOD_EXT(Socket::CreateTCP^0, Socket_CreateTCP);
-	SCRIPT_METHOD_EXT(Socket::CreateUDPv6^0, Socket_CreateUDPv6);
-	SCRIPT_METHOD_EXT(Socket::CreateTCPv6^0, Socket_CreateTCPv6);
-	SCRIPT_METHOD_EXT(Socket::get_Tag, Socket_get_Tag);
-	SCRIPT_METHOD_EXT(Socket::set_Tag, Socket_set_Tag);
-	SCRIPT_METHOD_EXT(Socket::get_Local, Socket_get_Local);
-	SCRIPT_METHOD_EXT(Socket::get_Remote, Socket_get_Remote);
-	SCRIPT_METHOD_EXT(Socket::get_Valid, Socket_get_Valid);
-	SCRIPT_METHOD_EXT(Socket::ErrorString^0, Socket_ErrorString);
-	SCRIPT_METHOD_EXT(Socket::Bind^1, Socket_Bind);
-	SCRIPT_METHOD_EXT(Socket::Listen^1, Socket_Listen);
-	SCRIPT_METHOD_EXT(Socket::Connect^2, Socket_Connect);
-	SCRIPT_METHOD_EXT(Socket::Accept^0, Socket_Accept);
-	SCRIPT_METHOD_EXT(Socket::Close^0, Socket_Close);
-	SCRIPT_METHOD_EXT(Socket::Send^1, Socket_Send);
-	SCRIPT_METHOD_EXT(Socket::SendTo^2, Socket_SendTo);
-	SCRIPT_METHOD_EXT(Socket::Recv^0, Socket_Recv);
-	SCRIPT_METHOD_EXT(Socket::RecvFrom^1, Socket_RecvFrom);
-	SCRIPT_METHOD_EXT(Socket::SendData^1, Socket_SendData);
-	SCRIPT_METHOD_EXT(Socket::SendDataTo^2, Socket_SendDataTo);
-	SCRIPT_METHOD_EXT(Socket::RecvData^0, Socket_RecvData);
-	SCRIPT_METHOD_EXT(Socket::RecvDataFrom^1, Socket_RecvDataFrom);
-	SCRIPT_METHOD_EXT(Socket::GetOption^2, Socket_GetOption);
-	SCRIPT_METHOD_EXT(Socket::SetOption^3, Socket_SetOption);
-
+	SCRIPT_METHOD(SockData::Create^2, AGSSock::SockData_Create);
+	SCRIPT_METHOD(SockData::CreateEmpty^0, AGSSock::SockData_CreateEmpty);
+	SCRIPT_METHOD(SockData::CreateFromString^1, AGSSock::SockData_CreateFromString);
+	SCRIPT_METHOD(SockData::get_Size, AGSSock::SockData_get_Size);
+	SCRIPT_METHOD(SockData::set_Size, AGSSock::SockData_set_Size);
+	SCRIPT_METHOD(SockData::geti_Chars, AGSSock::SockData_geti_Chars);
+	SCRIPT_METHOD(SockData::seti_Chars, AGSSock::SockData_seti_Chars);
+	SCRIPT_METHOD(SockData::AsString^0, AGSSock::SockData_AsString);
+	SCRIPT_METHOD(SockData::Clear^0, AGSSock::SockData_Clear);
+	SCRIPT_METHOD(SockAddr::Create^1, AGSSock::SockAddr_Create);
+	SCRIPT_METHOD(SockAddr::CreateFromString^2, AGSSock::SockAddr_CreateFromString);
+	SCRIPT_METHOD(SockAddr::CreateFromData^1, AGSSock::SockAddr_CreateFromData);
+	SCRIPT_METHOD(SockAddr::CreateIP^2, AGSSock::SockAddr_CreateIP);
+	SCRIPT_METHOD(SockAddr::CreateIPv6^2, AGSSock::SockAddr_CreateIPv6);
+	SCRIPT_METHOD(SockAddr::get_Port, AGSSock::SockAddr_get_Port);
+	SCRIPT_METHOD(SockAddr::set_Port, AGSSock::SockAddr_set_Port);
+	SCRIPT_METHOD(SockAddr::get_Address, AGSSock::SockAddr_get_Address);
+	SCRIPT_METHOD(SockAddr::set_Address, AGSSock::SockAddr_set_Address);
+	SCRIPT_METHOD(SockAddr::get_IP, AGSSock::SockAddr_get_IP);
+	SCRIPT_METHOD(SockAddr::set_IP, AGSSock::SockAddr_set_IP);
+	SCRIPT_METHOD(SockAddr::GetData^0, AGSSock::SockAddr_GetData);
+	SCRIPT_METHOD(Socket::Create^3, AGSSock::Socket_Create);
+	SCRIPT_METHOD(Socket::CreateUDP^0, AGSSock::Socket_CreateUDP);
+	SCRIPT_METHOD(Socket::CreateTCP^0, AGSSock::Socket_CreateTCP);
+	SCRIPT_METHOD(Socket::CreateUDPv6^0, AGSSock::Socket_CreateUDPv6);
+	SCRIPT_METHOD(Socket::CreateTCPv6^0, AGSSock::Socket_CreateTCPv6);
+	SCRIPT_METHOD(Socket::get_Tag, AGSSock::Socket_get_Tag);
+	SCRIPT_METHOD(Socket::set_Tag, AGSSock::Socket_set_Tag);
+	SCRIPT_METHOD(Socket::get_Local, AGSSock::Socket_get_Local);
+	SCRIPT_METHOD(Socket::get_Remote, AGSSock::Socket_get_Remote);
+	SCRIPT_METHOD(Socket::get_Valid, AGSSock::Socket_get_Valid);
+	SCRIPT_METHOD(Socket::ErrorString^0, AGSSock::Socket_ErrorString);
+	SCRIPT_METHOD(Socket::Bind^1, AGSSock::Socket_Bind);
+	SCRIPT_METHOD(Socket::Listen^1, AGSSock::Socket_Listen);
+	SCRIPT_METHOD(Socket::Connect^2, AGSSock::Socket_Connect);
+	SCRIPT_METHOD(Socket::Accept^0, AGSSock::Socket_Accept);
+	SCRIPT_METHOD(Socket::Close^0, AGSSock::Socket_Close);
+	SCRIPT_METHOD(Socket::Send^1, AGSSock::Socket_Send);
+	SCRIPT_METHOD(Socket::SendTo^2, AGSSock::Socket_SendTo);
+	SCRIPT_METHOD(Socket::Recv^0, AGSSock::Socket_Recv);
+	SCRIPT_METHOD(Socket::RecvFrom^1, AGSSock::Socket_RecvFrom);
+	SCRIPT_METHOD(Socket::SendData^1, AGSSock::Socket_SendData);
+	SCRIPT_METHOD(Socket::SendDataTo^2, AGSSock::Socket_SendDataTo);
+	SCRIPT_METHOD(Socket::RecvData^0, AGSSock::Socket_RecvData);
+	SCRIPT_METHOD(Socket::RecvDataFrom^1, AGSSock::Socket_RecvDataFrom);
+	SCRIPT_METHOD(Socket::GetOption^2, AGSSock::Socket_GetOption);
+	SCRIPT_METHOD(Socket::SetOption^3, AGSSock::Socket_SetOption);
 }
 
 void AGSSock::SockData_Create(ScriptMethodParams &params) {

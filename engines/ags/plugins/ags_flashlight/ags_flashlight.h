@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGSFLASHLIGHT_AGSFLASHLIGHT_H
 #define AGS_PLUGINS_AGSFLASHLIGHT_AGSFLASHLIGHT_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/serializer.h"
 #include "ags/lib/allegro.h"
 
@@ -36,88 +36,87 @@ namespace AGSFlashlight {
  * but a workalike plugin originally created for the AGS engine PSP port.
  */
 class AGSFlashlight : public PluginBase {
+	SCRIPT_HASH(AGSFlashlight)
 private:
-IAGSEngine *_engine;
-int32 screen_width;
-int32 screen_height;
-int32 screen_color_depth;
-bool g_BitmapMustBeUpdated;
-int g_RedTint;
-int g_GreenTint;
-int g_BlueTint;
-int g_DarknessLightLevel;
-int g_BrightnessLightLevel;
-int g_DarknessSize;
-int g_DarknessDiameter;
-int g_BrightnessSize;
-int32 g_FlashlightX;
-int32 g_FlashlightY;
-int32 g_FlashlightDrawAtX;
-int32 g_FlashlightDrawAtY;
-bool g_FlashlightFollowMouse;
-int g_FollowCharacterId;
-int g_FollowCharacterDx;
-int g_FollowCharacterDy;
-int g_FollowCharacterHorz;
-int g_FollowCharacterVert;
-AGSCharacter *g_FollowCharacter;
-BITMAP *g_LightBitmap;
-uint32 flashlight_x, flashlight_n;
+	int32 screen_width = 320;
+	int32 screen_height = 200;
+	int32 screen_color_depth = 16;
+	bool g_BitmapMustBeUpdated = true;
+	int g_RedTint = 0;
+	int g_GreenTint = 0;
+	int g_BlueTint = 0;
+	int g_DarknessLightLevel = 100;
+	int g_BrightnessLightLevel = 100;
+	int g_DarknessSize = 0;
+	int g_DarknessDiameter = 0;
+	int g_BrightnessSize = 0;
+	int32 g_FlashlightX = 0;
+	int32 g_FlashlightY = 0;
+	int32 g_FlashlightDrawAtX = 0;
+	int32 g_FlashlightDrawAtY = 0;
+	bool g_FlashlightFollowMouse = false;
+	int g_FollowCharacterId = 0;
+	int g_FollowCharacterDx = 0;
+	int g_FollowCharacterDy = 0;
+	int g_FollowCharacterHorz = 0;
+	int g_FollowCharacterVert = 0;
+	AGSCharacter *g_FollowCharacter = nullptr;
+	BITMAP *g_LightBitmap = nullptr;
+	uint32 flashlight_x = 0, flashlight_n = 0;
 
 private:
-const char *AGS_GetPluginName();
-void AGS_EngineStartup(IAGSEngine *engine) override;
-void AGS_EngineShutdown();
-int64 AGS_EngineOnEvent(int event, NumberPtr data);
+	/**
+	 * This function is from Allegro, split for more performance.
+	 *  Combines a 32 bit RGBA sprite with a 16 bit RGB destination, optimised
+	 *  for when one pixel is in an RGB layout and the other is BGR.
+	 */
+	inline uint32 _blender_alpha16_bgr(uint32 y);
+	inline void calc_x_n(uint32 x);
+	inline void setPixel(int x, int y, uint32 color, uint32 *pixel);
+	void plotCircle(int xm, int ym, int r, uint32 color);
+	void ClipToRange(int &variable, int min, int max);
+	void AlphaBlendBitmap();
+	void DrawTint();
+	void DrawDarkness();
+	void CreateLightBitmap();
+	void Update();
+	uint32 blendPixel(uint32 col, bool isAlpha24, int light);
+	void syncGame(Serializer &s);
 
-private:
-/**
- * This function is from Allegro, split for more performance.
- *  Combines a 32 bit RGBA sprite with a 16 bit RGB destination, optimised
- *  for when one pixel is in an RGB layout and the other is BGR.
- */
-inline uint32 _blender_alpha16_bgr(uint32 y);
-inline void calc_x_n(uint32 x);
-inline void setPixel(int x, int y, uint32 color, uint32 *pixel);
-void plotCircle(int xm, int ym, int r, uint32 color);
-void ClipToRange(int &variable, int min, int max);
-void AlphaBlendBitmap();
-void DrawTint();
-void DrawDarkness();
-void CreateLightBitmap();
-void Update();
-uint32 blendPixel(uint32 col, bool isAlpha24, int light);
-void syncGame(Serializer &s);
-
-void SetFlashlightTint(ScriptMethodParams &params);
-void GetFlashlightTintRed(ScriptMethodParams &params);
-void GetFlashlightTintGreen(ScriptMethodParams &params);
-void GetFlashlightTintBlue(ScriptMethodParams &params);
-void GetFlashlightMinLightLevel(ScriptMethodParams &params);
-void GetFlashlightMaxLightLevel(ScriptMethodParams &params);
-void SetFlashlightDarkness(ScriptMethodParams &params);
-void GetFlashlightDarkness(ScriptMethodParams &params);
-void SetFlashlightDarknessSize(ScriptMethodParams &params);
-void GetFlashlightDarknessSize(ScriptMethodParams &params);
-void SetFlashlightBrightness(ScriptMethodParams &params);
-void GetFlashlightBrightness(ScriptMethodParams &params);
-void SetFlashlightBrightnessSize(ScriptMethodParams &params);
-void GetFlashlightBrightnessSize(ScriptMethodParams &params);
-void SetFlashlightPosition(ScriptMethodParams &params);
-void GetFlashlightPositionX(ScriptMethodParams &params);
-void GetFlashlightPositionY(ScriptMethodParams &params);
-void SetFlashlightFollowMouse(ScriptMethodParams &params);
-void GetFlashlightFollowMouse(ScriptMethodParams &params);
-void SetFlashlightFollowCharacter(ScriptMethodParams &params);
-void GetFlashlightFollowCharacter(ScriptMethodParams &params);
-void GetFlashlightCharacterDX(ScriptMethodParams &params);
-void GetFlashlightCharacterDY(ScriptMethodParams &params);
-void GetFlashlightCharacterHorz(ScriptMethodParams &params);
-void GetFlashlightCharacterVert(ScriptMethodParams &params);
-void SetFlashlightMask(ScriptMethodParams &params);
-void GetFlashlightMask(ScriptMethodParams &params);
+	void SetFlashlightTint(ScriptMethodParams &params);
+	void GetFlashlightTintRed(ScriptMethodParams &params);
+	void GetFlashlightTintGreen(ScriptMethodParams &params);
+	void GetFlashlightTintBlue(ScriptMethodParams &params);
+	void GetFlashlightMinLightLevel(ScriptMethodParams &params);
+	void GetFlashlightMaxLightLevel(ScriptMethodParams &params);
+	void SetFlashlightDarkness(ScriptMethodParams &params);
+	void GetFlashlightDarkness(ScriptMethodParams &params);
+	void SetFlashlightDarknessSize(ScriptMethodParams &params);
+	void GetFlashlightDarknessSize(ScriptMethodParams &params);
+	void SetFlashlightBrightness(ScriptMethodParams &params);
+	void GetFlashlightBrightness(ScriptMethodParams &params);
+	void SetFlashlightBrightnessSize(ScriptMethodParams &params);
+	void GetFlashlightBrightnessSize(ScriptMethodParams &params);
+	void SetFlashlightPosition(ScriptMethodParams &params);
+	void GetFlashlightPositionX(ScriptMethodParams &params);
+	void GetFlashlightPositionY(ScriptMethodParams &params);
+	void SetFlashlightFollowMouse(ScriptMethodParams &params);
+	void GetFlashlightFollowMouse(ScriptMethodParams &params);
+	void SetFlashlightFollowCharacter(ScriptMethodParams &params);
+	void GetFlashlightFollowCharacter(ScriptMethodParams &params);
+	void GetFlashlightCharacterDX(ScriptMethodParams &params);
+	void GetFlashlightCharacterDY(ScriptMethodParams &params);
+	void GetFlashlightCharacterHorz(ScriptMethodParams &params);
+	void GetFlashlightCharacterVert(ScriptMethodParams &params);
+	void SetFlashlightMask(ScriptMethodParams &params);
+	void GetFlashlightMask(ScriptMethodParams &params);
 public:
-AGSFlashlight();
+	AGSFlashlight() : PluginBase() {}
+	virtual ~AGSFlashlight() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *engine) override;
+	int64 AGS_EngineOnEvent(int event, NumberPtr data) override;
 };
 
 } // namespace AGSFlashlight

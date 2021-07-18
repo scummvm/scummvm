@@ -29,41 +29,28 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSController {
 
-IAGSEngine *AGSController::_engine;
-
-AGSController::AGSController() : PluginBase() {
-	_engine = nullptr;
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-	DLL_METHOD(AGS_EngineShutdown);
-	DLL_METHOD(AGS_EngineOnEvent);
-}
-
 const char *AGSController::AGS_GetPluginName() {
 	return "AGSController";
 }
 
 void AGSController::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 
-	SCRIPT_METHOD_EXT(ControllerCount, ControllerCount);
-	SCRIPT_METHOD_EXT(Controller::Open, Controller_Open);
-	SCRIPT_METHOD_EXT(Controller::Close, Controller_Close);
-	SCRIPT_METHOD_EXT(Controller::Plugged, Controller_Plugged);
-	SCRIPT_METHOD_EXT(Controller::GetAxis, Controller_GetAxis);
-	SCRIPT_METHOD_EXT(Controller::GetPOV, Controller_GetPOV);
-	SCRIPT_METHOD_EXT(Controller::IsButtonDown, Controller_IsButtonDown);
-	SCRIPT_METHOD_EXT(Controller::GetName ^ 0, Controller_GetName);
-	SCRIPT_METHOD_EXT(Controller::Rumble, Controller_Rumble);
-	SCRIPT_METHOD_EXT(Controller::IsButtonDownOnce, Controller_IsButtonDownOnce);
-	SCRIPT_METHOD_EXT(Controller::PressAnyKey, Controller_PressAnyKey);
-	SCRIPT_METHOD_EXT(Controller::BatteryStatus, Controller_BatteryStatus);
-	SCRIPT_METHOD_EXT(ClickMouse, ClickMouse);
+	SCRIPT_METHOD(ControllerCount, AGSController::ControllerCount);
+	SCRIPT_METHOD(Controller::Open, AGSController::Controller_Open);
+	SCRIPT_METHOD(Controller::Close, AGSController::Controller_Close);
+	SCRIPT_METHOD(Controller::Plugged, AGSController::Controller_Plugged);
+	SCRIPT_METHOD(Controller::GetAxis, AGSController::Controller_GetAxis);
+	SCRIPT_METHOD(Controller::GetPOV, AGSController::Controller_GetPOV);
+	SCRIPT_METHOD(Controller::IsButtonDown, AGSController::Controller_IsButtonDown);
+	SCRIPT_METHOD(Controller::GetName ^ 0, AGSController::Controller_GetName);
+	SCRIPT_METHOD(Controller::Rumble, AGSController::Controller_Rumble);
+	SCRIPT_METHOD(Controller::IsButtonDownOnce, AGSController::Controller_IsButtonDownOnce);
+	SCRIPT_METHOD(Controller::PressAnyKey, AGSController::Controller_PressAnyKey);
+	SCRIPT_METHOD(Controller::BatteryStatus, AGSController::Controller_BatteryStatus);
+	SCRIPT_METHOD(ClickMouse, AGSController::ClickMouse);
 
 	_engine->RequestEventHook(AGSE_PREGUIDRAW);
-}
-
-void AGSController::AGS_EngineShutdown() {
 }
 
 int64 AGSController::AGS_EngineOnEvent(int event, NumberPtr data) {

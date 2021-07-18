@@ -23,7 +23,7 @@
 #ifndef AGS_PLUGINS_AGS_BLEND_AGS_BLEND_H
 #define AGS_PLUGINS_AGS_BLEND_AGS_BLEND_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -34,36 +34,35 @@ namespace AGSBlend {
  * Description: An AGS Plugin to allow true Alpha Blending
  */
 class AGSBlend : public PluginBase {
+	SCRIPT_HASH(AGSBlend)
 private:
-IAGSEngine *_engine;
-private:
-const char *AGS_GetPluginName();
-void AGS_EngineStartup(IAGSEngine *lpEngine);
+	/**
+	 * Gets the alpha value at coords x,y
+	 */
+	void GetAlpha(ScriptMethodParams &params);
 
-private:
-/**
- * Gets the alpha value at coords x,y
- */
-void GetAlpha(ScriptMethodParams &params);
+	/**
+	 * Sets the alpha value at coords x,y
+	 */
+	void PutAlpha(ScriptMethodParams &params);
 
-/**
- * Sets the alpha value at coords x,y
- */
-void PutAlpha(ScriptMethodParams &params);
+	/**
+	 * Translates index from a 2D array to a 1D array
+	 */
+	int xytolocale(int x, int y, int width);
 
-/**
- * Translates index from a 2D array to a 1D array
- */
-int xytolocale(int x, int y, int width);
-
-void HighPass(ScriptMethodParams &params);
-void Blur(ScriptMethodParams &params);
-void DrawSprite(ScriptMethodParams &params);
-void DrawAdd(ScriptMethodParams &params);
-void DrawAlpha(ScriptMethodParams &params);
+	void HighPass(ScriptMethodParams &params);
+	void Blur(ScriptMethodParams &params);
+	void DrawSprite(ScriptMethodParams &params);
+	void DrawAdd(ScriptMethodParams &params);
+	void DrawAlpha(ScriptMethodParams &params);
 
 public:
-AGSBlend();
+	AGSBlend() : PluginBase() {}
+	virtual ~AGSBlend() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *lpEngine) override;
 };
 
 } // namespace AGSBlend

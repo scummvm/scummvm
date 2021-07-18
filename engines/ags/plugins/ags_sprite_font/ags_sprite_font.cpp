@@ -69,29 +69,15 @@ namespace AGSSpriteFont {
 
 #pragma endregion
 
-IAGSEngine *AGSSpriteFont::_engine;
-SpriteFontRenderer *AGSSpriteFont::_fontRenderer;
-VariableWidthSpriteFontRenderer *AGSSpriteFont::_vWidthRenderer;
-
 #define STRINGIFY(s) STRINGIFY_X(s)
 #define STRINGIFY_X(s) #s
-
-AGSSpriteFont::AGSSpriteFont() : PluginBase() {
-	_engine = nullptr;
-	_fontRenderer = nullptr;
-	_vWidthRenderer = nullptr;
-
-	DLL_METHOD(AGS_GetPluginName);
-	DLL_METHOD(AGS_EngineStartup);
-	DLL_METHOD(AGS_EngineShutdown);
-}
 
 const char *AGSSpriteFont::AGS_GetPluginName() {
 	return "AGSSpriteFont";
 }
 
 void AGSSpriteFont::AGS_EngineStartup(IAGSEngine *engine) {
-	_engine = engine;
+	PluginBase::AGS_EngineStartup(engine);
 
 	if (_fontRenderer == nullptr) {
 		_engine->PrintDebugConsole("AGSSpriteFont: Init fixed width renderer");
@@ -105,13 +91,13 @@ void AGSSpriteFont::AGS_EngineStartup(IAGSEngine *engine) {
 	if (_engine->version < MIN_ENGINE_VERSION)
 		_engine->AbortGame("Plugin needs engine version " STRINGIFY(MIN_ENGINE_VERSION) " or newer.");
 
-	//register functions
+	// Register functions
 	_engine->PrintDebugConsole("AGSSpriteFont: Register functions");
-	SCRIPT_METHOD(SetSpriteFont);
-	SCRIPT_METHOD(SetVariableSpriteFont);
-	SCRIPT_METHOD(SetGlyph);
-	SCRIPT_METHOD(SetSpacing);
-	SCRIPT_METHOD(SetLineHeightAdjust);
+	SCRIPT_METHOD(SetSpriteFont, AGSSpriteFont::SetSpriteFont);
+	SCRIPT_METHOD(SetVariableSpriteFont, AGSSpriteFont::SetVariableSpriteFont);
+	SCRIPT_METHOD(SetGlyph, AGSSpriteFont::SetGlyph);
+	SCRIPT_METHOD(SetSpacing, AGSSpriteFont::SetSpacing);
+	SCRIPT_METHOD(SetLineHeightAdjust, AGSSpriteFont::SetLineHeightAdjust);
 }
 
 void AGSSpriteFont::AGS_EngineShutdown() {

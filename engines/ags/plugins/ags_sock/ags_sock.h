@@ -23,19 +23,16 @@
 #ifndef AGS_PLUGINS_AGS_SOCK_H
 #define AGS_PLUGINS_AGS_SOCK_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSSock {
 
 class AGSSock : public PluginBase {
+	SCRIPT_HASH(AGSSock)
 private:
-	IAGSEngine *_engine;
-	Common::String *_text;
-private:
-	const char *AGS_GetPluginName();
-	void AGS_EngineStartup(IAGSEngine *engine) override;
+	Common::String _text;
 
 	/**
 	 * Creates a new data container with specified size
@@ -295,7 +292,12 @@ private:
 	void Socket_SetOption(ScriptMethodParams &params);
 
 public:
-	AGSSock();
+	AGSSock() : PluginBase() {}
+	virtual ~AGSSock() {}
+
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *engine) override;
+
 };
 
 } // namespace AGSSock
