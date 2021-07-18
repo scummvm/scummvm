@@ -150,16 +150,10 @@ bool                nudge = false;
 extern ObjectID     viewCenterObject;
 
 static struct _delayedNavigation {
-	TilePoint   walkToPos;
+	StaticTilePoint walkToPos;
 	bool        pathFindFlag;
 	Alarm       delay;
-
-	_delayedNavigation(void) : pathFindFlag(false) {
-		delay.basetime = 0;
-		delay.duration = 0;
-	}
-
-} delayedNavigation;
+} delayedNavigation = {{0, 0, 0}, false, {0, 0}};
 static bool navigationDelayed = false;
 
 //Tile Mode GameMode Object
