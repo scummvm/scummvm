@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-17 06:29+0000\n"
-"PO-Revision-Date: 2021-07-15 10:25+0000\n"
+"PO-Revision-Date: 2021-07-19 01:25+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5262,7 +5262,7 @@ msgstr "~L~ógica Imprecisa para Ativar Nave Espacial"
 
 #: engines/mohawk/dialogs.cpp:138
 msgid "Simulate loading times of old CD drives"
-msgstr ""
+msgstr "Simular tempos de carregamento de unidades de CD antigas"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:145
