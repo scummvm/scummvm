@@ -140,7 +140,7 @@ jobs:
           cache_key: ${{ matrix.platform }}
       - name: Build scummvm
         run: |
-          xcodebuild build -project scummvm.xcodeproj ${{ matrix.buildFlags }}
+          xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ build -project scummvm.xcodeproj ${{ matrix.buildFlags }}
           ls
   ubuntu:
     name: Ubuntu
