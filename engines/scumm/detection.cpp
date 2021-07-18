@@ -193,6 +193,12 @@ static const ExtraGuiOption fmtownsTrimTo200 = {
 	false
 };
 
+static const ExtraGuiOption macV3LowQualityMusic = {
+	_s("Play simplified music"),
+	_s("This music was presumably intended for low-end Macs, and uses only one channel."),
+	"mac_v3_low_quality_music",
+	false,
+};
 
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
@@ -208,6 +214,9 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 	}
 	if (target.empty() || (ConfMan.get("platform", target) == "fmtowns" && guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))) {
 		options.push_back(fmtownsTrimTo200);
+	}
+	if (target.empty() || (ConfMan.get("gameid", target) == "loom" && ConfMan.get("platform", target) == "macintosh" && ConfMan.get("extra", target) != "Steam")) {
+		options.push_back(macV3LowQualityMusic);
 	}
 	return options;
 }
