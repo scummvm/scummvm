@@ -75,7 +75,8 @@ int main(int argc, char *argv[]) {
 		//setbuf(stderr, NULL);	/** No buffering. */
 #endif
 	}
-	setbuf(stderr, (char*)NULL, _IONBF, 0);	/** No buffering. */
+	if
+		setbuf(stderr, (char*)NULL);	/** No buffering. */
 	
 	// Create our OSystem instance.
 	g_system = new OSystem_SDL_Symbian();
