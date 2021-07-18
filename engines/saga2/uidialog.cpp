@@ -194,12 +194,6 @@ static const StaticRect saveLoadWindowRect = {
 
 // indirections
 
-static const StaticRect *saveLoadPanelRects[kNumSaveLoadPanels] = {
-	&SLTopPanel,
-	&SLMidPanel,
-	&SLBotPanel
-};
-
 static const StaticRect *saveLoadButtonRects[kNumSaveLoadBtns] = {
 	&SLQuitBtnRect,
 	&SLBtnRect,
@@ -216,9 +210,9 @@ static const StaticRect *saveLoadTextRects[kNumSaveLoadTexts] = {
 // save/load dialog window decorations
 
 static StaticWindow saveWindowDecorations[kNumSaveLoadPanels] = {
-	{*(saveLoadPanelRects[0]), NULL, SLTopPanelResID},
-	{*(saveLoadPanelRects[1]), NULL, SLMidPanelResID},
-	{*(saveLoadPanelRects[2]), NULL, SLBotPanelResID}
+	{SLTopPanel, NULL, SLTopPanelResID},
+	{SLMidPanel, NULL, SLMidPanelResID},
+	{SLBotPanel, NULL, SLBotPanelResID}
 };
 
 
@@ -425,12 +419,6 @@ static const StaticRect optionsWindowRect = {
 
 // indirections
 
-static const StaticRect *optionsPanelRects[kNumOptionsPanels] = {
-	&optTopPanel,
-	&optMidPanel,
-	&optBotPanel
-};
-
 static const StaticRect *optionsButtonRects[] = {
 	&optResumeRect,
 	&optSaveRect,
@@ -458,9 +446,9 @@ static const StaticRect *optionsTextRects[] = {
 // options dialog window decorations
 
 static StaticWindow optionsDecorations[kNumOptionsPanels] = {
-	{*(optionsPanelRects[0]), NULL, optTopPanelResID},
-	{*(optionsPanelRects[1]), NULL, optMidPanelResID},
-	{*(optionsPanelRects[2]), NULL, optBotPanelResID}
+	{optTopPanel, NULL, optTopPanelResID},
+	{optMidPanel, NULL, optMidPanelResID},
+	{optBotPanel, NULL, optBotPanelResID}
 };
 
 
