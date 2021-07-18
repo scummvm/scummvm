@@ -71,12 +71,13 @@ int main(int argc, char *argv[]) {
 		if (newfp) {
 			*stderr = *newfp;
 		}
-#else
-		setbuf(stderr, NULL);	/** No buffering. */
+//#else
+		//setbuf(stderr, NULL);	/** No buffering. */
 #endif
 	}
-	//setbuf(stderr, NULL);	/** No buffering. */
-	
+#if
+	setbuf(stderr, NULL);	/** No buffering. */
+#endif
 	// Create our OSystem instance.
 	g_system = new OSystem_SDL_Symbian();
 	assert(g_system);
