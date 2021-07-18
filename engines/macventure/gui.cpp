@@ -221,7 +221,7 @@ void Gui::initWindows() {
 	BorderBounds bbs(0 , 0, 0, 0, 0, 0);
 	// Game Controls Window
 	_controlsWindow = _wm.addWindow(false, false, false);
-	
+
 
 	bounds = getWindowData(kCommandsWindow).bounds;
 	bbs = borderBounds(findWindowData(kCommandsWindow).type);
@@ -257,7 +257,7 @@ void Gui::initWindows() {
 	_outConsoleWindow->setTitle("Untitled");
 	// Self Window
 	_selfWindow = _wm.addWindow(false, true, false);
-	
+
 	bounds = getWindowData(kSelfWindow).bounds;
 	bbs = borderBounds(findWindowData(kSelfWindow).type);
 	loadBorders(_selfWindow, findWindowData(kSelfWindow).type);
@@ -269,7 +269,7 @@ void Gui::initWindows() {
 
 	// Exits Window
 	_exitsWindow = _wm.addWindow(false, false, false);
-	
+
 	bounds = getWindowData(kExitsWindow).bounds;
 	bbs = borderBounds(findWindowData(kExitsWindow).type);
 	loadBorders(_exitsWindow, findWindowData(kExitsWindow).type);
@@ -386,7 +386,7 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	newWindow->move(newData.bounds.left - bbs.leftOffset, newData.bounds.top - bbs.topOffset);
 	newWindow->setCallback(inventoryWindowCallback, this);
 	//newWindow->setCloseable(true);
-	
+
 	_inventoryWindows.push_back(newWindow);
 
 	debugC(1, kMVDebugGUI, "Create new inventory window. Reference: %d", newData.refcon);
@@ -399,52 +399,51 @@ void Gui::loadBorders(Graphics::MacWindow *target, MVWindowType type) {
 }
 
 void Gui::loadBorder(Graphics::MacWindow *target, MVWindowType type, bool active) {
+	Common::SeekableReadStream *stream;
 
-    Common::SeekableReadStream *stream;
+	bool activeFlag = (active ? Graphics::kWindowBorderActive : 0);
+	bool canHaveTitle = false;
+	bool canHaveScrollbar = false;
 
-    bool activeFlag = (active ? Graphics::kWindowBorderActive : 0);    
-    bool canHaveTitle = false;
-    bool canHaveScrollbar = false;
+	if (type == MacVenture::kInvWindow || type == MacVenture::kZoomDoc) {
+		canHaveScrollbar = true;
+	}
 
-    if (type == MacVenture::kInvWindow || type == MacVenture::kZoomDoc) {
-        canHaveScrollbar = true;
-    }
+	if (type == MacVenture::kInvWindow || type == MacVenture::kZoomDoc || type == MacVenture::kNoGrowDoc || type == MacVenture::kRDoc4) {
+		canHaveTitle = true;
+	}
 
-    if (type == MacVenture::kInvWindow || type == MacVenture::kZoomDoc || type == MacVenture::kNoGrowDoc || type == MacVenture::kRDoc4) {
-        canHaveTitle = true;
-    }
-    
 	Graphics::BorderOffsets offsets = borderOffsets(type);
-    stream = _engine->getBorderFile(type, active);
-    
+	stream = _engine->getBorderFile(type, active);
+
 	if (stream) {
-        target->loadBorder(*stream, activeFlag, offsets);
-        delete stream;
-    }
+		target->loadBorder(*stream, activeFlag, offsets);
+		delete stream;
+	}
 
-    if (canHaveTitle) {
-        stream = _engine->getBorderFile(type, active);
-        if (stream) {
-            target->loadBorder(*stream, activeFlag | Graphics::kWindowBorderTitle , offsets);
-            delete stream;
-        }
-    }
+	if (canHaveTitle) {
+		stream = _engine->getBorderFile(type, active);
+		if (stream) {
+			target->loadBorder(*stream, activeFlag | Graphics::kWindowBorderTitle, offsets);
+			delete stream;
+		}
+	}
 
-    if (canHaveScrollbar) {
-        stream = _engine->getBorderFile(type, active);
-        if (stream) {
-            target->loadBorder(*stream, activeFlag | Graphics::kWindowBorderScrollbar, offsets);
-            delete stream;
-        }
-    }
+	if (canHaveScrollbar) {
+		stream = _engine->getBorderFile(type, active);
+		if (stream) {
+			target->loadBorder(*stream, activeFlag | Graphics::kWindowBorderScrollbar, offsets);
+			delete stream;
+		}
+	}
 
-    if (canHaveTitle && canHaveScrollbar) {
-        stream = _engine->getBorderFile(type, active);
-        if (stream) {
-            target->loadBorder(*stream, activeFlag | Graphics::kWindowBorderTitle | Graphics::kWindowBorderScrollbar, offsets);
-            delete stream;
-        }
-    }
+	if (canHaveTitle && canHaveScrollbar) {
+		stream = _engine->getBorderFile(type, active);
+		if (stream) {
+			target->loadBorder(*stream, activeFlag | Graphics::kWindowBorderTitle | Graphics::kWindowBorderScrollbar, offsets);
+			delete stream;
+		}
+	}
 }
 
 void Gui::loadGraphics() {
@@ -546,7 +545,7 @@ bool Gui::loadWindows() {
 		data.bounds = Common::Rect(
 			left,
 			top,
-			right, 
+			right,
 			bottom
 		);
 		data.visible = res->readUint16BE();
@@ -774,7 +773,7 @@ void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSur
 			surface->frameRect(testBounds, kColorGreen);
 		}
 	}
-	Common::Point composePosition = Common::Point(0, 0);//border.leftOffset, border.topOffset);
+	Common::Point composePosition = Common::Point(0, 0);
 	surface->transBlitFrom(composeSurface, composePosition, kColorGreen);
 }
 
@@ -895,7 +894,6 @@ void Gui::updateExit(ObjID obj) {
 	if (!_engine->isObjExit(obj)) {
 		return;
 	}
-	//BorderBounds border = borderBounds(getWindowData(kExitsWindow).type);
 
 	int ctl = -1;
 	int i = 0;
@@ -1001,7 +999,7 @@ WindowReference Gui::findWindowAtPoint(Common::Point point) {
 	Graphics::MacWindow *win = _wm.findWindowAtPoint(point);
 	if (win != nullptr) {
 		for (it = _windowData->begin(); it != _windowData->end(); it++) {
-			if ( win == findWindow(it->refcon) && it->refcon != kDiplomaWindow) { //HACK, diploma should be cosnidered
+			if (win == findWindow(it->refcon) && it->refcon != kDiplomaWindow) { //HACK, diploma should be considered
 				if (win->getDimensions().contains(point)) {
 					return it->refcon;
 				}
@@ -1350,7 +1348,7 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 			event.mouse.x - bbs.leftOffset,
 			event.mouse.y - bbs.topOffset
 		);
-		
+
 		CommandButton data;
 		if (!_controlData)
 			return false;
@@ -1490,11 +1488,11 @@ void Gui::selectForDrag(Common::Point cursorPosition) {
 	if (ref == kNoWindow) {
 		return;
 	}
-	if(_engine->needsClickToContinue())
+	if (_engine->needsClickToContinue())
 		return;
-	
+
 	Graphics::MacWindow *win = findWindow(ref);
-	WindowData &data = findWindowData((WindowReference) ref);
+	WindowData &data = findWindowData((WindowReference)ref);
 
 	Common::Rect clickRect = calculateClickRect(cursorPosition + data.scrollPos, win->getInnerDimensions());
 	checkSelect(data, cursorPosition, clickRect, (WindowReference)ref);
