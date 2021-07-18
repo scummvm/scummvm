@@ -41,9 +41,11 @@ struct auxAudioTheme {
 	soundSegment loopID;
 };
 
+static const StaticTilePoint NullTile = {(int16)minint16, (int16)minint16, (int16)minint16};
+
 static auxAudioTheme aats[AUXTHEMES] = {
-	{false, {Nowhere, 0}, 0},
-	{false, {Nowhere, 0}, 0}
+	{false, {NullTile, 0}, 0},
+	{false, {NullTile, 0}, 0}
 };
 
 void addAuxTheme(Location loc, soundSegment lid);
@@ -138,8 +140,6 @@ extern bool debugAudioThemes;
 /* ===================================================================== *
    Locals
  * ===================================================================== */
-
-static Deejay grandMasterFTA;
 
 static uint32 currentTheme = 0;
 static uint32 auxTheme = 0;
@@ -459,28 +459,28 @@ void useActiveFactions(void) {
 		}
 	}
 	if (highCount)
-		grandMasterFTA.setEnemy(highFaction);
+		g_vm->_grandMasterFTA->setEnemy(highFaction);
 	else
-		grandMasterFTA.setEnemy(NoEnemy);
+		g_vm->_grandMasterFTA->setEnemy(NoEnemy);
 }
 
 //-----------------------------------------------------------------------
 // Aggresssion & day/night control
 
 void audioEnvironmentSetAggression(bool onOff) {
-	grandMasterFTA.setAggression(onOff);
+	g_vm->_grandMasterFTA->setAggression(onOff);
 }
 
 void audioEnvironmentSetDaytime(bool onOff) {
-	grandMasterFTA.setDaytime(onOff);
+	g_vm->_grandMasterFTA->setDaytime(onOff);
 }
 
 void audioEnvironmentSuspend(bool onOff) {
-	grandMasterFTA.setSuspend(onOff);
+	g_vm->_grandMasterFTA->setSuspend(onOff);
 }
 
 void audioEnvironmentSetWorld(int mapNum) {
-	grandMasterFTA.setWorld(mapNum == 1);
+	g_vm->_grandMasterFTA->setWorld(mapNum == 1);
 }
 
 } // end of namespace Saga2

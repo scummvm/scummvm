@@ -72,6 +72,7 @@ class HandleArray;
 class TileActivityTaskList;
 class TaskStackList;
 class TaskList;
+class Deejay;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -158,6 +159,7 @@ public:
 	TileActivityTaskList *_aTaskList;
 	TaskStackList *_stackList;
 	TaskList *_taskList;
+	Deejay *_grandMasterFTA;
 
 
 	gDisplayPort _mainPort;
