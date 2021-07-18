@@ -109,6 +109,8 @@ jobs:
             buildFlags: -scheme ScummVM-iOS CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO
             configFlags: --disable-nasm --disable-opengl --disable-theora --disable-taskbar --disable-tts --disable-fribidi
             packagesUrl: https://downloads.scummvm.org/frs/build/scummvm-ios7-libs-v2.zip
+    env:
+      BUILDCACHE_MAX_CACHE_SIZE: 2000000000
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -133,11 +135,9 @@ jobs:
         run: |
           ./devtools/create_project/xcode/build/Release/create_project . --xcode --enable-all-engines ${{ matrix.configflags }}
           ls
-      - name: ccache
-        uses: hendrikmuhs/ccache-action@v1
+      - uses: mikehardy/buildcache-action@v1
         with:
-          key: ${{ matrix.platform }}
-          max-size: 1G
+          cache_key: ${{ matrix.platform }}
       - name: Build scummvm
         run: |
           xcodebuild build -project scummvm.xcodeproj ${{ matrix.buildFlags }}
@@ -173,7 +173,7 @@ jobs:
           max-size: 1G
       - name: Call configure
         run: |
-          ./configure --enable-all-engines ${{ matrix.configflags }}
+          CXX='ccache g++' ./configure --enable-all-engines ${{ matrix.configflags }}
       - name: Build scummvm
         run: |
           make -j2
