@@ -286,20 +286,6 @@ void TaskStackList::updateTaskStacks(void) {
 }
 
 /* ===================================================================== *
-   Global TaskStackList instantiation
- * ===================================================================== */
-
-//	This is a statically allocated buffer large enough to hold a
-//	TaskStackList.  The stackList is a TaskStackList reference to this
-//	area of memory.  The reason that I did this in this manner is to
-//	prevent the TaskStackList constructor from being called until it is
-//	expicitly called using an overloaded new call.  The overloaded new
-//	call will simply return a pointer to the stackListBuffer in order
-//	to construct the TaskStackList in place.
-
-static TaskStackList stackList;
-
-/* ===================================================================== *
    Misc. task stack management functions
  * ===================================================================== */
 
@@ -309,7 +295,7 @@ static TaskStackList stackList;
 
 void updateActorTasks(void) {
 	if (!actorTasksPaused)
-		stackList.updateTaskStacks();
+		g_vm->_stackList->updateTaskStacks();
 }
 
 void pauseActorTasks(void) {
@@ -324,7 +310,7 @@ void resumeActorTasks(void) {
 //	to a new TaskStack
 
 void newTaskStack(TaskStack *p) {
-	return stackList.newTaskStack(p);
+	return g_vm->_stackList->newTaskStack(p);
 }
 
 //----------------------------------------------------------------------
@@ -332,27 +318,28 @@ void newTaskStack(TaskStack *p) {
 //	a previously allocated TaskStack
 
 void deleteTaskStack(TaskStack *p) {
-	stackList.deleteTaskStack(p);
+	g_vm->_stackList->deleteTaskStack(p);
 }
 
 //----------------------------------------------------------------------
 //	Return the specified TaskStack's ID
 
 TaskStackID getTaskStackID(TaskStack *ts) {
-	return stackList.getTaskStackID(ts);
+	return g_vm->_stackList->getTaskStackID(ts);
 }
 
 //----------------------------------------------------------------------
 //	Return a pointer to a TaskStack given a TaskStackID
 
 TaskStack *getTaskStackAddress(TaskStackID id) {
-	return stackList.getTaskStackAddress(id);
+	return g_vm->_stackList->getTaskStackAddress(id);
 }
 
 //----------------------------------------------------------------------
 //	Initialize the stackList
 
 void initTaskStacks(void) {
+	g_vm->_stackList = new TaskStackList;
 }
 
 void saveTaskStacks(Common::OutSaveFile *outS) {
@@ -360,7 +347,7 @@ void saveTaskStacks(Common::OutSaveFile *outS) {
 
 	outS->write("TSTK", 4);
 	CHUNK_BEGIN;
-	stackList.write(out);
+	g_vm->_stackList->write(out);
 	CHUNK_END;
 }
 
@@ -369,13 +356,13 @@ void loadTaskStacks(Common::InSaveFile *in, int32 chunkSize) {
 
 	//  If there is no saved data, simply call the default constructor
 	if (chunkSize == 0) {
-		new (&stackList) TaskStackList;
+		g_vm->_stackList = new TaskStackList;
 		return;
 	}
 
 	//  Reconstruct stackList from archived data
-	new (&stackList) TaskStackList;
-	stackList.read(in);
+	g_vm->_stackList = new TaskStackList;
+	g_vm->_stackList->read(in);
 }
 
 //----------------------------------------------------------------------
@@ -383,7 +370,7 @@ void loadTaskStacks(Common::InSaveFile *in, int32 chunkSize) {
 
 void cleanupTaskStacks(void) {
 	//  Simply call stackList's destructor
-	stackList.~TaskStackList();
+	delete g_vm->_stackList;
 }
 
 /* ===================================================================== *
@@ -560,21 +547,15 @@ void TaskList::deleteTask(Task *p) {
 }
 
 /* ===================================================================== *
-   Global TaskList instantiation
- * ===================================================================== */
-
-static TaskList taskList;
-
-/* ===================================================================== *
    Misc. task management functions
  * ===================================================================== */
 
 void newTask(Task *t) {
-	return taskList.newTask(t);
+	return g_vm->_taskList->newTask(t);
 }
 
 void newTask(Task *t, TaskID id) {
-	return taskList.newTask(t, id);
+	return g_vm->_taskList->newTask(t, id);
 }
 
 //----------------------------------------------------------------------
@@ -582,21 +563,21 @@ void newTask(Task *t, TaskID id) {
 //	previously allocated TaskStack
 
 void deleteTask(Task *p) {
-	taskList.deleteTask(p);
+	g_vm->_taskList->deleteTask(p);
 }
 
 //----------------------------------------------------------------------
 //	Return the specified Task's ID
 
 TaskID getTaskID(Task *t) {
-	return taskList.getTaskID(t);
+	return g_vm->_taskList->getTaskID(t);
 }
 
 //----------------------------------------------------------------------
 //	Return a pointer to a Task given a TaskID
 
 Task *getTaskAddress(TaskID id) {
-	return taskList.getTaskAddress(id);
+	return g_vm->_taskList->getTaskAddress(id);
 }
 
 //----------------------------------------------------------------------
@@ -604,7 +585,7 @@ Task *getTaskAddress(TaskID id) {
 
 void initTasks(void) {
 	//  Simply call the default constructor for the task list
-	new (&taskList) TaskList;
+	g_vm->_taskList = new TaskList;
 }
 
 void saveTasks(Common::OutSaveFile *outS) {
@@ -612,7 +593,7 @@ void saveTasks(Common::OutSaveFile *outS) {
 
 	outS->write("TASK", 4);
 	CHUNK_BEGIN;
-	taskList.write(out);
+	g_vm->_taskList->write(out);
 	CHUNK_END;
 }
 
@@ -621,11 +602,13 @@ void loadTasks(Common::InSaveFile *in, int32 chunkSize) {
 
 	//  If there is no saved data, simply call the default constructor
 	if (chunkSize == 0) {
+		g_vm->_taskList = new TaskList;
 		return;
 	}
 
 	//  Reconstruct taskList from archived data
-	taskList.read(in);
+	g_vm->_taskList = new TaskList;
+	g_vm->_taskList->read(in);
 }
 
 //----------------------------------------------------------------------
@@ -633,7 +616,7 @@ void loadTasks(Common::InSaveFile *in, int32 chunkSize) {
 
 void cleanupTasks(void) {
 	//  Simply call the taskList's destructor
-	taskList.~TaskList();
+	delete g_vm->_taskList;
 }
 
 void readTask(TaskID id, Common::InSaveFile *in) {

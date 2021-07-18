@@ -70,6 +70,8 @@ class ProtoObj;
 class ActorProto;
 class HandleArray;
 class TileActivityTaskList;
+class TaskStackList;
+class TaskList;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -154,6 +156,8 @@ public:
 	Properties *_properties;
 	HandleArray *_tileImageBanks;
 	TileActivityTaskList *_aTaskList;
+	TaskStackList *_stackList;
+	TaskList *_taskList;
 
 
 	gDisplayPort _mainPort;
