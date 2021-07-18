@@ -23,34 +23,36 @@
 #ifndef AGS_PLUGINS_CORE_MATH_H
 #define AGS_PLUGINS_CORE_MATH_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Math : public ScriptContainer {
+	SCRIPT_HASH(Math)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Math() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void ArcCos(ScriptMethodParams &params);
-	static void ArcSin(ScriptMethodParams &params);
-	static void ArcTan(ScriptMethodParams &params);
-	static void ArcTan2(ScriptMethodParams &params);
-	static void Cos(ScriptMethodParams &params);
-	static void Cosh(ScriptMethodParams &params);
-	static void DegreesToRadians(ScriptMethodParams &params);
-	static void Exp(ScriptMethodParams &params);
-	static void Log(ScriptMethodParams &params);
-	static void Log10(ScriptMethodParams &params);
-	static void RadiansToDegrees(ScriptMethodParams &params);
-	static void RaiseToPower(ScriptMethodParams &params);
-	static void Sin(ScriptMethodParams &params);
-	static void Sinh(ScriptMethodParams &params);
-	static void Sqrt(ScriptMethodParams &params);
-	static void Tan(ScriptMethodParams &params);
-	static void Tanh(ScriptMethodParams &params);
-	static void GetPi(ScriptMethodParams &params);
+	void ArcCos(ScriptMethodParams &params);
+	void ArcSin(ScriptMethodParams &params);
+	void ArcTan(ScriptMethodParams &params);
+	void ArcTan2(ScriptMethodParams &params);
+	void Cos(ScriptMethodParams &params);
+	void Cosh(ScriptMethodParams &params);
+	void DegreesToRadians(ScriptMethodParams &params);
+	void Exp(ScriptMethodParams &params);
+	void Log(ScriptMethodParams &params);
+	void Log10(ScriptMethodParams &params);
+	void RadiansToDegrees(ScriptMethodParams &params);
+	void RaiseToPower(ScriptMethodParams &params);
+	void Sin(ScriptMethodParams &params);
+	void Sinh(ScriptMethodParams &params);
+	void Sqrt(ScriptMethodParams &params);
+	void Tan(ScriptMethodParams &params);
+	void Tanh(ScriptMethodParams &params);
+	void GetPi(ScriptMethodParams &params);
 };
 
 } // namespace Core

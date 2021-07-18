@@ -23,30 +23,32 @@
 #ifndef AGS_PLUGINS_CORE_REGION_H
 #define AGS_PLUGINS_CORE_REGION_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Region : public ScriptContainer {
+	SCRIPT_HASH(Region)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Region() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void GetRegionAtRoom(ScriptMethodParams &params);
-	static void GetRegionAtScreen(ScriptMethodParams &params);
-	static void TintNoLum(ScriptMethodParams &params);
-	static void RunInteraction(ScriptMethodParams &params);
-	static void GetEnabled(ScriptMethodParams &params);
-	static void SetEnabled(ScriptMethodParams &params);
-	static void GetID(ScriptMethodParams &params);
-	static void GetLightLevel(ScriptMethodParams &params);
-	static void SetLightLevel(ScriptMethodParams &params);
-	static void GetTintEnabled(ScriptMethodParams &params);
-	static void GetTintBlue(ScriptMethodParams &params);
-	static void GetTintGreen(ScriptMethodParams &params);
-	static void GetTintRed(ScriptMethodParams &params);
-	static void GetTintSaturation(ScriptMethodParams &params);
+	void GetRegionAtRoom(ScriptMethodParams &params);
+	void GetRegionAtScreen(ScriptMethodParams &params);
+	void TintNoLum(ScriptMethodParams &params);
+	void RunInteraction(ScriptMethodParams &params);
+	void GetEnabled(ScriptMethodParams &params);
+	void SetEnabled(ScriptMethodParams &params);
+	void GetID(ScriptMethodParams &params);
+	void GetLightLevel(ScriptMethodParams &params);
+	void SetLightLevel(ScriptMethodParams &params);
+	void GetTintEnabled(ScriptMethodParams &params);
+	void GetTintBlue(ScriptMethodParams &params);
+	void GetTintGreen(ScriptMethodParams &params);
+	void GetTintRed(ScriptMethodParams &params);
+	void GetTintSaturation(ScriptMethodParams &params);
 };
 
 } // namespace Core

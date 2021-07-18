@@ -55,7 +55,7 @@ using AGS::Shared::String;
 // give the script access to a variable or function in your program
 extern bool ccAddExternalStaticFunction(const String &name, ScriptAPIFunction *pfn);
 // temporary workaround for plugins
-extern bool ccAddExternalPluginFunction(const String &name, void *pfn);
+extern bool ccAddExternalPluginFunction(const String &name, Plugins::ScriptContainer *sc);
 extern bool ccAddExternalStaticObject(const String &name, void *ptr, ICCStaticObject *manager);
 extern bool ccAddExternalStaticArray(const String &name, void *ptr, StaticArray *array_mgr);
 extern bool ccAddExternalDynamicObject(const String &name, void *ptr, ICCDynamicObject *manager);
@@ -83,7 +83,8 @@ extern void ccSetScriptAliveTimer(int);
 // reset the current while loop counter
 extern void ccNotifyScriptStillAlive();
 // for calling exported plugin functions old-style
-extern int call_function(intptr_t addr, const RuntimeScriptValue *obj, int numparm, const RuntimeScriptValue *parms);
+extern int call_function(Plugins::ScriptContainer *sc, const Common::String &name,
+	const RuntimeScriptValue *obj, int numparm, const RuntimeScriptValue *parms);
 extern void nullfree(void *data); // in script/script_runtime
 
 } // namespace AGS3

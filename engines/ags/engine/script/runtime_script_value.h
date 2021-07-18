@@ -32,6 +32,7 @@
 #include "ags/engine/script/script_api.h"
 #include "ags/shared/util/memory.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_object.h"
+#include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
 
@@ -81,6 +82,7 @@ public:
 	}
 
 	ScriptValueType Type;
+	Common::String methodName;
 	// The 32-bit value used for integer/float math and for storing
 	// variable/element offset relative to object (and array) address
 	union {
@@ -253,11 +255,12 @@ public:
 		Size = 4;
 		return *this;
 	}
-	inline RuntimeScriptValue &SetPluginFunction(void *pfn) {
+	inline RuntimeScriptValue &SetPluginMethod(Plugins::ScriptContainer *sc, const Common::String &method) {
 		Type = kScValPluginFunction;
-		IValue = 0;
-		Ptr = (char *)pfn;
+		methodName = method;
+		Ptr = (char *)sc;
 		MgrPtr = nullptr;
+		IValue = 0;
 		Size = 4;
 		return *this;
 	}

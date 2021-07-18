@@ -23,29 +23,31 @@
 #ifndef AGS_PLUGINS_CORE_ROOM_H
 #define AGS_PLUGINS_CORE_ROOM_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Room : public ScriptContainer {
+	SCRIPT_HASH(Room)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Room() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void GetDrawingSurfaceForBackground(ScriptMethodParams &params);
-	static void GetProperty(ScriptMethodParams &params);
-	static void GetTextProperty(ScriptMethodParams &params);
-	static void GetBottomEdge(ScriptMethodParams &params);
-	static void GetColorDepth(ScriptMethodParams &params);
-	static void GetHeight(ScriptMethodParams &params);
-	static void GetLeftEdge(ScriptMethodParams &params);
-	static void GetMessages(ScriptMethodParams &params);
-	static void GetMusicOnLoad(ScriptMethodParams &params);
-	static void GetObjectCount(ScriptMethodParams &params);
-	static void GetRightEdge(ScriptMethodParams &params);
-	static void GetTopEdge(ScriptMethodParams &params);
-	static void GetWidth(ScriptMethodParams &params);
+	void GetDrawingSurfaceForBackground(ScriptMethodParams &params);
+	void GetProperty(ScriptMethodParams &params);
+	void GetTextProperty(ScriptMethodParams &params);
+	void GetBottomEdge(ScriptMethodParams &params);
+	void GetColorDepth(ScriptMethodParams &params);
+	void GetHeight(ScriptMethodParams &params);
+	void GetLeftEdge(ScriptMethodParams &params);
+	void GetMessages(ScriptMethodParams &params);
+	void GetMusicOnLoad(ScriptMethodParams &params);
+	void GetObjectCount(ScriptMethodParams &params);
+	void GetRightEdge(ScriptMethodParams &params);
+	void GetTopEdge(ScriptMethodParams &params);
+	void GetWidth(ScriptMethodParams &params);
 };
 
 } // namespace Core

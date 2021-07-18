@@ -30,6 +30,7 @@ namespace Plugins {
 namespace Core {
 
 void Game::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(Game::IsAudioPlaying^1, IsAudioPlaying);
 	SCRIPT_METHOD_EXT(Game::SetAudioTypeSpeechVolumeDrop^2, SetAudioTypeSpeechVolumeDrop);
 	SCRIPT_METHOD_EXT(Game::SetAudioTypeVolume^3, SetAudioTypeVolume);
@@ -77,6 +78,7 @@ void Game::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(Game::get_UseNativeCoordinates, GetUseNativeCoordinates);
 	SCRIPT_METHOD_EXT(Game::get_ViewCount, GetViewCount);
 	SCRIPT_METHOD_EXT(Game::PlayVoiceClip, PlayVoiceClip);
+	*/
 }
 
 void Game::IsAudioPlaying(ScriptMethodParams &params) {

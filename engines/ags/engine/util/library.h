@@ -41,8 +41,6 @@ public:
 	virtual bool Load(const AGS::Shared::String &libraryName) = 0;
 
 	virtual bool Unload() = 0;
-
-	virtual void *GetFunctionAddress(const AGS::Shared::String &functionName) = 0;
 };
 
 } // namespace Engine

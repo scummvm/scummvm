@@ -76,6 +76,7 @@ namespace Plugins {
 namespace Core {
 
 void GlobalAPI::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(AbortGame, ScPl_sc_AbortGame);
 	SCRIPT_METHOD_EXT(AddInventory, add_inventory);
 	SCRIPT_METHOD_EXT(AddInventoryToCharacter, AddInventoryToCharacter);
@@ -441,7 +442,7 @@ void GlobalAPI::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(Wait, scrWait);
 	SCRIPT_METHOD_EXT(WaitKey, WaitKey);
 	SCRIPT_METHOD_EXT(WaitMouseKey, WaitMouseKey);
-
+	*/
 }
 
 void GlobalAPI::ScPl_sc_AbortGame(ScriptMethodParams &params) {

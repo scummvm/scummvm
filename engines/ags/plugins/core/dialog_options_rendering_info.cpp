@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void DialogOptionsRenderingInfo::AGS_EngineStartup(IAGSEngine *engine) {
+/*
 	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_ActiveOptionID, GetActiveOptionID);
 	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::set_ActiveOptionID, SetActiveOptionID);
 	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_DialogToRender, GetDialogToRender);
@@ -46,6 +47,7 @@ void DialogOptionsRenderingInfo::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::set_X, SetX);
 	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_Y, GetY);
 	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::set_Y, SetY);
+	*/
 }
 
 void DialogOptionsRenderingInfo::GetActiveOptionID(ScriptMethodParams &params) {

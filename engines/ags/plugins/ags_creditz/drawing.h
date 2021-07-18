@@ -31,7 +31,7 @@ namespace AGSCreditz {
 
 class Drawing {
 public:
-static void drawPixel(uint8 *bitmap, int32 x, int32 y,
+void drawPixel(uint8 *bitmap, int32 x, int32 y,
                       uint col, int32 pitch, int32 coldepth) {
 	switch (coldepth) {
 	case 8:
@@ -46,7 +46,7 @@ static void drawPixel(uint8 *bitmap, int32 x, int32 y,
 	}
 }
 
-static uint getPixelColor(uint8 *bitmap, int32 x, int32 y,
+uint getPixelColor(uint8 *bitmap, int32 x, int32 y,
                           int32 pitch, int32 coldepth) {
 	switch (coldepth) {
 	case 8:

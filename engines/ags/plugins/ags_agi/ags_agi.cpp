@@ -28,10 +28,6 @@ namespace AGSAgi {
 
 int screen_mode = 0;
 
-IAGSEngine *AGSAgi::_engine;
-int AGSAgi::_enabled;
-int AGSAgi::_scaling_mode;
-
 AGSAgi::AGSAgi() : PluginBase() {
 	_engine = nullptr;
 	_enabled = 0;

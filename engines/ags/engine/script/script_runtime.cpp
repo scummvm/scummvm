@@ -53,8 +53,8 @@ bool ccAddExternalStaticFunction(const String &name, ScriptAPIFunction *pfn) {
 	return _GP(simp).add(name, RuntimeScriptValue().SetStaticFunction(pfn), nullptr) == 0;
 }
 
-bool ccAddExternalPluginFunction(const String &name, void *pfn) {
-	return _GP(simp).add(name, RuntimeScriptValue().SetPluginFunction(pfn), nullptr) == 0;
+bool ccAddExternalPluginFunction(const String &name, Plugins::ScriptContainer *instance) {
+	return _GP(simp).add(name, RuntimeScriptValue().SetPluginMethod(instance, name), nullptr) == 0;
 }
 
 bool ccAddExternalStaticObject(const String &name, void *ptr, ICCStaticObject *manager) {
@@ -98,8 +98,8 @@ void *ccGetSymbolAddress(const String &name) {
 	return nullptr;
 }
 
-bool ccAddExternalFunctionForPlugin(const String &name, void *pfn) {
-	return _GP(simp_for_plugin).add(name, RuntimeScriptValue().SetPluginFunction(pfn), nullptr) == 0;
+bool ccAddExternalFunctionForPlugin(const String &name, Plugins::ScriptContainer *sc) {
+	return _GP(simp_for_plugin).add(name, RuntimeScriptValue().SetPluginMethod(sc, name), nullptr) == 0;
 }
 
 void *ccGetSymbolAddressForPlugin(const String &name) {
@@ -132,9 +132,9 @@ void ccSetDebugHook(new_line_hook_type jibble) {
 	_G(new_line_hook) = jibble;
 }
 
-int call_function(intptr_t addr, const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms) {
-	if (!addr) {
-		cc_error("null function pointer in call_function");
+int call_function(Plugins::ScriptContainer *sc, const Common::String &name, const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms) {
+	if (!sc) {
+		cc_error("null script container pointer in call_function");
 		return -1;
 	}
 	if (numparm > 0 && !parms) {
@@ -178,8 +178,7 @@ int call_function(intptr_t addr, const RuntimeScriptValue *object, int numparm, 
 			params.push_back(parm_value[i]);
 
 		// Call the method
-		Plugins::PluginMethod fparam = (Plugins::PluginMethod)addr;
-		fparam(params);
+		(*sc).execMethod(name, params);
 
 		// TODO: Though some script methods return pointers, the call_function only
 		// supports a 32-bit result. In case they're actually used by any game, the

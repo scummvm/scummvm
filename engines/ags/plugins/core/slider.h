@@ -23,28 +23,30 @@
 #ifndef AGS_PLUGINS_CORE_SLIDER_H
 #define AGS_PLUGINS_CORE_SLIDER_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Slider : public ScriptContainer {
+	SCRIPT_HASH(Slider)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Slider() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void GetBackgroundGraphic(ScriptMethodParams &params);
-	static void SetBackgroundGraphic(ScriptMethodParams &params);
-	static void GetHandleGraphic(ScriptMethodParams &params);
-	static void SetHandleGraphic(ScriptMethodParams &params);
-	static void GetHandleOffset(ScriptMethodParams &params);
-	static void SetHandleOffset(ScriptMethodParams &params);
-	static void GetMax(ScriptMethodParams &params);
-	static void SetMax(ScriptMethodParams &params);
-	static void GetMin(ScriptMethodParams &params);
-	static void SetMin(ScriptMethodParams &params);
-	static void GetValue(ScriptMethodParams &params);
-	static void SetValue(ScriptMethodParams &params);
+	void GetBackgroundGraphic(ScriptMethodParams &params);
+	void SetBackgroundGraphic(ScriptMethodParams &params);
+	void GetHandleGraphic(ScriptMethodParams &params);
+	void SetHandleGraphic(ScriptMethodParams &params);
+	void GetHandleOffset(ScriptMethodParams &params);
+	void SetHandleOffset(ScriptMethodParams &params);
+	void GetMax(ScriptMethodParams &params);
+	void SetMax(ScriptMethodParams &params);
+	void GetMin(ScriptMethodParams &params);
+	void SetMin(ScriptMethodParams &params);
+	void GetValue(ScriptMethodParams &params);
+	void SetValue(ScriptMethodParams &params);
 };
 
 } // namespace Core

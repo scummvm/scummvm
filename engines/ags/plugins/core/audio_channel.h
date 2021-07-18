@@ -23,29 +23,31 @@
 #ifndef AGS_PLUGINS_CORE_AUDIO_CHANNEL_H
 #define AGS_PLUGINS_CORE_AUDIO_CHANNEL_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class AudioChannel : public ScriptContainer {
+	SCRIPT_HASH(AudioChannel)
 public:
-	static void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~AudioChannel() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void Seek(ScriptMethodParams &params);
-	static void SetRoomLocation(ScriptMethodParams &params);
-	static void Stop(ScriptMethodParams &params);
-	static void GetID(ScriptMethodParams &params);
-	static void GetIsPlaying(ScriptMethodParams &params);
-	static void GetLengthMs(ScriptMethodParams &params);
-	static void GetPanning(ScriptMethodParams &params);
-	static void SetPanning(ScriptMethodParams &params);
-	static void GetPlayingClip(ScriptMethodParams &params);
-	static void GetPosition(ScriptMethodParams &params);
-	static void GetPositionMs(ScriptMethodParams &params);
-	static void GetVolume(ScriptMethodParams &params);
-	static void SetVolume(ScriptMethodParams &params);
+	void Seek(ScriptMethodParams &params);
+	void SetRoomLocation(ScriptMethodParams &params);
+	void Stop(ScriptMethodParams &params);
+	void GetID(ScriptMethodParams &params);
+	void GetIsPlaying(ScriptMethodParams &params);
+	void GetLengthMs(ScriptMethodParams &params);
+	void GetPanning(ScriptMethodParams &params);
+	void SetPanning(ScriptMethodParams &params);
+	void GetPlayingClip(ScriptMethodParams &params);
+	void GetPosition(ScriptMethodParams &params);
+	void GetPositionMs(ScriptMethodParams &params);
+	void GetVolume(ScriptMethodParams &params);
+	void SetVolume(ScriptMethodParams &params);
 };
 
 } // namespace Core

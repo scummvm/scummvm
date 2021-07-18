@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void GUI::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(GUI::Centre^0, Centre);
 	SCRIPT_METHOD_EXT(GUI::GetAtScreenXY^2, GetGUIAtLocation);
 	SCRIPT_METHOD_EXT(GUI::SetPosition^2, SetPosition);
@@ -53,6 +54,7 @@ void GUI::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(GUI::set_Y, SetY);
 	SCRIPT_METHOD_EXT(GUI::get_ZOrder, GetZOrder);
 	SCRIPT_METHOD_EXT(GUI::set_ZOrder, SetZOrder);
+	*/
 }
 
 void GUI::Centre(ScriptMethodParams &params) {

@@ -23,33 +23,35 @@
 #ifndef AGS_PLUGINS_CORE_BUTTON_H
 #define AGS_PLUGINS_CORE_BUTTON_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Button : public ScriptContainer {
+	SCRIPT_HASH(Button)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Button() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void Animate(ScriptMethodParams &params);
-	static void GetText(ScriptMethodParams &params);
-	static void SetText(ScriptMethodParams &params);
-	static void GetClipImage(ScriptMethodParams &params);
-	static void SetClipImage(ScriptMethodParams &params);
-	static void GetFont(ScriptMethodParams &params);
-	static void SetFont(ScriptMethodParams &params);
-	static void GetGraphic(ScriptMethodParams &params);
-	static void GetMouseOverGraphic(ScriptMethodParams &params);
-	static void SetMouseOverGraphic(ScriptMethodParams &params);
-	static void GetNormalGraphic(ScriptMethodParams &params);
-	static void SetNormalGraphic(ScriptMethodParams &params);
-	static void GetPushedGraphic(ScriptMethodParams &params);
-	static void SetPushedGraphic(ScriptMethodParams &params);
-	static void GetText_New(ScriptMethodParams &params);
-	static void GetTextColor(ScriptMethodParams &params);
-	static void SetTextColor(ScriptMethodParams &params);
+	void Animate(ScriptMethodParams &params);
+	void GetText(ScriptMethodParams &params);
+	void SetText(ScriptMethodParams &params);
+	void GetClipImage(ScriptMethodParams &params);
+	void SetClipImage(ScriptMethodParams &params);
+	void GetFont(ScriptMethodParams &params);
+	void SetFont(ScriptMethodParams &params);
+	void GetGraphic(ScriptMethodParams &params);
+	void GetMouseOverGraphic(ScriptMethodParams &params);
+	void SetMouseOverGraphic(ScriptMethodParams &params);
+	void GetNormalGraphic(ScriptMethodParams &params);
+	void SetNormalGraphic(ScriptMethodParams &params);
+	void GetPushedGraphic(ScriptMethodParams &params);
+	void SetPushedGraphic(ScriptMethodParams &params);
+	void GetText_New(ScriptMethodParams &params);
+	void GetTextColor(ScriptMethodParams &params);
+	void SetTextColor(ScriptMethodParams &params);
 };
 
 } // namespace Core

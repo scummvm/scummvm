@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void Region::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(Region::GetAtRoomXY^2, GetRegionAtRoom);
 	SCRIPT_METHOD_EXT(Region::GetAtScreenXY^2, GetRegionAtScreen);
 	SCRIPT_METHOD_EXT(Region::Tint^4, TintNoLum);
@@ -42,6 +43,7 @@ void Region::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(Region::get_TintGreen, GetTintGreen);
 	SCRIPT_METHOD_EXT(Region::get_TintRed, GetTintRed);
 	SCRIPT_METHOD_EXT(Region::get_TintSaturation, GetTintSaturation);
+	*/
 }
 
 void Region::GetRegionAtRoom(ScriptMethodParams &params) {

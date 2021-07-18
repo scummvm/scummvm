@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void Room::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(Room::GetDrawingSurfaceForBackground^1, GetDrawingSurfaceForBackground);
 	SCRIPT_METHOD_EXT(Room::GetProperty^1, GetProperty);
 	SCRIPT_METHOD_EXT(Room::GetTextProperty^1, GetTextProperty);
@@ -41,6 +42,7 @@ void Room::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(Room::get_RightEdge, GetRightEdge);
 	SCRIPT_METHOD_EXT(Room::get_TopEdge, GetTopEdge);
 	SCRIPT_METHOD_EXT(Room::get_Width, GetWidth);
+	*/
 }
 
 void Room::GetDrawingSurfaceForBackground(ScriptMethodParams &params) {

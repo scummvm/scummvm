@@ -23,43 +23,45 @@
 #ifndef AGS_PLUGINS_CORE_GUI_CONTROL_H
 #define AGS_PLUGINS_CORE_GUI_CONTROL_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class GUIControl : public ScriptContainer {
+	SCRIPT_HASH(GUIControl)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~GUIControl() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void BringToFront(ScriptMethodParams &params);
-	static void GetGUIControlAtLocation(ScriptMethodParams &params);
-	static void SendToBack(ScriptMethodParams &params);
-	static void SetPosition(ScriptMethodParams &params);
-	static void SetSize(ScriptMethodParams &params);
-	static void GetAsButton(ScriptMethodParams &params);
-	static void GetAsInvWindow(ScriptMethodParams &params);
-	static void GetAsLabel(ScriptMethodParams &params);
-	static void GetAsListBox(ScriptMethodParams &params);
-	static void GetAsSlider(ScriptMethodParams &params);
-	static void GetAsTextBox(ScriptMethodParams &params);
-	static void GetClickable(ScriptMethodParams &params);
-	static void SetClickable(ScriptMethodParams &params);
-	static void GetEnabled(ScriptMethodParams &params);
-	static void SetEnabled(ScriptMethodParams &params);
-	static void GetHeight(ScriptMethodParams &params);
-	static void SetHeight(ScriptMethodParams &params);
-	static void GetID(ScriptMethodParams &params);
-	static void GetOwningGUI(ScriptMethodParams &params);
-	static void GetVisible(ScriptMethodParams &params);
-	static void SetVisible(ScriptMethodParams &params);
-	static void GetWidth(ScriptMethodParams &params);
-	static void SetWidth(ScriptMethodParams &params);
-	static void GetX(ScriptMethodParams &params);
-	static void SetX(ScriptMethodParams &params);
-	static void GetY(ScriptMethodParams &params);
-	static void SetY(ScriptMethodParams &params);
+	void BringToFront(ScriptMethodParams &params);
+	void GetGUIControlAtLocation(ScriptMethodParams &params);
+	void SendToBack(ScriptMethodParams &params);
+	void SetPosition(ScriptMethodParams &params);
+	void SetSize(ScriptMethodParams &params);
+	void GetAsButton(ScriptMethodParams &params);
+	void GetAsInvWindow(ScriptMethodParams &params);
+	void GetAsLabel(ScriptMethodParams &params);
+	void GetAsListBox(ScriptMethodParams &params);
+	void GetAsSlider(ScriptMethodParams &params);
+	void GetAsTextBox(ScriptMethodParams &params);
+	void GetClickable(ScriptMethodParams &params);
+	void SetClickable(ScriptMethodParams &params);
+	void GetEnabled(ScriptMethodParams &params);
+	void SetEnabled(ScriptMethodParams &params);
+	void GetHeight(ScriptMethodParams &params);
+	void SetHeight(ScriptMethodParams &params);
+	void GetID(ScriptMethodParams &params);
+	void GetOwningGUI(ScriptMethodParams &params);
+	void GetVisible(ScriptMethodParams &params);
+	void SetVisible(ScriptMethodParams &params);
+	void GetWidth(ScriptMethodParams &params);
+	void SetWidth(ScriptMethodParams &params);
+	void GetX(ScriptMethodParams &params);
+	void SetX(ScriptMethodParams &params);
+	void GetY(ScriptMethodParams &params);
+	void SetY(ScriptMethodParams &params);
 };
 
 } // namespace Core

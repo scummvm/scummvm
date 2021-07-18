@@ -23,29 +23,31 @@
 #ifndef AGS_PLUGINS_CORE_HOTSPOT_H
 #define AGS_PLUGINS_CORE_HOTSPOT_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Hotspot : public ScriptContainer {
+	SCRIPT_HASH(Hotspot)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Hotspot() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void GetHotspotAtRoom(ScriptMethodParams &params);
-	static void GetHotspotAtScreen(ScriptMethodParams &params);
-	static void GetName(ScriptMethodParams &params);
-	static void GetProperty(ScriptMethodParams &params);
-	static void GetPropertyText(ScriptMethodParams &params);
-	static void GetTextProperty(ScriptMethodParams &params);
-	static void RunInteraction(ScriptMethodParams &params);
-	static void GetEnabled(ScriptMethodParams &params);
-	static void SetEnabled(ScriptMethodParams &params);
-	static void GetID(ScriptMethodParams &params);
-	static void GetName_New(ScriptMethodParams &params);
-	static void GetWalkToX(ScriptMethodParams &params);
-	static void GetWalkToY(ScriptMethodParams &params);
+	void GetHotspotAtRoom(ScriptMethodParams &params);
+	void GetHotspotAtScreen(ScriptMethodParams &params);
+	void GetName(ScriptMethodParams &params);
+	void GetProperty(ScriptMethodParams &params);
+	void GetPropertyText(ScriptMethodParams &params);
+	void GetTextProperty(ScriptMethodParams &params);
+	void RunInteraction(ScriptMethodParams &params);
+	void GetEnabled(ScriptMethodParams &params);
+	void SetEnabled(ScriptMethodParams &params);
+	void GetID(ScriptMethodParams &params);
+	void GetName_New(ScriptMethodParams &params);
+	void GetWalkToX(ScriptMethodParams &params);
+	void GetWalkToY(ScriptMethodParams &params);
 };
 
 } // namespace Core

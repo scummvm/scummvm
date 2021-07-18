@@ -28,10 +28,12 @@ namespace Plugins {
 namespace Core {
 
 void Parser::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(Parser::FindWordID^1, FindWordID);
 	SCRIPT_METHOD_EXT(Parser::ParseText^1, ParseText);
 	SCRIPT_METHOD_EXT(Parser::SaidUnknownWord^0, SaidUnknownWord);
 	SCRIPT_METHOD_EXT(Parser::Said^1, Said);
+	*/
 }
 
 void Parser::FindWordID(ScriptMethodParams &params) {

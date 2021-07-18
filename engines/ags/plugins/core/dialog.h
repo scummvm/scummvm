@@ -23,25 +23,27 @@
 #ifndef AGS_PLUGINS_CORE_DIALOG_H
 #define AGS_PLUGINS_CORE_DIALOG_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Dialog : public ScriptContainer {
+	SCRIPT_HASH(Dialog)
 public:
-	static void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Dialog() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void GetID(ScriptMethodParams &params);
-	static void GetOptionCount(ScriptMethodParams &params);
-	static void GetShowTextParser(ScriptMethodParams &params);
-	static void DisplayOptions(ScriptMethodParams &params);
-	static void GetOptionState(ScriptMethodParams &params);
-	static void GetOptionText(ScriptMethodParams &params);
-	static void HasOptionBeenChosen(ScriptMethodParams &params);
-	static void SetOptionState(ScriptMethodParams &params);
-	static void Start(ScriptMethodParams &params);
+	void GetID(ScriptMethodParams &params);
+	void GetOptionCount(ScriptMethodParams &params);
+	void GetShowTextParser(ScriptMethodParams &params);
+	void DisplayOptions(ScriptMethodParams &params);
+	void GetOptionState(ScriptMethodParams &params);
+	void GetOptionText(ScriptMethodParams &params);
+	void HasOptionBeenChosen(ScriptMethodParams &params);
+	void SetOptionState(ScriptMethodParams &params);
+	void Start(ScriptMethodParams &params);
 };
 
 } // namespace Core

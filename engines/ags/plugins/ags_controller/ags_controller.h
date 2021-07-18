@@ -31,30 +31,30 @@ namespace AGSController {
 
 class AGSController : public PluginBase {
 private:
-static IAGSEngine *_engine;
+IAGSEngine *_engine;
 
 private:
-static const char *AGS_GetPluginName();
-static void AGS_EngineStartup(IAGSEngine *engine);
-static void AGS_EngineShutdown();
-static int64 AGS_EngineOnEvent(int event, NumberPtr data);
+const char *AGS_GetPluginName();
+void AGS_EngineStartup(IAGSEngine *engine) override;
+void AGS_EngineShutdown();
+int64 AGS_EngineOnEvent(int event, NumberPtr data);
 
 private:
-static void Controller_Update();
+void Controller_Update();
 
-static void ControllerCount(ScriptMethodParams &params);
-static void Controller_Open(ScriptMethodParams &params);
-static void Controller_Plugged(ScriptMethodParams &params);
-static void Controller_GetAxis(ScriptMethodParams &params);
-static void Controller_GetPOV(ScriptMethodParams &params);
-static void Controller_IsButtonDown(ScriptMethodParams &params);
-static void Controller_Close(ScriptMethodParams &params);
-static void Controller_GetName(ScriptMethodParams &params);
-static void Controller_Rumble(ScriptMethodParams &params);
-static void Controller_IsButtonDownOnce(ScriptMethodParams &params);
-static void Controller_PressAnyKey(ScriptMethodParams &params);
-static void Controller_BatteryStatus(ScriptMethodParams &params);
-static void ClickMouse(ScriptMethodParams &params);
+void ControllerCount(ScriptMethodParams &params);
+void Controller_Open(ScriptMethodParams &params);
+void Controller_Plugged(ScriptMethodParams &params);
+void Controller_GetAxis(ScriptMethodParams &params);
+void Controller_GetPOV(ScriptMethodParams &params);
+void Controller_IsButtonDown(ScriptMethodParams &params);
+void Controller_Close(ScriptMethodParams &params);
+void Controller_GetName(ScriptMethodParams &params);
+void Controller_Rumble(ScriptMethodParams &params);
+void Controller_IsButtonDownOnce(ScriptMethodParams &params);
+void Controller_PressAnyKey(ScriptMethodParams &params);
+void Controller_BatteryStatus(ScriptMethodParams &params);
+void ClickMouse(ScriptMethodParams &params);
 public:
 AGSController();
 };

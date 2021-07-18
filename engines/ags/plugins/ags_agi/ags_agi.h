@@ -31,18 +31,17 @@ namespace AGSAgi {
 
 class AGSAgi : public PluginBase {
 private:
-	static IAGSEngine *_engine;
-	static int _enabled;
-	static int _scaling_mode;
+	int _enabled = 0;
+	int _scaling_mode = 0;
 
 private:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *engine);
+	const char *AGS_GetPluginName() override;
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
 private:
-	static void SetAGIScalingMode(ScriptMethodParams &params);
-	static void GetAGIScalingMode(ScriptMethodParams &params);
-	static void UseAGIScaling(ScriptMethodParams &params);
+	void SetAGIScalingMode(ScriptMethodParams &params);
+	void GetAGIScalingMode(ScriptMethodParams &params);
+	void UseAGIScaling(ScriptMethodParams &params);
 
 public:
 	AGSAgi();

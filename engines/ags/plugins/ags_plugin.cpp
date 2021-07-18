@@ -85,16 +85,13 @@ const int PLUGIN_API_VERSION = 25;
 struct EnginePlugin {
 	char        filename[PLUGIN_FILENAME_MAX + 1];
 	AGS::Engine::Library   library;
+	Plugins::PluginBase *_plugin;
 	bool       available;
 	char *savedata;
 	int         savedatasize;
 	int         wantHook;
 	int         invalidatedRegion;
-	void (*engineStartup)(IAGSEngine *) = nullptr;
-	void (*engineShutdown)() = nullptr;
-	int (*onEvent)(int, NumberPtr) = nullptr;
-	void (*initGfxHook)(const char *driverName, void *data) = nullptr;
-	int (*debugHook)(const char *whichscript, int lineNumber, int reserved) = nullptr;
+
 	IAGSEngine  eiface;
 	bool        builtin;
 
@@ -118,8 +115,8 @@ int pluginsWantingDebugHooks = 0;
 // On save/restore, the Engine will provide the plugin with a handle. Because we only ever save to one file at a time,
 // we can reuse the same handle.
 
-static long pl_file_handle = -1;
-static Stream *pl_file_stream = nullptr;
+long pl_file_handle = -1;
+Stream *pl_file_stream = nullptr;
 
 void PluginSimulateMouseClick(int pluginButtonID) {
 	_G(pluginSimulatedClick) = pluginButtonID - 1;
@@ -131,8 +128,8 @@ void IAGSEngine::AbortGame(const char *reason) {
 const char *IAGSEngine::GetEngineVersion() {
 	return get_engine_version();
 }
-void IAGSEngine::RegisterScriptFunction(const char *name, void *addy) {
-	ccAddExternalPluginFunction(name, addy);
+void IAGSEngine::RegisterScriptFunction(const char *name, Plugins::ScriptContainer *instance) {
+	ccAddExternalPluginFunction(name, instance);
 }
 const char *IAGSEngine::GetGraphicsDriverID() {
 	if (_G(gfxDriver) == nullptr)
@@ -159,9 +156,6 @@ void IAGSEngine::RequestEventHook(int32 event) {
 	if (event >= AGSE_TOOHIGH)
 		quit("!IAGSEngine::RequestEventHook: invalid event requested");
 
-	if (plugins[this->pluginId].onEvent == nullptr)
-		quit("!IAGSEngine::RequestEventHook: no callback AGS_EngineOnEvent function exported from plugin");
-
 	if ((event & AGSE_SCRIPTDEBUG) &&
 	        ((plugins[this->pluginId].wantHook & AGSE_SCRIPTDEBUG) == 0)) {
 		pluginsWantingDebugHooks++;
@@ -171,7 +165,6 @@ void IAGSEngine::RequestEventHook(int32 event) {
 	if (event & AGSE_AUDIODECODE) {
 		quit("Plugin requested AUDIODECODE, which is no longer supported");
 	}
-
 
 	plugins[this->pluginId].wantHook |= event;
 }
@@ -787,8 +780,7 @@ void pl_stop_plugins() {
 
 	for (a = 0; a < numPlugins; a++) {
 		if (plugins[a].available) {
-			if (plugins[a].engineShutdown != nullptr)
-				plugins[a].engineShutdown();
+			plugins[a]._plugin->AGS_EngineShutdown();
 			plugins[a].wantHook = 0;
 			if (plugins[a].savedata) {
 				free(plugins[a].savedata);
@@ -809,7 +801,7 @@ void pl_startup_plugins() {
 			_GP(engineExports).AGS_EngineStartup(&plugins[0].eiface);
 
 		if (plugins[i].available)
-			plugins[i].engineStartup(&plugins[i].eiface);
+			plugins[i]._plugin->AGS_EngineStartup(&plugins[i].eiface);
 	}
 }
 
@@ -817,7 +809,7 @@ NumberPtr pl_run_plugin_hooks(int event, NumberPtr data) {
 	int i, retval = 0;
 	for (i = 0; i < numPlugins; i++) {
 		if (plugins[i].wantHook & event) {
-			retval = plugins[i].onEvent(event, data);
+			retval = plugins[i]._plugin->AGS_EngineOnEvent(event, data);
 			if (retval)
 				return retval;
 		}
@@ -830,7 +822,7 @@ int pl_run_plugin_debug_hooks(const char *scriptfile, int linenum) {
 	int i, retval = 0;
 	for (i = 0; i < numPlugins; i++) {
 		if (plugins[i].wantHook & AGSE_SCRIPTDEBUG) {
-			retval = plugins[i].debugHook(scriptfile, linenum, 0);
+			retval = plugins[i]._plugin->AGS_EngineDebugHook(scriptfile, linenum, 0);
 			if (retval)
 				return retval;
 		}
@@ -840,9 +832,7 @@ int pl_run_plugin_debug_hooks(const char *scriptfile, int linenum) {
 
 void pl_run_plugin_init_gfx_hooks(const char *driverName, void *data) {
 	for (int i = 0; i < numPlugins; i++) {
-		if (plugins[i].initGfxHook != nullptr) {
-			plugins[i].initGfxHook(driverName, data);
-		}
+		plugins[i]._plugin->AGS_EngineInitGfx(driverName, data);
 	}
 }
 
@@ -883,18 +873,6 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 		if (apl->library.Load(apl->filename)) {
 			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded as '%s', resolving imports...", apl->filename, expect_filename.GetCStr());
 
-			if (apl->library.GetFunctionAddress("AGS_PluginV2") == nullptr) {
-				quitprintf("Plugin '%s' is an old incompatible version.", apl->filename);
-			}
-			apl->engineStartup = (void(*)(IAGSEngine *))apl->library.GetFunctionAddress("AGS_EngineStartup");
-			apl->engineShutdown = (void(*)())apl->library.GetFunctionAddress("AGS_EngineShutdown");
-
-			if (apl->engineStartup == nullptr) {
-				quitprintf("Plugin '%s' is not a valid AGS plugin (no engine startup entry point)", apl->filename);
-			}
-			apl->onEvent = (int(*)(int, NumberPtr))apl->library.GetFunctionAddress("AGS_EngineOnEvent");
-			apl->debugHook = (int(*)(const char *, int, int))apl->library.GetFunctionAddress("AGS_EngineDebugHook");
-			apl->initGfxHook = (void(*)(const char *, void *))apl->library.GetFunctionAddress("AGS_EngineInitGfx");
 		} else {
 			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s')",
 			                           apl->filename, expect_filename.GetCStr());

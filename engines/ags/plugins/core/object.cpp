@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void Object::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(Object::Animate^5, Animate);
 	SCRIPT_METHOD_EXT(Object::IsCollidingWithObject^1, IsCollidingWithObject);
 	SCRIPT_METHOD_EXT(Object::GetName^1, GetName);
@@ -76,6 +77,7 @@ void Object::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(Object::set_X, SetX);
 	SCRIPT_METHOD_EXT(Object::get_Y, GetY);
 	SCRIPT_METHOD_EXT(Object::set_Y, SetY);
+	*/
 }
 
 void Object::Animate(ScriptMethodParams &params) {

@@ -109,23 +109,23 @@ void AGSBlend::AGS_EngineStartup(IAGSEngine *engine) {
 
 #pragma region Color_Functions
 
-static int getr32(int c) {
+int getr32(int c) {
 	return ((c >> DEFAULT_RGB_R_SHIFT_32) & 0xFF);
 }
 
-static int getg32(int c) {
+int getg32(int c) {
 	return ((c >> DEFAULT_RGB_G_SHIFT_32) & 0xFF);
 }
 
-static int getb32(int c) {
+int getb32(int c) {
 	return ((c >> DEFAULT_RGB_B_SHIFT_32) & 0xFF);
 }
 
-static int geta32(int c) {
+int geta32(int c) {
 	return ((c >> DEFAULT_RGB_A_SHIFT_32) & 0xFF);
 }
 
-static int makeacol32(int r, int g, int b, int a) {
+int makeacol32(int r, int g, int b, int a) {
 	return ((r << DEFAULT_RGB_R_SHIFT_32) |
 	        (g << DEFAULT_RGB_G_SHIFT_32) |
 	        (b << DEFAULT_RGB_B_SHIFT_32) |

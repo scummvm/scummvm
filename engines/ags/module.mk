@@ -317,7 +317,8 @@ MODULE_OBJS = \
 	plugins/core/string.o \
 	plugins/core/system.o \
 	plugins/core/textbox.o \
-	plugins/core/view_frame.o \
+	plugins/core/view_frame.o
+/*
 	plugins/ags_agi/ags_agi.o \
 	plugins/ags_blend/ags_blend.o \
 	plugins/ags_clipboard/ags_clipboard.o \
@@ -352,7 +353,7 @@ MODULE_OBJS = \
 	plugins/ags_tcp_ip/ags_tcp_ip.o \
 	plugins/ags_wadjet_util/ags_wadjet_util.o \
 	plugins/ags_waves/ags_waves.o
-
+*/
 ifdef ENABLE_AGS_TESTS
 MODULE_OBJS += \
 	tests/test_all.o \

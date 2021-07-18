@@ -23,23 +23,25 @@
 #ifndef AGS_PLUGINS_CORE_LABEL_H
 #define AGS_PLUGINS_CORE_LABEL_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Label : public ScriptContainer {
+	SCRIPT_HASH(Label)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Label() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void GetText(ScriptMethodParams &params);
-	static void SetText(ScriptMethodParams &params);
-	static void GetFont(ScriptMethodParams &params);
-	static void SetFont(ScriptMethodParams &params);
-	static void GetText_New(ScriptMethodParams &params);
-	static void GetColor(ScriptMethodParams &params);
-	static void SetColor(ScriptMethodParams &params);
+	void GetText(ScriptMethodParams &params);
+	void SetText(ScriptMethodParams &params);
+	void GetFont(ScriptMethodParams &params);
+	void SetFont(ScriptMethodParams &params);
+	void GetText_New(ScriptMethodParams &params);
+	void GetColor(ScriptMethodParams &params);
+	void SetColor(ScriptMethodParams &params);
 };
 
 } // namespace Core

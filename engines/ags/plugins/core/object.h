@@ -23,64 +23,66 @@
 #ifndef AGS_PLUGINS_CORE_OBJECT_H
 #define AGS_PLUGINS_CORE_OBJECT_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Object : public ScriptContainer {
+	SCRIPT_HASH(Object)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Object() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void Animate(ScriptMethodParams &params);
-	static void IsCollidingWithObject(ScriptMethodParams &params);
-	static void GetName(ScriptMethodParams &params);
-	static void GetProperty(ScriptMethodParams &params);
-	static void GetPropertyText(ScriptMethodParams &params);
-	static void GetTextProperty(ScriptMethodParams &params);
-	static void MergeIntoBackground(ScriptMethodParams &params);
-	static void Move(ScriptMethodParams &params);
-	static void RemoveTint(ScriptMethodParams &params);
-	static void RunInteraction(ScriptMethodParams &params);
-	static void SetPosition(ScriptMethodParams &params);
-	static void SetView(ScriptMethodParams &params);
-	static void StopAnimating(ScriptMethodParams &params);
-	static void StopMoving(ScriptMethodParams &params);
-	static void Tint(ScriptMethodParams &params);
-	static void GetObjectAtRoom(ScriptMethodParams &params);
-	static void GetObjectAtScreen(ScriptMethodParams &params);
-	static void GetAnimating(ScriptMethodParams &params);
-	static void GetBaseline(ScriptMethodParams &params);
-	static void SetBaseline(ScriptMethodParams &params);
-	static void GetBlockingHeight(ScriptMethodParams &params);
-	static void SetBlockingHeight(ScriptMethodParams &params);
-	static void GetBlockingWidth(ScriptMethodParams &params);
-	static void SetBlockingWidth(ScriptMethodParams &params);
-	static void GetClickable(ScriptMethodParams &params);
-	static void SetClickable(ScriptMethodParams &params);
-	static void GetFrame(ScriptMethodParams &params);
-	static void GetGraphic(ScriptMethodParams &params);
-	static void SetGraphic(ScriptMethodParams &params);
-	static void GetID(ScriptMethodParams &params);
-	static void GetIgnoreScaling(ScriptMethodParams &params);
-	static void SetIgnoreScaling(ScriptMethodParams &params);
-	static void GetIgnoreWalkbehinds(ScriptMethodParams &params);
-	static void SetIgnoreWalkbehinds(ScriptMethodParams &params);
-	static void GetLoop(ScriptMethodParams &params);
-	static void GetMoving(ScriptMethodParams &params);
-	static void GetName_New(ScriptMethodParams &params);
-	static void GetSolid(ScriptMethodParams &params);
-	static void SetSolid(ScriptMethodParams &params);
-	static void GetTransparency(ScriptMethodParams &params);
-	static void SetTransparency(ScriptMethodParams &params);
-	static void GetView(ScriptMethodParams &params);
-	static void GetVisible(ScriptMethodParams &params);
-	static void SetVisible(ScriptMethodParams &params);
-	static void GetX(ScriptMethodParams &params);
-	static void SetX(ScriptMethodParams &params);
-	static void GetY(ScriptMethodParams &params);
-	static void SetY(ScriptMethodParams &params);
+	void Animate(ScriptMethodParams &params);
+	void IsCollidingWithObject(ScriptMethodParams &params);
+	void GetName(ScriptMethodParams &params);
+	void GetProperty(ScriptMethodParams &params);
+	void GetPropertyText(ScriptMethodParams &params);
+	void GetTextProperty(ScriptMethodParams &params);
+	void MergeIntoBackground(ScriptMethodParams &params);
+	void Move(ScriptMethodParams &params);
+	void RemoveTint(ScriptMethodParams &params);
+	void RunInteraction(ScriptMethodParams &params);
+	void SetPosition(ScriptMethodParams &params);
+	void SetView(ScriptMethodParams &params);
+	void StopAnimating(ScriptMethodParams &params);
+	void StopMoving(ScriptMethodParams &params);
+	void Tint(ScriptMethodParams &params);
+	void GetObjectAtRoom(ScriptMethodParams &params);
+	void GetObjectAtScreen(ScriptMethodParams &params);
+	void GetAnimating(ScriptMethodParams &params);
+	void GetBaseline(ScriptMethodParams &params);
+	void SetBaseline(ScriptMethodParams &params);
+	void GetBlockingHeight(ScriptMethodParams &params);
+	void SetBlockingHeight(ScriptMethodParams &params);
+	void GetBlockingWidth(ScriptMethodParams &params);
+	void SetBlockingWidth(ScriptMethodParams &params);
+	void GetClickable(ScriptMethodParams &params);
+	void SetClickable(ScriptMethodParams &params);
+	void GetFrame(ScriptMethodParams &params);
+	void GetGraphic(ScriptMethodParams &params);
+	void SetGraphic(ScriptMethodParams &params);
+	void GetID(ScriptMethodParams &params);
+	void GetIgnoreScaling(ScriptMethodParams &params);
+	void SetIgnoreScaling(ScriptMethodParams &params);
+	void GetIgnoreWalkbehinds(ScriptMethodParams &params);
+	void SetIgnoreWalkbehinds(ScriptMethodParams &params);
+	void GetLoop(ScriptMethodParams &params);
+	void GetMoving(ScriptMethodParams &params);
+	void GetName_New(ScriptMethodParams &params);
+	void GetSolid(ScriptMethodParams &params);
+	void SetSolid(ScriptMethodParams &params);
+	void GetTransparency(ScriptMethodParams &params);
+	void SetTransparency(ScriptMethodParams &params);
+	void GetView(ScriptMethodParams &params);
+	void GetVisible(ScriptMethodParams &params);
+	void SetVisible(ScriptMethodParams &params);
+	void GetX(ScriptMethodParams &params);
+	void SetX(ScriptMethodParams &params);
+	void GetY(ScriptMethodParams &params);
+	void SetY(ScriptMethodParams &params);
 };
 
 } // namespace Core

@@ -23,35 +23,37 @@
 #ifndef AGS_PLUGINS_CORE_STRING_H
 #define AGS_PLUGINS_CORE_STRING_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class String : public ScriptContainer {
+	SCRIPT_HASH(String)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~String() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void IsNullOrEmpty(ScriptMethodParams &params);
-	static void Append(ScriptMethodParams &params);
-	static void AppendChar(ScriptMethodParams &params);
-	static void CompareTo(ScriptMethodParams &params);
-	static void StrContains(ScriptMethodParams &params);
-	static void Copy(ScriptMethodParams &params);
-	static void EndsWith(ScriptMethodParams &params);
-	static void ScPl_String_Format(ScriptMethodParams &params);
-	static void LowerCase(ScriptMethodParams &params);
-	static void Replace(ScriptMethodParams &params);
-	static void ReplaceCharAt(ScriptMethodParams &params);
-	static void StartsWith(ScriptMethodParams &params);
-	static void Substring(ScriptMethodParams &params);
-	static void Truncate(ScriptMethodParams &params);
-	static void UpperCase(ScriptMethodParams &params);
-	static void StringToFloat(ScriptMethodParams &params);
-	static void StringToInt(ScriptMethodParams &params);
-	static void GetChars(ScriptMethodParams &params);
-	static void strlen(ScriptMethodParams &params);
+	void IsNullOrEmpty(ScriptMethodParams &params);
+	void Append(ScriptMethodParams &params);
+	void AppendChar(ScriptMethodParams &params);
+	void CompareTo(ScriptMethodParams &params);
+	void StrContains(ScriptMethodParams &params);
+	void Copy(ScriptMethodParams &params);
+	void EndsWith(ScriptMethodParams &params);
+	void ScPl_String_Format(ScriptMethodParams &params);
+	void LowerCase(ScriptMethodParams &params);
+	void Replace(ScriptMethodParams &params);
+	void ReplaceCharAt(ScriptMethodParams &params);
+	void StartsWith(ScriptMethodParams &params);
+	void Substring(ScriptMethodParams &params);
+	void Truncate(ScriptMethodParams &params);
+	void UpperCase(ScriptMethodParams &params);
+	void StringToFloat(ScriptMethodParams &params);
+	void StringToInt(ScriptMethodParams &params);
+	void GetChars(ScriptMethodParams &params);
+	void strlen(ScriptMethodParams &params);
 };
 
 } // namespace Core

@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void InvWindow::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(InvWindow::ScrollDown^0, ScrollDown);
 	SCRIPT_METHOD_EXT(InvWindow::ScrollUp^0, ScrollUp);
 	SCRIPT_METHOD_EXT(InvWindow::get_CharacterToUse, GetCharacterToUse);
@@ -42,6 +43,7 @@ void InvWindow::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(InvWindow::get_RowCount, GetRowCount);
 	SCRIPT_METHOD_EXT(InvWindow::get_TopItem, GetTopItem);
 	SCRIPT_METHOD_EXT(InvWindow::set_TopItem, SetTopItem);
+	*/
 }
 
 void InvWindow::ScrollDown(ScriptMethodParams &params) {

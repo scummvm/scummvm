@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void AudioChannel::AGS_EngineStartup(IAGSEngine *engine) {
+/*
 	SCRIPT_METHOD_EXT(AudioChannel::Seek^1, Seek);
 	SCRIPT_METHOD_EXT(AudioChannel::SetRoomLocation^2, SetRoomLocation);
 	SCRIPT_METHOD_EXT(AudioChannel::Stop^0, Stop);
@@ -41,6 +42,7 @@ void AudioChannel::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(AudioChannel::get_PositionMs, GetPositionMs);
 	SCRIPT_METHOD_EXT(AudioChannel::get_Volume, GetVolume);
 	SCRIPT_METHOD_EXT(AudioChannel::set_Volume, SetVolume);
+	*/
 }
 
 void AudioChannel::Seek(ScriptMethodParams &params) {

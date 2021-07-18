@@ -58,7 +58,7 @@ public:
 
 	bool Unload() override {
 		if (_library) {
-			void *lib = _library;
+			Plugins::PluginBase *lib = _library;
 			_library = nullptr;
 
 			return (Plugins::pluginClose(lib) == 0);
@@ -67,16 +67,8 @@ public:
 		}
 	}
 
-	void *GetFunctionAddress(const AGS::Shared::String &functionName) override {
-		if (_library) {
-			return Plugins::pluginSym(_library, functionName.GetCStr());
-		} else {
-			return nullptr;
-		}
-	}
-
 private:
-	void *_library;
+	Plugins::PluginBase *_library;
 };
 
 

@@ -31,9 +31,9 @@ namespace AGSGalaxySteam {
 
 class AGSWadjetEyeSteam : public AGSSteam {
 private:
-	static void AGS_EngineStartup(IAGSEngine *engine);
-	static void AddAchievement(ScriptMethodParams &params);
-	static void AddStat(ScriptMethodParams &params);
+	void AGS_EngineStartup(IAGSEngine *engine) override;
+	void AddAchievement(ScriptMethodParams &params);
+	void AddStat(ScriptMethodParams &params);
 
 public:
 	AGSWadjetEyeSteam();

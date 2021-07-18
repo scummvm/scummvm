@@ -215,7 +215,7 @@ void AGSCreditz1::StartEndStaticCredits(ScriptMethodParams &params) {
 		_engine->AbortGame("StartEndStaticCredits: Wrong resolution");
 
 	} else {
-		_state->_currentStatic = 0;
+		_state->_current= 0;
 		_engine->GetScreenDimensions(&_state->_screenWidth,
 		                             &_state->_screenHeight, &_state->_screenColorDepth);
 
@@ -271,9 +271,9 @@ void AGSCreditz1::ShowStaticCredit(ScriptMethodParams &params) {
 
 			_state->_staticScreenWidth = (res == 1) ? 320 : 640;
 			_state->_staticWidthMatches = _state->_screenWidth == _state->_staticScreenWidth;
-			_state->_currentStatic = ID;
+			_state->_current= ID;
 
-			// TODO: Final static setup
+			// TODO: Final setup
 		}
 	}
 

@@ -32,8 +32,8 @@ namespace AGSTcpIp {
 
 class AGSTcpIp : public PluginBase {
 private:
-static const char *AGS_GetPluginName();
-static void AGS_EngineStartup(IAGSEngine *engine);
+const char *AGS_GetPluginName();
+void AGS_EngineStartup(IAGSEngine *engine) override;
 
 public:
 AGSTcpIp();

@@ -31,28 +31,28 @@ namespace AGSJoy {
 
 class AGSJoy : public PluginBase {
 private:
-static IAGSEngine *_engine;
+IAGSEngine *_engine;
 private:
-static const char *AGS_GetPluginName();
-static void AGS_EngineStartup(IAGSEngine *lpEngine);
+const char *AGS_GetPluginName();
+void AGS_EngineStartup(IAGSEngine *lpEngine);
 
 private:
-static void Count(ScriptMethodParams &params);
-static void Name(ScriptMethodParams &params);
-static void Rescan(ScriptMethodParams &params);
-static void Open(ScriptMethodParams &params);
-static void IsOpen(ScriptMethodParams &params);
-static void Click(ScriptMethodParams &params);
-static void Close(ScriptMethodParams &params);
-static void Valid(ScriptMethodParams &params);
-static void Unplugged(ScriptMethodParams &params);
-static void GetName(ScriptMethodParams &params);
-static void GetAxis(ScriptMethodParams &params);
-static void IsButtonDown(ScriptMethodParams &params);
-static void IsJoyBtnDown(ScriptMethodParams &params);
-static void Update(ScriptMethodParams &params);
-static void DisableEvents(ScriptMethodParams &params);
-static void EnableEvents(ScriptMethodParams &params);
+void Count(ScriptMethodParams &params);
+void Name(ScriptMethodParams &params);
+void Rescan(ScriptMethodParams &params);
+void Open(ScriptMethodParams &params);
+void IsOpen(ScriptMethodParams &params);
+void Click(ScriptMethodParams &params);
+void Close(ScriptMethodParams &params);
+void Valid(ScriptMethodParams &params);
+void Unplugged(ScriptMethodParams &params);
+void GetName(ScriptMethodParams &params);
+void GetAxis(ScriptMethodParams &params);
+void IsButtonDown(ScriptMethodParams &params);
+void IsJoyBtnDown(ScriptMethodParams &params);
+void Update(ScriptMethodParams &params);
+void DisableEvents(ScriptMethodParams &params);
+void EnableEvents(ScriptMethodParams &params);
 
 public:
 AGSJoy();

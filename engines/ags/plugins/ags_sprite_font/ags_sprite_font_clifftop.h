@@ -31,9 +31,9 @@ namespace AGSSpriteFont {
 
 class AGSSpriteFontClifftopGames : public AGSSpriteFont {
 private:
-static void AGS_EngineStartup(IAGSEngine *engine);
+void AGS_EngineStartup(IAGSEngine *engine) override;
 
-static void SetLineHeightAdjust(ScriptMethodParams &params);
+void SetLineHeightAdjust(ScriptMethodParams &params);
 
 public:
 AGSSpriteFontClifftopGames();

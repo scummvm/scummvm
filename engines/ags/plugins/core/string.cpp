@@ -29,6 +29,7 @@ namespace Plugins {
 namespace Core {
 
 void String::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(String::IsNullOrEmpty^1, IsNullOrEmpty);
 	SCRIPT_METHOD_EXT(String::Append^1, Append);
 	SCRIPT_METHOD_EXT(String::AppendChar^1, AppendChar);
@@ -49,6 +50,7 @@ void String::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(String::get_AsInt, StringToInt);
 	SCRIPT_METHOD_EXT(String::geti_Chars, GetChars);
 	SCRIPT_METHOD_EXT(String::get_Length, strlen);
+	*/
 }
 
 void String::IsNullOrEmpty(ScriptMethodParams &params) {

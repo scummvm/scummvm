@@ -23,38 +23,40 @@
 #ifndef AGS_PLUGINS_CORE_DYNAMIC_SPRITE_H
 #define AGS_PLUGINS_CORE_DYNAMIC_SPRITE_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class DynamicSprite : public ScriptContainer {
+	SCRIPT_HASH(DynamicSprite)
 public:
-	static void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~DynamicSprite() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void ChangeCanvasSize(ScriptMethodParams &params);
-	static void CopyTransparencyMask(ScriptMethodParams &params);
-	static void Crop(ScriptMethodParams &params);
-	static void Delete(ScriptMethodParams &params);
-	static void Flip(ScriptMethodParams &params);
-	static void GetDrawingSurface(ScriptMethodParams &params);
-	static void Resize(ScriptMethodParams &params);
-	static void Rotate(ScriptMethodParams &params);
-	static void SaveToFile(ScriptMethodParams &params);
-	static void Tint(ScriptMethodParams &params);
-	static void GetColorDepth(ScriptMethodParams &params);
-	static void GetGraphic(ScriptMethodParams &params);
-	static void GetHeight(ScriptMethodParams &params);
-	static void GetWidth(ScriptMethodParams &params);
-	static void Create(ScriptMethodParams &params);
-	static void CreateFromBackground(ScriptMethodParams &params);
-	static void CreateFromDrawingSurface(ScriptMethodParams &params);
-	static void CreateFromExistingSprite_Old(ScriptMethodParams &params);
-	static void CreateFromExistingSprite(ScriptMethodParams &params);
-	static void CreateFromFile(ScriptMethodParams &params);
-	static void CreateFromSaveGame(ScriptMethodParams &params);
-	static void CreateFromScreenShot(ScriptMethodParams &params);
+	void ChangeCanvasSize(ScriptMethodParams &params);
+	void CopyTransparencyMask(ScriptMethodParams &params);
+	void Crop(ScriptMethodParams &params);
+	void Delete(ScriptMethodParams &params);
+	void Flip(ScriptMethodParams &params);
+	void GetDrawingSurface(ScriptMethodParams &params);
+	void Resize(ScriptMethodParams &params);
+	void Rotate(ScriptMethodParams &params);
+	void SaveToFile(ScriptMethodParams &params);
+	void Tint(ScriptMethodParams &params);
+	void GetColorDepth(ScriptMethodParams &params);
+	void GetGraphic(ScriptMethodParams &params);
+	void GetHeight(ScriptMethodParams &params);
+	void GetWidth(ScriptMethodParams &params);
+	void Create(ScriptMethodParams &params);
+	void CreateFromBackground(ScriptMethodParams &params);
+	void CreateFromDrawingSurface(ScriptMethodParams &params);
+	void CreateFromExistingSprite_Old(ScriptMethodParams &params);
+	void CreateFromExistingSprite(ScriptMethodParams &params);
+	void CreateFromFile(ScriptMethodParams &params);
+	void CreateFromSaveGame(ScriptMethodParams &params);
+	void CreateFromScreenShot(ScriptMethodParams &params);
 };
 
 } // namespace Core

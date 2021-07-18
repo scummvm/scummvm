@@ -31,19 +31,19 @@ namespace AGSFire {
 
 class AGSFire : public PluginBase {
 private:
-	static IAGSEngine *_engine;
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *engine);
+	IAGSEngine *_engine;
+	const char *AGS_GetPluginName();
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
 private:
-	static void FireAddObject(ScriptMethodParams &params);
-	static void FirePreHeat(ScriptMethodParams &params);
-	static void FireDisableSeeding(ScriptMethodParams &params);
-	static void FireEnableSeeding(ScriptMethodParams &params);
-	static void FireSetStrength(ScriptMethodParams &params);
-	static void FireRemoveObject(ScriptMethodParams &params);
-	static void FireUpdate(ScriptMethodParams &params);
-	static void FireStop(ScriptMethodParams &params);
+	void FireAddObject(ScriptMethodParams &params);
+	void FirePreHeat(ScriptMethodParams &params);
+	void FireDisableSeeding(ScriptMethodParams &params);
+	void FireEnableSeeding(ScriptMethodParams &params);
+	void FireSetStrength(ScriptMethodParams &params);
+	void FireRemoveObject(ScriptMethodParams &params);
+	void FireUpdate(ScriptMethodParams &params);
+	void FireStop(ScriptMethodParams &params);
 
 public:
 	AGSFire();

@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void GUIControl::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(GUIControl::BringToFront^0, BringToFront);
 	SCRIPT_METHOD_EXT(GUIControl::GetAtScreenXY^2, GetGUIControlAtLocation);
 	SCRIPT_METHOD_EXT(GUIControl::SendToBack^0, SendToBack);
@@ -55,6 +56,7 @@ void GUIControl::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(GUIControl::set_X, SetX);
 	SCRIPT_METHOD_EXT(GUIControl::get_Y, GetY);
 	SCRIPT_METHOD_EXT(GUIControl::set_Y, SetY);
+	*/
 }
 
 void GUIControl::BringToFront(ScriptMethodParams &params) {

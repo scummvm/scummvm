@@ -23,25 +23,27 @@
 #ifndef AGS_PLUGINS_CORE_OVERLAY_H
 #define AGS_PLUGINS_CORE_OVERLAY_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Overlay : public ScriptContainer {
+	SCRIPT_HASH(Overlay)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Overlay() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void CreateGraphical(ScriptMethodParams &params);
-	static void ScPl_CreateTextual(ScriptMethodParams &params);
-	static void ScPl_SetText(ScriptMethodParams &params);
-	static void Remove(ScriptMethodParams &params);
-	static void GetValid(ScriptMethodParams &params);
-	static void GetX(ScriptMethodParams &params);
-	static void SetX(ScriptMethodParams &params);
-	static void GetY(ScriptMethodParams &params);
-	static void SetY(ScriptMethodParams &params);
+	void CreateGraphical(ScriptMethodParams &params);
+	void ScPl_CreateTextual(ScriptMethodParams &params);
+	void ScPl_SetText(ScriptMethodParams &params);
+	void Remove(ScriptMethodParams &params);
+	void GetValid(ScriptMethodParams &params);
+	void GetX(ScriptMethodParams &params);
+	void SetX(ScriptMethodParams &params);
+	void GetY(ScriptMethodParams &params);
+	void SetY(ScriptMethodParams &params);
 };
 
 } // namespace Core

@@ -41,37 +41,37 @@ extern int32 _screenColorDepth;
  */
 class AGSSnowRain : public PluginBase {
 private:
-static Weather *_rain;
-static Weather *_snow;
+Weather *_rain;
+Weather *_snow;
 private:
-static const char *AGS_GetPluginName();
-static void AGS_EngineStartup(IAGSEngine *lpEngine);
-static void AGS_EngineShutdown();
-static int64 AGS_EngineOnEvent(int event, NumberPtr data);
+const char *AGS_GetPluginName();
+void AGS_EngineStartup(IAGSEngine *lpEngine);
+void AGS_EngineShutdown();
+int64 AGS_EngineOnEvent(int event, NumberPtr data);
 
 private:
-static void srSetWindSpeed(ScriptMethodParams &params);
-static void srSetBaseline(ScriptMethodParams &params);
-static void srSetSnowDriftRange(ScriptMethodParams &params);
-static void srSetSnowDriftSpeed(ScriptMethodParams &params);
-static void srChangeSnowAmount(ScriptMethodParams &params);
-static void srSetSnowView(ScriptMethodParams &params);
-static void srSetSnowDefaultView(ScriptMethodParams &params);
-static void srSetSnowTransparency(ScriptMethodParams &params);
-static void srSetSnowWindSpeed(ScriptMethodParams &params);
-static void srSetSnowBaseline(ScriptMethodParams &params);
-static void srSetSnowAmount(ScriptMethodParams &params);
-static void srSetSnowFallSpeed(ScriptMethodParams &params);
-static void srSetRainDriftRange(ScriptMethodParams &params);
-static void srSetRainDriftSpeed(ScriptMethodParams &params);
-static void srChangeRainAmount(ScriptMethodParams &params);
-static void srSetRainView(ScriptMethodParams &params);
-static void srSetRainDefaultView(ScriptMethodParams &params);
-static void srSetRainTransparency(ScriptMethodParams &params);
-static void srSetRainWindSpeed(ScriptMethodParams &params);
-static void srSetRainBaseline(ScriptMethodParams &params);
-static void srSetRainAmount(ScriptMethodParams &params);
-static void srSetRainFallSpeed(ScriptMethodParams &params);
+void srSetWindSpeed(ScriptMethodParams &params);
+void srSetBaseline(ScriptMethodParams &params);
+void srSetSnowDriftRange(ScriptMethodParams &params);
+void srSetSnowDriftSpeed(ScriptMethodParams &params);
+void srChangeSnowAmount(ScriptMethodParams &params);
+void srSetSnowView(ScriptMethodParams &params);
+void srSetSnowDefaultView(ScriptMethodParams &params);
+void srSetSnowTransparency(ScriptMethodParams &params);
+void srSetSnowWindSpeed(ScriptMethodParams &params);
+void srSetSnowBaseline(ScriptMethodParams &params);
+void srSetSnowAmount(ScriptMethodParams &params);
+void srSetSnowFallSpeed(ScriptMethodParams &params);
+void srSetRainDriftRange(ScriptMethodParams &params);
+void srSetRainDriftSpeed(ScriptMethodParams &params);
+void srChangeRainAmount(ScriptMethodParams &params);
+void srSetRainView(ScriptMethodParams &params);
+void srSetRainDefaultView(ScriptMethodParams &params);
+void srSetRainTransparency(ScriptMethodParams &params);
+void srSetRainWindSpeed(ScriptMethodParams &params);
+void srSetRainBaseline(ScriptMethodParams &params);
+void srSetRainAmount(ScriptMethodParams &params);
+void srSetRainFallSpeed(ScriptMethodParams &params);
 public:
 AGSSnowRain();
 };

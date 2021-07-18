@@ -82,7 +82,7 @@ int speed = 0;
 bool finished = false;
 };
 
-struct SingleStatic {
+struct Single{
 int id = 0;
 int time = 0;
 int style = 0;
@@ -99,13 +99,13 @@ CreditArray _credits[10];
 StCreditArray _stCredits[10];
 bool _creditsRunning = 0, _paused = 0, _staticCredits = 0;
 int _creditSequence = 0, _yPos = 0, _sequenceHeight = 0, _speedPoint = 0;
-int _calculatedSequenceHeight = 0, _timer = 0, _currentStatic = 0;
+int _calculatedSequenceHeight = 0, _timer = 0, _current= 0;
 int _numChars = 0, _timer2 = 0;
 int _emptyLineHeight = 10;
 int _strCredit[10];
 SequenceSettings _seqSettings[10];
 StSequenceSettings _stSeqSettings[10];
-SingleStatic _singleStatic;
+Single_singleStatic;
 
 // Version 1.1 specific
 bool _resolutionFlag = false;
@@ -116,29 +116,29 @@ bool _staticWidthMatches = false;
 
 class AGSCreditz : public PluginBase, public Drawing {
 private:
-static int drawCredit(int sequence, int credit);
-static void doCredits();
-static int countLines(const Common::String &text);
-static Common::String extractParameter(Common::String &line, const Common::String &separator);
-static void specialEffect(int sequence, int credit, const Common::String &text,
+int drawCredit(int sequence, int credit);
+void doCredits();
+int countLines(const Common::String &text);
+Common::String extractParameter(Common::String &line, const Common::String &separator);
+void specialEffect(int sequence, int credit, const Common::String &text,
                           int font, int color, int32 x_pos);
-static void drawStEffects(int sequence, int id, int style);
-static void speeder(int sequence);
+void drawStEffects(int sequence, int id, int style);
+void speeder(int sequence);
 
 protected:
 enum Version {
 	VERSION_11 = 11, VERSION_20 = 20
 };
 
-static Version _version;
-static State *_state;
-static IAGSEngine *_engine;
-static IntFunction _playSound;
+Version _version;
+State *_state;
+IAGSEngine *_engine;
+IntFunction _playSound;
 
-static void draw();
-static void calculateSequenceHeight(int sequence);
-static int VGACheck(int value);
-static void startSequence(int sequence);
+void draw();
+void calculateSequenceHeight(int sequence);
+int VGACheck(int value);
+void startSequence(int sequence);
 
 public:
 AGSCreditz();

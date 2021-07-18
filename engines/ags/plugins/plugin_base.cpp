@@ -22,6 +22,7 @@
 
 #include "ags/lib/allegro.h"
 #include "ags/plugins/plugin_base.h"
+/*
 #include "ags/plugins/ags_agi/ags_agi.h"
 #include "ags/plugins/ags_blend/ags_blend.h"
 #include "ags/plugins/ags_clipboard/ags_clipboard.h"
@@ -43,6 +44,7 @@
 #include "ags/plugins/ags_tcp_ip/ags_tcp_ip.h"
 #include "ags/plugins/ags_wadjet_util/ags_wadjet_util.h"
 #include "ags/plugins/ags_waves/ags_waves.h"
+*/
 #include "ags/ags.h"
 #include "ags/detection.h"
 #include "common/str.h"
@@ -50,7 +52,7 @@
 namespace AGS3 {
 namespace Plugins {
 
-void *pluginOpen(const char *filename) {
+Plugins::PluginBase *pluginOpen(const char *filename) {
 	Common::String fname(filename);
 
 	// Check for if the game specifies a specific plugin version for this game
@@ -62,7 +64,7 @@ void *pluginOpen(const char *filename) {
 			break;
 		}
 	}
-
+/*
 	if (fname.equalsIgnoreCase("ags_tcp_ip"))
 		return new AGSTcpIp::AGSTcpIp();
 
@@ -130,20 +132,15 @@ void *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("agswaves"))
 		return new AGSWaves::AGSWaves();
-
+*/
 	debug("Plugin '%s' is not yet supported", fname.c_str());
 	return nullptr;
 }
 
-int pluginClose(void *lib) {
+int pluginClose(Plugins::PluginBase *lib) {
 	PluginBase *plugin = static_cast<PluginBase *>(lib);
 	delete plugin;
 	return 0;
-}
-
-void *pluginSym(void *lib, const char *method) {
-	PluginBase *plugin = static_cast<PluginBase *>(lib);
-	return (*plugin)[method];
 }
 
 const char *pluginError() {
@@ -154,57 +151,6 @@ const char *pluginError() {
 
 Common::String ScriptMethodParams::format(int formatIndex) {
 	error("TODO: Implement ScriptMethodParams::format");
-}
-
-/*------------------------------------------------------------------*/
-
-PluginBase::PluginBase() {
-	DLL_METHOD(AGS_PluginV2);
-	DLL_METHOD(AGS_EditorStartup);
-	DLL_METHOD(AGS_EditorShutdown);
-	DLL_METHOD(AGS_EditorProperties);
-	DLL_METHOD(AGS_EditorSaveGame);
-	DLL_METHOD(AGS_EditorLoadGame);
-	DLL_METHOD(AGS_EngineStartup);
-	DLL_METHOD(AGS_EngineShutdown);
-	DLL_METHOD(AGS_EngineOnEvent);
-	DLL_METHOD(AGS_EngineDebugHook);
-	DLL_METHOD(AGS_EngineInitGfx);
-}
-
-int PluginBase::AGS_EditorStartup(IAGSEditor *) {
-	return 0;
-}
-
-void PluginBase::AGS_EditorShutdown() {
-}
-
-void PluginBase::AGS_EditorProperties(HWND) {
-}
-
-int PluginBase::AGS_EditorSaveGame(char *, int) {
-	return 0;
-}
-
-void PluginBase::AGS_EditorLoadGame(char *, int) {
-}
-
-void PluginBase::AGS_EngineStartup(IAGSEngine *) {
-}
-
-void PluginBase::AGS_EngineShutdown() {
-}
-
-int64 PluginBase::AGS_EngineOnEvent(int, NumberPtr) {
-	return 0;
-}
-
-int PluginBase::AGS_EngineDebugHook(const char *, int, int) {
-	return 0;
-}
-
-void PluginBase::AGS_EngineInitGfx(const char *driverID, void *data) {
-	assert(!strcmp(driverID, "Software"));
 }
 
 } // namespace Plugins

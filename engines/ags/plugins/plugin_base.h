@@ -24,16 +24,34 @@
 #define AGS_PLUGINS_PLUGIN_BASE_H
 
 #include "ags/shared/util/string.h"
-#include "ags/plugins/ags_plugin.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/textconsole.h"
 
 namespace AGS3 {
+
+class IAGSEditor;
+class IAGSEngine;
+
 namespace Plugins {
 
-#define DLL_METHOD(NAME) _methods[#NAME] = (void *)&NAME
-#define SCRIPT_METHOD(NAME) registerFunction(engine, #NAME, &NAME)
-#define SCRIPT_METHOD_EXT(NAME, PROC) registerFunction(engine, #NAME, &(PROC))
+#define SCRIPT_METHOD(NAME) addMethod(#NAME, &NAME)
+#define SCRIPT_METHOD_EXT(NAME, PROC) addMethod(#NAME, &(PROC))
+
+#define SCRIPT_HASH(TheClass) \
+	private: \
+		typedef void (TheClass::*MethodPtr)(ScriptMethodParams &params); \
+		Common::HashMap<Common::String, MethodPtr> _methods; \
+		inline void addMethod(const Common::String &name, MethodPtr fn) { \
+			_methods[name] = fn; \
+			_engine->RegisterScriptFunction(name.c_str(), this); \
+		} \
+	public: \
+		void execMethod(const Common::String &name, ScriptMethodParams & params) override { \
+			if (!_methods.contains(name)) \
+				error("Plugin does not contain method - %s", name.c_str()); \
+			(this->*_methods[name])(params); \
+		}
 
 inline float PARAM_TO_FLOAT(int32 xi) {
 	float x;
@@ -103,11 +121,10 @@ inline int32 PARAM_FROM_FLOAT(float x) {
 	T9 N9 = (T9)params[8]
 
 class ScriptMethodParams;
+class ScriptContainer;
 
 using string = const char *;
 typedef uint32 HWND;
-
-typedef void (*PluginMethod)(ScriptMethodParams &params);
 
 class ScriptMethodParams : public Common::Array<intptr_t> {
 public:
@@ -125,45 +142,39 @@ public:
  */
 class ScriptContainer {
 protected:
-	static inline void registerFunction(IAGSEngine *engine, const char *name, PluginMethod fn) {
-		engine->RegisterScriptFunction(name, (void *)fn);
+	IAGSEngine *_engine = nullptr;
+public:
+	virtual void AGS_EngineStartup(IAGSEngine *engine) {
+		_engine = engine;
 	}
-};
 
+	virtual void execMethod(const Common::String &name, ScriptMethodParams &params) = 0;
+};
 
 /**
  * Base class for the implementation of AGS plugins
  */
 class PluginBase: public ScriptContainer {
-protected:
-	Common::HashMap<Common::String, void *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _methods;
-
-	static int    AGS_PluginV2() {
-		return 1;
-	}
-	static int    AGS_EditorStartup(IAGSEditor *);
-	static void   AGS_EditorShutdown();
-	static void   AGS_EditorProperties(HWND);
-	static int    AGS_EditorSaveGame(char *, int);
-	static void   AGS_EditorLoadGame(char *, int);
-	static void   AGS_EngineStartup(IAGSEngine *);
-	static void   AGS_EngineShutdown();
-	static int64 AGS_EngineOnEvent(int, NumberPtr);
-	static int    AGS_EngineDebugHook(const char *, int, int);
-	static void   AGS_EngineInitGfx(const char *driverID, void *data);
 public:
-	PluginBase();
+	PluginBase() {}
+	virtual ~PluginBase() {}
 
-	void *operator[](const Common::String &methodName) const {
-		return _methods[methodName];
-	}
+	virtual const char *AGS_GetPluginName() = 0;
+	virtual int    AGS_PluginV2() const { return 1; }
+	virtual int    AGS_EditorStartup(IAGSEditor *) { return 0; }
+	virtual void   AGS_EditorShutdown() {}
+	virtual void   AGS_EditorProperties(HWND) {}
+	virtual int    AGS_EditorSaveGame(char *, int) { return 0; }
+	virtual void   AGS_EditorLoadGame(char *, int) {}
+	virtual void   AGS_EngineShutdown() {}
+	virtual int64 AGS_EngineOnEvent(int, NumberPtr) { return 0; }
+	virtual int    AGS_EngineDebugHook(const char *, int, int) { return 0; }
+	virtual void   AGS_EngineInitGfx(const char *driverID, void *data) {}
 };
 
-extern void *pluginOpen(const char *filename);
+extern PluginBase *pluginOpen(const char *filename);
 
-extern int pluginClose(void *lib);
-
-extern void *pluginSym(void *lib, const char *method);
+extern int pluginClose(Plugins::PluginBase *lib);
 
 extern const char *pluginError();
 

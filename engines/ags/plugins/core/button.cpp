@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void Button::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(Button::Animate^4, Animate);
 	SCRIPT_METHOD_EXT(Button::GetText^1, GetText);
 	SCRIPT_METHOD_EXT(Button::SetText^1, SetText);
@@ -46,6 +47,7 @@ void Button::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(Button::set_Text, SetText);
 	SCRIPT_METHOD_EXT(Button::get_TextColor, GetTextColor);
 	SCRIPT_METHOD_EXT(Button::set_TextColor, SetTextColor);
+	*/
 }
 
 void Button::Animate(ScriptMethodParams &params) {

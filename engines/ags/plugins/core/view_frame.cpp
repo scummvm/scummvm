@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void ViewFrame::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(ViewFrame::get_Flipped, GetFlipped);
 	SCRIPT_METHOD_EXT(ViewFrame::get_Frame, GetFrame);
 	SCRIPT_METHOD_EXT(ViewFrame::get_Graphic, GetGraphic);
@@ -39,6 +40,7 @@ void ViewFrame::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(ViewFrame::set_Sound, SetSound);
 	SCRIPT_METHOD_EXT(ViewFrame::get_Speed, GetSpeed);
 	SCRIPT_METHOD_EXT(ViewFrame::get_View, GetView);
+	*/
 }
 
 void ViewFrame::GetFlipped(ScriptMethodParams &params) {

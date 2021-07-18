@@ -31,14 +31,14 @@ namespace AGSClipboard {
 
 class AGSClipboard : public PluginBase {
 private:
-	static IAGSEngine *_engine;
-	static Common::String *_text;
+	IAGSEngine *_engine;
+	Common::String *_text;
 private:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *engine);
-	static void AGS_EngineShutdown();
-	static void Clipboard_PasteText(ScriptMethodParams &params);
-	static void Clipboard_CopyText(ScriptMethodParams &params);
+	const char *AGS_GetPluginName();
+	void AGS_EngineStartup(IAGSEngine *engine) override;
+	void AGS_EngineShutdown();
+	void Clipboard_PasteText(ScriptMethodParams &params);
+	void Clipboard_CopyText(ScriptMethodParams &params);
 
 public:
 	AGSClipboard();

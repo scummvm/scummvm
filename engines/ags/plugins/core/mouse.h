@@ -23,36 +23,38 @@
 #ifndef AGS_PLUGINS_CORE_MOUSE_H
 #define AGS_PLUGINS_CORE_MOUSE_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Mouse : public ScriptContainer {
+	SCRIPT_HASH(Mouse)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Mouse() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void ChangeCursorGraphic(ScriptMethodParams &params);
-	static void ChangeCursorHotspot(ScriptMethodParams &params);
-	static void Mouse_ChangeModeView(ScriptMethodParams &params);
-	static void disable_cursor_mode(ScriptMethodParams &params);
-	static void enable_cursor_mode(ScriptMethodParams &params);
-	static void Mouse_GetModeGraphic(ScriptMethodParams &params);
-	static void IsButtonDown(ScriptMethodParams &params);
-	static void IsModeEnabled(ScriptMethodParams &params);
-	static void SaveCursorForLocationChange(ScriptMethodParams &params);
-	static void SetNextCursor(ScriptMethodParams &params);
-	static void SetPreviousCursor(ScriptMethodParams &params);
-	static void SetMouseBounds(ScriptMethodParams &params);
-	static void SetMousePosition(ScriptMethodParams &params);
-	static void RefreshMouse(ScriptMethodParams &params);
-	static void set_default_cursor(ScriptMethodParams &params);
-	static void set_mouse_cursor(ScriptMethodParams &params);
-	static void GetCursorMode(ScriptMethodParams &params);
-	static void set_cursor_mode(ScriptMethodParams &params);
-	static void Mouse_GetVisible(ScriptMethodParams &params);
-	static void Mouse_SetVisible(ScriptMethodParams &params);
+	void ChangeCursorGraphic(ScriptMethodParams &params);
+	void ChangeCursorHotspot(ScriptMethodParams &params);
+	void Mouse_ChangeModeView(ScriptMethodParams &params);
+	void disable_cursor_mode(ScriptMethodParams &params);
+	void enable_cursor_mode(ScriptMethodParams &params);
+	void Mouse_GetModeGraphic(ScriptMethodParams &params);
+	void IsButtonDown(ScriptMethodParams &params);
+	void IsModeEnabled(ScriptMethodParams &params);
+	void SaveCursorForLocationChange(ScriptMethodParams &params);
+	void SetNextCursor(ScriptMethodParams &params);
+	void SetPreviousCursor(ScriptMethodParams &params);
+	void SetMouseBounds(ScriptMethodParams &params);
+	void SetMousePosition(ScriptMethodParams &params);
+	void RefreshMouse(ScriptMethodParams &params);
+	void set_default_cursor(ScriptMethodParams &params);
+	void set_mouse_cursor(ScriptMethodParams &params);
+	void GetCursorMode(ScriptMethodParams &params);
+	void set_cursor_mode(ScriptMethodParams &params);
+	void Mouse_GetVisible(ScriptMethodParams &params);
+	void Mouse_SetVisible(ScriptMethodParams &params);
 };
 
 } // namespace Core

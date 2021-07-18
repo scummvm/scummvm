@@ -35,32 +35,32 @@ namespace AGSBlend {
  */
 class AGSBlend : public PluginBase {
 private:
-static IAGSEngine *_engine;
+IAGSEngine *_engine;
 private:
-static const char *AGS_GetPluginName();
-static void AGS_EngineStartup(IAGSEngine *lpEngine);
+const char *AGS_GetPluginName();
+void AGS_EngineStartup(IAGSEngine *lpEngine);
 
 private:
 /**
  * Gets the alpha value at coords x,y
  */
-static void GetAlpha(ScriptMethodParams &params);
+void GetAlpha(ScriptMethodParams &params);
 
 /**
  * Sets the alpha value at coords x,y
  */
-static void PutAlpha(ScriptMethodParams &params);
+void PutAlpha(ScriptMethodParams &params);
 
 /**
  * Translates index from a 2D array to a 1D array
  */
-static int xytolocale(int x, int y, int width);
+int xytolocale(int x, int y, int width);
 
-static void HighPass(ScriptMethodParams &params);
-static void Blur(ScriptMethodParams &params);
-static void DrawSprite(ScriptMethodParams &params);
-static void DrawAdd(ScriptMethodParams &params);
-static void DrawAlpha(ScriptMethodParams &params);
+void HighPass(ScriptMethodParams &params);
+void Blur(ScriptMethodParams &params);
+void DrawSprite(ScriptMethodParams &params);
+void DrawAdd(ScriptMethodParams &params);
+void DrawAlpha(ScriptMethodParams &params);
 
 public:
 AGSBlend();

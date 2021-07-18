@@ -215,7 +215,7 @@ void AGSCreditz2::RunStaticCreditSequence(ScriptMethodParams &params) {
 		_state->_creditSequence = sequence;
 		_state->_staticCredits = true;
 		_state->_creditsRunning = true;
-		_state->_currentStatic = 1;
+		_state->_current= 1;
 		_state->_timer = 0;
 		draw();
 
@@ -224,7 +224,7 @@ void AGSCreditz2::RunStaticCreditSequence(ScriptMethodParams &params) {
 		_state->_creditSequence = -1;
 		_state->_stSeqSettings[sequence].finished = false;
 		_state->_creditsRunning = false;
-		_state->_currentStatic = 0;
+		_state->_current= 0;
 		_state->_timer = 0;
 	}
 }

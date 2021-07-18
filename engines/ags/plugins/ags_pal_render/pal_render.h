@@ -51,7 +51,7 @@ class Mix {
 public:
 //unsigned char MixColorAlpha (unsigned char fg,unsigned char bg,unsigned char alpha);
 //unsigned char MixColorAdditive (unsigned char fg,unsigned char bg,unsigned char alpha);
-	static unsigned char MixColorAlpha(unsigned char fg, unsigned char bg, unsigned char alpha, int use_objpal = 0) {
+	unsigned char MixColorAlpha(unsigned char fg, unsigned char bg, unsigned char alpha, int use_objpal = 0) {
 		unsigned char rfg = cycle_remap[fg]; //Automatic remapping of palette slots.
 		//unsigned char rbg = cycle_remap [bg]; //Saves on typing elsewhere.
 		AGSColor *palette = engine->GetPalette();
@@ -88,7 +88,7 @@ public:
 		//engine->ReleaseBitmapSurface (clutspr);
 	}
 
-	static unsigned char MixColorLightLevel(unsigned char fg, unsigned char intensity) {
+	unsigned char MixColorLightLevel(unsigned char fg, unsigned char intensity) {
 		unsigned char rfg = cycle_remap [fg]; //Automatic remapping of palette slots.
 		int i = 0;
 		//int dark_r = (((palette[fg].r>>1) * (intensity))>>8);
@@ -102,7 +102,7 @@ public:
 		return cycle_remap [*(clutp + i)]; //Once again, to make sure that the palette slot used is the right one.
 	}
 
-	static unsigned char MixColorAdditive(unsigned char fg, unsigned char bg, unsigned char alpha, int use_objpal = 0) {
+	unsigned char MixColorAdditive(unsigned char fg, unsigned char bg, unsigned char alpha, int use_objpal = 0) {
 		unsigned char rfg = cycle_remap[fg]; //Automatic remapping of palette slots.
 		//unsigned char rbg = cycle_remap[bg]; //Saves on typing elsewhere.
 		//BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
@@ -143,7 +143,7 @@ public:
 		return result;
 	}
 
-	static unsigned char MixColorMultiply(unsigned char fg, unsigned char bg, unsigned char alpha, int use_objpal = 0) {
+	unsigned char MixColorMultiply(unsigned char fg, unsigned char bg, unsigned char alpha, int use_objpal = 0) {
 		unsigned char rfg = cycle_remap [fg]; //Automatic remapping of palette slots.
 		unsigned char rbg = cycle_remap [bg]; //Saves on typing elsewhere.
 		AGSColor *palette = engine->GetPalette();

@@ -48,25 +48,25 @@ void syncGame(Serializer &s);
  */
 class AGSParallax : public PluginBase {
 private:
-static IAGSEngine *_engine;
-static int32 _screenWidth;
-static int32 _screenHeight;
-static int32 _screenColorDepth;
+IAGSEngine *_engine;
+int32 _screenWidth;
+int32 _screenHeight;
+int32 _screenColorDepth;
 
-static bool _enabled;
-static Sprite _sprites[MAX_SPRITES];
+bool _enabled;
+Sprite _sprites[MAX_SPRITES];
 private:
-static const char *AGS_GetPluginName();
-static void AGS_EngineStartup(IAGSEngine *lpEngine);
-static int64 AGS_EngineOnEvent(int event, NumberPtr data);
+const char *AGS_GetPluginName();
+void AGS_EngineStartup(IAGSEngine *lpEngine);
+int64 AGS_EngineOnEvent(int event, NumberPtr data);
 
-static void pxDrawSprite(ScriptMethodParams &params);
-static void pxDeleteSprite(ScriptMethodParams &params);
+void pxDrawSprite(ScriptMethodParams &params);
+void pxDeleteSprite(ScriptMethodParams &params);
 
 private:
-static void syncGame(Serializer &s);
-static void Draw(bool foreground);
-static void clear();
+void syncGame(Serializer &s);
+void Draw(bool foreground);
+void clear();
 
 public:
 AGSParallax();

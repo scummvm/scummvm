@@ -23,23 +23,25 @@
 #ifndef AGS_PLUGINS_CORE_AUDIO_CLIP_H
 #define AGS_PLUGINS_CORE_AUDIO_CLIP_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class AudioClip : public ScriptContainer {
+	SCRIPT_HASH(AudioClip)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~AudioClip() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void Play(ScriptMethodParams &params);
-	static void PlayFrom(ScriptMethodParams &params);
-	static void PlayQueued(ScriptMethodParams &params);
-	static void Stop(ScriptMethodParams &params);
-	static void GetFileType(ScriptMethodParams &params);
-	static void GetIsAvailable(ScriptMethodParams &params);
-	static void GetType(ScriptMethodParams &params);
+	void Play(ScriptMethodParams &params);
+	void PlayFrom(ScriptMethodParams &params);
+	void PlayQueued(ScriptMethodParams &params);
+	void Stop(ScriptMethodParams &params);
+	void GetFileType(ScriptMethodParams &params);
+	void GetIsAvailable(ScriptMethodParams &params);
+	void GetType(ScriptMethodParams &params);
 };
 
 } // namespace Core

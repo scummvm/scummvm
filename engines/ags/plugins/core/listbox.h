@@ -23,41 +23,43 @@
 #ifndef AGS_PLUGINS_CORE_LISTBOX_H
 #define AGS_PLUGINS_CORE_LISTBOX_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Listbox : public ScriptContainer {
+	SCRIPT_HASH(Listbox)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Listbox() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void AddItem(ScriptMethodParams &params);
-	static void Clear(ScriptMethodParams &params);
-	static void FillDirList(ScriptMethodParams &params);
-	static void FillSaveGameList(ScriptMethodParams &params);
-	static void GetItemAtLocation(ScriptMethodParams &params);
-	static void GetItemText(ScriptMethodParams &params);
-	static void InsertItemAt(ScriptMethodParams &params);
-	static void RemoveItem(ScriptMethodParams &params);
-	static void ScrollDown(ScriptMethodParams &params);
-	static void ScrollUp(ScriptMethodParams &params);
-	static void SetItemText(ScriptMethodParams &params);
-	static void GetFont(ScriptMethodParams &params);
-	static void SetFont(ScriptMethodParams &params);
-	static void GetHideBorder(ScriptMethodParams &params);
-	static void SetHideBorder(ScriptMethodParams &params);
-	static void GetHideScrollArrows(ScriptMethodParams &params);
-	static void SetHideScrollArrows(ScriptMethodParams &params);
-	static void GetItemCount(ScriptMethodParams &params);
-	static void GetItems(ScriptMethodParams &params);
-	static void GetRowCount(ScriptMethodParams &params);
-	static void GetSaveGameSlots(ScriptMethodParams &params);
-	static void GetSelectedIndex(ScriptMethodParams &params);
-	static void SetSelectedIndex(ScriptMethodParams &params);
-	static void GetTopItem(ScriptMethodParams &params);
-	static void SetTopItem(ScriptMethodParams &params);
+	void AddItem(ScriptMethodParams &params);
+	void Clear(ScriptMethodParams &params);
+	void FillDirList(ScriptMethodParams &params);
+	void FillSaveGameList(ScriptMethodParams &params);
+	void GetItemAtLocation(ScriptMethodParams &params);
+	void GetItemText(ScriptMethodParams &params);
+	void InsertItemAt(ScriptMethodParams &params);
+	void RemoveItem(ScriptMethodParams &params);
+	void ScrollDown(ScriptMethodParams &params);
+	void ScrollUp(ScriptMethodParams &params);
+	void SetItemText(ScriptMethodParams &params);
+	void GetFont(ScriptMethodParams &params);
+	void SetFont(ScriptMethodParams &params);
+	void GetHideBorder(ScriptMethodParams &params);
+	void SetHideBorder(ScriptMethodParams &params);
+	void GetHideScrollArrows(ScriptMethodParams &params);
+	void SetHideScrollArrows(ScriptMethodParams &params);
+	void GetItemCount(ScriptMethodParams &params);
+	void GetItems(ScriptMethodParams &params);
+	void GetRowCount(ScriptMethodParams &params);
+	void GetSaveGameSlots(ScriptMethodParams &params);
+	void GetSelectedIndex(ScriptMethodParams &params);
+	void SetSelectedIndex(ScriptMethodParams &params);
+	void GetTopItem(ScriptMethodParams &params);
+	void SetTopItem(ScriptMethodParams &params);
 };
 
 } // namespace Core

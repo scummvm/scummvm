@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void File::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(File::Delete^1, Delete);
 	SCRIPT_METHOD_EXT(File::Exists^1, Exists);
 	SCRIPT_METHOD_EXT(File::Open^2, OpenFile);
@@ -45,6 +46,7 @@ void File::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(File::WriteString^1, WriteString);
 	SCRIPT_METHOD_EXT(File::get_EOF, GetEOF);
 	SCRIPT_METHOD_EXT(File::get_Error, GetError);
+	*/
 }
 
 void File::Delete(ScriptMethodParams &params) {

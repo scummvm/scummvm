@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void Slider::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(Slider::get_BackgroundGraphic, GetBackgroundGraphic);
 	SCRIPT_METHOD_EXT(Slider::set_BackgroundGraphic, SetBackgroundGraphic);
 	SCRIPT_METHOD_EXT(Slider::get_HandleGraphic, GetHandleGraphic);
@@ -40,6 +41,7 @@ void Slider::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(Slider::set_Min, SetMin);
 	SCRIPT_METHOD_EXT(Slider::get_Value, GetValue);
 	SCRIPT_METHOD_EXT(Slider::set_Value, SetValue);
+	*/
 }
 
 void Slider::GetBackgroundGraphic(ScriptMethodParams &params) {

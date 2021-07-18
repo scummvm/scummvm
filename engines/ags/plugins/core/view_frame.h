@@ -23,27 +23,29 @@
 #ifndef AGS_PLUGINS_CORE_VIEW_FRAME_H
 #define AGS_PLUGINS_CORE_VIEW_FRAME_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class ViewFrame : public ScriptContainer {
+	SCRIPT_HASH(ViewFrame)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~ViewFrame() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void GetFlipped(ScriptMethodParams &params);
-	static void GetFrame(ScriptMethodParams &params);
-	static void GetGraphic(ScriptMethodParams &params);
-	static void SetGraphic(ScriptMethodParams &params);
-	static void GetLinkedAudio(ScriptMethodParams &params);
-	static void SetLinkedAudio(ScriptMethodParams &params);
-	static void GetLoop(ScriptMethodParams &params);
-	static void GetSound(ScriptMethodParams &params);
-	static void SetSound(ScriptMethodParams &params);
-	static void GetSpeed(ScriptMethodParams &params);
-	static void GetView(ScriptMethodParams &params);
+	void GetFlipped(ScriptMethodParams &params);
+	void GetFrame(ScriptMethodParams &params);
+	void GetGraphic(ScriptMethodParams &params);
+	void SetGraphic(ScriptMethodParams &params);
+	void GetLinkedAudio(ScriptMethodParams &params);
+	void SetLinkedAudio(ScriptMethodParams &params);
+	void GetLoop(ScriptMethodParams &params);
+	void GetSound(ScriptMethodParams &params);
+	void SetSound(ScriptMethodParams &params);
+	void GetSpeed(ScriptMethodParams &params);
+	void GetView(ScriptMethodParams &params);
 };
 
 } // namespace Core

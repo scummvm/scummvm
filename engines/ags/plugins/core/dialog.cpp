@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void Dialog::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(Dialog::get_ID, GetID);
 	SCRIPT_METHOD_EXT(Dialog::get_OptionCount, GetOptionCount);
 	SCRIPT_METHOD_EXT(Dialog::get_ShowTextParser, GetShowTextParser);
@@ -37,6 +38,7 @@ void Dialog::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(Dialog::HasOptionBeenChosen^1, HasOptionBeenChosen);
 	SCRIPT_METHOD_EXT(Dialog::SetOptionState^2, SetOptionState);
 	SCRIPT_METHOD_EXT(Dialog::Start^0, Start);
+	*/
 }
 
 void Dialog::GetID(ScriptMethodParams &params) {

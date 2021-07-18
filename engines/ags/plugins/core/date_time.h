@@ -23,24 +23,26 @@
 #ifndef AGS_PLUGINS_CORE_DATE_TIME_H
 #define AGS_PLUGINS_CORE_DATE_TIME_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class DateTime : public ScriptContainer {
+	SCRIPT_HASH(DateTime)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~DateTime() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void Now(ScriptMethodParams &params);
-	static void GetDayOfMonth(ScriptMethodParams &params);
-	static void GetHour(ScriptMethodParams &params);
-	static void GetMinute(ScriptMethodParams &params);
-	static void GetMonth(ScriptMethodParams &params);
-	static void GetRawTime(ScriptMethodParams &params);
-	static void GetSecond(ScriptMethodParams &params);
-	static void GetYear(ScriptMethodParams &params);
+	void Now(ScriptMethodParams &params);
+	void GetDayOfMonth(ScriptMethodParams &params);
+	void GetHour(ScriptMethodParams &params);
+	void GetMinute(ScriptMethodParams &params);
+	void GetMonth(ScriptMethodParams &params);
+	void GetRawTime(ScriptMethodParams &params);
+	void GetSecond(ScriptMethodParams &params);
+	void GetYear(ScriptMethodParams &params);
 };
 
 } // namespace Core

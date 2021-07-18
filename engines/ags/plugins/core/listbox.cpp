@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void Listbox::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(ListBox::AddItem^1, AddItem);
 	SCRIPT_METHOD_EXT(ListBox::Clear^0, Clear);
 	SCRIPT_METHOD_EXT(ListBox::FillDirList^1, FillDirList);
@@ -54,6 +55,7 @@ void Listbox::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(ListBox::set_SelectedIndex, SetSelectedIndex);
 	SCRIPT_METHOD_EXT(ListBox::get_TopItem, GetTopItem);
 	SCRIPT_METHOD_EXT(ListBox::set_TopItem, SetTopItem);
+	*/
 }
 
 void Listbox::AddItem(ScriptMethodParams &params) {

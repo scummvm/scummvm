@@ -23,41 +23,43 @@
 #ifndef AGS_PLUGINS_CORE_GUI_H
 #define AGS_PLUGINS_CORE_GUI_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class GUI : public ScriptContainer {
+	SCRIPT_HASH(GUI)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~GUI() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void Centre(ScriptMethodParams &params);
-	static void GetGUIAtLocation(ScriptMethodParams &params);
-	static void SetPosition(ScriptMethodParams &params);
-	static void SetSize(ScriptMethodParams &params);
-	static void GetBackgroundGraphic(ScriptMethodParams &params);
-	static void SetBackgroundGraphic(ScriptMethodParams &params);
-	static void GetClickable(ScriptMethodParams &params);
-	static void SetClickable(ScriptMethodParams &params);
-	static void GetControlCount(ScriptMethodParams &params);
-	static void GetiControls(ScriptMethodParams &params);
-	static void GetHeight(ScriptMethodParams &params);
-	static void SetHeight(ScriptMethodParams &params);
-	static void GetID(ScriptMethodParams &params);
-	static void GetTransparency(ScriptMethodParams &params);
-	static void SetTransparency(ScriptMethodParams &params);
-	static void GetVisible(ScriptMethodParams &params);
-	static void SetVisible(ScriptMethodParams &params);
-	static void GetWidth(ScriptMethodParams &params);
-	static void SetWidth(ScriptMethodParams &params);
-	static void GetX(ScriptMethodParams &params);
-	static void SetX(ScriptMethodParams &params);
-	static void GetY(ScriptMethodParams &params);
-	static void SetY(ScriptMethodParams &params);
-	static void GetZOrder(ScriptMethodParams &params);
-	static void SetZOrder(ScriptMethodParams &params);
+	void Centre(ScriptMethodParams &params);
+	void GetGUIAtLocation(ScriptMethodParams &params);
+	void SetPosition(ScriptMethodParams &params);
+	void SetSize(ScriptMethodParams &params);
+	void GetBackgroundGraphic(ScriptMethodParams &params);
+	void SetBackgroundGraphic(ScriptMethodParams &params);
+	void GetClickable(ScriptMethodParams &params);
+	void SetClickable(ScriptMethodParams &params);
+	void GetControlCount(ScriptMethodParams &params);
+	void GetiControls(ScriptMethodParams &params);
+	void GetHeight(ScriptMethodParams &params);
+	void SetHeight(ScriptMethodParams &params);
+	void GetID(ScriptMethodParams &params);
+	void GetTransparency(ScriptMethodParams &params);
+	void SetTransparency(ScriptMethodParams &params);
+	void GetVisible(ScriptMethodParams &params);
+	void SetVisible(ScriptMethodParams &params);
+	void GetWidth(ScriptMethodParams &params);
+	void SetWidth(ScriptMethodParams &params);
+	void GetX(ScriptMethodParams &params);
+	void SetX(ScriptMethodParams &params);
+	void GetY(ScriptMethodParams &params);
+	void SetY(ScriptMethodParams &params);
+	void GetZOrder(ScriptMethodParams &params);
+	void SetZOrder(ScriptMethodParams &params);
 };
 
 } // namespace Core

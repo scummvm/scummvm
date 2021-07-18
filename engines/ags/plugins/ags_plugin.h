@@ -31,9 +31,10 @@
 #ifndef AGS_PLUGINS_AGS_PLUGIN_H
 #define AGS_PLUGINS_AGS_PLUGIN_H
 
+#include "common/array.h"
 #include "ags/shared/core/types.h"
 #include "ags/shared/font/ags_font_renderer.h"
-#include "common/array.h"
+#include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
 
@@ -318,7 +319,8 @@ public:
 	// get engine version
 	AGSIFUNC(const char *) GetEngineVersion();
 	// register a script function with the system
-	AGSIFUNC(void) RegisterScriptFunction(const char *name, void *address);
+	AGSIFUNC(void) RegisterScriptFunction(const char *name,
+		Plugins::ScriptContainer *instance);
 	#ifdef WINDOWS_VERSION
 	// get game window handle
 	AGSIFUNC(HWND) GetWindowHandle();

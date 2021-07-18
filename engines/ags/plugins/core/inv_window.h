@@ -23,30 +23,32 @@
 #ifndef AGS_PLUGINS_CORE_INV_WINDOW_H
 #define AGS_PLUGINS_CORE_INV_WINDOW_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class InvWindow : public ScriptContainer {
+	SCRIPT_HASH(InvWindow)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~InvWindow() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void ScrollDown(ScriptMethodParams &params);
-	static void ScrollUp(ScriptMethodParams &params);
-	static void GetCharacterToUse(ScriptMethodParams &params);
-	static void SetCharacterToUse(ScriptMethodParams &params);
-	static void GetItemAtIndex(ScriptMethodParams &params);
-	static void GetItemCount(ScriptMethodParams &params);
-	static void GetItemHeight(ScriptMethodParams &params);
-	static void SetItemHeight(ScriptMethodParams &params);
-	static void GetItemWidth(ScriptMethodParams &params);
-	static void SetItemWidth(ScriptMethodParams &params);
-	static void GetItemsPerRow(ScriptMethodParams &params);
-	static void GetRowCount(ScriptMethodParams &params);
-	static void GetTopItem(ScriptMethodParams &params);
-	static void SetTopItem(ScriptMethodParams &params);
+	void ScrollDown(ScriptMethodParams &params);
+	void ScrollUp(ScriptMethodParams &params);
+	void GetCharacterToUse(ScriptMethodParams &params);
+	void SetCharacterToUse(ScriptMethodParams &params);
+	void GetItemAtIndex(ScriptMethodParams &params);
+	void GetItemCount(ScriptMethodParams &params);
+	void GetItemHeight(ScriptMethodParams &params);
+	void SetItemHeight(ScriptMethodParams &params);
+	void GetItemWidth(ScriptMethodParams &params);
+	void SetItemWidth(ScriptMethodParams &params);
+	void GetItemsPerRow(ScriptMethodParams &params);
+	void GetRowCount(ScriptMethodParams &params);
+	void GetTopItem(ScriptMethodParams &params);
+	void SetTopItem(ScriptMethodParams &params);
 };
 
 } // namespace Core

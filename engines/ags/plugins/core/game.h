@@ -23,63 +23,65 @@
 #ifndef AGS_PLUGINS_CORE_GAME_H
 #define AGS_PLUGINS_CORE_GAME_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Game : public ScriptContainer {
+	SCRIPT_HASH(Game)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Game() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void IsAudioPlaying(ScriptMethodParams &params);
-	static void SetAudioTypeSpeechVolumeDrop(ScriptMethodParams &params);
-	static void SetAudioTypeVolume(ScriptMethodParams &params);
-	static void StopAudio(ScriptMethodParams &params);
-	static void ChangeTranslation(ScriptMethodParams &params);
-	static void DoOnceOnly(ScriptMethodParams &params);
-	static void GetColorFromRGB(ScriptMethodParams &params);
-	static void GetFrameCountForLoop(ScriptMethodParams &params);
-	static void GetLocationName(ScriptMethodParams &params);
-	static void GetLoopCountForView(ScriptMethodParams &params);
-	static void GetMODPattern(ScriptMethodParams &params);
-	static void GetRunNextSettingForLoop(ScriptMethodParams &params);
-	static void GetSaveSlotDescription(ScriptMethodParams &params);
-	static void GetViewFrame(ScriptMethodParams &params);
-	static void InputBox(ScriptMethodParams &params);
-	static void SetSaveGameDirectory(ScriptMethodParams &params);
-	static void StopAllSounds(ScriptMethodParams &params);
-	static void GetCharacterCount(ScriptMethodParams &params);
-	static void GetDialogCount(ScriptMethodParams &params);
-	static void GetFileName(ScriptMethodParams &params);
-	static void GetFontCount(ScriptMethodParams &params);
-	static void GetGlobalMessages(ScriptMethodParams &params);
-	static void GetGlobalStrings(ScriptMethodParams &params);
-	static void SetGlobalString(ScriptMethodParams &params);
-	static void GetGUICount(ScriptMethodParams &params);
-	static void GetIgnoreUserInputAfterTextTimeoutMs(ScriptMethodParams &params);
-	static void SetIgnoreUserInputAfterTextTimeoutMs(ScriptMethodParams &params);
-	static void GetInSkippableCutscene(ScriptMethodParams &params);
-	static void GetInventoryItemCount(ScriptMethodParams &params);
-	static void GetMinimumTextDisplayTimeMs(ScriptMethodParams &params);
-	static void SetMinimumTextDisplayTimeMs(ScriptMethodParams &params);
-	static void GetMouseCursorCount(ScriptMethodParams &params);
-	static void GetName(ScriptMethodParams &params);
-	static void SetName(ScriptMethodParams &params);
-	static void GetNormalFont(ScriptMethodParams &params);
-	static void SetNormalFont(ScriptMethodParams &params);
-	static void GetSkippingCutscene(ScriptMethodParams &params);
-	static void GetSpeechFont(ScriptMethodParams &params);
-	static void SetSpeechFont(ScriptMethodParams &params);
-	static void GetSpriteWidth(ScriptMethodParams &params);
-	static void GetSpriteHeight(ScriptMethodParams &params);
-	static void GetTextReadingSpeed(ScriptMethodParams &params);
-	static void SetTextReadingSpeed(ScriptMethodParams &params);
-	static void GetTranslationFilename(ScriptMethodParams &params);
-	static void GetUseNativeCoordinates(ScriptMethodParams &params);
-	static void GetViewCount(ScriptMethodParams &params);
-	static void PlayVoiceClip(ScriptMethodParams &params);
+	void IsAudioPlaying(ScriptMethodParams &params);
+	void SetAudioTypeSpeechVolumeDrop(ScriptMethodParams &params);
+	void SetAudioTypeVolume(ScriptMethodParams &params);
+	void StopAudio(ScriptMethodParams &params);
+	void ChangeTranslation(ScriptMethodParams &params);
+	void DoOnceOnly(ScriptMethodParams &params);
+	void GetColorFromRGB(ScriptMethodParams &params);
+	void GetFrameCountForLoop(ScriptMethodParams &params);
+	void GetLocationName(ScriptMethodParams &params);
+	void GetLoopCountForView(ScriptMethodParams &params);
+	void GetMODPattern(ScriptMethodParams &params);
+	void GetRunNextSettingForLoop(ScriptMethodParams &params);
+	void GetSaveSlotDescription(ScriptMethodParams &params);
+	void GetViewFrame(ScriptMethodParams &params);
+	void InputBox(ScriptMethodParams &params);
+	void SetSaveGameDirectory(ScriptMethodParams &params);
+	void StopAllSounds(ScriptMethodParams &params);
+	void GetCharacterCount(ScriptMethodParams &params);
+	void GetDialogCount(ScriptMethodParams &params);
+	void GetFileName(ScriptMethodParams &params);
+	void GetFontCount(ScriptMethodParams &params);
+	void GetGlobalMessages(ScriptMethodParams &params);
+	void GetGlobalStrings(ScriptMethodParams &params);
+	void SetGlobalString(ScriptMethodParams &params);
+	void GetGUICount(ScriptMethodParams &params);
+	void GetIgnoreUserInputAfterTextTimeoutMs(ScriptMethodParams &params);
+	void SetIgnoreUserInputAfterTextTimeoutMs(ScriptMethodParams &params);
+	void GetInSkippableCutscene(ScriptMethodParams &params);
+	void GetInventoryItemCount(ScriptMethodParams &params);
+	void GetMinimumTextDisplayTimeMs(ScriptMethodParams &params);
+	void SetMinimumTextDisplayTimeMs(ScriptMethodParams &params);
+	void GetMouseCursorCount(ScriptMethodParams &params);
+	void GetName(ScriptMethodParams &params);
+	void SetName(ScriptMethodParams &params);
+	void GetNormalFont(ScriptMethodParams &params);
+	void SetNormalFont(ScriptMethodParams &params);
+	void GetSkippingCutscene(ScriptMethodParams &params);
+	void GetSpeechFont(ScriptMethodParams &params);
+	void SetSpeechFont(ScriptMethodParams &params);
+	void GetSpriteWidth(ScriptMethodParams &params);
+	void GetSpriteHeight(ScriptMethodParams &params);
+	void GetTextReadingSpeed(ScriptMethodParams &params);
+	void SetTextReadingSpeed(ScriptMethodParams &params);
+	void GetTranslationFilename(ScriptMethodParams &params);
+	void GetUseNativeCoordinates(ScriptMethodParams &params);
+	void GetViewCount(ScriptMethodParams &params);
+	void PlayVoiceClip(ScriptMethodParams &params);
 };
 
 } // namespace Core

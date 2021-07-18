@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void Math::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(Maths::ArcCos^1, ArcCos);
 	SCRIPT_METHOD_EXT(Maths::ArcSin^1, ArcSin);
 	SCRIPT_METHOD_EXT(Maths::ArcTan^1, ArcTan);
@@ -46,6 +47,7 @@ void Math::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(Maths::Tan^1, Tan);
 	SCRIPT_METHOD_EXT(Maths::Tanh^1, Tanh);
 	SCRIPT_METHOD_EXT(Maths::get_Pi, GetPi);
+	*/
 }
 
 void Math::ArcCos(ScriptMethodParams &params) {

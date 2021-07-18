@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void InventoryItem::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(InventoryItem::GetAtScreenXY ^ 2, GetInvAtLocation);
 	SCRIPT_METHOD_EXT(InventoryItem::IsInteractionAvailable ^ 1, CheckInteractionAvailable);
 	SCRIPT_METHOD_EXT(InventoryItem::GetName ^ 1, GetName);
@@ -43,6 +44,7 @@ void InventoryItem::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(InventoryItem::get_ID, GetID);
 	SCRIPT_METHOD_EXT(InventoryItem::get_Name, GetName_New);
 	SCRIPT_METHOD_EXT(InventoryItem::set_Name, SetName);
+	*/
 }
 
 void InventoryItem::GetInvAtLocation(ScriptMethodParams &params) {

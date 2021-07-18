@@ -23,38 +23,40 @@
 #ifndef AGS_PLUGINS_CORE_SYSTEM_H
 #define AGS_PLUGINS_CORE_SYSTEM_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class System : public ScriptContainer {
+	SCRIPT_HASH(System)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~System() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void GetAudioChannelCount(ScriptMethodParams &params);
-	static void GetAudioChannels(ScriptMethodParams &params);
-	static void GetCapsLock(ScriptMethodParams &params);
-	static void GetColorDepth(ScriptMethodParams &params);
-	static void GetGamma(ScriptMethodParams &params);
-	static void SetGamma(ScriptMethodParams &params);
-	static void GetHardwareAcceleration(ScriptMethodParams &params);
-	static void GetNumLock(ScriptMethodParams &params);
-	static void GetOS(ScriptMethodParams &params);
-	static void GetRuntimeInfo(ScriptMethodParams &params);
-	static void GetScreenHeight(ScriptMethodParams &params);
-	static void GetScreenWidth(ScriptMethodParams &params);
-	static void GetScrollLock(ScriptMethodParams &params);
-	static void GetSupportsGammaControl(ScriptMethodParams &params);
-	static void GetVersion(ScriptMethodParams &params);
-	static void GetViewportHeight(ScriptMethodParams &params);
-	static void GetViewportWidth(ScriptMethodParams &params);
-	static void GetVolume(ScriptMethodParams &params);
-	static void SetVolume(ScriptMethodParams &params);
-	static void GetVsync(ScriptMethodParams &params);
-	static void SetVsync(ScriptMethodParams &params);
-	static void GetWindowed(ScriptMethodParams &params);
+	void GetAudioChannelCount(ScriptMethodParams &params);
+	void GetAudioChannels(ScriptMethodParams &params);
+	void GetCapsLock(ScriptMethodParams &params);
+	void GetColorDepth(ScriptMethodParams &params);
+	void GetGamma(ScriptMethodParams &params);
+	void SetGamma(ScriptMethodParams &params);
+	void GetHardwareAcceleration(ScriptMethodParams &params);
+	void GetNumLock(ScriptMethodParams &params);
+	void GetOS(ScriptMethodParams &params);
+	void GetRuntimeInfo(ScriptMethodParams &params);
+	void GetScreenHeight(ScriptMethodParams &params);
+	void GetScreenWidth(ScriptMethodParams &params);
+	void GetScrollLock(ScriptMethodParams &params);
+	void GetSupportsGammaControl(ScriptMethodParams &params);
+	void GetVersion(ScriptMethodParams &params);
+	void GetViewportHeight(ScriptMethodParams &params);
+	void GetViewportWidth(ScriptMethodParams &params);
+	void GetVolume(ScriptMethodParams &params);
+	void SetVolume(ScriptMethodParams &params);
+	void GetVsync(ScriptMethodParams &params);
+	void SetVsync(ScriptMethodParams &params);
+	void GetWindowed(ScriptMethodParams &params);
 };
 
 } // namespace Core

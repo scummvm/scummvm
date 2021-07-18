@@ -28,6 +28,7 @@ namespace Plugins {
 namespace Core {
 
 void DynamicSprite::AGS_EngineStartup(IAGSEngine *engine) {
+	/*
 	SCRIPT_METHOD_EXT(DynamicSprite::ChangeCanvasSize^4, ChangeCanvasSize);
 	SCRIPT_METHOD_EXT(DynamicSprite::CopyTransparencyMask^1, CopyTransparencyMask);
 	SCRIPT_METHOD_EXT(DynamicSprite::Crop^4, Crop);
@@ -50,6 +51,7 @@ void DynamicSprite::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(DynamicSprite::CreateFromFile, CreateFromFile);
 	SCRIPT_METHOD_EXT(DynamicSprite::CreateFromSaveGame, CreateFromSaveGame);
 	SCRIPT_METHOD_EXT(DynamicSprite::CreateFromScreenShot, CreateFromScreenShot);
+	*/
 }
 
 void DynamicSprite::ChangeCanvasSize(ScriptMethodParams &params) {

@@ -23,23 +23,25 @@
 #ifndef AGS_PLUGINS_CORE_TEXTBOX_H
 #define AGS_PLUGINS_CORE_TEXTBOX_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Textbox : public ScriptContainer {
+	SCRIPT_HASH(Textbox)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Textbox() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void GetText(ScriptMethodParams &params);
-	static void SetText(ScriptMethodParams &params);
-	static void GetText_New(ScriptMethodParams &params);
-	static void GetFont(ScriptMethodParams &params);
-	static void SetFont(ScriptMethodParams &params);
-	static void GetTextColor(ScriptMethodParams &params);
-	static void SetTextColor(ScriptMethodParams &params);
+	void GetText(ScriptMethodParams &params);
+	void SetText(ScriptMethodParams &params);
+	void GetText_New(ScriptMethodParams &params);
+	void GetFont(ScriptMethodParams &params);
+	void SetFont(ScriptMethodParams &params);
+	void GetTextColor(ScriptMethodParams &params);
+	void SetTextColor(ScriptMethodParams &params);
 };
 
 } // namespace Core

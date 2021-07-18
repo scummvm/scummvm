@@ -29,6 +29,7 @@ namespace Plugins {
 namespace Core {
 
 void DrawingSurface::AGS_EngineStartup(IAGSEngine *engine) {
+/*
 	SCRIPT_METHOD_EXT(DrawingSurface::Clear^1, Clear);
 	SCRIPT_METHOD_EXT(DrawingSurface::CreateCopy^0, CreateCopy);
 	SCRIPT_METHOD_EXT(DrawingSurface::DrawCircle^3, DrawCircle);
@@ -54,6 +55,7 @@ void DrawingSurface::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(DrawingSurface::get_UseHighResCoordinates, GetUseHighResCoordinates);
 	SCRIPT_METHOD_EXT(DrawingSurface::set_UseHighResCoordinates, SetUseHighResCoordinates);
 	SCRIPT_METHOD_EXT(DrawingSurface::get_Width, GetWidth);
+*/
 }
 
 void DrawingSurface::Clear(ScriptMethodParams &params) {

@@ -23,20 +23,22 @@
 #ifndef AGS_PLUGINS_CORE_PARSER_H
 #define AGS_PLUGINS_CORE_PARSER_H
 
-#include "ags/plugins/plugin_base.h"
+#include "ags/plugins/ags_plugin.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
 class Parser : public ScriptContainer {
+	SCRIPT_HASH(Parser)
 public:
-	void AGS_EngineStartup(IAGSEngine *engine);
+	virtual ~Parser() {}
+	void AGS_EngineStartup(IAGSEngine *engine) override;
 
-	static void FindWordID(ScriptMethodParams &params);
-	static void ParseText(ScriptMethodParams &params);
-	static void SaidUnknownWord(ScriptMethodParams &params);
-	static void Said(ScriptMethodParams &params);
+	void FindWordID(ScriptMethodParams &params);
+	void ParseText(ScriptMethodParams &params);
+	void SaidUnknownWord(ScriptMethodParams &params);
+	void Said(ScriptMethodParams &params);
 };
 
 } // namespace Core

@@ -31,13 +31,13 @@ namespace AGSShell {
 
 class AGSShell : public PluginBase {
 private:
-static IAGSEngine *_engine;
+IAGSEngine *_engine;
 private:
-static const char *AGS_GetPluginName();
-static void AGS_EngineStartup(IAGSEngine *lpEngine);
+const char *AGS_GetPluginName();
+void AGS_EngineStartup(IAGSEngine *lpEngine);
 
 private:
-static void ShellExecute(ScriptMethodParams &params);
+void ShellExecute(ScriptMethodParams &params);
 
 public:
 AGSShell();
