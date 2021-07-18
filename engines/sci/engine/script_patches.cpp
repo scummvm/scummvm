@@ -5718,70 +5718,6 @@ static const uint16 kq6PatchTruncatedMessagesFix[] = {
 	PATCH_END
 };
 
-// Clicking Look or Do on the secret passage peephole outside of Cassima's room
-//  multiple times can lockup the game and crash the original.
-//
-// The bug is in the Feature and CueObj classes but room 800 and cassimaScript
-//  happen to expose it. Clicking on a Feature such as the hole causes ego to
-//  walk towards it, then face it, wait three cycles, and then call doVerb.
-//  Feature:handleEvent calls ego:setMotion and then has CueObj orchestrate the
-//  rest of the sequence. If ego is instead already within approachDist and
-//  facing the clicked Feature then handleEvent sets CueObj to its final state
-//  so that doVerb is called immediately. handleEvent resets CueObj's state and
-//  stops any ego movement to prevent a conflict from an earlier call but it
-//  doesn't stop ego's looper from turning to face the Feature. Clicking on a
-//  Feature while ego is within approachDist and in the process of turning to
-//  face that Feature from a previous click causes both clicks to generate calls
-//  to doVerb, and out of order. In room 800 that causes cassimaScript to run a
-//  a second time and interrupt the first which breaks the game in various ways.
-//
-// We fix room 800 by adding a check to prevent running a peephole script if
-//  there's already a script running.
-//
-// Applies to: All versions
-// Responsible method: chink:doVerb
-static const uint16 kq6SignatureCassimaSecretPassage[] = {
-	SIG_MAGICDWORD,
-	0x67, 0x1a,                         // pTos noun
-	0x3c,                               // dup
-	0x35, 0x04,                         // ldi 04
-	0x1a,                               // eq?
-	0x31, 0x12,                         // bnt 12
-	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
-	0x78,                               // push1
-	0x78,                               // push1
-	0x38, SIG_UINT16(0x0321),           // pushi 0321
-	0x43, 0x02, 0x02,                   // callk ScriptID 02 [ ScriptID 801 ]
-	0x36,                               // push
-	0x81, 0x02,                         // lag 02
-	0x4a, 0x06,                         // send 06 [ rm800 setScript: cassimaScript ]
-	0x33, 0x10,                         // jmp 10
-	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
-	SIG_ADDTOOFFSET(+5),
-	0x43, 0x02, 0x02,                   // callk ScriptID 02 [ ScriptID 802 ]
-	SIG_END
-};
-
-static const uint16 kq6PatchCassimaSecretPassage[] = {
-	0x38, PATCH_SELECTOR16(script),     // pushi script
-	0x76,                               // push0
-	0x81, 0x02,                         // lag 02
-	0x4a, 0x04,                         // send 04 [ rm800 script? ]
-	0x31, 0x01,                         // bnt 01
-	0x48,                               // ret [ do nothing if script is running ]
-	0x67, 0x1a,                         // pTos noun
-	0x3c,                               // dup
-	0x35, 0x04,                         // ldi 04
-	0x1a,                               // eq?
-	0x38, PATCH_SELECTOR16(setScript),  // pushi setScript
-	0x31, 0x07,                         // bnt 07
-	0x78,                               // push1
-	0x78,                               // push1
-	0x38, PATCH_UINT16(0x0321),         // pushi 0321
-	0x33, 0x05,                         // jmp 05 [ callk ScriptID 02 ]
-	PATCH_END
-};
-
 // WORKAROUND
 //
 // Dangling Participle and Rotten Tomato are inventory items that can talk, but
@@ -6460,6 +6396,44 @@ static const uint16 kq6PatchGuardDogMusic[] = {
 	PATCH_END
 };
 
+// Quickly clicking on certain Features multiple times can lockup and crash the
+//  the game. Examples: giving the rose to Beauty and looking at the peephole in
+//  the passage outside of Cassima's room. This also occurs in the original.
+//
+// The bug is in the Feature and CueObj classes but only a few Features are
+//  vulnerable. Factors include approach properties (coordinates, dist), the
+//  surrounding obstacles, and timing. Clicking on a Feature causes ego to walk
+//  towards it, turn towards it, wait three cycles, and then call doVerb. CueObj
+//  handles most of this sequence. However, if ego is already close to the
+//  Feature, then CueObj is advanced to its final state to immediately call
+//  doVerb. The problem is that this doesn't take into account that ego might be
+//  in the middle of turning. If a second click occurs while ego is turning from
+//  the first click, doVerb will be called immediately, CueObj will be reset to
+//  its initial state, and then ego's turn will complete and CueObj will proceed
+//  to call doVerb again. If doVerb runs a hands-off script then it will be
+//  interrupted and restarted at which point the game breaks in various ways.
+//
+// We fix this by removing a simple line that resets CueObj to its initial state
+//  after it calls Feature:doVerb. Nothing depends on this; every caller resets
+//  CueObj:state explicitly. But without this line, a stray cue from ego turning
+//  will advance CueObj from its final state (three) to an unused state (four)
+//  where it will have no effect. Although this buggy Feature script is in other
+//  games, so far it's only known to cause problems in KQ6.
+//
+// Applies to: All versions
+// Responsible method: CueObj:changeState(3)
+static const uint16 kq6SignatureFeatureEventHandling[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x14,                         // atop state [ state = 0 ]
+	SIG_END
+};
+
+static const uint16 kq6PatchFeatureEventHandling[] = {
+	0x33, 0x02,                         // jmp 02 [ don't reset CueObj state ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,    52, "CD: Girl In The Tower playback",                 1, kq6CDSignatureGirlInTheTowerPlayback,     kq6CDPatchGirlInTheTowerPlayback },
@@ -6479,12 +6453,12 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
 	{  true,   640, "fix 'Tickets Only' audio timing",                1, kq6CDSignatureTicketsOnlyAudioTiming,     kq6CDPatchTicketsOnlyAudioTiming },
 	{  true,   745, "fix wedding genie lamp message",                 1, kq6SignatureWeddingGenieLampMessage,      kq6PatchWeddingGenieLampMessage },
-	{  true,   800, "fix Cassima secret passage peephole",            1, kq6SignatureCassimaSecretPassage,         kq6PatchCassimaSecretPassage },
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
 	{  true,   907, "fix hair detection for ribbon's look msg",       1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
 	{  true,   907, "talking inventory workaround",                   4, kq6SignatureTalkingInventory,             kq6PatchTalkingInventory },
 	{  true,   924, "CD/Mac: fix truncated messages",                 1, kq6SignatureTruncatedMessagesFix,         kq6PatchTruncatedMessagesFix },
 	{  true,   928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,               sciNarratorLockupPatch },
+	{  true,   950, "fix Feature event handling",                     1, kq6SignatureFeatureEventHandling,         kq6PatchFeatureEventHandling },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	// *** King's Quest 6 audio + text support ***
 	{ false,   924, "CD: audio + text support KQ6&LB2 1",             1, kq6laurabow2CDSignatureAudioTextSupport1,     kq6laurabow2CDPatchAudioTextSupport1 },
@@ -6939,7 +6913,7 @@ static const uint16 kq7InitGameGlobalsPatch[] = {
 	PATCH_ADDTOOFFSET(+0x35),
 	0xa0, PATCH_UINT16(0x014a),             // sag 014a [ global330 = -1 ]
 	0xa0, PATCH_UINT16(0x0174),             // sag 0174 [ global372 = -1 (reset chicken little) ]
-	0x34, PATCH_UINT16(0x7fe8),             // ldi 7feg
+	0x34, PATCH_UINT16(0x7fe8),             // ldi 7fe8
 	0xa0, PATCH_UINT16(0x0142),             // sag 0142 [ global332 = kMemoryInfo 0 result ]
 	0x33, 0x2c,                             // jmp 2c   [ continue room init ]
 	// init loop
