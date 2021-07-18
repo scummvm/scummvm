@@ -107,6 +107,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	        << "\t\t<ProjectGuid>{" << uuid << "}</ProjectGuid>\n"
 	        << "\t\t<RootNamespace>" << name << "</RootNamespace>\n"
 	        << "\t\t<Keyword>Win32Proj</Keyword>\n"
+	        << "\t\t<UseMultiToolTask>true</UseMultiToolTask>\n"
 	        << "\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath" << _version << ")' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath" << _version << ")</VCTargetsPath>\n";
 
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
@@ -387,7 +388,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	           << "\t\t\t<CompileAs>Default</CompileAs>\n"
 	           << "\t\t\t<MultiProcessorCompilation>true</MultiProcessorCompilation>\n"
 	           << "\t\t\t<ConformanceMode>true</ConformanceMode>\n"
-	           << "\t\t\t<ObjectFileName>$(IntDir)dists\\msvc\\%(RelativeDir)</ObjectFileName>\n"
+	           << "\t\t\t<ObjectFileName>$(IntDir)dists\\msvc\\%(RelativeDir)\\%(Filename).obj</ObjectFileName>\n"
 	           << "\t\t\t<AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>\n"
 	           << "\t\t</ClCompile>\n"
 	           << "\t\t<Link>\n"
