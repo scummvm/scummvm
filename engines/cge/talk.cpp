@@ -95,9 +95,10 @@ const char *lastText = "";
 
 void textToSpeech(const char *text) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (lastText != text && ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+	if (lastText != text && ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
 		ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
 		lastText = text;
+	}
 }
 
 void Talk::update(const char *text) {
