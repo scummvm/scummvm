@@ -1641,6 +1641,8 @@ public:
 
 	//  Destructor
 	~TaskStack(void) {
+		if (actor)
+			actor->curTask = nullptr;
 		deleteTaskStack(this);
 	}
 

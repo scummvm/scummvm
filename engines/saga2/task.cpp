@@ -164,7 +164,6 @@ TaskStackList::~TaskStackList(void) {
 		if (_list[i] == nullptr)
 			continue;
 
-		_list[i]->actor->curTask = nullptr;
 		delete _list[i];
 		_list[i] = nullptr;
 	}
