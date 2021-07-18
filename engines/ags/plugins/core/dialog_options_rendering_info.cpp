@@ -28,26 +28,24 @@ namespace Plugins {
 namespace Core {
 
 void DialogOptionsRenderingInfo::AGS_EngineStartup(IAGSEngine *engine) {
-/*
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_ActiveOptionID, GetActiveOptionID);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::set_ActiveOptionID, SetActiveOptionID);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_DialogToRender, GetDialogToRender);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_Height, GetHeight);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::set_Height, SetHeight);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_ParserTextBoxX, GetParserTextboxX);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::set_ParserTextBoxX, SetParserTextboxX);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_ParserTextBoxY, GetParserTextboxY);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::set_ParserTextBoxY, SetParserTextboxY);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_ParserTextBoxWidth, GetParserTextboxWidth);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::set_ParserTextBoxWidth, SetParserTextboxWidth);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_Surface, GetSurface);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_Width, GetWidth);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::set_Width, SetWidth);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_X, GetX);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::set_X, SetX);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::get_Y, GetY);
-	SCRIPT_METHOD_EXT(DialogOptionsRenderingInfo::set_Y, SetY);
-	*/
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::get_ActiveOptionID, DialogOptionsRenderingInfo::GetActiveOptionID);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::set_ActiveOptionID, DialogOptionsRenderingInfo::SetActiveOptionID);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::get_DialogToRender, DialogOptionsRenderingInfo::GetDialogToRender);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::get_Height, DialogOptionsRenderingInfo::GetHeight);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::set_Height, DialogOptionsRenderingInfo::SetHeight);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::get_ParserTextBoxX, DialogOptionsRenderingInfo::GetParserTextboxX);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::set_ParserTextBoxX, DialogOptionsRenderingInfo::SetParserTextboxX);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::get_ParserTextBoxY, DialogOptionsRenderingInfo::GetParserTextboxY);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::set_ParserTextBoxY, DialogOptionsRenderingInfo::SetParserTextboxY);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::get_ParserTextBoxWidth, DialogOptionsRenderingInfo::GetParserTextboxWidth);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::set_ParserTextBoxWidth, DialogOptionsRenderingInfo::SetParserTextboxWidth);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::get_Surface, DialogOptionsRenderingInfo::GetSurface);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::get_Width, DialogOptionsRenderingInfo::GetWidth);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::set_Width, DialogOptionsRenderingInfo::SetWidth);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::get_X, DialogOptionsRenderingInfo::GetX);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::set_X, DialogOptionsRenderingInfo::SetX);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::get_Y, DialogOptionsRenderingInfo::GetY);
+	SCRIPT_METHOD(DialogOptionsRenderingInfo::set_Y, DialogOptionsRenderingInfo::SetY);
 }
 
 void DialogOptionsRenderingInfo::GetActiveOptionID(ScriptMethodParams &params) {

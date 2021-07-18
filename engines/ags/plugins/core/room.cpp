@@ -28,21 +28,19 @@ namespace Plugins {
 namespace Core {
 
 void Room::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(Room::GetDrawingSurfaceForBackground^1, GetDrawingSurfaceForBackground);
-	SCRIPT_METHOD_EXT(Room::GetProperty^1, GetProperty);
-	SCRIPT_METHOD_EXT(Room::GetTextProperty^1, GetTextProperty);
-	SCRIPT_METHOD_EXT(Room::get_BottomEdge, GetBottomEdge);
-	SCRIPT_METHOD_EXT(Room::get_ColorDepth, GetColorDepth);
-	SCRIPT_METHOD_EXT(Room::get_Height, GetHeight);
-	SCRIPT_METHOD_EXT(Room::get_LeftEdge, GetLeftEdge);
-	SCRIPT_METHOD_EXT(Room::geti_Messages, GetMessages);
-	SCRIPT_METHOD_EXT(Room::get_MusicOnLoad, GetMusicOnLoad);
-	SCRIPT_METHOD_EXT(Room::get_ObjectCount, GetObjectCount);
-	SCRIPT_METHOD_EXT(Room::get_RightEdge, GetRightEdge);
-	SCRIPT_METHOD_EXT(Room::get_TopEdge, GetTopEdge);
-	SCRIPT_METHOD_EXT(Room::get_Width, GetWidth);
-	*/
+	SCRIPT_METHOD(Room::GetDrawingSurfaceForBackground^1, Room::GetDrawingSurfaceForBackground);
+	SCRIPT_METHOD(Room::GetProperty^1, Room::GetProperty);
+	SCRIPT_METHOD(Room::GetTextProperty^1, Room::GetTextProperty);
+	SCRIPT_METHOD(Room::get_BottomEdge, Room::GetBottomEdge);
+	SCRIPT_METHOD(Room::get_ColorDepth, Room::GetColorDepth);
+	SCRIPT_METHOD(Room::get_Height, Room::GetHeight);
+	SCRIPT_METHOD(Room::get_LeftEdge, Room::GetLeftEdge);
+	SCRIPT_METHOD(Room::geti_Messages, Room::GetMessages);
+	SCRIPT_METHOD(Room::get_MusicOnLoad, Room::GetMusicOnLoad);
+	SCRIPT_METHOD(Room::get_ObjectCount, Room::GetObjectCount);
+	SCRIPT_METHOD(Room::get_RightEdge, Room::GetRightEdge);
+	SCRIPT_METHOD(Room::get_TopEdge, Room::GetTopEdge);
+	SCRIPT_METHOD(Room::get_Width, Room::GetWidth);
 }
 
 void Room::GetDrawingSurfaceForBackground(ScriptMethodParams &params) {

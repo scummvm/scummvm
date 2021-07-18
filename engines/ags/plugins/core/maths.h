@@ -29,10 +29,10 @@ namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
-class Math : public ScriptContainer {
-	SCRIPT_HASH(Math)
+class Maths : public ScriptContainer {
+	SCRIPT_HASH(Maths)
 public:
-	virtual ~Math() {}
+	virtual ~Maths() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;
 
 	void ArcCos(ScriptMethodParams &params);

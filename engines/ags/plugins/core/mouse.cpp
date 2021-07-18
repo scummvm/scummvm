@@ -29,28 +29,26 @@ namespace Plugins {
 namespace Core {
 
 void Mouse::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(Mouse::ChangeModeGraphic^2, ChangeCursorGraphic);
-	SCRIPT_METHOD_EXT(Mouse::ChangeModeHotspot^3, ChangeCursorHotspot);
-	SCRIPT_METHOD_EXT(Mouse::ChangeModeView^2, Mouse_ChangeModeView);
-	SCRIPT_METHOD_EXT(Mouse::DisableMode^1, disable_cursor_mode);
-	SCRIPT_METHOD_EXT(Mouse::EnableMode^1, enable_cursor_mode);
-	SCRIPT_METHOD_EXT(Mouse::GetModeGraphic^1, Mouse_GetModeGraphic);
-	SCRIPT_METHOD_EXT(Mouse::IsButtonDown^1, IsButtonDown);
-	SCRIPT_METHOD_EXT(Mouse::IsModeEnabled^1, IsModeEnabled);
-	SCRIPT_METHOD_EXT(Mouse::SaveCursorUntilItLeaves^0, SaveCursorForLocationChange);
-	SCRIPT_METHOD_EXT(Mouse::SelectNextMode^0, SetNextCursor);
-	SCRIPT_METHOD_EXT(Mouse::SelectPreviousMode^0, SetPreviousCursor);
-	SCRIPT_METHOD_EXT(Mouse::SetBounds^4, SetMouseBounds);
-	SCRIPT_METHOD_EXT(Mouse::SetPosition^2, SetMousePosition);
-	SCRIPT_METHOD_EXT(Mouse::Update^0, RefreshMouse);
-	SCRIPT_METHOD_EXT(Mouse::UseDefaultGraphic^0, set_default_cursor);
-	SCRIPT_METHOD_EXT(Mouse::UseModeGraphic^1, set_mouse_cursor);
-	SCRIPT_METHOD_EXT(Mouse::get_Mode, GetCursorMode);
-	SCRIPT_METHOD_EXT(Mouse::set_Mode, set_cursor_mode);
-	SCRIPT_METHOD_EXT(Mouse::get_Visible, Mouse_GetVisible);
-	SCRIPT_METHOD_EXT(Mouse::set_Visible, Mouse_SetVisible);
-	*/
+	SCRIPT_METHOD(Mouse::ChangeModeGraphic^2, Mouse::ChangeCursorGraphic);
+	SCRIPT_METHOD(Mouse::ChangeModeHotspot^3, Mouse::ChangeCursorHotspot);
+	SCRIPT_METHOD(Mouse::ChangeModeView^2, Mouse::Mouse_ChangeModeView);
+	SCRIPT_METHOD(Mouse::DisableMode^1, Mouse::disable_cursor_mode);
+	SCRIPT_METHOD(Mouse::EnableMode^1, Mouse::enable_cursor_mode);
+	SCRIPT_METHOD(Mouse::GetModeGraphic^1, Mouse::Mouse_GetModeGraphic);
+	SCRIPT_METHOD(Mouse::IsButtonDown^1, Mouse::IsButtonDown);
+	SCRIPT_METHOD(Mouse::IsModeEnabled^1, Mouse::IsModeEnabled);
+	SCRIPT_METHOD(Mouse::SaveCursorUntilItLeaves^0, Mouse::SaveCursorForLocationChange);
+	SCRIPT_METHOD(Mouse::SelectNextMode^0, Mouse::SetNextCursor);
+	SCRIPT_METHOD(Mouse::SelectPreviousMode^0, Mouse::SetPreviousCursor);
+	SCRIPT_METHOD(Mouse::SetBounds^4, Mouse::SetMouseBounds);
+	SCRIPT_METHOD(Mouse::SetPosition^2, Mouse::SetMousePosition);
+	SCRIPT_METHOD(Mouse::Update^0, Mouse::RefreshMouse);
+	SCRIPT_METHOD(Mouse::UseDefaultGraphic^0, Mouse::set_default_cursor);
+	SCRIPT_METHOD(Mouse::UseModeGraphic^1, Mouse::set_mouse_cursor);
+	SCRIPT_METHOD(Mouse::get_Mode, Mouse::GetCursorMode);
+	SCRIPT_METHOD(Mouse::set_Mode, Mouse::set_cursor_mode);
+	SCRIPT_METHOD(Mouse::get_Visible, Mouse::Mouse_GetVisible);
+	SCRIPT_METHOD(Mouse::set_Visible, Mouse::Mouse_SetVisible);
 }
 
 void Mouse::ChangeCursorGraphic(ScriptMethodParams &params) {

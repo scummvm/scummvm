@@ -29,33 +29,31 @@ namespace Plugins {
 namespace Core {
 
 void DrawingSurface::AGS_EngineStartup(IAGSEngine *engine) {
-/*
-	SCRIPT_METHOD_EXT(DrawingSurface::Clear^1, Clear);
-	SCRIPT_METHOD_EXT(DrawingSurface::CreateCopy^0, CreateCopy);
-	SCRIPT_METHOD_EXT(DrawingSurface::DrawCircle^3, DrawCircle);
-	SCRIPT_METHOD_EXT(DrawingSurface::DrawImage^6, DrawImage);
-	SCRIPT_METHOD_EXT(DrawingSurface::DrawLine^5, DrawLine);
-	SCRIPT_METHOD_EXT(DrawingSurface::DrawMessageWrapped^5, DrawMessageWrapped);
-	SCRIPT_METHOD_EXT(DrawingSurface::DrawPixel^2, DrawPixel);
-	SCRIPT_METHOD_EXT(DrawingSurface::DrawRectangle^4, DrawRectangle);
-	SCRIPT_METHOD_EXT(DrawingSurface::DrawString^104, ScPl_DrawString);
+	SCRIPT_METHOD(DrawingSurface::Clear^1, DrawingSurface::Clear);
+	SCRIPT_METHOD(DrawingSurface::CreateCopy^0, DrawingSurface::CreateCopy);
+	SCRIPT_METHOD(DrawingSurface::DrawCircle^3, DrawingSurface::DrawCircle);
+	SCRIPT_METHOD(DrawingSurface::DrawImage^6, DrawingSurface::DrawImage);
+	SCRIPT_METHOD(DrawingSurface::DrawLine^5, DrawingSurface::DrawLine);
+	SCRIPT_METHOD(DrawingSurface::DrawMessageWrapped^5, DrawingSurface::DrawMessageWrapped);
+	SCRIPT_METHOD(DrawingSurface::DrawPixel^2, DrawingSurface::DrawPixel);
+	SCRIPT_METHOD(DrawingSurface::DrawRectangle^4, DrawingSurface::DrawRectangle);
+	SCRIPT_METHOD(DrawingSurface::DrawString^104, DrawingSurface::ScPl_DrawString);
 
 	if (engine->version < kScriptAPI_v350)
-		SCRIPT_METHOD_EXT(DrawingSurface::DrawStringWrapped^6, DrawStringWrapped_Old);
+		SCRIPT_METHOD(DrawingSurface::DrawStringWrapped^6, DrawingSurface::DrawStringWrapped_Old);
 	else
-		SCRIPT_METHOD_EXT(DrawingSurface::DrawStringWrapped^6, DrawStringWrapped);
+		SCRIPT_METHOD(DrawingSurface::DrawStringWrapped^6, DrawingSurface::DrawStringWrapped);
 
-	SCRIPT_METHOD_EXT(DrawingSurface::DrawSurface^2, DrawSurface);
-	SCRIPT_METHOD_EXT(DrawingSurface::DrawTriangle^6, DrawTriangle);
-	SCRIPT_METHOD_EXT(DrawingSurface::GetPixel^2, GetPixel);
-	SCRIPT_METHOD_EXT(DrawingSurface::Release^0, Release);
-	SCRIPT_METHOD_EXT(DrawingSurface::get_DrawingColor, GetDrawingColor);
-	SCRIPT_METHOD_EXT(DrawingSurface::set_DrawingColor, SetDrawingColor);
-	SCRIPT_METHOD_EXT(DrawingSurface::get_Height, GetHeight);
-	SCRIPT_METHOD_EXT(DrawingSurface::get_UseHighResCoordinates, GetUseHighResCoordinates);
-	SCRIPT_METHOD_EXT(DrawingSurface::set_UseHighResCoordinates, SetUseHighResCoordinates);
-	SCRIPT_METHOD_EXT(DrawingSurface::get_Width, GetWidth);
-*/
+	SCRIPT_METHOD(DrawingSurface::DrawSurface^2, DrawingSurface::DrawSurface);
+	SCRIPT_METHOD(DrawingSurface::DrawTriangle^6, DrawingSurface::DrawTriangle);
+	SCRIPT_METHOD(DrawingSurface::GetPixel^2, DrawingSurface::GetPixel);
+	SCRIPT_METHOD(DrawingSurface::Release^0, DrawingSurface::Release);
+	SCRIPT_METHOD(DrawingSurface::get_DrawingColor, DrawingSurface::GetDrawingColor);
+	SCRIPT_METHOD(DrawingSurface::set_DrawingColor, DrawingSurface::SetDrawingColor);
+	SCRIPT_METHOD(DrawingSurface::get_Height, DrawingSurface::GetHeight);
+	SCRIPT_METHOD(DrawingSurface::get_UseHighResCoordinates, DrawingSurface::GetUseHighResCoordinates);
+	SCRIPT_METHOD(DrawingSurface::set_UseHighResCoordinates, DrawingSurface::SetUseHighResCoordinates);
+	SCRIPT_METHOD(DrawingSurface::get_Width, DrawingSurface::GetWidth);
 }
 
 void DrawingSurface::Clear(ScriptMethodParams &params) {

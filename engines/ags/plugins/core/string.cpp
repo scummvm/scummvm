@@ -29,28 +29,26 @@ namespace Plugins {
 namespace Core {
 
 void String::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(String::IsNullOrEmpty^1, IsNullOrEmpty);
-	SCRIPT_METHOD_EXT(String::Append^1, Append);
-	SCRIPT_METHOD_EXT(String::AppendChar^1, AppendChar);
-	SCRIPT_METHOD_EXT(String::CompareTo^2, CompareTo);
-	SCRIPT_METHOD_EXT(String::Contains^1, StrContains);
-	SCRIPT_METHOD_EXT(String::Copy^0, Copy);
-	SCRIPT_METHOD_EXT(String::EndsWith^2, EndsWith);
-	SCRIPT_METHOD_EXT(String::Format^101, ScPl_String_Format);
-	SCRIPT_METHOD_EXT(String::IndexOf^1, StrContains);
-	SCRIPT_METHOD_EXT(String::LowerCase^0, LowerCase);
-	SCRIPT_METHOD_EXT(String::Replace^3, Replace);
-	SCRIPT_METHOD_EXT(String::ReplaceCharAt^2, ReplaceCharAt);
-	SCRIPT_METHOD_EXT(String::StartsWith^2, StartsWith);
-	SCRIPT_METHOD_EXT(String::Substring^2, Substring);
-	SCRIPT_METHOD_EXT(String::Truncate^1, Truncate);
-	SCRIPT_METHOD_EXT(String::UpperCase^0, UpperCase);
-	SCRIPT_METHOD_EXT(String::get_AsFloat, StringToFloat);
-	SCRIPT_METHOD_EXT(String::get_AsInt, StringToInt);
-	SCRIPT_METHOD_EXT(String::geti_Chars, GetChars);
-	SCRIPT_METHOD_EXT(String::get_Length, strlen);
-	*/
+	SCRIPT_METHOD(String::IsNullOrEmpty^1, String::IsNullOrEmpty);
+	SCRIPT_METHOD(String::Append^1, String::Append);
+	SCRIPT_METHOD(String::AppendChar^1, String::AppendChar);
+	SCRIPT_METHOD(String::CompareTo^2, String::CompareTo);
+	SCRIPT_METHOD(String::Contains^1, String::StrContains);
+	SCRIPT_METHOD(String::Copy^0, String::Copy);
+	SCRIPT_METHOD(String::EndsWith^2, String::EndsWith);
+	SCRIPT_METHOD(String::Format^101, String::ScPl_String_Format);
+	SCRIPT_METHOD(String::IndexOf^1, String::StrContains);
+	SCRIPT_METHOD(String::LowerCase^0, String::LowerCase);
+	SCRIPT_METHOD(String::Replace^3, String::Replace);
+	SCRIPT_METHOD(String::ReplaceCharAt^2, String::ReplaceCharAt);
+	SCRIPT_METHOD(String::StartsWith^2, String::StartsWith);
+	SCRIPT_METHOD(String::Substring^2, String::Substring);
+	SCRIPT_METHOD(String::Truncate^1, String::Truncate);
+	SCRIPT_METHOD(String::UpperCase^0, String::UpperCase);
+	SCRIPT_METHOD(String::get_AsFloat, String::StringToFloat);
+	SCRIPT_METHOD(String::get_AsInt, String::StringToInt);
+	SCRIPT_METHOD(String::geti_Chars, String::GetChars);
+	SCRIPT_METHOD(String::get_Length, String::strlen);
 }
 
 void String::IsNullOrEmpty(ScriptMethodParams &params) {

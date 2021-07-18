@@ -28,26 +28,24 @@ namespace Plugins {
 namespace Core {
 
 void Button::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(Button::Animate^4, Animate);
-	SCRIPT_METHOD_EXT(Button::GetText^1, GetText);
-	SCRIPT_METHOD_EXT(Button::SetText^1, SetText);
-	SCRIPT_METHOD_EXT(Button::get_ClipImage, GetClipImage);
-	SCRIPT_METHOD_EXT(Button::set_ClipImage, SetClipImage);
-	SCRIPT_METHOD_EXT(Button::get_Font, GetFont);
-	SCRIPT_METHOD_EXT(Button::set_Font, SetFont);
-	SCRIPT_METHOD_EXT(Button::get_Graphic, GetGraphic);
-	SCRIPT_METHOD_EXT(Button::get_MouseOverGraphic, GetMouseOverGraphic);
-	SCRIPT_METHOD_EXT(Button::set_MouseOverGraphic, SetMouseOverGraphic);
-	SCRIPT_METHOD_EXT(Button::get_NormalGraphic, GetNormalGraphic);
-	SCRIPT_METHOD_EXT(Button::set_NormalGraphic, SetNormalGraphic);
-	SCRIPT_METHOD_EXT(Button::get_PushedGraphic, GetPushedGraphic);
-	SCRIPT_METHOD_EXT(Button::set_PushedGraphic, SetPushedGraphic);
-	SCRIPT_METHOD_EXT(Button::get_Text, GetText_New);
-	SCRIPT_METHOD_EXT(Button::set_Text, SetText);
-	SCRIPT_METHOD_EXT(Button::get_TextColor, GetTextColor);
-	SCRIPT_METHOD_EXT(Button::set_TextColor, SetTextColor);
-	*/
+	SCRIPT_METHOD(Button::Animate^4, Button::Animate);
+	SCRIPT_METHOD(Button::GetText^1, Button::GetText);
+	SCRIPT_METHOD(Button::SetText^1, Button::SetText);
+	SCRIPT_METHOD(Button::get_ClipImage, Button::GetClipImage);
+	SCRIPT_METHOD(Button::set_ClipImage, Button::SetClipImage);
+	SCRIPT_METHOD(Button::get_Font, Button::GetFont);
+	SCRIPT_METHOD(Button::set_Font, Button::SetFont);
+	SCRIPT_METHOD(Button::get_Graphic, Button::GetGraphic);
+	SCRIPT_METHOD(Button::get_MouseOverGraphic, Button::GetMouseOverGraphic);
+	SCRIPT_METHOD(Button::set_MouseOverGraphic, Button::SetMouseOverGraphic);
+	SCRIPT_METHOD(Button::get_NormalGraphic, Button::GetNormalGraphic);
+	SCRIPT_METHOD(Button::set_NormalGraphic, Button::SetNormalGraphic);
+	SCRIPT_METHOD(Button::get_PushedGraphic, Button::GetPushedGraphic);
+	SCRIPT_METHOD(Button::set_PushedGraphic, Button::SetPushedGraphic);
+	SCRIPT_METHOD(Button::get_Text, Button::GetText_New);
+	SCRIPT_METHOD(Button::set_Text, Button::SetText);
+	SCRIPT_METHOD(Button::get_TextColor, Button::GetTextColor);
+	SCRIPT_METHOD(Button::set_TextColor, Button::SetTextColor);
 }
 
 void Button::Animate(ScriptMethodParams &params) {

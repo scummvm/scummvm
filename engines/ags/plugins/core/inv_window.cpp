@@ -28,22 +28,20 @@ namespace Plugins {
 namespace Core {
 
 void InvWindow::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(InvWindow::ScrollDown^0, ScrollDown);
-	SCRIPT_METHOD_EXT(InvWindow::ScrollUp^0, ScrollUp);
-	SCRIPT_METHOD_EXT(InvWindow::get_CharacterToUse, GetCharacterToUse);
-	SCRIPT_METHOD_EXT(InvWindow::set_CharacterToUse, SetCharacterToUse);
-	SCRIPT_METHOD_EXT(InvWindow::geti_ItemAtIndex, GetItemAtIndex);
-	SCRIPT_METHOD_EXT(InvWindow::get_ItemCount, GetItemCount);
-	SCRIPT_METHOD_EXT(InvWindow::get_ItemHeight, GetItemHeight);
-	SCRIPT_METHOD_EXT(InvWindow::set_ItemHeight, SetItemHeight);
-	SCRIPT_METHOD_EXT(InvWindow::get_ItemWidth, GetItemWidth);
-	SCRIPT_METHOD_EXT(InvWindow::set_ItemWidth, SetItemWidth);
-	SCRIPT_METHOD_EXT(InvWindow::get_ItemsPerRow, GetItemsPerRow);
-	SCRIPT_METHOD_EXT(InvWindow::get_RowCount, GetRowCount);
-	SCRIPT_METHOD_EXT(InvWindow::get_TopItem, GetTopItem);
-	SCRIPT_METHOD_EXT(InvWindow::set_TopItem, SetTopItem);
-	*/
+	SCRIPT_METHOD(InvWindow::ScrollDown^0, InvWindow::ScrollDown);
+	SCRIPT_METHOD(InvWindow::ScrollUp^0, InvWindow::ScrollUp);
+	SCRIPT_METHOD(InvWindow::get_CharacterToUse, InvWindow::GetCharacterToUse);
+	SCRIPT_METHOD(InvWindow::set_CharacterToUse, InvWindow::SetCharacterToUse);
+	SCRIPT_METHOD(InvWindow::geti_ItemAtIndex, InvWindow::GetItemAtIndex);
+	SCRIPT_METHOD(InvWindow::get_ItemCount, InvWindow::GetItemCount);
+	SCRIPT_METHOD(InvWindow::get_ItemHeight, InvWindow::GetItemHeight);
+	SCRIPT_METHOD(InvWindow::set_ItemHeight, InvWindow::SetItemHeight);
+	SCRIPT_METHOD(InvWindow::get_ItemWidth, InvWindow::GetItemWidth);
+	SCRIPT_METHOD(InvWindow::set_ItemWidth, InvWindow::SetItemWidth);
+	SCRIPT_METHOD(InvWindow::get_ItemsPerRow, InvWindow::GetItemsPerRow);
+	SCRIPT_METHOD(InvWindow::get_RowCount, InvWindow::GetRowCount);
+	SCRIPT_METHOD(InvWindow::get_TopItem, InvWindow::GetTopItem);
+	SCRIPT_METHOD(InvWindow::set_TopItem, InvWindow::SetTopItem);
 }
 
 void InvWindow::ScrollDown(ScriptMethodParams &params) {

@@ -28,22 +28,20 @@ namespace Plugins {
 namespace Core {
 
 void Region::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(Region::GetAtRoomXY^2, GetRegionAtRoom);
-	SCRIPT_METHOD_EXT(Region::GetAtScreenXY^2, GetRegionAtScreen);
-	SCRIPT_METHOD_EXT(Region::Tint^4, TintNoLum);
-	SCRIPT_METHOD_EXT(Region::RunInteraction^1, RunInteraction);
-	SCRIPT_METHOD_EXT(Region::get_Enabled, GetEnabled);
-	SCRIPT_METHOD_EXT(Region::set_Enabled, SetEnabled);
-	SCRIPT_METHOD_EXT(Region::get_ID, GetID);
-	SCRIPT_METHOD_EXT(Region::get_LightLevel, GetLightLevel);
-	SCRIPT_METHOD_EXT(Region::set_LightLevel, SetLightLevel);
-	SCRIPT_METHOD_EXT(Region::get_TintEnabled, GetTintEnabled);
-	SCRIPT_METHOD_EXT(Region::get_TintBlue, GetTintBlue);
-	SCRIPT_METHOD_EXT(Region::get_TintGreen, GetTintGreen);
-	SCRIPT_METHOD_EXT(Region::get_TintRed, GetTintRed);
-	SCRIPT_METHOD_EXT(Region::get_TintSaturation, GetTintSaturation);
-	*/
+	SCRIPT_METHOD(Region::GetAtRoomXY^2, Region::GetRegionAtRoom);
+	SCRIPT_METHOD(Region::GetAtScreenXY^2, Region::GetRegionAtScreen);
+	SCRIPT_METHOD(Region::Tint^4, Region::TintNoLum);
+	SCRIPT_METHOD(Region::RunInteraction^1, Region::RunInteraction);
+	SCRIPT_METHOD(Region::get_Enabled, Region::GetEnabled);
+	SCRIPT_METHOD(Region::set_Enabled, Region::SetEnabled);
+	SCRIPT_METHOD(Region::get_ID, Region::GetID);
+	SCRIPT_METHOD(Region::get_LightLevel, Region::GetLightLevel);
+	SCRIPT_METHOD(Region::set_LightLevel, Region::SetLightLevel);
+	SCRIPT_METHOD(Region::get_TintEnabled, Region::GetTintEnabled);
+	SCRIPT_METHOD(Region::get_TintBlue, Region::GetTintBlue);
+	SCRIPT_METHOD(Region::get_TintGreen, Region::GetTintGreen);
+	SCRIPT_METHOD(Region::get_TintRed, Region::GetTintRed);
+	SCRIPT_METHOD(Region::get_TintSaturation, Region::GetTintSaturation);
 }
 
 void Region::GetRegionAtRoom(ScriptMethodParams &params) {

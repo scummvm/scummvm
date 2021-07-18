@@ -306,7 +306,7 @@ MODULE_OBJS = \
 	plugins/core/inv_window.o \
 	plugins/core/label.o \
 	plugins/core/listbox.o \
-	plugins/core/math.o \
+	plugins/core/maths.o \
 	plugins/core/mouse.o \
 	plugins/core/object.o \
 	plugins/core/overlay.o \

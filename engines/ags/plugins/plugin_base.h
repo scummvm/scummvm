@@ -35,8 +35,7 @@ class IAGSEngine;
 
 namespace Plugins {
 
-#define SCRIPT_METHOD(NAME) addMethod(#NAME, &NAME)
-#define SCRIPT_METHOD_EXT(NAME, PROC) addMethod(#NAME, &(PROC))
+#define SCRIPT_METHOD(NAME, PROC) addMethod(#NAME, &PROC)
 
 #define SCRIPT_HASH(TheClass) \
 	private: \

@@ -28,15 +28,13 @@ namespace Plugins {
 namespace Core {
 
 void AudioClip::AGS_EngineStartup(IAGSEngine *engine) {
-/*
-	SCRIPT_METHOD_EXT(AudioClip::Play^2, Play);
-	SCRIPT_METHOD_EXT(AudioClip::PlayFrom^3, PlayFrom);
-	SCRIPT_METHOD_EXT(AudioClip::PlayQueued^2, PlayQueued);
-	SCRIPT_METHOD_EXT(AudioClip::Stop^0, Stop);
-	SCRIPT_METHOD_EXT(AudioClip::get_FileType, GetFileType);
-	SCRIPT_METHOD_EXT(AudioClip::get_IsAvailable, GetIsAvailable);
-	SCRIPT_METHOD_EXT(AudioClip::get_Type, GetType);
-	*/
+	SCRIPT_METHOD(AudioClip::Play^2, AudioClip::Play);
+	SCRIPT_METHOD(AudioClip::PlayFrom^3, AudioClip::PlayFrom);
+	SCRIPT_METHOD(AudioClip::PlayQueued^2, AudioClip::PlayQueued);
+	SCRIPT_METHOD(AudioClip::Stop^0, AudioClip::Stop);
+	SCRIPT_METHOD(AudioClip::get_FileType, AudioClip::GetFileType);
+	SCRIPT_METHOD(AudioClip::get_IsAvailable, AudioClip::GetIsAvailable);
+	SCRIPT_METHOD(AudioClip::get_Type, AudioClip::GetType);
 }
 
 void AudioClip::Play(ScriptMethodParams &params) {

@@ -28,21 +28,19 @@ namespace Plugins {
 namespace Core {
 
 void AudioChannel::AGS_EngineStartup(IAGSEngine *engine) {
-/*
-	SCRIPT_METHOD_EXT(AudioChannel::Seek^1, Seek);
-	SCRIPT_METHOD_EXT(AudioChannel::SetRoomLocation^2, SetRoomLocation);
-	SCRIPT_METHOD_EXT(AudioChannel::Stop^0, Stop);
-	SCRIPT_METHOD_EXT(AudioChannel::get_ID, GetID);
-	SCRIPT_METHOD_EXT(AudioChannel::get_IsPlaying, GetIsPlaying);
-	SCRIPT_METHOD_EXT(AudioChannel::get_LengthMs, GetLengthMs);
-	SCRIPT_METHOD_EXT(AudioChannel::get_Panning, GetPanning);
-	SCRIPT_METHOD_EXT(AudioChannel::set_Panning, SetPanning);
-	SCRIPT_METHOD_EXT(AudioChannel::get_PlayingClip, GetPlayingClip);
-	SCRIPT_METHOD_EXT(AudioChannel::get_Position, GetPosition);
-	SCRIPT_METHOD_EXT(AudioChannel::get_PositionMs, GetPositionMs);
-	SCRIPT_METHOD_EXT(AudioChannel::get_Volume, GetVolume);
-	SCRIPT_METHOD_EXT(AudioChannel::set_Volume, SetVolume);
-	*/
+	SCRIPT_METHOD(AudioChannel::Seek^1, AudioChannel::Seek);
+	SCRIPT_METHOD(AudioChannel::SetRoomLocation^2, AudioChannel::SetRoomLocation);
+	SCRIPT_METHOD(AudioChannel::Stop^0, AudioChannel::Stop);
+	SCRIPT_METHOD(AudioChannel::get_ID, AudioChannel::GetID);
+	SCRIPT_METHOD(AudioChannel::get_IsPlaying, AudioChannel::GetIsPlaying);
+	SCRIPT_METHOD(AudioChannel::get_LengthMs, AudioChannel::GetLengthMs);
+	SCRIPT_METHOD(AudioChannel::get_Panning, AudioChannel::GetPanning);
+	SCRIPT_METHOD(AudioChannel::set_Panning, AudioChannel::SetPanning);
+	SCRIPT_METHOD(AudioChannel::get_PlayingClip, AudioChannel::GetPlayingClip);
+	SCRIPT_METHOD(AudioChannel::get_Position, AudioChannel::GetPosition);
+	SCRIPT_METHOD(AudioChannel::get_PositionMs, AudioChannel::GetPositionMs);
+	SCRIPT_METHOD(AudioChannel::get_Volume, AudioChannel::GetVolume);
+	SCRIPT_METHOD(AudioChannel::set_Volume, AudioChannel::SetVolume);
 }
 
 void AudioChannel::Seek(ScriptMethodParams &params) {

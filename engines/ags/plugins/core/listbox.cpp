@@ -27,158 +27,156 @@ namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
-void Listbox::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(ListBox::AddItem^1, AddItem);
-	SCRIPT_METHOD_EXT(ListBox::Clear^0, Clear);
-	SCRIPT_METHOD_EXT(ListBox::FillDirList^1, FillDirList);
-	SCRIPT_METHOD_EXT(ListBox::FillSaveGameList^0, FillSaveGameList);
-	SCRIPT_METHOD_EXT(ListBox::GetItemAtLocation^2, GetItemAtLocation);
-	SCRIPT_METHOD_EXT(ListBox::GetItemText^2, GetItemText);
-	SCRIPT_METHOD_EXT(ListBox::InsertItemAt^2, InsertItemAt);
-	SCRIPT_METHOD_EXT(ListBox::RemoveItem^1, RemoveItem);
-	SCRIPT_METHOD_EXT(ListBox::ScrollDown^0, ScrollDown);
-	SCRIPT_METHOD_EXT(ListBox::ScrollUp^0, ScrollUp);
-	SCRIPT_METHOD_EXT(ListBox::SetItemText^2, SetItemText);
-	SCRIPT_METHOD_EXT(ListBox::get_Font, GetFont);
-	SCRIPT_METHOD_EXT(ListBox::set_Font, SetFont);
-	SCRIPT_METHOD_EXT(ListBox::get_HideBorder, GetHideBorder);
-	SCRIPT_METHOD_EXT(ListBox::set_HideBorder, SetHideBorder);
-	SCRIPT_METHOD_EXT(ListBox::get_HideScrollArrows, GetHideScrollArrows);
-	SCRIPT_METHOD_EXT(ListBox::set_HideScrollArrows, SetHideScrollArrows);
-	SCRIPT_METHOD_EXT(ListBox::get_ItemCount, GetItemCount);
-	SCRIPT_METHOD_EXT(ListBox::geti_Items, GetItems);
-	SCRIPT_METHOD_EXT(ListBox::seti_Items, SetItemText);
-	SCRIPT_METHOD_EXT(ListBox::get_RowCount, GetRowCount);
-	SCRIPT_METHOD_EXT(ListBox::geti_SaveGameSlots, GetSaveGameSlots);
-	SCRIPT_METHOD_EXT(ListBox::get_SelectedIndex, GetSelectedIndex);
-	SCRIPT_METHOD_EXT(ListBox::set_SelectedIndex, SetSelectedIndex);
-	SCRIPT_METHOD_EXT(ListBox::get_TopItem, GetTopItem);
-	SCRIPT_METHOD_EXT(ListBox::set_TopItem, SetTopItem);
-	*/
+void ListBox::AGS_EngineStartup(IAGSEngine *engine) {
+	SCRIPT_METHOD(ListBox::AddItem^1, ListBox::AddItem);
+	SCRIPT_METHOD(ListBox::Clear^0, ListBox::Clear);
+	SCRIPT_METHOD(ListBox::FillDirList^1, ListBox::FillDirList);
+	SCRIPT_METHOD(ListBox::FillSaveGameList^0, ListBox::FillSaveGameList);
+	SCRIPT_METHOD(ListBox::GetItemAtLocation^2, ListBox::GetItemAtLocation);
+	SCRIPT_METHOD(ListBox::GetItemText^2, ListBox::GetItemText);
+	SCRIPT_METHOD(ListBox::InsertItemAt^2, ListBox::InsertItemAt);
+	SCRIPT_METHOD(ListBox::RemoveItem^1, ListBox::RemoveItem);
+	SCRIPT_METHOD(ListBox::ScrollDown^0, ListBox::ScrollDown);
+	SCRIPT_METHOD(ListBox::ScrollUp^0, ListBox::ScrollUp);
+	SCRIPT_METHOD(ListBox::SetItemText^2, ListBox::SetItemText);
+	SCRIPT_METHOD(ListBox::get_Font, ListBox::GetFont);
+	SCRIPT_METHOD(ListBox::set_Font, ListBox::SetFont);
+	SCRIPT_METHOD(ListBox::get_HideBorder, ListBox::GetHideBorder);
+	SCRIPT_METHOD(ListBox::set_HideBorder, ListBox::SetHideBorder);
+	SCRIPT_METHOD(ListBox::get_HideScrollArrows, ListBox::GetHideScrollArrows);
+	SCRIPT_METHOD(ListBox::set_HideScrollArrows, ListBox::SetHideScrollArrows);
+	SCRIPT_METHOD(ListBox::get_ItemCount, ListBox::GetItemCount);
+	SCRIPT_METHOD(ListBox::geti_Items, ListBox::GetItems);
+	SCRIPT_METHOD(ListBox::seti_Items, ListBox::SetItemText);
+	SCRIPT_METHOD(ListBox::get_RowCount, ListBox::GetRowCount);
+	SCRIPT_METHOD(ListBox::geti_SaveGameSlots, ListBox::GetSaveGameSlots);
+	SCRIPT_METHOD(ListBox::get_SelectedIndex, ListBox::GetSelectedIndex);
+	SCRIPT_METHOD(ListBox::set_SelectedIndex, ListBox::SetSelectedIndex);
+	SCRIPT_METHOD(ListBox::get_TopItem, ListBox::GetTopItem);
+	SCRIPT_METHOD(ListBox::set_TopItem, ListBox::SetTopItem);
 }
 
-void Listbox::AddItem(ScriptMethodParams &params) {
+void ListBox::AddItem(ScriptMethodParams &params) {
 	PARAMS2(GUIListBox *, lbb, const char *, text);
 	params._result = AGS3::ListBox_AddItem(lbb, text);
 }
 
-void Listbox::Clear(ScriptMethodParams &params) {
+void ListBox::Clear(ScriptMethodParams &params) {
 	PARAMS1(GUIListBox *, listbox);
 	AGS3::ListBox_Clear(listbox);
 }
 
-void Listbox::FillDirList(ScriptMethodParams &params) {
+void ListBox::FillDirList(ScriptMethodParams &params) {
 	PARAMS2(GUIListBox *, listbox, const char *, filemask);
 	AGS3::ListBox_FillDirList(listbox, filemask);
 }
 
-void Listbox::FillSaveGameList(ScriptMethodParams &params) {
+void ListBox::FillSaveGameList(ScriptMethodParams &params) {
 	PARAMS1(GUIListBox *, listbox);
 	params._result = AGS3::ListBox_FillSaveGameList(listbox);
 }
 
-void Listbox::GetItemAtLocation(ScriptMethodParams &params) {
+void ListBox::GetItemAtLocation(ScriptMethodParams &params) {
 	PARAMS3(GUIListBox *, listbox, int, x, int, y);
 	params._result = AGS3::ListBox_GetItemAtLocation(listbox, x, y);
 }
 
-void Listbox::GetItemText(ScriptMethodParams &params) {
+void ListBox::GetItemText(ScriptMethodParams &params) {
 	PARAMS3(GUIListBox *, listbox, int, index, char *, buffer);
 	params._result = AGS3::ListBox_GetItemText(listbox, index, buffer);
 }
 
-void Listbox::InsertItemAt(ScriptMethodParams &params) {
+void ListBox::InsertItemAt(ScriptMethodParams &params) {
 	PARAMS3(GUIListBox *, lbb, int, index, const char *, text);
 	params._result = AGS3::ListBox_InsertItemAt(lbb, index, text);
 }
 
-void Listbox::RemoveItem(ScriptMethodParams &params) {
+void ListBox::RemoveItem(ScriptMethodParams &params) {
 	PARAMS2(GUIListBox *, listbox, int, itemIndex);
 	AGS3::ListBox_RemoveItem(listbox, itemIndex);
 }
 
-void Listbox::ScrollDown(ScriptMethodParams &params) {
+void ListBox::ScrollDown(ScriptMethodParams &params) {
 	PARAMS1(GUIListBox *, listbox);
 	AGS3::ListBox_ScrollDown(listbox);
 }
 
-void Listbox::ScrollUp(ScriptMethodParams &params) {
+void ListBox::ScrollUp(ScriptMethodParams &params) {
 	PARAMS1(GUIListBox *, listbox);
 	AGS3::ListBox_ScrollUp(listbox);
 }
 
-void Listbox::SetItemText(ScriptMethodParams &params) {
+void ListBox::SetItemText(ScriptMethodParams &params) {
 	PARAMS3(GUIListBox *, listbox, int, index, const char *, newtext);
 	AGS3::ListBox_SetItemText(listbox, index, newtext);
 }
 
-void Listbox::GetFont(ScriptMethodParams &params) {
+void ListBox::GetFont(ScriptMethodParams &params) {
 	PARAMS1(GUIListBox *, listbox);
 	params._result = AGS3::ListBox_GetFont(listbox);
 }
 
-void Listbox::SetFont(ScriptMethodParams &params) {
+void ListBox::SetFont(ScriptMethodParams &params) {
 	PARAMS2(GUIListBox *, listbox, int, newfont);
 	AGS3::ListBox_SetFont(listbox, newfont);
 }
 
-void Listbox::GetHideBorder(ScriptMethodParams &params) {
+void ListBox::GetHideBorder(ScriptMethodParams &params) {
 	PARAMS1(GUIListBox *, listbox);
 	params._result = AGS3::ListBox_GetHideBorder(listbox);
 }
 
-void Listbox::SetHideBorder(ScriptMethodParams &params) {
+void ListBox::SetHideBorder(ScriptMethodParams &params) {
 	PARAMS2(GUIListBox *, listbox, int, newValue);
 	AGS3::ListBox_SetHideBorder(listbox, newValue);
 }
 
-void Listbox::GetHideScrollArrows(ScriptMethodParams &params) {
+void ListBox::GetHideScrollArrows(ScriptMethodParams &params) {
 	PARAMS1(GUIListBox *, listbox);
 	params._result = AGS3::ListBox_GetHideScrollArrows(listbox);
 }
 
-void Listbox::SetHideScrollArrows(ScriptMethodParams &params) {
+void ListBox::SetHideScrollArrows(ScriptMethodParams &params) {
 	PARAMS2(GUIListBox *, listbox, int, newValue);
 	AGS3::ListBox_SetHideScrollArrows(listbox, newValue);
 }
 
-void Listbox::GetItemCount(ScriptMethodParams &params) {
+void ListBox::GetItemCount(ScriptMethodParams &params) {
 	PARAMS1(GUIListBox *, listbox);
 	params._result = AGS3::ListBox_GetItemCount(listbox);
 }
 
-void Listbox::GetItems(ScriptMethodParams &params) {
+void ListBox::GetItems(ScriptMethodParams &params) {
 	PARAMS2(GUIListBox *, listbox, int, index);
 	params._result = AGS3::ListBox_GetItems(listbox, index);
 }
 
-void Listbox::GetRowCount(ScriptMethodParams &params) {
+void ListBox::GetRowCount(ScriptMethodParams &params) {
 	PARAMS1(GUIListBox *, listbox);
 	params._result = AGS3::ListBox_GetRowCount(listbox);
 }
 
-void Listbox::GetSaveGameSlots(ScriptMethodParams &params) {
+void ListBox::GetSaveGameSlots(ScriptMethodParams &params) {
 	PARAMS2(GUIListBox *, listbox, int, index);
 	params._result = AGS3::ListBox_GetSaveGameSlots(listbox, index);
 }
 
-void Listbox::GetSelectedIndex(ScriptMethodParams &params) {
+void ListBox::GetSelectedIndex(ScriptMethodParams &params) {
 	PARAMS1(GUIListBox *, listbox);
 	params._result = AGS3::ListBox_GetSelectedIndex(listbox);
 }
 
-void Listbox::SetSelectedIndex(ScriptMethodParams &params) {
+void ListBox::SetSelectedIndex(ScriptMethodParams &params) {
 	PARAMS2(GUIListBox *, guisl, int, newsel);
 	AGS3::ListBox_SetSelectedIndex(guisl, newsel);
 }
 
-void Listbox::GetTopItem(ScriptMethodParams &params) {
+void ListBox::GetTopItem(ScriptMethodParams &params) {
 	PARAMS1(GUIListBox *, listbox);
 	params._result = AGS3::ListBox_GetTopItem(listbox);
 }
 
-void Listbox::SetTopItem(ScriptMethodParams &params) {
+void ListBox::SetTopItem(ScriptMethodParams &params) {
 	PARAMS2(GUIListBox *, guisl, int, item);
 	AGS3::ListBox_SetTopItem(guisl, item);
 }

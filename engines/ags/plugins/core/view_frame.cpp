@@ -28,19 +28,17 @@ namespace Plugins {
 namespace Core {
 
 void ViewFrame::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(ViewFrame::get_Flipped, GetFlipped);
-	SCRIPT_METHOD_EXT(ViewFrame::get_Frame, GetFrame);
-	SCRIPT_METHOD_EXT(ViewFrame::get_Graphic, GetGraphic);
-	SCRIPT_METHOD_EXT(ViewFrame::set_Graphic, SetGraphic);
-	SCRIPT_METHOD_EXT(ViewFrame::get_LinkedAudio, GetLinkedAudio);
-	SCRIPT_METHOD_EXT(ViewFrame::set_LinkedAudio, SetLinkedAudio);
-	SCRIPT_METHOD_EXT(ViewFrame::get_Loop, GetLoop);
-	SCRIPT_METHOD_EXT(ViewFrame::get_Sound, GetSound);
-	SCRIPT_METHOD_EXT(ViewFrame::set_Sound, SetSound);
-	SCRIPT_METHOD_EXT(ViewFrame::get_Speed, GetSpeed);
-	SCRIPT_METHOD_EXT(ViewFrame::get_View, GetView);
-	*/
+	SCRIPT_METHOD(ViewFrame::get_Flipped, ViewFrame::GetFlipped);
+	SCRIPT_METHOD(ViewFrame::get_Frame, ViewFrame::GetFrame);
+	SCRIPT_METHOD(ViewFrame::get_Graphic, ViewFrame::GetGraphic);
+	SCRIPT_METHOD(ViewFrame::set_Graphic, ViewFrame::SetGraphic);
+	SCRIPT_METHOD(ViewFrame::get_LinkedAudio, ViewFrame::GetLinkedAudio);
+	SCRIPT_METHOD(ViewFrame::set_LinkedAudio, ViewFrame::SetLinkedAudio);
+	SCRIPT_METHOD(ViewFrame::get_Loop, ViewFrame::GetLoop);
+	SCRIPT_METHOD(ViewFrame::get_Sound, ViewFrame::GetSound);
+	SCRIPT_METHOD(ViewFrame::set_Sound, ViewFrame::SetSound);
+	SCRIPT_METHOD(ViewFrame::get_Speed, ViewFrame::GetSpeed);
+	SCRIPT_METHOD(ViewFrame::get_View, ViewFrame::GetView);
 }
 
 void ViewFrame::GetFlipped(ScriptMethodParams &params) {

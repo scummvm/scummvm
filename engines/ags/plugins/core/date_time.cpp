@@ -28,16 +28,14 @@ namespace Plugins {
 namespace Core {
 
 void DateTime::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(DateTime::get_Now, Now);
-	SCRIPT_METHOD_EXT(DateTime::get_DayOfMonth, GetDayOfMonth);
-	SCRIPT_METHOD_EXT(DateTime::get_Hour, GetHour);
-	SCRIPT_METHOD_EXT(DateTime::get_Minute, GetMinute);
-	SCRIPT_METHOD_EXT(DateTime::get_Month, GetMonth);
-	SCRIPT_METHOD_EXT(DateTime::get_RawTime, GetRawTime);
-	SCRIPT_METHOD_EXT(DateTime::get_Second, GetSecond);
-	SCRIPT_METHOD_EXT(DateTime::get_Year, GetYear);
-	*/
+	SCRIPT_METHOD(DateTime::get_Now, DateTime::Now);
+	SCRIPT_METHOD(DateTime::get_DayOfMonth, DateTime::GetDayOfMonth);
+	SCRIPT_METHOD(DateTime::get_Hour, DateTime::GetHour);
+	SCRIPT_METHOD(DateTime::get_Minute, DateTime::GetMinute);
+	SCRIPT_METHOD(DateTime::get_Month, DateTime::GetMonth);
+	SCRIPT_METHOD(DateTime::get_RawTime, DateTime::GetRawTime);
+	SCRIPT_METHOD(DateTime::get_Second, DateTime::GetSecond);
+	SCRIPT_METHOD(DateTime::get_Year, DateTime::GetYear);
 }
 
 void DateTime::Now(ScriptMethodParams &params) {

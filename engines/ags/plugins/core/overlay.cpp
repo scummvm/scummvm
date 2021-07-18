@@ -28,17 +28,15 @@ namespace Plugins {
 namespace Core {
 
 void Overlay::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(Overlay::CreateGraphical^4, CreateGraphical);
-	SCRIPT_METHOD_EXT(Overlay::CreateTextual^106, ScPl_CreateTextual);
-	SCRIPT_METHOD_EXT(Overlay::SetText^104, ScPl_SetText);
-	SCRIPT_METHOD_EXT(Overlay::Remove^0, Remove);
-	SCRIPT_METHOD_EXT(Overlay::get_Valid, GetValid);
-	SCRIPT_METHOD_EXT(Overlay::get_X, GetX);
-	SCRIPT_METHOD_EXT(Overlay::set_X, SetX);
-	SCRIPT_METHOD_EXT(Overlay::get_Y, GetY);
-	SCRIPT_METHOD_EXT(Overlay::set_Y, SetY);
-	*/
+	SCRIPT_METHOD(Overlay::CreateGraphical^4, Overlay::CreateGraphical);
+	SCRIPT_METHOD(Overlay::CreateTextual^106, Overlay::ScPl_CreateTextual);
+	SCRIPT_METHOD(Overlay::SetText^104, Overlay::ScPl_SetText);
+	SCRIPT_METHOD(Overlay::Remove^0, Overlay::Remove);
+	SCRIPT_METHOD(Overlay::get_Valid, Overlay::GetValid);
+	SCRIPT_METHOD(Overlay::get_X, Overlay::GetX);
+	SCRIPT_METHOD(Overlay::set_X, Overlay::SetX);
+	SCRIPT_METHOD(Overlay::get_Y, Overlay::GetY);
+	SCRIPT_METHOD(Overlay::set_Y, Overlay::SetY);
 }
 
 void Overlay::CreateGraphical(ScriptMethodParams &params) {

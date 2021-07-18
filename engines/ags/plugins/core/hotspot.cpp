@@ -28,21 +28,19 @@ namespace Plugins {
 namespace Core {
 
 void Hotspot::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(Hotspot::GetAtRoomXY^2, GetHotspotAtRoom);
-	SCRIPT_METHOD_EXT(Hotspot::GetAtScreenXY^2, GetHotspotAtScreen);
-	SCRIPT_METHOD_EXT(Hotspot::GetName^1, GetName);
-	SCRIPT_METHOD_EXT(Hotspot::GetProperty^1, GetProperty);
-	SCRIPT_METHOD_EXT(Hotspot::GetPropertyText^2, GetPropertyText);
-	SCRIPT_METHOD_EXT(Hotspot::GetTextProperty^1, GetTextProperty);
-	SCRIPT_METHOD_EXT(Hotspot::RunInteraction^1, RunInteraction);
-	SCRIPT_METHOD_EXT(Hotspot::get_Enabled, GetEnabled);
-	SCRIPT_METHOD_EXT(Hotspot::set_Enabled, SetEnabled);
-	SCRIPT_METHOD_EXT(Hotspot::get_ID, GetID);
-	SCRIPT_METHOD_EXT(Hotspot::get_Name, GetName_New);
-	SCRIPT_METHOD_EXT(Hotspot::get_WalkToX, GetWalkToX);
-	SCRIPT_METHOD_EXT(Hotspot::get_WalkToY, GetWalkToY);
-	*/
+	SCRIPT_METHOD(Hotspot::GetAtRoomXY^2, Hotspot::GetHotspotAtRoom);
+	SCRIPT_METHOD(Hotspot::GetAtScreenXY^2, Hotspot::GetHotspotAtScreen);
+	SCRIPT_METHOD(Hotspot::GetName^1, Hotspot::GetName);
+	SCRIPT_METHOD(Hotspot::GetProperty^1, Hotspot::GetProperty);
+	SCRIPT_METHOD(Hotspot::GetPropertyText^2, Hotspot::GetPropertyText);
+	SCRIPT_METHOD(Hotspot::GetTextProperty^1, Hotspot::GetTextProperty);
+	SCRIPT_METHOD(Hotspot::RunInteraction^1, Hotspot::RunInteraction);
+	SCRIPT_METHOD(Hotspot::get_Enabled, Hotspot::GetEnabled);
+	SCRIPT_METHOD(Hotspot::set_Enabled, Hotspot::SetEnabled);
+	SCRIPT_METHOD(Hotspot::get_ID, Hotspot::GetID);
+	SCRIPT_METHOD(Hotspot::get_Name, Hotspot::GetName_New);
+	SCRIPT_METHOD(Hotspot::get_WalkToX, Hotspot::GetWalkToX);
+	SCRIPT_METHOD(Hotspot::get_WalkToY, Hotspot::GetWalkToY);
 }
 
 void Hotspot::GetHotspotAtRoom(ScriptMethodParams &params) {

@@ -28,33 +28,31 @@ namespace Plugins {
 namespace Core {
 
 void GUI::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(GUI::Centre^0, Centre);
-	SCRIPT_METHOD_EXT(GUI::GetAtScreenXY^2, GetGUIAtLocation);
-	SCRIPT_METHOD_EXT(GUI::SetPosition^2, SetPosition);
-	SCRIPT_METHOD_EXT(GUI::SetSize^2, SetSize);
-	SCRIPT_METHOD_EXT(GUI::get_BackgroundGraphic, GetBackgroundGraphic);
-	SCRIPT_METHOD_EXT(GUI::set_BackgroundGraphic, SetBackgroundGraphic);
-	SCRIPT_METHOD_EXT(GUI::get_Clickable, GetClickable);
-	SCRIPT_METHOD_EXT(GUI::set_Clickable, SetClickable);
-	SCRIPT_METHOD_EXT(GUI::get_ControlCount, GetControlCount);
-	SCRIPT_METHOD_EXT(GUI::geti_Controls, GetiControls);
-	SCRIPT_METHOD_EXT(GUI::get_Height, GetHeight);
-	SCRIPT_METHOD_EXT(GUI::set_Height, SetHeight);
-	SCRIPT_METHOD_EXT(GUI::get_ID, GetID);
-	SCRIPT_METHOD_EXT(GUI::get_Transparency, GetTransparency);
-	SCRIPT_METHOD_EXT(GUI::set_Transparency, SetTransparency);
-	SCRIPT_METHOD_EXT(GUI::get_Visible, GetVisible);
-	SCRIPT_METHOD_EXT(GUI::set_Visible, SetVisible);
-	SCRIPT_METHOD_EXT(GUI::get_Width, GetWidth);
-	SCRIPT_METHOD_EXT(GUI::set_Width, SetWidth);
-	SCRIPT_METHOD_EXT(GUI::get_X, GetX);
-	SCRIPT_METHOD_EXT(GUI::set_X, SetX);
-	SCRIPT_METHOD_EXT(GUI::get_Y, GetY);
-	SCRIPT_METHOD_EXT(GUI::set_Y, SetY);
-	SCRIPT_METHOD_EXT(GUI::get_ZOrder, GetZOrder);
-	SCRIPT_METHOD_EXT(GUI::set_ZOrder, SetZOrder);
-	*/
+	SCRIPT_METHOD(GUI::Centre^0, GUI::Centre);
+	SCRIPT_METHOD(GUI::GetAtScreenXY^2, GUI::GetGUIAtLocation);
+	SCRIPT_METHOD(GUI::SetPosition^2, GUI::SetPosition);
+	SCRIPT_METHOD(GUI::SetSize^2, GUI::SetSize);
+	SCRIPT_METHOD(GUI::get_BackgroundGraphic, GUI::GetBackgroundGraphic);
+	SCRIPT_METHOD(GUI::set_BackgroundGraphic, GUI::SetBackgroundGraphic);
+	SCRIPT_METHOD(GUI::get_Clickable, GUI::GetClickable);
+	SCRIPT_METHOD(GUI::set_Clickable, GUI::SetClickable);
+	SCRIPT_METHOD(GUI::get_ControlCount, GUI::GetControlCount);
+	SCRIPT_METHOD(GUI::geti_Controls, GUI::GetiControls);
+	SCRIPT_METHOD(GUI::get_Height, GUI::GetHeight);
+	SCRIPT_METHOD(GUI::set_Height, GUI::SetHeight);
+	SCRIPT_METHOD(GUI::get_ID, GUI::GetID);
+	SCRIPT_METHOD(GUI::get_Transparency, GUI::GetTransparency);
+	SCRIPT_METHOD(GUI::set_Transparency, GUI::SetTransparency);
+	SCRIPT_METHOD(GUI::get_Visible, GUI::GetVisible);
+	SCRIPT_METHOD(GUI::set_Visible, GUI::SetVisible);
+	SCRIPT_METHOD(GUI::get_Width, GUI::GetWidth);
+	SCRIPT_METHOD(GUI::set_Width, GUI::SetWidth);
+	SCRIPT_METHOD(GUI::get_X, GUI::GetX);
+	SCRIPT_METHOD(GUI::set_X, GUI::SetX);
+	SCRIPT_METHOD(GUI::get_Y, GUI::GetY);
+	SCRIPT_METHOD(GUI::set_Y, GUI::SetY);
+	SCRIPT_METHOD(GUI::get_ZOrder, GUI::GetZOrder);
+	SCRIPT_METHOD(GUI::set_ZOrder, GUI::SetZOrder);
 }
 
 void GUI::Centre(ScriptMethodParams &params) {

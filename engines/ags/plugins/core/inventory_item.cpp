@@ -28,23 +28,21 @@ namespace Plugins {
 namespace Core {
 
 void InventoryItem::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(InventoryItem::GetAtScreenXY ^ 2, GetInvAtLocation);
-	SCRIPT_METHOD_EXT(InventoryItem::IsInteractionAvailable ^ 1, CheckInteractionAvailable);
-	SCRIPT_METHOD_EXT(InventoryItem::GetName ^ 1, GetName);
-	SCRIPT_METHOD_EXT(InventoryItem::GetProperty ^ 1, GetProperty);
-	SCRIPT_METHOD_EXT(InventoryItem::GetPropertyText ^ 2, GetPropertyText);
-	SCRIPT_METHOD_EXT(InventoryItem::GetTextProperty ^ 1, GetTextProperty);
-	SCRIPT_METHOD_EXT(InventoryItem::RunInteraction ^ 1, RunInteraction);
-	SCRIPT_METHOD_EXT(InventoryItem::SetName ^ 1, SetName);
-	SCRIPT_METHOD_EXT(InventoryItem::get_CursorGraphic, GetCursorGraphic);
-	SCRIPT_METHOD_EXT(InventoryItem::set_CursorGraphic, SetCursorGraphic);
-	SCRIPT_METHOD_EXT(InventoryItem::get_Graphic, GetGraphic);
-	SCRIPT_METHOD_EXT(InventoryItem::set_Graphic, SetGraphic);
-	SCRIPT_METHOD_EXT(InventoryItem::get_ID, GetID);
-	SCRIPT_METHOD_EXT(InventoryItem::get_Name, GetName_New);
-	SCRIPT_METHOD_EXT(InventoryItem::set_Name, SetName);
-	*/
+	SCRIPT_METHOD(InventoryItem::GetAtScreenXY ^ 2, InventoryItem::GetInvAtLocation);
+	SCRIPT_METHOD(InventoryItem::IsInteractionAvailable ^ 1, InventoryItem::CheckInteractionAvailable);
+	SCRIPT_METHOD(InventoryItem::GetName ^ 1, InventoryItem::GetName);
+	SCRIPT_METHOD(InventoryItem::GetProperty ^ 1, InventoryItem::GetProperty);
+	SCRIPT_METHOD(InventoryItem::GetPropertyText ^ 2, InventoryItem::GetPropertyText);
+	SCRIPT_METHOD(InventoryItem::GetTextProperty ^ 1, InventoryItem::GetTextProperty);
+	SCRIPT_METHOD(InventoryItem::RunInteraction ^ 1, InventoryItem::RunInteraction);
+	SCRIPT_METHOD(InventoryItem::SetName ^ 1, InventoryItem::SetName);
+	SCRIPT_METHOD(InventoryItem::get_CursorGraphic, InventoryItem::GetCursorGraphic);
+	SCRIPT_METHOD(InventoryItem::set_CursorGraphic, InventoryItem::SetCursorGraphic);
+	SCRIPT_METHOD(InventoryItem::get_Graphic, InventoryItem::GetGraphic);
+	SCRIPT_METHOD(InventoryItem::set_Graphic, InventoryItem::SetGraphic);
+	SCRIPT_METHOD(InventoryItem::get_ID, InventoryItem::GetID);
+	SCRIPT_METHOD(InventoryItem::get_Name, InventoryItem::GetName_New);
+	SCRIPT_METHOD(InventoryItem::set_Name, InventoryItem::SetName);
 }
 
 void InventoryItem::GetInvAtLocation(ScriptMethodParams &params) {

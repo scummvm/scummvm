@@ -28,31 +28,29 @@ namespace Plugins {
 namespace Core {
 
 void System::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(System::get_AudioChannelCount, GetAudioChannelCount);
-	SCRIPT_METHOD_EXT(System::geti_AudioChannels, GetAudioChannels);
-	SCRIPT_METHOD_EXT(System::get_CapsLock, GetCapsLock);
-	SCRIPT_METHOD_EXT(System::get_ColorDepth, GetColorDepth);
-	SCRIPT_METHOD_EXT(System::get_Gamma, GetGamma);
-	SCRIPT_METHOD_EXT(System::set_Gamma, SetGamma);
-	SCRIPT_METHOD_EXT(System::get_HardwareAcceleration, GetHardwareAcceleration);
-	SCRIPT_METHOD_EXT(System::get_NumLock, GetNumLock);
-	SCRIPT_METHOD_EXT(System::get_OperatingSystem, GetOS);
-	SCRIPT_METHOD_EXT(System::get_RuntimeInfo, GetRuntimeInfo);
-	SCRIPT_METHOD_EXT(System::get_ScreenHeight, GetScreenHeight);
-	SCRIPT_METHOD_EXT(System::get_ScreenWidth, GetScreenWidth);
-	SCRIPT_METHOD_EXT(System::get_ScrollLock, GetScrollLock);
-	SCRIPT_METHOD_EXT(System::get_SupportsGammaControl, GetSupportsGammaControl);
-	SCRIPT_METHOD_EXT(System::get_Version, GetVersion);
-	SCRIPT_METHOD_EXT(SystemInfo::get_Version, GetVersion);
-	SCRIPT_METHOD_EXT(System::get_ViewportHeight, GetViewportHeight);
-	SCRIPT_METHOD_EXT(System::get_ViewportWidth, GetViewportWidth);
-	SCRIPT_METHOD_EXT(System::get_Volume, GetVolume);
-	SCRIPT_METHOD_EXT(System::set_Volume, SetVolume);
-	SCRIPT_METHOD_EXT(System::get_VSync, GetVsync);
-	SCRIPT_METHOD_EXT(System::set_VSync, SetVsync);
-	SCRIPT_METHOD_EXT(System::get_Windowed, GetWindowed);
-	*/
+	SCRIPT_METHOD(System::get_AudioChannelCount, System::GetAudioChannelCount);
+	SCRIPT_METHOD(System::geti_AudioChannels, System::GetAudioChannels);
+	SCRIPT_METHOD(System::get_CapsLock, System::GetCapsLock);
+	SCRIPT_METHOD(System::get_ColorDepth, System::GetColorDepth);
+	SCRIPT_METHOD(System::get_Gamma, System::GetGamma);
+	SCRIPT_METHOD(System::set_Gamma, System::SetGamma);
+	SCRIPT_METHOD(System::get_HardwareAcceleration, System::GetHardwareAcceleration);
+	SCRIPT_METHOD(System::get_NumLock, System::GetNumLock);
+	SCRIPT_METHOD(System::get_OperatingSystem, System::GetOS);
+	SCRIPT_METHOD(System::get_RuntimeInfo, System::GetRuntimeInfo);
+	SCRIPT_METHOD(System::get_ScreenHeight, System::GetScreenHeight);
+	SCRIPT_METHOD(System::get_ScreenWidth, System::GetScreenWidth);
+	SCRIPT_METHOD(System::get_ScrollLock, System::GetScrollLock);
+	SCRIPT_METHOD(System::get_SupportsGammaControl, System::GetSupportsGammaControl);
+	SCRIPT_METHOD(System::get_Version, System::GetVersion);
+	SCRIPT_METHOD(SystemInfo::get_Version, System::GetVersion);
+	SCRIPT_METHOD(System::get_ViewportHeight, System::GetViewportHeight);
+	SCRIPT_METHOD(System::get_ViewportWidth, System::GetViewportWidth);
+	SCRIPT_METHOD(System::get_Volume, System::GetVolume);
+	SCRIPT_METHOD(System::set_Volume, System::SetVolume);
+	SCRIPT_METHOD(System::get_VSync, System::GetVsync);
+	SCRIPT_METHOD(System::set_VSync, System::SetVsync);
+	SCRIPT_METHOD(System::get_Windowed, System::GetWindowed);
 }
 
 void System::GetAudioChannelCount(ScriptMethodParams &params) {

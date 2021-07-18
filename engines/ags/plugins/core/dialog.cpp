@@ -28,17 +28,15 @@ namespace Plugins {
 namespace Core {
 
 void Dialog::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(Dialog::get_ID, GetID);
-	SCRIPT_METHOD_EXT(Dialog::get_OptionCount, GetOptionCount);
-	SCRIPT_METHOD_EXT(Dialog::get_ShowTextParser, GetShowTextParser);
-	SCRIPT_METHOD_EXT(Dialog::DisplayOptions^1, DisplayOptions);
-	SCRIPT_METHOD_EXT(Dialog::GetOptionState^1, GetOptionState);
-	SCRIPT_METHOD_EXT(Dialog::GetOptionText^1, GetOptionText);
-	SCRIPT_METHOD_EXT(Dialog::HasOptionBeenChosen^1, HasOptionBeenChosen);
-	SCRIPT_METHOD_EXT(Dialog::SetOptionState^2, SetOptionState);
-	SCRIPT_METHOD_EXT(Dialog::Start^0, Start);
-	*/
+	SCRIPT_METHOD(Dialog::get_ID, Dialog::GetID);
+	SCRIPT_METHOD(Dialog::get_OptionCount, Dialog::GetOptionCount);
+	SCRIPT_METHOD(Dialog::get_ShowTextParser, Dialog::GetShowTextParser);
+	SCRIPT_METHOD(Dialog::DisplayOptions^1, Dialog::DisplayOptions);
+	SCRIPT_METHOD(Dialog::GetOptionState^1, Dialog::GetOptionState);
+	SCRIPT_METHOD(Dialog::GetOptionText^1, Dialog::GetOptionText);
+	SCRIPT_METHOD(Dialog::HasOptionBeenChosen^1, Dialog::HasOptionBeenChosen);
+	SCRIPT_METHOD(Dialog::SetOptionState^2, Dialog::SetOptionState);
+	SCRIPT_METHOD(Dialog::Start^0, Dialog::Start);
 }
 
 void Dialog::GetID(ScriptMethodParams &params) {

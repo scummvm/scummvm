@@ -28,30 +28,28 @@ namespace Plugins {
 namespace Core {
 
 void DynamicSprite::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(DynamicSprite::ChangeCanvasSize^4, ChangeCanvasSize);
-	SCRIPT_METHOD_EXT(DynamicSprite::CopyTransparencyMask^1, CopyTransparencyMask);
-	SCRIPT_METHOD_EXT(DynamicSprite::Crop^4, Crop);
-	SCRIPT_METHOD_EXT(DynamicSprite::Delete, Delete);
-	SCRIPT_METHOD_EXT(DynamicSprite::Flip^1, Flip);
-	SCRIPT_METHOD_EXT(DynamicSprite::GetDrawingSurface^0, GetDrawingSurface);
-	SCRIPT_METHOD_EXT(DynamicSprite::Resize^2, Resize);
-	SCRIPT_METHOD_EXT(DynamicSprite::Rotate^3, Rotate);
-	SCRIPT_METHOD_EXT(DynamicSprite::SaveToFile^1, SaveToFile);
-	SCRIPT_METHOD_EXT(DynamicSprite::Tint^5, Tint);
-	SCRIPT_METHOD_EXT(DynamicSprite::get_ColorDepth, GetColorDepth);
-	SCRIPT_METHOD_EXT(DynamicSprite::get_Graphic, GetGraphic);
-	SCRIPT_METHOD_EXT(DynamicSprite::get_Height, GetHeight);
-	SCRIPT_METHOD_EXT(DynamicSprite::get_Width, GetWidth);
-	SCRIPT_METHOD_EXT(DynamicSprite::Create^3, Create);
-	SCRIPT_METHOD_EXT(DynamicSprite::CreateFromBackground, CreateFromBackground);
-	SCRIPT_METHOD_EXT(DynamicSprite::CreateFromDrawingSurface^5, CreateFromDrawingSurface);
-	SCRIPT_METHOD_EXT(DynamicSprite::CreateFromExistingSprite^1, CreateFromExistingSprite_Old);
-	SCRIPT_METHOD_EXT(DynamicSprite::CreateFromExistingSprite^2, CreateFromExistingSprite);
-	SCRIPT_METHOD_EXT(DynamicSprite::CreateFromFile, CreateFromFile);
-	SCRIPT_METHOD_EXT(DynamicSprite::CreateFromSaveGame, CreateFromSaveGame);
-	SCRIPT_METHOD_EXT(DynamicSprite::CreateFromScreenShot, CreateFromScreenShot);
-	*/
+	SCRIPT_METHOD(DynamicSprite::ChangeCanvasSize^4, DynamicSprite::ChangeCanvasSize);
+	SCRIPT_METHOD(DynamicSprite::CopyTransparencyMask^1, DynamicSprite::CopyTransparencyMask);
+	SCRIPT_METHOD(DynamicSprite::Crop^4, DynamicSprite::Crop);
+	SCRIPT_METHOD(DynamicSprite::Delete, DynamicSprite::Delete);
+	SCRIPT_METHOD(DynamicSprite::Flip^1, DynamicSprite::Flip);
+	SCRIPT_METHOD(DynamicSprite::GetDrawingSurface^0, DynamicSprite::GetDrawingSurface);
+	SCRIPT_METHOD(DynamicSprite::Resize^2, DynamicSprite::Resize);
+	SCRIPT_METHOD(DynamicSprite::Rotate^3, DynamicSprite::Rotate);
+	SCRIPT_METHOD(DynamicSprite::SaveToFile^1, DynamicSprite::SaveToFile);
+	SCRIPT_METHOD(DynamicSprite::Tint^5, DynamicSprite::Tint);
+	SCRIPT_METHOD(DynamicSprite::get_ColorDepth, DynamicSprite::GetColorDepth);
+	SCRIPT_METHOD(DynamicSprite::get_Graphic, DynamicSprite::GetGraphic);
+	SCRIPT_METHOD(DynamicSprite::get_Height, DynamicSprite::GetHeight);
+	SCRIPT_METHOD(DynamicSprite::get_Width, DynamicSprite::GetWidth);
+	SCRIPT_METHOD(DynamicSprite::Create^3, DynamicSprite::Create);
+	SCRIPT_METHOD(DynamicSprite::CreateFromBackground, DynamicSprite::CreateFromBackground);
+	SCRIPT_METHOD(DynamicSprite::CreateFromDrawingSurface^5, DynamicSprite::CreateFromDrawingSurface);
+	SCRIPT_METHOD(DynamicSprite::CreateFromExistingSprite^1, DynamicSprite::CreateFromExistingSprite_Old);
+	SCRIPT_METHOD(DynamicSprite::CreateFromExistingSprite^2, DynamicSprite::CreateFromExistingSprite);
+	SCRIPT_METHOD(DynamicSprite::CreateFromFile, DynamicSprite::CreateFromFile);
+	SCRIPT_METHOD(DynamicSprite::CreateFromSaveGame, DynamicSprite::CreateFromSaveGame);
+	SCRIPT_METHOD(DynamicSprite::CreateFromScreenShot, DynamicSprite::CreateFromScreenShot);
 }
 
 void DynamicSprite::ChangeCanvasSize(ScriptMethodParams &params) {

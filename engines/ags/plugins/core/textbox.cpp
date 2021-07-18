@@ -28,16 +28,14 @@ namespace Plugins {
 namespace Core {
 
 void Textbox::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(TextBox::GetText^1, GetText);
-	SCRIPT_METHOD_EXT(TextBox::SetText^1, SetText);
-	SCRIPT_METHOD_EXT(TextBox::get_Font, GetFont);
-	SCRIPT_METHOD_EXT(TextBox::set_Font, SetFont);
-	SCRIPT_METHOD_EXT(TextBox::get_Text, GetText_New);
-	SCRIPT_METHOD_EXT(TextBox::set_Text, SetText);
-	SCRIPT_METHOD_EXT(TextBox::get_TextColor, GetTextColor);
-	SCRIPT_METHOD_EXT(TextBox::set_TextColor, SetTextColor);
-	*/
+	SCRIPT_METHOD(TextBox::GetText^1, Textbox::GetText);
+	SCRIPT_METHOD(TextBox::SetText^1, Textbox::SetText);
+	SCRIPT_METHOD(TextBox::get_Font, Textbox::GetFont);
+	SCRIPT_METHOD(TextBox::set_Font, Textbox::SetFont);
+	SCRIPT_METHOD(TextBox::get_Text, Textbox::GetText_New);
+	SCRIPT_METHOD(TextBox::set_Text, Textbox::SetText);
+	SCRIPT_METHOD(TextBox::get_TextColor, Textbox::GetTextColor);
+	SCRIPT_METHOD(TextBox::set_TextColor, Textbox::SetTextColor);
 }
 
 void Textbox::GetText(ScriptMethodParams &params) {

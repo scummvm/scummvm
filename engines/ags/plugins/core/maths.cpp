@@ -20,122 +20,120 @@
  *
  */
 
-#include "ags/plugins/core/math.h"
+#include "ags/plugins/core/maths.h"
 #include "ags/engine/ac/math.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
-void Math::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(Maths::ArcCos^1, ArcCos);
-	SCRIPT_METHOD_EXT(Maths::ArcSin^1, ArcSin);
-	SCRIPT_METHOD_EXT(Maths::ArcTan^1, ArcTan);
-	SCRIPT_METHOD_EXT(Maths::ArcTan2^2, ArcTan2);
-	SCRIPT_METHOD_EXT(Maths::Cos^1, Cos);
-	SCRIPT_METHOD_EXT(Maths::Cosh^1, Cosh);
-	SCRIPT_METHOD_EXT(Maths::DegreesToRadians^1, DegreesToRadians);
-	SCRIPT_METHOD_EXT(Maths::Exp^1, Exp);
-	SCRIPT_METHOD_EXT(Maths::Log^1, Log);
-	SCRIPT_METHOD_EXT(Maths::Log10^1, Log10);
-	SCRIPT_METHOD_EXT(Maths::RadiansToDegrees^1, RadiansToDegrees);
-	SCRIPT_METHOD_EXT(Maths::RaiseToPower^2, RaiseToPower);
-	SCRIPT_METHOD_EXT(Maths::Sin^1, Sin);
-	SCRIPT_METHOD_EXT(Maths::Sinh^1, Sinh);
-	SCRIPT_METHOD_EXT(Maths::Sqrt^1, Sqrt);
-	SCRIPT_METHOD_EXT(Maths::Tan^1, Tan);
-	SCRIPT_METHOD_EXT(Maths::Tanh^1, Tanh);
-	SCRIPT_METHOD_EXT(Maths::get_Pi, GetPi);
-	*/
+void Maths::AGS_EngineStartup(IAGSEngine *engine) {
+	SCRIPT_METHOD(Maths::ArcCos^1, Maths::ArcCos);
+	SCRIPT_METHOD(Maths::ArcSin^1, Maths::ArcSin);
+	SCRIPT_METHOD(Maths::ArcTan^1, Maths::ArcTan);
+	SCRIPT_METHOD(Maths::ArcTan2^2, Maths::ArcTan2);
+	SCRIPT_METHOD(Maths::Cos^1, Maths::Cos);
+	SCRIPT_METHOD(Maths::Cosh^1, Maths::Cosh);
+	SCRIPT_METHOD(Maths::DegreesToRadians^1, Maths::DegreesToRadians);
+	SCRIPT_METHOD(Maths::Exp^1, Maths::Exp);
+	SCRIPT_METHOD(Maths::Log^1, Maths::Log);
+	SCRIPT_METHOD(Maths::Log10^1, Maths::Log10);
+	SCRIPT_METHOD(Maths::RadiansToDegrees^1, Maths::RadiansToDegrees);
+	SCRIPT_METHOD(Maths::RaiseToPower^2, Maths::RaiseToPower);
+	SCRIPT_METHOD(Maths::Sin^1, Maths::Sin);
+	SCRIPT_METHOD(Maths::Sinh^1, Maths::Sinh);
+	SCRIPT_METHOD(Maths::Sqrt^1, Maths::Sqrt);
+	SCRIPT_METHOD(Maths::Tan^1, Maths::Tan);
+	SCRIPT_METHOD(Maths::Tanh^1, Maths::Tanh);
+	SCRIPT_METHOD(Maths::get_Pi, Maths::GetPi);
 }
 
-void Math::ArcCos(ScriptMethodParams &params) {
+void Maths::ArcCos(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_ArcCos(value);
 }
 
-void Math::ArcSin(ScriptMethodParams &params) {
+void Maths::ArcSin(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_ArcSin(value);
 }
 
-void Math::ArcTan(ScriptMethodParams &params) {
+void Maths::ArcTan(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_ArcTan(value);
 }
 
-void Math::ArcTan2(ScriptMethodParams &params) {
+void Maths::ArcTan2(ScriptMethodParams &params) {
 	PARAMS2(float, yval, float, xval);
 	params._result = AGS3::Math_ArcTan2(xval, yval);
 }
 
-void Math::Cos(ScriptMethodParams &params) {
+void Maths::Cos(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_Cos(value);
 }
 
-void Math::Cosh(ScriptMethodParams &params) {
+void Maths::Cosh(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_Cosh(value);
 }
 
-void Math::DegreesToRadians(ScriptMethodParams &params) {
+void Maths::DegreesToRadians(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_DegreesToRadians(value);
 }
 
-void Math::Exp(ScriptMethodParams &params) {
+void Maths::Exp(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_Exp(value);
 }
 
-void Math::Log(ScriptMethodParams &params) {
+void Maths::Log(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_Log(value);
 }
 
-void Math::Log10(ScriptMethodParams &params) {
+void Maths::Log10(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_Log10(value);
 }
 
-void Math::RadiansToDegrees(ScriptMethodParams &params) {
+void Maths::RadiansToDegrees(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_RadiansToDegrees(value);
 }
 
-void Math::RaiseToPower(ScriptMethodParams &params) {
+void Maths::RaiseToPower(ScriptMethodParams &params) {
 	PARAMS2(float, base, float, exp);
 	params._result = AGS3::Math_RaiseToPower(base, exp);
 }
 
-void Math::Sin(ScriptMethodParams &params) {
+void Maths::Sin(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_Sin(value);
 }
 
-void Math::Sinh(ScriptMethodParams &params) {
+void Maths::Sinh(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_Sinh(value);
 }
 
-void Math::Sqrt(ScriptMethodParams &params) {
+void Maths::Sqrt(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_Sqrt(value);
 }
 
-void Math::Tan(ScriptMethodParams &params) {
+void Maths::Tan(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_Tan(value);
 }
 
-void Math::Tanh(ScriptMethodParams &params) {
+void Maths::Tanh(ScriptMethodParams &params) {
 	PARAMS1(float, value);
 	params._result = AGS3::Math_Tanh(value);
 }
 
-void Math::GetPi(ScriptMethodParams &params) {
+void Maths::GetPi(ScriptMethodParams &params) {
 	params._result = AGS3::Math_GetPi();
 }
 

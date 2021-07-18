@@ -28,20 +28,18 @@ namespace Plugins {
 namespace Core {
 
 void Slider::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(Slider::get_BackgroundGraphic, GetBackgroundGraphic);
-	SCRIPT_METHOD_EXT(Slider::set_BackgroundGraphic, SetBackgroundGraphic);
-	SCRIPT_METHOD_EXT(Slider::get_HandleGraphic, GetHandleGraphic);
-	SCRIPT_METHOD_EXT(Slider::set_HandleGraphic, SetHandleGraphic);
-	SCRIPT_METHOD_EXT(Slider::get_HandleOffset, GetHandleOffset);
-	SCRIPT_METHOD_EXT(Slider::set_HandleOffset, SetHandleOffset);
-	SCRIPT_METHOD_EXT(Slider::get_Max, GetMax);
-	SCRIPT_METHOD_EXT(Slider::set_Max, SetMax);
-	SCRIPT_METHOD_EXT(Slider::get_Min, GetMin);
-	SCRIPT_METHOD_EXT(Slider::set_Min, SetMin);
-	SCRIPT_METHOD_EXT(Slider::get_Value, GetValue);
-	SCRIPT_METHOD_EXT(Slider::set_Value, SetValue);
-	*/
+	SCRIPT_METHOD(Slider::get_BackgroundGraphic, Slider::GetBackgroundGraphic);
+	SCRIPT_METHOD(Slider::set_BackgroundGraphic, Slider::SetBackgroundGraphic);
+	SCRIPT_METHOD(Slider::get_HandleGraphic, Slider::GetHandleGraphic);
+	SCRIPT_METHOD(Slider::set_HandleGraphic, Slider::SetHandleGraphic);
+	SCRIPT_METHOD(Slider::get_HandleOffset, Slider::GetHandleOffset);
+	SCRIPT_METHOD(Slider::set_HandleOffset, Slider::SetHandleOffset);
+	SCRIPT_METHOD(Slider::get_Max, Slider::GetMax);
+	SCRIPT_METHOD(Slider::set_Max, Slider::SetMax);
+	SCRIPT_METHOD(Slider::get_Min, Slider::GetMin);
+	SCRIPT_METHOD(Slider::set_Min, Slider::SetMin);
+	SCRIPT_METHOD(Slider::get_Value, Slider::GetValue);
+	SCRIPT_METHOD(Slider::set_Value, Slider::SetValue);
 }
 
 void Slider::GetBackgroundGraphic(ScriptMethodParams &params) {

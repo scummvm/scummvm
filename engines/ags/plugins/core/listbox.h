@@ -29,10 +29,10 @@ namespace AGS3 {
 namespace Plugins {
 namespace Core {
 
-class Listbox : public ScriptContainer {
-	SCRIPT_HASH(Listbox)
+class ListBox : public ScriptContainer {
+	SCRIPT_HASH(ListBox)
 public:
-	virtual ~Listbox() {}
+	virtual ~ListBox() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;
 
 	void AddItem(ScriptMethodParams &params);

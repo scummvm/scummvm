@@ -42,7 +42,7 @@
 #include "ags/plugins/core/inv_window.h"
 #include "ags/plugins/core/label.h"
 #include "ags/plugins/core/listbox.h"
-#include "ags/plugins/core/math.h"
+#include "ags/plugins/core/maths.h"
 #include "ags/plugins/core/mouse.h"
 #include "ags/plugins/core/object.h"
 #include "ags/plugins/core/overlay.h"
@@ -79,8 +79,8 @@ private:
 	InvWindow _invWindow;
 	InventoryItem _inventoryItem;
 	Label _label;
-	Listbox _listbox;
-	Math _math;
+	ListBox _listbox;
+	Maths _math;
 	Mouse _mouse;
 	Object _object;
 	Overlay _overlay;

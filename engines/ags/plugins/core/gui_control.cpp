@@ -28,35 +28,33 @@ namespace Plugins {
 namespace Core {
 
 void GUIControl::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(GUIControl::BringToFront^0, BringToFront);
-	SCRIPT_METHOD_EXT(GUIControl::GetAtScreenXY^2, GetGUIControlAtLocation);
-	SCRIPT_METHOD_EXT(GUIControl::SendToBack^0, SendToBack);
-	SCRIPT_METHOD_EXT(GUIControl::SetPosition^2, SetPosition);
-	SCRIPT_METHOD_EXT(GUIControl::SetSize^2, SetSize);
-	SCRIPT_METHOD_EXT(GUIControl::get_AsButton, GetAsButton);
-	SCRIPT_METHOD_EXT(GUIControl::get_AsInvWindow, GetAsInvWindow);
-	SCRIPT_METHOD_EXT(GUIControl::get_AsLabel, GetAsLabel);
-	SCRIPT_METHOD_EXT(GUIControl::get_AsListBox, GetAsListBox);
-	SCRIPT_METHOD_EXT(GUIControl::get_AsSlider, GetAsSlider);
-	SCRIPT_METHOD_EXT(GUIControl::get_AsTextBox, GetAsTextBox);
-	SCRIPT_METHOD_EXT(GUIControl::get_Clickable, GetClickable);
-	SCRIPT_METHOD_EXT(GUIControl::set_Clickable, SetClickable);
-	SCRIPT_METHOD_EXT(GUIControl::get_Enabled, GetEnabled);
-	SCRIPT_METHOD_EXT(GUIControl::set_Enabled, SetEnabled);
-	SCRIPT_METHOD_EXT(GUIControl::get_Height, GetHeight);
-	SCRIPT_METHOD_EXT(GUIControl::set_Height, SetHeight);
-	SCRIPT_METHOD_EXT(GUIControl::get_ID, GetID);
-	SCRIPT_METHOD_EXT(GUIControl::get_OwningGUI, GetOwningGUI);
-	SCRIPT_METHOD_EXT(GUIControl::get_Visible, GetVisible);
-	SCRIPT_METHOD_EXT(GUIControl::set_Visible, SetVisible);
-	SCRIPT_METHOD_EXT(GUIControl::get_Width, GetWidth);
-	SCRIPT_METHOD_EXT(GUIControl::set_Width, SetWidth);
-	SCRIPT_METHOD_EXT(GUIControl::get_X, GetX);
-	SCRIPT_METHOD_EXT(GUIControl::set_X, SetX);
-	SCRIPT_METHOD_EXT(GUIControl::get_Y, GetY);
-	SCRIPT_METHOD_EXT(GUIControl::set_Y, SetY);
-	*/
+	SCRIPT_METHOD(GUIControl::BringToFront^0, GUIControl::BringToFront);
+	SCRIPT_METHOD(GUIControl::GetAtScreenXY^2, GUIControl::GetGUIControlAtLocation);
+	SCRIPT_METHOD(GUIControl::SendToBack^0, GUIControl::SendToBack);
+	SCRIPT_METHOD(GUIControl::SetPosition^2, GUIControl::SetPosition);
+	SCRIPT_METHOD(GUIControl::SetSize^2, GUIControl::SetSize);
+	SCRIPT_METHOD(GUIControl::get_AsButton, GUIControl::GetAsButton);
+	SCRIPT_METHOD(GUIControl::get_AsInvWindow, GUIControl::GetAsInvWindow);
+	SCRIPT_METHOD(GUIControl::get_AsLabel, GUIControl::GetAsLabel);
+	SCRIPT_METHOD(GUIControl::get_AsListBox, GUIControl::GetAsListBox);
+	SCRIPT_METHOD(GUIControl::get_AsSlider, GUIControl::GetAsSlider);
+	SCRIPT_METHOD(GUIControl::get_AsTextBox, GUIControl::GetAsTextBox);
+	SCRIPT_METHOD(GUIControl::get_Clickable, GUIControl::GetClickable);
+	SCRIPT_METHOD(GUIControl::set_Clickable, GUIControl::SetClickable);
+	SCRIPT_METHOD(GUIControl::get_Enabled, GUIControl::GetEnabled);
+	SCRIPT_METHOD(GUIControl::set_Enabled, GUIControl::SetEnabled);
+	SCRIPT_METHOD(GUIControl::get_Height, GUIControl::GetHeight);
+	SCRIPT_METHOD(GUIControl::set_Height, GUIControl::SetHeight);
+	SCRIPT_METHOD(GUIControl::get_ID, GUIControl::GetID);
+	SCRIPT_METHOD(GUIControl::get_OwningGUI, GUIControl::GetOwningGUI);
+	SCRIPT_METHOD(GUIControl::get_Visible, GUIControl::GetVisible);
+	SCRIPT_METHOD(GUIControl::set_Visible, GUIControl::SetVisible);
+	SCRIPT_METHOD(GUIControl::get_Width, GUIControl::GetWidth);
+	SCRIPT_METHOD(GUIControl::set_Width, GUIControl::SetWidth);
+	SCRIPT_METHOD(GUIControl::get_X, GUIControl::GetX);
+	SCRIPT_METHOD(GUIControl::set_X, GUIControl::SetX);
+	SCRIPT_METHOD(GUIControl::get_Y, GUIControl::GetY);
+	SCRIPT_METHOD(GUIControl::set_Y, GUIControl::SetY);
 }
 
 void GUIControl::BringToFront(ScriptMethodParams &params) {

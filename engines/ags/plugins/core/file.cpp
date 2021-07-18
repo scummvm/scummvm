@@ -28,25 +28,23 @@ namespace Plugins {
 namespace Core {
 
 void File::AGS_EngineStartup(IAGSEngine *engine) {
-	/*
-	SCRIPT_METHOD_EXT(File::Delete^1, Delete);
-	SCRIPT_METHOD_EXT(File::Exists^1, Exists);
-	SCRIPT_METHOD_EXT(File::Open^2, OpenFile);
-	SCRIPT_METHOD_EXT(File::Close^0, Close);
-	SCRIPT_METHOD_EXT(File::ReadInt^0, ReadInt);
-	SCRIPT_METHOD_EXT(File::ReadRawChar^0, ReadRawChar);
-	SCRIPT_METHOD_EXT(File::ReadRawInt^0, ReadRawInt);
-	SCRIPT_METHOD_EXT(File::ReadRawLine^1, ReadRawLine);
-	SCRIPT_METHOD_EXT(File::ReadRawLineBack^0, ReadRawLineBack);
-	SCRIPT_METHOD_EXT(File::ReadString^1, ReadString);
-	SCRIPT_METHOD_EXT(File::ReadStringBack^0, ReadStringBack);
-	SCRIPT_METHOD_EXT(File::WriteInt^1, WriteInt);
-	SCRIPT_METHOD_EXT(File::WriteRawChar^1, WriteRawChar);
-	SCRIPT_METHOD_EXT(File::WriteRawLine^1, WriteRawLine);
-	SCRIPT_METHOD_EXT(File::WriteString^1, WriteString);
-	SCRIPT_METHOD_EXT(File::get_EOF, GetEOF);
-	SCRIPT_METHOD_EXT(File::get_Error, GetError);
-	*/
+	SCRIPT_METHOD(File::Delete^1, File::Delete);
+	SCRIPT_METHOD(File::Exists^1, File::Exists);
+	SCRIPT_METHOD(File::Open^2, File::OpenFile);
+	SCRIPT_METHOD(File::Close^0, File::Close);
+	SCRIPT_METHOD(File::ReadInt^0, File::ReadInt);
+	SCRIPT_METHOD(File::ReadRawChar^0, File::ReadRawChar);
+	SCRIPT_METHOD(File::ReadRawInt^0, File::ReadRawInt);
+	SCRIPT_METHOD(File::ReadRawLine^1, File::ReadRawLine);
+	SCRIPT_METHOD(File::ReadRawLineBack^0, File::ReadRawLineBack);
+	SCRIPT_METHOD(File::ReadString^1, File::ReadString);
+	SCRIPT_METHOD(File::ReadStringBack^0, File::ReadStringBack);
+	SCRIPT_METHOD(File::WriteInt^1, File::WriteInt);
+	SCRIPT_METHOD(File::WriteRawChar^1, File::WriteRawChar);
+	SCRIPT_METHOD(File::WriteRawLine^1, File::WriteRawLine);
+	SCRIPT_METHOD(File::WriteString^1, File::WriteString);
+	SCRIPT_METHOD(File::get_EOF, File::GetEOF);
+	SCRIPT_METHOD(File::get_Error, File::GetError);
 }
 
 void File::Delete(ScriptMethodParams &params) {
