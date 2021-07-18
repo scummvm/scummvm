@@ -96,6 +96,8 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_tileImageBanks = nullptr;
 	_stackList = nullptr;
 	_taskList = nullptr;
+	_frate = nullptr;
+	_lrate = nullptr;
 }
 
 Saga2Engine::~Saga2Engine() {

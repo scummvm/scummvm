@@ -128,10 +128,6 @@ static pMessager Status2[10];
 
 pMessager ratemess[3];
 
-frameSmoother frate(frameRate, TICKSPERSECOND, gameTime);
-frameCounter lrate(TICKSPERSECOND, gameTime);
-frameCounter irate(TICKSPERSECOND, gameTime);
-
 /* ===================================================================== *
    Prototypes
  * ===================================================================== */
@@ -233,6 +229,9 @@ static void mainLoop(bool &cleanExit_, int argc, char *argv[]) {
 // Game setup function
 
 bool setupGame(void) {
+	g_vm->_frate = new frameSmoother(frameRate, TICKSPERSECOND, gameTime);
+	g_vm->_lrate = new frameCounter(TICKSPERSECOND, gameTime);
+
 	return programInit();
 }
 
@@ -240,6 +239,9 @@ bool setupGame(void) {
 // Game cleanup function
 
 void cleanupGame(void) {
+	delete g_vm->_frate;
+	delete g_vm->_lrate;
+
 	programTerm();
 }
 
@@ -269,7 +271,6 @@ void dumpGBASE(char *msg);
 void processEventLoop(bool updateScreen) {
 
 	debugC(1, kDebugEventLoop, "EventLoop: starting event loop");
-	irate.updateFrameCount();
 
 	if (checkExit && verifyUserExit()) {
 		//gameRunning=false;
@@ -330,7 +331,7 @@ void displayUpdate(void) {
 		dayNightUpdate();
 		//debugC(1, kDebugEventLoop, "EventLoop: Game mode handle task");
 		GameMode::modeStackPtr[GameMode::modeStackCtr - 1]->handleTask();
-		lrate.updateFrameCount();
+		g_vm->_lrate->updateFrameCount();
 		loops++;
 		elapsed += (gameTime - lastGameTime);
 		lastGameTime = gameTime;
@@ -765,12 +766,12 @@ void WriteStatusF2(int16, const char *, ...) {}
 
 int32 currentGamePerformance(void) {
 	int32 framePer = 100;
-	int32 lval = int(lrate.frameStat());
-	int32 fval = int(lrate.frameStat(grFramesPerSecond));
+	int32 lval = int(g_vm->_lrate->frameStat());
+	int32 fval = int(g_vm->_lrate->frameStat(grFramesPerSecond));
 	if (fval >= frameRate && lval > fval) {
 		framePer += (50 * ((lval - fval) / fval));
 	} else {
-		framePer = (100 * frate.frameStat(grFramesPerSecond)) / frameRate;
+		framePer = (100 * g_vm->_frate->frameStat(grFramesPerSecond)) / frameRate;
 	}
 	framePer = clamp(10, framePer, 240);
 	return framePer;
@@ -778,7 +779,7 @@ int32 currentGamePerformance(void) {
 
 
 void updateFrameCount(void) {
-	frate.updateFrameCount();
+	g_vm->_frate->updateFrameCount();
 }
 
 int32 eloopsPerSecond = 0;

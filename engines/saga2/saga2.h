@@ -73,6 +73,8 @@ class TileActivityTaskList;
 class TaskStackList;
 class TaskList;
 class Deejay;
+class frameSmoother;
+class frameCounter;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -160,7 +162,8 @@ public:
 	TaskStackList *_stackList;
 	TaskList *_taskList;
 	Deejay *_grandMasterFTA;
-
+	frameSmoother *_frate;
+	frameCounter *_lrate;
 
 	gDisplayPort _mainPort;
 	gPort _backPort;
