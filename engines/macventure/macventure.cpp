@@ -447,7 +447,7 @@ bool MacVentureEngine::showTextEntry(ObjID text, ObjID srcObj, ObjID destObj) {
 	return true;
 }
 
-void MacVentureEngine::setTextInput(Common::String content) {
+void MacVentureEngine::setTextInput(const Common::String &content) {
 	_prepared = true;
 	_userInput = content;
 	_clickToContinue = false;
