@@ -120,14 +120,6 @@ static const StaticRect autoMapBotPanelRect = {
 	autoMapBTHeight
 };
 
-
-static const StaticRect *autoMapPanelRects[numAutoMapPanels] = {
-	&autoMapTopPanelRect,
-	&autoMapMidPanelRect,
-	&autoMapBotPanelRect
-};
-
-
 const int16     scrollBtnWidth  = 42;
 const int16     scrollBtnHeight = 42;
 
@@ -143,9 +135,9 @@ static const StaticRect scrollBtnRect = {
 
 
 StaticWindow autoMapDecorations[numAutoMapPanels] = {
-	{*(autoMapPanelRects[0]), NULL, autoMapTopPanelResID},
-	{*(autoMapPanelRects[1]), NULL, autoMapMidPanelResID},
-	{*(autoMapPanelRects[2]), NULL, autoMapBotPanelResID}
+	{autoMapTopPanelRect, NULL, autoMapTopPanelResID},
+	{autoMapMidPanelRect, NULL, autoMapMidPanelResID},
+	{autoMapBotPanelRect, NULL, autoMapBotPanelResID}
 };
 
 
