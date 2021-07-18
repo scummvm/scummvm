@@ -57,7 +57,7 @@ const int32 spellFailSound = 42;
  * ===================================================================== */
 
 extern WorldMapData                     *mapList;
-extern SpellStuff                       spellBook[];
+extern SpellStuff                       *spellBook;
 extern Point32                          lastMousePos;           // Last mouse position over map
 
 /* ===================================================================== *

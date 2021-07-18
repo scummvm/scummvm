@@ -135,7 +135,7 @@ extern uint16   uMaxMasks[4],
        vMaxMasks[4],
        vMinMasks[4];
 
-extern SpellStuff spellBook[];
+extern SpellStuff *spellBook;
 void fallingDamage(GameObject *obj, int16 speed);
 
 /* ===================================================================== *

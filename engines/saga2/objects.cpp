@@ -133,7 +133,7 @@ bool                massAndBulkCount;
 extern BackWindow   *mainWindow;
 extern StaticPoint16 fineScroll;             // current scroll pos
 extern hResContext  *imageRes;              // image resource handle
-extern SpellStuff   spellBook[];
+extern SpellStuff   *spellBook;
 extern ObjectID     pickedObject;
 
 const uint32    imageGroupID = MKTAG('I', 'M', 'A', 'G');

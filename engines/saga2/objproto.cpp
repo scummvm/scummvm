@@ -44,7 +44,7 @@
 
 namespace Saga2 {
 
-extern SpellStuff   spellBook[];
+extern SpellStuff   *spellBook;
 extern uint8        identityColors[256];
 
 #ifdef __WATCOMC__

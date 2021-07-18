@@ -100,7 +100,7 @@ extern ColorTable               identityColors;
  * ===================================================================== */
 
 SpriteSet                       *spellSprites;         // longsword test sprites
-SpellStuff                      spellBook[maxSpells];
+SpellStuff                      *spellBook;
 
 ColorTable                      spellColorMaps[maxSpellColorMaps];
 ColorSchemeList                 *spellSchemes;
@@ -124,6 +124,8 @@ static void loadMagicData(void);
 void initMagic(void) {
 	g_vm->_edpList = new EffectDisplayPrototypeList(maxEffectPrototypes);
 	g_vm->_sdpList = new SpellDisplayPrototypeList(maxSpellPrototypes);
+
+	spellBook = new SpellStuff[maxSpells]();
 
 	defineEffects();
 	loadMagicData();
@@ -150,6 +152,8 @@ void cleanupMagic(void) {
 	for (int i = 0; i < maxSpells; i++) {
 		spellBook[i].killEffects();
 	}
+	delete spellBook;
+
 	g_vm->_sdpList->cleanup();
 	g_vm->_edpList->cleanup();
 

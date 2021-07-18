@@ -54,7 +54,6 @@ static void *selImage;
 
 extern ReadyContainerView   *TrioCviews[kNumViews];
 extern ReadyContainerView   *indivCviewTop, *indivCviewBot;
-extern SpellStuff   spellBook[];
 extern SpriteSet    *objectSprites;        // object sprites
 extern Alarm        containerObjTextAlarm;
 extern bool         gameSetupComplete;

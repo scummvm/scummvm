@@ -35,7 +35,7 @@
 namespace Saga2 {
 
 extern WorldMapData                     *mapList;
-extern SpellStuff                       spellBook[];
+extern SpellStuff                       *spellBook;
 extern bool                             gameRunning;  // kludge
 extern PlatformHandle   platformList;       // platform resource hunk
 
