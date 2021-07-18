@@ -44,7 +44,7 @@ extern PlatformHandle   platformList;       // platform resource hunk
  * ===================================================================== */
 
 static int16        prevMapNum;
-static StaticTilePoint prevCoords = Nowhere;
+static StaticTilePoint prevCoords = {(int16)minint16, (int16)minint16, (int16)minint16};
 static MetaTilePtr  prevMeta;
 
 /* ===================================================================== *

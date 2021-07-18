@@ -36,7 +36,7 @@ namespace Saga2 {
 extern WorldMapData     *mapList;
 
 static int16        prevMapNum;
-static TilePoint    prevCoords = Nowhere;
+static StaticTilePoint prevCoords = {(int16)minint16, (int16)minint16, (int16)minint16};
 static MetaTilePtr  prevMeta = NULL;
 
 /* ===================================================================== *
@@ -130,7 +130,7 @@ uint32 tileTerrain(
 		//  Look up the metatile on the map.
 		metaPtr = prevMeta = map->lookupMeta(metaCoords);
 		prevMapNum = mapNum;
-		prevCoords = metaCoords;
+		prevCoords.set(metaCoords.u, metaCoords.v, metaCoords.z);
 	}
 
 	if (metaPtr == NULL) return 0L;
@@ -609,7 +609,7 @@ int16 tileSlopeHeight(
 	//  Look up the metatile on the map.
 	metaPtr = prevMeta = mapList[mapNum].lookupMeta(metaCoords);
 	prevMapNum = mapNum;
-	prevCoords = metaCoords;
+	prevCoords.set(metaCoords.u, metaCoords.v, metaCoords.z);
 
 	if (metaPtr != NULL) {
 		highestTile.surfaceTile = lowestTile.surfaceTile = NULL;
