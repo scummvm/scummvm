@@ -41,7 +41,6 @@ int main(int argc, char *argv[]) {
 
 	// Symbian does not like any output to the console through any *print* function.
 	char STDOUT_FILE[256], STDERR_FILE[256]; // Shhh... don't tell anybody :)
-#ifdef	DUMP_STDOUT
 	strcpy(STDOUT_FILE, Symbian::GetExecutablePath());
 	strcpy(STDERR_FILE, Symbian::GetExecutablePath());
 	strcat(STDOUT_FILE, "scummvm.stdout.txt");
@@ -74,8 +73,8 @@ int main(int argc, char *argv[]) {
 		}
 #endif
 	}
+	setbuf(stdout, NULL);
 	setbuf(stderr, NULL);	/** No buffering. */
-#endif //DUMP_STDOUT
 	
 	// Create our OSystem instance.
 	g_system = new OSystem_SDL_Symbian();
