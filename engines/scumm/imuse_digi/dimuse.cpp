@@ -647,7 +647,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 					// same time as a loop; the result is that the former is prioritized and the latter
 					// is executed without a crossfade. Also, avoid music crossfades for start markers, these are just plain
 					// dangerous and useless since there's already a fade in for those.
-					if (!track->volFadeUsed && !(track->volFadeStep < 0) && !(isJumpToStart && track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+					/*if (!track->volFadeUsed && !(track->volFadeStep < 0) && !(isJumpToStart && track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 						_scheduledCrossfades[track->trackId].scheduled = true;
 						_scheduledCrossfades[track->trackId].destRegion = region;
 						_scheduledCrossfades[track->trackId].destDataOffset = _sound->getRegionOffset(soundDesc, region);
@@ -655,7 +655,8 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 						_scheduledCrossfades[track->trackId].destHookId = track->curHookId;
 						_scheduledCrossfades[track->trackId].volumeBefJump = track->vol / 1000;
 						_scheduledCrossfades[track->trackId].isJumpToLoop = isJumpToLoop;
-					}
+					}*/
+					track->curRegion = region;
 				} else {
 					debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, fadeDelay);
 					Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
