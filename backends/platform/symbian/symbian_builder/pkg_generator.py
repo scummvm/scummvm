@@ -51,13 +51,11 @@ pkg_template = """
 # Template args = (UID from 1st package, major version, minor version, build number,
 # major version, minor version, build number, 1st package name).
 dependency = """
-
 ; ScummVM1 dependency.
 (%s), %s,%s,%s ~ %s,%s,%s, {"%s"}
 """
 
 pkg_licenses_install = """
-
 ; Scummvm documentation.
 "..\\..\\..\\..\\COPYRIGHT" - "!:\\data\\scummvm\\COPYRIGHT", FT, TC
 "..\\..\\..\\..\\COPYING.BSD"   - "!:\\data\\scummvm\\COPYING.BSD", FT, TC
@@ -75,7 +73,6 @@ pkg_licenses_install = """
 """
 
 pkg_licenses_show = """
-
 ; Scummvm documentation.
 "..\\..\\..\\..\COPYRIGHT"    - "", FT, TC
 "..\\..\\..\\..\COPYING.BSD"  - "", FT, TC
@@ -111,12 +108,11 @@ install_eclipse_data = """
 """
 
 clear_uninstall = """
-
 ; Config/log files: 'empty' will automagically be removed on uninstall.
-""- "c:\data\scummvm\scummvm.ini",FILENULL
-""- "c:\data\scummvm\scummvm.stdout.txt",FILENULL
-""- "c:\data\scummvm\scummvm.stderr.txt",FILENULL
-""- "c:\data\scummvm\sdl.ini",FILENULL
+""- "!:\data\scummvm\scummvm.ini",FILENULL
+""- "!:\data\scummvm\scummvm.stdout.txt",FILENULL
+""- "!:\data\scummvm\scummvm.stderr.txt",FILENULL
+""- "!:\data\scummvm\sdl.ini",FILENULL
 """
 
 mif_install = """
