@@ -110,7 +110,7 @@ void MacWindowBorder::addBorder(TransparentSurface *source, uint32 flags, int ti
 		setOffsets(_border[flags]->getPadding());
 }
 
-bool MacWindowBorder::hasOffsets() {
+bool MacWindowBorder::hasOffsets() const {
 	return _borderOffsets.left > -1 && _borderOffsets.right > -1
 		&& _borderOffsets.top > -1 && _borderOffsets.bottom > -1;
 }
@@ -134,6 +134,10 @@ void MacWindowBorder::setOffsets(const BorderOffsets &offsets) {
 }
 
 BorderOffsets &MacWindowBorder::getOffset() {
+	return _borderOffsets;
+}
+
+const BorderOffsets &MacWindowBorder::getOffset() const {
 	return _borderOffsets;
 }
 
