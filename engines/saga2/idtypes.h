@@ -156,10 +156,6 @@ struct ActiveItemID {
 		return *this;
 	}
 
-	static int16 getVal(int16 m, int16 i) {
-		return (m << activeItemMapShift) | (i & activeItemIndexMask);
-	}
-
 	bool operator == (const ActiveItemID &id) const {
 		return val == id.val;
 	}

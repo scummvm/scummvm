@@ -55,7 +55,6 @@ void updateWindowSection(const Rect16 &r);
 //  These externs are imported because the window update routines
 //  need to know about the scrolling tile area.
 
-extern gPixelMap    tileDrawMap;
 extern StaticPoint16 fineScroll;
 extern gFont        *mainFont;
 extern bool         allPlayerActorsDead;
@@ -618,7 +617,7 @@ void updateWindowSection(const Rect16 &r) {
 	Point16         animOffset(kTileRectX - fineScroll.x, kTileRectY);
 
 	//  Detects that program is shutting down and aborts the blit
-	if (tileDrawMap.data == nullptr)
+	if (g_vm->_tileDrawMap.data == nullptr)
 		return;
 
 	if (!checkTileAreaPort()) return;
@@ -664,7 +663,7 @@ void updateWindowSection(const Rect16 &r) {
 
 		//  Blit the animated pixels into the temp map.
 
-		tempPort.bltPixels(tileDrawMap,
+		tempPort.bltPixels(g_vm->_tileDrawMap,
 		                   localOrg.x,
 		                   localOrg.y,
 		                   animClip.x, animClip.y,

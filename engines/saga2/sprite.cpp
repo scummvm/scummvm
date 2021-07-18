@@ -51,12 +51,6 @@ extern void drawTileMask(
     TilePoint loc,
     uint16 roofID = rippedRoofID);
 
-/* ===================================================================== *
-   Imports
- * ===================================================================== */
-
-extern gPixelMap    tileDrawMap;
-
 //  Color map ranges
 extern uint8        *ColorMapRanges;
 

@@ -86,6 +86,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_activeRegionList = new ActiveRegion[kPlayerActors];
 	_toolBase = new gToolBase;
 	_properties = new Properties;
+	_aTaskList = new TileActivityTaskList;
 
 	_edpList = nullptr;
 	_sdpList = nullptr;
@@ -109,6 +110,7 @@ Saga2Engine::~Saga2Engine() {
 	delete[] _activeRegionList;
 	delete _toolBase;
 	delete _properties;
+	delete _aTaskList;
 }
 
 Common::Error Saga2Engine::run() {

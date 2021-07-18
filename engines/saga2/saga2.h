@@ -69,6 +69,7 @@ class PlayerActor;
 class ProtoObj;
 class ActorProto;
 class HandleArray;
+class TileActivityTaskList;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -152,9 +153,12 @@ public:
 	gToolBase *_toolBase;
 	Properties *_properties;
 	HandleArray *_tileImageBanks;
+	TileActivityTaskList *_aTaskList;
+
 
 	gDisplayPort _mainPort;
 	gPort _backPort;
+	gPixelMap _tileDrawMap;
 
 	bool _autoAggression;
 	bool _autoWeapon;

@@ -40,7 +40,6 @@ const uint16 tileBankCount = 64;
 const uint32 tileImageID = MKTAG('T', 'I', 'L',  0);
 
 
-extern gPixelMap            tileDrawMap;
 extern int16                currentMapNum;
 extern hResource           *objResFile;
 extern hResContext          *tileRes;       // tile resource handle
@@ -70,8 +69,8 @@ void drawPlatform(
     int16           uOrg,                   // for TAG search
     int16           vOrg) {                 // for TAG search
 
-	int16           right = tileDrawMap.size.x,
-	                bottom = tileDrawMap.size.y;
+	int16           right = g_vm->_tileDrawMap.size.x,
+	                bottom = g_vm->_tileDrawMap.size.y;
 
 	Point16         tilePos;
 
@@ -128,7 +127,7 @@ void drawPlatform(
 					int16 y = tilePos.y - h;
 
 					if (ti->attrs.height > 0 && y < bottom + ti->attrs.height - 1) {
-						drawTile(&tileDrawMap, tilePos.x, y, ti->attrs.height, imageData);
+						drawTile(&g_vm->_tileDrawMap, tilePos.x, y, ti->attrs.height, imageData);
 					}
 				}
 			}

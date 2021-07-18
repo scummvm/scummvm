@@ -973,9 +973,6 @@ extern StaticTilePoint viewCenter;             // coordinates of view on map
 
 //  These two variables define which sectors overlap the view rect.
 
-extern TilePoint    minSector,
-       maxSector;
-
 extern uint16       rippedRoofID;
 
 /* ===================================================================== *

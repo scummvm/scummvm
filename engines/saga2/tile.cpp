@@ -79,7 +79,7 @@ const int           slowScrollSpeed = 6,
 const StaticTilePoint Nowhere = {(int16)minint16, (int16)minint16, (int16)minint16};
 
 const StaticMetaTileID NoMetaTile = {nullID, nullID};
-const StaticActiveItemID  NoActiveItem = {ActiveItemID::getVal(0, activeItemIndexNullID)};
+const StaticActiveItemID  NoActiveItem = {activeItemIndexNullID};
 
 enum SurfaceType {
 	surfaceHoriz,               //  Level surface
@@ -161,12 +161,6 @@ extern int16        worldCount;     //  Used as map count as well
 extern ObjectID     viewCenterObject;       // ID of object that view tracks
 
 /* ===================================================================== *
-   Exports
- * ===================================================================== */
-
-gPixelMap           tileDrawMap;
-
-/* ===================================================================== *
    Tile structure management
  * ===================================================================== */
 
@@ -202,23 +196,15 @@ StaticTilePoint viewCenter = {0, 0, 0};             // coordinates of view on ma
 
 //  These two variables define which sectors overlap the view rect.
 
-TilePoint           minSector,
-                    maxSector;
-
 int16               currentMapNum;          // which map is in use
 int16               lastMapNum;
 
 int32               lastUpdateTime;         // time of last display update
 
-gPort               mouseSavePort;          // for tweaking mouse backsave
-
-
 /* also:
     -- height of center character
     -- what map we are on.
  */
-
-BankBits LoadedBanks;                // what banks are loaded?
 
 /* ===================================================================== *
    ActiveItemID member functions
@@ -886,11 +872,6 @@ void cleanupActiveItemStates(void) {
  * ===================================================================== */
 
 //-----------------------------------------------------------------------
-//	The list of active tile activity tasks
-
-static TileActivityTaskList aTaskList;
-
-//-----------------------------------------------------------------------
 //	Constructor
 
 TileActivityTaskList::TileActivityTaskList(void) {
@@ -1017,7 +998,7 @@ TileActivityTask *TileActivityTaskList::newTask(ActiveItem *activeInstance) {
 void TileActivityTask::remove(void) {
 	debugC(3, kDebugTasks, "Removing TAT");
 
-	aTaskList._list.remove(this);
+	g_vm->_aTaskList->_list.remove(this);
 }
 
 //-----------------------------------------------------------------------
@@ -1027,7 +1008,7 @@ void TileActivityTask::openDoor(ActiveItem &activeInstance) {
 	debugC(3, kDebugTasks, "TAT Open Door");
 
 	TileActivityTask *tat;
-	if ((tat = aTaskList.newTask(&activeInstance)) != nullptr)
+	if ((tat = g_vm->_aTaskList->newTask(&activeInstance)) != nullptr)
 		tat->activityType = activityTypeOpen;
 }
 
@@ -1038,7 +1019,7 @@ void TileActivityTask::closeDoor(ActiveItem &activeInstance) {
 	debugC(3, kDebugTasks, "TAT Close Door");
 
 	TileActivityTask *tat;
-	if ((tat = aTaskList.newTask(&activeInstance)) != nullptr)
+	if ((tat = g_vm->_aTaskList->newTask(&activeInstance)) != nullptr)
 		tat->activityType = activityTypeClose;
 }
 
@@ -1049,7 +1030,7 @@ void TileActivityTask::doScript(ActiveItem &activeInstance, uint8 finalState, Th
 	debugC(3, kDebugTasks, "TAT Do Script");
 
 	TileActivityTask *tat;
-	if ((tat = aTaskList.newTask(&activeInstance)) != nullptr) {
+	if ((tat = g_vm->_aTaskList->newTask(&activeInstance)) != nullptr) {
 		if (scr)
 			debugC(3, kDebugTasks, "TAT Assign Script!");
 
@@ -1069,7 +1050,7 @@ void TileActivityTask::doScript(ActiveItem &activeInstance, uint8 finalState, Th
 void TileActivityTask::updateActiveItems(void) {
 	int count = 0, scriptCount = 0;
 
-	for (Common::List<TileActivityTask *>::iterator it = aTaskList._list.begin(); it != aTaskList._list.end();) {
+	for (Common::List<TileActivityTask *>::iterator it = g_vm->_aTaskList->_list.begin(); it != g_vm->_aTaskList->_list.end();) {
 		TileActivityTask *tat = *it;
 		ActiveItem *activityInstance = tat->tai;
 		bool activityTaskDone = false;
@@ -1132,7 +1113,7 @@ void TileActivityTask::updateActiveItems(void) {
 //	Search for tile activity task matching an item
 
 TileActivityTask *TileActivityTask::find(ActiveItem *tai) {
-	for (Common::List<TileActivityTask *>::iterator it = aTaskList._list.begin(); it != aTaskList._list.end(); ++it) {
+	for (Common::List<TileActivityTask *>::iterator it = g_vm->_aTaskList->_list.begin(); it != g_vm->_aTaskList->_list.end(); ++it) {
 		if (tai == (*it)->tai)
 			return *it;
 	}
@@ -1182,7 +1163,7 @@ void saveTileTasks(Common::OutSaveFile *outS) {
 
 	outS->write("TACT", 4);
 	CHUNK_BEGIN;
-	aTaskList.write(out);
+	g_vm->_aTaskList->write(out);
 	CHUNK_END;
 }
 
@@ -1194,7 +1175,7 @@ void loadTileTasks(Common::InSaveFile *in, int32 chunkSize) {
 		return;
 
 	//  Reconstruct aTaskList from archived data
-	aTaskList.read(in);
+	g_vm->_aTaskList->read(in);
 }
 
 
@@ -1203,7 +1184,7 @@ void loadTileTasks(Common::InSaveFile *in, int32 chunkSize) {
 
 void cleanupTileTasks(void) {
 	//  Simply call the aTaskList's cleanup
-	aTaskList.cleanup();
+	g_vm->_aTaskList->cleanup();
 }
 
 /* ===================================================================== *
@@ -2519,7 +2500,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 	int16           layerLimit;
 
 	for (;
-	        pos.x < tileDrawMap.size.x + kMetaDX;
+	        pos.x < g_vm->_tileDrawMap.size.x + kMetaDX;
 	        coords.u++,
 	        coords.v--,
 	        uOrg += kPlatformWidth,
@@ -2586,7 +2567,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 				p->highestPixel = kTileHeight * (kPlatformWidth - 1) + kMaxTileHeight * 2 + 64;
 
 				if (pos.y <= 0
-				        || pos.y - p->highestPixel >= tileDrawMap.size.y)
+				        || pos.y - p->highestPixel >= g_vm->_tileDrawMap.size.y)
 					continue;
 
 				*put++ = p;
@@ -2822,7 +2803,7 @@ inline void drawMetaTiles(void) {
 	//      (replace 256 constant with better value)
 
 	for (;
-	        metaPos.y < tileDrawMap.size.y + kMetaTileHeight * 4 ;
+	        metaPos.y < g_vm->_tileDrawMap.size.y + kMetaTileHeight * 4 ;
 	        baseCoords.u--,
 	        baseCoords.v--
 	    ) {
@@ -4332,8 +4313,6 @@ void updateMainDisplay(void) {
 	int32           scrollSpeed = defaultScrollSpeed,
 	                scrollDistance;
 
-	int16           viewSize = kTileRectHeight;
-	int16           mapSectors = curMap->mapSize * 8 * 16 / kSectorSize;
 	TilePoint       trackPos,
 	                mCoords;
 
@@ -4396,11 +4375,6 @@ void updateMainDisplay(void) {
 
 	//  Compute the largest U/V rectangle which completely
 	//  encloses the view area, and convert to sector coords.
-	minSector.u = clamp(0, (viewCenter.u - viewSize) / kSectorSize, mapSectors - 1);
-	minSector.v = clamp(0, (viewCenter.v - viewSize) / kSectorSize, mapSectors - 1);
-	maxSector.u = clamp(0, (viewCenter.u + viewSize) / kSectorSize, mapSectors - 1);
-	maxSector.v = clamp(0, (viewCenter.v + viewSize) / kSectorSize, mapSectors - 1);
-
 	buildRoofTable();
 
 	mCoords.u = trackPos.u >> (kTileUVShift + kPlatShift);
@@ -4427,7 +4401,7 @@ void updateMainDisplay(void) {
 void drawMainDisplay(void) {
 
 
-	// draws tiles to tileDrawMap.data
+	// draws tiles to g_vm->_tileDrawMap.data
 	drawMetaTiles();
 
 	//  Draw sprites onto back buffer
@@ -4445,10 +4419,10 @@ void drawMainDisplay(void) {
 	//  Blit it all onto the screen
 	drawPage->writePixels(
 	    rect,
-	    tileDrawMap.data
+	    g_vm->_tileDrawMap.data
 	    + fineScroll.x
-	    + fineScroll.y * tileDrawMap.size.x,
-	    tileDrawMap.size.x);
+	    + fineScroll.y * g_vm->_tileDrawMap.size.x,
+	    g_vm->_tileDrawMap.size.x);
 
 	updateFrameCount();
 }
