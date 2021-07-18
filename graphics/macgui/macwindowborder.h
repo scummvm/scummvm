@@ -89,7 +89,7 @@ public:
 	 * Accessor function for the custom offsets.
 	 * @return True if custom offsets have been indicated (setOffsets has been called previously).
 	 */
-	bool hasOffsets();
+	bool hasOffsets() const;
 
 	/**
 	 * Mutator method to indicate the custom border offsets.
@@ -115,6 +115,7 @@ public:
 	 * @return The desired offset in pixels.
 	 */
 	BorderOffsets &getOffset();
+	const BorderOffsets &getOffset() const;
 
 	/**
 	 * Blit the desired border (active or inactive) into a destination surface.

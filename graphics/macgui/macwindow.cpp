@@ -89,7 +89,7 @@ void MacWindow::setActive(bool active) {
 	_borderIsDirty = true;
 }
 
-bool MacWindow::isActive() { return _active; }
+bool MacWindow::isActive() const { return _active; }
 
 void MacWindow::resize(int w, int h, bool inner) {
 	if (_composeSurface->w == w && _composeSurface->h == h)
@@ -178,7 +178,7 @@ void MacWindow::blit(ManagedSurface *g, Common::Rect &dest) {
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, transcolor);
 }
 
-uint32 MacWindow::getBorderFlags() {
+uint32 MacWindow::getBorderFlags() const {
 	uint32 flags = 0;
 	if (_active)
 		flags |= kWindowBorderActive;
@@ -343,7 +343,7 @@ void MacWindow::fillRect(ManagedSurface *g, int x, int y, int w, int h, int colo
 	g->fillRect(r, color);
 }
 
-WindowClick MacWindow::isInBorder(int x, int y) {
+WindowClick MacWindow::isInBorder(int x, int y) const {
 	if (_innerDims.contains(x, y))
 		return kBorderInner;
 
@@ -360,7 +360,7 @@ WindowClick MacWindow::isInBorder(int x, int y) {
 	return kBorderBorder;
 }
 
-bool MacWindow::isInCloseButton(int x, int y) {
+bool MacWindow::isInCloseButton(int x, int y) const {
 	int bLeft = kBorderWidth;
 	int bTop = kBorderWidth;
 	if (_macBorder.hasOffsets()) {
@@ -370,7 +370,7 @@ bool MacWindow::isInCloseButton(int x, int y) {
 	return (x >= _innerDims.left - bLeft && x < _innerDims.left && y >= _innerDims.top - bTop && y < _innerDims.top);
 }
 
-bool MacWindow::isInResizeButton(int x, int y) {
+bool MacWindow::isInResizeButton(int x, int y) const {
 	int bRight = kBorderWidth;
 	int bBottom = kBorderWidth;
 	if (_macBorder.hasOffsets()) {
@@ -380,7 +380,7 @@ bool MacWindow::isInResizeButton(int x, int y) {
 	return (x >= _innerDims.right && x < _innerDims.right + bRight && y >= _innerDims.bottom && y < _innerDims.bottom + bBottom);
 }
 
-WindowClick MacWindow::isInScroll(int x, int y) {
+WindowClick MacWindow::isInScroll(int x, int y) const {
 	int bTop = kBorderWidth;
 	int bRight = kBorderWidth;
 	int bBottom = kBorderWidth;
