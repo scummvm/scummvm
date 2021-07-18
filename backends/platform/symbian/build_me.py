@@ -1,5 +1,5 @@
 # ScummVM - Graphic Adventure Engine
-# Copyright (C) 2020 Stryzhniou Fiodar
+# Copyright (C) 2020-2021 Stryzhniou Fiodar
 
 # ScummVM is the legal property of its developers, whose names
 # are too numerous to list here. Please refer to the COPYRIGHT
@@ -22,11 +22,8 @@
 
 import symbian_builder
 
-
 build = 'full'
-# build = 'release'
-
+#build = 'release'
 
 if __name__ == "__main__":
    symbian_builder.run(build, "S60v3")
-
