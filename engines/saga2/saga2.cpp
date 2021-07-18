@@ -108,6 +108,7 @@ Saga2Engine::~Saga2Engine() {
 	delete _pointer;
 	delete[] _activeRegionList;
 	delete _toolBase;
+	delete _properties;
 }
 
 Common::Error Saga2Engine::run() {
