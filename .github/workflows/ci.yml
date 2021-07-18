@@ -31,7 +31,7 @@ jobs:
             configFlags: --enable-faad --enable-mpeg2 --enable-discord --disable-fribidi --disable-opengl
             vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib'
     env:
-      CONFIGURATION: Analysis
+      CONFIGURATION: Release
       PLATFORM: ${{ matrix.platform }}
     steps:
       - name: Checkout
@@ -59,14 +59,14 @@ jobs:
           cd ../../../
       - name: Call create_project
         run: |
-          mkdir build-scummvm
+          New-Item -ItemType Directory -Force -Path C:\build-scummvm
+          New-Item -ItemType Junction -Path build-scummvm -Target C:\build-scummvm
           cd build-scummvm
           ../devtools/create_project/cmake/Debug/create_project.exe .. --msvc --enable-all-engines ${{ matrix.configflags }} --use-canonical-lib-names
           ls
       - name: set SCUMMVM_LIBS env variable
         run: |
-          echo "SCUMMVM_LIBS=${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\debug" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          Copy-Item "${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\include" -Destination "${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\debug" -Recurse
+          echo "SCUMMVM_LIBS=${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
       - name: Build scummvm
