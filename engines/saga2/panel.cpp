@@ -400,7 +400,6 @@ gWindow::gWindow(const Rect16 &box, uint16 ident, const char saveName[], AppFunc
 
 	//  Set up the window's gPort
 
-	windowPort.setDisplayPage(globalPort->displayPage);
 	windowPort.setFont(mainFont);
 	windowPort.setPenMap(globalPort->penMap);
 
@@ -1099,7 +1098,6 @@ void HandleTimerTick(long tick) {
  * ===================================================================== */
 
 void initPanels(gDisplayPort &port) {
-	port.setDisplayPage(&protoPage);
 	globalPort = &port;
 	mainFont = &Helv11Font;
 }

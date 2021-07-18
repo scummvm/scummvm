@@ -326,7 +326,6 @@ TERMINATOR(termMousePointer) {
 INITIALIZER(initDisplay) {
 	g_vm->_mainPort.setColor(0);            //  fill screen with color
 	drawPage = &g_vm->_mainPort.protoPage;
-	g_vm->_mainPort.setDisplayPage(drawPage);
 	//lightsOut();
 	//g_vm->_mainPort.fillRect( Rect16( 0, 0, screenWidth, screenHeight ) );
 

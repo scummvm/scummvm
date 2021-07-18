@@ -68,20 +68,19 @@ uint16 blackStatusF = 24;
 uint16 heightStatusF = 11;
 
 int StatusLineMessager::dumpit(char *s, size_t size) {
-	if (textPort->displayPage != NULL) {
-		Rect16          r;
+	Rect16          r;
 
-		r.x = atX;
-		r.y = atY;
-		r.width = atW;
-		r.height = heightStatusF;
+	r.x = atX;
+	r.y = atY;
+	r.width = atW;
+	r.height = heightStatusF;
 
-		textPort->setColor(blackStatusF);
-		textPort->fillRect(r);
-		textPort->setColor(atColor);
-		textPort->setStyle(0);
-		textPort->drawTextInBox(s, size, r, textPosLeft, Point16(2, 1));
-	}
+	textPort->setColor(blackStatusF);
+	textPort->fillRect(r);
+	textPort->setColor(atColor);
+	textPort->setStyle(0);
+	textPort->drawTextInBox(s, size, r, textPosLeft, Point16(2, 1));
+
 	return 0;
 }
 

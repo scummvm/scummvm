@@ -36,12 +36,6 @@ public:
 	virtual ~gDisplayPort() {}
 
 	vDisplayPage protoPage;
-	vDisplayPage        *displayPage;           // page to draw to
-
-	virtual void setDisplayPage(vDisplayPage *dPage) {
-		displayPage = dPage;
-		clip = Rect16(0, 0, dPage->size.x, dPage->size.y);
-	}
 
 	//  Lowest-level drawing functions, (virtually) retargeted to
 	//  call SVGA drawing routines
@@ -49,7 +43,7 @@ public:
 	void fillRect(const Rect16 r);
 
 	void clear(void) {
-		displayPage->fillRect(clip, fgPen);
+		protoPage.fillRect(clip, fgPen);
 	}
 
 	//  Blitting functions

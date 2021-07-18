@@ -44,9 +44,9 @@ void gDisplayPort::fillRect(const Rect16 r) {
 
 	if (!sect.empty()) {                    // if result is non-empty
 		if (drawMode == drawModeComplement) // Complement drawing mode
-			displayPage->invertRect(sect, fgPen);
+			protoPage.invertRect(sect, fgPen);
 		else
-			displayPage->fillRect(sect, fgPen);     // regular drawing mode
+			protoPage.fillRect(sect, fgPen);     // regular drawing mode
 	}
 }
 
@@ -79,16 +79,16 @@ void gDisplayPort::bltPixels(
 
 		switch (drawMode) {
 		case drawModeMatte:                     // use transparency
-			displayPage->writeTransPixels(sect, src_line, src.size.x);
+			protoPage.writeTransPixels(sect, src_line, src.size.x);
 			break;
 		case drawModeReplace:                   // don't use transparency
-			displayPage->writePixels(sect, src_line, src.size.x);
+			protoPage.writePixels(sect, src_line, src.size.x);
 			break;
 		case drawModeColor:                     // solid color, use transparency
-			displayPage->writeColorPixels(sect, src_line, src.size.x, fgPen);
+			protoPage.writeColorPixels(sect, src_line, src.size.x, fgPen);
 			break;
 		case drawModeComplement:                // blit in complement mode
-			displayPage->writeComplementPixels(sect, src_line, src.size.x, fgPen);
+			protoPage.writeComplementPixels(sect, src_line, src.size.x, fgPen);
 			break;
 		default:
 			error("bltPixels: Unknown drawMode: %d", drawMode);
@@ -148,8 +148,8 @@ void gDisplayPort::scrollPixels(
 
 		//  Blit scrolled pixels to system ram and back to SVGA
 
-		displayPage->readPixels(srcRect, tempMap.data, tempMap.size.x);
-		displayPage->writePixels(dstRect, tempMap.data, tempMap.size.x);
+		protoPage.readPixels(srcRect, tempMap.data, tempMap.size.x);
+		protoPage.writePixels(dstRect, tempMap.data, tempMap.size.x);
 
 		//  dispose of temp pixel map
 
@@ -197,14 +197,14 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 		yDir = -1;
 		yAbs = y1 - y2;
-		yMove = -displayPage->size.x;
+		yMove = -protoPage.size.x;
 	} else {                            // drawing down
 		if (y2 < clip.y || y1 >= clipBottom) return;
 		if (y1 < clip.y || y2 >= clipBottom) clipNeeded = true;
 
 		yDir = 1;
 		yAbs = y2 - y1;
-		yMove = displayPage->size.x;
+		yMove = protoPage.size.x;
 	}
 
 	if (clipNeeded) {                   // clipping versions
@@ -244,11 +244,11 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			}
 		}
 
-		offset = (y1 + origin.y) * displayPage->size.x + x1 + origin.x;
+		offset = (y1 + origin.y) * protoPage.size.x + x1 + origin.x;
 		bank = offset >> 16;
 
-		displayPage->setWriteBank(bank);
-		if (drawMode == drawModeComplement) displayPage->setReadBank(bank);
+		protoPage.setWriteBank(bank);
+		if (drawMode == drawModeComplement) protoPage.setReadBank(bank);
 		offset &= 0x0000ffff;
 
 		if (xAbs > yAbs) {
@@ -275,14 +275,14 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 				if (offset >= cBytesPerBank) {
 					offset -= cBytesPerBank;
-					displayPage->setWriteBank(++bank);
+					protoPage.setWriteBank(++bank);
 					if (drawMode == drawModeComplement)
-						displayPage->setReadBank(bank);
+						protoPage.setReadBank(bank);
 				} else if (offset < 0) {
 					offset += cBytesPerBank;
-					displayPage->setWriteBank(--bank);
+					protoPage.setWriteBank(--bank);
 					if (drawMode == drawModeComplement)
-						displayPage->setReadBank(bank);
+						protoPage.setReadBank(bank);
 				}
 			}
 		} else {
@@ -309,24 +309,24 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 				if (offset >= cBytesPerBank) {
 					offset -= cBytesPerBank;
-					displayPage->setWriteBank(++bank);
+					protoPage.setWriteBank(++bank);
 					if (drawMode == drawModeComplement)
-						displayPage->setReadBank(bank);
+						protoPage.setReadBank(bank);
 				} else if (offset < 0) {
 					offset += cBytesPerBank;
-					displayPage->setWriteBank(--bank);
+					protoPage.setWriteBank(--bank);
 					if (drawMode == drawModeComplement)
-						displayPage->setReadBank(bank);
+						protoPage.setReadBank(bank);
 				}
 			}
 		}
 	} else {                            // non-clipping versions
-		offset = (y1 + origin.y) * displayPage->size.x + x1 + origin.x;
+		offset = (y1 + origin.y) * protoPage.size.x + x1 + origin.x;
 
 		bank = offset >> 16;
 
-		displayPage->setWriteBank(bank);
-		if (drawMode == drawModeComplement) displayPage->setReadBank(bank);
+		protoPage.setWriteBank(bank);
+		if (drawMode == drawModeComplement) protoPage.setReadBank(bank);
 		offset &= 0x0000ffff;
 
 		if (xAbs > yAbs) {
@@ -350,14 +350,14 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 				if (offset >= cBytesPerBank) {
 					offset -= cBytesPerBank;
-					displayPage->setWriteBank(++bank);
+					protoPage.setWriteBank(++bank);
 					if (drawMode == drawModeComplement)
-						displayPage->setReadBank(bank);
+						protoPage.setReadBank(bank);
 				} else if (offset < 0) {
 					offset += cBytesPerBank;
-					displayPage->setWriteBank(--bank);
+					protoPage.setWriteBank(--bank);
 					if (drawMode == drawModeComplement)
-						displayPage->setReadBank(bank);
+						protoPage.setReadBank(bank);
 				}
 			}
 		} else {
@@ -381,14 +381,14 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 				if (offset >= cBytesPerBank) {
 					offset -= cBytesPerBank;
-					displayPage->setWriteBank(++bank);
+					protoPage.setWriteBank(++bank);
 					if (drawMode == drawModeComplement)
-						displayPage->setReadBank(bank);
+						protoPage.setReadBank(bank);
 				} else if (offset < 0) {
 					offset += cBytesPerBank;
-					displayPage->setWriteBank(--bank);
+					protoPage.setWriteBank(--bank);
 					if (drawMode == drawModeComplement)
-						displayPage->setReadBank(bank);
+						protoPage.setReadBank(bank);
 				}
 			}
 		}

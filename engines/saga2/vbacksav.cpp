@@ -85,7 +85,7 @@ gBackSave::~gBackSave() {
 */
 void gBackSave::save(gDisplayPort &port) {
 	if (!saved && savedPixels.data) {
-		port.displayPage->readPixels(savedRegion,
+		port.protoPage.readPixels(savedRegion,
 		                             savedPixels.data,
 		                             savedPixels.size.x);
 		saved = true;
@@ -108,7 +108,7 @@ void gBackSave::save(gDisplayPort &port) {
 */
 void gBackSave::restore(gDisplayPort &port) {
 	if (saved && savedPixels.data) {
-		port.displayPage->writePixels(savedRegion,
+		port.protoPage.writePixels(savedRegion,
 		                              savedPixels.data,
 		                              savedPixels.size.x);
 		saved = false;
