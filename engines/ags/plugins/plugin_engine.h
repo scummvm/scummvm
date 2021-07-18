@@ -35,8 +35,6 @@
 
 namespace AGS3 {
 
-#define PLUGIN_FILENAME_MAX (49)
-
 class IAGSEngine;
 namespace AGS {
 namespace Shared {

@@ -93,6 +93,7 @@
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/system_imports.h"
 #include "ags/lib/std/limits.h"
+#include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_object_reader.h"
 #include "ags/plugins/core/core.h"
 #include "common/file.h"
@@ -207,7 +208,6 @@ Globals::Globals() {
 	_myScriptStringImpl = new ScriptString();
 	_guis = new std::vector<AGS::Shared::GUIMain>();
 	_play = new GameState();
-	_engineExports = new Plugins::Core::EngineExports();
 	_game = new GameSetupStruct();
 	_spriteset = new SpriteCache(_game->SpriteInfos);
 	_thisroom = new AGS::Shared::RoomStruct();
@@ -293,6 +293,10 @@ Globals::Globals() {
 
 	// overlay.cpp globals
 	_screenover = new ScreenOverlay[MAX_SCREEN_OVERLAYS];
+
+	// plugins globals
+	_engineExports = new Plugins::Core::EngineExports();
+	_plugins = new Common::Array<EnginePlugin>();
 
 	// plugin_object_reader.cpp globals
 	_pluginReaders = new PluginObjectReader[MAX_PLUGIN_OBJECT_READERS];
@@ -515,6 +519,10 @@ Globals::~Globals() {
 
 	// overlay.cpp globals
 	delete[] _screenover;
+
+	// plugins globals
+	delete _engineExports;
+	delete _plugins;
 
 	// plugin_object_reader.cpp globals
 	delete[] _pluginReaders;

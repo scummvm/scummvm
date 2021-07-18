@@ -35,6 +35,7 @@
 #include "ags/shared/core/types.h"
 #include "ags/shared/font/ags_font_renderer.h"
 #include "ags/plugins/plugin_base.h"
+#include "ags/engine/util/library_scummvm.h"
 
 namespace AGS3 {
 
@@ -67,13 +68,15 @@ typedef int HWND;
 // MASK_REGIONS is interface version 11 and above only
 #define MASK_REGIONS    4
 
+#define PLUGIN_FILENAME_MAX (49)
+
 // **** WARNING: DO NOT ALTER THESE CLASSES IN ANY WAY!
 // **** CHANGING THE ORDER OF THE FUNCTIONS OR ADDING ANY VARIABLES
 // **** WILL CRASH THE SYSTEM.
 
 struct AGSColor {
-unsigned char r, g, b;
-unsigned char padding;
+	unsigned char r, g, b;
+	unsigned char padding;
 };
 
 struct AGSGameOptions {
@@ -555,33 +558,31 @@ public:
 	AGSIFUNC(void)  GetRenderStageDesc(AGSRenderStageDesc *desc);
 };
 
-#ifdef THIS_IS_THE_PLUGIN
+struct EnginePlugin {
+	char        filename[PLUGIN_FILENAME_MAX + 1];
+	AGS::Engine::Library   library;
+	Plugins::PluginBase *_plugin;
+	bool       available;
+	char *savedata;
+	int         savedatasize;
+	int         wantHook;
+	int         invalidatedRegion;
 
-#ifdef WINDOWS_VERSION
-#define DLLEXPORT extern "C" __declspec(dllexport)
-#else
-// MAC VERSION: compile with -fvisibility=hidden
-// gcc -dynamiclib -std=gnu99 agsplugin.c -fvisibility=hidden -o agsplugin.dylib
-#define DLLEXPORT extern "C" __attribute__((visibility("default")))
-#endif
+	IAGSEngine  eiface;
+	bool        builtin;
 
-DLLEXPORT const char *AGS_GetPluginName(void);
-DLLEXPORT int    AGS_EditorStartup(IAGSEditor *);
-DLLEXPORT void   AGS_EditorShutdown(void);
-DLLEXPORT void   AGS_EditorProperties(HWND);
-DLLEXPORT int    AGS_EditorSaveGame(char *, int);
-DLLEXPORT void   AGS_EditorLoadGame(char *, int);
-DLLEXPORT void   AGS_EngineStartup(IAGSEngine *);
-DLLEXPORT void   AGS_EngineShutdown(void);
-DLLEXPORT int    AGS_EngineOnEvent(int, int);
-DLLEXPORT int    AGS_EngineDebugHook(const char *, int, int);
-DLLEXPORT void   AGS_EngineInitGfx(const char *driverID, void *data);
-// We export this to verify that we are an AGS Plugin
-DLLEXPORT int    AGS_PluginV2() {
-return 1;
-}
-
-#endif // THIS_IS_THE_PLUGIN
+	EnginePlugin() {
+		filename[0] = 0;
+		wantHook = 0;
+		invalidatedRegion = 0;
+		savedata = nullptr;
+		savedatasize = 0;
+		builtin = false;
+		available = false;
+		eiface.version = 0;
+		eiface.pluginId = 0;
+	}
+};
 
 extern void PluginSimulateMouseClick(int pluginButtonID);
 

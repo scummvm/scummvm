@@ -128,6 +128,7 @@ struct COLOR_MAP;
 struct CSCIMessage;
 struct DialogTopic;
 struct DirtyRects;
+struct EnginePlugin;
 struct ExecutingScript;
 struct EventHappened;
 struct GameFrameSetup;
@@ -699,7 +700,6 @@ public:
 	 * @{
 	 */
 
-	Plugins::Core::EngineExports *_engineExports;
 	GameSetupStruct *_game;
 	GameState *_play;
 	SpriteCache *_spriteset;
@@ -1297,6 +1297,12 @@ public:
 	 * @ingroup agsglobals
 	 * @{
 	 */
+
+	Plugins::Core::EngineExports *_engineExports;
+	Common::Array<EnginePlugin> *_plugins;
+	int _pluginsWantingDebugHooks = 0;
+	long _pl_file_handle = -1;
+	AGS::Shared::Stream *_pl_file_stream = nullptr;
 
 	int _pluginSimulatedClick = -1;
 	int _mouse_z_was = 0;
