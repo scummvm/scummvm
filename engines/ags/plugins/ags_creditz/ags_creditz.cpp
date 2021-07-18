@@ -27,114 +27,105 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSCreditz {
 
-AGSCreditz::AGSCreditz() : PluginBase(), Drawing() {
-	_state = new State();
-	_engine = nullptr;
-}
-
-AGSCreditz::~AGSCreditz() {
-	delete _state;
-}
-
 void AGSCreditz::draw() {
 	int endPoint;
 
-	if (_state->_creditsRunning) {
+	if (_creditsRunning) {
 		_engine->PollSystem();
 
-		if (!_state->_staticCredits) {
+		if (!_staticCredits) {
 			// Scrolling credits
-			if (_state->_seqSettings[_state->_creditSequence].automatic == 1)
-				endPoint = 0 - _state->_calculatedSequenceHeight;
+			if (_seqSettings[_creditSequence].automatic == 1)
+				endPoint = 0 - _calculatedSequenceHeight;
 			else
-				endPoint = _state->_seqSettings[_state->_creditSequence].endpoint;
+				endPoint = _seqSettings[_creditSequence].endpoint;
 
-			if (_state->_yPos >= endPoint) {
+			if (_yPos >= endPoint) {
 				doCredits();
 			} else {
-				if (_state->_seqSettings[_state->_creditSequence].endwait > 0 && _state->_timer <= _state->_seqSettings[_state->_creditSequence].endwait) {
-					_state->_paused = true;
+				if (_seqSettings[_creditSequence].endwait > 0 && _timer <= _seqSettings[_creditSequence].endwait) {
+					_paused = true;
 					doCredits();
-					_state->_timer++;
+					_timer++;
 					return;
 				} else {
-					_state->_paused = false;
-					_state->_timer = 0;
-					_state->_creditsRunning = false;
-					_state->_seqSettings[_state->_creditSequence].finished = true;
+					_paused = false;
+					_timer = 0;
+					_creditsRunning = false;
+					_seqSettings[_creditSequence].finished = true;
 				}
 			}
 
-			_engine->MarkRegionDirty(0, 0, _state->_screenWidth, _state->_screenHeight);
+			_engine->MarkRegionDirty(0, 0, _screenWidth, _screenHeight);
 		} else {
 			// credits
-			if (!_state->_singleStatic.bool_) {
-				if (_state->_currentStatic < (int)_state->_stCredits[_state->_creditSequence].size()) {
-					if (_state->_stCredits[_state->_creditSequence][_state->_currentStatic].pause > 0) {
+			if (!_singleStatic.bool_) {
+				if (_currentStatic < (int)_stCredits[_creditSequence].size()) {
+					if (_stCredits[_creditSequence][_currentStatic].pause > 0) {
 						// Pause
-						if (_state->_timer <= _state->_stCredits[_state->_creditSequence][_state->_currentStatic].pause) {
-							_state->_timer++;
+						if (_timer <= _stCredits[_creditSequence][_currentStatic].pause) {
+							_timer++;
 						} else {
-							_state->_timer = 0;
-							_state->_currentStatic++;
+							_timer = 0;
+							_currentStatic++;
 						}
 					} else {
-						if (_state->_stCredits[_state->_creditSequence][_state->_currentStatic].image) {
+						if (_stCredits[_creditSequence][_currentStatic].image) {
 							// Image
-							if (_state->_timer <= _state->_stCredits[_state->_creditSequence][_state->_currentStatic].image_time) {
-								drawCredit(_state->_creditSequence, _state->_currentStatic);
-								_state->_timer++;
+							if (_timer <= _stCredits[_creditSequence][_currentStatic].image_time) {
+								drawCredit(_creditSequence, _currentStatic);
+								_timer++;
 							} else {
-								_state->_timer = 0;
-								_state->_currentStatic++;
-								if (_state->_stCredits[_state->_creditSequence][_state->_currentStatic].pause <= 0 &&
-								        _state->_currentStatic< (int)_state->_stCredits[_state->_creditSequence].size())
-									drawCredit(_state->_creditSequence, _state->_currentStatic);
+								_timer = 0;
+								_currentStatic++;
+								if (_stCredits[_creditSequence][_currentStatic].pause <= 0 &&
+								        _currentStatic< (int)_stCredits[_creditSequence].size())
+									drawCredit(_creditSequence, _currentStatic);
 								else
 									return;
 							}
 						} else {
 							// Text
-							if (_state->_timer <= (_state->_stSeqSettings[_state->_creditSequence].speed *
-							                       ((int)_state->_stCredits[_state->_creditSequence][_state->_currentStatic].title.size() +
-							                        (int)_state->_stCredits[_state->_creditSequence][_state->_currentStatic].credit.size()))) {
-								drawCredit(_state->_creditSequence, _state->_currentStatic);
-								_state->_timer++;
+							if (_timer <= (_stSeqSettings[_creditSequence].speed *
+							                       ((int)_stCredits[_creditSequence][_currentStatic].title.size() +
+							                        (int)_stCredits[_creditSequence][_currentStatic].credit.size()))) {
+								drawCredit(_creditSequence, _currentStatic);
+								_timer++;
 							} else {
-								_state->_timer = 0;
-								_state->_currentStatic++;
-								if (_state->_stCredits[_state->_creditSequence][_state->_currentStatic].pause <= 0 &&
-								        (int)_state->_currentStatic<= (int)_state->_stCredits[_state->_creditSequence].size())
-									drawCredit(_state->_creditSequence, _state->_currentStatic);
+								_timer = 0;
+								_currentStatic++;
+								if (_stCredits[_creditSequence][_currentStatic].pause <= 0 &&
+								        (int)_currentStatic<= (int)_stCredits[_creditSequence].size())
+									drawCredit(_creditSequence, _currentStatic);
 								else
 									return;
 							}
 						}
 					}
 				} else {
-					_state->_stSeqSettings[_state->_creditSequence].finished = true;
-					_state->_creditsRunning = false;
-					_state->_creditSequence = -1;
-					_state->_timer = 0;
-					_state->_currentStatic= 1;
+					_stSeqSettings[_creditSequence].finished = true;
+					_creditsRunning = false;
+					_creditSequence = -1;
+					_timer = 0;
+					_currentStatic= 1;
 					return;
 				}
 			} else {
 				// Single Static
-				if (_state->_timer <= _state->_singleStatic.time) {
-					if (_state->_singleStatic.style == 0)
-						drawCredit(_state->_creditSequence, _state->_singleStatic.id);
-					else if (_state->_singleStatic.style == 1)
-						drawStEffects(_state->_creditSequence, _state->_singleStatic.id, _state->_singleStatic.style);
+				if (_timer <= _singleStatic.time) {
+					if (_singleStatic.style == 0)
+						drawCredit(_creditSequence, _singleStatic.id);
+					else if (_singleStatic.style == 1)
+						drawStEffects(_creditSequence, _singleStatic.id, _singleStatic.style);
 
-					_state->_timer++;
+					_timer++;
 				} else {
-					_state->_timer = 0;
-					_state->_singleStatic.bool_ = false;
-					_state->_creditsRunning = false;
-					_state->_staticCredits = false;
-					_state->_stSeqSettings[_state->_creditSequence].finished = true;
-					_state->_creditSequence = -1;
+					_timer = 0;
+					_singleStatic.bool_ = false;
+					_creditsRunning = false;
+					_staticCredits = false;
+					_stSeqSettings[_creditSequence].finished = true;
+					_creditSequence = -1;
 				}
 			}
 		}
@@ -153,15 +144,15 @@ int AGSCreditz::drawCredit(int sequence, int credit) {
 
 	_engine->GetScreenDimensions(&scrn_width, &scrn_height, &coldepth);
 
-	if (!_state->_staticCredits) {
+	if (!_staticCredits) {
 		// Scrolling Credits
-		if ((_state->_yPos + _state->_sequenceHeight) > scrn_height)
+		if ((_yPos + _sequenceHeight) > scrn_height)
 			return 0;
 
-		if (_state->_credits[sequence][credit]._image) {
-			slot = _state->_credits[sequence][credit]._fontSlot;
-			sprite_height = _state->_credits[sequence][credit]._colorHeight;
-			x_pos = _state->_credits[sequence][credit]._x;
+		if (_credits[sequence][credit]._image) {
+			slot = _credits[sequence][credit]._fontSlot;
+			sprite_height = _credits[sequence][credit]._colorHeight;
+			x_pos = _credits[sequence][credit]._x;
 
 			if (x_pos < 0) {
 				sprite_width = _engine->GetSpriteWidth(slot);
@@ -178,13 +169,13 @@ int AGSCreditz::drawCredit(int sequence, int credit) {
 			korkeus = sprite_height;
 
 			sprite = _engine->GetSpriteGraphic(slot);
-			_engine->BlitBitmap(x_pos, _state->_yPos + _state->_sequenceHeight, sprite, 1);
+			_engine->BlitBitmap(x_pos, _yPos + _sequenceHeight, sprite, 1);
 
 		} else {
-			font = _state->_credits[sequence][credit]._fontSlot;
-			color = _state->_credits[sequence][credit]._colorHeight;
-			text = _state->_credits[sequence][credit]._text;
-			x_pos = _state->_credits[sequence][credit]._x;
+			font = _credits[sequence][credit]._fontSlot;
+			color = _credits[sequence][credit]._colorHeight;
+			text = _credits[sequence][credit]._text;
+			x_pos = _credits[sequence][credit]._x;
 
 			if (!text.empty()) {
 				_engine->GetTextExtent(font, text.c_str(), &leveys, &korkeus);
@@ -198,15 +189,15 @@ int AGSCreditz::drawCredit(int sequence, int credit) {
 				if (text.contains('<')) {
 					specialEffect(sequence, credit, text, font, color, x_pos);
 				} else {
-					if (_state->_credits[sequence][credit]._outline) {
+					if (_credits[sequence][credit]._outline) {
 						// Outline
-						_engine->DrawText(x_pos - 1, _state->_yPos + _state->_sequenceHeight, font, 16, text.c_str());
-						_engine->DrawText(x_pos + 1, _state->_yPos + _state->_sequenceHeight, font, 16, text.c_str());
-						_engine->DrawText(x_pos, _state->_yPos + _state->_sequenceHeight - 1, font, 16, text.c_str());
-						_engine->DrawText(x_pos, _state->_yPos + _state->_sequenceHeight + 1, font, 16, text.c_str());
+						_engine->DrawText(x_pos - 1, _yPos + _sequenceHeight, font, 16, text.c_str());
+						_engine->DrawText(x_pos + 1, _yPos + _sequenceHeight, font, 16, text.c_str());
+						_engine->DrawText(x_pos, _yPos + _sequenceHeight - 1, font, 16, text.c_str());
+						_engine->DrawText(x_pos, _yPos + _sequenceHeight + 1, font, 16, text.c_str());
 					}
 
-					_engine->DrawText(x_pos, _state->_yPos + _state->_sequenceHeight, font, color, text.c_str());
+					_engine->DrawText(x_pos, _yPos + _sequenceHeight, font, color, text.c_str());
 				}
 			}
 		}
@@ -214,10 +205,10 @@ int AGSCreditz::drawCredit(int sequence, int credit) {
 		result = korkeus;
 	} else {
 
-		if (_state->_stCredits[sequence][credit].image) {
-			x_pos = _state->_stCredits[sequence][credit].x;
-			y_posit = _state->_stCredits[sequence][credit].y;
-			font = _state->_stCredits[sequence][credit].image_slot;
+		if (_stCredits[sequence][credit].image) {
+			x_pos = _stCredits[sequence][credit].x;
+			y_posit = _stCredits[sequence][credit].y;
+			font = _stCredits[sequence][credit].image_slot;
 
 			sprite = _engine->GetSpriteGraphic(font);
 			_engine->GetBitmapDimensions(sprite, &leveys, &korkeus, &coldepth);
@@ -235,11 +226,11 @@ int AGSCreditz::drawCredit(int sequence, int credit) {
 			result = 0;
 		} else {
 			// Title
-			font = _state->_stCredits[sequence][credit].title_font;
-			color = _state->_stCredits[sequence][credit].title_color;
-			text = _state->_stCredits[sequence][credit].title;
-			x_pos = _state->_stCredits[sequence][credit].title_x;
-			y_posit = _state->_stCredits[sequence][credit].title_y;
+			font = _stCredits[sequence][credit].title_font;
+			color = _stCredits[sequence][credit].title_color;
+			text = _stCredits[sequence][credit].title;
+			x_pos = _stCredits[sequence][credit].title_x;
+			y_posit = _stCredits[sequence][credit].title_y;
 
 			if (!text.empty()) {
 				_engine->GetTextExtent(font, text.c_str(), &leveys, &korkeus);
@@ -253,7 +244,7 @@ int AGSCreditz::drawCredit(int sequence, int credit) {
 				else
 					y_posit = VGACheck(y_posit);
 
-				if (_state->_stCredits[sequence][credit].title_outline) {
+				if (_stCredits[sequence][credit].title_outline) {
 					_engine->DrawText(x_pos - 1, y_posit, font, 16, text.c_str());
 					_engine->DrawText(x_pos + 1, y_posit, font, 16, text.c_str());
 					_engine->DrawText(x_pos, y_posit - 1, font, 16, text.c_str());
@@ -265,11 +256,11 @@ int AGSCreditz::drawCredit(int sequence, int credit) {
 			}
 
 			// Credit
-			font = _state->_stCredits[sequence][credit].font;
-			color = _state->_stCredits[sequence][credit].color;
-			text = _state->_stCredits[sequence][credit].credit;
-			x_pos = _state->_stCredits[sequence][credit].x;
-			y_posit = _state->_stCredits[sequence][credit].y;
+			font = _stCredits[sequence][credit].font;
+			color = _stCredits[sequence][credit].color;
+			text = _stCredits[sequence][credit].credit;
+			x_pos = _stCredits[sequence][credit].x;
+			y_posit = _stCredits[sequence][credit].y;
 
 			if (!text.empty()) {
 				_engine->GetTextExtent(font, text.c_str(), &leveys, &korkeus);
@@ -284,7 +275,7 @@ int AGSCreditz::drawCredit(int sequence, int credit) {
 					else
 						y_posit = VGACheck(y_posit);
 
-					if (_state->_stCredits[sequence][credit].outline) {
+					if (_stCredits[sequence][credit].outline) {
 						_engine->DrawText(x_pos - 1, y_posit, font, 16, text.c_str());
 						_engine->DrawText(x_pos + 1, y_posit, font, 16, text.c_str());
 						_engine->DrawText(x_pos, y_posit - 1, font, 16, text.c_str());
@@ -312,7 +303,7 @@ int AGSCreditz::drawCredit(int sequence, int credit) {
 						else
 							x_pos = VGACheck(x_pos);
 
-						if (_state->_stCredits[sequence][credit].outline) {
+						if (_stCredits[sequence][credit].outline) {
 							_engine->DrawText(x_pos - 1, y_posit + others, font, 16, text.c_str());
 							_engine->DrawText(x_pos + 1, y_posit + others, font, 16, text.c_str());
 							_engine->DrawText(x_pos, y_posit + others - 1, font, 16, text.c_str());
@@ -321,7 +312,7 @@ int AGSCreditz::drawCredit(int sequence, int credit) {
 						_engine->DrawText(x_pos, y_posit + others, font, color, text.c_str());
 						_engine->MarkRegionDirty(x_pos, y_posit + others, x_pos + leveys, y_posit + others + korkeus + 15);
 						others += korkeus;
-						x_pos = _state->_stCredits[sequence][credit].x;
+						x_pos = _stCredits[sequence][credit].x;
 						line++;
 					}
 				}
@@ -339,35 +330,35 @@ void AGSCreditz::doCredits() {
 	int32 increment, dum;
 
 	current_line = 1;
-	_state->_sequenceHeight = 0;
+	_sequenceHeight = 0;
 
-	while (current_line < (int)_state->_credits[_state->_creditSequence].size()) {
-		if (_state->_credits[_state->_creditSequence][current_line]._isSet) {
-			if (_state->_credits[_state->_creditSequence][current_line]._image) {
-				increment = _engine->GetSpriteHeight(_state->_credits[_state->_creditSequence][current_line]._fontSlot);
+	while (current_line < (int)_credits[_creditSequence].size()) {
+		if (_credits[_creditSequence][current_line]._isSet) {
+			if (_credits[_creditSequence][current_line]._image) {
+				increment = _engine->GetSpriteHeight(_credits[_creditSequence][current_line]._fontSlot);
 
-				if ((_state->_yPos + _state->_sequenceHeight + increment) <= 0) {
-					if (_state->_credits[_state->_creditSequence][current_line]._colorHeight >= 0)
-						increment = VGACheck(_state->_credits[_state->_creditSequence][current_line]._colorHeight);
+				if ((_yPos + _sequenceHeight + increment) <= 0) {
+					if (_credits[_creditSequence][current_line]._colorHeight >= 0)
+						increment = VGACheck(_credits[_creditSequence][current_line]._colorHeight);
 				}
 			} else {
-				_engine->GetTextExtent(_state->_credits[_state->_creditSequence][current_line]._fontSlot,
-				                       _state->_credits[_state->_creditSequence][current_line]._text.c_str(), &dum, &increment);
+				_engine->GetTextExtent(_credits[_creditSequence][current_line]._fontSlot,
+				                       _credits[_creditSequence][current_line]._text.c_str(), &dum, &increment);
 			}
 
-			if ((_state->_yPos + _state->_sequenceHeight + increment) > 0)
-				increment = drawCredit(_state->_creditSequence, current_line);
+			if ((_yPos + _sequenceHeight + increment) > 0)
+				increment = drawCredit(_creditSequence, current_line);
 
 		} else {
-			increment = VGACheck(_state->_emptyLineHeight);
+			increment = VGACheck(_emptyLineHeight);
 		}
 
-		_state->_sequenceHeight += increment;
+		_sequenceHeight += increment;
 		current_line++;
 	}
 
-	if (!_state->_paused)
-		speeder(_state->_creditSequence);
+	if (!_paused)
+		speeder(_creditSequence);
 }
 
 int AGSCreditz::countLines(const Common::String &text) {
@@ -424,22 +415,22 @@ void AGSCreditz::specialEffect(int sequence, int credit, const Common::String &t
 
 		_engine->GetTextExtent(font, creditt[2].c_str(), &rightside_width, &dum);
 
-		if (_state->_credits[sequence][credit]._outline) {
-			_engine->DrawText(x_pos - 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[0].c_str());
-			_engine->DrawText(x_pos + 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[0].c_str());
-			_engine->DrawText(x_pos, _state->_yPos + _state->_sequenceHeight - 1, font, color, creditt[0].c_str());
-			_engine->DrawText(x_pos, _state->_yPos + _state->_sequenceHeight + 1, font, color, creditt[0].c_str());
+		if (_credits[sequence][credit]._outline) {
+			_engine->DrawText(x_pos - 1, _yPos + _sequenceHeight, font, color, creditt[0].c_str());
+			_engine->DrawText(x_pos + 1, _yPos + _sequenceHeight, font, color, creditt[0].c_str());
+			_engine->DrawText(x_pos, _yPos + _sequenceHeight - 1, font, color, creditt[0].c_str());
+			_engine->DrawText(x_pos, _yPos + _sequenceHeight + 1, font, color, creditt[0].c_str());
 		}
 
-		_engine->DrawText(x_pos, _state->_yPos + _state->_sequenceHeight, font, color, creditt[0].c_str());
+		_engine->DrawText(x_pos, _yPos + _sequenceHeight, font, color, creditt[0].c_str());
 
-		if (_state->_credits[sequence][credit]._outline) {
-			_engine->DrawText(scrn_width - (x_pos + rightside_width) - 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[2].c_str());
-			_engine->DrawText(scrn_width - (x_pos + rightside_width) + 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[2].c_str());
-			_engine->DrawText(scrn_width - (x_pos + rightside_width), _state->_yPos + _state->_sequenceHeight - 1, font, color, creditt[2].c_str());
-			_engine->DrawText(scrn_width - (x_pos + rightside_width), _state->_yPos + _state->_sequenceHeight + 1, font, color, creditt[2].c_str());
+		if (_credits[sequence][credit]._outline) {
+			_engine->DrawText(scrn_width - (x_pos + rightside_width) - 1, _yPos + _sequenceHeight, font, color, creditt[2].c_str());
+			_engine->DrawText(scrn_width - (x_pos + rightside_width) + 1, _yPos + _sequenceHeight, font, color, creditt[2].c_str());
+			_engine->DrawText(scrn_width - (x_pos + rightside_width), _yPos + _sequenceHeight - 1, font, color, creditt[2].c_str());
+			_engine->DrawText(scrn_width - (x_pos + rightside_width), _yPos + _sequenceHeight + 1, font, color, creditt[2].c_str());
 		}
-		_engine->DrawText(scrn_width - (x_pos + rightside_width), _state->_yPos + _state->_sequenceHeight, font, color, creditt[2].c_str());
+		_engine->DrawText(scrn_width - (x_pos + rightside_width), _yPos + _sequenceHeight, font, color, creditt[2].c_str());
 	} else if (text.contains("<.>")) {
 		if (x_pos < 0)
 			x_pos = 0;
@@ -452,22 +443,22 @@ void AGSCreditz::specialEffect(int sequence, int credit, const Common::String &t
 		_engine->GetTextExtent(font, creditt[2].c_str(), &rightside_width, &dum);
 		_engine->GetTextExtent(font, creditt[0].c_str(), &leftside_width, &dum);
 
-		if (_state->_credits[sequence][credit]._outline) {
-			_engine->DrawText(x_pos - 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[0].c_str());
-			_engine->DrawText(x_pos + 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[0].c_str());
-			_engine->DrawText(x_pos, _state->_yPos + _state->_sequenceHeight - 1, font, color, creditt[0].c_str());
-			_engine->DrawText(x_pos, _state->_yPos + _state->_sequenceHeight + 1, font, color, creditt[0].c_str());
+		if (_credits[sequence][credit]._outline) {
+			_engine->DrawText(x_pos - 1, _yPos + _sequenceHeight, font, color, creditt[0].c_str());
+			_engine->DrawText(x_pos + 1, _yPos + _sequenceHeight, font, color, creditt[0].c_str());
+			_engine->DrawText(x_pos, _yPos + _sequenceHeight - 1, font, color, creditt[0].c_str());
+			_engine->DrawText(x_pos, _yPos + _sequenceHeight + 1, font, color, creditt[0].c_str());
 		}
 
-		_engine->DrawText(x_pos, _state->_yPos + _state->_sequenceHeight, font, color, creditt[0].c_str());
+		_engine->DrawText(x_pos, _yPos + _sequenceHeight, font, color, creditt[0].c_str());
 
-		if (_state->_credits[sequence][credit]._outline) {
-			_engine->DrawText(scrn_width - (x_pos + rightside_width) - 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[2].c_str());
-			_engine->DrawText(scrn_width - (x_pos + rightside_width) + 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[2].c_str());
-			_engine->DrawText(scrn_width - (x_pos + rightside_width), _state->_yPos + _state->_sequenceHeight - 1, font, color, creditt[2].c_str());
-			_engine->DrawText(scrn_width - (x_pos + rightside_width), _state->_yPos + _state->_sequenceHeight + 1, font, color, creditt[2].c_str());
+		if (_credits[sequence][credit]._outline) {
+			_engine->DrawText(scrn_width - (x_pos + rightside_width) - 1, _yPos + _sequenceHeight, font, color, creditt[2].c_str());
+			_engine->DrawText(scrn_width - (x_pos + rightside_width) + 1, _yPos + _sequenceHeight, font, color, creditt[2].c_str());
+			_engine->DrawText(scrn_width - (x_pos + rightside_width), _yPos + _sequenceHeight - 1, font, color, creditt[2].c_str());
+			_engine->DrawText(scrn_width - (x_pos + rightside_width), _yPos + _sequenceHeight + 1, font, color, creditt[2].c_str());
 		}
-		_engine->DrawText(scrn_width - (x_pos + rightside_width), _state->_yPos + _state->_sequenceHeight, font, color, creditt[2].c_str());
+		_engine->DrawText(scrn_width - (x_pos + rightside_width), _yPos + _sequenceHeight, font, color, creditt[2].c_str());
 
 		_engine->GetTextExtent(font, " .", &dotwidth, &dum);
 		space = scrn_width - (x_pos + leftside_width + x_pos + rightside_width);
@@ -479,13 +470,13 @@ void AGSCreditz::specialEffect(int sequence, int credit, const Common::String &t
 			dotpos++;
 		}
 
-		if (_state->_credits[sequence][credit]._outline) {
-			_engine->DrawText(x_pos + leftside_width - 1, _state->_yPos + _state->_sequenceHeight, font, color, dots.c_str());
-			_engine->DrawText(x_pos + leftside_width + 1, _state->_yPos + _state->_sequenceHeight, font, color, dots.c_str());
-			_engine->DrawText(x_pos + leftside_width, _state->_yPos + _state->_sequenceHeight - 1, font, color, dots.c_str());
-			_engine->DrawText(x_pos + leftside_width, _state->_yPos + _state->_sequenceHeight + 1, font, color, dots.c_str());
+		if (_credits[sequence][credit]._outline) {
+			_engine->DrawText(x_pos + leftside_width - 1, _yPos + _sequenceHeight, font, color, dots.c_str());
+			_engine->DrawText(x_pos + leftside_width + 1, _yPos + _sequenceHeight, font, color, dots.c_str());
+			_engine->DrawText(x_pos + leftside_width, _yPos + _sequenceHeight - 1, font, color, dots.c_str());
+			_engine->DrawText(x_pos + leftside_width, _yPos + _sequenceHeight + 1, font, color, dots.c_str());
 		}
-		_engine->DrawText(x_pos + leftside_width, _state->_yPos + _state->_sequenceHeight, font, color, dots.c_str());
+		_engine->DrawText(x_pos + leftside_width, _yPos + _sequenceHeight, font, color, dots.c_str());
 	} else if (text.contains("<#>")) {
 		if (x_pos < 0)
 			x_pos = 0;
@@ -498,21 +489,21 @@ void AGSCreditz::specialEffect(int sequence, int credit, const Common::String &t
 		_engine->GetTextExtent(font, creditt[2].c_str(), &rightside_width, &dum);
 		_engine->GetTextExtent(font, creditt[0].c_str(), &leftside_width, &dum);
 
-		if (_state->_credits[sequence][credit]._outline) {
-			_engine->DrawText(scrn_width / 2 - x_pos / 2 - leftside_width - 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[0].c_str());
-			_engine->DrawText(scrn_width / 2 - x_pos / 2 - leftside_width + 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[0].c_str());
-			_engine->DrawText(scrn_width / 2 - x_pos / 2 - leftside_width, _state->_yPos + _state->_sequenceHeight - 1, font, color, creditt[0].c_str());
-			_engine->DrawText(scrn_width / 2 - x_pos / 2 - leftside_width, _state->_yPos + _state->_sequenceHeight + 1, font, color, creditt[0].c_str());
+		if (_credits[sequence][credit]._outline) {
+			_engine->DrawText(scrn_width / 2 - x_pos / 2 - leftside_width - 1, _yPos + _sequenceHeight, font, color, creditt[0].c_str());
+			_engine->DrawText(scrn_width / 2 - x_pos / 2 - leftside_width + 1, _yPos + _sequenceHeight, font, color, creditt[0].c_str());
+			_engine->DrawText(scrn_width / 2 - x_pos / 2 - leftside_width, _yPos + _sequenceHeight - 1, font, color, creditt[0].c_str());
+			_engine->DrawText(scrn_width / 2 - x_pos / 2 - leftside_width, _yPos + _sequenceHeight + 1, font, color, creditt[0].c_str());
 		}
-		_engine->DrawText(scrn_width / 2 - x_pos / 2 - leftside_width, _state->_yPos + _state->_sequenceHeight, font, color, creditt[0].c_str());
+		_engine->DrawText(scrn_width / 2 - x_pos / 2 - leftside_width, _yPos + _sequenceHeight, font, color, creditt[0].c_str());
 
-		if (_state->_credits[sequence][credit]._outline) {
-			_engine->DrawText(scrn_width / 2 + x_pos / 2 - 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[2].c_str());
-			_engine->DrawText(scrn_width / 2 + x_pos / 2 + 1, _state->_yPos + _state->_sequenceHeight, font, color, creditt[2].c_str());
-			_engine->DrawText(scrn_width / 2 + x_pos / 2, _state->_yPos + _state->_sequenceHeight - 1, font, color, creditt[2].c_str());
-			_engine->DrawText(scrn_width / 2 + x_pos / 2, _state->_yPos + _state->_sequenceHeight + 1, font, color, creditt[2].c_str());
+		if (_credits[sequence][credit]._outline) {
+			_engine->DrawText(scrn_width / 2 + x_pos / 2 - 1, _yPos + _sequenceHeight, font, color, creditt[2].c_str());
+			_engine->DrawText(scrn_width / 2 + x_pos / 2 + 1, _yPos + _sequenceHeight, font, color, creditt[2].c_str());
+			_engine->DrawText(scrn_width / 2 + x_pos / 2, _yPos + _sequenceHeight - 1, font, color, creditt[2].c_str());
+			_engine->DrawText(scrn_width / 2 + x_pos / 2, _yPos + _sequenceHeight + 1, font, color, creditt[2].c_str());
 		}
-		_engine->DrawText(scrn_width / 2 + x_pos / 2, _state->_yPos + _state->_sequenceHeight, font, color, creditt[2].c_str());
+		_engine->DrawText(scrn_width / 2 + x_pos / 2, _yPos + _sequenceHeight, font, color, creditt[2].c_str());
 	}
 }
 
@@ -524,26 +515,26 @@ void AGSCreditz::drawStEffects(int sequence, int id, int style) {
 	int font, color, set1, set2;
 	int32 x_pos, y_posit, scrn_width, leveys, scrn_height, korkeus, coldepth;
 
-	teksti = _state->_stCredits[sequence][id].credit;
-	font = _state->_stCredits[sequence][id].font;
-	color = _state->_stCredits[sequence][id].color;
-	x_pos = _state->_stCredits[sequence][id].x;
-	y_posit = _state->_stCredits[sequence][id].y;
-	set1 = _state->_singleStatic.settings1;
-	set2 = _state->_singleStatic.settings2;
+	teksti = _stCredits[sequence][id].credit;
+	font = _stCredits[sequence][id].font;
+	color = _stCredits[sequence][id].color;
+	x_pos = _stCredits[sequence][id].x;
+	y_posit = _stCredits[sequence][id].y;
+	set1 = _singleStatic.settings1;
+	set2 = _singleStatic.settings2;
 
 	_engine->GetScreenDimensions(&scrn_width, &scrn_height, &coldepth);
 	_engine->GetTextExtent(font, teksti.c_str(), &leveys, &korkeus);
 
 	if (style == 1) {
-		if (set2 >= 0 && _state->_numChars < (int)teksti.size() && _state->_timer2 == 0) {
+		if (set2 >= 0 && _numChars < (int)teksti.size() && _timer2 == 0) {
 			(*_playSound)(set2);
 		}
 
-		if (_state->_timer2 <= set1) {
+		if (_timer2 <= set1) {
 			thischar = 0;
-			if (thischar <= _state->_numChars && _state->_numChars <= (int)teksti.size()) {
-				for (thischar = 0; thischar < _state->_numChars; ++thischar)
+			if (thischar <= _numChars && _numChars <= (int)teksti.size()) {
+				for (thischar = 0; thischar < _numChars; ++thischar)
 					teksti2 = teksti2 + teksti[thischar];
 				text = teksti2;
 			} else {
@@ -560,26 +551,26 @@ void AGSCreditz::drawStEffects(int sequence, int id, int style) {
 				y_posit = VGACheck(y_posit);
 
 			_engine->DrawText(x_pos, y_posit, font, color, text.c_str());
-			_state->_timer2++;
-			x_pos = _state->_stCredits[sequence][id].x;
-			y_posit = _state->_stCredits[sequence][id].y;
+			_timer2++;
+			x_pos = _stCredits[sequence][id].x;
+			y_posit = _stCredits[sequence][id].y;
 		} else {
-			_state->_numChars++;
+			_numChars++;
 			thischar = 0;
-			_state->_timer2 = 0;
+			_timer2 = 0;
 			drawStEffects(sequence, id, style);
 		}
 	}
 }
 
 void AGSCreditz::speeder(int sequence) {
-	int speed = _state->_seqSettings[sequence].speed;
+	int speed = _seqSettings[sequence].speed;
 
-	if (_state->_speedPoint == speed) {
-		_state->_yPos -= VGACheck(1);
-		_state->_speedPoint = 0;
+	if (_speedPoint == speed) {
+		_yPos -= VGACheck(1);
+		_speedPoint = 0;
 	} else {
-		_state->_speedPoint++;
+		_speedPoint++;
 	}
 }
 
@@ -588,28 +579,28 @@ void AGSCreditz::calculateSequenceHeight(int sequence) {
 	int32 height, creditHeight, dum;
 	height = 0;
 
-	for (uint currentCredit = 0; currentCredit < _state->_credits[sequence].size();
+	for (uint currentCredit = 0; currentCredit < _credits[sequence].size();
 	        ++currentCredit) {
 
-		if (_state->_credits[sequence][currentCredit]._isSet) {
-			if (_state->_credits[sequence][currentCredit]._image) {
-				if (_state->_credits[sequence][currentCredit]._colorHeight < 0)
-					creditHeight = _engine->GetSpriteHeight(_state->_credits[sequence][currentCredit]._fontSlot);
+		if (_credits[sequence][currentCredit]._isSet) {
+			if (_credits[sequence][currentCredit]._image) {
+				if (_credits[sequence][currentCredit]._colorHeight < 0)
+					creditHeight = _engine->GetSpriteHeight(_credits[sequence][currentCredit]._fontSlot);
 				else
-					creditHeight = _state->_credits[sequence][currentCredit]._colorHeight;
+					creditHeight = _credits[sequence][currentCredit]._colorHeight;
 			} else {
-				_engine->GetTextExtent(_state->_credits[sequence][currentCredit]._fontSlot,
-				                       _state->_credits[sequence][currentCredit]._text.c_str(),
+				_engine->GetTextExtent(_credits[sequence][currentCredit]._fontSlot,
+				                       _credits[sequence][currentCredit]._text.c_str(),
 				                       &dum, &creditHeight);
 			}
 
 			height += creditHeight;
 		} else {
-			height += VGACheck(_state->_emptyLineHeight);
+			height += VGACheck(_emptyLineHeight);
 		}
 	}
 
-	_state->_calculatedSequenceHeight = height;
+	_calculatedSequenceHeight = height;
 }
 
 int AGSCreditz::VGACheck(int value) {
@@ -623,29 +614,29 @@ int AGSCreditz::VGACheck(int value) {
 }
 
 void AGSCreditz::startSequence(int sequence) {
-	if (!_state->_creditsRunning) {
-		_state->_seqSettings[sequence].finished = false;
-		_state->_creditsRunning = true;
-		_state->_creditSequence = sequence;
+	if (!_creditsRunning) {
+		_seqSettings[sequence].finished = false;
+		_creditsRunning = true;
+		_creditSequence = sequence;
 
-		_engine->GetScreenDimensions(&_state->_screenWidth, &_state->_screenHeight,
-		                             &_state->_screenColorDepth);
+		_engine->GetScreenDimensions(&_screenWidth, &_screenHeight,
+		                             &_screenColorDepth);
 
-		if (_state->_seqSettings[sequence].automatic) {
+		if (_seqSettings[sequence].automatic) {
 			calculateSequenceHeight(sequence);
-			_state->_yPos = _state->_screenHeight + 1;
+			_yPos = _screenHeight + 1;
 		} else {
-			_state->_yPos = _state->_seqSettings[sequence].startpoint;
+			_yPos = _seqSettings[sequence].startpoint;
 		}
 
-		_state->_speedPoint = 0;
-		_state->_timer = 0;
+		_speedPoint = 0;
+		_timer = 0;
 		draw();
 	} else {
-		_state->_paused = false;
-		_state->_creditsRunning = false;
-		_state->_creditSequence = -1;
-		_state->_seqSettings[sequence].finished = true;
+		_paused = false;
+		_creditsRunning = false;
+		_creditSequence = -1;
+		_seqSettings[sequence].finished = true;
 	}
 }
 

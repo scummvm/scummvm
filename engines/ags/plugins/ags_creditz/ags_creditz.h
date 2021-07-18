@@ -94,26 +94,6 @@ struct SingleStatic {
 typedef Common::Array<Credit> CreditArray;
 typedef Common::Array<StCredit> StCreditArray;
 
-struct State {
-	CreditArray _credits[10];
-	StCreditArray _stCredits[10];
-	bool _creditsRunning = 0, _paused = 0, _staticCredits = 0;
-	int _creditSequence = 0, _yPos = 0, _sequenceHeight = 0, _speedPoint = 0;
-	int _calculatedSequenceHeight = 0, _timer = 0, _currentStatic = 0;
-	int _numChars = 0, _timer2 = 0;
-	int _emptyLineHeight = 10;
-	int _strCredit[10];
-	SequenceSettings _seqSettings[10];
-	StSequenceSettings _stSeqSettings[10];
-	SingleStatic _singleStatic;
-
-	// Version 1.1 specific
-	bool _resolutionFlag = false;
-	int32 _screenWidth = 0, _screenHeight = 0, _screenColorDepth = 0;
-	int32 _staticScreenWidth = 0;
-	bool _staticWidthMatches = false;
-};
-
 class AGSCreditz : public PluginBase, public Drawing {
 private:
 	int drawCredit(int sequence, int credit);
@@ -131,8 +111,24 @@ protected:
 	};
 
 	Version _version;
-	State *_state;
 	IntFunction _playSound;
+	CreditArray _credits[10];
+	StCreditArray _stCredits[10];
+	bool _creditsRunning = 0, _paused = 0, _staticCredits = 0;
+	int _creditSequence = 0, _yPos = 0, _sequenceHeight = 0, _speedPoint = 0;
+	int _calculatedSequenceHeight = 0, _timer = 0, _currentStatic = 0;
+	int _numChars = 0, _timer2 = 0;
+	int _emptyLineHeight = 10;
+	int _strCredit[10];
+	SequenceSettings _seqSettings[10];
+	StSequenceSettings _stSeqSettings[10];
+	SingleStatic _singleStatic;
+
+	// Version 1.1 specific
+	bool _resolutionFlag = false;
+	int32 _screenWidth = 0, _screenHeight = 0, _screenColorDepth = 0;
+	int32 _staticScreenWidth = 0;
+	bool _staticWidthMatches = false;
 
 	void draw();
 	void calculateSequenceHeight(int sequence);
@@ -140,8 +136,8 @@ protected:
 	void startSequence(int sequence);
 
 public:
-	AGSCreditz();
-	virtual ~AGSCreditz();
+	AGSCreditz() : PluginBase(), Drawing() {}
+	virtual ~AGSCreditz() {}
 };
 
 } // namespace AGSCreditz
