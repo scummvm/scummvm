@@ -492,6 +492,8 @@ public:
 
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, FontColor color = kFontColorNormal);
 
+	void drawFoldIndicator(const Common::Rect &r, bool expanded);
+
 	//@}
 
 

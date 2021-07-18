@@ -1439,6 +1439,22 @@ void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font 
 	addDirtyRect(charArea);
 }
 
+void ThemeEngine::drawFoldIndicator(const Common::Rect &r, bool expanded) {
+	Graphics::VectorRenderer::TriangleOrientation orient;
+	if (_layerToDraw == kDrawLayerBackground)
+		return;
+
+	if (expanded)
+		orient = Graphics::VectorRenderer::kTriangleDown;
+	else
+		orient = Graphics::VectorRenderer::kTriangleUp;
+
+	_vectorRenderer->setFillMode(Graphics::VectorRenderer::kFillForeground);
+	_vectorRenderer->setFgColor(_textColors[kTextColorNormal]->r, _textColors[kTextColorNormal]->g, _textColors[kTextColorNormal]->b);
+	_vectorRenderer->drawTriangle(r.left + r.width() / 4, r.top + r.width() / 4, r.width() / 2, r.height() / 2, orient);
+	addDirtyRect(r);
+}
+
 void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
 	_font->drawString(&_screen, name, r.left, r.top, r.width(), 0xFFFF, Graphics::kTextAlignRight, 0, true);
 	_screen.hLine(r.left, r.top, r.right, 0xFFFF);
