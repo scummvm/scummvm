@@ -39,6 +39,25 @@ void EngineExports::AGS_EngineStartup(IAGSEngine *engine) {
 	_file.AGS_EngineStartup(engine);
 	_game.AGS_EngineStartup(engine);
 	_globalAPI.AGS_EngineStartup(engine);
+	_gui.AGS_EngineStartup(engine);
+	_guiControl.AGS_EngineStartup(engine);
+	_hotspot.AGS_EngineStartup(engine);
+	_invWindow.AGS_EngineStartup(engine);
+	_inventoryItem.AGS_EngineStartup(engine);
+	_label.AGS_EngineStartup(engine);
+	_listbox.AGS_EngineStartup(engine);
+	_math.AGS_EngineStartup(engine);
+	_mouse.AGS_EngineStartup(engine);
+	_object.AGS_EngineStartup(engine);
+	_overlay.AGS_EngineStartup(engine);
+	_parser.AGS_EngineStartup(engine);
+	_region.AGS_EngineStartup(engine);
+	_room.AGS_EngineStartup(engine);
+	_slider.AGS_EngineStartup(engine);
+	_string.AGS_EngineStartup(engine);
+	_system.AGS_EngineStartup(engine);
+	_textbox.AGS_EngineStartup(engine);
+	_viewFrame.AGS_EngineStartup(engine);
 }
 
 } // namespace Core

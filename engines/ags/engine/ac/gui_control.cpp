@@ -402,36 +402,6 @@ void RegisterGUIControlAPI() {
 	ccAddExternalObjectFunction("GUIControl::set_Y", Sc_GUIControl_SetY);
 	ccAddExternalObjectFunction("GUIControl::get_ZOrder", Sc_GUIControl_GetZOrder);
 	ccAddExternalObjectFunction("GUIControl::set_ZOrder", Sc_GUIControl_SetZOrder);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("GUIControl::BringToFront^0", (void *)GUIControl_BringToFront);
-	ccAddExternalFunctionForPlugin("GUIControl::GetAtScreenXY^2", (void *)GetGUIControlAtLocation);
-	ccAddExternalFunctionForPlugin("GUIControl::SendToBack^0", (void *)GUIControl_SendToBack);
-	ccAddExternalFunctionForPlugin("GUIControl::SetPosition^2", (void *)GUIControl_SetPosition);
-	ccAddExternalFunctionForPlugin("GUIControl::SetSize^2", (void *)GUIControl_SetSize);
-	ccAddExternalFunctionForPlugin("GUIControl::get_AsButton", (void *)GUIControl_GetAsButton);
-	ccAddExternalFunctionForPlugin("GUIControl::get_AsInvWindow", (void *)GUIControl_GetAsInvWindow);
-	ccAddExternalFunctionForPlugin("GUIControl::get_AsLabel", (void *)GUIControl_GetAsLabel);
-	ccAddExternalFunctionForPlugin("GUIControl::get_AsListBox", (void *)GUIControl_GetAsListBox);
-	ccAddExternalFunctionForPlugin("GUIControl::get_AsSlider", (void *)GUIControl_GetAsSlider);
-	ccAddExternalFunctionForPlugin("GUIControl::get_AsTextBox", (void *)GUIControl_GetAsTextBox);
-	ccAddExternalFunctionForPlugin("GUIControl::get_Clickable", (void *)GUIControl_GetClickable);
-	ccAddExternalFunctionForPlugin("GUIControl::set_Clickable", (void *)GUIControl_SetClickable);
-	ccAddExternalFunctionForPlugin("GUIControl::get_Enabled", (void *)GUIControl_GetEnabled);
-	ccAddExternalFunctionForPlugin("GUIControl::set_Enabled", (void *)GUIControl_SetEnabled);
-	ccAddExternalFunctionForPlugin("GUIControl::get_Height", (void *)GUIControl_GetHeight);
-	ccAddExternalFunctionForPlugin("GUIControl::set_Height", (void *)GUIControl_SetHeight);
-	ccAddExternalFunctionForPlugin("GUIControl::get_ID", (void *)GUIControl_GetID);
-	ccAddExternalFunctionForPlugin("GUIControl::get_OwningGUI", (void *)GUIControl_GetOwningGUI);
-	ccAddExternalFunctionForPlugin("GUIControl::get_Visible", (void *)GUIControl_GetVisible);
-	ccAddExternalFunctionForPlugin("GUIControl::set_Visible", (void *)GUIControl_SetVisible);
-	ccAddExternalFunctionForPlugin("GUIControl::get_Width", (void *)GUIControl_GetWidth);
-	ccAddExternalFunctionForPlugin("GUIControl::set_Width", (void *)GUIControl_SetWidth);
-	ccAddExternalFunctionForPlugin("GUIControl::get_X", (void *)GUIControl_GetX);
-	ccAddExternalFunctionForPlugin("GUIControl::set_X", (void *)GUIControl_SetX);
-	ccAddExternalFunctionForPlugin("GUIControl::get_Y", (void *)GUIControl_GetY);
-	ccAddExternalFunctionForPlugin("GUIControl::set_Y", (void *)GUIControl_SetY);
 }
 
 } // namespace AGS3

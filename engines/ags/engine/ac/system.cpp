@@ -372,32 +372,6 @@ void RegisterSystemAPI() {
 
 	ccAddExternalStaticFunction("System::SaveConfigToFile", Sc_System_SaveConfigToFile);
 	ccAddExternalStaticFunction("System::Log^102", Sc_System_Log);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("System::get_AudioChannelCount", (void *)System_GetAudioChannelCount);
-	ccAddExternalFunctionForPlugin("System::geti_AudioChannels", (void *)System_GetAudioChannels);
-	ccAddExternalFunctionForPlugin("System::get_CapsLock", (void *)System_GetCapsLock);
-	ccAddExternalFunctionForPlugin("System::get_ColorDepth", (void *)System_GetColorDepth);
-	ccAddExternalFunctionForPlugin("System::get_Gamma", (void *)System_GetGamma);
-	ccAddExternalFunctionForPlugin("System::set_Gamma", (void *)System_SetGamma);
-	ccAddExternalFunctionForPlugin("System::get_HardwareAcceleration", (void *)System_GetHardwareAcceleration);
-	ccAddExternalFunctionForPlugin("System::get_NumLock", (void *)System_GetNumLock);
-	ccAddExternalFunctionForPlugin("System::get_OperatingSystem", (void *)System_GetOS);
-	ccAddExternalFunctionForPlugin("System::get_RuntimeInfo", (void *)System_GetRuntimeInfo);
-	ccAddExternalFunctionForPlugin("System::get_ScreenHeight", (void *)System_GetScreenHeight);
-	ccAddExternalFunctionForPlugin("System::get_ScreenWidth", (void *)System_GetScreenWidth);
-	ccAddExternalFunctionForPlugin("System::get_ScrollLock", (void *)System_GetScrollLock);
-	ccAddExternalFunctionForPlugin("System::get_SupportsGammaControl", (void *)System_GetSupportsGammaControl);
-	ccAddExternalFunctionForPlugin("System::get_Version", (void *)System_GetVersion);
-	ccAddExternalFunctionForPlugin("SystemInfo::get_Version", (void *)System_GetVersion);
-	ccAddExternalFunctionForPlugin("System::get_ViewportHeight", (void *)System_GetViewportHeight);
-	ccAddExternalFunctionForPlugin("System::get_ViewportWidth", (void *)System_GetViewportWidth);
-	ccAddExternalFunctionForPlugin("System::get_Volume", (void *)System_GetVolume);
-	ccAddExternalFunctionForPlugin("System::set_Volume", (void *)System_SetVolume);
-	ccAddExternalFunctionForPlugin("System::get_VSync", (void *)System_GetVsync);
-	ccAddExternalFunctionForPlugin("System::set_VSync", (void *)System_SetVsync);
-	ccAddExternalFunctionForPlugin("System::get_Windowed", (void *)System_GetWindowed);
 }
 
 } // namespace AGS3

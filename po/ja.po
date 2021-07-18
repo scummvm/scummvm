@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-17 06:29+0000\n"
-"PO-Revision-Date: 2021-07-14 21:25+0000\n"
+"PO-Revision-Date: 2021-07-17 20:17+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5190,7 +5190,7 @@ msgstr "SpaceShipパズルについてファジィ理論を有効化"
 
 #: engines/mohawk/dialogs.cpp:138
 msgid "Simulate loading times of old CD drives"
-msgstr ""
+msgstr "古いCDドライブの読み込み時間をシミュレート"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:145

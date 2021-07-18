@@ -881,57 +881,6 @@ void RegisterObjectAPI() {
 	ccAddExternalObjectFunction("Object::get_TintRed", Sc_Object_GetTintRed);
 	ccAddExternalObjectFunction("Object::get_TintSaturation", Sc_Object_GetTintSaturation);
 	ccAddExternalObjectFunction("Object::get_TintLuminance", Sc_Object_GetTintLuminance);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("Object::Animate^5", (void *)Object_Animate);
-	ccAddExternalFunctionForPlugin("Object::IsCollidingWithObject^1", (void *)Object_IsCollidingWithObject);
-	ccAddExternalFunctionForPlugin("Object::GetName^1", (void *)Object_GetName);
-	ccAddExternalFunctionForPlugin("Object::GetProperty^1", (void *)Object_GetProperty);
-	ccAddExternalFunctionForPlugin("Object::GetPropertyText^2", (void *)Object_GetPropertyText);
-	ccAddExternalFunctionForPlugin("Object::GetTextProperty^1", (void *)Object_GetTextProperty);
-	ccAddExternalFunctionForPlugin("Object::MergeIntoBackground^0", (void *)Object_MergeIntoBackground);
-	ccAddExternalFunctionForPlugin("Object::Move^5", (void *)Object_Move);
-	ccAddExternalFunctionForPlugin("Object::RemoveTint^0", (void *)Object_RemoveTint);
-	ccAddExternalFunctionForPlugin("Object::RunInteraction^1", (void *)Object_RunInteraction);
-	ccAddExternalFunctionForPlugin("Object::SetPosition^2", (void *)Object_SetPosition);
-	ccAddExternalFunctionForPlugin("Object::SetView^3", (void *)Object_SetView);
-	ccAddExternalFunctionForPlugin("Object::StopAnimating^0", (void *)Object_StopAnimating);
-	ccAddExternalFunctionForPlugin("Object::StopMoving^0", (void *)Object_StopMoving);
-	ccAddExternalFunctionForPlugin("Object::Tint^5", (void *)Object_Tint);
-	ccAddExternalFunctionForPlugin("Object::GetAtRoomXY^2", (void *)GetObjectAtRoom);
-	ccAddExternalFunctionForPlugin("Object::GetAtScreenXY^2", (void *)GetObjectAtScreen);
-	ccAddExternalFunctionForPlugin("Object::get_Animating", (void *)Object_GetAnimating);
-	ccAddExternalFunctionForPlugin("Object::get_Baseline", (void *)Object_GetBaseline);
-	ccAddExternalFunctionForPlugin("Object::set_Baseline", (void *)Object_SetBaseline);
-	ccAddExternalFunctionForPlugin("Object::get_BlockingHeight", (void *)Object_GetBlockingHeight);
-	ccAddExternalFunctionForPlugin("Object::set_BlockingHeight", (void *)Object_SetBlockingHeight);
-	ccAddExternalFunctionForPlugin("Object::get_BlockingWidth", (void *)Object_GetBlockingWidth);
-	ccAddExternalFunctionForPlugin("Object::set_BlockingWidth", (void *)Object_SetBlockingWidth);
-	ccAddExternalFunctionForPlugin("Object::get_Clickable", (void *)Object_GetClickable);
-	ccAddExternalFunctionForPlugin("Object::set_Clickable", (void *)Object_SetClickable);
-	ccAddExternalFunctionForPlugin("Object::get_Frame", (void *)Object_GetFrame);
-	ccAddExternalFunctionForPlugin("Object::get_Graphic", (void *)Object_GetGraphic);
-	ccAddExternalFunctionForPlugin("Object::set_Graphic", (void *)Object_SetGraphic);
-	ccAddExternalFunctionForPlugin("Object::get_ID", (void *)Object_GetID);
-	ccAddExternalFunctionForPlugin("Object::get_IgnoreScaling", (void *)Object_GetIgnoreScaling);
-	ccAddExternalFunctionForPlugin("Object::set_IgnoreScaling", (void *)Object_SetIgnoreScaling);
-	ccAddExternalFunctionForPlugin("Object::get_IgnoreWalkbehinds", (void *)Object_GetIgnoreWalkbehinds);
-	ccAddExternalFunctionForPlugin("Object::set_IgnoreWalkbehinds", (void *)Object_SetIgnoreWalkbehinds);
-	ccAddExternalFunctionForPlugin("Object::get_Loop", (void *)Object_GetLoop);
-	ccAddExternalFunctionForPlugin("Object::get_Moving", (void *)Object_GetMoving);
-	ccAddExternalFunctionForPlugin("Object::get_Name", (void *)Object_GetName_New);
-	ccAddExternalFunctionForPlugin("Object::get_Solid", (void *)Object_GetSolid);
-	ccAddExternalFunctionForPlugin("Object::set_Solid", (void *)Object_SetSolid);
-	ccAddExternalFunctionForPlugin("Object::get_Transparency", (void *)Object_GetTransparency);
-	ccAddExternalFunctionForPlugin("Object::set_Transparency", (void *)Object_SetTransparency);
-	ccAddExternalFunctionForPlugin("Object::get_View", (void *)Object_GetView);
-	ccAddExternalFunctionForPlugin("Object::get_Visible", (void *)Object_GetVisible);
-	ccAddExternalFunctionForPlugin("Object::set_Visible", (void *)Object_SetVisible);
-	ccAddExternalFunctionForPlugin("Object::get_X", (void *)Object_GetX);
-	ccAddExternalFunctionForPlugin("Object::set_X", (void *)Object_SetX);
-	ccAddExternalFunctionForPlugin("Object::get_Y", (void *)Object_GetY);
-	ccAddExternalFunctionForPlugin("Object::set_Y", (void *)Object_SetY);
 }
 
 } // namespace AGS3

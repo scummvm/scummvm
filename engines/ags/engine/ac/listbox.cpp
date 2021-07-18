@@ -587,35 +587,6 @@ void RegisterListBoxAPI() {
 	ccAddExternalObjectFunction("ListBox::set_TextColor", Sc_ListBox_SetTextColor);
 	ccAddExternalObjectFunction("ListBox::get_TopItem", Sc_ListBox_GetTopItem);
 	ccAddExternalObjectFunction("ListBox::set_TopItem", Sc_ListBox_SetTopItem);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("ListBox::AddItem^1", (void *)ListBox_AddItem);
-	ccAddExternalFunctionForPlugin("ListBox::Clear^0", (void *)ListBox_Clear);
-	ccAddExternalFunctionForPlugin("ListBox::FillDirList^1", (void *)ListBox_FillDirList);
-	ccAddExternalFunctionForPlugin("ListBox::FillSaveGameList^0", (void *)ListBox_FillSaveGameList);
-	ccAddExternalFunctionForPlugin("ListBox::GetItemAtLocation^2", (void *)ListBox_GetItemAtLocation);
-	ccAddExternalFunctionForPlugin("ListBox::GetItemText^2", (void *)ListBox_GetItemText);
-	ccAddExternalFunctionForPlugin("ListBox::InsertItemAt^2", (void *)ListBox_InsertItemAt);
-	ccAddExternalFunctionForPlugin("ListBox::RemoveItem^1", (void *)ListBox_RemoveItem);
-	ccAddExternalFunctionForPlugin("ListBox::ScrollDown^0", (void *)ListBox_ScrollDown);
-	ccAddExternalFunctionForPlugin("ListBox::ScrollUp^0", (void *)ListBox_ScrollUp);
-	ccAddExternalFunctionForPlugin("ListBox::SetItemText^2", (void *)ListBox_SetItemText);
-	ccAddExternalFunctionForPlugin("ListBox::get_Font", (void *)ListBox_GetFont);
-	ccAddExternalFunctionForPlugin("ListBox::set_Font", (void *)ListBox_SetFont);
-	ccAddExternalFunctionForPlugin("ListBox::get_HideBorder", (void *)ListBox_GetHideBorder);
-	ccAddExternalFunctionForPlugin("ListBox::set_HideBorder", (void *)ListBox_SetHideBorder);
-	ccAddExternalFunctionForPlugin("ListBox::get_HideScrollArrows", (void *)ListBox_GetHideScrollArrows);
-	ccAddExternalFunctionForPlugin("ListBox::set_HideScrollArrows", (void *)ListBox_SetHideScrollArrows);
-	ccAddExternalFunctionForPlugin("ListBox::get_ItemCount", (void *)ListBox_GetItemCount);
-	ccAddExternalFunctionForPlugin("ListBox::geti_Items", (void *)ListBox_GetItems);
-	ccAddExternalFunctionForPlugin("ListBox::seti_Items", (void *)ListBox_SetItemText);
-	ccAddExternalFunctionForPlugin("ListBox::get_RowCount", (void *)ListBox_GetRowCount);
-	ccAddExternalFunctionForPlugin("ListBox::geti_SaveGameSlots", (void *)ListBox_GetSaveGameSlots);
-	ccAddExternalFunctionForPlugin("ListBox::get_SelectedIndex", (void *)ListBox_GetSelectedIndex);
-	ccAddExternalFunctionForPlugin("ListBox::set_SelectedIndex", (void *)ListBox_SetSelectedIndex);
-	ccAddExternalFunctionForPlugin("ListBox::get_TopItem", (void *)ListBox_GetTopItem);
-	ccAddExternalFunctionForPlugin("ListBox::set_TopItem", (void *)ListBox_SetTopItem);
 }
 
 } // namespace AGS3

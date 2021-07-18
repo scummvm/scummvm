@@ -196,21 +196,6 @@ void RegisterSliderAPI() {
 	ccAddExternalObjectFunction("Slider::set_Min", Sc_Slider_SetMin);
 	ccAddExternalObjectFunction("Slider::get_Value", Sc_Slider_GetValue);
 	ccAddExternalObjectFunction("Slider::set_Value", Sc_Slider_SetValue);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("Slider::get_BackgroundGraphic", (void *)Slider_GetBackgroundGraphic);
-	ccAddExternalFunctionForPlugin("Slider::set_BackgroundGraphic", (void *)Slider_SetBackgroundGraphic);
-	ccAddExternalFunctionForPlugin("Slider::get_HandleGraphic", (void *)Slider_GetHandleGraphic);
-	ccAddExternalFunctionForPlugin("Slider::set_HandleGraphic", (void *)Slider_SetHandleGraphic);
-	ccAddExternalFunctionForPlugin("Slider::get_HandleOffset", (void *)Slider_GetHandleOffset);
-	ccAddExternalFunctionForPlugin("Slider::set_HandleOffset", (void *)Slider_SetHandleOffset);
-	ccAddExternalFunctionForPlugin("Slider::get_Max", (void *)Slider_GetMax);
-	ccAddExternalFunctionForPlugin("Slider::set_Max", (void *)Slider_SetMax);
-	ccAddExternalFunctionForPlugin("Slider::get_Min", (void *)Slider_GetMin);
-	ccAddExternalFunctionForPlugin("Slider::set_Min", (void *)Slider_SetMin);
-	ccAddExternalFunctionForPlugin("Slider::get_Value", (void *)Slider_GetValue);
-	ccAddExternalFunctionForPlugin("Slider::set_Value", (void *)Slider_SetValue);
 }
 
 } // namespace AGS3

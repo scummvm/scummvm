@@ -240,22 +240,6 @@ void RegisterHotspotAPI() {
 	ccAddExternalObjectFunction("Hotspot::get_Name", Sc_Hotspot_GetName_New);
 	ccAddExternalObjectFunction("Hotspot::get_WalkToX", Sc_Hotspot_GetWalkToX);
 	ccAddExternalObjectFunction("Hotspot::get_WalkToY", Sc_Hotspot_GetWalkToY);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("Hotspot::GetAtRoomXY^2", (void *)GetHotspotAtRoom);
-	ccAddExternalFunctionForPlugin("Hotspot::GetAtScreenXY^2", (void *)GetHotspotAtScreen);
-	ccAddExternalFunctionForPlugin("Hotspot::GetName^1", (void *)Hotspot_GetName);
-	ccAddExternalFunctionForPlugin("Hotspot::GetProperty^1", (void *)Hotspot_GetProperty);
-	ccAddExternalFunctionForPlugin("Hotspot::GetPropertyText^2", (void *)Hotspot_GetPropertyText);
-	ccAddExternalFunctionForPlugin("Hotspot::GetTextProperty^1", (void *)Hotspot_GetTextProperty);
-	ccAddExternalFunctionForPlugin("Hotspot::RunInteraction^1", (void *)Hotspot_RunInteraction);
-	ccAddExternalFunctionForPlugin("Hotspot::get_Enabled", (void *)Hotspot_GetEnabled);
-	ccAddExternalFunctionForPlugin("Hotspot::set_Enabled", (void *)Hotspot_SetEnabled);
-	ccAddExternalFunctionForPlugin("Hotspot::get_ID", (void *)Hotspot_GetID);
-	ccAddExternalFunctionForPlugin("Hotspot::get_Name", (void *)Hotspot_GetName_New);
-	ccAddExternalFunctionForPlugin("Hotspot::get_WalkToX", (void *)Hotspot_GetWalkToX);
-	ccAddExternalFunctionForPlugin("Hotspot::get_WalkToY", (void *)Hotspot_GetWalkToY);
 }
 
 } // namespace AGS3

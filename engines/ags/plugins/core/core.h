@@ -35,6 +35,25 @@
 #include "ags/plugins/core/file.h"
 #include "ags/plugins/core/game.h"
 #include "ags/plugins/core/global_api.h"
+#include "ags/plugins/core/gui.h"
+#include "ags/plugins/core/gui_control.h"
+#include "ags/plugins/core/hotspot.h"
+#include "ags/plugins/core/inventory_item.h"
+#include "ags/plugins/core/inv_window.h"
+#include "ags/plugins/core/label.h"
+#include "ags/plugins/core/listbox.h"
+#include "ags/plugins/core/math.h"
+#include "ags/plugins/core/mouse.h"
+#include "ags/plugins/core/object.h"
+#include "ags/plugins/core/overlay.h"
+#include "ags/plugins/core/parser.h"
+#include "ags/plugins/core/region.h"
+#include "ags/plugins/core/room.h"
+#include "ags/plugins/core/slider.h"
+#include "ags/plugins/core/string.h"
+#include "ags/plugins/core/system.h"
+#include "ags/plugins/core/textbox.h"
+#include "ags/plugins/core/view_frame.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -54,6 +73,25 @@ private:
 	File _file;
 	Game _game;
 	GlobalAPI _globalAPI;
+	GUI _gui;
+	GUIControl _guiControl;
+	Hotspot _hotspot;
+	InvWindow _invWindow;
+	InventoryItem _inventoryItem;
+	Label _label;
+	Listbox _listbox;
+	Math _math;
+	Mouse _mouse;
+	Object _object;
+	Overlay _overlay;
+	Parser _parser;
+	Region _region;
+	Room _room;
+	Slider _slider;
+	String _string;
+	System _system;
+	Textbox _textbox;
+	ViewFrame _viewFrame;
 
 public:
 	void AGS_EngineStartup(IAGSEngine *engine);

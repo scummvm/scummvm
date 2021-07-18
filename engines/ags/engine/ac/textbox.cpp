@@ -147,17 +147,6 @@ void RegisterTextBoxAPI() {
 	ccAddExternalObjectFunction("TextBox::set_Text", Sc_TextBox_SetText);
 	ccAddExternalObjectFunction("TextBox::get_TextColor", Sc_TextBox_GetTextColor);
 	ccAddExternalObjectFunction("TextBox::set_TextColor", Sc_TextBox_SetTextColor);
-
-	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
-
-	ccAddExternalFunctionForPlugin("TextBox::GetText^1", (void *)TextBox_GetText);
-	ccAddExternalFunctionForPlugin("TextBox::SetText^1", (void *)TextBox_SetText);
-	ccAddExternalFunctionForPlugin("TextBox::get_Font", (void *)TextBox_GetFont);
-	ccAddExternalFunctionForPlugin("TextBox::set_Font", (void *)TextBox_SetFont);
-	ccAddExternalFunctionForPlugin("TextBox::get_Text", (void *)TextBox_GetText_New);
-	ccAddExternalFunctionForPlugin("TextBox::set_Text", (void *)TextBox_SetText);
-	ccAddExternalFunctionForPlugin("TextBox::get_TextColor", (void *)TextBox_GetTextColor);
-	ccAddExternalFunctionForPlugin("TextBox::set_TextColor", (void *)TextBox_SetTextColor);
 }
 
 } // namespace AGS3
