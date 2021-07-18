@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void Room::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Room::GetDrawingSurfaceForBackground^1, Room::GetDrawingSurfaceForBackground);
 	SCRIPT_METHOD(Room::GetProperty^1, Room::GetProperty);
 	SCRIPT_METHOD(Room::GetTextProperty^1, Room::GetTextProperty);

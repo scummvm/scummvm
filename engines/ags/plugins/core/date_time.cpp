@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void DateTime::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(DateTime::get_Now, DateTime::Now);
 	SCRIPT_METHOD(DateTime::get_DayOfMonth, DateTime::GetDayOfMonth);
 	SCRIPT_METHOD(DateTime::get_Hour, DateTime::GetHour);

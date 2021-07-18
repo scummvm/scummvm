@@ -76,6 +76,8 @@ namespace Plugins {
 namespace Core {
 
 void GlobalAPI::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(AbortGame, GlobalAPI::ScPl_sc_AbortGame);
 	SCRIPT_METHOD(AddInventory, GlobalAPI::add_inventory);
 	SCRIPT_METHOD(AddInventoryToCharacter, GlobalAPI::AddInventoryToCharacter);

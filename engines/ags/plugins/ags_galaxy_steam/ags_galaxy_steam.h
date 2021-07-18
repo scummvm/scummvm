@@ -66,7 +66,7 @@ public:
 };
 
 class AGSGalaxy : public AGS2Client {
-	SCRIPT_HASH(AGSGalaxy)
+	SCRIPT_HASH_SUB(AGSGalaxy, AGS2Client)
 public:
 	AGSGalaxy() : AGS2Client() {}
 	virtual ~AGSGalaxy() {}
@@ -76,7 +76,7 @@ public:
 };
 
 class AGSSteam : public AGS2Client {
-	SCRIPT_HASH(AGSSteam)
+	SCRIPT_HASH_SUB(AGSSteam, AGS2Client)
 public:
 	AGSSteam() : AGS2Client() {}
 	virtual ~AGSSteam() {}

@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void GUI::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(GUI::Centre^0, GUI::Centre);
 	SCRIPT_METHOD(GUI::GetAtScreenXY^2, GUI::GetGUIAtLocation);
 	SCRIPT_METHOD(GUI::SetPosition^2, GUI::SetPosition);

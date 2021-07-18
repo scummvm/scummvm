@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class ViewFrame : public ScriptContainer {
-	SCRIPT_HASH(ViewFrame)
+	BUILT_IN_HASH(ViewFrame)
 public:
 	virtual ~ViewFrame() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

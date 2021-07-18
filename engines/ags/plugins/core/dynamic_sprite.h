@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class DynamicSprite : public ScriptContainer {
-	SCRIPT_HASH(DynamicSprite)
+	BUILT_IN_HASH(DynamicSprite)
 public:
 	virtual ~DynamicSprite() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

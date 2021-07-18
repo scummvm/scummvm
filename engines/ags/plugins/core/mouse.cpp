@@ -29,6 +29,8 @@ namespace Plugins {
 namespace Core {
 
 void Mouse::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Mouse::ChangeModeGraphic^2, Mouse::ChangeCursorGraphic);
 	SCRIPT_METHOD(Mouse::ChangeModeHotspot^3, Mouse::ChangeCursorHotspot);
 	SCRIPT_METHOD(Mouse::ChangeModeView^2, Mouse::Mouse_ChangeModeView);

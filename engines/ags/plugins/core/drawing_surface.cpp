@@ -29,6 +29,8 @@ namespace Plugins {
 namespace Core {
 
 void DrawingSurface::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(DrawingSurface::Clear^1, DrawingSurface::Clear);
 	SCRIPT_METHOD(DrawingSurface::CreateCopy^0, DrawingSurface::CreateCopy);
 	SCRIPT_METHOD(DrawingSurface::DrawCircle^3, DrawingSurface::DrawCircle);

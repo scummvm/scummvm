@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Slider : public ScriptContainer {
-	SCRIPT_HASH(Slider)
+	BUILT_IN_HASH(Slider)
 public:
 	virtual ~Slider() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

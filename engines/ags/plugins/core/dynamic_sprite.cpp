@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void DynamicSprite::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(DynamicSprite::ChangeCanvasSize^4, DynamicSprite::ChangeCanvasSize);
 	SCRIPT_METHOD(DynamicSprite::CopyTransparencyMask^1, DynamicSprite::CopyTransparencyMask);
 	SCRIPT_METHOD(DynamicSprite::Crop^4, DynamicSprite::Crop);

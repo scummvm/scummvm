@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void Label::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Label::GetText^1, Label::GetText);
 	SCRIPT_METHOD(Label::SetText^1, Label::SetText);
 	SCRIPT_METHOD(Label::get_Font, Label::GetFont);

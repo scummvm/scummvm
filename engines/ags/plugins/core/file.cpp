@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void File::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(File::Delete^1, File::Delete);
 	SCRIPT_METHOD(File::Exists^1, File::Exists);
 	SCRIPT_METHOD(File::Open^2, File::OpenFile);

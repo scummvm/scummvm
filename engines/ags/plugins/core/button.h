@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Button : public ScriptContainer {
-	SCRIPT_HASH(Button)
+	BUILT_IN_HASH(Button)
 public:
 	virtual ~Button() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

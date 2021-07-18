@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void ListBox::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(ListBox::AddItem^1, ListBox::AddItem);
 	SCRIPT_METHOD(ListBox::Clear^0, ListBox::Clear);
 	SCRIPT_METHOD(ListBox::FillDirList^1, ListBox::FillDirList);

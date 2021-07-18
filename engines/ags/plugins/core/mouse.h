@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Mouse : public ScriptContainer {
-	SCRIPT_HASH(Mouse)
+	BUILT_IN_HASH(Mouse)
 public:
 	virtual ~Mouse() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

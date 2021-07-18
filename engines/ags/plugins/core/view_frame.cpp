@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void ViewFrame::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(ViewFrame::get_Flipped, ViewFrame::GetFlipped);
 	SCRIPT_METHOD(ViewFrame::get_Frame, ViewFrame::GetFrame);
 	SCRIPT_METHOD(ViewFrame::get_Graphic, ViewFrame::GetGraphic);

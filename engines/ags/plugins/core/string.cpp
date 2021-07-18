@@ -29,6 +29,8 @@ namespace Plugins {
 namespace Core {
 
 void String::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(String::IsNullOrEmpty^1, String::IsNullOrEmpty);
 	SCRIPT_METHOD(String::Append^1, String::Append);
 	SCRIPT_METHOD(String::AppendChar^1, String::AppendChar);

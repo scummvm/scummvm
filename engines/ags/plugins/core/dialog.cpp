@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void Dialog::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Dialog::get_ID, Dialog::GetID);
 	SCRIPT_METHOD(Dialog::get_OptionCount, Dialog::GetOptionCount);
 	SCRIPT_METHOD(Dialog::get_ShowTextParser, Dialog::GetShowTextParser);

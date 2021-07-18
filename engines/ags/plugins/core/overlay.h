@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Overlay : public ScriptContainer {
-	SCRIPT_HASH(Overlay)
+	BUILT_IN_HASH(Overlay)
 public:
 	virtual ~Overlay() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

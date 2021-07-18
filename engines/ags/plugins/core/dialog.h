@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Dialog : public ScriptContainer {
-	SCRIPT_HASH(Dialog)
+	BUILT_IN_HASH(Dialog)
 public:
 	virtual ~Dialog() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class GUIControl : public ScriptContainer {
-	SCRIPT_HASH(GUIControl)
+	BUILT_IN_HASH(GUIControl)
 public:
 	virtual ~GUIControl() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

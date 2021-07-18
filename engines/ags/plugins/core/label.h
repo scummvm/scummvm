@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Label : public ScriptContainer {
-	SCRIPT_HASH(Label)
+	BUILT_IN_HASH(Label)
 public:
 	virtual ~Label() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

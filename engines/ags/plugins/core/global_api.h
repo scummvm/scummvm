@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class GlobalAPI : public ScriptContainer {
-	SCRIPT_HASH(GlobalAPI)
+	BUILT_IN_HASH(GlobalAPI)
 public:
 	void AGS_EngineStartup(IAGSEngine *engine) override;
 

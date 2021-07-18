@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void Hotspot::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Hotspot::GetAtRoomXY^2, Hotspot::GetHotspotAtRoom);
 	SCRIPT_METHOD(Hotspot::GetAtScreenXY^2, Hotspot::GetHotspotAtScreen);
 	SCRIPT_METHOD(Hotspot::GetName^1, Hotspot::GetName);

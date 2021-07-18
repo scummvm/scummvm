@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class DrawingSurface : public ScriptContainer {
-	SCRIPT_HASH(DrawingSurface)
+	BUILT_IN_HASH(DrawingSurface)
 public:
 	virtual ~DrawingSurface() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

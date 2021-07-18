@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void AudioChannel::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(AudioChannel::Seek^1, AudioChannel::Seek);
 	SCRIPT_METHOD(AudioChannel::SetRoomLocation^2, AudioChannel::SetRoomLocation);
 	SCRIPT_METHOD(AudioChannel::Stop^0, AudioChannel::Stop);

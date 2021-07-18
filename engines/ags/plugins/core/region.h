@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Region : public ScriptContainer {
-	SCRIPT_HASH(Region)
+	BUILT_IN_HASH(Region)
 public:
 	virtual ~Region() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

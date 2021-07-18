@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Room : public ScriptContainer {
-	SCRIPT_HASH(Room)
+	BUILT_IN_HASH(Room)
 public:
 	virtual ~Room() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

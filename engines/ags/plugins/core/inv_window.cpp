@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void InvWindow::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(InvWindow::ScrollDown^0, InvWindow::ScrollDown);
 	SCRIPT_METHOD(InvWindow::ScrollUp^0, InvWindow::ScrollUp);
 	SCRIPT_METHOD(InvWindow::get_CharacterToUse, InvWindow::GetCharacterToUse);

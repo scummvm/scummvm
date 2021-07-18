@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class GUI : public ScriptContainer {
-	SCRIPT_HASH(GUI)
+	BUILT_IN_HASH(GUI)
 public:
 	virtual ~GUI() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

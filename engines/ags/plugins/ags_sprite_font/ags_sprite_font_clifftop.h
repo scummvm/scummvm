@@ -30,7 +30,7 @@ namespace Plugins {
 namespace AGSSpriteFont {
 
 class AGSSpriteFontClifftopGames : public AGSSpriteFont {
-	SCRIPT_HASH(AGSSpriteFontClifftopGames)
+	SCRIPT_HASH_SUB(AGSSpriteFontClifftopGames, AGSSpriteFont)
 private:
 	void SetLineHeightAdjust(ScriptMethodParams &params);
 

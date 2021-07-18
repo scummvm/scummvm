@@ -30,7 +30,7 @@ namespace Plugins {
 namespace AGSGalaxySteam {
 
 class AGSWadjetEyeSteam : public AGSSteam {
-	SCRIPT_HASH(AGSWadjetEyeSteam)
+	SCRIPT_HASH_SUB(AGSWadjetEyeSteam, AGSSteam)
 private:
 	void AddAchievement(ScriptMethodParams &params);
 	void AddStat(ScriptMethodParams &params);

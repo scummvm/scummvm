@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Hotspot : public ScriptContainer {
-	SCRIPT_HASH(Hotspot)
+	BUILT_IN_HASH(Hotspot)
 public:
 	virtual ~Hotspot() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

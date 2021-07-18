@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class File : public ScriptContainer {
-	SCRIPT_HASH(File)
+	BUILT_IN_HASH(File)
 public:
 	virtual ~File() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Maths : public ScriptContainer {
-	SCRIPT_HASH(Maths)
+	BUILT_IN_HASH(Maths)
 public:
 	virtual ~Maths() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

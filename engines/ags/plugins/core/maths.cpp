@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void Maths::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Maths::ArcCos^1, Maths::ArcCos);
 	SCRIPT_METHOD(Maths::ArcSin^1, Maths::ArcSin);
 	SCRIPT_METHOD(Maths::ArcTan^1, Maths::ArcTan);

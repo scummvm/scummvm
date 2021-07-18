@@ -37,7 +37,7 @@ namespace Plugins {
 
 #define SCRIPT_METHOD(NAME, PROC) addMethod(#NAME, &PROC)
 
-#define SCRIPT_HASH(TheClass) \
+#define SCRIPT_HASH_SUB(TheClass, BaseClass) \
 	private: \
 		typedef void (TheClass::*MethodPtr)(ScriptMethodParams &params); \
 		Common::HashMap<Common::String, MethodPtr> _methods; \
@@ -46,11 +46,14 @@ namespace Plugins {
 			_engine->RegisterScriptFunction(name.c_str(), this); \
 		} \
 	public: \
-		void execMethod(const Common::String &name, ScriptMethodParams & params) override { \
-			if (!_methods.contains(name)) \
-				error("Plugin does not contain method - %s", name.c_str()); \
-			(this->*_methods[name])(params); \
+		void execMethod(const Common::String &name, ScriptMethodParams &params) override { \
+			if (_methods.contains(name)) \
+				(this->*_methods[name])(params); \
+			else \
+				BaseClass::execMethod(name, params); \
 		}
+#define SCRIPT_HASH(TheClass) SCRIPT_HASH_SUB(TheClass, PluginBase)
+#define BUILT_IN_HASH(TheClass) SCRIPT_HASH_SUB(TheClass, ScriptContainer)
 
 inline float PARAM_TO_FLOAT(int32 xi) {
 	float x;
@@ -147,7 +150,9 @@ public:
 		_engine = engine;
 	}
 
-	virtual void execMethod(const Common::String &name, ScriptMethodParams &params) = 0;
+	virtual void execMethod(const Common::String &name, ScriptMethodParams &params) {
+		error("Plugin does not contain method - %s", name.c_str());
+	}
 };
 
 /**

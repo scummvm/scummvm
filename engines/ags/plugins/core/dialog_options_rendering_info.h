@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class DialogOptionsRenderingInfo : public ScriptContainer {
-	SCRIPT_HASH(DialogOptionsRenderingInfo)
+	BUILT_IN_HASH(DialogOptionsRenderingInfo)
 public:
 	virtual ~DialogOptionsRenderingInfo() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

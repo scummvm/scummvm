@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void Overlay::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Overlay::CreateGraphical^4, Overlay::CreateGraphical);
 	SCRIPT_METHOD(Overlay::CreateTextual^106, Overlay::ScPl_CreateTextual);
 	SCRIPT_METHOD(Overlay::SetText^104, Overlay::ScPl_SetText);

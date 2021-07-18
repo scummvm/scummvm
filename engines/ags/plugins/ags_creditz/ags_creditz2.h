@@ -30,7 +30,7 @@ namespace Plugins {
 namespace AGSCreditz {
 
 class AGSCreditz2 : public AGSCreditz {
-	SCRIPT_HASH(AGSCreditz2)
+	SCRIPT_HASH_SUB(AGSCreditz2, AGSCreditz)
 private:
 	void RunCreditSequence(ScriptMethodParams &params);
 	void SetCredit(ScriptMethodParams &params);

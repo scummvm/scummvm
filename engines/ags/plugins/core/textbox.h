@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Textbox : public ScriptContainer {
-	SCRIPT_HASH(Textbox)
+	BUILT_IN_HASH(Textbox)
 public:
 	virtual ~Textbox() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

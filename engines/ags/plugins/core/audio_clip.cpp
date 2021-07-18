@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void AudioClip::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(AudioClip::Play^2, AudioClip::Play);
 	SCRIPT_METHOD(AudioClip::PlayFrom^3, AudioClip::PlayFrom);
 	SCRIPT_METHOD(AudioClip::PlayQueued^2, AudioClip::PlayQueued);

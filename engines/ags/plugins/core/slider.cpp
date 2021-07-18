@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void Slider::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Slider::get_BackgroundGraphic, Slider::GetBackgroundGraphic);
 	SCRIPT_METHOD(Slider::set_BackgroundGraphic, Slider::SetBackgroundGraphic);
 	SCRIPT_METHOD(Slider::get_HandleGraphic, Slider::GetHandleGraphic);

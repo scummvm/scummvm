@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class InvWindow : public ScriptContainer {
-	SCRIPT_HASH(InvWindow)
+	BUILT_IN_HASH(InvWindow)
 public:
 	virtual ~InvWindow() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

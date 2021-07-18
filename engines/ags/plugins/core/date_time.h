@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class DateTime : public ScriptContainer {
-	SCRIPT_HASH(DateTime)
+	BUILT_IN_HASH(DateTime)
 public:
 	virtual ~DateTime() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

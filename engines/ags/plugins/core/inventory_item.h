@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class InventoryItem : public ScriptContainer {
-	SCRIPT_HASH(InventoryItem)
+	BUILT_IN_HASH(InventoryItem)
 public:
 	virtual ~InventoryItem() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void System::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(System::get_AudioChannelCount, System::GetAudioChannelCount);
 	SCRIPT_METHOD(System::geti_AudioChannels, System::GetAudioChannels);
 	SCRIPT_METHOD(System::get_CapsLock, System::GetCapsLock);

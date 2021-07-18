@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class AudioClip : public ScriptContainer {
-	SCRIPT_HASH(AudioClip)
+	BUILT_IN_HASH(AudioClip)
 public:
 	virtual ~AudioClip() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void Button::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Button::Animate^4, Button::Animate);
 	SCRIPT_METHOD(Button::GetText^1, Button::GetText);
 	SCRIPT_METHOD(Button::SetText^1, Button::SetText);

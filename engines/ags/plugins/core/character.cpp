@@ -30,6 +30,8 @@ namespace Plugins {
 namespace Core {
 
 void Character::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Character::AddInventory^2, Character::AddInventory);
 	SCRIPT_METHOD(Character::AddWaypoint^2, Character::AddWaypoint);
 	SCRIPT_METHOD(Character::Animate^5, Character::Animate);

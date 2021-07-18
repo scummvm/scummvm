@@ -30,7 +30,7 @@ namespace Plugins {
 namespace Core {
 
 class Parser : public ScriptContainer {
-	SCRIPT_HASH(Parser)
+	BUILT_IN_HASH(Parser)
 public:
 	virtual ~Parser() {}
 	void AGS_EngineStartup(IAGSEngine *engine) override;

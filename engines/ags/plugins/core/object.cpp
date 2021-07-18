@@ -28,6 +28,8 @@ namespace Plugins {
 namespace Core {
 
 void Object::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Object::Animate^5, Object::Animate);
 	SCRIPT_METHOD(Object::IsCollidingWithObject^1, Object::IsCollidingWithObject);
 	SCRIPT_METHOD(Object::GetName^1, Object::GetName);

@@ -30,6 +30,8 @@ namespace Plugins {
 namespace Core {
 
 void Game::AGS_EngineStartup(IAGSEngine *engine) {
+	ScriptContainer::AGS_EngineStartup(engine);
+
 	SCRIPT_METHOD(Game::IsAudioPlaying^1, Game::IsAudioPlaying);
 	SCRIPT_METHOD(Game::SetAudioTypeSpeechVolumeDrop^2, Game::SetAudioTypeSpeechVolumeDrop);
 	SCRIPT_METHOD(Game::SetAudioTypeVolume^3, Game::SetAudioTypeVolume);
