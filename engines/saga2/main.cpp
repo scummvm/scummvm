@@ -59,7 +59,6 @@ extern bool             underground;
 extern char             commandLineHelp[];
 extern hResContext     *tileRes;       // tile resource handle
 extern hResContext     *listRes;
-extern vDisplayPage     protoPage;
 
 /* ===================================================================== *
    Globals

@@ -33,7 +33,6 @@
 namespace Saga2 {
 
 vDisplayPage *drawPage;
-vDisplayPage protoPage;
 
 void gDisplayPort::fillRect(const Rect16 r) {
 	Rect16          sect;

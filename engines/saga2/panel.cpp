@@ -37,7 +37,6 @@ namespace Saga2 {
 
 //extern vDisplayPage   *drawPage;
 extern char iniFile[];
-extern vDisplayPage protoPage;
 
 //  Function to enable/disable user interface keys
 extern bool enableUIKeys(bool enabled);
