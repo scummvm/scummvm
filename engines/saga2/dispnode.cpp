@@ -808,7 +808,7 @@ void DisplayNode::drawObject(void) {
 //-----------------------------------------------------------------------
 //	Do mouse hit-test on objects
 
-ObjectID pickObject(const Point16 &mouse, StaticTilePoint &objPos) {
+ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos) {
 	DisplayNode     *dn;
 	ObjectID        result = Nothing;
 	int32           dist = maxint32;
@@ -822,7 +822,7 @@ ObjectID pickObject(const Point16 &mouse, StaticTilePoint &objPos) {
 		if (dn->type == nodeTypeObject) {
 			GameObject  *obj = dn->object;
 
-			if (obj->parent() == currentWorld && dn->hitBox.ptInside(mouse)) {
+			if (obj->parent() == currentWorld && dn->hitBox.ptInside(mouse.x, mouse.y)) {
 				TilePoint   loc = obj->getLocation();
 				int32       newDist = loc.u + loc.v;
 

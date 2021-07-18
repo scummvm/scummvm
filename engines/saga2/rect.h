@@ -141,6 +141,11 @@ typedef Point16         Extent16;               // contains width and height
 struct StaticPoint32 {
 	int32 x, y;
 
+	void set(int16 nx, int16 ny) {
+		x = nx;
+		y = ny;
+	}
+
 	friend StaticPoint32 operator+ (StaticPoint32 a, StaticPoint32 b) {
 		StaticPoint32 p;
 		p.x = a.x + b.x;

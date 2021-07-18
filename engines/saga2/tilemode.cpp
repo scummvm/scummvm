@@ -185,7 +185,7 @@ Alarm               updateAlarm,            // max coord update rate
 bool                tileLockFlag;           // true if tile mode is locked
 
 GameObject          *mouseObject = NULL;    // object being dragged
-Point32             lastMousePos;           // Last mouse position over map
+StaticPoint32       lastMousePos = {0, 0};           // Last mouse position over map
 static bool         mousePressed,           // State of mouse button
        clickActionDone = true; // Flag indication wether current
 // mouse click action is done
@@ -1066,7 +1066,7 @@ static APPFUNC(cmdClickTileMap) {
 			g_vm->_mouseInfo->setText(NULL);
 			g_vm->_mouseInfo->clearGauge();
 		}
-		lastMousePos = ev.mouse;
+		lastMousePos.set(ev.mouse.x, ev.mouse.y);
 		break;
 
 	case gEventMouseDown:
