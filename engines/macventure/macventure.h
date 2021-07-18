@@ -242,7 +242,7 @@ public:
 	void updateWindow(WindowReference winID);
 
 	bool showTextEntry(ObjID text, ObjID srcObj, ObjID destObj);
-	void setTextInput(Common::String content);
+	void setTextInput(const Common::String &content);
 	Common::String getUserInput();
 
 	// Data retrieval

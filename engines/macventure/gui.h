@@ -136,7 +136,7 @@ public:
 
 	// Modifiers
 	void bringToFront(WindowReference window);
-	void setWindowTitle(WindowReference winID, Common::String string);
+	void setWindowTitle(WindowReference winID, const Common::String &string);
 	void updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array<ObjID> &children);
 	void ensureInventoryOpen(WindowReference reference, ObjID id);
 
@@ -154,7 +154,7 @@ public:
 	bool isDialogOpen();
 
 	void getTextFromUser();
-	void setTextInput(Common::String str);
+	void setTextInput(const Common::String &str);
 	void closeDialog();
 
 	void loadGame();

@@ -297,7 +297,7 @@ void Gui::bringToFront(WindowReference winID) {
 	_wm.setActiveWindow(findWindow(winID)->getId());
 }
 
-void Gui::setWindowTitle(WindowReference winID, Common::String string) {
+void Gui::setWindowTitle(WindowReference winID, const Common::String &string) {
 	findWindowData(winID).title = string;
 	findWindowData(winID).titleLength = string.size();
 	findWindow(winID)->setTitle(string);
@@ -937,10 +937,9 @@ bool Gui::isDialogOpen() {
 	return _dialog != NULL;
 }
 
-void Gui::setTextInput(Common::String str) {
+void Gui::setTextInput(const Common::String &str) {
 	_engine->setTextInput(str);
 }
-
 
 void Gui::closeDialog() {
 	delete _dialog;
