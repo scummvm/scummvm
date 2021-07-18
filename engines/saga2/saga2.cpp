@@ -90,6 +90,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_edpList = nullptr;
 	_sdpList = nullptr;
 	_containerList = nullptr;
+	_tileImageBanks = nullptr;
 }
 
 Saga2Engine::~Saga2Engine() {

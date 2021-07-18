@@ -35,7 +35,7 @@
 
 namespace Saga2 {
 
-const uint16 tileBankCount = 25;
+const uint16 tileBankCount = 64;
 
 const uint32 tileImageID = MKTAG('T', 'I', 'L',  0);
 
@@ -52,31 +52,16 @@ static byte *tileResLoad(hResID i, bool asynch = false) {
 		return nullptr;
 }
 
-HandleArray tileImageBanks(64, tileResLoad, tileImageID);
-
-void initTileBank(int16 bankNum) {
-}
-
-void RHeapsAMess(void);
-
 void freeAllTileBanks(void) {
-	tileImageBanks.flush();
-}
-
-void unlockAllTileBanks(void) {
-	tileImageBanks.flush();
-}
-
-void freeTileBank(int16) {
+	g_vm->_tileImageBanks->flush();
 }
 
 void updateHandleRefs(const TilePoint &) { //, StandingTileInfo *stiResult )
-	tileImageBanks.flush();
+	g_vm->_tileImageBanks->flush();
 }
 
 void initTileBanks(void) {
-	for (int16 i = 0; i < tileBankCount; i++)
-		initTileBank(i);
+	g_vm->_tileImageBanks = new HandleArray(tileBankCount, tileResLoad, tileImageID);
 }
 
 void drawPlatform(

@@ -42,6 +42,7 @@
 #include "saga2/uidialog.h"
 #include "saga2/contain.h"
 #include "saga2/saveload.h"
+#include "saga2/oncall.h"
 
 namespace Saga2 {
 
@@ -679,6 +680,7 @@ void TileModeCleanup(void) {
 	tileControls->enable(false);
 
 	freeAllTileBanks();
+	delete g_vm->_tileImageBanks;
 
 //	freePalette();
 

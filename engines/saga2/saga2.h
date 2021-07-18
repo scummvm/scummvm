@@ -68,6 +68,7 @@ class Properties;
 class PlayerActor;
 class ProtoObj;
 class ActorProto;
+class HandleArray;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -150,6 +151,7 @@ public:
 	ActiveRegion *_activeRegionList;
 	gToolBase *_toolBase;
 	Properties *_properties;
+	HandleArray *_tileImageBanks;
 
 	gDisplayPort _mainPort;
 	gPort _backPort;

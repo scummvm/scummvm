@@ -96,7 +96,6 @@ void setAreaSound(const TilePoint &baseCoords);
  * ===================================================================== */
 
 TileBankPtr tileBanks[maxBanks];
-extern HandleArray tileImageBanks;
 
 void updateHandleRefs(const TilePoint &pt);  //, StandingTileInfo *stiResult )
 void updateFrameCount(void);
@@ -284,7 +283,7 @@ TileInfo *TileInfo::tileAddress(TileID id, uint8 **imageData) {
 	}
 
 	if (ti != nullptr) {
-		if ((tibh = tileImageBanks[tileBank]) != nullptr)
+		if ((tibh = (*g_vm->_tileImageBanks)[tileBank]) != nullptr)
 			*imageData = &tibh[ti->offset];
 		else
 			*imageData = nullptr;
