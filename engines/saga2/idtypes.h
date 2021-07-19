@@ -458,6 +458,10 @@ enum {
 	BASE_REC_RATE = 1
 };
 
+enum {
+	kObjectVolumeArraySize = 128
+};
+
 } // end of namespace Saga2
 
 #endif
