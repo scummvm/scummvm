@@ -71,14 +71,11 @@ int16 buttonWrap(
     int16           &buttonCount,           // returns number of buttons
     char            *text,                  // text to wrap
     int16           width,                  // width of text
-    int16           supressText);
+    int16           supressText,
+    gPort           &textPort);
 
 //-----------------------------------------------------------------------
 //	locals
-
-//  pixelmap which holds the rendered text
-gPixelMap           speechImage;
-gPort               tempTextPort;
 
 //  Temporary: Alarm which determines when speech finishes
 Alarm               speechFinished;
@@ -108,7 +105,7 @@ static uint8 BulletData[] = {
 	0x00, 0x00, 0x00, 0x18, 0x18, 0x18, 0x00, 0x00, 0x00, // Row 8
 };
 
-static gStaticImage BulletImage(9, 9, BulletData);
+static StaticPixelMap BulletImage = {{9, 9}, BulletData};
 
 //-----------------------------------------------------------------------
 //	Speech button mode override.
@@ -296,11 +293,11 @@ bool Speech::setupActive(void) {
 //		throw gError( "Could Not Set Talk Animation");
 
 	// Set up temp gport for blitting to bitmap
-	tempTextPort.setStyle(textStyleThickOutline);    // extra Thick Outline
-	tempTextPort.setOutlineColor(outlineColor);      // outline black
-	tempTextPort.setFont(&Amber13Font);              // speech font
-	tempTextPort.setColor(penColor);                 // color of letters
-	tempTextPort.setMode(drawModeMatte);             // insure transparency
+	_textPort.setStyle(textStyleThickOutline);    // extra Thick Outline
+	_textPort.setOutlineColor(outlineColor);      // outline black
+	_textPort.setFont(&Amber13Font);              // speech font
+	_textPort.setColor(penColor);                 // color of letters
+	_textPort.setMode(drawModeMatte);             // insure transparency
 
 	setWidth();
 
@@ -327,19 +324,20 @@ bool Speech::setupActive(void) {
 	                             speechButtonCount,
 	                             speechBuffer,
 	                             bounds.width,
-	                             !g_vm->_speechText && (speechFlags & spHasVoice));
+	                             !g_vm->_speechText && (speechFlags & spHasVoice),
+	                             _textPort);
 
 	//  Compute height of bitmap based on number of lines of text.
 	//  Include 4 for outline width
 	bounds.height =
-	    (speechLineCount * (tempTextPort.font->height + lineLeading))
+	    (speechLineCount * (_textPort.font->height + lineLeading))
 	    + outlineWidth * 2;
 
 	//  Blit to temp bitmap
-	speechImage.size.x = bounds.width;
-	speechImage.size.y = bounds.height;
-	speechImage.data = new uint8[speechImage.bytes()]();
-	tempTextPort.setMap(&speechImage);
+	_speechImage.size.x = bounds.width;
+	_speechImage.size.y = bounds.height;
+	_speechImage.data = new uint8[_speechImage.bytes()]();
+	_textPort.setMap(&_speechImage);
 
 	y = outlineWidth;                       // Plus 2 for Outlines
 	buttonChars = speechButtonList[buttonNum].charWidth;
@@ -351,7 +349,7 @@ bool Speech::setupActive(void) {
 		x   = (bounds.width - speechLineList[i].pixelWidth) / 2
 		      + outlineWidth;
 
-		tempTextPort.moveTo(x, y);
+		_textPort.moveTo(x, y);
 
 		//  Draw each button on the line in turn.
 		while (lineChars > 0) {
@@ -367,26 +365,26 @@ bool Speech::setupActive(void) {
 				if (buttonNum > speechButtonCount) break;
 
 				buttonChars = speechButtonList[buttonNum].charWidth;
-				tempTextPort.setColor(1 + 9);
+				_textPort.setColor(1 + 9);
 
 				//  Blit the little bullet symbol
 				lineChars--;
 				lineText++;
 				buttonChars--;
 
-				tempTextPort.bltPixels(
+				_textPort.bltPixels(
 				    BulletImage, 0, 0,
-				    tempTextPort.penPos.x, tempTextPort.penPos.y + 1,
+				    _textPort.penPos.x, _textPort.penPos.y + 1,
 				    BulletImage.size.x, BulletImage.size.y);
 
-				tempTextPort.move(bulletWidth, 0);
+				_textPort.move(bulletWidth, 0);
 			}
 
 			//  Compute how much of this button is on this line.
 			dChars = MIN(lineChars, buttonChars);
 
 			//  Draw however much of this button is on this line.
-			tempTextPort.drawText(lineText, dChars);
+			_textPort.drawText(lineText, dChars);
 
 			//  Move forward by dChars
 			lineChars -= dChars;
@@ -394,7 +392,7 @@ bool Speech::setupActive(void) {
 			lineText += dChars;
 		}
 
-		y += tempTextPort.font->height + lineLeading;
+		y += _textPort.font->height + lineLeading;
 	}
 
 	if (speechButtonCount > 0) {
@@ -434,7 +432,8 @@ void Speech::setWidth() {
 	                             speechButtonCount_,
 	                             speechBuffer,
 	                             defaultWidth,
-	                             !g_vm->_speechText && (speechFlags & spHasVoice));
+	                             !g_vm->_speechText && (speechFlags & spHasVoice),
+	                             _textPort);
 
 	//  If it's more than 3 lines, then use the max line width.
 
@@ -444,7 +443,8 @@ void Speech::setWidth() {
 		                             speechButtonCount_,
 		                             speechBuffer,
 		                             maxWidth,
-		                             !g_vm->_speechText && (speechFlags & spHasVoice));
+		                             !g_vm->_speechText && (speechFlags & spHasVoice),
+		                             _textPort);
 	}
 
 
@@ -495,7 +495,7 @@ bool Speech::displayText(void) {
 
 	//  Blit to the port
 	g_vm->_backPort.setMode(drawModeMatte);
-	g_vm->_backPort.bltPixels(speechImage,
+	g_vm->_backPort.bltPixels(_speechImage,
 	                   0, 0,
 	                   p.x + fineScroll.x,
 	                   p.y + fineScroll.y,
@@ -521,8 +521,8 @@ void Speech::dispose(void) {
 		wakeUpThread(thread, selectedButton);
 
 		//  De-allocate the speech data
-		delete[] speechImage.data;
-		speechImage.data = NULL;
+		delete[] _speechImage.data;
+		_speechImage.data = NULL;
 
 		//  Clear the number of active buttons
 		speechLineCount = speechButtonCount = 0;
@@ -555,7 +555,7 @@ void updateSpeech(void) {
 			sp->setupActive();
 
 			//  If speech failed to set up, then skip it
-			if (speechImage.data == NULL) {
+			if (sp->_speechImage.data == NULL) {
 				sp->dispose();
 				return;
 			}
@@ -603,68 +603,6 @@ void deleteSpeech(ObjectID id) {         // voice sound sample ID
 	while ((sp = speechList.findSpeech(id)) != NULL) sp->dispose();
 }
 
-int16 TextWrap(
-    char            *lines[],               // array of line pointers
-    int16           line_chars[],           // character count of each line
-    int16           line_pixels[],          // pixel count of each line
-    char            *text,                  // the text to render
-    int16           width                   // width to constrain text
-) {
-	int16           i,                      // loop counter
-	                line_start,             // start of current line
-	                last_space,             // last space encountered
-	                last_space_pixels = 0,  // pixel pos of last space
-	                pixel_len,              // pixel length of line
-	                line_count = 0;         // number of lines
-
-	lines[line_count] = text;
-	last_space = -1;
-	line_start = 0;
-	pixel_len = 0;
-
-	//  For each character in the string, check for word wrap
-
-	for (i = 0; ; i++) {
-		uint8           c = text[i];
-
-//			REM: Translate from foreign character set if needed...
-//		c = TranslationTable[c];
-
-		if (c == '\n' || c == '\r' || c == '\0') {  // if deliberate end of line
-			line_chars[line_count] = i - line_start;  //
-			line_pixels[line_count] = pixel_len;
-			line_start = i + 1;
-			if (c == '\0') {
-				line_count++;
-				break;
-			}
-			lines[++line_count] = &text[line_start];
-			last_space = -1;
-			pixel_len = 0;
-			continue;
-		} else if (c == ' ') {
-			last_space = i;
-			last_space_pixels = pixel_len;
-		}
-
-		pixel_len +=
-		    tempTextPort.font->charKern[c] + tempTextPort.font->charSpace[c];
-
-		if (pixel_len > width - 2 && last_space > 0) {
-			line_chars[line_count] = last_space - line_start;
-			line_pixels[line_count] = last_space_pixels;
-			line_start = last_space + 1;
-			lines[++line_count] = &text[line_start];
-
-			last_space = -1;
-			pixel_len = 0;
-
-			i = line_start - 1;
-		}
-	}
-	return line_count;
-}
-
 //-----------------------------------------------------------------------
 //	This routine does a word-wrap on the input text, and also checks for
 //	the '@' symbol to see if there are any embedded buttons in the text.
@@ -675,7 +613,8 @@ int16 buttonWrap(
     int16           &buttonCount,           // returns number of buttons
     char            *text,                  // text to wrap
     int16           width,                  // width of text
-    int16           supressText) {
+    int16           supressText,
+    gPort           &textPort) {
 	int16           i,                      // loop counter
 	                line_start,             // start of current line
 	                last_space,             // last space encountered
@@ -737,8 +676,8 @@ int16 buttonWrap(
 
 			//  Add to pixel length
 			charPixels
-			    = tempTextPort.font->charKern[c]
-			      + tempTextPort.font->charSpace[c];
+			    = textPort.font->charKern[c]
+			      + textPort.font->charSpace[c];
 		}
 
 		linePixels += charPixels;
@@ -793,8 +732,8 @@ int16 buttonWrap(
 			} else { //  Any other character
 				//  Add to pixel length
 				charPixels
-				    = tempTextPort.font->charKern[c]
-				      + tempTextPort.font->charSpace[c];
+				    = textPort.font->charKern[c]
+				      + textPort.font->charSpace[c];
 			}
 
 			buttonPixels += charPixels;
@@ -819,7 +758,8 @@ int16 pickButton(
     int16           numLines,               // number of line breaks
     TextSpan        *buttonList,            // indicates where button breaks are
     int16           buttonCount,            // number of buttons
-    int16           width) {                // width of rectangle
+    int16           width,
+    gPort           textPort) {                // width of rectangle
 	int16           pickLine,
 	                pickPixels = 0,
 	                centerWidth;
@@ -829,7 +769,7 @@ int16 pickButton(
 	        ||  buttonCount < 1)                // no buttons defined
 		return 0;
 
-	pickLine = pt.y / (tempTextPort.font->height + lineLeading);
+	pickLine = pt.y / (textPort.font->height + lineLeading);
 	if (pickLine >= numLines) return 0;
 
 	//  Strange algorithm:
@@ -1098,7 +1038,7 @@ void Speech::remove(void) {
 //-----------------------------------------------------------------------
 //	AppFunc for handling clicks on speech
 
-int16 pickSpeechButton(Point16 mouse) {
+int16 pickSpeechButton(Point16 mouse, int16 size, gPort &textPort) {
 	Point16 p = mouse - initialSpeechPosition;
 
 	p.x -= kTileRectX;
@@ -1107,7 +1047,8 @@ int16 pickSpeechButton(Point16 mouse) {
 	return pickButton(p,
 	                  speechLineList, speechLineCount,
 	                  speechButtonList, speechButtonCount,
-	                  speechImage.size.x);
+	                  size,
+	                  textPort);
 }
 
 APPFUNC(cmdClickSpeech) {
@@ -1123,7 +1064,7 @@ APPFUNC(cmdClickSpeech) {
 	case gEventMouseDown:
 
 		if ((sp = speechList.currentActive()) != NULL) {
-			sp->selectedButton = pickSpeechButton(ev.mouse);
+			sp->selectedButton = pickSpeechButton(ev.mouse, sp->_speechImage.size.x, sp->_textPort);
 		}
 		break;
 

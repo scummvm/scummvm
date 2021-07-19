@@ -60,13 +60,6 @@ bool sayVoice(uint32 s[]);
 //  REM: This function is no longer used by the speech code,
 //  but it may be useful for other things.
 
-int16 TextWrap(
-    char            *lines[],
-    int16           line_chars[],
-    int16           line_pixels[],
-    char            *text,                  // the text to render
-    int16           width);                 // width to constrain text
-
 extern int16        speechButtonCount;      // count of speech buttons
 
 //  Actor speech enums -- move these to include file
@@ -108,6 +101,8 @@ private:
 
 public:
 	int16               selectedButton;     // which button was hit
+	gPixelMap           _speechImage;
+	gPort               _textPort;
 
 private:
 	//  Reconstruct this SpeechTask from an archive buffer
