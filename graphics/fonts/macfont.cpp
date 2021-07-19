@@ -168,11 +168,27 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
 	}
 
 	if (_ffWTabOff) {
-		// TODO: Read widths table
+		stream.seek(_ffWTabOff);
+
+		uint16 cnt = stream.readUint16BE() + 1;
+		debug(10, "style widths entries: %d", cnt);
+
+		for (uint i = 0; i < cnt; i++) {
+			uint16 style = stream.readUint16BE();
+			for (uint j = _ffFirstChar; j <= _ffLastChar + 2; j++) {
+				/*styleWidth[i].widthTab[j] =*/ stream.readUint16BE();
+			}
+		}
 	}
 
 	if (_ffStylOff) {
-		// TODO: Read styles table
+		// looks like this part is not useful for now.
+//		stream.seek(_ffStylOff);
+
+		/*uint16 classFlag =*/ stream.readUint16BE();
+		/*uint8 plainIndex =*/ stream.readSByte();
+		/*uint8 boldIndex =*/ stream.readSByte();
+		/*uint8 italicIndex =*/ stream.readSByte();
 	}
 
 	if (_ffKernOff) {
