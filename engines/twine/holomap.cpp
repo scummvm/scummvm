@@ -45,6 +45,17 @@
 
 namespace TwinE {
 
+#define HOLOMAP_ARROW		(1 << 0)
+#define HOLOMAP_VISITED		(1 << 1)
+#define HOLOMAP_UNK3		(1 << 2)
+#define HOLOMAP_UNK4		(1 << 3)
+#define HOLOMAP_UNK5		(1 << 4)
+#define HOLOMAP_UNK6		(1 << 5)
+#define HOLOMAP_UNK7		(1 << 6)
+#define HOLOMAP_CAN_FOCUS	(1 << 7)
+#define HOLOMAP_RESET		(HOLOMAP_VISITED | HOLOMAP_UNK3 | HOLOMAP_UNK4 | HOLOMAP_UNK5 | HOLOMAP_UNK6 | HOLOMAP_UNK7)
+#define HOLOMAP_ACTIVE		(HOLOMAP_CAN_FOCUS | HOLOMAP_ARROW)
+
 Holomap::Holomap(TwinEEngine *engine) : _engine(engine) {}
 
 bool Holomap::loadLocations() {
@@ -80,7 +91,7 @@ bool Holomap::loadLocations() {
 
 void Holomap::setHolomapPosition(int32 locationIdx) {
 	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->holomapFlags));
-	_engine->_gameState->holomapFlags[locationIdx] = 0x81;
+	_engine->_gameState->holomapFlags[locationIdx] = HOLOMAP_ACTIVE;
 	if (_engine->_gameState->hasItem(InventoryItems::kiHolomap)) {
 		_engine->_redraw->addOverlay(OverlayType::koInventoryItem, InventoryItems::kiHolomap, 0, 0, 0, OverlayPosType::koNormal, 3);
 	}
@@ -88,8 +99,8 @@ void Holomap::setHolomapPosition(int32 locationIdx) {
 
 void Holomap::clearHolomapPosition(int32 locationIdx) {
 	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->holomapFlags));
-	_engine->_gameState->holomapFlags[locationIdx] &= 0x7E;
-	_engine->_gameState->holomapFlags[locationIdx] |= 0x40;
+	_engine->_gameState->holomapFlags[locationIdx] &= HOLOMAP_RESET;
+	_engine->_gameState->holomapFlags[locationIdx] |= HOLOMAP_UNK7;
 }
 
 void Holomap::loadHolomapGFX() {
@@ -387,7 +398,7 @@ int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
 		i %= NUM_LOCATIONS;
 	}
 	for (; i != idx; i = (i + dir) % NUM_LOCATIONS) {
-		if (_engine->_gameState->holomapFlags[i] & 0x81) {
+		if (_engine->_gameState->holomapFlags[i] & HOLOMAP_ACTIVE) {
 			return i;
 		}
 	}
@@ -397,7 +408,7 @@ int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
 void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 	int n = 0;
 	for (int locationIdx = 0; locationIdx < NUM_LOCATIONS; ++locationIdx) {
-		if ((_engine->_gameState->holomapFlags[locationIdx] & 0x80) || locationIdx == _engine->_scene->currentSceneIdx) {
+		if ((_engine->_gameState->holomapFlags[locationIdx] & HOLOMAP_CAN_FOCUS) || locationIdx == _engine->_scene->currentSceneIdx) {
 			const Location &loc = _locations[locationIdx];
 			_engine->_renderer->setBaseRotation(loc.angle.x, loc.angle.y, 0);
 			_engine->_renderer->getBaseRotationPosition(0, 0, loc.angle.z + 1000);
@@ -425,7 +436,7 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 					continue;
 				}
 			}
-			uint8 flags = _engine->_gameState->holomapFlags[locationIdx] & 1;
+			uint8 flags = _engine->_gameState->holomapFlags[locationIdx] & HOLOMAP_ARROW;
 			if (locationIdx == _engine->_scene->currentSceneIdx) {
 				flags |= 2u; // model type
 			}

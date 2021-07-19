@@ -84,7 +84,6 @@ void Renderer::projectXYPositionOnScreen(int32 x, int32 y, int32 z) {
 	}
 	projPos.x = 0;
 	projPos.y = 0;
-	return;
 }
 
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
