@@ -50,9 +50,9 @@ private:
 	void addButtons();
 
 	/**
-	 * Get russian day/days form id
+	 * Get plural day/days form
 	 */
-	int getRuDays(int val);
+	Common::String getDaysPlurals(int val);
 
 	/**
 	 * Return a string containing the details of the character

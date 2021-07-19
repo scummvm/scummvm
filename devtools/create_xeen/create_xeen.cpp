@@ -39,7 +39,7 @@
 #include "constants.h"
 #include "map.h"
 
-#define VERSION_NUMBER 4
+#define VERSION_NUMBER 5
 
 void NORETURN_PRE error(const char *s, ...) {
 	va_list ap;
