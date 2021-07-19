@@ -274,7 +274,6 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->write(inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	file->writeByte(inventoryNumLeafs);
-	// TODO: writeUInt16LE in disassembly
 	file->writeByte(usingSabre ? 1 : 0);
 	file->writeByte(0);
 
@@ -285,19 +284,16 @@ void GameState::setGameFlag(uint8 index, uint8 value) {
 	debug(2, "Set gameStateFlags[%u]=%u", index, value);
 	_gameStateFlags[index] = value;
 
-	// all 4 slap videos
 	if ((index == GAMEFLAG_VIDEO_BAFFE || index == GAMEFLAG_VIDEO_BAFFE2 || index == GAMEFLAG_VIDEO_BAFFE3 || index == GAMEFLAG_VIDEO_BAFFE5) &&
 		_gameStateFlags[GAMEFLAG_VIDEO_BAFFE] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE2] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE3] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE5] != 0) {
+		// all 4 slap videos
 		_engine->unlockAchievement("LBA_ACH_012");
-	}
-	// second video of ferry trip
-	if (index == GAMEFLAG_VIDEO_BATEAU2) {
+	} else if (index == GAMEFLAG_VIDEO_BATEAU2) {
+		// second video of ferry trip
 		_engine->unlockAchievement("LBA_ACH_010");
-	}
-	if (index == (uint8)InventoryItems::kiUseSabre) {
+	} else if (index == (uint8)InventoryItems::kiUseSabre) {
 		_engine->unlockAchievement("LBA_ACH_002");
-	}
-	if (index == (uint8)InventoryItems::kBottleOfSyrup) {
+	} else if (index == (uint8)InventoryItems::kBottleOfSyrup) {
 		_engine->unlockAchievement("LBA_ACH_007");
 	}
 }

@@ -190,7 +190,7 @@ public:
 	int32 strengthOfHit = 0; // field_66
 	int32 hitBy = 0;
 	BonusParameter bonusParameter; // field_10
-	int32 angle = 0;
+	int32 angle = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise
 	int32 speed = 0;
 	ControlMode controlMode = ControlMode::kNoMove;
 	int32 delayInMillis = 0;
