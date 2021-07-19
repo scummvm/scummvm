@@ -173,6 +173,7 @@ protected:
 	ProtoObj        *prototype;             // object that defines our behavior
 public:
 	ObjectData _data;
+	uint _index;
 	//  Default constructor
 	GameObject(void);
 

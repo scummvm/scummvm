@@ -3516,6 +3516,8 @@ void initActors(void) {
 
 		//  Initialize the actors with the resource data
 		new (a) Actor(resourceActorList[i]);
+
+		actorList[i]._index = i + ActorBaseID;
 	}
 
 	//  Place all of the extra actors in actor limbo
@@ -3523,6 +3525,8 @@ void initActors(void) {
 		Actor       *a = &actorList[i];
 
 		new (a) Actor;
+
+		actorList[i]._index = i + ActorBaseID;
 	}
 
 	actorList[0].disposition = dispositionPlayer + 0;
@@ -3558,10 +3562,12 @@ void loadActors(Common::InSaveFile *in) {
 	if (actorList == NULL)
 		error("Unable to load Actors");
 
-	for (int i = 0; i < kActorCount; i++)
+	for (int i = 0; i < kActorCount; i++) {
 		//  Initilize actors with archive data
 		new (&actorList[i]) Actor(in);
 
+		actorList[i]._index = i + ActorBaseID;
+	}
 }
 
 //-------------------------------------------------------------------

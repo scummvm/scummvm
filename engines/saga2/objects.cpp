@@ -201,6 +201,7 @@ GameObject::GameObject(void) {
 	memset(&_data.reserved, 0, sizeof(_data.reserved));
 
 	_data.obj = this;
+	_index = 0;
 }
 
 //-----------------------------------------------------------------------
@@ -225,12 +226,14 @@ GameObject::GameObject(const ResourceGameObject &res) {
 	memset(&_data.reserved, 0, sizeof(_data.reserved));
 
 	_data.obj = this;
+	_index = 0;
 }
 
 GameObject::GameObject(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "Loading object %d", thisID());
 
 	read(in, false);
+	_index = 0;
 }
 
 void GameObject::read(Common::InSaveFile *in, bool expandProto) {
@@ -328,18 +331,33 @@ void GameObject::write(Common::MemoryWriteStreamDynamic *out, bool expandProto) 
 //  Same as above but use object addresses instead of ID's
 
 bool isObject(GameObject *obj) {
-	return (obj >= objectList
-	        && (uint8 *)obj < (uint8 *)objectList + objectListSize);
+	if (obj == nullptr)
+		return false;
+
+	if (obj->_index >= objectCount)
+		return false;
+
+	return (&objectList[obj->_index] == obj);
 }
 
 bool isActor(GameObject *obj) {
-	return (obj >= actorList
-	        && (uint8 *)obj < (uint8 *)actorList + actorListSize);
+	if (obj == nullptr)
+		return false;
+
+	if (obj->_index >= kActorCount + ActorBaseID || obj->_index < ActorBaseID)
+		return false;
+
+	return (&actorList[obj->_index - ActorBaseID] == obj);
 }
 
 bool isWorld(GameObject *obj) {
-	return (obj >= worldList
-	        && (uint8 *)obj < (uint8 *)worldList + worldListSize);
+	if (obj == nullptr)
+		return false;
+
+	if (obj->_index >= (uint)worldCount + WorldBaseID || obj->_index < WorldBaseID)
+		return false;
+
+	return (&worldList[obj->_index - WorldBaseID] == obj);
 }
 
 //  returns the address of the object based on the ID, and this
@@ -380,18 +398,7 @@ uint16 GameObject::containmentSet(void) {
 //  Calculates the ID of an object, given it's (implicit) address
 
 ObjectID GameObject::thisID(void) {         // calculate our own id
-	ObjectID        id;
-
-	id = (GameObject *)this - objectList;
-	if (id < objectCount) return id;
-
-	id = (Actor *)this - actorList;
-	if (id < kActorCount) return id + ActorBaseID;
-
-	id = (GameWorld *)this - worldList;
-	if (id < worldCount) return id + WorldBaseID;
-
-	return Nothing;
+	return _index;
 }
 
 //  Since Worlds have more than one object chain, we need a function
@@ -2772,6 +2779,8 @@ void initWorlds(void) {
 		GameWorld   *gw = &worldList[i];
 
 		new (gw) GameWorld(i);
+
+		worldList[i]._index = i + WorldBaseID;
 	}
 
 	currentWorld = &worldList[0];
@@ -2820,8 +2829,11 @@ void loadWorlds(Common::InSaveFile *in) {
 
 	debugC(3, kDebugSaveload, "... currentWorldID = %d", currentWorldID);
 
-	for (int i = 0; i < worldCount; ++i)
+	for (int i = 0; i < worldCount; ++i) {
 		new (&worldList[i]) GameWorld(in);
+
+		worldList[i]._index = i + WorldBaseID;
+	}
 
 	//  Reset the current world
 	currentWorld = (GameWorld *)GameObject::objectAddress(currentWorldID);
@@ -2905,6 +2917,8 @@ void initObjects(void) {
 		else
 			//  Initialize the objects with the resource data
 			new (obj) GameObject(resourceObjectList[i]);
+
+		objectList[i]._index = i;
 	}
 
 	for (; i < objectCount; i++) {
@@ -2912,6 +2926,8 @@ void initObjects(void) {
 
 		//  Use the default constructor for the extra actors
 		new (obj) GameObject;
+
+		objectList[i]._index = i;
 	}
 
 	//  Go through the object list and initialize all objects.
@@ -2999,6 +3015,7 @@ void loadObjects(Common::InSaveFile *in) {
 	for (int i = 0; i < objectCount; i++) {
 		objectList[i].read(in, true);
 		in->readUint16LE();
+		objectList[i]._index = i;
 	}
 }
 
