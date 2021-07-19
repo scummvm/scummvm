@@ -212,6 +212,7 @@ void Resources::loadData() {
 	file.syncString(SWORDS_GAME_TEXT);
 	file.syncStrings(WEEK_DAY_STRINGS, 10);
 	file.syncString(CHARACTER_DETAILS);
+	file.syncStrings(RU_DAYS, 3);
 	file.syncString(PARTY_GOLD);
 	file.syncString(PLUS_14);
 	file.syncString(CHARACTER_TEMPLATE);
@@ -297,6 +298,7 @@ void Resources::loadData() {
 	file.syncStrings(CATEGORY_BACKPACK_IS_FULL, 4);
 	file.syncString(BUY_X_FOR_Y_GOLD);
 	file.syncString(SELL_X_FOR_Y_GOLD);
+	file.syncStrings(RU_SELL_X_FOR_Y_GOLD_ENDINGS, 2);
 	file.syncString(NO_NEED_OF_THIS);
 	file.syncString(NOT_RECHARGABLE);
 	file.syncString(SPELL_FAILED);

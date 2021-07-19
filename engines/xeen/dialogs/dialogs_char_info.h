@@ -50,6 +50,11 @@ private:
 	void addButtons();
 
 	/**
+	 * Get russian day/days form id
+	 */
+	int getRuDays(int val);
+
+	/**
 	 * Return a string containing the details of the character
 	 */
 	Common::String loadCharacterDetails(const Character &c);

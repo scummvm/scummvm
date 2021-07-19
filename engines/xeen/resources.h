@@ -267,6 +267,7 @@ public:
 	const char *SWORDS_GAME_TEXT;
 	const char *WEEK_DAY_STRINGS[10];
 	const char *CHARACTER_DETAILS;
+	const char *RU_DAYS[3];
 	const char *PARTY_GOLD;
 	const char *PLUS_14;
 	const char *CHARACTER_TEMPLATE;
@@ -352,6 +353,7 @@ public:
 	const char *CATEGORY_BACKPACK_IS_FULL[4];
 	const char *BUY_X_FOR_Y_GOLD;
 	const char *SELL_X_FOR_Y_GOLD;
+	const char *RU_SELL_X_FOR_Y_GOLD_ENDINGS[2];
 	const char *NO_NEED_OF_THIS;
 	const char *NOT_RECHARGABLE;
 	const char *SPELL_FAILED;
