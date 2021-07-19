@@ -3123,6 +3123,58 @@ drawTriangleFastV(int x1, int y1, int size, bool inverted, PixelType color, Vect
 	}
 }
 
+/** HORIZONTAL TRIANGLE DRAWING ALGORITHM **/
+/**
+   TODO: Add Fixed point arithmetic
+   TODO: Add Clipping version of the algorithm
+   TODO: Add inversion (left facing triangle)
+**/
+
+template<typename PixelType>
+void VectorRendererSpec<PixelType>::
+drawTriangleHorAlg(int x1, int y1, int h, int w, bool inverted, PixelType color, VectorRenderer::FillMode fill_m) {
+	// Don't draw anything for empty rects. This assures dy is always different
+	// from zero.
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
+	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
+	int x2 = x1 + h;
+	int y2 = y1 + w / 2;
+
+	PixelType *ptr_top = (PixelType *)_activeSurface->getBasePtr(x1, y1);
+	PixelType *wall1 = ptr_top;
+	PixelType *ptr_bottom = (PixelType *)_activeSurface->getBasePtr(x2, y2 - 1);
+	PixelType *wall2 = (PixelType *)_activeSurface->getBasePtr(x1, y2 - 1);
+
+	double dx = (double)x2 - (double)x1;
+	double dy = (double)y2 - (double)y1;
+	double gradient = dx / dy;
+
+	double x = x1;
+
+	for (int y = y1 + 1; y < y2; ++y) {
+		ptr_top += pitch;
+		ptr_bottom += pitch;
+		wall1 += pitch;
+		wall2 += pitch;
+
+		ptr_top += ((int)(x + gradient) - (int)x);
+		ptr_bottom -= ((int)(x + gradient) - (int)x);
+
+		x += gradient;
+
+		colorFill<PixelType>(wall1 + 1, ptr_top, color);
+		colorFill<PixelType>(wall2 + 1, ptr_bottom, color);
+
+		blendPixelPtr(ptr_top, color, calcGradient(x - x1, w));
+		blendPixelPtr(ptr_bottom, color, calcGradient(x - x1, w));
+		blendPixelPtr(wall1, color, 50);
+		blendPixelPtr(wall2, color, 50);
+	}
+}
+
 /** ROUNDED SQUARE ALGORITHM **/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
