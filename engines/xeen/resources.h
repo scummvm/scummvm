@@ -147,7 +147,8 @@ public:
 	const char *ALIGNMENT_NAMES[3];
 	const char *SEX_NAMES[2];
 	const char *SKILL_NAMES[18];
-	const char *CONDITION_NAMES[17];
+	const char *CONDITION_NAMES_M[17];
+	const char *CONDITION_NAMES_F[17];
 	int CONDITION_COLORS[17];
 	const char *GOOD;
 	const char *BLESSED;
@@ -229,7 +230,7 @@ public:
 	const char *NOT_ENOUGH_X_IN_THE_Y;
 	const char *NO_X_IN_THE_Y;
 	const char *STAT_NAMES[16];
-	const char *CONSUMABLE_NAMES[4];
+	const char *CONSUMABLE_NAMES[6];
 	const char *WHERE_NAMES[2];
 	const char *AMOUNT;
 	const char *FOOD_PACKS_FULL;
@@ -353,7 +354,7 @@ public:
 	const char *CATEGORY_BACKPACK_IS_FULL[4];
 	const char *BUY_X_FOR_Y_GOLD;
 	const char *SELL_X_FOR_Y_GOLD;
-	const char *RU_SELL_X_FOR_Y_GOLD_ENDINGS[2];
+	const char *GOLDS[2];
 	const char *NO_NEED_OF_THIS;
 	const char *NOT_RECHARGABLE;
 	const char *SPELL_FAILED;

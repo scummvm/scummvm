@@ -88,9 +88,12 @@ void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
 	file.syncStrings(SKILL_NAMES(), 18);
 	delete[] _skillNames;
 	_skillNames = NULL;
-	file.syncStrings(CONDITION_NAMES(), 17);
-	delete[] _conditionNames;
-	_conditionNames = NULL;
+	file.syncStrings(CONDITION_NAMES_M(), 17);
+	delete[] _conditionNamesM;
+	_conditionNamesM = NULL;
+	file.syncStrings(CONDITION_NAMES_F(), 17);
+	delete[] _conditionNamesF;
+	_conditionNamesF = NULL;
 	file.syncNumbers(CONDITION_COLORS, 17);
 	file.syncString(GOOD());
 	file.syncString(BLESSED());
@@ -176,7 +179,7 @@ void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
 	file.syncStrings(STAT_NAMES(), 16);
 	delete[] _statNames;
 	_statNames = NULL;
-	file.syncStrings(CONSUMABLE_NAMES(), 4);
+	file.syncStrings(CONSUMABLE_NAMES(), 6);
 	delete[] _consumableNames;
 	_consumableNames = NULL;
 	file.syncStrings(WHERE_NAMES(), 2);
@@ -334,7 +337,7 @@ void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
 	file.syncStrings(CATEGORY_BACKPACK_IS_FULL(), 4);
 	file.syncString(BUY_X_FOR_Y_GOLD());
 	file.syncString(SELL_X_FOR_Y_GOLD());
-	file.syncStrings(SELL_X_FOR_Y_GOLD_ENDINGS(), 2);
+	file.syncStrings(GOLDS(), 2);
 	delete[] _sellXForYGoldEndings;
 	_sellXForYGoldEndings = NULL;
 	file.syncString(NO_NEED_OF_THIS());

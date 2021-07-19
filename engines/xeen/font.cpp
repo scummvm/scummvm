@@ -96,6 +96,12 @@ void FontSurface::writeSymbol(int symbolId) {
 	_writePos.x += 8;
 }
 
+bool FontSurface::isSpace(char c) {
+	if (Common::RU_RUS == lang) 
+		return c == ' ';
+	return (c & 0x7f) == ' ';
+}
+
 const char *FontSurface::writeString(const Common::String &s, const Common::Rect &bounds) {
 	_displayString = s.c_str();
 	assert(_fontData);
@@ -123,7 +129,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 			// First, move backwards to find the end of the previous word
 			// for a convenient point to break the line at
 			const char *endP = displayEnd;
-			while (endP > _displayString && (*endP & 0x7f) != ' ')
+			while (endP > _displayString && !isSpace(*endP))
 				--endP;
 
 			if (endP == _displayString) {
@@ -138,7 +144,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 				}
 			} else {
 				// Found word break, find end of previous word
-				while (endP > _displayString && (*endP & 0x7f) == ' ')
+				while (endP > _displayString && !isSpace(*endP))
 					--endP;
 
 				displayEnd = endP;
@@ -328,7 +334,9 @@ bool FontSurface::getNextCharWidth(int &total) {
 			getNextChar();
 		return false;
 	} else if (Common::RU_RUS == lang && c < 0) {
-		total += _fontData[(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(0x80 + c)];
+		int iii = (_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (char)(0x80 + c);
+		//int iii = _fontData[(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(0x80 + c)];
+		total += _fontData[(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (char)(0x80 + c)];
 		return false;
 	} else {
 		--_displayString;
@@ -338,7 +346,7 @@ bool FontSurface::getNextCharWidth(int &total) {
 
 bool FontSurface::newLine(const Common::Rect &bounds) {
 	// Move past any spaces currently being pointed to
-	while ((*_displayString & 0x7f) == ' ')
+	while (isSpace(*_displayString))
 		++_displayString;
 
 	_msgWraps = false;

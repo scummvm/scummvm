@@ -94,7 +94,8 @@ void Resources::loadData() {
 	file.syncStrings(ALIGNMENT_NAMES, 3);
 	file.syncStrings(SEX_NAMES, 2);
 	file.syncStrings(SKILL_NAMES, 18);
-	file.syncStrings(CONDITION_NAMES, 17);
+	file.syncStrings(CONDITION_NAMES_M, 17);
+	file.syncStrings(CONDITION_NAMES_F, 17);
 	file.syncNumbers(CONDITION_COLORS, 17);
 	file.syncString(GOOD);
 	file.syncString(BLESSED);
@@ -176,7 +177,7 @@ void Resources::loadData() {
 	file.syncString(NOT_ENOUGH_X_IN_THE_Y);
 	file.syncString(NO_X_IN_THE_Y);
 	file.syncStrings(STAT_NAMES, 16);
-	file.syncStrings(CONSUMABLE_NAMES, 4);
+	file.syncStrings(CONSUMABLE_NAMES, 6);
 	file.syncStrings(WHERE_NAMES, 2);
 	file.syncString(AMOUNT);
 	file.syncString(FOOD_PACKS_FULL);
@@ -300,7 +301,7 @@ void Resources::loadData() {
 	file.syncStrings(CATEGORY_BACKPACK_IS_FULL, 4);
 	file.syncString(BUY_X_FOR_Y_GOLD);
 	file.syncString(SELL_X_FOR_Y_GOLD);
-	file.syncStrings(RU_SELL_X_FOR_Y_GOLD_ENDINGS, 2);
+	file.syncStrings(GOLDS, 2);
 	file.syncString(NO_NEED_OF_THIS);
 	file.syncString(NOT_RECHARGABLE);
 	file.syncString(SPELL_FAILED);
