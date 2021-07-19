@@ -48,6 +48,10 @@ private:
 	bool cmdGodmode(int argc, const char **argv);
 
 	bool cmdPosition(int argc, const char **argv);
+
+	bool cmdTeleport(int argc, const char **argv);
+
+	bool cmdGotoPlace(int argc, const char **argv);
 };
 
 }

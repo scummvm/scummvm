@@ -23,10 +23,13 @@
 #include "saga2/saga2.h"
 #include "saga2/objects.h"
 #include "saga2/player.h"
+#include "saga2/mapfeatr.h"
 
 #include "saga2/console.h"
 
 namespace Saga2 {
+
+extern pCMapFeature mapFeatures[];
 
 Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -42,6 +45,10 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("name2id", WRAP_METHOD(Console, cmdObjNameToID));
 
 	registerCmd("position", WRAP_METHOD(Console, cmdPosition));
+
+	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
+
+	registerCmd("goto_place", WRAP_METHOD(Console, cmdGotoPlace));
 }
 
 Console::~Console() {
@@ -113,6 +120,44 @@ bool Console::cmdPosition(int argc, const char **argv) {
 	else {
 		bool show = atoi(argv[1]);
 		_vm->_showPosition = show;
+	}
+
+	return true;
+}
+
+bool Console::cmdTeleport(int argc, const char **argv) {
+	if (argc != 4)
+		debugPrintf("Usage: %s <u> <v> <z>\n", argv[0]);
+	else {
+		int u = atoi(argv[1]);
+		int v = atoi(argv[2]);
+		int z = atoi(argv[3]);
+
+		Actor *a = getCenterActor();
+		a->setLocation(TilePoint(u, v, z));
+	}
+
+	return true;
+}
+
+bool Console::cmdGotoPlace(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <place id>\n", argv[0]);
+	else {
+		int placeID = atoi(argv[1]);
+		int u = mapFeatures[placeID]->getU();
+		int v = mapFeatures[placeID]->getV();
+
+		Actor *a = getCenterActor();
+
+		int du = u - a->getLocation().u;
+		int dv = v - a->getLocation().v;
+
+		for (ObjectID id = ActorBaseID; id < ActorBaseID + kPlayerActors; ++id) {
+			Actor *p = (Actor *)GameObject::objectAddress(id);
+			TilePoint curLoc = p->getLocation();
+			p->setLocation(TilePoint(curLoc.u + du, curLoc.v + dv, 8));
+		}
 	}
 
 	return true;
