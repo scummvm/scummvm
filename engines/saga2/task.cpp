@@ -3034,7 +3034,7 @@ void HuntToKillTask::evaluateTarget(void) {
 	Actor               *a = stack->getActor();
 
 	if (flags & evalWeapon
-	        &&  a->isInterruptable()) {
+	        &&  a->isInterruptable() && currentTarget != NULL) {
 		evaluateWeapon();
 		flags &= ~evalWeapon;
 	}
