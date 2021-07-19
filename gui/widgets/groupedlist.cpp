@@ -189,7 +189,6 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 
 	// First check whether the selection changed
 	int newSelectedItem = findItem(x, y);
-	int selectID = getSelected();
 	if (_selectedItem != newSelectedItem && newSelectedItem != -1) {
 		if (_editMode)
 			abortEditMode();
