@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "xeen/dialogs/dialogs_awards.h"
 #include "xeen/dialogs/dialogs_char_info.h"
 #include "xeen/dialogs/dialogs_exchange.h"
@@ -277,6 +278,17 @@ void CharacterInfo::addButtons() {
 	addPartyButtons(_vm);
 }
 
+int CharacterInfo::getRuDays(int val) {
+	int i = val % 100;
+	if (i < 5 || i > 20) switch (val % 10) {
+	case 1: return 0;
+	case 2: 
+	case 3: 
+	case 4: return 1;
+	}
+	return 2;
+}
+
 Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 	Condition condition = c.worstCondition();
 	Party &party = *_vm->_party;
@@ -290,7 +302,39 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 		c._energyResistence._permanent + c.itemScan(15) + c._energyResistence._temporary +
 		c._magicResistence._permanent + c.itemScan(16) + c._magicResistence._temporary;
 
-	return Common::String::format(Res.CHARACTER_DETAILS,
+	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+		return Common::String::format(Res.CHARACTER_DETAILS,
+			Res.PARTY_GOLD, c._name.c_str(), Res.SEX_NAMES[c._sex],
+			Res.RACE_NAMES[c._race], Res.CLASS_NAMES[c._class],
+			c.statColor(c.getStat(MIGHT), c.getStat(MIGHT, true)), c.getStat(MIGHT),
+			c.statColor(c.getStat(ACCURACY), c.getStat(ACCURACY, true)), c.getStat(ACCURACY),
+			c.statColor(c._currentHp, c.getMaxHP()), c._currentHp,
+			c.getCurrentExperience(),
+			c.statColor(c.getStat(INTELLECT), c.getStat(INTELLECT, true)), c.getStat(INTELLECT),
+			c.statColor(c.getStat(LUCK), c.getStat(LUCK, true)), c.getStat(LUCK),
+			c.statColor(c._currentSp, c.getMaxSP()), c._currentSp,
+			party._gold,
+			c.statColor(c.getStat(PERSONALITY), c.getStat(PERSONALITY, true)), c.getStat(PERSONALITY),
+			c.statColor(c.getAge(), c.getAge(true)), c.getAge(),
+			totalResist,
+			party._gems,
+			c.statColor(c.getStat(ENDURANCE), c.getStat(ENDURANCE, true)), c.getStat(ENDURANCE),
+			c.statColor(c.getCurrentLevel(), c._level._permanent), c.getCurrentLevel(),
+			c.getNumSkills(),
+			foodVal,
+			Res.RU_DAYS[getRuDays(foodVal)],
+			c.statColor(c.getStat(SPEED), c.getStat(SPEED, true)), c.getStat(SPEED),
+			c.statColor(c.getArmorClass(), c.getArmorClass(true)), c.getArmorClass(),
+			c.getNumAwards(),
+			Res.CONDITION_COLORS[condition], Res.CONDITION_NAMES[condition],
+			condition == NO_CONDITION && party._blessed ? Res.PLUS_14 : "",
+			condition == NO_CONDITION && party._powerShield ? Res.PLUS_14 : "",
+			condition == NO_CONDITION && party._holyBonus ? Res.PLUS_14 : "",
+			condition == NO_CONDITION && party._heroism ? Res.PLUS_14 : ""
+		);
+	}
+
+	return  Common::String::format(Res.CHARACTER_DETAILS,
 		Res.PARTY_GOLD, c._name.c_str(), Res.SEX_NAMES[c._sex],
 		Res.RACE_NAMES[c._race], Res.CLASS_NAMES[c._class],
 		c.statColor(c.getStat(MIGHT), c.getStat(MIGHT, true)), c.getStat(MIGHT),
