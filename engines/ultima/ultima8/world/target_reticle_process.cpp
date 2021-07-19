@@ -21,6 +21,7 @@
  */
 
 
+#include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/gumps/message_box_gump.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/kernel.h"
@@ -39,9 +40,12 @@ TargetReticleProcess *TargetReticleProcess::_instance = nullptr;
 DEFINE_RUNTIME_CLASSTYPE_CODE(TargetReticleProcess)
 
 TargetReticleProcess::TargetReticleProcess() : Process(), _reticleEnabled(true),
-		_lastUpdate(0), _reticleSpriteProcess(0), _lastTargetDir(dir_current), _lastTargetItem(0) {
+		_lastUpdate(0), _reticleSpriteProcess(0), _lastTargetDir(dir_current), _lastTargetItem(0),
+		_reticleStyle(0) {
 	_instance = this;
 	_type = 1; // persistent
+	if (GAME_IS_REGRET)
+		_reticleStyle = 3;
 }
 
 TargetReticleProcess::~TargetReticleProcess() {
@@ -128,7 +132,7 @@ void TargetReticleProcess::avatarMoved() {
 	_lastUpdate = 0;
 }
 
-void TargetReticleProcess::putTargetReticleOnItem(Item *item, bool last_frame) {
+void TargetReticleProcess::putTargetReticleOnItem(Item *item, bool only_last_frame) {
 	int32 x, y, z;
 
 	// TODO: the game does a bunch of other maths here to pick the right location.
@@ -138,10 +142,12 @@ void TargetReticleProcess::putTargetReticleOnItem(Item *item, bool last_frame) {
 	z -= 8;
 
 	Process *p;
-	if (!last_frame)
-		p = new SpriteProcess(0x59a, 0, 5, 1, 10, x, y, z, false);
+	const int first_frame = _reticleStyle * 6;
+	const int last_frame = first_frame + 5;
+	if (!only_last_frame)
+		p = new SpriteProcess(0x59a, first_frame, last_frame, 1, 10, x, y, z, false);
 	else
-		p = new SpriteProcess(0x59a, 5, 5, 1, 1000, x, y, z, false);
+		p = new SpriteProcess(0x59a, last_frame, last_frame, 1, 1000, x, y, z, false);
 
 	_reticleSpriteProcess = Kernel::get_instance()->addProcess(p);
 	_lastTargetItem = item->getObjId();
@@ -199,6 +205,17 @@ void TargetReticleProcess::toggle() {
 	setEnabled(newstate);
 }
 
+void TargetReticleProcess::toggleReticleStyle() {
+	if (GAME_IS_REMORSE) {
+		_reticleStyle = 0;
+		return;
+	}
+
+	_reticleStyle++;
+	if (_reticleStyle >= 4)
+		_reticleStyle = 0;
+}
+
 void TargetReticleProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 
@@ -207,6 +224,8 @@ void TargetReticleProcess::saveData(Common::WriteStream *ws) {
 	ws->writeUint16LE(_reticleSpriteProcess);
 	ws->writeByte(_lastTargetDir);
 	ws->writeUint16LE(_lastTargetItem);
+	if (GAME_IS_REGRET)
+		ws->writeUint16LE(_reticleStyle);
 }
 
 bool TargetReticleProcess::loadData(Common::ReadStream *rs, uint32 version) {
@@ -217,6 +236,8 @@ bool TargetReticleProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_reticleSpriteProcess = rs->readUint16LE();
 	_lastTargetDir = static_cast<Direction>(rs->readByte());
 	_lastTargetItem = rs->readUint16LE();
+	if (GAME_IS_REGRET)
+		_reticleStyle = rs->readUint16LE();
 
 	return true;
 }
