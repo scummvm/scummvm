@@ -130,7 +130,7 @@ contents with hfsutils.
 
 Mode 1:
   $0 -m
-	  Operate in MacBinary encoding mode
+	  Operate in MacBinary encoding mode. Recursively encode all resource forks in the current directory
 
 Mode 2:
   $0 [-e <encoding>] -f <file.iso>
