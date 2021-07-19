@@ -2,6 +2,7 @@
 
 use strict;
 use Getopt::Std;
+use Encode;
 
 sub VERSION_MESSAGE() {
     print "$0 version 1.0\n"
@@ -32,14 +33,17 @@ sub processIso($) {
     system("hmount \"$isofile\" >/dev/null 2>&1") == 0 or die "Can't execute hmount";
     print "done\n";
 
-    open(my $ls, "-|", "hls -1ablRU");
+    open(my $ls, "-|", "hls -1alRU");
 
     my $dir = "";
     my $mdir = "";
 
+    my $numfiles = 0;
+    my $numdirs = 0;
+    my $prevlen = 0;
+
     while (<$ls>) {
         chomp;
-        print "$_...                          \r";
         flush STDOUT;
 
         if (/^:/) {
@@ -47,24 +51,43 @@ sub processIso($) {
             s/^://;
             s/:/\//g;
             $dir = $_;
-            mkdir "$_";
+            if ($::opt_e) {
+                $dir = encode_utf8(decode($::opt_e, $dir));
+            }
+            mkdir "$dir";
+            $numdirs++;
         } elsif (/^[fF]/) {
             if (/[fF]i?\s+[^\s]+\s+([0-9]+)\s+([0-9]+)\s+\w+\s+\d+\s+\d+\s+(.*)/) {
                 my $res = $1;
                 my $data = $2;
                 my $fname = $3;
 
-                if ($res != 0) {
-                    system("hcopy -m -- $mdir$fname $dir$fname");
-                } else {
-                    system("hcopy -r -- $mdir$fname $dir$fname");
+                $fname =~ s'/':'g; # Replace / with :
+
+                my $decfname = $fname;
+
+                if ($::opt_e) {
+                    $decfname = encode_utf8(decode($::opt_e, $fname));
                 }
+
+                print " " x $prevlen;
+                print "\r$dir$decfname\r";
+                $prevlen = length "$dir$decfname";
+                flush STDOUT;
+
+                if ($res != 0) {
+                    system("hcopy -m -- \"$mdir$fname\" \"$dir$decfname\"");
+                } else {
+                    system("hcopy -r -- \"$mdir$fname\" \"$dir$decfname\"");
+                }
+                $numfiles++;
             } else {
                 die "Bad format:\n$_\n";
             }
         }
     }
-    print "\n";
+    print " " x $prevlen;
+    print "\rExtracted $numdirs dirs and $numfiles files\n";
 
     print "Unounting ISO...";
     flush STDOUT;
@@ -89,7 +112,7 @@ Mode 1:
 Mode 2:
   $0 [-e <encoding>] -f <file.iso>
       Operate in disk dumping mode
-	  Optionally specify 'jap' for using 'recode' for converting Japanese file names
+	  Optionally specify encoding (MacRoman, MacJapanese)
 
 Miscellaneous:
   -h, --help   display this help and exit
