@@ -175,6 +175,10 @@ void CharacterInfo::execute(int charIndex) {
 			break;
 		}
 
+		case Common::KEYCODE_c:
+			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+				break;
+			}
 		case Common::KEYCODE_e:
 			if (oldMode == MODE_COMBAT) {
 				ErrorScroll::show(_vm, Res.EXCHANGING_IN_COMBAT, WT_FREEZE_WAIT);
@@ -186,6 +190,10 @@ void CharacterInfo::execute(int charIndex) {
 			}
 			break;
 
+		case Common::KEYCODE_d:
+			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+				break;
+			}
 		case Common::KEYCODE_i:
 			_vm->_mode = oldMode;
 			_vm->_combat->_itemFlag = _vm->_mode == MODE_COMBAT;
@@ -200,6 +208,10 @@ void CharacterInfo::execute(int charIndex) {
 			redrawFlag = true;
 			break;
 
+		case Common::KEYCODE_COMMA:
+			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+				break;
+			}
 		case Common::KEYCODE_q:
 			QuickReferenceDialog::show(_vm);
 			redrawFlag = true;
@@ -271,9 +283,15 @@ void CharacterInfo::addButtons() {
 	addButton(Common::Rect(177, 70, 201, 90), 1018, &_iconSprites);
 	addButton(Common::Rect(177, 93, 201, 113), 1019, &_iconSprites);
 	addButton(Common::Rect(177, 116, 201, 136), 1020, &_iconSprites);
-	addButton(Common::Rect(285, 11, 309, 31), Common::KEYCODE_i, &_iconSprites);
-	addButton(Common::Rect(285, 43, 309, 63), Common::KEYCODE_q, &_iconSprites);
-	addButton(Common::Rect(285, 75, 309, 95), Common::KEYCODE_e, &_iconSprites);
+	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+		addButton(Common::Rect(285, 11, 309, 31), Common::KEYCODE_d, &_iconSprites);		// russian key Â
+		addButton(Common::Rect(285, 43, 309, 63), Common::KEYCODE_COMMA, &_iconSprites);	// russian key Á
+		addButton(Common::Rect(285, 75, 309, 95), Common::KEYCODE_c, &_iconSprites);		// russian key Ñ
+	} else {
+		addButton(Common::Rect(285, 11, 309, 31), Common::KEYCODE_i, &_iconSprites);
+		addButton(Common::Rect(285, 43, 309, 63), Common::KEYCODE_q, &_iconSprites);
+		addButton(Common::Rect(285, 75, 309, 95), Common::KEYCODE_e, &_iconSprites);
+	}
 	addButton(Common::Rect(285, 107, 309, 127), Common::KEYCODE_ESCAPE, &_iconSprites);
 	addPartyButtons(_vm);
 }
