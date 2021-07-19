@@ -509,6 +509,24 @@ public:
 			int KEY_WARRIOR;
 		} DIALOGS_DIFFICULTY;
 
+		struct {
+			int KEY_WEAPONS;
+			int KEY_ARMOR;
+			int KEY_ACCESSORY;
+			int KEY_MISC;
+			int KEY_ENCHANT;
+			int KEY_USE;
+			int KEY_BUY;
+			int KEY_SELL;
+			int KEY_IDENTIFY;
+			int KEY_FIX;
+			int KEY_EQUIP;
+			int KEY_REM;
+			int KEY_DISC;
+			int KEY_QUEST;
+			int KEY_RECHRG;
+			int KEY_GOLD;
+		} DIALOGS_ITEMS;
 	} KEY_CONSTANTS;
 
 
