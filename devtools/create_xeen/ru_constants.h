@@ -804,28 +804,17 @@ public:
 	}
 
 	const char *CHARACTER_DETAILS() {
-		return "\x3"
-			   "l\v041\t196%s\t000\v002%s : %s %s %s"
-			   "\x3"
-			   "r\t053\v028\f%02u%u\fd\t103\f%02u%u\fd"
-			   "\x3"
-			   "l\t131\f%02u%d\fd\t196\f15%lu\fd\x3"
-			   "r"
+		return "\x3""l\v041\t196%s\t000\v002%s : %s %s %s"
+			   "\x3""r\t053\v028\f%02u%u\fd\t103\f%02u%u\fd"
+			   "\x3""l\t131\f%02u%d\fd\t196\f15%lu\fd\x3""r"
 			   "\t053\v051\f%02u%u\fd\t103\f%02u%u\fd"
-			   "\x3"
-			   "l\t131\f%02u%u\fd\t196\f15%lu\fd"
-			   "\x3"
-			   "r\t053\v074\f%02u%u\fd\t103\f%02u%u\fd"
-			   "\x3"
-			   "l\t131\f15%u\fd\t196\f15%lu\fd"
-			   "\x3"
-			   "r\t053\v097\f%02u%u\fd\t103\f%02u%u\fd"
-			   "\x3"
-			   "l\t131\f15%u\fd\t196\f15%u %s\fd"
-			   "\x3"
-			   "r\t053\v120\f%02u%u\fd\t103\f%02u%u\fd"
-			   "\x3"
-			   "l\t131\f15%u\fd\t196\f%02u%s\fd"
+			   "\x3""l\t131\f%02u%u\fd\t196\f15%lu\fd"
+			   "\x3""r\t053\v074\f%02u%u\fd\t103\f%02u%u\fd"
+			   "\x3""l\t131\f15%u\fd\t196\f15%lu\fd"
+			   "\x3""r\t053\v097\f%02u%u\fd\t103\f%02u%u\fd"
+			   "\x3""l\t131\f15%u\fd\t196\f15%u %s\fd"
+			   "\x3""r\t053\v120\f%02u%u\fd\t103\f%02u%u\fd"
+			   "\x3""l\t131\f15%u\fd\t196\f%02u%s\fd"
 			   "\t245%s%s%s%s\fd";
 	}
 
@@ -1418,7 +1407,7 @@ public:
 	}
 
 	const char *FIX_IDENTIFY_GOLD() {
-		return "\x3""l\v000\t000%s %s\fd \xA7\xA0 %lu \xA7\xAE\xAB\xAE\xE2%s?"; // "\x3""l\v000\t000%s %s\fd за %lu золот%s?"
+		return "\x3""l\v000\t000%s %s\fd \xA7\xA0 %lu %s?"; // "\x3""l\v000\t000%s %s\fd за %lu %s?"
 	}
 
 	const char *IDENTIFY_ITEM_MSG() {
