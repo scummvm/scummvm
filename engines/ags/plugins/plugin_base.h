@@ -149,6 +149,10 @@ public:
  * Shared base class for plugins and classes exposed to plugins
  */
 class ScriptContainer {
+public:
+	ScriptContainer() {}
+	virtual ~ScriptContainer() {}
+
 protected:
 	IAGSEngine *_engine = nullptr;
 public:
