@@ -69,7 +69,7 @@ protected:
 public:
 	uint8 *_color;
 
-	const char *lastText = "";
+	const char *_lastText = "";
 	Talk(CGE2Engine *vm, const char *text, TextBoxStyle mode = kTBPure, ColorBank color = kCBStd, bool wideSpace = false);
 	Talk(CGE2Engine *vm, ColorBank color = kCBStd);
 

@@ -38,7 +38,7 @@ static const DebugChannelDef debugFlagList[] = {
 namespace CGE2 {
 
 #define GAMEOPTION_COLOR_BLIND_DEFAULT_OFF  GUIO_GAMEOPTIONS1
-#define GAMEOPTION_TTS_THINGS				GUIO_GAMEOPTIONS2
+#define GAMEOPTION_TTS_OBJECTS				GUIO_GAMEOPTIONS2
 #define GAMEOPTION_TTS_SPEECH				GUIO_GAMEOPTIONS3
 
 static const PlainGameDescriptor CGE2Games[] = {
@@ -51,42 +51,42 @@ static const ADGameDescription gameDescriptions[] = {
 			"sfinx", "Freeware",
 			AD_ENTRY2s("vol.cat", "21197b287d397c53261b6616bf0dd880", 129024,
 					   "vol.dat", "de14291869a8eb7c2732ab783c7542ef", 34180844),
-			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_THINGS)
+			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_OBJECTS)
 		},
 
 		{
 			"sfinx", "Freeware v1.0",
 			AD_ENTRY2s("vol.cat", "aa402aed24a72c53a4d1211c456b79dd", 129024,
 					   "vol.dat", "5966ac26d91d664714349669f9dd09b5", 34180164),
-			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_THINGS)
+			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_OBJECTS)
 		},
 
 		{
 			"sfinx", "Freeware v1.1",
 			AD_ENTRY2s("vol.cat", "aa402aed24a72c53a4d1211c456b79dd", 129024,
 					   "vol.dat", "5966ac26d91d664714349669f9dd09b5", 34180367),
-			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_THINGS)
+			Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO2(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_OBJECTS)
 		},
 
 		{
 			"sfinx", "Freeware v0.3",
 			AD_ENTRY2s("vol.cat", "f158e469dccbebc5a632eb848df89779", 129024,
 					   "vol.dat", "d40a6b4ae173d6930be54ba56bee15d5", 34183430),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO3(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_THINGS, GAMEOPTION_TTS_SPEECH)
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO3(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_SPEECH)
 		},
 
 		{
 			"sfinx", "Freeware v1.0",
 			AD_ENTRY2s("vol.cat", "f158e469dccbebc5a632eb848df89779", 129024,
 					   "vol.dat", "d40a6b4ae173d6930be54ba56bee15d5", 34183443),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO3(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_THINGS, GAMEOPTION_TTS_SPEECH)
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO3(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_SPEECH)
 		},
 
 		{
 			"sfinx", "Freeware v1.1",
 			AD_ENTRY2s("vol.cat", "f158e469dccbebc5a632eb848df89779", 129024,
 					   "vol.dat", "d40a6b4ae173d6930be54ba56bee15d5", 34182773),
-			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO3(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_THINGS, GAMEOPTION_TTS_SPEECH)
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO3(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF, GAMEOPTION_TTS_OBJECTS, GAMEOPTION_TTS_SPEECH)
 		},
 
 		AD_TABLE_END_MARKER
@@ -105,11 +105,11 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 #ifdef USE_TTS
 	{
-		GAMEOPTION_TTS_THINGS,
+		GAMEOPTION_TTS_OBJECTS,
 		{
 			_s("Enable Text to Speech for Objects and Options"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
-			"tts_enabled",
+			"tts_enabled_objects",
 			false
 		}
 	},
@@ -117,9 +117,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_TTS_SPEECH,
 		{
-			_s("Enable Text to Speech for Subtitles and Override Original Voice Overs"),
-			_s("Use TTS to read the descriptions (if TTS is available)"),
-			"tts_enabled_new",
+			_s("Enable Text to Speech for Subtitles"),
+			_s("Use TTS to read the subtitles (if TTS is available)"),
+			"tts_enabled_speech",
 			false
 		}
 	},

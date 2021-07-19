@@ -115,7 +115,7 @@ uint16 Font::width(const char *text) {
 Talk::Talk(CGE2Engine *vm, const char *text, TextBoxStyle mode, ColorBank color, bool wideSpace)
 	: Sprite(vm), _mode(mode), _created(false), _wideSpace(wideSpace), _vm(vm) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled_new"))
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech"))
 		ttsMan->say(text);
 
 	_color = _vm->_font->_colorSet[color];
@@ -263,10 +263,10 @@ InfoLine::InfoLine(CGE2Engine *vm, uint16 w, ColorBank color)
 void InfoLine::update(const char *text) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (text) {
-        if (strcmp(lastText,text) != 0) {
-            if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+        if (strcmp(_lastText,text) != 0) {
+            if (ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
                 ttsMan->say(text);
-            lastText = text;
+            _lastText = text;
         }
     }
 	if (!_realTime && (text == _oldText))

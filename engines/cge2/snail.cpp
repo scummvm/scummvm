@@ -657,7 +657,7 @@ void CGE2Engine::snSay(Sprite *spr, int val) {
 				i -= 100;
 			int16 oldRepeat = _sound->getRepeat();
 			_sound->setRepeat(1);
-			if (!ConfMan.getBool("tts_enabled_new") && Common::getLanguageCode(getLanguage()) == "pl")
+			if (!ConfMan.getBool("tts_enabled_speech") || Common::getLanguageCode(getLanguage()) == "pl")
 				snSound(spr, i, Audio::Mixer::kSpeechSoundType);
 			_sound->setRepeat(oldRepeat);
 			_soundStat._wait = &_sound->_smpinf._counter;
