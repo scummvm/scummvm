@@ -3,6 +3,7 @@
 use strict;
 use Getopt::Std;
 use Encode;
+use File::Find;
 
 sub VERSION_MESSAGE() {
     print "$0 version 1.0\n"
@@ -10,11 +11,17 @@ sub VERSION_MESSAGE() {
 
 sub HELP_MESSAGE();
 sub processIso($);
+sub processMacbinary();
 
 getopts('hmf:e:');
 
 if ($::opt_h) {
     HELP_MESSAGE();
+    exit 0;
+}
+
+if ($::opt_m) {
+    processMacbinary;
     exit 0;
 }
 
@@ -94,6 +101,22 @@ sub processIso($) {
 
     system("humount >/dev/null 2>&1") == 0 or die "Can't execute humount";
     print "done\n";
+}
+
+sub processMacbinary() {
+    find( sub {
+        my $fname = $_;
+
+        if (open F, "$fname/..namedfork/rsrc") {
+            print "Resource in $fname\n";
+            close F;
+
+            system("macbinary encode \"$fname\"");
+			system("touch -r \"$fname\" \"$fname.bin\"");
+			system("mv \"$fname.bin\" \"$fname\"");
+        }
+    }, ".");
+
 }
 
 sub HELP_MESSAGE() {
