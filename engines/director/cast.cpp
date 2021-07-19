@@ -563,7 +563,7 @@ void Cast::loadCastChildren() {
 
 			if (w > 0 && h > 0) {
 				if (_version < kFileVer600) {
-					img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch, _vm->getPalette(), static_cast<FileVersion>(_version));
+					img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch, _vm->getPalette(), _version);
 				} else {
 					img = new Image::BitmapDecoder();
 				}

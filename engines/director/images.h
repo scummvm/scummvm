@@ -61,7 +61,7 @@ private:
 
 class BITDDecoder : public Image::ImageDecoder {
 public:
-	BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const byte *palette, FileVersion version);
+	BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch, const byte *palette, uint16 version);
 	~BITDDecoder() override;
 
 	// ImageDecoder API
@@ -78,7 +78,7 @@ private:
 	const byte *_palette;
 	uint8 _paletteColorCount;
 	uint16 _bitsPerPixel;
-	FileVersion _version;
+	uint16 _version;
 	uint16 _pitch;
 };
 

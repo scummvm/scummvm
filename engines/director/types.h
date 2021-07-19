@@ -317,7 +317,7 @@ enum ChunkType {
 	kChunkLine
 };
 
-enum FileVersion {
+enum {
 	kFileVer300 = 0x404,
 	kFileVer310 = 0x405,
 	kFileVer400 = 0x45B,
