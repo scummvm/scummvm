@@ -133,9 +133,10 @@ void ccSetDebugHook(new_line_hook_type jibble) {
 	_G(new_line_hook) = jibble;
 }
 
-int call_function(Plugins::ScriptContainer *sc, const Common::String &name, const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms) {
-	if (!sc) {
-		cc_error("null script container pointer in call_function");
+int call_function(const Plugins::PluginMethod &method,
+		const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms) {
+	if (!method) {
+		cc_error("invalid method in call_function");
 		return -1;
 	}
 	if (numparm > 0 && !parms) {
@@ -179,15 +180,15 @@ int call_function(Plugins::ScriptContainer *sc, const Common::String &name, cons
 			params.push_back(parm_value[i]);
 
 		// Call the method
-		(*sc).execMethod(name, params);
+		NumberPtr result = method(params);
 
 		// TODO: Though some script methods return pointers, the call_function only
 		// supports a 32-bit result. In case they're actually used by any game, the
 		// guard below will throw a wobbly if they're more than 32-bits
-		if ((int64)params._result._ptr > 0xffffffff)
+		if (result._ptr > (void *)0xffffffff)
 			error("Uhandled 64-bit pointer result from plugin method call");
 
-		return params._result;
+		return result;
 	}
 }
 

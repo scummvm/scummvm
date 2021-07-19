@@ -331,6 +331,9 @@ public:
 		return rval;
 	}
 
+	Plugins::PluginMethod pluginMethod() const {
+		return Plugins::PluginMethod((Plugins::PluginBase *)Ptr, methodName);
+	}
 
 	// Helper functions for reading or writing values from/to
 	// object, referenced by this Runtime Value.

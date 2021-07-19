@@ -989,10 +989,10 @@ int ccInstance::Run(int32_t curpc) {
 				if (next_call_needs_object) {
 					RuntimeScriptValue obj_rval = registers[SREG_OP];
 					obj_rval.DirectPtrObj();
-					int_ret_val = call_function((Plugins::ScriptContainer *)reg1.Ptr, reg1.methodName,
+					int_ret_val = call_function(reg1.pluginMethod(),
 						&obj_rval, num_args_to_func, func_callstack.GetHead() + 1);
 				} else {
-					int_ret_val = call_function((Plugins::ScriptContainer *)reg1.Ptr, reg1.methodName,
+					int_ret_val = call_function(reg1.pluginMethod(),
 						nullptr, num_args_to_func, func_callstack.GetHead() + 1);
 				}
 

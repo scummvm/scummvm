@@ -83,7 +83,7 @@ extern void ccSetScriptAliveTimer(int);
 // reset the current while loop counter
 extern void ccNotifyScriptStillAlive();
 // for calling exported plugin functions old-style
-extern int call_function(Plugins::ScriptContainer *sc, const Common::String &name,
+extern int call_function(const Plugins::PluginMethod &method,
 	const RuntimeScriptValue *obj, int numparm, const RuntimeScriptValue *parms);
 extern void nullfree(void *data); // in script/script_runtime
 

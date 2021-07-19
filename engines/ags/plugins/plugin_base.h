@@ -196,31 +196,31 @@ public:
 		_sc(sc), _name(name) {
 	}
 
-	bool isValid() const {
+	operator bool() const {
 		return _sc != nullptr;
 	}
 
-	bool operator()(ScriptMethodParams &params) {
+	NumberPtr operator()(ScriptMethodParams &params) const {
 		_sc->execMethod(_name, params);
 		return params._result;
 	}
 
-	NumberPtr operator()(intptr_t val1) {
+	NumberPtr operator()(intptr_t val1) const {
 		ScriptMethodParams params(val1);
 		_sc->execMethod(_name, params);
 		return params._result;
 	}
-	NumberPtr operator()(intptr_t val1, intptr_t val2) {
+	NumberPtr operator()(intptr_t val1, intptr_t val2) const {
 		ScriptMethodParams params(val1, val2);
 		_sc->execMethod(_name, params);
 		return params._result;
 	}
-	NumberPtr operator()(intptr_t val1, intptr_t val2, intptr_t val3) {
+	NumberPtr operator()(intptr_t val1, intptr_t val2, intptr_t val3) const {
 		ScriptMethodParams params(val1, val2, val3);
 		_sc->execMethod(_name, params);
 		return params._result;
 	}
-	NumberPtr operator()(intptr_t val1, intptr_t val2, intptr_t val3, intptr_t val4) {
+	NumberPtr operator()(intptr_t val1, intptr_t val2, intptr_t val3, intptr_t val4) const {
 		ScriptMethodParams params(val1, val2, val3, val4);
 		_sc->execMethod(_name, params);
 		return params._result;
