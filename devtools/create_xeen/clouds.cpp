@@ -32,7 +32,6 @@
 #include "file.h"
 #include "clouds.h"
 
-
 static const char *const MAP_NAMES[86] = {
 	"", "Area A1", "Area A2", "Area A3", "Area A4", "Area B1", "Area B2",
 	"Area B3", "Area B4", "Area C1", "Area C2", "Area C3", "Area C4",
