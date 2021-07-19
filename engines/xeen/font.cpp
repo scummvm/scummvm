@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "xeen/font.h"
 #include "xeen/resources.h"
@@ -34,15 +35,60 @@ byte FontData::_bgColor;
 bool FontData::_fontReduced;
 Justify FontData::_fontJustify;
 
+Common::Language lang;
+int offset_fntEn;
+int offset_fntEnReduced;
+int offset_fntNonEn;
+int offset_fntNonEnReduced;
+int offset_fntEnW;
+int offset_fntEnReducedW;
+int offset_fntNonEnW;
+int offset_fntNonEnReducedW;
+
+
 FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullptr),
 		_writePos(*FontData::_fontWritePos) {
 	setTextColor(0);
+
+	lang = Common::parseLanguage(ConfMan.get("language"));
+	if (Common::RU_RUS == lang) {
+		offset_fntEn            = 0x0000;
+		offset_fntNonEn         = 0x0800;
+		offset_fntEnReduced     = 0x1000;
+		offset_fntNonEnReduced  = 0x1800;
+		offset_fntEnW           = 0x2000;
+		offset_fntNonEnW        = 0x2080;
+		offset_fntEnReducedW    = 0x2100;
+		offset_fntNonEnReducedW = 0x2180;
+	} else {
+		offset_fntEn            = 0x0000;
+		offset_fntEnReduced     = 0x0800;
+		offset_fntEnW           = 0x1000;
+		offset_fntEnReducedW    = 0x1080;
+	}
 }
 
 FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv),
 		_msgWraps(false), _displayString(nullptr), _writePos(*FontData::_fontWritePos) {
 	create(w, h);
 	setTextColor(0);
+
+	lang = Common::parseLanguage(ConfMan.get("language"));
+	if (Common::RU_RUS == lang) {
+		offset_fntEn            = 0x0000;
+		offset_fntNonEn         = 0x0800;
+		offset_fntEnReduced     = 0x1000;
+		offset_fntNonEnReduced  = 0x1800;
+		offset_fntEnW           = 0x2000;
+		offset_fntNonEnW        = 0x2080;
+		offset_fntEnReducedW    = 0x2100;
+		offset_fntNonEnReducedW = 0x2180;
+	} else {
+		offset_fntEn            = 0x0000;
+		offset_fntEnReduced     = 0x0800;
+		offset_fntEnW           = 0x1000;
+		offset_fntEnReducedW    = 0x1080;
+	}
 }
 
 void FontSurface::writeSymbol(int symbolId) {
@@ -193,7 +239,11 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 				} else {
 					if (c == 6)
 						c = ' ';
-					byte charSize = _fontData[0x1000 + (int)c + (_fontReduced ? 0x80 : 0)];
+					int offset_charW = c < 0 ?
+						(_fontReduced ? offset_fntNonEnReducedW : offset_fntNonEnW) + (int)(0x80 + c) :
+						(_fontReduced ? offset_fntEnReducedW : offset_fntEnW) + (int)c;
+					byte charSize = _fontData[offset_charW];
+
 					_writePos.x -= charSize;
 				}
 
@@ -230,9 +280,13 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 					idx = 0;
 				setTextColor(idx);
 			} else if (c < ' ') {
-				// End of string or invalid command
-				_displayString = nullptr;
-				break;
+				if (Common::RU_RUS == lang && c < 0) {
+					writeChar(c, bounds);
+				} else {
+					// End of string or invalid command
+					_displayString = nullptr;
+					break;
+				}
 			} else {
 				// Standard character - write it out
 				writeChar(c, bounds);
@@ -257,14 +311,16 @@ void FontSurface::writeCharacter(char c, const Common::Rect &clipRect) {
 }
 
 char FontSurface::getNextChar() {
-	return  *_displayString++ & 0x7f;
+	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language")))
+		return *_displayString++;
+	return *_displayString++ & 0x7f;
 }
 
 bool FontSurface::getNextCharWidth(int &total) {
-	char c = getNextChar();
+ 	char c = getNextChar();
 
 	if (c > ' ') {
-		total += _fontData[0x1000 + (int)c + (_fontReduced ? 0x80 : 0)];
+		total += _fontData[(_fontReduced ? offset_fntEnReducedW : offset_fntEnW) + (int)c];
 		return false;
 	} else if (c == ' ') {
 		total += 4;
@@ -282,6 +338,9 @@ bool FontSurface::getNextCharWidth(int &total) {
 		c = getNextChar();
 		if (c != 'd')
 			getNextChar();
+		return false;
+	} else if (Common::RU_RUS == lang && c < 0) {
+		total += _fontData[(_fontReduced ? offset_fntNonEnReducedW : offset_fntNonEnW) + (int)(0x80 + c)];
 		return false;
 	} else {
 		--_displayString;
@@ -333,8 +392,16 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 	int yStart = y;
 
 	// Get pointers into font data and surface to write pixels to
-	int charIndex = (int)c + (_fontReduced ? 0x80 : 0);
-	const byte *srcP = &_fontData[charIndex * 16];
+	int offset_charData;
+	int offset_charW;
+	if (Common::RU_RUS == lang && c < 0) {
+		offset_charData = (_fontReduced ? offset_fntNonEnReduced : offset_fntNonEn) + (int)(0x80 + c) * 16;
+		offset_charW = (_fontReduced ? offset_fntNonEnReducedW : offset_fntNonEnW) + (int)(0x80 + c);
+	} else {
+		offset_charData = (_fontReduced ? offset_fntEnReduced : offset_fntEn) + (int)c * 16;
+		offset_charW = (_fontReduced ? offset_fntEnReducedW : offset_fntEnW) + (int)c;
+	}
+	const byte *srcP = &_fontData[offset_charData];
 
 	for (int yp = 0; yp < FONT_HEIGHT; ++yp, ++y) {
 		uint16 lineData = READ_LE_UINT16(srcP); srcP += 2;
@@ -357,7 +424,7 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 
 	addDirtyRect(Common::Rect(_writePos.x, yStart, _writePos.x + FONT_WIDTH,
 		yStart + FONT_HEIGHT));
-	_writePos.x += _fontData[0x1000 + charIndex];
+	_writePos.x += _fontData[offset_charW];
 }
 
 } // End of namespace Xeen
