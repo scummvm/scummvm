@@ -634,6 +634,11 @@ void Cast::loadSoundCasts() {
 				audio->loadStream(*sndData);
 				soundCast->_audio = audio;
 				soundCast->_size = sndData->size();
+				if (g_director->getVersion() < 400) {
+					// The looping flag wasn't added to sound cast members until D4.
+					// In older versions, always loop sounds that contain a loop start and end.
+					soundCast->_looping = audio->hasLoopBounds();
+				}
 			}
 			delete sndData;
 		}

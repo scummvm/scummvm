@@ -547,12 +547,21 @@ Audio::AudioStream *SNDDecoder::getAudioStream(bool looping, DisposeAfterUse::Fl
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream(buffer, _size, _rate, _flags, disposeAfterUse);
 
 	if (looping) {
-		return new Audio::LoopingAudioStream(stream, 0);
-	} else if (_loopEnd != _loopStart) {
-		return new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
-	} else {
-		return stream;
+		if (hasLoopBounds()) {
+			return new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
+		} else {
+			// Not sure if looping sounds can appear without loop bounds.
+			// Let's just log a warning and loop the entire sound...
+			warning("SNDDecoder::getAudioStream: Looping sound has no loop bounds");
+			return new Audio::LoopingAudioStream(stream, 0);
+		}
 	}
+
+	return stream;
+}
+
+bool SNDDecoder::hasLoopBounds() {
+	return _loopStart != 0 || _loopEnd != 0;
 }
 
 AudioFileDecoder::AudioFileDecoder(Common::String &path)
