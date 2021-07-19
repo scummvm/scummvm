@@ -561,8 +561,20 @@ public:
 
 	const char **CONSUMABLE_NAMES() {
 		delete[] _consumableNames;
-		_consumableNames = new const char *[6] { "Gold", "Gems", "Food", "Condition", "", "" };
+		_consumableNames = new const char *[4] { "Gold", "Gems", "Food", "Condition" };
 		return _consumableNames;
+	}
+
+	const char **CONSUMABLE_GOLD_FORMS() {
+		delete[] _consumableGoldForms;
+		_consumableGoldForms = new const char *[1] { "" };
+		return _consumableGoldForms;
+	}
+
+	const char **CONSUMABLE_GEM_FORMS() {
+		delete[] _consumableGemForms;
+		_consumableGemForms = new const char *[1] { "" };
+		return _consumableGemForms;
 	}
 
 	const char **WHERE_NAMES() {
@@ -794,13 +806,19 @@ public:
 		return _ratingText;
 	}
 
+	const char **BORN() {
+		delete[] _born;
+		_born = new const char *[2] { "Born", "" };
+		return _born;
+	}
+
 	const char *AGE_TEXT() {
 		return "\x2\x3"
 			   "c%s\n"
 			   "Current / Natural\n"
 			   "\x3r\t057%u\x3l\t061/ %u\n"
 			   "\x3"
-			   "cBorn: %u / %u\x1";
+			   "c%s: %u / %u\x1";
 	}
 
 	const char *LEVEL_TEXT() {
@@ -845,10 +863,16 @@ public:
 			   "%u in bank\x1\x3l";
 	}
 
+	const char **FOOD_ON_HAND() {
+		delete[] _onHand;
+		_onHand = new const char *[3] { "on hand", "", "" };
+		return _onHand;
+	}
+
 	const char *FOOD_TEXT() {
 		return "\x2\x3"
 			   "cParty %s\n"
-			   "%u on hand\n"
+			   "%u %s\n"
 			   "Enough for %u day%s\x3l";
 	}
 
@@ -1617,9 +1641,15 @@ public:
 			   "077";
 	}
 
+	const char **FOUND() {
+		delete[] _found;
+		_found = new const char *[2] { "found", "" };
+		return _found;
+	}
+
 	const char *X_FOUND_Y() {
 		return "\v060\t000\x3"
-			   "c%s found: %s";
+			   "c%s %s: %s";
 	}
 
 	const char *ON_WHO() {
@@ -1748,12 +1778,24 @@ public:
 
 	const char *PICKS_THE_LOCK() {
 		return "\x3"
-			   "c\v010%s picks the lock!\nPress any key.";
+			   "c\v010%s %s the lock!\nPress any key.";
+	}
+
+	const char **PICK_FORM() {
+		delete[] _pickForm;
+		_pickForm = new const char *[2] { "picks", "" };
+		return _pickForm;
 	}
 
 	const char *UNABLE_TO_PICK_LOCK() {
 		return "\x3"
-			   "c\v010%s was unable to pick the lock!\nPress any key.";
+			   "c\v010%s was %s the lock!\nPress any key.";
+	}
+
+	const char **UNABLE_TO_PICK_FORM() {
+		delete[] _unableToPickForm;
+		_unableToPickForm = new const char *[2] { "unable to pick", "" }; 
+		return _unableToPickForm;
 	}
 
 	const char *CONTROL_PANEL_TEXT() {
