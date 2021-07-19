@@ -278,7 +278,7 @@ void CharacterInfo::addButtons() {
 	addPartyButtons(_vm);
 }
 
-const char* CharacterInfo::getDaysPlurals(int val) {
+const char *CharacterInfo::getDaysPlurals(int val) {
 	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
 		int i = val % 100;
 		if (i < 5 || i > 20)

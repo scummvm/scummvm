@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "xeen/dialogs/dialogs_quick_ref.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
@@ -30,6 +31,24 @@ void QuickReferenceDialog::show(XeenEngine *vm) {
 	QuickReferenceDialog *dlg = new QuickReferenceDialog(vm);
 	dlg->execute();
 	delete dlg;
+}
+
+const char *QuickReferenceDialog::getDaysPlurals(int val) {
+	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+		int i = val % 100;
+		if (i < 5 || i > 20)
+			switch (val % 10) {
+			case 1:
+				return Res.DAYS[0];
+			case 2:
+			case 3:
+			case 4:
+				return Res.DAYS[1];
+			}
+		return Res.DAYS[2];
+	} else {
+		return Res.DAYS[val == 1 ? 0 : 1];
+	}
 }
 
 void QuickReferenceDialog::execute() {
@@ -65,7 +84,7 @@ void QuickReferenceDialog::execute() {
 		lines[3].c_str(), lines[4].c_str(), lines[5].c_str(),
 		lines[6].c_str(), lines[7].c_str(),
 		party._gold, party._gems,
-		food, food == 1 ? "" : "s"
+		food, getDaysPlurals(food)
 	);
 
 	Window &w = windows[24];
