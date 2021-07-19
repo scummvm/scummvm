@@ -82,7 +82,6 @@ using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
 
 const int PLUGIN_API_VERSION = 25;
-#define MAXPLUGINS 20
 
 // On save/restore, the Engine will provide the plugin with a handle. Because we only ever save to one file at a time,
 // we can reuse the same handle.
@@ -760,7 +759,9 @@ void pl_stop_plugins() {
 			}
 		}
 	}
+
 	_GP(plugins).clear();
+	_GP(plugins).reserve(MAXPLUGINS);
 }
 
 void pl_startup_plugins() {
@@ -768,8 +769,10 @@ void pl_startup_plugins() {
 		if (i == 0)
 			_GP(engineExports).AGS_EngineStartup(&_GP(plugins)[0].eiface);
 
-		if (_GP(plugins)[i].available)
-			_GP(plugins)[i]._plugin->AGS_EngineStartup(&_GP(plugins)[i].eiface);
+		if (_GP(plugins)[i].available) {
+			EnginePlugin &ep = _GP(plugins)[i];
+			ep._plugin->AGS_EngineStartup(&ep.eiface);
+		}
 	}
 }
 
@@ -806,6 +809,7 @@ void pl_run_plugin_init_gfx_hooks(const char *driverName, void *data) {
 
 Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> &infos) {
 	_GP(plugins).clear();
+	_GP(plugins).reserve(MAXPLUGINS);
 
 	for (size_t inf_index = 0; inf_index < infos.size(); ++inf_index) {
 		const Shared::PluginInfo &info = infos[inf_index];

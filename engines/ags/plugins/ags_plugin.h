@@ -60,6 +60,8 @@ class BITMAP;
 typedef int HWND;
 #endif
 
+#define MAXPLUGINS 20
+
 #define AGSIFUNC(type) virtual type
 
 #define MASK_WALKABLE   1
@@ -559,26 +561,19 @@ public:
 };
 
 struct EnginePlugin {
-	char        filename[PLUGIN_FILENAME_MAX + 1];
+	char filename[PLUGIN_FILENAME_MAX + 1] = { 0 };
 	AGS::Engine::Library   library;
-	Plugins::PluginBase *_plugin;
-	bool       available;
-	char *savedata;
-	int         savedatasize;
-	int         wantHook;
-	int         invalidatedRegion;
+	Plugins::PluginBase *_plugin = nullptr;
+	bool available = false;
+	char *savedata = nullptr;
+	int savedatasize = 0;
+	int wantHook = 0;
+	int invalidatedRegion = 0;
+	bool builtin = false;
 
 	IAGSEngine  eiface;
-	bool        builtin;
 
 	EnginePlugin() {
-		filename[0] = 0;
-		wantHook = 0;
-		invalidatedRegion = 0;
-		savedata = nullptr;
-		savedatasize = 0;
-		builtin = false;
-		available = false;
 		eiface.version = 0;
 		eiface.pluginId = 0;
 	}

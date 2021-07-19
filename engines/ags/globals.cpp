@@ -297,6 +297,7 @@ Globals::Globals() {
 	// plugins globals
 	_engineExports = new Plugins::Core::EngineExports();
 	_plugins = new Common::Array<EnginePlugin>();
+	_plugins->reserve(MAXPLUGINS);
 
 	// plugin_object_reader.cpp globals
 	_pluginReaders = new PluginObjectReader[MAX_PLUGIN_OBJECT_READERS];

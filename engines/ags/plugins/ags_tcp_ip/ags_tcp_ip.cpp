@@ -31,6 +31,7 @@ const char *AGSTcpIp::AGS_GetPluginName() {
 }
 
 void AGSTcpIp::AGS_EngineStartup(IAGSEngine *engine) {
+	PluginBase::AGS_EngineStartup(engine);
 }
 
 } // namespace AGSTcpIp

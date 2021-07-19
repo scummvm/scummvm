@@ -32,7 +32,7 @@ const char *AGSClipboard::AGS_GetPluginName() {
 }
 
 void AGSClipboard::AGS_EngineStartup(IAGSEngine *engine) {
-	AGS_EngineStartup(engine);
+	PluginBase::AGS_EngineStartup(engine);
 
 	SCRIPT_METHOD(Clipboard::PasteText, AGSClipboard::Clipboard_PasteText);
 	SCRIPT_METHOD(Clipboard::CopyText^1, AGSClipboard::Clipboard_CopyText);
