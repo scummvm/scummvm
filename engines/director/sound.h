@@ -114,8 +114,7 @@ public:
 	AudioDecoder() {};
 	virtual ~AudioDecoder() {};
 public:
-	virtual Audio::AudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) { return nullptr; }
-	virtual Audio::AudioStream *getLoopingAudioStream();
+	virtual Audio::AudioStream *getAudioStream(bool looping = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) { return nullptr; }
 };
 
 class SNDDecoder : public AudioDecoder {
@@ -127,7 +126,7 @@ public:
 	void loadExternalSoundStream(Common::SeekableReadStreamEndian &stream);
 	bool processCommands(Common::SeekableReadStreamEndian &stream);
 	bool processBufferCommand(Common::SeekableReadStreamEndian &stream);
-	Audio::AudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+	Audio::AudioStream *getAudioStream(bool looping = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
 
 private:
 	byte *_data;
@@ -146,7 +145,7 @@ public:
 
 	void setPath(Common::String &path);
 
-	Audio::AudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+	Audio::AudioStream *getAudioStream(bool looping = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
 
 private:
 	Common::String _path;

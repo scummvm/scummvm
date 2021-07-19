@@ -119,11 +119,10 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 					warning("DirectorSound::playCastMember: no audio data attached to %s", memberID.asString().c_str());
 					return;
 				}
+
 				Audio::AudioStream *as;
-				if (looping)
-					as = ad->getLoopingAudioStream();
-				else
-					as = ad->getAudioStream();
+				as = ad->getAudioStream(looping);
+
 				if (!as) {
 					warning("DirectorSound::playCastMember: audio data failed to load from cast");
 					return;
@@ -336,12 +335,13 @@ void DirectorSound::playFPlaySound() {
 		delete sndData;
 
 		Audio::AudioStream *as;
+		bool looping = false;
+
 		if (!_fplayQueue.empty() && _fplayQueue.front().equalsIgnoreCase("continuous")) {
 			_fplayQueue.pop();
-			as = ad->getLoopingAudioStream();
-		} else {
-			as = ad->getAudioStream();
+			looping = true;
 		}
+		as = ad->getAudioStream(looping);
 
 		if (!as) {
 			warning("DirectorSound:playFPlaySound: failed to get audio stream");
@@ -395,13 +395,6 @@ uint8 DirectorSound::getSoundLevel(uint8 soundChannel) {
 	if (!isChannelValid(soundChannel))
 		return 0;
 	return _channels[soundChannel - 1].volume / 32;
-}
-
-Audio::AudioStream *AudioDecoder::getLoopingAudioStream() {
-	Audio::RewindableAudioStream *target = dynamic_cast<Audio::RewindableAudioStream *> (getAudioStream(DisposeAfterUse::YES));
-	if (!target)
-		return nullptr;
-	return new Audio::LoopingAudioStream(target, 0);
 }
 
 SNDDecoder::SNDDecoder()
@@ -545,15 +538,21 @@ bool SNDDecoder::processBufferCommand(Common::SeekableReadStreamEndian &stream) 
 	return true;
 }
 
-Audio::AudioStream *SNDDecoder::getAudioStream(DisposeAfterUse::Flag disposeAfterUse) {
+Audio::AudioStream *SNDDecoder::getAudioStream(bool looping, DisposeAfterUse::Flag disposeAfterUse) {
 	if (!_data)
 		return nullptr;
 	byte *buffer = (byte *)malloc(_size);
 	memcpy(buffer, _data, _size);
-	if (_loopEnd == _loopStart)
-		return Audio::makeRawStream(buffer, _size, _rate, _flags, disposeAfterUse);
-	else
-		return new Audio::SubLoopingAudioStream(Audio::makeRawStream(buffer, _size, _rate, _flags, DisposeAfterUse::YES), 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
+
+	Audio::SeekableAudioStream *stream = Audio::makeRawStream(buffer, _size, _rate, _flags, disposeAfterUse);
+
+	if (looping) {
+		return new Audio::LoopingAudioStream(stream, 0);
+	} else if (_loopEnd != _loopStart) {
+		return new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
+	} else {
+		return stream;
+	}
 }
 
 AudioFileDecoder::AudioFileDecoder(Common::String &path)
@@ -561,7 +560,7 @@ AudioFileDecoder::AudioFileDecoder(Common::String &path)
 	_path = path;
 }
 
-Audio::AudioStream *AudioFileDecoder::getAudioStream(DisposeAfterUse::Flag disposeAfterUse) {
+Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, DisposeAfterUse::Flag disposeAfterUse) {
 	if (_path.empty())
 		return nullptr;
 
@@ -574,14 +573,23 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(DisposeAfterUse::Flag dispo
 	file->readUint32BE();
 	uint32 magic2 = file->readUint32BE();
 	file->seek(0);
+
+	Audio::RewindableAudioStream *stream = nullptr;
 	if (magic1 == MKTAG('R', 'I', 'F', 'F') &&
 		magic2 == MKTAG('W', 'A', 'V', 'E')) {
-		return Audio::makeWAVStream(file, disposeAfterUse);
+		stream = Audio::makeWAVStream(file, disposeAfterUse);
 	} else if (magic1 == MKTAG('F', 'O', 'R', 'M') &&
 				magic2 == MKTAG('A', 'I', 'F', 'F')) {
-		return Audio::makeAIFFStream(file, disposeAfterUse);
+		stream = Audio::makeAIFFStream(file, disposeAfterUse);
 	} else {
 		warning("Unknown file type for %s", _path.c_str());
+	}
+
+	if (stream) {
+		if (looping)
+			return new Audio::LoopingAudioStream(stream, 0);
+		else
+			return stream;
 	}
 
 	return nullptr;
