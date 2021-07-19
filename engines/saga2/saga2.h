@@ -176,6 +176,8 @@ public:
 	bool _showNight;
 	bool _speechText;
 
+	bool _showPosition;
+
 private:
 	Video::SmackerDecoder *_smkDecoder;
 	int _videoX, _videoY;

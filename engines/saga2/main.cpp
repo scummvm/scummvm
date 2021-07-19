@@ -159,6 +159,7 @@ int16 OptionsDialog(bool disableSaveResume = false);
 
 static void mainLoop(bool &cleanExit, int argc, char *argv[]);
 void displayUpdate(void);
+void showDebugMessages();
 
 bool initResourceHandles();
 bool initDisplayPort();
@@ -352,6 +353,15 @@ void displayUpdate(void) {
 		//  Call the asynchronous path finder
 		debugC(1, kDebugEventLoop, "EventLoop: pathfinder update");
 		runPathFinder();
+
+		showDebugMessages();
+	}
+}
+
+void showDebugMessages() {
+	if (g_vm->_showPosition) {
+		TilePoint p = centerActorCoords();
+		WriteStatusF2(0, "Position: %d, %d, %d", p.u, p.v, p.z);
 	}
 }
 
@@ -707,7 +717,7 @@ bool initGUIMessagers(void) {
 		if (Status[i] == NULL)
 			return false;
 		sprintf(debItem, "Status%2.2d", i + 10);
-		Status2[i] = new StatusLineMessager(debItem, i, &g_vm->_mainPort, 468, 21 + (11 * i));
+		Status2[i] = new StatusLineMessager(debItem, i, &g_vm->_mainPort, 20, 21 + (11 * i));
 	}
 	for (int j = 0; j < 3; j++)
 		ratemess[j] = new StatusLineMessager("FrameRates", j, &g_vm->_mainPort, 5, 450 + (11 * j), 500);

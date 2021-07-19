@@ -40,6 +40,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("obj_name", WRAP_METHOD(Console, cmdObjName));
 
 	registerCmd("name2id", WRAP_METHOD(Console, cmdObjNameToID));
+
+	registerCmd("position", WRAP_METHOD(Console, cmdPosition));
 }
 
 Console::~Console() {
@@ -100,6 +102,17 @@ bool Console::cmdObjNameToID(int argc, const char **argv) {
 			debugPrintf("Invalid name index!\n");
 		else
 			debugPrintf("%d\n", id);
+	}
+
+	return true;
+}
+
+bool Console::cmdPosition(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <1/0>\n", argv[0]);
+	else {
+		bool show = atoi(argv[1]);
+		_vm->_showPosition = show;
 	}
 
 	return true;

@@ -46,6 +46,8 @@ private:
 	bool cmdObjNameToID(int argc, const char **argv);
 
 	bool cmdGodmode(int argc, const char **argv);
+
+	bool cmdPosition(int argc, const char **argv);
 };
 
 }
