@@ -1442,6 +1442,7 @@ void initMaps(void) {
 		ripTableList[k].metaID = NoMetaTile;
 		ripTableList[k].ripID = 0;
 		memset(ripTableList[k].zTable, 0, sizeof(ripTableList[k].zTable));
+		ripTableList[k]._index = k;
 	}
 
 	initPlatformCache();
@@ -2086,8 +2087,7 @@ RipTable *RipTable::ripTableAddress(RipTableID id) {
 //	Return a rip table's ID
 
 RipTableID RipTable::thisID(void) {
-	warning("RipTable::thisID(): Unsafe pointer arithmetics");
-	return this - ripTableList;
+	return _index;
 }
 
 /* ====================================================================== *
@@ -2699,7 +2699,7 @@ void buildRipTables(void) {
 			//  Null out pointer
 			mtTable[i] = nullptr;
 			//  Mark the table as unavailable
-			tableIndex = mtRipTable - ripTableList;
+			tableIndex = mtRipTable->_index;
 			tableAvail[tableIndex >> 3] &= ~(1 << (tableIndex & 0x7));
 		}
 	}

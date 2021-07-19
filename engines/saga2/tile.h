@@ -765,13 +765,14 @@ struct RipTable {
 	MetaTileID  metaID;
 	uint16      ripID;
 	int16       zTable[kPlatformWidth][kPlatformWidth];
+	int _index;
 
 	enum {
 		kRipTableSize = 25
 	};
 
 	//  Constructor
-	RipTable(void) : metaID(NoMetaTile), ripID(0) {
+	RipTable(void) : metaID(NoMetaTile), ripID(0), _index(-1) {
 		for (int i = 0; i < kPlatformWidth; i++)
 			for (int j = 0; j < kPlatformWidth; j++)
 				zTable[i][j] = 0;
