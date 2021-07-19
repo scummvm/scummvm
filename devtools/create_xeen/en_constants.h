@@ -2067,12 +2067,77 @@ public:
 			return _di;
 		}
 
+		class EN_DialogsParty : public DialogsParty {
+		public:
+			const int KEY_DELETE() { return Common::KEYCODE_d; }
+			const int KEY_REMOVE() { return Common::KEYCODE_r; }
+			const int KEY_CREATE() { return Common::KEYCODE_c; }
+			const int KEY_EXIT()   { return Common::KEYCODE_x; }
+		};
+		EN_DialogsParty *DIALOGS_PARTY() {
+			if (!_dp) _dp = new EN_DialogsParty();
+			return _dp;
+		}
+
+		class EN_DialogsQuests : public DialogsQuests {
+		public:
+			const int KEY_QUEST_ITEMS()    { return Common::KEYCODE_i; }
+			const int KEY_CURRENT_QUESTS() { return Common::KEYCODE_q; }
+			const int KEY_AUTO_NOTES()     { return Common::KEYCODE_a; }
+		};
+		EN_DialogsQuests *DIALOGS_QUESTS() {
+			if (!_dq) _dq = new EN_DialogsQuests();
+			return _dq;
+		}
+
+		class EN_DialogsQuickFight : public DialogsQuickFight {
+		public:
+			const int KEY_NEXT() { return Common::KEYCODE_t; }
+		};
+		EN_DialogsQuickFight *DIALOGS_QUICK_FIGHT() {
+			if (!_dqf) _dqf = new EN_DialogsQuickFight();
+			return _dqf;
+		}
+
+		class EN_DialogsSpells : public DialogsSpells {
+		public:
+			const int KEY_CAST()   { return Common::KEYCODE_c; }
+			const int KEY_NEW()    { return Common::KEYCODE_n; }
+			const int KEY_FIRE()   { return Common::KEYCODE_f; }
+			const int KEY_ELEC()   { return Common::KEYCODE_e; }
+			const int KEY_COLD()   { return Common::KEYCODE_c; }
+			const int KEY_ACID()   { return Common::KEYCODE_a; }
+			const int KEY_SET()    { return Common::KEYCODE_t; }
+			const int KEY_RETURN() { return Common::KEYCODE_r; }
+		};
+		EN_DialogsSpells *DIALOGS_SPELLS() {
+			if (!_ds) _ds = new EN_DialogsSpells();
+			return _ds;
+		}
+
+		class EN_Locations : public Locations {
+		public:
+			const int KEY_DEP()  { return Common::KEYCODE_d; }
+			const int KEY_WITH() { return Common::KEYCODE_w; }
+			const int KEY_GOLD() { return Common::KEYCODE_o; }
+			const int KEY_GEMS() { return Common::KEYCODE_e; }
+		};
+		EN_Locations *LOCATIONS() {
+			if (!_l) _l = new EN_Locations();
+			return _l;
+		}
+
 	private:
 		EN_DialogsCharInfo     *_dci = NULL;
 		EN_DialogsControlPanel *_dcp = NULL;
 		EN_DialogsCreateChar   *_dcc = NULL;
 		EN_DialogsDifficulty   *_dd = NULL;
 		EN_DialogsItems        *_di = NULL;
+		EN_DialogsParty        *_dp = NULL;
+		EN_DialogsQuests       *_dq = NULL;
+		EN_DialogsQuickFight   *_dqf = NULL;
+		EN_DialogsSpells       *_ds = NULL;
+		EN_Locations           *_l = NULL;
 	};
 
 	EN_KeyConstants *KEY_CONSTANTS() {
