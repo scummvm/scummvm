@@ -314,14 +314,8 @@ void GroupedListWidget::drawWidget() {
 		if (_listIndex[pos] <= kGroupTag) {
 			int groupID = -_listIndex[pos] + kGroupTag;
 			isGroupHeader = true;
-			r.left += g_gui.getStringWidth(Common::U32String(" > "), ThemeEngine::kFontStyleConsole) + _leftPadding;
-			// TODO: Placeholder for expansion / contraction icons (triangles).
-			if (_groupExpanded[groupID])
-				buffer = Common::String(" v ");
-			else
-				buffer = Common::String(" > ");
-			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight - 2),
-									buffer, _state, _drawAlign, inverted, _leftPadding, true, ThemeEngine::kFontStyleConsole);
+			r.left += fontHeight - 2 + _leftPadding;
+			g_gui.theme()->drawFoldIndicator(Common::Rect(_x + _hlLeftPadding, y, _x + fontHeight - 2 + _leftPadding, y + fontHeight - 2), _groupExpanded[groupID]);
 			pad = 0;
 		}
 
