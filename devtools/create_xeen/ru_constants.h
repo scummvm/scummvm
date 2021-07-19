@@ -333,16 +333,16 @@ public:
 		return _classNames;
 	}
 
-	const char **CONDITION_NAMES() {
-		delete[] _conditionNames;
-		_conditionNames = new const char *[17] {
+	const char **CONDITION_NAMES_M() {
+		delete[] _conditionNamesM;
+		_conditionNamesM = new const char *[17] {
 			"\x8F\xE0\xAE\xAA\xAB\xEF\xE2\xA8\xA5",		// "Проклятие",
 			"Heart Broken",                             // "Heart Broken",
 			"\x91\xAB\xA0\xA1\xAE\xE1\xE2\xEC",         // "Слабость",
 			"\x8E\xE2\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xA5", // "Отравление",
 			"\x81\xAE\xAB\xA5\xA7\xAD\xEC",             // "Болезнь",
 			"\x81\xA5\xA7\xE3\xAC\xA8\xA5",             // "Безумие",
-			"\x82\xAB\xEE\xA1\xAB\xF1\xAD(-\xA0)",      // "Влюблён(-а)",
+			"\x82\xAB\xEE\xA1\xAB\xF1\xAD",             // "Влюблён",
 			"\x8D\xA0\xA2\xA5\xE1\xA5\xAB\xA5",         // "Навеселе",
 			"\x91\xAE\xAD",                             // "Сон",
 			"\x82 \xE3\xAD\xEB\xAD\xA8\xA8",            // "В унынии",
@@ -354,7 +354,31 @@ public:
 			"\x93\xAD\xA8\xE7\xE2\xAE\xA6\xA5\xAD",     // "Уничтожен",
 			"\x95\xAE\xE0\xAE\xE8\xA5\xA5"              // "Хорошее"
 		};
-		return _conditionNames;
+		return _conditionNamesM;
+	}
+
+	const char **CONDITION_NAMES_F() {
+		delete[] _conditionNamesF;
+		_conditionNamesF = new const char *[17] {
+			"\x8F\xE0\xAE\xAA\xAB\xEF\xE2\xA8\xA5",         // "Проклятие",
+				"Heart Broken",                             // "Heart Broken",
+				"\x91\xAB\xA0\xA1\xAE\xE1\xE2\xEC",         // "Слабость",
+				"\x8E\xE2\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xA5", // "Отравление",
+				"\x81\xAE\xAB\xA5\xA7\xAD\xEC",             // "Болезнь",
+				"\x81\xA5\xA7\xE3\xAC\xA8\xA5",             // "Безумие",
+				"\x82\xAB\xEE\xA1\xAB\xF1\xAD\xA0",         // "Влюблёна",
+				"\x8D\xA0\xA2\xA5\xE1\xA5\xAB\xA5",         // "Навеселе",
+				"\x91\xAE\xAD",                             // "Сон",
+				"\x82 \xE3\xAD\xEB\xAD\xA8\xA8",            // "В унынии",
+				"\x82 \xE1\xAC\xEF\xE2\xA5\xAD\xA8\xA8",    // "В смятении",
+				"\x8F\xA0\xE0\xA0\xAB\xA8\xE7",             // "Паралич",
+				"\x81.\xE1\xAE\xA7\xAD\xA0\xAD\xA8\xEF",    // "Б.сознания",
+				"\x8C\xA5\xE0\xE2\xA2\xA0",                 // "Мертва",
+				"\x8A\xA0\xAC\xA5\xAD\xEC",                 // "Камень",
+				"\x93\xAD\xA8\xE7\xE2\xAE\xA6\xA5\xAD\xA0", // "Уничтожена",
+				"\x95\xAE\xE0\xAE\xE8\xA5\xA5"              // "Хорошее"
+		};
+		return _conditionNamesF;
 	}
 
 	const char *GOOD() {
@@ -604,7 +628,7 @@ public:
 
 	const char **CONSUMABLE_NAMES() {
 		delete[] _consumableNames;
-		_consumableNames = new const char *[4] { "\x87\xAE\xAB\xAE\xE2\xAE", "\x80\xAB\xAC\xA0\xA7\xEB", "\x8F\xA8\xE9\xA0", "\x91\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA5" }; // "Золото", "Алмазы", "Пища", "Состояние"
+		_consumableNames = new const char *[6] { "\x87\xAE\xAB\xAE\xE2\xAE", "\x80\xAB\xAC\xA0\xA7\xEB", "\x8F\xA8\xE9\xA0", "\x91\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA5", "\x87\xAE\xAB\xAE\xE2\xA0", "\x80\xAB\xAC\xA0\xA7\xAE\xA2" }; // "Золото", "Алмазы", "Пища", "Состояние", "Золота", "Алмазов"
 		return _consumableNames;
 	}
 
@@ -1330,16 +1354,16 @@ public:
 	}
 
 	const char *BUY_X_FOR_Y_GOLD() {
-		return "\x3""l\v000\t000\fd\x8A\xE3\xAF\xA8\xE2\xEC %s\fd \xA7\xA0 %lu \xA7\xAE\xAB\xAE\xE2%s?"; // "\x3""l\v000\t000\fdКупить %s\fd за %lu золот%s?"
+		return "\x3""l\v000\t000\fd\x8A\xE3\xAF\xA8\xE2\xEC %s\fd\n\xA7\xA0 %lu %s?"; // "\x3""l\v000\t000\fdКупить %s\fd\nза %lu %s?"
 	}
 
 	const char *SELL_X_FOR_Y_GOLD() {
-		return "\x3""l\v000\t000\fd\x8F\xE0\xAE\xA4\xA0\xE2\xEC %s\fd \xA7\xA0 %lu \xA7\xAE\xAB\xAE\xE2%s?"; // "\x3""l\v000\t000\fdПродать %s\fd за %lu золот%s?"
+		return "\x3""l\v000\t000\fd\x8F\xE0\xAE\xA4\xA0\xE2\xEC %s\fd\n\xA7\xA0 %lu %s?"; // "\x3""l\v000\t000\fdПродать %s\fd\nза %lu %s?"
 	}
 
-	const char **SELL_X_FOR_Y_GOLD_ENDINGS() {
+	const char **GOLDS() {
 		delete[] _sellXForYGoldEndings;
-		_sellXForYGoldEndings = new const char *[2] { "\xAE\xA9", "\xEB\xE5" }; // "ой", "ых"
+		_sellXForYGoldEndings = new const char *[2] { "\xA7\xAE\xAB\xAE\xE2\xAE\xA9", "\xA7\xAE\xAB\xAE\xE2\xEB\xE5" }; // "золотой", "золотых"
 		return _sellXForYGoldEndings;
 	}
 
@@ -1756,19 +1780,18 @@ public:
 
 	const char *CONTROL_PANEL_TEXT() {
 		return "\x1\f00\x3""c\v000\t000\x8F\xA0\xAD\xA5\xAB\xEC \xE3\xAF\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xEF\x3""r" // "\x1\f00\x3""c\v000\t000Панель управления\x3""r"
-			   "\v022\t045\x87\xA2\f06\xE3\fd\xAA:\t124\f06\x91\fd\xAE\xE5\xE0:"                                // "\v022\t045Зв\f06у\fdк:\t124\f06С\fdохр:"
-			   "\v041\t045\f06\x8C\fd\xE3\xA7.:\t124\x91\f06\xAE\fd\xE5\xE0:\v060\t045\f06\x87\fd\xA0\xA3\xE0:" // "\v041\t045\f06М\fdуз.:\t124С\f06о\fdхр:\v060\t045\f06З\fdагр:"
-			   "\t124\f06\x82\fd\xEB\xE5\xAE\xA4"                                                               // "\t124\f06В\fdыход"
+			   "\v022\t045\f06\x87\fd\xA0\xA3\xE0:\t124\x87\xA2\f06\xE3\fd\xAA:"                                // "\v022\t045\f06З\fdагр:\t124Зв\f06у\fdк:"
+			   "\v041\t045\f06\x91\fd\xAE\xE5\xE0:\t124\f06\x8C\fd\xE3\xA7.:"									// "\v041\t045\f06С\fdохр:\t124М\fdуз.:
+			   "\v060\t045\f06\x82\fd\xEB\xE5\xAE\xA4"                                                          // "\v060\t045\f06В\fdыход"
 			   "\v080\t084\f06\x8F\fd\xAE\xAC\xAE\xE9\xEC %s\t137\x8C\xA0\xA3\xA0\t000\x1";                     // "\v080\t084\f06П\fdомощь %s\t137Мага\t000\x1";
 	}
 
 	const char *CONTROL_PANEL_BUTTONS() {
-		return "\x3"
-			   "c\f11"
-			   "\v022\t062load\t141%s"
-			   "\v041\t062save\t141%s"
-			   "\v060\t062exit"
-			   "\v079\t102Help\fd";
+		return "\x3""c\f11"			               // "\x3""c\f11"
+			   "\v022\t062\xA8\xA3\xE0\xE3\t141%s" // "\v022\t062игру\t141%s"
+			   "\v041\t062\xA8\xA3\xE0\xE3\t141%s" // "\v041\t062игру\t141%s"
+			   "\v060\t062DOS"                     // "\v060\t062DOS"
+			   "\v079\t102\x8C\xE0.\fd";           // "\v079\t102Мр.\fd";
 	}
 
 	const char *ON() {

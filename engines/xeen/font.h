@@ -112,7 +112,7 @@ public:
 	 *		justification is set, the message will be written at _writePos
 	 */
 	const char *writeString(const Common::String &s, const Common::Rect &clipRect);
-
+	bool isSpace(char c);
 	/**
 	 * Write a charcter to the window
 	 * @param c			Character
