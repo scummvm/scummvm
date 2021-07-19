@@ -244,7 +244,7 @@ void Quests::execute() {
 		} else if (Res.KEY_CONSTANTS.DIALOGS_QUESTS.KEY_QUEST_ITEMS == _buttonValue) {
 			mode = QUEST_ITEMS;
 			topRow = 0;
-		} else if (Res.KEY_CONSTANTS.DIALOGS_QUESTS.KEY_AUTO_NOTES == _buttonValue) {
+		} else if (Res.KEY_CONSTANTS.DIALOGS_QUESTS.KEY_CURRENT_QUESTS == _buttonValue) {
 			mode = CURRENT_QUESTS;
 			topRow = 0;
 		}
