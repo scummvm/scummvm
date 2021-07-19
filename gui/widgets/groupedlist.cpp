@@ -120,7 +120,7 @@ void GroupedListWidget::groupByAttribute() {
 }
 
 void GroupedListWidget::sortGroups() {
-	int oldListSize = _list.size();
+	uint oldListSize = _list.size();
 	_list.clear();
 	_listIndex.clear();
 
@@ -140,8 +140,8 @@ void GroupedListWidget::sortGroups() {
 	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list 
 	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog, 
 	// but not doing so the background of scrollbar isn't cleared.
-	if (((_scrollBar->_entriesPerPage < oldListSize) && (_scrollBar->_entriesPerPage > _list.size())) ||
-		((_scrollBar->_entriesPerPage > oldListSize) && (_scrollBar->_entriesPerPage < _list.size()))) {
+	if ((((uint)_scrollBar->_entriesPerPage < oldListSize) && ((uint)_scrollBar->_entriesPerPage > _list.size())) ||
+		(((uint)_scrollBar->_entriesPerPage > oldListSize) && ((uint)_scrollBar->_entriesPerPage < _list.size()))) {
 		g_gui.scheduleTopDialogRedraw();
 	} else {
 		markAsDirty();
