@@ -311,8 +311,7 @@ void FontSurface::writeCharacter(char c, const Common::Rect &clipRect) {
 }
 
 char FontSurface::getNextChar() {
-	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language")))
-		return *_displayString++;
+	if (Common::RU_RUS == lang) return *_displayString++;
 	return *_displayString++ & 0x7f;
 }
 
