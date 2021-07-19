@@ -1351,8 +1351,29 @@ public:
 			virtual const int KEY_WITH() = 0;
 			virtual const int KEY_GOLD() = 0;
 			virtual const int KEY_GEMS() = 0;
+			virtual const int KEY_BROWSE() = 0;
+			virtual const int KEY_BUY_SPELLS() = 0;
+			virtual const int KEY_SPELL_INFO() = 0;
+			virtual const int KEY_SIGN_IN() = 0;
+			virtual const int KEY_DRINK() = 0;
+			virtual const int KEY_FOOD() = 0;
+			virtual const int KEY_TIP() = 0;
+			virtual const int KEY_RUMORS() = 0;
+			virtual const int KEY_HEAL() = 0;
+			virtual const int KEY_DONATION() = 0;
+			virtual const int KEY_UNCURSE() = 0;
+			virtual const int KEY_TRAIN() = 0;
 		};
 		virtual Locations *LOCATIONS() = 0;
+
+		class CloudsOfXeenMenu {
+		public:
+			virtual const int KEY_START_NEW_GAME() = 0;
+			virtual const int KEY_LOAD_GAME() = 0;
+			virtual const int KEY_SHOW_CREDITS() = 0;
+			virtual const int KEY_VIEW_ENDGAME() = 0;
+		};
+		virtual CloudsOfXeenMenu *CLOUDSOFXEENMENU() = 0;
 	};
 	virtual KeyConstants *KEY_CONSTANTS() = 0;
 };

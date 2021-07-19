@@ -585,7 +585,7 @@ public:
 	const char *TRAINING_TEXT() {
 		return "\r\x3""c\x8E\xA1\xE3\xE7\xA5\xAD\xA8\xA5\n"						// "\r\x3""cОбучение\n"
 			   "\n"                                                             // "\n"
-			   "%s\x3""l\v090\t000\x87\xAE\xAB\x3""r\t000%s\x2\x3""c\v122\t021" // "%s\x3""l\v090\t000Зол\x3""r\t000%s\x2\x3""c\v122\t021"
+			   "%s\x3""l\v090\t000\x87\xAE\xAB\x3""r\t000%s\x2\x3""c\v122\t025" // "%s\x3""l\v090\t000Зол\x3""r\t000%s\x2\x3""c\v122\t025"
 			   "\f37\x8E\fd\xA1\xE3\xE7\xA5\xAD\xA8\xA5\t060ESC\x1";            // "\f37О\fdбучение\t060ESC\x1";
 	}
 
@@ -2123,16 +2123,40 @@ public:
 
 		class RU_Locations : public Locations {
 		public:
-			const int KEY_DEP()  { return Common::KEYCODE_d; }
-			const int KEY_WITH() { return Common::KEYCODE_c; }
-			const int KEY_GOLD() { return Common::KEYCODE_p; }
-			const int KEY_GEMS() { return Common::KEYCODE_f; }
+			const int KEY_DEP()        { return Common::KEYCODE_d; }
+			const int KEY_WITH()       { return Common::KEYCODE_c; }
+			const int KEY_GOLD()       { return Common::KEYCODE_p; }
+			const int KEY_GEMS()       { return Common::KEYCODE_f; }
+			const int KEY_BROWSE()     { return Common::KEYCODE_c; }
+			const int KEY_BUY_SPELLS() { return Common::KEYCODE_r; }
+			const int KEY_SPELL_INFO() { return Common::KEYCODE_j; }
+			const int KEY_SIGN_IN()    { return Common::KEYCODE_j; }
+			const int KEY_DRINK()      { return Common::KEYCODE_d; }
+			const int KEY_FOOD()       { return Common::KEYCODE_t; }
+			const int KEY_TIP()        { return Common::KEYCODE_x; }
+			const int KEY_RUMORS()     { return Common::KEYCODE_c; }
+			const int KEY_HEAL()       { return Common::KEYCODE_k; }
+			const int KEY_DONATION()   { return Common::KEYCODE_l; }
+			const int KEY_UNCURSE()    { return Common::KEYCODE_c; }
+			const int KEY_TRAIN()      { return Common::KEYCODE_j; }
 		};
 		RU_Locations *LOCATIONS() {
 			if (!_l) _l = new RU_Locations();
 			return _l;
 		}
 
+		class RU_CloudsOfXeenMenu : public CloudsOfXeenMenu {
+		public:
+			const int KEY_START_NEW_GAME() { return Common::KEYCODE_y; }
+			const int KEY_LOAD_GAME()      { return Common::KEYCODE_p; }
+			const int KEY_SHOW_CREDITS()   { return Common::KEYCODE_c; }
+			const int KEY_VIEW_ENDGAME()   { return Common::KEYCODE_a; }
+		};
+		RU_CloudsOfXeenMenu *CLOUDSOFXEENMENU() {
+			if (!_soxm)
+				_soxm = new RU_CloudsOfXeenMenu();
+			return _soxm;
+		}
 	private:
 		RU_DialogsCharInfo     *_dci = NULL;
 		RU_DialogsControlPanel *_dcp = NULL;
@@ -2144,6 +2168,7 @@ public:
 		RU_DialogsQuickFight   *_dqf = NULL;
 		RU_DialogsSpells       *_ds = NULL;
 		RU_Locations           *_l = NULL;
+		RU_CloudsOfXeenMenu    *_soxm = NULL;
 	};
 
 	RU_KeyConstants *KEY_CONSTANTS() {
