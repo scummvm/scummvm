@@ -147,8 +147,58 @@ const char *pluginError() {
 
 /*------------------------------------------------------------------*/
 
+#define GET_CHAR c = format[0]; format.deleteChar(0)
+
 Common::String ScriptMethodParams::format(int formatIndex) {
-	error("TODO: Implement ScriptMethodParams::format");
+	Common::String result;
+
+	Common::String format((const char *)(*this)[formatIndex]);
+	Common::String paramFormat;
+	char c;
+	++formatIndex;
+
+	while (!format.empty()) {
+		GET_CHAR;
+
+		if (c != '%') {
+			result += c;
+
+		} else if (format.hasPrefix("%")) {
+			GET_CHAR;
+			result += '%';
+
+		} else {
+			// Form up a format specifier
+			paramFormat = "%";
+			while (!format.empty()) {
+				GET_CHAR;
+				paramFormat += c;
+
+				if (Common::isAlpha(c))
+					break;
+			}
+
+			// Convert the parameter to a string. Not sure if all the
+			// casts are necessary, but it's better safe than sorry
+			// for big endian systems
+			switch (tolower(paramFormat.lastChar())) {
+			case 'c':
+				result += Common::String::format(paramFormat.c_str(), (char)(*this)[formatIndex]);
+				break;
+			case 's':
+			case 'p':
+				result += Common::String::format(paramFormat.c_str(), (void *)(*this)[formatIndex]);
+				break;
+			default:
+				result += Common::String::format(paramFormat.c_str(), (int)(*this)[formatIndex]);
+				break;
+			}
+
+			formatIndex++;
+		}
+	}
+
+	return result;
 }
 
 } // namespace Plugins
