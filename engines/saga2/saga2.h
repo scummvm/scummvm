@@ -30,6 +30,7 @@
 
 #include "engines/engine.h"
 
+#include "saga2/console.h"
 #include "saga2/idtypes.h"
 #include "saga2/weapons.h"
 #include "saga2/vdraw.h"
@@ -128,6 +129,7 @@ public:
 public:
 	// We need random numbers
 	Common::RandomSource *_rnd;
+	Console *_console;
 
 	WeaponStuff _weaponRack[kMaxWeapons];
 	weaponID _loadedWeapons;

@@ -61,6 +61,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 
 	g_vm = this;
 
+	_console = nullptr;
 	_bandList = nullptr;
 	_mouseInfo = nullptr;
 	_smkDecoder = nullptr;
@@ -125,6 +126,9 @@ Common::Error Saga2Engine::run() {
 	initGraphics(640, 480);
 
 	_containerList = new ContainerList;
+
+	_console = new Console(this);
+	setDebugger(_console);
 
 	readConfig();
 

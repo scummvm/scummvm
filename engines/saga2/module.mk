@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	blitters.o \
 	button.o \
 	calender.o \
+	console.o \
 	contain.o \
 	display.o \
 	dispnode.o \
