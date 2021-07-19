@@ -287,11 +287,11 @@ void MovieGump::loadTXTSubs(Common::SeekableReadStream *rs) {
 }
 
 // Some fourCCs used in IFF files
-static const uint32 IFF_MAGIC   = 0x464F524D;  // 'FORM'
-static const uint32 IFF_LANG    = 0x4C414E47;  // 'LANG'
-static const uint32 IFF_LANG_FR = 0x4652454E;  // 'FREN'
-static const uint32 IFF_LANG_EN = 0x454E474C;  // 'ENGL'
-static const uint32 IFF_LANG_DE = 0x4745524D;  // 'GERM'
+static const uint32 IFF_MAGIC   = MKTAG('F', 'O', 'R', 'M');
+static const uint32 IFF_LANG    = MKTAG('L', 'A', 'N', 'G');
+static const uint32 IFF_LANG_FR = MKTAG('F', 'R', 'E', 'N');
+static const uint32 IFF_LANG_EN = MKTAG('E', 'N', 'G', 'L');
+static const uint32 IFF_LANG_DE = MKTAG('G', 'E', 'R', 'M');
 
 void MovieGump::loadIFFSubs(Common::SeekableReadStream *rs) {
 	uint32 magic = rs->readUint32BE();
