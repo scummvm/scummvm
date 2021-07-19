@@ -139,8 +139,15 @@ void writeSensor(Sensor *sensor, Common::MemoryWriteStreamDynamic *out) {
 //----------------------------------------------------------------------
 
 void checkSensors(void) {
+	Common::Array<Sensor *> deadSensors;
+
 	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it) {
 		Sensor *sensor = *it;
+
+		if (sensor->_active == false) {
+			deadSensors.push_back(sensor);
+			continue;
+		}
 
 		if (--sensor->checkCtr <= 0) {
 			assert(sensor->checkCtr == 0);
@@ -163,6 +170,9 @@ void checkSensors(void) {
 			sensor->checkCtr = sensorCheckRate;
 		}
 	}
+
+	for (uint i = 0; i < deadSensors.size(); ++i)
+		delete deadSensors[i];
 }
 
 //----------------------------------------------------------------------
@@ -247,6 +257,9 @@ void saveSensors(Common::OutSaveFile *outS) {
 
 	//  Archive all sensors
 	for (Common::List<Sensor *>::iterator it = g_vm->_sensorList.begin(); it != g_vm->_sensorList.end(); ++it) {
+		if ((*it)->_active == false)
+			continue;
+
 		debugC(3, kDebugSaveload, "Saving Sensor %d", getSensorID(*it));
 		out->writeSint16LE((*it)->checkCtr);
 		debugC(3, kDebugSaveload, "... ctr = %d", (*it)->checkCtr);
@@ -329,10 +342,14 @@ SensorList::SensorList(Common::InSaveFile *in) {
 	obj = GameObject::objectAddress(id);
 
 	newSensorList(this);
+
+	debugC(4, kDebugSaveload, "... objID = %d", id);
 }
 
 void SensorList::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeUint16LE(obj->thisID());
+
+	debugC(4, kDebugSaveload, "... objID = %d", obj->thisID());
 }
 
 /* ===================================================================== *
@@ -354,6 +371,10 @@ Sensor::Sensor(Common::InSaveFile *in, int16 ctr) {
 	range = in->readSint16LE();
 
 	newSensor(this, ctr);
+
+	debugC(4, kDebugSaveload, "... objID = %d", objID);
+	debugC(4, kDebugSaveload, "... id = %d", id);
+	debugC(4, kDebugSaveload, "... range = %d", range);
 }
 
 //----------------------------------------------------------------------
@@ -368,6 +389,10 @@ void Sensor::write(Common::MemoryWriteStreamDynamic *out) {
 
 	//  Store the range
 	out->writeSint16LE(range);
+
+	debugC(4, kDebugSaveload, "... objID = %d", obj->thisID());
+	debugC(4, kDebugSaveload, "... id = %d", id);
+	debugC(4, kDebugSaveload, "... range = %d", range);
 }
 
 /* ===================================================================== *

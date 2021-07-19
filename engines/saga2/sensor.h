@@ -115,15 +115,15 @@ public:
 public:
 	//  Constructor -- initial construction
 	SensorList(GameObject *o) : obj(o) {
-		debugC(1, kDebugSensors, "Adding SensorList %p to %p (%s)",
-		       (void *)this, (void *)o, o->objName());
 		newSensorList(this);
+		debugC(1, kDebugSensors, "Adding SensorList %p to %d (%s) (total %d)",
+		       (void *)this, o->thisID(), o->objName(), _list.size());
 	}
 
 	~SensorList() {
-		debugC(1, kDebugSensors, "Deleting SensorList %p of %p (%s)",
-		       (void *)this, (void *)obj, obj->objName());
 		deleteSensorList(this);
+		debugC(1, kDebugSensors, "Deleting SensorList %p of %d (%s) (total %d)",
+		       (void *)this, obj->thisID(), obj->objName(), _list.size());
 	}
 
 	SensorList(Common::InSaveFile *in);
@@ -152,22 +152,25 @@ public:
 	int16           range;
 
 	int16       checkCtr;
+	bool _active;
 
 public:
 	//  Constructor -- initial construction
-	Sensor(GameObject *o, SensorID sensorID, int16 rng) : obj(o), id(sensorID), range(rng) {
-		debugC(1, kDebugSensors, "Adding Sensor %p to %p (%s)",
-		       (void *)this, (void *)o, o->objName());
+	Sensor(GameObject *o, SensorID sensorID, int16 rng) : obj(o), id(sensorID), range(rng), _active(true) {
 		newSensor(this);
+		SensorList *sl = fetchSensorList(o);
+		debugC(1, kDebugSensors, "Adding Sensor %p to %d (%s) (list = %p, total = %d)",
+		       (void *)this, o->thisID(), o->objName(), (void *)sl, (sl != nullptr) ? sl->_list.size() : -1);
 	}
 
 	Sensor(Common::InSaveFile *in, int16 ctr);
 
 	//  Virtural destructor
 	virtual ~Sensor(void) {
-		debugC(1, kDebugSensors, "Deleting Sensor %p to %p (%s)",
-		       (void *)this, (void *)obj, obj->objName());
 		deleteSensor(this);
+		SensorList *sl = fetchSensorList(obj);
+		debugC(1, kDebugSensors, "Deleting Sensor %p of %d (%s) (list = %p, total = %d)",
+		       (void *)this, obj->thisID(), obj->objName(), (void *)sl, (sl != nullptr) ? sl->_list.size() : -1);
 	}
 
 	virtual void write(Common::MemoryWriteStreamDynamic *out);

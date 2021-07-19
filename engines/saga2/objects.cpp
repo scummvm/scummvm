@@ -2024,11 +2024,11 @@ void GameObject::removeSensor(SensorID id) {
 		for (Common::List<Sensor *>::iterator it = sensorList->_list.begin(); it != sensorList->_list.end(); ++it) {
 			if ((*it)->thisID() == id) {
 				//  Remove the sensor, then delete it
-				sensorList->_list.remove(*it);
+				(*it)->_active = false;
+				sensorList->_list.erase(it);
 
 				//  If the list is now empty, delete it
 				if (sensorList->_list.empty()) {
-					deleteSensorList(sensorList);
 					delete sensorList;
 				}
 
@@ -2047,10 +2047,8 @@ void GameObject::removeAllSensors(void) {
 	//  Get this object's sensor list
 	if ((sensorList = fetchSensorList(this)) != nullptr) {
 		//  Iterate through the sensors
-		for (Common::List<Sensor *>::iterator it = sensorList->_list.begin(); it != sensorList->_list.end(); ++it) {
-			deleteSensor(*it);
+		for (Common::List<Sensor *>::iterator it = sensorList->_list.begin(); it != sensorList->_list.end(); ++it)
 			delete *it;
-		}
 
 		deleteSensorList(sensorList);
 		delete sensorList;
