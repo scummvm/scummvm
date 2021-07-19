@@ -278,7 +278,7 @@ void CharacterInfo::addButtons() {
 	addPartyButtons(_vm);
 }
 
-Common::String CharacterInfo::getDaysPlurals(int val) {
+const char* CharacterInfo::getDaysPlurals(int val) {
 	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
 		int i = val % 100;
 		if (i < 5 || i > 20)
@@ -294,7 +294,6 @@ Common::String CharacterInfo::getDaysPlurals(int val) {
 	} else {
 		return Res.DAYS[val == 1 ? 0 : 1];
 	}
-
 }
 
 Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
@@ -330,7 +329,7 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 		c.statColor(c.getCurrentLevel(), c._level._permanent), c.getCurrentLevel(),
 		c.getNumSkills(),
 		foodVal,
-		getDaysPlurals(foodVal).c_str(),
+		getDaysPlurals(foodVal),
 		c.statColor(c.getStat(SPEED), c.getStat(SPEED, true)), c.getStat(SPEED),
 		c.statColor(c.getArmorClass(), c.getArmorClass(true)), c.getArmorClass(),
 		c.getNumAwards(),
@@ -349,6 +348,35 @@ void CharacterInfo::showCursor(bool flag) {
 		_iconSprites.draw(0, flag ? 49 : 48,
 			Common::Point(CURSOR_X[_cursorCell / 5], CURSOR_Y[_cursorCell % 5]));
 	}
+}
+
+const char *CharacterInfo::getBornForm(const Character &c) {
+	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+		switch (c._sex) {
+		case MALE:
+			return Res.BORN[0];
+		case FEMALE:
+			return Res.BORN[1];
+		}
+	}
+	return Res.BORN[0];
+}
+
+const char *CharacterInfo::getFoodOnHandPlurals(int food) {
+	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+		int i = food % 100;
+		if (i < 5 || i > 20)
+			switch (food % 10) {
+			case 1:
+				return Res.FOOD_ON_HAND[0];
+			case 2:
+			case 3:
+			case 4:
+				return Res.FOOD_ON_HAND[1];
+			}
+		return Res.FOOD_ON_HAND[2];
+	}
+	return Res.FOOD_ON_HAND[0];
 }
 
 bool CharacterInfo::expandStat(int attrib, const Character &c) {
@@ -394,7 +422,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		stat1 = c.getAge(false);
 		stat2 = c.getAge(true);
 		msg = Common::String::format(Res.AGE_TEXT, Res.STAT_NAMES[attrib],
-			stat1, stat2, c._birthDay, c._birthYear);
+			stat1, stat2, getBornForm(c), c._birthDay, c._birthYear);
 		break;
 
 	case 8: {
@@ -520,7 +548,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		// Food
 		int food = (party._food / party._activeParty.size()) / 3;
 		msg = Common::String::format(Res.FOOD_TEXT, Res.CONSUMABLE_NAMES[2],
-			party._food, food, food != 1 ? "s" : "");
+			party._food, getFoodOnHandPlurals(food), food, getDaysPlurals(food));
 		break;
 	}
 
