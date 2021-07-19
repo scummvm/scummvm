@@ -86,6 +86,11 @@ public:
 		return hasGameFlag(30) != 0;
 	}
 
+	// Arrived on the hamalayi with the rebels
+	inline bool hasArrivedHamalayi() const {
+		return hasGameFlag(90) != 0;
+	}
+
 	inline bool hasItem(InventoryItems item) const {
 		return hasGameFlag(item) != 0;
 	}
