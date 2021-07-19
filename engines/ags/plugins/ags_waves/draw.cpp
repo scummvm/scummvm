@@ -44,17 +44,17 @@ void AGSWaves::CastWave(int delayMax, int PixelsWide, int n) {
 }
 
 void AGSWaves::DrawEffect(int sprite_a, int sprite_b, int id, int n) {
-	int x, y;
+	int32 x, y;
 
 	BITMAP *src_a = _engine->GetSpriteGraphic(sprite_a);
 	BITMAP *src_b = _engine->GetSpriteGraphic(sprite_b);
 
-	unsigned int **pixel_a = (unsigned int **)_engine->GetRawBitmapSurface(src_a);
-	unsigned int **pixel_b = (unsigned int **)_engine->GetRawBitmapSurface(src_b);
+	uint32 **pixel_a = (uint32 **)_engine->GetRawBitmapSurface(src_a);
+	uint32 **pixel_b = (uint32 **)_engine->GetRawBitmapSurface(src_b);
 
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src_a, &src_width, &src_height, &src_depth);
 
 
@@ -79,9 +79,9 @@ void AGSWaves::DrawEffect(int sprite_a, int sprite_b, int id, int n) {
 
 
 		for (x = 0; x < src_width; x++) {
-			unsigned int colorfromB = pixel_b[y][x];
-			int getX = x;
-			int getY = y;
+			uint32 colorfromB = pixel_b[y][x];
+			int32 getX = x;
+			int32 getY = y;
 
 			if (id == 0) {
 				getX = x - ::AGS::g_vm->getRandomNumber(1) - 2;
