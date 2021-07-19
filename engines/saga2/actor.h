@@ -916,7 +916,7 @@ public:
 	void updateAppearance(int32 deltaTime);
 
 	//  Used To Find Wait State When Preffered Not Available
-	bool SetAvailableAction(int16, ...);
+	bool setAvailableAction(int16 action1, int16 action2, int16 action3, int16 actiondefault);
 
 	//  Set the current animation sequence that the actor is doing.
 	//  Returns the number of poses in the sequence, or 0 if there

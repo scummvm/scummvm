@@ -2362,27 +2362,24 @@ void Actor::updateAppearance(int32) {
 						//Currently Attitude Not Set So Always Hits Zero
 						case 0:
 							//Returns True If Successful No Checking Yet
-							SetAvailableAction(0, actionWaitAgressive,
+							setAvailableAction(actionWaitAgressive,
 							                   actionWaitImpatient,
 							                   actionWaitFriendly,
-							                   actionStand,
-							                   -1);//Second To Last Parameter Is The Default
+							                   actionStand); // This is default
 							break;
 
 						case 1:
-							SetAvailableAction(0, actionWaitImpatient,
+							setAvailableAction(actionWaitImpatient,
 							                   actionWaitFriendly,
 							                   actionWaitAgressive,
-							                   actionStand,
-							                   -1);
+							                   actionStand);
 							break;
 
 						case 2:
-							SetAvailableAction(0, actionWaitFriendly,
+							setAvailableAction(actionWaitFriendly,
 							                   actionWaitImpatient,
 							                   actionWaitAgressive,
-							                   actionStand,
-							                   -1);
+							                   actionStand);
 
 						}
 					} else //Assume -1
@@ -2400,21 +2397,20 @@ void Actor::updateAppearance(int32) {
 	}// End if (appearance)
 }
 
-bool Actor::SetAvailableAction(int16 flags_, ...) {
-	bool            result = false;
-	va_list Actions;
-	va_start(Actions, flags_); //Initialize To First Argument Even Though We Dont Use It In The Loop
+bool Actor::setAvailableAction(int16 action1, int16 action2, int16 action3, int16 actiondefault) {
+	if (setAction(action1, 0))
+		return true;
 
-	for (;;) { //Infinite Loop
-		int thisAction = va_arg(Actions, int);  //Increment To Second Argument Ignoring Flags
-		if (thisAction < 0) break;              //Check If Last Parameter Since Last Always Should Be -1
-		if (setAction(thisAction, flags_)) {     //Try To Set This Action
-			result = true;  //If Successful
-			break;
-		}
-	}
-	va_end(Actions); //Clean Up
-	return result;
+	if (setAction(action2, 0))
+		return true;
+
+	if (setAction(action3, 0))
+		return true;
+
+	if (setAction(actiondefault, 0))
+		return true;
+
+	return false;
 }
 
 //-----------------------------------------------------------------------
