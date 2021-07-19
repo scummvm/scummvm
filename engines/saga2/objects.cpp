@@ -202,6 +202,8 @@ GameObject::GameObject(void) {
 
 	_data.obj = this;
 	_index = 0;
+
+	_godmode = false;
 }
 
 //-----------------------------------------------------------------------
@@ -227,6 +229,8 @@ GameObject::GameObject(const ResourceGameObject &res) {
 
 	_data.obj = this;
 	_index = 0;
+
+	_godmode = false;
 }
 
 GameObject::GameObject(Common::InSaveFile *in) {
@@ -234,6 +238,7 @@ GameObject::GameObject(Common::InSaveFile *in) {
 
 	read(in, false);
 	_index = 0;
+	_godmode = false;
 }
 
 void GameObject::read(Common::InSaveFile *in, bool expandProto) {
@@ -388,6 +393,34 @@ ProtoObj *GameObject::protoAddress(ObjectID id) {
 	GameObject      *obj = objectAddress(id);
 
 	return obj ? obj->prototype : nullptr ;
+}
+
+int32 GameObject::nameIndexToID(uint16 ind) {
+	for (int i = 0; i < objectCount; ++i) {
+		if (objectList[i]._data.nameIndex == ind)
+			return objectList[i].thisID();
+
+		if (objectList[i].prototype && objectList[i].prototype->nameIndex == ind)
+			return objectList[i].thisID();
+	}
+
+	for (int i = 0; i < kActorCount; ++i) {
+		if (actorList[i]._data.nameIndex == ind)
+			return actorList[i].thisID();
+
+		if (actorList[i].prototype && actorList[i].prototype->nameIndex == ind)
+			return actorList[i].thisID();
+	}
+
+	for (int i = 0; i < worldCount; ++i) {
+		if (worldList[i]._data.nameIndex == ind)
+			return worldList[i].thisID();
+
+		if (worldList[i].prototype && worldList[i].prototype->nameIndex == ind)
+			return worldList[i].thisID();
+	}
+
+	return -1;
 }
 
 

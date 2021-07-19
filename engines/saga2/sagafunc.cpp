@@ -1271,6 +1271,10 @@ int16 scriptActorSetVitality(int16 *args) {
 	OBJLOG(SetVitality);
 	if (isActor((GameObject *)thisThread->thisObject)) {
 		Actor       *a = (Actor *)thisThread->thisObject;
+
+		if (a->_godmode)
+			return 0;
+
 		int16       &vitalityRef = a->getStats()->vitality;
 		int16       oldVal = vitalityRef;
 		PlayerActorID   pID;

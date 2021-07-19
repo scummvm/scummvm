@@ -39,6 +39,13 @@ private:
 
 	bool cmdKillProtag(int argc, const char **argv);
 
+	bool cmdKill(int argc, const char **argv);
+
+	bool cmdObjName(int argc, const char **argv);
+
+	bool cmdObjNameToID(int argc, const char **argv);
+
+	bool cmdGodmode(int argc, const char **argv);
 };
 
 }

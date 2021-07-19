@@ -31,7 +31,15 @@ namespace Saga2 {
 Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	registerCmd("killprotag", WRAP_METHOD(Console, cmdKillProtag));
+	registerCmd("kill_protag", WRAP_METHOD(Console, cmdKillProtag));
+
+	registerCmd("kill", WRAP_METHOD(Console, cmdKill));
+
+	registerCmd("godmode", WRAP_METHOD(Console, cmdGodmode));
+
+	registerCmd("obj_name", WRAP_METHOD(Console, cmdObjName));
+
+	registerCmd("name2id", WRAP_METHOD(Console, cmdObjNameToID));
 }
 
 Console::~Console() {
@@ -42,6 +50,57 @@ bool Console::cmdKillProtag(int argc, const char **argv) {
 
 	Actor *protag = (Actor *)GameObject::objectAddress(ActorBaseID);
 	protag->getStats()->vitality = 0;
+
+	return true;
+}
+
+bool Console::cmdKill(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <Actor id>\n", argv[0]);
+	else {
+		Actor *a = (Actor *)GameObject::objectAddress(atoi(argv[1]));
+		if (a)
+			a->getStats()->vitality = 0;
+	}
+
+	return true;
+}
+
+bool Console::cmdGodmode(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s\n <1/0>\n", argv[0]);
+	else {
+		for (ObjectID id = ActorBaseID; id < ActorBaseID + kPlayerActors; ++id) {
+			Actor *a = (Actor *)GameObject::objectAddress(id);
+			a->_godmode = atoi(argv[1]);
+		}
+	}
+
+	return true;
+}
+
+bool Console::cmdObjName(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <Object id>\n", argv[0]);
+	else {
+		GameObject *obj = GameObject::objectAddress(atoi(argv[1]));
+		if (obj)
+			debugPrintf("%s\n", obj->objName());
+	}
+
+	return true;
+}
+
+bool Console::cmdObjNameToID(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <Name index>", argv[0]);
+	else {
+		int32 id = GameObject::nameIndexToID(atoi(argv[1]));
+		if (id == -1)
+			debugPrintf("Invalid name index!\n");
+		else
+			debugPrintf("%d\n", id);
+	}
 
 	return true;
 }

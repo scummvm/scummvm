@@ -174,6 +174,7 @@ protected:
 public:
 	ObjectData _data;
 	uint _index;
+	bool _godmode;
 	//  Default constructor
 	GameObject(void);
 
@@ -196,6 +197,8 @@ public:
 
 	//  Converts object ID into prototype address...
 	static ProtoObj *protoAddress(ObjectID id);
+
+	static int32 nameIndexToID(uint16 ind);
 
 	//  object creation and deletion
 	static GameObject *newObject(void);      // get a newly created object
@@ -400,6 +403,9 @@ public:
 	    int8                dice = 0,
 	    uint8               sides = 1,
 	    int8                perDieMod = 0) {
+		if (_godmode)
+			return false;
+
 		return  prototype->acceptDamage(
 		            thisID(),
 		            enactor,
