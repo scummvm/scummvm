@@ -132,6 +132,12 @@ class ScriptMethodParams : public Common::Array<intptr_t> {
 public:
 	NumberPtr _result;
 
+	ScriptMethodParams();
+	ScriptMethodParams(int val1);
+	ScriptMethodParams(int val1, int val2);
+	ScriptMethodParams(int val1, int val2, int val3);
+	ScriptMethodParams(int val1, int val2, int val3, int val4);
+
 	/**
 	 * Form of Common::String::format for the parameters array.
 	 * @param formatIndex	Param index of the format specifier string
@@ -174,6 +180,47 @@ public:
 	virtual int64 AGS_EngineOnEvent(int, NumberPtr) { return 0; }
 	virtual int    AGS_EngineDebugHook(const char *, int, int) { return 0; }
 	virtual void   AGS_EngineInitGfx(const char *driverID, void *data) {}
+};
+
+class PluginMethod {
+private:
+	ScriptContainer *_sc;
+	Common::String _name;
+public:
+	PluginMethod() : _sc(nullptr) {}
+	PluginMethod(ScriptContainer *sc, const Common::String &name) :
+		_sc(sc), _name(name) {
+	}
+
+	bool isValid() const {
+		return _sc != nullptr;
+	}
+
+	bool operator()(ScriptMethodParams &params) {
+		_sc->execMethod(_name, params);
+		return params._result;
+	}
+
+	NumberPtr operator()(intptr_t val1) {
+		ScriptMethodParams params(val1);
+		_sc->execMethod(_name, params);
+		return params._result;
+	}
+	NumberPtr operator()(intptr_t val1, intptr_t val2) {
+		ScriptMethodParams params(val1, val2);
+		_sc->execMethod(_name, params);
+		return params._result;
+	}
+	NumberPtr operator()(intptr_t val1, intptr_t val2, intptr_t val3) {
+		ScriptMethodParams params(val1, val2, val3);
+		_sc->execMethod(_name, params);
+		return params._result;
+	}
+	NumberPtr operator()(intptr_t val1, intptr_t val2, intptr_t val3, intptr_t val4) {
+		ScriptMethodParams params(val1, val2, val3, val4);
+		_sc->execMethod(_name, params);
+		return params._result;
+	}
 };
 
 extern PluginBase *pluginOpen(const char *filename);

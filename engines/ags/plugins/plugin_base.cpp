@@ -147,6 +147,32 @@ const char *pluginError() {
 
 /*------------------------------------------------------------------*/
 
+ScriptMethodParams::ScriptMethodParams() {
+
+}
+
+ScriptMethodParams::ScriptMethodParams(int val1) {
+	push_back(val1);
+}
+
+ScriptMethodParams::ScriptMethodParams(int val1, int val2) {
+	push_back(val1);
+	push_back(val2);
+}
+
+ScriptMethodParams::ScriptMethodParams(int val1, int val2, int val3) {
+	push_back(val1);
+	push_back(val2);
+	push_back(val3);
+}
+
+ScriptMethodParams::ScriptMethodParams(int val1, int val2, int val3, int val4) {
+	push_back(val1);
+	push_back(val2);
+	push_back(val3);
+	push_back(val4);
+}
+
 #define GET_CHAR c = format[0]; format.deleteChar(0)
 
 Common::String ScriptMethodParams::format(int formatIndex) {

@@ -36,7 +36,7 @@ const char *AGSCreditz2::AGS_GetPluginName() {
 
 void AGSCreditz2::AGS_EngineStartup(IAGSEngine *engine) {
 	PluginBase::AGS_EngineStartup(engine);
-	_playSound = (IntFunction)_engine->GetScriptFunctionAddress("PlaySound");
+	_playSound = _engine->GetScriptFunctionAddress("PlaySound");
 	engine->RequestEventHook(AGSE_POSTSCREENDRAW);
 
 	SCRIPT_METHOD(RunCreditSequence, AGSCreditz2::RunCreditSequence);

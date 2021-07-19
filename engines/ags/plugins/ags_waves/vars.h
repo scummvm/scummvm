@@ -123,9 +123,9 @@ struct Vars {
 	int screen_color_depth = 32;
 	AGSCharacter *playerCharacter = nullptr;
 
-	SCAPI_CHARACTER_GETX Character_GetX = nullptr;
-	SCAPI_CHARACTER_GETY Character_GetY = nullptr;
-	SCAPI_CHARACTER_ID   Character_ID = nullptr;
+	PluginMethod Character_GetX;
+	PluginMethod Character_GetY;
+	PluginMethod Character_ID;
 
 	getMus MusicLoads[80];
 	Soundeffect SFX[500];

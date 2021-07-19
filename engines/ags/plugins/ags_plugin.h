@@ -427,7 +427,7 @@ public:
 	// get the walk-behind baseline of a specific WB area
 	AGSIFUNC(int)    GetWalkbehindBaseline(int32 walkbehind);
 	// get the address of a script function
-	AGSIFUNC(void *) GetScriptFunctionAddress(const char *funcName);
+	AGSIFUNC(Plugins::PluginMethod) GetScriptFunctionAddress(const char *funcName);
 	// get the transparent colour of a bitmap
 	AGSIFUNC(int)    GetBitmapTransparentColor(BITMAP *);
 	// get the character scaling level at a particular point

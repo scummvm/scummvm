@@ -102,18 +102,19 @@ bool ccAddExternalFunctionForPlugin(const String &name, Plugins::ScriptContainer
 	return _GP(simp_for_plugin).add(name, RuntimeScriptValue().SetPluginMethod(sc, name), nullptr) == 0;
 }
 
-void *ccGetSymbolAddressForPlugin(const String &name) {
+Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name) {
 	const ScriptImport *import = _GP(simp_for_plugin).getByName(name);
 	if (import) {
-		return import->Value.Ptr;
+		return Plugins::PluginMethod((Plugins::ScriptContainer *)import->Value.Ptr, name);
 	} else {
 		// Also search the internal symbol table for non-function symbols
 		import = _GP(simp).getByName(name);
 		if (import) {
-			return import->Value.Ptr;
+			return Plugins::PluginMethod((Plugins::ScriptContainer *)import->Value.Ptr, name);
 		}
 	}
-	return nullptr;
+
+	return Plugins::PluginMethod();
 }
 
 // If a while loop does this many iterations without the

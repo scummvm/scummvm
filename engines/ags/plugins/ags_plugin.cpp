@@ -443,7 +443,7 @@ int IAGSEngine::GetWalkbehindBaseline(int32 wa) {
 		quit("!IAGSEngine::GetWalkBehindBase: invalid walk-behind area specified");
 	return _G(croom)->walkbehind_base[wa];
 }
-void *IAGSEngine::GetScriptFunctionAddress(const char *funcName) {
+Plugins::PluginMethod IAGSEngine::GetScriptFunctionAddress(const char *funcName) {
 	return ccGetSymbolAddressForPlugin(funcName);
 }
 int IAGSEngine::GetBitmapTransparentColor(BITMAP *bmp) {

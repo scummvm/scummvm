@@ -43,9 +43,9 @@ void AGSWaves::AGS_EngineStartup(IAGSEngine *engine) {
 
 	StartingValues();
 
-	Character_GetX = (SCAPI_CHARACTER_GETX)engine->GetScriptFunctionAddress("Character::get_X");
-	Character_GetY = (SCAPI_CHARACTER_GETY)engine->GetScriptFunctionAddress("Character::get_Y");
-	Character_ID = (SCAPI_CHARACTER_ID)engine->GetScriptFunctionAddress("Character::ID");
+	Character_GetX = engine->GetScriptFunctionAddress("Character::get_X");
+	Character_GetY = engine->GetScriptFunctionAddress("Character::get_Y");
+	Character_ID = engine->GetScriptFunctionAddress("Character::ID");
 
 	SCRIPT_METHOD(DrawScreenEffect, AGSWaves::DrawScreenEffect);
 	SCRIPT_METHOD(SFX_Play, AGSWaves::SFX_Play);

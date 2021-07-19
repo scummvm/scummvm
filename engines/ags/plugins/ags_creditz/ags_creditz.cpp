@@ -528,7 +528,7 @@ void AGSCreditz::drawStEffects(int sequence, int id, int style) {
 
 	if (style == 1) {
 		if (set2 >= 0 && _numChars < (int)teksti.size() && _timer2 == 0) {
-			(*_playSound)(set2);
+			_playSound(set2);
 		}
 
 		if (_timer2 <= set1) {

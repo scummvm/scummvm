@@ -111,7 +111,7 @@ protected:
 	};
 
 	Version _version;
-	IntFunction _playSound;
+	PluginMethod _playSound;
 	CreditArray _credits[10];
 	StCreditArray _stCredits[10];
 	bool _creditsRunning = 0, _paused = 0, _staticCredits = 0;

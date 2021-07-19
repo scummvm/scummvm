@@ -1309,8 +1309,7 @@ int DrawReflections(int id, int charobj = 0) {
 	int *obst;
 	int flipped = 0;
 	if (charobj == 0) {
-		int (*sfGetGameParameter)(int, int, int, int);
-		sfGetGameParameter = ((int(*)(int, int, int, int)) engine->GetScriptFunctionAddress("GetGameParameter"));
+		PluginMethod sfGetGameParameter = engine->GetScriptFunctionAddress("GetGameParameter");
 		flipped = sfGetGameParameter(13, currchar->view + 1, currchar->loop, currchar->frame);
 	} else flipped = 0;
 	obst = new int [w];

@@ -1275,8 +1275,7 @@ void AGSPalRender::Raycast_Render(ScriptMethodParams &params) {
 			if (vf == nullptr) engine->AbortGame("Raycast_Render: Unable to load viewframe of sprite.");
 			else {
 				sprite[spriteOrder[i]].texture = vf->pic;
-				int (*sfGetGameParameter)(int, int, int, int);
-				sfGetGameParameter = ((int(*)(int, int, int, int)) engine->GetScriptFunctionAddress("GetGameParameter"));
+				PluginMethod sfGetGameParameter = engine->GetScriptFunctionAddress("GetGameParameter");
 				flipped = sfGetGameParameter(13, sprite[spriteOrder[i]].view, loop, sprite[spriteOrder[i]].frame);
 			}
 		}
