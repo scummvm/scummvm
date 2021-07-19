@@ -24,12 +24,13 @@
 #define AGS_PLUGINS_AGS_WAVES_AGS_WAVES_H
 
 #include "ags/plugins/ags_plugin.h"
+#include "ags/plugins/ags_waves/vars.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSWaves {
 
-class AGSWaves : public PluginBase {
+class AGSWaves : public PluginBase, public Vars {
 	SCRIPT_HASH(AGSWaves)
 private:
 	void DrawScreenEffect(ScriptMethodParams &params);
@@ -82,8 +83,15 @@ private:
 	void TintProper(ScriptMethodParams &params);
 	void GetWalkbehindBaserine(ScriptMethodParams &params);
 	void SetWalkbehindBaserine(ScriptMethodParams &params);
+
+private:
+	void StartingValues();
+
+	void CastWave(int delayMax, int PixelsWide, int n);
+	void DrawEffect(int sprite_a, int sprite_b, int id, int n);
+
 public:
-	AGSWaves() : PluginBase() {}
+	AGSWaves() : PluginBase(), Vars() {}
 	virtual ~AGSWaves() {}
 
 	const char *AGS_GetPluginName() override;

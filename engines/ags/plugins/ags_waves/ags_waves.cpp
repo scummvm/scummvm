@@ -26,12 +26,26 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSWaves {
 
+const unsigned int Magic = 0xACAB0000;
+const unsigned int Version = 1;
+const unsigned int SaveMagic = Magic + Version;
+const float PI = 3.14159265f;
+
 const char *AGSWaves::AGS_GetPluginName() {
 	return "AGS Waves";
 }
 
 void AGSWaves::AGS_EngineStartup(IAGSEngine *engine) {
 	PluginBase::AGS_EngineStartup(engine);
+
+	if (engine->version < 13)
+		engine->AbortGame("Engine interface is too old, need newer version of AGS.");
+
+	StartingValues();
+
+	Character_GetX = (SCAPI_CHARACTER_GETX)engine->GetScriptFunctionAddress("Character::get_X");
+	Character_GetY = (SCAPI_CHARACTER_GETY)engine->GetScriptFunctionAddress("Character::get_Y");
+	Character_ID = (SCAPI_CHARACTER_ID)engine->GetScriptFunctionAddress("Character::ID");
 
 	SCRIPT_METHOD(DrawScreenEffect, AGSWaves::DrawScreenEffect);
 	SCRIPT_METHOD(SFX_Play, AGSWaves::SFX_Play);
@@ -86,7 +100,8 @@ void AGSWaves::AGS_EngineStartup(IAGSEngine *engine) {
 }
 
 void AGSWaves::DrawScreenEffect(ScriptMethodParams &params) {
-	//PARAMS4(int, sprite, int, sprite_prev, int, ide, int, n);
+	PARAMS4(int, sprite, int, sprite_prev, int, ide, int, n);
+	DrawEffect(sprite, sprite_prev, ide, n);
 }
 
 void AGSWaves::SFX_Play(ScriptMethodParams &params) {
@@ -195,16 +210,62 @@ void AGSWaves::ReadVariable(ScriptMethodParams &params) {
 }
 
 void AGSWaves::GameDoOnceOnly(ScriptMethodParams &params) {
-	//PARAMS1(const char *, value);
+//	PARAMS1(const char *, value);
+
+	GetGDState(params);
+	if (params._result) {
+		// Set state to false
+		params.push_back(false);
+		SetGDState(params);
+
+		params._result = true;
+	} else {
+		params._result = false;
+	}
 }
 
 void AGSWaves::SetGDState(ScriptMethodParams &params) {
-	//PARAMS2(const char *, value, bool, setvalue);
+	PARAMS2(const char *, value, bool, setValue);
+
+	int id = -1;
+	for (int i = 0; i <= usedTokens; i++) {
+		if (Token[i] != NULL && strcmp(Token[i], value) == 0) {
+			id = i;
+			TokenUnUsed[i] = setValue;
+			i = usedTokens + 1;
+		}
+	}
+
+	if (id == -1) {
+		// It doesn't find it while trying to set its state
+		// create the thing with said state
+		id = usedTokens;
+		TokenUnUsed[id] = setValue;
+		if (Token[id] != NULL)
+			free(Token[id]);
+
+		Token[id] = scumm_strdup(value);
+		usedTokens++;
+	}
 }
 
 void AGSWaves::GetGDState(ScriptMethodParams &params) {
-	//PARAMS1(const char *, value);
-	params._result = false;
+	PARAMS1(const char *, value);
+
+	int id = -1;
+
+	for (int i = 0; i <= usedTokens; i++) {
+		if (Token[i] != NULL && strcmp(Token[i], value) == 0) {
+			id = i;
+			i = usedTokens + 1;
+		}
+	}
+
+	if (id == -1) {
+		params._result = true;
+	} else {
+		params._result = TokenUnUsed[id];
+	}
 }
 
 void AGSWaves::ResetAllGD(ScriptMethodParams &params) {
@@ -285,6 +346,32 @@ void AGSWaves::GetWalkbehindBaserine(ScriptMethodParams &params) {
 
 void AGSWaves::SetWalkbehindBaserine(ScriptMethodParams &params) {
 	//PARAMS2(int, id, int, base);
+}
+
+void AGSWaves::StartingValues() {
+	GeneralAudio.NumOfChannels = 0;
+	GeneralAudio.Initialized = false;
+	GeneralAudio.Disabled = false;
+	GeneralAudio.FilterFrequency = 10;
+	GeneralAudio.SoundValue = 0;
+	MFXStream.ID = 0;
+	MFXStream.Channel = -1;
+	MFXStream.Switch = false;
+	MFXStream.FadeTime = 0;
+	MFXStream.FadeRate = 0.0;
+	MFXStream.FadeVolume = 0.0;
+	MFXStream.HaltedZero = false;
+	MFXStream.HaltedOne = false;
+
+	int j = 0;
+	while (j < 2) {
+		globalStream[j].Filename = NULL;
+		globalStream[j].repeat = 0;
+		globalStream[j].volume = 0;
+		globalStream[j].Vorbis = NULL;
+		globalStream[j].fix_click = false;
+		j++;
+	}
 }
 
 } // namespace AGSWaves
