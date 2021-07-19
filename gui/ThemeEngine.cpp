@@ -1447,7 +1447,7 @@ void ThemeEngine::drawFoldIndicator(const Common::Rect &r, bool expanded) {
 	if (expanded)
 		orient = Graphics::VectorRenderer::kTriangleDown;
 	else
-		orient = Graphics::VectorRenderer::kTriangleUp;
+		orient = Graphics::VectorRenderer::kTriangleRight;
 
 	_vectorRenderer->setFillMode(Graphics::VectorRenderer::kFillForeground);
 	_vectorRenderer->setFgColor(_textColors[kTextColorNormal]->r, _textColors[kTextColorNormal]->g, _textColors[kTextColorNormal]->b);
