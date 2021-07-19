@@ -842,6 +842,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 
 		String expect_filename = apl->library.GetFilenameForLib(apl->filename);
 		if (apl->library.Load(apl->filename)) {
+			apl->_plugin = apl->library.getPlugin();
 			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded as '%s', resolving imports...", apl->filename, expect_filename.GetCStr());
 
 		} else {

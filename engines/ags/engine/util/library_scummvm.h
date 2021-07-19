@@ -34,10 +34,11 @@ namespace AGS {
 namespace Engine {
 
 class ScummVMLibrary : public BaseLibrary {
+private:
+	Plugins::PluginBase *_library = nullptr;
+
 public:
-	ScummVMLibrary()
-		: _library(nullptr) {
-	};
+	ScummVMLibrary() : BaseLibrary() {}
 
 	~ScummVMLibrary() override {
 		Unload();
@@ -67,8 +68,9 @@ public:
 		}
 	}
 
-private:
-	Plugins::PluginBase *_library;
+	Plugins::PluginBase *getPlugin() const {
+		return _library;
+	}
 };
 
 
