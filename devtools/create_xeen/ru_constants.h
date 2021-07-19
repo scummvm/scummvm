@@ -593,7 +593,7 @@ public:
 		return "\x3""c\v000\t000%s\x3""l\n"																					 // "\x3""c\v000\t000%s\x3""l\n"
 			   "\n"																											 // "\n"
 			   "\x87\xAE\xAB\x3""r\t000%s\x3""l\n"																			 // "Зол\x3""r\t000%s\x3""l\n"
-			   "\x80\xAB\xAC\xA7\x3""r\t000%s\x2\x3""c\v096\t007\f37\x80\fd\xAB\xAC\xA7\t035\f37\x87\fd\xAE\xAB\t067ESC\x1"; // "Алмз\x3""r\t000%s\x2\x3""c\v096\t007\f37А\fdлмз\t035\f37З\fdол\t067ESC\x1";
+			   "\x80\xAB\xAC\xA7\x3""r\t000%s\x2\x3""c\v096\t013\f37\x80\fd\xAB\xAC\xA7\t035\f37\x87\fd\xAE\xAB\t067ESC\x1"; // "Алмз\x3""r\t000%s\x2\x3""c\v096\t013\f37А\fdлмз\t035\f37З\fdол\t067ESC\x1";
 	}
 
 	const char *GOLD_GEMS_2() {
@@ -2073,12 +2073,77 @@ public:
 			return _di;
 		}
 
+		class RU_DialogsParty : public DialogsParty {
+		public:
+			const int KEY_DELETE() { return Common::KEYCODE_e; }
+			const int KEY_REMOVE() { return Common::KEYCODE_d; }
+			const int KEY_CREATE() { return Common::KEYCODE_c; }
+			const int KEY_EXIT()   { return Common::KEYCODE_s; }
+		};
+		RU_DialogsParty *DIALOGS_PARTY() {
+			if (!_dp) _dp = new RU_DialogsParty();
+			return _dp;
+		}
+
+		class RU_DialogsQuests : public DialogsQuests {
+		public:
+			const int KEY_QUEST_ITEMS()    { return Common::KEYCODE_d; }
+			const int KEY_CURRENT_QUESTS() { return Common::KEYCODE_p; }
+			const int KEY_AUTO_NOTES()     { return Common::KEYCODE_f; }
+		};
+		RU_DialogsQuests *DIALOGS_QUESTS() {
+			if (!_dq) _dq = new RU_DialogsQuests();
+			return _dq;
+		}
+
+		class RU_DialogsQuickFight : public DialogsQuickFight {
+		public:
+			const int KEY_NEXT() { return Common::KEYCODE_c; }
+		};
+		RU_DialogsQuickFight *DIALOGS_QUICK_FIGHT() {
+			if (!_dqf) _dqf = new RU_DialogsQuickFight();
+			return _dqf;
+		}
+
+		class RU_DialogsSpells : public DialogsSpells {
+		public:
+			const int KEY_CAST()   { return Common::KEYCODE_p; }
+			const int KEY_NEW()    { return Common::KEYCODE_y; }
+			const int KEY_FIRE()   { return Common::KEYCODE_j; }
+			const int KEY_ELEC()   { return Common::KEYCODE_u; }
+			const int KEY_COLD()   { return Common::KEYCODE_LEFTBRACKET; }
+			const int KEY_ACID()   { return Common::KEYCODE_z; }
+			const int KEY_SET()    { return Common::KEYCODE_e; }
+			const int KEY_RETURN() { return Common::KEYCODE_d; }
+		};
+		RU_DialogsSpells *DIALOGS_SPELLS() {
+			if (!_ds) _ds = new RU_DialogsSpells();
+			return _ds;
+		}
+
+		class RU_Locations : public Locations {
+		public:
+			const int KEY_DEP()  { return Common::KEYCODE_d; }
+			const int KEY_WITH() { return Common::KEYCODE_c; }
+			const int KEY_GOLD() { return Common::KEYCODE_p; }
+			const int KEY_GEMS() { return Common::KEYCODE_f; }
+		};
+		RU_Locations *LOCATIONS() {
+			if (!_l) _l = new RU_Locations();
+			return _l;
+		}
+
 	private:
 		RU_DialogsCharInfo     *_dci = NULL;
 		RU_DialogsControlPanel *_dcp = NULL;
 		RU_DialogsCreateChar   *_dcc = NULL;
 		RU_DialogsDifficulty   *_dd = NULL;
 		RU_DialogsItems        *_di = NULL;
+		RU_DialogsParty        *_dp = NULL;
+		RU_DialogsQuests       *_dq = NULL;
+		RU_DialogsQuickFight   *_dqf = NULL;
+		RU_DialogsSpells       *_ds = NULL;
+		RU_Locations           *_l = NULL;
 	};
 
 	RU_KeyConstants *KEY_CONSTANTS() {

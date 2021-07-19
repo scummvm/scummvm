@@ -303,8 +303,8 @@ int BaseLocation::wait() {
 BankLocation::BankLocation() : BaseLocation(BANK) {
 	_icons1.load("bank.icn");
 	_icons2.load("bank2.icn");
-	addButton(Common::Rect(234, 108, 259, 128), Common::KEYCODE_d, &_icons1);
-	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_w, &_icons1);
+	addButton(Common::Rect(234, 108, 259, 128), Res.KEY_CONSTANTS.LOCATIONS.KEY_DEP, &_icons1);
+	addButton(Common::Rect(261, 108, 285, 128), Res.KEY_CONSTANTS.LOCATIONS.KEY_WITH, &_icons1);
 	addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_icons1);
 	_animFrame = 1;
 
@@ -328,9 +328,9 @@ void BankLocation::drawBackground() {
 }
 
 Character *BankLocation::doOptions(Character *c) {
-	if (_buttonValue == Common::KEYCODE_d)
+	if (_buttonValue == Res.KEY_CONSTANTS.LOCATIONS.KEY_DEP)
 		_buttonValue = (int)WHERE_PARTY;
-	else if (_buttonValue == Common::KEYCODE_w)
+	else if (_buttonValue == Res.KEY_CONSTANTS.LOCATIONS.KEY_WITH)
 		_buttonValue = (int)WHERE_BANK;
 	else
 		return c;
@@ -353,11 +353,17 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 		gold = party._gold;
 		gems = party._gems;
 	}
-
 	for (uint idx = 0; idx < _buttons.size(); ++idx)
 		_buttons[idx]._sprites = &_icons2;
-	_buttons[0]._value = Common::KEYCODE_o;
-	_buttons[1]._value = Common::KEYCODE_e;
+
+	if (g_vm->getLanguage() == Common::RU_RUS) {
+		// In RU version sprites in wrong order
+		_buttons[1]._value = Res.KEY_CONSTANTS.LOCATIONS.KEY_GOLD;
+		_buttons[0]._value = Res.KEY_CONSTANTS.LOCATIONS.KEY_GEMS;
+	} else {
+		_buttons[0]._value = Res.KEY_CONSTANTS.LOCATIONS.KEY_GOLD;
+		_buttons[1]._value = Res.KEY_CONSTANTS.LOCATIONS.KEY_GEMS;
+	}
 	_buttons[2]._value = Common::KEYCODE_ESCAPE;
 
 	Common::String msg = Common::String::format(Res.GOLD_GEMS,
@@ -376,9 +382,9 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 
 	do {
 		wait();
-		if (_buttonValue == Common::KEYCODE_o) {
+		if (_buttonValue == Res.KEY_CONSTANTS.LOCATIONS.KEY_GOLD) {
 			consType = CONS_GOLD;
-		} else if (_buttonValue == Common::KEYCODE_e) {
+		} else if (_buttonValue == Res.KEY_CONSTANTS.LOCATIONS.KEY_GEMS) {
 			consType = CONS_GEMS;
 		} else if (_buttonValue == Common::KEYCODE_ESCAPE) {
 			break;
@@ -433,8 +439,8 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 
 	for (uint idx = 0; idx < _buttons.size(); ++idx)
 		_buttons[idx]._sprites = &_icons1;
-	_buttons[0]._value = Common::KEYCODE_d;
-	_buttons[1]._value = Common::KEYCODE_w;
+	_buttons[0]._value = Res.KEY_CONSTANTS.LOCATIONS.KEY_DEP;
+	_buttons[1]._value = Res.KEY_CONSTANTS.LOCATIONS.KEY_WITH;
 	_buttons[2]._value = Common::KEYCODE_ESCAPE;
 
 	w.close();
