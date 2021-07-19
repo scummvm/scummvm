@@ -74,7 +74,7 @@ void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
 		return;
 
 	AudioFileDecoder af(filename);
-	Audio::RewindableAudioStream *sound = af.getAudioStream(DisposeAfterUse::YES);
+	Audio::AudioStream *sound = af.getAudioStream(DisposeAfterUse::YES);
 
 	cancelFade(soundChannel);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, sound, -1, getChannelVolume(soundChannel));
@@ -398,7 +398,7 @@ uint8 DirectorSound::getSoundLevel(uint8 soundChannel) {
 }
 
 Audio::AudioStream *AudioDecoder::getLoopingAudioStream() {
-	Audio::RewindableAudioStream *target = getAudioStream(DisposeAfterUse::YES);
+	Audio::RewindableAudioStream *target = dynamic_cast<Audio::RewindableAudioStream *> (getAudioStream(DisposeAfterUse::YES));
 	if (!target)
 		return nullptr;
 	return new Audio::LoopingAudioStream(target, 0);
@@ -411,6 +411,7 @@ SNDDecoder::SNDDecoder()
 	_size = 0;
 	_rate = 0;
 	_flags = 0;
+	_loopStart = _loopEnd = 0;
 }
 
 SNDDecoder::~SNDDecoder() {
@@ -491,8 +492,8 @@ bool SNDDecoder::processBufferCommand(Common::SeekableReadStreamEndian &stream) 
 	uint32 param = stream.readUint32();
 	_rate = stream.readUint16();
 	/*uint16 rateExt =*/stream.readUint16();
-	/*uint32 loopStart =*/stream.readUint32();
-	/*uint32 loopEnd =*/stream.readUint32();
+	_loopStart = stream.readUint32();
+	_loopEnd = stream.readUint32();
 	byte encoding = stream.readByte();
 	byte baseFrequency = stream.readByte();
 	if (baseFrequency != 0x3c) {
@@ -544,12 +545,15 @@ bool SNDDecoder::processBufferCommand(Common::SeekableReadStreamEndian &stream) 
 	return true;
 }
 
-Audio::RewindableAudioStream *SNDDecoder::getAudioStream(DisposeAfterUse::Flag disposeAfterUse) {
+Audio::AudioStream *SNDDecoder::getAudioStream(DisposeAfterUse::Flag disposeAfterUse) {
 	if (!_data)
 		return nullptr;
 	byte *buffer = (byte *)malloc(_size);
 	memcpy(buffer, _data, _size);
-	return Audio::makeRawStream(buffer, _size, _rate, _flags, disposeAfterUse);
+	if (_loopEnd == _loopStart)
+		return Audio::makeRawStream(buffer, _size, _rate, _flags, disposeAfterUse);
+	else
+		return new Audio::SubLoopingAudioStream(Audio::makeRawStream(buffer, _size, _rate, _flags, DisposeAfterUse::YES), 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
 }
 
 AudioFileDecoder::AudioFileDecoder(Common::String &path)
@@ -557,7 +561,7 @@ AudioFileDecoder::AudioFileDecoder(Common::String &path)
 	_path = path;
 }
 
-Audio::RewindableAudioStream *AudioFileDecoder::getAudioStream(DisposeAfterUse::Flag disposeAfterUse) {
+Audio::AudioStream *AudioFileDecoder::getAudioStream(DisposeAfterUse::Flag disposeAfterUse) {
 	if (_path.empty())
 		return nullptr;
 

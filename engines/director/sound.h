@@ -114,7 +114,7 @@ public:
 	AudioDecoder() {};
 	virtual ~AudioDecoder() {};
 public:
-	virtual Audio::RewindableAudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) { return nullptr; }
+	virtual Audio::AudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) { return nullptr; }
 	virtual Audio::AudioStream *getLoopingAudioStream();
 };
 
@@ -127,7 +127,7 @@ public:
 	void loadExternalSoundStream(Common::SeekableReadStreamEndian &stream);
 	bool processCommands(Common::SeekableReadStreamEndian &stream);
 	bool processBufferCommand(Common::SeekableReadStreamEndian &stream);
-	Audio::RewindableAudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+	Audio::AudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 private:
 	byte *_data;
@@ -135,6 +135,8 @@ private:
 	uint32 _size;
 	uint16 _rate;
 	byte _flags;
+	uint32 _loopStart;
+	uint32 _loopEnd;
 };
 
 class AudioFileDecoder : public AudioDecoder {
@@ -144,7 +146,7 @@ public:
 
 	void setPath(Common::String &path);
 
-	Audio::RewindableAudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+	Audio::AudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 private:
 	Common::String _path;
