@@ -320,6 +320,667 @@ void AGSWaves::DrawForceField(ScriptMethodParams &params) {
 	_engine->ReleaseBitmapSurface(src);
 }
 
+void AGSWaves::SpriteSkew(ScriptMethodParams &params) {
+	PARAMS5(int, sprite, float, xskewmin, float, yskewmin, float, xskewmax, float, yskewmax);
+
+	BITMAP *src = _engine->GetSpriteGraphic(sprite);
+	uint32 **pixel_src = (uint32 **)_engine->GetRawBitmapSurface(src);
+
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+	_engine->ReleaseBitmapSurface(src);
+
+	BITMAP *dest = _engine->GetSpriteGraphic(sprite);
+	uint32 **pixel_dest = (uint32 **)_engine->GetRawBitmapSurface(dest);
+
+	int x, y;
+
+	float raty = abs(yskewmin - yskewmax) / float(src_height * src_width);
+	float ratx = abs(xskewmin - xskewmax) / float(src_height * src_width);
+	float yskew = yskewmin;
+	float xskew = xskewmin;
+
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			int ry = int((float(x) * yskew) + float(y));
+			int rx = int(float(x) + (float(y) * xskew));
+
+			if (ry > src_height - 1) ry = src_height - 1;
+			if (rx > src_width - 1) rx = src_width - 1;
+			if (rx < 0) rx = 0;
+			if (ry < 0) ry = 0;
+
+			int getColor = pixel_src[ry][rx];
+			int red = getRcolor(getColor);
+			int green = getGcolor(getColor);
+			int blue = getBcolor(getColor);
+			int alpha = getAcolor(getColor);
+
+			pixel_dest[y][x] = SetColorRGBA(red, green, blue, alpha);
+
+			if (xskewmin < xskewmax) xskew += ratx;
+			else xskew -= ratx;
+
+			if (yskewmin < yskewmax) yskew += raty;
+			else yskew -= raty;
+		}
+	}
+
+	_engine->ReleaseBitmapSurface(dest);
+}
+
+void AGSWaves::ReturnWidth(ScriptMethodParams &params) {
+	//PARAMS8(int, x1, int, y1, int, x2, int, y2, int, x3, int, y3, int, x4, int, y4);
+	int x1 = params[0];
+	int x2 = params[2];
+	int x3 = params[4];
+	int x4 = params[6];
+
+	float ax = float(x1);
+	float bx = float(x2);
+	float cx = float(x3);
+	float dx = float(x4);
+
+	params._result = (int(max4(ax, bx, cx, dx)) + 1);
+}
+
+void AGSWaves::ReturnHeight(ScriptMethodParams &params) {
+	//PARAMS8(int, x1, int, y1, int, x2, int, y2, int, x3, int, y3, int, x4, int, y4);
+	int y1 = params[1];
+	int y2 = params[3];
+	int y3 = params[5];
+	int y4 = params[7];
+
+	float ay = float(y1);
+	float by = float(y2);
+	float cy = float(y3);
+	float dy = float(y4);
+
+	params._result = (int)max4(ay, by, cy, dy) + 1;
+}
+
+void AGSWaves::Grayscale(ScriptMethodParams &params) {
+	PARAMS1(int, sprite);
+
+	BITMAP *src = _engine->GetSpriteGraphic(sprite);
+	uint32 **pixels = (uint32 **)_engine->GetRawBitmapSurface(src);
+
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+
+	int x, y;
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			int color = ConvertColorToGrayScale(pixels[y][x]);
+			pixels[y][x] = color;
+		}
+	}
+
+
+	_engine->ReleaseBitmapSurface(src);
+}
+
+void AGSWaves::BlendTwoSprites(ScriptMethodParams &params) {
+	PARAMS2(int, graphic, int, refgraphic);
+
+	BITMAP *src = _engine->GetSpriteGraphic(graphic);
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+	uint32 **sprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(src);
+
+	BITMAP *refsrc = _engine->GetSpriteGraphic(refgraphic);
+	int refsrc_width = 640;
+	int refsrc_height = 360;
+	int refsrc_depth = 32;
+	_engine->GetBitmapDimensions(refsrc, &refsrc_width, &refsrc_height, &refsrc_depth);
+	uint32 **refsprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(refsrc);
+	_engine->ReleaseBitmapSurface(refsrc);
+
+	int x, y;
+
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			int getColor = sprite_pixels[y][x];
+			int rn = getRcolor(getColor);
+			int gn = getGcolor(getColor);
+			int bn = getBcolor(getColor);
+			int an = getAcolor(getColor);
+
+			if (an > 0.0 && rn > 4 && gn > 4 && bn > 4) {
+				int getColor2 = refsprite_pixels[y][x];
+				int rj = getRcolor(getColor2);
+				int gj = getGcolor(getColor2);
+				int bj = getBcolor(getColor2);
+				int aj = getAcolor(getColor2);
+
+				if (rj > 100 || gj > 100 || bj > 100) {
+					sprite_pixels[y][x] = SetColorRGBA(rj, gj, bj, aj);
+				}
+			}
+		}
+	}
+
+	_engine->ReleaseBitmapSurface(src);
+}
+
+void AGSWaves::Blend(ScriptMethodParams &params) {
+	PARAMS4(int, graphic, int, refgraphic, bool, screen, int, perc);
+
+	BITMAP *src = _engine->GetSpriteGraphic(graphic);
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+	uint32 **sprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(src);
+
+	BITMAP *refsrc = _engine->GetSpriteGraphic(refgraphic);
+	int refsrc_width = 640;
+	int refsrc_height = 360;
+	int refsrc_depth = 32;
+	_engine->GetBitmapDimensions(refsrc, &refsrc_width, &refsrc_height, &refsrc_depth);
+	uint32 **refsprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(refsrc);
+	_engine->ReleaseBitmapSurface(refsrc);
+
+	int x, y;
+
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			int getColor = sprite_pixels[y][x];
+			int rn = getRcolor(getColor);
+			int gn = getGcolor(getColor);
+			int bn = getBcolor(getColor);
+			int an = getAcolor(getColor);
+
+			if (an >= 0.0 && rn > 4 && gn > 4 && bn > 4) {
+				int getColor2 = refsprite_pixels[y][x];
+				int rj = getRcolor(getColor2);
+				int gj = getGcolor(getColor2);
+				int bj = getBcolor(getColor2);
+				int aj = getAcolor(getColor2);
+
+				if (!screen) {
+					rj = BlendColor(rn, rj, perc);
+					gj = BlendColor(gn, gj, perc);
+					bj = BlendColor(bn, bj, perc);
+					aj = BlendColor(an, aj, perc);
+				} else {
+					rj = BlendColorScreen(rn, rj, perc);
+					gj = BlendColorScreen(gn, gj, perc);
+					bj = BlendColorScreen(bn, bj, perc);
+					aj = BlendColorScreen(an, aj, perc);
+				}
+
+				sprite_pixels[y][x] = SetColorRGBA(rj, gj, bj, aj);
+			}
+		}
+	}
+
+	_engine->ReleaseBitmapSurface(src);
+}
+
+void AGSWaves::Dissolve(ScriptMethodParams &params) {
+	PARAMS3(int, graphic, int, noisegraphic, int, disvalue);
+
+	BITMAP *src = _engine->GetSpriteGraphic(graphic);
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+	uint32 **sprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(src);
+
+	BITMAP *noisesrc = _engine->GetSpriteGraphic(noisegraphic);
+	int noisesrc_width = 640;
+	int noisesrc_height = 360;
+	int noisesrc_depth = 32;
+	_engine->GetBitmapDimensions(noisesrc, &noisesrc_width, &noisesrc_height, &noisesrc_depth);
+	uint32 **noise_pixels = (uint32 **)_engine->GetRawBitmapSurface(noisesrc);
+	_engine->ReleaseBitmapSurface(noisesrc);
+
+	int x, y;
+
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++)//
+		{
+			int getColor = noise_pixels[y][x];
+			int gn = getRcolor(getColor);
+
+
+			int getColorx = sprite_pixels[y][x];
+			int rj = getRcolor(getColorx);
+			int gj = getGcolor(getColorx);
+			int bj = getBcolor(getColorx);
+			int originalA = getAcolor(getColorx);
+			int aj = 0;
+
+			//disvalue 0-255
+			//FOR EACH PIXEL IN THE NOISE GRAPHIC THAT IS < DISVALUE
+			if (gn < disvalue) {
+				if (gn > disvalue - 2) {
+					rj = 193 + Random(20);
+					gj = 132 + Random(20);
+					bj = 255 + Random(20);
+					aj = originalA;
+				} else if (gn > disvalue - 3) {
+					rj = 128 + Random(20);
+					gj = 0 + Random(20);
+					bj = 255 + Random(20);
+					aj = 150;
+				} else {
+					aj = 0;
+				}
+			} else aj = originalA;
+
+			if (originalA > 50) {
+				sprite_pixels[y][x] = SetColorRGBA(rj, gj, bj, aj);
+			}
+		}
+	}
+
+	_engine->ReleaseBitmapSurface(src);
+}
+
+void AGSWaves::ReverseTransparency(ScriptMethodParams &params) {
+	PARAMS1(int, graphic);
+
+	BITMAP *noisesrc = _engine->GetSpriteGraphic(graphic);
+	int noisesrc_width = 640;
+	int noisesrc_height = 360;
+	int noisesrc_depth = 32;
+	_engine->GetBitmapDimensions(noisesrc, &noisesrc_width, &noisesrc_height, &noisesrc_depth);
+	uint32 **noise_pixels = (uint32 **)_engine->GetRawBitmapSurface(noisesrc);
+	_engine->ReleaseBitmapSurface(noisesrc);
+
+	BITMAP *src = _engine->GetSpriteGraphic(graphic);
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+	uint32 **sprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(src);
+
+	int x, y;
+
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			int getColors = noise_pixels[y][x];
+			int TranClr = getAcolor(getColors);
+
+			if (TranClr < 254) {
+				//PIXEL IS TRANSPARENT
+				sprite_pixels[y][x] = SetColorRGBA(255, 255, 255, 255);
+			} else {
+				//PIXEL IS VISIBLE
+				sprite_pixels[y][x] = SetColorRGBA(0, 0, 0, 0);
+			}
+		}
+	}
+
+	_engine->ReleaseBitmapSurface(src);
+}
+
+void AGSWaves::TintProper(ScriptMethodParams &params) {
+	PARAMS7(int, sprite, int, lightx, int, lighty, int, radi, int, rex, int, grx, int, blx);
+
+	BITMAP *src = _engine->GetSpriteGraphic(sprite);
+	BITMAP *src2 = _engine->GetSpriteGraphic(lightx);
+	(void)lighty; // Unused
+
+	uint32 **pixelb = (uint32 **)_engine->GetRawBitmapSurface(src);
+	uint32 **pixela = (uint32 **)_engine->GetRawBitmapSurface(src2);
+	_engine->ReleaseBitmapSurface(src2);
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+
+	int x, y;
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			int totalRed = 0;
+			int totalGreen = 0;
+			int totalBlue = 0;
+
+			int vx = -(radi);
+			int pixels_parsed = 0;
+
+			int setY = y;
+			if (setY < 0) setY = 0;
+			if (setY > src_height - 1) setY = src_height - 1;
+
+			while (vx < (radi)+1) {
+				int setX = x + vx;
+				if (setX < 0) setX = 0;
+				if (setX > src_width - 1) setX = src_width - 1;
+
+				int color = pixela[setY][setX];
+
+				totalRed += getRcolor(color);
+				totalGreen += getGcolor(color);
+				totalBlue += getBcolor(color);
+
+				pixels_parsed++;
+
+				vx++;
+			}
+
+			int rN = totalRed / pixels_parsed;
+			int gN = totalGreen / pixels_parsed;
+			int bN = totalBlue / pixels_parsed;
+
+			int r = int(CLIP(rN, 0, 255));
+			int g = int(CLIP(gN, 0, 255));
+			int b = int(CLIP(bN, 0, 255));
+
+			if (r > rex &&g > grx &&b > blx) {
+				pixelb[y][x] = ((r << 16) | (g << 8) | (b << 0) | (255 << 24));
+			} else {
+				pixelb[y][x] = SetColorRGBA(rex, grx, blx, 0);
+			}
+		}
+	}
+
+
+	_engine->ReleaseBitmapSurface(src);
+	src = _engine->GetSpriteGraphic(sprite);
+
+	x = 0;
+	y = 0;
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			int totalRed = 0;
+			int totalGreen = 0;
+			int totalBlue = 0;
+
+			int pixels_parsed = 0;
+			int setX = x;
+			if (setX < 0) setX = 0;
+			if (setX > src_width - 1) setX = src_width - 1;
+
+			int vy = -(radi);
+			while (vy < (radi)+1) {
+				int setY = y + vy;
+				if (setY < 0) setY = 0;
+				if (setY > src_height - 1) setY = src_height - 1;
+
+				int color = pixela[setY][setX];
+
+				totalRed += getRcolor(color);
+				totalGreen += getGcolor(color);
+				totalBlue += getBcolor(color);
+
+				pixels_parsed++;
+
+
+				vy++;
+			}
+
+			int rN = totalRed / pixels_parsed;
+			int gN = totalGreen / pixels_parsed;
+			int bN = totalBlue / pixels_parsed;
+
+			int r = CLIP(rN, 0, 255);
+			int g = CLIP(gN, 0, 255);
+			int b = CLIP(bN, 0, 255);
+
+			if (r > rex &&g > grx &&b > blx) {
+				pixelb[y][x] = ((r << 16) | (g << 8) | (b << 0) | (255 << 24));
+			} else {
+				pixelb[y][x] = SetColorRGBA(rex, grx, blx, 0);
+			}
+		}
+	}
+
+	_engine->ReleaseBitmapSurface(src);
+}
+
+void AGSWaves::ReadWalkBehindIntoSprite(ScriptMethodParams &params) {
+	PARAMS3(int, sprite, int, bgsprite, int, walkbehindBaseline);
+
+	BITMAP *src = _engine->GetSpriteGraphic(sprite);
+	BITMAP *bgsrc = _engine->GetSpriteGraphic(bgsprite);
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+	BITMAP *wbh = _engine->GetRoomMask(MASK_WALKBEHIND);
+
+	uint32 **sprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(src);
+	uint32 **bgsprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(bgsrc);
+	byte *walk_pixels = _engine->GetRawBitmapSurface(wbh); //8bit
+
+	_engine->ReleaseBitmapSurface(wbh);
+	_engine->ReleaseBitmapSurface(bgsrc);
+
+	// WE GRAB ALL OF THEM INTO A BITMAP and thus we know where they are drawn
+	int x, y;
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			//READ COLOR
+			if (walk_pixels[y * src_width + x] > 0) {
+				int grabBaseline = _engine->GetWalkbehindBaseline(walk_pixels[y * src_width + x]);
+
+				if (grabBaseline == walkbehindBaseline) {
+					sprite_pixels[y][x] = bgsprite_pixels[y][x];
+				}
+			}
+		}
+	}
+
+	_engine->ReleaseBitmapSurface(src);
+}
+
+void AGSWaves::AdjustSpriteFont(ScriptMethodParams &params) {
+	PARAMS5(int, sprite, int, rate, int, outlineRed, int, outlineGreen, int, outlineBlue);
+
+	BITMAP *src = _engine->GetSpriteGraphic(sprite);
+	uint32 **pixel_src = (uint32 **)_engine->GetRawBitmapSurface(src);
+
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+
+	int x, y;
+
+	int px = 1;
+	bool found = false;
+	for (y = 0; y < src_height; y++) {
+		if (found) {
+			px++;
+		}
+		//if (px >12) px=12;
+		bool havefound = false;
+		for (x = 0; x < src_width; x++) {
+			int getColor = pixel_src[y][x];
+			int red = getRcolor(getColor);
+			int green = getGcolor(getColor);
+			int blue = getBcolor(getColor);
+			int alpha = getAcolor(getColor);
+
+			if (alpha < 255.0 || (red <= 10 && green <= 10 && blue <= 10)) {
+				//px=1;
+				if (alpha == 255 && (red <= 10 && green <= 10 && blue <= 10)) {
+					pixel_src[y][x] = SetColorRGBA(outlineRed, outlineGreen, outlineBlue, 255);
+				}
+			} else {
+				havefound = true;
+				found = true;
+				red -= (px * rate);
+				green -= (px * rate);
+				blue -= (px * rate);
+
+				pixel_src[y][x] = SetColorRGBA(red, green, blue, 255);
+			}
+		}
+
+		if (havefound == false) {
+			if (found) {
+				px = 1;
+				found = false;
+			}
+		}
+	}
+
+	_engine->ReleaseBitmapSurface(src);
+}
+
+void AGSWaves::SpriteGradient(ScriptMethodParams &params) {
+	PARAMS3(int, sprite, int, rate, int, toy);
+
+	BITMAP *src = _engine->GetSpriteGraphic(sprite);
+	uint32 **pixel_src = (uint32 **)_engine->GetRawBitmapSurface(src);
+
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+
+	int x, y;
+	int setA = 0;
+
+	for (y = toy; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			int getColor = pixel_src[y][x];
+			int red = getRcolor(getColor);
+			int green = getGcolor(getColor);
+			int blue = getBcolor(getColor);
+			int alpha = getAcolor(getColor) + setA;
+			if (alpha > 250) alpha = 250;
+
+			if (red > 10 && green > 10 && blue > 10) {
+				pixel_src[y][x] = SetColorRGBA(red, green, blue, alpha);
+			}
+
+		}
+		setA += rate;
+	}
+
+	_engine->ReleaseBitmapSurface(src);
+}
+
+void AGSWaves::Outline(ScriptMethodParams &params) {
+	PARAMS5(int, sprite, int, red, int, ged, int, bed, int, aed);
+
+	BITMAP *src = _engine->GetSpriteGraphic(sprite);
+	uint32 **pixel_src = (uint32 **)_engine->GetRawBitmapSurface(src);
+
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+
+	//OUTLINE
+	_engine->ReleaseBitmapSurface(src);
+
+
+	BITMAP *dst = _engine->GetSpriteGraphic(sprite);
+	uint32 **pixel_dst = (uint32 **)_engine->GetRawBitmapSurface(dst);
+
+	int x, y;
+	for (x = 0; x < src_width; x++) {
+		for (y = 0; y < src_height; y++) {
+			if (!IsPixelTransparent(pixel_src[y][x])) {
+			} else {
+				int pcount = 0;
+				int gy = -1;
+				while (gy < 2) {
+					int gx = -1;
+					while (gx < 2) {
+						int sx = x + gx;
+						int sy = y + gy;
+
+						if (sx < 0) sx = 0;
+						if (sy < 0) sy = 0;
+						if (sx > src_width - 1) sx = src_width - 1;
+						if (sy > src_height - 1) sy = src_height - 1;
+
+						if (!IsPixelTransparent(pixel_src[sy][sx])) {
+							pcount++;
+						}
+
+						gx++;
+					}
+					gy++;
+				}
+
+				if (pcount >= 2) {
+					int colorLeft = SetColorRGBA(red, ged, bed, aed);
+					pixel_dst[y][x] = colorLeft;
+				}
+			}
+		}
+	}
+
+	// OUTLINE
+	_engine->ReleaseBitmapSurface(dst);
+}
+
+void AGSWaves::OutlineOnly(ScriptMethodParams &params) {
+	PARAMS7(int, sprite, int, refsprite, int, red, int, ged, int, bed, int, aed, int, trans);
+
+	BITMAP *src = _engine->GetSpriteGraphic(refsprite);
+	uint32 **pixel_src = (uint32 **)_engine->GetRawBitmapSurface(src);
+
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+
+	// OUTLINE
+	_engine->ReleaseBitmapSurface(src);
+
+	BITMAP *dst = _engine->GetSpriteGraphic(sprite);
+	uint32 **pixel_dst = (uint32 **)_engine->GetRawBitmapSurface(dst);
+
+	int x, y;
+	for (x = 0; x < src_width; x++) {
+		for (y = 0; y < src_height; y++) {
+			if (!IsPixelTransparent(pixel_src[y][x])) {
+				int colorLeft = SetColorRGBA(red, ged, bed, trans);
+				pixel_dst[y][x] = colorLeft;
+			} else {
+				int pcount = 0;
+				int gy = -1;
+				while (gy < 2) {
+					int gx = -1;
+					while (gx < 2) {
+						int sx = x + gx;
+						int sy = y + gy;
+
+						if (sx < 0) sx = 0;
+						if (sy < 0) sy = 0;
+						if (sx > src_width - 1) sx = src_width - 1;
+						if (sy > src_height - 1) sy = src_height - 1;
+
+						if (!IsPixelTransparent(pixel_src[sy][sx])) {
+							pcount++;
+						}
+
+						gx++;
+					}
+					gy++;
+				}
+
+				if (pcount >= 2) {
+					int colorLeft = SetColorRGBA(red, ged, bed, aed);
+					pixel_dst[y][x] = colorLeft;
+				}
+			}
+		}
+	}
+
+	// OUTLINE
+	_engine->ReleaseBitmapSurface(dst);
+}
+
 
 void AGSWaves::CastWave(int delayMax, int PixelsWide, int n) {
 	tDy[n]++;
@@ -428,6 +1089,10 @@ void AGSWaves::DrawEffect(int sprite_a, int sprite_b, int id, int n) {
 	_engine->ReleaseBitmapSurface(src_b);
 }
 
+int AGSWaves::Random(int threshold) {
+	return ::AGS::g_vm->getRandomNumber(threshold - 1);
+}
+
 int AGSWaves::SetColorRGBA(int r, int g, int b, int a) {
 	r = CLIP(r, 0, 255);
 	g = CLIP(g, 0, 255);
@@ -452,6 +1117,22 @@ float AGSWaves::noiseField(float tx, float ty, float tz) {
 		lerp(hasher(n + 157.0), hasher(n + 158.0), fx), fy),
 		lerp(lerp(hasher(n + 113.0), hasher(n + 114.0), fx),
 			lerp(hasher(n + 270.0), hasher(n + 271.0), fx), fy), fz);
+}
+
+int AGSWaves::ConvertColorToGrayScale(int color) {
+	int r = getRcolor(color);
+	int g = getGcolor(color);
+	int b = getBcolor(color);
+
+	float d = float((r * r + g * g + b * b) / 3);
+	int gr = int(sqrt(d));
+
+	return ((gr << 16) | (gr << 8) | (gr << 0) | (255 << 24));
+}
+
+bool AGSWaves::IsPixelTransparent(int color) {
+	int ad = getAcolor(color);
+	return ad < 255;
 }
 
 } // namespace AGSWaves

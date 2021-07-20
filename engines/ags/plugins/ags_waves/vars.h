@@ -149,8 +149,8 @@ struct Vars {
 	int transp;
 	int life;
 	bool active;
-	int dx;
-	int dy;
+	int _dx;
+	int _dy;
 	int mlay;
 	int timlay;
 	int movedport;
@@ -215,6 +215,12 @@ struct Vars {
 	int dY[30];
 	int tDy[30];
 	int direction[30];
+
+	// Warper fields
+	int _newWidth = 0, _newHeight = 0;
+	int _y2 = 0;
+	int _x3 = 0, _y3 = 0;
+	int _x4 = 0, _y4 = 0;
 };
 
 } // namespace AGSWaves

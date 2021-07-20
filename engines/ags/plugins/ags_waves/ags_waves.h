@@ -89,6 +89,7 @@ private:
 
 	void CastWave(int delayMax, int PixelsWide, int n);
 	void DrawEffect(int sprite_a, int sprite_b, int id, int n);
+	int Random(int threshold);
 
 	inline static int getRcolor(int color) {
 		return ((color >> 16) & 0xFF);
@@ -102,9 +103,19 @@ private:
 	inline static int getAcolor(int color) {
 		return ((color >> 24) & 0xFF);
 	}
+	static int BlendColor(int Ln, int Bn, int perc) {
+		return ((Ln < 128) ? (2 * Bn * Ln / perc) : (perc - 2 * (perc - Bn) * (perc - Ln) / perc));
+	}
+	static int BlendColorScreen(int Ln, int Bn, int perc) {
+		return (Bn == perc) ? Bn :
+			MIN(perc, (Ln * Ln / (perc - Bn)));
+	}
 	static int SetColorRGBA(int r, int g, int b, int a);
+	static int ConvertColorToGrayScale(int color);
+	static bool IsPixelTransparent(int color);
 	float noiseField(float tx, float ty, float tz);
 
+	int IntersectLines(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
 
 	static inline float fracts(float value) {
 		return value - floor(value);
@@ -114,6 +125,12 @@ private:
 	}
 	static inline float hasher(float n) {
 		return fracts(sin(n) * 153.5453123);
+	}
+	static float min4(float m1, float m2, float m3, float m4) {
+		return MIN(MIN(m1, m2), MIN(m3, m4));
+	}
+	static float max4(float m1, float m2, float m3, float m4) {
+		return MAX(MAX(m1, m2), MAX(m3, m4));
 	}
 public:
 	AGSWaves() : PluginBase(), Vars() {}
