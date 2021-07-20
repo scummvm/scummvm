@@ -37,6 +37,7 @@ public:
 
 	bool load(Common::SeekableReadStream &stream);
 	int getKerningOffset(uint style, int32 left, uint32 right) const;
+	int getGlyphWidth(uint style, uint c);
 
 	struct AsscEntry {
 		uint16 _fontSize;
@@ -96,21 +97,31 @@ private:
 
 	uint16 _ffNumKerns;
 	Common::Array<KernEntry> _ffKernEntries;
+
+	struct StyleWidthEntry {
+		uint16 _style;
+		Common::Array<uint16> _widths;
+	};
+
+	uint16 _ffNumStyleWidths;
+	Common::Array<StyleWidthEntry> _ffStyleWidths;
 };
 
 struct MacGlyph {
 	void clear() {
 		bitmapOffset = 0;
-		width = 0;
+		width1 = 0;
 		height = 0;
 		bitmapWidth = 0;
 		kerningOffset = 0;
+		width = 0;
 	}
 
 	uint16 bitmapOffset;
-	byte width;
 	uint16 height;
 	uint16 bitmapWidth;
+	uint16 width1;	// this width is from glyph-table, which has the higher priority
+	byte width;	// this width is from width/offset table
 	int kerningOffset;
 };
 

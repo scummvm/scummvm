@@ -89,6 +89,7 @@ MacFontFamily::MacFontFamily() {
 	_ffOffsets = nullptr;
 	_ffNumBBoxes = 0;
 	_ffNumKerns = 0;
+	_ffNumStyleWidths = 0;
 }
 
 MacFontFamily::~MacFontFamily() {
@@ -170,20 +171,24 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
 	if (_ffWTabOff) {
 		stream.seek(_ffWTabOff);
 
-		uint16 cnt = stream.readUint16BE() + 1;
-		debug(10, "style widths entries: %d", cnt);
+		_ffNumStyleWidths = stream.readUint16BE() + 1;
+		_ffStyleWidths.resize(_ffNumStyleWidths);
 
-		for (uint i = 0; i < cnt; i++) {
-			uint16 style = stream.readUint16BE();
-			for (uint j = _ffFirstChar; j <= _ffLastChar + 2; j++) {
-				/*styleWidth[i].widthTab[j] =*/ stream.readUint16BE();
-			}
+		debug(10, "style widths entries: %d", _ffNumStyleWidths);
+
+		for (uint i = 0; i < _ffNumStyleWidths; i++) {
+			uint size = _ffLastChar - _ffFirstChar + 3;
+			_ffStyleWidths[i]._style = stream.readUint16BE();
+			_ffStyleWidths[i]._widths.resize(size);
+
+			for (uint j = 0; j < size; j++)
+				_ffStyleWidths[i]._widths[j] = stream.readUint16BE();
 		}
 	}
 
 	if (_ffStylOff) {
 		// looks like this part is not useful for now.
-//		stream.seek(_ffStylOff);
+		// stream.seek(_ffStylOff);
 
 		/*uint16 classFlag =*/ stream.readUint16BE();
 		/*uint8 plainIndex =*/ stream.readSByte();
@@ -219,6 +224,17 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
 	}
 
 	return true;
+ }
+
+ int MacFontFamily::getGlyphWidth(uint style, uint c) {
+	 for (uint i = 0; i < _ffStyleWidths.size(); i++) {
+		 if (_ffKernEntries[i]._style == style) {
+			 if (c < _ffFirstChar || c > _ffLastChar)
+				 return -1;
+			 return _ffStyleWidths[i]._widths[c - _ffFirstChar];
+		 }
+	 }
+	 return -1;
  }
 
  int MacFontFamily::getKerningOffset(uint style, int32 left, uint32 right) const {
@@ -345,7 +361,7 @@ bool MacFONTFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *fa
 		warning("Skipping glyph-width table");
 
 		for (uint16 i = 0; i < glyphCount; i++)
-			stream.readUint16BE();
+			_data._glyphs[i].width1 = stream.readUint16BE();
 	}
 
 	if (_data._fontType & kFontTypeImageHeightTable) {
@@ -364,6 +380,16 @@ int MacFONTFont::getCharWidth(uint32 chr) const {
 	if (!glyph)
 		return _data._maxWidth;
 
+	// this part looks wrong
+	//	if (_data._fontType & kFontTypeGlyphWidthTable) {
+	//		return glyph->width1;
+	//	} else {
+	//		if (_data._family) {
+	//			int width = _data._family->getGlyphWidth(_data._style, chr);
+	//			if (width != -1)
+	//				return (width * 1000L + (1 << 11)) >> 12;
+	//		}
+	//	}
 	return glyph->width;
 }
 
