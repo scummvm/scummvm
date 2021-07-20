@@ -94,6 +94,11 @@ void GroupedListWidget::append(const String &s, ThemeEngine::FontColor color) {
 	scrollBarRecalc();
 }
 
+void GroupedListWidget::setGroupHeaderFormat(const U32String &prefix, const U32String &suffix) {
+	_groupHeaderPrefix = prefix;
+	_groupHeaderSuffix = suffix;
+}
+
 void GroupedListWidget::groupByAttribute() {
 	if (_attributeValues.empty()) return;
 
@@ -135,7 +140,7 @@ void GroupedListWidget::sortGroups() {
 		_listIndex.push_back(kGroupTag - groupID);
 
 		displayedHeader.toUppercase();
-		_list.push_back(displayedHeader);
+		_list.push_back(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix);
 
 		if (_groupExpanded[groupID]) {
 			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
