@@ -219,6 +219,7 @@ scriptpart:	'\n'						{ $$ = nullptr; }
 	| factory
 	| handler
 	| stmt
+	| tENDCLAUSE endargdef '\n'			{ $$ = nullptr; delete $tENDCLAUSE; } // stray `end`s are allowed for some reason
 	;
 
 // MACRO
