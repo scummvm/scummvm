@@ -27,6 +27,9 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSWaves {
 
+void AGSWaves::NoiseCreator(ScriptMethodParams &params) {
+	//PARAMS2(int, graphic, int, setA);
+}
 
 void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 	//PARAMS2(int, SFX, int, repeat);

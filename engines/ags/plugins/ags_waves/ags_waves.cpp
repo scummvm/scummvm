@@ -99,26 +99,6 @@ void AGSWaves::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(SetWalkbehindBaserine, AGSWaves::SetWalkbehindBaserine);
 }
 
-void AGSWaves::FireUpdate(ScriptMethodParams &params) {
-	//PARAMS2(int, getDynamicSprite, bool, Fire2Visible));
-}
-
-void AGSWaves::WindUpdate(ScriptMethodParams &params) {
-	//PARAMS4(int, ForceX, int, ForceY, int, Transparency, int, sprite);
-}
-
-void AGSWaves::SetWindValues(ScriptMethodParams &params) {
-	//PARAMS4(int, w, int, h, int, pr, int, prev);
-}
-
-void AGSWaves::RainUpdate(ScriptMethodParams &params) {
-	//PARAMS7(int, rdensity, int, FX, int, FY, int, RW, int, RH, int, graphic, float, perc);
-}
-
-void AGSWaves::NoiseCreator(ScriptMethodParams &params) {
-	//PARAMS2(int, graphic, int, setA);
-}
-
 void AGSWaves::StartingValues() {
 	GeneralAudio.NumOfChannels = 0;
 	GeneralAudio.Initialized = false;

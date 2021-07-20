@@ -39,7 +39,29 @@ typedef int SDL_AudioSpec;
 typedef int SDL_AudioDeviceID;
 
 struct Particle {
-	int x, y;
+	int x;
+	int y;
+	int transp;
+	int life;
+	bool active;
+	int dx;
+	int dy;
+	int mlay;
+	int timlay;
+	int movedport;
+	int translay;
+	int translayHold;
+	int width;
+	int height;
+	int fx;
+	int fy;
+	bool doingcircle;
+	float angle;
+	float radius;
+	int doingCircleChance;
+	float angleLay;
+	int frame;
+	float anglespeed;
 };
 
 /*---------------------------------------------*/
@@ -143,30 +165,6 @@ struct Vars {
 	double yv[3];
 	double xvOGG[3];
 	double yvOGG[3];
-
-	int _x;
-	int _y;
-	int transp;
-	int life;
-	bool active;
-	int _dx;
-	int _dy;
-	int mlay;
-	int timlay;
-	int movedport;
-	int translay;
-	int translayHold;
-	int _width;
-	int _height;
-	int _fx;
-	int _fy;
-	bool doingcircle;
-	float _angle;
-	float _radius;
-	int doingCircleChance;
-	float angleLay;
-	int frame;
-	float anglespeed;
 
 	Particle particles[110];
 	Particle particlesF[10];

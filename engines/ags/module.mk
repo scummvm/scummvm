@@ -355,7 +355,8 @@ MODULE_OBJS = \
 	plugins/ags_waves/data.o \
 	plugins/ags_waves/draw.o \
 	plugins/ags_waves/sound.o \
-	plugins/ags_waves/warper.o
+	plugins/ags_waves/warper.o \
+	plugins/ags_waves/weather.o
 
 ifdef ENABLE_AGS_TESTS
 MODULE_OBJS += \

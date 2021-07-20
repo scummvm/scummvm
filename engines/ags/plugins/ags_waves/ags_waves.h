@@ -132,6 +132,17 @@ private:
 	static float max4(float m1, float m2, float m3, float m4) {
 		return MAX(MAX(m1, m2), MAX(m3, m4));
 	}
+
+	// Weather
+	void DrawLineCustom(int x1, int y1, int x2, int y2, int graphic, int setR, int setG, int setB, int setA, int TranDif);
+	void CreateParticle(int xx, int yy, int ForceX, int ForceY);
+	void CreateParticle2(int xx, int yy, int ForceX, int ForceY);
+	void CreateParticleF(int xx, int yy, int ForceX, int ForceY);
+	void CreateDustParticle(int xx, int yy);
+	void CreateRainParticleMid(int x, int y, int fx, int fy, int maxpart);
+	void CreateRainParticleFore(int x, int y, int fx, int fy, int maxpart);
+	void CreateRainParticleBack(int x, int y, int fx, int fy, int maxpart);
+
 public:
 	AGSWaves() : PluginBase(), Vars() {}
 	virtual ~AGSWaves() {}
