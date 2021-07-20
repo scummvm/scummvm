@@ -262,7 +262,7 @@ bool MainMenuDialog::handleEvents() {
 	checkEvents(g_vm);
 	int difficulty;
 
-	if (Res.KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_START_NEW_GAME == _buttonValue) {
+	if (Res.KeyConstants.CloudsOfXeenMenu.KEY_START_NEW_GAME == _buttonValue) {
 		// Start new game
 		difficulty = DifficultyDialog::show(g_vm);
 		if (difficulty == -1)
@@ -272,7 +272,7 @@ bool MainMenuDialog::handleEvents() {
 		g_vm->_saves->newGame();
 		g_vm->_party->_difficulty = (Difficulty)difficulty;
 		g_vm->_gameMode = GMODE_PLAY_GAME;
-	} else if (Res.KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_LOAD_GAME == _buttonValue) {
+	} else if (Res.KeyConstants.CloudsOfXeenMenu.KEY_LOAD_GAME == _buttonValue) {
 		// Load existing game
 		int ccNum = files._ccNum;
 		g_vm->_saves->newGame();
@@ -282,7 +282,7 @@ bool MainMenuDialog::handleEvents() {
 		}
 
 		g_vm->_gameMode = GMODE_PLAY_GAME;
-	} else if (Res.KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_SHOW_CREDITS == _buttonValue) {
+	} else if (Res.KeyConstants.CloudsOfXeenMenu.KEY_SHOW_CREDITS == _buttonValue) {
 		// Show credits
 		CreditsScreen::show(g_vm);
 	} else if (Common::KEYCODE_ESCAPE == _buttonValue) {
@@ -316,11 +316,11 @@ CloudsMenuDialog::~CloudsMenuDialog() {
 
 void CloudsMenuDialog::loadButtons() {
 	_buttonSprites.load("start.icn");
-	addButton(Common::Rect(93, 53, 227, 73), Res.KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_START_NEW_GAME, &_buttonSprites);
-	addButton(Common::Rect(93, 78, 227, 98), Res.KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_LOAD_GAME, &_buttonSprites);
-	addButton(Common::Rect(93, 103, 227, 123), Res.KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_SHOW_CREDITS, &_buttonSprites);
+	addButton(Common::Rect(93, 53, 227, 73), Res.KeyConstants.CloudsOfXeenMenu.KEY_START_NEW_GAME, &_buttonSprites);
+	addButton(Common::Rect(93, 78, 227, 98), Res.KeyConstants.CloudsOfXeenMenu.KEY_LOAD_GAME, &_buttonSprites);
+	addButton(Common::Rect(93, 103, 227, 123), Res.KeyConstants.CloudsOfXeenMenu.KEY_SHOW_CREDITS, &_buttonSprites);
 	if (g_vm->_gameWon[0])
-		addButton(Common::Rect(93, 128, 227, 148), Res.KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_VIEW_ENDGAME, &_buttonSprites);
+		addButton(Common::Rect(93, 128, 227, 148), Res.KeyConstants.CloudsOfXeenMenu.KEY_VIEW_ENDGAME, &_buttonSprites);
 }
 
 void CloudsMenuDialog::draw() {
@@ -336,7 +336,7 @@ bool CloudsMenuDialog::handleEvents() {
 	if (MainMenuDialog::handleEvents())
 		return true;
 
-	if (Res.KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_VIEW_ENDGAME == _buttonValue) {
+	if (Res.KeyConstants.CloudsOfXeenMenu.KEY_VIEW_ENDGAME == _buttonValue) {
 		if (g_vm->_gameWon[0]) {
 			// Close the window
 			delete this;

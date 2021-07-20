@@ -375,22 +375,22 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				redrawFlag = REDRAW_TEXT;
 			}
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_WEAPONS == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsItems.KEY_WEAPONS == _buttonValue) {
 			// Weapons category
 			category = CATEGORY_WEAPON;
 			redrawFlag = REDRAW_FULL;
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ARMOR == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsItems.KEY_ARMOR == _buttonValue) {
 			// Armor category
 			category = CATEGORY_ARMOR;
 			redrawFlag = REDRAW_FULL;
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ACCESSORY == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsItems.KEY_ACCESSORY == _buttonValue) {
 			// Accessories category
 			category = CATEGORY_ACCESSORY;
 			redrawFlag = REDRAW_FULL;
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_MISC == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsItems.KEY_MISC == _buttonValue) {
 			// Misc
 			category = CATEGORY_MISC;
 			redrawFlag = REDRAW_FULL;
@@ -398,19 +398,19 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		} else if (mode == ITEMMODE_ENCHANT ||
 				   mode == ITEMMODE_RECHARGE ||
 				   mode == ITEMMODE_TO_GOLD) {
-			if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_USE == _buttonValue) {
+			if (Res.KeyConstants.DialogsItems.KEY_USE == _buttonValue) {
 
 			} else if (mode == ITEMMODE_ENCHANT &&
-				       Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ENCHANT == _buttonValue) {
+				       Res.KeyConstants.DialogsItems.KEY_ENCHANT == _buttonValue) {
 				actionIndex = 4;
 			} else if (mode == ITEMMODE_RECHARGE &&
-				       Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_RECHRG == _buttonValue) {
+				       Res.KeyConstants.DialogsItems.KEY_RECHRG == _buttonValue) {
 				actionIndex = 5;
 			} else if (mode == ITEMMODE_TO_GOLD &&
-				       Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_GOLD == _buttonValue) {
+				       Res.KeyConstants.DialogsItems.KEY_GOLD == _buttonValue) {
 				actionIndex = 6;
 			} else if (mode == ITEMMODE_TO_GOLD &&
-					   Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_EQUIP == _buttonValue) {
+					   Res.KeyConstants.DialogsItems.KEY_EQUIP == _buttonValue) {
 				if (category != CATEGORY_MISC)
 					actionIndex = 0;
 			}
@@ -419,35 +419,35 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				   ITEMMODE_SELL == mode ||
 				   ITEMMODE_IDENTIFY == mode ||
 				   ITEMMODE_REPAIR == mode) {
-			if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_BUY == _buttonValue) {
+			if (Res.KeyConstants.DialogsItems.KEY_BUY == _buttonValue) {
 				mode = ITEMMODE_BUY;
 				c = &_itemsCharacter;
 				redrawFlag = REDRAW_FULL;
-			} else if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_SELL == _buttonValue) {
+			} else if (Res.KeyConstants.DialogsItems.KEY_SELL == _buttonValue) {
 				mode = ITEMMODE_SELL;
 				c = startingChar;
 				redrawFlag = REDRAW_TEXT;
-			} else if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_IDENTIFY == _buttonValue) {
+			} else if (Res.KeyConstants.DialogsItems.KEY_IDENTIFY == _buttonValue) {
 				mode = ITEMMODE_IDENTIFY;
 				c = startingChar;
 				redrawFlag = REDRAW_TEXT;
-			} else if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_FIX == _buttonValue) {
+			} else if (Res.KeyConstants.DialogsItems.KEY_FIX == _buttonValue) {
 				mode = ITEMMODE_REPAIR;
 				c = startingChar;
 				redrawFlag = REDRAW_TEXT;
 			}
 		} else if (ITEMMODE_CHAR_INFO == mode) {
-			if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_EQUIP == _buttonValue) {
+			if (Res.KeyConstants.DialogsItems.KEY_EQUIP == _buttonValue) {
 				if (category != CATEGORY_MISC) 
 					actionIndex = 0;
-			} else if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_USE == _buttonValue) {
+			} else if (Res.KeyConstants.DialogsItems.KEY_USE == _buttonValue) {
 				if (category == CATEGORY_MISC)
 					actionIndex = 2;
-			} else if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_REM == _buttonValue) {
+			} else if (Res.KeyConstants.DialogsItems.KEY_REM == _buttonValue) {
 				actionIndex = 1;
-			} else if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_DISC == _buttonValue) {
+			} else if (Res.KeyConstants.DialogsItems.KEY_DISC == _buttonValue) {
 				actionIndex = 3;
-			} else if (Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_QUEST == _buttonValue) {
+			} else if (Res.KeyConstants.DialogsItems.KEY_QUEST == _buttonValue) {
 				// Quests
 				Quests::show(_vm);
 				redrawFlag = REDRAW_FULL;
@@ -475,13 +475,13 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c, ItemCategory catego
 	clearButtons();
 	if (mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE || mode == ITEMMODE_TO_GOLD) {
 		// Enchant button list
-		addButton(Common::Rect(12, 109, 36, 129),   Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_WEAPONS, &_iconSprites);
-		addButton(Common::Rect(46, 109, 70, 129), Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ARMOR, &_iconSprites);
-		addButton(Common::Rect(80, 109, 104, 129), Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ACCESSORY, &_iconSprites);
-		addButton(Common::Rect(114, 109, 138, 129), Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_MISC, &_iconSprites);
-		addButton(Common::Rect(148, 109, 172, 129), Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ENCHANT, &_iconSprites);
+		addButton(Common::Rect(12, 109, 36, 129),   Res.KeyConstants.DialogsItems.KEY_WEAPONS, &_iconSprites);
+		addButton(Common::Rect(46, 109, 70, 129), Res.KeyConstants.DialogsItems.KEY_ARMOR, &_iconSprites);
+		addButton(Common::Rect(80, 109, 104, 129), Res.KeyConstants.DialogsItems.KEY_ACCESSORY, &_iconSprites);
+		addButton(Common::Rect(114, 109, 138, 129), Res.KeyConstants.DialogsItems.KEY_MISC, &_iconSprites);
+		addButton(Common::Rect(148, 109, 172, 129), Res.KeyConstants.DialogsItems.KEY_ENCHANT, &_iconSprites);
 		addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites);
-		addButton(Common::Rect(148, 109, 172, 129), Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_USE, &_iconSprites);
+		addButton(Common::Rect(148, 109, 172, 129), Res.KeyConstants.DialogsItems.KEY_USE, &_iconSprites);
 		addButton(Common::Rect(8, 20, 263, 28), Common::KEYCODE_1);
 		addButton(Common::Rect(8, 29, 263, 37), Common::KEYCODE_2);
 		addButton(Common::Rect(8, 38, 263, 46), Common::KEYCODE_3);
@@ -494,14 +494,14 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c, ItemCategory catego
 	} else {
 		bool flag = mode == ITEMMODE_BUY || mode == ITEMMODE_SELL || mode == ITEMMODE_IDENTIFY
 			|| mode == ITEMMODE_REPAIR;
-		addButton(Common::Rect(12, 109, 36, 129), Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_WEAPONS, &_iconSprites);
-		addButton(Common::Rect(46, 109, 70, 129), Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ARMOR, &_iconSprites);
-		addButton(Common::Rect(80, 109, 104, 129), Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ACCESSORY, &_iconSprites);
-		addButton(Common::Rect(114, 109, 138, 129), Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_MISC, &_iconSprites);
-		addButton(Common::Rect(148, 109, 172, 129), flag ? Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_BUY : Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_EQUIP, &_iconSprites);
-		addButton(Common::Rect(182, 109, 206, 129), flag ? Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_SELL : Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_REM, &_iconSprites);
-		addButton(Common::Rect(216, 109, 240, 129), flag ? Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_IDENTIFY : Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_DISC, &_iconSprites);
-		addButton(Common::Rect(250, 109, 274, 129), flag ? Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_FIX : Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_QUEST, &_iconSprites);
+		addButton(Common::Rect(12, 109, 36, 129), Res.KeyConstants.DialogsItems.KEY_WEAPONS, &_iconSprites);
+		addButton(Common::Rect(46, 109, 70, 129), Res.KeyConstants.DialogsItems.KEY_ARMOR, &_iconSprites);
+		addButton(Common::Rect(80, 109, 104, 129), Res.KeyConstants.DialogsItems.KEY_ACCESSORY, &_iconSprites);
+		addButton(Common::Rect(114, 109, 138, 129), Res.KeyConstants.DialogsItems.KEY_MISC, &_iconSprites);
+		addButton(Common::Rect(148, 109, 172, 129), flag ? Res.KeyConstants.DialogsItems.KEY_BUY : Res.KeyConstants.DialogsItems.KEY_EQUIP, &_iconSprites);
+		addButton(Common::Rect(182, 109, 206, 129), flag ? Res.KeyConstants.DialogsItems.KEY_SELL : Res.KeyConstants.DialogsItems.KEY_REM, &_iconSprites);
+		addButton(Common::Rect(216, 109, 240, 129), flag ? Res.KeyConstants.DialogsItems.KEY_IDENTIFY : Res.KeyConstants.DialogsItems.KEY_DISC, &_iconSprites);
+		addButton(Common::Rect(250, 109, 274, 129), flag ? Res.KeyConstants.DialogsItems.KEY_FIX : Res.KeyConstants.DialogsItems.KEY_QUEST, &_iconSprites);
 		addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites);
 		addButton(Common::Rect(8, 20, 263, 28), Common::KEYCODE_1);
 		addButton(Common::Rect(8, 29, 263, 37), Common::KEYCODE_2);
@@ -517,7 +517,7 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c, ItemCategory catego
 
 	if (mode == ITEMMODE_CHAR_INFO && category == CATEGORY_MISC) {
 		_buttons[4].setFrame(18);
-		_buttons[4]._value = Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_USE;
+		_buttons[4]._value = Res.KeyConstants.DialogsItems.KEY_USE;
 	}
 	if (mode != ITEMMODE_ENCHANT && mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
 		_buttons[5].setFrame(10);
@@ -548,11 +548,11 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c, ItemCategory catego
 		_buttons[4]._bounds.moveTo(148, _buttons[4]._bounds.top);
 		_buttons[9]._draw = false;
 	} else if (mode == ITEMMODE_RECHARGE) {
-		_buttons[4]._value = Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_RECHRG;
+		_buttons[4]._value = Res.KeyConstants.DialogsItems.KEY_RECHRG;
 	} else if (mode == ITEMMODE_ENCHANT) {
-		_buttons[4]._value = Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ENCHANT;
+		_buttons[4]._value = Res.KeyConstants.DialogsItems.KEY_ENCHANT;
 	} else if (mode == ITEMMODE_TO_GOLD) {
-		_buttons[4]._value = Res.KEY_CONSTANTS.DIALOGS_ITEMS.KEY_GOLD;
+		_buttons[4]._value = Res.KeyConstants.DialogsItems.KEY_GOLD;
 	}
 }
 

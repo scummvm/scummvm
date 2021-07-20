@@ -665,8 +665,8 @@ const char *Party::getConsumableForm(ConsumableType consumableId) {
 	switch (consumableId) {
 	case CONS_GOLD: return Res.CONSUMABLE_GOLD_FORMS[0];
 	case CONS_GEMS: return Res.CONSUMABLE_GEM_FORMS[0];
+	default:        return Res.CONSUMABLE_NAMES[consumableId];
 	}
-	return Res.CONSUMABLE_NAMES[consumableId];
 }
 
 void Party::notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, MessageWaitType wait) {
@@ -821,15 +821,10 @@ bool Party::arePacksFull() const {
 }
 
 const char *Party::getFoundForm(const Character &c) {
-	if (Common::RU_RUS == g_vm->getLanguage()) {
-		switch (c._sex) {
-		case MALE:
-			return Res.FOUND[0];
-		case FEMALE:
-			return Res.FOUND[1];
-		}
-	}
-	return Res.FOUND[0];
+	if (Common::RU_RUS == g_vm->getLanguage()) 
+		return Res.FOUND[FEMALE == c._sex ? 1 : 0];
+	else 
+		return Res.FOUND[0];
 }
 
 void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int itemIndex) {
@@ -1483,27 +1478,17 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 }
 
 const char *Party::getPickLockForm(const Character &c) {
-	if (Common::RU_RUS == g_vm->getLanguage()) {
-		switch (c._sex) {
-		case MALE:
-			return Res.PICK_FORM[0];
-		case FEMALE:
-			return Res.PICK_FORM[1];
-		}
-	}
-	return Res.PICK_FORM[0];
+	if (Common::RU_RUS == g_vm->getLanguage())
+		return Res.PICK_FORM[FEMALE == c._sex ? 1 : 0];
+	else
+		return Res.PICK_FORM[0];
 }
 
 const char *Party::getUnablePickLockForm(const Character &c) {
-	if (Common::RU_RUS == g_vm->getLanguage()) {
-		switch (c._sex) {
-		case MALE:
-			return Res.UNABLE_TO_PICK_FORM[0];
-		case FEMALE:
-			return Res.UNABLE_TO_PICK_FORM[1];
-		}
-	}
-	return Res.UNABLE_TO_PICK_FORM[0];
+	if (Common::RU_RUS == g_vm->getLanguage())
+		return Res.UNABLE_TO_PICK_FORM[FEMALE == c._sex ? 1 : 0];
+	else
+		return Res.UNABLE_TO_PICK_FORM[0];
 }
 
 bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint val3, int charId) {

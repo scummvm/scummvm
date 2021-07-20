@@ -169,7 +169,7 @@ void CharacterInfo::execute(int charIndex) {
 			if (result)
 				redrawFlag = true;
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_EXCHANGE == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsCharInfo.KEY_EXCHANGE == _buttonValue) {
 			if (oldMode == MODE_COMBAT) {
 				ErrorScroll::show(_vm, Res.EXCHANGING_IN_COMBAT, WT_FREEZE_WAIT);
 			} else {
@@ -179,7 +179,7 @@ void CharacterInfo::execute(int charIndex) {
 				redrawFlag = true;
 			}
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_ITEM == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsCharInfo.KEY_ITEM == _buttonValue) {
 			_vm->_mode = oldMode;
 			_vm->_combat->_itemFlag = _vm->_mode == MODE_COMBAT;
 			c = ItemsDialog::show(_vm, c, ITEMMODE_CHAR_INFO);
@@ -192,7 +192,7 @@ void CharacterInfo::execute(int charIndex) {
 			_vm->_mode = MODE_CHARACTER_INFO;
 			redrawFlag = true;
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_QUICK == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsCharInfo.KEY_QUICK == _buttonValue) {
 			QuickReferenceDialog::show(_vm);
 			redrawFlag = true;
 
@@ -261,9 +261,9 @@ void CharacterInfo::addButtons() {
 	addButton(Common::Rect(177, 93, 201, 113), 1019, &_iconSprites);
 	addButton(Common::Rect(177, 116, 201, 136), 1020, &_iconSprites);
 
-	addButton(Common::Rect(285, 11, 309, 31), Res.KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_ITEM, &_iconSprites);
-	addButton(Common::Rect(285, 43, 309, 63), Res.KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_QUICK, &_iconSprites);
-	addButton(Common::Rect(285, 75, 309, 95), Res.KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_EXCHANGE, &_iconSprites);
+	addButton(Common::Rect(285, 11, 309, 31), Res.KeyConstants.DialogsCharInfo.KEY_ITEM, &_iconSprites);
+	addButton(Common::Rect(285, 43, 309, 63), Res.KeyConstants.DialogsCharInfo.KEY_QUICK, &_iconSprites);
+	addButton(Common::Rect(285, 75, 309, 95), Res.KeyConstants.DialogsCharInfo.KEY_EXCHANGE, &_iconSprites);
 
 	addButton(Common::Rect(285, 107, 309, 127), Common::KEYCODE_ESCAPE, &_iconSprites);
 	addPartyButtons(_vm);

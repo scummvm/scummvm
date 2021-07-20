@@ -238,13 +238,13 @@ void Quests::execute() {
 				   Common::KEYCODE_KP2 == _buttonValue ||
 				   Common::KEYCODE_d == _buttonValue) {
 			topRow = CLIP(topRow + 1, 0, MAX(count - 1, 0));
-		} else if (Res.KEY_CONSTANTS.DIALOGS_QUESTS.KEY_AUTO_NOTES == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsQuests.KEY_AUTO_NOTES == _buttonValue) {
 			mode = AUTO_NOTES;
 			topRow = 0;
-		} else if (Res.KEY_CONSTANTS.DIALOGS_QUESTS.KEY_QUEST_ITEMS == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsQuests.KEY_QUEST_ITEMS == _buttonValue) {
 			mode = QUEST_ITEMS;
 			topRow = 0;
-		} else if (Res.KEY_CONSTANTS.DIALOGS_QUESTS.KEY_CURRENT_QUESTS == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsQuests.KEY_CURRENT_QUESTS == _buttonValue) {
 			mode = CURRENT_QUESTS;
 			topRow = 0;
 		}
@@ -260,9 +260,9 @@ void Quests::execute() {
 void Quests::addButtons() {
 	_iconSprites.load("quest.icn");
 
-	addButton(Common::Rect(12, 109, 36, 129),   Res.KEY_CONSTANTS.DIALOGS_QUESTS.KEY_QUEST_ITEMS, &_iconSprites);
-	addButton(Common::Rect(80, 109, 104, 129),  Res.KEY_CONSTANTS.DIALOGS_QUESTS.KEY_CURRENT_QUESTS, &_iconSprites);
-	addButton(Common::Rect(148, 109, 172, 129), Res.KEY_CONSTANTS.DIALOGS_QUESTS.KEY_AUTO_NOTES, &_iconSprites);
+	addButton(Common::Rect(12, 109, 36, 129),   Res.KeyConstants.DialogsQuests.KEY_QUEST_ITEMS, &_iconSprites);
+	addButton(Common::Rect(80, 109, 104, 129),  Res.KeyConstants.DialogsQuests.KEY_CURRENT_QUESTS, &_iconSprites);
+	addButton(Common::Rect(148, 109, 172, 129), Res.KeyConstants.DialogsQuests.KEY_AUTO_NOTES, &_iconSprites);
 
 	addButton(Common::Rect(216, 109, 240, 129), Common::KEYCODE_UP, &_iconSprites);
 	addButton(Common::Rect(250, 109, 274, 129), Common::KEYCODE_DOWN, &_iconSprites);

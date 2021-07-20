@@ -83,13 +83,13 @@ int ControlPanel::execute() {
 				return 0;
 		} while (!_buttonValue && events.timeElapsed() < 2);
 
-		if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_QUIT == _buttonValue) {
+		if (Res.KeyConstants.DialogsControlPanel.KEY_QUIT == _buttonValue) {
 			if (Confirm::show(g_vm, Res.CONFIRM_QUIT)) {
 				g_vm->_gameMode = GMODE_QUIT;
 				result = 1;
 			}
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MRWIZARD == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsControlPanel.KEY_MRWIZARD == _buttonValue) {
 			if (Confirm::show(g_vm, Res.MR_WIZARD)) {
 				w.close();
 				if (!windows[2]._enabled) {
@@ -111,7 +111,7 @@ int ControlPanel::execute() {
 				result = 2;
 			}
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_LOAD == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsControlPanel.KEY_LOAD == _buttonValue) {
 			if (_vm->_mode == MODE_COMBAT) {
 				ErrorScroll::show(_vm, Res.NO_LOADING_IN_COMBAT);
 			} else {
@@ -119,7 +119,7 @@ int ControlPanel::execute() {
 				result = 3;
 			}
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_SAVE == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsControlPanel.KEY_SAVE == _buttonValue) {
 			if (_vm->_mode == MODE_COMBAT) {
 				ErrorScroll::show(_vm, Res.NO_SAVING_IN_COMBAT);
 			} else {
@@ -127,10 +127,10 @@ int ControlPanel::execute() {
 				result = 4;
 			}
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_FXON == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsControlPanel.KEY_FXON == _buttonValue) {
 			sound.setFxOn(!sound._fxOn);
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MUSICON == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsControlPanel.KEY_MUSICON == _buttonValue) {
 			sound.setMusicOn(!sound._musicOn);
 
 		} else if (Common::KEYCODE_ESCAPE == _buttonValue) {
@@ -166,17 +166,17 @@ int ControlPanel::execute() {
 
 void ControlPanel::loadButtons() {
 	_iconSprites.load("cpanel.icn");
-	addButton(Common::Rect(214, 56, 244, 69), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_FXON, 0, &_iconSprites);
-	addButton(Common::Rect(214, 75, 244, 88), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MUSICON, 0, &_iconSprites);
-	addButton(Common::Rect(135, 56, 165, 69), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_LOAD, 0, &_iconSprites);
-	addButton(Common::Rect(135, 75, 165, 88), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_SAVE, 0, &_iconSprites);
+	addButton(Common::Rect(214, 56, 244, 69), Res.KeyConstants.DialogsControlPanel.KEY_FXON, 0, &_iconSprites);
+	addButton(Common::Rect(214, 75, 244, 88), Res.KeyConstants.DialogsControlPanel.KEY_MUSICON, 0, &_iconSprites);
+	addButton(Common::Rect(135, 56, 165, 69), Res.KeyConstants.DialogsControlPanel.KEY_LOAD, 0, &_iconSprites);
+	addButton(Common::Rect(135, 75, 165, 88), Res.KeyConstants.DialogsControlPanel.KEY_SAVE, 0, &_iconSprites);
 
 	// For ScummVM we've merged both Save and Save As into a single
 	// save item, so we don't need this one
 	addButton(Common::Rect(), 0);
 
-	addButton(Common::Rect(135, 94, 165, 107), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_QUIT, 0, &_iconSprites);
-	addButton(Common::Rect(175, 113, 205, 126), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MRWIZARD, 0, &_iconSprites);
+	addButton(Common::Rect(135, 94, 165, 107), Res.KeyConstants.DialogsControlPanel.KEY_QUIT, 0, &_iconSprites);
+	addButton(Common::Rect(175, 113, 205, 126), Res.KeyConstants.DialogsControlPanel.KEY_MRWIZARD, 0, &_iconSprites);
 }
 
 Common::String ControlPanel::getButtonText() {

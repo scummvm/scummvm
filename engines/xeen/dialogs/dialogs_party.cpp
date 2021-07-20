@@ -159,7 +159,7 @@ void PartyDialog::execute() {
 					startingCharChanged(startingChar);
 				}
 
-			} else if (Res.KEY_CONSTANTS.DIALOGS_PARTY.KEY_EXIT == _buttonValue ||
+			} else if (Res.KeyConstants.DialogsParty.KEY_EXIT == _buttonValue ||
 				Common::KEYCODE_ESCAPE == _buttonValue ||
 				Common::KEYCODE_SPACE == _buttonValue) {
 				if (party._activeParty.size() == 0) {
@@ -184,7 +184,7 @@ void PartyDialog::execute() {
 					return;
 				}
 
-			} else if (Res.KEY_CONSTANTS.DIALOGS_PARTY.KEY_CREATE == _buttonValue) {
+			} else if (Res.KeyConstants.DialogsParty.KEY_CREATE == _buttonValue) {
 				// Create
 				if (_charList.size() == XEEN_TOTAL_CHARACTERS) {
 					ErrorScroll::show(_vm, Res.YOUR_ROSTER_IS_FULL);
@@ -211,7 +211,7 @@ void PartyDialog::execute() {
 					breakFlag = true;
 				}
 
-			} else if (Res.KEY_CONSTANTS.DIALOGS_PARTY.KEY_DELETE == _buttonValue) {
+			} else if (Res.KeyConstants.DialogsParty.KEY_DELETE == _buttonValue) {
 				// Delete character
 				if (_charList.size() > 0) {
 					int charButtonValue = selectCharacter(true, startingChar);
@@ -243,7 +243,7 @@ void PartyDialog::execute() {
 					}
 				}
 
-			} else if (Res.KEY_CONSTANTS.DIALOGS_PARTY.KEY_REMOVE == _buttonValue) {
+			} else if (Res.KeyConstants.DialogsParty.KEY_REMOVE == _buttonValue) {
 				// Remove character
 				if (party._activeParty.size() > 0) {
 					int charButtonValue = selectCharacter(false, startingChar);
@@ -277,10 +277,10 @@ void PartyDialog::loadButtons() {
 	addButton(Common::Rect(16, 100, 40, 120), Common::KEYCODE_UP, &_uiSprites);
 	addButton(Common::Rect(52, 100, 76, 120), Common::KEYCODE_DOWN, &_uiSprites);
 
-	addButton(Common::Rect(87, 100, 111, 120), Res.KEY_CONSTANTS.DIALOGS_PARTY.KEY_DELETE, &_uiSprites);
-	addButton(Common::Rect(122, 100, 146, 120), Res.KEY_CONSTANTS.DIALOGS_PARTY.KEY_REMOVE, &_uiSprites);
-	addButton(Common::Rect(157, 100, 181, 120), Res.KEY_CONSTANTS.DIALOGS_PARTY.KEY_CREATE, &_uiSprites);
-	addButton(Common::Rect(192, 100, 216, 120), Res.KEY_CONSTANTS.DIALOGS_PARTY.KEY_EXIT, &_uiSprites);
+	addButton(Common::Rect(87, 100, 111, 120), Res.KeyConstants.DialogsParty.KEY_DELETE, &_uiSprites);
+	addButton(Common::Rect(122, 100, 146, 120), Res.KeyConstants.DialogsParty.KEY_REMOVE, &_uiSprites);
+	addButton(Common::Rect(157, 100, 181, 120), Res.KeyConstants.DialogsParty.KEY_CREATE, &_uiSprites);
+	addButton(Common::Rect(192, 100, 216, 120), Res.KeyConstants.DialogsParty.KEY_EXIT, &_uiSprites);
 
 	addButton(Common::Rect(0, 0, 0, 0), Common::KEYCODE_ESCAPE);
 }

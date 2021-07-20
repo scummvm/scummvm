@@ -79,7 +79,7 @@ void QuickFight::execute() {
 				intf.highlightChar(charIdx);
 			}
 		} else if (Common::KEYCODE_n == _buttonValue || 
-				   Res.KEY_CONSTANTS.DIALOGS_QUICK_FIGHT.KEY_NEXT == _buttonValue) {
+				   Res.KeyConstants.DialogsQuickFight.KEY_NEXT == _buttonValue) {
 			_currentChar->_quickOption = (QuickAction)(((int)_currentChar->_quickOption + 1) % 4);
 		}
 	} while (_buttonValue != Common::KEYCODE_RETURN && _buttonValue != Common::KEYCODE_ESCAPE);
@@ -92,7 +92,7 @@ void QuickFight::loadButtons() {
 	_icons.load("train.icn");
 	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons);
 
-	addButton(Common::Rect(242, 108, 266, 128), Res.KEY_CONSTANTS.DIALOGS_QUICK_FIGHT.KEY_NEXT, &_icons);
+	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.DialogsQuickFight.KEY_NEXT, &_icons);
 }
 
 } // End of namespace Xeen

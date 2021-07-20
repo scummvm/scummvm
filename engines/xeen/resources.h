@@ -481,7 +481,7 @@ public:
 			int KEY_QUICK;
 			int KEY_EXCHANGE;
 			int KEY_ESCAPE;
-		} DIALOGS_CHAR_INFO;
+		} DialogsCharInfo;
 
 		struct {
 			int KEY_FXON;
@@ -490,7 +490,7 @@ public:
 			int KEY_SAVE;
 			int KEY_QUIT;
 			int KEY_MRWIZARD;
-		} DIALOGS_CONTROL_PANEL;
+		} DialogsControlPanel;
 
 		struct {
 			int KEY_ROLL;
@@ -502,12 +502,12 @@ public:
 			int KEY_SPD;
 			int KEY_ACY;
 			int KEY_LCK;
-		} DIALOGS_CREATE_CHAR;
+		} DialogsCreateChar;
 
 		struct {
 			int KEY_ADVENTURER;
 			int KEY_WARRIOR;
-		} DIALOGS_DIFFICULTY;
+		} DialogsDifficulty;
 
 		struct {
 			int KEY_WEAPONS;
@@ -526,24 +526,24 @@ public:
 			int KEY_QUEST;
 			int KEY_RECHRG;
 			int KEY_GOLD;
-		} DIALOGS_ITEMS;
+		} DialogsItems;
 
 		struct {
 			int KEY_DELETE;
 			int KEY_REMOVE;
 			int KEY_CREATE;
 			int KEY_EXIT;
-		} DIALOGS_PARTY;
+		} DialogsParty;
 
 		struct {
 			int KEY_QUEST_ITEMS;
 			int KEY_CURRENT_QUESTS;
 			int KEY_AUTO_NOTES;
-		} DIALOGS_QUESTS;
+		} DialogsQuests;
 
 		struct {
 			int KEY_NEXT;
-		} DIALOGS_QUICK_FIGHT;
+		} DialogsQuickFight;
 
 		struct {
 			int KEY_CAST;
@@ -554,7 +554,7 @@ public:
 			int KEY_ACID;
 			int KEY_SET;
 			int KEY_RETURN;
-		} DIALOGS_SPELLS;
+		} DialogsSpells;
 
 		struct {
 			int KEY_DEP;
@@ -573,15 +573,15 @@ public:
 			int KEY_DONATION;
 			int KEY_UNCURSE;
 			int KEY_TRAIN;
-		} LOCATIONS;
+		} Locations;
 
 		struct {
 			int KEY_START_NEW_GAME;
 			int KEY_LOAD_GAME;
 			int KEY_SHOW_CREDITS;
 			int KEY_VIEW_ENDGAME;
-		} CLOUDSOFXEENMENU;
-	} KEY_CONSTANTS;
+		} CloudsOfXeenMenu;
+	} KeyConstants;
 
 
 public:

@@ -52,9 +52,9 @@ int DifficultyDialog::execute() {
 		events.pollEventsAndWait();
 		checkEvents(_vm);
 
-		if (Res.KEY_CONSTANTS.DIALOGS_DIFFICULTY.KEY_ADVENTURER == _buttonValue)
+		if (Res.KeyConstants.DialogsDifficulty.KEY_ADVENTURER == _buttonValue)
 			result = ADVENTURER;
-		else if (Res.KEY_CONSTANTS.DIALOGS_DIFFICULTY.KEY_WARRIOR == _buttonValue)
+		else if (Res.KeyConstants.DialogsDifficulty.KEY_WARRIOR == _buttonValue)
 			result = WARRIOR;
 		else if (Common::KEYCODE_ESCAPE != _buttonValue)
 			continue;
@@ -69,8 +69,8 @@ int DifficultyDialog::execute() {
 void DifficultyDialog::loadButtons() {
 	_sprites.load("choice.icn");
 
-	addButton(Common::Rect(68, 167, 158, 187),  Res.KEY_CONSTANTS.DIALOGS_DIFFICULTY.KEY_ADVENTURER, &_sprites);
-	addButton(Common::Rect(166, 167, 256, 187), Res.KEY_CONSTANTS.DIALOGS_DIFFICULTY.KEY_WARRIOR, &_sprites);
+	addButton(Common::Rect(68, 167, 158, 187),  Res.KeyConstants.DialogsDifficulty.KEY_ADVENTURER, &_sprites);
+	addButton(Common::Rect(166, 167, 256, 187), Res.KeyConstants.DialogsDifficulty.KEY_WARRIOR, &_sprites);
 }
 
 } // End of namespace Xeen

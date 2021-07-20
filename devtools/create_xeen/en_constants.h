@@ -1997,7 +1997,7 @@ public:
 			const int KEY_QUICK()    { return Common::KEYCODE_q; }
 			const int KEY_EXCHANGE() { return Common::KEYCODE_e; }
 		};
-		EN_DialogsCharInfo *DIALOGS_CHAR_INFO() {
+		EN_DialogsCharInfo *dialogsCharInfo() {
 			if (!_dci)_dci = new EN_DialogsCharInfo();
 			return _dci;
 		}
@@ -2011,7 +2011,7 @@ public:
 			const int KEY_QUIT()     { return Common::KEYCODE_q; }
 			const int KEY_MRWIZARD() { return Common::KEYCODE_w; }
 		};
-		EN_DialogsControlPanel *DIALOGS_CONTROL_PANEL() {
+		EN_DialogsControlPanel *dialogsControlPanel() {
 			if (!_dcp) _dcp = new EN_DialogsControlPanel();
 			return _dcp;
 		}
@@ -2028,7 +2028,7 @@ public:
 			const int KEY_ACY()    { return Common::KEYCODE_a; }
 			const int KEY_LCK()    { return Common::KEYCODE_l; }
 		};
-		EN_DialogsCreateChar *DIALOGS_CREATE_CHAR() {
+		EN_DialogsCreateChar *dialogsCreateChar() {
 			if (!_dcc) _dcc = new EN_DialogsCreateChar();
 			return _dcc;
 		}
@@ -2038,7 +2038,7 @@ public:
 			const int KEY_ADVENTURER() { return Common::KEYCODE_a; }
 			const int KEY_WARRIOR()    { return Common::KEYCODE_w; }
 		};
-		EN_DialogsDifficulty *DIALOGS_DIFFICULTY() {
+		EN_DialogsDifficulty *dialogsDifficulty() {
 			if (!_dd) _dd = new EN_DialogsDifficulty();
 			return _dd;
 		}
@@ -2062,7 +2062,7 @@ public:
 			const int KEY_RECHRG()    { return Common::KEYCODE_r; }
 			const int KEY_GOLD()      { return Common::KEYCODE_g; }
 		};
-		EN_DialogsItems *DIALOGS_ITEMS() {
+		EN_DialogsItems *dialogsItems() {
 			if (!_di) _di = new EN_DialogsItems();
 			return _di;
 		}
@@ -2074,7 +2074,7 @@ public:
 			const int KEY_CREATE() { return Common::KEYCODE_c; }
 			const int KEY_EXIT()   { return Common::KEYCODE_x; }
 		};
-		EN_DialogsParty *DIALOGS_PARTY() {
+		EN_DialogsParty *dialogsParty() {
 			if (!_dp) _dp = new EN_DialogsParty();
 			return _dp;
 		}
@@ -2085,7 +2085,7 @@ public:
 			const int KEY_CURRENT_QUESTS() { return Common::KEYCODE_q; }
 			const int KEY_AUTO_NOTES()     { return Common::KEYCODE_a; }
 		};
-		EN_DialogsQuests *DIALOGS_QUESTS() {
+		EN_DialogsQuests *dialogsQuests() {
 			if (!_dq) _dq = new EN_DialogsQuests();
 			return _dq;
 		}
@@ -2094,7 +2094,7 @@ public:
 		public:
 			const int KEY_NEXT() { return Common::KEYCODE_t; }
 		};
-		EN_DialogsQuickFight *DIALOGS_QUICK_FIGHT() {
+		EN_DialogsQuickFight *dialogsQuickFight() {
 			if (!_dqf) _dqf = new EN_DialogsQuickFight();
 			return _dqf;
 		}
@@ -2110,7 +2110,7 @@ public:
 			const int KEY_SET()    { return Common::KEYCODE_t; }
 			const int KEY_RETURN() { return Common::KEYCODE_r; }
 		};
-		EN_DialogsSpells *DIALOGS_SPELLS() {
+		EN_DialogsSpells *dialogsSpells() {
 			if (!_ds) _ds = new EN_DialogsSpells();
 			return _ds;
 		}
@@ -2134,7 +2134,7 @@ public:
 			const int KEY_UNCURSE()    { return Common::KEYCODE_u; }
 			const int KEY_TRAIN()      { return Common::KEYCODE_t; }
 		};
-		EN_Locations *LOCATIONS() {
+		EN_Locations *locations() {
 			if (!_l) _l = new EN_Locations();
 			return _l;
 		}
@@ -2146,7 +2146,7 @@ public:
 			const int KEY_SHOW_CREDITS()   { return Common::KEYCODE_c; }
 			const int KEY_VIEW_ENDGAME()   { return Common::KEYCODE_e; }
 		};
-		EN_CloudsOfXeenMenu *CLOUDSOFXEENMENU() {
+		EN_CloudsOfXeenMenu *cloudsOfXeenMenu() {
 			if (!_soxm)
 				_soxm = new EN_CloudsOfXeenMenu();
 			return _soxm;
@@ -2166,7 +2166,7 @@ public:
 		EN_CloudsOfXeenMenu    *_soxm = NULL;
 	};
 
-	EN_KeyConstants *KEY_CONSTANTS() {
+	EN_KeyConstants *keyConstants() {
 		if (!_kc)_kc = new EN_KeyConstants();
 		return _kc;
 	}
