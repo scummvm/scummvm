@@ -158,10 +158,6 @@ void CGE2MetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-Common::Language CGE2Engine::getLanguage() const {
-	return _gameDescription->language;
-}
-
 } // End of namespace CGE2
 
 #if PLUGIN_ENABLED_DYNAMIC(CGE2)

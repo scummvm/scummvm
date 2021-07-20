@@ -25,6 +25,7 @@
  * Copyright (c) 1994-1997 Janusz B. Wisniewski and L.K. Avalon
  */
 
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "common/text-to-speech.h"
 #include "common/config-manager.h"
@@ -197,6 +198,10 @@ Common::Error CGE2Engine::run() {
 	ConfMan.flushToDisk();
 
 	return Common::kNoError;
+}
+
+Common::Language CGE2Engine::getLanguage() const {
+	return _gameDescription->language;
 }
 
 } // End of namespace CGE2
