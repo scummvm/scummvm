@@ -20,10 +20,16 @@
  *
  */
 
+#include "common/file.h"
+#include "graphics/palette.h"
+#include "graphics/surface.h"
+#include "image/png.h"
+
 #include "saga2/saga2.h"
 #include "saga2/objects.h"
 #include "saga2/player.h"
 #include "saga2/mapfeatr.h"
+#include "saga2/tile.h"
 
 #include "saga2/console.h"
 
@@ -33,6 +39,10 @@ namespace Saga2 {
 
 extern pCMapFeature mapFeatures[];
 extern GameObject *objectList;
+extern WorldMapData *mapList;
+extern int16 currentMapNum;
+
+void drawMetaTiles(gPixelMap &drawMap);
 
 Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -60,6 +70,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("list_places", WRAP_METHOD(Console, cmdListPlaces));
 
 	registerCmd("stats", WRAP_METHOD(Console, cmdStats));
+
+	registerCmd("dump_map", WRAP_METHOD(Console, cmdDumpMap));
 }
 
 Console::~Console() {
@@ -219,6 +231,38 @@ bool Console::cmdListPlaces(int argc, const char **argv) {
 			if (mapFeatures[i])
 				debugPrintf("%d: %s\n", i, mapFeatures[i]->getText());
 		}
+	}
+
+	return true;
+}
+
+bool Console::cmdDumpMap(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <Map Size Multiplier>\n", argv[0]);
+	else {
+		gPixelMap drawMap;
+		drawMap.size = _vm->_tileDrawMap.size * atoi(argv[1]);
+		//drawMap.size.x = mapList[currentMapNum].mapHeight;
+		//drawMap.size.y = mapList[currentMapNum].mapHeight;
+		drawMap.data = new uint8[drawMap.bytes()]();
+		drawMetaTiles(drawMap);
+
+		Graphics::Surface sur;
+		sur.create(drawMap.size.x, drawMap.size.y, Graphics::PixelFormat::createFormatCLUT8());
+		sur.setPixels(drawMap.data);
+
+		Common::String pngFile = Common::String::format("%s-mapdump.png", _vm->getMetaEngine()->getName());
+		Common::DumpFile dump;
+		dump.open(pngFile);
+
+		byte palette[256 * 3];
+		g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+
+		Image::writePNG(dump, sur, palette);
+
+		dump.close();
+
+		delete[] drawMap.data;
 	}
 
 	return true;

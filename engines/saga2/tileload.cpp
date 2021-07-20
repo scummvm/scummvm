@@ -64,13 +64,14 @@ void initTileBanks(void) {
 }
 
 void drawPlatform(
+	gPixelMap &drawMap,
     Platform        **pList,                // platforms to draw
     Point16         screenPos,              // screen position
     int16           uOrg,                   // for TAG search
     int16           vOrg) {                 // for TAG search
 
-	int16           right = g_vm->_tileDrawMap.size.x,
-	                bottom = g_vm->_tileDrawMap.size.y;
+	int16           right = drawMap.size.x,
+	                bottom = drawMap.size.y;
 
 	Point16         tilePos;
 
@@ -127,7 +128,7 @@ void drawPlatform(
 					int16 y = tilePos.y - h;
 
 					if (ti->attrs.height > 0 && y < bottom + ti->attrs.height - 1) {
-						drawTile(&g_vm->_tileDrawMap, tilePos.x, y, ti->attrs.height, imageData);
+						drawTile(&drawMap, tilePos.x, y, ti->attrs.height, imageData);
 					}
 				}
 			}

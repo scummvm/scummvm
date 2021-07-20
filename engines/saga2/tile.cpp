@@ -107,6 +107,7 @@ void updateFrameCount(void);
 hResContext         *tileRes;       // tile resource handle
 
 void drawPlatform(
+	gPixelMap &drawMap,
     Platform        **pList,                // platforms to draw
     Point16         screenPos,              // screen position
     int16           uOrg,                   // for TAG search
@@ -2482,7 +2483,7 @@ TileInfo *TileIterator::next(TilePoint *loc, StandingTileInfo *stiResult) {
    Map drawing functions
  * ============================================================================ */
 
-inline void drawMetaRow(TilePoint coords, Point16 pos) {
+inline void drawMetaRow(gPixelMap &drawMap, TilePoint coords, Point16 pos) {
 	WorldMapData    *curMap = &mapList[currentMapNum];
 
 	int16           uOrg = coords.u * kPlatformWidth,
@@ -2500,7 +2501,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 	int16           layerLimit;
 
 	for (;
-	        pos.x < g_vm->_tileDrawMap.size.x + kMetaDX;
+	        pos.x < drawMap.size.x + kMetaDX;
 	        coords.u++,
 	        coords.v--,
 	        uOrg += kPlatformWidth,
@@ -2567,7 +2568,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 				p->highestPixel = kTileHeight * (kPlatformWidth - 1) + kMaxTileHeight * 2 + 64;
 
 				if (pos.y <= 0
-				        || pos.y - p->highestPixel >= g_vm->_tileDrawMap.size.y)
+				        || pos.y - p->highestPixel >= drawMap.size.y)
 					continue;
 
 				*put++ = p;
@@ -2576,7 +2577,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 		*put++ = nullptr;
 
 		if (drawList[0] != nullptr) {
-			drawPlatform(drawList, pos, uOrg, vOrg);
+			drawPlatform(drawMap, drawList, pos, uOrg, vOrg);
 		}
 		//  gThread::yield();
 	}
@@ -2758,7 +2759,7 @@ void buildRoofTable(void) {
 
 //  Draw all visible metatiles
 
-inline void drawMetaTiles(void) {
+inline void drawMetaTiles(gPixelMap &drawMap) {
 	Point32     viewPos;
 	Point16     metaPos;
 	TilePoint   baseCoords;
@@ -2803,16 +2804,16 @@ inline void drawMetaTiles(void) {
 	//      (replace 256 constant with better value)
 
 	for (;
-	        metaPos.y < g_vm->_tileDrawMap.size.y + kMetaTileHeight * 4 ;
+	        metaPos.y < drawMap.size.y + kMetaTileHeight * 4 ;
 	        baseCoords.u--,
 	        baseCoords.v--
 	    ) {
-		drawMetaRow(baseCoords, metaPos);
+		drawMetaRow(drawMap, baseCoords, metaPos);
 
 		metaPos.y += kMetaDY;
 		metaPos.x -= kMetaDX;
 
-		drawMetaRow(TilePoint(baseCoords.u - 1, baseCoords.v, 0), metaPos);
+		drawMetaRow(drawMap, TilePoint(baseCoords.u - 1, baseCoords.v, 0), metaPos);
 
 		metaPos.y += kMetaDY;
 		metaPos.x += kMetaDX;
@@ -4402,7 +4403,7 @@ void drawMainDisplay(void) {
 
 
 	// draws tiles to g_vm->_tileDrawMap.data
-	drawMetaTiles();
+	drawMetaTiles(g_vm->_tileDrawMap);
 
 	//  Draw sprites onto back buffer
 	drawDisplayList();
