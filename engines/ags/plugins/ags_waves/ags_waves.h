@@ -90,6 +90,31 @@ private:
 	void CastWave(int delayMax, int PixelsWide, int n);
 	void DrawEffect(int sprite_a, int sprite_b, int id, int n);
 
+	inline static int getRcolor(int color) {
+		return ((color >> 16) & 0xFF);
+	}
+	inline static int getGcolor(int color) {
+		return ((color >> 8) & 0xFF);
+	}
+	inline static int getBcolor(int color) {
+		return ((color >> 0) & 0xFF);
+	}
+	inline static int getAcolor(int color) {
+		return ((color >> 24) & 0xFF);
+	}
+	static int SetColorRGBA(int r, int g, int b, int a);
+	float noiseField(float tx, float ty, float tz);
+
+
+	static inline float fracts(float value) {
+		return value - floor(value);
+	}
+	static inline float lerp(float x, float y, float fn) {
+		return x * (1.0 - fn) + y * fn;
+	}
+	static inline float hasher(float n) {
+		return fracts(sin(n) * 153.5453123);
+	}
 public:
 	AGSWaves() : PluginBase(), Vars() {}
 	virtual ~AGSWaves() {}

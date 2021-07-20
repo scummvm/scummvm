@@ -99,11 +99,6 @@ void AGSWaves::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(SetWalkbehindBaserine, AGSWaves::SetWalkbehindBaserine);
 }
 
-void AGSWaves::DrawScreenEffect(ScriptMethodParams &params) {
-	PARAMS4(int, sprite, int, sprite_prev, int, ide, int, n);
-	DrawEffect(sprite, sprite_prev, ide, n);
-}
-
 void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 	//PARAMS2(int, SFX, int, repeat);
 }
@@ -158,22 +153,6 @@ void AGSWaves::SFX_AllowOverlap(ScriptMethodParams &params) {
 
 void AGSWaves::SFX_Filter(ScriptMethodParams &params) {
 	//PARAMS2(int, SFX, int, enable);
-}
-
-void AGSWaves::DrawBlur(ScriptMethodParams &params) {
-	//PARAMS2(int, spriteD, int, radius);
-}
-
-void AGSWaves::DrawTunnel(ScriptMethodParams &params) {
-	//PARAMS3(int, spriteD, float, scale, float, speed);
-}
-
-void AGSWaves::DrawCylinder(ScriptMethodParams &params) {
-	//PARAMS2(int, spriteD, int, ogsprite);
-}
-
-void AGSWaves::DrawForceField(ScriptMethodParams &params) {
-	//PARAMS4(int, spriteD, int, scale, float, speed, int, id);
 }
 
 void AGSWaves::Grayscale(ScriptMethodParams &params) {
