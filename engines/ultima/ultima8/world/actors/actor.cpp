@@ -788,7 +788,16 @@ uint16 Actor::setActivityCru(int activity) {
 
 	Kernel *kernel = Kernel::get_instance();
 
-	static const uint16 PROCSTYPES_TO_KILL[] = { 0x204, 0x258, 0xf0, 0x255, 0x257, 0x259, 0x25f, 0x25e };
+	static const uint16 PROCSTYPES_TO_KILL[] = {
+		ActorAnimProcess::ACTOR_ANIM_PROC_TYPE,
+		PathfinderProcess::PATHFINDER_PROC_TYPE,
+		0x255, // PaceProcess
+		0x257, // LoiterProcess
+		// 0x258, // Stand Process (we don't have a process for this)
+		AttackProcess::ATTACK_PROCESS_TYPE,
+		0x25e, // GuardProcess
+		0x25f  // SurrenderProcess
+	};
 	for (int i = 0; i < ARRAYSIZE(PROCSTYPES_TO_KILL); i++) {
 		kernel->killProcesses(_objId, PROCSTYPES_TO_KILL[i], true);
 	}
