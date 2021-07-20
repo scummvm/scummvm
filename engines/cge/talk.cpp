@@ -91,12 +91,12 @@ Talk::Talk(CGEEngine *vm)
 	_wideSpace = false;
 }
 
-const char *lastText = "";
+const char *lastText = nullptr;
 
-void textToSpeech(const char *text) {
+void Talk::textToSpeech(const char *text) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (lastText != text && ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-		ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
+		ttsMan->say(text);
 		lastText = text;
 	}
 }
