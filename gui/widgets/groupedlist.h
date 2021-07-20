@@ -39,6 +39,8 @@ protected:
 	String									_groupingAttribute;
 	Common::HashMap<U32String, int>			_groupValueIndex;
 	Common::Array<bool>						_groupExpanded;
+	U32String									_groupHeaderPrefix;
+	U32String									_groupHeaderSuffix;
 	U32StringArray								_groupHeaders;
 	U32StringArray								_attributeValues;
 	Common::HashMap<int, Common::Array<int>>	_itemsInGroup;
@@ -51,6 +53,7 @@ public:
 	const U32StringArray &getList()	const			{ return _dataList; }
 
 	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
+	void setGroupHeaderFormat(const U32String &prefix, const U32String &suffix);
 	void groupByAttribute();
 
 	void setSelected(int item);
