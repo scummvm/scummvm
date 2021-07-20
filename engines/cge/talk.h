@@ -64,7 +64,7 @@ private:
 };
 
 class InfoLine : public Talk {
-	const char *_oldText, *_lastText;
+	const char *_oldText;
 public:
 	InfoLine(CGEEngine *vm, uint16 wid);
 	void update(const char *text) override;
