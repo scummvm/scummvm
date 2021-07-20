@@ -26,13 +26,12 @@ import multiprocessing as mp
 
 from common_names import *
 
-#workaround for "threading bug in strptime"
-#see - https://stackoverflow.com/questions/32245560/module-object-has-no-attribute-strptime-with-several-threads-python/46401422
+# Workaround for "threading bug in strptime"
+# See - https://stackoverflow.com/questions/32245560/module-object-has-no-attribute-strptime-with-several-threads-python/46401422
 import _strptime
 
 prj_template = "PRJ_MMPFILES\n%s"
 prj_path = "paralell_build"
-
 
 def thread_func(q, plats):
    while True:
@@ -48,20 +47,21 @@ def thread_func(q, plats):
             pass
          else:
             raise
-
       fname = os.path.join(plats, fileName)
       fname = os.path.join("..", fname)
       fname = os.path.join("..", fname)
-      fname = os.path.join("..", fname) # point to mmp file in port specific folder
+      fname = os.path.join("..", fname) # Point to mmp file in port specific folder.
       tmp = os.path.join(pth, "bld.inf")
       SafeWriteFile(tmp, prj_template %fname)
 
-
-      #Needed because datetime.now() returns the same time for every call
-      start = time.strftime("%H:%M:%S")
-
       cmd = subprocess.Popen('bldmake bldfiles', stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=pth, shell=True)
       out, err = cmd.communicate()
+      # Clean build directory from previous build.
+      cmd = subprocess.Popen('abld reallyclean gcce urel', cwd=pth, shell=True)
+      cmd.communicate()
+
+      # Needed because datetime.now() returns the same time for every call.
+      start = time.strftime("%H:%M:%S")
       cmd1 = subprocess.Popen('abld build gcce urel', stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=pth, shell=True)
       out1, err1 = cmd1.communicate()
 
@@ -72,25 +72,31 @@ def thread_func(q, plats):
 
       out = out + out1
       err = err + err1
-      # I hope it correctly stores logs in parallel tasks
-      # after cmd.communicate() we have ugly 'crcrlf' line endings
+      # I hope it correctly stores logs in parallel tasks.
+      # After cmd.communicate() we have ugly 'crcrlf' line endings.
       AppendToFile(build_log, out.replace(u"\r", u""))
       AppendToFile(build_err, err.replace(u"\r", u""))
-      AppendToFile(build_time, "Engine %s build time: %s.\n" %(fileName, str(diff)) )
+      AppendToFile(build_time, "Target %s build time: %s.\n" %(fileName, str(diff)) )
+      print "Target %s done!" %fileName
 
 def build_apps(plats):
    q = Queue.Queue()
+   t_count = mp.cpu_count() + 2
+   if t_count > q.qsize():
+      t_count = q.qsize()
    fileNames = os.listdir(plats)
    fileNames = [x for x in fileNames if ".mmp" in x]
 
    for fileName in fileNames:
       q.put(fileName)
-   print q.qsize()
-   print "Thread count: %s" %mp.cpu_count()
-   threads = [ threading.Thread(target=thread_func, args=(q, plats)) for i in range(mp.cpu_count()) ]
+   print "Queue size: %s" %q.qsize()
+   print "Thread count: %s" %t_count
+   threads = [threading.Thread(target=thread_func, args=(q, plats)) for i in range(t_count)]
    for thread in threads:
       thread.start()
-      q.put(None)  # one EOF marker for each thread
+      q.put(None)  # One EOF marker for each thread.
+   for thread in threads:
+      thread.join()
 
 if __name__ == "__main__":
    build_apps(plats = "S60v3")
