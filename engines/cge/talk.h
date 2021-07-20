@@ -57,14 +57,14 @@ public:
 	Talk(CGEEngine *vm, const char *text, TextBoxStyle mode, bool wideSpace = false);
 	Talk(CGEEngine *vm);
 
-	virtual void textToSpeech(const char *text);
+	void textToSpeech(const char *text);
 	virtual void update(const char *text);
 private:
 	CGEEngine *_vm;
 };
 
 class InfoLine : public Talk {
-	const char *_oldText;
+	const char *_oldText, *_lastText;
 public:
 	InfoLine(CGEEngine *vm, uint16 wid);
 	void update(const char *text) override;
