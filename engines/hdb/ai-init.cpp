@@ -677,6 +677,11 @@ AIEntTypeInfo aiEntList[] = {
 	{ END_AI_TYPES,			nullptr,					nullptr,					nullptr,					nullptr }
 };
 
+struct FuncLookUp {
+	FuncPtr function;
+	const char *funcName;
+};
+
 FuncLookUp aiFuncList[] = {
 	{aiPlayerInit,				"aiPlayerInit"},
 	{aiPlayerInit2,				"aiPlayerInit2"},
@@ -1246,7 +1251,7 @@ void AI::clearPersistent() {
 	_numGems = _numGooCups = _numMonkeystones = _numInventory = _numDeliveries = 0;
 }
 
-const char *AI::funcLookUp(void(*function)(AIEntity *e)) {
+const char *AI::funcLookUp(FuncPtr function) {
 	if (!function)
 		return nullptr;
 

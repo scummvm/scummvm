@@ -383,6 +383,10 @@ struct AIStateDef {
 	const char *name;
 };
 
+// Structs for Function Table Lookup for SaveGames
+typedef void(*FuncPtr)(AIEntity *);
+typedef void(*EntFuncPtr)(AIEntity *, int, int);
+
 struct AIEntity {
 	AIType type;
 	AIState state;
@@ -390,11 +394,11 @@ struct AIEntity {
 
 	Tile *draw;											// Current frame to draw
 
-	void (*aiInit)(AIEntity *e);						// func ptr to init routine
-	void (*aiInit2)(AIEntity *e);						// func ptr to init2 routine - graphic init only (this for LoadGame functionality)
-	void (*aiAction)(AIEntity *e);						// func ptr to action routine
-	void (*aiUse)(AIEntity *e);							// func ptr to use routine
-	void (*aiDraw)(AIEntity *e, int x, int y);			// func ptr to extra drawing routine (only for special stuff) - pass in mapx, mapy
+	FuncPtr aiInit;										// func ptr to init routine
+	FuncPtr aiInit2;									// func ptr to init2 routine - graphic init only (this for LoadGame functionality)
+	FuncPtr aiAction;									// func ptr to action routine
+	FuncPtr aiUse;										// func ptr to use routine
+	EntFuncPtr aiDraw;									// func ptr to extra drawing routine (only for special stuff) - pass in mapx, mapy
 
 	char		luaFuncInit[32];						// Lua function for Init (always called after entity's init). These are ptrs into the map header.
 	char		luaFuncAction[32];						// Lua function for Action
@@ -555,32 +559,22 @@ struct AIEntity {
 	void load(Common::InSaveFile *in);
 };
 
-// Structs for Function Table Lookup for SaveGames
-typedef void(*FuncPtr)(AIEntity *);
-typedef void(*EntFuncPtr)(AIEntity *, int, int);
-
 struct AIEntTypeInfo {
 	AIType type;
 	const char *luaName;
 	AIStateDef *stateDef;
-	void (*initFunc)(AIEntity *e);
-	void (*initFunc2)(AIEntity *e);
-};
-
-struct FuncLookUp {
-	void(*function)(AIEntity *e);
-	const char *funcName;
+	FuncPtr initFunc;
+	FuncPtr initFunc2;
 };
 
 extern AIEntTypeInfo aiEntList[];
-extern FuncLookUp aiFuncList[];
 
 struct AIEntLevel2 {
 	uint16 x;
 	uint16 y;
 	Tile *draw;
 	AIEntity *e;
-	void(*aiDraw)(AIEntity *e, int x, int y);
+	EntFuncPtr aiDraw;
 	uint32 stunnedWait;
 
 	AIEntLevel2() : x(0), y(0), draw(nullptr), e(nullptr), aiDraw(nullptr), stunnedWait(0) {}
@@ -885,7 +879,7 @@ public:
 	void init();
 	void clearPersistent();
 	void restartSystem();
-	const char *funcLookUp(void(*function)(AIEntity *e));
+	const char *funcLookUp(FuncPtr function);
 	FuncPtr funcLookUp(const char *function);
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
