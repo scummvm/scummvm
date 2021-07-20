@@ -47,6 +47,8 @@ private:
 
 	bool cmdSearchObj(int argc, const char **argv);
 
+	bool cmdAddObj(int argc, const char **argv);
+
 	bool cmdGodmode(int argc, const char **argv);
 
 	bool cmdPosition(int argc, const char **argv);

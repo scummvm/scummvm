@@ -49,6 +49,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 
 	registerCmd("search_obj", WRAP_METHOD(Console, cmdSearchObj));
 
+	registerCmd("add_obj", WRAP_METHOD(Console, cmdAddObj));
+
 	registerCmd("position", WRAP_METHOD(Console, cmdPosition));
 
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
@@ -133,6 +135,17 @@ bool Console::cmdSearchObj(int argc, const char **argv) {
 			if (objName.contains(argv[1]))
 				debugPrintf("%d: %s\n", i, objectList[i].objName());
 		}
+	}
+
+	return true;
+}
+
+bool Console::cmdAddObj(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <ObjectID>\n", argv[0]);
+	else {
+		Actor *a = getCenterActor();
+		a->placeObject(a->thisID(), atoi(argv[1]));
 	}
 
 	return true;
