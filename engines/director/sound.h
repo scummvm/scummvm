@@ -95,6 +95,9 @@ public:
 	void systemBeep();
 	void changingMovie();
 
+	void setLastPlayCast(uint8 soundChannel, CastMemberID castMemberId);
+	bool checkLastPlayCast(uint8 soundChannel, const CastMemberID &castMemberId);
+
 	bool getSoundEnabled() { return _enable; }
 
 	Common::String getCurrentSound() { return _currentSoundName; }
@@ -103,7 +106,6 @@ public:
 	bool fadeChannel(uint8 soundChannel);
 
 	bool isChannelActive(uint8 soundChannel);
-	CastMemberID lastPlayingCast(uint8 soundChannel);
 	void stopSound(uint8 soundChannel);
 	void stopSound();
 
