@@ -126,20 +126,19 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 
 %token tUNARY
 
-%token tLEXERROR
 %token<i> tINT
 %token<f> tFLOAT
 %token<s> tVARID tSTRING tSYMBOL
 %token<s> tENDCLAUSE
 %token tCAST tFIELD tSCRIPT tWINDOW
-%token tDELETE tDOWN tELSE tELSIF tEXIT tFRAME tGLOBAL tGO tHILITE tIF tIN tINTO tMACRO
+%token tDELETE tDOWN tELSE tEXIT tFRAME tGLOBAL tGO tHILITE tIF tIN tINTO tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tFACTORY tOPEN tPLAY tINSTANCE
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS
 %token tCHAR tCHARS tITEM tITEMS tLINE tLINES tWORD tWORDS
 %token tABBREVIATED tABBREV tABBR tLONG tSHORT
-%token tCASTMEMBERS tDATE tLAST tMENU tMENUITEM tMENUITEMS tNUMBER tTHE tTIME
+%token tDATE tLAST tMENU tMENUITEM tMENUITEMS tNUMBER tTHE tTIME
 %token tSOUND tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tMETHOD tENDIF tENDREPEAT tENDTELL
 %token tASSERTERROR
@@ -188,7 +187,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %left '<' tLE '>' tGE tEQ tNEQ tCONTAINS tSTARTS
 %left '&' tCONCAT
 %left '+' '-'
-%left '*' '/' '%' tMOD
+%left '*' '/' tMOD
 %right tUNARY
 // %right tCAST tFIELD tSCRIPT tWINDOW
 // %nonassoc tVARID
