@@ -2086,6 +2086,38 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		}
 	}
 
+	if (_game.platform == Common::kPlatformMacintosh && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4)) {
+		// While the Mac versions do have ADL resources, the Mac player
+		// doesn't handle them. So if a song is missing a MAC resource,
+		// prefer the ROL version over ADL.
+		//
+		// This is the case in Monkey Island 2, where some key music is
+		// missing near the end of the game: The Indiana Jones fanfare
+		// when Guybrush uses the rope to get the chest, and the music
+		// after the first LeChuck encounter in the underground tunnels
+		// below that scene. As well as some others that I haven't
+		// identified.
+		//
+		// Note that this does not seem to be a ScummVM bug. That music
+		// was missing when I ran the game in a Mac emulator too!
+		//
+		// ScummVM would play the ROL music instead, but only if it
+		// didn't think it was  using an AdLib music driver. Even if
+		// (as in my case) it was only by default. Now we always set
+		// MDT_MIDI to ensure consistent behavior. The Mac instrument
+		// set isn't quite the same as the MT-32, but it looks like it
+		// was based on a subset of it.
+		//
+		// From what I've seen, when a resource has a Mac version that
+		// is all that it has. So there shouldn't be any case where it
+		// prefers a ROL resource over MAC.
+		//
+		// Adding AdLib capabilities to the player may still be a good
+		// idea, because there are plenty of sound resources that exist
+		// only as ADL and SPK.
+		_sound->_musicType = MDT_MIDI;
+	}
+
 	// DOTT + SAM use General MIDI, so they shouldn't use GS settings
 	if ((_game.id == GID_TENTACLE) || (_game.id == GID_SAMNMAX))
 		_enable_gs = false;
