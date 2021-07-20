@@ -145,11 +145,6 @@ Common::String AdlEngine::readStringAt(Common::SeekableReadStream &stream, uint 
 	return readString(stream, until);
 }
 
-void AdlEngine::openFile(Common::File &file, const Common::String &name) const {
-	if (!file.open(name))
-		error("Error opening '%s'", name.c_str());
-}
-
 void AdlEngine::printMessage(uint idx) {
 	printString(loadMessage(idx));
 }

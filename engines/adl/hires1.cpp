@@ -52,17 +52,6 @@ namespace Adl {
 #define IDI_HR1_MSG_DONT_HAVE_IT       127
 #define IDI_HR1_MSG_GETTING_DARK         7
 
-#define IDI_HR1_OFS_STR_ENTER_COMMAND   0x5bbc
-#define IDI_HR1_OFS_STR_VERB_ERROR      0x5b4f
-#define IDI_HR1_OFS_STR_NOUN_ERROR      0x5b8e
-#define IDI_HR1_OFS_STR_PLAY_AGAIN      0x5f1e
-#define IDI_HR1_OFS_STR_CANT_GO_THERE   0x6c0a
-#define IDI_HR1_OFS_STR_DONT_HAVE_IT    0x6c31
-#define IDI_HR1_OFS_STR_DONT_UNDERSTAND 0x6c51
-#define IDI_HR1_OFS_STR_GETTING_DARK    0x6c7c
-#define IDI_HR1_OFS_STR_PRESS_RETURN    0x5f68
-#define IDI_HR1_OFS_STR_LINE_FEEDS      0x59d4
-
 #define IDI_HR1_OFS_PD_TEXT_0    0x005d
 #define IDI_HR1_OFS_PD_TEXT_1    0x012b
 #define IDI_HR1_OFS_PD_TEXT_2    0x016d
@@ -103,6 +92,7 @@ private:
 	void loadRoom(byte roomNr) override;
 	void showRoom() override;
 
+	void extractExeStrings(Common::ReadStream &stream, Common::StringArray &strings);
 	void showInstructions(Common::SeekableReadStream &stream);
 	void wordWrap(Common::String &str) const;
 
@@ -119,6 +109,24 @@ private:
 		Common::String gettingDark;
 	} _gameStrings;
 };
+
+void HiRes1Engine::extractExeStrings(Common::ReadStream &stream, Common::StringArray &strings) {
+	uint32 window = 0;
+
+	for (;;) {
+		window <<= 8;
+		window |= stream.readByte();
+
+		if (stream.eos())
+			return;
+
+		if (stream.err())
+			error("Failed to extract strings from game executable");
+
+		if ((window & 0xffffff) == 0x201576)
+			strings.push_back(readString(stream));
+	}
+}
 
 void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream) {
 	_display->setMode(Display::kModeText);
@@ -288,19 +296,25 @@ void HiRes1Engine::init() {
 
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));
 
+	Common::StringArray exeStrings;
+	extractExeStrings(*stream, exeStrings);
+
+	if (exeStrings.size() != 18)
+		error("Failed to load strings from executable");
+
 	// Some messages have overrides inside the executable
-	_gameStrings.cantGoThere = readStringAt(*stream, IDI_HR1_OFS_STR_CANT_GO_THERE);
-	_gameStrings.dontHaveIt = readStringAt(*stream, IDI_HR1_OFS_STR_DONT_HAVE_IT);
-	_gameStrings.dontUnderstand = readStringAt(*stream, IDI_HR1_OFS_STR_DONT_UNDERSTAND);
-	_gameStrings.gettingDark = readStringAt(*stream, IDI_HR1_OFS_STR_GETTING_DARK);
+	_gameStrings.cantGoThere = exeStrings[12];
+	_gameStrings.dontHaveIt = exeStrings[13];
+	_gameStrings.dontUnderstand = exeStrings[14];
+	_gameStrings.gettingDark = exeStrings[15];
 
 	// Load other strings from executable
-	_strings.enterCommand = readStringAt(*stream, IDI_HR1_OFS_STR_ENTER_COMMAND);
-	_strings.verbError = readStringAt(*stream, IDI_HR1_OFS_STR_VERB_ERROR);
-	_strings.nounError = readStringAt(*stream, IDI_HR1_OFS_STR_NOUN_ERROR);
-	_strings.playAgain = readStringAt(*stream, IDI_HR1_OFS_STR_PLAY_AGAIN);
-	_strings.pressReturn = readStringAt(*stream, IDI_HR1_OFS_STR_PRESS_RETURN);
-	_strings.lineFeeds = readStringAt(*stream, IDI_HR1_OFS_STR_LINE_FEEDS);
+	_strings.enterCommand = exeStrings[5];
+	_strings.verbError = exeStrings[3];
+	_strings.nounError = exeStrings[4];
+	_strings.playAgain = exeStrings[8];
+	_strings.pressReturn = exeStrings[10];
+	_strings.lineFeeds = exeStrings[1];
 
 	// Set message IDs
 	_messageIds.cantGoThere = IDI_HR1_MSG_CANT_GO_THERE;

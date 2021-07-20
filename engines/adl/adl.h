@@ -266,7 +266,6 @@ protected:
 	virtual void saveState(Common::WriteStream &stream);
 	Common::String readString(Common::ReadStream &stream, byte until = 0) const;
 	Common::String readStringAt(Common::SeekableReadStream &stream, uint offset, byte until = 0) const;
-	void openFile(Common::File &file, const Common::String &name) const;
 
 	virtual void printString(const Common::String &str) = 0;
 	virtual Common::String loadMessage(uint idx) const = 0;
