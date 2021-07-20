@@ -1254,7 +1254,7 @@ public:
 			virtual const int KEY_QUICK() = 0;
 			virtual const int KEY_EXCHANGE() = 0;
 		};
-		virtual DialogsCharInfo *DIALOGS_CHAR_INFO() = 0;
+		virtual DialogsCharInfo *dialogsCharInfo() = 0;
 
 		class DialogsControlPanel {
 		public:
@@ -1265,7 +1265,7 @@ public:
 			virtual const int KEY_QUIT() = 0;
 			virtual const int KEY_MRWIZARD() = 0;
 		};
-		virtual DialogsControlPanel *DIALOGS_CONTROL_PANEL() = 0;
+		virtual DialogsControlPanel *dialogsControlPanel() = 0;
 
 		class DialogsCreateChar {
 		public:
@@ -1279,14 +1279,14 @@ public:
 			virtual const int KEY_ACY() = 0;
 			virtual const int KEY_LCK() = 0;
 		};
-		virtual DialogsCreateChar *DIALOGS_CREATE_CHAR() = 0;
+		virtual DialogsCreateChar *dialogsCreateChar() = 0;
 
 		class DialogsDifficulty {
 		public:
 			virtual const int KEY_ADVENTURER() = 0;
 			virtual const int KEY_WARRIOR() = 0;
 		};
-		virtual DialogsDifficulty *DIALOGS_DIFFICULTY() = 0;
+		virtual DialogsDifficulty *dialogsDifficulty() = 0;
 
 		class DialogsItems {
 		public:
@@ -1307,7 +1307,7 @@ public:
 			virtual const int KEY_RECHRG() = 0;
 			virtual const int KEY_GOLD() = 0;
 		};
-		virtual DialogsItems *DIALOGS_ITEMS() = 0;
+		virtual DialogsItems *dialogsItems() = 0;
 
 		class DialogsParty {
 		public:
@@ -1316,7 +1316,7 @@ public:
 			virtual const int KEY_CREATE() = 0;
 			virtual const int KEY_EXIT() = 0;
 		};
-		virtual DialogsParty *DIALOGS_PARTY() = 0;
+		virtual DialogsParty *dialogsParty() = 0;
 
 		class DialogsQuests {
 		public:
@@ -1324,13 +1324,13 @@ public:
 			virtual const int KEY_CURRENT_QUESTS() = 0;
 			virtual const int KEY_AUTO_NOTES() = 0;
 		};
-		virtual DialogsQuests *DIALOGS_QUESTS() = 0;
+		virtual DialogsQuests *dialogsQuests() = 0;
 
 		class DialogsQuickFight {
 		public:
 			virtual const int KEY_NEXT() = 0;
 		};
-		virtual DialogsQuickFight *DIALOGS_QUICK_FIGHT() = 0;
+		virtual DialogsQuickFight *dialogsQuickFight() = 0;
 
 		class DialogsSpells {
 		public:
@@ -1343,7 +1343,7 @@ public:
 			virtual const int KEY_SET() = 0;
 			virtual const int KEY_RETURN() = 0;
 		};
-		virtual DialogsSpells *DIALOGS_SPELLS() = 0;
+		virtual DialogsSpells *dialogsSpells() = 0;
 
 		class Locations {
 		public:
@@ -1364,7 +1364,7 @@ public:
 			virtual const int KEY_UNCURSE() = 0;
 			virtual const int KEY_TRAIN() = 0;
 		};
-		virtual Locations *LOCATIONS() = 0;
+		virtual Locations *locations() = 0;
 
 		class CloudsOfXeenMenu {
 		public:
@@ -1373,9 +1373,9 @@ public:
 			virtual const int KEY_SHOW_CREDITS() = 0;
 			virtual const int KEY_VIEW_ENDGAME() = 0;
 		};
-		virtual CloudsOfXeenMenu *CLOUDSOFXEENMENU() = 0;
+		virtual CloudsOfXeenMenu *cloudsOfXeenMenu() = 0;
 	};
-	virtual KeyConstants *KEY_CONSTANTS() = 0;
+	virtual KeyConstants *keyConstants() = 0;
 };
 
 extern void writeConstants(CCArchive &cc);

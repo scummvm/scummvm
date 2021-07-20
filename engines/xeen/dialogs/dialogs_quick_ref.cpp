@@ -63,7 +63,7 @@ void QuickReferenceDialog::execute() {
 			party._activeParty.size()); ++idx) {
 		Character &c = combat._globalCombat == 2 ? *combat._combatParty[idx] :
 			party._activeParty[idx];
-		const char **_tmpConditions = c._sex == FEMALE ? (const char **)Res.CONDITION_NAMES_F : (const char **)Res.CONDITION_NAMES_M;
+		const char **tmpConditions = c._sex == FEMALE ? (const char **)Res.CONDITION_NAMES_F : (const char **)Res.CONDITION_NAMES_M;
 		Condition condition = c.worstCondition();
 		lines[idx] = Common::String::format(Res.QUICK_REF_LINE,
 			idx * 10 + 24, idx + 1, c._name.c_str(),
@@ -73,8 +73,8 @@ void QuickReferenceDialog::execute() {
 			c.statColor(c._currentSp, c.getMaxSP()), c._currentSp,
 			c.statColor(c.getArmorClass(), c.getArmorClass(true)), c.getArmorClass(),
 			Res.CONDITION_COLORS[condition],
-			_tmpConditions[condition][0], _tmpConditions[condition][1],
-			_tmpConditions[condition][2], _tmpConditions[condition][3]
+			tmpConditions[condition][0], tmpConditions[condition][1],
+			tmpConditions[condition][2], tmpConditions[condition][3]
 		);
 	}
 

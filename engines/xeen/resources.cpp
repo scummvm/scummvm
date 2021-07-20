@@ -421,89 +421,89 @@ void Resources::loadData() {
 	file.syncString(PHAROAH_ENDING_TEXT2);
 
 	ResFile keys("CONSTKEYS_", _buffer, lang);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_ITEM);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_QUICK);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_EXCHANGE);
+	keys.syncNumber(KeyConstants.DialogsCharInfo.KEY_ITEM);
+	keys.syncNumber(KeyConstants.DialogsCharInfo.KEY_QUICK);
+	keys.syncNumber(KeyConstants.DialogsCharInfo.KEY_EXCHANGE);
 
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_FXON);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MUSICON);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_LOAD);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_SAVE);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_QUIT);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MRWIZARD);
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_FXON);
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_MUSICON);
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_LOAD);
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_SAVE);
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_QUIT);
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_MRWIZARD);
 
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_ROLL);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_CREATE);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_MGT);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_INT);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_PER);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_END);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_SPD);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_ACY);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_LCK);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_ROLL);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_CREATE);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_MGT);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_INT);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_PER);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_END);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_SPD);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_ACY);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_LCK);
 
 
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_DIFFICULTY.KEY_ADVENTURER);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_DIFFICULTY.KEY_WARRIOR);
+	keys.syncNumber(KeyConstants.DialogsDifficulty.KEY_ADVENTURER);
+	keys.syncNumber(KeyConstants.DialogsDifficulty.KEY_WARRIOR);
 
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_WEAPONS);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ARMOR);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ACCESSORY);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_MISC);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_ENCHANT);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_USE);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_BUY);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_SELL);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_IDENTIFY);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_FIX);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_EQUIP);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_REM);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_DISC);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_QUEST);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_RECHRG);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_ITEMS.KEY_GOLD);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_WEAPONS);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_ARMOR);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_ACCESSORY);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_MISC);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_ENCHANT);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_USE);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_BUY);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_SELL);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_IDENTIFY);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_FIX);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_EQUIP);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_REM);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_DISC);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_QUEST);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_RECHRG);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_GOLD);
 
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_PARTY.KEY_DELETE);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_PARTY.KEY_REMOVE);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_PARTY.KEY_CREATE);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_PARTY.KEY_EXIT);
+	keys.syncNumber(KeyConstants.DialogsParty.KEY_DELETE);
+	keys.syncNumber(KeyConstants.DialogsParty.KEY_REMOVE);
+	keys.syncNumber(KeyConstants.DialogsParty.KEY_CREATE);
+	keys.syncNumber(KeyConstants.DialogsParty.KEY_EXIT);
 
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_QUESTS.KEY_QUEST_ITEMS);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_QUESTS.KEY_CURRENT_QUESTS);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_QUESTS.KEY_AUTO_NOTES);
+	keys.syncNumber(KeyConstants.DialogsQuests.KEY_QUEST_ITEMS);
+	keys.syncNumber(KeyConstants.DialogsQuests.KEY_CURRENT_QUESTS);
+	keys.syncNumber(KeyConstants.DialogsQuests.KEY_AUTO_NOTES);
 
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_QUICK_FIGHT.KEY_NEXT);
+	keys.syncNumber(KeyConstants.DialogsQuickFight.KEY_NEXT);
 
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_SPELLS.KEY_CAST);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_SPELLS.KEY_NEW);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_SPELLS.KEY_FIRE);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_SPELLS.KEY_ELEC);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_SPELLS.KEY_COLD);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_SPELLS.KEY_ACID);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_SPELLS.KEY_SET);
-	keys.syncNumber(KEY_CONSTANTS.DIALOGS_SPELLS.KEY_RETURN);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_CAST);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_NEW);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_FIRE);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_ELEC);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_COLD);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_ACID);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_SET);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_RETURN);
 
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_DEP);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_WITH);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_GOLD);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_GEMS);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_BROWSE);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_BUY_SPELLS);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_SPELL_INFO);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_SIGN_IN);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_DRINK);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_FOOD);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_TIP);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_RUMORS);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_HEAL);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_DONATION);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_UNCURSE);
-	keys.syncNumber(KEY_CONSTANTS.LOCATIONS.KEY_TRAIN);
+	keys.syncNumber(KeyConstants.Locations.KEY_DEP);
+	keys.syncNumber(KeyConstants.Locations.KEY_WITH);
+	keys.syncNumber(KeyConstants.Locations.KEY_GOLD);
+	keys.syncNumber(KeyConstants.Locations.KEY_GEMS);
+	keys.syncNumber(KeyConstants.Locations.KEY_BROWSE);
+	keys.syncNumber(KeyConstants.Locations.KEY_BUY_SPELLS);
+	keys.syncNumber(KeyConstants.Locations.KEY_SPELL_INFO);
+	keys.syncNumber(KeyConstants.Locations.KEY_SIGN_IN);
+	keys.syncNumber(KeyConstants.Locations.KEY_DRINK);
+	keys.syncNumber(KeyConstants.Locations.KEY_FOOD);
+	keys.syncNumber(KeyConstants.Locations.KEY_TIP);
+	keys.syncNumber(KeyConstants.Locations.KEY_RUMORS);
+	keys.syncNumber(KeyConstants.Locations.KEY_HEAL);
+	keys.syncNumber(KeyConstants.Locations.KEY_DONATION);
+	keys.syncNumber(KeyConstants.Locations.KEY_UNCURSE);
+	keys.syncNumber(KeyConstants.Locations.KEY_TRAIN);
 
-	keys.syncNumber(KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_START_NEW_GAME);
-	keys.syncNumber(KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_LOAD_GAME);
-	keys.syncNumber(KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_SHOW_CREDITS);
-	keys.syncNumber(KEY_CONSTANTS.CLOUDSOFXEENMENU.KEY_VIEW_ENDGAME);
+	keys.syncNumber(KeyConstants.CloudsOfXeenMenu.KEY_START_NEW_GAME);
+	keys.syncNumber(KeyConstants.CloudsOfXeenMenu.KEY_LOAD_GAME);
+	keys.syncNumber(KeyConstants.CloudsOfXeenMenu.KEY_SHOW_CREDITS);
+	keys.syncNumber(KeyConstants.CloudsOfXeenMenu.KEY_VIEW_ENDGAME);
 }
 
 } // End of namespace Xeen

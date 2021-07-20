@@ -528,11 +528,11 @@ int CastSpell::execute(Character *&c) {
 		} else if (Common::KEYCODE_ESCAPE == _buttonValue) {
 			spellId = -1;
 
-		} else if (Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_CAST == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsSpells.KEY_CAST == _buttonValue) {
 			// Cast spell - return the selected spell Id to be cast
 			if (c->_currentSpell != -1 && !c->noActions())
 				_buttonValue = Common::KEYCODE_ESCAPE;
-		} else if (Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_NEW == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsSpells.KEY_NEW == _buttonValue) {
 			// Select new spell
 			_vm->_mode = (Mode)_oldMode;
 			c = SpellsDialog::show(_vm, this, c, SPELLS_DIALOG_SELECT);
@@ -548,8 +548,8 @@ int CastSpell::execute(Character *&c) {
 void CastSpell::loadButtons() {
 	_iconSprites.load("cast.icn");
 
-	addButton(Common::Rect(234, 108, 259, 128), Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_CAST, &_iconSprites);
-	addButton(Common::Rect(261, 108, 285, 128), Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_NEW, &_iconSprites);
+	addButton(Common::Rect(234, 108, 259, 128), Res.KeyConstants.DialogsSpells.KEY_CAST, &_iconSprites);
+	addButton(Common::Rect(261, 108, 285, 128), Res.KeyConstants.DialogsSpells.KEY_NEW, &_iconSprites);
 
 	addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_iconSprites);
 	addPartyButtons(_vm);
@@ -680,13 +680,13 @@ int SelectElement::execute(int spellId) {
 		if (Common::KEYCODE_ESCAPE == _buttonValue) {
 			result = -1;
 			spells.addSpellCost(*combat._oldCharacter, spellId);
-		} else if (Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_ACID == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsSpells.KEY_ACID == _buttonValue) {
 			result = DT_POISON;
-		} else if (Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_COLD == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsSpells.KEY_COLD == _buttonValue) {
 			result = DT_COLD;
-		} else if (Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_ELEC == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsSpells.KEY_ELEC == _buttonValue) {
 			result = DT_ELECTRICAL;
-		} else if (Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_FIRE == _buttonValue) {
+		} else if (Res.KeyConstants.DialogsSpells.KEY_FIRE == _buttonValue) {
 			result = DT_FIRE;
 		}
 	}
@@ -699,10 +699,10 @@ int SelectElement::execute(int spellId) {
 void SelectElement::loadButtons() {
 	_iconSprites.load("element.icn");
 
-	addButton(Common::Rect(60, 92, 84, 112),   Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_FIRE, &_iconSprites);
-	addButton(Common::Rect(90, 92, 114, 112),  Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_ELEC, &_iconSprites);
-	addButton(Common::Rect(120, 92, 144, 112), Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_COLD, &_iconSprites);
-	addButton(Common::Rect(150, 92, 174, 112), Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_ACID, &_iconSprites);
+	addButton(Common::Rect(60, 92, 84, 112),   Res.KeyConstants.DialogsSpells.KEY_FIRE, &_iconSprites);
+	addButton(Common::Rect(90, 92, 114, 112),  Res.KeyConstants.DialogsSpells.KEY_ELEC, &_iconSprites);
+	addButton(Common::Rect(120, 92, 144, 112), Res.KeyConstants.DialogsSpells.KEY_COLD, &_iconSprites);
+	addButton(Common::Rect(150, 92, 174, 112), Res.KeyConstants.DialogsSpells.KEY_ACID, &_iconSprites);
 }
 
 /*------------------------------------------------------------------------*/
@@ -796,7 +796,7 @@ bool LloydsBeacon::execute() {
 			} while (!_buttonValue && events.timeElapsed() < 1);
 		} while (!_buttonValue);
 
-		if (Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_RETURN == _buttonValue) {
+		if (Res.KeyConstants.DialogsSpells.KEY_RETURN == _buttonValue) {
 			if (!ccNum && c._lloydMap >= XEEN_CASTLE1 && c._lloydMap <= XEEN_CASTLE4 && party._cloudsCompleted) {
 				// Xeen's Castle has already been destroyed
 				result = false;
@@ -811,7 +811,7 @@ bool LloydsBeacon::execute() {
 			}
 
 			_buttonValue = Common::KEYCODE_ESCAPE;
-		} else if (Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_SET == _buttonValue ||
+		} else if (Res.KeyConstants.DialogsSpells.KEY_SET == _buttonValue ||
 				   Common::KEYCODE_s == _buttonValue) {
 			sound.playFX(20);
 			c._lloydMap = party._mazeId;
@@ -830,8 +830,8 @@ bool LloydsBeacon::execute() {
 void LloydsBeacon::loadButtons() {
 	_iconSprites.load("lloyds.icn");
 
-	addButton(Common::Rect(281, 108, 305, 128), Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_RETURN, &_iconSprites);
-	addButton(Common::Rect(242, 108, 266, 128), Res.KEY_CONSTANTS.DIALOGS_SPELLS.KEY_SET, &_iconSprites);
+	addButton(Common::Rect(281, 108, 305, 128), Res.KeyConstants.DialogsSpells.KEY_RETURN, &_iconSprites);
+	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.DialogsSpells.KEY_SET, &_iconSprites);
 }
 
 /*------------------------------------------------------------------------*/
