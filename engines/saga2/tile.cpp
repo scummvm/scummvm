@@ -2759,7 +2759,7 @@ void buildRoofTable(void) {
 
 //  Draw all visible metatiles
 
-inline void drawMetaTiles(gPixelMap &drawMap) {
+void drawMetaTiles(gPixelMap &drawMap) {
 	Point32     viewPos;
 	Point16     metaPos;
 	TilePoint   baseCoords;

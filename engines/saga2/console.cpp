@@ -42,8 +42,6 @@ extern GameObject *objectList;
 extern WorldMapData *mapList;
 extern int16 currentMapNum;
 
-void drawMetaTiles(gPixelMap &drawMap);
-
 Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	_vm = vm;
 

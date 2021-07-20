@@ -1074,6 +1074,8 @@ TilePoint selectNearbySite(
     int32           maxDist,
     bool            offScreenOnly = false);     // true if we want it off-screen
 
+void drawMetaTiles(gPixelMap &drawMap);
+
 } // end of namespace Saga2
 
 #endif
