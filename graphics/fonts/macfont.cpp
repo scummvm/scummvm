@@ -413,6 +413,10 @@ void MacFONTFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color)
 	uint16 xStart = (x < 0) ? -x : 0;
 	uint16 xStop = glyph->bitmapWidth;
 
+	x += glyph->kerningOffset;
+	if (x >= dst->w)
+		return;
+
 	if (y + _data._fRectHeight >= dst->h)
 		yStop = dst->h - y;
 	if (x + glyph->bitmapWidth >= dst->w)
