@@ -38,6 +38,7 @@
 #include "director/channel.h"
 #include "director/sprite.h"
 #include "director/util.h"
+#include "director/sound.h"
 
 namespace Director {
 
@@ -494,6 +495,7 @@ bool Window::step() {
 		} else {
 			delete sharedCast;
 		}
+		g_director->getSoundManager()->changingMovie();
 
 		_nextMovie.movie.clear();
 	}

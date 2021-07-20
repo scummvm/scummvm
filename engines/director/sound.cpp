@@ -111,7 +111,7 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 			if (soundCast->_type != kCastSound) {
 				warning("DirectorSound::playCastMember: attempted to play a non-SoundCastMember %s", memberID.asString().c_str());
 			} else {
-				if (!allowRepeat && lastPlayingCast(soundChannel) == memberID)
+				if (!allowRepeat && lastPlayingCast(soundChannel) == memberID && !_channels[soundChannel - 1]._movieChanged)
 					return;
 				bool looping = ((SoundCastMember *)soundCast)->_looping;
 				AudioDecoder *ad = ((SoundCastMember *)soundCast)->_audio;
@@ -129,6 +129,7 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 				}
 				playStream(*as, soundChannel);
 				_channels[soundChannel - 1].lastPlayingCast = memberID;
+				_channels[soundChannel - 1]._movieChanged = false;
 			}
 		} else {
 			warning("DirectorSound::playCastMember: couldn't find %s", memberID.asString().c_str());
@@ -252,11 +253,17 @@ void DirectorSound::playExternalSound(AudioDecoder *ad, uint8 soundChannel, uint
 
 	// use castMemberID info to check, castLib -1 represent for externalSound
 	// this should be amended by some kind of union which contains CastMemberID and externalSound info
-	if (isChannelActive(soundChannel) && lastPlayingCast(soundChannel) == CastMemberID(externalSoundID, -1))
+	if (isChannelActive(soundChannel) && (lastPlayingCast(soundChannel) == CastMemberID(externalSoundID, -1)) && !_channels[soundChannel - 1]._movieChanged)
 		return;
 
 	playStream(*(ad->getAudioStream()), soundChannel);
 	_channels[soundChannel - 1].lastPlayingCast = CastMemberID(externalSoundID, -1);
+	_channels[soundChannel - 1]._movieChanged = false;
+}
+
+void DirectorSound::changingMovie() {
+	for (uint i = 0; i < _channels.size(); i++)
+		_channels[i]._movieChanged = true;
 }
 
 CastMemberID DirectorSound::lastPlayingCast(uint8 soundChannel) {
@@ -273,6 +280,7 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 	cancelFade(soundChannel);
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
 	_channels[soundChannel - 1].lastPlayingCast = CastMemberID(0, 0);
+	_channels[soundChannel - 1]._movieChanged = false;
 	return;
 }
 
@@ -282,6 +290,7 @@ void DirectorSound::stopSound() {
 
 		_mixer->stopHandle(_channels[i].handle);
 		_channels[i].lastPlayingCast = CastMemberID(0, 0);
+		_channels[i]._movieChanged = false;
 	}
 
 	_mixer->stopHandle(_scriptSound);

@@ -54,7 +54,11 @@ struct SoundChannel {
 	byte volume;
 	FadeParams *fade;
 
-	SoundChannel(): handle(), volume(255), fade(nullptr) {}
+	// this indicate whether the sound is playing across the movie. Because the cast name may be the same while the actual sounds are changing.
+	// And we will override the sound when ever the sound is changing. thus we use a flag to indicate whether the movie is changed.
+	bool _movieChanged;
+
+	SoundChannel(): handle(), volume(255), fade(nullptr), _movieChanged(false) {}
 };
 
 class DirectorSound {
@@ -89,6 +93,7 @@ public:
 	uint8 getSoundLevel(uint8 soundChannel);
 	void setSoundEnabled(bool enabled);
 	void systemBeep();
+	void changingMovie();
 
 	bool getSoundEnabled() { return _enable; }
 
