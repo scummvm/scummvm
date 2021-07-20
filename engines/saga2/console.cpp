@@ -53,6 +53,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("goto_place", WRAP_METHOD(Console, cmdGotoPlace));
 
 	registerCmd("list_places", WRAP_METHOD(Console, cmdListPlaces));
+
+	registerCmd("stats", WRAP_METHOD(Console, cmdStats));
 }
 
 Console::~Console() {
@@ -124,6 +126,17 @@ bool Console::cmdPosition(int argc, const char **argv) {
 	else {
 		bool show = atoi(argv[1]);
 		_vm->_showPosition = show;
+	}
+
+	return true;
+}
+
+bool Console::cmdStats(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <1/0>\n", argv[0]);
+	else {
+		bool show = atoi(argv[1]);
+		_vm->_showStats = show;
 	}
 
 	return true;

@@ -49,6 +49,8 @@ private:
 
 	bool cmdPosition(int argc, const char **argv);
 
+	bool cmdStats(int argc, const char **argv);
+
 	bool cmdTeleport(int argc, const char **argv);
 
 	bool cmdGotoPlace(int argc, const char **argv);

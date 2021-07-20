@@ -177,6 +177,7 @@ public:
 	bool _speechText;
 
 	bool _showPosition;
+	bool _showStats;
 
 private:
 	Video::SmackerDecoder *_smkDecoder;

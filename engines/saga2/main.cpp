@@ -44,6 +44,7 @@
 #include "saga2/saveload.h"
 #include "saga2/gamerate.h"
 #include "saga2/msgbox.h"
+#include "saga2/grabinfo.h"
 
 namespace Saga2 {
 
@@ -362,6 +363,23 @@ void showDebugMessages() {
 	if (g_vm->_showPosition) {
 		TilePoint p = centerActorCoords();
 		WriteStatusF2(0, "Position: %d, %d, %d", p.u, p.v, p.z);
+	}
+
+	if (g_vm->_showStats) {
+		ObjectID objID = g_vm->_mouseInfo->getObjectId();
+		GameObject *obj = GameObject::objectAddress(objID);
+
+		if (ProtoObj *p = obj->proto()) {
+			WriteStatusF2(1, "%s (%d)", obj->objName(), objID);
+			WriteStatusF2(2, "dmg = %d", p->weaponDamage);
+			WriteStatusF2(3, "firerate = %d", p->weaponFireRate);
+			WriteStatusF2(4, "maximumRange = %d", p->maximumRange);
+			WriteStatusF2(5, "dmgAbsorbtion = %d", p->damageAbsorbtion);
+			WriteStatusF2(6, "dmgDivider = %d", p->damageDivider);
+			WriteStatusF2(7, "defenseBonus = %d", p->defenseBonus);
+			WriteStatusF2(8, "maxCharges = %d", p->maxCharges);
+			WriteStatusF2(9, "price = %d", p->price);
+		}
 	}
 }
 
