@@ -32,6 +32,7 @@ namespace Saga2 {
 #define MAX_MAP_FEATURES 128
 
 extern pCMapFeature mapFeatures[];
+extern GameObject *objectList;
 
 Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -45,6 +46,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("obj_name", WRAP_METHOD(Console, cmdObjName));
 
 	registerCmd("name2id", WRAP_METHOD(Console, cmdObjNameToID));
+
+	registerCmd("search_obj", WRAP_METHOD(Console, cmdSearchObj));
 
 	registerCmd("position", WRAP_METHOD(Console, cmdPosition));
 
@@ -108,13 +111,28 @@ bool Console::cmdObjName(int argc, const char **argv) {
 
 bool Console::cmdObjNameToID(int argc, const char **argv) {
 	if (argc != 2)
-		debugPrintf("Usage: %s <Name index>", argv[0]);
+		debugPrintf("Usage: %s <Name index>\n", argv[0]);
 	else {
 		int32 id = GameObject::nameIndexToID(atoi(argv[1]));
 		if (id == -1)
 			debugPrintf("Invalid name index!\n");
 		else
 			debugPrintf("%d\n", id);
+	}
+
+	return true;
+}
+
+bool Console::cmdSearchObj(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <Object name>\n", argv[0]);
+	else {
+		for (int i = 0; i < objectCount; ++i) {
+			Common::String objName = objectList[i].objName();
+			objName.toLowercase();
+			if (objName.contains(argv[1]))
+				debugPrintf("%d: %s\n", i, objectList[i].objName());
+		}
 	}
 
 	return true;
