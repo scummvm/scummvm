@@ -33,14 +33,10 @@
 
 namespace CGE2 {
 
-const char *_iWantToStopPlayingAlready = "";
-const char *_thisIsAMistakeKeepPlaying = "";
-
 Choice::Choice(CGE2Engine *vm) : _vm(vm), _text(nullptr) {}
 
 ExitGameChoice::ExitGameChoice(CGE2Engine *vm) : Choice(vm) {
 	_text = _vm->_text->getText(kQuitText);
-	_iWantToStopPlayingAlready = _text;
 }
 
 void ExitGameChoice::proc() {
@@ -49,7 +45,6 @@ void ExitGameChoice::proc() {
 
 ReturnToGameChoice::ReturnToGameChoice(CGE2Engine *vm) : Choice(vm) {
 	_text = _vm->_text->getText(kNoQuitText);
-	_thisIsAMistakeKeepPlaying = _text;
 }
 
 void ReturnToGameChoice::proc() {
@@ -159,12 +154,9 @@ void VMenu::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 		n = _items - 1 - n;
 
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-		if (lastN != n) {
-			if (n == 0)
-				ttsMan->say(_iWantToStopPlayingAlready, Common::TextToSpeechManager::INTERRUPT);
-			else
-				ttsMan->say(_thisIsAMistakeKeepPlaying, Common::TextToSpeechManager::INTERRUPT);
-			lastN = n;
+		if (_lastN != n) {
+			ttsMan->say(_menu[n]->_text, Common::TextToSpeechManager::INTERRUPT);
+			_lastN = n;
 		}
 
 		if (ok && (mask & kMouseLeftUp)) {

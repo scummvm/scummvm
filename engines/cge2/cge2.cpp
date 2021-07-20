@@ -183,7 +183,7 @@ bool CGE2Engine::hasFeature(EngineFeature f) const {
 
 Common::Error CGE2Engine::run() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-    if (ttsMan != nullptr)
+	if (ttsMan != nullptr)
 		ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
 	syncSoundSettings();
 	initGraphics(kScrWidth, kScrHeight);
