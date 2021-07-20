@@ -29,6 +29,8 @@
 
 namespace Saga2 {
 
+#define MAX_MAP_FEATURES 128
+
 extern pCMapFeature mapFeatures[];
 
 Console::Console(Saga2Engine *vm) : GUI::Debugger() {
@@ -49,6 +51,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
 
 	registerCmd("goto_place", WRAP_METHOD(Console, cmdGotoPlace));
+
+	registerCmd("list_places", WRAP_METHOD(Console, cmdListPlaces));
 }
 
 Console::~Console() {
@@ -157,6 +161,19 @@ bool Console::cmdGotoPlace(int argc, const char **argv) {
 			Actor *p = (Actor *)GameObject::objectAddress(id);
 			TilePoint curLoc = p->getLocation();
 			p->setLocation(TilePoint(curLoc.u + du, curLoc.v + dv, 8));
+		}
+	}
+
+	return true;
+}
+
+bool Console::cmdListPlaces(int argc, const char **argv) {
+	if (argc != 1)
+		debugPrintf("Usage: %s\n", argv[0]);
+	else {
+		for (int i = 0; i < MAX_MAP_FEATURES; ++i) {
+			if (mapFeatures[i])
+				debugPrintf("%d: %s\n", i, mapFeatures[i]->getText());
 		}
 	}
 

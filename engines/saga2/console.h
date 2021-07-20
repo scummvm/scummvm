@@ -52,6 +52,8 @@ private:
 	bool cmdTeleport(int argc, const char **argv);
 
 	bool cmdGotoPlace(int argc, const char **argv);
+
+	bool cmdListPlaces(int argc, const char **argv);
 };
 
 }
