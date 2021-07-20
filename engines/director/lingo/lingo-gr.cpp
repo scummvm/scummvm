@@ -3034,7 +3034,7 @@ yyreduce:
 
   case 80: /* ID: tENDCLAUSE  */
 #line 355 "engines/director/lingo/lingo-gr.y"
-                        { (yyval.s) = new Common::String("end"); }
+                        { (yyval.s) = new Common::String("end"); delete (yyvsp[0].s); }
 #line 3039 "engines/director/lingo/lingo-gr.cpp"
     break;
 

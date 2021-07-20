@@ -352,7 +352,7 @@ CMDID: tVARID
 
 ID: CMDID
 	| tELSE			{ $$ = new Common::String("else"); }
-	| tENDCLAUSE	{ $$ = new Common::String("end"); }
+	| tENDCLAUSE	{ $$ = new Common::String("end"); delete $tENDCLAUSE; }
 	| tEXIT			{ $$ = new Common::String("exit"); }
 	| tFACTORY		{ $$ = new Common::String("factory"); }
 	| tGLOBAL		{ $$ = new Common::String("global"); }
