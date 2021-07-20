@@ -124,12 +124,21 @@ void GroupedListWidget::sortGroups() {
 	_list.clear();
 	_listIndex.clear();
 
-	for (uint groupID = 0; groupID != _groupHeaders.size(); ++groupID) {
+	Common::sort(_groupHeaders.begin(), _groupHeaders.end());
+
+	for (uint i = 0; i != _groupHeaders.size(); ++i) {
+		U32String header = _groupHeaders[i];
+		U32String displayedHeader = header;
+		uint groupID = _groupValueIndex[header];
+
 		_listColors.push_back(_listColors.front());
 		_listIndex.push_back(kGroupTag - groupID);
-		_list.push_back(_groupHeaders[groupID]);
+
+		displayedHeader.toUppercase();
+		_list.push_back(displayedHeader);
+
 		if (_groupExpanded[groupID]) {
-			for (auto k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
+			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
 				_list.push_back(Common::U32String("    ") + _dataList[*k]);
 				_listIndex.push_back(*k);
 			}
