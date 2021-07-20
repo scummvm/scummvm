@@ -77,7 +77,6 @@ uint16 Font::width(const char *text) {
 
 Talk::Talk(CGEEngine *vm, const char *text, TextBoxStyle mode, bool wideSpace)
 	: Sprite(vm, NULL), _mode(mode), _wideSpace(wideSpace), _vm(vm) {
-	textToSpeech(text);
 	_ts = NULL;
 	_flags._syst = true;
 	update(text);
@@ -91,17 +90,15 @@ Talk::Talk(CGEEngine *vm)
 	_wideSpace = false;
 }
 
-const char *lastText = nullptr;
-
 void Talk::textToSpeech(const char *text) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (lastText != text && ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+	if (text != nullptr && ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
 		ttsMan->say(text);
-		lastText = text;
-	}
 }
 
 void Talk::update(const char *text) {
+	textToSpeech(text);
+
 	const uint16 vmarg = (_mode) ? kTextVMargin : 0;
 	const uint16 hmarg = (_mode) ? kTextHMargin : 0;
 	uint16 mw = 0;
@@ -205,7 +202,7 @@ Bitmap *Talk::box(uint16 w, uint16 h) {
 	return new Bitmap(_vm, w, h, b);
 }
 
-InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldText(NULL), _vm(vm) {
+InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldText(NULL), _lastText(NULL), _vm(vm) {
 	if (!_ts) {
 		_ts = new BitmapPtr[2];
 		_ts[1] = NULL;
@@ -216,10 +213,18 @@ InfoLine::InfoLine(CGEEngine *vm, uint16 w) : Talk(vm), _oldText(NULL), _vm(vm) 
 }
 
 void InfoLine::update(const char *text) {
-	textToSpeech(text);
-
 	if (text == _oldText)
 		return;
+
+	// As we increment text in the loop below and only set _oldText at the end of the loop,
+	// _oldText actually point to the end of the previous text and not the start. So calling
+	// this function twice with the same pointer will not return immediately.
+	// I suspect this is a bug (already present in the original).
+	// If we fix this we can get rid of the _lastText variable and the check below.
+	if (text != _lastText) {
+		textToSpeech(text);
+		_lastText = text;
+	}
 
 	uint16 w = _ts[0]->_w;
 	uint16 h = _ts[0]->_h;
