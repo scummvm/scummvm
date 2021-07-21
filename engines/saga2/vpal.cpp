@@ -228,6 +228,7 @@ bool updatePalette() {
 			memcpy(&currentPalette, &tempPalette, sizeof(gPalette));
 			assertCurrentPalette();
 
+			g_system->updateScreen();
 		}
 		return true;
 	}
