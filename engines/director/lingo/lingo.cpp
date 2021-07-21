@@ -445,6 +445,13 @@ void Lingo::execute(uint pc) {
 		}
 	}
 
+	if (_abort) {
+		// Clean up call stack
+		while (_callstack.size()) {
+			popContext();
+		}
+	}
+
 	_abort = false;
 }
 
