@@ -419,7 +419,7 @@ void Score::update() {
 	// Enter and exit from previous frame
 	if (!_vm->_playbackPaused) {
 		_movie->processEvent(kEventEnterFrame); // Triggers the frame script in D2-3, explicit enterFrame handlers in D4+
-		if (_vm->getVersion() == 300) {
+		if (_vm->getVersion() >= 300 && _vm->getVersion() < 400) {
 			// Movie version of enterFrame, for D3 only. The Lingo Dictionary claims
 			// "This handler executes before anything else when the playback head moves."
 			// but this is incorrect. The frame script is executed first.
