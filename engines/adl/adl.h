@@ -258,6 +258,7 @@ protected:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
 	virtual Common::String getSaveStateName(int slot) const override;
+	int getAutosaveSlot() const override { return 15; }
 
 	Common::String getDiskImageName(byte volume) const { return Adl::getDiskImageName(*_gameDescription, volume); }
 	GameType getGameType() const { return Adl::getGameType(*_gameDescription); }
