@@ -36,6 +36,14 @@ typedef uint16 L9UINT16;
 typedef uint32 L9UINT32;
 typedef bool L9BOOL;
 
+#if defined(FALSE)
+#undef FALSE
+#endif
+
+#if defined(TRUE)
+#undef TRUE
+#endif
+
 #define FALSE false
 #define TRUE true
 
