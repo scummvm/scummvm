@@ -328,7 +328,7 @@ void GroupedListWidget::drawWidget() {
 			int groupID = -_listIndex[pos] + kGroupTag;
 			isGroupHeader = true;
 			r.left += fontHeight - 2 + _leftPadding;
-			g_gui.theme()->drawFoldIndicator(Common::Rect(_x + _hlLeftPadding, y, _x + fontHeight - 2 + _leftPadding, y + fontHeight - 2), _groupExpanded[groupID]);
+			g_gui.theme()->drawFoldIndicator(Common::Rect(_x + _hlLeftPadding + _leftPadding, y, _x + fontHeight - 2 + _leftPadding, y + fontHeight - 2), _groupExpanded[groupID]);
 			pad = 0;
 		}
 
