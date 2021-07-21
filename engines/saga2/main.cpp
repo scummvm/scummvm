@@ -24,6 +24,7 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/memstream.h"
@@ -149,6 +150,7 @@ bool setupGame(void);
 void mainEnable(void);
 void mainDisable(void);
 void lightsOut(void);
+void updateMainDisplay(void);
 
 void cleanupGame(void);                  // auto-cleanup function
 void parseCommandLine(int argc, char *argv[]);
@@ -190,6 +192,28 @@ void main_saga2() {
 	cleanExit = gameInitialized;
 
 	if (gameInitialized) {
+		if (ConfMan.hasKey("save_slot")) {
+			reDrawScreen();
+
+			disableUserControls();
+			cleanupGameState();
+
+			fadeDown();
+
+			loadSavedGameState(ConfMan.getInt("save_slot"));
+
+			if (GameMode::newmodeFlag)
+				GameMode::update();
+			updateActiveRegions();
+			enableUserControls();
+			updateMainDisplay();
+			drawMainDisplay();
+			enablePaletteChanges();
+			updateAllUserControls();
+			fadeUp();
+			reDrawScreen();
+		}
+
 		mainLoop(cleanExit, 0, NULL);
 	}
 
