@@ -53,9 +53,9 @@ void AGSWaves::Warper(ScriptMethodParams &params) {
 	int h = int(max4(ay, by, cy, dy)) + 1;
 
 	BITMAP *refsrc = _engine->GetSpriteGraphic(swarp);
-	int refsrc_width = 640;
-	int refsrc_height = 360;
-	int refsrc_depth = 32;
+	int32 refsrc_width = 640;
+	int32 refsrc_height = 360;
+	int32 refsrc_depth = 32;
 	_engine->GetBitmapDimensions(refsrc, &refsrc_width, &refsrc_height, &refsrc_depth);
 	unsigned int **refsprite_pixels = (unsigned int **)_engine->GetRawBitmapSurface(refsrc);
 	_engine->ReleaseBitmapSurface(refsrc);
@@ -63,9 +63,9 @@ void AGSWaves::Warper(ScriptMethodParams &params) {
 
 	// create temporary sprite holding the warped version
 	BITMAP *resizeb = _engine->GetSpriteGraphic(sadjust);
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(resizeb, &src_width, &src_height, &src_depth);
 	unsigned int **sprite_pixels = (unsigned int **)_engine->GetRawBitmapSurface(resizeb);
 

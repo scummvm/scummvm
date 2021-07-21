@@ -43,9 +43,9 @@ void AGSWaves::DrawBlur(ScriptMethodParams &params) {
 	uint32 *pixelb = (uint32 *)_engine->GetRawBitmapSurface(src);
 	uint32 *pixela = (uint32 *)_engine->GetRawBitmapSurface(src2);
 	_engine->ReleaseBitmapSurface(src2);
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 
@@ -147,9 +147,9 @@ void AGSWaves::DrawTunnel(ScriptMethodParams &params) {
 	d_time = speed;
 	BITMAP *src = _engine->GetSpriteGraphic(spriteD);
 	uint32 *pixela = (uint32 *)_engine->GetRawBitmapSurface(src);
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 
 	BITMAP *src2 = _engine->GetSpriteGraphic(int(scale));
@@ -199,9 +199,9 @@ void AGSWaves::DrawCylinder(ScriptMethodParams &params) {
 
 	BITMAP *src = _engine->GetSpriteGraphic(spriteD);
 	uint32 *pixela = (uint32 *)_engine->GetRawBitmapSurface(src);
-	int src_width = 640;
-	int src_height = 640;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 640;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 
 	BITMAP *src2 = _engine->GetSpriteGraphic(ogsprite);
@@ -261,9 +261,9 @@ void AGSWaves::DrawForceField(ScriptMethodParams &params) {
 
 	uint32 *pixelb = (uint32 *)_engine->GetRawBitmapSurface(src);
 
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 
@@ -326,9 +326,9 @@ void AGSWaves::SpriteSkew(ScriptMethodParams &params) {
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 	uint32 *pixel_src = (uint32 *)_engine->GetRawBitmapSurface(src);
 
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 	_engine->ReleaseBitmapSurface(src);
 
@@ -407,9 +407,9 @@ void AGSWaves::Grayscale(ScriptMethodParams &params) {
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 	uint32 *pixels = (uint32 *)_engine->GetRawBitmapSurface(src);
 
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 
@@ -429,16 +429,16 @@ void AGSWaves::BlendTwoSprites(ScriptMethodParams &params) {
 	PARAMS2(int, graphic, int, refgraphic);
 
 	BITMAP *src = _engine->GetSpriteGraphic(graphic);
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 	uint32 *sprite_pixels = (uint32 *)_engine->GetRawBitmapSurface(src);
 
 	BITMAP *refsrc = _engine->GetSpriteGraphic(refgraphic);
-	int refsrc_width = 640;
-	int refsrc_height = 360;
-	int refsrc_depth = 32;
+	int32 refsrc_width = 640;
+	int32 refsrc_height = 360;
+	int32 refsrc_depth = 32;
 	_engine->GetBitmapDimensions(refsrc, &refsrc_width, &refsrc_height, &refsrc_depth);
 	uint32 *refsprite_pixels = (uint32 *)_engine->GetRawBitmapSurface(refsrc);
 	_engine->ReleaseBitmapSurface(refsrc);
@@ -474,16 +474,16 @@ void AGSWaves::Blend(ScriptMethodParams &params) {
 	PARAMS4(int, graphic, int, refgraphic, bool, screen, int, perc);
 
 	BITMAP *src = _engine->GetSpriteGraphic(graphic);
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 	uint32 *sprite_pixels = (uint32 *)_engine->GetRawBitmapSurface(src);
 
 	BITMAP *refsrc = _engine->GetSpriteGraphic(refgraphic);
-	int refsrc_width = 640;
-	int refsrc_height = 360;
-	int refsrc_depth = 32;
+	int32 refsrc_width = 640;
+	int32 refsrc_height = 360;
+	int32 refsrc_depth = 32;
 	_engine->GetBitmapDimensions(refsrc, &refsrc_width, &refsrc_height, &refsrc_depth);
 	uint32 *refsprite_pixels = (uint32 *)_engine->GetRawBitmapSurface(refsrc);
 	_engine->ReleaseBitmapSurface(refsrc);
@@ -529,16 +529,16 @@ void AGSWaves::Dissolve(ScriptMethodParams &params) {
 	PARAMS3(int, graphic, int, noisegraphic, int, disvalue);
 
 	BITMAP *src = _engine->GetSpriteGraphic(graphic);
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 	uint32 *sprite_pixels = (uint32 *)_engine->GetRawBitmapSurface(src);
 
 	BITMAP *noisesrc = _engine->GetSpriteGraphic(noisegraphic);
-	int noisesrc_width = 640;
-	int noisesrc_height = 360;
-	int noisesrc_depth = 32;
+	int32 noisesrc_width = 640;
+	int32 noisesrc_height = 360;
+	int32 noisesrc_depth = 32;
 	_engine->GetBitmapDimensions(noisesrc, &noisesrc_width, &noisesrc_height, &noisesrc_depth);
 	uint32 *noise_pixels = (uint32 *)_engine->GetRawBitmapSurface(noisesrc);
 	_engine->ReleaseBitmapSurface(noisesrc);
@@ -589,17 +589,17 @@ void AGSWaves::ReverseTransparency(ScriptMethodParams &params) {
 	PARAMS1(int, graphic);
 
 	BITMAP *noisesrc = _engine->GetSpriteGraphic(graphic);
-	int noisesrc_width = 640;
-	int noisesrc_height = 360;
-	int noisesrc_depth = 32;
+	int32 noisesrc_width = 640;
+	int32 noisesrc_height = 360;
+	int32 noisesrc_depth = 32;
 	_engine->GetBitmapDimensions(noisesrc, &noisesrc_width, &noisesrc_height, &noisesrc_depth);
 	uint32 *noise_pixels = (uint32 *)_engine->GetRawBitmapSurface(noisesrc);
 	_engine->ReleaseBitmapSurface(noisesrc);
 
 	BITMAP *src = _engine->GetSpriteGraphic(graphic);
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 	uint32 *sprite_pixels = (uint32 *)_engine->GetRawBitmapSurface(src);
 
@@ -633,9 +633,9 @@ void AGSWaves::TintProper(ScriptMethodParams &params) {
 	uint32 *pixelb = (uint32 *)_engine->GetRawBitmapSurface(src);
 	uint32 *pixela = (uint32 *)_engine->GetRawBitmapSurface(src2);
 	_engine->ReleaseBitmapSurface(src2);
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 
@@ -744,9 +744,9 @@ void AGSWaves::ReadWalkBehindIntoSprite(ScriptMethodParams &params) {
 
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 	BITMAP *bgsrc = _engine->GetSpriteGraphic(bgsprite);
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 	BITMAP *wbh = _engine->GetRoomMask(MASK_WALKBEHIND);
@@ -782,9 +782,9 @@ void AGSWaves::AdjustSpriteFont(ScriptMethodParams &params) {
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 	uint32 *pixel_src = (uint32 *)_engine->GetRawBitmapSurface(src);
 
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 
 	int x, y;
@@ -837,9 +837,9 @@ void AGSWaves::SpriteGradient(ScriptMethodParams &params) {
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 	uint32 *pixel_src = (uint32 *)_engine->GetRawBitmapSurface(src);
 
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 
 	int x, y;
@@ -871,9 +871,9 @@ void AGSWaves::Outline(ScriptMethodParams &params) {
 	BITMAP *src = _engine->GetSpriteGraphic(sprite);
 	uint32 *pixel_src = (uint32 *)_engine->GetRawBitmapSurface(src);
 
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 
 	//OUTLINE
@@ -928,9 +928,9 @@ void AGSWaves::OutlineOnly(ScriptMethodParams &params) {
 	BITMAP *src = _engine->GetSpriteGraphic(refsprite);
 	uint32 *pixel_src = (uint32 *)_engine->GetRawBitmapSurface(src);
 
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 
 	// OUTLINE
@@ -984,9 +984,9 @@ void AGSWaves::NoiseCreator(ScriptMethodParams &params) {
 	PARAMS2(int, graphic, int, setA);
 
 	BITMAP *src = _engine->GetSpriteGraphic(graphic);
-	int src_width = 640;
-	int src_height = 360;
-	int src_depth = 32;
+	int32 src_width = 640;
+	int32 src_height = 360;
+	int32 src_depth = 32;
 	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
 	uint32 *sprite_pixels = (uint32 *)_engine->GetRawBitmapSurface(src);
 

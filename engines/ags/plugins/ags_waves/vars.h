@@ -143,9 +143,9 @@ struct DustParticle {
 };
 
 struct Vars {
-	int screen_width = 640;
-	int screen_height = 360;
-	int screen_color_depth = 32;
+	int32 screen_width = 640;
+	int32 screen_height = 360;
+	int32 screen_color_depth = 32;
 	AGSCharacter *playerCharacter = nullptr;
 
 	PluginMethod Character_GetX;
