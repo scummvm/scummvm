@@ -166,7 +166,7 @@ int call_function(const Plugins::PluginMethod &method,
 
 	// AN IMPORTANT NOTE ON PARAMS
 	// The original AGS interpreter did a bunch of dodgy function pointers with
-	// varying numbers of parameters, which were all int64_t. To simply matters
+	// varying numbers of parameters, which were all intptr_t. To simply matters
 	// now that we only supported plugins implemented in code, and not DLLs,
 	// we use a simplified Common::Array containing the parameters and result
 
@@ -183,8 +183,9 @@ int call_function(const Plugins::PluginMethod &method,
 		NumberPtr result = method(params);
 
 		// TODO: Though some script methods return pointers, the call_function only
-		// supports a 32-bit result. In case they're actually used by any game, the
-		// guard below will throw a wobbly if they're more than 32-bits
+		// supports a 32-bit result. To avoid weird problems on 64-bit systems that
+		// produce pointers above 32-bits, detect and throw a wobbly
+		// until such time as it can properly be fixed
 		if (result._ptr > (void *)0xffffffff)
 			error("Uhandled 64-bit pointer result from plugin method call");
 
