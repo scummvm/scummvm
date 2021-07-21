@@ -543,7 +543,7 @@ void Channel::addRegistrationOffset(Common::Point &pos, bool subtract) {
 
 		Common::Point point(0, 0);
 		// stretch the offset
-		if (!_sprite->_stretch && (_width < bc->_initialRect.width() || _height < bc->_initialRect.height())) {
+		if (!_sprite->_stretch && (_width != bc->_initialRect.width() || _height != bc->_initialRect.height())) {
 			point.x = (bc->_initialRect.left - bc->_regX) * _width / bc->_initialRect.width();
 			point.y = (bc->_initialRect.top - bc->_regY) * _height / bc->_initialRect.height();
 		} else {
