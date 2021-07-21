@@ -39,9 +39,9 @@ build = 'full'
 sis_major_version, sis_minor_version, sis_build_number = 2, '03', 0
 
 
-uids = ("0xA0000657", "0xA0000658", "0x2006FE7C", "0x2006FE7D", "0x2006FE7E", "0x2006FE7F", "0x2006FE80")
+uids = ("0xA0000657", "0xA0000658", "0x2006FE7C", "0x2006FE7D", "0x2006FE7E", "0x2006FE7F", "0x2006FE80", "0x2006FE81", "0x2006FE82")
 # Test uids 3
-uids_tests = ("0xAA000657", "0xAA000658", "0xA006FE7C", "0xA006FE7D", "0xA006FE7E", "0xA006FE7F", "0xA006FE80")
+uids_tests = ("0xAA000657", "0xAA000658", "0xA006FE7C", "0xA006FE7D", "0xA006FE7E", "0xA006FE7F", "0xA006FE80", "0xA006FE81", "0xA006FE82")
 
 def get_UIDs(build):
    if build == 'full':
