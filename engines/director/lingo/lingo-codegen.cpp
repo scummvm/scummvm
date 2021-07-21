@@ -392,7 +392,7 @@ bool LingoCompiler::visitScriptNode(ScriptNode *node) {
 bool LingoCompiler::visitFactoryNode(FactoryNode *node) {
 	_inFactory = true;
 	ScriptContext *mainContext = _assemblyContext;
-	_assemblyContext = new ScriptContext(mainContext->getName(), mainContext->_scriptType, mainContext->_id);
+	_assemblyContext = new ScriptContext(*node->name, mainContext->_scriptType, mainContext->_id);
 
 	COMPILE_LIST(node->methods);
 	registerFactory(*node->name);
