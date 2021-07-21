@@ -181,8 +181,8 @@ void LM::m_dispose(int nargs) {
 
 /* ScriptContext */
 
-ScriptContext::ScriptContext(Common::String name, LingoArchive *archive, ScriptType type, int id)
-	: Object<ScriptContext>(name), _archive(archive), _scriptType(type), _id(id) {
+ScriptContext::ScriptContext(Common::String name, ScriptType type, int id)
+	: Object<ScriptContext>(name), _scriptType(type), _id(id) {
 	_objType = kScriptObj;
 }
 
@@ -200,7 +200,6 @@ ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc
 	_constants = sc._constants;
 	_properties = sc._properties;
 
-	_archive = sc._archive;
 	_id = sc._id;
 }
 
@@ -220,7 +219,6 @@ Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Commo
 	sym.argNames = argNames;
 	sym.varNames = varNames;
 	sym.ctx = this;
-	sym.archive = _archive;
 
 	if (debugChannelSet(1, kDebugCompile)) {
 		uint pc = 0;
@@ -234,9 +232,6 @@ Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Commo
 
 	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
 		_functionHandlers[name] = sym;
-		if (_scriptType == kMovieScript && _archive && !_archive->functionHandlers.contains(name)) {
-			_archive->functionHandlers[name] = sym;
-		}
 	} else {
 		_eventHandlers[g_lingo->_eventHandlerTypeIds[name]] = sym;
 	}

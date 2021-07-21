@@ -67,7 +67,6 @@ Symbol::Symbol() {
 	argNames = nullptr;
 	varNames = nullptr;
 	ctx = nullptr;
-	archive = nullptr;
 	target = nullptr;
 	anonymous = false;
 }
@@ -84,7 +83,6 @@ Symbol::Symbol(const Symbol &s) {
 	argNames = s.argNames;
 	varNames = s.varNames;
 	ctx = s.ctx;
-	archive = s.archive;
 	target = s.target;
 	anonymous = s.anonymous;
 }
@@ -105,7 +103,6 @@ Symbol& Symbol::operator=(const Symbol &s) {
 	argNames = s.argNames;
 	varNames = s.varNames;
 	ctx = s.ctx;
-	archive = s.archive;
 	target = s.target;
 	anonymous = s.anonymous;
 

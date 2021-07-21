@@ -981,12 +981,12 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		}
 		debugC(1, kDebugCompile, "Add V4 script %d: factory '%s'", scriptId, factoryName.c_str());
 
-		sc = _assemblyContext = new ScriptContext(factoryName, _assemblyArchive, scriptType, castId);
+		sc = _assemblyContext = new ScriptContext(factoryName, scriptType, castId);
 		registerFactory(factoryName);
 	} else {
 		debugC(1, kDebugCompile, "Add V4 script %d: %s %d", scriptId, scriptType2str(scriptType), castId);
 
-		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", castId), _assemblyArchive, scriptType, castId);
+		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", castId), scriptType, castId);
 	}
 
 	// initialise each property
@@ -1529,6 +1529,15 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 
 		_assemblyContext->_functionNames.push_back(*sym.name);
 		_currentAssembly = nullptr;
+	}
+
+	if (!_assemblyContext->isFactory()) {
+		// Register this context's functions with the containing archive.
+		for (SymbolHash::iterator it = _assemblyContext->_functionHandlers.begin(); it != _assemblyContext->_functionHandlers.end(); ++it) {
+			if (!_assemblyArchive->functionHandlers.contains(it->_key)) {
+				_assemblyArchive->functionHandlers[it->_key] = it->_value;
+			}
+		}
 	}
 
 	if (!skipdump && ConfMan.getBool("dump_scripts")) {

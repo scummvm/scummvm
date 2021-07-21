@@ -98,7 +98,6 @@ struct Symbol {	/* symbol table entry */
 	Common::Array<Common::String> *argNames;
 	Common::Array<Common::String> *varNames;
 	ScriptContext *ctx;		/* optional script context to execute with */
-	LingoArchive *archive; 	/* optional archive to execute with */
 	AbstractObject *target;			/* optional method target */
 	bool anonymous;
 

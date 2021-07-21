@@ -103,7 +103,7 @@ ScriptContext *LingoCompiler::compileAnonymous(const Common::U32String &code) {
 ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoArchive *archive, ScriptType type, CastMemberID id, const Common::String &scriptName, bool anonymous) {
 	_assemblyArchive = archive;
 	_assemblyAST = nullptr;
-	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, archive, type, id.member);
+	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, type, id.member);
 	_currentAssembly = new ScriptData;
 
 	_methodVars = new VarTypeHash;
@@ -164,7 +164,6 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 		Common::String typeStr = Common::String(scriptType2str(type));
 		currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->getName() + "]");
 		currentFunc.ctx = _assemblyContext;
-		currentFunc.archive = archive;
 		currentFunc.anonymous = anonymous;
 		Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
 		Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
@@ -192,6 +191,13 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 		_assemblyContext->_eventHandlers[kEventGeneric] = currentFunc;
 	} else {
 		delete _currentAssembly;
+	}
+
+	// Register this context's functions with the containing archive.
+	for (SymbolHash::iterator it = _assemblyContext->_functionHandlers.begin(); it != _assemblyContext->_functionHandlers.end(); ++it) {
+		if (!_assemblyArchive->functionHandlers.contains(it->_key)) {
+			_assemblyArchive->functionHandlers[it->_key] = it->_value;
+		}
 	}
 
 	delete _methodVars;
@@ -347,8 +353,6 @@ void LingoCompiler::registerMethodVar(const Common::String &name, VarType type) 
 }
 
 void LingoCompiler::registerFactory(Common::String &name) {
-	// FIXME: The factory's context should not be tied to the LingoArchive
-	// but bytecode needs it to resolve names
 	_assemblyContext->setName(name);
 	_assemblyContext->setFactory(true);
 	if (!g_lingo->_globalvars.contains(name) || g_lingo->_globalvars[name].type == VOID) {
@@ -388,7 +392,7 @@ bool LingoCompiler::visitScriptNode(ScriptNode *node) {
 bool LingoCompiler::visitFactoryNode(FactoryNode *node) {
 	_inFactory = true;
 	ScriptContext *mainContext = _assemblyContext;
-	_assemblyContext = new ScriptContext(mainContext->getName(), mainContext->_archive, mainContext->_scriptType, mainContext->_id);
+	_assemblyContext = new ScriptContext(mainContext->getName(), mainContext->_scriptType, mainContext->_id);
 
 	COMPILE_LIST(node->methods);
 	registerFactory(*node->name);

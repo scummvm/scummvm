@@ -187,7 +187,6 @@ SymbolHash *Object<Derived>::_methods = nullptr;
 
 class ScriptContext : public Object<ScriptContext> {
 public:
-	LingoArchive *_archive;
 	ScriptType _scriptType;
 	int _id;
 	Common::Array<Common::String> _functionNames; // used by cb_localcall
@@ -198,7 +197,7 @@ public:
 	Common::HashMap<uint32, Datum> _objArray;
 
 public:
-	ScriptContext(Common::String name, LingoArchive *archive = nullptr, ScriptType type = kNoneScript, int id = 0);
+	ScriptContext(Common::String name, ScriptType type = kNoneScript, int id = 0);
 	ScriptContext(const ScriptContext &sc);
 	~ScriptContext() override;
 
