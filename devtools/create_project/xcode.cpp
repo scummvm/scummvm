@@ -459,14 +459,13 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
 		DEF_LOCALLIB_STATIC("libFLAC");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDLITE")) {
+		DEF_LOCALLIB_STATIC("libfluidlite");
+	} else if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
 		DEF_LOCALLIB_STATIC("libfluidsynth");
 		DEF_LOCALLIB_STATIC("libffi");
 		DEF_LOCALLIB_STATIC("libglib-2.0");
 		DEF_SYSTBD("libffi");
-	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDLITE")) {
-		DEF_LOCALLIB_STATIC("libfluidlite");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) {
 		DEF_LOCALLIB_STATIC("libfreetype");
@@ -601,7 +600,8 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_FRIBIDI")) {
 		frameworks_iOS.push_back("libfribidi.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH") &&
+		!CONTAINS_DEFINE(setup.defines, "USE_FLUIDLITE")) {
 		frameworks_iOS.push_back("libfluidsynth.a");
 		frameworks_iOS.push_back("libglib-2.0.a");
 		frameworks_iOS.push_back("libffi.a");
@@ -667,7 +667,8 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_FLAC")) {
 		frameworks_osx.push_back("libFLAC.a");
 	}
-	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH")) {
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDSYNTH") &&
+		!CONTAINS_DEFINE(setup.defines, "USE_FLUIDLITE")) {
 		frameworks_osx.push_back("libfluidsynth.a");
 		frameworks_osx.push_back("libglib-2.0.a");
 		frameworks_osx.push_back("libffi.tbd");

@@ -411,6 +411,8 @@ int main(int argc, char *argv[]) {
 				setup.defines.push_back("USE_SPARKLE");
 			else if (backendWin32 && !strcmp(i->name, "libcurl"))
 				setup.defines.push_back("CURL_STATICLIB");
+			else if (!strcmp(i->name, "fluidlite"))
+				setup.defines.push_back("USE_FLUIDSYNTH");
 		}
 	}
 
