@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	floating.o \
 	gamemode.o \
 	gdraw.o \
+	gfx.o \
 	gpointer.o \
 	grabinfo.o \
 	grequest.o \

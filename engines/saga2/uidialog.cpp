@@ -777,6 +777,9 @@ void enableUserControls(void);
 void updateAllUserControls(void);
 
 int16 OptionsDialog(bool disableSaveResume) {
+	// Save back buffer before opening the dialog
+	g_vm->_renderer->saveBackBuffer(kBeforeOpeningMenu);
+
 	// text for dialog
 	const char  *btnStrings[kNumOptionsBtns] = {
 		OPTN_DIALOG_BUTTON1,

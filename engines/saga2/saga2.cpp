@@ -62,6 +62,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	g_vm = this;
 
 	_console = nullptr;
+	_renderer = nullptr;
 	_bandList = nullptr;
 	_mouseInfo = nullptr;
 	_smkDecoder = nullptr;
@@ -110,6 +111,8 @@ Saga2Engine::~Saga2Engine() {
 
 	// Dispose your resources here
 	delete _rnd;
+	delete _renderer;
+
 	delete _imageCache;
 	delete _mTaskList;
 	delete _bandList;
@@ -131,6 +134,8 @@ Common::Error Saga2Engine::run() {
 
 	_console = new Console(this);
 	setDebugger(_console);
+
+	_renderer = new Renderer(this);
 
 	readConfig();
 
@@ -177,7 +182,14 @@ Common::Error Saga2Engine::saveGameState(int slot, const Common::String &desc, b
 	CHUNK_BEGIN;
 	uint32 pos = outS->pos() + 4;
 
+	_renderer->saveBackBuffer(kBeforeTakingThumbnail);
+
+	if (_renderer->hasSavedBackBuffer(kBeforeOpeningMenu))
+		_renderer->restoreSavedBackBuffer(kBeforeOpeningMenu);
+
 	getMetaEngine()->appendExtendedSaveToStream(out, g_vm->getTotalPlayTime() / 1000, desc, false, pos);
+
+	_renderer->popSavedBackBuffer(kBeforeTakingThumbnail);
 	CHUNK_END;
 
 	outS->finalize();
