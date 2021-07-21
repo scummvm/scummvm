@@ -53,9 +53,9 @@ public:
 protected:
 	// Savegame serialization
 	// TODO: reimplement with the proper memory stream?!
-	int bytesSoFar;
-	int totalBytes;
-	char *serbuffer;
+	int bytesSoFar = 0;
+	int totalBytes = 0;
+	char *serbuffer = nullptr;
 
 	void StartSerialize(char *sbuffer);
 	void SerializeInt(int val);
