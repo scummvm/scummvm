@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
 	if (argc > 1) {
 		debug("console arg count by CCommandLineArguments: %d", argc);
 		argv = new char* [argc];
-		HBufC8 *buf = HBufC8::NewMax(20); // This suffice for most cases.
+		HBufC8 *buf = HBufC8::NewMax(20); // This should suffice for most cases.
 		for (TInt i = 0; i < argc; ++i) {
 			TPtrC arg = cmdline->Arg(i);
 			argv[i] = new char[arg.Length() + 1](); // Hold zero terminated string.
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 	int res = scummvm_main(argc, argv);
 
 	// Clear argv.
-	if(argc > 1) { //avoid multiple User 42 panics at exit
+	if (argc > 1) { //avoid multiple User 42 panics at exit
 		for (TInt i = 0; i < argc; ++i) {
 			delete[] argv[i];
 		}
