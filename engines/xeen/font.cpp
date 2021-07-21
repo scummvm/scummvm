@@ -234,7 +234,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 					if (c == 6)
 						c = ' ';
 					int offset_charW = c < 0 ?
-						(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(0x80 + c) :
+						(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(c & 0x7F) :
 						(_fontReduced ? _fntEnReducedWOffset : _fntEnWOffset) + (int)c;
 					byte charSize = _fontData[offset_charW];
 
@@ -305,8 +305,10 @@ void FontSurface::writeCharacter(char c, const Common::Rect &clipRect) {
 }
 
 char FontSurface::getNextChar() {
-	if (Common::RU_RUS == lang) return *_displayString++;
-	return *_displayString++ & 0x7f;
+	if (Common::RU_RUS == lang)
+		return *_displayString++;
+	else
+		return *_displayString++ & 0x7f;
 }
 
 bool FontSurface::getNextCharWidth(int &total) {
@@ -333,7 +335,7 @@ bool FontSurface::getNextCharWidth(int &total) {
 			getNextChar();
 		return false;
 	} else if (Common::RU_RUS == lang && c < 0) {
-		total += _fontData[(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (char)(0x80 + c)];
+		total += _fontData[(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(c & 0x7F)];
 		return false;
 	} else {
 		--_displayString;
@@ -388,8 +390,8 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 	int offset_charData;
 	int offset_charW;
 	if (Common::RU_RUS == lang && c < 0) {
-		offset_charData = (_fontReduced ? _fntNonEnReducedOffset : _fntNonEnOffset) + (int)(0x80 + c) * 16;
-		offset_charW = (_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(0x80 + c);
+		offset_charData = (_fontReduced ? _fntNonEnReducedOffset : _fntNonEnOffset) + (int)(c & 0x7F) * 16;
+		offset_charW = (_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(c & 0x7F);
 	} else {
 		offset_charData = (_fontReduced ? _fntEnReducedOffset : _fntEnOffset) + (int)c * 16;
 		offset_charW = (_fontReduced ? _fntEnReducedWOffset : _fntEnWOffset) + (int)c;
