@@ -155,6 +155,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_currentChannelId = -1;
 	_globalCounter = 0;
 	_pc = 0;
+	_freezeContext = false;
 	_abort = false;
 	_expectError = false;
 	_caughtError = false;
@@ -389,7 +390,7 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 void Lingo::execute() {
 	uint localCounter = 0;
 
-	while (!_abort && (*_currentScript)[_pc] != STOP) {
+	while (!_abort && !_freezeContext && (*_currentScript)[_pc] != STOP) {
 		if (_globalCounter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
 			warning("Lingo::execute(): Stopping due to debug few frames only");
 			_vm->getCurrentMovie()->getScore()->_playState = kPlayStopped;
@@ -444,8 +445,11 @@ void Lingo::execute() {
 			popContext();
 		}
 	}
-
 	_abort = false;
+
+	if (_freezeContext) {
+		debugC(1, kDebugLingoExec, "Lingo::execute(): Context is frozen, pausing execution");
+	}
 }
 
 void Lingo::executeScript(ScriptType type, CastMemberID id) {

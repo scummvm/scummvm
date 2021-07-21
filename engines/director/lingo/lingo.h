@@ -197,6 +197,7 @@ struct CFrame {	/* proc/func call stack frame */
 	int		retpc;	/* where to resume after return */
 	ScriptData *retscript;		/* which script to resume after return */
 	ScriptContext *retctx;		/* which script context to use after return */
+	bool retFreezeContext;		/* whether the context should be frozen after return */
 	DatumHash *localvars;
 	Datum retMe; /* which me obj to use after return */
 	uint stackSizeBefore;
@@ -368,6 +369,7 @@ public:
 	ScriptData *_currentScript;
 	Datum _currentMe;
 
+	bool _freezeContext;
 	bool _abort;
 	bool _expectError;
 	bool _caughtError;
