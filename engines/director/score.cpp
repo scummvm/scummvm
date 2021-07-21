@@ -308,8 +308,6 @@ void Score::stopPlay() {
 }
 
 void Score::update() {
-	uint initialCallStackSize = g_lingo->_callstack.size();
-
 	if (_activeFade) {
 		if (!_soundManager->fadeChannel(_activeFade))
 			_activeFade = 0;
@@ -404,6 +402,8 @@ void Score::update() {
 	}
 
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
+
+	uint initialCallStackSize = g_lingo->_callstack.size();
 
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
 
