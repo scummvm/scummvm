@@ -102,7 +102,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x60, LC::cb_theassign2,	"bN" },
 	{ 0x61, LC::cb_objectfieldpush, "bN" },
 	{ 0x62, LC::cb_objectfieldassign, "bN" },
-	{ 0x63, LC::cb_call,		"b" }, // tellcall
+	{ 0x63, LC::cb_call,		"bN" }, // tellcall
 	{ 0x64, LC::c_stackpeek, 	"b" },
 	{ 0x65, LC::c_stackdrop, 	"b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "bN" },
