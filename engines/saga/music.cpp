@@ -445,8 +445,12 @@ void Music::playMidi(uint32 resourceId, MusicFlags flags) {
 
 		_parser->setMidiDriver(_driver);
 		_parser->setTimerRate(_driver->getBaseTempo());
-		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+		if (_vm->getGameId() == GID_IHNM) {
+			// IHNM XMIDI uses sustain and does not reset pitch bend at the
+			// start of a new track.
+			_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+			_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+		}
 
 		// Handle music looping
 		_parser->property(MidiParser::mpAutoLoop, flags & MUSIC_LOOP);
