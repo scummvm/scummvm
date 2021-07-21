@@ -258,6 +258,7 @@ InfoLine::InfoLine(CGE2Engine *vm, uint16 w, ColorBank color)
 	V2D siz = V2D(_vm, w, kFontHigh);
 	b[0] = Bitmap(_vm, siz.x, siz.y, _color[2]);
 	setShapeList(b, 1);
+	_lastText = "";
 }
 
 void InfoLine::update(const char *text) {

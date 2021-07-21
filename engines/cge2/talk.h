@@ -69,7 +69,6 @@ protected:
 public:
 	uint8 *_color;
 
-	const char *_lastText = "";
 	Talk(CGE2Engine *vm, const char *text, TextBoxStyle mode = kTBPure, ColorBank color = kCBStd, bool wideSpace = false);
 	Talk(CGE2Engine *vm, ColorBank color = kCBStd);
 
@@ -79,7 +78,7 @@ private:
 };
 
 class InfoLine : public Talk {
-	const char *_oldText, *_newText;
+	const char *_oldText, *_newText, *_lastText;
 public:
 	bool _realTime;
 	InfoLine(CGE2Engine *vm, uint16 wid, ColorBank color = kCBStd);

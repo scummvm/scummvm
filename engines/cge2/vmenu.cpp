@@ -101,6 +101,8 @@ VMenu::VMenu(CGE2Engine *vm, Common::Array<Choice *> list, V2D pos, ColorBank co
 	_bar = new MenuBar(_vm, _siz.x - 2 * kTextHMargin, _color);
 	_bar->gotoxyz(V2D(_vm, _pos2D.x, _pos2D.y + kTextVMargin - kMenuBarVerticalMargin));
 	_vm->_vga->_showQ->append(_bar);
+
+	_lastN = 2;
 }
 
 char *VMenu::vmGather(Common::Array<Choice *> list) {
