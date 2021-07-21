@@ -86,8 +86,6 @@ SoundJamObject::SoundJamObject(ObjectType objType) : Object<SoundJamObject>("Sou
 }
 
 void SoundJam::m_new(int nargs) {
-	ARGNUMCHECK(1);
-
 	/* Datum numberOfChannels = */ g_lingo->pop();
 
 	// Meet MediaBand seems to have fully working fallbacks to

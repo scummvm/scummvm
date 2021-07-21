@@ -516,8 +516,6 @@ void LB::b_add(int nargs) {
 }
 
 void LB::b_addAt(int nargs) {
-	ARGNUMCHECK(3);
-
 	Datum value = g_lingo->pop();
 	Datum indexD = g_lingo->pop();
 	Datum list = g_lingo->pop();
@@ -535,8 +533,6 @@ void LB::b_addAt(int nargs) {
 }
 
 void LB::b_addProp(int nargs) {
-	ARGNUMCHECK(3);
-
 	Datum value = g_lingo->pop();
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
@@ -548,8 +544,6 @@ void LB::b_addProp(int nargs) {
 }
 
 void LB::b_append(int nargs) {
-	ARGNUMCHECK(2);
-
 	Datum value = g_lingo->pop();
 	Datum list = g_lingo->pop();
 
@@ -559,8 +553,6 @@ void LB::b_append(int nargs) {
 }
 
 void LB::b_count(int nargs) {
-	ARGNUMCHECK(1);
-
 	Datum list = g_lingo->pop();
 	Datum result;
 	result.type = INT;
@@ -580,8 +572,6 @@ void LB::b_count(int nargs) {
 }
 
 void LB::b_deleteAt(int nargs) {
-	ARGNUMCHECK(2);
-
 	Datum indexD = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	TYPECHECK2(indexD, INT, FLOAT);
@@ -601,8 +591,6 @@ void LB::b_deleteAt(int nargs) {
 }
 
 void LB::b_deleteProp(int nargs) {
-	ARGNUMCHECK(2);
-
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	TYPECHECK2(list, ARRAY, PARRAY);
@@ -626,8 +614,6 @@ void LB::b_deleteProp(int nargs) {
 }
 
 void LB::b_findPos(int nargs) {
-	ARGNUMCHECK(2);
-
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	Datum d(0);
@@ -643,8 +629,6 @@ void LB::b_findPos(int nargs) {
 }
 
 void LB::b_findPosNear(int nargs) {
-	ARGNUMCHECK(2);
-
 	Common::String prop = g_lingo->pop().asString();
 	Datum list = g_lingo->pop();
 	Datum res(0);
@@ -667,7 +651,6 @@ void LB::b_findPosNear(int nargs) {
 }
 
 void LB::b_getaProp(int nargs) {
-	ARGNUMCHECK(2);
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
 
@@ -692,8 +675,6 @@ void LB::b_getaProp(int nargs) {
 }
 
 void LB::b_getAt(int nargs) {
-	ARGNUMCHECK(2);
-
 	Datum indexD = g_lingo->pop();
 	TYPECHECK2(indexD, INT, FLOAT);
 	Datum list = g_lingo->pop();
@@ -714,8 +695,6 @@ void LB::b_getAt(int nargs) {
 }
 
 void LB::b_getLast(int nargs) {
-	ARGNUMCHECK(1);
-
 	Datum list = g_lingo->pop();
 	switch (list.type) {
 	case ARRAY:
@@ -730,7 +709,6 @@ void LB::b_getLast(int nargs) {
 }
 
 void LB::b_getOne(int nargs) {
-	ARGNUMCHECK(2);
 	Datum val = g_lingo->pop();
 	Datum list = g_lingo->pop();
 
@@ -755,7 +733,6 @@ void LB::b_getOne(int nargs) {
 }
 
 void LB::b_getPos(int nargs) {
-	ARGNUMCHECK(2);
 	Datum val = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	TYPECHECK2(list, ARRAY, PARRAY);
@@ -785,7 +762,6 @@ void LB::b_getPos(int nargs) {
 }
 
 void LB::b_getProp(int nargs) {
-	ARGNUMCHECK(2);
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	TYPECHECK2(list, ARRAY, PARRAY);
@@ -811,8 +787,6 @@ void LB::b_getProp(int nargs) {
 }
 
 void LB::b_getPropAt(int nargs) {
-	ARGNUMCHECK(2);
-
 	Datum indexD = g_lingo->pop();
 	Datum list = g_lingo->pop();
 	TYPECHECK2(indexD, INT, FLOAT);
@@ -834,7 +808,6 @@ void LB::b_list(int nargs) {
 }
 
 void LB::b_listP(int nargs) {
-	ARGNUMCHECK(1);
 	Datum list = g_lingo->pop();
 	Datum d(0);
 	if (list.type == ARRAY || list.type == PARRAY) {
@@ -910,7 +883,6 @@ void LB::b_min(int nargs) {
 }
 
 void LB::b_setaProp(int nargs) {
-	ARGNUMCHECK(3);
 	Datum value = g_lingo->pop();
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
@@ -938,7 +910,6 @@ void LB::b_setaProp(int nargs) {
 }
 
 void LB::b_setAt(int nargs) {
-	ARGNUMCHECK(3);
 	Datum value = g_lingo->pop();
 	Datum indexD = g_lingo->pop();
 	Datum list = g_lingo->pop();
@@ -968,7 +939,6 @@ void LB::b_setAt(int nargs) {
 }
 
 void LB::b_setProp(int nargs) {
-	ARGNUMCHECK(3);
 	Datum value = g_lingo->pop();
 	Datum prop = g_lingo->pop();
 	Datum list = g_lingo->pop();
@@ -1013,8 +983,6 @@ void LB::b_closeXlib(int nargs) {
 }
 
 void LB::b_getNthFileNameInFolder(int nargs) {
-	ARGNUMCHECK(2);
-
 	int fileNum = g_lingo->pop().asInt() - 1;
 	Common::String path = pathMakeRelative(g_lingo->pop().asString(), true, false, true);
 	// for directory, we either return the correct path, which we can access recursively.
@@ -1441,7 +1409,6 @@ void LB::b_voidP(int nargs) {
 // Misc
 ///////////////////
 void LB::b_alert(int nargs) {
-	ARGNUMCHECK(1);
 	Datum d = g_lingo->pop();
 
 	Common::String alert = d.asString();
@@ -1997,8 +1964,6 @@ void LB::b_rollOver(int nargs) {
 }
 
 void LB::b_spriteBox(int nargs) {
-	ARGNUMCHECK(5);
-
 	int b = g_lingo->pop().asInt();
 	int r = g_lingo->pop().asInt();
 	int t = g_lingo->pop().asInt();
@@ -2089,8 +2054,6 @@ void LB::b_zoomBox(int nargs) {
 }
 
 void LB::b_updateStage(int nargs) {
-	ARGNUMCHECK(0);
-
 	if (g_director->getGameGID() == GID_TEST) {
 		warning("b_updateStage: Skipping due to tests");
 
@@ -2288,8 +2251,6 @@ void LB::b_sound(int nargs) {
 }
 
 void LB::b_soundBusy(int nargs) {
-	ARGNUMCHECK(1);
-
 	DirectorSound *sound = g_director->getSoundManager();
 	Datum whichChannel = g_lingo->pop();
 
@@ -2460,8 +2421,6 @@ void LB::b_scummvmassertequal(int nargs) {
 }
 
 void LB::b_getVolumes(int nargs) {
-	ARGNUMCHECK(0);
-
 	// Right now, only "Journeyman Project 2: Buried in Time" is known to check
 	// for its volume name.
 	Datum d;
