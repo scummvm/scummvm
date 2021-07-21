@@ -274,8 +274,11 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	_trackNumber = resourceId;
 	_mixer->stopHandle(_musicHandle);
-	if (_parser)
-		_parser->stopPlaying();
+	if (_parser) {
+		_parser->unloadMusic();
+		delete _parser;
+		_parser = 0;
+	}
 	if (_driverPC98)
 		_driverPC98->reset();
 
