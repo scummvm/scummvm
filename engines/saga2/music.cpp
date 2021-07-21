@@ -110,20 +110,21 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		return;
 
 	_trackNumber = resourceId;
-	if (_parser)
-		_parser->stopPlaying();
+	if (_parser) {
+		_parser->unloadMusic();
+	} else {
+		_parser = MidiParser::createParser_XMIDI(0, 0, 0);
+
+		_parser->setMidiDriver(_driver);
+		_parser->setTimerRate(_driver->getBaseTempo());
+		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+	}
 
 	free(_currentMusicBuffer);
 
 	_currentMusicBuffer = (byte *)LoadResource(_musicContext, resourceId, "music data");
 	uint32 size = _musicContext->size(resourceId);
-
-	_parser = MidiParser::createParser_XMIDI(0, 0, 0);
-
-	_parser->setMidiDriver(_driver);
-	_parser->setTimerRate(_driver->getBaseTempo());
-	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-	_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 
 	// Handle music looping
 	_parser->property(MidiParser::mpAutoLoop, flags & MUSIC_LOOP);
