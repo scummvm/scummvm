@@ -20,12 +20,12 @@
  *
  */
 
- /*************************************
-  *
-  * USED IN:
-  * Meet Mediaband
-  *
-  *************************************/
+/*************************************
+ *
+ * USED IN:
+ * Meet Mediaband
+ *
+ *************************************/
 
 /*
 	-- LabelDrv XObject. Version 1.1 6/5/95 greg yachuk
@@ -34,7 +34,7 @@
 	X      mDispose      --Disposes of XObject instance.
 	XSS    mSetRange     --Sets the drive letters to begin and end the search for the label. Default is C..Z.
 	SS     mGetDrive     --Return the drive letter where the specified label is mounted.
- */
+*/
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"

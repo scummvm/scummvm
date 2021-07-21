@@ -21,11 +21,11 @@
  */
 
 /*************************************
-  *
-  * USED IN:
-  * Spaceship Warlock Mac
-  *
-  *************************************/
+ *
+ * USED IN:
+ * Spaceship Warlock Mac
+ *
+ *************************************/
 
 #include "director/director.h"
 #include "director/sound.h"
