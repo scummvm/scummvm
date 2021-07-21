@@ -42,6 +42,7 @@ MODULE_OBJS := \
 	stuffit.o \
 	system.o \
 	textconsole.o \
+	text-to-speech.o \
 	tokenizer.o \
 	translation.o \
 	unarj.o \
@@ -107,9 +108,6 @@ MODULE_OBJS += \
 	lua/lzio.o \
 	lua/scummvm_file.o
 endif
-
-MODULE_OBJS += \
-	text-to-speech.o
 
 # Include common rules
 include $(srcdir)/rules.mk
