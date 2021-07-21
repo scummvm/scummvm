@@ -403,6 +403,13 @@ void Lingo::execute(uint pc) {
 			break;
 		}
 
+		// process events every so often
+		if (localCounter > 0 && localCounter % 100 == 0) {
+			_vm->processEvents();
+			if (_vm->getCurrentMovie()->getScore()->_playState == kPlayStopped)
+				break;
+		}
+
 		Common::String instr = decodeInstruction(_currentArchive, _currentScript, _pc);
 		uint current = _pc;
 
@@ -429,19 +436,12 @@ void Lingo::execute(uint pc) {
 			printAllVars();
 		}
 
-		if (!_abort && _pc >= (*_currentScript).size()) {
-			warning("Lingo::execute(): Bad PC (%d)", _pc);
-			break;
-		}
-
 		_globalCounter++;
 		localCounter++;
 
-		// process events every so often
-		if (localCounter % 100 == 0) {
-			_vm->processEvents();
-			if (_vm->getCurrentMovie()->getScore()->_playState == kPlayStopped)
-				break;
+		if (!_abort && _pc >= (*_currentScript).size()) {
+			warning("Lingo::execute(): Bad PC (%d)", _pc);
+			break;
 		}
 	}
 
