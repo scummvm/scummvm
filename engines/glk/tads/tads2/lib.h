@@ -62,6 +62,14 @@ typedef int            eword;
 #define CLRSTRUCT(x) memset(&(x), 0, (size_t)sizeof(x))
 #define CPSTRUCT(dst,src) memcpy(&(dst), &(src), (size_t)sizeof(dst))
 
+#if defined(TRUE)
+#undef TRUE
+#endif
+
+#if defined(FALSE)
+#undef FALSE
+#endif
+
 /* TRUE and FALSE */
 #define TRUE true
 #define FALSE false
