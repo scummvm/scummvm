@@ -86,11 +86,25 @@ sub processIso($) {
 		if (/^:/) {
 			$mdir = $_;
 			s/^://;
-			s/:/\//g;
 			$dir = $_;
+
 			if ($::opt_c) {
 				$dir = encode_utf8(decode($::opt_c, $dir));
 			}
+
+			if ($::opt_e) {
+				# make 0x81 an escape symbol
+				$dir =~ s/\x81/\x81\x81/g;
+				# escape non-printables, '/', "'" and '"'
+				$dir =~ s/([\x00-\x1f\/'"])/\x81@{[chr(ord($1) + 0x80)]}/g;
+
+				if ($dir =~ /[\x80-\xff]/) {
+					$dir = encode_punycode $dir;
+				}
+			}
+			# Replace Mac separators with *nix
+			$dir =~ s/:/\//g;
+
 			mkdir "$dir";
 			$numdirs++;
 		} elsif (/^[fF]/) {
@@ -99,8 +113,6 @@ sub processIso($) {
 				my $data = $2;
 				my $fname = $3;
 
-				$fname =~ s'/':'g; # Replace / with :
-
 				my $decfname = $fname;
 
 				if ($::opt_c) {
@@ -108,8 +120,13 @@ sub processIso($) {
 				}
 
 				if ($::opt_e) {
-					if ($fname =~ /[\x80-\xff]/) {
-						$decfname = encode_punycode $fname;
+					# make 0x81 an escape symbol
+					$decfname =~ s/\x81/\x81\x81/g;
+					# escape non-printables, '/', "'" and '"'
+					$decfname =~ s/([\x00-\x1f\/'"])/\x81@{[chr(ord($1) + 0x80)]}/g;
+
+					if ($decfname =~ /[\x80-\xff]/) {
+						$decfname = encode_punycode $decfname;
 					}
 				}
 
@@ -216,7 +233,7 @@ sub decode_punycode {
 
 	$input =~ s/^xn--//;
 
-    if($input =~ s/(.*)$Delimiter//os) {
+    if ($input =~ s/(.*)$Delimiter//os) {
       my $base_chars = $1;
       croak("non-base character in input for decode_punycode")
         if $base_chars =~ m/[^$BasicRE]/os;
@@ -229,7 +246,7 @@ sub decode_punycode {
     utf8::downgrade($input);    ## handling failure of downgrade is more expensive than
                                 ## doing the above regexp w/ utf8 semantics
 
-    while(length $code) {
+    while (length $code) {
         my $oldi = $i;
         my $w    = 1;
     LOOP:
@@ -283,7 +300,7 @@ sub encode_punycode {
         next if $m < $n;
         $delta += ($m - $n) * ($h + 1);
         $n = $m;
-        for(my $i = 0; $i < $input_length; $i++) {
+        for (my $i = 0; $i < $input_length; $i++) {
             my $c = $input[$i];
             $delta++ if $c < $n;
             if ($c == $n) {
