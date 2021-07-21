@@ -212,7 +212,9 @@ void Lingo::reloadBuiltIns() {
 LingoArchive::~LingoArchive() {
 	for (int i = 0; i <= kMaxScriptType; i++) {
 		for (ScriptContextHash::iterator it = scriptContexts[i].begin(); it != scriptContexts[i].end(); ++it) {
-			delete it->_value;
+			*it->_value->_refCount -= 1;
+			if (*it->_value->_refCount <= 0)
+				delete it->_value;
 		}
 	}
 }

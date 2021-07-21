@@ -239,8 +239,10 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	if (funcSym.target)
 		g_lingo->_currentMe = funcSym.target;
 
-	if (funcSym.ctx)
+	if (funcSym.ctx) {
 		g_lingo->_currentScriptContext = funcSym.ctx;
+		*g_lingo->_currentScriptContext->_refCount += 1;
+	}
 
 	g_lingo->_currentArchive = funcSym.archive;
 
@@ -315,8 +317,8 @@ void Lingo::popContext() {
 		error("handler %s popped extra %d values", fp->sp.name->c_str(), fp->stackSizeBefore - _stack.size());
 	}
 
-	// Destroy anonymous function context
-	if (fp->sp.anonymous) {
+	*g_lingo->_currentScriptContext->_refCount -= 1;
+	if (*g_lingo->_currentScriptContext->_refCount <= 0) {
 		delete g_lingo->_currentScriptContext;
 	}
 
