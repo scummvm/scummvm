@@ -284,7 +284,7 @@ public:
 	void processEvents();
 
 public:
-	void execute(uint pc);
+	void execute();
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext();
 	void cleanLocalVars();

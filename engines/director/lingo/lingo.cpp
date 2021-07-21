@@ -393,10 +393,10 @@ Common::String Lingo::decodeInstruction(LingoArchive *archive, ScriptData *sd, u
 	return res;
 }
 
-void Lingo::execute(uint pc) {
+void Lingo::execute() {
 	uint localCounter = 0;
 
-	for (_pc = pc; !_abort && (*_currentScript)[_pc] != STOP;) {
+	while (!_abort && (*_currentScript)[_pc] != STOP) {
 		if (_globalCounter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
 			warning("Lingo::execute(): Stopping due to debug few frames only");
 			_vm->getCurrentMovie()->getScore()->_playState = kPlayStopped;
@@ -478,14 +478,14 @@ void Lingo::executeScript(ScriptType type, CastMemberID id) {
 
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
 	LC::call(sym, 0, false);
-	execute(_pc);
+	execute();
 }
 
 void Lingo::executeHandler(const Common::String &name) {
 	debugC(1, kDebugLingoExec, "Executing script handler : %s", name.c_str());
 	Symbol sym = getHandler(name);
 	LC::call(sym, 0, false);
-	execute(_pc);
+	execute();
 }
 
 void Lingo::lingoError(const char *s, ...) {
@@ -1066,7 +1066,7 @@ void Lingo::executePerFrameHook(int frame, int subframe) {
 			push(frame);
 			push(subframe);
 			LC::call(method, 3, false);
-			execute(_pc);
+			execute();
 		}
 	}
 }
