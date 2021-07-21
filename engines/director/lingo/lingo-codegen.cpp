@@ -355,11 +355,7 @@ void LingoCompiler::registerMethodVar(const Common::String &name, VarType type) 
 void LingoCompiler::registerFactory(Common::String &name) {
 	_assemblyContext->setName(name);
 	_assemblyContext->setFactory(true);
-	if (!g_lingo->_globalvars.contains(name) || g_lingo->_globalvars[name].type == VOID) {
-		g_lingo->_globalvars[name] = _assemblyContext;
-	} else {
-		warning("BUILDBOT: Factory '%s' already defined", name.c_str());
-	}
+	g_lingo->_globalvars[name] = _assemblyContext;
 }
 
 void LingoCompiler::updateLoopJumps(uint nextTargetPos, uint exitTargetPos) {
