@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/config-manager.h"
+
 #include "saga2/saga2.h"
 #include "saga2/display.h"
 #include "saga2/intrface.h"
@@ -87,6 +89,15 @@ void displayUpdate(void);
 void drawMainDisplay(void);
 
 void niceScreenStartup(void) {
+	if (ConfMan.hasKey("save_slot")) {
+		cleanupGameState();
+		loadSavedGameState(ConfMan.getInt("save_slot"));
+
+		if (GameMode::newmodeFlag)
+			GameMode::update();
+		updateActiveRegions();
+	}
+
 	blackOut();
 	disablePaletteChanges();
 	mainEnable();
