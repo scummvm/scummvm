@@ -40,6 +40,7 @@
 #include "director/lingo/xlibs/fplayxobj.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
 #include "director/lingo/xlibs/palxobj.h"
+#include "director/lingo/xlibs/soundjam.h"
 #include "director/lingo/xlibs/winxobj.h"
 
 namespace Director {
@@ -115,6 +116,7 @@ static struct XLibProto {
 	{ "FPlayXObj",				FPlayXObj::initialize,				kXObj,					200 },	// D2
 	{ "PalXObj",				PalXObj:: initialize,				kXObj,					400 }, 	// D4
 	{ "LabelDrv",				LabelDrvXObj:: initialize,			kXObj,					400 }, 	// D4
+	{ "SoundJam",				SoundJam::initialize,				kXObj,					400 },	// D4
 	{ "winXObj",				RearWindowXObj::initialize,			kXObj,					400 },	// D4
 	{ 0, 0, 0, 0 }
 

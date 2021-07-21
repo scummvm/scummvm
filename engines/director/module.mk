@@ -42,6 +42,7 @@ MODULE_OBJS = \
 	lingo/xlibs/fplayxobj.o \
 	lingo/xlibs/labeldrvxobj.o \
 	lingo/xlibs/palxobj.o \
+	lingo/xlibs/soundjam.o \
 	lingo/xlibs/winxobj.o
 
 # HACK: Skip this when including the file for detection objects.
