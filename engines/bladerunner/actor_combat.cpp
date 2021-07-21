@@ -258,9 +258,9 @@ void ActorCombat::hitAttempt() {
 
 		int sentenceId = _vm->_rnd.getRandomNumberRng(0, 1) ? 9000 : 9005;
 		if (enemy->inCombat()) {
-			enemy->changeAnimationMode(22, false);
+			enemy->changeAnimationMode(kAnimationModeCombatHit, false);
 		} else {
-			enemy->changeAnimationMode(21, false);
+			enemy->changeAnimationMode(kAnimationModeHit, false);
 		}
 
 		int damage = 0;

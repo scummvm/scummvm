@@ -207,8 +207,9 @@ void SceneScriptMA02::PlayerWalkedIn() {
 
 	if ( Global_Variable_Query(kVariableChapter) < 4
 	 && !Game_Flag_Query(kFlagMA04ToMA02)
-	 &&  Actor_Query_Goal_Number(kActorMaggie) != 2
-	) {
+	 &&  Actor_Query_Goal_Number(kActorMaggie) != kGoalMaggieMA02Intermediate02) {
+		// Note, clause Actor_Query_Goal_Number(kActorMaggie) != kGoalMaggieMA02Intermediate02 is always true,
+		// as kGoalMaggieMA02Intermediate02 is never set as Maggie's goal.
 		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02WalkToEntrance);
 
 		if (!Game_Flag_Query(kFlagMA02MaggieIntroduced)) {

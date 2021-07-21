@@ -143,7 +143,7 @@ void SceneScriptKP05::PlayerWalkedIn() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorMaggie) == kGoalMaggieKP05Wait) {
-		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05McCoyEntred);
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05McCoyEntered);
 	}
 
 	if (Actor_Query_Goal_Number(kActorSteele) == 450) {

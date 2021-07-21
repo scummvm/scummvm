@@ -37,6 +37,7 @@ class MovementTrack {
 
 	struct Entry {
 		int     waypointId;
+		// delay specifies how long (in milliseconds) to stay at the target waypoint (when reached)
 		int32   delay;
 		int     angle;
 		bool    run;
