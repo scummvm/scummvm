@@ -399,8 +399,12 @@ void MotionTaskList::write(Common::MemoryWriteStreamDynamic *out) {
 //	Cleanup the motion tasks
 
 void MotionTaskList::cleanup(void) {
-	for (Common::List<MotionTask *>::iterator it = _list.begin(); it != _list.end(); ++it)
+	for (Common::List<MotionTask *>::iterator it = _list.begin(); it != _list.end(); ++it) {
+		abortPathFind(*it);
+		(*it)->pathFindTask = NULL;
+
 		delete *it;
+	}
 
 	_list.clear();
 }
