@@ -1929,8 +1929,8 @@ bool GameObject::addSensor(Sensor *newSensor) {
 		assert((*it)->getObject() == this);
 
 		if (newSensor->thisID() == (*it)->thisID()) {
-			sensorList->_list.remove(*it);
 			delete *it;
+			it = sensorList->_list.erase(it);
 
 			break;
 		}
