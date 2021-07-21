@@ -981,6 +981,32 @@ void AGSWaves::OutlineOnly(ScriptMethodParams &params) {
 	_engine->ReleaseBitmapSurface(dst);
 }
 
+void AGSWaves::NoiseCreator(ScriptMethodParams &params) {
+	PARAMS2(int, graphic, int, setA);
+
+	BITMAP *src = _engine->GetSpriteGraphic(graphic);
+	int src_width = 640;
+	int src_height = 360;
+	int src_depth = 32;
+	_engine->GetBitmapDimensions(src, &src_width, &src_height, &src_depth);
+	uint32 **sprite_pixels = (uint32 **)_engine->GetRawBitmapSurface(src);
+
+	int x, y;
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			//int getColor = sprite_pixels[y][x];
+			int r = Random(256);
+			int g = Random(256);
+			int b = Random(256);
+			int a = setA;
+
+			sprite_pixels[y][x] = SetColorRGBA(r, g, b, a);
+
+		}
+	}
+
+	_engine->ReleaseBitmapSurface(src);
+}
 
 void AGSWaves::CastWave(int delayMax, int PixelsWide, int n) {
 	tDy[n]++;

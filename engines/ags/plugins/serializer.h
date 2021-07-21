@@ -31,66 +31,66 @@ namespace Plugins {
 
 class Serializer {
 private:
-IAGSEngine *_engine;
-long _file;
-bool _isLoading;
-public:
-Serializer(IAGSEngine *engine, long file, bool isLoading) :
-	_engine(engine), _file(file), _isLoading(isLoading) {}
+	IAGSEngine *_engine;
+	long _file;
+	bool _isLoading;
+	public:
+	Serializer(IAGSEngine *engine, long file, bool isLoading) :
+		_engine(engine), _file(file), _isLoading(isLoading) {}
 
-bool isLoading() const {
-	return _isLoading;
-}
-bool isSaving() const {
-	return !_isLoading;
-}
-
-template<typename T>
-void syncAsInt(T &value) {
-	byte buf[4];
-	if (_isLoading) {
-		_engine->FRead(buf, 4, _file);
-		value = READ_LE_INT32(buf);
-	} else {
-		WRITE_LE_UINT32(buf, value);
-		_engine->FWrite(buf, 4, _file);
+	bool isLoading() const {
+		return _isLoading;
 	}
-}
+	bool isSaving() const {
+		return !_isLoading;
+	}
 
-void syncAsBool(bool &value) {
-	if (_isLoading)
-		_engine->FRead(&value, 1, _file);
-	else
-		_engine->FWrite(&value, 1, _file);
-}
+	template<typename T>
+	void syncAsInt(T &value) {
+		byte buf[4];
+		if (_isLoading) {
+			_engine->FRead(buf, 4, _file);
+			value = READ_LE_INT32(buf);
+		} else {
+			WRITE_LE_UINT32(buf, value);
+			_engine->FWrite(buf, 4, _file);
+		}
+	}
 
-void syncAsInt8(int8 &value) {
-	if (_isLoading)
-		_engine->FRead(&value, 1, _file);
-	else
-		_engine->FWrite(&value, 1, _file);
-}
+	void syncAsBool(bool &value) {
+		if (_isLoading)
+			_engine->FRead(&value, 1, _file);
+		else
+			_engine->FWrite(&value, 1, _file);
+	}
 
-void syncAsByte(byte &value) {
-	if (_isLoading)
-		_engine->FRead(&value, 1, _file);
-	else
-		_engine->FWrite(&value, 1, _file);
-}
+	void syncAsInt8(int8 &value) {
+		if (_isLoading)
+			_engine->FRead(&value, 1, _file);
+		else
+			_engine->FWrite(&value, 1, _file);
+	}
 
-void syncAsFloat(float &value) {
-	if (_isLoading)
-		_engine->FRead(&value, sizeof(float), _file);
-	else
-		_engine->FWrite(&value, sizeof(float), _file);
-}
+	void syncAsByte(byte &value) {
+		if (_isLoading)
+			_engine->FRead(&value, 1, _file);
+		else
+			_engine->FWrite(&value, 1, _file);
+	}
 
-void syncAsDouble(double &value) {
-	if (_isLoading)
-		_engine->FRead(&value, sizeof(double), _file);
-	else
-		_engine->FWrite(&value, sizeof(double), _file);
-}
+	void syncAsFloat(float &value) {
+		if (_isLoading)
+			_engine->FRead(&value, sizeof(float), _file);
+		else
+			_engine->FWrite(&value, sizeof(float), _file);
+	}
+
+	void syncAsDouble(double &value) {
+		if (_isLoading)
+			_engine->FRead(&value, sizeof(double), _file);
+		else
+			_engine->FWrite(&value, sizeof(double), _file);
+	}
 };
 
 } // namespace Plugins

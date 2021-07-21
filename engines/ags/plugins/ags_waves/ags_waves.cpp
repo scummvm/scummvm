@@ -21,15 +21,16 @@
  */
 
 #include "ags/plugins/ags_waves/ags_waves.h"
+#include "ags/plugins/serializer.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSWaves {
 
-const uint32 Magic = 0xACAB0000;
-const uint32 Version = 1;
-const uint32 SaveMagic = Magic + Version;
-const float PI = 3.14159265f;
+AGSWaves::AGSWaves() : PluginBase(), Vars() {
+	_mixer = ::AGS::g_vm->_mixer;
+}
 
 const char *AGSWaves::AGS_GetPluginName() {
 	return "AGS Waves";
@@ -38,14 +39,14 @@ const char *AGSWaves::AGS_GetPluginName() {
 void AGSWaves::AGS_EngineStartup(IAGSEngine *engine) {
 	PluginBase::AGS_EngineStartup(engine);
 
-	if (engine->version < 13)
-		engine->AbortGame("Engine interface is too old, need newer version of AGS.");
+	if (_engine->version < 13)
+		_engine->AbortGame("Engine interface is too old, need newer version of AGS.");
 
 	StartingValues();
 
-	Character_GetX = engine->GetScriptFunctionAddress("Character::get_X");
-	Character_GetY = engine->GetScriptFunctionAddress("Character::get_Y");
-	Character_ID = engine->GetScriptFunctionAddress("Character::ID");
+	Character_GetX = _engine->GetScriptFunctionAddress("Character::get_X");
+	Character_GetY = _engine->GetScriptFunctionAddress("Character::get_Y");
+	Character_ID = _engine->GetScriptFunctionAddress("Character::ID");
 
 	SCRIPT_METHOD(DrawScreenEffect, AGSWaves::DrawScreenEffect);
 	SCRIPT_METHOD(SFX_Play, AGSWaves::SFX_Play);
@@ -97,6 +98,56 @@ void AGSWaves::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(TintProper, AGSWaves::TintProper);
 	SCRIPT_METHOD(GetWalkbehindBaserine, AGSWaves::GetWalkbehindBaserine);
 	SCRIPT_METHOD(SetWalkbehindBaserine, AGSWaves::SetWalkbehindBaserine);
+}
+
+int64 AGSWaves::AGS_EngineOnEvent(int event, NumberPtr data) {
+	switch (event) {
+	case AGSE_PREGUIDRAW:
+//		Update();
+		break;
+
+	case AGSE_RESTOREGAME: {
+		_mixer->stopAll();
+
+		Serializer s(_engine, data, true);
+		for (int j = 0; j < 500 - 1; ++j) {
+			s.syncAsInt(SFX[j]._repeat);
+			s.syncAsInt(SFX[j]._volume);
+			s.syncAsInt(SFX[j]._playing);
+		}
+		break;
+	}
+
+	case AGSE_SAVEGAME: {
+		Serializer s(_engine, data, true);
+		for (int j = 0; j < 500 - 1; ++j) {
+			s.syncAsInt(SFX[j]._repeat);
+			s.syncAsInt(SFX[j]._volume);
+			s.syncAsInt(SFX[j]._playing);
+		}
+		break;
+	}
+
+	case AGSE_PRESCREENDRAW:
+		// Get screen size once here.
+		_engine->GetScreenDimensions(&screen_width, &screen_height, &screen_color_depth);
+
+		//_engine->UnrequestEventHook(AGSE_SAVEGAME);
+		//_engine->UnrequestEventHook(AGSE_RESTOREGAME);
+		break;
+
+	case AGSE_ENTERROOM:
+		for (int j = 0; j < 500 - 1; ++j) {
+			if (!_mixer->isSoundHandleActive(SFX[j]._soundHandle))
+				UnloadSFX(j);
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return 0;
 }
 
 void AGSWaves::StartingValues() {

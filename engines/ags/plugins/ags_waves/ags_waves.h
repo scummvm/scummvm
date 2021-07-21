@@ -23,6 +23,7 @@
 #ifndef AGS_PLUGINS_AGS_WAVES_AGS_WAVES_H
 #define AGS_PLUGINS_AGS_WAVES_AGS_WAVES_H
 
+#include "audio/mixer.h"
 #include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/ags_waves/vars.h"
 
@@ -32,6 +33,8 @@ namespace AGSWaves {
 
 class AGSWaves : public PluginBase, public Vars {
 	SCRIPT_HASH(AGSWaves)
+private:
+	Audio::Mixer *_mixer;
 private:
 	void DrawScreenEffect(ScriptMethodParams &params);
 	void SFX_Play(ScriptMethodParams &params);
@@ -86,6 +89,7 @@ private:
 
 private:
 	void StartingValues();
+	void Update();
 
 	void CastWave(int delayMax, int PixelsWide, int n);
 	void DrawEffect(int sprite_a, int sprite_b, int id, int n);
@@ -143,12 +147,38 @@ private:
 	void CreateRainParticleFore(int x, int y, int fx, int fy, int maxpart);
 	void CreateRainParticleBack(int x, int y, int fx, int fy, int maxpart);
 
+	// Sound
+	/**
+	 * Plays a sound from the sounds.sfx in the Sounds/ folder
+	 * @param soundToPlay	The sound to play
+	 * @param repeat		Times to repeat, -1 for indefine
+	 */
+	void PlaySFX(int SoundToPlay, int repeat);
+
+	/**
+	 * Loads a sound file to memory
+	 * @param i		Sound number to load
+	 */
+	void LoadSFX(int i);
+
+	/**
+	 * Unloads a sound file from memory
+	 * @param i		Sound number to unload
+	 */
+	void UnloadSFX(int i);
+
+	void GlitchFix();
+	void ApplyFilter(int SetFrequency);
+	void SetFilterFrequency(int setFrequency);
+	void MusicPlay(int MusicToPlay, int repeat, int fadeinMS, int fadeoutMS, int pos, bool forceplay, bool fixclick);
+
 public:
-	AGSWaves() : PluginBase(), Vars() {}
+	AGSWaves();
 	virtual ~AGSWaves() {}
 
 	const char *AGS_GetPluginName() override;
 	void AGS_EngineStartup(IAGSEngine *engine) override;
+	int64 AGS_EngineOnEvent(int event, NumberPtr data) override;
 };
 
 } // namespace AGSWaves

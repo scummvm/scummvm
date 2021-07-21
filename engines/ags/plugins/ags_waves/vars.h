@@ -23,6 +23,8 @@
 #ifndef AGS_PLUGINS_AGS_WAVES_VARS_H
 #define AGS_PLUGINS_AGS_WAVES_VARS_H
 
+#include "audio/audiostream.h"
+
 namespace AGS3 {
 namespace Plugins {
 namespace AGSWaves {
@@ -75,22 +77,23 @@ struct getMus {
 };
 
 //WAVE SOUNDS FILES
-struct Soundeffect {
-	Mix_Chunk *chunk;
-	int repeat;
-	int volume;
-	int playing;
-	int allow;
-	int channel;
-	int filter;
+struct SoundEffect {
+	Audio::AudioStream *_stream;
+	Audio::SoundHandle _soundHandle;
+	int _repeat;
+	int _volume;
+	bool _playing;
+	int _allow;
+	int _channel;
+	int _filter;
 };
 
 struct Aud {
-	int NumOfChannels;
-	bool Initialized;
-	bool Disabled;
-	int FilterFrequency;
-	int SoundValue;
+	int NumOfChannels = 0;
+	bool Initialized = false;
+	bool Disabled = false;
+	int FilterFrequency = 0;
+	int SoundValue = 0;
 };
 
 struct Mus {
@@ -150,7 +153,7 @@ struct Vars {
 	PluginMethod Character_ID;
 
 	getMus MusicLoads[80];
-	Soundeffect SFX[500];
+	SoundEffect SFX[500];
 	RainParticle RainParticles[400];
 	RainParticle RainParticlesFore[400];
 	RainParticle RainParticlesBack[800];
