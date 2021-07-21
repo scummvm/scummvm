@@ -183,7 +183,7 @@ static BuiltinProto builtins[] = {
 	{ "puppetTransition",LB::b_puppetTransition,-1,0,200, CBLTIN },// D2 c
 	{ "ramNeeded",		LB::b_ramNeeded,	2, 2, 300, FBLTIN },	//		D3.1 f
 	{ "rollOver",		LB::b_rollOver,		1, 1, 200, FBLTIN },	// D2 f
-	{ "spriteBox",		LB::b_spriteBox,	-1,0, 200, CBLTIN },	// D2 c
+	{ "spriteBox",		LB::b_spriteBox,	5, 5, 200, CBLTIN },	// D2 c
 	{ "unLoad",			LB::b_unLoad,		0, 2, 300, CBLTIN },	//		D3.1 c
 	{ "unLoadCast",		LB::b_unLoadCast,	0, 2, 300, CBLTIN },	//		D3.1 c
 	{ "updateStage",	LB::b_updateStage,	0, 0, 200, CBLTIN },	// D2 c
