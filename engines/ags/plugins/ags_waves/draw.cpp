@@ -240,7 +240,7 @@ void AGSWaves::DrawCylinder(ScriptMethodParams &params) {
 				cposy > height - 1) {
 				pixela[y * width + x] = SetColorRGBA(0, 0, 0, 0);
 			} else {
-				pixela[y * width + x] = pixelb[cposy & src2->w + cposx];
+				pixela[y * width + x] = pixelb[cposy * src2->w + cposx];
 			}
 		}
 	}
@@ -251,10 +251,10 @@ void AGSWaves::DrawCylinder(ScriptMethodParams &params) {
 void AGSWaves::DrawForceField(ScriptMethodParams &params) {
 	PARAMS4(int, spriteD, int, scale, float, speed, int, id);
 
-	if (id < 0 || id >4) {
+	if (id < 0 || id > 4) {
 		return;
 	}
-	if (b_time[id] == NULL) b_time[id] = 1.0;
+	if (b_time[id] == 0.0) b_time[id] = 1.0;
 	if (b_time[id] < 1.0) b_time[id] = 1.0;
 	b_time[id] += speed;
 	BITMAP *src = _engine->GetSpriteGraphic(spriteD);
