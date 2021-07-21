@@ -30,8 +30,6 @@
 
 namespace Saga2 {
 
-extern Actor *actorList;
-
 //----------------------------------------------------------------------
 //	BandList constructor -- simply place each element of the array in
 //	the inactive list
@@ -229,8 +227,8 @@ void loadBands(Common::InSaveFile *in, int32 chunkSize) {
 
 	// Reconstruct followers for actors
 	for (int i = 0; i < kActorCount; ++i) {
-		BandID id = actorList[i]._followersID;
-		actorList[i].followers = id != NoBand
+		BandID id = g_vm->_actorList[i]->_followersID;
+		g_vm->_actorList[i]->followers = id != NoBand
 	                             ?   getBandAddress(id)
 	                             :   nullptr;
 	}

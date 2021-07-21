@@ -65,10 +65,6 @@ extern uint8 identityColors[256];
 
 extern hResContext  *listRes;               // object list resource handle
 
-extern Actor        *actorList;
-
-extern int32        actorListSize;
-
 extern int16        actorLimboCount;
 
 bool unstickObject(GameObject *obj);
@@ -1455,7 +1451,7 @@ Actor *Actor::newActor(
 
 		//  Search actor list for first scavangable actor
 		for (i = kPlayerActors; i < kActorCount; i++) {
-			a = &actorList[i];
+			a = g_vm->_actorList[i];
 
 			if ((a->flags & temporary)
 			        &&  !a->isActivated()
@@ -3390,7 +3386,7 @@ bool Actor::makeSavingThrow(void) {
 //	Determine if the actors are currently initialized
 
 bool areActorsInitialized(void) {
-	return actorList != NULL;
+	return g_vm->_actorList.size() > 0;
 }
 
 int16 GetRandomBetween(int start, int end) {
@@ -3403,13 +3399,12 @@ void updateActorStates(void) {
 	static const int32  evalRate = 8;
 	static const int32  evalRateMask = evalRate - 1;
 	static int32        baseActorIndex = evalRateMask;
-	extern Actor        *actorList;
 
 	int32               actorIndex;
 
 	actorIndex = baseActorIndex = (baseActorIndex + 1) & evalRateMask;
 	while (actorIndex < kActorCount) {
-		Actor   *a = &actorList[actorIndex];
+		Actor   *a = g_vm->_actorList[actorIndex];
 
 		if (isWorld(a->IDParent()))
 			a->evaluateNeeds();
@@ -3419,7 +3414,7 @@ void updateActorStates(void) {
 
 	updatesViaScript = 0;
 	for (actorIndex = 0; actorIndex < kActorCount; actorIndex++) {
-		Actor   *a = &actorList[actorIndex];
+		Actor   *a = g_vm->_actorList[actorIndex];
 
 		if (isWorld(a->IDParent()) && a->isActivated())
 			a->updateState();
@@ -3493,13 +3488,6 @@ void initActors(void) {
 	if (resourceActorCount < 1)
 		error("Unable to load Actors");
 
-	//  Allocate memory for the actor list
-	actorListSize = kActorCount * sizeof(Actor);
-	actorList = new Actor[kActorCount]();
-
-	if (!actorList)
-		error("Unable to load Actors");
-
 	if ((stream = loadResourceToStream(listRes, actorListID, "res actor list")) == nullptr)
 		error("Unable to load Actors");
 
@@ -3512,26 +3500,26 @@ void initActors(void) {
 	delete stream;
 
 	for (i = 0; i < resourceActorCount; i++) {
-		Actor       *a = &actorList[i];
-
 		//  Initialize the actors with the resource data
-		new (a) Actor(resourceActorList[i]);
+		Actor *a = new Actor(resourceActorList[i]);
 
-		actorList[i]._index = i + ActorBaseID;
+		a->_index = i + ActorBaseID;
+
+		g_vm->_actorList.push_back(a);
 	}
 
 	//  Place all of the extra actors in actor limbo
 	for (; i < kActorCount; i++) {
-		Actor       *a = &actorList[i];
+		Actor *a = new Actor;
 
-		new (a) Actor;
+		a->_index = i + ActorBaseID;
 
-		actorList[i]._index = i + ActorBaseID;
+		g_vm->_actorList.push_back(a);
 	}
 
-	actorList[0].disposition = dispositionPlayer + 0;
-	actorList[1].disposition = dispositionPlayer + 1;
-	actorList[2].disposition = dispositionPlayer + 2;
+	g_vm->_actorList[0]->disposition = dispositionPlayer + 0;
+	g_vm->_actorList[1]->disposition = dispositionPlayer + 1;
+	g_vm->_actorList[2]->disposition = dispositionPlayer + 2;
 }
 
 void saveActors(Common::OutSaveFile *outS) {
@@ -3544,7 +3532,7 @@ void saveActors(Common::OutSaveFile *outS) {
 	debugC(3, kDebugSaveload, "... kActorCount = %d", kActorCount);
 
 	for (int i = 0; i < kActorCount; ++i)
-		actorList[i].write(out);
+		g_vm->_actorList[i]->write(out);
 	CHUNK_END;
 }
 
@@ -3556,17 +3544,13 @@ void loadActors(Common::InSaveFile *in) {
 
 	debugC(3, kDebugSaveload, "... kActorCount = %d", kActorCount);
 
-	//  Allocate the actor array
-	actorListSize = kActorCount * sizeof(Actor);
-	actorList = new Actor[kActorCount]();
-	if (actorList == NULL)
-		error("Unable to load Actors");
-
 	for (int i = 0; i < kActorCount; i++) {
 		//  Initilize actors with archive data
-		new (&actorList[i]) Actor(in);
+		Actor *a = new Actor(in);
 
-		actorList[i]._index = i + ActorBaseID;
+		a->_index = i + ActorBaseID;
+
+		g_vm->_actorList.push_back(a);
 	}
 }
 
@@ -3574,14 +3558,11 @@ void loadActors(Common::InSaveFile *in) {
 //	Cleanup the actor list
 
 void cleanupActors(void) {
-	if (actorList != NULL) {
-		int16       i;
+	if (g_vm->_actorList.size() > 0) {
+		for (int i = 0; i < kActorCount; i++)
+			delete g_vm->_actorList[i];
 
-		for (i = 0; i < kActorCount; i++)
-			actorList[i].~Actor();
-
-		delete[] actorList;
-		actorList = NULL;
+		g_vm->_actorList.clear();
 	}
 }
 

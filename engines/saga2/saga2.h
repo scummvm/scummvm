@@ -136,6 +136,7 @@ public:
 	WeaponStuff _weaponRack[kMaxWeapons];
 	weaponID _loadedWeapons;
 	Common::Array<char *> _nameList;
+	Common::Array<Actor *> _actorList;
 	Common::Array<PlayerActor *> _playerList;
 	Common::Array<ProtoObj *> _objectProtos;
 	Common::Array<ActorProto *> _actorProtos;
