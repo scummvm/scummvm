@@ -110,7 +110,7 @@ static struct FuncDescr {
 	{ LC::c_lt,				"c_lt",				"" },
 	{ LC::c_mod,			"c_mod",			"" },
 	{ LC::c_mul,			"c_mul",			"" },
-	{ LC::c_namepush,		"c_namepush",		"N" },
+	{ LC::c_namepush,		"c_namepush",		"s" },
 	{ LC::c_negate,			"c_negate",			"" },
 	{ LC::c_neq,			"c_neq",			"" },
 	{ LC::c_not,			"c_not",			"" },
@@ -143,31 +143,31 @@ static struct FuncDescr {
 	{ LC::c_wordToOf,		"c_wordToOf",		"" },	// D3
 	{ LC::c_wordToOfRef,	"c_wordToOfRef",	"" },	// D3
 	{ LC::c_xpop,			"c_xpop",			""  },
-	{ LC::cb_call,			"cb_call",			"N" },
+	{ LC::cb_call,			"cb_call",			"s" },
 	{ LC::cb_delete,		"cb_delete",		"i" },
 	{ LC::cb_hilite,		"cb_hilite",		"" },
-	{ LC::cb_globalassign,	"cb_globalassign",	"N" },
-	{ LC::cb_globalpush,	"cb_globalpush",	"N" },
+	{ LC::cb_globalassign,	"cb_globalassign",	"s" },
+	{ LC::cb_globalpush,	"cb_globalpush",	"s" },
 	{ LC::cb_list,			"cb_list",			"" },
 	{ LC::cb_proplist,		"cb_proplist",		"" },
 	{ LC::cb_localcall,		"cb_localcall",		"i" },
 	{ LC::cb_objectcall,	"cb_objectcall",	"i" },
-	{ LC::cb_objectfieldassign, "cb_objectfieldassign", "N" },
-	{ LC::cb_objectfieldpush, "cb_objectfieldpush", "N" },
-	{ LC::cb_varrefpush,	"cb_varrefpush",	"N" },
-	{ LC::cb_theassign,		"cb_theassign",		"N" },
-	{ LC::cb_theassign2,	"cb_theassign2",	"N" },
-	{ LC::cb_thepush,		"cb_thepush",		"N" },
-	{ LC::cb_thepush2,		"cb_thepush2",		"N" },
+	{ LC::cb_objectfieldassign, "cb_objectfieldassign", "s" },
+	{ LC::cb_objectfieldpush, "cb_objectfieldpush", "s" },
+	{ LC::cb_varrefpush,	"cb_varrefpush",	"s" },
+	{ LC::cb_theassign,		"cb_theassign",		"s" },
+	{ LC::cb_theassign2,	"cb_theassign2",	"s" },
+	{ LC::cb_thepush,		"cb_thepush",		"s" },
+	{ LC::cb_thepush2,		"cb_thepush2",		"s" },
 	{ LC::cb_unk,			"cb_unk",			"i" },
 	{ LC::cb_unk1,			"cb_unk1",			"ii" },
 	{ LC::cb_unk2,			"cb_unk2",			"iii" },
-	{ LC::cb_varassign,		"cb_varassign",		"N" },
-	{ LC::cb_varpush,		"cb_varpush",		"N" },
+	{ LC::cb_varassign,		"cb_varassign",		"s" },
+	{ LC::cb_varpush,		"cb_varpush",		"s" },
 	{ LC::cb_v4assign,		"cb_v4assign",		"i" },
 	{ LC::cb_v4assign2,		"cb_v4assign2",		"i" },
 	{ LC::cb_v4theentitypush,"cb_v4theentitypush","i" },
-	{ LC::cb_v4theentitynamepush,"cb_v4theentitynamepush","N" },
+	{ LC::cb_v4theentitynamepush,"cb_v4theentitynamepush","s" },
 	{ LC::cb_v4theentityassign,"cb_v4theentityassign","i" },
 	{ LC::cb_zeropush,		"cb_zeropush",		"" },
 	{ LC::c_stackpeek,		"c_stackpeek",		"i" },
@@ -385,8 +385,7 @@ void LC::c_symbolpush() {
 }
 
 void LC::c_namepush() {
-	int i = g_lingo->readInt();
-	Datum d(Common::String(g_lingo->_currentArchive->getName(i)));
+	Datum d(g_lingo->readString());
 	d.type = SYMBOL;
 	g_lingo->push(d);
 }

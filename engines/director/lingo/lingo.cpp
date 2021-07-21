@@ -368,14 +368,6 @@ Common::String Lingo::decodeInstruction(LingoArchive *archive, ScriptData *sd, u
 					res += Common::String::format(" %s", field2str(v));
 					break;
 				}
-			case 'N':
-				{
-					i = (*sd)[pc++];
-					int v = READ_UINT32(&i);
-
-					res += Common::String::format(" \"%s\"", archive->names[v].c_str());
-					break;
-				}
 			default:
 				warning("decodeInstruction: Unknown parameter type: %c", pars[-1]);
 			}
