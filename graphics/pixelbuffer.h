@@ -132,7 +132,7 @@ public:
 			((uint32 *) _buffer)[pixel] = value;
 			return;
 		}
-		error("setPixelAt: Unhandled bytesPerPixel %i", _format.bytesPerPixel);
+		error("setPixelAt: Unhandled bytesPerPixel %d", int(_format.bytesPerPixel));
 	}
 	/**
 	 * Set the value of a pixel. The pixel will be converted from a pixel in another PixelBuffer,
@@ -208,7 +208,7 @@ public:
 		case 4:
 			return ((uint32 *) _buffer)[i];
 		}
-		error("getValueAt: Unhandled bytesPerPixel %i", _format.bytesPerPixel);
+		error("getValueAt: Unhandled bytesPerPixel %d", int(_format.bytesPerPixel));
 	}
 	/**
 	 * Return the RGB value of the pixel at the given index.
