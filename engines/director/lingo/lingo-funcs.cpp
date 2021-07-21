@@ -187,6 +187,13 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	if (!_vm->getCurrentMovie())
 		return;
 
+	if (movie.type == VOID && frame.type == VOID)
+		return;
+
+	Score *score = _vm->getCurrentMovie()->getScore();
+
+	_vm->_skipFrameAdvance = true;
+
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
 		Window *stage = _vm->getCurrentWindow();
@@ -194,37 +201,25 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 		if (!stage->setNextMovie(movieFilenameRaw))
 			return;
 
-		stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+		score->_playState = kPlayStopped;
 
 		stage->_nextMovie.frameS.clear();
 		stage->_nextMovie.frameI = -1;
 
-		if (frame.type == VOID)
-			return;
-
 		if (frame.type == STRING) {
 			stage->_nextMovie.frameS = *frame.u.s;
-			return;
+		} else if (frame.type != VOID) {
+			stage->_nextMovie.frameI = frame.asInt();
 		}
 
-		stage->_nextMovie.frameI = frame.asInt();
-
 		return;
 	}
-
-	if (frame.type == VOID)
-		return;
-
-	_vm->_skipFrameAdvance = true;
 
 	if (frame.type == STRING) {
-		if (_vm->getCurrentMovie())
-			_vm->getCurrentMovie()->getScore()->setStartToLabel(*frame.u.s);
-		return;
+		score->setStartToLabel(*frame.u.s);
+	} else {
+		score->setCurrentFrame(frame.asInt());
 	}
-
-	if (_vm->getCurrentMovie())
-		_vm->getCurrentMovie()->getScore()->setCurrentFrame(frame.asInt());
 }
 
 void Lingo::func_gotoloop() {
