@@ -196,6 +196,7 @@ void AGSWaves::LoadSFX(int i) {
 	Common::FSNode fsNode = ::AGS::g_vm->getGameFolder().getChild(
 		"sounds").getChild(Common::String::format("sound%d.sfx", i));
 
+#ifdef USE_VORBIS
 	if (fsNode.exists()) {
 		Common::File *soundFile = new Common::File();
 		if (!soundFile->open(fsNode))
@@ -204,6 +205,7 @@ void AGSWaves::LoadSFX(int i) {
 		SFX[i]._stream = Audio::makeVorbisStream(soundFile, DisposeAfterUse::YES);
 		assert(SFX[i]._stream);
 	}
+#endif
 }
 
 void AGSWaves::UnloadSFX(int i) {
