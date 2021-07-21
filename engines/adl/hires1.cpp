@@ -281,8 +281,6 @@ void HiRes1Engine::runIntro() {
 		// This does mean we need to push out some extra line feeds to clear the screen
 		_display->printString(_strings.lineFeeds);
 		inputKey();
-		if (shouldQuit())
-			return;
 	}
 }
 
@@ -447,29 +445,39 @@ Common::String HiRes1Engine::loadMessage(uint idx) const {
 }
 
 void HiRes1Engine::printMessage(uint idx) {
-	// Messages with hardcoded overrides don't delay after printing.
-	// It's unclear if this is a bug or not. In some cases the result
-	// is that these strings will scroll past the four-line text window
-	// before the user gets a chance to read them.
-	// NOTE: later games seem to wait for a key when the text window
-	// overflows and don't use delays. It might be better to use
-	// that system for this game as well.
+	// In the English version, messages with hardcoded overrides don't delay
+	// after printing. It's unclear if this is a bug or not. In most cases
+	// the slow drawing of the room will give the player a chance to read
+	// it. This isn't the case in ScummVM however, so we add a delay after
+	// these messages.
+
+	// In the French version, messages with hardcoded overrides delay
+	// based on string length. This leads to overly long delays on longer
+	// strings. This might be a bug, since other messages have a fixed
+	// delay (that is slightly longer than the English version).
+	// We've chosen to stick with fixed delays here as well.
+
+	// NOTE: Later games wait for a key when the text window overflows and
+	// don't use delays. It might be better to use that system for this game
+	// as well.
 	switch (idx) {
 	case IDI_HR1_MSG_CANT_GO_THERE:
 		_display->printString(_gameStrings.cantGoThere);
-		return;
+		break;
 	case IDI_HR1_MSG_DONT_HAVE_IT:
 		_display->printString(_gameStrings.dontHaveIt);
-		return;
+		break;
 	case IDI_HR1_MSG_DONT_UNDERSTAND:
 		_display->printString(_gameStrings.dontUnderstand);
-		return;
+		break;
 	case IDI_HR1_MSG_GETTING_DARK:
 		_display->printString(_gameStrings.gettingDark);
-		return;
+		break;
 	default:
-		printString(loadMessage(idx));
+		return printString(loadMessage(idx));
 	}
+
+	delay(1500);
 }
 
 void HiRes1Engine::drawItems() {
