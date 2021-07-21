@@ -1732,9 +1732,9 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 	// it changes a script that is used by all keypads in the game, which
 	// means some puzzles are completely nerfed.
 	//
-	// Even worse, this is the version that GOG (and apparently Steam as
-	// well) are selling. No, seriously! I've reported this as a bug, but
-	// it remains unclear whether or not they will fix it.
+	// Even worse, this is the version that GOG and Steam are selling. No,
+	// seriously! I've reported this as a bug, but it remains unclear
+	// whether or not they will fix it.
 
 	if (_game.id == GID_MANIAC && _game.version == 2 && _game.platform == Common::kPlatformDOS && type == rtScript && idx == 44 && size == 199) {
 		byte *data = getResourceAddress(type, idx);
