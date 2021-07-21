@@ -32,6 +32,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "theapartment",		"The Apartment, Interactive demo" },
 	{ "dirmacromedia",		"Macromedia Director" },
 	{ "dirmacromind",		"MacroMind Director" },
+	{ "lingoexpo",			"Director 4 Lingo Expo and Sample Titles"},
 
 	// Commercially released games
 	{ "10plus2",			"10+2" },
@@ -1392,6 +1393,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("leonardo", "", "LEO.EXE", "65d06b5fef155a2473434571aff5bc29", 370000, 310),
 
 	WINDEMO1("leopardspots", "Demo", "LEOPARD.EXE", "2b3543a9131a49f665982d26513a84f8", 1081371, 310),
+
+	MACGAME1("lingoexpo", "", "Navigator", "53c55a79ef2c9247201c3b1873d851c6", 1082586, 400),
 
 	MACGAME1_l("lvi", "Nº1", "LVI_8Mo", "7f443f2e63fd497a9ad85b10dc880a91", 384462, Common::FR_FRA, 310),
 	WINGAME1_l("lvi", "Nº1", "LVI.EXE", "65d06b5fef155a2473434571aff5bc29", 634203, Common::FR_FRA, 310),
