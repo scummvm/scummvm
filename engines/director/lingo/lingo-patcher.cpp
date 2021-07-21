@@ -140,6 +140,9 @@ struct ScriptPatch {
 			1, "GO \"SPACE\" OF MOVIE \"L-ZONE:DATA:R-G:ST-A2\",\"242,197\"",
 			   "GO \"SPACE\" OF MOVIE \"L-ZONE:DATA:R-G:ST-A2\""},
 
+	{"lingoexpo", "", kPlatformMacintosh, "Lingo Expo/Navigator", kMovieScript, 9, 0,
+			97, "  append(codeExampleList,\"6,301,302,303,304,305,306\")  - KIOSK SCRIPTS",
+				"  append(codeExampleList,\"6,301,302,303,304,305,306\")"},
 
 	{"jman", "", kPlatformWindows, "mmm/Mars Space Game 05", kMovieScript, 10, 0,
 			68, "set DamageParameter = (gProcessorSpeed/2) + 7)", "set DamageParameter = (gProcessorSpeed/2) + 7"},
