@@ -232,6 +232,10 @@ bool AGSEngine::is64BitGame() const {
 		&& f.size() == -1;
 }
 
+Common::FSNode AGSEngine::getGameFolder() {
+	return Common::FSNode(ConfMan.get("path"));
+}
+
 bool AGSEngine::canLoadGameStateCurrently() {
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
 	       !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);

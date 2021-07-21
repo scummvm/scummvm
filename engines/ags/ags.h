@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
+#include "common/fs.h"
 #include "common/random.h"
 #include "common/hash-str.h"
 #include "common/util.h"
@@ -140,6 +141,11 @@ public:
 	 * Returns true if the game has data files greater than 2Gb
 	 */
 	bool is64BitGame() const;
+
+	/**
+	 * Returns the game folder as a ScummVM filesystem node
+	 */
+	Common::FSNode getGameFolder();
 
 	/**
 	 * Indicate whether a game state can be loaded.

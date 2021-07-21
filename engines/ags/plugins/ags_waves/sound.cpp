@@ -20,11 +20,12 @@
  *
  */
 
-#include "audio/decoders/wave.h"
+#include "audio/decoders/vorbis.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/util.h"
 #include "ags/plugins/ags_waves/ags_waves.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -192,16 +193,16 @@ void AGSWaves::SFX_Filter(ScriptMethodParams &params) {
 
 
 void AGSWaves::LoadSFX(int i) {
-	Common::FSNode soundsFolder("sounds");
-	Common::FSNode soundFileNode = soundsFolder.getChild(
-		Common::String::format("sound%d.sfx", i));
+	Common::FSNode fsNode = ::AGS::g_vm->getGameFolder().getChild(
+		"sounds").getChild(Common::String::format("sound%d.sfx", i));
 
-	Common::File *soundFile = new Common::File();
-	if (soundFile->open(soundFileNode)) {
-		SFX[i]._stream = Audio::makeWAVStream(soundFile, DisposeAfterUse::YES);
+	if (fsNode.exists()) {
+		Common::File *soundFile = new Common::File();
+		if (!soundFile->open(fsNode))
+			error("Failed to open");
 
-	} else {
-		delete soundFile;
+		SFX[i]._stream = Audio::makeVorbisStream(soundFile, DisposeAfterUse::YES);
+		assert(SFX[i]._stream);
 	}
 }
 
