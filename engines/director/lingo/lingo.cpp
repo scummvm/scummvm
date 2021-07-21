@@ -149,7 +149,6 @@ PCell::PCell(const Datum &prop, const Datum &val) {
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
-	_currentArchive = nullptr;
 	_currentScript = 0;
 	_currentScriptContext = nullptr;
 
@@ -308,7 +307,7 @@ void Lingo::printCallStack(uint pc) {
 	}
 }
 
-Common::String Lingo::decodeInstruction(LingoArchive *archive, ScriptData *sd, uint pc, uint *newPc) {
+Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 	Symbol sym;
 	Common::String res;
 
@@ -404,7 +403,7 @@ void Lingo::execute() {
 				break;
 		}
 
-		Common::String instr = decodeInstruction(_currentArchive, _currentScript, _pc);
+		Common::String instr = decodeInstruction(_currentScript, _pc);
 		uint current = _pc;
 
 		if (debugChannelSet(5, kDebugLingoExec))

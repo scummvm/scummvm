@@ -226,7 +226,7 @@ Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Commo
 		uint pc = 0;
 		while (pc < sym.u.defn->size()) {
 			uint spc = pc;
-			Common::String instr = g_lingo->decodeInstruction(_archive, sym.u.defn, pc, &pc);
+			Common::String instr = g_lingo->decodeInstruction(sym.u.defn, pc, &pc);
 			debugC(1, kDebugCompile, "[%5d] %s", spc, instr.c_str());
 		}
 		debugC(1, kDebugCompile, "<end define code>");

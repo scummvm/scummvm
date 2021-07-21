@@ -227,7 +227,6 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	fp->retpc = g_lingo->_pc;
 	fp->retscript = g_lingo->_currentScript;
 	fp->retctx = g_lingo->_currentScriptContext;
-	fp->retarchive = g_lingo->_currentArchive;
 	fp->localvars = g_lingo->_localvars;
 	fp->retMe = g_lingo->_currentMe;
 	fp->sp = funcSym;
@@ -243,8 +242,6 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 		g_lingo->_currentScriptContext = funcSym.ctx;
 		*g_lingo->_currentScriptContext->_refCount += 1;
 	}
-
-	g_lingo->_currentArchive = funcSym.archive;
 
 	DatumHash *localvars = g_lingo->_localvars;
 	if (!funcSym.anonymous) {
@@ -324,7 +321,6 @@ void Lingo::popContext() {
 
 	g_lingo->_currentScript = fp->retscript;
 	g_lingo->_currentScriptContext = fp->retctx;
-	g_lingo->_currentArchive = fp->retarchive;
 	g_lingo->_pc = fp->retpc;
 	g_lingo->_currentMe = fp->retMe;
 

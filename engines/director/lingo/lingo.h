@@ -197,7 +197,6 @@ struct CFrame {	/* proc/func call stack frame */
 	int		retpc;	/* where to resume after return */
 	ScriptData *retscript;		/* which script to resume after return */
 	ScriptContext *retctx;		/* which script context to use after return */
-	LingoArchive *retarchive;	/* which archive to use after return */
 	DatumHash *localvars;
 	Datum retMe; /* which me obj to use after return */
 	uint stackSizeBefore;
@@ -255,7 +254,7 @@ public:
 	void executeScript(ScriptType type, CastMemberID id);
 	void printStack(const char *s, uint pc);
 	void printCallStack(uint pc);
-	Common::String decodeInstruction(LingoArchive *archive, ScriptData *sd, uint pc, uint *newPC = NULL);
+	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
 
 	void reloadBuiltIns();
 	void initBuiltIns();
@@ -365,7 +364,6 @@ public:
 	LingoCompiler *_compiler;
 
 	int _currentChannelId;
-	LingoArchive *_currentArchive;
 	ScriptContext *_currentScriptContext;
 	ScriptData *_currentScript;
 	Datum _currentMe;

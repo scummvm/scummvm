@@ -1521,7 +1521,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 			uint pc = 0;
 			while (pc < _currentAssembly->size()) {
 				uint spc = pc;
-				Common::String instr = g_lingo->decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
+				Common::String instr = g_lingo->decodeInstruction(_currentAssembly, pc, &pc);
 				out.writeString(Common::String::format("[%5d] %s\n", spc, instr.c_str()));
 			}
 			out.writeString(Common::String::format("<end code>\n\n"));

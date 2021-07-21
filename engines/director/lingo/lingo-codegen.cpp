@@ -151,7 +151,7 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 			uint pc = 0;
 			while (pc < _currentAssembly->size()) {
 				uint spc = pc;
-				Common::String instr = g_lingo->decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
+				Common::String instr = g_lingo->decodeInstruction(_currentAssembly, pc, &pc);
 				debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
 			}
 			debugC(2, kDebugCompile, "<end code>");
