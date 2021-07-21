@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-20 07:39+0000\n"
+"POT-Creation-Date: 2021-07-21 20:36+0000\n"
 "PO-Revision-Date: 2021-07-17 20:17+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4056,10 +4056,10 @@ msgstr "デフォルトで色覚多様性モードを有効化"
 msgid "Enable Text to Speech"
 msgstr "音声合成をオンにする"
 
-#: engines/cge/detection.cpp:120 engines/lure/detection.cpp:46
-#: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
-#: engines/twine/metaengine.cpp:160
-msgid "Use TTS to read the descriptions (if TTS is available)"
+#: engines/cge/detection.cpp:120
+#, fuzzy
+#| msgid "Use TTS to read the descriptions (if TTS is available)"
+msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "音声合成を使用して詳細を読み上げる(利用可能な場合のみ)"
 
 #: engines/cine/detection.cpp:61
@@ -5118,6 +5118,11 @@ msgstr "このパズルを体験版でプレイする事はできません"
 #: engines/sherlock/detection.cpp:120 engines/twine/metaengine.cpp:159
 msgid "TTS Narrator"
 msgstr "音声合成によるナレーション"
+
+#: engines/lure/detection.cpp:46 engines/mads/detection.cpp:115
+#: engines/sherlock/detection.cpp:121 engines/twine/metaengine.cpp:160
+msgid "Use TTS to read the descriptions (if TTS is available)"
+msgstr "音声合成を使用して詳細を読み上げる(利用可能な場合のみ)"
 
 #: engines/made/detection_tables.h:405 engines/made/detection_tables.h:422
 msgid "The game is using unsupported engine"

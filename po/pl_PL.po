@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-20 07:39+0000\n"
+"POT-Creation-Date: 2021-07-21 20:36+0000\n"
 "PO-Revision-Date: 2021-05-17 17:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -4123,11 +4123,11 @@ msgstr "Domyślnie włącz tryb dla daltonistów"
 msgid "Enable Text to Speech"
 msgstr "Przetwórz tekst na mowę"
 
-#: engines/cge/detection.cpp:120 engines/lure/detection.cpp:46
-#: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
-#: engines/twine/metaengine.cpp:160
-msgid "Use TTS to read the descriptions (if TTS is available)"
-msgstr ""
+#: engines/cge/detection.cpp:120
+#, fuzzy
+#| msgid "Use CD audio instead of in-game audio, if available"
+msgid "Use TTS to read text in the game (if TTS is available)"
+msgstr "Użyj CD audio zamiast muzyki w grze, jeśli jest dostępne"
 
 #: engines/cine/detection.cpp:61
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -5146,6 +5146,11 @@ msgstr ""
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:114
 #: engines/sherlock/detection.cpp:120 engines/twine/metaengine.cpp:159
 msgid "TTS Narrator"
+msgstr ""
+
+#: engines/lure/detection.cpp:46 engines/mads/detection.cpp:115
+#: engines/sherlock/detection.cpp:121 engines/twine/metaengine.cpp:160
+msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
 #: engines/made/detection_tables.h:405 engines/made/detection_tables.h:422

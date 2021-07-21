@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-20 07:39+0000\n"
+"POT-Creation-Date: 2021-07-21 20:36+0000\n"
 "PO-Revision-Date: 2021-05-27 09:25+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4143,10 +4143,10 @@ msgstr "Schakel Kleurenblind modus standaard in"
 msgid "Enable Text to Speech"
 msgstr "Gebruik Tekst naar Spraak"
 
-#: engines/cge/detection.cpp:120 engines/lure/detection.cpp:46
-#: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
-#: engines/twine/metaengine.cpp:160
-msgid "Use TTS to read the descriptions (if TTS is available)"
+#: engines/cge/detection.cpp:120
+#, fuzzy
+#| msgid "Use TTS to read the descriptions (if TTS is available)"
+msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr ""
 "Gebruik TTS voor het lezen van de omschrijvingen (als TTS beschikbaar is)"
 
@@ -5224,6 +5224,12 @@ msgstr "Deze puzzel is niet beschikbaar in de probeer versie van het spel"
 #: engines/sherlock/detection.cpp:120 engines/twine/metaengine.cpp:159
 msgid "TTS Narrator"
 msgstr "TTS Verteller"
+
+#: engines/lure/detection.cpp:46 engines/mads/detection.cpp:115
+#: engines/sherlock/detection.cpp:121 engines/twine/metaengine.cpp:160
+msgid "Use TTS to read the descriptions (if TTS is available)"
+msgstr ""
+"Gebruik TTS voor het lezen van de omschrijvingen (als TTS beschikbaar is)"
 
 #: engines/made/detection_tables.h:405 engines/made/detection_tables.h:422
 msgid "The game is using unsupported engine"

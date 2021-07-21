@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-20 07:39+0000\n"
+"POT-Creation-Date: 2021-07-21 20:36+0000\n"
 "PO-Revision-Date: 2021-05-15 04:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4057,10 +4057,10 @@ msgstr "색맹 모드를 기본으로 활성화합니다"
 msgid "Enable Text to Speech"
 msgstr "TTS 활성화"
 
-#: engines/cge/detection.cpp:120 engines/lure/detection.cpp:46
-#: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
-#: engines/twine/metaengine.cpp:160
-msgid "Use TTS to read the descriptions (if TTS is available)"
+#: engines/cge/detection.cpp:120
+#, fuzzy
+#| msgid "Use TTS to read the descriptions (if TTS is available)"
+msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
 
 #: engines/cine/detection.cpp:61
@@ -5119,6 +5119,11 @@ msgstr "게임 평가판에서는 현재 퍼즐을 이용할 수 없습니다"
 #: engines/sherlock/detection.cpp:120 engines/twine/metaengine.cpp:159
 msgid "TTS Narrator"
 msgstr "TTS 나레이터"
+
+#: engines/lure/detection.cpp:46 engines/mads/detection.cpp:115
+#: engines/sherlock/detection.cpp:121 engines/twine/metaengine.cpp:160
+msgid "Use TTS to read the descriptions (if TTS is available)"
+msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
 
 #: engines/made/detection_tables.h:405 engines/made/detection_tables.h:422
 msgid "The game is using unsupported engine"

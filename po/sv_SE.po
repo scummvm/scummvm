@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-20 07:39+0000\n"
+"POT-Creation-Date: 2021-07-21 20:36+0000\n"
 "PO-Revision-Date: 2021-04-12 23:51+0000\n"
 "Last-Translator: Henrik Andersson <henke@henke37.cjb.net>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -4160,10 +4160,10 @@ msgstr "Aktivera färgblint läge som standard"
 msgid "Enable Text to Speech"
 msgstr "Undertext och tal:"
 
-#: engines/cge/detection.cpp:120 engines/lure/detection.cpp:46
-#: engines/mads/detection.cpp:115 engines/sherlock/detection.cpp:121
-#: engines/twine/metaengine.cpp:160
-msgid "Use TTS to read the descriptions (if TTS is available)"
+#: engines/cge/detection.cpp:120
+#, fuzzy
+#| msgid "Use TTS to read the descriptions (if TTS is available)"
+msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Använd TTT för att läsa beskrivningarna (om TTT är tilgängligt)"
 
 #: engines/cine/detection.cpp:61
@@ -5194,6 +5194,11 @@ msgstr "För fortsatt utforskande krävs den fullständiga versionen av spelet."
 #: engines/sherlock/detection.cpp:120 engines/twine/metaengine.cpp:159
 msgid "TTS Narrator"
 msgstr "TTT Berättare"
+
+#: engines/lure/detection.cpp:46 engines/mads/detection.cpp:115
+#: engines/sherlock/detection.cpp:121 engines/twine/metaengine.cpp:160
+msgid "Use TTS to read the descriptions (if TTS is available)"
+msgstr "Använd TTT för att läsa beskrivningarna (om TTT är tilgängligt)"
 
 #: engines/made/detection_tables.h:405 engines/made/detection_tables.h:422
 #, fuzzy
