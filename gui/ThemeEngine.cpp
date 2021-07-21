@@ -1440,19 +1440,22 @@ void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font 
 }
 
 void ThemeEngine::drawFoldIndicator(const Common::Rect &r, bool expanded) {
-	Graphics::VectorRenderer::TriangleOrientation orient;
-	if (_layerToDraw == kDrawLayerBackground)
-		return;
+	Common::U32String arrow = (expanded) ? Common::U32String(" v ") : Common::U32String(" > ");
+	drawText(r, arrow, kStateEnabled, Graphics::kTextAlignCenter, kTextInversionNone,
+			 0, false, kFontStyleConsole, kFontColorNormal);
+	// Graphics::VectorRenderer::TriangleOrientation orient;
+	// if (_layerToDraw == kDrawLayerBackground)
+	// 	return;
 
-	if (expanded)
-		orient = Graphics::VectorRenderer::kTriangleDown;
-	else
-		orient = Graphics::VectorRenderer::kTriangleRight;
+	// if (expanded)
+	// 	orient = Graphics::VectorRenderer::kTriangleDown;
+	// else
+	// 	orient = Graphics::VectorRenderer::kTriangleRight;
 
-	_vectorRenderer->setFillMode(Graphics::VectorRenderer::kFillForeground);
-	_vectorRenderer->setFgColor(_textColors[kTextColorNormal]->r, _textColors[kTextColorNormal]->g, _textColors[kTextColorNormal]->b);
-	_vectorRenderer->drawTriangle(r.left + r.width() / 4, r.top + r.width() / 4, r.width() / 2, r.height() / 2, orient);
-	addDirtyRect(r);
+	// _vectorRenderer->setFillMode(Graphics::VectorRenderer::kFillForeground);
+	// _vectorRenderer->setFgColor(_textColors[kTextColorNormal]->r, _textColors[kTextColorNormal]->g, _textColors[kTextColorNormal]->b);
+	// _vectorRenderer->drawTriangle(r.left + r.width() / 4, r.top + r.height() / 4, r.width() / 2, r.height() / 2, orient);
+	// addDirtyRect(r);
 }
 
 void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
