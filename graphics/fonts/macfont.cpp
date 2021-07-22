@@ -756,6 +756,7 @@ static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
 
 static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height) {
 	glyph->bitmapWidth += 2;
+	glyph->width++;
 	glyph->height++;
 
 	for (uint16 y = 0; y < height + 1; y++) {
