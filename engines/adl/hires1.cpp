@@ -25,6 +25,7 @@
 #include "common/error.h"
 #include "common/file.h"
 #include "common/stream.h"
+#include "common/memstream.h"
 #include "common/ptr.h"
 
 #include "adl/adl.h"
@@ -75,7 +76,7 @@ public:
 			_messageDelay(true) { }
 	~HiRes1Engine() override { delete _files; }
 
-private:
+protected:
 	// AdlEngine
 	void runIntro() override;
 	void init() override;
@@ -555,7 +556,116 @@ void HiRes1Engine::wordWrap(Common::String &str) const {
 	}
 }
 
+class HiRes1Engine_VF : public HiRes1Engine {
+public:
+	HiRes1Engine_VF(OSystem *syst, const AdlGameDescription *gd) :
+			HiRes1Engine(syst, gd) { }
+
+private:
+	// AdlEngine
+	void runIntro() override;
+	void getInput(uint &verb, uint &noun) override;
+};
+
+void HiRes1Engine_VF::getInput(uint &verb, uint &noun) {
+	// This version has a modified "parser"
+	while (1) {
+		_display->printString(_strings.enterCommand);
+		const Common::String line = getLine();
+
+		if (shouldQuit() || _isRestoring)
+			return;
+
+		uint index = 0;
+		Common::String verbString = getWord(line, index);
+
+		if (!_verbs.contains(verbString)) {
+			// If the verb is not found and it looks like an imperative, try to build the infinitive
+			const size_t ezPos = verbString.find("\xc5\xda"); // "EZ"
+
+			bool found = false;
+
+			if (ezPos != verbString.npos) {
+				const char *suf[] = { "\xc5\xd2", "\xc9\xd2", "\xd2\xc5", nullptr }; // "ER", "IR", "RE"
+
+				for (uint i = 0; suf[i]; ++i) {
+					verbString.replace(ezPos, 2, suf[i]);
+					if (_verbs.contains(verbString)) {
+						found = true;
+						break;
+					}
+				}
+			}
+
+			if (!found) {
+				_display->printString(formatVerbError(verbString));
+				continue;
+			}
+		}
+
+		verb = _verbs[verbString];
+
+		while (1) {
+			// Go over all nouns to find one we know. At the end of the string,
+			// it will always match the empty word (which is in the noun list).
+
+			// The original has a code path to return a noun error here, but
+			// it appears to be non-functional.
+			const Common::String nounString = getWord(line, index);
+
+			if (_nouns.contains(nounString)) {
+				noun = _nouns[nounString];
+				return;
+			}
+		}
+	}
+}
+
+void HiRes1Engine_VF::runIntro() {
+	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_0));
+
+	stream->seek(0x1000);
+
+	// Title image is one padding byte short, so we first read it into a buffer
+	const uint frameBufferSize = 0x2000;
+	byte *const frameBuffer = (byte *)malloc(frameBufferSize);
+
+	if (stream->read(frameBuffer, frameBufferSize - 1) < frameBufferSize - 1)
+		error("Failed to read title image");
+
+	// Set missing byte
+	frameBuffer[frameBufferSize - 1] = 0;
+	Common::MemoryReadStream frameBufferStream(frameBuffer, frameBufferSize, DisposeAfterUse::YES);
+
+	_display->setMode(Display::kModeGraphics);
+	static_cast<Display_A2 *>(_display)->loadFrameBuffer(frameBufferStream);
+	_display->renderGraphics();
+
+	_display->setMode(Display::kModeMixed);
+
+	Common::String str = readStringAt(*stream, 0xf);
+
+	while (1) {
+		_display->printString(str);
+		const char key = inputKey();
+
+		if (shouldQuit())
+			return;
+
+		if (key == _display->asciiToNative('M')) {
+			stream->seek(0x75);
+			showInstructions(*stream);
+			return;
+		} else if (key == _display->asciiToNative('J')) {
+			return;
+		}
+	}
+}
+
 Engine *HiRes1Engine_create(OSystem *syst, const AdlGameDescription *gd) {
+	if (gd->version == GAME_VER_HR1_VF2)
+		return new HiRes1Engine_VF(syst, gd);
+
 	return new HiRes1Engine(syst, gd);
 }
 

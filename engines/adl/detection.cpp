@@ -164,6 +164,22 @@ static const AdlGameDescription gameFileDescriptions[] = {
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_VF1
 	},
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - French - Modified parser
+		{
+			"hires1", "VF2",
+			{
+				{ "ADVENTURE", 0, "f9a1add3609b4bc24b5dc4a9db1fec67", 29952 },
+				{ "AUTO LOAD OBJ", 0, "2a348058363da4c78a069ee5a2d81a31", 12287 },
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformApple2,
+			ADGF_TESTING,
+			MH_OPTIONS
+		},
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_VF2
+	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Coarsegold - With MIXEDON
 		{
 			"hires1", "V3",
@@ -224,6 +240,18 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 		},
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_COARSE
+	},
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - French - Modified parser
+		{
+			"hires1", "VF2",
+			AD_ENTRY1s("mysthous", "7bd1918ffc28e551e5b3baf610982bd3", 116480),
+			Common::FR_FRA,
+			Common::kPlatformApple2,
+			ADGF_TESTING,
+			MH_OPTIONS
+		},
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_VF2
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Coarsegold - With MIXEDON
 		{
