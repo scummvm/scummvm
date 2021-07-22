@@ -935,7 +935,7 @@ void LauncherSimple::build() {
 
 void LauncherSimple::updateListing() {
 	U32StringArray l;
-	U32StringArray attrs;
+	Array<const Common::ConfigManager::Domain *> attrs;
 	ListWidget::ColorList colors;
 	ThemeEngine::FontColor color;
 	int numEntries = ConfMan.getInt("gui_list_max_scan_entries");
@@ -990,15 +990,17 @@ void LauncherSimple::updateListing() {
 				// description += Common::String::format(" (%s)", _("Not found"));
 			}
 		}
-		// TEST: currently testing the grouping with just the first letter.
-		attrs.push_back(iter->description.substr(0, 1));
 		l.push_back(iter->description);
 		colors.push_back(color);
+		attrs.push_back(iter->domain);
 		_domains.push_back(iter->key);
 	}
 
 	const int oldSel = _list->getSelected();
-	_list->setList(l, &colors, &attrs);
+	_list->setList(l, &colors);
+	
+	groupEntries(attrs);
+
 	if (oldSel < (int)l.size())
 		_list->setSelected(oldSel);	// Restore the old selection
 	else if (oldSel != -1)
@@ -1009,6 +1011,16 @@ void LauncherSimple::updateListing() {
 	// Update the filter settings, those are lost when "setList"
 	// is called.
 	_list->setFilter(_searchWidget->getEditString());
+}
+
+void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata) {
+	U32StringArray attrs;
+	for (int i = 0; i < metadata.size(); ++i) {
+		attrs.push_back(metadata[i]->getVal("description").substr(0, 1));
+	}
+	_list->setGroupHeaderFormat(U32String(""), U32String("..."));
+	_list->setAttributeValues(attrs);
+	_list->groupByAttribute();
 }
 
 void LauncherSimple::handleKeyDown(Common::KeyState state) {

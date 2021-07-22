@@ -39,7 +39,7 @@ GroupedListWidget::GroupedListWidget(Dialog *boss, const String &name, const Com
 
 }
 
-void GroupedListWidget::setList(const U32StringArray &list, const ColorList *colors, const U32StringArray *attrValues) {
+void GroupedListWidget::setList(const U32StringArray &list, const ColorList *colors) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
 
@@ -56,11 +56,6 @@ void GroupedListWidget::setList(const U32StringArray &list, const ColorList *col
 		assert(_listColors.size() == _dataList.size());
 	}
 
-	if (attrValues) {
-		_attributeValues = *attrValues;
-		assert(_attributeValues.size() == _dataList.size());
-	}
-
 	int size = list.size();
 	if (_currentPos >= size)
 		_currentPos = size - 1;
@@ -71,6 +66,12 @@ void GroupedListWidget::setList(const U32StringArray &list, const ColorList *col
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	groupByAttribute();
 	scrollBarRecalc();
+}
+
+void GroupedListWidget::setAttributeValues(const U32StringArray &attrValues) {
+	_attributeValues = attrValues;
+	if (!attrValues.empty())
+		assert(_attributeValues.size() == _dataList.size());
 }
 
 void GroupedListWidget::append(const String &s, ThemeEngine::FontColor color) {
@@ -100,12 +101,21 @@ void GroupedListWidget::setGroupHeaderFormat(const U32String &prefix, const U32S
 }
 
 void GroupedListWidget::groupByAttribute() {
-	if (_attributeValues.empty()) return;
-
 	_groupExpanded.clear();
 	_groupHeaders.clear();
 	_groupValueIndex.clear();
 	_itemsInGroup.clear();
+
+	if (_attributeValues.empty()) {
+		_groupExpanded.push_back(true);
+		_groupHeaders.push_back(String("All"));
+		_groupValueIndex.setVal(String("All"), 0);
+		for (int i = 0; i < _dataList.size(); ++i) {
+			_itemsInGroup[0].push_back(i);
+		}
+		sortGroups();
+		return;
+	}
 
 	for (uint i = 0; i < _dataList.size(); ++i) {
 		int groupID;

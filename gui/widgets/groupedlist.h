@@ -49,7 +49,8 @@ public:
 	GroupedListWidget(Dialog *boss, const String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	GroupedListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 
-	void setList(const U32StringArray &list, const ColorList *colors = nullptr, const U32StringArray *attrValues = nullptr);
+	void setList(const U32StringArray &list, const ColorList *colors = nullptr);
+	void setAttributeValues(const U32StringArray &attrValues);
 	const U32StringArray &getList()	const			{ return _dataList; }
 
 	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
