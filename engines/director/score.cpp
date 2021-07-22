@@ -433,14 +433,14 @@ void Score::update() {
 	// If we have more call stack frames than we started with, then we have a newly
 	// added frozen context. We'll deal with that later.
 	if (_window->_callstack.size() == initialCallStackSize) {
-		// We may have frozen Lingo context(s) from func_goto.
-		// Now that we've entered a new frame and we don't have any new frozen
-		// contexts just added on, let's unfreeze all the contexts.
-		while (g_lingo->_freezeContext) {
+		// We may have a frozen Lingo context from func_goto.
+		// Now that we've entered a new frame, let's unfreeze that context.
+		if (g_lingo->_freezeContext) {
 			debugC(1, kDebugLingoExec, "Score::update(): Unfreezing Lingo context");
 			g_lingo->_freezeContext = false;
 			g_lingo->execute();
 		}
+		_window->_hasFrozenLingo = false;
 	}
 
 	byte tempo = _frames[_currentFrame]->_tempo;

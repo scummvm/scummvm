@@ -173,6 +173,7 @@ public:
 	bool _newMovieStarted;
 
 	Common::Array<CFrame *> _callstack;
+	bool _hasFrozenLingo;
 
 private:
 	uint32 _stageColor;

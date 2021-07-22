@@ -61,6 +61,8 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_windowType = -1;
 	_titleVisible = true;
 	updateBorderType();
+
+	_hasFrozenLingo = false;
 }
 
 Window::~Window() {

@@ -190,16 +190,20 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 	if (movie.type == VOID && frame.type == VOID)
 		return;
 
+	Window *stage = _vm->getCurrentWindow();
 	Score *score = _vm->getCurrentMovie()->getScore();
 
 	_vm->_skipFrameAdvance = true;
 
-	// Freeze this script context. We'll return to it after entering the next frame.
-	g_lingo->_freezeContext = true;
+	// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
+	// freeze this script context. We'll return to it after entering the next frame.
+	if (!stage->_hasFrozenLingo) {
+		g_lingo->_freezeContext = true;
+		stage->_hasFrozenLingo = true;
+	}
 
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
-		Window *stage = _vm->getCurrentWindow();
 
 		if (!stage->setNextMovie(movieFilenameRaw))
 			return;
