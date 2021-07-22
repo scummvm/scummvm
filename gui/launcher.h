@@ -53,6 +53,14 @@ enum {
 };
 #endif
 
+enum GroupingMethod {
+	kGroupByNone,
+	kGroupByFirstLetter,
+	kGroupByEngine,
+	kGroupByLanguage,
+	kGroupByPlatform
+};
+
 class BrowserDialog;
 class CommandSender;
 class GroupedListWidget;
@@ -97,6 +105,7 @@ protected:
 	StringArray		_domains;
 	BrowserDialog	*_browser;
 	SaveLoadChooser	*_loadDialog;
+	GroupingMethod	_groupBy;
 	String			_title;
 	String _search;
 
