@@ -148,7 +148,7 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 	int linenumber = 1;
 	bool defFound = false;
 
-	const Common::U32String macro("macro"), factory("factory"), on("on");
+	const Common::U32String macro("macro"), factory("factory"), on("on"), global("global"), property("property");
 
 	while (*s) {
 		line.clear();
@@ -166,7 +166,7 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 
 		if (!defFound && (type == kMovieScript || type == kCastScript) && (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo)) {
 			tok = nexttok(line.c_str());
-			if (tok.equals(macro) || tok.equals(factory) || tok.equals(on)) {
+			if (tok.equals(macro) || tok.equals(factory) || tok.equals(on) || tok.equals(global) || tok.equals(property)) {
 				defFound = true;
 			} else {
 				debugC(2, kDebugParse | kDebugPreprocess, "skipping line before first definition");
