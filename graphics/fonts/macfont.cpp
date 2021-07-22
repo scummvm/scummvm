@@ -561,7 +561,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 		for (int y = 0; y < data._fRectHeight; y++) {
 			byte *dst = (byte *)srcSurf.getBasePtr(0, y);
 
-			for (int x = 0; x < glyph->width; x++, grayPtr++, dst++) {
+			for (int x = 0; x < glyph->bitmapWidth; x++, grayPtr++, dst++) {
 #if DEBUGSCALING
 				if (i == ccc) {
 					if (*grayPtr)
@@ -586,10 +586,10 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 			makeBold(&srcSurf, dstGray, glyph, data._fRectHeight);
 
 			for (uint16 y = 0; y < data._fRectHeight; y++) {
-				int *srcPtr = &dstGray[y * glyph->width];
+				int *srcPtr = &dstGray[y * glyph->bitmapWidth];
 				byte *dstPtr = (byte *)srcSurf.getBasePtr(0, y);
 
-				for (uint16 x = 0; x < glyph->width; x++, srcPtr++, dstPtr++) {
+				for (uint16 x = 0; x < glyph->bitmapWidth; x++, srcPtr++, dstPtr++) {
 					if (*srcPtr)
 						*dstPtr = 1;
 
@@ -736,12 +736,12 @@ static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
 
 	for (uint16 y = 0; y < height; y++) {
 		byte *srcPtr = (byte *)src->getBasePtr(0, y);
-		int *dst = &dstGray[y * glyph->width];
+		int *dst = &dstGray[y * glyph->bitmapWidth];
 
-		for (uint16 x = 0; x < glyph->width; x++, srcPtr++, dst++) {
+		for (uint16 x = 0; x < glyph->bitmapWidth; x++, srcPtr++, dst++) {
 			bool left = x ? *(srcPtr - 1) == 1 : false;
 			bool center = *srcPtr == 1;
-			bool right = x > glyph->width - 1 ? false : *(srcPtr + 1) == 1;
+			bool right = x > glyph->bitmapWidth - 1 ? false : *(srcPtr + 1) == 1;
 
 			bool edge, bold, res;
 
