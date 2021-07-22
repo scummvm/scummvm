@@ -375,8 +375,8 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// Crusader games use basically the same engine as ultima8, but still
-	// need a lot of work.  All are unstable, some simply crash on startup.
+	// Crusader games use basically the same engine as ultima8, but
+	// are less complete.
 
 	// GOG Crusader - No Remorse (V1.21)
 	{
@@ -400,6 +400,36 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			"",
 			AD_ENTRY1s("eusecode.flx", "3fb211f4adfd80595078afc85bdfe7b4", 433143),
 			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_CRUSADER_REM,
+		0
+	},
+
+	// Crusader - No Remorse (V1.01), unpatched data on the GOG CD image
+	{
+		{
+			"remorse",
+			"",
+			AD_ENTRY1s("eusecode.flx", "8c74327e30088ce93f08a15a7f85b3ce", 418556),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_CRUSADER_REM,
+		0
+	},
+
+	// Crusader - No Remorse (French) provided by BeWorld2018
+	{
+		{
+			"remorse",
+			"",
+			AD_ENTRY1s("eusecode.flx", "efbd33d6a5e8f14e9c57f963c3fbe939", 423051),
+			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
