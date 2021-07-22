@@ -567,7 +567,7 @@ Intrinsic RemorseDemoIntrinsics[] = {
 	World::I_setAlertActive,
 	Item::I_equip,
 	World::I_clrAlertActive,
-	Ultima8Engine::I_setAvatarInStasis,
+	Ultima8Engine::I_getAvatarInStasis,
 	MainActor::I_addItemCru,
 	Actor::I_getLastAnimSet,
 	Item::I_setQuality,
@@ -720,6 +720,7 @@ Intrinsic RemorseEsIntrinsics[] = {
 	AudioProcess::I_playSFXCru,
 	World::I_getAlertActive,
 	Item::I_getStatus,
+	// 0x010
 	Item::I_orStatus,
 	Item::I_equip,
 	Item::I_isPartlyOnScreen,
@@ -736,6 +737,7 @@ Intrinsic RemorseEsIntrinsics[] = {
 	Item::I_explode,
 	Item::I_legalCreateAtCoords,
 	Item::I_andStatus,
+	// 0x020
 	World::I_getControlledNPCNum,
 	Actor::I_getDir,
 	Actor::I_getLastAnimSet,
@@ -752,6 +754,7 @@ Intrinsic RemorseEsIntrinsics[] = {
 	Item::I_hurl,
 	World::I_gameDifficulty,
 	AudioProcess::I_playAmbientSFXCru,
+	// 0x030
 	Item::I_isCompletelyOn,
 	UCMachine::I_true,
 	Container::I_destroyContents,
@@ -768,6 +771,7 @@ Intrinsic RemorseEsIntrinsics[] = {
 	Actor::I_isKneeling,
 	Actor::I_doAnim,
 	MainActor::I_addItemCru,
+	// 0x040
 	AudioProcess::I_stopSFXCru,
 	Actor::I_isDead,
 	AudioProcess::I_isSFXPlayingForObject,
@@ -784,6 +788,7 @@ Intrinsic RemorseEsIntrinsics[] = {
 	Item::I_isOn,
 	Item::I_getQHi,
 	Item::I_isOn,
+	// 0x050
 	Item::I_getQHi,
 	Item::I_isOn,
 	Item::I_getQHi,
@@ -891,7 +896,7 @@ Intrinsic RemorseEsIntrinsics[] = {
 	World::I_setAlertActive,
 	Item::I_equip,
 	World::I_clrAlertActive,
-	Ultima8Engine::I_setAvatarInStasis,
+	Ultima8Engine::I_getAvatarInStasis,
 	MainActor::I_addItemCru,
 	Actor::I_getLastAnimSet,
 	Item::I_setQuality,
