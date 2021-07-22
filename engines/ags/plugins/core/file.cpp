@@ -60,6 +60,8 @@ void File::Exists(ScriptMethodParams &params) {
 }
 
 void File::OpenFile(ScriptMethodParams &params) {
+	PARAMS2(const char *, fnmm, int, mode);
+	params._result = AGS3::sc_OpenFile(fnmm, mode);
 }
 
 void File::Close(ScriptMethodParams &params) {
