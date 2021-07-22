@@ -502,7 +502,6 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 	data._nDescent = (int)((float)src->_data._nDescent * scale);
 	data._fRectWidth = (int)((float)src->_data._fRectWidth * scale + data._lastChar * 2);
 	data._fRectHeight = (int)((float)src->_data._fRectHeight * scale);
-	data._surfHeight = data._fRectHeight + 2;	// Outline
 	data._owTLoc = src->_data._owTLoc;
 	data._ascent = (int)((float)src->_data._ascent * scale);
 	data._descent = (int)((float)src->_data._descent * scale);
@@ -513,6 +512,10 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 	data._style = src->_data._style;
 
 	data._glyphs.resize(src->_data._glyphs.size());
+
+	if (outline)
+		data._fRectHeight += 2;
+	data._surfHeight = data._fRectHeight;
 
 	// Determine width of the bit image table
 	int newBitmapWidth = 0;
@@ -607,6 +610,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 		}
 
 		if (outline) {
+			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
 			makeOutline(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
 			srcSurf.copyFrom(tmpSurf);
 		}
@@ -759,18 +763,20 @@ static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height)
 	glyph->width++;
 	glyph->height++;
 
-	for (uint16 y = 0; y < height + 1; y++) {
+	for (uint16 y = 0; y < height + 2; y++) {
 		byte *srcPtr = (byte *)src->getBasePtr(0, y);
-		byte *srcPtr2 = (byte *)src->getBasePtr(0, (y == height ? 0 : y + 1));
 		byte *dstPtr = (byte *)dst->getBasePtr(0, y);
 
-		for (uint16 x = 0; x < glyph->bitmapWidth; x++, dstPtr++) {
-			byte pixX, pixR, pixB;
-			pixX = (x == 0 || x == glyph->bitmapWidth - 2) ? 0 : *srcPtr++;
-			pixB = (x == 0 || x == glyph->bitmapWidth - 2 || y == height) ? 0 : *srcPtr2++;
-			pixR = (x == glyph->bitmapWidth - 1) ? 0 : *srcPtr;
-
-			*dstPtr = (pixX ^ pixR) | (pixX ^ pixB);
+		for (uint16 x = 0; x < glyph->bitmapWidth; x++, dstPtr++, srcPtr++) {
+			if (*srcPtr)
+				continue;
+			// for every white pixel, if there is black pixel around it. It means that the white pixel is boundary, then we draw it as black pixel.
+			byte *left = (byte *)src->getBasePtr(MAX(x - 1, 0), y);
+			byte *right = (byte *)src->getBasePtr(MIN(x + 1, src->w - 1), y);
+			byte *up = (byte *)src->getBasePtr(x, MAX(y - 1, 0));
+			byte *down = (byte *)src->getBasePtr(x, MIN(y + 1, src->h - 1));
+			if (*left || *right || *up || *down)
+				*dstPtr = 1;
 		}
 	}
 }
