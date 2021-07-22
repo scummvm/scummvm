@@ -30,6 +30,8 @@
 
 namespace Graphics {
 
+#define SLANTDEEP 3
+
 class MacFontFamily {
 public:
 	MacFontFamily();

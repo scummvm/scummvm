@@ -468,6 +468,7 @@ bool dododo;
 static void magnifyGray(Surface *src, int *dstGray, int width, int height, float scale);
 static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height);
 static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height);
+static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height);
 
 MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bold, bool italic, bool outline) {
 	if (!src) {
@@ -515,6 +516,10 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 
 	// Determine width of the bit image table
 	int newBitmapWidth = 0;
+
+	// offset for bold and italic, and we need to calc italic offset ourself
+	int bitmapOffset = italic ? (data._fRectHeight - 1) / SLANTDEEP : 2;
+
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
 		const MacGlyph *srcglyph = (i == src->_data._glyphs.size()) ? &src->_data._defaultChar : &src->_data._glyphs[i];
@@ -525,7 +530,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 		glyph->bitmapOffset = newBitmapWidth;
 
 		// Align width to a byte
-		newBitmapWidth += (glyph->bitmapWidth + 7 + 2) & ~0x7; // Add 2 pixels for italic and bold
+		newBitmapWidth += (glyph->bitmapWidth + 7 + bitmapOffset) & ~0x7; // Add 2 pixels for italic and bold
 	}
 
 	data._rowWords = newBitmapWidth;
@@ -603,6 +608,12 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 
 		if (outline) {
 			makeOutline(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
+			srcSurf.copyFrom(tmpSurf);
+		}
+
+		if (italic) {
+			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
+			makeItalic(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
 			srcSurf.copyFrom(tmpSurf);
 		}
 
@@ -760,6 +771,24 @@ static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height)
 			*dstPtr = (pixX ^ pixR) | (pixX ^ pixB);
 		}
 	}
+}
+
+static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height) {
+	int slantDeep = SLANTDEEP;
+	int dw = (height - 1) / slantDeep;
+
+	for (uint16 y = 0; y < height; y++) {
+		int dx = dw - y / slantDeep;
+		byte *srcPtr = (byte *)src->getBasePtr(0, y);
+		byte *dstPtr = (byte *)dst->getBasePtr(dx, y);
+
+		for (uint16 x = 0; x < glyph->width; x++, srcPtr++, dstPtr++) {
+			*dstPtr = *srcPtr;
+		}
+	}
+	glyph->bitmapWidth += dw;
+	glyph->width += dw;
+	glyph->kerningOffset -= dw / 2;
 }
 
 void MacFONTFont::testBlit(const MacFONTFont *src, ManagedSurface *dst, int color, int x0, int y0, int width) {
