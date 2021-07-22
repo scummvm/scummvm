@@ -1289,7 +1289,7 @@ void LB::b_quit(int nargs) {
 }
 
 void LB::b_return(int nargs) {
-	CFrame *fp = g_lingo->_callstack.back();
+	CFrame *fp = g_director->getCurrentWindow()->_callstack.back();
 
 	Datum retVal;
 	if (nargs > 0) {

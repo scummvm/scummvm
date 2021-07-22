@@ -373,7 +373,6 @@ public:
 	bool _expectError;
 	bool _caughtError;
 
-	Common::Array<CFrame *> _callstack;
 	TheEntityHash _theEntities;
 	TheEntityFieldHash _theEntityFields;
 

@@ -403,7 +403,7 @@ void Score::update() {
 
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
 
-	uint initialCallStackSize = g_lingo->_callstack.size();
+	uint initialCallStackSize = _window->_callstack.size();
 
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
 
@@ -432,7 +432,7 @@ void Score::update() {
 
 	// If we have more call stack frames than we started with, then we have a newly
 	// added frozen context. We'll deal with that later.
-	if (g_lingo->_callstack.size() == initialCallStackSize) {
+	if (_window->_callstack.size() == initialCallStackSize) {
 		// We may have frozen Lingo context(s) from func_goto.
 		// Now that we've entered a new frame and we don't have any new frozen
 		// contexts just added on, let's unfreeze all the contexts.

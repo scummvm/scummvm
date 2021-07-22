@@ -172,6 +172,8 @@ public:
 	Common::List<MovieReference> _movieStack;
 	bool _newMovieStarted;
 
+	Common::Array<CFrame *> _callstack;
+
 private:
 	uint32 _stageColor;
 

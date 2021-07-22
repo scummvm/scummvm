@@ -281,20 +281,21 @@ void Lingo::printStack(const char *s, uint pc) {
 }
 
 void Lingo::printCallStack(uint pc) {
-	if (g_lingo->_callstack.size() == 0) {
+	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
+	if (callstack.size() == 0) {
 		debugC(2, kDebugLingoExec, "\nEnd of execution");
 		return;
 	}
 	debugC(2, kDebugLingoExec, "\nCall stack:");
-	for (int i = 0; i < (int)g_lingo->_callstack.size(); i++) {
-		CFrame *frame = g_lingo->_callstack[i];
+	for (int i = 0; i < (int)callstack.size(); i++) {
+		CFrame *frame = callstack[i];
 		uint framePc = pc;
-		if (i < (int)g_lingo->_callstack.size() - 1)
-			framePc = g_lingo->_callstack[i + 1]->retpc;
+		if (i < (int)callstack.size() - 1)
+			framePc = callstack[i + 1]->retpc;
 
 		if (frame->sp.type != VOIDSYM) {
 			debugC(2, kDebugLingoExec, "#%d %s:%d", i + 1,
-				g_lingo->_callstack[i]->sp.name->c_str(),
+				callstack[i]->sp.name->c_str(),
 				framePc
 			);
 		} else {
@@ -438,7 +439,7 @@ void Lingo::execute() {
 
 	if (_abort) {
 		// Clean up call stack
-		while (_callstack.size()) {
+		while (_vm->getCurrentWindow()->_callstack.size()) {
 			popContext();
 		}
 	}

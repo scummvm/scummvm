@@ -29,6 +29,7 @@
 #include "director/castmember.h"
 #include "director/movie.h"
 #include "director/util.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-codegen.h"
@@ -336,7 +337,8 @@ Datum Lingo::findVarV4(int varType, const Datum &id) {
 	case 4: // arg
 	case 5: // local
 		{
-			if (g_lingo->_callstack.empty()) {
+			Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
+			if (callstack.empty()) {
 				warning("BUILDBOT: findVarV4: no call frame");
 				return res;
 			}
@@ -346,8 +348,8 @@ Datum Lingo::findVarV4(int varType, const Datum &id) {
 			}
 			int varIndex = id.asInt() / 6;
 			Common::Array<Common::String> *varNames = (varType == 4)
-				? _callstack.back()->sp.argNames
-				: _callstack.back()->sp.varNames;
+				? callstack.back()->sp.argNames
+				: callstack.back()->sp.varNames;
 
 			if (varIndex < (int)varNames->size()) {
 				res = (*varNames)[varIndex];

@@ -221,7 +221,9 @@ void LC::c_xpop() {
 }
 
 void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal) {
-	debugC(5, kDebugLingoExec, "Pushing frame %d", g_lingo->_callstack.size() + 1);
+	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
+
+	debugC(5, kDebugLingoExec, "Pushing frame %d", callstack.size() + 1);
 	CFrame *fp = new CFrame;
 
 	fp->retpc = g_lingo->_pc;
@@ -288,7 +290,7 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 
 	fp->stackSizeBefore = _stack.size();
 
-	g_lingo->_callstack.push_back(fp);
+	callstack.push_back(fp);
 
 	if (debugChannelSet(2, kDebugLingoExec)) {
 		g_lingo->printCallStack(0);
@@ -296,9 +298,11 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 }
 
 void Lingo::popContext() {
-	debugC(5, kDebugLingoExec, "Popping frame %d", g_lingo->_callstack.size());
-	CFrame *fp = g_lingo->_callstack.back();
-	g_lingo->_callstack.pop_back();
+	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
+
+	debugC(5, kDebugLingoExec, "Popping frame %d", callstack.size());
+	CFrame *fp = callstack.back();
+	callstack.pop_back();
 
 	if (_stack.size() == fp->stackSizeBefore + 1) {
 		if (!fp->allowRetVal) {
@@ -1560,7 +1564,9 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 }
 
 void LC::c_procret() {
-	if (g_lingo->_callstack.size() == 0) {
+	Common::Array<CFrame *> &callstack = g_director->getCurrentWindow()->_callstack;
+
+	if (callstack.size() == 0) {
 		warning("LC::c_procret(): Call stack underflow");
 		g_lingo->_abort = true;
 		return;
@@ -1568,7 +1574,7 @@ void LC::c_procret() {
 
 	g_lingo->popContext();
 
-	if (g_lingo->_callstack.size() == 0) {
+	if (callstack.size() == 0) {
 		debugC(5, kDebugLingoExec, "Call stack empty, returning");
 		g_lingo->_abort = true;
 		return;
