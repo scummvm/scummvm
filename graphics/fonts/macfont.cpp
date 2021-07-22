@@ -624,7 +624,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 			byte *srcPtr = (byte *)srcSurf.getBasePtr(0, y);
 			byte b = 0;
 
-			for (int x = 0; x < glyph->width; x++, srcPtr++) {
+			for (int x = 0; x < glyph->bitmapWidth; x++, srcPtr++) {
 				b <<= 1;
 
 				if (*srcPtr == 1)
@@ -646,13 +646,13 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 			}
 #endif
 
-			if (((glyph->width - 1) % 8)) {
+			if (((glyph->bitmapWidth - 1) % 8)) {
 #if DEBUGSCALING
 				if (i == ccc)
 					debugN("  --- %02x (w: %d bw: %d << %d)", b, glyph->width, glyph->bitmapWidth, 7 - ((glyph->width - 1) % 8));
 #endif
 
-				b <<= 7 - ((glyph->width - 1) % 8);
+				b <<= 7 - ((glyph->bitmapWidth - 1) % 8);
 				*dst = b;
 
 #if DEBUGSCALING
@@ -732,6 +732,7 @@ static void magnifyGray(Surface *src, int *dstGray, int width, int height, float
 
 static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
 	glyph->width++;
+	glyph->bitmapWidth++;
 
 	for (uint16 y = 0; y < height; y++) {
 		byte *srcPtr = (byte *)src->getBasePtr(0, y);
@@ -754,7 +755,7 @@ static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
 }
 
 static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height) {
-	glyph->width += 2;
+	glyph->bitmapWidth += 2;
 	glyph->height++;
 
 	for (uint16 y = 0; y < height + 1; y++) {
@@ -762,11 +763,11 @@ static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height)
 		byte *srcPtr2 = (byte *)src->getBasePtr(0, (y == height ? 0 : y + 1));
 		byte *dstPtr = (byte *)dst->getBasePtr(0, y);
 
-		for (uint16 x = 0; x < glyph->width; x++, dstPtr++) {
+		for (uint16 x = 0; x < glyph->bitmapWidth; x++, dstPtr++) {
 			byte pixX, pixR, pixB;
-			pixX = (x == 0 || x == glyph->width - 2) ? 0 : *srcPtr++;
-			pixB = (x == 0 || x == glyph->width - 2 || y == height) ? 0 : *srcPtr2++;
-			pixR = (x == glyph->width - 1) ? 0 : *srcPtr;
+			pixX = (x == 0 || x == glyph->bitmapWidth - 2) ? 0 : *srcPtr++;
+			pixB = (x == 0 || x == glyph->bitmapWidth - 2 || y == height) ? 0 : *srcPtr2++;
+			pixR = (x == glyph->bitmapWidth - 1) ? 0 : *srcPtr;
 
 			*dstPtr = (pixX ^ pixR) | (pixX ^ pixB);
 		}
@@ -774,11 +775,10 @@ static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height)
 }
 
 static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height) {
-	int slantDeep = SLANTDEEP;
-	int dw = (height - 1) / slantDeep;
+	int dw = (height - 1) / SLANTDEEP;
 
 	for (uint16 y = 0; y < height; y++) {
-		int dx = dw - y / slantDeep;
+		int dx = dw - y / SLANTDEEP;
 		byte *srcPtr = (byte *)src->getBasePtr(0, y);
 		byte *dstPtr = (byte *)dst->getBasePtr(dx, y);
 
@@ -787,7 +787,6 @@ static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height) 
 		}
 	}
 	glyph->bitmapWidth += dw;
-	glyph->width += dw;
 	glyph->kerningOffset -= dw / 2;
 }
 
