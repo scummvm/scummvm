@@ -77,6 +77,7 @@ enum {
 	kSearchCmd = 'SRCH',
 	kListSearchCmd = 'LSSR',
 	kSearchClearCmd = 'SRCL',
+	kSetGroupMethodCmd = 'GPBY',
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
 	kCmdGlobalAudioOverride = 'OSFX',
@@ -1015,12 +1016,52 @@ void LauncherSimple::updateListing() {
 
 void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata) {
 	U32StringArray attrs;
-	for (int i = 0; i < metadata.size(); ++i) {
-		attrs.push_back(metadata[i]->getVal("description").substr(0, 1));
+	switch (_groupBy) {
+	case kGroupByFirstLetter:
+		for (int i = 0; i < metadata.size(); ++i) {
+			attrs.push_back(metadata[i]->getVal("description").substr(0, 1));
+		}
+		_list->setGroupHeaderFormat(U32String(""), U32String("..."));
+		_list->setAttributeValues(attrs);
+		_list->groupByAttribute();
+		break;
+	case kGroupByEngine:
+		for (int i = 0; i < metadata.size(); ++i) {
+			U32String engineid = metadata[i]->contains(String("engineid")) ?
+								metadata[i]->getVal(String("engineid")) : String("Unknown Engine");
+			attrs.push_back(engineid);
+		}
+		_list->setGroupHeaderFormat(U32String(""), U32String(" Games"));
+		_list->setAttributeValues(attrs);
+		_list->groupByAttribute();
+		break;
+	case kGroupByLanguage:
+		for (int i = 0; i < metadata.size(); ++i) {
+			U32String engineid = metadata[i]->contains(String("language")) ?
+								metadata[i]->getVal(String("language")) : String("Language not set");
+			attrs.push_back(engineid);
+		}
+		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		_list->setAttributeValues(attrs);
+		_list->groupByAttribute();
+		break;
+	case kGroupByPlatform:
+		for (int i = 0; i < metadata.size(); ++i) {
+			U32String engineid = metadata[i]->contains(String("Platform")) ?
+								metadata[i]->getVal(String("Platform")) : String("Platform not set");
+			attrs.push_back(engineid);
+		}
+		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		_list->setAttributeValues(attrs);
+		_list->groupByAttribute();
+		break;
+	case kGroupByNone:	// Fall-through intentional
+	default:
+		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		_list->setAttributeValues(attrs);
+		_list->groupByAttribute();
+		break;
 	}
-	_list->setGroupHeaderFormat(U32String(""), U32String("..."));
-	_list->setAttributeValues(attrs);
-	_list->groupByAttribute();
 }
 
 void LauncherSimple::handleKeyDown(Common::KeyState state) {
@@ -1057,6 +1098,17 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		// Reset the active search filter, thus showing all games again
 		_searchWidget->setEditString(Common::U32String());
 		_list->setFilter(Common::U32String());
+		break;
+	case kSetGroupMethodCmd:
+		// Change the grouping criteria
+		if (data) {
+			GroupingMethod newGroupBy = (GroupingMethod)data;
+			if (_groupBy != newGroupBy) {
+				warning("Changed from: %d to: %d", _groupBy, newGroupBy);
+				_groupBy = newGroupBy;
+				updateListing();
+			}
+		}
 		break;
 	default:
 		LauncherDialog::handleCommand(sender, cmd, data);
