@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-21 21:06+0000\n"
-"PO-Revision-Date: 2021-07-18 07:25+0000\n"
+"PO-Revision-Date: 2021-07-22 10:40+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4132,10 +4132,8 @@ msgid "Enable Text to Speech"
 msgstr "Utiliser le synthétiseur vocal"
 
 #: engines/cge/detection.cpp:120
-#, fuzzy
-#| msgid "Use TTS to read the descriptions (if TTS is available)"
 msgid "Use TTS to read text in the game (if TTS is available)"
-msgstr "Utilise la synthèse vocale pour lire les descriptions (si disponible)"
+msgstr "Utilise la synthèse vocale pour lire les textes du jeu (si disponible)"
 
 #: engines/cine/detection.cpp:61
 msgid "Use transparent dialog boxes in 16 color scenes"
