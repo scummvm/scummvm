@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	mutex.o \
 	osd_message_queue.o \
 	platform.o \
+	punycode.o \
 	quicktime.o \
 	random.o \
 	rational.o \
