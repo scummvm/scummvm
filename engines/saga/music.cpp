@@ -44,6 +44,8 @@
 
 namespace Saga {
 
+const uint8 Music::MT32_GOODBYE_MSG[] = { 0x47, 0x6F, 0x6F, 0x64, 0x62, 0x79, 0x65, 0x21, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+
 Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _parser(0), _driver(0), _driverPC98(0), _musicContext(0) {
 	_currentVolume = 0;
 	_currentMusicBuffer = NULL;
@@ -170,6 +172,18 @@ Music::~Music() {
 	if (_driverPC98) {
 		_driverPC98->reset();
 		delete _driverPC98;
+	}
+}
+
+void Music::close() {
+	if (_parser)
+		_parser->stopPlaying();
+
+	if (_vm->getGameId() == GID_ITE && _vm->getPlatform() == Common::kPlatformDOS && _driver) {
+		MidiDriver_MT32GM *mt32Driver = dynamic_cast<MidiDriver_MT32GM *>(_driver);
+		if (mt32Driver)
+			mt32Driver->sysExMT32(MT32_GOODBYE_MSG, MidiDriver_MT32GM::MT32_DISPLAY_NUM_CHARS,
+				MidiDriver_MT32GM::MT32_DISPLAY_MEMORY_ADDRESS, false, false);
 	}
 }
 

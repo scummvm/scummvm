@@ -366,6 +366,8 @@ Common::Error SagaEngine::run() {
 		_system->delayMillis(10);
 	}
 
+	_music->close();
+
 	return Common::kNoError;
 }
 

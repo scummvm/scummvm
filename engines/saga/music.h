@@ -27,6 +27,7 @@
 
 #include "audio/mididrv.h"
 #include "audio/mididrv_ms.h"
+#include "audio/mt32gm.h"
 #include "audio/midiparser.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
@@ -43,10 +44,12 @@ enum MusicFlags {
 class Music {
 private:
 	static const uint8 MUSIC_SUNSPOT = 26;
+	static const uint8 MT32_GOODBYE_MSG[MidiDriver_MT32GM::MT32_DISPLAY_NUM_CHARS];
 
 public:
 	Music(SagaEngine *vm, Audio::Mixer *mixer);
 	~Music();
+	void close();
 	bool isPlaying();
 	bool hasDigitalMusic() { return _digitalMusic; }
 
