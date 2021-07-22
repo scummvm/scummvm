@@ -130,6 +130,7 @@ public:
 
 	inline RuntimeScriptValue &Invalidate() {
 		Type = kScValUndefined;
+		methodName.clear();
 		IValue = 0;
 		Ptr = nullptr;
 		MgrPtr = nullptr;
@@ -138,6 +139,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetUInt8(uint8_t val) {
 		Type = kScValInteger;
+		methodName.clear();
 		IValue = val;
 		Ptr = nullptr;
 		MgrPtr = nullptr;
@@ -146,6 +148,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetInt16(int16_t val) {
 		Type = kScValInteger;
+		methodName.clear();
 		IValue = val;
 		Ptr = nullptr;
 		MgrPtr = nullptr;
@@ -154,6 +157,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetInt32(int32_t val) {
 		Type = kScValInteger;
+		methodName.clear();
 		IValue = val;
 		Ptr = nullptr;
 		MgrPtr = nullptr;
@@ -162,6 +166,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetFloat(float val) {
 		Type = kScValFloat;
+		methodName.clear();
 		FValue = val;
 		Ptr = nullptr;
 		MgrPtr = nullptr;
@@ -176,6 +181,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetPluginArgument(int32_t val) {
 		Type = kScValPluginArg;
+		methodName.clear();
 		IValue = val;
 		Ptr = nullptr;
 		MgrPtr = nullptr;
@@ -184,6 +190,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetStackPtr(RuntimeScriptValue *stack_entry) {
 		Type = kScValStackPtr;
+		methodName.clear();
 		IValue = 0;
 		RValue = stack_entry;
 		MgrPtr = nullptr;
@@ -192,6 +199,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetData(char *data, int size) {
 		Type = kScValData;
+		methodName.clear();
 		IValue = 0;
 		Ptr = data;
 		MgrPtr = nullptr;
@@ -200,6 +208,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetGlobalVar(RuntimeScriptValue *glvar_value) {
 		Type = kScValGlobalVar;
+		methodName.clear();
 		IValue = 0;
 		RValue = glvar_value;
 		MgrPtr = nullptr;
@@ -209,6 +218,7 @@ public:
 	// TODO: size?
 	inline RuntimeScriptValue &SetStringLiteral(const char *str) {
 		Type = kScValStringLiteral;
+		methodName.clear();
 		IValue = 0;
 		Ptr = const_cast<char *>(str);
 		MgrPtr = nullptr;
@@ -217,6 +227,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetStaticObject(void *object, ICCStaticObject *manager) {
 		Type = kScValStaticObject;
+		methodName.clear();
 		IValue = 0;
 		Ptr = (char *)object;
 		StcMgr = manager;
@@ -225,6 +236,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetStaticArray(void *object, StaticArray *manager) {
 		Type = kScValStaticArray;
+		methodName.clear();
 		IValue = 0;
 		Ptr = (char *)object;
 		StcArr = manager;
@@ -233,6 +245,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetDynamicObject(void *object, ICCDynamicObject *manager) {
 		Type = kScValDynamicObject;
+		methodName.clear();
 		IValue = 0;
 		Ptr = (char *)object;
 		DynMgr = manager;
@@ -241,6 +254,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetPluginObject(void *object, ICCDynamicObject *manager) {
 		Type = kScValPluginObject;
+		methodName.clear();
 		IValue = 0;
 		Ptr = (char *)object;
 		DynMgr = manager;
@@ -249,6 +263,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetStaticFunction(ScriptAPIFunction *pfn) {
 		Type = kScValStaticFunction;
+		methodName.clear();
 		IValue = 0;
 		SPfn = pfn;
 		MgrPtr = nullptr;
@@ -266,6 +281,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetObjectFunction(ScriptAPIObjectFunction *pfn) {
 		Type = kScValObjectFunction;
+		methodName.clear();
 		IValue = 0;
 		ObjPfn = pfn;
 		MgrPtr = nullptr;
@@ -274,6 +290,7 @@ public:
 	}
 	inline RuntimeScriptValue &SetCodePtr(char *ptr) {
 		Type = kScValCodePtr;
+		methodName.clear();
 		IValue = 0;
 		Ptr = ptr;
 		MgrPtr = nullptr;
