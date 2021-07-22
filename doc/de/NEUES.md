@@ -121,8 +121,8 @@ Programmcodes finden Sie auf Englisch unter:
      LucasArts Mac CD Game Pack II-Compilation enthalten war, wurde aktiviert. (Die Auswahl der
      Spiel-Schwierigkeit wurde zusammen mit dem Kopierschutz entfernt.)
    - Fehlerhaften Crack im Keypad-Skript von Maniac Mansion korrigiert.
-     Das bedeutet, dass die GOG- (und Steam?)-Versionen keine falschen Ziffern,
-     z.B. für Ednas Telefon-Nummer, mehr akzeptieren. (Warum werden hier überhaupt
+     Das bedeutet, dass die GOG- und Steam-Versionen keine falschen Ziffern,
+     z.B. für Ednas Telefon-Nummer, mehr akzeptieren. (Warum wird hier überhaupt eine
      gecrackte Versionen verkauft?!)
 
  Tinsel:
