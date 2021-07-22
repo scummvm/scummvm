@@ -115,7 +115,7 @@ static size_t encode_var_int(const size_t bias, const size_t delta, char *const 
 
 static size_t decode_digit(uint32_t v) {
 	if (Common::isDigit(v)) {
-		return 22 + (v - '0');
+		return 26 + (v - '0');
 	}
 	if (Common::isLower(v)) {
 		return v - 'a';
@@ -195,9 +195,8 @@ String punycode_decode(const String src1) {
 	if (!src1.hasPrefix("xn--"))
 		return src1;
 
-	String src(src1.c_str()[4]); // Skip the prefix for simplification
-
-	int srclen = src1.size();
+	String src(&src1.c_str()[4]); // Skip the prefix for simplification
+	int srclen = src.size();
 	String dst;
 
 	/* Ensure that the input contains only ASCII characters. */
@@ -207,7 +206,7 @@ String punycode_decode(const String src1) {
 		}
 	}
 
-	size_t di = src.rfind('-');
+	size_t di = src.findLastOf('-');
 
 	if (di == String::npos)
 		return src;
@@ -273,8 +272,9 @@ String punycode_decode(const String src1) {
 		i %= (di + 1);
 
 		String dst1(dst.c_str(), i);
-		dst1 += n;
-		dst1 += String(dst.c_str()[i + 1]);
+		dst1 += (char )n;
+		dst1 += String(&dst.c_str()[i]);
+		dst = dst1;
 		i++;
 	}
 
@@ -282,5 +282,25 @@ fail:
 
 	return dst;
 }
+
+String punycode_decodefilename(const String src1) {
+	String dst;
+	String src = punycode_decode(src1);
+
+	for (int i = 0; i < src.size(); i++) {
+		if ((byte)src[i] == 0x81 && i + 1 < src.size()) {
+			i++;
+			if (src[i] == 0x79)
+				dst += 0x81;
+			else
+				dst += src[i] - 0x80;
+		} else {
+			dst + src[i];
+		}
+	}
+
+	return dst;
+}
+
 
 } // end of namespace Common

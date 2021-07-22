@@ -49,14 +49,20 @@
 namespace Common {
 
 /**
- * Convert Unicode to Punycode. Returns the number of Unicode characters that were converted.
+ * Convert Binary to Punycode. Returns the encoded string.
  */
 size_t punycode_encode(const uint32_t *const src, const size_t srclen, char *const dst, size_t *const dstlen);
 
 /**
- * Convert Punycode to Unicode. Returns the number of bytes that were converted.
+ * Convert Punycode to Binary. Returns the decoded string
  */
 String punycode_decode(const String src);
+
+/**
+ * Convert Punycode filename to Binary using special 0x81 escape character. Returns the decoded string
+ */
+String punycode_decodefilename(const String src1);
+
 
 } // end of namespace Common
 
