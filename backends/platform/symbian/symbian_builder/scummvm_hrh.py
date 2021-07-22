@@ -34,7 +34,9 @@ hrh_template = """
 #if defined (UIQ3) || defined (__SERIES60_3X__)
 #ifdef SCUMMVM_PT_1
 #define ScummUid %s
-%s#endif // SCUMMVM_PT_1
+%s#else
+#define ScummUid 0x2006efdb // Test app UID.
+#endif // SCUMMVM_PT_1
 
 #else
 #define ScummUid 0x101f9b57
@@ -53,7 +55,7 @@ def Generate_ScummVm_hrh(build):
       if i > 0:
          defines += macro_template %(i+1, uids[i])
    data = hrh_template %(uids[0], defines)
-   SafeWriteFile(os.path.join("src", "ScummVm.hrh"), data)
+   SafeWriteFile(os.path.join("src", "scummvm.hrh"), data)
 
 if __name__ == "__main__":
    Generate_ScummVm_hrh(build = "full")
