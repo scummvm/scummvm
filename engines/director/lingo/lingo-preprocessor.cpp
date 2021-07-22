@@ -155,12 +155,15 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 		res1.clear();
 
 		// Get next line
+		int continuationCount = 0;
 		while (*s && *s != '\n') { // If we see a whitespace
 			res1 += *s;
 			line += tolower(*s++);
 
-			if (*s == CONTINUATION)
+			if (*s == CONTINUATION) {
 				linenumber++;
+				continuationCount++;
+			}
 		}
 		debugC(2, kDebugParse | kDebugPreprocess, "line: '%s'", line.encode().c_str());
 
@@ -170,6 +173,9 @@ Common::U32String LingoCompiler::codePreprocessor(const Common::U32String &code,
 				defFound = true;
 			} else {
 				debugC(2, kDebugParse | kDebugPreprocess, "skipping line before first definition");
+				for (int i = 0; i < continuationCount; i++) {
+					res += CONTINUATION;
+				}
 				linenumber++;
 				if (*s)	// copy newline symbol
 					res += *s++;
