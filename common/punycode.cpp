@@ -73,7 +73,7 @@ static uint32_t adapt_bias(uint32_t delta, unsigned n_points, int is_first) {
 static char encode_digit(int c) {
 	assert(c >= 0 && c <= BASE - TMIN);
 	if (c > 25) {
-		return c + 22; /* '0'..'9' */
+		return c + 26; /* '0'..'9' */
 	} else {
 		return c + 'a'; /* 'a'..'z' */
 	}
@@ -189,6 +189,20 @@ fail:
 
 	/* Return how many Unicode code points were converted. */
 	return si;
+}
+
+bool punycode_hasprefix(const String src) {
+	return src.hasPrefix("xn--");
+}
+
+bool punycode_needEncode(const String src) {
+	for (int si = 0; si < src.size(); si++) {
+		if (src[si] & 0x80 || src[si] < 0x20) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 String punycode_decode(const String src1) {

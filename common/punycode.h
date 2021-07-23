@@ -63,6 +63,9 @@ String punycode_decode(const String src);
  */
 String punycode_decodefilename(const String src1);
 
+bool punycode_hasprefix(const String src);
+
+bool punycode_needEncode(const String src);
 
 } // end of namespace Common
 
