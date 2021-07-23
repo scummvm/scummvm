@@ -483,6 +483,7 @@ static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height);
 static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height);
 static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height);
 static void makeUnderLine(Surface *src, MacGlyph *glyph, int ascent);
+static void makeShadow(Surface *src, Surface *dst, MacGlyph *glyph, int height);
 
 MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int slant) {
 	if (!src) {
@@ -647,6 +648,12 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 
 		if (slant & kMacFontUnderline)
 			makeUnderLine(&srcSurf, glyph, data._ascent);
+
+		if (slant & kMacFontShadow) {
+			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
+			makeShadow(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
+			srcSurf.copyFrom(tmpSurf);
+		}
 
 		byte *ptr = &data._bitImage[glyph->bitmapOffset / 8];
 
@@ -839,6 +846,45 @@ static void makeUnderLine(Surface *src, MacGlyph *glyph, int ascent) {
 
 	for (int x = 0; x < glyph->width; x++)
 		*((byte *) src->getBasePtr(x, ascent + 2)) = 1;
+}
+
+static void makeShadow(Surface *src, Surface *dst, MacGlyph *glyph, int height) {
+	// makeShadow looks like just the outLine font with one more shadow at right-most edge and lowest edge
+	makeOutline(src, dst, glyph, height);
+	glyph->bitmapWidth++;
+	glyph->width++;
+
+	// right to left
+	for (uint16 y = 0; y < height + 2; y++) {
+		for (int x = dst->w - 1; x >= 0; x--) {
+			byte *dstPtr = (byte *)dst->getBasePtr(x, y);
+			if (*dstPtr)
+				continue;
+
+			// check the left pixel. if it's black, then we black the current one and break.
+			byte *left = (byte *)dst->getBasePtr(MAX(x - 1, 0), y);
+			if (*left) {
+				*dstPtr = 1;
+				break;
+			}
+		}
+	}
+
+	// down to up
+	for (uint16 x = 0; x < glyph->bitmapWidth; x++) {
+		for (int y = dst->h - 1; y >= 0; y--) {
+			byte *dstPtr = (byte *) dst->getBasePtr(x, y);
+
+			if (*dstPtr)
+				continue;
+
+			byte *up = (byte *)dst->getBasePtr(x, MAX(y - 1, 0));
+			if (*up) {
+				*dstPtr = 1;
+				break;
+			}
+		}
+	}
 }
 
 void MacFONTFont::testBlit(const MacFONTFont *src, ManagedSurface *dst, int color, int x0, int y0, int width) {
