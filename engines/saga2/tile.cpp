@@ -1287,6 +1287,7 @@ ActiveItem::ActiveItem(ActiveItemList *parent, int ind, Common::SeekableReadStre
 	_data.instance.targetV = stream->readUint16LE();
 	_data.instance.targetZ = stream->readByte();
 	_data.instance.worldNum = stream->readByte();
+	_data.aItem = this;
 }
 
 ActiveItemList::ActiveItemList(WorldMapData *parent, int count, Common::SeekableReadStream *stream) {

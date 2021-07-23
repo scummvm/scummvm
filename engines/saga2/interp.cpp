@@ -151,7 +151,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 		break;
 
 	case builtinTypeTAG:
-		aItem = (ActiveItem *)addr;
+		aItem = ((ActiveItemData *)addr)->aItem;
 		script = aItem->_data.scriptClassID;
 		*callTab = &tagCFuncs;
 
@@ -161,7 +161,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 		break;
 
 	case builtinTypeMission:
-		aMission = (ActiveMission *)addr;
+		aMission = ((ActiveMissionData *)addr)->aMission;
 		script = aMission->getScript();
 		*callTab = &missionCFuncs;
 
@@ -849,7 +849,7 @@ bool Thread::interpret(void) {
 						error("Invalid member function number");
 
 					//  Set up thread-specific vars
-					thisObject = ((ObjectData *)addr)->obj;
+					thisObject = addr;
 					argCount = n;
 					threadArgs.invokedObject = offset;
 

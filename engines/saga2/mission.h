@@ -39,6 +39,8 @@ struct KnowledgeID {
 	uint16      kID;
 };
 
+class ActiveMission;
+
 #include "common/pack-start.h"
 
 //  Mission flags
@@ -63,6 +65,8 @@ struct ActiveMissionData {
 	KnowledgeID     missionKnowledgeList[32];
 	uint16          numObjectIDs,
 	                numKnowledgeIDs;
+
+	ActiveMission *aMission; // ActiveMission this ActiveMissionData belongs to
 } PACKED_STRUCT;
 
 #include "common/pack-end.h"

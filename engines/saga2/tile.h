@@ -346,6 +346,8 @@ extern byte **stateArray;
 
 class ActiveItemList;
 
+class ActiveItem;
+
 #include "common/pack-start.h"
 
 struct ActiveItemData {
@@ -379,6 +381,8 @@ struct ActiveItemData {
 			        worldNum;               // Add 0xf000 to get world Object ID
 		} instance;
 	};
+
+	ActiveItem *aItem; // active item this ActiveItemData is a part of
 } PACKED_STRUCT;
 
 #include "common/pack-end.h"

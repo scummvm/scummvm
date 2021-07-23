@@ -57,6 +57,8 @@ ActiveMission *ActiveMission::newMission(ObjectID genID, uint16 script) {
 
 	memset(ms->_data.missionVars, 0, ARRAYSIZE(ms->_data.missionVars));
 
+	ms->_data.aMission = ms;
+
 	return ms;
 }
 
@@ -191,6 +193,8 @@ void ActiveMission::read(Common::InSaveFile *in) {
 
 	_data.numObjectIDs = in->readUint16LE();
 	_data.numKnowledgeIDs = in->readUint16LE();
+
+	_data.aMission = this;
 
 	debugC(4, kDebugSaveload, "... numObjectIDs = %d", _data.numObjectIDs);
 	debugC(4, kDebugSaveload, "... numKnowledgeIDs = %d", _data.numKnowledgeIDs);
