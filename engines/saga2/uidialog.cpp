@@ -733,6 +733,7 @@ int16 FileDialog(int16 fileProcess) {
 		GameMode::update();
 
 	win->invalidate();
+	textBox->choose();
 
 	EventLoop(rInfo.running, true);
 
