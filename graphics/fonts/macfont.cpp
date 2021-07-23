@@ -470,6 +470,7 @@ static void magnifyGray(Surface *src, int *dstGray, int width, int height, float
 static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height);
 static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height);
 static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height);
+static void makeUnderLine(Surface *src, MacGlyph *glyph, int ascent);
 
 MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int slant) {
 	if (!src) {
@@ -621,6 +622,9 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 			makeItalic(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
 			srcSurf.copyFrom(tmpSurf);
 		}
+
+		if (slant & kMacFontUnderline)
+			makeUnderLine(&srcSurf, glyph, data._ascent);
 
 		byte *ptr = &data._bitImage[glyph->bitmapOffset / 8];
 
@@ -796,6 +800,11 @@ static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height) 
 	}
 	glyph->bitmapWidth += dw;
 	glyph->kerningOffset -= dw / 2;
+}
+
+static void makeUnderLine(Surface *src, MacGlyph *glyph, int ascent) {
+	for (int x = 0; x < glyph->width; x++)
+		*((byte *) src->getBasePtr(x, ascent + 2)) = 1;
 }
 
 void MacFONTFont::testBlit(const MacFONTFont *src, ManagedSurface *dst, int color, int x0, int y0, int width) {
