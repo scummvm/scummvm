@@ -25,9 +25,14 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/file.h"
+#include "common/translation.h"
 
 #include "graphics/thumbnail.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+
+#include "adl/adl.h"
 #include "adl/detection.h"
 #include "adl/disk_image_helpers.h"
 
@@ -80,6 +85,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool AdlMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -239,6 +245,21 @@ Common::Error AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 	}
 
 	return Common::kNoError;
+}
+
+Common::KeymapArray AdlMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Keymap *engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "adl", "ADL");
+
+	Action *act;
+
+	act = new Action("QUIT", _("Quit"));
+	act->setCustomEngineActionEvent(kADLActionQuit);
+	act->addDefaultInputMapping("C+q");
+	engineKeymap->addAction(act);
+
+	return Keymap::arrayOf(engineKeymap);
 }
 
 } // End of namespace Adl
