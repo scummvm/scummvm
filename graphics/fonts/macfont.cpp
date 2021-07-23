@@ -530,15 +530,22 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 	// when we are generating the slant fonts. e.g. italic font, underLine font. we set this. more detail is in drawChar
 	data._slant = slant;
 
-	if (slant & kMacFontOutline)
+	if ((slant & kMacFontShadow) || (slant & kMacFontOutline))
 		data._fRectHeight += 2;
 	data._surfHeight = data._fRectHeight;
 
 	// Determine width of the bit image table
 	int newBitmapWidth = 0;
 
-	// offset for bold and italic, and we need to calc italic offset ourself
-	int bitmapOffset = slant & kMacFontItalic ? (data._fRectHeight - 1) / SLANTDEEP : 2;
+	// add the offset which we may use when we are making fonts
+	int bitmapOffset = 2;
+
+	// for italic, we need to calc our self. for shadow, it's 3
+	// for bold and outline, it's 2
+	if (slant & kMacFontItalic)
+		bitmapOffset = (data._fRectHeight - 1) / SLANTDEEP;
+	else if (slant & kMacFontShadow)
+		bitmapOffset++;
 
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
@@ -550,7 +557,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 		glyph->bitmapOffset = newBitmapWidth;
 
 		// Align width to a byte
-		newBitmapWidth += (glyph->bitmapWidth + 7 + bitmapOffset) & ~0x7; // Add 2 pixels for italic and bold
+		newBitmapWidth += (glyph->bitmapWidth + 7 + bitmapOffset) & ~0x7;
 	}
 
 	data._rowWords = newBitmapWidth;
