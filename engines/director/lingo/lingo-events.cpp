@@ -297,6 +297,7 @@ void Movie::registerEvent(LEvent event, int targetId) {
 
 		case kEventStartUp:
 		case kEventStartMovie:
+		case kEventStepMovie:
 		case kEventStopMovie:
 		case kEventTimeout:
 		case kEventPrepareMovie:
