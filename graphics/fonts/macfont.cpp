@@ -23,6 +23,7 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "graphics/managed_surface.h"
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/fonts/macfont.h"
 
 #define DEBUGSCALING 0
@@ -470,7 +471,7 @@ static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height);
 static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height);
 static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height);
 
-MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bold, bool italic, bool outline) {
+MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int slant) {
 	if (!src) {
 		warning("Empty font reference in scale font");
 		return NULL;
@@ -513,7 +514,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 
 	data._glyphs.resize(src->_data._glyphs.size());
 
-	if (outline)
+	if (slant & kMacFontOutline)
 		data._fRectHeight += 2;
 	data._surfHeight = data._fRectHeight;
 
@@ -521,7 +522,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 	int newBitmapWidth = 0;
 
 	// offset for bold and italic, and we need to calc italic offset ourself
-	int bitmapOffset = italic ? (data._fRectHeight - 1) / SLANTDEEP : 2;
+	int bitmapOffset = slant & kMacFontItalic ? (data._fRectHeight - 1) / SLANTDEEP : 2;
 
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
@@ -584,7 +585,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 #endif
 		}
 
-		if (bold) {
+		if (slant & kMacFontBold) {
 			memset(dstGray, 0, dstGraySize * sizeof(int));
 			makeBold(&srcSurf, dstGray, glyph, data._fRectHeight);
 
@@ -609,13 +610,13 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 			}
 		}
 
-		if (outline) {
+		if (slant & kMacFontOutline) {
 			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
 			makeOutline(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
 			srcSurf.copyFrom(tmpSurf);
 		}
 
-		if (italic) {
+		if (slant & kMacFontItalic) {
 			tmpSurf.fillRect(Common::Rect(tmpSurf.w, tmpSurf.h), 0);
 			makeItalic(&srcSurf, &tmpSurf, glyph, data._fRectHeight);
 			srcSurf.copyFrom(tmpSurf);
