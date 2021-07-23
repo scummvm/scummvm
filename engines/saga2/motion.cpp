@@ -439,6 +439,10 @@ MotionTask *MotionTaskList::newTask(GameObject *obj) {
 		mt->immediateLocation = mt->finalTarget = obj->getLocation();
 		mt->thread = NoThread;
 
+		mt->targetObj = nullptr;
+		mt->targetTAG = nullptr;
+		mt->spellObj = nullptr;
+
 		_list.push_back(mt);
 
 		if (isActor(obj))
