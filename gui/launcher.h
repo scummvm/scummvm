@@ -30,6 +30,7 @@
 #define kSwitchLauncherDialog -2
 
 #include "gui/dialog.h"
+#include "gui/widgets/popup.h"
 #include "engines/game.h"
 
 using Common::String;
@@ -73,6 +74,7 @@ class GraphicsWidget;
 class StaticTextWidget;
 class EditTextWidget;
 class SaveLoadChooser;
+class PopUpWidget;
 
 class LauncherDialog : public Dialog {
 public:
@@ -105,9 +107,11 @@ protected:
 	StringArray		_domains;
 	BrowserDialog	*_browser;
 	SaveLoadChooser	*_loadDialog;
+	PopUpWidget		*_grpChooserPopup;
+	StaticTextWidget	*_grpChooserDesc;
 	GroupingMethod	_groupBy;
 	String			_title;
-	String _search;
+	String			_search;
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	ButtonWidget		*_listButton;
