@@ -301,6 +301,7 @@ bool MacFONTFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *fa
 	_data._rowWords    = stream.readUint16BE() * 2; // row width of bit image in 16-bit wds
 
 	_data._surfHeight = _data._fRectHeight;
+	_data._slant = 0; // only used in generated font
 
 	if (getDepth(_data._fontType) != 1) {
 		warning("MacFONTFont: %dbpp fonts are not supported", getDepth(_data._fontType));
@@ -531,8 +532,14 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 	// when we are generating the slant fonts. e.g. italic font, underLine font. we set this. more detail is in drawChar
 	data._slant = slant;
 
+	// update the height, for shadow and outline font, we are drawing the outline, thus we may have 2 more pixel height
+	// for the underLine, we are drawing the line at ascent + 2, so we shall extend the height when we need.
 	if ((slant & kMacFontShadow) || (slant & kMacFontOutline))
 		data._fRectHeight += 2;
+	else if (slant & kMacFontUnderline) {
+		data._fRectHeight = MAX((int)data._fRectHeight, data._ascent + 2);
+	}
+
 	data._surfHeight = data._fRectHeight;
 
 	// Determine width of the bit image table
