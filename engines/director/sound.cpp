@@ -74,7 +74,7 @@ void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
 		return;
 
 	AudioFileDecoder af(filename);
-	Audio::AudioStream *sound = af.getAudioStream(DisposeAfterUse::YES);
+	Audio::AudioStream *sound = af.getAudioStream(false, DisposeAfterUse::YES);
 
 	cancelFade(soundChannel);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, sound, -1, getChannelVolume(soundChannel));
