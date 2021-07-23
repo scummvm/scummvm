@@ -343,9 +343,11 @@ int Window::preprocessColor(DirectorPlotData *p, uint32 src) {
 		case kInkTypeNotReverse:
 			src = (src == p->backColor ? p->colorWhite : 0);
 			break;
-		case kInkTypeGhost:
-			src = (src == p->foreColor ? p->backColor : p->colorWhite);
-			break;
+			// looks like this part is wrong, maybe it's very same as reverse?
+			// check warlock/DATA/WARLOCKSHIP/ENG/ABOUT to see more detail.
+//		case kInkTypeGhost:
+//			src = (src == p->foreColor ? p->backColor : p->colorWhite);
+//			break;
 		case kInkTypeNotGhost:
 			src = (src == p->backColor ? p->colorWhite : p->backColor);
 			break;
