@@ -565,6 +565,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 
 	uint bitImageSize = data._rowWords * data._fRectHeight;
 	data._bitImage = new byte[bitImageSize];
+	memset(data._bitImage, 0, bitImageSize * sizeof(byte));
 
 	int dstPitch = data._rowWords;
 
