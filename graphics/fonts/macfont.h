@@ -151,6 +151,9 @@ struct MacFONTdata {
 	MacFontFamily *_family;
 	int _size;
 	int _style;
+
+	// currently only available in generated fonts
+	int _slant;
 };
 
 /**

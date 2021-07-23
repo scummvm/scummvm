@@ -423,6 +423,18 @@ void MacFONTFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color)
 	if (x + glyph->bitmapWidth >= dst->w)
 		xStop = dst->w - x;
 
+	// for the underLine font, we need to draw the line at the whole area, which includes the kerning space.
+	if ((_data._slant & kMacFontUnderline) && glyph->kerningOffset) {
+		for (uint16 j = 1; j <= glyph->kerningOffset; j++) {
+			if (dst->format.bytesPerPixel == 1)
+				*((byte *)dst->getBasePtr(x - j, y + _data._ascent + 2)) = color;
+			else if (dst->format.bytesPerPixel == 2)
+				*((uint16 *)dst->getBasePtr(x - j, y + _data._ascent + 2)) = color;
+			else if (dst->format.bytesPerPixel == 4)
+				*((uint32 *)dst->getBasePtr(x - j, y + _data._ascent + 2)) = color;
+		}
+	}
+
 	for (uint16 i = yStart; i < yStop; i++) {
 		byte *srcRow = _data._bitImage + i * _data._rowWords;
 
@@ -514,6 +526,9 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 	data._style = src->_data._style;
 
 	data._glyphs.resize(src->_data._glyphs.size());
+
+	// when we are generating the slant fonts. e.g. italic font, underLine font. we set this. more detail is in drawChar
+	data._slant = slant;
 
 	if (slant & kMacFontOutline)
 		data._fRectHeight += 2;
