@@ -150,6 +150,12 @@
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
 				/>
+				<widget name = 'laGroupPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'laGroupPopup'
+						type = 'PopUp'
+				/>
 				<space />
 			</layout>
 			<widget name = 'GameList'/>
