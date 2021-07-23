@@ -995,6 +995,7 @@ int MacText::getLineCharWidth(int line, bool enforce) {
 int MacText::getLastLineWidth() {
 	if (_textLines.size() == 0)
 		return 0;
+
 	return getLineWidth(_textLines.size() - 1, true);
 }
 
@@ -1009,6 +1010,7 @@ int MacText::getLineHeight(int line) {
 
 void MacText::setInterLinear(int interLinear) {
 	_interLinear = interLinear;
+
 	recalcDims();
 	_fullRefresh = true;
 	render();
@@ -1053,6 +1055,7 @@ void MacText::recalcDims() {
 void MacText::setAlignOffset(TextAlign align) {
 	if (_textAlignment == align)
 		return;
+
 	_contentIsDirty = true;
 	_fullRefresh = true;
 	_textAlignment = align;
@@ -1139,17 +1142,15 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 	// then we remove those empty lines
 	// too many special check may cause some strange problem in the future
 	if (_str.empty()) {
-		while (!_textLines.empty() && !_textLines.back().paragraphEnd) {
+		while (!_textLines.empty() && !_textLines.back().paragraphEnd)
 			removeLastLine();
-		}
 	}
 
 	// we need to split the string with the font, in order to get the correct font
 	Common::U32String strWithFont = Common::U32String(fontRun.toString()) + str;
 
-	if (!skipAdd) {
+	if (!skipAdd)
 		_str += strWithFont;
-	}
 
 	appendText_(strWithFont, oldLen);
 }
@@ -1161,18 +1162,15 @@ void MacText::appendText(const Common::U32String &str, const Font *font, uint16 
 
 	_currentFormatting = fontRun;
 
-	// we check _str here, if _str is empty but _textLines is not empty, and they are not the end of paragraph
-	// then we remove those empty lines
-	// too many special check may cause some strange problem in the future
 	if (_str.empty()) {
-		while (!_textLines.empty() && !_textLines.back().paragraphEnd) {
+		while (!_textLines.empty() && !_textLines.back().paragraphEnd)
 			removeLastLine();
-		}
 	}
 
-	if (!skipAdd) {
-		_str += str;
-	}
+	Common::U32String strWithFont = Common::U32String(fontRun.toString()) + str;
+
+	if (!skipAdd)
+		_str += strWithFont;
 
 	appendText_(str, oldLen);
 }
@@ -1284,7 +1282,7 @@ bool MacText::draw(bool forceRedraw) {
 
 	draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, offset.x, offset.y);
 
-	for (int bb = 0; bb < _shadow; bb ++) {
+	for (int bb = 0; bb < _shadow; bb++) {
 		_composeSurface->hLine(_shadow, _composeSurface->h - _shadow + bb, _composeSurface->w, 0);
 		_composeSurface->vLine(_composeSurface->w - _shadow + bb, _shadow, _composeSurface->h - _shadow, 0);
 	}
