@@ -78,7 +78,7 @@ private:
 };
 
 class InfoLine : public Talk {
-	const char *_oldText, *_newText, *_lastText;
+	const char *_oldText, *_newText;
 public:
 	bool _realTime;
 	InfoLine(CGE2Engine *vm, uint16 wid, ColorBank color = kCBStd);

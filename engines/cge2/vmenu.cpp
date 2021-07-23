@@ -85,7 +85,7 @@ MenuBar::MenuBar(CGE2Engine *vm, uint16 w, byte *c) : Talk(vm) {
 VMenu *VMenu::_addr = nullptr;
 
 VMenu::VMenu(CGE2Engine *vm, Common::Array<Choice *> list, V2D pos, ColorBank col)
-	: Talk(vm, vmGather(list), kTBRect, col), _menu(list), _bar(nullptr), _items(list.size()), _vm(vm) {
+	: Talk(vm, vmGather(list), kTBRect, col), _menu(list), _bar(nullptr), _items(list.size()), _vm(vm), _lastN(2) {
 	delete[] _vmgt; // Lefotver of vmGather.
 
 	_addr = this;
@@ -101,8 +101,6 @@ VMenu::VMenu(CGE2Engine *vm, Common::Array<Choice *> list, V2D pos, ColorBank co
 	_bar = new MenuBar(_vm, _siz.x - 2 * kTextHMargin, _color);
 	_bar->gotoxyz(V2D(_vm, _pos2D.x, _pos2D.y + kTextVMargin - kMenuBarVerticalMargin));
 	_vm->_vga->_showQ->append(_bar);
-
-	_lastN = 2;
 }
 
 char *VMenu::vmGather(Common::Array<Choice *> list) {

@@ -258,22 +258,17 @@ InfoLine::InfoLine(CGE2Engine *vm, uint16 w, ColorBank color)
 	V2D siz = V2D(_vm, w, kFontHigh);
 	b[0] = Bitmap(_vm, siz.x, siz.y, _color[2]);
 	setShapeList(b, 1);
-	_lastText = "";
 }
 
 void InfoLine::update(const char *text) {
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (text) {
-        if (strcmp(_lastText,text) != 0) {
-            if (ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
-                ttsMan->say(text);
-            _lastText = text;
-        }
-    }
 	if (!_realTime && (text == _oldText))
 		return;
 
 	_oldText = text;
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (text && ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
+		ttsMan->say(text);
 
 	uint16 w = _ext->_shpList->_w;
 	uint16 h = _ext->_shpList->_h;
