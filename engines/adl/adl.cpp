@@ -108,17 +108,15 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 
 bool AdlEngine::pollEvent(Common::Event &event) const {
 	if (g_system->getEventManager()->pollEvent(event)) {
-		if (event.type != Common::EVENT_KEYDOWN)
-			return false;
-
-		if (event.kbd.flags & Common::KBD_CTRL) {
-			if (event.kbd.keycode == Common::KEYCODE_q) {
+		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+			if (event.customType == kADLActionQuit) {
 				quitGame();
-				return false;
 			}
+			return false;
 		}
 
-		return true;
+		if (event.type == Common::EVENT_KEYDOWN)
+			return true;
 	}
 
 	return false;

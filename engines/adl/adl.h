@@ -69,6 +69,13 @@ enum kDebugChannels {
 	kDebugChannelScript = 1 << 0
 };
 
+enum ADLAction {
+	kADLActionNone,
+	kADLActionQuit,
+
+	kADLActionCount
+};
+
 // Save and restore opcodes
 #define IDO_ACT_SAVE           0x0f
 #define IDO_ACT_LOAD           0x10
