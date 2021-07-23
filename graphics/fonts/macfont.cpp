@@ -789,6 +789,9 @@ static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height)
 	glyph->bitmapWidth += 2;
 	glyph->width++;
 
+	int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
+	int dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+
 	for (uint16 y = 0; y < height + 2; y++) {
 		byte *srcPtr = (byte *)src->getBasePtr(0, y);
 		byte *dstPtr = (byte *)dst->getBasePtr(0, y);
@@ -797,12 +800,17 @@ static void makeOutline(Surface *src, Surface *dst, MacGlyph *glyph, int height)
 			if (*srcPtr)
 				continue;
 			// for every white pixel, if there is black pixel around it. It means that the white pixel is boundary, then we draw it as black pixel.
-			byte *left = (byte *)src->getBasePtr(MAX(x - 1, 0), y);
-			byte *right = (byte *)src->getBasePtr(MIN(x + 1, src->w - 1), y);
-			byte *up = (byte *)src->getBasePtr(x, MAX(y - 1, 0));
-			byte *down = (byte *)src->getBasePtr(x, MIN(y + 1, src->h - 1));
-			if (*left || *right || *up || *down)
-				*dstPtr = 1;
+			for (int i = 0; i < 8; i++) {
+				int nx = x + dx[i];
+				int ny = y + dy[i];
+				if (nx >= src->w || nx < 0 || ny >= src->h || ny < 0)
+					continue;
+
+				if (*((byte *)src->getBasePtr(nx, ny))) {
+					*dstPtr = 1;
+					break;
+				}
+			}
 		}
 	}
 }
