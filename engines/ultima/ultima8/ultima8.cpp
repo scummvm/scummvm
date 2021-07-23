@@ -367,17 +367,41 @@ bool Ultima8Engine::startupGame() {
 	if (_gameInfo->_type == GameInfo::GAME_U8) {
 		_ucMachine = new UCMachine(U8Intrinsics, ARRAYSIZE(U8Intrinsics));
 	} else if (_gameInfo->_type == GameInfo::GAME_REMORSE) {
-		if (_gameInfo->_ucOffVariant == GameInfo::GAME_UC_DEMO)
+		switch (_gameInfo->_ucOffVariant) {
+		case GameInfo::GAME_UC_DEMO:
 			_ucMachine = new UCMachine(RemorseDemoIntrinsics, ARRAYSIZE(RemorseDemoIntrinsics));
-		else if (_gameInfo->_ucOffVariant == GameInfo::GAME_UC_REM_ES)
+			break;
+		case GameInfo::GAME_UC_REM_ES:
 			_ucMachine = new UCMachine(RemorseEsIntrinsics, ARRAYSIZE(RemorseEsIntrinsics));
-		else
+			break;
+		case GameInfo::GAME_UC_REM_FR:
+			_ucMachine = new UCMachine(RemorseFrIntrinsics, ARRAYSIZE(RemorseFrIntrinsics));
+			break;
+		case GameInfo::GAME_UC_REM_JA:
+			warning("TODO: Create Remorse JA intrinsic list");
 			_ucMachine = new UCMachine(RemorseIntrinsics, ARRAYSIZE(RemorseIntrinsics));
+			break;
+		case GameInfo::GAME_UC_ORIG:
+			warning("TODO: Create Remorse original version intrinsic list");
+			_ucMachine = new UCMachine(RemorseIntrinsics, ARRAYSIZE(RemorseIntrinsics));
+			break;
+		default:
+			_ucMachine = new UCMachine(RemorseIntrinsics, ARRAYSIZE(RemorseIntrinsics));
+			break;
+		}
 	} else if (_gameInfo->_type == GameInfo::GAME_REGRET) {
-		if (_gameInfo->_ucOffVariant == GameInfo::GAME_UC_DEMO)
+		switch (_gameInfo->_ucOffVariant) {
+		case GameInfo::GAME_UC_DEMO:
 			_ucMachine = new UCMachine(RegretDemoIntrinsics, ARRAYSIZE(RegretDemoIntrinsics));
-		else
+			break;
+		case GameInfo::GAME_UC_REG_DE:
+			_ucMachine = new UCMachine(RegretDeIntrinsics, ARRAYSIZE(RegretDeIntrinsics));
+			break;
+		case GameInfo::GAME_UC_ORIG: // 1.06 is the original CD release too?
+		default:
 			_ucMachine = new UCMachine(RegretIntrinsics, ARRAYSIZE(RegretIntrinsics));
+			break;
+		}
 	} else {
 		CANT_HAPPEN_MSG("Invalid game type.");
 	}
@@ -842,15 +866,39 @@ bool Ultima8Engine::getGameInfo(const istring &game, GameInfo *ginfo) {
 
 	if (ginfo->_type == GameInfo::GAME_REMORSE)
 	{
-		if (_gameDescription->desc.flags & ADGF_DEMO)
+		switch (_gameDescription->desc.flags & ADGF_USECODE_MASK) {
+		case ADGF_USECODE_DEMO:
 			ginfo->_ucOffVariant = GameInfo::GAME_UC_DEMO;
-		else if (_gameDescription->desc.language == Common::ES_ESP &&
-				 Common::String("") == _gameDescription->desc.extra) {
+			break;
+		case ADGF_USECODE_ORIG:
+			ginfo->_ucOffVariant = GameInfo::GAME_UC_ORIG;
+			break;
+		case ADGF_USECODE_ES:
 			ginfo->_ucOffVariant = GameInfo::GAME_UC_REM_ES;
+			break;
+		case ADGF_USECODE_FR:
+			ginfo->_ucOffVariant = GameInfo::GAME_UC_REM_FR;
+			break;
+		case ADGF_USECODE_JA:
+			ginfo->_ucOffVariant = GameInfo::GAME_UC_REM_JA;
+			break;
+		default:
+			break;
 		}
 	} else if (ginfo->_type == GameInfo::GAME_REGRET) {
-		if (_gameDescription->desc.flags & ADGF_DEMO)
+		switch (_gameDescription->desc.flags & ADGF_USECODE_MASK) {
+		case ADGF_USECODE_DEMO:
 			ginfo->_ucOffVariant = GameInfo::GAME_UC_DEMO;
+			break;
+		case ADGF_USECODE_ORIG:
+			ginfo->_ucOffVariant = GameInfo::GAME_UC_ORIG;
+			break;
+		case ADGF_USECODE_DE:
+			ginfo->_ucOffVariant = GameInfo::GAME_UC_REG_DE;
+			break;
+		default:
+			break;
+		}
 	}
 
 	switch (_gameDescription->desc.language) {

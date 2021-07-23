@@ -47,8 +47,12 @@ struct GameInfo {
 	// Usecode coff variant
 	enum GameUsecodeOffsetVariant {
 		GAME_UC_DEFAULT, // Most versions of most games
+		GAME_UC_ORIG,	 // Original (pre-patch) CD versions of Crusader games
+		GAME_UC_DEMO,    // Crusader: No Remorse or No Regret Demos
 		GAME_UC_REM_ES,  // Crusader: No Remorse Spanish
-		GAME_UC_DEMO     // Crusader: No Remorse or No Regret Demos
+		GAME_UC_REM_FR,	 // Crusader: No Remorse French
+		GAME_UC_REM_JA,  // Crusader: No Remorse Japanese
+		GAME_UC_REG_DE   // Crusader: No Regret German
 	} _ucOffVariant;
 
 	//! version number, encoded as 100*major + minor

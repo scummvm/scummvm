@@ -50,6 +50,19 @@ enum UltimaGameFeatures {
 	GF_VGA_ENHANCED = 1 << 0
 };
 
+// Custom game detector flags used by Ultima engines
+enum UltimaGameFlags {
+	// Usecode variants (used by Crusader games)
+	ADGF_USECODE_MASK = (0xF | ADGF_DEMO),	// Mask of flags data used for usecode variants
+	ADGF_USECODE_DEFAULT = 0,	// Default usecode tables (latest/gog editions of game)
+	ADGF_USECODE_DEMO = ADGF_DEMO, // Demo versions of each game (re-use demo flag)
+	ADGF_USECODE_ORIG = 1, 		// Original (eg, 1.01) CD version
+	ADGF_USECODE_ES = 2,		// Spanish version of game
+	ADGF_USECODE_DE = 3, 		// German version of game
+	ADGF_USECODE_FR = 4,		// French version of game
+	ADGF_USECODE_JA = 5			// Japanese version of game
+};
+
 struct UltimaGameDescription {
 	ADGameDescription desc;
 	GameId gameId;

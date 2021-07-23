@@ -386,7 +386,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("eusecode.flx", "0a0f64507adc4f280129c735ee9cad42", 556613),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_TESTING | ADGF_USECODE_DEFAULT,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_CRUSADER_REM,
@@ -416,7 +416,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("eusecode.flx", "8c74327e30088ce93f08a15a7f85b3ce", 418556),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSTABLE | ADGF_USECODE_ORIG,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_CRUSADER_REM,
@@ -431,7 +431,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("eusecode.flx", "efbd33d6a5e8f14e9c57f963c3fbe939", 423051),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSTABLE | ADGF_USECODE_FR,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_CRUSADER_REM,
@@ -446,7 +446,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("eusecode.flx", "36a16d70c97d0379f1133cc743c31313", 558493),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_TESTING | ADGF_USECODE_ES,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_CRUSADER_REM,
@@ -461,7 +461,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("eusecode.flx", "a8b5c421c5d74be8c69fcd4fecadd1dd", 559015),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_TESTING | ADGF_USECODE_DEFAULT,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_CRUSADER_REM,
@@ -476,7 +476,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("jusecode.flx", "088105959be4f2de1cb9e796e71c5f2d", 554522),
 			Common::JA_JPN,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE,
+			ADGF_UNSTABLE | ADGF_USECODE_JA,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_CRUSADER_REM,
@@ -506,7 +506,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("eusecode.flx", "1bb360156b7240a1f05eb9bda01c54db", 481652),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSTABLE | ADGF_USECODE_DEFAULT,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_CRUSADER_REG,
@@ -521,7 +521,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("eusecode.flx", "1824d9725de45a8b49f058c12c6cf5c3", 484445),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSTABLE | ADGF_USECODE_DE,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_CRUSADER_REG,
@@ -551,7 +551,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("eusecode.flx", "f5906654047ed1dab75760da6426ecfa", 478125),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_UNSTABLE | ADGF_USECODE_ES,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_CRUSADER_REG,
