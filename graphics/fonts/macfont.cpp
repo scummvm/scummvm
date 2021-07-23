@@ -802,6 +802,11 @@ static void makeItalic(Surface *src, Surface *dst, MacGlyph *glyph, int height) 
 }
 
 static void makeUnderLine(Surface *src, MacGlyph *glyph, int ascent) {
+	// this case is for space, which has the same number of kerning offset and width.
+	// inorder to draw the underLine for space, we need to disable the kerning offset of it.
+	if (glyph->width == glyph->kerningOffset)
+		glyph->kerningOffset = 0;
+
 	for (int x = 0; x < glyph->width; x++)
 		*((byte *) src->getBasePtr(x, ascent + 2)) = 1;
 }
