@@ -282,8 +282,12 @@ Common::Error GobEngine::run() {
 		return err;
 
 	// On some systems it's not safe to run CD audio games from the CD.
-	if (isCD())
-		checkCD();
+	if (isCD()) {
+		if (!existExtractedCDAudioFiles()
+		    && !isDataAndCDAudioReadFromSameCD()) {
+			warnMissingExtractedCDAudio();
+		}
+	}
 
 	_system->getAudioCDManager()->open();
 

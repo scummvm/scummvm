@@ -49,7 +49,10 @@ SoundTowns_LoK::~SoundTowns_LoK() {
 }
 
 bool SoundTowns_LoK::init() {
-	_vm->checkCD();
+	if (!_vm->existExtractedCDAudioFiles()
+	    && !_vm->isDataAndCDAudioReadFromSameCD()) {
+		_vm->warnMissingExtractedCDAudio();
+	}
 	int unused = 0;
 	_musicFadeTable = _vm->staticres()->loadRawData(k1TownsMusicFadeTable, unused);
 	_sfxWDTable = _vm->staticres()->loadRawData(k1TownsSFXwdTable, unused);
