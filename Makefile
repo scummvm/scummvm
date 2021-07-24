@@ -133,3 +133,14 @@ print-version:
 
 print-distversion:
 	@echo $(DISTVERSION)
+
+devtools/create_project/cmake/build/create_project:
+	cmake -Hdevtools/create_project/cmake -Bdevtools/create_project/cmake/build/
+	cmake --build devtools/create_project/cmake/build/
+
+CMakeLists.txt: devtools/create_project/cmake/build/create_project config.mk
+	./devtools/create_project/cmake/build/create_project . --cmake $(SAVED_CONFIGFLAGS)
+
+cmake: CMakeLists.txt
+	cmake -H. -Bbuild
+	cmake --build build
