@@ -275,7 +275,7 @@ void Holomap::renderHolomapModel(const BodyData &bodyData, int32 x, int32 y, int
 	_engine->_renderer->getBaseRotationPosition(0, 0, zPos + 1000);
 	_engine->_renderer->getBaseRotationPosition(_engine->_renderer->destPos.x, _engine->_renderer->destPos.y, _engine->_renderer->destPos.z);
 	_engine->_interface->resetClip();
-	_engine->_renderer->renderIsoModel(_engine->_renderer->destPos.x, _engine->_renderer->destPos.y, _engine->_renderer->destPos.z, x, y, 0, bodyData);
+	_engine->_renderer->renderIsoModel(_engine->_renderer->destPos.x, _engine->_renderer->destPos.y, _engine->_renderer->destPos.z, x, y, ANGLE_0, bodyData);
 }
 
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
@@ -350,7 +350,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 		_engine->_renderer->setLightVector(-60, 128, 0);
 		const Common::Rect rect(0, 200, 199, 479);
 		_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
-		_engine->_renderer->renderIsoModel(0, 0, 0, 0, newAngle, 0, bodyData);
+		_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, newAngle, ANGLE_0, bodyData);
 		_engine->copyBlockPhys(rect);
 		_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
 		_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, 5300);
@@ -465,7 +465,7 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 		if (bodyData != nullptr) {
 			int32 angleX = _locations[drawList.actorIdx].angle.x;
 			int32 angleY = _locations[drawList.actorIdx].angle.y;
-			_engine->_renderer->renderIsoModel(drawList.x, drawList.y, drawList.z, angleX, angleY, 0, *bodyData);
+			_engine->_renderer->renderIsoModel(drawList.x, drawList.y, drawList.z, angleX, angleY, ANGLE_0, *bodyData);
 		}
 	}
 }
