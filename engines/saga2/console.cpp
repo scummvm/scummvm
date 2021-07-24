@@ -65,6 +65,10 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 
 	registerCmd("teleport_to_npc", WRAP_METHOD(Console, cmdTeleportToNPC));
 
+	registerCmd("teleport_npc", WRAP_METHOD(Console, cmdTeleportNPC));
+
+	registerCmd("teleport_npc_here", WRAP_METHOD(Console, cmdTeleportNPCHere));
+
 	registerCmd("goto_place", WRAP_METHOD(Console, cmdGotoPlace));
 
 	registerCmd("list_places", WRAP_METHOD(Console, cmdListPlaces));
@@ -216,6 +220,37 @@ bool Console::cmdTeleportToNPC(int argc, const char **argv) {
 		Actor *b = (Actor *)GameObject::objectAddress(id);
 
 		a->setLocation(b->getLocation());
+	}
+
+	return true;
+}
+
+bool Console::cmdTeleportNPC(int argc, const char **argv) {
+	if (argc != 5)
+		debugPrintf("Usage: %s <Actor ID> <u> <v> <z>\n", argv[0]);
+	else {
+		ObjectID id = atoi(argv[1]);
+		Actor *a = (Actor *)GameObject::objectAddress(id);
+
+		TilePoint loc;
+		loc.u = atoi(argv[2]);
+		loc.v = atoi(argv[3]);
+		loc.z = atoi(argv[4]);
+
+		a->setLocation(loc);
+	}
+
+	return true;
+}
+
+bool Console::cmdTeleportNPCHere(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <Actor ID>\n", argv[0]);
+	else {
+		ObjectID id = atoi(argv[1]);
+		Actor *a = (Actor *)GameObject::objectAddress(id);
+
+		a->setLocation(getCenterActor()->getLocation());
 	}
 
 	return true;

@@ -59,6 +59,10 @@ private:
 
 	bool cmdTeleportToNPC(int argc, const char **argv);
 
+	bool cmdTeleportNPC(int argc, const char **argv);
+
+	bool cmdTeleportNPCHere(int argc, const char **argv);
+
 	bool cmdGotoPlace(int argc, const char **argv);
 
 	bool cmdListPlaces(int argc, const char **argv);
