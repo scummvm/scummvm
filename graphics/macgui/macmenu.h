@@ -68,8 +68,8 @@ public:
 	void calcDimensions();
 
 	MacMenuSubMenu *addSubMenu(MacMenuSubMenu *submenu, int index = -1);
-	int addMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int action = -1, int style = 0, char shortcut = 0, bool enabled = true);
-	int addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action = 0, int style = 0, char shortcut = 0, bool enabled = true);
+	int addMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int action = -1, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
+	int addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action = 0, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
 	void loadMenuResource(Common::MacResManager *resFork, uint16 id);
 	void loadMenuBarResource(Common::MacResManager *resFork, uint16 id);
 	void createSubMenuFromString(int id, const char *string, int commandId);

@@ -86,16 +86,17 @@ struct MacMenuItem {
 	char shortcut;
 	int shortcutPos;
 	bool enabled;
+	bool checked;
 	Common::Rect bbox;
 
 	MacMenuSubMenu *submenu;
 
-	MacMenuItem(const Common::String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true) :
+	MacMenuItem(const Common::String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true, bool c = false) :
 			text(t), unicode(false), action(a), style(s), shortcut(sh),
-			shortcutPos(sp), enabled(e), submenu(nullptr) {}
-	MacMenuItem(const Common::U32String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true) :
+			shortcutPos(sp), enabled(e), submenu(nullptr), checked(c) {}
+	MacMenuItem(const Common::U32String &t, int a = -1, int s = 0, char sh = 0, int sp = -1, bool e = true, bool c = false) :
 			unicodeText(t), unicode(true), action(a), style(s), shortcut(sh),
-			shortcutPos(sp), enabled(e), submenu(nullptr) {}
+			shortcutPos(sp), enabled(e), submenu(nullptr), checked(c) {}
 
 	~MacMenuItem() {
 		if (submenu)
@@ -358,7 +359,7 @@ MacMenuSubMenu *MacMenu::getSubmenu(MacMenuSubMenu *submenu, int index) {
 	}
 }
 
-int MacMenu::addMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int action, int style, char shortcut, bool enabled) {
+int MacMenu::addMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int action, int style, char shortcut, bool enabled, bool checked) {
 	_dimensionsDirty = true;
 
 	if (submenu == nullptr) {
@@ -370,12 +371,12 @@ int MacMenu::addMenuItem(MacMenuSubMenu *submenu, const Common::String &text, in
 
 	_dimensionsDirty = true;
 
-	submenu->items.push_back(new MacMenuItem(text, action, style, shortcut, -1, enabled));
+	submenu->items.push_back(new MacMenuItem(text, action, style, shortcut, -1, enabled, checked));
 
 	return submenu->items.size() - 1;
 }
 
-int MacMenu::addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action, int style, char shortcut, bool enabled) {
+int MacMenu::addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action, int style, char shortcut, bool enabled, bool checked) {
 	_dimensionsDirty = true;
 
 	Common::U32String amp("&");
@@ -402,7 +403,7 @@ int MacMenu::addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text,
 		return _items.size() - 1;
 	}
 
-	submenu->items.push_back(new MacMenuItem(res, action, style, shortcut, shortcutPos, enabled));
+	submenu->items.push_back(new MacMenuItem(res, action, style, shortcut, shortcutPos, enabled, checked));
 
 	return submenu->items.size() - 1;
 }
@@ -531,6 +532,7 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 			addMenuItem(submenu, NULL, 0);
 		} else {
 			bool enabled = true;
+			bool checked = false;
 			int style = 0;
 			char shortcut = 0;
 			const char *shortPtr = strrchr(item.c_str(), '/');
@@ -575,9 +577,13 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 						item.deleteChar(j);
 						break;
 					}
+			} else if (tmpitem.size() >= 2 && tmpitem[0] == '!' && (uint8)tmpitem[1] == 195) {
+				// this is the !√ situation, we need to set item checked, 195 represent √ in director
+				checked = true;
+				item = item.substr(2, Common::String::npos);
 			}
 
-			addMenuItem(submenu, item, commandId, style, shortcut, enabled);
+			addMenuItem(submenu, item, commandId, style, shortcut, enabled, checked);
 		}
 
 		item.clear();
@@ -940,6 +946,16 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 				const Font *font = getMenuFont(menu->items[i]->style);
 
 				font->drawString(s, text, tx, ty, r->width(), color);
+			}
+
+			if (menu->items[i]->checked) {
+				const Font *font = getMenuFont(menu->items[i]->style);
+
+				int padding = _align == kTextAlignRight ? -_menuRightDropdownPadding: _menuLeftDropdownPadding;
+				int offset = padding - font->getCharWidth(195);
+
+				// calculating the padding and offset, we draw the √ at the center
+				font->drawChar(s, 195, tx - padding + offset, ty, color);
 			}
 
 			if (!acceleratorText.empty() && shortcutPos == -1)
