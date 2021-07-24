@@ -59,6 +59,8 @@ private:
 
 	bool cmdStats(int argc, const char **argv);
 
+	bool cmdTeleportOnClick(int argc, const char **argv);
+
 	bool cmdTeleport(int argc, const char **argv);
 
 	bool cmdTeleportToNPC(int argc, const char **argv);

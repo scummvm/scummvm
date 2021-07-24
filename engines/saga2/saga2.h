@@ -178,6 +178,7 @@ public:
 	bool _autoWeapon;
 	bool _showNight;
 	bool _speechText;
+	bool _teleportOnClick;
 
 	bool _showPosition;
 	bool _showStats;

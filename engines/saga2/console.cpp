@@ -61,6 +61,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 
 	registerCmd("position", WRAP_METHOD(Console, cmdPosition));
 
+	registerCmd("teleport_on_click", WRAP_METHOD(Console, cmdTeleportOnClick));
+
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
 
 	registerCmd("teleport_to_npc", WRAP_METHOD(Console, cmdTeleportToNPC));
@@ -206,6 +208,17 @@ bool Console::cmdStats(int argc, const char **argv) {
 	else {
 		bool show = atoi(argv[1]);
 		_vm->_showStats = show;
+	}
+
+	return true;
+}
+
+bool Console::cmdTeleportOnClick(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <1/0>\n", argv[0]);
+	else {
+		bool teleport = atoi(argv[1]);
+		_vm->_teleportOnClick = teleport;
 	}
 
 	return true;

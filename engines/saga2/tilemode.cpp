@@ -1223,7 +1223,9 @@ static APPFUNC(cmdClickTileMap) {
 			//  We're not pointing at an object and the mouse cursor
 			//  does not have an object
 			else {
-				if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo
+				if (g_vm->_teleportOnClick) {
+					getCenterActor()->setLocation(walkToPos);
+				} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo
 				        &&  g_vm->_mouseInfo->getDoable()) {
 					if (pickedTAI == NULL) {
 						navigateDirect(walkToPos, false);
