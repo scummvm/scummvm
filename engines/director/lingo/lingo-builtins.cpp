@@ -1795,21 +1795,28 @@ void LB::b_puppetSound(int nargs) {
 	}
 
 	DirectorSound *sound = g_director->getSoundManager();
-	Datum castMember = g_lingo->pop();
 	Score *score = g_director->getCurrentMovie()->getScore();
-
-	int channel = 1;
-	if (nargs == 2) {
-		channel = g_lingo->pop().asInt();
-	}
 
 	if (!score) {
 		warning("b_puppetSound(): no score");
 		return;
 	}
 
-	CastMemberID castId = castMember.asMemberID();
-	sound->playCastMember(castId, channel);
+	if (nargs == 1) {
+		Datum castMember = g_lingo->pop();
+
+		sound->playCastMember(castMember.asMemberID(), 1);
+	} else if (nargs == 2) {
+		uint submenu = g_lingo->pop().asInt();
+		uint menu = g_lingo->pop().asInt();
+
+		if (score->_sampleSounds.empty())
+			score->loadSampleSounds(menu);
+
+		if (submenu <= score->_sampleSounds.size()) {
+			sound->playExternalSound(score->_sampleSounds[submenu - 1], 1, submenu);
+		}
+	}
 }
 
 void LB::b_immediateSprite(int nargs) {
