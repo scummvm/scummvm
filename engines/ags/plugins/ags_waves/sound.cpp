@@ -45,18 +45,19 @@ void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 	if (sound != nullptr) {
 		effect._volume = 255;
 
-		if (repeat != 1) {
-			assert(repeat != 0);
+		if (repeat != 0) {
 			Audio::SeekableAudioStream *sas =
 				dynamic_cast<Audio::SeekableAudioStream *>(sound);
 			assert(sas);
 
+			// -1 for infinite, >0 number of successive repeats
 			Audio::LoopingAudioStream *las =
-				new Audio::LoopingAudioStream(sas, repeat, DisposeAfterUse::NO);
-			_mixer->playStream(Audio::Mixer::kSFXSoundType, &effect._soundHandle, las);
+				new Audio::LoopingAudioStream(sas, repeat + 1, DisposeAfterUse::NO);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &effect._soundHandle, las,
+				-1, 255, 0, DisposeAfterUse::YES);
 		} else {
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &effect._soundHandle, sound,
-				-1, effect._volume, 0, DisposeAfterUse::YES);
+				-1, effect._volume, 0, DisposeAfterUse::NO);
 		}
 
 		if (OGG_Filter && effect._filter && effect._volume > 1) {
