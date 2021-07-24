@@ -55,7 +55,7 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 
 	registerCmd("nid2id", WRAP_METHOD(Console, cmdObjNameIndexToID));
 
-	registerCmd("search_obj", WRAP_METHOD(Console, cmdSearchObj));
+	registerCmd("search", WRAP_METHOD(Console, cmdSearchObj));
 
 	registerCmd("add_obj", WRAP_METHOD(Console, cmdAddObj));
 
@@ -147,15 +147,26 @@ bool Console::cmdSearchObj(int argc, const char **argv) {
 	else {
 		Common::String name = argv[1];
 		Common::Array<ObjectID> array = GameObject::nameToID(name);
+		Common::String type;
 
 		if (array.size() == 0)
 			debugPrintf("No objects found!\n");
 		else {
 			for (uint i = 0; i < array.size(); ++i) {
-			ObjectID id = array[i];
+				ObjectID id = array[i];
 
-			GameObject *obj = GameObject::objectAddress(id);
-			debugPrintf("%s: %d\n", obj->objName(), id);
+				GameObject *obj = GameObject::objectAddress(id);
+
+				if (isObject(obj))
+					type = "OBJECT";
+				else if (isActor(obj))
+					type = "ACTOR";
+				else if (isWorld(obj))
+					type = "WORLD";
+				else
+					type = "???";
+
+				debugPrintf("%s: %d (%s)\n", obj->objName(), id, type.c_str());
 			}
 		}
 	}
