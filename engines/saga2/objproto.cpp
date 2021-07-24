@@ -643,7 +643,6 @@ bool ProtoObj::acceptStrike(
 	int16   scriptResult;
 
 	//  Handle object script in a standard fashion
-	warning("ProtoObj::acceptStrike: Method_GameObject_onAcceptStrike undefined");
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptStrike,
 	                        dObj, enactor, strikingObj))
