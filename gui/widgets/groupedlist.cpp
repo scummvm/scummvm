@@ -192,11 +192,17 @@ void GroupedListWidget::setSelected(int item) {
 	assert(item >= -1 && item < (int)_list.size());
 
 	// We only have to do something if the widget is enabled and the selection actually changes
-	if (isEnabled() && _selectedItem != item) {
+	if (isEnabled() && (_selectedItem == -1 || _listIndex[_selectedItem] != item)) {
 		if (_editMode)
 			abortEditMode();
 
-		_selectedItem = item;
+		_selectedItem = -1;
+		for (uint i = 0; i < _listIndex.size(); ++i) {
+			if (_listIndex[i] == item) {
+				_selectedItem = i;
+				break;
+			}
+		}
 
 		// Notify clients that the selection changed.
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
