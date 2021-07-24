@@ -71,7 +71,7 @@ extern void *ccGetSymbolAddress(const String &name);
 
 // registering functions, compatible with old unsafe call style;
 // this is to be used solely by plugins until plugin inteface is redone
-extern bool ccAddExternalFunctionForPlugin(const String &name, void *pfn);
+extern bool ccAddExternalFunctionForPlugin(const String &name, Plugins::ScriptContainer *instance);
 extern Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name);
 
 // DEBUG HOOK

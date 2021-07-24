@@ -326,7 +326,9 @@ public:
 	// register a script function with the system
 	AGSIFUNC(void) RegisterScriptFunction(const char *name,
 		Plugins::ScriptContainer *instance);
-	#ifdef WINDOWS_VERSION
+	AGSIFUNC(void) RegisterBuiltInFunction(const char *name,
+		Plugins::ScriptContainer *instance);
+#ifdef WINDOWS_VERSION
 	// get game window handle
 	AGSIFUNC(HWND) GetWindowHandle();
 	// get reference to main DirectDraw interface

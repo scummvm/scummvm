@@ -99,6 +99,9 @@ const char *IAGSEngine::GetEngineVersion() {
 void IAGSEngine::RegisterScriptFunction(const char *name, Plugins::ScriptContainer *instance) {
 	ccAddExternalPluginFunction(name, instance);
 }
+void IAGSEngine::RegisterBuiltInFunction(const char *name, Plugins::ScriptContainer *instance) {
+	ccAddExternalFunctionForPlugin(name, instance);
+}
 const char *IAGSEngine::GetGraphicsDriverID() {
 	if (_G(gfxDriver) == nullptr)
 		return nullptr;

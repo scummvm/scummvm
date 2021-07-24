@@ -37,13 +37,13 @@ namespace Plugins {
 
 #define SCRIPT_METHOD(NAME, PROC) addMethod(#NAME, &PROC)
 
-#define SCRIPT_HASH_SUB(TheClass, BaseClass) \
+#define SCRIPT_HASH_MACRO(TheClass, BaseClass, RegisterMethod) \
 	private: \
 		typedef void (TheClass::*MethodPtr)(ScriptMethodParams &params); \
 		Common::HashMap<Common::String, MethodPtr> _methods; \
 		inline void addMethod(const Common::String &name, MethodPtr fn) { \
 			_methods[name] = fn; \
-			_engine->RegisterScriptFunction(name.c_str(), this); \
+			_engine->RegisterMethod(name.c_str(), this); \
 		} \
 	public: \
 		void execMethod(const Common::String &name, ScriptMethodParams &params) override { \
@@ -52,8 +52,9 @@ namespace Plugins {
 			else \
 				BaseClass::execMethod(name, params); \
 		}
-#define SCRIPT_HASH(TheClass) SCRIPT_HASH_SUB(TheClass, PluginBase)
-#define BUILT_IN_HASH(TheClass) SCRIPT_HASH_SUB(TheClass, ScriptContainer)
+#define SCRIPT_HASH(TheClass) SCRIPT_HASH_MACRO(TheClass, PluginBase, RegisterScriptFunction)
+#define BUILT_IN_HASH(TheClass) SCRIPT_HASH_MACRO(TheClass, ScriptContainer, RegisterBuiltInFunction)
+#define SCRIPT_HASH_SUB(TheClass, BaseClass) SCRIPT_HASH_MACRO(TheClass, BaseClass, RegisterScriptFunction)
 
 inline float PARAM_TO_FLOAT(int32 xi) {
 	float x;

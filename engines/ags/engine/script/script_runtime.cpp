@@ -98,8 +98,8 @@ void *ccGetSymbolAddress(const String &name) {
 	return nullptr;
 }
 
-bool ccAddExternalFunctionForPlugin(const String &name, Plugins::ScriptContainer *sc) {
-	return _GP(simp_for_plugin).add(name, RuntimeScriptValue().SetPluginMethod(sc, name), nullptr) == 0;
+bool ccAddExternalFunctionForPlugin(const String &name, Plugins::ScriptContainer *instance) {
+	return _GP(simp_for_plugin).add(name, RuntimeScriptValue().SetPluginMethod(instance, name), nullptr) == 0;
 }
 
 Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name) {
