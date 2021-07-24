@@ -855,6 +855,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 		} else {
 			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s')",
 			                           apl->filename, expect_filename.GetCStr());
+			_GP(plugins).pop_back();
 			continue;
 		}
 
