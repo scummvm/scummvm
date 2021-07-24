@@ -39,19 +39,22 @@ void DebugGrid::changeGridCamera() {
 		return;
 	}
 
-	if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressUp)) {
-		_engine->_grid->newCamera.z--;
-		_engine->_redraw->reqBgRedraw = true;
-	} else if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressDown)) {
-		_engine->_grid->newCamera.z++;
-		_engine->_redraw->reqBgRedraw = true;
+	Grid *grid = _engine->_grid;
+	Redraw *redraw = _engine->_redraw;
+	Input *input = _engine->_input;
+	if (input->isActionActive(TwinEActionType::DebugGridCameraPressUp)) {
+		grid->newCamera.z--;
+		redraw->reqBgRedraw = true;
+	} else if (input->isActionActive(TwinEActionType::DebugGridCameraPressDown)) {
+		grid->newCamera.z++;
+		redraw->reqBgRedraw = true;
 	}
-	if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressLeft)) {
-		_engine->_grid->newCamera.x--;
-		_engine->_redraw->reqBgRedraw = true;
-	} else if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressRight)) {
-		_engine->_grid->newCamera.x++;
-		_engine->_redraw->reqBgRedraw = true;
+	if (input->isActionActive(TwinEActionType::DebugGridCameraPressLeft)) {
+		grid->newCamera.x--;
+		redraw->reqBgRedraw = true;
+	} else if (input->isActionActive(TwinEActionType::DebugGridCameraPressRight)) {
+		grid->newCamera.x++;
+		redraw->reqBgRedraw = true;
 	}
 }
 
@@ -59,53 +62,58 @@ void DebugGrid::changeGrid() {
 	if (!canChangeScenes) {
 		return;
 	}
-	if (_engine->_input->toggleActionIfActive(TwinEActionType::NextRoom)) {
-		_engine->_scene->currentSceneIdx++;
-		if (_engine->_scene->currentSceneIdx >= LBA1SceneId::SceneIdMax) {
-			_engine->_scene->currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
+	Scene *scene = _engine->_scene;
+	Redraw *redraw = _engine->_redraw;
+	Input *input = _engine->_input;
+	if (input->toggleActionIfActive(TwinEActionType::NextRoom)) {
+		scene->currentSceneIdx++;
+		if (scene->currentSceneIdx >= LBA1SceneId::SceneIdMax) {
+			scene->currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 		}
-		_engine->_scene->needChangeScene = _engine->_scene->currentSceneIdx;
-		_engine->_redraw->reqBgRedraw = true;
+		scene->needChangeScene = scene->currentSceneIdx;
+		redraw->reqBgRedraw = true;
 	}
 
-	if (_engine->_input->toggleActionIfActive(TwinEActionType::PreviousRoom)) {
-		_engine->_scene->currentSceneIdx--;
-		if (_engine->_scene->currentSceneIdx < LBA1SceneId::Citadel_Island_Prison) {
-			_engine->_scene->currentSceneIdx = LBA1SceneId::SceneIdMax - 1;
+	if (input->toggleActionIfActive(TwinEActionType::PreviousRoom)) {
+		scene->currentSceneIdx--;
+		if (scene->currentSceneIdx < LBA1SceneId::Citadel_Island_Prison) {
+			scene->currentSceneIdx = LBA1SceneId::SceneIdMax - 1;
 		}
-		_engine->_scene->needChangeScene = _engine->_scene->currentSceneIdx;
-		_engine->_redraw->reqBgRedraw = true;
+		scene->needChangeScene = scene->currentSceneIdx;
+		redraw->reqBgRedraw = true;
 	}
 }
 
 void DebugGrid::applyCellingGrid() {
+	Grid *grid = _engine->_grid;
+	Input *input = _engine->_input;
 	// Increase celling grid index
-	if (_engine->_input->toggleActionIfActive(TwinEActionType::IncreaseCellingGridIndex)) {
-		_engine->_grid->cellingGridIdx++;
-		if (_engine->_grid->cellingGridIdx > 133) {
-			_engine->_grid->cellingGridIdx = 133;
+	if (input->toggleActionIfActive(TwinEActionType::IncreaseCellingGridIndex)) {
+		grid->cellingGridIdx++;
+		if (grid->cellingGridIdx > 133) {
+			grid->cellingGridIdx = 133;
 		}
 	}
 	// Decrease celling grid index
-	else if (_engine->_input->toggleActionIfActive(TwinEActionType::DecreaseCellingGridIndex)) {
-		_engine->_grid->cellingGridIdx--;
-		if (_engine->_grid->cellingGridIdx < 0) {
-			_engine->_grid->cellingGridIdx = 0;
+	else if (input->toggleActionIfActive(TwinEActionType::DecreaseCellingGridIndex)) {
+		grid->cellingGridIdx--;
+		if (grid->cellingGridIdx < 0) {
+			grid->cellingGridIdx = 0;
 		}
 	}
 	// Enable/disable celling grid
-	else if (_engine->_input->toggleActionIfActive(TwinEActionType::ApplyCellingGrid)) {
-		if (_engine->_grid->useCellingGrid == -1) {
-			_engine->_grid->useCellingGrid = 1;
+	else if (input->toggleActionIfActive(TwinEActionType::ApplyCellingGrid)) {
+		if (grid->useCellingGrid == -1) {
+			grid->useCellingGrid = 1;
 			//createGridMap();
-			_engine->_grid->initCellingGrid(_engine->_grid->cellingGridIdx);
-			debug("Enable Celling Grid index: %d", _engine->_grid->cellingGridIdx);
+			grid->initCellingGrid(grid->cellingGridIdx);
+			debug("Enable Celling Grid index: %d", grid->cellingGridIdx);
 			_engine->_scene->needChangeScene = -2; // tricky to make the fade
-		} else if (_engine->_grid->useCellingGrid == 1) {
-			_engine->_grid->useCellingGrid = -1;
-			_engine->_grid->createGridMap();
+		} else if (grid->useCellingGrid == 1) {
+			grid->useCellingGrid = -1;
+			grid->createGridMap();
 			_engine->_redraw->reqBgRedraw = true;
-			debug("Disable Celling Grid index: %d", _engine->_grid->cellingGridIdx);
+			debug("Disable Celling Grid index: %d", grid->cellingGridIdx);
 			_engine->_scene->needChangeScene = -2; // tricky to make the fade
 		}
 	}
