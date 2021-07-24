@@ -173,8 +173,10 @@ Globals::Globals() {
 	_dynamicallyCreatedSurfaces = new AGS::Shared::Bitmap *[MAX_DYNAMIC_SURFACES];
 	Common::fill(_dynamicallyCreatedSurfaces, _dynamicallyCreatedSurfaces +
 	             MAX_DYNAMIC_SURFACES, (AGS::Shared::Bitmap *)nullptr);
-	_palette = new color[256];
 	_maincoltable = new COLOR_MAP();
+	_palette = new color[256];
+	for (int i = 0; i < PALETTE_COUNT; ++i)
+		_palette[i].clear();
 
 	// draw_software.cpp globals
 	_BlackRects = new DirtyRects();

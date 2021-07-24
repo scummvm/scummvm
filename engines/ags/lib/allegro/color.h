@@ -53,6 +53,9 @@ struct color {
 
 	void readFromFile(AGS::Shared::Stream *file);
 	void writeToFile(AGS::Shared::Stream *file) const;
+	void clear() {
+		r = g = b = filler = 0;
+	}
 } PACKED_STRUCT;
 
 typedef color RGB;
