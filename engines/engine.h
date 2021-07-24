@@ -587,9 +587,19 @@ public:
 	inline Common::SaveFileManager *getSaveFileManager() { return _saveFileMan; }
 
 public:
-	/** On some systems, check whether the game appears to be run from CD. */
-	void checkCD();
-
+	/**
+	 * Check if extracted CD Audio files are found.
+	 */
+	bool existExtractedCDAudioFiles();
+	/**
+	 * On some systems, check whether the game appears to be run
+	 * from the same CD drive, which also should play CD audio.
+	 */
+	bool isDataAndCDAudioReadFromSameCD();
+	/**
+	 *Display a warning for no extracted CD Audio files found.
+	 */
+	void warnMissingExtractedCDAudio();
 
 	/**
 	 * Check whether it is time to autosave, and if so, do it.

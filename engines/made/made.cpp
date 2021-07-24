@@ -296,8 +296,12 @@ Common::Error MadeEngine::run() {
 		error ("Unknown MADE game");
 	}
 
-	if ((getFeatures() & GF_CD) || (getFeatures() & GF_CD_COMPRESSED))
-		checkCD();
+	if ((getFeatures() & GF_CD) || (getFeatures() & GF_CD_COMPRESSED)) {
+		if (!existExtractedCDAudioFiles()
+		    && !isDataAndCDAudioReadFromSameCD()) {
+			warnMissingExtractedCDAudio();
+		}
+	}
 
 	_autoStopSound = false;
 	_eventNum = _eventKey = _eventMouseX = _eventMouseY = 0;
