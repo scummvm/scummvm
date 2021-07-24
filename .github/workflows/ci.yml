@@ -31,7 +31,7 @@ jobs:
             configFlags: --enable-faad --enable-mpeg2 --enable-discord --disable-fribidi --disable-opengl
             vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib'
     env:
-      CONFIGURATION: Analysis
+      CONFIGURATION: Debug
       PLATFORM: ${{ matrix.platform }}
     steps:
       - name: Checkout
