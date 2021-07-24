@@ -153,7 +153,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_clipped = (clipped != 0);
 
 	// These help out with sorting. We calc them now, so it will be faster
-	si->_f32x32 = xd == 128 && yd == 128;
+	si->_fbigsq = (xd == 128 && yd == 128) || (xd == 256 && yd == 256) || (xd == 512 && yd == 512);
 	si->_flat = zd == 0;
 
 	si->_draw = info->is_draw();

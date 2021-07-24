@@ -43,7 +43,7 @@ struct SortItem {
 			_frame(0), _flags(0), _extFlags(0), _sx(0), _sy(0),
 			_sx2(0), _sy2(0), _x(0), _y(0), _z(0), _xLeft(0),
 			_yFar(0), _zTop(0), _sxLeft(0), _sxRight(0), _sxTop(0),
-			_syTop(0), _sxBot(0), _syBot(0),_f32x32(false), _flat(false),
+			_syTop(0), _sxBot(0), _syBot(0),_fbigsq(false), _flat(false),
 			_occl(false), _solid(false), _draw(false), _roof(false),
 			_noisy(false), _anim(false), _trans(false), _fixed(false),
 			_land(false), _occluded(false), _clipped(false), _sprite(false),
@@ -94,7 +94,7 @@ struct SortItem {
 	int32   _sxBot;      // Screenspace bounding box bottom x coord (RNB x coord) ss origin
 	int32   _syBot;      // Screenspace bounding box bottom extent  (RNB y coord) ss origin
 
-	bool    _f32x32 : 1;         // Needs 1 bit  0
+	bool    _fbigsq : 1;         // Needs 1 bit  0
 	bool    _flat : 1;           // Needs 1 bit  1
 	bool    _occl : 1;           // Needs 1 bit  2
 	bool    _solid : 1;          // Needs 1 bit  3
@@ -347,9 +347,9 @@ inline bool SortItem::below(const SortItem &si2) const {
 		if (si1._occl != si2._occl)
 			return si1._occl > si2._occl;
 
-		// 32x32 flats get drawn first
-		if (si1._f32x32 != si2._f32x32)
-			return si1._f32x32 > si2._f32x32;
+		// Large flats squares get drawn first
+		if (si1._fbigsq != si2._fbigsq)
+			return si1._fbigsq > si2._fbigsq;
 	}
 	// Mixed, or non flat
 	else {
@@ -420,8 +420,8 @@ ConsoleStream &operator<<(ConsoleStream &cs, const SortItem &si) {
 		cs << "solid ";
 	if (si._occl)
 		cs << "occl ";
-	if (si._f32x32)
-		cs << "f32x32 ";
+	if (si._fbigsq)
+		cs << "fbigsq ";
 	if (si._roof)
 		cs << "roof ";
 	if (si._land)

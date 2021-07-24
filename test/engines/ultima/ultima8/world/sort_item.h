@@ -74,4 +74,57 @@ class U8SortItemTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(!si2.below(si1));
 	}
 
+	/* Overlapping flat items (generally the floor) follow a set of rules */
+	void test_flat_sort() {
+		Ultima::Ultima8::SortItem si1(nullptr);
+		Ultima::Ultima8::SortItem si2(nullptr);
+
+		si1._x = si2._x = si1._y = si2._y = 10;
+
+		si1._flat = true;
+		si2._flat = true;
+
+		// If one has a higher z, it's above
+		si2._z = 1;
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+		si2._z = 0;
+
+		// Animated always gets drawn above
+		si1._anim = true;
+		TS_ASSERT(si2.below(si1));
+		TS_ASSERT(!si1.below(si2));
+		si1._anim = false;
+
+		// Trans always gets drawn above
+		si1._trans = true;
+		TS_ASSERT(si2.below(si1));
+		TS_ASSERT(!si1.below(si2));
+		si1._trans = false;
+
+		// Draw always gets drawn below
+		si1._draw = true;
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+		si1._draw = false;
+
+		// Solid always gets drawn below
+		si1._solid = true;
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+		si1._solid = false;
+
+		// Occludes always get drawn below
+		si1._occl = true;
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+		si1._occl = false;
+
+		// Large flat squares get drawn below
+		si1._fbigsq = true;
+		TS_ASSERT(si1.below(si2));
+		TS_ASSERT(!si2.below(si1));
+		si1._fbigsq = false;
+	}
+
 };
