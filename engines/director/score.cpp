@@ -713,9 +713,9 @@ void Score::playSoundChannel(uint16 frameId) {
 	DirectorSound *sound = _vm->getSoundManager();
 
 	// 0x0f represent sample sound
-	if (frame->_soundType1 == 0x0f) {
+	if (frame->_soundType1 && frame->_soundType1 <= 0x0f) {
 		if (_sampleSounds.empty())
-			loadSampleSounds(0x0f);
+			loadSampleSounds(frame->_soundType1);
 
 		if ((uint)frame->_sound1.member <= _sampleSounds.size()) {
 			sound->playExternalSound(_sampleSounds[frame->_sound1.member - 1], 1, frame->_sound1.member);
@@ -724,12 +724,13 @@ void Score::playSoundChannel(uint16 frameId) {
 		sound->playCastMember(frame->_sound1, 1, false);
 	}
 
-	if (frame->_soundType2 == 0x0f) {
+	if (frame->_soundType2 && frame->_soundType2 <= 0x0f) {
 		if (_sampleSounds.empty())
-			loadSampleSounds(0x0f);
+			loadSampleSounds(frame->_soundType2);
 
-		if ((uint)frame->_sound2.member <= _sampleSounds.size())
+		if ((uint)frame->_sound2.member <= _sampleSounds.size()) {
 			sound->playExternalSound(_sampleSounds[frame->_sound2.member - 1], 2, frame->_sound2.member);
+		}
 	} else {
 		sound->playCastMember(frame->_sound2, 2, false);
 	}
