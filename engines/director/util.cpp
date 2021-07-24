@@ -233,6 +233,11 @@ Common::String convertPath(Common::String &path) {
 	} else if (path.hasPrefix("@:")) { // Root of the game
 		res = ".\\";
 		idx = 2;
+	} else if (path.size() >= 3
+					&& Common::isAlpha(path[0])
+					&& path[1] == ':'
+					&& path[2] == '\\') { // Windows drive letter
+		idx = 3;
 	} else {
 		res = ".\\";
 
