@@ -1725,6 +1725,14 @@ public:
 	virtual void logMessage(LogMessageType::Type type, const char *message) = 0;
 
 	/**
+	 * Display a dialog box containing the given message.
+	 *
+	 * @param type    Type of the message.
+	 * @param message The message itself.
+	 */
+	virtual void messageBox(LogMessageType::Type type, const char *message) {}
+
+	/**
 	 * Open the log file in a way that allows the user to review it,
 	 * and possibly email it (or parts of it) to the ScummVM team,
 	 * for example as part of a bug report.

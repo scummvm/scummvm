@@ -79,7 +79,9 @@ static void defaultOutputFormatter(char *dst, const char *src, size_t dstSize) {
 	}
 }
 
-static void defaultErrorHandler(const char *msg) {
+static bool defaultErrorHandler(const char *msg) {
+	bool handled = false;
+
 	// Unless this error -originated- within the debugger itself, we
 	// now invoke the debugger, if available / supported.
 	if (g_engine) {
@@ -92,6 +94,7 @@ static void defaultErrorHandler(const char *msg) {
 		if (debugger && !debugger->isActive()) {
 			debugger->attach(msg);
 			debugger->onFrame();
+			handled = true;
 		}
 
 
@@ -100,6 +103,8 @@ static void defaultErrorHandler(const char *msg) {
 #endif
 
 	}
+
+	return handled;
 }
 
 // Chained games manager

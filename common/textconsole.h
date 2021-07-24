@@ -58,7 +58,7 @@ void setErrorOutputFormatter(OutputFormatter f);
  * A typical example would be a function that shows a debug
  * console and displays the given message in it.
  */
-typedef void (*ErrorHandler)(const char *msg);
+typedef bool (*ErrorHandler)(const char *msg);
 
 /**
  * Set a callback that is invoked by error() after the error

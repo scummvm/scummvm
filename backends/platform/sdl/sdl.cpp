@@ -608,6 +608,26 @@ bool OSystem_SDL::setTextInClipboard(const Common::U32String &text) {
 	Common::String utf8Text = text.encode();
 	return SDL_SetClipboardText(utf8Text.c_str()) == 0;
 }
+
+void OSystem_SDL::messageBox(LogMessageType::Type type, const char *message) {
+	Uint32 flags = 0;
+
+	switch (type) {
+	case LogMessageType::kError:
+		flags = SDL_MESSAGEBOX_ERROR;
+		break;
+	case LogMessageType::kWarning:
+		flags = SDL_MESSAGEBOX_WARNING;
+		break;
+	case LogMessageType::kInfo:
+	case LogMessageType::kDebug:
+	default:
+		flags = SDL_MESSAGEBOX_INFORMATION;
+		break;
+	}
+
+	SDL_ShowSimpleMessageBox(flags, "ScummVM", message, _window ? _window->getSDLWindow() : nullptr);
+}
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 14)
