@@ -105,16 +105,16 @@ void DebugGrid::applyCellingGrid() {
 	else if (input->toggleActionIfActive(TwinEActionType::ApplyCellingGrid)) {
 		if (grid->useCellingGrid == -1) {
 			grid->useCellingGrid = 1;
-			//createGridMap();
+			//grid->createGridMap();
 			grid->initCellingGrid(grid->cellingGridIdx);
 			debug("Enable Celling Grid index: %d", grid->cellingGridIdx);
-			_engine->_scene->needChangeScene = -2; // tricky to make the fade
+			_engine->_scene->needChangeScene = SCENE_CEILING_GRID_FADE_2; // tricky to make the fade
 		} else if (grid->useCellingGrid == 1) {
 			grid->useCellingGrid = -1;
 			grid->createGridMap();
 			_engine->_redraw->reqBgRedraw = true;
 			debug("Disable Celling Grid index: %d", grid->cellingGridIdx);
-			_engine->_scene->needChangeScene = -2; // tricky to make the fade
+			_engine->_scene->needChangeScene = SCENE_CEILING_GRID_FADE_2; // tricky to make the fade
 		}
 	}
 }

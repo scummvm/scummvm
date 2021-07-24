@@ -1011,7 +1011,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		_scene->sceneHero->staticFlags.bIsHidden = 0;
 	}
 
-	_scene->needChangeScene = -1;
+	_scene->needChangeScene = SCENE_CEILING_GRID_FADE_1;
 	_redraw->reqBgRedraw = false;
 
 	return 0;

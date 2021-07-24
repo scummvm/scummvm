@@ -280,6 +280,9 @@ enum class ZoneType {
 	kLadder = 6    // Hero can climb on it
 };
 
+#define SCENE_CEILING_GRID_FADE_1 (-1)
+#define SCENE_CEILING_GRID_FADE_2 (-2)
+
 enum LBA1SceneId {
 	Citadel_Island_Prison = 0,
 	Citadel_Island_outside_the_citadel = 1,

@@ -534,7 +534,7 @@ void Scene::changeScene() {
 
 	_engine->_renderer->setLightVector(alphaLight, betaLight, ANGLE_0);
 
-	if (previousSceneIdx != -1 && previousSceneIdx != needChangeScene) {
+	if (previousSceneIdx != SCENE_CEILING_GRID_FADE_1 && previousSceneIdx != needChangeScene) {
 		_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
 		_engine->_actor->previousHeroAngle = sceneHero->angle;
 		_engine->autoSave();
@@ -560,7 +560,7 @@ void Scene::changeScene() {
 	_engine->_grid->cellingGridIdx = -1;
 	_engine->_screens->lockPalette = false;
 
-	needChangeScene = -1;
+	needChangeScene = SCENE_CEILING_GRID_FADE_1;
 	enableGridTileRendering = true;
 
 	_engine->_renderer->setLightVector(alphaLight, betaLight, ANGLE_0);

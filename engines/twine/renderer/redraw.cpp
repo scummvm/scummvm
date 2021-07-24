@@ -679,7 +679,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 
 	if (bgRedraw) {
 		_engine->freezeTime();
-		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {
+		if (_engine->_scene->needChangeScene != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->needChangeScene != SCENE_CEILING_GRID_FADE_2) {
 			_engine->_screens->fadeOut(_engine->_screens->paletteRGBA);
 		}
 		_engine->_screens->clearScreen();
@@ -687,7 +687,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->projPosScreen.x, _engine->_renderer->projPosScreen.y);
 		_engine->saveFrontBuffer();
 
-		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {
+		if (_engine->_scene->needChangeScene != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->needChangeScene != SCENE_CEILING_GRID_FADE_2) {
 			_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
 		}
 	} else {
@@ -709,11 +709,11 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 
 	_engine->_interface->resetClip();
 
-	// make celling grid fade
+	// make ceiling grid fade
 	// need to be here to fade after drawing all actors in scene
-	if (_engine->_scene->needChangeScene == -2) {
+	if (_engine->_scene->needChangeScene == SCENE_CEILING_GRID_FADE_2) {
 		_engine->crossFade(_engine->_screens->paletteRGBA);
-		_engine->_scene->needChangeScene = -1;
+		_engine->_scene->needChangeScene = SCENE_CEILING_GRID_FADE_1;
 	}
 
 	if (bgRedraw) {

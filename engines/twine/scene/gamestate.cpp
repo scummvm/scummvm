@@ -115,7 +115,7 @@ void GameState::initEngineVars() {
 	_engine->_scene->newHeroPos.y = 0x1800;
 	_engine->_scene->newHeroPos.z = 0x2000;
 
-	_engine->_scene->currentSceneIdx = -1;
+	_engine->_scene->currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
 	_engine->_scene->needChangeScene = LBA1SceneId::Citadel_Island_Prison;
 	_engine->quitGame = -1;
 	_engine->_scene->mecaPinguinIdx = -1;
@@ -221,7 +221,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		file->readUint32LE();
 	}
 
-	_engine->_scene->currentSceneIdx = -1;
+	_engine->_scene->currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
 	_engine->_scene->heroPositionType = ScenePositionType::kReborn;
 	return true;
 }
