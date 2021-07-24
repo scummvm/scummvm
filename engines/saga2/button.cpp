@@ -483,6 +483,16 @@ gCompButton::gCompButton(gPanelList &list, const StaticRect &box, void **images,
 	extent        = box;
 }
 
+gCompButton::gCompButton(gPanelList &list, const Rect16 &box, AppFunc *cmd) : gCompImage(list, box, NULL, 0, cmd) {
+	forImage    = NULL;
+	resImage    = NULL;
+	dimImage    = NULL;
+
+	internalAlloc   = false;
+	dimmed          = false;
+	extent          = box;
+}
+
 gCompButton::~gCompButton(void) {
 	if (internalAlloc) {
 		if (forImage) {

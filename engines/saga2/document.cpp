@@ -788,19 +788,15 @@ int16 openBook(uint16 textScript) {
 	CDocument       *win = NULL;
 
 	gCompButton *closeBook;
-	void** closeBtnImage;
-	uint16 buttonResID = 0;
 	hResContext *decRes;
 
 	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
-
-	closeBtnImage = loadButtonRes(decRes, buttonResID, numBtnImages);
 
 	// create the window
 	win = new CDocument(bookAppearance, bookText, &Script10Font, 0, NULL);
 
 	// make the quit button
-	closeBook = new gCompButton(*win, bookAppearance.closeRect, closeBtnImage, numBtnImages, 0, cmdDocumentQuit);
+	closeBook = new gCompButton(*win, bookAppearance.closeRect, cmdDocumentQuit);
 	closeBook->accelKey = 0x1B;
 
 	// attach the structure to the book, open the book
@@ -812,8 +808,6 @@ int16 openBook(uint16 textScript) {
 
 	// remove the window all attatched controls
 	delete  win;
-
-	unloadImageRes(closeBtnImage, numBtnImages);
 
 	if (decRes)
 		resFile->disposeContext(decRes);
@@ -841,18 +835,14 @@ int16 openParchment(uint16 textScript) {
 	CDocument       *win = NULL;
 
 	gCompButton *closeParchment;
-	void** closeBtnImage;
-	uint16 buttonResID = 0;
 	hResContext *decRes;
 
 	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
 
-	closeBtnImage = loadButtonRes(decRes, buttonResID, numBtnImages);
-
 	// create the window
 	win = new CDocument(parchAppearance, bookText, &Script10Font, 0, NULL);
 	// make the quit button
-	closeParchment = new gCompButton(*win, parchAppearance.closeRect, closeBtnImage, numBtnImages, 0, cmdDocumentQuit);
+	closeParchment = new gCompButton(*win, parchAppearance.closeRect, cmdDocumentQuit);
 	closeParchment->accelKey = 0x1B;
 
 	// attach the structure to the book, open the book
@@ -864,8 +854,6 @@ int16 openParchment(uint16 textScript) {
 
 	// remove the window all attatched controls
 	delete  win;
-
-	unloadImageRes(closeBtnImage, numBtnImages);
 
 	if (decRes)
 		resFile->disposeContext(decRes);
