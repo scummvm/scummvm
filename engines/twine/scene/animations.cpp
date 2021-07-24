@@ -649,7 +649,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 	if (actor->staticFlags.bComputeCollisionWithBricks) {
 		_engine->_collision->collision.y = 0;
 
-		ShapeType brickShape = _engine->_grid->getBrickShape(_engine->_movements->previousActor.x, _engine->_movements->previousActor.y, _engine->_movements->previousActor.z);
+		ShapeType brickShape = _engine->_grid->getBrickShape(_engine->_movements->previousActor);
 
 		if (brickShape != ShapeType::kNone) {
 			if (brickShape != ShapeType::kSolid) {
@@ -706,7 +706,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			}
 		}
 
-		brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActor.x, _engine->_movements->processActor.y, _engine->_movements->processActor.z);
+		brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActor);
 		actor->setBrickShape(brickShape);
 
 		if (brickShape != ShapeType::kNone) {
