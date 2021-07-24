@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/punycode.h"
 #include "common/textconsole.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs-factory.h"
@@ -289,6 +290,9 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 		// don't touch name as it might be used for warning messages
 		String lowercaseName = name;
 		lowercaseName.toLowercase();
+
+		// We transparently decode any punycode-named files
+		lowercaseName = punycode_decodefilename(lowercaseName);
 
 		// since the hashmap is case insensitive, we need to check for clashes when caching
 		if (it->isDirectory()) {

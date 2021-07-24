@@ -43,6 +43,7 @@
  */
 
 #include "common/punycode.h"
+#include "common/debug.h"
 #include "common/util.h"
 
 namespace Common {
@@ -211,12 +212,11 @@ String punycode_decode(const String src1) {
 
 	String src(&src1.c_str()[4]); // Skip the prefix for simplification
 	int srclen = src.size();
-	String dst;
 
 	/* Ensure that the input contains only ASCII characters. */
 	for (int si = 0; si < srclen; si++) {
 		if (src[si] & 0x80) {
-			return dst;
+			return src1;
 		}
 	}
 
@@ -224,6 +224,8 @@ String punycode_decode(const String src1) {
 
 	if (di == String::npos)
 		return src;
+
+	String dst;
 
 	for (int i = 0; i < di; i++) {
 		dst += src[i];
@@ -241,13 +243,14 @@ String punycode_decode(const String src1) {
 			int digit = decode_digit(src[si++]);
 
 			if (digit == SIZE_MAX) {
-				goto fail;
+				warning("punycode_decode: incorrect digit");
+				return src1;
 			}
 
 			if (digit > (SIZE_MAX - i) / w) {
 				/* OVERFLOW */
-				assert(0 && "OVERFLOW");
-				goto fail;
+				warning("punycode_decode: overflow1");
+				return src1;
 			}
 
 			i += digit * w;
@@ -267,8 +270,8 @@ String punycode_decode(const String src1) {
 
 			if (w > SIZE_MAX / (BASE - t)) {
 				/* OVERFLOW */
-				assert(0 && "OVERFLOW");
-				goto fail;
+				warning("punycode_decode: overflow2");
+				return src1;
 			}
 
 			w *= BASE - t;
@@ -278,8 +281,8 @@ String punycode_decode(const String src1) {
 
 		if (i / (di + 1) > SIZE_MAX - n) {
 			/* OVERFLOW */
-			assert(0 && "OVERFLOW");
-			goto fail;
+				warning("punycode_decode: overflow3");
+			return src1;
 		}
 
 		n += i / (di + 1);
@@ -292,14 +295,17 @@ String punycode_decode(const String src1) {
 		i++;
 	}
 
-fail:
-
 	return dst;
 }
 
 String punycode_decodefilename(const String src1) {
 	String dst;
 	String src = punycode_decode(src1);
+
+	// Check if the string did not change which could be
+	// also on decoding failure
+	if (src == src1)
+		return src;
 
 	for (int i = 0; i < src.size(); i++) {
 		if ((byte)src[i] == 0x81 && i + 1 < src.size()) {
