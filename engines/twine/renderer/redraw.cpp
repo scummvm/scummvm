@@ -188,8 +188,8 @@ void Redraw::updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 	int32 drawListPos = 0;
-	for (int32 modelActorPos = 0; modelActorPos < _engine->_scene->sceneNumActors; modelActorPos++) {
-		ActorStruct *actor = _engine->_scene->getActor(modelActorPos);
+	for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
+		ActorStruct *actor = _engine->_scene->getActor(a);
 		actor->dynamicFlags.bIsVisible = 0; // reset visible state
 
 		if (_engine->_grid->useCellingGrid != -1 && actor->pos.y > _engine->_scene->sceneZones[_engine->_grid->cellingGridIdx].maxs.y) {
@@ -226,13 +226,13 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 
 			if (actor->staticFlags.bIsSpriteActor) {
 				drawList[drawListPos].type = DrawListType::DrawActorSprites;
-				drawList[drawListPos].actorIdx = modelActorPos;
+				drawList[drawListPos].actorIdx = a;
 				if (actor->staticFlags.bUsesClipping) {
 					tmpVal = actor->lastPos.x - _engine->_grid->camera.x + actor->lastPos.z - _engine->_grid->camera.z;
 				}
 			} else {
 				drawList[drawListPos].type = 0;
-				drawList[drawListPos].actorIdx = modelActorPos;
+				drawList[drawListPos].actorIdx = a;
 			}
 
 			drawList[drawListPos].posValue = tmpVal;
@@ -258,7 +258,7 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 				drawList[drawListPos].offset = 2;
 				drawListPos++;
 			}
-			if (inSceneryView && modelActorPos == _engine->_scene->currentlyFollowedActor) {
+			if (inSceneryView && a == _engine->_scene->currentlyFollowedActor) {
 				_sceneryViewX = _engine->_renderer->projPos.x;
 				_sceneryViewY = _engine->_renderer->projPos.y;
 			}

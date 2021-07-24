@@ -187,9 +187,9 @@ bool Scene::loadSceneLBA2() {
 
 	sceneNumActors = stream.readUint16LE();
 	int cnt = 1;
-	for (int32 i = 1; i < sceneNumActors; i++, cnt++) {
-		_engine->_actor->resetActor(i);
-		ActorStruct *act = &_sceneActors[i];
+	for (int32 a = 1; a < sceneNumActors; a++, cnt++) {
+		_engine->_actor->resetActor(a);
+		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint32LE());
 
 		act->loadModel(stream.readUint16LE());
@@ -232,7 +232,7 @@ bool Scene::loadSceneLBA2() {
 
 		if (_engine->_debugScene->onlyLoadActor != -1 && _engine->_debugScene->onlyLoadActor != cnt) {
 			sceneNumActors--;
-			i--;
+			a--;
 		}
 	}
 
@@ -317,10 +317,10 @@ bool Scene::loadSceneLBA1() {
 
 	sceneNumActors = stream.readUint16LE();
 	int cnt = 1;
-	for (int32 i = 1; i < sceneNumActors; i++, cnt++) {
-		_engine->_actor->resetActor(i);
+	for (int32 a = 1; a < sceneNumActors; a++, cnt++) {
+		_engine->_actor->resetActor(a);
 
-		ActorStruct *act = &_sceneActors[i];
+		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint16LE());
 
 		act->loadModel(stream.readUint16LE());
@@ -360,7 +360,7 @@ bool Scene::loadSceneLBA1() {
 
 		if (_engine->_debugScene->onlyLoadActor != -1 && _engine->_debugScene->onlyLoadActor != cnt) {
 			sceneNumActors--;
-			i--;
+			a--;
 		}
 	}
 
