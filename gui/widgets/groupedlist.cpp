@@ -218,12 +218,17 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 		return;
 
 	// First check whether the selection changed
-	int newSelectedItem = findItem(x, y);
-	if (_selectedItem != newSelectedItem && newSelectedItem != -1) {
+	int entryUnderMouse = findItem(x, y);
+	int newSelectedItem = _listIndex[entryUnderMouse];
+	if (_selectedItem != newSelectedItem && newSelectedItem > -1) {
 		if (_editMode)
 			abortEditMode();
 		_selectedItem = newSelectedItem;
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
+	} else if (newSelectedItem <= kGroupTag) {
+			int groupID = -newSelectedItem + kGroupTag;
+			toggleGroup(groupID);
+			warning("%d", groupID);
 	}
 
 	// TODO: Determine where inside the string the user clicked and place the
@@ -240,10 +245,6 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 		int selectID = getSelected();
 		if (selectID >= 0) {
 			sendCommand(kListItemDoubleClickedCmd, _selectedItem);
-		} else if (selectID <= kGroupTag) {
-			int groupID = -selectID + kGroupTag;
-			toggleGroup(groupID);
-			warning("%d", groupID);
 		}
 	}
 }
@@ -333,7 +334,7 @@ void GroupedListWidget::drawWidget() {
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 
 		// Draw the selected item inverted, on a highlighted background.
-		if (_selectedItem == pos)
+		if (_selectedItem == _listIndex[pos])
 			inverted = _inversion;
 
 		Common::Rect r(getEditRect());
