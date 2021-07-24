@@ -969,8 +969,8 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 				// fake it here
 				for (int ii = 0; ii < _tempSurface.h; ii++) {
 					const byte *src = (const byte *)_tempSurface.getBasePtr(0, ii);
-					byte *dst = (byte *)_screen.getBasePtr(x, y+ii);
-					byte pat = _wm->getPatterns()[kPatternCheckers2 - 1][ii % 8];
+					byte *dst = (byte *)_screen.getBasePtr(x, y + ii);
+					byte pat = _wm->getBuiltinPatterns()[kPatternCheckers2 - 1][ii % 8];
 					for (int j = 0; j < r->width(); j++) {
 						if (*src != _wm->_colorGreen && (pat & (1 << (7 - (x + j) % 8))))
 							*dst = *src;
@@ -979,6 +979,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 					}
 				}
 			}
+
 		} else { // Delimiter
 			bool flip = r->left & 2;
 			byte *ptr = (byte *)_screen.getBasePtr(r->left + 1, y + _menuDropdownItemHeight / 2);

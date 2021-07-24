@@ -203,6 +203,10 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 			_patterns.push_back(fillPatterns[i]);
 	}
 
+	// builtin pattern
+	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
+		_builtinPatterns.push_back(fillPatterns[i]);
+
 	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
 
 	_paletteSize = ARRAYSIZE(palette) / 3;

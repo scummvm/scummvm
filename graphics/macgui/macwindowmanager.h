@@ -272,6 +272,8 @@ public:
 	 */
 	void setActiveWidget(MacWidget *widget);
 
+	MacPatterns  &getBuiltinPatterns() { return _builtinPatterns; }
+
 	MacWidget *getActiveWidget() { return _activeWidget; }
 
 	Common::Rect getScreenBounds() { return _screen ? _screen->getBounds() : _screenDims; }
@@ -384,6 +386,7 @@ private:
 	bool _inEditableArea;
 
 	MacPatterns _patterns;
+	MacPatterns _builtinPatterns;
 	byte *_palette;
 	uint _paletteSize;
 
