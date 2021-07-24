@@ -53,7 +53,7 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 
 	registerCmd("obj_name", WRAP_METHOD(Console, cmdObjName));
 
-	registerCmd("name2id", WRAP_METHOD(Console, cmdObjNameToID));
+	registerCmd("nid2id", WRAP_METHOD(Console, cmdObjNameIndexToID));
 
 	registerCmd("search_obj", WRAP_METHOD(Console, cmdSearchObj));
 
@@ -123,7 +123,7 @@ bool Console::cmdObjName(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdObjNameToID(int argc, const char **argv) {
+bool Console::cmdObjNameIndexToID(int argc, const char **argv) {
 	if (argc != 2)
 		debugPrintf("Usage: %s <Name index>\n", argv[0]);
 	else {
@@ -141,11 +141,18 @@ bool Console::cmdSearchObj(int argc, const char **argv) {
 	if (argc != 2)
 		debugPrintf("Usage: %s <Object name>\n", argv[0]);
 	else {
-		for (int i = 0; i < objectCount; ++i) {
-			Common::String objName = objectList[i].objName();
-			objName.toLowercase();
-			if (objName.contains(argv[1]))
-				debugPrintf("%d: %s\n", i, objectList[i].objName());
+		Common::String name = argv[1];
+		Common::Array<ObjectID> array = GameObject::nameToID(name);
+
+		if (array.size() == 0)
+			debugPrintf("No objects found!\n");
+		else {
+			for (uint i = 0; i < array.size(); ++i) {
+			ObjectID id = array[i];
+
+			GameObject *obj = GameObject::objectAddress(id);
+			debugPrintf("%s: %d\n", obj->objName(), id);
+			}
 		}
 	}
 

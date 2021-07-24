@@ -198,7 +198,11 @@ public:
 	//  Converts object ID into prototype address...
 	static ProtoObj *protoAddress(ObjectID id);
 
+	// Returns first object id found associate with the given name index
 	static int32 nameIndexToID(uint16 ind);
+
+	// Returns first object id found assciated with the given name
+	static Common::Array<ObjectID> nameToID(Common::String name);
 
 	//  object creation and deletion
 	static GameObject *newObject(void);      // get a newly created object

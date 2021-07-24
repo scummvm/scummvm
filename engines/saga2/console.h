@@ -43,7 +43,7 @@ private:
 
 	bool cmdObjName(int argc, const char **argv);
 
-	bool cmdObjNameToID(int argc, const char **argv);
+	bool cmdObjNameIndexToID(int argc, const char **argv);
 
 	bool cmdSearchObj(int argc, const char **argv);
 

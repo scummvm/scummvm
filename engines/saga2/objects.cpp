@@ -421,6 +421,34 @@ int32 GameObject::nameIndexToID(uint16 ind) {
 	return -1;
 }
 
+Common::Array<ObjectID> GameObject::nameToID(Common::String name) {
+	Common::Array<ObjectID> array;
+	name.toLowercase();
+
+	for (int i = 0; i < objectCount; ++i) {
+		Common::String objName = objectList[i].objName();
+		objName.toLowercase();
+		if (objName.contains(name))
+			array.push_back(objectList[i].thisID());
+	}
+
+	for (int i = 0; i < kActorCount; ++i) {
+		Common::String objName = g_vm->_actorList[i]->objName();
+		objName.toLowercase();
+		if (objName.contains(name))
+			array.push_back(g_vm->_actorList[i]->thisID());
+	}
+
+	for (int i = 0; i < worldCount; ++i) {
+		Common::String objName = worldList[i].objName();
+		objName.toLowercase();
+		if (objName.contains(name))
+			array.push_back(worldList[i].thisID());
+	}
+
+	return array;
+}
+
 
 uint16 GameObject::containmentSet(void) {
 	return  prototype->containmentSet();
