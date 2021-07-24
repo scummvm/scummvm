@@ -49,7 +49,7 @@ const byte milesMT32SysExInitReverb[] = {
 };
 
 MidiDriver_Miles_Midi::MidiDriver_Miles_Midi(MusicType midiType, MilesMT32InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount) :
-		MidiDriver_MT32GM(midiType), _noteCounter(0) {
+		MidiDriver_MT32GM(midiType), _noteCounter(0), _milesVersion(MILES_VERSION_2) {
 	memset(_patchesBank, 0, sizeof(_patchesBank));
 
 	_instrumentTablePtr = instrumentTablePtr;
@@ -98,35 +98,75 @@ void MidiDriver_Miles_Midi::initMidiDevice() {
 	}
 
 	// Set Miles default controller values
-	// Note that AIL/MSS apparently did not get full support for GM until
-	// version 3.00 in 09/1994. Many games used the MT-32 driver to
-	// implement GM support. As a result, default parameters were only sent
-	// out on the MT-32 channels (2-10). Also, the default MT-32 instrument
-	// numbers were set on GM devices, even though they map to different
-	// instruments. This is reproduced here to prevent possible issues with
-	// games that depend on this behavior.
+	if (_milesVersion == MILES_VERSION_2) {
+		// Note that AIL/MSS apparently did not get full support for GM until
+		// version 3.00 in 09/1994. Many games used the MT-32 driver to
+		// implement GM support. As a result, default parameters were only sent
+		// out on the MT-32 channels (2-10). Also, the default MT-32 instrument
+		// numbers were set on GM devices, even though they map to different
+		// instruments. This is reproduced here to prevent possible issues with
+		// games that depend on this behavior.
 
-	for (int i = 1; i < 10; ++i) {
-		// Volume 7F (max)
-		send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_VOLUME, 0x7F);
-		if (_midiType == MT_MT32) {
-			// Panning center - not the MT-32 default for all channels
-			send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_PANNING, 0x40);
-		}
-		// Patch
-		if (i != MIDI_RHYTHM_CHANNEL) {
-			if (_midiType == MT_GM) {
+		for (int i = 1; i < 10; ++i) {
+			// Volume 7F (max)
+			send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_VOLUME, 0x7F);
+			if (_midiType == MT_MT32) {
+				// Panning center - not the MT-32 default for all channels
+				send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_PANNING, 0x40);
+			}
+			// Patch
+			if (_midiType == MT_GM && i != MIDI_RHYTHM_CHANNEL) {
 				// Send the MT-32 default instrument numbers out to GM devices.
 				send(-1, MIDI_COMMAND_PROGRAM_CHANGE | i, MT32_DEFAULT_INSTRUMENTS[i - 1], 0);
 			}
+			// The following settings are also sent out by the AIL driver:
+			// - Modulation 0
+			// - Expression 7F (max)
+			// - Sustain off
+			// - Pitch bend neutral
+			// These are the default MT-32 and GM settings, so it is not
+			// necessary to send these.
 		}
-		// The following settings are also sent out by the AIL driver:
-		// - Modulation 0
-		// - Expression 7F (max)
-		// - Sustain off
-		// - Pitch bend neutral
-		// These are the default MT-32 and GM settings, so it is not
-		// necessary to send these.
+	} else {
+		// MSS 3 initialization
+		for (int i = (_midiType == MT_GM ? 0 : 1); i < (_midiType == MT_GM ? MIDI_CHANNEL_COUNT : 10); ++i) {
+			// Patch
+			if (_midiType == MT_MT32 && i != MIDI_RHYTHM_CHANNEL) {
+				// Set instrument to 0.
+				send(-1, MIDI_COMMAND_PROGRAM_CHANGE | i, 0, 0);
+			}
+			// Volume 7F (max)
+			send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_VOLUME, 0x7F);
+			if (_midiType == MT_MT32) {
+				// Panning center - not the MT-32 default for all channels
+				send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_PANNING, 0x40);
+			}
+			if (_midiType == MT_GM) {
+				// Reverb 28h
+				send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_REVERB, 0x28);
+			}
+			// Pitch bend range 2 semitones
+			// TODO Some games seem to initialize this to a different value, so
+			// this might need to be configurable.
+			send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_RPN_LSB, 0x00);
+			send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_RPN_MSB, 0x00);
+			if (_midiType == MT_GM) {
+				// MT-32 does not respond to the LSB, so only send it out for GM
+				send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_DATA_ENTRY_LSB, 0x00);
+			}
+			send(-1, MIDI_COMMAND_CONTROL_CHANGE | i, MIDI_CONTROLLER_DATA_ENTRY_MSB, 0x02);
+
+			// MSS 3 also sets the following settings:
+			// - Program 0 (also for GM)
+			// - Pitch bend neutral
+			// - Modulation 0
+			// - Panning center (also for GM)
+			// - Expression 7F
+			// - Sustain off
+			// - Chorus 0
+			// These are the default settings, so it is not necessary to send
+			// these.
+		}
 	}
 }
 
@@ -890,6 +930,28 @@ void MidiDriver_Miles_Midi::applySourceVolume(uint8 source) {
 		if (channelData && channelData->volume != 0xFF)
 			controlChange(i, MIDI_CONTROLLER_VOLUME, channelData->volume, channelData->source, *channelData, channelLockedByOtherSource);
 	}
+}
+
+uint32 MidiDriver_Miles_Midi::property(int prop, uint32 param) {
+	switch (prop) {
+	case PROP_MILES_VERSION:
+		if (param == 0xFFFF)
+			return _milesVersion;
+
+		switch (param) {
+		case MILES_VERSION_3:
+			_milesVersion = MILES_VERSION_3;
+			break;
+		case MILES_VERSION_2:
+		default:
+			_milesVersion = MILES_VERSION_2;
+		}
+
+		break;
+	default:
+		return MidiDriver_Multisource::property(prop, param);
+	}
+	return 0;
 }
 
 } // End of namespace Audio

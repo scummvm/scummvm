@@ -118,6 +118,11 @@ public:
 
 class MidiDriver_Miles_Midi : public MidiDriver_MT32GM, public MidiDriver_Miles_Xmidi_Timbres {
 public:
+	enum MilesVersion {
+		MILES_VERSION_2 = 2,
+		MILES_VERSION_3
+	};
+
 	MidiDriver_Miles_Midi(MusicType midiType, MilesMT32InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount);
 	~MidiDriver_Miles_Midi();
 
@@ -134,6 +139,8 @@ public:
 	void deinitSource(uint8 source) override;
 
 	void stopAllNotes(bool stopSustainedNotes = false) override;
+
+	uint32 property(int prop, uint32 param) override;
 
 	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) override;
 
@@ -276,6 +283,9 @@ private:
 			memset(data, 0, sizeof(data));
 		}
 	};
+
+	// the version of Miles AIL/MSS to emulate
+	MilesVersion _milesVersion;
 
 	// stores information about all MIDI channels
 	MidiChannelEntry _midiChannels[MIDI_CHANNEL_COUNT];
