@@ -120,7 +120,7 @@ Archive *DirectorEngine::getMainArchive() const { return _currentWindow->getMain
 Movie *DirectorEngine::getCurrentMovie() const { return _currentWindow->getCurrentMovie(); }
 Common::String DirectorEngine::getCurrentPath() const { return _currentWindow->getCurrentPath(); }
 
-static void buildbotErrorHandler(const char *msg) { }
+static bool buildbotErrorHandler(const char *msg) { return true; }
 
 void DirectorEngine::setCurrentMovie(Movie *movie) {
 	_currentWindow = movie->getWindow();

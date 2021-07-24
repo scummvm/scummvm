@@ -96,8 +96,12 @@ void NORETURN_PRE error(const char *s, ...) {
 	// any OSystem yet.
 
 	// If there is an error handler, invoke it now
+	bool handled = false;
 	if (Common::s_errorHandler)
-		(*Common::s_errorHandler)(buf_output);
+		handled = (*Common::s_errorHandler)(buf_output);
+
+	if (!handled && g_system)
+		g_system->messageBox(LogMessageType::kError, buf_output);
 
 	if (g_system)
 		g_system->fatalError();
