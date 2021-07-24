@@ -111,6 +111,7 @@ public:
 	bool renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderCursor(Common::Point pos);
+	void renderVideo();
 
 private:
 	void update();

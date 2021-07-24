@@ -336,7 +336,8 @@ void Score::update() {
 
 		if (keepWaiting) {
 			if (_movie->_videoPlayback) {
-				renderFrame(_currentFrame);
+				renderVideo();
+				_window->render();
 			}
 			return;
 		}
@@ -598,6 +599,17 @@ void Score::renderCursor(Common::Point pos) {
 
 		_currentCursor = &_channels[spriteId]->_cursor;
 		_vm->_wm->pushCursor(_currentCursor->_cursorType, _currentCursor);
+	}
+}
+
+void Score::renderVideo() {
+	for (uint16 i = 0; i < _channels.size(); i++) {
+		Channel *channel = _channels[i];
+		CastMember *cast = channel->_sprite->_cast;
+		if (cast && cast->_type == kCastDigitalVideo && cast->isModified()) {
+			channel->replaceWidget();
+			_window->addDirtyRect(channel->getBbox());
+		}
 	}
 }
 
