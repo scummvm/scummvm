@@ -484,9 +484,7 @@ void Score::update() {
 		_nextFrameTime += 1000;
 }
 
-bool Score::renderFrame(uint16 frameId, RenderMode mode) {
-	bool updated = false;
-
+void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (!renderTransition(frameId))
 		renderSprites(frameId, mode);
 
@@ -496,8 +494,7 @@ bool Score::renderFrame(uint16 frameId, RenderMode mode) {
 		g_director->setPalette(resolvePaletteId(currentPalette));
 	}
 
-	if (_window->render())
-		updated = true;
+	_window->render();
 
 	// sound stuff
 	if (_frames[frameId]->_sound1.member || _frames[frameId]->_sound2.member)
@@ -508,10 +505,7 @@ bool Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (_cursorDirty) {
 		renderCursor(_movie->getWindow()->getMousePos());
 		_cursorDirty = false;
-		updated = true;
 	}
-
-	return updated;
 }
 
 bool Score::renderTransition(uint16 frameId) {

@@ -108,7 +108,7 @@ public:
 	uint16 getSpriteIdByMemberId(CastMemberID id);
 
 	bool renderTransition(uint16 frameId);
-	bool renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
+	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderCursor(Common::Point pos);
 	void renderVideo();
