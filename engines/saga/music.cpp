@@ -87,6 +87,8 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 		case MT_GM:
 			if (_vm->getPlatform() == Common::kPlatformDOS) {
 				_driver = Audio::MidiDriver_Miles_MIDI_create(_musicType, "");
+				_driver->property(MidiDriver::PROP_MILES_VERSION, _vm->getGameId() == GID_ITE ?
+					Audio::MidiDriver_Miles_Midi::MILES_VERSION_2 : Audio::MidiDriver_Miles_Midi::MILES_VERSION_3);
 			} else {
 				_driver = new MidiDriver_MT32GM(_musicType);
 			}
