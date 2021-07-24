@@ -63,6 +63,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
 
+	registerCmd("teleport_to_npc", WRAP_METHOD(Console, cmdTeleportToNPC));
+
 	registerCmd("goto_place", WRAP_METHOD(Console, cmdGotoPlace));
 
 	registerCmd("list_places", WRAP_METHOD(Console, cmdListPlaces));
@@ -193,6 +195,20 @@ bool Console::cmdTeleport(int argc, const char **argv) {
 
 		Actor *a = getCenterActor();
 		a->setLocation(TilePoint(u, v, z));
+	}
+
+	return true;
+}
+
+bool Console::cmdTeleportToNPC(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <Actor ID>\n", argv[0]);
+	else {
+		ObjectID id = atoi(argv[1]);
+		Actor *a = getCenterActor();
+		Actor *b = (Actor *)GameObject::objectAddress(id);
+
+		a->setLocation(b->getLocation());
 	}
 
 	return true;
