@@ -25,6 +25,8 @@
 
 #include "gui/debugger.h"
 
+#include "saga2/tcoords.h"
+
 namespace Saga2 {
 
 class Saga2Engine;
@@ -36,6 +38,8 @@ public:
 
 private:
 	Saga2Engine *_vm;
+
+	TilePoint _savedLoc;
 
 	bool cmdKillProtag(int argc, const char **argv);
 
@@ -62,6 +66,10 @@ private:
 	bool cmdTeleportNPC(int argc, const char **argv);
 
 	bool cmdTeleportNPCHere(int argc, const char **argv);
+
+	bool cmdSaveLoc(int argc, const char **argv);
+
+	bool cmdLoadLoc(int argc, const char **argv);
 
 	bool cmdGotoPlace(int argc, const char **argv);
 

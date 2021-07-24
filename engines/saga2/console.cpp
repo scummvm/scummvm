@@ -69,6 +69,10 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 
 	registerCmd("teleport_npc_here", WRAP_METHOD(Console, cmdTeleportNPCHere));
 
+	registerCmd("save_loc", WRAP_METHOD(Console, cmdSaveLoc));
+
+	registerCmd("load_loc", WRAP_METHOD(Console, cmdLoadLoc));
+
 	registerCmd("goto_place", WRAP_METHOD(Console, cmdGotoPlace));
 
 	registerCmd("list_places", WRAP_METHOD(Console, cmdListPlaces));
@@ -262,6 +266,32 @@ bool Console::cmdTeleportNPCHere(int argc, const char **argv) {
 		Actor *a = (Actor *)GameObject::objectAddress(id);
 
 		a->setLocation(getCenterActor()->getLocation());
+	}
+
+	return true;
+}
+
+bool Console::cmdSaveLoc(int argc, const char **argv) {
+	if (argc != 1)
+		debugPrintf("Usage: %s\n", argv[0]);
+	else {
+		Actor *a = getCenterActor();
+		_savedLoc = a->getLocation();
+	}
+
+	return true;
+}
+
+bool Console::cmdLoadLoc(int argc, const char **argv) {
+	if (argc != 1)
+		debugPrintf("Usage: %s\n", argv[0]);
+	else {
+		Actor *a = getCenterActor();
+
+		if (_savedLoc.u != 0 || _savedLoc.v != 0 || _savedLoc.z != 0)
+			a->setLocation(_savedLoc);
+		else
+			debugPrintf("Location not saved!\n");
 	}
 
 	return true;
