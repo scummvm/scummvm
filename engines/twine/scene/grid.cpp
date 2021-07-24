@@ -592,15 +592,8 @@ bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 	return true;
 }
 
-uint8 *Grid::getBlockBuffer(int32 x, int32 y, int32 z) {
-	const int32 tempX = (x + BRICK_HEIGHT) / BRICK_SIZE;
-	const int32 tempY = y / BRICK_HEIGHT;
-	const int32 tempZ = (z + BRICK_HEIGHT) / BRICK_SIZE;
-	return _blockBuffer + tempY * 2 + tempX * GRID_SIZE_Y * 2 + (tempZ * GRID_SIZE_X) * GRID_SIZE_Y * 2;
-}
-
-const uint8 *Grid::getBlockBufferGround(int32 x, int32 y, int32 z, int32 &ground) {
-	updateCollisionCoordinates(x, y, z);
+const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
+	updateCollisionCoordinates(pos.x, pos.y, pos.z);
 	const int32 tempX = _engine->_collision->collision.x;
 	int32 tempY = _engine->_collision->collision.y;
 	const int32 tempZ = _engine->_collision->collision.z;
@@ -823,7 +816,7 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	return ShapeType::kNone;
 }
 
-int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
+int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 	updateCollisionCoordinates(x, y, z);
 
 	if (_engine->_collision->collision.x < 0 || _engine->_collision->collision.x >= GRID_SIZE_X) {
@@ -880,6 +873,7 @@ void Grid::centerScreenOnActor() {
 	_engine->_renderer->projectPositionOnScreen(actor->pos.x - (newCamera.x * BRICK_SIZE),
 	                                   actor->pos.y - (newCamera.y * BRICK_HEIGHT),
 	                                   actor->pos.z - (newCamera.z * BRICK_SIZE));
+	// TODO: these border values should get scaled for hiher resolutions
 	if (_engine->_renderer->projPos.x < 80 || _engine->_renderer->projPos.x >= _engine->width() - 60 || _engine->_renderer->projPos.y < 80 || _engine->_renderer->projPos.y >= _engine->height() - 50) {
 		newCamera.x = ((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) - newCamera.x) / 2;
 		newCamera.y = actor->pos.y / BRICK_HEIGHT;

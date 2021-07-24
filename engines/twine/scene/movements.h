@@ -136,11 +136,9 @@ public:
 
 	/**
 	 * Get shadow position
-	 * @param x Shadow X coordinate
-	 * @param y Shadow Y coordinate
-	 * @param z Shadow Z coordinate
+	 * @param pos Shadow coordinates
 	 */
-	void getShadowPosition(int32 x, int32 y, int32 z);
+	void getShadowPosition(const IVec3 &pos);
 
 	/**
 	 * Set actor safe angle

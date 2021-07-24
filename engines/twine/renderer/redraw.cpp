@@ -246,7 +246,7 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 					_engine->_actor->shadowCoord.y = actor->pos.y - 1;
 					_engine->_actor->shadowCoord.z = actor->pos.z;
 				} else {
-					_engine->_movements->getShadowPosition(actor->pos.x, actor->pos.y, actor->pos.z);
+					_engine->_movements->getShadowPosition(actor->pos);
 				}
 
 				drawList[drawListPos].posValue = tmpVal - 1; // save the shadow entry in the drawList
@@ -292,7 +292,7 @@ int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
 				drawListPos++;
 
 				if (_engine->cfgfile.ShadowMode == 2 && !(extra->info0 & EXTRA_SPECIAL_MASK)) {
-					_engine->_movements->getShadowPosition(extra->pos.x, extra->pos.y, extra->pos.z);
+					_engine->_movements->getShadowPosition(extra->pos);
 
 					drawList[drawListPos].posValue = tmpVal - 1;
 					drawList[drawListPos].actorIdx = 0;

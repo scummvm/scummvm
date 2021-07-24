@@ -178,7 +178,6 @@ private:
 	int32 _blockBufferSize = 0;
 	uint8 *_blockBuffer = nullptr;
 
-	uint8 *getBlockBuffer(int32 x, int32 y, int32 z);
 	const BrickEntry* getBrickEntry(int32 j, int32 i) const;
 
 	void updateCollisionCoordinates(int32 x, int32 y, int32 z);
@@ -194,7 +193,7 @@ public:
 	/**
 	 * search down until either ground is found or lower border of the cube is reached
 	 */
-	const uint8 *getBlockBufferGround(int32 x, int32 y, int32 z, int32 &ground);
+	const uint8 *getBlockBufferGround(const IVec3 &pos, int32 &ground);
 
 	/** New grid camera x, y and z coordinates */
 	IVec3 newCamera;

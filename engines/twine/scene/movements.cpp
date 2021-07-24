@@ -38,10 +38,10 @@ namespace TwinE {
 
 Movements::Movements(TwinEEngine *engine) : _engine(engine) {}
 
-void Movements::getShadowPosition(int32 x, int32 y, int32 z) {
-	const uint8 *ptr = _engine->_grid->getBlockBufferGround(x, y, z, processActor.y);
-	processActor.x = x;
-	processActor.z = z;
+void Movements::getShadowPosition(const IVec3 &pos) {
+	const uint8 *ptr = _engine->_grid->getBlockBufferGround(pos, processActor.y);
+	processActor.x = pos.x;
+	processActor.z = pos.z;
 
 	ShapeType shadowCollisionType;
 	if (*ptr) {
