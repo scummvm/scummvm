@@ -295,6 +295,7 @@ private:
 
 	void chopChunk(const Common::U32String &str, int *curLine);
 	void splitString(const Common::U32String &str, int curLine = -1);
+	void render(int from, int to, int shadow);
 	void render(int from, int to);
 	void recalcDims();
 	void reallocSurface();
@@ -338,6 +339,7 @@ protected:
 	int _textMaxHeight;
 
 	ManagedSurface *_surface;
+	ManagedSurface *_shadowSurface;
 
 	TextAlign _textAlignment;
 

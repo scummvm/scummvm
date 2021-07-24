@@ -186,6 +186,7 @@ void MacText::init() {
 	_textMaxWidth = 0;
 	_textMaxHeight = 0;
 	_surface = nullptr;
+	_shadowSurface = nullptr;
 
 	if (!_fixedDims) {
 		int right = _dims.right;
@@ -255,6 +256,7 @@ MacText::~MacText() {
 
 	delete _cursorRect;
 	delete _surface;
+	delete _shadowSurface;
 	delete _cursorSurface;
 	delete _cursorSurface2;
 }
@@ -842,6 +844,9 @@ void MacText::reallocSurface() {
 	if (!_surface) {
 		_surface = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
 
+		if (_textShadow)
+			_shadowSurface = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
+
 		return;
 	}
 
@@ -853,31 +858,35 @@ void MacText::reallocSurface() {
 
 		delete _surface;
 		_surface = n;
+
+		// same as shadow surface
+		if (_textShadow) {
+			ManagedSurface *newShadowSurface = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
+			newShadowSurface->clear(_bgcolor);
+			newShadowSurface->blitFrom(*_shadowSurface, Common::Point(0, 0));
+
+			delete _shadowSurface;
+			_shadowSurface = newShadowSurface;
+		}
 	}
 }
 
 void MacText::render() {
 	if (_fullRefresh) {
 		_surface->clear(_bgcolor);
+		if (_textShadow)
+			_shadowSurface->clear(_bgcolor);
+
 		render(0, _textLines.size());
 
 		_fullRefresh = false;
 	}
 }
 
-void MacText::render(int from, int to) {
-	if (_textLines.empty())
-		return;
-
-	reallocSurface();
-
-	from = MAX<int>(0, from);
-	to = MIN<int>(to, _textLines.size() - 1);
+void MacText::render(int from, int to, int shadow) {
 
 	int w = MIN(_maxWidth, _textMaxWidth);
-
-	// Clear the screen
-	_surface->fillRect(Common::Rect(0, _textLines[from].y, _surface->w, _textLines[to].y + getLineHeight(to)), _bgcolor);
+	ManagedSurface *surface = shadow ? _shadowSurface : _surface;
 
 	for (int i = from; i <= to; i++) {
 		int xOffset = getAlignOffset(i);
@@ -906,14 +915,33 @@ void MacText::render(int from, int to) {
 
 			if (_textLines[i].chunks[j].plainByteMode()) {
 				Common::String str = _textLines[i].chunks[j].getEncodedText();
-				_textLines[i].chunks[j].getFont()->drawString(_surface, str, xOffset, _textLines[i].y + yOffset, w, _textLines[i].chunks[j].fgcolor);
+				_textLines[i].chunks[j].getFont()->drawString(surface, str, xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor);
 				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(str);
 			} else {
-				_textLines[i].chunks[j].getFont()->drawString(_surface, convertBiDiU32String(_textLines[i].chunks[j].text), xOffset, _textLines[i].y + yOffset, w, _textLines[i].chunks[j].fgcolor);
+				_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor);
 				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
 			}
 		}
 	}
+}
+
+void MacText::render(int from, int to) {
+	if (_textLines.empty())
+		return;
+
+	reallocSurface();
+
+	from = MAX<int>(0, from);
+	to = MIN<int>(to, _textLines.size() - 1);
+
+	// Clear the screen
+	_surface->fillRect(Common::Rect(0, _textLines[from].y, _surface->w, _textLines[to].y + getLineHeight(to)), _bgcolor);
+
+	// render the shadow surface;
+	if (_textShadow)
+		render(from, to, _textShadow);
+
+	render(from, to, 0);
 
 	for (uint i = 0; i < _textLines.size(); i++) {
 		debugN(9, "MacText::render: %2d ", i);
@@ -1247,11 +1275,11 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 	if (x + w < _surface->w || y + h < _surface->h)
 		g->fillRect(Common::Rect(x + xoff, y + yoff, x + w + xoff, y + h + yoff), _bgcolor);
 
-	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff, yoff));
-
+	// blit shadow surface first
 	if (_textShadow)
-		g->transBlitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff + _textShadow, yoff + _textShadow), 0xff);
+		g->blitFrom(*_shadowSurface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff + _textShadow, yoff + _textShadow));
 
+	g->transBlitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff, yoff), 0xff);
 
 	_contentIsDirty = false;
 	_cursorDirty = false;
