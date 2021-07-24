@@ -418,6 +418,18 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 				ptr++;
 			}
 
+			if (hasExtension(component)) {
+				Common::String nameWithoutExt = component.substr(0, component.size() - 4);
+				Common::String ext = component.substr(component.size() - 4);
+				Common::String newpath = convPath + convertMacFilename(nameWithoutExt.c_str()) + ext;
+
+				debug(2, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
+				Common::String res = pathMakeRelative(newpath, false, false);
+
+				if (testPath(res))
+					return res;
+			}
+
 			if (addexts)
 				addedexts = testExtensions(component, initialPath, convPath);
 		} else {
@@ -438,10 +450,21 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		return initialPath;
 }
 
+bool hasExtension(Common::String filename) {
+	uint len = filename.size();
+	return len >= 4 && filename[len - 4] == '.'
+					&& Common::isAlpha(filename[len - 3])
+					&& Common::isAlpha(filename[len - 2])
+					&& Common::isAlpha(filename[len - 1]);
+}
+
 Common::String testExtensions(Common::String component, Common::String initialPath, Common::String convPath) {
-	const char *exts[] = { ".MMM", ".DIR", ".DXR", 0 };
+	const char *extsD3[] = { ".MMM", 0 };
+	const char *extsD4[] = { ".DIR", ".DXR", 0 };
+
+	const char **exts = (g_director->getVersion() >= 400) ? extsD4 : extsD3;
 	for (int i = 0; exts[i]; ++i) {
-		Common::String newpath = convPath + (strcmp(exts[i], ".MMM") == 0 ?  convertMacFilename(component.c_str()) : component.c_str()) + exts[i];
+		Common::String newpath = convPath + convertMacFilename(component.c_str()) + exts[i];
 
 		debug(2, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
 		Common::String res = pathMakeRelative(newpath, false, false);
@@ -515,59 +538,73 @@ Common::String convertMacFilename(const char *name) {
 
 	int origlen = strlen(name);
 
-	// Remove trailing spaces
-	const char *ptr = &name[origlen - 1];
-	while (myIsSpace(*ptr))
-		ptr--;
+	if (g_director->getVersion() < 400) {
+		// Remove trailing spaces
+		const char *ptr = &name[origlen - 1];
+		while (myIsSpace(*ptr))
+			ptr--;
 
-	int numDigits = 0;
-	char digits[10];
+		int numDigits = 0;
+		char digits[10];
 
-	// Count trailing digits, but leave front letter
-	while (myIsDigit(*ptr) && (numDigits < (8 - 1)))
-		digits[++numDigits] = *ptr--;
+		// Count trailing digits, but leave front letter
+		while (myIsDigit(*ptr) && (numDigits < (8 - 1)))
+			digits[++numDigits] = *ptr--;
 
-	// Count file name without vowels, spaces and digits in-between
-	ptr = name;
-	int cnt = 0;
-	while (cnt < (8 - numDigits) && ptr < &name[origlen]) {
-		char c = toupper(*ptr++);
+		// Count file name without vowels, spaces and digits in-between
+		ptr = name;
+		int cnt = 0;
+		while (cnt < (8 - numDigits) && ptr < &name[origlen]) {
+			char c = toupper(*ptr++);
 
-		if ((myIsVowel(c) && (cnt != 0)) || myIsSpace(c) || myIsDigit(c))
-			continue;
-
-		if ((c != '_') && !myIsAlnum(c))
-			continue;
-
-		cnt++;
-	}
-
-	// Make sure all trailing digits fit
-	int numVowels = 8 - (numDigits + cnt);
-	ptr = name;
-
-	// Put enough characters from beginning
-	for (cnt = 0; cnt < (8 - numDigits) && ptr < &name[origlen];) {
-		char c = toupper(*ptr++);
-
-		if (myIsVowel(c) && (cnt != 0)) {
-			if (numVowels > 0)
-				numVowels--;
-			else
+			if ((myIsVowel(c) && (cnt != 0)) || myIsSpace(c) || myIsDigit(c))
 				continue;
+
+			if ((c != '_') && !myIsAlnum(c))
+				continue;
+
+			cnt++;
 		}
 
-		if (myIsSpace(c) || myIsDigit(c) || ((c != '_') && !myIsAlnum(c)))
-			continue;
+		// Make sure all trailing digits fit
+		int numVowels = 8 - (numDigits + cnt);
+		ptr = name;
 
-		res += c;
+		// Put enough characters from beginning
+		for (cnt = 0; cnt < (8 - numDigits) && ptr < &name[origlen];) {
+			char c = toupper(*ptr++);
 
-		cnt++;
+			if (myIsVowel(c) && (cnt != 0)) {
+				if (numVowels > 0)
+					numVowels--;
+				else
+					continue;
+			}
+
+			if (myIsSpace(c) || myIsDigit(c) || ((c != '_') && !myIsAlnum(c)))
+				continue;
+
+			res += c;
+
+			cnt++;
+		}
+
+		// Now attach all digits
+		while (numDigits)
+			res += digits[numDigits--];
+	} else {
+		const char *ptr = name;
+		for (int cnt = 0; cnt < 8 && ptr < &name[origlen];) {
+			char c = toupper(*ptr++);
+
+			if (myIsSpace(c) || (!myIsAlnum(c) && !myIsFATChar(c)))
+				continue;
+
+			res += c;
+
+			cnt++;
+		}
 	}
-
-	// Now attach all digits
-	while (numDigits)
-		res += digits[numDigits--];
 
 	return res;
 }
