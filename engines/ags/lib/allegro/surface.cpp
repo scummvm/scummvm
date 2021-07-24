@@ -120,8 +120,14 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	if (cr <= cl || cb <= ct)
 		return;
 
+	// Ensure the src rect is constrained to the source bitmap
+	Common::Rect srcArea = srcRect;
+	srcArea.clip(Common::Rect(0, 0, srcBitmap->w, srcBitmap->h));
+	if (srcArea.isEmpty())
+		return;
+
 	// Figure out the dest area that will be updated
-	Common::Rect dstRect(dstX, dstY, dstX + srcRect.width(), dstY + srcRect.height());
+	Common::Rect dstRect(dstX, dstY, dstX + srcArea.width(), dstY + srcArea.height());
 	Common::Rect destRect = dstRect.findIntersectingRect(
 	                            Common::Rect(cl, ct, cr, cb));
 	if (destRect.isEmpty())
@@ -166,9 +172,9 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 			continue;
 		byte *destP = (byte *)destArea.getBasePtr(0, destY);
 		const byte *srcP = (const byte *)src.getBasePtr(
-		                       horizFlip ? srcRect.right - 1 : srcRect.left,
-		                       vertFlip ? srcRect.bottom - 1 - yCtr :
-		                       srcRect.top + yCtr);
+		                       horizFlip ? srcArea.right - 1 : srcArea.left,
+		                       vertFlip ? srcArea.bottom - 1 - yCtr :
+		                       srcArea.top + yCtr);
 
 		// Loop through the pixels of the row
 		for (int destX = xStart, xCtr = 0, xCtrBpp = 0; xCtr < dstRect.width(); ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
