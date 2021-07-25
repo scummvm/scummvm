@@ -63,6 +63,10 @@ struct SoundChannel {
 
 class DirectorSound {
 
+public:
+	// whether the sound is puppet. i.e. it's controlled by lingo
+	bool _puppet;
+
 private:
 	DirectorEngine *_vm;
 	Common::Array<SoundChannel> _channels;

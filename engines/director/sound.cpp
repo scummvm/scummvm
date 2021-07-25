@@ -56,6 +56,7 @@ DirectorSound::DirectorSound(DirectorEngine *vm) : _vm(vm) {
 		&_pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
 
 	_enable = true;
+	_puppet = false;
 }
 
 DirectorSound::~DirectorSound() {

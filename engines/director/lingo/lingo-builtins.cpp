@@ -1802,11 +1802,16 @@ void LB::b_puppetSound(int nargs) {
 		return;
 	}
 
+	sound->_puppet = true;
 	if (nargs == 1) {
 		Datum castMember = g_lingo->pop();
 
+		// in D2 manual p206, puppetSound 0 will turn off the puppet status of sound
+		if (castMember.asInt() == 0)
+			sound->_puppet = false;
+
 		sound->playCastMember(castMember.asMemberID(), 1);
-	} else if (nargs == 2) {
+	} else {
 		uint submenu = g_lingo->pop().asInt();
 		uint menu = g_lingo->pop().asInt();
 

@@ -712,6 +712,10 @@ void Score::playSoundChannel(uint16 frameId) {
 	debugC(5, kDebugLoading, "playSoundChannel(): Sound1 %s Sound2 %s", frame->_sound1.asString().c_str(), frame->_sound2.asString().c_str());
 	DirectorSound *sound = _vm->getSoundManager();
 
+	// puppet sound will be controlled with lingo
+	if (sound->_puppet)
+		return;
+
 	// 0x0f represent sample sound
 	if (frame->_soundType1 && frame->_soundType1 <= 0x0f) {
 		if (_sampleSounds.empty())
