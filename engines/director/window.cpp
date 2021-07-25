@@ -78,10 +78,14 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 	Common::Rect srcRect = channel->getBbox();
 	srcRect.clip(destRect);
 
+	// let compiler to optimize it
+	int xoff = srcRect.left - channel->getBbox().left;
+	int yoff = srcRect.top - channel->getBbox().top;
+
 	if (_wm->_pixelformat.bytesPerPixel == 1) {
 		for (int i = 0; i < srcRect.height(); i++) {
 			byte *src = (byte *)_composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
-			const byte *msk = mask ? (const byte *)mask->getBasePtr(0, i) : nullptr;
+			const byte *msk = mask ? (const byte *)mask->getBasePtr(xoff, yoff + i) : nullptr;
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
 				if (!mask || (msk && !(*msk++)))
@@ -92,7 +96,7 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 
 		for (int i = 0; i < srcRect.height(); i++) {
 			uint32 *src = (uint32 *)_composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
-			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(0, i) : nullptr;
+			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(xoff, yoff + i) : nullptr;
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
 				if (!mask || (msk && !(*msk++)))
