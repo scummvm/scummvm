@@ -3413,10 +3413,12 @@ if test -n "$_host"; then
 			_zlib=yes
 			;;
 		*mingw32*)
-			_sdlconfig=$_host-sdl-config
+			_sdlconfig=$_host-sdl2-config
+			_libcurlconfig=$_host-curl-config
 			_windres=$_host-windres
 			_ar="$_host-ar cr"
 			_ranlib=$_host-ranlib
+			_strip=$_host-strip
 			;;
 		mips-sgi*)
 			append_var LDFLAGS "-static-libgcc"
