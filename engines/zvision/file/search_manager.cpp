@@ -30,11 +30,15 @@
 namespace ZVision {
 
 SearchManager::SearchManager(const Common::String &rootPath, int depth) {
-	_root = rootPath;
-	if (_root[_root.size() - 1] == '\\' || _root[_root.size() - 1] == '/')
-		_root.deleteLastChar();
+	Common::FSNode fsNode(rootPath);
 
-	Common::FSNode fsNode(_root);
+	// Retrieve the root path from the FSNode, since it may not be the
+	// same as rootPath any more, e.g. if we're doing auto-detection on
+	// the current directory.
+
+	_root = fsNode.getPath();
+	if (_root.hasSuffix("\\") || _root.hasSuffix("/"))
+		_root.deleteLastChar();
 
 	listDirRecursive(_dirList, fsNode, depth);
 
