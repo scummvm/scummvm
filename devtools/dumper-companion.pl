@@ -122,8 +122,8 @@ sub processIso($) {
 				if ($::opt_e) {
 					# make 0x81 an escape symbol
 					$decfname =~ s/\x81/\x81\x79/g;
-					# escape non-printables, '/', "'" and '"'
-					$decfname =~ s/([\x00-\x1f\/'"])/\x81@{[chr(ord($1) + 0x80)]}/g;
+					# escape non-printables, '/', '"' and ':'
+					$decfname =~ s/([\x00-\x1f\/":])/\x81@{[chr(ord($1) + 0x80)]}/g;
 
 					if ($decfname =~ /[\x80-\xff]/) {
 						$decfname = encode_punycode $decfname;
