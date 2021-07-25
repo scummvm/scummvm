@@ -45,6 +45,9 @@ class Action {
 
 typedef Common::List<Action*> Actions;
 
+class Hotspot;
+typedef Common::Array<Hotspot> Hotspots;
+
 class Hotspot { 
   public:
     HotspotType type;
@@ -53,12 +56,13 @@ class Hotspot {
 	int x0, y0;
 	int x1, y1;
 	Actions actions;
+	Hotspots *smenu;
 };
 
 class Mice : public Action {
   public:
 	Common::String path;
-	int index;
+	uint32 index;
 };
 
 class Palette : public Action {
@@ -70,14 +74,21 @@ class Background : public Action {
   public:
 	Common::String path;
 	Common::Point origin;
+	Common::String condition;
 };
 
-typedef Common::List<Hotspot> Hotspots;
+class Overlay : public Action {
+  public:
+	Common::String path;
+	Common::Point origin;
+	Common::String flag;
+};
+
+
 typedef Common::HashMap<Common::String, Hotspots> Settings;
 
 extern Settings setts;
-extern Hotspot *hot;
-extern Hotspots hots;
+extern Hotspots *hots;
 
 } // End of namespace Hypno
 

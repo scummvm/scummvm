@@ -125,18 +125,20 @@ public:
 	void skipVideo();
 
 	Graphics::Surface *decodeImage(const Common::String &file);
-	Graphics::Surface *decodeFrame(const Common::String &name, int frame);
+	Graphics::Surface *decodeFrame(const Common::String &name, int frame, bool convert = true);
 	void loadImage(const Common::String &file, int x, int y);
 	void drawScreenFrame();
 
 	// Cursors
-	void changeCursor(const Common::String &);
+	void changeCursor(const Common::String &, uint32);
 	Common::String getInventoryCursor();
 	Common::String getExitCursor();
 
-	// Rendering
+	// Actions
 	void prepareHotspots(Hotspots hs);
-    void runBackground(Background *a);
+    void runBackground(const Hotspot h, Background *a);
+	void runOverlay(const Hotspot h, Overlay *a);
+	void runMice(const Hotspot h, Mice *a);
 
 	Graphics::ManagedSurface *_compositeSurface;
 	Graphics::Surface *loadMask(const Common::String &, int, int, bool);

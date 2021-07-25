@@ -57,7 +57,7 @@ PLAY						return PLAYTOK;
 TURNON						return TONTOK;
 TURNOFF						return TOFFTOK;
 NO_RETURN                   return NRTOK;
-GS_[A-Za-z_0-9]+            return GSSWITCH;
+GS_[A-Za-z_0-9]+            HYPNO_lval.s = scumm_strdup(HYPNO_text); return GSSWITCH;
 \/BITMAP					return BITMAPTOK;
 \/BBOX\=					return BBOXTOK;
 \/[A-Za-z_0-9]*  			HYPNO_lval.s = scumm_strdup(HYPNO_text); return FLAG;
@@ -72,8 +72,6 @@ GS_[A-Za-z_0-9]+            return GSSWITCH;
 namespace Hypno {
 
 int parse(const char *code) {
-	hot = NULL;
-	hots.clear();
 	YY_BUFFER_STATE bp;
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	bp = yy_scan_string(code);

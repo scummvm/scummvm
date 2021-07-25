@@ -48,9 +48,9 @@ static const byte MOUSECURSOR_SCI[] = {
 
 static const byte cursorPalette[] = {
 	0x00, 0x00, 0x00,  // Black / Transparent
-	0x01, 0x01, 0x01,  // Gray
-	0xff, 0xff, 0xff,  // White
-	0xff, 0x00, 0x00   // Red
+	0x82, 0x00, 0x00,  // ???
+	0x00, 0x82, 0x00,  // ???
+	0x82, 0x82, 0x00   // ???
 };
 
 struct CursorTable {
@@ -68,18 +68,12 @@ static const CursorTable cursorTable[] = {
 	{ nullptr,      nullptr, nullptr,           0,  0,  0,  0  }
 };
 
-void HypnoEngine::changeCursor(const Common::String &cursor) {
-	const CursorTable *entry = cursorTable;
-	while (entry->name) {
-		if (cursor == entry->name || cursor == entry->aname)
-			break;
-		entry++;
-	}
-	if (!entry->name)
-		return;
+void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n) {
 
-	CursorMan.replaceCursor(entry->buf, entry->w, entry->h, entry->hotspotX, entry->hotspotY, 0);
-	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
+	Graphics::Surface *entry = decodeFrame(cursor, n, false);
+	debug("cursor: %d %d", entry->w, entry->h);
+	CursorMan.replaceCursor(entry->getPixels(), entry->w, entry->h, 0, 0, 0);
+	//CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 	CursorMan.showMouse(true);
 }
 
