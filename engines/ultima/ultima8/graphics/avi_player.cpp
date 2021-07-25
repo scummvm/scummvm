@@ -45,6 +45,8 @@ AVIPlayer::AVIPlayer(Common::SeekableReadStream *rs, int width, int height, cons
 	_currentFrame.create(vidWidth, vidHeight, _decoder->getPixelFormat());
 	_currentFrame.fillRect(Common::Rect(0, 0, vidWidth, vidHeight),
 						   _decoder->getPixelFormat().RGBToColor(0, 0, 0));
+	if (_currentFrame.format.bytesPerPixel == 1)
+		_currentFrame.setTransparentColor(0);
 }
 
 AVIPlayer::~AVIPlayer() {
@@ -115,6 +117,7 @@ void AVIPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 		}
 	}
 
+	surf->Fill32(0, _xoff, _yoff, _currentFrame.w, _currentFrame.h);
 	surf->Blit(&_currentFrame, 0, 0, _currentFrame.w, _currentFrame.h,
 			_xoff, _yoff);
 }
