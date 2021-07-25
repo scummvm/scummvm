@@ -29,7 +29,8 @@
 
 namespace Common {
 
-OutSaveFile::OutSaveFile(WriteStream *w): _wrapped(w) {}
+OutSaveFile::OutSaveFile(WriteStream *w, bool isCompressed):
+		_wrapped(w), _isCompressed(isCompressed) {}
 
 OutSaveFile::~OutSaveFile() {
 	delete _wrapped;
@@ -54,6 +55,37 @@ uint32 OutSaveFile::write(const void *dataPtr, uint32 dataSize) {
 
 int64 OutSaveFile::pos() const {
 	return _wrapped->pos();
+}
+
+bool OutSaveFile::seek(int64 offset, int whence) {
+	Common::SeekableWriteStream *sws =
+		dynamic_cast<Common::SeekableWriteStream *>(_wrapped);
+
+	if (sws) {
+		return sws->seek(offset, whence);
+	} else {
+		unsupportedMethodWarning("seek");
+		return false;
+	}
+}
+
+int64 OutSaveFile::size() const {
+	Common::SeekableWriteStream *sws =
+		dynamic_cast<Common::SeekableWriteStream *>(_wrapped);
+
+	if (sws) {
+		return sws->size();
+	} else {
+		unsupportedMethodWarning("size");
+		return -1;
+	}
+}
+
+void OutSaveFile::unsupportedMethodWarning(const Common::String &methodName) const {
+	if (_isCompressed)
+		warning("%s method is unsupported for compressed save files", methodName.c_str());
+	else
+		warning("%s method is unsupported for this particular backend", methodName.c_str());
 }
 
 bool SaveFileManager::copySavefile(const String &oldFilename, const String &newFilename, bool compress) {

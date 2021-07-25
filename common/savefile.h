@@ -52,12 +52,23 @@ typedef SeekableReadStream InSaveFile;
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-class OutSaveFile: public WriteStream {
+class OutSaveFile: public SeekableWriteStream {
+	/**
+	 * Used to print a warning if an unsupported SeekableWriteStream
+	 * method is called
+	 */
+	void unsupportedMethodWarning(const Common::String &methodName) const;
+
 protected:
 	WriteStream *_wrapped; /*!< @todo Doc required. */
+	bool _isCompressed;
 
 public:
-	OutSaveFile(WriteStream *w); /*!< Create an OutSaveFile that uses the given WriteStream to write the data. */
+	/**
+	 * Create an OutSaveFile that uses the given WriteStream
+	 * to write the data.
+	 */
+	OutSaveFile(WriteStream *w, bool isCompressed);
 	virtual ~OutSaveFile();
 
 	/**
@@ -107,6 +118,28 @@ public:
 	* @return The current position indicator, or -1 if an error occurred.
 	 */
 	virtual int64 pos() const;
+
+	/**
+	 * Relocate the position in the file
+	 * This is only relevant when creating save files not using compression.
+	 * Also, not all backends support seeking the OutSaveFile yet.
+	 * A good way to check is to try checking the size immediately
+	 * after creating, and only rely on the seek method if size
+	 * returns 0
+	 * @return True if the seeking was able to be done
+	 */
+	virtual bool seek(int64 offset, int whence = SEEK_SET);
+
+	/**
+	 * Obtain the current size of the stream, measured in bytes.
+	 * This is only relevant when creating save files not using compression.
+	 *
+	 * If this value is unknown or cannot be computed, -1 is returned.
+	 *
+	 * @return The size of the stream, or -1 if an error occurred,
+	 * such as if the backend doesn't support seeking and size.
+	 */
+	virtual int64 size() const;
 };
 
 /**
