@@ -75,8 +75,6 @@ const Graphics::Surface *JYV1Decoder::decodeFrame(Common::SeekableReadStream &st
 		offsets[i] = stream.readUint32LE() + startOffset;
 	}
 
-	int y = 0;
-	int x = 0;
 	bool upscale = false;
 
 	//
@@ -106,7 +104,10 @@ const Graphics::Surface *JYV1Decoder::decodeFrame(Common::SeekableReadStream &st
 			upscale = true;
 	}
 
-	for (int i = 0; i < numOffsets; i++) {
+	int y = 0;
+	int x = 0;
+
+	for (int i = 0; i < numOffsets && y < _height; i++) {
 		stream.seek(offsets[i], SEEK_SET);
 		const int cmdLen = stream.readUint32LE();
 
@@ -116,7 +117,7 @@ const Graphics::Surface *JYV1Decoder::decodeFrame(Common::SeekableReadStream &st
 		Common::BitStreamMemoryStream cmdMemStream(cmdData, cmdLen);
 		Common::BitStreamMemory8MSB cmdBitStream(cmdMemStream);
 		bool skipping = true;
-		while (!cmdBitStream.eos()) {
+		while (cmdBitStream.size() - cmdBitStream.pos() >= 4 && y < _height) {
 			uint32 idx = cmdBitStream.getBits(4);
 			uint32 blocksize = BASE_LEN[idx];
 			if (idx != 0 && idx != 8) {
@@ -137,7 +138,7 @@ const Graphics::Surface *JYV1Decoder::decodeFrame(Common::SeekableReadStream &st
 				}
 			} else {
 				// draw blocksize pixels from data block
-				while (blocksize) {
+				while (blocksize && y < _height) {
 					// TODO: would be nicer to read these in whole scanlines.
 					// Also this upscale code is kinda ugly.
 					const uint8 p = stream.readByte();
