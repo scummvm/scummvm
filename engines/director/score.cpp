@@ -717,7 +717,7 @@ void Score::playSoundChannel(uint16 frameId) {
 		return;
 
 	// 0x0f represent sample sound
-	if (frame->_soundType1 && frame->_soundType1 <= 0x0f) {
+	if (frame->_soundType1 >= 10 && frame->_soundType1 <= 15) {
 		if (_sampleSounds.empty())
 			loadSampleSounds(frame->_soundType1);
 
@@ -728,7 +728,7 @@ void Score::playSoundChannel(uint16 frameId) {
 		sound->playCastMember(frame->_sound1, 1, false);
 	}
 
-	if (frame->_soundType2 && frame->_soundType2 <= 0x0f) {
+	if (frame->_soundType2 >= 10 && frame->_soundType2 <= 15) {
 		if (_sampleSounds.empty())
 			loadSampleSounds(frame->_soundType2);
 

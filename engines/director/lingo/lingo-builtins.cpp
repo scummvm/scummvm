@@ -1820,6 +1820,9 @@ void LB::b_puppetSound(int nargs) {
 		uint submenu = g_lingo->pop().asInt();
 		uint menu = g_lingo->pop().asInt();
 
+		if (menu <= 9 || menu >= 16)
+			warning("LB::puppetSound: menu number is not available");
+
 		if (score->_sampleSounds.empty())
 			score->loadSampleSounds(menu);
 
