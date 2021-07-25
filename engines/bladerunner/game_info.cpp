@@ -123,6 +123,10 @@ bool GameInfo::open(const Common::String &name) {
 	for (uint32 i = 0; i != _outtakeCount; ++i) {
 		debug("%2d: %s.VQA", i, _outtakes[i].c_str());
 	}
+
+	debug("Clue Count: %d ", _clueCount);
+	debug("Crime Count: %d ", _crimeCount);
+	debug("Suspect Count: %d ", _suspectCount);
 #endif
 
 	bool err = s->err();
