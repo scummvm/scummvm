@@ -56,6 +56,7 @@ namespace Common {
 #define DAMP 700
 #define INITIAL_N 128
 #define INITIAL_BIAS 72
+#define SMAX 0x7fff
 
 static uint32_t adapt_bias(uint32_t delta, unsigned n_points, int is_first) {
 	uint32_t k;
@@ -122,27 +123,26 @@ static size_t decode_digit(uint32_t v) {
 	if (Common::isUpper(v)) {
 		return v - 'A';
 	}
-	return SIZE_MAX;
+	return SMAX;
 }
 
 String punycode_encode(String src) {
 	int srclen = src.size();
-	int di = 0, si;
+	int h = 0, si;
 	String dst;
 
 	for (si = 0; si < srclen; si++) {
 		if ((byte)src[si] < 128) {
 			dst += src[si];
-			di++;
+			h++;
 		}
 	}
 
-	int b = di, h = di;
+	int b = h;
 
 	/* Write out delimiter if any basic code points were processed. */
-	if (di > 0) {
+	if (!dst.empty()) {
 		dst += '-';
-		di++;
 	}
 
 	int n = INITIAL_N;
@@ -152,30 +152,29 @@ String punycode_encode(String src) {
 
 	for (; h < srclen; n++, delta++) {
 		/* Find next smallest non-basic code point. */
-		for (m = SIZE_MAX, si = 0; si < srclen; si++) {
-			if (src[si] >= n && src[si] < m) {
-				m = src[si];
+		for (m = SMAX, si = 0; si < srclen; si++) {
+			if ((byte)src[si] >= n && (byte)src[si] < m) {
+				m = (byte)src[si];
 			}
 		}
 
-		if ((m - n) > (SIZE_MAX - delta) / (h + 1)) {
+		if ((m - n) > (SMAX - delta) / (h + 1)) {
 			/* OVERFLOW */
-			assert(0 && "OVERFLOW");
-			goto fail;
+			warning("punycode_encode: overflow1");
+			return src;
 		}
 
 		delta += (m - n) * (h + 1);
 		n = m;
 
 		for (si = 0; si < srclen; si++) {
-			if (src[si] < n) {
+			if ((byte)src[si] < n) {
 				if (++delta == 0) {
 					/* OVERFLOW */
-					assert(0 && "OVERFLOW");
-					goto fail;
+					warning("punycode_encode: overflow2");
+					return src;
 				}
-			}
-			else if (src[si] == n) {
+			} else if ((byte)src[si] == n) {
 				dst += encode_var_int(bias, delta);
 				bias = adapt_bias(delta, h + 1, h == b);
 				delta = 0;
@@ -184,7 +183,6 @@ String punycode_encode(String src) {
 		}
 	}
 
-fail:
 	/* Return how many Unicode code points were converted. */
 	return dst;
 }
@@ -239,12 +237,12 @@ String punycode_decode(const String src1) {
 		for (int w = 1, k = BASE; true; k += BASE) {
 			int digit = decode_digit(src[si++]);
 
-			if (digit == SIZE_MAX) {
+			if (digit == SMAX) {
 				warning("punycode_decode: incorrect digit");
 				return src1;
 			}
 
-			if (digit > (SIZE_MAX - i) / w) {
+			if (digit > (SMAX - i) / w) {
 				/* OVERFLOW */
 				warning("punycode_decode: overflow1");
 				return src1;
@@ -265,7 +263,7 @@ String punycode_decode(const String src1) {
 				break;
 			}
 
-			if (w > SIZE_MAX / (BASE - t)) {
+			if (w > SMAX / (BASE - t)) {
 				/* OVERFLOW */
 				warning("punycode_decode: overflow2");
 				return src1;
@@ -276,7 +274,7 @@ String punycode_decode(const String src1) {
 
 		bias = adapt_bias(i - org_i, di + 1, org_i == 0);
 
-		if (i / (di + 1) > SIZE_MAX - n) {
+		if (i / (di + 1) > SMAX - n) {
 			/* OVERFLOW */
 				warning("punycode_decode: overflow3");
 			return src1;
@@ -310,7 +308,7 @@ String punycode_encodefilename(const String src) {
 		}
 	}
 
-	return dst;
+	return punycode_encode(dst);
 }
 
 String punycode_decodefilename(const String src1) {
