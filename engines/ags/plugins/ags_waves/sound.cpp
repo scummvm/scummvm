@@ -37,11 +37,13 @@ void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 	PARAMS2(int, sfxNum, int, repeat);
 
 	SoundEffect &effect = SFX[sfxNum];
-	if (effect._stream == nullptr) {
-		LoadSFX(sfxNum);
-	}
+	_mixer->stopHandle(effect._soundHandle);
 
-	Audio::AudioStream *sound = effect._stream;
+	Common::FSNode fsNode = ::AGS::g_vm->getGameFolder().getChild(
+		"sounds").getChild(Common::String::format("sound%d.sfx", sfxNum));
+
+	Audio::AudioStream *sound = loadOGG(fsNode);
+
 	if (sound != nullptr) {
 		effect._volume = 255;
 
@@ -52,12 +54,10 @@ void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 
 			// -1 for infinite, >0 number of successive repeats
 			Audio::LoopingAudioStream *las =
-				new Audio::LoopingAudioStream(sas, repeat + 1, DisposeAfterUse::NO);
-			_mixer->playStream(Audio::Mixer::kSFXSoundType, &effect._soundHandle, las,
-				-1, 255, 0, DisposeAfterUse::YES);
+				new Audio::LoopingAudioStream(sas, repeat + 1);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &effect._soundHandle, las);
 		} else {
-			_mixer->playStream(Audio::Mixer::kSFXSoundType, &effect._soundHandle, sound,
-				-1, effect._volume, 0, DisposeAfterUse::NO);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &effect._soundHandle, sound);
 		}
 
 		if (OGG_Filter && effect._filter && effect._volume > 1) {
@@ -65,7 +65,6 @@ void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 		}
 
 		effect._repeat = repeat;
-		effect._playing = true;
 	}
 }
 
@@ -73,18 +72,15 @@ void AGSWaves::SFX_SetVolume(ScriptMethodParams &params) {
 	PARAMS2(int, sfxNum, int, volume);
 
 	SoundEffect &effect = SFX[sfxNum];
-
-	if (effect._stream != nullptr) {
-		_mixer->setChannelVolume(effect._soundHandle, volume);
-		effect._volume = volume;
-	}
+	_mixer->setChannelVolume(effect._soundHandle, volume);
+	effect._volume = volume;
 }
 
 void AGSWaves::SFX_GetVolume(ScriptMethodParams &params) {
 	PARAMS1(int, sfxNum);
 
 	SoundEffect &effect = SFX[sfxNum];
-	params._result = effect._stream ? effect._volume : 0;
+	params._result = _mixer->getChannelVolume(effect._soundHandle);
 }
 
 void AGSWaves::Music_Play(ScriptMethodParams &params) {
@@ -103,17 +99,7 @@ void AGSWaves::Music_GetVolume(ScriptMethodParams &params) {
 
 void AGSWaves::SFX_Stop(ScriptMethodParams &params) {
 	PARAMS1(int, sfxNum); //, int, fademsOUT);
-
-	SoundEffect &effect = SFX[sfxNum];
-
-	if (effect._stream != nullptr) {
-		_mixer->stopHandle(effect._soundHandle);
-		UnloadSFX(sfxNum);
-
-		effect._playing = false;
-		effect._repeat = 0;
-		effect._channel = -2;
-	}
+	StopSFX(sfxNum);
 }
 
 void AGSWaves::SFX_SetPosition(ScriptMethodParams &params) {
@@ -121,42 +107,40 @@ void AGSWaves::SFX_SetPosition(ScriptMethodParams &params) {
 
 	SoundEffect &effect = SFX[sfxNum];
 
-	if (effect._stream != nullptr) {
-		if (_mixer->isSoundHandleActive(effect._soundHandle)) {
-			int angle = 0;
-			int dist = 0;
+	if (_mixer->isSoundHandleActive(effect._soundHandle)) { 
+		int angle = 0;
+		int dist = 0;
 
-			if (xS != 0 && yS != 0) {
-				int pid = _engine->GetPlayerCharacter();
-				playerCharacter = _engine->GetCharacter(pid);
+		if (xS != 0 && yS != 0) {
+			int pid = _engine->GetPlayerCharacter();
+			playerCharacter = _engine->GetCharacter(pid);
 
-				int x1 = Character_GetX((intptr_t)playerCharacter);
-				int y1 = Character_GetY((intptr_t)playerCharacter);
+			int x1 = Character_GetX((intptr_t)playerCharacter);
+			int y1 = Character_GetY((intptr_t)playerCharacter);
 
-				int x2 = xS;
-				int y2 = yS;
+			int x2 = xS;
+			int y2 = yS;
 
-				int defx = (x1 - x2) * (x1 - x2);
-				int defy = (y1 - y2) * (y1 - y2);
+			int defx = (x1 - x2) * (x1 - x2);
+			int defy = (y1 - y2) * (y1 - y2);
 
-				float SquareRoot = sqrt(float(defx + defy));
-				dist = int(SquareRoot) - intensity;
-				if (dist > 255) dist = 255;
-				if (dist < 0)  dist = 0;
+			float SquareRoot = sqrt(float(defx + defy));
+			dist = int(SquareRoot) - intensity;
+			if (dist > 255) dist = 255;
+			if (dist < 0)  dist = 0;
 
-				float xDiff = float(x2 - x1);
-				float yDiff = float(y2 - y1);
-				float at2 = atan2(yDiff, xDiff);
+			float xDiff = float(x2 - x1);
+			float yDiff = float(y2 - y1);
+			float at2 = atan2(yDiff, xDiff);
 
-				float angles = (at2 * 360.0 / PI);
-				angle = int(angles);//%360;
-			}
-
-			// TODO: Change Mix_SetPosition to ScummVM equivalent
-			//Mix_SetPosition(id, angle, dist);
-			(void)angle;
-			(void)dist;
+			float angles = (at2 * 360.0 / PI);
+			angle = int(angles);//%360;
 		}
+
+		// TODO: Change Mix_SetPosition to ScummVM equivalent
+		//Mix_SetPosition(id, angle, dist);
+		(void)angle;
+		(void)dist;
 	}
 }
 
@@ -166,8 +150,8 @@ void AGSWaves::SFX_SetGlobalVolume(ScriptMethodParams &params) {
 }
 
 void AGSWaves::Load_SFX(ScriptMethodParams &params) {
-	PARAMS1(int, sfxNum);
-	LoadSFX(sfxNum);
+//	PARAMS1(int, sfxNum);
+//	LoadSFX(sfxNum);
 }
 
 void AGSWaves::Audio_Apply_Filter(ScriptMethodParams &params) {
@@ -192,29 +176,35 @@ void AGSWaves::SFX_Filter(ScriptMethodParams &params) {
 	SFX[sfxNum]._filter = enable;
 }
 
-
-void AGSWaves::LoadSFX(int i) {
-	Common::FSNode fsNode = ::AGS::g_vm->getGameFolder().getChild(
-		"sounds").getChild(Common::String::format("sound%d.sfx", i));
-
+Audio::AudioStream *AGSWaves::loadOGG(const Common::FSNode &fsNode) {
 #ifdef USE_VORBIS
 	if (fsNode.exists()) {
 		Common::File *soundFile = new Common::File();
 		if (!soundFile->open(fsNode))
 			error("Failed to open");
 
-		SFX[i]._stream = Audio::makeVorbisStream(soundFile, DisposeAfterUse::YES);
-		assert(SFX[i]._stream);
+		Audio::AudioStream *stream = Audio::makeVorbisStream(soundFile, DisposeAfterUse::YES);
+		assert(stream);
+		return stream;
 	}
 #endif
+
+	return nullptr;
 }
 
-void AGSWaves::UnloadSFX(int i) {
-	if (SFX[i]._stream != nullptr) {
-		_mixer->stopHandle(SFX[i]._soundHandle);
-		delete SFX[i]._stream;
-		SFX[i]._stream = nullptr;
-	}
+void AGSWaves::StopSFX(int sfxNum) {
+	SoundEffect &effect = SFX[sfxNum];
+	_mixer->stopHandle(effect._soundHandle);
+	effect._playing = 0;
+	effect._repeat = 0;
+	effect._channel = -2;
+}
+
+void AGSWaves::stopAllSounds() {
+	for (int i = 0; i < 500; ++i)
+		StopSFX(i);
+
+	_mixer->stopHandle(MFXStream._soundHandle);
 }
 
 void AGSWaves::GlitchFix() {
@@ -237,8 +227,19 @@ void AGSWaves::MusicPlay(int MusicToPlay, int repeat, int fadeinMS, int fadeoutM
 		return;
 	}
 
+	// Stop any previous music
+	_mixer->stopHandle(MFXStream._soundHandle);
+
+	// Load OGG file for music
+	Common::FSNode fsNode = ::AGS::g_vm->getGameFolder().getChild(
+		"Music").getChild(Common::String::format("music%d.mfx", MusicToPlay));
+	Audio::AudioStream *musicStream = loadOGG(fsNode);
+	if (!musicStream)
+		return;
+
 	bool samefile = currentMusic != MusicToPlay;
-	if (forceplay) samefile = true;
+	if (forceplay)
+		samefile = true;
 
 	if (samefile) {
 		currentMusicRepeat = repeat;
@@ -248,7 +249,9 @@ void AGSWaves::MusicPlay(int MusicToPlay, int repeat, int fadeinMS, int fadeoutM
 		if (!MFXStream.Switch) {
 			MFXStream.Channel = 0;
 
-			warning("TODO: OGGplayMusic(MusicLoads[MusicToPlay].musicPath, 0, repeat, 0, fixclick);");
+			_mixer->playStream(Audio::Mixer::kMusicSoundType,
+				&MFXStream._soundHandle, musicStream);
+
 			MFXStream.ID = MusicToPlay;
 			MFXStream.FadeTime = (fadeinMS / 1000) * 40;
 			MFXStream.FadeRate = (float)_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType)
@@ -260,7 +263,8 @@ void AGSWaves::MusicPlay(int MusicToPlay, int repeat, int fadeinMS, int fadeoutM
 			MFXStream.HaltedOne = false;
 			MFXStream.Channel = 1;
 
-			warning("TODO: OGGplayMusic(MusicLoads[MusicToPlay].musicPath, 0, repeat, 1, fixclick);");
+			_mixer->playStream(Audio::Mixer::kMusicSoundType,
+				&MFXStream._soundHandle, musicStream);
 
 			MFXStream.ID = MusicToPlay;
 			MFXStream.FadeTime = (fadeoutMS / 1000) * 40;

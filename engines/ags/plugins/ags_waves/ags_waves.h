@@ -24,6 +24,7 @@
 #define AGS_PLUGINS_AGS_WAVES_AGS_WAVES_H
 
 #include "audio/mixer.h"
+#include "common/fs.h"
 #include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/ags_waves/vars.h"
 
@@ -156,17 +157,16 @@ private:
 	void PlaySFX(int SoundToPlay, int repeat);
 
 	/**
-	 * Loads a sound file to memory
-	 * @param i		Sound number to load
+	 * Stops a playing sound effect
 	 */
-	void LoadSFX(int i);
+	void StopSFX(int sfxNum);
 
 	/**
-	 * Unloads a sound file from memory
-	 * @param i		Sound number to unload
+	 * Loads a ScummVM OGG stream for playback
 	 */
-	void UnloadSFX(int i);
+	Audio::AudioStream *loadOGG(const Common::FSNode &fsNode);
 
+	void stopAllSounds();
 	void GlitchFix();
 	void ApplyFilter(int SetFrequency);
 	void SetFilterFrequency(int setFrequency);
@@ -174,7 +174,7 @@ private:
 
 public:
 	AGSWaves();
-	virtual ~AGSWaves() {}
+	virtual ~AGSWaves();
 
 	const char *AGS_GetPluginName() override;
 	void AGS_EngineStartup(IAGSEngine *engine) override;

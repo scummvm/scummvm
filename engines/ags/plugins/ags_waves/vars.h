@@ -72,20 +72,15 @@ typedef int (*SCAPI_CHARACTER_GETX)(AGSCharacter *ch);
 typedef int (*SCAPI_CHARACTER_GETY)(AGSCharacter *ch);
 typedef int (*SCAPI_CHARACTER_ID) (AGSCharacter *ch);
 
-struct getMus {
-	char musicPath[1024];
-};
-
 //WAVE SOUNDS FILES
 struct SoundEffect {
-	Audio::AudioStream *_stream;
 	Audio::SoundHandle _soundHandle;
-	int _repeat;
-	int _volume;
-	bool _playing;
-	int _allow;
-	int _channel;
-	int _filter;
+	int _repeat = 0;
+	int _volume = 0;
+	int _allow = 0;
+	int _channel = 0;
+	int _filter = 0;
+	int _playing = 0;
 };
 
 struct Aud {
@@ -97,49 +92,50 @@ struct Aud {
 };
 
 struct Mus {
-	int ID;
-	int FadeTime;
-	float FadeRate;
-	float FadeVolume;
-	int Channel;
-	bool Switch;
-	bool HaltedZero;
-	bool HaltedOne;
+	int ID = 0;
+	int FadeTime = 0;
+	float FadeRate = 0;
+	float FadeVolume = 0;
+	int Channel = 0;
+	bool Switch = 0;
+	bool HaltedZero = 0;
+	bool HaltedOne = 0;
+	Audio::SoundHandle _soundHandle;
 };
 
 struct RainParticle {
-	int x;
-	int y;
-	int fx;
-	int fy;
-	int life;
-	int trans;
-	bool active;
-	int translay;
-	int transhold;
+	int x = 0;
+	int y = 0;
+	int fx = 0;
+	int fy = 0;
+	int life = 0;
+	int trans = 0;
+	bool active = 0;
+	int translay = 0;
+	int transhold = 0;
 };
 
 struct MusicStream {
-	int volume;
-	const char *Filename;
-	int repeat;
-	stb_vorbis *Vorbis;
-	bool fix_click;
+	int volume = 0;
+	const char *Filename = nullptr;
+	int repeat = 0;
+	stb_vorbis *Vorbis = 0;
+	bool fix_click = false;
 };
 
 struct DustParticle {
-	int x;
-	int y;
-	int transp;
-	int life;
-	bool active;
-	int dx;
-	int dy;
-	int mlay;
-	int timlay;
-	int movedport;
-	int translay;
-	int translayHold;
+	int x = 0;
+	int y = 0;
+	int transp = 0;
+	int life = 0;
+	bool active = false;
+	int dx = 0;
+	int dy = 0;
+	int mlay = 0;
+	int timlay = 0;
+	int movedport = 0;
+	int translay = 0;
+	int translayHold = 0;
 };
 
 struct Vars {
@@ -152,7 +148,6 @@ struct Vars {
 	PluginMethod Character_GetY;
 	PluginMethod Character_ID;
 
-	getMus MusicLoads[80];
 	SoundEffect SFX[500];
 	RainParticle RainParticles[400];
 	RainParticle RainParticlesFore[400];
@@ -192,9 +187,9 @@ struct Vars {
 	MusicStream globalStream[2];
 	SDL_AudioDeviceID getDevice[2];
 	bool AudioEnabled = false;
-	float ix, iy, ua;
+	float ix = 0, iy = 0, ua = 0;
 	float b_time[5];
-	float d_time;
+	float d_time = 0;
 
 	// Y-coordinate first because we use horizontal scanlines
 	uint32 texture[texHeight][texWidth];

@@ -98,7 +98,21 @@ void AGSWaves::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(TintProper, AGSWaves::TintProper);
 	SCRIPT_METHOD(GetWalkbehindBaserine, AGSWaves::GetWalkbehindBaserine);
 	SCRIPT_METHOD(SetWalkbehindBaserine, AGSWaves::SetWalkbehindBaserine);
+
+	engine->RequestEventHook(AGSE_PREGUIDRAW);
+	engine->RequestEventHook(AGSE_PRESCREENDRAW);
+	engine->RequestEventHook(AGSE_SAVEGAME);
+	engine->RequestEventHook(AGSE_RESTOREGAME);
+	engine->RequestEventHook(AGSE_ENTERROOM);
 }
+
+AGSWaves::~AGSWaves() {
+	stopAllSounds();
+}
+
+void AGS_EngineShutdown() {
+}
+
 
 int64 AGSWaves::AGS_EngineOnEvent(int event, NumberPtr data) {
 	switch (event) {
@@ -107,7 +121,7 @@ int64 AGSWaves::AGS_EngineOnEvent(int event, NumberPtr data) {
 		break;
 
 	case AGSE_RESTOREGAME: {
-		_mixer->stopAll();
+		stopAllSounds();
 
 		Serializer s(_engine, data, true);
 		for (int j = 0; j < 500 - 1; ++j) {
@@ -121,6 +135,7 @@ int64 AGSWaves::AGS_EngineOnEvent(int event, NumberPtr data) {
 	case AGSE_SAVEGAME: {
 		Serializer s(_engine, data, true);
 		for (int j = 0; j < 500 - 1; ++j) {
+			SFX[j]._playing = _mixer->isSoundHandleActive(SFX[j]._soundHandle);
 			s.syncAsInt(SFX[j]._repeat);
 			s.syncAsInt(SFX[j]._volume);
 			s.syncAsInt(SFX[j]._playing);
@@ -137,10 +152,7 @@ int64 AGSWaves::AGS_EngineOnEvent(int event, NumberPtr data) {
 		break;
 
 	case AGSE_ENTERROOM:
-		for (int j = 0; j < 500 - 1; ++j) {
-			if (!_mixer->isSoundHandleActive(SFX[j]._soundHandle))
-				UnloadSFX(j);
-		}
+		stopAllSounds();
 		break;
 
 	default:
