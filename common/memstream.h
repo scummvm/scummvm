@@ -204,6 +204,16 @@ protected:
 
 		_size = new_len;
 	}
+
+	/** Round up capacity to the next power of 2.
+	  * A minimal capacity of 8 is used.
+	  */
+	static size_t roundUpCapacity(size_t capacity) {
+		size_t capa = 8;
+		while (capa < capacity)
+			capa <<= 1;
+		return capa;
+	}
 public:
 	explicit MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _ptr(nullptr), _data(nullptr), _pos(0), _disposeMemory(disposeMemory) {}
 
@@ -213,7 +223,9 @@ public:
 	}
 
 	uint32 write(const void *dataPtr, uint32 dataSize) override {
-		ensureCapacity(_pos + dataSize);
+		if ((_size + dataSize) >= _capacity)
+			ensureCapacity(roundUpCapacity(_pos + dataSize));
+
 		memcpy(_ptr, dataPtr, dataSize);
 		_ptr += dataSize;
 		_pos += dataSize;
