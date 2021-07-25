@@ -84,6 +84,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mafio", "Mafio" },
 	{ "meninbrown", "Men In Brown" },
 	{ "midtownshootout", "Anton Ulvfot's Mid-Town Shootout" },
+	{ "micv", "Monkey Island - Carnaval Vudu - Parte 1 - La Busqueda" },
+	{ "mimv", "Monkey Island - La Maldicion Vudu" },
+	{ "mivl", "Monkey Island - La Venganza de Largo" },
 	{ "momsquest", "Mom's Quest" },
 	{ "monkeyplank", "Monkey Plank" },
 	{ "moosewars", "Moose Wars: Desire For More Cows" },
@@ -1852,6 +1855,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12563246),	// 3.1
 	GAME_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12574643),  // 3.1c
 	GAME_ENTRY("kq2agdi", "kq2vga.exe", "43e6294f8bfbba8a3f754fa742353845", 12507938),
+	GAME_ENTRY("kq2agdi", "Kq2vgaEsp.exe", "f964e5cb4d339432dd0302d67eb11105", 2490368), // Spanish transalation
 	GAME_ENTRY("kq3agdi", "kq3redux.exe", "4c2ea3f7b4974509c59546ca8761b040", 11890197),  // 1.0
 	GAME_ENTRY("kq3agdi", "kq3redux.exe", "e569fb2ceabdc4a1609348c23ebc0821", 11986266),  // 1.1
 	GAME_ENTRY("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20523688),  // 1.1
@@ -1874,6 +1878,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("alemmo", "al_emmo.exe", "d14295053c672c253460c8a7179b2bba", 19054865),
 	GAME_ENTRY("alemmo", "al_emmo.exe", "4139d665622b2e3c5a31e90fc530fc74", 22442059),
 	GAME_ENTRY("alemmo", "al_emmo.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19181537),
+	GAME_ENTRY("alemmo", "Al_EmmoSPA.exe", "a6608b37277f1220a1aecc6c18102a04", 2479104), // Fanmade Spanish translation
 	GAME_ENTRY("alemmoanozira", "postcards from anozira.exe", "f5f73b35e809d9e01a2cff32abeffadf", 5567476), // 3.0, Desura
 	GAME_ENTRY_STEAM("alemmoanozira", "Postcards_from_Anozira.exe", "a33691e4a84e2645b4cbe1f681511798", 5567690),
 	GAME_ENTRY("alemmoanozira", "postcards from anozira.exe", "893f31faa33f1219b316894a0cbe7b27", 174781776),
@@ -2113,6 +2118,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("mash", "mash demo.ags", "af4276d98c9f71dba02658fe95e49b75", 2565641),
 	DEMO_ENTRY("mash", "mash demo.exe", "7825fa980fcd058caadaf6d3377b1f78", 5601309),
 	DEMO_ENTRY("mi5thereturnoflechuck", "demo.exe", "0500aacb6c176d47ac0f8158f055db83", 6235270),
+	DEMO_ENTRY("micv", "MI.exe", "d90febc33f641a5f14c485f8ef29fb33", 3371895),
+	DEMO_ENTRY("mimv", "MI.exe", "c0c6dafd33236a308bd0b87678326994", 1872382),
+	DEMO_ENTRY("mivl", "MI.exe", "23a7b5a6119e82a9750302492b3f2856", 1927604),
 	DEMO_ENTRY("mybigsister", "my big sister.exe", "4dc50ca8b5d2c762fe86a528b09973cf", 90464651),
 	DEMO_ENTRY("neofeud", "neofeud demo.exe", "6e861b1f476ff7cdf036082abb271329", 1886913453),
 	DEMO_ENTRY("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078743282), // 1.3 itch.io
