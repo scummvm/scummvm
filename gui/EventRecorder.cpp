@@ -383,8 +383,8 @@ bool EventRecorder::openRecordFile(const Common::String &fileName) {
 
 bool EventRecorder::checkGameHash(const ADGameDescription *gameDesc) {
 	if (_playbackFile->getHeader().hashRecords.size() == 0) {
-		warning("Engine doesn't contain description table");
-		return false;
+		warning("Engine doesn't contain description table, skipping hash check");
+		return true;
 	}
 	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 		if (fileDesc->md5 == nullptr)
