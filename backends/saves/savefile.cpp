@@ -83,9 +83,9 @@ int64 OutSaveFile::size() const {
 
 void OutSaveFile::unsupportedMethodWarning(const Common::String &methodName) const {
 	if (_isCompressed)
-		warning("%s method is unsupported for compressed save files", methodName.c_str());
+		warning("OutSaveFile::%s function is unsupported for compressed save files", methodName.c_str());
 	else
-		warning("%s method is unsupported for this particular backend", methodName.c_str());
+		warning("OutSaveFile::%s function is unsupported for this particular backend", methodName.c_str());
 }
 
 bool SaveFileManager::copySavefile(const String &oldFilename, const String &newFilename, bool compress) {

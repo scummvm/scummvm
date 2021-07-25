@@ -49,6 +49,8 @@ bool FileStream::HasErrors() const {
 
 void FileStream::Close() {
 	if (_outSave) {
+		// Cached savefile data written at the end for backends that
+		// don't directly support write file seeking
 		_outSave->write(_writeBuffer.getData(), _writeBuffer.size());
 		_outSave->finalize();
 		delete _outSave;
@@ -191,10 +193,10 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 		}
 
 	} else {
+		Common::String filename;
 
 		if (!file_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
-			_outSave = g_system->getSavefileManager()->openForSaving(
-			               file_name.GetCStr() + strlen(SAVE_FOLDER_PREFIX), false);
+			filename = file_name.GetCStr() + strlen(SAVE_FOLDER_PREFIX);
 		} else {
 			Common::String fname = file_name;
 			if (fname.hasPrefix("./"))
@@ -204,15 +206,25 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 			else if (fname.findFirstOf('/') != Common::String::npos)
 				error("Invalid attempt to create file - %s", fname.c_str());
 
-			_outSave = g_system->getSavefileManager()->openForSaving(fname, false);
+			filename = fname;
 		}
 
+		_outSave = g_system->getSavefileManager()->openForSaving(filename, false);
 		if (!_outSave)
 			error("Invalid attempt to create file - %s", file_name.GetCStr());
 
-		// Any data written has to first go through the memory stream buffer,
-		// since the savegame code uses Seeks, which OutSaveFile doesn't support
-		_file = &_writeBuffer;
+		// Check if the save file supports seek/size.. seek is needed
+		// for backtracking to write out chunk sizes and screenshot offset
+		if (_outSave->size() == 0) {
+			// Supports it, so data can be written directly
+			_file = _outSave;
+			_outSave = nullptr;
+
+		} else {
+			// It doesn't. So data needs to be written to a memory buffer
+			// to allow for seeking, and will be dumped all at once at the end
+			_file = &_writeBuffer;
+		}
 	}
 }
 

@@ -69,11 +69,11 @@ public:
 private:
 	void Open(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode);
 
-	Common::Stream *_file;
+	Common::Stream *_file = nullptr;
 	const FileOpenMode  _openMode;
 	const FileWorkMode  _workMode;
 	Common::MemoryWriteStreamDynamic _writeBuffer;
-	Common::OutSaveFile *_outSave;
+	Common::OutSaveFile *_outSave = nullptr;
 };
 
 } // namespace Shared
