@@ -30,7 +30,10 @@
 #include "gui/gui-manager.h"
 
 #include "gui/ThemeEval.h"
+
 #define kGroupTag -2
+#define isGroupHeader(x) (x <= kGroupTag)
+#define indexToGroupID(x) (kGroupTag - x)
 
 namespace GUI {
 
@@ -225,8 +228,8 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 				abortEditMode();
 			_selectedItem = newSelectedItem;
 			sendCommand(kListSelectionChangedCmd, _selectedItem);
-		} else if (_listIndex[newSelectedItem] <= kGroupTag) {
-			int groupID = -(_listIndex[newSelectedItem]) + kGroupTag;
+		} else if (isGroupHeader(_listIndex[newSelectedItem])) {
+			int groupID = indexToGroupID(_listIndex[newSelectedItem]);
 			_selectedItem = -1;
 			toggleGroup(groupID);
 			warning("%d", groupID);
@@ -332,7 +335,6 @@ void GroupedListWidget::drawWidget() {
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
 		const int y = _y + _topPadding + kLineHeight * i;
 		const int fontHeight = kLineHeight;
-		bool isGroupHeader = false;
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 
 		// Draw the selected item inverted, on a highlighted background.
@@ -343,9 +345,8 @@ void GroupedListWidget::drawWidget() {
 		int pad = _leftPadding;
 		int rtlPad = (_x + r.left + _leftPadding) - (_x + _hlLeftPadding);
 
-		if (_listIndex[pos] <= kGroupTag) {
-			int groupID = -_listIndex[pos] + kGroupTag;
-			isGroupHeader = true;
+		if (isGroupHeader(_listIndex[pos])) {
+			int groupID = indexToGroupID(_listIndex[pos]);
 			r.left += fontHeight - 2 + _leftPadding;
 			g_gui.theme()->drawFoldIndicator(Common::Rect(_x + _hlLeftPadding + _leftPadding, y, _x + fontHeight - 2 + _leftPadding, y + fontHeight - 2), _groupExpanded[groupID]);
 			pad = 0;
@@ -387,7 +388,7 @@ void GroupedListWidget::drawWidget() {
 		} else {
 			buffer = _list[pos];
 		}
-		if (isGroupHeader)
+		if (isGroupHeader(_listIndex[pos]))
 			g_gui.theme()->drawText(r1, buffer, _state,
 								_drawAlign, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
 		else
