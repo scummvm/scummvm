@@ -38,7 +38,7 @@ namespace std {
 
 template<class T>
 inline bool isUndefined(T val) {
-return val == FLOAT_UNASSIGNED;
+	return val == FLOAT_UNASSIGNED;
 }
 
 } // namespace std
