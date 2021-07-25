@@ -41,8 +41,7 @@
 
 namespace Hypno {
 
-Hotspot *hot;
-Hotspots hots;
+Hotspots *hots;
 Settings setts;
 
 extern int parse(const char *);
@@ -76,8 +75,8 @@ void HypnoEngine::loadMis(Common::String filename) {
 	test->read(buf, fileSize);
 	buf[fileSize] = '\0';
 	parse(buf);
-	setts[filename] = hots;
-	debug("Loaded hots size: %d", hots.size());
+	setts[filename] = *hots;
+	debug("Loaded hots size: %d", hots->size());
 }
 
 LibData HypnoEngine::loadLib(char *filename) {
@@ -156,7 +155,7 @@ Common::Error HypnoEngine::run() {
 	// Read assets file
 	loadMis("mis/demo.mis");
 	loadMis("mis/order.mis");
-	//loadMis("mis/alley.mis");
+	loadMis("mis/alley.mis");
 	//loadMis("MIS/SHOCTALK.MIS");
 
 	// Initialize graphics
@@ -189,7 +188,7 @@ Common::Error HypnoEngine::run() {
 	Common::String movieIntro = "DEMO/DCINE2.SMK";
 	_nextMovie = logoIntro;
 
-	while (_nextMovie != "" || _currentMovie != "") {
+	while ((_nextMovie != "" || _currentMovie != "") && !shouldQuit()) {
 			while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
 			switch (event.type) {
@@ -240,8 +239,9 @@ Common::Error HypnoEngine::run() {
 		g_system->delayMillis(10);
 	}
 
+	//_nextSetting = "mis/alley.mis";
 	_nextSetting = "mis/demo.mis";
-	changeCursor("default");
+	changeCursor("mouse/cursor1.smk", 0);
 
 	while (!shouldQuit()) {
 		
@@ -345,18 +345,34 @@ Common::Error HypnoEngine::run() {
 
 void HypnoEngine::prepareHotspots(Hotspots hs) {
 	for (Hotspots::const_iterator it = hs.begin(); it != hs.end(); ++it) {
-		debug("hotspot type: %d", it->type);
+		const Hotspot h = *it;
+		debug("hotspot type: %d action size: %d", it->type, it->actions.size());
 		for (Actions::const_iterator itt = it->actions.begin(); itt != it->actions.end(); ++itt) {
 			Action *action = *itt;
 			if (typeid(*action) == typeid(Background))
-				runBackground((Background*) action);
+				runBackground(h, (Background*) action);
+			else if (typeid(*action) == typeid(Overlay))
+				runOverlay(h, (Overlay*) action);
+			//else if (typeid(*action) == typeid(Mice))
+			//	runMice(h, (Mice*) action);
 		}	
 	}
 }
 
-void HypnoEngine::runBackground(Background *a) {
+void HypnoEngine::runBackground(const Hotspot h, Background *a) {
+	Common::Point origin = a->origin;
+	if (a->condition.size() == 0)
+		loadImage(a->path, origin.x, origin.y);
+}
+
+void HypnoEngine::runOverlay(const Hotspot h, Overlay *a) {
 	Common::Point origin = a->origin;
 	loadImage(a->path, origin.x, origin.y);
+}
+
+void HypnoEngine::runMice(const Hotspot h, Mice *a) {
+	if (h.type == MakeMenu)
+    	changeCursor(a->path, a->index);
 }
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y) {
@@ -364,7 +380,7 @@ void HypnoEngine::loadImage(const Common::String &name, int x, int y) {
 	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x, y), _transparentColor);
 }
 
-Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n) {
+Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, bool convert) {
 	Common::File *file = new Common::File();
 	Common::String path = convertPath(name);
 
@@ -379,16 +395,20 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n) {
 		_videoDecoder->decodeNextFrame();
 
 	const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
-	Graphics::Surface *sframe = frame->scale(_screenW, _screenH);
-	Graphics::Surface *cframe = sframe->convertTo(_pixelFormat, _videoDecoder->getPalette());
+	Graphics::Surface *rframe;
 
-	sframe->free();
-	delete sframe;
-	
+	if (convert) {
+		rframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
+	} else {
+		rframe = frame->convertTo(frame->format, _videoDecoder->getPalette());
+		//rframe->create(frame->w, frame->h, frame->format);
+		//rframe->copyRectToSurface(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
+	}
+
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
 
-	return cframe;
+	return rframe;
 }
 
 

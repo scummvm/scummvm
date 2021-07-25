@@ -51,6 +51,7 @@
 %{
 
 //#include "private/private.h"
+#include "common/array.h"
 #include "hypno/grammar.h"
 #include <stdio.h>
 
@@ -60,6 +61,9 @@
 extern int HYPNO_lex();
 extern int HYPNO_parse();
 extern int yylineno;
+
+Common::Array<uint32> smenu_idx;
+Common::Array<Hypno::Hotspots *> stack;
 
 void HYPNO_xerror(const char *str) {
 	debug("ERROR: %s", str);
@@ -73,19 +77,26 @@ using namespace Hypno;
 
 %} 
 
-
 %union {
 	char *s;	     	/* string value */
 	int i;	         	/* integer value */
 }
 
-%token<s> NAME FILENAME FLAG COMMENT
+%token<s> NAME FILENAME FLAG COMMENT GSSWITCH
 %token<i> NUM
 %token HOTSTOK CUTSTOK BITMAPTOK BACKTOK RETTOK  TIMETOK PALETOK BBOXTOK OVERTOK WALNTOK MICETOK PLAYTOK ENDTOK 
 %token MENUTOK SMENTOK ESCPTOK NRTOK
-%token GLOBTOK TONTOK TOFFTOK GSSWITCH
+%token GLOBTOK TONTOK TOFFTOK
+
+%type<s> gsswitch
 
 %%
+
+start: init lines 
+       ;
+
+init: { smenu_idx.push_back(-1);
+	    stack.push_back(new Hotspots()); }
 
 lines:   line RETTOK lines
        | line
@@ -96,52 +107,88 @@ end: RETTOK  { debug("implicit END"); }
     ; 
 
 line:    MENUTOK NAME mflag  {
-	     assert(hot == NULL);
-	     hot = new Hotspot(); 
+	     Hotspot *hot = new Hotspot(); 
 		 hot->type = MakeMenu;
-		 debug("MENU %d.", hot->type); 
-	  }
-      |	 HOTSTOK BBOXTOK NUM NUM NUM NUM  { 
-         if (hot != NULL)
-		    hots.push_back(*hot);
+		 hot->smenu = NULL;
+		 debug("MENU %d.", hot->type);
+		 Hotspots *cur = stack.back();
+		 cur->push_back(*hot);
 
-	     hot = new Hotspot(); 
+		 // We don't care about menus, only hotspots
+     	 int idx = smenu_idx.back();
+		 idx++;
+		 smenu_idx.pop_back();
+		 smenu_idx.push_back(idx);
+
+	  }
+      |	 HOTSTOK BBOXTOK NUM NUM NUM NUM  {  
+	     Hotspot *hot = new Hotspot(); 
 		 hot->type = MakeHotspot;
-		 hot->x0 = $3;
-		 debug("HOTS %d", hot->x0); 
+		 hot->smenu = NULL;
+		 debug("HOTS %d.", hot->type);
+		 Hotspots *cur = stack.back();
+		 cur->push_back(*hot); 
       }
 	  |  SMENTOK { 
-		  hot = NULL;
-		  debug("SUBMENU"); }
+		  // This should always point to a hotspot
+		  int idx = smenu_idx.back();
+		  idx++;
+		  smenu_idx.pop_back();
+		  smenu_idx.push_back(idx);
+
+		  Hotspots *cur = stack.back();
+		  Hotspot hot = (*cur)[idx];
+
+		  smenu_idx.push_back(-1);
+		  hot.smenu = new Hotspots();
+	      stack.push_back(hot.smenu);
+		  debug("SUBMENU"); 
+		}
       |  ESCPTOK                                   { debug("ESC SUBMENU"); }
 	  |  TIMETOK NUM                               { debug("TIME %d", $2); } 
       |  BACKTOK FILENAME NUM NUM gsswitch flag    {
-		  	Background *a = new Background();
-		  	a->path = $2;
-		  	a->origin = Common::Point($3, $4);
-		  	hot->actions.push_back(a);
+			Background *a = new Background();
+			a->path = $2;
+			a->origin = Common::Point($3, $4);
+			a->condition = $5;
+			Hotspots *cur = stack.back();
+		    Hotspot *hot = &cur->back();
+			hot->actions.push_back(a);
 		}
       |  GLOBTOK gsswitch command                  { debug("GLOB."); }
 	  |  PLAYTOK FILENAME NUM NUM gsswitch flag    { debug("PLAY %s.", $2); }
-      |  OVERTOK FILENAME NUM NUM flag    		   { debug("OVER %s.", $2); }
+      |  OVERTOK FILENAME NUM NUM flag { 
+		  	Overlay *a = new Overlay();
+			a->path = $2;
+			a->origin = Common::Point($3, $4);
+			Hotspots *cur = stack.back();
+		    Hotspot *hot = &cur->back();
+			hot->actions.push_back(a);
+	   }
 	  |  PALETOK FILENAME                          {
 			Palette *a = new Palette();
 			a->path = $2; 
-		    hot->actions.push_back(a);
+			Hotspots *cur = stack.back();
+		    Hotspot *hot = &cur->back();
+			hot->actions.push_back(a);
 		}
 	  |  CUTSTOK FILENAME                          { debug("CUTS %s.", $2); }
 	  |  WALNTOK FILENAME NUM NUM gsswitch flag    { debug("WALN %s %d %d.", $2, $3, $4); } 
 	  |  MICETOK FILENAME NUM {
-		  	  //Mice a;
-			  //a.path = $2; 
-			  //a.index = $3;
-		      //hot->actions.push_back(a);
+		  	//Mice *a = new Mice();
+			//a->path = $2; 
+			//a->index = $3;
+			//if (smenu_idx == -1)
+		    //	hot->actions.push_back(a);
+			//else 
+			//	hots[smenu_idx].smenu.push_back(a);
+			//debug("mice!");
 	  }
 	  |  ENDTOK RETTOK { 
-		  debug("explicit END"); 
-		  if (hot == NULL)
-			error("Invalid END during MIS parsing");
-		  hots.push_back(*hot);
+		  debug("explicit END");
+		  hots = stack.back(); 
+		  stack.pop_back();
+		  smenu_idx.pop_back();
 		  }   		               
 	  ;
 
@@ -153,8 +200,8 @@ flag:   BITMAPTOK                         { debug("flag: BITMAP"); }
       | /* nothing */
 	  ;
 
-gsswitch:   GSSWITCH                      { debug("flag: GS_SWITCH"); }
-          | /* nothing */
+gsswitch:   GSSWITCH                      { $$ = $1; debug("flag: GS_SWITCH"); }
+          | /* nothing */                 { $$ = scumm_strdup(""); }
 	      ;
 
 command:   TONTOK 
