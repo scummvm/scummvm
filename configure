@@ -230,6 +230,7 @@ _ar="ar cru"
 _as="as"
 _dwp=dwp
 _windres=windres
+_ldd=ldd
 _stagingpath="staging"
 _amigaospath="install"
 _morphospath="PROGDIR:"
@@ -3419,6 +3420,9 @@ if test -n "$_host"; then
 			_ar="$_host-ar cr"
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
+			if `which $_host-peldd >/dev/null 2>&1`; then
+				_ldd="$_host-peldd -t --ignore-errors"
+			fi
 			;;
 		mips-sgi*)
 			append_var LDFLAGS "-static-libgcc"
@@ -6163,6 +6167,7 @@ AS := $_as
 ASFLAGS := $ASFLAGS
 DWP := $_dwp
 WINDRES := $_windres
+LDD := $_ldd
 WINDRESFLAGS := $WINDRESFLAGS
 STAGINGPATH=$_stagingpath
 AMIGAOSPATH=$_amigaospath
