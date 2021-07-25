@@ -130,7 +130,7 @@ void GroupedListWidget::groupByAttribute() {
 			_groupExpanded.push_back(true);
 		}
 		groupID = _groupValueIndex.getVal(*attrVal);
-		
+
 		_itemsInGroup[groupID].push_back(i);
 	}
 
