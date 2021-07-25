@@ -33,8 +33,8 @@ namespace Saga2 {
 
 #define CHUNK_BEGIN Common::MemoryWriteStreamDynamic *out = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES)
 
-#define CHUNK_END outS->writeUint32LE(out->size()); \
-	outS->write(out->getData(), out->size()); \
+#define CHUNK_END outS->writeUint32LE(out->pos()); \
+	outS->write(out->getData(), out->pos()); \
 	delete out
 
 /* ===================================================================== *
