@@ -1,0 +1,55 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "engines/advancedDetector.h"
+#include "graphics/scaler.h"
+
+#include "hypno/hypno.h"
+
+class HypnoMetaEngine : public AdvancedMetaEngine {
+public:
+	const char *getName() const override {
+		return "hypno";
+	}
+
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	//void getSavegameThumbnail(Graphics::Surface &thumb) override;
+};
+
+Common::Error HypnoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+	*engine = new Hypno::HypnoEngine(syst, gd);
+	return Common::kNoError;
+}
+
+namespace Hypno {
+
+bool HypnoEngine::isDemo() const {
+	return (bool)(_gameDescription->flags & ADGF_DEMO);
+}
+
+} // End of namespace Hypno
+
+#if PLUGIN_ENABLED_DYNAMIC(HYPNO)
+REGISTER_PLUGIN_DYNAMIC(HYPNO, PLUGIN_TYPE_ENGINE, HypnoMetaEngine);
+#else
+REGISTER_PLUGIN_STATIC(HYPNO, PLUGIN_TYPE_ENGINE, HypnoMetaEngine);
+#endif
