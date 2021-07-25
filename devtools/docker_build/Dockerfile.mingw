@@ -1,0 +1,92 @@
+FROM debian:testing
+RUN printf 'APT::Get::Install-Recommends "false";\nAPT::Get::Install-Suggests "false";' > /etc/apt/apt.conf.d/10no-recommends
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    autoconf \
+    automake \
+    autopoint \
+    bash \
+    bison \
+    bzip2 \
+    ccache \
+    cmake \
+    curl \
+    dos2unix \
+    flex \
+    g++ \
+    gettext \
+    git \
+    gperf \
+    intltool \
+    less \
+    libffi-dev \
+    libgdk-pixbuf2.0-dev \
+    libltdl-dev \
+    libssl-dev \
+    libtool \
+    libtool-bin \
+    libxml-parser-perl \
+    lld \
+    lzip \
+    make \
+    openssl \
+    p7zip-full \
+    patch \
+    perl \
+    pkg-config \
+    python \
+    ruby \
+    sed \
+    unzip \
+    vim \
+    wget \
+    xz-utils \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PATH=$PATH:/opt/mxe/usr/bin
+
+RUN git clone https://github.com/mxe/mxe /opt/mxe
+
+ARG TYPE=static
+RUN cd /opt/mxe && \
+    make -j$(nproc) JOBS=$(nproc) \
+    curl \
+    faad2 \
+    flac \
+    fluidsynth \
+    freetype \
+    fribidi \
+    gcc \
+    giflib \
+    glew \
+    libjpeg-turbo \
+    libmad \
+    libmpeg2 \
+    libpng \
+    mingw-w64 \
+    ogg \
+    sdl2 \
+    sdl2_net \
+    theora \
+    vorbis \
+    zlib \
+    MXE_TARGETS=x86_64-w64-mingw32.$TYPE \
+    MXE_PLUGIN_DIRS=plugins/gcc11 \
+    MXE_USE_CCACHE=no \
+    && make clean-junk \
+    && rm -rf pkg
+RUN ln -s /usr/bin/ld.lld /opt/mxe/usr/bin/x86_64-w64-mingw32.$TYPE-ld.lld
+
+ARG DISCORD_VER=3.4.0
+RUN curl -L https://github.com/discord/discord-rpc/archive/refs/tags/v$DISCORD_VER.tar.gz | tar zxf - -C /usr/src \
+    && cd /usr/src/discord-rpc-$DISCORD_VER \
+    && mkdir build \
+    && cd build \
+    && x86_64-w64-mingw32.$TYPE-cmake .. -DCMAKE_INSTALL_PREFIX=/opt/mxe/usr/x86_64-w64-mingw32.$TYPE \
+    && MAKEFLAGS=-j$(nproc) cmake --build . --config Release --target install \
+    && cd / \
+    && rm -rf /usr/src/discord-rpc-$DISCORD_VER
+
+ENV CPPFLAGS="-I/opt/mxe/usr/x86_64-w64-mingw32.$TYPE/include/SDL2 -I/opt/mxe/usr/x86_64-w64-mingw32.$TYPE/include/libjpeg-turbo"
+ENV LDFLAGS=-L/opt/mxe/usr/x86_64-w64-mingw32.$TYPE/lib/libjpeg-turbo
+ENV PKG_CONFIG_LIBDIR=/opt/mxe/usr/x86_64-w64-mingw32.$TYPE/lib/pkgconfig
