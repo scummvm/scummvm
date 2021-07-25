@@ -1027,7 +1027,7 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 	U32StringArray attrs;
 	switch (_groupBy) {
 	case kGroupByFirstLetter:
-		for (int i = 0; i < metadata.size(); ++i) {
+		for (uint i = 0; i < metadata.size(); ++i) {
 			attrs.push_back(metadata[i]->getVal("description").substr(0, 1));
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String("..."));
@@ -1035,7 +1035,7 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 		_list->groupByAttribute();
 		break;
 	case kGroupByEngine:
-		for (int i = 0; i < metadata.size(); ++i) {
+		for (uint i = 0; i < metadata.size(); ++i) {
 			U32String engineid = metadata[i]->contains(String("engineid")) ?
 								metadata[i]->getVal(String("engineid")) : String("Unknown Engine");
 			attrs.push_back(engineid);
@@ -1045,7 +1045,7 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 		_list->groupByAttribute();
 		break;
 	case kGroupByLanguage:
-		for (int i = 0; i < metadata.size(); ++i) {
+		for (uint i = 0; i < metadata.size(); ++i) {
 			U32String engineid = metadata[i]->contains(String("language")) ?
 								metadata[i]->getVal(String("language")) : String("Language not set");
 			attrs.push_back(engineid);
@@ -1055,7 +1055,7 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 		_list->groupByAttribute();
 		break;
 	case kGroupByPlatform:
-		for (int i = 0; i < metadata.size(); ++i) {
+		for (uint i = 0; i < metadata.size(); ++i) {
 			U32String engineid = metadata[i]->contains(String("Platform")) ?
 								metadata[i]->getVal(String("Platform")) : String("Platform not set");
 			attrs.push_back(engineid);

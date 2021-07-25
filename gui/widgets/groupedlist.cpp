@@ -113,7 +113,7 @@ void GroupedListWidget::groupByAttribute() {
 		_groupExpanded.push_back(true);
 		_groupHeaders.push_back(String("All"));
 		_groupValueIndex.setVal(String("All"), 0);
-		for (int i = 0; i < _dataList.size(); ++i) {
+		for (uint i = 0; i < _dataList.size(); ++i) {
 			_itemsInGroup[0].push_back(i);
 		}
 		sortGroups();
