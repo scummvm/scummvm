@@ -1011,7 +1011,7 @@ void LauncherSimple::updateListing() {
 	
 	groupEntries(attrs);
 
-	if (oldSel < (int)l.size())
+	if (oldSel < (int)l.size() && oldSel >= 0)
 		_list->setSelected(oldSel);	// Restore the old selection
 	else if (oldSel != -1)
 		// Select the last entry if the list has been reduced
