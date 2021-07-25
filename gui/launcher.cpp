@@ -596,16 +596,20 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		massAddGame();
 		break;
 	case kRemoveGameCmd:
+		if (item < 0) return;
 		removeGame(item);
 		break;
 	case kEditGameCmd:
+		if (item < 0) return;
 		editGame(item);
 		break;
 	case kLoadGameCmd:
+		if (item < 0) return;
 		loadGame(item);
 		break;
 #ifdef ENABLE_EVENTRECORDER
 	case kRecordGameCmd:
+		if (item < 0) return;
 		recordGame(item);
 		break;
 #endif
@@ -621,7 +625,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kStartCmd:
 		// Start the selected game.
-		assert(item >= 0);
+		if (item < 0) return;
 		ConfMan.setActiveDomain(_domains[item]);
 		close();
 		break;
