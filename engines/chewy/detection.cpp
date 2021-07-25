@@ -52,6 +52,19 @@ static const ChewyGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Chewy - ESC from F5 - Spanish fanmade translation
+		{
+			"chewy",
+			0,
+			AD_ENTRY1s("atds.tap", "b1210066a524fe0f88862f44671ed97d", 226988),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOMIDI)
+		},
+	},
+
+	{
 		// Chewy - ESC von F5 - German
 		// Master version 1.1 (CHEWY.EXE - offset 0x8AB28)
 		// The source CD-ROM has the Matrix code SONOPRESS R-7885 B
