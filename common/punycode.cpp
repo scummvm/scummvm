@@ -81,14 +81,14 @@ static char encode_digit(int c) {
 }
 
 /* Encode as a generalized variable-length integer. Returns number of bytes written. */
-static size_t encode_var_int(const size_t bias, const size_t delta, char *const dst, size_t dstlen) {
-	size_t i, k, q, t;
+static String encode_var_int(const size_t bias, const size_t delta) {
+	size_t k, q, t;
+	String dst;
 
-	i = 0;
 	k = BASE;
 	q = delta;
 
-	while (i < dstlen) {
+	while (true) {
 		if (k <= bias) {
 			t = TMIN;
 		} else if (k >= bias + TMAX) {
@@ -101,17 +101,15 @@ static size_t encode_var_int(const size_t bias, const size_t delta, char *const 
 			break;
 		}
 
-		dst[i++] = encode_digit(t + (q - t) % (BASE - t));
+		dst += encode_digit(t + (q - t) % (BASE - t));
 
 		q = (q - t) / (BASE - t);
 		k += BASE;
 	}
 
-	if (i < dstlen) {
-		dst[i++] = encode_digit(q);
-	}
+	dst += encode_digit(q);
 
-	return i;
+	return dst;
 }
 
 static size_t decode_digit(uint32_t v) {
@@ -127,30 +125,32 @@ static size_t decode_digit(uint32_t v) {
 	return SIZE_MAX;
 }
 
-size_t punycode_encode(const uint32_t *const src, const size_t srclen, char *const dst, size_t *const dstlen) {
-	size_t b, h;
-	size_t delta, bias;
-	size_t m, n;
-	size_t si, di;
+String punycode_encode(String src) {
+	int srclen = src.size();
+	int di = 0, si;
+	String dst;
 
-	for (si = 0, di = 0; si < srclen && di < *dstlen; si++) {
-		if (src[si] < 128) {
-			dst[di++] = src[si];
+	for (si = 0; si < srclen; si++) {
+		if ((byte)src[si] < 128) {
+			dst += src[si];
+			di++;
 		}
 	}
 
-	b = h = di;
+	int b = di, h = di;
 
 	/* Write out delimiter if any basic code points were processed. */
-	if (di > 0 && di < *dstlen) {
-		dst[di++] = '-';
+	if (di > 0) {
+		dst += '-';
+		di++;
 	}
 
-	n = INITIAL_N;
-	bias = INITIAL_BIAS;
-	delta = 0;
+	int n = INITIAL_N;
+	int bias = INITIAL_BIAS;
+	int delta = 0;
+	int m;
 
-	for (; h < srclen && di < *dstlen; n++, delta++) {
+	for (; h < srclen; n++, delta++) {
 		/* Find next smallest non-basic code point. */
 		for (m = SIZE_MAX, si = 0; si < srclen; si++) {
 			if (src[si] >= n && src[si] < m) {
@@ -176,7 +176,7 @@ size_t punycode_encode(const uint32_t *const src, const size_t srclen, char *con
 				}
 			}
 			else if (src[si] == n) {
-				di += encode_var_int(bias, delta, &dst[di], *dstlen - di);
+				dst += encode_var_int(bias, delta);
 				bias = adapt_bias(delta, h + 1, h == b);
 				delta = 0;
 				h++;
@@ -185,11 +185,8 @@ size_t punycode_encode(const uint32_t *const src, const size_t srclen, char *con
 	}
 
 fail:
-	/* Tell the caller how many bytes were written to the output buffer. */
-	*dstlen = di;
-
 	/* Return how many Unicode code points were converted. */
-	return si;
+	return dst;
 }
 
 bool punycode_hasprefix(const String src) {
@@ -298,6 +295,24 @@ String punycode_decode(const String src1) {
 	return dst;
 }
 
+String punycode_encodefilename(const String src) {
+	String dst;
+
+	for (int i = 0; i < src.size(); i++) {
+		if ((byte)src[i] == 0x81) {	// In case we have our escape character present
+			dst += '\x81';
+			dst += '\x79';
+		// [\x00-\x1f\/":]
+		} else if (src[i] == '/' || src[i] == '"' || src[i] == ':' || (byte)src[i] < 0x20) {
+			dst += src[i] + 0x80;
+		} else {
+			dst += src[i];
+		}
+	}
+
+	return dst;
+}
+
 String punycode_decodefilename(const String src1) {
 	String dst;
 	String src = punycode_decode(src1);
@@ -315,12 +330,11 @@ String punycode_decodefilename(const String src1) {
 			else
 				dst += src[i] - 0x80;
 		} else {
-			dst + src[i];
+			dst += src[i];
 		}
 	}
 
 	return dst;
 }
-
 
 } // end of namespace Common

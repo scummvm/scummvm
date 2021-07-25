@@ -51,12 +51,14 @@ namespace Common {
 /**
  * Convert Binary to Punycode. Returns the encoded string.
  */
-size_t punycode_encode(const uint32_t *const src, const size_t srclen, char *const dst, size_t *const dstlen);
+String punycode_encode(const String src);
 
 /**
  * Convert Punycode to Binary. Returns the decoded string
  */
 String punycode_decode(const String src);
+
+String punycode_encodefilename(const String src1);
 
 /**
  * Convert Punycode filename to Binary using special 0x81 escape character. Returns the decoded string
