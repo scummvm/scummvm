@@ -55,6 +55,23 @@ namespace Scumm {
 void ScummEngine::printString(int m, const byte *msg) {
 	switch (m) {
 	case 0:
+		// WORKAROUND bug #12734: The script tries to clear the currently
+		// displayed message after Rapp gives you the map, but that means
+		// you'll never see Guybrush's reaction to finding a map piece.
+		//
+		// It's a bit hard to pin down the exact case, since it happens
+		// at a few different points during the script. We limit it to
+		// when the player has the map piece.
+		//
+		// We have to do it here, because we don't want to delay the
+		// animation of Rapp turning back to Ashes.
+		if (_game.id == GID_MONKEY2 && _roomResource == 19 &&
+			vm.slot[_currentScript].number == 203 &&
+			_actorToPrintStrFor == 255 && strcmp((const char *)msg, " ") == 0 &&
+			getOwner(200) == VAR(VAR_EGO) && VAR(VAR_HAVE_MSG)) {
+			return;
+		}
+
 		actorTalk(msg);
 		break;
 	case 1:
