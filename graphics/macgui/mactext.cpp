@@ -1300,13 +1300,20 @@ bool MacText::draw(bool forceRedraw) {
 		_composeSurface->clear(_bgcolor);
 
 	// TODO: Clear surface fully when background colour changes.
-	_contentIsDirty = false;
 	_cursorDirty = false;
 
 	Common::Point offset(calculateOffset());
 
-	if (!_cursorState)
-		_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
+	// if we are drawing the selection text or we are selecting, then we don't draw the cursor
+	if (!((_inTextSelection || _selectedText.endY != -1) && _active)) {
+		if (!_cursorState)
+			_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
+		else
+			_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
+	}
+
+	if (!(_contentIsDirty || forceRedraw))
+		return true;
 
 	draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, offset.x, offset.y);
 
@@ -1320,12 +1327,10 @@ bool MacText::draw(bool forceRedraw) {
 		_composeSurface->frameRect(borderRect, 0);
 	}
 
-	// if we are drawing the selection text or we are selecting, then we don't draw the cursor
-	if (_cursorState && !((_inTextSelection || _selectedText.endY != -1) && _active))
-		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
-
 	if (_selectedText.endY != -1)
 		drawSelection(offset.x, offset.y);
+
+	_contentIsDirty = false;
 
 	return true;
 }
