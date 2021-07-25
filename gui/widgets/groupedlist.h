@@ -27,10 +27,6 @@
 
 namespace GUI {
 
-enum {
-	kGroupToggleCmd = 'GPTG'
-};
-
 class ListWidget;
 
 /* GroupedListWidget */
