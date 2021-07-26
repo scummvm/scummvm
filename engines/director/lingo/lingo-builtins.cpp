@@ -2179,11 +2179,21 @@ void LB::b_intersect(int nargs) {
 }
 
 void LB::b_inside(int nargs) {
-	g_lingo->printSTUBWithArglist("b_inside", nargs);
+	Datum d(0);
+	if (nargs == 2) {
+		Datum r2 = g_lingo->pop();
+		Datum p1 = g_lingo->pop();
+		Common::Rect rect2(r2.u.farr->operator[](0).asInt(), r2.u.farr->operator[](1).asInt(), r2.u.farr->operator[](2).asInt(), r2.u.farr->operator[](3).asInt());
+		Common::Point point1(p1.u.farr->operator[](0).asInt(), p1.u.farr->operator[](1).asInt());
 
-	g_lingo->dropStack(nargs);
+		d.type = INT;
+		d.u.i = rect2.contains(point1);
+	} else {
+		warning("LB::b_inside: inside got %d args, expecting 2", nargs);
+		g_lingo->dropStack(nargs);
+	}
 
-	g_lingo->push(Datum(0));
+	g_lingo->push(d);
 }
 
 void LB::b_map(int nargs) {
