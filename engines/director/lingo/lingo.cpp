@@ -850,9 +850,6 @@ Common::String Datum::asString(bool printonly) const {
 			s += Common::String::format("chunk: %s %d to %d of %s (%s)", chunkType.c_str(), u.cref->startChunk, u.cref->endChunk, src.c_str(), chunk.c_str());
 		}
 		break;
-	case POINT:
-		s = "point:";
-		// fallthrough
 	case ARRAY:
 		s += "[";
 
@@ -878,6 +875,16 @@ Common::String Datum::asString(bool printonly) const {
 		}
 
 		s += "]";
+		break;
+	case POINT:
+		s = "point(";
+		for (uint i = 0; i < u.farr->size(); i++) {
+			if (i > 0)
+				s += ", ";
+			s += Common::String::format("%d", u.farr->operator[](i).asInt());
+		}
+		s += ")";
+
 		break;
 	case RECT:
 		s = "rect(";
