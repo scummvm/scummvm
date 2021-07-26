@@ -792,6 +792,10 @@ int WaitKey(int nloops) {
 	return WaitImpl(SKIP_KEYPRESS | SKIP_AUTOTIMER, nloops);
 }
 
+int WaitMouse(int nloops) {
+	return WaitImpl(SKIP_MOUSECLICK | SKIP_AUTOTIMER, nloops);
+}
+
 int WaitMouseKey(int nloops) {
 	return WaitImpl(SKIP_KEYPRESS | SKIP_MOUSECLICK | SKIP_AUTOTIMER, nloops);
 }

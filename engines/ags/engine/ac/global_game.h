@@ -106,6 +106,7 @@ int GetGraphicalVariable(const char *varName);
 void SetGraphicalVariable(const char *varName, int p_value);
 void scrWait(int nloops);
 int WaitKey(int nloops);
+int WaitMouse(int nloops);
 int WaitMouseKey(int nloops);
 
 } // namespace AGS3
