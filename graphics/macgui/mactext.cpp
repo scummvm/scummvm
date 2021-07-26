@@ -1832,6 +1832,11 @@ bool MacText::processEvent(Common::Event &event) {
 }
 
 void MacText::scroll(int delta) {
+	// disable the scroll for auto expand text
+	// should be amend to check the text type. e.g. auto expand type, fixed type, scroll type.
+	if (!_fixedDims)
+		return;
+
 	int oldScrollPos = _scrollPos;
 
 	_scrollPos += delta * kConScrollStep;
