@@ -154,7 +154,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 	_userVolume = 0;
 	_userMute = false;
 	_targetVolume = 0;
-	_currentVolumePercent = 0;
+	_currentVolumePercent = 100;
 
 	_digitalMusic = false;
 }
@@ -229,7 +229,6 @@ void Music::musicVolumeGauge() {
 
 void Music::setVolume(int volume, int time) {
 	_targetVolume = volume;
-	_currentVolumePercent = 0;
 
 	if (volume == -1) // Set Full volume
 		volume = 255;
@@ -241,6 +240,7 @@ void Music::setVolume(int volume, int time) {
 			_driver->setSourceVolume(0, volume);
 		}
 
+		_currentVolumePercent = 100;
 		_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 
 		int scaledVolume;
@@ -259,17 +259,24 @@ void Music::setVolume(int volume, int time) {
 	}
 
 	if (_driver)
-		_driver->startFade(0, time * 30, volume);
-	// TODO When doing a fade-out, this function is called with time 1000.
-	// Each callback decreases volume by 10%, so it takes 10 * 1000 * 3000 us =
-	// 30 seconds. That doesn't seem right. Also, the game does not wait for
-	// the fade-out to complete, but immediately plays the next track.
-	_vm->getTimerManager()->installTimerProc(&musicVolumeGaugeCallback, time * 3000L, this, "sagaMusicVolume");
+		_driver->startFade(0, time * 3, volume);
+
+	_currentVolumePercent = 0;
+	_vm->getTimerManager()->installTimerProc(&musicVolumeGaugeCallback, time * 300L, this, "sagaMusicVolume");
 }
 
 void Music::resetVolume() {
 	// Abort a fade / gauge if active and set volume to max.
 	setVolume(255);
+}
+
+bool Music::isFading() {
+	bool isFading = false;
+	if (_driver)
+		isFading = _driver->isFading(0);
+	isFading = isFading || (_currentVolumePercent < 100);
+
+	return isFading;
 }
 
 bool Music::isPlaying() {

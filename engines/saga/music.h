@@ -61,6 +61,7 @@ public:
 	void setVolume(int volume, int time = 1);
 	int getVolume() { return _currentVolume; }
 	void resetVolume();
+	bool isFading();
 
 	bool isAdlib() const { return  _driverType == MT_ADLIB; }
 
