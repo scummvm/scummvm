@@ -166,6 +166,11 @@ const char *Room_GetMessages(int index) {
 	return CreateNewScriptString(buffer);
 }
 
+bool Room_Exists(int room) {
+	String room_filename;
+	room_filename.Format("room%d.crm", room);
+	return _GP(AssetMgr)->DoesAssetExist(room_filename);
+}
 
 //=============================================================================
 
@@ -1158,25 +1163,30 @@ RuntimeScriptValue Sc_RoomProcessClick(const RuntimeScriptValue *params, int32_t
 	API_SCALL_VOID_PINT3(RoomProcessClick);
 }
 
+RuntimeScriptValue Sc_Room_Exists(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_BOOL_PINT(Room_Exists);
+}
+
 
 void RegisterRoomAPI() {
 	ccAddExternalStaticFunction("Room::GetDrawingSurfaceForBackground^1",   Sc_Room_GetDrawingSurfaceForBackground);
-	ccAddExternalStaticFunction("Room::GetProperty^1",                      Sc_Room_GetProperty);
-	ccAddExternalStaticFunction("Room::GetTextProperty^1",                  Sc_Room_GetTextProperty);
-	ccAddExternalStaticFunction("Room::SetProperty^2",                      Sc_Room_SetProperty);
-	ccAddExternalStaticFunction("Room::SetTextProperty^2",                  Sc_Room_SetTextProperty);
-	ccAddExternalStaticFunction("Room::ProcessClick^3",                     Sc_RoomProcessClick);
-	ccAddExternalStaticFunction("ProcessClick",                             Sc_RoomProcessClick);
-	ccAddExternalStaticFunction("Room::get_BottomEdge",                     Sc_Room_GetBottomEdge);
-	ccAddExternalStaticFunction("Room::get_ColorDepth",                     Sc_Room_GetColorDepth);
-	ccAddExternalStaticFunction("Room::get_Height",                         Sc_Room_GetHeight);
-	ccAddExternalStaticFunction("Room::get_LeftEdge",                       Sc_Room_GetLeftEdge);
-	ccAddExternalStaticFunction("Room::geti_Messages",                      Sc_Room_GetMessages);
-	ccAddExternalStaticFunction("Room::get_MusicOnLoad",                    Sc_Room_GetMusicOnLoad);
-	ccAddExternalStaticFunction("Room::get_ObjectCount",                    Sc_Room_GetObjectCount);
-	ccAddExternalStaticFunction("Room::get_RightEdge",                      Sc_Room_GetRightEdge);
-	ccAddExternalStaticFunction("Room::get_TopEdge",                        Sc_Room_GetTopEdge);
-	ccAddExternalStaticFunction("Room::get_Width",                          Sc_Room_GetWidth);
+	ccAddExternalStaticFunction("Room::GetProperty^1",      Sc_Room_GetProperty);
+	ccAddExternalStaticFunction("Room::GetTextProperty^1",  Sc_Room_GetTextProperty);
+	ccAddExternalStaticFunction("Room::SetProperty^2",      Sc_Room_SetProperty);
+	ccAddExternalStaticFunction("Room::SetTextProperty^2",  Sc_Room_SetTextProperty);
+	ccAddExternalStaticFunction("Room::ProcessClick^3",     Sc_RoomProcessClick);
+	ccAddExternalStaticFunction("ProcessClick",             Sc_RoomProcessClick);
+	ccAddExternalStaticFunction("Room::get_BottomEdge",     Sc_Room_GetBottomEdge);
+	ccAddExternalStaticFunction("Room::get_ColorDepth",     Sc_Room_GetColorDepth);
+	ccAddExternalStaticFunction("Room::get_Height",         Sc_Room_GetHeight);
+	ccAddExternalStaticFunction("Room::get_LeftEdge",       Sc_Room_GetLeftEdge);
+	ccAddExternalStaticFunction("Room::geti_Messages",      Sc_Room_GetMessages);
+	ccAddExternalStaticFunction("Room::get_MusicOnLoad",    Sc_Room_GetMusicOnLoad);
+	ccAddExternalStaticFunction("Room::get_ObjectCount",    Sc_Room_GetObjectCount);
+	ccAddExternalStaticFunction("Room::get_RightEdge",      Sc_Room_GetRightEdge);
+	ccAddExternalStaticFunction("Room::get_TopEdge",        Sc_Room_GetTopEdge);
+	ccAddExternalStaticFunction("Room::get_Width",          Sc_Room_GetWidth);
+	ccAddExternalStaticFunction("Room::Exists",             Sc_Room_Exists);
 }
 
 } // namespace AGS3

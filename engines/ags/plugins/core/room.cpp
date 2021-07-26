@@ -101,6 +101,11 @@ void Room::GetWidth(ScriptMethodParams &params) {
 	params._result = AGS3::Room_GetWidth();
 }
 
+void Room::RoomExists(ScriptMethodParams &params) {
+	PARAMS1(int, room);
+	params._result = AGS3::Room_Exists(room);
+}
+
 } // namespace Core
 } // namespace Plugins
 } // namespace AGS3
