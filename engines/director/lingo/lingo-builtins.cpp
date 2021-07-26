@@ -194,7 +194,7 @@ static BuiltinProto builtins[] = {
 	{ "inside",			LB::b_inside,		2, 2, 400, FBLTIN },	//			D4 f
 	{ "intersect",		LB::b_intersect,	2, 2, 400, FBLTIN },	//			D4 f
 	{ "map",			LB::b_map,			3, 3, 400, FBLTIN },	//			D4 f
-	{ "rect",			LB::b_rect,			4, 4, 400, FBLTIN },	//			D4 f
+	{ "rect",			LB::b_rect,			2, 4, 400, FBLTIN },	//			D4 f
 	{ "union",			LB::b_union,		2, 2, 400, FBLTIN },	//			D4 f
 	// Sound
 	{ "beep",	 		LB::b_beep,			0, 1, 200, CBLTIN },	// D2
@@ -2161,37 +2161,27 @@ void LB::b_rect(int nargs) {
 
 
 void LB::b_intersect(int nargs) {
-	Datum d(0);
-	if (nargs == 2) {
-		Datum r2 = g_lingo->pop();
-		Datum r1 = g_lingo->pop();
-		Common::Rect rect1(r1.u.farr->operator[](0).asInt(), r1.u.farr->operator[](1).asInt(), r1.u.farr->operator[](2).asInt(), r1.u.farr->operator[](3).asInt());
-		Common::Rect rect2(r2.u.farr->operator[](0).asInt(), r2.u.farr->operator[](1).asInt(), r2.u.farr->operator[](2).asInt(), r2.u.farr->operator[](3).asInt());
+	Datum d;
+	Datum r2 = g_lingo->pop();
+	Datum r1 = g_lingo->pop();
+	Common::Rect rect1(r1.u.farr->operator[](0).asInt(), r1.u.farr->operator[](1).asInt(), r1.u.farr->operator[](2).asInt(), r1.u.farr->operator[](3).asInt());
+	Common::Rect rect2(r2.u.farr->operator[](0).asInt(), r2.u.farr->operator[](1).asInt(), r2.u.farr->operator[](2).asInt(), r2.u.farr->operator[](3).asInt());
 
-		d.type = INT;
-		d.u.i = rect1.intersects(rect2);
-	} else {
-		warning("LB::b_intersect: intersect got %d args, expecting 2", nargs);
-		g_lingo->dropStack(nargs);
-	}
+	d.type = INT;
+	d.u.i = rect1.intersects(rect2);
 
 	g_lingo->push(d);
 }
 
 void LB::b_inside(int nargs) {
-	Datum d(0);
-	if (nargs == 2) {
-		Datum r2 = g_lingo->pop();
-		Datum p1 = g_lingo->pop();
-		Common::Rect rect2(r2.u.farr->operator[](0).asInt(), r2.u.farr->operator[](1).asInt(), r2.u.farr->operator[](2).asInt(), r2.u.farr->operator[](3).asInt());
-		Common::Point point1(p1.u.farr->operator[](0).asInt(), p1.u.farr->operator[](1).asInt());
+	Datum d;
+	Datum r2 = g_lingo->pop();
+	Datum p1 = g_lingo->pop();
+	Common::Rect rect2(r2.u.farr->operator[](0).asInt(), r2.u.farr->operator[](1).asInt(), r2.u.farr->operator[](2).asInt(), r2.u.farr->operator[](3).asInt());
+	Common::Point point1(p1.u.farr->operator[](0).asInt(), p1.u.farr->operator[](1).asInt());
 
-		d.type = INT;
-		d.u.i = rect2.contains(point1);
-	} else {
-		warning("LB::b_inside: inside got %d args, expecting 2", nargs);
-		g_lingo->dropStack(nargs);
-	}
+	d.type = INT;
+	d.u.i = rect2.contains(point1);
 
 	g_lingo->push(d);
 }
