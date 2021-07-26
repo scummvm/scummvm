@@ -1187,7 +1187,10 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_thickness & 0x3;
 		break;
 	case kTheLoc:
-		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
+		d.type = POINT;
+		d.u.farr = new DatumArray;
+		d.u.farr->push_back(channel->_currentPoint.x);
+		d.u.farr->push_back(channel->_currentPoint.y);
 		break;
 	case kTheLocH:
 		d.u.i = channel->_currentPoint.x;
@@ -1401,7 +1404,13 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	case kTheLoc:
-		warning("STUB: Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
+		if (channel->_currentPoint.x != d.asPoint().x || channel->_currentPoint.y != d.asPoint().y) {
+			g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+			channel->_dirty = true;
+		}
+
+		channel->_currentPoint.x = d.asPoint().x;
+		channel->_currentPoint.y = d.asPoint().y;
 		break;
 	case kTheLocH:
 		if (d.asInt() != channel->_currentPoint.x) {

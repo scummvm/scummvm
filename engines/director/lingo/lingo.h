@@ -145,6 +145,7 @@ struct Datum {	/* interpreter stack type */
 	int asInt() const;
 	Common::String asString(bool printonly = false) const;
 	CastMemberID asMemberID() const;
+	Common::Point asPoint() const;
 
 	bool isRef() const;
 	bool isVarRef() const;

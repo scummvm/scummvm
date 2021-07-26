@@ -903,6 +903,15 @@ CastMemberID Datum::asMemberID() const {
 	return g_lingo->resolveCastMember(*this, 0);
 }
 
+Common::Point Datum::asPoint() const {
+	if (type != POINT) {
+		warning("Incorrect operation asPoint() for type: %s", type2str());
+		return Common::Point(0, 0);
+	}
+
+	return Common::Point(u.farr->operator[](0).asInt(), u.farr->operator[](1).asInt());
+}
+
 bool Datum::isRef() const {
 	return (isVarRef() || isCastRef() || type == CHUNKREF);
 }
