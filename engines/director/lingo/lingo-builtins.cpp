@@ -360,10 +360,14 @@ void LB::b_integer(int nargs) {
 	Datum d = g_lingo->pop();
 	Datum res;
 
-	if (g_director->getVersion() < 500) {	// Note that D4 behaves differently from asInt()
-		res = (int)(d.u.f + 0.5);		// Yes, +0.5 even for negative numbers
+	if (d.type == FLOAT) {
+		if (g_director->getVersion() < 500) {	// Note that D4 behaves differently from asInt()
+			res = (int)(d.u.f + 0.5);		// Yes, +0.5 even for negative numbers
+		} else {
+			res = (int)round(d.u.f);
+		}
 	} else {
-		res = (int)round(d.u.f);
+		res = d.asInt();
 	}
 
 	g_lingo->push(res);
