@@ -209,7 +209,7 @@ static void check_mouse_controls() {
 		check_skip_cutscene_mclick(mbut);
 
 		if (_GP(play).fast_forward || _GP(play).IsIgnoringInput()) { /* do nothing if skipping cutscene or input disabled */
-		} else if ((_GP(play).wait_counter > 0) && (_GP(play).key_skip_wait & SKIP_MOUSECLICK) != 0) {
+		} else if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_MOUSECLICK) != 0) {
 			_GP(play).wait_counter = 0;
 			_GP(play).wait_skipped_by = SKIP_MOUSECLICK;
 			_GP(play).wait_skipped_by_data = mbut;
@@ -445,7 +445,7 @@ static void check_keyboard_controls() {
 		return;
 	}
 
-	if ((_GP(play).wait_counter > 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) != 0) {
+	if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) != 0) {
 		_GP(play).wait_counter = -1;
 		debug_script_log("Keypress code %d ignored - in Wait", kgn);
 		return;
