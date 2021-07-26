@@ -257,7 +257,7 @@ int Score::getPreviousLabelNumber(int referenceFrame) {
 }
 
 void Score::startPlay() {
-	_currentFrame = 0;
+	_currentFrame = 1;
 	_playState = kPlayStarted;
 	_nextFrameTime = 0;
 
@@ -344,7 +344,7 @@ void Score::update() {
 	}
 
 	// For previous frame
-	if (_currentFrame > 0 && !_vm->_playbackPaused) {
+	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
 		// When Lingo::func_goto* is called, _nextFrame is set
 		// and _skipFrameAdvance is set to true.
 		// exitFrame is not called in this case.
@@ -359,12 +359,10 @@ void Score::update() {
 		}
 	}
 
-	if (!_vm->_playbackPaused) {
-		if (_nextFrame)
-			_currentFrame = _nextFrame;
-		else
-			_currentFrame++;
-	}
+	if (_nextFrame)
+		_currentFrame = _nextFrame;
+	else if (!_window->_newMovieStarted)
+		_currentFrame++;
 
 	_nextFrame = 0;
 
