@@ -153,13 +153,19 @@ void SetObjectView(int obn, int vii) {
 void SetObjectFrame(int obn, int viw, int lop, int fra) {
 	if (!is_valid_object(obn)) quit("!SetObjectFrame: invalid object number specified");
 	viw--;
-	if (viw >= _GP(game).numviews) quit("!SetObjectFrame: invalid view number used");
-	if (_G(views)[viw].numLoops == 0) quit("!SetObjectFrame: specified view has no loops");
-	if (lop >= _G(views)[viw].numLoops) quit("!SetObjectFrame: invalid loop number used");
-
+	if (viw < 0 || viw >= _GP(game).numviews) quitprintf("!SetObjectFrame: invalid view number used (%d, range is 0 - %d)", viw, _GP(game).numviews - 1);
+	if (lop < 0 || lop >= _G(views)[viw].numLoops) quitprintf("!SetObjectFrame: invalid loop number used (%d, range is 0 - %d)", lop, _G(views)[viw].numLoops - 1);
+	// AGS < 3.6.0 let user to pass literally any positive invalid frame value by silently reassigning it to zero...
+	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v360) {
+		if (fra >= _G(views)[viw].loops[lop].numFrames) {
+			debug_script_warn("SetObjectFrame: frame index out of range (%d, must be 0 - %d), set to 0", fra, _G(views)[viw].loops[lop].numFrames - 1);
+			fra = 0;
+		}
+	}
+	if (fra < 0 || fra >= _G(views)[viw].loops[lop].numFrames) quitprintf("!SetObjectFrame: invalid frame number used (%d, range is 0 - %d)", fra, _G(views)[viw].loops[lop].numFrames - 1);
 	if (viw > UINT16_MAX || lop > UINT16_MAX || fra > UINT16_MAX) {
 		debug_script_warn("Warning: object's (id %d) view/loop/frame (%d/%d/%d) is outside of internal range (%d/%d/%d), reset to no view",
-		                  obn, viw + 1, lop, fra, UINT16_MAX + 1, UINT16_MAX, UINT16_MAX);
+			obn, viw + 1, lop, fra, UINT16_MAX + 1, UINT16_MAX, UINT16_MAX);
 		SetObjectGraphic(obn, 0);
 		return;
 	}
@@ -169,20 +175,17 @@ void SetObjectFrame(int obn, int viw, int lop, int fra) {
 		_G(objs)[obn].loop = (uint16_t)lop;
 	if (fra >= 0)
 		_G(objs)[obn].frame = (uint16_t)fra;
-	if (_G(objs)[obn].loop >= _G(views)[viw].numLoops)
-		_G(objs)[obn].loop = 0;
-	if (_G(objs)[obn].frame >= _G(views)[viw].loops[_G(objs)[obn].loop].numFrames)
-		_G(objs)[obn].frame = 0;
-
 	// AGS >= 3.2.0 do not let assign an empty loop
 	// NOTE: pre-3.2.0 games are converting views from ViewStruct272 struct, always has at least 1 frame
 	if (_G(loaded_game_file_version) >= kGameVersion_320) {
-		if (_G(views)[viw].loops[_G(objs)[obn].loop].numFrames == 0)
+		if (_G(views)[viw].loops[lop].numFrames == 0)
 			quit("!SetObjectFrame: specified loop has no frames");
 	}
-
+	_G(objs)[obn].view = viw;
+	_G(objs)[obn].loop = lop;
+	_G(objs)[obn].frame = fra;
 	_G(objs)[obn].cycling = 0;
-	int pic = _G(views)[viw].loops[_G(objs)[obn].loop].frames[_G(objs)[obn].frame].pic;
+	int pic = _G(views)[viw].loops[lop].frames[fra].pic;
 	_G(objs)[obn].num = Math::InRangeOrDef<uint16_t>(pic, 0);
 	if (pic > UINT16_MAX)
 		debug_script_warn("Warning: object's (id %d) sprite %d is outside of internal range (%d), reset to 0", obn, pic, UINT16_MAX);

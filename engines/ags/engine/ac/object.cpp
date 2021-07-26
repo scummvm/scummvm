@@ -40,6 +40,7 @@
 #include "ags/engine/main/game_run.h"
 #include "ags/engine/ac/route_finder.h"
 #include "ags/engine/gfx/graphics_driver.h"
+#include "ags/shared/ac/view.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/gfx/gfx_def.h"
 #include "ags/engine/script/runtime_script_value.h"
@@ -87,6 +88,16 @@ void Object_RemoveTint(ScriptObject *objj) {
 }
 
 void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
+	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v360) { // Previous version of SetView had negative loop and frame mean "use latest values"
+		auto &obj = _G(objs)[objj->id];
+		if (loop < 0) loop = obj.loop;
+		if (frame < 0) frame = obj.frame;
+		const int vidx = view - 1;
+		if (vidx < 0 || vidx >= _GP(game).numviews) quit("!Object_SetView: invalid view number used");
+		loop = CLIP(loop, 0, (int)_G(views)[vidx].numLoops - 1);
+		frame = CLIP(frame, 0, (int)_G(views)[vidx].loops[loop].numFrames - 1);
+	}
+
 	SetObjectFrame(objj->id, view, loop, frame);
 }
 
