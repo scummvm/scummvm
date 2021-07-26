@@ -3033,8 +3033,7 @@ TaskResult HuntToKillTask::update(void) {
 void HuntToKillTask::evaluateTarget(void) {
 	Actor               *a = stack->getActor();
 
-	if (flags & evalWeapon
-	        &&  a->isInterruptable() && currentTarget != NULL) {
+	if (flags & evalWeapon && a->isInterruptable()) {
 		evaluateWeapon();
 		flags &= ~evalWeapon;
 	}
@@ -3249,7 +3248,7 @@ void HuntToKillTask::evaluateWeapon(void) {
 		                                ? (WeaponProto *)currentWeapon->proto()
 		                                :   NULL;
 
-		if (currentWeapon == NULL
+		if (currentWeapon == NULL || currentTarget == NULL
 		        ||      weaponProto->weaponRating(
 		            a->thisID(),
 		            actorID,
@@ -3273,10 +3272,12 @@ void HuntToKillTask::evaluateWeapon(void) {
 			WeaponProto     *weaponProto = (WeaponProto *)proto;
 			int             weaponRating;
 
-			weaponRating =  weaponProto->weaponRating(
-			                    obj->thisID(),
-			                    actorID,
-			                    currentTarget->thisID());
+			if (currentTarget) {
+				weaponRating =  weaponProto->weaponRating(obj->thisID(),
+				                                          actorID,
+				                                          currentTarget->thisID());
+			} else
+				weaponRating = 0;
 
 			//  a rating of zero means this weapon is useless
 			if (weaponRating == 0) continue;
