@@ -127,6 +127,7 @@ public:
 	void close() override;
 	void send(uint32 b) override;
 	void send(int8 source, uint32 b) override;
+	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
 	MidiChannel *allocateChannel() override { return NULL; }
 	MidiChannel *getPercussionChannel() override { return NULL; }
 
@@ -135,10 +136,9 @@ public:
 
 	void stopAllNotes(uint8 source, uint8 channel) override;
 	void applySourceVolume(uint8 source) override;
+	void deinitSource(uint8 source) override;
 
 	void setVolume(byte volume);
-
-	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
 
 private:
 	bool _modeOPL3;
@@ -222,9 +222,6 @@ private:
 	OPL::OPL *_opl;
 	int _masterVolume;
 
-	Common::TimerManager::TimerProc _adlibTimerProc;
-	void *_adlibTimerParam;
-
 	bool _isOpen;
 
 	// stores information about all MIDI channels (not the actual OPL FM voice channels!)
@@ -242,8 +239,6 @@ private:
 
 	bool circularPhysicalAssignment;
 	byte circularPhysicalAssignmentFmVoice;
-
-	void onTimer();
 
 	void resetData();
 	void resetAdLib();
@@ -275,8 +270,7 @@ private:
 };
 
 MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount)
-	: _masterVolume(15), _opl(0),
-	  _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
+	: _masterVolume(15), _opl(0), _isOpen(false) {
 
 	_instrumentTablePtr = instrumentTablePtr;
 	_instrumentTableCount = instrumentTableCount;
@@ -325,6 +319,7 @@ int MidiDriver_Miles_AdLib::open() {
 
 	_isOpen = true;
 
+	_timerRate = getBaseTempo();
 	_opl->start(new Common::Functor0Mem<void, MidiDriver_Miles_AdLib>(this, &MidiDriver_Miles_AdLib::onTimer));
 
 	resetAdLib();
@@ -340,11 +335,6 @@ void MidiDriver_Miles_AdLib::close() {
 void MidiDriver_Miles_AdLib::setVolume(byte volume) {
 	_masterVolume = volume;
 	//renewNotes(-1, true);
-}
-
-void MidiDriver_Miles_AdLib::onTimer() {
-	if (_adlibTimerProc)
-		(*_adlibTimerProc)(_adlibTimerParam);
 }
 
 void MidiDriver_Miles_AdLib::resetData() {
@@ -467,11 +457,6 @@ void MidiDriver_Miles_AdLib::applySourceVolume(uint8 source) {
 			updatePhysicalFmVoice(i, true, kMilesAdLibUpdateFlags_Reg_40);
 		}
 	}
-}
-
-void MidiDriver_Miles_AdLib::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
-	_adlibTimerProc = timerProc;
-	_adlibTimerParam = timerParam;
 }
 
 int16 MidiDriver_Miles_AdLib::searchFreeVirtualFmVoiceChannel() {
@@ -1091,6 +1076,25 @@ void MidiDriver_Miles_AdLib::pitchBendChange(byte midiChannel, byte parameter1, 
 			}
 		}
 	}
+}
+
+void MidiDriver_Miles_AdLib::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+	if (type == MIDI_META_END_OF_TRACK && source >= 0)
+		// Stop hanging notes and release resources used by this source.
+		deinitSource(source);
+}
+
+void MidiDriver_Miles_AdLib::deinitSource(uint8 source) {
+	if (!(source == 0 || source == 0xFF))
+		return;
+
+	// Turn off sustained notes.
+	for (int i = 0; i < MIDI_CHANNEL_COUNT; i++) {
+		controlChange(i, MIDI_CONTROLLER_SUSTAIN, 0);
+	}
+
+	// Stop fades and turn off non-sustained notes.
+	MidiDriver_Multisource::deinitSource(source);
 }
 
 void MidiDriver_Miles_AdLib::setRegister(int reg, int value) {
