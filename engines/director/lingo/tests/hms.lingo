@@ -1,0 +1,13 @@
+scummvmAssertEqual framesToHMS(123456, 30, FALSE, FALSE), " 01:08:35.06 "
+scummvmAssertEqual framesToHMS(-123456, 30, FALSE, FALSE), "-01:08:35.06 "
+
+scummvmAssertEqual framesToHMS(123456, 30, FALSE, TRUE), " 01:08:35.20 "
+
+scummvmAssertEqual HMSToFrames(" 01:08:35.06 ", 30, FALSE, FALSE), 123456
+scummvmAssertEqual HMSToFrames("-01:08:35.06 ", 30, FALSE, FALSE), -123456
+scummvmAssertEqual HMSToFrames("01:08:35.06", 30, FALSE, FALSE), 123456
+scummvmAssertEqual HMSToFrames("08:35.06", 30, FALSE, FALSE), 15456
+scummvmAssertEqual HMSToFrames("35.06", 30, FALSE, FALSE), 1056
+scummvmAssertEqual HMSToFrames("35", 30, FALSE, FALSE), 1050
+
+scummvmAssertEqual HMSToFrames(" 01:08:35.20 ", 30, FALSE, TRUE), 123456
