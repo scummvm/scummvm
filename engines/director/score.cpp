@@ -441,7 +441,6 @@ void Score::update() {
 			g_lingo->_freezeContext = false;
 			g_lingo->execute();
 		}
-		_window->_hasFrozenLingo = false;
 	}
 
 	byte tempo = _frames[_currentFrame]->_tempo;

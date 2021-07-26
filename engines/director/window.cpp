@@ -67,7 +67,6 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_retContext = nullptr;
 	_retFreezeContext = false;
 	_retLocalVars = nullptr;
-	_hasFrozenLingo = false;
 }
 
 Window::~Window() {

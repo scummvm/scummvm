@@ -364,6 +364,19 @@ void Lingo::popContext() {
 	delete fp;
 }
 
+bool Lingo::hasFrozenContext() {
+	if (g_lingo->_freezeContext)
+		return true;
+
+	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
+	for (uint i = 0; i < callstack.size(); i++) {
+		if (callstack[i]->retFreezeContext)
+			return true;
+	}
+
+	return false;
+}
+
 void LC::c_constpush() {
 	Common::String name(g_lingo->readString());
 
