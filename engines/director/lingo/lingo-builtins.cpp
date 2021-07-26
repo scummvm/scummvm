@@ -2123,11 +2123,40 @@ void LB::b_point(int nargs) {
 }
 
 void LB::b_rect(int nargs) {
-	g_lingo->printSTUBWithArglist("b_rect", nargs);
+	Datum d(0);
 
-	g_lingo->dropStack(nargs);
+	if (nargs == 4) {
+		Datum bottom(g_lingo->pop().asFloat());
+		Datum right(g_lingo->pop().asFloat());
+		Datum top(g_lingo->pop().asFloat());
+		Datum left(g_lingo->pop().asFloat());
 
-	g_lingo->push(Datum(0));
+		d.u.farr = new DatumArray;
+		d.u.farr->push_back(left);
+		d.u.farr->push_back(top);
+		d.u.farr->push_back(right);
+		d.u.farr->push_back(bottom);
+		d.type = RECT;
+	} else if (nargs == 2) {
+		Datum p2 = g_lingo->pop();
+		Datum p1 = g_lingo->pop();
+
+		if (p2.type == POINT && p1.type == POINT) {
+			d.u.farr = new DatumArray;
+			d.u.farr->push_back(p1.u.farr[0]);
+			d.u.farr->push_back(p1.u.farr[1]);
+			d.u.farr->push_back(p2.u.farr[0]);
+			d.u.farr->push_back(p2.u.farr[1]);
+			d.type = RECT;
+		} else
+			warning("LB::b_rect: Rect need 2 Point variable as argument");
+
+	} else {
+		warning("LB::b_rect: Rect doesn't support %d args", nargs);
+		g_lingo->dropStack(nargs);
+	}
+
+	g_lingo->push(d);
 }
 
 
