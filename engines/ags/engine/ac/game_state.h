@@ -157,6 +157,8 @@ struct GameState {
 	int   bg_frame = 0, bg_anim_delay = 0;  // for animating backgrounds
 	int   music_vol_was = 0;  // before the volume drop
 	short wait_counter = 0;
+	char  wait_skipped_by = 0; // tells how last wait was skipped [not serialized]
+	int   wait_skipped_by_data = 0; // extended data telling how last wait was skipped [not serialized]
 	short mboundx1 = 0, mboundx2 = 0, mboundy1 = 0, mboundy2 = 0;
 	int   fade_effect = 0;
 	int   bg_frame_locked = 0;
