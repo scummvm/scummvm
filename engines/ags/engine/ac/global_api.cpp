@@ -1871,6 +1871,10 @@ RuntimeScriptValue Sc_WaitMouseKey(const RuntimeScriptValue *params, int32_t par
 	API_SCALL_INT_PINT(WaitMouseKey);
 }
 
+RuntimeScriptValue Sc_SkipWait(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID(SkipWait);
+}
+
 void RegisterGlobalAPI() {
 	ccAddExternalStaticFunction("AbortGame",                Sc_sc_AbortGame);
 	ccAddExternalStaticFunction("AddInventory",             Sc_add_inventory);
@@ -2241,6 +2245,7 @@ void RegisterGlobalAPI() {
 	ccAddExternalStaticFunction("WaitKey",                  Sc_WaitKey);
 	ccAddExternalStaticFunction("WaitMouse",                Sc_WaitMouse);
 	ccAddExternalStaticFunction("WaitMouseKey",             Sc_WaitMouseKey);
+	ccAddExternalStaticFunction("SkipWait",                 Sc_SkipWait);
 }
 
 } // namespace AGS3

@@ -806,4 +806,8 @@ int WaitMouseKey(int nloops) {
 	return WaitImpl(SKIP_KEYPRESS | SKIP_MOUSECLICK | SKIP_AUTOTIMER, nloops);
 }
 
+void SkipWait() {
+	_GP(play).wait_counter = 0;
+}
+
 } // namespace AGS3
