@@ -220,6 +220,26 @@ void LC::c_xpop() {
 	g_lingo->pop();
 }
 
+void Lingo::loadStateFromWindow() {
+	Window *window = _vm->getCurrentWindow();
+	_pc = window->_retPC;
+	_currentScript = window->_retScript;
+	_currentScriptContext = window->_retContext;
+	_freezeContext = window->_retFreezeContext;
+	_localvars = window->_retLocalVars;
+	_currentMe = window->_retMe;
+}
+
+void Lingo::saveStateToWindow() {
+	Window *window = _vm->getCurrentWindow();
+	window->_retPC = _pc;
+	window->_retScript = _currentScript;
+	window->_retContext = _currentScriptContext;
+	window->_retFreezeContext = _freezeContext;
+	window->_retLocalVars = _localvars;
+	window->_retMe = _currentMe;
+}
+
 void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal) {
 	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
 

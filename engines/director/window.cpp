@@ -62,6 +62,11 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_titleVisible = true;
 	updateBorderType();
 
+	_retPC = 0;
+	_retScript = nullptr;
+	_retContext = nullptr;
+	_retFreezeContext = false;
+	_retLocalVars = nullptr;
 	_hasFrozenLingo = false;
 }
 

@@ -198,7 +198,9 @@ Common::Error DirectorEngine::run() {
 			processEvents();
 
 		_currentWindow = _stage;
+		g_lingo->loadStateFromWindow();
 		loop = _currentWindow->step();
+		g_lingo->saveStateToWindow();
 
 		if (loop) {
 			DatumArray *windowList = g_lingo->_windowList.u.farr;
@@ -207,7 +209,9 @@ Common::Error DirectorEngine::run() {
 					continue;
 
 				_currentWindow = static_cast<Window *>((*windowList)[i].u.obj);
+				g_lingo->loadStateFromWindow();
 				_currentWindow->step();
+				g_lingo->saveStateToWindow();
 			}
 		}
 

@@ -287,6 +287,8 @@ public:
 
 public:
 	void execute();
+	void loadStateFromWindow();
+	void saveStateToWindow();
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext();
 	void cleanLocalVars();

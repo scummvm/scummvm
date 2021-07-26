@@ -172,7 +172,14 @@ public:
 	Common::List<MovieReference> _movieStack;
 	bool _newMovieStarted;
 
+	// saved Lingo state
 	Common::Array<CFrame *> _callstack;
+	uint _retPC;
+	ScriptData *_retScript;
+	ScriptContext *_retContext;
+	bool _retFreezeContext;
+	DatumHash *_retLocalVars;
+	Datum _retMe;
 	bool _hasFrozenLingo;
 
 private:
