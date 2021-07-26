@@ -51,7 +51,8 @@ bool    IsFile(const String &filename);
 // Tells if the given path is file or directory;
 // may be used to check if it's valid to use
 bool    IsFileOrDir(const String &filename);
-// Returns filename part out of the longer path
+// Returns parent directory of the given path;
+// returns "." (current dir) if the path does not contain a parent segment
 String  GetFilename(const String &path);
 // Returns file's extension; file may be a fully qualified path too
 String  GetFileExtension(const String &path);
