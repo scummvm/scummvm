@@ -2126,10 +2126,10 @@ void LB::b_rect(int nargs) {
 	Datum d(0);
 
 	if (nargs == 4) {
-		Datum bottom(g_lingo->pop().asFloat());
-		Datum right(g_lingo->pop().asFloat());
-		Datum top(g_lingo->pop().asFloat());
-		Datum left(g_lingo->pop().asFloat());
+		Datum bottom(g_lingo->pop().asInt());
+		Datum right(g_lingo->pop().asInt());
+		Datum top(g_lingo->pop().asInt());
+		Datum left(g_lingo->pop().asInt());
 
 		d.u.farr = new DatumArray;
 		d.u.farr->push_back(left);
@@ -2143,10 +2143,10 @@ void LB::b_rect(int nargs) {
 
 		if (p2.type == POINT && p1.type == POINT) {
 			d.u.farr = new DatumArray;
-			d.u.farr->push_back(p1.u.farr[0]);
-			d.u.farr->push_back(p1.u.farr[1]);
-			d.u.farr->push_back(p2.u.farr[0]);
-			d.u.farr->push_back(p2.u.farr[1]);
+			d.u.farr->push_back(p1.u.farr->operator[](0));
+			d.u.farr->push_back(p1.u.farr->operator[](1));
+			d.u.farr->push_back(p2.u.farr->operator[](0));
+			d.u.farr->push_back(p2.u.farr->operator[](1));
 			d.type = RECT;
 		} else
 			warning("LB::b_rect: Rect need 2 Point variable as argument");
@@ -2161,11 +2161,21 @@ void LB::b_rect(int nargs) {
 
 
 void LB::b_intersect(int nargs) {
-	g_lingo->printSTUBWithArglist("b_intersect", nargs);
+	Datum d(0);
+	if (nargs == 2) {
+		Datum r2 = g_lingo->pop();
+		Datum r1 = g_lingo->pop();
+		Common::Rect rect1(r1.u.farr->operator[](0).asInt(), r1.u.farr->operator[](1).asInt(), r1.u.farr->operator[](2).asInt(), r1.u.farr->operator[](3).asInt());
+		Common::Rect rect2(r2.u.farr->operator[](0).asInt(), r2.u.farr->operator[](1).asInt(), r2.u.farr->operator[](2).asInt(), r2.u.farr->operator[](3).asInt());
 
-	g_lingo->dropStack(nargs);
+		d.type = INT;
+		d.u.i = rect1.intersects(rect2);
+	} else {
+		warning("LB::b_intersect: intersect got %d args, expecting 2", nargs);
+		g_lingo->dropStack(nargs);
+	}
 
-	g_lingo->push(Datum(0));
+	g_lingo->push(d);
 }
 
 void LB::b_inside(int nargs) {
