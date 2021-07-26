@@ -807,6 +807,8 @@ void engine_init_game_settings() {
 	_GP(play).speech_has_voice = false;
 	_GP(play).speech_voice_blocking = false;
 	_GP(play).speech_in_post_state = false;
+	_GP(play).complete_overlay_on = 0;
+	_GP(play).text_overlay_on = 0;
 	_GP(play).narrator_speech = _GP(game).playercharacter;
 	_GP(play).crossfading_out_channel = 0;
 	_GP(play).speech_textwindow_gui = _GP(game).options[OPT_TWCUSTOM];

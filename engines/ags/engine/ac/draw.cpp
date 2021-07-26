@@ -2099,7 +2099,7 @@ void construct_game_scene(bool full_redraw) {
 		_GP(play).UpdateRoomCameras();
 
 	// Stage: room viewports
-	if (_GP(play).screen_is_faded_out == 0 && _G(is_complete_overlay) == 0) {
+	if (_GP(play).screen_is_faded_out == 0 && _GP(play).complete_overlay_on == 0) {
 		if (_G(displayed_room) >= 0) {
 			construct_room_view();
 		} else if (!_G(gfxDriver)->RequiresFullRedrawEachFrame()) {

@@ -160,8 +160,8 @@ void dispose_overlay(ScreenOverlay &over) {
 void remove_screen_overlay_index(int over_idx) {
 	ScreenOverlay &over = _G(screenover)[over_idx];
 	dispose_overlay(over);
-	if (over.type == OVER_COMPLETE) _G(is_complete_overlay)--;
-	if (over.type == OVER_TEXTMSG) _G(is_text_overlay)--;
+	if (over.type == _GP(play).complete_overlay_on) _GP(play).complete_overlay_on = 0;
+	if (over.type == _GP(play).text_overlay_on) _GP(play).text_overlay_on = 0;
 	_G(numscreenover)--;
 	for (int i = over_idx; i < _G(numscreenover); ++i)
 		_G(screenover)[i] = _G(screenover)[i + 1];
@@ -192,8 +192,8 @@ int add_screen_overlay(int x, int y, int type, Bitmap *piccy, bool alphaChannel)
 }
 
 int add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel) {
-	if (type == OVER_COMPLETE) _G(is_complete_overlay)++;
-	if (type == OVER_TEXTMSG) _G(is_text_overlay)++;
+	if (type == OVER_COMPLETE) _GP(play).complete_overlay_on = type;
+	if (type == OVER_TEXTMSG || type == OVER_TEXTSPEECH) _GP(play).text_overlay_on = type;
 	if (type == OVER_CUSTOM) {
 		// find an unused custom ID; TODO: find a better approach!
 		for (int id = OVER_CUSTOM + 1; id < OVER_CUSTOM + 100; ++id) {

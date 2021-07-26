@@ -173,7 +173,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	int extraHeight = paddingDoubledScaled;
 	color_t text_color = MakeColor(15);
 	if (disp_type < DISPLAYTEXT_NORMALOVERLAY)
-		remove_screen_overlay(OVER_TEXTMSG); // remove any previous blocking texts
+		remove_screen_overlay(_GP(play).text_overlay_on); // remove any previous blocking texts
 
 	const int bmp_width = std::max(2, wii);
 	const int bmp_height = std::max(2, disp.fulltxtheight + extraHeight);
@@ -246,9 +246,13 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 			wouttext_aligned(text_window_ds, xoffs, yoffs + ee * disp.linespacing, oriwid, usingfont, text_color, _GP(Lines)[ee].GetCStr(), _GP(play).text_align);
 	}
 
-	int ovrtype = OVER_TEXTMSG;
-	if (disp_type == DISPLAYTEXT_NORMALOVERLAY) ovrtype = OVER_CUSTOM;
-	else if (disp_type >= OVER_CUSTOM) ovrtype = disp_type;
+	int ovrtype;
+	switch (disp_type) {
+	case DISPLAYTEXT_SPEECH: ovrtype = OVER_TEXTSPEECH; break;
+	case DISPLAYTEXT_MESSAGEBOX: ovrtype = OVER_TEXTMSG; break;
+	case DISPLAYTEXT_NORMALOVERLAY: ovrtype = OVER_CUSTOM; break;
+	default: ovrtype = disp_type; break; // must be precreated overlay id
+	}
 
 	int nse = add_screen_overlay(xx, yy, ovrtype, text_window_ds, adjustedXX - xx, adjustedYY - yy, alphaChannel);
 	// we should not delete text_window_ds here, because it is now owned by Overlay
@@ -329,6 +333,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 		remove_screen_overlay(OVER_TEXTMSG);
 		invalidate_screen();
 	} else {
+		/* DISPLAYTEXT_SPEECH */
 		// if the speech does not time out, but we are skipping a cutscene,
 		// allow it to time out
 		if ((_GP(play).messagetime < 0) && (_GP(play).fast_forward))

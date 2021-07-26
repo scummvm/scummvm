@@ -20,7 +20,6 @@
  *
  */
 
-//include <cstdio>
 #include "ags/engine/ac/gui.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
@@ -584,8 +583,7 @@ int gui_on_mouse_move() {
 			if (_GP(guis)[guin].IsInteractableAt(_G(mousex), _G(mousey))) mouse_over_gui = guin;
 
 			if (_GP(guis)[guin].PopupStyle != kGUIPopupMouseY) continue;
-			if (_G(is_complete_overlay) > 0) break;  // interfaces disabled
-			//    if (_GP(play).disabled_user_interface>0) break;
+			if (_GP(play).complete_overlay_on > 0) break;  // interfaces disabled			//    if (_GP(play).disabled_user_interface>0) break;
 			if (_G(ifacepopped) == guin) continue;
 			if (!_GP(guis)[guin].IsVisible()) continue;
 			// Don't allow it to be popped up while skipping cutscene

@@ -260,9 +260,9 @@ void update_speech_and_messages() {
 
 		if (_GP(play).messagetime < 1) {
 			if (_GP(play).fast_forward > 0) {
-				remove_screen_overlay(OVER_TEXTMSG);
+				remove_screen_overlay(_GP(play).text_overlay_on);
 			} else if (_GP(play).cant_skip_speech & SKIP_AUTOTIMER) {
-				remove_screen_overlay(OVER_TEXTMSG);
+				remove_screen_overlay(_GP(play).text_overlay_on);
 				_GP(play).SetIgnoreInput(_GP(play).ignore_user_input_after_text_timeout_ms);
 			}
 		}
@@ -371,7 +371,7 @@ void update_sierra_speech() {
 		}
 
 		// _G(is_text_overlay) might be 0 if it was only just destroyed this loop
-		if ((updatedFrame) && (_G(is_text_overlay) > 0)) {
+		if ((updatedFrame) && (_GP(play).text_overlay_on > 0)) {
 
 			if (updatedFrame & 1)
 				CheckViewFrame(_G(facetalkview), _G(facetalkloop), _G(facetalkframe));

@@ -112,6 +112,7 @@ const int LegacyRoomVolumeFactor = 30;
 #define OVER_TEXTMSG  1
 #define OVER_COMPLETE 2
 #define OVER_PICTURE  3
+#define OVER_TEXTSPEECH 4
 #define OVER_CUSTOM   100
 #define OVR_AUTOPLACE 30000
 #define FOR_ANIMATION 1
