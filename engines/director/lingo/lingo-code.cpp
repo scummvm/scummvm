@@ -226,11 +226,11 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	debugC(5, kDebugLingoExec, "Pushing frame %d", callstack.size() + 1);
 	CFrame *fp = new CFrame;
 
-	fp->retpc = g_lingo->_pc;
-	fp->retscript = g_lingo->_currentScript;
-	fp->retctx = g_lingo->_currentScriptContext;
+	fp->retPC = g_lingo->_pc;
+	fp->retScript = g_lingo->_currentScript;
+	fp->retContext = g_lingo->_currentScriptContext;
 	fp->retFreezeContext = g_lingo->_freezeContext;
-	fp->localvars = g_lingo->_localvars;
+	fp->retLocalVars = g_lingo->_localvars;
 	fp->retMe = g_lingo->_currentMe;
 	fp->sp = funcSym;
 	fp->allowRetVal = allowRetVal;
@@ -325,16 +325,16 @@ void Lingo::popContext() {
 		delete g_lingo->_currentScriptContext;
 	}
 
-	g_lingo->_currentScript = fp->retscript;
-	g_lingo->_currentScriptContext = fp->retctx;
+	g_lingo->_currentScript = fp->retScript;
+	g_lingo->_currentScriptContext = fp->retContext;
 	g_lingo->_freezeContext = fp->retFreezeContext;
-	g_lingo->_pc = fp->retpc;
+	g_lingo->_pc = fp->retPC;
 	g_lingo->_currentMe = fp->retMe;
 
 	// Restore local variables
 	if (!fp->sp.anonymous) {
 		g_lingo->cleanLocalVars();
-		g_lingo->_localvars = fp->localvars;
+		g_lingo->_localvars = fp->retLocalVars;
 	}
 
 	if (debugChannelSet(2, kDebugLingoExec)) {

@@ -291,7 +291,7 @@ void Lingo::printCallStack(uint pc) {
 		CFrame *frame = callstack[i];
 		uint framePc = pc;
 		if (i < (int)callstack.size() - 1)
-			framePc = callstack[i + 1]->retpc;
+			framePc = callstack[i + 1]->retPC;
 
 		if (frame->sp.type != VOIDSYM) {
 			debugC(2, kDebugLingoExec, "#%d %s:%d", i + 1,

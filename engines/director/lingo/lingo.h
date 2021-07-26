@@ -195,16 +195,16 @@ typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Co
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
 
 struct CFrame {	/* proc/func call stack frame */
-	Symbol	sp;	/* symbol table entry */
-	int		retpc;	/* where to resume after return */
-	ScriptData *retscript;		/* which script to resume after return */
-	ScriptContext *retctx;		/* which script context to use after return */
-	bool retFreezeContext;		/* whether the context should be frozen after return */
-	DatumHash *localvars;
-	Datum retMe; /* which me obj to use after return */
-	uint stackSizeBefore;
-	bool allowRetVal;			/* whether to allow a return value */
-	Datum defaultRetVal;		/* default return value */
+	Symbol			sp;					/* symbol table entry */
+	int				retPC;				/* where to resume after return */
+	ScriptData		*retScript;			/* which script to resume after return */
+	ScriptContext	*retContext;		/* which script context to use after return */
+	bool			retFreezeContext;	/* whether the context should be frozen after return */
+	DatumHash		*retLocalVars;
+	Datum			retMe;				/* which me obj to use after return */
+	uint			stackSizeBefore;
+	bool			allowRetVal;		/* whether to allow a return value */
+	Datum			defaultRetVal;		/* default return value */
 };
 
 struct LingoEvent {
