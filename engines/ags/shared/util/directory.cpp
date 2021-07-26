@@ -89,6 +89,27 @@ String GetCurrentDirectory() {
 #endif
 }
 
+static bool GetFilesImpl(const String &dir_path, std::vector<String> &files, bool isDirectories) {
+	Common::FSNode fsNode(dir_path);
+	Common::FSList fsList;
+
+	fsNode.getChildren(fsList,
+		isDirectories ? Common::FSNode::kListDirectoriesOnly :
+		Common::FSNode::kListFilesOnly);
+
+	for (uint i = 0; i < fsList.size(); ++i)
+		files.push_back(fsList[i].getName());
+	return true;
+}
+
+bool GetDirs(const String &dir_path, std::vector<String> &dirs) {
+	return GetFilesImpl(dir_path, dirs, true);
+}
+
+bool GetFiles(const String &dir_path, std::vector<String> &files) {
+	return GetFilesImpl(dir_path, files, false);
+}
+
 } // namespace Directory
 
 } // namespace Shared
