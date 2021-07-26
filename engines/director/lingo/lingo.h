@@ -26,6 +26,7 @@
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
 #include "common/str-array.h"
+#include "common/rect.h"
 
 #include "director/types.h"
 
@@ -132,6 +133,7 @@ struct Datum {	/* interpreter stack type */
 	Datum(const Common::String &val);
 	Datum(AbstractObject *val);
 	Datum(const CastMemberID &val);
+	Datum(const Common::Rect &rect);
 	void reset();
 
 	~Datum() {

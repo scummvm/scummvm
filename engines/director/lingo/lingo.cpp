@@ -633,6 +633,15 @@ Datum::Datum(const CastMemberID &val) {
 	*refCount = 1;
 }
 
+Datum::Datum(const Common::Rect &rect) {
+	type = RECT;
+	u.farr = new DatumArray;
+	u.farr->push_back(Datum(rect.left));
+	u.farr->push_back(Datum(rect.top));
+	u.farr->push_back(Datum(rect.right));
+	u.farr->push_back(Datum(rect.bottom));
+}
+
 void Datum::reset() {
 	if (!refCount)
 		return;
