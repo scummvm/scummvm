@@ -140,56 +140,91 @@ void DrawingSurface_DrawSurface(ScriptDrawingSurface *target, ScriptDrawingSurfa
 	target->FinishedDrawing();
 }
 
-void DrawingSurface_DrawImage(ScriptDrawingSurface *sds, int xx, int yy, int slot, int trans, int width, int height) {
+void DrawingSurface_DrawImageEx(ScriptDrawingSurface *sds, int dst_x, int dst_y, int slot, int trans, int dst_width, int dst_height,
+	int src_x, int src_y, int src_width, int src_height) {
 	if ((slot < 0) || (_GP(spriteset)[slot] == nullptr))
 		quit("!DrawingSurface.DrawImage: invalid sprite slot number specified");
-
 	if ((trans < 0) || (trans > 100))
 		quit("!DrawingSurface.DrawImage: invalid transparency setting");
-
-	// 100% transparency, don't draw anything
 	if (trans == 100)
-		return;
+		return; // fully transparent
+	if (dst_width < 1 || dst_height < 1 || src_width < 1 || src_height < 1)
+		return; // invalid src or dest rectangles
 
-	Bitmap *sourcePic = _GP(spriteset)[slot];
+	// Setup uninitialized arguments; convert coordinates for legacy script mode
+	Bitmap *ds = sds->GetBitmapSurface();
+	Bitmap *src = _GP(spriteset)[slot];
+	if (dst_width == SCR_NO_VALUE) {
+		dst_width = src->GetWidth();
+	} else {
+		sds->SizeToGameResolution(&dst_width);
+	}
+	if (dst_height == SCR_NO_VALUE) {
+		dst_height = src->GetHeight();
+	} else {
+		sds->SizeToGameResolution(&dst_height);
+	}
+
+	if (src_x == SCR_NO_VALUE) {
+		src_x = 0;
+	}
+	if (src_y == SCR_NO_VALUE) {
+		src_y = 0;
+	}
+	sds->PointToGameResolution(&src_x, &src_y);
+	if (src_width == SCR_NO_VALUE) {
+		src_width = src->GetWidth();
+	} else {
+		sds->SizeToGameResolution(&src_width);
+	}
+	if (src_height == SCR_NO_VALUE) {
+		src_height = src->GetHeight();
+	} else {
+		sds->SizeToGameResolution(&src_height);
+	}
+
+	if (dst_x >= ds->GetWidth() || dst_x + dst_width <= 0 || dst_y >= ds->GetHeight() || dst_y + dst_height <= 0 ||
+		src_x >= src->GetWidth() || src_x + src_width <= 0 || src_y >= src->GetHeight() || src_y + src_height <= 0)
+		return; // source or destination rects lie completely off surface
+	// Clamp the source rect to the valid limits to prevent exceptions (ignore dest, bitmap drawing deals with that)
+	Math::ClampLength(src_x, src_width, 0, src->GetWidth());
+	Math::ClampLength(src_y, src_height, 0, src->GetHeight());
+
+	// TODO: possibly optimize by not making a stretched intermediate bitmap
+	// if simplier blit/draw_sprite could be called (no translucency with alpha channel).
 	bool needToFreeBitmap = false;
+	if (dst_width != src->GetWidth() || dst_height != src->GetHeight() ||
+		src_width != src->GetWidth() || src_height != src->GetHeight()) {
+		// Resize and/or partial copy specified
+		Bitmap *newPic = BitmapHelper::CreateBitmap(dst_width, dst_height, src->GetColorDepth());
+		newPic->StretchBlt(src,
+			RectWH(src_x, src_y, src_width, src_height),
+			RectWH(0, 0, dst_width, dst_height));
 
-	if (width != SCR_NO_VALUE) {
-		// Resize specified
-
-		if ((width < 1) || (height < 1))
-			return;
-
-		sds->SizeToGameResolution(&width, &height);
-
-		// resize the sprite to the requested size
-		Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, sourcePic->GetColorDepth());
-
-		newPic->StretchBlt(sourcePic,
-		                   RectWH(0, 0, _GP(game).SpriteInfos[slot].Width, _GP(game).SpriteInfos[slot].Height),
-		                   RectWH(0, 0, width, height));
-
-		sourcePic = newPic;
+		src = newPic;
 		needToFreeBitmap = true;
 		update_polled_stuff_if_runtime();
 	}
 
-	Bitmap *ds = sds->StartDrawing();
-	sds->PointToGameResolution(&xx, &yy);
+	ds = sds->StartDrawing();
+	sds->PointToGameResolution(&dst_x, &dst_y);
 
-	if (sourcePic->GetColorDepth() != ds->GetColorDepth()) {
+	if (src->GetColorDepth() != ds->GetColorDepth()) {
 		debug_script_warn("RawDrawImage: Sprite %d colour depth %d-bit not same as background depth %d-bit", slot, _GP(spriteset)[slot]->GetColorDepth(), ds->GetColorDepth());
 	}
 
-	draw_sprite_support_alpha(ds, sds->hasAlphaChannel != 0, xx, yy, sourcePic, (_GP(game).SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0,
-	                          kBlendMode_Alpha, GfxDef::Trans100ToAlpha255(trans));
+	draw_sprite_support_alpha(ds, sds->hasAlphaChannel != 0, dst_x, dst_y, src, (_GP(game).SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0,
+		kBlendMode_Alpha, GfxDef::Trans100ToAlpha255(trans));
 
 	sds->FinishedDrawing();
 
 	if (needToFreeBitmap)
-		delete sourcePic;
+		delete src;
 }
 
+void DrawingSurface_DrawImage(ScriptDrawingSurface *sds, int xx, int yy, int slot, int trans, int width, int height) {
+	DrawingSurface_DrawImageEx(sds, xx, yy, slot, trans, width, height, 0, 0, SCR_NO_VALUE, SCR_NO_VALUE);
+}
 
 void DrawingSurface_SetDrawingColor(ScriptDrawingSurface *sds, int newColour) {
 	sds->currentColourScript = newColour;
@@ -404,8 +439,15 @@ RuntimeScriptValue Sc_DrawingSurface_DrawCircle(void *self, const RuntimeScriptV
 }
 
 // void (ScriptDrawingSurface* sds, int xx, int yy, int slot, int trans, int width, int height)
-RuntimeScriptValue Sc_DrawingSurface_DrawImage(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_DrawingSurface_DrawImage_6(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT6(ScriptDrawingSurface, DrawingSurface_DrawImage);
+}
+
+RuntimeScriptValue Sc_DrawingSurface_DrawImage(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	ASSERT_OBJ_PARAM_COUNT(METHOD, 10);
+	DrawingSurface_DrawImageEx((ScriptDrawingSurface *)self, params[0].IValue, params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue, params[5].IValue,
+		params[6].IValue, params[7].IValue, params[8].IValue, params[9].IValue);
+	return RuntimeScriptValue((int32_t)0);
 }
 
 // void (ScriptDrawingSurface *sds, int fromx, int fromy, int tox, int toy, int thickness)
@@ -504,7 +546,8 @@ void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion compa
 	ccAddExternalObjectFunction("DrawingSurface::Clear^1", Sc_DrawingSurface_Clear);
 	ccAddExternalObjectFunction("DrawingSurface::CreateCopy^0", Sc_DrawingSurface_CreateCopy);
 	ccAddExternalObjectFunction("DrawingSurface::DrawCircle^3", Sc_DrawingSurface_DrawCircle);
-	ccAddExternalObjectFunction("DrawingSurface::DrawImage^6", Sc_DrawingSurface_DrawImage);
+	ccAddExternalObjectFunction("DrawingSurface::DrawImage^6", Sc_DrawingSurface_DrawImage_6);
+	ccAddExternalObjectFunction("DrawingSurface::DrawImage^10", Sc_DrawingSurface_DrawImage);
 	ccAddExternalObjectFunction("DrawingSurface::DrawLine^5", Sc_DrawingSurface_DrawLine);
 	ccAddExternalObjectFunction("DrawingSurface::DrawMessageWrapped^5", Sc_DrawingSurface_DrawMessageWrapped);
 	ccAddExternalObjectFunction("DrawingSurface::DrawPixel^2", Sc_DrawingSurface_DrawPixel);
