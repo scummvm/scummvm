@@ -1257,19 +1257,125 @@ void LB::b_preLoadCast(int nargs) {
 }
 
 void LB::b_framesToHMS(int nargs) {
-	g_lingo->printSTUBWithArglist("b_framesToHMS", nargs);
+	int fractionalSeconds = g_lingo->pop().asInt();
+	int dropFrame = g_lingo->pop().asInt();
+	int fps = g_lingo->pop().asInt();
+	int frames = g_lingo->pop().asInt();
 
-	g_lingo->dropStack(nargs);
+	if (fps <= 0)
+		fps = -fps;
 
-	g_lingo->push(Datum(0));
+	bool negative = frames < 0;
+	if (negative)
+		frames = -frames;
+
+	int framesPerMin = 60 * fps;
+	int framesPerHour = 60 * framesPerMin;
+
+	if (dropFrame)
+		warning("STUB: b_framesToHMS: Unhandled dropFrame option");
+
+	int h = frames / framesPerHour;
+	int m = (frames % framesPerHour) / framesPerMin;
+	int s = (frames % framesPerMin) / fps;
+
+	int residual;
+	if (fractionalSeconds) {
+		int ms = (1000 * (frames % fps)) / fps;
+		residual = (ms + 5) / 10; // round to nearest centisecond
+	} else {
+		residual = frames % fps;
+	}
+
+	Common::String hms = Common::String::format(
+		"%c%02d:%02d:%02d.%02d%c",
+		negative ? '-' : ' ',
+		h, m, s, residual,
+		dropFrame ? 'd' : ' '
+	);
+
+	g_lingo->push(hms);
 }
 
 void LB::b_HMStoFrames(int nargs) {
-	g_lingo->printSTUBWithArglist("b_HMStoFrames", nargs);
+	// The original implementation of this accepts some really weird,
+	// seemingly malformed input strings.
+	// (Try, for example, "12345678901234567890")
+	// It's probably not worth supporting them all unless we need to,
+	// so only well-formed input is handled right now.
 
-	g_lingo->dropStack(nargs);
+	int fractionalSeconds = g_lingo->pop().asInt();
+	int dropFrame = g_lingo->pop().asInt();
+	int fps = g_lingo->pop().asInt();
+	Common::String hms = g_lingo->pop().asString();
 
-	g_lingo->push(Datum(0));
+	if (fps <= 0)
+		fps = 1;
+
+	const char *ptr = hms.c_str();
+	while (Common::isSpace(*ptr))
+		ptr++;
+
+	// read sign
+	bool negative = false;
+	if (*ptr == '-') {
+		negative = true;
+		ptr++;
+	}
+
+	// read HH, MM, and SS
+	int secs = 0;
+	for (int i = 0; i < 3; i++) {
+		if (*ptr == ':' || Common::isSpace(*ptr))
+			ptr ++;
+
+		if (!Common::isDigit(*ptr))
+			break;
+
+		int part = 0;
+		for (int j = 0; j < 2 && Common::isDigit(*ptr); j++) {
+			part = (10 * part) + (*ptr - '0');
+			ptr++;
+		}
+		secs = (60 * secs) + part;
+	}
+	int frames = secs * fps;
+
+	// read FF
+	if (*ptr == '.') {
+		ptr++;
+
+		int part = 0;
+		for (int i = 0; i < 2 && Common::isDigit(*ptr); i++) {
+			part = (10 * part) + (*ptr - '0');
+			ptr++;
+		}
+		if (fractionalSeconds) {
+			frames += (part * fps + 50) / 100; // round to nearest frame
+		} else {
+			frames += part;
+		}
+	}
+
+	// read D
+	if (*ptr == 'd' || *ptr == 'D') {
+		ptr++;
+		dropFrame = 1;
+	}
+
+	while (Common::isSpace(*ptr))
+		ptr++;
+
+	if (*ptr != '\0')
+		warning("b_HMStoFrames: Unexpected character '%c'", *ptr);
+
+	if (dropFrame)
+		warning("STUB: b_HMStoFrames: Unhandled dropFrame option");
+
+	if (negative)
+		frames = -frames;
+
+	g_lingo->push(frames);
 }
 
 void LB::b_param(int nargs) {
