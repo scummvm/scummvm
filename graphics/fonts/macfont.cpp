@@ -301,6 +301,8 @@ bool MacFONTFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *fa
 	_data._rowWords    = stream.readUint16BE() * 2; // row width of bit image in 16-bit wds
 
 	_data._surfHeight = _data._fRectHeight;
+
+	// i use this as a flag to indicate whether the font is generated. see more detail on drawChar.
 	_data._slant = 0; // only used in generated font
 
 	if (getDepth(_data._fontType) != 1) {
@@ -415,7 +417,10 @@ void MacFONTFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color)
 	uint16 xStart = (x < 0) ? -x : 0;
 	uint16 xStop = glyph->bitmapWidth;
 
+	// due to the way we are handling the generated fonts. we only add the kerning offset for the original font
+	if (!_data._slant)
 	x += glyph->kerningOffset;
+
 	if (x >= dst->w)
 		return;
 
