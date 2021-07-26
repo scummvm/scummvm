@@ -1279,7 +1279,7 @@ void LB::b_framesToHMS(int nargs) {
 	if (dropFrame)
 		warning("STUB: b_framesToHMS: Unhandled dropFrame option");
 
-	int h = frames / framesPerHour;
+	int h = MIN(frames / framesPerHour, 99);
 	int m = (frames % framesPerHour) / framesPerMin;
 	int s = (frames % framesPerMin) / fps;
 
