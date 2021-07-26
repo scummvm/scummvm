@@ -3248,7 +3248,12 @@ void HuntToKillTask::evaluateWeapon(void) {
 		                                ? (WeaponProto *)currentWeapon->proto()
 		                                :   NULL;
 
-		if (currentWeapon == NULL || currentTarget == NULL
+		if (currentTarget == NULL) {
+			warning("%s: currentTarget = NULL (return)", a->objName());
+			return;
+		}
+
+		if (currentWeapon == NULL
 		        ||      weaponProto->weaponRating(
 		            a->thisID(),
 		            actorID,
@@ -3273,6 +3278,7 @@ void HuntToKillTask::evaluateWeapon(void) {
 			int             weaponRating;
 
 			if (currentTarget) {
+				warning("%s: currentTarget = NULL (weaponRating = 0)", a->objName());
 				weaponRating =  weaponProto->weaponRating(obj->thisID(),
 				                                          actorID,
 				                                          currentTarget->thisID());
