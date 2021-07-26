@@ -76,6 +76,7 @@ public:
 	char *_vmgt;
 	static VMenu *_addr;
 	int _recent;
+	int _lastN;
 	MenuBar *_bar;
 
 	VMenu(CGE2Engine *vm, Common::Array<Choice *> list, V2D pos, ColorBank col);
