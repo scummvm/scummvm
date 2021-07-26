@@ -609,7 +609,8 @@ Datum CastMember::getField(int field) {
 		d = _castId;
 		break;
 	case kTheRect:
-		warning("STUB: CastMember::getField(): Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		// not sure get the initial rect would be fine to castmember
+		d = Datum(_cast->getCastMember(_castId)->_initialRect);
 		break;
 	case kThePurgePriority:
 		d = _purgePriority;

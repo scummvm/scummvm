@@ -1214,7 +1214,13 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_puppet;
 		break;
 	case kTheRect:
-		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
+		// let compiler to optimize this
+		d.type = RECT;
+		d.u.farr = new DatumArray;
+		d.u.farr->push_back(channel->getBbox().left);
+		d.u.farr->push_back(channel->getBbox().top);
+		d.u.farr->push_back(channel->getBbox().right);
+		d.u.farr->push_back(channel->getBbox().bottom);
 		break;
 	case kTheRight:
 		d.u.i = channel->getBbox().right;
