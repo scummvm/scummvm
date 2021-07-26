@@ -478,12 +478,15 @@ void LB::b_offset(int nargs) {
 		b_offsetRect(nargs);
 		return;
 	}
-	Common::String target = g_lingo->pop().asString();
 	Common::String source = g_lingo->pop().asString();
+	Common::String target = g_lingo->pop().asString();
 
-	warning("STUB: b_offset()");
+	const char *str = strstr(source.c_str(), target.c_str());
 
-	g_lingo->push(Datum(0));
+	if (str == nullptr)
+		g_lingo->push(Datum(0));
+	else
+		g_lingo->push(Datum(int(str - source.c_str() + 1)));
 }
 
 void LB::b_string(int nargs) {
