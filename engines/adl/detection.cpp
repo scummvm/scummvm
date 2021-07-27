@@ -196,13 +196,12 @@ static const AdlGameDescription gameFileDescriptions[] = {
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_COARSE
 	},
-	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Public Domain
 		{
 			"hires1", "Public Domain",
 			{
 				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
 				{ "AUTO LOAD OBJ", 0, "23bfccfe9fcff9b22cf6c41bde9078ac", 12291 },
-				{ "MYSTERY.HELLO", 0, "2289b7fea300b506e902a4c597968369", 836 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -269,6 +268,18 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 		{
 			"hires1", "Public Domain",
 			AD_ENTRY1s("mysthous", "54d20eb1ef0084ac3c2d16c31c5b7eb7", 143360),
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			MH_OPTIONS
+		},
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_PD
+	},
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Public Domain
+		{
+			"hires1", "Public Domain",
+			AD_ENTRY1s("mysthous", "bc0f34d153a530b9bb4e554b0a42f8d7", 143360),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,

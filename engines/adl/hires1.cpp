@@ -175,11 +175,13 @@ void HiRes1Engine::runIntro() {
 
 	// Show the PD disclaimer for the PD release
 	if (getGameVersion() == GAME_VER_HR1_PD) {
-		// The PD release on the Roberta Williams Anthology disc has a PDE
-		// splash screen. The original HELLO file has been renamed to
-		// MYSTERY.HELLO. It's unclear whether or not this splash screen
-		// was present in the original PD release back in 1987.
-		StreamPtr basic(_files->createReadStream("MYSTERY.HELLO"));
+		// The P.D.E. version on the Roberta Williams Anthology has a renamed HELLO file
+		const char *fileName = "MYSTERY.HELLO";
+
+		if (!_files->exists(fileName))
+			fileName = "HELLO";
+
+		StreamPtr basic(_files->createReadStream(fileName));
 
 		_display->setMode(Display::kModeText);
 		_display->home();
