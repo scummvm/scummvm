@@ -2979,6 +2979,7 @@ enum GoalDektora {
 	kGoalDektoraNR11BurningFallToNR10        = 279,
 	kGoalDektoraNR11RanAway                  = 290,
 	kGoalDektoraNR07RanAway                  = 295,
+	kGoalDektoraStartAct4StashedAway         = 300,
 	kGoalDektoraKP07Wait                     = 513, // new goal when in moonbus, Act 5
 	kGoalDektoraGone                         = 599
 };

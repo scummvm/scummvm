@@ -217,9 +217,30 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					}
 					Actor_Says(kActorDektora, 1080, 13);
 					Actor_Says(kActorMcCoy, 3875, 14);
-					Actor_Says(kActorDektora, 1090, 17);
+					Actor_Says(kActorDektora, 1090, 17);     // I... appreciate it, Mr. McCoy.
+					if (_vm->_cutContent
+					 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora) {
+						Actor_Says(kActorMcCoy, 3880, -1);   // Call me Ray.
+						Actor_Says(kActorDektora, 1100, 12); // Okay. Ray.
+					}
 					Music_Stop(4u);
 					Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11WalkAway);
+#if !BLADERUNNER_ORIGINAL_BUGS
+					Unclickable_Object("CLOTHING02");
+					Unclickable_Object("BOX27");
+					Unclickable_Object("BOX39");
+					Unclickable_Object("DRESS");
+					Unclickable_Object("COATRACK");
+					Unclickable_Object("COLUMN3 DETS");
+					Unclickable_Object("COLUMN PIPE01");
+					Unclickable_Object("RECTANGLE02");
+					Unclickable_Object("COLUMN04");
+					Unclickable_Object("COATRACK01");
+					Unclickable_Object("SHIRT");
+					Unclickable_Object("SKIRT 02");
+					Unclickable_Object("CLOTHING B 03");
+					Unclickable_Object("BUST BUST");
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 					if (Global_Variable_Query(kVariableHollowayArrest) == 1) {
 						Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR10Wait);
 					}
