@@ -63,7 +63,7 @@ extern int HYPNO_parse();
 extern int yylineno;
 
 Common::Array<uint32> smenu_idx;
-Common::Array<Hypno::Hotspots *> stack;
+Hypno::HotspotsStack stack;
 
 void HYPNO_xerror(const char *str) {
 	debug("ERROR: %s", str);
@@ -109,6 +109,7 @@ end: RETTOK  { debug("implicit END"); }
 line:    MENUTOK NAME mflag  {
 	     Hotspot *hot = new Hotspot(); 
 		 hot->type = MakeMenu;
+		 hot->stype = $2;
 		 hot->smenu = NULL;
 		 debug("MENU %d.", hot->type);
 		 Hotspots *cur = stack.back();
@@ -125,6 +126,7 @@ line:    MENUTOK NAME mflag  {
 	     Hotspot *hot = new Hotspot(); 
 		 hot->type = MakeHotspot;
 		 hot->smenu = NULL;
+		 hot->rect = Common::Rect($3, $4, $5, $6);
 		 debug("HOTS %d.", hot->type);
 		 Hotspots *cur = stack.back();
 		 cur->push_back(*hot); 
@@ -137,14 +139,19 @@ line:    MENUTOK NAME mflag  {
 		  smenu_idx.push_back(idx);
 
 		  Hotspots *cur = stack.back();
-		  Hotspot hot = (*cur)[idx];
+		  Hotspot *hot = &(*cur)[idx];
 
 		  smenu_idx.push_back(-1);
-		  hot.smenu = new Hotspots();
-	      stack.push_back(hot.smenu);
+		  hot->smenu = new Hotspots();
+	      stack.push_back(hot->smenu);
 		  debug("SUBMENU"); 
 		}
-      |  ESCPTOK                                   { debug("ESC SUBMENU"); }
+      |  ESCPTOK  {
+			Escape *a = new Escape();
+			Hotspots *cur = stack.back();
+		    Hotspot *hot = &cur->back();
+			hot->actions.push_back(a);
+		  	debug("ESC SUBMENU"); }
 	  |  TIMETOK NUM                               { debug("TIME %d", $2); } 
       |  BACKTOK FILENAME NUM NUM gsswitch flag    {
 			Background *a = new Background();
@@ -172,21 +179,26 @@ line:    MENUTOK NAME mflag  {
 		    Hotspot *hot = &cur->back();
 			hot->actions.push_back(a);
 		}
-	  |  CUTSTOK FILENAME                          { debug("CUTS %s.", $2); }
+	  |  CUTSTOK FILENAME { 
+		  	Cutscene *a = new Cutscene();
+			a->path = $2;
+			Hotspots *cur = stack.back();
+		    Hotspot *hot = &cur->back();
+			hot->actions.push_back(a);		  
+		    debug("CUTS %s.", $2); 
+		}
 	  |  WALNTOK FILENAME NUM NUM gsswitch flag    { debug("WALN %s %d %d.", $2, $3, $4); } 
 	  |  MICETOK FILENAME NUM {
-		  	//Mice *a = new Mice();
-			//a->path = $2; 
-			//a->index = $3;
-			//if (smenu_idx == -1)
-		    //	hot->actions.push_back(a);
-			//else 
-			//	hots[smenu_idx].smenu.push_back(a);
-			//debug("mice!");
+		  	Mice *a = new Mice();
+			a->path = $2; 
+			a->index = $3-1;
+			Hotspots *cur = stack.back();
+		    Hotspot *hot = &cur->back();
+			hot->actions.push_back(a);
 	  }
 	  |  ENDTOK RETTOK { 
 		  debug("explicit END");
-		  hots = stack.back(); 
+		  g_parsedHots = stack.back(); 
 		  stack.pop_back();
 		  smenu_idx.pop_back();
 		  }   		               
