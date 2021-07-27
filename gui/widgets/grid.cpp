@@ -292,8 +292,10 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 		Common::FSNode fileNode(path);
 		Common::SeekableReadStream *stream = fileNode.createReadStream();
 		if (stream) {
-			if (!decoder.loadStream(*stream))
+			if (!decoder.loadStream(*stream)) {
 				warning("Error decoding PNG");
+				return surf;
+			}
 
 			srcSurface = decoder.getSurface();
 			delete stream;
