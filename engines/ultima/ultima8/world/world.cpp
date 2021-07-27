@@ -39,6 +39,7 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/world/snap_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -508,17 +509,21 @@ void World::setAlertActiveRegret(bool active)
 void World::setControlledNPCNum(uint16 num) {
 	uint16 oldnpc = _controlledNPCNum;
 	_controlledNPCNum = num;
-	CameraProcess::SetCameraProcess(new CameraProcess(num));
 	Actor *previous = getActor(oldnpc);
 	if (previous && !previous->isDead() && previous->isInCombat()) {
 		previous->clearInCombat();
 	}
 
 	Actor *controlled = getActor(num);
-	if (controlled && num != 1) {
-		Kernel::get_instance()->killProcesses(num, Kernel::PROC_TYPE_ALL, true);
-		if (controlled->isInCombat())
-			controlled->clearInCombat();
+	if (controlled) {
+		if (num != 1) {
+			Kernel::get_instance()->killProcesses(num, Kernel::PROC_TYPE_ALL, true);
+			if (controlled->isInCombat())
+				controlled->clearInCombat();
+		}
+		int32 x, y, z;
+		controlled->getCentre(x, y, z);
+		CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
 	}
 
 	TargetReticleProcess *t = TargetReticleProcess::get_instance();
