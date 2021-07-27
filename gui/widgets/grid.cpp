@@ -76,36 +76,41 @@ void GridItemWidget::drawWidget() {
 	//			selection border. This can break when the stroke width of
 	//			the border is comparable to 1/3 of grid item spacing. Also,
 	//			border shadow is not considered.
+	const int kMarginX = _grid->_gridXSpacing / 3;
+	const int kMarginY = _grid->_gridYSpacing / 3;
+
 	if ((isHighlighted) || (_grid->getSelected() == _activeEntry->entryID)) {
+		Common::Rect r(_x - kMarginX, _y - kMarginY,
+					   _x + _w + kMarginX, _y + _h + kMarginY);
 		// Draw a highlighted BG on hover
-		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - (_grid->_gridXSpacing / 3), _y - (_grid->_gridYSpacing / 3),
-											_x + _w + (_grid->_gridXSpacing / 3), _y + _h + (_grid->_gridYSpacing / 3)), 
-										ThemeEngine::WidgetBackground::kGridItemHighlight);
+		g_gui.theme()->drawWidgetBackground(r, ThemeEngine::WidgetBackground::kGridItemHighlight);
 	} else {
+		Common::Rect r(_x - 2 * kMarginX, _y - 2 * kMarginY,
+					   _x + _w + 2 * kMarginX, _y + _h + 2 * kMarginY);
 		// Draw a BG of the same color as grid area
 		// when it is not highlighted to cover up
 		// the highlight shadow
 		// FIXME: Find a way to redraw the area around the widget
 		//		 instead of just drawing a cover-up
-		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - 2 * (_grid->_gridXSpacing / 3), _y - 2 * (_grid->_gridYSpacing / 3),
-											_x + _w + 2 * (_grid->_gridXSpacing / 3), _y + _h + 2 * (_grid->_gridYSpacing / 3)), 
-										ThemeEngine::WidgetBackground::kGridItemBackground);
+		g_gui.theme()->drawWidgetBackground(r, ThemeEngine::WidgetBackground::kGridItemBackground);
 	}
 
 	// Draw Thumbnail Background
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _grid->getThumbnailWidth(), _y + thumbHeight), 
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + thumbWidth, _y + thumbHeight),
 										ThemeEngine::WidgetBackground::kThumbnailBackground);
 
 	// Draw Thumbnail
 	if (_thumbGfx.empty()) {
 		// Draw Title when thumbnail is missing
 		int linesInThumb = MIN(thumbHeight / kLineHeight, (int)titleLines.size());
+		Common::Rect r(_x, _y + (thumbHeight - linesInThumb * kLineHeight) / 2,
+					   _x + thumbWidth, _y + (thumbHeight - linesInThumb * kLineHeight) / 2 + kLineHeight);
 		for (int i = 0; i < linesInThumb; ++i) {
-			g_gui.theme()->drawText(Common::Rect(_x, _y + ((thumbHeight - (linesInThumb - 2 * i) * kLineHeight)) / 2,
-							_x + thumbWidth, _y + ((thumbHeight - (linesInThumb - 2 * i) * kLineHeight)) / 2 + kLineHeight),
-							titleLines[i], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter,
-							ThemeEngine::kTextInversionNone, 0, true, ThemeEngine::kFontStyleNormal,
-							ThemeEngine::kFontColorAlternate, false);
+			g_gui.theme()->drawText(r, titleLines[i], ThemeEngine::kStateEnabled,
+									Graphics::kTextAlignCenter, ThemeEngine::kTextInversionNone,
+									0, true, ThemeEngine::kFontStyleNormal,
+									ThemeEngine::kFontColorAlternate, false);
+			r.translate(0, kLineHeight);
 		}
 	} else {
 		g_gui.theme()->drawSurface(Common::Point(_x, _y), _thumbGfx, true);
@@ -114,15 +119,15 @@ void GridItemWidget::drawWidget() {
 	// Draw Platform Icon
 	const Graphics::ManagedSurface *platGfx = _grid->platformToSurface(_activeEntry->platform);
 	if (platGfx) {
-		g_gui.theme()->drawSurface(Common::Point(_x + thumbWidth - platGfx->w, _y + thumbHeight - platGfx->h), 
-									*platGfx, true);
+		Common::Point p(_x + thumbWidth - platGfx->w, _y + thumbHeight - platGfx->h);
+		g_gui.theme()->drawSurface(p, *platGfx, true);
 	}
 
 	// Draw Flag
 	const Graphics::ManagedSurface *flagGfx = _grid->languageToSurface(_activeEntry->language);
 	if (flagGfx) {
-		g_gui.theme()->drawSurface(Common::Point(_x + thumbWidth - flagGfx->w - 5, _y + 5), 
-									*flagGfx, true);
+		Common::Point p(_x + thumbWidth - flagGfx->w - 5, _y + 5);
+		g_gui.theme()->drawSurface(p, *flagGfx, true);
 	}
 
 	// Draw Title
@@ -132,13 +137,16 @@ void GridItemWidget::drawWidget() {
 		if (titleLines.size() < 2) {
 			titleLines.push_back(U32String());
 		} else if (titleLines.size() > 2) {
-			titleLines[1].erase(titleLines[1].size() - 3);
+			for (uint k = 0; (k < 3) && (titleLines[1].size() > 0); ++k)
+				titleLines[1].deleteLastChar();
 			titleLines[1] += U32String("...");
 		}
-		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight),
-								titleLines[0], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter);
-		g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight + kLineHeight, _x + thumbWidth, _y + thumbHeight + 2 * kLineHeight),
-								titleLines[1], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter);
+		Common::Rect r(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight);
+		for (uint k = 0; k < 2; ++k) {
+			g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight),
+									titleLines[0], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter);
+			r.translate(0, kLineHeight);
+		}
 	}
 }
 
