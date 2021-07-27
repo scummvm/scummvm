@@ -959,9 +959,26 @@ void LB::b_setProp(int nargs) {
 	}
 }
 
+static bool sortArrayHelper(const Datum &lhs, const Datum &rhs) {
+	return lhs.asInt() < rhs.asInt();
+}
+
+static bool sortPArrayHelper(const PCell &lhs, const PCell &rhs) {
+	return lhs.p.asString() < rhs.p.asString();
+}
+
 void LB::b_sort(int nargs) {
-	g_lingo->printSTUBWithArglist("b_sort", nargs);
-	g_lingo->dropStack(nargs);
+	Datum list = g_lingo->pop();
+
+	if (list.type == ARRAY) {
+		Common::sort(list.u.farr->begin(), list.u.farr->end(), sortArrayHelper);
+
+	} else if (list.type == PARRAY) {
+		Common::sort(list.u.parr->begin(), list.u.parr->end(), sortPArrayHelper);
+
+	} else {
+		warning("LB::b_sort can not handle argument of type %s", list.type2str());
+	}
 }
 
 
