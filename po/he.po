@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-21 21:06+0000\n"
+"POT-Creation-Date: 2021-07-27 18:50+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -64,7 +64,7 @@ msgstr "תיקיה למעלה"
 #: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:396
 #: gui/saveload-dialog.cpp:469 gui/saveload-dialog.cpp:771
 #: gui/saveload-dialog.cpp:1168 gui/themebrowser.cpp:55
-#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:645
+#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:650
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
 #: backends/events/default/default-events.cpp:209
@@ -159,7 +159,7 @@ msgstr "לא ניתן ליצור תיקיה להורדה - קובץ באותו �
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:385
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:514 gui/launcher.cpp:518
 #: gui/massadd.cpp:89 gui/options.cpp:2095 gui/saveload-dialog.cpp:1169
-#: engines/engine.cpp:504 engines/engine.cpp:516
+#: engines/engine.cpp:509 engines/engine.cpp:521
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -773,14 +773,14 @@ msgstr "חיפוש ברשימת המשחקים"
 msgid "Search:"
 msgstr "חיפוש:"
 
-#: gui/launcher.cpp:209 engines/dialogs.cpp:98 engines/engine.cpp:795
+#: gui/launcher.cpp:209 engines/dialogs.cpp:98 engines/engine.cpp:800
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:631
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "טען משחק:"
 
-#: gui/launcher.cpp:209 engines/dialogs.cpp:98 engines/engine.cpp:795
+#: gui/launcher.cpp:209 engines/dialogs.cpp:98 engines/engine.cpp:800
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/trecision/saveload.cpp:253
@@ -2177,7 +2177,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~ח~זור אל מסך הרצת המשחקים"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:767
+#: engines/dialogs.cpp:99 engines/engine.cpp:829 engines/agi/saveload.cpp:767
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2196,7 +2196,7 @@ msgstr "~ח~זור אל מסך הרצת המשחקים"
 msgid "Save game:"
 msgstr "שמור משחק:"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:824 engines/agi/saveload.cpp:767
+#: engines/dialogs.cpp:99 engines/engine.cpp:829 engines/agi/saveload.cpp:767
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2243,43 +2243,43 @@ msgstr "~ O ~ K"
 msgid "~C~ancel"
 msgstr "~ ג ~ אנסל"
 
-#: engines/engine.cpp:318
+#: engines/engine.cpp:323
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "לא ניתן היה לעבור לרזולוציה '%dx%d'."
 
-#: engines/engine.cpp:327
+#: engines/engine.cpp:332
 msgid "Could not initialize color format."
 msgstr "לא ניתן לאתחל את פורמט הצבעים."
 
-#: engines/engine.cpp:336
+#: engines/engine.cpp:341
 #, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "לא ניתן היה לעבור למצב הווידאו '%s'."
 
-#: engines/engine.cpp:344
+#: engines/engine.cpp:349
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "לא ניתן היה לעבור למצב מתיחה '%s'."
 
-#: engines/engine.cpp:351
+#: engines/engine.cpp:356
 msgid "Could not apply aspect ratio setting."
 msgstr "לא ניתן להחיל את הגדרת יחס הגובה-רוחב."
 
-#: engines/engine.cpp:356
+#: engines/engine.cpp:361
 msgid "Could not apply fullscreen setting."
 msgstr "לא ניתן להחיל הגדרת מסך מלא."
 
-#: engines/engine.cpp:361
+#: engines/engine.cpp:366
 msgid "Could not apply filtering setting."
 msgstr "לא ניתן להחיל את הגדרת הסינון."
 
-#: engines/engine.cpp:419
+#: engines/engine.cpp:424
 #, fuzzy
 msgid "Error"
 msgstr "אין שגיאה"
 
-#: engines/engine.cpp:500
+#: engines/engine.cpp:505
 #, fuzzy
 #| msgid ""
 #| "You appear to be playing this game directly\n"
@@ -2300,7 +2300,7 @@ msgstr ""
 "קבצי הנתונים לדיסק הקשיח.\n"
 "לפרטים, עיין בקובץ README."
 
-#: engines/engine.cpp:512
+#: engines/engine.cpp:517
 #, fuzzy
 #| msgid ""
 #| "This game has audio tracks in its disk. These\n"
@@ -2321,17 +2321,17 @@ msgstr ""
 "להזמין למוזיקה של המשחק.\n"
 "לפרטים, עיין בקובץ README."
 
-#: engines/engine.cpp:548 engines/metaengine.cpp:345 engines/savestate.cpp:81
+#: engines/engine.cpp:553 engines/metaengine.cpp:345 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:253 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "שמירה אוטומטית"
 
-#: engines/engine.cpp:550
+#: engines/engine.cpp:555
 msgid "Error occurred making autosave"
 msgstr "אירעה שגיאה ביצירת שמירה אוטומטית"
 
-#: engines/engine.cpp:623
+#: engines/engine.cpp:628
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2340,17 +2340,17 @@ msgstr ""
 "טעינת המשחק השמורה (%s) נכשלה! אנא עיין ב- README למידע בסיסי ולקבל הוראות "
 "כיצד לקבל סיוע נוסף."
 
-#: engines/engine.cpp:641
+#: engines/engine.cpp:646
 msgid "WARNING: "
 msgstr ""
 
-#: engines/engine.cpp:641
+#: engines/engine.cpp:646
 #, fuzzy
 #| msgid "Full title of the game"
 msgid " Shall we still run the game?"
 msgstr "כותרת מלאה של המשחק"
 
-#: engines/engine.cpp:642
+#: engines/engine.cpp:647
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2360,15 +2360,15 @@ msgstr ""
 "סביר להניח שהוא לא יציב, וכל משחק שנשמר שתבצע עשוי לא לעבוד בגירסאות עתידיות "
 "של ScummVM."
 
-#: engines/engine.cpp:645 engines/wintermute/wintermute.cpp:183
+#: engines/engine.cpp:650 engines/wintermute/wintermute.cpp:183
 msgid "Start anyway"
 msgstr "התחל בכל מקרה"
 
-#: engines/engine.cpp:652
+#: engines/engine.cpp:657
 msgid "This game is not supported."
 msgstr "מזהה המשחק אינו נתמך."
 
-#: engines/engine.cpp:652
+#: engines/engine.cpp:657
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2376,11 +2376,11 @@ msgstr ""
 "המשחק הזה לא נתמך מהסיבות הבאות:\n"
 "\n"
 
-#: engines/engine.cpp:791
+#: engines/engine.cpp:796
 msgid "Loading game is currently unavailable"
 msgstr "טעינת משחק לא אפשרית כרגע"
 
-#: engines/engine.cpp:820
+#: engines/engine.cpp:825
 msgid "Saving game is currently unavailable"
 msgstr "שמירת משחק לא אפשרית כרגע"
 
