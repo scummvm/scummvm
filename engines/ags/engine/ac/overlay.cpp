@@ -145,28 +145,56 @@ ScriptOverlay *Overlay_CreateTextual(int x, int y, int width, int font, int colo
 
 //=============================================================================
 
-void dispose_overlay(ScreenOverlay &over) {
+// Creates and registers a managed script object for existing overlay object
+ScriptOverlay *create_scriptobj_for_overlay(ScreenOverlay &over) {
+	ScriptOverlay *scover = new ScriptOverlay();
+	scover->overlayId = over.type;
+	int handl = ccRegisterManagedObject(scover, scover);
+	over.associatedOverlayHandle = handl;
+	return scover;
+}
+
+// Creates managed script object for overlay and adds internal engine's reference to it,
+// so that it does not get disposed even if there are no user references in script.
+static ScriptOverlay *create_scriptobj_addref(ScreenOverlay &over) {
+	ScriptOverlay *scover = create_scriptobj_for_overlay(over);
+	ccAddObjectReference(over.associatedOverlayHandle);
+	return scover;
+}
+
+// Invalidates existing script object to let user know that previous overlay is gone,
+// and releases engine's internal reference (script object may exist while there are user refs)
+static void invalidate_and_subref(ScreenOverlay &over, ScriptOverlay *&scover) {
+	scover->overlayId = -1;
+	scover = nullptr;
+	ccReleaseObjectReference(over.associatedOverlayHandle);
+}
+
+// Frees overlay resources and disposes script object if there are no more refs
+static void dispose_overlay(ScreenOverlay &over) {
 	delete over.pic;
 	over.pic = nullptr;
 	if (over.bmp != nullptr)
 		_G(gfxDriver)->DestroyDDB(over.bmp);
 	over.bmp = nullptr;
-	// if the script didn't actually use the Overlay* return
-	// value, dispose of the pointer
-	if (over.associatedOverlayHandle)
+	if (over.associatedOverlayHandle) // dispose script object if there are no more refs
 		ccAttemptDisposeObject(over.associatedOverlayHandle);
 }
 
 void remove_screen_overlay_index(int over_idx) {
 	ScreenOverlay &over = _G(screenover)[over_idx];
+	if (over.type == _GP(play).complete_overlay_on) {
+		_GP(play).complete_overlay_on = 0;
+	} else if (over.type == _GP(play).text_overlay_on) {
+		_GP(play).text_overlay_on = 0;
+		if (_GP(play).speech_text_scover)
+			invalidate_and_subref(over, _GP(play).speech_text_scover);
+	}
 	dispose_overlay(over);
-	if (over.type == _GP(play).complete_overlay_on) _GP(play).complete_overlay_on = 0;
-	if (over.type == _GP(play).text_overlay_on) _GP(play).text_overlay_on = 0;
 	_G(numscreenover)--;
 	for (int i = over_idx; i < _G(numscreenover); ++i)
 		_G(screenover)[i] = _G(screenover)[i + 1];
-	// if an overlay before the sierra-style speech one is removed,
-	// update the index
+	// if an overlay before the sierra-style speech one is removed, update the index
 	if (_G(face_talking) > over_idx)
 		_G(face_talking)--;
 }
@@ -192,8 +220,6 @@ int add_screen_overlay(int x, int y, int type, Bitmap *piccy, bool alphaChannel)
 }
 
 int add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel) {
-	if (type == OVER_COMPLETE) _GP(play).complete_overlay_on = type;
-	if (type == OVER_TEXTMSG || type == OVER_TEXTSPEECH) _GP(play).text_overlay_on = type;
 	if (type == OVER_CUSTOM) {
 		// find an unused custom ID; TODO: find a better approach!
 		for (int id = OVER_CUSTOM + 1; id < OVER_CUSTOM + 100; ++id) {
@@ -203,6 +229,7 @@ int add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic_of
 			}
 		}
 	}
+
 	ScreenOverlay &over = _G(screenover)[_G(numscreenover)++];
 	over.pic = piccy;
 	over.bmp = _G(gfxDriver)->CreateDDBFromBitmap(piccy, alphaChannel);
@@ -216,10 +243,19 @@ int add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic_of
 	over.associatedOverlayHandle = 0;
 	over.hasAlphaChannel = alphaChannel;
 	over.positionRelativeToScreen = true;
+	// TODO: move these custom settings outside of this function
+	if (type == OVER_COMPLETE) _GP(play).complete_overlay_on = type;
+	else if (type == OVER_TEXTMSG || type == OVER_TEXTSPEECH) {
+		_GP(play).text_overlay_on = type;
+		// only make script object for blocking speech now, because messagebox blocks all script
+		// and therefore cannot be accessed, so no practical reason for that atm
+		if (type == OVER_TEXTSPEECH)
+			_GP(play).speech_text_scover = create_scriptobj_addref(over);
+	} else if (type == OVER_PICTURE) {
+		_GP(play).speech_text_scover = create_scriptobj_addref(over);
+	}
 	return _G(numscreenover) - 1;
 }
-
-
 
 void get_overlay_position(const ScreenOverlay &over, int *x, int *y) {
 	int tdxp, tdyp;

@@ -53,6 +53,7 @@ struct RestoredData;
 using namespace AGS; // FIXME later
 struct ScriptViewport;
 struct ScriptCamera;
+struct ScriptOverlay;
 
 #define GAME_STATE_RESERVED_INTS 5
 
@@ -252,6 +253,8 @@ struct GameState {
 	int  complete_overlay_on = 0;
 	// Is there a blocking text overlay on screen (contains overlay ID)
 	int  text_overlay_on = 0;
+	// Blocking speech overlay managed object, for accessing in scripts
+	ScriptOverlay *speech_text_scover = nullptr;
 
 	int shake_screen_yoff = 0; // y offset of the shaking screen
 

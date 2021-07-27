@@ -708,14 +708,10 @@ ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
 	if (ovri < 0)
 		quit("!SayBackground internal error: no overlay");
 
-	// Convert the overlay ID to an Overlay object
-	ScriptOverlay *scOver = new ScriptOverlay();
-	scOver->overlayId = ovltype;
+	ScriptOverlay *scOver = create_scriptobj_for_overlay(_G(screenover)[ovri]);
 	scOver->borderHeight = 0;
 	scOver->borderWidth = 0;
 	scOver->isBackgroundSpeech = 1;
-	int handl = ccRegisterManagedObject(scOver, scOver);
-	_G(screenover)[ovri].associatedOverlayHandle = handl;
 
 	return scOver;
 }
