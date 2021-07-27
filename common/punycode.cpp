@@ -76,9 +76,9 @@ static uint32_t adapt_bias(uint32_t delta, unsigned n_points, int is_first) {
 static char encode_digit(int c) {
 	assert(c >= 0 && c <= BASE - TMIN);
 	if (c > 25) {
-		return c + 26; /* '0'..'9' */
+		return c + 0x30 - 26; /* '0'..'9' */
 	} else {
-		return c + 'a'; /* 'a'..'z' */
+		return c + 0x61; /* 'a'..'z' */
 	}
 }
 
