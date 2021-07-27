@@ -518,7 +518,7 @@ bool Window::step() {
 		case kPlayNotStarted:
 			{
 				debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-				debug(0, "@@@@   Loading movie '%s' in '%s'", _currentMovie->getMacName().c_str(), _currentPath.c_str());
+				debug(0, "@@@@   Loading movie '%s' in '%s'", toPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 				debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 				bool goodMovie = _currentMovie->loadArchive();
