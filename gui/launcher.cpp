@@ -1012,7 +1012,7 @@ void LauncherSimple::updateListing() {
 
 	const int oldSel = _list->getSelected();
 	_list->setList(l, &colors);
-	
+
 	groupEntries(attrs);
 
 	if (oldSel < (int)l.size() && oldSel >= 0)

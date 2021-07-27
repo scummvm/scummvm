@@ -79,7 +79,7 @@ void GridItemWidget::drawWidget() {
 										ThemeEngine::WidgetBackground::kGridItemHighlight);
 	} else {
 		// Draw a BG of the same color as grid area
-		// when it is not highlighted to cover up 
+		// when it is not highlighted to cover up
 		// the highlight shadow
 		// FIXME: Find a way to redraw the area around the widget
 		//		 instead of just drawing a cover-up
@@ -103,8 +103,9 @@ void GridItemWidget::drawWidget() {
 							ThemeEngine::kTextInversionNone, 0, true, ThemeEngine::kFontStyleNormal,
 							ThemeEngine::kFontColorAlternate, false);
 		}
-	} else
+	} else {
 		g_gui.theme()->drawSurface(Common::Point(_x, _y), _thumbGfx, true);
+	}
 
 	// Draw Platform Icon
 	const Graphics::ManagedSurface *platGfx = _grid->platformToSurface(_activeEntry->platform);
@@ -115,9 +116,10 @@ void GridItemWidget::drawWidget() {
 
 	// Draw Flag
 	const Graphics::ManagedSurface *flagGfx = _grid->languageToSurface(_activeEntry->language);
-	if (flagGfx)
+	if (flagGfx) {
 		g_gui.theme()->drawSurface(Common::Point(_x + thumbWidth - flagGfx->w - 5, _y + 5), 
 									*flagGfx, true);
+	}
 
 	// Draw Title
 	if (_grid->_isTitlesVisible) {
@@ -256,10 +258,10 @@ void GridItemTray::handleMouseMoved(int x, int y, int button) {
 
 Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 	Graphics::ManagedSurface *surf = nullptr;
-	const Graphics::Surface *srcSurface = nullptr;
 	const String path = String::format("%s/%s", ConfMan.get("iconpath").c_str(), name.c_str());
 	if (name.hasSuffix(".png")) {
 #ifdef USE_PNG
+		const Graphics::Surface *srcSurface = nullptr;
 		Image::PNGDecoder decoder;
 		Common::FSNode fileNode(path);
 		Common::SeekableReadStream *stream = fileNode.createReadStream();
@@ -271,8 +273,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 			delete stream;
 			if (!srcSurface) {
 				warning("Failed to load surface : %s", name.c_str());
-			}
-			if (srcSurface && srcSurface->format.bytesPerPixel != 1) {
+			} else if (srcSurface->format.bytesPerPixel != 1) {
 				surf = new Graphics::ManagedSurface(srcSurface->convertTo(g_system->getOverlayFormat()));
 			}
 
@@ -281,10 +282,10 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 		error("No PNG support compiled");
 #endif
 	} else if (name.hasSuffix(".svg")) {
-		Graphics::SVGBitmap *image = nullptr;
 		Common::FSNode fileNode(path);
 		Common::SeekableReadStream *stream = fileNode.createReadStream();
 		if (stream) {
+			Graphics::SVGBitmap *image = nullptr;
 			image = new Graphics::SVGBitmap(stream);
 			surf = new Graphics::ManagedSurface(60, 30, *image->getPixelFormat());
 			image->render(*surf, 60, 30);
@@ -534,7 +535,7 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 			int col = 0;
 
 			for (Common::Array<GridItemWidget *>::iterator it = _gridItems.begin(); it != _gridItems.end(); ++it) {
-				(*it)->setPos(2 * _minGridXSpacing + col * (_gridItemWidth + _gridXSpacing), 
+				(*it)->setPos(2 * _minGridXSpacing + col * (_gridItemWidth + _gridXSpacing),
 							  _gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing) - (-_scrollPos % (_gridItemHeight + _gridYSpacing)));
 				if (++col >= _itemsPerRow) {
 					++row;
@@ -602,10 +603,10 @@ void GridWidget::reflowLayout() {
 	}
 
 	for (int k = 0; k < _itemsOnScreen; ++k) {
-		GridItemWidget *newItem = new GridItemWidget(this, 
-									2 * _minGridXSpacing + col * (_gridItemWidth + _gridXSpacing), 
+		GridItemWidget *newItem = new GridItemWidget(this,
+									2 * _minGridXSpacing + col * (_gridItemWidth + _gridXSpacing),
 							  		_gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing) - ((-_scrollPos) % (_gridItemHeight + _gridYSpacing)),
-									_gridItemWidth, 
+									_gridItemWidth,
 									_gridItemHeight);
 
 		_gridItems.push_back(newItem);

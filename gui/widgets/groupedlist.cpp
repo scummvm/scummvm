@@ -164,8 +164,8 @@ void GroupedListWidget::sortGroups() {
 	}
 	checkBounds();
 	scrollBarRecalc();
-	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list 
-	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog, 
+	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list
+	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog,
 	// but not doing so the background of scrollbar isn't cleared.
 	if ((((uint)_scrollBar->_entriesPerPage < oldListSize) && ((uint)_scrollBar->_entriesPerPage > _list.size())) ||
 		(((uint)_scrollBar->_entriesPerPage > oldListSize) && ((uint)_scrollBar->_entriesPerPage < _list.size()))) {
