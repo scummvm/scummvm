@@ -311,14 +311,6 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	loadPlatformIcons();
 	loadFlagIcons();
 
-	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
-	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
-	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
-	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
-
-	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
-	_gridItemWidth = _thumbnailWidth;
-
 	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 200);
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
@@ -333,14 +325,6 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_iconDir = ConfMan.get("iconpath");
 	loadPlatformIcons();
 	loadFlagIcons();
-
-	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
-	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
-	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
-	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
-
-	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
-	_gridItemWidth = _thumbnailWidth;
 
 	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 200);
 	_scrollBar->setTarget(this);

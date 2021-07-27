@@ -1243,7 +1243,6 @@ void LauncherGrid::updateListing() {
 
 	int k = 0;
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
-		Common::String entryid = iter->key;
 		Common::String gameid = iter->domain->getVal("gameid");
 		Common::String title = iter->description;
 		Common::String engineid = "UNK";
