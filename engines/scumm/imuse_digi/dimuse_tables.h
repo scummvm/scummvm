@@ -53,7 +53,6 @@ struct imuseComiTable {
 	byte hookId;
 	int16 fadeOutDelay;
 	char filename[13];
-	int shiftLoop;
 };
 
 
