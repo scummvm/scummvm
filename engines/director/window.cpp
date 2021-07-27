@@ -447,11 +447,11 @@ bool Window::step() {
 	// finish last movie
 	if (_currentMovie && _currentMovie->getScore()->_playState == kPlayStopped) {
 		debugC(3, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		debugC(3, kDebugEvents, "@@@@   Finishing movie '%s' in '%s'", _currentMovie->getMacName().c_str(), _currentPath.c_str());
+		debugC(3, kDebugEvents, "@@@@   Finishing movie '%s' in '%s'", toPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 		debugC(3, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 		_currentMovie->getScore()->stopPlay();
-		debugC(1, kDebugEvents, "Finished playback of movie '%s'", _currentMovie->getMacName().c_str());
+		debugC(1, kDebugEvents, "Finished playback of movie '%s'", toPrintable(_currentMovie->getMacName()).c_str());
 
 		if (_vm->getGameGID() == GID_TESTALL) {
 			_nextMovie = getNextMovieFromQueue();
@@ -489,7 +489,7 @@ bool Window::step() {
 		_currentMovie->setArchive(mov);
 
 		debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		debug(0, "@@@@   Switching to movie '%s' in '%s'", _currentMovie->getMacName().c_str(), _currentPath.c_str());
+		debug(0, "@@@@   Switching to movie '%s' in '%s'", toPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 		debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 		g_lingo->resetLingo();
@@ -548,7 +548,7 @@ bool Window::step() {
 			// fall through
 		case kPlayStarted:
 			debugC(3, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-			debugC(3, kDebugEvents, "@@@@   Stepping movie '%s' in '%s'", _currentMovie->getMacName().c_str(), _currentPath.c_str());
+			debugC(3, kDebugEvents, "@@@@   Stepping movie '%s' in '%s'", toPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 			debugC(3, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 			_currentMovie->getScore()->step();
 			return true;

@@ -248,7 +248,7 @@ Symbol Lingo::getHandler(const Common::String &name) {
 
 void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName) {
 	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d in '%s%s'\n"
-			"***********\n%s\n\n***********", scriptType2str(type), type, id, g_director->getCurrentPath().c_str(), cast->getMacName().c_str(), code.encode().c_str());
+			"***********\n%s\n\n***********", scriptType2str(type), type, id, toPrintable(g_director->getCurrentPath()).c_str(), toPrintable(cast->getMacName()).c_str(), code.encode().c_str());
 
 	if (getScriptContext(type, id)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
