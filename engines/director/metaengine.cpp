@@ -62,7 +62,7 @@ Common::String DirectorEngine::getEXEName() const {
 	if (startMovie.startMovie.size() > 0)
 		return startMovie.startMovie;
 
-	return _gameDescription->desc.filesDescriptions[0].fileName;
+	return Common::punycode_decodefilename(_gameDescription->desc.filesDescriptions[0].fileName);
 }
 
 StartMovie DirectorEngine::getStartMovie() const {
