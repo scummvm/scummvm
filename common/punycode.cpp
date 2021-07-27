@@ -142,8 +142,10 @@ String punycode_encode(String src) {
 	int b = h;
 
 	/* Write out delimiter if any basic code points were processed. */
-	if (!dst.empty()) {
-		dst += '-';
+	if (h != srclen) {
+		dst = String::format("xn--%s-", dst.c_str());
+	} else {
+		return src;
 	}
 
 	int n = INITIAL_N;
@@ -303,7 +305,8 @@ String punycode_encodefilename(const String src) {
 			dst += '\x79';
 		// [\x00-\x1f\/":]
 		} else if (src[i] == '/' || src[i] == '"' || src[i] == ':' || (byte)src[i] < 0x20) {
-			dst += src[i] + 0x80;
+			dst += '\x81';
+			dst += (byte)src[i] + 0x80;
 		} else {
 			dst += src[i];
 		}
@@ -340,7 +343,7 @@ String punycode_decodefilename(const String src1) {
 			if (src[i] == 0x79)
 				dst += 0x81;
 			else
-				dst += src[i] - 0x80;
+				dst += (byte)src[i] - 0x80;
 		} else {
 			dst += src[i];
 		}
