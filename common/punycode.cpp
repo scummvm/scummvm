@@ -44,6 +44,7 @@
 
 #include "common/punycode.h"
 #include "common/debug.h"
+#include "common/tokenizer.h"
 #include "common/util.h"
 
 namespace Common {
@@ -311,6 +312,19 @@ String punycode_encodefilename(const String src) {
 	return punycode_encode(dst);
 }
 
+String punycode_encodepath(const String src) {
+	StringTokenizer tok(src, "/");
+	String res;
+
+	while (!tok.empty()) {
+		res += punycode_encodefilename(tok.nextToken());
+		if (!tok.empty())
+			res += '/';
+	}
+
+	return res;
+}
+
 String punycode_decodefilename(const String src1) {
 	String dst;
 	String src = punycode_decode(src1);
@@ -333,6 +347,19 @@ String punycode_decodefilename(const String src1) {
 	}
 
 	return dst;
+}
+
+String punycode_decodepath(const String src) {
+	StringTokenizer tok(src, "/");
+	String res;
+
+	while (!tok.empty()) {
+		res += punycode_decodefilename(tok.nextToken());
+		if (!tok.empty())
+			res += '/';
+	}
+
+	return res;
 }
 
 } // end of namespace Common

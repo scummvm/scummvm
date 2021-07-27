@@ -59,11 +59,17 @@ String punycode_encode(const String src);
 String punycode_decode(const String src);
 
 String punycode_encodefilename(const String src1);
+String punycode_encodepath(const String src);
 
 /**
  * Convert Punycode filename to Binary using special 0x81 escape character. Returns the decoded string
  */
 String punycode_decodefilename(const String src1);
+
+/**
+ * Convert path with '/' as separators from Punycode
+ */
+String punycode_decodepath(const String src);
 
 bool punycode_hasprefix(const String src);
 
