@@ -623,7 +623,29 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			// Handle KBD_ALT combos in MI2. We know that the result must be 273 for Alt-W
 			// because that's what MI2 looks for in its "instant win" cheat.
 			_mouseAndKeyboardStat = lastKeyHit.keycode + 154;
+		} else if ((_game.id == GID_MONKEY ||
+		            _game.id == GID_MONKEY_EGA ||
+			    _game.id == GID_MONKEY_VGA ||
+			    _game.id == GID_MONKEY2 ||
+		            _game.id == GID_LOOM ||
+		            _game.id == GID_PASS) &&
+		           (lastKeyHit.flags & Common::KBD_CTRL) &&
+		           lastKeyHit.ascii >= 'a' &&
+		           lastKeyHit.ascii <= 'z') {
+			// Some games games expect Ctrl+A, B, C, etc. to
+			// generate codes 1, 2, 3, etc.
+			//
+			// This is used for several settings in the "ultimate
+			// talkie" versions of Monkey Island 1 and 2. Monkey
+			// Island 1 also uses it for Ctrl+W to immediately win
+			// the game.
+			//
+			// Many (but not all) versions of Loom displays version
+			// information on Ctrl+V, as does the Passport to
+			// Adventure and Monkey Island 1 demo. If there are
+			// others, I don't know about them yet.
 
+			_mouseAndKeyboardStat = lastKeyHit.ascii & 0x1F;
 		} else if (lastKeyHit.keycode >= Common::KEYCODE_UP &&
 		          lastKeyHit.keycode <= Common::KEYCODE_LEFT) {
 			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD) {
