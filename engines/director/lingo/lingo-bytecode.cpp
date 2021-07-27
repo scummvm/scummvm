@@ -502,7 +502,7 @@ void LC::cb_proplist() {
 
 	Datum result;
 	result.type = PARRAY;
-	result.u.parr = new PropertyArray;
+	result.u.parr = new PArray;
 	arraySize /= 2;
 
 	for (int i = 0; i < arraySize; i++) {
@@ -510,7 +510,7 @@ void LC::cb_proplist() {
 		Datum p = g_lingo->pop();
 
 		PCell cell = PCell(p, v);
-		result.u.parr->insert_at(0, cell);
+		result.u.parr->arr.insert_at(0, cell);
 	};
 
 	if (nargs.u.i % 2)

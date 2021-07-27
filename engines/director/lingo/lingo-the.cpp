@@ -403,10 +403,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheChunk(id, field);
 		break;
 	case kTheClickLoc:
-		d.u.farr = new DatumArray;
+		d.u.farr = new FArray;
 
-		d.u.farr->push_back(movie->_lastClickPos.x);
-		d.u.farr->push_back(movie->_lastClickPos.y);
+		d.u.farr->arr.push_back(movie->_lastClickPos.x);
+		d.u.farr->arr.push_back(movie->_lastClickPos.y);
 		d.type = POINT;
 		break;
 	case kTheClickOn:
@@ -1158,11 +1158,11 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 			d.u.i = channel->_cursor._cursorResId;
 		} else {
 			d.type = ARRAY;
-			d.u.farr = new DatumArray(2);
+			d.u.farr = new FArray(2);
 
 			// TODO: How is this handled with multiple casts in D5?
-			d.u.farr->operator[](0) = (int)channel->_cursor._cursorCastId.member;
-			d.u.farr->operator[](1) = (int)channel->_cursor._cursorMaskId.member;
+			d.u.farr->arr[0] = (int)channel->_cursor._cursorCastId.member;
+			d.u.farr->arr[1] = (int)channel->_cursor._cursorMaskId.member;
 		}
 		break;
 	case kTheEditableText:
@@ -1188,9 +1188,9 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		break;
 	case kTheLoc:
 		d.type = POINT;
-		d.u.farr = new DatumArray;
-		d.u.farr->push_back(channel->_currentPoint.x);
-		d.u.farr->push_back(channel->_currentPoint.y);
+		d.u.farr = new FArray;
+		d.u.farr->arr.push_back(channel->_currentPoint.x);
+		d.u.farr->arr.push_back(channel->_currentPoint.y);
 		break;
 	case kTheLocH:
 		d.u.i = channel->_currentPoint.x;
@@ -1219,11 +1219,11 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheRect:
 		// let compiler to optimize this
 		d.type = RECT;
-		d.u.farr = new DatumArray;
-		d.u.farr->push_back(channel->getBbox().left);
-		d.u.farr->push_back(channel->getBbox().top);
-		d.u.farr->push_back(channel->getBbox().right);
-		d.u.farr->push_back(channel->getBbox().bottom);
+		d.u.farr = new FArray;
+		d.u.farr->arr.push_back(channel->getBbox().left);
+		d.u.farr->arr.push_back(channel->getBbox().top);
+		d.u.farr->arr.push_back(channel->getBbox().right);
+		d.u.farr->arr.push_back(channel->getBbox().bottom);
 		break;
 	case kTheRight:
 		d.u.i = channel->getBbox().right;
@@ -1360,9 +1360,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		if (d.type == INT && channel->_cursor._cursorResId != d.asInt()) {
 			channel->_cursor.readFromResource(d.asInt());
 			score->_cursorDirty = true;
-		} else if (d.type == ARRAY && d.u.farr->size() == 2) {
-			CastMemberID cursorId =	d.u.farr->operator[](0).asMemberID();
-			CastMemberID maskId = d.u.farr->operator[](1).asMemberID();
+		} else if (d.type == ARRAY && d.u.farr->arr.size() == 2) {
+			CastMemberID cursorId =	d.u.farr->arr[0].asMemberID();
+			CastMemberID maskId = d.u.farr->arr[1].asMemberID();
 
 			if (cursorId == channel->_cursor._cursorCastId &&
 					maskId == channel->_cursor._cursorMaskId)
@@ -1744,7 +1744,7 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 	if (obj.type == PARRAY) {
 		int index = LC::compareArrays(LC::eqData, obj, propName, true).u.i;
 		if (index > 0) {
-			d = obj.u.parr->operator[](index - 1).v;
+			d = obj.u.parr->arr[index - 1].v;
 		}
 		g_lingo->push(d);
 		return;
@@ -1796,10 +1796,10 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 	} else if (obj.type == PARRAY) {
 		int index = LC::compareArrays(LC::eqData, obj, propName, true).u.i;
 		if (index > 0) {
-			obj.u.parr->operator[](index - 1).v = val;
+			obj.u.parr->arr[index - 1].v = val;
 		} else {
 			PCell cell = PCell(propName, val);
-			obj.u.parr->push_back(cell);
+			obj.u.parr->arr.push_back(cell);
 		}
 	} else if (obj.type == CASTREF) {
 		Movie *movie = _vm->getCurrentMovie();

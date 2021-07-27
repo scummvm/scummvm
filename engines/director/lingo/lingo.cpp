@@ -170,7 +170,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_perFrameHook = Datum();
 
 	_windowList.type = ARRAY;
-	_windowList.u.farr = new DatumArray;
+	_windowList.u.farr = new FArray;
 
 	_compiler = new LingoCompiler;
 
@@ -635,11 +635,11 @@ Datum::Datum(const CastMemberID &val) {
 
 Datum::Datum(const Common::Rect &rect) {
 	type = RECT;
-	u.farr = new DatumArray;
-	u.farr->push_back(Datum(rect.left));
-	u.farr->push_back(Datum(rect.top));
-	u.farr->push_back(Datum(rect.right));
-	u.farr->push_back(Datum(rect.bottom));
+	u.farr = new FArray;
+	u.farr->arr.push_back(Datum(rect.left));
+	u.farr->arr.push_back(Datum(rect.top));
+	u.farr->arr.push_back(Datum(rect.right));
+	u.farr->arr.push_back(Datum(rect.bottom));
 }
 
 void Datum::reset() {
@@ -853,10 +853,10 @@ Common::String Datum::asString(bool printonly) const {
 	case ARRAY:
 		s += "[";
 
-		for (uint i = 0; i < u.farr->size(); i++) {
+		for (uint i = 0; i < u.farr->arr.size(); i++) {
 			if (i > 0)
 				s += ", ";
-			Datum d = u.farr->operator[](i);
+			Datum d = u.farr->arr[i];
 			s += d.asString(printonly);
 		}
 
@@ -864,13 +864,13 @@ Common::String Datum::asString(bool printonly) const {
 		break;
 	case PARRAY:
 		s = "[";
-		if (u.parr->size() == 0)
+		if (u.parr->arr.size() == 0)
 			s += ":";
-		for (uint i = 0; i < u.parr->size(); i++) {
+		for (uint i = 0; i < u.parr->arr.size(); i++) {
 			if (i > 0)
 				s += ", ";
-			Datum p = u.parr->operator[](i).p;
-			Datum v = u.parr->operator[](i).v;
+			Datum p = u.parr->arr[i].p;
+			Datum v = u.parr->arr[i].v;
 			s += Common::String::format("%s:%s", p.asString(printonly).c_str(), v.asString(printonly).c_str());
 		}
 
@@ -878,20 +878,20 @@ Common::String Datum::asString(bool printonly) const {
 		break;
 	case POINT:
 		s = "point(";
-		for (uint i = 0; i < u.farr->size(); i++) {
+		for (uint i = 0; i < u.farr->arr.size(); i++) {
 			if (i > 0)
 				s += ", ";
-			s += Common::String::format("%d", u.farr->operator[](i).asInt());
+			s += Common::String::format("%d", u.farr->arr[i].asInt());
 		}
 		s += ")";
 
 		break;
 	case RECT:
 		s = "rect(";
-		for (uint i = 0; i < u.farr->size(); i++) {
+		for (uint i = 0; i < u.farr->arr.size(); i++) {
 			if (i > 0)
 				s += ", ";
-			s += Common::String::format("%d", u.farr->operator[](i).asInt());
+			s += Common::String::format("%d", u.farr->arr[i].asInt());
 		}
 
 		s += ")";
@@ -916,7 +916,7 @@ Common::Point Datum::asPoint() const {
 		return Common::Point(0, 0);
 	}
 
-	return Common::Point(u.farr->operator[](0).asInt(), u.farr->operator[](1).asInt());
+	return Common::Point(u.farr->arr[0].asInt(), u.farr->arr[1].asInt());
 }
 
 bool Datum::isRef() const {

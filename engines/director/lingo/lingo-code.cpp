@@ -451,10 +451,10 @@ void LC::c_arraypush() {
 	int arraySize = g_lingo->readInt();
 
 	d.type = ARRAY;
-	d.u.farr = new DatumArray;
+	d.u.farr = new FArray;
 
 	for (int i = 0; i < arraySize; i++)
-		d.u.farr->insert_at(0, g_lingo->pop());
+		d.u.farr->arr.insert_at(0, g_lingo->pop());
 
 	g_lingo->push(d);
 }
@@ -464,14 +464,14 @@ void LC::c_proparraypush() {
 	int arraySize = g_lingo->readInt();
 
 	d.type = PARRAY;
-	d.u.parr = new PropertyArray;
+	d.u.parr = new PArray;
 
 	for (int i = 0; i < arraySize; i++) {
 		Datum v = g_lingo->pop();
 		Datum p = g_lingo->pop();
 
 		PCell cell = PCell(p, v);
-		d.u.parr->insert_at(0, cell);
+		d.u.parr->arr.insert_at(0, cell);
 	}
 
 	g_lingo->push(d);
@@ -626,25 +626,25 @@ Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum &, Datum &), Datum &d1, Datum &d2) 
 	// At least one of d1 and d2 must be an array
 	uint arraySize;
 	if (d1.type == ARRAY && d2.type == ARRAY) {
-		arraySize = MIN(d1.u.farr->size(), d2.u.farr->size());
+		arraySize = MIN(d1.u.farr->arr.size(), d2.u.farr->arr.size());
 	} else if (d1.type == ARRAY) {
-		arraySize = d1.u.farr->size();
+		arraySize = d1.u.farr->arr.size();
 	} else {
-		arraySize = d2.u.farr->size();
+		arraySize = d2.u.farr->arr.size();
 	}
 	Datum res;
 	res.type = ARRAY;
-	res.u.farr = new DatumArray(arraySize);
+	res.u.farr = new FArray(arraySize);
 	Datum a = d1;
 	Datum b = d2;
 	for (uint i = 0; i < arraySize; i++) {
 		if (d1.type == ARRAY) {
-			a = d1.u.farr->operator[](i);
+			a = d1.u.farr->arr[i];
 		}
 		if (d2.type == ARRAY) {
-			b = d2.u.farr->operator[](i);
+			b = d2.u.farr->arr[i];
 		}
-		res.u.farr->operator[](i) = mapFunc(a, b);
+		res.u.farr->arr[i] = mapFunc(a, b);
 	}
 	return res;
 }
@@ -779,12 +779,12 @@ void LC::c_mod() {
 
 Datum LC::negateData(Datum &d) {
 	if (d.type == ARRAY) {
-		uint arraySize = d.u.farr->size();
+		uint arraySize = d.u.farr->arr.size();
 		Datum res;
 		res.type = ARRAY;
-		res.u.farr = new DatumArray(arraySize);
+		res.u.farr = new FArray(arraySize);
 		for (uint i = 0; i < arraySize; i++) {
-			res.u.farr->operator[](i) = LC::negateData(d.u.farr->operator[](i));
+			res.u.farr->arr[i] = LC::negateData(d.u.farr->arr[i]);
 		}
 		return res;
 	}
@@ -1184,17 +1184,17 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 	// At least one of d1 and d2 must be an array
 	uint arraySize;
 	if (d1.type == ARRAY && d2.type == ARRAY) {
-		arraySize = MIN(d1.u.farr->size(), d2.u.farr->size());
+		arraySize = MIN(d1.u.farr->arr.size(), d2.u.farr->arr.size());
 	} else if (d1.type == PARRAY && d2.type == PARRAY) {
-		arraySize = MIN(d1.u.parr->size(), d2.u.parr->size());
+		arraySize = MIN(d1.u.parr->arr.size(), d2.u.parr->arr.size());
 	} else if (d1.type == ARRAY) {
-		arraySize = d1.u.farr->size();
+		arraySize = d1.u.farr->arr.size();
 	} else if (d1.type == PARRAY) {
-		arraySize = d1.u.parr->size();
+		arraySize = d1.u.parr->arr.size();
 	} else if (d2.type == ARRAY) {
-		arraySize = d2.u.farr->size();
+		arraySize = d2.u.farr->arr.size();
 	} else if (d2.type == PARRAY) {
-		arraySize = d2.u.parr->size();
+		arraySize = d2.u.parr->arr.size();
 	} else {
 		warning("LC::compareArrays(): Called with wrong data types: %s and %s", d1.type2str(), d2.type2str());
 		return Datum(0);
@@ -1207,16 +1207,16 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 	Datum b = d2;
 	for (uint i = 0; i < arraySize; i++) {
 		if (d1.type == ARRAY) {
-			a = d1.u.farr->operator[](i);
+			a = d1.u.farr->arr[i];
 		} else if (d1.type == PARRAY) {
-			PCell t = d1.u.parr->operator[](i);
+			PCell t = d1.u.parr->arr[i];
 			a = value ? t.v : t.p;
 		}
 
 		if (d2.type == ARRAY) {
-			b = d2.u.farr->operator[](i);
+			b = d2.u.farr->arr[i];
 		} else if (d2.type == PARRAY) {
-			PCell t = d2.u.parr->operator[](i);
+			PCell t = d2.u.parr->arr[i];
 			b = value ? t.v : t.p;
 		}
 
@@ -1239,11 +1239,11 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 Datum LC::eqData(Datum d1, Datum d2) {
 	// Lingo doesn't bother checking list equality if the left is longer
 	if (d1.type == ARRAY && d2.type == ARRAY &&
-			d1.u.farr->size() > d2.u.farr->size()) {
+			d1.u.farr->arr.size() > d2.u.farr->arr.size()) {
 		return Datum(0);
 	}
 	if (d1.type == PARRAY && d2.type == PARRAY &&
-			d1.u.parr->size() > d2.u.parr->size()) {
+			d1.u.parr->arr.size() > d2.u.parr->arr.size()) {
 		return Datum(0);
 	}
 	if (d1.type == ARRAY || d2.type == ARRAY ||

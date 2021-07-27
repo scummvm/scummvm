@@ -73,7 +73,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_stage = nullptr;
 	_windowList = new Datum;
 	_windowList->type = ARRAY;
-	_windowList->u.farr = new DatumArray;
+	_windowList->u.farr = new FArray;
 	_currentWindow = nullptr;
 	_lingo = nullptr;
 	_version = getDescriptionVersion();
@@ -198,12 +198,12 @@ Common::Error DirectorEngine::run() {
 		g_lingo->saveStateToWindow();
 
 		if (loop) {
-			DatumArray *windowList = g_lingo->_windowList.u.farr;
-			for (uint i = 0; i < windowList->size(); i++) {
-				if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
+			FArray *windowList = g_lingo->_windowList.u.farr;
+			for (uint i = 0; i < windowList->arr.size(); i++) {
+				if (windowList->arr[i].type != OBJECT || windowList->arr[i].u.obj->getObjType() != kWindowObj)
 					continue;
 
-				_currentWindow = static_cast<Window *>((*windowList)[i].u.obj);
+				_currentWindow = static_cast<Window *>(windowList->arr[i].u.obj);
 				g_lingo->loadStateFromWindow();
 				_currentWindow->step();
 				g_lingo->saveStateToWindow();

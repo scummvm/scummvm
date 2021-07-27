@@ -480,27 +480,27 @@ void LM::m_close(int nargs) {
 
 void LM::m_forget(int nargs) {
 	Window *me = static_cast<Window *>(g_lingo->_currentMe.u.obj);
-	DatumArray *windowList = g_lingo->_windowList.u.farr;
+	FArray *windowList = g_lingo->_windowList.u.farr;
 
 	uint i;
-	for (i = 0; i < windowList->size(); i++) {
-		if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
+	for (i = 0; i < windowList->arr.size(); i++) {
+		if (windowList->arr[i].type != OBJECT || windowList->arr[i].u.obj->getObjType() != kWindowObj)
 			continue;
 
-		Window *window = static_cast<Window *>((*windowList)[i].u.obj);
+		Window *window = static_cast<Window *>(windowList->arr[i].u.obj);
 		if (window == me)
 			break;
 	}
 
-	if (i < windowList->size())
-		windowList->remove_at(i);
+	if (i < windowList->arr.size())
+		windowList->arr.remove_at(i);
 
 	// remove me from global vars
 	for (DatumHash::iterator it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); ++it) {
 		if (it->_value.type != OBJECT || it->_value.u.obj->getObjType() != kWindowObj)
 			continue;
 
-		Window *window = static_cast<Window *>((*windowList)[i].u.obj);
+		Window *window = static_cast<Window *>(windowList->arr[i].u.obj);
 		if (window == me)
 			g_lingo->_globalvars[it->_key] = 0;
 	}

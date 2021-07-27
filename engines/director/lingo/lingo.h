@@ -109,6 +109,25 @@ struct Symbol {	/* symbol table entry */
 	~Symbol();
 };
 
+struct PArray {
+	bool _sorted;
+	PropertyArray arr;
+
+	PArray() : _sorted(false) {}
+
+	PArray(int size) : _sorted(false), arr(size) {}
+};
+
+struct FArray {
+	bool _sorted;
+	DatumArray arr;
+
+	FArray() : _sorted(false) {}
+
+	FArray(int size) : _sorted(false), arr(size) {}
+};
+
+
 struct Datum {	/* interpreter stack type */
 	DatumType type;
 
@@ -116,8 +135,8 @@ struct Datum {	/* interpreter stack type */
 		int	i;				/* INT, ARGC, ARGCNORET */
 		double f;			/* FLOAT */
 		Common::String *s;	/* STRING, VARREF, OBJECT */
-		DatumArray *farr;	/* ARRAY, POINT, RECT */
-		PropertyArray *parr; /* PARRAY */
+		FArray *farr;	/* ARRAY, POINT, RECT */
+		PArray *parr; /* PARRAY */
 		AbstractObject *obj; /* OBJECT */
 		ChunkReference *cref; /* CHUNKREF */
 		CastMemberID *cast;	/* CASTREF, FIELDREF */

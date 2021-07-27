@@ -531,12 +531,12 @@ void LB::b_addAt(int nargs) {
 	int index = indexD.asInt();
 	TYPECHECK(list, ARRAY);
 
-	int size = list.u.farr->size();
+	int size = list.u.farr->arr.size();
 	if (index > size) {
 		for (int i = 0; i < index - size - 1; i++)
-			list.u.farr->push_back(Datum(0));
+			list.u.farr->arr.push_back(Datum(0));
 	}
-	list.u.farr->insert_at(index - 1, value);
+	list.u.farr->arr.insert_at(index - 1, value);
 }
 
 void LB::b_addProp(int nargs) {
@@ -547,7 +547,7 @@ void LB::b_addProp(int nargs) {
 	TYPECHECK(list, PARRAY);
 
 	PCell cell = PCell(prop, value);
-	list.u.parr->push_back(cell);
+	list.u.parr->arr.push_back(cell);
 }
 
 void LB::b_append(int nargs) {
@@ -556,7 +556,7 @@ void LB::b_append(int nargs) {
 
 	TYPECHECK(list, ARRAY);
 
-	list.u.farr->push_back(value);
+	list.u.farr->arr.push_back(value);
 }
 
 void LB::b_count(int nargs) {
@@ -566,10 +566,10 @@ void LB::b_count(int nargs) {
 
 	switch (list.type) {
 	case ARRAY:
-		result.u.i = list.u.farr->size();
+		result.u.i = list.u.farr->arr.size();
 		break;
 	case PARRAY:
-		result.u.i = list.u.parr->size();
+		result.u.i = list.u.parr->arr.size();
 		break;
 	default:
 		TYPECHECK2(list, ARRAY, PARRAY);
@@ -587,10 +587,10 @@ void LB::b_deleteAt(int nargs) {
 
 	switch (list.type) {
 	case ARRAY:
-		list.u.farr->remove_at(index - 1);
+		list.u.farr->arr.remove_at(index - 1);
 		break;
 	case PARRAY:
-		list.u.parr->remove_at(index - 1);
+		list.u.parr->arr.remove_at(index - 1);
 		break;
 	default:
 		break;
@@ -611,7 +611,7 @@ void LB::b_deleteProp(int nargs) {
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			list.u.parr->remove_at(index - 1);
+			list.u.parr->arr.remove_at(index - 1);
 		}
 		break;
 	}
@@ -644,8 +644,8 @@ void LB::b_findPosNear(int nargs) {
 	// FIXME: Integrate with compareTo framework
 	prop.toLowercase();
 
-	for (uint i = 0; i < list.u.parr->size(); i++) {
-		Datum p = list.u.parr->operator[](i).p;
+	for (uint i = 0; i < list.u.parr->arr.size(); i++) {
+		Datum p = list.u.parr->arr[i].p;
 		Common::String tgt = p.asString();
 		tgt.toLowercase();
 		if (tgt.find(prop.c_str()) == 0) {
@@ -671,7 +671,7 @@ void LB::b_getaProp(int nargs) {
 		Datum d;
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			d = list.u.parr->operator[](index - 1).v;
+			d = list.u.parr->arr[index - 1].v;
 		}
 		g_lingo->push(d);
 		break;
@@ -690,11 +690,11 @@ void LB::b_getAt(int nargs) {
 	switch (list.type) {
 	case ARRAY:
 		ARRBOUNDSCHECK(index, list);
-		g_lingo->push(list.u.farr->operator[](index - 1));
+		g_lingo->push(list.u.farr->arr[index - 1]);
 		break;
 	case PARRAY:
 		ARRBOUNDSCHECK(index, list);
-		g_lingo->push(list.u.parr->operator[](index - 1).v);
+		g_lingo->push(list.u.parr->arr[index - 1].v);
 		break;
 	default:
 		TYPECHECK2(list, ARRAY, PARRAY);
@@ -705,10 +705,10 @@ void LB::b_getLast(int nargs) {
 	Datum list = g_lingo->pop();
 	switch (list.type) {
 	case ARRAY:
-		g_lingo->push(list.u.farr->back());
+		g_lingo->push(list.u.farr->arr.back());
 		break;
 	case PARRAY:
-		g_lingo->push(list.u.parr->back().v);
+		g_lingo->push(list.u.parr->arr.back().v);
 		break;
 	default:
 		TYPECHECK(list, ARRAY);
@@ -729,7 +729,7 @@ void LB::b_getOne(int nargs) {
 		Datum d;
 		int index = LC::compareArrays(LC::eqData, list, val, true, true).u.i;
 		if (index > 0) {
-			d = list.u.parr->operator[](index - 1).p;
+			d = list.u.parr->arr[index - 1].p;
 		}
 		g_lingo->push(d);
 		break;
@@ -782,7 +782,7 @@ void LB::b_getProp(int nargs) {
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			g_lingo->push(list.u.parr->operator[](index - 1).v);
+			g_lingo->push(list.u.parr->arr[index - 1].v);
 		} else {
 			error("b_getProp: Property %s not found", prop.asString().c_str());
 		}
@@ -800,16 +800,16 @@ void LB::b_getPropAt(int nargs) {
 	TYPECHECK(list, PARRAY);
 	int index = indexD.asInt();
 
-	g_lingo->push(list.u.parr->operator[](index - 1).p);
+	g_lingo->push(list.u.parr->arr[index - 1].p);
 }
 
 void LB::b_list(int nargs) {
 	Datum result;
 	result.type = ARRAY;
-	result.u.farr = new DatumArray;
+	result.u.farr = new FArray;
 
 	for (int i = 0; i < nargs; i++)
-		result.u.farr->insert_at(0, g_lingo->pop());
+		result.u.farr->arr.insert_at(0, g_lingo->pop());
 
 	g_lingo->push(result);
 }
@@ -831,9 +831,9 @@ void LB::b_max(int nargs) {
 	if (nargs == 1) {
 		Datum d = g_lingo->pop();
 		if (d.type == ARRAY) {
-			uint arrsize = d.u.farr->size();
+			uint arrsize = d.u.farr->arr.size();
 			for (uint i = 0; i < arrsize; i++) {
-				Datum item = d.u.farr->operator[](i);
+				Datum item = d.u.farr->arr[i];
 				if (i == 0 || item.compareTo(max) > 0) {
 					max = item;
 				}
@@ -864,9 +864,9 @@ void LB::b_min(int nargs) {
 	if (nargs == 1) {
 		Datum d = g_lingo->pop();
 		if (d.type == ARRAY) {
-			uint arrsize = d.u.farr->size();
+			uint arrsize = d.u.farr->arr.size();
 			for (uint i = 0; i < arrsize; i++) {
-				Datum item = d.u.farr->operator[](i);
+				Datum item = d.u.farr->arr[i];
 				if (i == 0 || item.compareTo(min) < 0) {
 					min = item;
 				}
@@ -904,10 +904,10 @@ void LB::b_setaProp(int nargs) {
 	case PARRAY: {
 		int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 		if (index > 0) {
-			list.u.parr->operator[](index - 1).v = value;
+			list.u.parr->arr[index - 1].v = value;
 		} else {
 			PCell cell = PCell(prop, value);
-			list.u.parr->push_back(cell);
+			list.u.parr->arr.push_back(cell);
 		}
 		break;
 	}
@@ -927,18 +927,18 @@ void LB::b_setAt(int nargs) {
 
 	switch (list.type) {
 	case ARRAY:
-		if ((uint)index <= list.u.farr->size()) {
-			list.u.farr->operator[](index - 1) = value;
+		if ((uint)index <= list.u.farr->arr.size()) {
+			list.u.farr->arr[index - 1] = value;
 		} else {
-			int inserts = index - list.u.farr->size();
+			int inserts = index - list.u.farr->arr.size();
 			while (--inserts)
-				list.u.farr->push_back(Datum(0));
-			list.u.farr->push_back(value);
+				list.u.farr->arr.push_back(Datum(0));
+			list.u.farr->arr.push_back(value);
 		}
 		break;
 	case PARRAY:
 		ARRBOUNDSCHECK(index, list);
-		list.u.parr->operator[](index - 1).v = value;
+		list.u.parr->arr[index - 1].v = value;
 		break;
 	default:
 		break;
@@ -953,7 +953,7 @@ void LB::b_setProp(int nargs) {
 
 	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 	if (index > 0) {
-		list.u.parr->operator[](index - 1).v = value;
+		list.u.parr->arr[index - 1].v = value;
 	} else {
 		warning("b_setProp: Property not found");
 	}
@@ -975,10 +975,10 @@ void LB::b_sort(int nargs) {
 	Datum list = g_lingo->pop();
 
 	if (list.type == ARRAY) {
-		Common::sort(list.u.farr->begin(), list.u.farr->end(), sortArrayHelper);
+		Common::sort(list.u.farr->arr.begin(), list.u.farr->arr.end(), sortArrayHelper);
 
 	} else if (list.type == PARRAY) {
-		Common::sort(list.u.parr->begin(), list.u.parr->end(), sortPArrayHelper);
+		Common::sort(list.u.parr->arr.begin(), list.u.parr->arr.end(), sortPArrayHelper);
 
 	} else {
 		warning("LB::b_sort can not handle argument of type %s", list.type2str());
@@ -1565,8 +1565,8 @@ void LB::b_cursor(int nargs) {
 	Datum d = g_lingo->pop();
 
 	if (d.type == ARRAY) {
-		Datum sprite = d.u.farr->operator[](0);
-		Datum mask = d.u.farr->operator[](1);
+		Datum sprite = d.u.farr->arr[0];
+		Datum mask = d.u.farr->arr[1];
 
 		g_lingo->func_cursor(sprite.asMemberID(), mask.asMemberID());
 	} else {
@@ -2254,10 +2254,10 @@ void LB::b_point(int nargs) {
 	Datum x(g_lingo->pop().asFloat());
 	Datum d;
 
-	d.u.farr = new DatumArray;
+	d.u.farr = new FArray;
 
-	d.u.farr->push_back(x);
-	d.u.farr->push_back(y);
+	d.u.farr->arr.push_back(x);
+	d.u.farr->arr.push_back(y);
 	d.type = POINT;
 
 	g_lingo->push(d);
@@ -2272,22 +2272,22 @@ void LB::b_rect(int nargs) {
 		Datum top(g_lingo->pop().asInt());
 		Datum left(g_lingo->pop().asInt());
 
-		d.u.farr = new DatumArray;
-		d.u.farr->push_back(left);
-		d.u.farr->push_back(top);
-		d.u.farr->push_back(right);
-		d.u.farr->push_back(bottom);
+		d.u.farr = new FArray;
+		d.u.farr->arr.push_back(left);
+		d.u.farr->arr.push_back(top);
+		d.u.farr->arr.push_back(right);
+		d.u.farr->arr.push_back(bottom);
 		d.type = RECT;
 	} else if (nargs == 2) {
 		Datum p2 = g_lingo->pop();
 		Datum p1 = g_lingo->pop();
 
 		if (p2.type == POINT && p1.type == POINT) {
-			d.u.farr = new DatumArray;
-			d.u.farr->push_back(p1.u.farr->operator[](0));
-			d.u.farr->push_back(p1.u.farr->operator[](1));
-			d.u.farr->push_back(p2.u.farr->operator[](0));
-			d.u.farr->push_back(p2.u.farr->operator[](1));
+			d.u.farr = new FArray;
+			d.u.farr->arr.push_back(p1.u.farr->arr[0]);
+			d.u.farr->arr.push_back(p1.u.farr->arr[1]);
+			d.u.farr->arr.push_back(p2.u.farr->arr[0]);
+			d.u.farr->arr.push_back(p2.u.farr->arr[1]);
 			d.type = RECT;
 		} else
 			warning("LB::b_rect: Rect need 2 Point variable as argument");
@@ -2305,8 +2305,8 @@ void LB::b_intersect(int nargs) {
 	Datum d;
 	Datum r2 = g_lingo->pop();
 	Datum r1 = g_lingo->pop();
-	Common::Rect rect1(r1.u.farr->operator[](0).asInt(), r1.u.farr->operator[](1).asInt(), r1.u.farr->operator[](2).asInt(), r1.u.farr->operator[](3).asInt());
-	Common::Rect rect2(r2.u.farr->operator[](0).asInt(), r2.u.farr->operator[](1).asInt(), r2.u.farr->operator[](2).asInt(), r2.u.farr->operator[](3).asInt());
+	Common::Rect rect1(r1.u.farr->arr[0].asInt(), r1.u.farr->arr[1].asInt(), r1.u.farr->arr[2].asInt(), r1.u.farr->arr[3].asInt());
+	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
 
 	d.type = INT;
 	d.u.i = rect1.intersects(rect2);
@@ -2318,8 +2318,8 @@ void LB::b_inside(int nargs) {
 	Datum d;
 	Datum r2 = g_lingo->pop();
 	Datum p1 = g_lingo->pop();
-	Common::Rect rect2(r2.u.farr->operator[](0).asInt(), r2.u.farr->operator[](1).asInt(), r2.u.farr->operator[](2).asInt(), r2.u.farr->operator[](3).asInt());
-	Common::Point point1(p1.u.farr->operator[](0).asInt(), p1.u.farr->operator[](1).asInt());
+	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
+	Common::Point point1(p1.u.farr->arr[0].asInt(), p1.u.farr->arr[1].asInt());
 
 	d.type = INT;
 	d.u.i = rect2.contains(point1);
@@ -2555,13 +2555,13 @@ void LB::b_script(int nargs) {
 void LB::b_window(int nargs) {
 	Datum d = g_lingo->pop();
 	Common::String windowName = d.asString();
-	DatumArray *windowList = g_lingo->_windowList.u.farr;
+	FArray *windowList = g_lingo->_windowList.u.farr;
 
-	for (uint i = 0; i < windowList->size(); i++) {
-		if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
+	for (uint i = 0; i < windowList->arr.size(); i++) {
+		if (windowList->arr[i].type != OBJECT || windowList->arr[i].u.obj->getObjType() != kWindowObj)
 			continue;
 
-		Window *window = static_cast<Window *>((*windowList)[i].u.obj);
+		Window *window = static_cast<Window *>(windowList->arr[i].u.obj);
 		if (window->getName().equalsIgnoreCase(windowName)) {
 			g_lingo->push(window);
 			return;
@@ -2575,7 +2575,7 @@ void LB::b_window(int nargs) {
 	window->resize(1, 1, true);
 	window->setVisible(false, true);
 	wm->addWindowInitialized(window);
-	windowList->push_back(window);
+	windowList->arr.push_back(window);
 	g_lingo->push(window);
 }
 
@@ -2630,8 +2630,8 @@ void LB::b_getVolumes(int nargs) {
 	// for its volume name.
 	Datum d;
 	d.type = ARRAY;
-	d.u.farr = new DatumArray;
-	d.u.farr->push_back(Datum("Buried in Time\252 1"));
+	d.u.farr = new FArray;
+	d.u.farr->arr.push_back(Datum("Buried in Time\252 1"));
 
 	g_lingo->push(d);
 }
