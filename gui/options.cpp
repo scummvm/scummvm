@@ -2142,7 +2142,7 @@ void GlobalOptionsDialog::build() {
 	// Set _savePath to the current save path
 	Common::String savePath(ConfMan.get("savepath", _domain));
 	Common::String themePath(ConfMan.get("themepath", _domain));
-	Common::String iconPath(ConfMan.get("iconpath", _domain));
+	Common::String iconPath(ConfMan.get("iconspath", _domain));
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
 
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
@@ -2157,7 +2157,7 @@ void GlobalOptionsDialog::build() {
 		_themePath->setLabel(themePath);
 	}
 
-	if (iconPath.empty() || !ConfMan.hasKey("iconpath", _domain)) {
+	if (iconPath.empty() || !ConfMan.hasKey("iconspath", _domain)) {
 		_iconPath->setLabel(_c("None", "path"));
 	} else {
 		_iconPath->setLabel(iconPath);
@@ -2647,9 +2647,9 @@ void GlobalOptionsDialog::apply() {
 
 	Common::U32String iconPath(_iconPath->getLabel());
 	if (!iconPath.empty() && (iconPath != _c("None", "path")))
-		ConfMan.set("iconpath", iconPath.encode(), _domain);
+		ConfMan.set("iconspath", iconPath.encode(), _domain);
 	else
-		ConfMan.removeKey("iconpath", _domain);
+		ConfMan.removeKey("iconspath", _domain);
 
 	Common::U32String extraPath(_extraPath->getLabel());
 	if (!extraPath.empty() && (extraPath != _c("None", "path")))
