@@ -555,15 +555,8 @@ void cleanupGameState(void) {
 #endif
 
 void checkRestartGame(const char *exeName) {
-#if 0
-	char saveRestart[260];
-	g_vm->getSavegameFile(999, saveRestart);
-	if (!fileExists(saveRestart) ||
-	        (getFileDate(exeName) > getFileDate(saveRestart)))
-		saveGameState(999, saveRestart);
-#endif
-
-	warning("STUB: checkRestartGame()");
+	Common::String saveRestart = g_vm->getSavegameFile(999);
+	g_vm->saveGameState(999, saveRestart, true);
 }
 
 
