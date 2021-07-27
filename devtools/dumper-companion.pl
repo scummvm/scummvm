@@ -38,6 +38,7 @@ sub processIso($);
 sub processMacbinary();
 sub decode_punycode;
 sub encode_punycode;
+sub encode_punycodefilename;
 
 getopts('hmf:c:ed');
 
@@ -93,14 +94,7 @@ sub processIso($) {
 			}
 
 			if ($::opt_e) {
-				# make 0x81 an escape symbol
-				$dir =~ s/\x81/\x81\x81/g;
-				# escape non-printables, '/', '"' and ":"
-				$dir =~ s/([\x00-\x1f\/":])/\x81@{[chr(ord($1) + 0x80)]}/g;
-
-				if ($dir =~ /[\x80-\xff]/) {
-					$dir = encode_punycode $dir;
-				}
+				$dir = encode_punycodefilename $dir;
 			}
 			# Replace Mac separators with *nix
 			$dir =~ s/:/\//g;
@@ -120,14 +114,7 @@ sub processIso($) {
 				}
 
 				if ($::opt_e) {
-					# make 0x81 an escape symbol
-					$decfname =~ s/\x81/\x81\x79/g;
-					# escape non-printables, '/', '"' and ':'
-					$decfname =~ s/([\x00-\x1f\/":])/\x81@{[chr(ord($1) + 0x80)]}/g;
-
-					if ($decfname =~ /[\x80-\xff]/) {
-						$decfname = encode_punycode $decfname;
-					}
+					$decfname = encode_punycodefilename	$decfname;
 				}
 
 				print " " x $prevlen;
@@ -329,4 +316,18 @@ sub encode_punycode {
         $n++;
     }
     return 'xn--' . $output;
+}
+
+sub encode_punycodefilename {
+	my $decfname = shift;
+
+	$decfname =~ s/\x81/\x81\x79/g;
+	# escape non-printables, '/', '"' and ':'
+	$decfname =~ s/([\x00-\x1f\/":])/\x81@{[chr(ord($1) + 0x80)]}/g;
+
+	if ($decfname =~ /[\x80-\xff]/) {
+		$decfname = encode_punycode $decfname;
+	}
+
+	return $decfname;
 }
