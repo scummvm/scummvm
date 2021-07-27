@@ -255,6 +255,8 @@ struct GameState {
 	int  text_overlay_on = 0;
 	// Blocking speech overlay managed object, for accessing in scripts
 	ScriptOverlay *speech_text_scover = nullptr;
+	// Speech portrait overlay managed object
+	ScriptOverlay *speech_face_scover = nullptr;
 
 	int shake_screen_yoff = 0; // y offset of the shaking screen
 
