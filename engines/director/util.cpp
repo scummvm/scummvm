@@ -248,8 +248,6 @@ Common::String convertPath(Common::String &path) {
 	while (idx != path.size()) {
 		if (path[idx] == ':')
 			res += '\\';
-		else if (path[idx] == '/')
-			res += ':';
 		else
 			res += path[idx];
 
