@@ -284,7 +284,7 @@ void GridItemTray::handleMouseMoved(int x, int y, int button) {
 
 Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 	Graphics::ManagedSurface *surf = nullptr;
-	const String path = String::format("%s/%s", ConfMan.get("iconpath").c_str(), name.c_str());
+	const String path = String::format("%s/%s", ConfMan.get("iconspath").c_str(), name.c_str());
 	if (name.hasSuffix(".png")) {
 #ifdef USE_PNG
 		const Graphics::Surface *srcSurface = nullptr;
@@ -327,7 +327,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 
 GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	: ContainerWidget(boss, x, y, w, h), CommandSender(boss) {
-	_iconDir = ConfMan.get("iconpath");
+	_iconDir = ConfMan.get("iconspath");
 	loadPlatformIcons();
 	loadFlagIcons();
 
@@ -342,7 +342,7 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 
 GridWidget::GridWidget(GuiObject *boss, const String &name)
 	: ContainerWidget(boss, name), CommandSender(boss) {
-	_iconDir = ConfMan.get("iconpath");
+	_iconDir = ConfMan.get("iconspath");
 	loadPlatformIcons();
 	loadFlagIcons();
 
