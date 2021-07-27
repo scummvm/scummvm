@@ -107,30 +107,29 @@ protected:
 	int				_scrollWindowWidth;
 	int				_scrollSpeed;
 	int				_scrollPos;
-
-public:
 	int				_innerHeight;
 	int				_innerWidth;
 	int				_thumbnailHeight;
 	int				_thumbnailWidth;
-	int				_gridItemHeight;
-	int				_gridItemWidth;
 	int				_minGridXSpacing;
 	int				_minGridYSpacing;
-	int				_gridXSpacing;
-	int				_gridYSpacing;
-	int				_trayHeight;
-
 	int				_rows;
 	int				_itemsPerRow;
 	int				_firstVisibleItem;
 	int				_itemsOnScreen;
+	GridItemTray 	*_tray;
+	String 			_iconDir;
+
+public:
+	int				_gridItemHeight;
+	int				_gridItemWidth;
+	int				_gridXSpacing;
+	int				_gridYSpacing;
+	int				_trayHeight;
 
 	bool 			_isTitlesVisible;
 
 	int 			_selectedEntry;
-	GridItemTray 	*_tray;
-	String 			_iconDir;
 
 	GridWidget(GuiObject *boss, int x, int y, int w, int h);
 	GridWidget(GuiObject *boss, const String &name);

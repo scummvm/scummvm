@@ -176,7 +176,6 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 			_grid->draw();
 		}
 		_grid->openTray(oldX,  oldY - offsetY + _h, _activeEntry->entryID);
-		_grid->_tray->runModal();
 	}
 }
 
@@ -624,6 +623,7 @@ void GridWidget::reflowLayout() {
 
 void GridWidget::openTray(int x, int y, int entryId) {
 	_tray = new GridItemTray(this, x  - _gridXSpacing / 3, y, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, entryId, this);
+	_tray->runModal();
 }
 
 void GridWidget::scrollBarRecalc() {
