@@ -59,8 +59,8 @@ namespace Common {
 #define INITIAL_BIAS 72
 #define SMAX 0x7fff
 
-static uint32_t adapt_bias(uint32_t delta, unsigned n_points, int is_first) {
-	uint32_t k;
+static uint32 adapt_bias(uint32 delta, unsigned n_points, int is_first) {
+	uint32 k;
 
 	delta /= is_first ? DAMP : 2;
 	delta += delta / n_points;
@@ -114,7 +114,7 @@ static String encode_var_int(const size_t bias, const size_t delta) {
 	return dst;
 }
 
-static size_t decode_digit(uint32_t v) {
+static size_t decode_digit(uint32 v) {
 	if (Common::isDigit(v)) {
 		return 26 + (v - '0');
 	}
