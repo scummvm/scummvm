@@ -259,7 +259,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sajaklucky",			"Pat Sajak's Lucky Letters" },
 	{ "screamingmetal",		"Screaming Metal" },
 	{ "searchlearn",     	"Search & Learn Adventures" },
-	{ "secretkeys",     	"Search for the Secret Keys with Mickey" },	
+	{ "secretkeys",     	"Search for the Secret Keys with Mickey" },
 	{ "secretpaths1",		"Secret Paths in the Forest" },
 	{ "shr1st2nd",			"Schoolhouse Rock!: 1st & 2nd Grade Essentials" },
 	{ "shr3rd4th",			"Schoolhouse Rock!: 3rd & 4th Grade Essentials" },
@@ -938,7 +938,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "thebody",			"The Body: Five doors plus" },
 	{ "thelegs",			"The Legs ～Get a LEG up～" },
 	{ "venus",				"Venus Photo CD-ROM" },
-	{ "vvalerie1",			"Virtual Valerie" },	
+	{ "vvalerie1",			"Virtual Valerie" },
 	{ "vvalerie2",			"Virtual Valerie 2" },
 	{ "vveronika",			"Virtual Veronika" },
 	{ "vpeepshow",			"Virtual Peep Show" },
@@ -1175,7 +1175,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("bookshelf94", "Demo", "BS94DEMO.EXE", "7c8230a804abf9353b05627a675b5ffb", 375300, 310),
 
 	WINDEMO1("bpmc", "", "BPMC.EXE", "1998188253fc8657198e3e78efe823a8", 370291, 313),
-	
+
 	// Original v3.5.1 demo filename is BusinessManager.デモ
 	MACDEMO1_l("businessmanager", "v3.5.1 Demo", "BusinessManager.Demo", "f5277c53bacd27936158dd3867e587e2", 2102528, Common::JA_JPN, 311),
 	MACDEMO1_l("businessmanager", "Demo", "BusinessManager.Demo", "f5277c53bacd27936158dd3867e587e2", 392603, Common::JA_JPN, 311),
@@ -1471,7 +1471,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("murderbrett", "", "The Environmental Surfer", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384469, 300),
 	WINGAME1("murderbrett", "", "BRETTP.EXE", "65d06b5fef155a2473434571aff5bc29", 370010, 300),
-	
+
 	MACGAME1("murdermagic", "", "The Magic Death", "a8788e8b79dccc582b9818ec63734bed", 736754, 300),
 	WINGAME1("murdermagic", "", "MAGIC.EXE", "7c8230a804abf9353b05627a675b5ffb", 375298, 300),
 
@@ -1525,7 +1525,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			(ADGF_CD|ADGF_MACRESFORK),
-			GUIO1(GUIO_NOASPECT)	
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
 		311
@@ -1716,7 +1716,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			(ADGF_CD|ADGF_MACRESFORK),
-			GUIO1(GUIO_NOASPECT)			
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
 		313
@@ -2159,7 +2159,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("horrortour1", "", "HORROR.EXE", "b16ecf8ebc02142c742b8a9acc935d52", 752425,
 								  "HORROR.DAT", "42f0450d970a95f0dd47727988996ce9", 450, Common::ZH_TWN, 404),
 
-	MACGAME1_l("horrortour1", "", "HorrorTour(7M)", "b7e69c37b7355022d400c14aa97c5d54", 483443, Common::JA_JPN, 404),	
+	MACGAME1_l("horrortour1", "", "HorrorTour(7M)", "b7e69c37b7355022d400c14aa97c5d54", 483443, Common::JA_JPN, 404),
 	WINGAME1_l("horrortour1", "", "HORROR.EXE", "b16ecf8ebc02142c742b8a9acc935d52", 752425, Common::JA_JPN, 404),
 	MACGAME1_l("horrortour2", "", "ZEDDAS PowerPC", "da7d3f1d85bdb99518b586c40d2a673e", 60013, Common::JA_JPN, 400),
 	WINGAME1_l("horrortour2", "", "HT2.EXE", "499d8545ee2325b18d3f09fb2c0fc26e", 698029, Common::JA_JPN, 400),
@@ -2425,7 +2425,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2("operafatal", "",	 "OPERA FATAL", "f5033f237ad1b1639fc46d01a82ac380", 285566,
 							     "SPRINT.Dxr",  "3e86f01eeac5fa3349c5177378997a7f", 694912, 400),
 	MACGAME2_l("operafatal", "", "OPERA FATAL",	"f5033f237ad1b1639fc46d01a82ac380", 285566,
-								 "SPRINT.Dxr",	"3eb6f5568c9ced258059e2cfd30751c5", 479616, Common::IT_ITA, 400),	
+								 "SPRINT.Dxr",	"3eb6f5568c9ced258059e2cfd30751c5", 479616, Common::IT_ITA, 400),
 
 	MACDEMO1("orgotto", "Demo", "ORGOTTO", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484351, 404),
 	WINDEMO1("orgotto", "Demo", "ORGOTTO.EXE", "f9272ef143c610ebd4dcb8301aa9b678", 760137, 404),
@@ -2526,7 +2526,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("redshift", "1994 Demo", "RSDEMO.MAC", "4f7ff33ce95ed9f42befdae4f9b6b690", 292244, 403),
 
 	MACGAME1_l("renderorgan", "", "RenderOrgan", "0c7bbb4b24823e5ab871cb4c1d6f3710", 505374, Common::JA_JPN, 404),
-	WINGAME1_l("renderorgan", "", "743.EXE", "7a59a30b6b2db921f6d354cd74faf09a", 697963, Common::JA_JPN, 404),	
+	WINGAME1_l("renderorgan", "", "743.EXE", "7a59a30b6b2db921f6d354cd74faf09a", 697963, Common::JA_JPN, 404),
 
 	// Original filename is ラインの黄金CD
 	MACDEMO1_l("rheingold", "Demo", "Das Rheingold CD", "b7e69c37b7355022d400c14aa97c5d54", 484351, Common::JA_JPN, 404),
@@ -3730,7 +3730,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "movie.dxr",	   "b8dc39b080e4892913c2d302fec39567", 50907991, 800),
 
 	MACDEMO1("balto2", "Trailer", "MacBolto", "08c9ea94f6469e71ae0c71987bbf6323", 155737, 850),
-	WINDEMO1("balto2", "Trailer", "Balto.exe", "c163f36141579ee374f7b4b2bddee95a", 2309044, 850),	
+	WINDEMO1("balto2", "Trailer", "Balto.exe", "c163f36141579ee374f7b4b2bddee95a", 2309044, 850),
 
 	MACGAME1_l("bamse1", "", "Spillerom", "a44511b8ff0e46b4f9c85dd1cb58d458", 199093, Common::DA_DAN, 851),
 	MACGAME1_l("bamse2", "", "Bamses egen", "a44511b8ff0e46b4f9c85dd1cb58d458", 157079, Common::DA_DAN, 851),
@@ -3739,7 +3739,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("barbrapunzel", "", "Rapunzel", "08c9ea94f6469e71ae0c71987bbf6323", 213604, 850),
 	MACDEMO1("barbrapunzel", "Trailer", "Trailer", "08c9ea94f6469e71ae0c71987bbf6323", 155737, 850),
-	WINGAME1("barbrapunzel", "", "Rapunzel.exe", "c163f36141579ee374f7b4b2bddee95a", 2116696, 850),	
+	WINGAME1("barbrapunzel", "", "Rapunzel.exe", "c163f36141579ee374f7b4b2bddee95a", 2116696, 850),
 	WINDEMO2("barbrapunzel", "Trailer", "Trailer.exe", "c163f36141579ee374f7b4b2bddee95a", 2303378,
 										"Trailer.mov", "c23add499f206fb3f8e088cf315c2783", 17393683, 850),
 
@@ -4142,7 +4142,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("immorale", "Demo", "Helmut Newton & Eri Ishida", "f5277c53bacd27936158dd3867e587e2", 390241, Common::JA_JPN, 311),
 	MACGAME1("isswim98", "",	   "Inside Sports Swimsuit 98",	 "4577dd3eadc467a986ab172d90871b22", 304156, 404),
 	WINGAME1("isswim98", "",	   "ISSWIM98.EXE",				 "24de9da2e30d07ba98d2fd6259afd16c", 753801, 404),
-	MACDEMO1_l("legs", "Demo",	   "LEGS Vol.1",				 "f5277c53bacd27936158dd3867e587e2", 548017, Common::JA_JPN, 311), 
+	MACDEMO1_l("legs", "Demo",	   "LEGS Vol.1",				 "f5277c53bacd27936158dd3867e587e2", 548017, Common::JA_JPN, 311),
 
 	// Touring Engine Ver 1.00. Original filename is MacPlaymate™
 	MACGAME1("macplaymate1", "",  "MacPlaymate",	"4bdad2173d739dcaca1241afe88c7aef", 33851, 0),
