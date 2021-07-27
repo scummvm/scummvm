@@ -57,21 +57,20 @@ void GuardProcess::run() {
 	if (!mainactor)
 		return;
 
-	int range = a->getRangeIfVisible(*mainactor);
-	if (!range) {
+	if (!a->canSeeControlledActor(false)) {
 		if (getRandom() % 2) {
 			DelayProcess *dp = new DelayProcess(30 * (1 + (getRandom() % 3)));
 			Kernel::get_instance()->addProcess(dp);
 			waitFor(dp);
-			return;
 		} else {
 			Animation::Sequence anim = (getRandom() % 2 ? Animation::unknownAnim30 : Animation::startRunLargeWeapon);
-			int animproc = a->doAnim(anim, dir_current);
+			uint16 animproc = a->doAnim(anim, dir_current);
 			a->doAnimAfter(Animation::stand, dir_current, animproc);
 		}
 		return;
 	}
 
+	// Saw the silencer, go to combat.
 	a->setActivity(5);
 }
 
