@@ -42,7 +42,6 @@ typedef Array<U32String> U32StringArray;
 
 namespace GUI {
 
-#ifndef DISABLE_LAUNCHERDISPLAY_GRID
 enum LauncherDisplayType {
 	kLauncherDisplayList = 1,
 	kLauncherDisplayGrid = 2
@@ -52,7 +51,6 @@ enum {
 	kListSwitchCmd = 'LIST',
 	kGridSwitchCmd = 'GRID'
 };
-#endif
 
 enum GroupingMethod {
 	kGroupByNone,
@@ -85,9 +83,7 @@ public:
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-#ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	virtual LauncherDisplayType getType() const = 0;
-#endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
 	int run();
 
@@ -175,7 +171,6 @@ private:
 	bool checkModifier(int modifier);
 };
 
-// Disable the grid for platforms that disable fancy themes
 class LauncherChooser {
 protected:
 	LauncherDialog *_impl;
@@ -195,9 +190,7 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
 
-#ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	LauncherDisplayType getType() const override { return kLauncherDisplayList; }
-#endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
 protected:
 	void updateListing() override;
