@@ -34,7 +34,7 @@ static const DebugChannelDef debugFlagList[] = {
 
 namespace Hypno {
 static const PlainGameDescriptor hypnoGames[] = {
-	{ "sinister-six", "Spiderman and the Sinister Six" },
+	{ "sinister-six", "Marvel Comics Spider-Man: The Sinister Six" },
 	{ 0, 0 }
 };
 
@@ -47,6 +47,16 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformWindows,
 		ADGF_TESTING | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"sinister-six", // US release
+		"",
+		AD_ENTRY2s("COMBAT.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 255115,
+  				   "SPIDER.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 248056),
+		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER

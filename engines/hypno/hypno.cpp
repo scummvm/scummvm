@@ -41,15 +41,16 @@
 
 namespace Hypno {
 
-Hotspots *hots;
-Settings setts;
+Hotspots *g_parsedHots;
+Settings g_settings;
 
 extern int parse(const char *);
 
 HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
-	  _compositeSurface(nullptr), _transparentColor(0), _frame(nullptr),
-	  _maxNumberClicks(0), _sirenWarning(0), _screenW(640), _screenH(480) {
+	  _compositeSurface(nullptr), _transparentColor(0), _frame(nullptr), 
+	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr),
+	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
 }
 
@@ -66,7 +67,6 @@ void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
 void HypnoEngine::loadMis(Common::String filename) {
     filename = convertPath(filename);
 	Common::File *test = new Common::File();
-	Common::SeekableReadStream *file = NULL;
 	assert(isDemo());
     assert(test->open(filename.c_str()));
 
@@ -75,8 +75,8 @@ void HypnoEngine::loadMis(Common::String filename) {
 	test->read(buf, fileSize);
 	buf[fileSize] = '\0';
 	parse(buf);
-	setts[filename] = *hots;
-	debug("Loaded hots size: %d", hots->size());
+	g_settings[filename] = *g_parsedHots;
+	debug("Loaded hots size: %d", g_parsedHots->size());
 }
 
 LibData HypnoEngine::loadLib(char *filename) {
@@ -96,7 +96,7 @@ LibData HypnoEngine::loadLib(char *filename) {
 		cont = true;
 		entry.clear();
 		for (j = 0; j < 24; j++) {
-			if (cont && it[i] != 0x96 && it[i] != NULL) {
+			if (cont && it[i] != 0x96 && it[i] != 0x0) {
 				entry += char(it[i]);
 			}
 			else
@@ -130,9 +130,8 @@ LibData HypnoEngine::loadLib(char *filename) {
 Common::Error HypnoEngine::run() {
 	_language = Common::parseLanguage(ConfMan.get("language"));
 	_platform = Common::parsePlatform(ConfMan.get("platform"));
-    /*
 	LibData files = loadLib("C_MISC/MISSIONS.LIB");
-	uint32 i = 0;
+	/*uint32 i = 0;
 	uint32 j = 0;
 	uint32 k = 0;
 
@@ -164,8 +163,7 @@ Common::Error HypnoEngine::run() {
 	if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
 		return Common::kUnsupportedColorMode;
 
-	_transparentColor = _pixelFormat.RGBToColor(0, 255, 0);
-	_safeColor = _pixelFormat.RGBToColor(65, 65, 65);
+	_transparentColor = _pixelFormat.RGBToColor(0, 0x82, 0);
 	screenRect = Common::Rect(0, 0, _screenW, _screenH);
 	//changeCursor("default");
 	_origin = Common::Point(0, 0);
@@ -184,63 +182,21 @@ Common::Error HypnoEngine::run() {
 	} else {
 		_nextSetting = getGoIntroSetting();
 	}*/
-	Common::String logoIntro = "DEMO/DCINE1.SMK";
-	Common::String movieIntro = "DEMO/DCINE2.SMK";
-	_nextMovie = logoIntro;
-
-	while ((_nextMovie != "" || _currentMovie != "") && !shouldQuit()) {
-			while (g_system->getEventManager()->pollEvent(event)) {
-			// Events
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
-					// Ugly hack to play two intro movies.
-					if (_currentMovie == logoIntro)
-						_nextMovie = movieIntro;
-					else
-					    skipVideo();
-
-				break;
-
-			default:
-				break;
-			}
-		}
-
-		// Movies
-		if (!_nextMovie.empty()) {
-			_videoDecoder = new Video::SmackerDecoder();
-			playVideo(_nextMovie);
-			_currentMovie = _nextMovie;
-			_nextMovie = "";
-			continue;
-		}
-
-		if (_videoDecoder && !_videoDecoder->isPaused()) {
-			if (_videoDecoder->getCurFrame() == 0)
-				stopSound(true);
-			if (_videoDecoder->endOfVideo()) {
-				_videoDecoder->close();
-				delete _videoDecoder;
-				_videoDecoder = nullptr;
-				// Ugly hack to play two intro movies.
-				if (_currentMovie == logoIntro)
-					_nextMovie = movieIntro;
-				else 
-					_nextMovie = "";
-			} else if (_videoDecoder->needsUpdate()) {
-				drawScreen();
-				g_system->delayMillis(10);
-			}
-			continue;
-		}
-
-		g_system->updateScreen();
-		g_system->delayMillis(10);
+	runIntro("DEMO/DCINE1.SMK", "DEMO/DCINE2.SMK");
+	while (!shouldQuit()) {
+		runMis("mis/alley.mis");
 	}
+	return Common::kNoError;
+}
 
-	//_nextSetting = "mis/alley.mis";
-	_nextSetting = "mis/demo.mis";
+
+void HypnoEngine::runMis(Common::String name) {
+	Common::Event event;
+	Common::Point mousePos;
+	
+	stack.clear();
+	assert(g_settings.contains(name));
+	_nextHotsToAdd = &g_settings[name];
 	changeCursor("mouse/cursor1.smk", 0);
 
 	while (!shouldQuit()) {
@@ -260,27 +216,8 @@ Common::Error HypnoEngine::run() {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-				// if (selectDossierNextSuspect(mousePos))
-				// 	break;
-				// else if (selectDossierPrevSuspect(mousePos))
-				// 	break;
-				// else if (selectDossierNextSheet(mousePos))
-				// 	break;
-				// else if (selectDossierPrevSheet(mousePos))
-				// 	break;
-				// else if (selectSafeDigit(mousePos))
-				// 	break;
-
-				// selectPauseMovie(mousePos);
-				// selectPhoneArea(mousePos);
-				// selectPoliceRadioArea(mousePos);
-				// selectAMRadioArea(mousePos);
-				// selectLoadGame(mousePos);
-				// selectSaveGame(mousePos);
-				// if (_nextSetting.empty())
-				// 	selectMask(mousePos);
-				// if (_nextSetting.empty())
-				// 	selectExit(mousePos);
+				if (!_nextHotsToAdd || !_nextHotsToRemove)
+				 	clickedHotspot(mousePos);
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
@@ -288,10 +225,9 @@ Common::Error HypnoEngine::run() {
 				//changeCursor("default");
 				// The following functions will return true
 				// if the cursor is changed
-				//if (cursorPauseMovie(mousePos)) {
-				//} else if (cursorMask(mousePos)) {
-				//} else
-				//	cursorExit(mousePos);
+				if (hoverHotspot(mousePos)) {
+				} else
+					changeCursor("mouse/cursor1.smk", 0);
 				break;
 
 			default:
@@ -317,6 +253,11 @@ Common::Error HypnoEngine::run() {
 				delete _videoDecoder;
 				_videoDecoder = nullptr;
 				_currentMovie = "";
+
+				// refresh current scene
+				runMenu(*stack.back());
+				drawScreen();
+
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
 				g_system->delayMillis(10);
@@ -324,39 +265,103 @@ Common::Error HypnoEngine::run() {
 			continue;
 		}
 
-		if (!_nextSetting.empty()) {
-
-			debug("Executing %s", _nextSetting.c_str());
+		if (_nextHotsToRemove) {
+			debug("Removing a hotspot list!");
+			stack.pop_back();
+			runMenu(*stack.back());
+			_nextHotsToRemove = NULL;
+			drawScreen();
+		} else if (_nextHotsToAdd) {
+			debug("Adding a hotspot list!");
 			//clearAreas();
-			_currentSetting = _nextSetting;
-			//Settings::g_setts->load(_nextSetting);
-			prepareHotspots(setts[_currentSetting]);
-			_nextSetting = "";
-			//Gen::g_vm->run();
-			//changeCursor("default");
+			stack.push_back(_nextHotsToAdd);
+			runMenu(*stack.back());
+			_nextHotsToAdd = NULL;
 			drawScreen();
 		}
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
-	return Common::kNoError;
 }
 
-void HypnoEngine::prepareHotspots(Hotspots hs) {
-	for (Hotspots::const_iterator it = hs.begin(); it != hs.end(); ++it) {
-		const Hotspot h = *it;
-		debug("hotspot type: %d action size: %d", it->type, it->actions.size());
-		for (Actions::const_iterator itt = it->actions.begin(); itt != it->actions.end(); ++itt) {
-			Action *action = *itt;
-			if (typeid(*action) == typeid(Background))
-				runBackground(h, (Background*) action);
-			else if (typeid(*action) == typeid(Overlay))
-				runOverlay(h, (Overlay*) action);
-			//else if (typeid(*action) == typeid(Mice))
-			//	runMice(h, (Mice*) action);
-		}	
+void HypnoEngine::runIntro(Common::String logoIntro, Common::String movieIntro) {
+	Common::Event event;
+	_nextMovie = logoIntro;
+
+	while ((_nextMovie != "" || _currentMovie != "") && !shouldQuit()) {
+			while (g_system->getEventManager()->pollEvent(event)) {
+			// Events
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder) {
+					if (_currentMovie == logoIntro)
+						_nextMovie = movieIntro;
+					else
+					    skipVideo();
+				}
+
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		// Movies
+		if (!_nextMovie.empty()) {
+			_videoDecoder = new Video::SmackerDecoder();
+			playVideo(_nextMovie);
+			_currentMovie = _nextMovie;
+			_nextMovie = "";
+			continue;
+		}
+
+		if (_videoDecoder && !_videoDecoder->isPaused()) {
+			if (_videoDecoder->getCurFrame() == 0)
+				stopSound(true);
+			if (_videoDecoder->endOfVideo()) {
+				_videoDecoder->close();
+				delete _videoDecoder;
+				_videoDecoder = nullptr;
+				if (_currentMovie == logoIntro)
+					_nextMovie = movieIntro;
+				else 
+					_nextMovie = "";
+			} else if (_videoDecoder->needsUpdate()) {
+				drawScreen();
+				g_system->delayMillis(10);
+			}
+			continue;
+		}
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
+}
+
+
+//Actions
+
+void HypnoEngine::runMenu(Hotspots hs) {
+	const Hotspot h = *hs.begin();
+	assert(h.type == MakeMenu);
+
+	debug("hotspot actions size: %d", h.actions.size());
+	for (Actions::const_iterator itt = h.actions.begin(); itt != h.actions.end(); ++itt) {
+		Action *action = *itt;
+		if (typeid(*action) == typeid(Background))
+			runBackground(h, (Background*) action);
+		else if (typeid(*action) == typeid(Overlay))
+			runOverlay(h, (Overlay*) action);
+		//else if (typeid(*action) == typeid(Mice))
+		//	runMice(h, (Mice*) action);
+	}
+
+	if (h.stype == "SINGLE_RUN")
+		loadImage("int_main/mainbutt.smk", 0, 0);
+	else if (h.stype == "AUTO_BUTTONS")
+		loadImage("int_main/resume.smk", 0, 0);
 }
 
 void HypnoEngine::runBackground(const Hotspot h, Background *a) {
@@ -371,8 +376,92 @@ void HypnoEngine::runOverlay(const Hotspot h, Overlay *a) {
 }
 
 void HypnoEngine::runMice(const Hotspot h, Mice *a) {
-	if (h.type == MakeMenu)
-    	changeCursor(a->path, a->index);
+    changeCursor(a->path, a->index);
+}
+
+void HypnoEngine::runEscape(const Hotspot h, Escape *a) {
+    _nextHotsToRemove = stack.back();
+}
+
+void HypnoEngine::runCutscene(const Hotspot h, Cutscene *a) {
+    _nextMovie = a->path;
+}
+
+// Hotspots
+
+void HypnoEngine::clickedHotspot(Common::Point mousePos) {
+	debug("clicked in %d %d", mousePos.x, mousePos.y);
+	Hotspots *hots = stack.back();
+	Hotspot selected;
+	bool found = false;
+	int rs = 100000000;
+	int cs = 0;
+	for (Hotspots::const_iterator it = hots->begin(); it != hots->end(); ++it) {
+		const Hotspot h = *it;
+		if (h.type != MakeHotspot)
+			continue;
+
+		cs = h.rect.width() * h.rect.height();
+		if (h.rect.contains(mousePos)) {
+			if (cs < rs) {
+				selected = h;
+				found = true;
+				rs = cs;
+			}
+		}
+	}
+	if (found) {
+		//debug("Hotspot found! %x", selected.smenu);
+		if (selected.smenu) {
+			debug("SMenu found!");
+			assert(selected.smenu->size() > 0);
+			_nextHotsToAdd = selected.smenu;
+		}
+
+		debug("hotspot clicked actions size: %d", selected.actions.size());
+		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
+			Action *action = *itt;
+			if (typeid(*action) == typeid(Escape))
+				runEscape(selected, (Escape*) action);
+			if (typeid(*action) == typeid(Cutscene))
+				runCutscene(selected, (Cutscene*) action);
+		}
+
+	}
+}
+
+bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
+	Hotspots *hots = stack.back();
+	Hotspot selected;
+	bool found = false;
+	int rs = 100000000;
+	int cs = 0;
+	for (Hotspots::const_iterator it = hots->begin(); it != hots->end(); ++it) {
+		const Hotspot h = *it;
+		if (h.type != MakeHotspot)
+			continue;
+
+		cs = h.rect.width() * h.rect.height();
+		if (h.rect.contains(mousePos)) {
+			if (cs < rs) {
+				selected = h;
+				found = true;
+				rs = cs;
+			}
+		}
+	}
+	if (found) {
+		debug("Hovered over %d %d %d %d!", selected.rect.left, selected.rect.top, selected.rect.bottom, selected.rect.right);
+
+		//debug("hotspot actions size: %d", h.actions.size());
+		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
+			Action *action = *itt;
+			if (typeid(*action) == typeid(Mice))
+				runMice(selected, (Mice*) action);
+		}
+		return true;
+	}
+	return false;
 }
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y) {

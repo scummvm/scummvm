@@ -47,14 +47,14 @@ typedef Common::List<Action*> Actions;
 
 class Hotspot;
 typedef Common::Array<Hotspot> Hotspots;
+typedef Common::Array<Hotspots *> HotspotsStack;
 
 class Hotspot { 
   public:
     HotspotType type;
     Common::String stype;
 	Common::String stypeFlag;
-	int x0, y0;
-	int x1, y1;
+	Common::Rect rect;
 	Actions actions;
 	Hotspots *smenu;
 };
@@ -84,11 +84,19 @@ class Overlay : public Action {
 	Common::String flag;
 };
 
+class Escape : public Action {
+};
+
+class Cutscene : public Action {
+  public:
+	Common::String path;
+};
+
 
 typedef Common::HashMap<Common::String, Hotspots> Settings;
 
-extern Settings setts;
-extern Hotspots *hots;
+extern Hotspots *g_parsedHots;
+extern Settings g_settings;
 
 } // End of namespace Hypno
 

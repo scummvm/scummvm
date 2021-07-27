@@ -82,6 +82,10 @@ public:
 	Common::InstallShieldV3 _installerArchive;
 
 	Common::Error run() override;
+	void runIntro(Common::String logoIntro, Common::String movieIntro);
+	void runMis(Common::String name);
+
+
 	void restartGame();
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
@@ -93,11 +97,8 @@ public:
 	void initFuncs();
 
 	// User input
-	void selectPauseMovie(Common::Point);
-	void selectMask(Common::Point);
-	void selectExit(Common::Point);
-	void selectLoadGame(Common::Point);
-	void selectSaveGame(Common::Point);
+	void clickedHotspot(Common::Point);
+	bool hoverHotspot(Common::Point);
 
 	// Cursors
 	bool cursorPauseMovie(Common::Point);
@@ -135,10 +136,12 @@ public:
 	Common::String getExitCursor();
 
 	// Actions
-	void prepareHotspots(Hotspots hs);
+	void runMenu(Hotspots hs);
     void runBackground(const Hotspot h, Background *a);
 	void runOverlay(const Hotspot h, Overlay *a);
 	void runMice(const Hotspot h, Mice *a);
+	void runEscape(const Hotspot h, Escape *a);
+	void runCutscene(const Hotspot h, Cutscene *a);
 
 	Graphics::ManagedSurface *_compositeSurface;
 	Graphics::Surface *loadMask(const Common::String &, int, int, bool);
@@ -153,45 +156,14 @@ public:
 	Common::Point _origin;
 	void drawScreen();
 
-	// settings
-	Common::String _nextSetting;
-	Common::String _pausedSetting;
-	Common::String _currentSetting;
-	Common::String getPauseMovieSetting();
-	Common::String getGoIntroSetting();
-	Common::String getMainDesktopSetting();
-	Common::String getPOGoBustMovieSetting();
-	Common::String getPoliceBustFromMOSetting();
-	Common::String getAlternateGameVariable();
-	Common::String getPoliceIndexVariable();
-	Common::String getWallSafeValueVariable();
+	// hotspots
+	Hotspots *_nextHotsToAdd;
+	Hotspots *_nextHotsToRemove;
+	HotspotsStack stack;
 
 	// movies
 	Common::String _nextMovie;
 	Common::String _currentMovie;
-
-	// Dossiers
-	bool selectDossierNextSuspect(Common::Point);
-	bool selectDossierPrevSuspect(Common::Point);
-	bool selectDossierNextSheet(Common::Point);
-	bool selectDossierPrevSheet(Common::Point);
-	void loadDossier();
-
-	// Police Bust
-	void policeBust();
-	bool _policeBustEnabled;
-	void startPoliceBust();
-	void checkPoliceBust();
-	int _numberClicks;
-	int _maxNumberClicks;
-	int _sirenWarning;
-	Common::String _policeBustSetting;
-
-	// Diary
-	Common::String _diaryLocPrefix;
-	void loadLocations(const Common::Rect &);
-	void loadInventory(uint32, const Common::Rect &, const Common::Rect &);
-	bool _toTake;
 
 	// Save/Load games
 	int _mode;
@@ -205,34 +177,6 @@ public:
 	void stopSound(bool);
 	bool isSoundActive();
 	bool _noStopSounds;
-
-	Common::String getPaperShuffleSound();
-	Common::String _globalAudioPath;
-
-	Common::String getTakeSound();
-	Common::String getTakeLeaveSound();
-	Common::String getLeaveSound();
-	Common::String _sirenSound;
-
-	// Radios
-	Common::String _infaceRadioPath;
-	Common::String _phonePrefix;
-	Common::String _phoneCallSound;
-
-	Common::String getRandomPhoneClip(const char *, int, int);
-	void selectAMRadioArea(Common::Point);
-	void selectPoliceRadioArea(Common::Point);
-	void selectPhoneArea(Common::Point);
-	void checkPhoneCall();
-
-	// Safe
-	uint32 _safeColor;
-	Common::String _safeNumberPath;
-	Common::Rect _safeDigitRect[3];
-
-	bool selectSafeDigit(Common::Point);
-	void addSafeDigit(uint32, Common::Rect*);
-	void renderSafeDigit(uint32);
 
 	// Random values
 	bool getRandomBool(uint);
