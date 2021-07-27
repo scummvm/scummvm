@@ -26,6 +26,7 @@
 #include "common/macresman.h"
 #include "common/md5.h"
 #include "common/config-manager.h"
+#include "common/punycode.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -572,7 +573,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		g = (const ADGameDescription *)descPtr;
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			Common::String fname = fileDesc->fileName;
+			Common::String fname = Common::punycode_decodefilename(fileDesc->fileName);
 
 			if (filesProps.contains(fname))
 				continue;
@@ -613,7 +614,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 
 		// Try to match all files for this game
 		for (fileDesc = game.desc->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			Common::String tstr = fileDesc->fileName;
+			Common::String tstr = Common::punycode_decodefilename(fileDesc->fileName);
 
 			if (!filesProps.contains(tstr) || filesProps[tstr].size == -1) {
 				allFilesPresent = false;
