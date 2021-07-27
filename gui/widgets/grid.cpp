@@ -72,6 +72,10 @@ void GridItemWidget::drawWidget() {
 	Array<U32String> titleLines;
 	g_gui.getFont().wordWrapText(_activeEntry->title, thumbWidth, titleLines);
 
+	// FIXME/HACK: We reserve 1/3 of the space between two items to draw the
+	//			selection border. This can break when the stroke width of
+	//			the border is comparable to 1/3 of grid item spacing. Also,
+	//			border shadow is not considered.
 	if ((isHighlighted) || (_grid->getSelected() == _activeEntry->entryID)) {
 		// Draw a highlighted BG on hover
 		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - (_grid->_gridXSpacing / 3), _y - (_grid->_gridYSpacing / 3),
@@ -123,6 +127,8 @@ void GridItemWidget::drawWidget() {
 
 	// Draw Title
 	if (_grid->_isTitlesVisible) {
+		// TODO: Currently title is fixed to two lines at all times, we may want
+		//		flexibility to let the theme define the number of title lines.
 		if (titleLines.size() < 2) {
 			titleLines.push_back(U32String());
 		} else if (titleLines.size() > 2) {
@@ -190,6 +196,8 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 	_boss = boss;
 	_grid = grid;
 
+	// TODO: Currently, the tray has a hardcoded layout. Theme file may
+	//		provide a different layout of buttons.
 	int buttonWidth = w / 3;
 	int buttonHeight = h / 3;
 

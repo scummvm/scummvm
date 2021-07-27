@@ -113,6 +113,10 @@ protected:
 	ButtonWidget		*_listButton;
 	ButtonWidget		*_gridButton;
 
+	/**
+	 * Create two buttons to switch between grid display and list display
+	 * in the launcher.
+	 */
 	void addChooserButtons();
 	ButtonWidget *createSwitchButton(const Common::String &name, const Common::U32String &desc, const Common::U32String &tooltip, const char *image, uint32 cmd = 0);
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
