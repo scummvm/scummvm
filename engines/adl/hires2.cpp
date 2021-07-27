@@ -70,28 +70,37 @@ void HiResBaseEngine::init() {
 	StreamPtr stream(_disk->createReadStream(0x1f, 0x2, 0x00, 4));
 	loadMessages(*stream, _numMsgs);
 
-	// Read parser messages
-	stream.reset(_disk->createReadStream(0x1a, 0x1));
-	_strings.verbError = readStringAt(*stream, 0x4f);
-	_strings.nounError = readStringAt(*stream, 0x8e);
-	_strings.enterCommand = readStringAt(*stream, 0xbc);
+	stream.reset(_disk->createReadStream(0x19, 0x0, 0x00, 25, 13));
+	Common::StringArray exeStrings;
+	extractExeStrings(*stream, 0x1566, exeStrings);
 
-	// Read time string
-	stream.reset(_disk->createReadStream(0x19, 0x7, 0xd7));
-	_strings_v2.time = readString(*stream, 0xff);
+	if (exeStrings.size() < 11)
+		error("Failed to load strings from executable");
+
+	// Heuristic to test for early versions that differ slightly
+	// Later versions have two additional strings for "INIT DISK"
+	const bool oldEngine = exeStrings.size() < 13;
+
+	// Read parser messages
+	_strings.verbError = exeStrings[2];
+	_strings.nounError = exeStrings[3];
+	_strings.enterCommand = exeStrings[4];
+
+	if (!oldEngine) {
+		stream.reset(_disk->createReadStream(0x19, 0x7, 0xd7));
+		_strings_v2.time = readString(*stream, 0xff);
+	}
 
 	// Read line feeds
-	stream.reset(_disk->createReadStream(0x19, 0xb, 0xf8, 1));
-	_strings.lineFeeds = readString(*stream);
+	_strings.lineFeeds = exeStrings[0];
 
 	// Read opcode strings
-	stream.reset(_disk->createReadStream(0x1a, 0x6, 0x00, 2));
-	_strings_v2.saveInsert = readStringAt(*stream, 0x5f);
-	_strings_v2.saveReplace = readStringAt(*stream, 0xe5);
-	_strings_v2.restoreInsert = readStringAt(*stream, 0x132);
-	_strings_v2.restoreReplace = readStringAt(*stream, 0x1c2);
-	_strings.playAgain = readStringAt(*stream, 0x225);
-	_strings.pressReturn = readStringAt(*stream, 0x25f);
+	_strings_v2.saveInsert = exeStrings[5];
+	_strings_v2.saveReplace = exeStrings[6];
+	_strings_v2.restoreInsert = exeStrings[7];
+	_strings_v2.restoreReplace = exeStrings[8];
+	_strings.playAgain = exeStrings[9];
+	_strings.pressReturn = exeStrings[10];
 
 	// Load global picture data
 	stream.reset(_disk->createReadStream(0x19, 0xa, 0x80, 0));
@@ -105,7 +114,7 @@ void HiResBaseEngine::init() {
 	stream.reset(_disk->createReadStream(0x1d, 0x7, 0x00, 4));
 	readCommands(*stream, _roomCommands);
 
-	stream.reset(_disk->createReadStream(0x1f, 0x7, 0x00, 3));
+	stream.reset(_disk->createReadStream((oldEngine ? 0x19 : 0x1f), 0x7, 0x00, 3));
 	readCommands(*stream, _globalCommands);
 
 	// Load dropped item offsets
@@ -151,10 +160,10 @@ HiRes2Engine::HiRes2Engine(OSystem *syst, const AdlGameDescription *gd) :
 }
 
 void HiRes2Engine::runIntro() {
-	// This only works for the 16-sector re-release. The original
-	// release is not supported at this time, because we don't have
-	// access to it.
-	_disk->setSectorLimit(0);
+	// Only the Green Valley version has a title screen
+	if (_disk->getSectorsPerTrack() != 16)
+		return;
+
 	StreamPtr stream(_disk->createReadStream(0x00, 0xd, 0x17, 1));
 
 	_display->setMode(Display::kModeText);
@@ -166,8 +175,6 @@ void HiRes2Engine::runIntro() {
 
 	_display->printString(str);
 	delay(2000);
-
-	_disk->setSectorLimit(13);
 }
 
 class HiRes3Engine : public HiResBaseEngine {

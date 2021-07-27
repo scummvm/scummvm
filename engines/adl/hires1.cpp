@@ -90,7 +90,6 @@ protected:
 	void loadRoom(byte roomNr) override;
 	void showRoom() override;
 
-	void extractExeStrings(Common::ReadStream &stream, Common::StringArray &strings);
 	void showInstructions(Common::SeekableReadStream &stream);
 	void wordWrap(Common::String &str) const;
 
@@ -107,24 +106,6 @@ protected:
 		Common::String gettingDark;
 	} _gameStrings;
 };
-
-void HiRes1Engine::extractExeStrings(Common::ReadStream &stream, Common::StringArray &strings) {
-	uint32 window = 0;
-
-	for (;;) {
-		window <<= 8;
-		window |= stream.readByte();
-
-		if (stream.eos())
-			return;
-
-		if (stream.err())
-			error("Failed to extract strings from game executable");
-
-		if ((window & 0xffffff) == 0x201576)
-			strings.push_back(readString(stream));
-	}
-}
 
 void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream) {
 	_display->setMode(Display::kModeText);
@@ -301,7 +282,7 @@ void HiRes1Engine::init() {
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));
 
 	Common::StringArray exeStrings;
-	extractExeStrings(*stream, exeStrings);
+	extractExeStrings(*stream, 0x1576, exeStrings);
 
 	if (exeStrings.size() != 18)
 		error("Failed to load strings from executable");

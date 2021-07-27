@@ -277,9 +277,45 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_PD
 	},
+	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - DOS 3.2 only
+		{
+			"hires2", "On-Line Systems [A]",
+			AD_ENTRY1s("wizard", "5201c87db24ba7e3fa447471f4f2ec99", 116480),
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES2,
+		GAME_VER_NONE
+	},
+	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II
+		{
+			"hires2", "On-Line Systems [B]",
+			AD_ENTRY1s("wizard", "1de984859212ff11cf61b29cb9b55f8c", 116480),
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES2,
+		GAME_VER_NONE
+	},
+	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - Green Valley Publishing
+		{
+			"hires2", "Green Valley [A]",
+			AD_ENTRY1s("wizard", "73cd373e9a2946c3181b72fdf7a32c77", 143360),
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES2,
+		GAME_VER_NONE
+	},
 	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - Roberta Williams Anthology
 		{
-			"hires2", "",
+			"hires2", "Green Valley [B]",
 			AD_ENTRY1s("wizard", "72b114bf8f94fafe5672daac2a70c765", 143360),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
@@ -375,7 +411,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - Roberta Williams Anthology / SierraVenture
 		{
-			"hires6", "SierraVenture [version A]",
+			"hires6", "SierraVenture [A]",
 			{
 				{ "dark1a", 0, "9a5968a8f378c84454d88f4cd4e143a9", 143360 },
 				{ "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 },
@@ -393,7 +429,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - SierraVenture
 		{
-			"hires6", "SierraVenture [version B]",
+			"hires6", "SierraVenture [B]",
 			{
 				{ "dark1a", 0, "d0b8e808b02564b6ce58b5ea5cc61ead", 143360 },
 				{ "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 },

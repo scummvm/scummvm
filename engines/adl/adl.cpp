@@ -147,6 +147,24 @@ Common::String AdlEngine::readStringAt(Common::SeekableReadStream &stream, uint 
 	return readString(stream, until);
 }
 
+void AdlEngine::extractExeStrings(Common::ReadStream &stream, uint16 printAddr, Common::StringArray &strings) const {
+	uint32 window = 0;
+
+	for (;;) {
+		window <<= 8;
+		window |= stream.readByte();
+
+		if (stream.eos())
+			return;
+
+		if (stream.err())
+			error("Failed to extract strings from game executable");
+
+		if ((window & 0xffffff) == (0x200000U | printAddr))
+			strings.push_back(readString(stream));
+	}
+}
+
 void AdlEngine::printMessage(uint idx) {
 	printString(loadMessage(idx));
 }
