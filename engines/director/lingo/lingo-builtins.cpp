@@ -968,6 +968,10 @@ static bool sortPArrayHelper(const PCell &lhs, const PCell &rhs) {
 }
 
 void LB::b_sort(int nargs) {
+	// in D4 manual, p266. linear list is sorted by values
+	// property list is sorted alphabetically by properties
+	// once the list is sorted, it maintains it's sort order even when we add new variables using add command
+	// see b_append to get more details.
 	Datum list = g_lingo->pop();
 
 	if (list.type == ARRAY) {
