@@ -331,7 +331,7 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	loadPlatformIcons();
 	loadFlagIcons();
 
-	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 200);
+	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, _y, _scrollBarWidth, _y + _h);
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
@@ -346,7 +346,7 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	loadPlatformIcons();
 	loadFlagIcons();
 
-	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 200);
+	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, _y, _scrollBarWidth, _y + _h);
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
