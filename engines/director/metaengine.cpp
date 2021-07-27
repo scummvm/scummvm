@@ -26,6 +26,7 @@
 
 #include "common/file.h"
 #include "common/config-manager.h"
+#include "common/punycode.h"
 
 #include "director/director.h"
 #include "director/detection.h"
@@ -72,6 +73,10 @@ StartMovie DirectorEngine::getStartMovie() const {
 		Common::String option = ConfMan.get("start_movie");
 		int atPos = option.findLastOf("@");
 		startMovie.startMovie = option.substr(0, atPos);
+
+		if (Common::punycode_hasprefix(startMovie.startMovie))
+			startMovie.startMovie = Common::punycode_decodepath(startMovie.startMovie);
+
 		Common::String tail = option.substr(atPos + 1, option.size());
 		if (tail.size() > 0)
 			startMovie.startFrame = atoi(tail.c_str());
