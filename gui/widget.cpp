@@ -159,8 +159,9 @@ void Widget::draw() {
 		w->draw();
 		w = w->_next;
 	}
-	if (!oldClip.isEmpty())
+	if (!oldClip.isEmpty()) {
 		g_gui.theme()->swapClipRect(oldClip);
+	}
 }
 
 Widget *Widget::findWidgetInChain(Widget *w, int x, int y) {
