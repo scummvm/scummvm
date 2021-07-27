@@ -145,21 +145,6 @@ int IMuseDigital::startSound(int soundId, const char *soundName, int soundType, 
 	} else if (_vm->_game.id == GID_CMI) {
 		// Tweak the default gain reduction to about 4 dB
 		track->gainRedFadeDest = 127 * 290;
-		if (track->soundId / 1000 == 1) { // State
-			for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {
-				if ((_comiStateMusicTable[l].soundId == track->soundId)) {
-					track->loopShiftType = _comiStateMusicTable[l].shiftLoop;
-					break;
-				}
-			}
-		} else if (track->soundId / 1000 == 2) { // Sequence
-			for (l = 0; _comiSeqMusicTable[l].soundId != -1; l++) {
-				if ((_comiSeqMusicTable[l].soundId == track->soundId)) {
-					track->loopShiftType = _comiSeqMusicTable[l].shiftLoop;
-					break;
-				}
-			}
-		}
 	}
 
 	int bits = 0, freq = 0, channels = 0;

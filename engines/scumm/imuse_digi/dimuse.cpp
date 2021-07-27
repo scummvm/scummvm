@@ -106,10 +106,6 @@ void IMuseDigital::resetState() {
 	_radioChatterSFX = 0;
 	_triggerUsed = false;
 	_speechIsPlaying = false;
-	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-		_scheduledCrossfades[l].scheduled = false;
-		_scheduledCrossfades[l].isJumpToLoop = false;
-	}
 }
 
 static void syncWithSerializer(Common::Serializer &s, Track &t) {
@@ -186,22 +182,6 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 
 			if (_vm->_game.id == GID_CMI) {
 				track->gainRedFadeDest = 127 * 290;
-
-				if (track->soundId / 1000 == 1) { // State
-					for (int ll = 0; _comiStateMusicTable[ll].soundId != -1; ll++) {
-						if ((_comiStateMusicTable[ll].soundId == track->soundId)) {
-							track->loopShiftType = _comiStateMusicTable[ll].shiftLoop;
-							break;
-						}
-					}
-				} else if (track->soundId / 1000 == 2) { // Sequence
-					for (int ll = 0; _comiSeqMusicTable[ll].soundId != -1; ll++) {
-						if ((_comiSeqMusicTable[ll].soundId == track->soundId)) {
-							track->loopShiftType = _comiSeqMusicTable[ll].shiftLoop;
-							break;
-						}
-					}
-				}
 			}
 
 			if (_vm->_game.id == GID_FT) {
@@ -235,65 +215,8 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 	}
 }
 
-void IMuseDigital::runScheduledCrossfades() {
-	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-		if (_scheduledCrossfades[l].scheduled) {
-			_scheduledCrossfades[l].scheduled = false;
-			Track *oldTrack = _track[l];
-
-			int newTrackId = -1;
-
-			oldTrack->volFadeDelay = _scheduledCrossfades[l].fadeDelay;
-			if (oldTrack->volGroupId == IMUSE_VOLGRP_MUSIC) {
-				newTrackId = startMusicWithOtherPos(oldTrack->soundName, oldTrack->soundId, oldTrack->curHookId, 127, oldTrack);
-			} else {
-				newTrackId = startSound(oldTrack->soundId, "", IMUSE_RESOURCE, IMUSE_VOLGRP_SFX, NULL, 0, _scheduledCrossfades[l].volumeBefJump, oldTrack->soundPriority, oldTrack);
-			}
-
-			if (newTrackId == -1) {
-				debug(5, "IMuseDigital::runScheduledCrossfades(): couldn't allocate crossfade for sound %d", oldTrack->soundId);
-				return;
-			}
-
-			Track *newTrack = _track[newTrackId];
-			newTrack->curRegion = _scheduledCrossfades[l].destRegion;
-
-			// WORKAROUND for some files having a little bit earlier
-			// loop point set in their iMUSE map; keep in mind we're considering
-			// regionOffset -= (oldTrack->feedSize / _callbackFps) as NO SHIFT.
-			// In COMI we're currently using 4 shift types.
-			if (newTrack->volGroupId == IMUSE_VOLGRP_SFX || !_scheduledCrossfades[l].isJumpToLoop) {
-				newTrack->regionOffset = 0;
-			} else if (_scheduledCrossfades[l].isJumpToLoop) {
-				switch (newTrack->loopShiftType) {
-				case 0:
-					newTrack->regionOffset -= (oldTrack->feedSize / _callbackFps);
-					break;
-				case 1:
-					newTrack->regionOffset = 0;
-					break;
-				case 2:
-					newTrack->regionOffset -= (oldTrack->feedSize / _callbackFps) + (oldTrack->feedSize / _callbackFps) / 2 + 2;
-					break;
-				case 3:
-					newTrack->regionOffset -= (oldTrack->feedSize / _callbackFps) - (oldTrack->feedSize / _callbackFps) / 2 + 2;
-					break;
-				case 4:
-					newTrack->regionOffset -= ((oldTrack->feedSize / _callbackFps) / 3) * 2;
-					break;
-				}
-			}
-
-			newTrack->dataOffset = _scheduledCrossfades[l].destDataOffset;
-			oldTrack->alreadyCrossfading = true; // We set this so to avoid duplicate crossfades
-			handleFadeOut(oldTrack, _scheduledCrossfades[l].fadeDelay);
-		}
-	}
-}
-
 void IMuseDigital::callback() {
 	Common::StackLock lock(_mutex, "IMuseDigital::callback()");
-	runScheduledCrossfades();
 	_speechIsPlaying = false;
 	// Check for any track playing a speech line
 	if (_vm->_game.id != GID_DIG) {
@@ -501,8 +424,6 @@ void IMuseDigital::callback() {
 
 					if (_sound->isEndOfRegion(track->soundDesc, track->curRegion)) {
 						switchToNextRegion(track);
-						if (_scheduledCrossfades[track->trackId].scheduled)
-							break;
 						if (!track->stream)	// Seems we reached the end of the stream
 							break;
 					}
@@ -636,28 +557,13 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 		if (track->curHookId == sampleHookId) {
 			int fadeDelay = (60 * _sound->getJumpFade(soundDesc, jumpId)) / 1000;
 			debug(5, "SwToNeReg(trackId:%d) - sound(%d) match hookId", track->trackId, track->soundId);
-			if (fadeDelay) {
-				// If there's a fade time, it means we have to CROSSFADE the jump.
-				// To do this we schedule a crossfade to happen at the next callback call;
-				// the reason for the scheduling is due to the fact that calling the
-				// crossfade immediately causes inconsistencies (and this crashes ImuseDigiSndMgr::getDataFromRegion())
-				if (_vm->_game.id == GID_CMI) {
-					// Block crossfades when the track is already fading down; this prevents edge cases where a crossfade
-					// between two tracks with the same attribPos (like sounds 1202, 1203 and 1204) is happening at the
-					// same time as a loop; the result is that the former is prioritized and the latter
-					// is executed without a crossfade. Also, avoid music crossfades for start markers, these are just plain
-					// dangerous and useless since there's already a fade in for those.
-					/*if (!track->volFadeUsed && !(track->volFadeStep < 0) && !(isJumpToStart && track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
-						_scheduledCrossfades[track->trackId].scheduled = true;
-						_scheduledCrossfades[track->trackId].destRegion = region;
-						_scheduledCrossfades[track->trackId].destDataOffset = _sound->getRegionOffset(soundDesc, region);
-						_scheduledCrossfades[track->trackId].fadeDelay = fadeDelay;
-						_scheduledCrossfades[track->trackId].destHookId = track->curHookId;
-						_scheduledCrossfades[track->trackId].volumeBefJump = track->vol / 1000;
-						_scheduledCrossfades[track->trackId].isJumpToLoop = isJumpToLoop;
-					}*/
-					track->curRegion = region;
-				} else {
+
+			if (_vm->_game.id == GID_CMI) {
+				// The original exe crossfades the jump to the destination region.
+				// For the time being this is implemented as a simple region switch.
+				track->curRegion = region;
+			} else {
+				if (fadeDelay) {
 					debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, fadeDelay);
 					Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 					if (fadeTrack) {
@@ -666,10 +572,10 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 						debug(5, "SwToNeReg(trackId:%d) - sound(%d) faded track, select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
 						fadeTrack->curHookId = 0;
 					}
+				} else {
+					track->curRegion = region;
 				}
 			}
-			if (_vm->_game.id != GID_CMI || !_scheduledCrossfades[track->trackId].scheduled)
-				track->curRegion = region;
 
 			debug(5, "SwToNeReg(trackId:%d) - sound(%d) jump to region %d, curHookId: %d", track->trackId, track->soundId, track->curRegion, track->curHookId);
 			track->curHookId = 0;
