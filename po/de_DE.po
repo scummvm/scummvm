@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-27 18:52+0000\n"
+"POT-Creation-Date: 2021-07-27 21:45+0000\n"
 "PO-Revision-Date: 2021-07-22 10:40+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -2191,7 +2191,7 @@ msgstr ""
 "Myst, Blade Runner und zahllosen weiteren Spielen wirst du auch einige "
 "wirklich kuriose Adventures und versteckte Schätze entdecken."
 
-#: engines/advancedDetector.cpp:227
+#: engines/advancedDetector.cpp:228
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Illegale Spielkopie erkannt. In solchen Fällen bieten wir keine "

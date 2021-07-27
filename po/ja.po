@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-27 18:52+0000\n"
+"POT-Creation-Date: 2021-07-27 21:45+0000\n"
 "PO-Revision-Date: 2021-07-23 08:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -2159,7 +2159,7 @@ msgstr ""
 "他の無数のゲームなどの画期的なタイトルの横に、いくつかの本当にあいまいな冒険"
 "と真に隠された宝石を見つけることができます."
 
-#: engines/advancedDetector.cpp:227
+#: engines/advancedDetector.cpp:228
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "違法コピーの痕跡が検出されました。このソフトはサポートできません"
 

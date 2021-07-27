@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-27 18:52+0000\n"
+"POT-Creation-Date: 2021-07-27 21:45+0000\n"
 "PO-Revision-Date: 2021-07-27 21:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -2191,7 +2191,7 @@ msgstr ""
 "маловідомих пригодницьких ігор та справді прихованих дорогоцінних каменів, "
 "які слід дослідити."
 
-#: engines/advancedDetector.cpp:227
+#: engines/advancedDetector.cpp:228
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "Знайдено нелегальну копію. В такому разі ми не надаємо підтримку"
 

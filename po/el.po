@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-27 18:52+0000\n"
+"POT-Creation-Date: 2021-07-27 21:45+0000\n"
 "PO-Revision-Date: 2021-07-01 15:36+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2231,7 +2231,7 @@ msgstr ""
 "βρείτε και μερικούς σχετικά άγνωστους τίτλους περιπέτειας και πραγματικά "
 "κρυμμένα διαμαντάκια για να εξερευνήσετε."
 
-#: engines/advancedDetector.cpp:227
+#: engines/advancedDetector.cpp:228
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Ανιχνεύτηκε μη νόμιμο αντίγραφο παιχνιδιού. Δεν παρέχουμε υποστήριξη σε "
