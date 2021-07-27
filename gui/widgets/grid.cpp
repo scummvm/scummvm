@@ -208,10 +208,20 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 	//		provide a different layout of buttons.
 	int buttonWidth = w / 3;
 	int buttonHeight = h / 3;
+	int buttonSpacingX = buttonWidth / 3;
+	int buttonSpacingY = buttonHeight / 3;
+	int trayPaddingX = buttonSpacingX;
+	int trayPaddingY = buttonSpacingY;
 
-	PicButtonWidget *playButton = new PicButtonWidget(this, (buttonWidth / 3), buttonHeight / 3, (buttonWidth / 3) + buttonWidth * 2, buttonHeight, U32String("Play"), kPlayButtonCmd);
-	PicButtonWidget *loadButton = new PicButtonWidget(this, (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Saves"), kLoadButtonCmd);
-	PicButtonWidget *editButton = new PicButtonWidget(this, buttonWidth + 2 * (buttonWidth / 3), (buttonHeight * 5) / 3, buttonWidth, buttonHeight, U32String("Edit"), kEditButtonCmd);
+	PicButtonWidget *playButton = new PicButtonWidget(this, trayPaddingX, trayPaddingY,
+													  2 * buttonWidth + buttonSpacingX, buttonHeight,
+													  U32String("Play"), kPlayButtonCmd);
+	PicButtonWidget *loadButton = new PicButtonWidget(this, trayPaddingX, trayPaddingY + buttonHeight + buttonSpacingY,
+													  buttonWidth, buttonHeight,
+													  U32String("Saves"), kLoadButtonCmd);
+	PicButtonWidget *editButton = new PicButtonWidget(this, trayPaddingX + buttonWidth + buttonSpacingX, trayPaddingY + buttonHeight + buttonSpacingY,
+													  buttonWidth, buttonHeight,
+													  U32String("Edit"), kEditButtonCmd);
 
 	playButton->useThemeTransparency(true);
 	loadButton->useThemeTransparency(true);
