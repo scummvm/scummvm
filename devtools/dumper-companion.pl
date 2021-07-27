@@ -95,8 +95,8 @@ sub processIso($) {
 			if ($::opt_e) {
 				# make 0x81 an escape symbol
 				$dir =~ s/\x81/\x81\x81/g;
-				# escape non-printables, '/', "'" and '"'
-				$dir =~ s/([\x00-\x1f\/'"])/\x81@{[chr(ord($1) + 0x80)]}/g;
+				# escape non-printables, '/', '"' and ":"
+				$dir =~ s/([\x00-\x1f\/":])/\x81@{[chr(ord($1) + 0x80)]}/g;
 
 				if ($dir =~ /[\x80-\xff]/) {
 					$dir = encode_punycode $dir;
