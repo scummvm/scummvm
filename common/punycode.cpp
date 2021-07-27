@@ -306,7 +306,7 @@ String punycode_encodefilename(const String src) {
 		// [\x00-\x1f\/":]
 		} else if (src[i] == '/' || src[i] == '"' || src[i] == ':' || (byte)src[i] < 0x20) {
 			dst += '\x81';
-			dst += (byte)src[i] + 0x80;
+			dst += (byte)src[i] + '\x80';
 		} else {
 			dst += src[i];
 		}
@@ -341,9 +341,9 @@ String punycode_decodefilename(const String src1) {
 		if ((byte)src[i] == 0x81 && i + 1 < src.size()) {
 			i++;
 			if (src[i] == 0x79)
-				dst += 0x81;
+				dst += '\x81';
 			else
-				dst += (byte)src[i] - 0x80;
+				dst += (byte)src[i] - '\x80';
 		} else {
 			dst += src[i];
 		}
