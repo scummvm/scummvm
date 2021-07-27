@@ -94,7 +94,8 @@ String FSNode::getDisplayName() const {
 
 String FSNode::getName() const {
 	assert(_realNode);
-	return _realNode->getName();
+	// We transparently decode any punycode-named files
+	return punycode_decodefilename(_realNode->getName());
 }
 
 FSNode FSNode::getParent() const {
@@ -290,9 +291,6 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 		// don't touch name as it might be used for warning messages
 		String lowercaseName = name;
 		lowercaseName.toLowercase();
-
-		// We transparently decode any punycode-named files
-		lowercaseName = punycode_decodefilename(lowercaseName);
 
 		// since the hashmap is case insensitive, we need to check for clashes when caching
 		if (it->isDirectory()) {
