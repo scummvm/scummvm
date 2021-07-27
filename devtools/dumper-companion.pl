@@ -40,7 +40,7 @@ sub decode_punycode;
 sub encode_punycode;
 sub encode_punycodefilename;
 
-getopts('hmf:c:ed');
+getopts('hmf:c:eds');
 
 if ($::opt_c and $::opt_e) {
 	die "$0: -c and -e are mutually exclusive";
@@ -48,6 +48,14 @@ if ($::opt_c and $::opt_e) {
 
 if ($::opt_h) {
 	HELP_MESSAGE();
+	exit 0;
+}
+
+if ($::opt_s) {
+	local $/;
+	my $input = <>;
+
+	print encode_punycodefilename($input) . "\n";
 	exit 0;
 }
 
@@ -179,6 +187,10 @@ Mode 2:
 	  Operate in disk dumping mode
 	  Optionally specify encoding (MacRoman, MacJapanese)
 	  If -e is specified, then encode filenames into punycode
+
+Mode 3:
+  $0 -s
+     Read whole standard input and encode it with punycode
 
 Miscellaneous:
   -h, --help   display this help and exit
