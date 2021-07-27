@@ -29,6 +29,7 @@
 
 #include "director/director.h"
 #include "director/sound.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/xlibs/fplayxobj.h"
 
@@ -67,7 +68,7 @@ void FPlayXObj::b_fplay(int nargs) {
 		arr[i] = g_lingo->pop().asString();
 	}
 
-	DirectorSound *sound = g_director->getSoundManager();
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 	sound->playFPlaySound(arr);
 }
 
@@ -107,7 +108,7 @@ void FPlayXObj::b_fsound(int nargs) {
 		g_lingo->dropStack(nargs);
 	}
 
-	DirectorSound *sound = g_director->getSoundManager();
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 	if (sound->isChannelActive(1)) {
 		g_lingo->push(Datum(sound->getCurrentSound()));
 	} else {

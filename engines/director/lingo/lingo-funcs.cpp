@@ -169,7 +169,7 @@ void Lingo::func_mci(const Common::String &name) {
 			uint32 from = strtol(params[1].c_str(), 0, 10);
 			uint32 to = strtol(params[2].c_str(), 0, 10);
 
-			_vm->getSoundManager()->playMCI(*_audioAliases[params[0]], from, to);
+			_vm->getCurrentWindow()->getSoundManager()->playMCI(*_audioAliases[params[0]], from, to);
 		}
 		break;
 	default:
@@ -325,7 +325,7 @@ void Lingo::func_cursor(int cursorId) {
 
 void Lingo::func_beep(int repeats) {
 	for (int r = 1; r <= repeats; r++) {
-		_vm->getSoundManager()->systemBeep();
+		_vm->getCurrentWindow()->getSoundManager()->systemBeep();
 		if (r < repeats)
 			g_system->delayMillis(400);
 	}

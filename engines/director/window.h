@@ -116,6 +116,7 @@ public:
 	Archive *getMainArchive() const { return _mainArchive; }
 	Movie *getCurrentMovie() const { return _currentMovie; }
 	Common::String getCurrentPath() const { return _currentPath; }
+	DirectorSound *getSoundManager() const { return _soundManager; }
 
 	virtual void setVisible(bool visible, bool silent = false) override;
 	bool setNextMovie(Common::String &movieFilenameRaw);
@@ -186,6 +187,7 @@ private:
 	uint32 _stageColor;
 
 	DirectorEngine *_vm;
+	DirectorSound *_soundManager;
 	bool _isStage;
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;

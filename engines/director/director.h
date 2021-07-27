@@ -190,7 +190,6 @@ public:
 	const char *getExtra();
 	Common::String getEXEName() const;
 	StartMovie getStartMovie() const;
-	DirectorSound *getSoundManager() const { return _soundManager; }
 	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
 	Archive *getMainArchive() const;
 	Lingo *getLingo() const { return _lingo; }
@@ -256,7 +255,6 @@ private:
 	const DirectorGameDescription *_gameDescription;
 	Common::FSNode _gameDataDir;
 
-	DirectorSound *_soundManager;
 	byte *_currentPalette;
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;

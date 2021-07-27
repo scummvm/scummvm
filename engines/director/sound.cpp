@@ -36,10 +36,11 @@
 #include "director/movie.h"
 #include "director/castmember.h"
 #include "director/sound.h"
+#include "director/window.h"
 
 namespace Director {
 
-DirectorSound::DirectorSound(DirectorEngine *vm) : _vm(vm) {
+DirectorSound::DirectorSound(Window *window) : _window(window) {
 	uint numChannels = 2;
 	if (g_director->getVersion() >= 400) {
 		numChannels = 4;
@@ -110,7 +111,7 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 	if (memberID.member == 0) {
 		stopSound(soundChannel);
 	} else {
-		CastMember *soundCast = _vm->getCurrentMovie()->getCastMember(memberID);
+		CastMember *soundCast = _window->getCurrentMovie()->getCastMember(memberID);
 		if (soundCast) {
 			if (soundCast->_type != kCastSound) {
 				warning("DirectorSound::playCastMember: attempted to play a non-SoundCastMember %s", memberID.asString().c_str());
@@ -195,7 +196,7 @@ void DirectorSound::registerFade(uint8 soundChannel, bool fadeIn, int ticks) {
 	int startVol = fadeIn ? 0 :  _channels[soundChannel - 1].volume;
 	int targetVol = fadeIn ? _channels[soundChannel - 1].volume : 0;
 
-	_channels[soundChannel - 1].fade = new FadeParams(startVol, targetVol, ticks, _vm->getMacTicks(), fadeIn);
+	_channels[soundChannel - 1].fade = new FadeParams(startVol, targetVol, ticks, _window->getVM()->getMacTicks(), fadeIn);
 	_mixer->setChannelVolume(_channels[soundChannel - 1].handle, startVol);
 }
 
@@ -207,7 +208,7 @@ bool DirectorSound::fadeChannel(uint8 soundChannel) {
 	if (!fade)
 		return false;
 
-	fade->lapsedTicks = _vm->getMacTicks() - fade->startTicks;
+	fade->lapsedTicks = _window->getVM()->getMacTicks() - fade->startTicks;
 	if (fade->lapsedTicks > fade->totalTicks) {
 		cancelFade(soundChannel);
 		return false;

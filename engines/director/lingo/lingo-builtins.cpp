@@ -1928,7 +1928,7 @@ void LB::b_puppetSound(int nargs) {
 		return;
 	}
 
-	DirectorSound *sound = g_director->getSoundManager();
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 	Score *score = g_director->getCurrentMovie()->getScore();
 
 	if (!score) {
@@ -2402,6 +2402,8 @@ void LB::b_sound(int nargs) {
 		return;
 	}
 
+	DirectorSound *soundManager = g_director->getCurrentWindow()->getSoundManager();
+
 	if (verb.u.s->equalsIgnoreCase("close") || verb.u.s->equalsIgnoreCase("stop")) {
 		if (nargs != 2) {
 			warning("sound %s: expected 1 argument, got %d", verb.u.s->c_str(), nargs - 1);
@@ -2409,7 +2411,7 @@ void LB::b_sound(int nargs) {
 		}
 
 		TYPECHECK(firstArg, INT);
-		g_director->getSoundManager()->stopSound(firstArg.u.i);
+		soundManager->stopSound(firstArg.u.i);
 	} else if (verb.u.s->equalsIgnoreCase("fadeIn")) {
 		if (nargs > 2) {
 			TYPECHECK(secondArg, INT);
@@ -2419,7 +2421,7 @@ void LB::b_sound(int nargs) {
 		}
 
 		TYPECHECK(firstArg, INT);
-		g_director->getSoundManager()->registerFade(firstArg.u.i, true, ticks);
+		soundManager->registerFade(firstArg.u.i, true, ticks);
 		g_director->getCurrentMovie()->getScore()->_activeFade = firstArg.u.i;
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("fadeOut")) {
@@ -2431,7 +2433,7 @@ void LB::b_sound(int nargs) {
 		}
 
 		TYPECHECK(firstArg, INT);
-		g_director->getSoundManager()->registerFade(firstArg.u.i, false, ticks);
+		soundManager->registerFade(firstArg.u.i, false, ticks);
 		g_director->getCurrentMovie()->getScore()->_activeFade = firstArg.u.i;
 		return;
 	} else if (verb.u.s->equalsIgnoreCase("playFile")) {
@@ -2440,14 +2442,14 @@ void LB::b_sound(int nargs) {
 		TYPECHECK(firstArg, INT);
 		TYPECHECK(secondArg, STRING);
 
-		g_director->getSoundManager()->playFile(pathMakeRelative(*secondArg.u.s), firstArg.u.i);
+		soundManager->playFile(pathMakeRelative(*secondArg.u.s), firstArg.u.i);
 	} else {
 		warning("b_sound: unknown verb %s", verb.u.s->c_str());
 	}
 }
 
 void LB::b_soundBusy(int nargs) {
-	DirectorSound *sound = g_director->getSoundManager();
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 	Datum whichChannel = g_lingo->pop();
 
 	TYPECHECK(whichChannel, INT);

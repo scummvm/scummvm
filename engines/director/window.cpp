@@ -36,6 +36,7 @@
 #include "director/castmember.h"
 #include "director/cursor.h"
 #include "director/channel.h"
+#include "director/sound.h"
 #include "director/sprite.h"
 #include "director/util.h"
 #include "director/sound.h"
@@ -48,6 +49,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_isStage = isStage;
 	_stageColor = _wm->_colorBlack;
 	_puppetTransition = nullptr;
+	_soundManager = new DirectorSound(this);
 
 	_currentMovie = nullptr;
 	_mainArchive = nullptr;
@@ -507,7 +509,7 @@ bool Window::step() {
 		} else {
 			delete sharedCast;
 		}
-		g_director->getSoundManager()->changingMovie();
+		_soundManager->changingMovie();
 
 		_nextMovie.movie.clear();
 	}

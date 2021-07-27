@@ -55,7 +55,7 @@ Score::Score(Movie *movie) {
 	_vm = _movie->getVM();
 	_lingo = _vm->getLingo();
 
-	_soundManager = _vm->getSoundManager();
+	_soundManager = _window->getSoundManager();
 
 	_puppetTempo = 0x00;
 	_puppetPalette = false;
@@ -707,7 +707,7 @@ void Score::playSoundChannel(uint16 frameId) {
 	Frame *frame = _frames[frameId];
 
 	debugC(5, kDebugLoading, "playSoundChannel(): Sound1 %s Sound2 %s", frame->_sound1.asString().c_str(), frame->_sound2.asString().c_str());
-	DirectorSound *sound = _vm->getSoundManager();
+	DirectorSound *sound = _window->getSoundManager();
 
 	// puppet sound will be controlled with lingo
 	if (sound->_puppet)
@@ -738,7 +738,7 @@ void Score::playSoundChannel(uint16 frameId) {
 }
 
 void Score::playQueuedSound() {
-	DirectorSound *sound = _vm->getSoundManager();
+	DirectorSound *sound = _window->getSoundManager();
 	sound->playFPlaySound();
 }
 

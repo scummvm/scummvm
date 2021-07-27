@@ -68,7 +68,7 @@ public:
 	bool _puppet;
 
 private:
-	DirectorEngine *_vm;
+	Window *_window;
 	Common::Array<SoundChannel> _channels;
 	Audio::SoundHandle _scriptSound;
 	Audio::Mixer *_mixer;
@@ -82,7 +82,7 @@ private:
 	bool _enable;
 
 public:
-	DirectorSound(DirectorEngine *vm);
+	DirectorSound(Window *window);
 	~DirectorSound();
 
 	SoundChannel *getChannel(uint8 soundChannel);

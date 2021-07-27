@@ -68,7 +68,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Load key codes
 	loadKeyCodes();
 
-	_soundManager = nullptr;
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
 	_stage = nullptr;
@@ -104,7 +103,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 DirectorEngine::~DirectorEngine() {
 	delete _windowList;
-	delete _soundManager;
 	delete _lingo;
 	delete _wm;
 	delete _surface;
@@ -148,8 +146,6 @@ Common::Error DirectorEngine::run() {
 
 	_currentPalette = nullptr;
 
-	_soundManager = nullptr;
-
 	wmMode = debugChannelSet(-1, kDebugDesktop) ? wmModeDesktop : wmModeFullscreen;
 
 	if (debugChannelSet(-1, kDebug32bpp))
@@ -175,7 +171,6 @@ Common::Error DirectorEngine::run() {
 	_currentWindow = _stage;
 
 	_lingo = new Lingo(this);
-	_soundManager = new DirectorSound(this);
 
 	if (getGameGID() == GID_TEST) {
 		_currentWindow->runTests();

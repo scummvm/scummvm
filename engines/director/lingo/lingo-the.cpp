@@ -748,14 +748,14 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheSoundEnabled:
 		d.type = INT;
-		d.u.i = _vm->getSoundManager()->getSoundEnabled();
+		d.u.i = _vm->getCurrentWindow()->getSoundManager()->getSoundEnabled();
 		break;
 	case kTheSoundEntity:
 		{
 			switch (field) {
 			case kTheVolume:
 				{
-					SoundChannel *chan = _vm->getSoundManager()->getChannel(id.asInt());
+					SoundChannel *chan = _vm->getCurrentWindow()->getSoundManager()->getChannel(id.asInt());
 					if (chan) {
 						d.type = INT;
 						d.u.i = (int)chan->volume;
@@ -771,7 +771,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheSoundLevel:
 		// getting sound level of channel 1, maybe need to be amended in higher version
 		d.type = INT;
-		d.u.i = _vm->getSoundManager()->getSoundLevel(1);
+		d.u.i = _vm->getCurrentWindow()->getSoundManager()->getSoundLevel(1);
 		break;
 	case kTheSprite:
 		d = getTheSprite(id, field);
@@ -1008,14 +1008,14 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		}
 		break;
 	case kTheSoundEnabled:
-		_vm->getSoundManager()->setSoundEnabled((bool)d.asInt());
+		_vm->getCurrentWindow()->getSoundManager()->setSoundEnabled((bool)d.asInt());
 		break;
 	case kTheSoundEntity:
 		{
 			switch (field) {
 			case kTheVolume:
 				{
-					SoundChannel *chan = _vm->getSoundManager()->getChannel(id.asInt());
+					SoundChannel *chan = _vm->getCurrentWindow()->getSoundManager()->getChannel(id.asInt());
 					if (chan) {
 						chan->volume = (byte)d.asInt();
 					}
@@ -1029,7 +1029,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheSoundLevel:
 		// setting all of the channel for now
-		_vm->getSoundManager()->setSouldLevel(-1, d.asInt());
+		_vm->getCurrentWindow()->getSoundManager()->setSouldLevel(-1, d.asInt());
 		break;
 	case kTheSprite:
 		setTheSprite(id, field, d);
