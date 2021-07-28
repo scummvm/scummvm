@@ -38,6 +38,8 @@ namespace AGS3 {
 
 int user_to_internal_skip_speech(SkipSpeechStyle userval) {
 	switch (userval) {
+	case kSkipSpeechNone:
+		return SKIP_NONE;
 	case kSkipSpeechKeyMouseTime:
 		return SKIP_AUTOTIMER | SKIP_KEYPRESS | SKIP_MOUSECLICK;
 	case kSkipSpeechKeyTime:
@@ -54,7 +56,7 @@ int user_to_internal_skip_speech(SkipSpeechStyle userval) {
 		return SKIP_MOUSECLICK;
 	default:
 		quit("user_to_internal_skip_speech: unknown userval");
-		return 0;
+		return SKIP_NONE;
 	}
 }
 
@@ -78,7 +80,7 @@ SkipSpeechStyle internal_skip_speech_to_user(int internal_val) {
 			return kSkipSpeechMouse;
 		}
 	}
-	return kSkipSpeechUndefined;
+	return kSkipSpeechNone;
 }
 
 //=============================================================================

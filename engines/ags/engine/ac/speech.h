@@ -26,7 +26,7 @@
 namespace AGS3 {
 
 enum SkipSpeechStyle {
-	kSkipSpeechUndefined = -1,
+	kSkipSpeechNone = -1,
 	kSkipSpeechKeyMouseTime = 0,
 	kSkipSpeechKeyTime = 1,
 	kSkipSpeechTime = 2,
@@ -35,7 +35,7 @@ enum SkipSpeechStyle {
 	kSkipSpeechKey = 5,
 	kSkipSpeechMouse = 6,
 
-	kSkipSpeechFirst = kSkipSpeechKeyMouseTime,
+	kSkipSpeechFirst = kSkipSpeechNone,
 	kSkipSpeechLast = kSkipSpeechMouse
 };
 
