@@ -343,6 +343,7 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 
 void DirectorSound::changingMovie() {
 	for (uint i = 0; i < _channels.size(); i++) {
+		setPuppetSound(SoundID(), i + 1); // disable puppet sound
 		_channels[i]._movieChanged = true;
 	}
 	unloadSampleSounds(); // TODO: we can possibly keep this between movies
