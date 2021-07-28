@@ -125,6 +125,21 @@ bool Movie::processEvent(Common::Event &event) {
 		if (_currentHandlingChannelId && !sc->_channels[_currentHandlingChannelId]->getBbox().contains(pos))
 			_currentHandlingChannelId = 0;
 
+		// for the list style button, we still have chance to trigger events though button.
+		if (!(g_director->_wm->_mode & Graphics::kWMModeButtonDialogStyle) && g_director->_wm->_mouseDown) {
+			if (g_director->getVersion() < 400)
+				spriteId = sc->getActiveSpriteIDFromPos(pos);
+			else
+				spriteId = sc->getMouseSpriteIDFromPos(pos);
+
+			_currentHandlingChannelId = spriteId;
+			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite()) {
+				_currentHiliteChannelId = spriteId;
+				g_director->getCurrentWindow()->setDirty(true);
+				g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
+			}
+		}
+
 		if (_currentDraggedChannel) {
 			if (_currentDraggedChannel->_sprite->_moveable) {
 				pos = _window->getMousePos();
@@ -152,9 +167,10 @@ bool Movie::processEvent(Common::Event &event) {
 			else
 				spriteId = sc->getMouseSpriteIDFromPos(pos);
 
+			// is this variable unused here?
 			_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
-			_currentHandlingChannelId = spriteId;
 
+			_currentHandlingChannelId = spriteId;
 			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite()) {
 				_currentHiliteChannelId = spriteId;
 				g_director->getCurrentWindow()->setDirty(true);
