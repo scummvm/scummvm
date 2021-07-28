@@ -113,10 +113,10 @@ public:
 	void renderCursor(Common::Point pos);
 	void renderVideo();
 
+	void playSoundChannel(uint16 frameId);
+
 private:
 	void update();
-
-	void playSoundChannel(uint16 frameId);
 	void playQueuedSound();
 
 	void screenShot();
