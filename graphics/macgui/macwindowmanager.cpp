@@ -191,6 +191,8 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 	_fullRefresh = true;
 	_inEditableArea = false;
 
+	_hilitingWidget = false;
+
 	if (mode & kWMMode32bpp)
 		_pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	else
