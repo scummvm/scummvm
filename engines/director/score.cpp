@@ -359,14 +359,18 @@ void Score::update() {
 		}
 	}
 
+	_vm->_skipFrameAdvance = false;
+
+	// the exitFrame event handler may have stopped this movie
+	if (_playState == kPlayStopped)
+		return;
+
 	if (_nextFrame)
 		_currentFrame = _nextFrame;
 	else if (!_window->_newMovieStarted)
 		_currentFrame++;
 
 	_nextFrame = 0;
-
-	_vm->_skipFrameAdvance = false;
 
 	if (_currentFrame >= _frames.size()) {
 		Window *window = _vm->getCurrentWindow();
