@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-28 08:37+0000\n"
+"POT-Creation-Date: 2021-07-28 11:37+0000\n"
 "PO-Revision-Date: 2021-07-27 19:30+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -6246,6 +6246,18 @@ msgstr ""
 "Corta los 40 píxeles de más que aparecen en la parte inferior de la pantalla "
 "para que la altura sea la estándar de 200 píxeles, lo que permite utilizar "
 "la corrección de la relación de aspecto"
+
+#: engines/scumm/detection.cpp:197
+#, fuzzy
+#| msgid "Play selected music record"
+msgid "Play simplified music"
+msgstr "Reproducir disco de música seleccionado"
+
+#: engines/scumm/detection.cpp:198
+msgid ""
+"This music was presumably intended for low-end Macs, and uses only one "
+"channel."
+msgstr ""
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format

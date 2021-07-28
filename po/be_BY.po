@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-28 08:37+0000\n"
+"POT-Creation-Date: 2021-07-28 11:37+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -6233,6 +6233,18 @@ msgstr ""
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
+msgstr ""
+
+#: engines/scumm/detection.cpp:197
+#, fuzzy
+#| msgid "Play selected music record"
+msgid "Play simplified music"
+msgstr "Прайграць абраны музычны запіс"
+
+#: engines/scumm/detection.cpp:198
+msgid ""
+"This music was presumably intended for low-end Macs, and uses only one "
+"channel."
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:165

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-07-28 08:37+0000\n"
+"POT-Creation-Date: 2021-07-28 11:37+0000\n"
 "PO-Revision-Date: 2021-05-15 04:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6123,6 +6123,18 @@ msgid ""
 msgstr ""
 "화면 아래쪽의 40픽셀을 잘라내 표준 200픽셀에 맞춤으로써 '종횡비 보정' 기능을 "
 "사용할 수 있게 함"
+
+#: engines/scumm/detection.cpp:197
+#, fuzzy
+#| msgid "Play selected music record"
+msgid "Play simplified music"
+msgstr "선택된 음악을 재생"
+
+#: engines/scumm/detection.cpp:198
+msgid ""
+"This music was presumably intended for low-end Macs, and uses only one "
+"channel."
+msgstr ""
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
