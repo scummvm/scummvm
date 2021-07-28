@@ -712,7 +712,7 @@ void Score::playSoundChannel(uint16 frameId) {
 
 	if (sound->isChannelPuppet(1)) {
 		sound->playPuppetSound(1);
-	} else if (frame->_soundType1 >= 10 && frame->_soundType1 <= 15) { // 0x0f represent sample sound
+	} else if (frame->_soundType1 >= kMinSampledMenu && frame->_soundType1 <= kMaxSampledMenu) {
 		sound->playExternalSound(frame->_soundType1, frame->_sound1.member, 1);
 	} else {
 		sound->playCastMember(frame->_sound1, 1, false);
@@ -720,7 +720,7 @@ void Score::playSoundChannel(uint16 frameId) {
 
 	if (sound->isChannelPuppet(2)) {
 		sound->playPuppetSound(2);
-	} else if (frame->_soundType2 >= 10 && frame->_soundType2 <= 15) {
+	} else if (frame->_soundType2 >= kMinSampledMenu && frame->_soundType2 <= kMaxSampledMenu) {
 		sound->playExternalSound(frame->_soundType2, frame->_sound2.member, 2);
 	} else {
 		sound->playCastMember(frame->_sound2, 2, false);
