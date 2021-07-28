@@ -1951,7 +1951,7 @@ void LB::b_puppetSound(int nargs) {
 			int submenu = g_lingo->pop().asInt();
 			int menu = g_lingo->pop().asInt();
 
-			if (menu <= 9 || menu >= 16)
+			if (menu < kMinSampledMenu || menu > kMaxSampledMenu)
 				warning("LB::puppetSound: menu number is not available");
 
 			sound->setPuppetSound(SoundID(kSoundExternal, menu, submenu), 1);

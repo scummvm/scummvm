@@ -48,6 +48,10 @@ struct FadeParams {
 		startVol(sv), targetVol(tv), totalTicks(tt), startTicks(st), lapsedTicks(0), fadeIn(f) {}
 };
 
+const uint16 kMinSampledMenu = 10;
+const uint16 kMaxSampledMenu = 15;
+const uint16 kNumSampledMenus = kMaxSampledMenu - kMinSampledMenu + 1;
+
 struct ExternalSoundID {
 	uint16 menu;
 	uint16 submenu;
@@ -156,7 +160,7 @@ private:
 
 	bool _enable;
 
-	Common::HashMap<uint, Common::Array<AudioDecoder *> > _sampleSounds;
+	Common::Array<AudioDecoder *> _sampleSounds[kNumSampledMenus];
 
 public:
 	DirectorSound(Window *window);

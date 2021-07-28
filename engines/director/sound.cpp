@@ -263,10 +263,13 @@ bool DirectorSound::isChannelValid(uint8 soundChannel) {
 }
 
 void DirectorSound::loadSampleSounds(uint type) {
-	if (_sampleSounds.contains(type))
+	if (type < kMinSampledMenu || type > kMaxSampledMenu) {
+		warning("DirectorSound::loadSampleSounds: Invalid menu number %d", type);
 		return;
+	}
 
-	_sampleSounds[type] = Common::Array<AudioDecoder *>();
+	if (!_sampleSounds[type - kMinSampledMenu].empty())
+		return;
 
 	// trying to load external sample sounds
 	// lazy loading
@@ -310,18 +313,19 @@ void DirectorSound::loadSampleSounds(uint type) {
 
 		SNDDecoder *ad = new SNDDecoder();
 		ad->loadExternalSoundStream(*csndData);
-		_sampleSounds[type].push_back(ad);
+		_sampleSounds[type - kMinSampledMenu].push_back(ad);
 	}
 
 	delete csndData;
 }
 
 void DirectorSound::unloadSampleSounds() {
-	for (Common::HashMap<uint, Common::Array<AudioDecoder *> >::iterator it = _sampleSounds.begin(); it != _sampleSounds.end(); ++it)
-		for (uint i = 0; i < it->_value.size(); i++)
-			delete it->_value[i];
-	
-	_sampleSounds.clear();
+	for (uint i = 0; i < kNumSampledMenus; i++) {
+		for (uint j = 0; j < _sampleSounds[i].size(); j++) {
+			delete _sampleSounds[i][j];
+		}
+		_sampleSounds[i].clear();
+	}
 }
 
 void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundChannel) {
@@ -332,11 +336,17 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 	if (isChannelActive(soundChannel) && checkLastPlaySound(soundChannel, soundId))
 		return;
 
-	if (!_sampleSounds.contains(menu))
+	if (menu < kMinSampledMenu || menu > kMaxSampledMenu) {
+		warning("DirectorSound::playExternalSound: Invalid menu number %d", menu);
+		return;
+	}
+
+	Common::Array<AudioDecoder *> &menuSounds = _sampleSounds[menu - kMinSampledMenu];
+	if (menuSounds.empty())
 		loadSampleSounds(menu);
 
-	if (1 <= submenu && submenu <= _sampleSounds[menu].size()) {
-		playStream(*(_sampleSounds[menu][submenu - 1]->getAudioStream()), soundChannel);
+	if (1 <= submenu && submenu <= menuSounds.size()) {
+		playStream(*(menuSounds[submenu - 1]->getAudioStream()), soundChannel);
 		setLastPlaySound(soundChannel, soundId);
 	} else {
 		warning("DirectorSound::playExternalSound: Could not find sound %d %d", menu, submenu);
