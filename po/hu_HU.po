@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-28 11:37+0000\n"
-"PO-Revision-Date: 2021-07-22 04:37+0000\n"
+"PO-Revision-Date: 2021-07-28 18:42+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -2309,13 +2309,6 @@ msgid "Error"
 msgstr "Hiba"
 
 #: engines/engine.cpp:519
-#, fuzzy
-#| msgid ""
-#| "You appear to be playing this game directly\n"
-#| "from the CD. This is known to cause problems,\n"
-#| "and it is therefore recommended that you copy\n"
-#| "the data files to your hard disk instead.\n"
-#| "See the Documentation (CD audio) for details."
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2330,13 +2323,6 @@ msgstr ""
 "A részletek a Dokumentáció (CD hang) részében."
 
 #: engines/engine.cpp:543
-#, fuzzy
-#| msgid ""
-#| "This game has audio tracks in its disk. These\n"
-#| "tracks need to be ripped from the disk using\n"
-#| "an appropriate CD audio extracting tool in\n"
-#| "order to listen to the game's music.\n"
-#| "See the Documentation (CD audio) for details."
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -2344,8 +2330,8 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"A játékhoz audiósávok tartoznak a lemezen\n"
-"ezeket a sávokat másold ki egy megfelelõ\n"
+"A játék CD-jén hangsávok vannnak. Ezeket\n"
+"a sávokat másold ki a CD-ről egy megfelelõ\n"
 "CD audió kitömörítõ programmal\n"
 "hogy a játék zenéje hallható legyen.\n"
 "A részletek a Dokumentáció (CD audio) részében."
@@ -6182,16 +6168,16 @@ msgstr ""
 "legyen, lehetővé téve a 'képarány korrekció' használatát"
 
 #: engines/scumm/detection.cpp:197
-#, fuzzy
-#| msgid "Play selected music record"
 msgid "Play simplified music"
-msgstr "A kiválasztott zene lejátszása"
+msgstr "Egyszerűsített zene lejátszás"
 
 #: engines/scumm/detection.cpp:198
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
 msgstr ""
+"Ezt a zenét feltehetően alacsony kategóriájú Mac-eknek szánták, és csak egy "
+"csatornát használ."
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
