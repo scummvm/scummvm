@@ -119,6 +119,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      This means that the GOG and Steam versions will no longer accept incorrect
      numbers, e.g. for Edna's phone number. (Why are they selling a cracked
      version anyway?!)
+   - Added support for Low quality music in Macintosh version of Loom.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
