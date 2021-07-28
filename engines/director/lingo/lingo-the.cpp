@@ -380,7 +380,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheBeepOn);
 		break;
 	case kTheButtonStyle:
-		getTheEntitySTUB(kTheButtonStyle);
+		d.type = INT;
+		d.u.i = g_director->_wm->_mode & Graphics::kWMModeButtonDialogStyle;
 		break;
 	case kTheCast:
 		d = getTheCast(id, field);
