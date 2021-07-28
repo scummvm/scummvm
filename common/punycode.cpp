@@ -195,7 +195,7 @@ bool punycode_hasprefix(const String src) {
 }
 
 bool punycode_needEncode(const String src) {
-	for (int si = 0; si < src.size(); si++) {
+	for (uint si = 0; si < src.size(); si++) {
 		if (src[si] & 0x80 || src[si] < 0x20) {
 			return true;
 		}
@@ -225,20 +225,20 @@ String punycode_decode(const String src1) {
 
 	String dst;
 
-	for (int i = 0; i < di; i++) {
+	for (size_t i = 0; i < di; i++) {
 		dst += src[i];
 	}
 
 	size_t b = di;
-	int i = 0;
-	int n = INITIAL_N;
-	int bias = INITIAL_BIAS;
+	size_t i = 0;
+	size_t n = INITIAL_N;
+	size_t bias = INITIAL_BIAS;
 
 	for (int si = b + (b > 0 ? 1 : 0); si < srclen; di++) {
-		int org_i = i;
+		size_t org_i = i;
 
 		for (int w = 1, k = BASE; true; k += BASE) {
-			int digit = decode_digit(src[si++]);
+			size_t digit = decode_digit(src[si++]);
 
 			if (digit == SMAX) {
 				warning("punycode_decode: incorrect digit");
@@ -299,7 +299,7 @@ String punycode_decode(const String src1) {
 String punycode_encodefilename(const String src) {
 	String dst;
 
-	for (int i = 0; i < src.size(); i++) {
+	for (uint i = 0; i < src.size(); i++) {
 		if ((byte)src[i] == 0x81) {	// In case we have our escape character present
 			dst += '\x81';
 			dst += '\x79';
@@ -337,7 +337,7 @@ String punycode_decodefilename(const String src1) {
 	if (src == src1)
 		return src;
 
-	for (int i = 0; i < src.size(); i++) {
+	for (uint i = 0; i < src.size(); i++) {
 		if ((byte)src[i] == 0x81 && i + 1 < src.size()) {
 			i++;
 			if (src[i] == 0x79)
