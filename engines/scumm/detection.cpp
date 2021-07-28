@@ -197,7 +197,7 @@ static const ExtraGuiOption macV3LowQualityMusic = {
 	_s("Play simplified music"),
 	_s("This music was presumably intended for low-end Macs, and uses only one channel."),
 	"mac_v3_low_quality_music",
-	false,
+	false
 };
 
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
