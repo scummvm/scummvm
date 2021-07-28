@@ -72,6 +72,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 }
 
 Window::~Window() {
+	delete _soundManager;
 	delete _currentMovie;
 	if (_macBinary) {
 		delete _macBinary;

@@ -312,6 +312,8 @@ void DirectorSound::loadSampleSounds(uint type) {
 		ad->loadExternalSoundStream(*csndData);
 		_sampleSounds[type].push_back(ad);
 	}
+
+	delete csndData;
 }
 
 void DirectorSound::unloadSampleSounds() {
