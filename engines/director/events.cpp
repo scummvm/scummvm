@@ -126,7 +126,7 @@ bool Movie::processEvent(Common::Event &event) {
 			_currentHandlingChannelId = 0;
 
 		// for the list style button, we still have chance to trigger events though button.
-		if (!(g_director->_wm->_mode & Graphics::kWMModeButtonDialogStyle) && g_director->_wm->_mouseDown) {
+		if (!(g_director->_wm->_mode & Graphics::kWMModeButtonDialogStyle) && g_director->_wm->_mouseDown && g_director->_wm->_hilitingWidget) {
 			if (g_director->getVersion() < 400)
 				spriteId = sc->getActiveSpriteIDFromPos(pos);
 			else
@@ -173,6 +173,7 @@ bool Movie::processEvent(Common::Event &event) {
 			_currentHandlingChannelId = spriteId;
 			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite()) {
 				_currentHiliteChannelId = spriteId;
+				g_director->_wm->_hilitingWidget = true;
 				g_director->getCurrentWindow()->setDirty(true);
 				g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
 			}
@@ -201,6 +202,8 @@ bool Movie::processEvent(Common::Event &event) {
 			g_director->getCurrentWindow()->setDirty(true);
 			g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
 		}
+
+		g_director->_wm->_hilitingWidget = false;
 
 		debugC(3, kDebugEvents, "event: Button Up @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), _currentHandlingChannelId);
 
