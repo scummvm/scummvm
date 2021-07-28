@@ -548,6 +548,23 @@ void LB::b_addProp(int nargs) {
 
 	PCell cell = PCell(prop, value);
 	list.u.parr->arr.push_back(cell);
+
+	if (list.u.parr->_sorted) {
+		if (list.u.parr->arr.empty())
+			list.u.parr->arr.push_back(cell);
+		else {
+			uint pos = list.u.parr->arr.size();
+			for (uint i = 0; i < list.u.parr->arr.size(); i++) {
+				if (list.u.parr->arr[i].p.asString() > cell.p.asString()) {
+					pos = i;
+					break;
+				}
+			}
+			list.u.parr->arr.insert_at(pos, cell);
+		}
+	} else {
+		list.u.parr->arr.push_back(cell);
+	}
 }
 
 void LB::b_append(int nargs) {
