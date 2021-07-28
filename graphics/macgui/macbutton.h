@@ -56,6 +56,7 @@ public:
 
 	void setHilite(bool hilite);
 	void setCheckBoxType(int type);
+	void setCheckBoxAccess(int type) { _checkBoxAccess = type; }
 
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
 	virtual bool draw(bool forceRedraw = false) override;
@@ -70,6 +71,7 @@ private:
 	MacPlotData _pd;
 	bool _invertInner;
 	int _checkBoxType;
+	int _checkBoxAccess;
 };
 
 } // End of namespace Graphics

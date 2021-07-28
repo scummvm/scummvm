@@ -43,6 +43,7 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 void MacButton::init() {
 	_invertInner = false;
 	_checkBoxType = 0;
+	_checkBoxAccess = 0;
 
 	switch (_buttonType) {
 	case kCheckBox:
@@ -193,7 +194,22 @@ bool MacButton::processEvent(Common::Event &event) {
 		break;
 	case Common::EVENT_LBUTTONUP:
 		setActive(false);
-		_invertInner = !_invertInner;
+
+		switch (_checkBoxAccess) {
+		case 0:
+			_invertInner = !_invertInner;
+			break;
+		case 1:
+			_invertInner = true;
+			break;
+		case 2:
+			// no op, type 2 will prevent user from setting checkboxes
+			break;
+		default:
+			warning("MacButton::processEvent can not handle checkBoxAccess with type %d", _checkBoxAccess);
+			break;
+		}
+
 		_wm->_hilitingWidget = false;
 		break;
 	default:
