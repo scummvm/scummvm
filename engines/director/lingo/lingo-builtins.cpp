@@ -1582,6 +1582,12 @@ void LB::b_alert(int nargs) {
 	Common::String alert = d.asString();
 	warning("b_alert(%s)", alert.c_str());
 
+	if (g_director->getGameGID() == GID_TEST) {
+		warning("b_alert: Skipping due to tests");
+
+		return;
+	}
+
 	if (!debugChannelSet(-1, kDebugFewFramesOnly)) {
 		g_director->_wm->clearHandlingWidgets();
 		GUI::MessageDialog dialog(alert.c_str(), "OK");
