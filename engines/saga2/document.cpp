@@ -160,13 +160,13 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 	origText = new char[textSize + 1];
 
 	// and fill it
-	strcpy(origText, buffer);
+	Common::strlcpy(origText, buffer, textSize);
 
 	// make a working buffer
 	text = new char[textSize + 1];
 
 	// and fill it
-	strcpy(text, origText);
+	Common::strlcpy(text, origText, textSize);
 
 	textFont        = font;
 	textHeight      = (textFont ? textFont->height : 0);
@@ -357,6 +357,7 @@ bool CDocument::checkForPageBreak(char *string, uint16 index, int32 &offset) {
 
 	// get the current index into the string
 	char    *strIndex       = string + index;
+	char *strAfter;
 
 	// page break detected
 	if (strIndex[1] == dPageBreak[0] &&
@@ -364,14 +365,18 @@ bool CDocument::checkForPageBreak(char *string, uint16 index, int32 &offset) {
 		// eat the page breaks chars
 		// tie off the end
 		strIndex[0] = 0;
+		strAfter = new char[textSize];
+		Common::strlcpy(strAfter, &strIndex[3], textSize);
 
 		// string them together
-		strcat(&strIndex[0], &strIndex[2 + 1]);
+		strcat(&strIndex[0], strAfter);
 
 		// take the offset to the end of this line
 		offset = index;
 
 		// and set the new page flag
+
+		delete[] strAfter;
 		return true;
 	}
 
@@ -461,7 +466,7 @@ bool CDocument::checkForImage(char      *string,
 
 void CDocument::makePages(void) {
 	// copy the original text back to the working buffer
-	strcpy(text, origText);
+	Common::strlcpy(text, origText, textSize);
 
 
 	char    *str            = text;
@@ -692,10 +697,10 @@ void appendBookText(char *string) {
 void buildText(uint16 textScript) {
 	if (textScript > 0) {
 		// clear out the scroll text
-		strcpy(bookText, "");
+		Common::strlcpy(bookText, "", sizeof(bookText));
 
 		if (textScript == resImports->reserved[0]) {
-			strcpy(bookText, PROGRAM_ABOUT);
+			Common::strlcpy(bookText, PROGRAM_ABOUT, sizeof(bookText));
 		}
 
 		// generate the text for the book
