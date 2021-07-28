@@ -97,7 +97,7 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("AGSPalRender"))
 		return new AGSPalRender::AGSPalRender();
 
-	if (fname.equalsIgnoreCase("ags_shell"))
+	if (fname.equalsIgnoreCase("ags_shell") || fname.equalsIgnoreCase("agsshell"))
 		return new AGSShell::AGSShell();
 
 	if (fname.equalsIgnoreCase("AGSSnowRain") || fname.equalsIgnoreCase("ags_snowrain"))
