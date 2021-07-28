@@ -604,13 +604,13 @@ int Actor::actorWalkStep() {
 			_walkdata.yfrac -= _v3stepThreshold;
 		}
 	} else {
-		tmpX = (_pos.x * (1 << 16)) + _walkdata.xfrac + (_walkdata.deltaXFactor / 256) * _scalex;
+		tmpX = (_pos.x << 16) + _walkdata.xfrac + (_walkdata.deltaXFactor >> 8) * _scalex;
 		_walkdata.xfrac = (uint16)tmpX;
-		_pos.x = (tmpX / (1 << 16));
+		_pos.x = (tmpX >> 16);
 
-		tmpY = (_pos.y * (1 << 16)) + _walkdata.yfrac + (_walkdata.deltaYFactor / 256) * _scaley;
+		tmpY = (_pos.y << 16) + _walkdata.yfrac + (_walkdata.deltaYFactor >> 8) * _scaley;
 		_walkdata.yfrac = (uint16)tmpY;
-		_pos.y = (tmpY / (1 << 16));
+		_pos.y = (tmpY >> 16);
 	}
 
 	if (ABS(_pos.x - _walkdata.cur.x) > distX) {
