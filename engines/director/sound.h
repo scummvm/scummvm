@@ -156,7 +156,7 @@ private:
 
 	bool _enable;
 
-	Common::HashMap<uint, Common::Array<AudioDecoder *>> _sampleSounds;
+	Common::HashMap<uint, Common::Array<AudioDecoder *> > _sampleSounds;
 
 public:
 	DirectorSound(Window *window);
