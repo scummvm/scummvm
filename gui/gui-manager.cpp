@@ -290,6 +290,11 @@ void GuiManager::redraw() {
 	if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 2)
 		shading = ThemeEngine::kShadingNone;
 
+	// Reset any custom RTL paddings set by stacked dialogs when we go back to the top
+	if (useRTL() && _dialogStack.size() == 1) {
+		setDialogPaddings(0, 0);
+	}
+
 	switch (_redrawStatus) {
 		case kRedrawCloseDialog:
 		case kRedrawFull:
