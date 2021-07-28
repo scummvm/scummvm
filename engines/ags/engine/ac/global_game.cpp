@@ -772,6 +772,7 @@ void SetGraphicalVariable(const char *varName, int p_value) {
 
 int WaitImpl(int skip_type, int nloops) {
 	_GP(play).wait_counter = nloops;
+	_GP(play).wait_skipped_by = SKIP_NONE;
 	_GP(play).wait_skipped_by = SKIP_AUTOTIMER; // we set timer flag by default to simplify that case
 	_GP(play).wait_skipped_by_data = 0;
 	_GP(play).key_skip_wait = skip_type;
@@ -783,11 +784,7 @@ int WaitImpl(int skip_type, int nloops) {
 		return (_GP(play).wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK)) != 0 ? 1 : 0;
 	}
 	// >= 3.6.0 return positive keycode, negative mouse button code, or 0 as time-out
-	switch (_GP(play).wait_skipped_by) {
-	case SKIP_KEYPRESS: return _GP(play).wait_skipped_by_data;
-	case SKIP_MOUSECLICK: return -(_GP(play).wait_skipped_by_data + 1); // convert to 1-based code and negate
-	default: return 0;
-	}
+	return _GP(play).GetWaitSkipResult();
 }
 
 void scrWait(int nloops) {

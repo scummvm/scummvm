@@ -158,8 +158,8 @@ struct GameState {
 	int   bg_frame = 0, bg_anim_delay = 0;  // for animating backgrounds
 	int   music_vol_was = 0;  // before the volume drop
 	short wait_counter = 0;
-	char  wait_skipped_by = 0; // tells how last wait was skipped [not serialized]
-	int   wait_skipped_by_data = 0; // extended data telling how last wait was skipped [not serialized]
+	char  wait_skipped_by = 0; // tells how last blocking wait was skipped [not serialized]
+	int   wait_skipped_by_data = 0; // extended data telling how last blocking wait was skipped [not serialized]
 	short mboundx1 = 0, mboundx2 = 0, mboundy1 = 0, mboundy2 = 0;
 	int   fade_effect = 0;
 	int   bg_frame_locked = 0;
@@ -353,6 +353,14 @@ struct GameState {
 	void SetIgnoreInput(int timeout_ms);
 	// Clears ignore input state
 	void ClearIgnoreInput();
+
+	// Set how the last blocking wait was skipped
+	void SetWaitSkipResult(int how, int data = 0);
+	// Returns the code of the latest blocking wait skip method.
+	// * positive value means a key code;
+	// * negative value means a -(mouse code + 1);
+	// * 0 means timeout.
+	int GetWaitSkipResult() const;
 
 	//
 	// Voice speech management

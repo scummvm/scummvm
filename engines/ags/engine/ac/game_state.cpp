@@ -370,6 +370,20 @@ void GameState::ClearIgnoreInput() {
 	_ignoreUserInputUntilTime = AGS_Clock::now();
 }
 
+void GameState::SetWaitSkipResult(int how, int data) {
+	wait_counter = 0;
+	wait_skipped_by = how;
+	wait_skipped_by_data = data;
+}
+
+int GameState::GetWaitSkipResult() const {
+	switch (wait_skipped_by) {
+	case SKIP_KEYPRESS: return wait_skipped_by_data;
+	case SKIP_MOUSECLICK: return -(wait_skipped_by_data + 1); // convert to 1-based code and negate
+	default: return 0;
+	}
+}
+
 bool GameState::IsBlockingVoiceSpeech() const {
 	return speech_has_voice && speech_voice_blocking;
 }

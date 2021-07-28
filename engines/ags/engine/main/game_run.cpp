@@ -208,12 +208,12 @@ static void check_mouse_controls() {
 
 		if (_GP(play).fast_forward || _GP(play).IsIgnoringInput()) { /* do nothing if skipping cutscene or input disabled */
 		} else if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_MOUSECLICK) != 0) {
-			_GP(play).wait_counter = 0;
-			_GP(play).wait_skipped_by = SKIP_MOUSECLICK;
-			_GP(play).wait_skipped_by_data = mbut;
+			_GP(play).SetWaitSkipResult(SKIP_MOUSECLICK, mbut);
 		} else if (_GP(play).text_overlay_on > 0) {
-			if (_GP(play).cant_skip_speech & SKIP_MOUSECLICK)
+			if (_GP(play).cant_skip_speech & SKIP_MOUSECLICK) {
 				remove_screen_overlay(_GP(play).text_overlay_on);
+				_GP(play).SetWaitSkipResult(SKIP_MOUSECLICK, mbut);
+			}
 		} else if (!IsInterfaceEnabled());  // blocking cutscene, ignore mouse
 		else if (pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut + 1)) {
 			// plugin took the click
@@ -436,16 +436,17 @@ static void check_keyboard_controls() {
 			// check if it requires a specific keypress
 			if ((_GP(play).skip_speech_specific_key > 0) &&
 				(kgn != _GP(play).skip_speech_specific_key)) {
-			} else
+			} else {
 				remove_screen_overlay(_GP(play).text_overlay_on);
+				_GP(play).SetWaitSkipResult(SKIP_KEYPRESS, kgn);
+			}
 		}
 
 		return;
 	}
 
 	if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) != 0) {
-		_GP(play).wait_counter = -1;
-		debug_script_log("Keypress code %d ignored - in Wait", kgn);
+		_GP(play).SetWaitSkipResult(SKIP_KEYPRESS, kgn);
 		return;
 	}
 

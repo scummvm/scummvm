@@ -738,6 +738,7 @@ void engine_init_game_settings() {
 	_GP(play).music_queue_size = 0;
 	_GP(play).shakesc_length = 0;
 	_GP(play).wait_counter = 0;
+	_GP(play).SetWaitSkipResult(SKIP_NONE);
 	_GP(play).key_skip_wait = SKIP_NONE;
 	_GP(play).cur_music_number = -1;
 	_GP(play).music_repeat = 1;
