@@ -556,7 +556,22 @@ void LB::b_append(int nargs) {
 
 	TYPECHECK(list, ARRAY);
 
-	list.u.farr->arr.push_back(value);
+	if (list.u.farr->_sorted) {
+		if (list.u.farr->arr.empty())
+			list.u.farr->arr.push_back(value);
+		else {
+			uint pos = list.u.farr->arr.size();
+			for (uint i = 0; i < list.u.farr->arr.size(); i++) {
+				if (list.u.farr->arr[i].asInt() > value.asInt()) {
+					pos = i;
+					break;
+				}
+			}
+			list.u.farr->arr.insert_at(pos, value);
+		}
+	} else {
+		list.u.farr->arr.push_back(value);
+	}
 }
 
 void LB::b_count(int nargs) {
@@ -976,9 +991,11 @@ void LB::b_sort(int nargs) {
 
 	if (list.type == ARRAY) {
 		Common::sort(list.u.farr->arr.begin(), list.u.farr->arr.end(), sortArrayHelper);
+		list.u.farr->_sorted = true;
 
 	} else if (list.type == PARRAY) {
 		Common::sort(list.u.parr->arr.begin(), list.u.parr->arr.end(), sortPArrayHelper);
+		list.u.parr->_sorted = true;
 
 	} else {
 		warning("LB::b_sort can not handle argument of type %s", list.type2str());
