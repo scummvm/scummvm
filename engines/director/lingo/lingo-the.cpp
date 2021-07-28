@@ -394,7 +394,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = g_director->_centerStage;
 		break;
 	case kTheCheckBoxAccess:
-		getTheEntitySTUB(kTheCheckBoxAccess);
+		d.type = INT;
+		d.u.i = g_director->getCurrentMovie()->_checkBoxAccess;
 		break;
 	case kTheCheckBoxType:
 		d.type = INT;
@@ -901,7 +902,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_director->_centerStage = d.asInt();
 		break;
 	case kTheCheckBoxAccess:
-		setTheEntitySTUB(kTheCheckBoxAccess);
+		g_director->getCurrentMovie()->_checkBoxAccess = d.asInt();
 		break;
 	case kTheCheckBoxType:
 		g_director->getCurrentMovie()->_checkBoxType = d.asInt();

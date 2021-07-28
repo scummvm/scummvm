@@ -158,6 +158,7 @@ public:
 	int _selEnd;
 
 	int _checkBoxType;
+	int _checkBoxAccess;
 
 	uint16 _currentHiliteChannelId;
 

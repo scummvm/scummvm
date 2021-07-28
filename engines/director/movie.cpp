@@ -79,6 +79,7 @@ Movie::Movie(Window *window) {
 	_selStart = -1;
 
 	_checkBoxType = 0;
+	_checkBoxAccess = 0;
 }
 
 Movie::~Movie() {
