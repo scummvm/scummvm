@@ -151,6 +151,7 @@ bool Movie::processEvent(Common::Event &event) {
 				spriteId = sc->getActiveSpriteIDFromPos(pos);
 			else
 				spriteId = sc->getMouseSpriteIDFromPos(pos);
+
 			_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
 			_currentHandlingChannelId = spriteId;
 

@@ -179,8 +179,8 @@ bool MacButton::processEvent(Common::Event &event) {
 		if (_wm->_mouseDown) {
 			if (_wm->_mode & kWMModeButtonDialogStyle)
 				return true;
-			else if (!_dims.contains(_wm->_lastClickPos))
-				return false;
+			// hovered widget in macwindow will help us set the button status to non-active.
+			// so we only care about setting active here is ok.
 
 			setActive(true);
 		}
