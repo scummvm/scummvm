@@ -1240,22 +1240,22 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	int zoom_level = 100;
 
 	// calculate the zoom level
-	if (_G(objs)[aa].flags & OBJF_USEROOMSCALING) {
+	if ((_G(objs)[aa].flags & OBJF_USEROOMSCALING) == 0) {
+		zoom_level = _G(objs)[aa].zoom;
+	} else {
 		int onarea = get_walkable_area_at_location(_G(objs)[aa].x, _G(objs)[aa].y);
 
 		if ((onarea <= 0) && (_GP(thisroom).WalkAreas[0].ScalingFar == 0)) {
 			// just off the edge of an area -- use the scaling we had
 			// while on the area
-			zoom_level = _G(objs)[aa].last_zoom;
+			zoom_level = _G(objs)[aa].zoom;
 		} else
 			zoom_level = get_area_scaling(onarea, _G(objs)[aa].x, _G(objs)[aa].y);
-
-		if (zoom_level != 100)
-			scale_sprite_size(_G(objs)[aa].num, zoom_level, &sprwidth, &sprheight);
-
 	}
-	// save the zoom level for next time
-	_G(objs)[aa].last_zoom = zoom_level;
+
+	if (zoom_level != 100)
+		scale_sprite_size(_G(objs)[aa].num, zoom_level, &sprwidth, &sprheight);
+	_G(objs)[aa].zoom = zoom_level;
 
 	// save width/height into parameters if requested
 	if (drawnWidth)
@@ -1423,7 +1423,7 @@ void prepare_objects_for_drawing() {
 				usebasel += _GP(thisroom).Height;
 			}
 		} else if (_G(walkBehindMethod) == DrawAsSeparateCharSprite) {
-			sort_out_char_sprite_walk_behind(useindx, atxp, atyp, usebasel, _G(objs)[aa].last_zoom, _G(objs)[aa].last_width, _G(objs)[aa].last_height);
+			sort_out_char_sprite_walk_behind(useindx, atxp, atyp, usebasel, _G(objs)[aa].zoom, _G(objs)[aa].last_width, _G(objs)[aa].last_height);
 		} else if ((!actspsIntact) && (_G(walkBehindMethod) == DrawOverCharSprite)) {
 			sort_out_walk_behinds(_G(actsps)[useindx], atxp, atyp, usebasel);
 		}
@@ -1546,10 +1546,12 @@ void prepare_characters_for_drawing() {
 		onarea = get_walkable_area_at_character(aa);
 		_G(our_eip) = 332;
 
+		// calculates the zoom level
 		if (chin->flags & CHF_MANUALSCALING)  // character ignores scaling
 			zoom_level = _G(charextra)[aa].zoom;
 		else if ((onarea <= 0) && (_GP(thisroom).WalkAreas[0].ScalingFar == 0)) {
 			zoom_level = _G(charextra)[aa].zoom;
+			// NOTE: room objects don't have this fix
 			if (zoom_level == 0)
 				zoom_level = 100;
 		} else

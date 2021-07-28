@@ -573,7 +573,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 			_G(croom)->obj[cc].moving = -1;
 			_G(croom)->obj[cc].flags = _GP(thisroom).Objects[cc].Flags;
 			_G(croom)->obj[cc].baseline = -1;
-			_G(croom)->obj[cc].last_zoom = 100;
+			_G(croom)->obj[cc].zoom = 100;
 			_G(croom)->obj[cc].last_width = 0;
 			_G(croom)->obj[cc].last_height = 0;
 			_G(croom)->obj[cc].blocking_width = 0;

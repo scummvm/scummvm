@@ -36,17 +36,13 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-
-
-
 RoomObject::RoomObject() {
 	x = y = 0;
 	transparent = 0;
 	tint_r = tint_g = 0;
 	tint_b = tint_level = 0;
 	tint_light = 0;
-	last_zoom = 0;
+	zoom = 0;
 	last_width = last_height = 0;
 	num = 0;
 	baseline = 0;
