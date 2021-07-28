@@ -685,7 +685,7 @@ char            bookText[textSize] = { "" };
 
 void appendBookText(char *string) {
 	if (string) {
-		strncat(bookText, string, textSize - 1);
+		Common::strlcat(bookText, string, textSize - 1);
 		bookText[textSize - 1] = 0;
 	}
 }
