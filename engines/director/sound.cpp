@@ -333,7 +333,7 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 	if (!_sampleSounds.contains(menu))
 		loadSampleSounds(menu);
 
-	if ((uint)submenu<= _sampleSounds[menu].size()) {
+	if (1 <= submenu && submenu <= _sampleSounds[menu].size()) {
 		playStream(*(_sampleSounds[menu][submenu - 1]->getAudioStream()), soundChannel);
 		setLastPlaySound(soundChannel, soundId);
 	} else {
