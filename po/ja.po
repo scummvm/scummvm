@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-28 11:37+0000\n"
-"PO-Revision-Date: 2021-07-23 08:25+0000\n"
+"PO-Revision-Date: 2021-07-29 08:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -2296,13 +2296,6 @@ msgid "Error"
 msgstr "エラー"
 
 #: engines/engine.cpp:519
-#, fuzzy
-#| msgid ""
-#| "You appear to be playing this game directly\n"
-#| "from the CD. This is known to cause problems,\n"
-#| "and it is therefore recommended that you copy\n"
-#| "the data files to your hard disk instead.\n"
-#| "See the Documentation (CD audio) for details."
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2310,20 +2303,13 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"このゲームを直接プレイしているようです\n"
-"CDから。これは問題を引き起こすことが知られています、\n"
-"したがって、コピーすることをお勧めします\n"
-"代わりに、データファイルをハードディスクに保存します。\n"
-"詳細については、ドキュメント（CDオーディオ）を参照してください。"
+"このゲームをCDから直接実行すると\n"
+"問題を起こす事が知られています。\n"
+"データファイルをHDDにコピーする事を\n"
+"おすすめします。\n"
+"詳細はドキュメント(CDオーディオ)をご覧下さい。"
 
 #: engines/engine.cpp:543
-#, fuzzy
-#| msgid ""
-#| "This game has audio tracks in its disk. These\n"
-#| "tracks need to be ripped from the disk using\n"
-#| "an appropriate CD audio extracting tool in\n"
-#| "order to listen to the game's music.\n"
-#| "See the Documentation (CD audio) for details."
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -2331,11 +2317,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"このゲームのディスクにはオーディオトラックがあります。これら\n"
-"トラックは、を使用してディスクからリッピングする必要があります\n"
-"の適切なCDオーディオ抽出ツール\n"
-"ゲームの音楽を聴くため。\n"
-"詳細については、ドキュメント（CDオーディオ）を参照してください。"
+"このゲームにはオーディオトラックが\n"
+"収録されています。\n"
+"これを聞くには、適切なツールでCDから\n"
+"リッピングする必要があります。\n"
+"詳細はドキュメント(CDオーディオ)をご覧下さい。"
 
 #: engines/engine.cpp:576 engines/metaengine.cpp:345 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:253 engines/sky/metaengine.cpp:176
@@ -6125,16 +6111,14 @@ msgstr ""
 "さにします"
 
 #: engines/scumm/detection.cpp:197
-#, fuzzy
-#| msgid "Play selected music record"
 msgid "Play simplified music"
-msgstr "選択したレコードを再生"
+msgstr "簡易再生"
 
 #: engines/scumm/detection.cpp:198
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
-msgstr ""
+msgstr "この音楽はローエンドなMacでの再生を想定したと思われ、1チャンネルしか使いません。"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
