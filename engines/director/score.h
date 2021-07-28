@@ -129,7 +129,6 @@ public:
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
-	Common::Array<AudioDecoder *> _sampleSounds;
 
 	byte _currentFrameRate;
 

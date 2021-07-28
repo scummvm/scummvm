@@ -1936,32 +1936,36 @@ void LB::b_puppetSound(int nargs) {
 		return;
 	}
 
-	sound->_puppet = true;
-	if (nargs == 1 || g_director->getVersion() >= 400) {
-		Datum castMember = g_lingo->pop();
+	// Most variants of puppetSound don't actually play the sound
+	// until the playback head moves or updateStage is called.
+	// So we'll just queue it to be played later.
+
+	if (nargs == 1) {
+		CastMemberID castMember = g_lingo->pop().asMemberID();
 
 		// in D2 manual p206, puppetSound 0 will turn off the puppet status of sound
-		if (castMember.asInt() == 0)
-			sound->_puppet = false;
-
-		uint channel = 1;
-		if (nargs == 2)
-			channel = g_lingo->pop().asInt();
-
-		sound->playCastMember(castMember.asMemberID(), channel);
+		sound->setPuppetSound(castMember, 1);
 	} else {
-		// in D2/3/3.1 interactivity manual, 2 args represent the menu and submenu sounds
-		uint submenu = g_lingo->pop().asInt();
-		uint menu = g_lingo->pop().asInt();
+		if (g_director->getVersion() < 400) {
+			// in D2/3/3.1 interactivity manual, 2 args represent the menu and submenu sounds
+			int submenu = g_lingo->pop().asInt();
+			int menu = g_lingo->pop().asInt();
 
-		if (menu <= 9 || menu >= 16)
-			warning("LB::puppetSound: menu number is not available");
+			if (menu <= 9 || menu >= 16)
+				warning("LB::puppetSound: menu number is not available");
 
-		if (score->_sampleSounds.empty())
-			score->loadSampleSounds(menu);
+			sound->setPuppetSound(SoundID(kSoundExternal, menu, submenu), 1);
+		} else {
+			// Two-argument puppetSound is undocumented in D4.
+			// It is however documented in the D5 Lingo dictionary.
+			CastMemberID castMember = g_lingo->pop().asMemberID();
+			int channel = g_lingo->pop().asInt();
+			sound->setPuppetSound(castMember, channel);
 
-		if (submenu <= score->_sampleSounds.size())
-			sound->playExternalSound(score->_sampleSounds[submenu - 1], 1, submenu);
+			// The D4 two-arg variant of puppetSound plays
+			// immediately for some inexplicable reason.
+			sound->playPuppetSound(channel);
+		}
 	}
 }
 

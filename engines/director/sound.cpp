@@ -57,11 +57,11 @@ DirectorSound::DirectorSound(Window *window) : _window(window) {
 		&_pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
 
 	_enable = true;
-	_puppet = false;
 }
 
 DirectorSound::~DirectorSound() {
 	this->stopSound();
+	unloadSampleSounds();
 	delete _speaker;
 }
 
@@ -104,6 +104,17 @@ void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, &stream, -1, getChannelVolume(soundChannel));
 }
 
+void DirectorSound::playSound(SoundID soundID, uint8 soundChannel) {
+	switch (soundID.type) {
+	case kSoundCast:
+		playCastMember(CastMemberID(soundID.u.cast.member, soundID.u.cast.castLib), soundChannel);
+		break;
+	case kSoundExternal:
+		playExternalSound(soundID.u.external.menu, soundID.u.external.submenu, soundChannel);
+		break;
+	}
+}
+
 void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bool allowRepeat) {
 	if (!isChannelValid(soundChannel))
 		return;
@@ -116,7 +127,7 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 			if (soundCast->_type != kCastSound) {
 				warning("DirectorSound::playCastMember: attempted to play a non-SoundCastMember %s", memberID.asString().c_str());
 			} else {
-				if (!allowRepeat && checkLastPlayCast(soundChannel, memberID))
+				if (!allowRepeat && checkLastPlaySound(soundChannel, memberID))
 					return;
 				bool looping = ((SoundCastMember *)soundCast)->_looping;
 				AudioDecoder *ad = ((SoundCastMember *)soundCast)->_audio;
@@ -133,7 +144,7 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 					return;
 				}
 				playStream(*as, soundChannel);
-				setLastPlayCast(soundChannel, memberID);
+				setLastPlaySound(soundChannel, memberID);
 			}
 		} else {
 			warning("DirectorSound::playCastMember: couldn't find %s", memberID.asString().c_str());
@@ -251,31 +262,99 @@ bool DirectorSound::isChannelValid(uint8 soundChannel) {
 	return true;
 }
 
-void DirectorSound::playExternalSound(AudioDecoder *ad, uint8 soundChannel, uint8 externalSoundID) {
+void DirectorSound::loadSampleSounds(uint type) {
+	if (_sampleSounds.contains(type))
+		return;
+
+	_sampleSounds[type] = Common::Array<AudioDecoder *>();
+
+	// trying to load external sample sounds
+	// lazy loading
+	uint32 tag = MKTAG('C', 'S', 'N', 'D');
+	uint id = 0xFF;
+	Archive *archive = nullptr;
+
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+		Common::Array<uint16> idList = it->_value->getResourceIDList(tag);
+		for (uint j = 0; j < idList.size(); j++) {
+			if ((idList[j] & 0xFF) == type) {
+				id = idList[j];
+				archive = it->_value;
+				break;
+			}
+		}
+	}
+
+	if (id == 0xFF) {
+		warning("Score::loadSampleSounds: can not find CSND resource with id %d", type);
+		return;
+	}
+
+	Common::SeekableReadStreamEndian *csndData = archive->getResource(tag, id);
+
+	/*uint32 flag = */ csndData->readUint32();
+
+	// the flag should be 0x604E
+	// i'm not sure what's that mean, but it occurs in those csnd files
+
+	// contains how many csnd data
+	uint16 num = csndData->readUint16();
+
+	// read the offset first;
+	Common::Array<uint32> offset(num);
+	for (uint i = 0; i < num; i++)
+		offset[i] = csndData->readUint32();
+
+	for (uint i = 0; i < num; i++) {
+		csndData->seek(offset[i]);
+
+		SNDDecoder *ad = new SNDDecoder();
+		ad->loadExternalSoundStream(*csndData);
+		_sampleSounds[type].push_back(ad);
+	}
+}
+
+void DirectorSound::unloadSampleSounds() {
+	for (Common::HashMap<uint, Common::Array<AudioDecoder *>>::iterator it = _sampleSounds.begin(); it != _sampleSounds.end(); ++it)
+		for (uint i = 0; i < it->_value.size(); i++)
+			delete it->_value[i];
+	
+	_sampleSounds.clear();
+}
+
+void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundChannel) {
 	if (!isChannelValid(soundChannel))
 		return;
 
-	// use castMemberID info to check, castLib -1 represent for externalSound
-	// this should be amended by some kind of union which contains CastMemberID and externalSound info
-	if (isChannelActive(soundChannel) && checkLastPlayCast(soundChannel, CastMemberID(externalSoundID, -1)))
+	SoundID soundId(kSoundExternal, menu, submenu);
+	if (isChannelActive(soundChannel) && checkLastPlaySound(soundChannel, soundId))
 		return;
 
-	playStream(*(ad->getAudioStream()), soundChannel);
-	setLastPlayCast(soundChannel, CastMemberID(externalSoundID, -1));
+	if (!_sampleSounds.contains(menu))
+		loadSampleSounds(menu);
+
+	if ((uint)submenu<= _sampleSounds[menu].size()) {
+		playStream(*(_sampleSounds[menu][submenu - 1]->getAudioStream()), soundChannel);
+		setLastPlaySound(soundChannel, soundId);
+	} else {
+		warning("DirectorSound::playExternalSound: Could not find sound %d %d", menu, submenu);
+	}
 }
 
 void DirectorSound::changingMovie() {
-	for (uint i = 0; i < _channels.size(); i++)
+	for (uint i = 0; i < _channels.size(); i++) {
 		_channels[i]._movieChanged = true;
+	}
+	unloadSampleSounds(); // TODO: we can possibly keep this between movies
 }
 
-void DirectorSound::setLastPlayCast(uint8 soundChannel, CastMemberID castMemberId) {
-	_channels[soundChannel - 1].lastPlayingCast = castMemberId;
+void DirectorSound::setLastPlaySound(uint8 soundChannel, SoundID soundId) {
+	_channels[soundChannel - 1].lastPlayingSound = soundId;
 	_channels[soundChannel - 1]._movieChanged = false;
 }
 
-bool DirectorSound::checkLastPlayCast(uint8 soundChannel, const CastMemberID &castMemberId) {
-	return !_channels[soundChannel - 1]._movieChanged && _channels[soundChannel - 1].lastPlayingCast == castMemberId;
+bool DirectorSound::checkLastPlaySound(uint8 soundChannel, const SoundID &soundId) {
+	return !_channels[soundChannel - 1]._movieChanged && _channels[soundChannel - 1].lastPlayingSound == soundId;
 }
 
 void DirectorSound::stopSound(uint8 soundChannel) {
@@ -284,7 +363,7 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 
 	cancelFade(soundChannel);
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
-	setLastPlayCast(soundChannel, CastMemberID(0, 0));
+	setLastPlaySound(soundChannel, SoundID());
 	return;
 }
 
@@ -293,7 +372,7 @@ void DirectorSound::stopSound() {
 		cancelFade(i + 1);
 
 		_mixer->stopHandle(_channels[i].handle);
-		setLastPlayCast(i + 1, CastMemberID(0, 0));
+		setLastPlaySound(i + 1, SoundID());
 	}
 
 	_mixer->stopHandle(_scriptSound);
@@ -302,6 +381,37 @@ void DirectorSound::stopSound() {
 
 void DirectorSound::systemBeep() {
 	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 500, 150);
+}
+
+bool DirectorSound::isChannelPuppet(uint8 soundChannel) {
+	if (!isChannelValid(soundChannel))
+		return false;
+
+	// cast member ID 0 means "not a puppet"
+	if (_channels[soundChannel - 1].puppet.type == kSoundCast && _channels[soundChannel - 1].puppet.u.cast.member == 0)
+		return false;
+
+	return true;
+}
+
+void DirectorSound::setPuppetSound(SoundID soundId, uint8 soundChannel) {
+	if (!isChannelValid(soundChannel))
+		return;
+
+	_channels[soundChannel - 1].newPuppet = true;
+	_channels[soundChannel - 1].puppet = soundId;
+}
+
+void DirectorSound::playPuppetSound(uint8 soundChannel) {
+	if (!isChannelValid(soundChannel))
+		return;
+
+	// only play if the puppet was just set
+	if (!_channels[soundChannel - 1].newPuppet)
+		return;
+
+	_channels[soundChannel - 1].newPuppet = false;
+	playSound(_channels[soundChannel - 1].puppet, soundChannel);
 }
 
 void DirectorSound::playFPlaySound() {

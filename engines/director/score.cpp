@@ -92,9 +92,6 @@ Score::~Score() {
 		for (Common::SortedArray<Label *>::iterator it = _labels->begin(); it != _labels->end(); ++it)
 			delete *it;
 
-	for (uint i = 0; i < _sampleSounds.size(); i++)
-		delete _sampleSounds[i];
-
 	delete _labels;
 }
 
@@ -713,84 +710,32 @@ void Score::playSoundChannel(uint16 frameId) {
 	debugC(5, kDebugLoading, "playSoundChannel(): Sound1 %s Sound2 %s", frame->_sound1.asString().c_str(), frame->_sound2.asString().c_str());
 	DirectorSound *sound = _window->getSoundManager();
 
-	// puppet sound will be controlled with lingo
-	if (sound->_puppet)
-		return;
-
-	// 0x0f represent sample sound
-	if (frame->_soundType1 >= 10 && frame->_soundType1 <= 15) {
-		if (_sampleSounds.empty())
-			loadSampleSounds(frame->_soundType1);
-
-		if ((uint)frame->_sound1.member <= _sampleSounds.size()) {
-			sound->playExternalSound(_sampleSounds[frame->_sound1.member - 1], 1, frame->_sound1.member);
-		}
+	if (sound->isChannelPuppet(1)) {
+		sound->playPuppetSound(1);
+	} else if (frame->_soundType1 >= 10 && frame->_soundType1 <= 15) { // 0x0f represent sample sound
+		sound->playExternalSound(frame->_soundType1, frame->_sound1.member, 1);
 	} else {
 		sound->playCastMember(frame->_sound1, 1, false);
 	}
 
-	if (frame->_soundType2 >= 10 && frame->_soundType2 <= 15) {
-		if (_sampleSounds.empty())
-			loadSampleSounds(frame->_soundType2);
-
-		if ((uint)frame->_sound2.member <= _sampleSounds.size()) {
-			sound->playExternalSound(_sampleSounds[frame->_sound2.member - 1], 2, frame->_sound2.member);
-		}
+	if (sound->isChannelPuppet(2)) {
+		sound->playPuppetSound(2);
+	} else if (frame->_soundType2 >= 10 && frame->_soundType2 <= 15) {
+		sound->playExternalSound(frame->_soundType2, frame->_sound2.member, 2);
 	} else {
 		sound->playCastMember(frame->_sound2, 2, false);
+	}
+
+	// Channels above 2 are only usable by Lingo.
+	if (g_director->getVersion() >= 400) {
+		sound->playPuppetSound(3);
+		sound->playPuppetSound(4);
 	}
 }
 
 void Score::playQueuedSound() {
 	DirectorSound *sound = _window->getSoundManager();
 	sound->playFPlaySound();
-}
-
-void Score::loadSampleSounds(uint type) {
-	// trying to load external sample sounds
-	// lazy loading
-	uint32 tag = MKTAG('C', 'S', 'N', 'D');
-	uint id = 0xFF;
-	Archive *archive = nullptr;
-
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
-		Common::Array<uint16> idList = it->_value->getResourceIDList(tag);
-		for (uint j = 0; j < idList.size(); j++) {
-			if ((idList[j] & 0xFF) == type) {
-				id = idList[j];
-				archive = it->_value;
-				break;
-			}
-		}
-	}
-
-	if (id == 0xFF) {
-		warning("Score::loadSampleSounds: can not find CSND resource with id %d", type);
-		return;
-	}
-
-	Common::SeekableReadStreamEndian *csndData = archive->getResource(tag, id);
-
-	/*uint32 flag = */ csndData->readUint32();
-
-	// the flag should be 0x604E
-	// i'm not sure what's that mean, but it occurs in those csnd files
-
-	// contains how many csnd data
-	uint16 num = csndData->readUint16();
-
-	// read the offset first;
-	Common::Array<uint32> offset(num);
-	for (uint i = 0; i < num; i++)
-		offset[i] = csndData->readUint32();
-
-	for (uint i = 0; i < num; i++) {
-		csndData->seek(offset[i]);
-
-		SNDDecoder *ad = new SNDDecoder();
-		ad->loadExternalSoundStream(*csndData);
-		_sampleSounds.push_back(ad);
-	}
 }
 
 void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version) {

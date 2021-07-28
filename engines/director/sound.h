@@ -48,24 +48,99 @@ struct FadeParams {
 		startVol(sv), targetVol(tv), totalTicks(tt), startTicks(st), lapsedTicks(0), fadeIn(f) {}
 };
 
+struct ExternalSoundID {
+	uint16 menu;
+	uint16 submenu;
+
+	ExternalSoundID() : menu(0), submenu(0) {}
+	ExternalSoundID(uint16 menuID, uint16 submenuID)
+		: menu(menuID), submenu(submenuID) {}
+
+	bool operator==(const ExternalSoundID &b) {
+		return menu == b.menu && submenu == b.submenu;
+	}
+	bool operator!=(const ExternalSoundID &b) {
+		return !(*this == b);
+	}
+};
+
+enum SoundIDType {
+	kSoundCast,
+	kSoundExternal
+};
+
+struct SoundID {
+	SoundIDType type;
+	union {
+		struct {
+			int member;
+			int castLib;
+		} cast;
+		struct {
+			uint16 menu;
+			uint16 submenu;
+		} external;
+	} u;
+
+	SoundID() {
+		type = kSoundCast;
+		u.cast.member = 0;
+		u.cast.castLib = 0;
+	}
+	SoundID(SoundIDType type_, int a, int b) {
+		type = type_;
+		switch (type) {
+		case kSoundCast:
+			u.cast.member = a;
+			u.cast.castLib = b;
+			break;
+		case kSoundExternal:
+			u.external.menu = a;
+			u.external.submenu = b;
+		}
+	}
+	SoundID(CastMemberID memberID) {
+		type = kSoundCast;
+		u.cast.member = memberID.member;
+		u.cast.castLib = memberID.castLib;
+	}
+
+	bool operator==(const SoundID &b) {
+		if (type != b.type)
+			return false;
+
+		switch (type) {
+		case kSoundCast:
+			return u.cast.member == b.u.cast.member && u.cast.castLib == b.u.cast.castLib;
+		case kSoundExternal:
+			return u.external.menu == b.u.external.menu && u.external.submenu == b.u.external.submenu;
+		}
+
+		return false;
+	}
+	bool operator!=(const SoundID &b) {
+		return !(*this == b);
+	}
+};
+
 struct SoundChannel {
 	Audio::SoundHandle handle;
-	CastMemberID lastPlayingCast;
+	SoundID lastPlayingSound;
 	byte volume;
 	FadeParams *fade;
+
+	// a non-zero sound ID if the channel is a puppet. i.e. it's controlled by lingo
+	SoundID puppet;
+	bool newPuppet;
 
 	// this indicate whether the sound is playing across the movie. Because the cast name may be the same while the actual sounds are changing.
 	// And we will override the sound when ever the sound is changing. thus we use a flag to indicate whether the movie is changed.
 	bool _movieChanged;
 
-	SoundChannel(): handle(), volume(255), fade(nullptr), _movieChanged(false) {}
+	SoundChannel(): handle(), lastPlayingSound(SoundID()), volume(255), fade(nullptr), puppet(SoundID()), newPuppet(false), _movieChanged(false) {}
 };
 
 class DirectorSound {
-
-public:
-	// whether the sound is puppet. i.e. it's controlled by lingo
-	bool _puppet;
 
 private:
 	Window *_window;
@@ -81,6 +156,8 @@ private:
 
 	bool _enable;
 
+	Common::HashMap<uint, Common::Array<AudioDecoder *>> _sampleSounds;
+
 public:
 	DirectorSound(Window *window);
 	~DirectorSound();
@@ -89,8 +166,9 @@ public:
 	void playFile(Common::String filename, uint8 soundChannel);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
+	void playSound(SoundID soundId, uint8 soundChannel);
 	void playCastMember(CastMemberID memberID, uint8 soundChannel, bool allowRepeat = true);
-	void playExternalSound(AudioDecoder *ad, uint8 soundChannel, uint8 externalSoundID);
+	void playExternalSound(uint16 menu, uint16 submenu, uint8 soundChannel);
 	void playFPlaySound(const Common::Array<Common::String> &fplayList);
 	void playFPlaySound();
 	void setSouldLevel(int channel, uint8 soundLevel);
@@ -99,8 +177,15 @@ public:
 	void systemBeep();
 	void changingMovie();
 
-	void setLastPlayCast(uint8 soundChannel, CastMemberID castMemberId);
-	bool checkLastPlayCast(uint8 soundChannel, const CastMemberID &castMemberId);
+	void loadSampleSounds(uint type);
+	void unloadSampleSounds();
+
+	void setLastPlaySound(uint8 soundChannel, SoundID soundId);
+	bool checkLastPlaySound(uint8 soundChannel, const SoundID &soundId);
+
+	bool isChannelPuppet(uint8 soundChannel);
+	void setPuppetSound(SoundID soundId, uint8 soundChannel);
+	void playPuppetSound(uint8 soundChannel);
 
 	bool getSoundEnabled() { return _enable; }
 
