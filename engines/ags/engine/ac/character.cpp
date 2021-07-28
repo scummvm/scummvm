@@ -1384,10 +1384,12 @@ void Character_SetScaling(CharacterInfo *chaa, int zoomlevel) {
 		debug_script_warn("Character.Scaling: cannot set property unless ManualScaling is enabled");
 		return;
 	}
-	if ((zoomlevel < 5) || (zoomlevel > 200))
-		quit("!Character.Scaling: scaling level must be between 5 and 200%");
+	int zoom_fixed = Math::Clamp(zoomlevel, 1, (int)(INT16_MAX)); // CharacterExtras.zoom is int16
+	if (zoomlevel != zoom_fixed)
+		debug_script_warn("Character.Scaling: scaling level must be between 1 and %d%%, asked for: %d",
+			(int)(INT16_MAX), zoomlevel);
 
-	_G(charextra)[chaa->index_id].zoom = zoomlevel;
+	_G(charextra)[chaa->index_id].zoom = zoom_fixed;
 }
 
 int Character_GetSolid(CharacterInfo *chaa) {
