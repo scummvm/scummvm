@@ -317,7 +317,7 @@ void DirectorSound::loadSampleSounds(uint type) {
 }
 
 void DirectorSound::unloadSampleSounds() {
-	for (Common::HashMap<uint, Common::Array<AudioDecoder *>>::iterator it = _sampleSounds.begin(); it != _sampleSounds.end(); ++it)
+	for (Common::HashMap<uint, Common::Array<AudioDecoder *> >::iterator it = _sampleSounds.begin(); it != _sampleSounds.end(); ++it)
 		for (uint i = 0; i < it->_value.size(); i++)
 			delete it->_value[i];
 	
