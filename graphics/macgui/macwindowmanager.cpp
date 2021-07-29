@@ -474,6 +474,22 @@ void MacWindowManager::setMenuItemName(int menuId, int itemId, const Common::Str
 	}
 }
 
+void MacWindowManager::setMenuItemAction(const Common::String &menuId, const Common::String &itemId, int actionId) {
+	if (_menu) {
+		_menu->setAction(menuId, itemId, actionId);
+	} else {
+		warning("MacWindowManager::setMenuItemAction: wm doesn't have menu");
+	}
+}
+
+void MacWindowManager::setMenuItemAction(int menuId, int itemId, int actionId) {
+	if (_menu) {
+		_menu->setAction(menuId, itemId, actionId);
+	} else {
+		warning("MacWindowManager::setMenuItemAction: wm doesn't have menu");
+	}
+}
+
 // this is refer to how we deal U32String in splitString in mactext
 // maybe we can optimize this specifically
 Common::U32String stripFormat(const Common::U32String &str) {

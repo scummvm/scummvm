@@ -540,6 +540,22 @@ void MacMenu::setName(int menuId, int itemId, const Common::String &name) {
 	}
 }
 
+void MacMenu::setAction(const Common::String &menuId, const Common::String &itemId, int actionId) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	if (item) {
+		item->action = actionId;
+	}
+}
+
+void MacMenu::setAction(int menuId, int itemId, int actionId) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	if (item) {
+		item->action = actionId;
+	}
+}
+
 MacMenuItem *MacMenu::findMenuItem(const Common::String &menuId, const Common::String &itemId) {
 	// TODO: support arbitrary level menu item finding
 	// only support 2 level finding now.

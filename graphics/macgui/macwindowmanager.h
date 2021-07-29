@@ -340,6 +340,8 @@ public:
 	void setMenuItemCheckMark(int menuId, int itemId, bool checkMark);
 	void setMenuItemEnabled(int menuId, int itemId, bool enabled);
 	void setMenuItemName(int menuId, int itemId, const Common::String &name);
+	void setMenuItemAction(const Common::String &menuId, const Common::String &itemId, int actionId);
+	void setMenuItemAction(int menuId, int itemId, int actionId);
 
 public:
 	MacFontManager *_fontMan;

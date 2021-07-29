@@ -98,11 +98,13 @@ public:
 	bool checkIntersects(Common::Rect &rect);
 
 	void setCheckMark(const Common::String &menuId, const Common::String &itemId, bool checkMark);
-	void setEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled);
-	void setName(const Common::String &menuId, const Common::String &itemId, const Common::String &name);
 	void setCheckMark(int menuId, int itemId, bool checkMark);
+	void setEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled);
 	void setEnabled(int menuId, int itemId, bool enabled);
+	void setName(const Common::String &menuId, const Common::String &itemId, const Common::String &name);
 	void setName(int menuId, int itemId, const Common::String &name);
+	void setAction(const Common::String &menuId, const Common::String &itemId, int actionId);
+	void setAction(int menuId, int itemId, int actionId);
 
 	Common::Rect _bbox;
 
