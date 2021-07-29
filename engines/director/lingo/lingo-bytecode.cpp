@@ -844,9 +844,9 @@ void LC::cb_v4theentityassign() {
 		break;
 	case kTEAMenuIdItemId:
 		{
-			/*Datum menuId = */g_lingo->pop();
-			/*Datum itemId = */g_lingo->pop();
-			warning("cb_v4theentityassign: STUB: kTEAMenuIdItemId");
+			Datum menuId = g_lingo->pop();
+			Datum itemId = g_lingo->pop();
+			g_lingo->setTheMenuItemEntity(entity, menuId, field, itemId, value);
 		}
 		break;
 	case kTEAChunk:

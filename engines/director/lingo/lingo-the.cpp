@@ -1107,8 +1107,23 @@ Datum Lingo::getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &m
 }
 
 void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d) {
-	warning("STUB: setTheMenuItemEntity(%s, %s, %s, %s, %s)", entity2str(entity), menuId.asString(true).c_str(), field2str(field),
-				menuItemId.asString(true).c_str(), d.asString(true).c_str());
+	switch(field) {
+	case kTheCheckMark:
+		g_director->_wm->setMenuItemCheckMark(menuId.asString(), menuItemId.asString(), d.asInt());
+		break;
+	case kTheEnabled:
+		g_director->_wm->setMenuItemEnabled(menuId.asString(), menuItemId.asString(), d.asInt());
+		break;
+	case kTheName:
+		setTheEntitySTUB(kTheName);
+		break;
+	case kTheScript:
+		setTheEntitySTUB(kTheScript);
+		break;
+	default:
+		warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+		break;
+	}
 }
 
 Datum Lingo::getTheSprite(Datum &id1, int field) {
