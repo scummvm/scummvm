@@ -57,6 +57,7 @@ enum {
 
 /* GridItemInfo */
 struct GridItemInfo {
+	bool		isHeader;
 	int 		entryID;
 	String 		engineid;
 	String 		gameid;
@@ -67,8 +68,12 @@ struct GridItemInfo {
 
 	GridItemInfo(int id, const String &eid, const String &gid
 		,const String &t, Common::Language l, Common::Platform p)
-		: entryID(id), gameid(gid), engineid(eid), title(t), language(l), platform(p) {
+		: entryID(id), gameid(gid), engineid(eid), title(t), language(l), platform(p), isHeader(false) {
 		thumbPath = String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
+	}
+
+	GridItemInfo(const String &groupHeader, int groupID) : title(groupHeader), isHeader(true), entryID(groupID) {
+		thumbPath = String("");
 	}
 };
 

@@ -67,6 +67,10 @@ void GridItemWidget::move(int x, int y) {
 }
 
 void GridItemWidget::drawWidget() {
+	if (_activeEntry->isHeader) {
+		g_gui.theme()->drawText(Common::Rect(_x, _y, _x + _w, _y + _h), Common::U32String(_activeEntry->title), ThemeEngine::kStateEnabled, Graphics::kTextAlignLeft);
+		return;
+	}
 	int thumbHeight = _grid->getThumbnailHeight();
 	int thumbWidth = _grid->getThumbnailWidth();
 	Array<U32String> titleLines;
