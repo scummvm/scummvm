@@ -28,6 +28,7 @@ use constant UNICODE_MAX => 0x10FFFF;
 my $Delimiter = chr 0x2D;
 my $BasicRE   = "\x00-\x7f";
 my $PunyRE    = "A-Za-z0-9";
+my $outPath = "./";
 
 sub VERSION_MESSAGE() {
 	print "$0 version 1.0\n"
@@ -40,7 +41,7 @@ sub decode_punycode;
 sub encode_punycode;
 sub encode_punycodefilename;
 
-getopts('hmf:c:eds');
+getopts('hmf:c:edsS:o:');
 
 if ($::opt_c and $::opt_e) {
 	die "$0: -c and -e are mutually exclusive";
@@ -57,6 +58,15 @@ if ($::opt_s) {
 
 	print encode_punycodefilename($input) . "\n";
 	exit 0;
+}
+
+if ($::opt_S) {
+	print encode_punycodefilename($::opt_S) . "\n";
+	exit 0;
+}
+
+if ($::opt_o) {
+	$outPath = $::opt_o;
 }
 
 if ($::opt_m) {
@@ -107,7 +117,7 @@ sub processIso($) {
 			# Replace Mac separators with *nix
 			$dir =~ s/:/\//g;
 
-			mkdir "$dir";
+			mkdir "$outPath$dir";
 			$numdirs++;
 		} elsif (/^[fF]/) {
 			if (/[fF]i?\s+[^\s]+\s+([0-9]+)\s+([0-9]+)\s+\w+\s+\d+\s+\d+\s+(.*)/) {
@@ -131,9 +141,9 @@ sub processIso($) {
 				flush STDOUT;
 
 				if ($res != 0) {
-					system("hcopy -m -- \"$mdir$fname\" \"$dir$decfname\"");
+					system("hcopy -m -- \"$mdir$fname\" \"$outPath$dir$decfname\"");
 				} else {
-					system("hcopy -r -- \"$mdir$fname\" \"$dir$decfname\"");
+					system("hcopy -r -- \"$mdir$fname\" \"$outPath$dir$decfname\"");
 				}
 				$numfiles++;
 			} else {
@@ -183,14 +193,17 @@ Mode 1:
 	  -d decode filenames from punycode
 
 Mode 2:
-  $0 [-c <encoding>] [-e] -f <file.iso>
+  $0 [-c <encoding>] [-e] [-o directory] -f <file.iso>
 	  Operate in disk dumping mode
 	  Optionally specify encoding (MacRoman, MacJapanese)
 	  If -e is specified, then encode filenames into punycode
+	  If -o is specified, outputs the file to the specified directory
 
 Mode 3:
   $0 -s
      Read whole standard input and encode it with punycode
+  $0 -S <string>
+     Encodes specified string with punycode
 
 Miscellaneous:
   -h, --help   display this help and exit
