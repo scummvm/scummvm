@@ -6118,7 +6118,9 @@ msgstr "簡易再生"
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
-msgstr "この音楽はローエンドなMacでの再生を想定したと思われ、1チャンネルしか使いません。"
+msgstr ""
+"この音楽はローエンドなMacでの再生を想定したと思われ、1チャンネルしか使いませ"
+"ん。"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
