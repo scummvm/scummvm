@@ -1993,9 +1993,9 @@ public:
 	public:
 		class EN_DialogsCharInfo : public DialogsCharInfo {
 		public:
-			const int KEY_ITEM()     { return Common::KEYCODE_i; }
-			const int KEY_QUICK()    { return Common::KEYCODE_q; }
-			const int KEY_EXCHANGE() { return Common::KEYCODE_e; }
+			int KEY_ITEM()     { return Common::KEYCODE_i; }
+			int KEY_QUICK()    { return Common::KEYCODE_q; }
+			int KEY_EXCHANGE() { return Common::KEYCODE_e; }
 		};
 		EN_DialogsCharInfo *dialogsCharInfo() {
 			if (!_dci)_dci = new EN_DialogsCharInfo();
@@ -2004,12 +2004,12 @@ public:
 
 		class EN_DialogsControlPanel : public DialogsControlPanel {
 		public:
-			const int KEY_FXON()     { return Common::KEYCODE_e; }
-			const int KEY_MUSICON()  { return Common::KEYCODE_m; }
-			const int KEY_LOAD()     { return Common::KEYCODE_l; }
-			const int KEY_SAVE()     { return Common::KEYCODE_s; }
-			const int KEY_QUIT()     { return Common::KEYCODE_q; }
-			const int KEY_MRWIZARD() { return Common::KEYCODE_w; }
+			int KEY_FXON()     { return Common::KEYCODE_e; }
+			int KEY_MUSICON()  { return Common::KEYCODE_m; }
+			int KEY_LOAD()     { return Common::KEYCODE_l; }
+			int KEY_SAVE()     { return Common::KEYCODE_s; }
+			int KEY_QUIT()     { return Common::KEYCODE_q; }
+			int KEY_MRWIZARD() { return Common::KEYCODE_w; }
 		};
 		EN_DialogsControlPanel *dialogsControlPanel() {
 			if (!_dcp) _dcp = new EN_DialogsControlPanel();
@@ -2018,15 +2018,15 @@ public:
 
 		class EN_DialogsCreateChar : public DialogsCreateChar {
 		public:
-			const int KEY_ROLL()   { return Common::KEYCODE_r; }
-			const int KEY_CREATE() { return Common::KEYCODE_c; }
-			const int KEY_MGT()    { return Common::KEYCODE_m; }
-			const int KEY_INT()    { return Common::KEYCODE_i; }
-			const int KEY_PER()    { return Common::KEYCODE_p; }
-			const int KEY_END()    { return Common::KEYCODE_e; }
-			const int KEY_SPD()    { return Common::KEYCODE_s; }
-			const int KEY_ACY()    { return Common::KEYCODE_a; }
-			const int KEY_LCK()    { return Common::KEYCODE_l; }
+			int KEY_ROLL()   { return Common::KEYCODE_r; }
+			int KEY_CREATE() { return Common::KEYCODE_c; }
+			int KEY_MGT()    { return Common::KEYCODE_m; }
+			int KEY_INT()    { return Common::KEYCODE_i; }
+			int KEY_PER()    { return Common::KEYCODE_p; }
+			int KEY_END()    { return Common::KEYCODE_e; }
+			int KEY_SPD()    { return Common::KEYCODE_s; }
+			int KEY_ACY()    { return Common::KEYCODE_a; }
+			int KEY_LCK()    { return Common::KEYCODE_l; }
 		};
 		EN_DialogsCreateChar *dialogsCreateChar() {
 			if (!_dcc) _dcc = new EN_DialogsCreateChar();
@@ -2035,8 +2035,8 @@ public:
 
 		class EN_DialogsDifficulty : public DialogsDifficulty {
 		public:
-			const int KEY_ADVENTURER() { return Common::KEYCODE_a; }
-			const int KEY_WARRIOR()    { return Common::KEYCODE_w; }
+			int KEY_ADVENTURER() { return Common::KEYCODE_a; }
+			int KEY_WARRIOR()    { return Common::KEYCODE_w; }
 		};
 		EN_DialogsDifficulty *dialogsDifficulty() {
 			if (!_dd) _dd = new EN_DialogsDifficulty();
@@ -2045,22 +2045,22 @@ public:
 
 		class EN_DialogsItems : public DialogsItems {
 		public:
-			const int KEY_WEAPONS()   { return Common::KEYCODE_w; }
-			const int KEY_ARMOR()     { return Common::KEYCODE_a; }
-			const int KEY_ACCESSORY() { return Common::KEYCODE_c; }
-			const int KEY_MISC()      { return Common::KEYCODE_m; }
-			const int KEY_ENCHANT()   { return Common::KEYCODE_e; }
-			const int KEY_USE()       { return Common::KEYCODE_u; }
-			const int KEY_BUY()       { return Common::KEYCODE_b; }
-			const int KEY_SELL()      { return Common::KEYCODE_s; }
-			const int KEY_IDENTIFY()  { return Common::KEYCODE_i; }
-			const int KEY_FIX()       { return Common::KEYCODE_f; }
-			const int KEY_EQUIP()     { return Common::KEYCODE_e; }
-			const int KEY_REM()       { return Common::KEYCODE_r; }
-			const int KEY_DISC()      { return Common::KEYCODE_d; }
-			const int KEY_QUEST()     { return Common::KEYCODE_q; }
-			const int KEY_RECHRG()    { return Common::KEYCODE_r; }
-			const int KEY_GOLD()      { return Common::KEYCODE_g; }
+			int KEY_WEAPONS()   { return Common::KEYCODE_w; }
+			int KEY_ARMOR()     { return Common::KEYCODE_a; }
+			int KEY_ACCESSORY() { return Common::KEYCODE_c; }
+			int KEY_MISC()      { return Common::KEYCODE_m; }
+			int KEY_ENCHANT()   { return Common::KEYCODE_e; }
+			int KEY_USE()       { return Common::KEYCODE_u; }
+			int KEY_BUY()       { return Common::KEYCODE_b; }
+			int KEY_SELL()      { return Common::KEYCODE_s; }
+			int KEY_IDENTIFY()  { return Common::KEYCODE_i; }
+			int KEY_FIX()       { return Common::KEYCODE_f; }
+			int KEY_EQUIP()     { return Common::KEYCODE_e; }
+			int KEY_REM()       { return Common::KEYCODE_r; }
+			int KEY_DISC()      { return Common::KEYCODE_d; }
+			int KEY_QUEST()     { return Common::KEYCODE_q; }
+			int KEY_RECHRG()    { return Common::KEYCODE_r; }
+			int KEY_GOLD()      { return Common::KEYCODE_g; }
 		};
 		EN_DialogsItems *dialogsItems() {
 			if (!_di) _di = new EN_DialogsItems();
@@ -2069,10 +2069,10 @@ public:
 
 		class EN_DialogsParty : public DialogsParty {
 		public:
-			const int KEY_DELETE() { return Common::KEYCODE_d; }
-			const int KEY_REMOVE() { return Common::KEYCODE_r; }
-			const int KEY_CREATE() { return Common::KEYCODE_c; }
-			const int KEY_EXIT()   { return Common::KEYCODE_x; }
+			int KEY_DELETE() { return Common::KEYCODE_d; }
+			int KEY_REMOVE() { return Common::KEYCODE_r; }
+			int KEY_CREATE() { return Common::KEYCODE_c; }
+			int KEY_EXIT()   { return Common::KEYCODE_x; }
 		};
 		EN_DialogsParty *dialogsParty() {
 			if (!_dp) _dp = new EN_DialogsParty();
@@ -2081,9 +2081,9 @@ public:
 
 		class EN_DialogsQuests : public DialogsQuests {
 		public:
-			const int KEY_QUEST_ITEMS()    { return Common::KEYCODE_i; }
-			const int KEY_CURRENT_QUESTS() { return Common::KEYCODE_q; }
-			const int KEY_AUTO_NOTES()     { return Common::KEYCODE_a; }
+			int KEY_QUEST_ITEMS()    { return Common::KEYCODE_i; }
+			int KEY_CURRENT_QUESTS() { return Common::KEYCODE_q; }
+			int KEY_AUTO_NOTES()     { return Common::KEYCODE_a; }
 		};
 		EN_DialogsQuests *dialogsQuests() {
 			if (!_dq) _dq = new EN_DialogsQuests();
@@ -2092,7 +2092,7 @@ public:
 
 		class EN_DialogsQuickFight : public DialogsQuickFight {
 		public:
-			const int KEY_NEXT() { return Common::KEYCODE_t; }
+			int KEY_NEXT() { return Common::KEYCODE_t; }
 		};
 		EN_DialogsQuickFight *dialogsQuickFight() {
 			if (!_dqf) _dqf = new EN_DialogsQuickFight();
@@ -2101,14 +2101,14 @@ public:
 
 		class EN_DialogsSpells : public DialogsSpells {
 		public:
-			const int KEY_CAST()   { return Common::KEYCODE_c; }
-			const int KEY_NEW()    { return Common::KEYCODE_n; }
-			const int KEY_FIRE()   { return Common::KEYCODE_f; }
-			const int KEY_ELEC()   { return Common::KEYCODE_e; }
-			const int KEY_COLD()   { return Common::KEYCODE_c; }
-			const int KEY_ACID()   { return Common::KEYCODE_a; }
-			const int KEY_SET()    { return Common::KEYCODE_t; }
-			const int KEY_RETURN() { return Common::KEYCODE_r; }
+			int KEY_CAST()   { return Common::KEYCODE_c; }
+			int KEY_NEW()    { return Common::KEYCODE_n; }
+			int KEY_FIRE()   { return Common::KEYCODE_f; }
+			int KEY_ELEC()   { return Common::KEYCODE_e; }
+			int KEY_COLD()   { return Common::KEYCODE_c; }
+			int KEY_ACID()   { return Common::KEYCODE_a; }
+			int KEY_SET()    { return Common::KEYCODE_t; }
+			int KEY_RETURN() { return Common::KEYCODE_r; }
 		};
 		EN_DialogsSpells *dialogsSpells() {
 			if (!_ds) _ds = new EN_DialogsSpells();
@@ -2117,22 +2117,22 @@ public:
 
 		class EN_Locations : public Locations {
 		public:
-			const int KEY_DEP()        { return Common::KEYCODE_d; }
-			const int KEY_WITH()       { return Common::KEYCODE_w; }
-			const int KEY_GOLD()       { return Common::KEYCODE_o; }
-			const int KEY_GEMS()       { return Common::KEYCODE_e; }
-			const int KEY_BROWSE()     { return Common::KEYCODE_b; }
-			const int KEY_BUY_SPELLS() { return Common::KEYCODE_b; }
-			const int KEY_SPELL_INFO() { return Common::KEYCODE_s; }
-			const int KEY_SIGN_IN()    { return Common::KEYCODE_s; }
-			const int KEY_DRINK()      { return Common::KEYCODE_d; }
-			const int KEY_FOOD()       { return Common::KEYCODE_f; }
-			const int KEY_TIP()        { return Common::KEYCODE_t; }
-			const int KEY_RUMORS()     { return Common::KEYCODE_r; }
-			const int KEY_HEAL()       { return Common::KEYCODE_h; }
-			const int KEY_DONATION()   { return Common::KEYCODE_d; }
-			const int KEY_UNCURSE()    { return Common::KEYCODE_u; }
-			const int KEY_TRAIN()      { return Common::KEYCODE_t; }
+			int KEY_DEP()        { return Common::KEYCODE_d; }
+			int KEY_WITH()       { return Common::KEYCODE_w; }
+			int KEY_GOLD()       { return Common::KEYCODE_o; }
+			int KEY_GEMS()       { return Common::KEYCODE_e; }
+			int KEY_BROWSE()     { return Common::KEYCODE_b; }
+			int KEY_BUY_SPELLS() { return Common::KEYCODE_b; }
+			int KEY_SPELL_INFO() { return Common::KEYCODE_s; }
+			int KEY_SIGN_IN()    { return Common::KEYCODE_s; }
+			int KEY_DRINK()      { return Common::KEYCODE_d; }
+			int KEY_FOOD()       { return Common::KEYCODE_f; }
+			int KEY_TIP()        { return Common::KEYCODE_t; }
+			int KEY_RUMORS()     { return Common::KEYCODE_r; }
+			int KEY_HEAL()       { return Common::KEYCODE_h; }
+			int KEY_DONATION()   { return Common::KEYCODE_d; }
+			int KEY_UNCURSE()    { return Common::KEYCODE_u; }
+			int KEY_TRAIN()      { return Common::KEYCODE_t; }
 		};
 		EN_Locations *locations() {
 			if (!_l) _l = new EN_Locations();
@@ -2141,10 +2141,10 @@ public:
 
 		class EN_CloudsOfXeenMenu : public CloudsOfXeenMenu {
 		public:
-			const int KEY_START_NEW_GAME() { return Common::KEYCODE_s; }
-			const int KEY_LOAD_GAME()      { return Common::KEYCODE_l; }
-			const int KEY_SHOW_CREDITS()   { return Common::KEYCODE_c; }
-			const int KEY_VIEW_ENDGAME()   { return Common::KEYCODE_e; }
+			int KEY_START_NEW_GAME() { return Common::KEYCODE_s; }
+			int KEY_LOAD_GAME()      { return Common::KEYCODE_l; }
+			int KEY_SHOW_CREDITS()   { return Common::KEYCODE_c; }
+			int KEY_VIEW_ENDGAME()   { return Common::KEYCODE_e; }
 		};
 		EN_CloudsOfXeenMenu *cloudsOfXeenMenu() {
 			if (!_soxm)
