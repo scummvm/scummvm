@@ -275,7 +275,7 @@ MacFontRun MacText::getFgColor() {
 }
 
 // we are doing this because we may need to dealing with the plain byte. See ctor of mactext which contains String str instead of U32String str
-// thus, if we are passing the str, meaning we are using plainByteMode. And when we calculating the string width. we need to convert it to it's orignal state first;
+// thus, if we are passing the str, meaning we are using plainByteMode. And when we calculate the string width. we need to convert it to it's original state first;
 int MacText::getStringWidth(MacFontRun &format, const Common::U32String &str) {
 	if (format.plainByteMode())
 		return format.getFont()->getStringWidth(Common::convertFromU32String(str, format.getEncoding()));
@@ -740,7 +740,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 			D(9, "curWidth %d word_width %d", cur_width, word_width);
 			// if cur_width == 0 but there`s chunks, meaning there must be empty string here
 			// if cur_width == 0, then you don`t have to add a newline for it
-			if (cur_width + word_width > _maxWidth && cur_width != 0) {
+			if (cur_width + word_width >= _maxWidth && cur_width != 0) {
 				++curLine;
 				_textLines.insert_at(curLine, MacTextLine());
 			}
@@ -778,7 +778,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 						} else {
 							char_width = word[i].getFont()->getCharWidth(c);
 						}
-						if (char_width + tmp_width + cur_width > _maxWidth) {
+						if (char_width + tmp_width + cur_width >= _maxWidth) {
 							++curLine;
 							_textLines.insert_at(curLine, MacTextLine());
 							_textLines[curLine].chunks.push_back(word[i]);
@@ -900,7 +900,7 @@ void MacText::render(int from, int to, int shadow) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
+			debug(0, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
 				  i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
 				  _textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
 				  (const void *)_textLines[i].chunks[j].getFont());

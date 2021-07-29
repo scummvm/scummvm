@@ -419,7 +419,7 @@ void MacFONTFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color)
 
 	// due to the way we are handling the generated fonts. we only add the kerning offset for the original font
 	if (!_data._slant)
-	x += glyph->kerningOffset;
+		x += glyph->kerningOffset;
 
 	if (x >= dst->w)
 		return;
