@@ -1107,6 +1107,10 @@ Datum Lingo::getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &m
 }
 
 void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d) {
+	// only used in kTheScript
+	LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
+	int commandId = 100;
+
 	switch(field) {
 	case kTheCheckMark:
 		if (menuId.type == STRING && menuItemId.type == STRING)
@@ -1133,7 +1137,16 @@ void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &me
 			warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
 		break;
 	case kTheScript:
-		warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+		while (mainArchive->getScriptContext(kEventScript, commandId))
+			commandId++;
+		mainArchive->addCode(d.asString(), kEventScript, commandId);
+
+		if (menuId.type == STRING && menuItemId.type == STRING)
+			g_director->_wm->setMenuItemAction(menuId.asString(), menuItemId.asString(), commandId);
+		else if (menuId.type == INT && menuItemId.type == INT)
+			g_director->_wm->setMenuItemAction(menuId.asInt() - 1, menuItemId.asInt() - 1, commandId);
+		else
+			warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
 		break;
 	default:
 		warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
