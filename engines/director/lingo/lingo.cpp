@@ -204,6 +204,7 @@ void Lingo::reloadBuiltIns() {
 	initTheEntities();
 	initMethods();
 	initXLibs();
+	reloadOpenXLibs();
 }
 
 LingoArchive::~LingoArchive() {

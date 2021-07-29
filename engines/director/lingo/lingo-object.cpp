@@ -203,6 +203,14 @@ void Lingo::closeXLib(Common::String name) {
 	}
 }
 
+void Lingo::reloadOpenXLibs() {
+	OpenXLibsHash openXLibsCopy = _openXLibs;
+	for (OpenXLibsHash::iterator it = openXLibsCopy.begin(); it != openXLibsCopy.end(); ++it) {
+		closeXLib(it->_key);
+		openXLib(it->_key, it->_value);
+	}
+}
+
 // Initialization/disposal
 
 void LM::m_new(int nargs) {

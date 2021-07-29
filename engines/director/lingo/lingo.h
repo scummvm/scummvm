@@ -295,6 +295,7 @@ public:
 	Common::String normalizeXLibName(Common::String name);
 	void openXLib(Common::String name, ObjectType type);
 	void closeXLib(Common::String name);
+	void reloadOpenXLibs();
 
 	void runTests();
 
