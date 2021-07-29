@@ -362,10 +362,12 @@ void Score::update() {
 	if (_playState == kPlayStopped)
 		return;
 
-	if (_nextFrame)
-		_currentFrame = _nextFrame;
-	else if (!_window->_newMovieStarted)
-		_currentFrame++;
+	if (!_vm->_playbackPaused) {
+		if (_nextFrame)
+			_currentFrame = _nextFrame;
+		else if (!_window->_newMovieStarted)
+			_currentFrame++;
+	}
 
 	_nextFrame = 0;
 
