@@ -334,6 +334,9 @@ public:
 	 */
 	void clearHandlingWidgets();
 
+	void setMenuItemCheckMark(const Common::String &menuId, const Common::String &itemId, bool checkMark);
+	void setMenuItemEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled);
+
 public:
 	MacFontManager *_fontMan;
 	uint32 _mode;

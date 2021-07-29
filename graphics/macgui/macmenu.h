@@ -97,6 +97,9 @@ public:
 
 	bool checkIntersects(Common::Rect &rect);
 
+	void setCheckMark(const Common::String &menuId, const Common::String &itemId, bool checkMark);
+	void setEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled);
+
 	Common::Rect _bbox;
 
 private:
@@ -129,6 +132,8 @@ private:
 	bool contains(int x, int y);
 
 	void eventLoop();
+
+	MacMenuItem *findMenuItem(const Common::String &menuId, const Common::String &itemId);
 
 	ItemArray _items;
 

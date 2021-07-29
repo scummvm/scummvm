@@ -486,6 +486,61 @@ void MacMenu::loadMenuBarResource(Common::MacResManager *resFork, uint16 id) {
 	}
 }
 
+void MacMenu::setCheckMark(const Common::String &menuId, const Common::String &itemId, bool checkMark) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	if (item) {
+		item->checked = checkMark;
+		_contentIsDirty = true;
+	}
+}
+
+void MacMenu::setEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	if (item) {
+		item->enabled = enabled;
+		_contentIsDirty = true;
+	}
+}
+
+MacMenuItem *MacMenu::findMenuItem(const Common::String &menuId, const Common::String &itemId) {
+	// TODO: support arbitrary level menu item finding
+	// only support 2 level finding now.
+
+	MacMenuItem *menu = nullptr;
+	for (uint i = 0; i < _items.size(); i++) {
+		// TODO: support unicode text menu
+		// didn't support unicode item finding yet
+		if (!_items[i]->unicode) {
+			if (_items[i]->text.equalsIgnoreCase(menuId)) {
+				menu = _items[i];
+				break;
+			}
+		}
+	}
+
+	if (!menu) {
+		warning("MacMenu::findMenuItem: can not find menu with id %s", menuId.c_str());
+		return nullptr;
+	}
+
+	if (!menu->submenu) {
+		warning("MacMenu::findMenuItem: menu %s doesn't have submenu", menuId.c_str());
+		return nullptr;
+	}
+
+	for (uint i = 0; i < menu->submenu->items.size(); i++) {
+		if (!menu->submenu->items[i]->unicode) {
+			if (menu->submenu->items[i]->text.equalsIgnoreCase(itemId))
+				return menu->submenu->items[i];
+		}
+	}
+
+	warning("MacMenu::findMenuItem: menu %s doesn't have item with id %s", menuId.c_str(), itemId.c_str());
+	return nullptr;
+}
+
 void MacMenu::clearSubMenu(int id) {
 	MacMenuItem *menu = _items[id];
 
