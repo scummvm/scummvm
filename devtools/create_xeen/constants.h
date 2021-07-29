@@ -1250,128 +1250,128 @@ public:
 	public:
 		class DialogsCharInfo {
 		public:
-			virtual const int KEY_ITEM() = 0;
-			virtual const int KEY_QUICK() = 0;
-			virtual const int KEY_EXCHANGE() = 0;
+			virtual int KEY_ITEM() = 0;
+			virtual int KEY_QUICK() = 0;
+			virtual int KEY_EXCHANGE() = 0;
 		};
 		virtual DialogsCharInfo *dialogsCharInfo() = 0;
 
 		class DialogsControlPanel {
 		public:
-			virtual const int KEY_FXON() = 0;
-			virtual const int KEY_MUSICON() = 0;
-			virtual const int KEY_LOAD() = 0;
-			virtual const int KEY_SAVE() = 0;
-			virtual const int KEY_QUIT() = 0;
-			virtual const int KEY_MRWIZARD() = 0;
+			virtual int KEY_FXON() = 0;
+			virtual int KEY_MUSICON() = 0;
+			virtual int KEY_LOAD() = 0;
+			virtual int KEY_SAVE() = 0;
+			virtual int KEY_QUIT() = 0;
+			virtual int KEY_MRWIZARD() = 0;
 		};
 		virtual DialogsControlPanel *dialogsControlPanel() = 0;
 
 		class DialogsCreateChar {
 		public:
-			virtual const int KEY_ROLL() = 0;
-			virtual const int KEY_CREATE() = 0;
-			virtual const int KEY_MGT() = 0;
-			virtual const int KEY_INT() = 0;
-			virtual const int KEY_PER() = 0;
-			virtual const int KEY_END() = 0;
-			virtual const int KEY_SPD() = 0;
-			virtual const int KEY_ACY() = 0;
-			virtual const int KEY_LCK() = 0;
+			virtual int KEY_ROLL() = 0;
+			virtual int KEY_CREATE() = 0;
+			virtual int KEY_MGT() = 0;
+			virtual int KEY_INT() = 0;
+			virtual int KEY_PER() = 0;
+			virtual int KEY_END() = 0;
+			virtual int KEY_SPD() = 0;
+			virtual int KEY_ACY() = 0;
+			virtual int KEY_LCK() = 0;
 		};
 		virtual DialogsCreateChar *dialogsCreateChar() = 0;
 
 		class DialogsDifficulty {
 		public:
-			virtual const int KEY_ADVENTURER() = 0;
-			virtual const int KEY_WARRIOR() = 0;
+			virtual int KEY_ADVENTURER() = 0;
+			virtual int KEY_WARRIOR() = 0;
 		};
 		virtual DialogsDifficulty *dialogsDifficulty() = 0;
 
 		class DialogsItems {
 		public:
-			virtual const int KEY_WEAPONS() = 0;
-			virtual const int KEY_ARMOR() = 0;
-			virtual const int KEY_ACCESSORY() = 0;
-			virtual const int KEY_MISC() = 0;
-			virtual const int KEY_ENCHANT() = 0;
-			virtual const int KEY_USE() = 0;
-			virtual const int KEY_BUY() = 0;
-			virtual const int KEY_SELL() = 0;
-			virtual const int KEY_IDENTIFY() = 0;
-			virtual const int KEY_FIX() = 0;
-			virtual const int KEY_EQUIP() = 0;
-			virtual const int KEY_REM() = 0;
-			virtual const int KEY_DISC() = 0;
-			virtual const int KEY_QUEST() = 0;
-			virtual const int KEY_RECHRG() = 0;
-			virtual const int KEY_GOLD() = 0;
+			virtual int KEY_WEAPONS() = 0;
+			virtual int KEY_ARMOR() = 0;
+			virtual int KEY_ACCESSORY() = 0;
+			virtual int KEY_MISC() = 0;
+			virtual int KEY_ENCHANT() = 0;
+			virtual int KEY_USE() = 0;
+			virtual int KEY_BUY() = 0;
+			virtual int KEY_SELL() = 0;
+			virtual int KEY_IDENTIFY() = 0;
+			virtual int KEY_FIX() = 0;
+			virtual int KEY_EQUIP() = 0;
+			virtual int KEY_REM() = 0;
+			virtual int KEY_DISC() = 0;
+			virtual int KEY_QUEST() = 0;
+			virtual int KEY_RECHRG() = 0;
+			virtual int KEY_GOLD() = 0;
 		};
 		virtual DialogsItems *dialogsItems() = 0;
 
 		class DialogsParty {
 		public:
-			virtual const int KEY_DELETE() = 0;
-			virtual const int KEY_REMOVE() = 0;
-			virtual const int KEY_CREATE() = 0;
-			virtual const int KEY_EXIT() = 0;
+			virtual int KEY_DELETE() = 0;
+			virtual int KEY_REMOVE() = 0;
+			virtual int KEY_CREATE() = 0;
+			virtual int KEY_EXIT() = 0;
 		};
 		virtual DialogsParty *dialogsParty() = 0;
 
 		class DialogsQuests {
 		public:
-			virtual const int KEY_QUEST_ITEMS() = 0;
-			virtual const int KEY_CURRENT_QUESTS() = 0;
-			virtual const int KEY_AUTO_NOTES() = 0;
+			virtual int KEY_QUEST_ITEMS() = 0;
+			virtual int KEY_CURRENT_QUESTS() = 0;
+			virtual int KEY_AUTO_NOTES() = 0;
 		};
 		virtual DialogsQuests *dialogsQuests() = 0;
 
 		class DialogsQuickFight {
 		public:
-			virtual const int KEY_NEXT() = 0;
+			virtual int KEY_NEXT() = 0;
 		};
 		virtual DialogsQuickFight *dialogsQuickFight() = 0;
 
 		class DialogsSpells {
 		public:
-			virtual const int KEY_CAST() = 0;
-			virtual const int KEY_NEW() = 0;
-			virtual const int KEY_FIRE() = 0;
-			virtual const int KEY_ELEC() = 0;
-			virtual const int KEY_COLD() = 0;
-			virtual const int KEY_ACID() = 0;
-			virtual const int KEY_SET() = 0;
-			virtual const int KEY_RETURN() = 0;
+			virtual int KEY_CAST() = 0;
+			virtual int KEY_NEW() = 0;
+			virtual int KEY_FIRE() = 0;
+			virtual int KEY_ELEC() = 0;
+			virtual int KEY_COLD() = 0;
+			virtual int KEY_ACID() = 0;
+			virtual int KEY_SET() = 0;
+			virtual int KEY_RETURN() = 0;
 		};
 		virtual DialogsSpells *dialogsSpells() = 0;
 
 		class Locations {
 		public:
-			virtual const int KEY_DEP() = 0;
-			virtual const int KEY_WITH() = 0;
-			virtual const int KEY_GOLD() = 0;
-			virtual const int KEY_GEMS() = 0;
-			virtual const int KEY_BROWSE() = 0;
-			virtual const int KEY_BUY_SPELLS() = 0;
-			virtual const int KEY_SPELL_INFO() = 0;
-			virtual const int KEY_SIGN_IN() = 0;
-			virtual const int KEY_DRINK() = 0;
-			virtual const int KEY_FOOD() = 0;
-			virtual const int KEY_TIP() = 0;
-			virtual const int KEY_RUMORS() = 0;
-			virtual const int KEY_HEAL() = 0;
-			virtual const int KEY_DONATION() = 0;
-			virtual const int KEY_UNCURSE() = 0;
-			virtual const int KEY_TRAIN() = 0;
+			virtual int KEY_DEP() = 0;
+			virtual int KEY_WITH() = 0;
+			virtual int KEY_GOLD() = 0;
+			virtual int KEY_GEMS() = 0;
+			virtual int KEY_BROWSE() = 0;
+			virtual int KEY_BUY_SPELLS() = 0;
+			virtual int KEY_SPELL_INFO() = 0;
+			virtual int KEY_SIGN_IN() = 0;
+			virtual int KEY_DRINK() = 0;
+			virtual int KEY_FOOD() = 0;
+			virtual int KEY_TIP() = 0;
+			virtual int KEY_RUMORS() = 0;
+			virtual int KEY_HEAL() = 0;
+			virtual int KEY_DONATION() = 0;
+			virtual int KEY_UNCURSE() = 0;
+			virtual int KEY_TRAIN() = 0;
 		};
 		virtual Locations *locations() = 0;
 
 		class CloudsOfXeenMenu {
 		public:
-			virtual const int KEY_START_NEW_GAME() = 0;
-			virtual const int KEY_LOAD_GAME() = 0;
-			virtual const int KEY_SHOW_CREDITS() = 0;
-			virtual const int KEY_VIEW_ENDGAME() = 0;
+			virtual int KEY_START_NEW_GAME() = 0;
+			virtual int KEY_LOAD_GAME() = 0;
+			virtual int KEY_SHOW_CREDITS() = 0;
+			virtual int KEY_VIEW_ENDGAME() = 0;
 		};
 		virtual CloudsOfXeenMenu *cloudsOfXeenMenu() = 0;
 	};
