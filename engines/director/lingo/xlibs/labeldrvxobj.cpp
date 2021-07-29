@@ -54,14 +54,10 @@ static MethodProto xlibMethods[] = {
 };
 
 void LabelDrvXObj::initialize(int type) {
-	LabelDrvXObject::initMethods(xlibMethods);
 	if (type & kXObj) {
-		if (!g_lingo->_globalvars.contains(xlibName)) {
-			LabelDrvXObject *xobj = new LabelDrvXObject(kXObj);
-			g_lingo->_globalvars[xlibName] = xobj;
-		} else {
-			warning("LabelDrvXObj already initialized");
-		}
+		LabelDrvXObject::initMethods(xlibMethods);
+		LabelDrvXObject *xobj = new LabelDrvXObject(kXObj);
+		g_lingo->_globalvars[xlibName] = xobj;
 	}
 }
 

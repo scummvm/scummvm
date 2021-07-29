@@ -159,6 +159,11 @@ void Lingo::openXLib(Common::String name, ObjectType type) {
 	name.toLowercase();
 	name.trim();
 
+	if (_openXLibs[name])
+		return;
+
+	_openXLibs[name] = true;
+
 	if (_xlibInitializers.contains(name)) {
 		Symbol sym = _xlibInitializers[name];
 		(*sym.u.bltin)(type);

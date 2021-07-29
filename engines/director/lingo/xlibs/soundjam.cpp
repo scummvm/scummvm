@@ -70,14 +70,10 @@ static MethodProto xlibMethods[] = {
 };
 
 void SoundJam::initialize(int type) {
-	SoundJamObject::initMethods(xlibMethods);
 	if (type & kXObj) {
-		if (!g_lingo->_globalvars.contains(xlibName)) {
-			SoundJamObject *xobj = new SoundJamObject(kXObj);
-			g_lingo->_globalvars[xlibName] = xobj;
-		} else {
-			warning("SoundJam already initialized");
-		}
+		SoundJamObject::initMethods(xlibMethods);
+		SoundJamObject *xobj = new SoundJamObject(kXObj);
+		g_lingo->_globalvars[xlibName] = xobj;
 	}
 }
 

@@ -51,14 +51,10 @@ static MethodProto xlibMethods[] = {
 };
 
 void FileIO::initialize(int type) {
-	FileObject::initMethods(xlibMethods);
 	if (type & kXObj) {
-		if (!g_lingo->_globalvars.contains(xlibName)) {
-			FileObject *xobj = new FileObject(kXObj);
-			g_lingo->_globalvars[xlibName] = xobj;
-		} else {
-			warning("FileIO XObject already initialized");
-		}
+		FileObject::initMethods(xlibMethods);
+		FileObject *xobj = new FileObject(kXObj);
+		g_lingo->_globalvars[xlibName] = xobj;
 	}
 	if (type & kXtraObj) {
 		// TODO - Implement Xtra

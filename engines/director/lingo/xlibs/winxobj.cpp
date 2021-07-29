@@ -48,14 +48,10 @@ static MethodProto xlibMethods[] = {
 };
 
 void RearWindowXObj::initialize(int type) {
-	RearWindowXObject::initMethods(xlibMethods);
 	if (type & kXObj) {
-		if (!g_lingo->_globalvars.contains(xlibName)) {
-			RearWindowXObject *xobj = new RearWindowXObject(kXObj);
-			g_lingo->_globalvars[xlibName] = xobj;
-		} else {
-			warning("RearWindowXObject already initialized");
-		}
+		RearWindowXObject::initMethods(xlibMethods);
+		RearWindowXObject *xobj = new RearWindowXObject(kXObj);
+		g_lingo->_globalvars[xlibName] = xobj;
 	}
 }
 

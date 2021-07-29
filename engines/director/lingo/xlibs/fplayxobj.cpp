@@ -50,11 +50,7 @@ static BuiltinProto builtins[] = {
 };
 
 void FPlayXObj::initialize(int type) {
-	if (!g_lingo->_builtinCmds.contains("FPlay")) {
-		g_lingo->initBuiltIns(builtins);
-	} else {
-		warning("FPlayXObj already initialized");
-	}
+	g_lingo->initBuiltIns(builtins);
 }
 
 void FPlayXObj::b_fplay(int nargs) {

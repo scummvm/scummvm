@@ -54,14 +54,10 @@ static MethodProto xlibMethods[] = {
 };
 
 void FlushXObj::initialize(int type) {
-	FlushXObject::initMethods(xlibMethods);
 	if (type & kXObj) {
-		if (!g_lingo->_globalvars.contains(xlibName)) {
-			FlushXObject *xobj = new FlushXObject(kXObj);
-			g_lingo->_globalvars[xlibName] = xobj;
-		} else {
-			warning("FlushXObject already initialized");
-		}
+		FlushXObject::initMethods(xlibMethods);
+		FlushXObject *xobj = new FlushXObject(kXObj);
+		g_lingo->_globalvars[xlibName] = xobj;
 	}
 }
 

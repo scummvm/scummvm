@@ -55,14 +55,10 @@ static MethodProto xlibMethods[] = {
 };
 
 void PalXObj::initialize(int type) {
-	PalXObject::initMethods(xlibMethods);
 	if (type & kXObj) {
-		if (!g_lingo->_globalvars.contains(xlibName)) {
-			PalXObject *xobj = new PalXObject(kXObj);
-			g_lingo->_globalvars[xlibName] = xobj;
-		} else {
-			warning("PalXObject already initialized");
-		}
+		PalXObject::initMethods(xlibMethods);
+		PalXObject *xobj = new PalXObject(kXObj);
+		g_lingo->_globalvars[xlibName] = xobj;
 	}
 }
 
