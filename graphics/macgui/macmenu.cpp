@@ -504,6 +504,15 @@ void MacMenu::setEnabled(const Common::String &menuId, const Common::String &ite
 	}
 }
 
+void MacMenu::setName(const Common::String &menuId, const Common::String &itemId, const Common::String &name) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	if (item) {
+		item->text = name;
+		_contentIsDirty = true;
+	}
+}
+
 MacMenuItem *MacMenu::findMenuItem(const Common::String &menuId, const Common::String &itemId) {
 	// TODO: support arbitrary level menu item finding
 	// only support 2 level finding now.

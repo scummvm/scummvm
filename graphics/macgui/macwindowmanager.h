@@ -336,6 +336,7 @@ public:
 
 	void setMenuItemCheckMark(const Common::String &menuId, const Common::String &itemId, bool checkMark);
 	void setMenuItemEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled);
+	void setMenuItemName(const Common::String &menuId, const Common::String &itemId, const Common::String &name);
 
 public:
 	MacFontManager *_fontMan;
