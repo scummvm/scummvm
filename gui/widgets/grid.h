@@ -153,7 +153,7 @@ public:
 	void move(int x, int y);
 	void assignEntriesToItems();
 
-	int getScrollPos() const { return -_scrollPos; }
+	int getScrollPos() const { return _scrollPos; }
 	int getSelected() const { return _selectedEntry; }
 	int getThumbnailHeight() const { return _thumbnailHeight; }
 	int getThumbnailWidth() const { return _thumbnailWidth; }
