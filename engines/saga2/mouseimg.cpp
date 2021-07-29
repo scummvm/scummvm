@@ -148,12 +148,16 @@ void freeCursors() {
 	delete combinedImage;
 }
 
-void createStackedImage(gPixelMap *newImage, int *newImageCenter, gPixelMap **imageArray, int *imageCenterArray, int images) {
+void createStackedImage(gPixelMap **newImage, int *newImageCenter, gPixelMap **imageArray, int *imageCenterArray, int images) {
 	assert(images != 0);
-	assert(newImage->data == nullptr);
 
-	newImage->size.x = 0;
-	newImage->size.y = 0;
+	if (*newImage)
+		delete *newImage;
+
+	*newImage = new gPixelMap;
+
+	(*newImage)->size.x = 0;
+	(*newImage)->size.y = 0;
 	*newImageCenter = 0;
 
 	for (int i = 0; i < images; i++) {
@@ -164,27 +168,27 @@ void createStackedImage(gPixelMap *newImage, int *newImageCenter, gPixelMap **im
 	for (int i = 0; i < images; i++) {
 		int16  rightImageBoundary;
 
-		newImage->size.y += imageArray[i]->size.y;
+		(*newImage)->size.y += imageArray[i]->size.y;
 
 		rightImageBoundary = *newImageCenter + (imageArray[i]->size.x - imageCenterArray[i]);
 
-		if (rightImageBoundary > newImage->size.x)
-			newImage->size.x = rightImageBoundary;
+		if (rightImageBoundary > (*newImage)->size.x)
+			(*newImage)->size.x = rightImageBoundary;
 	}
 
-	newImage->size.y += images - 1;
+	(*newImage)->size.y += images - 1;
 
-	int newImageBytes = newImage->bytes();
+	int newImageBytes = (*newImage)->bytes();
 
-	newImage->data = (uint8 *)malloc(newImageBytes) ;
+	(*newImage)->data = (uint8 *)malloc(newImageBytes) ;
 
-	memset(newImage->data, 0, newImageBytes);
+	memset((*newImage)->data, 0, newImageBytes);
 
 	int newImageRow = 0;
 	for (int i = 0; i < images; i++) {
 		gPixelMap *currentImage = imageArray[i];
 
-		TBlit(newImage, currentImage, *newImageCenter - imageCenterArray[i], newImageRow);
+		TBlit((*newImage), currentImage, *newImageCenter - imageCenterArray[i], newImageRow);
 
 		newImageRow += currentImage->size.y + 1;
 	}
@@ -193,11 +197,14 @@ void createStackedImage(gPixelMap *newImage, int *newImageCenter, gPixelMap **im
 //-----------------------------------------------------------------------
 //	Dispose of an image created with createStackedImage
 
-inline void disposeStackedImage(gPixelMap *image) {
-	assert(image->data != nullptr);
+inline void disposeStackedImage(gPixelMap **image) {
+	if (*image) {
+		free((*image)->data);
+		(*image)->data = nullptr;
 
-	free(image->data);
-	image->data = nullptr;
+		delete *image;
+		*image = nullptr;
+	}
 }
 
 //-----------------------------------------------------------------------
@@ -207,7 +214,7 @@ inline void disposeStackedImage(gPixelMap *image) {
 
 void cleanupMousePointer(void) {
 	if (combinedImage->data != nullptr)
-		disposeStackedImage(combinedImage);
+		disposeStackedImage(&combinedImage);
 }
 
 void setupMousePointer(void) {
@@ -233,9 +240,9 @@ void setupMousePointer(void) {
 	}
 
 	if (combinedImage->data != nullptr)
-		disposeStackedImage(combinedImage);
+		disposeStackedImage(&combinedImage);
 
-	createStackedImage(combinedImage, &combinedImageCenter, imageArray, imageCenterArray, imageIndex);
+	createStackedImage(&combinedImage, &combinedImageCenter, imageArray, imageCenterArray, imageIndex);
 
 	imageOffset.x = combinedImageCenter - mouseImage->size.x / 2;
 	imageOffset.y = 0;
