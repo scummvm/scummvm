@@ -82,6 +82,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("stats", WRAP_METHOD(Console, cmdStats));
 
 	registerCmd("dump_map", WRAP_METHOD(Console, cmdDumpMap));
+
+	registerCmd("play_music", WRAP_METHOD(Console, cmdPlayMusic));
 }
 
 Console::~Console() {
@@ -373,6 +375,17 @@ bool Console::cmdDumpMap(int argc, const char **argv) {
 		dump.close();
 
 		delete[] drawMap.data;
+	}
+
+	return true;
+}
+
+bool Console::cmdPlayMusic(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <Music Index>\n", argv[0]);
+	else {
+		int currentID = atoi(argv[1]);
+		playMusic(MKTAG('X', 'M', 'I', currentID));
 	}
 
 	return true;

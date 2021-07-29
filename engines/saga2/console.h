@@ -78,6 +78,8 @@ private:
 	bool cmdListPlaces(int argc, const char **argv);
 
 	bool cmdDumpMap(int argc, const char **argv);
+
+	bool cmdPlayMusic(int argc, const char **argv);
 };
 
 }
