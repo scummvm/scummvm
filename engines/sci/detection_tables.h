@@ -5377,6 +5377,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_PIRATED, GUIO_SQ4_CD	},
 
+	// Space Quest 4 - English DOS CD "NRS SQ4 Update 1.3" (unofficial patch)
+	// This comprehensive patch set combines CD and floppy versions and then applies its own changes.
+	// Version 1.3 is distributed as a set of patches and diffs which require the user
+	// to provide the full CD and floppy versions.
+	{"sq4", "CD", {
+		{"resource.map", 0, "8ae50cc723a6faab733fdc265afb1d0c", 7144},
+		{"resource.000", 0, "231fd8421e1f211e1bcf9d7b8b6408e7", 9526423},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO_SQ4_CD	},
+
 	// Space Quest 4 - Spanish DOS Floppy version distributed on a CD (from jvprat, also includes english language)
 	// Executable scanning reports "1.SQ4.057", VERSION file reports "1.000"
 	// SCI interpreter version 1.000.200 (just a guess)
