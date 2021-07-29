@@ -119,7 +119,7 @@ CDocumentAppearance parchAppearance = {
 	pageOrientVertical,
 	bookTextColors,
 	{ {27, 18, 149, 212}, {0, 0, 0, 0} },
-	{64, 229,  20,  20},
+	{164, 229,  20,  20},
 	parchDecorations,
 	ARRAYSIZE(parchDecorations),
 	MKTAG('P', 'A', 'R', 'C'),
@@ -787,7 +787,6 @@ int16 openBook(uint16 textScript) {
 	rInfo.result    = -1;
 	rInfo.running   = true;
 
-	warning("STUB: openBook()");
 
 	// point to book
 	CDocument       *win = NULL;
@@ -834,7 +833,6 @@ int16 openParchment(uint16 textScript) {
 	rInfo.result    = -1;
 	rInfo.running   = true;
 
-	warning("STUB: openParchment()");
 
 	// point to book
 	CDocument       *win = NULL;
