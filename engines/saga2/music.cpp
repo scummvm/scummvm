@@ -78,6 +78,8 @@ Music::Music(hResContext *musicRes) : _musicContext(musicRes), _parser(0) {
 	_currentMusicBuffer = nullptr;
 
 	_trackNumber = 0;
+
+	syncSoundSettings();
 }
 
 Music::~Music() {
