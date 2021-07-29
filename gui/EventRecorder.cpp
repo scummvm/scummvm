@@ -606,6 +606,7 @@ void EventRecorder::preDrawOverlayGui() {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
 		g_system->showOverlay();
+		g_gui.checkScreenChange();
 		g_gui.theme()->clearAll();
 		g_gui.theme()->drawToBackbuffer();
 		_controlPanel->drawDialog(kDrawLayerBackground);
