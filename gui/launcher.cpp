@@ -828,7 +828,7 @@ int LauncherChooser::runModal() {
 
 LauncherSimple::LauncherSimple(const U32String &title)
 	: LauncherDialog(title),
-	_list (nullptr), _addButton(nullptr), _startButton(nullptr),
+	_list(nullptr), _addButton(nullptr), _startButton(nullptr),
 	_loadButton(nullptr), _editButton(nullptr), _removeButton(nullptr) {
 
 	build();
@@ -1160,7 +1160,7 @@ void LauncherSimple::updateButtons() {
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 LauncherGrid::LauncherGrid(const U32String &title)
 	: LauncherDialog(title),
-	_grid (nullptr), _addButton(nullptr), _startButton(nullptr),
+	_grid(nullptr), _addButton(nullptr), _startButton(nullptr),
 	_loadButton(nullptr), _editButton(nullptr), _removeButton(nullptr) {
 
 	build();
