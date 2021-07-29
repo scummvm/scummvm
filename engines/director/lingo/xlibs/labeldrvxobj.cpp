@@ -53,11 +53,18 @@ static MethodProto xlibMethods[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-void LabelDrvXObj::initialize(int type) {
-	if (type & kXObj) {
+void LabelDrvXObj::open(int type) {
+	if (type == kXObj) {
 		LabelDrvXObject::initMethods(xlibMethods);
 		LabelDrvXObject *xobj = new LabelDrvXObject(kXObj);
 		g_lingo->_globalvars[xlibName] = xobj;
+	}
+}
+
+void LabelDrvXObj::close(int type) {
+	if (type == kXObj) {
+		LabelDrvXObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
 	}
 }
 

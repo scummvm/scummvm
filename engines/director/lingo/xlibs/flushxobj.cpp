@@ -53,11 +53,18 @@ static MethodProto xlibMethods[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-void FlushXObj::initialize(int type) {
-	if (type & kXObj) {
+void FlushXObj::open(int type) {
+	if (type == kXObj) {
 		FlushXObject::initMethods(xlibMethods);
 		FlushXObject *xobj = new FlushXObject(kXObj);
 		g_lingo->_globalvars[xlibName] = xobj;
+	}
+}
+
+void FlushXObj::close(int type) {
+	if (type == kXObj) {
+		FlushXObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
 	}
 }
 

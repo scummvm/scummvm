@@ -275,6 +275,27 @@ void Lingo::cleanupBuiltIns() {
 	_builtinConsts.clear();
 }
 
+void Lingo::cleanupBuiltIns(BuiltinProto protos[]) {
+	for (BuiltinProto *blt = protos; blt->name; blt++) {
+		switch (blt->type) {
+		case CBLTIN:
+			_builtinCmds.erase(blt->name);
+			break;
+		case FBLTIN:
+			_builtinFuncs.erase(blt->name);
+			break;
+		case HBLTIN:
+			_builtinCmds.erase(blt->name);
+			_builtinFuncs.erase(blt->name);
+			break;
+		case KBLTIN:
+			_builtinConsts.erase(blt->name);
+		default:
+			break;
+		}
+	}
+}
+
 void Lingo::printSTUBWithArglist(const char *funcname, int nargs, const char *prefix) {
 	Common::String s(funcname);
 
@@ -1040,8 +1061,8 @@ void LB::b_closeResFile(int nargs) {
 
 void LB::b_closeXlib(int nargs) {
 	Datum d = g_lingo->pop();
-
-	warning("STUB: b_closeXlib(%s)", d.asString().c_str());
+	Common::String xlibName = d.asString();
+	g_lingo->closeXLib(xlibName);
 }
 
 void LB::b_getNthFileNameInFolder(int nargs) {

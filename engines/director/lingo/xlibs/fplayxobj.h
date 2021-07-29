@@ -27,7 +27,8 @@ namespace Director {
 
 namespace FPlayXObj {
 
-void initialize(int type);
+void open(int type);
+void close(int type);
 
 void b_fplay(int nargs);
 void b_sndinfo(int nargs);

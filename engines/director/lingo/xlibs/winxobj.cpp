@@ -47,11 +47,18 @@ static MethodProto xlibMethods[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-void RearWindowXObj::initialize(int type) {
-	if (type & kXObj) {
+void RearWindowXObj::open(int type) {
+	if (type == kXObj) {
 		RearWindowXObject::initMethods(xlibMethods);
 		RearWindowXObject *xobj = new RearWindowXObject(kXObj);
 		g_lingo->_globalvars[xlibName] = xobj;
+	}
+}
+
+void RearWindowXObj::close(int type) {
+	if (type == kXObj) {
+		RearWindowXObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
 	}
 }
 

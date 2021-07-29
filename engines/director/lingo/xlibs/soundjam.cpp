@@ -69,11 +69,18 @@ static MethodProto xlibMethods[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-void SoundJam::initialize(int type) {
-	if (type & kXObj) {
+void SoundJam::open(int type) {
+	if (type == kXObj) {
 		SoundJamObject::initMethods(xlibMethods);
 		SoundJamObject *xobj = new SoundJamObject(kXObj);
 		g_lingo->_globalvars[xlibName] = xobj;
+	}
+}
+
+void SoundJam::close(int type) {
+	if (type == kXObj) {
+		SoundJamObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
 	}
 }
 

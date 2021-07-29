@@ -209,7 +209,7 @@ typedef Common::HashMap<Common::String, Symbol, Common::IgnoreCase_Hash, Common:
 typedef Common::HashMap<Common::String, Datum, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DatumHash;
 typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> BuiltinHash;
 typedef Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarTypeHash;
-typedef Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> OpenXLibsHash;
+typedef Common::HashMap<Common::String, ObjectType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> OpenXLibsHash;
 
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
@@ -283,6 +283,7 @@ public:
 	void initBuiltIns();
 	void initBuiltIns(BuiltinProto protos[]);
 	void cleanupBuiltIns();
+	void cleanupBuiltIns(BuiltinProto protos[]);
 	void initFuncs();
 	void cleanupFuncs();
 	void initBytecode();
@@ -290,7 +291,10 @@ public:
 	void cleanupMethods();
 	void initXLibs();
 	void cleanupXLibs();
+
+	Common::String normalizeXLibName(Common::String name);
 	void openXLib(Common::String name, ObjectType type);
+	void closeXLib(Common::String name);
 
 	void runTests();
 
@@ -408,7 +412,8 @@ public:
 	SymbolHash _builtinFuncs;
 	SymbolHash _builtinConsts;
 	SymbolHash _methods;
-	SymbolHash _xlibInitializers;
+	SymbolHash _xlibOpeners;
+	SymbolHash _xlibClosers;
 
 	OpenXLibsHash _openXLibs;
 

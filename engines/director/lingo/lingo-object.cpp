@@ -107,18 +107,19 @@ void Lingo::cleanupMethods() {
 
 static struct XLibProto {
 	const char *name;
-	void (*initializer)(int);
+	void (*opener)(int);
+	void (*closer)(int);
 	int type;
 	int version;
 } xlibs[] = {
-	{ "FileIO",					FileIO::initialize,					kXObj | kXtraObj,		200 },	// D2
-	{ "FlushXObj",				FlushXObj::initialize,				kXObj,					400 },	// D4
-	{ "FPlayXObj",				FPlayXObj::initialize,				kXObj,					200 },	// D2
-	{ "PalXObj",				PalXObj:: initialize,				kXObj,					400 }, 	// D4
-	{ "LabelDrv",				LabelDrvXObj:: initialize,			kXObj,					400 }, 	// D4
-	{ "SoundJam",				SoundJam::initialize,				kXObj,					400 },	// D4
-	{ "winXObj",				RearWindowXObj::initialize,			kXObj,					400 },	// D4
-	{ 0, 0, 0, 0 }
+	{ "FileIO",					FileIO::open,			FileIO::close,				kXObj | kXtraObj,		200 },	// D2
+	{ "FlushXObj",				FlushXObj::open,		FlushXObj::close,			kXObj,					400 },	// D4
+	{ "FPlayXObj",				FPlayXObj::open,		FPlayXObj::close,			kXObj,					200 },	// D2
+	{ "PalXObj",				PalXObj::open,			PalXObj::close,				kXObj,					400 }, 	// D4
+	{ "LabelDrv",				LabelDrvXObj::open,		LabelDrvXObj::close,		kXObj,					400 }, 	// D4
+	{ "SoundJam",				SoundJam::open,			SoundJam::close,			kXObj,					400 },	// D4
+	{ "winXObj",				RearWindowXObj::open,	RearWindowXObj::close,		kXObj,					400 },	// D4
+	{ 0, 0, 0, 0, 0 }
 
 };
 
@@ -127,25 +128,32 @@ void Lingo::initXLibs() {
 		if (lib->version > _vm->getVersion())
 			continue;
 
-		Symbol sym;
-		sym.name = new Common::String(lib->name);
-		sym.type = HBLTIN;
-		sym.nargs = 0;
-		sym.maxArgs = 0;
-		sym.targetType = lib->type;
-		sym.u.bltin = lib->initializer;
-		Common::String xlibName = lib->name;
-		xlibName.toLowercase();
-		_xlibInitializers[xlibName] = sym;
+		Symbol openSym;
+		openSym.name = new Common::String(lib->name);
+		openSym.type = HBLTIN;
+		openSym.nargs = 0;
+		openSym.maxArgs = 0;
+		openSym.targetType = lib->type;
+		openSym.u.bltin = lib->opener;
+		_xlibOpeners[lib->name] = openSym;
+
+		Symbol closeSym;
+		closeSym.name = new Common::String(lib->name);
+		closeSym.type = HBLTIN;
+		closeSym.nargs = 0;
+		closeSym.maxArgs = 0;
+		openSym.targetType = lib->type;
+		closeSym.u.bltin = lib->closer;
+		_xlibClosers[lib->name] = closeSym;
 	}
 }
 
 void Lingo::cleanupXLibs() {
-	_xlibInitializers.clear();
+	_xlibOpeners.clear();
+	_xlibClosers.clear();
 }
 
-void Lingo::openXLib(Common::String name, ObjectType type) {
-
+Common::String Lingo::normalizeXLibName(Common::String name) {
 	Common::Platform platform = _vm->getPlatform();
 	if (platform == Common::kPlatformMacintosh) {
 		int pos = name.findLastOf(':');
@@ -155,20 +163,43 @@ void Lingo::openXLib(Common::String name, ObjectType type) {
 			name = name.substr(0, name.size() - 4);
 	}
 
-	// normalize xlib name
-	name.toLowercase();
 	name.trim();
 
-	if (_openXLibs[name])
+	return name;
+}
+
+void Lingo::openXLib(Common::String name, ObjectType type) {
+	name = normalizeXLibName(name);
+
+	if (_openXLibs.contains(name))
 		return;
 
-	_openXLibs[name] = true;
+	_openXLibs[name] = type;
 
-	if (_xlibInitializers.contains(name)) {
-		Symbol sym = _xlibInitializers[name];
+	if (_xlibOpeners.contains(name)) {
+		Symbol sym = _xlibOpeners[name];
 		(*sym.u.bltin)(type);
 	} else {
-		warning("Unimplemented xlib: '%s'", name.c_str());
+		warning("Lingo::openXLib: Unimplemented xlib: '%s'", name.c_str());
+	}
+}
+
+void Lingo::closeXLib(Common::String name) {
+	name = normalizeXLibName(name);
+
+	if (!_openXLibs.contains(name)) {
+		warning("Lingo::closeXLib: xlib %s is not open", name.c_str());
+		return;
+	}
+
+	ObjectType type = _openXLibs[name];
+	_openXLibs.erase(name);
+
+	if (_xlibClosers.contains(name)) {
+		Symbol sym = _xlibClosers[name];
+		(*sym.u.bltin)(type);
+	} else {
+		warning("Lingo::closeXLib: Unimplemented xlib: '%s'", name.c_str());
 	}
 }
 

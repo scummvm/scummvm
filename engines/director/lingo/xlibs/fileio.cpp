@@ -50,13 +50,21 @@ static MethodProto xlibMethods[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-void FileIO::initialize(int type) {
-	if (type & kXObj) {
+void FileIO::open(int type) {
+	if (type == kXObj) {
 		FileObject::initMethods(xlibMethods);
 		FileObject *xobj = new FileObject(kXObj);
 		g_lingo->_globalvars[xlibName] = xobj;
+	} else if (type == kXtraObj) {
+		// TODO - Implement Xtra
 	}
-	if (type & kXtraObj) {
+}
+
+void FileIO::close(int type) {
+	if (type == kXObj) {
+		FileObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
+	} else if (type == kXtraObj) {
 		// TODO - Implement Xtra
 	}
 }
