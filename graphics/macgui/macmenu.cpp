@@ -513,6 +513,33 @@ void MacMenu::setName(const Common::String &menuId, const Common::String &itemId
 	}
 }
 
+void MacMenu::setCheckMark(int menuId, int itemId, bool checkMark) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	if (item) {
+		item->checked = checkMark;
+		_contentIsDirty = true;
+	}
+}
+
+void MacMenu::setEnabled(int menuId, int itemId, bool enabled) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	if (item) {
+		item->enabled = enabled;
+		_contentIsDirty = true;
+	}
+}
+
+void MacMenu::setName(int menuId, int itemId, const Common::String &name) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	if (item) {
+		item->text = name;
+		_contentIsDirty = true;
+	}
+}
+
 MacMenuItem *MacMenu::findMenuItem(const Common::String &menuId, const Common::String &itemId) {
 	// TODO: support arbitrary level menu item finding
 	// only support 2 level finding now.
@@ -547,6 +574,29 @@ MacMenuItem *MacMenu::findMenuItem(const Common::String &menuId, const Common::S
 	}
 
 	warning("MacMenu::findMenuItem: menu %s doesn't have item with id %s", menuId.c_str(), itemId.c_str());
+	return nullptr;
+}
+
+MacMenuItem *MacMenu::findMenuItem(int menuId, int itemId) {
+	MacMenuItem *menu = nullptr;
+
+	if ((uint)menuId < _items.size())
+		menu = _items[menuId];
+
+	if (!menu) {
+		warning("MacMenu::findMenuItem: menuId %d out of bounds", menuId);
+		return nullptr;
+	}
+
+	if (!menu->submenu) {
+		warning("MacMenu::findMenuItem: menu %d doesn't have submenu", menuId);
+		return nullptr;
+	}
+
+	if ((uint)itemId < menu->submenu->items.size())
+		return menu->submenu->items[itemId];
+
+	warning("MacMenu::findMenuItem: itemId %d out of bounds in menu %d", itemId, menuId);
 	return nullptr;
 }
 

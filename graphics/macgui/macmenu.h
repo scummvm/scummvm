@@ -100,6 +100,9 @@ public:
 	void setCheckMark(const Common::String &menuId, const Common::String &itemId, bool checkMark);
 	void setEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled);
 	void setName(const Common::String &menuId, const Common::String &itemId, const Common::String &name);
+	void setCheckMark(int menuId, int itemId, bool checkMark);
+	void setEnabled(int menuId, int itemId, bool enabled);
+	void setName(int menuId, int itemId, const Common::String &name);
 
 	Common::Rect _bbox;
 
@@ -135,6 +138,7 @@ private:
 	void eventLoop();
 
 	MacMenuItem *findMenuItem(const Common::String &menuId, const Common::String &itemId);
+	MacMenuItem *findMenuItem(int menuId, int itemId);
 
 	ItemArray _items;
 

@@ -450,6 +450,30 @@ void MacWindowManager::setMenuItemName(const Common::String &menuId, const Commo
 	}
 }
 
+void MacWindowManager::setMenuItemCheckMark(int menuId, int itemId, bool checkMark) {
+	if (_menu) {
+		_menu->setCheckMark(menuId, itemId, checkMark);
+	} else {
+		warning("MacWindowManager::setMenuItemCheckMark: wm doesn't have menu");
+	}
+}
+
+void MacWindowManager::setMenuItemEnabled(int menuId, int itemId, bool enabled) {
+	if (_menu) {
+		_menu->setEnabled(menuId, itemId, enabled);
+	} else {
+		warning("MacWindowManager::setMenuItemEnabled: wm doesn't have menu");
+	}
+}
+
+void MacWindowManager::setMenuItemName(int menuId, int itemId, const Common::String &name) {
+	if (_menu) {
+		_menu->setName(menuId, itemId, name);
+	} else {
+		warning("MacWindowManager::setMenuItemName: wm doesn't have menu");
+	}
+}
+
 // this is refer to how we deal U32String in splitString in mactext
 // maybe we can optimize this specifically
 Common::U32String stripFormat(const Common::U32String &str) {
