@@ -1109,16 +1109,31 @@ Datum Lingo::getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &m
 void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d) {
 	switch(field) {
 	case kTheCheckMark:
-		g_director->_wm->setMenuItemCheckMark(menuId.asString(), menuItemId.asString(), d.asInt());
+		if (menuId.type == STRING && menuItemId.type == STRING)
+			g_director->_wm->setMenuItemCheckMark(menuId.asString(), menuItemId.asString(), d.asInt());
+		else if (menuId.type == INT && menuItemId.type == INT)
+			g_director->_wm->setMenuItemCheckMark(menuId.asInt() - 1, menuItemId.asInt() - 1, d.asInt());
+		else
+			warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
 		break;
 	case kTheEnabled:
-		g_director->_wm->setMenuItemEnabled(menuId.asString(), menuItemId.asString(), d.asInt());
+		if (menuId.type == STRING && menuItemId.type == STRING)
+			g_director->_wm->setMenuItemEnabled(menuId.asString(), menuItemId.asString(), d.asInt());
+		else if (menuId.type == INT && menuItemId.type == INT)
+			g_director->_wm->setMenuItemEnabled(menuId.asInt() - 1, menuItemId.asInt() - 1, d.asInt());
+		else
+			warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
 		break;
 	case kTheName:
-		setTheEntitySTUB(kTheName);
+		if (menuId.type == STRING && menuItemId.type == STRING)
+			g_director->_wm->setMenuItemName(menuId.asString(), menuItemId.asString(), d.asString());
+		else if (menuId.type == INT && menuItemId.type == INT)
+			g_director->_wm->setMenuItemName(menuId.asInt() - 1, menuItemId.asInt() - 1, d.asString());
+		else
+			warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
 		break;
 	case kTheScript:
-		setTheEntitySTUB(kTheScript);
+		warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
 		break;
 	default:
 		warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
