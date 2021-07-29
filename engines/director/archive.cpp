@@ -340,7 +340,10 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 		if (nameSize) {
 			for (uint8 i = 0; i < nameSize; i++) {
-				name += stream->readByte();
+				byte b = stream->readByte();
+
+				if (b)
+					name += b;
 			}
 		}
 
