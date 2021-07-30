@@ -620,6 +620,18 @@ int Channel::getMouseChar(int x, int y) {
 	return ((Graphics::MacText *)_widget)->getMouseChar(x, y);
 }
 
+int Channel::getMouseWord(int x, int y) {
+	if (_sprite->_spriteType != kTextSprite)
+		return -1;
+
+	if (!_widget) {
+		warning("Channel::getMouseWord getting mouse char on a non-existing widget");
+		return -1;
+	}
+
+	return ((Graphics::MacText *)_widget)->getMouseWord(x, y);
+}
+
 Common::Point Channel::getPosition() {
 	Common::Point res = _currentPoint;
 	addRegistrationOffset(res);

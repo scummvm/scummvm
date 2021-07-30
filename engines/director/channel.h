@@ -73,6 +73,7 @@ public:
 	bool canKeepWidget(Sprite *currentSprite, Sprite *nextSprite);
 
 	int getMouseChar(int x, int y);
+	int getMouseWord(int x, int y);
 
 public:
 	Sprite *_sprite;

@@ -654,7 +654,14 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = g_director->getCurrentWindow()->getMousePos().y;
 		break;
 	case kTheMouseWord:
-		getTheEntitySTUB(kTheMouseWord);
+		{
+			// same issue as MouseChar, check MouseChar above
+			Common::Point pos = g_director->getCurrentWindow()->getMousePos();
+			uint16 spriteId = score->getSpriteIDFromPos(pos);
+			Channel *ch = score->getChannelById(spriteId);
+			d.u.i = ch->getMouseWord(pos.x, pos.y);
+			d.type = INT;
+		}
 		break;
 	case kTheMovie:
 	case kTheMovieName:
