@@ -213,6 +213,7 @@ public:
 	void setTextSlant(int textSlant, int start, int end);
 
 	int getMouseChar(int x, int y);
+	int getMouseWord(int x, int y);
 
 private:
 	MacFontRun getTextChunks(int start, int end);

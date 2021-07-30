@@ -1888,17 +1888,48 @@ int MacText::getMouseChar(int x, int y) {
 	Common::Point offset = calculateOffset();
 	x -= getDimensions().left - offset.x;
 	y -= getDimensions().top - offset.y;
-
 	y += _scrollPos;
-	int dx, dy, row, col;
 
+	int dx, dy, row, col;
 	getRowCol(x, y, &dx, &dy, &row, &col);
 
 	int index = 0;
 	for (int r = 0; r < row; r++)
 		index += getLineCharWidth(r);
-
 	index += col;
+
+	return index + 1;
+}
+
+int MacText::getMouseWord(int x, int y) {
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
+	y += _scrollPos;
+
+	int dx, dy, row, col;
+	getRowCol(x, y, &dx, &dy, &row, &col);
+
+	int index = 0;
+	for (int i = 0; i < row; i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			if (_textLines[i].chunks[j].text.empty())
+				continue;
+			index++;
+		}
+	}
+
+	int cur = 0;
+	for (uint j = 0; j < _textLines[row].chunks.size(); j++) {
+		if (_textLines[row].chunks[j].text.empty())
+			continue;
+		cur += _textLines[row].chunks[j].text.size();
+		if (cur <= col)
+			index++;
+		else
+			break;
+	}
+
 	return index + 1;
 }
 
