@@ -396,13 +396,12 @@ GridWidget::~GridWidget() {
 	_languageIcons.clear();
 	_loadedSurfaces.clear();
 	_gridItems.clear();
-	_allEntries.clear();
-	_visibleEntries.clear();
+	_visibleEntryList.clear();
 }
 
 const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name) {
-	for (Common::Array<GridItemInfo>::iterator l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
-		if (l->thumbPath == name) {
+	for (Common::Array<GridItemInfo *>::iterator l = _visibleEntryList.begin(); l != _visibleEntryList.end(); ++l) {
+		if ((!(*l)->isHeader) && ((*l)->thumbPath == name)) {
 			return _loadedSurfaces[name];
 		}
 	}
@@ -448,10 +447,10 @@ bool GridWidget::calcVisibleEntries() {
 
 		int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_allEntries.size());
 
-		_visibleEntries.clear();
+		_visibleEntryList.clear();
 		for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
 			GridItemInfo *iter = _allEntries.begin() + ind;
-			_visibleEntries.push_back(*iter);
+			_visibleEntryList.push_back(iter);
 		}
 	}
 	return needsReload;
@@ -466,16 +465,17 @@ void GridWidget::reloadThumbnails() {
 	String gameid;
 	String engineid;
 
-	for (Common::Array<GridItemInfo>::iterator iter = _visibleEntries.begin(); iter != _visibleEntries.end(); ++iter) {
-		if (!_loadedSurfaces.contains(iter->thumbPath)) {
-			surf = loadSurfaceFromFile(iter->thumbPath);
+	for (Common::Array<GridItemInfo *>::iterator iter = _visibleEntryList.begin(); iter != _visibleEntryList.end(); ++iter) {
+		GridItemInfo *entry = *iter;
+		if (!_loadedSurfaces.contains(entry->thumbPath)) {
+			surf = loadSurfaceFromFile(entry->thumbPath);
 			if (surf) {
 				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512));
-				_loadedSurfaces[iter->thumbPath] = scSurf;
+				_loadedSurfaces[entry->thumbPath] = scSurf;
 				surf->free();
 				delete surf;
 			} else {
-				_loadedSurfaces[iter->thumbPath] = nullptr;
+				_loadedSurfaces[entry->thumbPath] = nullptr;
 			}
 		}
 	}
@@ -535,15 +535,16 @@ void GridWidget::updateGrid() {
 }
 
 void GridWidget::assignEntriesToItems() {
-	// Assign entries from _visibleEntries to each GridItem in _gridItems
-	Common::Array<GridItemInfo>::iterator entry = _visibleEntries.begin();
+	// Assign entries from _visibleEntryList to each GridItem in _gridItems
+	Common::Array<GridItemInfo *>::iterator eit = _visibleEntryList.begin();
 	// Start assigning from the second row as the first row is supposed
 	// to be offscreen.
 	Common::Array<GridItemWidget *>::iterator it = _gridItems.begin() + _itemsPerRow;
 
 	for (int k = 0; k < _itemsOnScreen; ++k) {
 		GridItemWidget *item = *it;
-		if (entry != _visibleEntries.end()) {
+		GridItemInfo *entry = *eit;
+		if (eit != _visibleEntryList.end()) {
 			// Assign entry and update
 			item->setActiveEntry(*entry);
 			item->update();
@@ -551,7 +552,7 @@ void GridWidget::assignEntriesToItems() {
 				item->setVisible(false);
 			else
 				item->setVisible(true);
-			++entry;
+			++eit;
 		} else {
 			// If we run out of visible entries to display.
 			// e.g., scrolled to the very bottom, we make items invisible.
