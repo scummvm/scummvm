@@ -181,7 +181,7 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (isHighlighted && isVisible()) {
-		_grid->_selectedEntry = _activeEntry->entryID;
+		_grid->_selectedEntry = _activeEntry;
 		sendCommand(kItemClicked, 0);
 		// Work in progress
 		// Since user expected to click on "entry" and not the "widget", we
@@ -356,7 +356,8 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	_scrollWindowWidth = 0;
 	_gridYSpacing = 0;
 	_gridXSpacing = 0;
-	_selectedEntry = -1;
+
+	_selectedEntry = nullptr;
 }
 
 GridWidget::GridWidget(GuiObject *boss, const String &name)
@@ -386,7 +387,8 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_scrollWindowWidth = 0;
 	_gridYSpacing = 0;
 	_gridXSpacing = 0;
-	_selectedEntry = -1;
+
+	_selectedEntry = nullptr;
 }
 
 GridWidget::~GridWidget() {

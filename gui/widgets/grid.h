@@ -134,7 +134,7 @@ public:
 
 	bool 			_isTitlesVisible;
 
-	int 			_selectedEntry;
+	GridItemInfo	*_selectedEntry;
 
 	GridWidget(GuiObject *boss, int x, int y, int w, int h);
 	GridWidget(GuiObject *boss, const String &name);
@@ -159,7 +159,7 @@ public:
 	void assignEntriesToItems();
 
 	int getScrollPos() const { return _scrollPos; }
-	int getSelected() const { return _selectedEntry; }
+	int getSelected() const { return ((_selectedEntry == nullptr) ? -1 : _selectedEntry->entryID); }
 	int getThumbnailHeight() const { return _thumbnailHeight; }
 	int getThumbnailWidth() const { return _thumbnailWidth; }
 
