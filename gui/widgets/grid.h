@@ -103,7 +103,7 @@ protected:
 
 	Common::Array<GridItemWidget *> 	_gridItems;
 	Common::Array<GridItemInfo> 		_allEntries;
-	Common::Array<GridItemInfo> 		_visibleEntries;
+	Common::Array<GridItemInfo *> 		_visibleEntryList;
 
 	ScrollBarWidget *_scrollBar;
 
