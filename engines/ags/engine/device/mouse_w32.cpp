@@ -192,11 +192,16 @@ float Mouse::GetSpeed() {
 }
 
 void Mouse::UpdateGraphicArea() {
-	// TODO
+	Mouse::ControlRect = _GP(GameScaling).ScaleRange(_GP(play).GetMainViewport());
+	Debug::Printf("Mouse cursor graphic area: (%d,%d)-(%d,%d) (%dx%d)",
+		Mouse::ControlRect.Left, Mouse::ControlRect.Top, Mouse::ControlRect.Right, Mouse::ControlRect.Bottom,
+		Mouse::ControlRect.GetWidth(), Mouse::ControlRect.GetHeight());
 }
 
 void Mouse::SetMovementControl(bool flag) {
-	// TODO
+	ControlEnabled = false;
+	warning("movement control not supported, mouse control can't be enabled");
+	ags_clear_mouse_movement();
 }
 
 } // namespace AGS3

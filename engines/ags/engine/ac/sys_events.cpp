@@ -235,15 +235,28 @@ int ags_check_mouse_wheel() {
 	return result;
 }
 
-
-
-void ags_clear_input_buffer() {
+void ags_clear_input_state() {
+	// Clear everything related to the input field
 	::AGS::g_events->clearEvents();
 	_G(mouse_accum_relx) = 0;
 	_G(mouse_accum_rely) = 0;
 	_G(mouse_button_state) = 0;
 	_G(mouse_accum_button_state) = 0;
-	_G(mouse_clear_at_time) = AGS_Clock::now() + std::chrono::milliseconds(50);
+	_G(mouse_clear_at_time) = AGS_Clock::now();
+}
+
+void ags_clear_input_buffer() {
+	::AGS::g_events->clearEvents();
+	// accumulated state only helps to not miss clicks
+	_G(mouse_accum_button_state) = 0;
+	// forget about recent mouse relative movement too
+	_G(mouse_accum_relx) = 0;
+	_G(mouse_accum_rely) = 0;
+}
+
+void ags_clear_mouse_movement() {
+	_G(mouse_accum_relx) = 0;
+	_G(mouse_accum_rely) = 0;
 }
 
 // TODO: this is an awful function that should be removed eventually.

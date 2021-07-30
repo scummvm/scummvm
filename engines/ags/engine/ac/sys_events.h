@@ -96,8 +96,14 @@ extern int  ags_check_mouse_wheel();
 
 // Other input utilities
 //
-// Clears buffered keypresses and mouse clicks, if any
-extern void ags_clear_input_buffer();
+// Clears buffered keypresses and mouse clicks;
+// resets current key/mb states
+void ags_clear_input_state();
+// Clears buffered keypresses and mouse clicks, if any;
+// does NOT reset current key/mb states
+void ags_clear_input_buffer();
+// Clears buffered mouse movement
+void ags_clear_mouse_movement();
 // Halts execution until any user input
 // TODO: seriously not a good design, replace with event listening
 extern void ags_wait_until_keypress();

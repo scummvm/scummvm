@@ -1311,7 +1311,7 @@ bool engine_try_switch_windowed_gfxmode() {
 			init_desktop = get_desktop_size();
 		engine_post_gfxmode_setup(init_desktop);
 	}
-	ags_clear_input_buffer();
+	ags_clear_input_state();
 	return res;
 }
 
