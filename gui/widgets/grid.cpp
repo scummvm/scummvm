@@ -396,6 +396,8 @@ GridWidget::~GridWidget() {
 	_languageIcons.clear();
 	_loadedSurfaces.clear();
 	_gridItems.clear();
+	_dataEntryList.clear();
+	_sortedEntryList.clear();
 	_visibleEntryList.clear();
 }
 
@@ -421,13 +423,69 @@ const Graphics::ManagedSurface *GridWidget::platformToSurface(Common::Platform p
 }
 
 void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
-	_allEntries.clear();
+	_dataEntryList.clear();
+	_sortedEntryList.clear();
 	for (Common::Array<GridItemInfo>::iterator entryIter = list->begin(); entryIter != list->end(); ++entryIter) {
-		_allEntries.push_back(*entryIter);
+		_dataEntryList.push_back(*entryIter);
 	}
+	groupEntries();
+	// TODO: Remove this below, add drawWidget(), that should do the drawing
 	if (!_gridItems.empty()) {
 		reflowLayout();
 	}
+}
+
+void GridWidget::setAttributeValues(const Common::Array<U32String> &attrs) {
+	assert(attrs.size() == _dataEntryList.size());
+	for (uint i = 0; i < _dataEntryList.size(); ++i) {
+		_dataEntryList[i].attribute = attrs[i];
+	}
+}
+
+void GridWidget::groupEntries() {
+	_groupExpanded.clear();
+	_groupHeaders.clear();
+	_groupValueIndex.clear();
+	_itemsInGroup.clear();
+
+	for (uint i = 0; i < _dataEntryList.size(); ++i) {
+		int groupID;
+		U32String attrVal = _dataEntryList[i].attribute;
+		if (!_groupValueIndex.contains(attrVal)) {
+			int newGroupID = _groupValueIndex.size();
+			_groupValueIndex.setVal(attrVal, newGroupID);
+			_groupHeaders.push_back(attrVal);
+			_groupExpanded.push_back(true);
+		}
+		groupID = _groupValueIndex.getVal(attrVal);
+
+		_itemsInGroup[groupID].push_back(i);
+	}
+
+	sortGroups();
+}
+
+void GridWidget::sortGroups() {
+	uint oldListSize = _sortedEntryList.size();
+	_sortedEntryList.clear();
+
+	Common::sort(_groupHeaders.begin(), _groupHeaders.end());
+
+	for (uint i = 0; i != _groupHeaders.size(); ++i) {
+		U32String header = _groupHeaders[i];
+		U32String displayedHeader = header;
+		uint groupID = _groupValueIndex[header];
+
+		_sortedEntryList.push_back(GridItemInfo(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix, groupID));
+
+		if (_groupExpanded[groupID]) {
+			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
+				_sortedEntryList.push_back(_dataEntryList[*k]);
+			}
+		}
+	}
+	scrollBarRecalc();
+	markAsDirty();
 }
 
 bool GridWidget::calcVisibleEntries() {
@@ -445,11 +503,11 @@ bool GridWidget::calcVisibleEntries() {
 		_itemsOnScreen = nItemsOnScreen;
 		_firstVisibleItem = nFirstVisibleItem;
 
-		int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_allEntries.size());
+		int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_dataEntryList.size());
 
 		_visibleEntryList.clear();
 		for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
-			GridItemInfo *iter = _allEntries.begin() + ind;
+			GridItemInfo *iter = _dataEntryList.begin() + ind;
 			_visibleEntryList.push_back(iter);
 		}
 	}
@@ -633,7 +691,7 @@ void GridWidget::reflowLayout() {
 	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
 	_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
 
-	_rows = ceil(_allEntries.size() / (float)_itemsPerRow);
+	_rows = ceil(_dataEntryList.size() / (float)_itemsPerRow);
 
 	_innerHeight = _trayHeight + _gridYSpacing + _rows * (_gridItemHeight + _gridYSpacing);
 	_innerWidth = (2 * _minGridXSpacing) + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
