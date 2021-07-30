@@ -633,25 +633,11 @@ void Redraw::renderOverlays() {
 				const int32 textHeight = 48;
 
 				renderRect.left = overlay->x - (textLength / 2);
-				renderRect.top = overlay->y - 24;
+				renderRect.top = overlay->y - (textHeight / 2);
 				renderRect.right = overlay->x + (textLength / 2);
 				renderRect.bottom = overlay->y + textHeight;
 
-				if (renderRect.left < 0) {
-					renderRect.left = 0;
-				}
-
-				if (renderRect.top < 0) {
-					renderRect.top = 0;
-				}
-
-				if (renderRect.right > (_engine->width() - 1)) {
-					renderRect.right = (_engine->width() - 1);
-				}
-
-				if (renderRect.bottom > (_engine->height() - 1)) {
-					renderRect.bottom = (_engine->height() - 1);
-				}
+				renderRect.clip(_engine->rect());
 
 				_engine->_interface->setClip(renderRect);
 

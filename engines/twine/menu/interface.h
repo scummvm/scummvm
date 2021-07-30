@@ -38,7 +38,7 @@ class Interface {
 private:
 	TwinEEngine *_engine;
 	int32 checkClipping(int32 x, int32 y) const;
-	Common::Rect textWindowSave;
+	Common::Rect savedClip;
 
 public:
 	Interface(TwinEEngine *engine);

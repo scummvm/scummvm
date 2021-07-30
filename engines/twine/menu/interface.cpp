@@ -181,18 +181,16 @@ void Interface::drawFilledRect(const Common::Rect &rect, uint8 colorIndex) {
 }
 
 void Interface::setClip(const Common::Rect &rect) {
-	clip.left = MAX((int32)0, (int32)rect.left);
-	clip.top = MAX((int32)0, (int32)rect.top);
-	clip.right = MIN((int32)(_engine->width() - 1), (int32)rect.right);
-	clip.bottom = MIN((int32)(_engine->height() - 1), (int32)rect.bottom);
+	clip = rect;
+	clip.clip(_engine->rect());
 }
 
 void Interface::saveClip() {
-	textWindowSave = clip;
+	savedClip = clip;
 }
 
 void Interface::loadClip() {
-	clip = textWindowSave;
+	clip = savedClip;
 }
 
 void Interface::resetClip() {
