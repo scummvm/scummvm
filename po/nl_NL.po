@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-07-28 11:37+0000\n"
-"PO-Revision-Date: 2021-05-27 09:25+0000\n"
+"PO-Revision-Date: 2021-07-30 18:56+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -428,7 +428,7 @@ msgstr "Prestaties"
 
 #: gui/editgamedialog.cpp:374 engines/dialogs.cpp:342
 msgid "Statistics"
-msgstr ""
+msgstr "Statistieken"
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
 #: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2112
@@ -1037,7 +1037,7 @@ msgstr "Uitrekmodus:"
 
 #: gui/options.cpp:1425
 msgid "Scaler:"
-msgstr ""
+msgstr "Schaler:"
 
 #: gui/options.cpp:1438 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -1724,7 +1724,9 @@ msgstr "Selecteer map voor Bestanden Manager /root/"
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
-msgstr "URL openen mislukt! Navigeer a.u.b. handmatig naar deze pagina."
+msgstr ""
+"URL openen mislukt!\n"
+"Navigeer a.u.b. handmatig naar deze pagina."
 
 #: gui/options.cpp:2872
 msgid "Another Storage is working now. Do you want to interrupt it?"
@@ -1770,7 +1772,9 @@ msgstr "Verbinden met opslag mislukt: "
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
-msgstr "Verzoek mislukt. Controleer uw Internet verbinding."
+msgstr ""
+"Verzoek mislukt.\n"
+"Controleer uw Internet verbinding."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:102
@@ -1959,7 +1963,7 @@ msgstr "Kopieer naar klembord"
 
 #: gui/unknown-game-dialog.cpp:64
 msgid "Report game"
-msgstr "Rapporteer  spel"
+msgstr "Rapporteer spel"
 
 #: gui/unknown-game-dialog.cpp:101
 msgid ""
@@ -1989,9 +1993,8 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
-"ScummVM ondersteunt nu automatische controle op updates.\n"
-"Hiervoor is wel internet toegang nodig.\n"
-"\n"
+"ScummVM ondersteunt nu automatische controle op\n"
+"updates. Hiervoor is wel internet toegang nodig. \n"
 "Wilt u deze functie inschakelen?"
 
 #: gui/updates-dialog.cpp:52
@@ -1999,8 +2002,8 @@ msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
-"U kunt deze instelling later in het Misc-tabblad in het dialoogvenster "
-"Opties wijzigen."
+"U kunt deze instelling later in het Misc-tabblad\n"
+"in het dialoogvenster Opties wijzigen."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -2111,7 +2114,7 @@ msgstr "PC-9801 (16 Kleuren)"
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:48
 msgid "Macintosh b/w"
-msgstr ""
+msgstr "Macintosh z/w"
 
 #: common/rendermode.cpp:75
 msgctxt "lowres"
@@ -2326,13 +2329,6 @@ msgid "Error"
 msgstr "Fout"
 
 #: engines/engine.cpp:519
-#, fuzzy
-#| msgid ""
-#| "You appear to be playing this game directly\n"
-#| "from the CD. This is known to cause problems,\n"
-#| "and it is therefore recommended that you copy\n"
-#| "the data files to your hard disk instead.\n"
-#| "See the Documentation (CD audio) for details."
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2344,16 +2340,9 @@ msgstr ""
 "Hiervan is bekend dat dit problemen veroorzaakt.\n"
 "Het wordt daarom aangeraden om de data\n"
 "bestanden naar uw harddisk te kopiëren.\n"
-"Lees de documentatie (CD audio) voor details."
+"Zie de documentatie (CD audio) voor details."
 
 #: engines/engine.cpp:543
-#, fuzzy
-#| msgid ""
-#| "This game has audio tracks in its disk. These\n"
-#| "tracks need to be ripped from the disk using\n"
-#| "an appropriate CD audio extracting tool in\n"
-#| "order to listen to the game's music.\n"
-#| "See the README file for details."
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -2361,10 +2350,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"Dit spel heeft audio sporen op zijn disk. Deze\n"
+"Dit spel heeft audio sporen op zijn CD. Deze\n"
 "dienen eerst geripped te worden met een audio\n"
 "CD rip programma om te kunnen luisteren naar\n"
-"het spelmuziek. Voor details kijk in de README."
+"het spelmuziek. Zie de documentatie (CD audio)\n"
+"voor details."
 
 #: engines/engine.cpp:576 engines/metaengine.cpp:345 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:253 engines/sky/metaengine.cpp:176
@@ -2388,7 +2378,7 @@ msgstr ""
 
 #: engines/engine.cpp:669
 msgid "WARNING: "
-msgstr ""
+msgstr "WAARSCHUWING: "
 
 #: engines/engine.cpp:669
 msgid " Shall we still run the game?"
@@ -2515,8 +2505,6 @@ msgid "OpenGL with shaders"
 msgstr "OpenGL met shaders"
 
 #: graphics/renderer.cpp:42
-#, fuzzy
-#| msgid "OpenGL with shaders"
 msgctxt "lowres"
 msgid "OpenGL with shaders"
 msgstr "OpenGL met shaders"
@@ -2689,25 +2677,20 @@ msgid "Download failed."
 msgstr "Download mislukt."
 
 #: backends/events/default/default-events.cpp:185
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to start a new game? All unsaved progress will be "
-#| "lost."
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Weet u zeker dat u een nieuw spel wilt starten? Alle onbewaarde voortgang "
-"zal verloren gaan."
+"Weet u zeker dat u een nieuw spel wilt starten?\n"
+"Alle niet opgeslagen voortgang zal verloren gaan."
 
 #: backends/events/default/default-events.cpp:209
-#, fuzzy
-#| msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Weet u zeker dat u wilt stoppen? Alle onbewaarde voortgang zal verloren gaan."
+"Weet u zeker dat u wilt stoppen?\n"
+"Alle niet opgeslagen voortgang zal verloren gaan."
 
 #: backends/events/default/default-events.cpp:209
 #: backends/events/default/default-events.cpp:326
@@ -2796,10 +2779,8 @@ msgid "Pixel-perfect scaling"
 msgstr "Pixel-perfect schalen"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#, fuzzy
-#| msgid "Pixel-perfect scaling"
 msgid "Even pixels scaling"
-msgstr "Pixel-perfect schalen"
+msgstr "Gelijkmatig pixel schalen"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:69
@@ -2848,7 +2829,7 @@ msgstr "Uitrekmodus"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:61
 msgid "SDL Surface"
-msgstr ""
+msgstr "SDL Oppervlak"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2375
 msgid "Active graphics filter:"
@@ -2902,16 +2883,12 @@ msgid "Decrease the scale factor"
 msgstr "Verlaag de schalingsfactor"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:462
-#, fuzzy
-#| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
-msgstr "Schakel naar TV 2x schaalmode"
+msgstr "Schakel naar de volgende schaalmode"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:467
-#, fuzzy
-#| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
-msgstr "Schakel naar dichtstbijzijnde schaalmode"
+msgstr "Schakel naar de vorige schaalmode"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -3146,7 +3123,7 @@ msgid ""
 "from ScummVM distribution is available in 'themepath'."
 msgstr ""
 "Deze pagina is niet beschikbaar zonder de bronnen. Zorg ervoor dat bestand "
-"wwwroot.zip uit de  ScummVM disctributie beschikbaar is in 'themapad'."
+"wwwroot.zip uit de ScummVM disctributie beschikbaar is in 'themapad'."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
@@ -3432,10 +3409,8 @@ msgid "Magnify Mode Off"
 msgstr "Vergroot Modus Uit"
 
 #: backends/platform/ds/ds-graphics.cpp:219
-#, fuzzy
-#| msgid "Upscale videos"
 msgid "Unscaled"
-msgstr "Videos opschalen"
+msgstr "Niet geschaald"
 
 #: backends/platform/ds/ds-graphics.cpp:220
 msgid "Hardware scale (fast, but low quality)"
@@ -3773,7 +3748,7 @@ msgstr "Toon scanlines"
 #: engines/adl/detection.cpp:85
 msgid "Darken every other scanline to mimic the look of a CRT"
 msgstr ""
-"Maak om en om een scanline donker om zo het beeld van een CRT  na te bootsen"
+"Maak om en om een scanline donker om zo het beeld van een CRT na te bootsen"
 
 #: engines/adl/detection.cpp:94
 msgid "Always use sharp monochrome text"
@@ -3943,10 +3918,8 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Cutscene bestand '%s' niet gevonden!"
 
 #: engines/agos/metaengine.cpp:104
-#, fuzzy
-#| msgid "SAGA2 support not compiled in"
 msgid "AGOS 2 support is not compiled in"
-msgstr "SAGA2 ondersteuning niet mee gecompileerd"
+msgstr "AGOS 2 ondersteuning is niet meegecompileerd"
 
 #: engines/agos/midi.cpp:158 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -3963,32 +3936,24 @@ msgstr ""
 "dat sommige tracks niet goed klinken."
 
 #: engines/ags/detection.cpp:90
-#, fuzzy
-#| msgid "GUI language:"
 msgid "Game language:"
-msgstr "GUI taal:"
+msgstr "Spel taal:"
 
 #: engines/ags/detection.cpp:90
-#, fuzzy
-#| msgid "AdLib is used for music in many games"
 msgid "Language to use for multilingual games"
-msgstr "AdLib word in vele spelen voor muziek gebruikt"
+msgstr "De te gebruiken taal voor meertalige spellen"
 
 #: engines/ags/detection.cpp:110
-#, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
-msgstr "Antialiased"
+msgstr "Forceer antialiasen van text"
 
 #: engines/ags/detection.cpp:110
 msgid "Use antialiasing to draw text even if the game does not ask for it"
-msgstr ""
+msgstr "Antialias tekst zelfs als het spel er niet om vraagt"
 
 #: engines/asylum/metaengine.cpp:68
-#, fuzzy
-#| msgid "Show blueprint"
 msgid "Show version"
-msgstr "Toon blauwdruk"
+msgstr "Toon versie"
 
 #: engines/asylum/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:951
 msgid "Quick load"
@@ -3999,22 +3964,16 @@ msgid "Quick save"
 msgstr "Snel bewaren"
 
 #: engines/asylum/metaengine.cpp:83
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Sarah"
-msgstr "Schakel naar Spel"
+msgstr "Schakel naar Sarah"
 
 #: engines/asylum/metaengine.cpp:88
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Grimwall"
-msgstr "Schakel naar Spel"
+msgstr "Schakel naar Grimwall"
 
 #: engines/asylum/metaengine.cpp:93
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Olmec"
-msgstr "Schakel naar Spel"
+msgstr "Schakel naar Olmec"
 
 #: engines/bladerunner/bladerunner.cpp:357
 msgid "Failed to initialize resources"
@@ -4123,14 +4082,10 @@ msgid "Missing game code"
 msgstr "Ontbrekende spel code"
 
 #: engines/buried/biochip_view.cpp:623
-#, fuzzy
-#| msgid "The game is paused. Press any key to continue."
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr "Spel is gepauzeerd. Druk op een toets om verder te gaan."
+msgstr "Spel is gepauzeerd. Klik OK om verder te gaan."
 
 #: engines/buried/buried.cpp:530
-#, fuzzy
-#| msgid "   Are you sure you want to quit ?   "
 msgid "Are you sure you want to quit?"
 msgstr "Weet u zeker dat u wilt stoppen?"
 
@@ -4151,11 +4106,9 @@ msgid "Enable Text to Speech"
 msgstr "Gebruik Tekst naar Spraak"
 
 #: engines/cge/detection.cpp:120
-#, fuzzy
-#| msgid "Use TTS to read the descriptions (if TTS is available)"
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr ""
-"Gebruik TTS voor het lezen van de omschrijvingen (als TTS beschikbaar is)"
+"Gebruik TTS voor het oplezen van tekst in het spel (als TTS beschikbaar is)"
 
 #: engines/cine/detection.cpp:61
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -4196,9 +4149,8 @@ msgid "Load anyway"
 msgstr "Evengoed laden"
 
 #: engines/cryomni3d/metaengine.cpp:142
-#, fuzzy
 msgid "Versailles 1685 support is not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "Ondersteuning voor Versailles 1685 is niet meegecompileerd"
 
 #: engines/dragons/dragons.cpp:1803
 #, c-format
@@ -4749,10 +4701,8 @@ msgstr ""
 " maar is slechts eenmalig."
 
 #: engines/grim/metaengine.cpp:63
-#, fuzzy
-#| msgid "Eye of Beholder support is not compiled in"
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "Eye of the Beholder ondersteuning is niet mee gecompileerd"
+msgstr "Escape from Monkey Island ondersteuning is niet meegecompileerd"
 
 #: engines/grim/resource.cpp:100
 msgid ""
@@ -4944,13 +4894,14 @@ msgstr "Linkerknop om aan te vallen, rechterknop om voorwerpen op te pakken"
 
 #: engines/kyra/detection_tables.h:83
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "Taal specifieke spel code en/of onderdelen ontbreken."
 
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
+"Taal specifieke spel code en/of onderdelen ontbreken voor deze fan vertaling."
 
 #: engines/kyra/detection_tables.h:1402
 msgid "You added the game incorrectly. Please add the root folder of the game."
@@ -5305,7 +5256,7 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:138
 msgid "Simulate loading times of old CD drives"
-msgstr ""
+msgstr "Simuleer laadtijden van oude CD spelers"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:145
@@ -5506,7 +5457,8 @@ msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
-"Verder ontdekken is alleen mogelijk met de volledige versie van het spel."
+"Verder dan dit punt ontdekken is alleen mogelijk met de volledige\n"
+"versie van het spel."
 
 #: engines/mohawk/riven_stacks/aspit.cpp:429
 msgid ""
@@ -5559,51 +5511,36 @@ msgid "Invalid file name for saving"
 msgstr "Geef bestandsnaam voor bewaren"
 
 #: engines/nancy/input.cpp:164
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left Click Interact"
-msgstr "Linker Klik"
+msgstr "Linker Klik Interactie"
 
 #: engines/nancy/input.cpp:171
-#, fuzzy
-#| msgid "Right Click Once"
 msgid "Right Click Interact"
-msgstr "Rechter klik eenmalig"
+msgstr "Rechter klik Interactie"
 
 #: engines/nancy/input.cpp:202
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Fast move modifier"
-msgstr "Snelle modus"
+msgstr "Snelle modus bewerker"
 
 #: engines/nancy/input.cpp:210
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast conversation mode"
-msgstr "Snelle modus aan-/uitzetten"
+msgstr "Snelle conversatie modus aan-/uitzetten"
 
 #: engines/nancy/input.cpp:215
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle end conversation mode"
-msgstr "Snelle modus aan-/uitzetten"
+msgstr "Einde conversatie modus aan-/uitzetten"
 
 #: engines/nancy/input.cpp:220
-#, fuzzy
 msgid "Go to main menu"
-msgstr "Terug naar s~t~artmenu"
+msgstr "Ga naar hoofmenu"
 
 #: engines/nancy/input.cpp:225
-#, fuzzy
-#| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
-msgstr "Plaats bewaar/laad speldisk"
+msgstr "Ga naar opslaan/laad menu"
 
 #: engines/nancy/input.cpp:230
-#, fuzzy
-#| msgid "No date saved"
 msgid "Reload last save"
-msgstr "Gaan datum opgeslagen"
+msgstr "Laatst opgeslagen spel laden"
 
 #: engines/nancy/input.cpp:235
 #, fuzzy
@@ -6120,9 +6057,8 @@ msgstr ""
 "van 8bpp"
 
 #: engines/sci/metaengine.cpp:293
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "SCI32 ondersteuning is niet meegecompileerd"
 
 #: engines/sci/resource/resource.cpp:863
 msgid ""
@@ -6960,14 +6896,12 @@ msgstr ""
 "De volledige versie is te koop in de iTunes Store."
 
 #: engines/scumm/metaengine.cpp:422
-#, fuzzy
 msgid "HE v71+ support is not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "HE v71+ ondersteuning is niet meegecompileerd"
 
 #: engines/scumm/metaengine.cpp:446
-#, fuzzy
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "SCUMM v7-8 ondersteuning is niet meegecompileerd"
 
 #: engines/scumm/scumm.cpp:540
 msgid ""
@@ -6978,36 +6912,28 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/scumm.cpp:1341
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
-"De 'Loom' Macintosh executable is niet gevonden om de instrumenten van te "
-"laden. Muziek wordt uitgeschakeld."
+"De 'Indy' Macintosh executable is niet gevonden. Hoge resolutie lettertypes\n"
+"worden uitgeschakeld."
 
 #: engines/scumm/scumm.cpp:1367
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
-"De 'Loom' Macintosh executable is niet gevonden om de instrumenten van te "
-"laden. Muziek wordt uitgeschakeld."
+"De 'Loom' Macintosh executable is niet gevonden. Muziek en hoge resolutie\n"
+"versies van de lettertypes en aanwijzer worden uitgeschakeld."
 
 #: engines/scumm/scumm.cpp:1389
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"De 'Monkey Island' Macintosh executable is niet gevonden om de instrumenten "
-"van te laden. Muziek wordt uitgeschakeld."
+"De 'Monkey Island' Macintosh executable die nodig is voor het laden\n"
+"van de instrumenten is niet gevonden. Muziek wordt uitgeschakeld."
 
 #: engines/scumm/scumm.cpp:2084
 #, c-format
@@ -7714,10 +7640,8 @@ msgid ""
 msgstr ""
 
 #: engines/ultima/ultima8/meta_engine.cpp:175
-#, fuzzy
-#| msgid "Enable loading of external replacement assets."
 msgid "Enable font replacement"
-msgstr "Zet het laden van externe vervangende spelbestanden aan."
+msgstr "Lettertypes vervangen"
 
 #: engines/ultima/ultima8/meta_engine.cpp:176
 msgid "Replaces game fonts with rendered fonts"
@@ -7768,19 +7692,16 @@ msgid "Apply bilinear filtering to individual sprites"
 msgstr "Pas bilineair filteren toe op individuele sprites"
 
 #: engines/wintermute/metaengine.cpp:65
-#, fuzzy
 msgid "FoxTail support is not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "FoxTail ondersteuning is niet meegecompileerd"
 
 #: engines/wintermute/metaengine.cpp:71
-#, fuzzy
 msgid "Hero Craft support is not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "Hero Craft ondersteuning is niet meegecompileerd"
 
 #: engines/wintermute/metaengine.cpp:77
-#, fuzzy
 msgid "Wintermute3D support is not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "Wintermute3D ondersteuning is niet meegecompileerd"
 
 #: engines/wintermute/wintermute.cpp:149
 msgid "This game requires PNG, JPEG and Vorbis support."
