@@ -565,16 +565,17 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 	// Detect the language from the locale
 	if (locale.empty()) {
 		return BaseBackend::getSystemLanguage();
+	} else if (locale == "C" || locale == "POSIX") {
+		return "en_US";
 	} else {
 		int length = 0;
 
-		// Strip out additional information, like
-		// ".UTF-8" or the like. We do this, since
-		// our translation languages are usually
-		// specified without any charset information.
+		// Assume the locale is in the form language[_territory[.codeset]][@modifier].
+		// On macOS the format is different (it looks like C/UTF-8/C/C/C/C), but we
+		// have a different implementation of getSystemLanguage for macOS anyway, so
+		// we don't have to handle it here.
+		// Strip out additional information, like ".UTF-8" or the like.
 		for (int size = locale.size(); length < size; ++length) {
-			// TODO: Check whether "@" should really be checked
-			// here.
 			if (locale[length] == '.' || locale[length] == ' ' || locale[length] == '@')
 				break;
 		}

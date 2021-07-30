@@ -39,10 +39,14 @@ static inline void execute_on_main_thread_async(void (^block)(void)) {
 }
 
 Common::String OSystem_iOS7::getSystemLanguage() const {
-	NSString *locale = [[NSLocale currentLocale] localeIdentifier];
-	if (locale == nil)
+	NSString *language = [[NSLocale preferredLanguages] firstObject];
+	if (language == nil)
 		return Common::String();
-	return Common::String([locale cStringUsingEncoding:NSISOLatin1StringEncoding]);
+	Common::String lang([language cStringUsingEncoding:NSISOLatin1StringEncoding]);
+	// Depending on the iOS version this may use an underscore (e.g. en_US) or a
+	// dash (en-US). Make sure we always return one with an underscore.
+	Common::replace(lang, "-", "_");
+	return lang;
 }
 
 bool OSystem_iOS7::hasTextInClipboard() {
