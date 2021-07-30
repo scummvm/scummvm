@@ -72,6 +72,8 @@ public:
 	bool canKeepWidget(CastMemberID castId);
 	bool canKeepWidget(Sprite *currentSprite, Sprite *nextSprite);
 
+	int getMouseChar(int x, int y);
+
 public:
 	Sprite *_sprite;
 	Cursor _cursor;

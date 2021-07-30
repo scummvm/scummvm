@@ -608,7 +608,14 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		}
 		break;
 	case kTheMouseChar:
-		getTheEntitySTUB(kTheMouseChar);
+		{
+			// maybe a better handling is iterate channels and check the text sprite that enclose the cursor
+			Common::Point pos = g_director->getCurrentWindow()->getMousePos();
+			uint16 spriteId = score->getSpriteIDFromPos(pos);
+			Channel *ch = score->getChannelById(spriteId);
+			d.u.i = ch->getMouseChar(pos.x, pos.y);
+			d.type = INT;
+		}
 		break;
 	case kTheMouseDown:
 		d.type = INT;

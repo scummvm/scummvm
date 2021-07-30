@@ -608,6 +608,18 @@ void Channel::addDelta(Common::Point pos) {
 	_delta += pos;
 }
 
+int Channel::getMouseChar(int x, int y) {
+	if (_sprite->_spriteType != kTextSprite)
+		return -1;
+
+	if (!_widget) {
+		warning("Channel::getMouseChar getting mouse char on a non-existing widget");
+		return -1;
+	}
+
+	return ((Graphics::MacText *)_widget)->getMouseChar(x, y);
+}
+
 Common::Point Channel::getPosition() {
 	Common::Point res = _currentPoint;
 	addRegistrationOffset(res);
