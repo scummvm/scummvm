@@ -3411,6 +3411,7 @@ if test -n "$_host"; then
 		*mingw32*)
 			_sdlconfig=$_host-sdl2-config
 			_libcurlconfig=$_host-curl-config
+			_pkgconfig=$_host-pkg-config
 			_windres=$_host-windres
 			_ar="$_host-ar cr"
 			_ranlib=$_host-ranlib
@@ -3726,7 +3727,7 @@ _pkg_config=no
 command -v $_pkgconfig >/dev/null 2>&1 && _pkg_config=yes
 echo "$_pkg_config"
 
-if test "$_pkg_config" = yes && test -n "$_host" && test -z "$PKG_CONFIG_LIBDIR"; then
+if test "$_pkg_config" = yes && test -n "$_host" && test -z "$PKG_CONFIG_LIBDIR" && test "$_pkgconfig" = pkg-config; then
 	echo "WARNING: When cross-compiling PKG_CONFIG_LIBDIR must be set to the location of the .pc files for the target"
 fi
 
