@@ -68,6 +68,8 @@ struct GridItemInfo {
 	Common::Language	language;
 	Common::Platform 	platform;
 
+	Common::Rect		rect;
+
 	GridItemInfo(int id, const String &eid, const String &gid
 		,const String &t, Common::Language l, Common::Platform p)
 		: entryID(id), gameid(gid), engineid(eid), title(t), language(l), platform(p), isHeader(false) {
@@ -142,6 +144,8 @@ protected:
 public:
 	int				_gridItemHeight;
 	int				_gridItemWidth;
+	int				_gridHeaderHeight;
+	int 			_gridHeaderWidth;
 	int				_gridXSpacing;
 	int				_gridYSpacing;
 	int				_trayHeight;
@@ -189,6 +193,7 @@ public:
 	void reflowLayout() override;
 
 	void openTray(int x, int y, int entryID);
+	void openTrayAtSelected();
 	void scrollBarRecalc();
 };
 
@@ -216,6 +221,7 @@ public:
 	void handleMouseEntered(int button) override;
 	void handleMouseLeft(int button) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseMoved(int x, int y, int button) override;
 };
 

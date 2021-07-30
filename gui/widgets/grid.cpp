@@ -68,7 +68,8 @@ void GridItemWidget::move(int x, int y) {
 
 void GridItemWidget::drawWidget() {
 	if (_activeEntry->isHeader) {
-		g_gui.theme()->drawText(Common::Rect(_x, _y, _x + _w, _y + _h), Common::U32String(_activeEntry->title), ThemeEngine::kStateEnabled, Graphics::kTextAlignLeft);
+		g_gui.theme()->drawFoldIndicator(Common::Rect(_x, _y, _x + _h, _y + _h), _grid->groupExpanded(_activeEntry->entryID));
+		g_gui.theme()->drawText(Common::Rect(_x + _h, _y, _x + _w, _y + _h), Common::U32String(_activeEntry->title), ThemeEngine::kStateEnabled, Graphics::kTextAlignLeft);
 		return;
 	}
 	int thumbHeight = _grid->getThumbnailHeight();
@@ -180,23 +181,30 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 }
 
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	if (isHighlighted && isVisible()) {
+	if (_activeEntry->isHeader) {
+		_grid->_selectedEntry = nullptr;
+	}
+	else if (isHighlighted && isVisible()) {
 		_grid->_selectedEntry = _activeEntry;
 		sendCommand(kItemClicked, 0);
 		// Work in progress
 		// Since user expected to click on "entry" and not the "widget", we
 		// must open the tray where the user expects it to be, which might
 		// not be at the new widget location.
-		int oldX = getAbsX(), oldY = getAbsY();
+		// TODO: Make a scrollToSelection() function which does this
 		int offsetY = 0;
 		if (_y > (_grid->getHeight() - _h - _grid->_trayHeight)) {
 			offsetY = _y - (_grid->getHeight() - _h - _grid->_trayHeight);
 			sendCommand(kSetPositionCmd, _grid->getScrollPos() + offsetY);
+			_grid->scrollBarRecalc();
 			_grid->markAsDirty();
 			_grid->draw();
 		}
-		_grid->openTray(oldX,  oldY - offsetY + _h, _activeEntry->entryID);
 	}
+}
+
+void GridItemWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	_grid->openTrayAtSelected();
 }
 
 #pragma mark -
@@ -335,6 +343,8 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
+	_gridHeaderHeight = kLineHeight;
+	_gridHeaderWidth = _thumbnailWidth;
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
 
@@ -366,6 +376,8 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
+	_gridHeaderHeight = kLineHeight;
+	_gridHeaderWidth = _thumbnailWidth;
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
 
@@ -477,10 +489,14 @@ void GridWidget::sortGroups() {
 		uint groupID = _groupValueIndex[header];
 
 		_sortedEntryList.push_back(GridItemInfo(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix, groupID));
+		_sortedEntryList.back().rect.setHeight(_gridHeaderHeight);
+		_sortedEntryList.back().rect.setWidth(_gridHeaderWidth);
 
 		if (_groupExpanded[groupID]) {
 			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
 				_sortedEntryList.push_back(_dataEntryList[*k]);
+				_sortedEntryList.back().rect.setHeight(_gridItemHeight);
+				_sortedEntryList.back().rect.setWidth(_gridItemWidth);
 			}
 		}
 	}
@@ -493,7 +509,28 @@ bool GridWidget::calcVisibleEntries() {
 
 	int nFirstVisibleItem = 0, nItemsOnScreen = 0;
 
-	nFirstVisibleItem = _itemsPerRow * (_scrollPos / (_gridItemHeight + _gridYSpacing));
+	// Binary search to find the last element whose y value is less
+	// than _scrollPos, i.e., the last item of the topmost visible row.
+	int start = 0;
+	int end = (int)_sortedEntryList.size() - 1;
+	int mid;
+	int ans = -1;
+	while (start <= end) {
+		mid = start + (end - start) / 2;
+		if (_sortedEntryList[mid].rect.top >= _scrollPos) {
+			end = mid - 1;
+		} else {
+			ans = mid;
+			start = mid + 1;
+		}
+	}
+	nFirstVisibleItem = ans;
+	// We want the leftmost item from the topmost visible row, so we traverse backwards
+	while ((nFirstVisibleItem >= 0) && 
+		   (_sortedEntryList[nFirstVisibleItem].rect.top == _sortedEntryList[ans].rect.top)) {
+			nFirstVisibleItem--;
+	}
+	nFirstVisibleItem++;
 	nFirstVisibleItem = (nFirstVisibleItem < 0) ? 0 : nFirstVisibleItem;
 
 	nItemsOnScreen = (3 + (_scrollWindowHeight / (_gridItemHeight + _gridYSpacing))) * (_itemsPerRow);
@@ -503,11 +540,11 @@ bool GridWidget::calcVisibleEntries() {
 		_itemsOnScreen = nItemsOnScreen;
 		_firstVisibleItem = nFirstVisibleItem;
 
-		int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_dataEntryList.size());
+		int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_sortedEntryList.size());
 
 		_visibleEntryList.clear();
 		for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
-			GridItemInfo *iter = _dataEntryList.begin() + ind;
+			GridItemInfo *iter = _sortedEntryList.begin() + ind;
 			_visibleEntryList.push_back(iter);
 		}
 	}
@@ -593,11 +630,9 @@ void GridWidget::updateGrid() {
 }
 
 void GridWidget::assignEntriesToItems() {
-	// Assign entries from _visibleEntryList to each GridItem in _gridItems
+	// Assign entries from _visibleEntries to each GridItem in _gridItems
 	Common::Array<GridItemInfo *>::iterator eit = _visibleEntryList.begin();
-	// Start assigning from the second row as the first row is supposed
-	// to be offscreen.
-	Common::Array<GridItemWidget *>::iterator it = _gridItems.begin() + _itemsPerRow;
+	Common::Array<GridItemWidget *>::iterator it = _gridItems.begin();
 
 	for (int k = 0; k < _itemsOnScreen; ++k) {
 		GridItemWidget *item = *it;
@@ -605,6 +640,8 @@ void GridWidget::assignEntriesToItems() {
 		if (eit != _visibleEntryList.end()) {
 			// Assign entry and update
 			item->setActiveEntry(*entry);
+			item->setPos(entry->rect.left, entry->rect.top - _scrollPos);
+			item->setSize(entry->rect.width(), entry->rect.height());
 			item->update();
 			if (k >= _itemsOnScreen - _itemsPerRow)
 				item->setVisible(false);
@@ -613,7 +650,9 @@ void GridWidget::assignEntriesToItems() {
 			++eit;
 		} else {
 			// If we run out of visible entries to display.
-			// e.g., scrolled to the very bottom, we make items invisible.
+			// e.g., scrolled to the very bottom, we make items invisible,
+			// and move them out of view to keep them from registering mouse events.
+			item->setPos(_scrollWindowWidth, _scrollWindowHeight);
 			item->setVisible(false);
 		}
 
@@ -638,17 +677,6 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 				reloadThumbnails();
 			}
 
-			int row = 0;
-			int col = 0;
-
-			for (Common::Array<GridItemWidget *>::iterator it = _gridItems.begin(); it != _gridItems.end(); ++it) {
-				(*it)->setPos(2 * _minGridXSpacing + col * (_gridItemWidth + _gridXSpacing),
-							  _gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing) - (_scrollPos % (_gridItemHeight + _gridYSpacing)));
-				if (++col >= _itemsPerRow) {
-					++row;
-					col = 0;
-				}
-			}
 			assignEntriesToItems();
 			markAsDirty();
 
@@ -677,6 +705,9 @@ void GridWidget::reflowLayout() {
 		reloadThumbnails();
 		loadFlagIcons();
 	}
+	_gridHeaderHeight = kLineHeight;
+	_gridHeaderWidth = _scrollWindowWidth - _scrollBarWidth - 2 * _gridXSpacing;
+
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
 
@@ -691,16 +722,44 @@ void GridWidget::reflowLayout() {
 	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
 	_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
 
-	_rows = ceil(_dataEntryList.size() / (float)_itemsPerRow);
+	int row = 0;
+	int col = 0;
+	Common::Point p(_gridXSpacing, _gridYSpacing);
 
-	_innerHeight = _trayHeight + _gridYSpacing + _rows * (_gridItemHeight + _gridYSpacing);
-	_innerWidth = (2 * _minGridXSpacing) + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
+	for (int k = 0; k < (int)_sortedEntryList.size(); ++k) {
+		if (_sortedEntryList[k].isHeader) {
+			while (col != 0) {
+				if (++col >= _itemsPerRow) {
+					col = 0;
+					++row;
+					p.x = _gridXSpacing;
+					p.y += _sortedEntryList[k - 1].rect.height() + _gridYSpacing;
+				}
+			}
+			_sortedEntryList[k].rect.moveTo(p);
+			++row;
+			p.y += _sortedEntryList[k].rect.height() + _gridYSpacing;
+		} else {
+			_sortedEntryList[k].rect.moveTo(p);
+			if (++col >= _itemsPerRow) {
+				++row;
+				p.y += _sortedEntryList[k].rect.height() + _gridYSpacing;
+				col = 0;
+				p.x = _gridXSpacing;
+			} else {
+				p.x += _sortedEntryList[k].rect.width() + _gridXSpacing;
+			}
+		}
+		warning("Titel: %s \tX: %d Y: %d", _sortedEntryList[k].title.c_str(), _sortedEntryList[k].rect.left, _sortedEntryList[k].rect.top);
+	}
+
+	_rows = row;
+
+	_innerHeight = p.y + _gridItemHeight + _gridYSpacing + _trayHeight;
+	_innerWidth = _gridXSpacing + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
 
 	_scrollBar->checkBounds(_scrollBar->_currentPos);
 	_scrollPos = _scrollBar->_currentPos;
-
-	int row = 0;
-	int col = 0;
 
 	_scrollBar->resize(_scrollWindowWidth - _scrollBarWidth, 0, _scrollBarWidth, _scrollWindowHeight, false);
 
@@ -708,12 +767,12 @@ void GridWidget::reflowLayout() {
 		reloadThumbnails();
 	}
 
+	row = 0;
+	col = 0;
+
 	for (int k = 0; k < _itemsOnScreen; ++k) {
-		GridItemWidget *newItem = new GridItemWidget(this,
-									2 * _minGridXSpacing + col * (_gridItemWidth + _gridXSpacing),
-							  		_gridYSpacing + (row - 1) * (_gridItemHeight + _gridYSpacing) - (_scrollPos % (_gridItemHeight + _gridYSpacing)),
-									_gridItemWidth,
-									_gridItemHeight);
+		GridItemWidget *newItem = new GridItemWidget(this);
+		newItem->setVisible(false);
 
 		_gridItems.push_back(newItem);
 
@@ -731,6 +790,13 @@ void GridWidget::reflowLayout() {
 void GridWidget::openTray(int x, int y, int entryId) {
 	_tray = new GridItemTray(this, x  - _gridXSpacing / 3, y, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, entryId, this);
 	_tray->runModal();
+}
+
+void GridWidget::openTrayAtSelected() {
+	if (_selectedEntry) {
+		_tray = new GridItemTray(this, _x + _selectedEntry->rect.left - _gridXSpacing / 3, _y + _selectedEntry->rect.bottom - _scrollPos, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, _selectedEntry->entryID, this);
+		_tray->runModal();
+	}
 }
 
 void GridWidget::scrollBarRecalc() {
