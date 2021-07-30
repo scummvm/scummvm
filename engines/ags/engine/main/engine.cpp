@@ -294,27 +294,7 @@ void engine_locate_speech_pak() {
 				_G(platform)->DisplayAlert("Unable to read voice pack, file could be corrupted or of unknown format.\nSpeech voice-over will be disabled.");
 				return;
 			}
-			// TODO: why is this read right here??? move this to InitGameState!
-			Stream *speechsync = _GP(AssetMgr)->OpenAsset("syncdata.dat");
-			if (speechsync != nullptr) {
-				// this game has voice lip sync
-				int lipsync_fmt = speechsync->ReadInt32();
-				if (lipsync_fmt != 4) {
-					Debug::Printf(kDbgMsg_Info, "Unknown speech lip sync format (%d).\nLip sync disabled.", lipsync_fmt);
-				} else {
-					_G(numLipLines) = speechsync->ReadInt32();
-					_G(splipsync) = (SpeechLipSyncLine *)malloc(sizeof(SpeechLipSyncLine) * _G(numLipLines));
-					for (int ee = 0; ee < _G(numLipLines); ee++) {
-						_G(splipsync)[ee].numPhonemes = speechsync->ReadInt16();
-						speechsync->Read(_G(splipsync)[ee].filename, 14);
-						_G(splipsync)[ee].endtimeoffs = (int32_t *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(int));
-						speechsync->ReadArrayOfInt32(_G(splipsync)[ee].endtimeoffs, _G(splipsync)[ee].numPhonemes);
-						_G(splipsync)[ee].frame = (short *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(short));
-						speechsync->ReadArrayOfInt16(_G(splipsync)[ee].frame, _G(splipsync)[ee].numPhonemes);
-					}
-				}
-				delete speechsync;
-			}
+
 			Debug::Printf(kDbgMsg_Info, "Voice pack found and initialized.");
 			_GP(play).want_speech = 1;
 		} else if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).VoiceDir2) != 0) {

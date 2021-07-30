@@ -30,11 +30,13 @@
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/gui.h"
+#include "ags/engine/ac/lip_sync.h"
 #include "ags/engine/ac/move_list.h"
 #include "ags/engine/ac/dynobj/all_dynamic_classes.h"
 #include "ags/engine/ac/dynobj/all_script_classes.h"
 #include "ags/engine/ac/statobj/ags_static_object.h"
 #include "ags/engine/ac/statobj/static_array.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/font/ags_font_renderer.h"
@@ -43,6 +45,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/shared/gui/gui_label.h"
+#include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/shared/script/cc_error.h"
@@ -258,6 +261,29 @@ void LoadFonts(GameDataVersion data_ver) {
 		if (!wloadfont_size(i, _GP(game).fonts[i]))
 			quitprintf("Unable to load font %d, no renderer could load a matching file", i);
 	}
+}
+
+void LoadLipsyncData() {
+	std::unique_ptr<Stream> speechsync(_GP(AssetMgr)->OpenAsset("syncdata.dat", "voice"));
+	if (!speechsync)
+		return;
+	// this game has voice lip sync
+	int lipsync_fmt = speechsync->ReadInt32();
+	if (lipsync_fmt != 4) {
+		Debug::Printf(kDbgMsg_Info, "Unknown speech lip sync format (%d).\nLip sync disabled.", lipsync_fmt);
+	} else {
+		_G(numLipLines) = speechsync->ReadInt32();
+		_G(splipsync) = (SpeechLipSyncLine *)malloc(sizeof(SpeechLipSyncLine) * _G(numLipLines));
+		for (int ee = 0; ee < _G(numLipLines); ee++) {
+			_G(splipsync)[ee].numPhonemes = speechsync->ReadInt16();
+			speechsync->Read(_G(splipsync)[ee].filename, 14);
+			_G(splipsync)[ee].endtimeoffs = (int *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(int));
+			speechsync->ReadArrayOfInt32(_G(splipsync)[ee].endtimeoffs, _G(splipsync)[ee].numPhonemes);
+			_G(splipsync)[ee].frame = (short *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(short));
+			speechsync->ReadArrayOfInt16(_G(splipsync)[ee].frame, _G(splipsync)[ee].numPhonemes);
+		}
+	}
+	Debug::Printf(kDbgMsg_Info, "Lipsync data found and loaded");
 }
 
 void AllocScriptModules() {
