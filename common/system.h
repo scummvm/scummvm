@@ -1799,16 +1799,17 @@ public:
 	virtual bool openUrl(const Common::String &url) {return false; }
 
 	/**
-	 * Return the locale of the system.
+	 * Return the language of the system.
 	 *
-	 * This returns the currently set locale of the system on which
+	 * This returns the currently set language of the system on which
 	 * ScummVM is run.
 	 *
-	 * The format of the locale is language_country. These should match
-	 * the POSIX locale values.
+	 * The format is an ISO 639 language code, optionally followed by an ISO 3166-1 country code
+	 * in the form language_country.
 	 *
 	 * For information about POSIX locales, see the following link:
-	 * https://en.wikipedia.org/wiki/Locale_(computer_software)#POSIX_platforms
+	 * https://en.wikipedia.org/wiki/ISO_639
+	 * https://en.wikipedia.org/wiki/ISO_3166-1
 	 *
 	 * The default implementation returns "en_US".
 	 *
