@@ -996,7 +996,10 @@ const SciWorkaroundEntry kNewWindow_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kPalVarySetVary_workarounds[] = {
-	{ GID_KQ7,          4600,  4600,  0,      "sRosDogDeath2", "changeState",               NULL,     0,     0, { WORKAROUND_FAKE, 0 } }, // when dying by letting the dog find you under the house. Trac#9763
+	{ GID_KQ7,          4600,  4600,  0,      "sRosDogDeath",  "changeState",               NULL,     0,     0, { WORKAROUND_IGNORE, 0 } }, // when dying under Malicia's house, gets called with no parameters (bug #9763)
+	{ GID_KQ7,          4600,  4600,  0,      "sRosDogDeath2", "changeState",               NULL,     0,     0, { WORKAROUND_IGNORE, 0 } }, // when dying under Malicia's house, gets called with no parameters (bug #9763)
+	{ GID_KQ7,          4600,  4600,  0,      "sValDogDeath",  "changeState",               NULL,     0,     0, { WORKAROUND_IGNORE, 0 } }, // when dying under Malicia's house, gets called with no parameters (bug #9763)
+	{ GID_KQ7,          4600,  4600,  0,      "sZapVal",       "changeState",               NULL,     0,     0, { WORKAROUND_IGNORE, 0 } }, // when dying under Malicia's house, gets called with no parameters (bug #9763)
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
