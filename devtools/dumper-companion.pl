@@ -172,6 +172,9 @@ sub processIso($) {
 }
 
 sub processMacbinary() {
+	my $countres = 0;
+	my $countren = 0;
+
 	find( sub {
 		my $fname = $_;
 		my $fname1 = $fname;
@@ -180,11 +183,18 @@ sub processMacbinary() {
 			print "Resource in $fname\n";
 			close F;
 
+			$countres++;
+
 			system1("macbinary encode \"$fname\"");
 			system1("touch -r \"$fname\" \"$fname.bin\"");
 
 			if ($::opt_e) {
 				$fname1 = encode_punycodefilename $fname;
+			}
+
+			if ($fname1 ne $fname) {
+				print "Renamed \"$fname\" to \"$fname1\"\n" unless $verbose;
+				$countren++;
 			}
 
 			system1("mv \"$fname.bin\" \"$fname1\"");
@@ -194,12 +204,15 @@ sub processMacbinary() {
 
 				if ($fname1 ne $fname) {
 					system1("mv \"$fname\" \"$fname1\"");
+
+					print "Renamed \"$fname\" to \"$fname1\"\n" unless $verbose;
+					$countren++;
 				}
 			}
 		}
 
 	}, ".");
-
+	print "Macbinary $countres files, Renamed $countren files\n";
 }
 
 sub HELP_MESSAGE() {
