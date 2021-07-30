@@ -63,6 +63,8 @@ struct GridItemInfo {
 	String 		gameid;
 	String 		title;
 	String 		thumbPath;
+	// Generic attribute value, may be any piece of metadata
+	String		attribute;
 	Common::Language	language;
 	Common::Platform 	platform;
 
@@ -70,6 +72,8 @@ struct GridItemInfo {
 		,const String &t, Common::Language l, Common::Platform p)
 		: entryID(id), gameid(gid), engineid(eid), title(t), language(l), platform(p), isHeader(false) {
 		thumbPath = String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
+		// TEST: Remove assignment from here
+		attribute = title.firstChar();
 	}
 
 	GridItemInfo(const String &groupHeader, int groupID) : title(groupHeader), isHeader(true), entryID(groupID) {
@@ -101,9 +105,19 @@ protected:
 	// Images are mapped by filename -> surface.
 	Common::HashMap<String, const Graphics::ManagedSurface *> _loadedSurfaces;
 
-	Common::Array<GridItemWidget *> 	_gridItems;
-	Common::Array<GridItemInfo> 		_allEntries;
+	Common::Array<GridItemInfo> 		_dataEntryList;
+	Common::Array<GridItemInfo> 		_sortedEntryList;
 	Common::Array<GridItemInfo *> 		_visibleEntryList;
+
+	String									_groupingAttribute;
+	Common::HashMap<U32String, int>			_groupValueIndex;
+	Common::Array<bool>						_groupExpanded;
+	U32String									_groupHeaderPrefix;
+	U32String									_groupHeaderSuffix;
+	Common::Array<U32String>					_groupHeaders;
+	Common::HashMap<int, Common::Array<int>>	_itemsInGroup;
+
+	Common::Array<GridItemWidget *> 	_gridItems;
 
 	ScrollBarWidget *_scrollBar;
 
@@ -147,7 +161,13 @@ public:
 	/// Update _visibleEntries from _allEntries and returns true if reload is required.
 	bool calcVisibleEntries();
 	void setEntryList(Common::Array<GridItemInfo> *list);
+	void setAttributeValues(const Common::Array<U32String> &attrs);
 	void setTitlesVisible(bool vis);
+
+	void groupEntries();
+	void sortGroups();
+	bool groupExpanded(int groupID) { return _groupExpanded[groupID]; }
+	void toggleGroup(int groupID);
 
 	void reloadThumbnails();
 	void loadFlagIcons();
