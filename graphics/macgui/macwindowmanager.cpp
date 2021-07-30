@@ -241,8 +241,10 @@ MacWindowManager::~MacWindowManager() {
 	delete _fontMan;
 	delete _screenCopy;
 
-	_desktopBmp->free();
-	delete _desktopBmp;
+	if (_desktopBmp) {
+		_desktopBmp->free();
+		delete _desktopBmp;
+	}
 	delete _desktop;
 
 	cleanupDataBundle();
