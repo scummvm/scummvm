@@ -482,7 +482,7 @@ void Text::renderContinueReadingTriangle() {
 	polygon.renderType = POLYGONTYPE_FLAT;
 	_engine->_renderer->renderPolygons(polygon, vertices, top, bottom);
 
-	_engine->copyBlockPhys(Common::Rect(left, top, right, bottom));
+	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
 void Text::fadeInCharacters(int32 counter, int32 fontColor) {
