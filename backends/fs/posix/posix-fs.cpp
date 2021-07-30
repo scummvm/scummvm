@@ -297,7 +297,7 @@ Common::SeekableReadStream *POSIXFilesystemNode::createReadStream() {
 	return PosixIoStream::makeFromPath(getPath(), false);
 }
 
-Common::WriteStream *POSIXFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *POSIXFilesystemNode::createWriteStream() {
 	return PosixIoStream::makeFromPath(getPath(), true);
 }
 

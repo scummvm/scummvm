@@ -486,7 +486,7 @@ namespace {
 /**
  * Wrapper class which adds buffering to any WriteStream.
  */
-class BufferedWriteStream : public WriteStream {
+class BufferedWriteStream : public SeekableWriteStream {
 protected:
 	WriteStream *_parentStream;
 	byte *_buf;
@@ -531,7 +531,7 @@ public:
 		delete[] _buf;
 	}
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		// check if we have enough space for writing to the buffer
 		if (_bufSize - _pos >= dataSize) {
 			memcpy(_buf + _pos, dataPtr, dataSize);
@@ -549,13 +549,32 @@ public:
 		return dataSize;
 	}
 
-	virtual bool flush() { return flushBuffer(); }
+	bool flush() override { return flushBuffer(); }
 
-	virtual int64 pos() const { return _pos; }
+	int64 pos() const override { return _pos; }
 
+	bool seek(int64 offset, int whence) override {
+		flush();
+
+		Common::SeekableWriteStream *sws =
+			dynamic_cast<Common::SeekableWriteStream *>(_parentStream);
+		return sws ? sws->seek(offset, whence) : false;
+	}
+
+	int64 size() const override {
+		Common::SeekableWriteStream *sws =
+			dynamic_cast<Common::SeekableWriteStream *>(_parentStream);
+		return sws ? MAX(sws->pos() + _pos, sws->size()) : -1;
+	}
 };
 
 } // End of anonymous namespace
+
+SeekableWriteStream *wrapBufferedWriteStream(SeekableWriteStream *parentStream, uint32 bufSize) {
+	if (parentStream)
+		return new BufferedWriteStream(parentStream, bufSize);
+	return nullptr;
+}
 
 WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize) {
 	if (parentStream)

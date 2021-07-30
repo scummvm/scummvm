@@ -80,6 +80,7 @@ SeekableReadStream *wrapBufferedSeekableReadStream(SeekableReadStream *parentStr
  * @param bufSize             Size of the buffer.
  */
 
+SeekableWriteStream *wrapBufferedWriteStream(SeekableWriteStream *parentStream, uint32 bufSize);
 WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize);
 
 /** @} */

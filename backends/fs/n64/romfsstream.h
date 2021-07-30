@@ -28,7 +28,7 @@
 #include "common/stream.h"
 #include "common/str.h"
 
-class RomfsStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
+class RomfsStream : public Common::SeekableReadStream, public Common::SeekableWriteStream, public Common::NonCopyable {
 protected:
 	/** File handle to the actual file. */
 	void *_handle;

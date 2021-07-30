@@ -46,6 +46,7 @@ namespace Common {
 class FSNode;
 class SeekableReadStream;
 class WriteStream;
+class SeekableWriteStream;
 
 /**
  * List of multiple file system nodes. For example, the contents of a given directory.
@@ -238,7 +239,7 @@ public:
 	 *
 	 * @return Pointer to the stream object, 0 in case of a failure.
 	 */
-	WriteStream *createWriteStream() const;
+	SeekableWriteStream *createWriteStream() const;
 
 	/**
 	 * Create a directory referred by this node. This assumes that this

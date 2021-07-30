@@ -87,7 +87,7 @@ Common::SeekableReadStream *DrivePOSIXFilesystemNode::createReadStream() {
 	return readStream;
 }
 
-Common::WriteStream *DrivePOSIXFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *DrivePOSIXFilesystemNode::createWriteStream() {
 	PosixIoStream *writeStream = PosixIoStream::makeFromPath(getPath(), true);
 
 	configureStream(writeStream);

@@ -96,7 +96,7 @@ Common::SeekableReadStream *ChRootFilesystemNode::createReadStream() {
 	return _realNode->createReadStream();
 }
 
-Common::WriteStream *ChRootFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *ChRootFilesystemNode::createWriteStream() {
 	return _realNode->createWriteStream();
 }
 

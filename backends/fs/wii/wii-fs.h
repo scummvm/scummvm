@@ -68,7 +68,7 @@ public:
 	virtual AbstractFSNode *getParent() const override;
 
 	virtual Common::SeekableReadStream *createReadStream() override;
-	virtual Common::WriteStream *createWriteStream() override;
+	virtual Common::SeekableWriteStream *createWriteStream() override;
 	virtual bool createDirectory() override;
 };
 

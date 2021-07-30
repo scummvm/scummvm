@@ -210,7 +210,7 @@ Common::SeekableReadStream *RISCOSFilesystemNode::createReadStream() {
 	return StdioStream::makeFromPath(getPath(), false);
 }
 
-Common::WriteStream *RISCOSFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *RISCOSFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
 }
 

@@ -231,10 +231,10 @@ Common::SeekableReadStream *PSPFilesystemNode::createReadStream() {
 	return Common::wrapBufferedSeekableReadStream(stream, READ_BUFFER_SIZE, DisposeAfterUse::YES);
 }
 
-Common::WriteStream *PSPFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *PSPFilesystemNode::createWriteStream() {
 	const uint32 WRITE_BUFFER_SIZE = 1024;
 
-	Common::WriteStream *stream = PspIoStream::makeFromPath(getPath(), true);
+	Common::SeekableWriteStream *stream = PspIoStream::makeFromPath(getPath(), true);
 
 	return Common::wrapBufferedWriteStream(stream, WRITE_BUFFER_SIZE);
 }
