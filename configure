@@ -1036,7 +1036,7 @@ Some influential environment variables:
   LD                 linker command
   LDFLAGS            linker flags, e.g. -L<lib dir> if you have libraries in a
                      nonstandard directory <lib dir>
-  PKG_CONFIG_LIBDIR  list of directories where pkg-config ‘.pc’ files are
+  PKG_CONFIG_LIBDIR  list of directories where pkg-config '.pc' files are
                      looked up
   RANLIB             archive indexer command
   SDL_CONFIG         SDL configurer script name (not path)
