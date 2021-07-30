@@ -54,14 +54,27 @@ public:
 
 	bool    Seek(soff_t offset, StreamSeek origin) override;
 
-private:
-	soff_t _bufferPosition;
-	std::vector<char> _buffer;
-
-	soff_t _position;
+protected:
+	soff_t _start;
 	soff_t _end;
 
+private:
 	void FillBufferFromPosition(soff_t position);
+
+	soff_t _position;
+	soff_t _bufferPosition;
+	std::vector<char> _buffer;
+};
+
+
+// Creates a BufferedStream limited by an arbitrary offset range
+class BufferedSectionStream : public BufferedStream {
+public:
+	BufferedSectionStream(const String &file_name, soff_t start_pos, soff_t end_pos,
+		FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess = kLittleEndian);
+
+	soff_t  GetPosition() const override;
+	soff_t  GetLength() const override;
 };
 
 } // namespace Shared
