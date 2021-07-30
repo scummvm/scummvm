@@ -247,9 +247,6 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		break;
 		// Arithmetic ink types
 	default: {
-		if ((uint32)src == p->colorWhite)
-			break;
-
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 

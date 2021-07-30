@@ -103,6 +103,13 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		_sprite->_ink == kInkTypeNotTrans ||
 		_sprite->_ink == kInkTypeNotReverse ||
 		_sprite->_ink == kInkTypeNotGhost ||
+		_sprite->_ink == kInkTypeBlend ||
+		_sprite->_ink == kInkTypeAddPin ||
+		_sprite->_ink == kInkTypeAdd ||
+		_sprite->_ink == kInkTypeSubPin ||
+		_sprite->_ink == kInkTypeLight ||
+		_sprite->_ink == kInkTypeSub ||
+		_sprite->_ink == kInkTypeDark ||
 		_sprite->_blend > 0;
 
 	Common::Rect bbox(getBbox());
