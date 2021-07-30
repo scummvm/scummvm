@@ -181,6 +181,10 @@ MacFontManager::~MacFontManager() {
 		delete it->_value;
 	for (Common::HashMap<int, Common::SeekableReadStream *>::iterator it = _ttfData.begin(); it != _ttfData.end(); it++)
 		delete it->_value;
+	for (Common::HashMap<Common::String, MacFont *>::iterator it = _fontRegistry.begin(); it != _fontRegistry.end(); it++)
+		delete it->_value;
+	for (Common::HashMap<Common::String, MacFontFamily *>::iterator it = _fontFamilies.begin(); it != _fontFamilies.end(); it++)
+		delete it->_value;
 }
 
 void MacFontManager::setLocalizedFonts() {
@@ -419,7 +423,9 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 
 			delete fond;
 
-			if (!fontFamilyUsed)
+			if (fontFamilyUsed)
+				_fontFamilies[familyName] = fontFamily;
+			else
 				delete fontFamily;
 		}
 	}

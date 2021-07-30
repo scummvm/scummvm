@@ -35,6 +35,7 @@ namespace Common {
 namespace Graphics {
 
 class MacFONTFont;
+class MacFontFamily;
 
 enum {
 	kMacFontNonStandard = -1,
@@ -182,6 +183,7 @@ private:
 	uint32 _mode;
 	Common::Language _language;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
+	Common::HashMap<Common::String, MacFontFamily *> _fontFamilies;
 
 	Common::HashMap<int, FontInfo *> _fontInfo;
 	Common::HashMap<Common::String, int> _fontIds;
