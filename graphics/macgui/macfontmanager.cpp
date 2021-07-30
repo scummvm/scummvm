@@ -179,7 +179,7 @@ MacFontManager::~MacFontManager() {
 		delete it->_value;
 	for (Common::HashMap<int, const Graphics::Font *>::iterator it = _uniFonts.begin(); it != _uniFonts.end(); it++)
 		delete it->_value;
-	for (Common::HashMap<int, Common::SeekableReadStream *>::iterator it = _ttfData.begin(); it != _ttfData.end(); it++)
+	for (Common::HashMap<Common::String, Common::SeekableReadStream *>::iterator it = _ttfData.begin(); it != _ttfData.end(); it++)
 		delete it->_value;
 	for (Common::HashMap<Common::String, MacFont *>::iterator it = _fontRegistry.begin(); it != _fontRegistry.end(); it++)
 		delete it->_value;
@@ -322,7 +322,7 @@ void MacFontManager::loadJapaneseFonts() {
 			}
 		}
 
-		_ttfData[_fontIds.getValOrDefault(fontName, kMacFontNonStandard)] = stream;
+		_ttfData[fontName + "-0-0"] = stream;
 	}
 
 	delete dat;
@@ -389,7 +389,8 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 				if (!fontstream) {
 					// The sfnt resource should be just a copy of a TTF
 					fontstream = fontFile->getResource(MKTAG('s', 'f', 'n', 't'), (*assoc)[i]._fontID);
-					_ttfData[_fontIds.getValOrDefault(familyName, kMacFontNonStandard)] = fontstream;
+					Common::String fontName = Common::String::format("%s-%d-0", familyName.c_str(), (*assoc)[i]._fontStyle | familySlant);
+					_ttfData[fontName] = fontstream;
 					continue;
 				}
 #endif
@@ -638,6 +639,15 @@ Common::String MacFontManager::getFontName(uint16 id) {
 void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	Common::String name;
 
+#ifdef USE_FREETYPE2
+	// Check if we have TTF data for this font.
+	name = getFontName(macFont.getId(), 0, macFont.getSlant());
+	if (_ttfData.contains(name)) {
+		generateTTFFont(macFont, _ttfData[name]);
+		return;
+	}
+#endif
+
 	// Try to see if we have regular font
 	if (macFont.getSlant() != kMacFontRegular) {
 		name = getFontName(macFont.getId(), macFont.getSize(), kMacFontRegular);
@@ -648,14 +658,6 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 			return;
 		}
 	}
-
-#ifdef USE_FREETYPE2
-	// Checking if it's a TTF font. Restrict it only to regular fonts now
-	if (_ttfData.contains(macFont.getId()) && macFont.getSlant() == kMacFontRegular) {
-		generateTTFFont(macFont, _ttfData[macFont.getId()]);
-		return;
-	}
-#endif
 
 	// Now try twice size
 	name = getFontName(macFont.getId(), macFont.getSize() * 2, macFont.getSlant());

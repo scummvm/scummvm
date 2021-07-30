@@ -193,7 +193,7 @@ private:
 	/* Unicode font */
 	Common::HashMap<int, const Graphics::Font *> _uniFonts;
 
-	Common::HashMap<int, Common::SeekableReadStream *> _ttfData;
+	Common::HashMap<Common::String, Common::SeekableReadStream *> _ttfData;
 };
 
 } // End of namespace Graphics
