@@ -68,7 +68,10 @@ bool        GetFileModesFromCMode(const String &cmode, FileOpenMode &open_mode, 
 // Gets C-style file mode from FileOpenMode and FileWorkMode
 String      GetCMode(FileOpenMode open_mode, FileWorkMode work_mode);
 
+// Opens file in the given mode
 Stream *OpenFile(const String &filename, FileOpenMode open_mode, FileWorkMode work_mode);
+// Opens file for reading restricted to the arbitrary offset range
+Stream *OpenFile(const String &filename, soff_t start_off, soff_t end_off);
 // Convenience helpers
 // Create a totally new file, overwrite existing one
 inline Stream *CreateFile(const String &filename) {
