@@ -372,6 +372,11 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		// Apply scaler
 		requestedWidth  *= _graphicsScale;
 		requestedHeight *= _graphicsScale;
+
+		// Save current window dimensions
+		ConfMan.setInt("last_window_width", requestedWidth, Common::ConfigManager::kApplicationDomain);
+		ConfMan.setInt("last_window_height", requestedHeight, Common::ConfigManager::kApplicationDomain);
+		ConfMan.flushToDisk();
 	}
 
 	// Determine current aspect ratio
