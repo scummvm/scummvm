@@ -241,6 +241,7 @@ MacWindowManager::~MacWindowManager() {
 	delete _fontMan;
 	delete _screenCopy;
 
+	_desktopBmp->free();
 	delete _desktopBmp;
 	delete _desktop;
 
@@ -789,7 +790,6 @@ void MacWindowManager::loadDesktop() {
 	bmpDecoder.loadStream(*file);
 	source = bmpDecoder.getSurface()->convertTo(_desktopBmp->getSupportedPixelFormat(), bmpDecoder.getPalette());
 
-	_desktopBmp->create(source->w, source->h, _desktopBmp->getSupportedPixelFormat());
 	_desktopBmp->copyFrom(*source);
 
 	delete file;
