@@ -462,11 +462,6 @@ find_sdlconfig() {
 			if test -f "$path_dir/$sdlconfig" ; then
 				_sdlconfig="$path_dir/$sdlconfig"
 				echo $_sdlconfig
-				# Save the prefix
-				_sdlpath=$path_dir
-				if test `basename $path_dir` = bin || test `basename $path_dir` = sbin ; then
-					_sdlpath=`dirname $path_dir`
-				fi
 				# break at first sdl-config found in path
 				break 2
 			fi
@@ -3740,11 +3735,11 @@ fi
 #
 if test "$_sdl" = auto ; then
 	find_sdlconfig
-	append_var SDL_CFLAGS "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
+	append_var SDL_CFLAGS "`$_sdlconfig --cflags`"
 	if test "$_static_build" = yes ; then
-		append_var SDL_LIBS "`$_sdlconfig --prefix="$_sdlpath" --static-libs`"
+		append_var SDL_LIBS "`$_sdlconfig --static-libs`"
 	else
-		append_var SDL_LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
+		append_var SDL_LIBS "`$_sdlconfig --libs`"
 	fi
 	_sdlversion=`$_sdlconfig --version`
 
