@@ -1100,10 +1100,57 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 }
 
 Datum Lingo::getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId) {
-	warning("STUB: getTheMenuItemEntity(%s, %s, %s, %s)", entity2str(entity), menuId.asString(true).c_str(), field2str(field),
-				menuItemId.asString(true).c_str());
+	Datum d;
 
-	return Datum();
+	switch(field) {
+	case kTheCheckMark:
+		if (menuId.type == STRING && menuItemId.type == STRING) {
+			d.type = INT;
+			d.u.i = g_director->_wm->getMenuItemCheckMark(menuId.asString(), menuItemId.asString());
+		} else if (menuId.type == INT && menuItemId.type == INT) {
+			d.type = INT;
+			d.u.i = g_director->_wm->getMenuItemCheckMark(menuId.asInt(), menuItemId.asInt());
+		} else
+			warning("Lingo::getTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+		break;
+	case kTheEnabled:
+		if (menuId.type == STRING && menuItemId.type == STRING) {
+			d.type = INT;
+			d.u.i = g_director->_wm->getMenuItemEnabled(menuId.asString(), menuItemId.asString());
+		} else if (menuId.type == INT && menuItemId.type == INT) {
+			d.type = INT;
+			d.u.i = g_director->_wm->getMenuItemEnabled(menuId.asInt(), menuItemId.asInt());
+		} else
+			warning("Lingo::getTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+		break;
+	case kTheName:
+		if (menuId.type == STRING && menuItemId.type == STRING) {
+			d.type = STRING;
+			d.u.s = new Common::String;
+			*(d.u.s) = g_director->_wm->getMenuItemName(menuId.asString(), menuItemId.asString());
+		} else if (menuId.type == INT && menuItemId.type == INT) {
+			d.type = STRING;
+			d.u.s = new Common::String;
+			*(d.u.s) = g_director->_wm->getMenuItemName(menuId.asInt(), menuItemId.asInt());
+		} else
+			warning("Lingo::getTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+		break;
+	case kTheScript:
+		if (menuId.type == STRING && menuItemId.type == STRING) {
+			d.type = INT;
+			d.u.i = g_director->_wm->getMenuItemAction(menuId.asString(), menuItemId.asString());
+		} else if (menuId.type == INT && menuItemId.type == INT) {
+			d.type = INT;
+			d.u.i = g_director->_wm->getMenuItemAction(menuId.asInt(), menuItemId.asInt());
+		} else
+			warning("Lingo::getTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+		break;
+	default:
+		warning("Lingo::getTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+		break;
+	}
+
+	return d;
 }
 
 void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d) {
