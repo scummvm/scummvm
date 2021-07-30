@@ -52,7 +52,7 @@ typedef SeekableReadStream InSaveFile;
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-class OutSaveFile: public WriteStream {
+class OutSaveFile: public SeekableWriteStream {
 protected:
 	WriteStream *_wrapped; /*!< @todo Doc required. */
 
@@ -107,6 +107,18 @@ public:
 	* @return The current position indicator, or -1 if an error occurred.
 	 */
 	virtual int64 pos() const;
+
+	/**
+	 * Seeks to a new position within the file.
+	 * This is only supported when creating uncompressed save files.
+	 */
+	bool seek(int64 offset, int whence) override;
+
+	/**
+	 * Returns the size of the save file
+	 * This is only supported when creating uncompressed save files.
+	 */
+	int64 size() const override;
 };
 
 /**
