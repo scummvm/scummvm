@@ -29,6 +29,7 @@ my $Delimiter = chr 0x2D;
 my $BasicRE   = "\x00-\x7f";
 my $PunyRE    = "A-Za-z0-9";
 my $outPath = "./";
+my $verbose = 0;
 
 sub VERSION_MESSAGE() {
 	print "$0 version 1.0\n"
@@ -40,12 +41,17 @@ sub processMacbinary();
 sub decode_punycode;
 sub encode_punycode;
 sub encode_punycodefilename;
+sub system1($);
 
-getopts('hmf:c:edsS:o:');
+getopts('hmf:c:edsS:o:v');
 
 if ($::opt_h) {
 	HELP_MESSAGE();
 	exit 0;
+}
+
+if ($::opt_v) {
+	$verbose = 1;
 }
 
 if ($::opt_s) {
@@ -85,9 +91,10 @@ sub processIso($) {
 
 	print "Mounting ISO...";
 	flush STDOUT;
+	print "\n" if $verbose;
 
-	system("hmount \"$isofile\" >/dev/null 2>&1") == 0 or die "Can't execute hmount";
-	print "done\n";
+	system1("hmount \"$isofile\" >/dev/null 2>&1") == 0 or die "Can't execute hmount";
+	print "done\n" unless $verbose;
 
 	open(my $ls, "-|", "hls -1alRU");
 
@@ -118,9 +125,10 @@ sub processIso($) {
 			$dir .= '/' if $dir !~ m'/$';
 
 			mkdir "$outPath$dir";
+			print "mkdir \"$outPath$dir\"\n" if $verbose;
 			$numdirs++;
 		} elsif (/^[fF]/) {
-			if (/[fF]i?\s+[^\s]+\s+([0-9]+)\s+([0-9]+)\s+\w+\s+\d+\s+\d+\s+(.*)/) {
+			if (/[fF]i?\s+.{4}\/.{4}+\s+([0-9]+)\s+([0-9]+)\s+\w+\s+\d+\s+\d+\s+(.*)/) {
 				my $res = $1;
 				my $data = $2;
 				my $fname = $3;
@@ -135,15 +143,15 @@ sub processIso($) {
 					$decfname = encode_punycodefilename	$decfname;
 				}
 
-				print " " x $prevlen;
-				print "\r$dir$decfname\r";
+				print " " x $prevlen unless $verbose;
+				print "\r$dir$decfname\r" unless $verbose;
 				$prevlen = length "$dir$decfname";
 				flush STDOUT;
 
 				if ($res != 0) {
-					system("hcopy -m -- \"$mdir$fname\" \"$outPath$dir$decfname\"");
+					system1("hcopy -m -- \"$mdir$fname\" \"$outPath$dir$decfname\"");
 				} else {
-					system("hcopy -r -- \"$mdir$fname\" \"$outPath$dir$decfname\"");
+					system1("hcopy -r -- \"$mdir$fname\" \"$outPath$dir$decfname\"");
 				}
 				$numfiles++;
 			} else {
@@ -151,14 +159,16 @@ sub processIso($) {
 			}
 		}
 	}
-	print " " x $prevlen;
-	print "\rExtracted $numdirs dirs and $numfiles files\n";
+	print " " x $prevlen unless $verbose;
+	print "\r" unless $verbose;
+	print "Extracted $numdirs dirs and $numfiles files\n";
 
 	print "Unounting ISO...";
 	flush STDOUT;
+	print "\n" if $verbose;
 
-	system("humount >/dev/null 2>&1") == 0 or die "Can't execute humount";
-	print "done\n";
+	system1("humount >/dev/null 2>&1") == 0 or die "Can't execute humount";
+	print "done\n" unless $verbose;
 }
 
 sub processMacbinary() {
@@ -170,20 +180,20 @@ sub processMacbinary() {
 			print "Resource in $fname\n";
 			close F;
 
-			system("macbinary encode \"$fname\"");
-			system("touch -r \"$fname\" \"$fname.bin\"");
+			system1("macbinary encode \"$fname\"");
+			system1("touch -r \"$fname\" \"$fname.bin\"");
 
 			if ($::opt_e) {
 				$fname1 = encode_punycodefilename $fname;
 			}
 
-			system("mv \"$fname.bin\" \"$fname1\"");
+			system1("mv \"$fname.bin\" \"$fname1\"");
 		} else {
 			if ($::opt_e) {
 				$fname1 = encode_punycodefilename $fname;
 
 				if ($fname1 ne $fname) {
-					system("mv \"$fname\" \"$fname1\"");
+					system1("mv \"$fname\" \"$fname1\"");
 				}
 			}
 		}
@@ -223,6 +233,14 @@ Mode 3:
 Miscellaneous:
   -h, --help   display this help and exit
 EOF
+}
+
+sub system1($) {
+	my $cmd = shift;
+
+	print "$cmd\n" if $verbose;
+
+	return system $cmd;
 }
 
 ######### Punycode implementation.
