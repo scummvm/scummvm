@@ -156,7 +156,7 @@ Common::SeekableReadStream *N64FilesystemNode::createReadStream() {
 	return RomfsStream::makeFromPath(getPath(), false);
 }
 
-Common::WriteStream *N64FilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *N64FilesystemNode::createWriteStream() {
 	return RomfsStream::makeFromPath(getPath(), true);
 }
 

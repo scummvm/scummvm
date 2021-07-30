@@ -228,7 +228,7 @@ Common::SeekableReadStream *SymbianFilesystemNode::createReadStream() {
 	return SymbianStdioStream::makeFromPath(getPath(), false);
 }
 
-Common::WriteStream *SymbianFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *SymbianFilesystemNode::createWriteStream() {
 	return SymbianStdioStream::makeFromPath(getPath(), true);
 }
 

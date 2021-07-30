@@ -33,7 +33,7 @@
 /**
  *  Class to handle special suspend/resume needs of PSP IO Streams
  */
-class PspIoStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable, public Suspendable {
+class PspIoStream : public Common::SeekableReadStream, public Common::SeekableWriteStream, public Common::NonCopyable, public Suspendable {
 protected:
 	SceUID _handle;		// file handle
 	Common::String _path;

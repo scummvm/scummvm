@@ -142,7 +142,7 @@ SeekableReadStream *FSNode::createReadStream() const {
 	return _realNode->createReadStream();
 }
 
-WriteStream *FSNode::createWriteStream() const {
+SeekableWriteStream *FSNode::createWriteStream() const {
 	if (_realNode == nullptr)
 		return nullptr;
 
