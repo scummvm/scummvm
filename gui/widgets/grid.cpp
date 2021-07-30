@@ -350,6 +350,12 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	_firstVisibleItem = 0;
 	_itemsOnScreen = 0;
 
+	_innerHeight = 0;
+	_innerWidth = 0;
+	_scrollWindowHeight = 0;
+	_scrollWindowWidth = 0;
+	_gridYSpacing = 0;
+	_gridXSpacing = 0;
 	_selectedEntry = -1;
 }
 
@@ -374,6 +380,12 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_firstVisibleItem = 0;
 	_itemsOnScreen = 0;
 
+	_innerHeight = 0;
+	_innerWidth = 0;
+	_scrollWindowHeight = 0;
+	_scrollWindowWidth = 0;
+	_gridYSpacing = 0;
+	_gridXSpacing = 0;
 	_selectedEntry = -1;
 }
 
@@ -629,8 +641,7 @@ void GridWidget::reflowLayout() {
 	int row = 0;
 	int col = 0;
 
-
-	_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h, false);
+	_scrollBar->resize(_scrollWindowWidth - _scrollBarWidth, 0, _scrollBarWidth, _scrollWindowHeight, false);
 
 	if (calcVisibleEntries()) {
 		reloadThumbnails();
