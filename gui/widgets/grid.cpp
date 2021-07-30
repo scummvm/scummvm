@@ -332,6 +332,15 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	: ContainerWidget(boss, x, y, w, h), CommandSender(boss) {
 	_iconDir = ConfMan.get("iconspath");
+
+	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
+	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
+	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
+	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+
+	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
+	_gridItemWidth = _thumbnailWidth;
+
 	loadPlatformIcons();
 	loadFlagIcons();
 
@@ -347,6 +356,15 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 GridWidget::GridWidget(GuiObject *boss, const String &name)
 	: ContainerWidget(boss, name), CommandSender(boss) {
 	_iconDir = ConfMan.get("iconspath");
+
+	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
+	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
+	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
+	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+
+	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
+	_gridItemWidth = _thumbnailWidth;
+
 	loadPlatformIcons();
 	loadFlagIcons();
 
