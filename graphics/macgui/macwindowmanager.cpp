@@ -490,6 +490,78 @@ void MacWindowManager::setMenuItemAction(int menuId, int itemId, int actionId) {
 	}
 }
 
+bool MacWindowManager::getMenuItemCheckMark(const Common::String &menuId, const Common::String &itemId) {
+	if (_menu) {
+		return _menu->getCheckMark(menuId, itemId);
+	} else {
+		warning("MacWindowManager::getMenuItemCheckMark: wm doesn't have menu");
+		return false;
+	}
+}
+
+bool MacWindowManager::getMenuItemCheckMark(int menuId, int itemId) {
+	if (_menu) {
+		return _menu->getCheckMark(menuId, itemId);
+	} else {
+		warning("MacWindowManager::getMenuItemCheckMark: wm doesn't have menu");
+		return false;
+	}
+}
+
+bool MacWindowManager::getMenuItemEnabled(const Common::String &menuId, const Common::String &itemId) {
+	if (_menu) {
+		return _menu->getEnabled(menuId, itemId);
+	} else {
+		warning("MacWindowManager::getMenuItemEnabled: wm doesn't have menu");
+		return false;
+	}
+}
+
+bool MacWindowManager::getMenuItemEnabled(int menuId, int itemId) {
+	if (_menu) {
+		return _menu->getEnabled(menuId, itemId);
+	} else {
+		warning("MacWindowManager::getMenuItemEnabled: wm doesn't have menu");
+		return false;
+	}
+}
+
+Common::String MacWindowManager::getMenuItemName(const Common::String &menuId, const Common::String &itemId) {
+	if (_menu) {
+		return _menu->getName(menuId, itemId);
+	} else {
+		warning("MacWindowManager::getMenuItemName: wm doesn't have menu");
+		return Common::String();
+	}
+}
+
+Common::String MacWindowManager::getMenuItemName(int menuId, int itemId) {
+	if (_menu) {
+		return _menu->getName(menuId, itemId);
+	} else {
+		warning("MacWindowManager::getMenuItemName: wm doesn't have menu");
+		return Common::String();
+	}
+}
+
+int MacWindowManager::getMenuItemAction(const Common::String &menuId, const Common::String &itemId) {
+	if (_menu) {
+		return _menu->getAction(menuId, itemId);
+	} else {
+		warning("MacWindowManager::getMenuItemAction: wm doesn't have menu");
+		return 0;
+	}
+}
+
+int MacWindowManager::getMenuItemAction(int menuId, int itemId) {
+	if (_menu) {
+		return _menu->getAction(menuId, itemId);
+	} else {
+		warning("MacWindowManager::getMenuItemAction: wm doesn't have menu");
+		return 0;
+	}
+}
+
 // this is refer to how we deal U32String in splitString in mactext
 // maybe we can optimize this specifically
 Common::U32String stripFormat(const Common::U32String &str) {

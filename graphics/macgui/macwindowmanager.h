@@ -335,13 +335,22 @@ public:
 	void clearHandlingWidgets();
 
 	void setMenuItemCheckMark(const Common::String &menuId, const Common::String &itemId, bool checkMark);
-	void setMenuItemEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled);
-	void setMenuItemName(const Common::String &menuId, const Common::String &itemId, const Common::String &name);
 	void setMenuItemCheckMark(int menuId, int itemId, bool checkMark);
+	void setMenuItemEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled);
 	void setMenuItemEnabled(int menuId, int itemId, bool enabled);
+	void setMenuItemName(const Common::String &menuId, const Common::String &itemId, const Common::String &name);
 	void setMenuItemName(int menuId, int itemId, const Common::String &name);
 	void setMenuItemAction(const Common::String &menuId, const Common::String &itemId, int actionId);
 	void setMenuItemAction(int menuId, int itemId, int actionId);
+
+	bool getMenuItemCheckMark(const Common::String &menuId, const Common::String &itemId);
+	bool getMenuItemCheckMark(int menuId, int itemId);
+	bool getMenuItemEnabled(const Common::String &menuId, const Common::String &itemId);
+	bool getMenuItemEnabled(int menuId, int itemId);
+	Common::String getMenuItemName(const Common::String &menuId, const Common::String &itemId);
+	Common::String getMenuItemName(int menuId, int itemId);
+	int getMenuItemAction(const Common::String &menuId, const Common::String &itemId);
+	int getMenuItemAction(int menuId, int itemId);
 
 public:
 	MacFontManager *_fontMan;

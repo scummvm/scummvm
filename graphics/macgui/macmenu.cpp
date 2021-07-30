@@ -556,6 +556,55 @@ void MacMenu::setAction(int menuId, int itemId, int actionId) {
 	}
 }
 
+bool MacMenu::getCheckMark(int menuId, int itemId) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	// if item doesn't exist, this will be warned at findMenuItem
+	return item ? item->checked : false;
+}
+
+bool MacMenu::getCheckMark(const Common::String &menuId, const Common::String &itemId) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	return item ? item->checked : false;
+}
+
+bool MacMenu::getEnabled(int menuId, int itemId) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	return item ? item->enabled : false;
+}
+
+bool MacMenu::getEnabled(const Common::String &menuId, const Common::String &itemId) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	return item ? item->enabled : false;
+}
+
+Common::String MacMenu::getName(int menuId, int itemId) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	return item ? item->text : Common::String();
+}
+
+Common::String MacMenu::getName(const Common::String &menuId, const Common::String &itemId) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	return item ? item->text : Common::String();
+}
+
+int MacMenu::getAction(int menuId, int itemId) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	return item ? item->action : 0;
+}
+
+int MacMenu::getAction(const Common::String &menuId, const Common::String &itemId) {
+	MacMenuItem *item = findMenuItem(menuId, itemId);
+
+	return item ? item->action : 0;
+}
+
 MacMenuItem *MacMenu::findMenuItem(const Common::String &menuId, const Common::String &itemId) {
 	// TODO: support arbitrary level menu item finding
 	// only support 2 level finding now.
