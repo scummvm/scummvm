@@ -128,14 +128,10 @@ void Redraw::moveNextAreas() {
 
 void Redraw::flipRedrawAreas() {
 	for (int32 i = 0; i < numOfRedrawBox; i++) { // redraw areas on screen
-		_engine->copyBlockPhys(_currentRedrawList[i].left, _currentRedrawList[i].top, _currentRedrawList[i].right, _currentRedrawList[i].bottom);
+		_engine->copyBlockPhys(_currentRedrawList[i]);
 	}
 
-	numOfRedrawBox = 0;
-
-	for (int32 i = 0; i < currNumOfRedrawBox; i++) { //setup the redraw areas for next display
-		addRedrawCurrentArea(_nextRedrawList[i]);
-	}
+	moveNextAreas();
 }
 
 void Redraw::blitBackgroundAreas() {

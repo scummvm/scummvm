@@ -94,7 +94,10 @@ private:
 	 * @param redrawArea redraw the region
 	 */
 	void addRedrawCurrentArea(const Common::Rect &redrawArea);
-	/** Move next regions to the current redraw list */
+	/**
+	 * Move next regions to the current redraw list,
+	 * setup the redraw areas for next display
+	 */
 	void moveNextAreas();
 	void updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2);
 
