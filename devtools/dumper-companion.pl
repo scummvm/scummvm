@@ -43,10 +43,6 @@ sub encode_punycodefilename;
 
 getopts('hmf:c:edsS:o:');
 
-if ($::opt_c and $::opt_e) {
-	die "$0: -c and -e are mutually exclusive";
-}
-
 if ($::opt_h) {
 	HELP_MESSAGE();
 	exit 0;
@@ -67,6 +63,10 @@ if ($::opt_S) {
 
 if ($::opt_o) {
 	$outPath = $::opt_o;
+
+	if ($outPath !~ m'/$') {
+		$outPath .= "/";
+	}
 }
 
 if ($::opt_m) {
@@ -112,10 +112,10 @@ sub processIso($) {
 			}
 
 			if ($::opt_e) {
-				$dir = encode_punycodefilename $dir;
+				$dir = join '/', map { encode_punycodefilename $_} split /:/, $dir;
 			}
-			# Replace Mac separators with *nix
-			$dir =~ s/:/\//g;
+
+			$dir .= '/' if $dir !~ m'/$';
 
 			mkdir "$outPath$dir";
 			$numdirs++;
@@ -164,6 +164,7 @@ sub processIso($) {
 sub processMacbinary() {
 	find( sub {
 		my $fname = $_;
+		my $fname1 = $fname;
 
 		if (open F, "$fname/..namedfork/rsrc") {
 			print "Resource in $fname\n";
@@ -171,8 +172,22 @@ sub processMacbinary() {
 
 			system("macbinary encode \"$fname\"");
 			system("touch -r \"$fname\" \"$fname.bin\"");
-			system("mv \"$fname.bin\" \"$fname\"");
+
+			if ($::opt_e) {
+				$fname1 = encode_punycodefilename $fname;
+			}
+
+			system("mv \"$fname.bin\" \"$fname1\"");
+		} else {
+			if ($::opt_e) {
+				$fname1 = encode_punycodefilename $fname;
+
+				if ($fname1 ne $fname) {
+					system("mv \"$fname\" \"$fname1\"");
+				}
+			}
 		}
+
 	}, ".");
 
 }
@@ -187,10 +202,10 @@ There are 3 operation modes. Direct MacBinary encoding (Mac-only) and dumping IS
 contents with hfsutils.
 
 Mode 1:
-  $0 -m [-e] [-d]
-	  Operate in MacBinary encoding mode. Recursively encode all resource forks in the current directory
+  $0 -m [-e]
+	  Operate in MacBinary encoding mode. Recursively encode all resource forks in the current directory.
+	  It works only in-place.
 	  -e encode filenames into punycode
-	  -d decode filenames from punycode
 
 Mode 2:
   $0 [-c <encoding>] [-e] [-o directory] -f <file.iso>
