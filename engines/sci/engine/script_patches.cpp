@@ -1414,120 +1414,46 @@ static const SciScriptPatcherEntry ecoquest1Signatures[] = {
 };
 
 // ===========================================================================
-// doMyThing::changeState (2) is supposed to remove the initial text on the
-//  ecorder. This is done by reusing temp-space, that was filled on state 1.
-//  this worked in sierra sci just by accident. In our sci, the temp space
-//  is resetted every time, which means the previous text isn't available
-//  anymore. We have to patch the code because of that.
+// When the Ecorder is turned on and displays its initial welcome text, the
+//  doMyThing script stores the string in temporary space in one state and then
+//  accesses it in a later state. This worked in Sierra's interpreter by
+//  accident. We reset temporary space every time.
+//
+// We fix this by storing the string in local space instead of temporary space.
+//  Script 50 has 200 bytes of local space reserved for a local procedure to
+//  use as temporary string space so we use that.
+//
+// Applies to: All versions
+// Responsible method: doMyThing:changeState
 // Fixes bug: #4993
 static const uint16 ecoquest2SignatureEcorder[] = {
-	0x31, 0x22,                      // bnt [next state]
-	0x39, 0x0a,                      // pushi 0a
-	0x5b, 0x04, 0x1e,                // lea temp[1e]
-	0x36,                            // push
 	SIG_MAGICDWORD,
-	0x39, 0x64,                      // pushi 64
-	0x39, 0x7d,                      // pushi 7d
-	0x39, 0x32,                      // pushi 32
-	0x39, 0x66,                      // pushi 66
-	0x39, 0x17,                      // pushi 17
-	0x39, 0x69,                      // pushi 69
-	0x38, SIG_UINT16(0x2631),        // pushi 2631
-	0x39, 0x6a,                      // pushi 6a
-	0x39, 0x64,                      // pushi 64
-	0x43, 0x1b, 0x14,                // callk Display
-	0x35, 0x0a,                      // ldi 0a
-	0x65, 0x20,                      // aTop ticks
-	0x33,                            // jmp [end]
-	SIG_ADDTOOFFSET(+1),             // [skip 1 byte]
-	0x3c,                            // dup
-	0x35, 0x03,                      // ldi 03
-	0x1a,                            // eq?
-	0x31,                            // bnt [end]
+	0x5b, 0x04, 0x1e,                // lea 04 1e [ @temp30 ]
+	0x36,                            // push
 	SIG_END
 };
 
 static const uint16 ecoquest2PatchEcorder[] = {
-	0x2f, 0x02,                      // bt [to pushi 7]
-	0x3a,                            // toss
-	0x48,                            // ret
-	0x38, PATCH_UINT16(0x0007),      // pushi 7d (parameter count) (waste 1 byte)
-	0x39, 0x0b,                      // pushi 11d (FillBoxAny)
-	0x39, 0x1d,                      // pushi 29d
-	0x39, 0x73,                      // pushi 115d
-	0x39, 0x5e,                      // pushi 94d
-	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
-	0x78,                            // push1 (visual screen)
-	0x38, PATCH_UINT16(0x0017),      // pushi 23d (color) (waste 1 byte)
-	0x43, 0x6c, 0x0e,                // callk Graph
-	0x38, PATCH_UINT16(0x0005),      // pushi 5d (parameter count) (waste 1 byte)
-	0x39, 0x0c,                      // pushi 12d (UpdateBox)
-	0x39, 0x1d,                      // pushi 29d
-	0x39, 0x73,                      // pushi 115d
-	0x39, 0x5e,                      // pushi 94d
-	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
-	0x43, 0x6c, 0x0a,                // callk Graph
+	0x5b, 0x02, 0x10,                // lea 02 10 [ @local16 ]
 	PATCH_END
 };
 
-// Same patch as above for the ecorder introduction.
-// Two workarounds are needed for this patch in workarounds.cpp (when calling
-// kGraphFillBoxAny and kGraphUpdateBox), as there isn't enough space to patch
-// the function otherwise.
-// Fixes bug: #6467
+// This is the same Ecorder patch as above, but it's for the introduction when
+//  you're given the Ecorder. The showEcorder script has the same bug and we
+//  fix it the same way by using local space instead of temporary space.
+//
+// Applies to: All versions
+// Responsible method: showEcorder:changeState
+// Fixes bug: #5467
 static const uint16 ecoquest2SignatureEcorderTutorial[] = {
-	0x30, SIG_UINT16(0x0023),        // bnt [next state]
-	0x39, 0x0a,                      // pushi 0a
-	0x5b, 0x04, 0x1f,                // lea temp[1f]
-	0x36,                            // push
 	SIG_MAGICDWORD,
-	0x39, 0x64,                      // pushi 64
-	0x39, 0x7d,                      // pushi 7d
-	0x39, 0x32,                      // pushi 32
-	0x39, 0x66,                      // pushi 66
-	0x39, 0x17,                      // pushi 17
-	0x39, 0x69,                      // pushi 69
-	0x38, SIG_UINT16(0x2631),        // pushi 2631
-	0x39, 0x6a,                      // pushi 6a
-	0x39, 0x64,                      // pushi 64
-	0x43, 0x1b, 0x14,                // callk Display
-	0x35, 0x1e,                      // ldi 1e
-	0x65, 0x20,                      // aTop ticks
-	0x32,                            // jmp [end]
-	// 2 extra bytes, jmp offset
+	0x5b, 0x04, 0x1f,                // lea 04 1f [ @temp31 ]
+	0x36,                            // push
 	SIG_END
 };
 
 static const uint16 ecoquest2PatchEcorderTutorial[] = {
-	0x31, 0x23,                      // bnt [next state] (save 1 byte)
-	// The parameter count below should be 7, but we're out of bytes
-	// to patch! A workaround has been added because of this
-	0x78,                            // push1 (parameter count)
-	//0x39, 0x07,                    // pushi 7d (parameter count)
-	0x39, 0x0b,                      // pushi 11d (FillBoxAny)
-	0x39, 0x1d,                      // pushi 29d
-	0x39, 0x73,                      // pushi 115d
-	0x39, 0x5e,                      // pushi 94d
-	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
-	0x78,                            // push1 (visual screen)
-	0x39, 0x17,                      // pushi 23d (color)
-	0x43, 0x6c, 0x0e,                // callk Graph
-	// The parameter count below should be 5, but we're out of bytes
-	// to patch! A workaround has been added because of this
-	0x78,                            // push1 (parameter count)
-	//0x39, 0x05,                    // pushi 5d (parameter count)
-	0x39, 0x0c,                      // pushi 12d (UpdateBox)
-	0x39, 0x1d,                      // pushi 29d
-	0x39, 0x73,                      // pushi 115d
-	0x39, 0x5e,                      // pushi 94d
-	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
-	0x43, 0x6c, 0x0a,                // callk Graph
-	// We are out of bytes to patch at this point,
-	// so we skip 494 (0x1ee) bytes to reuse this code:
-	// ldi 1e
-	// aTop 20
-	// jmp 030e (jump to end)
-	0x32, PATCH_UINT16(0x01ee),      // jmp 494d
+	0x5b, 0x02, 0x02,                // lea 02 02 [ @local2 ]
 	PATCH_END
 };
 
@@ -1725,8 +1651,8 @@ static const uint16 ecoquest2PatchCampMessages2[] = {
 //          script, description,                                        signature                          patch
 static const SciScriptPatcherEntry ecoquest2Signatures[] = {
 	{  true,     0, "icon bar tutorial",                            10, ecoquest2SignatureIconBarTutorial, ecoquest2PatchIconBarTutorial },
-	{  true,    50, "initial text not removed on ecorder",           1, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
-	{  true,   333, "initial text not removed on ecorder tutorial",  1, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
+	{  true,    50, "initial text not removed on ecorder",           3, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
+	{  true,   333, "initial text not removed on ecorder tutorial",  3, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	{  true,   500, "room 500 items reappear",                       1, ecoquest2SignatureRoom500Items,    ecoquest2PatchRoom500Items },
 	{  true,   530, "missing camp messages",                         6, ecoquest2SignatureCampMessages1,   ecoquest2PatchCampMessages1 },
 	{  true,   560, "missing camp messages",                         7, ecoquest2SignatureCampMessages2,   ecoquest2PatchCampMessages2 },
