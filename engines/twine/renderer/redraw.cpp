@@ -328,7 +328,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 
 	_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
 
-	addRedrawArea(_engine->_interface->textWindow);
+	addRedrawArea(_engine->_interface->clip);
 
 	_engine->_debugScene->drawClip(renderRect);
 }
@@ -366,7 +366,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 
 	_engine->_interface->setClip(renderRect);
 
-	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
+	if (_engine->_interface->clip.isValidRect()) {
 		actor->dynamicFlags.bIsVisible = 1;
 
 		const int32 tempX = (actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
@@ -379,13 +379,13 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		_engine->_grid->drawOverModelActor(tempX, tempY, tempZ);
 
 		if (_engine->_actor->cropBottomScreen) {
-			renderRect.bottom = _engine->_interface->textWindow.bottom = _engine->_actor->cropBottomScreen + 10;
+			renderRect.bottom = _engine->_interface->clip.bottom = _engine->_actor->cropBottomScreen + 10;
 		}
 
-		addRedrawArea(_engine->_interface->textWindow);
+		addRedrawArea(_engine->_interface->clip);
 
 		if (actor->staticFlags.bIsBackgrounded && bgRedraw) {
-			_engine->blitFrontToWork(_engine->_interface->textWindow);
+			_engine->blitFrontToWork(_engine->_interface->clip);
 		}
 
 		_engine->_debugScene->drawClip(renderRect);
@@ -419,7 +419,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 		_engine->_interface->setClip(renderRect);
 	}
 
-	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
+	if (_engine->_interface->clip.isValidRect()) {
 		_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
 
 		actor->dynamicFlags.bIsVisible = 1;
@@ -440,10 +440,10 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 			_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 		}
 
-		addRedrawArea(_engine->_interface->textWindow);
+		addRedrawArea(_engine->_interface->clip);
 
 		if (actor->staticFlags.bIsBackgrounded && bgRedraw) {
-			_engine->blitFrontToWork(_engine->_interface->textWindow);
+			_engine->blitFrontToWork(_engine->_interface->clip);
 		}
 
 		_engine->_debugScene->drawClip(renderRect);
@@ -475,13 +475,13 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 
 	_engine->_interface->setClip(renderRect);
 
-	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
+	if (_engine->_interface->clip.isValidRect()) {
 		const int32 tmpX = (drawCmd.x + BRICK_HEIGHT) / BRICK_SIZE;
 		const int32 tmpY = drawCmd.y / BRICK_HEIGHT;
 		const int32 tmpZ = (drawCmd.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 		_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
-		addRedrawArea(_engine->_interface->textWindow);
+		addRedrawArea(_engine->_interface->clip);
 
 		// show clipping area
 		//drawBox(renderRect);
@@ -563,7 +563,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 
-				addRedrawArea(_engine->_interface->textWindow);
+				addRedrawArea(_engine->_interface->clip);
 				break;
 			}
 			case OverlayType::koNumber: {
@@ -584,7 +584,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				addRedrawArea(_engine->_interface->textWindow);
+				addRedrawArea(_engine->_interface->clip);
 				break;
 			}
 			case OverlayType::koNumberRange: {
@@ -607,7 +607,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				addRedrawArea(_engine->_interface->textWindow);
+				addRedrawArea(_engine->_interface->clip);
 				break;
 			}
 			case OverlayType::koInventoryItem: {
@@ -659,7 +659,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				addRedrawArea(_engine->_interface->textWindow);
+				addRedrawArea(_engine->_interface->clip);
 				break;
 			}
 			}

@@ -72,7 +72,7 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 	int32 right = *ptr + left - 1;
 	int32 bottom = *(ptr + 1) + top - 1;
 
-	if (left > _engine->_interface->textWindow.right || right < _engine->_interface->textWindow.left || bottom < _engine->_interface->textWindow.top || top > _engine->_interface->textWindow.bottom) {
+	if (left > _engine->_interface->clip.right || right < _engine->_interface->clip.left || bottom < _engine->_interface->clip.top || top > _engine->_interface->clip.bottom) {
 		return;
 	}
 
@@ -93,8 +93,8 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 	bottom++;
 
 	// if line on top aren't in the blitting area...
-	if (absY < _engine->_interface->textWindow.top) {
-		int numOfLineToRemove = _engine->_interface->textWindow.top - absY;
+	if (absY < _engine->_interface->clip.top) {
+		int numOfLineToRemove = _engine->_interface->clip.top - absY;
 
 		vSize -= numOfLineToRemove;
 		if (vSize <= 0) {
@@ -112,8 +112,8 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 	}
 
 	// reduce the vSize to remove lines on bottom
-	if (absY + vSize - 1 > _engine->_interface->textWindow.bottom) {
-		vSize = _engine->_interface->textWindow.bottom - absY + 1;
+	if (absY + vSize - 1 > _engine->_interface->clip.bottom) {
+		vSize = _engine->_interface->clip.bottom - absY + 1;
 		if (vSize <= 0) {
 			return;
 		}
@@ -140,7 +140,7 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 			width = *(ptr++); // copy size
 
 			for (int32 j = 0; j < width; j++) {
-				if (absX >= _engine->_interface->textWindow.left && absX <= _engine->_interface->textWindow.right) {
+				if (absX >= _engine->_interface->clip.left && absX <= _engine->_interface->clip.right) {
 					*outPtr = *inPtr;
 				}
 
@@ -162,14 +162,14 @@ const BrickEntry* Grid::getBrickEntry(int32 j, int32 i) const {
 }
 
 void Grid::drawOverModelActor(int32 x, int32 y, int32 z) {
-	const int32 copyBlockPhysLeft = ((_engine->_interface->textWindow.left + 24) / 24) - 1;
-	const int32 copyBlockPhysRight = ((_engine->_interface->textWindow.right + 24) / 24);
+	const int32 copyBlockPhysLeft = ((_engine->_interface->clip.left + 24) / 24) - 1;
+	const int32 copyBlockPhysRight = ((_engine->_interface->clip.right + 24) / 24);
 
 	for (int32 j = copyBlockPhysLeft; j <= copyBlockPhysRight; j++) {
 		for (int32 i = 0; i < _brickInfoBuffer[j]; i++) {
 			const BrickEntry *currBrickEntry = getBrickEntry(j, i);
 
-			if (currBrickEntry->posY + 38 > _engine->_interface->textWindow.top && currBrickEntry->posY <= _engine->_interface->textWindow.bottom && currBrickEntry->y >= y) {
+			if (currBrickEntry->posY + 38 > _engine->_interface->clip.top && currBrickEntry->posY <= _engine->_interface->clip.bottom && currBrickEntry->y >= y) {
 				if (currBrickEntry->x + currBrickEntry->z > z + x) {
 					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
 				}
@@ -179,14 +179,14 @@ void Grid::drawOverModelActor(int32 x, int32 y, int32 z) {
 }
 
 void Grid::drawOverSpriteActor(int32 x, int32 y, int32 z) {
-	const int32 copyBlockPhysLeft = ((_engine->_interface->textWindow.left + 24) / 24) - 1;
-	const int32 copyBlockPhysRight = (_engine->_interface->textWindow.right + 24) / 24;
+	const int32 copyBlockPhysLeft = ((_engine->_interface->clip.left + 24) / 24) - 1;
+	const int32 copyBlockPhysRight = (_engine->_interface->clip.right + 24) / 24;
 
 	for (int32 j = copyBlockPhysLeft; j <= copyBlockPhysRight; j++) {
 		for (int32 i = 0; i < _brickInfoBuffer[j]; i++) {
 			const BrickEntry *currBrickEntry = getBrickEntry(j, i);
 
-			if (currBrickEntry->posY + 38 > _engine->_interface->textWindow.top && currBrickEntry->posY <= _engine->_interface->textWindow.bottom && currBrickEntry->y >= y) {
+			if (currBrickEntry->posY + 38 > _engine->_interface->clip.top && currBrickEntry->posY <= _engine->_interface->clip.bottom && currBrickEntry->y >= y) {
 				if (currBrickEntry->x == x && currBrickEntry->z == z) {
 					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
 				}
@@ -488,19 +488,19 @@ bool Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) {
 
 bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr) {
 	const int32 left = posX + ptr.offsetX();
-	if (left > _engine->_interface->textWindow.right) {
+	if (left > _engine->_interface->clip.right) {
 		return false;
 	}
 	const int32 right = ptr.surface().w + left;
-	if (right < _engine->_interface->textWindow.left) {
+	if (right < _engine->_interface->clip.left) {
 		return false;
 	}
 	const int32 top = posY + ptr.offsetY();
-	if (top > _engine->_interface->textWindow.bottom) {
+	if (top > _engine->_interface->clip.bottom) {
 		return false;
 	}
 	const int32 bottom = ptr.surface().h + top;
-	if (bottom < _engine->_interface->textWindow.top) {
+	if (bottom < _engine->_interface->clip.top) {
 		return false;
 	}
 
@@ -511,27 +511,27 @@ bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr) {
 
 // WARNING: Rewrite this function to have better performance
 bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
-	if (_engine->_interface->textWindow.left > _engine->_interface->textWindow.right || _engine->_interface->textWindow.top > _engine->_interface->textWindow.bottom) {
+	if (_engine->_interface->clip.left > _engine->_interface->clip.right || _engine->_interface->clip.top > _engine->_interface->clip.bottom) {
 		return false;
 	}
 
 	const int32 left = posX + *(ptr + 2);
-	if (left > _engine->_interface->textWindow.right) {
+	if (left > _engine->_interface->clip.right) {
 		return false;
 	}
 	const int32 right = *ptr + left;
-	if (right < _engine->_interface->textWindow.left) {
+	if (right < _engine->_interface->clip.left) {
 		return false;
 	}
 	const int32 top = posY + *(ptr + 3);
-	if (top > _engine->_interface->textWindow.bottom) {
+	if (top > _engine->_interface->clip.bottom) {
 		return false;
 	}
 	const int32 bottom = (int32)*(ptr + 1) + top;
-	if (bottom < _engine->_interface->textWindow.top) {
+	if (bottom < _engine->_interface->clip.top) {
 		return false;
 	}
-	const int32 maxY = MIN(bottom, (int32)_engine->_interface->textWindow.bottom);
+	const int32 maxY = MIN(bottom, (int32)_engine->_interface->clip.bottom);
 
 	ptr += 4;
 
@@ -549,7 +549,7 @@ bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 					x += iterations;
 					continue;
 				}
-				if (y < _engine->_interface->textWindow.top || x >= _engine->_interface->textWindow.right || x + iterations < _engine->_interface->textWindow.left) {
+				if (y < _engine->_interface->clip.top || x >= _engine->_interface->clip.right || x + iterations < _engine->_interface->clip.left) {
 					if (type == 1) {
 						ptr += iterations;
 					} else {
@@ -561,7 +561,7 @@ bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 				if (type == 1) {
 					uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y);
 					for (uint8 i = 0; i < iterations; i++) {
-						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right) {
+						if (x >= _engine->_interface->clip.left && x < _engine->_interface->clip.right) {
 							*out = *ptr;
 						}
 
@@ -573,7 +573,7 @@ bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 					const uint8 pixel = *ptr++;
 					uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y);
 					for (uint8 i = 0; i < iterations; i++) {
-						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right) {
+						if (x >= _engine->_interface->clip.left && x < _engine->_interface->clip.right) {
 							*out = pixel;
 						}
 

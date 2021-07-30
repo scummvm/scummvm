@@ -42,7 +42,7 @@ private:
 
 public:
 	Interface(TwinEEngine *engine);
-	Common::Rect textWindow { 0, 0, 0, 0 };
+	Common::Rect clip { 0, 0, 0, 0 };
 
 	/**
 	 * Draw button line
