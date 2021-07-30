@@ -1884,6 +1884,24 @@ void MacText::updateTextSelection(int x, int y) {
 	_contentIsDirty = true;
 }
 
+int MacText::getMouseChar(int x, int y) {
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
+
+	y += _scrollPos;
+	int dx, dy, row, col;
+
+	getRowCol(x, y, &dx, &dy, &row, &col);
+
+	int index = 0;
+	for (int r = 0; r < row; r++)
+		index += getLineCharWidth(r);
+
+	index += col;
+	return index + 1;
+}
+
 int MacText::getAlignOffset(int row) {
 	int alignOffset = 0;
 	if (_textAlignment == kTextAlignRight)
@@ -1903,7 +1921,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	y = CLIP(y, 0, _textMaxHeight);
 
 	nrow = _textLines.size();
-	// use [lb, ub) bsearch here, final anser would we lb
+	// use [lb, ub) bsearch here, final answer would be lb
 	int lb = 0, ub = nrow;
 	while (ub - lb > 1) {
 		int mid = (ub + lb) / 2;

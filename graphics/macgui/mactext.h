@@ -212,6 +212,8 @@ public:
 	int getTextSlant(int start, int end);
 	void setTextSlant(int textSlant, int start, int end);
 
+	int getMouseChar(int x, int y);
+
 private:
 	MacFontRun getTextChunks(int start, int end);
 	void setTextChunks(int start, int end, int param, void (*callback)(MacFontRun &, int));
