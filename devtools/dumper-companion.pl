@@ -187,6 +187,8 @@ sub processIso($) {
 				$prevlen = length "$dir$decfname";
 				flush STDOUT;
 
+				$fname =~ s/\*/\\\*/g; # Files cound have stars in them, escape, so shell is happy
+
 				if ($res != 0) {
 					system1("hcopy -m -- \"$mdir$fname\" \"$outPath$dir$decfname\"") == 0 or die "Can't execute hcopy";
 				} else {
