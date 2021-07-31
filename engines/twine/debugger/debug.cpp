@@ -78,8 +78,6 @@ void Debug::debugDrawWindow(int32 w) {
 		}
 	}
 
-	_engine->copyBlockPhys(rect);
-
 	debugDrawWindowButtons(w);
 }
 

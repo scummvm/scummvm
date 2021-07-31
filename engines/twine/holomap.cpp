@@ -584,7 +584,6 @@ void Holomap::processHolomap() {
 			if (rotate) {
 				_engine->_menu->drawRectBorders(300, 170, 340, 210);
 			}
-			_engine->copyBlockPhys(rect);
 		}
 
 		if (rotate && xRot == _locations[currentLocation].angle.x && yRot == _locations[currentLocation].angle.y) {

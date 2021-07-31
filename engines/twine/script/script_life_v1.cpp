@@ -1736,7 +1736,6 @@ static int32 lCLEAR_TEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	lTextYPos = 0;
 	const Common::Rect rect(0, 0, engine->width() - 1, engine->height() / 2);
 	engine->_interface->drawFilledRect(rect, COLOR_BLACK);
-	engine->copyBlockPhys(rect);
 	return 0;
 }
 

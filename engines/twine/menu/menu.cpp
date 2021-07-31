@@ -298,8 +298,6 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 	_engine->_text->setFontParameters(2, 8);
 	const int32 textSize = _engine->_text->getTextSize(dialText);
 	_engine->_text->drawText((_engine->width() / 2) - (textSize / 2), rect.top + 7, dialText);
-
-	_engine->copyBlockPhys(rect);
 }
 
 int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
