@@ -884,7 +884,6 @@ void MacText::render() {
 }
 
 void MacText::render(int from, int to, int shadow) {
-
 	int w = MIN(_maxWidth, _textMaxWidth);
 	ManagedSurface *surface = shadow ? _shadowSurface : _surface;
 
@@ -900,7 +899,7 @@ void MacText::render(int from, int to, int shadow) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			debug(0, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
+			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
 				  i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
 				  _textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
 				  (const void *)_textLines[i].chunks[j].getFont());
@@ -1424,6 +1423,10 @@ void MacText::drawSelection(int xoff, int yoff) {
 
 	end = MIN((int)maxSelectionHeight, end);
 
+	// if we are selecting all text, then we invert the whole area
+	if ((uint)s.endRow == _textLines.size() - 1)
+		end = maxSelectionHeight;
+
 	int numLines = 0;
 	int x1 = 0, x2 = maxSelectionWidth;
 	int row = s.startRow;
@@ -1454,8 +1457,9 @@ void MacText::drawSelection(int xoff, int yoff) {
 		}
 	}
 
+	end = MIN(end, maxSelectionHeight - yoff);
 	for (int y = start; y < end; y++) {
-		if (!numLines) {
+		if (!numLines && (uint)row < _textLines.size()) {
 			x1 = 0;
 			x2 = maxSelectionWidth;
 
