@@ -82,8 +82,13 @@ void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, in
 		for (loop = 0;
 			(loop < _G(views)[view].numLoops) && (_G(views)[view].loops[loop].numFrames == 0); ++loop) {
 		}
-		if (loop == _G(views)[view].numLoops)
-			quitprintf("!Character %s is assigned view %d that has no frames!", name, view);
+		if (loop == _G(views)[view].numLoops) {
+			// view has no frames?!
+			// amazingly enough there are old games that allow this to happen...
+			if (_G(loaded_game_file_version) >= kGameVersion_300)
+				quitprintf("!Character %s is assigned view %d that has no frames!", name, view);
+			loop = 0;
+		}
 	}
 
 	int doing_nothing = 1;
