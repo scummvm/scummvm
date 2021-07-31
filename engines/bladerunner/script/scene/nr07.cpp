@@ -76,12 +76,14 @@ bool SceneScriptNR07::ClickedOnActor(int actorId) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(1100, -1, 3, 8); // VOIGT-KAMPFF
 			DM_Add_To_List_Never_Repeat_Once_Selected(1110, 8, -1, -1); // CRYSTAL
 			if (Actor_Clue_Query(kActorMcCoy, kClueSuspectDektora)) { // cut content? clue is not obtainable
+				// TODO - restore trigger
 				DM_Add_To_List_Never_Repeat_Once_Selected(1120, 3, 6, 7); // MOONBUS
 			}
 			if (Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1)) {
 				DM_Add_To_List_Never_Repeat_Once_Selected(1130, 3, 5, 7); // BLACK SEDAN
 			}
 			if (Game_Flag_Query(kFlagNotUsed510)) { // cut content? flag is never set
+				// TODO - restore trigger
 				DM_Add_To_List_Never_Repeat_Once_Selected(1140, 1, 4, 7); // SCORPIONS
 			}
 		} else {
@@ -278,6 +280,9 @@ void SceneScriptNR07::callHolloway() {
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 	Actor_Says(kActorMcCoy, 3760, 19);
 	Actor_Says(kActorDektora, 960, kAnimationModeSit);
+	if (_vm->_cutContent) {
+		Actor_Says(kActorMcCoy, 3765, kAnimationModeTalk); // Let me show you my ID.
+	}
 	Actor_Says(kActorDektora, 920, kAnimationModeSit);
 #if BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 3780, kAnimationModeIdle);
@@ -343,6 +348,9 @@ void SceneScriptNR07::talkAboutBelt1() {
 	Actor_Says(kActorMcCoy, 3630, 13);
 	Actor_Says_With_Pause(kActorDektora, 590, 1.0f, 30);
 	Actor_Says(kActorDektora, 600, 30);
+	if (_vm->_cutContent) {
+		Actor_Says_With_Pause(kActorMcCoy, 3635, 1.5f, 18); // Insects, hm.
+	}
 	Actor_Start_Speech_Sample(kActorMcCoy, 3640);  // Tell you the truth, I'm from the LPD. (...)
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, false);
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
@@ -435,6 +443,9 @@ void SceneScriptNR07::talkAboutSteele() {
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 	Actor_Face_Actor(kActorDektora, kActorMcCoy, true);
 	Actor_Says(kActorMcCoy, 3695, 15);
+	if (_vm->_cutContent) {
+		Actor_Says(kActorMcCoy, 3700, kAnimationModeTalk); // If I found you, so will she.
+	}
 	Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, 5);
 
 	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
@@ -445,14 +456,20 @@ void SceneScriptNR07::talkAboutSteele() {
 }
 
 void SceneScriptNR07::talkAboutMoonbus() {
-	// cut content?
-
+	// TODO cut content - restore trigger
 	Actor_Says(kActorMcCoy, 3705, 19);
-	Actor_Says(kActorDektora, 760, kAnimationModeSit);
+	Actor_Says(kActorDektora, 760, kAnimationModeSit); // Excuse me?
 
 	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 		Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, -5);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 3710, 18);
+#else
+		Actor_Says(kActorMcCoy, 3710, kAnimationModeTalk); // Somebody told me about this moonbus that got hijacked.
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		if (_vm->_cutContent) {
+			Actor_Says(kActorMcCoy, 3715, 15); // You know, the one where all those humans got killed?
+		}
 		callHolloway();
 	} else {
 		Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, -3);
@@ -481,17 +498,30 @@ void SceneScriptNR07::talkAboutBlackSedan() {
 }
 
 void SceneScriptNR07::talkAboutScorpions() {
-	// cut content?
+	// TODO cut content - restore trigger
 	Actor_Says(kActorMcCoy, 3620, 19);
 	Actor_Says(kActorDektora, 840, 30);
 	Actor_Says(kActorMcCoy, 3745, 9);
+#if BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says_With_Pause(kActorDektora, 850, 1.0f, 30);
 	Actor_Says(kActorDektora, 860, 30);
 	Actor_Says(kActorDektora, 870, kAnimationModeSit);
+#else
+	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
+		Actor_Says_With_Pause(kActorDektora, 850, 1.0f, 30); // I didn't know what they were called
+		// Note: this plays a bit loud and maybe in inconsistent tone, but surely belongs here
+		Actor_Says(kActorDektora, 870, 31);
+	} else {
+		Actor_Says(kActorDektora, 860, 31);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 3750, 11);
 	Actor_Says(kActorDektora, 880, 30);
 	Actor_Says(kActorMcCoy, 3755, 16);
 	Actor_Says(kActorDektora, 890, 31);
+	if (_vm->_cutContent) {
+		Actor_Says(kActorDektora, 900, 30); // Who would need to add insects to the list?
+	}
 }
 
 } // End of namespace BladeRunner
