@@ -185,7 +185,7 @@ const ExtraGuiOptions TwinEMetaEngine::getExtraGuiOptions(const Common::String &
 }
 
 void TwinEMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
-	thumb.copyFrom(((TwinEEngine*)g_engine)->workVideoBuffer);
+	thumb.copyFrom(((TwinEEngine*)g_engine)->_workVideoBuffer);
 }
 
 //

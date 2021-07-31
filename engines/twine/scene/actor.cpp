@@ -134,7 +134,7 @@ void Actor::initSpriteActor(int32 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 
 	if (localActor->staticFlags.bIsSpriteActor && localActor->sprite != -1 && localActor->entity != localActor->sprite) {
-		const BoundingBox *spritebbox = _engine->_resources->spriteBoundingBox.bbox(localActor->sprite);
+		const BoundingBox *spritebbox = _engine->_resources->_spriteBoundingBox.bbox(localActor->sprite);
 		localActor->entity = localActor->sprite;
 		localActor->boudingBox = *spritebbox;
 	}
@@ -193,7 +193,7 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	if (actorBoundingBox.hasBoundingBox) {
 		localActor->boudingBox = actorBoundingBox.bbox;
 	} else {
-		const BodyData &bd = _engine->_resources->bodyData[localActor->entity];
+		const BodyData &bd = _engine->_resources->_bodyData[localActor->entity];
 		localActor->boudingBox = bd.bbox;
 
 		int32 result = 0;

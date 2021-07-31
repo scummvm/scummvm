@@ -54,7 +54,7 @@ void Debug::debugDrawWindowBox(const Common::Rect &rect, int32 alpha) {
 }
 
 void Debug::debugDrawWindowButtons(int32 w) {
-	DebugWindowStruct &window = debugWindows[w];
+	DebugWindowStruct &window = _debugWindows[w];
 	for (int32 b = 0; b < window.numButtons; b++) {
 		DebugButtonStruct &btn = window.debugButtons[b];
 		const char *text = btn.text;
@@ -71,7 +71,7 @@ void Debug::debugDrawWindowButtons(int32 w) {
 }
 
 void Debug::debugDrawWindow(int32 w) {
-	DebugWindowStruct &window = debugWindows[w];
+	DebugWindowStruct &window = _debugWindows[w];
 	const Common::Rect &rect = window.rect;
 	const int32 alpha = window.alpha;
 
@@ -89,8 +89,8 @@ void Debug::debugDrawWindow(int32 w) {
 }
 
 int32 Debug::debugTypeUseMenu(int32 type) {
-	for (int32 w = 0; w < numDebugWindows; w++) {
-		DebugWindowStruct &window = debugWindows[w];
+	for (int32 w = 0; w < _numDebugWindows; w++) {
+		DebugWindowStruct &window = _debugWindows[w];
 		if (window.isActive <= 0) {
 			continue;
 		}
@@ -101,7 +101,7 @@ int32 Debug::debugTypeUseMenu(int32 type) {
 			}
 			const int submenu = btn.submenu;
 			if (submenu > 0) {
-				debugWindows[submenu].isActive = !debugWindows[submenu].isActive;
+				_debugWindows[submenu].isActive = !_debugWindows[submenu].isActive;
 			}
 			return submenu;
 		}
@@ -110,8 +110,8 @@ int32 Debug::debugTypeUseMenu(int32 type) {
 }
 
 void Debug::debugResetButtonsState() {
-	for (int32 w = 0; w < numDebugWindows; w++) {
-		DebugWindowStruct &window = debugWindows[w];
+	for (int32 w = 0; w < _numDebugWindows; w++) {
+		DebugWindowStruct &window = _debugWindows[w];
 		if (window.isActive <= 0) {
 			continue;
 		}
@@ -126,8 +126,8 @@ void Debug::debugResetButtonsState() {
 }
 
 void Debug::debugRefreshButtons(int32 type) {
-	for (int32 w = 0; w < numDebugWindows; w++) {
-		DebugWindowStruct &window = debugWindows[w];
+	for (int32 w = 0; w < _numDebugWindows; w++) {
+		DebugWindowStruct &window = _debugWindows[w];
 		if (window.isActive <= 0) {
 			continue;
 		}
@@ -156,8 +156,8 @@ void Debug::debugRefreshButtons(int32 type) {
 }
 
 void Debug::debugDrawWindows() {
-	for (int32 w = 0; w < numDebugWindows; w++) {
-		DebugWindowStruct &window = debugWindows[w];
+	for (int32 w = 0; w < _numDebugWindows; w++) {
+		DebugWindowStruct &window = _debugWindows[w];
 		if (window.isActive > 0) {
 			debugDrawWindow(w);
 		}
@@ -165,8 +165,8 @@ void Debug::debugDrawWindows() {
 }
 
 void Debug::debugResetButton(int32 type) {
-	for (int32 w = 0; w < numDebugWindows; w++) {
-		DebugWindowStruct &window = debugWindows[w];
+	for (int32 w = 0; w < _numDebugWindows; w++) {
+		DebugWindowStruct &window = _debugWindows[w];
 		if (window.isActive <= 0) {
 			continue;
 		}
@@ -178,7 +178,7 @@ void Debug::debugResetButton(int32 type) {
 			const int submenu = btn.submenu;
 			btn.isActive = 0;
 			if (submenu > 0) {
-				debugWindows[submenu].debugButtons[b].isActive = !debugWindows[submenu].debugButtons[b].isActive;
+				_debugWindows[submenu].debugButtons[b].isActive = !_debugWindows[submenu].debugButtons[b].isActive;
 			}
 			break;
 		}
@@ -196,13 +196,13 @@ int32 Debug::debugGetActionsState(int32 type) {
 
 	switch (type) {
 	case FREE_CAMERA:
-		state = _engine->_debugGrid->useFreeCamera ? 1 : 0;
+		state = _engine->_debugGrid->_useFreeCamera ? 1 : 0;
 		break;
 	case CHANGE_SCENE:
-		state = _engine->_debugGrid->canChangeScenes ? 1 : 0;
+		state = _engine->_debugGrid->_canChangeScenes ? 1 : 0;
 		break;
 	case SHOW_ZONES:
-		state = _engine->_debugScene->showingZones ? 1 : 0;
+		state = _engine->_debugScene->_showingZones ? 1 : 0;
 		break;
 	case SHOW_ZONE_CUBE:
 	case SHOW_ZONE_CAMERA:
@@ -211,7 +211,7 @@ int32 Debug::debugGetActionsState(int32 type) {
 	case SHOW_ZONE_OBJECT:
 	case SHOW_ZONE_TEXT:
 	case SHOW_ZONE_LADDER:
-		state = _engine->_debugScene->typeZones;
+		state = _engine->_debugScene->_typeZones;
 		break;
 	default:
 		break;
@@ -222,81 +222,81 @@ int32 Debug::debugGetActionsState(int32 type) {
 void Debug::debugSetActions(int32 type) {
 	switch (type) {
 	case FREE_CAMERA:
-		_engine->_debugGrid->useFreeCamera = !_engine->_debugGrid->useFreeCamera;
+		_engine->_debugGrid->_useFreeCamera = !_engine->_debugGrid->_useFreeCamera;
 		break;
 
 	case CHANGE_SCENE:
-		_engine->_debugGrid->canChangeScenes = !_engine->_debugGrid->canChangeScenes;
+		_engine->_debugGrid->_canChangeScenes = !_engine->_debugGrid->_canChangeScenes;
 		break;
 
 	case SHOW_ZONES:
-		_engine->_debugScene->showingZones = !_engine->_debugScene->showingZones;
+		_engine->_debugScene->_showingZones = !_engine->_debugScene->_showingZones;
 		debugResetButton(-1);
 		debugResetButton(-2);
 		debugRedrawScreen();
 		break;
 	case SHOW_ZONE_CUBE:
-		if (_engine->_debugScene->showingZones) {
-			if (_engine->_debugScene->typeZones & 0x01)
-				_engine->_debugScene->typeZones &= ~0x01;
+		if (_engine->_debugScene->_showingZones) {
+			if (_engine->_debugScene->_typeZones & 0x01)
+				_engine->_debugScene->_typeZones &= ~0x01;
 			else
-				_engine->_debugScene->typeZones |= 0x01;
+				_engine->_debugScene->_typeZones |= 0x01;
 			debugRedrawScreen();
 		}
 		break;
 	case SHOW_ZONE_CAMERA:
-		if (_engine->_debugScene->showingZones) {
-			if (_engine->_debugScene->typeZones & 0x02)
-				_engine->_debugScene->typeZones &= ~0x02;
+		if (_engine->_debugScene->_showingZones) {
+			if (_engine->_debugScene->_typeZones & 0x02)
+				_engine->_debugScene->_typeZones &= ~0x02;
 			else
-				_engine->_debugScene->typeZones |= 0x02;
+				_engine->_debugScene->_typeZones |= 0x02;
 			debugRedrawScreen();
 		}
 		break;
 	case SHOW_ZONE_SCENARIC:
-		if (_engine->_debugScene->showingZones) {
-			if (_engine->_debugScene->typeZones & 0x04)
-				_engine->_debugScene->typeZones &= ~0x04;
+		if (_engine->_debugScene->_showingZones) {
+			if (_engine->_debugScene->_typeZones & 0x04)
+				_engine->_debugScene->_typeZones &= ~0x04;
 			else
-				_engine->_debugScene->typeZones |= 0x04;
+				_engine->_debugScene->_typeZones |= 0x04;
 			debugRedrawScreen();
 		}
 		break;
 	case SHOW_ZONE_CELLINGGRID:
-		if (_engine->_debugScene->showingZones) {
-			if (_engine->_debugScene->typeZones & 0x08)
-				_engine->_debugScene->typeZones &= ~0x08;
+		if (_engine->_debugScene->_showingZones) {
+			if (_engine->_debugScene->_typeZones & 0x08)
+				_engine->_debugScene->_typeZones &= ~0x08;
 			else
-				_engine->_debugScene->typeZones |= 0x08;
+				_engine->_debugScene->_typeZones |= 0x08;
 			debugRedrawScreen();
 			debugRedrawScreen();
 		}
 		break;
 	case SHOW_ZONE_OBJECT:
-		if (_engine->_debugScene->showingZones) {
-			if (_engine->_debugScene->typeZones & 0x10)
-				_engine->_debugScene->typeZones &= ~0x10;
+		if (_engine->_debugScene->_showingZones) {
+			if (_engine->_debugScene->_typeZones & 0x10)
+				_engine->_debugScene->_typeZones &= ~0x10;
 			else
-				_engine->_debugScene->typeZones |= 0x10;
+				_engine->_debugScene->_typeZones |= 0x10;
 			debugRedrawScreen();
 			debugRedrawScreen();
 		}
 		break;
 	case SHOW_ZONE_TEXT:
-		if (_engine->_debugScene->showingZones) {
-			if (_engine->_debugScene->typeZones & 0x20)
-				_engine->_debugScene->typeZones &= ~0x20;
+		if (_engine->_debugScene->_showingZones) {
+			if (_engine->_debugScene->_typeZones & 0x20)
+				_engine->_debugScene->_typeZones &= ~0x20;
 			else
-				_engine->_debugScene->typeZones |= 0x20;
+				_engine->_debugScene->_typeZones |= 0x20;
 			debugRedrawScreen();
 		}
 		break;
 	case SHOW_ZONE_LADDER:
-		if (_engine->_debugScene->showingZones) {
-			if (_engine->_debugScene->typeZones & 0x40)
-				_engine->_debugScene->typeZones &= ~0x40;
+		if (_engine->_debugScene->_showingZones) {
+			if (_engine->_debugScene->_typeZones & 0x40)
+				_engine->_debugScene->_typeZones &= ~0x40;
 			else
-				_engine->_debugScene->typeZones |= 0x40;
+				_engine->_debugScene->_typeZones |= 0x40;
 			debugRedrawScreen();
 		}
 		break;
@@ -315,8 +315,8 @@ void Debug::debugSetActions(int32 type) {
 }
 
 void Debug::debugAddButton(int32 window, const Common::Rect &rect, const char *text, int32 textLeft, int32 textTop, int32 isActive, int32 color, int32 activeColor, int32 submenu, int32 type) {
-	const int32 button = debugWindows[window].numButtons;
-	DebugButtonStruct &btn = debugWindows[window].debugButtons[button];
+	const int32 button = _debugWindows[window].numButtons;
+	DebugButtonStruct &btn = _debugWindows[window].debugButtons[button];
 	btn.rect = rect;
 	btn.text = text;
 	btn.textLeft = textLeft;
@@ -326,21 +326,21 @@ void Debug::debugAddButton(int32 window, const Common::Rect &rect, const char *t
 	btn.activeColor = activeColor;
 	btn.submenu = submenu;
 	btn.type = type;
-	debugWindows[window].numButtons++;
+	_debugWindows[window].numButtons++;
 }
 
 void Debug::debugAddWindowText(int32 window, const char *text) {
-	int32 line = debugWindows[window].numLines;
-	debugWindows[window].text[line] = text;
-	debugWindows[window].numLines++;
+	int32 line = _debugWindows[window].numLines;
+	_debugWindows[window].text[line] = text;
+	_debugWindows[window].numLines++;
 }
 
 void Debug::debugAddWindow(const Common::Rect &rect, int32 alpha, int32 isActive) {
-	debugWindows[numDebugWindows].rect = rect;
-	debugWindows[numDebugWindows].alpha = alpha;
-	debugWindows[numDebugWindows].numButtons = 0;
-	debugWindows[numDebugWindows].isActive = isActive;
-	numDebugWindows++;
+	_debugWindows[_numDebugWindows].rect = rect;
+	_debugWindows[_numDebugWindows].alpha = alpha;
+	_debugWindows[_numDebugWindows].numButtons = 0;
+	_debugWindows[_numDebugWindows].isActive = isActive;
+	_numDebugWindows++;
 }
 
 void Debug::debugLeftMenu() {
@@ -381,11 +381,11 @@ void Debug::debugLeftMenu() {
 }
 
 int32 Debug::debugProcessButton(int32 x, int32 y) {
-	for (int32 i = 0; i < numDebugWindows; i++) {
-		for (int32 j = 0; j < debugWindows[i].numButtons; j++) {
-			const Common::Rect &rect = debugWindows[i].debugButtons[j].rect;
+	for (int32 i = 0; i < _numDebugWindows; i++) {
+		for (int32 j = 0; j < _debugWindows[i].numButtons; j++) {
+			const Common::Rect &rect = _debugWindows[i].debugButtons[j].rect;
 			if (rect.contains(x, y)) {
-				return debugWindows[i].debugButtons[j].type;
+				return _debugWindows[i].debugButtons[j].type;
 			}
 		}
 	}
@@ -417,7 +417,7 @@ void Debug::debugProcessWindow() {
 	_engine->saveFrontBuffer();
 
 	debugResetButtonsState();
-	if (numDebugWindows == 0) {
+	if (_numDebugWindows == 0) {
 		debugLeftMenu();
 	}
 	debugDrawWindows();
@@ -465,7 +465,7 @@ void Debug::debugProcessWindow() {
 }
 
 void Debug::processDebug() {
-	if (!_engine->cfgfile.Debug) {
+	if (!_engine->_cfgfile.Debug) {
 		return;
 	}
 	debugProcessWindow();

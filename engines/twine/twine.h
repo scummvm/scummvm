@@ -277,9 +277,24 @@ public:
 
 	/** Configuration file structure
 	 * Contains all the data used in the engine to configurated the game in particulary ways. */
-	ConfigFile cfgfile;
+	ConfigFile _cfgfile;
 
-	int32 frameCounter = 0;
+	int32 _frameCounter = 0;
+	int32 _quitGame = 0;
+	int32 _lbaTime = 0;
+
+	int32 _loopInventoryItem = 0;
+	int32 _loopActorStep = 0;
+	uint32 _gameFlags;
+
+	/** Disable screen recenter */
+	bool _disableScreenRecenter = false;
+
+	Graphics::ManagedSurface _imageBuffer;
+	/** Work video buffer */
+	Graphics::ManagedSurface _workVideoBuffer;
+	/** Main game video buffer */
+	TwineScreen _frontVideoBuffer;
 
 	int width() const;
 	int height() const;
@@ -295,25 +310,11 @@ public:
 	 * @return A random value between [0-max)
 	 */
 	int getRandomNumber(uint max = 0x7FFF);
-	int32 quitGame = 0;
-	int32 lbaTime = 0;
-
-	Graphics::ManagedSurface imageBuffer;
-	/** Work video buffer */
-	Graphics::ManagedSurface workVideoBuffer;
-	/** Main game video buffer */
-	TwineScreen frontVideoBuffer;
 
 	void blitWorkToFront(const Common::Rect &rect);
 	void blitFrontToWork(const Common::Rect &rect);
 	void restoreFrontBuffer();
 	void saveFrontBuffer();
-
-	int32 loopInventoryItem = 0;
-	int32 loopActorStep = 0;
-
-	/** Disable screen recenter */
-	bool disableScreenRecenter = false;
 
 	void freezeTime();
 	void unfreezeTime();
@@ -323,8 +324,6 @@ public:
 	 * @return true if we want to show credit sequence
 	 */
 	bool gameEngineLoop();
-
-	uint32 _gameFlags;
 
 	/**
 	 * Deplay certain seconds till proceed - Can also Skip this delay
@@ -375,15 +374,15 @@ public:
 };
 
 inline int TwinEEngine::width() const {
-	return frontVideoBuffer.w;
+	return _frontVideoBuffer.w;
 }
 
 inline int TwinEEngine::height() const {
-	return frontVideoBuffer.h;
+	return _frontVideoBuffer.h;
 }
 
 inline Common::Rect TwinEEngine::rect() const {
-	return Common::Rect(0, 0, frontVideoBuffer.w - 1, frontVideoBuffer.h - 1);
+	return Common::Rect(0, 0, _frontVideoBuffer.w - 1, _frontVideoBuffer.h - 1);
 }
 
 } // namespace TwinE

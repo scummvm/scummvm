@@ -131,7 +131,7 @@ static int sortHolomapSurfaceCoordsByDepth(const void *a1, const void *a2) {
 
 // verified with disassembly
 void Holomap::prepareHolomapSurface() {
-	Common::MemoryReadStream stream(_engine->_resources->holomapSurfacePtr, _engine->_resources->holomapSurfaceSize);
+	Common::MemoryReadStream stream(_engine->_resources->_holomapSurfacePtr, _engine->_resources->_holomapSurfaceSize);
 	int holomapSurfaceArrayIdx = 0;
 	_engine->_renderer->setBaseRotation(0, 0, 0);
 	for (int angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
@@ -184,21 +184,21 @@ void Holomap::prepareHolomapPolygons() {
 			IVec3* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 			_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
 			if (angle != ANGLE_90) {
-				_holomapSort[holomapSortArrayIdx].z = _engine->_renderer->destPos.z;
+				_holomapSort[holomapSortArrayIdx].z = _engine->_renderer->_destPos.z;
 				_holomapSort[holomapSortArrayIdx].projectedPosIdx = _projectedSurfaceIndex;
 				++holomapSortArrayIdx;
 			}
-			_engine->_renderer->projectXYPositionOnScreen(_engine->_renderer->destPos);
-			_projectedSurfacePositions[_projectedSurfaceIndex].x = _engine->_renderer->projPos.x;
-			_projectedSurfacePositions[_projectedSurfaceIndex].y = _engine->_renderer->projPos.y;
+			_engine->_renderer->projectXYPositionOnScreen(_engine->_renderer->_destPos);
+			_projectedSurfacePositions[_projectedSurfaceIndex].x = _engine->_renderer->_projPos.x;
+			_projectedSurfacePositions[_projectedSurfaceIndex].y = _engine->_renderer->_projPos.y;
 			rotation += ANGLE_11_25;
 			++_projectedSurfaceIndex;
 		}
 		IVec3* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 		_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
-		_engine->_renderer->projectXYPositionOnScreen(_engine->_renderer->destPos);
-		_projectedSurfacePositions[_projectedSurfaceIndex].x = _engine->_renderer->projPos.x;
-		_projectedSurfacePositions[_projectedSurfaceIndex].y = _engine->_renderer->projPos.y;
+		_engine->_renderer->projectXYPositionOnScreen(_engine->_renderer->_destPos);
+		_projectedSurfacePositions[_projectedSurfaceIndex].x = _engine->_renderer->_projPos.x;
+		_projectedSurfacePositions[_projectedSurfaceIndex].y = _engine->_renderer->_projPos.y;
 		rotation += ANGLE_11_25;
 		++_projectedSurfaceIndex;
 	}
@@ -273,10 +273,10 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 void Holomap::renderHolomapModel(const BodyData &bodyData, int32 x, int32 y, int32 zPos) {
 	_engine->_renderer->setBaseRotation(x, y, 0);
 	_engine->_renderer->getBaseRotationPosition(0, 0, zPos + 1000);
-	_engine->_renderer->getBaseRotationPosition(_engine->_renderer->destPos.x, _engine->_renderer->destPos.y, _engine->_renderer->destPos.z);
+	_engine->_renderer->getBaseRotationPosition(_engine->_renderer->_destPos.x, _engine->_renderer->_destPos.y, _engine->_renderer->_destPos.z);
 	_engine->_interface->resetClip();
 	Common::Rect dummy;
-	_engine->_renderer->renderIsoModel(_engine->_renderer->destPos.x, _engine->_renderer->destPos.y, _engine->_renderer->destPos.z, x, y, ANGLE_0, bodyData, dummy);
+	_engine->_renderer->renderIsoModel(_engine->_renderer->_destPos.x, _engine->_renderer->_destPos.y, _engine->_renderer->_destPos.z, x, y, ANGLE_0, bodyData, dummy);
 }
 
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
@@ -310,7 +310,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	BodyData bodyData;
 	bodyData.loadFromHQR(Resources::HQR_RESS_FILE, data->getModel());
 	uint frameNumber = 0;
-	int32 frameTime = _engine->lbaTime;
+	int32 frameTime = _engine->_lbaTime;
 	int16 trajAnimFrameIdx = 0;
 
 	int32 local18 = 0;
@@ -323,7 +323,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			break;
 		}
 
-		if (!fadeInPalette && local18 < _engine->lbaTime) {
+		if (!fadeInPalette && local18 < _engine->_lbaTime) {
 			//const Common::Rect rect(170, 50, 470, 330);
 			//_engine->_interface->setClip(rect);
 			_engine->setPalette(192, 32, &_paletteHolomap[3 * _holomapPaletteIndex++]);
@@ -332,10 +332,10 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			if (_holomapPaletteIndex == 32) {
 				_holomapPaletteIndex = 0;
 			}
-			local18 = _engine->lbaTime + 3;
+			local18 = _engine->_lbaTime + 3;
 		}
 
-		const int16 newAngle = move.getRealAngle(_engine->lbaTime);
+		const int16 newAngle = move.getRealAngle(_engine->_lbaTime);
 		if (move.numOfStep == 0) {
 			_engine->_movements->setActorAngleSafe(ANGLE_0, -ANGLE_90, 500, &move);
 		}
@@ -357,8 +357,8 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 		_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
 		_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, 5300);
 		_engine->_renderer->setLightVector(data->pos.x, data->pos.y, 0);
-		if (frameTime + 40 <= _engine->lbaTime) {
-			frameTime = _engine->lbaTime;
+		if (frameTime + 40 <= _engine->_lbaTime) {
+			frameTime = _engine->_lbaTime;
 			int32 modelX;
 			int32 modelY;
 			if (trajAnimFrameIdx < data->numAnimFrames) {
@@ -415,27 +415,27 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			const Location &loc = _locations[locationIdx];
 			_engine->_renderer->setBaseRotation(loc.angle.x, loc.angle.y, 0);
 			_engine->_renderer->getBaseRotationPosition(0, 0, loc.angle.z + 1000);
-			int32 xpos1 = _engine->_renderer->destPos.x;
-			int32 ypos1 = _engine->_renderer->destPos.y;
-			int32 zpos1 = _engine->_renderer->destPos.z;
+			int32 xpos1 = _engine->_renderer->_destPos.x;
+			int32 ypos1 = _engine->_renderer->_destPos.y;
+			int32 zpos1 = _engine->_renderer->_destPos.z;
 			_engine->_renderer->getBaseRotationPosition(0, 0, 1500);
-			int32 xpos2 = _engine->_renderer->destPos.x;
-			int32 ypos2 = _engine->_renderer->destPos.y;
-			int32 zpos2 = _engine->_renderer->destPos.z;
+			int32 xpos2 = _engine->_renderer->_destPos.x;
+			int32 ypos2 = _engine->_renderer->_destPos.y;
+			int32 zpos2 = _engine->_renderer->_destPos.z;
 			_engine->_renderer->setBaseRotation(xRot, yRot, zRot, true);
 			int32 zpos1_copy = zpos1;
-			_engine->_renderer->baseRotPos.x = 0;
-			_engine->_renderer->baseRotPos.y = 0;
-			_engine->_renderer->baseRotPos.z = 9500;
+			_engine->_renderer->_baseRotPos.x = 0;
+			_engine->_renderer->_baseRotPos.y = 0;
+			_engine->_renderer->_baseRotPos.z = 9500;
 			_engine->_renderer->getBaseRotationPosition(xpos1, ypos1, zpos1);
-			int32 zpos1_copy2 = _engine->_renderer->destPos.z;
+			int32 zpos1_copy2 = _engine->_renderer->_destPos.z;
 			_engine->_renderer->getBaseRotationPosition(xpos2, ypos2, zpos2);
 			if (lower) {
-				if (zpos1_copy2 > _engine->_renderer->destPos.z) {
+				if (zpos1_copy2 > _engine->_renderer->_destPos.z) {
 					continue;
 				}
 			} else {
-				if (_engine->_renderer->destPos.z > zpos1_copy2) {
+				if (_engine->_renderer->_destPos.z > zpos1_copy2) {
 					continue;
 				}
 			}
@@ -498,7 +498,7 @@ void Holomap::processHolomap() {
 	int32 currentLocation = _engine->_scene->currentSceneIdx;
 	_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 
-	int32 time = _engine->lbaTime;
+	int32 time = _engine->_lbaTime;
 	int32 xRot = ClampAngle(_locations[currentLocation].angle.x);
 	int32 yRot = ClampAngle(_locations[currentLocation].angle.y);
 	bool rotate = false;
@@ -518,7 +518,7 @@ void Holomap::processHolomap() {
 			if (nextLocation != -1) {
 				currentLocation = nextLocation;
 				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
-				time = _engine->lbaTime;
+				time = _engine->_lbaTime;
 				rotate = true;
 			}
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
@@ -526,7 +526,7 @@ void Holomap::processHolomap() {
 			if (nextLocation != -1) {
 				currentLocation = nextLocation;
 				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
-				time = _engine->lbaTime;
+				time = _engine->_lbaTime;
 				rotate = true;
 			}
 		}
@@ -534,31 +534,31 @@ void Holomap::processHolomap() {
 		if (_engine->_input->isActionActive(TwinEActionType::HolomapLeft)) {
 			xRot += ANGLE_1;
 			rotate = true;
-			time = _engine->lbaTime;
+			time = _engine->_lbaTime;
 		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapRight)) {
 			xRot -= 8;
 			rotate = true;
-			time = _engine->lbaTime;
+			time = _engine->_lbaTime;
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::HolomapUp)) {
 			yRot += 8;
 			rotate = true;
-			time = _engine->lbaTime;
+			time = _engine->_lbaTime;
 		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapDown)) {
 			yRot -= 8;
 			rotate = true;
-			time = _engine->lbaTime;
+			time = _engine->_lbaTime;
 		}
 
 		if (rotate) {
-			const int32 dt = _engine->lbaTime - time;
+			const int32 dt = _engine->_lbaTime - time;
 			xRot = _engine->_collision->getAverageValue(ClampAngle(xRot), _locations[currentLocation].angle.x, 75, dt);
 			yRot = _engine->_collision->getAverageValue(ClampAngle(yRot), _locations[currentLocation].angle.y, 75, dt);
 			redraw = true;
 		}
 
-		if (!fadeInPalette && local18 < _engine->lbaTime) {
+		if (!fadeInPalette && local18 < _engine->_lbaTime) {
 			//const Common::Rect rect(170, 50, 470, 330);
 			//_engine->_interface->setClip(rect);
 			_engine->setPalette(192, 32, &_paletteHolomap[3 * _holomapPaletteIndex++]);
@@ -567,7 +567,7 @@ void Holomap::processHolomap() {
 			if (_holomapPaletteIndex == 32) {
 				_holomapPaletteIndex = 0;
 			}
-			local18 = _engine->lbaTime + 3;
+			local18 = _engine->_lbaTime + 3;
 			redraw = true;
 		}
 
@@ -579,9 +579,9 @@ void Holomap::processHolomap() {
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
 			renderLocations(xRot, yRot, 0, false);
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0, true);
-			_engine->_renderer->baseRotPos.x = 0;
-			_engine->_renderer->baseRotPos.y = 0;
-			_engine->_renderer->baseRotPos.z = 9500;
+			_engine->_renderer->_baseRotPos.x = 0;
+			_engine->_renderer->_baseRotPos.y = 0;
+			_engine->_renderer->_baseRotPos.z = 9500;
 			renderHolomapSurfacePolygons();
 			renderLocations(xRot, yRot, 0, true);
 			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
@@ -595,7 +595,7 @@ void Holomap::processHolomap() {
 			rotate = false;
 		}
 
-		++_engine->lbaTime;
+		++_engine->_lbaTime;
 
 		// TODO: text afterwards on top (not before as it is currently implemented)?
 		// pos 0x140,0x19?
@@ -609,7 +609,7 @@ void Holomap::processHolomap() {
 	}
 
 	_engine->_screens->clearScreen();
-	_engine->_text->drawTextBoxBackground = true;
+	_engine->_text->_drawTextBoxBackground = true;
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
 	_engine->_scene->alphaLight = alphaLightTmp;
 	_engine->_scene->betaLight = betaLightTmp;

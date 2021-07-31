@@ -50,14 +50,14 @@ Input::Input(TwinEEngine *engine) : _engine(engine) {}
 
 bool Input::isActionActive(TwinEActionType actionType, bool onlyFirstTime) const {
 	if (onlyFirstTime) {
-		return actionStates[actionType] == 1;
+		return _actionStates[actionType] == 1;
 	}
-	return actionStates[actionType] > 0;
+	return _actionStates[actionType] > 0;
 }
 
 bool Input::toggleActionIfActive(TwinEActionType actionType) {
-	if (actionStates[actionType] > 0) {
-		actionStates[actionType] = 0;
+	if (_actionStates[actionType] > 0) {
+		_actionStates[actionType] = 0;
 		return true;
 	}
 	return false;
@@ -117,7 +117,7 @@ void Input::enableKeyMap(const char *id) {
 }
 
 void Input::processCustomEngineEventStart(const Common::Event &event) {
-	if (!_engine->cfgfile.Debug) {
+	if (!_engine->_cfgfile.Debug) {
 		switch (event.customType) {
 		case TwinEActionType::DebugGridCameraPressUp:
 		case TwinEActionType::DebugGridCameraPressDown:
@@ -132,17 +132,17 @@ void Input::processCustomEngineEventStart(const Common::Event &event) {
 		case TwinEActionType::DecreaseCellingGridIndex:
 			break;
 		default:
-			actionStates[event.customType] = 1 + event.kbdRepeat;
+			_actionStates[event.customType] = 1 + event.kbdRepeat;
 			break;
 		}
 	} else {
-		actionStates[event.customType] = 1 + event.kbdRepeat;
+		_actionStates[event.customType] = 1 + event.kbdRepeat;
 	}
 	debug(3, "twine custom event type start: %i", event.customType);
 }
 
 void Input::processCustomEngineEventEnd(const Common::Event &event) {
-	actionStates[event.customType] = 0;
+	_actionStates[event.customType] = 0;
 	debug(3, "twine custom event type end: %i", event.customType);
 }
 
@@ -167,7 +167,7 @@ Common::Point Input::getMousePositions() const {
 }
 
 bool Input::isMouseHovering(const Common::Rect &rect) const {
-	if (!_engine->cfgfile.Mouse) {
+	if (!_engine->_cfgfile.Mouse) {
 		return false;
 	}
 	const Common::Point &point = getMousePositions();

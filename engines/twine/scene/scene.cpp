@@ -230,7 +230,7 @@ bool Scene::loadSceneLBA2() {
 		act->lifeScript = currentScene + stream.pos();
 		stream.skip(act->lifeScriptSize);
 
-		if (_engine->_debugScene->onlyLoadActor != -1 && _engine->_debugScene->onlyLoadActor != cnt) {
+		if (_engine->_debugScene->_onlyLoadActor != -1 && _engine->_debugScene->_onlyLoadActor != cnt) {
 			sceneNumActors--;
 			a--;
 		}
@@ -358,7 +358,7 @@ bool Scene::loadSceneLBA1() {
 		act->lifeScript = currentScene + stream.pos();
 		stream.skip(act->lifeScriptSize);
 
-		if (_engine->_debugScene->onlyLoadActor != -1 && _engine->_debugScene->onlyLoadActor != cnt) {
+		if (_engine->_debugScene->_onlyLoadActor != -1 && _engine->_debugScene->_onlyLoadActor != cnt) {
 			sceneNumActors--;
 			a--;
 		}
@@ -393,7 +393,7 @@ bool Scene::loadSceneLBA1() {
 		point->z = stream.readUint16LE();
 	}
 
-	if (_engine->_debugScene->useScenePatches) {
+	if (_engine->_debugScene->_useScenePatches) {
 		// TODO: these were found in the disassembly and might be some script fixes - check me and activate me
 		switch (currentSceneIdx) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
@@ -547,7 +547,7 @@ void Scene::changeScene() {
 	}
 
 	_engine->_gameState->inventoryNumKeys = 0;
-	_engine->disableScreenRecenter = false;
+	_engine->_disableScreenRecenter = false;
 	heroPositionType = ScenePositionType::kNoPosition;
 	_sampleAmbienceTime = 0;
 
@@ -607,7 +607,7 @@ void Scene::playSceneMusic() {
 }
 
 void Scene::processEnvironmentSound() {
-	if (_engine->lbaTime >= _sampleAmbienceTime) {
+	if (_engine->_lbaTime >= _sampleAmbienceTime) {
 		int16 currentAmb = _engine->getRandomNumber(4); // random ambiance
 
 		for (int32 s = 0; s < 4; s++) {
@@ -633,7 +633,7 @@ void Scene::processEnvironmentSound() {
 		}
 
 		// compute next ambiance timer
-		_sampleAmbienceTime = _engine->lbaTime + (_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay) * 50;
+		_sampleAmbienceTime = _engine->_lbaTime + (_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay) * 50;
 	}
 }
 
@@ -689,8 +689,8 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case ZoneType::kCamera:
-				if (currentlyFollowedActor == actorIdx && !_engine->_debugGrid->useFreeCamera) {
-					_engine->disableScreenRecenter = true;
+				if (currentlyFollowedActor == actorIdx && !_engine->_debugGrid->_useFreeCamera) {
+					_engine->_disableScreenRecenter = true;
 					if (_engine->_grid->newCamera.x != zone->infoData.CameraView.x || _engine->_grid->newCamera.y != zone->infoData.CameraView.y || _engine->_grid->newCamera.z != zone->infoData.CameraView.z) {
 						_engine->_grid->newCamera.x = zone->infoData.CameraView.x;
 						_engine->_grid->newCamera.y = zone->infoData.CameraView.y;
@@ -737,11 +737,11 @@ void Scene::processActorZones(int32 actorIdx) {
 			case ZoneType::kLadder:
 				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != HeroBehaviourType::kProtoPack && (actor->anim == AnimationTypes::kForward || actor->anim == AnimationTypes::kTopLadder || actor->anim == AnimationTypes::kClimbLadder)) {
 					_engine->_movements->rotateActor(actor->boudingBox.mins.x, actor->boudingBox.mins.z, actor->angle + ANGLE_360 + ANGLE_135);
-					_engine->_renderer->destPos.x += _engine->_movements->processActor.x;
-					_engine->_renderer->destPos.z += _engine->_movements->processActor.z;
+					_engine->_renderer->_destPos.x += _engine->_movements->processActor.x;
+					_engine->_renderer->_destPos.z += _engine->_movements->processActor.z;
 
-					if (_engine->_renderer->destPos.x >= 0 && _engine->_renderer->destPos.z >= 0 && _engine->_renderer->destPos.x <= 0x7E00 && _engine->_renderer->destPos.z <= 0x7E00) {
-						if (_engine->_grid->getBrickShape(_engine->_renderer->destPos.x, actor->pos.y + ANGLE_90, _engine->_renderer->destPos.z) != ShapeType::kNone) {
+					if (_engine->_renderer->_destPos.x >= 0 && _engine->_renderer->_destPos.z >= 0 && _engine->_renderer->_destPos.x <= 0x7E00 && _engine->_renderer->_destPos.z <= 0x7E00) {
+						if (_engine->_grid->getBrickShape(_engine->_renderer->_destPos.x, actor->pos.y + ANGLE_90, _engine->_renderer->_destPos.z) != ShapeType::kNone) {
 							currentActorInZone = true;
 							if (actor->pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationType_2, AnimationTypes::kStanding, actorIdx); // reached end of ladder

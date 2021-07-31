@@ -163,7 +163,7 @@ void Redraw::addOverlay(OverlayType type, int16 info0, int16 x, int16 y, int16 i
 			overlay->y = y;
 			overlay->info1 = info1;
 			overlay->posType = posType;
-			overlay->lifeTime = _engine->lbaTime + lifeTime * 50;
+			overlay->lifeTime = _engine->_lbaTime + lifeTime * 50;
 			break;
 		}
 	}
@@ -197,7 +197,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 			_engine->_renderer->projectPositionOnScreen(actor->pos - _engine->_grid->camera);
 
 			// check if actor is visible on screen, otherwise don't display it
-			if (_engine->_renderer->projPos.x > -50 && _engine->_renderer->projPos.x < _engine->width() + 40 && _engine->_renderer->projPos.y > -30 && _engine->_renderer->projPos.y < _engine->height() + 100) {
+			if (_engine->_renderer->_projPos.x > -50 && _engine->_renderer->_projPos.x < _engine->width() + 40 && _engine->_renderer->_projPos.y > -30 && _engine->_renderer->_projPos.y < _engine->height() + 100) {
 				actor->dynamicFlags.bIsVisible = 1;
 			}
 			continue;
@@ -209,8 +209,8 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 		// get actor position on screen
 		_engine->_renderer->projectPositionOnScreen(actor->pos - _engine->_grid->camera);
 
-		if ((actor->staticFlags.bUsesClipping && _engine->_renderer->projPos.x > -112 && _engine->_renderer->projPos.x < _engine->width() + 112 && _engine->_renderer->projPos.y > -50 && _engine->_renderer->projPos.y < _engine->height() + 171) ||
-		    ((!actor->staticFlags.bUsesClipping) && _engine->_renderer->projPos.x > -50 && _engine->_renderer->projPos.x < _engine->width() + 40 && _engine->_renderer->projPos.y > -30 && _engine->_renderer->projPos.y < _engine->height() + 100)) {
+		if ((actor->staticFlags.bUsesClipping && _engine->_renderer->_projPos.x > -112 && _engine->_renderer->_projPos.x < _engine->width() + 112 && _engine->_renderer->_projPos.y > -50 && _engine->_renderer->_projPos.y < _engine->height() + 171) ||
+		    ((!actor->staticFlags.bUsesClipping) && _engine->_renderer->_projPos.x > -50 && _engine->_renderer->_projPos.x < _engine->width() + 40 && _engine->_renderer->_projPos.y > -30 && _engine->_renderer->_projPos.y < _engine->height() + 100)) {
 
 			int32 tmpVal = actor->pos.z + actor->pos.x - _engine->_grid->camera.x - _engine->_grid->camera.z;
 
@@ -236,7 +236,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 			drawListPos++;
 
 			// if use shadows
-			if (_engine->cfgfile.ShadowMode != 0 && !(actor->staticFlags.bDoesntCastShadow)) {
+			if (_engine->_cfgfile.ShadowMode != 0 && !(actor->staticFlags.bDoesntCastShadow)) {
 				if (actor->standOn != -1) {
 					_engine->_actor->shadowCoord.x = actor->pos.x;
 					_engine->_actor->shadowCoord.y = actor->pos.y - 1;
@@ -255,8 +255,8 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 				drawListPos++;
 			}
 			if (_inSceneryView && a == _engine->_scene->currentlyFollowedActor) {
-				_sceneryViewX = _engine->_renderer->projPos.x;
-				_sceneryViewY = _engine->_renderer->projPos.y;
+				_sceneryViewX = _engine->_renderer->_projPos.x;
+				_sceneryViewY = _engine->_renderer->_projPos.y;
 			}
 		}
 	}
@@ -270,24 +270,24 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 			continue;
 		}
 		if (extra->type & ExtraType::TIME_IN) {
-			if (_engine->lbaTime - extra->spawnTime > 35) {
-				extra->spawnTime = _engine->lbaTime;
+			if (_engine->_lbaTime - extra->spawnTime > 35) {
+				extra->spawnTime = _engine->_lbaTime;
 				extra->type &= ~ExtraType::TIME_IN;
 				_engine->_sound->playSample(Samples::ItemPopup, 1, extra->pos);
 			}
 			continue;
 		}
-		if ((extra->type & ExtraType::TIME_OUT) || (extra->type & ExtraType::FLASH) || (extra->payload.lifeTime + extra->spawnTime - 150 < _engine->lbaTime) || (!((_engine->lbaTime + extra->spawnTime) & 8))) {
+		if ((extra->type & ExtraType::TIME_OUT) || (extra->type & ExtraType::FLASH) || (extra->payload.lifeTime + extra->spawnTime - 150 < _engine->_lbaTime) || (!((_engine->_lbaTime + extra->spawnTime) & 8))) {
 			_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->camera);
 
-			if (_engine->_renderer->projPos.x > -50 && _engine->_renderer->projPos.x < _engine->width() + 40 && _engine->_renderer->projPos.y > -30 && _engine->_renderer->projPos.y < _engine->height() + 100) {
+			if (_engine->_renderer->_projPos.x > -50 && _engine->_renderer->_projPos.x < _engine->width() + 40 && _engine->_renderer->_projPos.y > -30 && _engine->_renderer->_projPos.y < _engine->height() + 100) {
 				const int16 tmpVal = extra->pos.x - _engine->_grid->camera.x + extra->pos.z - _engine->_grid->camera.z;
 				drawList[drawListPos].posValue = tmpVal;
 				drawList[drawListPos].actorIdx = i;
 				drawList[drawListPos].type = DrawListType::DrawExtras;
 				drawListPos++;
 
-				if (_engine->cfgfile.ShadowMode == 2 && !(extra->info0 & EXTRA_SPECIAL_MASK)) {
+				if (_engine->_cfgfile.ShadowMode == 2 && !(extra->info0 & EXTRA_SPECIAL_MASK)) {
 					_engine->_movements->getShadowPosition(extra->pos);
 
 					drawList[drawListPos].posValue = tmpVal - 1;
@@ -310,18 +310,18 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 	_engine->_renderer->projectPositionOnScreen(drawCmd.x - _engine->_grid->camera.x, drawCmd.y - _engine->_grid->camera.y, drawCmd.z - _engine->_grid->camera.z);
 
 	int32 spriteWidth, spriteHeight;
-	_engine->_grid->getSpriteSize(drawCmd.offset, &spriteWidth, &spriteHeight, _engine->_resources->spriteShadowPtr);
+	_engine->_grid->getSpriteSize(drawCmd.offset, &spriteWidth, &spriteHeight, _engine->_resources->_spriteShadowPtr);
 
 	// calculate sprite size and position on screen
 	Common::Rect renderRect;
-	renderRect.left = _engine->_renderer->projPos.x - (spriteWidth / 2);
-	renderRect.top = _engine->_renderer->projPos.y - (spriteHeight / 2);
-	renderRect.right = _engine->_renderer->projPos.x + (spriteWidth / 2);
-	renderRect.bottom = _engine->_renderer->projPos.y + (spriteHeight / 2);
+	renderRect.left = _engine->_renderer->_projPos.x - (spriteWidth / 2);
+	renderRect.top = _engine->_renderer->_projPos.y - (spriteHeight / 2);
+	renderRect.right = _engine->_renderer->_projPos.x + (spriteWidth / 2);
+	renderRect.bottom = _engine->_renderer->_projPos.y + (spriteHeight / 2);
 
 	_engine->_interface->setClip(renderRect);
 
-	_engine->_grid->drawSprite(drawCmd.offset, renderRect.left, renderRect.top, _engine->_resources->spriteShadowPtr);
+	_engine->_grid->drawSprite(drawCmd.offset, renderRect.left, renderRect.top, _engine->_resources->_spriteShadowPtr);
 
 	const int32 tmpX = (drawCmd.x + BRICK_HEIGHT) / BRICK_SIZE;
 	const int32 tmpY = drawCmd.y / BRICK_HEIGHT;
@@ -329,7 +329,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 
 	_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
 
-	addRedrawArea(_engine->_interface->clip);
+	addRedrawArea(_engine->_interface->_clip);
 
 	_engine->_debugScene->drawClip(renderRect);
 }
@@ -338,15 +338,15 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	const int32 actorIdx = drawCmd.actorIdx;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->previousAnimIdx >= 0) {
-		const AnimData &animData = _engine->_resources->animData[actor->previousAnimIdx];
-		_engine->_animations->setModelAnimation(actor->animPosition, animData, _engine->_resources->bodyData[actor->entity], &actor->animTimerData);
+		const AnimData &animData = _engine->_resources->_animData[actor->previousAnimIdx];
+		_engine->_animations->setModelAnimation(actor->animPosition, animData, _engine->_resources->_bodyData[actor->entity], &actor->animTimerData);
 	}
 
 	const int32 x = actor->pos.x - _engine->_grid->camera.x;
 	const int32 y = actor->pos.y - _engine->_grid->camera.y;
 	const int32 z = actor->pos.z - _engine->_grid->camera.z;
 	Common::Rect renderRect;
-	if (!_engine->_renderer->renderIsoModel(x, y, z, ANGLE_0, actor->angle, ANGLE_0, _engine->_resources->bodyData[actor->entity], renderRect)) {
+	if (!_engine->_renderer->renderIsoModel(x, y, z, ANGLE_0, actor->angle, ANGLE_0, _engine->_resources->_bodyData[actor->entity], renderRect)) {
 		return;
 	}
 
@@ -363,25 +363,25 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		_engine->_grid->drawOverModelActor(tempX, tempY, tempZ);
 
 		if (_engine->_actor->cropBottomScreen) {
-			_engine->_interface->clip.bottom = _engine->_actor->cropBottomScreen + 10;
+			_engine->_interface->_clip.bottom = _engine->_actor->cropBottomScreen + 10;
 		}
 
-		addRedrawArea(_engine->_interface->clip);
+		addRedrawArea(_engine->_interface->_clip);
 
 		if (actor->staticFlags.bIsBackgrounded && bgRedraw) {
-			_engine->blitFrontToWork(_engine->_interface->clip);
+			_engine->blitFrontToWork(_engine->_interface->_clip);
 		}
 
-		_engine->_debugScene->drawClip(_engine->_interface->clip);
+		_engine->_debugScene->drawClip(_engine->_interface->_clip);
 	}
 }
 
 void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgRedraw) {
 	int32 actorIdx = drawCmd.actorIdx;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	const SpriteData &spriteData = _engine->_resources->spriteData[actor->entity];
+	const SpriteData &spriteData = _engine->_resources->_spriteData[actor->entity];
 	// TODO: using the raw pointer and not the SpriteData surface here is a workaround for issue https://bugs.scummvm.org/ticket/12024
-	const uint8 *spritePtr = _engine->_resources->spriteTable[actor->entity];
+	const uint8 *spritePtr = _engine->_resources->_spriteTable[actor->entity];
 
 	// get actor position on screen
 	_engine->_renderer->projectPositionOnScreen(actor->pos - _engine->_grid->camera);
@@ -390,21 +390,21 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	const int32 spriteHeight = spriteData.surface().h;
 
 	// calculate sprite position on screen
-	const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(actor->entity);
+	const SpriteDim *dim = _engine->_resources->_spriteBoundingBox.dim(actor->entity);
 	Common::Rect renderRect;
-	renderRect.left = _engine->_renderer->projPos.x + dim->x;
-	renderRect.top = _engine->_renderer->projPos.y + dim->y;
+	renderRect.left = _engine->_renderer->_projPos.x + dim->x;
+	renderRect.top = _engine->_renderer->_projPos.y + dim->y;
 	renderRect.right = renderRect.left + spriteWidth;
 	renderRect.bottom = renderRect.top + spriteHeight;
 
 	if (actor->staticFlags.bUsesClipping) {
-		const Common::Rect rect(_engine->_renderer->projPosScreen.x + actor->cropLeft, _engine->_renderer->projPosScreen.y + actor->cropTop, _engine->_renderer->projPosScreen.x + actor->cropRight, _engine->_renderer->projPosScreen.y + actor->cropBottom);
+		const Common::Rect rect(_engine->_renderer->_projPosScreen.x + actor->cropLeft, _engine->_renderer->_projPosScreen.y + actor->cropTop, _engine->_renderer->_projPosScreen.x + actor->cropRight, _engine->_renderer->_projPosScreen.y + actor->cropBottom);
 		_engine->_interface->setClip(rect);
 	} else {
 		_engine->_interface->setClip(renderRect);
 	}
 
-	if (_engine->_interface->clip.isValidRect()) {
+	if (_engine->_interface->_clip.isValidRect()) {
 		_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
 
 		actor->dynamicFlags.bIsVisible = 1;
@@ -425,10 +425,10 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 			_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 		}
 
-		addRedrawArea(_engine->_interface->clip);
+		addRedrawArea(_engine->_interface->_clip);
 
 		if (actor->staticFlags.bIsBackgrounded && bgRedraw) {
-			_engine->blitFrontToWork(_engine->_interface->clip);
+			_engine->blitFrontToWork(_engine->_interface->_clip);
 		}
 
 		_engine->_debugScene->drawClip(renderRect);
@@ -443,16 +443,16 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 
 	Common::Rect renderRect;
 	if (extra->info0 & EXTRA_SPECIAL_MASK) {
-		_engine->_extra->drawExtraSpecial(extraIdx, _engine->_renderer->projPos.x, _engine->_renderer->projPos.y, renderRect);
+		_engine->_extra->drawExtraSpecial(extraIdx, _engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, renderRect);
 	} else {
-		const SpriteData &spritePtr = _engine->_resources->spriteData[extra->info0];
+		const SpriteData &spritePtr = _engine->_resources->_spriteData[extra->info0];
 		const int32 spriteWidth = spritePtr.surface().w;
 		const int32 spriteHeight = spritePtr.surface().h;
 
 		// calculate sprite position on screen
-		const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(extra->info0);
-		renderRect.left = _engine->_renderer->projPos.x + dim->x;
-		renderRect.top = _engine->_renderer->projPos.y + dim->y;
+		const SpriteDim *dim = _engine->_resources->_spriteBoundingBox.dim(extra->info0);
+		renderRect.left = _engine->_renderer->_projPos.x + dim->x;
+		renderRect.top = _engine->_renderer->_projPos.y + dim->y;
 		renderRect.right = renderRect.left + spriteWidth;
 		renderRect.bottom = renderRect.top + spriteHeight;
 
@@ -461,13 +461,13 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 
 	_engine->_interface->setClip(renderRect);
 
-	if (_engine->_interface->clip.isValidRect()) {
+	if (_engine->_interface->_clip.isValidRect()) {
 		const int32 tmpX = (drawCmd.x + BRICK_HEIGHT) / BRICK_SIZE;
 		const int32 tmpY = drawCmd.y / BRICK_HEIGHT;
 		const int32 tmpZ = (drawCmd.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 		_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
-		addRedrawArea(_engine->_interface->clip);
+		addRedrawArea(_engine->_interface->_clip);
 
 		// show clipping area
 		//drawBox(renderRect);
@@ -513,7 +513,7 @@ void Redraw::renderOverlays() {
 			// process position overlay
 			switch (overlay->posType) {
 			case OverlayPosType::koNormal:
-				if (_engine->lbaTime >= overlay->lifeTime) {
+				if (_engine->_lbaTime >= overlay->lifeTime) {
 					overlay->info0 = -1;
 					continue;
 				}
@@ -523,10 +523,10 @@ void Redraw::renderOverlays() {
 
 				_engine->_renderer->projectPositionOnScreen(actor2->pos.x - _engine->_grid->camera.x, actor2->pos.y + actor2->boudingBox.maxs.y - _engine->_grid->camera.y, actor2->pos.z - _engine->_grid->camera.z);
 
-				overlay->x = _engine->_renderer->projPos.x;
-				overlay->y = _engine->_renderer->projPos.y;
+				overlay->x = _engine->_renderer->_projPos.x;
+				overlay->y = _engine->_renderer->_projPos.y;
 
-				if (_engine->lbaTime >= overlay->lifeTime) {
+				if (_engine->_lbaTime >= overlay->lifeTime) {
 					overlay->info0 = -1;
 					continue;
 				}
@@ -537,11 +537,11 @@ void Redraw::renderOverlays() {
 			// process overlay type
 			switch (overlay->type) {
 			case OverlayType::koSprite: {
-				const SpriteData &spritePtr = _engine->_resources->spriteData[overlay->info0];
+				const SpriteData &spritePtr = _engine->_resources->_spriteData[overlay->info0];
 				const int32 spriteWidth = spritePtr.surface().w;
 				const int32 spriteHeight = spritePtr.surface().h;
 
-				const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(overlay->info0);
+				const SpriteDim *dim = _engine->_resources->_spriteBoundingBox.dim(overlay->info0);
 				Common::Rect renderRect;
 				renderRect.left = dim->x + overlay->x;
 				renderRect.top = dim->y + overlay->y;
@@ -550,7 +550,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 
-				addRedrawArea(_engine->_interface->clip);
+				addRedrawArea(_engine->_interface->_clip);
 				break;
 			}
 			case OverlayType::koNumber: {
@@ -572,11 +572,11 @@ void Redraw::renderOverlays() {
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				addRedrawArea(_engine->_interface->clip);
+				addRedrawArea(_engine->_interface->_clip);
 				break;
 			}
 			case OverlayType::koNumberRange: {
-				const int32 range = _engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->lbaTime - 50);
+				const int32 range = _engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->_lbaTime - 50);
 
 				char text[10];
 				sprintf(text, "%d", range);
@@ -596,7 +596,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				addRedrawArea(_engine->_interface->clip);
+				addRedrawArea(_engine->_interface->_clip);
 				break;
 			}
 			case OverlayType::koInventoryItem: {
@@ -606,7 +606,7 @@ void Redraw::renderOverlays() {
 				_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 				_engine->_interface->setClip(rect);
 
-				const BodyData &bodyPtr = _engine->_resources->inventoryTable[item];
+				const BodyData &bodyPtr = _engine->_resources->_inventoryTable[item];
 				_overlayRotation += 1; // overlayRotation += 8;
 				_engine->_renderer->renderInventoryItem(40, 40, bodyPtr, _overlayRotation, 16000);
 				_engine->_menu->drawBox(rect);
@@ -635,7 +635,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				addRedrawArea(_engine->_interface->clip);
+				addRedrawArea(_engine->_interface->_clip);
 				break;
 			}
 			}
@@ -644,8 +644,8 @@ void Redraw::renderOverlays() {
 }
 
 void Redraw::redrawEngineActions(bool bgRedraw) {
-	int32 tmp_projPosX = _engine->_renderer->projPosScreen.x;
-	int32 tmp_projPosY = _engine->_renderer->projPosScreen.y;
+	int32 tmp_projPosX = _engine->_renderer->_projPosScreen.x;
+	int32 tmp_projPosY = _engine->_renderer->_projPosScreen.y;
 
 	_engine->_interface->resetClip();
 
@@ -656,7 +656,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		}
 		_engine->_screens->clearScreen();
 		_engine->_grid->redrawGrid();
-		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->projPosScreen.x, _engine->_renderer->projPosScreen.y);
+		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->_projPosScreen.x, _engine->_renderer->_projPosScreen.y);
 		_engine->saveFrontBuffer();
 
 		if (_engine->_scene->needChangeScene != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->needChangeScene != SCENE_CEILING_GRID_FADE_2) {
@@ -674,7 +674,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 	_currNumOfRedrawBox = 0;
 	processDrawList(drawList, drawListPos, bgRedraw);
 
-	if (_engine->cfgfile.Debug) {
+	if (_engine->_cfgfile.Debug) {
 		_engine->_debugScene->renderDebugView();
 	}
 
@@ -721,18 +721,18 @@ void Redraw::drawBubble(int32 actorIdx) {
 		_bubbleActor = actorIdx;
 	}
 
-	const SpriteData &spritePtr = _engine->_resources->spriteData[_bubbleSpriteIndex];
+	const SpriteData &spritePtr = _engine->_resources->_spriteData[_bubbleSpriteIndex];
 	const int32 spriteWidth = spritePtr.surface().w;
 	const int32 spriteHeight = spritePtr.surface().h;
 
 	// calculate sprite position on screen
 	Common::Rect renderRect;
 	if (_bubbleSpriteIndex == SPRITEHQR_DIAG_BUBBLE_RIGHT) {
-		renderRect.left = _engine->_renderer->projPos.x + 10;
+		renderRect.left = _engine->_renderer->_projPos.x + 10;
 	} else {
-		renderRect.left = _engine->_renderer->projPos.x - 10 - spriteWidth;
+		renderRect.left = _engine->_renderer->_projPos.x - 10 - spriteWidth;
 	}
-	renderRect.top = _engine->_renderer->projPos.y - 20;
+	renderRect.top = _engine->_renderer->_projPos.y - 20;
 	renderRect.right = spriteWidth + renderRect.left - 1;
 	renderRect.bottom = spriteHeight + renderRect.top - 1;
 
@@ -742,14 +742,14 @@ void Redraw::drawBubble(int32 actorIdx) {
 }
 
 void Redraw::zoomScreenScale() {
-	Graphics::ManagedSurface zoomWorkVideoBuffer(_engine->workVideoBuffer);
+	Graphics::ManagedSurface zoomWorkVideoBuffer(_engine->_workVideoBuffer);
 	const int maxW = zoomWorkVideoBuffer.w;
 	const int maxH = zoomWorkVideoBuffer.h;
 	const int left = CLIP<int>(_sceneryViewX - maxW / 4, 0, maxW / 2);
 	const int top = CLIP<int>(_sceneryViewY - maxH / 4, 0, maxH / 2);
 	const Common::Rect srcRect(left, top, left + maxW / 2, top + maxH / 2);
 	const Common::Rect& destRect = zoomWorkVideoBuffer.getBounds();
-	zoomWorkVideoBuffer.transBlitFrom(_engine->frontVideoBuffer, srcRect, destRect);
+	zoomWorkVideoBuffer.transBlitFrom(_engine->_frontVideoBuffer, srcRect, destRect);
 	g_system->copyRectToScreen(zoomWorkVideoBuffer.getPixels(), zoomWorkVideoBuffer.pitch, 0, 0, zoomWorkVideoBuffer.w, zoomWorkVideoBuffer.h);
 	g_system->updateScreen();
 }

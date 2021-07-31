@@ -172,16 +172,16 @@ public:
 	// TODO: refactor all this variables and related functions
 	bool _hasValidTextHandle = false;
 	// renders a triangle if the next side of the text can get activated
-	bool renderTextTriangle = false;
-	bool drawTextBoxBackground = false;
-	bool hasHiddenVox = false; // printTextVar5
-	int32 voxHiddenIndex = 0;
+	bool _renderTextTriangle = false;
+	bool _drawTextBoxBackground = false;
+	bool _hasHiddenVox = false; // printTextVar5
+	int32 _voxHiddenIndex = 0;
 	// ---
 
-	const TextEntry *currDialTextEntry = nullptr; // ordered entry
-	Common::String currentVoxBankFile;
+	const TextEntry *_currDialTextEntry = nullptr; // ordered entry
+	Common::String _currentVoxBankFile;
 
-	bool showDialogueBubble = true;
+	bool _showDialogueBubble = true;
 
 	/**
 	 * Initialize dialogue

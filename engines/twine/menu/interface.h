@@ -38,11 +38,11 @@ class Interface {
 private:
 	TwinEEngine *_engine;
 	int32 checkClipping(int32 x, int32 y) const;
-	Common::Rect savedClip;
+	Common::Rect _savedClip;
 
 public:
 	Interface(TwinEEngine *engine);
-	Common::Rect clip { 0, 0, 0, 0 };
+	Common::Rect _clip { 0, 0, 0, 0 };
 
 	/**
 	 * Draw button line

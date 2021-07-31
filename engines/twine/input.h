@@ -114,8 +114,7 @@ private:
 	TwinEEngine *_engine;
 	Common::String _currentKeyMap;
 
-	uint8 actionStates[TwinEActionType::Max]{false};
-	//int16 currentKey = 0;
+	uint8 _actionStates[TwinEActionType::Max]{false};
 public:
 	Input(TwinEEngine *engine);
 

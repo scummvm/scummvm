@@ -79,32 +79,32 @@ TwinEConsole::~TwinEConsole() {
 		debugPrintf("Enabling " description);  \
 		(var) = true;                          \
 	}                                          \
-	if ((var) && !_engine->cfgfile.Debug) {    \
+	if ((var) && !_engine->_cfgfile.Debug) {    \
 		doToggleDebug(0, nullptr);             \
 	}
 
 bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->showingZones, "zone rendering\n")
+	TOGGLE_DEBUG(_engine->_debugScene->_showingZones, "zone rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleActorRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->showingActors, "actor rendering\n")
+	TOGGLE_DEBUG(_engine->_debugScene->_showingActors, "actor rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleTrackRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->showingTracks, "tracks rendering\n")
+	TOGGLE_DEBUG(_engine->_debugScene->_showingTracks, "tracks rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleScenePatches(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->useScenePatches, "use scene patches\n")
+	TOGGLE_DEBUG(_engine->_debugScene->_useScenePatches, "use scene patches\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleClipRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->showingClips, "clip rendering\n")
+	TOGGLE_DEBUG(_engine->_debugScene->_showingClips, "clip rendering\n")
 	return true;
 }
 
@@ -136,17 +136,17 @@ bool TwinEConsole::doSkipSceneActorsBut(int argc, const char **argv) {
 	}
 	const int16 actorIdx = atoi(argv[1]);
 	debugPrintf("Only load actor %d in the next scene\n", actorIdx);
-	_engine->_debugScene->onlyLoadActor = actorIdx;
+	_engine->_debugScene->_onlyLoadActor = actorIdx;
 	return true;
 }
 
 bool TwinEConsole::doToggleFreeCamera(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugGrid->useFreeCamera, "free camera movement\n")
+	TOGGLE_DEBUG(_engine->_debugGrid->_useFreeCamera, "free camera movement\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleSceneChanges(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugGrid->canChangeScenes, "scene switching via keybinding\n")
+	TOGGLE_DEBUG(_engine->_debugGrid->_canChangeScenes, "scene switching via keybinding\n")
 	return true;
 }
 
@@ -290,12 +290,12 @@ bool TwinEConsole::doGiveKashes(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doToggleDebug(int argc, const char **argv) {
-	if (_engine->cfgfile.Debug) {
+	if (_engine->_cfgfile.Debug) {
 		debugPrintf("Disabling debug mode\n");
-		_engine->cfgfile.Debug = false;
+		_engine->_cfgfile.Debug = false;
 	} else {
 		debugPrintf("Enabling debug mode\n");
-		_engine->cfgfile.Debug = true;
+		_engine->_cfgfile.Debug = true;
 	}
 	return true;
 }

@@ -78,8 +78,8 @@ class Debug {
 private:
 	TwinEEngine *_engine;
 
-	DebugWindowStruct debugWindows[10];
-	int32 numDebugWindows = 0;
+	DebugWindowStruct _debugWindows[10];
+	int32 _numDebugWindows = 0;
 	void debugFillButton(int32 x, int32 y, int32 width, int32 height, int8 color);
 	void debugDrawButton(const Common::Rect &rect, const char *text, int32 textLeft, int32 textTop, int32 isActive, int8 color);
 	void debugDrawWindowBox(const Common::Rect &rect, int32 alpha);

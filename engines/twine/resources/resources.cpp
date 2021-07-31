@@ -34,15 +34,15 @@
 namespace TwinE {
 
 Resources::~Resources() {
-	for (size_t i = 0; i < ARRAYSIZE(spriteTable); ++i) {
-		free(spriteTable[i]);
+	for (size_t i = 0; i < ARRAYSIZE(_spriteTable); ++i) {
+		free(_spriteTable[i]);
 	}
-	for (size_t i = 0; i < ARRAYSIZE(samplesTable); ++i) {
-		free(samplesTable[i]);
+	for (size_t i = 0; i < ARRAYSIZE(_samplesTable); ++i) {
+		free(_samplesTable[i]);
 	}
-	free(fontPtr);
-	free(spriteShadowPtr);
-	free(holomapSurfacePtr);
+	free(_fontPtr);
+	free(_spriteShadowPtr);
+	free(_holomapSurfacePtr);
 	free(holomapImagePtr);
 	free(_engine->_screens->_mainPalette);
 }
@@ -68,8 +68,8 @@ void Resources::preloadSprites() {
 	}
 	debug("preload %i sprites", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		spriteSizeTable[i] = HQR::getAllocEntry(&spriteTable[i], Resources::HQR_SPRITES_FILE, i);
-		if (!spriteData[i].loadFromBuffer(spriteTable[i], spriteSizeTable[i])) {
+		_spriteSizeTable[i] = HQR::getAllocEntry(&_spriteTable[i], Resources::HQR_SPRITES_FILE, i);
+		if (!_spriteData[i].loadFromBuffer(_spriteTable[i], _spriteSizeTable[i])) {
 			warning("Failed to load sprite %i", i);
 		}
 	}
@@ -83,7 +83,7 @@ void Resources::preloadAnimations() {
 	}
 	debug("preload %i animations", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		animData[i].loadFromHQR(Resources::HQR_ANIM_FILE, i);
+		_animData[i].loadFromHQR(Resources::HQR_ANIM_FILE, i);
 	}
 }
 
@@ -107,19 +107,19 @@ void Resources::preloadSamples() {
 	debug("preload %i samples", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		if (_engine->isLBA1() && isLba1BlankSampleEntry(i)) {
-			samplesSizeTable[i] = 0;
-			samplesTable[i] = nullptr;
+			_samplesSizeTable[i] = 0;
+			_samplesTable[i] = nullptr;
 			continue;
 		}
-		samplesSizeTable[i] = HQR::getAllocEntry(&samplesTable[i], Resources::HQR_SAMPLES_FILE, i);
-		if (samplesSizeTable[i] == 0) {
+		_samplesSizeTable[i] = HQR::getAllocEntry(&_samplesTable[i], Resources::HQR_SAMPLES_FILE, i);
+		if (_samplesSizeTable[i] == 0) {
 			warning("Failed to load sample %i", i);
 			continue;
 		}
 		// Fix incorrect sample files first byte
-		if (*samplesTable[i] != 'C') {
-			debug("Sample %i has incorrect magic id (size: %u)", i, samplesSizeTable[i]);
-			*samplesTable[i] = 'C';
+		if (*_samplesTable[i] != 'C') {
+			debug("Sample %i has incorrect magic id (size: %u)", i, _samplesSizeTable[i]);
+			*_samplesTable[i] = 'C';
 		}
 	}
 }
@@ -131,15 +131,15 @@ void Resources::preloadInventoryItems() {
 	}
 	debug("preload %i inventory items", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		inventoryTable[i].loadFromHQR(Resources::HQR_INVOBJ_FILE, i);
+		_inventoryTable[i].loadFromHQR(Resources::HQR_INVOBJ_FILE, i);
 	}
 }
 
 void Resources::initResources() {
 	initPalettes();
 
-	fontBufSize = HQR::getAllocEntry(&fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT);
-	if (fontBufSize == 0) {
+	_fontBufSize = HQR::getAllocEntry(&_fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT);
+	if (_fontBufSize == 0) {
 		error("Failed to load font");
 	}
 
@@ -147,19 +147,19 @@ void Resources::initResources() {
 	_engine->_text->setFontColor(COLOR_14);
 	_engine->_text->setTextCrossColor(136, 143, 2);
 
-	spriteShadowSize = HQR::getAllocEntry(&spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW);
-	if (spriteShadowSize == 0) {
+	_spriteShadowSize = HQR::getAllocEntry(&_spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW);
+	if (_spriteShadowSize == 0) {
 		error("Failed to load sprite shadow");
 	}
 
 	if (_engine->isLBA1()) {
-		if (!spriteBoundingBox.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA)) {
+		if (!_spriteBoundingBox.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA)) {
 			error("Failed to load sprite bounding box data");
 		}
 	}
 
-	holomapSurfaceSize = HQR::getAllocEntry(&holomapSurfacePtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOSURFACE);
-	if (holomapSurfaceSize == 0) {
+	_holomapSurfaceSize = HQR::getAllocEntry(&_holomapSurfacePtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOSURFACE);
+	if (_holomapSurfaceSize == 0) {
 		error("Failed to load holomap surface");
 	}
 
@@ -196,7 +196,7 @@ void Resources::initResources() {
 
 	const int32 bodyCount = HQR::numEntries(Resources::HQR_BODY_FILE);
 	for (int32 i = 0; i < bodyCount; ++i) {
-		if (!bodyData[i].loadFromHQR(Resources::HQR_BODY_FILE, i)) {
+		if (!_bodyData[i].loadFromHQR(Resources::HQR_BODY_FILE, i)) {
 			error("HQR ERROR: Parsing body entity for model %i failed", i);
 		}
 	}
@@ -205,7 +205,7 @@ void Resources::initResources() {
 
 	const int32 textEntryCount = _engine->isLBA1() ? 28 : 30;
 	for (int32 i = 0; i < textEntryCount / 2; ++i) {
-		if (!_textData.loadFromHQR(Resources::HQR_TEXT_FILE, (TextBankId)i, _engine->cfgfile.LanguageId, textEntryCount)) {
+		if (!_textData.loadFromHQR(Resources::HQR_TEXT_FILE, (TextBankId)i, _engine->_cfgfile.LanguageId, textEntryCount)) {
 			error("HQR ERROR: Parsing textbank %i failed", i);
 		}
 	}

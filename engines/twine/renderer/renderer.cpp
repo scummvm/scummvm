@@ -67,41 +67,41 @@ void Renderer::init(int32 w, int32 h) {
 
 void Renderer::projectXYPositionOnScreen(int32 x, int32 y, int32 z) {
 	if (_isUsingOrthoProjection == 1) {
-		projPos.x = ((x - z) * 24) / BRICK_SIZE + _orthoProjPos.x;
-		projPos.y = y;
+		_projPos.x = ((x - z) * 24) / BRICK_SIZE + _orthoProjPos.x;
+		_projPos.y = y;
 		return;
 	}
-	int32 cz = baseRotPos.z - z;
+	int32 cz = _baseRotPos.z - z;
 	if (-1 < cz) {
-		const int32 xdelta = x - baseRotPos.x;
+		const int32 xdelta = x - _baseRotPos.x;
 		int32 posZ = cz + _cameraDepthOffset;
 		if (posZ < 0) {
 			posZ = 0x7FFF;
 		}
-		projPos.x = (xdelta * _cameraScaleY) / posZ + _orthoProjPos.x;
-		projPos.y = y - baseRotPos.y;
+		_projPos.x = (xdelta * _cameraScaleY) / posZ + _orthoProjPos.x;
+		_projPos.y = y - _baseRotPos.y;
 		return;
 	}
-	projPos.x = 0;
-	projPos.y = 0;
+	_projPos.x = 0;
+	_projPos.y = 0;
 }
 
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	if (_isUsingOrthoProjection) {
-		projPos.x = ((cX - cZ) * 24) / BRICK_SIZE + _orthoProjPos.x;
-		projPos.y = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + _orthoProjPos.y;
-		projPos.z = cZ - cY - cX;
+		_projPos.x = ((cX - cZ) * 24) / BRICK_SIZE + _orthoProjPos.x;
+		_projPos.y = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + _orthoProjPos.y;
+		_projPos.z = cZ - cY - cX;
 		return 1;
 	}
 
-	cX -= baseRotPos.x;
-	cY -= baseRotPos.y;
-	cZ -= baseRotPos.z;
+	cX -= _baseRotPos.x;
+	cY -= _baseRotPos.y;
+	cZ -= _baseRotPos.z;
 
 	if (cZ < 0) {
-		projPos.x = 0;
-		projPos.y = 0;
-		projPos.z = 0;
+		_projPos.x = 0;
+		_projPos.y = 0;
+		_projPos.z = 0;
 		return 0;
 	}
 
@@ -110,9 +110,9 @@ int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 		posZ = 0x7FFF;
 	}
 
-	projPos.x = (cX * _cameraScaleY) / posZ + _orthoProjPos.x;
-	projPos.y = (-cY * _cameraScaleZ) / posZ + _orthoProjPos.y;
-	projPos.z = posZ;
+	_projPos.x = (cX * _cameraScaleY) / posZ + _orthoProjPos.x;
+	_projPos.y = (-cY * _cameraScaleZ) / posZ + _orthoProjPos.y;
+	_projPos.z = posZ;
 	return -1;
 }
 
@@ -175,27 +175,25 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 	}
 	getBaseRotationPosition(_baseTransPos.x, _baseTransPos.y, _baseTransPos.z);
 
-	baseRotPos.x = destPos.x;
-	baseRotPos.y = destPos.y;
-	baseRotPos.z = destPos.z;
+	_baseRotPos = _destPos;
 }
 
 void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
-	destPos.x = (_baseMatrix.row1.x * x + _baseMatrix.row1.y * y + _baseMatrix.row1.z * z) / SCENE_SIZE_HALF;
-	destPos.y = (_baseMatrix.row2.x * x + _baseMatrix.row2.y * y + _baseMatrix.row2.z * z) / SCENE_SIZE_HALF;
-	destPos.z = (_baseMatrix.row3.x * x + _baseMatrix.row3.y * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
+	_destPos.x = (_baseMatrix.row1.x * x + _baseMatrix.row1.y * y + _baseMatrix.row1.z * z) / SCENE_SIZE_HALF;
+	_destPos.y = (_baseMatrix.row2.x * x + _baseMatrix.row2.y * y + _baseMatrix.row2.z * z) / SCENE_SIZE_HALF;
+	_destPos.z = (_baseMatrix.row3.x * x + _baseMatrix.row3.y * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
 }
 
 void Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
-	destPos.x = (_baseMatrix.row1.x * x + _baseMatrix.row2.x * y + _baseMatrix.row3.x * z) / SCENE_SIZE_HALF;
-	destPos.y = (_baseMatrix.row1.y * x + _baseMatrix.row2.y * y + _baseMatrix.row3.y * z) / SCENE_SIZE_HALF;
-	destPos.z = (_baseMatrix.row1.z * x + _baseMatrix.row2.z * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
+	_destPos.x = (_baseMatrix.row1.x * x + _baseMatrix.row2.x * y + _baseMatrix.row3.x * z) / SCENE_SIZE_HALF;
+	_destPos.y = (_baseMatrix.row1.y * x + _baseMatrix.row2.y * y + _baseMatrix.row3.y * z) / SCENE_SIZE_HALF;
+	_destPos.z = (_baseMatrix.row1.z * x + _baseMatrix.row2.z * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
 }
 
 void Renderer::translateGroup(int32 x, int32 y, int32 z) {
-	destPos.x = (_shadeMatrix.row1.x * x + _shadeMatrix.row1.y * y + _shadeMatrix.row1.z * z) / SCENE_SIZE_HALF;
-	destPos.y = (_shadeMatrix.row2.x * x + _shadeMatrix.row2.y * y + _shadeMatrix.row2.z * z) / SCENE_SIZE_HALF;
-	destPos.z = destPos.y;
+	_destPos.x = (_shadeMatrix.row1.x * x + _shadeMatrix.row1.y * y + _shadeMatrix.row1.z * z) / SCENE_SIZE_HALF;
+	_destPos.y = (_shadeMatrix.row2.x * x + _shadeMatrix.row2.y * y + _shadeMatrix.row2.z * z) / SCENE_SIZE_HALF;
+	_destPos.z = _destPos.y;
 }
 
 void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
@@ -205,11 +203,11 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 
 	setBaseRotation(rotPosX, rotPosY, rotPosZ);
 
-	baseRotPos.z += param6;
+	_baseRotPos.z += param6;
 
-	getCameraAnglePositions(baseRotPos.x, baseRotPos.y, baseRotPos.z);
+	getCameraAnglePositions(_baseRotPos.x, _baseRotPos.y, _baseRotPos.z);
 
-	_baseTransPos = destPos;
+	_baseTransPos = _destPos;
 }
 
 IVec3 Renderer::getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const {
@@ -316,9 +314,9 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 void Renderer::applyPointsRotation(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix) {
 	for (int32 i = 0; i < numPoints; ++i) {
 		const BodyVertex &vertex = vertices[i + firstPoint];
-		destPoints->x = ((rotationMatrix->row1.x * vertex.x + rotationMatrix->row1.y * vertex.y + rotationMatrix->row1.z * vertex.z) / SCENE_SIZE_HALF) + destPos.x;
-		destPoints->y = ((rotationMatrix->row2.x * vertex.x + rotationMatrix->row2.y * vertex.y + rotationMatrix->row2.z * vertex.z) / SCENE_SIZE_HALF) + destPos.y;
-		destPoints->z = ((rotationMatrix->row3.x * vertex.x + rotationMatrix->row3.y * vertex.y + rotationMatrix->row3.z * vertex.z) / SCENE_SIZE_HALF) + destPos.z;
+		destPoints->x = ((rotationMatrix->row1.x * vertex.x + rotationMatrix->row1.y * vertex.y + rotationMatrix->row1.z * vertex.z) / SCENE_SIZE_HALF) + _destPos.x;
+		destPoints->y = ((rotationMatrix->row2.x * vertex.x + rotationMatrix->row2.y * vertex.y + rotationMatrix->row2.z * vertex.z) / SCENE_SIZE_HALF) + _destPos.y;
+		destPoints->z = ((rotationMatrix->row3.x * vertex.x + rotationMatrix->row3.y * vertex.y + rotationMatrix->row3.z * vertex.z) / SCENE_SIZE_HALF) + _destPos.z;
 
 		destPoints++;
 	}
@@ -334,16 +332,16 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Arr
 	if (bone.isRoot()) {
 		currentMatrix = &_baseMatrix;
 
-		destPos.x = 0;
-		destPos.y = 0;
-		destPos.z = 0;
+		_destPos.x = 0;
+		_destPos.y = 0;
+		_destPos.z = 0;
 	} else {
 		const int32 pointIdx = bone.vertex;
 		const int32 matrixIndex = bone.parent;
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(_matricesTable));
 		currentMatrix = &_matricesTable[matrixIndex];
 
-		destPos = modelData->computedPoints[pointIdx];
+		_destPos = modelData->computedPoints[pointIdx];
 	}
 
 	applyRotation(targetMatrix, currentMatrix, renderAngle);
@@ -362,9 +360,9 @@ void Renderer::applyPointsTranslation(const Common::Array<BodyVertex> &vertices,
 		const int32 tmpY = vertex.y + angleVec.y;
 		const int32 tmpZ = vertex.z + angleVec.x;
 
-		destPoints->x = ((translationMatrix->row1.x * tmpX + translationMatrix->row1.y * tmpY + translationMatrix->row1.z * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
-		destPoints->y = ((translationMatrix->row2.x * tmpX + translationMatrix->row2.y * tmpY + translationMatrix->row2.z * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
-		destPoints->z = ((translationMatrix->row3.x * tmpX + translationMatrix->row3.y * tmpY + translationMatrix->row3.z * tmpZ) / SCENE_SIZE_HALF) + destPos.z;
+		destPoints->x = ((translationMatrix->row1.x * tmpX + translationMatrix->row1.y * tmpY + translationMatrix->row1.z * tmpZ) / SCENE_SIZE_HALF) + _destPos.x;
+		destPoints->y = ((translationMatrix->row2.x * tmpX + translationMatrix->row2.y * tmpY + translationMatrix->row2.z * tmpZ) / SCENE_SIZE_HALF) + _destPos.y;
+		destPoints->z = ((translationMatrix->row3.x * tmpX + translationMatrix->row3.y * tmpY + translationMatrix->row3.z * tmpZ) / SCENE_SIZE_HALF) + _destPos.z;
 
 		destPoints++;
 	}
@@ -377,14 +375,14 @@ void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::
 	renderAngle.z = rotZ;
 
 	if (bone.isRoot()) { // base point
-		destPos.x = 0;
-		destPos.y = 0;
-		destPos.z = 0;
+		_destPos.x = 0;
+		_destPos.y = 0;
+		_destPos.z = 0;
 
 		*targetMatrix = _baseMatrix;
 	} else { // dependent
 		const int32 pointsIdx = bone.vertex;
-		destPos = modelData->computedPoints[pointsIdx];
+		_destPos = modelData->computedPoints[pointsIdx];
 
 		const int32 matrixIndex = bone.parent;
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(_matricesTable));
@@ -404,7 +402,7 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	applyRotation(&_shadeMatrix, &_baseMatrix, renderAngle);
 	translateGroup(0, 0, 59);
 
-	_lightPos = destPos;
+	_lightPos = _destPos;
 }
 
 static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
@@ -488,7 +486,7 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 }
 
 void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint8 color) const {
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -530,7 +528,7 @@ void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint8 color) const {
 }
 
 void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const {
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -562,7 +560,7 @@ void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const {
 }
 
 void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const {
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -592,7 +590,7 @@ void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const {
 }
 
 void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint8 color) const {
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	int bx = (uint16)color << 16;
 	const int screenWidth = _engine->width();
@@ -670,7 +668,7 @@ void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint8 color) const {
 
 // FIXME: buggy
 void Renderer::renderPolygonsTras(int vtop, int32 vsize, uint8 color) const {
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -707,7 +705,7 @@ void Renderer::renderPolygonsTras(int vtop, int32 vsize, uint8 color) const {
 
 // FIXME: buggy
 void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const {
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	unsigned char bh = 0;
 	const int screenWidth = _engine->width();
@@ -752,7 +750,7 @@ void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const {
 }
 
 void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_polyTab2[vtop];
 	const int screenWidth = _engine->width();
@@ -852,7 +850,7 @@ void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
 }
 
 void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_polyTab2[vtop];
 	const int screenWidth = _engine->width();
@@ -1445,7 +1443,7 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	} else {
 		getBaseRotationPosition(x, y, z);
 
-		renderPos = destPos - baseRotPos; // RECHECK y
+		renderPos = _destPos - _baseRotPos; // RECHECK y
 	}
 
 	if (!bodyData.isAnimated()) {
@@ -1476,7 +1474,7 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 	Common::Rect dummy;
 	if (angle == -1) {
 		ActorMoveStruct &move = _engine->_menu->_moveMenu;
-		const int16 newAngle = move.getRealAngle(_engine->lbaTime);
+		const int16 newAngle = move.getRealAngle(_engine->_lbaTime);
 		if (move.numOfStep == 0) {
 			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, ANGLE_17, &move);
 		}
@@ -1581,12 +1579,12 @@ void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Ve
 }
 
 void Renderer::renderHolomapPolygons(int32 top, int32 bottom) {
-	const void *pixelBegin = _engine->frontVideoBuffer.getBasePtr(0, 0);
-	const void *pixelEnd = _engine->frontVideoBuffer.getBasePtr(_engine->frontVideoBuffer.w - 1, _engine->frontVideoBuffer.h - 1);
-	if (top < 0 || top >= _engine->frontVideoBuffer.h) {
+	const void *pixelBegin = _engine->_frontVideoBuffer.getBasePtr(0, 0);
+	const void *pixelEnd = _engine->_frontVideoBuffer.getBasePtr(_engine->_frontVideoBuffer.w - 1, _engine->_frontVideoBuffer.h - 1);
+	if (top < 0 || top >= _engine->_frontVideoBuffer.h) {
 		return;
 	}
-	uint8 *screenBufPtr = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, top);
+	uint8 *screenBufPtr = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(0, top);
 
 	const int16 *lholomap_polytab_1_1 = _holomap_polytab_1_1 + top;
 	const int16 *lholomap_polytab_2_1 = _holomap_polytab_2_1 + top;
@@ -1622,7 +1620,7 @@ void Renderer::renderHolomapPolygons(int32 top, int32 bottom) {
 				uVar3 += (int32)(((uint32)x_2_2 - (uint32)x_1_2) + 1) / iWidth;
 			}
 		}
-		screenBufPtr += _engine->frontVideoBuffer.pitch;
+		screenBufPtr += _engine->_frontVideoBuffer.pitch;
 		--yHeight;
 	}
 }

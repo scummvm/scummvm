@@ -117,9 +117,9 @@ static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
-	engine->_renderer->destPos.x = sp.x;
-	engine->_renderer->destPos.y = sp.y;
-	engine->_renderer->destPos.z = sp.z;
+	engine->_renderer->_destPos.x = sp.x;
+	engine->_renderer->_destPos.y = sp.y;
+	engine->_renderer->_destPos.z = sp.z;
 
 	const int32 newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, sp.x, sp.z);
 
@@ -189,9 +189,9 @@ static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
-	engine->_renderer->destPos.x = sp.x;
-	engine->_renderer->destPos.y = sp.y;
-	engine->_renderer->destPos.z = sp.z;
+	engine->_renderer->_destPos.x = sp.x;
+	engine->_renderer->_destPos.y = sp.y;
+	engine->_renderer->_destPos.z = sp.z;
 
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
 		ctx.actor->speed = 0;
@@ -249,9 +249,9 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
-	engine->_renderer->destPos.x = sp.x;
-	engine->_renderer->destPos.y = sp.y;
-	engine->_renderer->destPos.z = sp.z;
+	engine->_renderer->_destPos.x = sp.x;
+	engine->_renderer->_destPos.y = sp.y;
+	engine->_renderer->_destPos.z = sp.z;
 
 	const int32 newAngle = ANGLE_180 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, sp.x, sp.z);
 
@@ -322,9 +322,9 @@ static int32 mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = trackId;
 
 	const IVec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
-	engine->_renderer->destPos.x = sp.x;
-	engine->_renderer->destPos.y = sp.y;
-	engine->_renderer->destPos.z = sp.z;
+	engine->_renderer->_destPos.x = sp.x;
+	engine->_renderer->_destPos.y = sp.y;
+	engine->_renderer->_destPos.z = sp.z;
 
 	ctx.actor->angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, sp.x, sp.z);
 	ctx.actor->spriteActorRotation = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.y, 0, sp.y, engine->_movements->targetActorDistance);
@@ -387,12 +387,12 @@ static int32 mWAIT_NUM_SECOND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 currentTime = ctx.stream.readSint32LE();
 
 	if (currentTime == 0) {
-		currentTime = engine->lbaTime + numSeconds * 50;
+		currentTime = engine->_lbaTime + numSeconds * 50;
 		ctx.stream.rewind(4);
 		ctx.stream.writeSint32LE(currentTime);
 	}
 
-	if (engine->lbaTime < currentTime) {
+	if (engine->_lbaTime < currentTime) {
 		ctx.undo(5);
 		return 1;
 	}

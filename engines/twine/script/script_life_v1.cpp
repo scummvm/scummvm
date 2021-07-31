@@ -328,7 +328,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		int32 item = ctx.stream.readByte();
 
 		if (!engine->_gameState->inventoryDisabled()) {
-			if (item == engine->loopInventoryItem) {
+			if (item == engine->_loopInventoryItem) {
 				engine->_scene->currentScriptValue = 1;
 			} else {
 				if (engine->_gameState->inventoryFlags[item] == 1 && engine->_gameState->hasItem((InventoryItems)item)) {
@@ -650,7 +650,7 @@ static int32 lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
-	if (engine->_text->showDialogueBubble) {
+	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
 	}
 	engine->_text->setFontCrossColor(ctx.actor->talkColor);
@@ -854,9 +854,9 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
 	for (int16 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		OverlayListStruct *overlay = &engine->_redraw->overlayList[i];
 		if (overlay->info0 != -1 && overlay->type == OverlayType::koNumberRange) {
-			overlay->info0 = engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - engine->lbaTime - 50);
+			overlay->info0 = engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - engine->_lbaTime - 50);
 			overlay->info1 = engine->_gameState->inventoryNumKashes;
-			overlay->lifeTime = engine->lbaTime + 150;
+			overlay->lifeTime = engine->_lbaTime + 150;
 			hideRange = true;
 			break;
 		}
@@ -906,7 +906,7 @@ static int32 lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
-	if (engine->_text->showDialogueBubble) {
+	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(otherActorIdx);
 	}
 	engine->_text->setFontCrossColor(engine->_scene->getActor(otherActorIdx)->talkColor);
@@ -1093,7 +1093,7 @@ static int32 lINVISIBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int zoomScreen = ctx.stream.readByte();
 
-	if (zoomScreen && !engine->_redraw->_inSceneryView && engine->cfgfile.SceZoom) {
+	if (zoomScreen && !engine->_redraw->_inSceneryView && engine->_cfgfile.SceZoom) {
 		engine->_screens->fadeToBlack(engine->_screens->_mainPaletteRGBA);
 		engine->initSceneryView();
 		engine->_screens->setBackPal();
@@ -1117,9 +1117,9 @@ static int32 lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 trackIdx = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->sceneTracks[trackIdx];
-	engine->_renderer->destPos.x = sp.x;
-	engine->_renderer->destPos.y = sp.y;
-	engine->_renderer->destPos.z = sp.z;
+	engine->_renderer->_destPos.x = sp.x;
+	engine->_renderer->_destPos.y = sp.y;
+	engine->_renderer->_destPos.z = sp.z;
 
 	ctx.actor->pos.x = sp.x;
 	ctx.actor->pos.y = sp.y;
@@ -1262,7 +1262,7 @@ static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
-	if (engine->_text->showDialogueBubble) {
+	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
 	}
 	engine->_text->setFontCrossColor(ctx.actor->talkColor);
@@ -1283,7 +1283,7 @@ static int32 lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	engine->freezeTime();
 	engine->_text->textClipFull();
-	if (engine->_text->showDialogueBubble) {
+	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
 	}
 	engine->_text->setFontCrossColor(ctx.actor->talkColor);
@@ -1517,7 +1517,7 @@ static int32 lEXPLODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x59
  */
 static int32 lBUBBLE_ON(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_text->showDialogueBubble = true;
+	engine->_text->_showDialogueBubble = true;
 	return 0;
 }
 
@@ -1526,7 +1526,7 @@ static int32 lBUBBLE_ON(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x5A
  */
 static int32 lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_text->showDialogueBubble = true; // TODO: this looks wrong - why true and not false?
+	engine->_text->_showDialogueBubble = true; // TODO: this looks wrong - why true and not false?
 	return 0;
 }
 
@@ -1539,7 +1539,7 @@ static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
-	if (engine->_text->showDialogueBubble) {
+	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(otherActorIdx);
 	}
 	engine->_text->setFontCrossColor(engine->_scene->getActor(otherActorIdx)->talkColor);
@@ -1589,12 +1589,12 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->loadImage(RESSHQR_TWINSEN_ZOE_SENDELLIMG, RESSHQR_TWINSEN_ZOE_SENDELLPAL);
 	engine->_text->textClipFull();
 	engine->_text->setFontCrossColor(COLOR_WHITE);
-	engine->_text->drawTextBoxBackground = false;
-	const bool tmpFlagDisplayText = engine->cfgfile.FlagDisplayText;
-	engine->cfgfile.FlagDisplayText = true;
+	engine->_text->_drawTextBoxBackground = false;
+	const bool tmpFlagDisplayText = engine->_cfgfile.FlagDisplayText;
+	engine->_cfgfile.FlagDisplayText = true;
 	engine->_text->drawTextProgressive(TextId::kSendell);
-	engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
-	engine->_text->drawTextBoxBackground = true;
+	engine->_cfgfile.FlagDisplayText = tmpFlagDisplayText;
+	engine->_text->_drawTextBoxBackground = true;
 	engine->_text->textClipSmall();
 	engine->_screens->fadeToBlack(engine->_screens->_paletteRGBACustom);
 	engine->_screens->clearScreen();
@@ -1641,7 +1641,7 @@ static int32 lGAME_OVER(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x62
  */
 static int32 lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->quitGame = 1;
+	engine->_quitGame = 1;
 	engine->_gameState->setLeafs(0);
 	engine->_scene->sceneHero->setLife(kActorMaxLife);
 	engine->_gameState->setMagicPoints(80);
@@ -1687,7 +1687,7 @@ static int32 lPROJ_ISO(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
 	// TODO: only used for credits scene? If not, then move the credits related code into the menu->showCredits method
-	engine->_screens->copyScreen(engine->frontVideoBuffer, engine->workVideoBuffer);
+	engine->_screens->copyScreen(engine->_frontVideoBuffer, engine->_workVideoBuffer);
 	engine->_scene->enableGridTileRendering = false;
 
 	engine->_renderer->setCameraPosition(engine->width() / 2, engine->height() / 2, 128, 1024, 1024);
@@ -1708,7 +1708,7 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	const int32 textHeight = 40;
 	if (lTextYPos < engine->height() - textHeight) {
-		if (engine->cfgfile.Version == USA_VERSION) {
+		if (engine->_cfgfile.Version == USA_VERSION) {
 			// TODO: these are most likely not the menu text ids - but from a different text bank
 			if (textIdx == TextId::kBehaviourNormal) {
 				textIdx = TextId::kSaveSettings;
@@ -1750,7 +1750,7 @@ static int32 lCLEAR_TEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x69
  */
 static int32 lBRUTAL_EXIT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->quitGame = 0;
+	engine->_quitGame = 0;
 	return 1; // break
 }
 

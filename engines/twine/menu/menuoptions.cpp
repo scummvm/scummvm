@@ -49,14 +49,14 @@ void MenuOptions::newGame() {
 	_engine->_music->stopMusic();
 	_engine->_sound->stopSamples();
 
-	int32 tmpFlagDisplayText = _engine->cfgfile.FlagDisplayText;
-	_engine->cfgfile.FlagDisplayText = true;
+	int32 tmpFlagDisplayText = _engine->_cfgfile.FlagDisplayText;
+	_engine->_cfgfile.FlagDisplayText = true;
 
 	// intro screen 1 - twinsun
 	_engine->_screens->loadImage(RESSHQR_INTROSCREEN1IMG, RESSHQR_INTROSCREEN1PAL);
 
-	_engine->_text->drawTextBoxBackground = false;
-	_engine->_text->renderTextTriangle = true;
+	_engine->_text->_drawTextBoxBackground = false;
+	_engine->_text->_renderTextTriangle = true;
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->textClipFull();
@@ -74,7 +74,7 @@ void MenuOptions::newGame() {
 			aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText3);
 		}
 	}
-	_engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
+	_engine->_cfgfile.FlagDisplayText = tmpFlagDisplayText;
 
 	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBACustom);
 	_engine->_screens->clearScreen();
@@ -87,8 +87,8 @@ void MenuOptions::newGame() {
 	_engine->_text->textClipSmall();
 	_engine->_screens->clearScreen();
 
-	_engine->_text->drawTextBoxBackground = true;
-	_engine->_text->renderTextTriangle = false;
+	_engine->_text->_drawTextBoxBackground = true;
+	_engine->_text->_renderTextTriangle = false;
 
 	// set main palette back
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
@@ -96,8 +96,8 @@ void MenuOptions::newGame() {
 
 void MenuOptions::showCredits() {
 	// TODO: the camera settings are wrong - this results in rendering problems with e.g. circles
-	const int32 tmpShadowMode = _engine->cfgfile.ShadowMode;
-	_engine->cfgfile.ShadowMode = 0;
+	const int32 tmpShadowMode = _engine->_cfgfile.ShadowMode;
+	_engine->_cfgfile.ShadowMode = 0;
 	_engine->_gameState->initEngineVars();
 	_engine->_scene->currentSceneIdx = LBA1SceneId::Credits_List_Sequence;
 	_engine->_scene->needChangeScene = LBA1SceneId::Credits_List_Sequence;
@@ -107,7 +107,7 @@ void MenuOptions::showCredits() {
 	_engine->_scene->stopRunningGame();
 	canShowCredits = false;
 
-	_engine->cfgfile.ShadowMode = tmpShadowMode;
+	_engine->_cfgfile.ShadowMode = tmpShadowMode;
 
 	_engine->_screens->clearScreen();
 

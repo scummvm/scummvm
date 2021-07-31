@@ -117,7 +117,7 @@ void GameState::initEngineVars() {
 
 	_engine->_scene->currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
 	_engine->_scene->needChangeScene = LBA1SceneId::Citadel_Island_Prison;
-	_engine->quitGame = -1;
+	_engine->_quitGame = -1;
 	_engine->_scene->mecaPinguinIdx = -1;
 	_engine->_menuOptions->canShowCredits = false;
 
@@ -314,7 +314,7 @@ void GameState::processFoundItem(InventoryItems item) {
 	const int32 itemCameraY = _engine->_grid->newCamera.y * BRICK_HEIGHT;
 	const int32 itemCameraZ = _engine->_grid->newCamera.z * BRICK_SIZE;
 
-	BodyData &bodyData = _engine->_resources->bodyData[_engine->_scene->sceneHero->entity];
+	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->sceneHero->entity];
 	const int32 bodyX = _engine->_scene->sceneHero->pos.x - itemCameraX;
 	const int32 bodyY = _engine->_scene->sceneHero->pos.y - itemCameraY;
 	const int32 bodyZ = _engine->_scene->sceneHero->pos.z - itemCameraZ;
@@ -332,12 +332,12 @@ void GameState::processFoundItem(InventoryItems item) {
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 
 	_engine->_renderer->projectPositionOnScreen(bodyX, bodyY, bodyZ);
-	_engine->_renderer->projPos.y -= 150;
+	_engine->_renderer->_projPos.y -= 150;
 
-	const int32 boxTopLeftX = _engine->_renderer->projPos.x - 65;
-	const int32 boxTopLeftY = _engine->_renderer->projPos.y - 65;
-	const int32 boxBottomRightX = _engine->_renderer->projPos.x + 65;
-	const int32 boxBottomRightY = _engine->_renderer->projPos.y + 65;
+	const int32 boxTopLeftX = _engine->_renderer->_projPos.x - 65;
+	const int32 boxTopLeftY = _engine->_renderer->_projPos.y - 65;
+	const int32 boxBottomRightX = _engine->_renderer->_projPos.x + 65;
+	const int32 boxBottomRightY = _engine->_renderer->_projPos.y + 65;
 	const Common::Rect boxRect(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
 	_engine->_sound->playSample(Samples::BigItemFound);
 
@@ -354,7 +354,7 @@ void GameState::processFoundItem(InventoryItems item) {
 	_engine->_text->initVoxToPlayTextId((TextId)item);
 
 	const int32 bodyAnimIdx = _engine->_animations->getBodyAnimIndex(AnimationTypes::kFoundItem);
-	const AnimData &currentAnimData = _engine->_resources->animData[bodyAnimIdx];
+	const AnimData &currentAnimData = _engine->_resources->_animData[bodyAnimIdx];
 
 	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->sceneHero->animTimerData;
 
@@ -376,7 +376,7 @@ void GameState::processFoundItem(InventoryItems item) {
 
 		_engine->_menu->_itemAngle[item] += ANGLE_2;
 
-		_engine->_renderer->renderInventoryItem(_engine->_renderer->projPos.x, _engine->_renderer->projPos.y, _engine->_resources->inventoryTable[item], _engine->_menu->_itemAngle[item], 10000);
+		_engine->_renderer->renderInventoryItem(_engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, _engine->_resources->_inventoryTable[item], _engine->_menu->_itemAngle[item], 10000);
 
 		_engine->_menu->drawBox(boxRect);
 		_engine->_redraw->addRedrawArea(boxRect);
@@ -406,13 +406,13 @@ void GameState::processFoundItem(InventoryItems item) {
 
 		_engine->readKeys();
 		if (_engine->_input->toggleAbortAction()) {
-			_engine->_text->stopVox(_engine->_text->currDialTextEntry);
+			_engine->_text->stopVox(_engine->_text->_currDialTextEntry);
 			break;
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
 			if (textState == ProgressiveTextState::End) {
-				_engine->_text->stopVox(_engine->_text->currDialTextEntry);
+				_engine->_text->stopVox(_engine->_text->_currDialTextEntry);
 				break;
 			}
 			if (textState == ProgressiveTextState::NextPage) {
@@ -420,12 +420,12 @@ void GameState::processFoundItem(InventoryItems item) {
 			}
 		}
 
-		_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry);
+		_engine->_text->playVoxSimple(_engine->_text->_currDialTextEntry);
 
-		_engine->lbaTime++;
+		_engine->_lbaTime++;
 	}
 
-	while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
+	while (_engine->_text->playVoxSimple(_engine->_text->_currDialTextEntry)) {
 		FrameMarker frame(_engine);
 		_engine->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
@@ -435,7 +435,7 @@ void GameState::processFoundItem(InventoryItems item) {
 
 	initEngineProjections();
 	_engine->_text->initSceneTextBank();
-	_engine->_text->stopVox(_engine->_text->currDialTextEntry);
+	_engine->_text->stopVox(_engine->_text->_currDialTextEntry);
 
 	_engine->_scene->sceneHero->animTimerData = tmpAnimTimer;
 }
@@ -459,21 +459,21 @@ void GameState::processGameChoices(TextId choiceIdx) {
 
 	// get right VOX entry index
 	if (_engine->_text->initVoxToPlayTextId(choiceAnswer)) {
-		while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
+		while (_engine->_text->playVoxSimple(_engine->_text->_currDialTextEntry)) {
 			FrameMarker frame(_engine);
 			if (_engine->shouldQuit()) {
 				break;
 			}
 		}
-		_engine->_text->stopVox(_engine->_text->currDialTextEntry);
+		_engine->_text->stopVox(_engine->_text->_currDialTextEntry);
 
-		_engine->_text->hasHiddenVox = false;
-		_engine->_text->voxHiddenIndex = 0;
+		_engine->_text->_hasHiddenVox = false;
+		_engine->_text->_voxHiddenIndex = 0;
 	}
 }
 
 void GameState::processGameoverAnimation() {
-	const int32 tmpLbaTime = _engine->lbaTime;
+	const int32 tmpLbaTime = _engine->_lbaTime;
 
 	_engine->exitSceneryView();
 	// workaround to fix hero redraw after drowning
@@ -492,27 +492,27 @@ void GameState::processGameoverAnimation() {
 	_engine->_sound->stopSamples();
 	_engine->_music->stopMidiMusic(); // stop fade music
 	_engine->_renderer->setCameraPosition(_engine->width() / 2, _engine->height() / 2, 128, 200, 200);
-	int32 startLbaTime = _engine->lbaTime;
+	int32 startLbaTime = _engine->_lbaTime;
 	const Common::Rect &rect = _engine->centerOnScreen(_engine->width() / 2, _engine->height() / 2);
 	_engine->_interface->setClip(rect);
 
 	Common::Rect dummy;
-	while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
+	while (!_engine->_input->toggleAbortAction() && (_engine->_lbaTime - startLbaTime) <= 500) {
 		FrameMarker frame(_engine, 66);
 		_engine->readKeys();
 		if (_engine->shouldQuit()) {
 			return;
 		}
 
-		const int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
-		const int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 100);
+		const int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->_lbaTime - startLbaTime);
+		const int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->_lbaTime - startLbaTime) % 100);
 
 		_engine->blitWorkToFront(rect);
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
 		_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr, dummy);
 		_engine->copyBlockPhys(rect);
 
-		_engine->lbaTime++;
+		_engine->_lbaTime++;
 	}
 
 	_engine->_sound->playSample(Samples::Explode);
@@ -527,7 +527,7 @@ void GameState::processGameoverAnimation() {
 	_engine->restoreFrontBuffer();
 	initEngineProjections();
 
-	_engine->lbaTime = tmpLbaTime;
+	_engine->_lbaTime = tmpLbaTime;
 }
 
 void GameState::giveUp() {

@@ -61,7 +61,7 @@ void Sound::setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z) {
 }
 
 void Sound::playFlaSample(int32 index, int32 repeat, int32 x, int32 y) {
-	if (!_engine->cfgfile.Sound) {
+	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
 
@@ -80,8 +80,8 @@ void Sound::playFlaSample(int32 index, int32 repeat, int32 x, int32 y) {
 
 	// Fix incorrect sample files first byte
 	if (*sampPtr != 'C') {
-		_engine->_text->hasHiddenVox = *sampPtr != '\0';
-		_engine->_text->voxHiddenIndex++;
+		_engine->_text->_hasHiddenVox = *sampPtr != '\0';
+		_engine->_text->_voxHiddenIndex++;
 		*sampPtr = 'C';
 	}
 
@@ -89,7 +89,7 @@ void Sound::playFlaSample(int32 index, int32 repeat, int32 x, int32 y) {
 }
 
 void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int32 actorIdx) {
-	if (!_engine->cfgfile.Sound) {
+	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
 
@@ -105,18 +105,18 @@ void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int
 		samplesPlayingActors[channelIdx] = actorIdx;
 	}
 
-	uint8 *sampPtr = _engine->_resources->samplesTable[index];
-	int32 sampSize = _engine->_resources->samplesSizeTable[index];
+	uint8 *sampPtr = _engine->_resources->_samplesTable[index];
+	int32 sampSize = _engine->_resources->_samplesSizeTable[index];
 	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_SAMPLES_FILE, Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
 }
 
 bool Sound::playVoxSample(const TextEntry *text) {
-	if (!_engine->cfgfile.Sound || text == nullptr) {
+	if (!_engine->_cfgfile.Sound || text == nullptr) {
 		return false;
 	}
 
 	uint8 *sampPtr = nullptr;
-	int32 sampSize = HQR::getAllocVoxEntry(&sampPtr, _engine->_text->currentVoxBankFile.c_str(), text->index, _engine->_text->voxHiddenIndex);
+	int32 sampSize = HQR::getAllocVoxEntry(&sampPtr, _engine->_text->_currentVoxBankFile.c_str(), text->index, _engine->_text->_voxHiddenIndex);
 	if (sampSize == 0) {
 		if (ConfMan.hasKey("tts_narrator") && ConfMan.getBool("tts_narrator")) {
 			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -139,12 +139,12 @@ bool Sound::playVoxSample(const TextEntry *text) {
 
 	// Fix incorrect sample files first byte
 	if (*sampPtr != 'C') {
-		_engine->_text->hasHiddenVox = *sampPtr != '\0';
-		_engine->_text->voxHiddenIndex++;
+		_engine->_text->_hasHiddenVox = *sampPtr != '\0';
+		_engine->_text->_voxHiddenIndex++;
 		*sampPtr = 'C';
 	}
 
-	return playSample(channelIdx, text->index, sampPtr, sampSize, 1, _engine->_text->currentVoxBankFile.c_str(), Audio::Mixer::kSpeechSoundType);
+	return playSample(channelIdx, text->index, sampPtr, sampSize, 1, _engine->_text->_currentVoxBankFile.c_str(), Audio::Mixer::kSpeechSoundType);
 }
 
 bool Sound::playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name, Audio::Mixer::SoundType soundType, DisposeAfterUse::Flag disposeFlag) {
@@ -163,21 +163,21 @@ bool Sound::playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize
 }
 
 void Sound::resumeSamples() {
-	if (!_engine->cfgfile.Sound) {
+	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
 	_engine->_system->getMixer()->pauseAll(false);
 }
 
 void Sound::pauseSamples() {
-	if (!_engine->cfgfile.Sound) {
+	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
 	_engine->_system->getMixer()->pauseAll(true);
 }
 
 void Sound::stopSamples() {
-	if (!_engine->cfgfile.Sound) {
+	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
 
@@ -210,7 +210,7 @@ void Sound::removeSampleChannel(int32 c) {
 }
 
 void Sound::stopSample(int32 index) {
-	if (!_engine->cfgfile.Sound) {
+	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
 	const int32 stopChannel = getSampleChannel(index);

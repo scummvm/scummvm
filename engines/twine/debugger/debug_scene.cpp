@@ -35,7 +35,7 @@ namespace TwinE {
 DebugScene::DebugScene(TwinEEngine *engine) : _engine(engine) {}
 
 void DebugScene::drawClip(const Common::Rect &rect) {
-	if (!showingClips) {
+	if (!_showingClips) {
 		return;
 	}
 	_engine->_menu->drawBox(rect);
@@ -44,27 +44,27 @@ void DebugScene::drawClip(const Common::Rect &rect) {
 void DebugScene::projectBoundingBoxPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjected) {
 	_engine->_renderer->projectPositionOnScreen(pPoint3d->x, pPoint3d->y, pPoint3d->z);
 
-	pPoint3dProjected->x = _engine->_renderer->projPos.x;
-	pPoint3dProjected->y = _engine->_renderer->projPos.y;
-	pPoint3dProjected->z = _engine->_renderer->projPos.z;
+	pPoint3dProjected->x = _engine->_renderer->_projPos.x;
+	pPoint3dProjected->y = _engine->_renderer->_projPos.y;
+	pPoint3dProjected->z = _engine->_renderer->_projPos.z;
 }
 
 bool DebugScene::checkZoneType(ZoneType type) const {
 	switch (type) {
 	case ZoneType::kCube:
-		return (typeZones & 0x01) != 0;
+		return (_typeZones & 0x01) != 0;
 	case ZoneType::kCamera:
-		return (typeZones & 0x02) != 0;
+		return (_typeZones & 0x02) != 0;
 	case ZoneType::kSceneric:
-		return (typeZones & 0x04) != 0;
+		return (_typeZones & 0x04) != 0;
 	case ZoneType::kGrid:
-		return (typeZones & 0x08) != 0;
+		return (_typeZones & 0x08) != 0;
 	case ZoneType::kObject:
-		return (typeZones & 0x10) != 0;
+		return (_typeZones & 0x10) != 0;
 	case ZoneType::kText:
-		return (typeZones & 0x20) != 0;
+		return (_typeZones & 0x20) != 0;
 	case ZoneType::kLadder:
-		return (typeZones & 0x40) != 0;
+		return (_typeZones & 0x40) != 0;
 	default:
 		return true;
 	}
@@ -212,13 +212,13 @@ bool DebugScene::displayZones() {
 }
 
 void DebugScene::renderDebugView() {
-	if (showingZones) {
+	if (_showingZones) {
 		displayZones();
 	}
-	if (showingActors) {
+	if (_showingActors) {
 		displayActors();
 	}
-	if (showingTracks) {
+	if (_showingTracks) {
 		displayTracks();
 	}
 }

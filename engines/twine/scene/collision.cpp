@@ -165,7 +165,7 @@ void Collision::reajustActorPosition(ShapeType brickShape) {
 			}
 			break;
 		default:
-			if (_engine->cfgfile.Debug) {
+			if (_engine->_cfgfile.Debug) {
 				debug("Brick Shape %d unsupported", (int)brickShape);
 			}
 			break;
@@ -323,13 +323,13 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 	if (actor->dynamicFlags.bIsHitting) {
 		_engine->_movements->rotateActor(0, 200, actor->angle);
 
-		mins.x = _engine->_renderer->destPos.x + processActor.x + actor->boudingBox.mins.x;
+		mins.x = _engine->_renderer->_destPos.x + processActor.x + actor->boudingBox.mins.x;
 		mins.y = processActor.y + actor->boudingBox.mins.y;
-		mins.z = _engine->_renderer->destPos.z + processActor.z + actor->boudingBox.mins.z;
+		mins.z = _engine->_renderer->_destPos.z + processActor.z + actor->boudingBox.mins.z;
 
-		maxs.x = _engine->_renderer->destPos.x + processActor.x + actor->boudingBox.maxs.x;
+		maxs.x = _engine->_renderer->_destPos.x + processActor.x + actor->boudingBox.maxs.x;
 		maxs.y = processActor.y + actor->boudingBox.maxs.y;
-		maxs.z = _engine->_renderer->destPos.z + processActor.z + actor->boudingBox.maxs.z;
+		maxs.z = _engine->_renderer->_destPos.z + processActor.z + actor->boudingBox.maxs.z;
 
 		for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
 			const ActorStruct *actorTest = _engine->_scene->getActor(a);
@@ -442,7 +442,7 @@ void Collision::stopFalling() { // ReceptionObj()
 }
 
 int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx) {
-	const BoundingBox *bbox = _engine->_resources->spriteBoundingBox.bbox(extra->info0);
+	const BoundingBox *bbox = _engine->_resources->_spriteBoundingBox.bbox(extra->info0);
 	const IVec3 mins = bbox->mins + extra->pos;
 	const IVec3 maxs = bbox->maxs + extra->pos;
 
@@ -492,7 +492,7 @@ bool Collision::checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, int32 o
 
 int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) const {
 	int32 index = extra->info0;
-	const BoundingBox *bbox = _engine->_resources->spriteBoundingBox.bbox(index);
+	const BoundingBox *bbox = _engine->_resources->_spriteBoundingBox.bbox(index);
 	const IVec3 mins = bbox->mins + extra->pos;
 	const IVec3 maxs = bbox->maxs + extra->pos;
 
@@ -500,7 +500,7 @@ int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extr
 		const ExtraListStruct *extraTest = &_engine->_extra->extraList[i];
 		if (i != extraIdx && extraTest->info0 != -1) {
 			// TODO: shouldn't this be extraTest->info0 as index?
-			const BoundingBox *testbbox = _engine->_resources->spriteBoundingBox.bbox(++index);
+			const BoundingBox *testbbox = _engine->_resources->_spriteBoundingBox.bbox(++index);
 			const IVec3 minsTest = testbbox->mins + extraTest->pos;
 			const IVec3 maxsTest = testbbox->maxs + extraTest->pos;
 

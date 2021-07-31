@@ -116,7 +116,7 @@ int32 Extra::addExtraExplode(int32 x, int32 y, int32 z) {
 		extra->pos.y = y;
 		extra->pos.z = z;
 		extra->payload.lifeTime = 40;
-		extra->spawnTime = _engine->lbaTime;
+		extra->spawnTime = _engine->_lbaTime;
 		extra->strengthOfHit = 0;
 		return i;
 	}
@@ -138,15 +138,15 @@ void Extra::throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32
 
 	_engine->_movements->rotateActor(x, 0, xAngle);
 
-	extra->destPos.y = -_engine->_renderer->destPos.z;
+	extra->destPos.y = -_engine->_renderer->_destPos.z;
 
-	_engine->_movements->rotateActor(0, _engine->_renderer->destPos.x, yAngle);
+	_engine->_movements->rotateActor(0, _engine->_renderer->_destPos.x, yAngle);
 
-	extra->destPos.x = _engine->_renderer->destPos.x;
-	extra->destPos.z = _engine->_renderer->destPos.z;
+	extra->destPos.x = _engine->_renderer->_destPos.x;
+	extra->destPos.z = _engine->_renderer->_destPos.z;
 
 	extra->angle = extraAngle;
-	extra->spawnTime = _engine->lbaTime;
+	extra->spawnTime = _engine->_lbaTime;
 }
 
 int32 Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { // InitSpecial
@@ -180,7 +180,7 @@ int32 Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) {
 			extra->pos.z = z;
 
 			extra->strengthOfHit = 0;
-			extra->spawnTime = _engine->lbaTime;
+			extra->spawnTime = _engine->_lbaTime;
 			extra->payload.lifeTime = 5;
 		}
 		return i;
@@ -268,7 +268,7 @@ int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spri
 		throwExtra(extra, xAngle, yAngle, xRotPoint, extraAngle);
 
 		extra->strengthOfHit = strengthOfHit;
-		extra->spawnTime = _engine->lbaTime;
+		extra->spawnTime = _engine->_lbaTime;
 		extra->payload.actorIdx = actorIdx;
 		extra->info1 = 0;
 
@@ -414,8 +414,8 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 
 	_engine->_movements->rotateActor(shapeX, shapeZ, angle);
 
-	const int32 computedX = _engine->_renderer->destPos.x + x;
-	const int32 computedY = _engine->_renderer->destPos.z + y;
+	const int32 computedX = _engine->_renderer->_destPos.x + x;
+	const int32 computedY = _engine->_renderer->_destPos.z + y;
 
 	if (computedX < renderRect.left) {
 		renderRect.left = computedX;
@@ -444,13 +444,13 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 		const int32 oldComputedX = currentX;
 		const int32 oldComputedY = currentY;
 
-		_engine->_renderer->projPos.x = currentX;
-		_engine->_renderer->projPos.y = currentY;
+		_engine->_renderer->_projPos.x = currentX;
+		_engine->_renderer->_projPos.y = currentY;
 
 		_engine->_movements->rotateActor(shapeX, shapeZ, angle);
 
-		currentX = _engine->_renderer->destPos.x + x;
-		currentY = _engine->_renderer->destPos.z + y;
+		currentX = _engine->_renderer->_destPos.x + x;
+		currentY = _engine->_renderer->_destPos.z + y;
 
 		if (currentX < renderRect.left) {
 			renderRect.left = currentX;
@@ -468,17 +468,17 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 			renderRect.bottom = currentY;
 		}
 
-		_engine->_renderer->projPos.x = currentX;
-		_engine->_renderer->projPos.y = currentY;
+		_engine->_renderer->_projPos.x = currentX;
+		_engine->_renderer->_projPos.y = currentY;
 
 		_engine->_interface->drawLine(oldComputedX, oldComputedY, currentX, currentY, color);
 
-		currentX = _engine->_renderer->projPos.x;
-		currentY = _engine->_renderer->projPos.y;
+		currentX = _engine->_renderer->_projPos.x;
+		currentY = _engine->_renderer->_projPos.y;
 	}
 
-	_engine->_renderer->projPos.x = currentX;
-	_engine->_renderer->projPos.y = currentY;
+	_engine->_renderer->_projPos.x = currentX;
+	_engine->_renderer->_projPos.y = currentY;
 	_engine->_interface->drawLine(currentX, currentY, computedX, computedY, color);
 }
 
@@ -488,10 +488,10 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y, Common::Rect &ren
 
 	switch (specialType) {
 	case ExtraSpecialType::kHitStars:
-		drawSpecialShape(hitStarsShape, x, y, COLOR_WHITE, (_engine->lbaTime * 32) & ANGLE_270, 4, renderRect);
+		drawSpecialShape(hitStarsShape, x, y, COLOR_WHITE, (_engine->_lbaTime * 32) & ANGLE_270, 4, renderRect);
 		break;
 	case ExtraSpecialType::kExplodeCloud: {
-		int32 cloudTime = 1 + _engine->lbaTime - extra->spawnTime;
+		int32 cloudTime = 1 + _engine->_lbaTime - extra->spawnTime;
 
 		if (cloudTime > 32) {
 			cloudTime = 32;
@@ -521,7 +521,7 @@ void Extra::processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int
 	extra->pos.z = z;
 	extra->lastPos.z = z;
 
-	extra->spawnTime = _engine->lbaTime;
+	extra->spawnTime = _engine->_lbaTime;
 }
 
 void Extra::processExtras() {
@@ -536,7 +536,7 @@ void Extra::processExtras() {
 		}
 		// process extra life time
 		if (extra->type & ExtraType::TIME_OUT) {
-			if (extra->payload.lifeTime + extra->spawnTime <= _engine->lbaTime) {
+			if (extra->payload.lifeTime + extra->spawnTime <= _engine->_lbaTime) {
 				extra->info0 = -1;
 				continue;
 			}
@@ -546,7 +546,7 @@ void Extra::processExtras() {
 			extra->info0 = -1;
 			continue;
 		}
-		const int32 deltaT = _engine->lbaTime - extra->spawnTime;
+		const int32 deltaT = _engine->_lbaTime - extra->spawnTime;
 
 		if (extra->type & ExtraType::EXPLOSION) {
 			extra->info0 = _engine->_collision->getAverageValue(SPRITEHQR_EXPLOSION_FIRST_FRAME, 100, 30, deltaT);
@@ -594,7 +594,7 @@ void Extra::processExtras() {
 		}
 
 		if (extra->type & ExtraType::BONUS) {
-			if (_engine->lbaTime - extra->spawnTime > 40) {
+			if (_engine->_lbaTime - extra->spawnTime > 40) {
 				extra->type &= ~ExtraType::BONUS;
 			}
 			continue;
@@ -626,17 +626,17 @@ void Extra::processExtras() {
 			}
 
 			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos.y, 0, currentExtraY, _engine->_movements->targetActorDistance);
-			int32 pos = extra->trackActorMove.getRealAngle(_engine->lbaTime);
+			int32 pos = extra->trackActorMove.getRealAngle(_engine->_lbaTime);
 			if (!pos) {
 				pos = 1;
 			}
 
 			_engine->_movements->rotateActor(pos, 0, angle2);
-			extra->pos.y -= _engine->_renderer->destPos.z;
+			extra->pos.y -= _engine->_renderer->_destPos.z;
 
-			_engine->_movements->rotateActor(0, _engine->_renderer->destPos.x, tmpAngle);
-			extra->pos.x += _engine->_renderer->destPos.x;
-			extra->pos.z += _engine->_renderer->destPos.z;
+			_engine->_movements->rotateActor(0, _engine->_renderer->_destPos.x, tmpAngle);
+			extra->pos.x += _engine->_renderer->_destPos.x;
+			extra->pos.z += _engine->_renderer->_destPos.z;
 
 			_engine->_movements->setActorAngle(ANGLE_0, extra->destPos.z, ANGLE_17, &extra->trackActorMove);
 
@@ -663,7 +663,7 @@ void Extra::processExtras() {
 
 				if (extraKey->info1 > 1) {
 					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->camera);
-					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->projPos.x, _engine->_renderer->projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
+					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KEY, 10, 30, 0, OverlayPosType::koNormal, 2);
@@ -676,18 +676,18 @@ void Extra::processExtras() {
 				continue;
 			}
 			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos.y, 0, extraKey->pos.y, _engine->_movements->targetActorDistance);
-			int32 pos = extra->trackActorMove.getRealAngle(_engine->lbaTime);
+			int32 pos = extra->trackActorMove.getRealAngle(_engine->_lbaTime);
 
 			if (!pos) {
 				pos = 1;
 			}
 
 			_engine->_movements->rotateActor(pos, 0, angle2);
-			extra->pos.y -= _engine->_renderer->destPos.z;
+			extra->pos.y -= _engine->_renderer->_destPos.z;
 
-			_engine->_movements->rotateActor(0, _engine->_renderer->destPos.x, tmpAngle);
-			extra->pos.x += _engine->_renderer->destPos.x;
-			extra->pos.z += _engine->_renderer->destPos.z;
+			_engine->_movements->rotateActor(0, _engine->_renderer->_destPos.x, tmpAngle);
+			extra->pos.x += _engine->_renderer->_destPos.x;
+			extra->pos.z += _engine->_renderer->_destPos.z;
 
 			_engine->_movements->setActorAngle(ANGLE_0, extra->destPos.z, ANGLE_17, &extra->trackActorMove);
 
@@ -696,7 +696,7 @@ void Extra::processExtras() {
 
 				if (extraKey->info1 > 1) {
 					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->camera);
-					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->projPos.x, _engine->_renderer->projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
+					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KEY, 10, 30, 0, OverlayPosType::koNormal, 2);
@@ -828,7 +828,7 @@ void Extra::processExtras() {
 			}
 
 			if (process) {
-				const BoundingBox *bbox = _engine->_resources->spriteBoundingBox.bbox(extra->info0);
+				const BoundingBox *bbox = _engine->_resources->_spriteBoundingBox.bbox(extra->info0);
 				extra->pos.y = (_engine->_collision->collision.y * BRICK_HEIGHT) + BRICK_HEIGHT - bbox->mins.y;
 				extra->type &= ~(ExtraType::STOP_COL | ExtraType::FLY);
 				continue;
@@ -843,7 +843,7 @@ void Extra::processExtras() {
 				if (extra->info1 > 1 && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 					_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->camera);
 					const int16 fontColor = COLOR_158;
-					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, _engine->_renderer->projPos.x, _engine->_renderer->projPos.y, fontColor, OverlayPosType::koNormal, 2);
+					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, _engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, fontColor, OverlayPosType::koNormal, 2);
 				}
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, extra->info0, 10, 30, 0, OverlayPosType::koNormal, 2);

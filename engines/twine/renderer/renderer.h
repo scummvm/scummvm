@@ -207,10 +207,10 @@ public:
 
 	void init(int32 w, int32 h);
 
-	IVec3 projPosScreen;
-	IVec3 projPos;
-	IVec3 baseRotPos;
-	IVec3 destPos;
+	IVec3 _projPosScreen;
+	IVec3 _projPos;
+	IVec3 _baseRotPos;
+	IVec3 _destPos;
 	IVec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);

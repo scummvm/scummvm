@@ -39,7 +39,7 @@ bool Screens::adelineLogo() {
 
 void Screens::loadMenuImage(bool fadeIn) {
 	loadImage(RESSHQR_MENUIMG, -1, fadeIn);
-	_engine->workVideoBuffer.blitFrom(_engine->frontVideoBuffer);
+	_engine->_workVideoBuffer.blitFrom(_engine->_frontVideoBuffer);
 }
 
 void Screens::loadCustomPalette(int32 index) {
@@ -63,13 +63,13 @@ void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
 }
 
 void Screens::loadImage(int32 index, int32 paletteIndex, bool fadeIn) {
-	Graphics::ManagedSurface& src = _engine->imageBuffer;
+	Graphics::ManagedSurface& src = _engine->_imageBuffer;
 	if (HQR::getEntry((uint8 *)src.getPixels(), Resources::HQR_RESS_FILE, index) == 0) {
 		warning("Failed to load image with index %i", index);
 		return;
 	}
 	debug(0, "Load image: %i", index);
-	Graphics::ManagedSurface& target = _engine->frontVideoBuffer;
+	Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
 	target.transBlitFrom(src, src.getBounds(), target.getBounds(), 0, false, 0, 0xff, nullptr, true);
 	const uint32 *pal = _paletteRGBA;
 	if (paletteIndex != -1) {
@@ -94,7 +94,7 @@ bool Screens::loadImageDelay(int32 index, int32 paletteIndex, int32 seconds) {
 }
 
 void Screens::fadeIn(const uint32 *pal) {
-	if (_engine->cfgfile.CrossFade) {
+	if (_engine->_cfgfile.CrossFade) {
 		_engine->crossFade(pal);
 	} else {
 		fadeToPal(pal);
@@ -108,7 +108,7 @@ void Screens::fadeOut(const uint32 *pal) {
 		crossFade(frontVideoBuffer, pal);
 	else
 		fadeToBlack(pal);*/
-	if (!_engine->cfgfile.CrossFade) {
+	if (!_engine->_cfgfile.CrossFade) {
 		fadeToBlack(pal);
 	}
 }
@@ -147,7 +147,7 @@ void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, in
 	}
 
 	_engine->setPalette(pal);
-	_engine->frontVideoBuffer.update();
+	_engine->_frontVideoBuffer.update();
 }
 
 void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
@@ -184,7 +184,7 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 
 		_engine->setPalette(pal);
 		intensity++;
-		_engine->frontVideoBuffer.update();
+		_engine->_frontVideoBuffer.update();
 	} while (intensity <= 100);
 }
 
@@ -219,7 +219,7 @@ void Screens::blackToWhite() {
 		memset(pal, i, sizeof(pal));
 
 		_engine->setPalette(pal);
-		_engine->frontVideoBuffer.update();
+		_engine->_frontVideoBuffer.update();
 	}
 }
 
@@ -251,7 +251,7 @@ void Screens::copyScreen(const Graphics::ManagedSurface &source, Graphics::Manag
 }
 
 void Screens::clearScreen() {
-	_engine->frontVideoBuffer.clear(0);
+	_engine->_frontVideoBuffer.clear(0);
 }
 
 } // namespace TwinE
