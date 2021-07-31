@@ -178,9 +178,9 @@ sub processIso($) {
 				flush STDOUT;
 
 				if ($res != 0) {
-					system1("hcopy -m -- \"$mdir$fname\" \"$outPath$dir$decfname\"");
+					system1("hcopy -m -- \"$mdir$fname\" \"$outPath$dir$decfname\"") == 0 or die "Can't execute hcopy";
 				} else {
-					system1("hcopy -r -- \"$mdir$fname\" \"$outPath$dir$decfname\"");
+					system1("hcopy -r -- \"$mdir$fname\" \"$outPath$dir$decfname\"") == 0 or die "Can't execute hcopy";
 				}
 				$numfiles++;
 			} else {
