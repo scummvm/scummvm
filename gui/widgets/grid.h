@@ -178,6 +178,7 @@ public:
 	void loadPlatformIcons();
 
 	void destroyItems();
+	void calcInnerHeight();
 	void updateGrid();
 	void move(int x, int y);
 	void assignEntriesToItems();
