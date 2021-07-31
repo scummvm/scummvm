@@ -33,6 +33,7 @@
 #include "ags/engine/ac/room_object.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
+#include "ags/engine/ac/walk_behind.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_main.h"
@@ -63,6 +64,12 @@ void DrawingSurface_Release(ScriptDrawingSurface *sds) {
 		}
 
 		sds->roomBackgroundNumber = -1;
+	}
+	if (sds->roomMaskType > kRoomAreaNone) {
+		if (sds->roomMaskType == kRoomAreaWalkBehind) {
+			recache_walk_behinds();
+		}
+		sds->roomMaskType = kRoomAreaNone;
 	}
 	if (sds->dynamicSpriteNumber >= 0) {
 		if (sds->modified) {
