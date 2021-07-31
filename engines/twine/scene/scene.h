@@ -212,7 +212,7 @@ public:
 	int32 sceneNumTracks = 0;
 	IVec3 sceneTracks[NUM_MAX_TRACKS];
 
-	bool enableGridTileRendering = true;
+	bool _enableGridTileRendering = true;
 
 	uint8 sceneFlags[NUM_SCENES_FLAGS]{0}; // cubeFlags
 

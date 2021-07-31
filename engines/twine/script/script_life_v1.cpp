@@ -1688,7 +1688,7 @@ static int32 lPROJ_ISO(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
 	// TODO: only used for credits scene? If not, then move the credits related code into the menu->showCredits method
 	engine->_screens->copyScreen(engine->_frontVideoBuffer, engine->_workVideoBuffer);
-	engine->_scene->enableGridTileRendering = false;
+	engine->_scene->_enableGridTileRendering = false;
 
 	engine->_renderer->setCameraPosition(engine->width() / 2, engine->height() / 2, 128, 1024, 1024);
 	engine->_renderer->setCameraAngle(0, 1500, 0, 25, -128, 0, 13000);

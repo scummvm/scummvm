@@ -681,12 +681,9 @@ void Grid::redrawGrid() {
 
 	_engine->_renderer->projectPositionOnScreen(-camera.x, -camera.y, -camera.z);
 
-	_engine->_renderer->_projPosScreen.x = _engine->_renderer->_projPos.x;
-	_engine->_renderer->_projPosScreen.y = _engine->_renderer->_projPos.y;
-
 	memset(_brickInfoBuffer, 0, _brickInfoBufferSize);
 
-	if (!_engine->_scene->enableGridTileRendering) {
+	if (!_engine->_scene->_enableGridTileRendering) {
 		return;
 	}
 

@@ -561,7 +561,7 @@ void Scene::changeScene() {
 	_engine->_screens->_lockPalette = false;
 
 	needChangeScene = SCENE_CEILING_GRID_FADE_1;
-	enableGridTileRendering = true;
+	_enableGridTileRendering = true;
 
 	_engine->_renderer->setLightVector(alphaLight, betaLight, ANGLE_0);
 

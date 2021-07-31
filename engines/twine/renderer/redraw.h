@@ -95,6 +95,8 @@ private:
 	int32 _bubbleActor = -1;
 	int32 _bubbleSpriteIndex = SPRITEHQR_DIAG_BUBBLE_LEFT;
 
+	IVec3 _projPosScreen;
+
 	/**
 	 * Add a certain region to the current redraw list array
 	 * @param redrawArea redraw the region

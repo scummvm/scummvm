@@ -208,7 +208,6 @@ public:
 
 	void init(int32 w, int32 h);
 
-	IVec3 _projPosScreen;
 	IVec3 _projPos;
 	IVec3 _destPos;
 	void setBaseRotationPos(int32 x, int32 y, int32 z);
