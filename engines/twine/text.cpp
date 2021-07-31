@@ -286,6 +286,7 @@ void Text::initDialogueBox() {
 	_engine->blitFrontToWork(_dialTextBox);
 }
 
+// TODO: this blits a few pixels too much when switching an item in the inventory menu.
 void Text::initInventoryDialogueBox() {
 	_engine->blitWorkToFront(_dialTextBox);
 	_engine->copyBlockPhys(_dialTextBox);
