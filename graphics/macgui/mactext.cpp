@@ -914,10 +914,10 @@ void MacText::render(int from, int to, int shadow) {
 
 			if (_textLines[i].chunks[j].plainByteMode()) {
 				Common::String str = _textLines[i].chunks[j].getEncodedText();
-				_textLines[i].chunks[j].getFont()->drawString(surface, str, xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor);
+				_textLines[i].chunks[j].getFont()->drawString(surface, str, xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
 				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(str);
 			} else {
-				_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor);
+				_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
 				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
 			}
 		}
