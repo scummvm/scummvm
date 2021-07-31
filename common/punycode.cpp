@@ -304,7 +304,8 @@ String punycode_encodefilename(const String src) {
 			dst += '\x81';
 			dst += '\x79';
 		// [\x00-\x1f\/":]
-		} else if (src[i] == '/' || src[i] == '"' || src[i] == ':' || (byte)src[i] < 0x20) {
+		} else if (src[i] == '/' || src[i] == '"' || src[i] == ':' || src[i] == '*'
+				src[i] == '[' || src[i] == ']' || (byte)src[i] < 0x20) {
 			dst += '\x81';
 			dst += (byte)src[i] + '\x80';
 		} else {
