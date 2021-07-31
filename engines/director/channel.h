@@ -74,6 +74,7 @@ public:
 
 	int getMouseChar(int x, int y);
 	int getMouseWord(int x, int y);
+	int getMouseItem(int x, int y);
 
 public:
 	Sprite *_sprite;

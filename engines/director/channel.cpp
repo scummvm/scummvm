@@ -632,11 +632,23 @@ int Channel::getMouseWord(int x, int y) {
 		return -1;
 
 	if (!_widget) {
-		warning("Channel::getMouseWord getting mouse char on a non-existing widget");
+		warning("Channel::getMouseWord getting mouse word on a non-existing widget");
 		return -1;
 	}
 
 	return ((Graphics::MacText *)_widget)->getMouseWord(x, y);
+}
+
+int Channel::getMouseItem(int x, int y) {
+	if (_sprite->_spriteType != kTextSprite)
+		return -1;
+
+	if (!_widget) {
+		warning("Channel::getMouseItem getting mouse item on a non-existing widget");
+		return -1;
+	}
+
+	return ((Graphics::MacText *)_widget)->getMouseItem(x, y);
 }
 
 Common::Point Channel::getPosition() {
