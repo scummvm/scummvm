@@ -511,7 +511,6 @@ void GameState::processGameoverAnimation() {
 		_engine->blitWorkToFront(rect);
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
 		_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr, dummy);
-		_engine->copyBlockPhys(rect);
 
 		_engine->_lbaTime++;
 	}
@@ -520,7 +519,6 @@ void GameState::processGameoverAnimation() {
 	_engine->blitWorkToFront(rect);
 	_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
 	_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr, dummy);
-	_engine->copyBlockPhys(rect);
 
 	_engine->delaySkip(2000);
 

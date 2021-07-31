@@ -1047,7 +1047,7 @@ bool TwinEEngine::delaySkip(uint32 time) {
 			return true;
 		}
 		stopTicks = _system->getMillis() - startTicks;
-		//lbaTime++;
+		//_lbaTime++;
 	} while (stopTicks <= time);
 	return false;
 }
@@ -1062,6 +1062,7 @@ void TwinEEngine::restoreFrontBuffer() {
 
 void TwinEEngine::blitWorkToFront(const Common::Rect &rect) {
 	_interface->blitBox(rect, _workVideoBuffer, _frontVideoBuffer);
+	copyBlockPhys(rect);
 }
 
 void TwinEEngine::blitFrontToWork(const Common::Rect &rect) {

@@ -281,7 +281,6 @@ void Text::initDialogueBox() {
 		_engine->_interface->drawTransparentBox(rect, 3);
 	}
 
-	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
 	_engine->blitFrontToWork(_dialTextBox);
 }
@@ -289,7 +288,6 @@ void Text::initDialogueBox() {
 // TODO: this blits a few pixels too much when switching an item in the inventory menu.
 void Text::initInventoryDialogueBox() {
 	_engine->blitWorkToFront(_dialTextBox);
-	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
 }
 
