@@ -39,7 +39,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(CruAvatarMoverProcess)
 static const int REBEL_BASE_MAP = 40;
 
 CruAvatarMoverProcess::CruAvatarMoverProcess() : AvatarMoverProcess(),
-_avatarAngle(-1), _SGA1Loaded(false), _nextFireTick(0) {
+_avatarAngle(-1), _SGA1Loaded(false), _nextFireTick(0), _lastNPCAlertTick(0) {
 }
 
 
@@ -592,6 +592,9 @@ void CruAvatarMoverProcess::tryAttack() {
 				avatar->setMana(avatar->getMana() - wpninfo->_energyUse);
 			}
 
+			// Check if we should alert nearby NPCs
+			checkForAlertingNPCs();
+
 			if (wpninfo->_shotDelay) {
 				_nextFireTick = kernel->getTickNum() + wpninfo->_shotDelay;
 			} else {
@@ -601,10 +604,59 @@ void CruAvatarMoverProcess::tryAttack() {
 	}
 }
 
+void CruAvatarMoverProcess::checkForAlertingNPCs() {
+	uint32 nowtick = Kernel::get_instance()->getTickNum();
+	if (nowtick - _lastNPCAlertTick < 240)
+		return;
+
+	_lastNPCAlertTick = nowtick;
+	uint16 controllednpc = World::get_instance()->getControlledNPCNum();
+	for (int i = 2; i < 256; i++) {
+		if (i == controllednpc)
+			continue;
+
+		Actor *a = getActor(i);
+		if (!a || a->isDead() || !a->isOnScreen())
+			continue;
+
+		if (!a->isInCombat()) {
+			uint16 currentactivity = a->getCurrentActivityNo();
+			uint16 activity2 = a->getDefaultActivity(2);
+			if (currentactivity == activity2) {
+				// note: original game also seems to check surrendering flag here?
+				if (currentactivity == 8) {
+					// Was guarding, attack!
+					a->setActivity(5);
+				}
+			} else {
+				uint16 range = 0;
+				uint32 npcshape = a->getShape();
+				if (npcshape == 0x2f5 || npcshape == 0x2f6 || npcshape == 0x2f7 ||
+					npcshape == 0x595 || npcshape == 0x597) {
+					Actor *c = getActor(controllednpc);
+					if (c)
+						range = a->getRangeIfVisible(*c);
+				} else {
+					range = 1;
+				}
+				if (range) {
+					a->setActivity(a->getDefaultActivity(2));
+				}
+			}
+		} else {
+			// Was guarding, attack!
+			a->setActivity(5);
+		}
+	}
+}
+
 void CruAvatarMoverProcess::saveData(Common::WriteStream *ws) {
 	AvatarMoverProcess::saveData(ws);
 	ws->writeSint32LE(_avatarAngle);
 	ws->writeByte(_SGA1Loaded ? 1 : 0);
+
+	// We don't bother saving _lastNPCAlertTick or _nextFireTick, they both
+	// will get reset to 0 which will behave almost identically in practice.
 }
 
 bool CruAvatarMoverProcess::loadData(Common::ReadStream *rs, uint32 version) {
