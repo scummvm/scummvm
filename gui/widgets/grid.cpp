@@ -180,14 +180,28 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 	}
 }
 
+void GridWidget::toggleGroup(int groupID) {
+	// Shrink group if it is expanded
+	if (_groupExpanded[groupID]) {
+		_groupExpanded[groupID] = false;
+		sortGroups();
+	} else {
+	// Expand group if it is shrunk
+		_groupExpanded[groupID] = true;
+		sortGroups();
+	}
+	// TODO: Replace reflowLayout with only the necessary sequence of steps
+	reflowLayout();
+}
+
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (_activeEntry->isHeader) {
 		_grid->_selectedEntry = nullptr;
+		_grid->toggleGroup(_activeEntry->entryID);
 	}
 	else if (isHighlighted && isVisible()) {
 		_grid->_selectedEntry = _activeEntry;
 		sendCommand(kItemClicked, 0);
-		// Work in progress
 		// Since user expected to click on "entry" and not the "widget", we
 		// must open the tray where the user expects it to be, which might
 		// not be at the new widget location.
@@ -500,8 +514,17 @@ void GridWidget::sortGroups() {
 			}
 		}
 	}
+	calcInnerHeight();
 	scrollBarRecalc();
-	markAsDirty();
+	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list
+	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog,
+	// but not doing so the background of scrollbar isn't cleared.
+	if ((((uint)_scrollBar->_entriesPerPage < oldListSize) && (_scrollBar->_entriesPerPage > _innerHeight)) ||
+		(((uint)_scrollBar->_entriesPerPage > oldListSize) && (_scrollBar->_entriesPerPage < _innerHeight))) {
+		g_gui.scheduleTopDialogRedraw();
+	} else {
+		markAsDirty();
+	}
 }
 
 bool GridWidget::calcVisibleEntries() {
@@ -535,7 +558,9 @@ bool GridWidget::calcVisibleEntries() {
 
 	nItemsOnScreen = (3 + (_scrollWindowHeight / (_gridItemHeight + _gridYSpacing))) * (_itemsPerRow);
 
-	if (nFirstVisibleItem != _firstVisibleItem || nItemsOnScreen != _itemsOnScreen) {
+	// TODO / FIXME: The previous if condition had to be removed as it can break on toggling groups.
+	//				Find a proper if condition and put the below code under it.
+	{
 		needsReload = true;
 		_itemsOnScreen = nItemsOnScreen;
 		_firstVisibleItem = nFirstVisibleItem;
@@ -689,6 +714,43 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
+void GridWidget::calcInnerHeight() {
+	int row = 0;
+	int col = 0;
+	Common::Point p(_gridXSpacing, _gridYSpacing);
+
+	for (int k = 0; k < (int)_sortedEntryList.size(); ++k) {
+		if (_sortedEntryList[k].isHeader) {
+			while (col != 0) {
+				if (++col >= _itemsPerRow) {
+					col = 0;
+					++row;
+					p.x = _gridXSpacing;
+					p.y += _sortedEntryList[k - 1].rect.height() + _gridYSpacing;
+				}
+			}
+			_sortedEntryList[k].rect.moveTo(p);
+			++row;
+			p.y += _sortedEntryList[k].rect.height() + _gridYSpacing;
+		} else {
+			_sortedEntryList[k].rect.moveTo(p);
+			if (++col >= _itemsPerRow) {
+				++row;
+				p.y += _sortedEntryList[k].rect.height() + _gridYSpacing;
+				col = 0;
+				p.x = _gridXSpacing;
+			} else {
+				p.x += _sortedEntryList[k].rect.width() + _gridXSpacing;
+			}
+		}
+	}
+
+	_rows = row;
+
+	_innerHeight = p.y + _gridItemHeight + _gridYSpacing + _trayHeight;
+	_innerWidth = _gridXSpacing + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
+}
+
 void GridWidget::reflowLayout() {
 	Widget::reflowLayout();
 	destroyItems();
@@ -722,41 +784,7 @@ void GridWidget::reflowLayout() {
 	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
 	_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
 
-	int row = 0;
-	int col = 0;
-	Common::Point p(_gridXSpacing, _gridYSpacing);
-
-	for (int k = 0; k < (int)_sortedEntryList.size(); ++k) {
-		if (_sortedEntryList[k].isHeader) {
-			while (col != 0) {
-				if (++col >= _itemsPerRow) {
-					col = 0;
-					++row;
-					p.x = _gridXSpacing;
-					p.y += _sortedEntryList[k - 1].rect.height() + _gridYSpacing;
-				}
-			}
-			_sortedEntryList[k].rect.moveTo(p);
-			++row;
-			p.y += _sortedEntryList[k].rect.height() + _gridYSpacing;
-		} else {
-			_sortedEntryList[k].rect.moveTo(p);
-			if (++col >= _itemsPerRow) {
-				++row;
-				p.y += _sortedEntryList[k].rect.height() + _gridYSpacing;
-				col = 0;
-				p.x = _gridXSpacing;
-			} else {
-				p.x += _sortedEntryList[k].rect.width() + _gridXSpacing;
-			}
-		}
-		warning("Titel: %s \tX: %d Y: %d", _sortedEntryList[k].title.c_str(), _sortedEntryList[k].rect.left, _sortedEntryList[k].rect.top);
-	}
-
-	_rows = row;
-
-	_innerHeight = p.y + _gridItemHeight + _gridYSpacing + _trayHeight;
-	_innerWidth = _gridXSpacing + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
+	calcInnerHeight();
 
 	_scrollBar->checkBounds(_scrollBar->_currentPos);
 	_scrollPos = _scrollBar->_currentPos;
@@ -767,8 +795,8 @@ void GridWidget::reflowLayout() {
 		reloadThumbnails();
 	}
 
-	row = 0;
-	col = 0;
+	int row = 0;
+	int col = 0;
 
 	for (int k = 0; k < _itemsOnScreen; ++k) {
 		GridItemWidget *newItem = new GridItemWidget(this);
