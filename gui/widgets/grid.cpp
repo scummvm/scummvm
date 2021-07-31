@@ -373,6 +373,7 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
 	_itemsOnScreen = 0;
+	_itemsPerRow = 0;
 
 	_innerHeight = 0;
 	_innerWidth = 0;
@@ -406,6 +407,7 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
 	_itemsOnScreen = 0;
+	_itemsPerRow = 0;
 
 	_innerHeight = 0;
 	_innerWidth = 0;
