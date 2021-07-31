@@ -64,6 +64,15 @@ typedef std::shared_ptr<ccScript> PScript;
 // later, when more engine source is put in AGS namespace and
 // refactored.
 
+// Room's area mask type
+enum RoomAreaMask {
+	kRoomAreaNone = 0,
+	kRoomAreaHotspot,
+	kRoomAreaWalkBehind,
+	kRoomAreaWalkable,
+	kRoomAreaRegion
+};
+
 // Room's audio volume modifier
 enum RoomVolumeMod {
 	kRoomVolumeQuietest = -3,
@@ -279,6 +288,11 @@ public:
 	void            InitDefaults();
 	// Set legacy resolution type
 	void            SetResolution(RoomResolutionType type);
+
+	// Gets bitmap of particular mask layer
+	Bitmap *GetMask(RoomAreaMask mask) const;
+	// Gets mask's scale relative to the room's background size
+	float   GetMaskScale(RoomAreaMask mask) const;
 
 	// TODO: see later whether it may be more convenient to move these to the Region class instead.
 	// Gets if the given region has light level set
