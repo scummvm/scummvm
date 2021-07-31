@@ -146,6 +146,16 @@ void AgiEngine::processScummVMEvents() {
 				key = key - 0x05d0 + 0xe0;
 			}
 
+			if (_game._vm->getLanguage() == Common::RU_RUS) {
+				// Convert UTF16 to CP866
+				if (key >= 0x400 && key <= 0x4ff) {
+					if (key >= 0x440)
+						key = key - 0x410 + 0xb0;
+					else
+						key = key - 0x410 + 0x80;
+				}
+			}
+
 			if ((key) && (key <= 0xFF)) {
 				// No special key, directly accept it
 				// Is ISO-8859-1, we need lower 128 characters only, which is plain ASCII, so no mapping required
