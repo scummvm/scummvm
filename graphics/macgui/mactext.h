@@ -216,6 +216,7 @@ public:
 	int getMouseChar(int x, int y);
 	int getMouseWord(int x, int y);
 	int getMouseItem(int x, int y);
+	int getMouseLine(int x, int y);
 
 private:
 	MacFontRun getTextChunks(int start, int end);

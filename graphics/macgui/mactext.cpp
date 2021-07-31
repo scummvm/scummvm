@@ -1972,6 +1972,18 @@ int MacText::getMouseItem(int x, int y) {
 	return index + 1;
 }
 
+int MacText::getMouseLine(int x, int y) {
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
+	y += _scrollPos;
+
+	int dx, dy, row, col;
+	getRowCol(x, y, &dx, &dy, &row, &col);
+
+	return row + 1;
+}
+
 int MacText::getAlignOffset(int row) {
 	int alignOffset = 0;
 	if (_textAlignment == kTextAlignRight)
