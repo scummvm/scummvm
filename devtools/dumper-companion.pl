@@ -103,6 +103,7 @@ sub processIso($) {
 
 	my $numfiles = 0;
 	my $numdirs = 0;
+	my $numrens = 0;
 	my $prevlen = 0;
 
 	while (<$ls>) {
@@ -119,7 +120,16 @@ sub processIso($) {
 			}
 
 			if ($::opt_e) {
-				$dir = join '/', map { encode_punycodefilename $_} split /:/, $dir;
+				my $dir1 = $dir;
+				my $changed = 0;
+
+				$dir = join '/', map { my $a = encode_punycodefilename $_; $changed = 1 if $a ne $_; $a } split /:/, $dir;
+
+				if ($changed) {
+					print " " x $prevlen unless $verbose;
+					print "\rRenamed dir \"$dir1\" -> \"$dir\"\n" unless $verbose;
+					$numrens++;
+				}
 			}
 
 			$dir .= '/' if $dir !~ m'/$';
@@ -140,7 +150,13 @@ sub processIso($) {
 				}
 
 				if ($::opt_e) {
+					my $decfname1 = $decfname;
 					$decfname = encode_punycodefilename	$decfname;
+					if ($decfname1 ne $decfname) {
+						print " " x $prevlen unless $verbose;
+						print "\rRenamed file \"$decfname1\" -> \"$decfname\"\n" unless $verbose;
+						$numrens++;
+					}
 				}
 
 				print " " x $prevlen unless $verbose;
@@ -161,7 +177,7 @@ sub processIso($) {
 	}
 	print " " x $prevlen unless $verbose;
 	print "\r" unless $verbose;
-	print "Extracted $numdirs dirs and $numfiles files\n";
+	print "Extracted $numdirs dirs and $numfiles files, made $numrens renames\n";
 
 	print "Unounting ISO...";
 	flush STDOUT;
@@ -193,7 +209,7 @@ sub processMacbinary() {
 			}
 
 			if ($fname1 ne $fname) {
-				print "Renamed \"$fname\" to \"$fname1\"\n" unless $verbose;
+				print "Renamed \"$fname\" -> \"$fname1\"\n" unless $verbose;
 				$countren++;
 			}
 
@@ -205,7 +221,7 @@ sub processMacbinary() {
 				if ($fname1 ne $fname) {
 					system1("mv \"$fname\" \"$fname1\"");
 
-					print "Renamed \"$fname\" to \"$fname1\"\n" unless $verbose;
+					print "Renamed \"$fname\" -> \"$fname1\"\n" unless $verbose;
 					$countren++;
 				}
 			}
