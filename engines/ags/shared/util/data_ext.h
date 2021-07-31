@@ -111,7 +111,7 @@ public:
 	}
 	// Tells if the end of the block list was reached
 	inline bool AtEnd() const {
-		return _block_id < 0;
+		return _blockID < 0;
 	}
 	// Tries to opens a next standard block from the stream,
 	// fills in identifier and length on success
@@ -128,10 +128,10 @@ protected:
 	Stream *_in = nullptr;
 	int _flags = 0;
 
-	int _block_id = -1;
-	String _ext_id;
-	soff_t _block_start = 0;
-	soff_t _block_len = 0;
+	int _blockID = -1;
+	String _extID;
+	soff_t _blockStart = 0;
+	soff_t _blockLen = 0;
 };
 
 // DataExtReader is a virtual base class of a block list reader; provides

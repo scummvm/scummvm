@@ -48,44 +48,44 @@ HError DataExtParser::OpenBlock() {
 	//               and -1 indicates end of the block list.
 	//    - 16 bytes - string ID of an extension (if numeric ID is 0).
 	//    - 4 or 8 bytes - length of extension data, in bytes.
-	_block_id = ((_flags & kDataExt_NumID32) != 0) ?
+	_blockID = ((_flags & kDataExt_NumID32) != 0) ?
 		_in->ReadInt32() :
 		_in->ReadInt8();
 
-	if (_block_id < 0)
+	if (_blockID < 0)
 		return HError::None(); // end of list
 	if (_in->EOS())
 		return new DataExtError(kDataExtErr_UnexpectedEOF);
 
-	if (_block_id > 0) { // old-style block identified by a numeric id
-		_block_len = ((_flags & kDataExt_File64) != 0) ? _in->ReadInt64() : _in->ReadInt32();
-		_ext_id = GetOldBlockName(_block_id);
+	if (_blockID > 0) { // old-style block identified by a numeric id
+		_blockLen = ((_flags & kDataExt_File64) != 0) ? _in->ReadInt64() : _in->ReadInt32();
+		_extID = GetOldBlockName(_blockID);
 	} else { // new style block identified by a string id
-		_ext_id = String::FromStreamCount(_in, 16);
-		_block_len = _in->ReadInt64();
+		_extID = String::FromStreamCount(_in, 16);
+		_blockLen = _in->ReadInt64();
 	}
-	_block_start = _in->GetPosition();
+	_blockStart = _in->GetPosition();
 	return HError::None();
 }
 
 void DataExtParser::SkipBlock() {
-	if (_block_id >= 0)
-		_in->Seek(_block_len);
+	if (_blockID >= 0)
+		_in->Seek(_blockLen);
 }
 
 HError DataExtParser::PostAssert() {
 	const soff_t cur_pos = _in->GetPosition();
-	const soff_t block_end = _block_start + _block_len;
+	const soff_t block_end = _blockStart + _blockLen;
 	if (cur_pos > block_end) {
 		String err = String::FromFormat("Block: '%s', expected to end at offset: %lld, finished reading at %lld.",
-			_ext_id.GetCStr(), block_end, cur_pos);
-		if (cur_pos <= block_end + GetOverLeeway(_block_id))
+			_extID.GetCStr(), block_end, cur_pos);
+		if (cur_pos <= block_end + GetOverLeeway(_blockID))
 			Debug::Printf(kDbgMsg_Warn, err);
 		else
 			return new DataExtError(kDataExtErr_BlockDataOverlapping, err);
 	} else if (cur_pos < block_end) {
 		Debug::Printf(kDbgMsg_Warn, "WARNING: data blocks nonsequential, block '%s' expected to end at %lld, finished reading at %lld",
-			_ext_id.GetCStr(), block_end, cur_pos);
+			_extID.GetCStr(), block_end, cur_pos);
 		_in->Seek(block_end, Shared::kSeekBegin);
 	}
 	return HError::None();
@@ -96,9 +96,9 @@ HError DataExtParser::FindOne(int id) {
 
 	HError err = HError::None();
 	for (err = OpenBlock(); err && !AtEnd(); err = OpenBlock()) {
-		if (id == _block_id)
+		if (id == _blockID)
 			return HError::None();
-		_in->Seek(_block_len); // skip it
+		_in->Seek(_blockLen); // skip it
 	}
 	if (!err)
 		return err;
@@ -111,7 +111,7 @@ HError DataExtReader::Read() {
 	for (err = OpenBlock(); err && !AtEnd() && read_next; err = OpenBlock()) {
 		// Call the reader function to read current block's data
 		read_next = true;
-		err = ReadBlock(_block_id, _ext_id, _block_len, read_next);
+		err = ReadBlock(_blockID, _extID, _blockLen, read_next);
 		if (!err)
 			return err;
 		// Test that we did not read too much or too little
