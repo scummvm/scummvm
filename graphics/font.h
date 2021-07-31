@@ -206,13 +206,13 @@ public:
 	 * @param useEllipsis  Use ellipsis if needed to fit the string in the area.
 	 *
 	 */
-	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
 	/** @overload */
-	void drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	void drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
 	/** @overload */
-	void drawString(ManagedSurface *dst, const Common::String &str, int x, int _y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	void drawString(ManagedSurface *dst, const Common::String &str, int x, int _y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
 	/** @overload */
-	void drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	void drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;
 
 	/**
 	 * Compute and return the width of the string @p str when rendered using this font.
