@@ -73,6 +73,10 @@ if ($::opt_o) {
 	if ($outPath !~ m'/$') {
 		$outPath .= "/";
 	}
+
+	if (not -d $outPath) {
+		die "Directory $outPath does not exits";
+	}
 }
 
 if ($::opt_m) {
@@ -127,6 +131,7 @@ sub processIso($) {
 
 				if ($changed) {
 					print " " x $prevlen unless $verbose;
+					$dir1 =~ s/([\x00-\x1f])/@{[sprintf "\\x%02x", ord($1)]}/g;
 					print "\rRenamed dir \"$dir1\" -> \"$dir\"\n" unless $verbose;
 					$numrens++;
 				}
@@ -154,6 +159,7 @@ sub processIso($) {
 					$decfname = encode_punycodefilename	$decfname;
 					if ($decfname1 ne $decfname) {
 						print " " x $prevlen unless $verbose;
+						$decfname1 =~ s/([\x00-\x1f])/@{[sprintf "\\x%02x", ord($1)]}/g;
 						print "\rRenamed file \"$decfname1\" -> \"$decfname\"\n" unless $verbose;
 						$numrens++;
 					}
@@ -221,6 +227,7 @@ sub processMacbinary() {
 				if ($fname1 ne $fname) {
 					system1("mv \"$fname\" \"$fname1\"");
 
+					$fname =~ s/([\x00-\x1f])/@{[sprintf "\\x%02x", ord($1)]}/g;
 					print "Renamed \"$fname\" -> \"$fname1\"\n" unless $verbose;
 					$countren++;
 				}
