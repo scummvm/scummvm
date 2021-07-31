@@ -1533,14 +1533,14 @@ static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 
-	engine->freezeTime();
+	ScopedEngineFreeze freeze(engine);
+	engine->exitSceneryView();
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(otherActorIdx);
 	}
 	engine->_text->setFontCrossColor(engine->_scene->getActor(otherActorIdx)->_talkColor);
 	engine->_gameState->processGameChoices(choiceIdx);
 	engine->_gameState->_numChoices = 0;
-	engine->unfreezeTime();
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
