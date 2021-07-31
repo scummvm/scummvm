@@ -22,7 +22,9 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "ags/lib/std/regex.h"
 #include "ags/shared/core/platform.h"
+#include "ags/shared/util/string_utils.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/stdio_compat.h"
@@ -111,6 +113,40 @@ bool GetFiles(const String &dir_path, std::vector<String> &files) {
 }
 
 } // namespace Directory
+
+FindFile::FindFile(const FindFile &ff) {
+	_files = ff._files;
+	_index = ff._index;
+}
+
+FindFile::~FindFile() {
+	Close();
+}
+
+FindFile FindFile::Open(const String &path, const String &wildcard, bool do_file, bool do_dir) {
+	FindFile ff;
+	ff._folder = Common::FSNode(path);
+
+	Common::FSNode::ListMode mode = Common::FSNode::kListAll;
+	if (do_file && !do_dir)
+		mode = Common::FSNode::kListFilesOnly;
+	else if (!do_file && do_dir)
+		mode = Common::FSNode::kListDirectoriesOnly;
+
+	warning("TODO: Wildcard not yet supported - %s", wildcard.GetCStr());
+
+	ff._folder.getChildren(ff._files, mode);
+	return ff;
+}
+
+void FindFile::Close() {
+	_index = 0;
+}
+
+bool FindFile::Next() {
+	++_index;
+	return _index < (int)_files.size();
+}
 
 } // namespace Shared
 } // namespace AGS

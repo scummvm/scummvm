@@ -20,9 +20,10 @@
  *
  */
 
-#include "ags/shared/core/platform.h"
-#include "ags/shared/util/math.h"
 #include "ags/shared/util/string_utils.h"
+#include "ags/shared/core/platform.h"
+#include "ags/lib/std/regex.h"
+#include "ags/shared/util/math.h"
 #include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
@@ -93,6 +94,18 @@ String StrUtil::Unescape(const String &s) {
 	String dst(buf);
 	delete buf;
 	return dst;
+}
+
+String StrUtil::WildcardToRegex(const String &wildcard) {
+	// https://stackoverflow.com/questions/40195412/c11-regex-search-for-exact-string-escape
+	// matches any characters that need to be escaped in RegEx
+	std::regex esc{ R"([-[\]{}()*+?.,\^$|#\s])" };
+	Common::String sanitized = std::regex_replace(wildcard.GetCStr(), esc, R"(\$&)");
+	// convert (now escaped) wildcard "\\*" and "\\?" into ".*" and "." respectively
+	String pattern(sanitized.c_str());
+	pattern.Replace("\\*", ".*");
+	pattern.Replace("\\?", ".");
+	return pattern;
 }
 
 String StrUtil::ReadString(Stream *in) {

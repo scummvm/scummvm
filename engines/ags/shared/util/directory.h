@@ -29,6 +29,8 @@
 #ifndef AGS_SHARED_UTIL_DIRECTORY_H
 #define AGS_SHARED_UTIL_DIRECTORY_H
 
+#include "common/fs.h"
+#include "ags/lib/std/memory.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/string.h"
 
@@ -56,6 +58,36 @@ bool   GetDirs(const String &dir_path, std::vector<String> &dirs);
 bool   GetFiles(const String &dir_path, std::vector<String> &files);
 
 } // namespace Directory
+
+class FindFile {
+private:
+	Common::FSNode _folder;
+	Common::FSList _files;
+	int _index = 0;
+
+private:
+	static FindFile Open(const String &path, const String &wildcard,
+		bool do_file, bool do_dir);
+
+public:
+	FindFile() {}
+	FindFile(const FindFile &ff);
+	~FindFile();
+	static FindFile OpenFiles(const String &path, const String &wildcard = "*") {
+		return Open(path, wildcard, true, false);
+	}
+	static FindFile OpenDirs(const String &path, const String &wildcard = "*") {
+		return Open(path, wildcard, false, true);
+	}
+	bool AtEnd() const {
+		return (_index >= (int)_files.size());
+	}
+	String Current() const {
+		return AtEnd() ? String() : String(_files[_index].getName().c_str());
+	}
+	void Close();
+	bool Next();
+};
 
 } // namespace Shared
 } // namespace AGS

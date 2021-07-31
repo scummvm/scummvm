@@ -20,26 +20,25 @@
  *
  */
 
-// Dummy include of STD mockup headers so they'll appear in the Visual Studio project
+#ifndef AGS_STD_REGEX_H
+#define AGS_STD_REGEX_H
 
-#include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/array.h"
-#include "ags/lib/std/chrono.h"
-#include "ags/lib/std/functional.h"
-#include "ags/lib/std/initializer_list.h"
-#include "ags/lib/std/limits.h"
-#include "ags/lib/std/list.h"
-#include "ags/lib/std/map.h"
-#include "ags/lib/std/math.h"
-#include "ags/lib/std/memory.h"
-#include "ags/lib/std/mutex.h"
-#include "ags/lib/std/queue.h"
-#include "ags/lib/std/regex.h"
-#include "ags/lib/std/set.h"
-#include "ags/lib/std/thread.h"
-#include "ags/lib/std/type_traits.h"
-#include "ags/lib/std/unordered_set.h"
-#include "ags/lib/std/utility.h"
-#include "ags/lib/std/vector.h"
-#include "ags/lib/std/xtr1common.h"
-#include "ags/lib/std/xutility.h"
+#include "common/str.h"
+#include "common/textconsole.h"
+
+namespace AGS3 {
+namespace std {
+
+struct regex {
+public:
+	regex(const char *) {}
+};
+
+inline Common::String regex_replace(const char *wildcard, const regex &esc, const char *fmt) {
+	error("TODO: Implement if engine needs it");
+}
+
+} // namespace std
+} // namespace AGS3
+
+#endif
