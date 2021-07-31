@@ -1933,6 +1933,45 @@ int MacText::getMouseWord(int x, int y) {
 	return index + 1;
 }
 
+int MacText::getMouseItem(int x, int y) {
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
+	y += _scrollPos;
+
+	int dx, dy, row, col;
+	getRowCol(x, y, &dx, &dy, &row, &col);
+
+	int index = 0;
+	for (int i = 0; i < row; i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			if (_textLines[i].chunks[j].text.empty())
+				continue;
+			if (_textLines[i].chunks[j].getEncodedText().contains(','))
+				index++;
+		}
+	}
+
+	int cur = 0;
+	for (uint i = 0; i < _textLines[row].chunks.size(); i++) {
+		if (_textLines[row].chunks[i].text.empty())
+			continue;
+
+		for (uint j = 0; j < _textLines[row].chunks[i].text.size(); j++) {
+			cur++;
+			if (cur > col)
+				break;
+			if (_textLines[row].chunks[i].text[j] == ',')
+				index++;
+		}
+
+		if (cur > col)
+			break;
+	}
+
+	return index + 1;
+}
+
 int MacText::getAlignOffset(int row) {
 	int alignOffset = 0;
 	if (_textAlignment == kTextAlignRight)

@@ -212,8 +212,10 @@ public:
 	int getTextSlant(int start, int end);
 	void setTextSlant(int textSlant, int start, int end);
 
+	// director text related-functions
 	int getMouseChar(int x, int y);
 	int getMouseWord(int x, int y);
+	int getMouseItem(int x, int y);
 
 private:
 	MacFontRun getTextChunks(int start, int end);
