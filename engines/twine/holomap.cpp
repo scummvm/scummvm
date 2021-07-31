@@ -424,9 +424,7 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			int32 zpos2 = _engine->_renderer->_destPos.z;
 			_engine->_renderer->setBaseRotation(xRot, yRot, zRot, true);
 			int32 zpos1_copy = zpos1;
-			_engine->_renderer->_baseRotPos.x = 0;
-			_engine->_renderer->_baseRotPos.y = 0;
-			_engine->_renderer->_baseRotPos.z = 9500;
+			_engine->_renderer->setBaseRotationPos(0, 0, 9500);
 			_engine->_renderer->getBaseRotationPosition(xpos1, ypos1, zpos1);
 			int32 zpos1_copy2 = _engine->_renderer->_destPos.z;
 			_engine->_renderer->getBaseRotationPosition(xpos2, ypos2, zpos2);
@@ -579,9 +577,7 @@ void Holomap::processHolomap() {
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
 			renderLocations(xRot, yRot, 0, false);
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0, true);
-			_engine->_renderer->_baseRotPos.x = 0;
-			_engine->_renderer->_baseRotPos.y = 0;
-			_engine->_renderer->_baseRotPos.z = 9500;
+			_engine->_renderer->setBaseRotationPos(0, 0, 9500);
 			renderHolomapSurfacePolygons();
 			renderLocations(xRot, yRot, 0, true);
 			drawHolomapText(_engine->width() / 2, 25, "HoloMap");

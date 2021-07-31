@@ -156,6 +156,7 @@ private:
 	IMatrix3x3 _matricesTable[30 + 1];
 	IMatrix3x3 _shadeMatrix;
 	IVec3 _lightPos;
+	IVec3 _baseRotPos;
 
 	RenderCommand _renderCmds[1000];
 	/**
@@ -209,8 +210,8 @@ public:
 
 	IVec3 _projPosScreen;
 	IVec3 _projPos;
-	IVec3 _baseRotPos;
 	IVec3 _destPos;
+	void setBaseRotationPos(int32 x, int32 y, int32 z);
 	IVec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
@@ -249,6 +250,12 @@ public:
 
 	void renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexAngles[3]);
 };
+
+inline void Renderer::setBaseRotationPos(int32 x, int32 y, int32 z) {
+	_baseRotPos.x = x;
+	_baseRotPos.y = y;
+	_baseRotPos.z = z;
+}
 
 } // namespace TwinE
 
