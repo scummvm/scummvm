@@ -95,9 +95,6 @@ private:
 	int32 _bubbleActor = -1;
 	int32 _bubbleSpriteIndex = SPRITEHQR_DIAG_BUBBLE_LEFT;
 
-	/** Draw list array to grab the necessary */
-	DrawListStruct _drawList[150];
-
 	/**
 	 * Add a certain region to the current redraw list array
 	 * @param redrawArea redraw the region
@@ -115,9 +112,9 @@ private:
 	void processDrawListActorSprites(const DrawListStruct& drawCmd, bool bgRedraw);
 	void processDrawListExtras(const DrawListStruct& drawCmd);
 
-	int32 fillActorDrawingList(bool bgRedraw);
-	int32 fillExtraDrawingList(int32 drawListPos);
-	void processDrawList(int32 drawListPos, bool bgRedraw);
+	int32 fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw);
+	int32 fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos);
+	void processDrawList(DrawListStruct *drawList, int32 drawListPos, bool bgRedraw);
 	void renderOverlays();
 
 public:

@@ -182,7 +182,7 @@ void Redraw::updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2) {
 	}
 }
 
-int32 Redraw::fillActorDrawingList(bool bgRedraw) {
+int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 	int32 drawListPos = 0;
 	for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
 		ActorStruct *actor = _engine->_scene->getActor(a);
@@ -221,17 +221,17 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 			}
 
 			if (actor->staticFlags.bIsSpriteActor) {
-				_drawList[drawListPos].type = DrawListType::DrawActorSprites;
-				_drawList[drawListPos].actorIdx = a;
+				drawList[drawListPos].type = DrawListType::DrawActorSprites;
+				drawList[drawListPos].actorIdx = a;
 				if (actor->staticFlags.bUsesClipping) {
 					tmpVal = actor->lastPos.x - _engine->_grid->camera.x + actor->lastPos.z - _engine->_grid->camera.z;
 				}
 			} else {
-				_drawList[drawListPos].type = 0;
-				_drawList[drawListPos].actorIdx = a;
+				drawList[drawListPos].type = 0;
+				drawList[drawListPos].actorIdx = a;
 			}
 
-			_drawList[drawListPos].posValue = tmpVal;
+			drawList[drawListPos].posValue = tmpVal;
 
 			drawListPos++;
 
@@ -245,13 +245,13 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 					_engine->_movements->getShadowPosition(actor->pos);
 				}
 
-				_drawList[drawListPos].posValue = tmpVal - 1; // save the shadow entry in the _drawList
-				_drawList[drawListPos].type = DrawListType::DrawShadows;
-				_drawList[drawListPos].actorIdx = 0;
-				_drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
-				_drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
-				_drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
-				_drawList[drawListPos].offset = 2;
+				drawList[drawListPos].posValue = tmpVal - 1; // save the shadow entry in the _drawList
+				drawList[drawListPos].type = DrawListType::DrawShadows;
+				drawList[drawListPos].actorIdx = 0;
+				drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
+				drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
+				drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
+				drawList[drawListPos].offset = 2;
 				drawListPos++;
 			}
 			if (inSceneryView && a == _engine->_scene->currentlyFollowedActor) {
@@ -263,7 +263,7 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 	return drawListPos;
 }
 
-int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
+int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &_engine->_extra->extraList[i];
 		if (extra->info0 == -1) {
@@ -282,21 +282,21 @@ int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
 
 			if (_engine->_renderer->projPos.x > -50 && _engine->_renderer->projPos.x < _engine->width() + 40 && _engine->_renderer->projPos.y > -30 && _engine->_renderer->projPos.y < _engine->height() + 100) {
 				const int16 tmpVal = extra->pos.x - _engine->_grid->camera.x + extra->pos.z - _engine->_grid->camera.z;
-				_drawList[drawListPos].posValue = tmpVal;
-				_drawList[drawListPos].actorIdx = i;
-				_drawList[drawListPos].type = DrawListType::DrawExtras;
+				drawList[drawListPos].posValue = tmpVal;
+				drawList[drawListPos].actorIdx = i;
+				drawList[drawListPos].type = DrawListType::DrawExtras;
 				drawListPos++;
 
 				if (_engine->cfgfile.ShadowMode == 2 && !(extra->info0 & EXTRA_SPECIAL_MASK)) {
 					_engine->_movements->getShadowPosition(extra->pos);
 
-					_drawList[drawListPos].posValue = tmpVal - 1;
-					_drawList[drawListPos].actorIdx = 0;
-					_drawList[drawListPos].type = DrawListType::DrawShadows;
-					_drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
-					_drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
-					_drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
-					_drawList[drawListPos].offset = 0;
+					drawList[drawListPos].posValue = tmpVal - 1;
+					drawList[drawListPos].actorIdx = 0;
+					drawList[drawListPos].type = DrawListType::DrawShadows;
+					drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
+					drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
+					drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
+					drawList[drawListPos].offset = 0;
 					drawListPos++;
 				}
 			}
@@ -474,9 +474,9 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 	}
 }
 
-void Redraw::processDrawList(int32 drawListPos, bool bgRedraw) {
+void Redraw::processDrawList(DrawListStruct *drawList, int32 drawListPos, bool bgRedraw) {
 	for (int32 pos = 0; pos < drawListPos; ++pos) {
-		const DrawListStruct &drawCmd = _drawList[pos];
+		const DrawListStruct &drawCmd = drawList[pos];
 		const uint32 flags = drawCmd.type;
 		// Drawing actors
 		if (flags < DrawListType::DrawShadows) {
@@ -666,12 +666,13 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		blitBackgroundAreas();
 	}
 
-	int32 drawListPos = fillActorDrawingList(bgRedraw);
-	drawListPos = fillExtraDrawingList(drawListPos);
-	sortDrawingList(_drawList, drawListPos);
+	DrawListStruct drawList[150];
+	int32 drawListPos = fillActorDrawingList(drawList, bgRedraw);
+	drawListPos = fillExtraDrawingList(drawList, drawListPos);
+	sortDrawingList(drawList, drawListPos);
 
 	currNumOfRedrawBox = 0;
-	processDrawList(drawListPos, bgRedraw);
+	processDrawList(drawList, drawListPos, bgRedraw);
 
 	if (_engine->cfgfile.Debug) {
 		_engine->_debugScene->renderDebugView();
