@@ -651,6 +651,18 @@ int Channel::getMouseItem(int x, int y) {
 	return ((Graphics::MacText *)_widget)->getMouseItem(x, y);
 }
 
+int Channel::getMouseLine(int x, int y) {
+	if (_sprite->_spriteType != kTextSprite)
+		return -1;
+
+	if (!_widget) {
+		warning("Channel::getMouseLine getting mouse line on a non-existing widget");
+		return -1;
+	}
+
+	return ((Graphics::MacText *)_widget)->getMouseLine(x, y);
+}
+
 Common::Point Channel::getPosition() {
 	Common::Point res = _currentPoint;
 	addRegistrationOffset(res);

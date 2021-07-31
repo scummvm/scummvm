@@ -642,7 +642,13 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		}
 		break;
 	case kTheMouseLine:
-		getTheEntitySTUB(kTheMouseLine);
+		{
+			Common::Point pos = g_director->getCurrentWindow()->getMousePos();
+			uint16 spriteId = score->getSpriteIDFromPos(pos);
+			Channel *ch = score->getChannelById(spriteId);
+			d.u.i = ch->getMouseLine(pos.x, pos.y);
+			d.type = INT;
+		}
 		break;
 	case kTheMouseUp:
 		d.type = INT;
