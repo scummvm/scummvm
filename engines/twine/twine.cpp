@@ -528,8 +528,6 @@ void TwinEEngine::exitSceneryView() {
 void TwinEEngine::initAll() {
 	Common::fill(&_menu->itemAngle[0], &_menu->itemAngle[NUM_INVENTORY_ITEMS], 0);
 
-	_redraw->bubbleSpriteIndex = SPRITEHQR_DIAG_BUBBLE_LEFT;
-
 	_scene->sceneHero = _scene->getActor(OWN_ACTOR_SCENE_INDEX);
 
 	// Set clip to fullscreen by default, allows main menu to render properly after load

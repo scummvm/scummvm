@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "twine/resources/resources.h"
 
 namespace TwinE {
 
@@ -89,6 +90,14 @@ private:
 	Common::Rect _nextRedrawList[300];
 
 	int16 _overlayRotation = 0;
+
+	/** Save last actor that bubble dialog icon */
+	int32 _bubbleActor = -1;
+	int32 _bubbleSpriteIndex = SPRITEHQR_DIAG_BUBBLE_LEFT;
+
+	/** Draw list array to grab the necessary */
+	DrawListStruct _drawList[150];
+
 	/**
 	 * Add a certain region to the current redraw list array
 	 * @param redrawArea redraw the region
@@ -123,10 +132,6 @@ public:
 	int32 currNumOfRedrawBox = 0; // fullRedrawVar8
 	/** Number of redraw regions in the screen */
 	int32 numOfRedrawBox = 0;
-
-	/** Save last actor that bubble dialog icon */
-	int32 bubbleActor = -1;
-	int32 bubbleSpriteIndex = 0;
 
 	OverlayListStruct overlayList[OVERLAY_MAX_ENTRIES];
 
@@ -174,9 +179,6 @@ public:
 	 * Zooms the area around the scenery view focus positions
 	 */
 	void zoomScreenScale();
-
-	/** Draw list array to grab the necessary */
-	DrawListStruct drawList[150];
 };
 
 } // namespace TwinE

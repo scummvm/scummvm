@@ -221,17 +221,17 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 			}
 
 			if (actor->staticFlags.bIsSpriteActor) {
-				drawList[drawListPos].type = DrawListType::DrawActorSprites;
-				drawList[drawListPos].actorIdx = a;
+				_drawList[drawListPos].type = DrawListType::DrawActorSprites;
+				_drawList[drawListPos].actorIdx = a;
 				if (actor->staticFlags.bUsesClipping) {
 					tmpVal = actor->lastPos.x - _engine->_grid->camera.x + actor->lastPos.z - _engine->_grid->camera.z;
 				}
 			} else {
-				drawList[drawListPos].type = 0;
-				drawList[drawListPos].actorIdx = a;
+				_drawList[drawListPos].type = 0;
+				_drawList[drawListPos].actorIdx = a;
 			}
 
-			drawList[drawListPos].posValue = tmpVal;
+			_drawList[drawListPos].posValue = tmpVal;
 
 			drawListPos++;
 
@@ -245,13 +245,13 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 					_engine->_movements->getShadowPosition(actor->pos);
 				}
 
-				drawList[drawListPos].posValue = tmpVal - 1; // save the shadow entry in the drawList
-				drawList[drawListPos].type = DrawListType::DrawShadows;
-				drawList[drawListPos].actorIdx = 0;
-				drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
-				drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
-				drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
-				drawList[drawListPos].offset = 2;
+				_drawList[drawListPos].posValue = tmpVal - 1; // save the shadow entry in the _drawList
+				_drawList[drawListPos].type = DrawListType::DrawShadows;
+				_drawList[drawListPos].actorIdx = 0;
+				_drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
+				_drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
+				_drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
+				_drawList[drawListPos].offset = 2;
 				drawListPos++;
 			}
 			if (inSceneryView && a == _engine->_scene->currentlyFollowedActor) {
@@ -282,21 +282,21 @@ int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
 
 			if (_engine->_renderer->projPos.x > -50 && _engine->_renderer->projPos.x < _engine->width() + 40 && _engine->_renderer->projPos.y > -30 && _engine->_renderer->projPos.y < _engine->height() + 100) {
 				const int16 tmpVal = extra->pos.x - _engine->_grid->camera.x + extra->pos.z - _engine->_grid->camera.z;
-				drawList[drawListPos].posValue = tmpVal;
-				drawList[drawListPos].actorIdx = i;
-				drawList[drawListPos].type = DrawListType::DrawExtras;
+				_drawList[drawListPos].posValue = tmpVal;
+				_drawList[drawListPos].actorIdx = i;
+				_drawList[drawListPos].type = DrawListType::DrawExtras;
 				drawListPos++;
 
 				if (_engine->cfgfile.ShadowMode == 2 && !(extra->info0 & EXTRA_SPECIAL_MASK)) {
 					_engine->_movements->getShadowPosition(extra->pos);
 
-					drawList[drawListPos].posValue = tmpVal - 1;
-					drawList[drawListPos].actorIdx = 0;
-					drawList[drawListPos].type = DrawListType::DrawShadows;
-					drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
-					drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
-					drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
-					drawList[drawListPos].offset = 0;
+					_drawList[drawListPos].posValue = tmpVal - 1;
+					_drawList[drawListPos].actorIdx = 0;
+					_drawList[drawListPos].type = DrawListType::DrawShadows;
+					_drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
+					_drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
+					_drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
+					_drawList[drawListPos].offset = 0;
 					drawListPos++;
 				}
 			}
@@ -476,7 +476,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 
 void Redraw::processDrawList(int32 drawListPos, bool bgRedraw) {
 	for (int32 pos = 0; pos < drawListPos; ++pos) {
-		const DrawListStruct &drawCmd = drawList[pos];
+		const DrawListStruct &drawCmd = _drawList[pos];
 		const uint32 flags = drawCmd.type;
 		// Drawing actors
 		if (flags < DrawListType::DrawShadows) {
@@ -668,7 +668,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 
 	int32 drawListPos = fillActorDrawingList(bgRedraw);
 	drawListPos = fillExtraDrawingList(drawListPos);
-	sortDrawingList(drawList, drawListPos);
+	sortDrawingList(_drawList, drawListPos);
 
 	currNumOfRedrawBox = 0;
 	processDrawList(drawListPos, bgRedraw);
@@ -715,18 +715,18 @@ void Redraw::drawBubble(int32 actorIdx) {
 	// get actor position on screen
 	_engine->_renderer->projectPositionOnScreen(actor->pos.x - _engine->_grid->camera.x, actor->pos.y + actor->boudingBox.maxs.y - _engine->_grid->camera.y, actor->pos.z - _engine->_grid->camera.z);
 
-	if (actorIdx != bubbleActor) {
-		bubbleSpriteIndex = bubbleSpriteIndex ^ 1;
-		bubbleActor = actorIdx;
+	if (actorIdx != _bubbleActor) {
+		_bubbleSpriteIndex = _bubbleSpriteIndex ^ 1;
+		_bubbleActor = actorIdx;
 	}
 
-	const SpriteData &spritePtr = _engine->_resources->spriteData[bubbleSpriteIndex];
+	const SpriteData &spritePtr = _engine->_resources->spriteData[_bubbleSpriteIndex];
 	const int32 spriteWidth = spritePtr.surface().w;
 	const int32 spriteHeight = spritePtr.surface().h;
 
 	// calculate sprite position on screen
 	Common::Rect renderRect;
-	if (bubbleSpriteIndex == SPRITEHQR_DIAG_BUBBLE_RIGHT) {
+	if (_bubbleSpriteIndex == SPRITEHQR_DIAG_BUBBLE_RIGHT) {
 		renderRect.left = _engine->_renderer->projPos.x + 10;
 	} else {
 		renderRect.left = _engine->_renderer->projPos.x - 10 - spriteWidth;

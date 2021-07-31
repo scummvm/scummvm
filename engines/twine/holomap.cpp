@@ -409,6 +409,7 @@ int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
 
 void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 	int n = 0;
+	DrawListStruct drawListArray[NUM_LOCATIONS];
 	for (int locationIdx = 0; locationIdx < NUM_LOCATIONS; ++locationIdx) {
 		if ((_engine->_gameState->holomapFlags[locationIdx] & HOLOMAP_CAN_FOCUS) || locationIdx == _engine->_scene->currentSceneIdx) {
 			const Location &loc = _locations[locationIdx];
@@ -442,7 +443,7 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			if (locationIdx == _engine->_scene->currentSceneIdx) {
 				flags |= 2u; // model type
 			}
-			DrawListStruct &drawList = _engine->_redraw->drawList[n];
+			DrawListStruct &drawList = drawListArray[n];
 			drawList.posValue = zpos1_copy2;
 			drawList.actorIdx = locationIdx;
 			drawList.type = flags;
@@ -452,9 +453,9 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			++n;
 		}
 	}
-	_engine->_redraw->sortDrawingList(_engine->_redraw->drawList, n);
+	_engine->_redraw->sortDrawingList(drawListArray, n);
 	for (int i = 0; i < n; ++i) {
-		const DrawListStruct &drawList = _engine->_redraw->drawList[i];
+		const DrawListStruct &drawList = drawListArray[i];
 		const uint16 flags = drawList.type;
 		const BodyData *bodyData = nullptr;
 		if (flags == 1u) {
