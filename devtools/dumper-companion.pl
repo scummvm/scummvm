@@ -189,7 +189,7 @@ sub processIso($) {
 	print "\r" unless $verbose;
 	print "Extracted $numdirs dirs and $numfiles files, made $numrens renames\n";
 
-	print "Unounting ISO...";
+	print "Unmounting ISO...";
 	flush STDOUT;
 	print "\n" if $verbose;
 
