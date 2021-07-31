@@ -44,20 +44,20 @@ Resources::~Resources() {
 	free(spriteShadowPtr);
 	free(holomapSurfacePtr);
 	free(holomapImagePtr);
-	free(_engine->_screens->mainPalette);
+	free(_engine->_screens->_mainPalette);
 }
 
 void Resources::initPalettes() {
-	const int32 size = HQR::getAllocEntry(&_engine->_screens->mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
+	const int32 size = HQR::getAllocEntry(&_engine->_screens->_mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
 	if (size == 0) {
 		error("Failed to load main palette");
 	}
-	_engine->_screens->convertPalToRGBA(_engine->_screens->mainPalette, _engine->_screens->mainPaletteRGBA);
+	_engine->_screens->convertPalToRGBA(_engine->_screens->_mainPalette, _engine->_screens->_mainPaletteRGBA);
 
-	memcpy(_engine->_screens->palette, _engine->_screens->mainPalette, NUMOFCOLORS * 3);
+	memcpy(_engine->_screens->_palette, _engine->_screens->_mainPalette, NUMOFCOLORS * 3);
 
-	_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBA);
-	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_paletteRGBA);
+	_engine->setPalette(_engine->_screens->_paletteRGBA);
 }
 
 void Resources::preloadSprites() {

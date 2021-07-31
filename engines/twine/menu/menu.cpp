@@ -159,20 +159,20 @@ const char *MenuSettings::getButtonText(Text *text, int buttonIndex) {
 Menu::Menu(TwinEEngine *engine) {
 	_engine = engine;
 
-	optionsMenuState = _priv::createOptionsMenu();
-	giveUpMenuWithSaveState = _priv::createGiveUpSaveMenu();
-	volumeMenuState = _priv::createVolumeMenu();
-	saveManageMenuState = _priv::createSaveManageMenu();
-	giveUpMenuState = _priv::createGiveUpMenu();
-	mainMenuState = _priv::createMainMenu();
-	advOptionsMenuState = _priv::createAdvancedOptionsMenu();
+	_optionsMenuState = _priv::createOptionsMenu();
+	_giveUpMenuWithSaveState = _priv::createGiveUpSaveMenu();
+	_volumeMenuState = _priv::createVolumeMenu();
+	_saveManageMenuState = _priv::createSaveManageMenu();
+	_giveUpMenuState = _priv::createGiveUpMenu();
+	_mainMenuState = _priv::createMainMenu();
+	_advOptionsMenuState = _priv::createAdvancedOptionsMenu();
 
-	Common::fill(&behaviourAnimState[0], &behaviourAnimState[4], 0);
-	Common::fill(&itemAngle[0], &itemAngle[NUM_INVENTORY_ITEMS], 0);
+	Common::fill(&_behaviourAnimState[0], &_behaviourAnimState[4], 0);
+	Common::fill(&_itemAngle[0], &_itemAngle[NUM_INVENTORY_ITEMS], 0);
 }
 
 Menu::~Menu() {
-	free(plasmaEffectPtr);
+	free(_plasmaEffectPtr);
 }
 
 void Menu::plasmaEffectRenderFrame() {
@@ -181,16 +181,16 @@ void Menu::plasmaEffectRenderFrame() {
 			/* Here we calculate the average of all 8 neighbour pixel values */
 
 			int16 c;
-			c = plasmaEffectPtr[(i - 1) + (j - 1) * PLASMA_WIDTH];  //top-left
-			c += plasmaEffectPtr[(i + 0) + (j - 1) * PLASMA_WIDTH]; //top
-			c += plasmaEffectPtr[(i + 1) + (j - 1) * PLASMA_WIDTH]; //top-right
+			c = _plasmaEffectPtr[(i - 1) + (j - 1) * PLASMA_WIDTH];  //top-left
+			c += _plasmaEffectPtr[(i + 0) + (j - 1) * PLASMA_WIDTH]; //top
+			c += _plasmaEffectPtr[(i + 1) + (j - 1) * PLASMA_WIDTH]; //top-right
 
-			c += plasmaEffectPtr[(i - 1) + (j + 0) * PLASMA_WIDTH]; //left
-			c += plasmaEffectPtr[(i + 1) + (j + 0) * PLASMA_WIDTH]; //right
+			c += _plasmaEffectPtr[(i - 1) + (j + 0) * PLASMA_WIDTH]; //left
+			c += _plasmaEffectPtr[(i + 1) + (j + 0) * PLASMA_WIDTH]; //right
 
-			c += plasmaEffectPtr[(i - 1) + (j + 1) * PLASMA_WIDTH]; // bottom-left
-			c += plasmaEffectPtr[(i + 0) + (j + 1) * PLASMA_WIDTH]; // bottom
-			c += plasmaEffectPtr[(i + 1) + (j + 1) * PLASMA_WIDTH]; // bottom-right
+			c += _plasmaEffectPtr[(i - 1) + (j + 1) * PLASMA_WIDTH]; // bottom-left
+			c += _plasmaEffectPtr[(i + 0) + (j + 1) * PLASMA_WIDTH]; // bottom
+			c += _plasmaEffectPtr[(i + 1) + (j + 1) * PLASMA_WIDTH]; // bottom-right
 
 			/* And the 2 least significant bits are used as a
 			 * randomizing parameter for statistically fading the flames */
@@ -202,13 +202,13 @@ void Menu::plasmaEffectRenderFrame() {
 			}
 
 			/* plot the pixel using the calculated color */
-			plasmaEffectPtr[i + (PLASMA_HEIGHT + j) * PLASMA_WIDTH] = (uint8)c;
+			_plasmaEffectPtr[i + (PLASMA_HEIGHT + j) * PLASMA_WIDTH] = (uint8)c;
 		}
 	}
 
 	// flip the double-buffer while scrolling the effect vertically:
-	const uint8 *src = plasmaEffectPtr + (PLASMA_HEIGHT + 1) * PLASMA_WIDTH;
-	memcpy(plasmaEffectPtr, src, PLASMA_HEIGHT * PLASMA_WIDTH);
+	const uint8 *src = _plasmaEffectPtr + (PLASMA_HEIGHT + 1) * PLASMA_WIDTH;
+	memcpy(_plasmaEffectPtr, src, PLASMA_HEIGHT * PLASMA_WIDTH);
 }
 
 void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
@@ -216,7 +216,7 @@ void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 
 	plasmaEffectRenderFrame();
 
-	const uint8 *in = plasmaEffectPtr + 5 * PLASMA_WIDTH;
+	const uint8 *in = _plasmaEffectPtr + 5 * PLASMA_WIDTH;
 	uint8 *out = (uint8 *)_engine->imageBuffer.getBasePtr(0, 0);
 
 	for (int32 y = 0; y < PLASMA_HEIGHT / 2; y++) {
@@ -251,7 +251,7 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom, int32 color
 
 void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &rect, int32 buttonId, const char *dialText, bool hover) {
 	if (hover) {
-		if (menuSettings == &volumeMenuState && buttonId <= MenuButtonTypes::kSpeechVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
+		if (menuSettings == &_volumeMenuState && buttonId <= MenuButtonTypes::kSpeechVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
 			int32 newWidth = 0;
 			switch (buttonId) {
 			case MenuButtonTypes::kMusicVolume: {
@@ -278,13 +278,13 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 
 			processPlasmaEffect(rect, COLOR_80);
 			if (!(_engine->getRandomNumber() % 5)) {
-				plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
+				_plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
 			}
 			_engine->_interface->drawFilledRect(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), COLOR_68);
 		} else {
 			processPlasmaEffect(rect, COLOR_64);
 			if (!(_engine->getRandomNumber() % 5)) {
-				plasmaEffectPtr[_engine->getRandomNumber() % PLASMA_WIDTH * 10 + 6400] = 255;
+				_plasmaEffectPtr[_engine->getRandomNumber() % PLASMA_WIDTH * 10 + 6400] = 255;
 			}
 		}
 	} else {
@@ -320,7 +320,7 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 	int16 mouseActiveButton = -1;
 
 	for (int16 i = 0; i < maxButton; ++i) {
-		if (menuSettings == &advOptionsMenuState) {
+		if (menuSettings == &_advOptionsMenuState) {
 			int16 id = menuSettings->getButtonState(i);
 			switch (id) {
 			case MenuButtonTypes::kAggressiveMode:
@@ -447,7 +447,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 		}
 
 		const int16 id = menuSettings->getActiveButtonState();
-		if (menuSettings == &advOptionsMenuState) {
+		if (menuSettings == &_advOptionsMenuState) {
 			switch (id) {
 			case MenuButtonTypes::kAggressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
@@ -500,7 +500,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 			default:
 				break;
 			}
-		} else if (menuSettings == &volumeMenuState) {
+		} else if (menuSettings == &_volumeMenuState) {
 			Audio::Mixer *mixer = _engine->_system->getMixer();
 			switch (id) {
 			case MenuButtonTypes::kMusicVolume: {
@@ -615,7 +615,7 @@ int32 Menu::advoptionsMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&advOptionsMenuState)) {
+		switch (processMenu(&_advOptionsMenuState)) {
 		case (int32)TextId::kReturnMenu: {
 			return 0;
 		}
@@ -639,7 +639,7 @@ int32 Menu::savemanageMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&saveManageMenuState)) {
+		switch (processMenu(&_saveManageMenuState)) {
 		case (int32)TextId::kReturnMenu:
 			return 0;
 		case (int32)TextId::kCreateSaveGame:
@@ -664,7 +664,7 @@ int32 Menu::volumeMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&volumeMenuState)) {
+		switch (processMenu(&_volumeMenuState)) {
 		case (int32)TextId::kReturnMenu:
 			return 0;
 		case kQuitEngine:
@@ -684,11 +684,11 @@ int32 Menu::volumeMenu() {
 
 void Menu::inGameOptionsMenu() {
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
-	optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
+	_optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
 	_engine->saveFrontBuffer();
 	optionsMenu();
 	_engine->_text->initSceneTextBank();
-	optionsMenuState.setButtonTextId(0, TextId::kReturnMenu);
+	_optionsMenuState.setButtonTextId(0, TextId::kReturnMenu);
 }
 
 int32 Menu::optionsMenu() {
@@ -699,7 +699,7 @@ int32 Menu::optionsMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&optionsMenuState)) {
+		switch (processMenu(&_optionsMenuState)) {
 		case (int32)TextId::kReturnGame:
 		case (int32)TextId::kReturnMenu: {
 			return 0;
@@ -747,12 +747,12 @@ static const byte cursorPalette[] = {
 
 bool Menu::init() {
 	// load menu effect file only once
-	plasmaEffectPtr = (uint8 *)malloc(kPlasmaEffectFilesize);
-	memset(plasmaEffectPtr, 0, kPlasmaEffectFilesize);
+	_plasmaEffectPtr = (uint8 *)malloc(kPlasmaEffectFilesize);
+	memset(_plasmaEffectPtr, 0, kPlasmaEffectFilesize);
 
 	CursorMan.pushCursor(cursorArrow, 11, 16, 1, 1, 3);
 	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
-	return HQR::getEntry(plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT) > 0;
+	return HQR::getEntry(_plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT) > 0;
 }
 
 EngineState Menu::run() {
@@ -763,7 +763,7 @@ EngineState Menu::run() {
 	_engine->_sound->stopSamples();
 
 	ScopedCursor scoped(_engine);
-	switch (processMenu(&mainMenuState)) {
+	switch (processMenu(&_mainMenuState)) {
 	case (int32)TextId::kNewGame: {
 		if (_engine->_menuOptions->newGameMenu()) {
 			return EngineState::GameLoop;
@@ -798,9 +798,9 @@ int32 Menu::giveupMenu() {
 
 	MenuSettings *localMenu;
 	if (_engine->cfgfile.UseAutoSaving) {
-		localMenu = &giveUpMenuState;
+		localMenu = &_giveUpMenuState;
 	} else {
-		localMenu = &giveUpMenuWithSaveState;
+		localMenu = &_giveUpMenuWithSaveState;
 	}
 
 	ScopedCursor scoped(_engine);
@@ -938,14 +938,14 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 	const int animIdx = _engine->_actor->heroAnimIdx[(byte)behaviour];
 	const AnimData &currentAnimData = _engine->_resources->animData[animIdx];
 
-	uint currentAnimState = behaviourAnimState[(byte)behaviour];
+	uint currentAnimState = _behaviourAnimState[(byte)behaviour];
 
-	if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, *behaviourEntity, &behaviourAnimData[(byte)behaviour])) {
+	if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, *_behaviourEntity, &_behaviourAnimData[(byte)behaviour])) {
 		currentAnimState++; // keyframe
 		if (currentAnimState >= currentAnimData.getNumKeyframes()) {
 			currentAnimState = currentAnimData.getLoopFrame();
 		}
-		behaviourAnimState[(byte)behaviour] = currentAnimState;
+		_behaviourAnimState[(byte)behaviour] = currentAnimState;
 	}
 
 	if (!cantDrawBox) {
@@ -985,7 +985,7 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 		_engine->_interface->drawFilledRect(boxRect, COLOR_BLACK);
 	}
 
-	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, *behaviourEntity);
+	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, *_behaviourEntity);
 
 	if (dirtyRect.isEmpty()) {
 		dirtyRect = boxRect;
@@ -998,7 +998,7 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 
 void Menu::prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect) {
 	const int animIdx = _engine->_actor->heroAnimIdx[(byte)behaviour];
-	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)behaviour], _engine->_resources->animData[animIdx], *behaviourEntity, &behaviourAnimData[(byte)behaviour]);
+	_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)behaviour], _engine->_resources->animData[animIdx], *_behaviourEntity, &_behaviourAnimData[(byte)behaviour]);
 	drawBehaviour(left, top, behaviour, angle, false, dirtyRect);
 }
 
@@ -1033,14 +1033,14 @@ void Menu::processBehaviourMenu() {
 		_engine->_actor->setBehaviour(HeroBehaviourType::kNormal);
 	}
 
-	behaviourEntity = &_engine->_resources->bodyData[_engine->_scene->sceneHero->entity];
+	_behaviourEntity = &_engine->_resources->bodyData[_engine->_scene->sceneHero->entity];
 
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kNormal] = _engine->_actor->heroAnimIdxNORMAL;
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kAthletic] = _engine->_actor->heroAnimIdxATHLETIC;
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kAggressive] = _engine->_actor->heroAnimIdxAGGRESSIVE;
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kDiscrete] = _engine->_actor->heroAnimIdxDISCRETE;
 
-	_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, ANGLE_17, &moveMenu);
+	_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, ANGLE_17, &_moveMenu);
 
 	_engine->saveFrontBuffer();
 
@@ -1056,7 +1056,7 @@ void Menu::processBehaviourMenu() {
 	HeroBehaviourType tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 
 	const int animIdx = _engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour];
-	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animData[animIdx], *behaviourEntity, &behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
+	_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animData[animIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
 
 	int32 tmpTime = _engine->lbaTime;
 
@@ -1099,9 +1099,9 @@ void Menu::processBehaviourMenu() {
 		if (tmpHeroBehaviour != _engine->_actor->heroBehaviour) {
 			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->sceneHero->angle, true, dirtyRect);
 			tmpHeroBehaviour = _engine->_actor->heroBehaviour;
-			_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, ANGLE_17, &moveMenu);
+			_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, ANGLE_17, &_moveMenu);
 			const int tmpAnimIdx = _engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour];
-			_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animData[tmpAnimIdx], *behaviourEntity, &behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
+			_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animData[tmpAnimIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
 		}
 
 		drawBehaviour(left, top, _engine->_actor->heroBehaviour, -1, true, dirtyRect);
@@ -1130,14 +1130,14 @@ void Menu::drawItem(int32 left, int32 top, int32 item, Common::Rect &dirtyRect) 
 	const int32 itemX = (item / 4) * (itemWidth + itemPadding) + left + itemWidthHalf + itemPadding - 1;
 	const int32 itemY = (item % 4) * (itemHeight + itemPadding) + top + itemHeightHalf + itemPadding - 1;
 	const Common::Rect rect(itemX - itemWidthHalf, itemY - itemHeightHalf, itemX + itemWidthHalf, itemY + itemHeightHalf);
-	const int32 color = inventorySelectedItem == item ? inventorySelectedColor : COLOR_BLACK;
+	const int32 color = _inventorySelectedItem == item ? _inventorySelectedColor : COLOR_BLACK;
 
 	_engine->_interface->drawFilledRect(rect, color);
 
 	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && (!_engine->_gameState->inventoryDisabled() || item == InventoryItems::kiCloverLeaf)) {
-		itemAngle[item] += ANGLE_2;
+		_itemAngle[item] += ANGLE_2;
 		_engine->_interface->setClip(rect);
-		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->inventoryTable[item], itemAngle[item], 15000);
+		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->inventoryTable[item], _itemAngle[item], 15000);
 		_engine->_interface->resetClip();
 		if (item == InventoryItems::kGasItem) {
 			_engine->_text->setFontColor(COLOR_WHITE);
@@ -1178,7 +1178,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_renderer->setLightVector(ANGLE_315, ANGLE_334, ANGLE_0);
 
-	inventorySelectedColor = COLOR_68;
+	_inventorySelectedColor = COLOR_68;
 
 	if (_engine->_gameState->inventoryNumLeafs > 0) {
 		_engine->_gameState->giveItem(InventoryItems::kiCloverLeaf);
@@ -1203,7 +1203,7 @@ void Menu::processInventoryMenu() {
 	for (;;) {
 		FrameMarker frame(_engine, 66);
 		_engine->readKeys();
-		int32 prevSelectedItem = inventorySelectedItem;
+		int32 prevSelectedItem = _inventorySelectedItem;
 
 		if (_engine->_input->toggleAbortAction() || _engine->shouldQuit()) {
 			break;
@@ -1216,30 +1216,30 @@ void Menu::processInventoryMenu() {
 
 		Common::Rect dirtyRect;
 		if (cursorDown) {
-			inventorySelectedItem++;
-			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
-				inventorySelectedItem = 0;
+			_inventorySelectedItem++;
+			if (_inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
+				_inventorySelectedItem = 0;
 			}
 			drawItem(left, top, prevSelectedItem, dirtyRect);
 			updateItemText = true;
 		} else if (cursorUp) {
-			inventorySelectedItem--;
-			if (inventorySelectedItem < 0) {
-				inventorySelectedItem = NUM_INVENTORY_ITEMS - 1;
+			_inventorySelectedItem--;
+			if (_inventorySelectedItem < 0) {
+				_inventorySelectedItem = NUM_INVENTORY_ITEMS - 1;
 			}
 			drawItem(left, top, prevSelectedItem, dirtyRect);
 			updateItemText = true;
 		} else if (cursorLeft) {
-			inventorySelectedItem -= 4;
-			if (inventorySelectedItem < 0) {
-				inventorySelectedItem += NUM_INVENTORY_ITEMS;
+			_inventorySelectedItem -= 4;
+			if (_inventorySelectedItem < 0) {
+				_inventorySelectedItem += NUM_INVENTORY_ITEMS;
 			}
 			drawItem(left, top, prevSelectedItem, dirtyRect);
 			updateItemText = true;
 		} else if (cursorRight) {
-			inventorySelectedItem += 4;
-			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
-				inventorySelectedItem -= NUM_INVENTORY_ITEMS;
+			_inventorySelectedItem += 4;
+			if (_inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
+				_inventorySelectedItem -= NUM_INVENTORY_ITEMS;
 			}
 			drawItem(left, top, prevSelectedItem, dirtyRect);
 			updateItemText = true;
@@ -1247,8 +1247,8 @@ void Menu::processInventoryMenu() {
 
 		if (updateItemText) {
 			_engine->_text->initInventoryDialogueBox();
-			if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
-				_engine->_text->initInventoryText((InventoryItems)inventorySelectedItem);
+			if (_inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)_inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
+				_engine->_text->initInventoryText((InventoryItems)_inventorySelectedItem);
 			} else {
 				_engine->_text->initInventoryText(InventoryItems::MaxInventoryItems);
 			}
@@ -1273,12 +1273,12 @@ void Menu::processInventoryMenu() {
 			}
 		}
 
-		drawItem(left, top, inventorySelectedItem, dirtyRect);
+		drawItem(left, top, _inventorySelectedItem, dirtyRect);
 
-		if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
-			_engine->loopInventoryItem = inventorySelectedItem;
-			inventorySelectedColor = COLOR_91;
-			drawItem(left, top, inventorySelectedItem, dirtyRect);
+		if (_inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->hasItem((InventoryItems)_inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
+			_engine->loopInventoryItem = _inventorySelectedItem;
+			_inventorySelectedColor = COLOR_91;
+			drawItem(left, top, _inventorySelectedItem, dirtyRect);
 			if (!dirtyRect.isEmpty()) {
 				_engine->copyBlockPhys(dirtyRect);
 			}

@@ -473,7 +473,7 @@ bool Grid::initCellingGrid(int32 index) {
 
 	createCellingGridMap(gridPtr, gridSize);
 	free(gridPtr);
-	_engine->_redraw->reqBgRedraw = true;
+	_engine->_redraw->_reqBgRedraw = true;
 	return true;
 }
 
@@ -858,7 +858,7 @@ void Grid::centerOnActor(const ActorStruct* actor) {
 	newCamera.x = (actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
 	newCamera.y = (actor->pos.y + BRICK_HEIGHT) / BRICK_HEIGHT;
 	newCamera.z = (actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
-	_engine->_redraw->reqBgRedraw = true;
+	_engine->_redraw->_reqBgRedraw = true;
 }
 
 void Grid::centerScreenOnActor() {
@@ -887,7 +887,7 @@ void Grid::centerScreenOnActor() {
 			newCamera.z = GRID_SIZE_Z - 1;
 		}
 
-		_engine->_redraw->reqBgRedraw = true;
+		_engine->_redraw->_reqBgRedraw = true;
 	}
 }
 

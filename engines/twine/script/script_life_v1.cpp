@@ -1093,17 +1093,17 @@ static int32 lINVISIBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int zoomScreen = ctx.stream.readByte();
 
-	if (zoomScreen && !engine->_redraw->inSceneryView && engine->cfgfile.SceZoom) {
-		engine->_screens->fadeToBlack(engine->_screens->mainPaletteRGBA);
+	if (zoomScreen && !engine->_redraw->_inSceneryView && engine->cfgfile.SceZoom) {
+		engine->_screens->fadeToBlack(engine->_screens->_mainPaletteRGBA);
 		engine->initSceneryView();
 		engine->_screens->setBackPal();
-		engine->_screens->lockPalette = true;
-	} else if (!zoomScreen && engine->_redraw->inSceneryView) {
-		engine->_screens->fadeToBlack(engine->_screens->mainPaletteRGBA);
+		engine->_screens->_lockPalette = true;
+	} else if (!zoomScreen && engine->_redraw->_inSceneryView) {
+		engine->_screens->fadeToBlack(engine->_screens->_mainPaletteRGBA);
 		engine->exitSceneryView();
 		engine->_screens->setBackPal();
-		engine->_screens->lockPalette = true;
-		engine->_redraw->reqBgRedraw = true;
+		engine->_screens->_lockPalette = true;
+		engine->_redraw->_reqBgRedraw = true;
 	}
 
 	return 0;
@@ -1207,7 +1207,7 @@ static int32 lPLAY_FLA(TwinEEngine *engine, LifeScriptContext &ctx) {
 	} while (true);
 
 	engine->_flaMovies->playFlaMovie(movie);
-	engine->setPalette(engine->_screens->paletteRGBA);
+	engine->setPalette(engine->_screens->_paletteRGBA);
 	engine->_screens->clearScreen();
 
 	return 0;
@@ -1431,8 +1431,8 @@ static int32 lGRM_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lFADE_PAL_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
-	engine->_screens->fadePalRed(engine->_screens->mainPaletteRGBA);
-	engine->_screens->useAlternatePalette = false;
+	engine->_screens->fadePalRed(engine->_screens->_mainPaletteRGBA);
+	engine->_screens->_useAlternatePalette = false;
 	return 0;
 }
 
@@ -1442,10 +1442,10 @@ static int32 lFADE_PAL_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lFADE_ALARM_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
-	HQR::getEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
-	engine->_screens->fadePalRed(engine->_screens->paletteRGBA);
-	engine->_screens->useAlternatePalette = true;
+	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
+	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
+	engine->_screens->fadePalRed(engine->_screens->_paletteRGBA);
+	engine->_screens->_useAlternatePalette = true;
 	return 0;
 }
 
@@ -1455,10 +1455,10 @@ static int32 lFADE_ALARM_RED(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lFADE_ALARM_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
-	HQR::getEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
-	engine->_screens->adjustCrossPalette(engine->_screens->paletteRGBA, engine->_screens->mainPaletteRGBA);
-	engine->_screens->useAlternatePalette = false;
+	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
+	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
+	engine->_screens->adjustCrossPalette(engine->_screens->_paletteRGBA, engine->_screens->_mainPaletteRGBA);
+	engine->_screens->_useAlternatePalette = false;
 	return 0;
 }
 
@@ -1468,8 +1468,8 @@ static int32 lFADE_ALARM_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lFADE_RED_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
-	engine->_screens->fadeRedPal(engine->_screens->mainPaletteRGBA);
-	engine->_screens->useAlternatePalette = false;
+	engine->_screens->fadeRedPal(engine->_screens->_mainPaletteRGBA);
+	engine->_screens->_useAlternatePalette = false;
 	return 0;
 }
 
@@ -1479,10 +1479,10 @@ static int32 lFADE_RED_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lFADE_RED_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
-	HQR::getEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
-	engine->_screens->fadeRedPal(engine->_screens->paletteRGBA);
-	engine->_screens->useAlternatePalette = true;
+	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
+	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
+	engine->_screens->fadeRedPal(engine->_screens->_paletteRGBA);
+	engine->_screens->_useAlternatePalette = true;
 	return 0;
 }
 
@@ -1492,10 +1492,10 @@ static int32 lFADE_RED_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lFADE_PAL_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
-	HQR::getEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
-	engine->_screens->adjustCrossPalette(engine->_screens->mainPaletteRGBA, engine->_screens->paletteRGBA);
-	engine->_screens->useAlternatePalette = true;
+	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
+	engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
+	engine->_screens->adjustCrossPalette(engine->_screens->_mainPaletteRGBA, engine->_screens->_paletteRGBA);
+	engine->_screens->_useAlternatePalette = true;
 	return 0;
 }
 
@@ -1558,12 +1558,12 @@ static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
 	// TODO: allocation in the game frame... cache it in Resource class
-	HQR::getEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL);
-	if (!engine->_screens->lockPalette) {
-		engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
-		engine->setPalette(engine->_screens->paletteRGBA);
+	HQR::getEntry(engine->_screens->_palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL);
+	if (!engine->_screens->_lockPalette) {
+		engine->_screens->convertPalToRGBA(engine->_screens->_palette, engine->_screens->_paletteRGBA);
+		engine->setPalette(engine->_screens->_paletteRGBA);
 	}
-	engine->_screens->useAlternatePalette = true;
+	engine->_screens->_useAlternatePalette = true;
 	return 0;
 }
 
@@ -1572,9 +1572,9 @@ static int32 lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x5D
  */
 static int32 lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_screens->useAlternatePalette = false;
-	if (!engine->_screens->lockPalette) {
-		engine->setPalette(engine->_screens->mainPaletteRGBA);
+	engine->_screens->_useAlternatePalette = false;
+	if (!engine->_screens->_lockPalette) {
+		engine->setPalette(engine->_screens->_mainPaletteRGBA);
 	}
 	return 0;
 }
@@ -1585,7 +1585,7 @@ static int32 lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
-	engine->_screens->fadeToBlack(engine->_screens->paletteRGBA);
+	engine->_screens->fadeToBlack(engine->_screens->_paletteRGBA);
 	engine->_screens->loadImage(RESSHQR_TWINSEN_ZOE_SENDELLIMG, RESSHQR_TWINSEN_ZOE_SENDELLPAL);
 	engine->_text->textClipFull();
 	engine->_text->setFontCrossColor(COLOR_WHITE);
@@ -1596,9 +1596,9 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
 	engine->_text->drawTextBoxBackground = true;
 	engine->_text->textClipSmall();
-	engine->_screens->fadeToBlack(engine->_screens->paletteRGBACustom);
+	engine->_screens->fadeToBlack(engine->_screens->_paletteRGBACustom);
 	engine->_screens->clearScreen();
-	engine->setPalette(engine->_screens->paletteRGBA);
+	engine->setPalette(engine->_screens->_paletteRGBA);
 	return 0;
 }
 

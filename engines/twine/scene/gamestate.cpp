@@ -161,11 +161,11 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	int playerNameIdx = 0;
 	do {
 		const byte c = file->readByte();
-		_engine->_menuOptions->saveGameName[playerNameIdx++] = c;
+		_engine->_menuOptions->_saveGameName[playerNameIdx++] = c;
 		if (c == '\0') {
 			break;
 		}
-		if (playerNameIdx >= ARRAYSIZE(_engine->_menuOptions->saveGameName)) {
+		if (playerNameIdx >= ARRAYSIZE(_engine->_menuOptions->_saveGameName)) {
 			warning("Failed to load savegame. Invalid playername.");
 			return false;
 		}
@@ -228,8 +228,8 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 
 bool GameState::saveGame(Common::WriteStream *file) {
 	debug(2, "Save game");
-	if (_engine->_menuOptions->saveGameName[0] == '\0') {
-		Common::strlcpy(_engine->_menuOptions->saveGameName, "TwinEngineSave", sizeof(_engine->_menuOptions->saveGameName));
+	if (_engine->_menuOptions->_saveGameName[0] == '\0') {
+		Common::strlcpy(_engine->_menuOptions->_saveGameName, "TwinEngineSave", sizeof(_engine->_menuOptions->_saveGameName));
 	}
 
 	int32 sceneIdx = _engine->_scene->currentSceneIdx;
@@ -241,7 +241,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	}
 
 	file->writeByte(0x03);
-	file->writeString(_engine->_menuOptions->saveGameName);
+	file->writeString(_engine->_menuOptions->_saveGameName);
 	file->writeByte('\0');
 	file->writeByte(NUM_GAME_FLAGS);
 	for (uint8 i = 0; i < NUM_GAME_FLAGS; ++i) {
@@ -362,21 +362,21 @@ void GameState::processFoundItem(InventoryItems item) {
 
 	uint currentAnimState = 0;
 
-	_engine->_redraw->numOfRedrawBox = 0;
+	_engine->_redraw->_numOfRedrawBox = 0;
 
 	ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
 	for (;;) {
 		FrameMarker frame(_engine, 66);
 		_engine->_interface->resetClip();
-		_engine->_redraw->currNumOfRedrawBox = 0;
+		_engine->_redraw->_currNumOfRedrawBox = 0;
 		_engine->_redraw->blitBackgroundAreas();
 		_engine->_interface->drawTransparentBox(boxRect, 4);
 
 		_engine->_interface->setClip(boxRect);
 
-		_engine->_menu->itemAngle[item] += ANGLE_2;
+		_engine->_menu->_itemAngle[item] += ANGLE_2;
 
-		_engine->_renderer->renderInventoryItem(_engine->_renderer->projPos.x, _engine->_renderer->projPos.y, _engine->_resources->inventoryTable[item], _engine->_menu->itemAngle[item], 10000);
+		_engine->_renderer->renderInventoryItem(_engine->_renderer->projPos.x, _engine->_renderer->projPos.y, _engine->_resources->inventoryTable[item], _engine->_menu->_itemAngle[item], 10000);
 
 		_engine->_menu->drawBox(boxRect);
 		_engine->_redraw->addRedrawArea(boxRect);
@@ -482,7 +482,7 @@ void GameState::processGameoverAnimation() {
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 0;
 
 	// TODO: inSceneryView
-	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->_paletteRGBA);
 	_engine->saveFrontBuffer();
 	BodyData gameOverPtr;
 	if (!gameOverPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL)) {

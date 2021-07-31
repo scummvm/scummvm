@@ -108,16 +108,16 @@ void Holomap::loadHolomapGFX() {
 
 	int32 j = 576;
 	for (int32 i = 0; i < 96; i += 3, j += 3) {
-		_paletteHolomap[i + 0] = _engine->_screens->palette[j + 0];
-		_paletteHolomap[i + 1] = _engine->_screens->palette[j + 1];
-		_paletteHolomap[i + 2] = _engine->_screens->palette[j + 2];
+		_paletteHolomap[i + 0] = _engine->_screens->_palette[j + 0];
+		_paletteHolomap[i + 1] = _engine->_screens->_palette[j + 1];
+		_paletteHolomap[i + 2] = _engine->_screens->_palette[j + 2];
 	}
 
 	j = 576;
 	for (int32 i = 96; i < 189; i += 3, j += 3) {
-		_paletteHolomap[i + 0] = _engine->_screens->palette[j + 0];
-		_paletteHolomap[i + 1] = _engine->_screens->palette[j + 1];
-		_paletteHolomap[i + 2] = _engine->_screens->palette[j + 2];
+		_paletteHolomap[i + 0] = _engine->_screens->_palette[j + 0];
+		_paletteHolomap[i + 1] = _engine->_screens->_palette[j + 1];
+		_paletteHolomap[i + 2] = _engine->_screens->_palette[j + 2];
 	}
 
 	prepareHolomapProjectedPositions();
@@ -291,7 +291,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	_engine->exitSceneryView();
 	_engine->_interface->resetClip();
 	_engine->_screens->clearScreen();
-	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->_paletteRGBA);
 
 	loadHolomapGFX();
 	ScopedEngineFreeze timeFreeze(_engine);
@@ -383,7 +383,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	}
 
 	_engine->_screens->clearScreen();
-	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->_paletteRGBA);
 	_engine->_gameState->initEngineProjections();
 	_engine->_interface->loadClip();
 
@@ -482,12 +482,12 @@ void Holomap::processHolomap() {
 
 	_engine->exitSceneryView();
 
-	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
+	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBA);
 	_engine->_sound->stopSamples();
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 	_engine->_screens->clearScreen();
-	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->_paletteRGBA);
 
 	loadHolomapGFX();
 
@@ -610,7 +610,7 @@ void Holomap::processHolomap() {
 
 	_engine->_screens->clearScreen();
 	_engine->_text->drawTextBoxBackground = true;
-	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->_paletteRGBA);
 	_engine->_scene->alphaLight = alphaLightTmp;
 	_engine->_scene->betaLight = betaLightTmp;
 

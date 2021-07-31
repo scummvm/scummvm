@@ -363,14 +363,14 @@ static int32 mBACKGROUND(TwinEEngine *engine, MoveScriptContext &ctx) {
 		if (!ctx.actor->staticFlags.bIsBackgrounded) {
 			ctx.actor->staticFlags.bIsBackgrounded = 1;
 			if (ctx.actor->dynamicFlags.bIsVisible) {
-				engine->_redraw->reqBgRedraw = true;
+				engine->_redraw->_reqBgRedraw = true;
 			}
 		}
 	} else {
 		if (ctx.actor->staticFlags.bIsBackgrounded) {
 			ctx.actor->staticFlags.bIsBackgrounded = 0;
 			if (ctx.actor->dynamicFlags.bIsVisible) {
-				engine->_redraw->reqBgRedraw = true;
+				engine->_redraw->_reqBgRedraw = true;
 			}
 		}
 	}
@@ -583,7 +583,7 @@ static int32 mPLAY_FLA(TwinEEngine *engine, MoveScriptContext &ctx) {
 	} while (true);
 
 	engine->_flaMovies->playFlaMovie(movie);
-	engine->setPalette(engine->_screens->paletteRGBA);
+	engine->setPalette(engine->_screens->_paletteRGBA);
 	engine->_screens->clearScreen();
 	return 0;
 }

@@ -49,28 +49,28 @@ public:
 	Screens(TwinEEngine *engine) : _engine(engine) {}
 
 	/** In-game palette (should not be used, except in special case. otherwise use other images functions instead) */
-	uint8 palette[NUMOFCOLORS * 3]{0};
+	uint8 _palette[NUMOFCOLORS * 3]{0};
 
 	/** converted in-game palette */
-	uint32 paletteRGBA[NUMOFCOLORS]{0};
+	uint32 _paletteRGBA[NUMOFCOLORS]{0};
 
 	/** converted custom palette */
-	uint32 paletteRGBACustom[NUMOFCOLORS]{0};
+	uint32 _paletteRGBACustom[NUMOFCOLORS]{0};
 
 	/** flag to check in the game palette was changed */
-	bool palResetted = false;
+	bool _palResetted = false;
 
 	/** flag to check if the main flag is locked */
-	bool lockPalette = false;
+	bool _lockPalette = false;
 
 	/** flag to check if we are using a different palette than the main one */
-	bool useAlternatePalette = false;
+	bool _useAlternatePalette = false;
 
 	/** main game palette */
-	uint8 *mainPalette = nullptr;
+	uint8 *_mainPalette = nullptr;
 
 	/** converted in-game palette */
-	uint32 mainPaletteRGBA[NUMOFCOLORS]{0};
+	uint32 _mainPaletteRGBA[NUMOFCOLORS]{0};
 
 	/** Load and display Adeline Logo */
 	bool adelineLogo();

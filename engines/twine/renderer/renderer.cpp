@@ -1475,7 +1475,7 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 
 	Common::Rect dummy;
 	if (angle == -1) {
-		ActorMoveStruct &move = _engine->_menu->moveMenu;
+		ActorMoveStruct &move = _engine->_menu->_moveMenu;
 		const int16 newAngle = move.getRealAngle(_engine->lbaTime);
 		if (move.numOfStep == 0) {
 			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, ANGLE_17, &move);

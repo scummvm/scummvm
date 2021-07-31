@@ -57,7 +57,7 @@ public:
 	void showCredits();
 	bool canShowCredits = false;
 
-	char saveGameName[32] {'\0'};
+	char _saveGameName[32] {'\0'};
 
 	/** Main menu new game options */
 	bool newGameMenu();

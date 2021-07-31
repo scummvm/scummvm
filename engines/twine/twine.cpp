@@ -518,15 +518,15 @@ void TwinEEngine::initEngine() {
 }
 
 void TwinEEngine::initSceneryView() {
-	_redraw->inSceneryView = true;
+	_redraw->_inSceneryView = true;
 }
 
 void TwinEEngine::exitSceneryView() {
-	_redraw->inSceneryView = false;
+	_redraw->_inSceneryView = false;
 }
 
 void TwinEEngine::initAll() {
-	Common::fill(&_menu->itemAngle[0], &_menu->itemAngle[NUM_INVENTORY_ITEMS], 0);
+	Common::fill(&_menu->_itemAngle[0], &_menu->_itemAngle[NUM_INVENTORY_ITEMS], 0);
 
 	_scene->sceneHero = _scene->getActor(OWN_ACTOR_SCENE_INDEX);
 
@@ -571,7 +571,7 @@ void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 }
 
 void TwinEEngine::processBookOfBu() {
-	_screens->fadeToBlack(_screens->paletteRGBA);
+	_screens->fadeToBlack(_screens->_paletteRGBA);
 	_screens->loadImage(RESSHQR_INTROSCREEN1IMG, RESSHQR_INTROSCREEN1PAL);
 	_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_text->drawTextBoxBackground = false;
@@ -584,10 +584,10 @@ void TwinEEngine::processBookOfBu() {
 	_text->textClipSmall();
 	_text->drawTextBoxBackground = true;
 	_text->initSceneTextBank();
-	_screens->fadeToBlack(_screens->paletteRGBACustom);
+	_screens->fadeToBlack(_screens->_paletteRGBACustom);
 	_screens->clearScreen();
-	setPalette(_screens->paletteRGBA);
-	_screens->lockPalette = true;
+	setPalette(_screens->_paletteRGBA);
+	_screens->_lockPalette = true;
 }
 
 void TwinEEngine::processBonusList() {
@@ -610,7 +610,7 @@ void TwinEEngine::processInventoryAction() {
 	switch (loopInventoryItem) {
 	case kiHolomap:
 		_holomap->processHolomap();
-		_screens->lockPalette = true;
+		_screens->_lockPalette = true;
 		break;
 	case kiMagicBall:
 		if (_gameState->usingSabre) {
@@ -816,7 +816,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		if (_input->toggleActionIfActive(TwinEActionType::OpenHolomap) && _gameState->hasItem(InventoryItems::kiHolomap) && !_gameState->inventoryDisabled()) {
 			freezeTime();
 			_holomap->processHolomap();
-			_screens->lockPalette = true;
+			_screens->_lockPalette = true;
 			unfreezeTime();
 			_redraw->redrawEngineActions(true);
 		}
@@ -826,7 +826,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			freezeTime();
 			const char *PauseString = "Pause";
 			_text->setFontColor(COLOR_WHITE);
-			if (_redraw->inSceneryView) {
+			if (_redraw->_inSceneryView) {
 				_text->drawText(_redraw->_sceneryViewX + 5, _redraw->_sceneryViewY, PauseString);
 				_redraw->zoomScreenScale();
 			} else {
@@ -958,8 +958,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						_scene->heroPositionType = ScenePositionType::kReborn;
 
 						_scene->sceneHero->setLife(kActorMaxLife);
-						_redraw->reqBgRedraw = true;
-						_screens->lockPalette = true;
+						_redraw->_reqBgRedraw = true;
+						_screens->_lockPalette = true;
 						_gameState->addLeafs(-1);
 						_actor->cropBottomScreen = 0;
 					} else { // game over
@@ -999,24 +999,24 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	_grid->centerScreenOnActor();
 
-	_redraw->redrawEngineActions(_redraw->reqBgRedraw);
+	_redraw->redrawEngineActions(_redraw->_reqBgRedraw);
 
 	// workaround to fix hero redraw after drowning
-	if (_actor->cropBottomScreen && _redraw->reqBgRedraw) {
+	if (_actor->cropBottomScreen && _redraw->_reqBgRedraw) {
 		_scene->sceneHero->staticFlags.bIsHidden = 1;
 		_redraw->redrawEngineActions(true);
 		_scene->sceneHero->staticFlags.bIsHidden = 0;
 	}
 
 	_scene->needChangeScene = SCENE_CEILING_GRID_FADE_1;
-	_redraw->reqBgRedraw = false;
+	_redraw->_reqBgRedraw = false;
 
 	return 0;
 }
 
 bool TwinEEngine::gameEngineLoop() {
-	_redraw->reqBgRedraw = true;
-	_screens->lockPalette = true;
+	_redraw->_reqBgRedraw = true;
+	_screens->_lockPalette = true;
 	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &_loopMovePtr);
 
 	while (quitGame == -1) {

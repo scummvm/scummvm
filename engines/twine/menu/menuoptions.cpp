@@ -76,7 +76,7 @@ void MenuOptions::newGame() {
 	}
 	_engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
 
-	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBACustom);
+	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBACustom);
 	_engine->_screens->clearScreen();
 
 	if (!aborted) {
@@ -91,7 +91,7 @@ void MenuOptions::newGame() {
 	_engine->_text->renderTextTriangle = false;
 
 	// set main palette back
-	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->_paletteRGBA);
 }
 
 void MenuOptions::showCredits() {
@@ -118,7 +118,7 @@ void MenuOptions::showEndSequence() {
 	_engine->_flaMovies->playFlaMovie(FLA_THEEND);
 
 	_engine->_screens->clearScreen();
-	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->_paletteRGBA);
 }
 
 void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect) {
@@ -349,7 +349,7 @@ bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize)
 
 bool MenuOptions::newGameMenu() {
 	_engine->restoreFrontBuffer();
-	if (!enterText(TextId::kEnterYourName, saveGameName, sizeof(saveGameName))) {
+	if (!enterText(TextId::kEnterYourName, _saveGameName, sizeof(_saveGameName))) {
 		return false;
 	}
 	_engine->_gameState->initEngineVars();

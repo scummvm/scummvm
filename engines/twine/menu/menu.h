@@ -137,14 +137,14 @@ class Menu {
 private:
 	TwinEEngine *_engine;
 	/** Hero behaviour menu entity */
-	BodyData *behaviourEntity = nullptr;
+	BodyData *_behaviourEntity = nullptr;
 	/** Behaviour menu anim state */
-	uint behaviourAnimState[4]; // winTab
+	uint _behaviourAnimState[4]; // winTab
 	/** Behaviour menu anim data pointer */
-	AnimTimerDataStruct behaviourAnimData[4];
+	AnimTimerDataStruct _behaviourAnimData[4];
 
-	int32 inventorySelectedColor = COLOR_BLACK;
-	int32 inventorySelectedItem = 0; // currentSelectedObjectInInventory
+	int32 _inventorySelectedColor = COLOR_BLACK;
+	int32 _inventorySelectedItem = 0; // currentSelectedObjectInInventory
 
 	/**
 	 * Draws main menu button
@@ -175,13 +175,13 @@ private:
 	void drawBehaviourMenu(int32 left, int32 top, int32 angle);
 	void drawItem(int32 left, int32 top, int32 item, Common::Rect &dirtyRect);
 
-	MenuSettings giveUpMenuWithSaveState;
-	MenuSettings volumeMenuState;
-	MenuSettings saveManageMenuState;
-	MenuSettings giveUpMenuState;
-	MenuSettings mainMenuState;
-	MenuSettings advOptionsMenuState;
-	MenuSettings optionsMenuState;
+	MenuSettings _giveUpMenuWithSaveState;
+	MenuSettings _volumeMenuState;
+	MenuSettings _saveManageMenuState;
+	MenuSettings _giveUpMenuState;
+	MenuSettings _mainMenuState;
+	MenuSettings _advOptionsMenuState;
+	MenuSettings _optionsMenuState;
 
 	void drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteData, const Common::String &str, int32 color = COLOR_GOLD);
 
@@ -189,13 +189,13 @@ public:
 	Menu(TwinEEngine *engine);
 	~Menu();
 
-	int16 itemAngle[NUM_INVENTORY_ITEMS]; // objectRotation
+	int16 _itemAngle[NUM_INVENTORY_ITEMS]; // objectRotation
 
 	/** Behaviour menu move pointer */
-	ActorMoveStruct moveMenu;
+	ActorMoveStruct _moveMenu;
 
 	/** Plasma Effect pointer to file content: RESS.HQR:51 */
-	uint8 *plasmaEffectPtr = nullptr;
+	uint8 *_plasmaEffectPtr = nullptr;
 
 	/**
 	 * Process the plasma effect

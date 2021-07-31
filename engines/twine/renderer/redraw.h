@@ -120,15 +120,15 @@ private:
 public:
 	Redraw(TwinEEngine *engine) : _engine(engine) {}
 
-	bool inSceneryView = false;
+	bool _inSceneryView = false;
 
 	/** Request background redraw */
-	bool reqBgRedraw = false;
+	bool _reqBgRedraw = false;
 
 	/** Current number of redraw regions in the screen */
-	int32 currNumOfRedrawBox = 0; // fullRedrawVar8
+	int32 _currNumOfRedrawBox = 0; // fullRedrawVar8
 	/** Number of redraw regions in the screen */
-	int32 numOfRedrawBox = 0;
+	int32 _numOfRedrawBox = 0;
 
 	int _sceneryViewX = 0;
 	int _sceneryViewY = 0;

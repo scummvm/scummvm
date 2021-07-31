@@ -49,7 +49,7 @@ namespace TwinE {
 void Redraw::addRedrawCurrentArea(const Common::Rect &redrawArea) {
 	const int32 area = (redrawArea.right - redrawArea.left) * (redrawArea.bottom - redrawArea.top);
 
-	for (int32 i = 0; i < numOfRedrawBox; ++i) {
+	for (int32 i = 0; i < _numOfRedrawBox; ++i) {
 		Common::Rect &rect = _currentRedrawList[i];
 		const int32 leftValue = MIN<int32>(redrawArea.left, rect.left);
 		const int32 rightValue = MAX<int32>(redrawArea.right, rect.right);
@@ -70,7 +70,7 @@ void Redraw::addRedrawCurrentArea(const Common::Rect &redrawArea) {
 		}
 	}
 
-	Common::Rect &rect = _currentRedrawList[numOfRedrawBox];
+	Common::Rect &rect = _currentRedrawList[_numOfRedrawBox];
 	rect.left = redrawArea.left;
 	rect.top = redrawArea.top;
 	rect.right = redrawArea.right;
@@ -79,7 +79,7 @@ void Redraw::addRedrawCurrentArea(const Common::Rect &redrawArea) {
 	assert(rect.left <= rect.right);
 	assert(rect.top <= rect.bottom);
 
-	numOfRedrawBox++;
+	_numOfRedrawBox++;
 }
 
 void Redraw::addRedrawArea(const Common::Rect &rect) {
@@ -107,27 +107,27 @@ void Redraw::addRedrawArea(int32 left, int32 top, int32 right, int32 bottom) {
 		return;
 	}
 
-	Common::Rect &rect = _nextRedrawList[currNumOfRedrawBox];
+	Common::Rect &rect = _nextRedrawList[_currNumOfRedrawBox];
 	rect.left = left;
 	rect.top = top;
 	rect.right = right;
 	rect.bottom = bottom;
 
-	currNumOfRedrawBox++;
+	_currNumOfRedrawBox++;
 
 	addRedrawCurrentArea(rect);
 }
 
 void Redraw::moveNextAreas() {
-	numOfRedrawBox = 0;
+	_numOfRedrawBox = 0;
 
-	for (int32 i = 0; i < currNumOfRedrawBox; i++) {
+	for (int32 i = 0; i < _currNumOfRedrawBox; i++) {
 		addRedrawCurrentArea(_nextRedrawList[i]);
 	}
 }
 
 void Redraw::flipRedrawAreas() {
-	for (int32 i = 0; i < numOfRedrawBox; i++) { // redraw areas on screen
+	for (int32 i = 0; i < _numOfRedrawBox; i++) { // redraw areas on screen
 		_engine->copyBlockPhys(_currentRedrawList[i]);
 	}
 
@@ -135,7 +135,7 @@ void Redraw::flipRedrawAreas() {
 }
 
 void Redraw::blitBackgroundAreas() {
-	for (int32 i = 0; i < numOfRedrawBox; i++) {
+	for (int32 i = 0; i < _numOfRedrawBox; i++) {
 		_engine->blitWorkToFront(_currentRedrawList[i]);
 	}
 }
@@ -254,7 +254,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 				drawList[drawListPos].offset = 2;
 				drawListPos++;
 			}
-			if (inSceneryView && a == _engine->_scene->currentlyFollowedActor) {
+			if (_inSceneryView && a == _engine->_scene->currentlyFollowedActor) {
 				_sceneryViewX = _engine->_renderer->projPos.x;
 				_sceneryViewY = _engine->_renderer->projPos.y;
 			}
@@ -652,7 +652,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 	if (bgRedraw) {
 		_engine->freezeTime();
 		if (_engine->_scene->needChangeScene != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->needChangeScene != SCENE_CEILING_GRID_FADE_2) {
-			_engine->_screens->fadeOut(_engine->_screens->paletteRGBA);
+			_engine->_screens->fadeOut(_engine->_screens->_paletteRGBA);
 		}
 		_engine->_screens->clearScreen();
 		_engine->_grid->redrawGrid();
@@ -660,7 +660,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		_engine->saveFrontBuffer();
 
 		if (_engine->_scene->needChangeScene != SCENE_CEILING_GRID_FADE_1 && _engine->_scene->needChangeScene != SCENE_CEILING_GRID_FADE_2) {
-			_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
+			_engine->_screens->fadeIn(_engine->_screens->_paletteRGBA);
 		}
 	} else {
 		blitBackgroundAreas();
@@ -671,7 +671,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 	drawListPos = fillExtraDrawingList(drawList, drawListPos);
 	sortDrawingList(drawList, drawListPos);
 
-	currNumOfRedrawBox = 0;
+	_currNumOfRedrawBox = 0;
 	processDrawList(drawList, drawListPos, bgRedraw);
 
 	if (_engine->cfgfile.Debug) {
@@ -685,7 +685,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 	// make ceiling grid fade
 	// need to be here to fade after drawing all actors in scene
 	if (_engine->_scene->needChangeScene == SCENE_CEILING_GRID_FADE_2) {
-		_engine->crossFade(_engine->_screens->paletteRGBA);
+		_engine->crossFade(_engine->_screens->_paletteRGBA);
 		_engine->_scene->needChangeScene = SCENE_CEILING_GRID_FADE_1;
 	}
 
@@ -696,16 +696,16 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		flipRedrawAreas();
 	}
 
-	if (_engine->_screens->lockPalette) {
-		if (_engine->_screens->useAlternatePalette) {
-			_engine->_screens->fadeToPal(_engine->_screens->paletteRGBA);
+	if (_engine->_screens->_lockPalette) {
+		if (_engine->_screens->_useAlternatePalette) {
+			_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBA);
 		} else {
-			_engine->_screens->fadeToPal(_engine->_screens->mainPaletteRGBA);
+			_engine->_screens->fadeToPal(_engine->_screens->_mainPaletteRGBA);
 		}
-		_engine->_screens->lockPalette = false;
+		_engine->_screens->_lockPalette = false;
 	}
 
-	if (inSceneryView) {
+	if (_inSceneryView) {
 		zoomScreenScale();
 	}
 }

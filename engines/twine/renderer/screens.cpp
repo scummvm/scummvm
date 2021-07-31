@@ -43,11 +43,11 @@ void Screens::loadMenuImage(bool fadeIn) {
 }
 
 void Screens::loadCustomPalette(int32 index) {
-	if (HQR::getEntry(palette, Resources::HQR_RESS_FILE, index) == 0) {
+	if (HQR::getEntry(_palette, Resources::HQR_RESS_FILE, index) == 0) {
 		warning("Failed to load custom palette %i", index);
 		return;
 	}
-	convertPalToRGBA(palette, paletteRGBACustom);
+	convertPalToRGBA(_palette, _paletteRGBACustom);
 }
 
 void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
@@ -71,10 +71,10 @@ void Screens::loadImage(int32 index, int32 paletteIndex, bool fadeIn) {
 	debug(0, "Load image: %i", index);
 	Graphics::ManagedSurface& target = _engine->frontVideoBuffer;
 	target.transBlitFrom(src, src.getBounds(), target.getBounds(), 0, false, 0, 0xff, nullptr, true);
-	const uint32 *pal = paletteRGBA;
+	const uint32 *pal = _paletteRGBA;
 	if (paletteIndex != -1) {
 		loadCustomPalette(paletteIndex);
-		pal = paletteRGBACustom;
+		pal = _paletteRGBACustom;
 	}
 	if (fadeIn) {
 		fadeToPal(pal);
@@ -86,10 +86,10 @@ void Screens::loadImage(int32 index, int32 paletteIndex, bool fadeIn) {
 bool Screens::loadImageDelay(int32 index, int32 paletteIndex, int32 seconds) {
 	loadImage(index, paletteIndex);
 	if (_engine->delaySkip(1000 * seconds)) {
-		adjustPalette(0, 0, 0, paletteRGBACustom, 100);
+		adjustPalette(0, 0, 0, _paletteRGBACustom, 100);
 		return true;
 	}
-	fadeOut(paletteRGBACustom);
+	fadeOut(_paletteRGBACustom);
 	return false;
 }
 
@@ -189,7 +189,7 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 }
 
 void Screens::fadeToBlack(const uint32 *pal) {
-	if (palResetted) {
+	if (_palResetted) {
 		return;
 	}
 
@@ -198,7 +198,7 @@ void Screens::fadeToBlack(const uint32 *pal) {
 		adjustPalette(0, 0, 0, pal, i);
 	}
 
-	palResetted = true;
+	_palResetted = true;
 }
 
 void Screens::fadeToPal(const uint32 *pal) {
@@ -209,7 +209,7 @@ void Screens::fadeToPal(const uint32 *pal) {
 
 	_engine->setPalette(pal);
 
-	palResetted = false;
+	_palResetted = false;
 }
 
 void Screens::blackToWhite() {
@@ -224,12 +224,12 @@ void Screens::blackToWhite() {
 }
 
 void Screens::setBackPal() {
-	memset(palette, 0, sizeof(palette));
-	memset(paletteRGBA, 0, sizeof(paletteRGBA));
+	memset(_palette, 0, sizeof(_palette));
+	memset(_paletteRGBA, 0, sizeof(_paletteRGBA));
 
-	_engine->setPalette(paletteRGBA);
+	_engine->setPalette(_paletteRGBA);
 
-	palResetted = true;
+	_palResetted = true;
 }
 
 void Screens::fadePalRed(const uint32 *pal) {

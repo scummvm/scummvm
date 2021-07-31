@@ -461,7 +461,7 @@ void Scene::resetScene() {
 		_engine->_redraw->overlayList[i].info0 = -1;
 	}
 
-	_engine->_screens->useAlternatePalette = false;
+	_engine->_screens->_useAlternatePalette = false;
 }
 
 void Scene::reloadCurrentScene() {
@@ -558,7 +558,7 @@ void Scene::changeScene() {
 	_engine->_movements->heroMoved = true;
 	_engine->_grid->useCellingGrid = -1;
 	_engine->_grid->cellingGridIdx = -1;
-	_engine->_screens->lockPalette = false;
+	_engine->_screens->_lockPalette = false;
 
 	needChangeScene = SCENE_CEILING_GRID_FADE_1;
 	enableGridTileRendering = true;
@@ -695,7 +695,7 @@ void Scene::processActorZones(int32 actorIdx) {
 						_engine->_grid->newCamera.x = zone->infoData.CameraView.x;
 						_engine->_grid->newCamera.y = zone->infoData.CameraView.y;
 						_engine->_grid->newCamera.z = zone->infoData.CameraView.z;
-						_engine->_redraw->reqBgRedraw = true;
+						_engine->_redraw->_reqBgRedraw = true;
 					}
 				}
 				break;
@@ -760,7 +760,7 @@ void Scene::processActorZones(int32 actorIdx) {
 		_engine->_grid->useCellingGrid = -1;
 		_engine->_grid->cellingGridIdx = -1;
 		_engine->_grid->createGridMap();
-		_engine->_redraw->reqBgRedraw = true;
+		_engine->_redraw->_reqBgRedraw = true;
 	}
 }
 
