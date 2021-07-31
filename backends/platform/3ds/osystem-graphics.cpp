@@ -690,7 +690,7 @@ void OSystem_3DS::displayMessageOnOSD(const Common::U32String &msg) {
 		font->drawString(&_osdMessage, lines[i],
 		                 0, 0 + i * lineHeight + vOffset + lineSpacing, width,
 		                 _pfDefaultTexture.RGBToColor(255, 255, 255),
-		                 Graphics::kTextAlignCenter);
+		                 Graphics::kTextAlignCenter, 0, true);
 	}
 
 	_osdMessageEndTime = getMillis(true) + kOSDMessageDuration;
