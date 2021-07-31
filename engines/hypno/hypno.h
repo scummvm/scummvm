@@ -53,7 +53,6 @@ enum {
 	kHypnoDebugScript = 1 << 2
 };
 
-
 typedef Common::Array<byte> ByteArray;
 typedef struct LibData {
 	Common::Array<Common::String> filenames;
@@ -82,19 +81,17 @@ public:
 	Common::InstallShieldV3 _installerArchive;
 
 	Common::Error run() override;
-	void runIntro(Common::String logoIntro, Common::String movieIntro);
+	Levels _levels;
+	Common::HashMap<Common::String, int> _levelState;
+	void resetLevelState();
+	bool checkLevelCompleted();
 	void runMis(Common::String name);
-
 
 	void restartGame();
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
 	void loadMis(Common::String filename);
 	LibData loadLib(char *filename);
-
-	// Functions
-
-	void initFuncs();
 
 	// User input
 	void clickedHotspot(Common::Point);
@@ -116,9 +113,6 @@ public:
 		return true;
 	}
 
-	void ignoreEvents();
-	//Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
-	//Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void syncGameStream(Common::Serializer &s);
 
 	Common::String convertPath(const Common::String &);
@@ -128,49 +122,47 @@ public:
 	Graphics::Surface *decodeImage(const Common::String &file);
 	Graphics::Surface *decodeFrame(const Common::String &name, int frame, bool convert = true);
 	void loadImage(const Common::String &file, int x, int y);
-	void drawScreenFrame();
 
 	// Cursors
 	void changeCursor(const Common::String &, uint32);
-	Common::String getInventoryCursor();
-	Common::String getExitCursor();
 
 	// Actions
+	void runIntro();
 	void runMenu(Hotspots hs);
     void runBackground(const Hotspot h, Background *a);
 	void runOverlay(const Hotspot h, Overlay *a);
 	void runMice(const Hotspot h, Mice *a);
 	void runEscape(const Hotspot h, Escape *a);
+	void runQuit(const Hotspot h, Quit *a);
 	void runCutscene(const Hotspot h, Cutscene *a);
+	void runPlay(const Hotspot h, Play *a);
+	void runWalN(const Hotspot h, WalN *a);
+	void runGlobal(const Hotspot h, Global *a);
 
 	Graphics::ManagedSurface *_compositeSurface;
-	Graphics::Surface *loadMask(const Common::String &, int, int, bool);
-	void drawMask(Graphics::Surface *);
-	void fillRect(uint32, Common::Rect);
-	bool inMask(Graphics::Surface *, Common::Point);
 	uint32 _transparentColor;
 	Common::Rect screenRect;
-	Common::String _framePath;
-	Graphics::Surface *_frame;
-	Common::String _nextVS;
-	Common::Point _origin;
 	void drawScreen();
+
+	// intros
+	Common::HashMap<Common::String, Movies> _intros;
+
+	// settings 
+	Common::String _nextSetting;
+	Common::String _currentSetting;
 
 	// hotspots
 	Hotspots *_nextHotsToAdd;
 	Hotspots *_nextHotsToRemove;
 	HotspotsStack stack;
 
-	// movies
-	Common::String _nextMovie;
+	// Movies
+	Movies _nextMoviesToPlay;
+	Common::List<Common::Point> _nextMoviesPositions;
+	Common::List<bool> _nextMoviesScales;
+	Common::Point _moviePosition;
+	bool _movieScale;
 	Common::String _currentMovie;
-
-	// Save/Load games
-	int _mode;
-	bool _modified;
-	Common::String _repeatedMovieExit;
-
-	// Masks/Exits
 
 	// Sounds
 	void playSound(const Common::String &, uint, bool, bool);
@@ -178,15 +170,10 @@ public:
 	bool isSoundActive();
 	bool _noStopSounds;
 
-	// Random values
-	bool getRandomBool(uint);
-
 	// Timers
 	bool installTimer(uint32, Common::String *);
 	void removeTimer();
 };
-
-//extern PrivateEngine *g_private;
 
 } // End of namespace Hypno
 

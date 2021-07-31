@@ -42,21 +42,50 @@
 namespace Hypno {
 
 Hotspots *g_parsedHots;
-Settings g_settings;
+//Settings g_settings;
+
+const static char* levelVariables[] = {
+	"GS_NONE",
+	"GS_SCTEXT",
+	"GS_AMBIENT",
+	"GS_MUSIC",
+	"GS_VOLUME",
+	"GS_MOUSESPEED",
+	"GS_MOUSEON",
+	"GS_LEVELCOMPLETE",
+	"GS_LEVELWON",
+	"GS_CHEATS",
+	"GS_SWITCH0",
+	"GS_SWITCH1",
+	"GS_SWITCH2",
+	"GS_SWITCH3",
+	"GS_SWITCH4",
+	"GS_SWITCH5",
+	"GS_SWITCH6",
+	"GS_SWITCH7",
+	"GS_SWITCH8",
+	"GS_SWITCH9",
+	"GS_SWITCH10",
+	"GS_SWITCH11",
+	"GS_SWITCH12",
+	"GS_COMBATJSON",
+	"GS_COMBATLEVEL",
+	"GS_PUZZLELEVEL",
+	NULL
+};
 
 extern int parse(const char *);
 
 HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
-	  _compositeSurface(nullptr), _transparentColor(0), _frame(nullptr), 
+	  _compositeSurface(nullptr), _transparentColor(0), 
 	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
 }
 
 HypnoEngine::~HypnoEngine() {
-	// Dispose your resources here
-	delete _frame;
+	// Dispose your resources
 	delete _rnd;
 }
 
@@ -75,7 +104,9 @@ void HypnoEngine::loadMis(Common::String filename) {
 	test->read(buf, fileSize);
 	buf[fileSize] = '\0';
 	parse(buf);
-	g_settings[filename] = *g_parsedHots;
+	Level level;
+	level.hots = *g_parsedHots; 
+	_levels[filename] = level;
 	debug("Loaded hots size: %d", g_parsedHots->size());
 }
 
@@ -127,6 +158,18 @@ LibData HypnoEngine::loadLib(char *filename) {
 	return r;
 }
 
+void HypnoEngine::resetLevelState() {
+	uint32 i = 0;
+	while (levelVariables[i]) {
+		_levelState[levelVariables[i]] = 0;
+		i++;
+	}
+}
+
+bool HypnoEngine::checkLevelCompleted() {
+	return _levelState["GS_LEVELCOMPLETE"];
+}
+
 Common::Error HypnoEngine::run() {
 	_language = Common::parseLanguage(ConfMan.get("language"));
 	_platform = Common::parsePlatform(ConfMan.get("platform"));
@@ -151,10 +194,27 @@ Common::Error HypnoEngine::run() {
 		}
 	}
 	*/	
-	// Read assets file
+
+	Hotspot q;
+	q.type = MakeMenu;
+	Action *a = new Quit();
+	q.actions.push_back(a);
+	Level level;
+	Hotspots quit;
+	quit.push_back(q);
+	level.hots = quit;  
+	_levels["mis/quit.mis"] = level;
+	// Read assets from mis files
 	loadMis("mis/demo.mis");
+	_levels["mis/demo.mis"].intros.push_back("demo/dcine1.smk");
+	_levels["mis/demo.mis"].intros.push_back("demo/dcine2.smk");
+	_levels["mis/demo.mis"].hots[2].setting = "mis/alley.mis";
+	_levels["mis/demo.mis"].hots[5].setting = "mis/order.mis";
 	loadMis("mis/order.mis");
+	_levels["mis/order.mis"].hots[1].setting = "mis/quit.mis";
 	loadMis("mis/alley.mis");
+	_levels["mis/alley.mis"].intros.push_back("demo/aleyc01s.smk");
+
 	//loadMis("MIS/SHOCTALK.MIS");
 
 	// Initialize graphics
@@ -166,8 +226,6 @@ Common::Error HypnoEngine::run() {
 	_transparentColor = _pixelFormat.RGBToColor(0, 0x82, 0);
 	screenRect = Common::Rect(0, 0, _screenW, _screenH);
 	//changeCursor("default");
-	_origin = Common::Point(0, 0);
-	_image = new Image::BitmapDecoder();
 	_compositeSurface = new Graphics::ManagedSurface();
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 	_compositeSurface->setTransparentColor(_transparentColor);
@@ -182,9 +240,17 @@ Common::Error HypnoEngine::run() {
 	} else {
 		_nextSetting = getGoIntroSetting();
 	}*/
-	runIntro("DEMO/DCINE1.SMK", "DEMO/DCINE2.SMK");
+
+	_nextSetting = "mis/demo.mis";
 	while (!shouldQuit()) {
-		runMis("mis/alley.mis");
+		resetLevelState();
+		if (!_nextSetting.empty()) {
+			debug("Executing setting %s", _nextSetting.c_str());
+			_currentSetting = _nextSetting;
+			_nextSetting = "";
+			runMis(_currentSetting);
+		}
+			
 	}
 	return Common::kNoError;
 }
@@ -195,19 +261,30 @@ void HypnoEngine::runMis(Common::String name) {
 	Common::Point mousePos;
 	
 	stack.clear();
-	assert(g_settings.contains(name));
-	_nextHotsToAdd = &g_settings[name];
+	assert(_levels.contains(name));
+	_nextHotsToAdd = &_levels[name].hots;
+	_nextMoviesToPlay = _levels[name].intros;
+	for (uint32 i = 0; i < _nextMoviesToPlay.size(); i++) {
+		_nextMoviesPositions.push_back(Common::Point(0, 0));
+		_nextMoviesScales.push_back(true);
+	}
+	
 	changeCursor("mouse/cursor1.smk", 0);
 
-	while (!shouldQuit()) {
+	while (!shouldQuit() && _nextSetting.empty()) {
 		
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
 			// Events
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder)
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder) {
 					skipVideo();
+					if (!stack.empty()) { 
+						runMenu(*stack.back());
+						drawScreen();
+					}
+				}
 
 				break;
 
@@ -236,29 +313,40 @@ void HypnoEngine::runMis(Common::String name) {
 		}
 
 		// Movies
-		if (!_nextMovie.empty()) {
+		if (_nextMoviesToPlay.size() > 0 && _currentMovie.empty()) {
+			debug("start playing %s", _nextMoviesToPlay.front().c_str());
 			//removeTimer();
+			assert(_nextMoviesToPlay.size() == _nextMoviesPositions.size());
 			_videoDecoder = new Video::SmackerDecoder();
-			playVideo(_nextMovie);
-			_currentMovie = _nextMovie;
-			_nextMovie = "";
+			_currentMovie = _nextMoviesToPlay.front();
+			_moviePosition = _nextMoviesPositions.front();
+			_movieScale = _nextMoviesScales.front();
+			playVideo(_currentMovie);
+			_nextMoviesToPlay.pop_front();
+			_nextMoviesPositions.pop_front();
+			_nextMoviesScales.pop_front();
 			continue;
 		}
 
 		if (_videoDecoder && !_videoDecoder->isPaused()) {
+			debug("video decoder active!");
 			if (_videoDecoder->getCurFrame() == 0)
 				stopSound(true);
 			if (_videoDecoder->endOfVideo()) {
+				debug("video still playing");
 				_videoDecoder->close();
 				delete _videoDecoder;
 				_videoDecoder = nullptr;
 				_currentMovie = "";
 
 				// refresh current scene
-				runMenu(*stack.back());
-				drawScreen();
+				if (!stack.empty()) { 
+					runMenu(*stack.back());
+					drawScreen();
+				}
 
 			} else if (_videoDecoder->needsUpdate()) {
+				debug("updating screen");
 				drawScreen();
 				g_system->delayMillis(10);
 			}
@@ -280,66 +368,13 @@ void HypnoEngine::runMis(Common::String name) {
 			drawScreen();
 		}
 
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-	}
-}
-
-void HypnoEngine::runIntro(Common::String logoIntro, Common::String movieIntro) {
-	Common::Event event;
-	_nextMovie = logoIntro;
-
-	while ((_nextMovie != "" || _currentMovie != "") && !shouldQuit()) {
-			while (g_system->getEventManager()->pollEvent(event)) {
-			// Events
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder) {
-					if (_currentMovie == logoIntro)
-						_nextMovie = movieIntro;
-					else
-					    skipVideo();
-				}
-
-				break;
-
-			default:
-				break;
-			}
-		}
-
-		// Movies
-		if (!_nextMovie.empty()) {
-			_videoDecoder = new Video::SmackerDecoder();
-			playVideo(_nextMovie);
-			_currentMovie = _nextMovie;
-			_nextMovie = "";
-			continue;
-		}
-
-		if (_videoDecoder && !_videoDecoder->isPaused()) {
-			if (_videoDecoder->getCurFrame() == 0)
-				stopSound(true);
-			if (_videoDecoder->endOfVideo()) {
-				_videoDecoder->close();
-				delete _videoDecoder;
-				_videoDecoder = nullptr;
-				if (_currentMovie == logoIntro)
-					_nextMovie = movieIntro;
-				else 
-					_nextMovie = "";
-			} else if (_videoDecoder->needsUpdate()) {
-				drawScreen();
-				g_system->delayMillis(10);
-			}
-			continue;
-		}
+		if (checkLevelCompleted())
+			_nextSetting = "mis/demo.mis";
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 }
-
 
 //Actions
 
@@ -350,7 +385,9 @@ void HypnoEngine::runMenu(Hotspots hs) {
 	debug("hotspot actions size: %d", h.actions.size());
 	for (Actions::const_iterator itt = h.actions.begin(); itt != h.actions.end(); ++itt) {
 		Action *action = *itt;
-		if (typeid(*action) == typeid(Background))
+		if (typeid(*action) == typeid(Quit))
+			runQuit(h, (Quit*) action);
+		else if (typeid(*action) == typeid(Background))
 			runBackground(h, (Background*) action);
 		else if (typeid(*action) == typeid(Overlay))
 			runOverlay(h, (Overlay*) action);
@@ -358,16 +395,17 @@ void HypnoEngine::runMenu(Hotspots hs) {
 		//	runMice(h, (Mice*) action);
 	}
 
-	if (h.stype == "SINGLE_RUN")
-		loadImage("int_main/mainbutt.smk", 0, 0);
-	else if (h.stype == "AUTO_BUTTONS")
+	//if (h.stype == "SINGLE_RUN")
+	//	loadImage("int_main/mainbutt.smk", 0, 0);
+	if (h.stype == "AUTO_BUTTONS")
 		loadImage("int_main/resume.smk", 0, 0);
 }
 
 void HypnoEngine::runBackground(const Hotspot h, Background *a) {
+	if (a->condition.size() > 0 && !_levelState[a->condition])
+		return;
 	Common::Point origin = a->origin;
-	if (a->condition.size() == 0)
-		loadImage(a->path, origin.x, origin.y);
+	loadImage(a->path, origin.x, origin.y);
 }
 
 void HypnoEngine::runOverlay(const Hotspot h, Overlay *a) {
@@ -384,7 +422,49 @@ void HypnoEngine::runEscape(const Hotspot h, Escape *a) {
 }
 
 void HypnoEngine::runCutscene(const Hotspot h, Cutscene *a) {
-    _nextMovie = a->path;
+    _nextMoviesToPlay.push_back(a->path);
+	_nextMoviesPositions.push_back(Common::Point(0, 0));
+	_nextMoviesScales.push_back(true);
+}
+
+void HypnoEngine::runGlobal(const Hotspot h, Global *a) {
+    if (a->command == "TURNON")
+		_levelState[a->variable] = 1;
+	else if (a->command == "TURNOFF")
+		_levelState[a->variable] = 0;
+	else
+		error("Invalid command %s", a->command.c_str());
+}
+
+void HypnoEngine::runPlay(const Hotspot h, Play *a) {
+	if (a->condition.size() > 0 && !_levelState[a->condition])
+		return;
+	Common::Point origin = a->origin;
+
+	if (a->flag == "BITMAP")
+			loadImage(a->path, origin.x, origin.y);
+	else { 
+    	_nextMoviesToPlay.push_back(a->path);
+		_nextMoviesPositions.push_back(origin);
+		_nextMoviesScales.push_back(false);
+	}
+}
+
+void HypnoEngine::runWalN(const Hotspot h, WalN *a) {
+	if (a->condition.size() > 0 && !_levelState[a->condition])
+		return;
+	Common::Point origin = a->origin;
+	if (a->flag == "BITMAP")
+			loadImage(a->path, origin.x, origin.y);
+	else { 
+    	_nextMoviesToPlay.push_back(a->path);
+		_nextMoviesPositions.push_back(origin);
+		_nextMoviesScales.push_back(false);
+	}
+}
+
+void HypnoEngine::runQuit(const Hotspot h, Quit *a) {
+    quitGame();
 }
 
 // Hotspots
@@ -418,6 +498,9 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			_nextHotsToAdd = selected.smenu;
 		}
 
+		if (!selected.setting.empty())
+			_nextSetting = selected.setting;
+
 		debug("hotspot clicked actions size: %d", selected.actions.size());
 		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
 			Action *action = *itt;
@@ -425,12 +508,21 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 				runEscape(selected, (Escape*) action);
 			if (typeid(*action) == typeid(Cutscene))
 				runCutscene(selected, (Cutscene*) action);
+			if (typeid(*action) == typeid(Play))
+				runPlay(selected, (Play*) action);
+			if (typeid(*action) == typeid(WalN))
+				runWalN(selected, (WalN*) action);
+			if (typeid(*action) == typeid(Global))
+				runGlobal(selected, (Global*) action);
 		}
 
 	}
 }
 
 bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
+	if (stack.empty())
+		return false;
+
 	Hotspots *hots = stack.back();
 	Hotspot selected;
 	bool found = false;
@@ -466,7 +558,7 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y) {
 	Graphics::Surface *surf = decodeFrame(name, 0);
-	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x, y), _transparentColor);
+	_compositeSurface->transBlitFrom(*surf, Common::Point(x, y), _transparentColor);
 }
 
 Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, bool convert) {
@@ -476,26 +568,23 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());
 
-	_videoDecoder = new Video::SmackerDecoder();
-	if (!_videoDecoder->loadStream(file))
+	Video::SmackerDecoder vd;
+	if (!vd.loadStream(file))
 		error("unable to load video %s", path.c_str());
 
     for(int f = 0; f < n; f++) 
-		_videoDecoder->decodeNextFrame();
+		vd.decodeNextFrame();
 
-	const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
+	const Graphics::Surface *frame = vd.decodeNextFrame();
 	Graphics::Surface *rframe;
 
 	if (convert) {
-		rframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
+		rframe = frame->convertTo(_pixelFormat, vd.getPalette());
 	} else {
-		rframe = frame->convertTo(frame->format, _videoDecoder->getPalette());
+		rframe = frame->convertTo(frame->format, vd.getPalette());
 		//rframe->create(frame->w, frame->h, frame->format);
 		//rframe->copyRectToSurface(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
 	}
-
-	delete _videoDecoder;
-	_videoDecoder = nullptr;
 
 	return rframe;
 }
@@ -506,21 +595,27 @@ void HypnoEngine::drawScreen() {
 
 	if (_videoDecoder && !_videoDecoder->isPaused()) {
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
-		Graphics::Surface *sframe = frame->scale(_screenW, _screenH);
-		Graphics::Surface *cframe = sframe->convertTo(_pixelFormat, _videoDecoder->getPalette());
-		Common::Point center(0, 0);
-		surface->blitFrom(*cframe, center);
+		Graphics::Surface *sframe, *cframe;
 
-		sframe->free();
-		delete sframe;
+		if (_movieScale) {
+			sframe = frame->scale(_screenW, _screenH);
+			cframe = sframe->convertTo(_pixelFormat, _videoDecoder->getPalette());
+		} else
+			cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
+
+		debug("Move position: %d %d", _moviePosition.x, _moviePosition.y);
+		surface->blitFrom(*cframe, _moviePosition);
+
+		if (_movieScale) { 
+			sframe->free();
+			delete sframe;
+		}
 
 		cframe->free();
 		delete cframe;
 	}
 
-	Common::Rect w(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
-	Graphics::Surface sa = surface->getSubArea(w);
-	g_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
+	g_system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, _screenW, _screenH);
 	g_system->updateScreen();
 }
 

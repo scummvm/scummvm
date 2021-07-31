@@ -82,13 +82,13 @@ using namespace Hypno;
 	int i;	         	/* integer value */
 }
 
-%token<s> NAME FILENAME FLAG COMMENT GSSWITCH
+%token<s> NAME FILENAME FLAG COMMENT GSSWITCH COMMAND
 %token<i> NUM
-%token HOTSTOK CUTSTOK BITMAPTOK BACKTOK RETTOK  TIMETOK PALETOK BBOXTOK OVERTOK WALNTOK MICETOK PLAYTOK ENDTOK 
+%token HOTSTOK CUTSTOK BACKTOK RETTOK  TIMETOK PALETOK BBOXTOK OVERTOK WALNTOK MICETOK PLAYTOK ENDTOK 
 %token MENUTOK SMENTOK ESCPTOK NRTOK
 %token GLOBTOK TONTOK TOFFTOK
 
-%type<s> gsswitch
+%type<s> gsswitch flag
 
 %%
 
@@ -162,8 +162,25 @@ line:    MENUTOK NAME mflag  {
 		    Hotspot *hot = &cur->back();
 			hot->actions.push_back(a);
 		}
-      |  GLOBTOK gsswitch command                  { debug("GLOB."); }
-	  |  PLAYTOK FILENAME NUM NUM gsswitch flag    { debug("PLAY %s.", $2); }
+      |  GLOBTOK GSSWITCH NAME  { 
+		    Global *a = new Global();
+			a->variable = $2;
+			a->command = $3;
+			Hotspots *cur = stack.back();
+		    Hotspot *hot = &cur->back();
+			hot->actions.push_back(a);
+			debug("GLOB."); 
+		}
+	  |  PLAYTOK FILENAME NUM NUM gsswitch flag { 
+			Play *a = new Play();
+			a->path = $2;
+			a->origin = Common::Point($3, $4);
+			a->condition = $5;
+			a->flag = $6;
+			Hotspots *cur = stack.back();
+		    Hotspot *hot = &cur->back();
+			hot->actions.push_back(a);		  
+		    debug("PLAY %s.", $2); }
       |  OVERTOK FILENAME NUM NUM flag { 
 		  	Overlay *a = new Overlay();
 			a->path = $2;
@@ -187,7 +204,16 @@ line:    MENUTOK NAME mflag  {
 			hot->actions.push_back(a);		  
 		    debug("CUTS %s.", $2); 
 		}
-	  |  WALNTOK FILENAME NUM NUM gsswitch flag    { debug("WALN %s %d %d.", $2, $3, $4); } 
+	  |  WALNTOK FILENAME NUM NUM gsswitch flag  { 
+			WalN *a = new WalN();
+			a->path = $2;
+			a->origin = Common::Point($3, $4);
+			a->condition = $5;
+			a->flag = $6;
+			Hotspots *cur = stack.back();
+		    Hotspot *hot = &cur->back();
+			hot->actions.push_back(a);		  
+		    debug("WALN %s %d %d.", $2, $3, $4); } 
 	  |  MICETOK FILENAME NUM {
 		  	Mice *a = new Mice();
 			a->path = $2; 
@@ -208,14 +234,10 @@ mflag:  NRTOK
       | /*nothing*/
 	  ;
 
-flag:   BITMAPTOK                         { debug("flag: BITMAP"); }
-      | /* nothing */
+flag:   FLAG             { $$ = $1; debug("flag: %s", $1); }
+      | /* nothing */	 { $$ = scumm_strdup(""); }
 	  ;
 
-gsswitch:   GSSWITCH                      { $$ = $1; debug("flag: GS_SWITCH"); }
+gsswitch:   GSSWITCH                      { $$ = $1; debug("switch %s", $1); }
           | /* nothing */                 { $$ = scumm_strdup(""); }
 	      ;
-
-command:   TONTOK 
-         | TOFFTOK
-		 ;
