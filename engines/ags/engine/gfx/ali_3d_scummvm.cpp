@@ -162,8 +162,8 @@ void ScummVMRendererGraphicsDriver::ReleaseDisplayMode() {
 	ClearDrawLists();
 }
 
-bool ScummVMRendererGraphicsDriver::SetNativeSize(const Size &src_size) {
-	OnSetNativeSize(src_size);
+bool ScummVMRendererGraphicsDriver::SetNativeResolution(const GraphicResolution &native_res) {
+	OnSetNativeRes(native_res);
 	CreateVirtualScreen();
 	return !_srcRect.IsEmpty();
 }

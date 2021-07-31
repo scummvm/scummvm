@@ -1237,7 +1237,8 @@ bool engine_try_set_gfxmode_any(const ScreenSetup &setup) {
 	engine_shutdown_gfxmode();
 
 	const Size init_desktop = get_desktop_size();
-	if (!graphics_mode_init_any(_GP(game).GetGameRes(), setup, ColorDepthOption(_GP(game).GetColorDepth())))
+	if (!graphics_mode_init_any(GraphicResolution(_GP(game).GetGameRes(), _GP(game).color_depth * 8),
+		setup, ColorDepthOption(_GP(game).GetColorDepth())))
 		return false;
 
 	engine_post_gfxmode_setup(init_desktop);

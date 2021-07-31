@@ -178,7 +178,7 @@ public:
 	void SetTintMethod(TintMethod method) override;
 	bool SetDisplayMode(const DisplayMode &mode) override;
 	void UpdateDeviceScreen(const Size &screen_sz) override;
-	bool SetNativeSize(const Size &src_size) override;
+	bool SetNativeResolution(const GraphicResolution &native_res) override;
 	bool SetRenderFrame(const Rect &dst_rect) override;
 	bool IsModeSupported(const DisplayMode &mode) override;
 	int  GetDisplayDepthForNativeDepth(int native_color_depth) const override;

@@ -103,12 +103,13 @@ void GraphicsDriverBase::OnScalingChanged() {
 	_scaling.Init(_srcRect.GetSize(), _dstRect);
 }
 
-void GraphicsDriverBase::OnSetNativeSize(const Size &src_size) {
-	_srcRect = RectWH(0, 0, src_size.Width, src_size.Height);
+void GraphicsDriverBase::OnSetNativeRes(const GraphicResolution &native_res) {
+	_srcRect = RectWH(0, 0, native_res.Width, native_res.Height);
+	_srcColorDepth = native_res.ColorDepth;
 	OnScalingChanged();
 
 	// Adjust default sprite batch making it comply to native size
-	_spriteBatchDesc[0].Viewport = RectWH(src_size);
+	_spriteBatchDesc[0].Viewport = RectWH(native_res);
 	InitSpriteBatch(_actSpriteBatch, _spriteBatchDesc[_actSpriteBatch]);
 }
 

@@ -107,7 +107,7 @@ public:
 	// Gets if a graphics mode was initialized
 	virtual bool IsModeSet() const = 0;
 	// Set the size of the native image size
-	virtual bool SetNativeSize(const Size &src_size) = 0;
+	virtual bool SetNativeResolution(const GraphicResolution &native_res) = 0;
 	virtual bool IsNativeSizeValid() const = 0;
 	// Set game render frame and translation
 	virtual bool SetRenderFrame(const Rect &dst_rect) = 0;

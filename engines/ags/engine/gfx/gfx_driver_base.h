@@ -132,7 +132,7 @@ protected:
 	// Called after new mode was successfully initialized
 	virtual void OnModeSet(const DisplayMode &mode);
 	// Called when the new native size is set
-	virtual void OnSetNativeSize(const Size &src_size);
+	virtual void OnSetNativeRes(const GraphicResolution &native_res);
 	// Called before display mode is going to be released
 	virtual void OnModeReleased();
 	// Called when new render frame is set
@@ -148,6 +148,7 @@ protected:
 
 	DisplayMode         _mode;          // display mode settings
 	Rect                _srcRect;       // rendering source rect
+	int                 _srcColorDepth; // rendering source color depth (in bits per pixel)
 	Rect                _dstRect;       // rendering destination rect
 	Rect                _filterRect;    // filter scaling destination rect (before final scaling)
 	PlaneScaling        _scaling;       // native -> render dest coordinate transformation
