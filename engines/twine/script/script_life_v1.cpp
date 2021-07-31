@@ -237,7 +237,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 					engine->_scene->_currentScriptValue = engine->_movements->_targetActorDistance;
 				}
 			} else {
-				if (engine->_actor->heroBehaviour == HeroBehaviourType::kDiscrete) {
+				if (engine->_actor->_heroBehaviour == HeroBehaviourType::kDiscrete) {
 					int32 heroAngle = ClampAngle(ctx.actor->_angle + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
 
 					if (ABS(heroAngle) > ANGLE_90) {
@@ -291,7 +291,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		engine->_scene->_currentScriptValue = engine->_gameState->_inventoryNumKashes;
 		break;
 	case kcBEHAVIOUR:
-		engine->_scene->_currentScriptValue = (int16)engine->_actor->heroBehaviour;
+		engine->_scene->_currentScriptValue = (int16)engine->_actor->_heroBehaviour;
 		break;
 	case kcCHAPTER:
 		engine->_scene->_currentScriptValue = engine->_gameState->_gameChapter;
@@ -1641,9 +1641,9 @@ static int32 lTHE_END(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_sceneHero->setLife(kActorMaxLife);
 	engine->_gameState->setMagicPoints(80);
 	engine->_scene->_currentSceneIdx = LBA1SceneId::Polar_Island_Final_Battle;
-	engine->_actor->heroBehaviour = engine->_actor->previousHeroBehaviour;
+	engine->_actor->_heroBehaviour = engine->_actor->_previousHeroBehaviour;
 	engine->_scene->_newHeroPos.x = -1;
-	engine->_scene->_sceneHero->_angle = engine->_actor->previousHeroAngle;
+	engine->_scene->_sceneHero->_angle = engine->_actor->_previousHeroAngle;
 	engine->autoSave();
 	return 1; // break;
 }

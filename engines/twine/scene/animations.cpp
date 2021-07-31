@@ -458,7 +458,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	_currentlyProcessedActorIdx = actorIdx;
-	_engine->_actor->processActorPtr = actor;
+	_engine->_actor->_processActorPtr = actor;
 
 	if (actor->_entity == -1) {
 		return;
@@ -687,7 +687,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		}
 
 		// process wall hit while running
-		if (_engine->_collision->_causeActorDamage && !actor->_dynamicFlags.bIsFalling && !_currentlyProcessedActorIdx && _engine->_actor->heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward) {
+		if (_engine->_collision->_causeActorDamage && !actor->_dynamicFlags.bIsFalling && !_currentlyProcessedActorIdx && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward) {
 			_engine->_movements->rotateActor(actor->_boudingBox.mins.x, actor->_boudingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
 
 			_engine->_renderer->_destPos.x += processActor.x;
@@ -716,7 +716,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					_engine->_collision->stopFalling();
 					processActor.y = (_engine->_collision->_collision.y * BRICK_HEIGHT) + BRICK_HEIGHT;
 				} else {
-					if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
+					if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
 						initAnim(AnimationTypes::kBigHit, AnimType::kAnimationType_2, AnimationTypes::kStanding, _currentlyProcessedActorIdx);
 						_engine->_movements->_heroMoved = true;

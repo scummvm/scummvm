@@ -114,7 +114,7 @@ bool TwinEConsole::doToggleSceneryView(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doToggleAutoAggressive(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_actor->autoAggressive, "auto aggressive\n")
+	TOGGLE_DEBUG(_engine->_actor->_autoAggressive, "auto aggressive\n")
 	return true;
 }
 

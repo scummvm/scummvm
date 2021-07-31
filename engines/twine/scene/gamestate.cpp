@@ -128,7 +128,7 @@ void GameState::initEngineVars() {
 	_inventoryNumKeys = 0;
 	_inventoryNumGas = 0;
 
-	_engine->_actor->cropBottomScreen = 0;
+	_engine->_actor->_cropBottomScreen = 0;
 
 	_magicLevelIdx = 0;
 	_usingSabre = false;
@@ -137,9 +137,9 @@ void GameState::initEngineVars() {
 
 	_engine->_scene->_sceneTextBank = TextBankId::Options_and_menus;
 	_engine->_scene->_currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
-	_engine->_actor->heroBehaviour = HeroBehaviourType::kNormal;
-	_engine->_actor->previousHeroAngle = 0;
-	_engine->_actor->previousHeroBehaviour = HeroBehaviourType::kNormal;
+	_engine->_actor->_heroBehaviour = HeroBehaviourType::kNormal;
+	_engine->_actor->_previousHeroAngle = 0;
+	_engine->_actor->_previousHeroBehaviour = HeroBehaviourType::kNormal;
 }
 
 // http://lbafileinfo.kazekr.net/index.php?title=LBA1:Savegame
@@ -182,8 +182,8 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	_engine->_scene->_needChangeScene = file->readByte(); // scene index
 	_gameChapter = file->readByte();
 
-	_engine->_actor->heroBehaviour = (HeroBehaviourType)file->readByte();
-	_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
+	_engine->_actor->_heroBehaviour = (HeroBehaviourType)file->readByte();
+	_engine->_actor->_previousHeroBehaviour = _engine->_actor->_heroBehaviour;
 	_engine->_scene->_sceneHero->setLife(file->readByte());
 	setKashes(file->readSint16LE());
 	_magicLevelIdx = file->readByte();
@@ -193,7 +193,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	_engine->_scene->_newHeroPos.y = file->readSint16LE();
 	_engine->_scene->_newHeroPos.z = file->readSint16LE();
 	_engine->_scene->_sceneHero->_angle = ToAngle(file->readSint16LE());
-	_engine->_actor->previousHeroAngle = _engine->_scene->_sceneHero->_angle;
+	_engine->_actor->_previousHeroAngle = _engine->_scene->_sceneHero->_angle;
 	_engine->_scene->_sceneHero->_body = (BodyType)file->readByte();
 
 	const byte numHolomapFlags = file->readByte(); // number of holomap locations
@@ -249,7 +249,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	}
 	file->writeByte(sceneIdx);
 	file->writeByte(_gameChapter);
-	file->writeByte((byte)_engine->_actor->heroBehaviour);
+	file->writeByte((byte)_engine->_actor->_heroBehaviour);
 	file->writeByte(_engine->_scene->_sceneHero->_life);
 	file->writeSint16LE(_inventoryNumKashes);
 	file->writeByte(_magicLevelIdx);

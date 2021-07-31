@@ -238,9 +238,9 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 			// if use shadows
 			if (_engine->_cfgfile.ShadowMode != 0 && !(actor->_staticFlags.bDoesntCastShadow)) {
 				if (actor->_standOn != -1) {
-					_engine->_actor->shadowCoord.x = actor->_pos.x;
-					_engine->_actor->shadowCoord.y = actor->_pos.y - 1;
-					_engine->_actor->shadowCoord.z = actor->_pos.z;
+					_engine->_actor->_shadowCoord.x = actor->_pos.x;
+					_engine->_actor->_shadowCoord.y = actor->_pos.y - 1;
+					_engine->_actor->_shadowCoord.z = actor->_pos.z;
 				} else {
 					_engine->_movements->getShadowPosition(actor->pos());
 				}
@@ -248,9 +248,9 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 				drawList[drawListPos].posValue = tmpVal - 1; // save the shadow entry in the _drawList
 				drawList[drawListPos].type = DrawListType::DrawShadows;
 				drawList[drawListPos].actorIdx = 0;
-				drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
-				drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
-				drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
+				drawList[drawListPos].x = _engine->_actor->_shadowCoord.x;
+				drawList[drawListPos].y = _engine->_actor->_shadowCoord.y;
+				drawList[drawListPos].z = _engine->_actor->_shadowCoord.z;
 				drawList[drawListPos].offset = 2;
 				drawListPos++;
 			}
@@ -293,9 +293,9 @@ int32 Redraw::fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos) 
 					drawList[drawListPos].posValue = tmpVal - 1;
 					drawList[drawListPos].actorIdx = 0;
 					drawList[drawListPos].type = DrawListType::DrawShadows;
-					drawList[drawListPos].x = _engine->_actor->shadowCoord.x;
-					drawList[drawListPos].y = _engine->_actor->shadowCoord.y;
-					drawList[drawListPos].z = _engine->_actor->shadowCoord.z;
+					drawList[drawListPos].x = _engine->_actor->_shadowCoord.x;
+					drawList[drawListPos].y = _engine->_actor->_shadowCoord.y;
+					drawList[drawListPos].z = _engine->_actor->_shadowCoord.z;
 					drawList[drawListPos].offset = 0;
 					drawListPos++;
 				}
@@ -360,8 +360,8 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 
 		_engine->_grid->drawOverModelActor(tempX, tempY, tempZ);
 
-		if (_engine->_actor->cropBottomScreen) {
-			_engine->_interface->_clip.bottom = _engine->_actor->cropBottomScreen + 10;
+		if (_engine->_actor->_cropBottomScreen) {
+			_engine->_interface->_clip.bottom = _engine->_actor->_cropBottomScreen + 10;
 		}
 
 		addRedrawArea(_engine->_interface->_clip);
@@ -483,7 +483,7 @@ void Redraw::processDrawList(DrawListStruct *drawList, int32 drawListPos, bool b
 			}
 		}
 		// Drawing shadows
-		else if (flags == DrawListType::DrawShadows && !_engine->_actor->cropBottomScreen) {
+		else if (flags == DrawListType::DrawShadows && !_engine->_actor->_cropBottomScreen) {
 			processDrawListShadows(drawCmd);
 		}
 		// Drawing unknown

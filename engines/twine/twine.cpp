@@ -316,7 +316,7 @@ Common::Error TwinEEngine::run() {
 		}
 	}
 
-	ConfMan.setBool("combatauto", _actor->autoAggressive);
+	ConfMan.setBool("combatauto", _actor->_autoAggressive);
 	ConfMan.setInt("shadow", _cfgfile.ShadowMode);
 	ConfMan.setBool("scezoom", _cfgfile.SceZoom);
 	ConfMan.setInt("polygondetails", _cfgfile.PolygonDetails);
@@ -455,7 +455,7 @@ void TwinEEngine::initConfigurations() {
 	_cfgfile.CrossFade = ConfGetBoolOrDefault("crossfade", false);
 	_cfgfile.WallCollision = ConfGetBoolOrDefault("wallcollision", false);
 
-	_actor->autoAggressive = ConfGetBoolOrDefault("combatauto", true);
+	_actor->_autoAggressive = ConfGetBoolOrDefault("combatauto", true);
 	_cfgfile.ShadowMode = ConfGetIntOrDefault("shadow", 2);
 	_cfgfile.SceZoom = ConfGetBoolOrDefault("scezoom", false);
 	_cfgfile.PolygonDetails = ConfGetIntOrDefault("polygondetails", 2);
@@ -468,7 +468,7 @@ void TwinEEngine::initConfigurations() {
 	debug(1, "UseAutoSaving:  %s", (_cfgfile.UseAutoSaving ? "true" : "false"));
 	debug(1, "CrossFade:      %s", (_cfgfile.CrossFade ? "true" : "false"));
 	debug(1, "WallCollision:  %s", (_cfgfile.WallCollision ? "true" : "false"));
-	debug(1, "AutoAggressive: %s", (_actor->autoAggressive ? "true" : "false"));
+	debug(1, "AutoAggressive: %s", (_actor->_autoAggressive ? "true" : "false"));
 	debug(1, "ShadowMode:     %i", _cfgfile.ShadowMode);
 	debug(1, "PolygonDetails: %i", _cfgfile.PolygonDetails);
 	debug(1, "SceZoom:        %s", (_cfgfile.SceZoom ? "true" : "false"));
@@ -620,7 +620,7 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	case kiUseSabre:
 		if (_scene->_sceneHero->_body != BodyType::btSabre) {
-			if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
+			if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 				_actor->setBehaviour(HeroBehaviourType::kNormal);
 			}
 			_actor->initModelActor(BodyType::btSabre, OWN_ACTOR_SCENE_INDEX);
@@ -640,7 +640,7 @@ void TwinEEngine::processInventoryAction() {
 			_scene->_sceneHero->_body = BodyType::btTunic;
 		}
 
-		if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
+		if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 			_actor->setBehaviour(HeroBehaviourType::kNormal);
 		} else {
 			_actor->setBehaviour(HeroBehaviourType::kProtoPack);
@@ -777,13 +777,13 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		     _input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) &&
 		    _scene->_sceneHero->_entity != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
 			if (_input->isActionActive(TwinEActionType::QuickBehaviourNormal, false)) {
-				_actor->heroBehaviour = HeroBehaviourType::kNormal;
+				_actor->_heroBehaviour = HeroBehaviourType::kNormal;
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false)) {
-				_actor->heroBehaviour = HeroBehaviourType::kAthletic;
+				_actor->_heroBehaviour = HeroBehaviourType::kAthletic;
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourAggressive, false)) {
-				_actor->heroBehaviour = HeroBehaviourType::kAggressive;
+				_actor->_heroBehaviour = HeroBehaviourType::kAggressive;
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) {
-				_actor->heroBehaviour = HeroBehaviourType::kDiscrete;
+				_actor->_heroBehaviour = HeroBehaviourType::kDiscrete;
 			}
 			freezeTime();
 			_menu->processBehaviourMenu();
@@ -799,7 +799,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				_scene->_sceneHero->_body = BodyType::btTunic;
 			}
 
-			if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
+			if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 				_actor->setBehaviour(HeroBehaviourType::kNormal);
 			} else {
 				_actor->setBehaviour(HeroBehaviourType::kProtoPack);
@@ -919,16 +919,16 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			if ((brickSound & 0xF0) == 0xF0) {
 				if ((brickSound & 0x0F) == 1) {
 					if (IS_HERO(a)) {
-						if (_actor->heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
-							if (!_actor->cropBottomScreen) {
+						if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
+							if (!_actor->_cropBottomScreen) {
 								_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationType_4, AnimationTypes::kStanding, 0);
 								_renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
-								_actor->cropBottomScreen = _renderer->_projPos.y;
+								_actor->_cropBottomScreen = _renderer->_projPos.y;
 							}
 							_renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
 							actor->_controlMode = ControlMode::kNoMove;
 							actor->setLife(-1);
-							_actor->cropBottomScreen = _renderer->_projPos.y;
+							_actor->_cropBottomScreen = _renderer->_projPos.y;
 							actor->_staticFlags.bCanDrown |= 0x10; // TODO: doesn't make sense
 						}
 					} else {
@@ -961,13 +961,13 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						_redraw->_reqBgRedraw = true;
 						_screens->_lockPalette = true;
 						_gameState->addLeafs(-1);
-						_actor->cropBottomScreen = 0;
+						_actor->_cropBottomScreen = 0;
 					} else { // game over
 						_gameState->setLeafBoxes(2);
 						_gameState->setLeafs(1);
 						_gameState->setMaxMagicPoints();
-						_actor->heroBehaviour = _actor->previousHeroBehaviour;
-						actor->_angle = _actor->previousHeroAngle;
+						_actor->_heroBehaviour = _actor->_previousHeroBehaviour;
+						actor->_angle = _actor->_previousHeroAngle;
 						actor->setLife(kActorMaxLife);
 
 						if (_scene->_previousSceneIdx != _scene->_currentSceneIdx) {
@@ -1002,7 +1002,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	_redraw->redrawEngineActions(_redraw->_reqBgRedraw);
 
 	// workaround to fix hero redraw after drowning
-	if (_actor->cropBottomScreen && _redraw->_reqBgRedraw) {
+	if (_actor->_cropBottomScreen && _redraw->_reqBgRedraw) {
 		_scene->_sceneHero->_staticFlags.bIsHidden = 1;
 		_redraw->redrawEngineActions(true);
 		_scene->_sceneHero->_staticFlags.bIsHidden = 0;

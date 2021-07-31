@@ -324,7 +324,7 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 			int16 id = menuSettings->getButtonState(i);
 			switch (id) {
 			case MenuButtonTypes::kAggressiveMode:
-				if (_engine->_actor->autoAggressive) {
+				if (_engine->_actor->_autoAggressive) {
 					menuSettings->setButtonTextId(i, TextId::kBehaviourAggressiveAuto);
 				} else {
 					menuSettings->setButtonTextId(i, TextId::kBehaviourAggressiveManual);
@@ -451,7 +451,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 			switch (id) {
 			case MenuButtonTypes::kAggressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
-					_engine->_actor->autoAggressive = !_engine->_actor->autoAggressive;
+					_engine->_actor->_autoAggressive = !_engine->_actor->_autoAggressive;
 					startMillis = loopMillis;
 				}
 				break;
@@ -935,7 +935,7 @@ bool Menu::isBehaviourHovered(int32 left, int32 top, HeroBehaviourType behaviour
 void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect) {
 	const Common::Rect &boxRect = calcBehaviourRect(left, top, behaviour);
 
-	const int animIdx = _engine->_actor->heroAnimIdx[(byte)behaviour];
+	const int animIdx = _engine->_actor->_heroAnimIdx[(byte)behaviour];
 	const AnimData &currentAnimData = _engine->_resources->_animData[animIdx];
 
 	uint currentAnimState = _behaviourAnimState[(byte)behaviour];
@@ -957,7 +957,7 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 
-	if (behaviour == _engine->_actor->heroBehaviour) {
+	if (behaviour == _engine->_actor->_heroBehaviour) {
 		const int titleOffset = 10;
 		const int titleHeight = 40;
 		const int32 titleBoxLeft = left + 10;
@@ -997,7 +997,7 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 }
 
 void Menu::prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect) {
-	const int animIdx = _engine->_actor->heroAnimIdx[(byte)behaviour];
+	const int animIdx = _engine->_actor->_heroAnimIdx[(byte)behaviour];
 	_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)behaviour], _engine->_resources->_animData[animIdx], *_behaviourEntity, &_behaviourAnimData[(byte)behaviour]);
 	drawBehaviour(left, top, behaviour, angle, false, dirtyRect);
 }
@@ -1028,17 +1028,17 @@ void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
 
 void Menu::processBehaviourMenu() {
 	_engine->exitSceneryView();
-	if (_engine->_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
+	if (_engine->_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 		_engine->_sound->stopSamples();
 		_engine->_actor->setBehaviour(HeroBehaviourType::kNormal);
 	}
 
 	_behaviourEntity = &_engine->_resources->_bodyData[_engine->_scene->_sceneHero->_entity];
 
-	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kNormal] = _engine->_actor->heroAnimIdxNORMAL;
-	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kAthletic] = _engine->_actor->heroAnimIdxATHLETIC;
-	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kAggressive] = _engine->_actor->heroAnimIdxAGGRESSIVE;
-	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kDiscrete] = _engine->_actor->heroAnimIdxDISCRETE;
+	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kNormal] = _engine->_actor->_heroAnimIdxNORMAL;
+	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kAthletic] = _engine->_actor->_heroAnimIdxATHLETIC;
+	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kAggressive] = _engine->_actor->_heroAnimIdxAGGRESSIVE;
+	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kDiscrete] = _engine->_actor->_heroAnimIdxDISCRETE;
 
 	_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->_angle, _engine->_scene->_sceneHero->_angle - ANGLE_90, ANGLE_17, &_moveMenu);
 
@@ -1053,10 +1053,10 @@ void Menu::processBehaviourMenu() {
 	const int32 top = _engine->height() / 2 - 140;
 	drawBehaviourMenu(left, top, _engine->_scene->_sceneHero->_angle);
 
-	HeroBehaviourType tmpHeroBehaviour = _engine->_actor->heroBehaviour;
+	HeroBehaviourType tmpHeroBehaviour = _engine->_actor->_heroBehaviour;
 
-	const int animIdx = _engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour];
-	_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->_animData[animIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
+	const int animIdx = _engine->_actor->_heroAnimIdx[(byte)_engine->_actor->_heroBehaviour];
+	_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)_engine->_actor->_heroBehaviour], _engine->_resources->_animData[animIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->_heroBehaviour]);
 
 	int32 tmpTime = _engine->_lbaTime;
 
@@ -1080,7 +1080,7 @@ void Menu::processBehaviourMenu() {
 		}
 #endif
 
-		int heroBehaviour = (int)_engine->_actor->heroBehaviour;
+		int heroBehaviour = (int)_engine->_actor->_heroBehaviour;
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 			heroBehaviour--;
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
@@ -1093,18 +1093,18 @@ void Menu::processBehaviourMenu() {
 			heroBehaviour = (int)HeroBehaviourType::kNormal;
 		}
 
-		_engine->_actor->heroBehaviour = (HeroBehaviourType)heroBehaviour;
+		_engine->_actor->_heroBehaviour = (HeroBehaviourType)heroBehaviour;
 
 		Common::Rect dirtyRect;
-		if (tmpHeroBehaviour != _engine->_actor->heroBehaviour) {
+		if (tmpHeroBehaviour != _engine->_actor->_heroBehaviour) {
 			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->_sceneHero->_angle, true, dirtyRect);
-			tmpHeroBehaviour = _engine->_actor->heroBehaviour;
+			tmpHeroBehaviour = _engine->_actor->_heroBehaviour;
 			_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->_angle, _engine->_scene->_sceneHero->_angle - ANGLE_90, ANGLE_17, &_moveMenu);
-			const int tmpAnimIdx = _engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour];
-			_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->_animData[tmpAnimIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
+			const int tmpAnimIdx = _engine->_actor->_heroAnimIdx[(byte)_engine->_actor->_heroBehaviour];
+			_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)_engine->_actor->_heroBehaviour], _engine->_resources->_animData[tmpAnimIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->_heroBehaviour]);
 		}
 
-		drawBehaviour(left, top, _engine->_actor->heroBehaviour, -1, true, dirtyRect);
+		drawBehaviour(left, top, _engine->_actor->_heroBehaviour, -1, true, dirtyRect);
 		if (!dirtyRect.isEmpty()) {
 			_engine->copyBlockPhys(dirtyRect);
 		}
@@ -1114,7 +1114,7 @@ void Menu::processBehaviourMenu() {
 
 	_engine->_lbaTime = tmpTime;
 
-	_engine->_actor->setBehaviour(_engine->_actor->heroBehaviour);
+	_engine->_actor->setBehaviour(_engine->_actor->_heroBehaviour);
 	_engine->_gameState->initEngineProjections();
 
 	_engine->_scene->_sceneTextBank = tmpTextBank;

@@ -53,7 +53,7 @@ void Movements::getShadowPosition(const IVec3 &pos) {
 	}
 	_engine->_collision->reajustActorPosition(shadowCollisionType);
 
-	_engine->_actor->shadowCoord = _processActor;
+	_engine->_actor->_shadowCoord = _processActor;
 }
 
 void Movements::setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
@@ -227,7 +227,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 	if (_engine->_input->toggleActionIfActive(TwinEActionType::SpecialAction)) {
 		executeAction = true;
 	}
-	switch (_engine->_actor->heroBehaviour) {
+	switch (_engine->_actor->_heroBehaviour) {
 	case HeroBehaviourType::kNormal:
 		executeAction = true;
 		break;
@@ -235,7 +235,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		_engine->_animations->initAnim(AnimationTypes::kJump, AnimType::kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 		break;
 	case HeroBehaviourType::kAggressive:
-		if (_engine->_actor->autoAggressive) {
+		if (_engine->_actor->_autoAggressive) {
 			ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 			_heroMoved = true;
 			actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
@@ -357,7 +357,7 @@ void Movements::processManualMovementExecution(int actorIdx) {
 
 void Movements::processManualRotationExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (!_engine->_actor->autoAggressive && actor->isAttackAnimationActive()) {
+	if (!_engine->_actor->_autoAggressive && actor->isAttackAnimationActive()) {
 		// it is allowed to rotate in auto aggressive mode - but not in manual mode.
 		return;
 	}

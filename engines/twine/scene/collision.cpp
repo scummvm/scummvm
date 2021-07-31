@@ -359,7 +359,7 @@ void Collision::checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 da
 	processActor.z += z;
 
 	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= 0x7E00 && processActor.z <= 0x7E00) {
-		const BoundingBox &bbox = _engine->_actor->processActorPtr->_boudingBox;
+		const BoundingBox &bbox = _engine->_actor->_processActorPtr->_boudingBox;
 		reajustActorPosition(brickShape);
 		brickShape = _engine->_grid->getBrickShapeFull(processActor, bbox.maxs.y);
 
@@ -420,12 +420,12 @@ void Collision::stopFalling() { // ReceptionObj()
 		const int32 fall = _engine->_scene->_heroYBeforeFall - processActor.y;
 
 		if (fall >= BRICK_HEIGHT * 8) {
-			const IVec3 &actorPos = _engine->_actor->processActorPtr->pos();
+			const IVec3 &actorPos = _engine->_actor->_processActorPtr->pos();
 			_engine->_extra->addExtraSpecial(actorPos.x, actorPos.y + 1000, actorPos.z, ExtraSpecialType::kHitStars);
 			if (fall >= BRICK_HEIGHT * 16) {
-				_engine->_actor->processActorPtr->setLife(0);
+				_engine->_actor->_processActorPtr->setLife(0);
 			} else {
-				_engine->_actor->processActorPtr->addLife(-1);
+				_engine->_actor->_processActorPtr->addLife(-1);
 			}
 			_engine->_animations->initAnim(AnimationTypes::kLandingHit, AnimType::kAnimationType_2, AnimationTypes::kStanding, _engine->_animations->_currentlyProcessedActorIdx);
 		} else if (fall > 10) {
@@ -436,10 +436,10 @@ void Collision::stopFalling() { // ReceptionObj()
 
 		_engine->_scene->_heroYBeforeFall = 0;
 	} else {
-		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationType_2, _engine->_actor->processActorPtr->_animExtra, _engine->_animations->_currentlyProcessedActorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationType_2, _engine->_actor->_processActorPtr->_animExtra, _engine->_animations->_currentlyProcessedActorIdx);
 	}
 
-	_engine->_actor->processActorPtr->_dynamicFlags.bIsFalling = 0;
+	_engine->_actor->_processActorPtr->_dynamicFlags.bIsFalling = 0;
 }
 
 int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx) {

@@ -60,12 +60,12 @@ void Actor::restartHeroScene() {
 	sceneHero->_labelIdx = -1;
 	sceneHero->_positionInLifeScript = 0;
 	sceneHero->_zone = -1;
-	sceneHero->_angle = previousHeroAngle;
+	sceneHero->_angle = _previousHeroAngle;
 
 	_engine->_movements->setActorAngleSafe(sceneHero->_angle, sceneHero->_angle, ANGLE_0, &sceneHero->_move);
-	setBehaviour(previousHeroBehaviour);
+	setBehaviour(_previousHeroBehaviour);
 
-	cropBottomScreen = 0;
+	_cropBottomScreen = 0;
 }
 
 void Actor::loadBehaviourEntity(ActorStruct *actor, EntityData &entityData, int16 &bodyAnimIndex, int32 index) {
@@ -82,11 +82,11 @@ void Actor::loadBehaviourEntity(ActorStruct *actor, EntityData &entityData, int1
 
 void Actor::loadHeroEntities() {
 	ActorStruct *sceneHero = _engine->_scene->_sceneHero;
-	loadBehaviourEntity(sceneHero, _heroEntityATHLETIC, heroAnimIdxATHLETIC, FILE3DHQR_HEROATHLETIC);
-	loadBehaviourEntity(sceneHero, _heroEntityAGGRESSIVE, heroAnimIdxAGGRESSIVE, FILE3DHQR_HEROAGGRESSIVE);
-	loadBehaviourEntity(sceneHero, _heroEntityDISCRETE, heroAnimIdxDISCRETE, FILE3DHQR_HERODISCRETE);
-	loadBehaviourEntity(sceneHero, _heroEntityPROTOPACK, heroAnimIdxPROTOPACK, FILE3DHQR_HEROPROTOPACK);
-	loadBehaviourEntity(sceneHero, _heroEntityNORMAL, heroAnimIdxNORMAL, FILE3DHQR_HERONORMAL);
+	loadBehaviourEntity(sceneHero, _heroEntityATHLETIC, _heroAnimIdxATHLETIC, FILE3DHQR_HEROATHLETIC);
+	loadBehaviourEntity(sceneHero, _heroEntityAGGRESSIVE, _heroAnimIdxAGGRESSIVE, FILE3DHQR_HEROAGGRESSIVE);
+	loadBehaviourEntity(sceneHero, _heroEntityDISCRETE, _heroAnimIdxDISCRETE, FILE3DHQR_HERODISCRETE);
+	loadBehaviourEntity(sceneHero, _heroEntityPROTOPACK, _heroAnimIdxPROTOPACK, FILE3DHQR_HEROPROTOPACK);
+	loadBehaviourEntity(sceneHero, _heroEntityNORMAL, _heroAnimIdxNORMAL, FILE3DHQR_HERONORMAL);
 
 	_engine->_animations->_currentActorAnimExtraPtr = AnimationTypes::kStanding;
 	sceneHero->_animExtraPtr = _engine->_animations->_currentActorAnimExtraPtr;
@@ -96,23 +96,23 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	ActorStruct *sceneHero = _engine->_scene->_sceneHero;
 	switch (behaviour) {
 	case HeroBehaviourType::kNormal:
-		heroBehaviour = behaviour;
+		_heroBehaviour = behaviour;
 		sceneHero->_entityDataPtr = &_heroEntityNORMAL;
 		break;
 	case HeroBehaviourType::kAthletic:
-		heroBehaviour = behaviour;
+		_heroBehaviour = behaviour;
 		sceneHero->_entityDataPtr = &_heroEntityATHLETIC;
 		break;
 	case HeroBehaviourType::kAggressive:
-		heroBehaviour = behaviour;
+		_heroBehaviour = behaviour;
 		sceneHero->_entityDataPtr = &_heroEntityAGGRESSIVE;
 		break;
 	case HeroBehaviourType::kDiscrete:
-		heroBehaviour = behaviour;
+		_heroBehaviour = behaviour;
 		sceneHero->_entityDataPtr = &_heroEntityDISCRETE;
 		break;
 	case HeroBehaviourType::kProtoPack:
-		heroBehaviour = behaviour;
+		_heroBehaviour = behaviour;
 		sceneHero->_entityDataPtr = &_heroEntityPROTOPACK;
 		break;
 	};
@@ -141,11 +141,11 @@ void Actor::initSpriteActor(int32 actorIdx) {
 }
 
 TextId Actor::getTextIdForBehaviour() const {
-	if (heroBehaviour == HeroBehaviourType::kAggressive && autoAggressive) {
+	if (_heroBehaviour == HeroBehaviourType::kAggressive && _autoAggressive) {
 		return TextId::kBehaviourAggressiveAuto;
 	}
 	// the other values are matching the text ids
-	return (TextId)(int32)heroBehaviour;
+	return (TextId)(int32)_heroBehaviour;
 }
 
 int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox) {
@@ -169,7 +169,7 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 
 	debug(1, "Load body %i for actor %i", (int)bodyIdx, actorIdx);
 
-	if (IS_HERO(actorIdx) && heroBehaviour == HeroBehaviourType::kProtoPack && localActor->_armor != 0 && localActor->_armor != 1) {
+	if (IS_HERO(actorIdx) && _heroBehaviour == HeroBehaviourType::kProtoPack && localActor->_armor != 0 && localActor->_armor != 1) {
 		setBehaviour(HeroBehaviourType::kNormal);
 	}
 

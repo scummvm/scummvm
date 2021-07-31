@@ -532,8 +532,8 @@ void Scene::changeScene() {
 	_engine->_renderer->setLightVector(_alphaLight, _betaLight, ANGLE_0);
 
 	if (_previousSceneIdx != SCENE_CEILING_GRID_FADE_1 && _previousSceneIdx != _needChangeScene) {
-		_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
-		_engine->_actor->previousHeroAngle = _sceneHero->_angle;
+		_engine->_actor->_previousHeroBehaviour = _engine->_actor->_heroBehaviour;
+		_engine->_actor->_previousHeroAngle = _sceneHero->_angle;
 		_engine->autoSave();
 	}
 
@@ -732,7 +732,7 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case ZoneType::kLadder:
-				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_anim == AnimationTypes::kForward || actor->_anim == AnimationTypes::kTopLadder || actor->_anim == AnimationTypes::kClimbLadder)) {
+				if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_anim == AnimationTypes::kForward || actor->_anim == AnimationTypes::kTopLadder || actor->_anim == AnimationTypes::kClimbLadder)) {
 					_engine->_movements->rotateActor(actor->_boudingBox.mins.x, actor->_boudingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
 					_engine->_renderer->_destPos.x += _engine->_movements->_processActor.x;
 					_engine->_renderer->_destPos.z += _engine->_movements->_processActor.z;

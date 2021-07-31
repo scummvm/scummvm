@@ -288,34 +288,34 @@ private:
 public:
 	Actor(TwinEEngine *engine);
 
-	ActorStruct *processActorPtr = nullptr;
+	ActorStruct *_processActorPtr = nullptr;
 
 	/** Actor shadow coordinate */
-	IVec3 shadowCoord;
+	IVec3 _shadowCoord;
 
-	HeroBehaviourType heroBehaviour = HeroBehaviourType::kNormal;
+	HeroBehaviourType _heroBehaviour = HeroBehaviourType::kNormal;
 	/** Hero auto aggressive mode */
-	bool autoAggressive = true;
+	bool _autoAggressive = true;
 	/** Previous Hero behaviour */
-	HeroBehaviourType previousHeroBehaviour = HeroBehaviourType::kNormal;
+	HeroBehaviourType _previousHeroBehaviour = HeroBehaviourType::kNormal;
 	/** Previous Hero angle */
-	int16 previousHeroAngle = 0;
+	int16 _previousHeroAngle = 0;
 
-	int16 cropBottomScreen = 0;
+	int16 _cropBottomScreen = 0;
 
 	/** Hero current anim for normal behaviour */
-	int16 heroAnimIdxNORMAL = 0;
+	int16 _heroAnimIdxNORMAL = 0;
 	/** Hero current anim for athletic behaviour */
-	int16 heroAnimIdxATHLETIC = 0;
+	int16 _heroAnimIdxATHLETIC = 0;
 	/** Hero current anim for aggressive behaviour */
-	int16 heroAnimIdxAGGRESSIVE = 0;
+	int16 _heroAnimIdxAGGRESSIVE = 0;
 	/** Hero current anim for discrete behaviour */
-	int16 heroAnimIdxDISCRETE = 0;
+	int16 _heroAnimIdxDISCRETE = 0;
 	/** Hero current anim for protopack behaviour */
-	int16 heroAnimIdxPROTOPACK = 0;
+	int16 _heroAnimIdxPROTOPACK = 0;
 
 	/** Hero anim for behaviour menu */
-	int16 heroAnimIdx[4];
+	int16 _heroAnimIdx[4];
 
 	/** Restart hero variables while opening new scenes */
 	void restartHeroScene();
