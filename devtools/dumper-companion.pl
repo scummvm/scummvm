@@ -100,6 +100,8 @@ sub processIso($) {
 	system1("hmount \"$isofile\" >/dev/null 2>&1") == 0 or die "Can't execute hmount";
 	print "done\n" unless $verbose;
 
+	print "C: hls -1alRU\n" if $verbose;
+
 	open(my $ls, "-|", "hls -1alRU");
 
 	my $dir = "";
@@ -111,6 +113,8 @@ sub processIso($) {
 	my $prevlen = 0;
 
 	while (<$ls>) {
+		print "LS: $_" if $verbose;
+
 		chomp;
 		flush STDOUT;
 
@@ -274,7 +278,7 @@ EOF
 sub system1($) {
 	my $cmd = shift;
 
-	print "$cmd\n" if $verbose;
+	print "C: $cmd\n" if $verbose;
 
 	return system $cmd;
 }
