@@ -97,7 +97,10 @@ sub processIso($) {
 	flush STDOUT;
 	print "\n" if $verbose;
 
-	system1("hmount \"$isofile\" >/dev/null 2>&1") == 0 or die "Can't execute hmount";
+	my $redirect = $verbose ? "" : ">/dev/null 2>&1";
+
+	system1("hmount \"$isofile\" $redirect") == 0 or die "Can't execute hmount";
+
 	print "done\n" unless $verbose;
 
 	print "C: hls -1alRU\n" if $verbose;
@@ -193,7 +196,7 @@ sub processIso($) {
 	flush STDOUT;
 	print "\n" if $verbose;
 
-	system1("humount >/dev/null 2>&1") == 0 or die "Can't execute humount";
+	system1("humount $redirect") == 0 or die "Can't execute humount";
 	print "done\n" unless $verbose;
 }
 
