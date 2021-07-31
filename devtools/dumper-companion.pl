@@ -147,7 +147,7 @@ sub processIso($) {
 			print "mkdir \"$outPath$dir\"\n" if $verbose;
 			$numdirs++;
 		} elsif (/^[fF]/) {
-			if (/[fF]i?\s+.{4}\/.{4}+\s+([0-9]+)\s+([0-9]+)\s+\w+\s+\d+\s+\d+\s+(.*)/) {
+			if (/[fF]i?\s+.{4}\/.{4}\s+([0-9]+)\s+([0-9]+)\s+\w+\s+\d+\s+\d+:?\d*\s+(.*)/) {
 				my $res = $1;
 				my $data = $2;
 				my $fname = $3;
