@@ -107,6 +107,17 @@ sub processIso($) {
 
 	open(my $ls, "-|", "hls -1alRU");
 
+	my @lines;
+
+	while (<$ls>) {
+		print "LS: $_" if $verbose;
+
+		push @lines, $_;
+	}
+
+	close $ls;
+
+
 	my $dir = "";
 	my $mdir = "";
 
@@ -115,11 +126,10 @@ sub processIso($) {
 	my $numrens = 0;
 	my $prevlen = 0;
 
-	while (<$ls>) {
-		print "LS: $_" if $verbose;
+	for $_ (@lines) {
+		print "LINE: $_" if $verbose;
 
 		chomp;
-		flush STDOUT;
 
 		if (/^:/) {
 			$mdir = $_;
