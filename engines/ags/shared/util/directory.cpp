@@ -148,6 +148,86 @@ bool FindFile::Next() {
 	return _index < (int)_files.size();
 }
 
+FindFileRecursive::~FindFileRecursive() {
+	Close();
+}
+
+FindFileRecursive FindFileRecursive::Open(const String &path, const String &wildcard, size_t max_level) {
+	FindFile fdir = FindFile::OpenDirs(path);
+	FindFile ffile = FindFile::OpenFiles(path, wildcard);
+	if (ffile.AtEnd() && fdir.AtEnd())
+		return FindFileRecursive(); // return invalid object
+	FindFileRecursive ff;
+	ff._fdir = std::move(fdir);
+	ff._ffile = std::move(ffile);
+	// Try get the first matching entry
+	if (ff._ffile.AtEnd() && !ff.Next())
+		return FindFileRecursive(); // return invalid object
+	ff._maxLevel = max_level;
+	ff._fullDir = path;
+	ff._curFile = ff._ffile.Current();
+	return ff; // success
+}
+
+void FindFileRecursive::Close() {
+	while (_fdirs.size())
+		_fdirs.pop();
+	_fdir.Close();
+	_ffile.Close();
+}
+
+bool FindFileRecursive::Next() {
+	// Look up for the next file in the current dir
+	if (_ffile.Next()) {
+		Path::ConcatPaths(_curFile, _curDir, _ffile.Current());
+		return true;
+	}
+	// No more files? Find a directory that still has
+	while (_ffile.AtEnd()) {
+		// first make sure there are unchecked subdirs left in current dir
+		while (_fdir.AtEnd()) { // if not, go up, until found any, or hit the top
+			if (!PopDir())
+				return false; // no more directories
+		}
+
+		// Found an unchecked subdirectory/ies, try opening one
+		while (!PushDir(_fdir.Current()) && !_fdir.AtEnd())
+			_fdir.Next();
+	}
+	Path::ConcatPaths(_curFile, _curDir, _ffile.Current());
+	return true; // success
+}
+
+bool FindFileRecursive::PushDir(const String &sub) {
+	if (_maxLevel != -1 && (int)_fdirs.size() == _maxLevel)
+		return false; // no more nesting allowed
+
+	String path = Path::ConcatPaths(_fullDir, sub);
+	FindFile fdir = FindFile::OpenDirs(path);
+	FindFile ffile = FindFile::OpenFiles(path);
+	if (ffile.AtEnd() && fdir.AtEnd())
+		return false; // dir is empty, or error
+	_fdirs.push(std::move(_fdir)); // save previous dir iterator
+	_fdir = std::move(fdir);
+	_ffile = std::move(ffile);
+	_fullDir = path;
+	_curDir = Path::ConcatPaths(_curDir, sub);
+	return true;
+}
+
+bool FindFileRecursive::PopDir() {
+	if (_fdirs.size() == 0)
+		return false; // no more parent levels
+	// restore parent level
+	_fdir = std::move(_fdirs.top());
+	_fdirs.pop();
+	_fullDir = Path::GetParent(_fullDir);
+	_curDir = Path::GetParent(_curDir);
+	// advance dir iterator that we just recovered
+	_fdir.Next();
+	return true;
+}
+
 } // namespace Shared
 } // namespace AGS
 } // namespace AGS3

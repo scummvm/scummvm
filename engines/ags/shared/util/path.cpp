@@ -225,6 +225,17 @@ String ConcatPaths(const String &parent, const String &child) {
 	return path;
 }
 
+String ConcatPaths(String &buf, const String &parent, const String &child) {
+	if (parent.IsEmpty())
+		buf = child;
+	else if (child.IsEmpty())
+		buf = parent;
+	else
+		buf.Format("%s/%s", parent.GetCStr(), child.GetCStr());
+	FixupPath(buf);
+	return buf;
+}
+
 String MakePath(const String &parent, const String &filename) {
 	String path = String::FromFormat("%s/%s", parent.GetCStr(), filename.GetCStr());
 	FixupPath(path);

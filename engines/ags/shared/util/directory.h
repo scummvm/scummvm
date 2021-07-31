@@ -30,6 +30,7 @@
 #define AGS_SHARED_UTIL_DIRECTORY_H
 
 #include "common/fs.h"
+#include "common/stack.h"
 #include "ags/lib/std/memory.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/string.h"
@@ -87,6 +88,36 @@ public:
 	}
 	void Close();
 	bool Next();
+};
+
+class FindFileRecursive {
+public:
+	FindFileRecursive() {}
+	~FindFileRecursive();
+
+	static FindFileRecursive Open(const String &path, const String &wildcard = "*",
+		size_t max_level = -1);
+	// TODO: directory mode, like in FindFile
+	bool AtEnd() const {
+		return _ffile.AtEnd();
+	}
+	String Current() const {
+		return _curFile;
+	}
+	void Close();
+	bool Next();
+
+private:
+	bool PushDir(const String &sub);
+	bool PopDir();
+
+	Common::Stack<FindFile> _fdirs;
+	FindFile _fdir; // current find dir iterator
+	FindFile _ffile; // current find file iterator
+	int _maxLevel = -1; // max nesting level, -1 for unrestricted
+	String _fullDir; // full directory path
+	String _curDir; // current dir path, relative to the base path
+	String _curFile; // current file path with parent dirs
 };
 
 } // namespace Shared
