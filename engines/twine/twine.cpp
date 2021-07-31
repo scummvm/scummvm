@@ -526,8 +526,6 @@ void TwinEEngine::exitSceneryView() {
 }
 
 void TwinEEngine::initAll() {
-	Common::fill(&_menu->_itemAngle[0], &_menu->_itemAngle[NUM_INVENTORY_ITEMS], 0);
-
 	_scene->_sceneHero = _scene->getActor(OWN_ACTOR_SCENE_INDEX);
 
 	// Set clip to fullscreen by default, allows main menu to render properly after load

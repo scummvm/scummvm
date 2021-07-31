@@ -932,7 +932,7 @@ bool Menu::isBehaviourHovered(int32 left, int32 top, HeroBehaviourType behaviour
 	return _engine->_input->isMouseHovering(boxRect);
 }
 
-void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect) {
+void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int32 angle, bool cantDrawBox) {
 	const Common::Rect &boxRect = calcBehaviourRect(left, top, behaviour);
 
 	const int animIdx = _engine->_actor->_heroAnimIdx[(byte)behaviour];
@@ -980,26 +980,19 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), dialText, sizeof(dialText));
 
 		_engine->_text->drawText(titleBoxCenter - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
-		_engine->copyBlockPhys(titleRect);
 	} else {
 		_engine->_interface->drawFilledRect(boxRect, COLOR_BLACK);
 	}
 
-	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, *_behaviourEntity);
-
-	if (dirtyRect.isEmpty()) {
-		dirtyRect = boxRect;
-	} else {
-		dirtyRect.extend(boxRect);
-	}
+	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, *_behaviourEntity, _moveMenu);
 
 	_engine->_interface->loadClip();
 }
 
-void Menu::prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect) {
+void Menu::prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour) {
 	const int animIdx = _engine->_actor->_heroAnimIdx[(byte)behaviour];
 	_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)behaviour], _engine->_resources->_animData[animIdx], *_behaviourEntity, &_behaviourAnimData[(byte)behaviour]);
-	drawBehaviour(left, top, behaviour, angle, false, dirtyRect);
+	drawBehaviour(left, top, behaviour, angle, false);
 }
 
 void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
@@ -1015,11 +1008,10 @@ void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
 	boxRect.grow(-1);
 	_engine->_interface->drawTransparentBox(boxRect, 2);
 
-	Common::Rect ignoreRect;
-	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kNormal, ignoreRect);
-	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kAthletic, ignoreRect);
-	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kAggressive, ignoreRect);
-	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kDiscrete, ignoreRect);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kNormal);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kAthletic);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kAggressive);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kDiscrete);
 
 	_engine->copyBlockPhys(titleRect);
 
@@ -1095,19 +1087,15 @@ void Menu::processBehaviourMenu() {
 
 		_engine->_actor->_heroBehaviour = (HeroBehaviourType)heroBehaviour;
 
-		Common::Rect dirtyRect;
 		if (tmpHeroBehaviour != _engine->_actor->_heroBehaviour) {
-			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->_sceneHero->_angle, true, dirtyRect);
+			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->_sceneHero->_angle, true);
 			tmpHeroBehaviour = _engine->_actor->_heroBehaviour;
 			_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->_angle, _engine->_scene->_sceneHero->_angle - ANGLE_90, ANGLE_17, &_moveMenu);
 			const int tmpAnimIdx = _engine->_actor->_heroAnimIdx[(byte)_engine->_actor->_heroBehaviour];
 			_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)_engine->_actor->_heroBehaviour], _engine->_resources->_animData[tmpAnimIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->_heroBehaviour]);
 		}
 
-		drawBehaviour(left, top, _engine->_actor->_heroBehaviour, -1, true, dirtyRect);
-		if (!dirtyRect.isEmpty()) {
-			_engine->copyBlockPhys(dirtyRect);
-		}
+		drawBehaviour(left, top, _engine->_actor->_heroBehaviour, -1, true);
 
 		_engine->_lbaTime++;
 	}
@@ -1121,7 +1109,7 @@ void Menu::processBehaviourMenu() {
 	_engine->_text->initSceneTextBank();
 }
 
-void Menu::drawItem(int32 left, int32 top, int32 item, Common::Rect &dirtyRect) {
+void Menu::drawItem(int32 left, int32 top, int32 item) {
 	const int32 itemWidth = 74;
 	const int32 itemHeight = 64;
 	const int32 itemPadding = 11;
@@ -1147,26 +1135,15 @@ void Menu::drawItem(int32 left, int32 top, int32 item, Common::Rect &dirtyRect) 
 	}
 
 	drawBox(rect);
-	if (dirtyRect.isEmpty()) {
-		dirtyRect = rect;
-	} else {
-		dirtyRect.extend(rect);
-	}
 }
 
 void Menu::drawInventoryItems(int32 left, int32 top) {
 	const Common::Rect rect(left, top, left + 605, top + 310);
 	_engine->_interface->drawTransparentBox(rect, 4);
 	drawBox(rect);
-	drawBox(left + 93, top + 8, left + 93 + 78, top + 8 + 293, COLOR_75, COLOR_75);
-	_engine->copyBlockPhys(rect);
 
-	Common::Rect dirtyRect;
 	for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
-		drawItem(left, top, item, dirtyRect);
-	}
-	if (!dirtyRect.isEmpty()) {
-		_engine->copyBlockPhys(dirtyRect);
+		drawItem(left, top, item);
 	}
 }
 
@@ -1214,34 +1191,33 @@ void Menu::processInventoryMenu() {
 		const bool cursorLeft = _engine->_input->toggleActionIfActive(TwinEActionType::UILeft);
 		const bool cursorRight = _engine->_input->toggleActionIfActive(TwinEActionType::UIRight);
 
-		Common::Rect dirtyRect;
 		if (cursorDown) {
 			_inventorySelectedItem++;
 			if (_inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
 				_inventorySelectedItem = 0;
 			}
-			drawItem(left, top, prevSelectedItem, dirtyRect);
+			drawItem(left, top, prevSelectedItem);
 			updateItemText = true;
 		} else if (cursorUp) {
 			_inventorySelectedItem--;
 			if (_inventorySelectedItem < 0) {
 				_inventorySelectedItem = NUM_INVENTORY_ITEMS - 1;
 			}
-			drawItem(left, top, prevSelectedItem, dirtyRect);
+			drawItem(left, top, prevSelectedItem);
 			updateItemText = true;
 		} else if (cursorLeft) {
 			_inventorySelectedItem -= 4;
 			if (_inventorySelectedItem < 0) {
 				_inventorySelectedItem += NUM_INVENTORY_ITEMS;
 			}
-			drawItem(left, top, prevSelectedItem, dirtyRect);
+			drawItem(left, top, prevSelectedItem);
 			updateItemText = true;
 		} else if (cursorRight) {
 			_inventorySelectedItem += 4;
 			if (_inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
 				_inventorySelectedItem -= NUM_INVENTORY_ITEMS;
 			}
-			drawItem(left, top, prevSelectedItem, dirtyRect);
+			drawItem(left, top, prevSelectedItem);
 			updateItemText = true;
 		}
 
@@ -1273,20 +1249,13 @@ void Menu::processInventoryMenu() {
 			}
 		}
 
-		drawItem(left, top, _inventorySelectedItem, dirtyRect);
+		drawItem(left, top, _inventorySelectedItem);
 
 		if (_inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->hasItem((InventoryItems)_inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 			_engine->_loopInventoryItem = _inventorySelectedItem;
 			_inventorySelectedColor = COLOR_91;
-			drawItem(left, top, _inventorySelectedItem, dirtyRect);
-			if (!dirtyRect.isEmpty()) {
-				_engine->copyBlockPhys(dirtyRect);
-			}
+			drawItem(left, top, _inventorySelectedItem);
 			break;
-		}
-
-		if (!dirtyRect.isEmpty()) {
-			_engine->copyBlockPhys(dirtyRect);
 		}
 	}
 

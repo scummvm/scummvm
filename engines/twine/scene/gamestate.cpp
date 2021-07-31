@@ -365,6 +365,7 @@ void GameState::processFoundItem(InventoryItems item) {
 	_engine->_redraw->_numOfRedrawBox = 0;
 
 	ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
+	int16 itemAngle = ANGLE_0;
 	for (;;) {
 		FrameMarker frame(_engine, 66);
 		_engine->_interface->resetClip();
@@ -374,9 +375,9 @@ void GameState::processFoundItem(InventoryItems item) {
 
 		_engine->_interface->setClip(boxRect);
 
-		_engine->_menu->_itemAngle[item] += ANGLE_2;
+		itemAngle += ANGLE_2;
 
-		_engine->_renderer->renderInventoryItem(_engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, _engine->_resources->_inventoryTable[item], _engine->_menu->_itemAngle[item], 10000);
+		_engine->_renderer->renderInventoryItem(_engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, _engine->_resources->_inventoryTable[item], itemAngle, 10000);
 
 		_engine->_menu->drawBox(boxRect);
 		_engine->_redraw->addRedrawArea(boxRect);

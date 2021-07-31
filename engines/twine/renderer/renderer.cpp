@@ -1460,20 +1460,19 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	return true;
 }
 
-void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData) {
-	renderBehaviourModel(rect.left, rect.top, rect.right, rect.bottom, y, angle, bodyData);
-}
-
-void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, const BodyData &bodyData) {
+void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData, ActorMoveStruct &move) {
+	int32 boxLeft = rect.left;
+	int32 boxTop = rect.top;
+	int32 boxRight = rect.right;
+	int32 boxBottom = rect.bottom;
 	const int32 ypos = (boxBottom + boxTop) / 2;
 	const int32 xpos = (boxRight + boxLeft) / 2;
 
 	setOrthoProjection(xpos, ypos, 0);
-	_engine->_interface->setClip(Common::Rect(boxLeft, boxTop, boxRight, boxBottom));
+	_engine->_interface->setClip(rect);
 
 	Common::Rect dummy;
 	if (angle == -1) {
-		ActorMoveStruct &move = _engine->_menu->_moveMenu;
 		const int16 newAngle = move.getRealAngle(_engine->_lbaTime);
 		if (move.numOfStep == 0) {
 			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, ANGLE_17, &move);
