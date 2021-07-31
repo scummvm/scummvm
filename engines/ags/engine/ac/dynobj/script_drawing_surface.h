@@ -24,6 +24,7 @@
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPT_DRAWING_SURFACE_H
 
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
+#include "ags/shared/game/room_struct.h"
 
 namespace AGS3 {
 
@@ -34,7 +35,10 @@ class Bitmap;
 } // namespace AGS
 
 struct ScriptDrawingSurface final : AGSCCDynamicObject {
+	// These numbers and types are used to determine the source of this drawing surface;
+	// only one of them can be valid for this surface.
 	int roomBackgroundNumber;
+	RoomAreaMask roomMaskType;
 	int dynamicSpriteNumber;
 	int dynamicSurfaceNumber;
 	bool isLinkedBitmapOnly;
