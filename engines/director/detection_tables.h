@@ -197,7 +197,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "martian",			"Ray Bradbury's The Martian Chronicles Adventure Game" },
 	{ "maze",				"The Riddle of the Maze" },
 	{ "mcmillennium",		"Mission Code: Millennium" },
-	{ "mediaband",			"Meet Mediaband" },
+	{ "mediaband",			"Meet MediaBand" },
 	{ "melements",			"Masters of the Elements" },
 	{ "mentalmaths",		"Mental Maths Booster" },
 	{ "miamath",			"Mia's Math Adventure: Just in Time!" },
@@ -2339,7 +2339,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Full game is not Director
 	WINDEMO1("mechwarrior2", "Demo", "MW2DEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
 
-	WINGAME1("mediaband", "", "MEDIABND.EXE", "0cfb9b4762e33ab56d656a0eb146a048", 717921, 400),
+	MACGAME2("mediaband", "v1.0", "xn--Meet MediaBand-eca49b68a", "17efee018a660458fae80de4364021ac", 483774,
+								  "title", "88e717a623bc2690d84a1246e512eaff", 2646636, 404),
+	MACGAME2("mediaband", "v1.1", "xn--Meet MediaBand-eca49b68a", "17efee018a660458fae80de4364021ac", 483774,
+								  "title", "14a64b7999d909a23df7842cec65458c", 2752392, 404),
+	WINGAME1("mediaband", "v1.1", "MEDIABND.EXE", "0cfb9b4762e33ab56d656a0eb146a048", 717921, 404),
 
 	// Projector is 4.0 Demo from Lingo Workshop
 	MACDEMO1("mediabook", "Sampler", "MediaBook Sampler 16Mb", "78138a77207907642744d0960c14d9e5", 510450, 400),
