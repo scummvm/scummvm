@@ -114,9 +114,9 @@ static int32 mANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x04
  */
 static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
-	engine->_scene->currentScriptValue = ctx.stream.readByte();
+	engine->_scene->_currentScriptValue = ctx.stream.readByte();
 
-	const IVec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
 	engine->_renderer->_destPos.x = sp.x;
 	engine->_renderer->_destPos.y = sp.y;
 	engine->_renderer->_destPos.z = sp.z;
@@ -129,7 +129,7 @@ static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 		engine->_movements->moveActor(ctx.actor->angle, newAngle, ctx.actor->speed, &ctx.actor->move);
 	}
 
-	if (engine->_movements->targetActorDistance > 500) {
+	if (engine->_movements->_targetActorDistance > 500) {
 		ctx.undo(1);
 		return 1;
 	}
@@ -169,7 +169,7 @@ static int32 mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
 		return 0;
 	}
-	engine->_scene->currentScriptValue = angle;
+	engine->_scene->_currentScriptValue = angle;
 	if (ctx.actor->move.numOfStep == 0) {
 		engine->_movements->moveActor(ctx.actor->angle, angle, ctx.actor->speed, &ctx.actor->move);
 	}
@@ -186,9 +186,9 @@ static int32 mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x08
  */
 static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
-	engine->_scene->currentScriptValue = ctx.stream.readByte();
+	engine->_scene->_currentScriptValue = ctx.stream.readByte();
 
-	const IVec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
 	engine->_renderer->_destPos.x = sp.x;
 	engine->_renderer->_destPos.y = sp.y;
 	engine->_renderer->_destPos.z = sp.z;
@@ -211,7 +211,7 @@ static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mLABEL(TwinEEngine *engine, MoveScriptContext &ctx) {
 	ctx.actor->labelIdx = ctx.stream.readByte();
 	ctx.actor->currentLabelPtr = ctx.stream.pos() - 2;
-	if (engine->_scene->currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 2 &&
+	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 2 &&
 		(ctx.actor->labelIdx == 0 || ctx.actor->labelIdx == 1)) {
 		engine->unlockAchievement("LBA_ACH_004");
 	}
@@ -246,9 +246,9 @@ static int32 mSTOP(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x0C
  */
 static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
-	engine->_scene->currentScriptValue = ctx.stream.readByte();
+	engine->_scene->_currentScriptValue = ctx.stream.readByte();
 
-	const IVec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
 	engine->_renderer->_destPos.x = sp.x;
 	engine->_renderer->_destPos.y = sp.y;
 	engine->_renderer->_destPos.z = sp.z;
@@ -261,7 +261,7 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 		engine->_movements->moveActor(ctx.actor->angle, newAngle, ctx.actor->speed, &ctx.actor->move);
 	}
 
-	if (engine->_movements->targetActorDistance > 500) {
+	if (engine->_movements->_targetActorDistance > 500) {
 		ctx.undo(1);
 		return 1;
 	}
@@ -319,17 +319,17 @@ static int32 mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 		return 0;
 	}
 
-	engine->_scene->currentScriptValue = trackId;
+	engine->_scene->_currentScriptValue = trackId;
 
-	const IVec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
 	engine->_renderer->_destPos.x = sp.x;
 	engine->_renderer->_destPos.y = sp.y;
 	engine->_renderer->_destPos.z = sp.z;
 
 	ctx.actor->angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.x, ctx.actor->pos.z, sp.x, sp.z);
-	ctx.actor->spriteActorRotation = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.y, 0, sp.y, engine->_movements->targetActorDistance);
+	ctx.actor->spriteActorRotation = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos.y, 0, sp.y, engine->_movements->_targetActorDistance);
 
-	if (engine->_movements->targetActorDistance > 100) {
+	if (engine->_movements->_targetActorDistance > 100) {
 		ctx.undo(1);
 		return 1;
 	}
@@ -441,7 +441,7 @@ static int32 mOPEN_LEFT(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->speed = 1000;
 		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
-	if (engine->_scene->currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
+	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
 		engine->unlockAchievement("LBA_ACH_009");
 	}
 	return 0;
@@ -460,7 +460,7 @@ static int32 mOPEN_RIGHT(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->speed = 1000;
 		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
-	if (engine->_scene->currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
+	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
 		engine->unlockAchievement("LBA_ACH_009");
 	}
 	return 0;
@@ -479,7 +479,7 @@ static int32 mOPEN_UP(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->speed = 1000;
 		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
-	if (engine->_scene->currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
+	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
 		engine->unlockAchievement("LBA_ACH_009");
 	}
 	return 0;
@@ -498,7 +498,7 @@ static int32 mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->speed = 1000;
 		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
-	if (engine->_scene->currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
+	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Proxima_Island_Museum && ctx.actor->actorIdx == 16) {
 		engine->unlockAchievement("LBA_ACH_009");
 	}
 	return 0;
@@ -617,15 +617,15 @@ static int32 mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
 		return 0;
 	}
-	engine->_scene->currentScriptValue = angle;
-	if (engine->_scene->currentScriptValue == -1 && ctx.actor->move.numOfStep == 0) {
-		engine->_scene->currentScriptValue = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos, engine->_scene->sceneHero->pos);
-		engine->_movements->moveActor(ctx.actor->angle, engine->_scene->currentScriptValue, ctx.actor->speed, &ctx.actor->move);
+	engine->_scene->_currentScriptValue = angle;
+	if (engine->_scene->_currentScriptValue == -1 && ctx.actor->move.numOfStep == 0) {
+		engine->_scene->_currentScriptValue = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->pos, engine->_scene->_sceneHero->pos);
+		engine->_movements->moveActor(ctx.actor->angle, engine->_scene->_currentScriptValue, ctx.actor->speed, &ctx.actor->move);
 		ctx.stream.rewind(2);
-		ctx.stream.writeSint16LE(engine->_scene->currentScriptValue);
+		ctx.stream.writeSint16LE(engine->_scene->_currentScriptValue);
 	}
 
-	if (ctx.actor->angle != engine->_scene->currentScriptValue) {
+	if (ctx.actor->angle != engine->_scene->_currentScriptValue) {
 		ctx.undo(2);
 		return 1;
 	}
@@ -646,23 +646,23 @@ static int32 mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 		return 0;
 	}
 
-	engine->_scene->currentScriptValue = val2;
+	engine->_scene->_currentScriptValue = val2;
 
-	if (engine->_scene->currentScriptValue == -1 && ctx.actor->move.numOfStep == 0) {
+	if (engine->_scene->_currentScriptValue == -1 && ctx.actor->move.numOfStep == 0) {
 		if (engine->getRandomNumber() & 1) {
 			const int32 newAngle = ctx.actor->angle + ANGLE_90 + (ABS(val1) >> 1);
-			engine->_scene->currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
+			engine->_scene->_currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
 		} else {
 			const int32 newAngle = ctx.actor->angle - ANGLE_90 + (ABS(val1) >> 1);
-			engine->_scene->currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
+			engine->_scene->_currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
 		}
 
-		engine->_movements->moveActor(ctx.actor->angle, engine->_scene->currentScriptValue, ctx.actor->speed, &ctx.actor->move);
+		engine->_movements->moveActor(ctx.actor->angle, engine->_scene->_currentScriptValue, ctx.actor->speed, &ctx.actor->move);
 		ctx.stream.rewind(2);
-		ctx.stream.writeSint16LE(engine->_scene->currentScriptValue);
+		ctx.stream.writeSint16LE(engine->_scene->_currentScriptValue);
 	}
 
-	if (ctx.actor->angle != engine->_scene->currentScriptValue) {
+	if (ctx.actor->angle != engine->_scene->_currentScriptValue) {
 		ctx.undo(4);
 		return 1;
 	}

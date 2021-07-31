@@ -39,9 +39,9 @@ namespace TwinE {
 Movements::Movements(TwinEEngine *engine) : _engine(engine) {}
 
 void Movements::getShadowPosition(const IVec3 &pos) {
-	const uint8 *ptr = _engine->_grid->getBlockBufferGround(pos, processActor.y);
-	processActor.x = pos.x;
-	processActor.z = pos.z;
+	const uint8 *ptr = _engine->_grid->getBlockBufferGround(pos, _processActor.y);
+	_processActor.x = pos.x;
+	_processActor.z = pos.z;
 
 	ShapeType shadowCollisionType;
 	if (*ptr) {
@@ -53,7 +53,7 @@ void Movements::getShadowPosition(const IVec3 &pos) {
 	}
 	_engine->_collision->reajustActorPosition(shadowCollisionType);
 
-	_engine->_actor->shadowCoord = processActor;
+	_engine->_actor->shadowCoord = _processActor;
 }
 
 void Movements::setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
@@ -106,13 +106,13 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		flag = false;
 	}
 
-	targetActorDistance = (int32)sqrt((float)(newX + newZ));
+	_targetActorDistance = (int32)sqrt((float)(newX + newZ));
 
-	if (!targetActorDistance) {
+	if (!_targetActorDistance) {
 		return 0;
 	}
 
-	const int32 destAngle = (difZ * SCENE_SIZE_HALF) / targetActorDistance;
+	const int32 destAngle = (difZ * SCENE_SIZE_HALF) / _targetActorDistance;
 
 	int32 startAngle = ANGLE_0;
 	//	stopAngle  = ANGLE_90;
@@ -237,7 +237,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 	case HeroBehaviourType::kAggressive:
 		if (_engine->_actor->autoAggressive) {
 			ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-			heroMoved = true;
+			_heroMoved = true;
 			actor->angle = actor->move.getRealAngle(_engine->_lbaTime);
 			// TODO: previousLoopActionKey must be handled properly
 			if (!_previousLoopActionKey || actor->anim == AnimationTypes::kStanding) {
@@ -258,13 +258,13 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		} else {
 			if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 				_engine->_animations->initAnim(AnimationTypes::kLeftPunch, AnimType::kAnimationType_1, AnimationTypes::kStanding, actorIdx);
-				heroMoved = true;
+				_heroMoved = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 				_engine->_animations->initAnim(AnimationTypes::kRightPunch, AnimType::kAnimationType_1, AnimationTypes::kStanding, actorIdx);
-				heroMoved = true;
+				_heroMoved = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 				_engine->_animations->initAnim(AnimationTypes::kKick, AnimType::kAnimationType_1, AnimationTypes::kStanding, actorIdx);
-				heroMoved = true;
+				_heroMoved = true;
 			}
 		}
 		break;
@@ -313,24 +313,24 @@ void Movements::processManualMovementExecution(int actorIdx) {
 	if (actor->isAttackWeaponAnimationActive()) {
 		return;
 	}
-	if (!_changedCursorKeys || heroAction) {
+	if (!_changedCursorKeys || _heroAction) {
 		// if walking should get stopped
 		if (!_engine->_input->isActionActive(TwinEActionType::MoveForward) && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-			if (heroMoved && (_heroActionKey != _previousLoopActionKey || _changedCursorKeys != _previousChangedCursorKeys)) {
+			if (_heroMoved && (_heroActionKey != _previousLoopActionKey || _changedCursorKeys != _previousChangedCursorKeys)) {
 				_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			}
 		}
 
-		heroMoved = false;
+		_heroMoved = false;
 
 		if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
-			if (!_engine->_scene->currentActorInZone) {
+			if (!_engine->_scene->_currentActorInZone) {
 				_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			}
-			heroMoved = true;
+			_heroMoved = true;
 		} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 			_engine->_animations->initAnim(AnimationTypes::kBackward, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
-			heroMoved = true;
+			_heroMoved = true;
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
@@ -341,7 +341,7 @@ void Movements::processManualMovementExecution(int actorIdx) {
 					actor->angle = actor->move.getRealAngle(_engine->_lbaTime);
 				}
 			}
-			heroMoved = true;
+			_heroMoved = true;
 		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 			if (actor->anim == AnimationTypes::kStanding) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnRight, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
@@ -350,7 +350,7 @@ void Movements::processManualMovementExecution(int actorIdx) {
 					actor->angle = actor->move.getRealAngle(_engine->_lbaTime);
 				}
 			}
-			heroMoved = true;
+			_heroMoved = true;
 		}
 	}
 }
@@ -378,15 +378,15 @@ void Movements::processManualRotationExecution(int actorIdx) {
 
 void Movements::processManualAction(int actorIdx) {
 	if (IS_HERO(actorIdx)) {
-		heroAction = false;
+		_heroAction = false;
 		if (_engine->_input->isHeroActionActive()) {
-			heroAction = processBehaviourExecution(actorIdx);
+			_heroAction = processBehaviourExecution(actorIdx);
 		}
 	}
 
 	if (_engine->_input->isActionActive(TwinEActionType::ThrowMagicBall) && !_engine->_gameState->inventoryDisabled()) {
 		if (processAttackExecution(actorIdx)) {
-			heroMoved = true;
+			_heroMoved = true;
 		}
 	}
 

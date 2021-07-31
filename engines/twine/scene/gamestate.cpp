@@ -60,7 +60,7 @@ void GameState::initEngineProjections() {
 	_engine->_renderer->setOrthoProjection(311, 240, 512);
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
 	_engine->_renderer->setBaseRotation(ANGLE_0, ANGLE_0, ANGLE_0);
-	_engine->_renderer->setLightVector(_engine->_scene->alphaLight, _engine->_scene->betaLight, ANGLE_0);
+	_engine->_renderer->setLightVector(_engine->_scene->_alphaLight, _engine->_scene->_betaLight, ANGLE_0);
 }
 
 void GameState::initGameStateVars() {
@@ -71,8 +71,8 @@ void GameState::initGameStateVars() {
 		_engine->_redraw->overlayList[i].info0 = -1;
 	}
 
-	for (int32 i = 0; i < ARRAYSIZE(_engine->_scene->sceneFlags); i++) {
-		_engine->_scene->sceneFlags[i] = 0;
+	for (int32 i = 0; i < ARRAYSIZE(_engine->_scene->_sceneFlags); i++) {
+		_engine->_scene->_sceneFlags[i] = 0;
 	}
 
 	clearGameFlags();
@@ -96,29 +96,29 @@ void GameState::initHeroVars() {
 
 	usingSabre = false;
 
-	_engine->_scene->sceneHero->body = BodyType::btNormal;
-	_engine->_scene->sceneHero->setLife(kActorMaxLife);
-	_engine->_scene->sceneHero->talkColor = COLOR_BRIGHT_BLUE;
+	_engine->_scene->_sceneHero->body = BodyType::btNormal;
+	_engine->_scene->_sceneHero->setLife(kActorMaxLife);
+	_engine->_scene->_sceneHero->talkColor = COLOR_BRIGHT_BLUE;
 }
 
 void GameState::initEngineVars() {
 	debug(2, "Init engine variables");
 	_engine->_interface->resetClip();
 
-	_engine->_scene->alphaLight = ANGLE_315;
-	_engine->_scene->betaLight = ANGLE_334;
+	_engine->_scene->_alphaLight = ANGLE_315;
+	_engine->_scene->_betaLight = ANGLE_334;
 	initEngineProjections();
 	initGameStateVars();
 	initHeroVars();
 
-	_engine->_scene->newHeroPos.x = 0x2000;
-	_engine->_scene->newHeroPos.y = 0x1800;
-	_engine->_scene->newHeroPos.z = 0x2000;
+	_engine->_scene->_newHeroPos.x = 0x2000;
+	_engine->_scene->_newHeroPos.y = 0x1800;
+	_engine->_scene->_newHeroPos.z = 0x2000;
 
-	_engine->_scene->currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
-	_engine->_scene->needChangeScene = LBA1SceneId::Citadel_Island_Prison;
+	_engine->_scene->_currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
+	_engine->_scene->_needChangeScene = LBA1SceneId::Citadel_Island_Prison;
 	_engine->_quitGame = -1;
-	_engine->_scene->mecaPinguinIdx = -1;
+	_engine->_scene->_mecaPinguinIdx = -1;
 	_engine->_menuOptions->canShowCredits = false;
 
 	inventoryNumLeafs = 0;
@@ -135,8 +135,8 @@ void GameState::initEngineVars() {
 
 	gameChapter = 0;
 
-	_engine->_scene->sceneTextBank = TextBankId::Options_and_menus;
-	_engine->_scene->currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
+	_engine->_scene->_sceneTextBank = TextBankId::Options_and_menus;
+	_engine->_scene->_currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
 	_engine->_actor->heroBehaviour = HeroBehaviourType::kNormal;
 	_engine->_actor->previousHeroAngle = 0;
 	_engine->_actor->previousHeroBehaviour = HeroBehaviourType::kNormal;
@@ -179,22 +179,22 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	for (uint8 i = 0; i < numGameFlags; ++i) {
 		setGameFlag(i, file->readByte());
 	}
-	_engine->_scene->needChangeScene = file->readByte(); // scene index
+	_engine->_scene->_needChangeScene = file->readByte(); // scene index
 	gameChapter = file->readByte();
 
 	_engine->_actor->heroBehaviour = (HeroBehaviourType)file->readByte();
 	_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
-	_engine->_scene->sceneHero->setLife(file->readByte());
+	_engine->_scene->_sceneHero->setLife(file->readByte());
 	setKashes(file->readSint16LE());
 	magicLevelIdx = file->readByte();
 	setMagicPoints(file->readByte());
 	setLeafBoxes(file->readByte());
-	_engine->_scene->newHeroPos.x = file->readSint16LE();
-	_engine->_scene->newHeroPos.y = file->readSint16LE();
-	_engine->_scene->newHeroPos.z = file->readSint16LE();
-	_engine->_scene->sceneHero->angle = ToAngle(file->readSint16LE());
-	_engine->_actor->previousHeroAngle = _engine->_scene->sceneHero->angle;
-	_engine->_scene->sceneHero->body = (BodyType)file->readByte();
+	_engine->_scene->_newHeroPos.x = file->readSint16LE();
+	_engine->_scene->_newHeroPos.y = file->readSint16LE();
+	_engine->_scene->_newHeroPos.z = file->readSint16LE();
+	_engine->_scene->_sceneHero->angle = ToAngle(file->readSint16LE());
+	_engine->_actor->previousHeroAngle = _engine->_scene->_sceneHero->angle;
+	_engine->_scene->_sceneHero->body = (BodyType)file->readByte();
 
 	const byte numHolomapFlags = file->readByte(); // number of holomap locations
 	if (numHolomapFlags != NUM_LOCATIONS) {
@@ -221,8 +221,8 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		file->readUint32LE();
 	}
 
-	_engine->_scene->currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
-	_engine->_scene->heroPositionType = ScenePositionType::kReborn;
+	_engine->_scene->_currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
+	_engine->_scene->_heroPositionType = ScenePositionType::kReborn;
 	return true;
 }
 
@@ -232,7 +232,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 		Common::strlcpy(_engine->_menuOptions->_saveGameName, "TwinEngineSave", sizeof(_engine->_menuOptions->_saveGameName));
 	}
 
-	int32 sceneIdx = _engine->_scene->currentSceneIdx;
+	int32 sceneIdx = _engine->_scene->_currentSceneIdx;
 	if (sceneIdx == Polar_Island_end_scene || sceneIdx == Citadel_Island_end_sequence_1 || sceneIdx == Citadel_Island_end_sequence_2 || sceneIdx == Credits_List_Sequence) {
 		/* inventoryMagicPoints = 0x50 */
 		/* herobehaviour = 0 */
@@ -250,18 +250,18 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(sceneIdx);
 	file->writeByte(gameChapter);
 	file->writeByte((byte)_engine->_actor->heroBehaviour);
-	file->writeByte(_engine->_scene->sceneHero->life);
+	file->writeByte(_engine->_scene->_sceneHero->life);
 	file->writeSint16LE(inventoryNumKashes);
 	file->writeByte(magicLevelIdx);
 	file->writeByte(inventoryMagicPoints);
 	file->writeByte(inventoryNumLeafsBox);
 	// we don't save the whole scene state - so we have to make sure that the hero is
 	// respawned at the start of the scene - and not at its current position
-	file->writeSint16LE(_engine->_scene->newHeroPos.x);
-	file->writeSint16LE(_engine->_scene->newHeroPos.y);
-	file->writeSint16LE(_engine->_scene->newHeroPos.z);
-	file->writeSint16LE(FromAngle(_engine->_scene->sceneHero->angle));
-	file->writeByte((uint8)_engine->_scene->sceneHero->body);
+	file->writeSint16LE(_engine->_scene->_newHeroPos.x);
+	file->writeSint16LE(_engine->_scene->_newHeroPos.y);
+	file->writeSint16LE(_engine->_scene->_newHeroPos.z);
+	file->writeSint16LE(FromAngle(_engine->_scene->_sceneHero->angle));
+	file->writeByte((uint8)_engine->_scene->_sceneHero->body);
 
 	// number of holomap locations
 	file->writeByte(NUM_LOCATIONS);
@@ -300,34 +300,34 @@ void GameState::setGameFlag(uint8 index, uint8 value) {
 
 void GameState::processFoundItem(InventoryItems item) {
 	ScopedEngineFreeze freeze(_engine);
-	_engine->_grid->centerOnActor(_engine->_scene->sceneHero);
+	_engine->_grid->centerOnActor(_engine->_scene->_sceneHero);
 
 	_engine->exitSceneryView();
 	// Hide hero in scene
-	_engine->_scene->sceneHero->staticFlags.bIsHidden = 1;
+	_engine->_scene->_sceneHero->staticFlags.bIsHidden = 1;
 	_engine->_redraw->redrawEngineActions(true);
-	_engine->_scene->sceneHero->staticFlags.bIsHidden = 0;
+	_engine->_scene->_sceneHero->staticFlags.bIsHidden = 0;
 
 	_engine->saveFrontBuffer();
 
-	const int32 itemCameraX = _engine->_grid->newCamera.x * BRICK_SIZE;
-	const int32 itemCameraY = _engine->_grid->newCamera.y * BRICK_HEIGHT;
-	const int32 itemCameraZ = _engine->_grid->newCamera.z * BRICK_SIZE;
+	const int32 itemCameraX = _engine->_grid->_newCamera.x * BRICK_SIZE;
+	const int32 itemCameraY = _engine->_grid->_newCamera.y * BRICK_HEIGHT;
+	const int32 itemCameraZ = _engine->_grid->_newCamera.z * BRICK_SIZE;
 
-	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->sceneHero->entity];
-	const int32 bodyX = _engine->_scene->sceneHero->pos.x - itemCameraX;
-	const int32 bodyY = _engine->_scene->sceneHero->pos.y - itemCameraY;
-	const int32 bodyZ = _engine->_scene->sceneHero->pos.z - itemCameraZ;
+	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->_sceneHero->entity];
+	const int32 bodyX = _engine->_scene->_sceneHero->pos.x - itemCameraX;
+	const int32 bodyY = _engine->_scene->_sceneHero->pos.y - itemCameraY;
+	const int32 bodyZ = _engine->_scene->_sceneHero->pos.z - itemCameraZ;
 	Common::Rect modelRect;
 	_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
 	_engine->_interface->setClip(modelRect);
 
-	const int32 itemX = (_engine->_scene->sceneHero->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
-	int32 itemY = _engine->_scene->sceneHero->pos.y / BRICK_HEIGHT;
-	if (_engine->_scene->sceneHero->brickShape() != ShapeType::kNone) {
+	const int32 itemX = (_engine->_scene->_sceneHero->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
+	int32 itemY = _engine->_scene->_sceneHero->pos.y / BRICK_HEIGHT;
+	if (_engine->_scene->_sceneHero->brickShape() != ShapeType::kNone) {
 		itemY++;
 	}
-	const int32 itemZ = (_engine->_scene->sceneHero->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
+	const int32 itemZ = (_engine->_scene->_sceneHero->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 
@@ -356,9 +356,9 @@ void GameState::processFoundItem(InventoryItems item) {
 	const int32 bodyAnimIdx = _engine->_animations->getBodyAnimIndex(AnimationTypes::kFoundItem);
 	const AnimData &currentAnimData = _engine->_resources->_animData[bodyAnimIdx];
 
-	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->sceneHero->animTimerData;
+	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->_sceneHero->animTimerData;
 
-	_engine->_animations->stockAnimation(bodyData, &_engine->_scene->sceneHero->animTimerData);
+	_engine->_animations->stockAnimation(bodyData, &_engine->_scene->_sceneHero->animTimerData);
 
 	uint currentAnimState = 0;
 
@@ -383,7 +383,7 @@ void GameState::processFoundItem(InventoryItems item) {
 		_engine->_interface->resetClip();
 		initEngineProjections();
 
-		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, bodyData, &_engine->_scene->sceneHero->animTimerData)) {
+		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, bodyData, &_engine->_scene->_sceneHero->animTimerData)) {
 			currentAnimState++; // keyframe
 			if (currentAnimState >= currentAnimData.getNumKeyframes()) {
 				currentAnimState = currentAnimData.getLoopFrame();
@@ -437,14 +437,14 @@ void GameState::processFoundItem(InventoryItems item) {
 	_engine->_text->initSceneTextBank();
 	_engine->_text->stopVox(_engine->_text->_currDialTextEntry);
 
-	_engine->_scene->sceneHero->animTimerData = tmpAnimTimer;
+	_engine->_scene->_sceneHero->animTimerData = tmpAnimTimer;
 }
 
 void GameState::processGameChoices(TextId choiceIdx) {
 	_engine->saveFrontBuffer();
 
 	_gameChoicesSettings.reset();
-	_gameChoicesSettings.setTextBankId((TextBankId)((int)_engine->_scene->sceneTextBank + (int)TextBankId::Citadel_Island));
+	_gameChoicesSettings.setTextBankId((TextBankId)((int)_engine->_scene->_sceneTextBank + (int)TextBankId::Citadel_Island));
 
 	// filled via script
 	for (int32 i = 0; i < numChoices; i++) {
@@ -477,9 +477,9 @@ void GameState::processGameoverAnimation() {
 
 	_engine->exitSceneryView();
 	// workaround to fix hero redraw after drowning
-	_engine->_scene->sceneHero->staticFlags.bIsHidden = 1;
+	_engine->_scene->_sceneHero->staticFlags.bIsHidden = 1;
 	_engine->_redraw->redrawEngineActions(true);
-	_engine->_scene->sceneHero->staticFlags.bIsHidden = 0;
+	_engine->_scene->_sceneHero->staticFlags.bIsHidden = 0;
 
 	// TODO: inSceneryView
 	_engine->setPalette(_engine->_screens->_paletteRGBA);

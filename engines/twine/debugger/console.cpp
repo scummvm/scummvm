@@ -172,7 +172,7 @@ bool TwinEConsole::doSetHolomapTrajectory(int argc, const char **argv) {
 		debugPrintf("Expected to get a holomap trajectory index as parameter\n");
 		return true;
 	}
-	_engine->_scene->holomapTrajectory = atoi(argv[1]);
+	_engine->_scene->_holomapTrajectory = atoi(argv[1]);
 	_engine->_scene->reloadCurrentScene();
 	return false;
 }
@@ -318,7 +318,7 @@ bool TwinEConsole::doListMenuText(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doSetHeroPosition(int argc, const char **argv) {
-	IVec3 &pos = _engine->_scene->sceneHero->pos;
+	IVec3 &pos = _engine->_scene->_sceneHero->pos;
 	if (argc < 4) {
 		debugPrintf("Current hero position: %i:%i:%i\n", pos.x, pos.y, pos.z);
 		return true;
@@ -348,7 +348,7 @@ bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 		debugPrintf("Scene index out of bounds\n");
 		return true;
 	}
-	_engine->_scene->needChangeScene = atoi(argv[1]);
+	_engine->_scene->_needChangeScene = atoi(argv[1]);
 	_engine->_scene->changeScene();
 	return true;
 }
@@ -444,7 +444,7 @@ bool TwinEConsole::doSetLife(int argc, const char **argv) {
 		debugPrintf("Expected to get the life points as parameter\n");
 		return true;
 	}
-	_engine->_scene->sceneHero->setLife(atoi(argv[1]));
+	_engine->_scene->_sceneHero->setLife(atoi(argv[1]));
 	return true;
 }
 

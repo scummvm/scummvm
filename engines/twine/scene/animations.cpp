@@ -346,8 +346,8 @@ void Animations::processAnimActions(int32 actorIdx) {
 			break;
 		case ActionType::ACTION_THROW_3D_ALPHA:
 			if (action.animFrame == actor->animPosition) {
-				const int32 distance = _engine->_movements->getDistance2D(actor->pos, _engine->_scene->sceneHero->pos);
-				const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->pos.y, 0, _engine->_scene->sceneHero->pos.y, distance);
+				const int32 distance = _engine->_movements->getDistance2D(actor->pos, _engine->_scene->_sceneHero->pos);
+				const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->pos.y, 0, _engine->_scene->_sceneHero->pos.y, distance);
 
 				_engine->_movements->rotateActor(action.distanceX, action.distanceZ, actor->angle);
 
@@ -464,10 +464,10 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		return;
 	}
 
-	IVec3 &previousActor = _engine->_movements->previousActor;
+	IVec3 &previousActor = _engine->_movements->_previousActor;
 	previousActor = actor->collisionPos;
 
-	IVec3 &processActor = _engine->_movements->processActor;
+	IVec3 &processActor = _engine->_movements->_processActor;
 	if (actor->staticFlags.bIsSpriteActor) {
 		if (actor->strengthOfHit) {
 			actor->dynamicFlags.bIsHitting = 1;
@@ -699,7 +699,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					initAnim(AnimationTypes::kBigHit, AnimType::kAnimationType_2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
 
 					if (IS_HERO(currentlyProcessedActorIdx)) {
-						_engine->_movements->heroMoved = true;
+						_engine->_movements->_heroMoved = true;
 					}
 
 					actor->addLife(-1);
@@ -719,7 +719,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour == HeroBehaviourType::kAthletic && actor->anim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->pos.x, actor->pos.y + 1000, actor->pos.z, ExtraSpecialType::kHitStars);
 						initAnim(AnimationTypes::kBigHit, AnimType::kAnimationType_2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
-						_engine->_movements->heroMoved = true;
+						_engine->_movements->_heroMoved = true;
 						actor->addLife(-1);
 					}
 
@@ -762,8 +762,8 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					if (!actor->dynamicFlags.bIsRotationByAnim) {
 						actor->dynamicFlags.bIsFalling = 1;
 
-						if (IS_HERO(actorIdx) && _engine->_scene->heroYBeforeFall == 0) {
-							_engine->_scene->heroYBeforeFall = processActor.y;
+						if (IS_HERO(actorIdx) && _engine->_scene->_heroYBeforeFall == 0) {
+							_engine->_scene->_heroYBeforeFall = processActor.y;
 						}
 
 						initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);

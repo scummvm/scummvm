@@ -44,7 +44,7 @@ bool Collision::standingOnActor(int32 actorIdx1, int32 actorIdx2) const {
 	const ActorStruct *actor1 = _engine->_scene->getActor(actorIdx1);
 	const ActorStruct *actor2 = _engine->_scene->getActor(actorIdx2);
 
-	const IVec3 &processActor = _engine->_movements->processActor;
+	const IVec3 &processActor = _engine->_movements->_processActor;
 	const IVec3 &mins1 = processActor + actor1->boudingBox.mins;
 	const IVec3 &maxs1 = processActor + actor1->boudingBox.maxs;
 
@@ -103,7 +103,7 @@ void Collision::reajustActorPosition(ShapeType brickShape) {
 	const int32 brkY = collision.y * BRICK_HEIGHT;
 	const int32 brkZ = (collision.z * BRICK_SIZE) - BRICK_HEIGHT;
 
-	IVec3 &processActor = _engine->_movements->processActor;
+	IVec3 &processActor = _engine->_movements->_processActor;
 
 	// double-side stairs
 	if (brickShape >= ShapeType::kDoubleSideStairsTop1 && brickShape <= ShapeType::kDoubleSideStairsRight2) {
@@ -195,14 +195,14 @@ void Collision::reajustActorPosition(ShapeType brickShape) {
 int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
-	IVec3 &processActor = _engine->_movements->processActor;
-	IVec3 &previousActor = _engine->_movements->previousActor;
+	IVec3 &processActor = _engine->_movements->_processActor;
+	IVec3 &previousActor = _engine->_movements->_previousActor;
 	IVec3 mins = processActor + actor->boudingBox.mins;
 	IVec3 maxs = processActor + actor->boudingBox.maxs;
 
 	actor->collision = -1;
 
-	for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
+	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 		ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 		// aviod current processed actor
@@ -331,7 +331,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 		maxs.y = processActor.y + actor->boudingBox.maxs.y;
 		maxs.z = _engine->_renderer->_destPos.z + processActor.z + actor->boudingBox.maxs.z;
 
-		for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
+		for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 			const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 			// aviod current processed actor
@@ -350,8 +350,8 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 }
 
 void Collision::checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask) {
-	IVec3 &processActor = _engine->_movements->processActor;
-	IVec3 &previousActor = _engine->_movements->previousActor;
+	IVec3 &processActor = _engine->_movements->_processActor;
+	IVec3 &previousActor = _engine->_movements->_previousActor;
 	ShapeType brickShape = _engine->_grid->getBrickShape(processActor);
 
 	processActor.x += x;
@@ -383,8 +383,8 @@ void Collision::checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 da
 }
 
 void Collision::checkActorCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask) {
-	IVec3 &processActor = _engine->_movements->processActor;
-	IVec3 &previousActor = _engine->_movements->previousActor;
+	IVec3 &processActor = _engine->_movements->_processActor;
+	IVec3 &previousActor = _engine->_movements->_previousActor;
 	ShapeType brickShape = _engine->_grid->getBrickShape(processActor);
 
 	processActor.x += x;
@@ -416,8 +416,8 @@ void Collision::checkActorCollisionWithBricks(int32 x, int32 y, int32 z, int32 d
 
 void Collision::stopFalling() { // ReceptionObj()
 	if (IS_HERO(_engine->_animations->currentlyProcessedActorIdx)) {
-		const IVec3 &processActor = _engine->_movements->processActor;
-		const int32 fall = _engine->_scene->heroYBeforeFall - processActor.y;
+		const IVec3 &processActor = _engine->_movements->_processActor;
+		const int32 fall = _engine->_scene->_heroYBeforeFall - processActor.y;
 
 		if (fall >= BRICK_HEIGHT * 8) {
 			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->pos.x, _engine->_actor->processActorPtr->pos.y + 1000, _engine->_actor->processActorPtr->pos.z, ExtraSpecialType::kHitStars);
@@ -433,7 +433,7 @@ void Collision::stopFalling() { // ReceptionObj()
 			_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
 		}
 
-		_engine->_scene->heroYBeforeFall = 0;
+		_engine->_scene->_heroYBeforeFall = 0;
 	} else {
 		_engine->_animations->initAnim(AnimationTypes::kLanding, AnimType::kAnimationType_2, _engine->_actor->processActorPtr->animExtra, _engine->_animations->currentlyProcessedActorIdx);
 	}
@@ -446,7 +446,7 @@ int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 act
 	const IVec3 mins = bbox->mins + extra->pos;
 	const IVec3 maxs = bbox->maxs + extra->pos;
 
-	for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
+	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 		const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 		if (a != actorIdx && actorTest->entity != -1) {

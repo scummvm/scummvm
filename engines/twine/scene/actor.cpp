@@ -44,7 +44,7 @@ Actor::Actor(TwinEEngine *engine) : _engine(engine) {
 }
 
 void Actor::restartHeroScene() {
-	ActorStruct *sceneHero = _engine->_scene->sceneHero;
+	ActorStruct *sceneHero = _engine->_scene->_sceneHero;
 	sceneHero->controlMode = ControlMode::kManual;
 	memset(&sceneHero->dynamicFlags, 0, sizeof(sceneHero->dynamicFlags));
 	memset(&sceneHero->staticFlags, 0, sizeof(sceneHero->staticFlags));
@@ -81,7 +81,7 @@ void Actor::loadBehaviourEntity(ActorStruct *actor, EntityData &entityData, int1
 }
 
 void Actor::loadHeroEntities() {
-	ActorStruct *sceneHero = _engine->_scene->sceneHero;
+	ActorStruct *sceneHero = _engine->_scene->_sceneHero;
 	loadBehaviourEntity(sceneHero, _heroEntityATHLETIC, heroAnimIdxATHLETIC, FILE3DHQR_HEROATHLETIC);
 	loadBehaviourEntity(sceneHero, _heroEntityAGGRESSIVE, heroAnimIdxAGGRESSIVE, FILE3DHQR_HEROAGGRESSIVE);
 	loadBehaviourEntity(sceneHero, _heroEntityDISCRETE, heroAnimIdxDISCRETE, FILE3DHQR_HERODISCRETE);
@@ -93,7 +93,7 @@ void Actor::loadHeroEntities() {
 }
 
 void Actor::setBehaviour(HeroBehaviourType behaviour) {
-	ActorStruct *sceneHero = _engine->_scene->sceneHero;
+	ActorStruct *sceneHero = _engine->_scene->_sceneHero;
 	switch (behaviour) {
 	case HeroBehaviourType::kNormal:
 		heroBehaviour = behaviour;
@@ -332,7 +332,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 		_engine->_extra->addExtraSpecial(actor->pos.x, actor->pos.y + 1000, actor->pos.z, ExtraSpecialType::kHitStars);
 
 		if (!actorIdxAttacked) {
-			_engine->_movements->heroMoved = true;
+			_engine->_movements->_heroMoved = true;
 		}
 
 		actor->life -= strengthOfHit;
@@ -349,7 +349,7 @@ void Actor::processActorCarrier(int32 actorIdx) { // CheckCarrier
 	if (!actor->staticFlags.bIsCarrierActor) {
 		return;
 	}
-	for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
+	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 		if (actor->standOn == actorIdx) {
 			actor->standOn = -1;
 		}
@@ -367,7 +367,7 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 		_engine->_extra->addExtraBonus(actor->pos.x, actor->pos.y, actor->pos.z, ANGLE_90, ANGLE_0, bonusSprite, actor->bonusAmount);
 		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->pos, actorIdx);
 	} else {
-		ActorStruct *sceneHero = _engine->_scene->sceneHero;
+		ActorStruct *sceneHero = _engine->_scene->_sceneHero;
 		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->pos, sceneHero->pos);
 		_engine->_extra->addExtraBonus(actor->pos.x, actor->pos.y + actor->boudingBox.maxs.y, actor->pos.z, ANGLE_70, angle, bonusSprite, actor->bonusAmount);
 		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->pos.x, actor->pos.y + actor->boudingBox.maxs.y, actor->pos.z, actorIdx);

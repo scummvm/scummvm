@@ -112,7 +112,7 @@ private:
 	void processManualMovementExecution(int actorIdx);
 	void processManualRotationExecution(int actorIdx);
 
-	bool heroAction = false;
+	bool _heroAction = false;
 
 public:
 	Movements(TwinEEngine *engine);
@@ -124,15 +124,15 @@ public:
 	 */
 	bool shouldTriggerZoneAction() const;
 
-	bool heroMoved = false;
+	bool _heroMoved = false;
 
 	/** Process actor coordinate */
-	IVec3 processActor;
+	IVec3 _processActor;
 
 	/** Previous process actor coordinate */
-	IVec3 previousActor;
+	IVec3 _previousActor;
 
-	int32 targetActorDistance = 0;
+	int32 _targetActorDistance = 0;
 
 	/**
 	 * Get shadow position
@@ -220,7 +220,7 @@ public:
 };
 
 inline bool Movements::shouldTriggerZoneAction() const {
-	return heroAction;
+	return _heroAction;
 }
 
 } // namespace TwinE

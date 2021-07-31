@@ -633,7 +633,7 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 		return;
 	}
 
-	getBrickPos(x - newCamera.x, y - newCamera.y, z - newCamera.z);
+	getBrickPos(x - _newCamera.x, y - _newCamera.y, z - _newCamera.z);
 
 	if (_brickPixelPosX < -24) {
 		return;
@@ -675,11 +675,11 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 void Grid::redrawGrid() {
 	blockMap *map = (blockMap *)_blockBuffer;
 
-	camera.x = newCamera.x * BRICK_SIZE;
-	camera.y = newCamera.y * BRICK_HEIGHT;
-	camera.z = newCamera.z * BRICK_SIZE;
+	_camera.x = _newCamera.x * BRICK_SIZE;
+	_camera.y = _newCamera.y * BRICK_HEIGHT;
+	_camera.z = _newCamera.z * BRICK_SIZE;
 
-	_engine->_renderer->projectPositionOnScreen(-camera.x, -camera.y, -camera.z);
+	_engine->_renderer->projectPositionOnScreen(-_camera.x, -_camera.y, -_camera.z);
 
 	memset(_brickInfoBuffer, 0, _brickInfoBufferSize);
 
@@ -852,9 +852,9 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 }
 
 void Grid::centerOnActor(const ActorStruct* actor) {
-	newCamera.x = (actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
-	newCamera.y = (actor->pos.y + BRICK_HEIGHT) / BRICK_HEIGHT;
-	newCamera.z = (actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
+	_newCamera.x = (actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
+	_newCamera.y = (actor->pos.y + BRICK_HEIGHT) / BRICK_HEIGHT;
+	_newCamera.z = (actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
 	_engine->_redraw->_reqBgRedraw = true;
 }
 
@@ -866,22 +866,22 @@ void Grid::centerScreenOnActor() {
 		return;
 	}
 
-	ActorStruct *actor = _engine->_scene->getActor(_engine->_scene->currentlyFollowedActor);
-	_engine->_renderer->projectPositionOnScreen(actor->pos.x - (newCamera.x * BRICK_SIZE),
-	                                   actor->pos.y - (newCamera.y * BRICK_HEIGHT),
-	                                   actor->pos.z - (newCamera.z * BRICK_SIZE));
+	ActorStruct *actor = _engine->_scene->getActor(_engine->_scene->_currentlyFollowedActor);
+	_engine->_renderer->projectPositionOnScreen(actor->pos.x - (_newCamera.x * BRICK_SIZE),
+	                                   actor->pos.y - (_newCamera.y * BRICK_HEIGHT),
+	                                   actor->pos.z - (_newCamera.z * BRICK_SIZE));
 	// TODO: these border values should get scaled for hiher resolutions
 	if (_engine->_renderer->_projPos.x < 80 || _engine->_renderer->_projPos.x >= _engine->width() - 60 || _engine->_renderer->_projPos.y < 80 || _engine->_renderer->_projPos.y >= _engine->height() - 50) {
-		newCamera.x = ((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) - newCamera.x) / 2;
-		newCamera.y = actor->pos.y / BRICK_HEIGHT;
-		newCamera.z = ((actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE) - newCamera.z) / 2;
+		_newCamera.x = ((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) - _newCamera.x) / 2;
+		_newCamera.y = actor->pos.y / BRICK_HEIGHT;
+		_newCamera.z = ((actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE) - _newCamera.z) / 2;
 
-		if (newCamera.x >= GRID_SIZE_X) {
-			newCamera.x = GRID_SIZE_X - 1;
+		if (_newCamera.x >= GRID_SIZE_X) {
+			_newCamera.x = GRID_SIZE_X - 1;
 		}
 
-		if (newCamera.z >= GRID_SIZE_Z) {
-			newCamera.z = GRID_SIZE_Z - 1;
+		if (_newCamera.z >= GRID_SIZE_Z) {
+			_newCamera.z = GRID_SIZE_Z - 1;
 		}
 
 		_engine->_redraw->_reqBgRedraw = true;

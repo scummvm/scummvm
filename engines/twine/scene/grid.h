@@ -196,15 +196,15 @@ public:
 	const uint8 *getBlockBufferGround(const IVec3 &pos, int32 &ground);
 
 	/** New grid camera x, y and z coordinates */
-	IVec3 newCamera;
+	IVec3 _newCamera;
 
 	/** Current grid camera x, y and z coordinates */
-	IVec3 camera;
+	IVec3 _camera;
 
 	/** Flag to know if the engine is using celling grids */
-	int16 useCellingGrid = 0; // useAnotherGrm
+	int16 _useCellingGrid = 0; // useAnotherGrm
 	/** Current celling grid index */
-	int16 cellingGridIdx = 0; // currentGrid2
+	int16 _cellingGridIdx = 0; // currentGrid2
 
 	/**
 	 * Draw 3D actor over bricks

@@ -163,61 +163,62 @@ private:
 
 	int32 _currentGameOverScene = 0;
 
+	uint8 *_currentScene = nullptr;
+
 public:
 	Scene(TwinEEngine *engine) : _engine(engine) {}
 	~Scene();
 
-	void playSceneMusic();
+	int32 _needChangeScene = LBA1SceneId::Citadel_Island_Prison;
+	int32 _currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
+	int32 _previousSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 
-	void reloadCurrentScene();
-	uint8 *currentScene = nullptr;
+	int32 _holomapTrajectory = -1;
 
-	int32 needChangeScene = LBA1SceneId::Citadel_Island_Prison;
-	int32 currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
-	int32 previousSceneIdx = LBA1SceneId::Citadel_Island_Prison;
+	TextBankId _sceneTextBank = TextBankId::None;
+	int32 _alphaLight = ANGLE_0;
+	int32 _betaLight = ANGLE_0;
 
-	int32 holomapTrajectory = -1;
-
-	TextBankId sceneTextBank = TextBankId::None;
-	int32 alphaLight = ANGLE_0;
-	int32 betaLight = ANGLE_0;
-
-	IVec3 newHeroPos;
+	IVec3 _newHeroPos;
 
 	/** Hero Y coordinate before fall */
-	int16 heroYBeforeFall = 0;
+	int16 _heroYBeforeFall = 0;
 
 	/** Hero type of position in scene */
-	ScenePositionType heroPositionType = ScenePositionType::kNoPosition; // twinsenPositionModeInNewCube
+	ScenePositionType _heroPositionType = ScenePositionType::kNoPosition; // twinsenPositionModeInNewCube
 
 	// ACTORS
-	int32 sceneNumActors = 0;
-	ActorStruct *sceneHero = nullptr;
-	ActorStruct *getActor(int32 actorIdx);
+	int32 _sceneNumActors = 0;
+	ActorStruct *_sceneHero = nullptr;
 
 	/** Meca pinguin actor index */
-	int16 mecaPinguinIdx = 0; // currentPingouin
+	int16 _mecaPinguinIdx = 0; // currentPingouin
 
 	/** Current followed actor in scene */
-	int16 currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
+	int16 _currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
 	/** Current actor in zone - climbing a ladder */
-	bool currentActorInZone = false;
+	bool _currentActorInZone = false;
 	/** Current actor manipulated in scripts */
-	int16 currentScriptValue = 0; // manipActorResult
+	int16 _currentScriptValue = 0; // manipActorResult
 
-	int16 talkingActor = 0;
+	int16 _talkingActor = 0;
 
 	// TRACKS Tell the actor where to go
-
-	int32 sceneNumTracks = 0;
-	IVec3 sceneTracks[NUM_MAX_TRACKS];
+	int32 _sceneNumTracks = 0;
+	IVec3 _sceneTracks[NUM_MAX_TRACKS];
 
 	bool _enableGridTileRendering = true;
 
-	uint8 sceneFlags[NUM_SCENES_FLAGS]{0}; // cubeFlags
+	uint8 _sceneFlags[NUM_SCENES_FLAGS]{0}; // cubeFlags
 
-	int32 sceneNumZones = 0;
-	ZoneStruct sceneZones[NUM_MAX_ZONES];
+	int32 _sceneNumZones = 0;
+	ZoneStruct _sceneZones[NUM_MAX_ZONES];
+
+	ActorStruct *getActor(int32 actorIdx);
+
+	void playSceneMusic();
+
+	void reloadCurrentScene();
 
 	/** Change to another scene */
 	void changeScene();
@@ -237,7 +238,7 @@ public:
 };
 
 inline bool Scene::isGameRunning() const {
-	return currentScene != nullptr;
+	return _currentScene != nullptr;
 }
 
 } // namespace TwinE

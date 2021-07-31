@@ -834,7 +834,7 @@ int32 Menu::giveupMenu() {
 void Menu::drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPadding, int32 barHeight) {
 	_engine->_grid->drawSprite(left, top + 3, _engine->_resources->_spriteData[SPRITEHQR_LIFEPOINTS]);
 	const int32 barLeft = left + barLeftPadding;
-	const int32 healthBarRight = _engine->_screens->crossDot(barLeft, right, 50, _engine->_scene->sceneHero->life);
+	const int32 healthBarRight = _engine->_screens->crossDot(barLeft, right, 50, _engine->_scene->_sceneHero->life);
 	const int32 barBottom = top + barHeight;
 	_engine->_interface->drawFilledRect(Common::Rect(barLeft, top, healthBarRight, barBottom), COLOR_91);
 	drawBox(Common::Rect(barLeft, top, right, barBottom));
@@ -1033,25 +1033,25 @@ void Menu::processBehaviourMenu() {
 		_engine->_actor->setBehaviour(HeroBehaviourType::kNormal);
 	}
 
-	_behaviourEntity = &_engine->_resources->_bodyData[_engine->_scene->sceneHero->entity];
+	_behaviourEntity = &_engine->_resources->_bodyData[_engine->_scene->_sceneHero->entity];
 
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kNormal] = _engine->_actor->heroAnimIdxNORMAL;
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kAthletic] = _engine->_actor->heroAnimIdxATHLETIC;
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kAggressive] = _engine->_actor->heroAnimIdxAGGRESSIVE;
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kDiscrete] = _engine->_actor->heroAnimIdxDISCRETE;
 
-	_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, ANGLE_17, &_moveMenu);
+	_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->angle, _engine->_scene->_sceneHero->angle - ANGLE_90, ANGLE_17, &_moveMenu);
 
 	_engine->saveFrontBuffer();
 
-	TextBankId tmpTextBank = _engine->_scene->sceneTextBank;
-	_engine->_scene->sceneTextBank = TextBankId::None;
+	TextBankId tmpTextBank = _engine->_scene->_sceneTextBank;
+	_engine->_scene->_sceneTextBank = TextBankId::None;
 
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
 	const int32 left = _engine->width() / 2 - 220;
 	const int32 top = _engine->height() / 2 - 140;
-	drawBehaviourMenu(left, top, _engine->_scene->sceneHero->angle);
+	drawBehaviourMenu(left, top, _engine->_scene->_sceneHero->angle);
 
 	HeroBehaviourType tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 
@@ -1097,9 +1097,9 @@ void Menu::processBehaviourMenu() {
 
 		Common::Rect dirtyRect;
 		if (tmpHeroBehaviour != _engine->_actor->heroBehaviour) {
-			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->sceneHero->angle, true, dirtyRect);
+			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->_sceneHero->angle, true, dirtyRect);
 			tmpHeroBehaviour = _engine->_actor->heroBehaviour;
-			_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, ANGLE_17, &_moveMenu);
+			_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->angle, _engine->_scene->_sceneHero->angle - ANGLE_90, ANGLE_17, &_moveMenu);
 			const int tmpAnimIdx = _engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour];
 			_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->_animData[tmpAnimIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
 		}
@@ -1117,7 +1117,7 @@ void Menu::processBehaviourMenu() {
 	_engine->_actor->setBehaviour(_engine->_actor->heroBehaviour);
 	_engine->_gameState->initEngineProjections();
 
-	_engine->_scene->sceneTextBank = tmpTextBank;
+	_engine->_scene->_sceneTextBank = tmpTextBank;
 	_engine->_text->initSceneTextBank();
 }
 
@@ -1171,8 +1171,8 @@ void Menu::drawInventoryItems(int32 left, int32 top) {
 }
 
 void Menu::processInventoryMenu() {
-	int32 tmpAlphaLight = _engine->_scene->alphaLight;
-	int32 tmpBetaLight = _engine->_scene->betaLight;
+	int32 tmpAlphaLight = _engine->_scene->_alphaLight;
+	int32 tmpBetaLight = _engine->_scene->_betaLight;
 
 	_engine->saveFrontBuffer();
 
@@ -1292,8 +1292,8 @@ void Menu::processInventoryMenu() {
 
 	_engine->_text->_hasValidTextHandle = false;
 
-	_engine->_scene->alphaLight = tmpAlphaLight;
-	_engine->_scene->betaLight = tmpBetaLight;
+	_engine->_scene->_alphaLight = tmpAlphaLight;
+	_engine->_scene->_betaLight = tmpBetaLight;
 
 	_engine->_gameState->initEngineProjections();
 

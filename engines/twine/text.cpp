@@ -158,7 +158,7 @@ void Text::initTextBank(TextBankId bankIdx) {
 }
 
 void Text::initSceneTextBank() {
-	initTextBank((TextBankId)((int)_engine->_scene->sceneTextBank + (int)TextBankId::Citadel_Island));
+	initTextBank((TextBankId)((int)_engine->_scene->_sceneTextBank + (int)TextBankId::Citadel_Island));
 }
 
 void Text::drawCharacter(int32 x, int32 y, uint8 character) {
@@ -702,7 +702,7 @@ bool Text::getText(TextId index) {
 
 bool Text::getMenuText(TextId index, char *text, uint32 textSize) {
 	if (index == _currMenuTextIndex) {
-		if (_currMenuTextBank == _engine->_scene->sceneTextBank) {
+		if (_currMenuTextBank == _engine->_scene->_sceneTextBank) {
 			Common::strlcpy(text, _currMenuTextBuffer, textSize);
 			return true;
 		}
@@ -722,7 +722,7 @@ bool Text::getMenuText(TextId index, char *text, uint32 textSize) {
 	Common::strlcpy(_currMenuTextBuffer, text, MIN<int32>(sizeof(_currMenuTextBuffer), _currDialTextSize));
 
 	_currMenuTextIndex = index;
-	_currMenuTextBank = _engine->_scene->sceneTextBank;
+	_currMenuTextBank = _engine->_scene->_sceneTextBank;
 	return true;
 }
 

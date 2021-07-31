@@ -411,7 +411,7 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 	int n = 0;
 	DrawListStruct drawListArray[NUM_LOCATIONS];
 	for (int locationIdx = 0; locationIdx < NUM_LOCATIONS; ++locationIdx) {
-		if ((_engine->_gameState->holomapFlags[locationIdx] & HOLOMAP_CAN_FOCUS) || locationIdx == _engine->_scene->currentSceneIdx) {
+		if ((_engine->_gameState->holomapFlags[locationIdx] & HOLOMAP_CAN_FOCUS) || locationIdx == _engine->_scene->_currentSceneIdx) {
 			const Location &loc = _locations[locationIdx];
 			_engine->_renderer->setBaseRotation(loc.angle.x, loc.angle.y, 0);
 			_engine->_renderer->getBaseRotationPosition(0, 0, loc.angle.z + 1000);
@@ -438,7 +438,7 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 				}
 			}
 			uint8 flags = _engine->_gameState->holomapFlags[locationIdx] & HOLOMAP_ARROW;
-			if (locationIdx == _engine->_scene->currentSceneIdx) {
+			if (locationIdx == _engine->_scene->_currentSceneIdx) {
 				flags |= 2u; // model type
 			}
 			DrawListStruct &drawList = drawListArray[n];
@@ -475,8 +475,8 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 void Holomap::processHolomap() {
 	ScopedEngineFreeze freeze(_engine);
 
-	const int32 alphaLightTmp = _engine->_scene->alphaLight;
-	const int32 betaLightTmp = _engine->_scene->betaLight;
+	const int32 alphaLightTmp = _engine->_scene->_alphaLight;
+	const int32 betaLightTmp = _engine->_scene->_betaLight;
 
 	_engine->exitSceneryView();
 
@@ -493,7 +493,7 @@ void Holomap::processHolomap() {
 	_engine->_text->setFontCrossColor(COLOR_9);
 	_engine->_renderer->setCameraPosition(_engine->width() / 2, 190, 128, 1024, 1024);
 
-	int32 currentLocation = _engine->_scene->currentSceneIdx;
+	int32 currentLocation = _engine->_scene->_currentSceneIdx;
 	_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 
 	int32 time = _engine->_lbaTime;
@@ -607,8 +607,8 @@ void Holomap::processHolomap() {
 	_engine->_screens->clearScreen();
 	_engine->_text->_drawTextBoxBackground = true;
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
-	_engine->_scene->alphaLight = alphaLightTmp;
-	_engine->_scene->betaLight = betaLightTmp;
+	_engine->_scene->_alphaLight = alphaLightTmp;
+	_engine->_scene->_betaLight = betaLightTmp;
 
 	_engine->_gameState->initEngineProjections();
 	_engine->_interface->loadClip();

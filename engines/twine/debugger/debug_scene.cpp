@@ -75,32 +75,32 @@ bool DebugScene::checkZoneType(ZoneType type) const {
 DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const IVec3 &mins, const IVec3 &maxs) {
 	ScenePositionsProjected positions;
 	// compute the points in 3D
-	positions.frontBottomLeftPoint.x = mins.x - _engine->_grid->camera.x;
-	positions.frontBottomLeftPoint.y = mins.y - _engine->_grid->camera.y;
-	positions.frontBottomLeftPoint.z = maxs.z - _engine->_grid->camera.z;
+	positions.frontBottomLeftPoint.x = mins.x - _engine->_grid->_camera.x;
+	positions.frontBottomLeftPoint.y = mins.y - _engine->_grid->_camera.y;
+	positions.frontBottomLeftPoint.z = maxs.z - _engine->_grid->_camera.z;
 
-	positions.frontBottomRightPoint.x = maxs.x - _engine->_grid->camera.x;
-	positions.frontBottomRightPoint.y = mins.y - _engine->_grid->camera.y;
-	positions.frontBottomRightPoint.z = maxs.z - _engine->_grid->camera.z;
+	positions.frontBottomRightPoint.x = maxs.x - _engine->_grid->_camera.x;
+	positions.frontBottomRightPoint.y = mins.y - _engine->_grid->_camera.y;
+	positions.frontBottomRightPoint.z = maxs.z - _engine->_grid->_camera.z;
 
-	positions.frontTopLeftPoint.x = mins.x - _engine->_grid->camera.x;
-	positions.frontTopLeftPoint.y = maxs.y - _engine->_grid->camera.y;
-	positions.frontTopLeftPoint.z = maxs.z - _engine->_grid->camera.z;
+	positions.frontTopLeftPoint.x = mins.x - _engine->_grid->_camera.x;
+	positions.frontTopLeftPoint.y = maxs.y - _engine->_grid->_camera.y;
+	positions.frontTopLeftPoint.z = maxs.z - _engine->_grid->_camera.z;
 
-	positions.frontTopRightPoint = maxs - _engine->_grid->camera;
-	positions.backBottomLeftPoint = mins - _engine->_grid->camera;
+	positions.frontTopRightPoint = maxs - _engine->_grid->_camera;
+	positions.backBottomLeftPoint = mins - _engine->_grid->_camera;
 
-	positions.backBottomRightPoint.x = maxs.x - _engine->_grid->camera.x;
-	positions.backBottomRightPoint.y = mins.y - _engine->_grid->camera.y;
-	positions.backBottomRightPoint.z = mins.z - _engine->_grid->camera.z;
+	positions.backBottomRightPoint.x = maxs.x - _engine->_grid->_camera.x;
+	positions.backBottomRightPoint.y = mins.y - _engine->_grid->_camera.y;
+	positions.backBottomRightPoint.z = mins.z - _engine->_grid->_camera.z;
 
-	positions.backTopLeftPoint.x = mins.x - _engine->_grid->camera.x;
-	positions.backTopLeftPoint.y = maxs.y - _engine->_grid->camera.y;
-	positions.backTopLeftPoint.z = mins.z - _engine->_grid->camera.z;
+	positions.backTopLeftPoint.x = mins.x - _engine->_grid->_camera.x;
+	positions.backTopLeftPoint.y = maxs.y - _engine->_grid->_camera.y;
+	positions.backTopLeftPoint.z = mins.z - _engine->_grid->_camera.z;
 
-	positions.backTopRightPoint.x = maxs.x - _engine->_grid->camera.x;
-	positions.backTopRightPoint.y = maxs.y - _engine->_grid->camera.y;
-	positions.backTopRightPoint.z = mins.z - _engine->_grid->camera.z;
+	positions.backTopRightPoint.x = maxs.x - _engine->_grid->_camera.x;
+	positions.backTopRightPoint.y = maxs.y - _engine->_grid->_camera.y;
+	positions.backTopRightPoint.z = mins.z - _engine->_grid->_camera.z;
 
 	// project all points
 
@@ -147,7 +147,7 @@ bool DebugScene::drawBox(const ScenePositionsProjected &positions, uint8 color) 
 
 bool DebugScene::displayActors() {
 	bool state = false;
-	for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
+	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 		const ActorStruct *actorPtr = _engine->_scene->getActor(a);
 		// TODO: redrawing doesn't work properly yet for moving actors
 		if (!actorPtr->staticFlags.bIsSpriteActor) {
@@ -185,8 +185,8 @@ bool DebugScene::displayTracks() {
 
 bool DebugScene::displayZones() {
 	bool state = false;
-	for (int i = 0; i < _engine->_scene->sceneNumZones; i++) {
-		const ZoneStruct *zonePtr = &_engine->_scene->sceneZones[i];
+	for (int i = 0; i < _engine->_scene->_sceneNumZones; i++) {
+		const ZoneStruct *zonePtr = &_engine->_scene->_sceneZones[i];
 
 		if (!checkZoneType(zonePtr->type)) {
 			continue;

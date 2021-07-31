@@ -625,7 +625,7 @@ void Extra::processExtras() {
 				continue;
 			}
 
-			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos.y, 0, currentExtraY, _engine->_movements->targetActorDistance);
+			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos.y, 0, currentExtraY, _engine->_movements->_targetActorDistance);
 			int32 pos = extra->trackActorMove.getRealAngle(_engine->_lbaTime);
 			if (!pos) {
 				pos = 1;
@@ -659,10 +659,10 @@ void Extra::processExtras() {
 			const int32 angle = ClampAngle(tmpAngle - extra->angle);
 
 			if (angle > ANGLE_140 && angle < ANGLE_210) {
-				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->sceneHero->pos, OWN_ACTOR_SCENE_INDEX);
+				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->pos, OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
-					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->camera);
+					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_camera);
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
@@ -675,7 +675,7 @@ void Extra::processExtras() {
 				_engine->_gameState->magicBallIdx = addExtra(-1, extra->pos.x, extra->pos.y, extra->pos.z, SPRITEHQR_KEY, 0, 8000, 0);
 				continue;
 			}
-			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos.y, 0, extraKey->pos.y, _engine->_movements->targetActorDistance);
+			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos.y, 0, extraKey->pos.y, _engine->_movements->_targetActorDistance);
 			int32 pos = extra->trackActorMove.getRealAngle(_engine->_lbaTime);
 
 			if (!pos) {
@@ -692,10 +692,10 @@ void Extra::processExtras() {
 			_engine->_movements->setActorAngle(ANGLE_0, extra->destPos.z, ANGLE_17, &extra->trackActorMove);
 
 			if (extraIdx == _engine->_collision->checkExtraCollisionWithExtra(extra, _engine->_gameState->magicBallIdx)) {
-				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->sceneHero->pos, OWN_ACTOR_SCENE_INDEX);
+				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->pos, OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
-					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->camera);
+					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_camera);
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
@@ -841,7 +841,7 @@ void Extra::processExtras() {
 				_engine->_sound->playSample(Samples::ItemFound, 1, extra->pos);
 
 				if (extra->info1 > 1 && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-					_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->camera);
+					_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_camera);
 					const int16 fontColor = COLOR_158;
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, _engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, fontColor, OverlayPosType::koNormal, 2);
 				}
@@ -851,7 +851,7 @@ void Extra::processExtras() {
 				if (extra->info0 == SPRITEHQR_KASHES) {
 					_engine->_gameState->addKashes(extra->info1);
 				} else if (extra->info0 == SPRITEHQR_LIFEPOINTS) {
-					_engine->_scene->sceneHero->addLife(extra->info1);
+					_engine->_scene->_sceneHero->addLife(extra->info1);
 				} else if (extra->info0 == SPRITEHQR_MAGICPOINTS && _engine->_gameState->magicLevelIdx) {
 					_engine->_gameState->addMagicPoints(extra->info1 * 2);
 				} else if (extra->info0 == SPRITEHQR_KEY) {
