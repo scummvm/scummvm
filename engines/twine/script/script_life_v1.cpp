@@ -1521,7 +1521,7 @@ static int32 lBUBBLE_ON(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x5A
  */
 static int32 lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_text->_showDialogueBubble = true; // TODO: this looks wrong - why true and not false?
+	engine->_text->_showDialogueBubble = false;
 	return 0;
 }
 
