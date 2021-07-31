@@ -51,9 +51,9 @@ namespace TwinE {
 
 GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 	clearGameFlags();
-	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
-	Common::fill(&holomapFlags[0], &holomapFlags[NUM_LOCATIONS], 0);
-	Common::fill(&gameChoices[0], &gameChoices[10], TextId::kNone);
+	Common::fill(&_inventoryFlags[0], &_inventoryFlags[NUM_INVENTORY_ITEMS], 0);
+	Common::fill(&_holomapFlags[0], &_holomapFlags[NUM_LOCATIONS], 0);
+	Common::fill(&_gameChoices[0], &_gameChoices[10], TextId::kNone);
 }
 
 void GameState::initEngineProjections() {
@@ -76,29 +76,29 @@ void GameState::initGameStateVars() {
 	}
 
 	clearGameFlags();
-	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
+	Common::fill(&_inventoryFlags[0], &_inventoryFlags[NUM_INVENTORY_ITEMS], 0);
 
 	_engine->_scene->initSceneVars();
 
-	Common::fill(&holomapFlags[0], &holomapFlags[NUM_LOCATIONS], 0);
+	Common::fill(&_holomapFlags[0], &_holomapFlags[NUM_LOCATIONS], 0);
 }
 
 void GameState::initHeroVars() {
 	_engine->_actor->resetActor(OWN_ACTOR_SCENE_INDEX); // reset Hero
 
-	magicBallIdx = -1;
+	_magicBallIdx = -1;
 
-	inventoryNumLeafsBox = 2;
-	inventoryNumLeafs = 2;
-	inventoryNumKashes = 0;
-	inventoryNumKeys = 0;
-	inventoryMagicPoints = 0;
+	_inventoryNumLeafsBox = 2;
+	_inventoryNumLeafs = 2;
+	_inventoryNumKashes = 0;
+	_inventoryNumKeys = 0;
+	_inventoryMagicPoints = 0;
 
-	usingSabre = false;
+	_usingSabre = false;
 
-	_engine->_scene->_sceneHero->body = BodyType::btNormal;
+	_engine->_scene->_sceneHero->_body = BodyType::btNormal;
 	_engine->_scene->_sceneHero->setLife(kActorMaxLife);
-	_engine->_scene->_sceneHero->talkColor = COLOR_BRIGHT_BLUE;
+	_engine->_scene->_sceneHero->_talkColor = COLOR_BRIGHT_BLUE;
 }
 
 void GameState::initEngineVars() {
@@ -121,19 +121,19 @@ void GameState::initEngineVars() {
 	_engine->_scene->_mecaPinguinIdx = -1;
 	_engine->_menuOptions->canShowCredits = false;
 
-	inventoryNumLeafs = 0;
-	inventoryNumLeafsBox = 2;
-	inventoryMagicPoints = 0;
-	inventoryNumKashes = 0;
-	inventoryNumKeys = 0;
-	inventoryNumGas = 0;
+	_inventoryNumLeafs = 0;
+	_inventoryNumLeafsBox = 2;
+	_inventoryMagicPoints = 0;
+	_inventoryNumKashes = 0;
+	_inventoryNumKeys = 0;
+	_inventoryNumGas = 0;
 
 	_engine->_actor->cropBottomScreen = 0;
 
-	magicLevelIdx = 0;
-	usingSabre = false;
+	_magicLevelIdx = 0;
+	_usingSabre = false;
 
-	gameChapter = 0;
+	_gameChapter = 0;
 
 	_engine->_scene->_sceneTextBank = TextBankId::Options_and_menus;
 	_engine->_scene->_currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
@@ -180,28 +180,28 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		setGameFlag(i, file->readByte());
 	}
 	_engine->_scene->_needChangeScene = file->readByte(); // scene index
-	gameChapter = file->readByte();
+	_gameChapter = file->readByte();
 
 	_engine->_actor->heroBehaviour = (HeroBehaviourType)file->readByte();
 	_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
 	_engine->_scene->_sceneHero->setLife(file->readByte());
 	setKashes(file->readSint16LE());
-	magicLevelIdx = file->readByte();
+	_magicLevelIdx = file->readByte();
 	setMagicPoints(file->readByte());
 	setLeafBoxes(file->readByte());
 	_engine->_scene->_newHeroPos.x = file->readSint16LE();
 	_engine->_scene->_newHeroPos.y = file->readSint16LE();
 	_engine->_scene->_newHeroPos.z = file->readSint16LE();
-	_engine->_scene->_sceneHero->angle = ToAngle(file->readSint16LE());
-	_engine->_actor->previousHeroAngle = _engine->_scene->_sceneHero->angle;
-	_engine->_scene->_sceneHero->body = (BodyType)file->readByte();
+	_engine->_scene->_sceneHero->_angle = ToAngle(file->readSint16LE());
+	_engine->_actor->previousHeroAngle = _engine->_scene->_sceneHero->_angle;
+	_engine->_scene->_sceneHero->_body = (BodyType)file->readByte();
 
 	const byte numHolomapFlags = file->readByte(); // number of holomap locations
 	if (numHolomapFlags != NUM_LOCATIONS) {
 		warning("Failed to load holomapflags. Got %u, expected %i", numHolomapFlags, NUM_LOCATIONS);
 		return false;
 	}
-	file->read(holomapFlags, NUM_LOCATIONS);
+	file->read(_holomapFlags, NUM_LOCATIONS);
 
 	setGas(file->readByte());
 
@@ -210,10 +210,10 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		warning("Failed to load inventoryFlags. Got %u, expected %i", numInventoryFlags, NUM_INVENTORY_ITEMS);
 		return false;
 	}
-	file->read(inventoryFlags, NUM_INVENTORY_ITEMS);
+	file->read(_inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	setLeafs(file->readByte());
-	usingSabre = file->readByte();
+	_usingSabre = file->readByte();
 
 	if (saveFileVersion == 4) {
 		// the time the game was played
@@ -248,33 +248,33 @@ bool GameState::saveGame(Common::WriteStream *file) {
 		file->writeByte(hasGameFlag(i));
 	}
 	file->writeByte(sceneIdx);
-	file->writeByte(gameChapter);
+	file->writeByte(_gameChapter);
 	file->writeByte((byte)_engine->_actor->heroBehaviour);
-	file->writeByte(_engine->_scene->_sceneHero->life);
-	file->writeSint16LE(inventoryNumKashes);
-	file->writeByte(magicLevelIdx);
-	file->writeByte(inventoryMagicPoints);
-	file->writeByte(inventoryNumLeafsBox);
+	file->writeByte(_engine->_scene->_sceneHero->_life);
+	file->writeSint16LE(_inventoryNumKashes);
+	file->writeByte(_magicLevelIdx);
+	file->writeByte(_inventoryMagicPoints);
+	file->writeByte(_inventoryNumLeafsBox);
 	// we don't save the whole scene state - so we have to make sure that the hero is
 	// respawned at the start of the scene - and not at its current position
 	file->writeSint16LE(_engine->_scene->_newHeroPos.x);
 	file->writeSint16LE(_engine->_scene->_newHeroPos.y);
 	file->writeSint16LE(_engine->_scene->_newHeroPos.z);
-	file->writeSint16LE(FromAngle(_engine->_scene->_sceneHero->angle));
-	file->writeByte((uint8)_engine->_scene->_sceneHero->body);
+	file->writeSint16LE(FromAngle(_engine->_scene->_sceneHero->_angle));
+	file->writeByte((uint8)_engine->_scene->_sceneHero->_body);
 
 	// number of holomap locations
 	file->writeByte(NUM_LOCATIONS);
-	file->write(holomapFlags, NUM_LOCATIONS);
+	file->write(_holomapFlags, NUM_LOCATIONS);
 
-	file->writeByte(inventoryNumGas);
+	file->writeByte(_inventoryNumGas);
 
 	// number of inventory items
 	file->writeByte(NUM_INVENTORY_ITEMS);
-	file->write(inventoryFlags, NUM_INVENTORY_ITEMS);
+	file->write(_inventoryFlags, NUM_INVENTORY_ITEMS);
 
-	file->writeByte(inventoryNumLeafs);
-	file->writeByte(usingSabre ? 1 : 0);
+	file->writeByte(_inventoryNumLeafs);
+	file->writeByte(_usingSabre ? 1 : 0);
 	file->writeByte(0);
 
 	return true;
@@ -304,9 +304,9 @@ void GameState::processFoundItem(InventoryItems item) {
 
 	_engine->exitSceneryView();
 	// Hide hero in scene
-	_engine->_scene->_sceneHero->staticFlags.bIsHidden = 1;
+	_engine->_scene->_sceneHero->_staticFlags.bIsHidden = 1;
 	_engine->_redraw->redrawEngineActions(true);
-	_engine->_scene->_sceneHero->staticFlags.bIsHidden = 0;
+	_engine->_scene->_sceneHero->_staticFlags.bIsHidden = 0;
 
 	_engine->saveFrontBuffer();
 
@@ -314,20 +314,20 @@ void GameState::processFoundItem(InventoryItems item) {
 	const int32 itemCameraY = _engine->_grid->_newCamera.y * BRICK_HEIGHT;
 	const int32 itemCameraZ = _engine->_grid->_newCamera.z * BRICK_SIZE;
 
-	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->_sceneHero->entity];
-	const int32 bodyX = _engine->_scene->_sceneHero->pos.x - itemCameraX;
-	const int32 bodyY = _engine->_scene->_sceneHero->pos.y - itemCameraY;
-	const int32 bodyZ = _engine->_scene->_sceneHero->pos.z - itemCameraZ;
+	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->_sceneHero->_entity];
+	const int32 bodyX = _engine->_scene->_sceneHero->_pos.x - itemCameraX;
+	const int32 bodyY = _engine->_scene->_sceneHero->_pos.y - itemCameraY;
+	const int32 bodyZ = _engine->_scene->_sceneHero->_pos.z - itemCameraZ;
 	Common::Rect modelRect;
 	_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
 	_engine->_interface->setClip(modelRect);
 
-	const int32 itemX = (_engine->_scene->_sceneHero->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
-	int32 itemY = _engine->_scene->_sceneHero->pos.y / BRICK_HEIGHT;
+	const int32 itemX = (_engine->_scene->_sceneHero->_pos.x + BRICK_HEIGHT) / BRICK_SIZE;
+	int32 itemY = _engine->_scene->_sceneHero->_pos.y / BRICK_HEIGHT;
 	if (_engine->_scene->_sceneHero->brickShape() != ShapeType::kNone) {
 		itemY++;
 	}
-	const int32 itemZ = (_engine->_scene->_sceneHero->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
+	const int32 itemZ = (_engine->_scene->_sceneHero->_pos.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 
@@ -356,9 +356,9 @@ void GameState::processFoundItem(InventoryItems item) {
 	const int32 bodyAnimIdx = _engine->_animations->getBodyAnimIndex(AnimationTypes::kFoundItem);
 	const AnimData &currentAnimData = _engine->_resources->_animData[bodyAnimIdx];
 
-	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->_sceneHero->animTimerData;
+	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->_sceneHero->_animTimerData;
 
-	_engine->_animations->stockAnimation(bodyData, &_engine->_scene->_sceneHero->animTimerData);
+	_engine->_animations->stockAnimation(bodyData, &_engine->_scene->_sceneHero->_animTimerData);
 
 	uint currentAnimState = 0;
 
@@ -383,7 +383,7 @@ void GameState::processFoundItem(InventoryItems item) {
 		_engine->_interface->resetClip();
 		initEngineProjections();
 
-		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, bodyData, &_engine->_scene->_sceneHero->animTimerData)) {
+		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, bodyData, &_engine->_scene->_sceneHero->_animTimerData)) {
 			currentAnimState++; // keyframe
 			if (currentAnimState >= currentAnimData.getNumKeyframes()) {
 				currentAnimState = currentAnimData.getLoopFrame();
@@ -437,7 +437,7 @@ void GameState::processFoundItem(InventoryItems item) {
 	_engine->_text->initSceneTextBank();
 	_engine->_text->stopVox(_engine->_text->_currDialTextEntry);
 
-	_engine->_scene->_sceneHero->animTimerData = tmpAnimTimer;
+	_engine->_scene->_sceneHero->_animTimerData = tmpAnimTimer;
 }
 
 void GameState::processGameChoices(TextId choiceIdx) {
@@ -447,18 +447,18 @@ void GameState::processGameChoices(TextId choiceIdx) {
 	_gameChoicesSettings.setTextBankId((TextBankId)((int)_engine->_scene->_sceneTextBank + (int)TextBankId::Citadel_Island));
 
 	// filled via script
-	for (int32 i = 0; i < numChoices; i++) {
-		_gameChoicesSettings.addButton(gameChoices[i], 0);
+	for (int32 i = 0; i < _numChoices; i++) {
+		_gameChoicesSettings.addButton(_gameChoices[i], 0);
 	}
 
 	_engine->_text->drawAskQuestion(choiceIdx);
 
 	_engine->_menu->processMenu(&_gameChoicesSettings, false);
 	const int16 activeButton = _gameChoicesSettings.getActiveButton();
-	choiceAnswer = gameChoices[activeButton];
+	_choiceAnswer = _gameChoices[activeButton];
 
 	// get right VOX entry index
-	if (_engine->_text->initVoxToPlayTextId(choiceAnswer)) {
+	if (_engine->_text->initVoxToPlayTextId(_choiceAnswer)) {
 		while (_engine->_text->playVoxSimple(_engine->_text->_currDialTextEntry)) {
 			FrameMarker frame(_engine);
 			if (_engine->shouldQuit()) {
@@ -477,9 +477,9 @@ void GameState::processGameoverAnimation() {
 
 	_engine->exitSceneryView();
 	// workaround to fix hero redraw after drowning
-	_engine->_scene->_sceneHero->staticFlags.bIsHidden = 1;
+	_engine->_scene->_sceneHero->_staticFlags.bIsHidden = 1;
 	_engine->_redraw->redrawEngineActions(true);
-	_engine->_scene->_sceneHero->staticFlags.bIsHidden = 0;
+	_engine->_scene->_sceneHero->_staticFlags.bIsHidden = 0;
 
 	// TODO: inSceneryView
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
@@ -539,79 +539,79 @@ void GameState::giveUp() {
 }
 
 int16 GameState::setGas(int16 value) {
-	inventoryNumGas = CLIP<int16>(value, 0, 100);
-	return inventoryNumGas;
+	_inventoryNumGas = CLIP<int16>(value, 0, 100);
+	return _inventoryNumGas;
 }
 
 void GameState::addGas(int16 value) {
-	setGas(inventoryNumGas + value);
+	setGas(_inventoryNumGas + value);
 }
 
 int16 GameState::setKashes(int16 value) {
-	inventoryNumKashes = CLIP<int16>(value, 0, 999);
-	if (_engine->_gameState->inventoryNumKashes >= 500) {
+	_inventoryNumKashes = CLIP<int16>(value, 0, 999);
+	if (_engine->_gameState->_inventoryNumKashes >= 500) {
 		_engine->unlockAchievement("LBA_ACH_011");
 	}
-	return inventoryNumKashes;
+	return _inventoryNumKashes;
 }
 
 int16 GameState::setKeys(int16 value) {
-	inventoryNumKeys = MAX<int16>(0, value);
-	return inventoryNumKeys;
+	_inventoryNumKeys = MAX<int16>(0, value);
+	return _inventoryNumKeys;
 }
 
 void GameState::addKeys(int16 val) {
-	setKeys(inventoryNumKeys + val);
+	setKeys(_inventoryNumKeys + val);
 }
 
 void GameState::addKashes(int16 val) {
-	setKashes(inventoryNumKashes + val);
+	setKashes(_inventoryNumKashes + val);
 }
 
 int16 GameState::setMagicPoints(int16 val) {
-	inventoryMagicPoints = val;
-	if (inventoryMagicPoints > magicLevelIdx * 20) {
-		inventoryMagicPoints = magicLevelIdx * 20;
-	} else if (inventoryMagicPoints < 0) {
-		inventoryMagicPoints = 0;
+	_inventoryMagicPoints = val;
+	if (_inventoryMagicPoints > _magicLevelIdx * 20) {
+		_inventoryMagicPoints = _magicLevelIdx * 20;
+	} else if (_inventoryMagicPoints < 0) {
+		_inventoryMagicPoints = 0;
 	}
-	return inventoryMagicPoints;
+	return _inventoryMagicPoints;
 }
 
 int16 GameState::setMaxMagicPoints() {
-	inventoryMagicPoints = magicLevelIdx * 20;
-	return inventoryMagicPoints;
+	_inventoryMagicPoints = _magicLevelIdx * 20;
+	return _inventoryMagicPoints;
 }
 
 void GameState::addMagicPoints(int16 val) {
-	setMagicPoints(inventoryMagicPoints + val);
+	setMagicPoints(_inventoryMagicPoints + val);
 }
 
 int16 GameState::setLeafs(int16 val) {
-	inventoryNumLeafs = val;
-	if (inventoryNumLeafs > inventoryNumLeafsBox) {
-		inventoryNumLeafs = inventoryNumLeafsBox;
+	_inventoryNumLeafs = val;
+	if (_inventoryNumLeafs > _inventoryNumLeafsBox) {
+		_inventoryNumLeafs = _inventoryNumLeafsBox;
 	}
-	return inventoryNumLeafs;
+	return _inventoryNumLeafs;
 }
 
 void GameState::addLeafs(int16 val) {
-	setLeafs(inventoryNumLeafs + val);
+	setLeafs(_inventoryNumLeafs + val);
 }
 
 int16 GameState::setLeafBoxes(int16 val) {
-	inventoryNumLeafsBox = val;
-	if (inventoryNumLeafsBox > 10) {
-		inventoryNumLeafsBox = 10;
+	_inventoryNumLeafsBox = val;
+	if (_inventoryNumLeafsBox > 10) {
+		_inventoryNumLeafsBox = 10;
 	}
-	if (inventoryNumLeafsBox == 5) {
+	if (_inventoryNumLeafsBox == 5) {
 		_engine->unlockAchievement("LBA_ACH_003");
 	}
-	return inventoryNumLeafsBox;
+	return _inventoryNumLeafsBox;
 }
 
 void GameState::addLeafBoxes(int16 val) {
-	setLeafBoxes(inventoryNumLeafsBox + val);
+	setLeafBoxes(_inventoryNumLeafsBox + val);
 }
 
 } // namespace TwinE

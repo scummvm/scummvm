@@ -124,7 +124,7 @@ bool TwinEConsole::doAddMagicPoints(int argc, const char **argv) {
 		return true;
 	}
 	const int16 magicPoints = atoi(argv[1]);
-	_engine->_gameState->magicLevelIdx = CLIP<int16>(magicPoints, 0, 4);
+	_engine->_gameState->_magicLevelIdx = CLIP<int16>(magicPoints, 0, 4);
 	_engine->_gameState->setMaxMagicPoints();
 	return true;
 }
@@ -162,7 +162,7 @@ bool TwinEConsole::doSetInventoryFlag(int argc, const char **argv) {
 		return true;
 	}
 	const uint8 val = argc == 3 ? atoi(argv[2]) : 0;
-	_engine->_gameState->inventoryFlags[idx] = val;
+	_engine->_gameState->_inventoryFlags[idx] = val;
 
 	return true;
 }
@@ -185,7 +185,7 @@ bool TwinEConsole::doSetHolomapFlag(int argc, const char **argv) {
 
 	GameState* state = _engine->_gameState;
 	state->setGameFlag(InventoryItems::kiHolomap, 1);
-	state->inventoryFlags[InventoryItems::kiHolomap] = 1;
+	state->_inventoryFlags[InventoryItems::kiHolomap] = 1;
 	state->setGameFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
 
 	const int idx = atoi(argv[1]);
@@ -233,14 +233,14 @@ bool TwinEConsole::doPrintGameFlag(int argc, const char **argv) {
 bool TwinEConsole::doPrintInventoryFlag(int argc, const char **argv) {
 	if (argc <= 1) {
 		for (int i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
-			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->inventoryFlags[i]);
+			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->_inventoryFlags[i]);
 		}
 		return true;
 	}
 
 	const uint8 idx = atoi(argv[1]);
 	if (idx < NUM_INVENTORY_ITEMS) {
-		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->inventoryFlags[idx]);
+		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->_inventoryFlags[idx]);
 	}
 
 	return true;
@@ -249,14 +249,14 @@ bool TwinEConsole::doPrintInventoryFlag(int argc, const char **argv) {
 bool TwinEConsole::doPrintHolomapFlag(int argc, const char **argv) {
 	if (argc <= 1) {
 		for (int i = 0; i < NUM_LOCATIONS; ++i) {
-			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->holomapFlags[i]);
+			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->_holomapFlags[i]);
 		}
 		return true;
 	}
 
 	const uint8 idx = atoi(argv[1]);
 	if (idx < NUM_LOCATIONS) {
-		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->holomapFlags[idx]);
+		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->_holomapFlags[idx]);
 	}
 
 	return true;
@@ -318,7 +318,7 @@ bool TwinEConsole::doListMenuText(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doSetHeroPosition(int argc, const char **argv) {
-	IVec3 &pos = _engine->_scene->_sceneHero->pos;
+	IVec3 &pos = _engine->_scene->_sceneHero->_pos;
 	if (argc < 4) {
 		debugPrintf("Current hero position: %i:%i:%i\n", pos.x, pos.y, pos.z);
 		return true;
@@ -412,7 +412,7 @@ bool TwinEConsole::doGiveItem(int argc, const char **argv) {
 	}
 	GameState* state = _engine->_gameState;
 	state->setGameFlag(itemIdx, 1);
-	state->inventoryFlags[itemIdx] = 1;
+	state->_inventoryFlags[itemIdx] = 1;
 	state->setGameFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
 
 	return true;
@@ -422,7 +422,7 @@ bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 	GameState* state = _engine->_gameState;
 	for (int32 i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
 		state->setGameFlag(i, 1);
-		state->inventoryFlags[i] = 1;
+		state->_inventoryFlags[i] = 1;
 	}
 	state->setGameFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
 	int amount = 1;

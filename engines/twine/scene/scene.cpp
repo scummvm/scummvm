@@ -49,101 +49,101 @@ Scene::~Scene() {
 
 void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 	if (staticFlags & 0x1) {
-		act->staticFlags.bComputeCollisionWithObj = 1;
+		act->_staticFlags.bComputeCollisionWithObj = 1;
 	}
 	if (staticFlags & 0x2) {
-		act->staticFlags.bComputeCollisionWithBricks = 1;
+		act->_staticFlags.bComputeCollisionWithBricks = 1;
 	}
 	if (staticFlags & 0x4) {
-		act->staticFlags.bIsZonable = 1;
+		act->_staticFlags.bIsZonable = 1;
 	}
 	if (staticFlags & 0x8) {
-		act->staticFlags.bUsesClipping = 1;
+		act->_staticFlags.bUsesClipping = 1;
 	}
 	if (staticFlags & 0x10) {
-		act->staticFlags.bCanBePushed = 1;
+		act->_staticFlags.bCanBePushed = 1;
 	}
 	if (staticFlags & 0x20) {
-		act->staticFlags.bComputeLowCollision = 1;
+		act->_staticFlags.bComputeLowCollision = 1;
 	}
 	if (staticFlags & 0x40) {
-		act->staticFlags.bCanDrown = 1;
+		act->_staticFlags.bCanDrown = 1;
 	}
 	if (staticFlags & 0x80) {
-		act->staticFlags.bComputeCollisionWithFloor = 1;
+		act->_staticFlags.bComputeCollisionWithFloor = 1;
 	}
 
 	if (staticFlags & 0x100) {
-		act->staticFlags.bUnk0100 = 1;
+		act->_staticFlags.bUnk0100 = 1;
 	}
 	if (staticFlags & 0x200) {
-		act->staticFlags.bIsHidden = 1;
+		act->_staticFlags.bIsHidden = 1;
 	}
 	if (staticFlags & 0x400) {
-		act->staticFlags.bIsSpriteActor = 1;
+		act->_staticFlags.bIsSpriteActor = 1;
 	}
 	if (staticFlags & 0x800) {
-		act->staticFlags.bCanFall = 1;
+		act->_staticFlags.bCanFall = 1;
 	}
 	if (staticFlags & 0x1000) {
-		act->staticFlags.bDoesntCastShadow = 1;
+		act->_staticFlags.bDoesntCastShadow = 1;
 	}
 	if (staticFlags & 0x2000) {
 		//act->staticFlags.bIsBackgrounded = 1;
 	}
 	if (staticFlags & 0x4000) {
-		act->staticFlags.bIsCarrierActor = 1;
+		act->_staticFlags.bIsCarrierActor = 1;
 	}
 	if (staticFlags & 0x8000) {
-		act->staticFlags.bUseMiniZv = 1;
+		act->_staticFlags.bUseMiniZv = 1;
 	}
 	if (staticFlags & 0x10000) {
-		act->staticFlags.bHasInvalidPosition = 1;
+		act->_staticFlags.bHasInvalidPosition = 1;
 	}
 	if (staticFlags & 0x20000) {
-		act->staticFlags.bNoElectricShock = 1;
+		act->_staticFlags.bNoElectricShock = 1;
 	}
 	if (staticFlags & 0x40000) {
-		act->staticFlags.bHasSpriteAnim3D = 1;
+		act->_staticFlags.bHasSpriteAnim3D = 1;
 	}
 	if (staticFlags & 0x80000) {
-		act->staticFlags.bNoPreClipping = 1;
+		act->_staticFlags.bNoPreClipping = 1;
 	}
 	if (staticFlags & 0x100000) {
-		act->staticFlags.bHasZBuffer = 1;
+		act->_staticFlags.bHasZBuffer = 1;
 	}
 	if (staticFlags & 0x200000) {
-		act->staticFlags.bHasZBufferInWater = 1;
+		act->_staticFlags.bHasZBufferInWater = 1;
 	}
 }
 
 void Scene::setBonusParameterFlags(ActorStruct *act, uint16 bonusFlags) {
 	if (bonusFlags & 0x1) {
-		act->bonusParameter.unk1 = 1;
+		act->_bonusParameter.unk1 = 1;
 	}
 	if (bonusFlags & 0x2) {
-		act->bonusParameter.unk2 = 1;
+		act->_bonusParameter.unk2 = 1;
 	}
 	if (bonusFlags & 0x4) {
-		act->bonusParameter.unk3 = 1;
+		act->_bonusParameter.unk3 = 1;
 	}
 	if (bonusFlags & 0x8) {
-		act->bonusParameter.unk4 = 1;
+		act->_bonusParameter.unk4 = 1;
 	}
 	if (bonusFlags & 0x10) {
-		act->bonusParameter.kashes = 1;
+		act->_bonusParameter.kashes = 1;
 	}
 	if (bonusFlags & 0x20) {
-		act->bonusParameter.lifepoints = 1;
+		act->_bonusParameter.lifepoints = 1;
 	}
 	if (bonusFlags & 0x40) {
-		act->bonusParameter.magicpoints = 1;
+		act->_bonusParameter.magicpoints = 1;
 	}
 	if (bonusFlags & 0x80) {
-		act->bonusParameter.key = 1;
+		act->_bonusParameter.key = 1;
 	}
 	if (bonusFlags & 0x100) {
-		act->bonusParameter.cloverleaf = 1;
+		act->_bonusParameter.cloverleaf = 1;
 	}
 }
 
@@ -177,13 +177,13 @@ bool Scene::loadSceneLBA2() {
 	_sceneHeroPos.y = stream.readSint16LE();
 	_sceneHeroPos.z = stream.readSint16LE();
 
-	_sceneHero->moveScriptSize = stream.readUint16LE();
-	_sceneHero->moveScript = _currentScene + stream.pos();
-	stream.skip(_sceneHero->moveScriptSize);
+	_sceneHero->_moveScriptSize = stream.readUint16LE();
+	_sceneHero->_moveScript = _currentScene + stream.pos();
+	stream.skip(_sceneHero->_moveScriptSize);
 
-	_sceneHero->lifeScriptSize = stream.readUint16LE();
-	_sceneHero->lifeScript = _currentScene + stream.pos();
-	stream.skip(_sceneHero->lifeScriptSize);
+	_sceneHero->_lifeScriptSize = stream.readUint16LE();
+	_sceneHero->_lifeScript = _currentScene + stream.pos();
+	stream.skip(_sceneHero->_lifeScriptSize);
 
 	_sceneNumActors = stream.readUint16LE();
 	int cnt = 1;
@@ -194,41 +194,41 @@ bool Scene::loadSceneLBA2() {
 
 		act->loadModel(stream.readUint16LE());
 
-		act->body = (BodyType)stream.readSint16LE();
-		act->anim = (AnimationTypes)stream.readByte();
-		act->sprite = stream.readUint16LE();
-		act->pos.x = stream.readUint16LE();
-		act->pos.y = stream.readUint16LE();
-		act->pos.z = stream.readUint16LE();
-		act->collisionPos = act->pos;
-		act->strengthOfHit = stream.readByte();
+		act->_body = (BodyType)stream.readSint16LE();
+		act->_anim = (AnimationTypes)stream.readByte();
+		act->_sprite = stream.readUint16LE();
+		act->_pos.x = stream.readUint16LE();
+		act->_pos.y = stream.readUint16LE();
+		act->_pos.z = stream.readUint16LE();
+		act->_collisionPos = act->pos();
+		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
-		act->angle = stream.readUint16LE();
-		act->speed = stream.readUint16LE();
-		act->controlMode = (ControlMode)stream.readByte();
-		act->cropLeft = stream.readSint16LE();
-		act->delayInMillis = act->cropLeft; // TODO: this might not be needed
-		act->cropTop = stream.readSint16LE();
-		act->cropRight = stream.readSint16LE();
-		act->cropBottom = stream.readSint16LE();
-		act->followedActor = act->cropBottom; // TODO: is this needed? and valid?
-		act->bonusAmount = stream.readSint16LE();
-		act->talkColor = stream.readByte();
-		if (act->staticFlags.bHasSpriteAnim3D) {
+		act->_angle = stream.readUint16LE();
+		act->_speed = stream.readUint16LE();
+		act->_controlMode = (ControlMode)stream.readByte();
+		act->_cropLeft = stream.readSint16LE();
+		act->_delayInMillis = act->_cropLeft; // TODO: this might not be needed
+		act->_cropTop = stream.readSint16LE();
+		act->_cropRight = stream.readSint16LE();
+		act->_cropBottom = stream.readSint16LE();
+		act->_followedActor = act->_cropBottom; // TODO: is this needed? and valid?
+		act->_bonusAmount = stream.readSint16LE();
+		act->_talkColor = stream.readByte();
+		if (act->_staticFlags.bHasSpriteAnim3D) {
 			/*act->spriteAnim3DNumber = */stream.readSint32LE();
 			/*act->spriteSizeHit = */stream.readSint16LE();
 			/*act->cropBottom = act->spriteSizeHit;*/
 		}
-		act->armor = stream.readByte();
+		act->_armor = stream.readByte();
 		act->setLife(stream.readByte());
 
-		act->moveScriptSize = stream.readUint16LE();
-		act->moveScript = _currentScene + stream.pos();
-		stream.skip(act->moveScriptSize);
+		act->_moveScriptSize = stream.readUint16LE();
+		act->_moveScript = _currentScene + stream.pos();
+		stream.skip(act->_moveScriptSize);
 
-		act->lifeScriptSize = stream.readUint16LE();
-		act->lifeScript = _currentScene + stream.pos();
-		stream.skip(act->lifeScriptSize);
+		act->_lifeScriptSize = stream.readUint16LE();
+		act->_lifeScript = _currentScene + stream.pos();
+		stream.skip(act->_lifeScriptSize);
 
 		if (_engine->_debugScene->_onlyLoadActor != -1 && _engine->_debugScene->_onlyLoadActor != cnt) {
 			_sceneNumActors--;
@@ -307,13 +307,13 @@ bool Scene::loadSceneLBA1() {
 	_sceneHeroPos.y = stream.readUint16LE();
 	_sceneHeroPos.z = stream.readUint16LE();
 
-	_sceneHero->moveScriptSize = stream.readUint16LE();
-	_sceneHero->moveScript = _currentScene + stream.pos();
-	stream.skip(_sceneHero->moveScriptSize);
+	_sceneHero->_moveScriptSize = stream.readUint16LE();
+	_sceneHero->_moveScript = _currentScene + stream.pos();
+	stream.skip(_sceneHero->_moveScriptSize);
 
-	_sceneHero->lifeScriptSize = stream.readUint16LE();
-	_sceneHero->lifeScript = _currentScene + stream.pos();
-	stream.skip(_sceneHero->lifeScriptSize);
+	_sceneHero->_lifeScriptSize = stream.readUint16LE();
+	_sceneHero->_lifeScript = _currentScene + stream.pos();
+	stream.skip(_sceneHero->_lifeScriptSize);
 
 	_sceneNumActors = stream.readUint16LE();
 	int cnt = 1;
@@ -325,38 +325,36 @@ bool Scene::loadSceneLBA1() {
 
 		act->loadModel(stream.readUint16LE());
 
-		act->body = (BodyType)stream.readByte();
-		act->anim = (AnimationTypes)stream.readByte();
-		act->sprite = stream.readUint16LE();
-		act->pos.x = stream.readUint16LE();
-		act->collisionPos.x = act->pos.x;
-		act->pos.y = stream.readUint16LE();
-		act->collisionPos.y = act->pos.y;
-		act->pos.z = stream.readUint16LE();
-		act->collisionPos.z = act->pos.z;
-		act->strengthOfHit = stream.readByte();
+		act->_body = (BodyType)stream.readByte();
+		act->_anim = (AnimationTypes)stream.readByte();
+		act->_sprite = stream.readUint16LE();
+		act->_pos.x = stream.readUint16LE();
+		act->_pos.y = stream.readUint16LE();
+		act->_pos.z = stream.readUint16LE();
+		act->_collisionPos = act->pos();
+		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
-		act->angle = stream.readUint16LE();
-		act->speed = stream.readUint16LE();
-		act->controlMode = (ControlMode)stream.readUint16LE();
-		act->cropLeft = stream.readSint16LE();
-		act->delayInMillis = act->cropLeft; // TODO: this might not be needed
-		act->cropTop = stream.readSint16LE();
-		act->cropRight = stream.readSint16LE();
-		act->cropBottom = stream.readSint16LE();
-		act->followedActor = act->cropBottom; // TODO: is this needed? and valid?
-		act->bonusAmount = stream.readByte();
-		act->talkColor = stream.readByte();
-		act->armor = stream.readByte();
+		act->_angle = stream.readUint16LE();
+		act->_speed = stream.readUint16LE();
+		act->_controlMode = (ControlMode)stream.readUint16LE();
+		act->_cropLeft = stream.readSint16LE();
+		act->_delayInMillis = act->_cropLeft; // TODO: this might not be needed
+		act->_cropTop = stream.readSint16LE();
+		act->_cropRight = stream.readSint16LE();
+		act->_cropBottom = stream.readSint16LE();
+		act->_followedActor = act->_cropBottom; // TODO: is this needed? and valid?
+		act->_bonusAmount = stream.readByte();
+		act->_talkColor = stream.readByte();
+		act->_armor = stream.readByte();
 		act->setLife(stream.readByte());
 
-		act->moveScriptSize = stream.readUint16LE();
-		act->moveScript = _currentScene + stream.pos();
-		stream.skip(act->moveScriptSize);
+		act->_moveScriptSize = stream.readUint16LE();
+		act->_moveScript = _currentScene + stream.pos();
+		stream.skip(act->_moveScriptSize);
 
-		act->lifeScriptSize = stream.readUint16LE();
-		act->lifeScript = _currentScene + stream.pos();
-		stream.skip(act->lifeScriptSize);
+		act->_lifeScriptSize = stream.readUint16LE();
+		act->_lifeScript = _currentScene + stream.pos();
+		stream.skip(act->_lifeScriptSize);
 
 		if (_engine->_debugScene->_onlyLoadActor != -1 && _engine->_debugScene->_onlyLoadActor != cnt) {
 			_sceneNumActors--;
@@ -398,8 +396,8 @@ bool Scene::loadSceneLBA1() {
 		switch (_currentSceneIdx) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
 			assert(_sceneNumActors >= 22);
-			_sceneActors[21].pos.x = _sceneActors[21].collisionPos.x = 0x1b00;
-			_sceneActors[21].pos.z = _sceneActors[21].collisionPos.z = 0x300;
+			_sceneActors[21]._pos.x = _sceneActors[21]._collisionPos.x = 0x1b00;
+			_sceneActors[21]._pos.z = _sceneActors[21]._collisionPos.z = 0x300;
 			break;
 #if 0
 		case LBA1SceneId::Principal_Island_outside_the_fortress:
@@ -479,11 +477,11 @@ void Scene::changeScene() {
 	_currentSceneIdx = _needChangeScene;
 
 	if (_engine->isLBA1() && _currentSceneIdx >= LBA1SceneId::Citadel_Island_Prison && _currentSceneIdx < LBA1SceneId::SceneIdMax) {
-		snprintf(_engine->_gameState->sceneName, sizeof(_engine->_gameState->sceneName), "%i %s", _currentSceneIdx, _engine->_holomap->getLocationName(_currentSceneIdx));
+		snprintf(_engine->_gameState->_sceneName, sizeof(_engine->_gameState->_sceneName), "%i %s", _currentSceneIdx, _engine->_holomap->getLocationName(_currentSceneIdx));
 	} else {
-		snprintf(_engine->_gameState->sceneName, sizeof(_engine->_gameState->sceneName), "%i", _currentSceneIdx);
+		snprintf(_engine->_gameState->_sceneName, sizeof(_engine->_gameState->_sceneName), "%i", _currentSceneIdx);
 	}
-	debug(2, "Entering scene %s (came from %i)", _engine->_gameState->sceneName, _previousSceneIdx);
+	debug(2, "Entering scene %s (came from %i)", _engine->_gameState->_sceneName, _previousSceneIdx);
 
 	if (_needChangeScene == LBA1SceneId::Polar_Island_end_scene) {
 		_engine->unlockAchievement("LBA_ACH_001");
@@ -500,11 +498,11 @@ void Scene::changeScene() {
 	resetScene();
 	_engine->_actor->loadHeroEntities();
 
-	_sceneHero->controlMode = ControlMode::kManual;
-	_sceneHero->zone = -1;
-	_sceneHero->positionInLifeScript = 0;
-	_sceneHero->positionInMoveScript = -1;
-	_sceneHero->labelIdx = -1;
+	_sceneHero->_controlMode = ControlMode::kManual;
+	_sceneHero->_zone = -1;
+	_sceneHero->_positionInLifeScript = 0;
+	_sceneHero->_positionInMoveScript = -1;
+	_sceneHero->_labelIdx = -1;
 
 	initScene(_needChangeScene);
 
@@ -528,15 +526,14 @@ void Scene::changeScene() {
 		_newHeroPos = _sceneHeroPos;
 	}
 
-	_sceneHero->pos.x = _newHeroPos.x;
-	_sceneHero->pos.y = _heroYBeforeFall = _newHeroPos.y;
-	_sceneHero->pos.z = _newHeroPos.z;
+	_sceneHero->_pos = _newHeroPos;
+	_heroYBeforeFall = _newHeroPos.y;
 
 	_engine->_renderer->setLightVector(_alphaLight, _betaLight, ANGLE_0);
 
 	if (_previousSceneIdx != SCENE_CEILING_GRID_FADE_1 && _previousSceneIdx != _needChangeScene) {
 		_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
-		_engine->_actor->previousHeroAngle = _sceneHero->angle;
+		_engine->_actor->previousHeroAngle = _sceneHero->_angle;
 		_engine->autoSave();
 	}
 
@@ -546,7 +543,7 @@ void Scene::changeScene() {
 		_engine->_actor->initActor(a);
 	}
 
-	_engine->_gameState->inventoryNumKeys = 0;
+	_engine->_gameState->_inventoryNumKeys = 0;
 	_engine->_disableScreenRecenter = false;
 	_heroPositionType = ScenePositionType::kNoPosition;
 	_sampleAmbienceTime = 0;
@@ -554,7 +551,7 @@ void Scene::changeScene() {
 	ActorStruct *followedActor = getActor(_currentlyFollowedActor);
 	_engine->_grid->centerOnActor(followedActor);
 
-	_engine->_gameState->magicBallIdx = -1;
+	_engine->_gameState->_magicBallIdx = -1;
 	_engine->_movements->_heroMoved = true;
 	_engine->_grid->_useCellingGrid = -1;
 	_engine->_grid->_cellingGridIdx = -1;
@@ -648,11 +645,11 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	}
 
 	const int16 amount = zone->infoData.Bonus.amount;
-	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->maxs.x + zone->mins.x) / 2, ABS(zone->maxs.z + zone->mins.z) / 2, _sceneHero->pos.x, _sceneHero->pos.z);
+	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->maxs.x + zone->mins.x) / 2, ABS(zone->maxs.z + zone->mins.z) / 2, _sceneHero->_pos.x, _sceneHero->_pos.z);
 	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->maxs.x + zone->mins.x) / 2, zone->maxs.y, ABS(zone->maxs.z + zone->mins.z) / 2, ANGLE_63, angle, bonusSprite, amount);
 
 	if (index != -1) {
-		_engine->_extra->extraList[index].type |= ExtraType::TIME_IN;
+		_engine->_extra->_extraList[index].type |= ExtraType::TIME_IN;
 		zone->infoData.Bonus.used = 1; // set as used
 	}
 }
@@ -660,11 +657,11 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 void Scene::processActorZones(int32 actorIdx) {
 	ActorStruct *actor = &_sceneActors[actorIdx];
 
-	int32 currentX = actor->pos.x;
-	int32 currentY = actor->pos.y;
-	int32 currentZ = actor->pos.z;
+	int32 currentX = actor->_pos.x;
+	int32 currentY = actor->_pos.y;
+	int32 currentZ = actor->_pos.z;
 
-	actor->zone = -1;
+	actor->_zone = -1;
 	bool tmpCellingGrid = false;
 
 	if (IS_HERO(actorIdx)) {
@@ -680,11 +677,11 @@ void Scene::processActorZones(int32 actorIdx) {
 		    (currentZ >= zone->mins.z && currentZ <= zone->maxs.z)) {
 			switch (zone->type) {
 			case ZoneType::kCube:
-				if (IS_HERO(actorIdx) && actor->life > 0) {
+				if (IS_HERO(actorIdx) && actor->_life > 0) {
 					_needChangeScene = zone->infoData.ChangeScene.newSceneIdx;
-					_zoneHeroPos.x = actor->pos.x - zone->mins.x + zone->infoData.ChangeScene.x;
-					_zoneHeroPos.y = actor->pos.y - zone->mins.y + zone->infoData.ChangeScene.y;
-					_zoneHeroPos.z = actor->pos.z - zone->mins.z + zone->infoData.ChangeScene.z;
+					_zoneHeroPos.x = actor->_pos.x - zone->mins.x + zone->infoData.ChangeScene.x;
+					_zoneHeroPos.y = actor->_pos.y - zone->mins.y + zone->infoData.ChangeScene.y;
+					_zoneHeroPos.z = actor->_pos.z - zone->mins.z + zone->infoData.ChangeScene.z;
 					_heroPositionType = ScenePositionType::kZone;
 				}
 				break;
@@ -700,7 +697,7 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case ZoneType::kSceneric:
-				actor->zone = zone->infoData.Sceneric.zoneIdx;
+				actor->_zone = zone->infoData.Sceneric.zoneIdx;
 				break;
 			case ZoneType::kGrid:
 				if (_currentlyFollowedActor == actorIdx) {
@@ -735,15 +732,15 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case ZoneType::kLadder:
-				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != HeroBehaviourType::kProtoPack && (actor->anim == AnimationTypes::kForward || actor->anim == AnimationTypes::kTopLadder || actor->anim == AnimationTypes::kClimbLadder)) {
-					_engine->_movements->rotateActor(actor->boudingBox.mins.x, actor->boudingBox.mins.z, actor->angle + ANGLE_360 + ANGLE_135);
+				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_anim == AnimationTypes::kForward || actor->_anim == AnimationTypes::kTopLadder || actor->_anim == AnimationTypes::kClimbLadder)) {
+					_engine->_movements->rotateActor(actor->_boudingBox.mins.x, actor->_boudingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
 					_engine->_renderer->_destPos.x += _engine->_movements->_processActor.x;
 					_engine->_renderer->_destPos.z += _engine->_movements->_processActor.z;
 
 					if (_engine->_renderer->_destPos.x >= 0 && _engine->_renderer->_destPos.z >= 0 && _engine->_renderer->_destPos.x <= 0x7E00 && _engine->_renderer->_destPos.z <= 0x7E00) {
-						if (_engine->_grid->getBrickShape(_engine->_renderer->_destPos.x, actor->pos.y + ANGLE_90, _engine->_renderer->_destPos.z) != ShapeType::kNone) {
+						if (_engine->_grid->getBrickShape(_engine->_renderer->_destPos.x, actor->_pos.y + ANGLE_90, _engine->_renderer->_destPos.z) != ShapeType::kNone) {
 							_currentActorInZone = true;
-							if (actor->pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
+							if (actor->_pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationType_2, AnimationTypes::kStanding, actorIdx); // reached end of ladder
 							} else {
 								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder

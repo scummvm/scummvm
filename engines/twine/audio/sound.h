@@ -88,6 +88,10 @@ public:
 	/** Update sample position in channel */
 	void setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z);
 
+	inline void setSamplePosition(int32 channelIdx, const IVec3 &pos) {
+		setSamplePosition(channelIdx, pos.x, pos.y, pos.z);
+	}
+
 	/**
 	 * Play samples
 	 * @param index sample index under flasamp.hqr file

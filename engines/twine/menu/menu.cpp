@@ -834,7 +834,7 @@ int32 Menu::giveupMenu() {
 void Menu::drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPadding, int32 barHeight) {
 	_engine->_grid->drawSprite(left, top + 3, _engine->_resources->_spriteData[SPRITEHQR_LIFEPOINTS]);
 	const int32 barLeft = left + barLeftPadding;
-	const int32 healthBarRight = _engine->_screens->crossDot(barLeft, right, 50, _engine->_scene->_sceneHero->life);
+	const int32 healthBarRight = _engine->_screens->crossDot(barLeft, right, 50, _engine->_scene->_sceneHero->_life);
 	const int32 barBottom = top + barHeight;
 	_engine->_interface->drawFilledRect(Common::Rect(barLeft, top, healthBarRight, barBottom), COLOR_91);
 	drawBox(Common::Rect(barLeft, top, right, barBottom));
@@ -842,13 +842,13 @@ void Menu::drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPaddin
 
 void Menu::drawCloverLeafs(int32 newBoxLeft, int32 boxRight, int32 top) {
 	// Clover leaf boxes
-	for (int32 i = 0; i < _engine->_gameState->inventoryNumLeafsBox; i++) {
+	for (int32 i = 0; i < _engine->_gameState->_inventoryNumLeafsBox; i++) {
 		const int32 leftSpritePos = _engine->_screens->crossDot(newBoxLeft, boxRight, 10, i);
 		_engine->_grid->drawSprite(leftSpritePos, top + 58, _engine->_resources->_spriteData[SPRITEHQR_CLOVERLEAFBOX]);
 	}
 
 	// Clover leafs
-	for (int32 i = 0; i < _engine->_gameState->inventoryNumLeafs; i++) {
+	for (int32 i = 0; i < _engine->_gameState->_inventoryNumLeafs; i++) {
 		const int32 leftSpritePos = _engine->_screens->crossDot(newBoxLeft, boxRight, 10, i);
 		_engine->_grid->drawSprite(leftSpritePos + 2, top + 60, _engine->_resources->_spriteData[SPRITEHQR_CLOVERLEAF]);
 	}
@@ -862,15 +862,15 @@ void Menu::drawMagicPointsBar(int32 left, int32 right, int32 top, int32 barLeftP
 		return;
 	}
 	_engine->_grid->drawSprite(left, top + 1, _engine->_resources->_spriteData[SPRITEHQR_MAGICPOINTS]);
-	if (_engine->_gameState->magicLevelIdx <= 0) {
+	if (_engine->_gameState->_magicLevelIdx <= 0) {
 		return;
 	}
 	const int32 barLeft = left + barLeftPadding;
 	const int32 barBottom = top + barHeight;
-	const int32 barRight = _engine->_screens->crossDot(barLeft, right, 80, _engine->_gameState->inventoryMagicPoints);
+	const int32 barRight = _engine->_screens->crossDot(barLeft, right, 80, _engine->_gameState->_inventoryMagicPoints);
 	const Common::Rect pointsRect(barLeft, top, barRight, barBottom);
 	_engine->_interface->drawFilledRect(pointsRect, COLOR_75);
-	drawBox(barLeft, top, barLeft + _engine->_gameState->magicLevelIdx * 80, barBottom);
+	drawBox(barLeft, top, barLeft + _engine->_gameState->_magicLevelIdx * 80, barBottom);
 }
 
 void Menu::drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteData, const Common::String &str, int32 color) {
@@ -880,12 +880,12 @@ void Menu::drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteDa
 }
 
 void Menu::drawCoins(int32 left, int32 top) {
-	const Common::String &inventoryNumKashes = Common::String::format("%d", _engine->_gameState->inventoryNumKashes);
+	const Common::String &inventoryNumKashes = Common::String::format("%d", _engine->_gameState->_inventoryNumKashes);
 	drawSpriteAndString(left, top, _engine->_resources->_spriteData[SPRITEHQR_KASHES], inventoryNumKashes);
 }
 
 void Menu::drawKeys(int32 left, int32 top) {
-	const Common::String &inventoryNumKeys = Common::String::format("%d", _engine->_gameState->inventoryNumKeys);
+	const Common::String &inventoryNumKeys = Common::String::format("%d", _engine->_gameState->_inventoryNumKeys);
 	drawSpriteAndString(left, top, _engine->_resources->_spriteData[SPRITEHQR_KEY], inventoryNumKeys);
 }
 
@@ -1033,14 +1033,14 @@ void Menu::processBehaviourMenu() {
 		_engine->_actor->setBehaviour(HeroBehaviourType::kNormal);
 	}
 
-	_behaviourEntity = &_engine->_resources->_bodyData[_engine->_scene->_sceneHero->entity];
+	_behaviourEntity = &_engine->_resources->_bodyData[_engine->_scene->_sceneHero->_entity];
 
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kNormal] = _engine->_actor->heroAnimIdxNORMAL;
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kAthletic] = _engine->_actor->heroAnimIdxATHLETIC;
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kAggressive] = _engine->_actor->heroAnimIdxAGGRESSIVE;
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kDiscrete] = _engine->_actor->heroAnimIdxDISCRETE;
 
-	_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->angle, _engine->_scene->_sceneHero->angle - ANGLE_90, ANGLE_17, &_moveMenu);
+	_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->_angle, _engine->_scene->_sceneHero->_angle - ANGLE_90, ANGLE_17, &_moveMenu);
 
 	_engine->saveFrontBuffer();
 
@@ -1051,7 +1051,7 @@ void Menu::processBehaviourMenu() {
 
 	const int32 left = _engine->width() / 2 - 220;
 	const int32 top = _engine->height() / 2 - 140;
-	drawBehaviourMenu(left, top, _engine->_scene->_sceneHero->angle);
+	drawBehaviourMenu(left, top, _engine->_scene->_sceneHero->_angle);
 
 	HeroBehaviourType tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 
@@ -1097,9 +1097,9 @@ void Menu::processBehaviourMenu() {
 
 		Common::Rect dirtyRect;
 		if (tmpHeroBehaviour != _engine->_actor->heroBehaviour) {
-			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->_sceneHero->angle, true, dirtyRect);
+			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->_sceneHero->_angle, true, dirtyRect);
 			tmpHeroBehaviour = _engine->_actor->heroBehaviour;
-			_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->angle, _engine->_scene->_sceneHero->angle - ANGLE_90, ANGLE_17, &_moveMenu);
+			_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->_angle, _engine->_scene->_sceneHero->_angle - ANGLE_90, ANGLE_17, &_moveMenu);
 			const int tmpAnimIdx = _engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour];
 			_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->_animData[tmpAnimIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
 		}
@@ -1141,7 +1141,7 @@ void Menu::drawItem(int32 left, int32 top, int32 item, Common::Rect &dirtyRect) 
 		_engine->_interface->resetClip();
 		if (item == InventoryItems::kGasItem) {
 			_engine->_text->setFontColor(COLOR_WHITE);
-			const Common::String &inventoryNumGas = Common::String::format("%d", _engine->_gameState->inventoryNumGas);
+			const Common::String &inventoryNumGas = Common::String::format("%d", _engine->_gameState->_inventoryNumGas);
 			_engine->_text->drawText(rect.left + 3, rect.bottom - 32, inventoryNumGas.c_str());
 		}
 	}
@@ -1180,7 +1180,7 @@ void Menu::processInventoryMenu() {
 
 	_inventorySelectedColor = COLOR_68;
 
-	if (_engine->_gameState->inventoryNumLeafs > 0) {
+	if (_engine->_gameState->_inventoryNumLeafs > 0) {
 		_engine->_gameState->giveItem(InventoryItems::kiCloverLeaf);
 		// TODO: shouldn't this get reset? } else {
 		//	_engine->_gameState->removeItem(InventoryItems::kiCloverLeaf);

@@ -594,9 +594,9 @@ bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 
 const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
 	updateCollisionCoordinates(pos.x, pos.y, pos.z);
-	const int32 tempX = _engine->_collision->collision.x;
-	int32 tempY = _engine->_collision->collision.y;
-	const int32 tempZ = _engine->_collision->collision.z;
+	const int32 tempX = _engine->_collision->_collision.x;
+	int32 tempY = _engine->_collision->_collision.y;
+	const int32 tempZ = _engine->_collision->_collision.z;
 	const uint8 *ptr = _blockBuffer + tempY * 2 + tempX * GRID_SIZE_Y * 2 + (tempZ * GRID_SIZE_X) * GRID_SIZE_Y * 2;
 
 	while (tempY) {
@@ -607,7 +607,7 @@ const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
 		ptr -= 2;
 	}
 
-	_engine->_collision->collision.y = tempY;
+	_engine->_collision->_collision.y = tempY;
 	ground = (int16)((tempY + 1) * BRICK_HEIGHT);
 
 	return ptr;
@@ -702,22 +702,22 @@ void Grid::redrawGrid() {
 ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
 	updateCollisionCoordinates(x, y, z);
 
-	if (_engine->_collision->collision.x < 0 || _engine->_collision->collision.x >= GRID_SIZE_X) {
+	if (_engine->_collision->_collision.x < 0 || _engine->_collision->_collision.x >= GRID_SIZE_X) {
 		return ShapeType::kNone;
 	}
 
-	if (_engine->_collision->collision.y <= -1) {
+	if (_engine->_collision->_collision.y <= -1) {
 		return ShapeType::kSolid;
 	}
 
-	if (_engine->_collision->collision.y < 0 || _engine->_collision->collision.y >= GRID_SIZE_Y || _engine->_collision->collision.z < 0 || _engine->_collision->collision.z >= GRID_SIZE_Z) {
+	if (_engine->_collision->_collision.y < 0 || _engine->_collision->_collision.y >= GRID_SIZE_Y || _engine->_collision->_collision.z < 0 || _engine->_collision->_collision.z >= GRID_SIZE_Z) {
 		return ShapeType::kNone;
 	}
 
 	uint8 *blockBufferPtr = _blockBuffer;
-	blockBufferPtr += _engine->_collision->collision.x * GRID_SIZE_Y * 2;
-	blockBufferPtr += _engine->_collision->collision.y * 2;
-	blockBufferPtr += (_engine->_collision->collision.z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
+	blockBufferPtr += _engine->_collision->_collision.x * GRID_SIZE_Y * 2;
+	blockBufferPtr += _engine->_collision->_collision.y * 2;
+	blockBufferPtr += (_engine->_collision->_collision.z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
 
 	uint8 blockIdx = *blockBufferPtr;
 
@@ -736,30 +736,30 @@ ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
 }
 
 void Grid::updateCollisionCoordinates(int32 x, int32 y, int32 z) {
-	_engine->_collision->collision.x = (x + BRICK_HEIGHT) / BRICK_SIZE;
-	_engine->_collision->collision.y = y / BRICK_HEIGHT;
-	_engine->_collision->collision.z = (z + BRICK_HEIGHT) / BRICK_SIZE;
+	_engine->_collision->_collision.x = (x + BRICK_HEIGHT) / BRICK_SIZE;
+	_engine->_collision->_collision.y = y / BRICK_HEIGHT;
+	_engine->_collision->_collision.z = (z + BRICK_HEIGHT) / BRICK_SIZE;
 }
 
 ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	updateCollisionCoordinates(x, y, z);
 
-	if (_engine->_collision->collision.x < 0 || _engine->_collision->collision.x >= GRID_SIZE_X) {
+	if (_engine->_collision->_collision.x < 0 || _engine->_collision->_collision.x >= GRID_SIZE_X) {
 		return ShapeType::kNone;
 	}
 
-	if (_engine->_collision->collision.y <= -1) {
+	if (_engine->_collision->_collision.y <= -1) {
 		return ShapeType::kSolid;
 	}
 
-	if (_engine->_collision->collision.y < 0 || _engine->_collision->collision.y >= GRID_SIZE_Y || _engine->_collision->collision.z < 0 || _engine->_collision->collision.z >= GRID_SIZE_Z) {
+	if (_engine->_collision->_collision.y < 0 || _engine->_collision->_collision.y >= GRID_SIZE_Y || _engine->_collision->_collision.z < 0 || _engine->_collision->_collision.z >= GRID_SIZE_Z) {
 		return ShapeType::kNone;
 	}
 
 	uint8 *blockBufferPtr = _blockBuffer;
-	blockBufferPtr += _engine->_collision->collision.x * GRID_SIZE_Y * 2;
-	blockBufferPtr += _engine->_collision->collision.y * 2;
-	blockBufferPtr += (_engine->_collision->collision.z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
+	blockBufferPtr += _engine->_collision->_collision.x * GRID_SIZE_Y * 2;
+	blockBufferPtr += _engine->_collision->_collision.y * 2;
+	blockBufferPtr += (_engine->_collision->_collision.z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
 
 	uint8 blockIdx = *blockBufferPtr;
 
@@ -775,7 +775,7 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 		const ShapeType brickShape = (ShapeType)*blockPtr;
 
 		const int32 newY = (y2 + (BRICK_HEIGHT - 1)) / BRICK_HEIGHT;
-		int32 currY = _engine->_collision->collision.y;
+		int32 currY = _engine->_collision->_collision.y;
 
 		for (int32 i = 0; i < newY; i++) {
 			if (currY >= GRID_SIZE_Y) {
@@ -795,7 +795,7 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	const ShapeType brickShape = (ShapeType) * (blockBufferPtr + 1);
 
 	const int32 newY = (y2 + (BRICK_HEIGHT - 1)) / BRICK_HEIGHT;
-	int32 currY = _engine->_collision->collision.y;
+	int32 currY = _engine->_collision->_collision.y;
 
 	for (int32 i = 0; i < newY; i++) {
 		if (currY >= GRID_SIZE_Y) {
@@ -816,22 +816,22 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 	updateCollisionCoordinates(x, y, z);
 
-	if (_engine->_collision->collision.x < 0 || _engine->_collision->collision.x >= GRID_SIZE_X) {
+	if (_engine->_collision->_collision.x < 0 || _engine->_collision->_collision.x >= GRID_SIZE_X) {
 		return 0; // none
 	}
 
-	if (_engine->_collision->collision.y <= -1) {
+	if (_engine->_collision->_collision.y <= -1) {
 		return 1; // solid
 	}
 
-	if (_engine->_collision->collision.y < 0 || _engine->_collision->collision.y >= GRID_SIZE_Y || _engine->_collision->collision.z < 0 || _engine->_collision->collision.z >= GRID_SIZE_Z) {
+	if (_engine->_collision->_collision.y < 0 || _engine->_collision->_collision.y >= GRID_SIZE_Y || _engine->_collision->_collision.z < 0 || _engine->_collision->_collision.z >= GRID_SIZE_Z) {
 		return 0; // none
 	}
 
 	const uint8 *blockBufferPtr = _blockBuffer;
-	blockBufferPtr += _engine->_collision->collision.x * GRID_SIZE_Y * 2;
-	blockBufferPtr += _engine->_collision->collision.y * 2;
-	blockBufferPtr += (_engine->_collision->collision.z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
+	blockBufferPtr += _engine->_collision->_collision.x * GRID_SIZE_Y * 2;
+	blockBufferPtr += _engine->_collision->_collision.y * 2;
+	blockBufferPtr += (_engine->_collision->_collision.z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
 
 	uint8 blockIdx = *blockBufferPtr;
 
@@ -852,9 +852,9 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 }
 
 void Grid::centerOnActor(const ActorStruct* actor) {
-	_newCamera.x = (actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
-	_newCamera.y = (actor->pos.y + BRICK_HEIGHT) / BRICK_HEIGHT;
-	_newCamera.z = (actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
+	_newCamera.x = (actor->_pos.x + BRICK_HEIGHT) / BRICK_SIZE;
+	_newCamera.y = (actor->_pos.y + BRICK_HEIGHT) / BRICK_HEIGHT;
+	_newCamera.z = (actor->_pos.z + BRICK_HEIGHT) / BRICK_SIZE;
 	_engine->_redraw->_reqBgRedraw = true;
 }
 
@@ -867,14 +867,14 @@ void Grid::centerScreenOnActor() {
 	}
 
 	ActorStruct *actor = _engine->_scene->getActor(_engine->_scene->_currentlyFollowedActor);
-	_engine->_renderer->projectPositionOnScreen(actor->pos.x - (_newCamera.x * BRICK_SIZE),
-	                                   actor->pos.y - (_newCamera.y * BRICK_HEIGHT),
-	                                   actor->pos.z - (_newCamera.z * BRICK_SIZE));
+	_engine->_renderer->projectPositionOnScreen(actor->_pos.x - (_newCamera.x * BRICK_SIZE),
+	                                   actor->_pos.y - (_newCamera.y * BRICK_HEIGHT),
+	                                   actor->_pos.z - (_newCamera.z * BRICK_SIZE));
 	// TODO: these border values should get scaled for hiher resolutions
 	if (_engine->_renderer->_projPos.x < 80 || _engine->_renderer->_projPos.x >= _engine->width() - 60 || _engine->_renderer->_projPos.y < 80 || _engine->_renderer->_projPos.y >= _engine->height() - 50) {
-		_newCamera.x = ((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE) - _newCamera.x) / 2;
-		_newCamera.y = actor->pos.y / BRICK_HEIGHT;
-		_newCamera.z = ((actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->pos.z + BRICK_HEIGHT) / BRICK_SIZE) - _newCamera.z) / 2;
+		_newCamera.x = ((actor->_pos.x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->_pos.x + BRICK_HEIGHT) / BRICK_SIZE) - _newCamera.x) / 2;
+		_newCamera.y = actor->_pos.y / BRICK_HEIGHT;
+		_newCamera.z = ((actor->_pos.z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->_pos.z + BRICK_HEIGHT) / BRICK_SIZE) - _newCamera.z) / 2;
 
 		if (_newCamera.x >= GRID_SIZE_X) {
 			_newCamera.x = GRID_SIZE_X - 1;

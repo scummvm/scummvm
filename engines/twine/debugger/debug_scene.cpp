@@ -150,11 +150,11 @@ bool DebugScene::displayActors() {
 	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 		const ActorStruct *actorPtr = _engine->_scene->getActor(a);
 		// TODO: redrawing doesn't work properly yet for moving actors
-		if (!actorPtr->staticFlags.bIsSpriteActor) {
+		if (!actorPtr->_staticFlags.bIsSpriteActor) {
 			continue;
 		}
-		const IVec3 &pos = actorPtr->pos;
-		const BoundingBox &bbox = actorPtr->boudingBox;
+		const IVec3 &pos = actorPtr->pos();
+		const BoundingBox &bbox = actorPtr->_boudingBox;
 		const ScenePositionsProjected &positions = calculateBoxPositions(pos + bbox.mins, pos + bbox.maxs);
 		if (!drawBox(positions, COLOR_WHITE)) {
 			continue;

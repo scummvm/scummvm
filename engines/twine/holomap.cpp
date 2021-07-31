@@ -90,17 +90,17 @@ bool Holomap::loadLocations() {
 }
 
 void Holomap::setHolomapPosition(int32 locationIdx) {
-	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->holomapFlags));
-	_engine->_gameState->holomapFlags[locationIdx] = HOLOMAP_ACTIVE;
+	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->_holomapFlags));
+	_engine->_gameState->_holomapFlags[locationIdx] = HOLOMAP_ACTIVE;
 	if (_engine->_gameState->hasItem(InventoryItems::kiHolomap)) {
 		_engine->_redraw->addOverlay(OverlayType::koInventoryItem, InventoryItems::kiHolomap, 0, 0, 0, OverlayPosType::koNormal, 3);
 	}
 }
 
 void Holomap::clearHolomapPosition(int32 locationIdx) {
-	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->holomapFlags));
-	_engine->_gameState->holomapFlags[locationIdx] &= HOLOMAP_RESET;
-	_engine->_gameState->holomapFlags[locationIdx] |= HOLOMAP_UNK7;
+	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->_holomapFlags));
+	_engine->_gameState->_holomapFlags[locationIdx] &= HOLOMAP_RESET;
+	_engine->_gameState->_holomapFlags[locationIdx] |= HOLOMAP_UNK7;
 }
 
 void Holomap::loadHolomapGFX() {
@@ -400,7 +400,7 @@ int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
 		i %= NUM_LOCATIONS;
 	}
 	for (; i != idx; i = (i + dir) % NUM_LOCATIONS) {
-		if (_engine->_gameState->holomapFlags[i] & HOLOMAP_ACTIVE) {
+		if (_engine->_gameState->_holomapFlags[i] & HOLOMAP_ACTIVE) {
 			return i;
 		}
 	}
@@ -411,7 +411,7 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 	int n = 0;
 	DrawListStruct drawListArray[NUM_LOCATIONS];
 	for (int locationIdx = 0; locationIdx < NUM_LOCATIONS; ++locationIdx) {
-		if ((_engine->_gameState->holomapFlags[locationIdx] & HOLOMAP_CAN_FOCUS) || locationIdx == _engine->_scene->_currentSceneIdx) {
+		if ((_engine->_gameState->_holomapFlags[locationIdx] & HOLOMAP_CAN_FOCUS) || locationIdx == _engine->_scene->_currentSceneIdx) {
 			const Location &loc = _locations[locationIdx];
 			_engine->_renderer->setBaseRotation(loc.angle.x, loc.angle.y, 0);
 			_engine->_renderer->getBaseRotationPosition(0, 0, loc.angle.z + 1000);
@@ -437,7 +437,7 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 					continue;
 				}
 			}
-			uint8 flags = _engine->_gameState->holomapFlags[locationIdx] & HOLOMAP_ARROW;
+			uint8 flags = _engine->_gameState->_holomapFlags[locationIdx] & HOLOMAP_ARROW;
 			if (locationIdx == _engine->_scene->_currentSceneIdx) {
 				flags |= 2u; // model type
 			}
