@@ -91,6 +91,9 @@ void SceneScriptRC03::InitializeScene() {
 
 	if (Game_Flag_Query(kFlagHC04toRC03)
 	 && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoWaitingAtRC03
+#if !BLADERUNNER_ORIGINAL_BUGS
+	 && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoEscape
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 	) {
 		if (Random_Query(1, 3) == 1) {
 			// enhancement: don't always play this scene when exiting Hawker's Circle
@@ -283,20 +286,23 @@ void SceneScriptRC03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptRC03::talkWithSteele() {
 	Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
-	Actor_Says(kActorSteele, 1820, 3);
+	Actor_Says(kActorSteele, 1820, kAnimationModeTalk);
 	Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
 	Actor_Says(kActorMcCoy, 4815, 14);
-	Actor_Says(kActorSteele, 1830, 3);
-	Actor_Says(kActorSteele, 1840, 3);
+	Actor_Says(kActorSteele, 1830, kAnimationModeTalk);
+	Actor_Says(kActorSteele, 1840, kAnimationModeTalk);
 	Actor_Says(kActorMcCoy, 4820, 12);
-	Actor_Says(kActorSteele, 1850, 3);
-	Actor_Says(kActorSteele, 1950, 3);
+	Actor_Says(kActorSteele, 1850, kAnimationModeTalk);
+	if (_vm->_cutContent) {
+		Actor_Says(kActorMcCoy, 4825, 13);
+	}
+	Actor_Says(kActorSteele, 1950, kAnimationModeTalk);
 	Actor_Says(kActorMcCoy, 4835, 14);
-	Actor_Says(kActorSteele, 1960, 3);
-	Actor_Says(kActorSteele, 1980, 3);
+	Actor_Says(kActorSteele, 1960, kAnimationModeTalk);
+	Actor_Says(kActorSteele, 1980, kAnimationModeTalk);
 	Actor_Says(kActorMcCoy, 4840, 15);
-	Actor_Says(kActorSteele, 1990, 3);
-	Actor_Says(kActorSteele, 2000, 3);
+	Actor_Says(kActorSteele, 1990, kAnimationModeTalk);
+	Actor_Says(kActorSteele, 2000, kAnimationModeTalk);
 }
 
 void SceneScriptRC03::PlayerWalkedIn() {
@@ -376,7 +382,7 @@ void SceneScriptRC03::PlayerWalkedIn() {
 		}
 		talkWithSteele();
 		Async_Actor_Walk_To_Waypoint(kActorSteele, 174, 0, false);
-		Actor_Set_Goal_Number(kActorIzo, 200);
+		Actor_Set_Goal_Number(kActorIzo, kGoalIzoEscapedSteeleKnows);
 		Player_Gains_Control();
 	}
 	Game_Flag_Reset(kFlagUG01toRC03);

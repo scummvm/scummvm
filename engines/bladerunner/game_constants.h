@@ -3124,26 +3124,27 @@ enum GoalLucy {
 };
 
 enum GoalIzo {
-	kGoalIzoDefault         =   0,
-	kGoalIzoPrepareCamera   =   1,
-	kGoalIzoTakePhoto       =   2,
-	kGoalIzoRunToUG02       =   3,
-	kGoalIzoStopRunning     = 100,
-	kGoalIzoRunToRC03       = 101,
-	kGoalIzoWaitingAtRC03   = 102,
-	kGoalIzoEscape          = 103, // how can this happen? can mccoy catch izo in ug02?
-	kGoalIzoRC03Walk        = 110,
-	kGoalIzoRC03Run         = 111,
-	kGoalIzoRC03RunAway     = 114,
-	kGoalIzoGetArrested     = 120,
-	kGoalIzoGotArrested     = 180,
-	kGoalIzoRC03RanAwayDone = 181, // new - added for bug fix of Izo getting stuck at RC03
-	kGoalIzoGoToHC01        = 150,
-	kGoalIzoGoToHC03        = 155,
-	kGoalIzoDieHidden       = 198,
-	kGoalIzoDie             = 199,
-	kGoalIzoKP07Wait        = 513, // new goal when in moonbus, Act 5
-	kGoalIzoGone            = 599
+	kGoalIzoDefault            =   0,
+	kGoalIzoPrepareCamera      =   1,
+	kGoalIzoTakePhoto          =   2,
+	kGoalIzoRunToUG02          =   3,
+	kGoalIzoStopRunning        = 100,
+	kGoalIzoRunToRC03          = 101,
+	kGoalIzoWaitingAtRC03      = 102,
+	kGoalIzoEscape             = 103, // how can this happen? can mccoy catch izo in ug02?
+	kGoalIzoRC03Walk           = 110,
+	kGoalIzoRC03Run            = 111,
+	kGoalIzoRC03RunAway        = 114,
+	kGoalIzoGetArrested        = 120,
+	kGoalIzoGotArrested        = 180,
+	kGoalIzoRC03RanAwayDone    = 181, // new - added for bug fix of Izo getting stuck at RC03
+	kGoalIzoGoToHC01           = 150,
+	kGoalIzoGoToHC03           = 155,
+	kGoalIzoDieHidden          = 198,
+	kGoalIzoDie                = 199,
+	kGoalIzoEscapedSteeleKnows = 200, // Set after conversation with Steele about Izo escaping (original: untriggered)
+	kGoalIzoKP07Wait           = 513, // new goal when in moonbus, Act 5
+	kGoalIzoGone               = 599
 };
 
 enum GoalSadik {
