@@ -41,10 +41,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 ScriptRegion *GetRegionAtRoom(int xx, int yy) {
-	int hsnum = GetRegionIDAtRoom(xx, yy);
-	if (hsnum < 0)
-		hsnum = 0;
-	return &_G(scrRegion)[hsnum];
+	return &_G(scrRegion)[GetRegionIDAtRoom(xx, yy)];
 }
 
 ScriptRegion *GetRegionAtScreen(int x, int y) {

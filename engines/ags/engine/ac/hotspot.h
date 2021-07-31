@@ -43,7 +43,8 @@ int     Hotspot_GetProperty(ScriptHotspot *hss, const char *property);
 void    Hotspot_GetPropertyText(ScriptHotspot *hss, const char *property, char *bufer);
 const char *Hotspot_GetTextProperty(ScriptHotspot *hss, const char *property);
 
-// Gets hotspot ID at the given room coordinates
+// Gets hotspot ID at the given room coordinates;
+// if hotspot is disabled or non-existing, returns 0 (no area)
 int     get_hotspot_at(int xpp, int ypp);
 
 } // namespace AGS3
