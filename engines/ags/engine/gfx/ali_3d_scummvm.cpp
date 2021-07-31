@@ -139,7 +139,7 @@ void ScummVMRendererGraphicsDriver::CreateVirtualScreen() {
 	// Initialize virtual screen; size is equal to native resolution
 	const int vscreen_w = _srcRect.GetWidth();
 	const int vscreen_h = _srcRect.GetHeight();
-	_origVirtualScreen.reset(new Bitmap(vscreen_w, vscreen_h));
+	_origVirtualScreen.reset(new Bitmap(vscreen_w, vscreen_h, _srcColorDepth));
 	virtualScreen = _origVirtualScreen.get();
 	_stageVirtualScreen = virtualScreen;
 
@@ -263,7 +263,7 @@ void ScummVMRendererGraphicsDriver::InitSpriteBatch(size_t index, const SpriteBa
 	}
 	// No surface prepared and has transformation other than offset
 	else if (!batch.Surface || batch.IsVirtualScreen || batch.Surface->GetWidth() != src_w || batch.Surface->GetHeight() != src_h) {
-		batch.Surface.reset(new Bitmap(src_w, src_h));
+		batch.Surface.reset(new Bitmap(src_w, src_h, _srcColorDepth));
 		batch.Opaque = false;
 		batch.IsVirtualScreen = false;
 	}
@@ -287,7 +287,7 @@ void ScummVMRendererGraphicsDriver::SetScreenTint(int red, int green, int blue) 
 	_tint_red = red;
 	_tint_green = green;
 	_tint_blue = blue;
-	if (((_tint_red > 0) || (_tint_green > 0) || (_tint_blue > 0)) && (_mode.ColorDepth > 8)) {
+	if (((_tint_red > 0) || (_tint_green > 0) || (_tint_blue > 0)) && (_srcColorDepth > 8)) {
 		_spriteBatches[_actSpriteBatch].List.push_back(ALDrawListEntry((ALSoftwareBitmap *)0x1, 0, 0));
 	}
 }
@@ -526,9 +526,9 @@ Bitmap *ScummVMRendererGraphicsDriver::GetStageBackBuffer(bool /*mark_dirty*/) {
 bool ScummVMRendererGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt) {
 	(void)at_native_res; // software driver always renders at native resolution at the moment
 	// software filter is taught to copy to any size
-	if (destination->GetColorDepth() != _mode.ColorDepth) {
+	if (destination->GetColorDepth() != _srcColorDepth) {
 		if (want_fmt)
-			*want_fmt = GraphicResolution(destination->GetWidth(), destination->GetHeight(), _mode.ColorDepth);
+			*want_fmt = GraphicResolution(destination->GetWidth(), destination->GetHeight(), _srcColorDepth);
 		return false;
 	}
 
@@ -659,7 +659,7 @@ void ScummVMRendererGraphicsDriver::__fade_out_range(int speed, int from, int to
 }
 
 void ScummVMRendererGraphicsDriver::FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
-	if (_mode.ColorDepth > 8) {
+	if (_srcColorDepth > 8) {
 		highcolor_fade_out(virtualScreen, _drawPostScreenCallback, 0, 0, speed * 4, targetColourRed, targetColourGreen, targetColourBlue);
 	} else {
 		__fade_out_range(speed, 0, 255, targetColourRed, targetColourGreen, targetColourBlue);
@@ -671,7 +671,7 @@ void ScummVMRendererGraphicsDriver::FadeIn(int speed, PALETTE p, int targetColou
 		_drawScreenCallback();
 		RenderToBackBuffer();
 	}
-	if (_mode.ColorDepth > 8) {
+	if (_srcColorDepth > 8) {
 		highcolor_fade_in(virtualScreen, _drawPostScreenCallback, 0, 0, speed * 4, targetColourRed, targetColourGreen, targetColourBlue);
 	} else {
 		initialize_fade_256(targetColourRed, targetColourGreen, targetColourBlue);
