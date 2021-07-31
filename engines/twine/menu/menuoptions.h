@@ -47,7 +47,7 @@ private:
 	bool enterText(TextId textIdx, char *textTargetBuf, size_t bufSize);
 	void drawSelectableCharacters();
 	void drawInputText(int32 centerx, int32 top, int32 type, const char *text);
-	void drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect);
+	void drawSelectableCharacter(int32 x, int32 y);
 	int chooseSave(TextId textIdx, bool showEmptySlots = false);
 
 public:

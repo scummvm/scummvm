@@ -121,7 +121,7 @@ void MenuOptions::showEndSequence() {
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
 }
 
-void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect) {
+void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
 	const int32 borderTop = 200;
 	const int32 borderLeft = _engine->width() / 2 - 295;
 	const int32 halfButtonHeight = 25;
@@ -160,12 +160,6 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyR
 	const int32 textX = centerX - _engine->_text->getCharWidth(character) / 2;
 	const int32 textY = centerY - _engine->_text->getCharHeight(character) / 2;
 	_engine->_text->drawText(textX, textY, buffer);
-
-	if (dirtyRect.isEmpty()) {
-		dirtyRect = rect;
-	} else {
-		dirtyRect.extend(rect);
-	}
 }
 
 void MenuOptions::setOnScreenKeyboard(int x, int y) {
@@ -195,16 +189,11 @@ void MenuOptions::setOnScreenKeyboard(int x, int y) {
 }
 
 void MenuOptions::drawSelectableCharacters() {
-	Common::Rect dirtyRect;
 	for (int8 x = 0; x < ONSCREENKEYBOARD_WIDTH; x++) {
 		for (int8 y = 0; y < ONSCREENKEYBOARD_HEIGHT; y++) {
-			drawSelectableCharacter(x, y, dirtyRect);
+			drawSelectableCharacter(x, y);
 		}
 	}
-	if (dirtyRect.isEmpty()) {
-		return;
-	}
-	_engine->copyBlockPhys(dirtyRect);
 }
 
 void MenuOptions::drawInputText(int32 centerx, int32 top, int32 type, const char *text) {
