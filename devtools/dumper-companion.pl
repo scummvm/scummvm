@@ -124,6 +124,7 @@ sub processIso($) {
 	my $numfiles = 0;
 	my $numdirs = 0;
 	my $numrens = 0;
+	my $numres = 0;
 	my $prevlen = 0;
 
 	for $_ (@lines) {
@@ -147,9 +148,9 @@ sub processIso($) {
 				$dir = join '/', map { my $a = encode_punycodefilename $_; $changed = 1 if $a ne $_; $a } split /:/, $dir;
 
 				if ($changed) {
-					print " " x $prevlen unless $verbose;
 					$dir1 =~ s/([\x00-\x1f])/@{[sprintf "\\x%02x", ord($1)]}/g;
-					print "\rRenamed dir \"$dir1\" -> \"$dir\"\n" unless $verbose;
+					print ((" " x $prevlen) . "\r") unless $verbose;
+					print "Renamed dir \"$dir1\" -> \"$dir\"\n";
 					$numrens++;
 				}
 			}
@@ -175,15 +176,20 @@ sub processIso($) {
 					my $decfname1 = $decfname;
 					$decfname = encode_punycodefilename	$decfname;
 					if ($decfname1 ne $decfname) {
-						print " " x $prevlen unless $verbose;
 						$decfname1 =~ s/([\x00-\x1f])/@{[sprintf "\\x%02x", ord($1)]}/g;
-						print "\rRenamed file \"$decfname1\" -> \"$decfname\"\n" unless $verbose;
+						print ((" " x $prevlen) . "\r") unless $verbose;
+						print "Renamed file \"$decfname1\" -> \"$decfname\"" . ($res != 0 ? ", macbinary\n" : "\n");
 						$numrens++;
+					} else {
+						if ($res != 0) {
+							print ((" " x $prevlen) . "\r") unless $verbose;
+							print "Resource \"$decfname\"\n" if $verbose;
+						}
 					}
 				}
 
-				print " " x $prevlen unless $verbose;
-				print "\r$dir$decfname\r" unless $verbose;
+				print ((" " x $prevlen) . "\r") unless $verbose;
+				print "$dir$decfname\r" unless $verbose;
 				$prevlen = length "$dir$decfname";
 				flush STDOUT;
 
@@ -191,6 +197,7 @@ sub processIso($) {
 
 				if ($res != 0) {
 					system1("hcopy -m -- \"$mdir$fname\" \"$outPath$dir$decfname\"") == 0 or die "Can't execute hcopy";
+					$numres++;
 				} else {
 					system1("hcopy -r -- \"$mdir$fname\" \"$outPath$dir$decfname\"") == 0 or die "Can't execute hcopy";
 				}
@@ -200,9 +207,8 @@ sub processIso($) {
 			}
 		}
 	}
-	print " " x $prevlen unless $verbose;
-	print "\r" unless $verbose;
-	print "Extracted $numdirs dirs and $numfiles files, made $numrens renames\n";
+	print ((" " x $prevlen) . "\r") unless $verbose;
+	print "Extracted $numdirs dirs and $numfiles files, Macbinary $numres files, made $numrens renames\n";
 
 	print "Unmounting ISO...";
 	flush STDOUT;
