@@ -1037,12 +1037,12 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 			int accOff = _align == kTextAlignRight ? it->bbox.width() - _font->getStringWidth(it->unicodeText) : 0;
 			Common::UnicodeBiDiText utxt(it->unicodeText);
 
-			_font->drawString(&_screen, utxt.visual, x, y, it->bbox.width(), color, _align);
+			_font->drawString(&_screen, utxt.visual, x, y, it->bbox.width(), color, _align, 0, true);
 			underlineAccelerator(&_screen, _font, utxt, x + accOff, y, it->shortcutPos, color);
 		} else {
 			const Font *font = getMenuFont(it->style);
 
-			font->drawString(&_screen, it->text, x, y, it->bbox.width(), color);
+			font->drawString(&_screen, it->text, x, y, it->bbox.width(), color, Graphics::kTextAlignLeft, 0, true);
 		}
 	}
 
@@ -1121,12 +1121,12 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 
 			if (menu->items[i]->unicode) {
 				Common::UnicodeBiDiText utxt(unicodeText);
-				_font->drawString(s, utxt.visual, tx, ty, r->width(), color, _align);
+				_font->drawString(s, utxt.visual, tx, ty, r->width(), color, _align, 0, true);
 				underlineAccelerator(s, _font, utxt, tx + accOff, ty, shortcutPos, color);
 			} else {
 				const Font *font = getMenuFont(menu->items[i]->style);
 
-				font->drawString(s, text, tx, ty, r->width(), color);
+				font->drawString(s, text, tx, ty, r->width(), color, Graphics::kTextAlignLeft, 0, true);
 			}
 
 			if (menu->items[i]->checked) {
