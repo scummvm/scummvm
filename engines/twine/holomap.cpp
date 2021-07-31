@@ -582,7 +582,7 @@ void Holomap::processHolomap() {
 			renderLocations(xRot, yRot, 0, true);
 			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 			if (rotate) {
-				_engine->_menu->drawBox(300, 170, 340, 210);
+				_engine->_menu->drawRectBorders(300, 170, 340, 210);
 			}
 			_engine->copyBlockPhys(rect);
 		}

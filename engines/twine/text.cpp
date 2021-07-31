@@ -275,7 +275,7 @@ void Text::initDialogueBox() {
 	_engine->blitWorkToFront(_dialTextBox);
 
 	if (_drawTextBoxBackground) {
-		_engine->_menu->drawBox(_dialTextBox);
+		_engine->_menu->drawRectBorders(_dialTextBox);
 		Common::Rect rect(_dialTextBox);
 		rect.grow(-1);
 		_engine->_interface->drawTransparentBox(rect, 3);

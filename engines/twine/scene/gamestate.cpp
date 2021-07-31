@@ -379,7 +379,7 @@ void GameState::processFoundItem(InventoryItems item) {
 
 		_engine->_renderer->renderInventoryItem(_engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, _engine->_resources->_inventoryTable[item], itemAngle, 10000);
 
-		_engine->_menu->drawBox(boxRect);
+		_engine->_menu->drawRectBorders(boxRect);
 		_engine->_redraw->addRedrawArea(boxRect);
 		_engine->_interface->resetClip();
 		initEngineProjections();

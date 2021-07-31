@@ -238,15 +238,15 @@ void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 	_engine->_frontVideoBuffer.blitFrom(_engine->_imageBuffer, prect, rect);
 }
 
-void Menu::drawBox(const Common::Rect &rect, int32 colorLeftTop, int32 colorRightBottom) {
+void Menu::drawRectBorders(const Common::Rect &rect, int32 colorLeftTop, int32 colorRightBottom) {
 	_engine->_interface->drawLine(rect.left, rect.top, rect.right, rect.top, colorLeftTop);           // top line
 	_engine->_interface->drawLine(rect.left, rect.top, rect.left, rect.bottom, colorLeftTop);         // left line
 	_engine->_interface->drawLine(rect.right, rect.top + 1, rect.right, rect.bottom, colorRightBottom);   // right line
 	_engine->_interface->drawLine(rect.left + 1, rect.bottom, rect.right, rect.bottom, colorRightBottom); // bottom line
 }
 
-void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorLeftTop, int32 colorRightBottom) {
-	drawBox(Common::Rect(left, top, right, bottom), colorLeftTop, colorLeftTop);
+void Menu::drawRectBorders(int32 left, int32 top, int32 right, int32 bottom, int32 colorLeftTop, int32 colorRightBottom) {
+	drawRectBorders(Common::Rect(left, top, right, bottom), colorLeftTop, colorLeftTop);
 }
 
 void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &rect, int32 buttonId, const char *dialText, bool hover) {
@@ -292,7 +292,7 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 		_engine->_interface->drawTransparentBox(rect, 4);
 	}
 
-	drawBox(rect);
+	drawRectBorders(rect);
 
 	_engine->_text->setFontColor(COLOR_WHITE);
 	_engine->_text->setFontParameters(2, 8);
@@ -837,7 +837,7 @@ void Menu::drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPaddin
 	const int32 healthBarRight = _engine->_screens->crossDot(barLeft, right, 50, _engine->_scene->_sceneHero->_life);
 	const int32 barBottom = top + barHeight;
 	_engine->_interface->drawFilledRect(Common::Rect(barLeft, top, healthBarRight, barBottom), COLOR_91);
-	drawBox(Common::Rect(barLeft, top, right, barBottom));
+	drawRectBorders(Common::Rect(barLeft, top, right, barBottom));
 }
 
 void Menu::drawCloverLeafs(int32 newBoxLeft, int32 boxRight, int32 top) {
@@ -870,7 +870,7 @@ void Menu::drawMagicPointsBar(int32 left, int32 right, int32 top, int32 barLeftP
 	const int32 barRight = _engine->_screens->crossDot(barLeft, right, 80, _engine->_gameState->_inventoryMagicPoints);
 	const Common::Rect pointsRect(barLeft, top, barRight, barBottom);
 	_engine->_interface->drawFilledRect(pointsRect, COLOR_75);
-	drawBox(barLeft, top, barLeft + _engine->_gameState->_magicLevelIdx * 80, barBottom);
+	drawRectBorders(barLeft, top, barLeft + _engine->_gameState->_magicLevelIdx * 80, barBottom);
 }
 
 void Menu::drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteData, const Common::String &str, int32 color) {
@@ -893,7 +893,7 @@ void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 	_engine->_interface->resetClip();
 	const int16 height = 80;
 	const Common::Rect rect(left, top, left + width, top + height);
-	drawBox(rect);
+	drawRectBorders(rect);
 	Common::Rect filledRect(rect);
 	filledRect.grow(-1);
 	_engine->_interface->drawFilledRect(filledRect, COLOR_BLACK);
@@ -951,7 +951,7 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 	if (!cantDrawBox) {
 		Common::Rect boxRectCopy(boxRect);
 		boxRectCopy.grow(1);
-		drawBox(boxRectCopy);
+		drawRectBorders(boxRectCopy);
 	}
 
 	_engine->_interface->saveClip();
@@ -972,7 +972,7 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 		// behaviour menu title
 		const Common::Rect titleRect(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
 		_engine->_interface->drawFilledRect(titleRect, COLOR_BLACK);
-		drawBox(titleRect);
+		drawRectBorders(titleRect);
 
 		_engine->_text->setFontColor(COLOR_WHITE);
 
@@ -1002,7 +1002,7 @@ void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
 	const int32 bottom = top + height;
 
 	const Common::Rect titleRect(left, top, right, bottom);
-	drawBox(titleRect);
+	drawRectBorders(titleRect);
 
 	Common::Rect boxRect(titleRect);
 	boxRect.grow(-1);
@@ -1134,13 +1134,13 @@ void Menu::drawItem(int32 left, int32 top, int32 item) {
 		}
 	}
 
-	drawBox(rect);
+	drawRectBorders(rect);
 }
 
 void Menu::drawInventoryItems(int32 left, int32 top) {
 	const Common::Rect rect(left, top, left + 605, top + 310);
 	_engine->_interface->drawTransparentBox(rect, 4);
-	drawBox(rect);
+	drawRectBorders(rect);
 
 	for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
 		drawItem(left, top, item);

@@ -153,7 +153,7 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
 		_engine->_interface->drawTransparentBox(rect, 4);
 	}
 
-	_engine->_menu->drawBox(rect);
+	_engine->_menu->drawRectBorders(rect);
 
 	_engine->_text->setFontColor(COLOR_WHITE);
 	const uint8 character = (uint8)allowedCharIndex[idx];
@@ -207,7 +207,7 @@ void MenuOptions::drawInputText(int32 centerx, int32 top, int32 type, const char
 
 	Common::Rect rectBox(rect);
 	rectBox.grow(-1);
-	_engine->_menu->drawBox(rect);
+	_engine->_menu->drawRectBorders(rect);
 	_engine->_interface->drawTransparentBox(rectBox, 3);
 
 	_engine->_text->drawText(centerx - _engine->_text->getTextSize(text) / 2, top + 6, text);

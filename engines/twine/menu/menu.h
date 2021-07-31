@@ -210,14 +210,14 @@ public:
 	void drawKeys(int32 left, int32 top);
 
 	/**
-	 * Draw the entire button box
+	 * Draw the rect lines without filling the area
 	 * @param left start width to draw the button
 	 * @param top start height to draw the button
 	 * @param right end width to draw the button
 	 * @param bottom end height to draw the button
 	 */
-	void drawBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorLeftTop = COLOR_79, int32 colorRightBottom = COLOR_73);
-	void drawBox(const Common::Rect &rect, int32 colorLeftTop = COLOR_79, int32 colorRightBottom = COLOR_73);
+	void drawRectBorders(int32 left, int32 top, int32 right, int32 bottom, int32 colorLeftTop = COLOR_79, int32 colorRightBottom = COLOR_73);
+	void drawRectBorders(const Common::Rect &rect, int32 colorLeftTop = COLOR_79, int32 colorRightBottom = COLOR_73);
 	/**
 	 * Where the main menu options are processed
 	 * @param menuSettings menu settings array with the information to build the menu options

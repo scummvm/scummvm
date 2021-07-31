@@ -468,7 +468,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 		addRedrawArea(_engine->_interface->_clip);
 
 		// show clipping area
-		//drawBox(renderRect);
+		//drawRectBorders(renderRect);
 	}
 }
 
@@ -607,7 +607,7 @@ void Redraw::renderOverlays() {
 				const BodyData &bodyPtr = _engine->_resources->_inventoryTable[item];
 				_overlayRotation += 1; // overlayRotation += 8;
 				_engine->_renderer->renderInventoryItem(40, 40, bodyPtr, _overlayRotation, 16000);
-				_engine->_menu->drawBox(rect);
+				_engine->_menu->drawRectBorders(rect);
 				addRedrawArea(rect);
 				_engine->_gameState->initEngineProjections();
 				break;

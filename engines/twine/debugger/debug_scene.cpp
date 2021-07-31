@@ -38,7 +38,7 @@ void DebugScene::drawClip(const Common::Rect &rect) {
 	if (!_showingClips) {
 		return;
 	}
-	_engine->_menu->drawBox(rect);
+	_engine->_menu->drawRectBorders(rect);
 }
 
 void DebugScene::projectBoundingBoxPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjected) {
@@ -164,7 +164,7 @@ bool DebugScene::displayActors() {
 		const int boxheight = 2 * lineHeight;
 		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + boxheight);
 		_engine->_interface->drawFilledRect(filledRect, COLOR_WHITE);
-		_engine->_menu->drawBox(filledRect);
+		_engine->_menu->drawRectBorders(filledRect);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Actor: %i", a), true, false, boxwidth);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", positions.frontTopRightPoint.x, positions.frontTopRightPoint.y, positions.frontTopRightPoint.z), true, false, boxwidth);
 		state = true;
@@ -203,7 +203,7 @@ bool DebugScene::displayZones() {
 		const int boxheight = 2 * lineHeight;
 		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + boxheight);
 		_engine->_interface->drawFilledRect(filledRect, COLOR_WHITE);
-		_engine->_menu->drawBox(filledRect);
+		_engine->_menu->drawRectBorders(filledRect);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Type: %i (%i)", (int)zonePtr->type, i), true, false, boxwidth);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", positions.frontTopRightPoint.x, positions.frontTopRightPoint.y, positions.frontTopRightPoint.z), true, false, boxwidth);
 		state = true;
