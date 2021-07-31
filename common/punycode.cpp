@@ -237,7 +237,7 @@ String punycode_decode(const String src1) {
 	for (int si = b + (b > 0 ? 1 : 0); si < srclen; di++) {
 		size_t org_i = i;
 
-		for (int w = 1, k = BASE; true; k += BASE) {
+		for (size_t w = 1, k = BASE; true; k += BASE) {
 			size_t digit = decode_digit(src[si++]);
 
 			if (digit == SMAX) {
@@ -252,7 +252,7 @@ String punycode_decode(const String src1) {
 			}
 
 			i += digit * w;
-			int t;
+			size_t t;
 
 			if (k <= bias) {
 				t = TMIN;
