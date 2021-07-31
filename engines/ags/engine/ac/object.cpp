@@ -906,6 +906,7 @@ void RegisterObjectAPI() {
 	ccAddExternalObjectFunction("Object::get_Name", Sc_Object_GetName_New);
 	ccAddExternalObjectFunction("Object::get_Scaling", Sc_Object_GetScaling);
 	ccAddExternalObjectFunction("Object::set_Scaling", Sc_Object_SetScaling);
+	ccAddExternalObjectFunction("Object::get_Solid", Sc_Object_GetSolid);
 	ccAddExternalObjectFunction("Object::set_Solid", Sc_Object_SetSolid);
 	ccAddExternalObjectFunction("Object::get_Transparency", Sc_Object_GetTransparency);
 	ccAddExternalObjectFunction("Object::set_Transparency", Sc_Object_SetTransparency);
