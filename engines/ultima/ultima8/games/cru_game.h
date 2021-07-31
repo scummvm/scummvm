@@ -51,6 +51,9 @@ public:
 	void playCredits() override;
 	void playQuotes() override { }; // no quotes for Crusader
 	void playDemoScreen() override;
+
+	/** Play credits but without showing a menu at the end - just finish. */
+	ProcId playCreditsNoMenu();
 };
 
 } // End of namespace Ultima8
