@@ -444,7 +444,25 @@ void ScummEngine_v5::o5_actorOps() {
 			getVarOrDirectByte(PARAM_1);
 			break;
 		case 1:			// SO_COSTUME
-			a->setActorCostume(getVarOrDirectByte(PARAM_1));
+			i = getVarOrDirectByte(PARAM_1);
+
+			// WORKAROUND: In the VGA floppy version of the Monkey
+			// Island 1, there are two different costumes for the
+			// captain Smirk close-up: 0 for when the game is run
+			// from floppies, and 76 for when the game is run from
+			// hard disk, I believe.
+			//
+			// Costume 0 doesn't have any cigar smoke, perhaps to
+			// cut down on disk access.
+			//
+			// But in the VGA CD version, only costume 0 is used
+			// and the close-up is missing the cigar smoke.
+
+			if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12 && i == 0) {
+				i = 76;
+			}
+
+			a->setActorCostume(i);
 			break;
 		case 2:			// SO_STEP_DIST
 			i = getVarOrDirectByte(PARAM_1);
@@ -1452,12 +1470,32 @@ void ScummEngine_v5::o5_pseudoRoom() {
 }
 
 void ScummEngine_v5::o5_putActor() {
-	int x, y;
-	Actor *a;
+	int act, x, y;
 
-	a = derefActor(getVarOrDirectByte(PARAM_1), "o5_putActor");
+	act = getVarOrDirectByte(PARAM_1);
 	x = getVarOrDirectWord(PARAM_2);
 	y = getVarOrDirectWord(PARAM_3);
+
+	// WORKAROUND: When enabling the cigar smoke in the captain Smirk
+	// close-up, it turns out that the coordinates were changed in the CD
+	// version's script for no apparent reason. (Were they taken from the
+	// EGA version?)
+	//
+	// The coordinates below are taken from the VGA floppy version. The
+	// "Ultimate Talkie" version also corrects the positions, but uses
+	// other coordinates. The difference is never more than a single pixel,
+	// so there's not much reason to correct those.
+
+	if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12) {
+		if (x == 176 && y == 80) {
+			x = 174;
+			y = 86;
+		} else if (x == 176 && y == 78) {
+			x = 172;
+		}
+	}
+
+	Actor *a = derefActor(act, "o5_putActor");
 	a->putActor(x, y);
 }
 
