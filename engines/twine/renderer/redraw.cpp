@@ -140,7 +140,7 @@ void Redraw::blitBackgroundAreas() {
 	}
 }
 
-void Redraw::sortDrawingList(DrawListStruct *list, int32 listSize) {
+void Redraw::sortDrawingList(DrawListStruct *list, int32 listSize) const {
 	if (listSize == 1) {
 		return;
 	}

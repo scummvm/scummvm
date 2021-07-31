@@ -130,6 +130,9 @@ public:
 	/** Number of redraw regions in the screen */
 	int32 numOfRedrawBox = 0;
 
+	int _sceneryViewX = 0;
+	int _sceneryViewY = 0;
+
 	OverlayListStruct overlayList[OVERLAY_MAX_ENTRIES];
 
 	void addOverlay(OverlayType type, int16 info0, int16 x, int16 y, int16 info1, OverlayPosType posType, int16 lifeTime);
@@ -167,10 +170,7 @@ public:
 	 * @param list drawing list variable which contains information of the drawing objects
 	 * @param listSize number of drawing objects in the list
 	 */
-	void sortDrawingList(DrawListStruct *list, int32 listSize);
-
-	int _sceneryViewX = 0;
-	int _sceneryViewY = 0;
+	void sortDrawingList(DrawListStruct *list, int32 listSize) const;
 
 	/**
 	 * Zooms the area around the scenery view focus positions
