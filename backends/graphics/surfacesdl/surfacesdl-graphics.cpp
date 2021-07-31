@@ -2217,7 +2217,7 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 		font->drawString(&dst, lines[i],
 			0, 0 + i * lineHeight + vOffset + lineSpacing, width,
 			SDL_MapRGB(_osdMessageSurface->format, 255, 255, 255),
-			Graphics::kTextAlignCenter);
+			Graphics::kTextAlignCenter, 0, true);
 	}
 
 	// Finished drawing, so unlock the OSD message surface

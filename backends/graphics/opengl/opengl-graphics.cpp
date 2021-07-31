@@ -849,7 +849,7 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 	for (uint i = 0; i < osdLines.size(); ++i) {
 		font->drawString(dst, osdLines[i],
 		                 0, i * lineHeight + vOffset + lineSpacing, width,
-		                 white, Graphics::kTextAlignCenter);
+		                 white, Graphics::kTextAlignCenter, 0, true);
 	}
 
 	_osdMessageSurface->updateGLTexture();
