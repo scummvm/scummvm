@@ -68,7 +68,7 @@ public:
 
 	void drawFilledRect(const Common::Rect &rect, uint8 colorIndex);
 
-	void setClip(const Common::Rect &rect);
+	bool setClip(const Common::Rect &rect);
 	void saveClip(); // saveTextWindow
 	void loadClip(); // loadSavedTextWindow
 	void resetClip();

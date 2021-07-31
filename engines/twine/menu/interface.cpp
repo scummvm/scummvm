@@ -180,9 +180,13 @@ void Interface::drawFilledRect(const Common::Rect &rect, uint8 colorIndex) {
 	_engine->frontVideoBuffer.fillRect(Common::Rect(rect.left, rect.top, rect.right + 1, rect.bottom + 1), colorIndex);
 }
 
-void Interface::setClip(const Common::Rect &rect) {
+bool Interface::setClip(const Common::Rect &rect) {
+	if (!clip.isValidRect()) {
+		return false;
+	}
 	clip = rect;
 	clip.clip(_engine->rect());
+	return true;
 }
 
 void Interface::saveClip() {

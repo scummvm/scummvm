@@ -92,7 +92,7 @@ private:
 	void processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int32 z);
 	int32 findExtraKey() const;
 	int32 addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx);
-	void drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size);
+	void drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size, Common::Rect &renderRect);
 
 public:
 	Extra(TwinEEngine *engine);
@@ -117,7 +117,7 @@ public:
 	int32 addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActorIdx, int32 finalAngle, int32 strengthOfHit);
 	void addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle);
 
-	void drawExtraSpecial(int32 extraIdx, int32 x, int32 y);
+	void drawExtraSpecial(int32 extraIdx, int32 x, int32 y, Common::Rect &renderRect);
 
 	int getBonusSprite(BonusParameter bonusParameter) const;
 

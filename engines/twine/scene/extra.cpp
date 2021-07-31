@@ -400,37 +400,37 @@ void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int3
 	}
 }
 
-void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size) {
+void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size, Common::Rect &renderRect) {
 	int shapeDataIndex = 0;
 	int16 shapeX = shapeTable.data[shapeDataIndex].x * size / 16;
 	int16 shapeZ = shapeTable.data[shapeDataIndex].z * size / 16;
 
 	++shapeDataIndex;
 
-	_engine->_redraw->renderRect.left = 0x7D00;
-	_engine->_redraw->renderRect.right = -0x7D00;
-	_engine->_redraw->renderRect.top = 0x7D00;
-	_engine->_redraw->renderRect.bottom = -0x7D00;
+	renderRect.left = 0x7D00;
+	renderRect.right = -0x7D00;
+	renderRect.top = 0x7D00;
+	renderRect.bottom = -0x7D00;
 
 	_engine->_movements->rotateActor(shapeX, shapeZ, angle);
 
 	const int32 computedX = _engine->_renderer->destPos.x + x;
 	const int32 computedY = _engine->_renderer->destPos.z + y;
 
-	if (computedX < _engine->_redraw->renderRect.left) {
-		_engine->_redraw->renderRect.left = computedX;
+	if (computedX < renderRect.left) {
+		renderRect.left = computedX;
 	}
 
-	if (computedX > _engine->_redraw->renderRect.right) {
-		_engine->_redraw->renderRect.right = computedX;
+	if (computedX > renderRect.right) {
+		renderRect.right = computedX;
 	}
 
-	if (computedY < _engine->_redraw->renderRect.top) {
-		_engine->_redraw->renderRect.top = computedY;
+	if (computedY < renderRect.top) {
+		renderRect.top = computedY;
 	}
 
-	if (computedY > _engine->_redraw->renderRect.bottom) {
-		_engine->_redraw->renderRect.bottom = computedY;
+	if (computedY > renderRect.bottom) {
+		renderRect.bottom = computedY;
 	}
 
 	int32 currentX = computedX;
@@ -452,20 +452,20 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 		currentX = _engine->_renderer->destPos.x + x;
 		currentY = _engine->_renderer->destPos.z + y;
 
-		if (currentX < _engine->_redraw->renderRect.left) {
-			_engine->_redraw->renderRect.left = currentX;
+		if (currentX < renderRect.left) {
+			renderRect.left = currentX;
 		}
 
-		if (currentX > _engine->_redraw->renderRect.right) {
-			_engine->_redraw->renderRect.right = currentX;
+		if (currentX > renderRect.right) {
+			renderRect.right = currentX;
 		}
 
-		if (currentY < _engine->_redraw->renderRect.top) {
-			_engine->_redraw->renderRect.top = currentY;
+		if (currentY < renderRect.top) {
+			renderRect.top = currentY;
 		}
 
-		if (currentY > _engine->_redraw->renderRect.bottom) {
-			_engine->_redraw->renderRect.bottom = currentY;
+		if (currentY > renderRect.bottom) {
+			renderRect.bottom = currentY;
 		}
 
 		_engine->_renderer->projPos.x = currentX;
@@ -482,13 +482,13 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 	_engine->_interface->drawLine(currentX, currentY, computedX, computedY, color);
 }
 
-void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
+void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y, Common::Rect &renderRect) {
 	ExtraListStruct *extra = &extraList[extraIdx];
 	ExtraSpecialType specialType = (ExtraSpecialType)(extra->info0 & (EXTRA_SPECIAL_MASK - 1));
 
 	switch (specialType) {
 	case ExtraSpecialType::kHitStars:
-		drawSpecialShape(hitStarsShape, x, y, COLOR_WHITE, (_engine->lbaTime * 32) & ANGLE_270, 4);
+		drawSpecialShape(hitStarsShape, x, y, COLOR_WHITE, (_engine->lbaTime * 32) & ANGLE_270, 4, renderRect);
 		break;
 	case ExtraSpecialType::kExplodeCloud: {
 		int32 cloudTime = 1 + _engine->lbaTime - extra->spawnTime;
@@ -497,7 +497,7 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
 			cloudTime = 32;
 		}
 
-		drawSpecialShape(explodeCloudShape, x, y, COLOR_WHITE, ANGLE_0, cloudTime);
+		drawSpecialShape(explodeCloudShape, x, y, COLOR_WHITE, ANGLE_0, cloudTime, renderRect);
 		break;
 	}
 	}

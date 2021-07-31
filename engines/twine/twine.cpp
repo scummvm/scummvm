@@ -532,7 +532,6 @@ void TwinEEngine::initAll() {
 
 	_scene->sceneHero = _scene->getActor(OWN_ACTOR_SCENE_INDEX);
 
-	_redraw->renderRect = rect();
 	// Set clip to fullscreen by default, allows main menu to render properly after load
 	_interface->resetClip();
 

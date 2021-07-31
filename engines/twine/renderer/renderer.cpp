@@ -1169,17 +1169,13 @@ const Renderer::RenderCommand *Renderer::depthSortRenderCommands(int32 numOfPrim
 	return _renderCmds;
 }
 
-bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData) {
+bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect) {
 	uint8 *renderBufferPtr = _renderCoordinatesBuffer;
 	renderBufferPtr = preparePolygons(bodyData.getPolygons(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
 	renderBufferPtr = prepareLines(bodyData.getLines(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
 	renderBufferPtr = prepareSpheres(bodyData.getSpheres(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
 
 	if (numOfPrimitives == 0) {
-		_engine->_redraw->renderRect.right = -1;
-		_engine->_redraw->renderRect.bottom = -1;
-		_engine->_redraw->renderRect.left = -1;
-		_engine->_redraw->renderRect.top = -1;
 		return false;
 	}
 	const RenderCommand *cmds = depthSortRenderCommands(numOfPrimitives);
@@ -1218,20 +1214,20 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 
 			radius += 3;
 
-			if (sphere->x + radius > _engine->_redraw->renderRect.right) {
-				_engine->_redraw->renderRect.right = sphere->x + radius;
+			if (sphere->x + radius > modelRect.right) {
+				modelRect.right = sphere->x + radius;
 			}
 
-			if (sphere->x - radius < _engine->_redraw->renderRect.left) {
-				_engine->_redraw->renderRect.left = sphere->x - radius;
+			if (sphere->x - radius < modelRect.left) {
+				modelRect.left = sphere->x - radius;
 			}
 
-			if (sphere->y + radius > _engine->_redraw->renderRect.bottom) {
-				_engine->_redraw->renderRect.bottom = sphere->y + radius;
+			if (sphere->y + radius > modelRect.bottom) {
+				modelRect.bottom = sphere->y + radius;
 			}
 
-			if (sphere->y - radius < _engine->_redraw->renderRect.top) {
-				_engine->_redraw->renderRect.top = sphere->y - radius;
+			if (sphere->y - radius < modelRect.top) {
+				modelRect.top = sphere->y - radius;
 			}
 
 			radius -= 3;
@@ -1248,7 +1244,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 	return true;
 }
 
-bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos) {
+bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect) {
 	const int32 numVertices = bodyData.getNumVertices();
 	const int32 numBones = bodyData.getNumBones();
 
@@ -1296,18 +1292,18 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / BRICK_SIZE + _orthoProjPos.y;
 			pointPtrDest->z = coZ - coX - coY;
 
-			if (pointPtrDest->x < _engine->_redraw->renderRect.left) {
-				_engine->_redraw->renderRect.left = pointPtrDest->x;
+			if (pointPtrDest->x < modelRect.left) {
+				modelRect.left = pointPtrDest->x;
 			}
-			if (pointPtrDest->x > _engine->_redraw->renderRect.right) {
-				_engine->_redraw->renderRect.right = pointPtrDest->x;
+			if (pointPtrDest->x > modelRect.right) {
+				modelRect.right = pointPtrDest->x;
 			}
 
-			if (pointPtrDest->y < _engine->_redraw->renderRect.top) {
-				_engine->_redraw->renderRect.top = pointPtrDest->y;
+			if (pointPtrDest->y < modelRect.top) {
+				modelRect.top = pointPtrDest->y;
 			}
-			if (pointPtrDest->y > _engine->_redraw->renderRect.bottom) {
-				_engine->_redraw->renderRect.bottom = pointPtrDest->y;
+			if (pointPtrDest->y > modelRect.bottom) {
+				modelRect.bottom = pointPtrDest->y;
 			}
 
 			pointPtr++;
@@ -1335,12 +1331,12 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 
 				pointPtrDest->x = coX;
 
-				if (pointPtrDest->x < _engine->_redraw->renderRect.left) {
-					_engine->_redraw->renderRect.left = pointPtrDest->x;
+				if (pointPtrDest->x < modelRect.left) {
+					modelRect.left = pointPtrDest->x;
 				}
 
-				if (pointPtrDest->x > _engine->_redraw->renderRect.right) {
-					_engine->_redraw->renderRect.right = pointPtrDest->x;
+				if (pointPtrDest->x > modelRect.right) {
+					modelRect.right = pointPtrDest->x;
 				}
 			}
 
@@ -1354,11 +1350,11 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 
 				pointPtrDest->y = coY;
 
-				if (pointPtrDest->y < _engine->_redraw->renderRect.top) {
-					_engine->_redraw->renderRect.top = pointPtrDest->y;
+				if (pointPtrDest->y < modelRect.top) {
+					modelRect.top = pointPtrDest->y;
 				}
-				if (pointPtrDest->y > _engine->_redraw->renderRect.bottom) {
-					_engine->_redraw->renderRect.bottom = pointPtrDest->y;
+				if (pointPtrDest->y > modelRect.bottom) {
+					modelRect.bottom = pointPtrDest->y;
 				}
 			}
 
@@ -1426,20 +1422,20 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 		} while (--numOfPrimitives);
 	}
 
-	return renderModelElements(numOfPrimitives, bodyData, &renderCmds, modelData);
+	return renderModelElements(numOfPrimitives, bodyData, &renderCmds, modelData, modelRect);
 }
 
-bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const BodyData &bodyData) {
+bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const BodyData &bodyData, Common::Rect &modelRect) {
 	IVec3 renderAngle;
 	renderAngle.x = angleX;
 	renderAngle.y = angleY;
 	renderAngle.z = angleZ;
 
 	// model render size reset
-	_engine->_redraw->renderRect.left = SCENE_SIZE_MAX;
-	_engine->_redraw->renderRect.top = SCENE_SIZE_MAX;
-	_engine->_redraw->renderRect.right = SCENE_SIZE_MIN;
-	_engine->_redraw->renderRect.bottom = SCENE_SIZE_MIN;
+	modelRect.left = SCENE_SIZE_MAX;
+	modelRect.top = SCENE_SIZE_MAX;
+	modelRect.right = SCENE_SIZE_MIN;
+	modelRect.bottom = SCENE_SIZE_MIN;
 
 	IVec3 renderPos;
 	if (_isUsingOrthoProjection) {
@@ -1456,7 +1452,14 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 		error("Unsupported unanimated model render!");
 	}
 	// restart at the beginning of the renderTable
-	return renderAnimatedModel(&_modelData, bodyData, _renderCmds, renderAngle, renderPos);
+	if (!renderAnimatedModel(&_modelData, bodyData, _renderCmds, renderAngle, renderPos, modelRect)) {
+		modelRect.right = -1;
+		modelRect.bottom = -1;
+		modelRect.left = -1;
+		modelRect.top = -1;
+		return false;
+	}
+	return true;
 }
 
 void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData) {
@@ -1470,15 +1473,16 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 	setOrthoProjection(xpos, ypos, 0);
 	_engine->_interface->setClip(Common::Rect(boxLeft, boxTop, boxRight, boxBottom));
 
+	Common::Rect dummy;
 	if (angle == -1) {
 		ActorMoveStruct &move = _engine->_menu->moveMenu;
 		const int16 newAngle = move.getRealAngle(_engine->lbaTime);
 		if (move.numOfStep == 0) {
 			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, ANGLE_17, &move);
 		}
-		renderIsoModel(0, y, 0, ANGLE_0, newAngle, ANGLE_0, bodyData);
+		renderIsoModel(0, y, 0, ANGLE_0, newAngle, ANGLE_0, bodyData, dummy);
 	} else {
-		renderIsoModel(0, y, 0, ANGLE_0, angle, ANGLE_0, bodyData);
+		renderIsoModel(0, y, 0, ANGLE_0, angle, ANGLE_0, bodyData, dummy);
 	}
 }
 
@@ -1486,7 +1490,8 @@ void Renderer::renderInventoryItem(int32 x, int32 y, const BodyData &bodyData, i
 	setCameraPosition(x, y, 128, 200, 200);
 	setCameraAngle(0, 0, 0, 60, 0, 0, param);
 
-	renderIsoModel(0, 0, 0, ANGLE_0, angle, ANGLE_0, bodyData);
+	Common::Rect dummy;
+	renderIsoModel(0, 0, 0, ANGLE_0, angle, ANGLE_0, bodyData, dummy);
 }
 
 void Renderer::computeHolomapPolygon(int32 top, int32 x1, int32 bottom, int32 x2, int16 *polygonTabPtr) {

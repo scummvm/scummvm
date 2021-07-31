@@ -196,6 +196,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	IVec3 &processActor = _engine->_movements->processActor;
+	IVec3 &previousActor = _engine->_movements->previousActor;
 	IVec3 mins = processActor + actor->boudingBox.mins;
 	IVec3 maxs = processActor + actor->boudingBox.maxs;
 
@@ -261,7 +262,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 								}
 							} else {
 								if (!actor->dynamicFlags.bIsFalling) {
-									processActor = _engine->_movements->previousActor;
+									processActor = previousActor;
 								}
 							}
 						}
@@ -311,7 +312,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 						}
 					} else {
 						if (!actor->dynamicFlags.bIsFalling) {
-							processActor = _engine->_movements->previousActor;
+							processActor = previousActor;
 						}
 					}
 				}

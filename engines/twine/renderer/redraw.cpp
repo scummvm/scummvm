@@ -313,6 +313,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 	_engine->_grid->getSpriteSize(drawCmd.offset, &spriteWidth, &spriteHeight, _engine->_resources->spriteShadowPtr);
 
 	// calculate sprite size and position on screen
+	Common::Rect renderRect;
 	renderRect.left = _engine->_renderer->projPos.x - (spriteWidth / 2);
 	renderRect.top = _engine->_renderer->projPos.y - (spriteHeight / 2);
 	renderRect.right = _engine->_renderer->projPos.x + (spriteWidth / 2);
@@ -344,29 +345,12 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	const int32 x = actor->pos.x - _engine->_grid->camera.x;
 	const int32 y = actor->pos.y - _engine->_grid->camera.y;
 	const int32 z = actor->pos.z - _engine->_grid->camera.z;
-	if (!_engine->_renderer->renderIsoModel(x, y, z, ANGLE_0, actor->angle, ANGLE_0, _engine->_resources->bodyData[actor->entity])) {
+	Common::Rect renderRect;
+	if (!_engine->_renderer->renderIsoModel(x, y, z, ANGLE_0, actor->angle, ANGLE_0, _engine->_resources->bodyData[actor->entity], renderRect)) {
 		return;
 	}
 
-	if (renderRect.left < 0) {
-		renderRect.left = 0;
-	}
-
-	if (renderRect.top < 0) {
-		renderRect.top = 0;
-	}
-
-	if (renderRect.right >= _engine->width()) {
-		renderRect.right = (_engine->width() - 1);
-	}
-
-	if (renderRect.bottom >= _engine->height()) {
-		renderRect.bottom = (_engine->height() - 1);
-	}
-
-	_engine->_interface->setClip(renderRect);
-
-	if (_engine->_interface->clip.isValidRect()) {
+	if (_engine->_interface->setClip(renderRect)) {
 		actor->dynamicFlags.bIsVisible = 1;
 
 		const int32 tempX = (actor->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
@@ -379,7 +363,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		_engine->_grid->drawOverModelActor(tempX, tempY, tempZ);
 
 		if (_engine->_actor->cropBottomScreen) {
-			renderRect.bottom = _engine->_interface->clip.bottom = _engine->_actor->cropBottomScreen + 10;
+			_engine->_interface->clip.bottom = _engine->_actor->cropBottomScreen + 10;
 		}
 
 		addRedrawArea(_engine->_interface->clip);
@@ -388,7 +372,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 			_engine->blitFrontToWork(_engine->_interface->clip);
 		}
 
-		_engine->_debugScene->drawClip(renderRect);
+		_engine->_debugScene->drawClip(_engine->_interface->clip);
 	}
 }
 
@@ -407,6 +391,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 
 	// calculate sprite position on screen
 	const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(actor->entity);
+	Common::Rect renderRect;
 	renderRect.left = _engine->_renderer->projPos.x + dim->x;
 	renderRect.top = _engine->_renderer->projPos.y + dim->y;
 	renderRect.right = renderRect.left + spriteWidth;
@@ -456,8 +441,9 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 
 	_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->camera);
 
+	Common::Rect renderRect;
 	if (extra->info0 & EXTRA_SPECIAL_MASK) {
-		_engine->_extra->drawExtraSpecial(extraIdx, _engine->_renderer->projPos.x, _engine->_renderer->projPos.y);
+		_engine->_extra->drawExtraSpecial(extraIdx, _engine->_renderer->projPos.x, _engine->_renderer->projPos.y, renderRect);
 	} else {
 		const SpriteData &spritePtr = _engine->_resources->spriteData[extra->info0];
 		const int32 spriteWidth = spritePtr.surface().w;
@@ -556,6 +542,7 @@ void Redraw::renderOverlays() {
 				const int32 spriteHeight = spritePtr.surface().h;
 
 				const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(overlay->info0);
+				Common::Rect renderRect;
 				renderRect.left = dim->x + overlay->x;
 				renderRect.top = dim->y + overlay->y;
 				renderRect.right = renderRect.left + spriteWidth;
@@ -573,6 +560,7 @@ void Redraw::renderOverlays() {
 				const int32 textLength = _engine->_text->getTextSize(text);
 				const int32 textHeight = 48;
 
+				Common::Rect renderRect;
 				renderRect.left = overlay->x - (textLength / 2);
 				renderRect.top = overlay->y - 24;
 				renderRect.right = overlay->x + (textLength / 2);
@@ -596,6 +584,7 @@ void Redraw::renderOverlays() {
 				const int32 textLength = _engine->_text->getTextSize(text);
 				const int32 textHeight = 48;
 
+				Common::Rect renderRect;
 				renderRect.left = overlay->x - (textLength / 2);
 				renderRect.top = overlay->y - 24;
 				renderRect.right = overlay->x + (textLength / 2);
@@ -632,6 +621,7 @@ void Redraw::renderOverlays() {
 				const int32 textLength = _engine->_text->getTextSize(text);
 				const int32 textHeight = 48;
 
+				Common::Rect renderRect;
 				renderRect.left = overlay->x - (textLength / 2);
 				renderRect.top = overlay->y - (textHeight / 2);
 				renderRect.right = overlay->x + (textLength / 2);
@@ -735,6 +725,7 @@ void Redraw::drawBubble(int32 actorIdx) {
 	const int32 spriteHeight = spritePtr.surface().h;
 
 	// calculate sprite position on screen
+	Common::Rect renderRect;
 	if (bubbleSpriteIndex == SPRITEHQR_DIAG_BUBBLE_RIGHT) {
 		renderRect.left = _engine->_renderer->projPos.x + 10;
 	} else {

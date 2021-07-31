@@ -47,22 +47,6 @@ void DebugScene::projectBoundingBoxPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjec
 	pPoint3dProjected->x = _engine->_renderer->projPos.x;
 	pPoint3dProjected->y = _engine->_renderer->projPos.y;
 	pPoint3dProjected->z = _engine->_renderer->projPos.z;
-
-	if (_engine->_redraw->renderRect.left > _engine->_renderer->projPos.x) {
-		_engine->_redraw->renderRect.left = _engine->_renderer->projPos.x;
-	}
-
-	if (_engine->_redraw->renderRect.right < _engine->_renderer->projPos.x) {
-		_engine->_redraw->renderRect.right = _engine->_renderer->projPos.x;
-	}
-
-	if (_engine->_redraw->renderRect.top > _engine->_renderer->projPos.y) {
-		_engine->_redraw->renderRect.top = _engine->_renderer->projPos.y;
-	}
-
-	if (_engine->_redraw->renderRect.bottom < _engine->_renderer->projPos.y) {
-		_engine->_redraw->renderRect.bottom = _engine->_renderer->projPos.y;
-	}
 }
 
 bool DebugScene::checkZoneType(ZoneType type) const {

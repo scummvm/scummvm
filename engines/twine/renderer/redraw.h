@@ -114,9 +114,6 @@ private:
 public:
 	Redraw(TwinEEngine *engine) : _engine(engine) {}
 
-	/** Auxiliar object render position on screen */
-	Common::Rect renderRect { 0, 0, 0, 0 };
-
 	bool inSceneryView = false;
 
 	/** Request background redraw */

@@ -318,8 +318,9 @@ void GameState::processFoundItem(InventoryItems item) {
 	const int32 bodyX = _engine->_scene->sceneHero->pos.x - itemCameraX;
 	const int32 bodyY = _engine->_scene->sceneHero->pos.y - itemCameraY;
 	const int32 bodyZ = _engine->_scene->sceneHero->pos.z - itemCameraZ;
-	_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyData);
-	_engine->_interface->setClip(_engine->_redraw->renderRect);
+	Common::Rect modelRect;
+	_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
+	_engine->_interface->setClip(modelRect);
 
 	const int32 itemX = (_engine->_scene->sceneHero->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
 	int32 itemY = _engine->_scene->sceneHero->pos.y / BRICK_HEIGHT;
@@ -389,10 +390,10 @@ void GameState::processFoundItem(InventoryItems item) {
 			}
 		}
 
-		_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyData);
-		_engine->_interface->setClip(_engine->_redraw->renderRect);
+		_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
+		_engine->_interface->setClip(modelRect);
 		_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
-		_engine->_redraw->addRedrawArea(_engine->_redraw->renderRect);
+		_engine->_redraw->addRedrawArea(modelRect);
 
 		if (textState == ProgressiveTextState::ContinueRunning) {
 			_engine->_interface->resetClip();
@@ -495,6 +496,7 @@ void GameState::processGameoverAnimation() {
 	const Common::Rect &rect = _engine->centerOnScreen(_engine->width() / 2, _engine->height() / 2);
 	_engine->_interface->setClip(rect);
 
+	Common::Rect dummy;
 	while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
 		FrameMarker frame(_engine, 66);
 		_engine->readKeys();
@@ -507,7 +509,7 @@ void GameState::processGameoverAnimation() {
 
 		_engine->blitWorkToFront(rect);
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
-		_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr);
+		_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr, dummy);
 		_engine->copyBlockPhys(rect);
 
 		_engine->lbaTime++;
@@ -516,7 +518,7 @@ void GameState::processGameoverAnimation() {
 	_engine->_sound->playSample(Samples::Explode);
 	_engine->blitWorkToFront(rect);
 	_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
-	_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr);
+	_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr, dummy);
 	_engine->copyBlockPhys(rect);
 
 	_engine->delaySkip(2000);
