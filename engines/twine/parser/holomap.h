@@ -77,7 +77,10 @@ private:
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream) override;
 
-	const Trajectory *getTrajectory(int index) const {
+	const Trajectory *getTrajectory(uint index) const {
+		if (index >= _trajectories.size()) {
+			return nullptr;
+		}
 		return &_trajectories[index];
 	}
 
