@@ -232,7 +232,6 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 			int groupID = indexToGroupID(_listIndex[newSelectedItem]);
 			_selectedItem = -1;
 			toggleGroup(groupID);
-			warning("%d", groupID);
 		}
 	}
 
