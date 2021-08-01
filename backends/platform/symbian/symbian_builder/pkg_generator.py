@@ -59,16 +59,17 @@ dependency = """
 pkg_licenses_install = """
 
 ; Scummvm Documentation, licences.
+"..\\THANKS"  - "!:\\data\\scummvm\\THANKS", FT, TC
 "..\\..\\..\\..\\COPYRIGHT" - "!:\\data\\scummvm\\COPYRIGHT", FT, TC
-"..\\..\\..\\..\\COPYING.BSD"   - "!:\\data\\scummvm\\COPYING.BSD", FT, TC
-"..\\..\\..\\..\\COPYING.ISC"   - "!:\\data\\scummvm\\COPYING.ISC", FT, TC
-"..\\..\\..\\..\\COPYING.LGPL"  - "!:\\data\\scummvm\\COPYING.LGPL", FT, TC
-"..\\..\\..\\..\\COPYING.LUA"   - "!:\\data\\scummvm\\COPYING.LUA", FT, TC
-"..\\..\\..\\..\\COPYING.MIT"   - "!:\\data\\scummvm\\COPYING.MIT", FT, TC
-"..\\..\\..\\..\\COPYING.OFL"   - "!:\\data\\scummvm\\COPYING.OFL", FT, TC
-"..\\..\\..\\..\\COPYING.TINYGL"   - "!:\\data\\scummvm\\COPYING.TINYGL", FT, TC
-"..\\..\\..\\..\\COPYING"   - "!:\\data\\scummvm\\COPYING", FT, TC
-"..\\..\\..\\..\\AUTHORS"   - "!:\\data\\scummvm\\AUTHORS"
+"..\\..\\..\\..\\COPYING.BSD"   - "!:\\data\\scummvm\\COPYING.BSD"
+"..\\..\\..\\..\\COPYING.ISC"   - "!:\\data\\scummvm\\COPYING.ISC"
+"..\\..\\..\\..\\COPYING.LGPL"  - "!:\\data\\scummvm\\COPYING.LGPL"
+"..\\..\\..\\..\\COPYING.LUA"   - "!:\\data\\scummvm\\COPYING.LUA"
+"..\\..\\..\\..\\COPYING.MIT"   - "!:\\data\\scummvm\\COPYING.MIT"
+"..\\..\\..\\..\\COPYING.OFL"   - "!:\\data\\scummvm\\COPYING.OFL"
+"..\\..\\..\\..\\COPYING.TINYGL"   - "!:\\data\\scummvm\\COPYING.TINYGL"
+"..\\..\\..\\..\\COPYING"   - "!:\\data\\scummvm\\COPYING"
+"..\\..\\..\\..\\AUTHORS"   - "!:\\data\\scummvm\\AUTHORS", FT, TC
 "..\\..\\..\\..\\README.md" - "!:\\data\\scummvm\\README.md"
 "..\\..\\..\\..\\NEWS.md"   - "!:\\data\\scummvm\\NEWS.md"
 "..\\README"  - "!:\\data\\scummvm\\SYMBIAN_README", FT, TC
@@ -77,14 +78,8 @@ pkg_licenses_install = """
 pkg_licenses_show = """
 
 ; Scummvm Documentation.
+"..\\THANKS"  - "", FT, TC
 "..\\..\\..\\..\COPYRIGHT"    - "", FT, TC
-"..\\..\\..\\..\COPYING.BSD"  - "", FT, TC
-"..\\..\\..\\..\COPYING.ISC"   - "", FT, TC
-"..\\..\\..\\..\COPYING.LGPL"  - "", FT, TC
-"..\\..\\..\\..\COPYING.LUA"   - "", FT, TC
-"..\\..\\..\\..\COPYING.MIT"   - "", FT, TC
-"..\\..\\..\\..\COPYING.OFL"   - "", FT, TC
-"..\\..\\..\\..\COPYING.TINYGL"   - "", FT, TC
 "..\\..\\..\\..\COPYING"          - "", FT, TC
 "..\\README"  - "", FT, TC
 """
@@ -198,8 +193,11 @@ def CreateFirstPkg(install_uid, build, path, target):
    SafeWriteFile(pkg,         pkg_template %(pack_name, install_uid, sis_major_version, sis_minor_version, sis_build_number) )
    SafeWriteFile(pkg_cmdline, pkg_template %(pack_name, install_uid, sis_major_version, sis_minor_version, sis_build_number) )
 
-   AppendToFile(pkg,         pkg_licenses_install)
-   AppendToFile(pkg_cmdline, pkg_licenses_install)
+   p_license = pkg_licenses_install
+   if build == 'full':
+      p_license = p_license.replace("scummvm", "scummvm\\beta")
+   AppendToFile(pkg,         p_license)
+   AppendToFile(pkg_cmdline, p_license)
    if build == 'release':
       AppendToFile(pkg,                         mif_install)
       AppendToFile(pkg_cmdline, ResolveEpocRoot(mif_install))
