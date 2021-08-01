@@ -104,13 +104,17 @@ void Screens::fadeIn(const uint32 *pal) {
 }
 
 void Screens::fadeOut(const uint32 *pal) {
-	/*if(cfgfile.CrossFade)
-		crossFade(frontVideoBuffer, pal);
-	else
-		fadeToBlack(pal);*/
+#if 0
+	if (_engine->_cfgfile.CrossFade) {
+		_engine->crossFade(pal);
+	} else {
+		fadeToBlack(pal);
+	}
+#else
 	if (!_engine->_cfgfile.CrossFade) {
 		fadeToBlack(pal);
 	}
+#endif
 }
 
 int32 Screens::crossDot(int32 modifier, int32 color, int32 param, int32 intensity) {
