@@ -68,6 +68,7 @@ public:
 	static bool isConnectionLimited();
 	static void showVirtualKeyboard(bool enable);
 	static void showKeyboardControl(bool enable);
+	static void showSAFRevokePermsControl(bool enable);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 
 	static inline bool haveSurface();
@@ -113,6 +114,7 @@ private:
 	static jmethodID _MID_setWindowCaption;
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_showKeyboardControl;
+	static jmethodID _MID_showSAFRevokePermsControl;
 	static jmethodID _MID_getSysArchives;
 	static jmethodID _MID_getAllStorageLocations;
 	static jmethodID _MID_initSurface;

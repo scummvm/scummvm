@@ -167,6 +167,7 @@ void OptionsDialog::init() {
 	_enableControlSettings = false;
 	_onscreenCheckbox = nullptr;
 	_touchpadCheckbox = nullptr;
+	_onscreenSAFRevokeCheckbox = nullptr;
 	_swapMenuAndBackBtnsCheckbox = nullptr;
 	_kbdMouseSpeedDesc = nullptr;
 	_kbdMouseSpeedSlider = nullptr;
@@ -260,6 +261,13 @@ void OptionsDialog::build() {
 			bool onscreenState =  g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
 			if (_onscreenCheckbox != nullptr)
 				_onscreenCheckbox->setState(onscreenState);
+		}
+	}
+	if (g_system->hasFeature(OSystem::kFeatureSAFRevokePermsControl)) {
+		if (ConfMan.hasKey("onscreen_saf_revoke_btn", _domain)) {
+			bool showSAFRevokeState =  g_system->getFeatureState(OSystem::kFeatureSAFRevokePermsControl);
+			if (_onscreenSAFRevokeCheckbox != nullptr)
+				_onscreenSAFRevokeCheckbox->setState(showSAFRevokeState);
 		}
 	}
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
@@ -806,6 +814,11 @@ void OptionsDialog::apply() {
 				g_system->setFeatureState(OSystem::kFeatureOnScreenControl, _onscreenCheckbox->getState());
 			}
 		}
+		if (g_system->hasFeature(OSystem::kFeatureSAFRevokePermsControl)) {
+			if (ConfMan.getBool("onscreen_saf_revoke_btn", _domain) != _onscreenSAFRevokeCheckbox->getState()) {
+				g_system->setFeatureState(OSystem::kFeatureSAFRevokePermsControl, _onscreenSAFRevokeCheckbox->getState());
+			}
+		}
 		if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
 			if (ConfMan.getBool("touchpad_mouse_mode", _domain) != _touchpadCheckbox->getState()) {
 				g_system->setFeatureState(OSystem::kFeatureTouchpadMode, _touchpadCheckbox->getState());
@@ -1210,6 +1223,10 @@ void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &pr
 	// Show On-Screen control
 	if (g_system->hasFeature(OSystem::kFeatureOnScreenControl))
 		_onscreenCheckbox = new CheckboxWidget(boss, prefix + "grOnScreenCheckbox", _("Show On-screen control"));
+
+	// Show Overlay button to revoke SAF (storage access) ScummVM permissions (Android specific)
+	if (g_system->hasFeature(OSystem::kFeatureSAFRevokePermsControl))
+		_onscreenSAFRevokeCheckbox = new CheckboxWidget(boss, prefix + "grOnScreenSAFRevokeCheckbox ", _("Show SAF revoke permissions overlay button"));
 
 	// Touchpad Mouse mode
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode))
@@ -1952,6 +1969,7 @@ void GlobalOptionsDialog::build() {
 	//
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode) ||
 		g_system->hasFeature(OSystem::kFeatureOnScreenControl) ||
+		g_system->hasFeature(OSystem::kFeatureSAFRevokePermsControl) ||
 		g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons) ||
 		g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed) ||
 		g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {

@@ -258,6 +258,9 @@
 			<widget name = 'grTouchpadCheckbox'
 					type = 'Checkbox'
 			/>
+			<widget name = 'grOnScreenSAFRevokeCheckbox'
+					type = 'Checkbox'
+			/>
 			<widget name = 'grSwapMenuAndBackBtnsCheckbox'
 					type = 'Checkbox'
 			/>

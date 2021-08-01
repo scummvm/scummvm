@@ -131,6 +131,7 @@ private:
 
 	CheckboxWidget *_touchpadCheckbox;
 	CheckboxWidget *_onscreenCheckbox;
+	CheckboxWidget *_onscreenSAFRevokeCheckbox;
 	CheckboxWidget *_swapMenuAndBackBtnsCheckbox;
 
 	StaticTextWidget *_kbdMouseSpeedDesc;

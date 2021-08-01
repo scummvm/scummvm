@@ -503,7 +503,12 @@ public:
 		/**
 		* For platforms that should not have a Quit button.
 		*/
-		kFeatureNoQuit
+		kFeatureNoQuit,
+
+		/**
+		* Android specific button toggle to revoke storage permissions
+		*/
+		kFeatureSAFRevokePermsControl
 	};
 
 	/**

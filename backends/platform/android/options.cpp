@@ -62,6 +62,7 @@ private:
 
 	GUI::CheckboxWidget *_onscreenCheckbox;
 	GUI::CheckboxWidget *_touchpadCheckbox;
+	GUI::CheckboxWidget *_onscreenSAFRevokeCheckbox;
 
 	bool _enabled;
 };
@@ -71,6 +72,7 @@ AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String
 
 	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.OnScreenControl", _("Show On-screen control"));
 	_touchpadCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.TouchpadMode", _("Touchpad mouse mode"));
+	_onscreenSAFRevokeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.SAFRevokePermsControl", _("Show SAF revoke permissions overlay button"));
 }
 
 AndroidOptionsWidget::~AndroidOptionsWidget() {
@@ -82,6 +84,7 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 	            .addPadding(0, 0, 0, 0)
 	            .addWidget("OnScreenControl", "Checkbox")
 	            .addWidget("TouchpadMode", "Checkbox")
+	            .addWidget("SAFRevokePermsControl", "Checkbox")
 	        .closeLayout()
 	    .closeDialog();
 }
@@ -89,15 +92,18 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 void AndroidOptionsWidget::load() {
 	_onscreenCheckbox->setState(ConfMan.getBool("onscreen_control", _domain));
 	_touchpadCheckbox->setState(ConfMan.getBool("touchpad_mouse_mode", _domain));
+	_onscreenSAFRevokeCheckbox->setState(ConfMan.getBool("onscreen_saf_revoke_btn", _domain));
 }
 
 bool AndroidOptionsWidget::save() {
 	if (_enabled) {
 		ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
 		ConfMan.setBool("touchpad_mouse_mode", _touchpadCheckbox->getState(), _domain);
+		ConfMan.setBool("onscreen_saf_revoke_btn", _onscreenSAFRevokeCheckbox->getState(), _domain);
 	} else {
 		ConfMan.removeKey("onscreen_control", _domain);
 		ConfMan.removeKey("touchpad_mouse_mode", _domain);
+		ConfMan.removeKey("onscreen_saf_revoke_btn", _domain);
 	}
 
 	return true;
@@ -105,7 +111,8 @@ bool AndroidOptionsWidget::save() {
 
 bool AndroidOptionsWidget::hasKeys() {
 	return ConfMan.hasKey("onscreen_control", _domain) ||
-	       ConfMan.hasKey("touchpad_mouse_mode", _domain);
+	       ConfMan.hasKey("touchpad_mouse_mode", _domain) ||
+	       ConfMan.hasKey("onscreen_saf_revoke_btn", _domain);
 }
 
 void AndroidOptionsWidget::setEnabled(bool e) {
@@ -113,6 +120,7 @@ void AndroidOptionsWidget::setEnabled(bool e) {
 
 	_onscreenCheckbox->setEnabled(e);
 	_touchpadCheckbox->setEnabled(e);
+	_onscreenSAFRevokeCheckbox->setEnabled(e);
 }
 
 
@@ -123,9 +131,11 @@ GUI::OptionsContainerWidget *OSystem_Android::buildBackendOptionsWidget(GUI::Gui
 void OSystem_Android::registerDefaultSettings(const Common::String &target) const {
 	ConfMan.registerDefault("onscreen_control", true);
 	ConfMan.registerDefault("touchpad_mouse_mode", true);
+	ConfMan.registerDefault("onscreen_saf_revoke_btn", false);
 }
 
 void OSystem_Android::applyBackendSettings() {
 	JNI::showKeyboardControl(ConfMan.getBool("onscreen_control"));
+	JNI::showSAFRevokePermsControl(ConfMan.getBool("onscreen_saf_revoke_btn"));
 	_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");
 }

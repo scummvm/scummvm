@@ -68,6 +68,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected void setWindowCaption(String caption);
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected void showKeyboardControl(boolean enable);
+	abstract protected void showSAFRevokePermsControl(boolean enable);
 	abstract protected String[] getSysArchives();
 	abstract protected String[] getAllStorageLocations();
 	abstract protected String[] getAllStorageLocationsNoPermissionRequest();
