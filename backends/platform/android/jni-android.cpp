@@ -387,6 +387,7 @@ void JNI::showKeyboardControl(bool enable) {
 }
 
 void JNI::showSAFRevokePermsControl(bool enable) {
+#ifndef BACKEND_ANDROID3D
 	JNIEnv *env = JNI::getEnv();
 
 	env->CallVoidMethod(_jobj, _MID_showSAFRevokePermsControl, enable);
@@ -397,6 +398,7 @@ void JNI::showSAFRevokePermsControl(bool enable) {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
+#endif
 }
 
 // The following adds assets folder to search set.
@@ -569,15 +571,17 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, isConnectionLimited, "()Z");
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, showKeyboardControl, "(Z)V");
-	FIND_METHOD(, showSAFRevokePermsControl, "(Z)V");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(, deinitSurface, "()V");
+#ifndef BACKEND_ANDROID3D
+	FIND_METHOD(, showSAFRevokePermsControl, "(Z)V");
 	FIND_METHOD(, createDirectoryWithSAF, "(Ljava/lang/String;)Z");
 	FIND_METHOD(, createFileWithSAF, "(Ljava/lang/String;)Ljava/lang/String;");
 	FIND_METHOD(, closeFileWithSAF, "(Ljava/lang/String;)V");
 	FIND_METHOD(, isDirectoryWritableWithSAF, "(Ljava/lang/String;)Z");
+#endif
 
 	_jobj_egl = env->NewGlobalRef(egl);
 	_jobj_egl_display = env->NewGlobalRef(egl_display);
@@ -797,6 +801,7 @@ Common::Array<Common::String> JNI::getAllStorageLocations() {
 }
 
 bool JNI::createDirectoryWithSAF(const Common::String &dirPath) {
+#ifndef BACKEND_ANDROID3D
 	JNIEnv *env = JNI::getEnv();
 	jstring javaDirPath = env->NewStringUTF(dirPath.c_str());
 
@@ -811,10 +816,13 @@ bool JNI::createDirectoryWithSAF(const Common::String &dirPath) {
 	}
 
 	return created;
-
+#else
+	return false;
+#endif
 }
 
 Common::U32String JNI::createFileWithSAF(const Common::String &filePath) {
+#ifndef BACKEND_ANDROID3D
 	JNIEnv *env = JNI::getEnv();
 	jstring javaFilePath = env->NewStringUTF(filePath.c_str());
 
@@ -834,10 +842,13 @@ Common::U32String JNI::createFileWithSAF(const Common::String &filePath) {
 	env->DeleteLocalRef(hackyFilenameJSTR);
 
 	return hackyFilenameStr;
-
+#else
+	return Common::U32String();
+#endif
 }
 
 void JNI::closeFileWithSAF(const Common::String &hackyFilename) {
+#ifndef BACKEND_ANDROID3D
 	JNIEnv *env = JNI::getEnv();
 	jstring javaHackyFilename = env->NewStringUTF(hackyFilename.c_str());
 
@@ -849,10 +860,11 @@ void JNI::closeFileWithSAF(const Common::String &hackyFilename) {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
-
+#endif
 }
 
 bool JNI::isDirectoryWritableWithSAF(const Common::String &dirPath) {
+#ifndef BACKEND_ANDROID3D
 	JNIEnv *env = JNI::getEnv();
 	jstring javaDirPath = env->NewStringUTF(dirPath.c_str());
 
@@ -867,7 +879,9 @@ bool JNI::isDirectoryWritableWithSAF(const Common::String &dirPath) {
 	}
 
 	return isWritable;
-
+#else
+	return false;
+#endif
 }
 
 #endif
