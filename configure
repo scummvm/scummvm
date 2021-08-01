@@ -3414,7 +3414,7 @@ if test -n "$_host"; then
 			_zlib=yes
 			;;
 		*mingw32*)
-			_sdlconfig=$_host-sdl2-config
+			_sdlconfig=$_host-sdl-config
 			_libcurlconfig=$_host-curl-config
 			_pkgconfig=$_host-pkg-config
 			_windres=$_host-windres
