@@ -119,15 +119,30 @@ class Global : public Action {
 	Common::String command;
 };
 
+class Shoot {
+  public:
+	Common::String animation;
+};
+
+typedef Common::List<Shoot> Shoots;
+
+class ArcadeShooting {
+  public:
+	Common::String background;
+	Common::String player;
+	Shoots shoots;
+};
+
 class Level {
   public:
 	Hotspots hots;
 	Movies intros;
+	ArcadeShooting arcade;
 };
 
 typedef Common::HashMap<Common::String, Level> Levels;
 extern Hotspots *g_parsedHots;
-//extern Settings g_settings;
+extern ArcadeShooting g_parsedArc;
 
 } // End of namespace Hypno
 
