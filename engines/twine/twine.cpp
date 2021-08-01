@@ -547,7 +547,7 @@ int TwinEEngine::getRandomNumber(uint max) {
 }
 
 void TwinEEngine::freezeTime() {
-	if (!_isTimeFreezed) {
+	if (_isTimeFreezed == 0) {
 		_saveFreezedTime = _lbaTime;
 		_pauseToken = pauseEngine();
 	}
@@ -667,9 +667,7 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 	case kiBonusList: {
-		unfreezeTime();
 		_redraw->redrawEngineActions(true);
-		freezeTime();
 		processBonusList();
 		break;
 	}
@@ -731,19 +729,17 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	} else {
 		// Process give up menu - Press ESC
 		if (_input->toggleAbortAction() && _scene->_sceneHero->_life > 0 && _scene->_sceneHero->_entity != -1 && !_scene->_sceneHero->_staticFlags.bIsHidden) {
-			freezeTime();
+			ScopedEngineFreeze scopedFreeze(this);
 			exitSceneryView();
 			const int giveUp = _menu->giveupMenu();
 			if (giveUp == kQuitEngine) {
 				return 0;
 			}
 			if (giveUp == 1) {
-				unfreezeTime();
 				_redraw->redrawEngineActions(true);
 				_quitGame = 0;
 				return 0;
 			}
-			unfreezeTime();
 			_redraw->redrawEngineActions(true);
 		}
 
@@ -783,9 +779,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) {
 				_actor->_heroBehaviour = HeroBehaviourType::kDiscrete;
 			}
-			freezeTime();
+			ScopedEngineFreeze scopedFreeze(this);
 			_menu->processBehaviourMenu();
-			unfreezeTime();
 			_redraw->redrawEngineActions(true);
 		}
 
@@ -812,16 +807,14 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// Draw holomap
 		if (_input->toggleActionIfActive(TwinEActionType::OpenHolomap) && _gameState->hasItem(InventoryItems::kiHolomap) && !_gameState->inventoryDisabled()) {
-			freezeTime();
 			_holomap->processHolomap();
 			_screens->_lockPalette = true;
-			unfreezeTime();
 			_redraw->redrawEngineActions(true);
 		}
 
 		// Process Pause
 		if (_input->toggleActionIfActive(TwinEActionType::Pause)) {
-			freezeTime();
+			ScopedEngineFreeze scopedFreeze(this);
 			const char *PauseString = "Pause";
 			_text->setFontColor(COLOR_WHITE);
 			if (_redraw->_inSceneryView) {
@@ -840,7 +833,6 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					break;
 				}
 			} while (!_input->toggleActionIfActive(TwinEActionType::Pause));
-			unfreezeTime();
 			_redraw->redrawEngineActions(true);
 		}
 	}

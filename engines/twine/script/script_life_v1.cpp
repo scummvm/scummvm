@@ -649,7 +649,7 @@ static int32 lSET_TRACK_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
-	engine->freezeTime();
+	ScopedEngineFreeze scopedFreeze(engine);
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
 	}
@@ -659,7 +659,6 @@ static int32 lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	if (engine->_scene->_currentSceneIdx == LBA1SceneId::Principal_Island_Library && engine->_scene->_talkingActor == 8)/* && (*(short *)lifeScriptPosition == 0xe2 [226])*/ {
 		engine->unlockAchievement("LBA_ACH_008");
 	}
-	engine->unfreezeTime();
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
@@ -905,14 +904,13 @@ static int32 lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
-	engine->freezeTime();
+	ScopedEngineFreeze scopedFreeze(engine);
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(otherActorIdx);
 	}
 	engine->_text->setFontCrossColor(engine->_scene->getActor(otherActorIdx)->_talkColor);
 	engine->_scene->_talkingActor = otherActorIdx;
 	engine->_text->drawTextProgressive(textIdx);
-	engine->unfreezeTime();
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
@@ -1256,14 +1254,13 @@ static int32 lADD_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 
-	engine->freezeTime();
+	ScopedEngineFreeze scopedFreeze(engine);
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
 	}
 	engine->_text->setFontCrossColor(ctx.actor->_talkColor);
 	engine->_gameState->processGameChoices(choiceIdx);
 	engine->_gameState->_numChoices = 0;
-	engine->unfreezeTime();
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
@@ -1276,7 +1273,7 @@ static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
-	engine->freezeTime();
+	ScopedEngineFreeze scopedFreeze(engine);
 	engine->_text->textClipFull();
 	if (engine->_text->_showDialogueBubble) {
 		engine->_redraw->drawBubble(ctx.actorIdx);
@@ -1285,7 +1282,6 @@ static int32 lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_talkingActor = ctx.actorIdx;
 	engine->_text->drawTextProgressive(textIdx);
 	engine->_text->textClipSmall();
-	engine->unfreezeTime();
 	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
