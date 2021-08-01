@@ -8,7 +8,7 @@ if [ "$#" -ne 1 ]; then
   exit 3
 fi
 
-EMSDK_VERSION="2.0.23"
+EMSDK_VERSION="2.0.26"
 ROOT_FOLDER=$(pwd)
 DIST_FOLDER="$ROOT_FOLDER/dists/emscripten"
 LIBS_FOLDER="$DIST_FOLDER/libs"
@@ -18,15 +18,14 @@ if [[ ! -d "$DIST_FOLDER" ]]; then
 fi
 if [[ "$1" =~ ^(clean)$ ]]; then
   make clean
+  make distclean
   rm -rf ./dists/emscripten/libs/build
   rm -rf ./dists/emscripten/libs/*/
   rm -rf ./dists/emscripten/emsdk*/
+  rm scummvm.debug.wasm
   find . -name "*.o"
-  find . -name "*.o" -exec rm -rf {} \;
   find . -name "*.a"
-  find . -name "*.a" -exec rm -rf {} \;
   find . -name "*.wasm"
-  find . -name "*.wasm" -exec rm -rf {} \;
   exit 0
 fi
 
@@ -112,7 +111,7 @@ export LDFLAGS_LINKER=" --pre-js ./dists/emscripten/pre.js --post-js ./dists/ems
 if [[ "$1" =~ ^(configure|all)$ ]]; then
 
   echo "clean, & configure"
-  make clean
+  make clean || true
   emconfigure ./configure --enable-debug --enable-verbose-build --host=wasm32-unknown-emscripten \
     --disable-all-engines \
     --enable-engine=testbed,scumm,scumm_7_8,grim,monkey4,mohawk,myst,riven,sci32,agos2,sword2,drascula,sky,lure,queen,testbed \
@@ -181,7 +180,7 @@ if [[ "$1" =~ ^(data|all)$ ]]; then
     unzip -n lure-1.1.zip -d "${ROOT_FOLDER}/build-emscripten/games/lure/"
   fi
 
-  cd "${ROOT_FOLDER}//build-emscripten/games/"
+  cd "${ROOT_FOLDER}/build-emscripten/games/"
   NODE_DIR=$(dirname "$EMSDK_NODE")
   "$NODE_DIR/npx" -p browserfs make_xhrfs_index >index.json
 fi
