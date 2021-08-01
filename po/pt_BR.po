@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-01 14:12+0000\n"
-"PO-Revision-Date: 2021-07-29 08:25+0000\n"
+"PO-Revision-Date: 2021-08-01 17:17+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -960,7 +960,7 @@ msgstr "Mostrar controle na tela"
 
 #: gui/options.cpp:1229
 msgid "Show SAF revoke permissions overlay button"
-msgstr ""
+msgstr "Mostrar botão de sobreposição de permissões de revogação SAF"
 
 #: gui/options.cpp:1233
 msgid "Touchpad mouse mode"
@@ -6238,14 +6238,12 @@ msgstr ""
 "um canal."
 
 #: engines/scumm/detection.cpp:204
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth scrolling"
-msgstr "Habilita rolagem suave quando estiver andando"
+msgstr "Habilitar rolagem suave"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(em vez das etapas normais de rolagem de 8 pixels)"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
