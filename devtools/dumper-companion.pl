@@ -193,7 +193,7 @@ sub processIso($) {
 				$prevlen = length "$dir$decfname";
 				flush STDOUT;
 
-				$fname =~ s/([*+\[\]\|<>&])/\\$1/g; # Files cound have special symbols in them, escape, so shell is happy
+				$fname =~ s/([*+\[\]\|<>&`\^\{\}\\])/\\$1/g; # Files cound have special symbols in them, escape, so shell is happy
 
 				if ($res != 0) {
 					system1("hcopy -m -- \"$mdir$fname\" \"$outPath$dir$decfname\"") == 0 or die "Can't execute hcopy";
