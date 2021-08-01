@@ -478,4 +478,4 @@ AudioStream *makeProtrackerStream(Common::SeekableReadStream *stream, int offs, 
 	return (AudioStream *)protrackerStream;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

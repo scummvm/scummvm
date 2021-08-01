@@ -104,6 +104,6 @@ PacketizedAudioStream *makePacketizedADPCMStream(
 	int channels,
 	uint32 blockAlign = 0);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

@@ -231,4 +231,4 @@ SeekableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, DisposeAf
 	return 0;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

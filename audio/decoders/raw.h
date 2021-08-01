@@ -104,6 +104,6 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
  */
 PacketizedAudioStream *makePacketizedRawStream(int rate, byte flags);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

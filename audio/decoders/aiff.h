@@ -56,6 +56,6 @@ RewindableAudioStream *makeAIFFStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

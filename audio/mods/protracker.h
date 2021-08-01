@@ -58,6 +58,6 @@ class AudioStream;
  */
 AudioStream *makeProtrackerStream(Common::SeekableReadStream *stream, int offs = 0, int rate = 44100, bool stereo = true, Modules::Module **module = 0);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

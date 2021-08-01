@@ -102,4 +102,4 @@ AudioStream *XanDPCMStream::makeStream(Common::SeekableReadStream *data) {
 	return new Xan_DPCMStream(getRate(), getChannels(), data);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

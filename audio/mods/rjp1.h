@@ -44,6 +44,6 @@ class AudioStream;
  */
 AudioStream *makeRjp1Stream(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData, int num, int rate = 44100, bool stereo = true);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

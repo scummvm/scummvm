@@ -871,4 +871,4 @@ RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, Dispo
 	return NULL;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

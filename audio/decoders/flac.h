@@ -64,7 +64,7 @@ SeekableAudioStream *makeFLACStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // #ifdef USE_FLAC
 #endif // #ifndef AUDIO_FLAC_H

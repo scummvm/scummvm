@@ -146,6 +146,6 @@ RewindableAudioStream *make3DO_SDX2AudioStream(
 	audio_3DO_SDX2_PersistentSpace *persistentSpacePtr = NULL
 );
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

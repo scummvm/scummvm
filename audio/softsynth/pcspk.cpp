@@ -125,7 +125,7 @@ int8 PCSpeaker::generateTriangle(uint32 x, uint32 oscLength) {
 	return (x <= (oscLength / 2)) ? y : (256 - y);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 
 //	Plugin interface

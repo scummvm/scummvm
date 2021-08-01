@@ -191,6 +191,6 @@ protected:
 };
 
 /** @} */
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

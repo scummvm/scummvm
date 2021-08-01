@@ -523,6 +523,6 @@ static const float type34_delta[10] = { // FIXME: covers 8 entries..
 	0.138071194291115f,0.333333343267441f,0.60947573184967f,1.0f,0.0f,
 };
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

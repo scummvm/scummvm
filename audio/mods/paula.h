@@ -228,6 +228,6 @@ private:
 	float filterCalculateA0(int rate, int cutoff);
 };
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

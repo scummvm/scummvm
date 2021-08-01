@@ -622,4 +622,4 @@ int Channel::mix(int16 *data, uint len) {
 	return res;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

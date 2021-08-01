@@ -234,4 +234,4 @@ RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, Dispos
 	return 0;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

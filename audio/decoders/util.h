@@ -48,6 +48,6 @@ static inline void floatToInt16Interleave(int16 *dst, const float **src,
 	}
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // AUDIO_DECODERS_UTIL_H

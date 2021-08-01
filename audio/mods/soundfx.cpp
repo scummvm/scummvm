@@ -279,4 +279,4 @@ AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInst
 	return 0;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

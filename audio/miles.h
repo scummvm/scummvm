@@ -311,6 +311,6 @@ extern MidiDriver_Miles_Midi *MidiDriver_Miles_MT32_create(const Common::String 
 
 extern MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Common::String &instrumentDataFilename);
 /** @} */
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // AUDIO_MILES_MIDIDRIVER_H

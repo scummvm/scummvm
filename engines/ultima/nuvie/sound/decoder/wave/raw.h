@@ -152,6 +152,6 @@ SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream,
 		DisposeAfterUse::Flag disposeStream);
 
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

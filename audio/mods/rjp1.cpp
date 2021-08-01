@@ -584,4 +584,4 @@ AudioStream *makeRjp1Stream(Common::SeekableReadStream *songData, Common::Seekab
 	return 0;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

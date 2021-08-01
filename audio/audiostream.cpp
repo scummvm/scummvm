@@ -486,4 +486,4 @@ AudioStream *makeNullAudioStream() {
 	return new NullAudioStream();
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

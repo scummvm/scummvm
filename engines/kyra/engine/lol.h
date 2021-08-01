@@ -35,7 +35,7 @@
 
 namespace Audio {
 class SeekableAudioStream;
-} // End of namespace Audio
+} // End of namespace Audio.
 
 namespace Common {
 class Keymap;

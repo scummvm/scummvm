@@ -41,6 +41,6 @@ SeekableAudioStream *makeASFStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // AUDIO_DECODERS_ASF_H

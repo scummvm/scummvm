@@ -47,6 +47,6 @@ typedef byte *(*LoadSoundFxInstrumentCallback)(const char *name, uint32 *size);
  */
 AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb, int rate = 44100, bool stereo = true, bool repeat = true, int periodScaleDivisor = 1);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

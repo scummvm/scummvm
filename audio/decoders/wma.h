@@ -218,6 +218,6 @@ private:
 	static uint32 getLargeVal(Common::BitStream8MSB &bits);
 };
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // AUDIO_DECODERS_WMA_H

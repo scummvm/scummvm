@@ -192,4 +192,4 @@ void MidiPlayer::resume() {
 	_isPlaying = true;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

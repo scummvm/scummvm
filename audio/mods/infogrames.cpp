@@ -468,4 +468,4 @@ void Infogrames::interrupt() {
 	}
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

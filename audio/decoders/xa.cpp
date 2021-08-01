@@ -161,4 +161,4 @@ RewindableAudioStream *makeXAStream(Common::SeekableReadStream *stream, int rate
 	return new XAStream(stream, rate, disposeAfterUse);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

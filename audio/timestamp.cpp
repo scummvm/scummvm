@@ -204,4 +204,4 @@ int Timestamp::msecs() const {
 }
 
 
-} // End of namespace Audio
+} // End of namespace Audio.

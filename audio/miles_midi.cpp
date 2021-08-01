@@ -954,4 +954,4 @@ uint32 MidiDriver_Miles_Midi::property(int prop, uint32 param) {
 	return 0;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

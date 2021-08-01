@@ -339,4 +339,4 @@ RewindableAudioStream *make3DO_SDX2AudioStream(Common::SeekableReadStream *strea
 	return new Audio3DO_SDX2_Stream(stream, sampleRate, stereo, disposeAfterUse, persistentSpace);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

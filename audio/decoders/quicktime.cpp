@@ -733,4 +733,4 @@ SeekableAudioStream *makeQuickTimeStream(Common::SeekableReadStream *stream, Dis
 	return audioStream;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

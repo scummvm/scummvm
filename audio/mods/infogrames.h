@@ -143,6 +143,6 @@ protected:
 	virtual void interrupt();
 };
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

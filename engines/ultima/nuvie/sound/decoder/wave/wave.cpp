@@ -193,4 +193,4 @@ RewindableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, Dispose
 	return makeRawStream(data, size, rate, flags);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

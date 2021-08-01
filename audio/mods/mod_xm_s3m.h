@@ -91,6 +91,6 @@ RewindableAudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream,
 		int initialPos = 0,
 		int rate = 48000, int interpolation = 0);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

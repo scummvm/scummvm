@@ -87,6 +87,6 @@ RewindableAudioStream *makeADPCMStream(
 	int channels = 2,
 	uint32 blockAlign = 0);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

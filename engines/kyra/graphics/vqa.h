@@ -31,7 +31,7 @@ class OSystem;
 
 namespace Audio {
 class QueuingAudioStream;
-} // End of namespace Audio
+} // End of namespace Audio.
 
 namespace Kyra {
 

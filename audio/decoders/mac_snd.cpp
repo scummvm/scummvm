@@ -105,4 +105,4 @@ SeekableAudioStream *makeMacSndStream(Common::SeekableReadStream *stream,
 	return makeRawStream(dataStream, rate, Audio::FLAG_UNSIGNED);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

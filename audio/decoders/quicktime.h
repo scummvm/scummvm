@@ -63,6 +63,6 @@ SeekableAudioStream *makeQuickTimeStream(const Common::String &filename);
  */
 SeekableAudioStream *makeQuickTimeStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

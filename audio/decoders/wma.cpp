@@ -1509,4 +1509,4 @@ uint32 WMACodec::getLargeVal(Common::BitStream8MSB &bits) {
 	return bits.getBits(count);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

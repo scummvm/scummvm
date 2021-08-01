@@ -29,7 +29,7 @@
 
 namespace Audio {
 class RewindableAudioStream;
-} // End of namespace Audio
+} // End of namespace Audio.
 
 namespace Sci {
 

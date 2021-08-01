@@ -40,6 +40,6 @@ enum WaveCompressionType {
 	kWaveFormatXanDPCM     = 0x594a  // 'JY', Crusader: No Regret videos
 };
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

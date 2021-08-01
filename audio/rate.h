@@ -87,6 +87,6 @@ public:
 
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo = false);
 /** @} */
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

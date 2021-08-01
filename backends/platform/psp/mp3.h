@@ -115,6 +115,6 @@ public:
 	Timestamp getLength() const { return _length; }
 };
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // #ifndef SOUND_MP3_PSP_H

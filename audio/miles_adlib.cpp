@@ -1326,4 +1326,4 @@ MidiDriver_Multisource *MidiDriver_Miles_AdLib_create(const Common::String &file
 	return new MidiDriver_Miles_AdLib(instrumentTablePtr, instrumentTableCount);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

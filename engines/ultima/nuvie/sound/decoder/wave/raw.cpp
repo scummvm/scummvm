@@ -374,4 +374,4 @@ SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream, R
 	return makeRawStream(stream, blocks, rate, flags, disposeStream);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

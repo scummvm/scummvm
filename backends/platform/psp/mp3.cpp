@@ -514,4 +514,4 @@ int Mp3PspStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

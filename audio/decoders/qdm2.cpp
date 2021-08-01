@@ -2606,6 +2606,6 @@ Codec *makeQDM2Decoder(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 	return new QDM2Stream(extraData, disposeExtraData);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

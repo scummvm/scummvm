@@ -33,7 +33,7 @@
 namespace Audio {
 class AudioStream;
 class SeekableAudioStream;
-} // End of namespace Audio
+} // End of namespace Audio.
 
 namespace Kyra {
 

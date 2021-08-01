@@ -1376,4 +1376,4 @@ RewindableAudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream, Di
 	return soundStream;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

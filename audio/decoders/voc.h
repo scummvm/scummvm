@@ -86,6 +86,6 @@ extern int getSampleRateFromVOCRate(int vocSR);
  */
 SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

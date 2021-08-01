@@ -46,7 +46,7 @@ class Codec;
 Codec *makeQDM2Decoder(Common::SeekableReadStream *extraData,
 					   DisposeAfterUse::Flag disposeExtraData = DisposeAfterUse::NO);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // AUDIO_QDM2_H
 #endif // Mohawk/Plugins guard

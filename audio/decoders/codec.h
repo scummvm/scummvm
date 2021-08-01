@@ -46,6 +46,6 @@ public:
 	virtual AudioStream *decodeFrame(Common::SeekableReadStream &data) = 0;
 };
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

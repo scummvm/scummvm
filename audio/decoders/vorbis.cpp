@@ -252,6 +252,6 @@ SeekableAudioStream *makeVorbisStream(
 	}
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // #ifdef USE_VORBIS

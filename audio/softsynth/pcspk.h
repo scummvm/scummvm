@@ -80,6 +80,6 @@ protected:
 	static int8 generateTriangle(uint32 x, uint32 oscLength);
 };
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // AUDIO_SOFTSYNTH_PCSPEAKER_H

@@ -138,6 +138,6 @@ protected:
 	Common::Array<QuickTimeAudioTrack *> _audioTracks;
 };
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

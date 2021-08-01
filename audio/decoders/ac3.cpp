@@ -200,5 +200,5 @@ PacketizedAudioStream *makeAC3Stream(Common::SeekableReadStream &firstPacket, do
 	return stream.release();
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.
 

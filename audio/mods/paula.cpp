@@ -290,7 +290,7 @@ float Paula::filterCalculateA0(int rate, int cutoff) {
 	return 1 / (1 + 1 / omega);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 
 //	Plugin interface

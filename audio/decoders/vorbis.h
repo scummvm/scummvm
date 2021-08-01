@@ -66,7 +66,7 @@ SeekableAudioStream *makeVorbisStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // #ifdef USE_VORBIS
 #endif // #ifndef AUDIO_VORBIS_H

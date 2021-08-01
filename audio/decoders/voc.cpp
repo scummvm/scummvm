@@ -567,4 +567,4 @@ SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flag
 	}
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

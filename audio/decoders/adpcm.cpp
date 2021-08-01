@@ -615,4 +615,4 @@ PacketizedAudioStream *makePacketizedADPCMStream(ADPCMType type, int rate, int c
 	return new PacketizedADPCMStream(type, rate, channels, blockAlign);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

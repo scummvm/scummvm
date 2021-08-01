@@ -125,4 +125,4 @@ SeekableAudioStream *makeMuLawStream(Common::SeekableReadStream *stream, Dispose
 	return new G711MuLawStream(stream, disposeAfterUse, rate, channels);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

@@ -88,7 +88,7 @@ PacketizedAudioStream *makePacketizedMP3Stream(
 PacketizedAudioStream *makePacketizedMP3Stream(
 	uint channels, uint rate);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // #ifdef USE_MAD
 #endif // #ifndef AUDIO_MP3_H

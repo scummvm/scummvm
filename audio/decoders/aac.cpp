@@ -126,6 +126,6 @@ Codec *makeAACDecoder(Common::SeekableReadStream *extraData, DisposeAfterUse::Fl
 	return new AACDecoder(extraData, disposeExtraData);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // #ifdef USE_FAAD

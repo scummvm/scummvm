@@ -1430,6 +1430,6 @@ const float lspCodebook[kLSPCoefCount][16] = {
 	{ -1.56144989, -1.65944032, -1.72689685, -1.77857740, -1.82203011, -1.86220079, -1.90283983, -1.94820479, },
 };
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif // AUDIO_DECODERS_WMADATA_H

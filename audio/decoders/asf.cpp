@@ -465,4 +465,4 @@ SeekableAudioStream *makeASFStream(
 	return s;
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

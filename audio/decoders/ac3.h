@@ -29,7 +29,7 @@
 
 namespace Common {
 class SeekableReadStream;
-} // End of namespace Common
+} // End of namespace Common.
 
 namespace Audio {
 
@@ -43,7 +43,7 @@ class PacketizedAudioStream;
  */
 PacketizedAudioStream *makeAC3Stream(Common::SeekableReadStream &firstPacket, double decibel = 0.0);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif
 

@@ -243,4 +243,4 @@ PacketizedAudioStream *makePacketizedRawStream(int rate, byte flags) {
 	return new PacketizedRawStream(rate, flags);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.

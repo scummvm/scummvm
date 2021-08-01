@@ -263,6 +263,6 @@ private:
 	bool _topNibble;
 };
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

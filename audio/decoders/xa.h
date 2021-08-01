@@ -55,6 +55,6 @@ RewindableAudioStream *makeXAStream(
 	int rate,
 	DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-} // End of namespace Audio
+} // End of namespace Audio.
 
 #endif

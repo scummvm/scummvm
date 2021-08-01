@@ -40,7 +40,7 @@ class TownsPC98_AudioDriver;
 namespace Audio {
 class PCSpeaker;
 class MaxTrax;
-} // End of namespace Audio
+} // End of namespace Audio.
 
 namespace Kyra {
 

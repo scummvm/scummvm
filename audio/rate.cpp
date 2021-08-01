@@ -366,4 +366,4 @@ RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stere
 		return makeRateConverter<false, false>(inrate, outrate);
 }
 
-} // End of namespace Audio
+} // End of namespace Audio.
