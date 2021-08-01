@@ -181,6 +181,10 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 		return nullptr;
 	}
 
+	// skip creating widget when the bbox is not available, maybe we should create it using initialRect
+	if (!bbox.width() || !bbox.height())
+		return nullptr;
+
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	// scale for drawing a different size sprite
