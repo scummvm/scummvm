@@ -27,11 +27,11 @@
 
 namespace Common {
 class SeekableReadStream;
-} // End of namespace Common
+} // End of namespace Common.
 
 namespace Audio {
 class SeekableAudioStream;
-} // End of namespace Audio
+} // End of namespace Audio.
 
 namespace Kyra {
 

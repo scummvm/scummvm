@@ -256,4 +256,4 @@ void FFT::calc(Complex *z) {
 	fft(1 << _bits, _bits, z);
 }
 
-} // End of namespace Common
+} // End of namespace Common.

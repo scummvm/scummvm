@@ -1081,4 +1081,4 @@ const float *getSineWindow(int bits) {
 	return sineWindows[bits];
 }
 
-} // End of namespace Common
+} // End of namespace Common.

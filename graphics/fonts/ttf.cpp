@@ -1079,6 +1079,6 @@ Font *findTTFace(const Common::Array<Common::String> &files, const Common::U32St
 
 namespace Common {
 DECLARE_SINGLETON(Graphics::TTFLibrary);
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

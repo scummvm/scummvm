@@ -69,6 +69,6 @@ String ImageMap::findMapArea(int16 x, int16 y) {
 }
 
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifdef ENABLE_VKEYBD

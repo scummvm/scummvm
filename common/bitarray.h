@@ -71,6 +71,6 @@ private:
 	byte *_bits;
 };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

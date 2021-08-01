@@ -261,4 +261,4 @@ bool WinResources::VersionInfo::readVSVersionInfo(SeekableReadStream *res) {
 	return true;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

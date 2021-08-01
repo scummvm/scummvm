@@ -1021,6 +1021,6 @@ public:
 	inline reference operator[](const index_type index) { return _span[index]; }
 };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

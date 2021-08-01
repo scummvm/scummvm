@@ -97,4 +97,4 @@ void RDFT::calc(float *data) {
 
 }
 
-} // End of namespace Common
+} // End of namespace Common.

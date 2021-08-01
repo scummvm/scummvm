@@ -84,6 +84,6 @@ WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

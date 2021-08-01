@@ -813,4 +813,4 @@ Archive *makeArjArchive(const String &name) {
 	return new ArjArchive(name);
 }
 
-} // End of namespace Common
+} // End of namespace Common.

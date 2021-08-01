@@ -707,4 +707,4 @@ MacResManager::MacVers *MacResManager::parseVers(SeekableReadStream *vvers) {
 	return v;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

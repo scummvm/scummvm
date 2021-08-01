@@ -105,7 +105,7 @@ private:
 	Rect _bound;
 };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifdef ENABLE_VKEYBD
 

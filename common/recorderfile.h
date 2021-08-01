@@ -204,6 +204,6 @@ private:
 	bool grabScreenAndComputeMD5(Graphics::Surface &screen, uint8 md5[16]);
 };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

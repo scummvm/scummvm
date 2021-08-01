@@ -60,6 +60,6 @@ void getLanguageYesNo(KeyCode &keyYes, KeyCode &keyNo);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

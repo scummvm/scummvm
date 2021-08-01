@@ -96,6 +96,6 @@ extern const char *getPlatformDescription(Platform id);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

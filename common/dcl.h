@@ -73,6 +73,6 @@ SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

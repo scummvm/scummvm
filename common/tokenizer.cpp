@@ -101,4 +101,4 @@ U32String U32StringTokenizer::nextToken() {
 }
 
 
-} // End of namespace Common
+} // End of namespace Common.

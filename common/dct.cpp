@@ -206,4 +206,4 @@ void DCT::calcDSTI(float *data) {
 	data[n - 1] = 0;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

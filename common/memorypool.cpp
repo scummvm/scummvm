@@ -179,4 +179,4 @@ void MemoryPool::freeUnusedPages() {
 	}
 }
 
-} // End of namespace Common
+} // End of namespace Common.

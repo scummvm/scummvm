@@ -95,4 +95,4 @@ HardwareInput InputWatcher::checkForCapturedInput() {
 	return hwInput;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

@@ -567,6 +567,6 @@ EventSource *makeKeyboardRepeatingEventSource(EventSource *eventSource);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

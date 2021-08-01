@@ -65,4 +65,4 @@ Common::U32String UpdateManager::updateIntervalToString(int interval) {
 	}
 }
 
-} // End of namespace Common
+} // End of namespace Common.

@@ -294,4 +294,4 @@ Archive *makeInstallShieldArchive(const String &baseName) {
 	return cab;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

@@ -534,4 +534,4 @@ Common::Archive *createStuffItArchive(const Common::String &fileName) {
 	return archive;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

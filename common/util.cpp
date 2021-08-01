@@ -200,4 +200,4 @@ Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut) {
 	return Common::String::format("%.1f", floating);
 }
 
-} // End of namespace Common
+} // End of namespace Common.

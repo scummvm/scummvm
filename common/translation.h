@@ -253,7 +253,7 @@ public:
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #define TransMan Common::MainTranslationManager::instance()
 

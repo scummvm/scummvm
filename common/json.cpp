@@ -1231,4 +1231,4 @@ String JSONValue::indent(size_t depth) {
 	return indentStr;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

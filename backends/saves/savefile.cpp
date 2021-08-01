@@ -108,4 +108,4 @@ String SaveFileManager::popErrorDesc() {
 	return err;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

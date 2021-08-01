@@ -29,6 +29,6 @@ namespace Common {
 
 const float *getSineWindow(int bits);
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // COMMON_SINEWINDOWS_H

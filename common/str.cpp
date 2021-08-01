@@ -837,7 +837,7 @@ String toPrintable(const String &in, bool keepNewLines) {
 	return res;
 }
 
-} // End of namespace Common
+} // End of namespace Common.
 
 // Portable implementation of stricmp / strcasecmp / strcmpi.
 // TODO: Rename this to Common::strcasecmp

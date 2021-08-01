@@ -393,6 +393,6 @@ void replace(It begin, It end, const Dat &original, const Dat &replaced) {
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

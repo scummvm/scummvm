@@ -319,6 +319,6 @@ Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

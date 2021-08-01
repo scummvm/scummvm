@@ -79,4 +79,4 @@ SineTable::~SineTable() {
 	delete[] _table;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

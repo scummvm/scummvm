@@ -71,7 +71,7 @@ void setErrorHandler(ErrorHandler handler);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 /**
  * @addtogroup common_text_console

@@ -217,6 +217,6 @@ U32String toPrintable(const U32String &src, bool keepNewLines = true);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

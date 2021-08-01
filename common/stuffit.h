@@ -54,6 +54,6 @@ Archive *createStuffItArchive(const String &fileName);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

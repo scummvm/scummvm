@@ -87,4 +87,4 @@ Error::Error(ErrorCode code, const String &desc)
 }
 
 
-} // End of namespace Common
+} // End of namespace Common.

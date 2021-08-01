@@ -728,4 +728,4 @@ bool ConfigManager::Domain::hasKVComment(const String &key) const {
 	return _keyValueComments.contains(key);
 }
 
-} // End of namespace Common
+} // End of namespace Common.

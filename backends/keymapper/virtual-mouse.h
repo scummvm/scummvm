@@ -86,6 +86,6 @@ private:
 	uint32 _lastUpdateMillis;
 };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef BACKENDS_KEYMAPPER_VIRTUAL_MOUSE_H

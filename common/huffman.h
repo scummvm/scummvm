@@ -171,6 +171,6 @@ uint32 Huffman<BITSTREAM>::getSymbol(BITSTREAM &bits) const {
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // COMMON_HUFFMAN_H

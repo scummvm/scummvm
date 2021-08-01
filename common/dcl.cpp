@@ -519,4 +519,4 @@ SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream) {
 	return nullptr;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

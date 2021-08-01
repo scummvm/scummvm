@@ -378,7 +378,7 @@ size_t strlcat(char *dst, const char *src, size_t size);
 #define tag2str(x)	Common::tag2string(x).c_str()
 
 
-} // End of namespace Common
+} // End of namespace Common.
 
 extern int scumm_stricmp(const char *s1, const char *s2);
 extern int scumm_strnicmp(const char *s1, const char *s2, uint n);

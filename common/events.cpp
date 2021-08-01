@@ -262,4 +262,4 @@ EventSource *makeKeyboardRepeatingEventSource(EventSource *eventSource) {
 	return new KeyboardRepeatEventSourceWrapper(eventSource);
 }
 
-} // End of namespace Common
+} // End of namespace Common.

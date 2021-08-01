@@ -928,4 +928,4 @@ String U32String::encode(CodePage page) const {
 	return string;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

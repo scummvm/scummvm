@@ -168,6 +168,6 @@ bool operator!=(const Iterator<T> &a, const ConstIterator<T> &b) {
 }
 
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

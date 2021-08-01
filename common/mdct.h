@@ -61,6 +61,6 @@ private:
 	void calcHalfIMDCT(float *output, const float *input);
 };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // COMMON_MDCT_H

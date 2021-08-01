@@ -29,6 +29,6 @@ namespace Common {
 	template <typename T> struct RemoveConst { typedef T type; };
 	template <typename T> struct RemoveConst<const T> { typedef T type; };
 	template <typename T> struct AddConst { typedef const T type; };
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

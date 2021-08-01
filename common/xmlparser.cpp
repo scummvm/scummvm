@@ -519,4 +519,4 @@ bool XMLParser::parseToken() {
 	return isSpace(_char) != 0 || _char == '>' || _char == '=' || _char == '/';
 }
 
-} // End of namespace Common
+} // End of namespace Common.

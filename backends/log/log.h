@@ -29,7 +29,7 @@ class OSystem;
 
 namespace Common {
 class WriteStream;
-} // End of namespace Common
+} // End of namespace Common.
 
 namespace Backends {
 namespace Log {

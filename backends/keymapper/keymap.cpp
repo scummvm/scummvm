@@ -377,4 +377,4 @@ bool Keymap::areMappingsIdentical(const Array<HardwareInput> &mappingsA, const S
 	return foundCount == mappingsA.size() && foundCount == validDefaultMappings;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

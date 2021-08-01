@@ -94,4 +94,4 @@ bool WinResources::loadFromEXE(const String &fileName) {
 	return loadFromEXE(file);
 }
 
-} // End of namespace Common
+} // End of namespace Common.

@@ -264,4 +264,4 @@ WinResources::VersionInfo *NEResources::parseVersionInfo(SeekableReadStream *res
 	return info;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

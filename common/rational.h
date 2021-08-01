@@ -119,6 +119,6 @@ bool operator<=(int left, const Rational &right);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

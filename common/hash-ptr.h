@@ -49,6 +49,6 @@ struct Hash<T *> {
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

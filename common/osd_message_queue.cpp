@@ -59,4 +59,4 @@ bool OSDMessageQueue::pollEvent(Common::Event &event) {
 	return false;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

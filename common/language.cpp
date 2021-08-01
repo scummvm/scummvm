@@ -134,4 +134,4 @@ const String getGameGUIOptionsDescriptionLanguage(Language lang) {
 	return String("lang_") + getLanguageDescription(lang);
 }
 
-} // End of namespace Common
+} // End of namespace Common.

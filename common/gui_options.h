@@ -121,6 +121,6 @@ void updateGameGUIOptions(const String &options, const String &langOption);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

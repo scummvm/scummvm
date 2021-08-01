@@ -63,6 +63,6 @@ String convertUtf32ToUtf8(const U32String &str);
 U32String convertToU32String(const char *str, CodePage page = kUtf8);
 String convertFromU32String(const U32String &str, CodePage page = kUtf8);
 uint16 convertUHCToUCS(uint8 high, uint8 low);
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

@@ -65,6 +65,6 @@ String computeStreamMD5AsString(ReadStream &stream, uint32 length = 0);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

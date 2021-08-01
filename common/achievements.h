@@ -280,6 +280,6 @@ private:
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef COMMON_ACHIEVEMENTS_MANAGER_H

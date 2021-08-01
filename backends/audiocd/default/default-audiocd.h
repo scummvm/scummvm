@@ -28,7 +28,7 @@
 
 namespace Common {
 class String;
-} // End of namespace Common
+} // End of namespace Common.
 
 /**
  * The default audio cd manager. Implements emulation of audio cd playback.

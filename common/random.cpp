@@ -63,4 +63,4 @@ int RandomSource::getRandomNumberRngSigned(int min, int max) {
 	return getRandomNumber(max - min) + min;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

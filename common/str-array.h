@@ -46,6 +46,6 @@ typedef Array<U32String>	U32StringArray;
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

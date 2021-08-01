@@ -429,7 +429,7 @@ String toPrintable(const String &src, bool keepNewLines = true);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 extern int scumm_stricmp(const char *s1, const char *s2);
 extern int scumm_strnicmp(const char *s1, const char *s2, uint n);

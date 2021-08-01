@@ -157,4 +157,4 @@ void MDCT::calcHalfIMDCT(float *output, const float *input) {
 	}
 }
 
-} // End of namespace Common
+} // End of namespace Common.

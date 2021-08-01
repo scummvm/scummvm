@@ -149,7 +149,7 @@ private:
 
 };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifdef ENABLE_VKEYBD
 

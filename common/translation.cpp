@@ -412,6 +412,6 @@ bool TranslationManager::checkHeader(File &in) {
 	return true;
 }
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // USE_TRANSLATION

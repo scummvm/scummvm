@@ -61,6 +61,6 @@ private:
 	HardwareInput _hwInput;
 };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef COMMON_INPUT_WATCHER_H

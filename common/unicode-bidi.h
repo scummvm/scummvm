@@ -72,6 +72,6 @@ String convertBiDiString(const String &input, const Common::CodePage page, BiDiP
 // calls convertBiDiString for each line in isolation
 String convertBiDiStringByLines(const String &input, const Common::CodePage page, BiDiParagraph dir = BIDI_PAR_ON);
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

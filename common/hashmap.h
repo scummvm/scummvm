@@ -749,6 +749,6 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

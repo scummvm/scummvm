@@ -185,4 +185,4 @@ bool MacCursor::readFromCRSR(Common::SeekableReadStream &stream, bool forceMonoc
 	return stream.pos() == stream.size();
 }
 
-} // End of namespace Common
+} // End of namespace Common.

@@ -450,4 +450,4 @@ void INIFile::allowNonEnglishCharacters() {
 	_allowNonEnglishCharacters = true;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

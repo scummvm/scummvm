@@ -485,6 +485,6 @@ typedef BitStreamImpl<BitStreamMemoryStream, 32, false, false> BitStreamMemory32
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // COMMON_BITSTREAM_H

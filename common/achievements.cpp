@@ -440,4 +440,4 @@ const StatDescription *AchievementsManager::getStatDescription(uint16 index) con
 }
 
 
-} // End of namespace Common
+} // End of namespace Common.

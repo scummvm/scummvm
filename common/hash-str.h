@@ -81,6 +81,6 @@ struct Hash<const char *> {
 // String map -- by default case insensitive
 typedef HashMap<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo> StringMap;
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

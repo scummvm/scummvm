@@ -195,6 +195,6 @@ private:
 
 typedef Array<Keymap *> KeymapArray;
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef COMMON_KEYMAP_H

@@ -71,6 +71,6 @@ void uninitialized_fill_n(Type *dst, size_t n, const Value &x) {
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

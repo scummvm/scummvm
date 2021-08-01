@@ -105,6 +105,6 @@ bool checkGameGUIOptionLanguage(Common::Language lang, const String &str);
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

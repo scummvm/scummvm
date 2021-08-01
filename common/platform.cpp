@@ -115,4 +115,4 @@ const char *getPlatformDescription(Platform id) {
 	return l->description;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

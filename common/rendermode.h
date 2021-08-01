@@ -82,6 +82,6 @@ extern String allRenderModesGUIOs();
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif

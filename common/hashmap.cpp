@@ -161,4 +161,4 @@ void updateHashCollisionStats(int collisions, int dummyHits, int lookups, int ar
 }
 #endif
 
-} // End of namespace Common
+} // End of namespace Common.

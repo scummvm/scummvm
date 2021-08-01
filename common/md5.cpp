@@ -292,4 +292,4 @@ String computeStreamMD5AsString(ReadStream &stream, uint32 length) {
 	return md5;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

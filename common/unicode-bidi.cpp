@@ -149,4 +149,4 @@ UnicodeBiDiText convertBiDiU32String(const U32String &input, BiDiParagraph dir) 
 	return UnicodeBiDiText(input, dir);
 }
 
-} // End of namespace Common
+} // End of namespace Common.

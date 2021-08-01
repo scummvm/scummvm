@@ -243,4 +243,4 @@ File *PEResources::getResource(const WinResourceID &type, const WinResourceID &i
 	return file;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

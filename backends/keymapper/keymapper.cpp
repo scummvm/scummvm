@@ -446,4 +446,4 @@ bool DelayedEventSource::allowMapping() const {
 	return false; // Events from this source have already been mapped, and should not be mapped again
 }
 
-} // End of namespace Common
+} // End of namespace Common.

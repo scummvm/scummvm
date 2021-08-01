@@ -42,7 +42,7 @@ namespace Common {
 class OutSaveFile;
 class SeekableReadStream;
 class WriteStream;
-} // End of namespace Common
+} // End of namespace Common.
 
 namespace Graphics {
 struct Surface;

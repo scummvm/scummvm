@@ -346,6 +346,6 @@ protected:
 
 /** @} */
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // BACKENDS_TEXT_TO_SPEECH_ABSTRACT_H

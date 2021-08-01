@@ -76,4 +76,4 @@ CosineTable::~CosineTable() {
 	delete[] _table;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

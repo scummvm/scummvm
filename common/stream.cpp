@@ -563,4 +563,4 @@ WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize) 
 	return nullptr;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

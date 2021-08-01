@@ -203,6 +203,6 @@ private:
 	uint32 _delayedEffectiveTime;
 };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef COMMON_KEYMAPPER_H

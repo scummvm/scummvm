@@ -325,4 +325,4 @@ bool operator<=(int left, const Rational &right) {
 	return right >= left;
 }
 
-} // End of namespace Common
+} // End of namespace Common.

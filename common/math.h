@@ -168,6 +168,6 @@ inline T hypotenuse(T xv, T yv) {
 	return (T)sqrt((double)(xv * xv + yv * yv));
 }
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // COMMON_MATH_H

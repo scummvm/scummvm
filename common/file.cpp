@@ -233,4 +233,4 @@ int64 DumpFile::size() const {
 	return ws ? ws->size() : -1;
 }
 
-} // End of namespace Common
+} // End of namespace Common.
