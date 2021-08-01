@@ -27,6 +27,7 @@ MODULE_OBJS := \
 	mdct.o \
 	mutex.o \
 	osd_message_queue.o \
+	path.o \
 	platform.o \
 	punycode.o \
 	quicktime.o \
