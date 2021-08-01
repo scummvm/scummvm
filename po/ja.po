@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-01 14:12+0000\n"
-"PO-Revision-Date: 2021-07-29 08:25+0000\n"
+"PO-Revision-Date: 2021-08-01 17:17+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -952,7 +952,7 @@ msgstr "画面上コントロールを表示する"
 
 #: gui/options.cpp:1229
 msgid "Show SAF revoke permissions overlay button"
-msgstr ""
+msgstr "SAF権限の取り消しをボタン上に表示"
 
 #: gui/options.cpp:1233
 msgid "Touchpad mouse mode"
@@ -960,7 +960,7 @@ msgstr "タッチパッドマウスモード"
 
 #: gui/options.cpp:1237
 msgid "Swap Menu and Back buttons"
-msgstr "ニューと戻るボタンを入れ替えする"
+msgstr "メニューと戻るボタンを入れ替え"
 
 #: gui/options.cpp:1242
 msgid "Pointer Speed:"
@@ -6127,14 +6127,12 @@ msgstr ""
 "ん。"
 
 #: engines/scumm/detection.cpp:204
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth scrolling"
-msgstr "歩行中はスムーズスクロールを有効にする"
+msgstr "スムーズスクロールを有効化"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(通常の8px単位でのスクロールの代わりに)"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
