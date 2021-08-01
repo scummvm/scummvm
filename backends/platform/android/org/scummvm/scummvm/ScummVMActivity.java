@@ -417,19 +417,19 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 								// TODO - "Swipe" behavior does not seem to work currently. Should we support it?
 								public void swipeLeft() {
-									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeLeft");
+//									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeLeft");
 								}
 
 								public void swipeRight() {
-									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeRight" );
+//									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeRight" );
 								}
 
 								public void swipeDown() {
-									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeDown" );
+//									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeDown" );
 								}
 
 								public void swipeUp() {
-									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeUp ");
+//									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeUp ");
 								}
 								public void onKey(int key, int[] keysAround) {
 //									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onKey key: " + key );
@@ -582,7 +582,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			});
 		}
 	};
-
 
 	private class MyScummVM extends ScummVM {
 
@@ -789,6 +788,36 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //				Log.d(ScummVM.LOG_TAG, "(post SAF access) We can read from folder:" + dirPath);
 //
 //			}
+
+			return retRes[0];
+		}
+
+
+		// This is a simplified version of createDirectoryWithSAF
+		// TODO Maybe we could merge isDirectoryWritableWithSAF() with createDirectoryWithSAF() using an extra argument parameter
+		@Override
+		protected boolean isDirectoryWritableWithSAF(String dirPath) {
+			final boolean[] retRes = {false};
+
+			Log.d(ScummVM.LOG_TAG, "Check if folder writable: " + dirPath);
+			File folderToCheck = new File (dirPath);
+			if (folderToCheck.canWrite()) {
+				Log.d(ScummVM.LOG_TAG, "This path has write permission!" + dirPath);
+			} else {
+				Log.d(ScummVM.LOG_TAG, "Trying to get write access with SAF");
+				if (getStorageAccessFrameworkTreeUri() == null) {
+					requestStorageAccessFramework(dirPath);
+				} else {
+					Log.d(ScummVM.LOG_TAG, "Already requested Storage Access (Storage Access Framework) in the past (share prefs saved)!");
+				}
+			}
+
+			if (canWriteFile(folderToCheck, true)) {
+				Log.d(ScummVM.LOG_TAG, "(post SAF request) Writing is possible for this directory node");
+				retRes[0] = true;
+			} else {
+				Log.d(ScummVM.LOG_TAG, "(post SAF request) Error - writing is still not possible for this directory node");
+			}
 
 			return retRes[0];
 		}
@@ -2158,6 +2187,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		_scummvm.displayMessageOnOSD(getString(R.string.saf_request_prompt) + dirPathSample);
 
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+			// Directory picker
 			Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 			intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
 			                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -2298,14 +2328,20 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		} catch (Exception ignored) {
 			originalDirectory = true;
 		}
+
 		Uri treeUri;
 		if ((treeUri = getStorageAccessFrameworkTreeUri()) == null) {
 			return null;
 		}
+
 		DocumentFile dof = DocumentFile.fromTreeUri(getApplicationContext(), treeUri);
 		if (originalDirectory) {
 			return dof;
 		}
+
+		// Important note: We cannot assume that anything sent here is a relative path on top of the *ONLY* SAF "root" path
+		//                 since the the user could select another SD Card (from multiple inserted or replaces the current one and inserts another)
+		// TODO Can we translate our path string "/storage/XXXX-XXXXX/folder/doc.ext' a content URI? or a document URI?
 		String[] parts = relPath.split("\\/");
 		for (int i = 0; i < parts.length; i++) {
 			DocumentFile nextDof = dof.findFile(parts[i]);

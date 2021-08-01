@@ -74,6 +74,7 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected boolean createDirectoryWithSAF(String dirPath);
 	abstract protected String createFileWithSAF(String filePath);
 	abstract protected void closeFileWithSAF(String hackyFilename);
+	abstract protected boolean isDirectoryWritableWithSAF(String dirPath);
 
 	public ScummVM(AssetManager asset_manager, SurfaceHolder holder, final MyScummVMDestroyedCallback scummVMDestroyedCallback) {
 		_asset_manager = asset_manager;

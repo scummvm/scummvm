@@ -87,6 +87,7 @@ public:
 	static bool createDirectoryWithSAF(const Common::String &dirPath);
 	static Common::U32String createFileWithSAF(const Common::String &filePath);
 	static void closeFileWithSAF(const Common::String &hackyFilename);
+	static bool isDirectoryWritableWithSAF(const Common::String &dirPath);
 
 private:
 	static JavaVM *_vm;
@@ -119,6 +120,7 @@ private:
 	static jmethodID _MID_createDirectoryWithSAF;
 	static jmethodID _MID_createFileWithSAF;
 	static jmethodID _MID_closeFileWithSAF;
+	static jmethodID _MID_isDirectoryWritableWithSAF;
 
 	static jmethodID _MID_EGL10_eglSwapBuffers;
 

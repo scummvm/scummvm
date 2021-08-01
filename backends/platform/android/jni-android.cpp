@@ -91,6 +91,7 @@ jmethodID JNI::_MID_deinitSurface = 0;
 jmethodID JNI::_MID_createDirectoryWithSAF = 0;
 jmethodID JNI::_MID_createFileWithSAF = 0;
 jmethodID JNI::_MID_closeFileWithSAF = 0;
+jmethodID JNI::_MID_isDirectoryWritableWithSAF = 0;
 
 jmethodID JNI::_MID_EGL10_eglSwapBuffers = 0;
 
@@ -561,6 +562,7 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, createDirectoryWithSAF, "(Ljava/lang/String;)Z");
 	FIND_METHOD(, createFileWithSAF, "(Ljava/lang/String;)Ljava/lang/String;");
 	FIND_METHOD(, closeFileWithSAF, "(Ljava/lang/String;)V");
+	FIND_METHOD(, isDirectoryWritableWithSAF, "(Ljava/lang/String;)Z");
 
 	_jobj_egl = env->NewGlobalRef(egl);
 	_jobj_egl_display = env->NewGlobalRef(egl_display);
@@ -814,7 +816,6 @@ Common::U32String JNI::createFileWithSAF(const Common::String &filePath) {
 
 	Common::U32String hackyFilenameStr = convertFromJString(env, hackyFilenameJSTR);
 
-	//LOGD("JNI - _MID_createFileWithSAF returned %s", hackyFilenameStr.c_str());
 	env->DeleteLocalRef(hackyFilenameJSTR);
 
 	return hackyFilenameStr;
@@ -833,6 +834,24 @@ void JNI::closeFileWithSAF(const Common::String &hackyFilename) {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
+
+}
+
+bool JNI::isDirectoryWritableWithSAF(const Common::String &dirPath) {
+	JNIEnv *env = JNI::getEnv();
+	jstring javaDirPath = env->NewStringUTF(dirPath.c_str());
+
+	bool isWritable = env->CallBooleanMethod(_jobj, _MID_isDirectoryWritableWithSAF, javaDirPath);
+
+	if (env->ExceptionCheck()) {
+		LOGE("JNI - Failed to check if directory is writable SAF enhanced method");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+		isWritable = false;
+	}
+
+	return isWritable;
 
 }
 
