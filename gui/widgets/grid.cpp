@@ -69,9 +69,9 @@ void GridItemWidget::move(int x, int y) {
 
 void GridItemWidget::drawWidget() {
 	if (_activeEntry->isHeader) {
-		g_gui.theme()->drawFoldIndicator(Common::Rect(_x, _y, _x + _h, _y + _h), _grid->groupExpanded(_activeEntry->entryID));
-		g_gui.theme()->drawText(Common::Rect(_x + _h, _y, _x + _w, _y + _h), Common::U32String(_activeEntry->title),
-								ThemeEngine::kStateEnabled, Graphics::kTextAlignLeft);
+		g_gui.theme()->drawFoldIndicator(Common::Rect(_x - _h, _y, _x, _y + _h), _grid->groupExpanded(_activeEntry->entryID));
+		g_gui.theme()->drawText(Common::Rect(_x, _y, _x + _w, _y + _h), Common::U32String(_activeEntry->title),
+								ThemeEngine::kStateEnabled, Graphics::kTextAlignLeft, ThemeEngine::kTextInversionFocus, _h, false);
 		return;
 	}
 	int thumbHeight = _grid->getThumbnailHeight();
