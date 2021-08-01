@@ -12,7 +12,7 @@ va_macro_src = [("engines\\sci", "resource_patcher.cpp"), ("engines\\ags", "mana
 oneline_patch_src = [
 ("ptr.h", ["common", r'#include <cstddef>', r'//#include <cstddef>']),
 
-("object.cpp", ["gui", r'error("Unable to load widget position for \'%s\'. Please check your theme files", _name.c_str());', r'warning("Unable to load widget position for \'%s\'. Please check your theme files", _name.c_str());']),
+("object.cpp", ["gui", '''error("Unable to load widget position for \'%s\'. Please check your theme files", _name.c_str());''', '''warning("Unable to load widget position for \'%s\'. Please check your theme files", _name.c_str());''']),
 # ("", ["", "", ""]),
 ]
 
