@@ -356,13 +356,8 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
-	_gridHeaderHeight = kLineHeight;
-	_gridHeaderWidth = _thumbnailWidth;
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
-
-	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
-	_gridItemWidth = _thumbnailWidth;
 
 	loadPlatformIcons();
 	loadFlagIcons();
@@ -390,13 +385,8 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
-	_gridHeaderHeight = kLineHeight;
-	_gridHeaderWidth = _thumbnailWidth;
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
-
-	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight);
-	_gridItemWidth = _thumbnailWidth;
 
 	loadPlatformIcons();
 	loadFlagIcons();
@@ -504,17 +494,15 @@ void GridWidget::sortGroups() {
 		uint groupID = _groupValueIndex[header];
 
 		_sortedEntryList.push_back(GridItemInfo(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix, groupID));
-		_sortedEntryList.back().rect.setHeight(_gridHeaderHeight);
-		_sortedEntryList.back().rect.setWidth(_gridHeaderWidth);
 
 		if (_groupExpanded[groupID]) {
 			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
 				_sortedEntryList.push_back(_dataEntryList[*k]);
-				_sortedEntryList.back().rect.setHeight(_gridItemHeight);
-				_sortedEntryList.back().rect.setWidth(_gridItemWidth);
 			}
 		}
 	}
+
+	calcEntrySizes();
 	calcInnerHeight();
 	scrollBarRecalc();
 	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list
@@ -752,6 +740,30 @@ void GridWidget::calcInnerHeight() {
 	_innerWidth = _gridXSpacing + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
 }
 
+void GridWidget::calcEntrySizes() {
+	_gridHeaderHeight = kLineHeight;
+	_gridHeaderWidth = _scrollWindowWidth - _scrollBarWidth - 2 * _gridXSpacing;
+
+	for (uint i = 0; i != _sortedEntryList.size(); ++i) {
+		GridItemInfo *entry = &_sortedEntryList[i];
+		if (entry->isHeader) {
+			entry->rect.setHeight(_gridHeaderHeight);
+			entry->rect.setWidth(_gridHeaderWidth);
+		} else {
+			int titleRows;
+			if (_isTitlesVisible) {
+				Array<U32String> titleLines;
+				g_gui.getFont().wordWrapText(entry->title, _gridItemWidth, titleLines);
+				titleRows = MIN(2U, titleLines.size());
+			} else {
+				titleRows = 0;
+			}
+			entry->rect.setHeight(_thumbnailHeight + titleRows * kLineHeight);
+			entry->rect.setWidth(_gridItemWidth);
+		}
+	}
+}
+
 void GridWidget::reflowLayout() {
 	Widget::reflowLayout();
 	destroyItems();
@@ -768,8 +780,6 @@ void GridWidget::reflowLayout() {
 		reloadThumbnails();
 		loadFlagIcons();
 	}
-	_gridHeaderHeight = kLineHeight;
-	_gridHeaderWidth = _scrollWindowWidth - _scrollBarWidth - 2 * _gridXSpacing;
 
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
@@ -785,6 +795,7 @@ void GridWidget::reflowLayout() {
 	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
 	_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
 
+	calcEntrySizes();
 	calcInnerHeight();
 
 	_scrollBar->checkBounds(_scrollBar->_currentPos);

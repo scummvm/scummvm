@@ -179,6 +179,7 @@ public:
 
 	void destroyItems();
 	void calcInnerHeight();
+	void calcEntrySizes();
 	void updateGrid();
 	void move(int x, int y);
 	void assignEntriesToItems();
