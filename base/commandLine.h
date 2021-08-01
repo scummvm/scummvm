@@ -55,6 +55,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
  */
 bool processSettings(Common::String &command, Common::StringMap &settings, Common::Error &err);
 
-} // End of namespace Base
+} // End of namespace Base.
 
 #endif

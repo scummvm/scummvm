@@ -1613,4 +1613,4 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	return false;
 }
 
-} // End of namespace Base
+} // End of namespace Base.
