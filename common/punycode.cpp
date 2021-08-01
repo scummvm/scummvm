@@ -303,9 +303,8 @@ String punycode_encodefilename(const String src) {
 		if ((byte)src[i] == 0x81) {	// In case we have our escape character present
 			dst += '\x81';
 			dst += '\x79';
-		// [\x00-\x1f\/":]
-		} else if (src[i] == '/' || src[i] == '"' || src[i] == ':' || src[i] == '*'
-				|| src[i] == '[' || src[i] == ']' || (byte)src[i] < 0x20) {
+		// Encode special symbols and non-printables
+		} else if (rindex("/\":*[]+|\\?%<>,;=", (byte)src[i]) || (byte)src[i] < 0x20) {
 			dst += '\x81';
 			dst += (byte)src[i] + '\x80';
 		} else {
