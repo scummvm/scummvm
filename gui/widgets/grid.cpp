@@ -493,7 +493,7 @@ void GridWidget::groupEntries() {
 }
 
 void GridWidget::sortGroups() {
-	uint oldListSize = _sortedEntryList.size();
+	uint oldHeight = _innerHeight;
 	_sortedEntryList.clear();
 
 	Common::sort(_groupHeaders.begin(), _groupHeaders.end());
@@ -520,8 +520,8 @@ void GridWidget::sortGroups() {
 	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list
 	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog,
 	// but not doing so the background of scrollbar isn't cleared.
-	if ((((uint)_scrollBar->_entriesPerPage < oldListSize) && (_scrollBar->_entriesPerPage > _innerHeight)) ||
-		(((uint)_scrollBar->_entriesPerPage > oldListSize) && (_scrollBar->_entriesPerPage < _innerHeight))) {
+	if ((((uint)_scrollBar->_entriesPerPage < oldHeight) && (_scrollBar->_entriesPerPage > _innerHeight)) ||
+		(((uint)_scrollBar->_entriesPerPage > oldHeight) && (_scrollBar->_entriesPerPage < _innerHeight))) {
 		g_gui.scheduleTopDialogRedraw();
 	} else {
 		markAsDirty();
