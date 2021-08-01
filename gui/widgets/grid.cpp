@@ -148,8 +148,7 @@ void GridItemWidget::drawWidget() {
 		}
 		Common::Rect r(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight);
 		for (uint k = 0; k < 2; ++k) {
-			g_gui.theme()->drawText(Common::Rect(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight),
-									titleLines[0], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter);
+			g_gui.theme()->drawText(r, titleLines[k], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter);
 			r.translate(0, kLineHeight);
 		}
 	}
