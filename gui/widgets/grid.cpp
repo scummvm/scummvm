@@ -464,7 +464,6 @@ void GridWidget::groupEntries() {
 	_itemsInGroup.clear();
 
 	for (uint i = 0; i < _dataEntryList.size(); ++i) {
-		int groupID;
 		U32String attrVal = _dataEntryList[i].attribute;
 		if (!_groupValueIndex.contains(attrVal)) {
 			int newGroupID = _groupValueIndex.size();
@@ -472,7 +471,7 @@ void GridWidget::groupEntries() {
 			_groupHeaders.push_back(attrVal);
 			_groupExpanded.push_back(true);
 		}
-		groupID = _groupValueIndex.getVal(attrVal);
+		int groupID = _groupValueIndex.getVal(attrVal);
 
 		_itemsInGroup[groupID].push_back(i);
 	}

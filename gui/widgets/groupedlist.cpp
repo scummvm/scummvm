@@ -121,7 +121,6 @@ void GroupedListWidget::groupByAttribute() {
 	}
 
 	for (uint i = 0; i < _dataList.size(); ++i) {
-		int groupID;
 		U32StringArray::iterator attrVal = _attributeValues.begin() + i;
 		if (!_groupValueIndex.contains(*attrVal)) {
 			int newGroupID = _groupValueIndex.size();
@@ -129,7 +128,7 @@ void GroupedListWidget::groupByAttribute() {
 			_groupHeaders.push_back(*attrVal);
 			_groupExpanded.push_back(true);
 		}
-		groupID = _groupValueIndex.getVal(*attrVal);
+		int groupID = _groupValueIndex.getVal(*attrVal);
 
 		_itemsInGroup[groupID].push_back(i);
 	}
