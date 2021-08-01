@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-01 13:11+0000\n"
+"POT-Creation-Date: 2021-08-01 14:12+0000\n"
 "PO-Revision-Date: 2021-07-28 21:54+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -167,8 +167,8 @@ msgstr ""
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
-#: engines/scumm/scumm.cpp:1342 engines/scumm/scumm.cpp:1368
-#: engines/scumm/scumm.cpp:1390 engines/scumm/scumm.cpp:2086
+#: engines/scumm/scumm.cpp:1349 engines/scumm/scumm.cpp:1375
+#: engines/scumm/scumm.cpp:1397 engines/scumm/scumm.cpp:2093
 #: engines/sky/compact.cpp:142 engines/sword1/animation.cpp:532
 #: engines/sword1/animation.cpp:553 engines/sword1/animation.cpp:569
 #: engines/sword1/animation.cpp:577 engines/sword1/control.cpp:889
@@ -3897,7 +3897,7 @@ msgstr "Cargar"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "No se pueden usar el guardado o carga rápidos en este lugar"
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2696
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2703
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3908,7 +3908,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2686
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2693
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3919,7 +3919,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2709
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2716
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6263,6 +6263,16 @@ msgstr ""
 "En principio, esta música estaba pensada para ordenadores Mac de baja gama y "
 "solo utiliza un canal de sonido."
 
+#: engines/scumm/detection.cpp:204
+#, fuzzy
+#| msgid "Enable smooth scrolling when walking"
+msgid "Enable smooth scrolling"
+msgstr "Activar el desplazamiento de pantalla suave al caminar"
+
+#: engines/scumm/detection.cpp:205
+msgid "(instead of the normal 8-pixels steps scrolling)"
+msgstr ""
+
 #: engines/scumm/dialogs.cpp:165
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
@@ -6926,7 +6936,7 @@ msgstr "No se ha incluido el soporte de HE v71+."
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "No se ha incluido el soporte para SCUMM v7-8."
 
-#: engines/scumm/scumm.cpp:540
+#: engines/scumm/scumm.cpp:541
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -6939,7 +6949,7 @@ msgstr ""
 "Para corregirla, se debe recortar la resolución a 320x200. Esta opción está "
 "disponible en la pestaña Motor."
 
-#: engines/scumm/scumm.cpp:1341
+#: engines/scumm/scumm.cpp:1348
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
@@ -6947,7 +6957,7 @@ msgstr ""
 "No se ha encontrado el ejecutable de Macintosh de Indy.\n"
 "Se desactivarán las fuentes en alta resolución."
 
-#: engines/scumm/scumm.cpp:1367
+#: engines/scumm/scumm.cpp:1374
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
@@ -6956,7 +6966,7 @@ msgstr ""
 "Se desactivará la música, así como la fuente y el cursor\n"
 "en alta resolución."
 
-#: engines/scumm/scumm.cpp:1389
+#: engines/scumm/scumm.cpp:1396
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -6964,7 +6974,7 @@ msgstr ""
 "No se ha encontrado el ejecutable de Macintosh de Monkey Island\n"
 "para reproducir los instrumentos. Se ha desactivado la música."
 
-#: engines/scumm/scumm.cpp:2084
+#: engines/scumm/scumm.cpp:2091
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6973,7 +6983,7 @@ msgstr ""
 "El soporte MIDI nativo requiere la actualización Roland de LucasArts,\n"
 "pero %s no está disponible. Se usará AdLib."
 
-#: engines/scumm/scumm.cpp:3011
+#: engines/scumm/scumm.cpp:3018
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-01 13:11+0000\n"
+"POT-Creation-Date: 2021-08-01 14:12+0000\n"
 "PO-Revision-Date: 2021-07-01 15:36+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -166,8 +166,8 @@ msgstr ""
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
-#: engines/scumm/scumm.cpp:1342 engines/scumm/scumm.cpp:1368
-#: engines/scumm/scumm.cpp:1390 engines/scumm/scumm.cpp:2086
+#: engines/scumm/scumm.cpp:1349 engines/scumm/scumm.cpp:1375
+#: engines/scumm/scumm.cpp:1397 engines/scumm/scumm.cpp:2093
 #: engines/sky/compact.cpp:142 engines/sword1/animation.cpp:532
 #: engines/sword1/animation.cpp:553 engines/sword1/animation.cpp:569
 #: engines/sword1/animation.cpp:577 engines/sword1/control.cpp:889
@@ -3954,7 +3954,7 @@ msgstr ""
 "Η γρήγορη φόρτωση ή αποθήκευση παιχνιδιού δεν υποστηρίζεται σε αυτή την "
 "περιοχή"
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2696
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2703
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3965,7 +3965,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2686
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2693
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3976,7 +3976,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2709
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2716
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6362,6 +6362,16 @@ msgid ""
 "channel."
 msgstr ""
 
+#: engines/scumm/detection.cpp:204
+#, fuzzy
+#| msgid "Enable smooth scrolling when walking"
+msgid "Enable smooth scrolling"
+msgstr "Ενεργοποίηση ομαλής κύλισης κατά το περπάτημα"
+
+#: engines/scumm/detection.cpp:205
+msgid "(instead of the normal 8-pixels steps scrolling)"
+msgstr ""
+
 #: engines/scumm/dialogs.cpp:165
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
@@ -7025,7 +7035,7 @@ msgstr "Η υποστήριξη του HE v71+ δεν έχει ενσωματω�
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Η υποστήριξη για SCUMM v7-8 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
-#: engines/scumm/scumm.cpp:540
+#: engines/scumm/scumm.cpp:541
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -7038,7 +7048,7 @@ msgstr ""
 "Η διόρθωση αναλογίας διαστάσεων μπορεί να επιτευχθεί αν επιλέξετε την "
 "περικοπή της ανάλυσης σε 320x200 από το φάκελο (tab) 'μηχανή'."
 
-#: engines/scumm/scumm.cpp:1341
+#: engines/scumm/scumm.cpp:1348
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
@@ -7046,7 +7056,7 @@ msgstr ""
 "Δεν βρέθηκε το εκτελέσιμο του 'Indy' για Macintosh. Οι εκδοχές\n"
 "υψηλής ανάλυσης γραμματοσειράς (font) θα απενεργοποιηθούν."
 
-#: engines/scumm/scumm.cpp:1367
+#: engines/scumm/scumm.cpp:1374
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
@@ -7055,7 +7065,7 @@ msgstr ""
 "εκδοχές\n"
 "υψηλής ανάλυσης γραμματοσειράς (font) θα απενεργοποιηθούν."
 
-#: engines/scumm/scumm.cpp:1389
+#: engines/scumm/scumm.cpp:1396
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -7063,7 +7073,7 @@ msgstr ""
 "Δεν ήταν δυνατή η εύρεση του εκτελέσιμου Macintosh 'Monkey Island' από\n"
 "το οποίο να διαβαστούν τα όργανα μουσικής. Η μουσική θα απενεργοποιηθεί."
 
-#: engines/scumm/scumm.cpp:2084
+#: engines/scumm/scumm.cpp:2091
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7072,7 +7082,7 @@ msgstr ""
 "Η υποστήριξη native MIDI απαιτεί την Αναβάθμιση Roland από τη LucasArts,\n"
 "αλλά το %s λείπει. Γίνεται χρήση AdLib αντ 'αυτού."
 
-#: engines/scumm/scumm.cpp:3011
+#: engines/scumm/scumm.cpp:3018
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "

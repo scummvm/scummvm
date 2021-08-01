@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-01 13:11+0000\n"
+"POT-Creation-Date: 2021-08-01 14:12+0000\n"
 "PO-Revision-Date: 2021-05-15 04:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -165,8 +165,8 @@ msgstr ""
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
-#: engines/scumm/scumm.cpp:1342 engines/scumm/scumm.cpp:1368
-#: engines/scumm/scumm.cpp:1390 engines/scumm/scumm.cpp:2086
+#: engines/scumm/scumm.cpp:1349 engines/scumm/scumm.cpp:1375
+#: engines/scumm/scumm.cpp:1397 engines/scumm/scumm.cpp:2093
 #: engines/sky/compact.cpp:142 engines/sword1/animation.cpp:532
 #: engines/sword1/animation.cpp:553 engines/sword1/animation.cpp:569
 #: engines/sword1/animation.cpp:577 engines/sword1/control.cpp:889
@@ -3842,7 +3842,7 @@ msgstr "불러오기"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "빠른 저장과 불러오기는 여기서는 지원되지 않습니다"
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2696
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2703
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3853,7 +3853,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2686
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2693
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3864,7 +3864,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2709
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2716
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6140,6 +6140,16 @@ msgid ""
 "channel."
 msgstr ""
 
+#: engines/scumm/detection.cpp:204
+#, fuzzy
+#| msgid "Enable smooth scrolling when walking"
+msgid "Enable smooth scrolling"
+msgstr "걸을 때 부드러운 스크롤을 활성화합니다"
+
+#: engines/scumm/detection.cpp:205
+msgid "(instead of the normal 8-pixels steps scrolling)"
+msgstr ""
+
 #: engines/scumm/dialogs.cpp:165
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
@@ -6803,7 +6813,7 @@ msgstr "HE v71+ 지원이 컴파일 되지 않음"
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "SCUMM v7-8 지원이 컴파일 되지 않음"
 
-#: engines/scumm/scumm.cpp:540
+#: engines/scumm/scumm.cpp:541
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -6814,7 +6824,7 @@ msgstr ""
 "에 종횡비 보정을 지원하지 않습니다.\n"
 "'엔진' 탭에서 해상도를 320x200으로 잘라내면 종횡비 보정이 가능합니다."
 
-#: engines/scumm/scumm.cpp:1341
+#: engines/scumm/scumm.cpp:1348
 #, fuzzy
 #| msgid ""
 #| "Could not find the 'Loom' Macintosh executable to read the\n"
@@ -6826,7 +6836,7 @@ msgstr ""
 "악기가 포함된 'Loom' 매킨토시 실행파일을 찾을 수 없습니다.\n"
 "음악이 비활성화됩니다."
 
-#: engines/scumm/scumm.cpp:1367
+#: engines/scumm/scumm.cpp:1374
 #, fuzzy
 #| msgid ""
 #| "Could not find the 'Loom' Macintosh executable to read the\n"
@@ -6838,7 +6848,7 @@ msgstr ""
 "악기가 포함된 'Loom' 매킨토시 실행파일을 찾을 수 없습니다.\n"
 "음악이 비활성화됩니다."
 
-#: engines/scumm/scumm.cpp:1389
+#: engines/scumm/scumm.cpp:1396
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -6846,7 +6856,7 @@ msgstr ""
 "악기가 포함된 'Monkey Island' 매킨토시 실행 파일을 찾을 수 없습니다.\n"
 "음악이 비활성화됩니다."
 
-#: engines/scumm/scumm.cpp:2084
+#: engines/scumm/scumm.cpp:2091
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6855,7 +6865,7 @@ msgstr ""
 "MIDI 지원은 LucasArts에서 제공하는 Roland Upgrade가 필요합니다.\n"
 "하지만 %s 파일이 없습니다. AdLib을 대신 사용합니다."
 
-#: engines/scumm/scumm.cpp:3011
+#: engines/scumm/scumm.cpp:3018
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "

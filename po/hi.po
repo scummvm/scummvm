@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-01 13:11+0000\n"
+"POT-Creation-Date: 2021-08-01 14:12+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -165,8 +165,8 @@ msgstr ""
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
-#: engines/scumm/scumm.cpp:1342 engines/scumm/scumm.cpp:1368
-#: engines/scumm/scumm.cpp:1390 engines/scumm/scumm.cpp:2086
+#: engines/scumm/scumm.cpp:1349 engines/scumm/scumm.cpp:1375
+#: engines/scumm/scumm.cpp:1397 engines/scumm/scumm.cpp:2093
 #: engines/sky/compact.cpp:142 engines/sword1/animation.cpp:532
 #: engines/sword1/animation.cpp:553 engines/sword1/animation.cpp:569
 #: engines/sword1/animation.cpp:577 engines/sword1/control.cpp:889
@@ -3787,7 +3787,7 @@ msgstr ""
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2696
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2703
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3795,7 +3795,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2686
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2693
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3803,7 +3803,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2709
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2716
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -5908,6 +5908,14 @@ msgid ""
 "channel."
 msgstr ""
 
+#: engines/scumm/detection.cpp:204
+msgid "Enable smooth scrolling"
+msgstr ""
+
+#: engines/scumm/detection.cpp:205
+msgid "(instead of the normal 8-pixels steps scrolling)"
+msgstr ""
+
 #: engines/scumm/dialogs.cpp:165
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
@@ -6578,7 +6586,7 @@ msgstr "सुविधा बनाए गए:"
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "सुविधा बनाए गए:"
 
-#: engines/scumm/scumm.cpp:540
+#: engines/scumm/scumm.cpp:541
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -6586,32 +6594,32 @@ msgid ""
 "320x200, under 'engine' tab."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1341
+#: engines/scumm/scumm.cpp:1348
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1367
+#: engines/scumm/scumm.cpp:1374
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1389
+#: engines/scumm/scumm.cpp:1396
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2084
+#: engines/scumm/scumm.cpp:2091
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3011
+#: engines/scumm/scumm.cpp:3018
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
