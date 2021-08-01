@@ -141,15 +141,13 @@ void GridItemWidget::drawWidget() {
 	if (_grid->_isTitlesVisible) {
 		// TODO: Currently title is fixed to two lines at all times, we may want
 		//		flexibility to let the theme define the number of title lines.
-		if (titleLines.size() < 2) {
-			titleLines.push_back(U32String());
-		} else if (titleLines.size() > 2) {
+		if (titleLines.size() > 2) {
 			for (uint k = 0; (k < 3) && (titleLines[1].size() > 0); ++k)
 				titleLines[1].deleteLastChar();
 			titleLines[1] += U32String("...");
 		}
 		Common::Rect r(_x, _y + thumbHeight, _x + thumbWidth, _y + thumbHeight + kLineHeight);
-		for (uint k = 0; k < 2; ++k) {
+		for (uint k = 0; k < MIN(2U, titleLines.size()); ++k) {
 			g_gui.theme()->drawText(r, titleLines[k], GUI::ThemeEngine::kStateEnabled, Graphics::kTextAlignCenter);
 			r.translate(0, kLineHeight);
 		}
@@ -706,6 +704,7 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 void GridWidget::calcInnerHeight() {
 	int row = 0;
 	int col = 0;
+	int lastRowHeight = 0;
 	Common::Point p(_gridXSpacing, _gridYSpacing);
 
 	for (int k = 0; k < (int)_sortedEntryList.size(); ++k) {
@@ -713,19 +712,23 @@ void GridWidget::calcInnerHeight() {
 			while (col != 0) {
 				if (++col >= _itemsPerRow) {
 					col = 0;
-					++row;
 					p.x = _gridXSpacing;
-					p.y += _sortedEntryList[k - 1].rect.height() + _gridYSpacing;
+					++row;
+					p.y += lastRowHeight;
+					lastRowHeight = 0;
 				}
 			}
 			_sortedEntryList[k].rect.moveTo(p);
 			++row;
 			p.y += _sortedEntryList[k].rect.height() + _gridYSpacing;
+			lastRowHeight = 0;
 		} else {
 			_sortedEntryList[k].rect.moveTo(p);
+			lastRowHeight = MAX(lastRowHeight, _sortedEntryList[k].rect.height() + _gridYSpacing);
 			if (++col >= _itemsPerRow) {
 				++row;
-				p.y += _sortedEntryList[k].rect.height() + _gridYSpacing;
+				p.y += lastRowHeight;
+				lastRowHeight = 0;
 				col = 0;
 				p.x = _gridXSpacing;
 			} else {
