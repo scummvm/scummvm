@@ -125,8 +125,14 @@ void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src,
 	int dst_x, int dst_y, int trans, int dst_width, int dst_height,
 	int src_x, int src_y, int src_width, int src_height, int sprite_id, bool src_has_alpha) {
 	Bitmap *ds = sds->GetBitmapSurface();
-	if (src == ds)
-		quit("!DrawingSurface.DrawImage: cannot draw onto itself");
+
+	// WORKAROUND: Strangeland triggers this error, so change to a warning
+	static bool shownWarning = false;
+	if (src == ds && !shownWarning) {
+		warning("!DrawingSurface.DrawImage: cannot draw onto itself");
+		shownWarning = true;
+	}
+
 	if ((trans < 0) || (trans > 100))
 		quit("!DrawingSurface.DrawImage: invalid transparency setting");
 
