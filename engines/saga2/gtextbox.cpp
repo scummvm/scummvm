@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/keyboard.h"
+
 #include "saga2/saga2.h"
 #include "saga2/cmisc.h"
 #include "saga2/fta.h"
@@ -639,10 +641,10 @@ void gTextBox::pointerRelease(gPanelMessage &msg) {
 
 
 bool gTextBox::keyStroke(gPanelMessage &msg) {
-	gPort           &port = window.windowPort;
-	int16           selStart = MIN(cursorPos, anchorPos),
-	                selWidth = ABS(cursorPos - anchorPos);
-	uint8           key = msg.key;
+	gPort &port = window.windowPort;
+	int16 selStart = MIN(cursorPos, anchorPos),
+	      selWidth = ABS(cursorPos - anchorPos);
+	uint16 key = msg.key;
 
 	//  Process the various keystrokes...
 	if (editing && cursorPos > anchorPos) {
@@ -650,89 +652,122 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 		anchorPos = cursorPos;
 	}
 
-	if (key > 0x80) {
-		switch (key) {
-		case SpecialKey(upArrowKey):
-			selectionUp(1);
-			return true;
+	switch (key) {
+	case Common::KEYCODE_UP:
+		selectionUp(1);
+		return true;
 
-		case SpecialKey(downArrowKey):
-			selectionDown(1);
-			return true;
+	case Common::KEYCODE_DOWN:
+		selectionDown(1);
+		return true;
 
-		case SpecialKey(pageUpKey):
-			selectionUp(linesPerPage);
-			return true;
+	case Common::KEYCODE_PAGEUP:
+		selectionUp(linesPerPage);
+		return true;
 
-		case SpecialKey(pageDownKey):
-			selectionDown(linesPerPage);
-			return true;
-		}
+	case Common::KEYCODE_PAGEDOWN:
+		selectionDown(linesPerPage);
+		return true;
 	}
 
-	if ((key > 0x80) && editing) {
+	if (editing) {
 		switch (key) {
-
-		case SpecialKey(leftArrowKey):
-
-
-			if (anchorPos > 0) anchorPos--;
-			if (!(msg.qualifier & qualifierShift)) cursorPos = anchorPos;
+		case Common::KEYCODE_LEFT:
+			if (anchorPos > 0)
+				anchorPos--;
+			if (!(msg.qualifier & qualifierShift))
+				cursorPos = anchorPos;
 			break;
 
-		case SpecialKey(rightArrowKey):
-
-			if (anchorPos < currentLen[index]) anchorPos++;
-			if (!(msg.qualifier & qualifierShift)) cursorPos = anchorPos;
+		case Common::KEYCODE_RIGHT:
+			if (anchorPos < currentLen[index])
+				anchorPos++;
+			if (!(msg.qualifier & qualifierShift))
+				cursorPos = anchorPos;
 			break;
 
-		case SpecialKey(homeKey):
+		case Common::KEYCODE_HOME:
 			cursorPos = 0;
 			anchorPos = 0;
 			break;
 
-		case SpecialKey(endKey):
+		case Common::KEYCODE_END:
 			cursorPos = currentLen[index];
 			anchorPos = currentLen[index];
 			break;
 
-		case SpecialKey(deleteKey):                     // DELETE character
+		case Common::KEYCODE_z: // Alt-Z
+			if (msg.qualifier & (qualifierControl | qualifierAlt)) {
+				if (undoBuffer) {
+					cursorPos = anchorPos = currentLen[index] = undoLen;
+					memcpy(fieldStrings[index], undoBuffer, currentLen[index] + 1);
+					notify(gEventAltValue, 0);  // tell app about new value
+				}
+			} else {
+				//  Insert text, if it will fit
 
-			if (selWidth == 0) {            // if insertion point
-				// don't delete if at end
-				if (selStart >= currentLen[index]) return false;
-				selWidth = 1;               // delete 1 char
+				if (insertText((char *)&key, 1) == false)
+					return false;
+				notify(gEventAltValue, 0);       // tell app about new value
+			}
+			break;
+
+		case Common::ASCII_BACKSPACE:
+			if (selWidth == 0) {                // if insertion point
+				if (selStart < 1) return false; // if at start, do nothing
+				selStart--;                     // if I-bar, backup 1 char
+				selWidth = 1;                   // delete 1 char
 			}
 
 			//  Delete N chars
-
 			memmove(fieldStrings[index] + selStart,
-			        fieldStrings[index] + selStart + selWidth,
-			        currentLen[index] - (selStart + selWidth));
-			cursorPos = anchorPos = selStart;// adjust cursor pos
-			currentLen[index] -= selWidth;            // adjust str len
-			notify(gEventAltValue, 0);   // tell app about new value
+					fieldStrings[index] + selStart + selWidth,
+					currentLen[index] - (selStart + selWidth));
+			cursorPos = anchorPos = selStart;   // adjust cursor pos
+			currentLen[index] -= selWidth;                // adjust str len
+			notify(gEventAltValue, 0);       // tell app about new value
 			break;
 
-		case SpecialKey(0x2c00):                        // Alt-Z
-
-			if (undoBuffer) {
-				cursorPos = anchorPos = currentLen[index] = undoLen;
-				memcpy(fieldStrings[index], undoBuffer, currentLen[index] + 1);
-				notify(gEventAltValue, 0);  // tell app about new value
+		case Common::KEYCODE_DELETE:
+			if (selWidth == 0) {                // if insertion point
+				// don't delete if at end
+				if (selStart >= currentLen[index]) return false;
+				selWidth = 1;                   // delete 1 char
 			}
+
+			//  Delete N chars
+			memmove(fieldStrings[index] + selStart,
+					fieldStrings[index] + selStart + selWidth,
+					currentLen[index] - (selStart + selWidth));
+			cursorPos = anchorPos = selStart;   // adjust cursor pos
+			currentLen[index] -= selWidth;    // adjust str len
+			notify(gEventAltValue, 0);       // tell app about new value
 			break;
+
+		case Common::ASCII_TAB:
+			return false;
 
 		default:
-			if (flags & textBoxNoFilter) return false;
+			if (flags & textBoxNoFilter)
+				return false;
+
+			if (key >= Common::KEYCODE_SPACE &&     // 32 (First printable character)
+				key <= Common::KEYCODE_KP_EQUALS && // 272 (Last printable character)
+				key != Common::KEYCODE_DELETE) {
+				//  Insert text, if it will fit
+
+				if (insertText((char *)&key, 1) == false)
+					return false;
+				notify(gEventAltValue, 0);       // tell app about new value
+			}
+
 			break;
 		}
-	} else if (key == '\r' || key == '\n') { // return key
+	} else if (key == Common::ASCII_RETURN) { // return key
 		if (editing) {
 			commitEdit();
-			if (!(flags & textBoxStayActive)) {
+			if (!(flags & textBoxStayActive))
 				deactivate();                       // deactivate the text box
-			}
 		}
 
 		if (onEnter != NULL) {
@@ -744,7 +779,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 		}
 
 		return true;
-	} else if (key == 0x1B) {               // escape key
+	} else if (key == Common::ASCII_ESCAPE) {               // escape key
 		revertEdit();
 		deactivate();                       // deactivate the text box
 		if (onEscape != NULL) {
@@ -756,50 +791,9 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 			(*onEscape)(ev);
 		}
 
-		if (flags & textBoxNoFilter) return false;
+		if (flags & textBoxNoFilter)
+			return false;
 		return true;
-	} else if (key == '\b' && editing) {                // BACKSPACE
-		if (selWidth == 0) {                // if insertion point
-			if (selStart < 1) return false; // if at start, do nothing
-			selStart--;                     // if I-bar, backup 1 char
-			selWidth = 1;                   // delete 1 char
-		}
-
-		//  Delete N chars
-
-		memmove(fieldStrings[index] + selStart,
-		        fieldStrings[index] + selStart + selWidth,
-		        currentLen[index] - (selStart + selWidth));
-		cursorPos = anchorPos = selStart;   // adjust cursor pos
-		currentLen[index] -= selWidth;                // adjust str len
-		notify(gEventAltValue, 0);       // tell app about new value
-	} else if (key == SpecialKey(deleteKey) && editing) { // DELETE character
-		if (selWidth == 0) {                // if insertion point
-			// don't delete if at end
-			if (selStart >= currentLen[index]) return false;
-			selWidth = 1;                   // delete 1 char
-		}
-
-		//  Delete N chars
-
-		memmove(fieldStrings[index] + selStart,
-		        fieldStrings[index] + selStart + selWidth,
-		        currentLen[index] - (selStart + selWidth));
-		cursorPos = anchorPos = selStart;   // adjust cursor pos
-		currentLen[index] -= selWidth;    // adjust str len
-		notify(gEventAltValue, 0);       // tell app about new value
-	} else if (key == '\t' && editing) return false;    // reprocess keystroke
-	else if (key == 26 && editing) {                    // control-z
-		if (undoBuffer) {
-			cursorPos = anchorPos = currentLen[index] = undoLen;
-			memcpy(fieldStrings[index], undoBuffer, currentLen[index] + 1);
-			notify(gEventAltValue, 0);       // tell app about new value
-		}
-	} else if (editing) {
-		//  Insert text, if it will fit
-
-		if (insertText((char *)&key, 1) == false) return false;
-		notify(gEventAltValue, 0);       // tell app about new value
 	}
 
 	if (editing) {
