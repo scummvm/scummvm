@@ -83,10 +83,10 @@ public:
 	~HagArchive() override;
 
 	// Archive implementation
-	bool hasFile(const Common::String &name) const override;
+	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 };
 
 const char *const MADSCONCAT_STRING = "MADSCONCAT";
@@ -99,7 +99,8 @@ HagArchive::~HagArchive() {
 }
 
 // Archive implementation
-bool HagArchive::hasFile(const Common::String &name) const {
+bool HagArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	HagIndex hagIndex;
 	HagEntry hagEntry;
 	return getHeaderEntry(name, hagIndex, hagEntry);
@@ -122,14 +123,16 @@ int HagArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return members;
 }
 
-const Common::ArchiveMemberPtr HagArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr HagArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *HagArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *HagArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	HagIndex hagIndex;
 	HagEntry hagEntry;
 

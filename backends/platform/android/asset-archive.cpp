@@ -115,7 +115,8 @@ AndroidAssetArchive::AndroidAssetArchive(jobject am) : _hasCached(false) {
 AndroidAssetArchive::~AndroidAssetArchive() {
 }
 
-bool AndroidAssetArchive::hasFile(const Common::String &name) const {
+bool AndroidAssetArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	AAsset *asset = AAssetManager_open(_am, name.c_str(), AASSET_MODE_RANDOM);
 	bool exists = false;
 	if (asset != NULL) {
@@ -156,15 +157,17 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) con
 	return count;
 }
 
-const Common::ArchiveMemberPtr AndroidAssetArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr AndroidAssetArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const Common::String &path) const {
-	if (!hasFile(path)) {
+Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
+	if (!hasFile(name)) {
 		return nullptr;
 	}
-	return new AssetInputStream(_am, path);
+	return new AssetInputStream(_am, name);
 }
 
 #endif

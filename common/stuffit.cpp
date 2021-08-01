@@ -47,10 +47,10 @@ public:
 	bool isOpen() const { return _stream != 0; }
 
 	// Common::Archive API implementation
-	bool hasFile(const Common::String &name) const override;
+	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 private:
 	struct FileEntry {
@@ -199,7 +199,8 @@ void StuffItArchive::close() {
 	_map.clear();
 }
 
-bool StuffItArchive::hasFile(const Common::String &name) const {
+bool StuffItArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return _map.contains(name);
 }
 
@@ -210,11 +211,13 @@ int StuffItArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return _map.size();
 }
 
-const Common::ArchiveMemberPtr StuffItArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr StuffItArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *StuffItArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *StuffItArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!_stream || !_map.contains(name))
 		return nullptr;
 

@@ -113,7 +113,8 @@ bool Pics::exists() {
 	return Common::File::exists(getFilename());
 }
 
-bool Pics::hasFile(const Common::String &name) const {
+bool Pics::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (uint idx = 0; idx < _index.size(); ++idx) {
 		if (_index[idx]._filename.equalsIgnoreCase(name))
 			return true;
@@ -130,14 +131,16 @@ int Pics::listMembers(Common::ArchiveMemberList &list) const {
 	return (int)_index.size();
 }
 
-const Common::ArchiveMemberPtr Pics::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr Pics::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	PictureDecoder decoder;
 
 	for (uint idx = 0; idx < _index.size(); ++idx) {

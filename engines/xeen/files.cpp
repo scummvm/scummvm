@@ -121,7 +121,8 @@ void BaseCCArchive::saveIndex(Common::WriteStream &stream) {
 	delete[] rawIndex;
 }
 
-bool BaseCCArchive::hasFile(const Common::String &name) const {
+bool BaseCCArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	CCEntry ccEntry;
 	return getHeaderEntry(name, ccEntry);
 }
@@ -143,7 +144,8 @@ bool BaseCCArchive::getHeaderEntry(uint16 id, CCEntry &ccEntry) const {
 	return false;
 }
 
-const Common::ArchiveMemberPtr BaseCCArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr BaseCCArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
@@ -193,7 +195,8 @@ bool CCArchive::getHeaderEntry(const Common::String &resourceName, CCEntry &ccEn
 	return BaseCCArchive::getHeaderEntry(resName, ccEntry);
 }
 
-Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	CCEntry ccEntry;
 
 	if (getHeaderEntry(name, ccEntry)) {
@@ -465,7 +468,8 @@ SaveArchive::~SaveArchive() {
 	delete[] _data;
 }
 
-Common::SeekableReadStream *SaveArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *SaveArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 
 	// If the given resource has already been perviously "written" to the
 	// save manager, then return that new resource

@@ -39,10 +39,10 @@ public:
 	AndroidAssetArchive(jobject am);
 	virtual ~AndroidAssetArchive();
 
-	virtual bool hasFile(const Common::String &name) const override;
+	virtual bool hasFile(const Common::Path &path) const override;
 	virtual int listMembers(Common::ArchiveMemberList &list) const override;
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	virtual const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 private:
 	AAssetManager *_am;

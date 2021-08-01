@@ -74,7 +74,8 @@ void FastFile::close() {
 	_fileEntries.clear();
 }
 
-bool FastFile::hasFile(const Common::String &name) const {
+bool FastFile::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	const FileEntry *entry = getEntry(name);
 	return entry != nullptr;
 }
@@ -87,11 +88,13 @@ int FastFile::listMembers(Common::ArchiveMemberList &list) const {
 	return list.size();
 }
 
-const Common::ArchiveMemberPtr FastFile::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr FastFile::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!_stream)
 		return nullptr;
 

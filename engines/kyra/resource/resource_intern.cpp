@@ -37,7 +37,8 @@ PlainArchive::PlainArchive(Common::ArchiveMemberPtr file)
 	: _file(file), _files() {
 }
 
-bool PlainArchive::hasFile(const Common::String &name) const {
+bool PlainArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return (_files.find(name) != _files.end());
 }
 
@@ -52,14 +53,16 @@ int PlainArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return count;
 }
 
-const Common::ArchiveMemberPtr PlainArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr PlainArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *PlainArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *PlainArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	FileMap::const_iterator fDesc = _files.find(name);
 	if (fDesc == _files.end())
 		return 0;
@@ -92,7 +95,8 @@ TlkArchive::~TlkArchive() {
 	delete[] _fileEntries;
 }
 
-bool TlkArchive::hasFile(const Common::String &name) const {
+bool TlkArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return (findFile(name) != 0);
 }
 
@@ -107,14 +111,16 @@ int TlkArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return count;
 }
 
-const Common::ArchiveMemberPtr TlkArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr TlkArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *TlkArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *TlkArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	const uint32 *fileDesc = findFile(name);
 	if (!fileDesc)
 		return 0;
@@ -186,7 +192,8 @@ CachedArchive::~CachedArchive() {
 	_files.clear();
 }
 
-bool CachedArchive::hasFile(const Common::String &name) const {
+bool CachedArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return (_files.find(name) != _files.end());
 }
 
@@ -201,14 +208,16 @@ int CachedArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return count;
 }
 
-const Common::ArchiveMemberPtr CachedArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr CachedArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *CachedArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *CachedArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	FileMap::const_iterator fDesc = _files.find(name);
 	if (fDesc == _files.end())
 		return 0;
