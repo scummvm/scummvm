@@ -152,7 +152,6 @@ public class ResidualVMActivity extends Activity {
 		@Override
 		protected void displayMessageOnOSD(final String msg) {
 			if (msg != null) {
-				Log.i(LOG_TAG, "MessageOnOSD: " + msg + " " + getCurrentCharset());
 				runOnUiThread(new Runnable() {
 					public void run() {
 						Toast.makeText(ResidualVMActivity.this, msg, Toast.LENGTH_SHORT).show();
