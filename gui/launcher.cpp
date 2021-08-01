@@ -1117,7 +1117,6 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (data) {
 			GroupingMethod newGroupBy = (GroupingMethod)data;
 			if (_groupBy != newGroupBy) {
-				warning("Changed from: %d to: %d", _groupBy, newGroupBy);
 				_groupBy = newGroupBy;
 				updateListing();
 			}
