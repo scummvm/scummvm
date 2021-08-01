@@ -595,11 +595,13 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_screenHeight = 200;
 	}
 
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns) {
 		ConfMan.registerDefault("smooth_scroll", true);
 		if (ConfMan.hasKey("smooth_scroll"))
 			_enableSmoothScrolling = ConfMan.getBool("smooth_scroll");
 	}
+#endif
 
 	_bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
 	uint8 sizeMult = _bytesPerPixel;
