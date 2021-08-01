@@ -270,13 +270,20 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	_engine->_text->drawText(x, y, title);
 }
 
-void Holomap::renderHolomapModel(const BodyData &bodyData, int32 x, int32 y, int32 zPos) {
+void Holomap::renderHolomapPointModel(const Location &location, int32 x, int32 y) {
 	_engine->_renderer->setBaseRotation(x, y, 0);
-	_engine->_renderer->getBaseRotationPosition(0, 0, zPos + 1000);
-	_engine->_renderer->getBaseRotationPosition(_engine->_renderer->_destPos.x, _engine->_renderer->_destPos.y, _engine->_renderer->_destPos.z);
+	_engine->_renderer->getBaseRotationPosition(0, 0, 1000);
+	const IVec3 destPos = _engine->_renderer->_destPos;
+	_engine->_renderer->setBaseTranslation(0, 0, 0);
+	_engine->_renderer->setBaseRotation(location.angle);
+	_engine->_renderer->updateCameraAnglePositions(5300);
+	// why is this needed? _engine->_renderer->_baseTransPos = _engine->_renderer->_destPos;
+	_engine->_renderer->getBaseRotationPosition(destPos);
 	_engine->_interface->resetClip();
 	Common::Rect dummy;
-	_engine->_renderer->renderIsoModel(_engine->_renderer->_destPos.x, _engine->_renderer->_destPos.y, _engine->_renderer->_destPos.z, x, y, ANGLE_0, bodyData, dummy);
+	_engine->_renderer->renderIsoModel(destPos, x, y, ANGLE_0, _engine->_resources->holomapPointModelPtr, dummy);
+	// debug(3, "renderHolomapPointModel(%i, %i): dirty(%i:%i:%i:%i)", x, y, dummy.left, dummy.top, dummy.right, dummy.bottom);
+	// TODO: update the screen _engine->copyBlockPhys(_engine->rect());
 }
 
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
@@ -301,7 +308,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	renderHolomapSurfacePolygons();
 
 	const Location &loc = _locations[data->locationIdx];
-	renderHolomapModel(_engine->_resources->holomapPointModelPtr, loc.angle.x, loc.angle.y, 0);
+	renderHolomapPointModel(loc, loc.angle.x, loc.angle.y);
 
 	ActorMoveStruct move;
 	AnimTimerDataStruct animTimerData;
@@ -340,6 +347,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			_engine->_movements->setActorAngleSafe(ANGLE_0, -ANGLE_90, 500, &move);
 		}
 
+		// render the vehicle you travel with
 		if (_engine->_animations->setModelAnimation(frameNumber, animData, bodyData, &animTimerData)) {
 			frameNumber++;
 			if (frameNumber >= animData.getNumKeyframes()) {
@@ -357,6 +365,9 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 		_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
 		_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, 5300);
 		_engine->_renderer->setLightVector(data->pos.x, data->pos.y, 0);
+
+		// animate the path from point 1 to point 2 by rendering a point model on each position
+		// on the global every 40 timeunits
 		if (frameTime + 40 <= _engine->_lbaTime) {
 			frameTime = _engine->_lbaTime;
 			int32 modelX;
@@ -368,10 +379,10 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 				if (data->numAnimFrames < trajAnimFrameIdx) {
 					break;
 				}
-				modelX = _locations[data->trajLocationIdx].angle.x;
-				modelY = _locations[data->trajLocationIdx].angle.y;
+				modelX = loc.angle.x;
+				modelY = loc.angle.y;
 			}
-			renderHolomapModel(_engine->_resources->holomapPointModelPtr, modelX, modelY, 0);
+			renderHolomapPointModel(loc, modelX, modelY);
 			++trajAnimFrameIdx;
 		}
 
@@ -380,6 +391,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			// TODO: this does a flip - which puts stuff onto the screen that shouldn't be there
 			//_engine->_screens->fadeToPal(_engine->_screens->paletteRGBA);
 		}
+		++_engine->_lbaTime;
 	}
 
 	_engine->_screens->clearScreen();

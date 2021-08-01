@@ -205,9 +205,13 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 
 	_baseRotPos.z += param6;
 
-	getCameraAnglePositions(_baseRotPos.x, _baseRotPos.y, _baseRotPos.z);
+	updateCameraAnglePositions();
 
 	_baseTransPos = _destPos;
+}
+
+void Renderer::updateCameraAnglePositions(int zShift) {
+	getCameraAnglePositions(_baseRotPos.x, _baseRotPos.y, _baseRotPos.z + zShift);
 }
 
 IVec3 Renderer::getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const {
