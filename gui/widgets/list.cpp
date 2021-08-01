@@ -554,7 +554,7 @@ void ListWidget::drawWidget() {
 	// Draw the list items
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
 		const int y = _y + _topPadding + kLineHeight * i;
-		const int fontHeight = kLineHeight;
+		const int fontHeight = g_gui.getFontHeight();
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 
 		// Draw the selected item inverted, on a highlighted background.
@@ -568,7 +568,7 @@ void ListWidget::drawWidget() {
 		// If in numbering mode & not in RTL based GUI, we first print a number prefix
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL() == false) {
 			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
-			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight - 2),
+			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight),
 									buffer, _state, _drawAlign, inverted, _leftPadding, true);
 			pad = 0;
 		}
@@ -582,7 +582,7 @@ void ListWidget::drawWidget() {
 				color = _listColors[_listIndex[pos]];
 		}
 
-		Common::Rect r1(_x + r.left, y, _x + r.right, y + fontHeight - 2);
+		Common::Rect r1(_x + r.left, y, _x + r.right, y + fontHeight);
 
 		if (g_gui.useRTL()) {
 			if (_scrollBar->isVisible()) {
@@ -625,7 +625,7 @@ Common::Rect ListWidget::getEditRect() const {
 	if (editWidth < 0) {
 		editWidth = 0;
 	}
-	Common::Rect r(_hlLeftPadding, 0, _hlLeftPadding + editWidth, kLineHeight - 2);
+	Common::Rect r(_hlLeftPadding, 0, _hlLeftPadding + editWidth, g_gui.getFontHeight());
 	const int offset = (_selectedItem - _currentPos) * kLineHeight + _topPadding;
 	r.top += offset;
 	r.bottom += offset;
