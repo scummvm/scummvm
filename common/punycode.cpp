@@ -304,7 +304,7 @@ String punycode_encodefilename(const String src) {
 			dst += '\x81';
 			dst += '\x79';
 		// Encode special symbols and non-printables
-		} else if (Common::String("/\":*[]+|\\?%<>,;=").contains(src[i]) || (byte)src[i] < 0x20) {
+		} else if (strchr("/\":*[]+|\\?%<>,;=", src[i]) || (byte)src[i] < 0x20) {
 			dst += '\x81';
 			dst += (byte)src[i] + '\x80';
 		} else {
