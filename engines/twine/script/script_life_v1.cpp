@@ -682,6 +682,7 @@ static int32 lSET_DIRMODE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 controlMode = ctx.stream.readByte();
 
 	ctx.actor->_controlMode = (ControlMode)controlMode;
+	// TODO: should ControlMode::kSameXZ be taken into account, too - see processSameXZAction
 	if (ctx.actor->_controlMode == ControlMode::kFollow || ctx.actor->_controlMode == ControlMode::kFollow2) {
 		ctx.actor->_followedActor = ctx.stream.readByte();
 	}
@@ -699,6 +700,7 @@ static int32 lSET_DIRMODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 	otherActor->_controlMode = (ControlMode)controlMode;
+	// TODO: should ControlMode::kSameXZ be taken into account, too - see processSameXZAction
 	if (otherActor->_controlMode == ControlMode::kFollow || ctx.actor->_controlMode == ControlMode::kFollow2) {
 		otherActor->_followedActor = ctx.stream.readByte();
 	}

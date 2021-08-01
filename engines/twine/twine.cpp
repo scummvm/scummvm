@@ -658,10 +658,10 @@ void TwinEEngine::processInventoryAction() {
 			pinguin->setLife(kActorMaxLife);
 			pinguin->_body = BodyType::btNone;
 			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPinguinIdx);
-			pinguin->_dynamicFlags.bIsDead = 0; // &= 0xDF
+			pinguin->_dynamicFlags.bIsDead = 0;
 			pinguin->setBrickShape(ShapeType::kNone);
 			_movements->moveActor(pinguin->_angle, pinguin->_angle, pinguin->_speed, &pinguin->_move);
-			_gameState->removeItem(InventoryItems::kiPinguin); // byte_50D89 = 0;
+			_gameState->removeItem(InventoryItems::kiPinguin);
 			pinguin->_delayInMillis = _lbaTime + 1500;
 		}
 		break;

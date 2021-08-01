@@ -488,6 +488,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 		processTrackAction(actorIdx);
 		break;
 	case ControlMode::kSameXZ:
+		// TODO: see lSET_DIRMODE and lSET_DIRMODE_OBJ opcodes
 		processSameXZAction(actorIdx);
 		break;
 	case ControlMode::kRandom:
