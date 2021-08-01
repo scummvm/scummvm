@@ -1576,8 +1576,8 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 }
 
 void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexAngles[3]) {
-	int32 top = 32000;
-	int32 bottom = -32000;
+	int32 top = SCENE_SIZE_MAX;
+	int32 bottom = SCENE_SIZE_MIN;
 	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], vertexAngles[0], vertexAngles[1], top, bottom);
 	fillHolomapPolygons(vertexCoordinates[1], vertexCoordinates[2], vertexAngles[1], vertexAngles[2], top, bottom);
 	fillHolomapPolygons(vertexCoordinates[2], vertexCoordinates[0], vertexAngles[2], vertexAngles[0], top, bottom);
