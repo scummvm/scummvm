@@ -30,6 +30,29 @@
 
 namespace Tinsel {
 
+
+//----------------- LOCAL GLOBAL DATA --------------------
+/** TinselV3, base color for the text color replacement */
+static uint32 g_t3fontBaseColor;
+
+/**
+ * Returns the handle for the character image.
+ * @param pFont			Which font to use
+ * @param c				Index of the character
+ */
+SCNHANDLE GetFontDef(const FONT *pFont, int c)
+{
+	if (TinselV3)
+	{
+		const T3_FONT *pT3Font = (const T3_FONT *)pFont;
+		return FROM_32(pT3Font->fontDef[c]);
+	}
+	else
+	{
+		return FROM_32(pFont->fontDef[c]);
+	}
+}
+
 /**
  * Returns the length of one line of a string in pixels.
  * @param szStr			String
@@ -46,7 +69,7 @@ int StringLengthPix(char *szStr, const FONT *pFont) {
 			if (c & 0x80)
 				c = ((c & ~0x80) << 8) + *++szStr;
 		}
-		hImg = FROM_32(pFont->fontDef[c]);
+		hImg = GetFontDef(pFont, c);
 
 		if (hImg) {
 			// there is a IMAGE for this character
@@ -119,13 +142,14 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 
 	// get font pointer
 	const FONT *pFont = (const FONT *)_vm->_handle->LockMem(hFont);
+	const OBJ_INIT *pFontInit = TinselV3 ? (&((const T3_FONT *)pFont)->fontInit) : (&pFont->fontInit);
 
 	// init head of text list
 	pFirst = nullptr;
 
 	// get image for capital W
-	assert(pFont->fontDef[(int)'W']);
-	pImg = (const IMAGE *)_vm->_handle->LockMem(FROM_32(pFont->fontDef[(int)'W']));
+	assert(GetFontDef(pFont, (int)'W'));
+	pImg = (const IMAGE *)_vm->_handle->LockMem(GetFontDef(pFont, (int)'W'));
 
 	// get height of capital W for offset to next line
 	yOffset = FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK;
@@ -140,7 +164,7 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 				if (c & 0x80)
 					c = ((c & ~0x80) << 8) + *++szStr;
 			}
-			hImg = FROM_32(pFont->fontDef[c]);
+			hImg = GetFontDef(pFont, c);
 
 			if (hImg == 0) {
 				// no image for this character
@@ -152,12 +176,12 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 				int aniX, aniY;		// char image animation offsets
 
 				OBJ_INIT oi;
-				oi.hObjImg  = FROM_32(pFont->fontInit.hObjImg);
-				oi.objFlags = FROM_32(pFont->fontInit.objFlags);
-				oi.objID    = FROM_32(pFont->fontInit.objID);
-				oi.objX     = FROM_32(pFont->fontInit.objX);
-				oi.objY     = FROM_32(pFont->fontInit.objY);
-				oi.objZ     = FROM_32(pFont->fontInit.objZ);
+				oi.hObjImg  = FROM_32(pFontInit->hObjImg);
+				oi.objFlags = FROM_32(pFontInit->objFlags);
+				oi.objID    = FROM_32(pFontInit->objID);
+				oi.objX     = FROM_32(pFontInit->objX);
+				oi.objY     = FROM_32(pFontInit->objY);
+				oi.objZ     = FROM_32(pFontInit->objZ);
 
 				// allocate and init a character object
 				if (pFirst == NULL)
@@ -182,6 +206,11 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 
 				// set characters color - only effective for mono fonts
 				pChar->constant = color;
+
+				// set the base font color to be replaced with supplied color, only for Tinsel V3
+				if (TinselV3) {
+					g_t3fontBaseColor = FROM_32(((const T3_FONT*)pFont)->baseColor);
+				}
 
 				// get Y animation offset
 				GetAniOffset(hImg, pChar->flags, &aniX, &aniY);
@@ -271,7 +300,13 @@ bool IsCharImage(SCNHANDLE hFont, char c) {
 	// get font pointer
 	const FONT *pFont = (const FONT *)_vm->_handle->LockMem(hFont);
 
-	return pFont->fontDef[c2] != 0;
+	return GetFontDef(pFont, c2) != 0;
 }
+
+uint32 t3GetBaseColor()
+{
+	return g_t3fontBaseColor;
+}
+
 
 } // End of namespace Tinsel

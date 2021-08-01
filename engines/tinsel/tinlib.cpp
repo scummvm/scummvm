@@ -3391,18 +3391,24 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK))
 				_vm->_actor->GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
 
-			if (!TinselV0)
+			if (!TinselV0) {
 				SetTextPal(_vm->_actor->GetActorRGB(_ctx->actor));
-			if (TinselV2)
+			}
+			if (TinselV2) {
 				LoadSubString(hText, _ctx->sub, _vm->_font->TextBufferAddr(), TBUFSZ);
-			else {
+			} else {
 				LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
 
 				_ctx->y -= _ctx->Toffset;
 			}
 
+			int color = 0;
+			if (TinselV3) {
+				color = _vm->_actor->GetActorRGB(_ctx->actor);
+			}
+
 			_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
-					_vm->_font->TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
+					_vm->_font->TextBufferAddr(), color, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
 					_vm->_font->GetTalkFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // talk() string produced NULL text;
 
