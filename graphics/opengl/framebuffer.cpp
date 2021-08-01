@@ -162,10 +162,15 @@ void FrameBuffer::init() {
 		const char *glVersion = (const char *)glGetString(GL_VERSION);
 		if (strstr(glVersion,"WebGL 1.0") != NULL) {
 			// See https://www.khronos.org/registry/webgl/specs/latest/1.0/#FBO_ATTACHMENTS
+			// and https://github.com/emscripten-core/emscripten/issues/4832
+			#ifndef GL_DEPTH_STENCIL
 			#define GL_DEPTH_STENCIL 0x84F9
+			#endif
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, _texWidth, _texHeight);
 			
+			#ifndef GL_DEPTH_STENCIL_ATTACHMENT
 			#define GL_DEPTH_STENCIL_ATTACHMENT 0x821A
+			#endif
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
 		} else {
 			glRenderbufferStorage(GL_RENDERBUFFER, useDepthComponent24() ? GL_DEPTH_COMPONENT24 : GL_DEPTH_COMPONENT16, _texWidth, _texHeight);
