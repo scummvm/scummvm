@@ -25,8 +25,8 @@
 %option yylineno
 %option never-interactive
 
-%option outfile="engines/hypno/lexer.cpp"
-%option prefix="HYPNO_"
+%option outfile="engines/hypno/spider/lexer_arc.cpp"
+%option prefix="HYPNO_ARC_"
 
 %{
 #define YY_NO_UNISTD_H
@@ -34,46 +34,51 @@
 
 #include "hypno/hypno.h"
 #include "hypno/grammar.h"
-#include "hypno/tokens.h"
+#include "hypno/spider/tokens_arc.h"
 
 %}
 
 %%
-\;[A-Za-z_0-9 \t\*]*	    /* return COMMENT; */
-MENU				    	return MENUTOK;
-BACK                    	return BACKTOK;
-CUTS                    	return CUTSTOK;
-GLOB						return GLOBTOK;
-PALE						return PALETOK;
-HOTS                        return HOTSTOK;
-WAL[0-1]                    return WALNTOK;
-MICE                        return MICETOK;
-END                         return ENDTOK;
-TIME						return TIMETOK;
-OVER                        return OVERTOK;
-SMEN                        return SMENTOK;
-ESCP                        return ESCPTOK;
-PLAY						return PLAYTOK;
-NO_RETURN                   return NRTOK;
-GS_[A-Z_0-9]+           	HYPNO_lval.s = scumm_strdup(HYPNO_text); return GSSWITCH;
-\/BBOX\=					return BBOXTOK;
-\/[A-Za-z_0-9]*  			HYPNO_lval.s = scumm_strdup(HYPNO_text); return FLAG;
-[A-Za-z_][A-Za-z_0-9]*  	HYPNO_lval.s = scumm_strdup(HYPNO_text); return NAME;
-[A-Za-z][A-Za-z_0-9\\\.]*  	HYPNO_lval.s = scumm_strdup(HYPNO_text); return FILENAME;
-[\-]?[0-9]+		        	HYPNO_lval.i = atoi(HYPNO_text); return NUM;
-\r\n						return RETTOK;
+C				    		return CTOK;
+D                           return DTOK;
+HE                          return HETOK;
+H                           return HTOK;
+P							return PTOK;
+A							return ATOK;
+V							return VTOK;
+O 							return OTOK;
+N 							return NTOK;
+R 							return RTOK;
+I 							return ITOK;
+Q							return QTOK;
+Z							return ZTOK;
+W							return WTOK;
+X 							return XTOK;
+F0							return F0TOK;
+S[0-9]						return SNTOK;
+A0							return A0TOK;
+B0							return B0TOK;
+K0							return K0TOK;
+P0							return P0TOK;
+22[k|K]						return ENCTOK;
+[A-Za-z_][A-Za-z_0-9]*  	HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return NAME;
+[A-Za-z][A-Za-z_0-9\\\.]*  	HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
+[\-]?[0-9]+		        	HYPNO_ARC_lval.i = atoi(HYPNO_ARC_text); return NUM;
+\n							return RETTOK;
+\xb3                        return CB3TOK;
+\x02                        return C02TOK;
 [ \t]+		            	/* ignore whitespace */;
-.				        	debug("<no match>"); return *yytext;
+.				        	debug("notparsed: 0x%d",*yytext); return *yytext;
 %%
 
 namespace Hypno {
 
-int parse(const char *code) {
+int parse_arc(const char *code) {
 	YY_BUFFER_STATE bp;
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 	bp = yy_scan_string(code);
 	yy_switch_to_buffer(bp);
-	HYPNO_parse();
+	HYPNO_ARC_parse();
 	yy_delete_buffer(bp);
 	return 0;
 }

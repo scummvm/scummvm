@@ -20,56 +20,32 @@
  *
  */
 
-// Heavily inspired by hoc
-// Copyright (C) AT&T 1995
-// All Rights Reserved
-//
-// Permission to use, copy, modify, and distribute this software and
-// its documentation for any purpose and without fee is hereby
-// granted, provided that the above copyright notice appear in all
-// copies and that both that the copyright notice and this
-// permission notice and warranty disclaimer appear in supporting
-// documentation, and that the name of AT&T or any of its entities
-// not be used in advertising or publicity pertaining to
-// distribution of the software without specific, written prior
-// permission.
-//
-// AT&T DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
-// INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.
-// IN NO EVENT SHALL AT&T OR ANY OF ITS ENTITIES BE LIABLE FOR ANY
-// SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-// IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
-// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
-// THIS SOFTWARE.
-
 %require "3.0"
-%defines "engines/hypno/tokens.h"
-%output "engines/hypno/grammar.cpp"
-%define api.prefix {HYPNO_}
+%defines "engines/hypno/spider/tokens_mis.h"
+%output "engines/hypno/spider/grammar_mis.cpp"
+%define api.prefix {HYPNO_MIS_}
 
 %{
 
-//#include "private/private.h"
 #include "common/array.h"
 #include "hypno/grammar.h"
 #include <stdio.h>
 
 #undef yyerror
-#define yyerror	 HYPNO_xerror
+#define yyerror	 HYPNO_MIS_xerror
 
-extern int HYPNO_lex();
-extern int HYPNO_parse();
+extern int HYPNO_MIS_lex();
+extern int HYPNO_MIS_parse();
 extern int yylineno;
 
 Common::Array<uint32> smenu_idx;
 Hypno::HotspotsStack stack;
 
-void HYPNO_xerror(const char *str) {
+void HYPNO_MIS_xerror(const char *str) {
 	debug("ERROR: %s", str);
 }
 
-int HYPNO_wrap() {
+int HYPNO_MIS_wrap() {
     return 1;
 }
 
@@ -78,8 +54,8 @@ using namespace Hypno;
 %} 
 
 %union {
-	char *s;	     	/* string value */
-	int i;	         	/* integer value */
+	char *s; /* string value */
+	int i;	 /* integer value */
 }
 
 %token<s> NAME FILENAME FLAG COMMENT GSSWITCH COMMAND
@@ -152,8 +128,8 @@ line:    MENUTOK NAME mflag  {
 		    Hotspot *hot = &cur->back();
 			hot->actions.push_back(a);
 		  	debug("ESC SUBMENU"); }
-	  |  TIMETOK NUM                               { debug("TIME %d", $2); } 
-      |  BACKTOK FILENAME NUM NUM gsswitch flag    {
+	  |  TIMETOK NUM  { debug("TIME %d", $2); } 
+      |  BACKTOK FILENAME NUM NUM gsswitch flag {
 			Background *a = new Background();
 			a->path = $2;
 			a->origin = Common::Point($3, $4);
@@ -189,7 +165,7 @@ line:    MENUTOK NAME mflag  {
 		    Hotspot *hot = &cur->back();
 			hot->actions.push_back(a);
 	   }
-	  |  PALETOK FILENAME                          {
+	  |  PALETOK FILENAME {
 			Palette *a = new Palette();
 			a->path = $2; 
 			Hotspots *cur = stack.back();

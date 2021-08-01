@@ -85,13 +85,17 @@ public:
 	Common::HashMap<Common::String, int> _levelState;
 	void resetLevelState();
 	bool checkLevelCompleted();
-	void runMis(Common::String name);
+	void runLevel(Common::String name);
+	void runScene(Hotspots hots, Movies intros);
+	void runArcade(ArcadeShooting arc);
 
 	void restartGame();
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
+	void loadAssets();
 	void loadMis(Common::String filename);
 	LibData loadLib(char *filename);
+	Common::HashMap<Common::String, Common::String> _assets;
 
 	// User input
 	void clickedHotspot(Common::Point);
@@ -119,7 +123,6 @@ public:
 	void playVideo(const Common::String &);
 	void skipVideo();
 
-	Graphics::Surface *decodeImage(const Common::String &file);
 	Graphics::Surface *decodeFrame(const Common::String &name, int frame, bool convert = true);
 	void loadImage(const Common::String &file, int x, int y);
 

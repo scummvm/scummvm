@@ -42,6 +42,7 @@
 namespace Hypno {
 
 Hotspots *g_parsedHots;
+ArcadeShooting g_parsedArc;
 //Settings g_settings;
 
 const static char* levelVariables[] = {
@@ -74,7 +75,8 @@ const static char* levelVariables[] = {
 	NULL
 };
 
-extern int parse(const char *);
+extern int parse_mis(const char *);
+extern int parse_arc(const char *);
 
 HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
@@ -103,7 +105,7 @@ void HypnoEngine::loadMis(Common::String filename) {
 	char *buf = (char *)malloc(fileSize + 1);
 	test->read(buf, fileSize);
 	buf[fileSize] = '\0';
-	parse(buf);
+	parse_mis(buf);
 	Level level;
 	level.hots = *g_parsedHots; 
 	_levels[filename] = level;
@@ -170,52 +172,76 @@ bool HypnoEngine::checkLevelCompleted() {
 	return _levelState["GS_LEVELCOMPLETE"];
 }
 
-Common::Error HypnoEngine::run() {
-	_language = Common::parseLanguage(ConfMan.get("language"));
-	_platform = Common::parsePlatform(ConfMan.get("platform"));
+void HypnoEngine::loadAssets() {
+
+	
 	LibData files = loadLib("C_MISC/MISSIONS.LIB");
-	/*uint32 i = 0;
+	uint32 i = 0;
 	uint32 j = 0;
 	uint32 k = 0;
 
+	Common::String mis;
+
 	debug("file: %s",files.filenames[j].c_str());
 	for (i = 0; i < files.data.size(); i++) {
-		debugN("%c", files.data[i]);
+		mis += files.data[i];
+		//debugN("%x/%c, ", files.data[i], files.data[i]);
 		if (files.data[i] == 'X') {
-			if (j == files.filenames.size()-1) {
-				debug("Finished at %d from %d", i, files.data.size()); 
-				for (k = i; k < files.data.size(); k++)
-					debugN("%c", files.data[k]);
-				break;
-			}
+			break;
+			//if (j == files.filenames.size()-1) {
+			//	debug("Finished at %d from %d", i, files.data.size()); 
+			//	for (k = i; k < files.data.size(); k++)
+			//		debugN("%c", files.data[k]);
+			//	break;
+			//}
 
-			j++;
+			//j++;
 			debugN("\n************file: %s**************",files.filenames[j].c_str());
 		}
 	}
-	*/	
+	parse_arc(mis.c_str());
+	{ 
+		Level level;
+		level.arcade = g_parsedArc;  
+		_levels[files.filenames[0]] = level;
+		debug("%s", level.arcade.background.c_str());
+	}
 
-	Hotspot q;
-	q.type = MakeMenu;
-	Action *a = new Quit();
-	q.actions.push_back(a);
-	Level level;
-	Hotspots quit;
-	quit.push_back(q);
-	level.hots = quit;  
-	_levels["mis/quit.mis"] = level;
+	{ // quit level
+		Hotspot q;
+		q.type = MakeMenu;
+		Action *a = new Quit();
+		q.actions.push_back(a);
+		Level level;
+		Hotspots quit;
+		quit.push_back(q);
+		level.hots = quit;  
+		_levels["mis/quit.mis"] = level;
+	}
+
 	// Read assets from mis files
 	loadMis("mis/demo.mis");
 	_levels["mis/demo.mis"].intros.push_back("demo/dcine1.smk");
 	_levels["mis/demo.mis"].intros.push_back("demo/dcine2.smk");
+	_levels["mis/demo.mis"].hots[1].setting = "C1.MI_";
 	_levels["mis/demo.mis"].hots[2].setting = "mis/alley.mis";
 	_levels["mis/demo.mis"].hots[5].setting = "mis/order.mis";
+
+
 	loadMis("mis/order.mis");
 	_levels["mis/order.mis"].hots[1].setting = "mis/quit.mis";
 	loadMis("mis/alley.mis");
 	_levels["mis/alley.mis"].intros.push_back("demo/aleyc01s.smk");
 
-	//loadMis("MIS/SHOCTALK.MIS");
+	//loadMis("mis/shoctalk.mis");
+
+}
+
+Common::Error HypnoEngine::run() {
+	_language = Common::parseLanguage(ConfMan.get("language"));
+	_platform = Common::parsePlatform(ConfMan.get("platform"));
+
+	//return Common::kNoError;
 
 	// Initialize graphics
 	initGraphics(_screenW, _screenH, nullptr);
@@ -240,7 +266,7 @@ Common::Error HypnoEngine::run() {
 	} else {
 		_nextSetting = getGoIntroSetting();
 	}*/
-
+	loadAssets();
 	_nextSetting = "mis/demo.mis";
 	while (!shouldQuit()) {
 		resetLevelState();
@@ -248,22 +274,102 @@ Common::Error HypnoEngine::run() {
 			debug("Executing setting %s", _nextSetting.c_str());
 			_currentSetting = _nextSetting;
 			_nextSetting = "";
-			runMis(_currentSetting);
+			runLevel(_currentSetting);
 		}
 			
 	}
 	return Common::kNoError;
 }
 
+void HypnoEngine::runLevel(Common::String name) {
+	assert(_levels.contains(name));
+	if (_levels[name].hots.size() == 0)
+		runArcade(_levels[name].arcade);
+	else
+		runScene(_levels[name].hots, _levels[name].intros);
 
-void HypnoEngine::runMis(Common::String name) {
+}
+
+void HypnoEngine::runArcade(ArcadeShooting arc) {
+	Common::Event event;
+	Common::Point mousePos;
+	
+	_nextMoviesToPlay.push_back(arc.background);
+	_nextMoviesPositions.push_back(Common::Point(0, 0));
+	_nextMoviesScales.push_back(true);
+	
+	changeCursor("mouse/cursor1.smk", 0);
+
+	while (!shouldQuit()) {
+		
+		while (g_system->getEventManager()->pollEvent(event)) {
+			mousePos = g_system->getEventManager()->getMousePos();
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				//if (!_nextHotsToAdd || !_nextHotsToRemove)
+				// 	clickedHotspot(mousePos);
+				break;
+
+			case Common::EVENT_MOUSEMOVE:
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		// Movies
+		if (_nextMoviesToPlay.size() > 0 && _currentMovie.empty()) {
+			debug("start playing %s", _nextMoviesToPlay.front().c_str());
+			//removeTimer();
+			assert(_nextMoviesToPlay.size() == _nextMoviesPositions.size());
+			_videoDecoder = new Video::SmackerDecoder();
+			_currentMovie = _nextMoviesToPlay.front();
+			_moviePosition = _nextMoviesPositions.front();
+			_movieScale = _nextMoviesScales.front();
+			playVideo(_currentMovie);
+			_nextMoviesToPlay.pop_front();
+			_nextMoviesPositions.pop_front();
+			_nextMoviesScales.pop_front();
+			continue;
+		}
+
+		if (_videoDecoder && !_videoDecoder->isPaused()) {
+			if (_videoDecoder->getCurFrame() == 0)
+				stopSound(true);
+			if (_videoDecoder->endOfVideo()) {
+				debug("video still playing");
+				_videoDecoder->close();
+				delete _videoDecoder;
+				_videoDecoder = nullptr;
+				_currentMovie = "";
+
+			} else if (_videoDecoder->needsUpdate()) {
+				debug("updating screen");
+				drawScreen();
+				g_system->delayMillis(10);
+			}
+			continue;
+		}
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+}
+
+void HypnoEngine::runScene(Hotspots hots, Movies intros) {
 	Common::Event event;
 	Common::Point mousePos;
 	
 	stack.clear();
-	assert(_levels.contains(name));
-	_nextHotsToAdd = &_levels[name].hots;
-	_nextMoviesToPlay = _levels[name].intros;
+	_nextHotsToAdd = &hots;
+	_nextMoviesToPlay = intros;
 	for (uint32 i = 0; i < _nextMoviesToPlay.size(); i++) {
 		_nextMoviesPositions.push_back(Common::Point(0, 0));
 		_nextMoviesScales.push_back(true);

@@ -3,8 +3,10 @@ MODULE := engines/hypno
 MODULE_OBJS := \
 	cursors.o \
 	metaengine.o \
-	lexer.o \
-	grammar.o \
+	spider/lexer_mis.o \
+	spider/grammar_mis.o \
+	spider/lexer_arc.o \
+	spider/grammar_arc.o \
 	hypno.o
 
 MODULE_DIRS += \
