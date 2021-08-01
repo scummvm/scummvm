@@ -30,8 +30,8 @@
 namespace Common {
 
 // TODO: Maybe make 'Command' a separate mac-specific modifier so we can define
-//  defaults key bindings from the original mac game versions without binding
-//  them to the meta key on other platforms?
+// defaults key bindings from the original mac game versions without binding
+// them to the meta key on other platforms?
 #if defined(WIN32)
 #define META_KEY_NAME "Win"
 #elif defined(MACOSX) || defined(IPHONE)
@@ -115,7 +115,7 @@ const KeyTableEntry defaultKeys[] = {
 	{"z", KEYCODE_z, "z"},
 	{"DELETE", KEYCODE_DELETE, "Del"},
 
-	// Numeric keypad
+	// Numeric keypad.
 	{"KP0", KEYCODE_KP0, "KP0"},
 	{"KP1", KEYCODE_KP1, "KP1"},
 	{"KP2", KEYCODE_KP2, "KP2"},
@@ -134,7 +134,7 @@ const KeyTableEntry defaultKeys[] = {
 	{"KP_ENTER", KEYCODE_KP_ENTER, "KP Enter"},
 	{"KP_EQUALS", KEYCODE_KP_EQUALS, "KP="},
 
-	// Arrows + Home/End pad
+	// Arrows + Home/End pad.
 	{"UP", KEYCODE_UP, "Up"},
 	{"DOWN", KEYCODE_DOWN, "Down"},
 	{"RIGHT", KEYCODE_RIGHT, "Right"},
@@ -145,7 +145,7 @@ const KeyTableEntry defaultKeys[] = {
 	{"PAGEUP", KEYCODE_PAGEUP, "PgUp"},
 	{"PAGEDOWN", KEYCODE_PAGEDOWN, "PgDn"},
 
-	// Function keys
+	// Function keys.
 	{"F1", KEYCODE_F1, "F1"},
 	{"F2", KEYCODE_F2, "F2"},
 	{"F3", KEYCODE_F3, "F3"},
@@ -165,17 +165,17 @@ const KeyTableEntry defaultKeys[] = {
 	{"F17", KEYCODE_F17, "F17"},
 	{"F18", KEYCODE_F18, "F18"},
 
-	// Miscellaneous function keys
+	// Miscellaneous function keys.
 	{"HELP", KEYCODE_HELP, "Help"},
 	{"PRINT", KEYCODE_PRINT, "Print"},
 	{"SYSREQ", KEYCODE_SYSREQ, "SysRq"},
 	{"BREAK", KEYCODE_BREAK, "Break"},
 	{"MENU", KEYCODE_MENU, "Menu"},
-		// Power Macintosh power key
+		// Power Macintosh power key.
 	{"POWER", KEYCODE_POWER, "Power"},
-		// Some european keyboards
+		// Some european keyboards.
 	{"EURO", KEYCODE_EURO, "Euro"},
-		// Atari keyboard has Undo
+		// Atari keyboard has Undo.
 	{"UNDO", KEYCODE_UNDO, "Undo"},
 	{"SLEEP", KEYCODE_SLEEP, "Sleep"},
 	{"MUTE", KEYCODE_MUTE, "Mute"},
@@ -196,7 +196,7 @@ const KeyTableEntry defaultKeys[] = {
 	{"SELECT", KEYCODE_SELECT, "Select"},
 	{"CANCEL", KEYCODE_CANCEL, "Cancel"},
 
-	// Action keys
+	// Action keys.
 	{"AC_SEARCH", KEYCODE_AC_SEARCH, "AC Search"},
 	{"AC_HOME", KEYCODE_AC_HOME, "AC Home"},
 	{"AC_BACK", KEYCODE_AC_BACK, "AC Back"},
@@ -205,7 +205,7 @@ const KeyTableEntry defaultKeys[] = {
 	{"AC_REFRESH", KEYCODE_AC_REFRESH, "AC Refresh"},
 	{"AC_BOOKMARKS", KEYCODE_AC_BOOKMARKS, "AC Bookmarks"},
 
-	// Audio keys
+	// Audio keys.
 	{"AUDIONEXT", KEYCODE_AUDIONEXT, "Audio Next"},
 	{"AUDIOPREV", KEYCODE_AUDIOPREV, "Audio Previous"},
 	{"AUDIOSTOP", KEYCODE_AUDIOSTOP, "Audio Stop"},
@@ -216,7 +216,7 @@ const KeyTableEntry defaultKeys[] = {
 	{"AUDIOREWIND", KEYCODE_AUDIOREWIND, "Audio Rewind"},
 	{"AUDIOFASTFORWARD", KEYCODE_AUDIOFASTFORWARD, "Audio Fast-Forward"},
 
-	// Modifier keys
+	// Modifier keys.
 	{"SCROLLOCK", KEYCODE_SCROLLOCK, "Scroll Lock"          },
 	{"CAPSLOCK",  KEYCODE_CAPSLOCK,  "Caps Lock"            },
 	{"NUMLOCK",   KEYCODE_NUMLOCK,   "Num Lock"             },
@@ -232,7 +232,7 @@ const KeyTableEntry defaultKeys[] = {
 	{0, KEYCODE_INVALID, 0}
 };
 
-// TODO: Add NUM_LOCK
+// TODO: Add NUM_LOCK.
 const ModifierTableEntry defaultModifiers[] = {
 	{ KBD_CTRL,  "C", "Ctrl+"            },
 	{ KBD_SHIFT, "S", "Shift+"           },
@@ -296,7 +296,7 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const String &id) cons
 
 	byte modifierFlags = 0;
 
-	// TODO: Normalize modifier order
+	// TODO: Normalize modifier order.
 	U32String fullKeyDesc;
 
 	String token;
@@ -314,7 +314,7 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const String &id) cons
 			modifierFlags |= modifier->flag;
 			fullKeyDesc += _(modifier->desc);
 		} else {
-			// We reached the end of the modifiers, the token is a keycode
+			// We reached the end of the modifiers, the token is a keycode.
 			break;
 		}
 	}
@@ -528,7 +528,7 @@ HardwareInput JoystickHardwareInputSet::findHardwareInput(const Event &event) co
 	}
 	case EVENT_JOYAXIS_MOTION: {
 		if (ABS(event.joystick.position) < (JOYAXIS_MAX / 2)) {
-			return HardwareInput(); // Ignore incomplete presses for remapping purposes
+			return HardwareInput(); // Ignore incomplete presses for remapping purposes.
 		}
 
 		const AxisTableEntry *hw = AxisTableEntry::findWithCode(_axisEntries, event.joystick.axis);
@@ -613,4 +613,4 @@ void CompositeHardwareInputSet::addHardwareInputSet(HardwareInputSet *hardwareIn
 	_inputSets.push_back(hardwareInputSet);
 }
 
-} //namespace Common
+} // End of namespace Common.

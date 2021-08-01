@@ -40,12 +40,12 @@ struct KeyActionEntry {
 };
 
 struct Action {
-	/** unique id used for saving/loading to config */
+	/** Unique id used for saving/loading to config */
 	const char *id;
-	/** Human readable description */
+	/** Human readable description. */
 	U32String description;
 
-	/** Event to be sent when mapped key is pressed */
+	/** Event to be sent when mapped key is pressed. */
 	Event event;
 
 private:
@@ -118,7 +118,7 @@ public:
 
 	/**
 	 * Allows an action bound to a keyboard event to be repeatedly
-	 * triggered by key repeats
+	 * triggered by key repeats.
 	 *
 	 * Note that key repeat events should probably not be used for anything
 	 * else than text input as they do not trigger when the action is bound
@@ -133,13 +133,13 @@ public:
 	bool shouldTriggerOnKbdRepeats() const { return _shouldTriggerOnKbdRepeats; }
 
 	/**
-	 * Add a default input mapping for the action
+	 * Add a default input mapping for the action.
 	 *
 	 * Unknown hardware inputs will be silently ignored.
 	 * Having keyboard bindings by default will not cause trouble
 	 * on devices without a keyboard.
 	 *
-	 * @param hwId Hardware input identifier as registered with the keymapper
+	 * @param hwId Hardware input identifier as registered with the keymapper.
 	 */
 	void addDefaultInputMapping(const String &hwId);
 
@@ -149,6 +149,6 @@ public:
 
 };
 
-} // End of namespace Common
+} // End of namespace Common.
 
 #endif // #ifndef COMMON_ACTION_H
