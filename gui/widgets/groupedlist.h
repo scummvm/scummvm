@@ -47,14 +47,14 @@ public:
 
 	void setList(const U32StringArray &list, const ColorList *colors = nullptr);
 	void setAttributeValues(const U32StringArray &attrValues);
-	const U32StringArray &getList()	const			{ return _dataList; }
+	const U32StringArray &getList() const { return _dataList; }
 
 	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 	void setGroupHeaderFormat(const U32String &prefix, const U32String &suffix);
 	void groupByAttribute();
 
 	void setSelected(int item);
-	int getSelected() const						{ return (_selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
+	int getSelected() const { return (_selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;

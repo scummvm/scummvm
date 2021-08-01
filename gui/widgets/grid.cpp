@@ -40,6 +40,7 @@ GridItemWidget::GridItemWidget(GridWidget *boss, int x, int y, int w, int h)
 	_grid = boss;
 	isHighlighted = false;
 }
+
 GridItemWidget::GridItemWidget(GridWidget *boss)
 	: GridItemWidget(boss, 0, 0, 0, 0) {}
 
@@ -69,7 +70,8 @@ void GridItemWidget::move(int x, int y) {
 void GridItemWidget::drawWidget() {
 	if (_activeEntry->isHeader) {
 		g_gui.theme()->drawFoldIndicator(Common::Rect(_x, _y, _x + _h, _y + _h), _grid->groupExpanded(_activeEntry->entryID));
-		g_gui.theme()->drawText(Common::Rect(_x + _h, _y, _x + _w, _y + _h), Common::U32String(_activeEntry->title), ThemeEngine::kStateEnabled, Graphics::kTextAlignLeft);
+		g_gui.theme()->drawText(Common::Rect(_x + _h, _y, _x + _w, _y + _h), Common::U32String(_activeEntry->title),
+								ThemeEngine::kStateEnabled, Graphics::kTextAlignLeft);
 		return;
 	}
 	int thumbHeight = _grid->getThumbnailHeight();
@@ -197,17 +199,15 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (_activeEntry->isHeader) {
 		_grid->_selectedEntry = nullptr;
 		_grid->toggleGroup(_activeEntry->entryID);
-	}
-	else if (isHighlighted && isVisible()) {
+	} else if (isHighlighted && isVisible()) {
 		_grid->_selectedEntry = _activeEntry;
 		sendCommand(kItemClicked, 0);
 		// Since user expected to click on "entry" and not the "widget", we
 		// must open the tray where the user expects it to be, which might
 		// not be at the new widget location.
 		// TODO: Make a scrollToSelection() function which does this
-		int offsetY = 0;
 		if (_y > (_grid->getHeight() - _h - _grid->_trayHeight)) {
-			offsetY = _y - (_grid->getHeight() - _h - _grid->_trayHeight);
+			int offsetY = _y - (_grid->getHeight() - _h - _grid->_trayHeight);
 			sendCommand(kSetPositionCmd, _grid->getScrollPos() + offsetY);
 			_grid->scrollBarRecalc();
 			_grid->markAsDirty();
@@ -817,13 +817,14 @@ void GridWidget::reflowLayout() {
 }
 
 void GridWidget::openTray(int x, int y, int entryId) {
-	_tray = new GridItemTray(this, x  - _gridXSpacing / 3, y, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, entryId, this);
+	_tray = new GridItemTray(this, x - _gridXSpacing / 3, y, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, entryId, this);
 	_tray->runModal();
 }
 
 void GridWidget::openTrayAtSelected() {
 	if (_selectedEntry) {
-		_tray = new GridItemTray(this, _x + _selectedEntry->rect.left - _gridXSpacing / 3, _y + _selectedEntry->rect.bottom - _scrollPos, _gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, _selectedEntry->entryID, this);
+		_tray = new GridItemTray(this, _x + _selectedEntry->rect.left - _gridXSpacing / 3, _y + _selectedEntry->rect.bottom - _scrollPos,
+								_gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, _selectedEntry->entryID, this);
 		_tray->runModal();
 	}
 }

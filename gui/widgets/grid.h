@@ -85,9 +85,9 @@ struct GridItemInfo {
 
 /* GridItemTray */
 class GridItemTray: public Dialog, public CommandSender {
-	int			 	_entryID;
-	GridWidget 		*_grid;
-	GuiObject 		*_boss;
+	int				_entryID;
+	GridWidget		*_grid;
+	GuiObject		*_boss;
 public:
 	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid);
 
@@ -107,9 +107,9 @@ protected:
 	// Images are mapped by filename -> surface.
 	Common::HashMap<String, const Graphics::ManagedSurface *> _loadedSurfaces;
 
-	Common::Array<GridItemInfo> 		_dataEntryList;
-	Common::Array<GridItemInfo> 		_sortedEntryList;
-	Common::Array<GridItemInfo *> 		_visibleEntryList;
+	Common::Array<GridItemInfo>			_dataEntryList;
+	Common::Array<GridItemInfo>			_sortedEntryList;
+	Common::Array<GridItemInfo *>		_visibleEntryList;
 
 	String									_groupingAttribute;
 	Common::HashMap<U32String, int>			_groupValueIndex;
@@ -119,11 +119,11 @@ protected:
 	Common::Array<U32String>					_groupHeaders;
 	Common::HashMap<int, Common::Array<int>>	_itemsInGroup;
 
-	Common::Array<GridItemWidget *> 	_gridItems;
+	Common::Array<GridItemWidget *>		_gridItems;
 
 	ScrollBarWidget *_scrollBar;
 
-	int 			_scrollBarWidth;
+	int				_scrollBarWidth;
 	int				_scrollWindowHeight;
 	int				_scrollWindowWidth;
 	int				_scrollSpeed;
@@ -138,19 +138,19 @@ protected:
 	int				_itemsPerRow;
 	int				_firstVisibleItem;
 	int				_itemsOnScreen;
-	GridItemTray 	*_tray;
-	String 			_iconDir;
+	GridItemTray	*_tray;
+	String			_iconDir;
 
 public:
 	int				_gridItemHeight;
 	int				_gridItemWidth;
 	int				_gridHeaderHeight;
-	int 			_gridHeaderWidth;
+	int				_gridHeaderWidth;
 	int				_gridXSpacing;
 	int				_gridYSpacing;
 	int				_trayHeight;
 
-	bool 			_isTitlesVisible;
+	bool			_isTitlesVisible;
 
 	GridItemInfo	*_selectedEntry;
 
@@ -203,9 +203,9 @@ class GridItemWidget : public ContainerWidget, public CommandSender {
 protected:
 	Graphics::ManagedSurface _thumbGfx;
 
-	GridItemInfo 	*_activeEntry;
-	GridWidget 		*_grid;
-	bool 			isHighlighted;
+	GridItemInfo	*_activeEntry;
+	GridWidget		*_grid;
+	bool			isHighlighted;
 
 public:
 	GridItemWidget(GridWidget *boss, int x, int y, int w, int h);
