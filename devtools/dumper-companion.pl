@@ -387,6 +387,7 @@ sub encode_punycode {
     no warnings 'utf8';
 
     my $input = shift;
+    utf8::decode($input);
     my $input_length = length $input;
 
     my $output = $input; $output =~ s/[^$BasicRE]+//ogs;
