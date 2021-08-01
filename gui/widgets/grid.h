@@ -117,7 +117,7 @@ protected:
 	U32String									_groupHeaderPrefix;
 	U32String									_groupHeaderSuffix;
 	Common::Array<U32String>					_groupHeaders;
-	Common::HashMap<int, Common::Array<int>>	_itemsInGroup;
+	Common::HashMap<int, Common::Array<int> >	_itemsInGroup;
 
 	Common::Array<GridItemWidget *>		_gridItems;
 

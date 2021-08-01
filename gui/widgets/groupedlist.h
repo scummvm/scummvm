@@ -39,7 +39,7 @@ protected:
 	U32String									_groupHeaderSuffix;
 	U32StringArray								_groupHeaders;
 	U32StringArray								_attributeValues;
-	Common::HashMap<int, Common::Array<int>>	_itemsInGroup;
+	Common::HashMap<int, Common::Array<int> >	_itemsInGroup;
 
 public:
 	GroupedListWidget(Dialog *boss, const String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
