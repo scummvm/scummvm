@@ -103,6 +103,10 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
+	uint16 getTrackedItem() const {
+		return _itemNum;
+	}
+
 private:
 	int32 _sx, _sy, _sz;
 	int32 _ex, _ey, _ez;
