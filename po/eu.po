@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-01 14:12+0000\n"
+"POT-Creation-Date: 2021-08-01 19:25+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -169,8 +169,8 @@ msgstr ""
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
-#: engines/scumm/scumm.cpp:1349 engines/scumm/scumm.cpp:1375
-#: engines/scumm/scumm.cpp:1397 engines/scumm/scumm.cpp:2093
+#: engines/scumm/scumm.cpp:1351 engines/scumm/scumm.cpp:1377
+#: engines/scumm/scumm.cpp:1399 engines/scumm/scumm.cpp:2095
 #: engines/sky/compact.cpp:142 engines/sword1/animation.cpp:532
 #: engines/sword1/animation.cpp:553 engines/sword1/animation.cpp:569
 #: engines/sword1/animation.cpp:577 engines/sword1/control.cpp:889
@@ -3960,7 +3960,7 @@ msgstr "Kargatu"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2703
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2705
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3971,7 +3971,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2693
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2695
 #, fuzzy, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3982,7 +3982,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2716
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2718
 #, fuzzy, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6935,7 +6935,7 @@ msgid ""
 "320x200, under 'engine' tab."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1348
+#: engines/scumm/scumm.cpp:1350
 #, fuzzy
 #| msgid ""
 #| "Could not find the 'Loom' Macintosh executable to read the\n"
@@ -6947,7 +6947,7 @@ msgstr ""
 "Ezin izan da 'Loom' Macintosh exekutagarria aurkitu instrumentuak\n"
 "bertatik irakurtzeko. Musika desgaituta egongo da."
 
-#: engines/scumm/scumm.cpp:1374
+#: engines/scumm/scumm.cpp:1376
 #, fuzzy
 #| msgid ""
 #| "Could not find the 'Loom' Macintosh executable to read the\n"
@@ -6959,7 +6959,7 @@ msgstr ""
 "Ezin izan da 'Loom' Macintosh exekutagarria aurkitu instrumentuak\n"
 "bertatik irakurtzeko. Musika desgaituta egongo da."
 
-#: engines/scumm/scumm.cpp:1396
+#: engines/scumm/scumm.cpp:1398
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -6967,7 +6967,7 @@ msgstr ""
 "Ezin izan da 'Monkey Island' Macintosh exekutagarria aurkitu instrumentuak\n"
 "bertatik irakurtzeko. Musika desgaituta egongo da."
 
-#: engines/scumm/scumm.cpp:2091
+#: engines/scumm/scumm.cpp:2093
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6976,7 +6976,7 @@ msgstr ""
 "MIDI euskarri natiboak LucasArts-en Roland eguneraketa behar du,\n"
 "baina %s ez dago eskuragarri. AdLib erabiliko da."
 
-#: engines/scumm/scumm.cpp:3018
+#: engines/scumm/scumm.cpp:3020
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
