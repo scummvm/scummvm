@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-01 14:12+0000\n"
-"PO-Revision-Date: 2021-07-28 21:54+0000\n"
+"PO-Revision-Date: 2021-08-01 17:17+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -959,11 +959,11 @@ msgstr "Mostrar controles en pantalla"
 
 #: gui/options.cpp:1229
 msgid "Show SAF revoke permissions overlay button"
-msgstr ""
+msgstr "Mostrar botón superpuesto para revocar permisos del SAF"
 
 #: gui/options.cpp:1233
 msgid "Touchpad mouse mode"
-msgstr "Modo Touchpad"
+msgstr "Modo «touchpad»"
 
 #: gui/options.cpp:1237
 msgid "Swap Menu and Back buttons"
@@ -6264,14 +6264,12 @@ msgstr ""
 "solo utiliza un canal de sonido."
 
 #: engines/scumm/detection.cpp:204
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth scrolling"
-msgstr "Activar el desplazamiento de pantalla suave al caminar"
+msgstr "Desplazamiento suave"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(en lugar del desplazamiento normal por pasos de 8 píxeles)"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
