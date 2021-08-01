@@ -74,7 +74,8 @@ HPFArchive::HPFArchive(const Common::String &path) {
 	delete archive;
 }
 
-bool HPFArchive::hasFile(const Common::String &name) const {
+bool HPFArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return (_files.find(name) != _files.end());
 }
 
@@ -89,14 +90,16 @@ int HPFArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return numMembers;
 }
 
-const Common::ArchiveMemberPtr HPFArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr HPFArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *HPFArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *HPFArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	FileMap::const_iterator fDesc = _files.find(name);
 	if (fDesc == _files.end())
 		return NULL;

@@ -43,7 +43,8 @@ class FileMapArchive : public Common::Archive {
 public:
 	FileMapArchive(const AdvancedMetaEngineDetection::FileMap &fileMap) : _fileMap(fileMap) {}
 
-	bool hasFile(const Common::String &name) const override {
+	bool hasFile(const Common::Path &path) const override {
+		Common::String name = path.toString();
 		return _fileMap.contains(name);
 	}
 
@@ -57,7 +58,8 @@ public:
 		return files;
 	}
 
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override {
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override {
+		Common::String name = path.toString();
 		AdvancedMetaEngineDetection::FileMap::const_iterator it = _fileMap.find(name);
 		if (it == _fileMap.end()) {
 			return Common::ArchiveMemberPtr();
@@ -66,7 +68,8 @@ public:
 		return Common::ArchiveMemberPtr(new Common::FSNode(it->_value));
 	}
 
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override {
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override {
+		Common::String name = path.toString();
 		Common::FSNode fsNode = _fileMap.getValOrDefault(name);
 		return fsNode.createReadStream();
 	}

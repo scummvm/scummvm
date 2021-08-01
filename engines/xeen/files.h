@@ -295,9 +295,9 @@ public:
 	BaseCCArchive() {}
 
 	// Archive implementation
-	bool hasFile(const Common::String &name) const override;
+	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 };
 
 /**
@@ -316,7 +316,7 @@ public:
 	~CCArchive() override;
 
 	// Archive implementation
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 };
 
 class SaveArchive : public BaseCCArchive {
@@ -338,7 +338,7 @@ public:
 	/**
 	 * Archive implementation
 	 */
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 	/**
 	 * Archive implementation

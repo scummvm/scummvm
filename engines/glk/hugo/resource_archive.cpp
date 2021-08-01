@@ -48,7 +48,8 @@ bool ResourceArchive::splitName(const Common::String &name,
 }
 
 
-bool ResourceArchive::hasFile(const Common::String &name) const {
+bool ResourceArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	Common::String filename, resName;
 
 	if (!splitName(name, filename, resName))
@@ -59,14 +60,16 @@ bool ResourceArchive::hasFile(const Common::String &name) const {
 	return resLength != 0;
 }
 
-const Common::ArchiveMemberPtr ResourceArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr ResourceArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *ResourceArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *ResourceArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	Common::String filename, resName;
 
 	// Split up the file and resource entry; return if it's not one

@@ -46,10 +46,10 @@ class HPFArchive : public Common::Archive {
 public:
 	HPFArchive(const Common::String &path);
 
-	bool hasFile(const Common::String &name) const override;
+	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 	int count() { return _files.size(); }
 

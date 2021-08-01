@@ -247,7 +247,8 @@ PackageSet::~PackageSet() {
 	_packages.clear();
 }
 
-bool PackageSet::hasFile(const Common::String &name) const {
+bool PackageSet::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	Common::String upcName = name;
 	upcName.toUppercase();
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator it;
@@ -267,7 +268,8 @@ int PackageSet::listMembers(Common::ArchiveMemberList &list) const {
 	return count;
 }
 
-const Common::ArchiveMemberPtr PackageSet::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr PackageSet::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	Common::String upcName = name;
 	upcName.toUppercase();
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator it;
@@ -275,7 +277,8 @@ const Common::ArchiveMemberPtr PackageSet::getMember(const Common::String &name)
 	return Common::ArchiveMemberPtr(it->_value);
 }
 
-Common::SeekableReadStream *PackageSet::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *PackageSet::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	Common::String upcName = name;
 	upcName.toUppercase();
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::const_iterator it;

@@ -72,7 +72,7 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	bool hasFile(const Common::String &name) const override;
+	bool hasFile(const Common::Path &path) const override;
 
 	/**
 	 * Add all members of the Archive matching the specified pattern to list.
@@ -94,7 +94,7 @@ public:
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	const Common::ArchiveMemberPtr getMember(const Common::String &name)
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path)
 		const override;
 
 	/**
@@ -103,7 +103,7 @@ public:
 	 * @return the newly created input stream
 	 */
 	Common::SeekableReadStream *createReadStreamForMember(
-		const Common::String &name) const override;
+		const Common::Path &path) const override;
 };
 
 #ifndef RELEASE_BUILD
@@ -136,7 +136,8 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	bool hasFile(const Common::String &name) const override {
+	bool hasFile(const Common::Path &path) const override {
+		Common::String name = path.toString();
 		return name.hasPrefixIgnoreCase(_publicFolder) && getNode(name).exists();
 	}
 
@@ -164,7 +165,7 @@ public:
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	const Common::ArchiveMemberPtr getMember(const Common::String &name)
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path)
 		const override;
 
 	/**
@@ -173,7 +174,7 @@ public:
 	 * @return the newly created input stream
 	 */
 	Common::SeekableReadStream *createReadStreamForMember(
-		const Common::String &name) const override;
+		const Common::Path &path) const override;
 };
 
 #endif

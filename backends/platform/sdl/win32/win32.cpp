@@ -325,10 +325,10 @@ class Win32ResourceArchive final : public Common::Archive {
 public:
 	Win32ResourceArchive();
 
-	virtual bool hasFile(const Common::String &name) const override;
+	virtual bool hasFile(const Common::Path &path) const override;
 	virtual int listMembers(Common::ArchiveMemberList &list) const override;
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	virtual const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 private:
 	typedef Common::List<Common::String> FilenameList;
 
@@ -349,7 +349,8 @@ Win32ResourceArchive::Win32ResourceArchive() {
 	EnumResourceNames(NULL, MAKEINTRESOURCE(256), &EnumResNameProc, (LONG_PTR)this);
 }
 
-bool Win32ResourceArchive::hasFile(const Common::String &name) const {
+bool Win32ResourceArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (FilenameList::const_iterator i = _files.begin(); i != _files.end(); ++i) {
 		if (i->equalsIgnoreCase(name))
 			return true;
@@ -367,12 +368,14 @@ int Win32ResourceArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return count;
 }
 
-const Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::String &name) const {
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+const Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name.toString(), this));
 }
 
-Common::SeekableReadStream *Win32ResourceArchive::createReadStreamForMember(const Common::String &name) const {
-	TCHAR *tName = Win32::stringToTchar(name);
+Common::SeekableReadStream *Win32ResourceArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
+	TCHAR *tName = Win32::stringToTchar(name.toString());
 	HRSRC resource = FindResource(NULL, tName, MAKEINTRESOURCE(256));
 	free(tName);
 

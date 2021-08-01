@@ -39,7 +39,8 @@ Blorb::Blorb(const Common::FSNode &fileNode, InterpreterType interpType) :
 		error("Could not parse blorb file");
 }
 
-bool Blorb::hasFile(const Common::String &name) const {
+bool Blorb::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (uint idx = 0; idx < _chunks.size(); ++idx) {
 		if (_chunks[idx]._filename.equalsIgnoreCase(name))
 			return true;
@@ -56,14 +57,16 @@ int Blorb::listMembers(Common::ArchiveMemberList &list) const {
 	return (int)_chunks.size();
 }
 
-const Common::ArchiveMemberPtr Blorb::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr Blorb::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (uint idx = 0; idx < _chunks.size(); ++idx) {
 		const ChunkEntry &ce = _chunks[idx];
 

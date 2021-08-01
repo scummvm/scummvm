@@ -100,7 +100,8 @@ NGIArchive::~NGIArchive() {
 	g_nmi->_currArchive = nullptr;
 }
 
-bool NGIArchive::hasFile(const Common::String &name) const {
+bool NGIArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return _headers.contains(name);
 }
 
@@ -116,14 +117,16 @@ int NGIArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return matches;
 }
 
-const Common::ArchiveMemberPtr NGIArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr NGIArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *NGIArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *NGIArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!_headers.contains(name)) {
 		return 0;
 	}

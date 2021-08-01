@@ -35,15 +35,16 @@ FSNode::FSNode(AbstractFSNode *realNode)
 	: _realNode(realNode) {
 }
 
-FSNode::FSNode(const String &p) {
+FSNode::FSNode(const Path &p) {
 	assert(g_system);
 	FilesystemFactory *factory = g_system->getFilesystemFactory();
 	AbstractFSNode *tmp = nullptr;
+	String s = p.toString();
 
-	if (p.empty() || p == ".")
+	if (s.empty() || s == ".")
 		tmp = factory->makeCurrentDirectoryFileNode();
 	else
-		tmp = factory->makeFileNodePath(p);
+		tmp = factory->makeFileNodePath(s);
 	_realNode = SharedPtr<AbstractFSNode>(tmp);
 }
 
@@ -175,25 +176,25 @@ FSDirectory::FSDirectory(const FSNode &node, int depth, bool flat, bool ignoreCl
 	_includeDirectories(includeDirectories) {
 }
 
-FSDirectory::FSDirectory(const String &prefix, const FSNode &node, int depth, bool flat,
+FSDirectory::FSDirectory(const Path &prefix, const FSNode &node, int depth, bool flat,
 						 bool ignoreClashes, bool includeDirectories)
   : _node(node), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes),
 	_includeDirectories(includeDirectories) {
 
-	setPrefix(prefix);
+	setPrefix(prefix.rawString());
 }
 
-FSDirectory::FSDirectory(const String &name, int depth, bool flat, bool ignoreClashes, bool includeDirectories)
+FSDirectory::FSDirectory(const Path &name, int depth, bool flat, bool ignoreClashes, bool includeDirectories)
   : _node(name), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes),
 	_includeDirectories(includeDirectories) {
 }
 
-FSDirectory::FSDirectory(const String &prefix, const String &name, int depth, bool flat,
+FSDirectory::FSDirectory(const Path &prefix, const Path &name, int depth, bool flat,
 						 bool ignoreClashes, bool includeDirectories)
   : _node(name), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes),
 	_includeDirectories(includeDirectories) {
 
-	setPrefix(prefix);
+	setPrefix(prefix.rawString());
 }
 
 FSDirectory::~FSDirectory() {
@@ -202,8 +203,8 @@ FSDirectory::~FSDirectory() {
 void FSDirectory::setPrefix(const String &prefix) {
 	_prefix = prefix;
 
-	if (!_prefix.empty() && !_prefix.hasSuffix("/"))
-		_prefix += "/";
+	if (!_prefix.empty() && _prefix.lastChar() != DIR_SEPARATOR)
+		_prefix += DIR_SEPARATOR;
 }
 
 FSNode FSDirectory::getFSNode() const {
@@ -222,7 +223,8 @@ FSNode *FSDirectory::lookupCache(NodeCache &cache, const String &name) const {
 	return nullptr;
 }
 
-bool FSDirectory::hasFile(const String &name) const {
+bool FSDirectory::hasFile(const Path &path) const {
+	String name = path.rawString();
 	if (name.empty() || !_node.isDirectory())
 		return false;
 
@@ -230,7 +232,8 @@ bool FSDirectory::hasFile(const String &name) const {
 	return node && node->exists();
 }
 
-const ArchiveMemberPtr FSDirectory::getMember(const String &name) const {
+const ArchiveMemberPtr FSDirectory::getMember(const Path &path) const {
+	String name = path.rawString();
 	if (name.empty() || !_node.isDirectory())
 		return ArchiveMemberPtr();
 
@@ -247,7 +250,8 @@ const ArchiveMemberPtr FSDirectory::getMember(const String &name) const {
 	return ArchiveMemberPtr(new FSNode(*node));
 }
 
-SeekableReadStream *FSDirectory::createReadStreamForMember(const String &name) const {
+SeekableReadStream *FSDirectory::createReadStreamForMember(const Path &path) const {
+	String name = path.rawString();
 	if (name.empty() || !_node.isDirectory())
 		return nullptr;
 
@@ -261,23 +265,24 @@ SeekableReadStream *FSDirectory::createReadStreamForMember(const String &name) c
 	return stream;
 }
 
-FSDirectory *FSDirectory::getSubDirectory(const String &name, int depth, bool flat, bool ignoreClashes) {
-	return getSubDirectory(String(), name, depth, flat, ignoreClashes);
+FSDirectory *FSDirectory::getSubDirectory(const Path &name, int depth, bool flat, bool ignoreClashes) {
+	return getSubDirectory(Path(), name, depth, flat, ignoreClashes);
 }
 
-FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &name, int depth,
+FSDirectory *FSDirectory::getSubDirectory(const Path &prefix, const Path &name, int depth,
 		bool flat, bool ignoreClashes) {
-	if (name.empty() || !_node.isDirectory())
+	String rawName = name.rawString();
+	if (rawName.empty() || !_node.isDirectory())
 		return nullptr;
 
-	FSNode *node = lookupCache(_subDirCache, name);
+	FSNode *node = lookupCache(_subDirCache, rawName);
 	if (!node)
 		return nullptr;
 
 	return new FSDirectory(prefix, *node, depth, flat, ignoreClashes);
 }
 
-void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) const {
+void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& prefix) const {
 	if (depth <= 0)
 		return;
 
@@ -286,7 +291,7 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 
 	FSList::iterator it = list.begin();
 	for ( ; it != list.end(); ++it) {
-		String name = prefix + it->getName();
+		String name = prefix.rawString() + it->getName();
 
 		// don't touch name as it might be used for warning messages
 		String lowercaseName = name;
@@ -306,7 +311,7 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 						        name.c_str());
 					}
 				}
-				cacheDirectoryRecursive(*it, depth - 1, _flat ? prefix : lowercaseName + "/");
+				cacheDirectoryRecursive(*it, depth - 1, _flat ? prefix : lowercaseName + DIR_SEPARATOR);
 				_subDirCache[lowercaseName] = *it;
 			}
 		} else {
