@@ -155,7 +155,7 @@ void ScummEngine::towns_clearStrip(int strip) {
 }
 
 void ScummEngine::requestScroll(int dir) {
-	if (_game.platform == Common::kPlatformFMTowns && !_fastMode) {
+	if (_enableSmoothScrolling && !_fastMode) {
 		int lw = _townsScreen->getLayerWidth(0);
 		// Wait for opposite direction scroll to finish.
 		towns_waitForScroll(-dir);
@@ -197,17 +197,19 @@ void ScummEngine::towns_updateGfx() {
 			dur += _refreshDuration[i];
 		_refreshNeedCatchUp = (dur / ARRAYSIZE(_refreshDuration)) > (1000 / 60);
 	}
-	
-	while (_scrollTimer <= cur) {
-		if (!_scrollTimer)
-			_scrollTimer = cur;
-		_scrollTimer += 1000 / 60;
-		_townsScreen->scrollLayers(1, _scrollRequest);
-		if (_townsScreen->isScrolling(0))
-			_scrollDeltaAdjust++;
-		_scrollRequest = 0;
-		if (!_refreshNeedCatchUp)
-			break;
+
+	if (_enableSmoothScrolling) {
+		while (_scrollTimer <= cur) {
+			if (!_scrollTimer)
+				_scrollTimer = cur;
+			_scrollTimer += 1000 / 60;
+			_townsScreen->scrollLayers(1, _scrollRequest);
+			if (_townsScreen->isScrolling(0))
+				_scrollDeltaAdjust++;
+			_scrollRequest = 0;
+			if (!_refreshNeedCatchUp)
+				break;
+		}
 	}
 
 	_townsScreen->update();

@@ -286,6 +286,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_scrollRequest = _scrollDeltaAdjust = 0;
 	_scrollDestOffset = _scrollTimer = 0;
 	_refreshNeedCatchUp = false;
+	_enableSmoothScrolling = (_game.platform == Common::kPlatformFMTowns);
 	memset(_refreshDuration, 0, sizeof(_refreshDuration));
 	_refreshArrayPos = 0;
 #ifdef USE_RGB_COLOR
@@ -592,6 +593,12 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	} else {
 		_screenWidth = 320;
 		_screenHeight = 200;
+	}
+
+	if (_game.platform == Common::kPlatformFMTowns) {
+		ConfMan.registerDefault("smooth_scroll", true);
+		if (ConfMan.hasKey("smooth_scroll"))
+			_enableSmoothScrolling = ConfMan.getBool("smooth_scroll");
 	}
 
 	_bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;

@@ -200,6 +200,13 @@ static const ExtraGuiOption macV3LowQualityMusic = {
 	false
 };
 
+static const ExtraGuiOption smoothScrolling = {
+	_s("Enable smooth scrolling"),
+	_s("(instead of the normal 8-pixels steps scrolling)"),
+	"smooth_scroll",
+	true
+};
+
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -215,8 +222,10 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 	if (target.empty() || platform == Common::kPlatformNES) {
 		options.push_back(mmnesObjectLabelsOption);
 	}
-	if (target.empty() || (platform == Common::kPlatformFMTowns && guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))) {
-		options.push_back(fmtownsTrimTo200);
+	if (target.empty() || platform == Common::kPlatformFMTowns) {
+		options.push_back(smoothScrolling);
+		if (guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))
+			options.push_back(fmtownsTrimTo200);
 	}
 	// The Steam Mac version of Loom is more akin to the VGA DOS version,
 	// and that's how ScummVM usually sees it. But that rebranding does not
@@ -224,6 +233,7 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 	if (target.empty() || (gameid == "loom" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
 		options.push_back(macV3LowQualityMusic);
 	}
+
 	return options;
 }
 

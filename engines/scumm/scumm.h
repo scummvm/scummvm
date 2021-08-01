@@ -1388,6 +1388,7 @@ protected:
 	int _refreshDuration[20];
 	int _refreshArrayPos;
 	bool _refreshNeedCatchUp;
+	bool _enableSmoothScrolling;
 	uint32 _scrollTimer;
 	uint32 _scrollDestOffset;
 	uint16 _scrollFeedStrips[3];

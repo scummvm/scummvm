@@ -4095,7 +4095,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 void ScummEngine::scrollEffect(int dir) {
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	// The FM-Towns versions use smooth scrolling here, but only for left and right.
-	if (_game.platform == Common::kPlatformFMTowns && dir > 1) {
+	if (_enableSmoothScrolling && dir > 1) {
 		towns_scriptScrollEffect((dir & 1) * 2 - 1);
 		return;
 	}
