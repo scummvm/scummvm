@@ -150,8 +150,7 @@ public:
 	}
 
 	const char **GAME_NAMES() {
-		delete[] _gameNames;
-		_gameNames = new const char *[3] { "Clouds", "Darkside", "World" };
+		static const char *_gameNames[] = { "Clouds", "Darkside", "World" };
 		return _gameNames;
 	}
 
@@ -197,8 +196,7 @@ public:
 	}
 
 	const char **WHO_ACTIONS() {
-		delete[] _whoActions;
-		_whoActions = new const char *[32] {
+		static const char *_whoActions[] = {
 			"search", "open", "drink", "mine", "touch", "read", "learn", "take",
 				"bang", "steal", "bribe", "pay", "sit", "try", "turn", "bathe",
 				"destroy", "pull", "descend", "toss a coin", "pray", "join", "act",
@@ -208,46 +206,39 @@ public:
 	}
 
 	const char **WHO_WILL_ACTIONS() {
-		delete[] _whoWillActions;
-		_whoWillActions = new const char *[4] {
+		static const char *_whoWillActions[] = {
 			"Open Grate", "Open Door", "Open Scroll", "Select Char"
 		};
 		return _whoWillActions;
 	}
 
 	const char **DIRECTION_TEXT_UPPER() {
-		delete[] _directionTextUpper;
-		_directionTextUpper = new const char *[4] { "NORTH", "EAST", "SOUTH", "WEST" };
+		static const char *_directionTextUpper[] = { "NORTH", "EAST", "SOUTH", "WEST" };
 		return _directionTextUpper;
 	}
 
 	const char **DIRECTION_TEXT() {
-		delete[] _directionText;
-		_directionText = new const char *[4] { "North", "East", "South", "West" };
+		static const char *_directionText[] = { "North", "East", "South", "West" };
 		return _directionText;
 	}
 
 	const char **RACE_NAMES() {
-		delete[] _raceNames;
-		_raceNames = new const char *[5] { "Human", "Elf", "Dwarf", "Gnome", "H-Orc" };
+		static const char *_raceNames[] = { "Human", "Elf", "Dwarf", "Gnome", "H-Orc" };
 		return _raceNames;
 	}
 
 	const char **ALIGNMENT_NAMES() {
-		delete[] _alignmentNames;
-		_alignmentNames = new const char *[3] { "Good", "Neutral", "Evil" };
+		static const char *_alignmentNames[] = { "Good", "Neutral", "Evil" };
 		return _alignmentNames;
 	}
 
 	const char **SEX_NAMES() {
-		delete[] _sexNames;
-		_sexNames = new const char *[2] { "Male", "Female" };
+		static const char *_sexNames[] = { "Male", "Female" };
 		return _sexNames;
 	}
 
 	const char **SKILL_NAMES() {
-		delete[] _skillNames;
-		_skillNames = new const char *[18] {
+		static const char *_skillNames[] = {
 			"Thievery\t100", "Arms Master", "Astrologer", "Body Builder", "Cartographer",
 				"Crusader", "Direction Sense", "Linguist", "Merchant", "Mountaineer",
 				"Navigator", "Path Finder", "Prayer Master", "Prestidigitator",
@@ -257,8 +248,7 @@ public:
 	}
 
 	const char **CLASS_NAMES() {
-		delete[] _classNames;
-		_classNames = new const char *[11] {
+		static const char *_classNames[] = {
 			"Knight", "Paladin", "Archer", "Cleric", "Sorcerer", "Robber",
 				"Ninja", "Barbarian", "Druid", "Ranger", nullptr
 		};
@@ -266,8 +256,7 @@ public:
 	}
 
 	const char **CONDITION_NAMES_M() {
-		delete[] _conditionNamesM;
-		_conditionNamesM = new const char *[17] {
+		static const char *_conditionNamesM[] = {
 			"Cursed", "Heart Broken", "Weak", "Poisoned", "Diseased",
 				"Insane", "In Love", "Drunk", "Asleep", "Depressed", "Confused",
 				"Paralyzed", "Unconscious", "Dead", "Stone", "Eradicated", "Good"
@@ -276,8 +265,7 @@ public:
 	}
 
 	const char **CONDITION_NAMES_F() {
-		delete[] _conditionNamesF;
-		_conditionNamesF = new const char *[17] {
+		static const char *_conditionNamesF[] = {
 			"Cursed", "Heart Broken", "Weak", "Poisoned", "Diseased",
 				"Insane", "In Love", "Drunk", "Asleep", "Depressed", "Confused",
 				"Paralyzed", "Unconscious", "Dead", "Stone", "Eradicated", "Good"
@@ -536,8 +524,7 @@ public:
 	}
 
 	const char **DEPOSIT_WITHDRAWL() {
-		delete[] _depositWithdrawl;
-		_depositWithdrawl = new const char *[2] { "Deposit", "Withdrawl" };
+		static const char *_depositWithdrawl[] = { "Deposit", "Withdrawl" };
 		return _depositWithdrawl;
 	}
 
@@ -552,8 +539,7 @@ public:
 	}
 
 	const char **STAT_NAMES() {
-		delete[] _statNames;
-		_statNames = new const char *[16] {
+		static const char *_statNames[] = {
 			"Might", "Intellect", "Personality", "Endurance", "Speed",
 				"Accuracy", "Luck", "Age", "Level", "Armor Class", "Hit Points",
 				"Spell Points", "Resistances", "Skills", "Awards", "Experience"
@@ -562,26 +548,22 @@ public:
 	}
 
 	const char **CONSUMABLE_NAMES() {
-		delete[] _consumableNames;
-		_consumableNames = new const char *[4] { "Gold", "Gems", "Food", "Condition" };
+		static const char *_consumableNames[] = { "Gold", "Gems", "Food", "Condition" };
 		return _consumableNames;
 	}
 
 	const char **CONSUMABLE_GOLD_FORMS() {
-		delete[] _consumableGoldForms;
-		_consumableGoldForms = new const char *[1] { "" };
+		static const char *_consumableGoldForms[] = { "" };
 		return _consumableGoldForms;
 	}
 
 	const char **CONSUMABLE_GEM_FORMS() {
-		delete[] _consumableGemForms;
-		_consumableGemForms = new const char *[1] { "" };
+		static const char *_consumableGemForms[] = { "" };
 		return _consumableGemForms;
 	}
 
 	const char **WHERE_NAMES() {
-		delete[] _whereNames;
-		_whereNames = new const char *[2] { "Party", "Bank" };
+		static const char *_whereNames[] = { "Party", "Bank" };
 		return _whereNames;
 	}
 
@@ -730,8 +712,7 @@ public:
 	}
 
 	const char **WEEK_DAY_STRINGS() {
-		delete[] _weekDayStrings;
-		_weekDayStrings = new const char *[10] {
+		static const char *_weekDayStrings[] = {
 			"Ten", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"
 		};
 		return _weekDayStrings;
@@ -753,8 +734,7 @@ public:
 	}
 
 	const char **DAYS() {
-		delete[] _days;
-		_days = new const char *[3] { "", "s", "" };
+		static const char *_days[] = { "", "s", "" };
 		return _days;
 	}
 
@@ -798,8 +778,7 @@ public:
 	}
 
 	const char **RATING_TEXT() {
-		delete[] _ratingText;
-		_ratingText = new const char *[24] {
+		static const char *_ratingText[] = {
 			"Nonexistant", "Very Poor", "Poor", "Very Low", "Low", "Average", "Good",
 				"Very Good", "High", "Very High", "Great", "Super", "Amazing", "Incredible",
 				"Gigantic", "Fantastic", "Astoundig", "Astonishing", "Monumental", "Tremendous",
@@ -809,8 +788,7 @@ public:
 	}
 
 	const char **BORN() {
-		delete[] _born;
-		_born = new const char *[2] { "Born", "" };
+		static const char *_born[] = { "Born", "" };
 		return _born;
 	}
 
@@ -866,8 +844,7 @@ public:
 	}
 
 	const char **FOOD_ON_HAND() {
-		delete[] _onHand;
-		_onHand = new const char *[3] { "on hand", "", "" };
+		static const char *_onHand[] = { "on hand", "", "" };
 		return _onHand;
 	}
 
@@ -981,8 +958,7 @@ public:
 	}
 
 	const char **BONUS_NAMES() {
-		delete[] _bonusNames;
-		_bonusNames = new const char *[7] {
+		static const char *_bonusNames[] = {
 			"", "Dragon Slayer", "Undead Eater", "Golem Smasher",
 				"Bug Zapper", "Monster Masher", "Beast Bopper"
 		};
@@ -990,8 +966,7 @@ public:
 	}
 
 	const char **WEAPON_NAMES() {
-		delete[] _weaponNames;
-		_weaponNames = new const char *[41] {
+		static const char *_weaponNames[] = {
 			nullptr, "long sword ", "short sword ", "broad sword ", "scimitar ",
 				"cutlass ", "sabre ", "club ", "hand axe ", "katana ", "nunchakas ",
 				"wakazashi ", "dagger ", "mace ", "flail ", "cudgel ", "maul ", "spear ",
@@ -1005,8 +980,7 @@ public:
 	}
 
 	const char **ARMOR_NAMES() {
-		delete[] _armorNames;
-		_armorNames = new const char *[14] {
+		static const char *_armorNames[] = {
 			nullptr, "robes ", "scale armor ", "ring mail ", "chain mail ",
 				"splint mail ", "plate mail ", "plate armor ", "shield ",
 				"helm ", "boots ", "cloak ", "cape ", "gauntlets "
@@ -1015,8 +989,7 @@ public:
 	}
 
 	const char **ACCESSORY_NAMES() {
-		delete[] _accessoryNames;
-		_accessoryNames = new const char *[11] {
+		static const char *_accessoryNames[] = {
 			nullptr, "ring ", "belt ", "brooch ", "medal ", "charm ", "cameo ",
 				"scarab ", "pendant ", "necklace ", "amulet "
 		};
@@ -1024,8 +997,7 @@ public:
 	}
 
 	const char **MISC_NAMES() {
-		delete[] _miscNames;
-		_miscNames = new const char *[22] {
+		static const char *_miscNames[] = {
 			nullptr, "rod ", "jewel ", "gem ", "box ", "orb ", "horn ", "coin ",
 				"wand ", "whistle ", "potion ", "scroll ", "bogus", "bogus", "bogus",
 				"bogus", "bogus", "bogus", "bogus", "bogus", "bogus", "bogus"
@@ -1034,8 +1006,7 @@ public:
 	}
 
 	const char **SPECIAL_NAMES() {
-		delete[] _specialNames;
-		_specialNames = new const char *[74] {
+		static const char *_specialNames[] = {
 			nullptr, "light", "awakening", "magic arrows", "first aid", "fists", "energy blasts", "sleeping",
 				"revitalization", "curing", "sparking", "shrapmetal", "insect repellent", "toxic clouds", "elemental protection",
 				"pain", "jumping", "beast control", "clairvoyance", "undead turning", "levitation", "wizard eyes", "blessing",
@@ -1052,16 +1023,14 @@ public:
 	}
 
 	const char **ELEMENTAL_NAMES() {
-		delete[] _elementalNames;
-		_elementalNames = new const char *[6] {
+		static const char *_elementalNames[] = {
 			"Fire", "Elec", "Cold", "Acid/Poison", "Energy", "Magic"
 		};
 		return _elementalNames;
 	}
 
 	const char **ATTRIBUTE_NAMES() {
-		delete[] _attributeNames;
-		_attributeNames = new const char *[10] {
+		static const char *_attributeNames[] = {
 			"might", "Intellect", "Personality", "Speed", "accuracy", "Luck",
 				"Hit Points", "Spell Points", "Armor Class", "Thievery"
 		};
@@ -1069,16 +1038,14 @@ public:
 	}
 
 	const char **EFFECTIVENESS_NAMES() {
-		delete[] _effectivenessNames;
-		_effectivenessNames = new const char *[7] {
+		static const char *_effectivenessNames[] = {
 			nullptr, "Dragons", "Undead", "Golems", "Bugs", "Monsters", "Beasts"
 		};
 		return _effectivenessNames;
 	}
 
 	const char **QUEST_ITEM_NAMES() {
-		delete[] _questItemNames;
-		_questItemNames = new const char *[85] {
+		static const char *_questItemNames[] = {
 			"Deed to New Castle",
 				"Crystal Key to Witch Tower",
 				"Skeleton Key to Darzog's Tower",
@@ -1169,8 +1136,7 @@ public:
 	}
 
 	const char **QUEST_ITEM_NAMES_SWORDS() {
-		delete[] _questItemNamesSwords;
-		_questItemNamesSwords = new const char *[51] {
+		static const char *_questItemNamesSwords[] = {
 			"Pass to Hart", "Pass to Impery", "Pass to town3", "Pass to town4", "Pass to town5",
 				"Key to Hart Sewers", "Key to Rettig's Pyramid", "Key to the Old Temple",
 				"Key to Canegtut's Pyramid", "Key to Ascihep's Pyramid", "Key to Dragon Tower",
@@ -1199,8 +1165,7 @@ public:
 	}
 
 	const char **CATEGORY_NAMES() {
-		delete[] _categoryNames;
-		_categoryNames = new const char *[4] { "Weapons", "Armor", "Accessories", "Miscellaneous" };
+		static const char *_categoryNames[] = { "Weapons", "Armor", "Accessories", "Miscellaneous" };
 		return _categoryNames;
 	}
 
@@ -1235,8 +1200,7 @@ public:
 	}
 
 	const char **ITEM_ACTIONS() {
-		delete[] _itemActions;
-		_itemActions = new const char *[7] {
+		static const char *_itemActions[] = {
 			"Equip", "Remove", "Use", "Discard", "Enchant", "Recharge", "Gold"
 		};
 		return _itemActions;
@@ -1303,8 +1267,7 @@ public:
 	}
 
 	const char **CATEGORY_BACKPACK_IS_FULL() {
-		delete[] _categoryBackpackIsFull;
-		_categoryBackpackIsFull = new const char *[4] {
+		static const char *_categoryBackpackIsFull[] = {
 			"\v010\t000\x3"
 			"c%s's weapons backpack is full.",
 				"\v010\t000\x3"
@@ -1326,8 +1289,7 @@ public:
 	}
 
 	const char **GOLDS() {
-		delete[] _sellXForYGoldEndings;
-		_sellXForYGoldEndings = new const char *[2] { "gold", "" };
+		static const char *_sellXForYGoldEndings[] = { "gold", "" };
 		return _sellXForYGoldEndings;
 	}
 
@@ -1355,8 +1317,7 @@ public:
 	}
 
 	const char **FIX_IDENTIFY() {
-		delete[] _fixIdentify;
-		_fixIdentify = new const char *[2] { "Fix", "Identify" };
+		static const char *_fixIdentify[] = { "Fix", "Identify" };
 		return _fixIdentify;
 	}
 
@@ -1520,8 +1481,7 @@ public:
 	}
 
 	const char **REMOVE_DELETE() {
-		delete[] _removeDelete;
-		_removeDelete = new const char *[2] { "Remove", "Delete" };
+		static const char *_removeDelete[] = { "Remove", "Delete" };
 		return _removeDelete;
 	}
 
@@ -1577,8 +1537,7 @@ public:
 	}
 
 	const int *NEW_CHAR_SKILLS_OFFSET() {
-		delete[] _newCharSkillsOffset;
-		_newCharSkillsOffset = new const int [10] { 0, 0, 0, 5, 0, 0, 0, 0, 0, 0 };
+		static const int _newCharSkillsOffset[] = { 0, 0, 0, 5, 0, 0, 0, 0, 0, 0 };
 		return _newCharSkillsOffset;
 	}
 
@@ -1594,8 +1553,7 @@ public:
 	}
 
 	const char **SPELL_CAST_COMPONENTS() {
-		delete[] _spellCastComponents;
-		_spellCastComponents = new const char *[2] { "Spell Points", "Gems" };
+		static const char *_spellCastComponents[] = { "Spell Points", "Gems" };
 		return _spellCastComponents;
 	}
 
@@ -1650,8 +1608,7 @@ public:
 	}
 
 	const char **FOUND() {
-		delete[] _found;
-		_found = new const char *[2] { "found", "" };
+		static const char *_found[] = { "found", "" };
 		return _found;
 	}
 
@@ -1733,8 +1690,7 @@ public:
 	}
 
 	const char **MONSTER_SPECIAL_ATTACKS() {
-		delete[] _monsterSpecialAttacks;
-		_monsterSpecialAttacks = new const char *[23] {
+		static const char *_monsterSpecialAttacks[] = {
 			"None", "Magic", "Fire", "Elec", "Cold", "Poison", "Energy", "Disease",
 				"Insane", "Asleep", "CurseItm", "InLove", "DrnSPts", "Curse", "Paralys",
 				"Uncons", "Confuse", "BrkWpn", "Weak", "Erad", "Age+5", "Dead", "Stone"
@@ -1790,8 +1746,7 @@ public:
 	}
 
 	const char **PICK_FORM() {
-		delete[] _pickForm;
-		_pickForm = new const char *[2] { "picks", "" };
+		static const char *_pickForm[] = { "picks", "" };
 		return _pickForm;
 	}
 
@@ -1801,8 +1756,7 @@ public:
 	}
 
 	const char **UNABLE_TO_PICK_FORM() {
-		delete[] _unableToPickForm;
-		_unableToPickForm = new const char *[2] { "unable to pick", "" };
+		static const char *_unableToPickForm[] = { "unable to pick", "" };
 		return _unableToPickForm;
 	}
 
@@ -1858,14 +1812,12 @@ public:
 	}
 
 	const char **QUICK_FIGHT_OPTIONS() {
-		delete[] _quickFightOptions;
-		_quickFightOptions = new const char *[4] { "Attack", "Cast", "Block", "Run" };
+		static const char *_quickFightOptions[] = { "Attack", "Cast", "Block", "Run" };
 		return _quickFightOptions;
 	}
 
 	const char **WORLD_END_TEXT() {
-		delete[] _worldEndText;
-		_worldEndText = new const char *[9] {
+		static const char *_worldEndText[] = {
 			"\n\n\n\n\n\n\n"
 			"Congratulations Adventurers!\n\n"
 			"Let the unification ceremony begin!",
@@ -1924,8 +1876,7 @@ public:
 	}
 
 	const char **GOOBER() {
-		delete[] _goober;
-		_goober = new const char *[3] {
+		static const char *_goober[] = {
 			"", "I am a Goober!", "I am a Super Goober!"
 		};
 		return _goober;
@@ -1992,8 +1943,7 @@ public:
 
 
 	const char **MAE_NAMES() {
-		delete[] _maeNames;
-		_maeNames = new const char *[131] {
+		static const char *_maeNames[] = {
 			"",
 		};
 		return _maeNames;

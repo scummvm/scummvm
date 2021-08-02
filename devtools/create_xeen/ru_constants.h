@@ -150,8 +150,7 @@ public:
 	}
 
 	const char **GAME_NAMES() {
-		delete[] _gameNames;
-		_gameNames = new const char *[3] { "\x8E\xA1\xAB\xA0\xAA\xA0", "Darkside", "World" }; // "Облака", "Darkside", "World"
+		static const char *_gameNames[] = { "\x8E\xA1\xAB\xA0\xAA\xA0", "Darkside", "World" }; // "Облака", "Darkside", "World"
 		return _gameNames;
 	}
 
@@ -194,8 +193,7 @@ public:
 	}
 
 	const char **WHO_ACTIONS() {
-		delete[] _whoActions;
-		_whoActions = new const char *[32] {
+		static const char *_whoActions[] = {
 			"\x8A\xE2\xAE \xAE\xA1\xEB\xE9\xA5\xE2",                              // "Кто обыщет",
 			"\x8A\xE2\xAE \xAE\xE2\xAA\xE0\xAE\xA5\xE2",						  // "Кто откроет",
 			"\x8A\xE2\xAE \xA2\xEB\xAF\xEC\xA5\xE2",							  // "Кто выпьет",
@@ -233,8 +231,7 @@ public:
 	}
 
 	const char **WHO_WILL_ACTIONS() {
-		delete[] _whoWillActions;
-		_whoWillActions = new const char *[4] {
+		static const char *_whoWillActions[] = {
 			"\x8E\xE2\xAA\xE0\xEB\xE2\xEC \xE0\xA5\xE8\xF1\xE2\xAA\xE3",			// "Открыть решётку",
 			"\x8E\xE2\xAA\xE0\xEB\xE2\xEC \xA4\xA2\xA5\xE0\xEC",                    // "Открыть дверь",
 			"\x90\xA0\xE1\xAA\xE0\xEB\xE2\xEC \xE1\xA2\xA8\xE2\xAE\xAA",            // "Раскрыть свиток",
@@ -244,14 +241,12 @@ public:
 	}
 
 	const char **DIRECTION_TEXT_UPPER() {
-		delete[] _directionTextUpper;
-		_directionTextUpper = new const char *[4] { "NORTH", "EAST", "SOUTH", "WEST" };
+		static const char *_directionTextUpper[] = { "NORTH", "EAST", "SOUTH", "WEST" };
 		return _directionTextUpper;
 	}
 
 	const char **DIRECTION_TEXT() {
-		delete[] _directionText;
-		_directionText = new const char *[4] {
+		static const char *_directionText[] = {
 			"\x91\xA5\xA2\xA5\xE0",		// "Север",
 			"\x82\xAE\xE1\xE2\xAE\xAA", // "Восток",
 			"\x9E\xA3",                 // "Юг",
@@ -261,8 +256,7 @@ public:
 	}
 
 	const char **RACE_NAMES() {
-		delete[] _raceNames;
-		_raceNames = new const char *[5] {
+		static const char *_raceNames[] = {
 			"\x97\xA5\xAB\xAE\xA2\xA5\xAA", // "Человек",
 			"\x9D\xAB\xEC\xE4",				// "Эльф",
 			"\x84\xA2\xAE\xE0\xE4",			// "Дворф",
@@ -273,8 +267,7 @@ public:
 	}
 
 	const char **ALIGNMENT_NAMES() {
-		delete[] _alignmentNames;
-		_alignmentNames = new const char *[3] {
+		static const char *_alignmentNames[] = {
 			"\x95\xAE\xE0\xAE\xE8\xA8\xA9", // "Хороший",
 			"\x8D\xA5\xA9\xE2\xE0\xA0\xAB",	// "Нейтрал",
 			"\x87\xAB\xAE\xA9(-\xA0\xEF)"	// "Злой(-ая)"
@@ -283,8 +276,7 @@ public:
 	}
 
 	const char **SEX_NAMES() {
-		delete[] _sexNames;
-		_sexNames = new const char *[2] {
+		static const char *_sexNames[] = {
 			"\x8C\xE3\xA6\xE7\xA8\xAD\xA0", // "Мужчина",
 			"\x86\xA5\xAD\xE9\xA8\xAD\xA0"  // "Женщина"
 		};
@@ -292,8 +284,7 @@ public:
 	}
 
 	const char **SKILL_NAMES() {
-		delete[] _skillNames;
-		_skillNames = new const char *[18] {
+		static const char *_skillNames[] = {
 			"\x82\xAE\xE0\xAE\xA2\xE1\xE2\xA2\xAE\t100",								 // "Воровство\t100",
 			"\x8E\xE0\xE3\xA6\xA5\xA9\xAD\xA8\xAA",                                      // "Оружейник",
 			"\x80\xE1\xE2\xE0\xAE\xAB\xAE\xA3",                                          // "Астролог",
@@ -319,8 +310,7 @@ public:
 	}
 
 	const char **CLASS_NAMES() {
-		delete[] _classNames;
-		_classNames = new const char *[11] {
+		static const char *_classNames[] = {
 			"\x90\xEB\xE6\xA0\xE0\xEC",			// "Рыцарь",
 			"\x8F\xA0\xAB\xA0\xA4\xA8\xAD",     // "Паладин",
 			"\x8B\xE3\xE7\xAD\xA8\xAA",         // "Лучник",
@@ -337,8 +327,7 @@ public:
 	}
 
 	const char **CONDITION_NAMES_M() {
-		delete[] _conditionNamesM;
-		_conditionNamesM = new const char *[17] {
+		static const char *_conditionNamesM[] = {
 			"\x8F\xE0\xAE\xAA\xAB\xEF\xE2\xA8\xA5",		// "Проклятие",
 			"Heart Broken",                             // "Heart Broken",
 			"\x91\xAB\xA0\xA1\xAE\xE1\xE2\xEC",         // "Слабость",
@@ -361,8 +350,7 @@ public:
 	}
 
 	const char **CONDITION_NAMES_F() {
-		delete[] _conditionNamesF;
-		_conditionNamesF = new const char *[17] {
+		static const char *_conditionNamesF[] = {
 			"\x8F\xE0\xAE\xAA\xAB\xEF\xE2\xA8\xA5",         // "Проклятие",
 				"Heart Broken",                             // "Heart Broken",
 				"\x91\xAB\xA0\xA1\xAE\xE1\xE2\xEC",         // "Слабость",
@@ -606,8 +594,7 @@ public:
 	}
 
 	const char **DEPOSIT_WITHDRAWL() {
-		delete[] _depositWithdrawl;
-		_depositWithdrawl = new const char *[2] { "\x8F\xAE\xAB\xAE\xA6\xA8\xE2\xEC \xAD\xA0 \xE1\xE7\xF1\xE2", "\x91\xAD\xEF\xE2\xEC \xE1\xAE \xE1\xE7\xF1\xE2\xA0" }; // "Положить на счёт", "Снять со счёта"
+		static const char *_depositWithdrawl[] = { "\x8F\xAE\xAB\xAE\xA6\xA8\xE2\xEC \xAD\xA0 \xE1\xE7\xF1\xE2", "\x91\xAD\xEF\xE2\xEC \xE1\xAE \xE1\xE7\xF1\xE2\xA0" }; // "Положить на счёт", "Снять со счёта"
 		return _depositWithdrawl;
 	}
 
@@ -620,8 +607,7 @@ public:
 	}
 
 	const char **STAT_NAMES() {
-		delete[] _statNames;
-		_statNames = new const char *[16] {
+		static const char *_statNames[] = {
 			"\x91\xA8\xAB\xA0", "\x88\xAD\xE2\xA5\xAB\xAB\xA5\xAA\xE2", "\x91\xA8\xAB\xA0 \xA4\xE3\xE5\xA0", "\x91\xAB\xAE\xA6\xA5\xAD\xA8\xA5", "\x91\xAA\xAE\xE0\xAE\xE1\xE2\xEC",	 // "Сила", "Интеллект", "Сила духа", "Сложение", "Скорость",
 			"\x8C\xA5\xE2\xAA\xAE\xE1\xE2\xEC", "\x93\xA4\xA0\xE7\xA0", "\x82\xAE\xA7\xE0\xA0\xE1\xE2", "\x93\xE0\xAE\xA2\xA5\xAD\xEC", "\x8A\xAB\xA0\xE1\xE1 \xA7\xA0\xE9\xA8\xE2\xEB", // "Меткость", "Удача", "Возраст", "Уровень", "Класс защиты",
 			"\x87\xA4\xAE\xE0\xAE\xA2\xEC\xA5", "\x8E\xE7\xAA\xA8 \xAC\xA0\xA3\xA8\xA8", "\x93\xE1\xE2\xAE\xA9\xE7\xA8\xA2\xAE\xE1\xE2\xA8", "\x8D\xA0\xA2\xEB\xAA\xA8",				 // "Здоровье", "Очки магии", "Устойчивости", "Навыки",
@@ -631,26 +617,22 @@ public:
 	}
 
 	const char **CONSUMABLE_NAMES() {
-		delete[] _consumableNames;
-		_consumableNames = new const char *[4] { "\x87\xAE\xAB\xAE\xE2\xAE", "\x80\xAB\xAC\xA0\xA7\xEB", "\x8F\xA8\xE9\xA0", "\x91\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA5" }; // "Золото", "Алмазы", "Пища", "Состояние"
+		static const char *_consumableNames[] = { "\x87\xAE\xAB\xAE\xE2\xAE", "\x80\xAB\xAC\xA0\xA7\xEB", "\x8F\xA8\xE9\xA0", "\x91\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA5" }; // "Золото", "Алмазы", "Пища", "Состояние"
 		return _consumableNames;
 	}
 
 	const char **CONSUMABLE_GOLD_FORMS() {
-		delete[] _consumableGoldForms;
-		_consumableGoldForms = new const char *[1] { "\x87\xAE\xAB\xAE\xE2\xA0" }; // "Золота"
+		static const char *_consumableGoldForms[] = { "\x87\xAE\xAB\xAE\xE2\xA0" }; // "Золота"
 		return _consumableGoldForms;
 	}
 
 	const char **CONSUMABLE_GEM_FORMS() {
-		delete[] _consumableGemForms;
-		_consumableGemForms = new const char *[1] { "\x80\xAB\xAC\xA0\xA7\xAE\xA2" }; // "Алмазов"
+		static const char *_consumableGemForms[] = { "\x80\xAB\xAC\xA0\xA7\xAE\xA2" }; // "Алмазов"
 		return _consumableGemForms;
 	}
 
 	const char **WHERE_NAMES() {
-		delete[] _whereNames;
-		_whereNames = new const char *[2] { "\xE3 \xAE\xE2\xE0\xEF\xA4\xA0", "\xA2 \xA1\xA0\xAD\xAA\xA5" }; // "у отряда", "в банке"
+		static const char *_whereNames[] = { "\xE3 \xAE\xE2\xE0\xEF\xA4\xA0", "\xA2 \xA1\xA0\xAD\xAA\xA5" }; // "у отряда", "в банке"
 		return _whereNames;
 	}
 
@@ -799,8 +781,7 @@ public:
 	}
 
 	const char **WEEK_DAY_STRINGS() {
-		delete[] _weekDayStrings;
-		_weekDayStrings = new const char *[10] {
+		static const char *_weekDayStrings[] = {
 			"\xA4\xA5\xE1\xEF\xE2\xA8\xA4\xA5\xAD\xEC", "\xAF\xA5\xE0\xA2\xAE\xA4\xA5\xAD\xEC", "\xA2\xE2\xAE\xE0\xAE\xA4\xA5\xAD\xEC", "\xE2\xE0\xA5\xE2\xEC\xA5\xA4\xA5\xAD\xEC", "\xE7\xA5\xE2\xA2\xA5\xE0\xAE\xA4\xA5\xAD\xEC", // "десятидень", "перводень", "втородень", "третьедень", "четверодень",
 			"\xAF\xEF\xE2\xA8\xA4\xA5\xAD\xEC", "\xE8\xA5\xE1\xE2\xA8\xA4\xA5\xAD\xEC", "\xE1\xA5\xAC\xA8\xA4\xA5\xAD\xEC", "\xA2\xAE\xE1\xEC\xAC\xA8\xA4\xA5\xAD\xEC", "\xA4\xA5\xA2\xEF\xE2\xA8\xA4\xA5\xAD\xEC"                  // "пятидень",   "шестидень", "семидень",  "восьмидень", "девятидень"
 		};
@@ -823,8 +804,7 @@ public:
 	}
 
 	const char **DAYS() {
-		delete[] _days;
-		_days = new const char *[3] { "\xA4\xA5\xAD\xEC", "\xA4\xAD\xEF", "\xA4\xAD\xA5\xA9" }; // "день", "дня", "дней"
+		static const char *_days[] = { "\xA4\xA5\xAD\xEC", "\xA4\xAD\xEF", "\xA4\xAD\xA5\xA9" }; // "день", "дня", "дней"
 		return _days;
 	}
 
@@ -863,8 +843,7 @@ public:
 	}
 
 	const char **RATING_TEXT() {
-		delete[] _ratingText;
-		_ratingText = new const char *[24] {
+		static const char *_ratingText[] = {
 			"\x8D\xA5\xE2", "\x8C\xA8\xA7\xA5\xE0\xAD\xEB\xA9", "\x86\xA0\xAB\xAA\xA8\xA9", "\x8E\xE7.\xAD\xA8\xA7\xAA\xA8\xA9", "\x8D\xA8\xA7\xAA\xA8\xA9", "\x91\xE0\xA5\xA4\xAD\xA8\xA9", "\x95\xAE\xE0\xAE\xE8\xA8\xA9",											// "Нет", "Мизерный", "Жалкий", "Оч.низкий", "Низкий", "Средний", "Хороший",
 			"\x8E\xE2\xAB\xA8\xE7\xAD\xEB\xA9", "\x82\xEB\xE1\xAE\xAA\xA8\xA9", "\x82\xEB\xE1\xAE\xE7\xA5\xAD\xAD\xEB\xA9", "\x81\xAE\xAB\xEC\xE8\xAE\xA9", "\x8E\xA3\xE0\xAE\xAC\xAD\xEB\xA9", "\x93\xA4\xA8\xA2\xA8\xE2\xA5\xAB\xEC\xAD\xEB\xA9",                     // "Отличный", "Высокий", "Высоченный", "Большой", "Огромный", "Удивительный",
 			"\x8D\xA5\xA2\xA5\xE0\xAE\xEF\xE2\xAD\xEB\xA9", "\x83\xA8\xA3\xA0\xAD\xE2\xE1\xAA\xA8\xA9", "\x94\xA0\xAD\xE2\xA0\xE1\xE2\xA8\xE7\xAD\xEB\xA9", "\x88\xA7\xE3\xAC\xA8\xE2\xA5\xAB\xEC\xAD\xEB\xA9", "\x8F\xAE\xE0\xA0\xA7\xA8\xE2\xA5\xAB\xEC\xAD\xEB\xA9", // "Невероятный", "Гигантский", "Фантастичный", "Изумительный", "Поразительный",
@@ -875,8 +854,7 @@ public:
 	}
 
 	const char **BORN() {
-		delete[] _born;
-		_born = new const char *[2] { "\x90\xAE\xA4\xA8\xAB\xE1\xEF", "\x90\xAE\xA4\xA8\xAB\xA0\xE1\xEC" }; // "Родился", "Родилась"
+		static const char *_born[] = { "\x90\xAE\xA4\xA8\xAB\xE1\xEF", "\x90\xAE\xA4\xA8\xAB\xA0\xE1\xEC" }; // "Родился", "Родилась"
 		return _born;
 	}
 
@@ -925,8 +903,7 @@ public:
 	}
 
 	const char **FOOD_ON_HAND() {
-		delete[] _onHand;
-		_onHand = new const char *[3] { "\xAF\xAE\xE0\xE6\xA8\xEF", "\xAF\xAE\xE0\xE6\xA8\xA8", "\xAF\xAE\xE0\xE6\xA8\xA9" }; // "порция", "порции", "порций"
+		static const char *_onHand[] = { "\xAF\xAE\xE0\xE6\xA8\xEF", "\xAF\xAE\xE0\xE6\xA8\xA8", "\xAF\xAE\xE0\xE6\xA8\xA9" }; // "порция", "порции", "порций"
 		return _onHand;
 	}
 
@@ -1034,8 +1011,7 @@ public:
 	}
 
 	const char **BONUS_NAMES() {
-		delete[] _bonusNames;
-		_bonusNames = new const char *[7] {
+		static const char *_bonusNames[] = {
 			"", "\x93\xA1\xA8\xA9\xE6\xEB \xA4\xE0\xA0\xAA\xAE\xAD\xAE\xA2", "\x88\xA7\xA3\xAE\xAD\xEF\xEE\xE9\xA5\xA3\xAE \xAC\xF1\xE0\xE2\xA2\xEB\xE5", "\x8A\xE0\xE3\xE8\xA8\xE2\xA5\xAB\xEF \xA3\xAE\xAB\xA5\xAC\xAE\xA2", // "", "Убийцы драконов", "Изгоняющего мёртвых", "Крушителя големов",
 			"\x84\xA0\xA2\xA8\xE2\xA5\xAB\xEF \xAD\xA0\xE1\xA5\xAA\xAE\xAC\xEB\xE5", "\x93\xA1\xA8\xA9\xE6\xEB \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2", "\x93\xA1\xA8\xA9\xE6\xEB \xA7\xA2\xA5\xE0\xA5\xA9"                          // "Давителя насекомых", "Убийцы монстров", "Убийцы зверей"
 		};
@@ -1043,8 +1019,7 @@ public:
 	}
 
 	const char **WEAPON_NAMES() {
-		delete[] _weaponNames;
-		_weaponNames = new const char *[41] {
+		static const char *_weaponNames[] = {
 			nullptr, "\xAC\xA5\xE7 ", "\xA3\xAB\xA0\xA4\xA8\xE3\xE1 ", "\xAF\xA0\xAB\xA0\xE8 ", "\xEF\xE2\xA0\xA3\xA0\xAD ",																			   // nullptr, "меч ", "гладиус ", "палаш ", "ятаган ",
 			"\xAA\xAE\xE0\xE2\xA8\xAA ", "\xE1\xA0\xA1\xAB\xEF ", "\xA4\xE3\xA1\xA8\xAD\xA0 ", "\xE2\xAE\xAF\xAE\xE0 ", "\xAA\xA0\xE2\xA0\xAD\xA0 ", "\xAD\xE3\xAD\xE7\xA0\xAA\xA8 ",                      // "кортик ", "сабля ", "дубина ", "топор ", "катана ", "нунчаки ",
 			"\xA2\xA0\xAA\xA8\xA4\xA7\xA0\xE1\xA8 ", "\xAA\xA8\xAD\xA6\xA0\xAB ", "\xA1\xE3\xAB\xA0\xA2\xA0 ", "\xE6\xA5\xAF ", "\xA6\xA5\xA7\xAB ", "\xAC\xAE\xAB\xAE\xE2 ", "\xAA\xAE\xAF\xEC\xF1 ",     // "вакидзаси ", "кинжал ", "булава ", "цеп ", "жезл ", "молот ", "копьё ",
@@ -1059,8 +1034,7 @@ public:
 	}
 
 	const char **ARMOR_NAMES() {
-		delete[] _armorNames;
-		_armorNames = new const char *[14] {
+		static const char *_armorNames[] = {
 			nullptr, "\xAC\xA0\xAD\xE2\xA8\xEF ", "\xE7\xA5\xE8\xE3\xEF ", "\xAF\xA0\xAD\xE6\xA8\xE0\xEC ", "\xAA\xAE\xAB\xEC\xE7\xE3\xA3\xA0 ",		// nullptr, "мантия ", "чешуя ", "панцирь ", "кольчуга ",
 			"\xEE\xE8\xAC\xA0\xAD ", "\xA1\xA5\xE5\xE2\xA5\xE0\xA5\xE6 ", "\xAB\xA0\xE2\xEB ", "\xE9\xA8\xE2 ",                                         // "юшман ", "бехтерец ", "латы ", "щит ",
 			"\xE8\xAB\xA5\xAC ", "\xE1\xA0\xAF\xAE\xA3\xA8 ", "\xAF\xAB\xA0\xE9 ", "\xAD\xA0\xAA\xA8\xA4\xAA\xA0 ", "\xAF\xA5\xE0\xE7\xA0\xE2\xAA\xA8 " // "шлем ", "сапоги ", "плащ ", "накидка ", "перчатки "
@@ -1069,8 +1043,7 @@ public:
 	}
 
 	const char **ACCESSORY_NAMES() {
-		delete[] _accessoryNames;
-		_accessoryNames = new const char *[11] {
+		static const char *_accessoryNames[] = {
 			nullptr, "\xAA\xAE\xAB\xEC\xE6\xAE ", "\xAF\xAE\xEF\xE1 ", "\xA1\xE0\xAE\xE8\xEC ", "\xAC\xA5\xA4\xA0\xAB\xEC ", "\xE2\xA0\xAB\xA8\xE1\xAC\xA0\xAD ", "\xAA\xA0\xAC\xA5\xEF ", // nullptr, "кольцо ", "пояс ", "брошь ", "медаль ", "талисман ", "камея ",
 			"\xE1\xAA\xA0\xE0\xA0\xA1\xA5\xA9 ", "\xAA\xE3\xAB\xAE\xAD ", "\xAE\xA6\xA5\xE0\xA5\xAB\xEC\xA5 ", "\xA0\xAC\xE3\xAB\xA5\xE2 "                                                 // "скарабей ", "кулон ", "ожерелье ", "амулет "
 		};
@@ -1078,8 +1051,7 @@ public:
 	}
 
 	const char **MISC_NAMES() {
-		delete[] _miscNames;
-		_miscNames = new const char *[22] {
+		static const char *_miscNames[] = {
 			nullptr, "\xE1\xAA\xA8\xAF\xA5\xE2\xE0 ", "\xE1\xA0\xAC\xAE\xE6\xA2\xA5\xE2 ", "\xAA\xA0\xAC\xA5\xAD\xEC ", "\xE8\xAA\xA0\xE2\xE3\xAB\xAA\xA0 ", "\xE1\xE4\xA5\xE0\xA0 ", "\xE0\xAE\xA3 ",								// nullptr, "скипетр ", "самоцвет ", "камень ", "шкатулка ", "сфера ", "рог ",
 			"\xAC\xAE\xAD\xA5\xE2\xAA\xA0 ", "\xA6\xA5\xA7\xAB ", "\xE1\xA2\xA8\xE1\xE2\xAE\xAA ", "\xA7\xA5\xAB\xEC\xA5 ", "\xE1\xA2\xA8\xE2\xAE\xAA ", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0",    // "монетка ", "жезл ", "свисток ", "зелье ", "свиток ", "подделка", "подделка",
 			"\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", // "подделка", "подделка", "подделка", "подделка", "подделка", "подделка",
@@ -1089,8 +1061,7 @@ public:
 	}
 
 	const char **SPECIAL_NAMES() {
-		delete[] _specialNames;
-		_specialNames = new const char *[74] {
+		static const char *_specialNames[] = {
 			nullptr, "\xE1\xA2\xA5\xE2\xA0", "\xAF\xE0\xAE\xA1\xE3\xA6\xA4\xA5\xAD\xA8\xEF", "\xA2\xAE\xAB\xE8\xA5\xA1\xAD\xEB\xE5 \xE1\xE2\xE0\xA5\xAB", "\xAF\xA5\xE0\xA2\xAE\xA9 \xAF\xAE\xAC\xAE\xE9\xA8",														  // nullptr, "света", "пробуждения", "волшебных стрел", "первой помощи",
 			"\xAA\xE3\xAB\xA0\xAA\xAE\xA2", "\xED\xAD\xA5\xE0\xA3\xA5\xE2\xA8\xE7\xA5\xE1\xAA\xAE\xA3\xAE \xA2\xA7\xE0\xEB\xA2\xA0", "\xE3\xE1\xEB\xAF\xAB\xA5\xAD\xA8\xEF", "\xAB\xA5\xE7\xA5\xAD\xA8\xEF \xE1\xAB\xA0\xA1\xAE\xE1\xE2\xA8",                         // "кулаков", "энергетического взрыва", "усыпления", "лечения слабости",
 			"\xAB\xA5\xE7\xA5\xAD\xA8\xEF", "\xA8\xE1\xAA\xE0", "\xE8\xE0\xA0\xAF\xAD\xA5\xAB\xA8", "\xE0\xA5\xAF\xA5\xAB\xAB\xA5\xAD\xE2\xA0", "\xEF\xA4\xAE\xA2\xA8\xE2\xEB\xE5 \xAE\xA1\xAB\xA0\xAA\xAE\xA2",                                                      // "лечения", "искр", "шрапнели", "репеллента", "ядовитых облаков",
@@ -1114,16 +1085,14 @@ public:
 	}
 
 	const char **ELEMENTAL_NAMES() {
-		delete[] _elementalNames;
-		_elementalNames = new const char *[6] {
+		static const char *_elementalNames[] = {
 			"\x8E\xA3\xAD\xEF", "\x83\xE0\xAE\xAC\xA0", "\x95\xAE\xAB\xAE\xA4\xA0", "\x8A\xA8\xE1\xAB\xAE\xE2\xEB/\x9F\xA4\xA0", "\x9D\xAD\xA5\xE0\xA3\xA8\xA8", "\x8C\xA0\xA3\xA8\xA8" // "Огня", "Грома", "Холода", "Кислоты/Яда", "Энергии", "Магии"
 		};
 		return _elementalNames;
 	}
 
 	const char **ATTRIBUTE_NAMES() {
-		delete[] _attributeNames;
-		_attributeNames = new const char *[10] {
+		static const char *_attributeNames[] = {
 			"\x91\xA8\xAB\xA0", "\x88\xAD\xE2\xA5\xAB\xAB\xA5\xAA\xE2", "\x91\xA8\xAB\xA0 \xA4\xE3\xE5\xA0", "\x91\xAA\xAE\xE0\xAE\xE1\xE2\xEC", "\x8C\xA5\xE2\xAA\xAE\xE1\xE2\xEC", "\x93\xA4\xA0\xE7\xA0", // "Сила", "Интеллект", "Сила духа", "Скорость", "Меткость", "Удача",
 			"\x87\xA4\xAE\xE0\xAE\xA2\xEC\xA5", "\x8E\xE7\xAA\xA8 \xAC\xA0\xA3\xA8\xA8", "\x8A\xAB\xA0\xE1\xE1 \xA7\xA0\xE9\xA8\xE2\xEB", "\x82\xAE\xE0\xAE\xA2\xE1\xE2\xA2\xAE"                             // "Здоровье", "Очки магии", "Класс защиты", "Воровство"
 		};
@@ -1131,16 +1100,14 @@ public:
 	}
 
 	const char **EFFECTIVENESS_NAMES() {
-		delete[] _effectivenessNames;
-		_effectivenessNames = new const char *[7] {
+		static const char *_effectivenessNames[] = {
 			nullptr, "\x84\xE0\xA0\xAA\xAE\xAD\xAE\xA2", "\x8C\xF1\xE0\xE2\xA2\xEB\xE5", "\x83\xAE\xAB\xA5\xAC\xAE\xA2", "\x8D\xA0\xE1\xA5\xAA\xAE\xAC\xEB\xE5", "\x8C\xAE\xAD\xE1\xE2\xE0\xAE\xA2", "\x87\xA2\xA5\xE0\xA5\xA9" // nullptr, "Драконов", "Мёртвых", "Големов", "Насекомых", "Монстров", "Зверей"
 		};
 		return _effectivenessNames;
 	}
 
 	const char **QUEST_ITEM_NAMES() {
-		delete[] _questItemNames;
-		_questItemNames = new const char *[85] {
+		static const char *_questItemNames[] = {
 			"\x8F\xE0\xA0\xA2\xAE \xA2\xAB\xA0\xA4\xA5\xAD\xA8\xEF \x8D\xEC\xEE\xAA\xA0\xE1\xAB\xAE\xAC",											   // "Право владения Ньюкаслом",
 			"\x95\xE0\xE3\xE1\xE2\xA0\xAB\xEC\xAD\xEB\xA9 \xAA\xAB\xEE\xE7 \xAE\xE2 \x82\xA5\xA4\xEC\xAC\xA8\xAD\xAE\xA9 \xA1\xA0\xE8\xAD\xA8",        // "Хрустальный ключ от Ведьминой башни",
 			"\x8E\xE2\xAC\xEB\xE7\xAA\xA0 \xA4\xAB\xEF \xA1\xA0\xE8\xAD\xA8 \x84\xA0\xE0\xA7\xAE\xA3\xA0",                                             // "Отмычка для башни Дарзога",
@@ -1231,8 +1198,7 @@ public:
 	}
 
 	const char **QUEST_ITEM_NAMES_SWORDS() {
-		delete[] _questItemNamesSwords;
-		_questItemNamesSwords = new const char *[51] {
+		static const char *_questItemNamesSwords[] = {
 			"Pass to Hart", "Pass to Impery", "Pass to town3", "Pass to town4", "Pass to town5",
 				"Key to Hart Sewers", "Key to Rettig's Pyramid", "Key to the Old Temple",
 				"Key to Canegtut's Pyramid", "Key to Ascihep's Pyramid", "Key to Dragon Tower",
@@ -1258,8 +1224,7 @@ public:
 	}
 
 	const char **CATEGORY_NAMES() {
-		delete[] _categoryNames;
-		_categoryNames = new const char *[4] { "\x8E\xE0\xE3\xA6\xA8\xA5", "\x81\xE0\xAE\xAD\xEF", "\x93\xAA\xE0\xA0\xE8\xA5\xAD\xA8\xEF", "\x90\xA0\xA7\xAD\xAE\xA5" }; // "Оружие", "Броня", "Украшения", "Разное"
+		static const char *_categoryNames[] = { "\x8E\xE0\xE3\xA6\xA8\xA5", "\x81\xE0\xAE\xAD\xEF", "\x93\xAA\xE0\xA0\xE8\xA5\xAD\xA8\xEF", "\x90\xA0\xA7\xAD\xAE\xA5" }; // "Оружие", "Броня", "Украшения", "Разное"
 		return _categoryNames;
 	}
 
@@ -1298,8 +1263,7 @@ public:
 	}
 
 	const char **ITEM_ACTIONS() {
-		delete[] _itemActions;
-		_itemActions = new const char *[7] {
+		static const char *_itemActions[] = {
 			"\xAD\xA0\xA4\xA5\xE2\xEC", "\xE1\xAD\xEF\xE2\xEC", "\xA8\xE1\xAF\xAE\xAB\xEC\xA7\xAE\xA2\xA0\xE2\xEC", "\xA2\xEB\xAA\xA8\xAD\xE3\xE2\xEC", "\xA7\xA0\xE7\xA0\xE0\xAE\xA2\xA0\xE2\xEC", "\xAF\xA5\xE0\xA5\xA7\xA0\xE0\xEF\xA4\xA8\xE2\xEC", // "надеть", "снять", "использовать", "выкинуть", "зачаровать", "перезарядить",
 			"\x8F\xE0\xA5\xA2\xE0\xA0\xE2\xA8\xE2\xEC \xA2 \xA7\xAE\xAB\xAE\xE2\xAE"                                                                                                                                                                    // "Превратить в золото"
 		};
@@ -1360,8 +1324,7 @@ public:
 	}
 
 	const char **CATEGORY_BACKPACK_IS_FULL() {
-		delete[] _categoryBackpackIsFull;
-		_categoryBackpackIsFull = new const char *[4] {
+		static const char *_categoryBackpackIsFull[] = {
 			"\v010\t000\x3""c%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD.", // "\v010\t000\x3""c%s! Ваш рюкзак полон.",
 			"\v010\t000\x3""c%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD.", // "\v010\t000\x3""c%s! Ваш рюкзак полон.",
 			"\v010\t000\x3""c%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD.", // "\v010\t000\x3""c%s! Ваш рюкзак полон.",
@@ -1379,8 +1342,7 @@ public:
 	}
 
 	const char **GOLDS() {
-		delete[] _sellXForYGoldEndings;
-		_sellXForYGoldEndings = new const char *[2] { "\xA7\xAE\xAB\xAE\xE2\xAE\xA9", "\xA7\xAE\xAB\xAE\xE2\xEB\xE5" }; // "золотой", "золотых"
+		static const char *_sellXForYGoldEndings[] = { "\xA7\xAE\xAB\xAE\xE2\xAE\xA9", "\xA7\xAE\xAB\xAE\xE2\xEB\xE5" }; // "золотой", "золотых"
 		return _sellXForYGoldEndings;
 	}
 
@@ -1405,8 +1367,7 @@ public:
 	}
 
 	const char **FIX_IDENTIFY() {
-		delete[] _fixIdentify;
-		_fixIdentify = new const char *[2] { "\x8F\xAE\xE7\xA8\xAD\xA8\xE2\xEC", "\x8E\xAF\xAE\xA7\xAD\xA0\xE2\xEC" }; // "Починить", "Опознать"
+		static const char *_fixIdentify[] = { "\x8F\xAE\xE7\xA8\xAD\xA8\xE2\xEC", "\x8E\xAF\xAE\xA7\xAD\xA0\xE2\xEC" }; // "Починить", "Опознать"
 		return _fixIdentify;
 	}
 
@@ -1561,8 +1522,7 @@ public:
 	}
 
 	const char **REMOVE_DELETE() {
-		delete[] _removeDelete;
-		_removeDelete = new const char *[2] { "\x82\xEB\xA3\xAD\xA0\xE2\xEC", "\xE3\xA4\xA0\xAB\xA8\xE2\xEC" }; // "Выгнать", "удалить"
+		static const char *_removeDelete[] = { "\x82\xEB\xA3\xAD\xA0\xE2\xEC", "\xE3\xA4\xA0\xAB\xA8\xE2\xEC" }; // "Выгнать", "удалить"
 		return _removeDelete;
 	}
 
@@ -1614,8 +1574,7 @@ public:
 	}
 
 	const int *NEW_CHAR_SKILLS_OFFSET() {
-		delete[] _newCharSkillsOffset;
-		_newCharSkillsOffset = new const int[10]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		static const int _newCharSkillsOffset[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		return _newCharSkillsOffset;
 	}
 
@@ -1628,8 +1587,7 @@ public:
 	}
 
 	const char **SPELL_CAST_COMPONENTS() {
-		delete[] _spellCastComponents;
-		_spellCastComponents = new const char *[2] { "\xAE\xE7\xAA\xAE\xA2 \xAC\xA0\xA3\xA8\xA8", "\xA0\xAB\xAC\xA0\xA7\xAE\xA2" }; // "очков магии", "алмазов"
+		static const char *_spellCastComponents[] = { "\xAE\xE7\xAA\xAE\xA2 \xAC\xA0\xA3\xA8\xA8", "\xA0\xAB\xAC\xA0\xA7\xAE\xA2" }; // "очков магии", "алмазов"
 		return _spellCastComponents;
 	}
 
@@ -1678,8 +1636,7 @@ public:
 	}
 
 	const char **FOUND() {
-		delete[] _found;
-		_found = new const char *[2] { "\xAD\xA0\xE8\xF1\xAB", "\xAD\xA0\xE8\xAB\xA0" }; // "нашёл", "нашла"
+		static const char *_found[] = { "\xAD\xA0\xE8\xF1\xAB", "\xAD\xA0\xE8\xAB\xA0" }; // "нашёл", "нашла"
 		return _found;
 	}
 
@@ -1752,8 +1709,7 @@ public:
 	}
 
 	const char **MONSTER_SPECIAL_ATTACKS() {
-		delete[] _monsterSpecialAttacks;
-		_monsterSpecialAttacks = new const char *[23] {
+		static const char *_monsterSpecialAttacks[] = {
 			"\x8D\xA5\xE2", "\x8C\xA0\xA3\xA8\xEF", "\x8E\xA3\xAD\xEF", "\x83\xE0\xAE\xAC\xA0", "\x95\xAE\xAB\xAE\xA4\xA0", "\x8E\xE2\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xA5", "\x9D\xAD\xA5\xE0\xA3\xA8\xA8",								// "Нет", "Магия", "Огня", "Грома", "Холода", "Отравление", "Энергии",
 			"\x81\xAE\xAB\xA5\xA7\xAD\xEC", "\x81\xA5\xA7\xE3\xAC\xA8\xA5", "\x91\xAE\xAD", "\x8F\xE0\xAA\xAB\x8F\xE0\xA4\xAC", "\x82\xAB\xEE\xA1\xAB", "\x8E\xE1\xE3\xE8\x87\xA4\xAE\xE0", "\x8F\xE0\xAE\xAA\xAB\xEF\xE2\xA8\xA5",	// "Болезнь", "Безумие", "Сон", "ПрклПрдм", "Влюбл", "ОсушЗдор", "Проклятие",
 			"\x8F\xA0\xE0\xA0\xAB\xA8\xE7", "\x81\xA5\xE1\xE1\xAE\xA7\xAD", "\x91\xAC\xEF\xE2\xA5\xAD\xA8\xA5", "\x8B\xAE\xAC\x81\xE0\xAE\xAD", "\x91\xAB\xA0\xA1\xAE\xE1\xE2\xEC", "\x93\xAD\xA8\xE7\xE2\xAE\xA6",					// "Паралич", "Бессозн", "Смятение", "ЛомБрон", "Слабость", "Уничтож",
@@ -1804,8 +1760,7 @@ public:
 	}
 
 	const char **PICK_FORM() {
-		delete[] _pickForm;
-		_pickForm = new const char *[2] { "\xA2\xA7\xAB\xAE\xAC\xA0\xAB", "\xA2\xA7\xAB\xAE\xAC\xA0\xAB\xA0" }; // "взломал", "взломала"
+		static const char *_pickForm[] = { "\xA2\xA7\xAB\xAE\xAC\xA0\xAB", "\xA2\xA7\xAB\xAE\xAC\xA0\xAB\xA0" }; // "взломал", "взломала"
 		return _pickForm;
 	}
 
@@ -1814,8 +1769,7 @@ public:
 	}
 
 	const char **UNABLE_TO_PICK_FORM() {
-		delete[] _unableToPickForm;
-		_unableToPickForm = new const char *[2] { "\xAD\xA5 \xE1\xAC\xAE\xA3", "\xAD\xA5 \xE1\xAC\xAE\xA3\xAB\xA0" }; // "не смог", "не смогла"
+		static const char *_unableToPickForm[] = { "\xAD\xA5 \xE1\xAC\xAE\xA3", "\xAD\xA5 \xE1\xAC\xAE\xA3\xAB\xA0" }; // "не смог", "не смогла"
 		return _unableToPickForm;
 	}
 
@@ -1867,14 +1821,12 @@ public:
 	}
 
 	const char **QUICK_FIGHT_OPTIONS() {
-		delete[] _quickFightOptions;
-		_quickFightOptions = new const char *[4] { "\x80\xE2\xA0\xAA\xA0", "\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xA5", "\x81\xAB\xAE\xAA", "\x81\xA5\xA3\xE1\xE2\xA2\xAE" }; // "Атака", "Заклинание", "Блок", "Бегство"
+		static const char *_quickFightOptions[] = { "\x80\xE2\xA0\xAA\xA0", "\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xA5", "\x81\xAB\xAE\xAA", "\x81\xA5\xA3\xE1\xE2\xA2\xAE" }; // "Атака", "Заклинание", "Блок", "Бегство"
 		return _quickFightOptions;
 	}
 
 	const char **WORLD_END_TEXT() {
-		delete[] _worldEndText;
-		_worldEndText = new const char *[9] {
+		static const char *_worldEndText[] = {
 			"\n\n\n\n\n\n\n"
 			"Congratulations Adventurers!\n\n"
 			"Let the unification ceremony begin!",
@@ -1933,8 +1885,7 @@ public:
 	}
 
 	const char **GOOBER() {
-		delete[] _goober;
-		_goober = new const char *[3] {
+		static const char *_goober[] = {
 			"", "I am a Goober!", "I am a Super Goober!"
 		};
 		return _goober;
@@ -1998,8 +1949,7 @@ public:
 	}
 
 	const char **MAE_NAMES() {
-		delete[] _maeNames;
-		_maeNames = new const char *[131] {
+		static const char *_maeNames[] = {
 			"",
 			"\xA6\xA0\xE0\xA0",                                             //жара
 			"\xAE\xA3\xAD\xA5\xA9",                                         //огней
