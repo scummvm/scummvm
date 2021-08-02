@@ -22,12 +22,6 @@
 
 #define ENABLE_XCODE
 
-// HACK to allow building with the SDL backend on MinGW
-// see bug #3412 "TOOLS: MinGW tools building broken"
-#ifdef main
-#undef main
-#endif // main
-
 #if (defined(_WIN32) || defined(WIN32)) && !defined(__GNUC__)
 #define USE_WIN32_API
 #endif
