@@ -602,6 +602,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			if (recordMode == "record") {
 				Common::String targetFileName = ConfMan.hasKey("record_file_name") ? recordFileName : g_eventRec.generateRecordFileName(ConfMan.getActiveDomainName());
 				g_eventRec.init(targetFileName, GUI::EventRecorder::kRecorderRecord);
+			} else if (recordMode == "update") {
+				g_eventRec.init(recordFileName, GUI::EventRecorder::kRecorderUpdate);
 			} else if (recordMode == "playback") {
 				g_eventRec.init(recordFileName, GUI::EventRecorder::kRecorderPlayback);
 			} else if ((recordMode == "info") && (!recordFileName.empty())) {

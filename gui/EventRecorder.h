@@ -74,7 +74,8 @@ public:
 		kPassthrough = 0,		/**< kPassthrough, do nothing */
 		kRecorderRecord = 1,		/**< kRecorderRecord, do the recording */
 		kRecorderPlayback = 2,		/**< kRecorderPlayback, playback existing recording */
-		kRecorderPlaybackPause = 3	/**< kRecordetPlaybackPause, internal state when user pauses the playback */
+		kRecorderPlaybackPause = 3,	/**< kRecorderPlaybackPause, internal state when user pauses the playback */
+		kRecorderUpdate = 4			/**< kRecorderUpdate, playback existing recording and update all hashes */
 	};
 
 	void init(const Common::String &recordFileName, RecordMode mode);
@@ -237,6 +238,7 @@ private:
 	uint32 _lastScreenshotTime;
 	uint32 _screenshotPeriod;
 	Common::PlaybackFile *_playbackFile;
+	Common::PlaybackFile *_recordFile;
 
 	void saveScreenShot();
 	void checkRecordedMD5();

@@ -97,6 +97,7 @@ EventRecorder::EventRecorder() {
 	_lastScreenshotTime = 0;
 	_screenshotPeriod = 0;
 	_playbackFile = nullptr;
+	_recordFile = nullptr;
 }
 
 EventRecorder::~EventRecorder() {
@@ -116,12 +117,18 @@ void EventRecorder::deinit() {
 	_controlPanel->close();
 	delete _controlPanel;
 	debugC(1, kDebugLevelEventRec, "playback:action=stopplayback");
-	Common::EventDispatcher *eventDispater = g_system->getEventManager()->getEventDispatcher();
-	eventDispater->unregisterSource(this);
-	eventDispater->ignoreSources(false);
+	Common::EventDispatcher *eventDispatcher = g_system->getEventManager()->getEventDispatcher();
+	eventDispatcher->unregisterSource(this);
+	eventDispatcher->ignoreSources(false);
 	_recordMode = kPassthrough;
-	_playbackFile->close();
-	delete _playbackFile;
+	if (_playbackFile) {
+		_playbackFile->close();
+		delete _playbackFile;
+	}
+	if (_recordFile) {
+		_recordFile->close();
+		delete _recordFile;
+	}
 	switchMixer();
 	switchTimerManagers();
 	DebugMan.disableDebugChannel("EventRec");
@@ -143,31 +150,41 @@ void EventRecorder::processTimeAndDate(TimeDate &td, bool skipRecord) {
 		return;
 	}
 	Common::RecorderEvent timeDateEvent;
-	switch (_recordMode) {
-	case kRecorderRecord:
+	if (_recordMode == kRecorderRecord) {
 		timeDateEvent.recordedtype = Common::kRecorderEventTypeTimeDate;
 		timeDateEvent.timeDate = td;
 		_lastTimeDate = td;
-		_playbackFile->writeEvent(timeDateEvent);
-		break;
-	case kRecorderPlayback:
+		_recordFile->writeEvent(timeDateEvent);
+	}
+	if ((_recordMode == kRecorderPlayback) || (_recordMode == kRecorderUpdate)) {
 		if (_nextEvent.recordedtype != Common::kRecorderEventTypeTimeDate) {
 			// just re-use any previous date time value
 			td = _lastTimeDate;
+			if (_recordMode == kRecorderUpdate) {
+				// if we make it to here, we're expecting there to be an event in the file
+				// so add one to the updated recording
+				debug(3, "inserting additional timedate event");
+				timeDateEvent.recordedtype = Common::kRecorderEventTypeTimeDate;
+				timeDateEvent.timeDate = td;
+				_recordFile->writeEvent(timeDateEvent);
+			}
 			return;
 		}
 		_lastTimeDate = _nextEvent.timeDate;
 		td = _lastTimeDate;
 		debug(3, "timedate event");
 
+		if (_recordMode == kRecorderUpdate) {
+			// copy the event to the updated recording
+			timeDateEvent.recordedtype = Common::kRecorderEventTypeTimeDate;
+			timeDateEvent.timeDate = td;
+			_recordFile->writeEvent(timeDateEvent);
+		}
+
 		_nextEvent = _playbackFile->getNextEvent();
-		break;
-	case kRecorderPlaybackPause:
-		td = _lastTimeDate;
-		break;
-	default:
-		break;
 	}
+	if (_recordMode == kRecorderPlaybackPause)
+		td = _lastTimeDate;
 }
 
 void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
@@ -192,6 +209,7 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 		_recordFile->writeEvent(timerEvent);
 		_timerManager->handler();
 		break;
+	case kRecorderUpdate: // fallthrough
 	case kRecorderPlayback:
 		if (_nextEvent.recordedtype != Common::kRecorderEventTypeTimer) {
 			// just re-use any previous millis value
@@ -200,11 +218,25 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 			// is registered and thus dispatched after those EventSource instances, it
 			// might look like it ran out-of-sync.
 			millis = _fakeTimer;
+			if (_recordMode == kRecorderUpdate) {
+				// if we make it to here, we're expecting there to be an event in the file
+				// so add one to the updated recording
+				debug(3, "inserting additional timer event");
+				timerEvent.recordedtype = Common::kRecorderEventTypeTimer;
+				timerEvent.time = _fakeTimer;
+				_recordFile->writeEvent(timerEvent);
+			}
 			return;
 		}
 		_processingMillis = true;
 		_fakeTimer = _nextEvent.time;
 		millis = _fakeTimer;
+		if (_recordMode == kRecorderUpdate) {
+			// copy the event to the updated recording
+			timerEvent.recordedtype = Common::kRecorderEventTypeTimer;
+			timerEvent.time = _fakeTimer;
+			_recordFile->writeEvent(timerEvent);
+		}
 		updateSubsystems();
 		_nextEvent = _playbackFile->getNextEvent();
 		_timerManager->handler();
@@ -242,6 +274,7 @@ void EventRecorder::processScreenUpdate() {
 		takeScreenshot();
 		_timerManager->handler();
 		break;
+	case kRecorderUpdate: // fallthrough
 	case kRecorderPlayback:
 		if (_playbackFile->hasTrackScreenUpdate()) {
 			// if the file has screen update support, but the next event
@@ -261,6 +294,13 @@ void EventRecorder::processScreenUpdate() {
 			_fakeTimer = _nextEvent.time;
 			updateSubsystems();
 			_nextEvent = _playbackFile->getNextEvent();
+			if (_recordMode == kRecorderUpdate) {
+				// write event to the updated file and update screenshot if necessary
+				screenUpdateEvent.recordedtype = Common::kRecorderEventTypeScreenUpdate;
+				screenUpdateEvent.time = _fakeTimer;
+				_recordFile->writeEvent(screenUpdateEvent);
+				takeScreenshot();
+			}
 			_timerManager->handler();
 			_controlPanel->setReplayedTime(_fakeTimer);
 			_processingMillis = false;
@@ -278,7 +318,9 @@ void EventRecorder::checkForKeyCode(const Common::Event &event) {
 }
 
 bool EventRecorder::pollEvent(Common::Event &ev) {
-	if ((_recordMode != kRecorderPlayback) || !_initialized)
+	if (((_recordMode != kRecorderPlayback) &&
+		(_recordMode != kRecorderUpdate)) ||
+		!_initialized)
 		return false;
 
 	if (_nextEvent.recordedtype == Common::kRecorderEventTypeTimer
@@ -317,6 +359,7 @@ void EventRecorder::togglePause() {
 	switch (_recordMode) {
 	case kRecorderPlayback:
 	case kRecorderRecord:
+	case kRecorderUpdate:
 		oldState = _recordMode;
 		_recordMode = kRecorderPlaybackPause;
 		_controlPanel->runModal();
@@ -341,7 +384,7 @@ uint32 EventRecorder::getRandomSeed(const Common::String &name) {
 	}
 	uint32 result = g_system->getMillis();
 	if (_recordMode == kRecorderRecord) {
-		_playbackFile->getHeader().randomSourceRecords[name] = result;
+		_recordFile->getHeader().randomSourceRecords[name] = result;
 	}
 	return result;
 }
@@ -366,7 +409,6 @@ void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) 
 	_fakeMixerManager->suspendAudio();
 	_fakeTimer = 0;
 	_lastMillis = g_system->getMillis();
-	_playbackFile = new Common::PlaybackFile();
 	_lastScreenshotTime = 0;
 	_recordMode = mode;
 	_needcontinueGame = false;
@@ -374,12 +416,12 @@ void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) 
 		DebugMan.enableDebugChannel("EventRec");
 		gDebugLevel = 1;
 	}
-	if (_recordMode == kRecorderPlayback) {
+	if ((_recordMode == kRecorderPlayback) || (_recordMode == kRecorderUpdate)) {
 		debugC(1, kDebugLevelEventRec, "playback:action=\"Load file\" filename=%s", recordFileName.c_str());
-		Common::EventDispatcher *eventDispater = g_system->getEventManager()->getEventDispatcher();
-		eventDispater->clearEvents();
-		eventDispater->ignoreSources(true);
-		eventDispater->registerSource(this, false);
+		Common::EventDispatcher *eventDispatcher = g_system->getEventManager()->getEventDispatcher();
+		eventDispatcher->clearEvents();
+		eventDispatcher->ignoreSources(true);
+		eventDispatcher->registerSource(this, false);
 	}
 	_screenshotPeriod = ConfMan.getInt("screenshot_period");
 	if (_screenshotPeriod == 0) {
@@ -394,11 +436,11 @@ void EventRecorder::init(const Common::String &recordFileName, RecordMode mode) 
 		_controlPanel = new GUI::OnScreenDialog(_recordMode == kRecorderRecord);
 		_controlPanel->reflowLayout();
 	}
-	if (_recordMode == kRecorderPlayback) {
+	if ((_recordMode == kRecorderPlayback) || (_recordMode == kRecorderUpdate)) {
 		applyPlaybackSettings();
 		_nextEvent = _playbackFile->getNextEvent();
 	}
-	if (_recordMode == kRecorderRecord) {
+	if ((_recordMode == kRecorderRecord) || (_recordMode == kRecorderUpdate)) {
 		getConfig();
 	}
 
@@ -419,11 +461,21 @@ bool EventRecorder::openRecordFile(const Common::String &fileName) {
 	bool result;
 	switch (_recordMode) {
 	case kRecorderRecord:
-		return _playbackFile->openWrite(fileName);
+		_recordFile = new Common::PlaybackFile();
+		return _recordFile->openWrite(fileName);
 	case kRecorderPlayback:
 		_recordMode = kPassthrough;
+		_playbackFile = new Common::PlaybackFile();
 		result = _playbackFile->openRead(fileName);
 		_recordMode = kRecorderPlayback;
+		return result;
+	case kRecorderUpdate:
+		_recordMode = kPassthrough;
+		_playbackFile = new Common::PlaybackFile();
+		result = _playbackFile->openRead(fileName);
+		_recordMode = kRecorderUpdate;
+		_recordFile = new Common::PlaybackFile();
+		result &= _recordFile->openWrite(fileName + ".new");
 		return result;
 	default:
 		return false;
@@ -478,19 +530,24 @@ MixerManager *EventRecorder::getMixerManager() {
 
 void EventRecorder::getConfigFromDomain(const Common::ConfigManager::Domain *domain) {
 	for (Common::ConfigManager::Domain::const_iterator entry = domain->begin(); entry!= domain->end(); ++entry) {
-		_playbackFile->getHeader().settingsRecords[entry->_key] = entry->_value;
+		_recordFile->getHeader().settingsRecords[entry->_key] = entry->_value;
 	}
 }
 
 void EventRecorder::getConfig() {
 	getConfigFromDomain(ConfMan.getDomain(ConfMan.kApplicationDomain));
 	getConfigFromDomain(ConfMan.getActiveDomain());
-	_playbackFile->getHeader().settingsRecords["save_slot"] = ConfMan.get("save_slot");
+	_recordFile->getHeader().settingsRecords["save_slot"] = ConfMan.get("save_slot");
 }
 
 
 void EventRecorder::applyPlaybackSettings() {
 	for (Common::StringMap::const_iterator i = _playbackFile->getHeader().settingsRecords.begin(); i != _playbackFile->getHeader().settingsRecords.end(); ++i) {
+		if (_recordMode == kRecorderUpdate) {
+			// copy the header values to the new recording
+			_recordFile->getHeader().settingsRecords[i->_key] = i->_value;
+		}
+
 		Common::String currentValue = ConfMan.get(i->_key);
 		if (currentValue != i->_value) {
 			ConfMan.set(i->_key, i->_value, ConfMan.kTransientDomain);
@@ -549,10 +606,18 @@ bool EventRecorder::notifyEvent(const Common::Event &ev) {
 	evt.mouse.x = evt.mouse.x * (g_system->getOverlayWidth() / g_system->getWidth());
 	evt.mouse.y = evt.mouse.y * (g_system->getOverlayHeight() / g_system->getHeight());
 	switch (_recordMode) {
+	case kRecorderUpdate: // passthrough
 	case kRecorderPlayback:
 		// pass through screen updates to avoid loss of sync!
 		if (evt.type == Common::EVENT_SCREEN_CHANGED)
 			g_gui.processEvent(evt, _controlPanel);
+		if (_recordMode == kRecorderUpdate) {
+			// write a copy of the event to the output buffer
+			Common::RecorderEvent e(ev);
+			e.recordedtype = Common::kRecorderEventTypeNormal;
+			e.time = _fakeTimer;
+			_recordFile->writeEvent(e);
+		}
 		return false;
 	case kRecorderRecord:
 		g_gui.processEvent(evt, _controlPanel);
@@ -562,7 +627,7 @@ bool EventRecorder::notifyEvent(const Common::Event &ev) {
 			Common::RecorderEvent e(ev);
 			e.recordedtype = Common::kRecorderEventTypeNormal;
 			e.time = _fakeTimer;
-			_playbackFile->writeEvent(e);
+			_recordFile->writeEvent(e);
 			return false;
 		}
 	case kRecorderPlaybackPause: {
@@ -586,16 +651,16 @@ bool EventRecorder::notifyEvent(const Common::Event &ev) {
 void EventRecorder::setGameMd5(const ADGameDescription *gameDesc) {
 	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 		if (fileDesc->md5 != nullptr) {
-			_playbackFile->getHeader().hashRecords[fileDesc->fileName] = fileDesc->md5;
+			_recordFile->getHeader().hashRecords[fileDesc->fileName] = fileDesc->md5;
 		}
 	}
 }
 
 void EventRecorder::processGameDescription(const ADGameDescription *desc) {
-	if (_recordMode == kRecorderRecord) {
+	if ((_recordMode == kRecorderRecord) || (_recordMode == kRecorderUpdate)) {
 		setGameMd5(desc);
 	}
-	if ((_recordMode == kRecorderPlayback) && !checkGameHash(desc)) {
+	if (((_recordMode == kRecorderPlayback) || (_recordMode == kRecorderUpdate)) && !checkGameHash(desc)) {
 		deinit();
 		error("playback:action=error reason=\"\"");
 	}
@@ -611,7 +676,7 @@ void EventRecorder::takeScreenshot() {
 		uint8 md5[16];
 		if (grabScreenAndComputeMD5(screen, md5)) {
 			_lastScreenshotTime = _fakeTimer;
-			_playbackFile->saveScreenShot(screen, md5);
+			_recordFile->saveScreenShot(screen, md5);
 			screen.free();
 		}
 	}
@@ -636,7 +701,7 @@ Common::SeekableReadStream *EventRecorder::processSaveStream(const Common::Strin
 	case kRecorderRecord:
 		saveFile = _realSaveManager->openForLoading(fileName);
 		if (saveFile != nullptr) {
-			_playbackFile->addSaveFile(fileName, saveFile);
+			_recordFile->addSaveFile(fileName, saveFile);
 			saveFile->seek(0);
 		}
 		return saveFile;
@@ -681,7 +746,7 @@ void EventRecorder::postDrawOverlayGui() {
 }
 
 Common::StringArray EventRecorder::listSaveFiles(const Common::String &pattern) {
-	if (_recordMode == kRecorderPlayback) {
+	if ((_recordMode == kRecorderPlayback) || (_recordMode == kRecorderUpdate)) {
 		Common::StringArray result;
 		for (Common::HashMap<Common::String, Common::PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile->getHeader().saveFiles.begin(); i != _playbackFile->getHeader().saveFiles.end(); ++i) {
 			if (i->_key.matchString(pattern, false, "/")) {
@@ -695,7 +760,7 @@ Common::StringArray EventRecorder::listSaveFiles(const Common::String &pattern) 
 }
 
 void EventRecorder::setFileHeader() {
-	if (_recordMode != kRecorderRecord) {
+	if ((_recordMode != kRecorderRecord) && (_recordMode != kRecorderUpdate)) {
 		return;
 	}
 	TimeDate t;
@@ -707,9 +772,9 @@ void EventRecorder::setFileHeader() {
 	if (_name.empty()) {
 		g_eventRec.setName(Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon + 1, 1900 + t.tm_year) + desc.description);
 	}
-	_playbackFile->getHeader().author = _author;
-	_playbackFile->getHeader().notes = _desc;
-	_playbackFile->getHeader().name = _name;
+	_recordFile->getHeader().author = _author;
+	_recordFile->getHeader().notes = _desc;
+	_recordFile->getHeader().name = _name;
 }
 
 SDL_Surface *EventRecorder::getSurface(int width, int height) {
