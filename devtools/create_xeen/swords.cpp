@@ -37,7 +37,7 @@
 void writeSwordsData(CCArchive &cc, const char *swordsDatName) {
 	Common::File f;
 	Common::MemFile monsters;
-	const size_t size = MONSTERS_COUNT * 60;
+	const int size = MONSTERS_COUNT * 60;
 	const int32 offset = 0x44200;
 	byte buffer[size];
 
@@ -48,7 +48,7 @@ void writeSwordsData(CCArchive &cc, const char *swordsDatName) {
 		error("Failed to seek to 0x%x for '%s'", offset, swordsDatName);
 
 	if (f.read(buffer, size) != size)
-		error("Failed to read %zu bytes from '%s'", size, swordsDatName);
+		error("Failed to read %d bytes from '%s'", size, swordsDatName);
 
 	if (strcmp((const char *)buffer + 0x33, "Slime"))
 		error("Invalid '%s'", swordsDatName);

@@ -66,7 +66,7 @@ void CCArchive::loadIndex() {
 
 	if (_file.read(rawIndex, size) != size) {
 		delete[] rawIndex;
-		error("Failed to read %zu bytes from CC archive", size);
+		error("Failed to read %ld bytes from CC archive", size);
 	}
 
 	// Decrypt the index
