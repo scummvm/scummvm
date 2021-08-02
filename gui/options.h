@@ -290,6 +290,8 @@ protected:
 	StaticTextWidget *_pluginsPath;
 	ButtonWidget	 *_pluginsPathClearButton;
 #endif
+	StaticTextWidget *_browserPath;
+	ButtonWidget	 *_browserPathClearButton;
 
 	void addPathsControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 

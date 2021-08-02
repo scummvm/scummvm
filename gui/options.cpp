@@ -82,6 +82,7 @@ enum {
 	kSavePathClearCmd		= 'clsp',
 	kChooseThemeDirCmd		= 'chth',
 	kThemePathClearCmd		= 'clth',
+	kBrowserPathClearCmd	= 'clbr',
 	kChooseExtraDirCmd		= 'chex',
 	kExtraPathClearCmd		= 'clex',
 	kChoosePluginsDirCmd	= 'chpl',
@@ -1867,6 +1868,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_pluginsPath = nullptr;
 	_pluginsPathClearButton = nullptr;
 #endif
+	_browserPath = nullptr;
+	_browserPathClearButton = nullptr;
 	_curTheme = nullptr;
 	_guiBasePopUpDesc = nullptr;
 	_guiBasePopUp = nullptr;
@@ -2242,6 +2245,14 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 	if (confPath.empty())
 		confPath = g_system->getDefaultConfigFileName();
 	new StaticTextWidget(boss, prefix + "ConfigPath", _("ScummVM config path: ") + confPath, confPath);
+
+	Common::U32String browserPath = _("<default>");
+	if (ConfMan.hasKey("browser_lastpath"))
+		browserPath = ConfMan.get("browser_lastpath");
+
+	// I18N: Referring to the last path memorized when adding a game
+	_browserPath = new StaticTextWidget(boss, prefix + "BrowserPath", _("Last browser path: ") + browserPath, browserPath);
+	_browserPathClearButton = addClearButton(boss, prefix + "BrowserPathClearButton", kBrowserPathClearCmd);
 }
 
 void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
@@ -2778,6 +2789,12 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		_pluginsPath->setLabel(_c("None", "path"));
 		break;
 #endif
+	case kBrowserPathClearCmd:
+		ConfMan.removeKey("browser_lastpath", Common::ConfigManager::kApplicationDomain);
+		ConfMan.flushToDisk();
+		_browserPath->setLabel(_("Last browser path: ") + _("<default>"));
+
+		break;
 #ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	case kRootPathClearCmd:
@@ -3046,6 +3063,11 @@ void GlobalOptionsDialog::reflowLayout() {
 		_extraPathClearButton->setNext(nullptr);
 		delete _extraPathClearButton;
 		_extraPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.ExtraPathClearButton", kExtraPathClearCmd);
+
+		_tabWidget->removeWidget(_browserPathClearButton);
+		_browserPathClearButton->setNext(nullptr);
+		delete _browserPathClearButton;
+		_browserPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.BrowserPathClearButton", kBrowserPathClearCmd);
 	}
 
 	_tabWidget->setActiveTab(activeTab);
