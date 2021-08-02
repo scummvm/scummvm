@@ -38,25 +38,25 @@ File::~File() {
 	close();
 }
 
-bool File::open(const String &filename) {
+bool File::open(const Path &filename) {
 	return open(filename, SearchMan);
 }
 
-bool File::open(const String &filename, Archive &archive) {
+bool File::open(const Path &filename, Archive &archive) {
 	assert(!filename.empty());
 	assert(!_handle);
 
 	SeekableReadStream *stream = nullptr;
 
 	if ((stream = archive.createReadStreamForMember(filename))) {
-		debug(8, "Opening hashed: %s", filename.c_str());
+		debug(8, "Opening hashed: %s", filename.toString().c_str());
 	} else if ((stream = archive.createReadStreamForMember(filename + "."))) {
 		// WORKAROUND: Bug #2548: "SIMON1: Game Detection fails"
 		// sometimes instead of "GAMEPC" we get "GAMEPC." (note trailing dot)
-		debug(8, "Opening hashed: %s.", filename.c_str());
+		debug(8, "Opening hashed: %s.", filename.toString().c_str());
 	}
 
-	return open(stream, filename);
+	return open(stream, filename.toString());
 }
 
 bool File::open(const FSNode &node) {
@@ -87,7 +87,7 @@ bool File::open(SeekableReadStream *stream, const String &name) {
 }
 
 
-bool File::exists(const String &filename) {
+bool File::exists(const Path &filename) {
 	if (SearchMan.hasFile(filename)) {
 		return true;
 	} else if (SearchMan.hasFile(filename + ".")) {

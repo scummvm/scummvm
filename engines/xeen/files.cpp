@@ -324,21 +324,21 @@ File::File(const Common::String &filename, int ccMode) {
 	File::open(filename, ccMode);
 }
 
-bool File::open(const Common::String &filename) {
+bool File::open(const Common::Path &filename) {
 	if (!_currentSave || !Common::File::open(filename, *_currentSave)) {
 		if (!Common::File::open(filename, *_currentArchive)) {
 			// Could not find in current archive, so try intro.cc or in folder
 			if (!Common::File::open(filename))
-				error("Could not open file - %s", filename.c_str());
+				error("Could not open file - %s", filename.toString().c_str());
 		}
 	}
 
 	return true;
 }
 
-bool File::open(const Common::String &filename, Common::Archive &archive) {
+bool File::open(const Common::Path &filename, Common::Archive &archive) {
 	if (!Common::File::open(filename, archive))
-		error("Could not open file - %s", filename.c_str());
+		error("Could not open file - %s", filename.toString().c_str());
 	return true;
 }
 
