@@ -72,6 +72,7 @@ AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String
 
 	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.OnScreenControl", _("Show On-screen control"));
 	_touchpadCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.TouchpadMode", _("Touchpad mouse mode"));
+	// I18N: Show a button to revoke Storage Access Framework permissions for Android
 	_onscreenSAFRevokeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.SAFRevokePermsControl", _("Show SAF revoke permissions overlay button"));
 }
 
