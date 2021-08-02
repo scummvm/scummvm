@@ -581,7 +581,7 @@ void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
 
 void writeConstants(CCArchive &cc) {
 	EN eng;
-	eng.writeConstants(Common::String::format("_%i", Common::Language::EN_ANY), cc);
+	eng.writeConstants(Common::String::format("_%i", Common::EN_ANY), cc);
 	RU ru;
-	ru.writeConstants(Common::String::format("_%i", Common::Language::RU_RUS), cc);
+	ru.writeConstants(Common::String::format("_%i", Common::RU_RUS), cc);
 }
