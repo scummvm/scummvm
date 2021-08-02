@@ -51,11 +51,37 @@ AmbientSounds::AmbientSounds(BladeRunnerEngine *vm) {
 	for (int i = 0; i != kNonLoopingSounds; ++i) {
 		NonLoopingSound &track = _nonLoopingSounds[i];
 		track.isActive = false;
+#if !BLADERUNNER_ORIGINAL_BUGS
+		track.name.clear();
+		track.hash = 0;
+		track.audioPlayerTrack = -1;
+		track.delayMin = 0u;
+		track.delayMax = 0u;
+		track.nextPlayTimeStart = 0u;
+		track.nextPlayTimeDiff = 0u;
+		track.volumeMin = 0;
+		track.volumeMax = 0;
+		track.volume = 0;
+		track.panStartMin = 0;
+		track.panStartMax = 0;
+		track.panEndMin = 0;
+		track.panEndMax = 0;
+		track.priority = 0;
+		track.soundType = -1;
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 	}
 
 	for (int i = 0; i != kLoopingSounds; ++i) {
 		LoopingSound &track = _loopingSounds[i];
 		track.isActive = false;
+#if !BLADERUNNER_ORIGINAL_BUGS
+		track.name.clear();
+		track.hash = 0;
+		track.audioPlayerTrack = -1;
+		track.volume = 0;
+		track.pan = 0;
+		track.soundType = -1;
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 	}
 }
 
@@ -411,6 +437,22 @@ void AmbientSounds::removeNonLoopingSoundByIndex(int index, bool stopPlaying) {
 	track.audioPlayerTrack = -1;
 	//	track.field_45 = 0;
 	track.soundType = -1;
+#if !BLADERUNNER_ORIGINAL_BUGS
+	track.name.clear();
+	track.hash = 0;
+	track.delayMin = 0u;
+	track.delayMax = 0u;
+	track.nextPlayTimeStart = 0u;
+	track.nextPlayTimeDiff = 0u;
+	track.volumeMin = 0;
+	track.volumeMax = 0;
+	track.volume = 0;
+	track.panStartMin = 0;
+	track.panStartMax = 0;
+	track.panEndMin = 0;
+	track.panEndMax = 0;
+	track.priority = 0;
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 }
 
 void AmbientSounds::removeLoopingSoundByIndex(int index, uint32 delaySeconds) {
