@@ -14,7 +14,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Transylvania.
    - Added support for Crimson Crown.
    - Added support for OO-Topos.
-   - Added support for Glulx interactive fiction games
+   - Added support for Glulx interactive fiction games.
    - Added support for Lure of the Temptress Konami release.
    - Added support for Private Eye (US release).
    - Added support for Spanish Blue Force.
@@ -190,7 +190,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Now Hebrew is displayed correctly in GUI (requires FriBiDi library).
    - Updated the Roland MT-32 emulation code to Munt 2.4.0.
    - Added option to select the default voice for ports that support Text-to-Speech.
-   - Added support for Discord Rich Presence integration on supported platforms (Windows Vista+, macOS 10.9+ 64 Bit)
+   - Added support for Discord Rich Presence integration on supported platforms (Windows Vista+, macOS 10.9+ 64 Bit).
    - Major improvements to the keymapper.
    - Games are now recognised by engineid:gameid combination.
 
@@ -284,11 +284,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash loading some savegames directly from the launcher.
    - Fix curing the well in Nightshadow.
    - Fix loading of wall items from savegames.
-   - Fix U/D keys not working on Quests dialog
-   - Fix incorrect mirror destination for Dragon Tower
-   - Fix crash reading book in Great Pyramid safe
-   - Prevent attributes from going negative
-   - Fix border faces animation during Clairvoyance
+   - Fix U/D keys not working on Quests dialog.
+   - Fix incorrect mirror destination for Dragon Tower.
+   - Fix crash reading book in Great Pyramid safe.
+   - Prevent attributes from going negative.
+   - Fix border faces animation during Clairvoyance.
 
  ZVision:
    - Fixed regression in the safe puzzle in Zork Nemesis: The Forbidden Lands.
@@ -767,7 +767,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      in-game dialog.
 
  Tinsel:
-   - Fixed some Discworld 2 text/voice not displaying & playing all the way through
+   - Fixed some Discworld 2 text/voice not displaying & playing all the way through.
    - Fix crash in in-game save menu when all slots are used with long names
 
  TsAGE:
@@ -840,7 +840,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed missing translations in the in-game quit and restart dialogs in Pajama Sam 1.
    - Fixed visual glitches in DOTT that occured after loading a savegame with the stereo
      in Green Tentacle's room turned on.
-   - Improved timing and pathfinding in Maniac Mansion (C64 and Apple II versions)
+   - Improved timing and pathfinding in Maniac Mansion (C64 and Apple II versions).
    - Added support for the Dutch demo of Let's Explore the Airport with Buzzy.
 
  Sherlock:
@@ -911,10 +911,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCI:
    - Make cursor workarounds work properly on OpenPandora (and other devices, that
-     support touch screen and analog sticks/mouse at the same time)
+     support touch screen and analog sticks/mouse at the same time).
    - Script patch to fix broken ending battle in multilingual King's Quest 5
-     (French, German + Spanish versions are all broken)
-   - Fixed invalid memory access, when loading broken King's Quest 5 credit music track
+     (French, German + Spanish versions are all broken).
+   - Fixed invalid memory access, when loading broken King's Quest 5 credit music track.
    - Fixed lowres/hires issues in King's Quest 6 when saving, changing the lowres/hires
      setting and restoring the saved game afterwards.
 
@@ -1227,7 +1227,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Geisha.
    - Added support for Gregory and the Hot Air Balloon.
    - Added support for Magic Tales: Liam Finds a Story.
-   - Added support for Once Upon A Time: Little Red Riding Hood
+   - Added support for Once Upon A Time: Little Red Riding Hood.
    - Added support for Sleeping Cub's Test of Courage.
    - Added support for Soltys.
    - Added support for The Princess and the Crab.
@@ -1263,7 +1263,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      in scene with "von Braun").
 
  Gob:
-   - Fixed a crash in Lost in Time
+   - Fixed a crash in Lost in Time.
    - Rewrote the AdLib player. Enabled the now working MDY player in
      Fascination and Geisha.
 
