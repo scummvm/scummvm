@@ -898,45 +898,52 @@ int16 WhichIChar(gFont *font, uint8 *s, int16 length, int16 maxLen) {
 **********************************************************************
 */
 int32 GTextWrap(gFont *font, char *mark, uint16 &count, uint16 width, int16 styles) {
-	char        *text = mark;
-	char        *ntext, *atext, *ltext;
-	uint16      pixlen;
+	char *text = mark;
+	char *atext;
+	uint16 pixlen;
+	int aTextIndex = 0;
 
 	if (!strchr(text, '\n')) {
 		count = strlen(text);
 		pixlen = TextWidth(font, text, count, styles);
-		if (pixlen <= width) return -1;
+		if (pixlen <= width)
+			return -1;
 	}
 
 	atext = text;
 	while (1) {
-		ntext = strchr(atext, ' ');
-		ltext = strchr(atext, '\n');
+		Common::String s = atext;
 
-		if (ntext == NULL || (ltext != NULL && ltext < ntext)) {
-			pixlen = TextWidth(font, text, ltext - text, styles);
+		int nTextIndex = aTextIndex + s.findFirstOf(' ');
+		int lTextIndex = aTextIndex + s.findFirstOf('\n');
+
+		if (!s.contains(' ') || (s.contains('\n') && lTextIndex < nTextIndex)) {
+			pixlen = TextWidth(font, text, lTextIndex, styles);
 			if (pixlen <= width) {
-				count = ltext - text;
+				count = lTextIndex;
 				return count + 1;
 			}
 
-			if (ntext == NULL) {
-				if (atext == text) break;
+			if (!s.contains(' ')) {
+				if (atext == text)
+					break;
 
-				count = atext - text - 1;
+				count = aTextIndex - 1;
 				return count + 1;
 			}
 		}
 
-		pixlen = TextWidth(font, text, ntext - text, styles);
+		pixlen = TextWidth(font, text, nTextIndex, styles);
 		if (pixlen > width) {
-			if (atext == text) break;
+			if (atext == text)
+				break;
 
-			count = atext - text - 1;
+			count = aTextIndex - 1;
 			return count + 1;
 		}
 
-		atext = ntext + 1;
+		atext = text + nTextIndex + 1;
+		aTextIndex = nTextIndex + 1;
 	}
 
 	if (atext == text) {
@@ -945,10 +952,11 @@ int32 GTextWrap(gFont *font, char *mark, uint16 &count, uint16 width, int16 styl
 		count = strlen(text);
 		while (--count) {
 			pixlen = TextWidth(font, text, count, styles);
-			if (pixlen <= width) return count;
+			if (pixlen <= width)
+				return count;
 		}
 	} else {
-		count = atext - text - 1;
+		count = aTextIndex - 1;
 		return count + 1;
 	}
 
