@@ -48,10 +48,10 @@
 
 namespace Director {
 
-static const char *xlibName = "PopUp Menu XObj";
+static const char *xlibName = "PopMenu";
 
 static MethodProto xlibMethods[] = {
-	{ "new",				PopUpMenuXObj::m_new,			 0, 0,	200 },	// D2
+	{ "new",				PopUpMenuXObj::m_new,			 2, 2,	200 },	// D2
 	{ "AppendMenu",			PopUpMenuXObj::m_appendMenu,	 1, 1,	200 },	// D2
 	{ "DisableItem",		PopUpMenuXObj::m_disableItem,	 1, 1,	200 },	// D2
 	{ "EnableItem",			PopUpMenuXObj::m_enableItem,	 1, 1,	200 },	// D2
@@ -82,11 +82,13 @@ void PopUpMenuXObj::close(int type) {
 }
 
 
-PopUpMenuXObject::PopUpMenuXObject(ObjectType ObjectType) :Object<PopUpMenuXObject>("PopUp Menu XObj") {
+PopUpMenuXObject::PopUpMenuXObject(ObjectType ObjectType) :Object<PopUpMenuXObject>("PopMenu") {
 	_objType = ObjectType;
 }
 
 void PopUpMenuXObj::m_new(int nargs) {
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_new", nargs);
+	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_currentMe);
 }
 
