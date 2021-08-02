@@ -413,20 +413,20 @@ bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 			if (*p >= 0x20 && *p <= 0x7f)
 				cleanedFilename += (char) *p;
 
-		if (resMan.open(movieFilename)) {
+		if (resMan.open(Common::Path(movieFilename, _vm->_dirSeparator))) {
 			fileExists = true;
 			cleanedFilename = movieFilename;
-		} else if (!movieFilename.equals(cleanedFilename) && resMan.open(cleanedFilename)) {
+		} else if (!movieFilename.equals(cleanedFilename) && resMan.open(Common::Path(cleanedFilename, _vm->_dirSeparator))) {
 			fileExists = true;
 		}
 	} else {
 		Common::File file;
 		cleanedFilename = movieFilename + ".MMM";
 
-		if (file.open(movieFilename)) {
+		if (file.open(Common::Path(movieFilename, _vm->_dirSeparator))) {
 			fileExists = true;
 			cleanedFilename = movieFilename;
-		} else if (!movieFilename.equals(cleanedFilename) && file.open(cleanedFilename)) {
+		} else if (!movieFilename.equals(cleanedFilename) && file.open(Common::Path(cleanedFilename, _vm->_dirSeparator))) {
 			fileExists = true;
 		}
 	}
@@ -483,7 +483,7 @@ bool Window::step() {
 		delete _currentMovie;
 		_currentMovie = nullptr;
 
-		Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, '/'));
+		Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
 
 		if (!mov) {
 			warning("nextMovie: No movie is loaded");
@@ -589,7 +589,7 @@ Common::String Window::getSharedCastPath() {
 
 	for (uint i = 0; i < namesToTry.size(); i++) {
 		Common::File f;
-		if (f.open(_currentPath + namesToTry[i])) {
+		if (f.open(Common::Path(_currentPath + namesToTry[i], _vm->_dirSeparator))) {
 			f.close();
 			return _currentPath + namesToTry[i];
 		}

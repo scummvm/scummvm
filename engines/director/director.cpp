@@ -102,6 +102,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_playbackPaused = false;
 	_skipFrameAdvance = false;
 	_centerStage = true;
+	_dirSeparator = ':';
 
 	_surface = nullptr;
 }
@@ -272,7 +273,7 @@ void DirectorEngine::parseOptions() {
 			}
 
 			if (Common::punycode_hasprefix(_options.startMovie.startMovie))
-				_options.startMovie.startMovie = Common::punycode_decodepath(_options.startMovie.startMovie).toString();
+				_options.startMovie.startMovie = Common::punycode_decodepath(_options.startMovie.startMovie).toString(_dirSeparator);
 
 			debug(2, "parseOptions(): Movie is: %s, frame is: %d", _options.startMovie.startMovie.c_str(), _options.startMovie.startFrame);
 		} else if (key == "startup") {

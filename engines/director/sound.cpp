@@ -709,7 +709,7 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, DisposeAfterU
 		return nullptr;
 
 	Common::File *file = new Common::File();
-	if (!file->open(_path)) {
+	if (!file->open(Common::Path(_path, g_director->_dirSeparator))) {
 		warning("Failed to open %s", _path.c_str());
 		return nullptr;
 	}

@@ -296,7 +296,7 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	}
 
 	if (movie.type != VOID) {
-		ref.movie = unixToMacPath(_vm->getCurrentMovie()->_movieArchive->getPathName());
+		ref.movie = _vm->getCurrentMovie()->_movieArchive->getPathName();
 	}
 	ref.frameI = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
 
