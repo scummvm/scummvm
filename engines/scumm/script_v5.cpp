@@ -446,7 +446,7 @@ void ScummEngine_v5::o5_actorOps() {
 		case 1:			// SO_COSTUME
 			i = getVarOrDirectByte(PARAM_1);
 
-			// WORKAROUND: In the VGA floppy version of the Monkey
+			// WORKAROUND: In the VGA floppy version of Monkey
 			// Island 1, there are two different costumes for the
 			// captain Smirk close-up: 0 for when the game is run
 			// from floppies, and 76 for when the game is run from
