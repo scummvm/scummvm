@@ -40,6 +40,7 @@
 #include "director/lingo/xlibs/fplayxobj.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
 #include "director/lingo/xlibs/palxobj.h"
+#include "director/lingo/xlibs/orthoplayxobj.h"
 #include "director/lingo/xlibs/popupmenuxobj.h"
 #include "director/lingo/xlibs/soundjam.h"
 #include "director/lingo/xlibs/winxobj.h"
@@ -120,6 +121,7 @@ static struct XLibProto {
 	{ "PopUp Menu XObj",		PopUpMenuXObj::open,	PopUpMenuXObj::close,		kXObj | kXtraObj,		200 }, 	// D2
 	{ "LabelDrv",				LabelDrvXObj::open,		LabelDrvXObj::close,		kXObj,					400 }, 	// D4
 	{ "SoundJam",				SoundJam::open,			SoundJam::close,			kXObj,					400 },	// D4
+	{ "OrthoPlay XObj",			OrthoPlayXObj::open,	OrthoPlayXObj::close,		kXObj,					400 }, 	// D4
 	{ "winXObj",				RearWindowXObj::open,	RearWindowXObj::close,		kXObj,					400 },	// D4
 	{ 0, 0, 0, 0, 0 }
 
