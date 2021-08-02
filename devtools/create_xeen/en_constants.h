@@ -1989,6 +1989,15 @@ public:
 			   "l\fd";
 	}
 
+
+	const char **MAE_NAMES() {
+		delete[] _maeNames;
+		_maeNames = new const char *[131] {
+			"",
+		};
+		return _maeNames;
+	}
+
 	class EN_KeyConstants : public KeyConstants {
 	public:
 		class EN_DialogsCharInfo : public DialogsCharInfo {

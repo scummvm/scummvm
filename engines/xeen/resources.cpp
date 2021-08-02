@@ -419,6 +419,7 @@ void Resources::loadData() {
 	file.syncString(DARKSIDE_ENDING2);
 	file.syncString(PHAROAH_ENDING_TEXT1);
 	file.syncString(PHAROAH_ENDING_TEXT2);
+	file.syncStrings(MAE_NAMES, 131);
 
 	ResFile keys("CONSTKEYS_", _buffer, lang);
 	keys.syncNumber(KeyConstants.DialogsCharInfo.KEY_ITEM);
