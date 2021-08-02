@@ -1498,7 +1498,10 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	Datum target = funcSym.target;
 
 	if (funcSym.type == VOIDSYM) {
-		g_lingo->lingoError("Call to undefined handler. Dropping %d stack items", nargs);
+		if (funcSym.name)
+			g_lingo->lingoError("Call to undefined handler '%s'. Dropping %d stack items", funcSym.name->c_str(), nargs);
+		else
+			g_lingo->lingoError("Call to undefined handler. Dropping %d stack items", nargs);
 
 		for (int i = 0; i < nargs; i++)
 			g_lingo->pop();

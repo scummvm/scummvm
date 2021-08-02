@@ -235,16 +235,19 @@ Common::String LingoArchive::getName(uint16 id) {
 }
 
 Symbol Lingo::getHandler(const Common::String &name) {
+	Symbol sym;
 	if (!_eventHandlerTypeIds.contains(name)) {
 		// local functions
 		if (_currentScriptContext && _currentScriptContext->_functionHandlers.contains(name))
 			return _currentScriptContext->_functionHandlers[name];
 
-		Symbol sym = g_director->getCurrentMovie()->getHandler(name);
+		sym = g_director->getCurrentMovie()->getHandler(name);
 		if (sym.type != VOIDSYM)
 			return sym;
 	}
-	return Symbol();
+	sym.type = VOIDSYM;
+	sym.name = new Common::String(name);
+	return sym;
 }
 
 void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName) {
