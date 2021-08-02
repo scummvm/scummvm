@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-01 19:25+0000\n"
+"POT-Creation-Date: 2021-08-02 15:09+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -58,7 +58,7 @@ msgstr "תיקיה למעלה"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:384
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
-#: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:92 gui/options.cpp:2107
+#: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:92 gui/options.cpp:2110
 #: gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:396
@@ -126,7 +126,7 @@ msgstr "נראה כי החיבור מוגבל. האם להמשיך בהורדת 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:415 gui/launcher.cpp:458
-#: gui/options.cpp:2890 gui/options.cpp:2928
+#: gui/options.cpp:2907 gui/options.cpp:2945
 #: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -138,7 +138,7 @@ msgstr "כן"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:415 gui/launcher.cpp:458
-#: gui/options.cpp:2890 gui/options.cpp:2928 engines/buried/buried.cpp:530
+#: gui/options.cpp:2907 gui/options.cpp:2945 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:142
@@ -158,7 +158,7 @@ msgstr "לא ניתן ליצור תיקיה להורדה - קובץ באותו �
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:385
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:514 gui/launcher.cpp:518
-#: gui/massadd.cpp:89 gui/options.cpp:2109 gui/saveload-dialog.cpp:1169
+#: gui/massadd.cpp:89 gui/options.cpp:2112 gui/saveload-dialog.cpp:1169
 #: engines/engine.cpp:523 engines/engine.cpp:547
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
@@ -240,11 +240,12 @@ msgid ""
 "English"
 msgstr "שפת המשחק. אפשרות זו לא תהפוך משחק בטורקית למשחק בעברית"
 
-#: gui/editgamedialog.cpp:164 gui/editgamedialog.cpp:179 gui/options.cpp:1386
-#: gui/options.cpp:1406 gui/options.cpp:1419 gui/options.cpp:1433
-#: gui/options.cpp:1445 gui/options.cpp:1465 gui/options.cpp:1477
-#: gui/options.cpp:1847 gui/options.cpp:2302 gui/options.cpp:2474
-#: audio/null.cpp:41 engines/ags/detection.cpp:94
+#: gui/editgamedialog.cpp:164 gui/editgamedialog.cpp:179 gui/options.cpp:1387
+#: gui/options.cpp:1407 gui/options.cpp:1420 gui/options.cpp:1434
+#: gui/options.cpp:1446 gui/options.cpp:1466 gui/options.cpp:1478
+#: gui/options.cpp:1848 gui/options.cpp:2249 gui/options.cpp:2313
+#: gui/options.cpp:2485 gui/options.cpp:2795 audio/null.cpp:41
+#: engines/ags/detection.cpp:94
 msgid "<default>"
 msgstr "<ברירת מחדל>"
 
@@ -266,12 +267,12 @@ msgstr "פלטפורמה:"
 msgid "Engine"
 msgstr "מנוע"
 
-#: gui/editgamedialog.cpp:207 gui/options.cpp:1797 gui/options.cpp:1952
+#: gui/editgamedialog.cpp:207 gui/options.cpp:1798 gui/options.cpp:1955
 #: backends/graphics/sdl/sdl-graphics.cpp:408
 msgid "Graphics"
 msgstr "תצוגה"
 
-#: gui/editgamedialog.cpp:207 gui/options.cpp:1797 gui/options.cpp:1952
+#: gui/editgamedialog.cpp:207 gui/options.cpp:1798 gui/options.cpp:1955
 msgid "GFX"
 msgstr "תצוגה"
 
@@ -284,7 +285,7 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "ביטול הגדרות תצוגה מקיפות"
 
-#: gui/editgamedialog.cpp:225 gui/options.cpp:1963
+#: gui/editgamedialog.cpp:225 gui/options.cpp:1966
 msgid "Shader"
 msgstr "שיידר"
 
@@ -297,11 +298,11 @@ msgctxt "lowres"
 msgid "Override global shader settings"
 msgstr "עקוף הגדרות הצללה גלובליות"
 
-#: gui/editgamedialog.cpp:244 gui/options.cpp:1998 engines/dialogs.cpp:316
+#: gui/editgamedialog.cpp:244 gui/options.cpp:2001 engines/dialogs.cpp:316
 msgid "Keymaps"
 msgstr "מיפוי מקשים"
 
-#: gui/editgamedialog.cpp:251 gui/options.cpp:2005 engines/dialogs.cpp:323
+#: gui/editgamedialog.cpp:251 gui/options.cpp:2008 engines/dialogs.cpp:323
 msgid "Backend"
 msgstr "צד שרת"
 
@@ -316,7 +317,7 @@ msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "ביטול הגדרות שמע מקיפות"
 
-#: gui/editgamedialog.cpp:270 gui/options.cpp:2019 engines/dialogs.cpp:291
+#: gui/editgamedialog.cpp:270 gui/options.cpp:2022 engines/dialogs.cpp:291
 msgid "Audio"
 msgstr "שמע"
 
@@ -329,11 +330,11 @@ msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "ביטול הגדרות שמע מקיפות"
 
-#: gui/editgamedialog.cpp:284 gui/options.cpp:2024
+#: gui/editgamedialog.cpp:284 gui/options.cpp:2027
 msgid "Volume"
 msgstr "עוצמת שמע"
 
-#: gui/editgamedialog.cpp:286 gui/options.cpp:2026
+#: gui/editgamedialog.cpp:286 gui/options.cpp:2029
 msgctxt "lowres"
 msgid "Volume"
 msgstr "עוצמת שמע"
@@ -347,7 +348,7 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "ביטול הגדרות עוצמת שמע מקיפות"
 
-#: gui/editgamedialog.cpp:302 gui/options.cpp:2034
+#: gui/editgamedialog.cpp:302 gui/options.cpp:2037
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -360,7 +361,7 @@ msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "ביטול הגדרות MIDI מקיפות"
 
-#: gui/editgamedialog.cpp:317 gui/options.cpp:2040
+#: gui/editgamedialog.cpp:317 gui/options.cpp:2043
 msgid "MT-32"
 msgstr "MT-32"
 
@@ -373,11 +374,11 @@ msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "בטל הגדרות MT-32 גלובליות"
 
-#: gui/editgamedialog.cpp:331 gui/options.cpp:2047
+#: gui/editgamedialog.cpp:331 gui/options.cpp:2050
 msgid "Paths"
 msgstr "נתיבים"
 
-#: gui/editgamedialog.cpp:333 gui/options.cpp:2049
+#: gui/editgamedialog.cpp:333 gui/options.cpp:2052
 msgctxt "lowres"
 msgid "Paths"
 msgstr "נתיבים"
@@ -391,7 +392,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "נתיב משחק:"
 
-#: gui/editgamedialog.cpp:347 gui/options.cpp:2223
+#: gui/editgamedialog.cpp:347 gui/options.cpp:2226
 msgid "Extra Path:"
 msgstr "נתיב תוספות:"
 
@@ -400,22 +401,22 @@ msgstr "נתיב תוספות:"
 msgid "Specifies path to additional data used by the game"
 msgstr "נתיב שבו נמצאים קבצי מידע נוספים לשימוש על ידי המשחק"
 
-#: gui/editgamedialog.cpp:349 gui/options.cpp:2225
+#: gui/editgamedialog.cpp:349 gui/options.cpp:2228
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "נתיב תוספות:"
 
-#: gui/editgamedialog.cpp:356 gui/options.cpp:2207
+#: gui/editgamedialog.cpp:356 gui/options.cpp:2210
 msgid "Save Path:"
 msgstr "נתיב שמירה:"
 
 #: gui/editgamedialog.cpp:356 gui/editgamedialog.cpp:358
-#: gui/editgamedialog.cpp:359 gui/options.cpp:2207 gui/options.cpp:2209
-#: gui/options.cpp:2210
+#: gui/editgamedialog.cpp:359 gui/options.cpp:2210 gui/options.cpp:2212
+#: gui/options.cpp:2213
 msgid "Specifies where your saved games are put"
 msgstr "נתיב שבו שמירות המשחק יהיו"
 
-#: gui/editgamedialog.cpp:358 gui/options.cpp:2209
+#: gui/editgamedialog.cpp:358 gui/options.cpp:2212
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "נתיב שמירה:"
@@ -429,23 +430,23 @@ msgid "Statistics"
 msgstr ""
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
-#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2130
-#: gui/options.cpp:2136 gui/options.cpp:2144 gui/options.cpp:2175
-#: gui/options.cpp:2218 gui/options.cpp:2226 gui/options.cpp:2235
-#: gui/options.cpp:2498 gui/options.cpp:2504 gui/options.cpp:2511
-#: gui/options.cpp:2520 gui/options.cpp:2768 gui/options.cpp:2771
-#: gui/options.cpp:2778 gui/options.cpp:2784 gui/options.cpp:2795
+#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2133
+#: gui/options.cpp:2139 gui/options.cpp:2147 gui/options.cpp:2178
+#: gui/options.cpp:2221 gui/options.cpp:2229 gui/options.cpp:2238
+#: gui/options.cpp:2509 gui/options.cpp:2515 gui/options.cpp:2522
+#: gui/options.cpp:2531 gui/options.cpp:2779 gui/options.cpp:2782
+#: gui/options.cpp:2789 gui/options.cpp:2801 gui/options.cpp:2812
 msgctxt "path"
 msgid "None"
 msgstr "לא נבחר"
 
 #: gui/editgamedialog.cpp:403 gui/editgamedialog.cpp:510
-#: gui/editgamedialog.cpp:641 gui/options.cpp:2124 gui/options.cpp:2492
-#: gui/options.cpp:2774 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:641 gui/options.cpp:2127 gui/options.cpp:2503
+#: gui/options.cpp:2785 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "ברירת מחדל"
 
-#: gui/editgamedialog.cpp:563 gui/options.cpp:2789
+#: gui/editgamedialog.cpp:563 gui/options.cpp:2806
 msgid "Select SoundFont"
 msgstr "בחירת SoundFont"
 
@@ -453,11 +454,11 @@ msgstr "בחירת SoundFont"
 msgid "Select additional game directory"
 msgstr "בחר תיקיה על קבצי משחק נוספים"
 
-#: gui/editgamedialog.cpp:615 gui/options.cpp:2703
+#: gui/editgamedialog.cpp:615 gui/options.cpp:2714
 msgid "Select directory for saved games"
 msgstr "בחירת תיקיה לשמירת משחקים"
 
-#: gui/editgamedialog.cpp:622 gui/options.cpp:2710
+#: gui/editgamedialog.cpp:622 gui/options.cpp:2721
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "לא ניתן לכתוב את הספרייה שנבחרה. בחר אחד אחר."
 
@@ -551,7 +552,7 @@ msgstr "סינוס"
 msgid "Triangle"
 msgstr "גל משולש"
 
-#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:2056
+#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:2059
 msgid "Misc"
 msgstr "אחר"
 
@@ -850,7 +851,7 @@ msgstr "נסרקו %d תיקיות ..."
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "התגלו %d משחקים חדשים, דולג על %d משחקים קיימים ..."
 
-#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2409
+#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2420
 msgid "Open URL"
 msgstr "פתח כתובת אתר"
 
@@ -870,546 +871,551 @@ msgstr "עבור אל המשחק"
 msgid "Fast replay"
 msgstr "הילוך חוזר מהיר"
 
-#: gui/options.cpp:132 common/updates.cpp:56
+#: gui/options.cpp:133 common/updates.cpp:56
 msgid "Never"
 msgstr "אף פעם"
 
-#: gui/options.cpp:132
+#: gui/options.cpp:133
 msgid "Every 5 mins"
 msgstr "כל 5 דקות"
 
-#: gui/options.cpp:132
+#: gui/options.cpp:133
 msgid "Every 10 mins"
 msgstr "כל 10 דקות"
 
-#: gui/options.cpp:132
+#: gui/options.cpp:133
 msgid "Every 15 mins"
 msgstr "כל 15 דקות"
 
-#: gui/options.cpp:132
+#: gui/options.cpp:133
 msgid "Every 30 mins"
 msgstr "כל 30 דקות"
 
 #. I18N: Automatic GUI scaling
-#: gui/options.cpp:137
+#: gui/options.cpp:138
 #, fuzzy
 #| msgid "Autosave"
 msgid "Auto"
 msgstr "שמירה אוטומטית"
 
 #. I18N: Large GUI scale
-#: gui/options.cpp:139
+#: gui/options.cpp:140
 msgid "Large"
 msgstr ""
 
 #. I18N: Medium GUI scale
-#: gui/options.cpp:141 engines/nancy/dialogs.cpp:120
+#: gui/options.cpp:142 engines/nancy/dialogs.cpp:120
 msgid "Medium"
 msgstr ""
 
 #. I18N: Small GUI scale
-#: gui/options.cpp:143
+#: gui/options.cpp:144
 msgid "Small"
 msgstr ""
 
-#: gui/options.cpp:469 gui/options.cpp:890 gui/options.cpp:1028
-#: gui/options.cpp:1146 gui/options.cpp:1582
+#: gui/options.cpp:470 gui/options.cpp:891 gui/options.cpp:1029
+#: gui/options.cpp:1147 gui/options.cpp:1583
 msgctxt "soundfont"
 msgid "None"
 msgstr "לא נבחר"
 
-#: gui/options.cpp:744
+#: gui/options.cpp:745
 msgid "Failed to apply some of the graphic options changes:"
 msgstr "הפעלת חלק מהגדרות התצוגה נכשלה:"
 
-#: gui/options.cpp:756
+#: gui/options.cpp:757
 msgid "the video mode could not be changed"
 msgstr "מצב התצוגה לא יכול להשתנות"
 
-#: gui/options.cpp:769
+#: gui/options.cpp:770
 msgid "the stretch mode could not be changed"
 msgstr "מצב מתיחה לא השתנה"
 
-#: gui/options.cpp:775
+#: gui/options.cpp:776
 msgid "the aspect ratio setting could not be changed"
 msgstr "הגדרת יחס ממדים לא השתנתה"
 
-#: gui/options.cpp:781
+#: gui/options.cpp:782
 msgid "the fullscreen setting could not be changed"
 msgstr "הגדרת מסך מלא לא השתנתה"
 
-#: gui/options.cpp:787
+#: gui/options.cpp:788
 msgid "the filtering setting could not be changed"
 msgstr "הגדרת סינון לא השתנתה"
 
-#: gui/options.cpp:1225
+#: gui/options.cpp:1226
 msgid "Show On-screen control"
 msgstr "הצג שליטה על המסך"
 
-#: gui/options.cpp:1229
+#: gui/options.cpp:1230
 msgid "Show SAF revoke permissions overlay button"
 msgstr ""
 
-#: gui/options.cpp:1233
+#: gui/options.cpp:1234
 msgid "Touchpad mouse mode"
 msgstr "מצב משטח מגע"
 
-#: gui/options.cpp:1237
+#: gui/options.cpp:1238
 msgid "Swap Menu and Back buttons"
 msgstr "הפוך את כפתורי התפריט ואחורה"
 
-#: gui/options.cpp:1242
+#: gui/options.cpp:1243
 msgid "Pointer Speed:"
 msgstr "מהירות מצביע:"
 
-#: gui/options.cpp:1242 gui/options.cpp:1244 gui/options.cpp:1245
+#: gui/options.cpp:1243 gui/options.cpp:1245 gui/options.cpp:1246
 msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr "מהירות מצביע עם מקלדת/ג'ויסטיק"
 
-#: gui/options.cpp:1244
+#: gui/options.cpp:1245
 msgctxt "lowres"
 msgid "Pointer Speed:"
 msgstr "מהירות מצביע:"
 
-#: gui/options.cpp:1255
+#: gui/options.cpp:1256
 msgid "Joy Deadzone:"
 msgstr "שטח מת בג'ויסטיק:"
 
-#: gui/options.cpp:1255 gui/options.cpp:1257 gui/options.cpp:1258
+#: gui/options.cpp:1256 gui/options.cpp:1258 gui/options.cpp:1259
 msgid "Analog joystick Deadzone"
 msgstr "שטח מת בג'ויסטיק אנאלוגי"
 
-#: gui/options.cpp:1257
+#: gui/options.cpp:1258
 msgctxt "lowres"
 msgid "Joy Deadzone:"
 msgstr "שטח מת בג'ויסטיק:"
 
-#: gui/options.cpp:1329
+#: gui/options.cpp:1330
 #, c-format
 msgid "%d hidden achievements remaining"
 msgstr "%d הישגים נסתרים שנותרו"
 
-#: gui/options.cpp:1334
+#: gui/options.cpp:1335
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "הישגים שנפתחו: %d/%d"
 
-#: gui/options.cpp:1380
+#: gui/options.cpp:1381
 msgid "HW Shader:"
 msgstr "Shader חומרה:"
 
-#: gui/options.cpp:1380 gui/options.cpp:1382
+#: gui/options.cpp:1381 gui/options.cpp:1383
 msgid "Different hardware shaders give different visual effects"
 msgstr "Shaders"
 
-#: gui/options.cpp:1382
+#: gui/options.cpp:1383
 msgctxt "lowres"
 msgid "HW Shader:"
 msgstr "Shader חומרה:"
 
-#: gui/options.cpp:1383
+#: gui/options.cpp:1384
 msgid "Different shaders give different visual effects"
 msgstr "Shaders שונים נותנים אפקטים אחרים"
 
-#: gui/options.cpp:1403
+#: gui/options.cpp:1404
 msgid "Graphics mode:"
 msgstr "מצב תצוגה:"
 
-#: gui/options.cpp:1417
+#: gui/options.cpp:1418
 msgid "Render mode:"
 msgstr "מצב עיבוד:"
 
-#: gui/options.cpp:1417 gui/options.cpp:1418
+#: gui/options.cpp:1418 gui/options.cpp:1419
 msgid "Special dithering modes supported by some games"
 msgstr "מצבי dithering מיוחדים הנתמכים על ידי כמה משחקים"
 
-#: gui/options.cpp:1430
+#: gui/options.cpp:1431
 msgid "Stretch mode:"
 msgstr "מצב מתיחה:"
 
-#: gui/options.cpp:1442
+#: gui/options.cpp:1443
 msgid "Scaler:"
 msgstr ""
 
-#: gui/options.cpp:1455 backends/graphics/sdl/sdl-graphics.cpp:399
+#: gui/options.cpp:1456 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
 msgstr "מצב מסך מלא"
 
-#: gui/options.cpp:1457
+#: gui/options.cpp:1458
 msgid "V-Sync in 3D Games"
 msgstr ""
 
-#: gui/options.cpp:1457
+#: gui/options.cpp:1458
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgstr ""
 
-#: gui/options.cpp:1460
+#: gui/options.cpp:1461
 #, fuzzy
 msgid "Game 3D Renderer:"
 msgstr "מעבד GUI:"
 
-#: gui/options.cpp:1462
+#: gui/options.cpp:1463
 #, fuzzy
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
 msgstr "מעבד GUI:"
 
-#: gui/options.cpp:1475
+#: gui/options.cpp:1476
 #, fuzzy
 msgid "3D Anti-aliasing:"
 msgstr "אנטי-מיועד"
 
-#: gui/options.cpp:1479 engines/mohawk/dialogs.cpp:364
+#: gui/options.cpp:1480 engines/mohawk/dialogs.cpp:364
 msgid "Disabled"
 msgstr "נכים"
 
-#: gui/options.cpp:1491
+#: gui/options.cpp:1492
 msgid "Filter graphics"
 msgstr "סנן גרפיקה"
 
-#: gui/options.cpp:1491
+#: gui/options.cpp:1492
 msgid "Use linear filtering when scaling graphics"
 msgstr "השתמש בסינון לינארי בעת קנה המידה של גרפיקה"
 
-#: gui/options.cpp:1494
+#: gui/options.cpp:1495
 msgid "Aspect ratio correction"
 msgstr "תיקון יחסי גודל"
 
-#: gui/options.cpp:1494
+#: gui/options.cpp:1495
 #, fuzzy
 msgid "Correct aspect ratio for games"
 msgstr "תיקון יחסי גודל למשחקים בגודל 320x200"
 
-#: gui/options.cpp:1502
+#: gui/options.cpp:1503
 msgid "Preferred device:"
 msgstr "התקן מועדף:"
 
-#: gui/options.cpp:1502
+#: gui/options.cpp:1503
 msgid "Music device:"
 msgstr "מכשיר מוזיקה:"
 
-#: gui/options.cpp:1502 gui/options.cpp:1504
+#: gui/options.cpp:1503 gui/options.cpp:1505
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "מציין התקן קול או אמולטור כרטיס קול מועדף"
 
-#: gui/options.cpp:1502 gui/options.cpp:1504 gui/options.cpp:1505
+#: gui/options.cpp:1503 gui/options.cpp:1505 gui/options.cpp:1506
 msgid "Specifies output sound device or sound card emulator"
 msgstr "מציין התקן שמע פלט או אמולטור כרטיס כול מועדף"
 
-#: gui/options.cpp:1504
+#: gui/options.cpp:1505
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "מס 'מועדף:"
 
-#: gui/options.cpp:1504
+#: gui/options.cpp:1505
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "התקן מוזיקה:"
 
-#: gui/options.cpp:1531
+#: gui/options.cpp:1532
 msgid "AdLib emulator:"
 msgstr "אמולטור AdLib:"
 
-#: gui/options.cpp:1531 gui/options.cpp:1532
+#: gui/options.cpp:1532 gui/options.cpp:1533
 msgid "AdLib is used for music in many games"
 msgstr "AdLib נמצא בשימוש על ידי הרבה משחקים"
 
-#: gui/options.cpp:1545
+#: gui/options.cpp:1546
 msgid "GM device:"
 msgstr "התקן מידי כללי:"
 
-#: gui/options.cpp:1545
+#: gui/options.cpp:1546
 msgid "Specifies default sound device for General MIDI output"
 msgstr "מציין מכשיר צליל ברירת מחדל לפלט MIDI כללי"
 
-#: gui/options.cpp:1556
+#: gui/options.cpp:1557
 msgid "Don't use General MIDI music"
 msgstr "אל תשתמש במוזיקת MIDI כללית"
 
-#: gui/options.cpp:1567 gui/options.cpp:1629
+#: gui/options.cpp:1568 gui/options.cpp:1630
 msgid "Use first available device"
 msgstr "השתמש בהתקן הפנוי הראשון"
 
-#: gui/options.cpp:1579
+#: gui/options.cpp:1580
 msgid "SoundFont:"
 msgstr "גופן קול (SoundFont):"
 
-#: gui/options.cpp:1579 gui/options.cpp:1581 gui/options.cpp:1582
+#: gui/options.cpp:1580 gui/options.cpp:1582 gui/options.cpp:1583
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr "גופן קול נתמך על ידי מספר כרטיסי קול, FluidSynth ו-Timidity"
 
-#: gui/options.cpp:1581
+#: gui/options.cpp:1582
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "גופן קול (SoundFont):"
 
-#: gui/options.cpp:1587
+#: gui/options.cpp:1588
 msgid "Mixed AdLib/MIDI mode"
 msgstr "מצב מידי/AdLib מעורב"
 
-#: gui/options.cpp:1587
+#: gui/options.cpp:1588
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "השתמש בייצור צלילי MIDI וגם ב- AdLib"
 
-#: gui/options.cpp:1590
+#: gui/options.cpp:1591
 msgid "MIDI gain:"
 msgstr "רווח MIDI:"
 
-#: gui/options.cpp:1600
+#: gui/options.cpp:1601
 msgid "MT-32 Device:"
 msgstr "התקן MT-32:"
 
-#: gui/options.cpp:1600
+#: gui/options.cpp:1601
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr "מציין התקן קול ברירת מחדל לפלט Roland MT-32 / LAPC1 / CM32l / CM64"
 
-#: gui/options.cpp:1605
+#: gui/options.cpp:1606
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "רולנד MT-32 אמיתי (השבת אמולציה של GM)"
 
-#: gui/options.cpp:1605 gui/options.cpp:1607
+#: gui/options.cpp:1606 gui/options.cpp:1608
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
 "בחר אם ברצונך להשתמש במכשיר הקול התואם שלך עם חומרה אמיתית המחובר למחשב שלך"
 
-#: gui/options.cpp:1607
+#: gui/options.cpp:1608
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "רולנד MT-32 אמיתי (ללא אמולציה של GM)"
 
-#: gui/options.cpp:1610
+#: gui/options.cpp:1611
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "מכשיר רולנד GS (אפשר מיפוי MT-32)"
 
-#: gui/options.cpp:1610
+#: gui/options.cpp:1611
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr "בדוק אם ברצונך לאפשר מיפוי טלאים לחיקוי MT-32 במכשיר Roland GS"
 
-#: gui/options.cpp:1619
+#: gui/options.cpp:1620
 msgid "Don't use Roland MT-32 music"
 msgstr "אל תשתמש במוזיקה של רולנד MT-32"
 
-#: gui/options.cpp:1646
+#: gui/options.cpp:1647
 msgid "Text and speech:"
 msgstr "טקסט ודיבור:"
 
-#: gui/options.cpp:1650 gui/options.cpp:1660
+#: gui/options.cpp:1651 gui/options.cpp:1661
 msgid "Speech"
 msgstr "נאום"
 
-#: gui/options.cpp:1651 gui/options.cpp:1661
+#: gui/options.cpp:1652 gui/options.cpp:1662
 msgid "Subtitles"
 msgstr "כתוביות"
 
-#: gui/options.cpp:1652
+#: gui/options.cpp:1653
 msgid "Both"
 msgstr "שניהם"
 
-#: gui/options.cpp:1654
+#: gui/options.cpp:1655
 msgid "Subtitle speed:"
 msgstr "מהירות הכתוביות:"
 
-#: gui/options.cpp:1656
+#: gui/options.cpp:1657
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "טקסט ודיבור:"
 
-#: gui/options.cpp:1660
+#: gui/options.cpp:1661
 msgid "Spch"
 msgstr "ספץ '"
 
-#: gui/options.cpp:1661
+#: gui/options.cpp:1662
 msgid "Subs"
 msgstr "תת"
 
-#: gui/options.cpp:1662
+#: gui/options.cpp:1663
 msgctxt "lowres"
 msgid "Both"
 msgstr "שניהם"
 
-#: gui/options.cpp:1662
+#: gui/options.cpp:1663
 msgid "Show subtitles and play speech"
 msgstr "הצגת כתוביות והפעל דיבור"
 
-#: gui/options.cpp:1664
+#: gui/options.cpp:1665
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "מהירות הכתוביות:"
 
-#: gui/options.cpp:1680
+#: gui/options.cpp:1681
 msgid "Music volume:"
 msgstr "עוצמת מוזיקה:"
 
-#: gui/options.cpp:1682
+#: gui/options.cpp:1683
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "עוצמת מוזיקה:"
 
-#: gui/options.cpp:1689
+#: gui/options.cpp:1690
 msgid "Mute all"
 msgstr "להשתיק את הכול"
 
-#: gui/options.cpp:1692
+#: gui/options.cpp:1693
 msgid "SFX volume:"
 msgstr "נפח SFX:"
 
-#: gui/options.cpp:1692 gui/options.cpp:1694 gui/options.cpp:1695
+#: gui/options.cpp:1693 gui/options.cpp:1695 gui/options.cpp:1696
 msgid "Special sound effects volume"
 msgstr "אפקטים קוליים מיוחדים נפח"
 
-#: gui/options.cpp:1694
+#: gui/options.cpp:1695
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "נפח SFX:"
 
-#: gui/options.cpp:1702
+#: gui/options.cpp:1703
 msgid "Speech volume:"
 msgstr "נפח דיבור:"
 
-#: gui/options.cpp:1704
+#: gui/options.cpp:1705
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "נפח דיבור:"
 
-#: gui/options.cpp:1976
+#: gui/options.cpp:1979
 msgid "Control"
 msgstr "שליטה"
 
-#: gui/options.cpp:2058
+#: gui/options.cpp:2061
 msgctxt "lowres"
 msgid "Misc"
 msgstr "שונות"
 
-#: gui/options.cpp:2070
+#: gui/options.cpp:2073
 msgid "Cloud"
 msgstr "ענן"
 
-#: gui/options.cpp:2072
+#: gui/options.cpp:2075
 msgctxt "lowres"
 msgid "Cloud"
 msgstr "ענן"
 
-#: gui/options.cpp:2086
+#: gui/options.cpp:2089
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:2088
+#: gui/options.cpp:2091
 msgctxt "lowres"
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:2096
+#: gui/options.cpp:2099
 msgid "Accessibility"
 msgstr "נגישות"
 
-#: gui/options.cpp:2098
+#: gui/options.cpp:2101
 msgctxt "lowres"
 msgid "Accessibility"
 msgstr "נגישות"
 
-#: gui/options.cpp:2107
+#: gui/options.cpp:2110
 msgid "Discard changes and close the dialog"
 msgstr ""
 
-#: gui/options.cpp:2108
+#: gui/options.cpp:2111
 msgid "Apply"
 msgstr "החלת הגדרות"
 
-#: gui/options.cpp:2108
+#: gui/options.cpp:2111
 msgid "Apply changes without closing the dialog"
 msgstr ""
 
-#: gui/options.cpp:2109
+#: gui/options.cpp:2112
 msgid "Apply changes and close the dialog"
 msgstr ""
 
-#: gui/options.cpp:2196
+#: gui/options.cpp:2199
 msgid "FluidSynth Settings"
 msgstr "הגדרות FluidSynth"
 
-#: gui/options.cpp:2215
+#: gui/options.cpp:2218
 msgid "Theme Path:"
 msgstr "נתיב נושא:"
 
-#: gui/options.cpp:2217
+#: gui/options.cpp:2220
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "נתיב נושא:"
 
-#: gui/options.cpp:2223 gui/options.cpp:2225 gui/options.cpp:2226
+#: gui/options.cpp:2226 gui/options.cpp:2228 gui/options.cpp:2229
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "מציין נתיב לנתונים נוספים המשמשים את כל המשחקים או ScummVM"
 
-#: gui/options.cpp:2232
+#: gui/options.cpp:2235
 msgid "Plugins Path:"
 msgstr "נתיב תוספים:"
 
-#: gui/options.cpp:2234
+#: gui/options.cpp:2237
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "נתיב תוספים:"
 
-#: gui/options.cpp:2244
+#: gui/options.cpp:2247
 msgid "ScummVM config path: "
 msgstr "נתיב ההגדרות של ScummVM "
 
-#: gui/options.cpp:2248
+#. I18N: Referring to the last path memorized when adding a game
+#: gui/options.cpp:2254 gui/options.cpp:2795
+msgid "Last browser path: "
+msgstr ""
+
+#: gui/options.cpp:2259
 msgid "Theme:"
 msgstr "נושא:"
 
-#: gui/options.cpp:2252
+#: gui/options.cpp:2263
 #, fuzzy
 #| msgid "Upscale videos"
 msgid "GUI scale:"
 msgstr "סרטונים יוקרתיים"
 
-#: gui/options.cpp:2259
+#: gui/options.cpp:2270
 msgid "GUI renderer:"
 msgstr "מעבד GUI:"
 
-#: gui/options.cpp:2271
+#: gui/options.cpp:2282
 msgid "Autosave:"
 msgstr "שמירה אוטומטית:"
 
-#: gui/options.cpp:2273
+#: gui/options.cpp:2284
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "שמירה אוטומטית:"
 
-#: gui/options.cpp:2282
+#: gui/options.cpp:2293
 msgid "Always return to the launcher when leaving a game"
 msgstr "תמיד חזור למסך הרצת המשחקים בעת יציאה ממשחק"
 
-#: gui/options.cpp:2283
+#: gui/options.cpp:2294
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr "תמיד חזור למסך הרצת המשחקים בעת יציאה ממשחק במקום לסגור את ScummVM"
 
-#: gui/options.cpp:2290
+#: gui/options.cpp:2301
 msgid "Ask for confirmation on exit"
 msgstr ""
 
-#: gui/options.cpp:2291
+#: gui/options.cpp:2302
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr ""
 
-#: gui/options.cpp:2299
+#: gui/options.cpp:2310
 msgid "GUI language:"
 msgstr "שפת GUI:"
 
-#: gui/options.cpp:2299
+#: gui/options.cpp:2310
 msgid "Language of ScummVM GUI"
 msgstr "שפת GUI של ScummVM"
 
-#: gui/options.cpp:2325
+#: gui/options.cpp:2336
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "העבר את שפת ה- GUI לשפת המשחק"
 
-#: gui/options.cpp:2326
+#: gui/options.cpp:2337
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -1418,257 +1424,257 @@ msgstr ""
 "כשאתה מתחיל משחק, שנה את שפת ה- GUI לשפת המשחק. בדרך זו, אם משחק משתמש ב- "
 "ScummVM שמירה וטעינה של דו-שיח, הם נמצאים באותה שפה כמו המשחק."
 
-#: gui/options.cpp:2338
+#: gui/options.cpp:2349
 msgid "Use native system file browser"
 msgstr "השתמש בדפדפן קבצי המערכת המקורי"
 
-#: gui/options.cpp:2339
+#: gui/options.cpp:2350
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
 "השתמש בדפדפן קבצי המערכת המקורי במקום ב- ScummVM כדי לבחור קובץ או ספרייה."
 
-#: gui/options.cpp:2346 gui/updates-dialog.cpp:86
+#: gui/options.cpp:2357 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr "בדיקת עדכון:"
 
-#: gui/options.cpp:2346
+#: gui/options.cpp:2357
 msgid "How often to check ScummVM updates"
 msgstr "באיזו תדירות לבדוק עדכוני ScummVM"
 
-#: gui/options.cpp:2357
+#: gui/options.cpp:2368
 msgid "Check now"
 msgstr "בדוק עכשיו"
 
-#: gui/options.cpp:2364
+#: gui/options.cpp:2375
 msgid "Active storage:"
 msgstr "אחסון פעיל:"
 
-#: gui/options.cpp:2364
+#: gui/options.cpp:2375
 msgid "Active cloud storage"
 msgstr "אחסון ענן פעיל"
 
-#: gui/options.cpp:2373
+#: gui/options.cpp:2384
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "4. האחסון עדיין לא מופעל. ודא כי שם המשתמש נכון והפעל אותו:"
 
-#: gui/options.cpp:2375
+#: gui/options.cpp:2386
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr "4. האחסון עדיין לא מופעל. ודא כי שם המשתמש נכון והפעל אותו:"
 
-#: gui/options.cpp:2376
+#: gui/options.cpp:2387
 msgid "Enable storage"
 msgstr "אפשר אחסון"
 
-#: gui/options.cpp:2376
+#: gui/options.cpp:2387
 msgid "Confirm you want to use this account for this storage"
 msgstr "אשר שברצונך להשתמש בחשבון זה לאחסון זה"
 
-#: gui/options.cpp:2378 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:2389 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "שם משתמש:"
 
-#: gui/options.cpp:2378
+#: gui/options.cpp:2389
 msgid "Username used by this storage"
 msgstr "שם משתמש בשימוש באחסון זה"
 
-#: gui/options.cpp:2379
+#: gui/options.cpp:2390
 msgid "<none>"
 msgstr "<אין>"
 
-#: gui/options.cpp:2381
+#: gui/options.cpp:2392
 msgid "Used space:"
 msgstr "מקום משומש:"
 
-#: gui/options.cpp:2381
+#: gui/options.cpp:2392
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "שטח שמשמש את המשחקים השמורים של ScummVM באחסון זה"
 
-#: gui/options.cpp:2384
+#: gui/options.cpp:2395
 msgid "Last sync:"
 msgstr "סנכרון אחרון:"
 
-#: gui/options.cpp:2384
+#: gui/options.cpp:2395
 msgid "When was the last time saved games were synced with this storage"
 msgstr "מתי הייתה הפעם האחרונה שסונכרנו משחקים עם אחסון זה"
 
-#: gui/options.cpp:2385 gui/options.cpp:3123
+#: gui/options.cpp:2396 gui/options.cpp:3145
 msgid "<never>"
 msgstr "<never>"
 
-#: gui/options.cpp:2387
+#: gui/options.cpp:2398
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "משחקים שמורים מסתנכרנים אוטומטית עם ההשקה, לאחר השמירה וההעמסה."
 
-#: gui/options.cpp:2389
+#: gui/options.cpp:2400
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr "משחקים שמורים מסתנכרנים אוטומטית עם ההשקה, לאחר השמירה וההעמסה."
 
-#: gui/options.cpp:2390
+#: gui/options.cpp:2401
 msgid "Sync now"
 msgstr "סנכרן כעת"
 
-#: gui/options.cpp:2390
+#: gui/options.cpp:2401
 msgid "Start saved games sync"
 msgstr "התחל סנכרון משחקים שנשמר"
 
-#: gui/options.cpp:2393
+#: gui/options.cpp:2404
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "אתה יכול להוריד קבצי משחק מתיקיית ScummVM הענן שלך:"
 
-#: gui/options.cpp:2395
+#: gui/options.cpp:2406
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "אתה יכול להוריד קבצי משחק מתיקיית ScummVM הענן שלך:"
 
-#: gui/options.cpp:2396
+#: gui/options.cpp:2407
 msgid "Download game files"
 msgstr "הורד קבצי משחק"
 
-#: gui/options.cpp:2396
+#: gui/options.cpp:2407
 msgid "Open downloads manager dialog"
 msgstr "פתח את תיבת הדו-שיח של מנהל ההורדות"
 
-#: gui/options.cpp:2399
+#: gui/options.cpp:2410
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "לשינוי חשבון לאחסון זה, נתק וחבר שוב:"
 
-#: gui/options.cpp:2401
+#: gui/options.cpp:2412
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "לשינוי חשבון לאחסון זה, נתק וחבר שוב:"
 
-#: gui/options.cpp:2402
+#: gui/options.cpp:2413
 msgid "Disconnect"
 msgstr "נתק"
 
-#: gui/options.cpp:2402
+#: gui/options.cpp:2413
 msgid "Stop using this storage on this device"
 msgstr "הפסק להשתמש באחסון זה במכשיר זה"
 
-#: gui/options.cpp:2405
+#: gui/options.cpp:2416
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
 msgstr "אחסון זה עדיין לא מחובר! להתחבר,"
 
-#: gui/options.cpp:2407
+#: gui/options.cpp:2418
 msgid "This storage is not connected yet! To connect,"
 msgstr "אחסון זה עדיין לא מחובר! להתחבר,"
 
-#: gui/options.cpp:2408
+#: gui/options.cpp:2419
 msgid "1. Open this link:"
 msgstr "1. פתח את הקישור הזה:"
 
-#: gui/options.cpp:2411
+#: gui/options.cpp:2422
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr "2. השג את הקוד והזן אותו כאן:"
 
-#: gui/options.cpp:2413
+#: gui/options.cpp:2424
 msgid "2. Get the code and enter it here:"
 msgstr "2. השג את הקוד והזן אותו כאן:"
 
-#: gui/options.cpp:2415
+#: gui/options.cpp:2426
 msgid "Paste"
 msgstr "הדבק"
 
-#: gui/options.cpp:2415
+#: gui/options.cpp:2426
 msgid "Paste code from clipboard"
 msgstr "הדבק קוד מהלוח"
 
-#: gui/options.cpp:2416
+#: gui/options.cpp:2427
 msgid "3. Connect"
 msgstr "3. התחבר"
 
-#: gui/options.cpp:2416
+#: gui/options.cpp:2427
 msgid "Connect your cloud storage account"
 msgstr "חבר את חשבון האחסון בענן שלך"
 
-#: gui/options.cpp:2425
+#: gui/options.cpp:2436
 msgid "Run server"
 msgstr "הפעל את השרת"
 
-#: gui/options.cpp:2425
+#: gui/options.cpp:2436
 msgid "Run local webserver"
 msgstr "הפעל שרת אינטרנט מקומי"
 
-#: gui/options.cpp:2426 gui/options.cpp:3238
+#: gui/options.cpp:2437 gui/options.cpp:3260
 msgid "Not running"
 msgstr "לא רץ"
 
-#: gui/options.cpp:2430
+#: gui/options.cpp:2441
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/ שורש / נתיב:"
 
-#: gui/options.cpp:2430 gui/options.cpp:2432 gui/options.cpp:2433
+#: gui/options.cpp:2441 gui/options.cpp:2443 gui/options.cpp:2444
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "בחר איזו ספרייה תוצג כ / root / במנהל הקבצים"
 
-#: gui/options.cpp:2432
+#: gui/options.cpp:2443
 msgid "/root/ Path:"
 msgstr "/ שורש / נתיב:"
 
-#: gui/options.cpp:2438
+#: gui/options.cpp:2449
 msgid "Server's port:"
 msgstr "יציאת השרת:"
 
-#: gui/options.cpp:2438
+#: gui/options.cpp:2449
 msgid "Port for server to use"
 msgstr "יציאה לשימוש בשרת"
 
-#: gui/options.cpp:2443
+#: gui/options.cpp:2454
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr "הפעל את השרת לניהול קבצים באמצעות הדפדפן (באותה רשת)."
 
-#: gui/options.cpp:2444
+#: gui/options.cpp:2455
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr "שיח אפשרויות הסגירה יעצור את השרת."
 
-#: gui/options.cpp:2446
+#: gui/options.cpp:2457
 msgid "Run server to manage files with browser (in the same network)."
 msgstr "הפעל את השרת לניהול קבצים באמצעות הדפדפן (באותה רשת)."
 
-#: gui/options.cpp:2447
+#: gui/options.cpp:2458
 msgid "Closing options dialog will stop the server."
 msgstr "שיח אפשרויות הסגירה יעצור את השרת."
 
-#: gui/options.cpp:2459
+#: gui/options.cpp:2470
 msgid "Use Text to speech"
 msgstr "השתמש בטקסט לדיבור"
 
-#: gui/options.cpp:2459
+#: gui/options.cpp:2470
 msgid "Will read text in gui on mouse over."
 msgstr "יקרא טקסט בגוי על העכבר מעל."
 
-#: gui/options.cpp:2472
+#: gui/options.cpp:2483
 msgid "None"
 msgstr "ללא"
 
-#: gui/options.cpp:2552
+#: gui/options.cpp:2563
 msgid "Failed to change cloud storage!"
 msgstr "שינוי האחסון בענן נכשל!"
 
-#: gui/options.cpp:2555
+#: gui/options.cpp:2566
 msgid "Another cloud storage is already active."
 msgstr "אחסון ענן נוסף כבר פעיל."
 
-#: gui/options.cpp:2638
+#: gui/options.cpp:2649
 msgid "Theme does not support selected language!"
 msgstr "הנושא אינו תומך בשפה שנבחרה!"
 
-#: gui/options.cpp:2641
+#: gui/options.cpp:2652
 msgid "Theme cannot be loaded!"
 msgstr "לא ניתן לטעון את הנושא!"
 
-#: gui/options.cpp:2644
+#: gui/options.cpp:2655
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1676,23 +1682,23 @@ msgstr ""
 "\n"
 "הגדרות שונות ישוחזרו."
 
-#: gui/options.cpp:2719
+#: gui/options.cpp:2730
 msgid "Select directory for GUI themes"
 msgstr "בחר ספרייה לנושאי GUI"
 
-#: gui/options.cpp:2729
+#: gui/options.cpp:2740
 msgid "Select directory for extra files"
 msgstr "בחר ספרייה לקבצים נוספים"
 
-#: gui/options.cpp:2740
+#: gui/options.cpp:2751
 msgid "Select directory for plugins"
 msgstr "בחר ספרייה עבור תוספים"
 
-#: gui/options.cpp:2753
+#: gui/options.cpp:2764
 msgid "Select directory for Files Manager /root/"
 msgstr "בחר ספרייה עבור מנהל הקבצים / root /"
 
-#: gui/options.cpp:2865
+#: gui/options.cpp:2882
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1700,47 +1706,47 @@ msgstr ""
 "פתיחת כתובת האתר נכשלה!\n"
 "אנא נווט לדף זה באופן ידני."
 
-#: gui/options.cpp:2890
+#: gui/options.cpp:2907
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "אחסון אחר עובד עכשיו. האם אתה רוצה להפריע לזה?"
 
-#: gui/options.cpp:2899 gui/options.cpp:2937
+#: gui/options.cpp:2916 gui/options.cpp:2954
 msgid "Wait until current Storage finishes up and try again."
 msgstr "המתן עד לסיום האחסון הנוכחי ונסה שוב."
 
-#: gui/options.cpp:2912
+#: gui/options.cpp:2929
 msgid "Connecting..."
 msgstr "מתחבר ..."
 
-#: gui/options.cpp:2928
+#: gui/options.cpp:2945
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "אחסון זה עובד כעת. האם אתה רוצה להפריע לזה?"
 
-#: gui/options.cpp:3121 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3143 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<עכשיו>"
 
-#: gui/options.cpp:3230
+#: gui/options.cpp:3252
 msgid "Stop server"
 msgstr "עצור את השרת"
 
-#: gui/options.cpp:3231
+#: gui/options.cpp:3253
 msgid "Stop local webserver"
 msgstr "עצור את שרת האינטרנט המקומי"
 
-#: gui/options.cpp:3283
+#: gui/options.cpp:3305
 msgid "Storage connected."
 msgstr "אחסון מחובר."
 
-#: gui/options.cpp:3285
+#: gui/options.cpp:3307
 msgid "Failed to connect storage."
 msgstr "חיבור האחסון נכשל."
 
-#: gui/options.cpp:3287
+#: gui/options.cpp:3309
 msgid "Failed to connect storage: "
 msgstr "חיבור האחסון נכשל: "
 
-#: gui/options.cpp:3307
+#: gui/options.cpp:3329
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
