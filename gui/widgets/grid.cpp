@@ -42,7 +42,13 @@ GridItemWidget::GridItemWidget(GridWidget *boss, int x, int y, int w, int h)
 }
 
 GridItemWidget::GridItemWidget(GridWidget *boss)
-	: GridItemWidget(boss, 0, 0, 0, 0) {}
+	: ContainerWidget(boss, 0, 0, 0, 0), CommandSender(boss) {
+
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
+	_activeEntry = nullptr;
+	_grid = boss;
+	isHighlighted = false;
+}
 
 void GridItemWidget::setActiveEntry(GridItemInfo &entry) {
 	_activeEntry = &entry;
@@ -90,7 +96,7 @@ void GridItemWidget::drawWidget() {
 		Common::Rect r(_x - kMarginX, _y - kMarginY,
 					   _x + _w + kMarginX, _y + _h + kMarginY);
 		// Draw a highlighted BG on hover
-		g_gui.theme()->drawWidgetBackground(r, ThemeEngine::WidgetBackground::kGridItemHighlight);
+		g_gui.theme()->drawWidgetBackground(r, ThemeEngine::kGridItemHighlight);
 	} else {
 		Common::Rect r(_x - 2 * kMarginX, _y - 2 * kMarginY,
 					   _x + _w + 2 * kMarginX, _y + _h + 2 * kMarginY);
@@ -99,12 +105,12 @@ void GridItemWidget::drawWidget() {
 		// the highlight shadow
 		// FIXME: Find a way to redraw the area around the widget
 		//		 instead of just drawing a cover-up
-		g_gui.theme()->drawWidgetBackground(r, ThemeEngine::WidgetBackground::kGridItemBackground);
+		g_gui.theme()->drawWidgetBackground(r, ThemeEngine::kGridItemBackground);
 	}
 
 	// Draw Thumbnail Background
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + thumbWidth, _y + thumbHeight),
-										ThemeEngine::WidgetBackground::kThumbnailBackground);
+										ThemeEngine::kThumbnailBackground);
 
 	// Draw Thumbnail
 	if (_thumbGfx.empty()) {
@@ -426,13 +432,13 @@ const Graphics::ManagedSurface *GridWidget::filenameToSurface(const String &name
 }
 
 const Graphics::ManagedSurface *GridWidget::languageToSurface(Common::Language languageCode) {
-	if (languageCode == Common::Language::UNK_LANG)
+	if (languageCode == Common::UNK_LANG)
 		return nullptr;
 	return _languageIcons[languageCode];
 }
 
 const Graphics::ManagedSurface *GridWidget::platformToSurface(Common::Platform platformCode) {
-	if (platformCode == Common::Platform::kPlatformUnknown)
+	if (platformCode == Common::kPlatformUnknown)
 		return nullptr;
 	return _platformIcons[platformCode];
 }
