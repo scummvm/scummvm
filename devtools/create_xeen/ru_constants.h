@@ -26,8 +26,9 @@
 
 class RU : public LangConstants {
 public:
+	virtual ~RU() {}
 	const char *CLOUDS_CREDITS() {
-		return "\v012\t000\x3"																								 // "\v012\t000\x3"  
+		return "\v012\t000\x3"																								 // "\v012\t000\x3"
 			   "c\f35\x88\xA4\xA5\xEF \xA8 \xE0\xE3\xAA\xAE\xA2\xAE\xA4\xE1\xE2\xA2\xAE \xAF\xE0\xAE\xA5\xAA\xE2\xAE\xAC:\n" // "c\f35Идея и руководство проектом:\n"
 			   "\f17\x84\xA6\xAE\xAD \x82\xA0\xAD \x8A\xA0\xAD\xA5\xA3\xA5\xAC\x3"                                           // "\f17Джон Ван Канегем\x3"
 			   "l\n"                                                                                                         // "l\n"
@@ -1728,7 +1729,7 @@ public:
 			   "c\n"																		 // "\n"
 			   "\n"																			 // "В какой город (1-5)\n"
 			   "\x82 \xAA\xA0\xAA\xAE\xA9 \xA3\xAE\xE0\xAE\xA4 (1-5)\n"						 // "\n";
-			   "\n";																		 // 
+			   "\n";																		 //
 	}
 
 	const char *TOWN_PORTAL_SWORDS() {
@@ -2129,7 +2130,7 @@ public:
 			"\xE0\xA0\xA7\xA1\xAE\xA9\xAD\xA8\xAA\xA0",                     //разбойника
 			"\xA3\xE0\xA0\xA1\xA8\xE2\xA5\xAB\xEF",                         //грабителя
 			"\xAF\xE0\xA5\xE1\xE2\xE3\xAF\xAD\xA8\xAA\xA0",                 //преступника
-			"\xAF\xA8\xE0\xA0\xE2\xA0"                                      //пирата 
+			"\xAF\xA8\xE0\xA0\xE2\xA0"                                      //пирата
 		};
 		return _maeNames;
 	}

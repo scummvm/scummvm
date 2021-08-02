@@ -160,6 +160,7 @@ protected:
 	const int   *_newCharSkillsOffset = NULL;
 
 public:
+	virtual ~LangConstants() {}
 	virtual const char  *CLOUDS_CREDITS() = 0;
 	virtual const char  *DARK_SIDE_CREDITS() = 0;
 	virtual const char  *SWORDS_CREDITS1() = 0;
@@ -1255,6 +1256,7 @@ public:
 			virtual int KEY_ITEM() = 0;
 			virtual int KEY_QUICK() = 0;
 			virtual int KEY_EXCHANGE() = 0;
+			virtual ~DialogsCharInfo() {}
 		};
 		virtual DialogsCharInfo *dialogsCharInfo() = 0;
 
@@ -1266,6 +1268,7 @@ public:
 			virtual int KEY_SAVE() = 0;
 			virtual int KEY_QUIT() = 0;
 			virtual int KEY_MRWIZARD() = 0;
+			virtual ~DialogsControlPanel() {}
 		};
 		virtual DialogsControlPanel *dialogsControlPanel() = 0;
 
@@ -1280,6 +1283,7 @@ public:
 			virtual int KEY_SPD() = 0;
 			virtual int KEY_ACY() = 0;
 			virtual int KEY_LCK() = 0;
+			virtual ~DialogsCreateChar() {}
 		};
 		virtual DialogsCreateChar *dialogsCreateChar() = 0;
 
@@ -1287,6 +1291,7 @@ public:
 		public:
 			virtual int KEY_ADVENTURER() = 0;
 			virtual int KEY_WARRIOR() = 0;
+			virtual ~DialogsDifficulty() {}
 		};
 		virtual DialogsDifficulty *dialogsDifficulty() = 0;
 
@@ -1308,6 +1313,7 @@ public:
 			virtual int KEY_QUEST() = 0;
 			virtual int KEY_RECHRG() = 0;
 			virtual int KEY_GOLD() = 0;
+			virtual ~DialogsItems() {}
 		};
 		virtual DialogsItems *dialogsItems() = 0;
 
@@ -1317,6 +1323,7 @@ public:
 			virtual int KEY_REMOVE() = 0;
 			virtual int KEY_CREATE() = 0;
 			virtual int KEY_EXIT() = 0;
+			virtual ~DialogsParty() {}
 		};
 		virtual DialogsParty *dialogsParty() = 0;
 
@@ -1325,12 +1332,14 @@ public:
 			virtual int KEY_QUEST_ITEMS() = 0;
 			virtual int KEY_CURRENT_QUESTS() = 0;
 			virtual int KEY_AUTO_NOTES() = 0;
+			virtual ~DialogsQuests() {}
 		};
 		virtual DialogsQuests *dialogsQuests() = 0;
 
 		class DialogsQuickFight {
 		public:
 			virtual int KEY_NEXT() = 0;
+			virtual ~DialogsQuickFight() {}
 		};
 		virtual DialogsQuickFight *dialogsQuickFight() = 0;
 
@@ -1344,6 +1353,7 @@ public:
 			virtual int KEY_ACID() = 0;
 			virtual int KEY_SET() = 0;
 			virtual int KEY_RETURN() = 0;
+			virtual ~DialogsSpells() {}
 		};
 		virtual DialogsSpells *dialogsSpells() = 0;
 
@@ -1365,6 +1375,7 @@ public:
 			virtual int KEY_DONATION() = 0;
 			virtual int KEY_UNCURSE() = 0;
 			virtual int KEY_TRAIN() = 0;
+			virtual ~Locations() {}
 		};
 		virtual Locations *locations() = 0;
 
@@ -1374,8 +1385,10 @@ public:
 			virtual int KEY_LOAD_GAME() = 0;
 			virtual int KEY_SHOW_CREDITS() = 0;
 			virtual int KEY_VIEW_ENDGAME() = 0;
+			virtual ~CloudsOfXeenMenu() {}
 		};
 		virtual CloudsOfXeenMenu *cloudsOfXeenMenu() = 0;
+		virtual ~KeyConstants() {}
 	};
 	virtual KeyConstants *keyConstants() = 0;
 };

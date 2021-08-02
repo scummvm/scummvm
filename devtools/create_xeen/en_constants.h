@@ -27,6 +27,7 @@
 
 class EN : public LangConstants {
 public:
+	virtual ~EN() {}
 	const char *CLOUDS_CREDITS() {
 		return "\v012\t000\x3"
 			   "c\f35Designed and Directed By:\n"
@@ -1801,7 +1802,7 @@ public:
 
 	const char **UNABLE_TO_PICK_FORM() {
 		delete[] _unableToPickForm;
-		_unableToPickForm = new const char *[2] { "unable to pick", "" }; 
+		_unableToPickForm = new const char *[2] { "unable to pick", "" };
 		return _unableToPickForm;
 	}
 
@@ -2183,5 +2184,3 @@ public:
 private:
 	EN_KeyConstants *_kc = NULL;
 };
-
-
