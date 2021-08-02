@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-01 19:25+0000\n"
-"PO-Revision-Date: 2021-07-28 18:42+0000\n"
+"PO-Revision-Date: 2021-08-02 09:25+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -952,7 +952,7 @@ msgstr "Irányítás a képernyõn megjelenítése"
 
 #: gui/options.cpp:1229
 msgid "Show SAF revoke permissions overlay button"
-msgstr ""
+msgstr "A SAF visszavonási engedélyek átfedés gomb megjelenítése"
 
 #: gui/options.cpp:1233
 msgid "Touchpad mouse mode"
@@ -6184,14 +6184,12 @@ msgstr ""
 "csatornát használ."
 
 #: engines/scumm/detection.cpp:204
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth scrolling"
-msgstr "Finom görgetés engedélyezése járás közben"
+msgstr "Finom görgetés engedélyezése"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(a normál 8 képpontos lépés görgetés helyett)"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
