@@ -153,7 +153,7 @@ enum MASTER_LIB_CODES {
 	TRYPLAYSAMPLE, UNDIMMUSIC, UNHOOKSCENE, UNTAGACTOR, VIBRATE, WAITFRAME, WAITKEY,
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
 	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D, DECINVMAIN,
-	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, VOICEOVER, HIGHEST_LIBCODE
+	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, VOICEOVER, SETVIEW, HIGHEST_LIBCODE
 };
 
 static const MASTER_LIB_CODES DW1DEMO_CODES[] = {
@@ -3391,7 +3391,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK))
 				_vm->_actor->GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
 
-			if (!TinselV0) {
+			if (!TinselV0 && !TinselV3) {
 				SetTextPal(_vm->_actor->GetActorRGB(_ctx->actor));
 			}
 			if (TinselV2) {
@@ -4428,6 +4428,14 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d, %d, %d)", mapping.name, pp[0], pp[1], pp[2]);
 		break;
+	case 135:
+	case 221:
+	case 222:
+	case 223:
+		mapping = NoirMapping{"SAY", SAY, 2};
+		pp -= mapping.numArgs - 2;
+		debug(7, "%s_%2Xh(%d, %d)", mapping.name, libCode, pp[0], pp[1]);
+		break;
 	case 151:
 		mapping = NoirMapping{"SETSYSTEMREEL", SETSYSTEMREEL, 2};
 		pp -= mapping.numArgs - 1;
@@ -4440,6 +4448,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		break;
 	case 153:
 		mapping = NoirMapping{"SETSYSTEMVAR", SETSYSTEMVAR, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
+	case 154:
+		mapping = NoirMapping{"SETVIEW", SETVIEW, 2};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
 		break;
@@ -4514,6 +4527,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
+	case 111:
 	case 225: // STUBBED
 		mapping = NoirMapping{"PLAYMOVIE", PLAYMOVIE, 1};
 		pp -= mapping.numArgs - 1;
@@ -5641,6 +5655,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		pp -= 3;			// 4 parameters
 		SetTimer(pp[0], pp[1], pp[2], pp[3]);
 		return -4;
+
+	case SETVIEW:
+		// Noir only
+		pp -= 1;
+		warning("TODO: Implement SETVIEW(0x%08X, %i)", pp[0], pp[1]);
+		return -2;
 
 	case SHELL:
 		// DW2 only
