@@ -54,6 +54,20 @@ bool processQuitEvent(bool click) {
 	return false;
 }
 
+bool Window::processTransitionEvent(bool click) {
+	Common::Event event;
+
+	while (g_system->getEventManager()->pollEvent(event)) {
+		if (event.type == Common::EVENT_QUIT)
+			return true;
+		if (!processEvent(event)) {
+			if (click && event.type == Common::EVENT_LBUTTONDOWN)
+				return true;
+		}
+	}
+	return false;
+}
+
 uint32 DirectorEngine::getMacTicks() { return g_system->getMillis() * 60 / 1000.; }
 
 void DirectorEngine::processEvents() {

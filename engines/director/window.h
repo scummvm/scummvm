@@ -134,6 +134,7 @@ public:
 
 	// events.cpp
 	virtual bool processEvent(Common::Event &event) override;
+	bool processTransitionEvent(bool click);
 
 	// tests.cpp
 	Common::HashMap<Common::String, Movie *> *scanMovies(const Common::String &folder);
