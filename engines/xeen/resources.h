@@ -473,6 +473,7 @@ public:
 	const char *DARKSIDE_ENDING2;
 	const char *PHAROAH_ENDING_TEXT1;
 	const char *PHAROAH_ENDING_TEXT2;
+	const char *MAE_NAMES[131];
 
 	struct {
 

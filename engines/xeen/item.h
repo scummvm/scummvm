@@ -172,6 +172,12 @@ protected:
 	 * Capitalizes a passed description string that includes embedded formatting for the Items dialog
 	 */
 	void capitalizeItem(Common::String &name);
+
+	/**
+	 * Get Material Name
+	 */
+	const char *getMaeName(int material);
+
 public:
 	InventoryItems(Character *character, ItemCategory category);
 	virtual ~InventoryItems() {}

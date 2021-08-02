@@ -156,6 +156,7 @@ protected:
 	const char **_found = NULL;
 	const char **_born = NULL;
 	const char **_onHand = NULL;
+	const char **_maeNames = NULL;
 	const int   *_newCharSkillsOffset = NULL;
 
 public:
@@ -1236,13 +1237,14 @@ public:
 		{ "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m" }
 	};
 
-	virtual const char *DIFFICULTY_TEXT() = 0;
-	virtual const char *SAVE_OFF_LIMITS() = 0;
-	virtual const char *CLOUDS_INTRO1() = 0;
-	virtual const char *DARKSIDE_ENDING1() = 0;
-	virtual const char *DARKSIDE_ENDING2() = 0;
-	virtual const char *PHAROAH_ENDING_TEXT1() = 0;
-	virtual const char *PHAROAH_ENDING_TEXT2() = 0;
+	virtual const char  *DIFFICULTY_TEXT() = 0;
+	virtual const char  *SAVE_OFF_LIMITS() = 0;
+	virtual const char  *CLOUDS_INTRO1() = 0;
+	virtual const char  *DARKSIDE_ENDING1() = 0;
+	virtual const char  *DARKSIDE_ENDING2() = 0;
+	virtual const char  *PHAROAH_ENDING_TEXT1() = 0;
+	virtual const char  *PHAROAH_ENDING_TEXT2() = 0;
+	virtual const char **MAE_NAMES() = 0;
 
 	void writeConstants(Common::String num, CCArchive &cc);
 

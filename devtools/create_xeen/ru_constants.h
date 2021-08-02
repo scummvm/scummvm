@@ -1996,6 +1996,144 @@ public:
 			   "l\fd";
 	}
 
+	const char **MAE_NAMES() {
+		delete[] _maeNames;
+		_maeNames = new const char *[131] {
+			"",
+			"\xA6\xA0\xE0\xA0",                                             //жара
+			"\xAE\xA3\xAD\xA5\xA9",                                         //огней
+			"\xAE\xA3\xAD\xEF",                                             //огня
+			"\xA4\xEB\xAC\xA0",                                             //дыма
+			"\xAF\xAB\xA0\xAC\xA5\xAD\xA8",                                 //пламени
+			"\xAA\xA8\xAF\xA5\xAD\xA8\xEF",                                 //кипения
+			"\xA2\xE1\xAF\xEB\xE8\xAA\xA8",                                 //вспышки
+			"\xA0\xA4\xA0",                                                 //ада
+			"\xAC\xA5\xE0\xE6\xA0\xAD\xA8\xEF",                             //мерцания
+			"\xA8\xE1\xAA\xE0",                                             //искр
+			"\xE1\xE2\xA0\xE2\xA8\xAA\xA8",                                 //статики
+			"\xA3\xE0\xAE\xAC\xA0",                                         //грома
+			"\xE8\xAE\xAA\xA0",                                             //шока
+			"\xED\xAB\xA5\xAA\xE2\xE0\xA8\xE7\xA5\xE1\xE2\xA2\xA0",         //электричества
+			"\xAC\xAE\xAB\xAD\xA8\xA8",                                     //молнии
+			"\xAB\xEC\xA4\xA0",                                             //льда
+			"\xAC\xAE\xE0\xAE\xA7\xA0",                                     //мороза
+			"\xE1\xE2\xE3\xA6\xA8",                                         //стужи
+			"\xE5\xAE\xAB\xAE\xA4\xA0",                                     //холода
+			"\xAA\xE0\xA8\xAE",                                             //крио
+			"\xAA\xA8\xE1\xAB\xAE\xE2\xEB",                                 //кислоты
+			"\xA7\xA5\xAB\xEC\xEF",                                         //зелья
+			"\xEF\xA4\xA0",                                                 //яда
+			"\xE2\xAE\xAA\xE1\xA8\xAD\xA0",                                 //токсина
+			"\xAE\xE2\xE0\xA0\xA2\xEB",                                     //отравы
+			"\xE1\xA2\xA5\xE2\xA0",                                         //света
+			"\xAD\xA0\xAA\xA0\xAB\xA0",                                     //накала
+			"\xAF\xAB\xAE\xE2\xAD\xAE\xE1\xE2\xA8",                         //плотности
+			"\xA7\xA2\xE3\xAA\xA0",                                         //звука
+			"\xED\xAD\xA5\xE0\xA3\xA8\xA8",                                 //энергии
+			"\xE2\xA5\xAF\xAB\xA0",                                         //тепла
+			"\xE1\xA8\xEF\xAD\xA8\xEF",                                     //сияния
+			"\xAA\xA8\xAD\xA5\xE2\xA8\xAA\xA8",                             //кинетики
+			"\xAC\xA8\xE1\xE2\xA8\xAA\xA8",                                 //мистики
+			"\xAC\xA0\xA3\xA8\xA8",                                         //магии
+			"\xED\xAA\xE2\xAE\xAF\xAB\xA0\xA7\xAC\xEB",                     //эктоплазмы
+			"\xA8\xA7 \xA4\xA5\xE0\xA5\xA2\xA0",                            //из дерева
+			"\xA8\xA7 \xAA\xAE\xA6\xA8",                                    //из кожи
+			"\xA8\xA7 \xAC\xA5\xA4\xA8",                                    //из меди
+			"\xA8\xA7 \xA1\xE0\xAE\xAD\xA7\xEB",                            //из бронзы
+			"\xA8\xA7 \xA6\xA5\xAB\xA5\xA7\xA0",                            //из железа
+			"\xA8\xA7 \xE1\xA5\xE0\xA5\xA1\xE0\xA0",                        //из серебра
+			"\xA8\xA7 \xE1\xE2\xA0\xAB\xA8",                                //из стали
+			"\xA8\xA7 \xA7\xAE\xAB\xAE\xE2\xA0",                            //из золота
+			"\xA8\xA7 \xAF\xAB\xA0\xE2\xA8\xAD\xEB",                        //из платины
+			"\xA8\xA7 \xE1\xE2\xA5\xAA\xAB\xA0",                            //из стекла
+			"\xA8\xA7 \xAA\xAE\xE0\xA0\xAB\xAB\xAE\xA2",                    //из кораллов
+			"\xA8\xA7 \xE5\xE0\xE3\xE1\xE2\xA0\xAB\xEF",                    //из хрусталя
+			"\xA8\xA7 \xAB\xA0\xA7\xE3\xE0\xA8\xE2\xA0",                    //из лазурита
+			"\xA8\xA7 \xAF\xA5\xE0\xAB\xA0\xAC\xE3\xE2\xE0\xA0",            //из перламутра
+			"\xA8\xA7 \xEF\xAD\xE2\xA0\xE0\xEF",                            //из янтаря
+			"\xA8\xA7 \xED\xA1\xA5\xAD\xA0",                                //из эбена
+			"\xA8\xA7 \xAA\xA2\xA0\xE0\xE6\xA0",                            //из кварца
+			"\xA8\xA7 \xE0\xE3\xA1\xA8\xAD\xA0",                            //из рубина
+			"\xA8\xA7 \xA8\xA7\xE3\xAC\xE0\xE3\xA4\xA0",                    //из изумруда
+			"\xA8\xA7 \xE1\xA0\xAF\xE4\xA8\xE0\xA0",                        //из сапфира
+			"\xA8\xA7 \xA0\xAB\xAC\xA0\xA7\xA0",                            //из алмаза
+			"\xA8\xA7 \xAE\xA1\xE1\xA8\xA4\xA8\xA0\xAD\xA0",                //из обсидиана
+			"\xE1\xA8\xAB\xEB",                                             //силы
+			"\xAA\xE0\xA5\xAF\xAE\xE1\xE2\xA8",                             //крепости
+			"\xA2\xAE\xA8\xAD\xA0",                                         //воина
+			"\xAE\xA3\xE0\xA0",                                             //огра
+			"\xA3\xA8\xA3\xA0\xAD\xE2\xA0",                                 //гиганта
+			"\xA3\xE0\xAE\xAC\xA0",                                         //грома
+			"\xAC\xAE\xE9\xA8",                                             //мощи
+			"\xA4\xE0\xA0\xAA\xAE\xAD\xA0",                                 //дракона
+			"\xE4\xAE\xE2\xAE\xAD\xA0",                                     //фотона
+			"\xE3\xAC\xA0",                                                 //ума
+			"\xE0\xA0\xA7\xE3\xAC\xA0",                                     //разума
+			"\xA2\xAE\xAB\xE5\xA2\xA0",                                     //волхва
+			"\xAC\xEB\xE1\xAB\xA8",                                         //мысли
+			"\xA7\xAD\xA0\xAD\xA8\xEF",                                     //знания
+			"\xA8\xAD\xE2\xA5\xAB\xAB\xA5\xAA\xE2\xA0",                     //интеллекта
+			"\xAC\xE3\xA4\xE0\xAE\xE1\xE2\xA8",                             //мудрости
+			"\xA3\xA5\xAD\xA8\xEF",                                         //гения
+			"\xE1\xA8\xAC\xAF\xA0\xE2\xA8\xA8",                             //симпатии
+			"\xA4\xE0\xE3\xA6\xA1\xEB",                                     //дружбы
+			"\xAE\xA1\xA0\xEF\xAD\xA8\xEF",                                 //обаяния
+			"\xE2\xA0\xAB\xA8\xE1\xAC\xA0\xAD",                             //талисман
+			"\xE1\xA8\xAB\xEB \xA4\xE3\xE5\xA0",                            //силы духа
+			"\xE5\xA0\xE0\xA8\xA7\xAC\xEB",                                 //харизмы
+			"\xAB\xA8\xA4\xA5\xE0\xE1\xE2\xA2\xA0",                         //лидерства
+			"\xED\xA3\xAE",                                                 //эго
+			"\xE1\xA2\xEF\xE2\xAE\xE1\xE2\xA8",                             //святости
+			"\xAF\xE0\xEB\xE2\xAA\xAE\xE1\xE2\xA8",                         //прыткости
+			"\xE0\xA5\xA7\xA2\xAE\xE1\xE2\xA8",                             //резвости
+			"\xA1\xEB\xE1\xE2\xE0\xAE\xE2\xEB",                             //быстроты
+			"\xE1\xE2\xE0\xA5\xAC\xA8\xE2\xA5\xAB\xEC\xAD\xAE\xE1\xE2\xA8", //стремительности
+			"\xE1\xAA\xAE\xE0\xAE\xE1\xE2\xA8",                             //скорости
+			"\xA2\xA5\xE2\xE0\xA0",                                         //ветра
+			"\xE3\xE1\xAA\xAE\xE0\xA5\xAD\xA8\xEF",                         //ускорения
+			"\xE3\xE0\xA0\xA3\xA0\xAD\xA0",                                 //урагана
+			"\xE2\xAE\xE7\xAD\xAE\xE1\xE2\xA8",                             //точности
+			"\xAC\xA5\xE2\xAA\xAE\xE1\xE2\xA8",                             //меткости
+			"\xE1\xE2\xE0\xA5\xAB\xAA\xA0",                                 //стрелка
+			"\xAF\xE0\xA8\xE6\xA5\xAB\xEC\xAD\xAE\xE1\xE2\xA8",             //прицельности
+			"\xAD\xA0\xE6\xA5\xAB\xA5\xAD\xAD\xAE\xE1\xE2\xA8",             //нацеленности
+			"\xEF\xE1\xE2\xE0\xA5\xA1\xA0",                                 //ястреба
+			"\xAA\xAB\xA5\xA2\xA5\xE0\xA0",                                 //клевера
+			"\xE8\xA0\xAD\xE1\xA0",                                         //шанса
+			"\xAF\xAE\xA1\xA5\xA4\xA8\xE2\xA5\xAB\xEF",                     //победителя
+			"\xE3\xA4\xA0\xE7\xA8",                                         //удачи
+			"\xA8\xA3\xE0\xAE\xAA\xA0",                                     //игрока
+			"\xAB\xA5\xAF\xE0\xA5\xAA\xAE\xAD\xA0",                         //лепрекона
+			"\xA1\xAE\xA4\xE0\xAE\xE1\xE2\xA8",                             //бодрости
+			"\xA7\xA4\xAE\xE0\xAE\xA2\xEC\xEF",                             //здоровья
+			"\xA6\xA8\xA7\xAD\xA8",                                         //жизни
+			"\xE2\xE0\xAE\xAB\xAB\xEF",                                     //тролля
+			"\xA2\xA0\xAC\xAF\xA8\xE0\xA0",                                 //вампира
+			"\xE7\xA0\xE0",                                                 //чар
+			"\xA7\xA0\xAA\xAB\xA8\xAD\xA0\xE2\xA5\xAB\xEF",                 //заклинателя
+			"\xA2\xA5\xA4\xEC\xAC\xEB",                                     //ведьмы
+			"\xAC\xA0\xA3\xA0",                                             //мага
+			"\xA0\xE0\xE5\xA8\xAC\xA0\xA3\xA0",                             //архимага
+			"\xE2\xA0\xA9\xAD\xEB\xE5 \xA7\xAD\xA0\xAD\xA8\xA9",            //тайных знаний
+			"\xA7\xA0\xE9\xA8\xE2\xEB",                                     //защиты
+			"\xA1\xE0\xAE\xAD\xA8",                                         //брони
+			"\xA7\xA0\xE9\xA8\xE2\xAD\xA8\xAA\xA0",                         //защитника
+			"\xAB\xAE\xA2\xAA\xAE\xE1\xE2\xA8",                             //ловкости
+			"\xAF\xE0\xA5\xA4\xE1\xAA\xA0\xA7\xA0\xE2\xA5\xAB\xEF",         //предсказателя
+			"\xAC\xAE\xE8\xA5\xAD\xAD\xA8\xAA\xA0",                         //мошенника
+			"\xA2\xA7\xAB\xAE\xAC\xE9\xA8\xAA\xA0",                         //взломщика
+			"\xAC\xA0\xE0\xAE\xA4\xF1\xE0\xA0",                             //мародёра
+			"\xA1\xA0\xAD\xA4\xA8\xE2\xA0",                                 //бандита
+			"\xAA\xA0\xE0\xAC\xA0\xAD\xAD\xA8\xAA\xA0",                     //карманника
+			"\xA2\xAE\xE0\xA0",                                             //вора
+			"\xE0\xA0\xA7\xA1\xAE\xA9\xAD\xA8\xAA\xA0",                     //разбойника
+			"\xA3\xE0\xA0\xA1\xA8\xE2\xA5\xAB\xEF",                         //грабителя
+			"\xAF\xE0\xA5\xE1\xE2\xE3\xAF\xAD\xA8\xAA\xA0",                 //преступника
+			"\xAF\xA8\xE0\xA0\xE2\xA0"                                      //пирата 
+		};
+		return _maeNames;
+	}
+
 	class RU_KeyConstants : public KeyConstants {
 	public:
 		class RU_DialogsCharInfo : public DialogsCharInfo {
