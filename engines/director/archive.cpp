@@ -49,7 +49,7 @@ Common::String Archive::getFileName() const { return Director::getFileName(_path
 bool Archive::openFile(const Common::String &fileName) {
 	Common::File *file = new Common::File();
 
-	if (!file->open(fileName)) {
+	if (!file->open(Common::Path(fileName, g_director->_dirSeparator))) {
 		warning("Archive::openFile(): Error opening file %s", fileName.c_str());
 		delete file;
 		return false;
@@ -225,12 +225,12 @@ bool MacArchive::openFile(const Common::String &fileName) {
 
 	Common::String fName = fileName;
 
-	if (!_resFork->open(fName) || !_resFork->hasResFork()) {
+	if (!_resFork->open(Common::Path(fName, g_director->_dirSeparator)) || !_resFork->hasResFork()) {
 		close();
 		return false;
 	}
 
-	_pathName = _resFork->getBaseFileName().toString();
+	_pathName = _resFork->getBaseFileName().toString(g_director->_dirSeparator);
 	if (_pathName.hasSuffix(".bin")) {
 		for (int i = 0; i < 4; i++)
 			_pathName.deleteLastChar();

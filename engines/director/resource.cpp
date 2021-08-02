@@ -206,7 +206,7 @@ void Window::loadEXE(const Common::String movie) {
 		warning("No LINGO.INI");
 	}
 
-	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(movie);
+	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(Common::Path(movie, g_director->_dirSeparator));
 	if (!exeStream)
 		error("Failed to open EXE '%s'", g_director->getEXEName().c_str());
 
@@ -382,7 +382,7 @@ void Window::loadMac(const Common::String movie) {
 		// The RIFX is located in the data fork of the executable
 		_macBinary = new Common::MacResManager();
 
-		if (!_macBinary->open(movie) || !_macBinary->hasDataFork())
+		if (!_macBinary->open(Common::Path(movie, g_director->_dirSeparator)) || !_macBinary->hasDataFork())
 			error("Failed to open Mac binary '%s'", movie.c_str());
 
 		Common::SeekableReadStream *dataFork = _macBinary->getDataFork();

@@ -622,7 +622,7 @@ void Score::screenShot() {
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
 	Common::String currentPath = _vm->getCurrentPath().c_str();
-	Common::replace(currentPath, "/", "-"); // exclude '/' from screenshot filename prefix
+	Common::replace(currentPath, Common::String(g_director->_dirSeparator), "-"); // exclude dir separator from screenshot filename prefix
 	Common::String prefix = Common::String::format("%s%s", currentPath.c_str(), _movie->getMacName().c_str());
 	Common::String filename = dumpScriptName(prefix.c_str(), kMovieScript, _framesRan, "png");
 

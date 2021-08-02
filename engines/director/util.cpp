@@ -220,7 +220,7 @@ Common::String convertPath(Common::String &path) {
 	if (path.empty())
 		return path;
 
-	if (!path.contains(':') && !path.contains('/') && !path.contains('\\') && !path.contains('@')) {
+	if (!path.contains(':') && !path.contains('\\') && !path.contains('@')) {
 		return path;
 	}
 
@@ -228,10 +228,10 @@ Common::String convertPath(Common::String &path) {
 	uint32 idx = 0;
 
 	if (path.hasPrefix("::")) { // Parent directory
-		res = "..\\";
+		res = "..:";
 		idx = 2;
 	} else if (path.hasPrefix("@:")) { // Root of the game
-		res = ".\\";
+		res = ".:";
 		idx = 2;
 	} else if (path.size() >= 3
 					&& Common::isAlpha(path[0])
@@ -239,30 +239,22 @@ Common::String convertPath(Common::String &path) {
 					&& path[2] == '\\') { // Windows drive letter
 		idx = 3;
 	} else {
-		res = ".\\";
+		res = ".:";
 
 		if (path[0] == ':')
 			idx = 1;
 	}
 
-	while (idx != path.size()) {
-		if (path[idx] == ':')
-			res += '\\';
+	while (idx < path.size()) {
+		if (path[idx] == ':' || path[idx] == '\\')
+			res += g_director->_dirSeparator;
 		else
 			res += path[idx];
 
 		idx++;
 	}
 
-	// And now convert everything to Unix style paths
-	Common::String res1;
-	for (idx = 0; idx < res.size(); idx++)
-		if (res[idx] == '\\')
-			res1 += '/';
-		else
-			res1 += res[idx];
-
-	return res1;
+	return res;
 }
 
 Common::String unixToMacPath(const Common::String &path) {
@@ -280,7 +272,7 @@ Common::String unixToMacPath(const Common::String &path) {
 
 Common::String getPath(Common::String path, Common::String cwd) {
 	const char *s;
-	if ((s = strrchr(path.c_str(), '/'))) {
+	if ((s = strrchr(path.c_str(), g_director->_dirSeparator))) {
 		return Common::String(path.c_str(), s + 1);
 	}
 
@@ -292,12 +284,12 @@ bool testPath(Common::String &path, bool directory) {
 		Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
 
 		// check for the game data dir
-		if (!path.contains("/") && path.equalsIgnoreCase(d.getName())) {
+		if (!path.contains(g_director->_dirSeparator) && path.equalsIgnoreCase(d.getName())) {
 			path = "";
 			return true;
 		}
 
-		Common::StringTokenizer directory_list(path, "/");
+		Common::StringTokenizer directory_list(path, Common::String(g_director->_dirSeparator));
 
 		if (d.getChild(directory_list.nextToken()).exists()) {
 			// then this part is for the "relative to current directory"
@@ -313,7 +305,7 @@ bool testPath(Common::String &path, bool directory) {
 	}
 
 	Common::File f;
-	if (f.open(path)) {
+	if (f.open(Common::Path(path, g_director->_dirSeparator))) {
 		if (f.size())
 			return true;
 		f.close();
@@ -332,7 +324,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 	debug(2, "pathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
 
-	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, '/');
+	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, g_director->_dirSeparator);
 	Common::String convPath = initialPath;
 
 	debug(2, "pathMakeRelative(): s2 %s", convPath.c_str());
@@ -346,8 +338,8 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	// Now try to search the file
 	bool opened = false;
 
-	while (convPath.contains('/')) {
-		int pos = convPath.find('/');
+	while (convPath.contains(g_director->_dirSeparator)) {
+		int pos = convPath.find(g_director->_dirSeparator);
 		convPath = Common::String(&convPath.c_str()[pos + 1]);
 
 		debug(2, "pathMakeRelative(): s3 try %s", convPath.c_str());
@@ -372,8 +364,8 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			return initialPath;
 
 		// Now try to search the file
-		while (convPath.contains('/')) {
-			int pos = convPath.find('/');
+		while (convPath.contains(g_director->_dirSeparator)) {
+			int pos = convPath.find(g_director->_dirSeparator);
 			convPath = Common::String(&convPath.c_str()[pos + 1]);
 
 			debug(2, "pathMakeRelative(): s5 try %s", convPath.c_str());
@@ -400,7 +392,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			Common::String component;
 
 			while (*ptr) {
-				if (*ptr == '/') {
+				if (*ptr == g_director->_dirSeparator) {
 					if (component.equals(".")) {
 						convPath += component;
 					} else {
@@ -408,7 +400,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 					}
 
 					component.clear();
-					convPath += '/';
+					convPath += g_director->_dirSeparator;
 				} else {
 					component += *ptr;
 				}
@@ -475,8 +467,8 @@ Common::String testExtensions(Common::String component, Common::String initialPa
 }
 
 Common::String getFileName(Common::String path) {
-	while (path.contains('/')) {
-		int pos = path.find('/');
+	while (path.contains(g_director->_dirSeparator)) {
+		int pos = path.find(g_director->_dirSeparator);
 		path = Common::String(&path.c_str()[pos + 1]);
 	}
 	return path;
@@ -522,7 +514,7 @@ Common::String stripMacPath(const char *name) {
 	const char *ptr = name;
 
 	while (ptr <= end) {
-		if (myIsAlnum(*ptr) || myIsFATChar(*ptr) || *ptr == '/') {
+		if (myIsAlnum(*ptr) || myIsFATChar(*ptr) || *ptr == g_director->_dirSeparator) {
 			res += *ptr;
 		}
 		ptr++;
