@@ -1074,7 +1074,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 		return;
 
 	// If writing constant data, don't bother locking the data pointer and reading src details
-	if (((pObj->flags & DMA_CONST) == 0) || (TinselV3 && pObj->flags == 5)) {
+	if (((pObj->flags & DMA_CONST) == 0) || (TinselV3 && ((pObj->flags & 0x05) == 0x05))) {
 		if (TinselV2) {
 			srcPtr = (byte *)_vm->_handle->LockMem(pObj->hBits);
 			pObj->charBase = nullptr;
