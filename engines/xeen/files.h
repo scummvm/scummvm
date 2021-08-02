@@ -144,12 +144,12 @@ public:
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	bool open(const Common::String &filename) override;
+	bool open(const Common::Path &filename) override;
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	bool open(const Common::String &filename, Common::Archive &archive) override;
+	bool open(const Common::Path &filename, Common::Archive &archive) override;
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened

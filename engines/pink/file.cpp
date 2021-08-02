@@ -50,7 +50,7 @@ OrbFile::~OrbFile() {
 	delete[] _table;
 }
 
-bool OrbFile::open(const Common::String &name) {
+bool OrbFile::open(const Common::Path &name) {
 	if (!File::open(name) || readUint32BE() != MKTAG('O', 'R', 'B', '\0'))
 		return false;
 
@@ -122,7 +122,7 @@ void OrbFile::seekToObject(const char *name) {
 	seek(desc->objectsOffset);
 }
 
-bool BroFile::open(const Common::String &name) {
+bool BroFile::open(const Common::Path &name) {
 	if (!File::open(name) || readUint32BE() != MKTAG('B', 'R', 'O', '\0'))
 		return false;
 

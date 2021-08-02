@@ -38,7 +38,7 @@ public:
 	BaseScummFile() : _encbyte(0) {}
 	void setEnc(byte value) { _encbyte = value; }
 
-	bool open(const Common::String &filename) override = 0;
+	bool open(const Common::Path &filename) override = 0;
 	virtual bool openSubFile(const Common::String &filename) = 0;
 
 	int64 pos() const override = 0;
@@ -64,7 +64,7 @@ protected:
 public:
 	ScummFile();
 
-	bool open(const Common::String &filename) override;
+	bool open(const Common::Path &filename) override;
 	bool openSubFile(const Common::String &filename) override;
 
 	void clearErr() override { _myEos = false; BaseScummFile::clearErr(); }
@@ -109,7 +109,7 @@ private:
 public:
 	ScummDiskImage(const char *disk1, const char *disk2, GameSettings game);
 
-	bool open(const Common::String &filename) override;
+	bool open(const Common::Path &filename) override;
 	bool openSubFile(const Common::String &filename) override;
 
 	void close() override;
@@ -138,7 +138,7 @@ private:
 public:
 	ScummSteamFile(const SteamIndexFile &indexFile) : ScummFile(), _indexFile(indexFile) {}
 
-	bool open(const Common::String &filename) override;
+	bool open(const Common::Path &filename) override;
 };
 
 } // End of namespace Scumm

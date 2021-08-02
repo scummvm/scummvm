@@ -43,14 +43,14 @@ public:
 	 * Open the file with the given filename, by searching SearchMan.
 	 * @param	name	the name of the file to open
 	 */
-	bool open(const Common::String &name) override;
+	bool open(const Common::Path &name) override;
 
 	/**
 	 * Open the file with the given filename from within the given archive.
 	 * @param	name	the name of the file to open
 	 * @param	archive		the archive in which to search for the file
 	 */
-	bool open(const Common::String &name, Common::Archive &archive) override;
+	bool open(const Common::Path &name, Common::Archive &archive) override;
 
 	/**
 	 * Open the file corresponding to the give node.
