@@ -693,17 +693,17 @@ bool Debugger::cmdMd5Mac(int argc, const char **argv) {
 			debugPrintf("Resource file '%s' not found\n", filename.c_str());
 		} else {
 			if (!macResMan.hasResFork() && !macResMan.hasDataFork()) {
-				debugPrintf("'%s' has neither data not resource fork\n", macResMan.getBaseFileName().c_str());
+				debugPrintf("'%s' has neither data not resource fork\n", macResMan.getBaseFileName().toString().c_str());
 			} else {
 				// The resource fork is probably the most relevant one.
 				if (macResMan.hasResFork()) {
 					Common::String md5 = macResMan.computeResForkMD5AsString(length);
-					debugPrintf("%s  %s (resource)  %d\n", md5.c_str(), macResMan.getBaseFileName().c_str(), macResMan.getResForkDataSize());
+					debugPrintf("%s  %s (resource)  %d\n", md5.c_str(), macResMan.getBaseFileName().toString().c_str(), macResMan.getResForkDataSize());
 				}
 				if (macResMan.hasDataFork()) {
 					Common::SeekableReadStream *stream = macResMan.getDataFork();
 					Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-					debugPrintf("%s  %s (data)  %d\n", md5.c_str(), macResMan.getBaseFileName().c_str(), (int32)stream->size());
+					debugPrintf("%s  %s (data)  %d\n", md5.c_str(), macResMan.getBaseFileName().toString().c_str(), (int32)stream->size());
 				}
 			}
 			macResMan.close();

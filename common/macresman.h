@@ -75,7 +75,7 @@ public:
 	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
 	 * @return True on success
 	 */
-	bool open(const String &fileName);
+	bool open(const Path &fileName);
 
 	/**
 	 * Open a Mac data/resource fork pair from within the given archive.
@@ -85,14 +85,14 @@ public:
 	 * @note This will check for the raw resource fork, MacBinary, and AppleDouble formats.
 	 * @return True on success
 	 */
-	bool open(const String &fileName, Archive &archive);
+	bool open(const Path &fileName, Archive &archive);
 
 	/**
 	 * See if a Mac data/resource fork pair exists.
 	 * @param fileName The base file name of the file
 	 * @return True if either a data fork or resource fork with this name exists
 	 */
-	static bool exists(const String &fileName);
+	static bool exists(const Path &fileName);
 
 	/**
 	 * List all filenames matching pattern for opening with open().
@@ -178,9 +178,9 @@ public:
 	 * Get the base file name of the data/resource fork pair
 	 * @return The base file name of the data/resource fork pair
 	 */
-	String getBaseFileName() const { return _baseFileName; }
+	Path getBaseFileName() const { return _baseFileName; }
 
-	void setBaseFileName(Common::String str) { _baseFileName = str; }
+	void setBaseFileName(Common::Path str) { _baseFileName = str; }
 
 	/**
 	 * Return list of resource IDs with specified type ID
@@ -222,15 +222,15 @@ public:
 
 private:
 	SeekableReadStream *_stream;
-	String _baseFileName;
+	Path _baseFileName;
 
 	bool load(SeekableReadStream &stream);
 
 	bool loadFromRawFork(SeekableReadStream &stream);
 	bool loadFromAppleDouble(SeekableReadStream &stream);
 
-	static String constructAppleDoubleName(String name);
-	static String disassembleAppleDoubleName(String name, bool *isAppleDouble);
+	static Path constructAppleDoubleName(Path name);
+	static Path disassembleAppleDoubleName(Path name, bool *isAppleDouble);
 
 	/**
 	 * Do a sanity check whether the given stream is a raw resource fork.
