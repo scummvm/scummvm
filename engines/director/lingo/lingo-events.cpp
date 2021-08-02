@@ -29,6 +29,7 @@
 #include "director/frame.h"
 #include "director/score.h"
 #include "director/sprite.h"
+#include "director/window.h"
 
 namespace Director {
 
@@ -322,10 +323,11 @@ void Movie::processEvent(LEvent event, int targetId) {
 
 void Lingo::processEvents() {
 	int lastEventId = -1;
+	Window *window = _vm->getCurrentWindow();
 	Movie *movie = _vm->getCurrentMovie();
 	Score *sc = movie->getScore();
 
-	if (_vm->getVersion() >= 300 && sc->getCurrentFrame() > 0 && sc->_playState != kPlayStopped && movie->_eventQueue.empty())
+	if (_vm->getVersion() >= 300 && !window->_newMovieStarted && sc->_playState != kPlayStopped && movie->_eventQueue.empty())
 		movie->registerEvent(kEventIdle);
 
 	while (!movie->_eventQueue.empty()) {
