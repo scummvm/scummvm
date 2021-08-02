@@ -44,6 +44,7 @@
 #ifndef COMMON_PUNYCODE_H
 #define COMMON_PUNYCODE_H
 
+#include "common/path.h"
 #include "common/str.h"
 
 namespace Common {
@@ -69,7 +70,7 @@ String punycode_decodefilename(const String src1);
 /**
  * Convert path with '/' as separators from Punycode
  */
-String punycode_decodepath(const String src);
+Path punycode_decodepath(const Path &src);
 
 bool punycode_hasprefix(const String src);
 

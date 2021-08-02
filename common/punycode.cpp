@@ -352,17 +352,17 @@ String punycode_decodefilename(const String src1) {
 	return dst;
 }
 
-String punycode_decodepath(const String src) {
-	StringTokenizer tok(src, "/");
+Path punycode_decodepath(const Path &src) {
+	StringTokenizer tok(src.rawString(), Common::String(DIR_SEPARATOR));
 	String res;
 
 	while (!tok.empty()) {
 		res += punycode_decodefilename(tok.nextToken());
 		if (!tok.empty())
-			res += '/';
+			res += DIR_SEPARATOR;
 	}
 
-	return res;
+	return Path(res, DIR_SEPARATOR);
 }
 
 } // end of namespace Common

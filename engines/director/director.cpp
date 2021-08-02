@@ -272,7 +272,7 @@ void DirectorEngine::parseOptions() {
 			}
 
 			if (Common::punycode_hasprefix(_options.startMovie.startMovie))
-				_options.startMovie.startMovie = Common::punycode_decodepath(_options.startMovie.startMovie);
+				_options.startMovie.startMovie = Common::punycode_decodepath(_options.startMovie.startMovie).toString();
 
 			debug(2, "parseOptions(): Movie is: %s, frame is: %d", _options.startMovie.startMovie.c_str(), _options.startMovie.startFrame);
 		} else if (key == "startup") {
