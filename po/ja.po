@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-02 15:09+0000\n"
-"PO-Revision-Date: 2021-08-01 17:17+0000\n"
+"PO-Revision-Date: 2021-08-02 16:26+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1365,7 +1365,7 @@ msgstr "ScummVMの設定パス： "
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2254 gui/options.cpp:2795
 msgid "Last browser path: "
-msgstr ""
+msgstr "最後に使用したブラウザーのパス： "
 
 #: gui/options.cpp:2259
 msgid "Theme:"
