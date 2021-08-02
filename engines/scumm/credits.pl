@@ -11,7 +11,7 @@ begin_section("SCUMM");
 	add_person("Ludvig Strigeus", "ludde", "(retired)");
 end_section();
 
-begin_section("HE");
+begin_section("SCUMM HE");
 	add_person("Jonathan Gray", "khalek", "(retired)");
 	add_person("Travis Howell", "Kirben", "");
 	add_person("Gregory Montoir", "cyx", "(retired)");
