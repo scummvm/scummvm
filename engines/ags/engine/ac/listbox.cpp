@@ -82,7 +82,7 @@ void FillDirList(std::set<String> &files, const String &path) {
 		return;
 	}
 
-	Common::FSDirectory dir(dirName);
+	Common::FSDirectory dir(dirName.GetCStr());
 	Common::ArchiveMemberList fileList;
 	dir.listMatchingMembers(fileList, filePattern);
 	for (Common::ArchiveMemberList::iterator iter = fileList.begin(); iter != fileList.end(); ++iter) {

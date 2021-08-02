@@ -92,7 +92,7 @@ String GetCurrentDirectory() {
 }
 
 static bool GetFilesImpl(const String &dir_path, std::vector<String> &files, bool isDirectories) {
-	Common::FSNode fsNode(dir_path);
+	Common::FSNode fsNode(dir_path.GetCStr());
 	Common::FSList fsList;
 
 	fsNode.getChildren(fsList,
@@ -120,7 +120,7 @@ FindFile::~FindFile() {
 
 FindFile FindFile::Open(const String &path, const String &wildcard, bool do_file, bool do_dir) {
 	FindFile ff;
-	ff._folder = Common::FSNode(path);
+	ff._folder = Common::FSNode(path.GetCStr());
 
 	Common::FSNode::ListMode mode = Common::FSNode::kListAll;
 	if (do_file && !do_dir)
