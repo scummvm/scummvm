@@ -393,6 +393,7 @@ void Window::loadStartMovieXLibs() {
 	if (strcmp(g_director->getGameId(), "warlock") == 0 && g_director->getPlatform() == Common::kPlatformMacintosh) {
 		g_lingo->openXLib("FPlayXObj", kXObj);
 	}
+	g_lingo->openXLib("SerialPort", kXObj);
 }
 
 } // End of namespace Director

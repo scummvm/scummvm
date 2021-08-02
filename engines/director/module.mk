@@ -44,6 +44,7 @@ MODULE_OBJS = \
 	lingo/xlibs/palxobj.o \
 	lingo/xlibs/orthoplayxobj.o \
 	lingo/xlibs/popupmenuxobj.o \
+	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
 	lingo/xlibs/videodiscxobj.o \
 	lingo/xlibs/winxobj.o
