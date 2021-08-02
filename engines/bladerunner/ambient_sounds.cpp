@@ -487,10 +487,8 @@ void AmbientSounds::load(SaveFileReadStream &f) {
 		f.skip(4); // track.nextPlayTime is not used after load
 		track.nextPlayTimeStart = now;
 #if BLADERUNNER_ORIGINAL_BUGS
-#else
-		sort(&(track.delayMin), &(track.delayMax));
-#endif // BLADERUNNER_ORIGINAL_BUGS
 		track.nextPlayTimeDiff  = _vm->_rnd.getRandomNumberRng(track.delayMin, track.delayMax);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		track.volumeMin = f.readInt();
 		track.volumeMax = f.readInt();
 		track.volume = f.readInt();
@@ -498,15 +496,34 @@ void AmbientSounds::load(SaveFileReadStream &f) {
 		track.panStartMax = f.readInt();
 		track.panEndMin = f.readInt();
 		track.panEndMax = f.readInt();
-#if BLADERUNNER_ORIGINAL_BUGS
-#else
-		sort(&(track.volumeMin), &(track.volumeMax));
-		sort(&(track.panStartMin), &(track.panStartMax));
-		sort(&(track.panEndMin), &(track.panEndMax));
-#endif // BLADERUNNER_ORIGINAL_BUGS
 		track.priority = f.readInt();
 		f.skip(4); // field_45
 		track.soundType = -1;
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// Since unused ambient sound track fields are unitialized
+		// don't keep garbage field values for non-active tracks
+		// This was basically an issue when calling _vm->_rnd.getRandomNumberRng()
+		// with uninitialized fields, but it's a good practice to sanitize the fields here anyway
+		if (!track.isActive) {
+			track.delayMin = 0u;
+			track.delayMax = 0u;
+			track.nextPlayTimeDiff  = 0u;
+			track.volumeMin = 0;
+			track.volumeMax = 0;
+			track.volume = 0;
+			track.panStartMin = 0;
+			track.panStartMax = 0;
+			track.panEndMin = 0;
+			track.panEndMax = 0;
+			track.priority = 0;
+		} else {
+			sort(&(track.delayMin), &(track.delayMax));
+			track.nextPlayTimeDiff  = _vm->_rnd.getRandomNumberRng(track.delayMin, track.delayMax);
+			sort(&(track.volumeMin), &(track.volumeMax));
+			sort(&(track.panStartMin), &(track.panStartMax));
+			sort(&(track.panEndMin), &(track.panEndMax));
+		}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 	}
 
 	for (int i = 0; i != kLoopingSounds; ++i) {
@@ -519,6 +536,14 @@ void AmbientSounds::load(SaveFileReadStream &f) {
 		track.volume = f.readInt();
 		track.pan = f.readInt();
 		track.soundType = -1;
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// Since unused ambient sound track fields are unitialized
+		// don't keep garbage field values for non-active tracks
+		if (!track.isActive) {
+			track.volume = 0;
+			track.pan = 0;
+		}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 	}
 
 	for (int i = 0; i != kLoopingSounds; ++i) {
