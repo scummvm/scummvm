@@ -373,8 +373,10 @@ void gPort::drawStringChars(
 		if (drawchar == '_' && underbar) {
 			len--;
 			drawchar = *s++;
-			if (textStyles & textStyleUnderBar) underscore = true;
-			if (textStyles & textStyleHiLiteBar) color = bgPen;
+			if (textStyles & textStyleUnderBar)
+				underscore = true;
+			if (textStyles & textStyleHiLiteBar)
+				color = bgPen;
 		}
 		x += font->charKern[drawchar];
 		DrawChar(font, drawchar, x, buffer, color, drowMod);
@@ -384,8 +386,12 @@ void gPort::drawStringChars(
 			uint8   *put = uBuffer + last_x;
 			int16   width = x - last_x;
 
-			while (width-- > 0) *put++ = color;
-			if (!(textStyles & textStyleUnderScore)) underscore = false;
+			while (width-- > 0) {
+				*put++ = color;
+			}
+
+			if (!(textStyles & textStyleUnderScore))
+				underscore = false;
 		}
 	}
 }
@@ -421,12 +427,14 @@ int16 gPort::drawClippedString(
 			charwidth   = font->charKern[drawchar]
 			              + font->charSpace[drawchar] + textSpacing;
 
-			if (xpos + charwidth >= clip.x) break;
+			if (xpos + charwidth >= clip.x)
+				break;
 			s++;
 		} else {
 			charwidth   = font->charKern[drawchar]
 			              + font->charSpace[drawchar] + textSpacing;
-			if (xpos + charwidth >= clip.x) break;
+			if (xpos + charwidth >= clip.x)
+				break;
 		}
 
 		s++;
@@ -443,12 +451,14 @@ int16 gPort::drawClippedString(
 	for (clipLen = 0; clipLen < len; clipLen++) {
 		int16       drawchar = s[clipLen];
 
-		if (drawchar == '_' && underbar) continue;
+		if (drawchar == '_' && underbar)
+			continue;
 
 		clipWidth += font->charKern[drawchar]
 		             + font->charSpace[drawchar] + textSpacing;
 
-		if (xpos > clip.x + clip.width) break;
+		if (xpos > clip.x + clip.width)
+			break;
 	}
 
 	//  Handle special case of negative kern value of 1st character
@@ -497,7 +507,8 @@ int16 gPort::drawClippedString(
 
 	//  Allocate a temporary bitmap
 
-	if (tempMap.bytes() == 0) return 0;
+	if (tempMap.bytes() == 0)
+		return 0;
 	tempMap.data = (uint8 *)TempAlloc(tempMap.bytes());
 	if (tempMap.data != NULL) {
 		//  Fill the buffer with background pen if we're
@@ -546,7 +557,8 @@ int16 gPort::drawClippedString(
 				}
 
 				flag ^= 1;
-				if (flag) shift++;
+				if (flag)
+					shift++;
 			}
 		}
 
@@ -566,7 +578,8 @@ int16 gPort::drawClippedString(
 	for (clipLen = 0; clipLen < len; clipLen++) {
 		int16       drawchar = s[clipLen];
 
-		if (drawchar == '_' && underbar) continue;
+		if (drawchar == '_' && underbar)
+			continue;
 
 		penMove += font->charKern[drawchar]
 		           + font->charSpace[drawchar] + textSpacing;
@@ -611,7 +624,8 @@ int16 gPort::drawClippedString(
 void gPort::drawText(
     const char      *str,                   /* string to draw               */
     int16           length) {
-	if (length < 0) length = strlen(str);
+	if (length < 0)
+		length = strlen(str);
 
 	if (length > 0)
 		penPos.x += drawClippedString(str, length, penPos.x, penPos.y);
@@ -686,20 +700,27 @@ void gPort::drawTextInBox(
 	width  = TextWidth(font, str, length, textStyles);
 
 	if (textStyles & (textStyleUnderScore | textStyleUnderBar)) {
-		if (font->baseLine + 2 >= font->height) height++;
+		if (font->baseLine + 2 >= font->height)
+			height++;
 	}
 
 	//  Calculate x position of text string
 
-	if (pos & textPosLeft) x = r.x + borders.x;
-	else if (pos & textPosRight) x = r.x + r.width - width - borders.x;
-	else x = r.x + (r.width - width) / 2;
+	if (pos & textPosLeft)
+		x = r.x + borders.x;
+	else if (pos & textPosRight)
+		x = r.x + r.width - width - borders.x;
+	else
+		x = r.x + (r.width - width) / 2;
 
 	//  Calculate y position of text string
 
-	if (pos & textPosHigh) y = r.y + borders.y;
-	else if (pos & textPosLow) y = r.y + r.height - height - borders.y;
-	else y = r.y + (r.height - height) / 2;
+	if (pos & textPosHigh)
+		y = r.y + borders.y;
+	else if (pos & textPosLow)
+		y = r.y + r.height - height - borders.y;
+	else
+		y = r.y + (r.height - height) / 2;
 
 	//  Calculate clipping region
 
@@ -749,12 +770,14 @@ void gPort::drawTextInBox(
 int16 TextWidth(gFont *font, const char *s, int16 length, int16 styles) {
 	int16           count = 0;
 
-	if (length < 0) length = strlen(s);
+	if (length < 0)
+		length = strlen(s);
 
 	while (length--) {
 		uint8       chr = *s++;
 
-		if (chr == '_' && (styles & textStyleBar)) continue;
+		if (chr == '_' && (styles & textStyleBar))
+			continue;
 
 		count += font->charKern[chr] + font->charSpace[chr];
 	}
@@ -763,55 +786,13 @@ int16 TextWidth(gFont *font, const char *s, int16 length, int16 styles) {
 		count += (font->baseLine + 1) / 2 +
 		         (font->height - font->baseLine - 1) / 2;
 	}
-	if (styles & textStyleOutline) count += 2;
-	else if (styles & textStyleThickOutline) count += 4;
-	if (styles & textStyleShadow) count += 1;
+	if (styles & textStyleOutline)
+		count += 2;
+	else if (styles & textStyleThickOutline)
+		count += 4;
+	if (styles & textStyleShadow)
+		count += 1;
 
-	return count;
-}
-
-/********* gtext.cpp/WhichChar ***************************************
-*
-*   NAME
-*       WhichChar -- search for character under mouse pointer
-*
-*   SYNOPSIS
-*       charNum = WhichChar( font, str, pick, maxLen );
-*
-*       int16 WhichChar( gFont *, uint8 *, int16, int16 );
-*
-*   FUNCTION
-*       This function is used by the gTextBox class to click on
-*       a character within a text box. It computes the width of
-*       each character in the string (as it would be rendered
-*       on the screen) and determines which of those characters
-*       the "pick" position falls upon.
-*
-*   INPUTS
-*       font        The font to use in the character-width calculation.
-*
-*       str         The string to search.
-*
-*       pick        The pick position, relative to the start of the string.
-*
-*       maxLen      The length of the string.
-*
-*   RESULT
-*       The index of the selected character.
-*
-**********************************************************************
-*/
-int16 WhichChar(gFont *font, uint8 *s, int16 length, int16 maxLen) {
-	int16           count = 0;
-
-	if (maxLen == -1) maxLen = strlen((char *)s);
-
-	for (count = 0; count < maxLen; count++) {
-		uint8       chr = *s++;
-
-		length -= font->charKern[chr] + font->charSpace[chr];
-		if (length < 0) break;
-	}
 	return count;
 }
 
@@ -853,7 +834,8 @@ int16 WhichChar(gFont *font, uint8 *s, int16 length, int16 maxLen) {
 int16 WhichIChar(gFont *font, uint8 *s, int16 length, int16 maxLen) {
 	int16           count = 0;
 
-	if (maxLen == -1) maxLen = strlen((char *)s);
+	if (maxLen == -1)
+		maxLen = strlen((char *)s);
 
 	for (count = 0; count < maxLen; count++) {
 		uint8       chr = *s++;
@@ -861,7 +843,8 @@ int16 WhichIChar(gFont *font, uint8 *s, int16 length, int16 maxLen) {
 
 		width = font->charKern[chr] + font->charSpace[chr];
 
-		if (length < width / 2) break;
+		if (length < width / 2)
+			break;
 		length -= width;
 	}
 	return count;
