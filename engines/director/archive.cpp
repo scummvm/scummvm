@@ -230,7 +230,7 @@ bool MacArchive::openFile(const Common::String &fileName) {
 		return false;
 	}
 
-	_pathName = _resFork->getBaseFileName();
+	_pathName = _resFork->getBaseFileName().toString();
 	if (_pathName.hasSuffix(".bin")) {
 		for (int i = 0; i < 4; i++)
 			_pathName.deleteLastChar();

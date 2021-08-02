@@ -115,11 +115,11 @@ String MacResManager::computeResForkMD5AsString(uint32 length) const {
 	return computeStreamMD5AsString(resForkStream, MIN<uint32>(length, _resForkSize));
 }
 
-bool MacResManager::open(const String &fileName) {
+bool MacResManager::open(const Path &fileName) {
 	return open(fileName, SearchMan);
 }
 
-bool MacResManager::open(const String &fileName, Archive &archive) {
+bool MacResManager::open(const Path &fileName, Archive &archive) {
 	close();
 
 #ifdef MACOSX
@@ -185,7 +185,7 @@ bool MacResManager::open(const String &fileName, Archive &archive) {
 	return false;
 }
 
-bool MacResManager::exists(const String &fileName) {
+bool MacResManager::exists(const Path &fileName) {
 	// Try the file name by itself
 	if (File::exists(fileName))
 		return true;
@@ -216,7 +216,7 @@ void MacResManager::listFiles(StringArray &files, const String &pattern) {
 	SearchMan.listMatchingMembers(memberList, pattern);
 	SearchMan.listMatchingMembers(memberList, pattern + ".rsrc");
 	SearchMan.listMatchingMembers(memberList, pattern + ".bin");
-	SearchMan.listMatchingMembers(memberList, constructAppleDoubleName(pattern));
+	SearchMan.listMatchingMembers(memberList, constructAppleDoubleName(pattern).toString());
 
 	for (ArchiveMemberList::const_iterator i = memberList.begin(), end = memberList.end(); i != end; ++i) {
 		String filename = (*i)->getName();
@@ -254,7 +254,7 @@ void MacResManager::listFiles(StringArray &files, const String &pattern) {
 
 		// Strip AppleDouble '._' prefix if applicable.
 		bool isAppleDoubleName = false;
-		const String filenameAppleDoubleStripped = disassembleAppleDoubleName(filename, &isAppleDoubleName);
+		const String filenameAppleDoubleStripped = disassembleAppleDoubleName(filename, &isAppleDoubleName).toString();
 
 		if (isAppleDoubleName) {
 			SeekableReadStream *stream = (*i)->createReadStream();
@@ -606,39 +606,41 @@ void MacResManager::readMap() {
 	}
 }
 
-String MacResManager::constructAppleDoubleName(String name) {
+Path MacResManager::constructAppleDoubleName(Path name) {
 	// Insert "._" before the last portion of a path name
-	for (int i = name.size() - 1; i >= 0; i--) {
+	String rawName = name.rawString();
+	for (int i = rawName.size() - 1; i >= 0; i--) {
 		if (i == 0) {
-			name.insertChar('_', 0);
-			name.insertChar('.', 0);
-		} else if (name[i] == '/') {
-			name.insertChar('_', i + 1);
-			name.insertChar('.', i + 1);
+			rawName.insertChar('_', 0);
+			rawName.insertChar('.', 0);
+		} else if (rawName[i] == DIR_SEPARATOR) {
+			rawName.insertChar('_', i + 1);
+			rawName.insertChar('.', i + 1);
 			break;
 		}
 	}
 
-	return name;
+	return Path(rawName, DIR_SEPARATOR);
 }
 
-String MacResManager::disassembleAppleDoubleName(String name, bool *isAppleDouble) {
+Path MacResManager::disassembleAppleDoubleName(Path name, bool *isAppleDouble) {
 	if (isAppleDouble) {
 		*isAppleDouble = false;
 	}
 
 	// Remove "._" before the last portion of a path name.
-	for (int i = name.size() - 1; i >= 0; --i) {
+	String rawName = name.rawString();
+	for (int i = rawName.size() - 1; i >= 0; --i) {
 		if (i == 0) {
-			if (name.size() > 2 && name[0] == '.' && name[1] == '_') {
-				name.erase(0, 2);
+			if (rawName.size() > 2 && rawName[0] == '.' && rawName[1] == '_') {
+				rawName.erase(0, 2);
 				if (isAppleDouble) {
 					*isAppleDouble = true;
 				}
 			}
-		} else if (name[i] == '/') {
-			if ((uint)(i + 2) < name.size() && name[i + 1] == '.' && name[i + 2] == '_') {
-				name.erase(i + 1, 2);
+		} else if (rawName[i] == DIR_SEPARATOR) {
+			if ((uint)(i + 2) < rawName.size() && rawName[i + 1] == '.' && rawName[i + 2] == '_') {
+				rawName.erase(i + 1, 2);
 				if (isAppleDouble) {
 					*isAppleDouble = true;
 				}
@@ -647,7 +649,7 @@ String MacResManager::disassembleAppleDoubleName(String name, bool *isAppleDoubl
 		}
 	}
 
-	return name;
+	return Path(rawName, DIR_SEPARATOR);
 }
 
 void MacResManager::dumpRaw() {
@@ -666,7 +668,7 @@ void MacResManager::dumpRaw() {
 				dataSize = len;
 			}
 
-			Common::String filename = Common::String::format("./dumps/%s-%s-%d", _baseFileName.c_str(), tag2str(_resTypes[i].id), j);
+			Common::String filename = Common::String::format("./dumps/%s-%s-%d", _baseFileName.toString().c_str(), tag2str(_resTypes[i].id), j);
 			_stream->read(data, len);
 
 			if (!out.open(filename)) {
