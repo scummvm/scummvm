@@ -108,7 +108,7 @@
 
 namespace Director {
 
-static const char *xlibName = "Videodisc";
+static const char *xlibName = "LaserDisc";
 
 static MethodProto xlibMethods[] = {
 	{ "new",			VideodiscXObj::m_new,			 3, 3,	200 },	// D2
@@ -155,7 +155,7 @@ void VideodiscXObj::close(int type) {
 }
 
 
-VideodiscXObject::VideodiscXObject(ObjectType ObjectType) :Object<VideodiscXObject>("Videodisc") {
+VideodiscXObject::VideodiscXObject(ObjectType ObjectType) :Object<VideodiscXObject>("LaserDisc") {
 	_objType = ObjectType;
 }
 
