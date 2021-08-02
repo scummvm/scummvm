@@ -178,8 +178,16 @@ protected:
 	static uint16 _active_notes[128];
 
 protected:
+	enum ParserType {
+		kParserTypeNone = 0,
+		kParserTypeRO,
+		kParserTypeXMI,
+		kParserTypeSMF
+	};
+
 	MidiDriver *_midi;
 	MidiParser *_parser;
+	ParserType _parserType;
 
 	Part *_parts;
 	bool _active;
