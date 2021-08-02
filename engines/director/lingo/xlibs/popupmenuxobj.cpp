@@ -93,62 +93,62 @@ void PopUpMenuXObj::m_new(int nargs) {
 }
 
 void PopUpMenuXObj::m_appendMenu(int nargs) {
-	 g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_appendMenu", nargs);
-	 g_lingo->dropStack(nargs);
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_appendMenu", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void PopUpMenuXObj::m_disableItem(int nargs) {
-	 g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_disableItem", nargs);
-	 g_lingo->dropStack(nargs);
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_disableItem", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void PopUpMenuXObj::m_enableItem(int nargs) {
-	 g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_enableItem", nargs);
-	 g_lingo->dropStack(nargs);
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_enableItem", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void PopUpMenuXObj::m_getItem(int nargs) {
-	 g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_getItem", nargs);
-	 g_lingo->dropStack(nargs);
-	 g_lingo->push(Datum());
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_getItem", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
 }
 
 void PopUpMenuXObj::m_getMenuID(int nargs) {
-	 g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_getMenuID", nargs);
-	 g_lingo->dropStack(nargs);
-	 g_lingo->push(Datum());
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_getMenuID", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
 }
 
 void PopUpMenuXObj::m_popNum(int nargs) {
-	 g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_popNum", nargs);
-	 g_lingo->dropStack(nargs);
-	 g_lingo->push(Datum());
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_popNum", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
 }
 
 void PopUpMenuXObj::m_popText(int nargs) {
-	 g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_popText", nargs);
-	 g_lingo->dropStack(nargs);
-	 g_lingo->push(Datum());
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_popText", nargs);
+	g_lingo->dropStack(nargs);
+	g_lingo->push(Datum());
 }
 
 void PopUpMenuXObj::m_setItem(int nargs) {
-	 g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_setItem", nargs);
-	 g_lingo->dropStack(nargs);
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_setItem", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void PopUpMenuXObj::m_setItemMark(int nargs) {
-	 g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_setItemMark", nargs);
-	 g_lingo->dropStack(nargs);
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_setItemMark", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void PopUpMenuXObj::m_smart(int nargs) {
-	 g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_smart", nargs);
-	 g_lingo->dropStack(nargs);
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_smart", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void PopUpMenuXObj::m_setItemIcon(int nargs) {
-	 g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_setItemIcon", nargs);
-	 g_lingo->dropStack(nargs);
+	g_lingo->printSTUBWithArglist("PopUpMenuXObj::m_setItemIcon", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 } // End of namespace Director
