@@ -56,8 +56,6 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 
 bool isButtonSprite(SpriteType spriteType);
 
-bool processQuitEvent(bool click = false); // events.cpp
-
 class RandomState {
 public:
 	uint32 _seed;

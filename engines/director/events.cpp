@@ -36,67 +36,31 @@
 
 namespace Director {
 
-bool processQuitEvent(bool click) {
-	Common::Event event;
-
-	while (g_system->getEventManager()->pollEvent(event)) {
-		if (event.type == Common::EVENT_QUIT) {
-			g_director->getCurrentMovie()->getScore()->_playState = kPlayStopped;
-			return true;
-		}
-
-		if (click) {
-			if (event.type == Common::EVENT_LBUTTONDOWN)
-				return true;
-		}
-	}
-
-	return false;
-}
-
-bool Window::processTransitionEvent(bool click) {
-	Common::Event event;
-
-	while (g_system->getEventManager()->pollEvent(event)) {
-		if (event.type == Common::EVENT_QUIT)
-			return true;
-		if (!processEvent(event)) {
-			if (click && event.type == Common::EVENT_LBUTTONDOWN)
-				return true;
-		}
-	}
-	return false;
-}
-
 uint32 DirectorEngine::getMacTicks() { return g_system->getMillis() * 60 / 1000.; }
 
-void DirectorEngine::processEvents() {
+bool DirectorEngine::processEvents(bool captureClick) {
 	debugC(3, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	debugC(3, kDebugEvents, "@@@@   Processing events");
 	debugC(3, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		_wm->processEvent(event);
 
-	uint endTime = g_system->getMillis() + 10;
-
-	while (g_system->getMillis() < endTime) {
-		while (g_system->getEventManager()->pollEvent(event)) {
-			if (_wm->processEvent(event)) {
-				// window manager has done something! update the channels
-				continue;
-			}
-
-			switch (event.type) {
-			case Common::EVENT_QUIT:
-				_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
-				break;
-			default:
-				break;
-			}
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			if (captureClick)
+				return true;
+			break;
+		default:
+			break;
 		}
-
-		g_system->delayMillis(10);
 	}
+
+	return false;
 }
 
 bool Window::processEvent(Common::Event &event) {

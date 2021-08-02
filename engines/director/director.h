@@ -230,7 +230,7 @@ public:
 	Archive *createArchive();
 
 	// events.cpp
-	void processEvents();
+	bool processEvents(bool captureClick = false);
 	uint32 getMacTicks();
 
 public:
