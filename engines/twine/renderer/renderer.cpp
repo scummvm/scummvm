@@ -1451,7 +1451,14 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	}
 
 	if (!bodyData.isAnimated()) {
+#if 0
+		// TODO: fill modeldata.flattenedpoints
+		int32 numOfPrimitives = 0;
+		RenderCommand* renderCmds = _renderCmds;
+		return renderModelElements(numOfPrimitives, bodyData, &renderCmds, &_modelData, modelRect);
+#else
 		error("Unsupported unanimated model render!");
+#endif
 	}
 	// restart at the beginning of the renderTable
 	if (!renderAnimatedModel(&_modelData, bodyData, _renderCmds, renderAngle, renderPos, modelRect)) {
