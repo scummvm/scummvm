@@ -147,6 +147,8 @@ protected:
 	String			_iconDir;
 
 public:
+	int				_scrollWindowPaddingX;
+	int				_scrollWindowPaddingY;
 	int				_gridItemHeight;
 	int				_gridItemWidth;
 	int				_gridHeaderHeight;
