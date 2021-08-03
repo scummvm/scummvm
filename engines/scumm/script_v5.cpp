@@ -2777,6 +2777,8 @@ void ScummEngine_v5::decodeParseString() {
 					strcpy(tmpBuf + diff, "5000");
 					strcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1);
 					printString(textSlot, (byte *)tmpBuf);
+				} if (_game.id == GID_MONKEY && _roomResource == 25 && vm.slot[_currentScript].number == 205) {
+					printPatchedMI1CannibalString(textSlot, _scriptPointer);
 				} else {
 					printString(textSlot, _scriptPointer);
 				}
@@ -2808,6 +2810,28 @@ void ScummEngine_v5::decodeParseString() {
 	}
 
 	_string[textSlot].saveDefault();
+}
+
+void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr) {
+	const char *msg = (const char *)ptr;
+
+#define MSG_WAIT "\xFF\x03"
+
+	if (strncmp((const char *)ptr, "/LMH.001/", 9) == 0) {
+		msg =
+"Oooh, that's nice." MSG_WAIT
+"Simple.  Just like one of mine." MSG_WAIT
+"And little.  Like mine.";
+	} else if (strncmp((const char *)ptr, "/LMH.002/", 9) == 0) {
+		msg =
+"And it says, `Made by Lemonhead`^" MSG_WAIT
+"^just like one of mine!" MSG_WAIT
+"We should take this to the Great Monkey.";
+	}
+
+#undef MSG_WAIT
+
+	printString(textSlot, (const byte *)msg);
 }
 
 } // End of namespace Scumm
