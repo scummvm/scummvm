@@ -211,8 +211,6 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 						pixels.push_back(data);
 					}
 				}
-				if (_bitsPerPixel == 32 && pixels.size() % (_surface->w * 3) == 0)
-					stream.readUint16BE();
 			}
 		}
 	}
