@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-02 19:57+0000\n"
-"PO-Revision-Date: 2021-08-01 17:17+0000\n"
+"PO-Revision-Date: 2021-08-03 11:25+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -1374,7 +1374,7 @@ msgstr "Config. do ScummVM: "
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2236 gui/options.cpp:2777
 msgid "Last browser path: "
-msgstr ""
+msgstr "Último caminho navegado: "
 
 #: gui/options.cpp:2241
 msgid "Theme:"
