@@ -537,9 +537,11 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 		assert(sampleHookId != -1);
 
 		bool isJumpToStart = false;
-		bool isJumpToLoop = false;
+		//bool isJumpToLoop = false;
 		if (_vm->_game.id == GID_CMI) {
 			isJumpToStart = (soundDesc->jump[jumpId].dest == soundDesc->marker[2].pos && !scumm_stricmp(soundDesc->marker[2].ptr, "start"));
+#if 0
+			// FIXME: Remove dead code?
 			if (!isJumpToStart) {
 				for (int m = 0; m < soundDesc->numMarkers; m++) {
 					if (soundDesc->jump[jumpId].dest == soundDesc->marker[m].pos) {
@@ -551,6 +553,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 					}
 				}
 			}
+#endif
 		}
 
 		debug(5, "SwToNeReg(trackId:%d) - JUMP found - sound:%d, track hookId:%d, data hookId:%d", track->trackId, track->soundId, track->curHookId, sampleHookId);
