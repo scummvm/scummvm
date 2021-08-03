@@ -363,7 +363,7 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
-	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
 
 	loadPlatformIcons();
 	loadFlagIcons();
@@ -392,7 +392,7 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
-	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
 
 	loadPlatformIcons();
 	loadFlagIcons();
@@ -712,14 +712,14 @@ void GridWidget::calcInnerHeight() {
 	int row = 0;
 	int col = 0;
 	int lastRowHeight = 0;
-	Common::Point p(_gridXSpacing, _gridYSpacing);
+	Common::Point p(_scrollWindowPaddingX, _scrollWindowPaddingY);
 
 	for (int k = 0; k < (int)_sortedEntryList.size(); ++k) {
 		if (_sortedEntryList[k].isHeader) {
 			while (col != 0) {
 				if (++col >= _itemsPerRow) {
 					col = 0;
-					p.x = _gridXSpacing;
+					p.x = _scrollWindowPaddingX;
 					++row;
 					p.y += lastRowHeight;
 					lastRowHeight = 0;
@@ -737,7 +737,7 @@ void GridWidget::calcInnerHeight() {
 				p.y += lastRowHeight;
 				lastRowHeight = 0;
 				col = 0;
-				p.x = _gridXSpacing;
+				p.x = _scrollWindowPaddingX;
 			} else {
 				p.x += _sortedEntryList[k].rect.width() + _gridXSpacing;
 			}
@@ -746,13 +746,13 @@ void GridWidget::calcInnerHeight() {
 
 	_rows = row;
 
-	_innerHeight = p.y + _gridItemHeight + _gridYSpacing + _trayHeight;
-	_innerWidth = _gridXSpacing + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
+	_innerHeight = p.y + _gridItemHeight + _scrollWindowPaddingY + _trayHeight;
+	_innerWidth = 2 * _scrollWindowPaddingX + (_itemsPerRow * (_gridItemWidth + _gridXSpacing) - _gridXSpacing);
 }
 
 void GridWidget::calcEntrySizes() {
 	_gridHeaderHeight = kLineHeight;
-	_gridHeaderWidth = _scrollWindowWidth - _scrollBarWidth - 2 * _gridXSpacing;
+	_gridHeaderWidth = _scrollWindowWidth - _scrollBarWidth - 2 * _scrollWindowPaddingX;
 
 	for (uint i = 0; i != _sortedEntryList.size(); ++i) {
 		GridItemInfo *entry = &_sortedEntryList[i];
@@ -792,7 +792,10 @@ void GridWidget::reflowLayout() {
 	}
 
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
-	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+	_scrollWindowPaddingX = _minGridXSpacing;
+	_scrollWindowPaddingY = _minGridYSpacing;
+	_gridYSpacing = _minGridYSpacing;
 
 	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
 
@@ -802,8 +805,12 @@ void GridWidget::reflowLayout() {
 	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight * _isTitlesVisible);
 	_gridItemWidth = _thumbnailWidth;
 
-	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
-	_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _minGridXSpacing) - _scrollBarWidth) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, _minGridXSpacing);
+	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _scrollWindowPaddingX) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
+	if (_itemsPerRow == 1) {
+		_gridXSpacing = 0;
+	} else {
+		_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _scrollWindowPaddingX) - _scrollBarWidth) - (_itemsPerRow * _gridItemWidth)) / (_itemsPerRow - 1), _minGridXSpacing);
+	}
 
 	calcEntrySizes();
 	calcInnerHeight();
@@ -852,7 +859,7 @@ void GridWidget::openTrayAtSelected() {
 
 void GridWidget::scrollBarRecalc() {
 	_scrollBar->_numEntries = _innerHeight;
-	_scrollBar->_entriesPerPage = _scrollWindowHeight - _gridYSpacing;
+	_scrollBar->_entriesPerPage = _scrollWindowHeight - 2 * _scrollWindowPaddingY;
 	_scrollBar->_currentPos = _scrollPos;
 	_scrollBar->_singleStep = kLineHeight;
 
