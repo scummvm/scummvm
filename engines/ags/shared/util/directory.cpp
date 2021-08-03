@@ -114,11 +114,6 @@ bool GetFiles(const String &dir_path, std::vector<String> &files) {
 
 } // namespace Directory
 
-FindFile::FindFile(const FindFile &ff) {
-	_files = ff._files;
-	_index = ff._index;
-}
-
 FindFile::~FindFile() {
 	Close();
 }

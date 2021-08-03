@@ -72,7 +72,6 @@ private:
 
 public:
 	FindFile() {}
-	FindFile(const FindFile &ff);
 	~FindFile();
 	static FindFile OpenFiles(const String &path, const String &wildcard = "*") {
 		return Open(path, wildcard, true, false);
