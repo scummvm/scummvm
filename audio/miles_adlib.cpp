@@ -143,7 +143,7 @@ public:
 	void setVolume(byte volume);
 
 private:
-	bool _modeOPL3;
+	OPL::Config::OplType _oplType;
 	byte _modePhysicalFmVoicesCount;
 	byte _modeVirtualFmVoicesCount;
 	bool _modeStereo;
@@ -282,7 +282,7 @@ MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(InstrumentEntry *instrumentTableP
 
 	// Set up for OPL3, we will downgrade in case we can't create OPL3 emulator
 	// regular AdLib (OPL2) card
-	_modeOPL3 = true;
+	_oplType = OPL::Config::kOpl3;
 	_modeVirtualFmVoicesCount = 20;
 	_modePhysicalFmVoicesCount = 18;
 	_modeStereo = true;
@@ -304,13 +304,14 @@ MidiDriver_Miles_AdLib::~MidiDriver_Miles_AdLib() {
 }
 
 int MidiDriver_Miles_AdLib::open() {
-	if (_modeOPL3) {
+	if (_oplType == OPL::Config::kOpl3) {
 		// Try to create OPL3 first
 		_opl = OPL::Config::create(OPL::Config::kOpl3);
 	}
+	// TODO Add support for dual OPL2
 	if (!_opl) {
 		// not created yet, downgrade to OPL2
-		_modeOPL3 = false;
+		_oplType = OPL::Config::kOpl2;
 		_modeVirtualFmVoicesCount = 16;
 		_modePhysicalFmVoicesCount = 9;
 		_modeStereo = false;
@@ -365,26 +366,35 @@ void MidiDriver_Miles_AdLib::resetData() {
 }
 
 void MidiDriver_Miles_AdLib::resetAdLib() {
-	if (_modeOPL3) {
+	if (_oplType == OPL::Config::kOpl3) {
 		setRegister(0x105, 1); // enable OPL3
 		setRegister(0x104, 0); // activate 18 2-operator FM-voices
 	}
 
-	setRegister(0x01, 0x20); // enable waveform control on both operators
-	setRegister(0x04, 0xE0); // Timer control
+	// enable waveform control on both operators
+	setRegister(0x01, _oplType == OPL::Config::kOpl3 ? 0 : 0x20);
+	if (_oplType == OPL::Config::kOpl3)
+		setRegister(0x101, 0);
+	// Timer control
+	setRegister(0x02, 0);
+	setRegister(0x03, 0);
+	setRegister(0x04, 0x60);
+	setRegister(0x04, 0x80);
 
-	setRegister(0x08, 0); // select FM music mode
-	setRegister(0xBD, 0); // disable Rhythm
+	// Set note select and disable CSM mode
+	setRegister(0x08, 0);
+	// disable Rhythm; set vibrato and modulation depth to 1
+	setRegister(0xBD, 0xC0);
 
 	// reset FM voice instrument data
-	resetAdLibOperatorRegisters(0x20, 0);
-	resetAdLibOperatorRegisters(0x60, 0);
-	resetAdLibOperatorRegisters(0x80, 0);
+	resetAdLibOperatorRegisters(0x20, 1);
+	resetAdLibOperatorRegisters(0x40, 0x3F);
+	resetAdLibOperatorRegisters(0x60, 0xFF);
+	resetAdLibOperatorRegisters(0x80, 0x0F);
 	resetAdLibFMVoiceChannelRegisters(0xA0, 0);
 	resetAdLibFMVoiceChannelRegisters(0xB0, 0);
 	resetAdLibFMVoiceChannelRegisters(0xC0, 0);
 	resetAdLibOperatorRegisters(0xE0, 0);
-	resetAdLibOperatorRegisters(0x40, 0x3F);
 }
 
 void MidiDriver_Miles_AdLib::resetAdLibOperatorRegisters(byte baseRegister, byte value) {
@@ -866,7 +876,7 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 		// Feedback / Algorithm
 		byte regC0 = instrumentPtr->regC0;
 
-		if (_modeOPL3) {
+		if (_oplType == OPL::Config::kOpl3) {
 			// Panning for OPL3
 			byte panning = _midiChannels[midiChannel].currentPanning;
 
@@ -1128,11 +1138,12 @@ void MidiDriver_Miles_AdLib::deinitSource(uint8 source) {
 }
 
 void MidiDriver_Miles_AdLib::setRegister(int reg, int value) {
-	if (!(reg & 0x100)) {
+	if (!(reg & 0x100) || _oplType == OPL::Config::kDualOpl2) {
 		_opl->write(0x220, reg);
 		_opl->write(0x221, value);
 		//warning("OPL write %x %x (%d)", reg, value, value);
-	} else {
+	}
+	if ((reg & 0x100) || _oplType == OPL::Config::kDualOpl2) {
 		_opl->write(0x222, reg & 0xFF);
 		_opl->write(0x223, value);
 		//warning("OPL3 write %x %x (%d)", reg & 0xFF, value, value);
