@@ -72,6 +72,11 @@ String punycode_decodefilename(const String src1);
  */
 Path punycode_decodepath(const Path &src);
 
+/**
+ * Convert path to Punycode with '/' as separators
+ */
+Path punycode_encodepath(const Path &src);
+
 bool punycode_hasprefix(const String src);
 
 bool punycode_needEncode(const String src);
