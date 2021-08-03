@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "common/keyboard.h"
 #include "common/memstream.h"
+#include "common/punycode.h"
 #include "common/tokenizer.h"
 #include "common/zlib.h"
 
@@ -809,6 +810,10 @@ int compareStrings(const Common::String &s1, const Common::String &s2) {
 		p2++;
 	}
 	return c1 - c2;
+}
+
+Common::String encodePathForDump(const Common::String &path) {
+	return punycode_encodepath(Common::Path(path, g_director->_dirSeparator)).toString();
 }
 
 } // End of namespace Director

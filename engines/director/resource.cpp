@@ -282,7 +282,7 @@ void Window::loadEXEv3(Common::SeekableReadStream *stream) {
 			byte *buf = (byte *)malloc(mmmSize);
 			stream->read(buf, mmmSize);
 			stream->seek(riffOffset);
-			Common::String fname = Common::String::format("./dumps/%s", mmmFileName.c_str());
+			Common::String fname = Common::String::format("./dumps/%s", encodePathForDump(mmmFileName).c_str());
 
 
 			if (!out.open(fname.c_str(), true)) {
