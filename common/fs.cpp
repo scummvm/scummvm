@@ -240,10 +240,10 @@ const ArchiveMemberPtr FSDirectory::getMember(const Path &path) const {
 	FSNode *node = lookupCache(_fileCache, name);
 
 	if (!node || !node->exists()) {
-		warning("FSDirectory::getMember: '%s' does not exist", name.c_str());
+		warning("FSDirectory::getMember: '%s' does not exist", Common::toPrintable(name).c_str());
 		return ArchiveMemberPtr();
 	} else if (node->isDirectory()) {
-		warning("FSDirectory::getMember: '%s' is a directory", name.c_str());
+		warning("FSDirectory::getMember: '%s' is a directory", Common::toPrintable(name).c_str());
 		return ArchiveMemberPtr();
 	}
 
@@ -260,7 +260,7 @@ SeekableReadStream *FSDirectory::createReadStreamForMember(const Path &path) con
 		return nullptr;
 	SeekableReadStream *stream = node->createReadStream();
 	if (!stream)
-		warning("FSDirectory::createReadStreamForMember: Can't create stream for file '%s'", name.c_str());
+		warning("FSDirectory::createReadStreamForMember: Can't create stream for file '%s'", Common::toPrintable(name).c_str());
 
 	return stream;
 }
@@ -303,12 +303,12 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 				// Always warn in this case as it's when there are 2 directories at the same place with different case
 				// That means a problem in user installation as lookups are always done case insensitive
 				warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring sub-directory '%s'",
-				        name.c_str());
+				        Common::toPrintable(name).c_str());
 			} else {
 				if (_subDirCache.contains(lowercaseName)) {
 					if (!_ignoreClashes) {
 						warning("FSDirectory::cacheDirectory: name clash when building subDirCache with subdirectory '%s'",
-						        name.c_str());
+						        Common::toPrintable(name).c_str());
 					}
 				}
 				cacheDirectoryRecursive(*it, depth - 1, _flat ? prefix : lowercaseName + DIR_SEPARATOR);
@@ -318,7 +318,7 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const Path& pr
 			if (_fileCache.contains(lowercaseName)) {
 				if (!_ignoreClashes) {
 					warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring file '%s'",
-					        name.c_str());
+					        Common::toPrintable(name).c_str());
 				}
 			} else {
 				_fileCache[lowercaseName] = *it;
