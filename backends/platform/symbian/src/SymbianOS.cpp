@@ -26,9 +26,13 @@
 #pragma GCC diagnostic ignored "-Wc++14-compat"
 #endif
 
+#include <utf.h>
+#include <apgcli.h>
+#include <eikenv.h> // for CEikonEnv::Static()
 #include <sdlapp.h> // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
 #include <bautils.h>
-#include <eikenv.h> // for CEikonEnv::Static()
+#include <e32base.h>
+#include <symbian_helper.h>
 
 #if (__GNUC__ && __cplusplus)
 // If a pop has no matching push, the command-line options are restored.
@@ -169,6 +173,9 @@ Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 bool OSystem_SDL_Symbian::hasFeature(Feature f) {
 	if (f == kFeatureFullscreenMode)
 		return false;
+#if defined(USE_CLOUD)
+	if (f == kFeatureOpenUrl) return true;
+#endif
 
 	return OSystem_SDL::hasFeature(f);
 }
@@ -179,6 +186,64 @@ Common::KeymapperDefaultBindings *OSystem_SDL_Symbian::getKeymapperDefaultBindin
 	return keymapperDefaultBindings;
 }
 
+_LIT8(KHTMLMimeType, "text/html");
+_LIT(KOperaName,"OperaMobile.exe");
+const size_t kOpera10500_UID = 537056398;
+const char kFailMsg[] = "RApaLsSession failed: error = %d";
+
+bool OSystem_SDL_Symbian::openUrl(const Common::String &url) {
+#if defined(USE_CLOUD)
+#ifdef __S60_3X__
+	TAutoClose2<RApaLsSession> appArcSession;
+	TInt error = appArcSession->Connect();
+	if(error != KErrNone) {
+		warning(kFailMsg, error);
+		return false;
+	}
+	appArcSession->GetAllApps(); // inits RApaLsSession
+
+	TUid browserUID;
+	TDataType html = TDataType(KHTMLMimeType);
+	error = appArcSession->AppForDataType(html, browserUID);
+	if(browserUID == KNullUid) {
+		warning("Can't find any browser. Try to install Opera.");
+		return false;
+	}
+
+	TApaAppInfo info;
+	error = appArcSession->GetAppInfo(info, browserUID);
+
+	// Give more time to obtain app list
+	while(error == RApaLsSession::EAppListInvalid) {
+		error = appArcSession->GetAppInfo(info, browserUID);
+		User::After(TTimeIntervalMicroSeconds32(100000));  // 0.1 secs
+	}
+
+	// hack: We should run Opera 10 itself, not launcher, because
+	// Opera's launcher doesn't recognize commandline args.
+	if(browserUID.iUid == kOpera10500_UID) {
+		TParse pth;
+		pth.Set(info.iFullName, NULL , NULL);
+		TPtrC name = pth.NameAndExt();
+		info.iFullName.SetLength(info.iFullName.Length() - name.Length());
+		info.iFullName.Append(KOperaName);
+	}
+
+	HBufC *addr = CnvUtfConverter::ConvertToUnicodeFromUtf8L(TPtrC8((TUint8 *)url.c_str(), url.size()));
+	CleanupStack::PushL(addr);
+
+	TAutoClose2<RProcess> proc;
+	error = proc->Create(info.iFullName, *addr);
+	if(error == KErrNone)
+		proc->Resume();
+	else
+		warning("Failure while browser starts = %d", error);
+
+	CleanupStack::PopAndDestroy(addr);
+#endif //__S60_3X__
+#endif //USE_CLOUD
+	return false;
+}
 
 // Symbian bsearch implementation is flawed.
 void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
