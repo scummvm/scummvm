@@ -152,8 +152,10 @@
 				/>
 				<widget name = 'laGroupPopupDesc'
 						type = 'OptionsLabel'
+						textalign = 'end'
 				/>
 				<widget name = 'laGroupPopup'
+						width = '150'
 						type = 'PopUp'
 				/>
 				<space />
