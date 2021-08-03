@@ -59,6 +59,8 @@ namespace Common {
 #define INITIAL_BIAS 72
 #define SMAX 0x7fff
 
+#define SPECIAL_SYMBOLS "/\":*[]+|\\?%<>,;="
+
 static uint32 adapt_bias(uint32 delta, unsigned n_points, int is_first) {
 	uint32 k;
 
@@ -196,7 +198,7 @@ bool punycode_hasprefix(const String src) {
 
 bool punycode_needEncode(const String src) {
 	for (uint si = 0; si < src.size(); si++) {
-		if (src[si] & 0x80 || src[si] < 0x20) {
+		if (src[si] & 0x80 || src[si] < 0x20 || strchr(SPECIAL_SYMBOLS, src[si])) {
 			return true;
 		}
 	}
@@ -304,7 +306,7 @@ String punycode_encodefilename(const String src) {
 			dst += '\x81';
 			dst += '\x79';
 		// Encode special symbols and non-printables
-		} else if (strchr("/\":*[]+|\\?%<>,;=", src[i]) || (byte)src[i] < 0x20) {
+		} else if (strchr(SPECIAL_SYMBOLS, src[i]) || (byte)src[i] < 0x20) {
 			dst += '\x81';
 			dst += (byte)src[i] + '\x80';
 		} else {
@@ -358,6 +360,24 @@ Path punycode_decodepath(const Path &src) {
 
 	while (!tok.empty()) {
 		res += punycode_decodefilename(tok.nextToken());
+		if (!tok.empty())
+			res += DIR_SEPARATOR;
+	}
+
+	return Path(res, DIR_SEPARATOR);
+}
+
+Path punycode_encodepath(const Path &src) {
+	StringTokenizer tok(src.rawString(), Common::String(DIR_SEPARATOR));
+	String res;
+
+	while (!tok.empty()) {
+		String part = tok.nextToken();
+		if (punycode_needEncode(part))
+			res += punycode_encodefilename(part);
+		else
+			res += part;
+
 		if (!tok.empty())
 			res += DIR_SEPARATOR;
 	}
