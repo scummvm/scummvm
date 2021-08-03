@@ -1726,6 +1726,16 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 		delete[] patchedScript;
 	} else
 
+	// For some reason, the CD version of Monkey Island 1 removes some of
+	// the text when giving the wimpy idol to the cannibals. It looks like
+	// a mistake, because one of the text that is printed is immediately
+	// overwritten. This probably affects all CD versions, so we just have
+	// to add further patches as they are reported.
+
+	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25) {
+		tryPatchMI1CannibalScript(getResourceAddress(type, idx), size);
+	} else
+
 	// There is a cracked version of Maniac Mansion v2 that attempts to
 	// remove the security door copy protection. With it, any code is
 	// accepted as long as you get the last digit wrong. Unfortunately,
@@ -1768,6 +1778,73 @@ bool ScummEngine::verifyMI2MacBootScript(byte *buf, int size) {
 		warning("Unexpected MI2 Mac boot script length: %d", size);
 		return false;
 	}
+	return true;
+}
+
+bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
+	assert(_game.id == GID_MONKEY);
+
+	int expectedSize = -1;
+	int scriptOffset = -1;
+	int scriptLength = -1;
+	Common::String expectedMd5;
+	int patchOffset = -1;
+	int patchLength = -1;
+
+	switch (_language) {
+	case Common::EN_ANY:
+		expectedSize = 82906;
+		scriptOffset = 73883;
+		scriptLength = 607;
+		expectedMd5 = "98b1126a836ef5bfefff10b605b20555";
+		patchOffset = 167;
+		patchLength = 126;
+		break;
+	default:
+		return false;
+	}
+
+	if (size == expectedSize) {
+		// There isn't enough space in the script for the revised
+		// texts, so these abbreviations will be expanded in
+		// decodeParseString().
+		const byte patchData[] = {
+			0x14, 0x03, 0x0F,       // print(3,[Text("/LMH.001/");
+			0x2F, 0x4C, 0x4D, 0x48,
+			0x2E, 0x30, 0x30, 0x31,
+			0x2F, 0x00,
+			0xAE, 0x02,             // WaitForMessage();
+			0x14, 0x03, 0x0F,       // print(3,[Text("/LMH.001/");
+			0x2F, 0x4C, 0x4D, 0x48,
+			0x2E, 0x30, 0x30, 0x32,
+			0x2F,			// No terminating 0x00!
+		};
+
+		byte *scriptPtr = buf + scriptOffset;
+
+		// Check that the data is a local script.
+		if (READ_BE_UINT32(scriptPtr) != MKTAG('L','S','C','R'))
+			return false;
+
+		// Check that the first instruction to be patched is o5_print
+		if (scriptPtr[patchOffset] != 0x14)
+			return false;
+
+		// Check that the MD5 sum matches a known patchable script.
+		Common::MemoryReadStream stream(buf + scriptOffset, scriptLength);
+		Common::String md5 = Common::computeStreamMD5AsString(stream);
+
+		if (md5 != expectedMd5)
+			return false;
+
+		// Pad the rest of the replaced script part with spaces before
+		// terminating the string.
+
+		memcpy(scriptPtr + patchOffset, patchData, sizeof(patchData));
+		memset(scriptPtr + patchOffset + sizeof(patchData), 32, patchLength - sizeof(patchData) - 1);
+		scriptPtr[patchOffset + patchLength - 1] = 0;
+	}
+
 	return true;
 }
 
