@@ -102,6 +102,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for alternate Russian SQ5.
    - Added support for alternate Russian Torin's Passage.
    - Added support for fan game Soulshade Asylum.
+   - SCI1.1 views are now scaled accurately.
    - Fixed sounds not stopping or restarting correctly.
    - Fixed sound issues when restoring SCI0 games.
    - Fixed corruption when "Prefer digital sound effects" was disabled in SCI1 games.
