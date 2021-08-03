@@ -77,10 +77,14 @@ public:
 
 	void setCast(CastMemberID memberID);
 	bool isQDShape();
+	Graphics::Surface *getQDMatte();
+	void createQDMatte();
 
 	Frame *_frame;
 	Score *_score;
 	Movie *_movie;
+
+	Graphics::FloodFill *_matte; // matte for quickdraw shape
 
 	CastMemberID _scriptId;
 	byte _colorcode; // x40 editable, 0x80 moveable

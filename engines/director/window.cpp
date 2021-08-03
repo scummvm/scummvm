@@ -81,7 +81,14 @@ Window::~Window() {
 }
 
 void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
-	const Graphics::Surface *mask = channel->getMask(true);
+	const Graphics::Surface *mask;
+
+	// in D3, we have inverted QDshape
+	if (channel->_sprite->isQDShape() && channel->_sprite->_ink == kInkTypeMatte)
+		mask = channel->_sprite->getQDMatte();
+	else
+		mask = channel->getMask(true);
+
 	Common::Rect srcRect = channel->getBbox();
 	srcRect.clip(destRect);
 
