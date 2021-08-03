@@ -23,7 +23,7 @@
 #pragma once
 
 #include "constants.h"
-#include "../scummvm/common/keyboard.h"
+#include "common/keyboard.h"
 
 class EN : public LangConstants {
 public:
