@@ -370,12 +370,12 @@ int Win32ResourceArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 const Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::Path &path) const {
 	Common::String name = path.toString();
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name.toString(), this));
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
 Common::SeekableReadStream *Win32ResourceArchive::createReadStreamForMember(const Common::Path &path) const {
 	Common::String name = path.toString();
-	TCHAR *tName = Win32::stringToTchar(name.toString());
+	TCHAR *tName = Win32::stringToTchar(name);
 	HRSRC resource = FindResource(NULL, tName, MAKEINTRESOURCE(256));
 	free(tName);
 
