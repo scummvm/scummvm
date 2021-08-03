@@ -614,7 +614,7 @@ void Holomap::processHolomap() {
 		if (fadeInPalette) {
 			fadeInPalette = false;
 			// TODO: this does a flip - which puts stuff onto the screen that shouldn't be there
-			//_engine->_screens->fadeToPal(_engine->_screens->paletteRGBA);
+			//_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBA);
 		}
 	}
 
