@@ -1159,6 +1159,14 @@ bool TwinEEngine::unlockAchievement(const Common::String &id) {
 	return AchMan.setAchievement(id);
 }
 
+Common::Rect TwinEEngine::centerOnScreenX(int32 w, int32 y, int32 h) const {
+	const int32 left = width() / 2 - w / 2;
+	const int32 right = left + w;
+	const int32 top = y;
+	const int32 bottom = top + h;
+	return Common::Rect(left, top, right, bottom);
+}
+
 Common::Rect TwinEEngine::centerOnScreen(int32 w, int32 h) const {
 	const int32 left = width() / 2 - w / 2;
 	const int32 right = left + w;

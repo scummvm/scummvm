@@ -503,7 +503,9 @@ void Holomap::processHolomap() {
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(COLOR_9);
-	_engine->_renderer->setCameraPosition(_engine->width() / 2, 190, 128, 1024, 1024);
+	const int32 cameraPosX = _engine->width() / 2;
+	const int32 cameraPosY = 190;
+	_engine->_renderer->setCameraPosition(cameraPosX, cameraPosY, 128, 1024, 1024);
 
 	int32 currentLocation = _engine->_scene->_currentSceneIdx;
 	_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
@@ -542,21 +544,21 @@ void Holomap::processHolomap() {
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::HolomapLeft)) {
-			xRot += ANGLE_1;
+			xRot += ANGLE_2;
 			rotate = true;
 			time = _engine->_lbaTime;
 		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapRight)) {
-			xRot -= 8;
+			xRot -= ANGLE_2;
 			rotate = true;
 			time = _engine->_lbaTime;
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::HolomapUp)) {
-			yRot += 8;
+			yRot += ANGLE_2;
 			rotate = true;
 			time = _engine->_lbaTime;
 		} else if (_engine->_input->isActionActive(TwinEActionType::HolomapDown)) {
-			yRot -= 8;
+			yRot -= ANGLE_2;
 			rotate = true;
 			time = _engine->_lbaTime;
 		}
@@ -583,7 +585,7 @@ void Holomap::processHolomap() {
 
 		if (redraw) {
 			redraw = false;
-			const Common::Rect rect(170, 0, 470, 330);
+			const Common::Rect &rect = _engine->centerOnScreenX(300, 0, 330);
 			_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0, true);
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
@@ -594,7 +596,8 @@ void Holomap::processHolomap() {
 			renderLocations(xRot, yRot, 0, true);
 			drawHolomapText(_engine->width() / 2, 25, "HoloMap");
 			if (rotate) {
-				_engine->_menu->drawRectBorders(300, 170, 340, 210);
+				const Common::Rect &targetRect = _engine->centerOnScreen(40, 40);
+				_engine->_menu->drawRectBorders(targetRect.left, cameraPosY - 20, targetRect.right, cameraPosY + 20);
 			}
 		}
 

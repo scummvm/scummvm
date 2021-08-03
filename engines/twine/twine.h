@@ -300,6 +300,7 @@ public:
 	int height() const;
 	Common::Rect rect() const;
 	Common::Rect centerOnScreen(int32 w, int32 h) const;
+	Common::Rect centerOnScreenX(int32 w, int32 y, int32 h) const;
 
 	void initSceneryView();
 	void exitSceneryView();
