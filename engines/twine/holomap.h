@@ -85,6 +85,7 @@ private:
 	void prepareHolomapProjectedPositions();
 	void prepareHolomapPolygons();
 	void renderHolomapSurfacePolygons();
+	void renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData);
 
 public:
 	Holomap(TwinEEngine *engine);

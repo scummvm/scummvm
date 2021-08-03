@@ -286,6 +286,29 @@ void Holomap::renderHolomapPointModel(const Location &location, int32 x, int32 y
 	// TODO: update the screen _engine->copyBlockPhys(_engine->rect());
 }
 
+void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData) {
+	const int16 newAngle = move.getRealAngle(_engine->_lbaTime);
+	if (move.numOfStep == 0) {
+		_engine->_movements->setActorAngleSafe(ANGLE_0, -ANGLE_90, 500, &move);
+	}
+
+	if (_engine->_animations->setModelAnimation(frameNumber, animData, bodyData, &animTimerData)) {
+		frameNumber++;
+		if (frameNumber >= animData.getNumKeyframes()) {
+			frameNumber = animData.getLoopFrame();
+		}
+	}
+	const Common::Rect rect(0, _engine->height() - 280, 200, _engine->height() - 1);
+	_engine->_renderer->setCameraPosition(rect.width() / 2, _engine->height() - 80, 128, 900, 900);
+	_engine->_renderer->setCameraAngle(0, 0, 0, 60, 128, 0, 30000);
+	_engine->_renderer->setLightVector(-60, 128, 0);
+	// background of the vehicle
+	_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
+	Common::Rect dummy;
+	_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, newAngle, ANGLE_0, bodyData, dummy);
+	_engine->copyBlockPhys(rect);
+}
+
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	debug("Draw trajectory index %i", trajectoryIndex);
 
@@ -302,8 +325,11 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 	loadHolomapGFX();
 	ScopedEngineFreeze timeFreeze(_engine);
-	_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
-	_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, 5300);
+	const int32 cameraPosX = _engine->width() / 2 + 80;
+	const int32 cameraPosY = _engine->height() / 2;
+	const int32 extraZRot = 5300;
+	_engine->_renderer->setCameraPosition(cameraPosX, cameraPosY, 128, 1024, 1024);
+	_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, extraZRot);
 
 	renderHolomapSurfacePolygons();
 
@@ -342,32 +368,15 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			local18 = _engine->_lbaTime + 3;
 		}
 
-		const int16 newAngle = move.getRealAngle(_engine->_lbaTime);
-		if (move.numOfStep == 0) {
-			_engine->_movements->setActorAngleSafe(ANGLE_0, -ANGLE_90, 500, &move);
-		}
+		renderHolomapVehicle(frameNumber, move, animTimerData, bodyData, animData);
 
-		// render the vehicle you travel with
-		if (_engine->_animations->setModelAnimation(frameNumber, animData, bodyData, &animTimerData)) {
-			frameNumber++;
-			if (frameNumber >= animData.getNumKeyframes()) {
-				frameNumber = animData.getLoopFrame();
-			}
-		}
-		_engine->_renderer->setCameraPosition(100, 400, 128, 900, 900);
-		_engine->_renderer->setCameraAngle(0, 0, 0, 60, 128, 0, 30000);
-		_engine->_renderer->setLightVector(-60, 128, 0);
-		const Common::Rect rect(0, 200, 199, 479);
-		_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
-		Common::Rect dummy;
-		_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, newAngle, ANGLE_0, bodyData, dummy);
-		_engine->copyBlockPhys(rect);
-		_engine->_renderer->setCameraPosition(400, 240, 128, 1024, 1024);
-		_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, 5300);
+		// now render the holomap path
+		_engine->_renderer->setCameraPosition(cameraPosX, cameraPosY, 128, 1024, 1024);
+		_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, extraZRot);
 		_engine->_renderer->setLightVector(data->pos.x, data->pos.y, 0);
 
 		// animate the path from point 1 to point 2 by rendering a point model on each position
-		// on the global every 40 timeunits
+		// on the globe every 40 timeunits
 		if (frameTime + 40 <= _engine->_lbaTime) {
 			frameTime = _engine->_lbaTime;
 			int32 modelX;
