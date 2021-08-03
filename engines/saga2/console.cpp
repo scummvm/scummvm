@@ -71,6 +71,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 
 	registerCmd("teleport_npc_here", WRAP_METHOD(Console, cmdTeleportNPCHere));
 
+	registerCmd("teleport_party_here", WRAP_METHOD(Console, cmdTeleportPartyHere));
+
 	registerCmd("save_loc", WRAP_METHOD(Console, cmdSaveLoc));
 
 	registerCmd("load_loc", WRAP_METHOD(Console, cmdLoadLoc));
@@ -284,6 +286,21 @@ bool Console::cmdTeleportNPCHere(int argc, const char **argv) {
 		Actor *a = (Actor *)GameObject::objectAddress(id);
 
 		a->setLocation(getCenterActor()->getLocation());
+	}
+
+	return true;
+}
+
+bool Console::cmdTeleportPartyHere(int argc, const char **argv) {
+	if (argc != 1)
+		debugPrintf("Usage: %s\n", argv[0]);
+	else {
+		TilePoint loc = getCenterActor()->getLocation();
+
+		for (ObjectID id = ActorBaseID; id < ActorBaseID + kPlayerActors; ++id) {
+			Actor *p = (Actor *)GameObject::objectAddress(id);
+			p->setLocation(loc);
+		}
 	}
 
 	return true;

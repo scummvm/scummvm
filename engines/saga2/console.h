@@ -69,6 +69,8 @@ private:
 
 	bool cmdTeleportNPCHere(int argc, const char **argv);
 
+	bool cmdTeleportPartyHere(int argc, const char **argv);
+
 	bool cmdSaveLoc(int argc, const char **argv);
 
 	bool cmdLoadLoc(int argc, const char **argv);
