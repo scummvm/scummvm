@@ -348,6 +348,8 @@ const char *CharacterInfo::getBornForm(const Character &c) {
 			return Res.BORN[0];
 		case FEMALE:
 			return Res.BORN[1];
+		case YES_PLEASE:
+			break;
 		}
 	}
 	return Res.BORN[0];
