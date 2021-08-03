@@ -63,8 +63,8 @@
 		<def var = 'GridSupported' value = '1'/>
 		<def var = 'GridItemThumbnail.Width' value = '128' scalable = 'no'/>
 		<def var = 'GridItemThumbnail.Height' value = '128' scalable = 'no'/>
-		<def var = 'Grid.XSpacing' value = '10' scalable = 'no'/>
-		<def var = 'Grid.YSpacing' value = '20' scalable = 'no'/>
+		<def var = 'Grid.XSpacing' value = '20' scalable = 'no'/>
+		<def var = 'Grid.YSpacing' value = '10' scalable = 'no'/>
 		<def var = 'Grid.ShowTitles' value = '0' scalable = 'no'/>
 
 		<widget name = 'OptionsLabel'
@@ -153,6 +153,15 @@
 				<widget name = 'SearchClearButton'
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
+				/>
+				<widget name = 'laGroupPopupDesc'
+						type = 'OptionsLabel'
+						height = 'Globals.Line.Height'
+						textalign = 'end'
+				/>
+				<widget name = 'laGroupPopup'
+						width = '150'
+						type = 'PopUp'
 				/>
 				<space />
 				<widget name = 'ListSwitch'
