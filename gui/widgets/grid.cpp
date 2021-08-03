@@ -651,6 +651,8 @@ void GridWidget::updateGrid() {
 
 void GridWidget::assignEntriesToItems() {
 	// Assign entries from _visibleEntries to each GridItem in _gridItems
+	if (_visibleEntryList.empty() || _gridItems.empty())
+		return;
 	Common::Array<GridItemInfo *>::iterator eit = _visibleEntryList.begin();
 	Common::Array<GridItemWidget *>::iterator it = _gridItems.begin();
 
