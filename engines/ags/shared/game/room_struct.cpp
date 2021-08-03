@@ -193,6 +193,7 @@ void RoomStruct::SetResolution(RoomResolutionType type) {
 
 Bitmap *RoomStruct::GetMask(RoomAreaMask mask) const {
 	switch (mask) {
+	case kRoomAreaNone: break;
 	case kRoomAreaHotspot: return HotspotMask.get();
 	case kRoomAreaWalkBehind: return WalkBehindMask.get();
 	case kRoomAreaWalkable: return WalkAreaMask.get();
@@ -203,6 +204,7 @@ Bitmap *RoomStruct::GetMask(RoomAreaMask mask) const {
 
 float RoomStruct::GetMaskScale(RoomAreaMask mask) const {
 	switch (mask) {
+	case kRoomAreaNone: break;
 	case kRoomAreaWalkBehind: return 1.f; // walk-behinds always 1:1 with room size
 	case kRoomAreaHotspot:
 	case kRoomAreaWalkable:
