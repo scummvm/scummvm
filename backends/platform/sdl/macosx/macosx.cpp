@@ -91,7 +91,7 @@ void OSystem_MacOSX::init() {
 
 void OSystem_MacOSX::initBackend() {
 #ifdef USE_TRANSLATION
-	// We need to initialize the translataion manager here for the following
+	// We need to initialize the translation manager here for the following
 	// call to replaceApplicationMenuItems() work correctly
 	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
 #endif // USE_TRANSLATION
@@ -216,7 +216,7 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 		}
 
 	}
-	// Falback to POSIX implementation
+	// Fallback to POSIX implementation
 	return OSystem_POSIX::getSystemLanguage();
 #else // USE_DETECTLANG
 	return OSystem_POSIX::getSystemLanguage();

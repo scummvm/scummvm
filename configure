@@ -2046,7 +2046,7 @@ if test "$have_icc" = yes; then
 	add_line_to_config_mk 'HAVE_ICC = 1'
 
 	# Make ICC error out on unknown command line options instead of printing
-	# a warning. This is for example required to make the -Wglobal-destructors
+	# a warning. This is for example required to make the -Wglobal-constructors
 	# detection work correctly.
 	append_var CXXFLAGS "-diag-error 10006,10148"
 

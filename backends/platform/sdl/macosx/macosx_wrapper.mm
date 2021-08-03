@@ -35,8 +35,8 @@
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
 typedef unsigned long NSUInteger;
 
-// Those are not defined in the 10.4 SDK, but they are defined when targetting
-// Mac OS X 10.4 or above in the 10.5 SDK. So hopfully that means it works with 10.4 as well.
+// Those are not defined in the 10.4 SDK, but they are defined when targeting
+// Mac OS X 10.4 or above in the 10.5 SDK. So hopefully that means it works with 10.4 as well.
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 enum {
 	NSUTF32StringEncoding = 0x8c000100,
@@ -53,7 +53,7 @@ bool hasTextInClipboardMacOSX() {
 Common::U32String getTextFromClipboardMacOSX() {
 	if (!hasTextInClipboardMacOSX())
 		return Common::U32String();
-	// Note: on OS X 10.6 and above it is recommanded to use NSPasteboardTypeString rather than NSStringPboardType.
+	// Note: on OS X 10.6 and above it is recommended to use NSPasteboardTypeString rather than NSStringPboardType.
 	// But since we still target older version use NSStringPboardType.
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
 	NSString *str = [pb  stringForType:NSStringPboardType];
@@ -96,7 +96,7 @@ bool setTextInClipboardMacOSX(const Common::U32String &text) {
 }
 
 Common::String getDesktopPathMacOSX() {
-	// The recommanded method is to use NSFileManager.
+	// The recommended method is to use NSFileManager.
 	// NSUrl *url = [[[NSFileManager defaultManager] URLsForDirectory:NSDesktopDirectory inDomains:NSUserDomainMask] firstObject];
 	// However it is only available in OS X 10.6+. So use NSSearchPathForDirectoriesInDomains instead (available since OS X 10.0)
 	// [NSArray firstObject] is also only available in OS X 10.6+. So we need to use [NSArray count] and [NSArray objectAtIndex:]
