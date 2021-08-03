@@ -59,7 +59,6 @@ Music::Music(hResContext *musicRes) : _musicContext(musicRes), _parser(0) {
 	case MT_MT32:
 	case MT_GM:
 		_driver = Audio::MidiDriver_Miles_MIDI_create(_musicType, "");
-		_driver->property(MidiDriver::PROP_MILES_VERSION, Audio::MidiDriver_Miles_Midi::MILES_VERSION_3);
 		break;
 	default:
 		_driver = new MidiDriver_NULL_Multisource();
@@ -68,6 +67,7 @@ Music::Music(hResContext *musicRes) : _musicContext(musicRes), _parser(0) {
 
 	if (_driver) {
 		_driver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+		_driver->property(MidiDriver::PROP_MILES_VERSION, Audio::MILES_VERSION_3);
 		if (_driver->open() != 0)
 			error("Failed to open MIDI driver.");
 

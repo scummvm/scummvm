@@ -86,6 +86,11 @@ namespace Audio {
 // volume of 256, so use this by default.
 #define MILES_DEFAULT_SOURCE_NEUTRAL_VOLUME 256
 
+enum MilesVersion {
+	MILES_VERSION_2 = 2,
+	MILES_VERSION_3
+};
+
 struct MilesMT32InstrumentEntry {
 	byte bankId;
 	byte patchId;
@@ -118,11 +123,6 @@ public:
 
 class MidiDriver_Miles_Midi : public MidiDriver_MT32GM, public MidiDriver_Miles_Xmidi_Timbres {
 public:
-	enum MilesVersion {
-		MILES_VERSION_2 = 2,
-		MILES_VERSION_3
-	};
-
 	MidiDriver_Miles_Midi(MusicType midiType, MilesMT32InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount);
 	~MidiDriver_Miles_Midi();
 

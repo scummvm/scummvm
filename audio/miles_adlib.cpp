@@ -138,6 +138,8 @@ public:
 	void applySourceVolume(uint8 source) override;
 	void deinitSource(uint8 source) override;
 
+	uint32 property(int prop, uint32 param) override;
+
 	void setVolume(byte volume);
 
 private:
@@ -145,6 +147,9 @@ private:
 	byte _modePhysicalFmVoicesCount;
 	byte _modeVirtualFmVoicesCount;
 	bool _modeStereo;
+
+	// the version of Miles AIL/MSS to emulate
+	MilesVersion _milesVersion;
 
 	// Structure to hold information about current status of MIDI Channels
 	struct MidiChannelEntry {
@@ -282,6 +287,9 @@ MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(InstrumentEntry *instrumentTableP
 	_modePhysicalFmVoicesCount = 18;
 	_modeStereo = true;
 
+	// Default to Miles v2
+	_milesVersion = MILES_VERSION_2;
+
 	// Older Miles Audio drivers did not do a circular assign for physical FM-voices
 	// Sherlock Holmes 2 used the circular assign
 	circularPhysicalAssignment = true;
@@ -349,9 +357,9 @@ void MidiDriver_Miles_AdLib::resetData() {
 		_midiChannels[midiChannel].currentVolumeExpression = 127;
 
 		// Miles Audio 2: hardcoded pitch range as a global (not channel specific), set to 12
-		// Miles Audio 3: pitch range per MIDI channel
+		// Miles Audio 3: pitch range per MIDI channel; default 2 semitones
 		_midiChannels[midiChannel].currentPitchBender = MIDI_PITCH_BEND_DEFAULT;
-		_midiChannels[midiChannel].currentPitchRange = 12;
+		_midiChannels[midiChannel].currentPitchRange = _milesVersion == MILES_VERSION_3 ? 2 : 12;
 	}
 
 }
@@ -446,6 +454,28 @@ void MidiDriver_Miles_AdLib::stopAllNotes(uint8 source, uint8 channel) {
 			releaseFmVoice(i);
 		}
 	}
+}
+
+uint32 MidiDriver_Miles_AdLib::property(int prop, uint32 param) {
+	switch (prop) {
+	case PROP_MILES_VERSION:
+		if (param == 0xFFFF)
+			return _milesVersion;
+
+		switch (param) {
+		case MILES_VERSION_3:
+			_milesVersion = MILES_VERSION_3;
+			break;
+		case MILES_VERSION_2:
+		default:
+			_milesVersion = MILES_VERSION_2;
+		}
+
+		break;
+	default:
+		return MidiDriver_Multisource::property(prop, param);
+	}
+	return 0;
 }
 
 void MidiDriver_Miles_AdLib::applySourceVolume(uint8 source) {
