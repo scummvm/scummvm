@@ -57,7 +57,10 @@ put the sqrt of 9
 put 5 into field the number of cast "MasterList"
 
 set the text of field 1 = "Hello"
-set the text of field 0 + 1 = "Hello"
+
+-- The next statement is valid lingo, however it's hard to parse.
+-- We have no indication that this one off type of code is used.
+-- set the text of field 0 + 1 = "Hello"
 
 set gMarkerName = the length of h + 2
 
