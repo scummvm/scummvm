@@ -87,11 +87,31 @@ For a more comprehensive changelog of the latest experimental code, see:
      issues in screen transitions and avoids mode changes when playing Mac QuickTime videos.
    - Added custom palette mods for SQ3 and LSL2 from the FreeSCI project. When enabled, the mods improve the visuals
      in these two games.
-   - Added support for the Korean fan translations of Castle of Dr. Brain, Eco Quest, Gabriel Knight,
-     King's Quest 1, 5 and 6, Laura Bow 2: Dagger of Amon Ra and Space Quest 4.
-   - Added support for numerous Korean translations from scummkor project.
-   - Added detection for LSL6 Russian.
-   - Added detection for alternate LSL7 Russian.
+   - Added support for Macintosh version of Gabriel Knight 1.
+   - Added support for CD-Audio version of Mixed-Up Mother Goose.
+   - Added support for Korean fan translations from the scummkor project: Castle of Dr. Brain,
+     EcoQuest 1, Gabriel Knight 1, King's Quest 1, 5, and 6, Laura Bow 2, and Space Quest 4.
+   - Added support for Space Quest 4 Update 1.3 by New Rising Sun.
+   - Added support for French LSL1VGA.
+   - Added support for Hebrew QFG1VGA.
+   - Added support for Hebrew GK1.
+   - Added support for Russian Longbow.
+   - Added support for Russian LSL6.
+   - Added support for alternate Russian LSL7.
+   - Added support for alternate Polish LSL7 including files packaged with InstallShield.
+   - Added support for alternate Russian SQ5.
+   - Added support for alternate Russian Torin's Passage.
+   - Added support for fan game Soulshade Asylum.
+   - Fixed sounds not stopping or restarting correctly.
+   - Fixed sound issues when restoring SCI0 games.
+   - Fixed corruption when "Prefer digital sound effects" was disabled in SCI1 games.
+   - Space Quest 4 CD sound effects now match the selected platform.
+   - Added option to enable Windows cursors in CD versions of King's Quest 5 and Space Quest 4.
+   - Fixed "Girl In The Tower" song not playing at the end of King's Quest 6 CD.
+   - Fixed King's Quest 5 Amiga beach error that prevented completing the game.
+   - Fixed over 30 script bugs in GK1, HOYLE4, KQ1DEMO, KQ5, KQ6, KQ7, LB1,
+     LSL3, PEPPER, PQ3, QFG3, SQ1, SQ4, and SQ6.
+   - Unlocked JANE easter egg in Gabriel Knight 1.
 
  SCUMM:
    - Fixed Chinese, Japanese and Korean text display for The Dig and for The Curse of Monkey Island. These fixes
