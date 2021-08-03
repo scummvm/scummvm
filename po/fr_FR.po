@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-02 19:57+0000\n"
-"PO-Revision-Date: 2021-07-30 14:16+0000\n"
+"PO-Revision-Date: 2021-08-04 00:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1383,7 +1383,7 @@ msgstr "Config. de ScummVM : "
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2236 gui/options.cpp:2777
 msgid "Last browser path: "
-msgstr ""
+msgstr "Dernier chemin utilisé : "
 
 #: gui/options.cpp:2241
 msgid "Theme:"
@@ -6282,14 +6282,12 @@ msgstr ""
 "n'utilise qu'un seul canal."
 
 #: engines/scumm/detection.cpp:204
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth scrolling"
-msgstr "Active le défilement régulier en marchant"
+msgstr "Active le défilement régulier"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(au lieu du défilement normal par pas de 8 pixels)"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
