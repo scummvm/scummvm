@@ -13,9 +13,6 @@ puppetPalette "custompal", 15,4
 
 puppetSound "Air Lock Lock"
 puppetSound 0
-puppetSound midiStart
-puppetSound midiSong, 3
-puppetSound midisongPointer, 2, 120
 
 puppetSprite 15, true
 
