@@ -1098,7 +1098,7 @@ uint8 MidiDriver_ADLIB_Multisource::allocateOplChannel(uint8 channel, uint8 sour
 	uint8 allocatedChannel = 0xFF;
 	if (_allocationMode == ALLOCATION_MODE_DYNAMIC) {
 		// In dynamic channel allocation mode, each note is allocated a new
-		// OPL channel. The following criterea are used, in this order:
+		// OPL channel. The following criteria are used, in this order:
 		// - The channel with the lowest number that has not yet been used to
 		//   play a note (note counter value is 0).
 		// - The channel with the lowest note counter value that is not
