@@ -381,7 +381,7 @@ public:
 	 * @param id	Id of the resource to check
 	 * @return		non-NULL if the resource exists, NULL otherwise
 	 */
-	Resource *testResource(ResourceId id);
+	Resource *testResource(const ResourceId &id) const;
 
 	/**
 	 * Returns a list of all resources of the specified type.

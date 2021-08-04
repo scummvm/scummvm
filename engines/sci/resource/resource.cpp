@@ -630,7 +630,7 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	resMan->disposeVolumeFileStream(fileStream, this);
 }
 
-Resource *ResourceManager::testResource(ResourceId id) {
+Resource *ResourceManager::testResource(const ResourceId &id) const {
 	return _resMap.getValOrDefault(id, NULL);
 }
 
