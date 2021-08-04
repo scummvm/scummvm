@@ -632,7 +632,8 @@ void CruAvatarMoverProcess::checkForAlertingNPCs() {
 				uint16 range = 0;
 				uint32 npcshape = a->getShape();
 				if (npcshape == 0x2f5 || npcshape == 0x2f6 || npcshape == 0x2f7 ||
-					npcshape == 0x595 || npcshape == 0x597) {
+					(GAME_IS_REMORSE && (npcshape == 0x595 || npcshape == 0x597)) ||
+					(GAME_IS_REGRET && (npcshape == 0x344 || npcshape == 0x384))) {
 					Actor *c = getActor(controllednpc);
 					if (c)
 						range = a->getRangeIfVisible(*c);
