@@ -42,7 +42,11 @@
 
 namespace Director {
 
-static const char *xlibName = "FlushXObj";
+const char *FlushXObj::xlibName = "FlushXObj";
+const char *FlushXObj::fileNames[] = {
+	"FlushXObj",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",				FlushXObj::m_new,				 0, 0,	400 },	// D4

@@ -38,7 +38,11 @@
 
 namespace Director {
 
-static const char *xlibName = "RearWindow";
+const char *RearWindowXObj::xlibName = "RearWindow";
+const char *RearWindowXObj::fileNames[] = {
+	"winXObj",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",				RearWindowXObj::m_new,				1,	1,	400 },	// D4

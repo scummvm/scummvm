@@ -43,8 +43,11 @@
 
 namespace Director {
 
-// The name is different from the obj filename.
-static const char *xlibName = "LabelDrv";
+const char *LabelDrvXObj::xlibName = "LabelDrv";
+const char *LabelDrvXObj::fileNames[] = {
+	"LabelDrv",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",				LabelDrvXObj::m_new,		 0, 0,	400 },	// D4
@@ -68,7 +71,7 @@ void LabelDrvXObj::close(int type) {
 	}
 }
 
-LabelDrvXObject::LabelDrvXObject(ObjectType ObjectType) :Object<LabelDrvXObject>("LabelDrvXObj") {
+LabelDrvXObject::LabelDrvXObject(ObjectType ObjectType) :Object<LabelDrvXObject>("LabelDrv") {
 	_objType = ObjectType;
 }
 

@@ -108,7 +108,11 @@
 
 namespace Director {
 
-static const char *xlibName = "LaserDisc";
+const char *VideodiscXObj::xlibName = "LaserDisc";
+const char *VideodiscXObj::fileNames[] = {
+	"Videodisc XObj",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",			VideodiscXObj::m_new,			 3, 3,	200 },	// D2

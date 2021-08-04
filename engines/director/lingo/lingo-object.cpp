@@ -111,50 +111,37 @@ void Lingo::cleanupMethods() {
 }
 
 static struct XLibProto {
-	const char *name;
-	void (*opener)(int);
-	void (*closer)(int);
+	const char **names;
+	XLibFunc opener;
+	XLibFunc closer;
 	int type;
 	int version;
 } xlibs[] = {
-	{ "CD-ROM XObj",			CDROMXObj::open,		CDROMXObj::close,			kXObj,					200 },	// D2
-	{ "FileIO",					FileIO::open,			FileIO::close,				kXObj | kXtraObj,		200 },	// D2
-	{ "FlushXObj",				FlushXObj::open,		FlushXObj::close,			kXObj,					400 },	// D4
-	{ "FPlayXObj",				FPlayXObj::open,		FPlayXObj::close,			kXObj,					200 },	// D2
-	{ "LabelDrv",				LabelDrvXObj::open,		LabelDrvXObj::close,		kXObj,					400 }, 	// D4
-	{ "OrthoPlay XObj",			OrthoPlayXObj::open,	OrthoPlayXObj::close,		kXObj,					400 }, 	// D4
-	{ "PalXObj",				PalXObj::open,			PalXObj::close,				kXObj,					400 }, 	// D4
-	{ "PopUp Menu XObj",		PopUpMenuXObj::open,	PopUpMenuXObj::close,		kXObj,					200 }, 	// D2
-	{ "SerialPort",				SerialPortXObj::open,	SerialPortXObj::close,		kXObj,					200 },	// D2
-	{ "SoundJam",				SoundJam::open,			SoundJam::close,			kXObj,					400 },	// D4
-	{ "Videodisc XObj",			VideodiscXObj::open,	VideodiscXObj::close,		kXObj,					200 }, 	// D2
-	{ "winXObj",				RearWindowXObj::open,	RearWindowXObj::close,		kXObj,					400 },	// D4
+	{ CDROMXObj::fileNames,			CDROMXObj::open,		CDROMXObj::close,			kXObj,					200 },	// D2
+	{ FileIO::fileNames,			FileIO::open,			FileIO::close,				kXObj | kXtraObj,		200 },	// D2
+	{ FlushXObj::fileNames,			FlushXObj::open,		FlushXObj::close,			kXObj,					400 },	// D4
+	{ FPlayXObj::fileNames,			FPlayXObj::open,		FPlayXObj::close,			kXObj,					200 },	// D2
+	{ LabelDrvXObj::fileNames,		LabelDrvXObj::open,		LabelDrvXObj::close,		kXObj,					400 }, 	// D4
+	{ OrthoPlayXObj::fileNames,		OrthoPlayXObj::open,	OrthoPlayXObj::close,		kXObj,					400 }, 	// D4
+	{ PalXObj::fileNames,			PalXObj::open,			PalXObj::close,				kXObj,					400 }, 	// D4
+	{ PopUpMenuXObj::fileNames,		PopUpMenuXObj::open,	PopUpMenuXObj::close,		kXObj,					200 }, 	// D2
+	{ SerialPortXObj::fileNames,	SerialPortXObj::open,	SerialPortXObj::close,		kXObj,					200 },	// D2
+	{ SoundJam::fileNames,			SoundJam::open,			SoundJam::close,			kXObj,					400 },	// D4
+	{ VideodiscXObj::fileNames,		VideodiscXObj::open,	VideodiscXObj::close,		kXObj,					200 }, 	// D2
+	{ RearWindowXObj::fileNames,	RearWindowXObj::open,	RearWindowXObj::close,		kXObj,					400 },	// D4
 	{ 0, 0, 0, 0, 0 }
 
 };
 
 void Lingo::initXLibs() {
-	for (XLibProto *lib = xlibs; lib->name; lib++) {
+	for (XLibProto *lib = xlibs; lib->names; lib++) {
 		if (lib->version > _vm->getVersion())
 			continue;
 
-		Symbol openSym;
-		openSym.name = new Common::String(lib->name);
-		openSym.type = HBLTIN;
-		openSym.nargs = 0;
-		openSym.maxArgs = 0;
-		openSym.targetType = lib->type;
-		openSym.u.bltin = lib->opener;
-		_xlibOpeners[lib->name] = openSym;
-
-		Symbol closeSym;
-		closeSym.name = new Common::String(lib->name);
-		closeSym.type = HBLTIN;
-		closeSym.nargs = 0;
-		closeSym.maxArgs = 0;
-		openSym.targetType = lib->type;
-		closeSym.u.bltin = lib->closer;
-		_xlibClosers[lib->name] = closeSym;
+		for (uint i = 0; lib->names[i]; i++) {
+			_xlibOpeners[lib->names[i]] = lib->opener;
+			_xlibClosers[lib->names[i]] = lib->closer;
+		}
 	}
 }
 
@@ -189,8 +176,7 @@ void Lingo::openXLib(Common::String name, ObjectType type) {
 	_openXLibs[name] = type;
 
 	if (_xlibOpeners.contains(name)) {
-		Symbol sym = _xlibOpeners[name];
-		(*sym.u.bltin)(type);
+		(*_xlibOpeners[name])(type);
 	} else {
 		warning("Lingo::openXLib: Unimplemented xlib: '%s'", name.c_str());
 	}
@@ -208,8 +194,7 @@ void Lingo::closeXLib(Common::String name) {
 	_openXLibs.erase(name);
 
 	if (_xlibClosers.contains(name)) {
-		Symbol sym = _xlibClosers[name];
-		(*sym.u.bltin)(type);
+		(*_xlibClosers[name])(type);
 	} else {
 		warning("Lingo::closeXLib: Unimplemented xlib: '%s'", name.c_str());
 	}

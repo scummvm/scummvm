@@ -32,7 +32,11 @@
 
 namespace Director {
 
-static const char *xlibName = "FileIO";
+const char *FileIO::xlibName = "FileIO";
+const char *FileIO::fileNames[] = {
+	"FileIO",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "delete",					FileIO::m_delete,			 0, 0,	200 },	// D2

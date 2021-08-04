@@ -36,7 +36,11 @@
 
 namespace Director {
 
-static const char *xlibName = "SerialPort";
+const char *SerialPortXObj::xlibName = "SerialPort";
+const char *SerialPortXObj::fileNames[] = {
+	"SerialPort",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",				SerialPortXObj::m_new,			 1, 1,	200 },	// D2

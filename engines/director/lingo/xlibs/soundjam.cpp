@@ -54,7 +54,11 @@
 
 namespace Director {
 
-static const char *xlibName = "SoundJam";
+const char *SoundJam::xlibName = "SoundJam";
+const char *SoundJam::fileNames[] = {
+	"SoundJam",
+	0
+};
 
 const int kJamChannel = 3;
 

@@ -48,7 +48,12 @@
 
 namespace Director {
 
-static const char *xlibName = "PopMenu";
+const char *PopUpMenuXObj::xlibName = "PopMenu";
+const char *PopUpMenuXObj::fileNames[] = {
+	"PopMenu",
+	"PopUp Menu XObj",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",				PopUpMenuXObj::m_new,			 2, 2,	200 },	// D2

@@ -40,7 +40,11 @@
 
 namespace Director {
 
-static const char *xlibName = "OrthoPlayXObj";
+const char *OrthoPlayXObj::xlibName = "OrthoPlayXObj";
+const char *OrthoPlayXObj::fileNames[] = {
+	"OrthoPlay XObj",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",				OrthoPlayXObj::m_new,				 0, 0,	200 },	// D2

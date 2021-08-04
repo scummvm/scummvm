@@ -27,6 +27,9 @@ namespace Director {
 
 namespace FPlayXObj {
 
+extern const char *xlibName;
+extern const char *fileNames[];
+
 void open(int type);
 void close(int type);
 

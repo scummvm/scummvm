@@ -111,7 +111,11 @@
 
 namespace Director {
 
-static const char *xlibName = "AppleAudioCD";
+const char *CDROMXObj::xlibName = "AppleAudioCD";
+const char *CDROMXObj::fileNames[] = {
+	"CD-ROM XObj",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",			CDROMXObj::m_new,			 2, 2,	200 },	// D2

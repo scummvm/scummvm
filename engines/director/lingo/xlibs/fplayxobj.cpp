@@ -37,6 +37,12 @@
 
 namespace Director {
 
+const char *FPlayXObj::xlibName = "FPlay";
+const char *FPlayXObj::fileNames[] = {
+	"FPlayXObj",
+	0
+};
+
 static BuiltinProto builtins[] = {
 	{ "FPlay",			FPlayXObj::b_fplay,		-1,0, 200, CBLTIN },
 	{ "SndInfo",		FPlayXObj::b_sndinfo,	-1,0, 200, FBLTIN },

@@ -209,6 +209,8 @@ typedef Common::HashMap<Common::String, Symbol, Common::IgnoreCase_Hash, Common:
 typedef Common::HashMap<Common::String, Datum, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DatumHash;
 typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> BuiltinHash;
 typedef Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarTypeHash;
+typedef void (*XLibFunc)(int);
+typedef Common::HashMap<Common::String, XLibFunc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> XLibFuncHash;
 typedef Common::HashMap<Common::String, ObjectType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> OpenXLibsHash;
 
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
@@ -413,8 +415,8 @@ public:
 	SymbolHash _builtinFuncs;
 	SymbolHash _builtinConsts;
 	SymbolHash _methods;
-	SymbolHash _xlibOpeners;
-	SymbolHash _xlibClosers;
+	XLibFuncHash _xlibOpeners;
+	XLibFuncHash _xlibClosers;
 
 	OpenXLibsHash _openXLibs;
 

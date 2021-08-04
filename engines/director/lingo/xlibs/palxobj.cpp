@@ -46,7 +46,11 @@
 namespace Director {
 
 // The name is different from the obj filename.
-static const char *xlibName = "FixPalette";
+const char *PalXObj::xlibName = "FixPalette";
+const char *PalXObj::fileNames[] = {
+	"PalXObj",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",				PalXObj::m_new,				 4, 4,	400 },	// D4
