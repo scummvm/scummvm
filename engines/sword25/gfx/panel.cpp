@@ -71,7 +71,7 @@ Panel::~Panel() {
 
 bool Panel::doRender(RectangleList *updateRects) {
 	// Falls der Alphawert 0 ist, ist das Panel komplett durchsichtig und es muss nichts gezeichnet werden.
-	if (_color >> 24 == 0)
+	if (_color >> BS_ASHIFT == 0)
 		return true;
 
 	GraphicEngine *gfxPtr = Kernel::getInstance()->getGfx();

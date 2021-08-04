@@ -60,10 +60,21 @@ class Panel;
 class Screenshot;
 class RenderObjectManager;
 
-typedef uint BS_COLOR;
+#define BS_ASHIFT 24
+#define BS_RSHIFT 16
+#define BS_GSHIFT 8
+#define BS_BSHIFT 0
 
-#define BS_RGB(R,G,B)       (0xFF000000 | ((R) << 16) | ((G) << 8) | (B))
-#define BS_ARGB(A,R,G,B)    (((A) << 24) | ((R) << 16) | ((G) << 8) | (B))
+#define BS_AMASK 0xFF000000
+#define BS_RMASK 0x00FF0000
+#define BS_GMASK 0x0000FF00
+#define BS_BMASK 0x000000FF
+
+#define BS_RGBMASK (BS_RMASK | BS_GMASK | BS_BMASK)
+#define BS_ARGBMASK (BS_AMASK | BS_RMASK | BS_GMASK | BS_BMASK)
+
+#define BS_RGB(R,G,B)       (BS_AMASK | ((R) << BS_RSHIFT) | ((G) << BS_GSHIFT) | ((B) << BS_BSHIFT))
+#define BS_ARGB(A,R,G,B)    (((A) << BS_ASHIFT) | ((R) << BS_RSHIFT) | ((G) << BS_GSHIFT) | ((B) << BS_BSHIFT))
 
 /**
  * This is the graphics engine. Unlike the original code, this is not
