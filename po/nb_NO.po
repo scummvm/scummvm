@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-04 10:46+0000\n"
+"POT-Creation-Date: 2021-08-04 11:27+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -2853,27 +2853,27 @@ msgid "Resolution: %dx%d"
 msgstr "Oppløsning: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:692
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2409
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2412
 msgid "Enabled aspect ratio correction"
 msgstr "Aspekt-rate korrigering aktivert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:694
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2415
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2418
 msgid "Disabled aspect ratio correction"
 msgstr "Aspekt-rate korrigering deaktivert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:715
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2431
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2434
 msgid "Filtering enabled"
 msgstr "Filtrering aktivert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2433
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2436
 msgid "Filtering disabled"
 msgstr "Filtrering deaktivert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:746
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2463
 #, fuzzy
 msgid "Stretch mode"
 msgstr "Helium-modus"
@@ -2882,7 +2882,7 @@ msgstr "Helium-modus"
 msgid "SDL Surface"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2375
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2378
 msgid "Active graphics filter:"
 msgstr "Aktivt grafikkfilter:"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-04 10:46+0000\n"
+"POT-Creation-Date: 2021-08-04 11:27+0000\n"
 "PO-Revision-Date: 2021-07-28 18:41+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -2808,27 +2808,27 @@ msgid "Resolution: %dx%d"
 msgstr "Разрешение: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:692
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2409
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2412
 msgid "Enabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон включена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:694
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2415
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2418
 msgid "Disabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон выключена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:715
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2431
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2434
 msgid "Filtering enabled"
 msgstr "Фильтрация включена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2433
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2436
 msgid "Filtering disabled"
 msgstr "Фильтрация выключена"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:746
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2463
 msgid "Stretch mode"
 msgstr "Режим растягивания"
 
@@ -2836,7 +2836,7 @@ msgstr "Режим растягивания"
 msgid "SDL Surface"
 msgstr "Поверхность SDL"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2375
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2378
 msgid "Active graphics filter:"
 msgstr "Активный графический фильтр:"
 
