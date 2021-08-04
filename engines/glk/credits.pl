@@ -1,4 +1,4 @@
-begin_section("ScummGlk");
+begin_section("Glk");
 	add_person("Paul Gilbert", "dreammaster", "");
 	add_person("Tor Andersson", "", "GarGlk library");
 	add_person("Stefan Jokisch", "", "Frotz interpreter");
