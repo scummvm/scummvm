@@ -142,7 +142,7 @@ protected:
 	int				_rows;
 	int				_itemsPerRow;
 	int				_firstVisibleItem;
-	int				_itemsOnScreen;
+	int				_lastVisibleItem;
 	GridItemTray	*_tray;
 	String			_iconDir;
 
