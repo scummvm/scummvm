@@ -41,15 +41,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-static  class Chardata { // ctype-like character lists
-public:
-	string  whitespace;
-	Chardata() {
-		for (size_t i = 0; i < 256; i++)
-			if (Common::isSpace(i))
-				whitespace += static_cast<char>(i);
-	}
-} chardata;
+static const char * whitespace = "\t\n\v\f\r ";
 
 typedef void(*ActionFunc)(int const *);
 
@@ -453,7 +445,7 @@ void KeyBinder::ParseText(char *text, int len) {
 }
 
 static void skipspace(string &s) {
-	size_t i = s.findFirstNotOf(chardata.whitespace);
+	size_t i = s.findFirstNotOf(whitespace);
 	if (i && i != string::npos)
 		s.erase(0, i);
 }
@@ -494,7 +486,7 @@ void KeyBinder::ParseLine(char *line) {
 			s.erase(0, 6);
 			u.erase(0, 6);
 		} else {
-			i = s.findFirstOf(chardata.whitespace);
+			i = s.findFirstOf(whitespace);
 
 			keycode = s.substr(0, i);
 			s.erase(0, i);
@@ -532,7 +524,7 @@ void KeyBinder::ParseLine(char *line) {
 	// get function
 	skipspace(s);
 
-	i = s.findFirstOf(chardata.whitespace);
+	i = s.findFirstOf(whitespace);
 	string t = s.substr(0, i);
 	s.erase(0, i);
 	t = Std::to_uppercase(t);
@@ -550,7 +542,7 @@ void KeyBinder::ParseLine(char *line) {
 
 	int np = 0;
 	while (!s.empty() && s[0] != '#' && np < c_maxparams) {
-		i = s.findFirstOf(chardata.whitespace);
+		i = s.findFirstOf(whitespace);
 		string tmp = s.substr(0, i);
 		s.erase(0, i);
 		skipspace(s);
