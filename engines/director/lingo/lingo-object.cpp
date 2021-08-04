@@ -117,17 +117,17 @@ static struct XLibProto {
 	int type;
 	int version;
 } xlibs[] = {
-	{ "CD-ROM XObj",			CDROMXObj::open,		CDROMXObj::close,			kXObj | kXtraObj,		200 },	// D2
+	{ "CD-ROM XObj",			CDROMXObj::open,		CDROMXObj::close,			kXObj,					200 },	// D2
 	{ "FileIO",					FileIO::open,			FileIO::close,				kXObj | kXtraObj,		200 },	// D2
 	{ "FlushXObj",				FlushXObj::open,		FlushXObj::close,			kXObj,					400 },	// D4
 	{ "FPlayXObj",				FPlayXObj::open,		FPlayXObj::close,			kXObj,					200 },	// D2
 	{ "OrthoPlay XObj",			OrthoPlayXObj::open,	OrthoPlayXObj::close,		kXObj,					400 }, 	// D4
 	{ "PalXObj",				PalXObj::open,			PalXObj::close,				kXObj,					400 }, 	// D4
-	{ "PopUp Menu XObj",		PopUpMenuXObj::open,	PopUpMenuXObj::close,		kXObj | kXtraObj,		200 }, 	// D2
+	{ "PopUp Menu XObj",		PopUpMenuXObj::open,	PopUpMenuXObj::close,		kXObj,					200 }, 	// D2
 	{ "LabelDrv",				LabelDrvXObj::open,		LabelDrvXObj::close,		kXObj,					400 }, 	// D4
-	{ "SerialPort",				SerialPortXObj::open,	SerialPortXObj::close,		kXObj | kXtraObj,		200 },	// D2
+	{ "SerialPort",				SerialPortXObj::open,	SerialPortXObj::close,		kXObj,					200 },	// D2
 	{ "SoundJam",				SoundJam::open,			SoundJam::close,			kXObj,					400 },	// D4
-	{ "Videodisc XObj",			VideodiscXObj::open,	VideodiscXObj::close,		kXObj | kXtraObj,		200 }, 	// D2
+	{ "Videodisc XObj",			VideodiscXObj::open,	VideodiscXObj::close,		kXObj,					200 }, 	// D2
 	{ "winXObj",				RearWindowXObj::open,	RearWindowXObj::close,		kXObj,					400 },	// D4
 	{ 0, 0, 0, 0, 0 }
 
