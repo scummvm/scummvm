@@ -420,6 +420,7 @@ void Resources::loadData() {
 	file.syncString(PHAROAH_ENDING_TEXT1);
 	file.syncString(PHAROAH_ENDING_TEXT2);
 	file.syncStrings(MAE_NAMES, 131);
+	file.syncStrings(MIRROR_LOCATIONS, 59);
 
 	ResFile keys("CONSTKEYS_", _buffer, lang);
 	keys.syncNumber(KeyConstants.DialogsCharInfo.KEY_ITEM);

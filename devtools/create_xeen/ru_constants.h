@@ -2085,6 +2085,71 @@ public:
 		return _maeNames;
 	}
 
+	const char **MIRROR_LOCATIONS() {
+		static const char *_mirrLocs[] = {
+			"\xA2\xA5\xE0\xE2\xA8\xA3\xAE",                                                                            // вертиго
+			"\xAD\xA0\xA9\xE2\xE8\xED\xA4\xAE\xE3",                                                                    // найтшэдоу
+			"\xE0\xA8\xA2\xA5\xE0\xE1\xA8\xE2\xA8",                                                                    // риверсити
+			"\xED\xE1\xAF",                                                                                            // эсп
+			"\xA2\xA8\xAD\xE2\xA5\xE0\xAA\xA8\xAB\xAB",                                                                // винтеркилл
+			"\xA7\xA0\xAC\xAE\xAA \xA1\xA0\xE0\xAB\xAE\xAA",                                                           // замок барлок
+			"\xAD\xEC\xEE\xAA\xA0\xE1\xAB",                                                                            // ньюкасл
+			"\xA7\xA0\xAC\xAE\xAA \xA1\xA0\xA7\xA5\xAD\xA4\xA6\xA8",                                                   // замок базенджи
+			"\xA2\xA5\xA4\xEC\xAC\xA8\xAD\xA0 \xA1\xA0\xE8\xAD\xEF",                                                   // ведьмина башня
+			"\xA1\xA0\xE8\xAD\xEF \xA4\xA0\xE0\xA7\xAE\xA3\xA0",                                                       // башня дарзога
+			"\xA1\xA0\xE8\xAD\xEF \xA4\xA0\xE0\xA7\xAE\xA3\xA0",                                                       // башня дарзога
+			"\xA1\xA0\xE8\xAD\xEF \xA4\xE0\xA0\xAA\xAE\xAD\xAE\xA2",                                                   // башня драконов
+			"\xA1\xA0\xE8\xAD\xEF \xA2\xEB\xE1\xE8\xA5\xA9 \xAC\xA0\xA3\xA8\xA8",                                      // башня высшей магии
+			"\xA1\xA0\xE8\xAD\xEF \xE2\xF1\xAC\xAD\xAE\xA3\xAE \xAA\xA0\xAC\xAD\xEF",                                  // башня тёмного камня
+			"\xA4\xE0\xA0\xAA\xAE\xAD\xEC\xA5 \xAB\xAE\xA3\xAE\xA2\xAE",                                               // драконье логово
+			"\xAF\xA5\xE9\xA5\xE0\xA0 \xA8\xAB\xAB\xEE\xA7\xA8\xA9",                                                   // пещера иллюзий
+			"\xA0\xE0\xA5\xAD\xA0",                                                                                    // арена
+			"\xA3\xAE\xE0\xA0 \xE4\xA0\xA9\xA5\xE0\xE1\xE2\xAE\xE3\xAD",                                               // гора файерстоун
+			"\xA3\xAE\xE0\xEB \xA2\xA0\xE0\xA2\xA0\xE0\xAE\xA2",                                                       // горы варваров
+			"\xE5\xE0\xA5\xA1\xA5\xE2 \xA3\xAE\xE0\xA3\xE3\xAB\xA8\xA9",                                               // хребет горгулий
+			"\xA3\xAE\xE0\xEB \xE0\xEB\xA6\xA8\xE5 \xA4\xA2\xAE\xE0\xE4\xAE\xA2",                                      // горы рыжих дворфов
+			"\xE5\xAE\xAB\xAC\xEB \xAE\xA3\xE0\xAE\xA2",                                                               // холмы огров
+			"\xA2\xA8\xAB\xAE\xAE\xA1\xE0\xA0\xA7\xAD\xA0\xEF \xA1\xE3\xE5\xE2\xA0",                                   // вилообразная бухта
+			"\xA2\xAE\xAB\xE8\xA5\xA1\xAD\xA0\xEF \xA4\xA5\xAB\xEC\xE2\xA0",                                           // волшебная дельта
+			"\xAB\xA0\xA3\xE3\xAD\xA0 \xA6\xA8\xA7\xAD\xA5\xAD\xAD\xAE\xA9 \xE1\xA8\xAB\xEB",                          // лагуна жизненной силы
+			"\xAB\xA0\xA2\xAE\xA2\xAE\xA5 \xAE\xA7\xA5\xE0\xAE",                                                       // лавовое озеро
+			"\xA1\xA0\xE1\xE1\xA5\xA9\xAD \xAA\xE0\xA0\xE1\xAD\xAE\xA9 \xE0\xA5\xAA\xA8",                              // бассейн красной реки
+			"\xA6\xA0\xA1\xEC\xA8 \xAB\xE3\xA3\xA0",                                                                   // жабьи луга
+			"\xA2\xA5\xE7\xAD\xAE \xE6\xA2\xA5\xE2\xE3\xE9\xA8\xA9 \xE4\xE0\xE3\xAA\xE2\xAE\xA2\xEB\xA9 \xE1\xA0\xA4", // вечно цветущий фруктовый сад
+			"\xAB\xA5\xE1 \xA6\xA8\xA2\xEB\xE5 \xAC\xA5\xE0\xE2\xA2\xA5\xE6\xAE\xA2",                                  // лес живых мертвецов
+			"\xA2\xAE\xAB\xE8\xA5\xA1\xAD\xEB\xA9 \xAB\xA5\xE1",                                                       // волшебный лес
+			"\xAB\xA5\xE1 \xE2\xE0\xAE\xAB\xAB\xA5\xA9",                                                               // лес троллей
+			"\xE1\xA0\xA2\xA0\xAD\xAD\xA0 \xA2\xE1\xA0\xA4\xAD\xA8\xAA\xAE\xA2",                                       // саванна всадников
+			"\xE1\xA0\xA2\xA0\xAD\xAD\xA0 \xA2\xE1\xA0\xA4\xAD\xA8\xAA\xAE\xA2",                                       // саванна всадников
+			"\xAF\xE3\xE1\xE2\xEB\xAD\xEF \xE1\xE4\xA8\xAD\xAA\xE1\xA0",                                               // пустыня сфинкса
+			"\xA7\xA5\xAC\xAB\xEF \xA3\xA8\xA3\xA0\xAD\xE2\xAE\xA2",                                                   // земля гигантов
+			"\xE8\xA0\xAD\xA3\xE0\xA8-\xAB\xA0",                                                                       // шангри-ла
+			"\xA3\xE0\xA0\xE4 \xA4\xEE \xAC\xAE\xAD\xA5\xE2\xA0",                                                      // граф дю монета
+			"\xAB\xAE\xE0\xA4 \xAA\xE1\xA8\xAD",                                                                       // лорд ксин
+			"\xE8\xAE\xE3 \xAD\xA0\xE7\xA8\xAD\xA0\xA5\xE2\xE1\xEF",                                                   // шоу начинается
+			"\xE8\xA0\xE5\xE2\xA0""1",                                                                                 // шахта1
+			"\xE8\xA0\xE5\xE2\xA0 1",                                                                                  // шахта 1
+			"\xE8\xA0\xE5\xE2\xA0""2",                                                                                 // шахта2
+			"\xE8\xA0\xE5\xE2\xA0 2",                                                                                  // шахта 2
+			"\xE8\xA0\xE5\xE2\xA0""3",                                                                                 // шахта3
+			"\xE8\xA0\xE5\xE2\xA0 3",                                                                                  // шахта 3
+			"\xE8\xA0\xE5\xE2\xA0""4",                                                                                 // шахта4
+			"\xE8\xA0\xE5\xE2\xA0 4",                                                                                  // шахта 4
+			"\xE8\xA0\xE5\xE2\xA0""5",                                                                                 // шахта5
+			"\xE8\xA0\xE5\xE2\xA0 5",                                                                                  // шахта 5
+			"\xA0\xAB\xEC\xE4\xA0",                                                                                    // альфа
+			"\xA3\xAB\xE3\xA1\xAE\xAA\xA0\xEF \xE8\xA0\xE5\xE2\xA0 \xA0\xAB\xEC\xE4\xA0",                              // глубокая шахта альфа
+			"\xE2\xA5\xE2\xA0",                                                                                        // тета
+			"\xA3\xAB\xE3\xA1\xAE\xAA\xA0\xEF \xE8\xA0\xE5\xE2\xA0 \xE2\xA5\xE2\xA0",                                  // глубокая шахта тета
+			"\xAA\xA0\xAF\xAF\xA0",                                                                                    // каппа
+			"\xA3\xAB\xE3\xA1\xAE\xAA\xA0\xEF \xE8\xA0\xE5\xE2\xA0 \xAA\xA0\xAF\xAF\xA0",                              // глубокая шахта каппа
+			"\xAE\xAC\xA5\xA3\xA0",                                                                                    // омега
+			"\xA3\xAB\xE3\xA1\xAE\xAA\xA0\xEF \xE8\xA0\xE5\xE2\xA0 \xAE\xAC\xA5\xA3\xA0",                              // глубокая шахта омега
+			"\xEF \xAF\xAE\xE2\xA5\xE0\xEF\xAB \xED\xE2\xAE",                                                          // я потерял это
+		};
+		return _mirrLocs;
+	}
+
 	class RU_KeyConstants : public KeyConstants {
 	public:
 		class RU_DialogsCharInfo : public DialogsCharInfo {

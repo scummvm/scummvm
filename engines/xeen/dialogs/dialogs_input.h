@@ -44,6 +44,9 @@ protected:
 	Window *_window;
 	int _cursorAnimIndex;
 
+	int nonEnToUpper(uint16 ascii);
+	int nonEnToLower(uint16 ascii);
+
 	/**
 	 * Allows the user to enter a string
 	 */

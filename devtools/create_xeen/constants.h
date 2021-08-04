@@ -468,6 +468,7 @@ public:
 	virtual const char  *PHAROAH_ENDING_TEXT1() = 0;
 	virtual const char  *PHAROAH_ENDING_TEXT2() = 0;
 	virtual const char **MAE_NAMES() = 0;
+	virtual const char **MIRROR_LOCATIONS() = 0;
 
 	void writeConstants(Common::String num, CCArchive &cc);
 
