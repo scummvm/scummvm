@@ -151,8 +151,8 @@ void Actor::initActor(int mode) {
 		_flip = false;
 		_speedx = 8;
 		_speedy = 2;
-		_v3stepX = 0;
-		_v3stepThreshold = 0;
+		_stepX = 0;
+		_stepThreshold = 0;
 		_frame = 0;
 		_walkbox = 0;
 		_animProgress = 0;
@@ -486,22 +486,28 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	diffX = next.x - _pos.x;
 	diffY = next.y - _pos.y;
 
-	if (_vm->_game.version == 3) {
-		// These two lines fix bug #1052 (INDY3: Hitler facing wrong directions in the Berlin scene).
-		// I can't see anything like this in the original SCUMM1/2 code, so I limit this to SCUMM3.
-		if (!(_moving & MF_LAST_LEG) && (int)_speedx > ABS(diffX) && (int)_speedy > ABS(diffY))
-			return 0;
+	if (_vm->_game.version <= 3) {
+		if (_vm->_game.version <= 2) {
+			_stepThreshold = MAX(ABS(diffX), ABS(diffY));
+			deltaXFactor = deltaYFactor = 1;
+		} else {
+			// These two lines fix bug #1052 (INDY3: Hitler facing wrong directions in the Berlin scene).
+			// I can't see anything like this in the original SCUMM1/2 code, so I limit this to SCUMM3.
+			if (!(_moving & MF_LAST_LEG) && (int)_speedx > ABS(diffX) && (int)_speedy > ABS(diffY))
+				return 0;
 
-		_v3stepX = ((ABS(diffY) / (int)_speedy) >> 1) > (ABS(diffX) / (int)_speedx) ? _speedy + 1 : _speedx;
-		_v3stepThreshold = MAX(ABS(diffY) / _speedy, ABS(diffX) / _v3stepX);
-		deltaXFactor = (int32)_v3stepX;
+			_stepX = ((ABS(diffY) / (int)_speedy) >> 1) > (ABS(diffX) / (int)_speedx) ? _speedy + 1 : _speedx;
+			_stepThreshold = MAX(ABS(diffY) / _speedy, ABS(diffX) / _stepX);
+			deltaXFactor = (int32)_stepX;
+			deltaYFactor = (int32)_speedy;
+		}
 		if (diffX < 0)
 			deltaXFactor = -deltaXFactor;
-		deltaYFactor = (int32)_speedy;
 		if (diffY < 0)
 			deltaYFactor = -deltaYFactor;
-		_walkdata.xfrac = _walkdata.v3XAdd = diffX / deltaXFactor;
-		_walkdata.yfrac = _walkdata.v3YAdd = diffY / deltaYFactor;
+
+		_walkdata.xfrac = _walkdata.xAdd = diffX / deltaXFactor;
+		_walkdata.yfrac = _walkdata.yAdd = diffY / deltaYFactor;
 	} else {
 		deltaYFactor = _speedy << 16;
 		if (diffY < 0)
@@ -554,17 +560,22 @@ int Actor::actorWalkStep() {
 
 	nextFacing = updateActorDirection(true);
 	if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
-		if (_walkFrame != _frame || _facing != nextFacing) {
+		int facing = _facing;
+		if (_walkFrame != _frame || _facing != nextFacing)
 			startWalkAnim(1, nextFacing);
-		}
+
 		_moving |= MF_IN_LEG;
-		// The next two lines fix bug #12278 for ZAK FM-TOWNS. Limited to SCUMM3.
-		if (_vm->_game.version == 3)
+		// The next two lines fix bug #12278 for ZAK FM-TOWNS (SCUMM3). They are alse required for SCUMM 1/2 to prevent movement while
+		// turning, but only if the character has to make a turn. The correct behavior for v1/2 can be tested by letting Zak (only v1/2
+		// versions) walk in the starting room from the torn wallpaper to the desk drawer: Zak should first turn around clockwise by
+		// 180°, then walk one step to the left, then turn clockwise 90°. For ZAK FM-TOWNS (SCUMM3) this part will look quite different
+		// (and a bit weird), but I have confirmed the correctness with the FM-Towns emulator, too.
+		if (_vm->_game.version == 3 || (_vm->_game.version <= 2 && facing != nextFacing))
 			return 1;
 	}
 
 	if (_vm->_game.version == 3) {
-		if (_walkdata.next.x - (int)_v3stepX <= _pos.x && _walkdata.next.x + (int)_v3stepX >= _pos.x)
+		if (_walkdata.next.x - (int)_stepX <= _pos.x && _walkdata.next.x + (int)_stepX >= _pos.x)
 			_pos.x = _walkdata.next.x;
 		if (_walkdata.next.y - (int)_speedy <= _pos.y && _walkdata.next.y + (int)_speedy >= _pos.y)
 			_pos.y = _walkdata.next.y;
@@ -581,27 +592,14 @@ int Actor::actorWalkStep() {
 		return 0;
 	}
 
-	if (_vm->_game.version <= 2) {
-		if (_walkdata.deltaXFactor != 0) {
-			if (_walkdata.deltaXFactor > 0)
-				_pos.x += 1;
-			else
-				_pos.x -= 1;
-		}
-		if (_walkdata.deltaYFactor != 0) {
-			if (_walkdata.deltaYFactor > 0)
-				_pos.y += 1;
-			else
-				_pos.y -= 1;
-		}
-	} else if (_vm->_game.version == 3) {
-		if ((_walkdata.xfrac += _walkdata.v3XAdd) >= _v3stepThreshold) {
+	if (_vm->_game.version <= 3) {
+		if ((_walkdata.xfrac += _walkdata.xAdd) >= _stepThreshold) {
 			_pos.x += _walkdata.deltaXFactor;
-			_walkdata.xfrac -= _v3stepThreshold;
+			_walkdata.xfrac -= _stepThreshold;
 		}
-		if ((_walkdata.yfrac += _walkdata.v3YAdd) >= _v3stepThreshold) {
+		if ((_walkdata.yfrac += _walkdata.yAdd) >= _stepThreshold) {
 			_pos.y += _walkdata.deltaYFactor;
-			_walkdata.yfrac -= _v3stepThreshold;
+			_walkdata.yfrac -= _stepThreshold;
 		}
 	} else {
 		tmpX = (_pos.x << 16) + _walkdata.xfrac + (_walkdata.deltaXFactor >> 8) * _scalex;
@@ -3745,25 +3743,34 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 		setDirection(_facing);
 	}
 
-	if (_vm->_game.version == 3) {
-		if (s.isLoading() && s.getVersion() < VER(101)) {
+	if (_vm->_game.version <= 3) {
+		int rev = (_vm->_game.version == 3 ? 101 : 102);
+		if (s.isLoading() && s.getVersion() < VER(rev)) {
 			int diffX = _walkdata.next.x - _pos.x;
 			int diffY = _walkdata.next.y - _pos.y;
-			_v3stepX = ((ABS(diffY) / (int)_speedy) >> 1) >(ABS(diffX) / (int)_speedx) ? _speedy + 1 : _speedx;
-			_v3stepThreshold = MAX(ABS(diffY) / _speedy, ABS(diffX) / _v3stepX);
-			_walkdata.deltaXFactor = (int32)_v3stepX;
+
+			if (_vm->_game.version < 3) {
+				_stepThreshold = MAX(ABS(diffX), ABS(diffY));
+				_walkdata.deltaXFactor = _walkdata.deltaYFactor = 1;
+			} else {
+				_stepX = ((ABS(diffY) / (int)_speedy) >> 1) >(ABS(diffX) / (int)_speedx) ? _speedy + 1 : _speedx;
+				_stepThreshold = MAX(ABS(diffY) / _speedy, ABS(diffX) / _stepX);
+				_walkdata.deltaXFactor = (int32)_stepX;
+				_walkdata.deltaYFactor = (int32)_speedy;
+			}
+
 			if (diffX < 0)
 				_walkdata.deltaXFactor = -_walkdata.deltaXFactor;
-			_walkdata.deltaYFactor = (int32)_speedy;
 			if (diffY < 0)
 				_walkdata.deltaYFactor = -_walkdata.deltaYFactor;
-			_walkdata.xfrac = _walkdata.v3XAdd = diffX / _walkdata.deltaXFactor;
-			_walkdata.yfrac = _walkdata.v3YAdd = diffY / _walkdata.deltaYFactor;
+			_walkdata.xfrac = _walkdata.xAdd = diffX / _walkdata.deltaXFactor;
+			_walkdata.yfrac = _walkdata.yAdd = diffY / _walkdata.deltaYFactor;
+
 		} else {
-			s.syncAsUint16LE(_walkdata.v3XAdd, VER(101));
-			s.syncAsUint16LE(_walkdata.v3YAdd, VER(101));
-			s.syncAsUint16LE(_v3stepX, VER(101));
-			s.syncAsUint16LE(_v3stepThreshold, VER(101));
+			s.syncAsUint16LE(_walkdata.xAdd, VER(rev));
+			s.syncAsUint16LE(_walkdata.yAdd, VER(rev));
+			s.syncAsUint16LE(_stepX, VER(rev));
+			s.syncAsUint16LE(_stepThreshold, VER(rev));
 		}
 	}
 }
