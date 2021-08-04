@@ -168,6 +168,8 @@ Common::String Lingo::normalizeXLibName(Common::String name) {
 	if (platform == Common::kPlatformMacintosh) {
 		int pos = name.findLastOf(':');
 		name = name.substr(pos + 1, name.size());
+		if (name.hasSuffixIgnoreCase(".xlib"))
+			name = name.substr(0, name.size() - 5);
 	} else if (platform == Common::kPlatformWindows) {
 		if (name.hasSuffixIgnoreCase(".dll"))
 			name = name.substr(0, name.size() - 4);
