@@ -70,8 +70,6 @@ def generate_punyencoded_path(destination_dir: Path, encoding:str, hpath: Tuple[
     for el in hpath:
         if decode_name(el, encoding=encoding) != el + "-":
             decoded = decode_name(el, encoding=encoding)
-            print(f"compare: {el} {decoded}")
-            breakpoint()
             upath /= "xn--" + decode_name(el, encoding=encoding)
         else:
             upath /= el
