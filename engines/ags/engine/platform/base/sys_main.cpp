@@ -49,7 +49,9 @@ void sys_set_background_mode(bool on) {
 // ----------------------------------------------------------------------------
 // DISPLAY UTILS
 // ----------------------------------------------------------------------------
+#ifdef TODO
 const int DEFAULT_DISPLAY_INDEX = 0; // TODO: is this always right?
+#endif
 
 int sys_get_desktop_resolution(int &width, int &height) {
 	// TODO: ScummVM has a hardcoded dummy desktop resolution. See if there's any

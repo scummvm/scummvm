@@ -28,7 +28,7 @@
 
 namespace Saga2 {
 
-Renderer::Renderer(Saga2Engine *vm) : _vm(vm) {
+Renderer::Renderer() {
 	for (int i = 0; i < kMaxBackBufferSources; ++i) {
 		_savedBackBuffers[i] = nullptr;
 	}

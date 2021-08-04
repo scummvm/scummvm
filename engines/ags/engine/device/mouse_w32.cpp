@@ -40,7 +40,7 @@ enum {
 	NONE = -1, LEFT = 0, RIGHT = 1, MIDDLE = 2
 };
 
-static const int MB_ARRAY[3] = { 1, 2, 4 };
+// static const int MB_ARRAY[3] = { 1, 2, 4 };
 
 void mgetgraphpos() {
 	// TODO: review and possibly rewrite whole thing;

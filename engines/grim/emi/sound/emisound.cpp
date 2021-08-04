@@ -49,7 +49,7 @@ EMISound *g_emiSound = nullptr;
 
 extern uint16 imuseDestTable[];
 
-MusicEntry emiPS2MusicTable[] = {
+static MusicEntry emiPS2MusicTable[] = {
 	{ 0, 0, 0, 127, 0, "", "", "" },
 	{ 0, 0, 1, 127, 1, "state", "", "1115.scx" },
 	{ 0, 0, 2, 127, 2, "state", "", "1170.scx" },

@@ -237,9 +237,11 @@ private:
 	PSDLRenderFilter _filter;
 
 	bool _hasGamma = false;
+#ifdef TODO
 	uint16 _defaultGammaRed[256] {};
 	uint16 _defaultGammaGreen[256] {};
 	uint16 _defaultGammaBlue[256] {};
+#endif
 
 	RendererFlip _renderFlip = FLIP_NONE;
 	/*  SDL_Renderer *_renderer = nullptr;
