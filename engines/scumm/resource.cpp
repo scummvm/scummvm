@@ -1827,7 +1827,7 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 	Common::String expectedMd5;
 	int patchOffset = -1;
 	int patchLength = -1;
-	char lang[4];
+	byte lang[3];
 
 	switch (_language) {
 	case Common::EN_ANY:
@@ -1837,7 +1837,9 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		expectedMd5 = "98b1126a836ef5bfefff10b605b20555";
 		patchOffset = 167;
 		patchLength = 22;
-		strcpy(lang, "ENG");
+		lang[0] = 'E';
+		lang[1] = 'N';
+		lang[2] = 'G';
 		break;
 	default:
 		return false;
@@ -1877,7 +1879,7 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		// language.
 
 		memcpy(scriptPtr + patchOffset, patchData, sizeof(patchData));
-		memcpy(scriptPtr + patchOffset + 7, lang, 3);
+		memcpy(scriptPtr + patchOffset + 7, lang, sizeof(lang));
 
 		// Pad the rest of the replaced script part with spaces before
 		// terminating the string. Finally, add WaitForMessage().
