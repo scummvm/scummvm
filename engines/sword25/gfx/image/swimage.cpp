@@ -92,7 +92,10 @@ uint SWImage::getPixel(int x, int y) {
 	assert(x >= 0 && x < _image.w);
 	assert(y >= 0 && y < _image.h);
 
-	return *((const uint32 *)_image.getBasePtr(0, 0));
+	byte a, r, g, b;
+	_image.format.colorToARGB(_image.getPixel(0, 0), a, r, g, b);
+
+	return BS_ARGB(a, r, g, b);
 }
 
 } // End of namespace Sword25
