@@ -1214,6 +1214,7 @@ void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
 	file.syncString(PHAROAH_ENDING_TEXT1());
 	file.syncString(PHAROAH_ENDING_TEXT2());
 	file.syncStrings(MAE_NAMES(), 131);
+	file.syncStrings(MIRROR_LOCATIONS(), 59);
 
 	cc.add("CONSTANTS" + num, file);
 

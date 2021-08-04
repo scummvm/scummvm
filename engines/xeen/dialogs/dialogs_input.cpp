@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+﻿/* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -35,7 +35,52 @@ int Input::show(XeenEngine *vm, Window *window, Common::String &line,
 	return result;
 }
 
+int Input::nonEnToLower(uint16 ascii) {
+	if (Common::RU_RUS == g_vm->getLanguage()) {
+		switch (ascii) {
+		case Common::KEYCODE_f:            return 0xA0;  // А
+		case Common::KEYCODE_COMMA:        return 0xA1;  // Б
+		case Common::KEYCODE_d:            return 0xA2;  // В
+		case Common::KEYCODE_u:            return 0xA3;  // Г
+		case Common::KEYCODE_l:            return 0xA4;  // Д
+		case Common::KEYCODE_t:            return 0xA5;  // Е
+		case Common::KEYCODE_BACKQUOTE:    return 0xF1;  // Ё
+		case Common::KEYCODE_SEMICOLON:    return 0xA6;  // Ж
+		case Common::KEYCODE_p:            return 0xA7;  // З
+		case Common::KEYCODE_b:            return 0xA8;  // И
+		case Common::KEYCODE_q:            return 0xA9;  // Й
+		case Common::KEYCODE_r:            return 0xAA;  // К
+		case Common::KEYCODE_k:            return 0xAB;  // Л
+		case Common::KEYCODE_v:            return 0xAC;  // М
+		case Common::KEYCODE_y:            return 0xAD;  // Н
+		case Common::KEYCODE_j:            return 0xAE;  // О
+		case Common::KEYCODE_g:            return 0xAF;  // П
+		case Common::KEYCODE_h:            return 0xE0;  // Р
+		case Common::KEYCODE_c:            return 0xE1;  // С
+		case Common::KEYCODE_n:            return 0xE2;  // Т
+		case Common::KEYCODE_e:            return 0xE3;  // У
+		case Common::KEYCODE_a:            return 0xE4;  // Ф
+		case Common::KEYCODE_LEFTBRACKET:  return 0xE5;  // Х
+		case Common::KEYCODE_w:            return 0xE6;  // Ц
+		case Common::KEYCODE_x:            return 0xE7;  // Ч
+		case Common::KEYCODE_i:            return 0xE8;  // Ш
+		case Common::KEYCODE_o:            return 0xE9;  // Щ
+		case Common::KEYCODE_RIGHTBRACKET: return 0xEA;  // Ъ
+		case Common::KEYCODE_s:            return 0xEB;  // Ы
+		case Common::KEYCODE_m:            return 0xEC;  // Ь
+		case Common::KEYCODE_QUOTE:        return 0xED;  // Э
+		case Common::KEYCODE_PERIOD:       return 0xEE;  // Ю
+		case Common::KEYCODE_z:            return 0xEF;  // Я
+		default:
+			return tolower(ascii);
+		}
+	}
+	return ascii;
+}
+
 int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNumeric) {
+	bool nonEnCharset = false;
+
 	_vm->_noDirectionSense = true;
 	Common::String msg = Common::String::format("\x3""l\t000\x4%03d\x3""c", maxWidth);
 	_window->writeString(msg);
@@ -53,17 +98,25 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 		} else if (line.size() < maxLen && (line.size() > 0 || keyCode != Common::KEYCODE_SPACE)
 				&& ((isNumeric && keyState.ascii >= '0' && keyState.ascii <= '9') ||
 				   (!isNumeric && keyState.ascii >= ' ' && keyState.ascii <= (char)127))) {
-			if (!isNumeric && Common::isAlpha(keyState.ascii)) {
-				// The original game doesn't care about Shift or Caps Locks. The
-				// capitalization is done for the user automatically at the beginning of
-				// words.
-				if (line.empty() || line.hasSuffix(" ")) {
-					line += toupper(keyState.ascii);
+			if (!nonEnCharset) {
+				if (!isNumeric && Common::isAlpha(keyState.ascii)) {
+					// The original game doesn't care about Shift or Caps Locks. The
+					// capitalization is done for the user automatically at the beginning of
+					// words.
+					if (line.empty() || line.hasSuffix(" ")) {
+						line += toupper(keyState.ascii);
+					} else {
+						line += tolower(keyState.ascii);
+					}
 				} else {
-					line += tolower(keyState.ascii);
+					line += keyState.ascii;
 				}
 			} else {
-				line += keyState.ascii;
+				if (!isNumeric) {
+					line += nonEnToLower(keyState.ascii);
+				} else {
+					line += keyState.ascii;
+				}
 			}
 
 			refresh = true;
@@ -72,6 +125,12 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 		} else if (keyCode == Common::KEYCODE_ESCAPE) {
 			line = "";
 			break;
+		} else if (Common::RU_RUS == g_vm->getLanguage()) {
+			if (Common::KEYCODE_F11 == keyCode) {
+				nonEnCharset = true;
+			} else if (Common::KEYCODE_F12 == keyCode) {
+				nonEnCharset = false;
+			}
 		}
 
 		if (refresh) {
@@ -198,11 +257,21 @@ int StringInput::execute(bool type, const Common::String &expected,
 				f2.close();
 			}
 
-			for (uint idx = 0; idx < scripts._mirror.size(); ++idx) {
-				if (!line.compareToIgnoreCase(scripts._mirror[idx]._name)) {
-					result = idx + 1;
-					sound.playFX(_vm->_files->_ccNum ? 35 : 61);
-					break;
+			if (Common::RU_RUS == g_vm->getLanguage()) {
+				for (uint idx = 0; idx < 59; ++idx) {
+					if (!line.compareToIgnoreCase(Res.MIRROR_LOCATIONS[idx])) {
+						result = idx + 1;
+						sound.playFX(_vm->_files->_ccNum ? 35 : 61);
+						break;
+					}
+				}
+			} else {
+				for (uint idx = 0; idx < scripts._mirror.size(); ++idx) {
+					if (!line.compareToIgnoreCase(scripts._mirror[idx]._name)) {
+						result = idx + 1;
+						sound.playFX(_vm->_files->_ccNum ? 35 : 61);
+						break;
+					}
 				}
 			}
 		}

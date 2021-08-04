@@ -474,6 +474,7 @@ public:
 	const char *PHAROAH_ENDING_TEXT1;
 	const char *PHAROAH_ENDING_TEXT2;
 	const char *MAE_NAMES[131];
+	const char *MIRROR_LOCATIONS[58];
 
 	struct {
 

@@ -1941,12 +1941,18 @@ public:
 			   "l\fd";
 	}
 
-
 	const char **MAE_NAMES() {
 		static const char *_maeNames[] = {
 			"",
 		};
 		return _maeNames;
+	}
+
+	const char **MIRROR_LOCATIONS() {
+		static const char *_mirrLocs[] = {
+			"",
+		};
+		return _mirrLocs;
 	}
 
 	class EN_KeyConstants : public KeyConstants {
