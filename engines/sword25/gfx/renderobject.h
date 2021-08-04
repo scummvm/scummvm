@@ -45,6 +45,7 @@
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
 #include "common/rect.h"
+#include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/renderobjectptr.h"
 
 #include "common/list.h"
@@ -132,7 +133,7 @@ public:
 	            Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
 
-	RenderObjectPtr<Panel> addPanel(int width, int height, uint color = 0xff000000);
+	RenderObjectPtr<Panel> addPanel(int width, int height, uint color = BS_RGB(0, 0, 0));
 	/**
 	    @brief Erzeugt ein Textobjekt als Kinderobjekt des Renderobjektes.
 	    @param Font der Dateiname des zu verwendenen Fonts

@@ -33,6 +33,7 @@
 #define SWORD25_BITMAP_H
 
 #include "sword25/kernel/common.h"
+#include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/renderobject.h"
 
 namespace Sword25 {
@@ -95,7 +96,7 @@ public:
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsAlphaAllowed() true zurückgibt.
 	*/
 	int getAlpha() {
-		return _modulationColor >> 24;
+		return _modulationColor >> BS_ASHIFT;
 	}
 
 	/**
@@ -103,7 +104,7 @@ public:
 	    @remark Diese Methode darf nur aufgerufen werden, wenn die Methode IsColorModulationAllowed() true zurückgibt.
 	*/
 	int getModulationColor() {
-		return _modulationColor & 0x00ffffff;
+		return _modulationColor & BS_RGBMASK;
 	}
 
 	/**

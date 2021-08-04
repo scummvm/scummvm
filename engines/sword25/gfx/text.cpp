@@ -46,7 +46,7 @@ const uint32 AUTO_WRAP_THRESHOLD_DEFAULT = 300;
 
 Text::Text(RenderObjectPtr<RenderObject> parentPtr) :
 	RenderObject(parentPtr, RenderObject::TYPE_TEXT),
-	_modulationColor(0xffffffff),
+	_modulationColor(BS_ARGBMASK),
 	_autoWrap(false),
 	_autoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
 
@@ -55,7 +55,7 @@ Text::Text(RenderObjectPtr<RenderObject> parentPtr) :
 Text::Text(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle) :
 		RenderObject(parentPtr, TYPE_TEXT, handle),
 		// Temporarily set fields prior to unpersisting actual values
-		_modulationColor(0xffffffff),
+		_modulationColor(BS_ARGBMASK),
 		_autoWrap(false),
 		_autoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
 
@@ -96,7 +96,7 @@ void Text::setText(const Common::String &text) {
 }
 
 void Text::setColor(uint32 modulationColor) {
-	uint32 newModulationColor = (modulationColor & 0x00ffffff) | (_modulationColor & 0xff000000);
+	uint32 newModulationColor = (modulationColor & BS_RGBMASK) | (_modulationColor & BS_AMASK);
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();
@@ -105,7 +105,7 @@ void Text::setColor(uint32 modulationColor) {
 
 void Text::setAlpha(int alpha) {
 	assert(alpha >= 0 && alpha < 256);
-	uint32 newModulationColor = (_modulationColor & 0xffffff) | (alpha << 24);
+	uint32 newModulationColor = (_modulationColor & BS_RGBMASK) | (alpha << BS_ASHIFT);
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();

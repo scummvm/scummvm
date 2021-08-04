@@ -107,7 +107,7 @@ public:
 	    @return Der Alphawert des Textes (0 = keine Deckung, 255 = volle Deckung).
 	*/
 	int getAlpha() const {
-		return _modulationColor >> 24;
+		return _modulationColor >> BS_ASHIFT;
 	}
 
 	/**
@@ -115,7 +115,7 @@ public:
 	    @return Eine 24-Bit RGB Farbe, die die Farbe des Textes angibt.
 	*/
 	int getColor() const {
-		return _modulationColor & 0x00ffffff;
+		return _modulationColor & BS_RGBMASK;
 	}
 
 	/**

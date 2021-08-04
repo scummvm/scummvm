@@ -115,7 +115,7 @@ void Animation::initMembers() {
 	_relY = 0;
 	_scaleFactorX = 1.0f;
 	_scaleFactorY = 1.0f;
-	_modulationColor = 0xffffffff;
+	_modulationColor = BS_ARGBMASK;
 	_animationResourcePtr = 0;
 	_animationTemplateHandle = 0;
 	_framesLocked = false;
@@ -424,7 +424,7 @@ void Animation::setAlpha(int alpha) {
 		return;
 	}
 
-	uint newModulationColor = (_modulationColor & 0x00ffffff) | alpha << 24;
+	uint newModulationColor = (_modulationColor & BS_RGBMASK) | alpha << BS_ASHIFT;
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();
@@ -439,7 +439,7 @@ void Animation::setModulationColor(uint modulationColor) {
 		return;
 	}
 
-	uint newModulationColor = (modulationColor & 0x00ffffff) | (_modulationColor & 0xff000000);
+	uint newModulationColor = (modulationColor & BS_RGBMASK) | (_modulationColor & BS_AMASK);
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();
