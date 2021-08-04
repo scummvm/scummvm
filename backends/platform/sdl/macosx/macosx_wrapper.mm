@@ -32,6 +32,10 @@
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CFString.h>
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
+#define NSPasteboardTypeString NSStringPboardType
+#endif
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
 typedef unsigned long NSUInteger;
 
@@ -47,16 +51,15 @@ enum {
 #endif
 
 bool hasTextInClipboardMacOSX() {
-	return [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]] != nil;
+	return [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObject:NSPasteboardTypeString]] != nil;
 }
 
 Common::U32String getTextFromClipboardMacOSX() {
 	if (!hasTextInClipboardMacOSX())
 		return Common::U32String();
-	// Note: on OS X 10.6 and above it is recommended to use NSPasteboardTypeString rather than NSStringPboardType.
-	// But since we still target older version use NSStringPboardType.
+
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
-	NSString *str = [pb  stringForType:NSStringPboardType];
+	NSString *str = [pb  stringForType:NSPasteboardTypeString];
 	if (str == nil)
 		return Common::U32String();
 
@@ -82,7 +85,7 @@ Common::U32String getTextFromClipboardMacOSX() {
 
 bool setTextInClipboardMacOSX(const Common::U32String &text) {
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
-	[pb declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+	[pb declareTypes:[NSArray arrayWithObject:NSPasteboardTypeString] owner:nil];
 
 #ifdef SCUMM_LITTLE_ENDIAN
 	NSStringEncoding stringEncoding = NSUTF32LittleEndianStringEncoding;
@@ -90,7 +93,7 @@ bool setTextInClipboardMacOSX(const Common::U32String &text) {
 	NSStringEncoding stringEncoding = NSUTF32BigEndianStringEncoding;
 #endif
 	NSString *nsstring = [[NSString alloc] initWithBytes:text.c_str() length:4*text.size() encoding: stringEncoding];
-	bool status =  [pb setString:nsstring forType:NSStringPboardType];
+	bool status =  [pb setString:nsstring forType:NSPasteboardTypeString];
 	[nsstring release];
 	return status;
 }
