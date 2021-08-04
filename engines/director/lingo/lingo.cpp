@@ -441,7 +441,7 @@ void Lingo::execute() {
 		}
 	}
 
-	if (_abort) {
+	if (_abort || _vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
 		// Clean up call stack
 		while (_vm->getCurrentWindow()->_callstack.size()) {
 			popContext();
