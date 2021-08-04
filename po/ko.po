@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-04 11:27+0000\n"
+"POT-Creation-Date: 2021-08-04 13:42+0000\n"
 "PO-Revision-Date: 2021-08-04 12:37+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -945,11 +945,11 @@ msgstr "전체 화면 설정을 변경할 수 없음"
 msgid "the filtering setting could not be changed"
 msgstr "필터링 설정을 변경할 수 없음"
 
-#: gui/options.cpp:1213
+#: gui/options.cpp:1213 backends/platform/android/options.cpp:72
 msgid "Show On-screen control"
 msgstr "화면상 컨트롤을 표시"
 
-#: gui/options.cpp:1217
+#: gui/options.cpp:1217 backends/platform/android/options.cpp:73
 msgid "Touchpad mouse mode"
 msgstr "터치패드 마우스 모드"
 
@@ -3371,6 +3371,11 @@ msgstr "돋보기 모드 끔. 드래그 모드를 재활성화합니다..."
 #: backends/platform/3ds/osystem-events.cpp:431
 msgid "Magnify Mode Off"
 msgstr "돋보기 모드 끔"
+
+#. I18N: Show a button to revoke Storage Access Framework permissions for Android
+#: backends/platform/android/options.cpp:77
+msgid "Show SAF revoke permissions overlay button"
+msgstr ""
 
 #: backends/platform/ds/ds-graphics.cpp:219
 msgid "Unscaled"

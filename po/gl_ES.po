@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-04 11:27+0000\n"
+"POT-Creation-Date: 2021-08-04 13:42+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -961,11 +961,11 @@ msgstr "non se puido cambiar a configuración de pantalla completa."
 msgid "the filtering setting could not be changed"
 msgstr "non se puido cambiar a configuración de filtrado."
 
-#: gui/options.cpp:1213
+#: gui/options.cpp:1213 backends/platform/android/options.cpp:72
 msgid "Show On-screen control"
 msgstr "Mostrar controis na pantalla"
 
-#: gui/options.cpp:1217
+#: gui/options.cpp:1217 backends/platform/android/options.cpp:73
 msgid "Touchpad mouse mode"
 msgstr "Modo Panel táctil"
 
@@ -3508,6 +3508,11 @@ msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:431
 msgid "Magnify Mode Off"
+msgstr ""
+
+#. I18N: Show a button to revoke Storage Access Framework permissions for Android
+#: backends/platform/android/options.cpp:77
+msgid "Show SAF revoke permissions overlay button"
 msgstr ""
 
 #: backends/platform/ds/ds-graphics.cpp:219

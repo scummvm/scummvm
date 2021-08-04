@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-04 11:27+0000\n"
+"POT-Creation-Date: 2021-08-04 13:42+0000\n"
 "PO-Revision-Date: 2021-08-02 16:26+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -954,11 +954,11 @@ msgstr "no se ha podido cambiar el ajuste de pantalla completa"
 msgid "the filtering setting could not be changed"
 msgstr "no se ha podido cambiar el filtrado"
 
-#: gui/options.cpp:1213
+#: gui/options.cpp:1213 backends/platform/android/options.cpp:72
 msgid "Show On-screen control"
 msgstr "Mostrar controles en pantalla"
 
-#: gui/options.cpp:1217
+#: gui/options.cpp:1217 backends/platform/android/options.cpp:73
 msgid "Touchpad mouse mode"
 msgstr "Modo «touchpad»"
 
@@ -3430,6 +3430,11 @@ msgstr "Modo aumentado desactivado. Reactivando modo de arrastre..."
 #: backends/platform/3ds/osystem-events.cpp:431
 msgid "Magnify Mode Off"
 msgstr "Modo aumentado desactivado"
+
+#. I18N: Show a button to revoke Storage Access Framework permissions for Android
+#: backends/platform/android/options.cpp:77
+msgid "Show SAF revoke permissions overlay button"
+msgstr "Mostrar botón superpuesto para revocar permisos del SAF"
 
 #: backends/platform/ds/ds-graphics.cpp:219
 msgid "Unscaled"
@@ -8427,9 +8432,6 @@ msgstr ""
 "Necesitarás todas las fuentes del paquete que prefieras, por ejemplo, "
 "LiberationMono, LiberationSans y LiberationSerif, o FreeMono, FreeSans y "
 "FreeSerif respectivamente."
-
-#~ msgid "Show SAF revoke permissions overlay button"
-#~ msgstr "Mostrar botón superpuesto para revocar permisos del SAF"
 
 #~ msgid "SAGA2 support not compiled in"
 #~ msgstr "No se ha incluido el soporte para SAGA2."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-04 11:27+0000\n"
+"POT-Creation-Date: 2021-08-04 13:42+0000\n"
 "PO-Revision-Date: 2021-08-04 00:25+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -950,11 +950,11 @@ msgstr "kokoruututilaa ei voitu muuttaa"
 msgid "the filtering setting could not be changed"
 msgstr "Suodatusasetusta ei voitu muuttaa"
 
-#: gui/options.cpp:1213
+#: gui/options.cpp:1213 backends/platform/android/options.cpp:72
 msgid "Show On-screen control"
 msgstr "Virtuaalikontrollit"
 
-#: gui/options.cpp:1217
+#: gui/options.cpp:1217 backends/platform/android/options.cpp:73
 msgid "Touchpad mouse mode"
 msgstr "Touchpad hiiritila"
 
@@ -3398,6 +3398,11 @@ msgstr "Suurennustila poissa. Siirrytään raahaustilaan..."
 #: backends/platform/3ds/osystem-events.cpp:431
 msgid "Magnify Mode Off"
 msgstr "Suurennustila poissa"
+
+#. I18N: Show a button to revoke Storage Access Framework permissions for Android
+#: backends/platform/android/options.cpp:77
+msgid "Show SAF revoke permissions overlay button"
+msgstr "Näytä SAF-käyttöoikeuden perumisnappi overlay:ssä"
 
 #: backends/platform/ds/ds-graphics.cpp:219
 msgid "Unscaled"
@@ -8347,9 +8352,6 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
-
-#~ msgid "Show SAF revoke permissions overlay button"
-#~ msgstr "Näytä SAF-käyttöoikeuden perumisnappi overlay:ssä"
 
 #~ msgid "SAGA2 support not compiled in"
 #~ msgstr "SAGA2-tukea ei ole käännetty mukaan"
