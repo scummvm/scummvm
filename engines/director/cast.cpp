@@ -678,7 +678,7 @@ Common::String Cast::getVideoPath(int castId) {
 		Common::String filename = _castsInfo[castId]->fileName;
 		Common::String directory = _castsInfo[castId]->directory;
 
-		res = directory + "\\" + filename;
+		res = directory + g_director->_dirSeparator + filename;
 	} else {
 		warning("STUB: Cast::getVideoPath(%d): unsupported non-zero MooV block", castId);
 	}

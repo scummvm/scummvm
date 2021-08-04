@@ -358,7 +358,7 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	_video = new Video::QuickTimeDecoder();
 
 	debugC(2, kDebugLoading | kDebugImages, "Loading video %s", path.c_str());
-	bool result = _video->loadFile(path);
+	bool result = _video->loadFile(Common::Path(path, g_director->_dirSeparator));
 
 	if (result && g_director->_pixelformat.bytesPerPixel == 1) {
 		// Director supports playing back RGB and paletted video in 256 colour mode.
