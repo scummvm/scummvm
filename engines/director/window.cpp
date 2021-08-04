@@ -402,44 +402,22 @@ void Window::setVisible(bool visible, bool silent) {
 
 bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 	Common::String movieFilename = pathMakeRelative(movieFilenameRaw);
-	Common::String cleanedFilename;
 
 	bool fileExists = false;
-
-	if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-		Common::MacResManager resMan;
-
-		for (const byte *p = (const byte *)movieFilename.c_str(); *p; p++)
-			if (*p >= 0x20 && *p <= 0x7f)
-				cleanedFilename += (char) *p;
-
-		if (resMan.open(Common::Path(movieFilename, _vm->_dirSeparator))) {
-			fileExists = true;
-			cleanedFilename = movieFilename;
-		} else if (!movieFilename.equals(cleanedFilename) && resMan.open(Common::Path(cleanedFilename, _vm->_dirSeparator))) {
-			fileExists = true;
-		}
-	} else {
-		Common::File file;
-		cleanedFilename = movieFilename + ".MMM";
-
-		if (file.open(Common::Path(movieFilename, _vm->_dirSeparator))) {
-			fileExists = true;
-			cleanedFilename = movieFilename;
-		} else if (!movieFilename.equals(cleanedFilename) && file.open(Common::Path(cleanedFilename, _vm->_dirSeparator))) {
-			fileExists = true;
-		}
+	Common::File file;
+	if (file.open(Common::Path(movieFilename, _vm->_dirSeparator))) {
+		fileExists = true;
+		file.close();
 	}
 
-	debug(1, "Window::setNextMovie: '%s' -> '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(),
-			movieFilename.c_str(), cleanedFilename.c_str());
+	debug(1, "Window::setNextMovie: '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(), movieFilename.c_str());
 
 	if (!fileExists) {
 		warning("Movie %s does not exist", movieFilename.c_str());
 		return false;
 	}
 
-	_nextMovie.movie = cleanedFilename;
+	_nextMovie.movie = movieFilename;
 	return true;
 }
 
