@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-04 13:42+0000\n"
+"POT-Creation-Date: 2021-08-04 18:28+0000\n"
 "PO-Revision-Date: 2021-08-04 17:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -127,7 +127,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:415 gui/launcher.cpp:458
-#: gui/options.cpp:2889 gui/options.cpp:2927
+#: gui/options.cpp:2885 gui/options.cpp:2923
 #: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -139,7 +139,7 @@ msgstr "Да"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:393 gui/launcher.cpp:415 gui/launcher.cpp:458
-#: gui/options.cpp:2889 gui/options.cpp:2927 engines/buried/buried.cpp:530
+#: gui/options.cpp:2885 gui/options.cpp:2923 engines/buried/buried.cpp:530
 #: engines/grim/grim.cpp:350 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:142
@@ -249,7 +249,7 @@ msgstr ""
 #: gui/options.cpp:1390 gui/options.cpp:1403 gui/options.cpp:1417
 #: gui/options.cpp:1429 gui/options.cpp:1449 gui/options.cpp:1461
 #: gui/options.cpp:1831 gui/options.cpp:2231 gui/options.cpp:2295
-#: gui/options.cpp:2467 gui/options.cpp:2777 audio/null.cpp:41
+#: gui/options.cpp:2467 gui/options.cpp:2773 audio/null.cpp:41
 #: engines/ags/detection.cpp:94
 msgid "<default>"
 msgstr "<по умолчанию>"
@@ -437,19 +437,19 @@ msgstr "Статистика"
 #: gui/options.cpp:2121 gui/options.cpp:2129 gui/options.cpp:2160
 #: gui/options.cpp:2203 gui/options.cpp:2211 gui/options.cpp:2220
 #: gui/options.cpp:2491 gui/options.cpp:2497 gui/options.cpp:2504
-#: gui/options.cpp:2513 gui/options.cpp:2761 gui/options.cpp:2764
-#: gui/options.cpp:2771 gui/options.cpp:2783 gui/options.cpp:2794
+#: gui/options.cpp:2513 gui/options.cpp:2757 gui/options.cpp:2760
+#: gui/options.cpp:2767 gui/options.cpp:2779 gui/options.cpp:2790
 msgctxt "path"
 msgid "None"
 msgstr "Не задан"
 
 #: gui/editgamedialog.cpp:403 gui/editgamedialog.cpp:510
 #: gui/editgamedialog.cpp:641 gui/options.cpp:2109 gui/options.cpp:2485
-#: gui/options.cpp:2767 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2763 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "По умолчанию"
 
-#: gui/editgamedialog.cpp:563 gui/options.cpp:2788
+#: gui/editgamedialog.cpp:563 gui/options.cpp:2784
 msgid "Select SoundFont"
 msgstr "Выберите SoundFont"
 
@@ -457,11 +457,11 @@ msgstr "Выберите SoundFont"
 msgid "Select additional game directory"
 msgstr "Выберите дополнительный каталог игры"
 
-#: gui/editgamedialog.cpp:615 gui/options.cpp:2696
+#: gui/editgamedialog.cpp:615 gui/options.cpp:2692
 msgid "Select directory for saved games"
 msgstr "Выберите каталог для сохранённых игр"
 
-#: gui/editgamedialog.cpp:622 gui/options.cpp:2703
+#: gui/editgamedialog.cpp:622 gui/options.cpp:2699
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Не могу писать в выбранный каталог. Пожалуйста, укажите другой."
 
@@ -1369,7 +1369,7 @@ msgid "ScummVM config path: "
 msgstr "Файл настроек ScummVM: "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2236 gui/options.cpp:2777
+#: gui/options.cpp:2236 gui/options.cpp:2773
 msgid "Last browser path: "
 msgstr "Последний путь в браузере файлов: "
 
@@ -1523,7 +1523,7 @@ msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "Когда в последний раз сохранённые игры синхронизировались с этим хранилищем"
 
-#: gui/options.cpp:2378 gui/options.cpp:3127
+#: gui/options.cpp:2378 gui/options.cpp:3123
 msgid "<never>"
 msgstr "<никогда>"
 
@@ -1632,7 +1632,7 @@ msgstr "Запустить сервер"
 msgid "Run local webserver"
 msgstr "Запускает локальный веб-сервер"
 
-#: gui/options.cpp:2419 gui/options.cpp:3242
+#: gui/options.cpp:2419 gui/options.cpp:3238
 msgid "Not running"
 msgstr "Не запущен"
 
@@ -1713,23 +1713,23 @@ msgstr ""
 "\n"
 "Настройки на вкладке \"Разное\" будут восстановлены."
 
-#: gui/options.cpp:2712
+#: gui/options.cpp:2708
 msgid "Select directory for GUI themes"
 msgstr "Выберите каталог для тем интерфейса"
 
-#: gui/options.cpp:2722
+#: gui/options.cpp:2718
 msgid "Select directory for extra files"
 msgstr "Выберите каталог для дополнительных файлов"
 
-#: gui/options.cpp:2733
+#: gui/options.cpp:2729
 msgid "Select directory for plugins"
 msgstr "Выберите каталог с плагинами"
 
-#: gui/options.cpp:2746
+#: gui/options.cpp:2742
 msgid "Select directory for Files Manager /root/"
 msgstr "Выберите корневой каталог для менеджера файлов"
 
-#: gui/options.cpp:2864
+#: gui/options.cpp:2860
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1737,47 +1737,47 @@ msgstr ""
 "Не удалось открыть URL!\n"
 "Пожалуйста, перейдите на указанную страницу вручную."
 
-#: gui/options.cpp:2889
+#: gui/options.cpp:2885
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Сейчас работает ещё одно хранилище. Вы хотите остановить его?"
 
-#: gui/options.cpp:2898 gui/options.cpp:2936
+#: gui/options.cpp:2894 gui/options.cpp:2932
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Подождите, пока текущее хранилище завершит работу, и попробуйте снова."
 
-#: gui/options.cpp:2911
+#: gui/options.cpp:2907
 msgid "Connecting..."
 msgstr "Подключение..."
 
-#: gui/options.cpp:2927
+#: gui/options.cpp:2923
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Это хранилище сейчас работает. Вы хотите остановить его?"
 
-#: gui/options.cpp:3125 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:3121 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<сейчас>"
 
-#: gui/options.cpp:3234
+#: gui/options.cpp:3230
 msgid "Stop server"
 msgstr "Остановить сервер"
 
-#: gui/options.cpp:3235
+#: gui/options.cpp:3231
 msgid "Stop local webserver"
 msgstr "Остановить локальный веб-сервер"
 
-#: gui/options.cpp:3287
+#: gui/options.cpp:3283
 msgid "Storage connected."
 msgstr "Хранилище подключено."
 
-#: gui/options.cpp:3289
+#: gui/options.cpp:3285
 msgid "Failed to connect storage."
 msgstr "Не удалось подключить хранилище."
 
-#: gui/options.cpp:3291
+#: gui/options.cpp:3287
 msgid "Failed to connect storage: "
 msgstr "Не удалось подключить хранилище: "
 
-#: gui/options.cpp:3311
+#: gui/options.cpp:3307
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
