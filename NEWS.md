@@ -39,6 +39,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added command line option --window-size for specifying ScummVM window size,
      applicable only to the OpenGL renderer.
 
+ AGI:
+   - Added support for Russian versions. Input now works.
+
  AGOS:
    - Added support for the Japanese PC-98 version of Elvira 1.
 
