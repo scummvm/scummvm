@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-04 13:42+0000\n"
-"PO-Revision-Date: 2021-07-28 18:42+0000\n"
+"PO-Revision-Date: 2021-08-04 17:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1372,7 +1372,7 @@ msgstr "Файл налаштувань ScummVM: "
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2236 gui/options.cpp:2777
 msgid "Last browser path: "
-msgstr ""
+msgstr "Останній шлях у переглядачі: "
 
 #: gui/options.cpp:2241
 msgid "Theme:"
@@ -3416,7 +3416,7 @@ msgstr "Режим збільшення вимкнено"
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:77
 msgid "Show SAF revoke permissions overlay button"
-msgstr ""
+msgstr "Показати кнопку SAF (доступу до картки пам'яті)"
 
 #: backends/platform/ds/ds-graphics.cpp:219
 msgid "Unscaled"
@@ -6220,14 +6220,12 @@ msgstr ""
 "один канал."
 
 #: engines/scumm/detection.cpp:204
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth scrolling"
-msgstr "Ввімкнути плавну прокрутку під час ходіння"
+msgstr "Ввімкнути плавну прокрутку"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(замість звичайної прокрутки у 8 пікселів)"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
