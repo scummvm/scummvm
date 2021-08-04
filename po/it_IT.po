@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-04 13:42+0000\n"
-"PO-Revision-Date: 2021-07-31 12:48+0000\n"
+"PO-Revision-Date: 2021-08-04 17:44+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -1374,7 +1374,7 @@ msgstr "Config. di ScummVM: "
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2236 gui/options.cpp:2777
 msgid "Last browser path: "
-msgstr ""
+msgstr "Ultimo percorso usato: "
 
 #: gui/options.cpp:2241
 msgid "Theme:"
@@ -6279,14 +6279,12 @@ msgstr ""
 "utilizza un solo canale."
 
 #: engines/scumm/detection.cpp:204
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth scrolling"
-msgstr "Attiva lo scorrimento fluido durante gli spostamenti"
+msgstr "Attiva lo scorrimento fluido"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(al posto dello scorrimento a scatti di 8 pixel)"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
