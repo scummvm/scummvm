@@ -81,7 +81,7 @@ struct I16Vec3 {
 	int16 z = 0;
 };
 #include "common/pack-end.h"
-static_assert(sizeof(I16Vec3) == 6, "Unexpected pointTab size");
+STATIC_ASSERT(sizeof(I16Vec3) == 6, "Unexpected pointTab size");
 
 struct IVec3 {
 	constexpr IVec3() : x(0), y(0), z(0) {}

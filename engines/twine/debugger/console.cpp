@@ -395,7 +395,7 @@ static const char *ItemNames[] = {
 	"BonusList",
 	"CloverLeaf"
 };
-static_assert(ARRAYSIZE(ItemNames) == InventoryItems::MaxInventoryItems, "Array size doesn't match items");
+STATIC_ASSERT(ARRAYSIZE(ItemNames) == InventoryItems::MaxInventoryItems, "Array size doesn't match items");
 
 bool TwinEConsole::doGiveItem(int argc, const char **argv) {
 	if (argc <= 1) {
