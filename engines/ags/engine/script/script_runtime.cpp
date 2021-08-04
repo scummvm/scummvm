@@ -47,7 +47,7 @@
 
 namespace AGS3 {
 
-static const char ccRunnerCopyright[] = "ScriptExecuter32 v" SCOM_VERSIONSTR " (c) 2001 Chris Jones";
+// static const char ccRunnerCopyright[] = "ScriptExecuter32 v" SCOM_VERSIONSTR " (c) 2001 Chris Jones";
 
 bool ccAddExternalStaticFunction(const String &name, ScriptAPIFunction *pfn) {
 	return _GP(simp).add(name, RuntimeScriptValue().SetStaticFunction(pfn), nullptr) == 0;

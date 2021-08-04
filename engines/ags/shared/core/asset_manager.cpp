@@ -42,9 +42,9 @@ AssetLocation::AssetLocation()
 inline static bool IsAssetLibDir(const AssetLibInfo *lib) {
 	return lib->BaseFileName.IsEmpty();
 }
-inline static bool IsAssetLibFile(const AssetLibInfo *lib) {
-	return !lib->BaseFileName.IsEmpty();
-}
+// inline static bool IsAssetLibFile(const AssetLibInfo *lib) {
+// 	return !lib->BaseFileName.IsEmpty();
+// }
 
 bool AssetManager::LibsByPriority::operator()(const AssetLibInfo *lib1, const AssetLibInfo *lib2) const {
 	const bool lib1dir = IsAssetLibDir(lib1);

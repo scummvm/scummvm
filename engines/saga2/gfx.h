@@ -35,12 +35,10 @@ enum BackBufferSource {
 
 class Renderer : public Common::NonCopyable {
 private:
-	Saga2Engine *_vm;
-
 	byte *_savedBackBuffers[kMaxBackBufferSources];
 	
 public:
-	Renderer(Saga2Engine *vm);
+	Renderer();
 	~Renderer();
 
 	void saveBackBuffer(BackBufferSource source);
