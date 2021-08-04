@@ -1447,7 +1447,7 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	} else {
 		getBaseRotationPosition(x, y, z);
 
-		renderPos = _destPos - _baseRotPos; // RECHECK y
+		renderPos = _destPos - _baseRotPos;
 	}
 
 	if (!bodyData.isAnimated()) {
