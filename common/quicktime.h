@@ -33,6 +33,7 @@
 
 #include "common/array.h"
 #include "common/scummsys.h"
+#include "common/path.h"
 #include "common/stream.h"
 #include "common/rational.h"
 #include "common/types.h"
@@ -62,7 +63,7 @@ public:
 	 * Load a QuickTime file
 	 * @param filename	the filename to load
 	 */
-	bool parseFile(const String &filename);
+	bool parseFile(const Path &filename);
 
 	/**
 	 * Load a QuickTime file from a SeekableReadStream

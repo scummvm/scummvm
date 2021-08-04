@@ -63,7 +63,7 @@ public:
 	QuickTimeDecoder();
 	virtual ~QuickTimeDecoder();
 
-	bool loadFile(const Common::String &filename);
+	bool loadFile(const Common::Path &filename);
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
 	uint16 getWidth() const { return _width; }

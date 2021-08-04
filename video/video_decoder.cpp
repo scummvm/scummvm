@@ -82,7 +82,7 @@ void VideoDecoder::close() {
 	_canSetDither = true;
 }
 
-bool VideoDecoder::loadFile(const Common::String &filename) {
+bool VideoDecoder::loadFile(const Common::Path &filename) {
 	Common::File *file = new Common::File();
 
 	if (!file->open(filename)) {
