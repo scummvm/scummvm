@@ -181,7 +181,7 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 
 	if (rect.width() > 0 && rect.height() > 0) {
 		if (ca == 0xff) {
-			_backSurface.fillRect(rect, BS_ARGB(cr, cg, cb, ca));
+			_backSurface.fillRect(rect, _backSurface.format.ARGBToColor(ca, cr, cg, cb));
 		} else {
 			byte *outo = (byte *)_backSurface.getBasePtr(rect.left, rect.top);
 			byte *out;

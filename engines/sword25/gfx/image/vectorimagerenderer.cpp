@@ -50,7 +50,7 @@ void art_rgb_fill_run1(byte *buf, byte r, byte g, byte b, int n) {
 		memset(buf, g, n + n + n + n);
 	} else {
 		uint32 *alt = (uint32 *)buf;
-		uint32 color = BS_ARGB(r, g, b, 0xff);
+		uint32 color = TS_RGB(r, g, b);
 
 		for (i = 0; i < n; i++)
 			*alt++ = color;
