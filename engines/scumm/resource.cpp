@@ -1827,6 +1827,7 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 	Common::String expectedMd5;
 	int patchOffset = -1;
 	int patchLength = -1;
+	char lang[4];
 
 	switch (_language) {
 	case Common::EN_ANY:
@@ -1836,19 +1837,23 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		expectedMd5 = "98b1126a836ef5bfefff10b605b20555";
 		patchOffset = 167;
 		patchLength = 22;
+		strcpy(lang, "ENG");
 		break;
 	default:
 		return false;
 	}
+
+	// Note that the patch will not apply to the "Ultimate Talkie" edition
+	// since that script has been patched to a different length.
 
 	if (size == expectedSize) {
 		// There isn't enough space in the script for the revised
 		// texts, so these abbreviations will be expanded in
 		// decodeParseString().
 		const byte patchData[] = {
-			0x14, 0x03, 0x0F,       // print(3,[Text("/LH.1/");
+			0x14, 0x03, 0x0F,       // print(3,[Text("/LH.$$$/");
 			0x2F, 0x4C, 0x48, 0x2E,
-			0x31, 0x2F              // No terminating 0x00!
+			0x24, 0x24, 0x24, 0x2F  // No terminating 0x00!
 		};
 
 		byte *scriptPtr = buf + scriptOffset;
@@ -1868,10 +1873,15 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		if (md5 != expectedMd5)
 			return false;
 
+		// Insert the script patch and tag it with the appropriate
+		// language.
+
+		memcpy(scriptPtr + patchOffset, patchData, sizeof(patchData));
+		memcpy(scriptPtr + patchOffset + 7, lang, 3);
+
 		// Pad the rest of the replaced script part with spaces before
 		// terminating the string. Finally, add WaitForMessage().
 
-		memcpy(scriptPtr + patchOffset, patchData, sizeof(patchData));
 		memset(scriptPtr + patchOffset+ sizeof(patchData), 32, patchLength - sizeof(patchData) - 3);
 		scriptPtr[patchOffset + patchLength - 3] = 0;
 		scriptPtr[patchOffset + patchLength - 2] = 0xAE;
