@@ -8220,92 +8220,38 @@ static const uint16 laurabow1PatchArmorMoveToFix[] = {
 	PATCH_END
 };
 
-// In some cases like for example when the player oils the arm of the armor,
-// command input stays disabled, even when the player exits fast enough, so
-// that Laura doesn't die.
+// When oiling the left arm of the armor that holds the axe, pressing 'E' to
+//  exit the screen leaves input disabled in the PC version. The local procedure
+//  that restores room 37 enables directional control but not input when the axe
+//  arm is is oiled. Sierra fixed this in the Amiga and Atari ST versions by
+//  adding a call to User:canInput(1) so that the procedure always enables both.
 //
-// This is caused by the scripts only enabling control (directional movement),
-// but do not enable command input as well.
+// We also fix this by enabling both control and input, but we do it by calling
+//  the HandsOn procedure instead, which this procedure already does in every
+//  case except the buggy one when the axe arm is being oiled. We simply patch
+//  out the tests that prevent HandsOn from being called when it's needed.
 //
-// This bug also happens, when using the original interpreter. It was fixed for
-// the Atari ST + Amiga versions of the game.
-//
-// Applies to at least: English PC Floppy
-// Responsible method: 2nd subroutine in script 37, called by oiling::changeState(7)
+// Applies to: English PC Floppy
+// Responsible method: 3rd subroutine in script 37, called by Room37:handleEvent
 // Fixes bug: #7154
 static const uint16 laurabow1SignatureArmorOilingArmFix[] = {
-	0x38, SIG_UINT16(0x0089),           // pushi 89h
-	0x76,                               // push0
 	SIG_MAGICDWORD,
-	0x72, SIG_UINT16(0x1a5c),           // lofsa "Can" - offsets are not skipped to make sure only the PC version gets patched
-	0x4a, 0x04,                         // send 04
-	0x38, SIG_UINT16(0x0089),           // pushi 89h
-	0x76,                               // push0
-	0x72, SIG_UINT16(0x19a1),           // lofsa "Visor"
-	0x4a, 0x04,                         // send 04
-	0x38, SIG_UINT16(0x0089),           // pushi 89h
-	0x76,                               // push0
-	0x72, SIG_UINT16(0x194a),           // lofsa "note"
-	0x4a, 0x04,                         // send 04
-	0x38, SIG_UINT16(0x0089),           // pushi 89h
-	0x76,                               // push0
-	0x72, SIG_UINT16(0x18f3),           // lofsa "valve"
-	0x4a, 0x04,                         // send 04
-	0x8b, 0x34,                         // lsl local[34h]
-	0x35, 0x02,                         // ldi 02
+	0x72, SIG_UINT16(0x18f3),           // lofsa valve [ included offset so that only PC version is patched ]
+	0x4a, 0x04,                         // send 04 [ valve hide: ]
+	0x8b, 0x34,                         // lsl 34  [ oil-target ]
+	0x35, 0x02,                         // ldi 02  [ left arm ]
 	0x1c,                               // ne?
-	0x30, SIG_UINT16(0x0014),           // bnt [to ret]
-	0x8b, 0x34,                         // lsl local[34h]
-	0x35, 0x05,                         // ldi 05
-	0x1c,                               // ne?
-	0x30, SIG_UINT16(0x000c),           // bnt [to ret]
-	0x8b, 0x34,                         // lsl local[34h]
-	0x35, 0x06,                         // ldi 06
-	0x1c,                               // ne?
-	0x30, SIG_UINT16(0x0004),           // bnt [to ret]
-	// followed by code to call script 0 export to re-enable controls and call setMotion
+	0x30, SIG_UINT16(0x0014),           // bnt 0014 [ skip HandsOn if oiled left arm ]
+	SIG_ADDTOOFFSET(+0x10),             // [ more oil-target tests: left elbow, axe ]
+	0x76,                               // push0
+	0x45, 0x04, 0x00,                   // callb proc0_4 [ HandsOn ]
+	0x48,                               // ret
 	SIG_END
 };
 
 static const uint16 laurabow1PatchArmorOilingArmFix[] = {
-	PATCH_ADDTOOFFSET(+3),              // skip over pushi 89h
-	0x3c,                               // dup
-	0x3c,                               // dup
-	0x3c,                               // dup
-	// saves a total of 6 bytes
-	0x76,                               // push0
-	0x72, PATCH_UINT16(0x1a59),         // lofsa "Can"
-	0x4a, 0x04,                         // send 04
-	0x76,                               // push0
-	0x72, PATCH_UINT16(0x19a1),         // lofsa "Visor"
-	0x4a, 0x04,                         // send 04
-	0x76,                               // push0
-	0x72, PATCH_UINT16(0x194d),         // lofsa "note"
-	0x4a, 0x04,                         // send 04
-	0x76,                               // push0
-	0x72, PATCH_UINT16(0x18f9),         // lofsa "valve" 18f3
-	0x4a, 0x04,                         // send 04
-	// new code to enable input as well, needs 9 spare bytes
-	0x38, PATCH_UINT16(0x00e2),         // pushi canInput
-	0x78,                               // push1
-	0x78,                               // push1
-	0x51, 0x2b,                         // class User
-	0x4a, 0x06,                         // send 06 -> call User::canInput(1)
-	// original code, but changed a bit to save some more bytes
-	0x8b, 0x34,                         // lsl local[34h]
-	0x35, 0x02,                         // ldi 02
-	0x04,                               // sub
-	0x31, 0x12,                         // bnt [to ret]
-	0x36,                               // push
-	0x35, 0x03,                         // ldi 03
-	0x04,                               // sub
-	0x31, 0x0c,                         // bnt [to ret]
-	0x78,                               // push1
-	0x1a,                               // eq?
-	0x2f, 0x08,                         // bt [to ret]
-	// saves 7 bytes, we only need 3, so waste 4 bytes
-	0x35, 0x00,                         // ldi 0
-	0x35, 0x00,                         // ldi 0
+	PATCH_ADDTOOFFSET(+5),
+	0x33, 0x16,                         // jmp 16 [ always call HandsOn ]
 	PATCH_END
 };
 
