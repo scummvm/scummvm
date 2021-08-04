@@ -2815,7 +2815,7 @@ void ScummEngine_v5::decodeParseString() {
 void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr) {
 	const char *msg = (const char *)ptr;
 
-	if (strncmp((const char *)ptr, "/LH.1/", 6) == 0) {
+	if (strncmp((const char *)ptr, "/LH.ENG/", 8) == 0) {
 		msg =
 "Oooh, that's nice.\xFF\x03"
 "Simple.  Just like one of mine.\xFF\x03"
