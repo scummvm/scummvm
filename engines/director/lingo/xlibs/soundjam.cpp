@@ -45,6 +45,8 @@
 */
 
 #include "director/director.h"
+#include "director/window.h"
+#include "director/sound.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -53,6 +55,8 @@
 namespace Director {
 
 static const char *xlibName = "SoundJam";
+
+const int kJamChannel = 3;
 
 static MethodProto xlibMethods[] = {
 	{ "new",				SoundJam::m_new,			 1, 1,	400 },
@@ -89,17 +93,15 @@ SoundJamObject::SoundJamObject(ObjectType objType) : Object<SoundJamObject>("Sou
 }
 
 void SoundJam::m_new(int nargs) {
-	/* Datum numberOfChannels = */ g_lingo->pop();
+	int numberOfChannels = g_lingo->pop().asInt();
 
-	// Meet MediaBand seems to have fully working fallbacks to
-	// standard Lingo builtins, which it uses when SoundJam
-	// fails to initialize. So let's fail to initialize it...
+	if (numberOfChannels != 1) {
+		warning("SoundJam::m_new: Expected numberOfChannels = 1, got %d", numberOfChannels);
+		g_lingo->push(Datum());
+		return;
+	}
 
-	g_lingo->push(-20023); // Indicates this version of Director does not support SoundJam
-
-	// If we discover that the standard builtins don't replicate
-	// everything SoundJam is used for, then we'll have to properly
-	// implement this.
+	g_lingo->push(g_lingo->_currentMe);
 }
 
 void SoundJam::m_defineFileSound(int nargs) {
@@ -109,15 +111,37 @@ void SoundJam::m_defineFileSound(int nargs) {
 }
 
 void SoundJam::m_defineCastSound(int nargs) {
-	g_lingo->printSTUBWithArglist("SoundJam::m_defineCastSound", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
+	SoundJamObject *me = static_cast<SoundJamObject *>(g_lingo->_currentMe.u.obj);
+
+	/* Datum numberOfBeats = */ g_lingo->pop();
+	CastMemberID castMemberNumber = g_lingo->pop().asMemberID();
+
+	int soundID = 0;
+	while (me->_soundMap.contains(soundID))
+		soundID++;
+
+	me->_soundMap[soundID] = castMemberNumber;
+
+	g_lingo->push(soundID);
 }
 
 void SoundJam::m_undefineSound(int nargs) {
-	g_lingo->printSTUBWithArglist("SoundJam::m_undefineSound", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
+	SoundJamObject *me = static_cast<SoundJamObject *>(g_lingo->_currentMe.u.obj);
+	int soundID = g_lingo->pop().asInt();
+
+	if (soundID < 0) {
+		g_lingo->push(0); // success
+		return;
+	}
+
+	if (!me->_soundMap.contains(soundID)) {
+		warning("SoundJam::m_undefineSound: Sound %d is not defined", soundID);
+		g_lingo->push(-1); // error
+		return;
+	}
+
+	me->_soundMap.erase(soundID);
+	g_lingo->push(0); // success
 }
 
 void SoundJam::m_readSome(int nargs) {
@@ -133,9 +157,19 @@ void SoundJam::m_startSound(int nargs) {
 }
 
 void SoundJam::m_switchNew(int nargs) {
-	g_lingo->printSTUBWithArglist("SoundJam::m_switchNew", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
+	SoundJamObject *me = static_cast<SoundJamObject *>(g_lingo->_currentMe.u.obj);
+	int soundID = g_lingo->pop().asInt();
+
+	if (!me->_soundMap.contains(soundID)) {
+		warning("SoundJam::m_switchNew: Sound %d is not defined", soundID);
+		g_lingo->push(-1); // error
+		return;
+	}
+
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
+	sound->setPuppetSound(me->_soundMap[soundID], kJamChannel);
+	sound->playPuppetSound(kJamChannel);
+	g_lingo->push(0); // success
 }
 
 void SoundJam::m_switchParallel(int nargs) {
@@ -156,8 +190,9 @@ void SoundJam::m_toggleMute(int nargs) {
 }
 
 void SoundJam::m_stop(int nargs) {
-	g_lingo->printSTUBWithArglist("SoundJam::m_stop", nargs);
-	g_lingo->dropStack(nargs);
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
+	sound->setPuppetSound(SoundID(), kJamChannel);
+	sound->playPuppetSound(kJamChannel);
 }
 
 } // End of namespace Director

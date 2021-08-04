@@ -27,6 +27,9 @@ namespace Director {
 
 class SoundJamObject : public Object<SoundJamObject> {
 public:
+	Common::HashMap<int, CastMemberID> _soundMap;
+
+public:
 	SoundJamObject(ObjectType objType);
 };
 
