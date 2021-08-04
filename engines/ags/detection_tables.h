@@ -2612,6 +2612,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("escapetheship", "Escape.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 1063503),
 	GAME_ENTRY("esper", "esper.exe", "0710e2ec71042617f565c01824f0cf3c", 17409715),
 	GAME_ENTRY("eternallyus", "Eternally Us.exe", "3faa59edd92158ff2cbd4b9db54acf61", 43467084),
+	GAME_ENTRY("eternallyus", "Eternally Us.exe", "3faa59edd92158ff2cbd4b9db54acf61", 43468014),
 	GAME_ENTRY("eventtimer", "Timer.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 3000682),
 	GAME_ENTRY("exclamation", "!.exe", "0514661a4ba6772cf0db0cf839fc7003", 2785515),
 	GAME_ENTRY("exit", "EXIT.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 54723513),
