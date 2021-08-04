@@ -811,4 +811,8 @@ Common::String encodePathForDump(const Common::String &path) {
 	return punycode_encodepath(Common::Path(path, g_director->_dirSeparator)).toString();
 }
 
+Common::String utf8ToPrintable(const Common::String &str) {
+	return Common::toPrintable(Common::U32String(str));
+}
+
 } // End of namespace Director

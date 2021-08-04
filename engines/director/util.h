@@ -93,6 +93,8 @@ int compareStrings(const Common::String &s1, const Common::String &s2);
 
 Common::String encodePathForDump(const Common::String &path);
 
+Common::String utf8ToPrintable(const Common::String &str);
+
 } // End of namespace Director
 
 #endif
