@@ -229,21 +229,16 @@ Common::String convertPath(Common::String &path) {
 	uint32 idx = 0;
 
 	if (path.hasPrefix("::")) { // Parent directory
-		res = "..:";
 		idx = 2;
 	} else if (path.hasPrefix("@:")) { // Root of the game
-		res = ".:";
 		idx = 2;
 	} else if (path.size() >= 3
 					&& Common::isAlpha(path[0])
 					&& path[1] == ':'
 					&& path[2] == '\\') { // Windows drive letter
 		idx = 3;
-	} else {
-		res = ".:";
-
-		if (path[0] == ':')
-			idx = 1;
+	} else if (path[0] == ':') {
+		idx = 1;
 	}
 
 	while (idx < path.size()) {
