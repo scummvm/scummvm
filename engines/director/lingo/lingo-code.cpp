@@ -1007,7 +1007,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 
 				if (idx == (int)str.size())
 					break;
-				
+
 				idx++; // skip delimiter
 			}
 		}
@@ -1740,7 +1740,7 @@ void LC::c_asserterror() {
 
 void LC::c_asserterrordone() {
 	if (!g_lingo->_caughtError) {
-		warning("BUILDBOT: c_asserterrordone: did not catch error");
+		warning("c_asserterrordone: did not catch error");
 	}
 	g_lingo->_expectError = false;
 }
