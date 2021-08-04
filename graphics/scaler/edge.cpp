@@ -123,7 +123,8 @@
 #define GREY_SHIFT 12           /* bit shift for greyscale precision */
 #define RGB_SHIFT 13            /* bit shift for RGB precision */
 
-static const int16 one_sqrt2 = (int16)(((int16)1 << GREY_SHIFT) / sqrt(2.0) + 0.5);
+#define SQRT2 1.41421356237309504880
+static const int16 one_sqrt2 = (int16)(((int16)1 << GREY_SHIFT) / SQRT2 + 0.5);
 // static const int16 int32_sqrt3 = (int16)(((int16)1 << GREY_SHIFT) * sqrt(3.0) + 0.5);
 
 
