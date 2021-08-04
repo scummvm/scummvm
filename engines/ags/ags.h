@@ -51,7 +51,7 @@ namespace AGS {
  */
 
 /* Synced up to upstream: 3.6.0.6
- * ff6c964fc649a97c65374f69379773bf50754a6a
+ * f33e064cd148c6a709ccbf25a5fd4939272a7814
  */
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
