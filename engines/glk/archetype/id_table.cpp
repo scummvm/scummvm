@@ -22,6 +22,7 @@
 
 #include "glk/archetype/id_table.h"
 #include "glk/archetype/array.h"
+#include "glk/archetype/archetype.h"
 
 namespace Glk {
 namespace Archetype {
@@ -29,9 +30,7 @@ namespace Archetype {
 ClassifyType DefaultClassification;
 
 // Static variables
-IdRecPtr hash[BUCKETS];
-// FIXME: This requires global constructor
-XArrayType h_index;
+static IdRecPtr hash[BUCKETS];
 
 int add_ident(const String &id_str) {
 	int hasher;
@@ -47,16 +46,16 @@ int add_ident(const String &id_str) {
 
 	if (p->next == nullptr || *p->next->id_name > id_str) {
 		new_rec = new IdRecType();
-		append_to_xarray(h_index, new_rec);
+		append_to_xarray(g_vm->h_index, new_rec);
 
 		new_rec->id_kind    = DefaultClassification;
-		new_rec->id_index   = h_index.size();
+		new_rec->id_index   = g_vm->h_index.size();
 		new_rec->id_integer = new_rec->id_index;
 		new_rec->id_name    = NewConstStr(id_str);
 		new_rec->next       = p->next;
 
 		p->next = new_rec;
-		return h_index.size();
+		return g_vm->h_index.size();
 	} else {
 		// found existing identifier
 		return p->next->id_index;
@@ -65,7 +64,7 @@ int add_ident(const String &id_str) {
 
 bool index_ident(int index, IdRecPtr &id_ptr) {
 	void *p;
-	bool result = index_xarray(h_index, index, p);
+	bool result = index_xarray(g_vm->h_index, index, p);
 	id_ptr = (IdRecPtr)p;
 	return result;
 }

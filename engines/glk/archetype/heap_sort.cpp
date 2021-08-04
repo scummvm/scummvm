@@ -30,18 +30,15 @@ namespace Archetype {
 const char *const CANT_PEEK = "Internal error:  cannot peek into heap";
 const char *const CANT_POKE = "Internal error:  cannot poke into heap";
 
-// FIXME: This requires global constructor
-HeapType H;
-
 void heap_sort_init() {
-	new_xarray(H);
+	g_vm->H.clear();
 }
 
 static bool lighter(const Element one, const Element two) {
 	return *static_cast<StringPtr>(one) < *static_cast<StringPtr>(two);
 }
 
-static void heapup() {
+static void heapup(HeapType &H) {
 	int L, parent;
 	Element Lp, parentp = nullptr;
 	Element temp;
@@ -67,7 +64,7 @@ static void heapup() {
 	}
 }
 
-static void heapdown() {
+static void heapdown(HeapType &H) {
 	uint L, compare, lc, rc;
 	Element lp;
 	Element lcp, rcp;
@@ -114,6 +111,7 @@ static void heapdown() {
 }
 
 bool pop_heap(Element &e) {
+	HeapType &H = g_vm->H;
 	Element temp;
 
 	if (H.empty()) {
@@ -124,25 +122,20 @@ bool pop_heap(Element &e) {
 			g_vm->writeln(CANT_PEEK);
 
 		shrink_xarray(H);
-		heapdown();
+		heapdown(H);
 		return true;
 	}
-}
-
-void drop_on_heap(Element e) {
-	append_to_xarray(H, e);
-	heapup();
 }
 
 void drop_str_on_heap(const String &s) {
 	StringPtr sp = NewDynStr(s);
 	void *p = (void *)sp;
-	drop_on_heap(p);
+	append_to_xarray(g_vm->H, p);
+	heapup(g_vm->H);
 }
 
 void reinit_heap() {
-	dispose_xarray(H);
-	new_xarray(H);
+	g_vm->H.clear();
 }
 
 } // End of namespace Archetype

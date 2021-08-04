@@ -206,7 +206,7 @@ void show_split(String s) {
 	cerr << "\n";
 }
 
-Logger::Nullstreambuf Logger::cnull;
+// Logger::Nullstreambuf Logger::cnull;
 
 Logger::Logger() { // : logfilestr_(NULL), cerrbuf_(NULL) {
 /*
