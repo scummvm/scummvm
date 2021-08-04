@@ -1641,6 +1641,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO_STD16_UNDITHER	},
 
+	// King's Quest 4 - Russian
+	// Game version 1.001.111 (Sep 23, 1988)
+	// SCI interpreter version 0.000.274
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "f0833063ba4bd58072cf0e3402c8be69", 5712},
+		{"resource.001", 0, "28bcd0c6363762fde0ef12c491fb706b", 2401589},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
 #define GUIO_KQ5_CD_WINDOWS GUIO6(GUIO_MIDIGM,                         \
 								  GAMEOPTION_PREFER_DIGITAL_SFX,       \
 								  GAMEOPTION_ORIGINAL_SAVELOAD,        \
