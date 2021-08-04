@@ -1882,7 +1882,7 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		// Pad the rest of the replaced script part with spaces before
 		// terminating the string. Finally, add WaitForMessage().
 
-		memset(scriptPtr + patchOffset+ sizeof(patchData), 32, patchLength - sizeof(patchData) - 3);
+		memset(scriptPtr + patchOffset + sizeof(patchData), 32, patchLength - sizeof(patchData) - 3);
 		scriptPtr[patchOffset + patchLength - 3] = 0;
 		scriptPtr[patchOffset + patchLength - 2] = 0xAE;
 		scriptPtr[patchOffset + patchLength - 1] = 0x02;
