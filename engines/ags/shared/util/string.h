@@ -287,6 +287,9 @@ public:
 	void    Append(const char *cstr, size_t len);
 	// Appends a single character
 	void    AppendChar(char c);
+	// Appends a formatted string
+	void    AppendFmt(const char *fcstr, ...);
+	void    AppendFmtv(const char *fcstr, va_list argptr);
 	// Clip* methods decrease the string, removing defined part
 	// Cuts off leftmost N characters
 	void    ClipLeft(size_t count);

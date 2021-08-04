@@ -449,6 +449,25 @@ void String::AppendChar(char c) {
 	}
 }
 
+void String::AppendFmt(const char *fcstr, ...) {
+	va_list argptr;
+	va_start(argptr, fcstr);
+	AppendFmtv(fcstr, argptr);
+	va_end(argptr);
+}
+
+void String::AppendFmtv(const char *fcstr, va_list argptr) {
+	fcstr = fcstr ? fcstr : "";
+	va_list argptr_cpy;
+	va_copy(argptr_cpy, argptr);
+	size_t length = vsnprintf(nullptr, 0u, fcstr, argptr);
+	ReserveAndShift(false, length);
+	vsprintf(_cstr + _len, fcstr, argptr_cpy);
+	va_end(argptr_cpy);
+	_len += length;
+	_cstr[_len] = 0;
+}
+
 void String::ClipLeft(size_t count) {
 	if ((_len != 0) && (count > 0)) {
 		count = Math::Min(count, _len);
