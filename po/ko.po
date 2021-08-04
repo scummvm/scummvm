@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-02 19:57+0000\n"
+"POT-Creation-Date: 2021-08-04 10:46+0000\n"
 "PO-Revision-Date: 2021-08-04 10:57+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2130,9 +2130,10 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
-"ScummVM은 데이터 파일을 가진 경우 다양한 고전 그래픽 포인트 앤 클릭 어드벤처 게임과 롤플레잉 게임을 실행할 수 있게 하는 "
-"프로그램입니다. ScummVM은 게임과 함께 제공된 실행파일을 대체하기 때문에 원래 게임이 실행되도록 설계되지 않은 시스템에서도 실행할 "
-"수 있습니다!"
+"ScummVM은 데이터 파일을 가진 경우 다양한 고전 그래픽 포인트 앤 클릭 어드벤처 "
+"게임과 롤플레잉 게임을 실행할 수 있게 하는 프로그램입니다. ScummVM은 게임과 "
+"함께 제공된 실행파일을 대체하기 때문에 원래 게임이 실행되도록 설계되지 않은 "
+"시스템에서도 실행할 수 있습니다!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
@@ -2142,9 +2143,9 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
-"현재 ScummVM은 합계 4000개를 넘는 수많은 어드벤처 게임을 지원합니다. LucasArts, Sierra On-Line, "
-"Revolution Software, Cyan, Inc., 그리고 Westwood Studios 같은 전설적인 스튜디오에서 발표된 많은 "
-"고전을 지원합니다."
+"현재 ScummVM은 합계 4000개를 넘는 수많은 어드벤처 게임을 지원합니다. "
+"LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc., 그리고 Westwood "
+"Studios 같은 전설적인 스튜디오에서 발표된 많은 고전을 지원합니다."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
@@ -2153,8 +2154,9 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
-"Monkey Island 시리즈, Broken Sword, Myst, Blade Runner와 같이 획기적인 타이틀을 비롯해, 잘 "
-"알려지지 않은 어드벤처 게임과 진정한 숨겨진 보석을 찾아볼 수 있습니다."
+"Monkey Island 시리즈, Broken Sword, Myst, Blade Runner와 같이 획기적인 타이틀"
+"을 비롯해, 잘 알려지지 않은 어드벤처 게임과 진정한 숨겨진 보석을 찾아볼 수 있"
+"습니다."
 
 #: engines/advancedDetector.cpp:228
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -4029,8 +4031,8 @@ msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 �
 #: engines/mohawk/detection_tables.h:954 engines/mohawk/detection_tables.h:1045
 #: engines/mohawk/detection_tables.h:1060 engines/neverhood/detection.cpp:110
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:985
-#: engines/saga/detection_tables.h:1044 engines/sci/detection_tables.h:4880
-#: engines/sci/detection_tables.h:4888 engines/sherlock/detection_tables.h:214
+#: engines/saga/detection_tables.h:1044 engines/sci/detection_tables.h:4889
+#: engines/sci/detection_tables.h:4897 engines/sherlock/detection_tables.h:214
 #: engines/stark/detection.cpp:305 engines/teenagent/detection.cpp:118
 #: engines/zvision/detection_tables.h:190
 #: engines/zvision/detection_tables.h:210
@@ -5162,8 +5164,9 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
-"활성화되면 라이트닝 볼트 커서로 아이템이나 영역을 클릭했을 때, 중간 화면을 생략하고 그 곳으로 즉시 이동합니다. 이미 이동했던 적이 "
-"있는 장소로만 'Zip' 가능합니다."
+"활성화되면 라이트닝 볼트 커서로 아이템이나 영역을 클릭했을 때, 중간 화면을 생"
+"략하고 그 곳으로 즉시 이동합니다. 이미 이동했던 적이 있는 장소로만 'Zip' 가능"
+"합니다."
 
 #: engines/mohawk/dialogs.cpp:118
 msgid "~T~ransitions Enabled"
@@ -5173,7 +5176,9 @@ msgstr "번역 사용함(~T~)"
 msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
-msgstr "화면 전환 효과를 켜거나 끕니다. 화면 전환 효과를 끌 경우 게임 내를 더욱 빠르게 다닐 수 있습니다."
+msgstr ""
+"화면 전환 효과를 켜거나 끕니다. 화면 전환 효과를 끌 경우 게임 내를 더욱 빠르"
+"게 다닐 수 있습니다."
 
 #: engines/mohawk/dialogs.cpp:122
 msgid "Play the Myst fly by movie"
@@ -5753,7 +5758,9 @@ msgstr "현재 메뉴 항목은 아직 구현되지 않았습니다"
 msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
-msgstr "압축된 게임을 감지했습니다. ScummVM 위키의 게임 설명란을 참고해 압축을 해제해 주세요"
+msgstr ""
+"압축된 게임을 감지했습니다. ScummVM 위키의 게임 설명란을 참고해 압축을 해제"
+"해 주세요"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -5906,7 +5913,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/detection_tables.h:4236
+#: engines/sci/detection_tables.h:4245
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "불완전한 게임이 감지되었습니다. 모든 CD로부터 데이터를 복사해야 합니다."
@@ -6122,7 +6129,8 @@ msgstr "단순화된 음악을 재생"
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
-msgstr "이 음악은 저사양 Mac에서 사용될 것을 가정했으므로, 한 채널만 사용합니다."
+msgstr ""
+"이 음악은 저사양 Mac에서 사용될 것을 가정했으므로, 한 채널만 사용합니다."
 
 #: engines/scumm/detection.cpp:204
 msgid "Enable smooth scrolling"
@@ -6979,14 +6987,15 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
-"텍스트를 의도된 스타일대로 표시하기 위해서는 'fonts' 폴더가 필요합니다. Steam 판에는 이 폴더가 존재하지 않지만, 데모 "
-"버전에서 가져올 수 있습니다."
+"텍스트를 의도된 스타일대로 표시하기 위해서는 'fonts' 폴더가 필요합니다. "
+"Steam 판에는 이 폴더가 존재하지 않지만, 데모 버전에서 가져올 수 있습니다."
 
 #: engines/stark/stark.cpp:305
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
-msgstr "게임 현지화에 필요한 글꼴 설정을 얻어오기 위해서 'gui.ini'가 필요합니다."
+msgstr ""
+"게임 현지화에 필요한 글꼴 설정을 얻어오기 위해서 'gui.ini'가 필요합니다."
 
 #: engines/stark/stark.cpp:311
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
@@ -7022,7 +7031,9 @@ msgstr "게임 폴더나 엔진 데이터 파일에서 '%s' 을(를) 찾을 수 
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
-msgstr "게임 임시 저장에 실패했습니다. 게임 저장 디렉토리가 ScummVM에 설정되어 있는지, 쓰기 가능한지 확인해 주세요."
+msgstr ""
+"게임 임시 저장에 실패했습니다. 게임 저장 디렉토리가 ScummVM에 설정되어 있는"
+"지, 쓰기 가능한지 확인해 주세요."
 
 #: engines/supernova/supernova.cpp:825
 msgid "Failed to load temporary game state."
@@ -7044,12 +7055,15 @@ msgstr "PSX 스트림 영상 '%s'는 팔레트 모드에서 재생할 수 없습
 
 #: engines/sword1/animation.cpp:553 engines/sword2/animation.cpp:449
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
-msgstr "DXA 영상을 발견했지만 ScummVM이 zlib이 포함되지 않은 상태로 빌드되었습니다"
+msgstr ""
+"DXA 영상을 발견했지만 ScummVM이 zlib이 포함되지 않은 상태로 빌드되었습니다"
 
 #: engines/sword1/animation.cpp:569 engines/sword2/animation.cpp:465
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr "MPEG-2 영상을 발견했지만 ScummVM이 MPEG-2가 포함되지 않은 상태로 빌드되었습니다"
+msgstr ""
+"MPEG-2 영상을 발견했지만 ScummVM이 MPEG-2가 포함되지 않은 상태로 빌드되었습니"
+"다"
 
 #: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:474
 #, c-format
@@ -7097,7 +7111,9 @@ msgstr "Broken Sword 1 데모는 여기서 끝납니다"
 #: engines/sword2/animation.cpp:429
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr "PSX 영상을 발견했지만 ScummVM이 RGB 색상 지원이 포함되지 않은 상태로 빌드되었습니다"
+msgstr ""
+"PSX 영상을 발견했지만 ScummVM이 RGB 색상 지원이 포함되지 않은 상태로 빌드되었"
+"습니다"
 
 #: engines/sword2/detection.cpp:33
 msgid "Show object labels"
@@ -7473,7 +7489,8 @@ msgstr "마우스 위치로 점프를 활성화"
 #: engines/ultima/ultima8/meta_engine.cpp:164
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr "이동 중이 아닐 때 점프하면 방향 뿐 아니라 마우스 커서를 타겟으로 합니다."
+msgstr ""
+"이동 중이 아닐 때 점프하면 방향 뿐 아니라 마우스 커서를 타겟으로 합니다."
 
 #: engines/ultima/ultima8/meta_engine.cpp:175
 msgid "Enable font replacement"
@@ -7555,7 +7572,9 @@ msgstr "이 게임은 현재 빌드에 포함되지 않은 HeroCraft 서브엔�
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
-msgstr "이 게임은 현재 빌드에 포함되지 않은 3D 기능이 필요합니다. 따라서, 일부 또는 전부를 플레이할 수 없을 수도 있습니다."
+msgstr ""
+"이 게임은 현재 빌드에 포함되지 않은 3D 기능이 필요합니다. 따라서, 일부 또는 "
+"전부를 플레이할 수 없을 수도 있습니다."
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
@@ -8135,7 +8154,8 @@ msgstr "일반 인벤토리 모드에서 아이템 가격을 표시"
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
-msgstr "일반 인벤토리 모드에서 아이템 가격을 표시해 가치를 비교할 수 있게 합니다"
+msgstr ""
+"일반 인벤토리 모드에서 아이템 가격을 표시해 가치를 비교할 수 있게 합니다"
 
 #: engines/xeen/detection.cpp:66
 msgid "More durable armor"
@@ -8186,7 +8206,9 @@ msgstr "저해상도 AVI 대신, DVD 버전에 포함된 MPEG 영상을 사용�
 msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
-msgstr "이 저장 파일은 버전 %u을(를) 사용합니다. 하지만 이 엔진은 버전 %d 까지만 지원합니다. 엔진을 업데이트해 주세요."
+msgstr ""
+"이 저장 파일은 버전 %u을(를) 사용합니다. 하지만 이 엔진은 버전 %d 까지만 지원"
+"합니다. 엔진을 업데이트해 주세요."
 
 #: engines/zvision/metaengine.cpp:129
 msgid "Look Up"
