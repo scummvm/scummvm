@@ -1784,6 +1784,43 @@ bool ScummEngine::verifyMI2MacBootScript(byte *buf, int size) {
 bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 	assert(_game.id == GID_MONKEY);
 
+	// The room resource is a collection of resources. We need to know the
+	// offset to the initial LSCR tag of the room-25-205 script, and its
+	// length up to (but not including) the LSCR tag of the next script.
+	// Furthermore we need to know the offset and length of the part of
+	// the script that we are going to replace. As an illustration, this
+	// is what that part of script looks like in the English CD version:
+	//
+	// [009C] (AE) WaitForMessage();
+	// [009E] (14) print(3,[Text("Oooh, that's nice.")]);
+	// [00B4] (14) print(3,[Text("And it says, `Made by Lemonhead`^" +
+	//             wait() + "^just like one of mine!" + wait() +
+	//             "We should take this to the Great Monkey.")]);
+	// [011C] (AE) WaitForMessage();
+	//
+	// What we want to do is make it behave like the script from the VGA
+	// floppy version:
+	//
+	// [009E] (AE) WaitForMessage();
+	// [00A0] (14) print(3,[Text("Oooh, that's nice." + wait() +
+	//             "Simple.  Just like one of mine." + wait() +
+	//             "And little.  Like mine.")]);
+	// [00F0] (AE) WaitForMessage();
+	// [00F2] (14) print(3,[Text("And it says, `Made by Lemonhead`^" +
+	//             wait() + "^just like one of mine!" + wait() +
+	//             "We should take this to the Great Monkey.")]);
+	// [015A] (AE) WaitForMessage();
+	//
+	// So we want to adjust the message, and insert a WaitForMessage().
+	// Unfortunately there isn't enough space to do that, and rather than
+	// modifying the length of the whole resource (which is easy to get
+	// wrong), we insert a placeholder message that gets replaced by
+	// decodeParseString().
+	//
+	// There should be enough space to do this even if we only change the
+	// first message. Any leftover space in the message is padded with
+	// spaces, since I can't find any NOP opcode.
+
 	int expectedSize = -1;
 	int scriptOffset = -1;
 	int scriptLength = -1;
@@ -1798,7 +1835,7 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		scriptLength = 607;
 		expectedMd5 = "98b1126a836ef5bfefff10b605b20555";
 		patchOffset = 167;
-		patchLength = 126;
+		patchLength = 22;
 		break;
 	default:
 		return false;
@@ -1809,15 +1846,9 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		// texts, so these abbreviations will be expanded in
 		// decodeParseString().
 		const byte patchData[] = {
-			0x14, 0x03, 0x0F,       // print(3,[Text("/LMH.001/");
-			0x2F, 0x4C, 0x4D, 0x48,
-			0x2E, 0x30, 0x30, 0x31,
-			0x2F, 0x00,
-			0xAE, 0x02,             // WaitForMessage();
-			0x14, 0x03, 0x0F,       // print(3,[Text("/LMH.001/");
-			0x2F, 0x4C, 0x4D, 0x48,
-			0x2E, 0x30, 0x30, 0x32,
-			0x2F,			// No terminating 0x00!
+			0x14, 0x03, 0x0F,       // print(3,[Text("/LH.1/");
+			0x2F, 0x4C, 0x48, 0x2E,
+			0x31, 0x2F              // No terminating 0x00!
 		};
 
 		byte *scriptPtr = buf + scriptOffset;
@@ -1838,11 +1869,13 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 			return false;
 
 		// Pad the rest of the replaced script part with spaces before
-		// terminating the string.
+		// terminating the string. Finally, add WaitForMessage().
 
 		memcpy(scriptPtr + patchOffset, patchData, sizeof(patchData));
-		memset(scriptPtr + patchOffset + sizeof(patchData), 32, patchLength - sizeof(patchData) - 1);
-		scriptPtr[patchOffset + patchLength - 1] = 0;
+		memset(scriptPtr + patchOffset+ sizeof(patchData), 32, patchLength - sizeof(patchData) - 3);
+		scriptPtr[patchOffset + patchLength - 3] = 0;
+		scriptPtr[patchOffset + patchLength - 2] = 0xAE;
+		scriptPtr[patchOffset + patchLength - 1] = 0x02;
 	}
 
 	return true;

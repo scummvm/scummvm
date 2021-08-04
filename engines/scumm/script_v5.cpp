@@ -2815,21 +2815,12 @@ void ScummEngine_v5::decodeParseString() {
 void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr) {
 	const char *msg = (const char *)ptr;
 
-#define MSG_WAIT "\xFF\x03"
-
-	if (strncmp((const char *)ptr, "/LMH.001/", 9) == 0) {
+	if (strncmp((const char *)ptr, "/LH.1/", 6) == 0) {
 		msg =
-"Oooh, that's nice." MSG_WAIT
-"Simple.  Just like one of mine." MSG_WAIT
+"Oooh, that's nice.\xFF\x03"
+"Simple.  Just like one of mine.\xFF\x03"
 "And little.  Like mine.";
-	} else if (strncmp((const char *)ptr, "/LMH.002/", 9) == 0) {
-		msg =
-"And it says, `Made by Lemonhead`^" MSG_WAIT
-"^just like one of mine!" MSG_WAIT
-"We should take this to the Great Monkey.";
 	}
-
-#undef MSG_WAIT
 
 	printString(textSlot, (const byte *)msg);
 }
