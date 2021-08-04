@@ -204,6 +204,11 @@ void convert_room_background_to_game_res() {
 	_GP(thisroom).HotspotMask = FixBitmap(_GP(thisroom).HotspotMask, mask_width, mask_height);
 	_GP(thisroom).RegionMask = FixBitmap(_GP(thisroom).RegionMask, mask_width, mask_height);
 	_GP(thisroom).WalkAreaMask = FixBitmap(_GP(thisroom).WalkAreaMask, mask_width, mask_height);
+
+	for (size_t i = 0; i < _GP(thisroom).WalkAreaCount; ++i) {
+		_GP(thisroom).WalkAreas[i].Top = room_to_mask_coord(_GP(thisroom).WalkAreas[i].Top);
+		_GP(thisroom).WalkAreas[i].Bottom = room_to_mask_coord(_GP(thisroom).WalkAreas[i].Bottom);
+	}
 }
 
 
