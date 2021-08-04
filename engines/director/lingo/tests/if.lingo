@@ -56,7 +56,7 @@ if abs(y) = x and abs(x) = y then put 5
 if abs(y) = x and abs(x) = y then put 5
 else put 6
 
-if the selection = the text of cast A31 then
+if the selection = the text of cast A11 then
     go to frame "sEnd"
     exit
 else if whichTry = 1 then go to frame "sTell"
