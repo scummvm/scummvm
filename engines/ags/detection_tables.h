@@ -1869,6 +1869,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// Infamous Adventures games. Likewise
 	GAME_ENTRY("kq3vga", "kq3.exe", "f120690b506dd63cd7d1112ea6af2f77", 4844298),  // 1.0 was kq3agdi
 	GAME_ENTRY("kq3vga", "KQ3.exe", "f120690b506dd63cd7d1112ea6af2f77", 5883843),  // current version from the download site
+	GAME_ENTRY("kq3vga", "ac2game.dat", "f120690b506dd63cd7d1112ea6af2f77", 5883843), // current mac version from the download site
 	GAME_ENTRY("sq2fg", "sq2fg.exe", "a524cbb1c51589903c4043b98917f1d9", 5329030),
 	GAME_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 106094482),  // 1.0
 	GAME_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 117200044),  // 1.1
