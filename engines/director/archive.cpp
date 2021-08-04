@@ -28,6 +28,7 @@
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/window.h"
 #include "director/util.h"
 
 namespace Director {
@@ -431,6 +432,14 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		if (Common::MacResManager::isMacBinary(*stream)) {
 			warning("RIFXArchive::openStream(): MacBinary detected, overriding");
 
+			// We need to look at the resource fork to detect XCOD resources
+			Common::SeekableSubReadStream *macStream = new Common::SeekableSubReadStream(stream, 0, stream->size());
+			MacArchive *macArchive = new MacArchive();
+			macArchive->openStream(macStream);
+			g_director->getCurrentWindow()->probeMacBinary(macArchive);
+			delete macArchive;
+
+			// Then read the data fork
 			moreOffset = Common::MacResManager::getDataForkOffset();
 			stream->seek(startOffset + moreOffset);
 

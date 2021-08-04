@@ -57,12 +57,12 @@ Common::Error Window::loadInitialMovie() {
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 	Common::String movie = (_vm->getGameGID() == GID_TESTALL) ? getNextMovieFromQueue().movie : _vm->getEXEName();
 
-	probeProjector(movie);
-
-	if (g_director->getPlatform() == Common::kPlatformWindows)
+	if (g_director->getPlatform() == Common::kPlatformWindows) {
 		loadEXE(movie);
-	else
+	} else {
+		probeProjector(movie);
 		loadMac(movie);
+	}
 
 	if (!_mainArchive) {
 		warning("Cannot open main movie");
@@ -89,14 +89,17 @@ void Window::probeProjector(const Common::String &movie) {
 	if (g_director->getPlatform() == Common::kPlatformWindows)
 		return;
 
-	Director::MacArchive *archive = new MacArchive();
-
+	MacArchive *archive = new MacArchive();
 	if (!archive->openFile(movie)) {
 		delete archive;
-
 		return;
 	}
 
+	probeMacBinary(archive);
+	delete archive;
+}
+
+void Window::probeMacBinary(MacArchive *archive) {
 	// Let's check if it is a projector file
 	// So far tested with Spaceship Warlock, D2
 	if (archive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
@@ -112,15 +115,6 @@ void Window::probeProjector(const Common::String &movie) {
 					v->preReleaseVer, v->region, v->str.c_str(), v->msg.c_str());
 
 				delete v;
-			}
-		}
-
-		if (archive->hasResource(MKTAG('X', 'C', 'O', 'D'), -1)) {
-			Common::Array<uint16> xcod = archive->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
-			for (Common::Array<uint16>::iterator iterator = xcod.begin(); iterator != xcod.end(); ++iterator) {
-				Resource res = archive->getResourceDetail(MKTAG('X', 'C', 'O', 'D'), *iterator);
-				debug(0, "Detected XObject '%s'", res.name.c_str());
-				g_lingo->openXLib(res.name, kXObj);
 			}
 		}
 
@@ -149,7 +143,14 @@ void Window::probeProjector(const Common::String &movie) {
 		}
 	}
 
-	delete archive;
+	if (archive->hasResource(MKTAG('X', 'C', 'O', 'D'), -1)) {
+		Common::Array<uint16> xcod = archive->getResourceIDList(MKTAG('X', 'C', 'O', 'D'));
+		for (Common::Array<uint16>::iterator iterator = xcod.begin(); iterator != xcod.end(); ++iterator) {
+			Resource res = archive->getResourceDetail(MKTAG('X', 'C', 'O', 'D'), *iterator);
+			debug(0, "Detected XObject '%s'", res.name.c_str());
+			g_lingo->openXLib(res.name, kXObj);
+		}
+	}
 }
 
 Archive *Window::openMainArchive(const Common::String movie) {

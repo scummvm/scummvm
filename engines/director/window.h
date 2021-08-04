@@ -41,6 +41,7 @@ namespace Director {
 const int SCALE_THRESHOLD = 0x100;
 
 class Channel;
+class MacArchive;
 struct MacShape;
 
 struct TransParams {
@@ -146,6 +147,7 @@ public:
 	// resource.cpp
 	Common::Error loadInitialMovie();
 	void probeProjector(const Common::String &movie);
+	void probeMacBinary(MacArchive *archive);
 	Archive *openMainArchive(const Common::String movie);
 	void loadEXE(const Common::String movie);
 	void loadEXEv3(Common::SeekableReadStream *stream);
