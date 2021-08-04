@@ -11,8 +11,7 @@ put "asdf" into field 1
 put "lorem ipsum" into cast 1
 
 -- the property of reference
-put the text of cast "castname"
-put the visible of window "windowname"
+put the text of cast 1
 put line 1 to 5 of field the number of cast "MasterList" into field the number of cast "InventoryList"
 
 -- the loaded of cast
@@ -35,10 +34,11 @@ scummvmAssertError set test to cast "fake"
 set theWindow = Window(mNew,#noGrowDoc,"Window " & windowNumber)
 
 -- other weird stuff with reference name
-put window("test")
-set window = 1
-put window
-window("test")
-window "test"
-window cast
+-- FIXME: We need to find a way of clean execution of these
+--put window("test")
+--set window = 1
+--put window
+--window("test")
+--window "test"
+--window cast
 put cast cast

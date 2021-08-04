@@ -56,14 +56,14 @@ if abs(y) = x and abs(x) = y then put 5
 if abs(y) = x and abs(x) = y then put 5
 else put 6
 
-if the selection = the text of cast A11 then
+if the selection = the text of cast 1 then
     go to frame "sEnd"
     exit
 else if whichTry = 1 then go to frame "sTell"
 else if whichTry = 2 then go to frame "sShow"
 else if whichTry = 3 then go to frame "sDo"
 
-if the selection = the text of cast A31 then
+if the selection = the text of cast 1 then
     go to frame "sEnd"
     exit
 else if whichTry = 1 then
@@ -74,10 +74,10 @@ else if whichTry = 2 then
 else if whichTry = 3 then go to frame "sDo"
 else put 6
 
-if the selection = the text of cast A31 then go to frame "sEnd"
+if the selection = the text of cast 1 then go to frame "sEnd"
 else put 7
 
-if the selection = the text of cast A31 then go to frame "sEnd"
+if the selection = the text of cast 1 then go to frame "sEnd"
 else if whichTry = 1 then
 	go to frame "sTell"
 else if whichTry = 2 then
@@ -89,7 +89,7 @@ else
 	put 7
 end if
 
-if the selection = the text of cast A31 then go to frame "sEnd"
+if the selection = the text of cast 1 then go to frame "sEnd"
 else if whichTry = 1 then
 	go to frame "sTell"
 else if whichTry = 2 then
@@ -104,7 +104,7 @@ else
   put "The cursor is OUTSIDE the square." into field "Cursor Status"
 end if
 
-if the selection = the text of cast A31 then
+if the selection = the text of cast 1 then
     if whichTry = 3 then
 		go to frame "sDo"
 	end if
@@ -129,12 +129,12 @@ else if whichTry = 2 then
 else if whichTry = 3 then go to frame "sDo"
 else put 6
 
-if the selection = the text of cast A31 then go to frame "sEnd"
+if the selection = the text of cast 1 then go to frame "sEnd"
 
 when keyDown then if the key = RETURN then checkField
 when keyDown then if the key = QUOTE then checkField
 
-  if the mouseH > ((the right of sprite 15) - 20) then HidePopUp
+  if the mouseH > ((the right of sprite 15) - 20) then beep
   else if ((the mouseH > ((the left of sprite 15) + 30)) and Â
            (the mouseH < ((the left of sprite 15) + 73)) and Â
            (the mouseV > ((the top  of sprite 15) + 20)) and Â
