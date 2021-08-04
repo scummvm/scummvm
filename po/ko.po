@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-02 19:57+0000\n"
-"PO-Revision-Date: 2021-05-15 04:25+0000\n"
+"PO-Revision-Date: 2021-08-04 10:57+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -425,7 +425,7 @@ msgstr "업적"
 
 #: gui/editgamedialog.cpp:374 engines/dialogs.cpp:342
 msgid "Statistics"
-msgstr ""
+msgstr "통계"
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
 #: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2115
@@ -1028,7 +1028,7 @@ msgstr "확대 모드:"
 
 #: gui/options.cpp:1426
 msgid "Scaler:"
-msgstr ""
+msgstr "크기조절:"
 
 #: gui/options.cpp:1439 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
@@ -1356,7 +1356,7 @@ msgstr "ScummVM 설정 경로: "
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2236 gui/options.cpp:2777
 msgid "Last browser path: "
-msgstr ""
+msgstr "마지막 접근 경로: "
 
 #: gui/options.cpp:2241
 msgid "Theme:"
@@ -2088,7 +2088,7 @@ msgstr "PC-9801 (16색)"
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:48
 msgid "Macintosh b/w"
-msgstr ""
+msgstr "Macintosh 흑백"
 
 #: common/rendermode.cpp:75
 msgctxt "lowres"
@@ -2119,7 +2119,7 @@ msgstr "<잘못된 값>"
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "여러 어드벤처 게임과 RPG를 위한 인터프리터"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
@@ -2130,6 +2130,9 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM은 데이터 파일을 가진 경우 다양한 고전 그래픽 포인트 앤 클릭 어드벤처 게임과 롤플레잉 게임을 실행할 수 있게 하는 "
+"프로그램입니다. ScummVM은 게임과 함께 제공된 실행파일을 대체하기 때문에 원래 게임이 실행되도록 설계되지 않은 시스템에서도 실행할 "
+"수 있습니다!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
@@ -2139,6 +2142,9 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"현재 ScummVM은 합계 4000개를 넘는 수많은 어드벤처 게임을 지원합니다. LucasArts, Sierra On-Line, "
+"Revolution Software, Cyan, Inc., 그리고 Westwood Studios 같은 전설적인 스튜디오에서 발표된 많은 "
+"고전을 지원합니다."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
@@ -2147,6 +2153,8 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Monkey Island 시리즈, Broken Sword, Myst, Blade Runner와 같이 획기적인 타이틀을 비롯해, 잘 "
+"알려지지 않은 어드벤처 게임과 진정한 숨겨진 보석을 찾아볼 수 있습니다."
 
 #: engines/advancedDetector.cpp:228
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -2288,13 +2296,6 @@ msgid "Error"
 msgstr "오류"
 
 #: engines/engine.cpp:519
-#, fuzzy
-#| msgid ""
-#| "You appear to be playing this game directly\n"
-#| "from the CD. This is known to cause problems,\n"
-#| "and it is therefore recommended that you copy\n"
-#| "the data files to your hard disk instead.\n"
-#| "See the Documentation (CD audio) for details."
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2309,13 +2310,6 @@ msgstr ""
 "문서(CD Audio)에서 추가 정보를 확인해 주세요."
 
 #: engines/engine.cpp:543
-#, fuzzy
-#| msgid ""
-#| "This game has audio tracks in its disk. These\n"
-#| "tracks need to be ripped from the disk using\n"
-#| "an appropriate CD audio extracting tool in\n"
-#| "order to listen to the game's music.\n"
-#| "See the Documentation (CD audio) for details."
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -2323,7 +2317,7 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"현재 게임은 디스크의 오디오 트랙을 포함합니다.\n"
+"현재 게임은 CD에 오디오 트랙을 포함합니다.\n"
 "게임의 음악을 듣기 위해서는 적절한 \n"
 "CD 오디오 추출 도구를 사용해 디스크에서 \n"
 "트랙을 추출해야 합니다.\n"
@@ -2350,11 +2344,11 @@ msgstr ""
 
 #: engines/engine.cpp:669
 msgid "WARNING: "
-msgstr ""
+msgstr "경고: "
 
 #: engines/engine.cpp:669
 msgid " Shall we still run the game?"
-msgstr ""
+msgstr " 그래도 게임을 실행하겠습니까?"
 
 #: engines/engine.cpp:670
 msgid ""
@@ -2750,10 +2744,8 @@ msgid "Pixel-perfect scaling"
 msgstr "픽셀 맞춤 크기조절"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#, fuzzy
-#| msgid "Pixel-perfect scaling"
 msgid "Even pixels scaling"
-msgstr "픽셀 맞춤 크기조절"
+msgstr "균일 픽셀 크기조절"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:69
@@ -2802,7 +2794,7 @@ msgstr "확대 모드"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:61
 msgid "SDL Surface"
-msgstr ""
+msgstr "SDL Surface"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2375
 msgid "Active graphics filter:"
@@ -3917,10 +3909,8 @@ msgstr ""
 "게임이 요청하지 않더라도 텍스트를 그리기 위해 안티앨리어싱을 사용합니다"
 
 #: engines/asylum/metaengine.cpp:68
-#, fuzzy
-#| msgid "Show blueprint"
 msgid "Show version"
-msgstr "청사진 표시"
+msgstr "버전 표시"
 
 #: engines/asylum/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:951
 msgid "Quick load"
@@ -3931,22 +3921,16 @@ msgid "Quick save"
 msgstr "빠른 저장"
 
 #: engines/asylum/metaengine.cpp:83
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Sarah"
-msgstr "게임으로 전환"
+msgstr "Sarah에게 전환"
 
 #: engines/asylum/metaengine.cpp:88
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Grimwall"
-msgstr "게임으로 전환"
+msgstr "Grimwall에게 전환"
 
 #: engines/asylum/metaengine.cpp:93
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Olmec"
-msgstr "게임으로 전환"
+msgstr "Olmec에게 전환"
 
 #: engines/bladerunner/bladerunner.cpp:357
 msgid "Failed to initialize resources"
@@ -4078,10 +4062,8 @@ msgid "Enable Text to Speech"
 msgstr "TTS 활성화"
 
 #: engines/cge/detection.cpp:120
-#, fuzzy
-#| msgid "Use TTS to read the descriptions (if TTS is available)"
 msgid "Use TTS to read text in the game (if TTS is available)"
-msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
+msgstr "TTS를 사용하여 게임 텍스트 읽기 (TTS를 사용할 수 있는 경우)"
 
 #: engines/cine/detection.cpp:61
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -5180,6 +5162,8 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"활성화되면 라이트닝 볼트 커서로 아이템이나 영역을 클릭했을 때, 중간 화면을 생략하고 그 곳으로 즉시 이동합니다. 이미 이동했던 적이 "
+"있는 장소로만 'Zip' 가능합니다."
 
 #: engines/mohawk/dialogs.cpp:118
 msgid "~T~ransitions Enabled"
@@ -5189,7 +5173,7 @@ msgstr "번역 사용함(~T~)"
 msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
-msgstr ""
+msgstr "화면 전환 효과를 켜거나 끕니다. 화면 전환 효과를 끌 경우 게임 내를 더욱 빠르게 다닐 수 있습니다."
 
 #: engines/mohawk/dialogs.cpp:122
 msgid "Play the Myst fly by movie"
@@ -5208,11 +5192,11 @@ msgstr "Myst 영화보기는 원본 게임 엔진으로 실행되지 않습니�
 #.
 #: engines/mohawk/dialogs.cpp:135
 msgid "~F~uzzy Logic in SpaceShip Active"
-msgstr ""
+msgstr "SpaceShip 퍼즐에 퍼지 로직을 사용 (~F~)"
 
 #: engines/mohawk/dialogs.cpp:138
 msgid "Simulate loading times of old CD drives"
-msgstr ""
+msgstr "오래된 CD 드라이브의 로딩 시간을 재현"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:145
@@ -5769,7 +5753,7 @@ msgstr "현재 메뉴 항목은 아직 구현되지 않았습니다"
 msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
-msgstr ""
+msgstr "압축된 게임을 감지했습니다. ScummVM 위키의 게임 설명란을 참고해 압축을 해제해 주세요"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -6131,26 +6115,22 @@ msgstr ""
 "사용할 수 있게 함"
 
 #: engines/scumm/detection.cpp:197
-#, fuzzy
-#| msgid "Play selected music record"
 msgid "Play simplified music"
-msgstr "선택된 음악을 재생"
+msgstr "단순화된 음악을 재생"
 
 #: engines/scumm/detection.cpp:198
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
-msgstr ""
+msgstr "이 음악은 저사양 Mac에서 사용될 것을 가정했으므로, 한 채널만 사용합니다."
 
 #: engines/scumm/detection.cpp:204
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth scrolling"
-msgstr "걸을 때 부드러운 스크롤을 활성화합니다"
+msgstr "부드러운 스크롤 활성화"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(일반적인 8 픽셀 단위 스크롤을 대신해 사용)"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -6827,28 +6807,20 @@ msgstr ""
 "'엔진' 탭에서 해상도를 320x200으로 잘라내면 종횡비 보정이 가능합니다."
 
 #: engines/scumm/scumm.cpp:1350
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
-"악기가 포함된 'Loom' 매킨토시 실행파일을 찾을 수 없습니다.\n"
-"음악이 비활성화됩니다."
+"'Indy' 매킨토시 실행파일을 찾을 수 없습니다. 고해상도\n"
+"글꼴이 비활성화됩니다."
 
 #: engines/scumm/scumm.cpp:1376
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
 "악기가 포함된 'Loom' 매킨토시 실행파일을 찾을 수 없습니다.\n"
-"음악이 비활성화됩니다."
+"음악과 고해상도 글꼴, 커서가 비활성화됩니다."
 
 #: engines/scumm/scumm.cpp:1398
 msgid ""
@@ -6923,11 +6895,11 @@ msgstr "대화시 캐릭터 얼굴을 표시합니다"
 
 #: engines/sherlock/detection.cpp:99
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "대화창을 슬라이드 표시"
 
 #: engines/sherlock/detection.cpp:100
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "UI 대화창을 즉시 표시하지 않고 슬라이드하여 표시합니다"
 
 #: engines/sherlock/detection.cpp:109
 msgid "Transparent windows"
@@ -6951,15 +6923,15 @@ msgstr "플로피 버전의 인트로를 사용합니다 (CD 버전에서만)"
 
 #: engines/sky/metaengine.cpp:76
 msgid "Walk / Look / Talk"
-msgstr ""
+msgstr "걷기 / 보기 / 말하기"
 
 #: engines/sky/metaengine.cpp:94
 msgid "Skip / Close"
-msgstr ""
+msgstr "건너뛰기 / 닫기"
 
 #: engines/sky/metaengine.cpp:102
 msgid "Open control panel"
-msgstr ""
+msgstr "제어판 열기"
 
 #: engines/sky/metaengine.cpp:118
 msgid "Toggle fast mode"
@@ -7007,20 +6979,22 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"텍스트를 의도된 스타일대로 표시하기 위해서는 'fonts' 폴더가 필요합니다. Steam 판에는 이 폴더가 존재하지 않지만, 데모 "
+"버전에서 가져올 수 있습니다."
 
 #: engines/stark/stark.cpp:305
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
-msgstr ""
+msgstr "게임 현지화에 필요한 글꼴 설정을 얻어오기 위해서 'gui.ini'가 필요합니다."
 
 #: engines/stark/stark.cpp:311
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
-msgstr ""
+msgstr "현지화된 확인 창을 사용하기 위해서 'language.ini'가 필요합니다."
 
 #: engines/stark/stark.cpp:317
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
-msgstr ""
+msgstr "스타일이 적용된 확인창을 사용하기 위해서 'game.exe'가 필요합니다."
 
 #: engines/supernova/supernova.cpp:184
 #, c-format
@@ -7037,7 +7011,7 @@ msgstr ""
 #: engines/supernova/supernova.cpp:477
 #, c-format
 msgid "Unable to find block for part %d"
-msgstr ""
+msgstr "파트 %d에 해당하는 블록을 찾을 수 없습니다"
 
 #: engines/supernova/supernova.cpp:520
 #, c-format
@@ -7048,7 +7022,7 @@ msgstr "게임 폴더나 엔진 데이터 파일에서 '%s' 을(를) 찾을 수 
 msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
-msgstr ""
+msgstr "게임 임시 저장에 실패했습니다. 게임 저장 디렉토리가 ScummVM에 설정되어 있는지, 쓰기 가능한지 확인해 주세요."
 
 #: engines/supernova/supernova.cpp:825
 msgid "Failed to load temporary game state."
@@ -7056,26 +7030,26 @@ msgstr "임시 게임 상태저장 파일을 불러오는데 실패했습니다.
 
 #: engines/supernova/detection.cpp:41
 msgid "Improved mode"
-msgstr ""
+msgstr "향상된 모드"
 
 #: engines/supernova/detection.cpp:42
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
-msgstr ""
+msgstr "일부 반복 조작을 제거하고, 키보드로 명령어를 변경할 수 있게 함"
 
 #: engines/sword1/animation.cpp:532
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr "PSX 스트림 영상 '%s'는 팔레트 모드에서 재생할 수 없습니다"
 
 #: engines/sword1/animation.cpp:553 engines/sword2/animation.cpp:449
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
-msgstr ""
+msgstr "DXA 영상을 발견했지만 ScummVM이 zlib이 포함되지 않은 상태로 빌드되었습니다"
 
 #: engines/sword1/animation.cpp:569 engines/sword2/animation.cpp:465
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr ""
+msgstr "MPEG-2 영상을 발견했지만 ScummVM이 MPEG-2가 포함되지 않은 상태로 빌드되었습니다"
 
 #: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:474
 #, c-format
@@ -7105,23 +7079,25 @@ msgid ""
 "Target new saved game already exists!\n"
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
+"이미 게임 저장 파일이 존재합니다!\n"
+"이전 저장 파일 (%s)과 신규 저장 파일 (%s) 중 어느 것을 남기겠습니까?\n"
 
 #: engines/sword1/control.cpp:1264
 msgid "Keep the old one"
-msgstr ""
+msgstr "이전 파일을 남김"
 
 #: engines/sword1/control.cpp:1264
 msgid "Keep the new one"
-msgstr ""
+msgstr "신규 파일을 남김"
 
 #: engines/sword1/logic.cpp:1635
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr ""
+msgstr "Broken Sword 1 데모는 여기서 끝납니다"
 
 #: engines/sword2/animation.cpp:429
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
-msgstr ""
+msgstr "PSX 영상을 발견했지만 ScummVM이 RGB 색상 지원이 포함되지 않은 상태로 빌드되었습니다"
 
 #: engines/sword2/detection.cpp:33
 msgid "Show object labels"
@@ -7287,83 +7263,83 @@ msgstr "게임의 고해상도 지원을 활성화합니다"
 
 #: engines/twine/metaengine.cpp:215
 msgid "Debug Next Room"
-msgstr ""
+msgstr "다음 룸을 디버그"
 
 #: engines/twine/metaengine.cpp:220
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "이전 룸을 디버그"
 
 #: engines/twine/metaengine.cpp:225
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "셀 그리드를 적용"
 
 #: engines/twine/metaengine.cpp:230
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "디버그 셀 그리드 인덱스를 증가"
 
 #: engines/twine/metaengine.cpp:235
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "디버그 셀 그리드 인덱스를 감소"
 
 #: engines/twine/metaengine.cpp:240
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "디버그 그리드 카메라를 올림"
 
 #: engines/twine/metaengine.cpp:245
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "디버그 그리드 카메라를 내림"
 
 #: engines/twine/metaengine.cpp:250
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "디버그 그리드 카메라를 왼쪽으로 이동"
 
 #: engines/twine/metaengine.cpp:256
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "디버그 그리드 카메라를 오른쪽으로 이동"
 
 #: engines/twine/metaengine.cpp:261
 msgid "Debug Menu"
-msgstr ""
+msgstr "디버그 메뉴"
 
 #: engines/twine/metaengine.cpp:266
 msgid "Debug Menu Execute"
-msgstr ""
+msgstr "디버그 메뉴 실행"
 
 #: engines/twine/metaengine.cpp:271 engines/twine/metaengine.cpp:291
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "보통 행동방식"
 
 #: engines/twine/metaengine.cpp:276 engines/twine/metaengine.cpp:296
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "스포츠 행동방식"
 
 #: engines/twine/metaengine.cpp:281 engines/twine/metaengine.cpp:301
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "공격적 행동방식"
 
 #: engines/twine/metaengine.cpp:286 engines/twine/metaengine.cpp:306
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "신중한 행동방식"
 
 #: engines/twine/metaengine.cpp:311
 msgid "Behaviour Action"
-msgstr ""
+msgstr "행동 실행"
 
 #: engines/twine/metaengine.cpp:317
 msgid "Change Behaviour"
-msgstr ""
+msgstr "행동방식 변경"
 
 #: engines/twine/metaengine.cpp:324
 msgid "Options Menu"
-msgstr ""
+msgstr "설정"
 
 #: engines/twine/metaengine.cpp:336
 msgid "Use Selected Object"
-msgstr ""
+msgstr "선택한 오브젝트를 사용"
 
 #: engines/twine/metaengine.cpp:342
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "매직 볼을 던지기"
 
 #: engines/twine/metaengine.cpp:356
 msgid "Move Backward"
@@ -7371,28 +7347,28 @@ msgstr "뒤로 이동"
 
 #: engines/twine/metaengine.cpp:377
 msgid "Use Protopack"
-msgstr ""
+msgstr "프로토팩을 사용"
 
 #: engines/twine/metaengine.cpp:382
 msgid "Open Holomap"
-msgstr ""
+msgstr "홀로맵을 열기"
 
 #: engines/twine/metaengine.cpp:395
 msgid "Special Action"
-msgstr ""
+msgstr "스페셜 액션"
 
 #: engines/twine/metaengine.cpp:401 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
-msgstr ""
+msgstr "탈출"
 
 #: engines/twine/metaengine.cpp:414
 msgid "Accept"
-msgstr ""
+msgstr "확인"
 
 #: engines/twine/metaengine.cpp:422 engines/twine/metaengine.cpp:474
 #: engines/twine/metaengine.cpp:490
 msgid "Abort"
-msgstr ""
+msgstr "취소"
 
 #: engines/twine/metaengine.cpp:460
 msgid "Next Page"
@@ -7428,7 +7404,7 @@ msgstr "벽 충돌 끔"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
-msgstr ""
+msgstr "올바른 ultima.dat 데이터 파일을 찾지 못 했습니다"
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
@@ -7443,28 +7419,28 @@ msgstr "구 엔진 데이터 입니다. 필요한 버전: %d.%d, 실제 버전: 
 #: engines/ultima/nuvie/nuvie.cpp:382
 #, c-format
 msgid "loading quick save %d"
-msgstr ""
+msgstr "빠른 저장 %d번을 불러옵니다"
 
 #: engines/ultima/nuvie/nuvie.cpp:387
 #, c-format
 msgid "saving quick save %d"
-msgstr ""
+msgstr "빠른 저장 %d번을 저장합니다"
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
 msgid "Original Save"
-msgstr ""
+msgstr "오리지널 저장"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 msgid "Transfer Character"
-msgstr ""
+msgstr "캐릭터 전송"
 
 #: engines/ultima/ultima8/meta_engine.cpp:129
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "프레임 스킵 활성화"
 
 #: engines/ultima/ultima8/meta_engine.cpp:130
 msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
+msgstr "게임이 너무 느린 경우 애니메이션 프레임을 건너뛸 수 있게 합니다."
 
 #: engines/ultima/ultima8/meta_engine.cpp:135
 msgid "Enable frame limiting"
@@ -7472,7 +7448,7 @@ msgstr "프레임 제한 활성화"
 
 #: engines/ultima/ultima8/meta_engine.cpp:136
 msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
+msgstr "게임 속도를 제한해 너무 빨라지지 않게 합니다."
 
 #: engines/ultima/ultima8/meta_engine.cpp:141
 msgid "Enable cheats"
@@ -7480,24 +7456,24 @@ msgstr "치트 활성화"
 
 #: engines/ultima/ultima8/meta_engine.cpp:142
 msgid "Allow cheats by commands and a menu when player is clicked."
-msgstr ""
+msgstr "플레이어를 클릭했을 때 명령어나 메뉴에서 치트를 허용합니다."
 
 #: engines/ultima/ultima8/meta_engine.cpp:157
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "발자국 사운드 재생"
 
 #: engines/ultima/ultima8/meta_engine.cpp:158
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "플레이어가 이동할 때 소리를 재생합니다."
 
 #: engines/ultima/ultima8/meta_engine.cpp:163
 msgid "Enable jump to mouse position"
-msgstr ""
+msgstr "마우스 위치로 점프를 활성화"
 
 #: engines/ultima/ultima8/meta_engine.cpp:164
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
+msgstr "이동 중이 아닐 때 점프하면 방향 뿐 아니라 마우스 커서를 타겟으로 합니다."
 
 #: engines/ultima/ultima8/meta_engine.cpp:175
 msgid "Enable font replacement"
@@ -7505,35 +7481,35 @@ msgstr "대체 폰트 사용"
 
 #: engines/ultima/ultima8/meta_engine.cpp:176
 msgid "Replaces game fonts with rendered fonts"
-msgstr ""
+msgstr "게임 폰트를 렌더링된 폰트로 교체"
 
 #: engines/ultima/ultima8/meta_engine.cpp:197
 msgid "Ultima VIII"
-msgstr ""
+msgstr "울티마 VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:197
 msgid "Crusader"
-msgstr ""
+msgstr "크루세이더"
 
 #: engines/ultima/ultima8/meta_engine.cpp:244
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "울티마 VIII 치트"
 
 #: engines/ultima/ultima8/meta_engine.cpp:261
 msgid "Ultima VIII Debug"
-msgstr ""
+msgstr "울티마 VIII 디버그"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:297
 msgid "[corrupt]"
-msgstr ""
+msgstr "[파손됨]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:300
 msgid "[outdated]"
-msgstr ""
+msgstr "[구식]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:303
 msgid "[too modern]"
-msgstr ""
+msgstr "[너무 새로움]"
 
 #: engines/wintermute/detection.cpp:53
 msgid "Show FPS-counter"
@@ -7541,15 +7517,15 @@ msgstr "FPS 표시"
 
 #: engines/wintermute/detection.cpp:54
 msgid "Show the current number of frames per second in the upper left corner"
-msgstr ""
+msgstr "현재 초당 프레임을 좌상단에 표시"
 
 #: engines/wintermute/detection.cpp:63
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr ""
+msgstr "스프라이트 이중 선형 필터링 (느림)"
 
 #: engines/wintermute/detection.cpp:64
 msgid "Apply bilinear filtering to individual sprites"
-msgstr ""
+msgstr "각 스프라이트에 이중 선형 필터링을 적용합니다"
 
 #: engines/wintermute/metaengine.cpp:65
 msgid "FoxTail support is not compiled in"
@@ -7569,37 +7545,37 @@ msgstr "이 게임은 PNG, JPEG, Vorbis 지원을 필요로 합니다."
 
 #: engines/wintermute/wintermute.cpp:160
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr ""
+msgstr "이 게임은 현재 빌드에 포함되지 않은 FoxTail 서브엔진이 필요합니다."
 
 #: engines/wintermute/wintermute.cpp:171
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr ""
+msgstr "이 게임은 현재 빌드에 포함되지 않은 HeroCraft 서브엔진이 필요합니다."
 
 #: engines/wintermute/wintermute.cpp:182
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
-msgstr ""
+msgstr "이 게임은 현재 빌드에 포함되지 않은 3D 기능이 필요합니다. 따라서, 일부 또는 전부를 플레이할 수 없을 수도 있습니다."
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
 #: engines/wintermute/keymapper_tables.h:2040
 #: engines/wintermute/keymapper_tables.h:2140
 msgid "Walk forward"
-msgstr ""
+msgstr "앞으로 걷기"
 
 #: engines/wintermute/keymapper_tables.h:156
 #: engines/wintermute/keymapper_tables.h:737
 #: engines/wintermute/keymapper_tables.h:2162
 msgid "Walk backward"
-msgstr ""
+msgstr "뒤로 걷기"
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
 #: engines/wintermute/keymapper_tables.h:175
 #: engines/wintermute/keymapper_tables.h:686
 #: engines/wintermute/keymapper_tables.h:1779
 msgid "Show scene geometry"
-msgstr ""
+msgstr "씬 지오메트리 표시"
 
 #: engines/wintermute/keymapper_tables.h:184
 #: engines/wintermute/keymapper_tables.h:200
@@ -7686,104 +7662,102 @@ msgstr "GUI 종류 B"
 #: engines/wintermute/keymapper_tables.h:548
 #: engines/wintermute/keymapper_tables.h:1118
 msgid "Phone cancel button"
-msgstr ""
+msgstr "전화: 취소 버튼"
 
 #: engines/wintermute/keymapper_tables.h:289
 #: engines/wintermute/keymapper_tables.h:420
 #: engines/wintermute/keymapper_tables.h:553
 #: engines/wintermute/keymapper_tables.h:1123
 msgid "Phone up button"
-msgstr ""
+msgstr "전화: 위 버튼"
 
 #: engines/wintermute/keymapper_tables.h:295
 #: engines/wintermute/keymapper_tables.h:426
 #: engines/wintermute/keymapper_tables.h:559
 #: engines/wintermute/keymapper_tables.h:1129
 msgid "Phone down button"
-msgstr ""
+msgstr "전화: 아래 버튼"
 
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:361
-#, fuzzy
-#| msgid "Alternative intro"
 msgid "Alternative action"
-msgstr "대체 인트로"
+msgstr "대체 액션"
 
 #: engines/wintermute/keymapper_tables.h:432
 #: engines/wintermute/keymapper_tables.h:565
 #: engines/wintermute/keymapper_tables.h:1135
 msgid "Phone 0 button"
-msgstr ""
+msgstr "전화: 0 버튼"
 
 #: engines/wintermute/keymapper_tables.h:437
 #: engines/wintermute/keymapper_tables.h:570
 #: engines/wintermute/keymapper_tables.h:1140
 #: engines/wintermute/keymapper_tables.h:1741
 msgid "Phone 1 button"
-msgstr ""
+msgstr "전화: 1 버튼"
 
 #: engines/wintermute/keymapper_tables.h:442
 #: engines/wintermute/keymapper_tables.h:575
 #: engines/wintermute/keymapper_tables.h:1145
 #: engines/wintermute/keymapper_tables.h:1746
 msgid "Phone 2 button"
-msgstr ""
+msgstr "전화: 2 버튼"
 
 #: engines/wintermute/keymapper_tables.h:447
 #: engines/wintermute/keymapper_tables.h:580
 #: engines/wintermute/keymapper_tables.h:1150
 #: engines/wintermute/keymapper_tables.h:1751
 msgid "Phone 3 button"
-msgstr ""
+msgstr "전화: 3 버튼"
 
 #: engines/wintermute/keymapper_tables.h:452
 #: engines/wintermute/keymapper_tables.h:585
 #: engines/wintermute/keymapper_tables.h:1155
 msgid "Phone 4 button"
-msgstr ""
+msgstr "전화: 4 버튼"
 
 #: engines/wintermute/keymapper_tables.h:457
 #: engines/wintermute/keymapper_tables.h:590
 #: engines/wintermute/keymapper_tables.h:1160
 msgid "Phone 5 button"
-msgstr ""
+msgstr "전화: 5 버튼"
 
 #: engines/wintermute/keymapper_tables.h:462
 #: engines/wintermute/keymapper_tables.h:595
 #: engines/wintermute/keymapper_tables.h:1165
 msgid "Phone 6 button"
-msgstr ""
+msgstr "전화: 6 버튼"
 
 #: engines/wintermute/keymapper_tables.h:467
 #: engines/wintermute/keymapper_tables.h:600
 #: engines/wintermute/keymapper_tables.h:1170
 msgid "Phone 7 button"
-msgstr ""
+msgstr "전화: 7 버튼"
 
 #: engines/wintermute/keymapper_tables.h:472
 #: engines/wintermute/keymapper_tables.h:605
 #: engines/wintermute/keymapper_tables.h:1175
 msgid "Phone 8 button"
-msgstr ""
+msgstr "전화: 8 버튼"
 
 #: engines/wintermute/keymapper_tables.h:477
 #: engines/wintermute/keymapper_tables.h:610
 #: engines/wintermute/keymapper_tables.h:1180
 msgid "Phone 9 button"
-msgstr ""
+msgstr "전화: 9 버튼"
 
 #: engines/wintermute/keymapper_tables.h:482
 #: engines/wintermute/keymapper_tables.h:615
 #: engines/wintermute/keymapper_tables.h:1185
 msgid "Phone * button"
-msgstr ""
+msgstr "전화: * 버튼"
 
 #: engines/wintermute/keymapper_tables.h:487
 #: engines/wintermute/keymapper_tables.h:620
 #: engines/wintermute/keymapper_tables.h:1190
 msgid "Phone # button"
-msgstr ""
+msgstr "전화: # 버튼"
 
 #: engines/wintermute/keymapper_tables.h:665
 #: engines/wintermute/keymapper_tables.h:1346
@@ -7850,7 +7824,7 @@ msgstr "종료"
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:727
 msgid "Light helper window"
-msgstr ""
+msgstr "광원 설정 도우미 창"
 
 #: engines/wintermute/keymapper_tables.h:752
 msgid "Run forward"
@@ -7879,7 +7853,7 @@ msgstr "청사진 표시"
 #: engines/wintermute/keymapper_tables.h:1727
 #: engines/wintermute/keymapper_tables.h:2013
 msgid "Next action"
-msgstr ""
+msgstr "다음 행동"
 
 #: engines/wintermute/keymapper_tables.h:800
 #: engines/wintermute/keymapper_tables.h:1519
@@ -7887,11 +7861,11 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1734
 #: engines/wintermute/keymapper_tables.h:2021
 msgid "Previous action"
-msgstr ""
+msgstr "이전 행동"
 
 #: engines/wintermute/keymapper_tables.h:827
 msgid "Volume off"
-msgstr ""
+msgstr "음소거"
 
 #: engines/wintermute/keymapper_tables.h:841
 msgid "Change font size"
@@ -7974,131 +7948,129 @@ msgstr "노트 7 연주: B"
 
 #: engines/wintermute/keymapper_tables.h:1053
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "어빌리티: 염동력"
 
 #: engines/wintermute/keymapper_tables.h:1058
 msgid "Ability: Push"
-msgstr ""
+msgstr "어빌리티: 밀기"
 
 #: engines/wintermute/keymapper_tables.h:1063
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "어빌리티: 라이트닝"
 
 #: engines/wintermute/keymapper_tables.h:1068
 msgid "Ability: Light"
-msgstr ""
+msgstr "어빌리티: 빛"
 
 #: engines/wintermute/keymapper_tables.h:1073
 msgid "Ability: Wind"
-msgstr ""
+msgstr "어빌리티: 바람"
 
 #: engines/wintermute/keymapper_tables.h:1078
 msgid "Ability: Sound"
-msgstr ""
+msgstr "어빌리티: 소리"
 
 #: engines/wintermute/keymapper_tables.h:1083
 msgid "Ability: Esence"
-msgstr ""
+msgstr "어빌리티: 에센스"
 
 #: engines/wintermute/keymapper_tables.h:1088
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "어빌리티: 엑소시스트"
 
 #: engines/wintermute/keymapper_tables.h:1201
 msgid "Show hints / Dance move"
-msgstr ""
+msgstr "힌트 표시 / 댄스 이동"
 
 #: engines/wintermute/keymapper_tables.h:1208
 msgid "Dance move up"
-msgstr ""
+msgstr "댄스 위로 이동"
 
 #: engines/wintermute/keymapper_tables.h:1214
 msgid "Dance move down"
-msgstr ""
+msgstr "댄스 아래로 이동"
 
 #: engines/wintermute/keymapper_tables.h:1220
 msgid "Dance move left"
-msgstr ""
+msgstr "댄스 왼쪽으로 이동"
 
 #: engines/wintermute/keymapper_tables.h:1226
 msgid "Dance move right"
-msgstr ""
+msgstr "댄스 오른쪽으로 이동"
 
 #: engines/wintermute/keymapper_tables.h:1256
 msgid "Cancel input"
-msgstr ""
+msgstr "입력 취소"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle subtitles"
-msgstr "음소거 전환"
+msgstr "자막 표시 전환"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1388
 msgid "Shift key"
-msgstr ""
+msgstr "시프트 키"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1490
 msgid "Chapayev's action"
-msgstr ""
+msgstr "Chapayev의 행동"
 
 #: engines/wintermute/keymapper_tables.h:1538
 #: engines/wintermute/keymapper_tables.h:1791
 #: engines/wintermute/keymapper_tables.h:1887
 msgid "Settings"
-msgstr ""
+msgstr "설정"
 
 #: engines/wintermute/keymapper_tables.h:1543
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "다이얼로그 답변 1"
 
 #: engines/wintermute/keymapper_tables.h:1548
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "다이얼로그 답변 2"
 
 #: engines/wintermute/keymapper_tables.h:1553
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "다이얼로그 답변 3"
 
 #: engines/wintermute/keymapper_tables.h:1558
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "다이얼로그 답변 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1569
 msgid "Spin wheel slower"
-msgstr ""
+msgstr "돌림판을 천천히 돌림"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1577
 msgid "Spin wheel faster"
-msgstr ""
+msgstr "돌림판을 빠르게 돌림"
 
 #: engines/wintermute/keymapper_tables.h:1655
 msgid "Zoom out"
-msgstr ""
+msgstr "줌 아웃"
 
 #: engines/wintermute/keymapper_tables.h:1662
 msgid "Zoom in"
-msgstr ""
+msgstr "줌 인"
 
 #: engines/wintermute/keymapper_tables.h:1675
 #: engines/wintermute/keymapper_tables.h:1881
 msgid "Show journal"
-msgstr ""
+msgstr "일기 표시"
 
 #. I18N: Displays a debug interface with Bezier curves
 #: engines/wintermute/keymapper_tables.h:1808
 msgid "Bezier window"
-msgstr ""
+msgstr "베지어 디버그 창"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1825
 msgid "Droid's action"
-msgstr ""
+msgstr "드로이드의 행동"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
 #: engines/wintermute/keymapper_tables.h:1933
@@ -8108,7 +8080,7 @@ msgstr "회전"
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/wintermute/keymapper_tables.h:1959
 msgid "Drop"
-msgstr ""
+msgstr "떨어뜨리기"
 
 #: engines/wintermute/keymapper_tables.h:1967
 msgid "Player 1: Up"
@@ -8132,20 +8104,20 @@ msgstr "플레이어 2: 위"
 
 #: engines/wintermute/keymapper_tables.h:1992
 msgid "Player 2: Left"
-msgstr ""
+msgstr "플레이어 2: 왼쪽"
 
 #: engines/wintermute/keymapper_tables.h:1997
 msgid "Player 2: Down"
-msgstr ""
+msgstr "플레이어 2: 아래쪽"
 
 #: engines/wintermute/keymapper_tables.h:2002
 msgid "Player 2: Right"
-msgstr ""
+msgstr "플레이어 2: 오른쪽"
 
 #. I18N: Displays a debug FPS counter
 #: engines/wintermute/keymapper_tables.h:2008
 msgid "Debug FPS"
-msgstr ""
+msgstr "디버그 FPS 표시"
 
 #: engines/wintermute/keymapper_tables.h:2105
 msgid "F1"
@@ -8153,25 +8125,25 @@ msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:2110
 msgid "Key i"
-msgstr ""
+msgstr "i 키"
 
 #: engines/xeen/detection.cpp:56
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "일반 인벤토리 모드에서 아이템 가격을 표시"
 
 #: engines/xeen/detection.cpp:57
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
-msgstr ""
+msgstr "일반 인벤토리 모드에서 아이템 가격을 표시해 가치를 비교할 수 있게 합니다"
 
 #: engines/xeen/detection.cpp:66
 msgid "More durable armor"
-msgstr ""
+msgstr "방어구 내구력을 증가"
 
 #: engines/xeen/detection.cpp:67
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
-msgstr ""
+msgstr "방어구가 부서지는 캐릭터 HP를 -10에서 -80으로 변경합니다"
 
 #: engines/xeen/saves.cpp:291
 msgid "Failed to autosave"
@@ -8195,46 +8167,46 @@ msgstr "비너스 도움말 시스템 활성화"
 
 #: engines/zvision/detection_tables.h:80
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "회전 중 애니메이션 비활성화"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning in panorama mode"
-msgstr ""
+msgstr "파노라마 모드에서 회전 중 애니메이션을 비활성화합니다"
 
 #: engines/zvision/detection_tables.h:90
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "고해상도 MPEG 영상 사용"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
-msgstr ""
+msgstr "저해상도 AVI 대신, DVD 버전에 포함된 MPEG 영상을 사용합니다"
 
 #: engines/zvision/file/save_manager.cpp:222
 #, c-format
 msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
-msgstr ""
+msgstr "이 저장 파일은 버전 %u을(를) 사용합니다. 하지만 이 엔진은 버전 %d 까지만 지원합니다. 엔진을 업데이트해 주세요."
 
 #: engines/zvision/metaengine.cpp:129
 msgid "Look Up"
-msgstr ""
+msgstr "위를 보기"
 
 #: engines/zvision/metaengine.cpp:135
 msgid "Look Down"
-msgstr ""
+msgstr "아래를 보기"
 
 #: engines/zvision/metaengine.cpp:170
 msgid "Spellbook"
-msgstr ""
+msgstr "스펠북"
 
 #: engines/zvision/metaengine.cpp:176
 msgid "Score"
-msgstr ""
+msgstr "스코어"
 
 #: engines/zvision/metaengine.cpp:182
 msgid "Put away object"
-msgstr ""
+msgstr "오브젝트를 정리"
 
 #: engines/zvision/metaengine.cpp:188
 msgid "Extract coin"
