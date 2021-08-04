@@ -50,48 +50,6 @@ Retired Project Leaders
 Engine Teams
 ************
 
-SCUMM
-^^^^^
-
-.. list-table::
-   :widths: 35 65
-
-   * - Torbjörn Andersson
-     -
-   * - James Brown
-     - (retired)
-   * - Jonathan Gray
-     - (retired)
-   * - Vincent Hamm
-     - (retired)
-   * - Max Horn
-     - (retired)
-   * - Travis Howell
-     -
-   * - Paweł Kołodziejski
-     - Codecs, iMUSE, Smush, etc.
-   * - Gregory Montoir
-     - (retired)
-   * - Eugene Sandulenko
-     - FT INSANE, MM NES, MM C64, game detection, Herc/CGA
-   * - Ludvig Strigeus
-     - (retired)
-
-HE
-^^
-
-.. list-table::
-   :widths: 35 65
-
-   * - Jonathan Gray
-     - (retired)
-   * - Travis Howell
-     -
-   * - Gregory Montoir
-     - (retired)
-   * - Eugene Sandulenko
-     -
-
 Access
 ^^^^^^
 
@@ -473,17 +431,8 @@ DreamWeb
    * - Willem Jan Palenstijn
      -
 
-Fullpipe
-^^^^^^^^
-
-.. list-table::
-   :widths: 35 65
-
-   * - Eugene Sandulenko
-     -
-
-ScummGlk
-^^^^^^^^
+Glk
+^^^
 
 .. list-table::
    :widths: 35 65
@@ -812,6 +761,15 @@ Neverhood
    * - Filippos Karapetis
      -
 
+NGI
+^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Eugene Sandulenko
+     -
+
 Parallaction
 ^^^^^^^^^^^^
 
@@ -940,6 +898,48 @@ SCI
    * - Lars Skovlund
      -
    * - Colin Snover
+     -
+
+SCUMM
+^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Torbjörn Andersson
+     -
+   * - James Brown
+     - (retired)
+   * - Jonathan Gray
+     - (retired)
+   * - Vincent Hamm
+     - (retired)
+   * - Max Horn
+     - (retired)
+   * - Travis Howell
+     -
+   * - Paweł Kołodziejski
+     - Codecs, iMUSE, Smush, etc.
+   * - Gregory Montoir
+     - (retired)
+   * - Eugene Sandulenko
+     - FT INSANE, MM NES, MM C64, game detection, Herc/CGA
+   * - Ludvig Strigeus
+     - (retired)
+
+SCUMM HE
+^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Jonathan Gray
+     - (retired)
+   * - Travis Howell
+     -
+   * - Gregory Montoir
+     - (retired)
+   * - Eugene Sandulenko
      -
 
 Sherlock
