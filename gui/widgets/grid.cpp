@@ -373,7 +373,7 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
-	_itemsOnScreen = 0;
+	_lastVisibleItem = 0;
 	_itemsPerRow = 0;
 
 	_innerHeight = 0;
@@ -402,7 +402,7 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
 	_firstVisibleItem = 0;
-	_itemsOnScreen = 0;
+	_lastVisibleItem = 0;
 	_itemsPerRow = 0;
 
 	_innerHeight = 0;
@@ -522,45 +522,49 @@ void GridWidget::sortGroups() {
 	}
 }
 
-bool GridWidget::calcVisibleEntries() {
-	bool needsReload = false;
-
-	int nFirstVisibleItem = 0, nItemsOnScreen = 0;
-
+// Perform a binary search to find the last element before position yPos in arr.
+int lastItemBeforeY(const Array<GridItemInfo> &arr, int yPos) {
 	// Binary search to find the last element whose y value is less
 	// than _scrollPos, i.e., the last item of the topmost visible row.
 	int start = 0;
-	int end = (int)_sortedEntryList.size() - 1;
+	int end = (int)arr.size() - 1;
 	int mid;
 	int ans = -1;
 	while (start <= end) {
 		mid = start + (end - start) / 2;
-		if (_sortedEntryList[mid].rect.top >= _scrollPos) {
+		if (arr[mid].rect.top >= yPos) {
 			end = mid - 1;
 		} else {
 			ans = mid;
 			start = mid + 1;
 		}
 	}
-	nFirstVisibleItem = ans;
+	return ans;
+}
+
+bool GridWidget::calcVisibleEntries() {
+	bool needsReload = false;
+
+	int nFirstVisibleItem = 0, nLastVisibleItem = 0;
+	int temp = lastItemBeforeY(_sortedEntryList, _scrollPos);
+	nFirstVisibleItem = temp;
 	// We want the leftmost item from the topmost visible row, so we traverse backwards
 	while ((nFirstVisibleItem >= 0) && 
-		   (_sortedEntryList[nFirstVisibleItem].rect.top == _sortedEntryList[ans].rect.top)) {
+		   (_sortedEntryList[nFirstVisibleItem].rect.top == _sortedEntryList[temp].rect.top)) {
 			nFirstVisibleItem--;
 	}
 	nFirstVisibleItem++;
 	nFirstVisibleItem = (nFirstVisibleItem < 0) ? 0 : nFirstVisibleItem;
 
-	nItemsOnScreen = (3 + (_scrollWindowHeight / (_gridItemHeight + _gridYSpacing))) * (_itemsPerRow);
+	nLastVisibleItem = lastItemBeforeY(_sortedEntryList, _scrollPos + _scrollWindowHeight);
+	nLastVisibleItem = (nLastVisibleItem < 0) ? 0 : nLastVisibleItem;
 
-	// TODO / FIXME: The previous if condition had to be removed as it can break on toggling groups.
-	//				Find a proper if condition and put the below code under it.
-	{
+	if ((nFirstVisibleItem != _firstVisibleItem) || (nLastVisibleItem != _lastVisibleItem)) {
 		needsReload = true;
-		_itemsOnScreen = nItemsOnScreen;
+		_lastVisibleItem = nLastVisibleItem;
 		_firstVisibleItem = nFirstVisibleItem;
 
-		int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_sortedEntryList.size());
+		int toRender = MIN(_lastVisibleItem + 1, (int)_sortedEntryList.size());
 
 		_visibleEntryList.clear();
 		for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
@@ -651,35 +655,37 @@ void GridWidget::updateGrid() {
 
 void GridWidget::assignEntriesToItems() {
 	// Assign entries from _visibleEntries to each GridItem in _gridItems
-	if (_visibleEntryList.empty() || _gridItems.empty())
+	if (_visibleEntryList.empty())
 		return;
-	Common::Array<GridItemInfo *>::iterator eit = _visibleEntryList.begin();
-	Common::Array<GridItemWidget *>::iterator it = _gridItems.begin();
 
-	for (int k = 0; k < _itemsOnScreen; ++k) {
-		GridItemWidget *item = *it;
-		GridItemInfo *entry = *eit;
-		if (eit != _visibleEntryList.end()) {
-			// Assign entry and update
-			item->setActiveEntry(*entry);
-			item->setPos(entry->rect.left, entry->rect.top - _scrollPos);
-			item->setSize(entry->rect.width(), entry->rect.height());
-			item->update();
-			if (k >= _itemsOnScreen - _itemsPerRow)
-				item->setVisible(false);
-			else
-				item->setVisible(true);
-			++eit;
-		} else {
+	// In case we have less ContainerWidgets than the number of visible entries
+	if (_visibleEntryList.size() > _gridItems.size()) {
+		for (uint l = _gridItems.size(); l < _visibleEntryList.size(); ++l) {
+			GridItemWidget *newItem = new GridItemWidget(this);
+			newItem->setVisible(false);
+			newItem->markAsDirty();
+			_gridItems.push_back(newItem);
+		}
+	}
+
+	for (uint k = 0; k < _gridItems.size(); ++k) {
+		GridItemWidget *item = _gridItems[k];
+		if (k >= _visibleEntryList.size()) {
 			// If we run out of visible entries to display.
 			// e.g., scrolled to the very bottom, we make items invisible,
 			// and move them out of view to keep them from registering mouse events.
 			item->setPos(_scrollWindowWidth, _scrollWindowHeight);
 			item->setVisible(false);
+			item->markAsDirty();
+		} else {
+			// Assign entry and update
+			item->setVisible(true);
+			GridItemInfo *entry = _visibleEntryList[k];
+			item->setActiveEntry(*entry);
+			item->setPos(entry->rect.left, entry->rect.top - _scrollPos);
+			item->setSize(entry->rect.width(), entry->rect.height());
+			item->update();
 		}
-
-		if (++it == _gridItems.end())
-			it = _gridItems.begin();
 	}
 }
 
@@ -825,21 +831,6 @@ void GridWidget::reflowLayout() {
 
 	if (calcVisibleEntries()) {
 		reloadThumbnails();
-	}
-
-	int row = 0;
-	int col = 0;
-
-	for (int k = 0; k < _itemsOnScreen; ++k) {
-		GridItemWidget *newItem = new GridItemWidget(this);
-		newItem->setVisible(false);
-
-		_gridItems.push_back(newItem);
-
-		if (++col >= _itemsPerRow) {
-			++row;
-			col = 0;
-		}
 	}
 
 	assignEntriesToItems();
