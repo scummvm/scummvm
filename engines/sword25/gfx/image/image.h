@@ -66,11 +66,6 @@ public:
 	*/
 	virtual int getHeight() const = 0;
 
-	/**
-	    @brief Returns the color format of the image
-	*/
-	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const = 0;
-
 	//@}
 
 	//@{

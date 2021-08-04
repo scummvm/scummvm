@@ -83,31 +83,6 @@ class RenderObjectManager;
  */
 class GraphicEngine : public ResourceService, public Persistable {
 public:
-	// Enums
-	// -----
-
-	// Color formats
-	//
-	/**
-	 * The color format used by the engine
-	 */
-	enum COLOR_FORMATS {
-		/// Undefined/unknown color format
-		CF_UNKNOWN = 0,
-		/**
-		 * 24-bit color format (R8G8B8)
-		 */
-		CF_RGB24,
-		/**
-		 * 32-bit color format (A8R8G8B8) (little endian)
-		*/
-		CF_ARGB32,
-		/**
-		    32-bit color format (A8B8G8R8) (little endian)
-		*/
-		CF_ABGR32
-	};
-
 	// Constructor
 	// -----------
 	GraphicEngine(Kernel *pKernel);
@@ -247,39 +222,6 @@ public:
 	Common::SeekableReadStream *getThumbnail() { return _thumbnail; }
 
 	// Access methods
-
-	/**
-	 * Returns the size of a pixel entry in bytes for a particular color format
-	 * @param ColorFormat   The desired color format. The parameter must be of type COLOR_FORMATS
-	 * @return              Returns the size of a pixel in bytes. If the color format is unknown, -1 is returned.
-	 */
-	static int getPixelSize(GraphicEngine::COLOR_FORMATS colorFormat) {
-		switch (colorFormat) {
-		case GraphicEngine::CF_ARGB32:
-			return 4;
-		default:
-			return -1;
-		}
-	}
-
-	/**
-	 * Calculates the length of an image line in bytes, depending on a given color format.
-	 * @param ColorFormat   The color format
-	 * @param Width         The width of the line in pixels
-	 * @return              Reflects the length of the line in bytes. If the color format is
-	 * unknown, -1 is returned
-	 */
-	static int calcPitch(GraphicEngine::COLOR_FORMATS colorFormat, int width) {
-		switch (colorFormat) {
-		case GraphicEngine::CF_ARGB32:
-			return width * 4;
-
-		default:
-			assert(false);
-		}
-
-		return -1;
-	}
 
 	// Resource-Managing Methods
 	// --------------------------
