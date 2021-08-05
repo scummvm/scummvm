@@ -17,7 +17,7 @@ dependencies {
 
 // Enable to see use of deprecated API
  tasks.withType(JavaCompile) {
-     options.compilerArgs << "-Xlint:deprecation"
+	 options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
  }
 
 apply plugin: 'com.android.application'
