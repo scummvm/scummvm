@@ -180,16 +180,7 @@ int call_function(const Plugins::PluginMethod &method,
 			params.push_back(parm_value[i]);
 
 		// Call the method
-		NumberPtr result = method(params);
-
-		// TODO: Though some script methods return pointers, the call_function only
-		// supports a 32-bit result. To avoid weird problems on 64-bit systems that
-		// produce pointers above 32-bits, detect and throw a wobbly
-		// until such time as it can properly be fixed
-		if (result._ptr > (void *)0xffffffff)
-			error("Uhandled 64-bit pointer result from plugin method call");
-
-		return result;
+		return method(params);
 	}
 }
 

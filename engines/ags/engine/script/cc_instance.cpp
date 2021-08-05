@@ -985,21 +985,28 @@ int ccInstance::Run(int32_t curpc) {
 
 			if (reg1.Type == kScValPluginFunction) {
 				_GP(GlobalReturnValue).Invalidate();
-				int32_t int_ret_val;
+				NumberPtr fnResult;
 				if (next_call_needs_object) {
 					RuntimeScriptValue obj_rval = registers[SREG_OP];
 					obj_rval.DirectPtrObj();
-					int_ret_val = call_function(reg1.pluginMethod(),
+					fnResult = call_function(reg1.pluginMethod(),
 						&obj_rval, num_args_to_func, func_callstack.GetHead() + 1);
 				} else {
-					int_ret_val = call_function(reg1.pluginMethod(),
+					fnResult = call_function(reg1.pluginMethod(),
 						nullptr, num_args_to_func, func_callstack.GetHead() + 1);
 				}
 
 				if (_GP(GlobalReturnValue).IsValid()) {
 					return_value = _GP(GlobalReturnValue);
 				} else {
-					return_value.SetPluginArgument(int_ret_val);
+					// TODO: Though some plugin methods return pointers, the SetPluginArgument
+					// call only supports a 32-bit value. This is fine in most cases, since
+					// methods mostly set the ptr on GlobalReturnValue, so it doesn't reach here.
+					// But just in case, throw a wobbly if it reaches here with a 64-bit pointer
+					if (fnResult._ptr > (void *)0xffffffff)
+						error("Uhandled 64-bit pointer result from plugin method call");
+
+					return_value.SetPluginArgument(fnResult);
 				}
 			} else if (next_call_needs_object) {
 				// member function call
