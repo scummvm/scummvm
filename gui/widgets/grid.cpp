@@ -725,20 +725,21 @@ void GridWidget::calcInnerHeight() {
 	int row = 0;
 	int col = 0;
 	int lastRowHeight = 0;
-	Common::Point p(_scrollWindowPaddingX, _scrollWindowPaddingY);
+	Common::Point p(_scrollWindowPaddingX + _gridXSpacing, _scrollWindowPaddingY);
 
 	for (int k = 0; k < (int)_sortedEntryList.size(); ++k) {
 		if (_sortedEntryList[k].isHeader) {
 			while (col != 0) {
 				if (++col >= _itemsPerRow) {
 					col = 0;
-					p.x = _scrollWindowPaddingX;
 					++row;
 					p.y += lastRowHeight;
 					lastRowHeight = 0;
 				}
 			}
+			p.x = _scrollWindowPaddingX;
 			_sortedEntryList[k].rect.moveTo(p);
+			p.x = _scrollWindowPaddingX + _gridXSpacing;
 			++row;
 			p.y += _sortedEntryList[k].rect.height() + _gridYSpacing;
 			lastRowHeight = 0;
@@ -750,7 +751,7 @@ void GridWidget::calcInnerHeight() {
 				p.y += lastRowHeight;
 				lastRowHeight = 0;
 				col = 0;
-				p.x = _scrollWindowPaddingX;
+				p.x = _scrollWindowPaddingX + _gridXSpacing;
 			} else {
 				p.x += _sortedEntryList[k].rect.width() + _gridXSpacing;
 			}
@@ -819,11 +820,7 @@ void GridWidget::reflowLayout() {
 	_gridItemWidth = _thumbnailWidth;
 
 	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _scrollWindowPaddingX) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
-	if (_itemsPerRow == 1) {
-		_gridXSpacing = 0;
-	} else {
-		_gridXSpacing = MAX(((_scrollWindowWidth - (2 * _scrollWindowPaddingX) - _scrollBarWidth) - (_itemsPerRow * _gridItemWidth)) / (_itemsPerRow - 1), _minGridXSpacing);
-	}
+	_gridXSpacing = MAX(((_scrollWindowWidth - _scrollBarWidth - (2 * _scrollWindowPaddingX)) - (_itemsPerRow * _gridItemWidth)) / (_itemsPerRow + 1), _minGridXSpacing);
 
 	calcEntrySizes();
 	calcInnerHeight();
