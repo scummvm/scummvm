@@ -129,8 +129,8 @@ void BodyData::loadLines(Common::SeekableReadStream &stream) {
 	_lines.reserve(numLines);
 	for (uint16 i = 0; i < numLines; ++i) {
 		BodyLine line;
-		line.color = stream.readByte();
 		line.unk1 = stream.readByte();
+		line.color = stream.readByte();
 		line.unk2 = stream.readUint16LE();
 		line.vertex1 = stream.readUint16LE() / 6;
 		line.vertex2 = stream.readUint16LE() / 6;
