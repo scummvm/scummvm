@@ -270,12 +270,12 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 	_engine->_text->drawText(x, y, title);
 }
 
-void Holomap::renderHolomapPointModel(const Location &location, int32 x, int32 y) {
+void Holomap::renderHolomapPointModel(const IVec3 &angle, int32 x, int32 y) {
 	_engine->_renderer->setBaseRotation(x, y, 0);
 	_engine->_renderer->getBaseRotationPosition(0, 0, 1000);
 	const IVec3 destPos = _engine->_renderer->_destPos;
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
-	_engine->_renderer->setBaseRotation(location.angle);
+	_engine->_renderer->setBaseRotation(angle);
 	_engine->_renderer->updateCameraAnglePositions(5300);
 	// why is this needed? _engine->_renderer->_baseTransPos = _engine->_renderer->_destPos;
 	_engine->_renderer->getBaseRotationPosition(destPos);
@@ -334,7 +334,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	renderHolomapSurfacePolygons();
 
 	const Location &loc = _locations[data->locationIdx];
-	renderHolomapPointModel(loc, loc.angle.x, loc.angle.y);
+	renderHolomapPointModel(data->pos, loc.angle.x, loc.angle.y);
 
 	ActorMoveStruct move;
 	AnimTimerDataStruct animTimerData;
@@ -391,7 +391,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 				modelX = loc.angle.x;
 				modelY = loc.angle.y;
 			}
-			renderHolomapPointModel(loc, modelX, modelY);
+			renderHolomapPointModel(data->pos, modelX, modelY);
 			++trajAnimFrameIdx;
 		}
 

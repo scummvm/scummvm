@@ -79,8 +79,10 @@ private:
 
 	void renderLocations(int xRot, int yRot, int zRot, bool lower);
 
-	void renderHolomapPointModel(const Location &location, int32 x, int32 y);
-
+	/**
+	 * Renders a holomap path with single path points appearing slowly one after another
+	 */
+	void renderHolomapPointModel(const IVec3 &angle, int32 x, int32 y);
 	void prepareHolomapSurface();
 	void prepareHolomapProjectedPositions();
 	void prepareHolomapPolygons();
