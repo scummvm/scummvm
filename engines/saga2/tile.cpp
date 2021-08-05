@@ -803,7 +803,7 @@ void saveActiveItemStates(Common::OutSaveFile *outS) {
 			}
 
 			//  Copy the state data to the archive buffer
-			out->write(stateArray[i], arraySize);
+			out->write(bufferedStateArray, arraySize);
 
 			delete[] bufferedStateArray;
 		} else
