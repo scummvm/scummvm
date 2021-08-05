@@ -288,7 +288,7 @@ public:
 	// Appends a single character
 	void    AppendChar(char c);
 	// Appends a formatted string
-	void    AppendFmt(MSVC_PRINTF const char *fcstr, ...) GCC_PRINTF(1, 2);
+	void    AppendFmt(const char *fcstr, ...);
 	void    AppendFmtv(const char *fcstr, va_list argptr);
 	// Clip* methods decrease the string, removing defined part
 	// Cuts off leftmost N characters
