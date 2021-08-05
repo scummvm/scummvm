@@ -356,6 +356,10 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	updateTextCast();
 	updateGlobalAttr();
 
+	// reset the stop time when we are not playing video
+	if (_stopTime && _sprite->_cast && _sprite->_cast->_type != kCastDigitalVideo)
+		_stopTime = 0;
+
 	_dirty = false;
 }
 
