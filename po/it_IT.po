@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-04 18:28+0000\n"
-"PO-Revision-Date: 2021-08-04 17:44+0000\n"
+"PO-Revision-Date: 2021-08-05 17:25+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -3436,7 +3436,7 @@ msgstr "Vista Ingrandita disattivata"
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:77
 msgid "Show SAF revoke permissions overlay button"
-msgstr ""
+msgstr "Mostra tasto per revocare permessi SAF"
 
 #: backends/platform/ds/ds-graphics.cpp:219
 msgid "Unscaled"
