@@ -455,7 +455,7 @@ void Score::update() {
 		if (tempo > 161) {
 			// Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
-		} else if (tempo <= 60) {
+		} else if (tempo <= 120) {
 			// FPS
 			_currentFrameRate = tempo;
 			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
