@@ -278,7 +278,7 @@ Codec *createQuickTimeCodec(uint32 tag, int width, int height, int bitsPerPixel)
 		return new CDToonsDecoder(width, height);
 	case MKTAG('r','a','w',' '):
 		// Used my L-Zone-mac (Director game)
-		return new BitmapRawDecoder(width, height, bitsPerPixel);
+		return new BitmapRawDecoder(width, height, bitsPerPixel, true);
 	default:
 		warning("Unsupported QuickTime codec \'%s\'", tag2str(tag));
 	}
