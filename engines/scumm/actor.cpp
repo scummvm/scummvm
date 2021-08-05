@@ -548,6 +548,9 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	else
 		_targetFacing = getAngleFromPos(deltaXFactor, deltaYFactor, (_vm->_game.id == GID_DIG || _vm->_game.id == GID_CMI));
 
+	if (_vm->_game.version <= 2 && _facing != updateActorDirection(true))
+		_moving |= MF_TURN;
+
 	return actorWalkStep();
 }
 
@@ -560,7 +563,6 @@ int Actor::actorWalkStep() {
 
 	nextFacing = updateActorDirection(true);
 	if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
-		int facing = _facing;
 		if (_walkFrame != _frame || _facing != nextFacing)
 			startWalkAnim(1, nextFacing);
 
@@ -570,7 +572,7 @@ int Actor::actorWalkStep() {
 		// versions) walk in the starting room from the torn wallpaper to the desk drawer: Zak should first turn around clockwise by
 		// 180°, then walk one step to the left, then turn clockwise 90°. For ZAK FM-TOWNS (SCUMM3) this part will look quite different
 		// (and a bit weird), but I have confirmed the correctness with the FM-Towns emulator, too.
-		if (_vm->_game.version == 3 || (_vm->_game.version <= 2 && facing != nextFacing))
+		if (_vm->_game.version == 3 || (_vm->_game.version <= 2 && (_moving & MF_TURN)))
 			return 1;
 	}
 
@@ -1168,7 +1170,7 @@ void Actor_v2::walkActor() {
 		actorWalkStep();
 	} else {
 		if (_moving & MF_LAST_LEG) {
-			_moving = 0;
+			_moving = MF_TURN;
 			startAnimActor(_standFrame);
 			if (_targetFacing != _walkdata.destdir)
 				turnToDirection(_walkdata.destdir);
