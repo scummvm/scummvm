@@ -452,7 +452,6 @@ void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
 	for (Common::Array<GridItemInfo>::iterator entryIter = list->begin(); entryIter != list->end(); ++entryIter) {
 		_dataEntryList.push_back(*entryIter);
 	}
-	groupEntries();
 	// TODO: Remove this below, add drawWidget(), that should do the drawing
 	if (!_gridItems.empty()) {
 		reflowLayout();

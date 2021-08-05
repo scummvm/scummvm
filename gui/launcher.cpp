@@ -1165,6 +1165,59 @@ LauncherGrid::LauncherGrid(const U32String &title)
 	build();
 }
 
+void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata) {
+	U32StringArray attrs;
+	switch (_groupBy) {
+	case kGroupByFirstLetter:
+		for (uint i = 0; i < metadata.size(); ++i) {
+			attrs.push_back(metadata[i]->getVal("description").substr(0, 1));
+		}
+		// _list->setGroupHeaderFormat(U32String(""), U32String("..."));
+		_grid->setAttributeValues(attrs);
+		_grid->groupEntries();
+		break;
+	case kGroupByEngine:
+		for (uint i = 0; i < metadata.size(); ++i) {
+			U32String engineid = metadata[i]->contains(String("engineid")) ?
+								metadata[i]->getVal(String("engineid")) : String("Unknown Engine");
+			attrs.push_back(engineid);
+		}
+		// _list->setGroupHeaderFormat(U32String(""), U32String(" Games"));
+		_grid->setAttributeValues(attrs);
+		_grid->groupEntries();
+		break;
+	case kGroupByLanguage:
+		for (uint i = 0; i < metadata.size(); ++i) {
+			U32String engineid = metadata[i]->contains(String("language")) ?
+								metadata[i]->getVal(String("language")) : String("Language not set");
+			attrs.push_back(engineid);
+		}
+		// _grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setAttributeValues(attrs);
+		_grid->groupEntries();
+		break;
+	case kGroupByPlatform:
+		for (uint i = 0; i < metadata.size(); ++i) {
+			U32String engineid = metadata[i]->contains(String("Platform")) ?
+								metadata[i]->getVal(String("Platform")) : String("Platform not set");
+			attrs.push_back(engineid);
+		}
+		// _grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setAttributeValues(attrs);
+		_grid->groupEntries();
+		break;
+	case kGroupByNone:	// Fall-through intentional
+	default:
+		for (uint i = 0; i < metadata.size(); ++i) {
+			attrs.push_back(String("All"));
+		}
+		// _grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setAttributeValues(attrs);
+		_grid->groupEntries();
+		break;
+	}
+}
+
 void LauncherGrid::handleKeyDown(Common::KeyState state) {
 	if (state.keycode == Common::KEYCODE_TAB) {
 		// Toggle between the game list and the quick search field.
@@ -1194,12 +1247,24 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	case kItemClicked:
 		updateButtons();
 		break;
+	case kSetGroupMethodCmd:
+		// Change the grouping criteria
+		if (data) {
+			GroupingMethod newGroupBy = (GroupingMethod)data;
+			if (_groupBy != newGroupBy) {
+				_groupBy = newGroupBy;
+				updateListing();
+			}
+		}
+		break;
 	default:
 		LauncherDialog::handleCommand(sender, cmd, data);
 	}
 }
 
 void LauncherGrid::updateListing() {
+	Array<const Common::ConfigManager::Domain *> attrs;
+
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
@@ -1250,11 +1315,12 @@ void LauncherGrid::updateListing() {
 		iter->domain->tryGetVal("engineid", engineid);
 		iter->domain->tryGetVal("language", language);
 		iter->domain->tryGetVal("platform", platform);
+		attrs.push_back(iter->domain);
 		gridList.push_back(GridItemInfo(k++, engineid, gameid, title, Common::parseLanguage(language), Common::parsePlatform(platform)));
 	}
 
 	_grid->setEntryList(&gridList);
-
+	groupEntries(attrs);
 	// And fill out our structures
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
 		_domains.push_back(iter->key);
@@ -1276,6 +1342,14 @@ void LauncherGrid::build() {
 	_grid = nullptr;
 #ifndef DISABLE_FANCY_THEMES
 	_logo = nullptr;
+	_grpChooserDesc = new StaticTextWidget(this, String("LauncherGrid.laGroupPopupDesc"), U32String("Group by: "));
+	_grpChooserPopup = new PopUpWidget(this, String("LauncherGrid.laGroupPopup"), U32String("Select a criteria to group the entries"), kSetGroupMethodCmd);
+	_grpChooserPopup->appendEntry(_("None"), kGroupByNone);
+	_grpChooserPopup->appendEntry(_("First letter"), kGroupByFirstLetter);
+	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
+	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
+	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
+	_grpChooserPopup->setSelected(0);
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "LauncherGrid.Logo");
 		_logo->useThemeTransparency(true);
