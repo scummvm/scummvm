@@ -460,10 +460,7 @@ void Score::update() {
 			_currentFrameRate = tempo;
 			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
 		} else {
-			if (tempo >= 136) {
-				// TODO Wait for channel tempo - 135
-				warning("STUB: tempo >= 136");
-			} else if (tempo == 128) {
+			if (tempo == 128) {
 				_waitForClick = true;
 				_waitForClickCursor = false;
 				_vm->setCursor(kCursorMouseUp);
@@ -473,6 +470,8 @@ void Score::update() {
 			} else if (tempo == 134) {
 				// Wait for sound channel 2
 				_waitForChannel = 2;
+			} else {
+				warning("STUB: tempo %d", tempo);
 			}
 			_nextFrameTime = g_system->getMillis();
 		}
