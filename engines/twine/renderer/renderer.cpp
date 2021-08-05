@@ -1052,6 +1052,7 @@ uint8 *Renderer::prepareSpheres(const Common::Array<BodySphere> &spheres, int32 
 		const int16 centerIndex = sphere.vertex;
 		cmd->x = modelData->flattenPoints[centerIndex].x;
 		cmd->y = modelData->flattenPoints[centerIndex].y;
+		cmd->z = modelData->flattenPoints[centerIndex].z;
 
 		(*renderCmds)->depth = modelData->flattenPoints[centerIndex].z;
 		(*renderCmds)->renderType = RENDERTYPE_DRAWSPHERE;
@@ -1208,11 +1209,11 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 			CmdRenderSphere *sphere = (CmdRenderSphere *)pointer;
 			int32 radius = sphere->radius;
 
-			//if (isUsingOrthoProjection) {
-			radius = (radius * 34) / 512;
-			//} else {
-			//	radius = (radius * cameraScaleY) / (cameraDepthOffset + *(const int16 *)pointer); // TODO: this does not make sense.
-			//}
+			if (_isUsingOrthoProjection) {
+				radius = (radius * 34) / 512;
+			} else {
+				radius = (sphere->radius * _cameraScaleY) / (_cameraDepthOffset + sphere->z);
+			}
 
 			radius += 3;
 

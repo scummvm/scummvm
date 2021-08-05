@@ -121,9 +121,10 @@ private:
 	 */
 	struct CmdRenderSphere {
 		int8 colorIndex = 0;
+		int16 radius = 0;
 		int16 x = 0;
 		int16 y = 0;
-		int16 radius = 0;
+		int16 z = 0;
 	};
 
 	struct ModelData {
