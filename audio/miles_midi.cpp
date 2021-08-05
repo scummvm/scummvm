@@ -56,6 +56,7 @@ MidiDriver_Miles_Midi::MidiDriver_Miles_Midi(MusicType midiType, MilesMT32Instru
 	_instrumentTableCount = instrumentTableCount;
 
 	setSourceNeutralVolume(MILES_DEFAULT_SOURCE_NEUTRAL_VOLUME);
+	setSourceVolume(MILES_DEFAULT_SOURCE_NEUTRAL_VOLUME);
 }
 
 MidiDriver_Miles_Midi::~MidiDriver_Miles_Midi() {
@@ -920,9 +921,9 @@ void MidiDriver_Miles_Midi::applySourceVolume(uint8 source) {
 		// Apply the new source volume to this channel if this source is active
 		// on this channel, or if it was active on the channel before it was
 		// locked.
-		if (source == 0xFF || channel.currentData->source == source) {
+		if (source == 0xFF || (channel.currentData && channel.currentData->source == source)) {
 			channelData = channel.currentData;
-		} else if (channel.locked && channel.unlockData->source == source) {
+		} else if (channel.locked && channel.unlockData && channel.unlockData->source == source) {
 			channelData = channel.unlockData;
 			channelLockedByOtherSource = true;
 		}
