@@ -224,6 +224,15 @@
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
 				/>
+				<widget name = 'laGroupPopupDesc'
+						type = 'OptionsLabel'
+						height = 'Globals.Line.Height'
+						textalign = 'end'
+				/>
+				<widget name = 'laGroupPopup'
+						width = '150'
+						type = 'PopUp'
+				/>
 				<space />
 				<widget name = 'ListSwitch'
 						height = 'Globals.Button.Height'

@@ -224,6 +224,7 @@ public:
 
 protected:
 	void updateListing() override;
+	void groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata);
 	void updateButtons() override;
 	void selectTarget(const String &target) override;
 	const int getSelected() override;
