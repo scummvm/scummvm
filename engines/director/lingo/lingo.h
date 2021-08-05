@@ -317,7 +317,7 @@ public:
 	void loadStateFromWindow();
 	void saveStateToWindow();
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
-	void popContext();
+	void popContext(bool aborting = false);
 	bool hasFrozenContext();
 	void cleanLocalVars();
 	void varAssign(const Datum &var, const Datum &value);

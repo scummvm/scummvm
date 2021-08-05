@@ -317,7 +317,7 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	}
 }
 
-void Lingo::popContext() {
+void Lingo::popContext(bool aborting) {
 	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
 
 	debugC(5, kDebugLingoExec, "Popping frame %d", callstack.size());
@@ -335,7 +335,15 @@ void Lingo::popContext() {
 			g_lingo->push(fp->defaultRetVal);
 		}
 	} else if (_stack.size() > fp->stackSizeBefore) {
-		error("handler %s returned extra %d values", fp->sp.name->c_str(), _stack.size() - fp->stackSizeBefore);
+		if (aborting) {
+			// Since we're aborting execution, we should expect that some extra
+			// values are left on the stack.
+			while (_stack.size() > fp->stackSizeBefore) {
+				g_lingo->pop();
+			}
+		} else {
+			error("handler %s returned extra %d values", fp->sp.name->c_str(), _stack.size() - fp->stackSizeBefore);
+		}
 	} else {
 		error("handler %s popped extra %d values", fp->sp.name->c_str(), fp->stackSizeBefore - _stack.size());
 	}
