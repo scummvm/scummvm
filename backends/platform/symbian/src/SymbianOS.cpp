@@ -196,7 +196,7 @@ bool OSystem_SDL_Symbian::openUrl(const Common::String &url) {
 #ifdef __S60_3X__
 	TAutoClose2<RApaLsSession> appArcSession;
 	TInt error = appArcSession->Connect();
-	if(error != KErrNone) {
+	if (error != KErrNone) {
 		warning(kFailMsg, error);
 		return false;
 	}
@@ -205,7 +205,7 @@ bool OSystem_SDL_Symbian::openUrl(const Common::String &url) {
 	TUid browserUID;
 	TDataType html = TDataType(KHTMLMimeType);
 	error = appArcSession->AppForDataType(html, browserUID);
-	if(browserUID == KNullUid) {
+	if (browserUID == KNullUid) {
 		warning("Can't find any browser. Try to install Opera.");
 		return false;
 	}
@@ -214,12 +214,12 @@ bool OSystem_SDL_Symbian::openUrl(const Common::String &url) {
 	error = appArcSession->GetAppInfo(info, browserUID);
 
 	// Give more time to obtain app list
-	while(error == RApaLsSession::EAppListInvalid) {
+	while (error == RApaLsSession::EAppListInvalid) {
 		error = appArcSession->GetAppInfo(info, browserUID);
 		User::After(TTimeIntervalMicroSeconds32(100000));  // 0.1 secs
 	}
 
-	// hack: We should run Opera 10 itself, not launcher, because
+	// HACK: We should run Opera 10 itself, not launcher, because
 	// Opera's launcher doesn't recognize commandline args.
 	if(browserUID.iUid == kOpera10500_UID) {
 		TParse pth;
@@ -234,7 +234,7 @@ bool OSystem_SDL_Symbian::openUrl(const Common::String &url) {
 
 	TAutoClose2<RProcess> proc;
 	error = proc->Create(info.iFullName, *addr);
-	if(error == KErrNone)
+	if (error == KErrNone)
 		proc->Resume();
 	else
 		warning("Failure while browser starts = %d", error);
