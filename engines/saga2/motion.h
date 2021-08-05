@@ -538,6 +538,7 @@ class MotionTaskList {
 	friend class    MotionTask;
 
 	Common::List<MotionTask *> _list;
+	Common::List<MotionTask *>::iterator _nextMT;
 
 public:
 	//  Default constructor

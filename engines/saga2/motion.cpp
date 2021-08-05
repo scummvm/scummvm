@@ -348,10 +348,12 @@ uint8 computeTurnFrames(Direction fromDir, Direction toDir) {
 //	Initialize the MotionTaskList
 
 MotionTaskList::MotionTaskList(void) {
+	_nextMT = _list.end();
 }
 
 MotionTaskList::MotionTaskList(Common::SeekableReadStream *stream) {
 	read(stream);
+	_nextMT = _list.end();
 }
 
 
@@ -1067,8 +1069,8 @@ void MotionTask::write(Common::MemoryWriteStreamDynamic *out) {
 //	When a motion task is finished, call this function to delete it.
 
 void MotionTask::remove(int16 returnVal) {
-	if (g_vm->_nextMT != g_vm->_mTaskList->_list.end() && *(g_vm->_nextMT) == this)
-		++g_vm->_nextMT;
+	if (g_vm->_mTaskList->_nextMT != g_vm->_mTaskList->_list.end() && *(g_vm->_mTaskList->_nextMT) == this)
+		++g_vm->_mTaskList->_nextMT;
 
 	object->_data.objectFlags &= ~objectMoving;
 	if (objObscured(object))
@@ -4034,15 +4036,15 @@ void MotionTask::updatePositions(void) {
 	int16           targetDist;
 	StandingTileInfo sti;
 
-	for (Common::List<MotionTask *>::iterator it = g_vm->_mTaskList->_list.begin(); it != g_vm->_mTaskList->_list.end(); it = g_vm->_nextMT) {
+	for (Common::List<MotionTask *>::iterator it = g_vm->_mTaskList->_list.begin(); it != g_vm->_mTaskList->_list.end(); it = g_vm->_mTaskList->_nextMT) {
 		MotionTask *mt = *it;
 		GameObject  *obj = mt->object;
 		ProtoObj    *proto = obj->proto();
 		Actor       *a = (Actor *)obj;
 		bool        moveTaskDone = false;
 
-		g_vm->_nextMT = it;
-		g_vm->_nextMT++;
+		g_vm->_mTaskList->_nextMT = it;
+		g_vm->_mTaskList->_nextMT++;
 
 		if (!isWorld(obj->IDParent())) {
 			mt->remove();
@@ -4119,7 +4121,7 @@ void MotionTask::updatePositions(void) {
 							    mt->finalTarget,
 							    (mt->flags & requestRun) != 0);
 						}
-						g_vm->_nextMT = it;
+						g_vm->_mTaskList->_nextMT = it;
 					}
 				} else {
 					a->setAction(newAction, 0);
@@ -4138,7 +4140,7 @@ void MotionTask::updatePositions(void) {
 						    mt->finalTarget,
 						    (mt->flags & requestRun) != 0);
 					}
-					g_vm->_nextMT = it;
+					g_vm->_mTaskList->_nextMT = it;
 				} else if (mt->freeFall(obj->_data.location, sti) == false)
 					moveTaskDone = true;
 			} else {
@@ -4159,7 +4161,7 @@ void MotionTask::updatePositions(void) {
 						    mt->finalTarget,
 						    (mt->flags & requestRun) != 0);
 					}
-					g_vm->_nextMT = it;
+					g_vm->_mTaskList->_nextMT = it;
 				}
 			}
 			break;
@@ -4200,7 +4202,7 @@ void MotionTask::updatePositions(void) {
 				if (targetDist > kTileUVSize) {
 					mt->motionType = mt->prevMotionType;
 					mt->flags |= reset;
-					g_vm->_nextMT = it;
+					g_vm->_mTaskList->_nextMT = it;
 				} else
 					moveTaskDone = true;
 			}
@@ -4220,7 +4222,7 @@ void MotionTask::updatePositions(void) {
 			//  This will be uninterrutable for 2 frames
 			a->setActionPoints(2);
 			mt->o.directObject->use(a->thisID());
-			//g_vm->_nextMT=mt;
+			//g_vm->_mTaskList->_nextMT=mt;
 			moveTaskDone = true;
 			break;
 
@@ -4248,7 +4250,7 @@ void MotionTask::updatePositions(void) {
 						if (mt->motionType == motionTypeUseObjectOnObject)
 							moveTaskDone = true;
 						else
-							g_vm->_nextMT = it;
+							g_vm->_mTaskList->_nextMT = it;
 					}
 				}
 			} else {
@@ -4260,7 +4262,7 @@ void MotionTask::updatePositions(void) {
 				if (mt->motionType == motionTypeUseObjectOnObject)
 					moveTaskDone = true;
 				else
-					g_vm->_nextMT = it;
+					g_vm->_mTaskList->_nextMT = it;
 			}
 
 			break;
@@ -4301,7 +4303,7 @@ void MotionTask::updatePositions(void) {
 				if (mt->motionType == motionTypeUseObjectOnTAI)
 					moveTaskDone = true;
 				else
-					g_vm->_nextMT = it;
+					g_vm->_mTaskList->_nextMT = it;
 			}
 			break;
 
@@ -4321,7 +4323,7 @@ void MotionTask::updatePositions(void) {
 				if (mt->motionType == motionTypeUseObjectOnLocation)
 					moveTaskDone = true;
 				else
-					g_vm->_nextMT = it;
+					g_vm->_mTaskList->_nextMT = it;
 			}
 			break;
 
@@ -4381,7 +4383,7 @@ void MotionTask::updatePositions(void) {
 					if (mt->motionType == motionTypeDropObject)
 						moveTaskDone = true;
 					else
-						g_vm->_nextMT = it;
+						g_vm->_mTaskList->_nextMT = it;
 				}
 			} else {
 				//  The actor will now be uniterruptable
@@ -4392,7 +4394,7 @@ void MotionTask::updatePositions(void) {
 				if (mt->motionType == motionTypeDropObject)
 					moveTaskDone = true;
 				else
-					g_vm->_nextMT = it;
+					g_vm->_mTaskList->_nextMT = it;
 			}
 
 			CMassWeightIndicator::bRedraw = true;   // tell the mass/weight indicators to refresh
@@ -4416,7 +4418,7 @@ void MotionTask::updatePositions(void) {
 					if (mt->motionType == motionTypeDropObjectOnObject)
 						moveTaskDone = true;
 					else
-						g_vm->_nextMT = it;
+						g_vm->_mTaskList->_nextMT = it;
 				}
 			} else {
 				//  The actor will now be uniterruptable
@@ -4428,7 +4430,7 @@ void MotionTask::updatePositions(void) {
 				if (mt->motionType == motionTypeDropObjectOnObject)
 					moveTaskDone = true;
 				else
-					g_vm->_nextMT = it;
+					g_vm->_mTaskList->_nextMT = it;
 			}
 
 			CMassWeightIndicator::bRedraw = true;   // tell the mass/weight indicators to refresh
@@ -4454,7 +4456,7 @@ void MotionTask::updatePositions(void) {
 				if (mt->motionType == motionTypeDropObjectOnTAI)
 					moveTaskDone = true;
 				else
-					g_vm->_nextMT = it;
+					g_vm->_mTaskList->_nextMT = it;
 			}
 			break;
 
