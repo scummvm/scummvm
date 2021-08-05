@@ -486,67 +486,81 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	diffX = next.x - _pos.x;
 	diffY = next.y - _pos.y;
 
-	if (_vm->_game.version <= 3) {
-		if (_vm->_game.version <= 2) {
-			_stepThreshold = MAX(ABS(diffX), ABS(diffY));
-			deltaXFactor = deltaYFactor = 1;
-		} else {
-			// These two lines fix bug #1052 (INDY3: Hitler facing wrong directions in the Berlin scene).
-			// I can't see anything like this in the original SCUMM1/2 code, so I limit this to SCUMM3.
-			if (!(_moving & MF_LAST_LEG) && (int)_speedx > ABS(diffX) && (int)_speedy > ABS(diffY))
-				return 0;
+	deltaYFactor = _speedy << 16;
+	if (diffY < 0)
+		deltaYFactor = -deltaYFactor;
 
-			_stepX = ((ABS(diffY) / (int)_speedy) >> 1) > (ABS(diffX) / (int)_speedx) ? _speedy + 1 : _speedx;
-			_stepThreshold = MAX(ABS(diffY) / _speedy, ABS(diffX) / _stepX);
-			deltaXFactor = (int32)_stepX;
-			deltaYFactor = (int32)_speedy;
-		}
-		if (diffX < 0)
-			deltaXFactor = -deltaXFactor;
-		if (diffY < 0)
-			deltaYFactor = -deltaYFactor;
-
-		_walkdata.xfrac = _walkdata.xAdd = diffX / deltaXFactor;
-		_walkdata.yfrac = _walkdata.yAdd = diffY / deltaYFactor;
+	deltaXFactor = deltaYFactor * diffX;
+	if (diffY != 0) {
+		deltaXFactor /= diffY;
 	} else {
-		deltaYFactor = _speedy << 16;
-		if (diffY < 0)
-			deltaYFactor = -deltaYFactor;
-
-		deltaXFactor = deltaYFactor * diffX;
-		if (diffY != 0) {
-			deltaXFactor /= diffY;
-		} else {
-			deltaYFactor = 0;
-		}
-
-		if ((uint)ABS(deltaXFactor >> 16) > _speedx) {
-			deltaXFactor = _speedx << 16;
-			if (diffX < 0)
-				deltaXFactor = -deltaXFactor;
-
-			deltaYFactor = deltaXFactor * diffY;
-			if (diffX != 0) {
-				deltaYFactor /= diffX;
-			} else {
-				deltaXFactor = 0;
-			}
-		}
-
-		_walkdata.xfrac = 0;
-		_walkdata.yfrac = 0;
+		deltaYFactor = 0;
 	}
 
+	if ((uint)ABS(deltaXFactor >> 16) > _speedx) {
+		deltaXFactor = _speedx << 16;
+		if (diffX < 0)
+			deltaXFactor = -deltaXFactor;
+
+		deltaYFactor = deltaXFactor * diffY;
+		if (diffX != 0) {
+			deltaYFactor /= diffX;
+		} else {
+			deltaXFactor = 0;
+		}
+	}
+
+	_walkdata.xfrac = 0;
+	_walkdata.yfrac = 0;
 	_walkdata.cur = _pos;
 	_walkdata.next = next;
 	_walkdata.deltaXFactor = deltaXFactor;
 	_walkdata.deltaYFactor = deltaYFactor;
 
-	if (_vm->_game.version <= 3)
-		// The x/y distance ratio which determines whether to face up/down instead of left/right is different for SCUMM1/2 and SCUMM3.
-		_targetFacing = oldDirToNewDir(((ABS(diffY) * (_vm->_game.version == 3 ? 3 : 1)) > ABS(diffX)) ? 3 - (diffY >= 0 ? 1 : 0) : (diffX >= 0 ? 1 : 0));
-	else
-		_targetFacing = getAngleFromPos(deltaXFactor, deltaYFactor, (_vm->_game.id == GID_DIG || _vm->_game.id == GID_CMI));
+	_targetFacing = getAngleFromPos(deltaXFactor, deltaYFactor, (_vm->_game.id == GID_DIG || _vm->_game.id == GID_CMI));
+
+	return actorWalkStep();
+}
+
+int Actor_v3::calcMovementFactor(const Common::Point& next) {
+	int diffX, diffY;
+	int32 deltaXFactor, deltaYFactor;
+
+	if (_pos == next)
+		return 0;
+
+	diffX = next.x - _pos.x;
+	diffY = next.y - _pos.y;
+
+	if (_vm->_game.version <= 2) {
+		_stepThreshold = MAX(ABS(diffX), ABS(diffY));
+		deltaXFactor = deltaYFactor = 1;
+	} else {
+		// These two lines fix bug #1052 (INDY3: Hitler facing wrong directions in the Berlin scene).
+		// I can't see anything like this in the original SCUMM1/2 code, so I limit this to SCUMM3.
+		if (!(_moving & MF_LAST_LEG) && (int)_speedx > ABS(diffX) && (int)_speedy > ABS(diffY))
+			return 0;
+
+		_stepX = ((ABS(diffY) / (int)_speedy) >> 1) > (ABS(diffX) / (int)_speedx) ? _speedy + 1 : _speedx;
+		_stepThreshold = MAX(ABS(diffY) / _speedy, ABS(diffX) / _stepX);
+		deltaXFactor = (int32)_stepX;
+		deltaYFactor = (int32)_speedy;
+	}
+
+	if (diffX < 0)
+		deltaXFactor = -deltaXFactor;
+	if (diffY < 0)
+		deltaYFactor = -deltaYFactor;
+
+	_walkdata.xfrac = _walkdata.xAdd = diffX / deltaXFactor;
+	_walkdata.yfrac = _walkdata.yAdd = diffY / deltaYFactor;
+	_walkdata.cur = _pos;
+	_walkdata.next = next;
+	_walkdata.deltaXFactor = deltaXFactor;
+	_walkdata.deltaYFactor = deltaYFactor;
+
+	// The x/y distance ratio which determines whether to face up/down instead of left/right is different for SCUMM1/2 and SCUMM3.
+	_targetFacing = oldDirToNewDir(((ABS(diffY) * (_vm->_game.version == 3 ? 3 : 1)) > ABS(diffX)) ? 3 - (diffY >= 0 ? 1 : 0) : (diffX >= 0 ? 1 : 0));
 
 	if (_vm->_game.version <= 2 && _facing != updateActorDirection(true))
 		_moving |= MF_TURN;

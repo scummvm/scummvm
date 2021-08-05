@@ -208,7 +208,7 @@ public:
 	void putActor(int x, int y, int room);
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
 protected:
-	int calcMovementFactor(const Common::Point& next);
+	virtual int calcMovementFactor(const Common::Point& next);
 	int actorWalkStep();
 	int remapDirection(int dir, bool is_walking);
 	virtual void setupActorScale();
@@ -333,6 +333,7 @@ public:
 	Actor_v3(ScummEngine *scumm, int id) : Actor(scumm, id) {}
 
 	void walkActor() override;
+	int calcMovementFactor(const Common::Point& next) override;
 
 protected:
 	void setupActorScale() override;
