@@ -578,6 +578,11 @@ void GridWidget::setTitlesVisible(bool vis) {
 	_isTitlesVisible = vis;
 }
 
+void GridWidget::setGroupHeaderFormat(const U32String &prefix, const U32String &suffix) {
+	_groupHeaderPrefix = prefix;
+	_groupHeaderSuffix = suffix;
+}
+
 void GridWidget::reloadThumbnails() {
 	Graphics::ManagedSurface *surf = nullptr;
 	String gameid;

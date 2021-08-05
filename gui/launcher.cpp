@@ -1050,9 +1050,9 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 		break;
 	case kGroupByLanguage:
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String engineid = metadata[i]->contains(String("language")) ?
+			U32String language = metadata[i]->contains(String("language")) ?
 								metadata[i]->getVal(String("language")) : String("Language not set");
-			attrs.push_back(engineid);
+			attrs.push_back(language);
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String(""));
 		_list->setAttributeValues(attrs);
@@ -1060,9 +1060,9 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 		break;
 	case kGroupByPlatform:
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String engineid = metadata[i]->contains(String("Platform")) ?
+			U32String platform = metadata[i]->contains(String("Platform")) ?
 								metadata[i]->getVal(String("Platform")) : String("Platform not set");
-			attrs.push_back(engineid);
+			attrs.push_back(platform);
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String(""));
 		_list->setAttributeValues(attrs);
@@ -1172,7 +1172,7 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 		for (uint i = 0; i < metadata.size(); ++i) {
 			attrs.push_back(metadata[i]->getVal("description").substr(0, 1));
 		}
-		// _list->setGroupHeaderFormat(U32String(""), U32String("..."));
+		_grid->setGroupHeaderFormat(U32String(""), U32String("..."));
 		_grid->setAttributeValues(attrs);
 		_grid->groupEntries();
 		break;
@@ -1182,27 +1182,27 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 								metadata[i]->getVal(String("engineid")) : String("Unknown Engine");
 			attrs.push_back(engineid);
 		}
-		// _list->setGroupHeaderFormat(U32String(""), U32String(" Games"));
+		_grid->setGroupHeaderFormat(U32String(""), U32String(" Games"));
 		_grid->setAttributeValues(attrs);
 		_grid->groupEntries();
 		break;
 	case kGroupByLanguage:
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String engineid = metadata[i]->contains(String("language")) ?
+			U32String language = metadata[i]->contains(String("language")) ?
 								metadata[i]->getVal(String("language")) : String("Language not set");
-			attrs.push_back(engineid);
+			attrs.push_back(language);
 		}
-		// _grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
 		_grid->setAttributeValues(attrs);
 		_grid->groupEntries();
 		break;
 	case kGroupByPlatform:
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String engineid = metadata[i]->contains(String("Platform")) ?
+			U32String platform = metadata[i]->contains(String("Platform")) ?
 								metadata[i]->getVal(String("Platform")) : String("Platform not set");
-			attrs.push_back(engineid);
+			attrs.push_back(platform);
 		}
-		// _grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
 		_grid->setAttributeValues(attrs);
 		_grid->groupEntries();
 		break;
@@ -1211,7 +1211,7 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 		for (uint i = 0; i < metadata.size(); ++i) {
 			attrs.push_back(String("All"));
 		}
-		// _grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
 		_grid->setAttributeValues(attrs);
 		_grid->groupEntries();
 		break;

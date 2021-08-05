@@ -174,6 +174,7 @@ public:
 	void setEntryList(Common::Array<GridItemInfo> *list);
 	void setAttributeValues(const Common::Array<U32String> &attrs);
 	void setTitlesVisible(bool vis);
+	void setGroupHeaderFormat(const U32String &prefix, const U32String &suffix);
 
 	void groupEntries();
 	void sortGroups();
