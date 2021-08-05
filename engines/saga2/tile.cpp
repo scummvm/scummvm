@@ -771,11 +771,15 @@ void saveActiveItemStates(Common::OutSaveFile *outS) {
 		if (stateArray[i] != nullptr) {
 			WorldMapData *mapData = &mapList[i];
 			ActiveItemList *activeItemList = mapData->activeItemList;
+			uint8 *bufferedStateArray;
 			int16 activeItemCount = mapData->activeCount;
 			int32 arraySize = tileRes->size(tagStateID + i);
 
 			//  Save the size of the state array
 			out->writeSint16LE(arraySize);
+
+			bufferedStateArray = new uint8[arraySize];
+			memcpy(bufferedStateArray, stateArray[i], arraySize);
 
 			debugC(4, kDebugSaveload, "... arraySize = %d", arraySize);
 
@@ -788,7 +792,7 @@ void saveActiveItemStates(Common::OutSaveFile *outS) {
 
 				//  Get a pointer to the current active item's state
 				//  data in the archive buffer
-				statePtr = &stateArray[i][activeItem->_data.instance.stateIndex];
+				statePtr = &bufferedStateArray[activeItem->_data.instance.stateIndex];
 
 				//  Set the high bit of the state value based upon the
 				//  active item's locked state
@@ -800,6 +804,8 @@ void saveActiveItemStates(Common::OutSaveFile *outS) {
 
 			//  Copy the state data to the archive buffer
 			out->write(stateArray[i], arraySize);
+
+			delete[] bufferedStateArray;
 		} else
 			out->writeSint16LE(0);
 	}
