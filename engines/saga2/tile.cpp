@@ -2310,7 +2310,8 @@ void WorldMapData::buildInstanceHash(void) {
 			           + ai->_data.instance.v + (ai->_data.instance.groupID << 2))
 			          % ARRAYSIZE(instHash);
 
-			itemHash.setVal(hashVal, ai);
+			ai->_nextHash = instHash[hashVal];
+			instHash[hashVal] = ai;
 		}
 	}
 }
@@ -2325,8 +2326,13 @@ ActiveItem *WorldMapData::findHashedInstance(
 	int16           hashVal = (((tp.u + tp.z) << 4) + tp.v + (group << 2))
 	                          % ARRAYSIZE(instHash);
 
-	if (itemHash.contains(hashVal))
-		return itemHash.getVal(hashVal);
+	for (ActiveItem *ai = instHash[hashVal]; ai; ai = ai->_nextHash) {
+		if (ai->_data.instance.u == tp.u &&
+		    ai->_data.instance.v == tp.v &&
+		    ai->_data.instance.h == tp.z &&
+		    ai->_data.instance.groupID == group)
+			return ai;
+	}
 
 	return nullptr;
 }
