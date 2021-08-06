@@ -217,7 +217,7 @@ void Actor::initActor(int mode) {
 }
 
 void Actor_v2::initActor(int mode) {
-	Actor::initActor(mode);
+	Actor_v3::initActor(mode);
 
 	_speedx = 1;
 	_speedy = 1;
