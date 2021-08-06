@@ -1185,8 +1185,6 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 }
 
 Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
-	debugC(3, kDebugSaveload, "Loading actor %d", thisID());
-
 	//  Fixup the prototype pointer to point to an actor prototype
 	prototype   =   prototype != nullptr
 	                ? (ProtoObj *)g_vm->_actorProtos[getProtoNum()]
@@ -3537,6 +3535,8 @@ void loadActors(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "... kActorCount = %d", kActorCount);
 
 	for (int i = 0; i < kActorCount; i++) {
+		debugC(3, kDebugSaveload, "Loading actor %d", i + ActorBaseID);
+
 		//  Initilize actors with archive data
 		Actor *a = new Actor(in);
 

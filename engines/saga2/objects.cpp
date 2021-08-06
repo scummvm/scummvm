@@ -232,16 +232,12 @@ GameObject::GameObject(const ResourceGameObject &res) {
 }
 
 GameObject::GameObject(Common::InSaveFile *in) {
-	debugC(3, kDebugSaveload, "Loading object %d", thisID());
-
 	read(in, false);
 	_index = 0;
 	_godmode = false;
 }
 
 void GameObject::read(Common::InSaveFile *in, bool expandProto) {
-	debugC(3, kDebugSaveload, "Loading object %d", thisID());
-
 	int16 pInd = in->readSint16LE();
 	if (expandProto)
 		in->readSint16LE();
@@ -2439,7 +2435,6 @@ GameWorld::GameWorld(Common::SeekableReadStream *stream) {
 	size.u = size.v = stream->readSint16LE();
 	mapNum = stream->readSint16LE();
 
-	debugC(3, kDebugSaveload, "World %d", thisID());
 	debugC(3, kDebugSaveload, "... size.u = size.v = %d", size.u);
 	debugC(3, kDebugSaveload, "... mapNum = %d", mapNum);
 
@@ -2889,6 +2884,8 @@ void loadWorlds(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "... currentWorldID = %d", currentWorldID);
 
 	for (int i = 0; i < worldCount; ++i) {
+		debugC(3, kDebugSaveload, "Loading World %d", i);
+
 		new (&worldList[i]) GameWorld(in);
 
 		worldList[i]._index = i + WorldBaseID;
@@ -3072,6 +3069,8 @@ void loadObjects(Common::InSaveFile *in) {
 		error("Unable to load Objects");
 
 	for (int i = 0; i < objectCount; i++) {
+		debugC(3, kDebugSaveload, "Loading object %d", i);
+
 		objectList[i].read(in, true);
 		in->readUint16LE();
 		objectList[i]._index = i;
