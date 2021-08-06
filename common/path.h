@@ -78,13 +78,6 @@ public:
 	 */
 	Path(const String &str, char separator = '/');
 
-	/** Construct a path consisting of the given character. */
-	Path(char c, char separator = '/');
-
-private:
-	void setString(const char *str, char separator = '/');
-
-public:
 	/**
 	 * Returns the unmodified, internal representation of the path,
 	 * using '\x1f' as a directory separator.
@@ -117,39 +110,57 @@ public:
 	/** @overload */
 	Path &operator=(const String &str);
 
-	/** @overload */
-	Path &operator=(char c);
+	void set(const char *str, char separator = '/');
 
 	/**
-	 * Append the given path to this path. Does not automatically
-	 * add a directory separator.
+	 * Appends the given path to this path (in-place).
+	 * Does not automatically add a directory separator.
 	 */
-	Path &operator+=(const Path &str);
+	Path &appendInPlace(const Path &x);
 
 	/** @overload */
-	Path &operator+=(const char *str);
+	Path &appendInPlace(const String &str, char separator = '/');
 
 	/** @overload */
-	Path &operator+=(const String &str);
+	Path &appendInPlace(const char *str, char separator = '/');
+
+	/**
+	 * Returns this path with the given path appended (out-of-place).
+	 * Does not automatically add a directory separator.
+	 */
+	Path append(const Path &x) const;
 
 	/** @overload */
-	Path &operator+=(char c);
+	Path append(const String &str, char separator = '/') const;
+
+	/** @overload */
+	Path append(const char *str, char separator = '/') const;
+
+
+	/**
+	 * Joins the given path to this path (in-place).
+	 * Automatically adds a directory separator.
+	 */
+	Path &joinInPlace(const Path &x);
+
+	/** @overload */
+	Path &joinInPlace(const String &str, char separator = '/');
+
+	/** @overload */
+	Path &joinInPlace(const char *str, char separator = '/');
+
+	/**
+	 * Returns this path joined with the given path (out-of-place).
+	 * Automatically adds a directory separator.
+	 */
+	Path join(const Path &x) const;
+
+	/** @overload */
+	Path join(const String &str, char separator = '/') const;
+
+	/** @overload */
+	Path join(const char *str, char separator = '/') const;
 };
-
-/**
- * Concatenate paths @p x and @p y. Does not automatically
- * add a directory separator between them.
- */
-Path operator+(const Path &x, const Path &y);
-
-/** @overload */
-Path operator+(const Path &x, const String &y);
-
-/** @overload */
-Path operator+(const Path &x, const char *y);
-
-/** @overload */
-Path operator+(const Path &x, char y);
 
 /** @} */
 

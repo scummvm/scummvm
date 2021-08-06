@@ -140,7 +140,7 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 #endif
 
 	// Prefer standalone files first, starting with raw forks
-	SeekableReadStream *stream = archive.createReadStreamForMember(fileName + ".rsrc");
+	SeekableReadStream *stream = archive.createReadStreamForMember(fileName.append(".rsrc"));
 	if (stream && loadFromRawFork(*stream)) {
 		_baseFileName = fileName;
 		return true;
@@ -156,7 +156,7 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 	delete stream;
 
 	// Check .bin for MacBinary next
-	stream = archive.createReadStreamForMember(fileName + ".bin");
+	stream = archive.createReadStreamForMember(fileName.append(".bin"));
 	if (stream && loadFromMacBinary(*stream)) {
 		_baseFileName = fileName;
 		return true;
@@ -191,12 +191,12 @@ bool MacResManager::exists(const Path &fileName) {
 		return true;
 
 	// Try the .rsrc extension
-	if (File::exists(fileName + ".rsrc"))
+	if (File::exists(fileName.append(".rsrc")))
 		return true;
 
 	// Check if we have a MacBinary file
 	File tempFile;
-	if (tempFile.open(fileName + ".bin") && isMacBinary(tempFile))
+	if (tempFile.open(fileName.append(".bin")) && isMacBinary(tempFile))
 		return true;
 
 	// Check if we have an AppleDouble file
