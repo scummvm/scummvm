@@ -30,7 +30,7 @@
 #include "common/serializer.h"
 #include "engines/engine.h"
 #include "graphics/managed_surface.h"
-#include "video/smk_decoder.h"
+
 
 #include "hypno/grammar.h"
 
@@ -77,7 +77,6 @@ public:
 
 	Audio::SoundHandle _fgSoundHandle;
 	Audio::SoundHandle _bgSoundHandle;
-	Video::SmackerDecoder *_videoDecoder;
 	Common::InstallShieldV3 _installerArchive;
 
 	Common::Error run() override;
@@ -86,19 +85,24 @@ public:
 	void resetLevelState();
 	bool checkLevelCompleted();
 	void runLevel(Common::String name);
-	void runScene(Hotspots hots, Movies intros);
+	void runScene(Hotspots hots, Videos intros);
+	ShootInfos _shootInfos;
 	void runArcade(ArcadeShooting arc);
 
 	void restartGame();
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
 	void loadAssets();
-	void loadMis(Common::String filename);
+	void parseLevel(Common::String filename);
+	void parseArcadeShooting(Common::String name, Common::String data);
+	void parseShootList(Common::String name, Common::String data);
 	LibData loadLib(char *filename);
 	Common::HashMap<Common::String, Common::String> _assets;
 
 	// User input
 	void clickedHotspot(Common::Point);
+	void shootSpiderweb(Common::Point);
+	bool clickedShoot(Common::Point);
 	bool hoverHotspot(Common::Point);
 
 	// Cursors
@@ -120,11 +124,12 @@ public:
 	void syncGameStream(Common::Serializer &s);
 
 	Common::String convertPath(const Common::String &);
-	void playVideo(const Common::String &);
-	void skipVideo();
+	void playVideo(MVideo &video);
+	void skipVideo(MVideo &video);
 
 	Graphics::Surface *decodeFrame(const Common::String &name, int frame, bool convert = true);
-	void loadImage(const Common::String &file, int x, int y);
+	void loadImage(const Common::String &file, int x, int y, bool transparent);
+	void drawImage(Graphics::Surface &image, int x, int y, bool transparent);
 
 	// Cursors
 	void changeCursor(const Common::String &, uint32);
@@ -145,10 +150,11 @@ public:
 	Graphics::ManagedSurface *_compositeSurface;
 	uint32 _transparentColor;
 	Common::Rect screenRect;
+	void updateScreen(MVideo &video);
 	void drawScreen();
 
 	// intros
-	Common::HashMap<Common::String, Movies> _intros;
+	Common::HashMap<Common::String, Videos> _intros;
 
 	// settings 
 	Common::String _nextSetting;
@@ -160,12 +166,9 @@ public:
 	HotspotsStack stack;
 
 	// Movies
-	Movies _nextMoviesToPlay;
-	Common::List<Common::Point> _nextMoviesPositions;
-	Common::List<bool> _nextMoviesScales;
-	Common::Point _moviePosition;
-	bool _movieScale;
-	Common::String _currentMovie;
+	Videos _nextSequentialVideoToPlay;
+	Videos _nextParallelVideoToPlay;
+	Videos _videosPlaying;
 
 	// Sounds
 	void playSound(const Common::String &, uint, bool, bool);

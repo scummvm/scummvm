@@ -33,17 +33,29 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/timer.h"
+#include "common/tokenizer.h"
 #include "engines/util.h"
 #include "image/bmp.h"
+
 
 #include "hypno/hypno.h"
 #include "hypno/grammar.h"
 
 namespace Hypno {
 
+
 Hotspots *g_parsedHots;
 ArcadeShooting g_parsedArc;
-//Settings g_settings;
+
+MVideo::MVideo(Common::String _path, Common::Point _position, bool _transparent, bool _scaled) {
+	path = _path;
+	position = _position;
+	scaled = _scaled;
+	transparent = _transparent;
+	videoDecoder = nullptr;
+	currentFrame = nullptr;
+	finishBeforeEnd = 0;
+}
 
 const static char* levelVariables[] = {
 	"GS_NONE",
@@ -79,7 +91,7 @@ extern int parse_mis(const char *);
 extern int parse_arc(const char *);
 
 HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
-	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
+	: Engine(syst), _gameDescription(gd), _image(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0), 
 	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr),
 	  _screenW(640), _screenH(480) {
@@ -95,7 +107,7 @@ void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
 }
 
-void HypnoEngine::loadMis(Common::String filename) {
+void HypnoEngine::parseLevel(Common::String filename) {
     filename = convertPath(filename);
 	Common::File *test = new Common::File();
 	assert(isDemo());
@@ -130,7 +142,7 @@ LibData HypnoEngine::loadLib(char *filename) {
 		entry.clear();
 		for (j = 0; j < 24; j++) {
 			if (cont && it[i] != 0x96 && it[i] != 0x0) {
-				entry += char(it[i]);
+				entry += tolower(char(it[i]));
 			}
 			else
 				cont = false;
@@ -172,6 +184,32 @@ bool HypnoEngine::checkLevelCompleted() {
 	return _levelState["GS_LEVELCOMPLETE"];
 }
 
+void HypnoEngine::parseShootList(Common::String name, Common::String data) {
+	Common::StringTokenizer tok(data, " S,\t\n");
+
+	Common::String t;
+	Common::String n;
+	ShootInfo si;
+	while(!tok.empty()) {
+		t = tok.nextToken();
+		n = tok.nextToken();
+		if (t == "Z")
+			break;
+		si.name = n;
+		si.timestamp = atoi(t.c_str());
+		_shootInfos.push_back(si);
+		debug("%d -> %s", si.timestamp, si.name.c_str());
+	}
+
+}
+
+void HypnoEngine::parseArcadeShooting(Common::String name, Common::String data) {
+	parse_arc(data.c_str());
+	Level level;
+	level.arcade = g_parsedArc;  
+	_levels[name] = level;
+}
+
 void HypnoEngine::loadAssets() {
 
 	
@@ -180,58 +218,49 @@ void HypnoEngine::loadAssets() {
 	uint32 j = 0;
 	uint32 k = 0;
 
-	Common::String mis;
+	Common::String arc;
+	Common::String list;
 
 	debug("file: %s",files.filenames[j].c_str());
 	for (i = 0; i < files.data.size(); i++) {
-		mis += files.data[i];
-		//debugN("%x/%c, ", files.data[i], files.data[i]);
+		arc += files.data[i];
 		if (files.data[i] == 'X') {
-			break;
-			//if (j == files.filenames.size()-1) {
-			//	debug("Finished at %d from %d", i, files.data.size()); 
-			//	for (k = i; k < files.data.size(); k++)
-			//		debugN("%c", files.data[k]);
-			//	break;
-			//}
-
-			//j++;
-			debugN("\n************file: %s**************",files.filenames[j].c_str());
+			i++;
+			for (k = i; k < files.data.size(); k++) {
+				if (files.data[k] == 'Y')
+					break;
+				list += files.data[k];
+			}
+			break; // No need to keep parsing, no more files are used in the demo
 		}
 	}
-	parse_arc(mis.c_str());
-	{ 
-		Level level;
-		level.arcade = g_parsedArc;  
-		_levels[files.filenames[0]] = level;
-		debug("%s", level.arcade.background.c_str());
-	}
 
-	{ // quit level
-		Hotspot q;
-		q.type = MakeMenu;
-		Action *a = new Quit();
-		q.actions.push_back(a);
-		Level level;
-		Hotspots quit;
-		quit.push_back(q);
-		level.hots = quit;  
-		_levels["mis/quit.mis"] = level;
-	}
+	parseArcadeShooting(files.filenames[0], arc);
+	parseShootList(files.filenames[0], list);
+
+	// quit level
+	Hotspot q;
+	q.type = MakeMenu;
+	Action *a = new Quit();
+	q.actions.push_back(a);
+	Level level;
+	Hotspots quit;
+	quit.push_back(q);
+	level.hots = quit;  
+	_levels["mis/quit.mis"] = level;
 
 	// Read assets from mis files
-	loadMis("mis/demo.mis");
-	_levels["mis/demo.mis"].intros.push_back("demo/dcine1.smk");
-	_levels["mis/demo.mis"].intros.push_back("demo/dcine2.smk");
-	_levels["mis/demo.mis"].hots[1].setting = "C1.MI_";
+	parseLevel("mis/demo.mis");
+	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine1.smk", Common::Point(0, 0), false, true));
+	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine2.smk", Common::Point(0, 0), false, true));
+	_levels["mis/demo.mis"].hots[1].setting = "c1.mi_";
 	_levels["mis/demo.mis"].hots[2].setting = "mis/alley.mis";
 	_levels["mis/demo.mis"].hots[5].setting = "mis/order.mis";
 
-
-	loadMis("mis/order.mis");
+	parseLevel("mis/order.mis");
 	_levels["mis/order.mis"].hots[1].setting = "mis/quit.mis";
-	loadMis("mis/alley.mis");
-	_levels["mis/alley.mis"].intros.push_back("demo/aleyc01s.smk");
+	parseLevel("mis/alley.mis");
+	_levels["mis/alley.mis"].intros.push_back(MVideo("demo/aleyc01s.smk", Common::Point(0, 0), false, true));
 
 	//loadMis("mis/shoctalk.mis");
 
@@ -243,23 +272,25 @@ Common::Error HypnoEngine::run() {
 
 	//return Common::kNoError;
 
+	Graphics::ModeList modes;
+	modes.push_back(Graphics::Mode(640, 480));
+	modes.push_back(Graphics::Mode(320, 200));
+    initGraphicsModes(modes);
+
 	// Initialize graphics
 	initGraphics(_screenW, _screenH, nullptr);
 	_pixelFormat = g_system->getScreenFormat();
 	if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
 		return Common::kUnsupportedColorMode;
 
-	_transparentColor = _pixelFormat.RGBToColor(0, 0x82, 0);
 	screenRect = Common::Rect(0, 0, _screenW, _screenH);
 	//changeCursor("default");
 	_compositeSurface = new Graphics::ManagedSurface();
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
-	_compositeSurface->setTransparentColor(_transparentColor);
 
 	// Main event loop
 	Common::Event event;
 	Common::Point mousePos;
-	_videoDecoder = nullptr;
 	/*int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
@@ -270,12 +301,14 @@ Common::Error HypnoEngine::run() {
 	_nextSetting = "mis/demo.mis";
 	while (!shouldQuit()) {
 		resetLevelState();
+		_videosPlaying.clear();
 		if (!_nextSetting.empty()) {
 			debug("Executing setting %s", _nextSetting.c_str());
 			_currentSetting = _nextSetting;
 			_nextSetting = "";
 			runLevel(_currentSetting);
 		}
+		_levels["mis/demo.mis"].intros.clear();
 			
 	}
 	return Common::kNoError;
@@ -290,15 +323,41 @@ void HypnoEngine::runLevel(Common::String name) {
 
 }
 
+void HypnoEngine::shootSpiderweb(Common::Point target) {
+	uint32 c = _pixelFormat.RGBToColor(255, 255, 255);
+	_compositeSurface->drawLine(0, 300, target.x, target.y+1, c);
+	_compositeSurface->drawLine(0, 300, target.x, target.y  , c);
+	_compositeSurface->drawLine(0, 300, target.x, target.y-1, c);
+
+	drawScreen();
+	g_system->delayMillis(2);
+}
+
 void HypnoEngine::runArcade(ArcadeShooting arc) {
+	// Move into a function
+	_screenW = 320;
+	_screenH = 200;
+
+	initGraphics(_screenW, _screenH, nullptr);
+
+	_compositeSurface->free();
+	delete _compositeSurface;
+
+	_compositeSurface = new Graphics::ManagedSurface();
+	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
+
 	Common::Event event;
 	Common::Point mousePos;
 	
-	_nextMoviesToPlay.push_back(arc.background);
-	_nextMoviesPositions.push_back(Common::Point(0, 0));
-	_nextMoviesScales.push_back(true);
-	
+	_transparentColor = _pixelFormat.RGBToColor(0, 0, 0);
+	_compositeSurface->setTransparentColor(_transparentColor);
+
+	//_nextParallelVideoToPlay.push_back(MVideo(arc.background, Common::Point(0, 0), false, false));
+	MVideo background = MVideo(arc.background, Common::Point(0, 0), false, false);	
+	Graphics::Surface *sp = decodeFrame(arc.player, 2);
+
 	changeCursor("mouse/cursor1.smk", 0);
+	playVideo(background);
 
 	while (!shouldQuit()) {
 		
@@ -312,6 +371,9 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
+				shootSpiderweb(mousePos);
+				clickedShoot(mousePos);
+
 				//if (!_nextHotsToAdd || !_nextHotsToRemove)
 				// 	clickedHotspot(mousePos);
 				break;
@@ -325,56 +387,81 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 		}
 
 		// Movies
-		if (_nextMoviesToPlay.size() > 0 && _currentMovie.empty()) {
-			debug("start playing %s", _nextMoviesToPlay.front().c_str());
-			//removeTimer();
-			assert(_nextMoviesToPlay.size() == _nextMoviesPositions.size());
-			_videoDecoder = new Video::SmackerDecoder();
-			_currentMovie = _nextMoviesToPlay.front();
-			_moviePosition = _nextMoviesPositions.front();
-			_movieScale = _nextMoviesScales.front();
-			playVideo(_currentMovie);
-			_nextMoviesToPlay.pop_front();
-			_nextMoviesPositions.pop_front();
-			_nextMoviesScales.pop_front();
-			continue;
+		for (Videos::iterator it = _nextParallelVideoToPlay.begin(); it != _nextParallelVideoToPlay.end(); ++it) {
+			playVideo(*it);
+			_videosPlaying.push_back(*it);
 		}
 
-		if (_videoDecoder && !_videoDecoder->isPaused()) {
-			if (_videoDecoder->getCurFrame() == 0)
-				stopSound(true);
-			if (_videoDecoder->endOfVideo()) {
-				debug("video still playing");
-				_videoDecoder->close();
-				delete _videoDecoder;
-				_videoDecoder = nullptr;
-				_currentMovie = "";
+		if (_nextParallelVideoToPlay.size() > 0)
+			_nextParallelVideoToPlay.clear();
 
-			} else if (_videoDecoder->needsUpdate()) {
-				debug("updating screen");
-				drawScreen();
-				g_system->delayMillis(10);
+		if (background.videoDecoder->endOfVideo()) {
+			skipVideo(background);
+			_nextSetting = "mis/demo.mis";
+			return;
+		}
+
+
+		if (background.videoDecoder->needsUpdate())
+			updateScreen(background);
+
+		if (_shootInfos.size() > 0) {
+			ShootInfo si = _shootInfos.front();
+			if (si.timestamp <= background.videoDecoder->getCurFrame()) {
+				_shootInfos.pop_front();
+				for (Shoots::iterator it = arc.shoots.begin(); it != arc.shoots.end(); ++it) {
+					if (it->name == si.name) {
+						_nextParallelVideoToPlay.push_back(MVideo(it->animation, it->position , true, false));
+						_nextParallelVideoToPlay[0].finishBeforeEnd = 24;
+					}
+				}
 			}
-			continue;
 		}
 
-		g_system->updateScreen();
+		drawImage(*sp, 60, 129, true);
+
+		for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
+			if (it->videoDecoder) {
+				if (it->videoDecoder-> getCurFrame() > 0 && it->videoDecoder-> getCurFrame() >= it->videoDecoder->getFrameCount() - it->finishBeforeEnd) {
+				delete it->videoDecoder;
+				it->videoDecoder = nullptr;
+				//TODO: remove from the _videosPlaying list
+
+				} else if (it->videoDecoder->needsUpdate()) {
+					updateScreen(*it);
+				}
+			}
+		}
+
+		drawScreen();
 		g_system->delayMillis(10);
 	}
 }
 
-void HypnoEngine::runScene(Hotspots hots, Movies intros) {
+void HypnoEngine::runScene(Hotspots hots, Videos intros) {
+	// Move into a function
+	_screenW = 640;
+	_screenH = 480;
+
+	initGraphics(_screenW, _screenH, nullptr);
+
+	_compositeSurface->free();
+	delete _compositeSurface;
+
+	_compositeSurface = new Graphics::ManagedSurface();
+	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
+
+
 	Common::Event event;
 	Common::Point mousePos;
+	Common::List<uint32> videosToRemove;
+
+	_transparentColor = _pixelFormat.RGBToColor(0, 0x82, 0);
+	_compositeSurface->setTransparentColor(_transparentColor);
 	
 	stack.clear();
 	_nextHotsToAdd = &hots;
-	_nextMoviesToPlay = intros;
-	for (uint32 i = 0; i < _nextMoviesToPlay.size(); i++) {
-		_nextMoviesPositions.push_back(Common::Point(0, 0));
-		_nextMoviesScales.push_back(true);
-	}
-	
+	_nextSequentialVideoToPlay = intros;	
 	changeCursor("mouse/cursor1.smk", 0);
 
 	while (!shouldQuit() && _nextSetting.empty()) {
@@ -384,8 +471,13 @@ void HypnoEngine::runScene(Hotspots hots, Movies intros) {
 			// Events
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder) {
-					skipVideo();
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
+						if (it->videoDecoder)
+							skipVideo(*it);
+					}
+					_videosPlaying.clear();
+
 					if (!stack.empty()) { 
 						runMenu(*stack.back());
 						drawScreen();
@@ -419,45 +511,50 @@ void HypnoEngine::runScene(Hotspots hots, Movies intros) {
 		}
 
 		// Movies
-		if (_nextMoviesToPlay.size() > 0 && _currentMovie.empty()) {
-			debug("start playing %s", _nextMoviesToPlay.front().c_str());
-			//removeTimer();
-			assert(_nextMoviesToPlay.size() == _nextMoviesPositions.size());
-			_videoDecoder = new Video::SmackerDecoder();
-			_currentMovie = _nextMoviesToPlay.front();
-			_moviePosition = _nextMoviesPositions.front();
-			_movieScale = _nextMoviesScales.front();
-			playVideo(_currentMovie);
-			_nextMoviesToPlay.pop_front();
-			_nextMoviesPositions.pop_front();
-			_nextMoviesScales.pop_front();
-			continue;
+		if (_nextSequentialVideoToPlay.size() > 0 && _videosPlaying.empty()) {
+			playVideo(*_nextSequentialVideoToPlay.begin());
+			_videosPlaying.push_back(*_nextSequentialVideoToPlay.begin());
+			_nextSequentialVideoToPlay.remove_at(0);
 		}
+		uint32 i = 0;
+		videosToRemove.clear();
+		for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
 
-		if (_videoDecoder && !_videoDecoder->isPaused()) {
-			debug("video decoder active!");
-			if (_videoDecoder->getCurFrame() == 0)
-				stopSound(true);
-			if (_videoDecoder->endOfVideo()) {
-				debug("video still playing");
-				_videoDecoder->close();
-				delete _videoDecoder;
-				_videoDecoder = nullptr;
-				_currentMovie = "";
+			if (it->videoDecoder) {
+				if (it->videoDecoder->endOfVideo()) {
+				it->videoDecoder->close();
+				delete it->videoDecoder;
+				it->videoDecoder = nullptr;
+				videosToRemove.push_back(i);
 
-				// refresh current scene
+				} else if (it->videoDecoder->needsUpdate()) {
+					updateScreen(*it);
+				}
+			}
+			i++;
+
+		}
+		if (videosToRemove.size() > 0) {
+
+			for(Common::List<uint32>::iterator it = videosToRemove.begin(); it != videosToRemove.end(); ++it) {
+				debug("removing %d from %d size", *it, _videosPlaying.size()); 
+				_videosPlaying.remove_at(*it);
+			}
+
+			// Nothing else to play
+			if (_videosPlaying.size() == 0 && _nextSequentialVideoToPlay.size() == 0){
 				if (!stack.empty()) { 
 					runMenu(*stack.back());
 					drawScreen();
 				}
-
-			} else if (_videoDecoder->needsUpdate()) {
-				debug("updating screen");
-				drawScreen();
-				g_system->delayMillis(10);
 			}
-			continue;
+
 		}
+
+		if (_videosPlaying.size() > 0 || _nextSequentialVideoToPlay.size() > 0) {
+			drawScreen();
+			continue;
+		} 
 
 		if (_nextHotsToRemove) {
 			debug("Removing a hotspot list!");
@@ -504,19 +601,19 @@ void HypnoEngine::runMenu(Hotspots hs) {
 	//if (h.stype == "SINGLE_RUN")
 	//	loadImage("int_main/mainbutt.smk", 0, 0);
 	if (h.stype == "AUTO_BUTTONS")
-		loadImage("int_main/resume.smk", 0, 0);
+		loadImage("int_main/resume.smk", 0, 0, true);
 }
 
 void HypnoEngine::runBackground(const Hotspot h, Background *a) {
 	if (a->condition.size() > 0 && !_levelState[a->condition])
 		return;
 	Common::Point origin = a->origin;
-	loadImage(a->path, origin.x, origin.y);
+	loadImage(a->path, origin.x, origin.y, false);
 }
 
 void HypnoEngine::runOverlay(const Hotspot h, Overlay *a) {
 	Common::Point origin = a->origin;
-	loadImage(a->path, origin.x, origin.y);
+	loadImage(a->path, origin.x, origin.y, false);
 }
 
 void HypnoEngine::runMice(const Hotspot h, Mice *a) {
@@ -528,9 +625,7 @@ void HypnoEngine::runEscape(const Hotspot h, Escape *a) {
 }
 
 void HypnoEngine::runCutscene(const Hotspot h, Cutscene *a) {
-    _nextMoviesToPlay.push_back(a->path);
-	_nextMoviesPositions.push_back(Common::Point(0, 0));
-	_nextMoviesScales.push_back(true);
+	_nextSequentialVideoToPlay.push_back(MVideo(a->path, Common::Point(0, 0), false, true));
 }
 
 void HypnoEngine::runGlobal(const Hotspot h, Global *a) {
@@ -548,11 +643,9 @@ void HypnoEngine::runPlay(const Hotspot h, Play *a) {
 	Common::Point origin = a->origin;
 
 	if (a->flag == "BITMAP")
-			loadImage(a->path, origin.x, origin.y);
-	else { 
-    	_nextMoviesToPlay.push_back(a->path);
-		_nextMoviesPositions.push_back(origin);
-		_nextMoviesScales.push_back(false);
+			loadImage(a->path, origin.x, origin.y, false);
+	else {
+		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false));
 	}
 }
 
@@ -561,16 +654,41 @@ void HypnoEngine::runWalN(const Hotspot h, WalN *a) {
 		return;
 	Common::Point origin = a->origin;
 	if (a->flag == "BITMAP")
-			loadImage(a->path, origin.x, origin.y);
+			loadImage(a->path, origin.x, origin.y, false);
 	else { 
-    	_nextMoviesToPlay.push_back(a->path);
-		_nextMoviesPositions.push_back(origin);
-		_nextMoviesScales.push_back(false);
+		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false));
 	}
 }
 
 void HypnoEngine::runQuit(const Hotspot h, Quit *a) {
     quitGame();
+}
+
+// Shoots
+
+bool HypnoEngine::clickedShoot(Common::Point mousePos) {
+	bool found = false;
+	int x;
+	int y;
+
+	Videos::iterator it = _videosPlaying.begin();
+	//it++;
+	for (; it != _videosPlaying.end(); ++it) {
+		x = mousePos.x - it->position.x;
+		y = mousePos.y - it->position.y;
+		//debug("%d %d %d %d", x, y, it->videoDecoder->getWidth(), it->videoDecoder->getHeight());
+		//assert(it->currentFrame->w == it->videoDecoder->getWidth());
+		//assert(it->currentFrame->h == it->videoDecoder->getHeight());
+		if (it->videoDecoder && x >= 0 && y >= 0 && x < it->videoDecoder->getWidth() && y < it->videoDecoder->getHeight()) {
+			uint32 c = it->currentFrame->getPixel(x, y);
+			debug("inside %x", c); 
+			if (c > 0) {
+				it->videoDecoder->rewind();
+				it->videoDecoder->start();
+			}
+		}
+	}
+	return found;
 }
 
 // Hotspots
@@ -649,7 +767,7 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 		}
 	}
 	if (found) {
-		debug("Hovered over %d %d %d %d!", selected.rect.left, selected.rect.top, selected.rect.bottom, selected.rect.right);
+		//debug("Hovered over %d %d %d %d!", selected.rect.left, selected.rect.top, selected.rect.bottom, selected.rect.right);
 
 		//debug("hotspot actions size: %d", h.actions.size());
 		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
@@ -662,9 +780,16 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 	return false;
 }
 
-void HypnoEngine::loadImage(const Common::String &name, int x, int y) {
+void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent) {
 	Graphics::Surface *surf = decodeFrame(name, 0);
-	_compositeSurface->transBlitFrom(*surf, Common::Point(x, y), _transparentColor);
+	drawImage(*surf, x , y, transparent);
+}
+
+void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transparent) {
+	if (transparent)
+		_compositeSurface->transBlitFrom(surf, Common::Point(x, y), _transparentColor);
+	else 
+		_compositeSurface->blitFrom(surf, Common::Point(x, y));
 }
 
 Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, bool convert) {
@@ -695,56 +820,63 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 	return rframe;
 }
 
+void HypnoEngine::updateScreen(MVideo &video) {
+	const Graphics::Surface *frame = video.videoDecoder->decodeNextFrame();
+	video.currentFrame = frame;
+	Graphics::Surface *sframe, *cframe;
 
-void HypnoEngine::drawScreen() {
-	Graphics::ManagedSurface *surface = _compositeSurface;
+	if (video.scaled) {
+		sframe = frame->scale(_screenW, _screenH);
+		cframe = sframe->convertTo(_pixelFormat, video.videoDecoder->getPalette());
+	} else
+		cframe = frame->convertTo(_pixelFormat, video.videoDecoder->getPalette());
+	
+	if (video.transparent)
+		_compositeSurface->transBlitFrom(*cframe, video.position, _transparentColor);
+	else
+		_compositeSurface->blitFrom(*cframe, video.position);
 
-	if (_videoDecoder && !_videoDecoder->isPaused()) {
-		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
-		Graphics::Surface *sframe, *cframe;
 
-		if (_movieScale) {
-			sframe = frame->scale(_screenW, _screenH);
-			cframe = sframe->convertTo(_pixelFormat, _videoDecoder->getPalette());
-		} else
-			cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
-
-		debug("Move position: %d %d", _moviePosition.x, _moviePosition.y);
-		surface->blitFrom(*cframe, _moviePosition);
-
-		if (_movieScale) { 
-			sframe->free();
-			delete sframe;
-		}
-
-		cframe->free();
-		delete cframe;
+	if (video.scaled) { 
+		sframe->free();
+		delete sframe;
 	}
 
-	g_system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, _screenW, _screenH);
+	cframe->free();
+	delete cframe;
+
+}
+
+
+void HypnoEngine::drawScreen() {
+	g_system->copyRectToScreen(_compositeSurface->getPixels(), _compositeSurface->pitch, 0, 0, _screenW, _screenH);
 	g_system->updateScreen();
 }
 
 // Video handling
 
-void HypnoEngine::playVideo(const Common::String &name) {
+void HypnoEngine::playVideo(MVideo &video) {
 	//debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
+	debug("video.path: %s", video.path.c_str());
 	Common::File *file = new Common::File();
-	Common::String path = convertPath(name);
+	Common::String path = convertPath(video.path);
 
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());
 
-	if (!_videoDecoder->loadStream(file))
+	assert(video.videoDecoder == nullptr);
+	video.videoDecoder = new Video::SmackerDecoder();
+
+	if (!video.videoDecoder->loadStream(file))
 		error("unable to load video %s", path.c_str());
-	_videoDecoder->start();
+	video.videoDecoder->start();
 }
 
-void HypnoEngine::skipVideo() {
-	_videoDecoder->close();
-	delete _videoDecoder;
-	_videoDecoder = nullptr;	
-	_currentMovie = "";
+void HypnoEngine::skipVideo(MVideo &video) {
+	video.videoDecoder->close();
+	delete video.videoDecoder;
+	video.videoDecoder = nullptr;	
+	//_currentMovie = "";
 }
 
 // Sound handling
