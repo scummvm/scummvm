@@ -96,9 +96,8 @@ bool ScummEngine::canLoadGameStateCurrently() {
 	// the main menu) via its scripts, thus we need to make an
 	// exception here. This the same forced overwriting of the
 	// script decisions as in ScummEngine::processKeyboard.
-	// Also, disable saving/loading when a SAN video is playing.
 	if (_game.id == GID_CMI)
-		return !((ScummEngine_v7 *)this)->isSmushActive();
+		return true;
 
 	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 }
@@ -131,7 +130,7 @@ bool ScummEngine::canSaveGameStateCurrently() {
 	// the main menu) via its scripts, thus we need to make an
 	// exception here. This the same forced overwriting of the
 	// script decisions as in ScummEngine::processKeyboard.
-	// Also, disable saving/loading when a SAN video is playing.
+	// Also, disable saving when a SAN video is playing.
 	if (_game.id == GID_CMI)
 		return !((ScummEngine_v7 *)this)->isSmushActive();
 
