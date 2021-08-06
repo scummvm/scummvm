@@ -1255,6 +1255,12 @@ void MacWindowManager::pushCustomCursor(const byte *data, int w, int h, int hx, 
 	_cursorTypeStack.push(kMacCursorCustom);
 }
 
+void MacWindowManager::replaceCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor) {
+	CursorMan.replaceCursor(data, w, h, hx, hy, transcolor);
+	CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
+	replaceCursorType(kMacCursorCustom);
+}
+
 void MacWindowManager::pushCustomCursor(const Graphics::Cursor *cursor) {
 	CursorMan.pushCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
 	                     cursor->getHotspotY(), cursor->getKeyColor());

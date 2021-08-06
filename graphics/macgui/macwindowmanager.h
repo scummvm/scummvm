@@ -291,6 +291,7 @@ public:
 	void replaceCursor(MacCursorType type, Cursor *cursor = nullptr);
 
 	void pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor);
+	void replaceCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor);
 	void pushCustomCursor(const Graphics::Cursor *cursor);
 	void popCursor();
 
