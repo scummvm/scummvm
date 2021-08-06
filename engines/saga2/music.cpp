@@ -47,6 +47,8 @@ Music::Music(hResContext *musicRes) : _musicContext(musicRes), _parser(0) {
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driverType = MidiDriver::getMusicType(dev);
+	if (_driverType == MT_GM && ConfMan.getBool("native_mt32"))
+		_driverType = MT_MT32;
 
 	switch (_driverType) {
 	case MT_ADLIB:
