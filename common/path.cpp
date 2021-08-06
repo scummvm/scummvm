@@ -29,25 +29,11 @@ Path::Path(const Path &path) {
 }
 
 Path::Path(const char *str, char separator) {
-	setString(str, separator);
+	set(str, separator);
 }
 
 Path::Path(const String &str, char separator) {
-	setString(str.c_str(), separator);
-}
-
-Path::Path(char c, char separator) {
-	const char str[] = { c, '\0' };
-	setString(str, separator);
-}
-
-void Path::setString(const char *str, char separator) {
-	for (; *str; str++) {
-		if (*str == separator)
-			_str += DIR_SEPARATOR;
-		else
-			_str += *str;
-	}
+	set(str.c_str(), separator);
 }
 
 String Path::toString(char separator) const {
@@ -79,62 +65,97 @@ Path &Path::operator=(const Path &path) {
 }
 
 Path &Path::operator=(const char *str) {
-	setString(str);
+	set(str);
 	return *this;
 }
 
 Path &Path::operator=(const String &str) {
-	setString(str.c_str());
+	set(str.c_str());
 	return *this;
 }
 
-Path &Path::operator=(char c) {
-	const char str[] = { c, '\0' };
-	setString(str);
+void Path::set(const char *str, char separator) {
+	_str.clear();
+	appendInPlace(str, separator);
+}
+
+Path &Path::appendInPlace(const Path &x) {
+	_str += x.rawString();
 	return *this;
 }
 
-Path &Path::operator+=(const Path &path) {
-	_str += path.rawString();
+Path &Path::appendInPlace(const String &str, char separator) {
+	appendInPlace(str.c_str(), separator);
 	return *this;
 }
 
-Path &Path::operator+=(const char *str) {
-	_str += Path(str).rawString();
+Path &Path::appendInPlace(const char *str, char separator) {
+	for (; *str; str++) {
+		if (*str == separator)
+			_str += DIR_SEPARATOR;
+		else
+			_str += *str;
+	}
 	return *this;
 }
 
-Path &Path::operator+=(const String &str) {
-	_str += Path(str).rawString();
-	return *this;
-}
-
-Path &Path::operator+=(char c) {
-	_str += Path(c).rawString();
-	return *this;
-}
-
-Path operator+(const Path &x, const Path &y) {
-	Path temp(x);
-	temp += y;
+Path Path::append(const Path &x) const {
+	Path temp(*this);
+	temp.appendInPlace(x);
 	return temp;
 }
 
-Path operator+(const Path &x, const String &y) {
-	Path temp(x);
-	temp += y;
+Path Path::append(const String &str, char separator) const {
+	return append(str.c_str(), separator);
+}
+
+Path Path::append(const char *str, char separator) const {
+	Path temp(*this);
+	temp.appendInPlace(str, separator);
 	return temp;
 }
 
-Path operator+(const Path &x, const char *y) {
-	Path temp(x);
-	temp += y;
+Path &Path::joinInPlace(const Path &x) {
+	if (x.empty())
+		return *this;
+
+	if (!_str.empty() && _str.lastChar() != DIR_SEPARATOR && x.rawString().firstChar() != DIR_SEPARATOR)
+		_str += DIR_SEPARATOR;
+
+	_str += x.rawString();
+
+	return *this;
+}
+
+Path &Path::joinInPlace(const String &str, char separator) {
+	return joinInPlace(str.c_str(), separator);
+}
+
+Path &Path::joinInPlace(const char *str, char separator) {
+	if (*str == '\0')
+		return *this;
+
+	if (!_str.empty() && _str.lastChar() != DIR_SEPARATOR && *str != separator)
+		_str += DIR_SEPARATOR;
+
+	appendInPlace(str, separator);
+
+	return *this;
+}
+
+Path Path::join(const Path &x) const {
+	Path temp(*this);
+	temp.joinInPlace(x);
 	return temp;
 }
 
-Path operator+(const Path &x, char y) {
-	Path temp(x);
-	temp += y;
+Path Path::join(const String &str, char separator) const {
+	return join(str.c_str(), separator);
+}
+
+Path Path::join(const char *str, char separator) const {
+	Path temp(*this);
+	temp.joinInPlace(str, DIR_SEPARATOR);
 	return temp;
 }
 
