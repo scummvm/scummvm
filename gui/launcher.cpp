@@ -147,7 +147,7 @@ bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, C
 LauncherDialog::LauncherDialog(const Common::String &dialogName)
 	: Dialog(dialogName), _title(dialogName), _browser(nullptr),
 	_loadDialog(nullptr), _searchClearButton(nullptr), _searchDesc(nullptr),
-	_grpChooserDesc(nullptr), _grpChooserPopup(nullptr)
+	_grpChooserDesc(nullptr), _grpChooserPopup(nullptr), _groupBy(kGroupByNone)
 #ifndef DISABLE_FANCY_THEMES
 	, _logo(nullptr), _searchPic(nullptr)
 #endif // !DISABLE_FANCY_THEMES
@@ -859,7 +859,7 @@ void LauncherSimple::build() {
 	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
 	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
 	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
-	_grpChooserPopup->setSelected(0);
+	_grpChooserPopup->setSelected(_groupBy);
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
@@ -1349,7 +1349,7 @@ void LauncherGrid::build() {
 	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
 	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
 	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
-	_grpChooserPopup->setSelected(0);
+	_grpChooserPopup->setSelected(_groupBy);
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "LauncherGrid.Logo");
 		_logo->useThemeTransparency(true);
