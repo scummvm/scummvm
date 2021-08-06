@@ -60,6 +60,8 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 
 		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | (_musicType == MT_MT32 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
 		_driverType = MidiDriver::getMusicType(dev);
+		if (_driverType == MT_GM && ConfMan.getBool("native_mt32"))
+			_driverType = MT_MT32;
 
 		switch (_driverType) {
 		case MT_ADLIB:
