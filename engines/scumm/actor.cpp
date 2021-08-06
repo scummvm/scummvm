@@ -151,8 +151,6 @@ void Actor::initActor(int mode) {
 		_flip = false;
 		_speedx = 8;
 		_speedy = 2;
-		_stepX = 0;
-		_stepThreshold = 0;
 		_frame = 0;
 		_walkbox = 0;
 		_animProgress = 0;
@@ -229,6 +227,14 @@ void Actor_v2::initActor(int mode) {
 	_standFrame = 1;
 	_talkStartFrame = 5;
 	_talkStopFrame = 4;
+}
+
+void Actor_v3::initActor(int mode) {
+	if (mode == -1) {
+		_stepX = 0;
+		_stepThreshold = 0;
+	}
+	Actor::initActor(mode);
 }
 
 void Actor_v0::initActor(int mode) {
@@ -523,14 +529,13 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 }
 
 int Actor_v3::calcMovementFactor(const Common::Point& next) {
-	int diffX, diffY;
 	int32 deltaXFactor, deltaYFactor;
 
 	if (_pos == next)
 		return 0;
 
-	diffX = next.x - _pos.x;
-	diffY = next.y - _pos.y;
+	int diffX = next.x - _pos.x;
+	int diffY = next.y - _pos.y;
 
 	if (_vm->_game.version <= 2) {
 		_stepThreshold = MAX(ABS(diffX), ABS(diffY));
@@ -560,7 +565,7 @@ int Actor_v3::calcMovementFactor(const Common::Point& next) {
 	_walkdata.deltaYFactor = deltaYFactor;
 
 	// The x/y distance ratio which determines whether to face up/down instead of left/right is different for SCUMM1/2 and SCUMM3.
-	_targetFacing = oldDirToNewDir(((ABS(diffY) * (_vm->_game.version == 3 ? 3 : 1)) > ABS(diffX)) ? 3 - (diffY >= 0 ? 1 : 0) : (diffX >= 0 ? 1 : 0));
+	_targetFacing = oldDirToNewDir(((ABS(diffY) * _facingXYratio) > ABS(diffX)) ? 3 - (diffY >= 0 ? 1 : 0) : (diffX >= 0 ? 1 : 0));
 
 	if (_vm->_game.version <= 2 && _facing != updateActorDirection(true))
 		_moving |= MF_TURN;
@@ -569,13 +574,53 @@ int Actor_v3::calcMovementFactor(const Common::Point& next) {
 }
 
 int Actor::actorWalkStep() {
-	int tmpX, tmpY;
-	int distX, distY;
-	int nextFacing;
-
 	_needRedraw = true;
 
-	nextFacing = updateActorDirection(true);
+	int nextFacing = updateActorDirection(true);
+	if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
+		if (_walkFrame != _frame || _facing != nextFacing) {
+			startWalkAnim(1, nextFacing);
+		}
+		_moving |= MF_IN_LEG;
+	}
+
+	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y))
+		setBox(_walkdata.curbox);
+
+	int distX = ABS(_walkdata.next.x - _walkdata.cur.x);
+	int distY = ABS(_walkdata.next.y - _walkdata.cur.y);
+
+	if (ABS(_pos.x - _walkdata.cur.x) >= distX && ABS(_pos.y - _walkdata.cur.y) >= distY) {
+		_moving &= ~MF_IN_LEG;
+		return 0;
+	}
+
+	int tmpX = (_pos.x << 16) + _walkdata.xfrac + (_walkdata.deltaXFactor >> 8) * _scalex;
+	_walkdata.xfrac = (uint16)tmpX;
+	_pos.x = (tmpX >> 16);
+
+	int tmpY = (_pos.y << 16) + _walkdata.yfrac + (_walkdata.deltaYFactor >> 8) * _scaley;
+	_walkdata.yfrac = (uint16)tmpY;
+	_pos.y = (tmpY >> 16);
+
+	if (ABS(_pos.x - _walkdata.cur.x) > distX)
+		_pos.x = _walkdata.next.x;
+
+	if (ABS(_pos.y - _walkdata.cur.y) > distY)
+		_pos.y = _walkdata.next.y;
+
+	if (_vm->_game.version >= 4 && _vm->_game.version <= 6 && _pos == _walkdata.next) {
+		_moving &= ~MF_IN_LEG;
+		return 0;
+	}
+
+	return 1;
+}
+
+int Actor_v3::actorWalkStep() {
+	_needRedraw = true;
+
+	int nextFacing = updateActorDirection(true);
 	if (!(_moving & MF_IN_LEG) || _facing != nextFacing) {
 		if (_walkFrame != _frame || _facing != nextFacing)
 			startWalkAnim(1, nextFacing);
@@ -595,47 +640,26 @@ int Actor::actorWalkStep() {
 			_pos.x = _walkdata.next.x;
 		if (_walkdata.next.y - (int)_speedy <= _pos.y && _walkdata.next.y + (int)_speedy >= _pos.y)
 			_pos.y = _walkdata.next.y;
-	}
 
-	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y))
-		setBox(_walkdata.curbox);
+		if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y))
+			setBox(_walkdata.curbox);
 
-	distX = ABS(_walkdata.next.x - _walkdata.cur.x);
-	distY = ABS(_walkdata.next.y - _walkdata.cur.y);
-
-	if ((_vm->_game.version == 3 && _pos == _walkdata.next) || (_vm->_game.version != 3 && ABS(_pos.x - _walkdata.cur.x) >= distX && ABS(_pos.y - _walkdata.cur.y) >= distY)) {
-		_moving &= ~MF_IN_LEG;
-		return 0;
-	}
-
-	if (_vm->_game.version <= 3) {
-		if ((_walkdata.xfrac += _walkdata.xAdd) >= _stepThreshold) {
-			_pos.x += _walkdata.deltaXFactor;
-			_walkdata.xfrac -= _stepThreshold;
+		if (_pos == _walkdata.next) {
+			_moving &= ~MF_IN_LEG;
+			return 0;
 		}
-		if ((_walkdata.yfrac += _walkdata.yAdd) >= _stepThreshold) {
-			_pos.y += _walkdata.deltaYFactor;
-			_walkdata.yfrac -= _stepThreshold;
-		}
-	} else {
-		tmpX = (_pos.x << 16) + _walkdata.xfrac + (_walkdata.deltaXFactor >> 8) * _scalex;
-		_walkdata.xfrac = (uint16)tmpX;
-		_pos.x = (tmpX >> 16);
-
-		tmpY = (_pos.y << 16) + _walkdata.yfrac + (_walkdata.deltaYFactor >> 8) * _scaley;
-		_walkdata.yfrac = (uint16)tmpY;
-		_pos.y = (tmpY >> 16);
 	}
 
-	if (ABS(_pos.x - _walkdata.cur.x) > distX) {
-		_pos.x = _walkdata.next.x;
+	if ((_walkdata.xfrac += _walkdata.xAdd) >= _stepThreshold) {
+		_pos.x += _walkdata.deltaXFactor;
+		_walkdata.xfrac -= _stepThreshold;
+	}
+	if ((_walkdata.yfrac += _walkdata.yAdd) >= _stepThreshold) {
+		_pos.y += _walkdata.deltaYFactor;
+		_walkdata.yfrac -= _stepThreshold;
 	}
 
-	if (ABS(_pos.y - _walkdata.cur.y) > distY) {
-		_pos.y = _walkdata.next.y;
-	}
-
-	if ((_vm->_game.version <= 2 || (_vm->_game.version >= 4 && _vm->_game.version <= 6)) && _pos == _walkdata.next) {
+	if (_vm->_game.version <= 2 && _pos == _walkdata.next) {
 		_moving &= ~MF_IN_LEG;
 		return 0;
 	}
@@ -3758,36 +3782,39 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 
 		setDirection(_facing);
 	}
+}
 
-	if (_vm->_game.version <= 3) {
-		int rev = (_vm->_game.version == 3 ? 101 : 102);
-		if (s.isLoading() && s.getVersion() < VER(rev)) {
-			int diffX = _walkdata.next.x - _pos.x;
-			int diffY = _walkdata.next.y - _pos.y;
+void Actor_v3::saveLoadWithSerializer(Common::Serializer &s) {
+	Actor::saveLoadWithSerializer(s);
 
-			if (_vm->_game.version < 3) {
-				_stepThreshold = MAX(ABS(diffX), ABS(diffY));
-				_walkdata.deltaXFactor = _walkdata.deltaYFactor = 1;
-			} else {
-				_stepX = ((ABS(diffY) / (int)_speedy) >> 1) >(ABS(diffX) / (int)_speedx) ? _speedy + 1 : _speedx;
-				_stepThreshold = MAX(ABS(diffY) / _speedy, ABS(diffX) / _stepX);
-				_walkdata.deltaXFactor = (int32)_stepX;
-				_walkdata.deltaYFactor = (int32)_speedy;
-			}
+	int rev = (_vm->_game.version == 3 ? 101 : 102);
 
-			if (diffX < 0)
-				_walkdata.deltaXFactor = -_walkdata.deltaXFactor;
-			if (diffY < 0)
-				_walkdata.deltaYFactor = -_walkdata.deltaYFactor;
-			_walkdata.xfrac = _walkdata.xAdd = diffX / _walkdata.deltaXFactor;
-			_walkdata.yfrac = _walkdata.yAdd = diffY / _walkdata.deltaYFactor;
+	if (s.isLoading() && s.getVersion() < VER(rev)) {
+		int diffX = _walkdata.next.x - _pos.x;
+		int diffY = _walkdata.next.y - _pos.y;
 
+		if (_vm->_game.version < 3) {
+			_stepThreshold = MAX(ABS(diffX), ABS(diffY));
+			_walkdata.deltaXFactor = _walkdata.deltaYFactor = 1;
 		} else {
-			s.syncAsUint16LE(_walkdata.xAdd, VER(rev));
-			s.syncAsUint16LE(_walkdata.yAdd, VER(rev));
-			s.syncAsUint16LE(_stepX, VER(rev));
-			s.syncAsUint16LE(_stepThreshold, VER(rev));
+			_stepX = ((ABS(diffY) / (int)_speedy) >> 1) >(ABS(diffX) / (int)_speedx) ? _speedy + 1 : _speedx;
+			_stepThreshold = MAX(ABS(diffY) / _speedy, ABS(diffX) / _stepX);
+			_walkdata.deltaXFactor = (int32)_stepX;
+			_walkdata.deltaYFactor = (int32)_speedy;
 		}
+
+		if (diffX < 0)
+			_walkdata.deltaXFactor = -_walkdata.deltaXFactor;
+		if (diffY < 0)
+			_walkdata.deltaYFactor = -_walkdata.deltaYFactor;
+		_walkdata.xfrac = _walkdata.xAdd = diffX / _walkdata.deltaXFactor;
+		_walkdata.yfrac = _walkdata.yAdd = diffY / _walkdata.deltaYFactor;
+
+	} else {
+		s.syncAsUint16LE(_walkdata.xAdd, VER(rev));
+		s.syncAsUint16LE(_walkdata.yAdd, VER(rev));
+		s.syncAsUint16LE(_stepX, VER(rev));
+		s.syncAsUint16LE(_stepThreshold, VER(rev));
 	}
 }
 

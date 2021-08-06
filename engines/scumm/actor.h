@@ -176,7 +176,6 @@ protected:
 	uint16 _facing;
 	uint16 _targetFacing;
 	uint _speedx, _speedy;
-	uint _stepX, _stepThreshold;
 	byte _animProgress, _animSpeed;
 	bool _costumeNeedsInit;
 	ActorWalkData _walkdata;
@@ -208,7 +207,7 @@ public:
 	void putActor(int x, int y, int room);
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
 protected:
-	virtual int calcMovementFactor(const Common::Point& next);
+	int calcMovementFactor(const Common::Point& next);
 	int actorWalkStep();
 	int remapDirection(int dir, bool is_walking);
 	virtual void setupActorScale();
@@ -330,14 +329,23 @@ protected:
 
 class Actor_v3 : public Actor {
 public:
-	Actor_v3(ScummEngine *scumm, int id) : Actor(scumm, id) {}
+	Actor_v3(ScummEngine *scumm, int id) : Actor(scumm, id), _stepX(0), _stepThreshold(0), _facingXYratio(scumm->_game.version == 3 ? 3 : 1) {}
 
+	void initActor(int mode) override;
 	void walkActor() override;
-	int calcMovementFactor(const Common::Point& next) override;
+
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 protected:
+	int calcMovementFactor(const Common::Point& next);
+	int actorWalkStep();
+
 	void setupActorScale() override;
 	void findPathTowardsOld(byte box, byte box2, byte box3, Common::Point &p2, Common::Point &p3);
+
+private:
+	uint _stepX, _stepThreshold;
+	const int _facingXYratio;
 };
 
 class Actor_v2 : public Actor_v3 {
