@@ -288,8 +288,7 @@ enum PaletteType {
 	kClutSystemWin = -101
 };
 
-enum {
-	kCursorDefault,
+enum DirectorCursor {
 	kCursorMouseDown,
 	kCursorMouseUp
 };

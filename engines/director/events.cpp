@@ -45,8 +45,24 @@ bool DirectorEngine::processEvents(bool captureClick) {
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
-		_wm->processEvent(event);
+		if (!_wm->processEvent(event)) {
+			// We only want to handle these events if the event
+			// wasn't handled by the window manager.
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				if (_cursorWindow) {
+					// The cursor is no longer in a window.
+					// Set it to the default arrow cursor.
+					_wm->replaceCursor(Graphics::kMacCursorArrow);
+					_cursorWindow = nullptr;
+				}
+				break;
+			default:
+				break;
+			}
+		}
 
+		// We want to handle these events regardless.
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 			_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
@@ -89,7 +105,13 @@ bool Movie::processEvent(Common::Event &event) {
 		_lastEventTime = g_director->getMacTicks();
 		_lastRollTime =	 _lastEventTime;
 
-		sc->renderCursor(pos);
+		if (_vm->getCursorWindow() != _window) {
+			// Cursor just entered this window. Force a cursor update.
+			_vm->setCursorWindow(_window);
+			sc->renderCursor(pos, true);
+		} else {
+			sc->renderCursor(pos);
+		}
 
 		// hiliteChannelId is specified for BitMap castmember, so we deal with them separately with other castmember
 		// if we are moving out of bounds, then we don't hilite it anymore
@@ -133,7 +155,7 @@ bool Movie::processEvent(Common::Event &event) {
 	case Common::EVENT_LBUTTONDOWN:
 		if (sc->_waitForClick) {
 			sc->_waitForClick = false;
-			_vm->setCursor(kCursorDefault);
+			sc->renderCursor(_window->getMousePos(), true);
 		} else {
 			pos = _window->getMousePos();
 

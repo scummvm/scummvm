@@ -75,6 +75,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_windowList->type = ARRAY;
 	_windowList->u.farr = new FArray;
 	_currentWindow = nullptr;
+	_cursorWindow = nullptr;
 	_lingo = nullptr;
 	_version = getDescriptionVersion();
 

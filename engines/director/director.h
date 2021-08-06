@@ -196,6 +196,8 @@ public:
 	Window *getStage() const { return _stage; }
 	Window *getCurrentWindow() const { return _currentWindow; }
 	void setCurrentWindow(Window *window) { _currentWindow = window; };
+	Window *getCursorWindow() const { return _cursorWindow; }
+	void setCursorWindow(Window *window) { _cursorWindow = window; }
 	Movie *getCurrentMovie() const;
 	void setCurrentMovie(Movie *movie);
 	Common::String getCurrentPath() const;
@@ -219,7 +221,7 @@ public:
 	void loadPatterns();
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
-	void setCursor(int type);
+	void setCursor(DirectorCursor type);
 	void draw();
 
 	Graphics::MacDrawPixPtr getInkDrawPixel();
@@ -263,6 +265,7 @@ private:
 	Window *_stage;
 	Datum *_windowList; // Lingo list
 	Window *_currentWindow;
+	Window *_cursorWindow;
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;

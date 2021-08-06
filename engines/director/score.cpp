@@ -62,7 +62,6 @@ Score::Score(Movie *movie) {
 	_lastPalette = 0;
 
 	_labels = nullptr;
-	_currentCursor = nullptr;
 
 	_currentFrameRate = 20;
 	_currentFrame = 0;
@@ -322,8 +321,7 @@ void Score::update() {
 		} else if (_waitForClick) {
 			if (g_system->getMillis() >= _nextFrameTime + 1000) {
 				_waitForClickCursor = !_waitForClickCursor;
-				_vm->setCursor(kCursorDefault);
-				_vm->setCursor(_waitForClickCursor ? kCursorMouseDown : kCursorMouseUp);
+				renderCursor(_movie->getWindow()->getMousePos());
 				_nextFrameTime = g_system->getMillis();
 			}
 			keepWaiting = true;
@@ -463,7 +461,7 @@ void Score::update() {
 			if (tempo == 128) {
 				_waitForClick = true;
 				_waitForClickCursor = false;
-				_vm->setCursor(kCursorMouseUp);
+				renderCursor(_movie->getWindow()->getMousePos());
 			} else if (tempo == 135) {
 				// Wait for sound channel 1
 				_waitForChannel = 1;
@@ -501,8 +499,9 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	// this is currently only used in FPlayXObj
 	playQueuedSound();
 
-	if (_cursorDirty) {
-		renderCursor(_movie->getWindow()->getMousePos());
+	if (_cursorDirty || _window->_newMovieStarted) {
+		// Force cursor update if a new movie's started.
+		renderCursor(_movie->getWindow()->getMousePos(), _window->_newMovieStarted);
 		_cursorDirty = false;
 	}
 }
@@ -565,34 +564,41 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 	}
 }
 
-void Score::renderCursor(Common::Point pos) {
-	uint spriteId = 0;
-
-	if (_channels.empty())
+void Score::renderCursor(Common::Point pos, bool forceUpdate) {
+	if (_window != _vm->getCursorWindow()) {
+		// The cursor is outside of this window.
 		return;
+	}
 
-	for (int i = _channels.size() - 1; i >= 0; i--)
-		if (_channels[i]->isMouseIn(pos) && !_channels[i]->_cursor.isEmpty()) {
-			spriteId = i;
-			break;
-		}
+	if (_waitForClick) {
+		_vm->setCursor(_waitForClickCursor ? kCursorMouseDown : kCursorMouseUp);
+		return;
+	}
 
-	if (_channels[spriteId]->_cursor.isEmpty()) {
-		if (_currentCursor) {
-			_vm->_wm->popCursor();
-			_currentCursor = nullptr;
-		}
-	} else {
-		if (_currentCursor) {
-			if (*_currentCursor == _channels[spriteId]->_cursor)
+	if (!_channels.empty()) {
+		uint spriteId = 0;
+
+		for (int i = _channels.size() - 1; i >= 0; i--)
+			if (_channels[i]->isMouseIn(pos) && !_channels[i]->_cursor.isEmpty()) {
+				spriteId = i;
+				break;
+			}
+
+		if (!_channels[spriteId]->_cursor.isEmpty()) {
+			if (!forceUpdate && _currentCursor == _channels[spriteId]->_cursor)
 				return;
 
-			_vm->_wm->popCursor();
+			_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, &_channels[spriteId]->_cursor);
+			_currentCursor = _channels[spriteId]->_cursor.getRef();
+			return;
 		}
-
-		_currentCursor = &_channels[spriteId]->_cursor;
-		_vm->_wm->pushCursor(_currentCursor->_cursorType, _currentCursor);
 	}
+
+	if (!forceUpdate && _currentCursor == _defaultCursor)
+		return;
+
+	_vm->_wm->replaceCursor(_defaultCursor._cursorType, &_defaultCursor);
+	_currentCursor = _defaultCursor.getRef();
 }
 
 void Score::renderVideo() {

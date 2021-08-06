@@ -310,17 +310,15 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 }
 
 void Lingo::func_cursor(CastMemberID cursorId, CastMemberID maskId) {
-	Cursor cursor;
-	cursor.readFromCast(cursorId, maskId);
-	// TODO: Figure out why there are artifacts here
-	_vm->_wm->replaceCursor(cursor._cursorType, ((Graphics::Cursor *)&cursor));
+	Score *score = _vm->getCurrentMovie()->getScore();
+	score->_defaultCursor.readFromCast(cursorId, maskId);
+	score->_cursorDirty = true;
 }
 
 void Lingo::func_cursor(int cursorId) {
-	Cursor cursor;
-	cursor.readFromResource(cursorId);
-	// TODO: Figure out why there are artifacts here
-	_vm->_wm->replaceCursor(cursor._cursorType, ((Graphics::Cursor *)&cursor));
+	Score *score = _vm->getCurrentMovie()->getScore();
+	score->_defaultCursor.readFromResource(cursorId);
+	score->_cursorDirty = true;
 }
 
 void Lingo::func_beep(int repeats) {
