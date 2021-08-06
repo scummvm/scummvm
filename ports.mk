@@ -552,7 +552,7 @@ endif
 	@echo
 	@echo All is done.
 	@echo Now run
-	@echo "\tgit commit -m 'DISTS: Generated Code::Blocks and MSVC project files'"
+	@echo -e "\tgit commit -m 'DISTS: Generated Code::Blocks and MSVC project files'"
 
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap install uninstall
