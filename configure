@@ -5055,9 +5055,6 @@ else
 fi
 
 if test "$_readline" = yes ; then
-	append_var LIBS "$READLINE_LIBS $_READLINE_LIBS"
-	append_var INCLUDES "$READLINE_CFLAGS"
-
 	#
 	# Check the type of rl_completion_entry_function.
 	# It can be int(*)(const char *, int) or char *(*)(const char *, int).
@@ -5074,9 +5071,15 @@ int main(void) {
 	rl_completion_entry_function = &readline_completionFunction;
 }
 EOF
-	cc_check -c && add_line_to_config_h '#define USE_READLINE_INT_COMPLETION'
+	cc_check $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS -c && add_line_to_config_h '#define USE_READLINE_INT_COMPLETION'
 
 fi
+
+if test "$_readline" = yes ; then
+	append_var LIBS "$READLINE_LIBS $_READLINE_LIBS"
+	append_var INCLUDES "$READLINE_CFLAGS"
+fi
+
 define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 
 define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE_FOR_DEBUGGER'
