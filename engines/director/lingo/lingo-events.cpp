@@ -293,6 +293,7 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		case kEventIdle:
 		case kEventEnterFrame:
 		case kEventExitFrame:
+		case kEventTimeout:
 			queueFrameEvent(event, eventId);
 			// fall through
 
@@ -300,7 +301,6 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		case kEventStartMovie:
 		case kEventStepMovie:
 		case kEventStopMovie:
-		case kEventTimeout:
 		case kEventPrepareMovie:
 			queueMovieEvent(event, eventId);
 			break;
