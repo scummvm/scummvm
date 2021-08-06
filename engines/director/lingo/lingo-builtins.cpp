@@ -2296,6 +2296,11 @@ void LB::b_updateStage(int nargs) {
 	// play any puppet sounds that have been queued
 	score->playSoundChannel(score->getCurrentFrame());
 
+	if (score->_cursorDirty) {
+		score->renderCursor(movie->getWindow()->getMousePos());
+		score->_cursorDirty = false;
+	}
+
 	if (debugChannelSet(-1, kDebugFewFramesOnly)) {
 		score->_framesRan++;
 
