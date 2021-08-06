@@ -221,7 +221,7 @@ bool OSystem_SDL_Symbian::openUrl(const Common::String &url) {
 
 	// HACK: We should run Opera 10 itself, not launcher, because
 	// Opera's launcher doesn't recognize commandline args.
-	if(browserUID.iUid == kOpera10500_UID) {
+	if (browserUID.iUid == kOpera10500_UID) {
 		TParse pth;
 		pth.Set(info.iFullName, NULL , NULL);
 		TPtrC name = pth.NameAndExt();
