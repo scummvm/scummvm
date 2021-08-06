@@ -43,6 +43,12 @@ bool DirectorEngine::processEvents(bool captureClick) {
 	debugC(3, kDebugEvents, "@@@@   Processing events");
 	debugC(3, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
+	// update and register timeOut event
+	if (g_director->getMacTicks() - g_director->getCurrentMovie()->_lastTimeOut >= g_director->getCurrentMovie()->_timeOutLength) {
+		g_director->getCurrentMovie()->registerEvent(kEventTimeout);
+		g_director->getCurrentMovie()->_lastTimeOut = g_director->getMacTicks();
+	}
+
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		if (!_wm->processEvent(event)) {
