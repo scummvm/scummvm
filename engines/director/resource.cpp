@@ -74,6 +74,19 @@ Common::Error Window::loadInitialMovie() {
 	Common::String sharedCastPath = getSharedCastPath();
 	if (!sharedCastPath.empty() && !sharedCastPath.equalsIgnoreCase(movie))
 		_currentMovie->loadSharedCastsFrom(sharedCastPath);
+
+	// load startup movie
+	Common::String startupPath = g_director->getStartupPath();
+	if (!startupPath.empty()) {
+		Archive *arc = g_director->createArchive();
+		if (arc->openFile(startupPath)) {
+			_currentMovie->setArchive(arc);
+			_currentMovie->loadArchive();
+		} else {
+			warning("Window::LoadInitialMovie: failed to load startup movie");
+		}
+	}
+
 	_currentMovie->setArchive(_mainArchive);
 
 	// XLibs are usually loaded in the initial movie.

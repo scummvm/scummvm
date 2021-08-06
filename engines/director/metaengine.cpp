@@ -72,7 +72,12 @@ StartMovie DirectorEngine::getStartMovie() const {
 	if (ConfMan.hasKey("start_movie")) {
 		Common::String option = ConfMan.get("start_movie");
 		int atPos = option.findLastOf("@");
-		startMovie.startMovie = option.substr(0, atPos);
+		if ((uint)atPos == Common::String::npos) {
+			int commaPos = option.findLastOf(",");
+			startMovie.startMovie = option.substr(0, commaPos);
+		} else {
+			startMovie.startMovie = option.substr(0, atPos);
+		}
 
 		if (Common::punycode_hasprefix(startMovie.startMovie))
 			startMovie.startMovie = Common::punycode_decodepath(startMovie.startMovie);
@@ -82,6 +87,21 @@ StartMovie DirectorEngine::getStartMovie() const {
 			startMovie.startFrame = atoi(tail.c_str());
 	}
 	return startMovie;
+}
+
+Common::String DirectorEngine::getStartupPath() const {
+	if (ConfMan.hasKey("start_movie")) {
+		Common::String option = ConfMan.get("start_movie");
+
+		int atPos = option.findLastOf(",");
+		if ((uint)atPos == Common::String::npos)
+			return "";
+
+		Common::String tail = option.substr(atPos + 1, option.size());
+		if (tail.size() > 0)
+			return tail;
+	}
+	return "";
 }
 
 bool DirectorEngine::hasFeature(EngineFeature f) const {

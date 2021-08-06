@@ -97,6 +97,7 @@ struct MovieReference {
 struct StartMovie {
 	Common::String startMovie;
 	int16 startFrame;
+	Common::String startupPath;
 };
 
 struct PaletteV4 {
@@ -201,6 +202,7 @@ public:
 	Movie *getCurrentMovie() const;
 	void setCurrentMovie(Movie *movie);
 	Common::String getCurrentPath() const;
+	Common::String getStartupPath() const;
 
 	// graphics.cpp
 	bool hasFeature(EngineFeature f) const override;
