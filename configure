@@ -4731,7 +4731,7 @@ EOF
 		# don't execute while cross compiling
 		cc_check $A52_CFLAGS $A52_LIBS -la52 && _a52=yes
 	else
-		cc_check_no_clean $A52_CFLAGS $A52_LIBS -la52 && $TMPO$HOSTEXEEXT && _a52=yes
+		cc_check_no_clean $A52_CFLAGS $A52_LIBS -la52 && $TMPO$HOSTEXEEXT 2>/dev/null && _a52=yes
 		cc_check_clean
 	fi
 fi
