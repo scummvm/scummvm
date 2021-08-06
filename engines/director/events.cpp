@@ -43,22 +43,23 @@ bool DirectorEngine::processEvents(bool captureClick) {
 	debugC(3, kDebugEvents, "@@@@   Processing events");
 	debugC(3, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
+	Movie *currentMovie = g_director->getCurrentMovie();
 	// update and register timeOut event
-	if (getMacTicks() - g_director->getCurrentMovie()->_lastTimeOut >= g_director->getCurrentMovie()->_timeOutLength) {
-		g_director->getCurrentMovie()->registerEvent(kEventTimeout);
-		g_director->getCurrentMovie()->_lastTimeOut = getMacTicks();
+	if (currentMovie && getMacTicks() - currentMovie->_lastTimeOut >= currentMovie->_timeOutLength) {
+		currentMovie->registerEvent(kEventTimeout);
+		currentMovie->_lastTimeOut = getMacTicks();
 	}
 
-	if (g_director->getCurrentMovie()->_timeOutPlay && g_director->_playbackPaused)
-		g_director->getCurrentMovie()->_lastTimeOut = getMacTicks();
+	if (currentMovie && currentMovie->_timeOutPlay && g_director->_playbackPaused)
+		currentMovie->_lastTimeOut = getMacTicks();
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		// update timeOut related values
-		if (event.type == Common::EVENT_LBUTTONDOWN && g_director->getCurrentMovie()->_timeOutMouse)
-			g_director->getCurrentMovie()->_lastTimeOut = getMacTicks();
-		if (event.type == Common::EVENT_KEYDOWN && g_director->getCurrentMovie()->_timeOutKeyDown)
-			g_director->getCurrentMovie()->_lastTimeOut = getMacTicks();
+		if (currentMovie && event.type == Common::EVENT_LBUTTONDOWN && g_director->getCurrentMovie()->_timeOutMouse)
+			currentMovie->_lastTimeOut = getMacTicks();
+		if (currentMovie && event.type == Common::EVENT_KEYDOWN && g_director->getCurrentMovie()->_timeOutKeyDown)
+			currentMovie->_lastTimeOut = getMacTicks();
 
 		if (!_wm->processEvent(event)) {
 			// We only want to handle these events if the event
