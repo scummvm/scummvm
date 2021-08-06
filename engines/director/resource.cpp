@@ -78,12 +78,19 @@ Common::Error Window::loadInitialMovie() {
 	// load startup movie
 	Common::String startupPath = g_director->getStartupPath();
 	if (!startupPath.empty()) {
-		Archive *arc = g_director->createArchive();
-		if (arc->openFile(startupPath)) {
-			_currentMovie->setArchive(arc);
-			_currentMovie->loadArchive();
+		Common::SeekableReadStream *const stream = SearchMan.createReadStreamForMember(startupPath);
+		if (stream) {
+			uint size = stream->size();
+			char *script = (char *)calloc(size + 1, 1);
+
+			stream->read(script, size);
+
+			LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
+			mainArchive->addCode(Common::U32String(script, Common::kMacRoman), kMovieScript, 65535);
+
+			free(script);
 		} else {
-			warning("Window::LoadInitialMovie: failed to load startup movie");
+			warning("Window::LoadInitialMovie: failed to load startup scripts");
 		}
 	}
 
