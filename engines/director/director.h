@@ -97,6 +97,11 @@ struct MovieReference {
 struct StartMovie {
 	Common::String startMovie;
 	int16 startFrame;
+
+};
+
+struct StartOptions {
+	StartMovie startMovie;
 	Common::String startupPath;
 };
 
@@ -191,6 +196,7 @@ public:
 	const char *getExtra();
 	Common::String getEXEName() const;
 	StartMovie getStartMovie() const;
+	void parseOptions();
 	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
 	Archive *getMainArchive() const;
 	Lingo *getLingo() const { return _lingo; }
@@ -275,6 +281,8 @@ private:
 	Common::HashMap<int, PaletteV4> _loadedPalettes;
 
 	Graphics::ManagedSurface *_surface;
+
+	StartOptions _options;
 };
 
 extern DirectorEngine *g_director;

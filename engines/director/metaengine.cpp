@@ -26,7 +26,6 @@
 
 #include "common/file.h"
 #include "common/config-manager.h"
-#include "common/punycode.h"
 
 #include "director/director.h"
 #include "director/detection.h"
@@ -55,53 +54,6 @@ Common::Language DirectorEngine::getLanguage() const {
 
 const char *DirectorEngine::getExtra() {
 	return _gameDescription->desc.extra;
-}
-
-Common::String DirectorEngine::getEXEName() const {
-	StartMovie startMovie = getStartMovie();
-	if (startMovie.startMovie.size() > 0)
-		return startMovie.startMovie;
-
-	return Common::punycode_decodefilename(_gameDescription->desc.filesDescriptions[0].fileName);
-}
-
-StartMovie DirectorEngine::getStartMovie() const {
-	StartMovie startMovie;
-	startMovie.startFrame = -1;
-
-	if (ConfMan.hasKey("start_movie")) {
-		Common::String option = ConfMan.get("start_movie");
-		int atPos = option.findLastOf("@");
-		if ((uint)atPos == Common::String::npos) {
-			int commaPos = option.findLastOf(",");
-			startMovie.startMovie = option.substr(0, commaPos);
-		} else {
-			startMovie.startMovie = option.substr(0, atPos);
-		}
-
-		if (Common::punycode_hasprefix(startMovie.startMovie))
-			startMovie.startMovie = Common::punycode_decodepath(startMovie.startMovie);
-
-		Common::String tail = option.substr(atPos + 1, option.size());
-		if (tail.size() > 0)
-			startMovie.startFrame = atoi(tail.c_str());
-	}
-	return startMovie;
-}
-
-Common::String DirectorEngine::getStartupPath() const {
-	if (ConfMan.hasKey("start_movie")) {
-		Common::String option = ConfMan.get("start_movie");
-
-		int atPos = option.findLastOf(",");
-		if ((uint)atPos == Common::String::npos)
-			return "";
-
-		Common::String tail = option.substr(atPos + 1, option.size());
-		if (tail.size() > 0)
-			return tail;
-	}
-	return "";
 }
 
 bool DirectorEngine::hasFeature(EngineFeature f) const {

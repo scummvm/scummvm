@@ -23,6 +23,8 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
+#include "common/punycode.h"
+#include "common/tokenizer.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -55,6 +57,8 @@ DirectorEngine *g_director;
 
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	g_director = this;
+
+	parseOptions();
 
 	// Setup mixer
 	syncSoundSettings();
@@ -219,6 +223,75 @@ Common::Error DirectorEngine::run() {
 
 Common::CodePage DirectorEngine::getPlatformEncoding() {
 	return getEncoding(getPlatform(), getLanguage());
+}
+
+Common::String DirectorEngine::getEXEName() const {
+	StartMovie startMovie = getStartMovie();
+	if (startMovie.startMovie.size() > 0)
+		return startMovie.startMovie;
+
+	return Common::punycode_decodefilename(_gameDescription->desc.filesDescriptions[0].fileName);
+}
+
+void DirectorEngine::parseOptions() {
+	_options.startMovie.startFrame = -1;
+
+	if (!ConfMan.hasKey("start_movie"))
+		return;
+
+	Common::StringTokenizer tok(ConfMan.get("start_movie"), ",");
+
+	while (!tok.empty()) {
+		Common::String part = tok.nextToken();
+
+		int eqPos = part.findLastOf("=");
+		Common::String key;
+		Common::String value;
+
+		if ((uint)eqPos != Common::String::npos) {
+			key = part.substr(0, eqPos);
+			value = part.substr(eqPos + 1, part.size());
+		} else {
+			value = part;
+		}
+
+		if (key == "movie" || key.empty()) { // Format is movie[@startFrame]
+			if (!_options.startMovie.startMovie.empty()) {
+				warning("parseOptions(): Duplicate startup movie: %s", value.c_str());
+			}
+
+			int atPos = value.findLastOf("@");
+
+			if ((uint)atPos == Common::String::npos) {
+				_options.startMovie.startMovie = value;
+			} else {
+				_options.startMovie.startMovie = value.substr(0, atPos);
+				Common::String tail = value.substr(atPos + 1, value.size());
+				if (tail.size() > 0)
+					_options.startMovie.startFrame = atoi(tail.c_str());
+			}
+
+			if (Common::punycode_hasprefix(_options.startMovie.startMovie))
+				_options.startMovie.startMovie = Common::punycode_decodepath(_options.startMovie.startMovie);
+
+			debug(2, "parseOptions(): Movie is: %s, frame is: %d", _options.startMovie.startMovie.c_str(), _options.startMovie.startFrame);
+		} else if (key == "startup") {
+			_options.startupPath = value;
+
+			debug(2, "parseOptions(): Startup is: %s", value.c_str());
+		} else {
+			warning("parseOptions(): unknown option %s", part.c_str());
+		}
+
+	}
+}
+
+StartMovie DirectorEngine::getStartMovie() const {
+	return _options.startMovie;
+}
+
+Common::String DirectorEngine::getStartupPath() const {
+	return _options.startupPath;
 }
 
 } // End of namespace Director
