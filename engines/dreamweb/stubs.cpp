@@ -966,7 +966,7 @@ void DreamWebEngine::useTimedText() {
 	printDirect(string, _timedTemp._x, _timedTemp._y, 237, true);
 	const char *theText = (const char *)string;
 	if (_lastText != theText) {
-		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_new")) {
+		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech")) {
 			_ttsMan->say(theText);
 		}
 	}
@@ -1189,8 +1189,8 @@ void DreamWebEngine::commandOnly(uint8 command) {
 
 	printDirect(string, _textAddressX, _textAddressY, _textLen, (bool)(_textLen & 1));
 
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled") && str1 != string2) {
-		_ttsMan->say((const char*)string);
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects") && str1 != string2) {
+		_ttsMan->say((const char *)string);
 	}
 	_newTextLine = 1;
 }
@@ -1292,7 +1292,7 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 
 	if (getLanguage() != Common::RU_RUS) {
 		printDirect(string, _textAddressX, _textAddressY, textLen, (bool)(textLen & 1));
-    	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
 			theText += (const char *)string;
 		}
 
@@ -1302,7 +1302,7 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 		if (command != 0)
 			x += 5;
 		printDirect(commandLine, x, _textAddressY, textLen, (bool)(textLen & 1));
-		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
 			theText += (const char *)commandLine;
 			_ttsMan->say(theText);
 		}
@@ -1972,7 +1972,7 @@ void DreamWebEngine::doLook() {
 	const char *placeName = (const char *)string;
 	auto colon_pos = strchr(placeName, ':');
 	const char *desRoom = colon_pos + 1;
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
 		_ttsMan->say(desRoom);
 
 	findNextColon(&string);
@@ -2374,7 +2374,7 @@ void DreamWebEngine::obsThatDoThings() {
 void DreamWebEngine::textToSpeech(const char *text) {
 	auto colon_pos = strchr(text, ':');
 	Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
 		_ttsMan->say(result);
 }
 

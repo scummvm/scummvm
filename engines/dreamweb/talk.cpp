@@ -98,7 +98,7 @@ void DreamWebEngine::startTalk() {
 	auto colon_pos = strchr(text, ':');
 	const char *goodText = colon_pos + 1;
 
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_new"))
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech"))
 		_ttsMan->say(goodText);
 
 	if (getLanguage() == Common::RU_RUS)
@@ -125,7 +125,7 @@ void DreamWebEngine::startTalk() {
 
 const uint8 *DreamWebEngine::getPersonText(uint8 index, uint8 talkPos) {
 	const uint8 *text = (const uint8 *)_personText.getString(index*64 + talkPos);
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_new"))
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech"))
 		_ttsMan->say((const char *)text,Common::TextToSpeechManager::INTERRUPT);
 	return text;
 }

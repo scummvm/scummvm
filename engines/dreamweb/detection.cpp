@@ -75,7 +75,7 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		{
 			_s("Enable Text to Speech for Objects, Options, and the Bible Quote"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
-			"tts_enabled",
+			"tts_enabled_objects",
 			false
 		}
 	},
@@ -83,9 +83,9 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	{
 		GAMEOPTION_TTS_SPEECH,
 		{
-			_s("Enable Text to Speech for Subtitles and Override Original Voice Overs"),
- 			_s("Use TTS to read the descriptions (if TTS is available)"),
- 			"tts_enabled_new",
+			_s("Enable Text to Speech for Subtitles"),
+			_s("Use TTS to read the subtitles (if TTS is available)"),
+			"tts_enabled_speech",
 			false
 		}
 	},

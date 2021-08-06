@@ -125,7 +125,7 @@ void DreamWebEngine::lookAtPlace() {
 	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
 	findNextColon(&string);
 
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
 		_ttsMan->say((const char*)string);
 
 	uint16 y = (_foreignRelease) ? 84 + 4 : 84;
@@ -164,7 +164,7 @@ void DreamWebEngine::locationPic() {
 	const char *placeName = (const char *)string;
 	auto colon_pos = strchr(placeName, ':');
 	Common::String result(placeName, colon_pos ? colon_pos - placeName : strlen(placeName));
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
 		_ttsMan->say(result);
 }
 

@@ -147,7 +147,7 @@ void DreamWebEngine::useRoutine() {
 	if (findNextColon(&obText) != 0) {
 		if (findNextColon(&obText) != 0) {
 			if (*obText != 0) {
-				if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+				if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
 					_ttsMan->say((const char *)obText, Common::TextToSpeechManager::INTERRUPT);
 				}
 				useText(obText);
@@ -185,6 +185,13 @@ void DreamWebEngine::showFirstUse() {
 	findNextColon(&obText);
 	findNextColon(&obText);
 	useText(obText);
+
+	const char *text = (const char *)obText;
+	auto colon_pos = strchr(text, ':');
+	Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
+		_ttsMan->say(result);
+
 	hangOnP(400);
 }
 

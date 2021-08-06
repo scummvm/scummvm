@@ -160,7 +160,7 @@ void DreamWebEngine::bibleQuote() {
 		return; // "biblequotearly"
 	}
 
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
 		_ttsMan->say(theStory);
 		while (_ttsMan->isSpeaking() && _lastHardKey != Common::KEYCODE_ESCAPE)
 			hangOne(1);
