@@ -231,7 +231,7 @@ void Actor_v2::initActor(int mode) {
 
 void Actor_v3::initActor(int mode) {
 	if (mode == -1) {
-		_stepX = 0;
+		_stepX = 1;
 		_stepThreshold = 0;
 	}
 	Actor::initActor(mode);
@@ -537,20 +537,18 @@ int Actor_v3::calcMovementFactor(const Common::Point& next) {
 	int diffX = next.x - _pos.x;
 	int diffY = next.y - _pos.y;
 
-	if (_vm->_game.version <= 2) {
-		_stepThreshold = MAX(ABS(diffX), ABS(diffY));
-		deltaXFactor = deltaYFactor = 1;
-	} else {
+	if (_vm->_game.version == 3) {
 		// These two lines fix bug #1052 (INDY3: Hitler facing wrong directions in the Berlin scene).
 		// I can't see anything like this in the original SCUMM1/2 code, so I limit this to SCUMM3.
 		if (!(_moving & MF_LAST_LEG) && (int)_speedx > ABS(diffX) && (int)_speedy > ABS(diffY))
 			return 0;
 
 		_stepX = ((ABS(diffY) / (int)_speedy) >> 1) > (ABS(diffX) / (int)_speedx) ? _speedy + 1 : _speedx;
-		_stepThreshold = MAX(ABS(diffY) / _speedy, ABS(diffX) / _stepX);
-		deltaXFactor = (int32)_stepX;
-		deltaYFactor = (int32)_speedy;
 	}
+
+	_stepThreshold = MAX(ABS(diffY) / _speedy, ABS(diffX) / _stepX);
+	deltaXFactor = (int32)_stepX;
+	deltaYFactor = (int32)_speedy;
 
 	if (diffX < 0)
 		deltaXFactor = -deltaXFactor;

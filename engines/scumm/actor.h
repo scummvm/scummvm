@@ -329,7 +329,7 @@ protected:
 
 class Actor_v3 : public Actor {
 public:
-	Actor_v3(ScummEngine *scumm, int id) : Actor(scumm, id), _stepX(0), _stepThreshold(0), _facingXYratio(scumm->_game.version == 3 ? 3 : 1) {}
+	Actor_v3(ScummEngine *scumm, int id) : Actor(scumm, id), _stepX(1), _stepThreshold(0), _facingXYratio(scumm->_game.version == 3 ? 3 : 1) {}
 
 	void initActor(int mode) override;
 	void walkActor() override;
