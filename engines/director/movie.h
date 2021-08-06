@@ -163,6 +163,7 @@ public:
 	uint16 _currentHiliteChannelId;
 
 	uint _lastTimeOut;
+	uint _timeOutLength;
 
 private:
 	Window *_window;

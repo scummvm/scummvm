@@ -82,6 +82,7 @@ Movie::Movie(Window *window) {
 	_checkBoxAccess = 0;
 
 	_lastTimeOut = _lastEventTime;
+	_timeOutLength = 10800;	// D4 dictionary p297, default value is 3minutes
 }
 
 Movie::~Movie() {

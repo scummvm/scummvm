@@ -848,7 +848,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getMacTicks() - g_director->getCurrentMovie()->_lastTimeOut;
 		break;
 	case kTheTimeoutLength:
-		getTheEntitySTUB(kTheTimeoutLength);
+		d.type = INT;
+		d.u.i = g_director->getCurrentMovie()->_timeOutLength;
 		break;
 	case kTheTimeoutMouse:
 		getTheEntitySTUB(kTheTimeoutMouse);
@@ -1080,10 +1081,11 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheTimeoutKeyDown);
 		break;
 	case kTheTimeoutLapsed:
+		// timeOutLapsed can be set in D4, but can't in D3. see D3.1 interactivity manual p312 and D4 dictionary p296.
 		setTheEntitySTUB(kTheTimeoutLapsed);
 		break;
 	case kTheTimeoutLength:
-		setTheEntitySTUB(kTheTimeoutLength);
+		g_director->getCurrentMovie()->_timeOutLength = d.asInt();
 		break;
 	case kTheTimeoutMouse:
 		setTheEntitySTUB(kTheTimeoutMouse);
