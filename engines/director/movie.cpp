@@ -83,6 +83,10 @@ Movie::Movie(Window *window) {
 
 	_lastTimeOut = _lastEventTime;
 	_timeOutLength = 10800;	// D4 dictionary p297, default value is 3minutes
+	// default value of keydown and mouse is true, for timeOutPlay is false. check D4 dictionary p297
+	_timeOutKeyDown = true;
+	_timeOutMouse = true;
+	_timeOutPlay = false;
 }
 
 Movie::~Movie() {

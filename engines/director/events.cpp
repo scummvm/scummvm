@@ -44,13 +44,22 @@ bool DirectorEngine::processEvents(bool captureClick) {
 	debugC(3, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	// update and register timeOut event
-	if (g_director->getMacTicks() - g_director->getCurrentMovie()->_lastTimeOut >= g_director->getCurrentMovie()->_timeOutLength) {
+	if (getMacTicks() - g_director->getCurrentMovie()->_lastTimeOut >= g_director->getCurrentMovie()->_timeOutLength) {
 		g_director->getCurrentMovie()->registerEvent(kEventTimeout);
-		g_director->getCurrentMovie()->_lastTimeOut = g_director->getMacTicks();
+		g_director->getCurrentMovie()->_lastTimeOut = getMacTicks();
 	}
+
+	if (g_director->getCurrentMovie()->_timeOutPlay && g_director->_playbackPaused)
+		g_director->getCurrentMovie()->_lastTimeOut = getMacTicks();
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
+		// update timeOut related values
+		if (event.type == Common::EVENT_LBUTTONDOWN && g_director->getCurrentMovie()->_timeOutMouse)
+			g_director->getCurrentMovie()->_lastTimeOut = getMacTicks();
+		if (event.type == Common::EVENT_KEYDOWN && g_director->getCurrentMovie()->_timeOutKeyDown)
+			g_director->getCurrentMovie()->_lastTimeOut = getMacTicks();
+
 		if (!_wm->processEvent(event)) {
 			// We only want to handle these events if the event
 			// wasn't handled by the window manager.

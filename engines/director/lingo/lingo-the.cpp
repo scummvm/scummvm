@@ -841,7 +841,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheTime(field);
 		break;
 	case kTheTimeoutKeyDown:
-		getTheEntitySTUB(kTheTimeoutKeyDown);
+		d.type = INT;
+		d.u.i = g_director->getCurrentMovie()->_timeOutKeyDown;
 		break;
 	case kTheTimeoutLapsed:
 		d.type = INT;
@@ -852,10 +853,12 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = g_director->getCurrentMovie()->_timeOutLength;
 		break;
 	case kTheTimeoutMouse:
-		getTheEntitySTUB(kTheTimeoutMouse);
+		d.type = INT;
+		d.u.i = g_director->getCurrentMovie()->_timeOutMouse;
 		break;
 	case kTheTimeoutPlay:
-		getTheEntitySTUB(kTheTimeoutPlay);
+		d.type = INT;
+		d.u.i = g_director->getCurrentMovie()->_timeOutPlay;
 		break;
 	case kTheTimeoutScript:
 		d.type = STRING;
@@ -1078,7 +1081,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheSwitchColorDepth);
 		break;
 	case kTheTimeoutKeyDown:
-		setTheEntitySTUB(kTheTimeoutKeyDown);
+		g_director->getCurrentMovie()->_timeOutKeyDown = d.asInt();
 		break;
 	case kTheTimeoutLapsed:
 		// timeOutLapsed can be set in D4, but can't in D3. see D3.1 interactivity manual p312 and D4 dictionary p296.
@@ -1088,10 +1091,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_director->getCurrentMovie()->_timeOutLength = d.asInt();
 		break;
 	case kTheTimeoutMouse:
-		setTheEntitySTUB(kTheTimeoutMouse);
+		g_director->getCurrentMovie()->_timeOutMouse = d.asInt();
 		break;
 	case kTheTimeoutPlay:
-		setTheEntitySTUB(kTheTimeoutPlay);
+		g_director->getCurrentMovie()->_timeOutPlay = d.asInt();
 		break;
 	case kTheTimeoutScript:
 		movie->setPrimaryEventHandler(kEventTimeout, d.asString());

@@ -164,6 +164,9 @@ public:
 
 	uint _lastTimeOut;
 	uint _timeOutLength;
+	bool _timeOutKeyDown;
+	bool _timeOutMouse;
+	bool _timeOutPlay;
 
 private:
 	Window *_window;
