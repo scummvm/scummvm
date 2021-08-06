@@ -542,7 +542,7 @@ int MacFontManager::registerFontName(Common::String name, int preferredId) {
 		return _fontIds[name];
 
 	int id;
-	if (preferredId > -1 && !_fontInfo.contains(id)) {
+	if (preferredId > -1 && !_fontInfo.contains(preferredId)) {
 		id = preferredId;
 	} else {
 		// Preferred ID is already registered, find an unused one.
