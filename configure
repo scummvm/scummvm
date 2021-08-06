@@ -5037,6 +5037,7 @@ if test "$_text_console" = yes ; then
 #include <readline/history.h>
 
 int main(void) {
+	rl_hook_func_t f; // not present in apple's libedit
 	char *x = readline("");
 }
 EOF
