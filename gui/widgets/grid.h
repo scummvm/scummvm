@@ -145,6 +145,7 @@ protected:
 	int				_lastVisibleItem;
 	GridItemTray	*_tray;
 	String			_iconDir;
+	bool			_isGridInvalid;
 
 public:
 	int				_scrollWindowPaddingX;
@@ -174,6 +175,7 @@ public:
 	void setEntryList(Common::Array<GridItemInfo> *list);
 	void setAttributeValues(const Common::Array<U32String> &attrs);
 	void setTitlesVisible(bool vis);
+	void markGridAsInvalid() { _isGridInvalid = true; }
 	void setGroupHeaderFormat(const U32String &prefix, const U32String &suffix);
 
 	void groupEntries();

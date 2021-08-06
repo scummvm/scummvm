@@ -75,7 +75,7 @@ void GridItemWidget::move(int x, int y) {
 
 void GridItemWidget::drawWidget() {
 	if (_activeEntry->isHeader) {
-		const int indicatorSize = MIN(MIN((int)_h, _grid->_gridXSpacing), (int)_w - 1);
+		const int indicatorSize = MIN(MIN((int)_h, _grid->_gridXSpacing), (int)_w);
 		g_gui.theme()->drawFoldIndicator(Common::Rect(_x, _y, _x + indicatorSize, _y + indicatorSize), _grid->groupExpanded(_activeEntry->entryID));
 		g_gui.theme()->drawText(Common::Rect(_x + indicatorSize, _y, _x + _w, _y + _h), Common::U32String(_activeEntry->title),
 								ThemeEngine::kStateEnabled, Graphics::kTextAlignLeft, ThemeEngine::kTextInversionFocus, _h, false);
@@ -196,6 +196,7 @@ void GridWidget::toggleGroup(int groupID) {
 		_groupExpanded[groupID] = true;
 		sortGroups();
 	}
+	markGridAsInvalid();
 	// TODO: Replace reflowLayout with only the necessary sequence of steps
 	reflowLayout();
 }
@@ -558,8 +559,9 @@ bool GridWidget::calcVisibleEntries() {
 	nLastVisibleItem = lastItemBeforeY(_sortedEntryList, _scrollPos + _scrollWindowHeight);
 	nLastVisibleItem = (nLastVisibleItem < 0) ? 0 : nLastVisibleItem;
 
-	if ((nFirstVisibleItem != _firstVisibleItem) || (nLastVisibleItem != _lastVisibleItem)) {
+	if ((nFirstVisibleItem != _firstVisibleItem) || (nLastVisibleItem != _lastVisibleItem) || (_isGridInvalid)) {
 		needsReload = true;
+		_isGridInvalid = false;
 		_lastVisibleItem = nLastVisibleItem;
 		_firstVisibleItem = nFirstVisibleItem;
 
@@ -680,7 +682,6 @@ void GridWidget::assignEntriesToItems() {
 			// and move them out of view to keep them from registering mouse events.
 			item->setPos(_scrollWindowWidth, _scrollWindowHeight);
 			item->setVisible(false);
-			item->markAsDirty();
 		} else {
 			// Assign entry and update
 			item->setVisible(true);
