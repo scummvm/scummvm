@@ -493,11 +493,8 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 
 	_window->render();
 
-	// sound stuff
-	if (_frames[frameId]->_sound1.member || _frames[frameId]->_sound2.member)
-		playSoundChannel(frameId);
-	// this is currently only used in FPlayXObj
-	playQueuedSound();
+	playSoundChannel(frameId);
+	playQueuedSound(); // this is currently only used in FPlayXObj
 
 	if (_cursorDirty || _window->_newMovieStarted) {
 		// Force cursor update if a new movie's started.
