@@ -14,7 +14,6 @@ import machfs
 
 
 def file_to_macbin(f: machfs.File, name:str, encoding:str ) -> bytes:
-    name = name.encode("mac_roman").decode(encoding)
     oldFlags = f.flags >> 8
     newFlags = f.flags & 8
     macbin = pack(
