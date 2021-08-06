@@ -80,6 +80,8 @@ Movie::Movie(Window *window) {
 
 	_checkBoxType = 0;
 	_checkBoxAccess = 0;
+
+	_lastTimeOut = _lastEventTime;
 }
 
 Movie::~Movie() {

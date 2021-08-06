@@ -844,7 +844,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheTimeoutKeyDown);
 		break;
 	case kTheTimeoutLapsed:
-		getTheEntitySTUB(kTheTimeoutLapsed);
+		d.type = INT;
+		d.u.i = _vm->getMacTicks() - g_director->getCurrentMovie()->_lastTimeOut;
 		break;
 	case kTheTimeoutLength:
 		getTheEntitySTUB(kTheTimeoutLength);

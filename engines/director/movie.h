@@ -162,6 +162,8 @@ public:
 
 	uint16 _currentHiliteChannelId;
 
+	uint _lastTimeOut;
+
 private:
 	Window *_window;
 	DirectorEngine *_vm;
