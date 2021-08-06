@@ -51,7 +51,7 @@ Band *getBandAddress(BandID id);
 
 //  Initialize the band list
 void initBands(void);
-void saveBands(Common::OutSaveFile *out);
+void saveBands(Common::OutSaveFile *outS);
 void loadBands(Common::InSaveFile *in, int32 chunkSize);
 //  Cleanup the band list
 void cleanupBands(void);
@@ -82,7 +82,7 @@ public:
 	//  in a buffer
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	//  Place a Band from the inactive list into the active
 	//  list.
@@ -133,7 +133,7 @@ public:
 	//  buffer
 	int32 archiveSize(void);
 
-	void write(Common::OutSaveFile *out);
+	void write(Common::MemoryWriteStreamDynamic *out);
 
 	Actor *getLeader(void) {
 		return leader;
