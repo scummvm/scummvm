@@ -25,6 +25,7 @@
 
 #include "common/hashmap.h"
 #include "common/list.h"
+#include "common/stack.h"
 #include "common/events.h"
 
 #include "graphics/font.h"
@@ -280,14 +281,14 @@ public:
 
 	void clearWidgetRefs(MacWidget *widget);
 
+private:
+	void replaceCursorType(MacCursorType type);
+
+public:
+	MacCursorType getCursorType() const;
+
 	void pushCursor(MacCursorType type, Cursor *cursor = nullptr);
 	void replaceCursor(MacCursorType type, Cursor *cursor = nullptr);
-
-	void pushArrowCursor();
-	void pushBeamCursor();
-	void pushCrossHairCursor();
-	void pushCrossBarCursor();
-	void pushWatchCursor();
 
 	void pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor);
 	void pushCustomCursor(const Graphics::Cursor *cursor);
@@ -420,7 +421,7 @@ private:
 	void (*_redrawEngineCallback)(void *engine);
 
 	MacCursorType _tempType;
-	MacCursorType _cursorType;
+	Common::Stack<MacCursorType> _cursorTypeStack;
 	Cursor *_cursor;
 
 	MacWidget *_activeWidget;

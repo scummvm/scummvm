@@ -220,9 +220,8 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 	_fontMan = new MacFontManager(mode, language);
 
 	_cursor = nullptr;
-	_cursorType = _tempType = kMacCursorArrow;
-	CursorMan.replaceCursorPalette(palette, 0, ARRAYSIZE(palette) / 3);
-	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
+	_tempType = kMacCursorArrow;
+	replaceCursor(kMacCursorArrow);
 	CursorMan.showMouse(true);
 
 	loadDataBundle();
@@ -994,15 +993,15 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 				 ((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) ||
 				(_activeWidget && _activeWidget->isEditable() &&
 				 _activeWidget->getDimensions().contains(event.mouse.x, event.mouse.y))) {
-			if (_cursorType != kMacCursorBeam) {
-				_tempType = _cursorType;
+			if (getCursorType() != kMacCursorBeam) {
+				_tempType = getCursorType();
 				_inEditableArea = true;
 				replaceCursor(kMacCursorBeam);
 			}
 		} else {
 			// here, we use _inEditableArea is distinguish whether the current Beam cursor is set by director or ourself
 			// if we are not in the editable area but we are drawing the Beam cursor, then the cursor is set by director, thus we don't replace it
-			if (_cursorType == kMacCursorBeam && _inEditableArea) {
+			if (getCursorType() == kMacCursorBeam && _inEditableArea) {
 				replaceCursor(_tempType, _cursor);
 				_inEditableArea = false;
 			}
@@ -1159,53 +1158,45 @@ void MacWindowManager::zoomBoxInner(Common::Rect &r, Graphics::MacPlotData &pd) 
 /////////////////
 // Cursor stuff
 /////////////////
-void MacWindowManager::pushArrowCursor() {
-	CursorMan.pushCursor(macCursorArrow, 11, 16, 1, 1, 3);
-	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
+void MacWindowManager::replaceCursorType(MacCursorType type) {
+	if (_cursorTypeStack.empty())
+		_cursorTypeStack.push(type);
+	else
+		_cursorTypeStack.top() = type;
 }
 
-void MacWindowManager::pushBeamCursor() {
-	CursorMan.pushCursor(macCursorBeam, 11, 16, 1, 1, 3);
-	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
-}
+MacCursorType MacWindowManager::getCursorType() const {
+	if (_cursorTypeStack.empty())
+		return kMacCursorOff;
 
-void MacWindowManager::pushCrossHairCursor() {
-	CursorMan.pushCursor(macCursorCrossHair, 11, 16, 1, 1, 3);
-	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
-}
-
-void MacWindowManager::pushCrossBarCursor() {
-	CursorMan.pushCursor(macCursorCrossBar, 11, 16, 1, 1, 3);
-	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
-}
-
-void MacWindowManager::pushWatchCursor() {
-	CursorMan.pushCursor(macCursorWatch, 11, 16, 1, 1, 3);
-	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
+	return _cursorTypeStack.top();
 }
 
 void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
-	if (_cursorType == kMacCursorOff && type != _cursorType)
-		CursorMan.showMouse(true);
-
 	switch (type) {
 	case kMacCursorOff:
-		CursorMan.showMouse(false);
+		CursorMan.pushCursor(nullptr, 0, 0, 0, 0, 0);
+		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorArrow:
-		pushArrowCursor();
+		CursorMan.pushCursor(macCursorArrow, 11, 16, 1, 1, 3);
+		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorBeam:
-		pushBeamCursor();
+		CursorMan.pushCursor(macCursorBeam, 11, 16, 1, 1, 3);
+		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossHair:
-		pushCrossHairCursor();
+		CursorMan.pushCursor(macCursorCrossHair, 11, 16, 1, 1, 3);
+		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossBar:
-		pushCrossBarCursor();
+		CursorMan.pushCursor(macCursorCrossBar, 11, 16, 1, 1, 3);
+		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorWatch:
-		pushWatchCursor();
+		CursorMan.pushCursor(macCursorWatch, 11, 16, 1, 1, 3);
+		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCustom:
 		if (!cursor) {
@@ -1216,31 +1207,34 @@ void MacWindowManager::pushCursor(MacCursorType type, Cursor *cursor) {
 		pushCustomCursor(cursor);
 	}
 
-	_cursorType = type;
+	_cursorTypeStack.push(type);
 }
 
 void MacWindowManager::replaceCursor(MacCursorType type, Cursor *cursor) {
-	if (_cursorType == kMacCursorOff && type != _cursorType)
-		CursorMan.showMouse(true);
-
 	switch (type) {
 	case kMacCursorOff:
-		CursorMan.showMouse(false);
+		CursorMan.replaceCursor(nullptr, 0, 0, 0, 0, 0);
+		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorArrow:
 		CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
+		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorBeam:
-		CursorMan.replaceCursor(macCursorBeam, 11, 16, 3, 8, 3);
+		CursorMan.replaceCursor(macCursorBeam, 11, 16, 1, 1, 3);
+		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossHair:
 		CursorMan.replaceCursor(macCursorCrossHair, 11, 16, 1, 1, 3);
+		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCrossBar:
 		CursorMan.replaceCursor(macCursorCrossBar, 11, 16, 1, 1, 3);
+		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorWatch:
 		CursorMan.replaceCursor(macCursorWatch, 11, 16, 1, 1, 3);
+		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		break;
 	case kMacCursorCustom:
 		if (!cursor) {
@@ -1252,12 +1246,13 @@ void MacWindowManager::replaceCursor(MacCursorType type, Cursor *cursor) {
 		break;
 	}
 
-	_cursorType = type;
+	replaceCursorType(type);
 }
 
 void MacWindowManager::pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor) {
 	CursorMan.pushCursor(data, w, h, hx, hy, transcolor);
 	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
+	_cursorTypeStack.push(kMacCursorCustom);
 }
 
 void MacWindowManager::pushCustomCursor(const Graphics::Cursor *cursor) {
@@ -1268,17 +1263,14 @@ void MacWindowManager::pushCustomCursor(const Graphics::Cursor *cursor) {
 		CursorMan.pushCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
 	else
 		CursorMan.pushCursorPalette(cursorPalette, 0, 2);
+
+	_cursorTypeStack.push(kMacCursorCustom);
 }
 
 void MacWindowManager::popCursor() {
-	if (_cursorType == kMacCursorOff) {
-		CursorMan.showMouse(true);
-	} else {
-		CursorMan.popCursor();
-		CursorMan.popCursorPalette();
-		// since we may only have one cursor available when we using macCursor, so we restore the cursorType when we pop the cursor
-		_cursorType = kMacCursorArrow;
-	}
+	CursorMan.popCursor();
+	CursorMan.popCursorPalette();
+	_cursorTypeStack.pop();
 }
 
 ///////////////////
