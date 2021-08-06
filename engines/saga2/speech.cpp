@@ -575,7 +575,7 @@ void updateSpeech(void) {
 
 bool Speech::longEnough(void) {
 	if (speechFlags & spHasVoice)
-		return (!stillDoingVoice(sampleID[0]));
+		return (!stillDoingVoice(sampleID));
 	else
 		return (selectedButton != 0 || speechFinished.check());
 }

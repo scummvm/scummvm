@@ -461,6 +461,16 @@ bool stillDoingVoice(uint32 sampno) {
 	return result;
 }
 
+bool stillDoingVoice(uint32 s[]) {
+	uint32 *p = s;
+
+	while (*p) {
+		if (audio->saying(*p++))
+			return true;
+	}
+
+	return false;
+}
 
 /* ===================================================================== *
    SAGA compatible audio playback routines
