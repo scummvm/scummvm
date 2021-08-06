@@ -43,24 +43,8 @@ bool DirectorEngine::processEvents(bool captureClick) {
 	debugC(3, kDebugEvents, "@@@@   Processing events");
 	debugC(3, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
-	Movie *currentMovie = g_director->getCurrentMovie();
-	// update and register timeOut event
-	if (currentMovie && getMacTicks() - currentMovie->_lastTimeOut >= currentMovie->_timeOutLength) {
-		currentMovie->registerEvent(kEventTimeout);
-		currentMovie->_lastTimeOut = getMacTicks();
-	}
-
-	if (currentMovie && currentMovie->_timeOutPlay && g_director->_playbackPaused)
-		currentMovie->_lastTimeOut = getMacTicks();
-
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
-		// update timeOut related values
-		if (currentMovie && event.type == Common::EVENT_LBUTTONDOWN && g_director->getCurrentMovie()->_timeOutMouse)
-			currentMovie->_lastTimeOut = getMacTicks();
-		if (currentMovie && event.type == Common::EVENT_KEYDOWN && g_director->getCurrentMovie()->_timeOutKeyDown)
-			currentMovie->_lastTimeOut = getMacTicks();
-
 		if (!_wm->processEvent(event)) {
 			// We only want to handle these events if the event
 			// wasn't handled by the window manager.
@@ -197,6 +181,8 @@ bool Movie::processEvent(Common::Event &event) {
 			_lastEventTime = g_director->getMacTicks();
 			_lastClickTime = _lastEventTime;
 			_lastClickPos = pos;
+			if (_timeOutMouse)
+				_lastTimeOut = _lastEventTime;
 
 			debugC(3, kDebugEvents, "event: Button Down @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
 			registerEvent(kEventMouseDown, spriteId);
@@ -247,6 +233,9 @@ bool Movie::processEvent(Common::Event &event) {
 
 		_lastEventTime = g_director->getMacTicks();
 		_lastKeyTime = _lastEventTime;
+		if (_timeOutKeyDown)
+			_lastTimeOut = _lastEventTime;
+
 		registerEvent(kEventKeyDown);
 		return true;
 

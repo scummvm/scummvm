@@ -427,8 +427,16 @@ void Score::update() {
 			// but this is incorrect. The frame script is executed first.
 			_movie->processEvent(kEventStepMovie);
 		}
+		if (_movie->_timeOutPlay)
+			_movie->_lastTimeOut = _vm->getMacTicks();
 	}
 	// TODO Director 6 - another order
+
+	// TODO: Figure out when exactly timeout events are processed
+	if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
+		_movie->processEvent(kEventTimeout);
+		_movie->_lastTimeOut = _vm->getMacTicks();
+	}
 
 	// If we have more call stack frames than we started with, then we have a newly
 	// added frozen context. We'll deal with that later.
