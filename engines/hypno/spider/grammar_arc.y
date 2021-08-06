@@ -117,12 +117,22 @@ bline: F0TOK FILENAME {
 		shoot->animation = $2;
 		debug("F0 %s", $2); 
 	 	}
-     | ITOK  NAME  { debug("I %s", $2); }
-	 | A0TOK NUM NUM { debug("A0 %d %d", $2, $3); }
+     | ITOK  NAME  { 
+		 shoot->name = $2;
+		 debug("I %s", $2); 
+	   }
+	 | A0TOK NUM NUM { 
+		 shoot->position = Common::Point($2, $3);
+		 debug("A0 %d %d", $2, $3); 
+		}
 	 | B0TOK NUM NUM { debug("B0 %d %d", $2, $3); }
 	 | K0TOK NUM NUM { debug("K0 %d %d", $2, $3); }
-	 | P0TOK NUM NUM { debug("P0 %d %d", $2, $3); }
-	 | OTOK NUM NUM { debug("O %d %d", $2, $3); }
+	 | P0TOK NUM NUM {
+		debug("P0 %d %d", $2, $3); 
+	   }
+	 | OTOK NUM NUM { 
+		debug("O %d %d", $2, $3); 
+	   }
 	 | CTOK NUM  { debug("C %d", $2); } 
 	 | HTOK NUM  { debug("H %d", $2); }
 	 | WTOK NUM  { debug("W %d", $2); }
@@ -130,8 +140,8 @@ bline: F0TOK FILENAME {
 	 | SNTOK FILENAME enc { debug("SN %s", $2); }
 	 | ZTOK {
 		g_parsedArc.shoots.push_back(*shoot); 
-		delete shoot; 
-		shoot = nullptr;
+		//delete shoot; 
+		//shoot = nullptr;
 	    debug("Z"); 
 		}
      ;

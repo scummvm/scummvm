@@ -31,6 +31,8 @@
 #include "common/array.h"
 #include "common/rect.h"
 
+#include "video/smk_decoder.h"
+
 namespace Hypno {
 
 enum HotspotType {
@@ -48,7 +50,20 @@ typedef Common::List<Action*> Actions;
 class Hotspot;
 typedef Common::Array<Hotspot> Hotspots;
 typedef Common::Array<Hotspots *> HotspotsStack;
-typedef Common::List<Common::String> Movies;
+
+class MVideo {
+  public:
+    MVideo(Common::String, Common::Point, bool, bool);
+    Common::String path;
+	Common::Point position;
+	bool scaled;
+	bool transparent;
+	Video::SmackerDecoder *videoDecoder;
+	const Graphics::Surface *currentFrame;
+	uint32 finishBeforeEnd;
+};
+
+typedef Common::Array<MVideo> Videos;
 
 class Hotspot { 
   public:
@@ -121,22 +136,33 @@ class Global : public Action {
 
 class Shoot {
   public:
+    Common::String name;
 	Common::String animation;
+	Common::Point position;
 };
 
-typedef Common::List<Shoot> Shoots;
+typedef Common::Array<Shoot> Shoots;
+
+class ShootInfo {
+  public:
+    Common::String name;
+	uint32 timestamp; 
+};
+
+typedef Common::List<ShootInfo> ShootInfos;
 
 class ArcadeShooting {
   public:
 	Common::String background;
 	Common::String player;
 	Shoots shoots;
+    ~ArcadeShooting() { debug("destroying arcade shooting"); };
 };
 
 class Level {
   public:
 	Hotspots hots;
-	Movies intros;
+	Videos intros;
 	ArcadeShooting arcade;
 };
 
