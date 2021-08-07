@@ -727,7 +727,7 @@ void Score::playSoundChannel(uint16 frameId) {
 	} else if (frame->_soundType1 >= kMinSampledMenu && frame->_soundType1 <= kMaxSampledMenu) {
 		sound->playExternalSound(frame->_soundType1, frame->_sound1.member, 1);
 	} else {
-		sound->playCastMember(frame->_sound1, 1, false);
+		sound->playCastMember(frame->_sound1, 1);
 	}
 
 	if (sound->isChannelPuppet(2)) {
@@ -735,7 +735,7 @@ void Score::playSoundChannel(uint16 frameId) {
 	} else if (frame->_soundType2 >= kMinSampledMenu && frame->_soundType2 <= kMaxSampledMenu) {
 		sound->playExternalSound(frame->_soundType2, frame->_sound2.member, 2);
 	} else {
-		sound->playCastMember(frame->_sound2, 2, false);
+		sound->playCastMember(frame->_sound2, 2);
 	}
 
 	// Channels above 2 are only usable by Lingo.

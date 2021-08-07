@@ -129,7 +129,8 @@ struct SoundID {
 
 struct SoundChannel {
 	Audio::SoundHandle handle;
-	SoundID lastPlayingSound;
+	SoundID lastPlayedSound;
+	bool stopOnZero; // Should the sound be stopped when the channel contains cast member 0?
 	byte volume;
 	FadeParams *fade;
 
@@ -141,7 +142,7 @@ struct SoundChannel {
 	// And we will override the sound when ever the sound is changing. thus we use a flag to indicate whether the movie is changed.
 	bool movieChanged;
 
-	SoundChannel(): handle(), lastPlayingSound(SoundID()), volume(255), fade(nullptr), puppet(SoundID()), newPuppet(false), movieChanged(false) {}
+	SoundChannel(): handle(), lastPlayedSound(SoundID()), stopOnZero(true), volume(255), fade(nullptr), puppet(SoundID()), newPuppet(false), movieChanged(false) {}
 };
 
 class DirectorSound {
@@ -170,8 +171,8 @@ public:
 	void playFile(Common::String filename, uint8 soundChannel);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
-	void playSound(SoundID soundId, uint8 soundChannel);
-	void playCastMember(CastMemberID memberID, uint8 soundChannel, bool allowRepeat = true);
+	void playSound(SoundID soundId, uint8 soundChannel, bool forPuppet = false);
+	void playCastMember(CastMemberID memberID, uint8 soundChannel, bool forPuppet = false);
 	void playExternalSound(uint16 menu, uint16 submenu, uint8 soundChannel);
 	void playFPlaySound(const Common::Array<Common::String> &fplayList);
 	void playFPlaySound();
@@ -184,8 +185,9 @@ public:
 	void loadSampleSounds(uint type);
 	void unloadSampleSounds();
 
-	void setLastPlaySound(uint8 soundChannel, SoundID soundId);
-	bool checkLastPlaySound(uint8 soundChannel, const SoundID &soundId);
+	void setLastPlayedSound(uint8 soundChannel, SoundID soundId, bool stopOnZero = true);
+	bool isLastPlayedSound(uint8 soundChannel, const SoundID &soundId);
+	bool shouldStopOnZero(uint8 soundChannel);
 
 	bool isChannelPuppet(uint8 soundChannel);
 	void setPuppetSound(SoundID soundId, uint8 soundChannel);
@@ -214,7 +216,7 @@ public:
 	AudioDecoder() {};
 	virtual ~AudioDecoder() {};
 public:
-	virtual Audio::AudioStream *getAudioStream(bool looping = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) { return nullptr; }
+	virtual Audio::AudioStream *getAudioStream(bool looping = false, bool forPuppet = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) { return nullptr; }
 };
 
 class SNDDecoder : public AudioDecoder {
@@ -226,7 +228,7 @@ public:
 	void loadExternalSoundStream(Common::SeekableReadStreamEndian &stream);
 	bool processCommands(Common::SeekableReadStreamEndian &stream);
 	bool processBufferCommand(Common::SeekableReadStreamEndian &stream);
-	Audio::AudioStream *getAudioStream(bool looping = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
+	Audio::AudioStream *getAudioStream(bool looping = false, bool forPuppet = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
 	bool hasLoopBounds();
 
 private:
@@ -246,7 +248,7 @@ public:
 
 	void setPath(Common::String &path);
 
-	Audio::AudioStream *getAudioStream(bool looping = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
+	Audio::AudioStream *getAudioStream(bool looping = false, bool forPuppet = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
 
 private:
 	Common::String _path;
