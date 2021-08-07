@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-04 18:28+0000\n"
+"POT-Creation-Date: 2021-08-07 08:44+0000\n"
 "PO-Revision-Date: 2021-08-04 12:37+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2158,7 +2158,7 @@ msgstr ""
 "을 비롯해, 잘 알려지지 않은 어드벤처 게임과 진정한 숨겨진 보석을 찾아볼 수 있"
 "습니다."
 
-#: engines/advancedDetector.cpp:228
+#: engines/advancedDetector.cpp:231
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "불법복제된 게임이 감지되었습니다. 이 경우 어떤 지원도 제공하지 않습니다"
