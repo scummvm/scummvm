@@ -1194,7 +1194,18 @@ void LB::b_delay(int nargs) {
 
 void LB::b_do(int nargs) {
 	Datum d = g_lingo->pop();
-	warning("STUB: b_do(%s)", d.asString().c_str());
+
+	// FIXME: correct way for finding the script id
+	// movie script 65535 is for startup scripts currently
+	// i think we don't find to find the empty slot. Maybe finding a constant slot for "do" command is ok. e.g. 65534.
+	// And we can always overwrite the script we add while executing "do" command
+	LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
+	int counter = 65535;
+	while (mainArchive->getScriptContext(kMovieScript, counter))
+		counter--;
+
+	mainArchive->addCode(Common::U32String(d.asString(), Common::kMacRoman), kMovieScript, 65535);
+	g_lingo->executeScript(kMovieScript, CastMemberID(counter, 0));
 }
 
 void LB::b_go(int nargs) {
