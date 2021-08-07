@@ -34,7 +34,10 @@ Graphics::Font *ALFONT_FONT::getFont() {
 #ifdef USE_FREETYPE2
 	if (!_fonts.contains(_size)) {
 		// Instantiate the raw TTF data into a font of the given size
-		_fonts[_size] = Graphics::loadTTFFont(_ttfData, _size);
+		Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome;
+		if (ShouldAntiAliasText())
+			renderMode = Graphics::kTTFRenderModeLight;
+		_fonts[_size] = Graphics::loadTTFFont(_ttfData, _size, Graphics::kTTFSizeModeCharacter, 0, renderMode);
 		assert(_fonts[_size]);
 	}
 
