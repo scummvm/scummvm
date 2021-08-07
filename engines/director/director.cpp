@@ -58,6 +58,8 @@ DirectorEngine *g_director;
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	g_director = this;
 
+	_dirSeparator = ':';
+
 	parseOptions();
 
 	// Setup mixer
@@ -102,7 +104,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_playbackPaused = false;
 	_skipFrameAdvance = false;
 	_centerStage = true;
-	_dirSeparator = ':';
 
 	_surface = nullptr;
 }
