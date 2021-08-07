@@ -87,6 +87,7 @@ Common::Error Window::loadInitialMovie() {
 
 			LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
 			mainArchive->addCode(Common::U32String(script, Common::kMacRoman), kMovieScript, 65535);
+			_currentMovie->processEvent(kEventStartUp);
 
 			free(script);
 		} else {
