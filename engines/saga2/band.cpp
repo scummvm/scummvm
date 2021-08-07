@@ -132,6 +132,14 @@ Band *BandList::newBand(BandID id) {
 
  void BandList::addBand(Band *b) {
 	for (int i = 0; i < kNumBands; i++) {
+		if (_list[i] == b) {
+			warning("Band %d (%p) already added", i, (void *)b);
+
+			return;
+		}
+	}
+
+	for (int i = 0; i < kNumBands; i++) {
 		if (!_list[i]) {
 			_list[i] = b;
 
@@ -236,8 +244,10 @@ void loadBands(Common::InSaveFile *in, int32 chunkSize) {
 
 void cleanupBands(void) {
 	for (int i = 0; i < BandList::kNumBands; i++) {
-		if (g_vm->_bandList->_list[i])
+		if (g_vm->_bandList->_list[i]) {
 			delete g_vm->_bandList->_list[i];
+			g_vm->_bandList->_list[i] = nullptr;
+		}
 	}
 }
 
@@ -284,8 +294,6 @@ Band::Band(Common::InSaveFile *in) {
 
 		debugC(4, kDebugSaveload , "... id = %d", id);
 	}
-
-	g_vm->_bandList->addBand(this);
 }
 
 //----------------------------------------------------------------------
