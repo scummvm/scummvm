@@ -356,18 +356,18 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 void DirectorSound::changingMovie() {
 	for (uint i = 0; i < _channels.size(); i++) {
 		setPuppetSound(SoundID(), i + 1); // disable puppet sound
-		_channels[i]._movieChanged = true;
+		_channels[i].movieChanged = true;
 	}
 	unloadSampleSounds(); // TODO: we can possibly keep this between movies
 }
 
 void DirectorSound::setLastPlaySound(uint8 soundChannel, SoundID soundId) {
 	_channels[soundChannel - 1].lastPlayingSound = soundId;
-	_channels[soundChannel - 1]._movieChanged = false;
+	_channels[soundChannel - 1].movieChanged = false;
 }
 
 bool DirectorSound::checkLastPlaySound(uint8 soundChannel, const SoundID &soundId) {
-	return !_channels[soundChannel - 1]._movieChanged && _channels[soundChannel - 1].lastPlayingSound == soundId;
+	return !_channels[soundChannel - 1].movieChanged && _channels[soundChannel - 1].lastPlayingSound == soundId;
 }
 
 void DirectorSound::stopSound(uint8 soundChannel) {

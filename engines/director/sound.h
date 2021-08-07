@@ -139,9 +139,9 @@ struct SoundChannel {
 
 	// this indicate whether the sound is playing across the movie. Because the cast name may be the same while the actual sounds are changing.
 	// And we will override the sound when ever the sound is changing. thus we use a flag to indicate whether the movie is changed.
-	bool _movieChanged;
+	bool movieChanged;
 
-	SoundChannel(): handle(), lastPlayingSound(SoundID()), volume(255), fade(nullptr), puppet(SoundID()), newPuppet(false), _movieChanged(false) {}
+	SoundChannel(): handle(), lastPlayingSound(SoundID()), volume(255), fade(nullptr), puppet(SoundID()), newPuppet(false), movieChanged(false) {}
 };
 
 class DirectorSound {
