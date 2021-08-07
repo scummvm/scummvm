@@ -132,7 +132,8 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 		 * We change it to use fuzzy logic.
 		 * By default the option is off.
 		 */
-		_spaceshipFuzzyLogicCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.FuzzyMode", _("~F~uzzy Logic in SpaceShip Active"));
+		_spaceshipFuzzyLogicCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.FuzzyMode", _("Improve Selenitic Age puzzle ~a~ccessibility"),
+																			_("Allow solving Selenitic Age audio puzzles with more error margin."));
 	}
 
 	_addCdromDelayCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.CdromDelay", _("Simulate loading times of old CD drives"));
