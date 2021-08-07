@@ -163,11 +163,10 @@ const Common::ArchiveMemberPtr AndroidAssetArchive::getMember(const Common::Path
 }
 
 Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const Common::Path &path) const {
-	Common::String name = path.toString();
-	if (!hasFile(name)) {
+	if (!hasFile(path)) {
 		return nullptr;
 	}
-	return new AssetInputStream(_am, name);
+	return new AssetInputStream(_am, path.toString());
 }
 
 #endif
