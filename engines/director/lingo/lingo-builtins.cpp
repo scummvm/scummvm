@@ -1204,7 +1204,7 @@ void LB::b_do(int nargs) {
 	while (mainArchive->getScriptContext(kMovieScript, counter))
 		counter--;
 
-	mainArchive->addCode(Common::U32String(d.asString(), Common::kMacRoman), kMovieScript, 65535);
+	mainArchive->addCode(Common::U32String(d.asString(), Common::kMacRoman), kMovieScript, counter);
 	g_lingo->executeScript(kMovieScript, CastMemberID(counter, 0));
 }
 
