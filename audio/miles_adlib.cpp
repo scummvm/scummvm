@@ -1026,8 +1026,15 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 		break;
 
 	case MILES_CONTROLLER_PITCH_RANGE:
+		// Note that this is in fact the MIDI data entry MSB controller. To use
+		// this to set pitch bend range, the pitch bend range RPN should first
+		// be selected using the RPN MSB and LSB controllers.
+		// MSS does not support the RPN controllers and assumes that any use of
+		// the data entry MSB controller is to set the pitch bend range.
+
 		// Miles Audio 3 feature
-		_midiChannels[midiChannel].currentPitchRange = controllerValue;
+		if (_milesVersion == MILES_VERSION_3)
+			_midiChannels[midiChannel].currentPitchRange = controllerValue;
 		break;
 
 	case MIDI_CONTROLLER_RESET_ALL_CONTROLLERS:
