@@ -39,12 +39,11 @@ FSNode::FSNode(const Path &p) {
 	assert(g_system);
 	FilesystemFactory *factory = g_system->getFilesystemFactory();
 	AbstractFSNode *tmp = nullptr;
-	String s = p.toString();
 
-	if (s.empty() || s == ".")
+	if (p.empty() || p == Path("."))
 		tmp = factory->makeCurrentDirectoryFileNode();
 	else
-		tmp = factory->makeFileNodePath(s);
+		tmp = factory->makeFileNodePath(p.toString());
 	_realNode = SharedPtr<AbstractFSNode>(tmp);
 }
 
