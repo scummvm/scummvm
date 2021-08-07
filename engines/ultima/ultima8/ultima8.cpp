@@ -1232,7 +1232,7 @@ void Ultima8Engine::syncSoundSettings() {
 	AudioMixer *audioMixer = AudioMixer::get_instance();
 	MidiPlayer *midiPlayer = audioMixer ? audioMixer->getMidiPlayer() : nullptr;
 	if (midiPlayer)
-		midiPlayer->setVolume(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
+		midiPlayer->syncSoundSettings();
 }
 
 void Ultima8Engine::applyGameSettings() {

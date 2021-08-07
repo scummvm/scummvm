@@ -24,15 +24,16 @@
 #define ULTIMA8_AUDIO_MIDI_PLAYER_H
 
 #include "audio/mixer.h"
-#include "audio/midiplayer.h"
+#include "audio/mididrv_ms.h"
+#include "audio/midiparser.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-class MidiPlayer : public Audio::MidiPlayer {
+class MidiPlayer {
 public:
 	MidiPlayer();
-	~MidiPlayer() override;
+	~MidiPlayer();
 
 	/**
 	 * Load the specified music data
@@ -45,6 +46,21 @@ public:
 	 * beginning.
 	 */
 	void play(int trackNo, int branchNo);
+
+	/**
+	 * Stop the currently playing track.
+	 */
+	void stop();
+
+	/**
+	 * Returns true if a track is playing.
+	 */
+	bool isPlaying();
+
+	/**
+	 * Synchronizes the user volume settings with those of the game.
+	 */
+	void syncSoundSettings();
 
 	/**
 	 * Sets whether the music should loop
@@ -67,7 +83,14 @@ public:
 		assert(seq == 0 || seq == 1);
 		return _callbackData[seq];
 	}
+
+	void onTimer();
+	static void timerCallback(void *data);
+
 private:
+	MidiDriver_Multisource *_driver;
+	MidiParser *_parser;
+
 	bool _isFMSynth;
 	static byte _callbackData[2];
 };
