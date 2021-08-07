@@ -232,7 +232,7 @@ void SKFPlayer::run() {
 				bool stereo = (buf[8] == 2);
 				s = new RawAudioSample(buf + 34, bufsize - 34,
 				                                  rate, true, stereo);
-				audioproc->playSample(s, 0x60, 0);
+				audioproc->playSample(s, 0x60, 0, true);
 				// FIXME: memory leak! (sample is never deleted)
 			}
 

@@ -156,7 +156,7 @@ bool AudioProcess::continueSpeech(SampleInfo &si) {
 
 	// hack to prevent playSample from deleting 'si'
 	si._channel = -1;
-	int channel = playSample(sample, 200, 0);
+	int channel = playSample(sample, 200, 0, true);
 	if (channel == -1)
 		return false;
 
@@ -224,9 +224,9 @@ bool AudioProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	return true;
 }
 
-int AudioProcess::playSample(AudioSample *sample, int priority, int loops, uint32 pitchShift, int16 lVol, int16 rVol, bool ambient) {
+int AudioProcess::playSample(AudioSample *sample, int priority, int loops, bool isSpeech, uint32 pitchShift, int16 lVol, int16 rVol, bool ambient) {
 	AudioMixer *mixer = AudioMixer::get_instance();
-	int channel = mixer->playSample(sample, loops, priority, false, pitchShift, lVol, rVol, ambient);
+	int channel = mixer->playSample(sample, loops, priority, false, isSpeech, pitchShift, lVol, rVol, ambient);
 
 	if (channel == -1) return channel;
 
@@ -281,7 +281,7 @@ void AudioProcess::playSFX(int sfxNum, int priority, ObjId objId, int loops,
 		if (objId) calculateSoundVolume(objId, lVol, rVol);
 	}
 
-	int channel = playSample(sample, priority, loops, pitchShift, (lVol * volume) / 256, (rVol * volume) / 256, ambient);
+	int channel = playSample(sample, priority, loops, false, pitchShift, (lVol * volume) / 256, (rVol * volume) / 256, ambient);
 	if (channel == -1) return;
 
 	// Update list
@@ -377,7 +377,7 @@ bool AudioProcess::playSpeech(const Std::string &barked, int shapeNum, ObjId obj
 	AudioSample *sample = speechflex->getSample(index);
 	if (!sample) return false;
 
-	int channel = playSample(sample, 200, 0, pitchShift, volume, volume);
+	int channel = playSample(sample, 200, 0, true, pitchShift, volume, volume);
 
 	if (channel == -1) return false;
 

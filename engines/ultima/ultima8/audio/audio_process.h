@@ -117,9 +117,9 @@ public:
 
 	//! play a sample (without storing a SampleInfo)
 	//! returns channel sample is played on, or -1
-	int playSample(AudioSample *sample, int priority, int loops,
+	int playSample(AudioSample *sample, int priority, int loops, bool isSpeech = false,
 				   uint32 pitchShift = PITCH_SHIFT_NONE, int16 lVol = 255,
-				   int16 rVol = 255, bool ambient=false);
+				   int16 rVol = 255, bool ambient = false);
 
 	//! pause all currently playing samples
 	void pauseAllSamples();

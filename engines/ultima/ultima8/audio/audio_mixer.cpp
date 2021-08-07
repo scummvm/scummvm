@@ -87,7 +87,7 @@ void AudioMixer::reset() {
 	Unlock();
 }
 
-int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool paused, uint32 pitch_shift, int lvol, int rvol, bool ambient) {
+int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool paused, bool isSpeech, uint32 pitch_shift, int lvol, int rvol, bool ambient) {
 	int lowest = -1;
 	int lowprior = 65536;
 
@@ -109,7 +109,7 @@ int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool pau
 	}
 
 	if (i != maxchan || lowprior < priority)
-		_channels[lowest]->playSample(sample, loop, priority, paused, pitch_shift, lvol, rvol);
+		_channels[lowest]->playSample(sample, loop, priority, paused, isSpeech, pitch_shift, lvol, rvol);
 	else
 		lowest = -1;
 
