@@ -60,10 +60,10 @@ private:
 	HolomapSort _holomapSort[512];
 
 	struct HolomapProjectedPos {
-		int16 x = 0;
-		int16 y = 0;
-		int16 unk1 = 0;
-		int16 unk2 = 0;
+		int16 x1 = 0;
+		int16 y1 = 0;
+		int16 x2 = 0;
+		int16 y2 = 0;
 	};
 	HolomapProjectedPos _projectedSurfacePositions[561];
 	int _projectedSurfaceIndex = 0;
