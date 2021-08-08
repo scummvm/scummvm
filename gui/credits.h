@@ -764,6 +764,8 @@ static const char *credits[] = {
 "C2""Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task) (retired)",
 "C0""Robin Watts",
 "C2""ARM assembly routines for nice speedups on several ports; improvements to the sound mixer",
+"C0""Coen Rampen",
+"C2""Sound improvements",
 "",
 "",
 "C1""Website (code)",
