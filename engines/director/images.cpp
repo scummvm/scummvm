@@ -149,6 +149,7 @@ void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, ui
 	case 4:
 		switch (toBpp) {
 		case 1:
+			// maybe this parts should also calculated by wm->findBestColor
 			if (red == 255 && blue == 255 && green == 255) {
 				*((byte*)surfacePointer) = 255;
 			} else if (red == 0 && blue == 0 && green == 0) {
@@ -196,7 +197,6 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
 	// logic above does not fit the situation when _bitsPerPixel == 1, need to fix.
-	debug("%d", _bitsPerPixel);
 	if ((stream.size() == _pitch * _surface->h * _bitsPerPixel / 8) || (_bitsPerPixel != 1 && _version < kFileVer400 && stream.size() >= _surface->h * _surface->w * _bitsPerPixel / 8)) {
 		debugC(6, kDebugImages, "Skipping compression");
 		for (int i = 0; i < stream.size(); i++) {
@@ -206,6 +206,8 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 		while (!stream.eos()) {
 			// TODO: D3 32-bit bitmap casts seem to just be ARGB pixels in a row and not RLE.
 			// Determine how to distinguish these different types. Maybe stage version.
+			// for D4, 32-bit bitmap is RLE, and the encoding format is every line contains the a? r g b at the same line of the original image.
+			// i.e. for every line, we shall combine 4 parts to create the original image.
 			int data = stream.readByte();
 			int len = data + 1;
 			if ((data & 0x80) != 0) {
@@ -223,7 +225,6 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	debug("%d %d %d", pixels.size(), _surface->w, _surface->h);
 	if (pixels.size() < (uint32)_surface->w * _surface->h * (_bitsPerPixel / 8)) {
 		int tail = (_surface->w * _surface->h * _bitsPerPixel / 8) - pixels.size();
 
@@ -271,11 +272,6 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 					break;
 
 				case 16:
-//					*((uint16*)_surface->getBasePtr(x, y)) = _surface->format.RGBToColor(
-//						(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
-//						(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
-//						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
-//						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
 					convertPixelIntoSurface(_surface->getBasePtr(x, y),
 						(_bitsPerPixel / 8),
 						_surface->format.bytesPerPixel,
