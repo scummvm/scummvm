@@ -466,6 +466,10 @@ void GridWidget::setAttributeValues(const Common::Array<U32String> &attrs) {
 	}
 }
 
+void GridWidget::setMetadataNames(const Common::StringMap &metadata) {
+	_metadataNames = metadata;
+}
+
 void GridWidget::groupEntries() {
 	_groupExpanded.clear();
 	_groupHeaders.clear();
@@ -496,7 +500,12 @@ void GridWidget::sortGroups() {
 
 	for (uint i = 0; i != _groupHeaders.size(); ++i) {
 		U32String header = _groupHeaders[i];
-		U32String displayedHeader = header;
+		U32String displayedHeader;
+		if (_metadataNames.contains(header)) {
+			displayedHeader = _metadataNames[header];
+		} else {
+			displayedHeader = header;
+		}
 		uint groupID = _groupValueIndex[header];
 
 		_sortedEntryList.push_back(GridItemInfo(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix, groupID));

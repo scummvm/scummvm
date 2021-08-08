@@ -161,6 +161,19 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName)
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	addChooserButtons();
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
+	Common::FSDirectory *mdDir = new Common::FSDirectory(Common::String("./metadata/"));
+	Common::ArchiveMemberList mdFiles;
+	mdDir->listMatchingMembers(mdFiles, "*.xml");
+	for (Common::ArchiveMemberList::iterator md = mdFiles.begin(); md != mdFiles.end(); ++md) {
+		if (_metadataParser.loadStream((*md)->createReadStream()) == false) {
+			warning("Failed to load XML file '%s'", (*md)->getDisplayName().c_str());
+			_metadataParser.close();
+		}
+		if (_metadataParser.parse() == false) {
+			warning("Failed to parse XML file '%s'", (*md)->getDisplayName().c_str());
+			_metadataParser.close();
+		}
+	}
 }
 
 LauncherDialog::~LauncherDialog() {
@@ -857,6 +870,7 @@ void LauncherSimple::build() {
 	_grpChooserPopup->appendEntry(_("None"), kGroupByNone);
 	_grpChooserPopup->appendEntry(_("First letter"), kGroupByFirstLetter);
 	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
+	_grpChooserPopup->appendEntry(_("Series"), kGroupBySeries);
 	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
 	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
 	_grpChooserPopup->setSelected(_groupBy);
@@ -1048,6 +1062,15 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 		_list->setAttributeValues(attrs);
 		_list->groupByAttribute();
 		break;
+	case kGroupBySeries:
+		for (uint i = 0; i < metadata.size(); ++i) {
+			U32String gameid = metadata[i]->getVal("gameid");
+			attrs.push_back(_metadataParser._gameInfo[gameid].series_id);
+		}
+		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		_list->setAttributeValues(attrs);
+		_list->groupByAttribute();
+		break;
 	case kGroupByLanguage:
 		for (uint i = 0; i < metadata.size(); ++i) {
 			U32String language = metadata[i]->contains(String("language")) ?
@@ -1161,12 +1184,12 @@ LauncherGrid::LauncherGrid(const U32String &title)
 	: LauncherDialog(title),
 	_grid(nullptr), _addButton(nullptr), _startButton(nullptr),
 	_loadButton(nullptr), _editButton(nullptr), _removeButton(nullptr) {
-
 	build();
 }
 
 void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata) {
 	U32StringArray attrs;
+	Common::StringMap metadataNames;
 	switch (_groupBy) {
 	case kGroupByFirstLetter:
 		for (uint i = 0; i < metadata.size(); ++i) {
@@ -1182,8 +1205,31 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 								metadata[i]->getVal(String("engineid")) : String("Unknown Engine");
 			attrs.push_back(engineid);
 		}
-		_grid->setGroupHeaderFormat(U32String(""), U32String(" Games"));
+		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
 		_grid->setAttributeValues(attrs);
+		metadataNames[""] = "Unknown Engine";
+		for (auto i = _metadataParser._engineInfo.begin(); i != _metadataParser._engineInfo.end(); ++i) {
+			if (i->_value.alt_name.empty()) {
+				metadataNames[i->_key] = i->_value.name;
+			} else {
+				metadataNames[i->_key] = Common::String::format("%s (%s)", i->_value.name.c_str(), i->_value.alt_name.c_str());
+			}
+		}
+		_grid->setMetadataNames(metadataNames);
+		_grid->groupEntries();
+		break;
+	case kGroupBySeries:
+		for (uint i = 0; i < metadata.size(); ++i) {
+			U32String gameid = metadata[i]->getVal(String("gameid"));
+			attrs.push_back(_metadataParser._gameInfo[gameid].series_id);
+		}
+		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setAttributeValues(attrs);
+		metadataNames[""] = "No Series";
+		for (auto i = _metadataParser._seriesInfo.begin(); i != _metadataParser._seriesInfo.end(); ++i) {
+			metadataNames[i->_key] = i->_value.name;
+		}
+		_grid->setMetadataNames(metadataNames);
 		_grid->groupEntries();
 		break;
 	case kGroupByLanguage:
@@ -1347,6 +1393,7 @@ void LauncherGrid::build() {
 	_grpChooserPopup->appendEntry(_("None"), kGroupByNone);
 	_grpChooserPopup->appendEntry(_("First letter"), kGroupByFirstLetter);
 	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
+	_grpChooserPopup->appendEntry(_("Series"), kGroupBySeries);
 	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
 	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
 	_grpChooserPopup->setSelected(_groupBy);

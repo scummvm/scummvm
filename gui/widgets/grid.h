@@ -122,6 +122,7 @@ protected:
 	U32String									_groupHeaderPrefix;
 	U32String									_groupHeaderSuffix;
 	Common::Array<U32String>					_groupHeaders;
+	Common::StringMap							_metadataNames;
 	Common::HashMap<int, Common::Array<int> >	_itemsInGroup;
 
 	Common::Array<GridItemWidget *>		_gridItems;
@@ -174,6 +175,7 @@ public:
 	bool calcVisibleEntries();
 	void setEntryList(Common::Array<GridItemInfo> *list);
 	void setAttributeValues(const Common::Array<U32String> &attrs);
+	void setMetadataNames(const Common::StringMap &metadata);
 	void setTitlesVisible(bool vis);
 	void markGridAsInvalid() { _isGridInvalid = true; }
 	void setGroupHeaderFormat(const U32String &prefix, const U32String &suffix);
