@@ -585,7 +585,7 @@ int ccInstance::Run(int32_t curpc) {
 				registers[SREG_MAR].WriteValue(arg2);
 				break;
 			default:
-				cc_error("unexpected data size for WRITELIT op: %d", arg1.IValue);
+				warning("unexpected data size for WRITELIT op: %d", arg1.IValue);
 				break;
 			}
 			break;

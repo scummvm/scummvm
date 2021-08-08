@@ -1833,9 +1833,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// Post 2.5 games that aren't currently supported
 	// uses unsupported agslua plugin
 	UNSUPPORTED_GAME_ENTRY("allthewaydown", "deepuns3.exe", "6c0b5468657c22d62201e3769cd8d2b3", 29830067),
-	// MMM13 crashes during the intro with an error
-	// Error: unexpected data size for WRITELIT op: 8
-	GAME_ENTRY("mmm13", "traum.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6703140),
 	// Commercial game that likely uses custom extensions. Not only does it seem
 	// to use AGSController plugin built-in, even when I hooked up AGSController for
 	// the stand-alone AGS 3.5 interpreter, it hangs just like in ScummVM
@@ -2957,6 +2954,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mmm11", "MMMania 2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7872940),
 	GAME_ENTRY("mmm11", "MMMania.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6123337),
 	GAME_ENTRY("mmm12", "Giga.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4141502),
+	GAME_ENTRY("mmm13", "traum.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6703140),
 	GAME_ENTRY("mmm14", "msytr.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5836799),
 	GAME_ENTRY("mmm14", "msytr.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5863583),
 	GAME_ENTRY("mmm15", "MMM15.exe", "06a03fe35791b0578068ab1873455463", 8503015),
