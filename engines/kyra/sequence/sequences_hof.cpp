@@ -986,15 +986,11 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 		if (wsaObj || callback)
 			_screen->copyPage(12, 2);
 
-		int frameIndex = _animCurrentFrame;
-		if (wsaObj)
-			frameIndex %= wsaObj->frames();
-
 		if (callback)
-			(this->*callback)(wsaObj, x, y, frameIndex);
+			(this->*callback)(wsaObj, x, y, wsaObj ? _animCurrentFrame % wsaObj->frames() : _animCurrentFrame);
 
 		if (wsaObj)
-			wsaObj->displayFrame(frameIndex, 2, x, y, 0, 0, 0);
+			wsaObj->displayFrame(_animCurrentFrame % wsaObj->frames(), 2, x, y, 0, 0, 0);
 
 		_screen->copyPage(2, 12);
 
@@ -1095,7 +1091,7 @@ void SeqPlayer_HOF::playDialogueAnimation(uint16 strID, uint16 soundID, int text
 	if (ABS(animLastFrame) < curframe)
 		curframe = ABS(animLastFrame);
 
-	if (curframe == animStartFrame)
+	if (curframe == animStartFrame && animStartFrame < animLastFrame)
 		curframe++;
 
 	_animCurrentFrame = curframe;
@@ -1297,7 +1293,7 @@ void SeqPlayer_HOF::playSoundEffect(uint16 id, int16 vol) {
 void SeqPlayer_HOF::playSoundAndDisplaySubTitle(uint16 id) {
 	assert(id < _sequenceSoundListSize);
 
-	if (id < 12 && !_vm->gameFlags().isDemo && _vm->textEnabled())
+	if (id < 12 && !(_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) && _vm->textEnabled())
 		displaySubTitle(id, 160, 168, _textDuration[id], 160);
 
 	_vm->sound()->voicePlay(_sequenceSoundList[id], 0);
