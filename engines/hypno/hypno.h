@@ -54,10 +54,12 @@ enum {
 };
 
 typedef Common::Array<byte> ByteArray;
-typedef struct LibData {
-	Common::Array<Common::String> filenames;
+typedef struct FileData {
+	Common::String name;
 	ByteArray data;
-} LibData;
+} FileData;
+
+typedef Common::Array<FileData> LibData;
 
 class HypnoEngine : public Engine {
 private:
@@ -75,8 +77,7 @@ public:
 	Common::Language _language;
 	Common::Platform _platform;
 
-	Audio::SoundHandle _fgSoundHandle;
-	Audio::SoundHandle _bgSoundHandle;
+	Audio::SoundHandle _soundHandle;
 	Common::InstallShieldV3 _installerArchive;
 
 	Common::Error run() override;
@@ -147,6 +148,8 @@ public:
 	void runWalN(const Hotspot h, WalN *a);
 	void runGlobal(const Hotspot h, Global *a);
 
+	// Screen
+	void changeScreenMode(Common::String mode);
 	Graphics::ManagedSurface *_compositeSurface;
 	uint32 _transparentColor;
 	Common::Rect screenRect;

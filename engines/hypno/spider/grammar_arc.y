@@ -60,7 +60,7 @@ using namespace Hypno;
 %token<s> NAME FILENAME
 %token<i> NUM
 // header
-%token CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
+%token YBTOK CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
 %token PTOK ATOK VTOK OTOK NTOK RTOK ITOK SNTOK ZTOK
 
 // body
@@ -74,7 +74,7 @@ using namespace Hypno;
 
 %%
 
-start: header body
+start: YBTOK header body
        ;
 
 
