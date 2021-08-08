@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	ThemeEval.o \
 	ThemeLayout.o \
 	ThemeParser.o \
+	MetadataParser.o \
 	Tooltip.o \
 	unknown-game-dialog.o \
 	animation/Animation.o \

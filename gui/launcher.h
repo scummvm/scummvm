@@ -32,6 +32,7 @@
 #include "gui/dialog.h"
 #include "gui/widgets/popup.h"
 #include "engines/game.h"
+#include "MetadataParser.h"
 
 using Common::String;
 using Common::U32String;
@@ -56,6 +57,7 @@ enum GroupingMethod {
 	kGroupByNone,
 	kGroupByFirstLetter,
 	kGroupByEngine,
+	kGroupBySeries,
 	kGroupByLanguage,
 	kGroupByPlatform
 };
@@ -108,6 +110,7 @@ protected:
 	GroupingMethod	_groupBy;
 	String			_title;
 	String			_search;
+	MetadataParser	_metadataParser;
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	ButtonWidget		*_listButton;
