@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-08 05:44+0000\n"
+"POT-Creation-Date: 2021-08-08 10:21+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -231,8 +231,8 @@ msgctxt "lowres"
 msgid "Name:"
 msgstr "İsim:"
 
-#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:159
-#: engines/mohawk/dialogs.cpp:378
+#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:160
+#: engines/mohawk/dialogs.cpp:379
 msgid "Language:"
 msgstr "Dil:"
 
@@ -1076,7 +1076,7 @@ msgstr "Oyun 3B Renderlama:"
 msgid "3D Anti-aliasing:"
 msgstr "3B Anti merdiven efekti:"
 
-#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:365
+#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:366
 msgid "Disabled"
 msgstr "Pasifleşmiş"
 
@@ -5124,7 +5124,7 @@ msgid "Naughty game mode"
 msgstr ""
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:358
+#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:359
 msgid "~Z~ip Mode Activated"
 msgstr ""
 
@@ -5172,40 +5172,46 @@ msgstr ""
 msgid "Simulate loading times of old CD drives"
 msgstr ""
 
+#: engines/mohawk/dialogs.cpp:140
+msgid ""
+"Simulate loading times of old CD-ROM drives by adding a random delay during "
+"scene transitions."
+msgstr ""
+
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:146
+#: engines/mohawk/dialogs.cpp:147
 msgid "~D~rop Page"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:150
+#: engines/mohawk/dialogs.cpp:151
 msgid "Show ~M~ap"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:155
+#: engines/mohawk/dialogs.cpp:156
 msgid "Main Men~u~"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:287
+#: engines/mohawk/dialogs.cpp:288
 msgid "The new language will be applied after restarting the game."
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:359
+#: engines/mohawk/dialogs.cpp:360
 msgid "~W~ater Effect Enabled"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:361
+#: engines/mohawk/dialogs.cpp:362
 msgid "Transitions:"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:366
+#: engines/mohawk/dialogs.cpp:367
 msgid "Fastest"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:367
+#: engines/mohawk/dialogs.cpp:368
 msgid "Normal"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:368
+#: engines/mohawk/dialogs.cpp:369
 msgid "Best"
 msgstr ""
 

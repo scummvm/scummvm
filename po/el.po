@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-08 05:44+0000\n"
+"POT-Creation-Date: 2021-08-08 10:21+0000\n"
 "PO-Revision-Date: 2021-07-01 15:36+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -233,8 +233,8 @@ msgctxt "lowres"
 msgid "Name:"
 msgstr "Όνομα:"
 
-#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:159
-#: engines/mohawk/dialogs.cpp:378
+#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:160
+#: engines/mohawk/dialogs.cpp:379
 msgid "Language:"
 msgstr "Γλώσσα:"
 
@@ -1081,7 +1081,7 @@ msgstr "Απόδοση εικόνας 3D παιχνιδιού:"
 msgid "3D Anti-aliasing:"
 msgstr "Εξομάλυνση 3D:"
 
-#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:365
+#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:366
 msgid "Disabled"
 msgstr "Απενεργοποιημένες"
 
@@ -5329,7 +5329,7 @@ msgid "Naughty game mode"
 msgstr "Λειτουργία παιχνιδιού για άτακτους"
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:358
+#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:359
 msgid "~Z~ip Mode Activated"
 msgstr "Λειτουργία ~Z~ip Ενεργοποιημένη"
 
@@ -5386,41 +5386,47 @@ msgstr ""
 msgid "Simulate loading times of old CD drives"
 msgstr ""
 
+#: engines/mohawk/dialogs.cpp:140
+msgid ""
+"Simulate loading times of old CD-ROM drives by adding a random delay during "
+"scene transitions."
+msgstr ""
+
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:146
+#: engines/mohawk/dialogs.cpp:147
 msgid "~D~rop Page"
 msgstr "~Ρ~ίξιμο Σελίδας"
 
-#: engines/mohawk/dialogs.cpp:150
+#: engines/mohawk/dialogs.cpp:151
 msgid "Show ~M~ap"
 msgstr "Προβολή ~Χ~άρτη"
 
-#: engines/mohawk/dialogs.cpp:155
+#: engines/mohawk/dialogs.cpp:156
 msgid "Main Men~u~"
 msgstr "Κεντρικό Μενο~ύ~"
 
-#: engines/mohawk/dialogs.cpp:287
+#: engines/mohawk/dialogs.cpp:288
 msgid "The new language will be applied after restarting the game."
 msgstr ""
 "Η επιλογή νέας γλώσσας θα εφαρμοστεί μετά από επανεκκίνηση του παιχνιδιού."
 
-#: engines/mohawk/dialogs.cpp:359
+#: engines/mohawk/dialogs.cpp:360
 msgid "~W~ater Effect Enabled"
 msgstr "Εφέ ~Ν~ερού Ενεργοποιημένο"
 
-#: engines/mohawk/dialogs.cpp:361
+#: engines/mohawk/dialogs.cpp:362
 msgid "Transitions:"
 msgstr "~Μ~εταβάσεις:"
 
-#: engines/mohawk/dialogs.cpp:366
+#: engines/mohawk/dialogs.cpp:367
 msgid "Fastest"
 msgstr "Σύντομες"
 
-#: engines/mohawk/dialogs.cpp:367
+#: engines/mohawk/dialogs.cpp:368
 msgid "Normal"
 msgstr "Κανονικές"
 
-#: engines/mohawk/dialogs.cpp:368
+#: engines/mohawk/dialogs.cpp:369
 msgid "Best"
 msgstr "Βέλτιστες"
 

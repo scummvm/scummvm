@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-08 05:44+0000\n"
+"POT-Creation-Date: 2021-08-08 10:21+0000\n"
 "PO-Revision-Date: 2021-08-04 17:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -233,8 +233,8 @@ msgctxt "lowres"
 msgid "Name:"
 msgstr "Назв.:"
 
-#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:159
-#: engines/mohawk/dialogs.cpp:378
+#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:160
+#: engines/mohawk/dialogs.cpp:379
 msgid "Language:"
 msgstr "Язык:"
 
@@ -1062,7 +1062,7 @@ msgstr "3D отрисовщик игры:"
 msgid "3D Anti-aliasing:"
 msgstr "Сглаживание 3D:"
 
-#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:365
+#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:366
 msgid "Disabled"
 msgstr "Выключены"
 
@@ -5218,7 +5218,7 @@ msgid "Naughty game mode"
 msgstr "Откровенный режим игры"
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:358
+#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:359
 msgid "~Z~ip Mode Activated"
 msgstr "~Р~ежим быстрого перехода активирован"
 
@@ -5271,40 +5271,46 @@ msgstr ""
 msgid "Simulate loading times of old CD drives"
 msgstr "Симулировать медленную загрузку старых CD приводов"
 
+#: engines/mohawk/dialogs.cpp:140
+msgid ""
+"Simulate loading times of old CD-ROM drives by adding a random delay during "
+"scene transitions."
+msgstr ""
+
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:146
+#: engines/mohawk/dialogs.cpp:147
 msgid "~D~rop Page"
 msgstr "~В~ыбросить страницу"
 
-#: engines/mohawk/dialogs.cpp:150
+#: engines/mohawk/dialogs.cpp:151
 msgid "Show ~M~ap"
 msgstr "Показать ~к~арту"
 
-#: engines/mohawk/dialogs.cpp:155
+#: engines/mohawk/dialogs.cpp:156
 msgid "Main Men~u~"
 msgstr "Главное мен~ю~"
 
-#: engines/mohawk/dialogs.cpp:287
+#: engines/mohawk/dialogs.cpp:288
 msgid "The new language will be applied after restarting the game."
 msgstr "Новый язык будет применён после перезапуска игры."
 
-#: engines/mohawk/dialogs.cpp:359
+#: engines/mohawk/dialogs.cpp:360
 msgid "~W~ater Effect Enabled"
 msgstr "~Э~ффекты воды включены"
 
-#: engines/mohawk/dialogs.cpp:361
+#: engines/mohawk/dialogs.cpp:362
 msgid "Transitions:"
 msgstr "Переходы:"
 
-#: engines/mohawk/dialogs.cpp:366
+#: engines/mohawk/dialogs.cpp:367
 msgid "Fastest"
 msgstr "Быстрые"
 
-#: engines/mohawk/dialogs.cpp:367
+#: engines/mohawk/dialogs.cpp:368
 msgid "Normal"
 msgstr "Обычные"
 
-#: engines/mohawk/dialogs.cpp:368
+#: engines/mohawk/dialogs.cpp:369
 msgid "Best"
 msgstr "Лучшие"
 

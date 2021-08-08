@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-08 05:44+0000\n"
+"POT-Creation-Date: 2021-08-08 10:21+0000\n"
 "PO-Revision-Date: 2021-08-08 09:03+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -233,8 +233,8 @@ msgctxt "lowres"
 msgid "Name:"
 msgstr "Nom.:"
 
-#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:159
-#: engines/mohawk/dialogs.cpp:378
+#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:160
+#: engines/mohawk/dialogs.cpp:379
 msgid "Language:"
 msgstr "Idioma:"
 
@@ -1066,7 +1066,7 @@ msgstr "Renderizador 3D:"
 msgid "3D Anti-aliasing:"
 msgstr "Antialiasing 3D:"
 
-#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:365
+#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:366
 msgid "Disabled"
 msgstr "Desactivado"
 
@@ -5255,7 +5255,7 @@ msgid "Naughty game mode"
 msgstr "Modo de juego picante"
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:358
+#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:359
 msgid "~Z~ip Mode Activated"
 msgstr "A~v~ance rápido activado"
 
@@ -5311,40 +5311,46 @@ msgstr ""
 msgid "Simulate loading times of old CD drives"
 msgstr "Simular tiempos de carga de lectores de CD antiguos"
 
+#: engines/mohawk/dialogs.cpp:140
+msgid ""
+"Simulate loading times of old CD-ROM drives by adding a random delay during "
+"scene transitions."
+msgstr ""
+
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:146
+#: engines/mohawk/dialogs.cpp:147
 msgid "~D~rop Page"
 msgstr "~T~irar página"
 
-#: engines/mohawk/dialogs.cpp:150
+#: engines/mohawk/dialogs.cpp:151
 msgid "Show ~M~ap"
 msgstr "~M~ostrar el mapa"
 
-#: engines/mohawk/dialogs.cpp:155
+#: engines/mohawk/dialogs.cpp:156
 msgid "Main Men~u~"
 msgstr "Menú ~p~rincipal"
 
-#: engines/mohawk/dialogs.cpp:287
+#: engines/mohawk/dialogs.cpp:288
 msgid "The new language will be applied after restarting the game."
 msgstr "El cambio de idioma se aplicará al reiniciar el juego."
 
-#: engines/mohawk/dialogs.cpp:359
+#: engines/mohawk/dialogs.cpp:360
 msgid "~W~ater Effect Enabled"
 msgstr "Efecto ag~u~a activado"
 
-#: engines/mohawk/dialogs.cpp:361
+#: engines/mohawk/dialogs.cpp:362
 msgid "Transitions:"
 msgstr "Transiciones:"
 
-#: engines/mohawk/dialogs.cpp:366
+#: engines/mohawk/dialogs.cpp:367
 msgid "Fastest"
 msgstr "Rápido"
 
-#: engines/mohawk/dialogs.cpp:367
+#: engines/mohawk/dialogs.cpp:368
 msgid "Normal"
 msgstr "Normal"
 
-#: engines/mohawk/dialogs.cpp:368
+#: engines/mohawk/dialogs.cpp:369
 msgid "Best"
 msgstr "Mejor"
 

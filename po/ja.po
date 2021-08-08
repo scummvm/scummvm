@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-08 05:44+0000\n"
+"POT-Creation-Date: 2021-08-08 10:21+0000\n"
 "PO-Revision-Date: 2021-08-08 09:03+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -231,8 +231,8 @@ msgctxt "lowres"
 msgid "Name:"
 msgstr "名前："
 
-#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:159
-#: engines/mohawk/dialogs.cpp:378
+#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:160
+#: engines/mohawk/dialogs.cpp:379
 msgid "Language:"
 msgstr "言語："
 
@@ -1057,7 +1057,7 @@ msgstr "3Dレンダラー："
 msgid "3D Anti-aliasing:"
 msgstr "3Dアンチエイリアス："
 
-#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:365
+#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:366
 msgid "Disabled"
 msgstr "無効"
 
@@ -5159,7 +5159,7 @@ msgid "Naughty game mode"
 msgstr "いたずらゲームモード"
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:358
+#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:359
 msgid "~Z~ip Mode Activated"
 msgstr "高速モードを有効化しました(~Z~)"
 
@@ -5211,40 +5211,46 @@ msgstr "Selenitic Ageパズルの回答について、より多くの誤差を�
 msgid "Simulate loading times of old CD drives"
 msgstr "古いCDドライブの読み込み時間をシミュレート"
 
+#: engines/mohawk/dialogs.cpp:140
+msgid ""
+"Simulate loading times of old CD-ROM drives by adding a random delay during "
+"scene transitions."
+msgstr ""
+
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:146
+#: engines/mohawk/dialogs.cpp:147
 msgid "~D~rop Page"
 msgstr "本のページをドロップ(~D~)"
 
-#: engines/mohawk/dialogs.cpp:150
+#: engines/mohawk/dialogs.cpp:151
 msgid "Show ~M~ap"
 msgstr "地図を見る(~M~)"
 
-#: engines/mohawk/dialogs.cpp:155
+#: engines/mohawk/dialogs.cpp:156
 msgid "Main Men~u~"
 msgstr "メインメニュー(~u~)"
 
-#: engines/mohawk/dialogs.cpp:287
+#: engines/mohawk/dialogs.cpp:288
 msgid "The new language will be applied after restarting the game."
 msgstr "ゲームを再起動すると、新しい言語が適用されます。"
 
-#: engines/mohawk/dialogs.cpp:359
+#: engines/mohawk/dialogs.cpp:360
 msgid "~W~ater Effect Enabled"
 msgstr "水のエフェクトを有効にする(~W~)"
 
-#: engines/mohawk/dialogs.cpp:361
+#: engines/mohawk/dialogs.cpp:362
 msgid "Transitions:"
 msgstr "トランジション："
 
-#: engines/mohawk/dialogs.cpp:366
+#: engines/mohawk/dialogs.cpp:367
 msgid "Fastest"
 msgstr "早め"
 
-#: engines/mohawk/dialogs.cpp:367
+#: engines/mohawk/dialogs.cpp:368
 msgid "Normal"
 msgstr "標準"
 
-#: engines/mohawk/dialogs.cpp:368
+#: engines/mohawk/dialogs.cpp:369
 msgid "Best"
 msgstr "良質"
 
