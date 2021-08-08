@@ -120,6 +120,8 @@ public:
 
 	//  Place a TaskStack from the inactive list into the active
 	//  list.
+	TaskStack *newTaskStack(Actor *a);
+
 	void newTaskStack(TaskStack *p);
 
 	void newTaskStack(TaskStack *p, TaskID id);
@@ -238,7 +240,28 @@ void TaskStackList::write(Common::MemoryWriteStreamDynamic *out) {
 //----------------------------------------------------------------------
 //	Place a TaskStack into the active list and return its address
 
+TaskStack *TaskStackList::newTaskStack(Actor *a) {
+	for (int i = 0; i < numTaskStacks; i++)
+		if (!_list[i]) {
+			_list[i] = new TaskStack(a);
+
+			return _list[i];
+		}
+
+	warning("Too many task stacks in the list, > %d", numTaskStacks);
+
+	return nullptr;
+}
+
 void TaskStackList::newTaskStack(TaskStack *p) {
+	for (int i = 0; i < numTaskStacks; i++) {
+		if (_list[i] == p) {
+			warning("TaskStack %d (%p) already added", i, (void *)p);
+
+			return;
+		}
+	}
+
 	for (int i = 0; i < numTaskStacks; i++)
 		if (!_list[i]) {
 			_list[i] = p;
@@ -308,6 +331,10 @@ void resumeActorTasks(void) {
 //----------------------------------------------------------------------
 //	Call the stackList member function newTaskStack() to get a pointer
 //	to a new TaskStack
+
+TaskStack *newTaskStack(Actor *a) {
+	return g_vm->_stackList->newTaskStack(a);
+}
 
 void newTaskStack(TaskStack *p) {
 	return g_vm->_stackList->newTaskStack(p);

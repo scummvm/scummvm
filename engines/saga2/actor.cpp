@@ -2627,7 +2627,7 @@ void Actor::updateState(void) {
 				disband();
 
 			if (curTask == NULL) {
-				if ((curTask = new TaskStack(this)) != NULL) {
+				if ((curTask = newTaskStack(this)) != NULL) {
 					Task    *task = new GoAwayFromActorTask(
 					                    curTask,
 					                    ActorPropertyTarget(
@@ -2649,7 +2649,7 @@ void Actor::updateState(void) {
 		case actorGoalAttackEnemy:
 
 			if (curTask == NULL) {
-				if ((curTask = new TaskStack(this)) != NULL) {
+				if ((curTask = newTaskStack(this)) != NULL) {
 					uint8   disp =  leader != NULL
 					                ?   leader->disposition
 					                :   disposition;
@@ -2687,7 +2687,7 @@ void Actor::updateState(void) {
 			assert(followers == NULL);
 
 			if (curTask == NULL) {
-				if ((curTask = new TaskStack(this)) != NULL) {
+				if ((curTask = newTaskStack(this)) != NULL) {
 					Task    *task = new BandAndAvoidEnemiesTask(curTask);
 
 					if (task != NULL)
@@ -3094,7 +3094,7 @@ TaskStack *Actor::createFollowerTask(Actor *bandMember) {
 
 	TaskStack   *ts = NULL;
 
-	if ((ts = new TaskStack(bandMember)) != NULL) {
+	if ((ts = newTaskStack(bandMember)) != NULL) {
 		Task    *task = new BandTask(ts);
 
 		if (task != NULL)

@@ -111,7 +111,7 @@ TaskStack *ActorAssignment::createTask(void) {
 	Actor       *a = getActor();
 	TaskStack   *ts = NULL;
 
-	if ((ts = new TaskStack(a)) != NULL) {
+	if ((ts = newTaskStack(a)) != NULL) {
 		Task    *task = getTask(ts);
 
 		if (task != NULL)

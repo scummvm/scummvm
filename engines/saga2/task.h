@@ -72,6 +72,7 @@ void pauseActorTasks(void);
 void resumeActorTasks(void);
 
 //  Allocate a new task stack
+TaskStack *newTaskStack(Actor *a);
 void newTaskStack(TaskStack *p);
 
 //  Dispose of a previously allocated task stack
