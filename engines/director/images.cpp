@@ -170,6 +170,18 @@ void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, ui
 		}
 		break;
 
+	case 2:
+		switch (toBpp) {
+		case 1:
+			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
+			break;
+
+		default:
+			warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented",
+					fromBpp, toBpp);
+		}
+		break;
+
 	default:
 		warning("BITDDecoder::convertPixelIntoSurface(): could not convert from %d to %d",
 			fromBpp, toBpp);
@@ -184,6 +196,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
 	// logic above does not fit the situation when _bitsPerPixel == 1, need to fix.
+	debug("%d", _bitsPerPixel);
 	if ((stream.size() == _pitch * _surface->h * _bitsPerPixel / 8) || (_bitsPerPixel != 1 && _version < kFileVer400 && stream.size() >= _surface->h * _surface->w * _bitsPerPixel / 8)) {
 		debugC(6, kDebugImages, "Skipping compression");
 		for (int i = 0; i < stream.size(); i++) {
@@ -210,6 +223,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 	}
 
+	debug("%d %d %d", pixels.size(), _surface->w, _surface->h);
 	if (pixels.size() < (uint32)_surface->w * _surface->h * (_bitsPerPixel / 8)) {
 		int tail = (_surface->w * _surface->h * _bitsPerPixel / 8) - pixels.size();
 
@@ -221,7 +235,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	int offset = 0;
-	if (_surface->w < (int)(pixels.size() / _surface->h))
+	if (_bitsPerPixel == 8 && _surface->w < (int)(pixels.size() / _surface->h))
 		offset = (pixels.size() / _surface->h) - _surface->w;
 	// looks like the data want to round up to 2, so we either got offset 1 or 0.
 	// but we may met situation when the pixel size is exactly equals to w * h, thus we add a check here.
@@ -257,7 +271,14 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 					break;
 
 				case 16:
-					*((uint16*)_surface->getBasePtr(x, y)) = _surface->format.RGBToColor(
+//					*((uint16*)_surface->getBasePtr(x, y)) = _surface->format.RGBToColor(
+//						(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
+//						(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
+//						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
+//						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
+					convertPixelIntoSurface(_surface->getBasePtr(x, y),
+						(_bitsPerPixel / 8),
+						_surface->format.bytesPerPixel,
 						(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
 						(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
 						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
