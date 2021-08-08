@@ -204,6 +204,9 @@ void HypnoEngine::parseArcadeShooting(Common::String name, Common::String data) 
 	Level level;
 	level.arcade = g_parsedArc;  
 	_levels[name] = level;
+	g_parsedArc.background.clear();
+	g_parsedArc.player.clear();
+	g_parsedArc.shoots.clear();
 }
 
 void HypnoEngine::loadAssets() {
@@ -341,9 +344,7 @@ void HypnoEngine::shootSpiderweb(Common::Point target) {
 void HypnoEngine::runArcade(ArcadeShooting arc) {
 	Common::Event event;
 	Common::Point mousePos;
-	
-	_transparentColor = _pixelFormat.RGBToColor(0, 0, 0);
-	_compositeSurface->setTransparentColor(_transparentColor);
+	Common::List<uint32> videosToRemove;
 
 	//_nextParallelVideoToPlay.push_back(MVideo(arc.background, Common::Point(0, 0), false, false));
 	MVideo background = MVideo(arc.background, Common::Point(0, 0), false, false);	
@@ -408,18 +409,28 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 			}
 		}
 
-		drawImage(*sp, 60, 129, true);
+		//drawImage(*sp, 60, 129, true);
+		uint32 i = 0;
+		videosToRemove.clear();
 
 		for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
 			if (it->videoDecoder) {
 				if (it->videoDecoder-> getCurFrame() > 0 && it->videoDecoder-> getCurFrame() >= it->videoDecoder->getFrameCount() - it->finishBeforeEnd) {
 				delete it->videoDecoder;
 				it->videoDecoder = nullptr;
-				//TODO: remove from the _videosPlaying list
+				videosToRemove.push_back(i);
 
 				} else if (it->videoDecoder->needsUpdate()) {
 					updateScreen(*it);
 				}
+				i++;
+			}
+		}
+
+		if (videosToRemove.size() > 0) {
+			for(Common::List<uint32>::iterator it = videosToRemove.begin(); it != videosToRemove.end(); ++it) {
+				debug("removing %d from %d size", *it, _videosPlaying.size()); 
+				_videosPlaying.remove_at(*it);
 			}
 		}
 
@@ -432,9 +443,6 @@ void HypnoEngine::runScene(Hotspots hots, Videos intros) {
 	Common::Event event;
 	Common::Point mousePos;
 	Common::List<uint32> videosToRemove;
-
-	_transparentColor = _pixelFormat.RGBToColor(0, 0x82, 0);
-	_compositeSurface->setTransparentColor(_transparentColor);
 	
 	stack.clear();
 	_nextHotsToAdd = &hots;
@@ -812,6 +820,9 @@ void HypnoEngine::changeScreenMode(Common::String mode) {
 		_compositeSurface = new Graphics::ManagedSurface();
 		_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 
+		_transparentColor = _pixelFormat.RGBToColor(0, 0x82, 0);
+		_compositeSurface->setTransparentColor(_transparentColor);
+
 	} else if (mode == "arcade") {
 		_screenW = 320;
 		_screenH = 200;
@@ -823,6 +834,9 @@ void HypnoEngine::changeScreenMode(Common::String mode) {
 
 		_compositeSurface = new Graphics::ManagedSurface();
 		_compositeSurface->create(_screenW, _screenH, _pixelFormat);
+
+		_transparentColor = _pixelFormat.RGBToColor(0, 0, 0);
+		_compositeSurface->setTransparentColor(_transparentColor);
 	} else
 		error("Unknown screen mode %s", mode.c_str());
 }
