@@ -21,6 +21,8 @@
  */
 
 #include "common/system.h"
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "gui/message.h"
@@ -553,15 +555,22 @@ bool GameManager::isNullObject(Object *obj) {
 }
 
 void GameManager::sentence(int number, bool brightness) {
+	Common::String string;
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (number < 0)
 		return;
 	_vm->renderBox(0, 141 + _rowsStart[number] * 10, 320, _rows[number] * 10 - 1, brightness ? kColorWhite44 : kColorWhite25);
 	if (_texts[_rowsStart[number]] == kStringDialogSeparator)
 		_vm->renderText(kStringConversationEnd, 1, 142 + _rowsStart[number] * 10, brightness ? kColorRed : kColorDarkRed);
 	else {
-		for (int r = _rowsStart[number]; r < _rowsStart[number] + _rows[number]; ++r)
+		for (int r = _rowsStart[number]; r < _rowsStart[number] + _rows[number]; ++r) {
 			_vm->renderText(_texts[r], 1, 142 + r * 10, brightness ? kColorGreen : kColorDarkGreen);
+			if (!string.empty())
+				string += " ";
+			string += _vm->getGameString(_texts[r]);
+		}
 	}
+	ttsMan->say(string, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 }
 
 void GameManager::say(int textId) {
