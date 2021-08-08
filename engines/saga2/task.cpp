@@ -262,12 +262,14 @@ void TaskStackList::newTaskStack(TaskStack *p) {
 		}
 	}
 
-	for (int i = 0; i < numTaskStacks; i++)
+	debugC(1, kDebugTasks, "List: %p Adding task stack %p", (void *)this, (void *)p);
+	for (int i = 0; i < numTaskStacks; i++) {
 		if (!_list[i]) {
 			_list[i] = p;
 
 			return;
 		}
+	}
 }
 
 void TaskStackList::newTaskStack(TaskStack *p, TaskID id) {
@@ -281,10 +283,12 @@ void TaskStackList::newTaskStack(TaskStack *p, TaskID id) {
 //	back into the inactive list
 
 void TaskStackList::deleteTaskStack(TaskStack *p) {
-	for (int i = 0; i < numTaskStacks; i++)
+	debugC(1, kDebugTasks, "List: %p Deleting task stack %p", (void *)this, (void *)p);
+	for (int i = 0; i < numTaskStacks; i++) {
 		if (_list[i] == p) {
 			_list[i] = nullptr;
 		}
+	}
 }
 
 //----------------------------------------------------------------------
