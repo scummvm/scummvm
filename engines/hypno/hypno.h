@@ -82,11 +82,13 @@ public:
 
 	Common::Error run() override;
 	Levels _levels;
+	LibData _soundFiles;
+	LibData _fontFiles;
 	Common::HashMap<Common::String, int> _levelState;
 	void resetLevelState();
 	bool checkLevelCompleted();
 	void runLevel(Common::String name);
-	void runScene(Hotspots hots, Videos intros);
+	void runScene(Scene scene, Videos intros);
 	ShootInfos _shootInfos;
 	void runArcade(ArcadeShooting arc);
 
@@ -94,10 +96,10 @@ public:
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
 	void loadAssets();
-	void parseLevel(Common::String filename);
+	void parseScene(Common::String filename);
 	void parseArcadeShooting(Common::String name, Common::String data);
 	void parseShootList(Common::String name, Common::String data);
-	LibData loadLib(char *filename);
+	void loadLib(Common::String filename, LibData &r);
 	Common::HashMap<Common::String, Common::String> _assets;
 
 	// User input
@@ -174,8 +176,9 @@ public:
 	Videos _videosPlaying;
 
 	// Sounds
-	void playSound(const Common::String &, uint, bool, bool);
-	void stopSound(bool);
+	Common::String _music;
+	void playSound(Common::String name, uint32);
+	void stopSound();
 	bool isSoundActive();
 	bool _noStopSounds;
 

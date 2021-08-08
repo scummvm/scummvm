@@ -108,7 +108,7 @@ void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
 }
 
-void HypnoEngine::parseLevel(Common::String filename) {
+void HypnoEngine::parseScene(Common::String filename) {
     filename = convertPath(filename);
 	Common::File *test = new Common::File();
 	assert(isDemo());
@@ -120,26 +120,25 @@ void HypnoEngine::parseLevel(Common::String filename) {
 	buf[fileSize] = '\0';
 	parse_mis(buf);
 	Level level;
-	level.hots = *g_parsedHots; 
+	level.scene.hots = *g_parsedHots; 
 	_levels[filename] = level;
 	debug("Loaded hots size: %d", g_parsedHots->size());
 }
 
-LibData HypnoEngine::loadLib(char *filename) {
+void HypnoEngine::loadLib(Common::String filename, LibData &r) {
 	Common::File libfile;
     assert(libfile.open(filename));
 	uint32 i = 0;
 	Common::String entry = "<>";
-	LibData r;
 	FileData f;
-	f.name = "<>";
+	f.data.push_back(0);
 	byte b;
 	uint32 start;
 	uint32 size;
 	uint32 pos;
 
-	while (f.name.size() > 0) {
-		f.name.clear();
+	do {
+		f.name = filename + "/";
 		f.data.clear();
 		for (i = 0; i < 12; i++) {
 			b = libfile.readByte();
@@ -162,10 +161,10 @@ LibData HypnoEngine::loadLib(char *filename) {
 		}
 		debug("size: %d", f.data.size());
 		libfile.seek(pos);
-		r.push_back(f);
+		if (size > 0)
+			r.push_back(f);
 
-	}
-	return r;
+	} while (size > 0);
 }
 
 void HypnoEngine::resetLevelState() {
@@ -212,7 +211,8 @@ void HypnoEngine::parseArcadeShooting(Common::String name, Common::String data) 
 void HypnoEngine::loadAssets() {
 
 	
-	LibData files = loadLib("C_MISC/MISSIONS.LIB");
+	LibData files; 
+	loadLib("c_misc/missions.lib", files);
 	uint32 i = 0;
 	uint32 j = 0;
 
@@ -236,14 +236,9 @@ void HypnoEngine::loadAssets() {
 	parseArcadeShooting(files[0].name, arc);
 	parseShootList(files[0].name, list);
 
-	//files = loadLib("C_MISC/FONTS.LIB");
-	files = loadLib("C_MISC/SOUND.LIB");
-	//ByteArray *raw = new ByteArray(files[3].data);
-
-	//Common::MemorySeekableReadWriteStream *mstream = new Common::MemorySeekableReadWriteStream(raw->data(), raw->size());
-	//Audio::LoopingAudioStream *stream;
-	//stream = new Audio::LoopingAudioStream(Audio::makeRawStream(mstream, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO), 1);
-	//_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
+	loadLib("c_misc/fonts.lib", _fontFiles);
+	loadLib("demo/sound.lib", _soundFiles);
+	loadLib("c_misc/sound.lib", _soundFiles);
 
 	// quit level
 	Hotspot q;
@@ -253,21 +248,24 @@ void HypnoEngine::loadAssets() {
 	Level level;
 	Hotspots quit;
 	quit.push_back(q);
-	level.hots = quit;  
+	level.scene.hots = quit;  
 	_levels["mis/quit.mis"] = level;
 
 	// Read assets from mis files
-	parseLevel("mis/demo.mis");
+	parseScene("mis/demo.mis");
 	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine1.smk", Common::Point(0, 0), false, true));
 	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine2.smk", Common::Point(0, 0), false, true));
-	_levels["mis/demo.mis"].hots[1].setting = "c1.mi_";
-	_levels["mis/demo.mis"].hots[2].setting = "mis/alley.mis";
-	_levels["mis/demo.mis"].hots[5].setting = "mis/order.mis";
+	_levels["mis/demo.mis"].scene.hots[1].setting = "c_misc/missions.lib/c1.mi_";
+	_levels["mis/demo.mis"].scene.hots[2].setting = "mis/alley.mis";
+	_levels["mis/demo.mis"].scene.hots[5].setting = "mis/order.mis";
+	_levels["mis/demo.mis"].scene.sound = "demo/sound.lib/menu_mus.raw";
 
-	parseLevel("mis/order.mis");
-	_levels["mis/order.mis"].hots[1].setting = "mis/quit.mis";
-	parseLevel("mis/alley.mis");
+
+	parseScene("mis/order.mis");
+	_levels["mis/order.mis"].scene.hots[1].setting = "mis/quit.mis";
+	parseScene("mis/alley.mis");
 	_levels["mis/alley.mis"].intros.push_back(MVideo("demo/aleyc01s.smk", Common::Point(0, 0), false, true));
+	_levels["mis/alley.mis"].scene.sound = "demo/sound.lib/alleymus.raw";
 
 	//loadMis("mis/shoctalk.mis");
 
@@ -288,8 +286,6 @@ Common::Error HypnoEngine::run() {
 	if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
 		return Common::kUnsupportedColorMode;
 
-	//screenRect = Common::Rect(0, 0, _screenW, _screenH);
-	//changeCursor("default");
 	_compositeSurface = new Graphics::ManagedSurface();
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 
@@ -321,12 +317,15 @@ Common::Error HypnoEngine::run() {
 
 void HypnoEngine::runLevel(Common::String name) {
 	assert(_levels.contains(name));
-	if (_levels[name].hots.size() == 0) {
+	stopSound();
+	_music = "";
+
+	if (_levels[name].scene.hots.size() == 0) {
 		changeScreenMode("arcade");
 		runArcade(_levels[name].arcade);
 	} else {
 		changeScreenMode("scene");
-		runScene(_levels[name].hots, _levels[name].intros);
+		runScene(_levels[name].scene, _levels[name].intros);
 	}
 
 }
@@ -346,7 +345,6 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 	Common::Point mousePos;
 	Common::List<uint32> videosToRemove;
 
-	//_nextParallelVideoToPlay.push_back(MVideo(arc.background, Common::Point(0, 0), false, false));
 	MVideo background = MVideo(arc.background, Common::Point(0, 0), false, false);	
 	Graphics::Surface *sp = decodeFrame(arc.player, 2);
 
@@ -434,18 +432,23 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 			}
 		}
 
+		if (_music.empty()) {
+			_music = "c_misc/sound.lib/" + arc.sounds.front();
+			playSound(_music, 0);
+		}
+
 		drawScreen();
 		g_system->delayMillis(10);
 	}
 }
 
-void HypnoEngine::runScene(Hotspots hots, Videos intros) {
+void HypnoEngine::runScene(Scene scene, Videos intros) {
 	Common::Event event;
 	Common::Point mousePos;
 	Common::List<uint32> videosToRemove;
 	
 	stack.clear();
-	_nextHotsToAdd = &hots;
+	_nextHotsToAdd = &scene.hots;
 	_nextSequentialVideoToPlay = intros;	
 	changeCursor("mouse/cursor1.smk", 0);
 
@@ -558,6 +561,12 @@ void HypnoEngine::runScene(Hotspots hots, Videos intros) {
 			drawScreen();
 		}
 
+		if (_music.empty()) {
+			_music = scene.sound;
+			playSound(_music, 0);
+		}
+
+
 		if (checkLevelCompleted())
 			_nextSetting = "mis/demo.mis";
 
@@ -612,6 +621,8 @@ void HypnoEngine::runEscape(const Hotspot h, Escape *a) {
 }
 
 void HypnoEngine::runCutscene(const Hotspot h, Cutscene *a) {
+	stopSound();
+	_music = "";
 	_nextSequentialVideoToPlay.push_back(MVideo(a->path, Common::Point(0, 0), false, true));
 }
 
@@ -902,15 +913,28 @@ void HypnoEngine::skipVideo(MVideo &video) {
 
 // Sound handling
 
-void HypnoEngine::stopSound(bool all) {
-	// debugC(1, kPrivateDebugFunction, "%s(%d)", __FUNCTION__, all);
+void HypnoEngine::playSound(Common::String name, uint32 loops) {
 
-	// if (all) {
-	// 	_mixer->stopHandle(_fgSoundHandle);
-	// 	_mixer->stopHandle(_bgSoundHandle);
-	// } else {
-	// 	_mixer->stopHandle(_fgSoundHandle);
-	// }
+	debug("playing %s", name.c_str());
+	ByteArray *raw;
+	Audio::LoopingAudioStream *stream;
+	Common::MemorySeekableReadWriteStream *mstream;
+
+	for (LibData::iterator it = _soundFiles.begin(); it != _soundFiles.end(); ++it) {
+			if (it->name == name) {
+				raw = new ByteArray(it->data);
+				stream = new Audio::LoopingAudioStream(Audio::makeRawStream(raw->data(), raw->size(), 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
+				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
+				break;
+			}
+	}
+
+
+}
+
+void HypnoEngine::stopSound() {
+	debugC(1, kHypnoDebugFunction, "%s()", __FUNCTION__);
+	_mixer->stopHandle(_soundHandle);
 }
 
 // Path handling
