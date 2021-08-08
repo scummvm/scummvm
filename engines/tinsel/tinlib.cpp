@@ -4413,12 +4413,22 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3]);
 		break;
+	case 114:
+		mapping = NoirMapping{"POINTACTOR", POINTACTOR, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 121:
 		mapping = NoirMapping{"POSTTAG", POSTTAG, 2};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X)", mapping.name, pp[0], pp[1]);
 		break;
 	case 124:
+		mapping = NoirMapping{"PRINTCURSOR", PRINTCURSOR, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d)", mapping.name, pp[0]);
+		break;
+	case 126:
 		mapping = NoirMapping{"PRINTTAG", PRINTTAG, 1};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d)", mapping.name, pp[0]);
@@ -4527,8 +4537,8 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
-	case 111:
-	case 225: // STUBBED
+	case 111: // no hold frame
+	case 225: // hold frame
 		mapping = NoirMapping{"PLAYMOVIE", PLAYMOVIE, 1};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
@@ -5423,7 +5433,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		}
 
 	case PRINTCURSOR:
-		// DW2 only
+		// DW2 / Noir only
 		PrintTag(pic->hPoly, pp[0], pic->idActor, true);
 		return -1;
 
@@ -5434,7 +5444,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case PRINTTAG:
 		// Common to DW1 / DW2 / Noir
-		PrintTag(pic->hPoly, pp[0], TinselV2 ? pic->idActor : 0,  TinselV3 ? true : false);
+		PrintTag(pic->hPoly, pp[0], TinselV2 ? pic->idActor : 0, false);
 		return -1;
 
 	case QUITGAME:
