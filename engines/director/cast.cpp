@@ -1095,10 +1095,21 @@ void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {
 		return;
 	}
 
-	out.write(script, strlen(script));
+	uint len = strlen(script);
+	char *scriptCopy = (char *)malloc(len + 1);
+	Common::strlcpy(scriptCopy, script, len + 1);
+
+	for (uint i = 0; i < len; i++)
+		if (scriptCopy[i] == '\r' && scriptCopy[i + 1] != '\n') // It is safe to check [i + 1], as '\0' != '\n'
+			scriptCopy[i] = '\n';
+
+	out.write(scriptCopy, len);
 
 	out.flush();
 	out.close();
+
+	free(scriptCopy);
+
 }
 
 void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
