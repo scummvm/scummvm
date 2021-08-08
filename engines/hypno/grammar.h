@@ -156,7 +156,7 @@ class ArcadeShooting {
 	Common::String background;
 	Common::String player;
 	Shoots shoots;
-    ~ArcadeShooting() { debug("destroying arcade shooting"); };
+    ~ArcadeShooting() { };
 };
 
 class Level {
