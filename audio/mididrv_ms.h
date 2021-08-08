@@ -213,6 +213,14 @@ public:
 	 */
 	void setSourceVolume(uint8 source, uint16 volume);
 	/**
+	 * Resets the source volume for all sources to each source's neutral volume.
+	 */
+	void resetSourceVolume();
+	/**
+	 * Resets the volume for this source to its neutral volume.
+	 */
+	void resetSourceVolume(uint8 source);
+	/**
 	 * Sets the neutral volume for all sources. See the source-specific
 	 * setSourceNeutralVolume function for details.
 	 * 

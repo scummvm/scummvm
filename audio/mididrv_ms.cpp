@@ -224,6 +224,18 @@ void MidiDriver_Multisource::setSourceVolume(uint8 source, uint16 volume) {
 	applySourceVolume(source);
 }
 
+void MidiDriver_Multisource::resetSourceVolume() {
+	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
+		resetSourceVolume(i);
+	}
+}
+
+void MidiDriver_Multisource::resetSourceVolume(uint8 source) {
+	assert(source < MAXIMUM_SOURCES);
+
+	setSourceVolume(source, _sources[source].neutralVolume);
+}
+
 void MidiDriver_Multisource::setSourceNeutralVolume(uint16 volume) {
 	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
 		setSourceNeutralVolume(i, volume);
