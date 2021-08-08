@@ -136,7 +136,8 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 																			_("Allow solving Selenitic Age audio puzzles with more error margin."));
 	}
 
-	_addCdromDelayCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.CdromDelay", _("Simulate loading times of old CD drives"));
+	_addCdromDelayCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.CdromDelay", _("Simulate loading times of old CD drives"),
+																	_("Simulate loading times of old CD-ROM drives by adding a random delay during scene transitions."));
 
 	if (isInGame()) {
 		MohawkEngine_Myst *vm = static_cast<MohawkEngine_Myst *>(g_engine);
