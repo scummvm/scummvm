@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-07 14:11+0000\n"
+"POT-Creation-Date: 2021-08-08 05:44+0000\n"
 "PO-Revision-Date: 2021-08-02 16:26+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -233,8 +233,8 @@ msgctxt "lowres"
 msgid "Name:"
 msgstr "Nom.:"
 
-#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:158
-#: engines/mohawk/dialogs.cpp:377
+#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:159
+#: engines/mohawk/dialogs.cpp:378
 msgid "Language:"
 msgstr "Idioma:"
 
@@ -1066,7 +1066,7 @@ msgstr "Renderizador 3D:"
 msgid "3D Anti-aliasing:"
 msgstr "Antialiasing 3D:"
 
-#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:364
+#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:365
 msgid "Disabled"
 msgstr "Desactivado"
 
@@ -5255,7 +5255,7 @@ msgid "Naughty game mode"
 msgstr "Modo de juego picante"
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:357
+#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:358
 msgid "~Z~ip Mode Activated"
 msgstr "A~v~ance rápido activado"
 
@@ -5298,47 +5298,51 @@ msgstr "La escena del sobrevuelo de Myst no se mostraba en el motor original."
 #. By default the option is off.
 #.
 #: engines/mohawk/dialogs.cpp:135
-msgid "~F~uzzy Logic in SpaceShip Active"
-msgstr "~L~ógica aproximada para activar la nave espacial"
+msgid "Improve Selenitic Age puzzle ~a~ccessibility"
+msgstr ""
 
-#: engines/mohawk/dialogs.cpp:138
+#: engines/mohawk/dialogs.cpp:136
+msgid "Allow solving Selenitic Age audio puzzles with more error margin."
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:139
 msgid "Simulate loading times of old CD drives"
 msgstr "Simular tiempos de carga de lectores de CD antiguos"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:145
+#: engines/mohawk/dialogs.cpp:146
 msgid "~D~rop Page"
 msgstr "~T~irar página"
 
-#: engines/mohawk/dialogs.cpp:149
+#: engines/mohawk/dialogs.cpp:150
 msgid "Show ~M~ap"
 msgstr "~M~ostrar el mapa"
 
-#: engines/mohawk/dialogs.cpp:154
+#: engines/mohawk/dialogs.cpp:155
 msgid "Main Men~u~"
 msgstr "Menú ~p~rincipal"
 
-#: engines/mohawk/dialogs.cpp:286
+#: engines/mohawk/dialogs.cpp:287
 msgid "The new language will be applied after restarting the game."
 msgstr "El cambio de idioma se aplicará al reiniciar el juego."
 
-#: engines/mohawk/dialogs.cpp:358
+#: engines/mohawk/dialogs.cpp:359
 msgid "~W~ater Effect Enabled"
 msgstr "Efecto ag~u~a activado"
 
-#: engines/mohawk/dialogs.cpp:360
+#: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
 msgstr "Transiciones:"
 
-#: engines/mohawk/dialogs.cpp:365
+#: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
 msgstr "Rápido"
 
-#: engines/mohawk/dialogs.cpp:366
+#: engines/mohawk/dialogs.cpp:367
 msgid "Normal"
 msgstr "Normal"
 
-#: engines/mohawk/dialogs.cpp:367
+#: engines/mohawk/dialogs.cpp:368
 msgid "Best"
 msgstr "Mejor"
 
@@ -8433,6 +8437,9 @@ msgstr ""
 "Necesitarás todas las fuentes del paquete que prefieras, por ejemplo, "
 "LiberationMono, LiberationSans y LiberationSerif, o FreeMono, FreeSans y "
 "FreeSerif respectivamente."
+
+#~ msgid "~F~uzzy Logic in SpaceShip Active"
+#~ msgstr "~L~ógica aproximada para activar la nave espacial"
 
 #~ msgid "SAGA2 support not compiled in"
 #~ msgstr "No se ha incluido el soporte para SAGA2."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-07 14:11+0000\n"
+"POT-Creation-Date: 2021-08-08 05:44+0000\n"
 "PO-Revision-Date: 2021-08-04 00:25+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -232,8 +232,8 @@ msgctxt "lowres"
 msgid "Name:"
 msgstr "Nimi:"
 
-#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:158
-#: engines/mohawk/dialogs.cpp:377
+#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:159
+#: engines/mohawk/dialogs.cpp:378
 msgid "Language:"
 msgstr "Kieli:"
 
@@ -1060,7 +1060,7 @@ msgstr "Pelin 3D-renderöijä:"
 msgid "3D Anti-aliasing:"
 msgstr "3D Antialiasointi:"
 
-#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:364
+#: gui/options.cpp:1463 engines/mohawk/dialogs.cpp:365
 msgid "Disabled"
 msgstr "Pois päältä"
 
@@ -5204,7 +5204,7 @@ msgid "Naughty game mode"
 msgstr "Tuhma pelitila"
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:357
+#: engines/mohawk/dialogs.cpp:114 engines/mohawk/dialogs.cpp:358
 msgid "~Z~ip Mode Activated"
 msgstr "~Z~ip moodi valittu"
 
@@ -5246,47 +5246,51 @@ msgstr "Alkuperäinen pelimoottori ei toistanut Myst fly by-videota."
 #. By default the option is off.
 #.
 #: engines/mohawk/dialogs.cpp:135
-msgid "~F~uzzy Logic in SpaceShip Active"
-msgstr "~S~umea logiikka avaruusaluksen aktivointi-pulmassa"
+msgid "Improve Selenitic Age puzzle ~a~ccessibility"
+msgstr ""
 
-#: engines/mohawk/dialogs.cpp:138
+#: engines/mohawk/dialogs.cpp:136
+msgid "Allow solving Selenitic Age audio puzzles with more error margin."
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:139
 msgid "Simulate loading times of old CD drives"
 msgstr "Simuloi vanhojen CD-asemien latausaikoja"
 
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:145
+#: engines/mohawk/dialogs.cpp:146
 msgid "~D~rop Page"
 msgstr "Pu~d~ota sivu"
 
-#: engines/mohawk/dialogs.cpp:149
+#: engines/mohawk/dialogs.cpp:150
 msgid "Show ~M~ap"
 msgstr "Näytä ~K~artta"
 
-#: engines/mohawk/dialogs.cpp:154
+#: engines/mohawk/dialogs.cpp:155
 msgid "Main Men~u~"
 msgstr "Päävalikko ~u~"
 
-#: engines/mohawk/dialogs.cpp:286
+#: engines/mohawk/dialogs.cpp:287
 msgid "The new language will be applied after restarting the game."
 msgstr "Uusi kieli otetaan käyttöön kun peli käynnistetään uudestaan."
 
-#: engines/mohawk/dialogs.cpp:358
+#: engines/mohawk/dialogs.cpp:359
 msgid "~W~ater Effect Enabled"
 msgstr "~V~esiefekti päällä"
 
-#: engines/mohawk/dialogs.cpp:360
+#: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
 msgstr "Siirtymät:"
 
-#: engines/mohawk/dialogs.cpp:365
+#: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
 msgstr "Nopein"
 
-#: engines/mohawk/dialogs.cpp:366
+#: engines/mohawk/dialogs.cpp:367
 msgid "Normal"
 msgstr "Normaali"
 
-#: engines/mohawk/dialogs.cpp:367
+#: engines/mohawk/dialogs.cpp:368
 msgid "Best"
 msgstr "Paras"
 
@@ -8353,6 +8357,9 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid "~F~uzzy Logic in SpaceShip Active"
+#~ msgstr "~S~umea logiikka avaruusaluksen aktivointi-pulmassa"
 
 #~ msgid "SAGA2 support not compiled in"
 #~ msgstr "SAGA2-tukea ei ole käännetty mukaan"
