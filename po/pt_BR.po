@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-08 10:21+0000\n"
-"PO-Revision-Date: 2021-08-03 11:25+0000\n"
+"PO-Revision-Date: 2021-08-08 17:42+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5274,11 +5274,13 @@ msgstr "O filme aéreo de Myst não foi reproduzido pela engine original."
 #.
 #: engines/mohawk/dialogs.cpp:135
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
-msgstr ""
+msgstr "Melhorar ~a~cessibilidade do enigma da Idade Selenítica"
 
 #: engines/mohawk/dialogs.cpp:136
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
 msgstr ""
+"Permite resolver os quebra-cabeças de áudio da Idade Selenítica com maior "
+"margem de erro."
 
 #: engines/mohawk/dialogs.cpp:139
 msgid "Simulate loading times of old CD drives"
@@ -5289,6 +5291,8 @@ msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
 msgstr ""
+"Simula o tempo de carregamento de unidades de CD-ROM antigas adicionando um "
+"atraso aleatório durante as transições de cena."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:147
