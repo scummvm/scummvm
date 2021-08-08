@@ -53,7 +53,7 @@ def file_to_macbin(f: machfs.File, name: str, encoding: str) -> bytes:
 
 def escape_string(s: str) -> str:
     new_name = [
-        "\x80" + chr(0x80 + ord(i)) if i in '/":*[]+|\\?%<>,;=' or ord(i) < 0x20 else i
+        "\x81" + chr(0x80 + ord(i)) if i in '/":*[]+|\\?%<>,;=' or ord(i) < 0x20 else i
         for i in s
     ]
     return "".join(new_name)
@@ -173,23 +173,23 @@ def call_test_parser(input_args: List[str]) -> Any:
 def test_encode_string(capsys):
     call_test_parser(["str", "Icon\r"])
     captured = capsys.readouterr()
-    assert captured.out == "xn--Icon-ea2f\n"
+    assert captured.out == "xn--Icon-ja6e\n"
 
 
 def test_encode_stdin(capsys, monkeypatch):
     monkeypatch.setattr("sys.stdin", io.StringIO("Icon\r"))
     call_test_parser(["str", "--stdin"])
     captured = capsys.readouterr()
-    assert captured.out == "xn--Icon-ea2f\n"
+    assert captured.out == "xn--Icon-ja6e\n"
 
 
 def test_decode_name():
-    checks = [["Icon\r", "xn--Icon-ea2f"]]
+    checks = [["Icon\r", "xn--Icon-ja6e"]]
     for input, expected in checks:
         assert punyencode(input, "mac_roman") == expected
 
 
 def test_escape_string():
-    checks = [["\r", "\x80\x8d"]]
+    checks = [["\r", "\x81\x8d"]]
     for input, expected in checks:
         assert escape_string(input) == expected
