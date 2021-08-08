@@ -1596,15 +1596,13 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheStretch:
 		if (d.asInt() != sprite->_stretch) {
+			g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
+
 			sprite->_stretch = d.asInt();
 			channel->_dirty = true;
 
-			if (sprite->_stretch) {
-				g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
-
-				channel->_width = sprite->_width;
-				channel->_height = sprite->_height;
-			}
+			channel->_width = sprite->_width;
+			channel->_height = sprite->_height;
 		}
 		break;
 	case kTheTrails:
