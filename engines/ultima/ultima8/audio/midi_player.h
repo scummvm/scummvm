@@ -58,6 +58,16 @@ public:
 	bool isPlaying();
 
 	/**
+	 * Starts a fade-out of the specified duration (in milliseconds).
+	 */
+	void startFadeOut(uint16 length);
+
+	/**
+	 * Returns true if the music is currently fading.
+	 */
+	bool isFading();
+
+	/**
 	 * Synchronizes the user volume settings with those of the game.
 	 */
 	void syncSoundSettings();

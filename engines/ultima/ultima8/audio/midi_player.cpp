@@ -114,7 +114,7 @@ void MidiPlayer::load(byte *data, size_t size, int seqNo, bool speedHack) {
 }
 
 void MidiPlayer::play(int trackNo, int branchIndex) {
-	if (!_parser)
+	if (!_parser || !_driver)
 		return;
 
 	if (!_parser->setTrack(trackNo)) {
@@ -129,6 +129,11 @@ void MidiPlayer::play(int trackNo, int branchIndex) {
 		}
 	}
 
+	// Abort any active fades and reset the source volume to neutral.
+	if (_driver->isFading(0))
+		_driver->abortFade(0);
+	_driver->resetSourceVolume(0);
+
 	if (!_parser->startPlaying()) {
 		warning("play() failed to start playing");
 	}
@@ -141,6 +146,15 @@ void MidiPlayer::stop() {
 
 bool MidiPlayer::isPlaying() {
 	return _parser && _parser->isPlaying();
+}
+
+void MidiPlayer::startFadeOut(uint16 length) {
+	if (_driver)
+		_driver->startFade(0, 1500, 0);
+}
+
+bool MidiPlayer::isFading() {
+	return _driver && _driver->isFading(0);
 }
 
 void MidiPlayer::syncSoundSettings() {

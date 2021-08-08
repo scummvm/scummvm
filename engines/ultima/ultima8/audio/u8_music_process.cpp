@@ -90,6 +90,15 @@ void U8MusicProcess::restoreMusic() {
 	playMusic_internal(_trackState._lastRequest);
 }
 
+void U8MusicProcess::fadeMusic(uint16 length) {
+	if (_midiPlayer && _midiPlayer->isPlaying())
+		_midiPlayer->startFadeOut(length);
+}
+
+bool U8MusicProcess::isFading() {
+	return _midiPlayer && _midiPlayer->isFading();
+}
+
 void U8MusicProcess::getTrackState(TrackState &trackState) const {
 	trackState = _trackState;
 }

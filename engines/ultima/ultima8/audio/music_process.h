@@ -66,6 +66,11 @@ public:
 	//! Restore the last requested non-combat track (eg, at the end of combat)
 	virtual void restoreMusic() = 0;
 
+	//! Fades out the music over the specified time (in milliseconds)
+	virtual void fadeMusic(uint16 length) = 0;
+	//! Returns true if the music is currently fading
+	virtual bool isFading() = 0;
+
 	//! Save the current track state - used when the menu is opened
 	virtual void saveTrackState() = 0;
 	//! Bring back the track state from before it was put on hold

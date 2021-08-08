@@ -72,6 +72,11 @@ public:
 	//! Restore the last requested non-combat track (eg, at the end of combat)
 	void restoreMusic() override;
 
+	//! Fading is not used, so this does nothing
+	void fadeMusic(uint16 length) override { };
+	//! Fading is not used, so this returns false
+	bool isFading() override { return false; };
+
 	//! Save the current track state - used when the menu is opened
 	void saveTrackState() override;
 	//! Bring back the track state from before it was put on hold
