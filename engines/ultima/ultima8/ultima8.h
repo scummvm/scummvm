@@ -172,6 +172,8 @@ protected:
 
 	bool initialize() override;
 
+	void pauseEngineIntern(bool pause) override;
+
 	/**
 	 * Returns the data archive folder and version that's required
 	 */

@@ -186,6 +186,16 @@ bool Ultima8Engine::initialize() {
 void Ultima8Engine::deinitialize() {
 }
 
+void Ultima8Engine::pauseEngineIntern(bool pause) {
+	if (_mixer)
+		_mixer->pauseAll(pause);
+	if (_audioMixer) {
+		MidiPlayer *midiPlayer = _audioMixer->getMidiPlayer();
+		if (midiPlayer)
+			midiPlayer->pause(pause);
+	}
+}
+
 bool Ultima8Engine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsSubtitleOptions) ||

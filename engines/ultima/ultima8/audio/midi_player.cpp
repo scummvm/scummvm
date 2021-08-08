@@ -144,6 +144,16 @@ void MidiPlayer::stop() {
 		_parser->stopPlaying();
 }
 
+void MidiPlayer::pause(bool pause) {
+	if (_parser) {
+		if (pause) {
+			_parser->pausePlaying();
+		} else {
+			_parser->resumePlaying();
+		}
+	}
+}
+
 bool MidiPlayer::isPlaying() {
 	return _parser && _parser->isPlaying();
 }

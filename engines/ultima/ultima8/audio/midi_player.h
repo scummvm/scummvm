@@ -53,6 +53,11 @@ public:
 	void stop();
 
 	/**
+	 * Pause or resume playback of the current track.
+	 */
+	void pause(bool pause);
+
+	/**
 	 * Returns true if a track is playing.
 	 */
 	bool isPlaying();
