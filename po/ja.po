@@ -5215,7 +5215,9 @@ msgstr "古いCDドライブの読み込み時間をシミュレート"
 msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
-msgstr "シーンの切り替え時にランダムなディレイを加え、古いCDドライブのロード時間を再現します。"
+msgstr ""
+"シーンの切り替え時にランダムなディレイを加え、古いCDドライブのロード時間を再"
+"現します。"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:147
