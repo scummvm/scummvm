@@ -2074,7 +2074,8 @@ builtIn(deleteFile) {
 	namNormal.clear();
 	if (failSecurityCheck(nam))
 		return BR_ERROR;
-	fun->reg.setVariable(SVT_INT, remove(nam.c_str()));
+
+	fun->reg.setVariable(SVT_INT, !g_system->getSavefileManager()->removeSavefile(nam.c_str()));
 
 	return BR_CONTINUE;
 }
