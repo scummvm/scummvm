@@ -21,7 +21,7 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/decoders/wave.h"
+#include "audio/decoders/raw.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -34,6 +34,7 @@
 #include "common/system.h"
 #include "common/timer.h"
 #include "common/tokenizer.h"
+#include "common/memstream.h"
 #include "engines/util.h"
 #include "image/bmp.h"
 
@@ -127,48 +128,43 @@ void HypnoEngine::parseLevel(Common::String filename) {
 LibData HypnoEngine::loadLib(char *filename) {
 	Common::File libfile;
     assert(libfile.open(filename));
-	const uint32 fileSize = libfile.size();
-	byte *buf = (byte *)malloc(fileSize + 1);
-	byte *it = buf;
-	libfile.read(buf, fileSize);
 	uint32 i = 0;
-	uint32 j = 0;
-	bool cont = false;
-	Common::String entry;
+	Common::String entry = "<>";
 	LibData r;
+	FileData f;
+	f.name = "<>";
+	byte b;
+	uint32 start;
+	uint32 size;
+	uint32 pos;
 
-	while (true) {
-		cont = true;
-		entry.clear();
-		for (j = 0; j < 24; j++) {
-			if (cont && it[i] != 0x96 && it[i] != 0x0) {
-				entry += tolower(char(it[i]));
-			}
-			else
-				cont = false;
-			i++;			
+	while (f.name.size() > 0) {
+		f.name.clear();
+		f.data.clear();
+		for (i = 0; i < 12; i++) {
+			b = libfile.readByte();
+			if (b != 0x96 && b != 0x0)
+				f.name += tolower(char(b));
 		}
-		if (!cont && entry.size() > 0) {
-			debug("Found %s", entry.c_str());
-			r.filenames.push_back(entry);
+		debug("name: %s", f.name.c_str());
+		start = libfile.readUint32LE();
+		size = libfile.readUint32LE();
+		debug("field: %x", libfile.readUint32LE());
+
+		pos = libfile.pos();
+		libfile.seek(start);
+
+		for (i = 0; i < size; i++) {
+			b = libfile.readByte();
+			if (b != '\n')
+				b = b ^ 0xfe;
+			f.data.push_back(b);
 		}
-		else {
-			break;
-		}
+		debug("size: %d", f.data.size());
+		libfile.seek(pos);
+		r.push_back(f);
 
 	}
-
-	while (it[i] != '\n')
-	    i++;
-
-	//ByteArray *files = new ByteArray();
-
-	for (; i < fileSize; i++) {
-		if (it[i] != '\n')
-			it[i] = it[i] ^ 0xfe;
-		r.data.push_back(it[i]);
-	}
-	
 	return r;
 }
 
@@ -216,27 +212,35 @@ void HypnoEngine::loadAssets() {
 	LibData files = loadLib("C_MISC/MISSIONS.LIB");
 	uint32 i = 0;
 	uint32 j = 0;
-	uint32 k = 0;
 
 	Common::String arc;
 	Common::String list;
 
-	debug("file: %s",files.filenames[j].c_str());
-	for (i = 0; i < files.data.size(); i++) {
-		arc += files.data[i];
-		if (files.data[i] == 'X') {
+	debug("Splitting file: %s",files[0].name.c_str());
+	for (i = 0; i < files[0].data.size(); i++) {
+		arc += files[0].data[i];
+		if (files[0].data[i] == 'X') {
 			i++;
-			for (k = i; k < files.data.size(); k++) {
-				if (files.data[k] == 'Y')
+			for (j = i; j < files[0].data.size(); j++) {
+				if (files[0].data[j] == 'Y')
 					break;
-				list += files.data[k];
+				list += files[0].data[j];
 			}
 			break; // No need to keep parsing, no more files are used in the demo
 		}
 	}
 
-	parseArcadeShooting(files.filenames[0], arc);
-	parseShootList(files.filenames[0], list);
+	parseArcadeShooting(files[0].name, arc);
+	parseShootList(files[0].name, list);
+
+	//files = loadLib("C_MISC/FONTS.LIB");
+	files = loadLib("C_MISC/SOUND.LIB");
+	//ByteArray *raw = new ByteArray(files[3].data);
+
+	//Common::MemorySeekableReadWriteStream *mstream = new Common::MemorySeekableReadWriteStream(raw->data(), raw->size());
+	//Audio::LoopingAudioStream *stream;
+	//stream = new Audio::LoopingAudioStream(Audio::makeRawStream(mstream, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO), 1);
+	//_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 
 	// quit level
 	Hotspot q;
@@ -270,8 +274,6 @@ Common::Error HypnoEngine::run() {
 	_language = Common::parseLanguage(ConfMan.get("language"));
 	_platform = Common::parsePlatform(ConfMan.get("platform"));
 
-	//return Common::kNoError;
-
 	Graphics::ModeList modes;
 	modes.push_back(Graphics::Mode(640, 480));
 	modes.push_back(Graphics::Mode(320, 200));
@@ -283,7 +285,7 @@ Common::Error HypnoEngine::run() {
 	if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
 		return Common::kUnsupportedColorMode;
 
-	screenRect = Common::Rect(0, 0, _screenW, _screenH);
+	//screenRect = Common::Rect(0, 0, _screenW, _screenH);
 	//changeCursor("default");
 	_compositeSurface = new Graphics::ManagedSurface();
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
@@ -316,10 +318,13 @@ Common::Error HypnoEngine::run() {
 
 void HypnoEngine::runLevel(Common::String name) {
 	assert(_levels.contains(name));
-	if (_levels[name].hots.size() == 0)
+	if (_levels[name].hots.size() == 0) {
+		changeScreenMode("arcade");
 		runArcade(_levels[name].arcade);
-	else
+	} else {
+		changeScreenMode("scene");
 		runScene(_levels[name].hots, _levels[name].intros);
+	}
 
 }
 
@@ -334,18 +339,6 @@ void HypnoEngine::shootSpiderweb(Common::Point target) {
 }
 
 void HypnoEngine::runArcade(ArcadeShooting arc) {
-	// Move into a function
-	_screenW = 320;
-	_screenH = 200;
-
-	initGraphics(_screenW, _screenH, nullptr);
-
-	_compositeSurface->free();
-	delete _compositeSurface;
-
-	_compositeSurface = new Graphics::ManagedSurface();
-	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
-
 	Common::Event event;
 	Common::Point mousePos;
 	
@@ -373,9 +366,6 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 			case Common::EVENT_LBUTTONDOWN:
 				shootSpiderweb(mousePos);
 				clickedShoot(mousePos);
-
-				//if (!_nextHotsToAdd || !_nextHotsToRemove)
-				// 	clickedHotspot(mousePos);
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
@@ -439,19 +429,6 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 }
 
 void HypnoEngine::runScene(Hotspots hots, Videos intros) {
-	// Move into a function
-	_screenW = 640;
-	_screenH = 480;
-
-	initGraphics(_screenW, _screenH, nullptr);
-
-	_compositeSurface->free();
-	delete _compositeSurface;
-
-	_compositeSurface = new Graphics::ManagedSurface();
-	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
-
-
 	Common::Event event;
 	Common::Point mousePos;
 	Common::List<uint32> videosToRemove;
@@ -491,6 +468,8 @@ void HypnoEngine::runScene(Hotspots hots, Videos intros) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
+				if (stack.empty())
+					break;
 				if (!_nextHotsToAdd || !_nextHotsToRemove)
 				 	clickedHotspot(mousePos);
 				break;
@@ -818,6 +797,34 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 	}
 
 	return rframe;
+}
+
+void HypnoEngine::changeScreenMode(Common::String mode) {
+	if (mode == "scene") {
+		_screenW = 640;
+		_screenH = 480;
+
+		initGraphics(_screenW, _screenH, nullptr);
+
+		_compositeSurface->free();
+		delete _compositeSurface;
+
+		_compositeSurface = new Graphics::ManagedSurface();
+		_compositeSurface->create(_screenW, _screenH, _pixelFormat);
+
+	} else if (mode == "arcade") {
+		_screenW = 320;
+		_screenH = 200;
+
+		initGraphics(_screenW, _screenH, nullptr);
+
+		_compositeSurface->free();
+		delete _compositeSurface;
+
+		_compositeSurface = new Graphics::ManagedSurface();
+		_compositeSurface->create(_screenW, _screenH, _pixelFormat);
+	} else
+		error("Unknown screen mode %s", mode.c_str());
 }
 
 void HypnoEngine::updateScreen(MVideo &video) {
