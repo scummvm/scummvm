@@ -82,6 +82,25 @@ const char *optionsTextEN[] = {
 	"Talk to"
 };
 
+// ES
+const char *invOptionsTextES[] = {
+	"Examinar",
+	"Usar",
+	"Abrir/Empujar",
+	"Cerrar/Tirar",
+	"Dar"
+};
+
+const char *optionsTextES[] = {
+	"Caminar a",
+	"Examinar",
+	"Coger",
+	"Usar",
+	"Abrir/Empujar",
+	"Cerrar/Tirar",
+	"Hablar con"
+};
+
 // RU
 const char *invOptionsTextRU[] = {
 	"Cvjnhtnm",
