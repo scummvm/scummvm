@@ -533,7 +533,7 @@ uint32 AudioProcess::I_playSFXCru(const uint8 *args, unsigned int argsize) {
 		AudioProcess *ap = AudioProcess::get_instance();
 		if (ap) {
 			// Crusader stops any existing item sounds before starting the next.
-			ap->stopSFX(item->getObjId(), -1);
+			ap->stopSFX(-1, item->getObjId());
 			ap->playSFX(sfxNum, 0x10, item->getObjId(), 0, true, PITCH_SHIFT_NONE, 0x80, false);
 		} else {
 			warning("I_playSFXCru Error: No AudioProcess");
