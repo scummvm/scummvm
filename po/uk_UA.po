@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-08 10:21+0000\n"
-"PO-Revision-Date: 2021-08-04 17:44+0000\n"
+"PO-Revision-Date: 2021-08-08 19:10+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -5261,11 +5261,11 @@ msgstr "Ролік польоту над Myst не показувався ори
 #.
 #: engines/mohawk/dialogs.cpp:135
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
-msgstr ""
+msgstr "Поліпшити досупність головоломки Віку Селенітік"
 
 #: engines/mohawk/dialogs.cpp:136
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
-msgstr ""
+msgstr ".Полегшити розв'язання аудіо головоломок у Віці Селенітік."
 
 #: engines/mohawk/dialogs.cpp:139
 msgid "Simulate loading times of old CD drives"
@@ -5276,6 +5276,8 @@ msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
 msgstr ""
+"Симулювати повільне завантаження старих CD-ROM і додати затримку під час "
+"переходів між сценами."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:147
