@@ -180,7 +180,7 @@ void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, ui
 bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	int x = 0, y = 0;
 
-	Common::Array<int> pixels;
+	Common::Array<uint> pixels;
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
 	// logic above does not fit the situation when _bitsPerPixel == 1, need to fix.
@@ -193,23 +193,18 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 		while (!stream.eos()) {
 			// TODO: D3 32-bit bitmap casts seem to just be ARGB pixels in a row and not RLE.
 			// Determine how to distinguish these different types. Maybe stage version.
-			if (_bitsPerPixel == 32) {
-				int data = stream.readByte();
-				pixels.push_back(data);
+			int data = stream.readByte();
+			int len = data + 1;
+			if ((data & 0x80) != 0) {
+				len = ((data ^ 0xFF) & 0xff) + 2;
+				data = stream.readByte();
+				for (int p = 0; p < len; p++) {
+					pixels.push_back(data);
+				}
 			} else {
-				int data = stream.readByte();
-				int len = data + 1;
-				if ((data & 0x80) != 0) {
-					len = ((data ^ 0xFF) & 0xff) + 2;
+				for (int p = 0; p < len; p++) {
 					data = stream.readByte();
-					for (int p = 0; p < len; p++) {
-						pixels.push_back(data);
-					}
-				} else {
-					for (int p = 0; p < len; p++) {
-						data = stream.readByte();
-						pixels.push_back(data);
-					}
+					pixels.push_back(data);
 				}
 			}
 		}
@@ -274,9 +269,9 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 					convertPixelIntoSurface(_surface->getBasePtr(x, y),
 						(_bitsPerPixel / 8),
 						_surface->format.bytesPerPixel,
-						pixels[(((y * (_surface->w * 4))) + ((x * 4) + 1))],
-						pixels[(((y * (_surface->w * 4))) + ((x * 4) + 2))],
-						pixels[(((y * (_surface->w * 4))) + ((x * 4) + 3))]);
+						pixels[(((y * _surface->w * 4)) + (x + _surface->w))],
+						pixels[(((y * _surface->w * 4)) + (x + 2 * _surface->w))],
+						pixels[(((y * _surface->w * 4)) + (x + 3 * _surface->w))]);
 					x++;
 					break;
 
