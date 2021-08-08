@@ -39,7 +39,7 @@ enum PTYPE {
 	// Extra polygon types from Tinsel v1
 	EXIT, EX_EXIT,
 	// Extra polygon types from Tinsel v3
-	UNKNOWN, EX_UNKNOWN
+	SCALE, EX_SCALE
 };
 
 // subtype
