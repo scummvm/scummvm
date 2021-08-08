@@ -52,10 +52,14 @@ def file_to_macbin(f: machfs.File, name: str, encoding: str) -> bytes:
 
 
 def escape_string(s: str) -> str:
-    new_name = [
-        "\x81" + chr(0x80 + ord(i)) if i in '/":*[]+|\\?%<>,;=' or ord(i) < 0x20 else i
-        for i in s
-    ]
+    new_name = ""
+    for char in s:
+        if char == "\x81":
+            new_name += "\x81\x79"
+        if char in '/":*[]+|\\?%<>,;=' or ord(char) < 0x20:
+            new_name += "\x81" + chr(0x80 + ord(char))
+        else:
+            new_name += char
     return "".join(new_name)
 
 
@@ -190,6 +194,6 @@ def test_decode_name():
 
 
 def test_escape_string():
-    checks = [["\r", "\x81\x8d"]]
+    checks = [["\r", "\x81\x8d"], ["\x81", "\x81\x79\x81"]]
     for input, expected in checks:
         assert escape_string(input) == expected
