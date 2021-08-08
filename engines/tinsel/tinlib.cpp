@@ -53,7 +53,7 @@
 #include "tinsel/pid.h"
 #include "tinsel/play.h"
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 #include "tinsel/savescn.h"
 #include "tinsel/sched.h"
 #include "tinsel/scn.h"
@@ -904,6 +904,26 @@ static int CursorPos(int xory) {
 
 	_vm->_cursor->GetCursorXY(&x, &y, true);
 	return (xory == CURSORXPOS) ? x : y;
+}
+
+/**
+ * Declare 3d model for an actor.
+ */
+void Dec3D(int ano, SCNHANDLE hModelName, SCNHANDLE hTextureName) {
+	MOVER* pMover = GetMover(ano);
+	assert(pMover != nullptr);
+
+	pMover->type = MOVER_3D;
+	pMover->hModelName = hModelName;
+	pMover->hTextureName = hTextureName;
+
+	// if (_hModelNameLoaded == 0) {
+	// 	_hModelNameLoaded = hModelName;
+	// 	const char* modelName = (const char *)_vm->_handle->LockMem(hModelName);
+	// 	const char* textureName = (const char *)_vm->_handle->LockMem(hTextureName);
+	// 	LoadModels(modelName, textureName);
+	// }
+	//assert(_hModelNameLoaded == hModelName);
 }
 
 /**
@@ -4870,7 +4890,8 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DEC3D:
 		// Noir only
-		warning("TODO: Implement DEC3D");
+		pp -= 2;
+		Dec3D(pp[0], pp[1], pp[2]);
 		return -3;
 
 	case DECCONVW:

@@ -37,7 +37,7 @@
 #include "tinsel/pid.h"
 #include "tinsel/play.h"
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 #include "tinsel/sched.h"
 #include "tinsel/sysvar.h"
 #include "tinsel/timers.h"
@@ -475,9 +475,13 @@ void GetMoverMidTop(PMOVER pMover, int *aniX, int *aniY) {
  */
 int GetMoverLeft(PMOVER pMover) {
 	assert(pMover); // Getting null moving actor's leftmost position
-	assert(pMover->actorObj); // Getting null moving actor's leftmost position
-
-	return MultiLeftmost(pMover->actorObj);
+	if (pMover->type == MOVER_3D) {
+		warning("TODO: Finish implementation of GetMoverLeft() for Noir");
+		return 0;
+	} else {
+		assert(pMover->actorObj); // Getting null moving actor's leftmost position
+		return MultiLeftmost(pMover->actorObj);
+	}
 }
 
 /**
@@ -485,9 +489,13 @@ int GetMoverLeft(PMOVER pMover) {
  */
 int GetMoverRight(PMOVER pMover) {
 	assert(pMover); // Getting null moving actor's rightmost position
-	assert(pMover->actorObj); // Getting null moving actor's rightmost position
-
-	return MultiRightmost(pMover->actorObj);
+	if (pMover->type == MOVER_3D) {
+		warning("TODO: Finish implementation of GetMoverRight() for Noir");
+		return 0;
+	} else {
+		assert(pMover->actorObj); // Getting null moving actor's rightmost position
+		return MultiRightmost(pMover->actorObj);
+	}
 }
 
 /**
@@ -495,9 +503,14 @@ int GetMoverRight(PMOVER pMover) {
  */
 int GetMoverTop(PMOVER pMover) {
 	assert(pMover); // Getting null moving actor's topmost position
-	assert(pMover->actorObj); // Getting null moving actor's topmost position
 
-	return MultiHighest(pMover->actorObj);
+	if (pMover->type == MOVER_3D) {
+		warning("TODO: Finish implementation of GetMoverTop() for Noir");
+		return 0;
+	} else {
+		assert(pMover->actorObj); // Getting null moving actor's topmost position
+		return MultiHighest(pMover->actorObj);
+	}
 }
 
 /**
@@ -505,9 +518,13 @@ int GetMoverTop(PMOVER pMover) {
  */
 int GetMoverBottom(PMOVER pMover) {
 	assert(pMover); // Getting null moving actor's bottommost position
-	assert(pMover->actorObj); // Getting null moving actor's bottommost position
-
-	return MultiLowest(pMover->actorObj);
+	if (pMover->type == MOVER_3D) {
+		warning("TODO: Finish implementation of GetMoverBottom() for Noir");
+		return 0;
+	} else {
+		assert(pMover->actorObj); // Getting null moving actor's bottommost position
+		return MultiLowest(pMover->actorObj);
+	}
 }
 
 /**
@@ -608,6 +625,10 @@ void SetMoverDirection(PMOVER pMover, DIRECTION dirn) {
  * Get actor to adopt its appropriate standing reel.
  */
 void SetMoverStanding(PMOVER pMover) {
+	if (TinselV3) {
+		warning("TODO: Finish implementation of GetMoverStanding() for Noir");
+		return;
+	}
 	assert(pMover->actorObj);
 	AlterMover(pMover, pMover->standReels[pMover->scale - 1][pMover->direction], AR_NORMAL);
 }
@@ -690,7 +711,11 @@ static void InitialPathChecks(PMOVER pMover, int xpos, int ypos) {
 
 		z = GetScale(FirstPathPoly(), pMover->objY);
 	}
-	SetMoverWalkReel(pMover, FORWARD, z, false);
+	if (TinselV3) {
+		warning("TODO: Finish implementation of InitialPathChecks() for Noir");
+	} else {
+		SetMoverWalkReel(pMover, FORWARD, z, false);
+	}
 }
 
 static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
@@ -851,16 +876,50 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 }
 
 /**
+ * Tinsel 3 Moving actor process
+ * - 1 per moving actor in current scene.
+ */
+void T3MoverProcess(CORO_PARAM, const void *param) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	// Get the co-ordinates - copied to process when it was created
+	const MAINIT *rpos = (const MAINIT *)param;
+	PMOVER pMover = rpos->pMover;
+
+	CORO_BEGIN_CODE(_ctx);
+
+	warning("TODO: Finish implementation of T3MoverProcess() for Noir");
+
+	InitMover(pMover);
+	InitialPathChecks(pMover, rpos->X, rpos->Y);
+
+	HideMover(pMover);		// Allows a play to come in before this appears
+	pMover->bHidden = false;	// ...but don't stay hidden
+
+	for (;;) {
+		DoMoveActor(pMover);
+
+		CheckBrightness(pMover);
+
+		CORO_SLEEP(1);
+	}
+
+	CORO_END_CODE;
+}
+
+
+/**
  * Creates a handling process for a moving actor
  */
 void MoverProcessCreate(int X, int Y, int id, PMOVER pMover) {
-	if (TinselV2) {
+	if (TinselV2 || TinselV3) {
 		MAINIT iStruct;
 		iStruct.X = X;
 		iStruct.Y = Y;
 		iStruct.pMover = pMover;
 
-		CoroScheduler.createProcess(PID_MOVER, T2MoverProcess, &iStruct, sizeof(MAINIT));
+		CoroScheduler.createProcess(PID_MOVER, TinselV3 ? T3MoverProcess : T2MoverProcess, &iStruct, sizeof(MAINIT));
 	} else {
 		MoverProcessHelper(X, Y, id, pMover);
 		pMover->pProc = CoroScheduler.createProcess(PID_MOVER, T1MoverProcess, &pMover, sizeof(PMOVER));

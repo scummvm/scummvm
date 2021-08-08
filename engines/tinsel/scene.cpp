@@ -40,7 +40,7 @@
 #include "tinsel/pid.h"	// process IDs
 #include "tinsel/play.h"
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 #include "tinsel/sched.h"
 #include "tinsel/scn.h"
 #include "tinsel/scroll.h"

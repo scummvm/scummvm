@@ -36,7 +36,7 @@
 #include "tinsel/pid.h"
 #include "tinsel/pcode.h"		// LEAD_ACTOR
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 #include "tinsel/sched.h"
 #include "tinsel/tinsel.h"
 

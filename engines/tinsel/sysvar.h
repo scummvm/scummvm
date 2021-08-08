@@ -78,12 +78,16 @@ typedef enum {	SV_DEFAULT_INV,
 		SYS_Platform,			// Hardware platform     **READ ONLY**
 		SYS_Debug,			// TRUE for debug build/'cheat'**READ ONLY**
 
-		ISV_DIVERT_ACTOR,
+		//SV_SPRITER_SCENE_ID = 0x2f // Noir, loaded scene
+
+		ISV_DIVERT_ACTOR, // for DW2 = 0x28, for Noir = 0x32
 		ISV_NO_BLOCKING,
 		ISV_GHOST_ACTOR,
 		ISV_GHOST_BASE,
 		ISV_GHOST_COLOR,
 
+		//SV_SPRITER_SCALE = 0x37 // Noir, scale used for 3D rendering
+		//SV_SPRITER_OVERLAY = 0x38 // Noir, if additional model is loaded
 
 		SV_TOPVALID } SYSVARS;
 

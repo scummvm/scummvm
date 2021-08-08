@@ -28,7 +28,7 @@
 #include "tinsel/dw.h"
 #include "tinsel/events.h"	// for PLR_EVENT, PLR_EVENT
 #include "tinsel/object.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 
 namespace Common {
 class Serializer;

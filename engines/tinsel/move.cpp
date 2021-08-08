@@ -33,7 +33,7 @@
 #include "tinsel/multiobj.h"	// multi-part object defintions etc.
 #include "tinsel/object.h"
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 #include "tinsel/scroll.h"
 #include "tinsel/tinlib.h"	// For Stand()
 #include "tinsel/tinsel.h"

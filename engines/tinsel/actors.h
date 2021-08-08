@@ -28,7 +28,7 @@
 #include "tinsel/dw.h"		// for SCNHANDLE
 #include "tinsel/events.h"	// for TINSEL_EVENT
 #include "tinsel/palette.h"	// for COLORREF
-#include "tinsel/rince.h"	// for PMOVER
+#include "tinsel/movers.h"	// for PMOVER
 
 namespace Common {
 class Serializer;
