@@ -1583,12 +1583,12 @@ void Renderer::fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2,
 	computeHolomapPolygon(yTop, (uint32)(uint16)angles2.y, yBottom, (uint32)(uint16)angles1.y, polygonTabPtr);
 }
 
-void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexAngles[3]) {
+void Renderer::renderHolomapVertices(const Vertex vertexCoordinates[3], const Vertex vertexCoordinates2[3]) {
 	int32 top = SCENE_SIZE_MAX;
 	int32 bottom = SCENE_SIZE_MIN;
-	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], vertexAngles[0], vertexAngles[1], top, bottom);
-	fillHolomapPolygons(vertexCoordinates[1], vertexCoordinates[2], vertexAngles[1], vertexAngles[2], top, bottom);
-	fillHolomapPolygons(vertexCoordinates[2], vertexCoordinates[0], vertexAngles[2], vertexAngles[0], top, bottom);
+	fillHolomapPolygons(vertexCoordinates[0], vertexCoordinates[1], vertexCoordinates2[0], vertexCoordinates2[1], top, bottom);
+	fillHolomapPolygons(vertexCoordinates[1], vertexCoordinates[2], vertexCoordinates2[1], vertexCoordinates2[2], top, bottom);
+	fillHolomapPolygons(vertexCoordinates[2], vertexCoordinates[0], vertexCoordinates2[2], vertexCoordinates2[0], top, bottom);
 	renderHolomapPolygons(top, bottom);
 }
 
@@ -1615,7 +1615,7 @@ void Renderer::renderHolomapPolygons(int32 top, int32 bottom) {
 		const uint16 x_1_3 = *lholomap_polytab_1_3++;
 		const uint16 x_2_2 = *lholomap_polytab_2_2++;
 		const uint16 x_2_3 = *lholomap_polytab_2_3++;
-		int16 width = right - left;
+		const int16 width = right - left;
 		if (width > 0) {
 			uint8 *pixelBufPtr = screenBufPtr + left;
 			const int32 iWidth = (int32)width;

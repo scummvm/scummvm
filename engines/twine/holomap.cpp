@@ -231,14 +231,14 @@ void Holomap::renderHolomapSurfacePolygons() {
 		vertexCoordinates[2].x = pos3.x;
 		vertexCoordinates[2].y = pos3.y;
 		if (isTriangleVisible(vertexCoordinates)) {
-			Vertex vertexAngles[3];
-			vertexAngles[0].x = pos1.unk1;
-			vertexAngles[0].y = pos1.unk2;
-			vertexAngles[1].x = pos2.unk1;
-			vertexAngles[1].y = pos2.unk2;
-			vertexAngles[2].x = pos3.unk1;
-			vertexAngles[2].y = pos3.unk2;
-			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexAngles);
+			Vertex vertexCoordinates2[3];
+			vertexCoordinates2[0].x = pos1.unk1;
+			vertexCoordinates2[0].y = pos1.unk2;
+			vertexCoordinates2[1].x = pos2.unk1;
+			vertexCoordinates2[1].y = pos2.unk2;
+			vertexCoordinates2[2].x = pos3.unk1;
+			vertexCoordinates2[2].y = pos3.unk2;
+			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexCoordinates2);
 		}
 		const HolomapProjectedPos &pos4 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 33];
 		const HolomapProjectedPos &pos5 = _projectedSurfacePositions[_holomapSort[i].projectedPosIdx + 34];
@@ -250,14 +250,14 @@ void Holomap::renderHolomapSurfacePolygons() {
 		vertexCoordinates[2].x = pos6.x;
 		vertexCoordinates[2].y = pos6.y;
 		if (isTriangleVisible(vertexCoordinates)) {
-			Vertex vertexAngles[3];
-			vertexAngles[0].x = pos4.unk1;
-			vertexAngles[0].y = pos4.unk2;
-			vertexAngles[1].x = pos5.unk1;
-			vertexAngles[1].y = pos5.unk2;
-			vertexAngles[2].x = pos6.unk1;
-			vertexAngles[2].y = pos6.unk2;
-			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexAngles);
+			Vertex vertexCoordinates2[3];
+			vertexCoordinates2[0].x = pos4.unk1;
+			vertexCoordinates2[0].y = pos4.unk2;
+			vertexCoordinates2[1].x = pos5.unk1;
+			vertexCoordinates2[1].y = pos5.unk2;
+			vertexCoordinates2[2].x = pos6.unk1;
+			vertexCoordinates2[2].y = pos6.unk2;
+			_engine->_renderer->renderHolomapVertices(vertexCoordinates, vertexCoordinates2);
 		}
 	}
 }
@@ -524,7 +524,7 @@ void Holomap::processHolomap() {
 	int32 yRot = ClampAngle(_locations[currentLocation].angle.y);
 	bool rotate = false;
 	bool redraw = true;
-	int local18 = 0;
+	int waterPaletteChangeTimer = 0;
 	bool fadeInPalette = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
 	for (;;) {
@@ -579,16 +579,13 @@ void Holomap::processHolomap() {
 			redraw = true;
 		}
 
-		if (!fadeInPalette && local18 < _engine->_lbaTime) {
-			//const Common::Rect rect(170, 50, 470, 330);
-			//_engine->_interface->setClip(rect);
+		if (!fadeInPalette && waterPaletteChangeTimer < _engine->_lbaTime) {
+			// animate the water surface
 			_engine->setPalette(192, 32, &_paletteHolomap[3 * _holomapPaletteIndex++]);
-			//_engine->copyBlockPhys(rect);
-			//_engine->_interface->resetClip();
 			if (_holomapPaletteIndex == 32) {
 				_holomapPaletteIndex = 0;
 			}
-			local18 = _engine->_lbaTime + 3;
+			waterPaletteChangeTimer = _engine->_lbaTime + 3;
 			redraw = true;
 		}
 
