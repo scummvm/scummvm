@@ -82,9 +82,8 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 	if (ConfMan.getActiveDomain()->tryGetVal("force_text_aa", forceAA))
 		Common::parseBool(forceAA, _forceTextAA);
 
-	// WORKAROUND: Fix incorrect accents in German Gemini Rue
-	// Check if future if this is needed for any other games
-	if (getGameId() == "geminirue" && _gameDescription->desc.language == Common::DE_DEU)
+	// WORKAROUND: Certain games need to force AA to render the text correctly
+	if (_gameDescription->desc.flags & GAMEFLAG_FORCE_AA)
 		_forceTextAA = true;
 }
 
