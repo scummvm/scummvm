@@ -49,6 +49,13 @@ typedef Common::List<Action*> Actions;
 
 class Hotspot;
 typedef Common::Array<Hotspot> Hotspots;
+
+class Scene {
+  public:
+	Hotspots hots;
+	Common::String sound;
+};
+
 typedef Common::Array<Hotspots *> HotspotsStack;
 
 class MVideo {
@@ -150,18 +157,20 @@ class ShootInfo {
 };
 
 typedef Common::List<ShootInfo> ShootInfos;
+typedef Common::List<Common::String> Sounds;
 
 class ArcadeShooting {
   public:
 	Common::String background;
 	Common::String player;
 	Shoots shoots;
+	Sounds sounds;
     ~ArcadeShooting() { };
 };
 
 class Level {
   public:
-	Hotspots hots;
+	Scene scene;
 	Videos intros;
 	ArcadeShooting arcade;
 };

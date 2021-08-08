@@ -99,7 +99,10 @@ hline:  CTOK NUM  { debug("C %d", $2); }
 		  debug("I %s", $2); 
 		}
 	  | QTOK NUM NUM { debug("Q %d %d", $2, $3); }
-	  | SNTOK FILENAME enc { debug("SN %s", $2); }
+	  | SNTOK FILENAME enc {
+		  g_parsedArc.sounds.push_back($2); 
+		  debug("SN %s", $2); 
+		}
 	  | HETOK C02TOK NUM NUM { debug("HE %d %d", $3, $4); }
 	  | HTOK CB3TOK NUM NUM { debug("H %d %d", $3, $4); }
 	  | ZTOK RETTOK { debug("Z"); }
