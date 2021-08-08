@@ -388,7 +388,7 @@ void DigitalVideoCastMember::startVideo(Channel *channel) {
 	_channel = channel;
 
 	if (!_video || !_video->isVideoLoaded()) {
-		warning("DigitalVideoCastMember::startVideo: No video decoder");
+		warning("DigitalVideoCastMember::startVideo: No video %s", !_video ? "decoder" : "loaded");
 		return;
 	}
 
