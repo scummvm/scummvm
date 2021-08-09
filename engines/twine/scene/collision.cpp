@@ -123,14 +123,14 @@ void Collision::reajustActorPosition(ShapeType brickShape) {
 			}
 			break;
 		case ShapeType::kDoubleSideStairsLeft1:
-			if (512 - processActor.x - _collision.x <= processActor.z - _collision.z) {
+			if (BRICK_SIZE - processActor.x - _collision.x <= processActor.z - _collision.z) {
 				brickShape = ShapeType::kStairsTopLeft;
 			} else {
 				brickShape = ShapeType::kStairsBottomLeft;
 			}
 			break;
 		case ShapeType::kDoubleSideStairsRight1:
-			if (512 - processActor.x - _collision.x <= processActor.z - _collision.z) {
+			if (BRICK_SIZE - processActor.x - _collision.x <= processActor.z - _collision.z) {
 				brickShape = ShapeType::kStairsTopRight;
 			} else {
 				brickShape = ShapeType::kStairsBottomRight;
@@ -151,14 +151,14 @@ void Collision::reajustActorPosition(ShapeType brickShape) {
 			}
 			break;
 		case ShapeType::kDoubleSideStairsLeft2:
-			if (512 - processActor.x - _collision.x <= processActor.z - _collision.z) {
+			if (BRICK_SIZE - processActor.x - _collision.x <= processActor.z - _collision.z) {
 				brickShape = ShapeType::kStairsBottomLeft;
 			} else {
 				brickShape = ShapeType::kStairsTopLeft;
 			}
 			break;
 		case ShapeType::kDoubleSideStairsRight2:
-			if (512 - processActor.x - _collision.x <= processActor.z - _collision.z) {
+			if (BRICK_SIZE - processActor.x - _collision.x <= processActor.z - _collision.z) {
 				brickShape = ShapeType::kStairsBottomRight;
 			} else {
 				brickShape = ShapeType::kStairsTopRight;

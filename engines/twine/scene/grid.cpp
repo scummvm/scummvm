@@ -51,7 +51,7 @@ Grid::~Grid() {
 		free(_brickTable[i]);
 	}
 	free(_currentGrid);
-	free(_currentBll);
+	free(_currentBlockLibrary);
 	free(_brickInfoBuffer);
 	free(_bricksDataBuffer);
 }
@@ -297,8 +297,8 @@ void Grid::loadGridBricks() {
 		const uint8 currentBitMask = 1 << (7 - (i & 7));
 
 		if (currentBitByte & currentBitMask) {
-			uint32 currentBllOffset = READ_LE_UINT32(_currentBll + currentBllEntryIdx);
-			const uint8 *currentBllPtr = _currentBll + currentBllOffset;
+			uint32 currentBllOffset = READ_LE_UINT32(_currentBlockLibrary + currentBllEntryIdx);
+			const uint8 *currentBllPtr = _currentBlockLibrary + currentBllOffset;
 
 			const uint32 bllSizeX = *currentBllPtr++;
 			const uint32 bllSizeY = *currentBllPtr++;
@@ -444,7 +444,7 @@ bool Grid::initGrid(int32 index) {
 	}
 
 	// load layouts from file
-	if (HQR::getAllocEntry(&_currentBll, Resources::HQR_LBA_BLL_FILE, index) == 0) {
+	if (HQR::getAllocEntry(&_currentBlockLibrary, Resources::HQR_LBA_BLL_FILE, index) == 0) {
 		warning("Failed to load block library index: %i", index);
 		return false;
 	}
@@ -453,7 +453,7 @@ bool Grid::initGrid(int32 index) {
 
 	createGridMask();
 
-	_numberOfBll = READ_LE_INT32(_currentBll) >> 2;
+	_numberOfBll = READ_LE_INT32(_currentBlockLibrary) >> 2;
 
 	createGridMap();
 
@@ -594,28 +594,29 @@ bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 
 const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
 	const IVec3 &collision = updateCollisionCoordinates(pos.x, pos.y, pos.z);
-	const int32 tempX = collision.x;
-	int32 tempY = collision.y;
-	const int32 tempZ = collision.z;
-	const uint8 *ptr = _blockBuffer + tempY * 2 + tempX * GRID_SIZE_Y * 2 + (tempZ * GRID_SIZE_X) * GRID_SIZE_Y * 2;
+	const uint8 *ptr = _blockBuffer
+					   + collision.y * sizeof(int16)
+					   + collision.x * GRID_SIZE_Y * sizeof(int16)
+					   + collision.z * GRID_SIZE_X * GRID_SIZE_Y * sizeof(int16);
 
-	while (tempY) {
+	int32 collisionY = collision.y;
+	while (collisionY) {
 		if (READ_LE_INT16(ptr)) { // found the ground
 			break;
 		}
-		tempY--;
-		ptr -= 2;
+		collisionY--;
+		ptr -= sizeof(int16);
 	}
 
-	_engine->_collision->_collision.y = tempY;
-	ground = (int16)((tempY + 1) * BRICK_HEIGHT);
+	_engine->_collision->_collision.y = collisionY;
+	ground = (int16)((collisionY + 1) * BRICK_HEIGHT);
 
 	return ptr;
 }
 
 const uint8 *Grid::getBlockLibrary(int32 index) const {
-	const int32 offset = READ_LE_UINT32(_currentBll + 4 * index);
-	return (const uint8 *)(_currentBll + offset);
+	const int32 offset = READ_LE_UINT32(_currentBlockLibrary + 4 * index);
+	return (const uint8 *)(_currentBlockLibrary + offset);
 }
 
 void Grid::getBrickPos(int32 x, int32 y, int32 z) {
@@ -722,7 +723,7 @@ ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
 	uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
-		const uint8 *blockPtr = _currentBll;
+		const uint8 *blockPtr = _currentBlockLibrary;
 
 		blockPtr += READ_LE_UINT32(blockPtr + blockIdx * 4 - 4);
 		blockPtr += 3;
@@ -765,7 +766,7 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
-		const uint8 *blockPtr = _currentBll;
+		const uint8 *blockPtr = _currentBlockLibrary;
 
 		blockPtr += READ_LE_UINT32(blockPtr + blockIdx * 4 - 4);
 		blockPtr += 3;
@@ -837,7 +838,7 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 	uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
-		const uint8 *blockPtr = _currentBll;
+		const uint8 *blockPtr = _currentBlockLibrary;
 
 		blockPtr += READ_LE_UINT32(blockPtr + blockIdx * 4 - 4);
 		blockPtr += 3;

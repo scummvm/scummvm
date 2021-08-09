@@ -344,7 +344,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 	}
 }
 
-void Actor::processActorCarrier(int32 actorIdx) { // CheckCarrier
+void Actor::processActorCarrier(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (!actor->_staticFlags.bIsCarrierActor) {
 		return;
@@ -356,7 +356,7 @@ void Actor::processActorCarrier(int32 actorIdx) { // CheckCarrier
 	}
 }
 
-void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
+void Actor::processActorExtraBonus(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	const int bonusSprite = _engine->_extra->getBonusSprite(actor->_bonusParameter);
@@ -367,10 +367,11 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 		_engine->_extra->addExtraBonus(actor->pos(), ANGLE_90, ANGLE_0, bonusSprite, actor->_bonusAmount);
 		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->pos(), actorIdx);
 	} else {
-		ActorStruct *sceneHero = _engine->_scene->_sceneHero;
+		const ActorStruct *sceneHero = _engine->_scene->_sceneHero;
 		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->pos(), sceneHero->pos());
-		_engine->_extra->addExtraBonus(actor->_pos.x, actor->_pos.y + actor->_boudingBox.maxs.y, actor->_pos.z, ANGLE_70, angle, bonusSprite, actor->_bonusAmount);
-		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->_pos.x, actor->_pos.y + actor->_boudingBox.maxs.y, actor->_pos.z, actorIdx);
+		const IVec3 pos(actor->_pos.x, actor->_pos.y + actor->_boudingBox.maxs.y, actor->_pos.z);
+		_engine->_extra->addExtraBonus(pos, ANGLE_70, angle, bonusSprite, actor->_bonusAmount);
+		_engine->_sound->playSample(Samples::ItemPopup, 1, pos, actorIdx);
 	}
 }
 
