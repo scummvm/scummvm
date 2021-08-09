@@ -12,6 +12,7 @@ import argparse
 import io
 import os
 import sys
+import re
 from binascii import crc_hqx
 from pathlib import Path
 from struct import pack
@@ -164,6 +165,15 @@ def collect_forks(args: argparse.Namespace) -> None:
                 info = os.stat(filename)
                 file.crdate = 2082844800 + int(info.st_birthtime)
                 file.mddate = 2082844800 + int(info.st_mtime)
+
+                # Get info on creator and type
+                tmp = os.popen("GetFileInfo \"" + os.path.join(dirpath, filename) + "\"").read()
+
+                groups = re.search(r"type: \"(.*)\"\ncreator: \"(.*)\"", tmp)
+
+                # We may have here "\0\0\0\0"
+                file.type = eval("\"" + groups.group(1) + "\"").encode()
+                file.creator = eval("\"" + groups.group(2) + "\"").encode()
 
                 with open(os.path.join(dirpath, resource_filename), "rb") as rsrc:
                     file.rsrc = rsrc.read()
