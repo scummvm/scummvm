@@ -635,6 +635,35 @@ void ScummEngine_v5::o5_add() {
 		}
 	}
 
+	// WORKAROUND: The clock tower is controlled by two variables: 163 and
+	// 247 in the floppy VGA version, 164 and 248 in the CD version. I
+	// don't know about the EGA version, but this fix only concerns the
+	// CD version.
+	//
+	// Whenever you enter the room, the first variable is cleared. It is
+	// then set if you examine the clock tower. The second variable
+	// determines which description you see, e.g. "Ten o'clock.", "Hmm.
+	// Still ten o'clock.", etc.
+	//
+	// If the first variable was set, the second is incremented when you
+	// leave the room. That means that every time you examine the clock
+	// tower, you get a new description (there are three of them, with a
+	// random variation on the last one) but only if you've been away from
+	// the room in between.
+	//
+	// But in the CD version, someone has attempted to "fix" this behavior
+	// by always incrementing the second variable when the clock tower is
+	// examined. So you don't have to leave the room in between, and if
+	// you examine the clock tower once and then leave, the second variable
+	// is incremented twice so you'll never see the second description.
+	//
+	// We restore the old behavior by adding 0, not 1, to the second
+	// variable when examining the clock tower.
+
+	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 210 && _currentRoom == 35 && _resultVarNumber == 248 && a == 1) {
+		a = 0;
+	}
+
 	setResult(readVar(_resultVarNumber) + a);
 }
 
