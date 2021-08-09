@@ -65,12 +65,12 @@ public:
 	 * This flag is never cleared automatically. In order to clear it,
 	 * you must call clearErr() explicitly.
 	 */
-	virtual bool err() const;
+	bool err() const override;
 
 	/**
 	 * Reset the I/O error status as returned by err().
 	 */
-	virtual void clearErr();
+	void clearErr() override;
 
 	/**
 	 * Finalize and close this stream. To be called right before this
@@ -83,14 +83,14 @@ public:
 	 *
 	 * By default, this just flushes the stream.
 	 */
-	virtual void finalize();
+	void finalize() override;
 
 	/**
 	 * Commit any buffered data to the underlying channel or
 	 * storage medium. Unbuffered streams can use the default
 	 * implementation
 	 */
-	virtual bool flush();
+	bool flush() override;
 
 	/**
 	 * Write data into the stream.
@@ -98,7 +98,7 @@ public:
 	 * @param dataPtr	Pointer to the data to be written.
 	 * @param dataSize	Number of bytes to be written.
 	 */
-	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+	uint32 write(const void *dataPtr, uint32 dataSize) override;
 
 	/**
 	* Obtain the current value of the stream position indicator of the
@@ -106,7 +106,7 @@ public:
 	*
 	* @return The current position indicator, or -1 if an error occurred.
 	 */
-	virtual int64 pos() const;
+	int64 pos() const override;
 
 	/**
 	 * Seeks to a new position within the file.
