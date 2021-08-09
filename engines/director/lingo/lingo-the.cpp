@@ -1100,7 +1100,8 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		movie->setPrimaryEventHandler(kEventTimeout, d.asString());
 		break;
 	case kTheTimer:
-		setTheEntitySTUB(kTheTimer);
+		// so value of the timer would be d.asInt()
+		movie->_lastTimerReset = _vm->getMacTicks() - d.asInt();
 		break;
 	case kTheTrace:
 		setTheEntitySTUB(kTheTrace);
