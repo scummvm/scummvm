@@ -517,7 +517,11 @@ void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
 		// if the type don't match, then we will set it as transparent. i.e. don't create widget
 		if (!_sprite->checkSpriteType())
 			return;
-		Common::Rect bbox(getBbox());
+		// always use the unstretched dims.
+		// because only the stretched sprite will have different channel size and sprite size
+		// we need the original image to scale the sprite.
+		// for the scaled bitmap castmember, it has scaled dims on sprite size, so we don't have to worry about it.
+		Common::Rect bbox(getBbox(true));
 		_sprite->_cast->setModified(false);
 
 		_widget = _sprite->_cast->createWidget(bbox, this, _sprite->_spriteType);
