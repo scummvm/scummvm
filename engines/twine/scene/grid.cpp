@@ -848,7 +848,7 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 		return READ_LE_INT16(blockPtr);
 	}
 
-	return 240;
+	return 0xF0;
 }
 
 void Grid::centerOnActor(const ActorStruct* actor) {
