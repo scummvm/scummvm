@@ -69,7 +69,7 @@ void Resources::preloadSprites() {
 	debug("preload %i sprites", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		_spriteSizeTable[i] = HQR::getAllocEntry(&_spriteTable[i], Resources::HQR_SPRITES_FILE, i);
-		if (!_spriteData[i].loadFromBuffer(_spriteTable[i], _spriteSizeTable[i])) {
+		if (!_spriteData[i].loadFromBuffer(_spriteTable[i], _spriteSizeTable[i], _engine->isLBA1())) {
 			warning("Failed to load sprite %i", i);
 		}
 	}
@@ -83,7 +83,7 @@ void Resources::preloadAnimations() {
 	}
 	debug("preload %i animations", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		_animData[i].loadFromHQR(Resources::HQR_ANIM_FILE, i);
+		_animData[i].loadFromHQR(Resources::HQR_ANIM_FILE, i, _engine->isLBA1());
 	}
 }
 
@@ -131,7 +131,7 @@ void Resources::preloadInventoryItems() {
 	}
 	debug("preload %i inventory items", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		_inventoryTable[i].loadFromHQR(Resources::HQR_INVOBJ_FILE, i);
+		_inventoryTable[i].loadFromHQR(Resources::HQR_INVOBJ_FILE, i, _engine->isLBA1());
 	}
 }
 
@@ -153,7 +153,7 @@ void Resources::initResources() {
 	}
 
 	if (_engine->isLBA1()) {
-		if (!_spriteBoundingBox.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA)) {
+		if (!_spriteBoundingBox.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA, _engine->isLBA1())) {
 			error("Failed to load sprite bounding box data");
 		}
 	}
@@ -168,23 +168,23 @@ void Resources::initResources() {
 		error("Failed to load holomap image");
 	}
 
-	if (!holomapTwinsenModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL)) {
+	if (!holomapTwinsenModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL, _engine->isLBA1())) {
 		error("Failed to load holomap twinsen model");
 	}
 
-	if (!holomapPointModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL)) {
+	if (!holomapPointModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL, _engine->isLBA1())) {
 		error("Failed to load holomap point model");
 	}
 
-	if (!holomapArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL)) {
+	if (!holomapArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL, _engine->isLBA1())) {
 		error("Failed to load holomap arrow model");
 	}
 
-	if (!holomapTwinsenArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL)) {
+	if (!holomapTwinsenArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL, _engine->isLBA1())) {
 		error("Failed to load holomap twinsen arrow model");
 	}
 
-	if (!_trajectories.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM)) {
+	if (!_trajectories.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM, _engine->isLBA1())) {
 		error("Failed to parse trajectory data");
 	}
 	debug("preload %i trajectories", (int)_trajectories.getTrajectories().size());
@@ -196,7 +196,7 @@ void Resources::initResources() {
 
 	const int32 bodyCount = HQR::numEntries(Resources::HQR_BODY_FILE);
 	for (int32 i = 0; i < bodyCount; ++i) {
-		if (!_bodyData[i].loadFromHQR(Resources::HQR_BODY_FILE, i)) {
+		if (!_bodyData[i].loadFromHQR(Resources::HQR_BODY_FILE, i, _engine->isLBA1())) {
 			error("HQR ERROR: Parsing body entity for model %i failed", i);
 		}
 	}
@@ -205,7 +205,7 @@ void Resources::initResources() {
 
 	const int32 textEntryCount = _engine->isLBA1() ? 28 : 30;
 	for (int32 i = 0; i < textEntryCount / 2; ++i) {
-		if (!_textData.loadFromHQR(Resources::HQR_TEXT_FILE, (TextBankId)i, _engine->_cfgfile.LanguageId, textEntryCount)) {
+		if (!_textData.loadFromHQR(Resources::HQR_TEXT_FILE, (TextBankId)i, _engine->_cfgfile.LanguageId, _engine->isLBA1(), textEntryCount)) {
 			error("HQR ERROR: Parsing textbank %i failed", i);
 		}
 	}

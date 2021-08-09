@@ -178,7 +178,7 @@ public:
 		return _bones[boneIdx];
 	}
 
-	bool loadFromStream(Common::SeekableReadStream &stream) override;
+	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 };
 
 } // End of namespace TwinE

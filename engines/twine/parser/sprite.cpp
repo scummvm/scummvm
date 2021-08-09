@@ -26,7 +26,7 @@
 
 namespace TwinE {
 
-bool SpriteBoundingBoxData::loadFromStream(Common::SeekableReadStream &stream) {
+bool SpriteBoundingBoxData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 	const int32 size = stream.size();
 	const int32 amount = size / 16;
 	for (int32 i = 0; i < amount; ++i) {
@@ -46,7 +46,7 @@ bool SpriteBoundingBoxData::loadFromStream(Common::SeekableReadStream &stream) {
 	return !stream.err();
 }
 
-bool SpriteData::loadFromStream(Common::SeekableReadStream &stream) {
+bool SpriteData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 	stream.skip(8);
 	int width = stream.readByte();
 	int height = stream.readByte();

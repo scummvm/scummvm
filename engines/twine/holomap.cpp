@@ -339,9 +339,9 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	ActorMoveStruct move;
 	AnimTimerDataStruct animTimerData;
 	AnimData animData;
-	animData.loadFromHQR(Resources::HQR_RESS_FILE, data->getAnimation());
+	animData.loadFromHQR(Resources::HQR_RESS_FILE, data->getAnimation(), _engine->isLBA1());
 	BodyData bodyData;
-	bodyData.loadFromHQR(Resources::HQR_RESS_FILE, data->getModel());
+	bodyData.loadFromHQR(Resources::HQR_RESS_FILE, data->getModel(), _engine->isLBA1());
 	uint frameNumber = 0;
 	int32 frameTime = _engine->_lbaTime;
 	int16 trajAnimFrameIdx = 0;

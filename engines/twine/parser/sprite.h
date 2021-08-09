@@ -45,7 +45,7 @@ private:
 	Common::Array<SpriteDim> _dimensions;
 
 public:
-	bool loadFromStream(Common::SeekableReadStream &stream) override;
+	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 
 	const BoundingBox *bbox(int index) const;
 	const SpriteDim *dim(int index) const;
@@ -72,7 +72,7 @@ private:
 	int _offsetY = 0;
 
 public:
-	bool loadFromStream(Common::SeekableReadStream &stream) override;
+	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 
 	inline const Graphics::ManagedSurface &surface() const {
 		return _surface;

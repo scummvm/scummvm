@@ -486,7 +486,7 @@ void GameState::processGameoverAnimation() {
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
 	_engine->saveFrontBuffer();
 	BodyData gameOverPtr;
-	if (!gameOverPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL)) {
+	if (!gameOverPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL, _engine->isLBA1())) {
 		return;
 	}
 

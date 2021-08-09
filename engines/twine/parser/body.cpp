@@ -153,7 +153,7 @@ void BodyData::loadSpheres(Common::SeekableReadStream &stream) {
 	}
 }
 
-bool BodyData::loadFromStream(Common::SeekableReadStream &stream) {
+bool BodyData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 	bodyFlag.value = stream.readUint16LE();
 	bbox.mins.x = stream.readSint16LE();
 	bbox.maxs.x = stream.readSint16LE();

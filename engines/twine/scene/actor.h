@@ -171,7 +171,7 @@ public:
 	}
 	inline void setBrickCausesDamage() { _brickCausesDamage = true; }
 	inline bool brickCausesDamage() { return _brickCausesDamage; }
-	void loadModel(int32 modelIndex);
+	void loadModel(int32 modelIndex, bool lba1);
 
 	void addLife(int32 val);
 

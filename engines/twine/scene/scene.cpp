@@ -192,7 +192,7 @@ bool Scene::loadSceneLBA2() {
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint32LE());
 
-		act->loadModel(stream.readUint16LE());
+		act->loadModel(stream.readUint16LE(), false);
 
 		act->_body = (BodyType)stream.readSint16LE();
 		act->_anim = (AnimationTypes)stream.readByte();
@@ -323,7 +323,7 @@ bool Scene::loadSceneLBA1() {
 		ActorStruct *act = &_sceneActors[a];
 		setActorStaticFlags(act, stream.readUint16LE());
 
-		act->loadModel(stream.readUint16LE());
+		act->loadModel(stream.readUint16LE(), true);
 
 		act->_body = (BodyType)stream.readByte();
 		act->_anim = (AnimationTypes)stream.readByte();

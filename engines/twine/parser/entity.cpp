@@ -155,7 +155,7 @@ bool EntityData::loadAnim(Common::SeekableReadStream &stream) {
 	return !stream.err();
 }
 
-bool EntityData::loadFromStream(Common::SeekableReadStream &stream) {
+bool EntityData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 	_animations.clear();
 	_bodies.clear();
 	do {
