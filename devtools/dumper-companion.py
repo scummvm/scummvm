@@ -149,18 +149,25 @@ def collect_forks(args: argparse.Namespace) -> None:
             if has_resource_fork(dirpath, filename):
                 print(f"Resource in {filename}")
                 count_resources += 1
-                data_filename = filename
-                to_filename = data_filename + ".bin"
+                resource_filename = filename + "/..namedfork/rsrc"
+                to_filename = filename + ".bin"
                 if punify:
                     tmp = punyencode(to_filename)
                     if tmp != to_filename:
                         print(f"Renamed {to_filename} to {tmp}")
                         count_renames += 1
                     to_filename = tmp
-                with open(os.path.join(dirpath, filename), "rb") as rsrc:
-                    file = machfs.File()
+
+                file = machfs.File()
+
+                # Set the file times and convert them to Mac epoch
+                info = os.stat(filename)
+                file.crdate = 2082844800 + int(info.st_birthtime)
+                file.mddate = 2082844800 + int(info.st_mtime)
+
+                with open(os.path.join(dirpath, resource_filename), "rb") as rsrc:
                     file.rsrc = rsrc.read()
-                with open(os.path.join(dirpath, data_filename), "rb") as data:
+                with open(os.path.join(dirpath, filename), "rb") as data:
                     file.data = data.read()
                 with open(os.path.join(dirpath, to_filename), "wb") as to_file:
                     to_file.write(
