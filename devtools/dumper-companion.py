@@ -151,7 +151,7 @@ def collect_forks(args: argparse.Namespace) -> None:
                 print(f"Resource in {filename}")
                 count_resources += 1
                 resource_filename = filename + "/..namedfork/rsrc"
-                to_filename = filename + ".bin"
+                to_filename = filename
                 if punify:
                     tmp = punyencode(to_filename)
                     if tmp != to_filename:
@@ -172,8 +172,8 @@ def collect_forks(args: argparse.Namespace) -> None:
                 groups = re.search(r"type: \"(.*)\"\ncreator: \"(.*)\"", tmp)
 
                 # We may have here "\0\0\0\0"
-                file.type = eval("\"" + groups.group(1) + "\"").encode()
-                file.creator = eval("\"" + groups.group(2) + "\"").encode()
+                file.type = groups.group(1).encode().decode('unicode-escape').encode()
+                file.creator = groups.group(2).encode().decode('unicode-escape').encode()
 
                 with open(os.path.join(dirpath, resource_filename), "rb") as rsrc:
                     file.rsrc = rsrc.read()
@@ -183,6 +183,11 @@ def collect_forks(args: argparse.Namespace) -> None:
                     to_file.write(
                         file_to_macbin(file, to_filename, encoding="mac_roman")
                     )
+
+                    if to_filename != filename:
+                        os.remove(filename) # Remove the original file
+
+                    os.utime(os.path.join(dirpath, to_filename), (info.st_mtime, info.st_mtime))
             elif punify:
                 punified_filename = punyencode(filename)
                 if punified_filename != filename:
