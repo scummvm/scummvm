@@ -346,7 +346,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	int32 frameTime = _engine->_lbaTime;
 	int16 trajAnimFrameIdx = 0;
 
-	int32 local18 = 0;
+	int32 waterPaletteChangeTimer = 0;
 	bool fadeInPalette = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
 	for (;;) {
@@ -356,16 +356,13 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 			break;
 		}
 
-		if (!fadeInPalette && local18 < _engine->_lbaTime) {
-			//const Common::Rect rect(170, 50, 470, 330);
-			//_engine->_interface->setClip(rect);
+		if (!fadeInPalette && waterPaletteChangeTimer < _engine->_lbaTime) {
+			// animate the water surface
 			_engine->setPalette(192, 32, &_paletteHolomap[3 * _holomapPaletteIndex++]);
-			//_engine->copyBlockPhys(rect);
-			//_engine->_interface->resetClip();
 			if (_holomapPaletteIndex == 32) {
 				_holomapPaletteIndex = 0;
 			}
-			local18 = _engine->_lbaTime + 3;
+			waterPaletteChangeTimer = _engine->_lbaTime + 3;
 		}
 
 		renderHolomapVehicle(frameNumber, move, animTimerData, bodyData, animData);
