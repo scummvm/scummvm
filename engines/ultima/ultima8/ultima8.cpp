@@ -991,7 +991,7 @@ bool Ultima8Engine::saveGame(int slot, const Std::string &desc) {
 	// (Avatar is flagged dead by usecode when you finish the _game as well.)
 	MainActor *av = getMainActor();
 	if (!av || av->hasActorFlags(Actor::ACT_DEAD)) {
-		pout << "Can't save: _game over." << Std::endl;
+		pout << "Can't save: game over." << Std::endl;
 		return false;
 	}
 
