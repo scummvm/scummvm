@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 #
 # prerequisites: pip3 install machfs
+#
+# Development information:
 # This file contains tests. They can be run with:
 #  $ pytest dumper-companion.py
+#
+# Code is formatted with blacks
 
 import argparse
 import io
@@ -19,7 +23,7 @@ def file_to_macbin(f: machfs.File, name: str, encoding: str) -> bytes:
     newFlags = f.flags & 8
     macbin = pack(
         ">xB63s4s4sBxHHHBxIIIIHB14xIHBB",
-        len(name),
+        len(name),  # TODO: shouldn't this be the encoded file length?
         name.encode(encoding),
         f.type,
         f.creator,
@@ -30,8 +34,8 @@ def file_to_macbin(f: machfs.File, name: str, encoding: str) -> bytes:
         f.locked,
         len(f.data),
         len(f.rsrc),
-        f.crdate,
-        f.mddate,
+        f.crdate,  # TODO: dates are wrong, investigate
+        f.mddate,  # TODO: dates are wrong, investigate
         0,
         newFlags,
         0,
