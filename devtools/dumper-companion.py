@@ -64,7 +64,7 @@ def escape_string(s: str) -> str:
             new_name += "\x81" + chr(0x80 + ord(char))
         else:
             new_name += char
-    return "".join(new_name)
+    return new_name
 
 
 def punyencode(orig: str, encoding: str = "mac_roman") -> str:
