@@ -619,8 +619,8 @@ const uint8 *Grid::getBlockLibrary(int32 index) const {
 }
 
 void Grid::getBrickPos(int32 x, int32 y, int32 z) {
-	_brickPixelPosX = (x - z) * 24 + 288;              // x pos
-	_brickPixelPosY = ((x + z) * 12) - (y * 15) + 215; // y pos
+	_brickPixelPosX = (x - z) * 24 + _engine->width() / 2 - 32;
+	_brickPixelPosY = ((x + z) * 12) - (y * 15) + _engine->height() / 2 - 25;
 }
 
 void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y, int32 z) {
