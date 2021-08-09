@@ -186,16 +186,16 @@ public:
 	int32 _entity = 0; // costumeIndex - index into bodyTable
 	BodyType _body = BodyType::btNormal;
 	AnimationTypes _anim = AnimationTypes::kAnimNone;
-	AnimationTypes _animExtra = AnimationTypes::kStanding; //field_2
+	AnimationTypes _animExtra = AnimationTypes::kStanding;
 	AnimationTypes _animExtraPtr = AnimationTypes::kAnimNone;
-	int32 _sprite = 0; // field_8
+	int32 _sprite = 0;
 	EntityData *_entityDataPtr = nullptr;
 
 	int16 _actorIdx = 0; // own actor index
 	IVec3 _pos;
-	int32 _strengthOfHit = 0; // field_66
+	int32 _strengthOfHit = 0;
 	int32 _hitBy = 0;
-	BonusParameter _bonusParameter; // field_10
+	BonusParameter _bonusParameter;
 	int32 _angle = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise
 	int32 _speed = 0;
 	ControlMode _controlMode = ControlMode::kNoMove;
@@ -205,9 +205,9 @@ public:
 	int32 _cropRight = 0;
 	int32 _cropBottom = 0;
 	int32 _followedActor = 0; // same as info3
-	int32 _bonusAmount = 0;   // field_12
+	int32 _bonusAmount = 0;
 	int32 _talkColor = COLOR_BLACK;
-	int32 _armor = 0; // field_14
+	int32 _armor = 0;
 	int32 _life = 0;
 
 	IVec3 _collisionPos;
@@ -224,7 +224,13 @@ public:
 	int32 _currentLabelPtr = 0; // pointer to LABEL offset
 	int32 _pausedTrackPtr = 0;
 
+	/**
+	 * colliding actor id
+	 */
 	int32 _collision = 0;
+	/**
+	 * actor id we are standing on
+	 */
 	int32 _standOn = 0;
 	int32 _zone = 0;
 
@@ -233,9 +239,9 @@ public:
 	int32 _previousAnimIdx = 0;
 	int32 _doorStatus = 0;
 	int32 _animPosition = 0;
-	AnimType _animType = AnimType::kAnimationTypeLoop;   // field_78
+	AnimType _animType = AnimType::kAnimationTypeLoop;
 	int32 _spriteActorRotation = 0;
-	int32 _brickSound = 0; // field_7A
+	int32 _brickSound = 0;
 
 	BoundingBox _boudingBox;
 	ActorMoveStruct _move;
