@@ -504,6 +504,22 @@ void ScummEngine_v5::o5_actorOps() {
 			i = getVarOrDirectByte(PARAM_1);
 			j = getVarOrDirectByte(PARAM_2);
 			assertRange(0, i, 31, "o5_actorOps: palette slot");
+
+			// WORKAROUND: The smoke animation is the same as
+			// what's used for the voodoo lady's cauldron. But
+			// for some reason, the colors changed between the
+			// VGA floppy and CD versions. So when it tries to
+			// remap the colors, it uses the wrong indexes. The
+			// CD animation uses colors 1-3, where the floppy
+			// version uses 2, 3, and 9.
+
+			if (_game.id == GID_MONKEY && _currentRoom == 76) {
+				if (i == 3)
+					i = 1;
+				else if (i == 9)
+					i = 3;
+			}
+
 			a->setPalette(i, j);
 			break;
 		case 12:		// SO_TALK_COLOR
@@ -1751,6 +1767,16 @@ void ScummEngine_v5::o5_roomOps() {
 			c = getVarOrDirectWord(PARAM_3);
 			_opcode = fetchScriptByte();
 			d = getVarOrDirectByte(PARAM_1);
+
+			// WORKAROUND: The CD version of Monkey Island 1 will
+			// set a couple of default colors, presumably for the
+			// GUI to use. But in the close-up of captain Smirk,
+			// we want the original color 3 for the cigar smoke. It
+			// should be ok since there is no GUI in this scene.
+
+			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3)
+				break;
+
 			setPalColor(d, a, b, c);	/* index, r, g, b */
 		}
 		break;
