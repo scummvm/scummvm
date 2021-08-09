@@ -147,7 +147,7 @@ def generate_parser() -> argparse.ArgumentParser:
     )
     parser_iso.set_defaults(func=extract_volume)
 
-    parser_str = subparsers.add_parser("str", help="Punyencode strings")
+    parser_str = subparsers.add_parser("str", help="Punyencode strings or standard in")
     parser_str.add_argument(
         "--stdin", action="store_true", help="Convert stdin to punycode"
     )
