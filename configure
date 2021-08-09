@@ -3416,6 +3416,9 @@ if test -n "$_host"; then
 			_ar="$_host-ar cr"
 			_ranlib=$_host-ranlib
 			_strip=$_host-strip
+			if test -z "$SDL_NET_LIBS"; then
+				set_var SDL_NET_LIBS "-lSDL2_net -lws2_32 -liphlpapi"
+			fi
 			if `which $_host-peldd >/dev/null 2>&1`; then
 				_ldd="$_host-peldd -t --ignore-errors"
 			fi
