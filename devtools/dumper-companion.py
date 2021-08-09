@@ -10,6 +10,8 @@
 
 import argparse
 import io
+import os
+import sys
 from binascii import crc_hqx
 from pathlib import Path
 from struct import pack
@@ -121,6 +123,62 @@ def extract_volume(args: argparse.Namespace) -> None:
             upath.write_bytes(file)
 
 
+def has_resource_fork(dirpath: str, filename: str) -> bool:
+    """
+    Check if file has a resource fork
+
+    Ease of compatibility between macOS and linux
+    """
+    filepath = os.path.join(dirpath, filename)
+    return os.path.exists(os.path.join(filepath, "..namedfork/rsrc"))
+
+
+def collect_forks(args: argparse.Namespace) -> None:
+    """
+    Collect resource forks and move them to a macbinary file
+
+    - combine them with the data fork when it's available
+    - punyencode the filename when requested
+    """
+    directory: Path = args.dir
+    punify: bool = args.punycode
+    count_resources = 0
+    count_renames = 0
+    for dirpath, _, filenames in os.walk(directory):
+        for filename in filenames:
+            if has_resource_fork(dirpath, filename):
+                print(f"Resource in {filename}")
+                count_resources += 1
+                data_filename = filename
+                to_filename = data_filename + ".bin"
+                if punify:
+                    tmp = punyencode(to_filename)
+                    if tmp != to_filename:
+                        print(f"Renamed {to_filename} to {tmp}")
+                        count_renames += 1
+                    to_filename = tmp
+                with open(os.path.join(dirpath, filename), "rb") as rsrc:
+                    file = machfs.File()
+                    file.rsrc = rsrc.read()
+                with open(os.path.join(dirpath, data_filename), "rb") as data:
+                    file.data = data.read()
+                with open(os.path.join(dirpath, to_filename), "wb") as to_file:
+                    to_file.write(
+                        file_to_macbin(file, to_filename, encoding="mac_roman")
+                    )
+            elif punify:
+                punified_filename = punyencode(filename)
+                if punified_filename != filename:
+                    print(f"Renamed {to_filename} to {punified_filename}")
+                    count_renames += 1
+                    os.rename(
+                        os.path.join(dirpath, tmp),
+                        os.path.join(dirpath, punified_filename),
+                    )
+
+    print(f"Macbinary {count_resources}, Renamed {count_renames} files")
+
+
 def generate_parser() -> argparse.ArgumentParser:
     """
     Generate the parser
@@ -159,6 +217,19 @@ def generate_parser() -> argparse.ArgumentParser:
         nargs="?",
     )
     parser_str.set_defaults(func=encode_string)
+
+    if sys.platform == "darwin":
+        parser_macbinary = subparsers.add_parser(
+            "mac",
+            help="MacOS only: Operate in MacBinary encoding mode. Recursively encode all resource forks in the current directory",
+        )
+        parser_macbinary.add_argument(
+            "--punycode", action="store_true", help="encode pathnames into punycode"
+        )
+        parser_macbinary.add_argument(
+            "dir", metavar="directory", type=Path, help="input directory"
+        )
+        parser_macbinary.set_defaults(func=collect_forks)
 
     return parser
 
