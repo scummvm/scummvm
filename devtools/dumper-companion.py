@@ -106,7 +106,7 @@ def extract_volume(args: argparse.Namespace) -> None:
     vol = machfs.Volume()
     vol.read(source_volume.read_bytes())
 
-    destination_dir.mkdir(parents=True)
+    destination_dir.mkdir(parents=True, exist_ok=True)
 
     for hpath, obj in vol.iter_paths():
         upath = generate_punyencoded_path(destination_dir, encoding, hpath)
