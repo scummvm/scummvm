@@ -375,7 +375,7 @@ public:
 	/**
 	 * Return a list of matching file names. Pattern can use GLOB wildcards.
 	 */
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
+	virtual int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const;
 
 	/**
 	 * Return a list of all the files in the cache.

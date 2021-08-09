@@ -147,10 +147,11 @@ bool XARCArchive::hasFile(const Common::Path &path) const {
 	return false;
 }
 
-int XARCArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const {
+int XARCArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern) const {
+	Common::String patternString = pattern.toString();
 	int matches = 0;
 	for (Common::ArchiveMemberList::const_iterator it = _members.begin(); it != _members.end(); ++it) {
-		if ((*it)->getName().matchString(pattern)) {
+		if ((*it)->getName().matchString(patternString)) {
 			// This file matches, add it
 			list.push_back(*it);
 			matches++;

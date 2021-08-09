@@ -38,7 +38,7 @@ public:
 
 	// Archive API
 	bool hasFile(const Common::Path &path) const;
-	int listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const;
+	int listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern) const;
 	int listMembers(Common::ArchiveMemberList &list) const;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const;

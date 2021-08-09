@@ -40,18 +40,19 @@ SeekableReadStream *GenericArchiveMember::createReadStream() const {
 }
 
 
-int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern) const {
+int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const {
 	// Get all "names" (TODO: "files" ?)
 	ArchiveMemberList allNames;
 	listMembers(allNames);
 
+	String patternString = pattern.toString();
 	int matches = 0;
 
 	ArchiveMemberList::const_iterator it = allNames.begin();
 	for (; it != allNames.end(); ++it) {
 		// TODO: We match case-insenstivie for now, our API does not define whether that's ok or not though...
 		// For our use case case-insensitive is probably what we want to have though.
-		if ((*it)->getName().matchString(pattern, true, "/")) {
+		if ((*it)->getName().matchString(patternString, true, "/")) {
 			list.push_back(*it);
 			matches++;
 		}
@@ -218,7 +219,7 @@ bool SearchSet::hasFile(const Path &path) const {
 	return false;
 }
 
-int SearchSet::listMatchingMembers(ArchiveMemberList &list, const String &pattern) const {
+int SearchSet::listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const {
 	int matches = 0;
 
 	ArchiveNodeList::const_iterator it = _list.begin();

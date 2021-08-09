@@ -116,7 +116,7 @@ public:
 	 *
 	 * @return The number of members added to list.
 	 */
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
+	virtual int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const;
 
 	/**
 	 * Add all members of the Archive to the list.
@@ -253,7 +253,7 @@ public:
 	void setPriority(const String& name, int priority);
 
 	virtual bool hasFile(const Path &path) const;
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
+	virtual int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const;
 	virtual int listMembers(ArchiveMemberList &list) const;
 
 	virtual const ArchiveMemberPtr getMember(const Path &path) const;

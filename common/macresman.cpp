@@ -216,7 +216,7 @@ void MacResManager::listFiles(StringArray &files, const String &pattern) {
 	SearchMan.listMatchingMembers(memberList, pattern);
 	SearchMan.listMatchingMembers(memberList, pattern + ".rsrc");
 	SearchMan.listMatchingMembers(memberList, pattern + ".bin");
-	SearchMan.listMatchingMembers(memberList, constructAppleDoubleName(pattern).toString());
+	SearchMan.listMatchingMembers(memberList, constructAppleDoubleName(pattern));
 
 	for (ArchiveMemberList::const_iterator i = memberList.begin(), end = memberList.end(); i != end; ++i) {
 		String filename = (*i)->getName();

@@ -334,7 +334,7 @@ void FSDirectory::ensureCached() const  {
 	_cached = true;
 }
 
-int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &pattern) const {
+int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const {
 	if (!_node.isDirectory())
 		return 0;
 
@@ -343,7 +343,7 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 
 	// need to match lowercase key, since all entries in our file cache are
 	// stored as lowercase.
-	String lowercasePattern(pattern);
+	String lowercasePattern(pattern.rawString());
 	lowercasePattern.toLowercase();
 
 	// Prevent wildcards from matching the directory separator.

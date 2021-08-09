@@ -125,10 +125,10 @@ bool UltimaDataArchive::hasFile(const Common::Path &path) const {
 	return _zip->hasFile(realFilename);
 }
 
-int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const {
-	Common::String patt = pattern;
-	if (pattern.hasPrefixIgnoreCase(_publicFolder))
-		patt = innerToPublic(pattern);
+int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern) const {
+	Common::String patt = pattern.toString();
+	if (patt.hasPrefixIgnoreCase(_publicFolder))
+		patt = innerToPublic(patt);
 
 	// Get any matching files
 	Common::ArchiveMemberList innerList;
