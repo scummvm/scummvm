@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-08 10:21+0000\n"
+"POT-Creation-Date: 2021-08-09 05:54+0000\n"
 "PO-Revision-Date: 2021-07-01 15:36+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5041,13 +5041,13 @@ msgstr "Η υποστήριξη του Eye of Beholder δεν έχει ενσω�
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:473
 #: engines/ultima/ultima4/meta_engine.cpp:225
-#: engines/ultima/ultima8/meta_engine.cpp:204
+#: engines/ultima/ultima8/meta_engine.cpp:210
 msgid "Interact via Left Click"
 msgstr "Αλληλεπίδραση με Αριστερό Click"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:474
 #: engines/ultima/ultima4/meta_engine.cpp:231
-#: engines/ultima/ultima8/meta_engine.cpp:210
+#: engines/ultima/ultima8/meta_engine.cpp:216
 msgid "Interact via Right Click"
 msgstr "Αλληλεπίδραση με Δεξί Click"
 
@@ -7790,19 +7790,28 @@ msgstr "Ενεργοποίηση αντικατάστασης γραμματοσ
 msgid "Replaces game fonts with rendered fonts"
 msgstr "Αντικαθιστά γραμματοσειρές του παιχνιδιού με rendered γραμματοσειρές"
 
-#: engines/ultima/ultima8/meta_engine.cpp:197
+#: engines/ultima/ultima8/meta_engine.cpp:191
+msgid "Camera moves with silencer"
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:192
+msgid ""
+"Camera tracks the player movement rather than snapping to defined positions."
+msgstr ""
+
+#: engines/ultima/ultima8/meta_engine.cpp:203
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:197
+#: engines/ultima/ultima8/meta_engine.cpp:203
 msgid "Crusader"
 msgstr "Σταυροφόρος"
 
-#: engines/ultima/ultima8/meta_engine.cpp:244
+#: engines/ultima/ultima8/meta_engine.cpp:250
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Κόλπα"
 
-#: engines/ultima/ultima8/meta_engine.cpp:261
+#: engines/ultima/ultima8/meta_engine.cpp:267
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Αποσφαλμάτωση"
 
