@@ -550,7 +550,6 @@ bool ProtoObj::acceptDrop(
 	int16   scriptResult;
 
 	//  Handle object script in a standard fashion
-	warning("ProtoObj::acceptDrop: Method_GameObject_onAcceptDrop undefined");
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptDrop,
 	                        dObj, enactor, droppedObj, count))
