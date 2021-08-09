@@ -815,4 +815,47 @@ Common::String utf8ToPrintable(const Common::String &str) {
 	return Common::toPrintable(Common::U32String(str));
 }
 
+Common::String castTypeToString(const CastType &type) {
+	Common::String res;
+	switch(type) {
+	case kCastBitmap:
+		res = "bitmap";
+		break;
+	case kCastPalette:
+		res = "palette";
+		break;
+	case kCastButton:
+		res = "button";
+		break;
+	case kCastPicture:
+		res = "picture";
+		break;
+	case kCastDigitalVideo:
+		res = "digitalVideo";
+		break;
+	case kCastLingoScript:
+		res = "script";
+		break;
+	case kCastShape:
+		res = "shape";
+		break;
+	case kCastFilmLoop:
+		res = "filmLoop";
+		break;
+	case kCastSound:
+		res = "sound";
+		break;
+	case kCastMovie:
+		res = "movie";
+		break;
+	case kCastText:
+		res = "text";
+		break;
+	default:
+		res = "empty";
+		break;
+	}
+	return res;
+}
+
 } // End of namespace Director

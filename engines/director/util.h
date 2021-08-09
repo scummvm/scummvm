@@ -56,6 +56,8 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 
 bool isButtonSprite(SpriteType spriteType);
 
+Common::String castTypeToString(const CastType &type);
+
 class RandomState {
 public:
 	uint32 _seed;

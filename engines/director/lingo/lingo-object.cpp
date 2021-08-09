@@ -624,7 +624,8 @@ Datum CastMember::getField(int field) {
 		d = (int)getBackColor();
 		break;
 	case kTheCastType:
-		d = _type;
+		d.type = SYMBOL;
+		d.u.s = new Common::String(castTypeToString(_type));
 		break;
 	case kTheFileName:
 		if (castInfo)
