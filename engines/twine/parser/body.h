@@ -103,24 +103,24 @@ private:
 public:
 	union BodyFlags {
 		struct BitMask {
-			uint16 unk1 : 1;            // 1 << 0
-			uint16 animated : 1;        // 1 << 1
-			uint16 unk3 : 1;            // 1 << 2
-			uint16 unk4 : 1;            // 1 << 3
-			uint16 unk5 : 1;            // 1 << 4
-			uint16 unk6 : 1;            // 1 << 5
-			uint16 unk7 : 1;            // 1 << 6
-			uint16 alreadyPrepared : 1; // 1 << 7
-			uint16 unk9 : 1;            // 1 << 8
-			uint16 unk10 : 1;           // 1 << 9
-			uint16 unk11 : 1;           // 1 << 10
-			uint16 unk12 : 1;           // 1 << 11
-			uint16 unk13 : 1;           // 1 << 12
-			uint16 unk14 : 1;           // 1 << 13
-			uint16 unk15 : 1;           // 1 << 14
-			uint16 unk16 : 1;           // 1 << 15
+			uint32 unk1 : 1;            // 1 << 0
+			uint32 animated : 1;        // 1 << 1
+			uint32 unk3 : 1;            // 1 << 2
+			uint32 unk4 : 1;            // 1 << 3
+			uint32 unk5 : 1;            // 1 << 4
+			uint32 unk6 : 1;            // 1 << 5
+			uint32 unk7 : 1;            // 1 << 6
+			uint32 alreadyPrepared : 1; // 1 << 7
+			uint32 unk9 : 1;            // 1 << 8
+			uint32 unk10 : 1;           // 1 << 9
+			uint32 unk11 : 1;           // 1 << 10
+			uint32 unk12 : 1;           // 1 << 11
+			uint32 unk13 : 1;           // 1 << 12
+			uint32 unk14 : 1;           // 1 << 13
+			uint32 unk15 : 1;           // 1 << 14
+			uint32 unk16 : 1;           // 1 << 15
 		} mask;
-		uint16 value;
+		uint32 value;
 	} bodyFlag;
 
 	BoundingBox bbox;
