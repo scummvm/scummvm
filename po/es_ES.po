@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-09 21:42+0000\n"
-"PO-Revision-Date: 2021-08-08 17:42+0000\n"
+"PO-Revision-Date: 2021-08-09 22:24+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6026,14 +6026,12 @@ msgstr ""
 "visual"
 
 #: engines/sci/detection.cpp:323
-#, fuzzy
-#| msgid "Enable frame skipping"
 msgid "Enable bearded musicians"
-msgstr "Activar omisión de fotogramas"
+msgstr "Activar músicos barbudos"
 
 #: engines/sci/detection.cpp:324
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "Muestra gráficos que fueron desactivados por motivos jurídicos"
 
 #: engines/sci/detection.cpp:354
 msgid "MIDI mode:"
@@ -7691,12 +7689,14 @@ msgstr "Sustituye las fuentes del juego por fuentes renderizadas"
 
 #: engines/ultima/ultima8/meta_engine.cpp:191
 msgid "Camera moves with silencer"
-msgstr ""
+msgstr "Cámara de seguimiento"
 
 #: engines/ultima/ultima8/meta_engine.cpp:192
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
+"La cámara seguirá el movimiento del jugador en vez de desplazarse a "
+"posiciones predefinidas."
 
 #: engines/ultima/ultima8/meta_engine.cpp:203
 msgid "Ultima VIII"
