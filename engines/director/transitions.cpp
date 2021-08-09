@@ -1064,19 +1064,19 @@ void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
 
 	switch (transProps[t.type].dir) {
 	case kTransDirHorizontal:
-		t.steps = w / t.chunkSize;
+		t.steps = MAX(w / t.chunkSize, (uint)1);
 		t.xStepSize = w / t.steps;
 		t.xpos = w % t.steps;
 		break;
 
 	case kTransDirVertical:
-		t.steps = h / t.chunkSize;
+		t.steps = MAX(h / t.chunkSize, (uint)1);
 		t.yStepSize = h / t.steps;
 		t.ypos = h % t.steps;
 		break;
 
 	case kTransDirBoth:
-		t.steps = m / t.chunkSize;
+		t.steps = MAX(m / t.chunkSize, (uint)1);
 
 		t.xStepSize = w / t.steps;
 		t.xpos = w % t.steps;
