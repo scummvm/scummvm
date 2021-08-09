@@ -180,7 +180,7 @@ private:
 
 	const BrickEntry* getBrickEntry(int32 j, int32 i) const;
 
-	void updateCollisionCoordinates(int32 x, int32 y, int32 z);
+	const IVec3 &updateCollisionCoordinates(int32 x, int32 y, int32 z);
 public:
 	Grid(TwinEEngine *engine);
 	~Grid();
