@@ -750,7 +750,8 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 
 			Common::String tmpitem(item);
 			tmpitem.trim();
-			if (tmpitem.size() > 0 && tmpitem[0] == '(') {
+			// is that any places locate a parenthese will disable the item, or only the first char and last char counts.
+			if (tmpitem.size() > 0 && (tmpitem[0] == '(' || tmpitem.lastChar() == '(')) {
 				enabled = false;
 
 				for (uint j = 0; j < item.size(); j++)
