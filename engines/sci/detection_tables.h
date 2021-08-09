@@ -4933,6 +4933,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO1(GUIO_NONE)	},
 
+#define GUIO_SQ1_ENGLISH_PC GUIO6(GUIO_NOSPEECH,                 \
+                                  GAMEOPTION_PREFER_DIGITAL_SFX, \
+                                  GAMEOPTION_ORIGINAL_SAVELOAD,  \
+                                  GAMEOPTION_MIDI_MODE,          \
+                                  GAMEOPTION_RGB_RENDERING,      \
+                                  GAMEOPTION_SQ1_BEARDED_MUSICIANS)
+
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 1.000.510 (just a guess)
 	{"sq1sci", "SCI", {
@@ -4957,7 +4964,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "c47600e50c6fc591957ae0c5020ee7b8", 1213262},
 		{"resource.004", 0, "e19ea4ad131472f9238590f2e1d40289", 1203051},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_SQ1_ENGLISH_PC },
 
 	// Space Quest 1 VGA Remake - Russian DOS (from ncuxonaT in bug report #10156)
 	// VERSION file reports "2.000"
@@ -5016,7 +5023,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "975c6e81194ae6b65e960a248129ecaa", 684119},
 		{"resource.005", 0, "13d96f7905637552c0647175ff816145", 695589},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_SQ1_ENGLISH_PC },
+
+#undef GUIO_SQ1_ENGLISH_PC
 
 	// Space Quest 3 - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 0.000.453 (just a guess)
