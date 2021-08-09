@@ -251,7 +251,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 				drawList[drawListPos].x = _engine->_actor->_shadowCoord.x;
 				drawList[drawListPos].y = _engine->_actor->_shadowCoord.y;
 				drawList[drawListPos].z = _engine->_actor->_shadowCoord.z;
-				drawList[drawListPos].offset = 2;
+				drawList[drawListPos].offset = 1;
 				drawListPos++;
 			}
 			if (_inSceneryView && a == _engine->_scene->_currentlyFollowedActor) {
@@ -309,8 +309,8 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 	// get actor position on screen
 	_engine->_renderer->projectPositionOnScreen(drawCmd.x - _engine->_grid->_camera.x, drawCmd.y - _engine->_grid->_camera.y, drawCmd.z - _engine->_grid->_camera.z);
 
-	int32 spriteWidth, spriteHeight;
-	_engine->_grid->getSpriteSize(drawCmd.offset, &spriteWidth, &spriteHeight, _engine->_resources->_spriteShadowPtr);
+	int32 spriteWidth = _engine->_resources->_spriteShadowPtr.surface(drawCmd.offset).w;
+	int32 spriteHeight = _engine->_resources->_spriteShadowPtr.surface(drawCmd.offset).h;
 
 	// calculate sprite size and position on screen
 	Common::Rect renderRect;
@@ -321,7 +321,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 
 	_engine->_interface->setClip(renderRect);
 
-	_engine->_grid->drawSprite(drawCmd.offset, renderRect.left, renderRect.top, _engine->_resources->_spriteShadowPtr);
+	_engine->_grid->drawSprite(renderRect.left, renderRect.top, _engine->_resources->_spriteShadowPtr, drawCmd.offset);
 
 	const int32 tmpX = (drawCmd.x + BRICK_HEIGHT) / BRICK_SIZE;
 	const int32 tmpY = drawCmd.y / BRICK_HEIGHT;

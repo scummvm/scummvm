@@ -185,8 +185,7 @@ public:
 	int32 _fontBufSize = 0;
 	uint8 *_fontPtr = nullptr;
 
-	uint32 _spriteShadowSize = 0;
-	uint8 *_spriteShadowPtr = nullptr;
+	SpriteData _spriteShadowPtr;
 	SpriteBoundingBoxData _spriteBoundingBox;
 
 	uint32 _holomapSurfaceSize = 0;

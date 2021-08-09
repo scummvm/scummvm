@@ -41,7 +41,6 @@ Resources::~Resources() {
 		free(_samplesTable[i]);
 	}
 	free(_fontPtr);
-	free(_spriteShadowPtr);
 	free(_holomapSurfacePtr);
 	free(_holomapImagePtr);
 }
@@ -148,9 +147,8 @@ void Resources::initResources() {
 	_engine->_text->setFontColor(COLOR_14);
 	_engine->_text->setTextCrossColor(136, 143, 2);
 
-	_spriteShadowSize = HQR::getAllocEntry(&_spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW);
-	if (_spriteShadowSize == 0) {
-		error("Failed to load sprite shadow");
+	if (!_spriteShadowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW, _engine->isLBA1())) {
+		error("Failed to load shadow sprites");
 	}
 
 	if (_engine->isLBA1()) {
