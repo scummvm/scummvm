@@ -2194,6 +2194,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		if ((stream = loadResourceToStream(tileRes, platformID + mapNum, "platform"))) {
 			if (stream->skip(plIndex * sizeof(Platform))) {
 				pce->pl.load(stream);
+				delete stream;
 				return &pce->pl;
 			}
 		}
