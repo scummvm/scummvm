@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-09 05:54+0000\n"
+"POT-Creation-Date: 2021-08-09 21:42+0000\n"
 "PO-Revision-Date: 2021-08-04 12:37+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -5905,11 +5905,21 @@ msgstr "리소스별 변경된 팔레트 사용"
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr "비주얼 향상을 위해 리소스별 커스텀 팔레트 사용"
 
-#: engines/sci/detection.cpp:343
+#: engines/sci/detection.cpp:323
+#, fuzzy
+#| msgid "Enable frame skipping"
+msgid "Enable bearded musicians"
+msgstr "프레임 스킵 활성화"
+
+#: engines/sci/detection.cpp:324
+msgid "Enable graphics that were disabled for legal reasons"
+msgstr ""
+
+#: engines/sci/detection.cpp:354
 msgid "MIDI mode:"
 msgstr "MIDI 모드:"
 
-#: engines/sci/detection.cpp:344
+#: engines/sci/detection.cpp:355
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
@@ -5917,15 +5927,15 @@ msgstr ""
 "외장 MIDI 장치를 사용하는 경우 (USB-MIDI 등), 여기서 사용하는 장치를 선택하십"
 "시오"
 
-#: engines/sci/detection.cpp:349
+#: engines/sci/detection.cpp:360
 msgid "Standard (GM / MT-32)"
 msgstr "표준 (GM / MT-32)"
 
-#: engines/sci/detection.cpp:353
+#: engines/sci/detection.cpp:364
 msgid "Roland D-110 / D-10 / D-20"
 msgstr "Roland D-110 / D-10 / D-20"
 
-#: engines/sci/detection.cpp:357
+#: engines/sci/detection.cpp:368
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
@@ -5977,7 +5987,7 @@ msgstr "최대 색상이 8비트인 시스템에서 %d비트 색상 영상을 �
 msgid "SCI32 support not compiled in"
 msgstr "SCI32 지원이 컴파일 되지 않음"
 
-#: engines/sci/resource/resource.cpp:863
+#: engines/sci/resource/resource.cpp:864
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "

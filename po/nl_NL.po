@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-09 05:54+0000\n"
+"POT-Creation-Date: 2021-08-09 21:42+0000\n"
 "PO-Revision-Date: 2021-07-30 18:56+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6003,11 +6003,21 @@ msgstr ""
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
 
-#: engines/sci/detection.cpp:343
+#: engines/sci/detection.cpp:323
+#, fuzzy
+#| msgid "Enable font anti-aliasing"
+msgid "Enable bearded musicians"
+msgstr "Schakel font anti-aliasing in"
+
+#: engines/sci/detection.cpp:324
+msgid "Enable graphics that were disabled for legal reasons"
+msgstr ""
+
+#: engines/sci/detection.cpp:354
 msgid "MIDI mode:"
 msgstr "MIDI modus:"
 
-#: engines/sci/detection.cpp:344
+#: engines/sci/detection.cpp:355
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
@@ -6015,15 +6025,15 @@ msgstr ""
 "Bij het gebruik van externe MIDI apparaten (bijv. door USB-MIDI), kunt u "
 "hier uw apparaat kiezen"
 
-#: engines/sci/detection.cpp:349
+#: engines/sci/detection.cpp:360
 msgid "Standard (GM / MT-32)"
 msgstr "Standaard (GM / MT-32)"
 
-#: engines/sci/detection.cpp:353
+#: engines/sci/detection.cpp:364
 msgid "Roland D-110 / D-10 / D-20"
 msgstr "Roland D-110 / D-10 / D-20"
 
-#: engines/sci/detection.cpp:357
+#: engines/sci/detection.cpp:368
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
@@ -6082,7 +6092,7 @@ msgstr ""
 msgid "SCI32 support not compiled in"
 msgstr "SCI32 ondersteuning is niet meegecompileerd"
 
-#: engines/sci/resource/resource.cpp:863
+#: engines/sci/resource/resource.cpp:864
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
