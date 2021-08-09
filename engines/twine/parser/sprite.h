@@ -66,24 +66,48 @@ inline const SpriteDim *SpriteBoundingBoxData::dim(int index) const {
 }
 
 class SpriteData : public Parser {
-private:
-	Graphics::ManagedSurface _surface;
-	int _offsetX = 0;
-	int _offsetY = 0;
+protected:
+	Graphics::ManagedSurface _surfaces[2];
+	int _offsetX[2] {0};
+	int _offsetY[2] {0};
+	int _sprites = 0;
+	bool _bricks = false;
+
+	bool loadSprite(Common::SeekableReadStream &stream, uint32 offset);
 
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 
-	inline const Graphics::ManagedSurface &surface() const {
-		return _surface;
+	inline const Graphics::ManagedSurface &surface(int index = 0) const {
+		if (index < 0 || index >= _sprites) {
+			error("Sprite surface index out of range: %i (max: %i)", index, _sprites);
+		}
+		return _surfaces[index];
 	}
 
-	inline int offsetX() const {
-		return _offsetX;
+	inline int sprites() const {
+		return _sprites;
 	}
 
-	inline int offsetY() const {
-		return _offsetY;
+	inline int offsetX(int index = 0) const {
+		if (index < 0 || index >= _sprites) {
+			error("Sprite offset index out of range: %i (max: %i)", index, _sprites);
+		}
+		return _offsetX[index];
+	}
+
+	inline int offsetY(int index = 0) const {
+		if (index < 0 || index >= _sprites) {
+			error("Sprite offset index out of range: %i (max: %i)", index, _sprites);
+		}
+		return _offsetY[index];
+	}
+};
+
+class BrickData : public SpriteData {
+public:
+	BrickData() {
+		_bricks = true;
 	}
 };
 
