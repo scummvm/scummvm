@@ -66,9 +66,6 @@ public:
 	/** flag to check if we are using a different palette than the main one */
 	bool _useAlternatePalette = false;
 
-	/** main game palette */
-	uint8 *_mainPalette = nullptr;
-
 	/** converted in-game palette */
 	uint32 _mainPaletteRGBA[NUMOFCOLORS]{0};
 

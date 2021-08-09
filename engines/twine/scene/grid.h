@@ -199,9 +199,9 @@ public:
 	IVec3 _camera;
 
 	/** Flag to know if the engine is using celling grids */
-	int16 _useCellingGrid = 0; // useAnotherGrm
+	int16 _useCellingGrid = 0;
 	/** Current celling grid index */
-	int16 _cellingGridIdx = 0; // currentGrid2
+	int16 _cellingGridIdx = 0;
 
 	/**
 	 * Draw 3D actor over bricks

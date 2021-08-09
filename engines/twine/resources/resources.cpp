@@ -43,21 +43,22 @@ Resources::~Resources() {
 	free(_fontPtr);
 	free(_spriteShadowPtr);
 	free(_holomapSurfacePtr);
-	free(holomapImagePtr);
-	free(_engine->_screens->_mainPalette);
+	free(_holomapImagePtr);
 }
 
 void Resources::initPalettes() {
-	const int32 size = HQR::getAllocEntry(&_engine->_screens->_mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
+	uint8 *mainPalette = nullptr;
+	const int32 size = HQR::getAllocEntry(&mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
 	if (size == 0) {
 		error("Failed to load main palette");
 	}
-	_engine->_screens->convertPalToRGBA(_engine->_screens->_mainPalette, _engine->_screens->_mainPaletteRGBA);
+	_engine->_screens->convertPalToRGBA(mainPalette, _engine->_screens->_mainPaletteRGBA);
 
-	memcpy(_engine->_screens->_palette, _engine->_screens->_mainPalette, NUMOFCOLORS * 3);
+	memcpy(_engine->_screens->_palette, mainPalette, NUMOFCOLORS * 3);
 
 	_engine->_screens->convertPalToRGBA(_engine->_screens->_palette, _engine->_screens->_paletteRGBA);
 	_engine->setPalette(_engine->_screens->_paletteRGBA);
+	free(mainPalette);
 }
 
 void Resources::preloadSprites() {
@@ -163,24 +164,24 @@ void Resources::initResources() {
 		error("Failed to load holomap surface");
 	}
 
-	holomapImageSize = HQR::getAllocEntry(&holomapImagePtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
-	if (holomapImageSize == 0) {
+	_holomapImageSize = HQR::getAllocEntry(&_holomapImagePtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
+	if (_holomapImageSize == 0) {
 		error("Failed to load holomap image");
 	}
 
-	if (!holomapTwinsenModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL, _engine->isLBA1())) {
+	if (!_holomapTwinsenModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL, _engine->isLBA1())) {
 		error("Failed to load holomap twinsen model");
 	}
 
-	if (!holomapPointModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL, _engine->isLBA1())) {
+	if (!_holomapPointModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL, _engine->isLBA1())) {
 		error("Failed to load holomap point model");
 	}
 
-	if (!holomapArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL, _engine->isLBA1())) {
+	if (!_holomapArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL, _engine->isLBA1())) {
 		error("Failed to load holomap arrow model");
 	}
 
-	if (!holomapTwinsenArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL, _engine->isLBA1())) {
+	if (!_holomapTwinsenArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL, _engine->isLBA1())) {
 		error("Failed to load holomap twinsen arrow model");
 	}
 

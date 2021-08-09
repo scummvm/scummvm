@@ -1623,12 +1623,12 @@ void Renderer::renderHolomapPolygons(int32 top, int32 bottom) {
 			uint32 uVar3 = (uint32)x_1_2;
 			for (int16 i = 0; i < width; ++i) {
 				const uint32 holomapImageOffset = (uint32)((int32)uVar3 >> 8 & 0xffU) | (uVar1 & 0xff00);
-				assert(holomapImageOffset < _engine->_resources->holomapImageSize);
+				assert(holomapImageOffset < _engine->_resources->_holomapImageSize);
 				if (pixelBufPtr < pixelBegin || pixelBufPtr > pixelEnd) {
 					++pixelBufPtr;
 				} else {
 					//debug("holomapImageOffset: %i", holomapImageOffset);
-					*pixelBufPtr++ = _engine->_resources->holomapImagePtr[holomapImageOffset];
+					*pixelBufPtr++ = _engine->_resources->_holomapImagePtr[holomapImageOffset];
 				}
 				uVar1 += (int32)(((uint32)x_2_3 - (uint32)x_1_3) + 1) / iWidth;
 				uVar3 += (int32)(((uint32)x_2_2 - (uint32)x_1_2) + 1) / iWidth;

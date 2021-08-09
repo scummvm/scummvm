@@ -281,7 +281,7 @@ void Holomap::renderHolomapPointModel(const IVec3 &angle, int32 x, int32 y) {
 	_engine->_renderer->getBaseRotationPosition(destPos);
 	_engine->_interface->resetClip();
 	Common::Rect dummy;
-	_engine->_renderer->renderIsoModel(destPos, x, y, ANGLE_0, _engine->_resources->holomapPointModelPtr, dummy);
+	_engine->_renderer->renderIsoModel(destPos, x, y, ANGLE_0, _engine->_resources->_holomapPointModelPtr, dummy);
 	// debug(3, "renderHolomapPointModel(%i, %i): dirty(%i:%i:%i:%i)", x, y, dummy.left, dummy.top, dummy.right, dummy.bottom);
 	// TODO: update the screen _engine->copyBlockPhys(_engine->rect());
 }
@@ -475,11 +475,11 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 		const uint16 flags = drawList.type;
 		const BodyData *bodyData = nullptr;
 		if (flags == 1u) {
-			bodyData = &_engine->_resources->holomapArrowPtr;
+			bodyData = &_engine->_resources->_holomapArrowPtr;
 		} else if (flags == 2u) {
-			bodyData = &_engine->_resources->holomapTwinsenModelPtr;
+			bodyData = &_engine->_resources->_holomapTwinsenModelPtr;
 		} else if (flags == 3u) {
-			bodyData = &_engine->_resources->holomapTwinsenArrowPtr;
+			bodyData = &_engine->_resources->_holomapTwinsenArrowPtr;
 		}
 		if (bodyData != nullptr) {
 			int32 angleX = _locations[drawList.actorIdx].angle.x;

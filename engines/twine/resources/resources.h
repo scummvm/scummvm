@@ -191,13 +191,13 @@ public:
 
 	uint32 _holomapSurfaceSize = 0;
 	uint8 *_holomapSurfacePtr = nullptr;
-	uint32 holomapImageSize = 0;
-	uint8 *holomapImagePtr = nullptr;
+	uint32 _holomapImageSize = 0;
+	uint8 *_holomapImagePtr = nullptr;
 
-	BodyData holomapPointModelPtr;
-	BodyData holomapTwinsenModelPtr;
-	BodyData holomapTwinsenArrowPtr;
-	BodyData holomapArrowPtr;
+	BodyData _holomapPointModelPtr;
+	BodyData _holomapTwinsenModelPtr;
+	BodyData _holomapTwinsenArrowPtr;
+	BodyData _holomapArrowPtr;
 
 	/** Initialize resource pointers */
 	void initResources();
