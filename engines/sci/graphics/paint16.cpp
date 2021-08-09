@@ -489,11 +489,7 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 void GfxPaint16::textToSpeech(const char *text) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (text != thelastText && ttsMan != nullptr) {
-		if (g_sci->getGameId() == GID_LAURABOW2 && g_sci->isDemo() == true)
-			ttsMan->say(text, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
-		if (g_sci->getGameId() == GID_CASTLEBRAIN && g_sci->isDemo() == true)
-			ttsMan->say(text, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
-		if (g_sci->getGameId() == GID_LAURABOW && g_sci->isDemo() == true)
+		if ((g_sci->getGameId() == GID_LAURABOW2 || g_sci->getGameId() == GID_CASTLEBRAIN) && g_sci->isDemo() == true)
 			ttsMan->say(text, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 		thelastText = text;
 	}

@@ -1212,20 +1212,20 @@ reg_t kShakeScreen(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-Common::String textKeeper[20];
+Common::String textKeeper[10];
 
 void textToSpeech(const char *text) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan != nullptr && g_sci->getGameId() == GID_LAURABOW2 && g_sci->isDemo() == false)
 		ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
 
-		for (int i = 10; i < 20; ++i)
-			textKeeper[i] = textKeeper[i - 10];
+		for (int i = 5; i < 10; ++i)
+			textKeeper[i] = textKeeper[i - 5];
 
 		textKeeper[0] = text;
 
-		for (int i = 1; i < 10; ++i)
-			textKeeper[i] = textKeeper[i + 9];
+		for (int i = 1; i < 5; ++i)
+			textKeeper[i] = textKeeper[i + 4];
 }
 
 reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {

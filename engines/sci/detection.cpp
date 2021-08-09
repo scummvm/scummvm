@@ -326,7 +326,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
  			false
  		}
  	},
- #endif
+#endif
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
