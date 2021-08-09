@@ -346,16 +346,19 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 	String lowercasePattern(pattern);
 	lowercasePattern.toLowercase();
 
+	// Prevent wildcards from matching the directory separator.
+	const char wildcardExclusions[] = { DIR_SEPARATOR, '\0' };
+
 	int matches = 0;
 	for (NodeCache::const_iterator it = _fileCache.begin(); it != _fileCache.end(); ++it) {
-		if (it->_key.matchString(lowercasePattern, false, true)) {
+		if (it->_key.matchString(lowercasePattern, false, wildcardExclusions)) {
 			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
 			matches++;
 		}
 	}
 	if (_includeDirectories) {
 		for (NodeCache::const_iterator it = _subDirCache.begin(); it != _subDirCache.end(); ++it) {
-			if (it->_key.matchString(lowercasePattern, false, true)) {
+			if (it->_key.matchString(lowercasePattern, false, wildcardExclusions)) {
 				list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
 				matches++;
 			}

@@ -58,7 +58,7 @@ Common::StringArray FRAMSaveManager::listSavefiles(const Common::String &pattern
 
 	while ((dp = framfs_readdir(dirp)) != NULL) {
 		fname = new Common::String(dp->entryname);
-		if (fname->matchString(pattern, false, false))
+		if (fname->matchString(pattern, false, NULL))
 			list.push_back(dp->entryname);
 
 		delete fname;

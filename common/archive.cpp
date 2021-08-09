@@ -51,7 +51,7 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern)
 	for (; it != allNames.end(); ++it) {
 		// TODO: We match case-insenstivie for now, our API does not define whether that's ok or not though...
 		// For our use case case-insensitive is probably what we want to have though.
-		if ((*it)->getName().matchString(pattern, true, true)) {
+		if ((*it)->getName().matchString(pattern, true, "/")) {
 			list.push_back(*it);
 			matches++;
 		}

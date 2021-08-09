@@ -2988,7 +2988,7 @@ bool ScummEngine::startManiac() {
 				// While strictly speaking it's too broad, this matchString
 				// ignores the presence or absence of trailing path separators
 				// in either currentPath or path.
-				if (path.matchString("*maniac*", true, false)) {
+				if (path.matchString("*maniac*", true, NULL)) {
 					maniacTarget = iter->_key;
 					break;
 				}

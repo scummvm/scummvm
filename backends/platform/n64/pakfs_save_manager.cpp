@@ -59,7 +59,7 @@ Common::StringArray PAKSaveManager::listSavefiles(const Common::String &pattern)
 
 	while ((dp = pakfs_readdir(dirp)) != NULL) {
 		fname = new Common::String(dp->entryname);
-		if (fname->matchString(pattern, false, false))
+		if (fname->matchString(pattern, false, NULL))
 			list.push_back(dp->entryname);
 
 		delete fname;
