@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-09 05:54+0000\n"
-"PO-Revision-Date: 2021-08-05 17:25+0000\n"
+"PO-Revision-Date: 2021-08-09 20:25+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -5304,11 +5304,13 @@ msgstr ""
 #.
 #: engines/mohawk/dialogs.cpp:135
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
-msgstr ""
+msgstr "Migliora accessibilità puzzle dell'Era Selenitica"
 
 #: engines/mohawk/dialogs.cpp:136
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
 msgstr ""
+"Permette di risolvere gli enigmi sonori dell'Era Selenitica accettando un "
+"margine d'errore più ampio."
 
 #: engines/mohawk/dialogs.cpp:139
 msgid "Simulate loading times of old CD drives"
@@ -5319,6 +5321,8 @@ msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
 msgstr ""
+"Simula i tempi di caricamento dei vecchi lettori CD, aggiungendo un ritardo "
+"casuale nelle transizioni di scena."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:147
