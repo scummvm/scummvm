@@ -569,8 +569,9 @@ void Scene::changeScene() {
 }
 
 ActorStruct *Scene::getActor(int32 actorIdx) {
-	assert(actorIdx >= 0);
-	assert(actorIdx < NUM_MAX_ACTORS);
+	if (actorIdx < 0 || actorIdx >= NUM_MAX_ACTORS) {
+		error("Invalid actor id given: %i", actorIdx);
+	}
 	return &_sceneActors[actorIdx];
 }
 
