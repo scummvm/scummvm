@@ -64,9 +64,6 @@ struct BrickEntry {
 /** Total number of bricks allowed in the game */
 #define NUM_BRICKS 9000
 
-/** Total number of bricks allowed in the game */
-#define CELLING_GRIDS_START_INDEX 120
-
 /** Grip X size */
 #define GRID_SIZE_X 64
 /** Grip Y size */

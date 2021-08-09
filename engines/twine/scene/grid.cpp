@@ -35,6 +35,8 @@
 #include "twine/scene/scene.h"
 #include "twine/twine.h"
 
+#define CELLING_GRIDS_START_INDEX 120
+
 namespace TwinE {
 
 Grid::Grid(TwinEEngine *engine) : _engine(engine) {
