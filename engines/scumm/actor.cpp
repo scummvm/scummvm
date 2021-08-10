@@ -518,11 +518,11 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	_walkdata.deltaXFactor = deltaXFactor;
 	_walkdata.deltaYFactor = deltaYFactor;
 
-	if (_vm->_game.id == GID_DIG || _vm->_game.id == GID_CMI) {
+	if (_vm->_game.version >= 5 && _vm->_game.version <= 6) {
+		_targetFacing = ((ABS(diffY) * 3) > ABS(diffX)) ? (deltaYFactor > 0 ? 180 : 0) : (deltaXFactor > 0 ? 90 : 270);
+	} else if (_vm->_game.id == GID_DIG || _vm->_game.id == GID_CMI) {
 		double temp = atan2((double)deltaXFactor, (double)-deltaYFactor);
 		_targetFacing = normalizeAngle((int)(temp * 180 / M_PI));
-	} else if (_vm->_game.id == GID_TENTACLE) {
-		_targetFacing = ((ABS(diffY) * 3) > ABS(diffX)) ? (deltaYFactor > 0 ? 180 : 0) : (deltaXFactor > 0 ? 90 : 270);
 	} else {
 		_targetFacing = getAngleFromPos(deltaXFactor, deltaYFactor);
 	}
