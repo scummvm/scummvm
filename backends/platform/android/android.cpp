@@ -452,8 +452,7 @@ bool OSystem_Android::hasFeature(Feature f) {
 		return false;
 	if (f == kFeatureVirtualKeyboard ||
 			f == kFeatureOpenUrl ||
-			f == kFeatureClipboardSupport ||
-	                f == OSystem::kFeatureHiDPI) {
+			f == kFeatureClipboardSupport) {
 		return true;
 	}
 	return ModularGraphicsBackend::hasFeature(f);

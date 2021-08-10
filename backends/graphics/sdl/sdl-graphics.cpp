@@ -228,9 +228,9 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 
 	int showCursor = SDL_DISABLE;
 	// DPI aware scaling to mouse position
-	uint scale = getFeatureState(BaseBackend::kFeatureHiDPI) ? 2 : 1;
-	mouse.x *= scale;
-	mouse.y *= scale;
+	float scale = getHiDPIScreenFactor();
+	mouse.x = (int)(mouse.x * scale + 0.5f);
+	mouse.y = (int)(mouse.y * scale + 0.5f);
 	bool valid = true;
 	if (_activeArea.drawRect.contains(mouse)) {
 		_cursorLastInActiveArea = true;

@@ -363,11 +363,6 @@ public:
 		kFeatureFilteringMode,
 
 		/**
-		 * Indicates that GUI runs in HiDPI mode
-		 */
-		kFeatureHiDPI,
-
-		/**
 		 * Indicate if stretch modes are supported by the backend.
 		 */
 		kFeatureStretchMode,
