@@ -163,16 +163,6 @@ SaveStateDescriptor StarTrekMetaEngine::querySaveMetaInfos(const char *target, i
 
 		SaveStateDescriptor descriptor(slotNr, meta.description);
 
-		// Do not allow save slot 0 (used for auto-saving) to be deleted or
-		// overwritten.
-		if (slotNr == 0) {
-			descriptor.setWriteProtectedFlag(true);
-			descriptor.setDeletableFlag(false);
-		} else {
-			descriptor.setWriteProtectedFlag(false);
-			descriptor.setDeletableFlag(true);
-		}
-
 		if (meta.thumbnail == nullptr) {
 			return SaveStateDescriptor();
 		}
@@ -185,13 +175,7 @@ SaveStateDescriptor StarTrekMetaEngine::querySaveMetaInfos(const char *target, i
 		return descriptor;
 
 	} else {
-		SaveStateDescriptor emptySave;
-		// Do not allow save slot 0 (used for auto-saving) to be overwritten.
-		if (slotNr == 0) {
-			emptySave.setWriteProtectedFlag(true);
-		} else {
-			emptySave.setWriteProtectedFlag(false);
-		}
+		SaveStateDescriptor emptySave(slotNr, Common::U32String());
 		return emptySave;
 	}
 }

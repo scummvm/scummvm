@@ -124,12 +124,7 @@ SaveStateDescriptor DrasculaMetaEngine::querySaveMetaInfos(const char *target, i
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
 
-	SaveStateDescriptor desc;
-	// Do not allow save slot 0 (used for auto-saving) to be deleted or
-	// overwritten.
-	desc.setDeletableFlag(slot != 0);
-	desc.setWriteProtectedFlag(slot == 0);
-
+	SaveStateDescriptor desc(slot, Common::U32String());
 	if (in) {
 		desc = Drascula::loadMetaData(in, slot, false);
 		if (desc.getSaveSlot() != slot) {

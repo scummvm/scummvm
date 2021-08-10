@@ -156,9 +156,6 @@ SaveStateDescriptor LilliputMetaEngine::querySaveMetaInfos(const char *target, i
 		}
 		desc.setThumbnail(thumbnail);
 
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
-
 		uint32 saveDate = file->readUint32BE();
 		uint16 saveTime = file->readUint16BE();
 
@@ -172,11 +169,6 @@ SaveStateDescriptor LilliputMetaEngine::querySaveMetaInfos(const char *target, i
 		int minutes = saveTime & 0xFF;
 
 		desc.setSaveTime(hour, minutes);
-
-		// Slot 0 is used for the 'restart game' save in all Robin games, thus
-		// we prevent it from being deleted.
-		desc.setDeletableFlag(slot != 0);
-		desc.setWriteProtectedFlag(slot == 0);
 
 		delete file;
 		return desc;

@@ -59,10 +59,12 @@ private:
 		kSaveTypeRegular,
 		kSaveTypeAutosave
 	};
+
+	void initSaveType();
 public:
 	SaveStateDescriptor();
-	SaveStateDescriptor(int s, const Common::U32String &d);
-	SaveStateDescriptor(int s, const Common::String &d);
+	SaveStateDescriptor(int slot, const Common::U32String &d);
+	SaveStateDescriptor(int slot, const Common::String &d);
 
 	/**
 	 * @param slot The saveslot id, as it would be passed to the "-x" command line switch.

@@ -62,9 +62,6 @@ SaveStateDescriptor TrecisionMetaEngine::querySaveMetaInfos(const char *target, 
 			Common::String saveName = saveFile->readString(0, 40);
 
 			SaveStateDescriptor desc(slot, saveName);
-			desc.setAutosave(false);
-			if (slot == getAutosaveSlot())
-				desc.setWriteProtectedFlag(true);
 
 			// This is freed inside SaveStateDescriptor
 			const Graphics::PixelFormat kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);

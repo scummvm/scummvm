@@ -141,11 +141,6 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 				desc.setPlayTime(header.playTime * 1000);
 			}
 
-			// Slot 0 is used for the 'automatic save on exit' save in Soltys, thus
-			// we prevent it from being deleted or overwritten by accident.
-			desc.setDeletableFlag(slot != 0);
-			desc.setWriteProtectedFlag(slot == 0);
-
 			return desc;
 		}
 	}
