@@ -163,7 +163,6 @@ public:
 
 	GridItemInfo	*_selectedEntry;
 
-	GridWidget(GuiObject *boss, int x, int y, int w, int h);
 	GridWidget(GuiObject *boss, const String &name);
 	~GridWidget();
 
@@ -221,7 +220,6 @@ protected:
 	bool			_isHighlighted;
 
 public:
-	GridItemWidget(GridWidget *boss, int x, int y, int w, int h);
 	GridItemWidget(GridWidget *boss);
 
 	void move(int x, int y);
