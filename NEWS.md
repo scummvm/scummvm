@@ -139,11 +139,18 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Enabled difficulty selection in the version of Monkey Island 2 that was
      included on the LucasArts Mac CD Game Pack II compilation. (It had been
      disabled along with the copy protection.)
-   - Repair clumsy crack in Maniac Mansion (enhanced)'s keypad script.
+   - Repaired clumsy crack in Maniac Mansion (enhanced)'s keypad script.
      This means that the GOG and Steam versions will no longer accept incorrect
      numbers, e.g. for Edna's phone number. (Why are they selling a cracked
      version anyway?!)
    - Added support for Low quality music in Macintosh version of Loom.
+   - Added animated cigar smoke to the close-up of captain Smirk in the CD
+     version of Monkey Island 1. It was present in earlier versions.
+   - Restored some missing Lemonhead lines in the English CD version of Monkey
+     Island 1.
+   - Made the clock tower in Monkey Island 1 behave the same in the CD version
+     as in earlier versions, i.e. after examining it you have to leave the
+     room and come back again for its description to change.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
