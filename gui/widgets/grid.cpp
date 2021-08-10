@@ -236,14 +236,14 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 	int trayPaddingY = buttonSpacingY;
 
 	_playButton = new PicButtonWidget(this, trayPaddingX, trayPaddingY,
-													  2 * buttonWidth + buttonSpacingX, buttonHeight,
-													  U32String("Play"), kPlayButtonCmd);
+									  2 * buttonWidth + buttonSpacingX, buttonHeight,
+									  U32String("Play"), kPlayButtonCmd);
 	_loadButton = new PicButtonWidget(this, trayPaddingX, trayPaddingY + buttonHeight + buttonSpacingY,
-													  buttonWidth, buttonHeight,
-													  U32String("Saves"), kLoadButtonCmd);
+									  buttonWidth, buttonHeight,
+									  U32String("Saves"), kLoadButtonCmd);
 	_editButton = new PicButtonWidget(this, trayPaddingX + buttonWidth + buttonSpacingX, trayPaddingY + buttonHeight + buttonSpacingY,
-													  buttonWidth, buttonHeight,
-													  U32String("Edit"), kEditButtonCmd);
+									  buttonWidth, buttonHeight,
+									  U32String("Edit"), kEditButtonCmd);
 
 	_playButton->useThemeTransparency(true);
 	_loadButton->useThemeTransparency(true);
