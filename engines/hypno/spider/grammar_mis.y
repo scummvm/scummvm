@@ -42,7 +42,7 @@ Common::Array<uint32> smenu_idx;
 Hypno::HotspotsStack stack;
 
 void HYPNO_MIS_xerror(const char *str) {
-	debug("ERROR: %s", str);
+	error("ERROR: %s", str);
 }
 
 int HYPNO_MIS_wrap() {
@@ -61,8 +61,10 @@ using namespace Hypno;
 %token<s> NAME FILENAME FLAG COMMENT GSSWITCH COMMAND
 %token<i> NUM
 %token HOTSTOK CUTSTOK BACKTOK RETTOK  TIMETOK PALETOK BBOXTOK OVERTOK WALNTOK MICETOK PLAYTOK ENDTOK 
-%token MENUTOK SMENTOK ESCPTOK NRTOK
+%token MENUTOK SMENTOK ESCPTOK NRTOK AMBITOK
 %token GLOBTOK TONTOK TOFFTOK
+%token TALKTOK INACTOK FDTOK BOXXTOK
+%token<s> PG PA PD PH PF PE PP PI
 
 %type<s> gsswitch flag
 
@@ -137,6 +139,7 @@ line:    MENUTOK NAME mflag  {
 			Hotspots *cur = stack.back();
 		    Hotspot *hot = &cur->back();
 			hot->actions.push_back(a);
+			debug("BACK");
 		}
       |  GLOBTOK GSSWITCH NAME  { 
 		    Global *a = new Global();
@@ -147,7 +150,16 @@ line:    MENUTOK NAME mflag  {
 			hot->actions.push_back(a);
 			debug("GLOB."); 
 		}
-	  |  PLAYTOK FILENAME NUM NUM gsswitch flag { 
+		|  AMBITOK FILENAME NUM NUM flag { 
+			Ambient *a = new Ambient();
+			a->path = $2;
+			a->origin = Common::Point($3, $4);
+			a->flag = $5;
+			Hotspots *cur = stack.back();
+		    Hotspot *hot = &cur->back();
+			hot->actions.push_back(a);			
+			debug("AMBI %d %d.", $3, $4); }
+	    |  PLAYTOK FILENAME NUM NUM gsswitch flag { 
 			Play *a = new Play();
 			a->path = $2;
 			a->origin = Common::Point($3, $4);
@@ -171,6 +183,7 @@ line:    MENUTOK NAME mflag  {
 			Hotspots *cur = stack.back();
 		    Hotspot *hot = &cur->back();
 			hot->actions.push_back(a);
+			debug("PALE");
 		}
 	  |  CUTSTOK FILENAME { 
 		  	Cutscene *a = new Cutscene();
@@ -198,12 +211,28 @@ line:    MENUTOK NAME mflag  {
 		    Hotspot *hot = &cur->back();
 			hot->actions.push_back(a);
 	  }
+	  |  TALKTOK talk { debug("TALK"); }
 	  |  ENDTOK RETTOK { 
 		  debug("explicit END");
 		  g_parsedHots = stack.back(); 
 		  stack.pop_back();
 		  smenu_idx.pop_back();
 		  }   		               
+	  ;
+
+talk:   INACTOK talk { debug("inactive"); }
+      | FDTOK talk { debug("inactive"); }
+	  | BACKTOK FILENAME NUM NUM gsswitch flag { debug("BACK in TALK"); }
+	  | BOXXTOK NUM NUM { debug("BOXX %d %d", $2, $3); }
+      | PG talk { debug("%s", $1); }
+      | PH talk { debug("%s", $1); }
+      | PF talk { debug("%s", $1); }
+      | PA talk { debug("%s", $1); } 
+      | PD talk { debug("%s", $1); }
+      | PP NUM NUM talk { debug("%s %d %d", $1, $2, $3); }
+      | PI NUM NUM talk { debug("%s %d %d", $1, $2, $3); }
+	  | PE { debug("|E"); }
+      | /*nothing*/ { debug("nothing in talk"); }
 	  ;
 
 mflag:  NRTOK

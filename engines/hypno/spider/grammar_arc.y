@@ -41,7 +41,7 @@ extern int HYPNO_ARC_parse();
 extern int yylineno;
 
 void HYPNO_ARC_xerror(const char *str) {
-	debug("ERROR: %s", str);
+	error("ERROR: %s", str);
 }
 
 int HYPNO_ARC_wrap() {
