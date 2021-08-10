@@ -1579,7 +1579,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 
 		uint stackSize = g_lingo->_stack.size();
 
-		if (funcSym.u.bltin != LB::b_return && funcSym.u.bltin != LB::b_returnNumber && funcSym.u.bltin != LB::b_value) {
+		if (funcSym.u.bltin != LB::b_return && funcSym.u.bltin != LB::b_value) {
 			if (stackSize == stackSizeBefore + 1) {
 				if (!allowRetVal) {
 					warning("dropping return value");

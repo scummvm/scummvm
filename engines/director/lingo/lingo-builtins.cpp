@@ -131,7 +131,6 @@ static BuiltinProto builtins[] = {
 	{ "quit",			LB::b_quit,			0, 0, 200, CBLTIN },	// D2 c
 	{ "restart",		LB::b_restart,		0, 0, 200, CBLTIN },	// D2 c
 	{ "return",			LB::b_return,		0, 1, 200, CBLTIN },	// D2 f
-	{ "scummvm_returnNumber", LB::b_returnNumber, 1, 1, 200, CBLTIN }, // D2 f
 	{ "shutDown",		LB::b_shutDown,		0, 0, 200, CBLTIN },	// D2 c
 	{ "startTimer",		LB::b_startTimer,	0, 0, 200, CBLTIN },	// D2 c
 		// when keyDown													// D2
@@ -527,7 +526,7 @@ void LB::b_value(int nargs) {
 		g_lingo->push(Datum(0));
 		return;
 	}
-	Common::String code = "scummvm_returnNumber " + expr;
+	Common::String code = "return " + expr;
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code);
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
@@ -1507,16 +1506,6 @@ void LB::b_return(int nargs) {
 		g_lingo->push(retVal);
 	}
 
-	LC::c_procret();
-}
-
-void LB::b_returnNumber(int nargs) {
-	Datum d = g_lingo->pop();
-	// Only return numeric values
-	if (d.type == INT || d.type == FLOAT)
-		g_lingo->push(d);
-	else
-		g_lingo->push(Datum());
 	LC::c_procret();
 }
 
