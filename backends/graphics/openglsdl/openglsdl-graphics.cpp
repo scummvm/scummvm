@@ -251,6 +251,12 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	}
 }
 
+float OpenGLSdlGraphicsManager::getHiDPIScreenFactor() const {
+	float scale;
+	getDpiScalingFactor(&scale);
+	return scale;
+}
+
 void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	// HACK: This is stupid but the SurfaceSDL backend defaults to 2x. This
 	// assures that the launcher (which requests 320x200) has a reasonable
@@ -288,9 +294,9 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 	// event is processed after recreating the window at the new resolution.
 	int currentWidth, currentHeight;
 	getWindowSizeFromSdl(&currentWidth, &currentHeight);
-	uint scale;
+	float scale;
 	getDpiScalingFactor(&scale);
-	debug(3, "req: %d x %d  cur: %d x %d, scale: %d", width, height, currentWidth, currentHeight, scale);
+	debug(3, "req: %d x %d  cur: %d x %d, scale: %f", width, height, currentWidth, currentHeight, scale);
 
 	handleResize(currentWidth, currentHeight);
 
@@ -299,8 +305,8 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 
 		// FIXME HACK. I don't like this at all, but macOS requires window size in LoDPI
 #ifdef __APPLE__
-		currentWidth /= scale;
-		currentHeight /= scale;
+		currentWidth = (int)(currentWidth / scale);
+		currentHeight = (int)(currentHeight / scale);
 #endif
 		// Reset maximized flag
 		_windowIsMaximized = false;
@@ -643,7 +649,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			getWindowSizeFromSdl(&windowWidth, &windowHeight);
 			// FIXME HACK. I don't like this at all, but macOS requires window size in LoDPI
 	#ifdef __APPLE__
-			uint scale;
+			float scale;
 			getDpiScalingFactor(&scale);
 			windowWidth /= scale;
 			windowHeight /= scale;
