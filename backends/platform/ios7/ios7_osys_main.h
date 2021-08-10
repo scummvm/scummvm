@@ -146,6 +146,9 @@ public:
 #endif
 
 	virtual PaletteManager *getPaletteManager() override { return this; }
+
+	virtual float getHiDPIScreenFactor() const override;
+
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num) override;
