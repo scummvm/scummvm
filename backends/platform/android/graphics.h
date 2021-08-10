@@ -41,6 +41,8 @@ public:
 	bool notifyMousePosition(Common::Point &mouse);
 	Common::Point getMousePosition() { return Common::Point(_cursorX, _cursorY); }
 
+	virtual float getHiDPIScreenFactor() const override;
+
 protected:
 	virtual void setSystemMousePosition(const int x, const int y) override {}
 
