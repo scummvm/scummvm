@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-09 21:42+0000\n"
-"PO-Revision-Date: 2021-08-09 20:25+0000\n"
+"PO-Revision-Date: 2021-08-10 04:32+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -5950,14 +5950,12 @@ msgid "Use custom per-resource palettes to improve visuals"
 msgstr "Használjon egyedi erőforrás palettákat a látvány javításához"
 
 #: engines/sci/detection.cpp:323
-#, fuzzy
-#| msgid "Enable frame skipping"
 msgid "Enable bearded musicians"
-msgstr "Képkocka kihagyás engedélyezése"
+msgstr "Szakállas zenészek engedélyezése"
 
 #: engines/sci/detection.cpp:324
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "Engedélyezze a jogi okok miatt letiltott grafikákat"
 
 #: engines/sci/detection.cpp:354
 msgid "MIDI mode:"
