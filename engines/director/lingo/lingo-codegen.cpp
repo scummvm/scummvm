@@ -1402,7 +1402,11 @@ bool LingoCompiler::visitTheLastNode(TheLastNode *node) {
 	codeInt(-30000);
 	code1(LC::c_intpush);
 	codeInt(0);
-	COMPILE(node->arg);
+	if (_refMode) {
+		COMPILE_REF(node->arg);
+	} else {
+		COMPILE(node->arg);
+	}
 	switch (node->type) {
 	case kChunkChar:
 		if (_refMode) {
@@ -1481,7 +1485,11 @@ bool LingoCompiler::visitChunkExprNode(ChunkExprNode *node) {
 		code1(LC::c_intpush);
 		codeInt(0);
 	}
-	COMPILE(node->src);
+	if (_refMode) {
+		COMPILE_REF(node->src);
+	} else {
+		COMPILE(node->src);
+	}
 	switch (node->type) {
 	case kChunkChar:
 		if (_refMode) {
