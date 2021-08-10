@@ -119,6 +119,10 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 	}
 }
 
+float OSystem_iOS7::getHiDPIScreenFactor() const {
+	return [UIScreen mainScreen].scale;
+}
+
 void OSystem_iOS7::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	//printf("initSize(%u, %u, %p)\n", width, height, (const void *)format);
 
