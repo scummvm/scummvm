@@ -109,7 +109,7 @@ GuiManager::~GuiManager() {
 void GuiManager::computeScaleFactor() {
 	uint16 w = g_system->getOverlayWidth();
 	uint16 h = g_system->getOverlayHeight();
-	uint scale = g_system->getFeatureState(OSystem::kFeatureHiDPI) ? 2 : 1;
+	float scale = g_system->getHiDPIScreenFactor();
 
 	_baseHeight = 0;	// Clean up from previous iteration
 

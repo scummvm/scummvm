@@ -243,8 +243,6 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 			return _wantsFullScreen;
 		}
 #endif
-	case OSystem::kFeatureHiDPI:
-		return getGraphicsModeScale(0) == 2;
 
 	default:
 		return OpenGLGraphicsManager::getFeatureState(f);
