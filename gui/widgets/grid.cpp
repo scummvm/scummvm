@@ -32,15 +32,6 @@
 
 namespace GUI {
 
-GridItemWidget::GridItemWidget(GridWidget *boss, int x, int y, int w, int h)
-	: ContainerWidget(boss, x, y, w, h), CommandSender(boss) {
-
-	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
-	_activeEntry = nullptr;
-	_grid = boss;
-	_isHighlighted = false;
-}
-
 GridItemWidget::GridItemWidget(GridWidget *boss)
 	: ContainerWidget(boss, 0, 0, 0, 0), CommandSender(boss) {
 
@@ -357,35 +348,6 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 }
 
 #pragma mark -
-
-GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h)
-	: ContainerWidget(boss, x, y, w, h), CommandSender(boss) {
-	_iconDir = ConfMan.get("iconspath");
-
-	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
-	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
-	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
-	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
-
-	loadPlatformIcons();
-	loadFlagIcons();
-
-	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, _y, _scrollBarWidth, _y + _h);
-	_scrollBar->setTarget(this);
-	_scrollPos = 0;
-	_firstVisibleItem = 0;
-	_lastVisibleItem = 0;
-	_itemsPerRow = 0;
-
-	_innerHeight = 0;
-	_innerWidth = 0;
-	_scrollWindowHeight = 0;
-	_scrollWindowWidth = 0;
-	_gridYSpacing = 0;
-	_gridXSpacing = 0;
-
-	_selectedEntry = nullptr;
-}
 
 GridWidget::GridWidget(GuiObject *boss, const String &name)
 	: ContainerWidget(boss, name), CommandSender(boss) {
