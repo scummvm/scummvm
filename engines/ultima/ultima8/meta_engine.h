@@ -68,11 +68,6 @@ public:
 	static Common::KeymapArray initKeymaps(const Common::String &gameId, bool isMenuActive = false);
 
 	/**
-	* Return the extra GUI options used by the target.
-	*/
-	static const ExtraGuiOptions getExtraGuiOptions(const Common::String& target);
-
-	/**
 	 * Execute an engine keymap press action
 	 */
 	static void pressAction(KeybindingAction keyAction);

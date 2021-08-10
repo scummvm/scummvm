@@ -49,11 +49,6 @@ public:
 	 * Initialize keymaps
 	 */
 	Common::KeymapArray initKeymaps(const char *target) const override;
-
-	/**
-	* Return the extra GUI options used by the target.
-	*/
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
 
 #endif

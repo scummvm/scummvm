@@ -94,16 +94,6 @@ Common::KeymapArray UltimaMetaEngine::initKeymaps(const char *target) const {
 	return Common::KeymapArray();
 }
 
-const ExtraGuiOptions UltimaMetaEngine::getExtraGuiOptions(const Common::String& target) const
-{
-	const Common::String gameId = getGameId(target);
-	if (gameId == "ultima8" || gameId == "remorse" || gameId == "regret")
-		return Ultima::Ultima8::MetaEngine::getExtraGuiOptions(gameId);
-
-	ExtraGuiOptions options;
-	return options;
-}
-
 Common::String UltimaMetaEngine::getGameId(const Common::String& target) {
 	// Store a copy of the active domain
 	Common::String currDomain = ConfMan.getActiveDomainName();
