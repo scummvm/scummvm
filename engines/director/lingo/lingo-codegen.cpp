@@ -57,20 +57,37 @@
 namespace Director {
 
 #define COMPILE(node) \
-	if (!(node)->accept(this)) \
-		return false; \
+	{ \
+		bool refModeStore = _refMode; \
+		_refMode = false; \
+		bool success = (node)->accept(this); \
+		_refMode = refModeStore; \
+		if (!success) \
+			return false; \
+	}
 
 #define COMPILE_REF(node) \
-	_refMode = true; \
-	if (!(node)->accept(this)) { \
-		_refMode = false; \
-		return false; \
-	} \
-	_refMode = false;
+	{ \
+		bool refModeStore = _refMode; \
+		_refMode = true; \
+		bool success = (node)->accept(this); \
+		_refMode = refModeStore; \
+		if (!success) \
+			return false; \
+	}
 
 #define COMPILE_LIST(list) \
-	for (uint i = 0; i < (list)->size(); i++) { \
-		if (!(*(list))[i]->accept(this)) \
+	{ \
+		bool refModeStore = _refMode; \
+		_refMode = false; \
+		bool success = true; \
+		for (uint i = 0; i < (list)->size(); i++) { \
+			success = (*(list))[i]->accept(this); \
+			if (!success) \
+				break; \
+		} \
+		_refMode = refModeStore; \
+		if (!success) \
 			return false; \
 	}
 
