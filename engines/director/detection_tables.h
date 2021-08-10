@@ -256,6 +256,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "rhem1",				"Rhem" },
 	{ "rhlava",				"Rescue Heroes: Lava Landslide" },
 	{ "rhmeteor",			"Rescue Heroes: Meteor Madness" },
+	{ "safecracker", 		"Safecracker" },
 	{ "sajaklucky",			"Pat Sajak's Lucky Letters" },
 	{ "screamingmetal",		"Screaming Metal" },
 	{ "searchlearn",     	"Search & Learn Adventures" },
@@ -290,6 +291,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "tkkg6",				"TKKG: The Forged Fifties" },
 	{ "tkkg9",				"TKKG: Voodoo Magic" },
 	{ "tommy",				"Pete Townshend Presents Tommy: The Interactive Adventure" },
+	{ "traitorsgate",		"Traitors Gate" },
 	{ "totaldistortion",	"Total Distortion" },
 	{ "tweeniesrtp",		"Tweenies: Ready to Play" },
 	{ "vcop",				"Virtual Cop" },
@@ -3060,6 +3062,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2_l("rolypolys2", "Demo", "DEMO32.EXE", 	 "38b75ecdedf662326fe4931a68ae60cd", 1411230,
 									 "DEMO.DXR", 	 "eef8ef25462ea82637af5ab730d3c684", 10075784, Common::JA_JPN, 501),
 
+	WINGAME1("safecracker", "", "sc_eng.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1415977, 501),
+
 	// Use 32-bit Windows executable in SUPPORT/WIN_95
 	MACGAME1("saillusion", "", "Illusion", "3f3285490a1764d200c9a82041bf4937", 719289, 501),
 	MACGAME1_l("saillusion", "", "Illusion", "06ed90580400cd9e263525f84c8075fd", 705673, Common::DE_DEU, 500),
@@ -3502,6 +3506,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("tkkg6", "", "TKKG-Start", "dd58f1859ddab9bf15867a510cf7bfe4", 1034014, 650),
 	WINGAME1("tkkg6", "", "Tkkg6_32.exe", "d62438566e44826960fc16c5c23dbe43", 1594089, 650),
+
+	WINGAME1("traitorsgate", "", "TRG001.EXE", "b762d2cc3f7db2a6446135917fe92496", 2072959, 650),
 
 	MACGAME1("trekpedia98", "", "Ency98 Player", "b0b0e36586489ca6070d20feeff52fa5", 1091806, 600),
 	WINGAME1("trekpedia98", "", "ENCY98.EXE", "35f1550747fcf691283b0f2486144e2b", 1707566, 600),
