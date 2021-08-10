@@ -465,20 +465,15 @@ void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
 	}
 }
 
-int getAngleFromPos(int x, int y, bool useATAN) {
-	if (useATAN) {
-		double temp = atan2((double)x, (double)-y);
-		return normalizeAngle((int)(temp * 180 / M_PI));
+int getAngleFromPos(int x, int y) {
+	if (ABS(y) * 2 < ABS(x)) {
+		if (x > 0)
+			return 90;
+		return 270;
 	} else {
-		if (ABS(y) * 2 < ABS(x)) {
-			if (x > 0)
-				return 90;
-			return 270;
-		} else {
-			if (y > 0)
-				return 180;
-			return 0;
-		}
+		if (y > 0)
+			return 180;
+		return 0;
 	}
 }
 
@@ -523,7 +518,14 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	_walkdata.deltaXFactor = deltaXFactor;
 	_walkdata.deltaYFactor = deltaYFactor;
 
-	_targetFacing = getAngleFromPos(deltaXFactor, deltaYFactor, (_vm->_game.id == GID_DIG || _vm->_game.id == GID_CMI));
+	if (_vm->_game.id == GID_DIG || _vm->_game.id == GID_CMI) {
+		double temp = atan2((double)deltaXFactor, (double)-deltaYFactor);
+		_targetFacing = normalizeAngle((int)(temp * 180 / M_PI));
+	} else if (_vm->_game.id == GID_TENTACLE) {
+		_targetFacing = ((ABS(diffY) * 3) > ABS(diffX)) ? (deltaYFactor > 0 ? 180 : 0) : (deltaXFactor > 0 ? 90 : 270);
+	} else {
+		_targetFacing = getAngleFromPos(deltaXFactor, deltaYFactor);
+	}
 
 	return actorWalkStep();
 }
@@ -969,15 +971,15 @@ UpdateActorDirection:;
 
 		if (!_walkYCountGreaterThanXCount) {
 			if (_walkDirX) {
-				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*1, V12_Y_MULTIPLIER*0, false);
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*1, V12_Y_MULTIPLIER*0);
 			} else {
-				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*-1, V12_Y_MULTIPLIER*0, false);
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*-1, V12_Y_MULTIPLIER*0);
 			}
 		} else {
 			if (_walkDirY) {
-				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*1, false);
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*1);
 			} else {
-				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*-1, false);
+				_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*-1);
 			}
 		}
 
@@ -1139,9 +1141,9 @@ UpdateActorDirection:;
 				_moving |= A;
 
 				if (_walkDirY) {
-					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*1, false);
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*1);
 				} else {
-					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*-1, false);
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*0, V12_Y_MULTIPLIER*-1);
 				}
 
 				directionUpdate();
@@ -1171,9 +1173,9 @@ UpdateActorDirection:;
 				_moving |= A;
 
 				if (_walkDirX) {
-					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*1, V12_Y_MULTIPLIER*0, false);
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*1, V12_Y_MULTIPLIER*0);
 				} else {
-					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*-1, V12_Y_MULTIPLIER*0, false);
+					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*-1, V12_Y_MULTIPLIER*0);
 				}
 
 				directionUpdate();
