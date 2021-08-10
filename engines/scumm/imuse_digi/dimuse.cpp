@@ -445,11 +445,9 @@ void IMuseDigital::callback() {
 						// Just in case the speakingActor is not being set...
 						// This allows for a fallback to pan = 64 (center) and volume = 127 (full)
 						if (track->speakingActor != nullptr) {
-							effVol = track->speakingActor->_talkVolume;
-							// Even though we fixed this in IMuseDigital::setVolume(),
-							// some sounds might be started without even calling that function
-							if (effVol > 127)
-								effVol /= 2;
+							if (track->speakingActor->_talkVolume >= 0 && track->speakingActor->_talkVolume <= 127)
+								effVol = track->speakingActor->_talkVolume;
+
 							effVol = int(round(effVol * 1.04));
 							effPan = (track->speakingActor->_talkPan != 64) ? 2 * track->speakingActor->_talkPan - 127 : 0;
 						}
