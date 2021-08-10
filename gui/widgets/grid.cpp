@@ -38,7 +38,7 @@ GridItemWidget::GridItemWidget(GridWidget *boss, int x, int y, int w, int h)
 	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_activeEntry = nullptr;
 	_grid = boss;
-	isHighlighted = false;
+	_isHighlighted = false;
 }
 
 GridItemWidget::GridItemWidget(GridWidget *boss)
@@ -47,7 +47,7 @@ GridItemWidget::GridItemWidget(GridWidget *boss)
 	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_activeEntry = nullptr;
 	_grid = boss;
-	isHighlighted = false;
+	_isHighlighted = false;
 }
 
 void GridItemWidget::setActiveEntry(GridItemInfo &entry) {
@@ -93,7 +93,7 @@ void GridItemWidget::drawWidget() {
 	const int kMarginX = _grid->_gridXSpacing / 3;
 	const int kMarginY = _grid->_gridYSpacing / 3;
 
-	if ((isHighlighted) || (_grid->getSelected() == _activeEntry->entryID)) {
+	if ((_isHighlighted) || (_grid->getSelected() == _activeEntry->entryID)) {
 		Common::Rect r(_x - kMarginX, _y - kMarginY,
 					   _x + _w + kMarginX, _y + _h + kMarginY);
 		// Draw a highlighted BG on hover
@@ -163,25 +163,25 @@ void GridItemWidget::drawWidget() {
 
 void GridItemWidget::handleMouseWheel(int x, int y, int direction) {
 	_grid->handleMouseWheel(x, y, direction);
-	isHighlighted = false;
+	_isHighlighted = false;
 }
 
 void GridItemWidget::handleMouseEntered(int button) {
-	if (!isHighlighted) {
-		isHighlighted = true;
+	if (!_isHighlighted) {
+		_isHighlighted = true;
 		markAsDirty();
 	}
 }
 
 void GridItemWidget::handleMouseLeft(int button) {
-	if (isHighlighted) {
-		isHighlighted = false;
+	if (_isHighlighted) {
+		_isHighlighted = false;
 		markAsDirty();
 	}
 }
 
 void GridItemWidget::handleMouseMoved(int x, int y, int button) {
-	if (!isHighlighted) {
+	if (!_isHighlighted) {
 		handleMouseEntered(button);
 	}
 }
@@ -205,7 +205,7 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (_activeEntry->isHeader) {
 		_grid->_selectedEntry = nullptr;
 		_grid->toggleGroup(_activeEntry->entryID);
-	} else if (isHighlighted && isVisible()) {
+	} else if (_isHighlighted && isVisible()) {
 		_grid->_selectedEntry = _activeEntry;
 		sendCommand(kItemClicked, 0);
 		// Since user expected to click on "entry" and not the "widget", we
