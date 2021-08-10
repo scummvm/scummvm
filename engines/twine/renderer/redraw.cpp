@@ -667,7 +667,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		blitBackgroundAreas();
 	}
 
-	DrawListStruct drawList[150];
+	static DrawListStruct drawList[150];
 	int32 drawListPos = fillActorDrawingList(drawList, bgRedraw);
 	drawListPos = fillExtraDrawingList(drawList, drawListPos);
 	sortDrawingList(drawList, drawListPos);
