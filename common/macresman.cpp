@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/crc.h"
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/file.h"
@@ -306,6 +307,14 @@ bool MacResManager::isMacBinary(SeekableReadStream &stream) {
 	int resForkOffset = -1;
 
 	if (stream.read(infoHeader, MBI_INFOHDR) != MBI_INFOHDR)
+		return false;
+
+	CRC_BINHEX crc;
+	crc.init();
+	uint16 checkSum = crc.crcFast(infoHeader, 124);
+
+	// Sanity check on the CRC. Some movies could look like MacBinary
+	if (checkSum != READ_BE_UINT16(&infoHeader[124]))
 		return false;
 
 	if (infoHeader[MBI_ZERO1] == 0 && infoHeader[MBI_ZERO2] == 0 &&
