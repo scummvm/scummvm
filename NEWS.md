@@ -190,6 +190,14 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Add native system file browser feature.
    - Re-activate nuked OPL Adlib driver.
 
+ Big-endian ports:
+   - Fixed crashes or rendering issues with the Blazing Dragons, Duckman and
+     Full Pipe games.
+
+ macOS port:
+   - Add support for Dark Mode.
+   - Provide new binaries for Apple Silicon (M1) systems.
+
  MorphOS port:
    - Added native system file browser feature.
    - Added Cloud feature.
