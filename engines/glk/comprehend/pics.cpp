@@ -279,10 +279,13 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 			ctx->_drawSurface->floodFill(a, b, ctx->_fillColor);
 		break;
 
+	#if 0
+	// FIXME: The reset case was causing room outside cell to be drawn all white
 	case OPCODE_RESET:
 		a = imageGetOperand(ctx);
 		doResetOp(ctx, a);
 		break;
+	#endif
 	}
 
 	//ctx->_drawSurface->dumpToScreen();
