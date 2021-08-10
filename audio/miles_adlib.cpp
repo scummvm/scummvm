@@ -116,6 +116,18 @@ uint16 milesAdLibVolumeSensitivityTable[] = {
 	82, 85, 88, 91, 94, 97, 100, 103, 106, 109, 112, 115, 118, 121, 124, 127
 };
 
+// MIDI panning to register volume table for dual OPL2
+// hardcoded, dumped from ADLIB.MDI
+uint8 milesAdLibPanningVolumeLookUpTable[] = {
+	0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30,
+	32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62,
+	64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94,
+	96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 127,
+	127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
+	127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
+	127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
+	127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127
+};
 
 class MidiDriver_Miles_AdLib : public MidiDriver_Multisource {
 public:
@@ -251,6 +263,7 @@ private:
 	void resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value);
 
 	void setRegister(int reg, int value);
+	void setRegisterStereo(uint8 reg, uint8 valueLeft, uint8 valueRight);
 
 	int16 searchFreeVirtualFmVoiceChannel();
 	int16 searchFreePhysicalFmVoiceChannel();
@@ -308,20 +321,26 @@ int MidiDriver_Miles_AdLib::open() {
 		// Try to create OPL3 first
 		_opl = OPL::Config::create(OPL::Config::kOpl3);
 	}
-	// TODO Add support for dual OPL2
+	if (!_opl) {
+		// not created yet, downgrade to dual OPL2
+		_oplType = OPL::Config::kDualOpl2;
+		_opl = OPL::Config::create(OPL::Config::kDualOpl2);
+	}
 	if (!_opl) {
 		// not created yet, downgrade to OPL2
 		_oplType = OPL::Config::kOpl2;
-		_modeVirtualFmVoicesCount = 16;
-		_modePhysicalFmVoicesCount = 9;
-		_modeStereo = false;
-
 		_opl = OPL::Config::create(OPL::Config::kOpl2);
 	}
 
 	if (!_opl) {
 		// We still got nothing -> can't do anything anymore
 		return -1;
+	}
+
+	if (_oplType != OPL::Config::kOpl3) {
+		_modeVirtualFmVoicesCount = 16;
+		_modePhysicalFmVoicesCount = 9;
+		_modeStereo = false;
 	}
 
 	_opl->init();
@@ -778,6 +797,8 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 	uint16 channelReg = milesAdLibChannelRegister[physicalFmVoice];
 
 	uint16 compositeVolume = 0;
+	uint8 leftVolume = 0;
+	uint8 rightVolume = 0;
 
 	if (registerUpdateFlags & kMilesAdLibUpdateFlags_Reg_40) {
 		// Calculate new volume
@@ -807,6 +828,19 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 		}
 		// Source volume scaling might clip volume, so reduce to maximum.
 		compositeVolume = MIN(compositeVolume, (uint16)0x7F);
+
+		if (_oplType == OPL::Config::kDualOpl2) {
+			// For dual OPL2, Miles pans the notes by playing the same note on
+			// the left and right OPL2 chips at different volume levels.
+			// Calculate the volume for each chip based on the panning value.
+			leftVolume = (milesAdLibPanningVolumeLookUpTable[_midiChannels[midiChannel].currentPanning] * compositeVolume) >> 7;
+			if (leftVolume)
+				leftVolume++; // round up in case result wasn't 0
+			uint8 invertedPanning = 0 - (_midiChannels[midiChannel].currentPanning - 127);
+			rightVolume = (milesAdLibPanningVolumeLookUpTable[invertedPanning] * compositeVolume) >> 7;
+			if (rightVolume)
+				rightVolume++; // round up in case result wasn't 0
+		}
 	}
 
 	if (registerUpdateFlags & kMilesAdLibUpdateFlags_Reg_20) {
@@ -831,22 +865,52 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 		uint16 volumeOp1 = (~reg40op1) & 0x3F;
 		uint16 volumeOp2 = (~reg40op2) & 0x3F;
 
-		if (instrumentPtr->regC0 & 1) {
-			// operator 2 enabled
-			// scale volume factor
-			volumeOp1 = (volumeOp1 * compositeVolume) / 127;
-			// 2nd operator always scaled
+		if (_oplType != OPL::Config::kDualOpl2) {
+			if (instrumentPtr->regC0 & 1) {
+				// operator 2 enabled
+				// scale volume factor
+				volumeOp1 = (volumeOp1 * compositeVolume) / 127;
+				// 2nd operator always scaled
+			}
+
+			volumeOp2 = (volumeOp2 * compositeVolume) / 127;
+
+			volumeOp1 = (~volumeOp1) & 0x3F; // negate it, so we get the proper value for the register
+			volumeOp2 = (~volumeOp2) & 0x3F; // ditto
+			reg40op1  = (reg40op1 & 0xC0) | volumeOp1; // keep "scaling level" and merge in our volume
+			reg40op2  = (reg40op2 & 0xC0) | volumeOp2;
+
+			setRegister(0x40 + op1Reg, reg40op1);
+			setRegister(0x40 + op2Reg, reg40op2);
+		} else {
+			// For dual OPL2, separate register values are calculated for the
+			// left and right OPL2 chip.
+			uint8 volumeLeftOp1 = volumeOp1;
+			uint8 volumeRightOp1 = volumeOp1;
+
+			if (instrumentPtr->regC0 & 1) {
+				// operator 2 enabled
+				// scale volume factor
+				volumeLeftOp1 = (volumeLeftOp1 * leftVolume) / 127;
+				volumeRightOp1 = (volumeRightOp1 * rightVolume) / 127;
+				// 2nd operator always scaled
+			}
+
+			uint8 volumeLeftOp2 = (volumeOp2 * leftVolume) / 127;
+			uint8 volumeRightOp2 = (volumeOp2 * rightVolume) / 127;
+
+			volumeLeftOp1 = (~volumeLeftOp1) & 0x3F; // negate it, so we get the proper value for the register
+			volumeRightOp1 = (~volumeRightOp1) & 0x3F;
+			volumeLeftOp2 = (~volumeLeftOp2) & 0x3F; // ditto
+			volumeRightOp2 = (~volumeRightOp2) & 0x3F;
+			uint8 reg40op1left = (reg40op1 & 0xC0) | volumeLeftOp1; // keep "scaling level" and merge in our volume
+			uint8 reg40op1right = (reg40op1 & 0xC0) | volumeRightOp1;
+			uint8 reg40op2left = (reg40op2 & 0xC0) | volumeLeftOp2;
+			uint8 reg40op2right = (reg40op2 & 0xC0) | volumeRightOp2;
+
+			setRegisterStereo(0x40 + op1Reg, reg40op1left, reg40op1right);
+			setRegisterStereo(0x40 + op2Reg, reg40op2left, reg40op2right);
 		}
-
-		volumeOp2 = (volumeOp2 * compositeVolume) / 127;
-
-		volumeOp1 = (~volumeOp1) & 0x3F; // negate it, so we get the proper value for the register
-		volumeOp2 = (~volumeOp2) & 0x3F; // ditto
-		reg40op1  = (reg40op1 & 0xC0) | volumeOp1; // keep "scaling level" and merge in our volume
-		reg40op2  = (reg40op2 & 0xC0) | volumeOp2;
-
-		setRegister(0x40 + op1Reg, reg40op1);
-		setRegister(0x40 + op2Reg, reg40op2);
 	}
 
 	if (registerUpdateFlags & kMilesAdLibUpdateFlags_Reg_60) {
@@ -1155,6 +1219,13 @@ void MidiDriver_Miles_AdLib::setRegister(int reg, int value) {
 		_opl->write(0x223, value);
 		//warning("OPL3 write %x %x (%d)", reg & 0xFF, value, value);
 	}
+}
+
+void MidiDriver_Miles_AdLib::setRegisterStereo(uint8 reg, uint8 valueLeft, uint8 valueRight) {
+	_opl->write(0x220, reg);
+	_opl->write(0x221, valueLeft);
+	_opl->write(0x222, reg);
+	_opl->write(0x223, valueRight);
 }
 
 MidiDriver_Multisource *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *streamAdLib, Common::SeekableReadStream *streamOPL3) {
