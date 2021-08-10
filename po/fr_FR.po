@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-09 21:42+0000\n"
-"PO-Revision-Date: 2021-08-09 20:25+0000\n"
+"PO-Revision-Date: 2021-08-10 18:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1094,11 +1094,11 @@ msgstr "Corrige le rapport d'aspect pour les jeux"
 
 #: gui/options.cpp:1486
 msgid "Preferred device:"
-msgstr "Périphérique préféré :"
+msgstr "Périph. préféré :"
 
 #: gui/options.cpp:1486
 msgid "Music device:"
-msgstr "Périphérique audio :"
+msgstr "Périph. audio :"
 
 #: gui/options.cpp:1486 gui/options.cpp:1488
 msgid "Specifies preferred sound device or sound card emulator"
@@ -1130,7 +1130,7 @@ msgstr "AdLib est utilisé pour la musique dans de nombreux jeux"
 
 #: gui/options.cpp:1529
 msgid "GM device:"
-msgstr "Périphérique GM :"
+msgstr "Périph. GM :"
 
 #: gui/options.cpp:1529
 msgid "Specifies default sound device for General MIDI output"
@@ -1173,7 +1173,7 @@ msgstr "Gain MIDI :"
 
 #: gui/options.cpp:1584
 msgid "MT-32 Device:"
-msgstr "Périphérique MT-32 :"
+msgstr "Périph. MT-32 :"
 
 #: gui/options.cpp:1584
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
@@ -1391,11 +1391,11 @@ msgstr "Thème :"
 
 #: gui/options.cpp:2245
 msgid "GUI scale:"
-msgstr "Echelle de l'interface :"
+msgstr "Interface - Echelle :"
 
 #: gui/options.cpp:2252
 msgid "GUI renderer:"
-msgstr "Interface :"
+msgstr "Interface - Rendu :"
 
 #: gui/options.cpp:2264
 msgid "Autosave:"
@@ -1464,7 +1464,7 @@ msgstr ""
 
 #: gui/options.cpp:2339 gui/updates-dialog.cpp:86
 msgid "Update check:"
-msgstr "Recherche de mises à jour :"
+msgstr "Rech. mises à jour :"
 
 #: gui/options.cpp:2339
 msgid "How often to check ScummVM updates"
@@ -3965,11 +3965,11 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
-"Il semble que vous utilisez un périphérique General MIDI,\n"
-"mais ce jeu ne supporte que le MIDI Roland MT32. Nous essayons\n"
-"d'associer les instruments Roland MT32 aux instruments General\n"
-"MIDI. Cependant il est possible que quelques pistes ne soient\n"
-" pas jouées correctement."
+"Il semble que vous utilisez un périphérique General\n"
+"MIDI, mais ce jeu ne supporte que le MIDI Roland MT32.\n"
+"Nous essayons d'associer les instruments Roland MT32\n"
+"aux instruments General MIDI. Cependant il est possible\n"
+"que quelques pistes ne soient pas jouées correctement."
 
 #: engines/ags/detection.cpp:90
 msgid "Game language:"
@@ -6035,14 +6035,13 @@ msgstr ""
 "Utilise des palettes personnalisées par ressource pour améliorer les visuels"
 
 #: engines/sci/detection.cpp:323
-#, fuzzy
-#| msgid "Enable frame skipping"
 msgid "Enable bearded musicians"
-msgstr "Activer le saut de frames"
+msgstr "Activer les musiciens barbus"
 
 #: engines/sci/detection.cpp:324
 msgid "Enable graphics that were disabled for legal reasons"
 msgstr ""
+"Active des graphismes qui ont été désactivés pour des raisons juridiques"
 
 #: engines/sci/detection.cpp:354
 msgid "MIDI mode:"
@@ -7723,7 +7722,7 @@ msgstr "Remplace les polices du jeu par des polices de rendu"
 
 #: engines/ultima/ultima8/meta_engine.cpp:191
 msgid "Camera moves with silencer"
-msgstr "Déplacement de la caméra avec le Silencer"
+msgstr "La caméra se déplace avec le Silencer"
 
 #: engines/ultima/ultima8/meta_engine.cpp:192
 msgid ""
@@ -7767,7 +7766,7 @@ msgstr "Afficher le compteur FPS"
 #: engines/wintermute/detection.cpp:54
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr ""
-"Affiche le nombre d'images par seconde (FPS) dans le coin en haut à gauche"
+"Affiche le nombre d'images par seconde (FPS) dans le coin supérieur gauche"
 
 #: engines/wintermute/detection.cpp:63
 msgid "Sprite bilinear filtering (SLOW)"
