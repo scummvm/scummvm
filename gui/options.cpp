@@ -134,8 +134,8 @@ static const char *savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("E
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 
 static const char *guiBaseLabels[] = {
-	// I18N: Automatic GUI scaling
-	_s("Auto"),
+	// I18N: Very large GUI scale
+	_s("Very large"),
 	// I18N: Large GUI scale
 	_s("Large"),
 	// I18N: Medium GUI scale
@@ -144,7 +144,7 @@ static const char *guiBaseLabels[] = {
 	_s("Small"),
 	nullptr
 };
-static const int guiBaseValues[] = { 0, 240, 480, 720, -1 };
+static const int guiBaseValues[] = { 150, 125, 100, 75, -1 };
 
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
@@ -2134,8 +2134,8 @@ void GlobalOptionsDialog::build() {
 #endif
 
 	// Misc Tab
-	_guiBasePopUp->setSelected(1);
-	int value = ConfMan.getInt("gui_base");
+	_guiBasePopUp->setSelected(2);
+	int value = ConfMan.getInt("gui_scale");
 	for (int i = 0; guiBaseLabels[i]; i++) {
 		if (value == guiBaseValues[i])
 			_guiBasePopUp->setSelected(i);
@@ -2517,9 +2517,9 @@ void GlobalOptionsDialog::apply() {
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
 
-	int oldGuiBase = ConfMan.getInt("gui_base");
-	ConfMan.setInt("gui_base", _guiBasePopUp->getSelectedTag(), _domain);
-	if (oldGuiBase != (int)_guiBasePopUp->getSelectedTag())
+	int oldGuiScale = ConfMan.getInt("gui_scale");
+	ConfMan.setInt("gui_scale", _guiBasePopUp->getSelectedTag(), _domain);
+	if (oldGuiScale != (int)_guiBasePopUp->getSelectedTag())
 		g_gui.computeScaleFactor();
 
 	ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
