@@ -1021,8 +1021,7 @@ void Player::fixAfterLoad() {
 	_midi = _se->getBestMidiDriver(_id);
 	if (!_midi) {
 		clear();
-	} else {
-		_parserType = kParserTypeNone;
+	} else {		
 		start_seq_sound(_id, false);
 		setSpeed(_speed);
 		if (_parser)
@@ -1058,6 +1057,7 @@ void Player::saveLoadWithSerializer(Common::Serializer &s) {
 	if (!s.isSaving() && _parser) {
 		delete _parser;
 		_parser = 0;
+		_parserType = kParserTypeNone;
 	}
 	_music_tick = _parser ? _parser->getTick() : 0;
 
