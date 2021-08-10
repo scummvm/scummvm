@@ -207,6 +207,13 @@ protected:
 	 * Returns the scaling mode based on the display DPI
 	 */
 	void getDpiScalingFactor(float *scale) const {
+#ifdef MACOSX
+		if (getMacWindowScaling(scale)) {
+			debug(4, "NSWindow HiDPI scaling: %f", *scale);
+			return;
+		}
+#endif
+
 		float dpi, defaultDpi, ratio;
 
 		getDisplayDpiFromSdl(&dpi, &defaultDpi);
@@ -245,6 +252,10 @@ protected:
 
 private:
 	void toggleFullScreen();
+
+#ifdef MACOSX
+	bool getMacWindowScaling(float *) const;
+#endif
 };
 
 #endif
