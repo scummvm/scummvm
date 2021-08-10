@@ -520,10 +520,8 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 
 	if (_vm->_game.version >= 7)
 		_targetFacing = normalizeAngle((int)(atan2((double)deltaXFactor, (double)-deltaYFactor) * 180 / M_PI));
-	else if (_vm->_game.version >= 5)
-		_targetFacing = ((ABS(diffY) * 3) > ABS(diffX)) ? (deltaYFactor > 0 ? 180 : 0) : (deltaXFactor > 0 ? 90 : 270);
-	else 
-		_targetFacing = getAngleFromPos(deltaXFactor, deltaYFactor);
+	else
+		_targetFacing = (ABS(diffY) * 3 > ABS(diffX)) ? (deltaYFactor > 0 ? 180 : 0) : (deltaXFactor > 0 ? 90 : 270);
 
 	return actorWalkStep();
 }
