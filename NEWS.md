@@ -152,8 +152,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      of one of the three destroyable turrets in the fort.
    - Added animated cigar smoke to the close-up of captain Smirk in the CD
      version of Monkey Island 1. It was present in earlier versions.
-   - Restored some missing Lemonhead lines in the English CD version of Monkey
-     Island 1.
+   - Restored some missing Lemonhead lines in the English and Italian CD
+     versions of Monkey Island 1.
    - Made the clock tower in Monkey Island 1 behave the same in the CD version
      as in earlier versions, i.e. after examining it you have to leave the
      room and come back again for its description to change.
