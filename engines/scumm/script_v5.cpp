@@ -2927,6 +2927,11 @@ void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr
 			"Oooh, che bello.\xFF\x03"
 			"Semplice.  Proprio come uno dei miei.\xFF\x03"
 			"E piccolo.  Come il mio.";
+	} else if (strncmp((const char *)ptr, "/LH.ESP/", 8) == 0) {
+		msg =
+			"Oooh, qu\x82 bonito.\xFF\x03"
+			"Simple.  Como uno de los m\xA1os.\xFF\x03"
+			"Y peque\xA4o, como los m\xA1os.";
 	}
 
 	printString(textSlot, (const byte *)msg);
