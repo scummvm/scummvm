@@ -293,9 +293,21 @@ void FileIO::m_readToken(int nargs) {
 }
 
 void FileIO::m_readFile(int nargs) {
-	g_lingo->printSTUBWithArglist("FileIO::m_readFile", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum());
+	FileObject *me = static_cast<FileObject *>(g_lingo->_currentMe.u.obj);
+
+	if (!me->_inStream || me->_inStream->eos() || me->_inStream->err()) {
+		g_lingo->push(Datum(""));
+		return;
+	}
+
+	Common::String res;
+	char ch = me->_inStream->readByte();
+	while (!me->_inStream->eos() && !me->_inStream->err()) {
+		res += ch;
+		ch = me->_inStream->readByte();
+	}
+
+	g_lingo->push(res);
 }
 
 // Write
