@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-09 21:42+0000\n"
-"PO-Revision-Date: 2021-07-30 18:56+0000\n"
+"PO-Revision-Date: 2021-08-10 05:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1373,7 +1373,7 @@ msgstr "ScummVM configuratie pad: "
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2236 gui/options.cpp:2773
 msgid "Last browser path: "
-msgstr ""
+msgstr "Laatste browser pad: "
 
 #: gui/options.cpp:2241
 msgid "Theme:"
@@ -3418,7 +3418,7 @@ msgstr "Vergroot Modus Uit"
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:77
 msgid "Show SAF revoke permissions overlay button"
-msgstr ""
+msgstr "Toon SAF intrekken toestemming overlay knop"
 
 #: backends/platform/ds/ds-graphics.cpp:219
 msgid "Unscaled"
@@ -4918,6 +4918,7 @@ msgstr ""
 #: engines/kyra/detection_tables.h:1402
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
+"Het spel is onjuist toegoevoegd. Voeg a.u.b. de root folder van het spel toe."
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1418
@@ -4925,6 +4926,8 @@ msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
 msgstr ""
+"Het spel is onjuist toegoevoegd. Het GAME.DAT bestand is een ISO image en de "
+"bestanden moeten daar uitgehaald worden."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -5246,6 +5249,8 @@ msgid ""
 "Toggle screen transitions on or off. Turning off screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
+"Zet schermovergangen aan/uit. Zonder schermovergangen kunt u sneller door "
+"het spel navigeren."
 
 #: engines/mohawk/dialogs.cpp:122
 msgid "Play the Myst fly by movie"
@@ -5269,6 +5274,7 @@ msgstr ""
 #: engines/mohawk/dialogs.cpp:136
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
 msgstr ""
+"Sta hoger foutmarge toe bij het oplossen van Selenitic Age geluid puzzels."
 
 #: engines/mohawk/dialogs.cpp:139
 msgid "Simulate loading times of old CD drives"
@@ -5279,6 +5285,8 @@ msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
 msgstr ""
+"Simuleer laad tijden van oude CD-ROM drives door willekeurige vertraging toe "
+"te voegen bij scene overgangen."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:147
@@ -5600,15 +5608,19 @@ msgstr "Speler Spraak"
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Zet speler spraak aan. Werkt alleen als spraak is aangezet bij de Geluid "
+"instellingen."
 
 #: engines/nancy/dialogs.cpp:42
 msgid "Character Speech"
-msgstr ""
+msgstr "Personage Spraak"
 
 #: engines/nancy/dialogs.cpp:42
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Zet NPC spraak aan. Werkt alleen als spraak is aangezet bij de Geluid "
+"instellingen."
 
 #: engines/nancy/dialogs.cpp:43
 #, fuzzy
@@ -5652,7 +5664,7 @@ msgstr "Algemeen"
 
 #: engines/nancy/dialogs.cpp:106
 msgid "Scene Data"
-msgstr ""
+msgstr "Scene Data"
 
 #: engines/nancy/dialogs.cpp:107
 #, fuzzy
@@ -5662,28 +5674,28 @@ msgstr "Start de debugger"
 
 #: engines/nancy/dialogs.cpp:109
 msgid "Scene Number"
-msgstr ""
+msgstr "Scene Nummer"
 
 #: engines/nancy/dialogs.cpp:111
 msgid "Frame Number"
-msgstr ""
+msgstr "Frame Nummer"
 
 #. I18N: The Y position (a.k.a vertical scroll) of the background
 #: engines/nancy/dialogs.cpp:115
 msgid "Background Top (Y)"
-msgstr ""
+msgstr "Achtergrond Top (Y)"
 
 #: engines/nancy/dialogs.cpp:117
 msgid "Hints Remaining"
-msgstr ""
+msgstr "Resterende Hints"
 
 #: engines/nancy/dialogs.cpp:118
 msgid "Easy"
-msgstr ""
+msgstr "Makkelijk"
 
 #: engines/nancy/dialogs.cpp:122
 msgid "Hard"
-msgstr ""
+msgstr "Moeilijk"
 
 #: engines/nancy/dialogs.cpp:125
 #, fuzzy
@@ -5697,11 +5709,11 @@ msgstr "Speeltijd:"
 
 #: engines/nancy/dialogs.cpp:128
 msgid "Days"
-msgstr ""
+msgstr "Dagen"
 
 #: engines/nancy/dialogs.cpp:130 engines/nancy/dialogs.cpp:140
 msgid "Hours"
-msgstr ""
+msgstr "Uren"
 
 #: engines/nancy/dialogs.cpp:132 engines/nancy/dialogs.cpp:142
 #, fuzzy
@@ -5711,11 +5723,11 @@ msgstr "Min"
 
 #: engines/nancy/dialogs.cpp:134
 msgid "Player Difficulty Level"
-msgstr ""
+msgstr "Speler Moeilijkheidsgraad"
 
 #: engines/nancy/dialogs.cpp:136
 msgid "Software Timer"
-msgstr ""
+msgstr "Software Timer"
 
 #: engines/nancy/dialogs.cpp:137
 msgid "Timer On"
@@ -5864,6 +5876,8 @@ msgid ""
 "Compressed game detected. Please uncompress it as specified in the game "
 "description on our Wiki"
 msgstr ""
+"Gecomprimeerd spel gedetecteerd. Pak a.u.b. het spel uit zoals beschreven "
+"bij de spel omschrijving op onze Wiki"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -6011,7 +6025,7 @@ msgstr "Schakel font anti-aliasing in"
 
 #: engines/sci/detection.cpp:324
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "Toon beelden die uitgeschakeld waren vanwege juridische redenen"
 
 #: engines/sci/detection.cpp:354
 msgid "MIDI mode:"
@@ -6039,7 +6053,7 @@ msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4245
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr ""
+msgstr "Onvolledig spel gevonden. U dient de data te kopiëren van alle CDs."
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:371
 msgid "(Autosave)"
@@ -6252,7 +6266,7 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:190
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "Trim FM-TOWNS spellen naar 200 pixels hoog"
 
 #: engines/scumm/detection.cpp:191
 msgid ""
@@ -6280,7 +6294,7 @@ msgstr "Schakelt vloeiend scrollen in als er gelopen word"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(in plaats van de gebruikelijke stappen van 8 pixels scrollen)"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -7332,7 +7346,7 @@ msgstr "Dit spel vereist Giflib die niet meegecompileerd is in ScummVM"
 
 #: engines/twine/metaengine.cpp:73
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Zet muur botsingen aan"
 
 #: engines/twine/metaengine.cpp:74
 msgid "Enable the original wall collision damage"
@@ -7345,7 +7359,7 @@ msgstr "Valsspeel modus aangezet"
 
 #: engines/twine/metaengine.cpp:81
 msgid "Enable cross fading of images and scenes"
-msgstr ""
+msgstr "Zet crossfaden van beelden of scenes aan"
 
 #: engines/twine/metaengine.cpp:88
 #, fuzzy
