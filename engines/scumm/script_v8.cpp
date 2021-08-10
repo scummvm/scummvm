@@ -1337,13 +1337,13 @@ void ScummEngine_v8::o8_getStringWidth() {
 	// Skip to the next instruction
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
 
-	translateText(msg, transBuf);
+	convertMessageToString(msg, transBuf, 256);
 	msg = transBuf;
 
 	// Temporary set the specified charset id
 	_charset->setCurID(charset);
 	// Determine the strings width
-	width = _charset->getStringWidth(0, msg);
+	width = _charset->getStringWidth(0, msg) - 1;
 	// Revert to old font
 	_charset->setCurID(oldID);
 
