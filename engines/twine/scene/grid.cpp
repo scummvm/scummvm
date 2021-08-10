@@ -513,7 +513,7 @@ bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteI
 
 // WARNING: Rewrite this function to have better performance
 bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
-	if (_engine->_interface->_clip.left > _engine->_interface->_clip.right || _engine->_interface->_clip.top > _engine->_interface->_clip.bottom) {
+	if (!_engine->_interface->_clip.isValidRect()) {
 		return false;
 	}
 
