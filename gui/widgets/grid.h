@@ -218,7 +218,7 @@ protected:
 
 	GridItemInfo	*_activeEntry;
 	GridWidget		*_grid;
-	bool			isHighlighted;
+	bool			_isHighlighted;
 
 public:
 	GridItemWidget(GridWidget *boss, int x, int y, int w, int h);
