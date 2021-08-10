@@ -211,7 +211,7 @@ uint8 *segmentArrayAddress(uint16 segment, uint16 index) {
 	if (segHandle == nullptr)
 		return nullptr;
 
-	return segHandle + sizeof(uint16) + (index * READ_LE_INT16(segHandle));
+	return segHandle + sizeof(uint16) + (uint16)(index * READ_LE_INT16(segHandle));
 }
 
 //  Returns the address of a byte given an addressing mode
@@ -452,7 +452,7 @@ uint8 *Thread::strAddress(int strNum) {
 	assert(codeSeg);
 	assert(strSeg);
 
-	return strSeg + READ_LE_INT16(strSeg + 2 * strNum);
+	return strSeg + (uint16)READ_LE_INT16(strSeg + 2 * strNum);
 }
 
 //-----------------------------------------------------------------------

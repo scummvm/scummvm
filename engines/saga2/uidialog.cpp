@@ -1762,7 +1762,7 @@ inline int16 quantizedVolume(uint16 trueVolume) {
 	int16 quantized = trueVolume & 0xFFF8;
 	quantized += (quantized / 16);
 
-	quantized += 2; // In ScummVM the range is 0..255
+	quantized = CLIP(quantized, (int16)0, (int16)255);
 
 	return quantized;
 }

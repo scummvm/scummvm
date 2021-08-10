@@ -37,11 +37,11 @@ public:
 	Common::String getFilename() const;
 
 	// Archive API
-	bool hasFile(const Common::String &name) const;
-	int listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const;
+	bool hasFile(const Common::Path &path) const;
+	int listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern) const;
 	int listMembers(Common::ArchiveMemberList &list) const;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const;
 
 	Common::SeekableReadStream *createReadStreamForMember(const XARCMember *member) const;
 

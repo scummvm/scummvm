@@ -1645,6 +1645,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO_STD16_UNDITHER	},
 
+	// King's Quest 4 - Russian
+	// Game version 1.001.111 (Sep 23, 1988)
+	// SCI interpreter version 0.000.274
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "f0833063ba4bd58072cf0e3402c8be69", 5712},
+		{"resource.001", 0, "28bcd0c6363762fde0ef12c491fb706b", 2401589},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
 #define GUIO_KQ5_CD_WINDOWS GUIO6(GUIO_MIDIGM,                         \
 								  GAMEOPTION_PREFER_DIGITAL_SFX,       \
 								  GAMEOPTION_ORIGINAL_SAVELOAD,        \
@@ -4928,6 +4937,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO1(GUIO_NONE)	},
 
+#define GUIO_SQ1_ENGLISH_PC GUIO6(GUIO_NOSPEECH,                 \
+                                  GAMEOPTION_PREFER_DIGITAL_SFX, \
+                                  GAMEOPTION_ORIGINAL_SAVELOAD,  \
+                                  GAMEOPTION_MIDI_MODE,          \
+                                  GAMEOPTION_RGB_RENDERING,      \
+                                  GAMEOPTION_SQ1_BEARDED_MUSICIANS)
+
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 1.000.510 (just a guess)
 	{"sq1sci", "SCI", {
@@ -4952,7 +4968,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "c47600e50c6fc591957ae0c5020ee7b8", 1213262},
 		{"resource.004", 0, "e19ea4ad131472f9238590f2e1d40289", 1203051},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_SQ1_ENGLISH_PC },
 
 	// Space Quest 1 VGA Remake - Russian DOS (from ncuxonaT in bug report #10156)
 	// VERSION file reports "2.000"
@@ -5011,7 +5027,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "975c6e81194ae6b65e960a248129ecaa", 684119},
 		{"resource.005", 0, "13d96f7905637552c0647175ff816145", 695589},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_SQ1_ENGLISH_PC },
+
+#undef GUIO_SQ1_ENGLISH_PC
 
 	// Space Quest 3 - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 0.000.453 (just a guess)
@@ -5380,6 +5398,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "231fd8421e1f211e1bcf9d7b8b6408e7", 9525849},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_PIRATED, GUIO_SQ4_CD	},
+
+	// Space Quest 4 - English DOS CD "NRS SQ4 Update 1.3" (unofficial patch)
+	// This comprehensive patch set combines CD and floppy versions and then applies its own changes.
+	// Version 1.3 is distributed as a set of patches and diffs which require the user
+	// to provide the full CD and floppy versions.
+	{"sq4", "CD", {
+		{"resource.map", 0, "8ae50cc723a6faab733fdc265afb1d0c", 7144},
+		{"resource.000", 0, "231fd8421e1f211e1bcf9d7b8b6408e7", 9526423},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO_SQ4_CD	},
 
 	// Space Quest 4 - Spanish DOS Floppy version distributed on a CD (from jvprat, also includes english language)
 	// Executable scanning reports "1.SQ4.057", VERSION file reports "1.000"

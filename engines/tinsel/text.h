@@ -62,6 +62,18 @@ struct FONT {
 	SCNHANDLE fontDef[300];	///< image handle array for all characters in the font
 } PACKED_STRUCT;
 
+
+struct T3_FONT {
+	int xSpacing;			///< x spacing between characters
+	int ySpacing;			///< y spacing between characters
+	int xShadow;			///< x shadow offset
+	int yShadow;			///< y shadow offset
+	int spaceSize;			///< x spacing to use for a space character
+	int baseColor;			///< base color which can be replaced, specific to Tinsel 3
+	OBJ_INIT fontInit;		///< structure used to init text objects
+	SCNHANDLE fontDef[300];	///< image handle array for all characters in the font
+} PACKED_STRUCT;
+
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 
@@ -104,6 +116,8 @@ OBJECT *ObjectTextOutIndirect(	// output a string of text
 bool IsCharImage(		// Is there an image for this character in this font?
 	SCNHANDLE hFont,	// which font to use
 	char c);		// character to test
+
+uint32 t3GetBaseColor();
 
 } // End of namespace Tinsel
 

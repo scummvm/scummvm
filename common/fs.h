@@ -46,6 +46,7 @@ namespace Common {
 class FSNode;
 class SeekableReadStream;
 class WriteStream;
+class SeekableWriteStream;
 
 /**
  * List of multiple file system nodes. For example, the contents of a given directory.
@@ -102,7 +103,7 @@ public:
 	 * operating system does not support the concept), some other directory is
 	 * used (usually the root directory).
 	 */
-	explicit FSNode(const String &path);
+	explicit FSNode(const Path &path);
 
 	virtual ~FSNode() {}
 
@@ -238,7 +239,7 @@ public:
 	 *
 	 * @return Pointer to the stream object, 0 in case of a failure.
 	 */
-	WriteStream *createWriteStream() const;
+	SeekableWriteStream *createWriteStream() const;
 
 	/**
 	 * Create a directory referred by this node. This assumes that this
@@ -313,7 +314,7 @@ class FSDirectory : public Archive {
 	FSNode *lookupCache(NodeCache &cache, const String &name) const;
 
 	// cache management
-	void cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) const;
+	void cacheDirectoryRecursive(FSNode node, int depth, const Path& prefix) const;
 
 	// fill cache if not already cached
 	void ensureCached() const;
@@ -324,7 +325,7 @@ public:
 	 * unbound FSDirectory if name is not found in the file system or if the node is not a
 	 * valid directory.
 	 */
-	FSDirectory(const String &name, int depth = 1, bool flat = false,
+	FSDirectory(const Path &name, int depth = 1, bool flat = false,
 	            bool ignoreClashes = false, bool includeDirectories = false);
 	/**
 	 * @overload
@@ -336,12 +337,12 @@ public:
 	 * Create a FSDirectory representing a tree with the specified depth. The parameter
 	 * prefix is prepended to the keys in the cache. See @ref FSDirectory.
 	 */
-	FSDirectory(const String &prefix, const String &name, int depth = 1,
+	FSDirectory(const Path &prefix, const Path &name, int depth = 1,
 	            bool flat = false, bool ignoreClashes = false, bool includeDirectories = false);
 	/**
 	 * @overload
 	 */
-	FSDirectory(const String &prefix, const FSNode &node, int depth = 1,
+	FSDirectory(const Path &prefix, const FSNode &node, int depth = 1,
 	            bool flat = false, bool ignoreClashes = false, bool includeDirectories = false);
 
 	virtual ~FSDirectory();
@@ -355,26 +356,26 @@ public:
 	 * Create a new FSDirectory pointing to a subdirectory of the instance.
 	 * @return A new FSDirectory instance.
 	 */
-	FSDirectory *getSubDirectory(const String &name, int depth = 1, bool flat = false,
+	FSDirectory *getSubDirectory(const Path &name, int depth = 1, bool flat = false,
 	                             bool ignoreClashes = false);
 	/**
 	 * Create a new FSDirectory pointing to a subdirectory of the instance. See FSDirectory
 	 * for an explanation of the prefix parameter.
 	 * @return A new FSDirectory instance.
 	 */
-	FSDirectory *getSubDirectory(const String &prefix, const String &name, int depth = 1,
+	FSDirectory *getSubDirectory(const Path &prefix, const Path &name, int depth = 1,
 	                             bool flat = false, bool ignoreClashes = false);
 
 	/**
 	 * Check for the existence of a file in the cache. A full match of relative path and file name
 	 * is needed for success.
 	 */
-	virtual bool hasFile(const String &name) const;
+	virtual bool hasFile(const Path &path) const;
 
 	/**
 	 * Return a list of matching file names. Pattern can use GLOB wildcards.
 	 */
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
+	virtual int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const;
 
 	/**
 	 * Return a list of all the files in the cache.
@@ -385,13 +386,13 @@ public:
 	 * Get an ArchiveMember representation of the specified file. A full match of relative
 	 * path and file name is needed for success.
 	 */
-	virtual const ArchiveMemberPtr getMember(const String &name) const;
+	virtual const ArchiveMemberPtr getMember(const Path &path) const;
 
 	/**
 	 * Open the specified file. A full match of relative path and file name is needed
 	 * for success.
 	 */
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const;
 };
 
 /** @} */

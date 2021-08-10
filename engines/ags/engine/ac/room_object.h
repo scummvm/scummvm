@@ -51,7 +51,7 @@ struct RoomObject {
 	short tint_r, tint_g;   // specific object tint
 	short tint_b, tint_level;
 	short tint_light;
-	short last_zoom;      // zoom level last time
+	short zoom;           // zoom level, either manual or from the current area
 	short last_width, last_height;   // width/height last time drawn
 	uint16_t num;            // sprite slot number
 	short baseline;       // <=0 to use Y co-ordinate; >0 for specific baseline

@@ -699,12 +699,14 @@ public:
 
 
 	Actor           *leader;                // This actor's leader
+	ObjectID        _leaderID;
 	Band            *followers;             // This actor's band of followers
 	BandID          _followersID;
 
 	ObjectID        armorObjects[ARMOR_COUNT];    //  armor objects being worn
 
 	GameObject      *currentTarget;
+	ObjectID        _currentTargetID;
 
 	int16           scriptVar[actorScriptVars];   //  scratch variables for scripter use
 

@@ -213,6 +213,14 @@ public:
 	 */
 	void setSourceVolume(uint8 source, uint16 volume);
 	/**
+	 * Resets the source volume for all sources to each source's neutral volume.
+	 */
+	void resetSourceVolume();
+	/**
+	 * Resets the volume for this source to its neutral volume.
+	 */
+	void resetSourceVolume(uint8 source);
+	/**
 	 * Sets the neutral volume for all sources. See the source-specific
 	 * setSourceNeutralVolume function for details.
 	 * 
@@ -364,7 +372,9 @@ protected:
 
 class MidiDriver_NULL_Multisource : public MidiDriver_Multisource {
 public:
-	int open() override { return 0; }
+	~MidiDriver_NULL_Multisource();
+
+	int open() override;
 	bool isOpen() const override { return true; }
 	void close() override { }
 	uint32 getBaseTempo() override { return 10000; }
@@ -375,6 +385,8 @@ public:
 	void send(int8 source, uint32 b) override { }
 	using MidiDriver_Multisource::stopAllNotes;
 	void stopAllNotes(uint8 source, uint8 channel) override { }
+
+	static void timerCallback(void *data);
 
 protected:
 	void applySourceVolume(uint8 source) override { }

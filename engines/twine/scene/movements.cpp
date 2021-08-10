@@ -38,10 +38,10 @@ namespace TwinE {
 
 Movements::Movements(TwinEEngine *engine) : _engine(engine) {}
 
-void Movements::getShadowPosition(int32 x, int32 y, int32 z) {
-	const uint8 *ptr = _engine->_grid->getBlockBufferGround(x, y, z, processActor.y);
-	processActor.x = x;
-	processActor.z = z;
+void Movements::getShadowPosition(const IVec3 &pos) {
+	const uint8 *ptr = _engine->_grid->getBlockBufferGround(pos, _processActor.y);
+	_processActor.x = pos.x;
+	_processActor.z = pos.z;
 
 	ShapeType shadowCollisionType;
 	if (*ptr) {
@@ -53,25 +53,25 @@ void Movements::getShadowPosition(int32 x, int32 y, int32 z) {
 	}
 	_engine->_collision->reajustActorPosition(shadowCollisionType);
 
-	_engine->_actor->shadowCoord = processActor;
+	_engine->_actor->_shadowCoord = _processActor;
 }
 
 void Movements::setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
 	movePtr->from = ClampAngle(startAngle);
 	movePtr->to = ClampAngle(endAngle);
 	movePtr->numOfStep = ClampAngle(stepAngle);
-	movePtr->timeOfChange = _engine->lbaTime;
+	movePtr->timeOfChange = _engine->_lbaTime;
 }
 
 void Movements::clearRealAngle(ActorStruct *actorPtr) {
-	setActorAngleSafe(actorPtr->angle, actorPtr->angle, ANGLE_0, &actorPtr->move);
+	setActorAngleSafe(actorPtr->_angle, actorPtr->_angle, ANGLE_0, &actorPtr->_move);
 }
 
 void Movements::setActorAngle(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
 	movePtr->from = startAngle;
 	movePtr->to = endAngle;
 	movePtr->numOfStep = stepAngle;
-	movePtr->timeOfChange = _engine->lbaTime;
+	movePtr->timeOfChange = _engine->_lbaTime;
 }
 
 int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2) {
@@ -106,13 +106,13 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		flag = false;
 	}
 
-	targetActorDistance = (int32)sqrt((float)(newX + newZ));
+	_targetActorDistance = (int32)sqrt((float)(newX + newZ));
 
-	if (!targetActorDistance) {
+	if (!_targetActorDistance) {
 		return 0;
 	}
 
-	const int32 destAngle = (difZ * SCENE_SIZE_HALF) / targetActorDistance;
+	const int32 destAngle = (difZ * SCENE_SIZE_HALF) / _targetActorDistance;
 
 	int32 startAngle = ANGLE_0;
 	//	stopAngle  = ANGLE_90;
@@ -142,8 +142,8 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 
 void Movements::rotateActor(int32 x, int32 z, int32 angle) {
 	const double radians = AngleToRadians(angle);
-	_engine->_renderer->destPos.x = (int32)(x * cos(radians) + z * sin(radians));
-	_engine->_renderer->destPos.z = (int32)(-x * sin(radians) + z * cos(radians));
+	_engine->_renderer->_destPos.x = (int32)(x * cos(radians) + z * sin(radians));
+	_engine->_renderer->_destPos.z = (int32)(-x * sin(radians) + z * cos(radians));
 }
 
 int32 Movements::getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) const {
@@ -177,7 +177,7 @@ void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMove
 	numOfStepInt /= 256;
 
 	movePtr->numOfStep = (int16)numOfStepInt;
-	movePtr->timeOfChange = _engine->lbaTime;
+	movePtr->timeOfChange = _engine->_lbaTime;
 }
 
 void Movements::ChangedCursorKeys::update(TwinEEngine *engine) {
@@ -227,7 +227,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 	if (_engine->_input->toggleActionIfActive(TwinEActionType::SpecialAction)) {
 		executeAction = true;
 	}
-	switch (_engine->_actor->heroBehaviour) {
+	switch (_engine->_actor->_heroBehaviour) {
 	case HeroBehaviourType::kNormal:
 		executeAction = true;
 		break;
@@ -235,12 +235,12 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		_engine->_animations->initAnim(AnimationTypes::kJump, AnimType::kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 		break;
 	case HeroBehaviourType::kAggressive:
-		if (_engine->_actor->autoAggressive) {
+		if (_engine->_actor->_autoAggressive) {
 			ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-			heroMoved = true;
-			actor->angle = actor->move.getRealAngle(_engine->lbaTime);
+			_heroMoved = true;
+			actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
 			// TODO: previousLoopActionKey must be handled properly
-			if (!_previousLoopActionKey || actor->anim == AnimationTypes::kStanding) {
+			if (!_previousLoopActionKey || actor->_anim == AnimationTypes::kStanding) {
 				const int32 aggresiveMode = _engine->getRandomNumber(3);
 
 				switch (aggresiveMode) {
@@ -258,13 +258,13 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		} else {
 			if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 				_engine->_animations->initAnim(AnimationTypes::kLeftPunch, AnimType::kAnimationType_1, AnimationTypes::kStanding, actorIdx);
-				heroMoved = true;
+				_heroMoved = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 				_engine->_animations->initAnim(AnimationTypes::kRightPunch, AnimType::kAnimationType_1, AnimationTypes::kStanding, actorIdx);
-				heroMoved = true;
+				_heroMoved = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 				_engine->_animations->initAnim(AnimationTypes::kKick, AnimType::kAnimationType_1, AnimationTypes::kStanding, actorIdx);
-				heroMoved = true;
+				_heroMoved = true;
 			}
 		}
 		break;
@@ -279,24 +279,24 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 
 bool Movements::processAttackExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (!_engine->_gameState->usingSabre) {
+	if (!_engine->_gameState->_usingSabre) {
 		// Use Magic Ball
 		if (_engine->_gameState->hasItem(InventoryItems::kiMagicBall)) {
-			if (_engine->_gameState->magicBallIdx == -1) {
+			if (_engine->_gameState->_magicBallIdx == -1) {
 				_engine->_animations->initAnim(AnimationTypes::kThrowBall, AnimType::kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 			}
 
-			actor->angle = actor->move.getRealAngle(_engine->lbaTime);
+			actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
 			return true;
 		}
 	} else if (_engine->_gameState->hasItem(InventoryItems::kiUseSabre)) {
-		if (actor->body != BodyType::btSabre) {
+		if (actor->_body != BodyType::btSabre) {
 			_engine->_actor->initModelActor(BodyType::btSabre, actorIdx);
 		}
 
 		_engine->_animations->initAnim(AnimationTypes::kSabreAttack, AnimType::kAnimationType_1, AnimationTypes::kStanding, actorIdx);
 
-		actor->angle = actor->move.getRealAngle(_engine->lbaTime);
+		actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
 		return true;
 	}
 	return false;
@@ -313,51 +313,51 @@ void Movements::processManualMovementExecution(int actorIdx) {
 	if (actor->isAttackWeaponAnimationActive()) {
 		return;
 	}
-	if (!_changedCursorKeys || heroAction) {
+	if (!_changedCursorKeys || _heroAction) {
 		// if walking should get stopped
 		if (!_engine->_input->isActionActive(TwinEActionType::MoveForward) && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-			if (heroMoved && (_heroActionKey != _previousLoopActionKey || _changedCursorKeys != _previousChangedCursorKeys)) {
+			if (_heroMoved && (_heroActionKey != _previousLoopActionKey || _changedCursorKeys != _previousChangedCursorKeys)) {
 				_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			}
 		}
 
-		heroMoved = false;
+		_heroMoved = false;
 
 		if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
-			if (!_engine->_scene->currentActorInZone) {
+			if (!_engine->_scene->_currentActorInZone) {
 				_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			}
-			heroMoved = true;
+			_heroMoved = true;
 		} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 			_engine->_animations->initAnim(AnimationTypes::kBackward, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
-			heroMoved = true;
+			_heroMoved = true;
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-			if (actor->anim == AnimationTypes::kStanding) {
+			if (actor->_anim == AnimationTypes::kStanding) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnLeft, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
-				if (!actor->dynamicFlags.bIsRotationByAnim) {
-					actor->angle = actor->move.getRealAngle(_engine->lbaTime);
+				if (!actor->_dynamicFlags.bIsRotationByAnim) {
+					actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
 				}
 			}
-			heroMoved = true;
+			_heroMoved = true;
 		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-			if (actor->anim == AnimationTypes::kStanding) {
+			if (actor->_anim == AnimationTypes::kStanding) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnRight, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
-				if (!actor->dynamicFlags.bIsRotationByAnim) {
-					actor->angle = actor->move.getRealAngle(_engine->lbaTime);
+				if (!actor->_dynamicFlags.bIsRotationByAnim) {
+					actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
 				}
 			}
-			heroMoved = true;
+			_heroMoved = true;
 		}
 	}
 }
 
 void Movements::processManualRotationExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (!_engine->_actor->autoAggressive && actor->isAttackAnimationActive()) {
+	if (!_engine->_actor->_autoAggressive && actor->isAttackAnimationActive()) {
 		// it is allowed to rotate in auto aggressive mode - but not in manual mode.
 		return;
 	}
@@ -373,20 +373,20 @@ void Movements::processManualRotationExecution(int actorIdx) {
 		tempAngle = ANGLE_0;
 	}
 
-	moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
+	moveActor(actor->_angle, actor->_angle + tempAngle, actor->_speed, &actor->_move);
 }
 
 void Movements::processManualAction(int actorIdx) {
 	if (IS_HERO(actorIdx)) {
-		heroAction = false;
+		_heroAction = false;
 		if (_engine->_input->isHeroActionActive()) {
-			heroAction = processBehaviourExecution(actorIdx);
+			_heroAction = processBehaviourExecution(actorIdx);
 		}
 	}
 
 	if (_engine->_input->isActionActive(TwinEActionType::ThrowMagicBall) && !_engine->_gameState->inventoryDisabled()) {
 		if (processAttackExecution(actorIdx)) {
-			heroMoved = true;
+			_heroMoved = true;
 		}
 	}
 
@@ -396,58 +396,58 @@ void Movements::processManualAction(int actorIdx) {
 
 void Movements::processFollowAction(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	const ActorStruct *followedActor = _engine->_scene->getActor(actor->followedActor);
-	int32 newAngle = getAngleAndSetTargetActorDistance(actor->pos, followedActor->pos);
-	if (actor->staticFlags.bIsSpriteActor) {
-		actor->angle = newAngle;
+	const ActorStruct *followedActor = _engine->_scene->getActor(actor->_followedActor);
+	int32 newAngle = getAngleAndSetTargetActorDistance(actor->pos(), followedActor->pos());
+	if (actor->_staticFlags.bIsSpriteActor) {
+		actor->_angle = newAngle;
 	} else {
-		moveActor(actor->angle, newAngle, actor->speed, &actor->move);
+		moveActor(actor->_angle, newAngle, actor->_speed, &actor->_move);
 	}
 }
 
 void Movements::processRandomAction(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (actor->dynamicFlags.bIsRotationByAnim) {
+	if (actor->_dynamicFlags.bIsRotationByAnim) {
 		return;
 	}
 
 	if (actor->brickCausesDamage()) {
-		moveActor(actor->angle, ClampAngle((_engine->getRandomNumber() & ANGLE_90) + (actor->angle - ANGLE_90)), actor->speed, &actor->move);
-		actor->delayInMillis = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
+		moveActor(actor->_angle, ClampAngle((_engine->getRandomNumber() & ANGLE_90) + (actor->_angle - ANGLE_90)), actor->_speed, &actor->_move);
+		actor->_delayInMillis = _engine->getRandomNumber(300) + _engine->_lbaTime + 300;
 		_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 	}
 
-	if (!actor->move.numOfStep) {
+	if (!actor->_move.numOfStep) {
 		_engine->_animations->initAnim(AnimationTypes::kForward, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
-		if (_engine->lbaTime > actor->delayInMillis) {
-			moveActor(actor->angle, ClampAngle((_engine->getRandomNumber() & ANGLE_90) + (actor->angle - ANGLE_90)), actor->speed, &actor->move);
-			actor->delayInMillis = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
+		if (_engine->_lbaTime > actor->_delayInMillis) {
+			moveActor(actor->_angle, ClampAngle((_engine->getRandomNumber() & ANGLE_90) + (actor->_angle - ANGLE_90)), actor->_speed, &actor->_move);
+			actor->_delayInMillis = _engine->getRandomNumber(300) + _engine->_lbaTime + 300;
 		}
 	}
 }
 
 void Movements::processTrackAction(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (actor->positionInMoveScript == -1) {
-		actor->positionInMoveScript = 0;
+	if (actor->_positionInMoveScript == -1) {
+		actor->_positionInMoveScript = 0;
 	}
 }
 
 void Movements::processSameXZAction(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	const ActorStruct *followedActor = _engine->_scene->getActor(actor->followedActor);
-	actor->pos.x = followedActor->pos.x;
-	actor->pos.z = followedActor->pos.z;
+	const ActorStruct *followedActor = _engine->_scene->getActor(actor->_followedActor);
+	actor->_pos.x = followedActor->_pos.x;
+	actor->_pos.z = followedActor->_pos.z;
 }
 
 void Movements::processActorMovements(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (actor->entity == -1) {
+	if (actor->_entity == -1) {
 		return;
 	}
 
-	if (actor->dynamicFlags.bIsFalling) {
-		if (actor->controlMode != ControlMode::kManual) {
+	if (actor->_dynamicFlags.bIsFalling) {
+		if (actor->_controlMode != ControlMode::kManual) {
 			return;
 		}
 
@@ -458,16 +458,16 @@ void Movements::processActorMovements(int32 actorIdx) {
 			tempAngle = -ANGLE_90;
 		}
 
-		moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
+		moveActor(actor->_angle, actor->_angle + tempAngle, actor->_speed, &actor->_move);
 		return;
 	}
-	if (!actor->staticFlags.bIsSpriteActor) {
-		if (actor->controlMode != ControlMode::kManual) {
-			actor->angle = actor->move.getRealAngle(_engine->lbaTime);
+	if (!actor->_staticFlags.bIsSpriteActor) {
+		if (actor->_controlMode != ControlMode::kManual) {
+			actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
 		}
 	}
 
-	switch (actor->controlMode) {
+	switch (actor->_controlMode) {
 	/**
 	 * The Actor's Track Script is stopped. Track Script execution may be started with Life Script of
 	 * the Actor or other Actors (with SET_TRACK(_OBJ) command). This mode does not mean the Actor
@@ -488,13 +488,14 @@ void Movements::processActorMovements(int32 actorIdx) {
 		processTrackAction(actorIdx);
 		break;
 	case ControlMode::kSameXZ:
+		// TODO: see lSET_DIRMODE and lSET_DIRMODE_OBJ opcodes
 		processSameXZAction(actorIdx);
 		break;
 	case ControlMode::kRandom:
 		processRandomAction(actorIdx);
 		break;
 	default:
-		warning("Unknown control mode %d", (int)actor->controlMode);
+		warning("Unknown control mode %d", (int)actor->_controlMode);
 		break;
 	}
 }

@@ -36,10 +36,11 @@
 #include "director/movie.h"
 #include "director/castmember.h"
 #include "director/sound.h"
+#include "director/window.h"
 
 namespace Director {
 
-DirectorSound::DirectorSound(DirectorEngine *vm) : _vm(vm) {
+DirectorSound::DirectorSound(Window *window) : _window(window) {
 	uint numChannels = 2;
 	if (g_director->getVersion() >= 400) {
 		numChannels = 4;
@@ -56,11 +57,11 @@ DirectorSound::DirectorSound(DirectorEngine *vm) : _vm(vm) {
 		&_pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
 
 	_enable = true;
-	_puppet = false;
 }
 
 DirectorSound::~DirectorSound() {
 	this->stopSound();
+	unloadSampleSounds();
 	delete _speaker;
 }
 
@@ -75,10 +76,13 @@ void DirectorSound::playFile(Common::String filename, uint8 soundChannel) {
 		return;
 
 	AudioFileDecoder af(filename);
-	Audio::AudioStream *sound = af.getAudioStream(false, DisposeAfterUse::YES);
+	Audio::AudioStream *sound = af.getAudioStream(false, false, DisposeAfterUse::YES);
 
 	cancelFade(soundChannel);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, sound, -1, getChannelVolume(soundChannel));
+
+	// Set the last played sound so that cast member 0 in the sound channel doesn't stop this file.
+	setLastPlayedSound(soundChannel, SoundID(), false);
 }
 
 void DirectorSound::playMCI(Audio::AudioStream &stream, uint32 from, uint32 to) {
@@ -103,21 +107,58 @@ void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, &stream, -1, getChannelVolume(soundChannel));
 }
 
-void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bool allowRepeat) {
+void DirectorSound::playSound(SoundID soundID, uint8 soundChannel, bool forPuppet) {
+	switch (soundID.type) {
+	case kSoundCast:
+		playCastMember(CastMemberID(soundID.u.cast.member, soundID.u.cast.castLib), soundChannel, forPuppet);
+		break;
+	case kSoundExternal:
+		playExternalSound(soundID.u.external.menu, soundID.u.external.submenu, soundChannel);
+		break;
+	}
+}
+
+void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bool forPuppet) {
 	if (!isChannelValid(soundChannel))
 		return;
 
 	if (memberID.member == 0) {
-		stopSound(soundChannel);
+		// Normally cast member 0 stops the sound.
+		// But there are some sounds where it doesn't. Those are:
+		//   1. playFile
+		//   2. FPlay
+		//   3. non-puppet looping sounds
+		//   4. maybe more?
+		if (shouldStopOnZero(soundChannel)) {
+			stopSound(soundChannel);
+		} else {
+			// Don't stop the currently playing sound, just set the last played sound to 0.
+			setLastPlayedSound(soundChannel, SoundID(), false);
+		}
 	} else {
-		CastMember *soundCast = _vm->getCurrentMovie()->getCastMember(memberID);
+		CastMember *soundCast = _window->getCurrentMovie()->getCastMember(memberID);
 		if (soundCast) {
 			if (soundCast->_type != kCastSound) {
 				warning("DirectorSound::playCastMember: attempted to play a non-SoundCastMember %s", memberID.asString().c_str());
 			} else {
-				if (!allowRepeat && checkLastPlayCast(soundChannel, memberID))
-					return;
 				bool looping = ((SoundCastMember *)soundCast)->_looping;
+				bool stopOnZero = true;
+
+				if (!forPuppet && isLastPlayedSound(soundChannel, memberID)) {
+					// We just played this sound.
+					// If the sound is not marked "looping", we should not play it again.
+					if (!looping)
+						return;
+
+					// If the sound is not finished yet, we need to wait more before playing it again.
+					if (isChannelActive(soundChannel))
+						return;
+
+					// We know that this is a non-puppet, looping sound.
+					// We don't want to stop it if this channel's cast member changes to 0.
+					stopOnZero = false;
+				}
+
 				AudioDecoder *ad = ((SoundCastMember *)soundCast)->_audio;
 				if (!ad) {
 					warning("DirectorSound::playCastMember: no audio data attached to %s", memberID.asString().c_str());
@@ -125,14 +166,14 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 				}
 
 				Audio::AudioStream *as;
-				as = ad->getAudioStream(looping);
+				as = ad->getAudioStream(looping, forPuppet);
 
 				if (!as) {
 					warning("DirectorSound::playCastMember: audio data failed to load from cast");
 					return;
 				}
 				playStream(*as, soundChannel);
-				setLastPlayCast(soundChannel, memberID);
+				setLastPlayedSound(soundChannel, memberID, stopOnZero);
 			}
 		} else {
 			warning("DirectorSound::playCastMember: couldn't find %s", memberID.asString().c_str());
@@ -195,7 +236,7 @@ void DirectorSound::registerFade(uint8 soundChannel, bool fadeIn, int ticks) {
 	int startVol = fadeIn ? 0 :  _channels[soundChannel - 1].volume;
 	int targetVol = fadeIn ? _channels[soundChannel - 1].volume : 0;
 
-	_channels[soundChannel - 1].fade = new FadeParams(startVol, targetVol, ticks, _vm->getMacTicks(), fadeIn);
+	_channels[soundChannel - 1].fade = new FadeParams(startVol, targetVol, ticks, _window->getVM()->getMacTicks(), fadeIn);
 	_mixer->setChannelVolume(_channels[soundChannel - 1].handle, startVol);
 }
 
@@ -207,7 +248,7 @@ bool DirectorSound::fadeChannel(uint8 soundChannel) {
 	if (!fade)
 		return false;
 
-	fade->lapsedTicks = _vm->getMacTicks() - fade->startTicks;
+	fade->lapsedTicks = _window->getVM()->getMacTicks() - fade->startTicks;
 	if (fade->lapsedTicks > fade->totalTicks) {
 		cancelFade(soundChannel);
 		return false;
@@ -250,31 +291,117 @@ bool DirectorSound::isChannelValid(uint8 soundChannel) {
 	return true;
 }
 
-void DirectorSound::playExternalSound(AudioDecoder *ad, uint8 soundChannel, uint8 externalSoundID) {
+void DirectorSound::loadSampleSounds(uint type) {
+	if (type < kMinSampledMenu || type > kMaxSampledMenu) {
+		warning("DirectorSound::loadSampleSounds: Invalid menu number %d", type);
+		return;
+	}
+
+	if (!_sampleSounds[type - kMinSampledMenu].empty())
+		return;
+
+	// trying to load external sample sounds
+	// lazy loading
+	uint32 tag = MKTAG('C', 'S', 'N', 'D');
+	uint id = 0xFF;
+	Archive *archive = nullptr;
+
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+		Common::Array<uint16> idList = it->_value->getResourceIDList(tag);
+		for (uint j = 0; j < idList.size(); j++) {
+			if ((idList[j] & 0xFF) == type) {
+				id = idList[j];
+				archive = it->_value;
+				break;
+			}
+		}
+	}
+
+	if (id == 0xFF) {
+		warning("Score::loadSampleSounds: can not find CSND resource with id %d", type);
+		return;
+	}
+
+	Common::SeekableReadStreamEndian *csndData = archive->getResource(tag, id);
+
+	/*uint32 flag = */ csndData->readUint32();
+
+	// the flag should be 0x604E
+	// i'm not sure what's that mean, but it occurs in those csnd files
+
+	// contains how many csnd data
+	uint16 num = csndData->readUint16();
+
+	// read the offset first;
+	Common::Array<uint32> offset(num);
+	for (uint i = 0; i < num; i++)
+		offset[i] = csndData->readUint32();
+
+	for (uint i = 0; i < num; i++) {
+		csndData->seek(offset[i]);
+
+		SNDDecoder *ad = new SNDDecoder();
+		ad->loadExternalSoundStream(*csndData);
+		_sampleSounds[type - kMinSampledMenu].push_back(ad);
+	}
+
+	delete csndData;
+}
+
+void DirectorSound::unloadSampleSounds() {
+	for (uint i = 0; i < kNumSampledMenus; i++) {
+		for (uint j = 0; j < _sampleSounds[i].size(); j++) {
+			delete _sampleSounds[i][j];
+		}
+		_sampleSounds[i].clear();
+	}
+}
+
+void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundChannel) {
 	if (!isChannelValid(soundChannel))
 		return;
 
-	// use castMemberID info to check, castLib -1 represent for externalSound
-	// this should be amended by some kind of union which contains CastMemberID and externalSound info
-	if (isChannelActive(soundChannel) && checkLastPlayCast(soundChannel, CastMemberID(externalSoundID, -1)))
+	SoundID soundId(kSoundExternal, menu, submenu);
+	if (isChannelActive(soundChannel) && isLastPlayedSound(soundChannel, soundId))
 		return;
 
-	playStream(*(ad->getAudioStream()), soundChannel);
-	setLastPlayCast(soundChannel, CastMemberID(externalSoundID, -1));
+	if (menu < kMinSampledMenu || menu > kMaxSampledMenu) {
+		warning("DirectorSound::playExternalSound: Invalid menu number %d", menu);
+		return;
+	}
+
+	Common::Array<AudioDecoder *> &menuSounds = _sampleSounds[menu - kMinSampledMenu];
+	if (menuSounds.empty())
+		loadSampleSounds(menu);
+
+	if (1 <= submenu && submenu <= menuSounds.size()) {
+		playStream(*(menuSounds[submenu - 1]->getAudioStream()), soundChannel);
+		setLastPlayedSound(soundChannel, soundId);
+	} else {
+		warning("DirectorSound::playExternalSound: Could not find sound %d %d", menu, submenu);
+	}
 }
 
 void DirectorSound::changingMovie() {
-	for (uint i = 0; i < _channels.size(); i++)
-		_channels[i]._movieChanged = true;
+	for (uint i = 0; i < _channels.size(); i++) {
+		setPuppetSound(SoundID(), i + 1); // disable puppet sound
+		_channels[i].movieChanged = true;
+	}
+	unloadSampleSounds(); // TODO: we can possibly keep this between movies
 }
 
-void DirectorSound::setLastPlayCast(uint8 soundChannel, CastMemberID castMemberId) {
-	_channels[soundChannel - 1].lastPlayingCast = castMemberId;
-	_channels[soundChannel - 1]._movieChanged = false;
+void DirectorSound::setLastPlayedSound(uint8 soundChannel, SoundID soundId, bool stopOnZero) {
+	_channels[soundChannel - 1].lastPlayedSound = soundId;
+	_channels[soundChannel - 1].stopOnZero = stopOnZero;
+	_channels[soundChannel - 1].movieChanged = false;
 }
 
-bool DirectorSound::checkLastPlayCast(uint8 soundChannel, const CastMemberID &castMemberId) {
-	return !_channels[soundChannel - 1]._movieChanged && _channels[soundChannel - 1].lastPlayingCast == castMemberId;
+bool DirectorSound::isLastPlayedSound(uint8 soundChannel, const SoundID &soundId) {
+	return !_channels[soundChannel - 1].movieChanged && _channels[soundChannel - 1].lastPlayedSound == soundId;
+}
+
+bool DirectorSound::shouldStopOnZero(uint8 soundChannel) {
+	return _channels[soundChannel - 1].stopOnZero;
 }
 
 void DirectorSound::stopSound(uint8 soundChannel) {
@@ -283,7 +410,7 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 
 	cancelFade(soundChannel);
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
-	setLastPlayCast(soundChannel, CastMemberID(0, 0));
+	setLastPlayedSound(soundChannel, SoundID());
 	return;
 }
 
@@ -292,7 +419,7 @@ void DirectorSound::stopSound() {
 		cancelFade(i + 1);
 
 		_mixer->stopHandle(_channels[i].handle);
-		setLastPlayCast(i + 1, CastMemberID(0, 0));
+		setLastPlayedSound(i + 1, SoundID());
 	}
 
 	_mixer->stopHandle(_scriptSound);
@@ -301,6 +428,37 @@ void DirectorSound::stopSound() {
 
 void DirectorSound::systemBeep() {
 	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 500, 150);
+}
+
+bool DirectorSound::isChannelPuppet(uint8 soundChannel) {
+	if (!isChannelValid(soundChannel))
+		return false;
+
+	// cast member ID 0 means "not a puppet"
+	if (_channels[soundChannel - 1].puppet.type == kSoundCast && _channels[soundChannel - 1].puppet.u.cast.member == 0)
+		return false;
+
+	return true;
+}
+
+void DirectorSound::setPuppetSound(SoundID soundId, uint8 soundChannel) {
+	if (!isChannelValid(soundChannel))
+		return;
+
+	_channels[soundChannel - 1].newPuppet = true;
+	_channels[soundChannel - 1].puppet = soundId;
+}
+
+void DirectorSound::playPuppetSound(uint8 soundChannel) {
+	if (!isChannelValid(soundChannel))
+		return;
+
+	// only play if the puppet was just set
+	if (!_channels[soundChannel - 1].newPuppet)
+		return;
+
+	_channels[soundChannel - 1].newPuppet = false;
+	playSound(_channels[soundChannel - 1].puppet, soundChannel, true);
 }
 
 void DirectorSound::playFPlaySound() {
@@ -352,7 +510,10 @@ void DirectorSound::playFPlaySound() {
 			_fplayQueue.pop();
 			looping = true;
 		}
-		as = ad->getAudioStream(looping);
+
+		// FPlay is controlled by Lingo, not the score, like a puppet,
+		// so we'll get the puppet version of the stream.
+		as = ad->getAudioStream(looping, true);
 
 		if (!as) {
 			warning("DirectorSound:playFPlaySound: failed to get audio stream");
@@ -365,6 +526,9 @@ void DirectorSound::playFPlaySound() {
 		playStream(*as, 1);
 		delete ad;
 	}
+
+	// Set the last played sound so that cast member 0 in the sound channel doesn't stop this file.
+	setLastPlayedSound(1, SoundID(), false);
 }
 
 void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayList) {
@@ -549,7 +713,7 @@ bool SNDDecoder::processBufferCommand(Common::SeekableReadStreamEndian &stream) 
 	return true;
 }
 
-Audio::AudioStream *SNDDecoder::getAudioStream(bool looping, DisposeAfterUse::Flag disposeAfterUse) {
+Audio::AudioStream *SNDDecoder::getAudioStream(bool looping, bool forPuppet, DisposeAfterUse::Flag disposeAfterUse) {
 	if (!_data)
 		return nullptr;
 	byte *buffer = (byte *)malloc(_size);
@@ -559,12 +723,20 @@ Audio::AudioStream *SNDDecoder::getAudioStream(bool looping, DisposeAfterUse::Fl
 
 	if (looping) {
 		if (hasLoopBounds()) {
-			return new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
+			// If this is for a puppet, return an automatically looping stream.
+			// Otherwise, the sound will be looped by the score.
+			if (forPuppet)
+				return new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
+			else
+				return new Audio::SubSeekableAudioStream(stream, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
 		} else {
 			// Not sure if looping sounds can appear without loop bounds.
 			// Let's just log a warning and loop the entire sound...
 			warning("SNDDecoder::getAudioStream: Looping sound has no loop bounds");
-			return new Audio::LoopingAudioStream(stream, 0);
+			if (forPuppet)
+				return new Audio::LoopingAudioStream(stream, 0);
+			else
+				return stream;
 		}
 	}
 
@@ -580,12 +752,12 @@ AudioFileDecoder::AudioFileDecoder(Common::String &path)
 	_path = path;
 }
 
-Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, DisposeAfterUse::Flag disposeAfterUse) {
+Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppet, DisposeAfterUse::Flag disposeAfterUse) {
 	if (_path.empty())
 		return nullptr;
 
 	Common::File *file = new Common::File();
-	if (!file->open(_path)) {
+	if (!file->open(Common::Path(_path, g_director->_dirSeparator))) {
 		warning("Failed to open %s", _path.c_str());
 		return nullptr;
 	}
@@ -606,10 +778,12 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, DisposeAfterU
 	}
 
 	if (stream) {
-		if (looping)
-			return new Audio::LoopingAudioStream(stream, 0);
-		else
-			return stream;
+		if (looping && forPuppet) {
+			// If this is for a puppet, return an automatically looping stream.
+			// Otherwise, the sound will be looped by the score
+				return new Audio::LoopingAudioStream(stream, 0);
+		}
+		return stream;
 	}
 
 	return nullptr;

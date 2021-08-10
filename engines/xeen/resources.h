@@ -48,7 +48,7 @@ class Resources {
 		char *_buffer;
 		char *_buffStart;
 	public:
-		ResFile(char *buffer) : File("CONSTANTS"), _buffer(buffer), _buffStart(buffer) {}
+		ResFile(const char* type, char *buffer, int num) : File(type + Common::String::format("%i", num)), _buffer(buffer), _buffStart(buffer) {}
 
 		void syncString(const char *&str) {
 			str = _buffer;
@@ -147,7 +147,8 @@ public:
 	const char *ALIGNMENT_NAMES[3];
 	const char *SEX_NAMES[2];
 	const char *SKILL_NAMES[18];
-	const char *CONDITION_NAMES[17];
+	const char *CONDITION_NAMES_M[17];
+	const char *CONDITION_NAMES_F[17];
 	int CONDITION_COLORS[17];
 	const char *GOOD;
 	const char *BLESSED;
@@ -230,6 +231,8 @@ public:
 	const char *NO_X_IN_THE_Y;
 	const char *STAT_NAMES[16];
 	const char *CONSUMABLE_NAMES[4];
+	const char *CONSUMABLE_GOLD_FORMS[1];
+	const char *CONSUMABLE_GEM_FORMS[1];
 	const char *WHERE_NAMES[2];
 	const char *AMOUNT;
 	const char *FOOD_PACKS_FULL;
@@ -267,6 +270,7 @@ public:
 	const char *SWORDS_GAME_TEXT;
 	const char *WEEK_DAY_STRINGS[10];
 	const char *CHARACTER_DETAILS;
+	const char *DAYS[3];
 	const char *PARTY_GOLD;
 	const char *PLUS_14;
 	const char *CHARACTER_TEMPLATE;
@@ -274,6 +278,7 @@ public:
 	const char *CURRENT_MAXIMUM_RATING_TEXT;
 	const char *CURRENT_MAXIMUM_TEXT;
 	const char *RATING_TEXT[24];
+	const char *BORN[2];
 	const char *AGE_TEXT;
 	const char *LEVEL_TEXT;
 	const char *RESISTENCES_TEXT;
@@ -281,6 +286,7 @@ public:
 	const char *EXPERIENCE_TEXT;
 	const char *ELIGIBLE;
 	const char *IN_PARTY_IN_BANK;
+	const char *FOOD_ON_HAND[3];
 	const char *FOOD_TEXT;
 	const char *EXCHANGE_WITH_WHOM;
 	const char *QUICK_REF_LINE;
@@ -352,6 +358,7 @@ public:
 	const char *CATEGORY_BACKPACK_IS_FULL[4];
 	const char *BUY_X_FOR_Y_GOLD;
 	const char *SELL_X_FOR_Y_GOLD;
+	const char *GOLDS[2];
 	const char *NO_NEED_OF_THIS;
 	const char *NOT_RECHARGABLE;
 	const char *SPELL_FAILED;
@@ -414,6 +421,7 @@ public:
 	const char *BACKPACKS_FULL_PRESS_KEY;
 	const char *HIT_A_KEY;
 	const char *GIVE_TREASURE_FORMATTING;
+	const char *FOUND[2];
 	const char *X_FOUND_Y;
 	const char *ON_WHO;
 	const char *WHICH_ELEMENT1;
@@ -437,7 +445,9 @@ public:
 	const char *WARZONE_LEVEL;
 	const char *WARZONE_HOW_MANY;
 	const char *PICKS_THE_LOCK;
+	const char *PICK_FORM[2];
 	const char *UNABLE_TO_PICK_LOCK;
+	const char *UNABLE_TO_PICK_FORM[2];
 	const char *CONTROL_PANEL_TEXT;
 	const char *CONTROL_PANEL_BUTTONS;
 	const char *ON;
@@ -463,6 +473,118 @@ public:
 	const char *DARKSIDE_ENDING2;
 	const char *PHAROAH_ENDING_TEXT1;
 	const char *PHAROAH_ENDING_TEXT2;
+	const char *MAE_NAMES[131];
+
+	struct {
+
+		struct {
+			int KEY_ITEM;
+			int KEY_QUICK;
+			int KEY_EXCHANGE;
+			int KEY_ESCAPE;
+		} DialogsCharInfo;
+
+		struct {
+			int KEY_FXON;
+			int KEY_MUSICON;
+			int KEY_LOAD;
+			int KEY_SAVE;
+			int KEY_QUIT;
+			int KEY_MRWIZARD;
+		} DialogsControlPanel;
+
+		struct {
+			int KEY_ROLL;
+			int KEY_CREATE;
+			int KEY_MGT;
+			int KEY_INT;
+			int KEY_PER;
+			int KEY_END;
+			int KEY_SPD;
+			int KEY_ACY;
+			int KEY_LCK;
+		} DialogsCreateChar;
+
+		struct {
+			int KEY_ADVENTURER;
+			int KEY_WARRIOR;
+		} DialogsDifficulty;
+
+		struct {
+			int KEY_WEAPONS;
+			int KEY_ARMOR;
+			int KEY_ACCESSORY;
+			int KEY_MISC;
+			int KEY_ENCHANT;
+			int KEY_USE;
+			int KEY_BUY;
+			int KEY_SELL;
+			int KEY_IDENTIFY;
+			int KEY_FIX;
+			int KEY_EQUIP;
+			int KEY_REM;
+			int KEY_DISC;
+			int KEY_QUEST;
+			int KEY_RECHRG;
+			int KEY_GOLD;
+		} DialogsItems;
+
+		struct {
+			int KEY_DELETE;
+			int KEY_REMOVE;
+			int KEY_CREATE;
+			int KEY_EXIT;
+		} DialogsParty;
+
+		struct {
+			int KEY_QUEST_ITEMS;
+			int KEY_CURRENT_QUESTS;
+			int KEY_AUTO_NOTES;
+		} DialogsQuests;
+
+		struct {
+			int KEY_NEXT;
+		} DialogsQuickFight;
+
+		struct {
+			int KEY_CAST;
+			int KEY_NEW;
+			int KEY_FIRE;
+			int KEY_ELEC;
+			int KEY_COLD;
+			int KEY_ACID;
+			int KEY_SET;
+			int KEY_RETURN;
+		} DialogsSpells;
+
+		struct {
+			int KEY_DEP;
+			int KEY_WITH;
+			int KEY_GOLD;
+			int KEY_GEMS;
+			int KEY_BROWSE;
+			int KEY_BUY_SPELLS;
+			int KEY_SPELL_INFO;
+			int KEY_SIGN_IN;
+			int KEY_DRINK;
+			int KEY_FOOD;
+			int KEY_TIP;
+			int KEY_RUMORS;
+			int KEY_HEAL;
+			int KEY_DONATION;
+			int KEY_UNCURSE;
+			int KEY_TRAIN;
+		} Locations;
+
+		struct {
+			int KEY_START_NEW_GAME;
+			int KEY_LOAD_GAME;
+			int KEY_SHOW_CREDITS;
+			int KEY_VIEW_ENDGAME;
+		} CloudsOfXeenMenu;
+	} KeyConstants;
+
+
 public:
 	/**
 	 * Constructor

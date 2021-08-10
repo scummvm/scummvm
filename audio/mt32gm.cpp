@@ -75,6 +75,9 @@ const uint8 MidiDriver_MT32GM::GS_DRUMKIT_FALLBACK_MAP[128] = {
 	 0,  0,  0,  0,  0,  0,  0, 127 // No drumkit defined; CM-64/32L (127)
 };
 
+const uint8 MidiDriver_MT32GM::MT32_DISPLAY_NUM_CHARS;
+const uint32 MidiDriver_MT32GM::MT32_DISPLAY_MEMORY_ADDRESS;
+
 // Callback hooked up to the driver wrapped by the MIDI driver
 // object. Executes onTimer and the external callback set by
 // the setTimerCallback function.

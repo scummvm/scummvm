@@ -73,6 +73,8 @@ public:
 	virtual bool hasTextInClipboard() override;
 	virtual Common::U32String getTextFromClipboard() override;
 	virtual bool setTextInClipboard(const Common::U32String &text) override;
+
+	virtual void messageBox(LogMessageType::Type type, const char *message) override;
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 14)

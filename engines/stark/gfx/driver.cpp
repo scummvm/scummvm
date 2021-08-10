@@ -51,8 +51,6 @@ Driver *Driver::create() {
 		initGraphics(kOriginalWidth, kOriginalHeight, nullptr);
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 	}
-	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
-	bool backendCapableOpenGLShaders = backendCapableOpenGL && OpenGLContext.shadersSupported;
 #endif
 
 	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
@@ -63,11 +61,13 @@ Driver *Driver::create() {
 	Driver *driver = nullptr;
 
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+	bool backendCapableOpenGLShaders = g_system->hasFeature(OSystem::kFeatureOpenGLForGame) && OpenGLContext.shadersSupported;
 	if (backendCapableOpenGLShaders && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		driver = new OpenGLSDriver();
 	}
 #endif
 #if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
 	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		driver = new OpenGLDriver();
 	}

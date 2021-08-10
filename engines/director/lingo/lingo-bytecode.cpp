@@ -502,7 +502,7 @@ void LC::cb_proplist() {
 
 	Datum result;
 	result.type = PARRAY;
-	result.u.parr = new PropertyArray;
+	result.u.parr = new PArray;
 	arraySize /= 2;
 
 	for (int i = 0; i < arraySize; i++) {
@@ -510,7 +510,7 @@ void LC::cb_proplist() {
 		Datum p = g_lingo->pop();
 
 		PCell cell = PCell(p, v);
-		result.u.parr->insert_at(0, cell);
+		result.u.parr->arr.insert_at(0, cell);
 	};
 
 	if (nargs.u.i % 2)
@@ -844,9 +844,9 @@ void LC::cb_v4theentityassign() {
 		break;
 	case kTEAMenuIdItemId:
 		{
-			/*Datum menuId = */g_lingo->pop();
-			/*Datum itemId = */g_lingo->pop();
-			warning("cb_v4theentityassign: STUB: kTEAMenuIdItemId");
+			Datum menuId = g_lingo->pop();
+			Datum itemId = g_lingo->pop();
+			g_lingo->setTheMenuItemEntity(entity, menuId, field, itemId, value);
 		}
 		break;
 	case kTEAChunk:
@@ -1177,7 +1177,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	bool skipdump = false;
 
 	if (ConfMan.getBool("dump_scripts")) {
-		Common::String buf = dumpScriptName(archName.c_str(), scriptType, castId, "lscr");
+		Common::String buf = dumpScriptName(encodePathForDump(archName).c_str(), scriptType, castId, "lscr");
 
 		if (!out.open(buf, true)) {
 			warning("Lingo::addCodeV4(): Can not open dump file %s", buf.c_str());

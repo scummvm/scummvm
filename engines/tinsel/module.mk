@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	mareels.o \
 	metaengine.o \
 	move.o \
+	movers.o \
 	multiobj.o \
 	music.o \
 	object.o \
@@ -32,7 +33,6 @@ MODULE_OBJS := \
 	pdisplay.o \
 	play.o \
 	polygons.o \
-	rince.o \
 	saveload.o \
 	savescn.o \
 	scene.o \

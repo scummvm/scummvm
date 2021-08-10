@@ -1002,6 +1002,38 @@ static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
 	}
 }
 
+static void t3WrtText(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP) {
+	bool applyClipping = (pObj->flags & DMA_CLIP) != 0;
+
+	if (applyClipping) {
+		srcP += (pObj->topClip * pObj->width * 2);
+
+		pObj->height -= pObj->topClip + pObj->botClip;
+		pObj->width -= pObj->leftClip + pObj->rightClip;
+	}
+
+	uint32 baseColor = t3GetBaseColor();
+
+	for (int y = 0; y < pObj->height; ++y) {
+		// Get the position to start writing out from
+		uint8 *tempP = destP;
+		srcP += pObj->leftClip * 2;
+		for (int x = 0; x < pObj->width; ++x) {
+			uint32 color = READ_LE_UINT16(srcP);
+			if (color != 0xF81F) { // "zero" for Tinsel 3 - magenta in 565
+				if (color == baseColor) {
+					color = pObj->constant;
+				}
+				WRITE_UINT16(tempP, color);
+			}
+			tempP += 2;
+			srcP += 2;
+		}
+		srcP += pObj->rightClip * 2;
+		destP += SCREEN_WIDTH * 2;
+	}
+}
+
 //----------------- MAIN FUNCTIONS ---------------------
 
 /**
@@ -1042,7 +1074,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 		return;
 
 	// If writing constant data, don't bother locking the data pointer and reading src details
-	if ((pObj->flags & DMA_CONST) == 0) {
+	if (((pObj->flags & DMA_CONST) == 0) || (TinselV3 && ((pObj->flags & 0x05) == 0x05))) {
 		if (TinselV2) {
 			srcPtr = (byte *)_vm->_handle->LockMem(pObj->hBits);
 			pObj->charBase = nullptr;
@@ -1171,6 +1203,11 @@ void DrawObject(DRAWOBJECT *pObj) {
 		case 0x84:	// draw transparent surface without clipping
 		case 0xC4:	// draw transparent surface with clipping
 			WrtTrans(pObj, destPtr, typeId == 0xC4);
+			break;
+		case 0x05:	// TinselV3, draw text with color replacement without clipping
+		case 0x45:	// TinselV3, draw text with color replacement with clipping
+			assert(TinselV3);
+			t3WrtText(pObj, srcPtr, destPtr);
 			break;
 		default:
 			error("Unknown drawing type %d", typeId);

@@ -64,13 +64,13 @@
 // Hit, reject
 #define GAMEFLAG_VIDEO_BAFFE5 215
 // Twinsun explosion (on top of the well)
-#define GAMEFLAG_VIDEO_EXPLOD 216
+#define GAMEFLAG_VIDEO_EXPLODE 216
 // Clear water lake
 #define GAMEFLAG_VIDEO_GLASS2 217
 // Twinsen in Well of Sendell
 #define GAMEFLAG_VIDEO_SENDEL 218
 // Twinsun explosion
-#define GAMEFLAG_VIDEO_EXPLOD2 219
+#define GAMEFLAG_VIDEO_EXPLODE2 219
 
 namespace TwinE {
 
@@ -81,7 +81,7 @@ struct I16Vec3 {
 	int16 z = 0;
 };
 #include "common/pack-end.h"
-static_assert(sizeof(I16Vec3) == 6, "Unexpected pointTab size");
+STATIC_ASSERT(sizeof(I16Vec3) == 6, "Unexpected pointTab size");
 
 struct IVec3 {
 	constexpr IVec3() : x(0), y(0), z(0) {}
@@ -133,7 +133,7 @@ struct ActorBoundingBox {
 	bool hasBoundingBox = false;
 };
 
-enum ActionType {
+enum class ActionType : uint8 {
 	ACTION_NOP = 0,
 	ACTION_BODY = 1,
 	ACTION_BODP = 2,
@@ -279,6 +279,9 @@ enum class ZoneType {
 	kText = 5,     // Displays text message
 	kLadder = 6    // Hero can climb on it
 };
+
+#define SCENE_CEILING_GRID_FADE_1 (-1)
+#define SCENE_CEILING_GRID_FADE_2 (-2)
 
 enum LBA1SceneId {
 	Citadel_Island_Prison = 0,

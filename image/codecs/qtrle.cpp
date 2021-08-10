@@ -83,7 +83,7 @@ void QTRLEDecoder::decode1(Common::SeekableReadStream &stream, uint32 rowPtr, ui
 	while (linesToChange) {
 		CHECK_STREAM_PTR(2);
 		byte skip = stream.readByte();
-		int8 rleCode = stream.readSByte();
+		int rleCode = stream.readSByte();
 
 		if (rleCode == 0)
 			break;
@@ -129,7 +129,7 @@ void QTRLEDecoder::decode2_4(Common::SeekableReadStream &stream, uint32 rowPtr, 
 		CHECK_STREAM_PTR(2);
 		pixelPtr = rowPtr + (numPixels * (stream.readByte() - 1));
 
-		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
+		for (int rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
 			if (rleCode == 0) {
 				// there's another skip code in the stream
 				CHECK_STREAM_PTR(1);
@@ -188,7 +188,7 @@ void QTRLEDecoder::decode8(Common::SeekableReadStream &stream, uint32 rowPtr, ui
 		CHECK_STREAM_PTR(2);
 		pixelPtr = rowPtr + 4 * (stream.readByte() - 1);
 
-		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
+		for (int rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
 			if (rleCode == 0) {
 				// there's another skip code in the stream
 				CHECK_STREAM_PTR(1);
@@ -233,7 +233,7 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream &stream, uint32 rowPtr, u
 		CHECK_STREAM_PTR(2);
 		pixelPtr = rowPtr + stream.readByte() - 1;
 
-		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
+		for (int rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
 			if (rleCode == 0) {
 				// there's another skip code in the stream
 				CHECK_STREAM_PTR(1);
@@ -271,7 +271,7 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream &stream, uint32 rowPtr, u
 		CHECK_STREAM_PTR(2);
 		pixelPtr = rowPtr + stream.readByte() - 1;
 
-		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
+		for (int rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
 			if (rleCode == 0) {
 				// there's another skip code in the stream
 				CHECK_STREAM_PTR(1);
@@ -338,7 +338,7 @@ void QTRLEDecoder::dither24(Common::SeekableReadStream &stream, uint32 rowPtr, u
 		pixelPtr = rowPtr + rowOffset;
 		uint16 colorTableOffset = colorTableOffsets[curColorTableOffset] + (rowOffset << 14);
 
-		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
+		for (int rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
 			if (rleCode == 0) {
 				// there's another skip code in the stream
 				CHECK_STREAM_PTR(1);
@@ -382,7 +382,7 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream &stream, uint32 rowPtr, u
 		CHECK_STREAM_PTR(2);
 		pixelPtr = rowPtr + stream.readByte() - 1;
 
-		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
+		for (int rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
 			if (rleCode == 0) {
 				// there's another skip code in the stream
 				CHECK_STREAM_PTR(1);

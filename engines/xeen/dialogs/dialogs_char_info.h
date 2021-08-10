@@ -50,6 +50,11 @@ private:
 	void addButtons();
 
 	/**
+	 * Get plural day/days form
+	 */
+	const char *getDaysPlurals(int val);
+
+	/**
 	 * Return a string containing the details of the character
 	 */
 	Common::String loadCharacterDetails(const Character &c);
@@ -58,6 +63,16 @@ private:
 	 * Cursor display handling
 	 */
 	void showCursor(bool flag);
+
+	/**
+	 * Get gender form 'born'
+	 */
+	const char *getBornForm(const Character &c);
+
+	/**
+	 * Get plural form 'on hand' for food
+	*/
+	const char *getFoodOnHandPlurals(int food);
 
 	bool expandStat(int attrib, const Character &c);
 public:

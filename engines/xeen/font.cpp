@@ -37,12 +37,46 @@ Justify FontData::_fontJustify;
 FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullptr),
 		_writePos(*FontData::_fontWritePos) {
 	setTextColor(0);
+
+	lang = g_vm->getLanguage();
+	if (Common::RU_RUS == lang) {
+		_fntEnOffset            = 0x0000;
+		_fntNonEnOffset         = 0x0800;
+		_fntEnReducedOffset     = 0x1000;
+		_fntNonEnReducedOffset  = 0x1800;
+		_fntEnWOffset           = 0x2000;
+		_fntNonEnWOffset        = 0x2080;
+		_fntEnReducedWOffset    = 0x2100;
+		_fntNonEnReducedWOffset = 0x2180;
+	} else {
+		_fntEnOffset            = 0x0000;
+		_fntEnReducedOffset     = 0x0800;
+		_fntEnWOffset           = 0x1000;
+		_fntEnReducedWOffset    = 0x1080;
+	}
 }
 
 FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv),
 		_msgWraps(false), _displayString(nullptr), _writePos(*FontData::_fontWritePos) {
 	create(w, h);
 	setTextColor(0);
+
+	lang = g_vm->getLanguage();
+	if (Common::RU_RUS == lang) {
+		_fntEnOffset            = 0x0000;
+		_fntNonEnOffset         = 0x0800;
+		_fntEnReducedOffset     = 0x1000;
+		_fntNonEnReducedOffset  = 0x1800;
+		_fntEnWOffset           = 0x2000;
+		_fntNonEnWOffset        = 0x2080;
+		_fntEnReducedWOffset    = 0x2100;
+		_fntNonEnReducedWOffset = 0x2180;
+	} else {
+		_fntEnOffset            = 0x0000;
+		_fntEnReducedOffset     = 0x0800;
+		_fntEnWOffset           = 0x1000;
+		_fntEnReducedWOffset    = 0x1080;
+	}
 }
 
 void FontSurface::writeSymbol(int symbolId) {
@@ -59,6 +93,12 @@ void FontSurface::writeSymbol(int symbolId) {
 	}
 
 	_writePos.x += 8;
+}
+
+bool FontSurface::isSpace(char c) {
+	if (Common::RU_RUS == lang) 
+		return c == ' ';
+	return (c & 0x7f) == ' ';
 }
 
 const char *FontSurface::writeString(const Common::String &s, const Common::Rect &bounds) {
@@ -88,7 +128,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 			// First, move backwards to find the end of the previous word
 			// for a convenient point to break the line at
 			const char *endP = displayEnd;
-			while (endP > _displayString && (*endP & 0x7f) != ' ')
+			while (endP > _displayString && !isSpace(*endP))
 				--endP;
 
 			if (endP == _displayString) {
@@ -103,7 +143,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 				}
 			} else {
 				// Found word break, find end of previous word
-				while (endP > _displayString && (*endP & 0x7f) == ' ')
+				while (endP > _displayString && !isSpace(*endP))
 					--endP;
 
 				displayEnd = endP;
@@ -193,7 +233,11 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 				} else {
 					if (c == 6)
 						c = ' ';
-					byte charSize = _fontData[0x1000 + (int)c + (_fontReduced ? 0x80 : 0)];
+					int offset_charW = c < 0 ?
+						(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(c & 0x7F) :
+						(_fontReduced ? _fntEnReducedWOffset : _fntEnWOffset) + (int)c;
+					byte charSize = _fontData[offset_charW];
+
 					_writePos.x -= charSize;
 				}
 
@@ -230,9 +274,13 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 					idx = 0;
 				setTextColor(idx);
 			} else if (c < ' ') {
-				// End of string or invalid command
-				_displayString = nullptr;
-				break;
+				if (Common::RU_RUS == lang && c < 0) {
+					writeChar(c, bounds);
+				} else {
+					// End of string or invalid command
+					_displayString = nullptr;
+					break;
+				}
 			} else {
 				// Standard character - write it out
 				writeChar(c, bounds);
@@ -257,14 +305,17 @@ void FontSurface::writeCharacter(char c, const Common::Rect &clipRect) {
 }
 
 char FontSurface::getNextChar() {
-	return  *_displayString++ & 0x7f;
+	if (Common::RU_RUS == lang)
+		return *_displayString++;
+	else
+		return *_displayString++ & 0x7f;
 }
 
 bool FontSurface::getNextCharWidth(int &total) {
 	char c = getNextChar();
 
 	if (c > ' ') {
-		total += _fontData[0x1000 + (int)c + (_fontReduced ? 0x80 : 0)];
+		total += _fontData[(_fontReduced ? _fntEnReducedWOffset : _fntEnWOffset) + (int)c];
 		return false;
 	} else if (c == ' ') {
 		total += 4;
@@ -283,6 +334,9 @@ bool FontSurface::getNextCharWidth(int &total) {
 		if (c != 'd')
 			getNextChar();
 		return false;
+	} else if (Common::RU_RUS == lang && c < 0) {
+		total += _fontData[(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(c & 0x7F)];
+		return false;
 	} else {
 		--_displayString;
 		return true;
@@ -291,7 +345,7 @@ bool FontSurface::getNextCharWidth(int &total) {
 
 bool FontSurface::newLine(const Common::Rect &bounds) {
 	// Move past any spaces currently being pointed to
-	while ((*_displayString & 0x7f) == ' ')
+	while (isSpace(*_displayString))
 		++_displayString;
 
 	_msgWraps = false;
@@ -333,8 +387,16 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 	int yStart = y;
 
 	// Get pointers into font data and surface to write pixels to
-	int charIndex = (int)c + (_fontReduced ? 0x80 : 0);
-	const byte *srcP = &_fontData[charIndex * 16];
+	int offset_charData;
+	int offset_charW;
+	if (Common::RU_RUS == lang && c < 0) {
+		offset_charData = (_fontReduced ? _fntNonEnReducedOffset : _fntNonEnOffset) + (int)(c & 0x7F) * 16;
+		offset_charW = (_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(c & 0x7F);
+	} else {
+		offset_charData = (_fontReduced ? _fntEnReducedOffset : _fntEnOffset) + (int)c * 16;
+		offset_charW = (_fontReduced ? _fntEnReducedWOffset : _fntEnWOffset) + (int)c;
+	}
+	const byte *srcP = &_fontData[offset_charData];
 
 	for (int yp = 0; yp < FONT_HEIGHT; ++yp, ++y) {
 		uint16 lineData = READ_LE_UINT16(srcP); srcP += 2;
@@ -357,7 +419,7 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 
 	addDirtyRect(Common::Rect(_writePos.x, yStart, _writePos.x + FONT_WIDTH,
 		yStart + FONT_HEIGHT));
-	_writePos.x += _fontData[0x1000 + charIndex];
+	_writePos.x += _fontData[offset_charW];
 }
 
 } // End of namespace Xeen

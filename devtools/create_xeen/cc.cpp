@@ -23,12 +23,6 @@
  // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-// HACK to allow building with the SDL backend on MinGW
-// see bug #3412 "TOOLS: MinGW tools building broken"
-#ifdef main
-#undef main
-#endif // main
-
 #include "cc.h"
 #include "common/endian.h"
 
@@ -66,7 +60,7 @@ void CCArchive::loadIndex() {
 
 	if (_file.read(rawIndex, size) != size) {
 		delete[] rawIndex;
-		error("Failed to read %zu bytes from CC archive", size);
+		error("Failed to read %ld bytes from CC archive", size);
 	}
 
 	// Decrypt the index

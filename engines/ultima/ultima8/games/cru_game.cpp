@@ -188,11 +188,7 @@ void CruGame::playDemoScreen() {
 	}
 }
 
-
-void CruGame::playCredits() {
-	Process *menuproc = new MainMenuProcess();
-	Kernel::get_instance()->addProcess(menuproc);
-
+ProcId CruGame::playCreditsNoMenu() {
 	static const Std::string txt_filename = "static/credits.dat";
 	static const Std::string bmp_filename = "static/cred.dat";
 	Common::SeekableReadStream *txtrs = FileSystem::get_instance()->ReadFile(txt_filename);
@@ -201,20 +197,29 @@ void CruGame::playCredits() {
 	if (!txtrs) {
 		perr << "RemorseGame::playCredits: error opening credits text: "
 			 << txt_filename << Std::endl;
-		return;
+		return 0;
 	}
 	if (!bmprs) {
 		perr << "RemorseGame::playCredits: error opening credits background: "
 			 << bmp_filename << Std::endl;
-		return;
+		return 0;
 	}
 	Gump *creditsgump = new CruCreditsGump(txtrs, bmprs);
 	creditsgump->InitGump(nullptr);
 	creditsgump->CreateNotifier();
 	Process *notifyproc = creditsgump->GetNotifyProcess();
+	return notifyproc->getPid();
+}
 
-	if (notifyproc) {
-		menuproc->waitFor(notifyproc);
+
+void CruGame::playCredits() {
+	Process *menuproc = new MainMenuProcess();
+	Kernel::get_instance()->addProcess(menuproc);
+
+	ProcId creditsnotify = playCreditsNoMenu();
+
+	if (creditsnotify) {
+		menuproc->waitFor(creditsnotify);
 	}
 }
 

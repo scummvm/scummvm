@@ -21,8 +21,8 @@
  * Should really be called "moving actors.h"
  */
 
-#ifndef TINSEL_RINCE_H	// prevent multiple includes
-#define TINSEL_RINCE_H
+#ifndef TINSEL_MOVERS_H	// prevent multiple includes
+#define TINSEL_MOVERS_H
 
 #include "tinsel/anim.h"	// for ANIM
 #include "tinsel/scene.h"	// for TFTYPE
@@ -46,8 +46,9 @@ enum DIRECTION { LEFTREEL, RIGHTREEL, FORWARD, AWAY };
 
 #define BOGUS_BRIGHTNESS -1
 
-struct MOVER {
+enum MOVER_TYPE { MOVER_2D, MOVER_3D };
 
+struct MOVER {
 	int		objX, objY;           /* Co-ordinates object  */
 
 	int     targetX, targetY;
@@ -118,6 +119,13 @@ struct MOVER {
 	int			startColor;
 	int			paletteLength;
 	HPOLYGON	hRpath;		// Recent path
+
+	// Noir specific, just for 3D actors
+	MOVER_TYPE type;
+	SCNHANDLE hModelName;
+	SCNHANDLE hTextureName;
+	bool bIsValid;
+
 };
 typedef MOVER *PMOVER;
 
@@ -220,4 +228,4 @@ enum {
 
 } // End of namespace Tinsel
 
-#endif /* TINSEL_RINCE_H */
+#endif /* TINSEL_MOVERS_H */

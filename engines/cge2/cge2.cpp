@@ -25,7 +25,9 @@
  * Copyright (c) 1994-1997 Janusz B. Wisniewski and L.K. Avalon
  */
 
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
+#include "common/text-to-speech.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -181,6 +183,9 @@ bool CGE2Engine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error CGE2Engine::run() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr)
+		ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
 	syncSoundSettings();
 	initGraphics(kScrWidth, kScrHeight);
 
@@ -193,6 +198,10 @@ Common::Error CGE2Engine::run() {
 	ConfMan.flushToDisk();
 
 	return Common::kNoError;
+}
+
+Common::Language CGE2Engine::getLanguage() const {
+	return _gameDescription->language;
 }
 
 } // End of namespace CGE2

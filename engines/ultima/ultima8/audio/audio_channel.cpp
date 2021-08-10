@@ -39,7 +39,7 @@ AudioChannel::AudioChannel(Audio::Mixer *mixer, uint32 sampleRate, bool stereo) 
 AudioChannel::~AudioChannel(void) {
 }
 
-void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool paused, uint32 pitchShift, int lvol, int rvol) {
+void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool paused, bool isSpeech, uint32 pitchShift, int lvol, int rvol) {
 	_sample = sample;
 	_loop = loop;
 	_priority = priority;
@@ -93,7 +93,7 @@ void AudioChannel::playSample(AudioSample *sample, int loop, int priority, bool 
 	// Play it
 	int vol = (_lVol + _rVol) / 2;		 // range is 0 ~ 255
 	int balance = (_rVol - _lVol) / 2; // range is -127 ~ +127
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream, -1, vol, balance);
+	_mixer->playStream(isSpeech ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, vol, balance);
 	if (paused)
 		_mixer->pauseHandle(_soundHandle, true);
 }

@@ -288,6 +288,15 @@ void InventoryItems::capitalizeItem(Common::String &name) {
 		name.setChar(toupper(name[3]), 3);
 }
 
+const char *InventoryItems::getMaeName(int material) {
+	if (Common::RU_RUS == g_vm->getLanguage()) {
+		return Res.MAE_NAMES[material];
+	} else {
+		Resources &res = *getVm()->_resources;
+		return res._maeNames[material].c_str();
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 void WeaponItems::equipItem(int itemIndex) {
@@ -342,17 +351,27 @@ void WeaponItems::equipItem(int itemIndex) {
 
 Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
-	Resources &res = *getVm()->_resources;
-
-	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
-		i._state._cursed || i._state._broken ? "" : res._maeNames[i._material].c_str(),
-		i._state._broken ? Res.ITEM_BROKEN : "",
-		i._state._cursed ? Res.ITEM_CURSED : "",
-		displayNum,
-		Res.WEAPON_NAMES[i._id],
-		!i._state._counter ? "" : Res.BONUS_NAMES[i._state._counter],
-		(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
-	);
+	Common::String desc;
+	if (Common::RU_RUS == g_vm->getLanguage())
+		 desc = Common::String::format("\f%02u%s%s\f%02u%s%s%s%s", displayNum,
+			i._state._broken ? Res.ITEM_BROKEN : "",
+			i._state._cursed ? Res.ITEM_CURSED : "",
+			displayNum,
+			Res.WEAPON_NAMES[i._id],
+			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			!i._state._counter ? "" : Res.BONUS_NAMES[i._state._counter],
+			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
+		);
+	else
+		desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
+			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			i._state._broken ? Res.ITEM_BROKEN : "",
+			i._state._cursed ? Res.ITEM_CURSED : "",
+			displayNum,
+			Res.WEAPON_NAMES[i._id],
+			!i._state._counter ? "" : Res.BONUS_NAMES[i._state._counter],
+			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
+		);
 	capitalizeItem(desc);
 	return desc;
 }
@@ -515,16 +534,26 @@ void ArmorItems::equipItem(int itemIndex) {
 
 Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
-	Resources &res = *getVm()->_resources;
+	Common::String desc;
 
-	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		i._state._cursed || i._state._broken ? "" : res._maeNames[i._material].c_str(),
-		i._state._broken ? Res.ITEM_BROKEN : "",
-		i._state._cursed ? Res.ITEM_CURSED : "",
-		displayNum,
-		Res.ARMOR_NAMES[i._id],
-		(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
-	);
+	if (Common::RU_RUS == g_vm->getLanguage()) 
+		desc = Common::String::format("\f%02u%s%s\f%02u%s%s%s", displayNum,
+			i._state._broken ? Res.ITEM_BROKEN : "",
+			i._state._cursed ? Res.ITEM_CURSED : "",
+			displayNum,
+			Res.ARMOR_NAMES[i._id],
+			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
+		);
+	else
+		desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
+			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			i._state._broken ? Res.ITEM_BROKEN : "",
+			i._state._cursed ? Res.ITEM_CURSED : "",
+			displayNum,
+			Res.ARMOR_NAMES[i._id],
+			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
+		);
 	capitalizeItem(desc);
 	return desc;
 }
@@ -635,16 +664,26 @@ void AccessoryItems::equipItem(int itemIndex) {
 
 Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
-	Resources &res = *getVm()->_resources;
+	Common::String desc;
 
-	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		i._state._cursed || i._state._broken ? "" : res._maeNames[i._material].c_str(),
-		i._state._broken ? Res.ITEM_BROKEN : "",
-		i._state._cursed ? Res.ITEM_CURSED : "",
-		displayNum,
-		Res.ACCESSORY_NAMES[i._id],
-		(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
-	);
+	if (Common::RU_RUS == g_vm->getLanguage()) 
+		desc = Common::String::format("\f%02u%s%s\f%02u%s%s%s", displayNum,
+			i._state._broken ? Res.ITEM_BROKEN : "",
+			i._state._cursed ? Res.ITEM_CURSED : "",
+			displayNum,
+			Res.ACCESSORY_NAMES[i._id],
+			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
+		);
+	else
+		desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
+			i._state._cursed || i._state._broken ? "" : getMaeName(i._material),
+			i._state._broken ? Res.ITEM_BROKEN : "",
+			i._state._cursed ? Res.ITEM_CURSED : "",
+			displayNum,
+			Res.ACCESSORY_NAMES[i._id],
+			(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
+		);
 	capitalizeItem(desc);
 	return desc;
 }

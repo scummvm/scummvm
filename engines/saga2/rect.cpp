@@ -86,10 +86,10 @@ Rect16 intersect(const Rect16 a, const Rect16 b) {
 	y1      = MAX(a.y, b.y);
 	height  = MIN(a.y + a.height, b.y + b.height) - y1;
 
-//	if ( ( width <= 0 ) || ( height <= 0 ) )
-//		return Rect16( 0, 0, 0, 0 );
-//	else
-	return Rect16(x1, y1, width, height);
+	if ((width <= 0) || (height <= 0))
+		return Rect16(0, 0, 0, 0);
+	else
+		return Rect16(x1, y1, width, height);
 }
 
 void Rect16::normalize(void) {

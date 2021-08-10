@@ -26,7 +26,7 @@
 
 #include "tinsel/actors.h"	// SAVED_ACTOR
 #include "tinsel/dw.h"	// SCNHANDLE
-#include "tinsel/rince.h"	// SAVED_MOVER
+#include "tinsel/movers.h"	// SAVED_MOVER
 #include "tinsel/pcode.h"	// INT_CONTEXT
 #include "tinsel/play.h"
 #include "tinsel/polygons.h"

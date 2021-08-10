@@ -51,7 +51,11 @@ bool    IsFile(const String &filename);
 // Tells if the given path is file or directory;
 // may be used to check if it's valid to use
 bool    IsFileOrDir(const String &filename);
-// Returns filename part out of the longer path
+// Returns parent directory of the given path;
+// returns "." (current dir) if the path does not contain a parent segment
+String  GetParent(const String &path);
+// Returns parent directory of the given path;
+// returns "." (current dir) if the path does not contain a parent segment
 String  GetFilename(const String &path);
 // Returns file's extension; file may be a fully qualified path too
 String  GetFileExtension(const String &path);
@@ -88,6 +92,7 @@ String  MakeAbsolutePath(const String &path);
 String  MakeRelativePath(const String &base, const String &path);
 // Concatenates parent and relative paths
 String  ConcatPaths(const String &parent, const String &child);
+String  ConcatPaths(String &buf, const String &parent, const String &child);
 // Creates path by combining directory, file name and extension
 String  MakePath(const String &parent, const String &filename, const String &ext);
 // Splits path into components, divided by path separator

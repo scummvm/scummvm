@@ -132,6 +132,7 @@ const char *directoryGlobs[] = {
 	"docs",							// Enhanced CDs
 	"anim",							// 1 vs 100 (Mindscape)
 	"Lingo Expo",					// D4 sample movies
+	"main",							// Meet MediaBand
 	0
 };
 

@@ -25,7 +25,7 @@
 #include "tinsel/pcode.h"
 #include "tinsel/pid.h"
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 #include "tinsel/sched.h"
 #include "common/serializer.h"
 #include "tinsel/tinsel.h"
@@ -42,7 +42,7 @@ namespace Tinsel {
 /** different types of polygon */
 enum POLY_TYPE {
 	POLY_PATH, POLY_NPATH, POLY_BLOCK, POLY_REFER, POLY_EFFECT,
-	POLY_EXIT, POLY_TAG, POLY_UNKNOWN
+	POLY_EXIT, POLY_TAG, POLY_SCALE
 };
 
 // Note 7/10/94, with adjacency reduction ANKHMAP max is 3, UNSEEN max is 4
@@ -184,8 +184,8 @@ public:
 	int32 reel;			// } PATH and NPATH
 	int32 zFactor;		// }
 
-	int32 playfield;	// TinselV3
-	int32 unknown;		// TinselV3
+	int32 playfield;	// Noir field
+	int32 sceneId;		// Noir field
 
 protected:
 	int32 nodecount;		///<The number of nodes in this polygon
@@ -194,6 +194,10 @@ protected:
 
 	const int32 *nlistx;
 	const int32 *nlisty;
+
+	int32 vx[4]; // Noir field, only for scale polygon
+	int32 vy[4]; // Noir field, only for scale polygon
+	int32 vz[4]; // Noir field, only for scale polygon
 
 public:
 	SCNHANDLE hScript;	///< handle of code segment for polygon events
@@ -249,32 +253,54 @@ void Poly::nextPoly() {
 		yoff = nextLong(_pData);
 		id = nextLong(_pData);
 		if (TinselV3) {
-			warning("TODO: Complete implementation of Polygon loading for Noir");
-			unknown = nextLong(_pData);
+			sceneId = nextLong(_pData);
 			playfield = nextLong(_pData);
 		}
-		reftype = nextLong(_pData);
 	}
 
-	tagx = nextLong(_pData);
-	tagy = nextLong(_pData);
-	hTagtext = nextLong(_pData);
-	nodex = nextLong(_pData);
-	nodey = nextLong(_pData);
-	hFilm = nextLong(_pData);
+	// Noir is for scale polygons using union with some alignment
+	if (TinselV3 && type == POLY_SCALE) {
+		vx[0] = nextLong(_pData);
+		vx[1] = nextLong(_pData);
+		vx[2] = nextLong(_pData);
+		vx[3] = nextLong(_pData);
 
-	if (!TinselV2) {
-		reftype = nextLong(_pData);
-		id = nextLong(_pData);
+		vy[0] = nextLong(_pData);
+		vy[1] = nextLong(_pData);
+		vy[2] = nextLong(_pData);
+		vy[3] = nextLong(_pData);
+
+		vz[0] = nextLong(_pData);
+		vz[1] = nextLong(_pData);
+		vz[2] = nextLong(_pData);
+		vz[3] = nextLong(_pData);
+	} else {
+		if (TinselV2) {
+			reftype = nextLong(_pData);
+		}
+		tagx = nextLong(_pData);
+		tagy = nextLong(_pData);
+		hTagtext = nextLong(_pData);
+		nodex = nextLong(_pData);
+		nodey = nextLong(_pData);
+		hFilm = nextLong(_pData);
+
+		if (!TinselV2) {
+			reftype = nextLong(_pData);
+			id = nextLong(_pData);
+		}
+
+		scale1 = nextLong(_pData);
+		scale2 = nextLong(_pData);
+
+		if (TinselV2) {
+			level1 = nextLong(_pData);
+			level2 = nextLong(_pData);
+			bright1 = nextLong(_pData);
+		}
 	}
-
-	scale1 = nextLong(_pData);
-	scale2 = nextLong(_pData);
 
 	if (TinselV2) {
-		level1 = nextLong(_pData);
-		level2 = nextLong(_pData);
-		bright1 = nextLong(_pData);
 		bright2 = nextLong(_pData);
 	}
 
@@ -1764,10 +1790,10 @@ static void InitTag(const Poly &ptp, int pno, bool bRestart) {
 
 
 /**
- * Initialize an unknown polygon.
+ * Initialize a scale polygon. Noir only.
  */
-static void InitUnknown(const Poly &ptp, int pno, bool bRestart) {
-	CommonInits(UNKNOWN, pno, ptp, bRestart);
+static void InitScale(const Poly &ptp, int pno, bool bRestart) {
+	CommonInits(SCALE, pno, ptp, bRestart);
 }
 
 
@@ -1802,8 +1828,8 @@ static void KillDeadPolygons() {
 				Polys[i]->polyType = EX_TAG;
 				break;
 
-			case UNKNOWN:
-				Polys[i]->polyType = EX_UNKNOWN;
+			case SCALE:
+				Polys[i]->polyType = EX_SCALE;
 				break;
 
 			default:
@@ -1882,8 +1908,8 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 				InitTag(ptp, i, bRestart);
 				break;
 
-			case POLY_UNKNOWN:
-				InitUnknown(ptp, i, bRestart);
+			case POLY_SCALE:
+				InitScale(ptp, i, bRestart);
 				break;
 
 			default:
@@ -1912,7 +1938,7 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 				if (Polys[i]->polyType == TAG){
 					if (TinselV3) {
 						Poly ptp(_vm->_handle->LockMem(pHandle), Polys[i]->pIndex);
-						if (ptp.unknown != -1) {
+						if (ptp.sceneId != -1) {
 							continue;
 						}
 					}

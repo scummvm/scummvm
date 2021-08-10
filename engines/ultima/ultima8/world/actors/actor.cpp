@@ -1071,9 +1071,7 @@ void Actor::tookHitCru() {
 		return;
 
 	if (lastanim == Animation::unknownAnim30 || lastanim == Animation::startRunLargeWeapon) {
-		Actor *controlled = getActor(World::get_instance()->getControlledNPCNum());
-		bool canseecontrolled = controlled && (getRangeIfVisible(*controlled) > 0);
-		if (canseecontrolled) {
+		if (canSeeControlledActor(true)) {
 			if (getRandom() % 4)
 				setActivity(5);
 			else
@@ -1828,15 +1826,14 @@ void Actor::setInCombatCru(int activity) {
 	AttackProcess *ap = new AttackProcess(this);
 	Kernel::get_instance()->addProcess(ap);
 
-	if (getCurrentActivityNo() == 8) {
-		// Guard process.. set some flag in ap
+	if (getLastActivityNo() == 8) {
+		// Coming from guard process.. set some flag in ap
 		ap->setField97();
 	}
 	if (activity == 0xc) {
-		ap->setTimer3();
-		// This sets fields 0x77 and 0x79 of the attack process
+		// This sets timer 3 of the attack process
 		// to some random timer value in the future
-		//ap->AttackProcess_1108_1485();
+		ap->setTimer3();
 	}
 
 	uint16 animproc = 0;
@@ -1869,6 +1866,52 @@ void Actor::clearInCombat() {
 		p->terminate();
 
 	clearActorFlag(ACT_INCOMBAT);
+}
+
+bool Actor::canSeeControlledActor(bool forcombat) {
+	const Actor *controlled = getControlledActor();
+	if (!controlled)
+		return false;
+
+	if (!isOnScreen())
+		return false;
+
+	Direction dirtocontrolled = getDirToItemCentre(*controlled);
+	Direction curdir = getDir();
+
+	/* TODO: There are extra checks in here in the original
+	if (forcombat) {
+		 Animation::Sequence lastanim = getLastAnim();
+		((lastanim == Animation::unknownAnim30 || lastanim == Animation::startRunLargeWeapon) && currentAnimFrame > 1)) {
+		 bool left;
+		 if (lastanim == Animation::unknownAnim30) {
+			left = false;
+			if (((currentdir != 8) && (currentdir != 10)) && (currentdir != 0xc))
+				left = true;
+		 } else {
+			left = true;
+			if (((currentdir != 8) && (currentdir != 10)) && (currentdir != 0xc)) {
+				left = false;
+		 }
+		 if (leftflag) {
+			currentdir = Direction_TurnByDelta(curdir, -4, dirmode_16dirs);
+		 } else {
+			currentdir = Direction_TurnByDelta(curdir, 4, dirmode_16dirs);
+		 }
+	}
+	*/
+
+	if (dirtocontrolled == curdir ||
+		dirtocontrolled == Direction_OneLeft(curdir, dirmode_16dirs) ||
+		dirtocontrolled == Direction_OneRight(curdir, dirmode_16dirs) ||
+		dirtocontrolled == Direction_TurnByDelta(curdir, 2, dirmode_16dirs) ||
+		dirtocontrolled == Direction_TurnByDelta(curdir, -2, dirmode_16dirs))
+	{
+		return getRangeIfVisible(*controlled) > 0;
+	}
+
+	return false;
+
 }
 
 int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleports, bool force,

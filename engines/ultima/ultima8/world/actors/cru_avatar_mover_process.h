@@ -54,6 +54,9 @@ private:
 	/** Try readying or firing weapon. */
 	void tryAttack();
 
+	/** Check if we need to alert NPCs after firing. */
+	void checkForAlertingNPCs();
+
 	/**
 	* Angle of avatar in centidegrees (1/100deg).  The original game runs the keyboard
 	* process 45 times per second and rotates the crosshair by 2 (regular) or
@@ -71,6 +74,11 @@ private:
 	 * Next tick the avatar can fire a weapon again.
 	 */
 	uint32 _nextFireTick;
+
+	/**
+	 * Last time we alerted NPCs on a shot.
+	 */
+	uint32 _lastNPCAlertTick;
 
 	void handleHangingMode() override;
 	void handleCombatMode() override;

@@ -298,8 +298,11 @@ public:
 
 	bool activeWeaponIsSmall() const;
 
-	// A cru-specific behavior - mostly make "ugh" noises, or explode for some robots.
+	//! A cru-specific behavior - mostly make "ugh" noises, or explode for some robots.
 	void tookHitCru();
+
+	//! Whether this NPC has the controlled actor in their sights (Crusader only)
+	bool canSeeControlledActor(bool forcombat);
 
 	//! Add the x/y/z fire offsets given the current state of the actor
 	void addFireAnimOffsets(int32 &x, int32 &y, int32 &z);

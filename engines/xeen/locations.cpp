@@ -303,8 +303,8 @@ int BaseLocation::wait() {
 BankLocation::BankLocation() : BaseLocation(BANK) {
 	_icons1.load("bank.icn");
 	_icons2.load("bank2.icn");
-	addButton(Common::Rect(234, 108, 259, 128), Common::KEYCODE_d, &_icons1);
-	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_w, &_icons1);
+	addButton(Common::Rect(234, 108, 259, 128), Res.KeyConstants.Locations.KEY_DEP, &_icons1);
+	addButton(Common::Rect(261, 108, 285, 128), Res.KeyConstants.Locations.KEY_WITH, &_icons1);
 	addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_icons1);
 	_animFrame = 1;
 
@@ -328,9 +328,9 @@ void BankLocation::drawBackground() {
 }
 
 Character *BankLocation::doOptions(Character *c) {
-	if (_buttonValue == Common::KEYCODE_d)
+	if (_buttonValue == Res.KeyConstants.Locations.KEY_DEP)
 		_buttonValue = (int)WHERE_PARTY;
-	else if (_buttonValue == Common::KEYCODE_w)
+	else if (_buttonValue == Res.KeyConstants.Locations.KEY_WITH)
 		_buttonValue = (int)WHERE_BANK;
 	else
 		return c;
@@ -353,11 +353,17 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 		gold = party._gold;
 		gems = party._gems;
 	}
-
 	for (uint idx = 0; idx < _buttons.size(); ++idx)
 		_buttons[idx]._sprites = &_icons2;
-	_buttons[0]._value = Common::KEYCODE_o;
-	_buttons[1]._value = Common::KEYCODE_e;
+
+	if (g_vm->getLanguage() == Common::RU_RUS) {
+		// In RU version sprites in wrong order
+		_buttons[1]._value = Res.KeyConstants.Locations.KEY_GOLD;
+		_buttons[0]._value = Res.KeyConstants.Locations.KEY_GEMS;
+	} else {
+		_buttons[0]._value = Res.KeyConstants.Locations.KEY_GOLD;
+		_buttons[1]._value = Res.KeyConstants.Locations.KEY_GEMS;
+	}
 	_buttons[2]._value = Common::KEYCODE_ESCAPE;
 
 	Common::String msg = Common::String::format(Res.GOLD_GEMS,
@@ -376,9 +382,9 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 
 	do {
 		wait();
-		if (_buttonValue == Common::KEYCODE_o) {
+		if (_buttonValue == Res.KeyConstants.Locations.KEY_GOLD) {
 			consType = CONS_GOLD;
-		} else if (_buttonValue == Common::KEYCODE_e) {
+		} else if (_buttonValue == Res.KeyConstants.Locations.KEY_GEMS) {
 			consType = CONS_GEMS;
 		} else if (_buttonValue == Common::KEYCODE_ESCAPE) {
 			break;
@@ -433,8 +439,8 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 
 	for (uint idx = 0; idx < _buttons.size(); ++idx)
 		_buttons[idx]._sprites = &_icons1;
-	_buttons[0]._value = Common::KEYCODE_d;
-	_buttons[1]._value = Common::KEYCODE_w;
+	_buttons[0]._value = Res.KeyConstants.Locations.KEY_DEP;
+	_buttons[1]._value = Res.KeyConstants.Locations.KEY_WITH;
 	_buttons[2]._value = Common::KEYCODE_ESCAPE;
 
 	w.close();
@@ -447,7 +453,7 @@ BlacksmithLocation::BlacksmithLocation() : BaseLocation(BLACKSMITH) {
 	_icons1.load("esc.icn");
 	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
 	addButton(Common::Rect(234, 54, 308, 62), 0);
-	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
+	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_BROWSE);
 	addButton(Common::Rect(234, 74, 308, 82), 0);
 	addButton(Common::Rect(234, 84, 308, 92), 0);
 
@@ -471,7 +477,7 @@ Character *BlacksmithLocation::doOptions(Character *c) {
 			c = &party._activeParty[_buttonValue];
 			intf.highlightChar(_buttonValue);
 		}
-	} else if (_buttonValue == Common::KEYCODE_b) {
+	} else if (_buttonValue == Res.KeyConstants.Locations.KEY_BROWSE) {
 		c = ItemsDialog::show(_vm, c, ITEMMODE_BUY);
 		_buttonValue = 0;
 	}
@@ -495,8 +501,8 @@ GuildLocation::GuildLocation() : BaseLocation(GUILD) {
 	_icons1.load("esc.icn");
 	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
 	addButton(Common::Rect(234, 54, 308, 62), 0);
-	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
-	addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_s);
+	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_BUY_SPELLS);
+	addButton(Common::Rect(234, 74, 308, 82), Res.KeyConstants.Locations.KEY_SPELL_INFO);
 	addButton(Common::Rect(234, 84, 308, 92), 0);
 	g_vm->_mode = MODE_INTERACTIVE7;
 
@@ -530,11 +536,11 @@ Character *GuildLocation::doOptions(Character *c) {
 				sound.playSound(_ccNum ? "skull1.voc" : "guild11.voc", 1);
 			}
 		}
-	} else if (_buttonValue == Common::KEYCODE_s) {
+	} else if (_buttonValue == Res.KeyConstants.Locations.KEY_SPELL_INFO) {
 		if (c->guildMember())
 			c = SpellsDialog::show(_vm, this, c, SPELLS_DIALOG_INFO);
 		_buttonValue = 0;
-	} else if (_buttonValue == Common::KEYCODE_b) {
+	} else if (_buttonValue == Res.KeyConstants.Locations.KEY_BUY_SPELLS) {
 		if (!c->noActions()) {
 			if (c->guildMember())
 				c = SpellsDialog::show(_vm, this, c, SPELLS_DIALOG_BUY);
@@ -556,11 +562,11 @@ TavernLocation::TavernLocation() : BaseLocation(TAVERN) {
 	loadStrings("tavern.bin");
 	_icons1.load("tavern.icn");
 	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
-	addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_s, &_icons1);
-	addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_d);
-	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_f);
-	addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_t);
-	addButton(Common::Rect(234, 84, 308, 92), Common::KEYCODE_r);
+	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.Locations.KEY_SIGN_IN, &_icons1);
+	addButton(Common::Rect(234, 54, 308, 62), Res.KeyConstants.Locations.KEY_DRINK);
+	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_FOOD);
+	addButton(Common::Rect(234, 74, 308, 82), Res.KeyConstants.Locations.KEY_TIP);
+	addButton(Common::Rect(234, 84, 308, 92), Res.KeyConstants.Locations.KEY_RUMORS);
 	g_vm->_mode = MODE_INTERACTIVE7;
 
 	_vocName = _ccNum ? "hello1.voc" : "hello.voc";
@@ -581,13 +587,13 @@ Character *TavernLocation::doOptions(Character *c) {
 	Windows &windows = *g_vm->_windows;
 	int idx = 0;
 
-	switch (_buttonValue) {
-	case Common::KEYCODE_F1:
-	case Common::KEYCODE_F2:
-	case Common::KEYCODE_F3:
-	case Common::KEYCODE_F4:
-	case Common::KEYCODE_F5:
-	case Common::KEYCODE_F6:
+	if (
+		Common::KEYCODE_F1 == _buttonValue ||
+		Common::KEYCODE_F2 == _buttonValue ||
+		Common::KEYCODE_F3 == _buttonValue ||
+		Common::KEYCODE_F4 == _buttonValue ||
+		Common::KEYCODE_F5 == _buttonValue ||
+		Common::KEYCODE_F6 == _buttonValue) {
 		// Switch character
 		_buttonValue -= Common::KEYCODE_F1;
 		if (_buttonValue < (int)party._activeParty.size()) {
@@ -595,9 +601,7 @@ Character *TavernLocation::doOptions(Character *c) {
 			intf.highlightChar(_buttonValue);
 			_v21 = 0;
 		}
-		break;
-
-	case Common::KEYCODE_d:
+	} else if (Res.KeyConstants.Locations.KEY_DRINK == _buttonValue) {
 		// Drink
 		if (!c->noActions()) {
 			if (party.subtract(CONS_GOLD, 1, WHERE_PARTY, WT_LOC_WAIT)) {
@@ -620,9 +624,7 @@ Character *TavernLocation::doOptions(Character *c) {
 				wait();
 			}
 		}
-		break;
-
-	case Common::KEYCODE_f: {
+	} else if (Res.KeyConstants.Locations.KEY_FOOD == _buttonValue) {
 		// Food
 		if (party._mazeId == (_ccNum ? 29 : 28)) {
 			_v22 = party._activeParty.size() * 15;
@@ -669,10 +671,7 @@ Character *TavernLocation::doOptions(Character *c) {
 		windows[12].close();
 		windows[10].open();
 		_buttonValue = 0;
-		break;
-	}
-
-	case Common::KEYCODE_r: {
+	} else if (Res.KeyConstants.Locations.KEY_RUMORS == _buttonValue) {
 		// Rumors
 		if (party._mazeId == (_ccNum ? 29 : 28)) {
 			idx = 0;
@@ -691,10 +690,7 @@ Character *TavernLocation::doOptions(Character *c) {
 
 		wait();
 		w.close();
-		break;
-	}
-
-	case Common::KEYCODE_s: {
+	} else if (Res.KeyConstants.Locations.KEY_SIGN_IN == _buttonValue) {
 		// Sign In
 		// Set location and position for afterwards
 		if (g_vm->getGameID() == GType_Swords) {
@@ -757,10 +753,7 @@ Character *TavernLocation::doOptions(Character *c) {
 		if (party._mazeId != 0)
 			map.load(party._mazeId);
 		_exitToUi = true;
-		break;
-	}
-
-	case Common::KEYCODE_t:
+	} else if (Res.KeyConstants.Locations.KEY_TIP == _buttonValue) {
 		if (!c->noActions()) {
 			if (!_v21) {
 				windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
@@ -807,10 +800,6 @@ Character *TavernLocation::doOptions(Character *c) {
 				}
 			}
 		}
-		break;
-
-	default:
-		break;
 	}
 
 	return c;
@@ -843,9 +832,9 @@ TempleLocation::TempleLocation() : BaseLocation(TEMPLE) {
 
 	_icons1.load("esc.icn");
 	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
-	addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_h);
-	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_d);
-	addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_u);
+	addButton(Common::Rect(234, 54, 308, 62), Res.KeyConstants.Locations.KEY_HEAL);
+	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_DONATION);
+	addButton(Common::Rect(234, 74, 308, 82), Res.KeyConstants.Locations.KEY_UNCURSE);
 	addButton(Common::Rect(234, 84, 308, 92), 0);
 
 	_vocName = _ccNum ? "help2.voc" : "maywe2.voc";
@@ -919,13 +908,12 @@ Character *TempleLocation::doOptions(Character *c) {
 	Party &party = *g_vm->_party;
 	Sound &sound = *g_vm->_sound;
 
-	switch (_buttonValue) {
-	case Common::KEYCODE_F1:
-	case Common::KEYCODE_F2:
-	case Common::KEYCODE_F3:
-	case Common::KEYCODE_F4:
-	case Common::KEYCODE_F5:
-	case Common::KEYCODE_F6:
+	if (Common::KEYCODE_F1 == _buttonValue ||
+		Common::KEYCODE_F2 == _buttonValue ||
+		Common::KEYCODE_F3 == _buttonValue ||
+		Common::KEYCODE_F4 == _buttonValue ||
+		Common::KEYCODE_F5 == _buttonValue ||
+		Common::KEYCODE_F6 == _buttonValue) {
 		// Switch character
 		_buttonValue -= Common::KEYCODE_F1;
 		if (_buttonValue < (int)party._activeParty.size()) {
@@ -933,9 +921,7 @@ Character *TempleLocation::doOptions(Character *c) {
 			intf.highlightChar(_buttonValue);
 			_dayOfWeek = 0;
 		}
-		break;
-
-	case Common::KEYCODE_d:
+	} else if (Res.KeyConstants.Locations.KEY_DONATION == _buttonValue) {
 		if (_donation && party.subtract(CONS_GOLD, _donation, WHERE_PARTY, WT_LOC_WAIT)) {
 			sound.stopSound();
 			sound.playSound("coina.voc", 1);
@@ -958,9 +944,7 @@ Character *TempleLocation::doOptions(Character *c) {
 				_donation = 0;
 			}
 		}
-		break;
-
-	case Common::KEYCODE_h:
+	} else if (Res.KeyConstants.Locations.KEY_HEAL == _buttonValue) {
 		if (_healCost && party.subtract(CONS_GOLD, _healCost, WHERE_PARTY, WT_LOC_WAIT)) {
 			c->_magicResistence._temporary = 0;
 			c->_energyResistence._temporary = 0;
@@ -985,9 +969,7 @@ Character *TempleLocation::doOptions(Character *c) {
 			sound.stopSound();
 			sound.playSound("ahh.voc", 1);
 		}
-		break;
-
-	case Common::KEYCODE_u:
+	} else if (Res.KeyConstants.Locations.KEY_UNCURSE == _buttonValue) {
 		if (_uncurseCost && party.subtract(CONS_GOLD, _uncurseCost, WHERE_PARTY, WT_LOC_WAIT)) {
 			c->_items.curseUncurse(false);
 			c->_conditions[CURSED] = 0;
@@ -996,10 +978,6 @@ Character *TempleLocation::doOptions(Character *c) {
 			sound.stopSound();
 			sound.playSound("ahh.voc", 1);
 		}
-		break;
-
-	default:
-		break;
 	}
 
 	return c;
@@ -1014,7 +992,7 @@ TrainingLocation::TrainingLocation() : BaseLocation(TRAINING) {
 
 	_icons1.load("train.icn");
 	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
-	addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t, &_icons1);
+	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.Locations.KEY_TRAIN, &_icons1);
 
 	_vocName = _ccNum ? "youtrn1.voc" : "training.voc";
 }
@@ -1082,13 +1060,12 @@ Character *TrainingLocation::doOptions(Character *c) {
 	Party &party = *g_vm->_party;
 	Sound &sound = *g_vm->_sound;
 
-	switch (_buttonValue) {
-	case Common::KEYCODE_F1:
-	case Common::KEYCODE_F2:
-	case Common::KEYCODE_F3:
-	case Common::KEYCODE_F4:
-	case Common::KEYCODE_F5:
-	case Common::KEYCODE_F6:
+	if (Common::KEYCODE_F1 == _buttonValue ||
+		Common::KEYCODE_F2 == _buttonValue ||
+		Common::KEYCODE_F3 == _buttonValue ||
+		Common::KEYCODE_F4 == _buttonValue ||
+		Common::KEYCODE_F5 == _buttonValue ||
+		Common::KEYCODE_F6 == _buttonValue) {
 		// Switch character
 		_buttonValue -= Common::KEYCODE_F1;
 		if (_buttonValue < (int)party._activeParty.size()) {
@@ -1096,9 +1073,7 @@ Character *TrainingLocation::doOptions(Character *c) {
 			c = &party._activeParty[_buttonValue];
 			intf.highlightChar(_buttonValue);
 		}
-		break;
-
-	case Common::KEYCODE_t:
+	} else if (Res.KeyConstants.Locations.KEY_TRAIN == _buttonValue) {
 		if (_experienceToNextLevel) {
 			sound.stopSound();
 			_drawFrameIndex = 0;
@@ -1133,10 +1108,6 @@ Character *TrainingLocation::doOptions(Character *c) {
 				intf.drawParty(true);
 			}
 		}
-		break;
-
-	default:
-		break;
 	}
 
 	return c;

@@ -178,9 +178,6 @@ public:
 	int getHeight() const override {
 		return _boundingBox.height();
 	}
-	GraphicEngine::COLOR_FORMATS getColorFormat() const override {
-		return GraphicEngine::CF_ARGB32;
-	}
 	bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0)) override;
 
 	void render(int width, int height);

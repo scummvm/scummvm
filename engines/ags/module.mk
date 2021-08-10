@@ -81,7 +81,6 @@ MODULE_OBJS = \
 	shared/util/ini_file.o \
 	shared/util/ini_util.o \
 	shared/util/lzw.o \
-	shared/util/misc.o \
 	shared/util/memory_stream.o \
 	shared/util/multi_file_lib.o \
 	shared/util/path.o \
@@ -328,6 +327,7 @@ MODULE_OBJS = \
 	plugins/ags_creditz/drawing.o \
 	plugins/ags_fire/ags_fire.o \
 	plugins/ags_flashlight/ags_flashlight.o \
+	plugins/ags_flashlight/gfx.o \
 	plugins/ags_galaxy_steam/ags_wadjeteye_steam.o \
 	plugins/ags_galaxy_steam/ags_galaxy_steam.o \
 	plugins/ags_joy/ags_joy.o \

@@ -136,7 +136,7 @@ Common::Error Saga2Engine::run() {
 	_console = new Console(this);
 	setDebugger(_console);
 
-	_renderer = new Renderer(this);
+	_renderer = new Renderer();
 
 	readConfig();
 

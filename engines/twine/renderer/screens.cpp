@@ -39,15 +39,15 @@ bool Screens::adelineLogo() {
 
 void Screens::loadMenuImage(bool fadeIn) {
 	loadImage(RESSHQR_MENUIMG, -1, fadeIn);
-	_engine->workVideoBuffer.blitFrom(_engine->frontVideoBuffer);
+	_engine->_workVideoBuffer.blitFrom(_engine->_frontVideoBuffer);
 }
 
 void Screens::loadCustomPalette(int32 index) {
-	if (HQR::getEntry(palette, Resources::HQR_RESS_FILE, index) == 0) {
+	if (HQR::getEntry(_palette, Resources::HQR_RESS_FILE, index) == 0) {
 		warning("Failed to load custom palette %i", index);
 		return;
 	}
-	convertPalToRGBA(palette, paletteRGBACustom);
+	convertPalToRGBA(_palette, _paletteRGBACustom);
 }
 
 void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
@@ -63,18 +63,18 @@ void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
 }
 
 void Screens::loadImage(int32 index, int32 paletteIndex, bool fadeIn) {
-	Graphics::ManagedSurface& src = _engine->imageBuffer;
+	Graphics::ManagedSurface& src = _engine->_imageBuffer;
 	if (HQR::getEntry((uint8 *)src.getPixels(), Resources::HQR_RESS_FILE, index) == 0) {
 		warning("Failed to load image with index %i", index);
 		return;
 	}
 	debug(0, "Load image: %i", index);
-	Graphics::ManagedSurface& target = _engine->frontVideoBuffer;
+	Graphics::ManagedSurface& target = _engine->_frontVideoBuffer;
 	target.transBlitFrom(src, src.getBounds(), target.getBounds(), 0, false, 0, 0xff, nullptr, true);
-	const uint32 *pal = paletteRGBA;
+	const uint32 *pal = _paletteRGBA;
 	if (paletteIndex != -1) {
 		loadCustomPalette(paletteIndex);
-		pal = paletteRGBACustom;
+		pal = _paletteRGBACustom;
 	}
 	if (fadeIn) {
 		fadeToPal(pal);
@@ -86,15 +86,15 @@ void Screens::loadImage(int32 index, int32 paletteIndex, bool fadeIn) {
 bool Screens::loadImageDelay(int32 index, int32 paletteIndex, int32 seconds) {
 	loadImage(index, paletteIndex);
 	if (_engine->delaySkip(1000 * seconds)) {
-		adjustPalette(0, 0, 0, paletteRGBACustom, 100);
+		adjustPalette(0, 0, 0, _paletteRGBACustom, 100);
 		return true;
 	}
-	fadeOut(paletteRGBACustom);
+	fadeOut(_paletteRGBACustom);
 	return false;
 }
 
 void Screens::fadeIn(const uint32 *pal) {
-	if (_engine->cfgfile.CrossFade) {
+	if (_engine->_cfgfile.CrossFade) {
 		_engine->crossFade(pal);
 	} else {
 		fadeToPal(pal);
@@ -104,13 +104,17 @@ void Screens::fadeIn(const uint32 *pal) {
 }
 
 void Screens::fadeOut(const uint32 *pal) {
-	/*if(cfgfile.CrossFade)
-		crossFade(frontVideoBuffer, pal);
-	else
-		fadeToBlack(pal);*/
-	if (!_engine->cfgfile.CrossFade) {
+#if 0
+	if (_engine->_cfgfile.CrossFade) {
+		_engine->crossFade(pal);
+	} else {
 		fadeToBlack(pal);
 	}
+#else
+	if (!_engine->_cfgfile.CrossFade) {
+		fadeToBlack(pal);
+	}
+#endif
 }
 
 int32 Screens::crossDot(int32 modifier, int32 color, int32 param, int32 intensity) {
@@ -147,7 +151,7 @@ void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, in
 	}
 
 	_engine->setPalette(pal);
-	_engine->frontVideoBuffer.update();
+	_engine->_frontVideoBuffer.update();
 }
 
 void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
@@ -184,12 +188,12 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 
 		_engine->setPalette(pal);
 		intensity++;
-		_engine->frontVideoBuffer.update();
+		_engine->_frontVideoBuffer.update();
 	} while (intensity <= 100);
 }
 
 void Screens::fadeToBlack(const uint32 *pal) {
-	if (palResetted) {
+	if (_palResetted) {
 		return;
 	}
 
@@ -198,7 +202,7 @@ void Screens::fadeToBlack(const uint32 *pal) {
 		adjustPalette(0, 0, 0, pal, i);
 	}
 
-	palResetted = true;
+	_palResetted = true;
 }
 
 void Screens::fadeToPal(const uint32 *pal) {
@@ -209,7 +213,7 @@ void Screens::fadeToPal(const uint32 *pal) {
 
 	_engine->setPalette(pal);
 
-	palResetted = false;
+	_palResetted = false;
 }
 
 void Screens::blackToWhite() {
@@ -219,17 +223,17 @@ void Screens::blackToWhite() {
 		memset(pal, i, sizeof(pal));
 
 		_engine->setPalette(pal);
-		_engine->frontVideoBuffer.update();
+		_engine->_frontVideoBuffer.update();
 	}
 }
 
 void Screens::setBackPal() {
-	memset(palette, 0, sizeof(palette));
-	memset(paletteRGBA, 0, sizeof(paletteRGBA));
+	memset(_palette, 0, sizeof(_palette));
+	memset(_paletteRGBA, 0, sizeof(_paletteRGBA));
 
-	_engine->setPalette(paletteRGBA);
+	_engine->setPalette(_paletteRGBA);
 
-	palResetted = true;
+	_palResetted = true;
 }
 
 void Screens::fadePalRed(const uint32 *pal) {
@@ -251,7 +255,7 @@ void Screens::copyScreen(const Graphics::ManagedSurface &source, Graphics::Manag
 }
 
 void Screens::clearScreen() {
-	_engine->frontVideoBuffer.clear(0);
+	_engine->_frontVideoBuffer.clear(0);
 }
 
 } // namespace TwinE

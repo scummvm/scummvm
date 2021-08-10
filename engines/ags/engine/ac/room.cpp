@@ -23,6 +23,7 @@
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/string_utils.h" //strlwr()
 #include "ags/shared/ac/common.h"
+#include "ags/engine/ac/character.h"
 #include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/draw.h"
@@ -103,6 +104,14 @@ ScriptDrawingSurface *Room_GetDrawingSurfaceForBackground(int backgroundNumber) 
 	return surface;
 }
 
+ScriptDrawingSurface *Room_GetDrawingSurfaceForMask(RoomAreaMask mask) {
+	if (_G(displayed_room) < 0)
+		quit("!Room_GetDrawingSurfaceForMask: no room is currently loaded");
+	ScriptDrawingSurface *surface = new ScriptDrawingSurface();
+	surface->roomMaskType = mask;
+	ccRegisterManagedObject(surface, surface);
+	return surface;
+}
 
 int Room_GetObjectCount() {
 	return _G(croom)->numobj;
@@ -166,6 +175,11 @@ const char *Room_GetMessages(int index) {
 	return CreateNewScriptString(buffer);
 }
 
+bool Room_Exists(int room) {
+	String room_filename;
+	room_filename.Format("room%d.crm", room);
+	return _GP(AssetMgr)->DoesAssetExist(room_filename);
+}
 
 //=============================================================================
 
@@ -191,6 +205,11 @@ void convert_room_background_to_game_res() {
 	_GP(thisroom).HotspotMask = FixBitmap(_GP(thisroom).HotspotMask, mask_width, mask_height);
 	_GP(thisroom).RegionMask = FixBitmap(_GP(thisroom).RegionMask, mask_width, mask_height);
 	_GP(thisroom).WalkAreaMask = FixBitmap(_GP(thisroom).WalkAreaMask, mask_width, mask_height);
+
+	for (size_t i = 0; i < _GP(thisroom).WalkAreaCount; ++i) {
+		_GP(thisroom).WalkAreas[i].Top = room_to_mask_coord(_GP(thisroom).WalkAreas[i].Top);
+		_GP(thisroom).WalkAreas[i].Bottom = room_to_mask_coord(_GP(thisroom).WalkAreas[i].Bottom);
+	}
 }
 
 
@@ -568,7 +587,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 			_G(croom)->obj[cc].moving = -1;
 			_G(croom)->obj[cc].flags = _GP(thisroom).Objects[cc].Flags;
 			_G(croom)->obj[cc].baseline = -1;
-			_G(croom)->obj[cc].last_zoom = 100;
+			_G(croom)->obj[cc].zoom = 100;
 			_G(croom)->obj[cc].last_width = 0;
 			_G(croom)->obj[cc].last_height = 0;
 			_G(croom)->obj[cc].blocking_width = 0;
@@ -674,6 +693,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		_G(rgb_map) = &_GP(rgb_table);
 	}
 	_G(our_eip) = 211;
+	bool place_on_walkable = false;
 	if (forchar != nullptr) {
 		// if it's not a Restore Game
 
@@ -693,10 +713,18 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 		forchar->prevroom = forchar->room;
 		forchar->room = newnum;
+
+		// Compatibility: old games had a *possibly unintentional* effect:
+		 // if a character was moving when "change room" function is called,
+		 // they ended up forced to a walkable area in the next room.
+		if (_G(loaded_game_file_version) < kGameVersion_300) {
+			if (is_char_walking_ndirect(forchar))
+				place_on_walkable = true;
+		}
+
 		// only stop moving if it's a new room, not a restore game
 		for (cc = 0; cc < _GP(game).numcharacters; cc++)
 			StopMoving(cc);
-
 	}
 
 	update_polled_stuff_if_runtime();
@@ -717,6 +745,8 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	if ((_G(new_room_x) != SCR_NO_VALUE) && (forchar != nullptr)) {
 		forchar->x = _G(new_room_x);
 		forchar->y = _G(new_room_y);
+		if (place_on_walkable)
+			Character_PlaceOnWalkableArea(forchar);
 
 		if (_G(new_room_loop) != SCR_NO_VALUE)
 			forchar->loop = _G(new_room_loop);
@@ -1158,25 +1188,30 @@ RuntimeScriptValue Sc_RoomProcessClick(const RuntimeScriptValue *params, int32_t
 	API_SCALL_VOID_PINT3(RoomProcessClick);
 }
 
+RuntimeScriptValue Sc_Room_Exists(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_BOOL_PINT(Room_Exists);
+}
+
 
 void RegisterRoomAPI() {
 	ccAddExternalStaticFunction("Room::GetDrawingSurfaceForBackground^1",   Sc_Room_GetDrawingSurfaceForBackground);
-	ccAddExternalStaticFunction("Room::GetProperty^1",                      Sc_Room_GetProperty);
-	ccAddExternalStaticFunction("Room::GetTextProperty^1",                  Sc_Room_GetTextProperty);
-	ccAddExternalStaticFunction("Room::SetProperty^2",                      Sc_Room_SetProperty);
-	ccAddExternalStaticFunction("Room::SetTextProperty^2",                  Sc_Room_SetTextProperty);
-	ccAddExternalStaticFunction("Room::ProcessClick^3",                     Sc_RoomProcessClick);
-	ccAddExternalStaticFunction("ProcessClick",                             Sc_RoomProcessClick);
-	ccAddExternalStaticFunction("Room::get_BottomEdge",                     Sc_Room_GetBottomEdge);
-	ccAddExternalStaticFunction("Room::get_ColorDepth",                     Sc_Room_GetColorDepth);
-	ccAddExternalStaticFunction("Room::get_Height",                         Sc_Room_GetHeight);
-	ccAddExternalStaticFunction("Room::get_LeftEdge",                       Sc_Room_GetLeftEdge);
-	ccAddExternalStaticFunction("Room::geti_Messages",                      Sc_Room_GetMessages);
-	ccAddExternalStaticFunction("Room::get_MusicOnLoad",                    Sc_Room_GetMusicOnLoad);
-	ccAddExternalStaticFunction("Room::get_ObjectCount",                    Sc_Room_GetObjectCount);
-	ccAddExternalStaticFunction("Room::get_RightEdge",                      Sc_Room_GetRightEdge);
-	ccAddExternalStaticFunction("Room::get_TopEdge",                        Sc_Room_GetTopEdge);
-	ccAddExternalStaticFunction("Room::get_Width",                          Sc_Room_GetWidth);
+	ccAddExternalStaticFunction("Room::GetProperty^1",      Sc_Room_GetProperty);
+	ccAddExternalStaticFunction("Room::GetTextProperty^1",  Sc_Room_GetTextProperty);
+	ccAddExternalStaticFunction("Room::SetProperty^2",      Sc_Room_SetProperty);
+	ccAddExternalStaticFunction("Room::SetTextProperty^2",  Sc_Room_SetTextProperty);
+	ccAddExternalStaticFunction("Room::ProcessClick^3",     Sc_RoomProcessClick);
+	ccAddExternalStaticFunction("ProcessClick",             Sc_RoomProcessClick);
+	ccAddExternalStaticFunction("Room::get_BottomEdge",     Sc_Room_GetBottomEdge);
+	ccAddExternalStaticFunction("Room::get_ColorDepth",     Sc_Room_GetColorDepth);
+	ccAddExternalStaticFunction("Room::get_Height",         Sc_Room_GetHeight);
+	ccAddExternalStaticFunction("Room::get_LeftEdge",       Sc_Room_GetLeftEdge);
+	ccAddExternalStaticFunction("Room::geti_Messages",      Sc_Room_GetMessages);
+	ccAddExternalStaticFunction("Room::get_MusicOnLoad",    Sc_Room_GetMusicOnLoad);
+	ccAddExternalStaticFunction("Room::get_ObjectCount",    Sc_Room_GetObjectCount);
+	ccAddExternalStaticFunction("Room::get_RightEdge",      Sc_Room_GetRightEdge);
+	ccAddExternalStaticFunction("Room::get_TopEdge",        Sc_Room_GetTopEdge);
+	ccAddExternalStaticFunction("Room::get_Width",          Sc_Room_GetWidth);
+	ccAddExternalStaticFunction("Room::Exists",             Sc_Room_Exists);
 }
 
 } // namespace AGS3

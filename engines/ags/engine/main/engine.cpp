@@ -294,27 +294,7 @@ void engine_locate_speech_pak() {
 				_G(platform)->DisplayAlert("Unable to read voice pack, file could be corrupted or of unknown format.\nSpeech voice-over will be disabled.");
 				return;
 			}
-			// TODO: why is this read right here??? move this to InitGameState!
-			Stream *speechsync = _GP(AssetMgr)->OpenAsset("syncdata.dat");
-			if (speechsync != nullptr) {
-				// this game has voice lip sync
-				int lipsync_fmt = speechsync->ReadInt32();
-				if (lipsync_fmt != 4) {
-					Debug::Printf(kDbgMsg_Info, "Unknown speech lip sync format (%d).\nLip sync disabled.", lipsync_fmt);
-				} else {
-					_G(numLipLines) = speechsync->ReadInt32();
-					_G(splipsync) = (SpeechLipSyncLine *)malloc(sizeof(SpeechLipSyncLine) * _G(numLipLines));
-					for (int ee = 0; ee < _G(numLipLines); ee++) {
-						_G(splipsync)[ee].numPhonemes = speechsync->ReadInt16();
-						speechsync->Read(_G(splipsync)[ee].filename, 14);
-						_G(splipsync)[ee].endtimeoffs = (int32_t *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(int));
-						speechsync->ReadArrayOfInt32(_G(splipsync)[ee].endtimeoffs, _G(splipsync)[ee].numPhonemes);
-						_G(splipsync)[ee].frame = (short *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(short));
-						speechsync->ReadArrayOfInt16(_G(splipsync)[ee].frame, _G(splipsync)[ee].numPhonemes);
-					}
-				}
-				delete speechsync;
-			}
+
 			Debug::Printf(kDbgMsg_Info, "Voice pack found and initialized.");
 			_GP(play).want_speech = 1;
 		} else if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).VoiceDir2) != 0) {
@@ -738,6 +718,7 @@ void engine_init_game_settings() {
 	_GP(play).music_queue_size = 0;
 	_GP(play).shakesc_length = 0;
 	_GP(play).wait_counter = 0;
+	_GP(play).SetWaitSkipResult(SKIP_NONE);
 	_GP(play).key_skip_wait = SKIP_NONE;
 	_GP(play).cur_music_number = -1;
 	_GP(play).music_repeat = 1;
@@ -807,6 +788,8 @@ void engine_init_game_settings() {
 	_GP(play).speech_has_voice = false;
 	_GP(play).speech_voice_blocking = false;
 	_GP(play).speech_in_post_state = false;
+	_GP(play).complete_overlay_on = 0;
+	_GP(play).text_overlay_on = 0;
 	_GP(play).narrator_speech = _GP(game).playercharacter;
 	_GP(play).crossfading_out_channel = 0;
 	_GP(play).speech_textwindow_gui = _GP(game).options[OPT_TWCUSTOM];
@@ -1254,7 +1237,8 @@ bool engine_try_set_gfxmode_any(const ScreenSetup &setup) {
 	engine_shutdown_gfxmode();
 
 	const Size init_desktop = get_desktop_size();
-	if (!graphics_mode_init_any(_GP(game).GetGameRes(), setup, ColorDepthOption(_GP(game).GetColorDepth())))
+	if (!graphics_mode_init_any(GraphicResolution(_GP(game).GetGameRes(), _GP(game).color_depth * 8),
+		setup, ColorDepthOption(_GP(game).GetColorDepth())))
 		return false;
 
 	engine_post_gfxmode_setup(init_desktop);
@@ -1308,7 +1292,7 @@ bool engine_try_switch_windowed_gfxmode() {
 			init_desktop = get_desktop_size();
 		engine_post_gfxmode_setup(init_desktop);
 	}
-	ags_clear_input_buffer();
+	ags_clear_input_state();
 	return res;
 }
 

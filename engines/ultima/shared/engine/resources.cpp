@@ -55,7 +55,8 @@ void Resources::addResource(const Common::String &name, const byte *data, size_t
 	Common::copy(data, data + size, &lr._data[0]);
 }
 
-bool Resources::hasFile(const Common::String &name) const {
+bool Resources::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (uint idx = 0; idx < _localResources.size(); ++idx)
 		if (!_localResources[idx]._name.compareToIgnoreCase(name))
 			return true;
@@ -71,14 +72,16 @@ int Resources::listMembers(Common::ArchiveMemberList &list) const {
 	return _localResources.size();
 }
 
-const Common::ArchiveMemberPtr Resources::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr Resources::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *Resources::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *Resources::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (uint idx = 0; idx < _localResources.size(); ++idx) {
 		const LocalResource &lr = _localResources[idx];
 		if (!lr._name.compareToIgnoreCase(name))

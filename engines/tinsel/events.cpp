@@ -36,7 +36,7 @@
 #include "tinsel/pdisplay.h"
 #include "tinsel/pid.h"
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"	// For walking lead actor
+#include "tinsel/movers.h"	// For walking lead actor
 #include "tinsel/sched.h"
 #include "tinsel/scroll.h"	// For DontScrollCursor()
 #include "tinsel/timers.h"	// DwGetCurrentTime()

@@ -186,13 +186,13 @@ protected:
 	uint32 _pos;
 	DisposeAfterUse::Flag _disposeMemory;
 
-	void ensureCapacity(uint32 new_len) {
-		if (new_len <= _capacity)
+	void ensureCapacity(uint32 capacity) {
+		if (capacity <= _capacity)
 			return;
 
 		byte *old_data = _data;
 
-		_capacity = MAX(new_len + 32, _capacity * 2);
+		_capacity = capacity;
 		_data = (byte *)malloc(_capacity);
 		_ptr = _data + _pos;
 
@@ -201,8 +201,6 @@ protected:
 			memcpy(_data, old_data, _size);
 			free(old_data);
 		}
-
-		_size = new_len;
 	}
 
 	/** Round up capacity to the next power of 2.
@@ -223,7 +221,7 @@ public:
 	}
 
 	uint32 write(const void *dataPtr, uint32 dataSize) override {
-		if ((_size + dataSize) >= _capacity)
+		if ((_pos + dataSize) >= _capacity)
 			ensureCapacity(roundUpCapacity(_pos + dataSize));
 
 		memcpy(_ptr, dataPtr, dataSize);

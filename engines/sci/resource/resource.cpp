@@ -22,6 +22,7 @@
 
 // Resource library
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/macresman.h"
@@ -630,7 +631,7 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	resMan->disposeVolumeFileStream(fileStream, this);
 }
 
-Resource *ResourceManager::testResource(ResourceId id) {
+Resource *ResourceManager::testResource(const ResourceId &id) const {
 	return _resMap.getValOrDefault(id, NULL);
 }
 
@@ -1574,6 +1575,18 @@ bool ResourceManager::isBlacklistedPatch(const ResourceId &resId) const {
 			g_sci->getPlatform() == Common::kPlatformDOS &&
 			resId.getType() == kResourceTypeSound &&
 			resId.getNumber() == 1;
+	case GID_SQ1:
+		// In the SCI remake of SQ1, the bearded musicians at the bar in Kerona
+		//  were removed for legal reasons. Sierra still included them, but the
+		//  real graphics were suppressed with patch files that shrunk the
+		//  guitarists to 13 pixels and replaced the drummer with an alien and
+		//  the Sierra logo. We allow users to enable the original graphics,
+		//  which we do by simply ignoring the patch files. In later versions
+		//  the musicians were completely removed from the game scripts.
+		return resId.getType() == kResourceTypeView &&
+			(resId.getNumber() == 433 || resId.getNumber() == 533) &&
+			ConfMan.getBool("enable_bearded_musicians") &&
+			testResource(resId); // ensure that the original view exists, just to be safe
 	default:
 		return false;
 	}

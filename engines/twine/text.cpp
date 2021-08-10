@@ -78,7 +78,7 @@ void Text::initVoxBank(TextBankId bankIdx) {
 		error("bankIdx is out of bounds: %i", (int)bankIdx);
 	}
 	// get the correct vox hqr file
-	currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[_engine->cfgfile.LanguageId].id, LanguageSuffixTypes[(int)bankIdx]);
+	_currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[_engine->_cfgfile.LanguageId].id, LanguageSuffixTypes[(int)bankIdx]);
 	// TODO: loop through other languages and take the scummvm settings regarding voices into account...
 
 	// TODO check the rest to reverse
@@ -90,30 +90,30 @@ bool Text::initVoxToPlayTextId(TextId textId) {
 }
 
 bool Text::initVoxToPlay(const TextEntry *text) {
-	currDialTextEntry = text;
-	voxHiddenIndex = 0;
-	hasHiddenVox = false;
+	_currDialTextEntry = text;
+	_voxHiddenIndex = 0;
+	_hasHiddenVox = false;
 
 	if (text == nullptr) {
 		return false;
 	}
 
-	if (!_engine->cfgfile.Voice) {
+	if (!_engine->_cfgfile.Voice) {
 		debug(3, "Voices are disabled");
 		return false;
 	}
 
-	return _engine->_sound->playVoxSample(currDialTextEntry);
+	return _engine->_sound->playVoxSample(_currDialTextEntry);
 }
 
 bool Text::playVox(const TextEntry *text) {
-	if (!_engine->cfgfile.Voice) {
+	if (!_engine->_cfgfile.Voice) {
 		return false;
 	}
 	if (text == nullptr) {
 		return false;
 	}
-	if (hasHiddenVox && !_engine->_sound->isSamplePlaying(text->index)) {
+	if (_hasHiddenVox && !_engine->_sound->isSamplePlaying(text->index)) {
 		_engine->_sound->playVoxSample(text);
 		return true;
 	}
@@ -142,7 +142,7 @@ bool Text::stopVox(const TextEntry *text) {
 	if (!_engine->_sound->isSamplePlaying(text->index)) {
 		return false;
 	}
-	hasHiddenVox = false;
+	_hasHiddenVox = false;
 	_engine->_sound->stopSample(text->index);
 	return true;
 }
@@ -158,11 +158,11 @@ void Text::initTextBank(TextBankId bankIdx) {
 }
 
 void Text::initSceneTextBank() {
-	initTextBank((TextBankId)((int)_engine->_scene->sceneTextBank + (int)TextBankId::Citadel_Island));
+	initTextBank((TextBankId)((int)_engine->_scene->_sceneTextBank + (int)TextBankId::Citadel_Island));
 }
 
 void Text::drawCharacter(int32 x, int32 y, uint8 character) {
-	Common::MemoryReadStream stream(_engine->_resources->fontPtr, _engine->_resources->fontBufSize);
+	Common::MemoryReadStream stream(_engine->_resources->_fontPtr, _engine->_resources->_fontBufSize);
 	stream.seek(character * 4);
 	stream.seek(stream.readSint16LE());
 	/*uint8 charWidth =*/ stream.readByte();
@@ -186,7 +186,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) {
 			}
 			const uint8 number = stream.readByte();
 			tempX += jump;
-			uint8* basePtr = (uint8 *)_engine->frontVideoBuffer.getBasePtr(tempX, tempY);
+			uint8* basePtr = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(tempX, tempY);
 			for (uint8 i = 0; i < number; i++) {
 				if (tempX >= 0 && tempX < (_engine->width() - 1) && tempY >= 0 && tempY < (_engine->height() - 1)) {
 					*basePtr = usedColor;
@@ -228,7 +228,7 @@ void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, C
 
 void Text::drawText(int32 x, int32 y, const char *dialogue) {
 	// if the font is not defined
-	if (_engine->_resources->fontPtr == nullptr) {
+	if (_engine->_resources->_fontPtr == nullptr) {
 		return;
 	}
 
@@ -274,21 +274,20 @@ int32 Text::getTextSize(const char *dialogue) {
 void Text::initDialogueBox() {
 	_engine->blitWorkToFront(_dialTextBox);
 
-	if (drawTextBoxBackground) {
-		_engine->_menu->drawBox(_dialTextBox);
+	if (_drawTextBoxBackground) {
+		_engine->_menu->drawRectBorders(_dialTextBox);
 		Common::Rect rect(_dialTextBox);
 		rect.grow(-1);
 		_engine->_interface->drawTransparentBox(rect, 3);
 	}
 
-	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
 	_engine->blitFrontToWork(_dialTextBox);
 }
 
+// TODO: this blits a few pixels too much when switching an item in the inventory menu.
 void Text::initInventoryDialogueBox() {
 	_engine->blitWorkToFront(_dialTextBox);
-	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
 }
 
@@ -482,7 +481,7 @@ void Text::renderContinueReadingTriangle() {
 	polygon.renderType = POLYGONTYPE_FLAT;
 	_engine->_renderer->renderPolygons(polygon, vertices, top, bottom);
 
-	_engine->copyBlockPhys(Common::Rect(left, top, right, bottom));
+	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
 void Text::fadeInCharacters(int32 counter, int32 fontColor) {
@@ -503,14 +502,14 @@ void Text::fadeInCharacters(int32 counter, int32 fontColor) {
 }
 
 int32 Text::getCharWidth(uint8 chr) const {
-	Common::MemoryReadStream stream(_engine->_resources->fontPtr, _engine->_resources->fontBufSize);
+	Common::MemoryReadStream stream(_engine->_resources->_fontPtr, _engine->_resources->_fontBufSize);
 	stream.seek(chr * 4);
 	stream.seek(stream.readSint16LE());
 	return stream.readByte();
 }
 
 int32 Text::getCharHeight(uint8 chr) const {
-	Common::MemoryReadStream stream(_engine->_resources->fontPtr, _engine->_resources->fontBufSize);
+	Common::MemoryReadStream stream(_engine->_resources->_fontPtr, _engine->_resources->_fontBufSize);
 	stream.seek(chr * 4);
 	stream.seek(stream.readSint16LE() + 1);
 	return stream.readByte();
@@ -617,7 +616,7 @@ bool Text::displayText(TextId index, bool showText, bool playVox, bool loop) {
 
 			if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
 				if (textState == ProgressiveTextState::End) {
-					stopVox(currDialTextEntry);
+					stopVox(_currDialTextEntry);
 					break;
 				}
 				if (textState == ProgressiveTextState::NextPage) {
@@ -625,27 +624,27 @@ bool Text::displayText(TextId index, bool showText, bool playVox, bool loop) {
 				}
 			}
 			if (_engine->_input->toggleAbortAction() || _engine->shouldQuit()) {
-				stopVox(currDialTextEntry);
+				stopVox(_currDialTextEntry);
 				aborted = true;
 				break;
 			}
 
 			if (playVox) {
-				playVoxSimple(currDialTextEntry);
+				playVoxSimple(_currDialTextEntry);
 			}
 		}
 	}
-	while (playVox && playVoxSimple(currDialTextEntry)) {
+	while (playVox && playVoxSimple(_currDialTextEntry)) {
 		FrameMarker frame(_engine);
 		_engine->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
-			stopVox(currDialTextEntry);
+			stopVox(_currDialTextEntry);
 			aborted = true;
 			break;
 		}
 	}
-	voxHiddenIndex = 0;
-	hasHiddenVox = false;
+	_voxHiddenIndex = 0;
+	_hasHiddenVox = false;
 	_hasValidTextHandle = false;
 	_engine->_input->resetHeroActions();
 
@@ -657,7 +656,7 @@ bool Text::drawTextProgressive(TextId index, bool playVox, bool loop) {
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 	_engine->saveFrontBuffer();
-	const bool aborted = displayText(index, _engine->cfgfile.FlagDisplayText, playVox, loop);
+	const bool aborted = displayText(index, _engine->_cfgfile.FlagDisplayText, playVox, loop);
 	_engine->_interface->loadClip();
 	return aborted;
 }
@@ -694,7 +693,7 @@ bool Text::getText(TextId index) {
 	_currDialTextSize = textEntry->string.size();
 
 	// RECHECK: this was added for vox playback
-	currDialTextEntry = textEntry;
+	_currDialTextEntry = textEntry;
 
 	debug(3, "text for bank %i with index %i (currIndex: %i): %s", (int)_currentBankIdx, textEntry->index, (int)textEntry->textIndex, _currDialTextPtr);
 	return true;
@@ -702,7 +701,7 @@ bool Text::getText(TextId index) {
 
 bool Text::getMenuText(TextId index, char *text, uint32 textSize) {
 	if (index == _currMenuTextIndex) {
-		if (_currMenuTextBank == _engine->_scene->sceneTextBank) {
+		if (_currMenuTextBank == _engine->_scene->_sceneTextBank) {
 			Common::strlcpy(text, _currMenuTextBuffer, textSize);
 			return true;
 		}
@@ -722,7 +721,7 @@ bool Text::getMenuText(TextId index, char *text, uint32 textSize) {
 	Common::strlcpy(_currMenuTextBuffer, text, MIN<int32>(sizeof(_currMenuTextBuffer), _currDialTextSize));
 
 	_currMenuTextIndex = index;
-	_currMenuTextBank = _engine->_scene->sceneTextBank;
+	_currMenuTextBank = _engine->_scene->_sceneTextBank;
 	return true;
 }
 
@@ -758,10 +757,10 @@ void Text::drawHolomapLocation(TextId index) {
 	textClipSmall();
 	setFontCrossColor(COLOR_WHITE);
 	_engine->_interface->drawFilledRect(_dialTextBox, COLOR_BLACK);
-	const bool displayText = _engine->cfgfile.FlagDisplayText;
-	_engine->cfgfile.FlagDisplayText = true;
+	const bool displayText = _engine->_cfgfile.FlagDisplayText;
+	_engine->_cfgfile.FlagDisplayText = true;
 	drawTextProgressive(index, false, false);
-	_engine->cfgfile.FlagDisplayText = displayText;
+	_engine->_cfgfile.FlagDisplayText = displayText;
 }
 
 } // namespace TwinE

@@ -540,9 +540,15 @@ int ScummEngine::findObject(int x, int y) {
 						return _objs[i].obj_nr;
 				}
 #endif
-				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
-				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
-					return _objs[i].obj_nr;
+				if (_game.id == GID_CMI || _game.id == GID_DIG) {
+					if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos >= x &&
+						_objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos >= y)
+						return _objs[i].obj_nr;
+				} else {
+					if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
+						_objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
+						return _objs[i].obj_nr;
+				}
 				break;
 			}
 		} while ((_objs[b].state & mask) == a);

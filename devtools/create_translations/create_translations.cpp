@@ -30,12 +30,6 @@
 #include <ctype.h>
 #include <vector>
 
- // HACK to allow building with the SDL backend on MinGW
-// see bug #3412 "TOOLS: MinGW tools building broken"
-#ifdef main
-#undef main
-#endif // main
-
 #include "po_parser.h"
 
 #define TRANSLATIONS_DAT_VER 4	// 1 byte

@@ -88,11 +88,37 @@ Programmcodes finden Sie auf Englisch unter:
      mit der Farbpalette während Bildschirmübergängen und Probleme bei der Darstellung von Mac-QuickTime-Videos korrigiert.
    - Unterstützung für benutzerdefinierte Farbpaletten in SQ3 und LSL2 des FreeSCI-Projekts hinzugefügt.
      Wenn diese Mods aktiviert werden, wird die grafische Darstellung in diesen beiden Spielen verbessert.
-   - Unterstützung für die koreanischen Fan-Übersetzungen von Castle of Dr. Brain, Eco Quest, Gabriel Knight,
-     King's Quest 1, 5 und 6, Laura Bow 2: Dagger of Amon Ra und Space Quest 4 hinzugefügt.
-   - Unterstützung für zahlreiche koreanische Übersetzungen des scummkor-Projektes hinzugefügt.
+   - Unterstützung für die Macintosh-Version von Gabriel Knight 1 hinzugefügt.
+   - Unterstützung für die CD-ROM-Version von Mixed-Up Mother Goose hinzugefügt.
+   - Unterstützung für die koreanischen Fan-Übersetzungen des scummkor-Projektes von Castle of Dr. Brain,
+     Eco Quest 1, Gabriel Knight 1, King's Quest 1, 5 und 6, Laura Bow 2: Dagger of Amon Ra
+     und Space Quest 4 hinzugefügt.
+   - Unterstützung für Space Quest 4 Update 1.3 von New Rising Sun hinzugefügt.
+   - Unterstützung für die französische Version von LSL1VGA hinzugefügt.
+   - Unterstützung für die hebräische Version von QFG1VGA hinzugefügt.
+   - Unterstützung für die hebräische Version von GK1 hinzugefügt.
+   - UNterstützung für die russische Version von Longbow hinzugefpgt.
    - Unterstützung für die russische Version von LSL6 hinzugefügt.
    - Unterstützung für eine alternative russische Version von LSL7 hinzugefügt.
+   - Unterstützung für eine alternative polnische Version von LSL7, welche mit
+     InstallShield gepackte Dateien enthält, hinzugefügt.
+   - Unterstützung für eine alternative russische Version von SQ5 hinzugefügt.
+   - Unterstützung für eine alternative russische Version von Torin's Passage hinzugefügt.
+   - Unterstützung für das Fan-Spiel Soulshade Asylum hinzugefügt.
+   - SCI1.1-Ansichten werden nun korrekt dargestellt.
+   - Fehler korrigiert, der dazu geführt hat, dass Sounds nicht korrekt angehalten oder neu gestartet werden.
+   - Ton-Probleme beim Laden von SCI0-Spielen behoben.
+   - Fehler korrigiert, der zu Audio-Problemen geführt hat, wenn "Digitale Audio-Effekte bevorzugen"
+     in SCI1-Spielen deaktiviert ist.
+   - Die Sound-Effekte der Space Quest 4-CD-Version entsprechen nun der gewählten Plattform.
+   - Unterstützung für den Windows-Mauzeiger in den CD-Version von King's Quest 5 und Space Quest 4 hinzugefügt.
+   - Fehler korrigiert, der dazu geführt hat, dass das Lied "Girl In The Tower"
+     am Ende der King's Quest 6 CD-Version nicht abgespielt wird.
+   - Fehler in der Amiga-Version von King's Quest 5 korrigiert, der dafür gesorgt hat,
+     dass das Spiel nicht komplett durchgespielt werden kann.
+   - Über 30 Skript-Fehler in GK1, HOYLE4, KQ1DEMO, KQ5, KQ6, KQ7, LB1, LSL3,
+     PEPPER, PQ3, QFG3, SQ1, SQ4 und SQ6 korrigiert.
+   - Das JANE Easter-Egg in Gabriel Knight 1 wurde freigeschaltet.
 
  SCUMM:
    - Textdarstellung in der chinesischen, japanischen und koreanischen Version von The Dig und
@@ -124,6 +150,7 @@ Programmcodes finden Sie auf Englisch unter:
      Das bedeutet, dass die GOG- und Steam-Versionen keine falschen Ziffern,
      z.B. für Ednas Telefon-Nummer, mehr akzeptieren. (Warum wird hier überhaupt eine
      gecrackte Versionen verkauft?!)
+   - Unterstützung für Musik in niedriger Qualität der Macintosh-Version von Loom hinzugefügt.
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
@@ -151,6 +178,7 @@ Programmcodes finden Sie auf Englisch unter:
  Xeen:
    - Gelegentliche Grafikfehler in Kampf-Szenen korrigiert.
    - Verbesserte Unterstützung für Zwischensequenzen, die nun dem Original genauer entsprechen.
+   - Unterstützung für die russische Version hinzugefügt.
 
  AmigaOS-Portierung:
    - Unterstützung für native Dateisystem-Dialoge hinzugefügt.

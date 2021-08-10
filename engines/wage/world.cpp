@@ -140,7 +140,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	if ((resArray = resMan->getResIDArray(MKTAG('V','E','R','S'))).size() == 0)
 		return false;
 
-	_name = resMan->getBaseFileName();
+	_name = resMan->getBaseFileName().toString();
 
 	if (resArray.size() > 1)
 		warning("Too many VERS resources");
@@ -160,7 +160,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		res->skip(3);
 		_aboutMessage = res->readPascalString();
 
-		if (!scumm_stricmp(resMan->getBaseFileName().c_str(), "Scepters"))
+		if (!scumm_stricmp(resMan->getBaseFileName().toString().c_str(), "Scepters"))
 			res->skip(1); // ????
 
 		_soundLibrary1 = res->readPascalString();

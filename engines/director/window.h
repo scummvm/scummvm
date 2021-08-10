@@ -41,6 +41,7 @@ namespace Director {
 const int SCALE_THRESHOLD = 0x100;
 
 class Channel;
+class MacArchive;
 struct MacShape;
 
 struct TransParams {
@@ -116,6 +117,7 @@ public:
 	Archive *getMainArchive() const { return _mainArchive; }
 	Movie *getCurrentMovie() const { return _currentMovie; }
 	Common::String getCurrentPath() const { return _currentPath; }
+	DirectorSound *getSoundManager() const { return _soundManager; }
 
 	virtual void setVisible(bool visible, bool silent = false) override;
 	bool setNextMovie(Common::String &movieFilenameRaw);
@@ -145,6 +147,7 @@ public:
 	// resource.cpp
 	Common::Error loadInitialMovie();
 	void probeProjector(const Common::String &movie);
+	void probeMacBinary(MacArchive *archive);
 	Archive *openMainArchive(const Common::String movie);
 	void loadEXE(const Common::String movie);
 	void loadEXEv3(Common::SeekableReadStream *stream);
@@ -172,13 +175,21 @@ public:
 	Common::List<MovieReference> _movieStack;
 	bool _newMovieStarted;
 
+	// saved Lingo state
 	Common::Array<CFrame *> _callstack;
+	uint _retPC;
+	ScriptData *_retScript;
+	ScriptContext *_retContext;
+	bool _retFreezeContext;
+	DatumHash *_retLocalVars;
+	Datum _retMe;
 	bool _hasFrozenLingo;
 
 private:
 	uint32 _stageColor;
 
 	DirectorEngine *_vm;
+	DirectorSound *_soundManager;
 	bool _isStage;
 	Archive *_mainArchive;
 	Common::MacResManager *_macBinary;

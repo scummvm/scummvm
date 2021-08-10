@@ -68,7 +68,14 @@ bool POSIXFilesystemNode::isReadable() const {
 }
 
 bool POSIXFilesystemNode::isWritable() const {
-	return access(_path.c_str(), W_OK) == 0;
+	bool retVal = access(_path.c_str(), W_OK) == 0;
+#if defined(ANDROID_PLAIN_PORT)
+	if (!retVal) {
+		// Update return value if going through Android's SAF grants the permission
+		retVal = JNI::isDirectoryWritableWithSAF(_path);
+	}
+#endif // ANDROID_PLAIN_PORT
+	return retVal;
 }
 
 void POSIXFilesystemNode::setFlags() {
@@ -290,7 +297,7 @@ Common::SeekableReadStream *POSIXFilesystemNode::createReadStream() {
 	return PosixIoStream::makeFromPath(getPath(), false);
 }
 
-Common::WriteStream *POSIXFilesystemNode::createWriteStream() {
+Common::SeekableWriteStream *POSIXFilesystemNode::createWriteStream() {
 	return PosixIoStream::makeFromPath(getPath(), true);
 }
 

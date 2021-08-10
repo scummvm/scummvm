@@ -40,18 +40,19 @@ SeekableReadStream *GenericArchiveMember::createReadStream() const {
 }
 
 
-int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern) const {
+int Archive::listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const {
 	// Get all "names" (TODO: "files" ?)
 	ArchiveMemberList allNames;
 	listMembers(allNames);
 
+	String patternString = pattern.toString();
 	int matches = 0;
 
 	ArchiveMemberList::const_iterator it = allNames.begin();
 	for (; it != allNames.end(); ++it) {
 		// TODO: We match case-insenstivie for now, our API does not define whether that's ok or not though...
 		// For our use case case-insensitive is probably what we want to have though.
-		if ((*it)->getName().matchString(pattern, true, true)) {
+		if ((*it)->getName().matchString(patternString, true, "/")) {
 			list.push_back(*it);
 			matches++;
 		}
@@ -205,20 +206,20 @@ void SearchSet::setPriority(const String &name, int priority) {
 	insert(node);
 }
 
-bool SearchSet::hasFile(const String &name) const {
-	if (name.empty())
+bool SearchSet::hasFile(const Path &path) const {
+	if (path.empty())
 		return false;
 
 	ArchiveNodeList::const_iterator it = _list.begin();
 	for (; it != _list.end(); ++it) {
-		if (it->_arc->hasFile(name))
+		if (it->_arc->hasFile(path))
 			return true;
 	}
 
 	return false;
 }
 
-int SearchSet::listMatchingMembers(ArchiveMemberList &list, const String &pattern) const {
+int SearchSet::listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const {
 	int matches = 0;
 
 	ArchiveNodeList::const_iterator it = _list.begin();
@@ -238,26 +239,26 @@ int SearchSet::listMembers(ArchiveMemberList &list) const {
 	return matches;
 }
 
-const ArchiveMemberPtr SearchSet::getMember(const String &name) const {
-	if (name.empty())
+const ArchiveMemberPtr SearchSet::getMember(const Path &path) const {
+	if (path.empty())
 		return ArchiveMemberPtr();
 
 	ArchiveNodeList::const_iterator it = _list.begin();
 	for (; it != _list.end(); ++it) {
-		if (it->_arc->hasFile(name))
-			return it->_arc->getMember(name);
+		if (it->_arc->hasFile(path))
+			return it->_arc->getMember(path);
 	}
 
 	return ArchiveMemberPtr();
 }
 
-SeekableReadStream *SearchSet::createReadStreamForMember(const String &name) const {
-	if (name.empty())
+SeekableReadStream *SearchSet::createReadStreamForMember(const Path &path) const {
+	if (path.empty())
 		return nullptr;
 
 	ArchiveNodeList::const_iterator it = _list.begin();
 	for (; it != _list.end(); ++it) {
-		SeekableReadStream *stream = it->_arc->createReadStreamForMember(name);
+		SeekableReadStream *stream = it->_arc->createReadStreamForMember(path);
 		if (stream)
 			return stream;
 	}

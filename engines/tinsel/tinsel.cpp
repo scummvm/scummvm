@@ -968,7 +968,7 @@ TinselEngine::~TinselEngine() {
 	ResetVarsPDisplay();	// pdisplay.cpp
 	ResetVarsPlay();	// play.cpp
 	ResetVarsPolygons();	// polygons.cpp
-	RebootMovers();       // rince.cpp
+	RebootMovers();       // movers.cpp
 	ResetVarsSaveLoad();	// saveload.cpp
 	ResetVarsSaveScn();	// savescn.cpp
 	ResetVarsScene();	// scene.cpp

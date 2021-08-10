@@ -26,7 +26,7 @@
 
 namespace TwinE {
 
-bool BrickData::loadFromStream(Common::SeekableReadStream &stream) {
+bool BrickData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 	int width = stream.readByte();
 	int height = stream.readByte();
 	_offsetX = stream.readByte();

@@ -24,6 +24,26 @@
 
 namespace Asylum {
 
+const struct {
+	int  cdNumber;
+	uint resourceId;
+	uint size;
+} patchedSizes[] = {
+	{3, 0x800403EB, 18177962},
+	{2, 0x8004071D, 40501676},
+	{2, 0x80040733, 40367314},
+	{2, 0x8004073C, 40347616},
+	{3, 0x8004074A, 17247084},
+	{3, 0x80040756, 15741212},
+	{2, 0x8004075E, 39099030},
+	{3, 0x80040782, 15468752},
+	{2, 0x80040783, 36119940},
+	{3, 0x8004093A,  6679208},
+	{3, 0x80040942,  4502532},
+	{3, 0x80040970,   654212},
+	{2, 0x8004097D,   524576},
+};
+
 //////////////////////////////////////////////////////////////////////////
 // ResourceManager
 //////////////////////////////////////////////////////////////////////////
@@ -63,6 +83,12 @@ ResourceEntry *ResourceManager::get(ResourceId id) {
 					error("[ResourceManager::get] Cd number has not been set!");
 
 				pack = new ResourcePack(Common::String::format("res.%01d%02d", _cdNumber, packId));
+
+				// WORKAROUND to support combined resource packs (used by GOG and Steam versions)
+				if (pack->_packFile.size() == 299872422)
+					for (int i = 0; i < ARRAYSIZE(patchedSizes); i++)
+						if (_cdNumber == patchedSizes[i].cdNumber)
+							pack->_resources[RESOURCE_INDEX(patchedSizes[i].resourceId)].size = patchedSizes[i].size;
 			} else {
 				pack = new ResourcePack(Common::String::format("res.%03d", packId));
 			}

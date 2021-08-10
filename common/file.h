@@ -64,7 +64,7 @@ public:
 	 * @param	filename	The file to check for.
 	 * @return	True if the file exists, false otherwise.
 	 */
-	static bool exists(const String &filename);
+	static bool exists(const Path &filename);
 
 	/**
 	 * Try to open the file with the given file name, by searching SearchMan.
@@ -73,7 +73,7 @@ public:
 	 * @param	filename	Name of the file to open.
 	 * @return	True if the file was opened successfully, false otherwise.
 	 */
-	virtual bool open(const String &filename);
+	virtual bool open(const Path &filename);
 
 	/**
 	 * Try to open the file with the given file name from within the given archive.
@@ -83,7 +83,7 @@ public:
 	 * @param	archive		Archive in which to search for the file.
 	 * @return	True if the file was opened successfully, false otherwise.
 	 */
-	virtual bool open(const String &filename, Archive &archive);
+	virtual bool open(const Path &filename, Archive &archive);
 
 	/**
 	 * Try to open the file corresponding to the given node. Will check whether the

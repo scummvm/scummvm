@@ -203,13 +203,22 @@ protected:
 	virtual void drawSquareAlgClip(int x, int y, int w, int h,
 		PixelType color, FillMode fill_m);
 
+	virtual void drawTriangleHorzAlg(int x, int y, int w, int h,
+	    bool inverted, PixelType color, FillMode fill_m);
+
+	virtual void drawTriangleHorzAlgClip(int x, int y, int w, int h,
+		bool inverted, PixelType color, FillMode fill_m);
+
+	virtual void drawTriangleFastH(int x, int y, int size,
+	    bool inverted, PixelType color, FillMode fill_m);
+
 	virtual void drawTriangleVertAlg(int x, int y, int w, int h,
 	    bool inverted, PixelType color, FillMode fill_m);
 
 	virtual void drawTriangleVertAlgClip(int x, int y, int w, int h,
 		bool inverted, PixelType color, FillMode fill_m);
 
-	virtual void drawTriangleFast(int x, int y, int size,
+	virtual void drawTriangleFastV(int x, int y, int size,
 	    bool inverted, PixelType color, FillMode fill_m);
 
 	virtual void drawBevelSquareAlg(int x, int y, int w, int h,

@@ -106,7 +106,7 @@ int TextDisplayer_SegaCD::clearDim(int dim) {
 	const ScreenDim *s = &_dimTable[dim];
 	_renderer->memsetVRAM((s->unkC & 0x7FF) << 5, s->unkA, (s->w * s->h) >> 1);
 	_screen->sega_clearTextBuffer(s->unkA);
-	memset(_msgRenderBuffer, 0, _msgRenderBufferSize);
+	memset(_msgRenderBuffer, s->unkA, _msgRenderBufferSize);
 	return res;
 }
 

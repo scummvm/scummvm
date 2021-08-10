@@ -277,7 +277,10 @@ Common::Error DrasculaEngine::run() {
 		currentChapter++;
 	}
 
-	checkCD();
+	if (!existExtractedCDAudioFiles()
+	    && !isDataAndCDAudioReadFromSameCD()) {
+		warnMissingExtractedCDAudio();
+	}
 
 	allocMemory();
 

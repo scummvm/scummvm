@@ -97,6 +97,12 @@ struct MovieReference {
 struct StartMovie {
 	Common::String startMovie;
 	int16 startFrame;
+
+};
+
+struct StartOptions {
+	StartMovie startMovie;
+	Common::String startupPath;
 };
 
 struct PaletteV4 {
@@ -190,16 +196,19 @@ public:
 	const char *getExtra();
 	Common::String getEXEName() const;
 	StartMovie getStartMovie() const;
-	DirectorSound *getSoundManager() const { return _soundManager; }
+	void parseOptions();
 	Graphics::MacWindowManager *getMacWindowManager() const { return _wm; }
 	Archive *getMainArchive() const;
 	Lingo *getLingo() const { return _lingo; }
 	Window *getStage() const { return _stage; }
 	Window *getCurrentWindow() const { return _currentWindow; }
 	void setCurrentWindow(Window *window) { _currentWindow = window; };
+	Window *getCursorWindow() const { return _cursorWindow; }
+	void setCursorWindow(Window *window) { _cursorWindow = window; }
 	Movie *getCurrentMovie() const;
 	void setCurrentMovie(Movie *movie);
 	Common::String getCurrentPath() const;
+	Common::String getStartupPath() const;
 
 	// graphics.cpp
 	bool hasFeature(EngineFeature f) const override;
@@ -220,7 +229,7 @@ public:
 	void loadPatterns();
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
-	void setCursor(int type);
+	void setCursor(DirectorCursor type);
 	void draw();
 
 	Graphics::MacDrawPixPtr getInkDrawPixel();
@@ -231,7 +240,7 @@ public:
 	Archive *createArchive();
 
 	// events.cpp
-	void processEvents();
+	bool processEvents(bool captureClick = false);
 	uint32 getMacTicks();
 
 public:
@@ -246,6 +255,7 @@ public:
 	bool _playbackPaused;
 	bool _skipFrameAdvance;
 	bool _centerStage;
+	char _dirSeparator;
 
 	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
 
@@ -256,7 +266,6 @@ private:
 	const DirectorGameDescription *_gameDescription;
 	Common::FSNode _gameDataDir;
 
-	DirectorSound *_soundManager;
 	byte *_currentPalette;
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
@@ -265,6 +274,7 @@ private:
 	Window *_stage;
 	Datum *_windowList; // Lingo list
 	Window *_currentWindow;
+	Window *_cursorWindow;
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;
@@ -272,6 +282,8 @@ private:
 	Common::HashMap<int, PaletteV4> _loadedPalettes;
 
 	Graphics::ManagedSurface *_surface;
+
+	StartOptions _options;
 };
 
 extern DirectorEngine *g_director;

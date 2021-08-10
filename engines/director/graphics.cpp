@@ -119,18 +119,13 @@ void DirectorEngine::clearPalettes() {
 	}
 }
 
-void DirectorEngine::setCursor(int type) {
+void DirectorEngine::setCursor(DirectorCursor type) {
 	switch (type) {
-	case kCursorDefault:
-		_wm->popCursor();
-		break;
-
 	case kCursorMouseDown:
-		_wm->pushCustomCursor(mouseDown, 16, 16, 0, 0, 3);
+		_wm->replaceCustomCursor(mouseDown, 16, 16, 0, 0, 3);
 		break;
-
 	case kCursorMouseUp:
-		_wm->pushCustomCursor(mouseUp, 16, 16, 0, 0, 3);
+		_wm->replaceCustomCursor(mouseUp, 16, 16, 0, 0, 3);
 		break;
 	}
 }
@@ -247,9 +242,6 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		break;
 		// Arithmetic ink types
 	default: {
-		if ((uint32)src == p->colorWhite)
-			break;
-
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 

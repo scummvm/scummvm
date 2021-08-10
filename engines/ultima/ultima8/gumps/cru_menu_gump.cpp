@@ -30,6 +30,7 @@
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
 #include "ultima/ultima8/gumps/difficulty_gump.h"
+#include "ultima/ultima8/games/cru_game.h"
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
@@ -218,9 +219,12 @@ void CruMenuGump::selectEntry(int entry) {
 		dlg.runModal();
 	}
 	break;
-	case 5: // Credits
-		Game::get_instance()->playCredits();
+	case 5: { // Credits
+		CruGame *game = dynamic_cast<CruGame *>(Game::get_instance());
+		assert(game);
+		game->playCreditsNoMenu();
 		break;
+	}
 	case 6: // Quit
 		QuitGump::verifyQuit();
 		break;

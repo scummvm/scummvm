@@ -66,29 +66,21 @@ void QuickFight::execute() {
 				return;
 		} while (!_buttonValue && !events.timeElapsed());
 
-		switch (_buttonValue) {
-		case Common::KEYCODE_n:
-		case Common::KEYCODE_t:
-			_currentChar->_quickOption = (QuickAction)(((int)_currentChar->_quickOption + 1) % 4);
-			break;
-
-		case Common::KEYCODE_F1:
-		case Common::KEYCODE_F2:
-		case Common::KEYCODE_F3:
-		case Common::KEYCODE_F4:
-		case Common::KEYCODE_F5:
-		case Common::KEYCODE_F6: {
+		if (Common::KEYCODE_F1 == _buttonValue || 
+			Common::KEYCODE_F2 == _buttonValue || 
+			Common::KEYCODE_F3 == _buttonValue || 
+			Common::KEYCODE_F4 == _buttonValue || 
+			Common::KEYCODE_F5 == _buttonValue || 
+			Common::KEYCODE_F6 == _buttonValue) {
 			int charIdx = _buttonValue - Common::KEYCODE_F1;
 			if (charIdx < (int)combat._combatParty.size()) {
 				// Highlight new character
 				_currentChar = &party._activeParty[charIdx];
 				intf.highlightChar(charIdx);
 			}
-			break;
-		}
-
-		default:
-			break;
+		} else if (Common::KEYCODE_n == _buttonValue || 
+				   Res.KeyConstants.DialogsQuickFight.KEY_NEXT == _buttonValue) {
+			_currentChar->_quickOption = (QuickAction)(((int)_currentChar->_quickOption + 1) % 4);
 		}
 	} while (_buttonValue != Common::KEYCODE_RETURN && _buttonValue != Common::KEYCODE_ESCAPE);
 
@@ -99,7 +91,8 @@ void QuickFight::execute() {
 void QuickFight::loadButtons() {
 	_icons.load("train.icn");
 	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons);
-	addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t, &_icons);
+
+	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.DialogsQuickFight.KEY_NEXT, &_icons);
 }
 
 } // End of namespace Xeen

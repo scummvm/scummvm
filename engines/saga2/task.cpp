@@ -120,6 +120,8 @@ public:
 
 	//  Place a TaskStack from the inactive list into the active
 	//  list.
+	TaskStack *newTaskStack(Actor *a);
+
 	void newTaskStack(TaskStack *p);
 
 	void newTaskStack(TaskStack *p, TaskID id);
@@ -238,13 +240,36 @@ void TaskStackList::write(Common::MemoryWriteStreamDynamic *out) {
 //----------------------------------------------------------------------
 //	Place a TaskStack into the active list and return its address
 
-void TaskStackList::newTaskStack(TaskStack *p) {
+TaskStack *TaskStackList::newTaskStack(Actor *a) {
 	for (int i = 0; i < numTaskStacks; i++)
+		if (!_list[i]) {
+			_list[i] = new TaskStack(a);
+
+			return _list[i];
+		}
+
+	warning("Too many task stacks in the list, > %d", numTaskStacks);
+
+	return nullptr;
+}
+
+void TaskStackList::newTaskStack(TaskStack *p) {
+	for (int i = 0; i < numTaskStacks; i++) {
+		if (_list[i] == p) {
+			warning("TaskStack %d (%p) already added", i, (void *)p);
+
+			return;
+		}
+	}
+
+	debugC(1, kDebugTasks, "List: %p Adding task stack %p", (void *)this, (void *)p);
+	for (int i = 0; i < numTaskStacks; i++) {
 		if (!_list[i]) {
 			_list[i] = p;
 
 			return;
 		}
+	}
 }
 
 void TaskStackList::newTaskStack(TaskStack *p, TaskID id) {
@@ -258,10 +283,12 @@ void TaskStackList::newTaskStack(TaskStack *p, TaskID id) {
 //	back into the inactive list
 
 void TaskStackList::deleteTaskStack(TaskStack *p) {
-	for (int i = 0; i < numTaskStacks; i++)
+	debugC(1, kDebugTasks, "List: %p Deleting task stack %p", (void *)this, (void *)p);
+	for (int i = 0; i < numTaskStacks; i++) {
 		if (_list[i] == p) {
 			_list[i] = nullptr;
 		}
+	}
 }
 
 //----------------------------------------------------------------------
@@ -308,6 +335,10 @@ void resumeActorTasks(void) {
 //----------------------------------------------------------------------
 //	Call the stackList member function newTaskStack() to get a pointer
 //	to a new TaskStack
+
+TaskStack *newTaskStack(Actor *a) {
+	return g_vm->_stackList->newTaskStack(a);
+}
 
 void newTaskStack(TaskStack *p) {
 	return g_vm->_stackList->newTaskStack(p);
@@ -3033,8 +3064,7 @@ TaskResult HuntToKillTask::update(void) {
 void HuntToKillTask::evaluateTarget(void) {
 	Actor               *a = stack->getActor();
 
-	if (flags & evalWeapon
-	        &&  a->isInterruptable() && currentTarget != NULL) {
+	if (flags & evalWeapon && a->isInterruptable()) {
 		evaluateWeapon();
 		flags &= ~evalWeapon;
 	}
@@ -3249,6 +3279,11 @@ void HuntToKillTask::evaluateWeapon(void) {
 		                                ? (WeaponProto *)currentWeapon->proto()
 		                                :   NULL;
 
+		if (currentTarget == NULL) {
+			warning("%s: currentTarget = NULL (return)", a->objName());
+			return;
+		}
+
 		if (currentWeapon == NULL
 		        ||      weaponProto->weaponRating(
 		            a->thisID(),
@@ -3273,10 +3308,13 @@ void HuntToKillTask::evaluateWeapon(void) {
 			WeaponProto     *weaponProto = (WeaponProto *)proto;
 			int             weaponRating;
 
-			weaponRating =  weaponProto->weaponRating(
-			                    obj->thisID(),
-			                    actorID,
-			                    currentTarget->thisID());
+			if (currentTarget) {
+				warning("%s: currentTarget = NULL (weaponRating = 0)", a->objName());
+				weaponRating =  weaponProto->weaponRating(obj->thisID(),
+				                                          actorID,
+				                                          currentTarget->thisID());
+			} else
+				weaponRating = 0;
 
 			//  a rating of zero means this weapon is useless
 			if (weaponRating == 0) continue;

@@ -59,7 +59,7 @@ QuickTimeParser::~QuickTimeParser() {
 	delete _resFork;
 }
 
-bool QuickTimeParser::parseFile(const String &filename) {
+bool QuickTimeParser::parseFile(const Path &filename) {
 	if (!_resFork->open(filename) || !_resFork->hasDataFork())
 		return false;
 

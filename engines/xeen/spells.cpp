@@ -85,7 +85,8 @@ void Spells::executeSpell(MagicSpell spellId) {
 		&Spells::wizardEye
 	};
 
-	(this->*SPELL_LIST[spellId])();
+	if (spellId < 76)
+		(this->*SPELL_LIST[spellId])();
 }
 
 void Spells::spellFailed() {

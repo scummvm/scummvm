@@ -25,6 +25,8 @@
 
 //#include "graphics/macgui/macwindowmanager.h"
 
+#include "director/cursor.h"
+
 namespace Graphics {
 	struct Surface;
 	class ManagedSurface;
@@ -110,13 +112,13 @@ public:
 	bool renderTransition(uint16 frameId);
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
-	void renderCursor(Common::Point pos);
+	void renderCursor(Common::Point pos, bool forceUpdate = false);
 	void renderVideo();
+
+	void playSoundChannel(uint16 frameId);
 
 private:
 	void update();
-
-	void playSoundChannel(uint16 frameId);
 	void playQueuedSound();
 
 	void screenShot();
@@ -129,7 +131,6 @@ public:
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
-	Common::Array<AudioDecoder *> _sampleSounds;
 
 	byte _currentFrameRate;
 
@@ -144,7 +145,8 @@ public:
 	bool _waitForClickCursor;
 	bool _cursorDirty;
 	int _activeFade;
-	Cursor *_currentCursor;
+	Cursor _defaultCursor;
+	CursorRef _currentCursor;
 
 	int _numChannelsDisplayed;
 

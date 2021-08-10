@@ -28,8 +28,8 @@
 
 namespace Image {
 
-BitmapRawDecoder::BitmapRawDecoder(int width, int height, int bitsPerPixel) : Codec(),
-		_width(width), _height(height), _bitsPerPixel(bitsPerPixel) {
+BitmapRawDecoder::BitmapRawDecoder(int width, int height, int bitsPerPixel, bool flip) : Codec(),
+		_width(width), _height(height), _bitsPerPixel(bitsPerPixel), _flip(flip) {
 	_surface.create(_width, _height, getPixelFormat());
 }
 
@@ -82,10 +82,11 @@ const Graphics::Surface *BitmapRawDecoder::decodeFrame(Common::SeekableReadStrea
 			stream.skip(extraDataLength);
 		}
 	} else if (_bitsPerPixel == 8) {
+		// flip the 8bpp images when we are decoding QTvideo
 		byte *dst = (byte *)_surface.getPixels();
 
 		for (int i = 0; i < _height; i++) {
-			stream.read(dst + (_height - i - 1) * _width, _width);
+			stream.read(dst + (_flip ? i : _height - i - 1) * _width, _width);
 			stream.skip(extraDataLength);
 		}
 	} else if (_bitsPerPixel == 24) {

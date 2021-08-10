@@ -48,19 +48,11 @@ PaceProcess::PaceProcess(Actor *actor): _counter(0) {
 
 
 bool PaceProcess::maybeStartDefaultActivity1(Actor *actor) {
-	const Actor *mainactor = getControlledActor();
-	if (!mainactor)
-		return false;
-
 	uint16 activity = actor->getDefaultActivity(1);
 	uint16 cur_activity = actor->getCurrentActivityNo();
-
-	if (actor->isOnScreen() && activity > 0 && cur_activity != activity) {
-		int range = actor->getRangeIfVisible(*mainactor);
-		if (range > 0) {
-			actor->setActivity(activity);
-			return true;
-		}
+	if (activity != 0 && cur_activity != activity && actor->canSeeControlledActor(false)) {
+		actor->setActivity(activity);
+		return true;
 	}
 
 	return false;
@@ -89,6 +81,7 @@ void PaceProcess::run() {
 
 	Animation::Result result = a->tryAnim(Animation::walk, a->getDir());
 	if (result == Animation::SUCCESS) {
+		_counter = 0;
 		uint16 walkprocid = a->doAnim(Animation::walk, a->getDir());
 		waitFor(walkprocid);
 	} else {
@@ -97,9 +90,9 @@ void PaceProcess::run() {
 			uint32 shapeno = a->getShape();
 			if (shapeno == 0x2f5 || shapeno == 0x2f7 || shapeno != 0x2f6 ||
 				shapeno == 0x344 || shapeno == 0x597) {
-				a->setActivity(5); // attack
-			} else {
 				a->setActivity(7); // surrender
+			} else {
+				a->setActivity(5); // attack
 			}
 			return;
 		}

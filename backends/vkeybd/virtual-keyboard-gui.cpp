@@ -441,7 +441,7 @@ void VirtualKeyboardGUI::updateDisplay() {
 
 	// draw to display surface
 	_dispSurface.fillRect(Rect(_dispSurface.w, _dispSurface.h), _dispBackColor);
-	_dispFont->drawString(&_dispSurface, dispText, 0, 0, _dispSurface.w, _dispForeColor);
+	_dispFont->drawString(&_dispSurface, dispText, 0, 0, _dispSurface.w, _dispForeColor, Graphics::kTextAlignLeft, 0, true);
 
 	String beforeCaret(wholeText.c_str() + _dispI, wholeText.c_str() + cursorPos);
 	_caretX = _dispFont->getStringWidth(beforeCaret);

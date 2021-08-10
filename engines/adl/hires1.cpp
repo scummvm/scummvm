@@ -90,7 +90,6 @@ protected:
 	void loadRoom(byte roomNr) override;
 	void showRoom() override;
 
-	void extractExeStrings(Common::ReadStream &stream, Common::StringArray &strings);
 	void showInstructions(Common::SeekableReadStream &stream);
 	void wordWrap(Common::String &str) const;
 
@@ -107,24 +106,6 @@ protected:
 		Common::String gettingDark;
 	} _gameStrings;
 };
-
-void HiRes1Engine::extractExeStrings(Common::ReadStream &stream, Common::StringArray &strings) {
-	uint32 window = 0;
-
-	for (;;) {
-		window <<= 8;
-		window |= stream.readByte();
-
-		if (stream.eos())
-			return;
-
-		if (stream.err())
-			error("Failed to extract strings from game executable");
-
-		if ((window & 0xffffff) == 0x201576)
-			strings.push_back(readString(stream));
-	}
-}
 
 void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream) {
 	_display->setMode(Display::kModeText);
@@ -194,11 +175,13 @@ void HiRes1Engine::runIntro() {
 
 	// Show the PD disclaimer for the PD release
 	if (getGameVersion() == GAME_VER_HR1_PD) {
-		// The PD release on the Roberta Williams Anthology disc has a PDE
-		// splash screen. The original HELLO file has been renamed to
-		// MYSTERY.HELLO. It's unclear whether or not this splash screen
-		// was present in the original PD release back in 1987.
-		StreamPtr basic(_files->createReadStream("MYSTERY.HELLO"));
+		// The P.D.E. version on the Roberta Williams Anthology has a renamed HELLO file
+		const char *fileName = "MYSTERY.HELLO";
+
+		if (!_files->exists(fileName))
+			fileName = "HELLO";
+
+		StreamPtr basic(_files->createReadStream(fileName));
 
 		_display->setMode(Display::kModeText);
 		_display->home();
@@ -301,7 +284,7 @@ void HiRes1Engine::init() {
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));
 
 	Common::StringArray exeStrings;
-	extractExeStrings(*stream, exeStrings);
+	extractExeStrings(*stream, 0x1576, exeStrings);
 
 	if (exeStrings.size() != 18)
 		error("Failed to load strings from executable");

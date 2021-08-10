@@ -24,7 +24,7 @@
 #define TINSEL_MAREELS_H
 
 #include "tinsel/dw.h"	// for SCNHANDLE
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 
 namespace Tinsel {
 

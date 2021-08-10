@@ -37,13 +37,13 @@ private:
 public:
 	Collision(TwinEEngine *engine);
 	/** Actor collision coordinate */
-	IVec3 collision;
+	IVec3 _collision;
 
 	/** Actor collision coordinate */
-	IVec3 processCollision;
+	IVec3 _processCollision;
 
 	/** Cause damage in current processed actor */
-	int32 causeActorDamage = 0; //fieldCauseDamage
+	int32 _causeActorDamage = 0; //fieldCauseDamage
 
 	/**
 	 * Check if actor 1 is standing in actor 2

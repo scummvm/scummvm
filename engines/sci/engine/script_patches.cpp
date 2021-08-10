@@ -1414,120 +1414,46 @@ static const SciScriptPatcherEntry ecoquest1Signatures[] = {
 };
 
 // ===========================================================================
-// doMyThing::changeState (2) is supposed to remove the initial text on the
-//  ecorder. This is done by reusing temp-space, that was filled on state 1.
-//  this worked in sierra sci just by accident. In our sci, the temp space
-//  is resetted every time, which means the previous text isn't available
-//  anymore. We have to patch the code because of that.
+// When the Ecorder is turned on and displays its initial welcome text, the
+//  doMyThing script stores the string in temporary space in one state and then
+//  accesses it in a later state. This worked in Sierra's interpreter by
+//  accident. We reset temporary space every time.
+//
+// We fix this by storing the string in local space instead of temporary space.
+//  Script 50 has 200 bytes of local space reserved for a local procedure to
+//  use as temporary string space so we use that.
+//
+// Applies to: All versions
+// Responsible method: doMyThing:changeState
 // Fixes bug: #4993
 static const uint16 ecoquest2SignatureEcorder[] = {
-	0x31, 0x22,                      // bnt [next state]
-	0x39, 0x0a,                      // pushi 0a
-	0x5b, 0x04, 0x1e,                // lea temp[1e]
-	0x36,                            // push
 	SIG_MAGICDWORD,
-	0x39, 0x64,                      // pushi 64
-	0x39, 0x7d,                      // pushi 7d
-	0x39, 0x32,                      // pushi 32
-	0x39, 0x66,                      // pushi 66
-	0x39, 0x17,                      // pushi 17
-	0x39, 0x69,                      // pushi 69
-	0x38, SIG_UINT16(0x2631),        // pushi 2631
-	0x39, 0x6a,                      // pushi 6a
-	0x39, 0x64,                      // pushi 64
-	0x43, 0x1b, 0x14,                // callk Display
-	0x35, 0x0a,                      // ldi 0a
-	0x65, 0x20,                      // aTop ticks
-	0x33,                            // jmp [end]
-	SIG_ADDTOOFFSET(+1),             // [skip 1 byte]
-	0x3c,                            // dup
-	0x35, 0x03,                      // ldi 03
-	0x1a,                            // eq?
-	0x31,                            // bnt [end]
+	0x5b, 0x04, 0x1e,                // lea 04 1e [ @temp30 ]
+	0x36,                            // push
 	SIG_END
 };
 
 static const uint16 ecoquest2PatchEcorder[] = {
-	0x2f, 0x02,                      // bt [to pushi 7]
-	0x3a,                            // toss
-	0x48,                            // ret
-	0x38, PATCH_UINT16(0x0007),      // pushi 7d (parameter count) (waste 1 byte)
-	0x39, 0x0b,                      // pushi 11d (FillBoxAny)
-	0x39, 0x1d,                      // pushi 29d
-	0x39, 0x73,                      // pushi 115d
-	0x39, 0x5e,                      // pushi 94d
-	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
-	0x78,                            // push1 (visual screen)
-	0x38, PATCH_UINT16(0x0017),      // pushi 23d (color) (waste 1 byte)
-	0x43, 0x6c, 0x0e,                // callk Graph
-	0x38, PATCH_UINT16(0x0005),      // pushi 5d (parameter count) (waste 1 byte)
-	0x39, 0x0c,                      // pushi 12d (UpdateBox)
-	0x39, 0x1d,                      // pushi 29d
-	0x39, 0x73,                      // pushi 115d
-	0x39, 0x5e,                      // pushi 94d
-	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
-	0x43, 0x6c, 0x0a,                // callk Graph
+	0x5b, 0x02, 0x10,                // lea 02 10 [ @local16 ]
 	PATCH_END
 };
 
-// Same patch as above for the ecorder introduction.
-// Two workarounds are needed for this patch in workarounds.cpp (when calling
-// kGraphFillBoxAny and kGraphUpdateBox), as there isn't enough space to patch
-// the function otherwise.
-// Fixes bug: #6467
+// This is the same Ecorder patch as above, but it's for the introduction when
+//  you're given the Ecorder. The showEcorder script has the same bug and we
+//  fix it the same way by using local space instead of temporary space.
+//
+// Applies to: All versions
+// Responsible method: showEcorder:changeState
+// Fixes bug: #5467
 static const uint16 ecoquest2SignatureEcorderTutorial[] = {
-	0x30, SIG_UINT16(0x0023),        // bnt [next state]
-	0x39, 0x0a,                      // pushi 0a
-	0x5b, 0x04, 0x1f,                // lea temp[1f]
-	0x36,                            // push
 	SIG_MAGICDWORD,
-	0x39, 0x64,                      // pushi 64
-	0x39, 0x7d,                      // pushi 7d
-	0x39, 0x32,                      // pushi 32
-	0x39, 0x66,                      // pushi 66
-	0x39, 0x17,                      // pushi 17
-	0x39, 0x69,                      // pushi 69
-	0x38, SIG_UINT16(0x2631),        // pushi 2631
-	0x39, 0x6a,                      // pushi 6a
-	0x39, 0x64,                      // pushi 64
-	0x43, 0x1b, 0x14,                // callk Display
-	0x35, 0x1e,                      // ldi 1e
-	0x65, 0x20,                      // aTop ticks
-	0x32,                            // jmp [end]
-	// 2 extra bytes, jmp offset
+	0x5b, 0x04, 0x1f,                // lea 04 1f [ @temp31 ]
+	0x36,                            // push
 	SIG_END
 };
 
 static const uint16 ecoquest2PatchEcorderTutorial[] = {
-	0x31, 0x23,                      // bnt [next state] (save 1 byte)
-	// The parameter count below should be 7, but we're out of bytes
-	// to patch! A workaround has been added because of this
-	0x78,                            // push1 (parameter count)
-	//0x39, 0x07,                    // pushi 7d (parameter count)
-	0x39, 0x0b,                      // pushi 11d (FillBoxAny)
-	0x39, 0x1d,                      // pushi 29d
-	0x39, 0x73,                      // pushi 115d
-	0x39, 0x5e,                      // pushi 94d
-	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
-	0x78,                            // push1 (visual screen)
-	0x39, 0x17,                      // pushi 23d (color)
-	0x43, 0x6c, 0x0e,                // callk Graph
-	// The parameter count below should be 5, but we're out of bytes
-	// to patch! A workaround has been added because of this
-	0x78,                            // push1 (parameter count)
-	//0x39, 0x05,                    // pushi 5d (parameter count)
-	0x39, 0x0c,                      // pushi 12d (UpdateBox)
-	0x39, 0x1d,                      // pushi 29d
-	0x39, 0x73,                      // pushi 115d
-	0x39, 0x5e,                      // pushi 94d
-	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
-	0x43, 0x6c, 0x0a,                // callk Graph
-	// We are out of bytes to patch at this point,
-	// so we skip 494 (0x1ee) bytes to reuse this code:
-	// ldi 1e
-	// aTop 20
-	// jmp 030e (jump to end)
-	0x32, PATCH_UINT16(0x01ee),      // jmp 494d
+	0x5b, 0x02, 0x02,                // lea 02 02 [ @local2 ]
 	PATCH_END
 };
 
@@ -1725,8 +1651,8 @@ static const uint16 ecoquest2PatchCampMessages2[] = {
 //          script, description,                                        signature                          patch
 static const SciScriptPatcherEntry ecoquest2Signatures[] = {
 	{  true,     0, "icon bar tutorial",                            10, ecoquest2SignatureIconBarTutorial, ecoquest2PatchIconBarTutorial },
-	{  true,    50, "initial text not removed on ecorder",           1, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
-	{  true,   333, "initial text not removed on ecorder tutorial",  1, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
+	{  true,    50, "initial text not removed on ecorder",           3, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
+	{  true,   333, "initial text not removed on ecorder tutorial",  3, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	{  true,   500, "room 500 items reappear",                       1, ecoquest2SignatureRoom500Items,    ecoquest2PatchRoom500Items },
 	{  true,   530, "missing camp messages",                         6, ecoquest2SignatureCampMessages1,   ecoquest2PatchCampMessages1 },
 	{  true,   560, "missing camp messages",                         7, ecoquest2SignatureCampMessages2,   ecoquest2PatchCampMessages2 },
@@ -8294,92 +8220,38 @@ static const uint16 laurabow1PatchArmorMoveToFix[] = {
 	PATCH_END
 };
 
-// In some cases like for example when the player oils the arm of the armor,
-// command input stays disabled, even when the player exits fast enough, so
-// that Laura doesn't die.
+// When oiling the left arm of the armor that holds the axe, pressing 'E' to
+//  exit the screen leaves input disabled in the PC version. The local procedure
+//  that restores room 37 enables directional control but not input when the axe
+//  arm is is oiled. Sierra fixed this in the Amiga and Atari ST versions by
+//  adding a call to User:canInput(1) so that the procedure always enables both.
 //
-// This is caused by the scripts only enabling control (directional movement),
-// but do not enable command input as well.
+// We also fix this by enabling both control and input, but we do it by calling
+//  the HandsOn procedure instead, which this procedure already does in every
+//  case except the buggy one when the axe arm is being oiled. We simply patch
+//  out the tests that prevent HandsOn from being called when it's needed.
 //
-// This bug also happens, when using the original interpreter. It was fixed for
-// the Atari ST + Amiga versions of the game.
-//
-// Applies to at least: English PC Floppy
-// Responsible method: 2nd subroutine in script 37, called by oiling::changeState(7)
+// Applies to: English PC Floppy
+// Responsible method: 3rd subroutine in script 37, called by Room37:handleEvent
 // Fixes bug: #7154
 static const uint16 laurabow1SignatureArmorOilingArmFix[] = {
-	0x38, SIG_UINT16(0x0089),           // pushi 89h
-	0x76,                               // push0
 	SIG_MAGICDWORD,
-	0x72, SIG_UINT16(0x1a5c),           // lofsa "Can" - offsets are not skipped to make sure only the PC version gets patched
-	0x4a, 0x04,                         // send 04
-	0x38, SIG_UINT16(0x0089),           // pushi 89h
-	0x76,                               // push0
-	0x72, SIG_UINT16(0x19a1),           // lofsa "Visor"
-	0x4a, 0x04,                         // send 04
-	0x38, SIG_UINT16(0x0089),           // pushi 89h
-	0x76,                               // push0
-	0x72, SIG_UINT16(0x194a),           // lofsa "note"
-	0x4a, 0x04,                         // send 04
-	0x38, SIG_UINT16(0x0089),           // pushi 89h
-	0x76,                               // push0
-	0x72, SIG_UINT16(0x18f3),           // lofsa "valve"
-	0x4a, 0x04,                         // send 04
-	0x8b, 0x34,                         // lsl local[34h]
-	0x35, 0x02,                         // ldi 02
+	0x72, SIG_UINT16(0x18f3),           // lofsa valve [ included offset so that only PC version is patched ]
+	0x4a, 0x04,                         // send 04 [ valve hide: ]
+	0x8b, 0x34,                         // lsl 34  [ oil-target ]
+	0x35, 0x02,                         // ldi 02  [ left arm ]
 	0x1c,                               // ne?
-	0x30, SIG_UINT16(0x0014),           // bnt [to ret]
-	0x8b, 0x34,                         // lsl local[34h]
-	0x35, 0x05,                         // ldi 05
-	0x1c,                               // ne?
-	0x30, SIG_UINT16(0x000c),           // bnt [to ret]
-	0x8b, 0x34,                         // lsl local[34h]
-	0x35, 0x06,                         // ldi 06
-	0x1c,                               // ne?
-	0x30, SIG_UINT16(0x0004),           // bnt [to ret]
-	// followed by code to call script 0 export to re-enable controls and call setMotion
+	0x30, SIG_UINT16(0x0014),           // bnt 0014 [ skip HandsOn if oiled left arm ]
+	SIG_ADDTOOFFSET(+0x10),             // [ more oil-target tests: left elbow, axe ]
+	0x76,                               // push0
+	0x45, 0x04, 0x00,                   // callb proc0_4 [ HandsOn ]
+	0x48,                               // ret
 	SIG_END
 };
 
 static const uint16 laurabow1PatchArmorOilingArmFix[] = {
-	PATCH_ADDTOOFFSET(+3),              // skip over pushi 89h
-	0x3c,                               // dup
-	0x3c,                               // dup
-	0x3c,                               // dup
-	// saves a total of 6 bytes
-	0x76,                               // push0
-	0x72, PATCH_UINT16(0x1a59),         // lofsa "Can"
-	0x4a, 0x04,                         // send 04
-	0x76,                               // push0
-	0x72, PATCH_UINT16(0x19a1),         // lofsa "Visor"
-	0x4a, 0x04,                         // send 04
-	0x76,                               // push0
-	0x72, PATCH_UINT16(0x194d),         // lofsa "note"
-	0x4a, 0x04,                         // send 04
-	0x76,                               // push0
-	0x72, PATCH_UINT16(0x18f9),         // lofsa "valve" 18f3
-	0x4a, 0x04,                         // send 04
-	// new code to enable input as well, needs 9 spare bytes
-	0x38, PATCH_UINT16(0x00e2),         // pushi canInput
-	0x78,                               // push1
-	0x78,                               // push1
-	0x51, 0x2b,                         // class User
-	0x4a, 0x06,                         // send 06 -> call User::canInput(1)
-	// original code, but changed a bit to save some more bytes
-	0x8b, 0x34,                         // lsl local[34h]
-	0x35, 0x02,                         // ldi 02
-	0x04,                               // sub
-	0x31, 0x12,                         // bnt [to ret]
-	0x36,                               // push
-	0x35, 0x03,                         // ldi 03
-	0x04,                               // sub
-	0x31, 0x0c,                         // bnt [to ret]
-	0x78,                               // push1
-	0x1a,                               // eq?
-	0x2f, 0x08,                         // bt [to ret]
-	// saves 7 bytes, we only need 3, so waste 4 bytes
-	0x35, 0x00,                         // ldi 0
-	0x35, 0x00,                         // ldi 0
+	PATCH_ADDTOOFFSET(+5),
+	0x33, 0x16,                         // jmp 16 [ always call HandsOn ]
 	PATCH_END
 };
 

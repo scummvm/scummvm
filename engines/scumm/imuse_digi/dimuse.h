@@ -69,18 +69,6 @@ private:
 	TriggerParams _triggerParams;
 	bool _triggerUsed;
 
-	struct ScheduledCrossfade {
-		bool scheduled;
-		int destRegion;
-		int destDataOffset;
-		int fadeDelay;
-		int destHookId;
-		int volumeBefJump;
-		bool isJumpToLoop;
-	};
-
-	ScheduledCrossfade _scheduledCrossfades[MAX_DIGITAL_TRACKS];
-
 	Track *_track[MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS];
 
 	Common::Mutex _mutex;
@@ -155,7 +143,6 @@ public:
 		{ error("IMuseDigital::startSound(int) should be never called"); }
 
 	void saveLoadEarly(Common::Serializer &ser);
-	void runScheduledCrossfades();
 	void resetState();
 	void setRadioChatterSFX(bool state) {
 		_radioChatterSFX = state;

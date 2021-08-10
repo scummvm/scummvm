@@ -26,12 +26,16 @@
 #pragma GCC diagnostic ignored "-Wc++14-compat"
 #endif
 
+#include <utf.h>
+#include <apgcli.h>
+#include <eikenv.h> // for CEikonEnv::Static()
 #include <sdlapp.h> // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
 #include <bautils.h>
-#include <eikenv.h> // for CEikonEnv::Static()
+#include <e32base.h>
+#include <symbian_helper.h>
 
 #if (__GNUC__ && __cplusplus)
-//If a pop has no matching push, the command-line options are restored.
+// If a pop has no matching push, the command-line options are restored.
 #pragma GCC diagnostic pop
 #endif
 
@@ -57,12 +61,12 @@
 ////////// extern "C" ///////////////////////////////////////////////////
 namespace Symbian {
 
-// make this easily available everywhere
+// Make this easily available everywhere.
 char *GetExecutablePath() {
 	return CSDLApp::GetExecutablePathCStr();
 }
 
-} // namespace Symbian {
+} // namespace Symbian.
 
 ////////// OSystem_SDL_Symbian //////////////////////////////////////////
 
@@ -77,26 +81,16 @@ void OSystem_SDL_Symbian::init() {
 }
 
 void OSystem_SDL_Symbian::initBackend() {
-	// Calculate the default savepath
+	// Calculate the default savepath.
 	Common::String savePath;
 	savePath = Symbian::GetExecutablePath();
 	savePath += DEFAULT_SAVE_PATH "\\";
 	_savefileManager = new DefaultSaveFileManager(savePath);
 
-	// If savepath has not already been set then set it
+	// If savepath has not already been set then set it.
 	if (!ConfMan.hasKey("savepath")) {
 		ConfMan.set("savepath", savePath);
 	}
-	
-#if !RELEASE_BUILD
-	_LIT(KDefaultBetaExtraPath,"!:\\DATA\\ScummVM\\BETA\\");
-	RFs _RFs = FsSession();
-	_RFs.SessionPath(_localpath);
-	_RFs.SetSessionPath(KDefaultBetaExtraPath);
-	
-	Common::String extrapath;
-	ConfMan.registerDefault("extrapath", extrapath);
-#endif
 
 #if _DEBUG
 #warning "set debuglevel = 20"
@@ -104,7 +98,7 @@ void OSystem_SDL_Symbian::initBackend() {
 	if (!ConfMan.hasKey("debuglevel"))
 		printf("debuglevel not set!\n");
 #endif
-	// Ensure that the current set path (might have been altered by the user) exists
+	// Ensure that the current set path (might have been altered by the user) exists.
 	Common::String currentPath = ConfMan.get("savepath");
 	TFileName fname;
 	TPtrC8 ptr((const unsigned char*)currentPath.c_str(), currentPath.size());
@@ -112,13 +106,13 @@ void OSystem_SDL_Symbian::initBackend() {
 	BaflUtils::EnsurePathExistsL(FsSession(), fname);
 
 	ConfMan.setBool("FM_high_quality", false);
-#if !defined(S60) || defined(S60V3) // S60 has low quality as default
+#if !defined(S60) || defined(S60V3) // S60 has low quality as default.
 	ConfMan.setBool("FM_medium_quality", true);
 #else
 	ConfMan.setBool("FM_medium_quality", false);
 #endif
 	// Symbian OS  should have joystick_num set to 0 in the ini file,
-	// but uiq devices might refuse opening the joystick
+	// but uiq devices might refuse opening the joystick.
 	ConfMan.setInt("joystick_num", 0);
 	ConfMan.setBool("fullscreen", true);
 	ConfMan.flushToDisk();
@@ -126,19 +120,40 @@ void OSystem_SDL_Symbian::initBackend() {
 	if (_mixerManager == nullptr) {
 		_mixerManager = new SymbianSdlMixerManager();
 
-		// Setup and start mixer
+		// Setup and start mixer.
 		_mixerManager->init();
 	}
 
-	// Call parent implementation of this method
+	// Call parent implementation of this method.
 	OSystem_SDL::initBackend();
 }
 
 void OSystem_SDL_Symbian::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	RFs rfs = FsSession();
+	TChar driveLetter;
+	TFileName extraPath;
+
+#if !RELEASE_BUILD
+	_LIT(KDefaultBetaExtraPath,"!:\\DATA\\ScummVM\\BETA\\");
+	extraPath = KDefaultBetaExtraPath;
+#else
+	_LIT(KDefaultExtraPath,"!:\\DATA\\ScummVM\\");
+	extraPath = KDefaultExtraPath;
 	Common::FSNode pluginsNode(Symbian::GetExecutablePath());
 	if (pluginsNode.exists() && pluginsNode.isDirectory()) {
 			s.add("SYMBIAN_DATAFOLDER", new Common::FSDirectory(Symbian::GetExecutablePath()), priority);
 		}
+#endif
+
+	for (TInt i = EDriveA; i <= EDriveZ; i++) {
+		if (rfs.DriveToChar(i, driveLetter) != KErrNone)
+			continue;
+		extraPath[0] = driveLetter;
+		if(BaflUtils::FolderExists(rfs, extraPath)){
+			TBuf8<KMaxFileName> fileName8 = extraPath.Collapse();
+			s.add("SYMBIAN_DATAFOLDER" + driveLetter, new Common::FSDirectory((char *)fileName8.PtrZ()), priority);
+		}
+	}
 }
 
 void OSystem_SDL_Symbian::quitWithErrorMsg(const char * /*aMsg*/) {
@@ -158,6 +173,9 @@ Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 bool OSystem_SDL_Symbian::hasFeature(Feature f) {
 	if (f == kFeatureFullscreenMode)
 		return false;
+#if defined(USE_CLOUD)
+	if (f == kFeatureOpenUrl) return true;
+#endif
 
 	return OSystem_SDL::hasFeature(f);
 }
@@ -168,10 +186,68 @@ Common::KeymapperDefaultBindings *OSystem_SDL_Symbian::getKeymapperDefaultBindin
 	return keymapperDefaultBindings;
 }
 
+_LIT8(KHTMLMimeType, "text/html");
+_LIT(KOperaName,"OperaMobile.exe");
+const size_t kOpera10500_UID = 537056398;
+const char kFailMsg[] = "RApaLsSession failed: error = %d";
 
-// Symbian bsearch implementation is flawed
+bool OSystem_SDL_Symbian::openUrl(const Common::String &url) {
+#if defined(USE_CLOUD)
+#ifdef __S60_3X__
+	TAutoClose2<RApaLsSession> appArcSession;
+	TInt error = appArcSession->Connect();
+	if (error != KErrNone) {
+		warning(kFailMsg, error);
+		return false;
+	}
+	appArcSession->GetAllApps(); // inits RApaLsSession
+
+	TUid browserUID;
+	TDataType html = TDataType(KHTMLMimeType);
+	error = appArcSession->AppForDataType(html, browserUID);
+	if (browserUID == KNullUid) {
+		warning("Can't find any browser. Try to install Opera.");
+		return false;
+	}
+
+	TApaAppInfo info;
+	error = appArcSession->GetAppInfo(info, browserUID);
+
+	// Give more time to obtain app list
+	while (error == RApaLsSession::EAppListInvalid) {
+		error = appArcSession->GetAppInfo(info, browserUID);
+		User::After(TTimeIntervalMicroSeconds32(100000));  // 0.1 secs
+	}
+
+	// HACK: We should run Opera 10 itself, not launcher, because
+	// Opera's launcher doesn't recognize commandline args.
+	if (browserUID.iUid == kOpera10500_UID) {
+		TParse pth;
+		pth.Set(info.iFullName, NULL , NULL);
+		TPtrC name = pth.NameAndExt();
+		info.iFullName.SetLength(info.iFullName.Length() - name.Length());
+		info.iFullName.Append(KOperaName);
+	}
+
+	HBufC *addr = CnvUtfConverter::ConvertToUnicodeFromUtf8L(TPtrC8((TUint8 *)url.c_str(), url.size()));
+	CleanupStack::PushL(addr);
+
+	TAutoClose2<RProcess> proc;
+	error = proc->Create(info.iFullName, *addr);
+	if (error == KErrNone)
+		proc->Resume();
+	else
+		warning("Failure while browser starts = %d", error);
+
+	CleanupStack::PopAndDestroy(addr);
+#endif //__S60_3X__
+#endif //USE_CLOUD
+	return false;
+}
+
+// Symbian bsearch implementation is flawed.
 void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
-	// Perform binary search
+	// Perform binary search.
 	size_t lo = 0;
 	size_t hi = nmemb;
 	while (lo < hi) {
@@ -189,7 +265,7 @@ void* scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size
 	return NULL;
 }
 
-/** Provide access to file server session. Lifetime managed bu UI framework. */
+/** Provide access to file server session. Lifetime managed by UI framework. */
 RFs &FsSession() {
 	return CEikonEnv::Static()->FsSession();
 }

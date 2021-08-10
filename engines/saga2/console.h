@@ -69,6 +69,8 @@ private:
 
 	bool cmdTeleportNPCHere(int argc, const char **argv);
 
+	bool cmdTeleportPartyHere(int argc, const char **argv);
+
 	bool cmdSaveLoc(int argc, const char **argv);
 
 	bool cmdLoadLoc(int argc, const char **argv);
@@ -78,6 +80,10 @@ private:
 	bool cmdListPlaces(int argc, const char **argv);
 
 	bool cmdDumpMap(int argc, const char **argv);
+
+	bool cmdPlayMusic(int argc, const char **argv);
+
+	bool cmdPlayVoice(int argc, const char **argv);
 };
 
 }

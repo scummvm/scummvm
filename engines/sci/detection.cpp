@@ -316,6 +316,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	// SQ1: Enable graphics that were disabled for legal reasons
+	{
+		GAMEOPTION_SQ1_BEARDED_MUSICIANS,
+		{
+			_s("Enable bearded musicians"),
+			_s("Enable graphics that were disabled for legal reasons"),
+			"enable_bearded_musicians",
+			false
+		}
+	},
+
 #ifdef USE_TTS
  	{
  		GAMEOPTION_TTS,

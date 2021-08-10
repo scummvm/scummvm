@@ -161,8 +161,8 @@ private:
 
 	EntityData _entityData;
 public:
-	StaticFlagsStruct staticFlags;
-	DynamicFlagsStruct dynamicFlags;
+	StaticFlagsStruct _staticFlags;
+	DynamicFlagsStruct _dynamicFlags;
 
 	inline ShapeType brickShape() const { return _brickShape; }
 	inline void setBrickShape(ShapeType shapeType) {
@@ -171,84 +171,95 @@ public:
 	}
 	inline void setBrickCausesDamage() { _brickCausesDamage = true; }
 	inline bool brickCausesDamage() { return _brickCausesDamage; }
-	void loadModel(int32 modelIndex);
-
-	int32 entity = 0; // costumeIndex - index into bodyTable
-	BodyType body = BodyType::btNormal;
-	AnimationTypes anim = AnimationTypes::kAnimNone;
-	AnimationTypes animExtra = AnimationTypes::kStanding; //field_2
-	AnimationTypes animExtraPtr = AnimationTypes::kAnimNone;
-	int32 sprite = 0; // field_8
-	EntityData *entityData = nullptr;
-
-	bool isAttackWeaponAnimationActive() const;
-	bool isAttackAnimationActive() const;
-	bool isJumpAnimationActive() const;
-
-	int16 actorIdx = 0; // own actor index
-	IVec3 pos;
-	int32 strengthOfHit = 0; // field_66
-	int32 hitBy = 0;
-	BonusParameter bonusParameter; // field_10
-	int32 angle = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise
-	int32 speed = 0;
-	ControlMode controlMode = ControlMode::kNoMove;
-	int32 delayInMillis = 0;
-	int32 cropLeft = 0;
-	int32 cropTop = 0;
-	int32 cropRight = 0;
-	int32 cropBottom = 0;
-	int32 followedActor = 0; // same as info3
-	int32 bonusAmount = 0;   // field_12
-	int32 talkColor = COLOR_BLACK;
-	int32 armor = 0; // field_14
-	int32 life = 0;
+	void loadModel(int32 modelIndex, bool lba1);
 
 	void addLife(int32 val);
 
 	void setLife(int32 val);
 
-	IVec3 collisionPos;
+	bool isAttackWeaponAnimationActive() const;
+	bool isAttackAnimationActive() const;
+	bool isJumpAnimationActive() const;
 
-	int32 positionInMoveScript = 0;
-	uint8 *moveScript = nullptr;
-	int32 moveScriptSize = 0;
+	const IVec3 &pos() const;
 
-	int32 positionInLifeScript = 0;
-	uint8 *lifeScript = nullptr;
-	int32 lifeScriptSize = 0;
+	int32 _entity = 0; // costumeIndex - index into bodyTable
+	BodyType _body = BodyType::btNormal;
+	AnimationTypes _anim = AnimationTypes::kAnimNone;
+	AnimationTypes _animExtra = AnimationTypes::kStanding;
+	AnimationTypes _animExtraPtr = AnimationTypes::kAnimNone;
+	int32 _sprite = 0;
+	EntityData *_entityDataPtr = nullptr;
 
-	int32 labelIdx = 0;        // script label index
-	int32 currentLabelPtr = 0; // pointer to LABEL offset
-	int32 pausedTrackPtr = 0;
+	int16 _actorIdx = 0; // own actor index
+	IVec3 _pos;
+	int32 _strengthOfHit = 0;
+	int32 _hitBy = 0;
+	BonusParameter _bonusParameter;
+	int32 _angle = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise
+	int32 _speed = 0;
+	ControlMode _controlMode = ControlMode::kNoMove;
+	int32 _delayInMillis = 0;
+	int32 _cropLeft = 0;
+	int32 _cropTop = 0;
+	int32 _cropRight = 0;
+	int32 _cropBottom = 0;
+	int32 _followedActor = 0; // same as info3
+	int32 _bonusAmount = 0;
+	int32 _talkColor = COLOR_BLACK;
+	int32 _armor = 0;
+	int32 _life = 0;
 
-	//int costumeIndex;
-	int32 collision = 0;
-	int32 standOn = 0;
-	int32 zone = 0;
+	IVec3 _collisionPos;
 
-	int32 lastRotationAngle = ANGLE_0;
-	IVec3 lastPos;
-	int32 previousAnimIdx = 0;
-	int32 doorStatus = 0;
-	int32 animPosition = 0;
-	AnimType animType = AnimType::kAnimationTypeLoop;   // field_78
-	int32 spriteActorRotation = 0;
-	int32 brickSound = 0; // field_7A
+	int32 _positionInMoveScript = 0;
+	uint8 *_moveScript = nullptr;
+	int32 _moveScriptSize = 0;
 
-	BoundingBox boudingBox;
-	ActorMoveStruct move;
-	AnimTimerDataStruct animTimerData;
+	int32 _positionInLifeScript = 0;
+	uint8 *_lifeScript = nullptr;
+	int32 _lifeScriptSize = 0;
+
+	int32 _labelIdx = 0;        // script label index
+	int32 _currentLabelPtr = 0; // pointer to LABEL offset
+	int32 _pausedTrackPtr = 0;
+
+	/**
+	 * colliding actor id
+	 */
+	int32 _collision = 0;
+	/**
+	 * actor id we are standing on
+	 */
+	int32 _standOn = 0;
+	int32 _zone = 0;
+
+	int32 _lastRotationAngle = ANGLE_0;
+	IVec3 _lastPos;
+	int32 _previousAnimIdx = 0;
+	int32 _doorStatus = 0;
+	int32 _animPosition = 0;
+	AnimType _animType = AnimType::kAnimationTypeLoop;
+	int32 _spriteActorRotation = 0;
+	int32 _brickSound = 0;
+
+	BoundingBox _boudingBox;
+	ActorMoveStruct _move;
+	AnimTimerDataStruct _animTimerData;
 };
 
+inline const IVec3 &ActorStruct::pos() const {
+	return _pos;
+}
+
 inline void ActorStruct::addLife(int32 val) {
-	setLife(life + val);
+	setLife(_life + val);
 }
 
 inline void ActorStruct::setLife(int32 val) {
-	life = val;
-	if (life > kActorMaxLife) {
-		life = kActorMaxLife;
+	_life = val;
+	if (_life > kActorMaxLife) {
+		_life = kActorMaxLife;
 	}
 }
 
@@ -283,34 +294,34 @@ private:
 public:
 	Actor(TwinEEngine *engine);
 
-	ActorStruct *processActorPtr = nullptr;
+	ActorStruct *_processActorPtr = nullptr;
 
 	/** Actor shadow coordinate */
-	IVec3 shadowCoord;
+	IVec3 _shadowCoord;
 
-	HeroBehaviourType heroBehaviour = HeroBehaviourType::kNormal;
+	HeroBehaviourType _heroBehaviour = HeroBehaviourType::kNormal;
 	/** Hero auto aggressive mode */
-	bool autoAggressive = true;
+	bool _autoAggressive = true;
 	/** Previous Hero behaviour */
-	HeroBehaviourType previousHeroBehaviour = HeroBehaviourType::kNormal;
+	HeroBehaviourType _previousHeroBehaviour = HeroBehaviourType::kNormal;
 	/** Previous Hero angle */
-	int16 previousHeroAngle = 0;
+	int16 _previousHeroAngle = 0;
 
-	int16 cropBottomScreen = 0;
+	int16 _cropBottomScreen = 0;
 
 	/** Hero current anim for normal behaviour */
-	int16 heroAnimIdxNORMAL = 0;
+	int16 _heroAnimIdxNORMAL = 0;
 	/** Hero current anim for athletic behaviour */
-	int16 heroAnimIdxATHLETIC = 0;
+	int16 _heroAnimIdxATHLETIC = 0;
 	/** Hero current anim for aggressive behaviour */
-	int16 heroAnimIdxAGGRESSIVE = 0;
+	int16 _heroAnimIdxAGGRESSIVE = 0;
 	/** Hero current anim for discrete behaviour */
-	int16 heroAnimIdxDISCRETE = 0;
+	int16 _heroAnimIdxDISCRETE = 0;
 	/** Hero current anim for protopack behaviour */
-	int16 heroAnimIdxPROTOPACK = 0;
+	int16 _heroAnimIdxPROTOPACK = 0;
 
 	/** Hero anim for behaviour menu */
-	int16 heroAnimIdx[4];
+	int16 _heroAnimIdx[4];
 
 	/** Restart hero variables while opening new scenes */
 	void restartHeroScene();

@@ -70,6 +70,16 @@ bool IsFileOrDir(const String &filename) {
 	return ags_path_exists(fixed_path.GetCStr()) != 0;
 }
 
+String GetParent(const String &path) {
+	const char *cstr = path.GetCStr();
+	const char *ptr_end = cstr + path.GetLength();
+	for (const char *ptr = ptr_end; ptr > cstr; --ptr) {
+		if (*ptr == '/' || *ptr == PATH_ALT_SEPARATOR)
+			return String(cstr, ptr - cstr);
+	}
+	return ".";
+}
+
 String GetFilename(const String &path) {
 	return get_filename(path.GetCStr());
 }
@@ -213,6 +223,17 @@ String ConcatPaths(const String &parent, const String &child) {
 	String path = String::FromFormat("%s/%s", parent.GetCStr(), child.GetCStr());
 	FixupPath(path);
 	return path;
+}
+
+String ConcatPaths(String &buf, const String &parent, const String &child) {
+	if (parent.IsEmpty())
+		buf = child;
+	else if (child.IsEmpty())
+		buf = parent;
+	else
+		buf.Format("%s/%s", parent.GetCStr(), child.GetCStr());
+	FixupPath(buf);
+	return buf;
 }
 
 String MakePath(const String &parent, const String &filename) {

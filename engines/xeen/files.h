@@ -144,12 +144,12 @@ public:
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	bool open(const Common::String &filename) override;
+	bool open(const Common::Path &filename) override;
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	bool open(const Common::String &filename, Common::Archive &archive) override;
+	bool open(const Common::Path &filename, Common::Archive &archive) override;
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
@@ -295,9 +295,9 @@ public:
 	BaseCCArchive() {}
 
 	// Archive implementation
-	bool hasFile(const Common::String &name) const override;
+	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 };
 
 /**
@@ -316,7 +316,7 @@ public:
 	~CCArchive() override;
 
 	// Archive implementation
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 };
 
 class SaveArchive : public BaseCCArchive {
@@ -338,7 +338,7 @@ public:
 	/**
 	 * Archive implementation
 	 */
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 	/**
 	 * Archive implementation

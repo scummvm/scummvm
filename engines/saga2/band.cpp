@@ -77,7 +77,7 @@ int32 BandList::archiveSize(void) {
 	return size;
 }
 
-void BandList::write(Common::OutSaveFile *out) {
+void BandList::write(Common::MemoryWriteStreamDynamic *out) {
 	int16 bandCount = 0;
 
 	//  Count the active bands
@@ -131,6 +131,14 @@ Band *BandList::newBand(BandID id) {
 }
 
  void BandList::addBand(Band *b) {
+	for (int i = 0; i < kNumBands; i++) {
+		if (_list[i] == b) {
+			warning("Band %d (%p) already added", i, (void *)b);
+
+			return;
+		}
+	}
+
 	for (int i = 0; i < kNumBands; i++) {
 		if (!_list[i]) {
 			_list[i] = b;
@@ -199,17 +207,14 @@ Band *getBandAddress(BandID id) {
 void initBands(void) {
 }
 
-void saveBands(Common::OutSaveFile *out) {
+void saveBands(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Bands");
 
-	int32   archiveBufSize;
 
-	archiveBufSize = g_vm->_bandList->archiveSize();
-
-	out->write("BAND", 4);
-	out->writeUint32LE(archiveBufSize);
-
+	outS->write("BAND", 4);
+	CHUNK_BEGIN;
 	g_vm->_bandList->write(out);
+	CHUNK_END;
 }
 
 void loadBands(Common::InSaveFile *in, int32 chunkSize) {
@@ -239,8 +244,10 @@ void loadBands(Common::InSaveFile *in, int32 chunkSize) {
 
 void cleanupBands(void) {
 	for (int i = 0; i < BandList::kNumBands; i++) {
-		if (g_vm->_bandList->_list[i])
+		if (g_vm->_bandList->_list[i]) {
 			delete g_vm->_bandList->_list[i];
+			g_vm->_bandList->_list[i] = nullptr;
+		}
 	}
 }
 
@@ -287,8 +294,6 @@ Band::Band(Common::InSaveFile *in) {
 
 		debugC(4, kDebugSaveload , "... id = %d", id);
 	}
-
-	g_vm->_bandList->addBand(this);
 }
 
 //----------------------------------------------------------------------
@@ -301,7 +306,7 @@ int32 Band::archiveSize(void) {
 	            +   sizeof(ObjectID) * memberCount;      //  members' ID's
 }
 
-void Band::write(Common::OutSaveFile *out) {
+void Band::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Store the leader's ID
 	out->writeUint16LE(leader->thisID());
 

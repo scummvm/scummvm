@@ -23,7 +23,7 @@
 
 #include "tinsel/handle.h"
 #include "tinsel/pcode.h"	// For D_UP, D_DOWN
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 
 #include "common/textconsole.h"
 #include "common/util.h"

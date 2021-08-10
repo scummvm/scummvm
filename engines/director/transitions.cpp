@@ -515,7 +515,7 @@ void Window::playTransition(uint16 transDuration, uint8 transArea, uint8 transCh
 		_composeSurface->blitFrom(*blitFrom, rfrom, Common::Point(rto.left, rto.top));
 
 		g_system->delayMillis(t.stepDuration);
-		if (processQuitEvent(true)) {
+		if (_vm->processEvents(true)) {
 			exitTransition(&nextFrame, clipRect);
 			break;
 		}
@@ -714,7 +714,7 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 
 		g_lingo->executePerFrameHook(t.frame, i + 1);
 
-		if (processQuitEvent(true)) {
+		if (_vm->processEvents(true)) {
 			exitTransition(nextFrame, clipRect);
 			break;
 		}
@@ -817,7 +817,7 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 
 		g_lingo->executePerFrameHook(t.frame, i + 1);
 
-		if (processQuitEvent(true)) {
+		if (_vm->processEvents(true)) {
 			exitTransition(nextFrame, clipRect);
 			break;
 		}
@@ -992,7 +992,7 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 
 		g_system->delayMillis(t.stepDuration);
 
-		if (processQuitEvent(true)) {
+		if (_vm->processEvents(true)) {
 			exitTransition(nextFrame, clipRect);
 			break;
 		}
@@ -1039,7 +1039,7 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 
 		g_system->delayMillis(t.stepDuration);
 
-		if (processQuitEvent(true)) {
+		if (_vm->processEvents(true)) {
 			exitTransition(nextFrame, clipRect);
 			break;
 		}
@@ -1064,19 +1064,19 @@ void Window::initTransParams(TransParams &t, Common::Rect &clipRect) {
 
 	switch (transProps[t.type].dir) {
 	case kTransDirHorizontal:
-		t.steps = w / t.chunkSize;
+		t.steps = MAX(w / t.chunkSize, (uint)1);
 		t.xStepSize = w / t.steps;
 		t.xpos = w % t.steps;
 		break;
 
 	case kTransDirVertical:
-		t.steps = h / t.chunkSize;
+		t.steps = MAX(h / t.chunkSize, (uint)1);
 		t.yStepSize = h / t.steps;
 		t.ypos = h % t.steps;
 		break;
 
 	case kTransDirBoth:
-		t.steps = m / t.chunkSize;
+		t.steps = MAX(m / t.chunkSize, (uint)1);
 
 		t.xStepSize = w / t.steps;
 		t.xpos = w % t.steps;

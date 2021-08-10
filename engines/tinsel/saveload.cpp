@@ -26,7 +26,7 @@
 #include "tinsel/dialogs.h"
 #include "tinsel/drives.h"
 #include "tinsel/dw.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 #include "tinsel/savescn.h"
 #include "tinsel/timers.h"
 #include "tinsel/tinlib.h"

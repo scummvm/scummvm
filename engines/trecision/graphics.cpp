@@ -110,7 +110,7 @@ void GraphicsManager::addDirtyRect(Common::Rect rect, bool translateRect) {
 }
 
 void GraphicsManager::drawObj(int index, bool mask, Common::Rect drawRect, Common::Rect drawObjRect, bool includeDirtyRect) {
-	if (drawObjRect.left > MAXX || drawObjRect.top > MAXX || drawObjRect.right > MAXX || drawObjRect.bottom > MAXX)
+	if (drawObjRect.left > MAXX || drawObjRect.top > MAXY)
 		return;
 
 	// If we have a valid object, draw it, otherwise erase it

@@ -34,7 +34,7 @@
 #include "tinsel/pid.h"
 #include "tinsel/play.h"
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 #include "tinsel/sched.h"
 #include "common/serializer.h"
 #include "tinsel/sysvar.h"
@@ -622,17 +622,33 @@ void Actor::GetActorMidTop(int ano, int *x, int *y) {
 
 	pActor = GetMover(ano);
 
-	if (pActor)
+	if (pActor) {
 		GetMoverMidTop(pActor, x, y);
-	else if (TinselV2) {
+	} else if (TinselV3) {
+		int i;
+		for (i = 0; i < MAX_REELS; i++) {
+			if (_actorInfo[ano-1].presObjs[i] && MultiHasShape(_actorInfo[ano-1].presObjs[i])) {
+				break;
+			}
+		}
+
+		if (i == MAX_REELS) {
+			*x = 320;
+			*y = 144;
+		} else {
+			*x = (GetActorLeft(ano) + GetActorRight(ano)) / 2;
+			*y = GetActorTop(ano);
+		}
+	} else if (TinselV2) {
 		*x = (GetActorLeft(ano) + GetActorRight(ano)) / 2;
 		*y = GetActorTop(ano);
 	} else if (_actorInfo[ano - 1].presObj) {
 		*x = (MultiLeftmost(_actorInfo[ano - 1].presObj)
 		      + MultiRightmost(_actorInfo[ano - 1].presObj)) / 2;
 		*y = MultiHighest(_actorInfo[ano - 1].presObj);
-	} else
+	} else {
 		GetActorPos(ano, x, y);		// The best we can do!
+	}
 }
 
 /**

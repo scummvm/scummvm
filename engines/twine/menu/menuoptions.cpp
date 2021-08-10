@@ -49,14 +49,14 @@ void MenuOptions::newGame() {
 	_engine->_music->stopMusic();
 	_engine->_sound->stopSamples();
 
-	int32 tmpFlagDisplayText = _engine->cfgfile.FlagDisplayText;
-	_engine->cfgfile.FlagDisplayText = true;
+	int32 tmpFlagDisplayText = _engine->_cfgfile.FlagDisplayText;
+	_engine->_cfgfile.FlagDisplayText = true;
 
 	// intro screen 1 - twinsun
 	_engine->_screens->loadImage(RESSHQR_INTROSCREEN1IMG, RESSHQR_INTROSCREEN1PAL);
 
-	_engine->_text->drawTextBoxBackground = false;
-	_engine->_text->renderTextTriangle = true;
+	_engine->_text->_drawTextBoxBackground = false;
+	_engine->_text->_renderTextTriangle = true;
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->textClipFull();
@@ -74,9 +74,9 @@ void MenuOptions::newGame() {
 			aborted |= _engine->_text->drawTextProgressive(TextId::kIntroText3);
 		}
 	}
-	_engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
+	_engine->_cfgfile.FlagDisplayText = tmpFlagDisplayText;
 
-	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBACustom);
+	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBACustom);
 	_engine->_screens->clearScreen();
 
 	if (!aborted) {
@@ -87,27 +87,27 @@ void MenuOptions::newGame() {
 	_engine->_text->textClipSmall();
 	_engine->_screens->clearScreen();
 
-	_engine->_text->drawTextBoxBackground = true;
-	_engine->_text->renderTextTriangle = false;
+	_engine->_text->_drawTextBoxBackground = true;
+	_engine->_text->_renderTextTriangle = false;
 
 	// set main palette back
-	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->_paletteRGBA);
 }
 
 void MenuOptions::showCredits() {
 	// TODO: the camera settings are wrong - this results in rendering problems with e.g. circles
-	const int32 tmpShadowMode = _engine->cfgfile.ShadowMode;
-	_engine->cfgfile.ShadowMode = 0;
+	const int32 tmpShadowMode = _engine->_cfgfile.ShadowMode;
+	_engine->_cfgfile.ShadowMode = 0;
 	_engine->_gameState->initEngineVars();
-	_engine->_scene->currentSceneIdx = LBA1SceneId::Credits_List_Sequence;
-	_engine->_scene->needChangeScene = LBA1SceneId::Credits_List_Sequence;
+	_engine->_scene->_currentSceneIdx = LBA1SceneId::Credits_List_Sequence;
+	_engine->_scene->_needChangeScene = LBA1SceneId::Credits_List_Sequence;
 
 	canShowCredits = true;
 	_engine->gameEngineLoop();
 	_engine->_scene->stopRunningGame();
 	canShowCredits = false;
 
-	_engine->cfgfile.ShadowMode = tmpShadowMode;
+	_engine->_cfgfile.ShadowMode = tmpShadowMode;
 
 	_engine->_screens->clearScreen();
 
@@ -118,10 +118,10 @@ void MenuOptions::showEndSequence() {
 	_engine->_flaMovies->playFlaMovie(FLA_THEEND);
 
 	_engine->_screens->clearScreen();
-	_engine->setPalette(_engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->_paletteRGBA);
 }
 
-void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect) {
+void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
 	const int32 borderTop = 200;
 	const int32 borderLeft = _engine->width() / 2 - 295;
 	const int32 halfButtonHeight = 25;
@@ -153,19 +153,13 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyR
 		_engine->_interface->drawTransparentBox(rect, 4);
 	}
 
-	_engine->_menu->drawBox(rect);
+	_engine->_menu->drawRectBorders(rect);
 
 	_engine->_text->setFontColor(COLOR_WHITE);
 	const uint8 character = (uint8)allowedCharIndex[idx];
 	const int32 textX = centerX - _engine->_text->getCharWidth(character) / 2;
 	const int32 textY = centerY - _engine->_text->getCharHeight(character) / 2;
 	_engine->_text->drawText(textX, textY, buffer);
-
-	if (dirtyRect.isEmpty()) {
-		dirtyRect = rect;
-	} else {
-		dirtyRect.extend(rect);
-	}
 }
 
 void MenuOptions::setOnScreenKeyboard(int x, int y) {
@@ -195,16 +189,11 @@ void MenuOptions::setOnScreenKeyboard(int x, int y) {
 }
 
 void MenuOptions::drawSelectableCharacters() {
-	Common::Rect dirtyRect;
 	for (int8 x = 0; x < ONSCREENKEYBOARD_WIDTH; x++) {
 		for (int8 y = 0; y < ONSCREENKEYBOARD_HEIGHT; y++) {
-			drawSelectableCharacter(x, y, dirtyRect);
+			drawSelectableCharacter(x, y);
 		}
 	}
-	if (dirtyRect.isEmpty()) {
-		return;
-	}
-	_engine->copyBlockPhys(dirtyRect);
 }
 
 void MenuOptions::drawInputText(int32 centerx, int32 top, int32 type, const char *text) {
@@ -218,7 +207,7 @@ void MenuOptions::drawInputText(int32 centerx, int32 top, int32 type, const char
 
 	Common::Rect rectBox(rect);
 	rectBox.grow(-1);
-	_engine->_menu->drawBox(rect);
+	_engine->_menu->drawRectBorders(rect);
 	_engine->_interface->drawTransparentBox(rectBox, 3);
 
 	_engine->_text->drawText(centerx - _engine->_text->getTextSize(text) / 2, top + 6, text);
@@ -349,7 +338,7 @@ bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize)
 
 bool MenuOptions::newGameMenu() {
 	_engine->restoreFrontBuffer();
-	if (!enterText(TextId::kEnterYourName, saveGameName, sizeof(saveGameName))) {
+	if (!enterText(TextId::kEnterYourName, _saveGameName, sizeof(_saveGameName))) {
 		return false;
 	}
 	_engine->_gameState->initEngineVars();

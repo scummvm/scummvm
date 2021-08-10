@@ -26,6 +26,7 @@
 #include "audio/mixer.h"
 #include "audio/timestamp.h"	// TODO: Move this to common/ ?
 #include "common/array.h"
+#include "common/path.h"
 #include "common/rational.h"
 #include "common/str.h"
 #include "graphics/pixelformat.h"
@@ -66,7 +67,7 @@ public:
 	 * @param filename	the filename to load
 	 * @return whether loading the file succeeded
 	 */
-	virtual bool loadFile(const Common::String &filename);
+	virtual bool loadFile(const Common::Path &filename);
 
 	/**
 	 * Load a video from a generic read stream. The ownership of the

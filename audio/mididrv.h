@@ -421,7 +421,18 @@ public:
 		 * requires MIDI channels to be monophonic (i.e. only play one
 		 * note at a time).
 		 */
-		PROP_OPL_CHANNEL_ALLOCATION_MODE = 8
+		PROP_OPL_CHANNEL_ALLOCATION_MODE = 8,
+		/**
+		 * Set this property to specify the Miles AIL/MSS version that the
+		 * Miles drivers should emulate.
+		 * 
+		 * MILES_VERSION_2: behavior matches Miles AIL versions 1 and 2.
+		 * Specifically, GM devices are initialized like the MT-32 because
+		 * these versions do not yet support GM.
+		 * MILES_VERSION_3: behavior matches Miles Sound System version 3 and
+		 * higher. GM devices are initialized according to the GM standard.
+		 */
+		PROP_MILES_VERSION = 9
 	};
 
 	/**

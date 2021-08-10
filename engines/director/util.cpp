@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "common/keyboard.h"
 #include "common/memstream.h"
+#include "common/punycode.h"
 #include "common/tokenizer.h"
 #include "common/zlib.h"
 
@@ -220,7 +221,7 @@ Common::String convertPath(Common::String &path) {
 	if (path.empty())
 		return path;
 
-	if (!path.contains(':') && !path.contains('/') && !path.contains('\\') && !path.contains('@')) {
+	if (!path.contains(':') && !path.contains('\\') && !path.contains('@')) {
 		return path;
 	}
 
@@ -228,43 +229,28 @@ Common::String convertPath(Common::String &path) {
 	uint32 idx = 0;
 
 	if (path.hasPrefix("::")) { // Parent directory
-		res = "..\\";
 		idx = 2;
 	} else if (path.hasPrefix("@:")) { // Root of the game
-		res = ".\\";
 		idx = 2;
 	} else if (path.size() >= 3
 					&& Common::isAlpha(path[0])
 					&& path[1] == ':'
 					&& path[2] == '\\') { // Windows drive letter
 		idx = 3;
-	} else {
-		res = ".\\";
-
-		if (path[0] == ':')
-			idx = 1;
+	} else if (path[0] == ':') {
+		idx = 1;
 	}
 
-	while (idx != path.size()) {
-		if (path[idx] == ':')
-			res += '\\';
-		else if (path[idx] == '/')
-			res += ':';
+	while (idx < path.size()) {
+		if (path[idx] == ':' || path[idx] == '\\')
+			res += g_director->_dirSeparator;
 		else
 			res += path[idx];
 
 		idx++;
 	}
 
-	// And now convert everything to Unix style paths
-	Common::String res1;
-	for (idx = 0; idx < res.size(); idx++)
-		if (res[idx] == '\\')
-			res1 += '/';
-		else
-			res1 += res[idx];
-
-	return res1;
+	return res;
 }
 
 Common::String unixToMacPath(const Common::String &path) {
@@ -282,7 +268,7 @@ Common::String unixToMacPath(const Common::String &path) {
 
 Common::String getPath(Common::String path, Common::String cwd) {
 	const char *s;
-	if ((s = strrchr(path.c_str(), '/'))) {
+	if ((s = strrchr(path.c_str(), g_director->_dirSeparator))) {
 		return Common::String(path.c_str(), s + 1);
 	}
 
@@ -294,12 +280,12 @@ bool testPath(Common::String &path, bool directory) {
 		Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
 
 		// check for the game data dir
-		if (!path.contains("/") && path.equalsIgnoreCase(d.getName())) {
+		if (!path.contains(g_director->_dirSeparator) && path.equalsIgnoreCase(d.getName())) {
 			path = "";
 			return true;
 		}
 
-		Common::StringTokenizer directory_list(path, "/");
+		Common::StringTokenizer directory_list(path, Common::String(g_director->_dirSeparator));
 
 		if (d.getChild(directory_list.nextToken()).exists()) {
 			// then this part is for the "relative to current directory"
@@ -315,7 +301,7 @@ bool testPath(Common::String &path, bool directory) {
 	}
 
 	Common::File f;
-	if (f.open(path)) {
+	if (f.open(Common::Path(path, g_director->_dirSeparator))) {
 		if (f.size())
 			return true;
 		f.close();
@@ -334,7 +320,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 
 	debug(2, "pathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
 
-	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, '/');
+	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, g_director->_dirSeparator);
 	Common::String convPath = initialPath;
 
 	debug(2, "pathMakeRelative(): s2 %s", convPath.c_str());
@@ -348,8 +334,8 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	// Now try to search the file
 	bool opened = false;
 
-	while (convPath.contains('/')) {
-		int pos = convPath.find('/');
+	while (convPath.contains(g_director->_dirSeparator)) {
+		int pos = convPath.find(g_director->_dirSeparator);
 		convPath = Common::String(&convPath.c_str()[pos + 1]);
 
 		debug(2, "pathMakeRelative(): s3 try %s", convPath.c_str());
@@ -374,8 +360,8 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			return initialPath;
 
 		// Now try to search the file
-		while (convPath.contains('/')) {
-			int pos = convPath.find('/');
+		while (convPath.contains(g_director->_dirSeparator)) {
+			int pos = convPath.find(g_director->_dirSeparator);
 			convPath = Common::String(&convPath.c_str()[pos + 1]);
 
 			debug(2, "pathMakeRelative(): s5 try %s", convPath.c_str());
@@ -402,7 +388,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			Common::String component;
 
 			while (*ptr) {
-				if (*ptr == '/') {
+				if (*ptr == g_director->_dirSeparator) {
 					if (component.equals(".")) {
 						convPath += component;
 					} else {
@@ -410,7 +396,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 					}
 
 					component.clear();
-					convPath += '/';
+					convPath += g_director->_dirSeparator;
 				} else {
 					component += *ptr;
 				}
@@ -477,8 +463,8 @@ Common::String testExtensions(Common::String component, Common::String initialPa
 }
 
 Common::String getFileName(Common::String path) {
-	while (path.contains('/')) {
-		int pos = path.find('/');
+	while (path.contains(g_director->_dirSeparator)) {
+		int pos = path.find(g_director->_dirSeparator);
 		path = Common::String(&path.c_str()[pos + 1]);
 	}
 	return path;
@@ -524,7 +510,7 @@ Common::String stripMacPath(const char *name) {
 	const char *ptr = name;
 
 	while (ptr <= end) {
-		if (myIsAlnum(*ptr) || myIsFATChar(*ptr) || *ptr == '/') {
+		if (myIsAlnum(*ptr) || myIsFATChar(*ptr) || *ptr == g_director->_dirSeparator) {
 			res += *ptr;
 		}
 		ptr++;
@@ -819,6 +805,57 @@ int compareStrings(const Common::String &s1, const Common::String &s2) {
 		p2++;
 	}
 	return c1 - c2;
+}
+
+Common::String encodePathForDump(const Common::String &path) {
+	return punycode_encodepath(Common::Path(path, g_director->_dirSeparator)).toString();
+}
+
+Common::String utf8ToPrintable(const Common::String &str) {
+	return Common::toPrintable(Common::U32String(str));
+}
+
+Common::String castTypeToString(const CastType &type) {
+	Common::String res;
+	switch(type) {
+	case kCastBitmap:
+		res = "bitmap";
+		break;
+	case kCastPalette:
+		res = "palette";
+		break;
+	case kCastButton:
+		res = "button";
+		break;
+	case kCastPicture:
+		res = "picture";
+		break;
+	case kCastDigitalVideo:
+		res = "digitalVideo";
+		break;
+	case kCastLingoScript:
+		res = "script";
+		break;
+	case kCastShape:
+		res = "shape";
+		break;
+	case kCastFilmLoop:
+		res = "filmLoop";
+		break;
+	case kCastSound:
+		res = "sound";
+		break;
+	case kCastMovie:
+		res = "movie";
+		break;
+	case kCastText:
+		res = "text";
+		break;
+	default:
+		res = "empty";
+		break;
+	}
+	return res;
 }
 
 } // End of namespace Director

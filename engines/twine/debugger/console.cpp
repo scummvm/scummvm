@@ -79,42 +79,42 @@ TwinEConsole::~TwinEConsole() {
 		debugPrintf("Enabling " description);  \
 		(var) = true;                          \
 	}                                          \
-	if ((var) && !_engine->cfgfile.Debug) {    \
+	if ((var) && !_engine->_cfgfile.Debug) {    \
 		doToggleDebug(0, nullptr);             \
 	}
 
 bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->showingZones, "zone rendering\n")
+	TOGGLE_DEBUG(_engine->_debugScene->_showingZones, "zone rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleActorRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->showingActors, "actor rendering\n")
+	TOGGLE_DEBUG(_engine->_debugScene->_showingActors, "actor rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleTrackRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->showingTracks, "tracks rendering\n")
+	TOGGLE_DEBUG(_engine->_debugScene->_showingTracks, "tracks rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleScenePatches(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->useScenePatches, "use scene patches\n")
+	TOGGLE_DEBUG(_engine->_debugScene->_useScenePatches, "use scene patches\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleClipRendering(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugScene->showingClips, "clip rendering\n")
+	TOGGLE_DEBUG(_engine->_debugScene->_showingClips, "clip rendering\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleSceneryView(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_redraw->inSceneryView, "scenery view\n")
+	TOGGLE_DEBUG(_engine->_redraw->_inSceneryView, "scenery view\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleAutoAggressive(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_actor->autoAggressive, "auto aggressive\n")
+	TOGGLE_DEBUG(_engine->_actor->_autoAggressive, "auto aggressive\n")
 	return true;
 }
 
@@ -124,7 +124,7 @@ bool TwinEConsole::doAddMagicPoints(int argc, const char **argv) {
 		return true;
 	}
 	const int16 magicPoints = atoi(argv[1]);
-	_engine->_gameState->magicLevelIdx = CLIP<int16>(magicPoints, 0, 4);
+	_engine->_gameState->_magicLevelIdx = CLIP<int16>(magicPoints, 0, 4);
 	_engine->_gameState->setMaxMagicPoints();
 	return true;
 }
@@ -136,17 +136,17 @@ bool TwinEConsole::doSkipSceneActorsBut(int argc, const char **argv) {
 	}
 	const int16 actorIdx = atoi(argv[1]);
 	debugPrintf("Only load actor %d in the next scene\n", actorIdx);
-	_engine->_debugScene->onlyLoadActor = actorIdx;
+	_engine->_debugScene->_onlyLoadActor = actorIdx;
 	return true;
 }
 
 bool TwinEConsole::doToggleFreeCamera(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugGrid->useFreeCamera, "free camera movement\n")
+	TOGGLE_DEBUG(_engine->_debugGrid->_useFreeCamera, "free camera movement\n")
 	return true;
 }
 
 bool TwinEConsole::doToggleSceneChanges(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_debugGrid->canChangeScenes, "scene switching via keybinding\n")
+	TOGGLE_DEBUG(_engine->_debugGrid->_canChangeScenes, "scene switching via keybinding\n")
 	return true;
 }
 
@@ -162,7 +162,7 @@ bool TwinEConsole::doSetInventoryFlag(int argc, const char **argv) {
 		return true;
 	}
 	const uint8 val = argc == 3 ? atoi(argv[2]) : 0;
-	_engine->_gameState->inventoryFlags[idx] = val;
+	_engine->_gameState->_inventoryFlags[idx] = val;
 
 	return true;
 }
@@ -172,7 +172,7 @@ bool TwinEConsole::doSetHolomapTrajectory(int argc, const char **argv) {
 		debugPrintf("Expected to get a holomap trajectory index as parameter\n");
 		return true;
 	}
-	_engine->_scene->holomapTrajectory = atoi(argv[1]);
+	_engine->_scene->_holomapTrajectory = atoi(argv[1]);
 	_engine->_scene->reloadCurrentScene();
 	return false;
 }
@@ -185,7 +185,7 @@ bool TwinEConsole::doSetHolomapFlag(int argc, const char **argv) {
 
 	GameState* state = _engine->_gameState;
 	state->setGameFlag(InventoryItems::kiHolomap, 1);
-	state->inventoryFlags[InventoryItems::kiHolomap] = 1;
+	state->_inventoryFlags[InventoryItems::kiHolomap] = 1;
 	state->setGameFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
 
 	const int idx = atoi(argv[1]);
@@ -233,14 +233,14 @@ bool TwinEConsole::doPrintGameFlag(int argc, const char **argv) {
 bool TwinEConsole::doPrintInventoryFlag(int argc, const char **argv) {
 	if (argc <= 1) {
 		for (int i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
-			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->inventoryFlags[i]);
+			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->_inventoryFlags[i]);
 		}
 		return true;
 	}
 
 	const uint8 idx = atoi(argv[1]);
 	if (idx < NUM_INVENTORY_ITEMS) {
-		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->inventoryFlags[idx]);
+		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->_inventoryFlags[idx]);
 	}
 
 	return true;
@@ -249,14 +249,14 @@ bool TwinEConsole::doPrintInventoryFlag(int argc, const char **argv) {
 bool TwinEConsole::doPrintHolomapFlag(int argc, const char **argv) {
 	if (argc <= 1) {
 		for (int i = 0; i < NUM_LOCATIONS; ++i) {
-			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->holomapFlags[i]);
+			debugPrintf("[%03d] = %d\n", i, _engine->_gameState->_holomapFlags[i]);
 		}
 		return true;
 	}
 
 	const uint8 idx = atoi(argv[1]);
 	if (idx < NUM_LOCATIONS) {
-		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->holomapFlags[idx]);
+		debugPrintf("[%03d] = %d\n", idx, _engine->_gameState->_holomapFlags[idx]);
 	}
 
 	return true;
@@ -290,12 +290,12 @@ bool TwinEConsole::doGiveKashes(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doToggleDebug(int argc, const char **argv) {
-	if (_engine->cfgfile.Debug) {
+	if (_engine->_cfgfile.Debug) {
 		debugPrintf("Disabling debug mode\n");
-		_engine->cfgfile.Debug = false;
+		_engine->_cfgfile.Debug = false;
 	} else {
 		debugPrintf("Enabling debug mode\n");
-		_engine->cfgfile.Debug = true;
+		_engine->_cfgfile.Debug = true;
 	}
 	return true;
 }
@@ -318,7 +318,7 @@ bool TwinEConsole::doListMenuText(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doSetHeroPosition(int argc, const char **argv) {
-	IVec3 &pos = _engine->_scene->sceneHero->pos;
+	IVec3 &pos = _engine->_scene->_sceneHero->_pos;
 	if (argc < 4) {
 		debugPrintf("Current hero position: %i:%i:%i\n", pos.x, pos.y, pos.z);
 		return true;
@@ -348,7 +348,7 @@ bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 		debugPrintf("Scene index out of bounds\n");
 		return true;
 	}
-	_engine->_scene->needChangeScene = atoi(argv[1]);
+	_engine->_scene->_needChangeScene = atoi(argv[1]);
 	_engine->_scene->changeScene();
 	return true;
 }
@@ -395,7 +395,7 @@ static const char *ItemNames[] = {
 	"BonusList",
 	"CloverLeaf"
 };
-static_assert(ARRAYSIZE(ItemNames) == InventoryItems::MaxInventoryItems, "Array size doesn't match items");
+STATIC_ASSERT(ARRAYSIZE(ItemNames) == InventoryItems::MaxInventoryItems, "Array size doesn't match items");
 
 bool TwinEConsole::doGiveItem(int argc, const char **argv) {
 	if (argc <= 1) {
@@ -412,7 +412,7 @@ bool TwinEConsole::doGiveItem(int argc, const char **argv) {
 	}
 	GameState* state = _engine->_gameState;
 	state->setGameFlag(itemIdx, 1);
-	state->inventoryFlags[itemIdx] = 1;
+	state->_inventoryFlags[itemIdx] = 1;
 	state->setGameFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
 
 	return true;
@@ -422,7 +422,7 @@ bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 	GameState* state = _engine->_gameState;
 	for (int32 i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
 		state->setGameFlag(i, 1);
-		state->inventoryFlags[i] = 1;
+		state->_inventoryFlags[i] = 1;
 	}
 	state->setGameFlag(GAMEFLAG_INVENTORY_DISABLED, 0);
 	int amount = 1;
@@ -444,7 +444,7 @@ bool TwinEConsole::doSetLife(int argc, const char **argv) {
 		debugPrintf("Expected to get the life points as parameter\n");
 		return true;
 	}
-	_engine->_scene->sceneHero->setLife(atoi(argv[1]));
+	_engine->_scene->_sceneHero->setLife(atoi(argv[1]));
 	return true;
 }
 

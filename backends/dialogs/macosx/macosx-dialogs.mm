@@ -40,6 +40,19 @@
 #include <Foundation/NSURL.h>
 #include <Foundation/NSAutoreleasePool.h>
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+
+    #ifndef NSControlStateValueOff
+      #define NSControlStateValueOff NSOffState
+    #endif
+
+    #ifndef NSControlStateValueOn
+      #define NSControlStateValueOn NSOnState
+    #endif
+
+#define NSButtonTypeSwitch NSSwitchButton
+#endif
+
 
 @interface BrowserDialogPresenter : NSObject {
 @public
@@ -73,7 +86,7 @@
 	NSButton *showHiddenFilesButton = 0;
 	if ([panel respondsToSelector:@selector(setShowsHiddenFiles:)]) {
 		showHiddenFilesButton = [[NSButton alloc] init];
-		[showHiddenFilesButton setButtonType:NSSwitchButton];
+		[showHiddenFilesButton setButtonType:NSButtonTypeSwitch];
 
 		CFStringRef hiddenFilesString = CFStringCreateWithCString(0, _("Show hidden files").encode().c_str(), kCFStringEncodingUTF8);
 		[showHiddenFilesButton setTitle:(NSString*)hiddenFilesString];
@@ -81,10 +94,10 @@
 
 		[showHiddenFilesButton sizeToFit];
 		if (ConfMan.getBool("gui_browser_show_hidden", Common::ConfigManager::kApplicationDomain)) {
-			[showHiddenFilesButton setState:NSOnState];
+			[showHiddenFilesButton setState:NSControlStateValueOn];
 			[panel setShowsHiddenFiles: YES];
 		} else {
-			[showHiddenFilesButton setState:NSOffState];
+			[showHiddenFilesButton setState:NSControlStateValueOff];
 			[panel setShowsHiddenFiles: NO];
 		}
 		[panel setAccessoryView:showHiddenFilesButton];
@@ -110,7 +123,7 @@
 }
 
 - (IBAction) showHiddenFiles : (id) sender {
-	if ([sender state] == NSOnState) {
+	if ([sender state] == NSControlStateValueOn) {
 		[_panel setShowsHiddenFiles: YES];
 		ConfMan.setBool("gui_browser_show_hidden", true, Common::ConfigManager::kApplicationDomain);
 	} else {

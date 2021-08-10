@@ -141,12 +141,12 @@ public:
 	 *
 	 * @param pat Glob pattern.
 	 * @param ignoreCase Whether to ignore the case when doing pattern match
-	 * @param pathMode Whether to use path mode, i.e., whether slashes must be matched explicitly.
+	 * @param wildcardExclusions Characters which are excluded from wildcards and must be matched explicitly.
 	 *
 	 * @return true if str matches the pattern, false otherwise.
 	 */
-	bool matchString(const char *pat, bool ignoreCase = false, bool pathMode = false) const;
-	bool matchString(const String &pat, bool ignoreCase = false, bool pathMode = false) const;
+	bool matchString(const char *pat, bool ignoreCase = false, const char *wildcardExclusions = NULL) const;
+	bool matchString(const String &pat, bool ignoreCase = false, const char *wildcardExclusions = NULL) const;
 
 	/**@{
 	 * Functions to replace some amount of chars with chars from some other string.
@@ -329,11 +329,11 @@ String normalizePath(const String &path, const char sep);
  * @param str Text to be matched against the given pattern.
  * @param pat Glob pattern.
  * @param ignoreCase Whether to ignore the case when doing pattern match
- * @param pathMode Whether to use path mode, i.e., whether slashes must be matched explicitly.
+ * @param wildcardExclusions Characters which are excluded from wildcards and must be matched explicitly.
  *
  * @return true if str matches the pattern, false otherwise.
  */
-bool matchString(const char *str, const char *pat, bool ignoreCase = false, bool pathMode = false);
+bool matchString(const char *str, const char *pat, bool ignoreCase = false, const char *wildcardExclusions = NULL);
 
 /**
  * Function which replaces substring with the other. It happens in place.

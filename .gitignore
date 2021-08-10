@@ -3,6 +3,7 @@
 .*.swp
 .*.swo
 *.o
+*.o.tmp
 *.dwo
 scummvm.dwp
 lib*.a
@@ -91,6 +92,7 @@ lib*.a
 /dists/codeblocks/*.cbp
 /dists/codeblocks/*.depend
 /dists/codeblocks/*.layout
+/dists/codeblocks/engines/
 /dists/codeblocks/scummvm*
 
 /doc/doxygen/html

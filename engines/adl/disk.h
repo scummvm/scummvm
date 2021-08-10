@@ -53,6 +53,7 @@ public:
 
 	virtual const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const = 0;
 	virtual Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const = 0;
+	virtual bool exists(const Common::String &filename) const = 0;
 
 protected:
 	class DataBlock : public Adl::DataBlock {
@@ -126,6 +127,7 @@ class Files_Plain : public Files {
 public:
 	const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const override;
 	Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const override;
+	bool exists(const Common::String &filename) const override { return Common::File::exists(filename); }
 };
 
 // Data in files contained in Apple DOS 3.3 disk image
@@ -137,6 +139,7 @@ public:
 	bool open(const Common::String &filename);
 	const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const override;
 	Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const override;
+	bool exists(const Common::String &filename) const override { return _toc.contains(filename); }
 
 private:
 	enum FileType {

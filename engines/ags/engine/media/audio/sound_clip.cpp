@@ -107,7 +107,7 @@ void SoundClipWaveBase::seek(int offset) {
 }
 
 int SoundClipWaveBase::get_pos() {
-	return _mixer->getSoundElapsedTime(_soundHandle) / 1000;
+	return _mixer->getSoundElapsedTime(_soundHandle);
 }
 
 int SoundClipWaveBase::get_pos_ms() {

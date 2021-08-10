@@ -370,6 +370,8 @@ Sensor::Sensor(Common::InSaveFile *in, int16 ctr) {
 	//  Restore the range
 	range = in->readSint16LE();
 
+	_active = true;
+
 	newSensor(this, ctr);
 
 	debugC(4, kDebugSaveload, "... objID = %d", objID);

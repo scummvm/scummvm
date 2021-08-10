@@ -103,6 +103,13 @@ const Graphics::Surface *Channel::getMask(bool forceMatte) {
 		_sprite->_ink == kInkTypeNotTrans ||
 		_sprite->_ink == kInkTypeNotReverse ||
 		_sprite->_ink == kInkTypeNotGhost ||
+		_sprite->_ink == kInkTypeBlend ||
+		_sprite->_ink == kInkTypeAddPin ||
+		_sprite->_ink == kInkTypeAdd ||
+		_sprite->_ink == kInkTypeSubPin ||
+		_sprite->_ink == kInkTypeLight ||
+		_sprite->_ink == kInkTypeSub ||
+		_sprite->_ink == kInkTypeDark ||
 		_sprite->_blend > 0;
 
 	Common::Rect bbox(getBbox());
@@ -349,6 +356,10 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	updateTextCast();
 	updateGlobalAttr();
 
+	// reset the stop time when we are not playing video
+	if (_stopTime && (!_sprite->_cast || (_sprite->_cast && _sprite->_cast->_type != kCastDigitalVideo)))
+		_stopTime = 0;
+
 	_dirty = false;
 }
 
@@ -401,8 +412,10 @@ void Channel::updateGlobalAttr() {
 		((Graphics::MacText *)_widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
 
 	// update button info, including checkBoxType
-	if ((_sprite->_cast->_type == kCastButton || isButtonSprite(_sprite->_spriteType)) && _widget)
+	if ((_sprite->_cast->_type == kCastButton || isButtonSprite(_sprite->_spriteType)) && _widget) {
 		((Graphics::MacButton *)_widget)->setCheckBoxType(g_director->getCurrentMovie()->_checkBoxType);
+		((Graphics::MacButton *)_widget)->setCheckBoxAccess(g_director->getCurrentMovie()->_checkBoxAccess);
+	}
 }
 
 void Channel::replaceSprite(Sprite *nextSprite) {
@@ -504,7 +517,11 @@ void Channel::replaceWidget(CastMemberID previousCastId, bool force) {
 		// if the type don't match, then we will set it as transparent. i.e. don't create widget
 		if (!_sprite->checkSpriteType())
 			return;
-		Common::Rect bbox(getBbox());
+		// always use the unstretched dims.
+		// because only the stretched sprite will have different channel size and sprite size
+		// we need the original image to scale the sprite.
+		// for the scaled bitmap castmember, it has scaled dims on sprite size, so we don't have to worry about it.
+		Common::Rect bbox(getBbox(true));
 		_sprite->_cast->setModified(false);
 
 		_widget = _sprite->_cast->createWidget(bbox, this, _sprite->_spriteType);
@@ -604,6 +621,54 @@ void Channel::addDelta(Common::Point pos) {
 	}
 
 	_delta += pos;
+}
+
+int Channel::getMouseChar(int x, int y) {
+	if (_sprite->_spriteType != kTextSprite)
+		return -1;
+
+	if (!_widget) {
+		warning("Channel::getMouseChar getting mouse char on a non-existing widget");
+		return -1;
+	}
+
+	return ((Graphics::MacText *)_widget)->getMouseChar(x, y);
+}
+
+int Channel::getMouseWord(int x, int y) {
+	if (_sprite->_spriteType != kTextSprite)
+		return -1;
+
+	if (!_widget) {
+		warning("Channel::getMouseWord getting mouse word on a non-existing widget");
+		return -1;
+	}
+
+	return ((Graphics::MacText *)_widget)->getMouseWord(x, y);
+}
+
+int Channel::getMouseItem(int x, int y) {
+	if (_sprite->_spriteType != kTextSprite)
+		return -1;
+
+	if (!_widget) {
+		warning("Channel::getMouseItem getting mouse item on a non-existing widget");
+		return -1;
+	}
+
+	return ((Graphics::MacText *)_widget)->getMouseItem(x, y);
+}
+
+int Channel::getMouseLine(int x, int y) {
+	if (_sprite->_spriteType != kTextSprite)
+		return -1;
+
+	if (!_widget) {
+		warning("Channel::getMouseLine getting mouse line on a non-existing widget");
+		return -1;
+	}
+
+	return ((Graphics::MacText *)_widget)->getMouseLine(x, y);
 }
 
 Common::Point Channel::getPosition() {

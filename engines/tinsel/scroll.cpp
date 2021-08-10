@@ -27,7 +27,7 @@
 #include "tinsel/dw.h"
 #include "tinsel/graphics.h"
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 #include "tinsel/scroll.h"
 #include "tinsel/sched.h"
 #include "tinsel/sysvar.h"

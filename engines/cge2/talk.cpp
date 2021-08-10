@@ -28,6 +28,9 @@
 #include "cge2/general.h"
 #include "cge2/talk.h"
 
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
+
 namespace CGE2 {
 
 void CGE2Engine::setAutoColors() {
@@ -111,6 +114,10 @@ uint16 Font::width(const char *text) {
 
 Talk::Talk(CGE2Engine *vm, const char *text, TextBoxStyle mode, ColorBank color, bool wideSpace)
 	: Sprite(vm), _mode(mode), _created(false), _wideSpace(wideSpace), _vm(vm) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech"))
+		ttsMan->say(text);
+
 	_color = _vm->_font->_colorSet[color];
 
 	if (color == kCBRel)
@@ -258,6 +265,10 @@ void InfoLine::update(const char *text) {
 		return;
 
 	_oldText = text;
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (text && ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
+		ttsMan->say(text);
 
 	uint16 w = _ext->_shpList->_w;
 	uint16 h = _ext->_shpList->_h;

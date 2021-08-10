@@ -89,12 +89,10 @@ int GetWalkableAreaAtScreen(int x, int y) {
 }
 
 int GetWalkableAreaAtRoom(int x, int y) {
-	if ((x >= _GP(thisroom).Width) | (x < 0) | (y < 0) | (y >= _GP(thisroom).Height))
-		return 0;
-	int result = get_walkable_area_pixel(x, y);
-	if (result <= 0)
-		return 0;
-	return result;
+	int area = get_walkable_area_pixel(x, y);
+	// IMPORTANT: disabled walkable areas are actually erased completely from the mask;
+	// see: RemoveWalkableArea() and RestoreWalkableArea().
+	return area >= 0 && area < (MAX_WALK_AREAS + 1) ? area : 0;
 }
 
 } // namespace AGS3

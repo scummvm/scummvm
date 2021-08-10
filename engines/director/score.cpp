@@ -55,14 +55,13 @@ Score::Score(Movie *movie) {
 	_vm = _movie->getVM();
 	_lingo = _vm->getLingo();
 
-	_soundManager = _vm->getSoundManager();
+	_soundManager = _window->getSoundManager();
 
 	_puppetTempo = 0x00;
 	_puppetPalette = false;
 	_lastPalette = 0;
 
 	_labels = nullptr;
-	_currentCursor = nullptr;
 
 	_currentFrameRate = 20;
 	_currentFrame = 0;
@@ -91,9 +90,6 @@ Score::~Score() {
 	if (_labels)
 		for (Common::SortedArray<Label *>::iterator it = _labels->begin(); it != _labels->end(); ++it)
 			delete *it;
-
-	for (uint i = 0; i < _sampleSounds.size(); i++)
-		delete _sampleSounds[i];
 
 	delete _labels;
 }
@@ -257,7 +253,7 @@ int Score::getPreviousLabelNumber(int referenceFrame) {
 }
 
 void Score::startPlay() {
-	_currentFrame = 0;
+	_currentFrame = 1;
 	_playState = kPlayStarted;
 	_nextFrameTime = 0;
 
@@ -325,8 +321,7 @@ void Score::update() {
 		} else if (_waitForClick) {
 			if (g_system->getMillis() >= _nextFrameTime + 1000) {
 				_waitForClickCursor = !_waitForClickCursor;
-				_vm->setCursor(kCursorDefault);
-				_vm->setCursor(_waitForClickCursor ? kCursorMouseDown : kCursorMouseUp);
+				renderCursor(_movie->getWindow()->getMousePos());
 				_nextFrameTime = g_system->getMillis();
 			}
 			keepWaiting = true;
@@ -344,7 +339,7 @@ void Score::update() {
 	}
 
 	// For previous frame
-	if (_currentFrame > 0 && !_vm->_playbackPaused) {
+	if (!_window->_newMovieStarted && !_vm->_playbackPaused) {
 		// When Lingo::func_goto* is called, _nextFrame is set
 		// and _skipFrameAdvance is set to true.
 		// exitFrame is not called in this case.
@@ -359,16 +354,20 @@ void Score::update() {
 		}
 	}
 
+	_vm->_skipFrameAdvance = false;
+
+	// the exitFrame event handler may have stopped this movie
+	if (_playState == kPlayStopped)
+		return;
+
 	if (!_vm->_playbackPaused) {
 		if (_nextFrame)
 			_currentFrame = _nextFrame;
-		else
+		else if (!_window->_newMovieStarted)
 			_currentFrame++;
 	}
 
 	_nextFrame = 0;
-
-	_vm->_skipFrameAdvance = false;
 
 	if (_currentFrame >= _frames.size()) {
 		Window *window = _vm->getCurrentWindow();
@@ -428,8 +427,16 @@ void Score::update() {
 			// but this is incorrect. The frame script is executed first.
 			_movie->processEvent(kEventStepMovie);
 		}
+		if (_movie->_timeOutPlay)
+			_movie->_lastTimeOut = _vm->getMacTicks();
 	}
 	// TODO Director 6 - another order
+
+	// TODO: Figure out when exactly timeout events are processed
+	if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
+		_movie->processEvent(kEventTimeout);
+		_movie->_lastTimeOut = _vm->getMacTicks();
+	}
 
 	// If we have more call stack frames than we started with, then we have a newly
 	// added frozen context. We'll deal with that later.
@@ -441,7 +448,6 @@ void Score::update() {
 			g_lingo->_freezeContext = false;
 			g_lingo->execute();
 		}
-		_window->_hasFrozenLingo = false;
 	}
 
 	byte tempo = _frames[_currentFrame]->_tempo;
@@ -455,24 +461,23 @@ void Score::update() {
 		if (tempo > 161) {
 			// Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
-		} else if (tempo <= 60) {
+		} else if (tempo <= 120) {
 			// FPS
 			_currentFrameRate = tempo;
 			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
 		} else {
-			if (tempo >= 136) {
-				// TODO Wait for channel tempo - 135
-				warning("STUB: tempo >= 136");
-			} else if (tempo == 128) {
+			if (tempo == 128) {
 				_waitForClick = true;
 				_waitForClickCursor = false;
-				_vm->setCursor(kCursorMouseUp);
+				renderCursor(_movie->getWindow()->getMousePos());
 			} else if (tempo == 135) {
 				// Wait for sound channel 1
 				_waitForChannel = 1;
 			} else if (tempo == 134) {
 				// Wait for sound channel 2
 				_waitForChannel = 2;
+			} else {
+				warning("STUB: tempo %d", tempo);
 			}
 			_nextFrameTime = g_system->getMillis();
 		}
@@ -496,14 +501,12 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 
 	_window->render();
 
-	// sound stuff
-	if (_frames[frameId]->_sound1.member || _frames[frameId]->_sound2.member)
-		playSoundChannel(frameId);
-	// this is currently only used in FPlayXObj
-	playQueuedSound();
+	playSoundChannel(frameId);
+	playQueuedSound(); // this is currently only used in FPlayXObj
 
-	if (_cursorDirty) {
-		renderCursor(_movie->getWindow()->getMousePos());
+	if (_cursorDirty || _window->_newMovieStarted) {
+		// Force cursor update if a new movie's started.
+		renderCursor(_movie->getWindow()->getMousePos(), _window->_newMovieStarted);
 		_cursorDirty = false;
 	}
 }
@@ -566,34 +569,41 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 	}
 }
 
-void Score::renderCursor(Common::Point pos) {
-	uint spriteId = 0;
-
-	if (_channels.empty())
+void Score::renderCursor(Common::Point pos, bool forceUpdate) {
+	if (_window != _vm->getCursorWindow()) {
+		// The cursor is outside of this window.
 		return;
+	}
 
-	for (int i = _channels.size() - 1; i >= 0; i--)
-		if (_channels[i]->isMouseIn(pos) && !_channels[i]->_cursor.isEmpty()) {
-			spriteId = i;
-			break;
-		}
+	if (_waitForClick) {
+		_vm->setCursor(_waitForClickCursor ? kCursorMouseDown : kCursorMouseUp);
+		return;
+	}
 
-	if (_channels[spriteId]->_cursor.isEmpty()) {
-		if (_currentCursor) {
-			_vm->_wm->popCursor();
-			_currentCursor = nullptr;
-		}
-	} else {
-		if (_currentCursor) {
-			if (*_currentCursor == _channels[spriteId]->_cursor)
+	if (!_channels.empty()) {
+		uint spriteId = 0;
+
+		for (int i = _channels.size() - 1; i >= 0; i--)
+			if (_channels[i]->isMouseIn(pos) && !_channels[i]->_cursor.isEmpty()) {
+				spriteId = i;
+				break;
+			}
+
+		if (!_channels[spriteId]->_cursor.isEmpty()) {
+			if (!forceUpdate && _currentCursor == _channels[spriteId]->_cursor)
 				return;
 
-			_vm->_wm->popCursor();
+			_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, &_channels[spriteId]->_cursor);
+			_currentCursor = _channels[spriteId]->_cursor.getRef();
+			return;
 		}
-
-		_currentCursor = &_channels[spriteId]->_cursor;
-		_vm->_wm->pushCursor(_currentCursor->_cursorType, _currentCursor);
 	}
+
+	if (!forceUpdate && _currentCursor == _defaultCursor)
+		return;
+
+	_vm->_wm->replaceCursor(_defaultCursor._cursorType, &_defaultCursor);
+	_currentCursor = _defaultCursor.getRef();
 }
 
 void Score::renderVideo() {
@@ -612,7 +622,7 @@ void Score::screenShot() {
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
 	Graphics::Surface *newSurface = rawSurface.convertTo(requiredFormat_4byte, _vm->getPalette());
 	Common::String currentPath = _vm->getCurrentPath().c_str();
-	Common::replace(currentPath, "/", "-"); // exclude '/' from screenshot filename prefix
+	Common::replace(currentPath, Common::String(g_director->_dirSeparator), "-"); // exclude dir separator from screenshot filename prefix
 	Common::String prefix = Common::String::format("%s%s", currentPath.c_str(), _movie->getMacName().c_str());
 	Common::String filename = dumpScriptName(prefix.c_str(), kMovieScript, _framesRan, "png");
 
@@ -710,86 +720,34 @@ void Score::playSoundChannel(uint16 frameId) {
 	Frame *frame = _frames[frameId];
 
 	debugC(5, kDebugLoading, "playSoundChannel(): Sound1 %s Sound2 %s", frame->_sound1.asString().c_str(), frame->_sound2.asString().c_str());
-	DirectorSound *sound = _vm->getSoundManager();
+	DirectorSound *sound = _window->getSoundManager();
 
-	// puppet sound will be controlled with lingo
-	if (sound->_puppet)
-		return;
-
-	// 0x0f represent sample sound
-	if (frame->_soundType1 >= 10 && frame->_soundType1 <= 15) {
-		if (_sampleSounds.empty())
-			loadSampleSounds(frame->_soundType1);
-
-		if ((uint)frame->_sound1.member <= _sampleSounds.size()) {
-			sound->playExternalSound(_sampleSounds[frame->_sound1.member - 1], 1, frame->_sound1.member);
-		}
+	if (sound->isChannelPuppet(1)) {
+		sound->playPuppetSound(1);
+	} else if (frame->_soundType1 >= kMinSampledMenu && frame->_soundType1 <= kMaxSampledMenu) {
+		sound->playExternalSound(frame->_soundType1, frame->_sound1.member, 1);
 	} else {
-		sound->playCastMember(frame->_sound1, 1, false);
+		sound->playCastMember(frame->_sound1, 1);
 	}
 
-	if (frame->_soundType2 >= 10 && frame->_soundType2 <= 15) {
-		if (_sampleSounds.empty())
-			loadSampleSounds(frame->_soundType2);
-
-		if ((uint)frame->_sound2.member <= _sampleSounds.size()) {
-			sound->playExternalSound(_sampleSounds[frame->_sound2.member - 1], 2, frame->_sound2.member);
-		}
+	if (sound->isChannelPuppet(2)) {
+		sound->playPuppetSound(2);
+	} else if (frame->_soundType2 >= kMinSampledMenu && frame->_soundType2 <= kMaxSampledMenu) {
+		sound->playExternalSound(frame->_soundType2, frame->_sound2.member, 2);
 	} else {
-		sound->playCastMember(frame->_sound2, 2, false);
+		sound->playCastMember(frame->_sound2, 2);
+	}
+
+	// Channels above 2 are only usable by Lingo.
+	if (g_director->getVersion() >= 400) {
+		sound->playPuppetSound(3);
+		sound->playPuppetSound(4);
 	}
 }
 
 void Score::playQueuedSound() {
-	DirectorSound *sound = _vm->getSoundManager();
+	DirectorSound *sound = _window->getSoundManager();
 	sound->playFPlaySound();
-}
-
-void Score::loadSampleSounds(uint type) {
-	// trying to load external sample sounds
-	// lazy loading
-	uint32 tag = MKTAG('C', 'S', 'N', 'D');
-	uint id = 0xFF;
-	Archive *archive = nullptr;
-
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
-		Common::Array<uint16> idList = it->_value->getResourceIDList(tag);
-		for (uint j = 0; j < idList.size(); j++) {
-			if ((idList[j] & 0xFF) == type) {
-				id = idList[j];
-				archive = it->_value;
-				break;
-			}
-		}
-	}
-
-	if (id == 0xFF) {
-		warning("Score::loadSampleSounds: can not find CSND resource with id %d", type);
-		return;
-	}
-
-	Common::SeekableReadStreamEndian *csndData = archive->getResource(tag, id);
-
-	/*uint32 flag = */ csndData->readUint32();
-
-	// the flag should be 0x604E
-	// i'm not sure what's that mean, but it occurs in those csnd files
-
-	// contains how many csnd data
-	uint16 num = csndData->readUint16();
-
-	// read the offset first;
-	Common::Array<uint32> offset(num);
-	for (uint i = 0; i < num; i++)
-		offset[i] = csndData->readUint32();
-
-	for (uint i = 0; i < num; i++) {
-		csndData->seek(offset[i]);
-
-		SNDDecoder *ad = new SNDDecoder();
-		ad->loadExternalSoundStream(*csndData);
-		_sampleSounds.push_back(ad);
-	}
 }
 
 void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version) {

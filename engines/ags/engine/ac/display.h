@@ -30,8 +30,11 @@ namespace AGS3 {
 using AGS::Shared::GUIMain;
 
 // options for 'disp_type' parameter
+// blocking speech
 #define DISPLAYTEXT_SPEECH        0
+// super-blocking message box
 #define DISPLAYTEXT_MESSAGEBOX    1
+// regular non-blocking overlay
 #define DISPLAYTEXT_NORMALOVERLAY 2
 // also accepts explicit overlay ID >= OVER_CUSTOM
 

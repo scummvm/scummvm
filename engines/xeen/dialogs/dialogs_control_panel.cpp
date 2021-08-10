@@ -83,15 +83,13 @@ int ControlPanel::execute() {
 				return 0;
 		} while (!_buttonValue && events.timeElapsed() < 2);
 
-		switch (_buttonValue) {
-		case Common::KEYCODE_q:
+		if (Res.KeyConstants.DialogsControlPanel.KEY_QUIT == _buttonValue) {
 			if (Confirm::show(g_vm, Res.CONFIRM_QUIT)) {
 				g_vm->_gameMode = GMODE_QUIT;
 				result = 1;
 			}
-			break;
 
-		case Common::KEYCODE_w:
+		} else if (Res.KeyConstants.DialogsControlPanel.KEY_MRWIZARD == _buttonValue) {
 			if (Confirm::show(g_vm, Res.MR_WIZARD)) {
 				w.close();
 				if (!windows[2]._enabled) {
@@ -112,58 +110,45 @@ int ControlPanel::execute() {
 				party._gems = 0;
 				result = 2;
 			}
-			break;
 
-		case Common::KEYCODE_l:
+		} else if (Res.KeyConstants.DialogsControlPanel.KEY_LOAD == _buttonValue) {
 			if (_vm->_mode == MODE_COMBAT) {
 				ErrorScroll::show(_vm, Res.NO_LOADING_IN_COMBAT);
 			} else {
 				// Close dialog and show loading dialog
 				result = 3;
 			}
-			break;
 
-		case Common::KEYCODE_s:
+		} else if (Res.KeyConstants.DialogsControlPanel.KEY_SAVE == _buttonValue) {
 			if (_vm->_mode == MODE_COMBAT) {
 				ErrorScroll::show(_vm, Res.NO_SAVING_IN_COMBAT);
 			} else {
 				// Close dialog and show saving dialog
 				result = 4;
 			}
-			break;
 
-		case Common::KEYCODE_e:
+		} else if (Res.KeyConstants.DialogsControlPanel.KEY_FXON == _buttonValue) {
 			sound.setFxOn(!sound._fxOn);
-			break;
 
-		case Common::KEYCODE_m:
+		} else if (Res.KeyConstants.DialogsControlPanel.KEY_MUSICON == _buttonValue) {
 			sound.setMusicOn(!sound._musicOn);
-			break;
 
-		case Common::KEYCODE_ESCAPE:
+		} else if (Common::KEYCODE_ESCAPE == _buttonValue) {
 			result = 1;
-			break;
 
-		// Goober cheat sequence
-		case Common::KEYCODE_g:
+		} else if (Common::KEYCODE_g == _buttonValue) { // Goober cheat sequence
 			debugCtr = 1;
-			break;
-		case Common::KEYCODE_o:
+		} else if (Common::KEYCODE_o == _buttonValue) {
 			debugCtr = (debugCtr == 1 || debugCtr == 2) ? 2 : 0;
-			break;
-		case Common::KEYCODE_b:
+		} else if (Common::KEYCODE_b == _buttonValue) {
 			debugCtr = (debugCtr == 2) ? 3 : 0;
-			break;
-		case Common::KEYCODE_r:
+		} else if (Common::KEYCODE_r == _buttonValue) {
 			if (debugCtr == 3)
 				_debugFlag = true;
 			else
 				debugCtr = 0;
-			break;
-
-		default:
-			break;
 		}
+
 	} while (!result);
 
 	w.close();
@@ -181,18 +166,17 @@ int ControlPanel::execute() {
 
 void ControlPanel::loadButtons() {
 	_iconSprites.load("cpanel.icn");
-
-	addButton(Common::Rect(214, 56, 244, 69), Common::KEYCODE_e, 0, &_iconSprites);
-	addButton(Common::Rect(214, 75, 244, 88), Common::KEYCODE_m, 0, &_iconSprites);
-	addButton(Common::Rect(135, 56, 165, 69), Common::KEYCODE_l, 0, &_iconSprites);
-	addButton(Common::Rect(135, 75, 165, 88), Common::KEYCODE_s, 0, &_iconSprites);
+	addButton(Common::Rect(214, 56, 244, 69), Res.KeyConstants.DialogsControlPanel.KEY_FXON, 0, &_iconSprites);
+	addButton(Common::Rect(214, 75, 244, 88), Res.KeyConstants.DialogsControlPanel.KEY_MUSICON, 0, &_iconSprites);
+	addButton(Common::Rect(135, 56, 165, 69), Res.KeyConstants.DialogsControlPanel.KEY_LOAD, 0, &_iconSprites);
+	addButton(Common::Rect(135, 75, 165, 88), Res.KeyConstants.DialogsControlPanel.KEY_SAVE, 0, &_iconSprites);
 
 	// For ScummVM we've merged both Save and Save As into a single
 	// save item, so we don't need this one
 	addButton(Common::Rect(), 0);
 
-	addButton(Common::Rect(135, 94, 165, 107), Common::KEYCODE_q, 0, &_iconSprites);
-	addButton(Common::Rect(175, 113, 205, 126), Common::KEYCODE_w, 0, &_iconSprites);
+	addButton(Common::Rect(135, 94, 165, 107), Res.KeyConstants.DialogsControlPanel.KEY_QUIT, 0, &_iconSprites);
+	addButton(Common::Rect(175, 113, 205, 126), Res.KeyConstants.DialogsControlPanel.KEY_MRWIZARD, 0, &_iconSprites);
 }
 
 Common::String ControlPanel::getButtonText() {

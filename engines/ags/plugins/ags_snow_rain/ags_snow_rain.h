@@ -37,11 +37,11 @@ namespace AGSSnowRain {
 class AGSSnowRain : public PluginBase {
 	SCRIPT_HASH(AGSSnowRain)
 private:
-	Weather _rain;
-	Weather _snow;
 	int32 _screenWidth = 320;
 	int32 _screenHeight = 200;
 	int32 _screenColorDepth = 32;
+	Weather _rain;
+	Weather _snow;
 
 private:
 	void srSetWindSpeed(ScriptMethodParams &params);

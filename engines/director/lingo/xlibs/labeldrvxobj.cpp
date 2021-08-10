@@ -43,8 +43,11 @@
 
 namespace Director {
 
-// The name is different from the obj filename.
-static const char *xlibName = "LabelDrv";
+const char *LabelDrvXObj::xlibName = "LabelDrv";
+const char *LabelDrvXObj::fileNames[] = {
+	"LabelDrv",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",				LabelDrvXObj::m_new,		 0, 0,	400 },	// D4
@@ -53,19 +56,22 @@ static MethodProto xlibMethods[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-void LabelDrvXObj::initialize(int type) {
-	LabelDrvXObject::initMethods(xlibMethods);
-	if (type & kXObj) {
-		if (!g_lingo->_globalvars.contains(xlibName)) {
-			LabelDrvXObject *xobj = new LabelDrvXObject(kXObj);
-			g_lingo->_globalvars[xlibName] = xobj;
-		} else {
-			warning("LabelDrvXObj already initialized");
-		}
+void LabelDrvXObj::open(int type) {
+	if (type == kXObj) {
+		LabelDrvXObject::initMethods(xlibMethods);
+		LabelDrvXObject *xobj = new LabelDrvXObject(kXObj);
+		g_lingo->_globalvars[xlibName] = xobj;
 	}
 }
 
-LabelDrvXObject::LabelDrvXObject(ObjectType ObjectType) :Object<LabelDrvXObject>("LabelDrvXObj") {
+void LabelDrvXObj::close(int type) {
+	if (type == kXObj) {
+		LabelDrvXObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
+	}
+}
+
+LabelDrvXObject::LabelDrvXObject(ObjectType ObjectType) :Object<LabelDrvXObject>("LabelDrv") {
 	_objType = ObjectType;
 }
 

@@ -34,6 +34,7 @@
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/mutex.h"
 #include "ags/lib/std/queue.h"
+#include "ags/lib/std/regex.h"
 #include "ags/lib/std/set.h"
 #include "ags/lib/std/thread.h"
 #include "ags/lib/std/type_traits.h"

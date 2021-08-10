@@ -186,6 +186,16 @@ bool Ultima8Engine::initialize() {
 void Ultima8Engine::deinitialize() {
 }
 
+void Ultima8Engine::pauseEngineIntern(bool pause) {
+	if (_mixer)
+		_mixer->pauseAll(pause);
+	if (_audioMixer) {
+		MidiPlayer *midiPlayer = _audioMixer->getMidiPlayer();
+		if (midiPlayer)
+			midiPlayer->pause(pause);
+	}
+}
+
 bool Ultima8Engine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsSubtitleOptions) ||
@@ -981,7 +991,7 @@ bool Ultima8Engine::saveGame(int slot, const Std::string &desc) {
 	// (Avatar is flagged dead by usecode when you finish the _game as well.)
 	MainActor *av = getMainActor();
 	if (!av || av->hasActorFlags(Actor::ACT_DEAD)) {
-		pout << "Can't save: _game over." << Std::endl;
+		pout << "Can't save: game over." << Std::endl;
 		return false;
 	}
 
@@ -1232,7 +1242,7 @@ void Ultima8Engine::syncSoundSettings() {
 	AudioMixer *audioMixer = AudioMixer::get_instance();
 	MidiPlayer *midiPlayer = audioMixer ? audioMixer->getMidiPlayer() : nullptr;
 	if (midiPlayer)
-		midiPlayer->setVolume(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
+		midiPlayer->syncSoundSettings();
 }
 
 void Ultima8Engine::applyGameSettings() {

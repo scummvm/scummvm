@@ -230,6 +230,7 @@ _ar="ar cru"
 _as="as"
 _dwp=dwp
 _windres=windres
+_ldd=ldd
 _stagingpath="staging"
 _amigaospath="install"
 _morphospath="PROGDIR:"
@@ -461,11 +462,6 @@ find_sdlconfig() {
 			if test -f "$path_dir/$sdlconfig" ; then
 				_sdlconfig="$path_dir/$sdlconfig"
 				echo $_sdlconfig
-				# Save the prefix
-				_sdlpath=$path_dir
-				if test `basename $path_dir` = bin || test `basename $path_dir` = sbin ; then
-					_sdlpath=`dirname $path_dir`
-				fi
 				# break at first sdl-config found in path
 				break 2
 			fi
@@ -1035,7 +1031,7 @@ Some influential environment variables:
   LD                 linker command
   LDFLAGS            linker flags, e.g. -L<lib dir> if you have libraries in a
                      nonstandard directory <lib dir>
-  PKG_CONFIG_LIBDIR  list of directories where pkg-config ‘.pc’ files are
+  PKG_CONFIG_LIBDIR  list of directories where pkg-config '.pc' files are
                      looked up
   RANLIB             archive indexer command
   SDL_CONFIG         SDL configurer script name (not path)
@@ -2050,7 +2046,7 @@ if test "$have_icc" = yes; then
 	add_line_to_config_mk 'HAVE_ICC = 1'
 
 	# Make ICC error out on unknown command line options instead of printing
-	# a warning. This is for example required to make the -Wglobal-destructors
+	# a warning. This is for example required to make the -Wglobal-constructors
 	# detection work correctly.
 	append_var CXXFLAGS "-diag-error 10006,10148"
 
@@ -3413,10 +3409,16 @@ if test -n "$_host"; then
 			_zlib=yes
 			;;
 		*mingw32*)
-			_sdlconfig=$_host-sdl-config
+			_sdlconfig=$_host-sdl2-config
+			_libcurlconfig=$_host-curl-config
+			_pkgconfig=$_host-pkg-config
 			_windres=$_host-windres
 			_ar="$_host-ar cr"
 			_ranlib=$_host-ranlib
+			_strip=$_host-strip
+			if `which $_host-peldd >/dev/null 2>&1`; then
+				_ldd="$_host-peldd -t --ignore-errors"
+			fi
 			;;
 		mips-sgi*)
 			append_var LDFLAGS "-static-libgcc"
@@ -3725,7 +3727,7 @@ _pkg_config=no
 command -v $_pkgconfig >/dev/null 2>&1 && _pkg_config=yes
 echo "$_pkg_config"
 
-if test "$_pkg_config" = yes && test -n "$_host" && test -z "$PKG_CONFIG_LIBDIR"; then
+if test "$_pkg_config" = yes && test -n "$_host" && test -z "$PKG_CONFIG_LIBDIR" && test "$_pkgconfig" = pkg-config; then
 	echo "WARNING: When cross-compiling PKG_CONFIG_LIBDIR must be set to the location of the .pc files for the target"
 fi
 
@@ -3734,11 +3736,11 @@ fi
 #
 if test "$_sdl" = auto ; then
 	find_sdlconfig
-	append_var SDL_CFLAGS "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
+	append_var SDL_CFLAGS "`$_sdlconfig --cflags | sed 's/[[:space:]]*-Dmain=SDL_main//g'`"
 	if test "$_static_build" = yes ; then
-		append_var SDL_LIBS "`$_sdlconfig --prefix="$_sdlpath" --static-libs`"
+		append_var SDL_LIBS "`$_sdlconfig --static-libs`"
 	else
-		append_var SDL_LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
+		append_var SDL_LIBS "`$_sdlconfig --libs`"
 	fi
 	_sdlversion=`$_sdlconfig --version`
 
@@ -3788,7 +3790,7 @@ if test "$_sdlnet" = auto ; then
 	if test "$_sdl" = no || test "$_sdlMajorVersionNumber" = 2; then
 		if test "$_pkg_config" = "yes" && $_pkgconfig --exists SDL2_net; then
 			append_var SDL2_NET_LIBS "`$_pkgconfig --libs SDL2_net`"
-			append_var SDL2_NET_CFLAGS "`$_pkgconfig --cflags SDL2_net`"
+			append_var SDL2_NET_CFLAGS "`$_pkgconfig --cflags SDL2_net | sed 's/[[:space:]]*-Dmain=SDL_main//g'`"
 		else
 			append_var SDL2_NET_LIBS "-lSDL2_net"
 		fi
@@ -3797,7 +3799,7 @@ if test "$_sdlnet" = auto ; then
 	if test "$_sdl" = no || test "$_sdlMajorVersionNumber" = 1; then
 		if test "$_pkg_config" = "yes" && $_pkgconfig --exists SDL_net; then
 			append_var SDL1_NET_LIBS "`$_pkgconfig --libs SDL_net`"
-			append_var SDL1_NET_CFLAGS "`$_pkgconfig --cflags SDL_net`"
+			append_var SDL1_NET_CFLAGS "`$_pkgconfig --cflags SDL_net | sed 's/[[:space:]]*-Dmain=SDL_main//g'`"
 		else
 			append_var SDL1_NET_LIBS "-lSDL_net"
 		fi
@@ -4729,7 +4731,7 @@ EOF
 		# don't execute while cross compiling
 		cc_check $A52_CFLAGS $A52_LIBS -la52 && _a52=yes
 	else
-		cc_check_no_clean $A52_CFLAGS $A52_LIBS -la52 && $TMPO$HOSTEXEEXT && _a52=yes
+		cc_check_no_clean $A52_CFLAGS $A52_LIBS -la52 && $TMPO$HOSTEXEEXT 2>/dev/null && _a52=yes
 		cc_check_clean
 	fi
 fi
@@ -5035,6 +5037,7 @@ if test "$_text_console" = yes ; then
 #include <readline/history.h>
 
 int main(void) {
+	rl_hook_func_t f; // not present in apple's libedit
 	char *x = readline("");
 }
 EOF
@@ -5052,9 +5055,6 @@ else
 fi
 
 if test "$_readline" = yes ; then
-	append_var LIBS "$READLINE_LIBS $_READLINE_LIBS"
-	append_var INCLUDES "$READLINE_CFLAGS"
-
 	#
 	# Check the type of rl_completion_entry_function.
 	# It can be int(*)(const char *, int) or char *(*)(const char *, int).
@@ -5071,9 +5071,15 @@ int main(void) {
 	rl_completion_entry_function = &readline_completionFunction;
 }
 EOF
-	cc_check -c && add_line_to_config_h '#define USE_READLINE_INT_COMPLETION'
+	cc_check $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS -c && add_line_to_config_h '#define USE_READLINE_INT_COMPLETION'
 
 fi
+
+if test "$_readline" = yes ; then
+	append_var LIBS "$READLINE_LIBS $_READLINE_LIBS"
+	append_var INCLUDES "$READLINE_CFLAGS"
+fi
+
 define_in_config_h_if_yes "$_readline" 'USE_READLINE'
 
 define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE_FOR_DEBUGGER'
@@ -5088,7 +5094,7 @@ else
 if test "$_libunity" = auto ; then
 	case $_host_os in
 		mingw*)
-			# pkgconfig and unity are not supported on mingw
+			# unity is not supported on mingw
 			_libunity=no
 			;;
 		*)
@@ -5129,7 +5135,7 @@ else
 if test "$_gtk" = auto ; then
 	case $_host_os in
 		mingw*)
-			# pkgconfig and gtk are not supported on mingw
+			# gtk is not required on mingw
 			_gtk=no
 			;;
 		*)
@@ -6161,6 +6167,7 @@ AS := $_as
 ASFLAGS := $ASFLAGS
 DWP := $_dwp
 WINDRES := $_windres
+LDD := $_ldd
 WINDRESFLAGS := $WINDRESFLAGS
 STAGINGPATH=$_stagingpath
 AMIGAOSPATH=$_amigaospath

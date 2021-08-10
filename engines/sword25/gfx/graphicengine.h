@@ -60,10 +60,21 @@ class Panel;
 class Screenshot;
 class RenderObjectManager;
 
-typedef uint BS_COLOR;
+#define BS_ASHIFT 24
+#define BS_RSHIFT 16
+#define BS_GSHIFT 8
+#define BS_BSHIFT 0
 
-#define BS_RGB(R,G,B)       (0xFF000000 | ((R) << 16) | ((G) << 8) | (B))
-#define BS_ARGB(A,R,G,B)    (((A) << 24) | ((R) << 16) | ((G) << 8) | (B))
+#define BS_AMASK 0xFF000000
+#define BS_RMASK 0x00FF0000
+#define BS_GMASK 0x0000FF00
+#define BS_BMASK 0x000000FF
+
+#define BS_RGBMASK (BS_RMASK | BS_GMASK | BS_BMASK)
+#define BS_ARGBMASK (BS_AMASK | BS_RMASK | BS_GMASK | BS_BMASK)
+
+#define BS_RGB(R,G,B)       (BS_AMASK | ((R) << BS_RSHIFT) | ((G) << BS_GSHIFT) | ((B) << BS_BSHIFT))
+#define BS_ARGB(A,R,G,B)    (((A) << BS_ASHIFT) | ((R) << BS_RSHIFT) | ((G) << BS_GSHIFT) | ((B) << BS_BSHIFT))
 
 /**
  * This is the graphics engine. Unlike the original code, this is not
@@ -72,31 +83,6 @@ typedef uint BS_COLOR;
  */
 class GraphicEngine : public ResourceService, public Persistable {
 public:
-	// Enums
-	// -----
-
-	// Color formats
-	//
-	/**
-	 * The color format used by the engine
-	 */
-	enum COLOR_FORMATS {
-		/// Undefined/unknown color format
-		CF_UNKNOWN = 0,
-		/**
-		 * 24-bit color format (R8G8B8)
-		 */
-		CF_RGB24,
-		/**
-		 * 32-bit color format (A8R8G8B8) (little endian)
-		*/
-		CF_ARGB32,
-		/**
-		    32-bit color format (A8B8G8R8) (little endian)
-		*/
-		CF_ABGR32
-	};
-
 	// Constructor
 	// -----------
 	GraphicEngine(Kernel *pKernel);
@@ -236,39 +222,6 @@ public:
 	Common::SeekableReadStream *getThumbnail() { return _thumbnail; }
 
 	// Access methods
-
-	/**
-	 * Returns the size of a pixel entry in bytes for a particular color format
-	 * @param ColorFormat   The desired color format. The parameter must be of type COLOR_FORMATS
-	 * @return              Returns the size of a pixel in bytes. If the color format is unknown, -1 is returned.
-	 */
-	static int getPixelSize(GraphicEngine::COLOR_FORMATS colorFormat) {
-		switch (colorFormat) {
-		case GraphicEngine::CF_ARGB32:
-			return 4;
-		default:
-			return -1;
-		}
-	}
-
-	/**
-	 * Calculates the length of an image line in bytes, depending on a given color format.
-	 * @param ColorFormat   The color format
-	 * @param Width         The width of the line in pixels
-	 * @return              Reflects the length of the line in bytes. If the color format is
-	 * unknown, -1 is returned
-	 */
-	static int calcPitch(GraphicEngine::COLOR_FORMATS colorFormat, int width) {
-		switch (colorFormat) {
-		case GraphicEngine::CF_ARGB32:
-			return width * 4;
-
-		default:
-			assert(false);
-		}
-
-		return -1;
-	}
 
 	// Resource-Managing Methods
 	// --------------------------

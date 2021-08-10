@@ -33,10 +33,10 @@ namespace TwinE {
 class Parser {
 public:
 	virtual ~Parser() {}
-	virtual bool loadFromStream(Common::SeekableReadStream &stream) = 0;
+	virtual bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) = 0;
 
-	bool loadFromBuffer(const uint8 *buf, uint32 size);
-	bool loadFromHQR(const char *name, int index);
+	bool loadFromBuffer(const uint8 *buf, uint32 size, bool lba1);
+	bool loadFromHQR(const char *name, int index, bool lba1);
 };
 
 } // End of namespace TwinE

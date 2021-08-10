@@ -193,22 +193,47 @@ static const ExtraGuiOption fmtownsTrimTo200 = {
 	false
 };
 
+static const ExtraGuiOption macV3LowQualityMusic = {
+	_s("Play simplified music"),
+	_s("This music was presumably intended for low-end Macs, and uses only one channel."),
+	"mac_v3_low_quality_music",
+	false
+};
+
+static const ExtraGuiOption smoothScrolling = {
+	_s("Enable smooth scrolling"),
+	_s("(instead of the normal 8-pixels steps scrolling)"),
+	"smooth_scroll",
+	true
+};
 
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
 	const Common::String guiOptionsString = ConfMan.get("guioptions", target);
+	const Common::String gameid = ConfMan.get("gameid", target);
+	const Common::String extra = ConfMan.get("extra", target);
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 
-	if (target.empty() || ConfMan.get("gameid", target) == "comi") {
+	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);
 	}
-	if (target.empty() || Common::parsePlatform(ConfMan.get("platform", target)) == Common::kPlatformNES) {
+	if (target.empty() || platform == Common::kPlatformNES) {
 		options.push_back(mmnesObjectLabelsOption);
 	}
-	if (target.empty() || (ConfMan.get("platform", target) == "fmtowns" && guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))) {
-		options.push_back(fmtownsTrimTo200);
+	if (target.empty() || platform == Common::kPlatformFMTowns) {
+		options.push_back(smoothScrolling);
+		if (guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))
+			options.push_back(fmtownsTrimTo200);
 	}
+	// The Steam Mac version of Loom is more akin to the VGA DOS version,
+	// and that's how ScummVM usually sees it. But that rebranding does not
+	// happen until later.
+	if (target.empty() || (gameid == "loom" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
+		options.push_back(macV3LowQualityMusic);
+	}
+
 	return options;
 }
 

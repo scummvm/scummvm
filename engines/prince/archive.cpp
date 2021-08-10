@@ -130,7 +130,8 @@ void PtcArchive::close() {
 	_items.clear();
 }
 
-bool PtcArchive::hasFile(const Common::String &name) const {
+bool PtcArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	// TODO: check if path matching should be added
 	return _items.contains(name);
 }
@@ -146,14 +147,16 @@ int PtcArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return matches;
 }
 
-const Common::ArchiveMemberPtr PtcArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr PtcArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!_items.contains(name)) {
 		Common::ArchiveMemberPtr();
 	}
 	return Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *PtcArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!_items.contains(name)) {
 		return 0;
 	}

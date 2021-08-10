@@ -701,6 +701,8 @@ public:
 	void applyWorkaroundIfNeeded(ResType type, int idx);
 	bool verifyMI2MacBootScript();
 	bool verifyMI2MacBootScript(byte *buf, int size);
+	bool tryPatchMI1CannibalScript(byte *buf, int size);
+
 	int getResourceDataSize(const byte *ptr) const;
 	void dumpResource(const char *tag, int index, const byte *ptr, int length = -1);
 
@@ -1388,6 +1390,7 @@ protected:
 	int _refreshDuration[20];
 	int _refreshArrayPos;
 	bool _refreshNeedCatchUp;
+	bool _enableSmoothScrolling;
 	uint32 _scrollTimer;
 	uint32 _scrollDestOffset;
 	uint16 _scrollFeedStrips[3];

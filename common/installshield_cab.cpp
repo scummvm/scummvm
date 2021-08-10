@@ -64,10 +64,10 @@ public:
 	void close();
 
 	// Archive API implementation
-	virtual bool hasFile(const String &name) const;
+	virtual bool hasFile(const Path &path) const;
 	virtual int listMembers(ArchiveMemberList &list) const;
-	virtual const ArchiveMemberPtr getMember(const String &name) const;
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+	virtual const ArchiveMemberPtr getMember(const Path &path) const;
+	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const;
 
 private:
 	struct FileEntry {
@@ -217,7 +217,8 @@ void InstallShieldCabinet::close() {
 	_version = 0;
 }
 
-bool InstallShieldCabinet::hasFile(const String &name) const {
+bool InstallShieldCabinet::hasFile(const Path &path) const {
+	String name = path.toString();
 	return _map.contains(name);
 }
 
@@ -228,11 +229,13 @@ int InstallShieldCabinet::listMembers(ArchiveMemberList &list) const {
 	return _map.size();
 }
 
-const ArchiveMemberPtr InstallShieldCabinet::getMember(const String &name) const {
+const ArchiveMemberPtr InstallShieldCabinet::getMember(const Path &path) const {
+	String name = path.toString();
 	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
 }
 
-SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const String &name) const {
+SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const Path &path) const {
+	String name = path.toString();
 	if (!_map.contains(name))
 		return nullptr;
 

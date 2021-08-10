@@ -69,9 +69,6 @@ public:
 	int getHeight() const override {
 		return _surface.h;
 	}
-	GraphicEngine::COLOR_FORMATS getColorFormat() const override {
-		return GraphicEngine::CF_ARGB32;
-	}
 
 	void copyDirectly(int posX, int posY);
 

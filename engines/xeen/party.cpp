@@ -661,10 +661,18 @@ int Party::subtract(ConsumableType consumableId, uint amount, PartyBank whereId,
 	return true;
 }
 
+const char *Party::getConsumableForm(ConsumableType consumableId) {
+	switch (consumableId) {
+	case CONS_GOLD: return Res.CONSUMABLE_GOLD_FORMS[0];
+	case CONS_GEMS: return Res.CONSUMABLE_GEM_FORMS[0];
+	default:        return Res.CONSUMABLE_NAMES[consumableId];
+	}
+}
+
 void Party::notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, MessageWaitType wait) {
 	Common::String msg = Common::String::format(
 		mode ? Res.NO_X_IN_THE_Y : Res.NOT_ENOUGH_X_IN_THE_Y,
-		Res.CONSUMABLE_NAMES[consumableId], Res.WHERE_NAMES[whereId]);
+		getConsumableForm(consumableId), Res.WHERE_NAMES[whereId]);
 	ErrorScroll::show(_vm, msg, wait);
 }
 
@@ -812,6 +820,13 @@ bool Party::arePacksFull() const {
 	return total == (_activeParty.size() * NUM_ITEM_CATEGORIES);
 }
 
+const char *Party::getFoundForm(const Character &c) {
+	if (Common::RU_RUS == g_vm->getLanguage()) 
+		return Res.FOUND[FEMALE == c._sex ? 1 : 0];
+	else 
+		return Res.FOUND[0];
+}
+
 void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int itemIndex) {
 	EventsManager &events = *_vm->_events;
 	Sound &sound = *_vm->_sound;
@@ -835,9 +850,9 @@ void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int ite
 	if (index >= (_vm->getGameID() == GType_Swords ? 88 : 82)) {
 		// Quest item, give an extra '*' prefix
 		Common::String format = Common::String::format("\f04 * \fd%s", itemName);
-		w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), format.c_str()));
+		w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), getFoundForm(c), format.c_str()));
 	} else {
-		w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), itemName));
+		w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), getFoundForm(c), itemName));
 	}
 
 	w.update();
@@ -1462,6 +1477,20 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 	return false;
 }
 
+const char *Party::getPickLockForm(const Character &c) {
+	if (Common::RU_RUS == g_vm->getLanguage())
+		return Res.PICK_FORM[FEMALE == c._sex ? 1 : 0];
+	else
+		return Res.PICK_FORM[0];
+}
+
+const char *Party::getUnablePickLockForm(const Character &c) {
+	if (Common::RU_RUS == g_vm->getLanguage())
+		return Res.UNABLE_TO_PICK_FORM[FEMALE == c._sex ? 1 : 0];
+	else
+		return Res.UNABLE_TO_PICK_FORM[0];
+}
+
 bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint val3, int charId) {
 	Combat &combat = *g_vm->_combat;
 	FileManager &files = *g_vm->_files;
@@ -1500,14 +1529,14 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 
 					sound.playFX(10);
 					intf.draw3d(true, false);
-					Common::String msg = Common::String::format(Res.PICKS_THE_LOCK, c._name.c_str());
+					Common::String msg = Common::String::format(Res.PICKS_THE_LOCK, c._name.c_str(), getPickLockForm(c));
 					ErrorScroll::show(g_vm, msg, WT_NONFREEZED_WAIT);
 				} else {
 					sound.playFX(21);
 
 					obj._frame = 0;
 					scripts._animCounter = 0;
-					Common::String msg = Common::String::format(Res.UNABLE_TO_PICK_LOCK, c._name.c_str());
+					Common::String msg = Common::String::format(Res.UNABLE_TO_PICK_LOCK, c._name.c_str(), getUnablePickLockForm(c));
 					ErrorScroll::show(g_vm, msg, WT_NONFREEZED_WAIT);
 
 					scripts._animCounter = 255;

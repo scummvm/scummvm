@@ -62,8 +62,8 @@ public:
 
 	void stop();
 
-	void playSample(AudioSample *sample, int loop, int priority, bool paused,
-		uint32 pitchShift, int lvol, int rvol);
+	void playSample(AudioSample *sample, int loop, int priority, bool paused, 
+		bool isSpeech, uint32 pitchShift, int lvol, int rvol);
 
 	void playMusicStream(Audio::AudioStream *stream);
 

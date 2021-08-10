@@ -51,7 +51,8 @@ public abstract class ResidualVM implements SurfaceHolder.Callback, Runnable {
 	// Feed an event to ResidualVM.  Safe to call from other threads.
 	final public native void pushEvent(int type, int arg1, int arg2, int arg3,
 										int arg4, int arg5, int arg6);
-	final public native String getCurrentCharset();
+
+	final public native String getNativeVersionInfo();
 
 	// Callbacks from C++ peer instance
 	abstract protected void getDPI(float[] values);

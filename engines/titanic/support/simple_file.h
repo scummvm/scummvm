@@ -41,7 +41,7 @@ class DecompressorData;
  */
 class File : public Common::File {
 public:
-	bool open(const Common::String &filename) override;
+	bool open(const Common::Path &filename) override;
 };
 
 /**

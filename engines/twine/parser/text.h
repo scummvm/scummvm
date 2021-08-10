@@ -49,7 +49,7 @@ private:
 	// custom texts that are not included in the original game
 	void initCustomTexts(TextBankId textBankId);
 public:
-	bool loadFromHQR(const char *name, TextBankId textBankId, int language, int entryCount);
+	bool loadFromHQR(const char *name, TextBankId textBankId, int language, bool lba1, int entryCount);
 
 	const TextEntry *getText(TextBankId textBankId, TextId textIndex) const;
 };

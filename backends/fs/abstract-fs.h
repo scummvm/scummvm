@@ -190,7 +190,7 @@ public:
 	 *
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
-	virtual Common::WriteStream *createWriteStream() = 0;
+	virtual Common::SeekableWriteStream *createWriteStream() = 0;
 
 	/**
 	* Creates a directory referred by this node.

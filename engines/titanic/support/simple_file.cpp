@@ -36,9 +36,9 @@ CString readStringFromStream(Common::SeekableReadStream *s) {
 
 /*------------------------------------------------------------------------*/
 
-bool File::open(const Common::String &filename) {
+bool File::open(const Common::Path &filename) {
 	if (!Common::File::open(filename))
-		error("Could not open file - %s", filename.c_str());
+		error("Could not open file - %s", filename.toString().c_str());
 	return true;
 }
 

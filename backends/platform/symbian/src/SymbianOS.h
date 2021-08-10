@@ -43,6 +43,7 @@ public:
 
 	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
+	virtual bool openUrl(const Common::String &url) override;
 protected:
 	TFileName _localpath;
 };

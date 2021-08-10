@@ -37,12 +37,17 @@ MODULE_OBJS = \
 	lingo/lingo-preprocessor.o \
 	lingo/lingo-the.o \
 	lingo/lingo-utils.o \
+	lingo/xlibs/cdromxobj.o \
 	lingo/xlibs/fileio.o \
 	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/fplayxobj.o \
 	lingo/xlibs/labeldrvxobj.o \
 	lingo/xlibs/palxobj.o \
+	lingo/xlibs/orthoplayxobj.o \
+	lingo/xlibs/popupmenuxobj.o \
+	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
+	lingo/xlibs/videodiscxobj.o \
 	lingo/xlibs/winxobj.o
 
 # HACK: Skip this when including the file for detection objects.

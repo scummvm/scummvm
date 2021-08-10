@@ -718,6 +718,16 @@ RuntimeScriptValue Sc_GetWalkableAreaAtScreen(const RuntimeScriptValue *params, 
 	API_SCALL_INT_PINT2(GetWalkableAreaAtScreen);
 }
 
+RuntimeScriptValue Sc_GetDrawingSurfaceForWalkableArea(const RuntimeScriptValue *params, int32_t param_count) {
+	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaWalkable);
+	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
+}
+
+RuntimeScriptValue Sc_GetDrawingSurfaceForWalkbehind(const RuntimeScriptValue *params, int32_t param_count) {
+	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaWalkBehind);
+	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
+}
+
 // void (int amnt)
 RuntimeScriptValue Sc_GiveScore(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT(GiveScore);
@@ -1862,9 +1872,17 @@ RuntimeScriptValue Sc_WaitKey(const RuntimeScriptValue *params, int32_t param_co
 	API_SCALL_INT_PINT(WaitKey);
 }
 
+RuntimeScriptValue Sc_WaitMouse(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_INT_PINT(WaitMouse);
+}
+
 // int (int nloops)
 RuntimeScriptValue Sc_WaitMouseKey(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT(WaitMouseKey);
+}
+
+RuntimeScriptValue Sc_SkipWait(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID(SkipWait);
 }
 
 void RegisterGlobalAPI() {
@@ -2000,6 +2018,8 @@ void RegisterGlobalAPI() {
 	ccAddExternalStaticFunction("GetWalkableAreaAtRoom",    Sc_GetWalkableAreaAtRoom);
 	ccAddExternalStaticFunction("GetWalkableAreaAt",        Sc_GetWalkableAreaAtScreen);
 	ccAddExternalStaticFunction("GetWalkableAreaAtScreen",  Sc_GetWalkableAreaAtScreen);
+	ccAddExternalStaticFunction("GetDrawingSurfaceForWalkableArea", Sc_GetDrawingSurfaceForWalkableArea);
+	ccAddExternalStaticFunction("GetDrawingSurfaceForWalkbehind", Sc_GetDrawingSurfaceForWalkbehind);
 	ccAddExternalStaticFunction("GiveScore",                Sc_GiveScore);
 	ccAddExternalStaticFunction("HasPlayerBeenInRoom",      Sc_HasPlayerBeenInRoom);
 	ccAddExternalStaticFunction("HideMouseCursor",          Sc_HideMouseCursor);
@@ -2235,7 +2255,9 @@ void RegisterGlobalAPI() {
 	ccAddExternalStaticFunction("UpdatePalette",            Sc_UpdatePalette);
 	ccAddExternalStaticFunction("Wait",                     Sc_scrWait);
 	ccAddExternalStaticFunction("WaitKey",                  Sc_WaitKey);
+	ccAddExternalStaticFunction("WaitMouse",                Sc_WaitMouse);
 	ccAddExternalStaticFunction("WaitMouseKey",             Sc_WaitMouseKey);
+	ccAddExternalStaticFunction("SkipWait",                 Sc_SkipWait);
 }
 
 } // namespace AGS3

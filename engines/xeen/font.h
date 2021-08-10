@@ -23,6 +23,7 @@
 #ifndef XEEN_FONT_H
 #define XEEN_FONT_H
 
+#include "common/language.h"
 #include "xeen/xsurface.h"
 
 namespace Xeen {
@@ -46,6 +47,19 @@ class FontSurface: public XSurface, public FontData {
 private:
 	const char *_displayString;
 	bool _msgWraps;
+
+	Common::Language lang;
+	/**
+	 * fnt file offsets
+	 */
+	int _fntEnOffset;               // English characters
+	int _fntEnReducedOffset;		// English characters (reduced)
+	int _fntNonEnOffset;			// Non-English characters
+	int _fntNonEnReducedOffset;     // Non-English characters (reduced)
+	int _fntEnWOffset;				// English characters Width
+	int _fntEnReducedWOffset;       // English characters (reduced) Width
+	int _fntNonEnWOffset;			// Non-English characters Width
+	int _fntNonEnReducedWOffset;    // Non-English characters (reduced) Width
 
 	/**
 	 * Return the next pending character to display
@@ -98,7 +112,7 @@ public:
 	 *		justification is set, the message will be written at _writePos
 	 */
 	const char *writeString(const Common::String &s, const Common::Rect &clipRect);
-
+	bool isSpace(char c);
 	/**
 	 * Write a charcter to the window
 	 * @param c			Character

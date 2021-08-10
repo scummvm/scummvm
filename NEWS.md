@@ -14,7 +14,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Transylvania.
    - Added support for Crimson Crown.
    - Added support for OO-Topos.
-   - Added support for Glulx interactive fiction games
+   - Added support for Glulx interactive fiction games.
    - Added support for Lure of the Temptress Konami release.
    - Added support for Private Eye (US release).
    - Added support for Spanish Blue Force.
@@ -38,6 +38,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added HiDPI support to the ScummVM GUI.
    - Added command line option --window-size for specifying ScummVM window size,
      applicable only to the OpenGL renderer.
+
+ AGI:
+   - Added support for Russian versions. Input now works.
 
  AGOS:
    - Added support for the Japanese PC-98 version of Elvira 1.
@@ -87,11 +90,32 @@ For a more comprehensive changelog of the latest experimental code, see:
      issues in screen transitions and avoids mode changes when playing Mac QuickTime videos.
    - Added custom palette mods for SQ3 and LSL2 from the FreeSCI project. When enabled, the mods improve the visuals
      in these two games.
-   - Added support for the Korean fan translations of Castle of Dr. Brain, Eco Quest, Gabriel Knight,
-     King's Quest 1, 5 and 6, Laura Bow 2: Dagger of Amon Ra and Space Quest 4.
-   - Added support for numerous Korean translations from scummkor project.
-   - Added detection for LSL6 Russian.
-   - Added detection for alternate LSL7 Russian.
+   - Added support for Macintosh version of Gabriel Knight 1.
+   - Added support for CD-Audio version of Mixed-Up Mother Goose.
+   - Added support for Korean fan translations from the scummkor project: Castle of Dr. Brain,
+     EcoQuest 1, Gabriel Knight 1, King's Quest 1, 5, and 6, Laura Bow 2, and Space Quest 4.
+   - Added support for Space Quest 4 Update 1.3 by New Rising Sun.
+   - Added support for French LSL1VGA.
+   - Added support for Hebrew QFG1VGA.
+   - Added support for Hebrew GK1.
+   - Added support for Russian Longbow.
+   - Added support for Russian LSL6.
+   - Added support for alternate Russian LSL7.
+   - Added support for alternate Polish LSL7 including files packaged with InstallShield.
+   - Added support for alternate Russian SQ5.
+   - Added support for alternate Russian Torin's Passage.
+   - Added support for fan game Soulshade Asylum.
+   - SCI1.1 views are now scaled accurately.
+   - Fixed sounds not stopping or restarting correctly.
+   - Fixed sound issues when restoring SCI0 games.
+   - Fixed corruption when "Prefer digital sound effects" was disabled in SCI1 games.
+   - Space Quest 4 CD sound effects now match the selected platform.
+   - Added option to enable Windows cursors in CD versions of King's Quest 5 and Space Quest 4.
+   - Fixed "Girl In The Tower" song not playing at the end of King's Quest 6 CD.
+   - Fixed King's Quest 5 Amiga beach error that prevented completing the game.
+   - Fixed over 30 script bugs in GK1, HOYLE4, KQ1DEMO, KQ5, KQ6, KQ7, LB1,
+     LSL3, PEPPER, PQ3, QFG3, SQ1, SQ4, and SQ6.
+   - Unlocked JANE easter egg in Gabriel Knight 1.
 
  SCUMM:
    - Fixed Chinese, Japanese and Korean text display for The Dig and for The Curse of Monkey Island. These fixes
@@ -115,10 +139,24 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Enabled difficulty selection in the version of Monkey Island 2 that was
      included on the LucasArts Mac CD Game Pack II compilation. (It had been
      disabled along with the copy protection.)
-   - Repair clumsy crack in Maniac Mansion (enhanced)'s keypad script.
+   - Repaired clumsy crack in Maniac Mansion (enhanced)'s keypad script.
      This means that the GOG and Steam versions will no longer accept incorrect
      numbers, e.g. for Edna's phone number. (Why are they selling a cracked
      version anyway?!)
+   - Added support for Low quality music in Macintosh version of Loom.
+   - Improved Digital iMUSE accuracy for Full Throttle and The Curse of Monkey Island. These improvements also fix
+     several audio related bugs for both games.
+   - Fixed a very old regression in the walk code for Full Throttle which softlocked the game.
+   - Improved the accuracy of the walk code for The Dig and The Curse of Monkey Island. 
+   - Fixed a bug in The Curse of Monkey Island which prevented, during the cannon minigame in Part 1, the destruction
+     of one of the three destroyable turrets in the fort.
+   - Added animated cigar smoke to the close-up of captain Smirk in the CD
+     version of Monkey Island 1. It was present in earlier versions.
+   - Restored some missing Lemonhead lines in the English CD version of Monkey
+     Island 1.
+   - Made the clock tower in Monkey Island 1 behave the same in the CD version
+     as in earlier versions, i.e. after examining it you have to leave the
+     room and come back again for its description to change.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
@@ -146,6 +184,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed occasional border corruption during fights.
    - Improvements to cutscenes to better match the original games.
    - Fixes for character selection, deselection, and dismissing to better match original.
+   - Add support for Russian version.
 
  AmigaOS port:
    - Add native system file browser feature.
@@ -188,7 +227,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Now Hebrew is displayed correctly in GUI (requires FriBiDi library).
    - Updated the Roland MT-32 emulation code to Munt 2.4.0.
    - Added option to select the default voice for ports that support Text-to-Speech.
-   - Added support for Discord Rich Presence integration on supported platforms (Windows Vista+, macOS 10.9+ 64 Bit)
+   - Added support for Discord Rich Presence integration on supported platforms (Windows Vista+, macOS 10.9+ 64 Bit).
    - Major improvements to the keymapper.
    - Games are now recognised by engineid:gameid combination.
 
@@ -282,11 +321,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash loading some savegames directly from the launcher.
    - Fix curing the well in Nightshadow.
    - Fix loading of wall items from savegames.
-   - Fix U/D keys not working on Quests dialog
-   - Fix incorrect mirror destination for Dragon Tower
-   - Fix crash reading book in Great Pyramid safe
-   - Prevent attributes from going negative
-   - Fix border faces animation during Clairvoyance
+   - Fix U/D keys not working on Quests dialog.
+   - Fix incorrect mirror destination for Dragon Tower.
+   - Fix crash reading book in Great Pyramid safe.
+   - Prevent attributes from going negative.
+   - Fix border faces animation during Clairvoyance.
 
  ZVision:
    - Fixed regression in the safe puzzle in Zork Nemesis: The Forbidden Lands.
@@ -765,7 +804,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      in-game dialog.
 
  Tinsel:
-   - Fixed some Discworld 2 text/voice not displaying & playing all the way through
+   - Fixed some Discworld 2 text/voice not displaying & playing all the way through.
    - Fix crash in in-game save menu when all slots are used with long names
 
  TsAGE:
@@ -838,7 +877,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed missing translations in the in-game quit and restart dialogs in Pajama Sam 1.
    - Fixed visual glitches in DOTT that occured after loading a savegame with the stereo
      in Green Tentacle's room turned on.
-   - Improved timing and pathfinding in Maniac Mansion (C64 and Apple II versions)
+   - Improved timing and pathfinding in Maniac Mansion (C64 and Apple II versions).
    - Added support for the Dutch demo of Let's Explore the Airport with Buzzy.
 
  Sherlock:
@@ -909,10 +948,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCI:
    - Make cursor workarounds work properly on OpenPandora (and other devices, that
-     support touch screen and analog sticks/mouse at the same time)
+     support touch screen and analog sticks/mouse at the same time).
    - Script patch to fix broken ending battle in multilingual King's Quest 5
-     (French, German + Spanish versions are all broken)
-   - Fixed invalid memory access, when loading broken King's Quest 5 credit music track
+     (French, German + Spanish versions are all broken).
+   - Fixed invalid memory access, when loading broken King's Quest 5 credit music track.
    - Fixed lowres/hires issues in King's Quest 6 when saving, changing the lowres/hires
      setting and restoring the saved game afterwards.
 
@@ -1225,7 +1264,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Geisha.
    - Added support for Gregory and the Hot Air Balloon.
    - Added support for Magic Tales: Liam Finds a Story.
-   - Added support for Once Upon A Time: Little Red Riding Hood
+   - Added support for Once Upon A Time: Little Red Riding Hood.
    - Added support for Sleeping Cub's Test of Courage.
    - Added support for Soltys.
    - Added support for The Princess and the Crab.
@@ -1261,7 +1300,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      in scene with "von Braun").
 
  Gob:
-   - Fixed a crash in Lost in Time
+   - Fixed a crash in Lost in Time.
    - Rewrote the AdLib player. Enabled the now working MDY player in
      Fascination and Geisha.
 

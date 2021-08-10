@@ -1726,6 +1726,16 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 		delete[] patchedScript;
 	} else
 
+	// For some reason, the CD version of Monkey Island 1 removes some of
+	// the text when giving the wimpy idol to the cannibals. It looks like
+	// a mistake, because one of the text that is printed is immediately
+	// overwritten. This probably affects all CD versions, so we just have
+	// to add further patches as they are reported.
+
+	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25) {
+		tryPatchMI1CannibalScript(getResourceAddress(type, idx), size);
+	} else
+
 	// There is a cracked version of Maniac Mansion v2 that attempts to
 	// remove the security door copy protection. With it, any code is
 	// accepted as long as you get the last digit wrong. Unfortunately,
@@ -1768,6 +1778,118 @@ bool ScummEngine::verifyMI2MacBootScript(byte *buf, int size) {
 		warning("Unexpected MI2 Mac boot script length: %d", size);
 		return false;
 	}
+	return true;
+}
+
+bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
+	assert(_game.id == GID_MONKEY);
+
+	// The room resource is a collection of resources. We need to know the
+	// offset to the initial LSCR tag of the room-25-205 script, and its
+	// length up to (but not including) the LSCR tag of the next script.
+	// Furthermore we need to know the offset and length of the part of
+	// the script that we are going to replace. As an illustration, this
+	// is what that part of script looks like in the English CD version:
+	//
+	// [009C] (AE) WaitForMessage();
+	// [009E] (14) print(3,[Text("Oooh, that's nice.")]);
+	// [00B4] (14) print(3,[Text("And it says, `Made by Lemonhead`^" +
+	//             wait() + "^just like one of mine!" + wait() +
+	//             "We should take this to the Great Monkey.")]);
+	// [011C] (AE) WaitForMessage();
+	//
+	// What we want to do is make it behave like the script from the VGA
+	// floppy version:
+	//
+	// [009E] (AE) WaitForMessage();
+	// [00A0] (14) print(3,[Text("Oooh, that's nice." + wait() +
+	//             "Simple.  Just like one of mine." + wait() +
+	//             "And little.  Like mine.")]);
+	// [00F0] (AE) WaitForMessage();
+	// [00F2] (14) print(3,[Text("And it says, `Made by Lemonhead`^" +
+	//             wait() + "^just like one of mine!" + wait() +
+	//             "We should take this to the Great Monkey.")]);
+	// [015A] (AE) WaitForMessage();
+	//
+	// So we want to adjust the message, and insert a WaitForMessage().
+	// Unfortunately there isn't enough space to do that, and rather than
+	// modifying the length of the whole resource (which is easy to get
+	// wrong), we insert a placeholder message that gets replaced by
+	// decodeParseString().
+	//
+	// There should be enough space to do this even if we only change the
+	// first message. Any leftover space in the message is padded with
+	// spaces, since I can't find any NOP opcode.
+
+	int expectedSize = -1;
+	int scriptOffset = -1;
+	int scriptLength = -1;
+	Common::String expectedMd5;
+	int patchOffset = -1;
+	int patchLength = -1;
+	byte lang[3];
+
+	switch (_language) {
+	case Common::EN_ANY:
+		expectedSize = 82906;
+		scriptOffset = 73883;
+		scriptLength = 607;
+		expectedMd5 = "98b1126a836ef5bfefff10b605b20555";
+		patchOffset = 167;
+		patchLength = 22;
+		lang[0] = 'E';
+		lang[1] = 'N';
+		lang[2] = 'G';
+		break;
+	default:
+		return false;
+	}
+
+	// Note that the patch will not apply to the "Ultimate Talkie" edition
+	// since that script has been patched to a different length.
+
+	if (size == expectedSize) {
+		// There isn't enough space in the script for the revised
+		// texts, so these abbreviations will be expanded in
+		// decodeParseString().
+		const byte patchData[] = {
+			0x14, 0x03, 0x0F,       // print(3,[Text("/LH.$$$/");
+			0x2F, 0x4C, 0x48, 0x2E,
+			0x24, 0x24, 0x24, 0x2F  // No terminating 0x00!
+		};
+
+		byte *scriptPtr = buf + scriptOffset;
+
+		// Check that the data is a local script.
+		if (READ_BE_UINT32(scriptPtr) != MKTAG('L','S','C','R'))
+			return false;
+
+		// Check that the first instruction to be patched is o5_print
+		if (scriptPtr[patchOffset] != 0x14)
+			return false;
+
+		// Check that the MD5 sum matches a known patchable script.
+		Common::MemoryReadStream stream(buf + scriptOffset, scriptLength);
+		Common::String md5 = Common::computeStreamMD5AsString(stream);
+
+		if (md5 != expectedMd5)
+			return false;
+
+		// Insert the script patch and tag it with the appropriate
+		// language.
+
+		memcpy(scriptPtr + patchOffset, patchData, sizeof(patchData));
+		memcpy(scriptPtr + patchOffset + 7, lang, sizeof(lang));
+
+		// Pad the rest of the replaced script part with spaces before
+		// terminating the string. Finally, add WaitForMessage().
+
+		memset(scriptPtr + patchOffset + sizeof(patchData), 32, patchLength - sizeof(patchData) - 3);
+		scriptPtr[patchOffset + patchLength - 3] = 0;
+		scriptPtr[patchOffset + patchLength - 2] = 0xAE;
+		scriptPtr[patchOffset + patchLength - 1] = 0x02;
+	}
+
 	return true;
 }
 

@@ -60,7 +60,8 @@ Resources::Resources() {
 }
 
 void Resources::loadData() {
-	ResFile file(_buffer);
+	Common::Language lang = g_vm->getLanguage();
+	ResFile file("CONSTANTS_", _buffer, lang);
 	file.syncString(CLOUDS_CREDITS);
 	file.syncString(DARK_SIDE_CREDITS);
 	file.syncString(SWORDS_CREDITS1);
@@ -92,7 +93,8 @@ void Resources::loadData() {
 	file.syncStrings(ALIGNMENT_NAMES, 3);
 	file.syncStrings(SEX_NAMES, 2);
 	file.syncStrings(SKILL_NAMES, 18);
-	file.syncStrings(CONDITION_NAMES, 17);
+	file.syncStrings(CONDITION_NAMES_M, 17);
+	file.syncStrings(CONDITION_NAMES_F, 17);
 	file.syncNumbers(CONDITION_COLORS, 17);
 	file.syncString(GOOD);
 	file.syncString(BLESSED);
@@ -175,6 +177,8 @@ void Resources::loadData() {
 	file.syncString(NO_X_IN_THE_Y);
 	file.syncStrings(STAT_NAMES, 16);
 	file.syncStrings(CONSUMABLE_NAMES, 4);
+	file.syncStrings(CONSUMABLE_GOLD_FORMS, 1);
+	file.syncStrings(CONSUMABLE_GEM_FORMS, 1);
 	file.syncStrings(WHERE_NAMES, 2);
 	file.syncString(AMOUNT);
 	file.syncString(FOOD_PACKS_FULL);
@@ -212,6 +216,7 @@ void Resources::loadData() {
 	file.syncString(SWORDS_GAME_TEXT);
 	file.syncStrings(WEEK_DAY_STRINGS, 10);
 	file.syncString(CHARACTER_DETAILS);
+	file.syncStrings(DAYS, 3);
 	file.syncString(PARTY_GOLD);
 	file.syncString(PLUS_14);
 	file.syncString(CHARACTER_TEMPLATE);
@@ -219,6 +224,7 @@ void Resources::loadData() {
 	file.syncString(CURRENT_MAXIMUM_RATING_TEXT);
 	file.syncString(CURRENT_MAXIMUM_TEXT);
 	file.syncStrings(RATING_TEXT, 24);
+	file.syncStrings(BORN, 2);
 	file.syncString(AGE_TEXT);
 	file.syncString(LEVEL_TEXT);
 	file.syncString(RESISTENCES_TEXT);
@@ -226,6 +232,7 @@ void Resources::loadData() {
 	file.syncString(EXPERIENCE_TEXT);
 	file.syncString(ELIGIBLE);
 	file.syncString(IN_PARTY_IN_BANK);
+	file.syncStrings(FOOD_ON_HAND, 3);
 	file.syncString(FOOD_TEXT);
 	file.syncString(EXCHANGE_WITH_WHOM);
 	file.syncString(QUICK_REF_LINE);
@@ -297,6 +304,7 @@ void Resources::loadData() {
 	file.syncStrings(CATEGORY_BACKPACK_IS_FULL, 4);
 	file.syncString(BUY_X_FOR_Y_GOLD);
 	file.syncString(SELL_X_FOR_Y_GOLD);
+	file.syncStrings(GOLDS, 2);
 	file.syncString(NO_NEED_OF_THIS);
 	file.syncString(NOT_RECHARGABLE);
 	file.syncString(SPELL_FAILED);
@@ -359,6 +367,7 @@ void Resources::loadData() {
 	file.syncString(BACKPACKS_FULL_PRESS_KEY);
 	file.syncString(HIT_A_KEY);
 	file.syncString(GIVE_TREASURE_FORMATTING);
+	file.syncStrings(FOUND, 2);
 	file.syncString(X_FOUND_Y);
 	file.syncString(ON_WHO);
 	file.syncString(WHICH_ELEMENT1);
@@ -382,7 +391,9 @@ void Resources::loadData() {
 	file.syncString(WARZONE_LEVEL);
 	file.syncString(WARZONE_HOW_MANY);
 	file.syncString(PICKS_THE_LOCK);
+	file.syncStrings(PICK_FORM, 2);
 	file.syncString(UNABLE_TO_PICK_LOCK);
+	file.syncStrings(UNABLE_TO_PICK_FORM, 2);
 	file.syncString(CONTROL_PANEL_TEXT);
 	file.syncString(CONTROL_PANEL_BUTTONS);
 	file.syncString(ON);
@@ -408,6 +419,92 @@ void Resources::loadData() {
 	file.syncString(DARKSIDE_ENDING2);
 	file.syncString(PHAROAH_ENDING_TEXT1);
 	file.syncString(PHAROAH_ENDING_TEXT2);
+	file.syncStrings(MAE_NAMES, 131);
+
+	ResFile keys("CONSTKEYS_", _buffer, lang);
+	keys.syncNumber(KeyConstants.DialogsCharInfo.KEY_ITEM);
+	keys.syncNumber(KeyConstants.DialogsCharInfo.KEY_QUICK);
+	keys.syncNumber(KeyConstants.DialogsCharInfo.KEY_EXCHANGE);
+
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_FXON);
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_MUSICON);
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_LOAD);
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_SAVE);
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_QUIT);
+	keys.syncNumber(KeyConstants.DialogsControlPanel.KEY_MRWIZARD);
+
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_ROLL);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_CREATE);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_MGT);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_INT);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_PER);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_END);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_SPD);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_ACY);
+	keys.syncNumber(KeyConstants.DialogsCreateChar.KEY_LCK);
+
+
+	keys.syncNumber(KeyConstants.DialogsDifficulty.KEY_ADVENTURER);
+	keys.syncNumber(KeyConstants.DialogsDifficulty.KEY_WARRIOR);
+
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_WEAPONS);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_ARMOR);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_ACCESSORY);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_MISC);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_ENCHANT);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_USE);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_BUY);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_SELL);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_IDENTIFY);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_FIX);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_EQUIP);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_REM);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_DISC);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_QUEST);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_RECHRG);
+	keys.syncNumber(KeyConstants.DialogsItems.KEY_GOLD);
+
+	keys.syncNumber(KeyConstants.DialogsParty.KEY_DELETE);
+	keys.syncNumber(KeyConstants.DialogsParty.KEY_REMOVE);
+	keys.syncNumber(KeyConstants.DialogsParty.KEY_CREATE);
+	keys.syncNumber(KeyConstants.DialogsParty.KEY_EXIT);
+
+	keys.syncNumber(KeyConstants.DialogsQuests.KEY_QUEST_ITEMS);
+	keys.syncNumber(KeyConstants.DialogsQuests.KEY_CURRENT_QUESTS);
+	keys.syncNumber(KeyConstants.DialogsQuests.KEY_AUTO_NOTES);
+
+	keys.syncNumber(KeyConstants.DialogsQuickFight.KEY_NEXT);
+
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_CAST);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_NEW);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_FIRE);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_ELEC);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_COLD);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_ACID);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_SET);
+	keys.syncNumber(KeyConstants.DialogsSpells.KEY_RETURN);
+
+	keys.syncNumber(KeyConstants.Locations.KEY_DEP);
+	keys.syncNumber(KeyConstants.Locations.KEY_WITH);
+	keys.syncNumber(KeyConstants.Locations.KEY_GOLD);
+	keys.syncNumber(KeyConstants.Locations.KEY_GEMS);
+	keys.syncNumber(KeyConstants.Locations.KEY_BROWSE);
+	keys.syncNumber(KeyConstants.Locations.KEY_BUY_SPELLS);
+	keys.syncNumber(KeyConstants.Locations.KEY_SPELL_INFO);
+	keys.syncNumber(KeyConstants.Locations.KEY_SIGN_IN);
+	keys.syncNumber(KeyConstants.Locations.KEY_DRINK);
+	keys.syncNumber(KeyConstants.Locations.KEY_FOOD);
+	keys.syncNumber(KeyConstants.Locations.KEY_TIP);
+	keys.syncNumber(KeyConstants.Locations.KEY_RUMORS);
+	keys.syncNumber(KeyConstants.Locations.KEY_HEAL);
+	keys.syncNumber(KeyConstants.Locations.KEY_DONATION);
+	keys.syncNumber(KeyConstants.Locations.KEY_UNCURSE);
+	keys.syncNumber(KeyConstants.Locations.KEY_TRAIN);
+
+	keys.syncNumber(KeyConstants.CloudsOfXeenMenu.KEY_START_NEW_GAME);
+	keys.syncNumber(KeyConstants.CloudsOfXeenMenu.KEY_LOAD_GAME);
+	keys.syncNumber(KeyConstants.CloudsOfXeenMenu.KEY_SHOW_CREDITS);
+	keys.syncNumber(KeyConstants.CloudsOfXeenMenu.KEY_VIEW_ENDGAME);
 }
 
 } // End of namespace Xeen

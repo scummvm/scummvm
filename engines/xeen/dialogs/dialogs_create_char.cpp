@@ -131,17 +131,16 @@ void CreateCharacterDialog::execute() {
 		if (_buttonValue == Common::KEYCODE_ESCAPE)
 			break;
 
-		switch (_buttonValue) {
-		case Common::KEYCODE_UP:
+		
+		if (Common::KEYCODE_UP == _buttonValue) {
 			if (charIndex == 0)
 				continue;
 
 			--charIndex;
 			race = (Race)((freeCharList[charIndex] / 4) % 5);
 			sex = (Sex)(freeCharList[charIndex] & 1);
-			break;
 
-		case Common::KEYCODE_DOWN:
+		} else if (Common::KEYCODE_DOWN == _buttonValue) {
 			if (++charIndex == (int)freeCharList.size()) {
 				--charIndex;
 				continue;
@@ -149,9 +148,8 @@ void CreateCharacterDialog::execute() {
 				race = (Race)((freeCharList[charIndex] / 4) % 5);
 				sex = (Sex)(freeCharList[charIndex] & 1);
 			}
-			break;
 
-		case Common::KEYCODE_PAGEUP:
+		} else if (Common::KEYCODE_PAGEUP == _buttonValue) {
 			for (int tempClass = selectedClass - 1; tempClass >= 0; --tempClass) {
 				if (_allowedClasses[tempClass]) {
 					selectedClass = tempClass;
@@ -162,61 +160,55 @@ void CreateCharacterDialog::execute() {
 			printSelectionArrow(selectedClass);
 			continue;
 
-		case Common::KEYCODE_PAGEDOWN:
-			break;
+		} else if (Common::KEYCODE_PAGEDOWN == _buttonValue) {
 
-		case Common::KEYCODE_m:
-		case Common::KEYCODE_i:
-		case Common::KEYCODE_p:
-		case Common::KEYCODE_e:
-		case Common::KEYCODE_s:
-		case Common::KEYCODE_a:
-		case Common::KEYCODE_l:
+		} else if (Res.KeyConstants.DialogsCreateChar.KEY_MGT == _buttonValue ||
+				   Res.KeyConstants.DialogsCreateChar.KEY_INT == _buttonValue ||
+				   Res.KeyConstants.DialogsCreateChar.KEY_PER == _buttonValue ||
+				   Res.KeyConstants.DialogsCreateChar.KEY_END == _buttonValue ||
+				   Res.KeyConstants.DialogsCreateChar.KEY_SPD == _buttonValue ||
+				   Res.KeyConstants.DialogsCreateChar.KEY_ACY == _buttonValue ||
+				   Res.KeyConstants.DialogsCreateChar.KEY_LCK == _buttonValue) {
 			if (swapAttributes(_buttonValue)) {
 				checkClass();
 				classId = -1;
 				selectedClass = newCharDetails(race, sex, classId, selectedClass, msg);
 			}
-			break;
 
-		case 1000:
-		case 1001:
-		case 1002:
-		case 1003:
-		case 1004:
-		case 1005:
-		case 1006:
-		case 1007:
-		case 1008:
-		case 1009:
+		} else if (1000 == _buttonValue ||
+				   1001 == _buttonValue ||
+				   1002 == _buttonValue ||
+				   1003 == _buttonValue ||
+				   1004 == _buttonValue ||
+				   1005 == _buttonValue ||
+				   1006 == _buttonValue ||
+				   1007 == _buttonValue ||
+				   1008 == _buttonValue ||
+				   1009 == _buttonValue) {
 			if (_allowedClasses[_buttonValue - 1000]) {
 				selectedClass = classId = _buttonValue - 1000;
 			}
-			break;
 
-		case Common::KEYCODE_c: {
+		} else if (Res.KeyConstants.DialogsCreateChar.KEY_CREATE == _buttonValue) {
 			_vm->_mode = MODE_FF;
 			bool result = saveCharacter(party._roster[freeCharList[charIndex]],
-				classId, race, sex);
+										classId, race, sex);
 			_vm->_mode = MODE_4;
 
 			if (result)
 				restartFlag = true;
 			continue;
-		}
 
-		case Common::KEYCODE_RETURN:
+		} else if (Common::KEYCODE_RETURN == _buttonValue) {
 			classId = selectedClass;
-			break;
 
-		case Common::KEYCODE_SPACE:
-		case Common::KEYCODE_r:
+		} else if (Common::KEYCODE_SPACE == _buttonValue ||
+				   Res.KeyConstants.DialogsCreateChar.KEY_ROLL == _buttonValue) {
 			// Re-roll the attributes
 			rollAttributes();
 			classId = -1;
-			break;
 
-		default:
+		} else {
 			// For all other keypresses, skip the code below the switch
 			// statement, and go to wait for the next key
 			continue;
@@ -257,18 +249,19 @@ void CreateCharacterDialog::loadButtons() {
 	_icons.load("create.icn");
 
 	// Add buttons
-	addButton(Common::Rect(132, 98, 156, 118), Common::KEYCODE_r, &_icons);
-	addButton(Common::Rect(132, 128, 156, 148), Common::KEYCODE_c, &_icons);
+	addButton(Common::Rect(132, 98, 156, 118), Res.KeyConstants.DialogsCreateChar.KEY_ROLL, &_icons);
+	addButton(Common::Rect(132, 128, 156, 148), Res.KeyConstants.DialogsCreateChar.KEY_CREATE, &_icons);
+	addButton(Common::Rect(168, 19, 192, 39), Res.KeyConstants.DialogsCreateChar.KEY_MGT, nullptr);
+	addButton(Common::Rect(168, 43, 192, 63),   Res.KeyConstants.DialogsCreateChar.KEY_INT, nullptr);
+	addButton(Common::Rect(168, 67, 192, 87),   Res.KeyConstants.DialogsCreateChar.KEY_PER, nullptr);
+	addButton(Common::Rect(168, 91, 192, 111),  Res.KeyConstants.DialogsCreateChar.KEY_END, nullptr);
+	addButton(Common::Rect(168, 115, 192, 135), Res.KeyConstants.DialogsCreateChar.KEY_SPD, nullptr);
+	addButton(Common::Rect(168, 139, 192, 159), Res.KeyConstants.DialogsCreateChar.KEY_ACY, nullptr);
+	addButton(Common::Rect(168, 163, 192, 183), Res.KeyConstants.DialogsCreateChar.KEY_LCK, nullptr);
+
 	addButton(Common::Rect(132, 158, 156, 178), Common::KEYCODE_ESCAPE, &_icons);
 	addButton(Common::Rect(86, 98, 110, 118), Common::KEYCODE_UP, &_icons);
 	addButton(Common::Rect(86, 120, 110, 140), Common::KEYCODE_DOWN, &_icons);
-	addButton(Common::Rect(168, 19, 192, 39), Common::KEYCODE_n, nullptr);
-	addButton(Common::Rect(168, 43, 192, 63), Common::KEYCODE_i, nullptr);
-	addButton(Common::Rect(168, 67, 192, 87), Common::KEYCODE_p, nullptr);
-	addButton(Common::Rect(168, 91, 192, 111), Common::KEYCODE_e, nullptr);
-	addButton(Common::Rect(168, 115, 192, 135), Common::KEYCODE_s, nullptr);
-	addButton(Common::Rect(168, 139, 192, 159), Common::KEYCODE_a, nullptr);
-	addButton(Common::Rect(168, 163, 192, 183), Common::KEYCODE_l, nullptr);
 	addButton(Common::Rect(227, 19, 239, 29), 1000, nullptr);
 	addButton(Common::Rect(227, 30, 239, 40), 1001, nullptr);
 	addButton(Common::Rect(227, 41, 239, 51), 1002, nullptr);
@@ -322,8 +315,8 @@ void CreateCharacterDialog::drawIcons2() {
 	_icons.draw(0, 58, Common::Point(62, 158));
 	_icons.draw(0, 59, Common::Point(62, 168));
 	_icons.draw(0, 61, Common::Point(220, 19));
-	_icons.draw(0, 64, Common::Point(220, 155));
-	_icons.draw(0, 65, Common::Point(220, 170));
+	_icons.draw(0, 64, Common::Point(220, 155)); 
+	_icons.draw(0, 65, Common::Point(220, 170)); 
 
 	_icons.draw(0, 0, Common::Point(132, 98));
 	_icons.draw(0, 2, Common::Point(132, 128));
@@ -470,24 +463,22 @@ void CreateCharacterDialog::drawDice() {
 }
 
 int CreateCharacterDialog::getAttribFromKeycode(int keycode) const {
-	switch (keycode) {
-	case Common::KEYCODE_m:
+	if (Res.KeyConstants.DialogsCreateChar.KEY_MGT == keycode)
 		return MIGHT;
-	case Common::KEYCODE_i:
+	else if (Res.KeyConstants.DialogsCreateChar.KEY_INT == keycode)
 		return INTELLECT;
-	case Common::KEYCODE_p:
+	else if (Res.KeyConstants.DialogsCreateChar.KEY_PER == keycode)
 		return PERSONALITY;
-	case Common::KEYCODE_e:
+	else if (Res.KeyConstants.DialogsCreateChar.KEY_END == keycode)
 		return ENDURANCE;
-	case Common::KEYCODE_s:
+	else if (Res.KeyConstants.DialogsCreateChar.KEY_SPD == keycode)
 		return SPEED;
-	case Common::KEYCODE_a:
+	else if (Res.KeyConstants.DialogsCreateChar.KEY_ACY == keycode)
 		return ACCURACY;
-	case Common::KEYCODE_l:
+	else if (Res.KeyConstants.DialogsCreateChar.KEY_LCK == keycode)
 		return LUCK;
-	default:
+	else
 		return -1;
-	}
 }
 
 bool CreateCharacterDialog::swapAttributes(int keycode) {
@@ -528,14 +519,15 @@ int CreateCharacterDialog::exchangeAttribute(int srcAttr) {
 	icons.load("create2.icn");
 
 	saveButtons();
+
 	addButton(Common::Rect(118, 58, 142, 78), Common::KEYCODE_ESCAPE, &_icons);
-	addButton(Common::Rect(168, 19, 192, 39), Common::KEYCODE_m);
-	addButton(Common::Rect(168, 43, 192, 63), Common::KEYCODE_i);
-	addButton(Common::Rect(168, 67, 192, 87), Common::KEYCODE_p);
-	addButton(Common::Rect(168, 91, 192, 111), Common::KEYCODE_e);
-	addButton(Common::Rect(168, 115, 192, 135), Common::KEYCODE_s);
-	addButton(Common::Rect(168, 139, 192, 159), Common::KEYCODE_a);
-	addButton(Common::Rect(168, 163, 192, 183), Common::KEYCODE_l);
+	addButton(Common::Rect(168, 19, 192, 39),   Res.KeyConstants.DialogsCreateChar.KEY_MGT);
+	addButton(Common::Rect(168, 43, 192, 63),   Res.KeyConstants.DialogsCreateChar.KEY_INT);
+	addButton(Common::Rect(168, 67, 192, 87),   Res.KeyConstants.DialogsCreateChar.KEY_PER);
+	addButton(Common::Rect(168, 91, 192, 111),  Res.KeyConstants.DialogsCreateChar.KEY_END);
+	addButton(Common::Rect(168, 115, 192, 135), Res.KeyConstants.DialogsCreateChar.KEY_SPD);
+	addButton(Common::Rect(168, 139, 192, 159), Res.KeyConstants.DialogsCreateChar.KEY_ACY);
+	addButton(Common::Rect(168, 163, 192, 183), Res.KeyConstants.DialogsCreateChar.KEY_LCK);
 
 	Window &w = windows[26];
 	w.open();

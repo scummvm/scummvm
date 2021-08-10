@@ -752,6 +752,10 @@ void Game_SimulateKeyPress(int key) {
 	ags_simulate_keypress(static_cast<eAGSKeyCode>(key));
 }
 
+int Game_BlockingWaitSkipped() {
+	return _GP(play).GetWaitSkipResult();
+}
+
 //=============================================================================
 
 // save game functions
@@ -1048,8 +1052,8 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 	src.InputStream.reset();
 	_G(our_eip) = _G(oldeip);
 
-	// ensure keyboard buffer is clean
-	ags_clear_input_buffer();
+	// ensure input state is reset
+	ags_clear_input_state();
 	// call "After Restore" event callback
 	run_on_event(GE_RESTORE_GAME, RuntimeScriptValue().SetInt32(slotNumber));
 	return HSaveError::None();
@@ -1093,9 +1097,10 @@ void start_skipping_cutscene() {
 		remove_popup_interface(_G(ifacepopped));
 
 	// if a text message is currently displayed, remove it
-	if (_G(is_text_overlay) > 0)
-		remove_screen_overlay(OVER_TEXTMSG);
-
+	if (_GP(play).text_overlay_on > 0) {
+		remove_screen_overlay(_GP(play).text_overlay_on);
+		_GP(play).SetWaitSkipResult(SKIP_AUTOTIMER);
+	}
 }
 
 bool check_skip_cutscene_keypress(int kgn) {
@@ -1227,7 +1232,7 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 // Called whenever game looses input focus
 void display_switch_out() {
 	_G(switched_away) = true;
-	ags_clear_input_buffer();
+	ags_clear_input_state();
 	// Always unlock mouse when switching out from the game
 	_GP(mouse).UnlockFromWindow();
 }
@@ -1261,8 +1266,7 @@ void display_switch_out_suspend() {
 
 // Called whenever game gets input focus
 void display_switch_in() {
-	_G(switched_away) = false;
-	ags_clear_input_buffer();
+	ags_clear_input_state();
 	// If auto lock option is set, lock mouse to the game window
 	if (_GP(usetup).mouse_auto_lock && _GP(scsystem).windowed)
 		_GP(mouse).TryLockToWindow();
@@ -1723,6 +1727,10 @@ RuntimeScriptValue Sc_Game_SimulateKeyPress(const RuntimeScriptValue *params, in
 	API_SCALL_VOID_PINT(Game_SimulateKeyPress);
 }
 
+RuntimeScriptValue Sc_Game_BlockingWaitSkipped(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_INT(Game_BlockingWaitSkipped);
+}
+
 void RegisterGameAPI() {
 	ccAddExternalStaticFunction("Game::IsAudioPlaying^1",                       Sc_Game_IsAudioPlaying);
 	ccAddExternalStaticFunction("Game::SetAudioTypeSpeechVolumeDrop^2",         Sc_Game_SetAudioTypeSpeechVolumeDrop);
@@ -1775,6 +1783,7 @@ void RegisterGameAPI() {
 	ccAddExternalStaticFunction("Game::IsPluginLoaded",                         Sc_Game_IsPluginLoaded);
 	ccAddExternalStaticFunction("Game::PlayVoiceClip",                          Sc_Game_PlayVoiceClip);
 	ccAddExternalStaticFunction("Game::SimulateKeyPress",                       Sc_Game_SimulateKeyPress);
+	ccAddExternalStaticFunction("Game::get_BlockingWaitSkipped",                Sc_Game_BlockingWaitSkipped);
 
 	ccAddExternalStaticFunction("Game::get_Camera",                             Sc_Game_GetCamera);
 	ccAddExternalStaticFunction("Game::get_CameraCount",                        Sc_Game_GetCameraCount);

@@ -227,7 +227,14 @@ uint RenderedImage::getPixel(int x, int y) {
 // -----------------------------------------------------------------------------
 
 bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, RectangleList *updateRects) {
-	_surface.blit(*_backSurface, posX, posY, (((flipping & 1) ? Graphics::FLIP_V : 0) | ((flipping & 2) ? Graphics::FLIP_H : 0)), pPartRect, color, width, height);
+	int newFlipping = (((flipping & 1) ? Graphics::FLIP_V : 0) | ((flipping & 2) ? Graphics::FLIP_H : 0));
+
+	int ca = (color >> BS_ASHIFT) & 0xff;
+	int cr = (color >> BS_RSHIFT) & 0xff;
+	int cg = (color >> BS_GSHIFT) & 0xff;
+	int cb = (color >> BS_BSHIFT) & 0xff;
+
+	_surface.blit(*_backSurface, posX, posY, newFlipping, pPartRect, _surface.format.ARGBToColor(ca, cr, cg, cb), width, height);
 
 	return true;
 }

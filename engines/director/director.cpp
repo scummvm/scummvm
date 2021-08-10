@@ -23,6 +23,8 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
+#include "common/punycode.h"
+#include "common/tokenizer.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
@@ -56,6 +58,10 @@ DirectorEngine *g_director;
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	g_director = this;
 
+	_dirSeparator = ':';
+
+	parseOptions();
+
 	// Setup mixer
 	syncSoundSettings();
 
@@ -68,14 +74,14 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Load key codes
 	loadKeyCodes();
 
-	_soundManager = nullptr;
 	_currentPalette = nullptr;
 	_currentPaletteLength = 0;
 	_stage = nullptr;
 	_windowList = new Datum;
 	_windowList->type = ARRAY;
-	_windowList->u.farr = new DatumArray;
+	_windowList->u.farr = new FArray;
 	_currentWindow = nullptr;
+	_cursorWindow = nullptr;
 	_lingo = nullptr;
 	_version = getDescriptionVersion();
 
@@ -104,7 +110,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 DirectorEngine::~DirectorEngine() {
 	delete _windowList;
-	delete _soundManager;
 	delete _lingo;
 	delete _wm;
 	delete _surface;
@@ -120,7 +125,7 @@ Archive *DirectorEngine::getMainArchive() const { return _currentWindow->getMain
 Movie *DirectorEngine::getCurrentMovie() const { return _currentWindow->getCurrentMovie(); }
 Common::String DirectorEngine::getCurrentPath() const { return _currentWindow->getCurrentPath(); }
 
-static void buildbotErrorHandler(const char *msg) { }
+static bool buildbotErrorHandler(const char *msg) { return true; }
 
 void DirectorEngine::setCurrentMovie(Movie *movie) {
 	_currentWindow = movie->getWindow();
@@ -148,8 +153,6 @@ Common::Error DirectorEngine::run() {
 
 	_currentPalette = nullptr;
 
-	_soundManager = nullptr;
-
 	wmMode = debugChannelSet(-1, kDebugDesktop) ? wmModeDesktop : wmModeFullscreen;
 
 	if (debugChannelSet(-1, kDebug32bpp))
@@ -175,7 +178,6 @@ Common::Error DirectorEngine::run() {
 	_currentWindow = _stage;
 
 	_lingo = new Lingo(this);
-	_soundManager = new DirectorSound(this);
 
 	if (getGameGID() == GID_TEST) {
 		_currentWindow->runTests();
@@ -198,16 +200,20 @@ Common::Error DirectorEngine::run() {
 			processEvents();
 
 		_currentWindow = _stage;
+		g_lingo->loadStateFromWindow();
 		loop = _currentWindow->step();
+		g_lingo->saveStateToWindow();
 
 		if (loop) {
-			DatumArray *windowList = g_lingo->_windowList.u.farr;
-			for (uint i = 0; i < windowList->size(); i++) {
-				if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
+			FArray *windowList = g_lingo->_windowList.u.farr;
+			for (uint i = 0; i < windowList->arr.size(); i++) {
+				if (windowList->arr[i].type != OBJECT || windowList->arr[i].u.obj->getObjType() != kWindowObj)
 					continue;
 
-				_currentWindow = static_cast<Window *>((*windowList)[i].u.obj);
+				_currentWindow = static_cast<Window *>(windowList->arr[i].u.obj);
+				g_lingo->loadStateFromWindow();
 				_currentWindow->step();
+				g_lingo->saveStateToWindow();
 			}
 		}
 
@@ -219,6 +225,74 @@ Common::Error DirectorEngine::run() {
 
 Common::CodePage DirectorEngine::getPlatformEncoding() {
 	return getEncoding(getPlatform(), getLanguage());
+}
+
+Common::String DirectorEngine::getEXEName() const {
+	StartMovie startMovie = getStartMovie();
+	if (startMovie.startMovie.size() > 0)
+		return startMovie.startMovie;
+
+	return Common::punycode_decodefilename(_gameDescription->desc.filesDescriptions[0].fileName);
+}
+
+void DirectorEngine::parseOptions() {
+	_options.startMovie.startFrame = -1;
+
+	if (!ConfMan.hasKey("start_movie"))
+		return;
+
+	Common::StringTokenizer tok(ConfMan.get("start_movie"), ",");
+
+	while (!tok.empty()) {
+		Common::String part = tok.nextToken();
+
+		int eqPos = part.findLastOf("=");
+		Common::String key;
+		Common::String value;
+
+		if ((uint)eqPos != Common::String::npos) {
+			key = part.substr(0, eqPos);
+			value = part.substr(eqPos + 1, part.size());
+		} else {
+			value = part;
+		}
+
+		if (key == "movie" || key.empty()) { // Format is movie[@startFrame]
+			if (!_options.startMovie.startMovie.empty()) {
+				warning("parseOptions(): Duplicate startup movie: %s", value.c_str());
+			}
+
+			int atPos = value.findLastOf("@");
+
+			if ((uint)atPos == Common::String::npos) {
+				_options.startMovie.startMovie = value;
+			} else {
+				_options.startMovie.startMovie = value.substr(0, atPos);
+				Common::String tail = value.substr(atPos + 1, value.size());
+				if (tail.size() > 0)
+					_options.startMovie.startFrame = atoi(tail.c_str());
+			}
+
+			_options.startMovie.startMovie = Common::punycode_decodepath(_options.startMovie.startMovie).toString(_dirSeparator);
+
+			debug(2, "parseOptions(): Movie is: %s, frame is: %d", _options.startMovie.startMovie.c_str(), _options.startMovie.startFrame);
+		} else if (key == "startup") {
+			_options.startupPath = value;
+
+			debug(2, "parseOptions(): Startup is: %s", value.c_str());
+		} else {
+			warning("parseOptions(): unknown option %s", part.c_str());
+		}
+
+	}
+}
+
+StartMovie DirectorEngine::getStartMovie() const {
+	return _options.startMovie;
+}
+
+Common::String DirectorEngine::getStartupPath() const {
+	return _options.startupPath;
 }
 
 } // End of namespace Director

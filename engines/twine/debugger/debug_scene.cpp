@@ -35,52 +35,36 @@ namespace TwinE {
 DebugScene::DebugScene(TwinEEngine *engine) : _engine(engine) {}
 
 void DebugScene::drawClip(const Common::Rect &rect) {
-	if (!showingClips) {
+	if (!_showingClips) {
 		return;
 	}
-	_engine->_menu->drawBox(rect);
+	_engine->_menu->drawRectBorders(rect);
 }
 
 void DebugScene::projectBoundingBoxPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjected) {
 	_engine->_renderer->projectPositionOnScreen(pPoint3d->x, pPoint3d->y, pPoint3d->z);
 
-	pPoint3dProjected->x = _engine->_renderer->projPos.x;
-	pPoint3dProjected->y = _engine->_renderer->projPos.y;
-	pPoint3dProjected->z = _engine->_renderer->projPos.z;
-
-	if (_engine->_redraw->renderRect.left > _engine->_renderer->projPos.x) {
-		_engine->_redraw->renderRect.left = _engine->_renderer->projPos.x;
-	}
-
-	if (_engine->_redraw->renderRect.right < _engine->_renderer->projPos.x) {
-		_engine->_redraw->renderRect.right = _engine->_renderer->projPos.x;
-	}
-
-	if (_engine->_redraw->renderRect.top > _engine->_renderer->projPos.y) {
-		_engine->_redraw->renderRect.top = _engine->_renderer->projPos.y;
-	}
-
-	if (_engine->_redraw->renderRect.bottom < _engine->_renderer->projPos.y) {
-		_engine->_redraw->renderRect.bottom = _engine->_renderer->projPos.y;
-	}
+	pPoint3dProjected->x = _engine->_renderer->_projPos.x;
+	pPoint3dProjected->y = _engine->_renderer->_projPos.y;
+	pPoint3dProjected->z = _engine->_renderer->_projPos.z;
 }
 
 bool DebugScene::checkZoneType(ZoneType type) const {
 	switch (type) {
 	case ZoneType::kCube:
-		return (typeZones & 0x01) != 0;
+		return (_typeZones & 0x01) != 0;
 	case ZoneType::kCamera:
-		return (typeZones & 0x02) != 0;
+		return (_typeZones & 0x02) != 0;
 	case ZoneType::kSceneric:
-		return (typeZones & 0x04) != 0;
+		return (_typeZones & 0x04) != 0;
 	case ZoneType::kGrid:
-		return (typeZones & 0x08) != 0;
+		return (_typeZones & 0x08) != 0;
 	case ZoneType::kObject:
-		return (typeZones & 0x10) != 0;
+		return (_typeZones & 0x10) != 0;
 	case ZoneType::kText:
-		return (typeZones & 0x20) != 0;
+		return (_typeZones & 0x20) != 0;
 	case ZoneType::kLadder:
-		return (typeZones & 0x40) != 0;
+		return (_typeZones & 0x40) != 0;
 	default:
 		return true;
 	}
@@ -91,32 +75,32 @@ bool DebugScene::checkZoneType(ZoneType type) const {
 DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const IVec3 &mins, const IVec3 &maxs) {
 	ScenePositionsProjected positions;
 	// compute the points in 3D
-	positions.frontBottomLeftPoint.x = mins.x - _engine->_grid->camera.x;
-	positions.frontBottomLeftPoint.y = mins.y - _engine->_grid->camera.y;
-	positions.frontBottomLeftPoint.z = maxs.z - _engine->_grid->camera.z;
+	positions.frontBottomLeftPoint.x = mins.x - _engine->_grid->_camera.x;
+	positions.frontBottomLeftPoint.y = mins.y - _engine->_grid->_camera.y;
+	positions.frontBottomLeftPoint.z = maxs.z - _engine->_grid->_camera.z;
 
-	positions.frontBottomRightPoint.x = maxs.x - _engine->_grid->camera.x;
-	positions.frontBottomRightPoint.y = mins.y - _engine->_grid->camera.y;
-	positions.frontBottomRightPoint.z = maxs.z - _engine->_grid->camera.z;
+	positions.frontBottomRightPoint.x = maxs.x - _engine->_grid->_camera.x;
+	positions.frontBottomRightPoint.y = mins.y - _engine->_grid->_camera.y;
+	positions.frontBottomRightPoint.z = maxs.z - _engine->_grid->_camera.z;
 
-	positions.frontTopLeftPoint.x = mins.x - _engine->_grid->camera.x;
-	positions.frontTopLeftPoint.y = maxs.y - _engine->_grid->camera.y;
-	positions.frontTopLeftPoint.z = maxs.z - _engine->_grid->camera.z;
+	positions.frontTopLeftPoint.x = mins.x - _engine->_grid->_camera.x;
+	positions.frontTopLeftPoint.y = maxs.y - _engine->_grid->_camera.y;
+	positions.frontTopLeftPoint.z = maxs.z - _engine->_grid->_camera.z;
 
-	positions.frontTopRightPoint = maxs - _engine->_grid->camera;
-	positions.backBottomLeftPoint = mins - _engine->_grid->camera;
+	positions.frontTopRightPoint = maxs - _engine->_grid->_camera;
+	positions.backBottomLeftPoint = mins - _engine->_grid->_camera;
 
-	positions.backBottomRightPoint.x = maxs.x - _engine->_grid->camera.x;
-	positions.backBottomRightPoint.y = mins.y - _engine->_grid->camera.y;
-	positions.backBottomRightPoint.z = mins.z - _engine->_grid->camera.z;
+	positions.backBottomRightPoint.x = maxs.x - _engine->_grid->_camera.x;
+	positions.backBottomRightPoint.y = mins.y - _engine->_grid->_camera.y;
+	positions.backBottomRightPoint.z = mins.z - _engine->_grid->_camera.z;
 
-	positions.backTopLeftPoint.x = mins.x - _engine->_grid->camera.x;
-	positions.backTopLeftPoint.y = maxs.y - _engine->_grid->camera.y;
-	positions.backTopLeftPoint.z = mins.z - _engine->_grid->camera.z;
+	positions.backTopLeftPoint.x = mins.x - _engine->_grid->_camera.x;
+	positions.backTopLeftPoint.y = maxs.y - _engine->_grid->_camera.y;
+	positions.backTopLeftPoint.z = mins.z - _engine->_grid->_camera.z;
 
-	positions.backTopRightPoint.x = maxs.x - _engine->_grid->camera.x;
-	positions.backTopRightPoint.y = maxs.y - _engine->_grid->camera.y;
-	positions.backTopRightPoint.z = mins.z - _engine->_grid->camera.z;
+	positions.backTopRightPoint.x = maxs.x - _engine->_grid->_camera.x;
+	positions.backTopRightPoint.y = maxs.y - _engine->_grid->_camera.y;
+	positions.backTopRightPoint.z = mins.z - _engine->_grid->_camera.z;
 
 	// project all points
 
@@ -163,14 +147,14 @@ bool DebugScene::drawBox(const ScenePositionsProjected &positions, uint8 color) 
 
 bool DebugScene::displayActors() {
 	bool state = false;
-	for (int i = 0; i < _engine->_scene->sceneNumActors; i++) {
-		const ActorStruct *actorPtr = _engine->_scene->getActor(i);
+	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
+		const ActorStruct *actorPtr = _engine->_scene->getActor(a);
 		// TODO: redrawing doesn't work properly yet for moving actors
-		if (!actorPtr->staticFlags.bIsSpriteActor) {
+		if (!actorPtr->_staticFlags.bIsSpriteActor) {
 			continue;
 		}
-		const IVec3 &pos = actorPtr->pos;
-		const BoundingBox &bbox = actorPtr->boudingBox;
+		const IVec3 &pos = actorPtr->pos();
+		const BoundingBox &bbox = actorPtr->_boudingBox;
 		const ScenePositionsProjected &positions = calculateBoxPositions(pos + bbox.mins, pos + bbox.maxs);
 		if (!drawBox(positions, COLOR_WHITE)) {
 			continue;
@@ -180,8 +164,8 @@ bool DebugScene::displayActors() {
 		const int boxheight = 2 * lineHeight;
 		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + boxheight);
 		_engine->_interface->drawFilledRect(filledRect, COLOR_WHITE);
-		_engine->_menu->drawBox(filledRect);
-		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Actor: %i", i), true, false, boxwidth);
+		_engine->_menu->drawRectBorders(filledRect);
+		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Actor: %i", a), true, false, boxwidth);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", positions.frontTopRightPoint.x, positions.frontTopRightPoint.y, positions.frontTopRightPoint.z), true, false, boxwidth);
 		state = true;
 	}
@@ -201,8 +185,8 @@ bool DebugScene::displayTracks() {
 
 bool DebugScene::displayZones() {
 	bool state = false;
-	for (int i = 0; i < _engine->_scene->sceneNumZones; i++) {
-		const ZoneStruct *zonePtr = &_engine->_scene->sceneZones[i];
+	for (int i = 0; i < _engine->_scene->_sceneNumZones; i++) {
+		const ZoneStruct *zonePtr = &_engine->_scene->_sceneZones[i];
 
 		if (!checkZoneType(zonePtr->type)) {
 			continue;
@@ -219,7 +203,7 @@ bool DebugScene::displayZones() {
 		const int boxheight = 2 * lineHeight;
 		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + boxheight);
 		_engine->_interface->drawFilledRect(filledRect, COLOR_WHITE);
-		_engine->_menu->drawBox(filledRect);
+		_engine->_menu->drawRectBorders(filledRect);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Type: %i (%i)", (int)zonePtr->type, i), true, false, boxwidth);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", positions.frontTopRightPoint.x, positions.frontTopRightPoint.y, positions.frontTopRightPoint.z), true, false, boxwidth);
 		state = true;
@@ -228,13 +212,13 @@ bool DebugScene::displayZones() {
 }
 
 void DebugScene::renderDebugView() {
-	if (showingZones) {
+	if (_showingZones) {
 		displayZones();
 	}
-	if (showingActors) {
+	if (_showingActors) {
 		displayActors();
 	}
-	if (showingTracks) {
+	if (_showingTracks) {
 		displayTracks();
 	}
 }

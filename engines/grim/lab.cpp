@@ -146,8 +146,8 @@ void Lab::parseMonkey4FileTable(Common::File *file) {
 	delete[] stringTable;
 }
 
-bool Lab::hasFile(const Common::String &filename) const {
-	Common::String fname(filename);
+bool Lab::hasFile(const Common::Path &filename) const {
+	Common::String fname(filename.toString());
 	fname.toLowercase();
 	return _entries.contains(fname);
 }
@@ -163,7 +163,8 @@ int Lab::listMembers(Common::ArchiveMemberList &list) const {
 	return count;
 }
 
-const Common::ArchiveMemberPtr Lab::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr Lab::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
@@ -172,7 +173,8 @@ const Common::ArchiveMemberPtr Lab::getMember(const Common::String &name) const 
 	return _entries[fname];
 }
 
-Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::String &filename) const {
+Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::Path &path) const {
+	Common::String filename = path.toString();
 	if (!hasFile(filename))
 		return nullptr;
 

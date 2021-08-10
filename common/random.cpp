@@ -20,6 +20,8 @@
  *
  */
 
+#include <climits>
+
 #include "common/random.h"
 #include "common/system.h"
 #include "gui/EventRecorder.h"
@@ -46,6 +48,9 @@ void RandomSource::setSeed(uint32 seed) {
 uint RandomSource::getRandomNumber(uint max) {
 	_randSeed = 0xDEADBF03 * (_randSeed + 1);
 	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
+
+	if (max == UINT_MAX)
+		return _randSeed;
 	return _randSeed % (max + 1);
 }
 

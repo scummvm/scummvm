@@ -35,6 +35,10 @@ enum AGSDebugChannels {
 	kDebugScript   = 1 << 4
 };
 
+enum GameFlag {
+	GAMEFLAG_FORCE_AA = 1
+};
+
 struct PluginVersion {
 	const char *_plugin;
 	int _version;

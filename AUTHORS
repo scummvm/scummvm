@@ -22,25 +22,6 @@ ScummVM Team
 
   Engine Teams
   ------------
-    SCUMM:
-       Torbjorn Andersson
-       James Brown                    - (retired)
-       Jonathan Gray                  - (retired)
-       Vincent Hamm                   - (retired)
-       Max Horn                       - (retired)
-       Travis Howell
-       Pawel Kolodziejski             - Codecs, iMUSE, Smush, etc.
-       Gregory Montoir                - (retired)
-       Eugene Sandulenko              - FT INSANE, MM NES, MM C64, game
-                                        detection, Herc/CGA
-       Ludvig Strigeus                - (retired)
-
-    HE:
-       Jonathan Gray                  - (retired)
-       Travis Howell
-       Gregory Montoir                - (retired)
-       Eugene Sandulenko
-
     Access:
        Arnaud Boutonne
        Paul Gilbert
@@ -197,10 +178,7 @@ ScummVM Team
        Vladimir Menshakov
        Willem Jan Palenstijn
 
-    Fullpipe:
-       Eugene Sandulenko
-
-    ScummGlk:
+    Glk:
        Paul Gilbert
        Tor Andersson                  - GarGlk library
        Stefan Jokisch                 - Frotz interpreter
@@ -326,6 +304,9 @@ ScummVM Team
        Benjamin Haisch
        Filippos Karapetis
 
+    NGI:
+       Eugene Sandulenko
+
     Parallaction:
        peres
 
@@ -376,6 +357,25 @@ ScummVM Team
        Jordi Vilalta Prat
        Lars Skovlund
        Colin Snover
+
+    SCUMM:
+       Torbjorn Andersson
+       James Brown                    - (retired)
+       Jonathan Gray                  - (retired)
+       Vincent Hamm                   - (retired)
+       Max Horn                       - (retired)
+       Travis Howell
+       Pawel Kolodziejski             - Codecs, iMUSE, Smush, etc.
+       Gregory Montoir                - (retired)
+       Eugene Sandulenko              - FT INSANE, MM NES, MM C64, game
+                                        detection, Herc/CGA
+       Ludvig Strigeus                - (retired)
+
+    SCUMM HE:
+       Jonathan Gray                  - (retired)
+       Travis Howell
+       Gregory Montoir                - (retired)
+       Eugene Sandulenko
 
     Sherlock:
        Paul Gilbert

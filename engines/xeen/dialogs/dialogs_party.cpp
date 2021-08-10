@@ -106,12 +106,62 @@ void PartyDialog::execute() {
 				events.pollEventsAndWait();
 				checkEvents(_vm);
 			} while (!_vm->shouldExit() && !_buttonValue);
+			if (Common::KEYCODE_F1 == _buttonValue ||
+				Common::KEYCODE_F2 == _buttonValue ||
+				Common::KEYCODE_F3 == _buttonValue ||
+				Common::KEYCODE_F4 == _buttonValue ||
+				Common::KEYCODE_F5 == _buttonValue ||
+				Common::KEYCODE_F6 == _buttonValue) {
+				// Show character info
+				_buttonValue -= Common::KEYCODE_F1;
+				if (_buttonValue < (int)party._activeParty.size())
+					CharacterInfo::show(_vm, _buttonValue);
+			} else if (Common::KEYCODE_1 == _buttonValue ||
+					   Common::KEYCODE_2 == _buttonValue ||
+					   Common::KEYCODE_3 == _buttonValue ||
+					   Common::KEYCODE_4 == _buttonValue) {
+				_buttonValue -= Common::KEYCODE_1 - 7;
+				if ((_buttonValue - 7 + startingChar) < (int)_charList.size()) {
+					// Check if the selected character is already in the party
+					uint idx = 0;
+					for (; idx < party._activeParty.size(); ++idx) {
+						if (_charList[_buttonValue - 7 + startingChar] ==
+							party._activeParty[idx]._rosterId)
+							break;
+					}
 
-			switch (_buttonValue) {
-			case Common::KEYCODE_ESCAPE:
-			case Common::KEYCODE_SPACE:
-			case Common::KEYCODE_e:
-			case Common::KEYCODE_x:
+					// Only add the character if they're not already in the party
+					if (idx == party._activeParty.size()) {
+						if (party._activeParty.size() == MAX_ACTIVE_PARTY) {
+							sound.playFX(21);
+							ErrorScroll::show(_vm, Res.YOUR_PARTY_IS_FULL);
+						} else {
+							// Add the character to the active party
+							party._activeParty.push_back(party._roster[_charList[_buttonValue - 7 + startingChar]]);
+							startingCharChanged(startingChar);
+						}
+					}
+				}
+
+			} else if (Common::KEYCODE_UP == _buttonValue ||
+					   Common::KEYCODE_KP8 == _buttonValue) {
+				// Up arrow
+				if (startingChar > 0) {
+					startingChar -= 4;
+					startingCharChanged(startingChar);
+				}
+
+			} else if (Common::KEYCODE_DOWN == _buttonValue ||
+					   Common::KEYCODE_KP2 == _buttonValue) {
+				// Down arrow
+				if (startingChar < ((int)_charList.size() - 4)) {
+					startingChar += 4;
+					startingCharChanged(startingChar);
+				}
+
+			} else if (Res.KeyConstants.DialogsParty.KEY_EXIT == _buttonValue ||
+				Common::KEYCODE_ESCAPE == _buttonValue ||
+				Common::KEYCODE_SPACE == _buttonValue) {
 				if (party._activeParty.size() == 0) {
 					ErrorScroll::show(_vm, Res.NO_ONE_TO_ADVENTURE_WITH);
 				} else {
@@ -133,68 +183,8 @@ void PartyDialog::execute() {
 					//_vm->_saves->writeCharFile();
 					return;
 				}
-				break;
 
-			case Common::KEYCODE_F1:
-			case Common::KEYCODE_F2:
-			case Common::KEYCODE_F3:
-			case Common::KEYCODE_F4:
-			case Common::KEYCODE_F5:
-			case Common::KEYCODE_F6:
-				// Show character info
-				_buttonValue -= Common::KEYCODE_F1;
-				if (_buttonValue < (int)party._activeParty.size())
-					CharacterInfo::show(_vm, _buttonValue);
-				break;
-
-			case Common::KEYCODE_1:
-			case Common::KEYCODE_2:
-			case Common::KEYCODE_3:
-			case Common::KEYCODE_4:
-				_buttonValue -= Common::KEYCODE_1 - 7;
-				if ((_buttonValue - 7 + startingChar) < (int)_charList.size()) {
-					// Check if the selected character is already in the party
-					uint idx = 0;
-					for (; idx < party._activeParty.size(); ++idx) {
-						if (_charList[_buttonValue - 7 + startingChar] ==
-							party._activeParty[idx]._rosterId)
-							break;
-					}
-
-					// Only add the character if they're not already in the party
-					if (idx == party._activeParty.size()) {
-						if (party._activeParty.size() == MAX_ACTIVE_PARTY) {
-							sound.playFX(21);
-							ErrorScroll::show(_vm, Res.YOUR_PARTY_IS_FULL);
-						} else {
-							// Add the character to the active party
-							party._activeParty.push_back(party._roster[
-								_charList[_buttonValue - 7 + startingChar]]);
-								startingCharChanged(startingChar);
-						}
-					}
-				}
-				break;
-
-			case Common::KEYCODE_UP:
-			case Common::KEYCODE_KP8:
-				// Up arrow
-				if (startingChar > 0) {
-					startingChar -= 4;
-					startingCharChanged(startingChar);
-				}
-				break;
-
-			case Common::KEYCODE_DOWN:
-			case Common::KEYCODE_KP2:
-				// Down arrow
-				if (startingChar < ((int)_charList.size() - 4)) {
-					startingChar += 4;
-					startingCharChanged(startingChar);
-				}
-				break;
-
-			case Common::KEYCODE_c:
+			} else if (Res.KeyConstants.DialogsParty.KEY_CREATE == _buttonValue) {
 				// Create
 				if (_charList.size() == XEEN_TOTAL_CHARACTERS) {
 					ErrorScroll::show(_vm, Res.YOUR_ROSTER_IS_FULL);
@@ -220,9 +210,8 @@ void PartyDialog::execute() {
 					modeFlag = true;
 					breakFlag = true;
 				}
-				break;
 
-			case Common::KEYCODE_d:
+			} else if (Res.KeyConstants.DialogsParty.KEY_DELETE == _buttonValue) {
 				// Delete character
 				if (_charList.size() > 0) {
 					int charButtonValue = selectCharacter(true, startingChar);
@@ -233,7 +222,7 @@ void PartyDialog::execute() {
 							ErrorScroll::show(_vm, Res.HAS_SLAYER_SWORD);
 						} else {
 							Common::String msg = Common::String::format(Res.SURE_TO_DELETE_CHAR,
-								c._name.c_str(), Res.CLASS_NAMES[c._class]);
+																		c._name.c_str(), Res.CLASS_NAMES[c._class]);
 							if (Confirm::show(_vm, msg)) {
 								// If the character is in the party, remove it
 								for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
@@ -253,9 +242,8 @@ void PartyDialog::execute() {
 						}
 					}
 				}
-				break;
 
-			case Common::KEYCODE_r:
+			} else if (Res.KeyConstants.DialogsParty.KEY_REMOVE == _buttonValue) {
 				// Remove character
 				if (party._activeParty.size() > 0) {
 					int charButtonValue = selectCharacter(false, startingChar);
@@ -265,10 +253,6 @@ void PartyDialog::execute() {
 					}
 					startingCharChanged(startingChar);
 				}
-				break;
-
-			default:
-				break;
 			}
 		}
 	}
@@ -292,10 +276,12 @@ void PartyDialog::loadButtons() {
 	_uiSprites.load("inn.icn");
 	addButton(Common::Rect(16, 100, 40, 120), Common::KEYCODE_UP, &_uiSprites);
 	addButton(Common::Rect(52, 100, 76, 120), Common::KEYCODE_DOWN, &_uiSprites);
-	addButton(Common::Rect(87, 100, 111, 120), Common::KEYCODE_d, &_uiSprites);
-	addButton(Common::Rect(122, 100, 146, 120), Common::KEYCODE_r, &_uiSprites);
-	addButton(Common::Rect(157, 100, 181, 120), Common::KEYCODE_c, &_uiSprites);
-	addButton(Common::Rect(192, 100, 216, 120), Common::KEYCODE_x, &_uiSprites);
+
+	addButton(Common::Rect(87, 100, 111, 120), Res.KeyConstants.DialogsParty.KEY_DELETE, &_uiSprites);
+	addButton(Common::Rect(122, 100, 146, 120), Res.KeyConstants.DialogsParty.KEY_REMOVE, &_uiSprites);
+	addButton(Common::Rect(157, 100, 181, 120), Res.KeyConstants.DialogsParty.KEY_CREATE, &_uiSprites);
+	addButton(Common::Rect(192, 100, 216, 120), Res.KeyConstants.DialogsParty.KEY_EXIT, &_uiSprites);
+
 	addButton(Common::Rect(0, 0, 0, 0), Common::KEYCODE_ESCAPE);
 }
 

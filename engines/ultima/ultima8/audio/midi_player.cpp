@@ -21,36 +21,64 @@
  */
 
 #include "ultima/ultima8/audio/midi_player.h"
+
 #include "ultima/ultima8/ultima8.h"
+#include "ultima/ultima8/audio/music_flex.h"
+#include "ultima/ultima8/games/game_data.h"
+
 #include "audio/midiparser.h"
+#include "audio/miles.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 byte MidiPlayer::_callbackData[2];
 
-MidiPlayer::MidiPlayer() {
-	MidiPlayer::createDriver();
+MidiPlayer::MidiPlayer() : _parser(nullptr) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_isFMSynth = MidiDriver::getMusicType(dev) == MT_ADLIB;
+	MusicType musicType = MidiDriver::getMusicType(dev);
+
+	switch (musicType) {
+	case MT_ADLIB:
+		MusicFlex *musicFlex;
+		musicFlex = GameData::get_instance()->getMusic();
+		_driver = Audio::MidiDriver_Miles_AdLib_create("", "", musicFlex->getAdlibTimbres(), nullptr);
+		break;
+	case MT_MT32:
+	case MT_GM:
+		_driver = Audio::MidiDriver_Miles_MIDI_create(MT_GM, "");
+		break;
+	default:
+		_driver = new MidiDriver_NULL_Multisource();
+		break;
+	}
+
+	_isFMSynth = (musicType == MT_ADLIB);
 	_callbackData[0] = 0;
 	_callbackData[1] = 0;
 
 	if (_driver) {
 		int retValue = _driver->open();
 		if (retValue == 0) {
-			if (_nativeMT32)
-				_driver->sendMT32Reset();
-			else
-				_driver->sendGMReset();
-
+			_driver->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
 			_driver->setTimerCallback(this, &timerCallback);
+			syncSoundSettings();
 		}
 	}
 }
 
 MidiPlayer::~MidiPlayer() {
-	_driver->close();
+	if (_parser) {
+		_parser->unloadMusic();
+		delete _parser;
+		_parser = 0;
+	}
+
+	if (_driver) {
+		_driver->close();
+		delete _driver;
+		_driver = 0;
+	}
 }
 
 void MidiPlayer::load(byte *data, size_t size, int seqNo, bool speedHack) {
@@ -59,34 +87,34 @@ void MidiPlayer::load(byte *data, size_t size, int seqNo, bool speedHack) {
 
 	assert(seqNo == 0 || seqNo == 1);
 
-	stop();
+	if (_parser) {
+		_parser->unloadMusic();
+		delete _parser;
+		_parser = 0;
+	}
 
 	if (size < 4)
 		error("load() wrong music resource size");
 
 	if (READ_BE_UINT32(data) != MKTAG('F', 'O', 'R', 'M')) {
 		warning("load() Unexpected signature");
-		_isPlaying = false;
 	} else {
-		_parser = MidiParser::createParser_XMIDI(xmidiCallback, _callbackData + seqNo);
+		_parser = MidiParser::createParser_XMIDI(xmidiCallback, _callbackData + seqNo, 0);
 
-		_parser->setMidiDriver(this);
+		_parser->setMidiDriver(_driver);
 		_parser->setTimerRate(_driver->getBaseTempo());
 		if (speedHack)
 			_parser->setTempo(_driver->getBaseTempo() * 2);
-		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 		_parser->property(MidiParser::mpDisableAutoStartPlayback, 1);
-
-		int volume = g_engine->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
-		setVolume(volume);
 
 		if (!_parser->loadMusic(data, size))
 			error("load() wrong music resource");
 	}
 }
+
 void MidiPlayer::play(int trackNo, int branchIndex) {
-	if (!_parser)
+	if (!_parser || !_driver)
 		return;
 
 	if (!_parser->setTrack(trackNo)) {
@@ -101,11 +129,47 @@ void MidiPlayer::play(int trackNo, int branchIndex) {
 		}
 	}
 
+	// Abort any active fades and reset the source volume to neutral.
+	if (_driver->isFading(0))
+		_driver->abortFade(0);
+	_driver->resetSourceVolume(0);
+
 	if (!_parser->startPlaying()) {
 		warning("play() failed to start playing");
-	} else {
-		_isPlaying = true;
 	}
+}
+
+void MidiPlayer::stop() {
+	if (_parser)
+		_parser->stopPlaying();
+}
+
+void MidiPlayer::pause(bool pause) {
+	if (_parser) {
+		if (pause) {
+			_parser->pausePlaying();
+		} else {
+			_parser->resumePlaying();
+		}
+	}
+}
+
+bool MidiPlayer::isPlaying() {
+	return _parser && _parser->isPlaying();
+}
+
+void MidiPlayer::startFadeOut(uint16 length) {
+	if (_driver)
+		_driver->startFade(0, 1500, 0);
+}
+
+bool MidiPlayer::isFading() {
+	return _driver && _driver->isFading(0);
+}
+
+void MidiPlayer::syncSoundSettings() {
+	if (_driver)
+		_driver->syncSoundSettings();
 }
 
 bool MidiPlayer::hasBranchIndex(uint8 index) {
@@ -113,7 +177,8 @@ bool MidiPlayer::hasBranchIndex(uint8 index) {
 }
 
 void MidiPlayer::setLooping(bool loop) {
-	_parser->property(MidiParser::mpAutoLoop, loop);
+	if (_parser)
+		_parser->property(MidiParser::mpAutoLoop, loop);
 }
 
 void MidiPlayer::xmidiCallback(byte eventData, void *data) {
@@ -123,6 +188,14 @@ void MidiPlayer::xmidiCallback(byte eventData, void *data) {
 	*static_cast<byte*>(data) = eventData;
 }
 
+void MidiPlayer::onTimer() {
+	if (_parser)
+		_parser->onTimer();
+}
+
+void MidiPlayer::timerCallback(void *data) {
+	((MidiPlayer *)data)->onTimer();
+}
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

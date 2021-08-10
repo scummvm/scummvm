@@ -568,6 +568,9 @@ int AdlEngine_v2::o_tellTime(ScriptEnv &e) {
 
 	Common::String time = _strings_v2.time;
 
+	if (time.size() <= 16)
+		error("Invalid time string");
+
 	const char zeroChar = _display->asciiToNative('0');
 
 	time.setChar(zeroChar + _state.time.hours / 10, 12);

@@ -55,6 +55,7 @@ STATICLIBRARY	libtremor.lib
 STATICLIBRARY	zlib.lib
 STATICLIBRARY	esdl.lib
 STATICLIBRARY	openlibm.lib
+STATICLIBRARY	libc_missed.lib
 
 // *** SOURCE files
 

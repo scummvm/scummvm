@@ -74,10 +74,10 @@ public:
 	NSArchive(Common::SeekableReadStream *stream, Common::Platform platform, uint32 features);
 	~NSArchive() override;
 
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
-	bool hasFile(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+	bool hasFile(const Common::Path &path) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 };
 
 
@@ -123,7 +123,8 @@ uint32 NSArchive::lookup(const char *name) const {
 	return i;
 }
 
-Common::SeekableReadStream *NSArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *NSArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	debugC(3, kDebugDisk, "NSArchive::createReadStreamForMember(%s)", name.c_str());
 
 	if (name.empty())
@@ -139,7 +140,8 @@ Common::SeekableReadStream *NSArchive::createReadStreamForMember(const Common::S
 	return new Common::SeekableSubReadStream(_stream, offset, endOffset, DisposeAfterUse::NO);
 }
 
-bool NSArchive::hasFile(const Common::String &name) const {
+bool NSArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (name.empty())
 		return false;
 	return lookup(name.c_str()) != _numFiles;
@@ -152,7 +154,8 @@ int NSArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return _numFiles;
 }
 
-const Common::ArchiveMemberPtr NSArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr NSArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	uint32 index = lookup(name.c_str());
 
 	const char *item = 0;

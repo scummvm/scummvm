@@ -23,6 +23,7 @@
 #define RONIN_TIMER_ACCESS
 
 #include "common/scummsys.h"
+#include "graphics/conversion.h"
 #include "graphics/surface.h"
 #include "dc.h"
 
@@ -657,14 +658,14 @@ void OSystem_Dreamcast::clearOverlay()
 
 void OSystem_Dreamcast::grabOverlay(Graphics::Surface &surface)
 {
-  int h = OVL_H;
-  unsigned short *src = overlay;
-  unsigned char *dst = (unsigned char *)surface.getPixels();
-  do {
-	memcpy(dst, src, OVL_W*sizeof(int16));
-	src += OVL_W;
-	dst += surface.pitch;
-  } while (--h);
+  assert(surface.w >= OVL_W);
+  assert(surface.h >= OVL_H);
+  assert(surface.format.bytesPerPixel == sizeof(unsigned short));
+
+  byte *src = (byte *)overlay;
+  byte *dst = (byte *)surface.getPixels();
+  Graphics::copyBlit(dst, src, surface.pitch, OVL_W * sizeof(unsigned short),
+	OVL_W, OVL_H, sizeof(unsigned short));
 }
 
 void OSystem_Dreamcast::copyRectToOverlay(const void *buf, int pitch,

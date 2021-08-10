@@ -31,20 +31,20 @@
 namespace AGS3 {
 
 struct ALFONT_FONT {
-Common::MemoryReadStream _ttfData;
-int _size;
-Common::HashMap<int, Graphics::Font *> _fonts;
+	Common::MemoryReadStream _ttfData;
+	int _size;
+	Common::HashMap<int, Graphics::Font *> _fonts;
 
-ALFONT_FONT() : _size(-1), _ttfData(nullptr, 0) {}
-ALFONT_FONT(const byte *data, int size) : _size(-1), _ttfData(data, size, DisposeAfterUse::YES) {}
+	ALFONT_FONT() : _size(-1), _ttfData(nullptr, 0) {}
+	ALFONT_FONT(const byte *data, int size) : _size(-1), _ttfData(data, size, DisposeAfterUse::YES) {}
 
-~ALFONT_FONT() {
-	for (Common::HashMap<int, Graphics::Font *>::iterator it = _fonts.begin();
-	        it != _fonts.end(); ++it)
-		delete(*it)._value;
-}
+	~ALFONT_FONT() {
+		for (Common::HashMap<int, Graphics::Font *>::iterator it = _fonts.begin();
+				it != _fonts.end(); ++it)
+			delete(*it)._value;
+	}
 
-Graphics::Font *getFont();
+	Graphics::Font *getFont();
 };
 
 inline void alfont_init() {}

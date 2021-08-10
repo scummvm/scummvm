@@ -25,6 +25,7 @@
 
 #include "common/str.h"
 #include "common/list.h"
+#include "common/path.h"
 #include "common/ptr.h"
 #include "common/singleton.h"
 
@@ -107,7 +108,7 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	virtual bool hasFile(const String &name) const = 0;
+	virtual bool hasFile(const Path &path) const = 0;
 
 	/**
 	 * Add all members of the Archive matching the specified pattern to the list.
@@ -115,7 +116,7 @@ public:
 	 *
 	 * @return The number of members added to list.
 	 */
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
+	virtual int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const;
 
 	/**
 	 * Add all members of the Archive to the list.
@@ -128,7 +129,7 @@ public:
 	/**
 	 * Return an ArchiveMember representation of the given file.
 	 */
-	virtual const ArchiveMemberPtr getMember(const String &name) const = 0;
+	virtual const ArchiveMemberPtr getMember(const Path &path) const = 0;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
@@ -136,7 +137,7 @@ public:
 	 *
 	 * @return The newly created input stream.
 	 */
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const = 0;
+	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const = 0;
 };
 
 
@@ -251,17 +252,17 @@ public:
 	 */
 	void setPriority(const String& name, int priority);
 
-	virtual bool hasFile(const String &name) const;
-	virtual int listMatchingMembers(ArchiveMemberList &list, const String &pattern) const;
+	virtual bool hasFile(const Path &path) const;
+	virtual int listMatchingMembers(ArchiveMemberList &list, const Path &pattern) const;
 	virtual int listMembers(ArchiveMemberList &list) const;
 
-	virtual const ArchiveMemberPtr getMember(const String &name) const;
+	virtual const ArchiveMemberPtr getMember(const Path &path) const;
 
 	/**
 	 * Implement createReadStreamForMember from the Archive base class. The current policy is
 	 * opening the first file encountered that matches the name.
 	 */
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const;
 
 	/**
 	 * Ignore clashes when adding directories. For more details, see the corresponding parameter

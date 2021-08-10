@@ -147,6 +147,18 @@ Stream *File::OpenFile(const String &filename, FileOpenMode open_mode, FileWorkM
 	return fs;
 }
 
+Stream *File::OpenStdin() {
+	error("TODO: File::OpenStdin");
+}
+
+Stream *File::OpenStdout() {
+	error("TODO: File::OpenStdout");
+}
+
+Stream *File::OpenStderr() {
+	error("TODO: File::OpenStderr");
+}
+
 String File::FindFileCI(const String &dir_name, const String &file_name) {
 #if !defined (AGS_CASE_SENSITIVE_FILESYSTEM)
 	// Simply concat dir and filename paths
@@ -235,6 +247,16 @@ Stream *File::OpenFileCI(const String &file_name, FileOpenMode open_mode, FileWo
 		return File::OpenFile(file_name, open_mode, work_mode);
 	return nullptr;
 #endif
+}
+
+Stream *File::OpenFile(const String &filename, soff_t start_off, soff_t end_off) {
+	FileStream *fs = new BufferedSectionStream(filename, start_off, end_off, kFile_Open, kFile_Read);
+	if (fs != nullptr && !fs->IsValid()) {
+		delete fs;
+		return nullptr;
+	}
+
+	return fs;
 }
 
 } // namespace Shared

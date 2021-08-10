@@ -28,6 +28,7 @@
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/window.h"
 #include "director/util.h"
 
 namespace Director {
@@ -48,7 +49,7 @@ Common::String Archive::getFileName() const { return Director::getFileName(_path
 bool Archive::openFile(const Common::String &fileName) {
 	Common::File *file = new Common::File();
 
-	if (!file->open(fileName)) {
+	if (!file->open(Common::Path(fileName, g_director->_dirSeparator))) {
 		warning("Archive::openFile(): Error opening file %s", fileName.c_str());
 		delete file;
 		return false;
@@ -224,12 +225,12 @@ bool MacArchive::openFile(const Common::String &fileName) {
 
 	Common::String fName = fileName;
 
-	if (!_resFork->open(fName) || !_resFork->hasResFork()) {
+	if (!_resFork->open(Common::Path(fName, g_director->_dirSeparator)) || !_resFork->hasResFork()) {
 		close();
 		return false;
 	}
 
-	_pathName = _resFork->getBaseFileName();
+	_pathName = _resFork->getBaseFileName().toString(g_director->_dirSeparator);
 	if (_pathName.hasSuffix(".bin")) {
 		for (int i = 0; i < 4; i++)
 			_pathName.deleteLastChar();
@@ -289,7 +290,7 @@ Common::SeekableReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 id)
 		return nullptr;
 	}
 
-	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), true, DisposeAfterUse::NO);
+	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), true, DisposeAfterUse::YES);
 }
 
 // RIFF Archive code
@@ -339,8 +340,15 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		byte nameSize = stream->readByte();
 
 		if (nameSize) {
+			bool skip = false;
 			for (uint8 i = 0; i < nameSize; i++) {
-				name += stream->readByte();
+				byte b = stream->readByte();
+
+				if (!b)
+					skip = true;
+
+				if (!skip)
+					name += b;
 			}
 		}
 
@@ -424,6 +432,14 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		if (Common::MacResManager::isMacBinary(*stream)) {
 			warning("RIFXArchive::openStream(): MacBinary detected, overriding");
 
+			// We need to look at the resource fork to detect XCOD resources
+			Common::SeekableSubReadStream *macStream = new Common::SeekableSubReadStream(stream, 0, stream->size());
+			MacArchive *macArchive = new MacArchive();
+			macArchive->openStream(macStream);
+			g_director->getCurrentWindow()->probeMacBinary(macArchive);
+			delete macArchive;
+
+			// Then read the data fork
 			moreOffset = Common::MacResManager::getDataForkOffset();
 			stream->seek(startOffset + moreOffset);
 
@@ -484,7 +500,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		Common::DumpFile out;
 
 		char buf[256];
-		sprintf(buf, "./dumps/%s-%08x", g_director->getEXEName().c_str(), startOffset);
+		sprintf(buf, "./dumps/%s-%08x", encodePathForDump(g_director->getEXEName()).c_str(), startOffset);
 
 		if (out.open(buf, true)) {
 			out.write(dumpData, sz);
@@ -543,7 +559,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			else
 				prepend = "stream";
 
-			Common::String filename = Common::String::format("./dumps/%s-%s-%d", prepend.c_str(), tag2str(_resources[i]->tag), _resources[i]->index);
+			Common::String filename = Common::String::format("./dumps/%s-%s-%d", encodePathForDump(prepend).c_str(), tag2str(_resources[i]->tag), _resources[i]->index);
 			resStream->read(data, len);
 
 			if (!out.open(filename, true)) {
@@ -700,7 +716,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 		Common::DumpFile out;
 
 		char buf[256];
-		sprintf(buf, "./dumps/%s-%s", g_director->getEXEName().c_str(), "ABMP");
+		sprintf(buf, "./dumps/%s-%s", encodePathForDump(g_director->getEXEName()).c_str(), "ABMP");
 
 		if (out.open(buf, true)) {
 			byte *data = (byte *)malloc(abmpStream->size());

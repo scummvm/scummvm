@@ -57,7 +57,7 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 
 	registerCmd("search", WRAP_METHOD(Console, cmdSearchObj));
 
-	registerCmd("add_obj", WRAP_METHOD(Console, cmdAddObj));
+	registerCmd("add", WRAP_METHOD(Console, cmdAddObj));
 
 	registerCmd("position", WRAP_METHOD(Console, cmdPosition));
 
@@ -71,6 +71,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 
 	registerCmd("teleport_npc_here", WRAP_METHOD(Console, cmdTeleportNPCHere));
 
+	registerCmd("teleport_party_here", WRAP_METHOD(Console, cmdTeleportPartyHere));
+
 	registerCmd("save_loc", WRAP_METHOD(Console, cmdSaveLoc));
 
 	registerCmd("load_loc", WRAP_METHOD(Console, cmdLoadLoc));
@@ -82,6 +84,10 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("stats", WRAP_METHOD(Console, cmdStats));
 
 	registerCmd("dump_map", WRAP_METHOD(Console, cmdDumpMap));
+
+	registerCmd("play_music", WRAP_METHOD(Console, cmdPlayMusic));
+
+	registerCmd("play_voice", WRAP_METHOD(Console, cmdPlayVoice));
 }
 
 Console::~Console() {
@@ -181,12 +187,15 @@ bool Console::cmdSearchObj(int argc, const char **argv) {
 }
 
 bool Console::cmdAddObj(int argc, const char **argv) {
-	if (argc != 2)
-		debugPrintf("Usage: %s <ObjectID>\n", argv[0]);
-	else {
+	if (argc == 2) {
 		Actor *a = getCenterActor();
 		a->placeObject(a->thisID(), atoi(argv[1]));
-	}
+	} else if (argc == 3) {
+		Actor *a = getCenterActor();
+		int num = atoi(argv[2]);
+		a->placeObject(a->thisID(), atoi(argv[1]), true, num);
+	} else
+		debugPrintf("Usage: %s <ObjectID> <num = 1>\n", argv[0]);
 
 	return true;
 }
@@ -284,6 +293,21 @@ bool Console::cmdTeleportNPCHere(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdTeleportPartyHere(int argc, const char **argv) {
+	if (argc != 1)
+		debugPrintf("Usage: %s\n", argv[0]);
+	else {
+		TilePoint loc = getCenterActor()->getLocation();
+
+		for (ObjectID id = ActorBaseID; id < ActorBaseID + kPlayerActors; ++id) {
+			Actor *p = (Actor *)GameObject::objectAddress(id);
+			p->setLocation(loc);
+		}
+	}
+
+	return true;
+}
+
 bool Console::cmdSaveLoc(int argc, const char **argv) {
 	if (argc != 1)
 		debugPrintf("Usage: %s\n", argv[0]);
@@ -373,6 +397,28 @@ bool Console::cmdDumpMap(int argc, const char **argv) {
 		dump.close();
 
 		delete[] drawMap.data;
+	}
+
+	return true;
+}
+
+bool Console::cmdPlayMusic(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <Music Index>\n", argv[0]);
+	else {
+		int32 currentID = atoi(argv[1]);
+		playMusic(MKTAG('X', 'M', 'I', currentID));
+	}
+
+	return true;
+}
+
+bool Console::cmdPlayVoice(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <Voice ID>\n", argv[0]);
+	else {
+		int32 soundID = READ_BE_INT32(argv[1]);
+		playVoice(soundID);
 	}
 
 	return true;

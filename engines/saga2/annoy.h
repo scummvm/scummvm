@@ -86,6 +86,7 @@ void writeConfig(void);
 
 void audioEventLoop(void);
 bool stillDoingVoice(uint32 sampno);
+bool stillDoingVoice(uint32 s[]);
 
 //-----------------------------------------------------------------------
 //	environmental sounds

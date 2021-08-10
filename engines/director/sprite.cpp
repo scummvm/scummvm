@@ -52,6 +52,7 @@ Sprite::Sprite(Frame *frame) {
 	_ink = kInkTypeCopy;
 	_trails = 0;
 
+	_matte = nullptr;
 	_cast = nullptr;
 
 	_thickness = 0;
@@ -71,6 +72,7 @@ Sprite::Sprite(Frame *frame) {
 }
 
 Sprite::~Sprite() {
+	delete _matte;
 }
 
 bool Sprite::isQDShape() {
@@ -84,6 +86,68 @@ bool Sprite::isQDShape() {
 		_spriteType == kOutlinedOvalSprite ||
 		_spriteType == kThickLineSprite;
 }
+
+void Sprite::createQDMatte() {
+	Graphics::ManagedSurface tmp;
+	tmp.create(_width, _height, g_director->_pixelformat);
+	tmp.clear(g_director->_wm->_colorWhite);
+
+	Common::Rect srcRect(_width, _height);
+
+	Common::Rect fillAreaRect((int)srcRect.width(), (int)srcRect.height());
+	Graphics::MacPlotData plotFill(&tmp, nullptr, &g_director->getPatterns(), getPattern(), 0, 0, 1, g_director->_wm->_colorBlack);
+
+	// it's the same for filled and outlined qd shape when we are using floodfill, so we use filled rect directly since it won't be affected by line size.
+	switch (_spriteType) {
+	case kOutlinedRectangleSprite:
+	case kRectangleSprite:
+		Graphics::drawFilledRect(fillAreaRect, g_director->_wm->_colorBlack, g_director->_wm->getDrawPixel(), &plotFill);
+		break;
+	case kOutlinedRoundedRectangleSprite:
+	case kRoundedRectangleSprite:
+		Graphics::drawRoundRect(fillAreaRect, 12, g_director->_wm->_colorBlack, true, g_director->_wm->getDrawPixel(), &plotFill);
+		break;
+	case kOutlinedOvalSprite:
+	case kOvalSprite:
+		Graphics::drawEllipse(fillAreaRect.left, fillAreaRect.top, fillAreaRect.right, fillAreaRect.bottom, g_director->_wm->_colorBlack, true, g_director->_wm->getDrawPixel(), &plotFill);
+		break;
+	case kLineBottomTopSprite:
+	case kLineTopBottomSprite:
+		warning("Sprite::createQDMatte doesn't support creating matte for type %d", _spriteType);
+		break;
+	default:
+		warning("Sprite::createQDMatte Expected shape type but got type %d", _spriteType);
+	}
+
+	Graphics::Surface surface;
+	surface.create(_width, _height, g_director->_pixelformat);
+	surface.copyFrom(tmp);
+
+	_matte = new Graphics::FloodFill(&surface, g_director->_wm->_colorWhite, 0, true);
+
+	for (int yy = 0; yy < surface.h; yy++) {
+		_matte->addSeed(0, yy);
+		_matte->addSeed(surface.w - 1, yy);
+	}
+
+	for (int xx = 0; xx < surface.w; xx++) {
+		_matte->addSeed(xx, 0);
+		_matte->addSeed(xx, surface.h - 1);
+	}
+
+	_matte->fillMask();
+	tmp.free();
+	surface.free();
+}
+
+Graphics::Surface *Sprite::getQDMatte() {
+	if (!isQDShape() || _ink != kInkTypeMatte)
+		return nullptr;
+	if (!_matte)
+		createQDMatte();
+	return _matte ? _matte->getMask() : nullptr;
+}
+
 
 void Sprite::updateCast() {
 	if (!_cast)
@@ -238,7 +302,11 @@ void Sprite::setCast(CastMemberID memberID) {
 		Common::Rect dims = _cast->getInitialRect();
 		// strange logic here, need to be fixed
 		if (_cast->_type == kCastBitmap) {
-			if (!(_inkData & 0x80)) {
+			// for the stretched sprites, we need the original size to get the correct bbox offset.
+			// there are two stretch situation here.
+			// 1. stretch happened when creating the widget, there is no lingo participated. we will use the original sprite size to create widget. check copyStretchImg
+			// 2. stretch set by lingo. this time we need to store the original dims because we will create the original sprite and stretch it when bliting. check inkBlitStretchSurface
+			if (!(_inkData & 0x80) || _stretch) {
 				_width = dims.width();
 				_height = dims.height();
 			}

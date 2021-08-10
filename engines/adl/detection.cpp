@@ -118,7 +118,7 @@ static const PlainGameDescriptor adlGames[] = {
 static const AdlGameDescription gameFileDescriptions[] = {
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Simi Valley
 		{
-			"hires1", "V1",
+			"hires1", "On-Line Systems [A]",
 			{
 				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
 				{ "AUTO LOAD OBJ", 0, "a2ab7be25842e1fa9f1343b0894a8b6f", 4095 },
@@ -134,7 +134,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Coarsegold - Without MIXEDON
 		{
-			"hires1", "V2",
+			"hires1", "On-Line Systems [B]",
 			{
 				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
 				{ "AUTO LOAD OBJ", 0, "669b5f313ffdfb373ab8dce5961688d3", 12288 },
@@ -150,7 +150,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - French - Without MIXEDON
 		{
-			"hires1", "VF1",
+			"hires1", "Malibu Microcomputing [A]",
 			{
 				{ "ADVENTURE", 0, "6e2245979871b44a9fec46b4b2ba590a", 29952 },
 				{ "AUTO LOAD OBJ", 0, "3d417e923e70abe9a82e51155974027d", 12288 },
@@ -166,7 +166,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - French - Modified parser
 		{
-			"hires1", "VF2",
+			"hires1", "Malibu Microcomputing [B]",
 			{
 				{ "ADVENTURE", 0, "f9a1add3609b4bc24b5dc4a9db1fec67", 29952 },
 				{ "AUTO LOAD OBJ", 0, "2a348058363da4c78a069ee5a2d81a31", 12287 },
@@ -182,7 +182,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Coarsegold - With MIXEDON
 		{
-			"hires1", "V3",
+			"hires1", "On-Line Systems [C]",
 			{
 				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
 				{ "AUTO LOAD OBJ", 0, "f6a6ac60c04c6ba6dff68b92cc279ba2", 12291 },
@@ -196,13 +196,12 @@ static const AdlGameDescription gameFileDescriptions[] = {
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_COARSE
 	},
-	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Public Domain
 		{
-			"hires1", "PD",
+			"hires1", "Public Domain",
 			{
 				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
 				{ "AUTO LOAD OBJ", 0, "23bfccfe9fcff9b22cf6c41bde9078ac", 12291 },
-				{ "MYSTERY.HELLO", 0, "2289b7fea300b506e902a4c597968369", 836 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -217,9 +216,9 @@ static const AdlGameDescription gameFileDescriptions[] = {
 };
 
 static const AdlGameDescription gameDiskDescriptions[] = {
-	{ // Hi-Res Adventure #1: Mystery House - Apple II - Simi Valley
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Simi Valley - DOS 3.2 only
 		{
-			"hires1", "V1",
+			"hires1", "On-Line Systems [A]",
 			AD_ENTRY1s("mysthous", "629b9d034cbf8d8e3a612398f53a8dfc", 116480),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
@@ -231,7 +230,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Coarsegold - Without MIXEDON
 		{
-			"hires1", "V2",
+			"hires1", "On-Line Systems [B]",
 			AD_ENTRY1s("mysthous", "b22561b5327c7dcdb659e2d649749310", 116480),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
@@ -243,7 +242,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - French - Modified parser
 		{
-			"hires1", "VF2",
+			"hires1", "Malibu Microcomputing [B]",
 			AD_ENTRY1s("mysthous", "7bd1918ffc28e551e5b3baf610982bd3", 116480),
 			Common::FR_FRA,
 			Common::kPlatformApple2,
@@ -255,7 +254,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Coarsegold - With MIXEDON
 		{
-			"hires1", "V3",
+			"hires1", "On-Line Systems [C]",
 			AD_ENTRY1s("mysthous", "8df0b3b3e609a2e40237e2419c1cb767", 116480),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
@@ -267,7 +266,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
 		{
-			"hires1", "PD",
+			"hires1", "Public Domain",
 			AD_ENTRY1s("mysthous", "54d20eb1ef0084ac3c2d16c31c5b7eb7", 143360),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
@@ -277,9 +276,57 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 		GAME_TYPE_HIRES1,
 		GAME_VER_HR1_PD
 	},
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Public Domain
+		{
+			"hires1", "Public Domain",
+			AD_ENTRY1s("mysthous", "bc0f34d153a530b9bb4e554b0a42f8d7", 143360),
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			MH_OPTIONS
+		},
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_PD
+	},
+	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - DOS 3.2 only
+		{
+			"hires2", "On-Line Systems [A]",
+			AD_ENTRY1s("wizard", "5201c87db24ba7e3fa447471f4f2ec99", 116480),
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES2,
+		GAME_VER_NONE
+	},
+	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II
+		{
+			"hires2", "On-Line Systems [B]",
+			AD_ENTRY1s("wizard", "1de984859212ff11cf61b29cb9b55f8c", 116480),
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES2,
+		GAME_VER_NONE
+	},
+	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - Green Valley Publishing
+		{
+			"hires2", "Green Valley [A]",
+			AD_ENTRY1s("wizard", "73cd373e9a2946c3181b72fdf7a32c77", 143360),
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			DEFAULT_OPTIONS
+		},
+		GAME_TYPE_HIRES2,
+		GAME_VER_NONE
+	},
 	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - Roberta Williams Anthology
 		{
-			"hires2", "",
+			"hires2", "Green Valley [B]",
 			AD_ENTRY1s("wizard", "72b114bf8f94fafe5672daac2a70c765", 143360),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
@@ -375,7 +422,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - Roberta Williams Anthology / SierraVenture
 		{
-			"hires6", "SierraVenture [version A]",
+			"hires6", "SierraVenture [A]",
 			{
 				{ "dark1a", 0, "9a5968a8f378c84454d88f4cd4e143a9", 143360 },
 				{ "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 },
@@ -393,7 +440,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	},
 	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - SierraVenture
 		{
-			"hires6", "SierraVenture [version B]",
+			"hires6", "SierraVenture [B]",
 			{
 				{ "dark1a", 0, "d0b8e808b02564b6ce58b5ea5cc61ead", 143360 },
 				{ "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 },

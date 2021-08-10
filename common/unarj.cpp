@@ -702,10 +702,10 @@ public:
 	virtual ~ArjArchive();
 
 	// Archive implementation
-	virtual bool hasFile(const String &name) const;
+	virtual bool hasFile(const Path &path) const;
 	virtual int listMembers(ArchiveMemberList &list) const;
-	virtual const ArchiveMemberPtr getMember(const String &name) const;
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+	virtual const ArchiveMemberPtr getMember(const Path &path) const;
+	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const;
 };
 
 ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
@@ -746,7 +746,8 @@ ArjArchive::~ArjArchive() {
 	}
 }
 
-bool ArjArchive::hasFile(const String &name) const {
+bool ArjArchive::hasFile(const Path &path) const {
+	String name = path.toString();
 	return _headers.contains(name);
 }
 
@@ -762,14 +763,16 @@ int ArjArchive::listMembers(ArchiveMemberList &list) const {
 	return matches;
 }
 
-const ArchiveMemberPtr ArjArchive::getMember(const String &name) const {
+const ArchiveMemberPtr ArjArchive::getMember(const Path &path) const {
+	String name = path.toString();
 	if (!hasFile(name))
 		return ArchiveMemberPtr();
 
 	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
 }
 
-SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) const {
+SeekableReadStream *ArjArchive::createReadStreamForMember(const Path &path) const {
+	String name = path.toString();
 	if (!_headers.contains(name)) {
 		return nullptr;
 	}

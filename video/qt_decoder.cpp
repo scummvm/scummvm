@@ -57,7 +57,7 @@ QuickTimeDecoder::~QuickTimeDecoder() {
 	close();
 }
 
-bool QuickTimeDecoder::loadFile(const Common::String &filename) {
+bool QuickTimeDecoder::loadFile(const Common::Path &filename) {
 	if (!Common::QuickTimeParser::parseFile(filename))
 		return false;
 

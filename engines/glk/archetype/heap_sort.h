@@ -32,12 +32,9 @@ namespace Archetype {
 typedef XArrayType HeapType;
 typedef void *Element;
 
-extern HeapType H;
-
 // Public methods
 extern void heap_sort_init();
 extern bool pop_heap(Element &e);
-extern void drop_on_heap(Element e);
 extern void drop_str_on_heap(const String &s);
 extern void reinit_heap();
 

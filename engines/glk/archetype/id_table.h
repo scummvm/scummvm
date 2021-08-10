@@ -27,14 +27,14 @@
 #include "glk/archetype/string.h"
 
 /**
- * Contains the necessary data structures andfunctions for adding to andreferring
+ * Contains the necessary data structures and functions for adding to and referring
  * to the ID table(a very busy little structure).
  *
  * The ID table is a 27-element hash table with one bucket for each letter; identifiers
  * are hashed according to their first letter. The last bucket is for identifiers beginning with
  * an underscore. The ID table is cross_indexed by an xarray containing pointers to id_records.
  * The ID table is complex enough that it should probably not be accessed directly but rather
- * only through its procedures.In this way the data type, its primary instantiation, andassociated
+ * only through its procedures. In this way the data type, its primary instantiation, and associated
  * code comprise one stand-alone module which must be "used" by any module wishing to modify or
  * query the table.
  */
@@ -57,7 +57,7 @@ typedef IdRecType *IdRecPtr;
 
 // Public methods
 /**
- * Adds the given identifier to the ID table, andreturns its index. There are no duplications;
+ * Adds the given identifier to the ID table, and returns its index. There are no duplications;
  * if the identifier already exists, its existing index is returned.
  * @param id_str		String containing identifier name
  * @returns				The index of the identifier

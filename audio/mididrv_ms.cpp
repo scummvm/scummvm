@@ -224,6 +224,18 @@ void MidiDriver_Multisource::setSourceVolume(uint8 source, uint16 volume) {
 	applySourceVolume(source);
 }
 
+void MidiDriver_Multisource::resetSourceVolume() {
+	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
+		resetSourceVolume(i);
+	}
+}
+
+void MidiDriver_Multisource::resetSourceVolume(uint8 source) {
+	assert(source < MAXIMUM_SOURCES);
+
+	setSourceVolume(source, _sources[source].neutralVolume);
+}
+
 void MidiDriver_Multisource::setSourceNeutralVolume(uint16 volume) {
 	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
 		setSourceNeutralVolume(i, volume);
@@ -251,4 +263,21 @@ void MidiDriver_Multisource::onTimer() {
 
 	if (_timer_proc && _timer_param)
 		_timer_proc(_timer_param);
+}
+
+MidiDriver_NULL_Multisource::~MidiDriver_NULL_Multisource() {
+	g_system->getTimerManager()->removeTimerProc(timerCallback);
+}
+
+int MidiDriver_NULL_Multisource::open() {
+	// Setup a timer callback so "fades" will end after the specified time
+	// (effectively becoming timers, because there is no audio).
+	_timerRate = getBaseTempo();
+	g_system->getTimerManager()->installTimerProc(timerCallback, _timerRate, this, "MidiDriver_NULL_Multisource");
+	return 0;
+}
+
+void MidiDriver_NULL_Multisource::timerCallback(void *data) {
+	MidiDriver_NULL_Multisource *driver = (MidiDriver_NULL_Multisource *)data;
+	driver->onTimer();
 }

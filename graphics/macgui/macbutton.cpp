@@ -43,6 +43,7 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 void MacButton::init() {
 	_invertInner = false;
 	_checkBoxType = 0;
+	_checkBoxAccess = 0;
 
 	switch (_buttonType) {
 	case kCheckBox:
@@ -179,18 +180,37 @@ bool MacButton::processEvent(Common::Event &event) {
 		if (_wm->_mouseDown) {
 			if (_wm->_mode & kWMModeButtonDialogStyle)
 				return true;
-			else if (!_dims.contains(_wm->_lastClickPos))
-				return false;
+			else if (!_wm->_hilitingWidget)
+				return true;
+			// hovered widget in macwindow will help us set the button status to non-active.
+			// so we only care about setting active here is ok.
 
 			setActive(true);
 		}
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 		setActive(true);
+		_wm->_hilitingWidget = true;
 		break;
 	case Common::EVENT_LBUTTONUP:
 		setActive(false);
-		_invertInner = !_invertInner;
+
+		switch (_checkBoxAccess) {
+		case 0:
+			_invertInner = !_invertInner;
+			break;
+		case 1:
+			_invertInner = true;
+			break;
+		case 2:
+			// no op, type 2 will prevent user from setting checkboxes
+			break;
+		default:
+			warning("MacButton::processEvent can not handle checkBoxAccess with type %d", _checkBoxAccess);
+			break;
+		}
+
+		_wm->_hilitingWidget = false;
 		break;
 	default:
 		warning("MacButton:: processEvent: Event not handled");

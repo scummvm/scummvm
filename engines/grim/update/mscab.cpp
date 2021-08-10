@@ -146,7 +146,8 @@ Common::String MsCabinet::readString(Common::ReadStream *stream) {
 	return ret;
 }
 
-bool MsCabinet::hasFile(const Common::String &name) const {
+bool MsCabinet::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return _fileMap.contains(name);
 }
 
@@ -157,11 +158,13 @@ int MsCabinet::listMembers(Common::ArchiveMemberList &list) const {
 	return _fileMap.size();
 }
 
-const Common::ArchiveMemberPtr MsCabinet::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr MsCabinet::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *MsCabinet::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *MsCabinet::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	byte *fileBuf;
 
 	if (!hasFile(name))

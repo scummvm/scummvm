@@ -29,12 +29,19 @@
 
 #include "director/director.h"
 #include "director/sound.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/xlibs/fplayxobj.h"
 
 #include "audio/audiostream.h"
 
 namespace Director {
+
+const char *FPlayXObj::xlibName = "FPlay";
+const char *FPlayXObj::fileNames[] = {
+	"FPlayXObj",
+	0
+};
 
 static BuiltinProto builtins[] = {
 	{ "FPlay",			FPlayXObj::b_fplay,		-1,0, 200, CBLTIN },
@@ -48,12 +55,12 @@ static BuiltinProto builtins[] = {
 	{ 0, 0, 0, 0, 0, VOIDSYM }
 };
 
-void FPlayXObj::initialize(int type) {
-	if (!g_lingo->_builtinCmds.contains("FPlay")) {
-		g_lingo->initBuiltIns(builtins);
-	} else {
-		warning("FPlayXObj already initialized");
-	}
+void FPlayXObj::open(int type) {
+	g_lingo->initBuiltIns(builtins);
+}
+
+void FPlayXObj::close(int type) {
+	g_lingo->cleanupBuiltIns(builtins);
 }
 
 void FPlayXObj::b_fplay(int nargs) {
@@ -67,7 +74,7 @@ void FPlayXObj::b_fplay(int nargs) {
 		arr[i] = g_lingo->pop().asString();
 	}
 
-	DirectorSound *sound = g_director->getSoundManager();
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 	sound->playFPlaySound(arr);
 }
 
@@ -107,7 +114,7 @@ void FPlayXObj::b_fsound(int nargs) {
 		g_lingo->dropStack(nargs);
 	}
 
-	DirectorSound *sound = g_director->getSoundManager();
+	DirectorSound *sound = g_director->getCurrentWindow()->getSoundManager();
 	if (sound->isChannelActive(1)) {
 		g_lingo->push(Datum(sound->getCurrentSound()));
 	} else {

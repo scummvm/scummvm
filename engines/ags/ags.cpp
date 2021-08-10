@@ -81,6 +81,10 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 	Common::String forceAA;
 	if (ConfMan.getActiveDomain()->tryGetVal("force_text_aa", forceAA))
 		Common::parseBool(forceAA, _forceTextAA);
+
+	// WORKAROUND: Certain games need to force AA to render the text correctly
+	if (_gameDescription->desc.flags & GAMEFLAG_FORCE_AA)
+		_forceTextAA = true;
 }
 
 AGSEngine::~AGSEngine() {

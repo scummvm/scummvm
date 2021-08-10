@@ -79,7 +79,7 @@ private:
 public:
 	ScummNESFile();
 
-	bool open(const Common::String &filename) override;
+	bool open(const Common::Path &filename) override;
 	bool openSubFile(const Common::String &filename) override;
 
 	void close() override;

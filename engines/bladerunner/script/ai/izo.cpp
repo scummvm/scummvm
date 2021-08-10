@@ -316,7 +316,7 @@ int AIScriptIzo::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId)
 }
 
 bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber == 200
+	if (newGoalNumber == kGoalIzoEscapedSteeleKnows
 	 || newGoalNumber == kGoalIzoDie
 	 || newGoalNumber == kGoalIzoDieHidden
 	 || newGoalNumber == kGoalIzoGotArrested
@@ -487,7 +487,7 @@ bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 
-	case 200:
+	case kGoalIzoEscapedSteeleKnows:
 		Game_Flag_Set(kFlagDNARowAvailable);
 		return true;
 

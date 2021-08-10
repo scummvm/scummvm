@@ -303,18 +303,18 @@ bool try_init_compatible_mode(const DisplayMode &dm, const bool match_device_rat
 }
 
 // Try to find and initialize compatible display mode as close to given setup as possible
-bool try_init_mode_using_setup(const Size &game_size, const DisplayModeSetup &dm_setup,
-                               const int col_depth, const GameFrameSetup &frame_setup,
-                               const GfxFilterSetup &filter_setup) {
+bool try_init_mode_using_setup(const GraphicResolution &game_res, const DisplayModeSetup &dm_setup,
+	const int col_depth, const GameFrameSetup &frame_setup,
+	const GfxFilterSetup &filter_setup) {
 	// We determine the requested size of the screen using setup options
-	const Size screen_size = precalc_screen_size(game_size, dm_setup, frame_setup);
+	const Size screen_size = precalc_screen_size(game_res, dm_setup, frame_setup);
 	DisplayMode dm(GraphicResolution(screen_size.Width, screen_size.Height, col_depth),
-	               dm_setup.Windowed, dm_setup.RefreshRate, dm_setup.VSync);
+		dm_setup.Windowed, dm_setup.RefreshRate, dm_setup.VSync);
 	if (!try_init_compatible_mode(dm, dm_setup.ScreenSize.SizeDef == kScreenDef_Explicit ? false : dm_setup.ScreenSize.MatchDeviceRatio))
 		return false;
 
 	// Set up native size and render frame
-	if (!graphics_mode_set_native_size(game_size) || !graphics_mode_set_render_frame(frame_setup))
+	if (!graphics_mode_set_native_res(game_res) || !graphics_mode_set_render_frame(frame_setup))
 		return false;
 
 	// Set up graphics filter
@@ -352,17 +352,19 @@ void log_out_driver_modes(const int color_depth) {
 
 // Create requested graphics driver and try to find and initialize compatible display mode as close to user setup as possible;
 // if the given setup fails, gets default setup for the opposite type of mode (fullscreen/windowed) and tries that instead.
-bool create_gfx_driver_and_init_mode_any(const String &gfx_driver_id, const Size &game_size, const DisplayModeSetup &dm_setup,
-        const ColorDepthOption &color_depth, const GameFrameSetup &frame_setup, const GfxFilterSetup &filter_setup) {
+bool create_gfx_driver_and_init_mode_any(const String &gfx_driver_id,
+	const GraphicResolution &game_res,
+	const DisplayModeSetup &dm_setup, const ColorDepthOption &color_depth,
+	const GameFrameSetup &frame_setup, const GfxFilterSetup &filter_setup) {
 	if (!graphics_mode_create_renderer(gfx_driver_id))
 		return false;
 
 	const int use_col_depth =
-	    color_depth.Forced ? color_depth.Bits : _G(gfxDriver)->GetDisplayDepthForNativeDepth(color_depth.Bits);
+		color_depth.Forced ? color_depth.Bits : _G(gfxDriver)->GetDisplayDepthForNativeDepth(color_depth.Bits);
 	// Log out supported driver modes
 	log_out_driver_modes(use_col_depth);
 
-	bool result = try_init_mode_using_setup(game_size, dm_setup, use_col_depth, frame_setup, filter_setup);
+	bool result = try_init_mode_using_setup(game_res, dm_setup, use_col_depth, frame_setup, filter_setup);
 	// Try windowed mode if fullscreen failed, and vice versa
 	if (!result && _G(editor_debugging_enabled) == 0) {
 		// we need to clone from initial config, because not every parameter is set by graphics_mode_get_defaults()
@@ -370,30 +372,30 @@ bool create_gfx_driver_and_init_mode_any(const String &gfx_driver_id, const Size
 		dm_setup_alt.Windowed = !dm_setup.Windowed;
 		GameFrameSetup frame_setup_alt;
 		graphics_mode_get_defaults(dm_setup_alt.Windowed, dm_setup_alt.ScreenSize, frame_setup_alt);
-		result = try_init_mode_using_setup(game_size, dm_setup_alt, use_col_depth, frame_setup_alt, filter_setup);
+		result = try_init_mode_using_setup(game_res, dm_setup_alt, use_col_depth, frame_setup_alt, filter_setup);
 	}
 	return result;
 }
 
 bool simple_create_gfx_driver_and_init_mode(const String &gfx_driver_id,
-        const Size &game_size,
-        const DisplayModeSetup &dm_setup,
-        const ColorDepthOption &color_depth,
-        const GameFrameSetup &frame_setup,
-        const GfxFilterSetup &filter_setup) {
+	const GraphicResolution &game_res,
+	const DisplayModeSetup &dm_setup,
+	const ColorDepthOption &color_depth,
+	const GameFrameSetup &frame_setup,
+	const GfxFilterSetup &filter_setup) {
 	if (!graphics_mode_create_renderer(gfx_driver_id)) {
 		return false;
 	}
 
 	const int col_depth = _G(gfxDriver)->GetDisplayDepthForNativeDepth(color_depth.Bits);
 
-	DisplayMode dm(GraphicResolution(game_size.Width, game_size.Height, col_depth),
-	               dm_setup.Windowed, dm_setup.RefreshRate, dm_setup.VSync);
+	DisplayMode dm(GraphicResolution(game_res.Width, game_res.Height, col_depth),
+		dm_setup.Windowed, dm_setup.RefreshRate, dm_setup.VSync);
 
 	if (!graphics_mode_set_dm(dm)) {
 		return false;
 	}
-	if (!graphics_mode_set_native_size(game_size)) {
+	if (!graphics_mode_set_native_res(dm)) {
 		return false;
 	}
 	if (!graphics_mode_set_render_frame(frame_setup)) {
@@ -405,7 +407,6 @@ bool simple_create_gfx_driver_and_init_mode(const String &gfx_driver_id,
 
 	return true;
 }
-
 
 void display_gfx_mode_error(const Size &game_size, const ScreenSetup &setup, const int color_depth) {
 	_G(proper_exit) = 1;
@@ -427,7 +428,7 @@ void display_gfx_mode_error(const Size &game_size, const ScreenSetup &setup, con
 	                           main_error.GetCStr(), _G(platform)->GetGraphicsTroubleshootingText());
 }
 
-bool graphics_mode_init_any(const Size game_size, const ScreenSetup &setup, const ColorDepthOption &color_depth) {
+bool graphics_mode_init_any(const GraphicResolution &game_res, const ScreenSetup &setup, const ColorDepthOption &color_depth) {
 	// Log out display information
 	Size device_size;
 	if (sys_get_desktop_resolution(device_size.Width, device_size.Height) == 0)
@@ -468,7 +469,7 @@ bool graphics_mode_init_any(const Size game_size, const ScreenSetup &setup, cons
 #else
 		    create_gfx_driver_and_init_mode_any
 #endif
-		    (*sit, game_size, setup.DisplayMode, color_depth, gameframe, setup.Filter);
+		    (*sit, game_res, setup.DisplayMode, color_depth, gameframe, setup.Filter);
 
 		if (result)
 			break;
@@ -476,7 +477,7 @@ bool graphics_mode_init_any(const Size game_size, const ScreenSetup &setup, cons
 	}
 	// If all possibilities failed, display error message and quit
 	if (!result) {
-		display_gfx_mode_error(game_size, setup, color_depth.Bits);
+		display_gfx_mode_error(game_res, setup, color_depth.Bits);
 		return false;
 	}
 	return true;
@@ -554,10 +555,10 @@ bool graphics_mode_update_render_frame() {
 	return true;
 }
 
-bool graphics_mode_set_native_size(const Size &native_size) {
-	if (!_G(gfxDriver) || native_size.IsNull())
+bool graphics_mode_set_native_res(const GraphicResolution &native_res) {
+	if (!_G(gfxDriver) || !native_res.IsValid())
 		return false;
-	if (!_G(gfxDriver)->SetNativeSize(native_size))
+	if (!_G(gfxDriver)->SetNativeResolution(native_res))
 		return false;
 	// if render frame translation was already set, then update it with new native size
 	if (_G(gfxDriver)->IsRenderFrameValid())

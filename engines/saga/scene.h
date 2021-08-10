@@ -358,6 +358,7 @@ class Scene {
 
 	void IHNMLoadCutaways();
 	bool checkKey();
+	void fadeMusic();
 
 	bool playTitle(int title, int time, int mode = kPanelVideo);
 	bool playLoopingTitle(int title, int seconds);

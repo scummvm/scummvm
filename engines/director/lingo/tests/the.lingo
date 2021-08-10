@@ -16,20 +16,19 @@ put the long date
 
 set a = 5
 
-set gravityConst = the value of ( the text of cast A14)
-set the hilite of cast A32 to (a = 3)
-set the text of cast A14 = string( gravityConst )
+set gravityConst = the value of ( the text of cast 1)
+set the hilite of cast 1 to (a = 3)
+set the text of cast 1 = string( gravityConst )
 
 -- This is object setting. D4+
 set BlastWindow to window "Media Blast"
-set the rect of BlastWindow to myWindowRect
 set the filename of BlastWindow to "blastwin"
 set the titleVisible of BlastWindow to true
 set the modal of BlastWindow to true
 set the windowtype of BlastWindow to 5
 
-set the bottom of x to originV + (the number of lines in someText) * 16
-set the bottom of x to originV + (the number of words in someText) * 16
+set the bottom of sprite 1 to originV + (the number of lines in someText) * 16
+set the bottom of sprite 1 to originV + (the number of words in someText) * 16
 
 put the number of words of field 1 into field 5
 
@@ -48,7 +47,7 @@ put abs( the locH of sprite 2 - the mouseH) into field 4
 
 set the castNum of sprite the clickon = the number of cast "main.hi"
 
-set castname = the name of cast(the castnum of sprite 15)
+-- set castname = the name of cast(the castnum of sprite 1)
 
 set res = the soundBusy of 1
 
@@ -57,7 +56,12 @@ put the sqrt of 9
 put 5 into field the number of cast "MasterList"
 
 set the text of field 1 = "Hello"
-set the text of field 0 + 1 = "Hello"
+
+-- The next statement is valid lingo, however it's hard to parse.
+-- We have no indication that this one off type of code is used.
+-- set the text of field 0 + 1 = "Hello"
+
+set h to "Hello"
 
 set gMarkerName = the length of h + 2
 

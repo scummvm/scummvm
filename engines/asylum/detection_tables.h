@@ -29,6 +29,7 @@ namespace Asylum {
 
 static const char *directoryGlobs[] = {
 	"Data",
+	"Vids",
 	0
 };
 
@@ -79,6 +80,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "f58f8dc3e63663f174977d359e11132c", 272057},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			{"MOV000.SMK", 0, NULL, -1},
 			AD_LISTEND
 		},
 		Common::EN_ANY,

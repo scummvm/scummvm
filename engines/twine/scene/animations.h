@@ -48,24 +48,24 @@ private:
 	void copyKeyFrameToState(const KeyFrame *keyframe, BodyData &bodyData, int32 numBones) const;
 	void copyStateToKeyFrame(KeyFrame *keyframe, const BodyData &bodyData) const;
 
-	int animKeyframeBufIdx = 0;
-	KeyFrame animKeyframeBuf[32];
+	int _animKeyframeBufIdx = 0;
+	KeyFrame _animKeyframeBuf[32];
 
 	/** Rotation by anim and not by engine */
-	int16 processRotationByAnim = 0; // processActorVar5
+	int16 _processRotationByAnim = 0; // processActorVar5
 	/** Last rotation angle */
-	int16 processLastRotationAngle = ANGLE_0; // processActorVar6
+	int16 _processLastRotationAngle = ANGLE_0; // processActorVar6
 
 	/** Current step coordinates */
-	IVec3 currentStep;
+	IVec3 _currentStep;
 
 public:
 	Animations(TwinEEngine *engine);
 
 	/** Current process actor index */
-	int16 currentlyProcessedActorIdx = 0;
+	int16 _currentlyProcessedActorIdx = 0;
 	/** Current actor anim extra pointer */
-	AnimationTypes currentActorAnimExtraPtr = AnimationTypes::kAnimNone;
+	AnimationTypes _currentActorAnimExtraPtr = AnimationTypes::kAnimNone;
 
 	/**
 	 * Set animation keyframe

@@ -134,7 +134,8 @@ Common::String XARCArchive::getFilename() const {
 	return _filename;
 }
 
-bool XARCArchive::hasFile(const Common::String &name) const {
+bool XARCArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (Common::ArchiveMemberList::const_iterator it = _members.begin(); it != _members.end(); ++it) {
 		if ((*it)->getName() == name) {
 			// Found it
@@ -146,10 +147,11 @@ bool XARCArchive::hasFile(const Common::String &name) const {
 	return false;
 }
 
-int XARCArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const {
+int XARCArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern) const {
+	Common::String patternString = pattern.toString();
 	int matches = 0;
 	for (Common::ArchiveMemberList::const_iterator it = _members.begin(); it != _members.end(); ++it) {
-		if ((*it)->getName().matchString(pattern)) {
+		if ((*it)->getName().matchString(patternString)) {
 			// This file matches, add it
 			list.push_back(*it);
 			matches++;
@@ -170,7 +172,8 @@ int XARCArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return files;
 }
 
-const Common::ArchiveMemberPtr XARCArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr XARCArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (Common::ArchiveMemberList::const_iterator it = _members.begin(); it != _members.end(); ++it) {
 		if ((*it)->getName() == name) {
 			// Found it
@@ -182,7 +185,8 @@ const Common::ArchiveMemberPtr XARCArchive::getMember(const Common::String &name
 	return Common::ArchiveMemberPtr();
 }
 
-Common::SeekableReadStream *XARCArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *XARCArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (Common::ArchiveMemberList::const_iterator it = _members.begin(); it != _members.end(); ++it) {
 		if ((*it)->getName() == name) {
 			// Found it

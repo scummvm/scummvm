@@ -25,6 +25,7 @@
 
 #include "common/hashmap.h"
 #include "common/list.h"
+#include "common/stack.h"
 #include "common/events.h"
 
 #include "graphics/font.h"
@@ -280,16 +281,17 @@ public:
 
 	void clearWidgetRefs(MacWidget *widget);
 
+private:
+	void replaceCursorType(MacCursorType type);
+
+public:
+	MacCursorType getCursorType() const;
+
 	void pushCursor(MacCursorType type, Cursor *cursor = nullptr);
 	void replaceCursor(MacCursorType type, Cursor *cursor = nullptr);
 
-	void pushArrowCursor();
-	void pushBeamCursor();
-	void pushCrossHairCursor();
-	void pushCrossBarCursor();
-	void pushWatchCursor();
-
 	void pushCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor);
+	void replaceCustomCursor(const byte *data, int w, int h, int hx, int hy, int transcolor);
 	void pushCustomCursor(const Graphics::Cursor *cursor);
 	void popCursor();
 
@@ -334,6 +336,24 @@ public:
 	 */
 	void clearHandlingWidgets();
 
+	void setMenuItemCheckMark(const Common::String &menuId, const Common::String &itemId, bool checkMark);
+	void setMenuItemCheckMark(int menuId, int itemId, bool checkMark);
+	void setMenuItemEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled);
+	void setMenuItemEnabled(int menuId, int itemId, bool enabled);
+	void setMenuItemName(const Common::String &menuId, const Common::String &itemId, const Common::String &name);
+	void setMenuItemName(int menuId, int itemId, const Common::String &name);
+	void setMenuItemAction(const Common::String &menuId, const Common::String &itemId, int actionId);
+	void setMenuItemAction(int menuId, int itemId, int actionId);
+
+	bool getMenuItemCheckMark(const Common::String &menuId, const Common::String &itemId);
+	bool getMenuItemCheckMark(int menuId, int itemId);
+	bool getMenuItemEnabled(const Common::String &menuId, const Common::String &itemId);
+	bool getMenuItemEnabled(int menuId, int itemId);
+	Common::String getMenuItemName(const Common::String &menuId, const Common::String &itemId);
+	Common::String getMenuItemName(int menuId, int itemId);
+	int getMenuItemAction(const Common::String &menuId, const Common::String &itemId);
+	int getMenuItemAction(int menuId, int itemId);
+
 public:
 	MacFontManager *_fontMan;
 	uint32 _mode;
@@ -349,6 +369,10 @@ public:
 	uint32 _colorBlack, _colorGray80, _colorGray88, _colorGrayEE, _colorWhite, _colorGreen, _colorGreen2;
 
 	MacWidget *_hoveredWidget;
+
+	// we use it to indicate whether we are clicking the hilite-able widget.
+	// In list style button mode, we will highlight the subsequent buttons only when we've clicked the hilite-able button initially
+	bool _hilitingWidget;
 
 private:
 	void loadDesktop();
@@ -398,7 +422,7 @@ private:
 	void (*_redrawEngineCallback)(void *engine);
 
 	MacCursorType _tempType;
-	MacCursorType _cursorType;
+	Common::Stack<MacCursorType> _cursorTypeStack;
 	Cursor *_cursor;
 
 	MacWidget *_activeWidget;

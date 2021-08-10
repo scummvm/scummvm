@@ -38,11 +38,11 @@ class Interface {
 private:
 	TwinEEngine *_engine;
 	int32 checkClipping(int32 x, int32 y) const;
-	Common::Rect textWindowSave;
+	Common::Rect _savedClip;
 
 public:
 	Interface(TwinEEngine *engine);
-	Common::Rect textWindow { 0, 0, 0, 0 };
+	Common::Rect _clip { 0, 0, 0, 0 };
 
 	/**
 	 * Draw button line
@@ -68,7 +68,7 @@ public:
 
 	void drawFilledRect(const Common::Rect &rect, uint8 colorIndex);
 
-	void setClip(const Common::Rect &rect);
+	bool setClip(const Common::Rect &rect);
 	void saveClip(); // saveTextWindow
 	void loadClip(); // loadSavedTextWindow
 	void resetClip();

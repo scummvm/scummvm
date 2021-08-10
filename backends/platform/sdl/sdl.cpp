@@ -565,16 +565,17 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 	// Detect the language from the locale
 	if (locale.empty()) {
 		return BaseBackend::getSystemLanguage();
+	} else if (locale == "C" || locale == "POSIX") {
+		return "en_US";
 	} else {
 		int length = 0;
 
-		// Strip out additional information, like
-		// ".UTF-8" or the like. We do this, since
-		// our translation languages are usually
-		// specified without any charset information.
+		// Assume the locale is in the form language[_territory[.codeset]][@modifier].
+		// On macOS the format is different (it looks like C/UTF-8/C/C/C/C), but we
+		// have a different implementation of getSystemLanguage for macOS anyway, so
+		// we don't have to handle it here.
+		// Strip out additional information, like ".UTF-8" or the like.
 		for (int size = locale.size(); length < size; ++length) {
-			// TODO: Check whether "@" should really be checked
-			// here.
 			if (locale[length] == '.' || locale[length] == ' ' || locale[length] == '@')
 				break;
 		}
@@ -607,6 +608,26 @@ bool OSystem_SDL::setTextInClipboard(const Common::U32String &text) {
 	// The encoding we need to use is UTF-8.
 	Common::String utf8Text = text.encode();
 	return SDL_SetClipboardText(utf8Text.c_str()) == 0;
+}
+
+void OSystem_SDL::messageBox(LogMessageType::Type type, const char *message) {
+	Uint32 flags = 0;
+
+	switch (type) {
+	case LogMessageType::kError:
+		flags = SDL_MESSAGEBOX_ERROR;
+		break;
+	case LogMessageType::kWarning:
+		flags = SDL_MESSAGEBOX_WARNING;
+		break;
+	case LogMessageType::kInfo:
+	case LogMessageType::kDebug:
+	default:
+		flags = SDL_MESSAGEBOX_INFORMATION;
+		break;
+	}
+
+	SDL_ShowSimpleMessageBox(flags, "ScummVM", message, _window ? _window->getSDLWindow() : nullptr);
 }
 #endif
 

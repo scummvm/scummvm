@@ -71,13 +71,13 @@ private:
 	bool drawBox(const ScenePositionsProjected &positions, uint8 color);
 public:
 	DebugScene(TwinEEngine *engine);
-	bool showingZones = false;
-	bool showingActors = false;
-	bool showingTracks = false;
-	bool showingClips = false;
-	bool useScenePatches = false;
-	int32 typeZones = 127; // all zones on as default
-	int16 onlyLoadActor = -1;
+	bool _showingZones = false;
+	bool _showingActors = false;
+	bool _showingTracks = false;
+	bool _showingClips = false;
+	bool _useScenePatches = false;
+	int32 _typeZones = 127; // all zones on as default
+	int16 _onlyLoadActor = -1;
 
 	void renderDebugView();
 

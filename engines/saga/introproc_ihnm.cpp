@@ -68,7 +68,7 @@ int Scene::IHNMStartProc() {
 				// Play the title music
 				_vm->_music->play(1, MUSIC_NORMAL);
 				// Play title screen
-				playTitle(2, _vm->_music->isAdlib() ? 20 : 27);
+				playTitle(2, 20);
 			}
 		}
 	} else {
@@ -79,7 +79,10 @@ int Scene::IHNMStartProc() {
 		playTitle(2, 12);
 	}
 
-	_vm->_music->setVolume(0, 1000);
+	fadeMusic();
+	if (_vm->shouldQuit())
+		return !SUCCESS;
+
 	_vm->_anim->clearCutawayList();
 
 	// Queue first scene
@@ -109,7 +112,7 @@ int Scene::IHNMCreditsProc() {
 		playTitle(3, 60, true);
 	}
 
-	_vm->_music->setVolume(0, 1000);
+	fadeMusic();
 	_vm->_anim->clearCutawayList();
 
 	return SUCCESS;
@@ -161,6 +164,19 @@ bool Scene::checkKey() {
 	}
 
 	return res;
+}
+
+void Scene::fadeMusic() {
+	if (!_vm->_music->isPlaying())
+		return;
+
+	_vm->_music->setVolume(0, 1000);
+	while (!_vm->shouldQuit() && _vm->_music->isFading()) {
+		_vm->_system->delayMillis(10);
+		if (checkKey()) {
+			_vm->_music->setVolume(0);
+		}
+	}
 }
 
 bool Scene::playTitle(int title, int time, int mode) {

@@ -84,6 +84,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mafio", "Mafio" },
 	{ "meninbrown", "Men In Brown" },
 	{ "midtownshootout", "Anton Ulvfot's Mid-Town Shootout" },
+	{ "micv", "Monkey Island - Carnaval Vudu - Parte 1 - La Busqueda" },
+	{ "mimv", "Monkey Island - La Maldicion Vudu" },
+	{ "mivl", "Monkey Island - La Venganza de Largo" },
 	{ "momsquest", "Mom's Quest" },
 	{ "monkeyplank", "Monkey Plank" },
 	{ "moosewars", "Moose Wars: Desire For More Cows" },
@@ -1667,39 +1670,42 @@ const char *const PRE_25 = "Pre 2.5";
 #define TESTING_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM) \
 	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, nullptr, ADGF_TESTING)
 
+#define STABLE_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM) \
+	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, nullptr, ADGF_NO_FLAGS)
+
 #define DEMO_ENTRY(ID, FILENAME, MD5, SIZE) \
-	TESTING_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "Demo")
+	STABLE_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "Demo")
 
 #define DEMO_ENTRY_LANG(ID, FILENAME, MD5, SIZE, LANG) \
-	TESTING_ENTRY(ID, FILENAME, MD5, SIZE, LANG, "Demo")
+	STABLE_ENTRY(ID, FILENAME, MD5, SIZE, LANG, "Demo")
 
 #define GAME_ENTRY(ID, FILENAME, MD5, SIZE) \
-	TESTING_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, nullptr)
+	STABLE_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, nullptr)
 
 #define GAME_ENTRY_LANG(ID, FILENAME, MD5, SIZE, LANG) \
-	TESTING_ENTRY(ID, FILENAME, MD5, SIZE, LANG, nullptr)
+	STABLE_ENTRY(ID, FILENAME, MD5, SIZE, LANG, nullptr)
 
 #define GAME_ENTRY_STEAM(ID, FILENAME, MD5, SIZE) \
-	TESTING_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "Steam")
+	STABLE_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "Steam")
 
 #define GAME_ENTRY_GOG(ID, FILENAME, MD5, SIZE) \
-	TESTING_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "GOG")
+	STABLE_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "GOG")
 
 #define GAME_ENTRY_PLATFORM(ID, FILENAME, MD5, SIZE, PLATFORM) \
-	TESTING_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, PLATFORM)
+	STABLE_ENTRY(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, PLATFORM)
 
 
-#define TESTING_ENTRY_PLUGIN(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, PLUGIN_ARR) \
-	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, PLUGIN_ARR, ADGF_TESTING)
+#define STABLE_ENTRY_PLUGIN(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, PLUGIN_ARR) \
+	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, PLUGIN_ARR, ADGF_NO_FLAGS)
 
 #define DEMO_ENTRY_PLUGIN(ID, FILENAME, MD5, SIZE, PLUGIN_ARR) \
-	TESTING_ENTRY_PLUGIN(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "Demo", PLUGIN_ARR)
+	STABLE_ENTRY_PLUGIN(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "Demo", PLUGIN_ARR)
 
 #define GAME_ENTRY_PLUGIN_STEAM(ID, FILENAME, MD5, SIZE, PLUGIN_ARR) \
-	TESTING_ENTRY_PLUGIN(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "Steam", PLUGIN_ARR)
+	STABLE_ENTRY_PLUGIN(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "Steam", PLUGIN_ARR)
 
 #define GAME_ENTRY_PLUGIN_GOG(ID, FILENAME, MD5, SIZE, PLUGIN_ARR) \
-	TESTING_ENTRY_PLUGIN(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "GOG", PLUGIN_ARR)
+	STABLE_ENTRY_PLUGIN(ID, FILENAME, MD5, SIZE, Common::UNK_LANG, "GOG", PLUGIN_ARR)
 
 static const PluginVersion AGSTEAM_WADJETEYE[] = { { "agsteam", kWadjetEye }, { nullptr, 0 } };
 static const PluginVersion AGS_FLASHLIGHT[] = { { "agsflashlight", 0 }, { nullptr, 0 } };
@@ -1827,9 +1833,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// Post 2.5 games that aren't currently supported
 	// uses unsupported agslua plugin
 	UNSUPPORTED_GAME_ENTRY("allthewaydown", "deepuns3.exe", "6c0b5468657c22d62201e3769cd8d2b3", 29830067),
-	// MMM13 crashes during the intro with an error
-	// Error: unexpected data size for WRITELIT op: 8
-	GAME_ENTRY("mmm13", "traum.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6703140),
 	// Commercial game that likely uses custom extensions. Not only does it seem
 	// to use AGSController plugin built-in, even when I hooked up AGSController for
 	// the stand-alone AGS 3.5 interpreter, it hangs just like in ScummVM
@@ -1852,6 +1855,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12563246),	// 3.1
 	GAME_ENTRY("kq2agdi", "kq2vga.exe", "40cfb7563df7dacf6530b19289a4745b", 12574643),  // 3.1c
 	GAME_ENTRY("kq2agdi", "kq2vga.exe", "43e6294f8bfbba8a3f754fa742353845", 12507938),
+	GAME_ENTRY("kq2agdi", "Kq2vgaEsp.exe", "f964e5cb4d339432dd0302d67eb11105", 2490368), // Spanish transalation
 	GAME_ENTRY("kq3agdi", "kq3redux.exe", "4c2ea3f7b4974509c59546ca8761b040", 11890197),  // 1.0
 	GAME_ENTRY("kq3agdi", "kq3redux.exe", "e569fb2ceabdc4a1609348c23ebc0821", 11986266),  // 1.1
 	GAME_ENTRY("qfg2agdi", "qfg2vga.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 20523688),  // 1.1
@@ -1862,6 +1866,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// Infamous Adventures games. Likewise
 	GAME_ENTRY("kq3vga", "kq3.exe", "f120690b506dd63cd7d1112ea6af2f77", 4844298),  // 1.0 was kq3agdi
 	GAME_ENTRY("kq3vga", "KQ3.exe", "f120690b506dd63cd7d1112ea6af2f77", 5883843),  // current version from the download site
+	GAME_ENTRY("kq3vga", "ac2game.dat", "f120690b506dd63cd7d1112ea6af2f77", 5883843), // current mac version from the download site
 	GAME_ENTRY("sq2fg", "sq2fg.exe", "a524cbb1c51589903c4043b98917f1d9", 5329030),
 	GAME_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 106094482),  // 1.0
 	GAME_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 117200044),  // 1.1
@@ -1874,6 +1879,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("alemmo", "al_emmo.exe", "d14295053c672c253460c8a7179b2bba", 19054865),
 	GAME_ENTRY("alemmo", "al_emmo.exe", "4139d665622b2e3c5a31e90fc530fc74", 22442059),
 	GAME_ENTRY("alemmo", "al_emmo.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19181537),
+	GAME_ENTRY("alemmo", "Al_EmmoSPA.exe", "a6608b37277f1220a1aecc6c18102a04", 2479104), // Fanmade Spanish translation
 	GAME_ENTRY("alemmoanozira", "postcards from anozira.exe", "f5f73b35e809d9e01a2cff32abeffadf", 5567476), // 3.0, Desura
 	GAME_ENTRY_STEAM("alemmoanozira", "Postcards_from_Anozira.exe", "a33691e4a84e2645b4cbe1f681511798", 5567690),
 	GAME_ENTRY("alemmoanozira", "postcards from anozira.exe", "893f31faa33f1219b316894a0cbe7b27", 174781776),
@@ -1959,7 +1965,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("geminirue", "GeminiRue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61906750), // v1.1 CD Release
 	GAME_ENTRY_GOG("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506),
 	GAME_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61926695),
-	GAME_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 64650419), // German retail
+	DETECTION_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 64650419, Common::DE_DEU, nullptr, nullptr, GAMEFLAG_FORCE_AA), // German retail
 	GAME_ENTRY_STEAM("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932),
 	GAME_ENTRY_STEAM("geminirue", "gemini_rue_pc.exe", "f49a61ea46feb86f89de3c136ad809ff", 73412249),
 	GAME_ENTRY_PLUGIN_STEAM("geminirue", "agsgame.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62059297, AGSTEAM_WADJETEYE), //Linux
@@ -2113,6 +2119,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("mash", "mash demo.ags", "af4276d98c9f71dba02658fe95e49b75", 2565641),
 	DEMO_ENTRY("mash", "mash demo.exe", "7825fa980fcd058caadaf6d3377b1f78", 5601309),
 	DEMO_ENTRY("mi5thereturnoflechuck", "demo.exe", "0500aacb6c176d47ac0f8158f055db83", 6235270),
+	DEMO_ENTRY("micv", "MI.exe", "d90febc33f641a5f14c485f8ef29fb33", 3371895),
+	DEMO_ENTRY("mimv", "MI.exe", "c0c6dafd33236a308bd0b87678326994", 1872382),
+	DEMO_ENTRY("mivl", "MI.exe", "23a7b5a6119e82a9750302492b3f2856", 1927604),
 	DEMO_ENTRY("mybigsister", "my big sister.exe", "4dc50ca8b5d2c762fe86a528b09973cf", 90464651),
 	DEMO_ENTRY("neofeud", "neofeud demo.exe", "6e861b1f476ff7cdf036082abb271329", 1886913453),
 	DEMO_ENTRY("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078743282), // 1.3 itch.io
@@ -2124,6 +2133,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 96799833),
 	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 96800964),
 	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 430357136),
+	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 505116629),
 	DEMO_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 727898212),
 	DEMO_ENTRY("pubmastersquest", "pub master quest [demo].exe", "e1676318c8a040fcf508b817013dc8fe", 23431689),
 	DEMO_ENTRY("puzzlebots", "puzzlebots_demo.exe", "34b49df9cf6eadb5c3587b3921d5b72f", 354138961),
@@ -2601,6 +2611,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("escapetheship", "Escape.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 1063503),
 	GAME_ENTRY("esper", "esper.exe", "0710e2ec71042617f565c01824f0cf3c", 17409715),
 	GAME_ENTRY("eternallyus", "Eternally Us.exe", "3faa59edd92158ff2cbd4b9db54acf61", 43467084),
+	GAME_ENTRY("eternallyus", "Eternally Us.exe", "3faa59edd92158ff2cbd4b9db54acf61", 43468014),
 	GAME_ENTRY("eventtimer", "Timer.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 3000682),
 	GAME_ENTRY("exclamation", "!.exe", "0514661a4ba6772cf0db0cf839fc7003", 2785515),
 	GAME_ENTRY("exit", "EXIT.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 54723513),
@@ -2944,6 +2955,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mmm11", "MMMania 2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7872940),
 	GAME_ENTRY("mmm11", "MMMania.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6123337),
 	GAME_ENTRY("mmm12", "Giga.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4141502),
+	GAME_ENTRY("mmm13", "traum.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6703140),
 	GAME_ENTRY("mmm14", "msytr.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5836799),
 	GAME_ENTRY("mmm14", "msytr.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 5863583),
 	GAME_ENTRY("mmm15", "MMM15.exe", "06a03fe35791b0578068ab1873455463", 8503015),
@@ -3242,7 +3254,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("ralphtheraven", "RalphTheRaven.exe", "0500aacb6c176d47ac0f8158f055db83", 1655198),
 	GAME_ENTRY("ramghost", "RAM_Ghost.exe", "f87f3e71d13b5fea0970ef95f1c87abe", 14830699),
 	GAME_ENTRY("ramsesporter", "Ramses Porter and the Relay for Love.exe", "a524cbb1c51589903c4043b98917f1d9", 55490676),
-	GAME_ENTRY("rango", "Rango.exe", "618d7dce9631229b4579340b964c6810", 21059129),
+	DETECTION_ENTRY("rango", "Rango.exe", "618d7dce9631229b4579340b964c6810", 21059129, Common::UNK_LANG, nullptr, nullptr, GAMEFLAG_FORCE_AA),
 	GAME_ENTRY("ratchannel", "Rat Channel.exe", "c5d2c54c20cb606519b86d3890ee7fc0", 303946606),
 	GAME_ENTRY("rayandtheguitar", "The Band.exe", "465f972675db2da6040518221af5b0ba", 1518249),
 	GAME_ENTRY("raybexter", "Ray Bexter.exe", "3e8667bab45f2e5d7237db53ab376400", 5930752),

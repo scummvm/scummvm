@@ -345,6 +345,33 @@ void Words::parseUsingDictionary(const char *rawUserInput) {
 	userInputLowcased = userInput;
 	userInputLowcased.toLowercase();
 
+	if (_vm->getLanguage() == Common::RU_RUS) {
+		const char *conv =
+			// АБВГДЕЖЗИЙКЛМНОП
+			  "abvgdewziiklmnop" // 80
+			// РСТУФХЦЧШЩЪЫЬЭЮЯ
+			  "rstufxcyhhjijeuq" // 90
+			// абвгдежзийклмноп
+			  "abvgdewziiklmnop" // a0
+			  "                " // b0
+			  "                " // c0
+			  "                " // d0
+			// рстуфхцчшщъыьэюя
+			  "rstufxcyhhjijeuq" // e0
+			// Ее
+			  "ee              ";// f0
+
+		Common::String tr;
+		for (uint i = 0; i < userInputLowcased.size(); i++) {
+			if ((byte)userInputLowcased[i] >= 0x80) {
+				tr += conv[(byte)userInputLowcased[i] - 0x80];
+			} else {
+				tr += (byte)userInputLowcased[i];
+			}
+		}
+		userInputLowcased = tr;
+	}
+
 	userInputLen = userInput.size();
 	userInputPtr = userInput.c_str();
 

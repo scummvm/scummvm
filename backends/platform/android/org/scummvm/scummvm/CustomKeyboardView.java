@@ -203,7 +203,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     private int mCurrentKey = NOT_A_KEY;
     private int mDownKey = NOT_A_KEY;
 
-    // New auxilliary set to keep track of any keys that were not released at the time of closing the keyboard
+    // New auxiliary set to keep track of any keys that were not released at the time of closing the keyboard
     private ArraySet<Integer> mKeysDownCodesSet;
 
     private long mLastKeyTime;
@@ -439,7 +439,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         mAccessibilityManager = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-        mKeysDownCodesSet = new ArraySet();
+        mKeysDownCodesSet = new ArraySet<>();
 
         resetMultiTap();
     }

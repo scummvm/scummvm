@@ -285,6 +285,10 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 	ASSERT_PARAM_COUNT(FUNCTION, 1); \
 	return RuntimeScriptValue().SetInt32AsBool(FUNCTION((P1CLASS*)params[0].Ptr))
 
+#define API_SCALL_BOOL_PINT(FUNCTION) \
+    ASSERT_PARAM_COUNT(FUNCTION, 1); \
+    return RuntimeScriptValue().SetInt32AsBool(FUNCTION(params[0].IValue))
+
 #define API_SCALL_BOOL_POBJ_PINT(FUNCTION, P1CLASS) \
 	ASSERT_PARAM_COUNT(FUNCTION, 2); \
 	return RuntimeScriptValue().SetInt32AsBool(FUNCTION((P1CLASS*)params[0].Ptr, params[1].IValue))

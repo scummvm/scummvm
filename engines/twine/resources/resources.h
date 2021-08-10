@@ -163,41 +163,40 @@ public:
 	const Common::Array<int32> &getFlaMovieInfo(const Common::String &name) const;
 
 	/** Table with all loaded samples */
-	BodyData inventoryTable[NUM_INVENTORY_ITEMS];
+	BodyData _inventoryTable[NUM_INVENTORY_ITEMS];
 
 	/** Table with all loaded sprites */
-	uint8 *spriteTable[NUM_SPRITES]{nullptr};
+	uint8 *_spriteTable[NUM_SPRITES]{nullptr};
 	/** Table with all loaded sprite sizes */
-	uint32 spriteSizeTable[NUM_SPRITES]{0};
-	SpriteData spriteData[NUM_SPRITES];
+	uint32 _spriteSizeTable[NUM_SPRITES]{0};
+	SpriteData _spriteData[NUM_SPRITES];
 
-	AnimData animData[NUM_ANIMS];
+	AnimData _animData[NUM_ANIMS];
 
 	/** Actors 3D body table - size of NUM_BODIES */
-	BodyData bodyData[NUM_BODIES];
+	BodyData _bodyData[NUM_BODIES];
 
 	/** Table with all loaded samples */
-	uint8 *samplesTable[NUM_SAMPLES]{nullptr};
+	uint8 *_samplesTable[NUM_SAMPLES]{nullptr};
 	/** Table with all loaded samples sizes */
-	uint32 samplesSizeTable[NUM_SAMPLES]{0};
+	uint32 _samplesSizeTable[NUM_SAMPLES]{0};
 
 	/** Font buffer pointer */
-	int32 fontBufSize = 0;
-	uint8 *fontPtr = nullptr;
+	int32 _fontBufSize = 0;
+	uint8 *_fontPtr = nullptr;
 
-	uint32 spriteShadowSize = 0;
-	uint8 *spriteShadowPtr = nullptr;
-	SpriteBoundingBoxData spriteBoundingBox;
+	SpriteData _spriteShadowPtr;
+	SpriteBoundingBoxData _spriteBoundingBox;
 
-	uint32 holomapSurfaceSize = 0;
-	uint8 *holomapSurfacePtr = nullptr;
-	uint32 holomapImageSize = 0;
-	uint8 *holomapImagePtr = nullptr;
+	uint32 _holomapSurfaceSize = 0;
+	uint8 *_holomapSurfacePtr = nullptr;
+	uint32 _holomapImageSize = 0;
+	uint8 *_holomapImagePtr = nullptr;
 
-	BodyData holomapPointModelPtr;
-	BodyData holomapTwinsenModelPtr;
-	BodyData holomapTwinsenArrowPtr;
-	BodyData holomapArrowPtr;
+	BodyData _holomapPointModelPtr;
+	BodyData _holomapTwinsenModelPtr;
+	BodyData _holomapTwinsenArrowPtr;
+	BodyData _holomapArrowPtr;
 
 	/** Initialize resource pointers */
 	void initResources();

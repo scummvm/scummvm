@@ -461,6 +461,16 @@ bool stillDoingVoice(uint32 sampno) {
 	return result;
 }
 
+bool stillDoingVoice(uint32 s[]) {
+	uint32 *p = s;
+
+	while (*p) {
+		if (audio->saying(*p++))
+			return true;
+	}
+
+	return false;
+}
 
 /* ===================================================================== *
    SAGA compatible audio playback routines
@@ -580,7 +590,7 @@ void audioInterface::playMe(void) {
 		delete stream;
 	}
 
-	if (_sfxQueue.size() > 0 && !_mixer->isSoundHandleActive(_sfxSoundHandle)) {
+	if (_sfxQueue.size() > 0) {
 		SoundInstance si = _sfxQueue.pop();
 
 		Common::SeekableReadStream *stream = loadResourceToStream(soundRes, si.seg, "sound data");

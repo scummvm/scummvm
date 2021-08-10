@@ -46,6 +46,13 @@
 namespace Ultima {
 namespace Ultima8 {
 
+// Some fourCCs used in IFF files
+static const uint32 IFF_MAGIC   = MKTAG('F', 'O', 'R', 'M');
+static const uint32 IFF_LANG    = MKTAG('L', 'A', 'N', 'G');
+static const uint32 IFF_LANG_FR = MKTAG('F', 'R', 'E', 'N');
+static const uint32 IFF_LANG_EN = MKTAG('E', 'N', 'G', 'L');
+static const uint32 IFF_LANG_DE = MKTAG('G', 'E', 'R', 'M');
+
 static Std::string _fixCrusaderMovieName(const Std::string &s) {
 	/*
 	 HACK! The game comes with movies MVA01.AVI etc, but the usecode mentions both
@@ -155,6 +162,7 @@ void MovieGump::run() {
 
 	_player->run();
 
+	// TODO: It would be nice to refactor this
 	AVIPlayer *aviplayer = dynamic_cast<AVIPlayer *>(_player);
 	if (aviplayer) {
 		// The AVI player can skip frame numbers, so search back from the
@@ -186,6 +194,25 @@ void MovieGump::run() {
 void MovieGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
 	_player->paint(surf, lerp_factor);
+
+	// If displaying subtitles, put a black box behind them.  The box should be ~600px across.
+	if (_subtitleWidget) {
+		TextWidget *subtitle = dynamic_cast<TextWidget *>(getGump(_subtitleWidget));
+		if (subtitle) {
+			int32 x, y;
+			Rect textdims;
+			Rect screendims;
+			subtitle->getLocation(x, y);
+			subtitle->GetDims(textdims);
+			surf->GetSurfaceDims(screendims);
+			surf->Fill32(surf->getPixelFormat().RGBToColor(0, 0, 0),
+						 screendims.width() / 2 - 300,
+						 y - 3,
+						 600,
+						 textdims.height() + 5);
+		}
+	}
+
 }
 
 bool MovieGump::OnKeyDown(int key, int mod) {
@@ -261,7 +288,7 @@ void MovieGump::loadSubtitles(Common::SeekableReadStream *rs) {
 	const uint32 id = rs->readUint32BE();
 	rs->seek(0);
 
-	if (id == 0x464F524D) { // 'FORM'
+	if (id == IFF_MAGIC) {
 		loadIFFSubs(rs);
 	} else {
 		loadTXTSubs(rs);
@@ -273,25 +300,18 @@ void MovieGump::loadTXTSubs(Common::SeekableReadStream *rs) {
 	while (!rs->eos()) {
 		Common::String line = rs->readLine();
 		if (line.hasPrefix("@frame ")) {
-			if (frameno != 0) {
+			if (frameno > 0) {
 				// two @frame directives in a row means that the last
 				// subtitle should be turned *off* at the first frame
 				_subtitles[frameno] = "";
 			}
 			frameno = atoi(line.c_str() + 7);
-		} else {
+		} else if (frameno >= 0) {
 			_subtitles[frameno] = line;
-			frameno = 0;
+			frameno = -1;
 		}
 	}
 }
-
-// Some fourCCs used in IFF files
-static const uint32 IFF_MAGIC   = MKTAG('F', 'O', 'R', 'M');
-static const uint32 IFF_LANG    = MKTAG('L', 'A', 'N', 'G');
-static const uint32 IFF_LANG_FR = MKTAG('F', 'R', 'E', 'N');
-static const uint32 IFF_LANG_EN = MKTAG('E', 'N', 'G', 'L');
-static const uint32 IFF_LANG_DE = MKTAG('G', 'E', 'R', 'M');
 
 void MovieGump::loadIFFSubs(Common::SeekableReadStream *rs) {
 	uint32 magic = rs->readUint32BE();

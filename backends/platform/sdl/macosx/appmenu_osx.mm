@@ -43,8 +43,8 @@
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
 typedef unsigned long NSUInteger;
 
-// Those are not defined in the 10.4 SDK, but they are defined when targetting
-// Mac OS X 10.4 or above in the 10.5 SDK. So hopfully that means it works with 10.4 as well.
+// Those are not defined in the 10.4 SDK, but they are defined when targeting
+// Mac OS X 10.4 or above in the 10.5 SDK. So hopefully that means it works with 10.4 as well.
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 enum {
 	NSUTF32StringEncoding = 0x8c000100,
@@ -84,7 +84,7 @@ static void openFromBundle(NSString *file) {
 	if (path) {
 		// RTF and HTML files are widely recognized and we can rely on the default
 		// file association working for those. For the other ones this might not be
-		// the case so we explicitely indicate they should be open with TextEdit.
+		// the case so we explicitly indicate they should be open with TextEdit.
 		if ([path hasSuffix:@".html"] || [path hasSuffix:@".rtf"])
 			[[NSWorkspace sharedWorkspace] openFile:path];
 		else

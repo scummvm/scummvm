@@ -606,6 +606,7 @@ void EventRecorder::preDrawOverlayGui() {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
 		g_system->showOverlay();
+		g_gui.checkScreenChange();
 		g_gui.theme()->clearAll();
 		g_gui.theme()->drawToBackbuffer();
 		_controlPanel->drawDialog(kDrawLayerBackground);
@@ -630,7 +631,7 @@ Common::StringArray EventRecorder::listSaveFiles(const Common::String &pattern) 
 	if (_recordMode == kRecorderPlayback) {
 		Common::StringArray result;
 		for (Common::HashMap<Common::String, Common::PlaybackFile::SaveFileBuffer>::iterator  i = _playbackFile->getHeader().saveFiles.begin(); i != _playbackFile->getHeader().saveFiles.end(); ++i) {
-			if (i->_key.matchString(pattern, false, true)) {
+			if (i->_key.matchString(pattern, false, "/")) {
 				result.push_back(i->_key);
 			}
 		}

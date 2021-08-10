@@ -159,20 +159,20 @@ const char *MenuSettings::getButtonText(Text *text, int buttonIndex) {
 Menu::Menu(TwinEEngine *engine) {
 	_engine = engine;
 
-	optionsMenuState = _priv::createOptionsMenu();
-	giveUpMenuWithSaveState = _priv::createGiveUpSaveMenu();
-	volumeMenuState = _priv::createVolumeMenu();
-	saveManageMenuState = _priv::createSaveManageMenu();
-	giveUpMenuState = _priv::createGiveUpMenu();
-	mainMenuState = _priv::createMainMenu();
-	advOptionsMenuState = _priv::createAdvancedOptionsMenu();
+	_optionsMenuState = _priv::createOptionsMenu();
+	_giveUpMenuWithSaveState = _priv::createGiveUpSaveMenu();
+	_volumeMenuState = _priv::createVolumeMenu();
+	_saveManageMenuState = _priv::createSaveManageMenu();
+	_giveUpMenuState = _priv::createGiveUpMenu();
+	_mainMenuState = _priv::createMainMenu();
+	_advOptionsMenuState = _priv::createAdvancedOptionsMenu();
 
-	Common::fill(&behaviourAnimState[0], &behaviourAnimState[4], 0);
-	Common::fill(&itemAngle[0], &itemAngle[NUM_INVENTORY_ITEMS], 0);
+	Common::fill(&_behaviourAnimState[0], &_behaviourAnimState[4], 0);
+	Common::fill(&_itemAngle[0], &_itemAngle[NUM_INVENTORY_ITEMS], 0);
 }
 
 Menu::~Menu() {
-	free(plasmaEffectPtr);
+	free(_plasmaEffectPtr);
 }
 
 void Menu::plasmaEffectRenderFrame() {
@@ -181,16 +181,16 @@ void Menu::plasmaEffectRenderFrame() {
 			/* Here we calculate the average of all 8 neighbour pixel values */
 
 			int16 c;
-			c = plasmaEffectPtr[(i - 1) + (j - 1) * PLASMA_WIDTH];  //top-left
-			c += plasmaEffectPtr[(i + 0) + (j - 1) * PLASMA_WIDTH]; //top
-			c += plasmaEffectPtr[(i + 1) + (j - 1) * PLASMA_WIDTH]; //top-right
+			c = _plasmaEffectPtr[(i - 1) + (j - 1) * PLASMA_WIDTH];  //top-left
+			c += _plasmaEffectPtr[(i + 0) + (j - 1) * PLASMA_WIDTH]; //top
+			c += _plasmaEffectPtr[(i + 1) + (j - 1) * PLASMA_WIDTH]; //top-right
 
-			c += plasmaEffectPtr[(i - 1) + (j + 0) * PLASMA_WIDTH]; //left
-			c += plasmaEffectPtr[(i + 1) + (j + 0) * PLASMA_WIDTH]; //right
+			c += _plasmaEffectPtr[(i - 1) + (j + 0) * PLASMA_WIDTH]; //left
+			c += _plasmaEffectPtr[(i + 1) + (j + 0) * PLASMA_WIDTH]; //right
 
-			c += plasmaEffectPtr[(i - 1) + (j + 1) * PLASMA_WIDTH]; // bottom-left
-			c += plasmaEffectPtr[(i + 0) + (j + 1) * PLASMA_WIDTH]; // bottom
-			c += plasmaEffectPtr[(i + 1) + (j + 1) * PLASMA_WIDTH]; // bottom-right
+			c += _plasmaEffectPtr[(i - 1) + (j + 1) * PLASMA_WIDTH]; // bottom-left
+			c += _plasmaEffectPtr[(i + 0) + (j + 1) * PLASMA_WIDTH]; // bottom
+			c += _plasmaEffectPtr[(i + 1) + (j + 1) * PLASMA_WIDTH]; // bottom-right
 
 			/* And the 2 least significant bits are used as a
 			 * randomizing parameter for statistically fading the flames */
@@ -202,13 +202,13 @@ void Menu::plasmaEffectRenderFrame() {
 			}
 
 			/* plot the pixel using the calculated color */
-			plasmaEffectPtr[i + (PLASMA_HEIGHT + j) * PLASMA_WIDTH] = (uint8)c;
+			_plasmaEffectPtr[i + (PLASMA_HEIGHT + j) * PLASMA_WIDTH] = (uint8)c;
 		}
 	}
 
 	// flip the double-buffer while scrolling the effect vertically:
-	const uint8 *src = plasmaEffectPtr + (PLASMA_HEIGHT + 1) * PLASMA_WIDTH;
-	memcpy(plasmaEffectPtr, src, PLASMA_HEIGHT * PLASMA_WIDTH);
+	const uint8 *src = _plasmaEffectPtr + (PLASMA_HEIGHT + 1) * PLASMA_WIDTH;
+	memcpy(_plasmaEffectPtr, src, PLASMA_HEIGHT * PLASMA_WIDTH);
 }
 
 void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
@@ -216,11 +216,11 @@ void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 
 	plasmaEffectRenderFrame();
 
-	const uint8 *in = plasmaEffectPtr + 5 * PLASMA_WIDTH;
-	uint8 *out = (uint8 *)_engine->imageBuffer.getBasePtr(0, 0);
+	const uint8 *in = _plasmaEffectPtr + 5 * PLASMA_WIDTH;
+	uint8 *out = (uint8 *)_engine->_imageBuffer.getBasePtr(0, 0);
 
 	for (int32 y = 0; y < PLASMA_HEIGHT / 2; y++) {
-		int32 yOffset = y * _engine->imageBuffer.w;
+		int32 yOffset = y * _engine->_imageBuffer.w;
 		const uint8 *colPtr = &in[y * PLASMA_WIDTH];
 		for (int32 x = 0; x < PLASMA_WIDTH; x++) {
 			const uint8 c = MIN(*colPtr / 2 + color, max_value);
@@ -228,30 +228,30 @@ void Menu::processPlasmaEffect(const Common::Rect &rect, int32 color) {
 			const int32 target = 2 * yOffset;
 			out[target + 0] = c;
 			out[target + 1] = c;
-			out[target + _engine->imageBuffer.w + 0] = c;
-			out[target + _engine->imageBuffer.w + 1] = c;
+			out[target + _engine->_imageBuffer.w + 0] = c;
+			out[target + _engine->_imageBuffer.w + 1] = c;
 			++colPtr;
 			++yOffset;
 		}
 	}
 	const Common::Rect prect(0, 0, PLASMA_WIDTH, PLASMA_HEIGHT);
-	_engine->frontVideoBuffer.blitFrom(_engine->imageBuffer, prect, rect);
+	_engine->_frontVideoBuffer.blitFrom(_engine->_imageBuffer, prect, rect);
 }
 
-void Menu::drawBox(const Common::Rect &rect, int32 colorLeftTop, int32 colorRightBottom) {
+void Menu::drawRectBorders(const Common::Rect &rect, int32 colorLeftTop, int32 colorRightBottom) {
 	_engine->_interface->drawLine(rect.left, rect.top, rect.right, rect.top, colorLeftTop);           // top line
 	_engine->_interface->drawLine(rect.left, rect.top, rect.left, rect.bottom, colorLeftTop);         // left line
 	_engine->_interface->drawLine(rect.right, rect.top + 1, rect.right, rect.bottom, colorRightBottom);   // right line
 	_engine->_interface->drawLine(rect.left + 1, rect.bottom, rect.right, rect.bottom, colorRightBottom); // bottom line
 }
 
-void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorLeftTop, int32 colorRightBottom) {
-	drawBox(Common::Rect(left, top, right, bottom), colorLeftTop, colorLeftTop);
+void Menu::drawRectBorders(int32 left, int32 top, int32 right, int32 bottom, int32 colorLeftTop, int32 colorRightBottom) {
+	drawRectBorders(Common::Rect(left, top, right, bottom), colorLeftTop, colorLeftTop);
 }
 
 void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &rect, int32 buttonId, const char *dialText, bool hover) {
 	if (hover) {
-		if (menuSettings == &volumeMenuState && buttonId <= MenuButtonTypes::kSpeechVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
+		if (menuSettings == &_volumeMenuState && buttonId <= MenuButtonTypes::kSpeechVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
 			int32 newWidth = 0;
 			switch (buttonId) {
 			case MenuButtonTypes::kMusicVolume: {
@@ -278,13 +278,13 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 
 			processPlasmaEffect(rect, COLOR_80);
 			if (!(_engine->getRandomNumber() % 5)) {
-				plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
+				_plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
 			}
 			_engine->_interface->drawFilledRect(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), COLOR_68);
 		} else {
 			processPlasmaEffect(rect, COLOR_64);
 			if (!(_engine->getRandomNumber() % 5)) {
-				plasmaEffectPtr[_engine->getRandomNumber() % PLASMA_WIDTH * 10 + 6400] = 255;
+				_plasmaEffectPtr[_engine->getRandomNumber() % PLASMA_WIDTH * 10 + 6400] = 255;
 			}
 		}
 	} else {
@@ -292,14 +292,12 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 		_engine->_interface->drawTransparentBox(rect, 4);
 	}
 
-	drawBox(rect);
+	drawRectBorders(rect);
 
 	_engine->_text->setFontColor(COLOR_WHITE);
 	_engine->_text->setFontParameters(2, 8);
 	const int32 textSize = _engine->_text->getTextSize(dialText);
 	_engine->_text->drawText((_engine->width() / 2) - (textSize / 2), rect.top + 7, dialText);
-
-	_engine->copyBlockPhys(rect);
 }
 
 int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
@@ -320,36 +318,36 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 	int16 mouseActiveButton = -1;
 
 	for (int16 i = 0; i < maxButton; ++i) {
-		if (menuSettings == &advOptionsMenuState) {
+		if (menuSettings == &_advOptionsMenuState) {
 			int16 id = menuSettings->getButtonState(i);
 			switch (id) {
 			case MenuButtonTypes::kAggressiveMode:
-				if (_engine->_actor->autoAggressive) {
+				if (_engine->_actor->_autoAggressive) {
 					menuSettings->setButtonTextId(i, TextId::kBehaviourAggressiveAuto);
 				} else {
 					menuSettings->setButtonTextId(i, TextId::kBehaviourAggressiveManual);
 				}
 				break;
 			case MenuButtonTypes::kPolygonDetails:
-				if (_engine->cfgfile.PolygonDetails == 0) {
+				if (_engine->_cfgfile.PolygonDetails == 0) {
 					menuSettings->setButtonTextId(i, TextId::kDetailsPolygonsLow);
-				} else if (_engine->cfgfile.PolygonDetails == 1) {
+				} else if (_engine->_cfgfile.PolygonDetails == 1) {
 					menuSettings->setButtonTextId(i, TextId::kDetailsPolygonsMiddle);
 				} else {
 					menuSettings->setButtonTextId(i, TextId::kDetailsPolygonsHigh);
 				}
 				break;
 			case MenuButtonTypes::kShadowSettings:
-				if (_engine->cfgfile.ShadowMode == 0) {
+				if (_engine->_cfgfile.ShadowMode == 0) {
 					menuSettings->setButtonTextId(i, TextId::kShadowsDisabled);
-				} else if (_engine->cfgfile.ShadowMode == 1) {
+				} else if (_engine->_cfgfile.ShadowMode == 1) {
 					menuSettings->setButtonTextId(i, TextId::kShadowsFigures);
 				} else {
 					menuSettings->setButtonTextId(i, TextId::kDetailsShadowHigh);
 				}
 				break;
 			case MenuButtonTypes::kSceneryZoom:
-				if (_engine->cfgfile.SceZoom) {
+				if (_engine->_cfgfile.SceZoom) {
 					menuSettings->setButtonTextId(i, TextId::kSceneryZoomOn);
 				} else {
 					menuSettings->setButtonTextId(i, TextId::kNoSceneryZoom);
@@ -447,39 +445,39 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 		}
 
 		const int16 id = menuSettings->getActiveButtonState();
-		if (menuSettings == &advOptionsMenuState) {
+		if (menuSettings == &_advOptionsMenuState) {
 			switch (id) {
 			case MenuButtonTypes::kAggressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
-					_engine->_actor->autoAggressive = !_engine->_actor->autoAggressive;
+					_engine->_actor->_autoAggressive = !_engine->_actor->_autoAggressive;
 					startMillis = loopMillis;
 				}
 				break;
 			case MenuButtonTypes::kPolygonDetails:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
-					_engine->cfgfile.PolygonDetails--;
-					_engine->cfgfile.PolygonDetails %= 3;
+					_engine->_cfgfile.PolygonDetails--;
+					_engine->_cfgfile.PolygonDetails %= 3;
 					startMillis = loopMillis;
 				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
-					_engine->cfgfile.PolygonDetails++;
-					_engine->cfgfile.PolygonDetails %= 3;
+					_engine->_cfgfile.PolygonDetails++;
+					_engine->_cfgfile.PolygonDetails %= 3;
 					startMillis = loopMillis;
 				}
 				break;
 			case MenuButtonTypes::kShadowSettings:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
-					_engine->cfgfile.ShadowMode--;
-					_engine->cfgfile.ShadowMode %= 3;
+					_engine->_cfgfile.ShadowMode--;
+					_engine->_cfgfile.ShadowMode %= 3;
 					startMillis = loopMillis;
 				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
-					_engine->cfgfile.ShadowMode++;
-					_engine->cfgfile.ShadowMode %= 3;
+					_engine->_cfgfile.ShadowMode++;
+					_engine->_cfgfile.ShadowMode %= 3;
 					startMillis = loopMillis;
 				}
 				break;
 			case MenuButtonTypes::kSceneryZoom:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
-					_engine->cfgfile.SceZoom = !_engine->cfgfile.SceZoom;
+					_engine->_cfgfile.SceZoom = !_engine->_cfgfile.SceZoom;
 					startMillis = loopMillis;
 				}
 				break;
@@ -500,7 +498,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 			default:
 				break;
 			}
-		} else if (menuSettings == &volumeMenuState) {
+		} else if (menuSettings == &_volumeMenuState) {
 			Audio::Mixer *mixer = _engine->_system->getMixer();
 			switch (id) {
 			case MenuButtonTypes::kMusicVolume: {
@@ -615,7 +613,7 @@ int32 Menu::advoptionsMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&advOptionsMenuState)) {
+		switch (processMenu(&_advOptionsMenuState)) {
 		case (int32)TextId::kReturnMenu: {
 			return 0;
 		}
@@ -639,7 +637,7 @@ int32 Menu::savemanageMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&saveManageMenuState)) {
+		switch (processMenu(&_saveManageMenuState)) {
 		case (int32)TextId::kReturnMenu:
 			return 0;
 		case (int32)TextId::kCreateSaveGame:
@@ -664,7 +662,7 @@ int32 Menu::volumeMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&volumeMenuState)) {
+		switch (processMenu(&_volumeMenuState)) {
 		case (int32)TextId::kReturnMenu:
 			return 0;
 		case kQuitEngine:
@@ -684,11 +682,11 @@ int32 Menu::volumeMenu() {
 
 void Menu::inGameOptionsMenu() {
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
-	optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
+	_optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
 	_engine->saveFrontBuffer();
 	optionsMenu();
 	_engine->_text->initSceneTextBank();
-	optionsMenuState.setButtonTextId(0, TextId::kReturnMenu);
+	_optionsMenuState.setButtonTextId(0, TextId::kReturnMenu);
 }
 
 int32 Menu::optionsMenu() {
@@ -699,7 +697,7 @@ int32 Menu::optionsMenu() {
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
-		switch (processMenu(&optionsMenuState)) {
+		switch (processMenu(&_optionsMenuState)) {
 		case (int32)TextId::kReturnGame:
 		case (int32)TextId::kReturnMenu: {
 			return 0;
@@ -747,12 +745,12 @@ static const byte cursorPalette[] = {
 
 bool Menu::init() {
 	// load menu effect file only once
-	plasmaEffectPtr = (uint8 *)malloc(kPlasmaEffectFilesize);
-	memset(plasmaEffectPtr, 0, kPlasmaEffectFilesize);
+	_plasmaEffectPtr = (uint8 *)malloc(kPlasmaEffectFilesize);
+	memset(_plasmaEffectPtr, 0, kPlasmaEffectFilesize);
 
 	CursorMan.pushCursor(cursorArrow, 11, 16, 1, 1, 3);
 	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
-	return HQR::getEntry(plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT) > 0;
+	return HQR::getEntry(_plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT) > 0;
 }
 
 EngineState Menu::run() {
@@ -763,7 +761,7 @@ EngineState Menu::run() {
 	_engine->_sound->stopSamples();
 
 	ScopedCursor scoped(_engine);
-	switch (processMenu(&mainMenuState)) {
+	switch (processMenu(&_mainMenuState)) {
 	case (int32)TextId::kNewGame: {
 		if (_engine->_menuOptions->newGameMenu()) {
 			return EngineState::GameLoop;
@@ -797,10 +795,10 @@ int32 Menu::giveupMenu() {
 	_engine->_sound->pauseSamples();
 
 	MenuSettings *localMenu;
-	if (_engine->cfgfile.UseAutoSaving) {
-		localMenu = &giveUpMenuState;
+	if (_engine->_cfgfile.UseAutoSaving) {
+		localMenu = &_giveUpMenuState;
 	} else {
-		localMenu = &giveUpMenuWithSaveState;
+		localMenu = &_giveUpMenuWithSaveState;
 	}
 
 	ScopedCursor scoped(_engine);
@@ -832,25 +830,25 @@ int32 Menu::giveupMenu() {
 }
 
 void Menu::drawHealthBar(int32 left, int32 right, int32 top, int32 barLeftPadding, int32 barHeight) {
-	_engine->_grid->drawSprite(left, top + 3, _engine->_resources->spriteData[SPRITEHQR_LIFEPOINTS]);
+	_engine->_grid->drawSprite(left, top + 3, _engine->_resources->_spriteData[SPRITEHQR_LIFEPOINTS]);
 	const int32 barLeft = left + barLeftPadding;
-	const int32 healthBarRight = _engine->_screens->crossDot(barLeft, right, 50, _engine->_scene->sceneHero->life);
+	const int32 healthBarRight = _engine->_screens->crossDot(barLeft, right, 50, _engine->_scene->_sceneHero->_life);
 	const int32 barBottom = top + barHeight;
 	_engine->_interface->drawFilledRect(Common::Rect(barLeft, top, healthBarRight, barBottom), COLOR_91);
-	drawBox(Common::Rect(barLeft, top, right, barBottom));
+	drawRectBorders(Common::Rect(barLeft, top, right, barBottom));
 }
 
 void Menu::drawCloverLeafs(int32 newBoxLeft, int32 boxRight, int32 top) {
 	// Clover leaf boxes
-	for (int32 i = 0; i < _engine->_gameState->inventoryNumLeafsBox; i++) {
+	for (int32 i = 0; i < _engine->_gameState->_inventoryNumLeafsBox; i++) {
 		const int32 leftSpritePos = _engine->_screens->crossDot(newBoxLeft, boxRight, 10, i);
-		_engine->_grid->drawSprite(leftSpritePos, top + 58, _engine->_resources->spriteData[SPRITEHQR_CLOVERLEAFBOX]);
+		_engine->_grid->drawSprite(leftSpritePos, top + 58, _engine->_resources->_spriteData[SPRITEHQR_CLOVERLEAFBOX]);
 	}
 
 	// Clover leafs
-	for (int32 i = 0; i < _engine->_gameState->inventoryNumLeafs; i++) {
+	for (int32 i = 0; i < _engine->_gameState->_inventoryNumLeafs; i++) {
 		const int32 leftSpritePos = _engine->_screens->crossDot(newBoxLeft, boxRight, 10, i);
-		_engine->_grid->drawSprite(leftSpritePos + 2, top + 60, _engine->_resources->spriteData[SPRITEHQR_CLOVERLEAF]);
+		_engine->_grid->drawSprite(leftSpritePos + 2, top + 60, _engine->_resources->_spriteData[SPRITEHQR_CLOVERLEAF]);
 	}
 }
 
@@ -861,16 +859,16 @@ void Menu::drawMagicPointsBar(int32 left, int32 right, int32 top, int32 barLeftP
 	if (!_engine->_gameState->hasItem(InventoryItems::kiTunic)) {
 		return;
 	}
-	_engine->_grid->drawSprite(left, top + 1, _engine->_resources->spriteData[SPRITEHQR_MAGICPOINTS]);
-	if (_engine->_gameState->magicLevelIdx <= 0) {
+	_engine->_grid->drawSprite(left, top + 1, _engine->_resources->_spriteData[SPRITEHQR_MAGICPOINTS]);
+	if (_engine->_gameState->_magicLevelIdx <= 0) {
 		return;
 	}
 	const int32 barLeft = left + barLeftPadding;
 	const int32 barBottom = top + barHeight;
-	const int32 barRight = _engine->_screens->crossDot(barLeft, right, 80, _engine->_gameState->inventoryMagicPoints);
+	const int32 barRight = _engine->_screens->crossDot(barLeft, right, 80, _engine->_gameState->_inventoryMagicPoints);
 	const Common::Rect pointsRect(barLeft, top, barRight, barBottom);
 	_engine->_interface->drawFilledRect(pointsRect, COLOR_75);
-	drawBox(barLeft, top, barLeft + _engine->_gameState->magicLevelIdx * 80, barBottom);
+	drawRectBorders(barLeft, top, barLeft + _engine->_gameState->_magicLevelIdx * 80, barBottom);
 }
 
 void Menu::drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteData, const Common::String &str, int32 color) {
@@ -880,20 +878,20 @@ void Menu::drawSpriteAndString(int32 left, int32 top, const SpriteData &spriteDa
 }
 
 void Menu::drawCoins(int32 left, int32 top) {
-	const Common::String &inventoryNumKashes = Common::String::format("%d", _engine->_gameState->inventoryNumKashes);
-	drawSpriteAndString(left, top, _engine->_resources->spriteData[SPRITEHQR_KASHES], inventoryNumKashes);
+	const Common::String &inventoryNumKashes = Common::String::format("%d", _engine->_gameState->_inventoryNumKashes);
+	drawSpriteAndString(left, top, _engine->_resources->_spriteData[SPRITEHQR_KASHES], inventoryNumKashes);
 }
 
 void Menu::drawKeys(int32 left, int32 top) {
-	const Common::String &inventoryNumKeys = Common::String::format("%d", _engine->_gameState->inventoryNumKeys);
-	drawSpriteAndString(left, top, _engine->_resources->spriteData[SPRITEHQR_KEY], inventoryNumKeys);
+	const Common::String &inventoryNumKeys = Common::String::format("%d", _engine->_gameState->_inventoryNumKeys);
+	drawSpriteAndString(left, top, _engine->_resources->_spriteData[SPRITEHQR_KEY], inventoryNumKeys);
 }
 
 void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 	_engine->_interface->resetClip();
 	const int16 height = 80;
 	const Common::Rect rect(left, top, left + width, top + height);
-	drawBox(rect);
+	drawRectBorders(rect);
 	Common::Rect filledRect(rect);
 	filledRect.grow(-1);
 	_engine->_interface->drawFilledRect(filledRect, COLOR_BLACK);
@@ -932,32 +930,32 @@ bool Menu::isBehaviourHovered(int32 left, int32 top, HeroBehaviourType behaviour
 	return _engine->_input->isMouseHovering(boxRect);
 }
 
-void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect) {
+void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int32 angle, bool cantDrawBox) {
 	const Common::Rect &boxRect = calcBehaviourRect(left, top, behaviour);
 
-	const int animIdx = _engine->_actor->heroAnimIdx[(byte)behaviour];
-	const AnimData &currentAnimData = _engine->_resources->animData[animIdx];
+	const int animIdx = _engine->_actor->_heroAnimIdx[(byte)behaviour];
+	const AnimData &currentAnimData = _engine->_resources->_animData[animIdx];
 
-	uint currentAnimState = behaviourAnimState[(byte)behaviour];
+	uint currentAnimState = _behaviourAnimState[(byte)behaviour];
 
-	if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, *behaviourEntity, &behaviourAnimData[(byte)behaviour])) {
+	if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, *_behaviourEntity, &_behaviourAnimData[(byte)behaviour])) {
 		currentAnimState++; // keyframe
 		if (currentAnimState >= currentAnimData.getNumKeyframes()) {
 			currentAnimState = currentAnimData.getLoopFrame();
 		}
-		behaviourAnimState[(byte)behaviour] = currentAnimState;
+		_behaviourAnimState[(byte)behaviour] = currentAnimState;
 	}
 
 	if (!cantDrawBox) {
 		Common::Rect boxRectCopy(boxRect);
 		boxRectCopy.grow(1);
-		drawBox(boxRectCopy);
+		drawRectBorders(boxRectCopy);
 	}
 
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 
-	if (behaviour == _engine->_actor->heroBehaviour) {
+	if (behaviour == _engine->_actor->_heroBehaviour) {
 		const int titleOffset = 10;
 		const int titleHeight = 40;
 		const int32 titleBoxLeft = left + 10;
@@ -972,7 +970,7 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 		// behaviour menu title
 		const Common::Rect titleRect(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
 		_engine->_interface->drawFilledRect(titleRect, COLOR_BLACK);
-		drawBox(titleRect);
+		drawRectBorders(titleRect);
 
 		_engine->_text->setFontColor(COLOR_WHITE);
 
@@ -980,26 +978,19 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), dialText, sizeof(dialText));
 
 		_engine->_text->drawText(titleBoxCenter - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
-		_engine->copyBlockPhys(titleRect);
 	} else {
 		_engine->_interface->drawFilledRect(boxRect, COLOR_BLACK);
 	}
 
-	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, *behaviourEntity);
-
-	if (dirtyRect.isEmpty()) {
-		dirtyRect = boxRect;
-	} else {
-		dirtyRect.extend(boxRect);
-	}
+	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, *_behaviourEntity, _moveMenu);
 
 	_engine->_interface->loadClip();
 }
 
-void Menu::prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect) {
-	const int animIdx = _engine->_actor->heroAnimIdx[(byte)behaviour];
-	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)behaviour], _engine->_resources->animData[animIdx], *behaviourEntity, &behaviourAnimData[(byte)behaviour]);
-	drawBehaviour(left, top, behaviour, angle, false, dirtyRect);
+void Menu::prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour) {
+	const int animIdx = _engine->_actor->_heroAnimIdx[(byte)behaviour];
+	_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)behaviour], _engine->_resources->_animData[animIdx], *_behaviourEntity, &_behaviourAnimData[(byte)behaviour]);
+	drawBehaviour(left, top, behaviour, angle, false);
 }
 
 void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
@@ -1009,17 +1000,16 @@ void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
 	const int32 bottom = top + height;
 
 	const Common::Rect titleRect(left, top, right, bottom);
-	drawBox(titleRect);
+	drawRectBorders(titleRect);
 
 	Common::Rect boxRect(titleRect);
 	boxRect.grow(-1);
 	_engine->_interface->drawTransparentBox(boxRect, 2);
 
-	Common::Rect ignoreRect;
-	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kNormal, ignoreRect);
-	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kAthletic, ignoreRect);
-	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kAggressive, ignoreRect);
-	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kDiscrete, ignoreRect);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kNormal);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kAthletic);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kAggressive);
+	prepareAndDrawBehaviour(left, top, angle, HeroBehaviourType::kDiscrete);
 
 	_engine->copyBlockPhys(titleRect);
 
@@ -1028,37 +1018,37 @@ void Menu::drawBehaviourMenu(int32 left, int32 top, int32 angle) {
 
 void Menu::processBehaviourMenu() {
 	_engine->exitSceneryView();
-	if (_engine->_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
+	if (_engine->_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 		_engine->_sound->stopSamples();
 		_engine->_actor->setBehaviour(HeroBehaviourType::kNormal);
 	}
 
-	behaviourEntity = &_engine->_resources->bodyData[_engine->_scene->sceneHero->entity];
+	_behaviourEntity = &_engine->_resources->_bodyData[_engine->_scene->_sceneHero->_entity];
 
-	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kNormal] = _engine->_actor->heroAnimIdxNORMAL;
-	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kAthletic] = _engine->_actor->heroAnimIdxATHLETIC;
-	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kAggressive] = _engine->_actor->heroAnimIdxAGGRESSIVE;
-	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kDiscrete] = _engine->_actor->heroAnimIdxDISCRETE;
+	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kNormal] = _engine->_actor->_heroAnimIdxNORMAL;
+	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kAthletic] = _engine->_actor->_heroAnimIdxATHLETIC;
+	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kAggressive] = _engine->_actor->_heroAnimIdxAGGRESSIVE;
+	_engine->_actor->_heroAnimIdx[(byte)HeroBehaviourType::kDiscrete] = _engine->_actor->_heroAnimIdxDISCRETE;
 
-	_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, ANGLE_17, &moveMenu);
+	_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->_angle, _engine->_scene->_sceneHero->_angle - ANGLE_90, ANGLE_17, &_moveMenu);
 
 	_engine->saveFrontBuffer();
 
-	TextBankId tmpTextBank = _engine->_scene->sceneTextBank;
-	_engine->_scene->sceneTextBank = TextBankId::None;
+	TextBankId tmpTextBank = _engine->_scene->_sceneTextBank;
+	_engine->_scene->_sceneTextBank = TextBankId::None;
 
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
 	const int32 left = _engine->width() / 2 - 220;
 	const int32 top = _engine->height() / 2 - 140;
-	drawBehaviourMenu(left, top, _engine->_scene->sceneHero->angle);
+	drawBehaviourMenu(left, top, _engine->_scene->_sceneHero->_angle);
 
-	HeroBehaviourType tmpHeroBehaviour = _engine->_actor->heroBehaviour;
+	HeroBehaviourType tmpHeroBehaviour = _engine->_actor->_heroBehaviour;
 
-	const int animIdx = _engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour];
-	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animData[animIdx], *behaviourEntity, &behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
+	const int animIdx = _engine->_actor->_heroAnimIdx[(byte)_engine->_actor->_heroBehaviour];
+	_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)_engine->_actor->_heroBehaviour], _engine->_resources->_animData[animIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->_heroBehaviour]);
 
-	int32 tmpTime = _engine->lbaTime;
+	int32 tmpTime = _engine->_lbaTime;
 
 #if 0
 	ScopedCursor scopedCursor(_engine);
@@ -1080,7 +1070,7 @@ void Menu::processBehaviourMenu() {
 		}
 #endif
 
-		int heroBehaviour = (int)_engine->_actor->heroBehaviour;
+		int heroBehaviour = (int)_engine->_actor->_heroBehaviour;
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 			heroBehaviour--;
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
@@ -1093,35 +1083,31 @@ void Menu::processBehaviourMenu() {
 			heroBehaviour = (int)HeroBehaviourType::kNormal;
 		}
 
-		_engine->_actor->heroBehaviour = (HeroBehaviourType)heroBehaviour;
+		_engine->_actor->_heroBehaviour = (HeroBehaviourType)heroBehaviour;
 
-		Common::Rect dirtyRect;
-		if (tmpHeroBehaviour != _engine->_actor->heroBehaviour) {
-			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->sceneHero->angle, true, dirtyRect);
-			tmpHeroBehaviour = _engine->_actor->heroBehaviour;
-			_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, ANGLE_17, &moveMenu);
-			const int tmpAnimIdx = _engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour];
-			_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animData[tmpAnimIdx], *behaviourEntity, &behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
+		if (tmpHeroBehaviour != _engine->_actor->_heroBehaviour) {
+			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->_sceneHero->_angle, true);
+			tmpHeroBehaviour = _engine->_actor->_heroBehaviour;
+			_engine->_movements->setActorAngleSafe(_engine->_scene->_sceneHero->_angle, _engine->_scene->_sceneHero->_angle - ANGLE_90, ANGLE_17, &_moveMenu);
+			const int tmpAnimIdx = _engine->_actor->_heroAnimIdx[(byte)_engine->_actor->_heroBehaviour];
+			_engine->_animations->setAnimAtKeyframe(_behaviourAnimState[(byte)_engine->_actor->_heroBehaviour], _engine->_resources->_animData[tmpAnimIdx], *_behaviourEntity, &_behaviourAnimData[(byte)_engine->_actor->_heroBehaviour]);
 		}
 
-		drawBehaviour(left, top, _engine->_actor->heroBehaviour, -1, true, dirtyRect);
-		if (!dirtyRect.isEmpty()) {
-			_engine->copyBlockPhys(dirtyRect);
-		}
+		drawBehaviour(left, top, _engine->_actor->_heroBehaviour, -1, true);
 
-		_engine->lbaTime++;
+		_engine->_lbaTime++;
 	}
 
-	_engine->lbaTime = tmpTime;
+	_engine->_lbaTime = tmpTime;
 
-	_engine->_actor->setBehaviour(_engine->_actor->heroBehaviour);
+	_engine->_actor->setBehaviour(_engine->_actor->_heroBehaviour);
 	_engine->_gameState->initEngineProjections();
 
-	_engine->_scene->sceneTextBank = tmpTextBank;
+	_engine->_scene->_sceneTextBank = tmpTextBank;
 	_engine->_text->initSceneTextBank();
 }
 
-void Menu::drawItem(int32 left, int32 top, int32 item, Common::Rect &dirtyRect) {
+void Menu::drawItem(int32 left, int32 top, int32 item) {
 	const int32 itemWidth = 74;
 	const int32 itemHeight = 64;
 	const int32 itemPadding = 11;
@@ -1130,57 +1116,46 @@ void Menu::drawItem(int32 left, int32 top, int32 item, Common::Rect &dirtyRect) 
 	const int32 itemX = (item / 4) * (itemWidth + itemPadding) + left + itemWidthHalf + itemPadding - 1;
 	const int32 itemY = (item % 4) * (itemHeight + itemPadding) + top + itemHeightHalf + itemPadding - 1;
 	const Common::Rect rect(itemX - itemWidthHalf, itemY - itemHeightHalf, itemX + itemWidthHalf, itemY + itemHeightHalf);
-	const int32 color = inventorySelectedItem == item ? inventorySelectedColor : COLOR_BLACK;
+	const int32 color = _inventorySelectedItem == item ? _inventorySelectedColor : COLOR_BLACK;
 
 	_engine->_interface->drawFilledRect(rect, color);
 
 	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && (!_engine->_gameState->inventoryDisabled() || item == InventoryItems::kiCloverLeaf)) {
-		itemAngle[item] += ANGLE_2;
+		_itemAngle[item] += ANGLE_2;
 		_engine->_interface->setClip(rect);
-		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->inventoryTable[item], itemAngle[item], 15000);
+		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->_inventoryTable[item], _itemAngle[item], 15000);
 		_engine->_interface->resetClip();
 		if (item == InventoryItems::kGasItem) {
 			_engine->_text->setFontColor(COLOR_WHITE);
-			const Common::String &inventoryNumGas = Common::String::format("%d", _engine->_gameState->inventoryNumGas);
+			const Common::String &inventoryNumGas = Common::String::format("%d", _engine->_gameState->_inventoryNumGas);
 			_engine->_text->drawText(rect.left + 3, rect.bottom - 32, inventoryNumGas.c_str());
 		}
 	}
 
-	drawBox(rect);
-	if (dirtyRect.isEmpty()) {
-		dirtyRect = rect;
-	} else {
-		dirtyRect.extend(rect);
-	}
+	drawRectBorders(rect);
 }
 
 void Menu::drawInventoryItems(int32 left, int32 top) {
 	const Common::Rect rect(left, top, left + 605, top + 310);
 	_engine->_interface->drawTransparentBox(rect, 4);
-	drawBox(rect);
-	drawBox(left + 93, top + 8, left + 93 + 78, top + 8 + 293, COLOR_75, COLOR_75);
-	_engine->copyBlockPhys(rect);
+	drawRectBorders(rect);
 
-	Common::Rect dirtyRect;
 	for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
-		drawItem(left, top, item, dirtyRect);
-	}
-	if (!dirtyRect.isEmpty()) {
-		_engine->copyBlockPhys(dirtyRect);
+		drawItem(left, top, item);
 	}
 }
 
 void Menu::processInventoryMenu() {
-	int32 tmpAlphaLight = _engine->_scene->alphaLight;
-	int32 tmpBetaLight = _engine->_scene->betaLight;
+	int32 tmpAlphaLight = _engine->_scene->_alphaLight;
+	int32 tmpBetaLight = _engine->_scene->_betaLight;
 
 	_engine->saveFrontBuffer();
 
 	_engine->_renderer->setLightVector(ANGLE_315, ANGLE_334, ANGLE_0);
 
-	inventorySelectedColor = COLOR_68;
+	_inventorySelectedColor = COLOR_68;
 
-	if (_engine->_gameState->inventoryNumLeafs > 0) {
+	if (_engine->_gameState->_inventoryNumLeafs > 0) {
 		_engine->_gameState->giveItem(InventoryItems::kiCloverLeaf);
 		// TODO: shouldn't this get reset? } else {
 		//	_engine->_gameState->removeItem(InventoryItems::kiCloverLeaf);
@@ -1203,7 +1178,7 @@ void Menu::processInventoryMenu() {
 	for (;;) {
 		FrameMarker frame(_engine, 66);
 		_engine->readKeys();
-		int32 prevSelectedItem = inventorySelectedItem;
+		int32 prevSelectedItem = _inventorySelectedItem;
 
 		if (_engine->_input->toggleAbortAction() || _engine->shouldQuit()) {
 			break;
@@ -1214,41 +1189,40 @@ void Menu::processInventoryMenu() {
 		const bool cursorLeft = _engine->_input->toggleActionIfActive(TwinEActionType::UILeft);
 		const bool cursorRight = _engine->_input->toggleActionIfActive(TwinEActionType::UIRight);
 
-		Common::Rect dirtyRect;
 		if (cursorDown) {
-			inventorySelectedItem++;
-			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
-				inventorySelectedItem = 0;
+			_inventorySelectedItem++;
+			if (_inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
+				_inventorySelectedItem = 0;
 			}
-			drawItem(left, top, prevSelectedItem, dirtyRect);
+			drawItem(left, top, prevSelectedItem);
 			updateItemText = true;
 		} else if (cursorUp) {
-			inventorySelectedItem--;
-			if (inventorySelectedItem < 0) {
-				inventorySelectedItem = NUM_INVENTORY_ITEMS - 1;
+			_inventorySelectedItem--;
+			if (_inventorySelectedItem < 0) {
+				_inventorySelectedItem = NUM_INVENTORY_ITEMS - 1;
 			}
-			drawItem(left, top, prevSelectedItem, dirtyRect);
+			drawItem(left, top, prevSelectedItem);
 			updateItemText = true;
 		} else if (cursorLeft) {
-			inventorySelectedItem -= 4;
-			if (inventorySelectedItem < 0) {
-				inventorySelectedItem += NUM_INVENTORY_ITEMS;
+			_inventorySelectedItem -= 4;
+			if (_inventorySelectedItem < 0) {
+				_inventorySelectedItem += NUM_INVENTORY_ITEMS;
 			}
-			drawItem(left, top, prevSelectedItem, dirtyRect);
+			drawItem(left, top, prevSelectedItem);
 			updateItemText = true;
 		} else if (cursorRight) {
-			inventorySelectedItem += 4;
-			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
-				inventorySelectedItem -= NUM_INVENTORY_ITEMS;
+			_inventorySelectedItem += 4;
+			if (_inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
+				_inventorySelectedItem -= NUM_INVENTORY_ITEMS;
 			}
-			drawItem(left, top, prevSelectedItem, dirtyRect);
+			drawItem(left, top, prevSelectedItem);
 			updateItemText = true;
 		}
 
 		if (updateItemText) {
 			_engine->_text->initInventoryDialogueBox();
-			if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
-				_engine->_text->initInventoryText((InventoryItems)inventorySelectedItem);
+			if (_inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)_inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
+				_engine->_text->initInventoryText((InventoryItems)_inventorySelectedItem);
 			} else {
 				_engine->_text->initInventoryText(InventoryItems::MaxInventoryItems);
 			}
@@ -1273,27 +1247,20 @@ void Menu::processInventoryMenu() {
 			}
 		}
 
-		drawItem(left, top, inventorySelectedItem, dirtyRect);
+		drawItem(left, top, _inventorySelectedItem);
 
-		if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
-			_engine->loopInventoryItem = inventorySelectedItem;
-			inventorySelectedColor = COLOR_91;
-			drawItem(left, top, inventorySelectedItem, dirtyRect);
-			if (!dirtyRect.isEmpty()) {
-				_engine->copyBlockPhys(dirtyRect);
-			}
+		if (_inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->hasItem((InventoryItems)_inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
+			_engine->_loopInventoryItem = _inventorySelectedItem;
+			_inventorySelectedColor = COLOR_91;
+			drawItem(left, top, _inventorySelectedItem);
 			break;
-		}
-
-		if (!dirtyRect.isEmpty()) {
-			_engine->copyBlockPhys(dirtyRect);
 		}
 	}
 
 	_engine->_text->_hasValidTextHandle = false;
 
-	_engine->_scene->alphaLight = tmpAlphaLight;
-	_engine->_scene->betaLight = tmpBetaLight;
+	_engine->_scene->_alphaLight = tmpAlphaLight;
+	_engine->_scene->_betaLight = tmpBetaLight;
 
 	_engine->_gameState->initEngineProjections();
 

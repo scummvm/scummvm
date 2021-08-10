@@ -187,6 +187,12 @@ static const ExtraGuiOption U8_OPTIONS[] = {
 };
 
 static const ExtraGuiOption CRUSADER_OPTIONS[] = {
+	{
+		_s("Camera moves with silencer"),
+		_s("Camera tracks the player movement rather than snapping to defined positions."),
+		"camera_on_player",
+		true
+	},
 	{ nullptr, nullptr, nullptr, false }
 };
 
@@ -284,7 +290,7 @@ const ExtraGuiOptions MetaEngine::getExtraGuiOptions(const Common::String& targe
 		options.push_back(*o);
 	}
 
-	// Game specific keymaps
+	// Game specific options
 	const ExtraGuiOption *game_options = (target.equals("ultima8") ? U8_OPTIONS : CRUSADER_OPTIONS);
 	for (const ExtraGuiOption *o = game_options; o->configOption; ++o) {
 		options.push_back(*o);

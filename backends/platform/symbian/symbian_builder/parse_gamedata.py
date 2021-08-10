@@ -19,6 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+
 from __future__ import with_statement
 import os
 from common_names import *
@@ -29,44 +30,42 @@ component_name_test = "ScummVM teting gamedata package"
 data_path = "..\\..\\..\\dists\\engine-data"
 theme_path = "..\\..\\..\\gui\\themes"
 
-# install_path has trailing '\'
-install_path = "!:\data\scummvm\\"
+# Install_path has trailing '\\'.
+install_path = "!:\\data\\scummvm\\"
 
-# Template args = (Component name, UID, major version, minor version, build number, list of datafiles)
+# Template args = (Component name, UID, major version, minor version, build number).
 pkg_template = """;;;
-;;; ScummVM .PKG file for .SIS generation
+;;; ScummVM .PKG file for .SIS generation.
 ;;;
 
-;Language - standard language definitions
+; Language - standard language definitions.
 &EN
 
 ; List of localised vendor names - one per language. At least one must be provided (English [EN]).
 ; List must correspond to list of languages specified elsewhere in the .pkg
-%%{"ScummVM"}
-; The non-localised, globally unique vendor name (mandatory)
+%%{"ScummVM"}.
+; The non-localised, globally unique vendor name (mandatory).
 :"ScummVM"
 
-; UID is the app's UID
+; UID is the app's UID.
 #{"%s"},(%s),%s,%s,%s,  TYPE=SISPATCH
 
-;Supports Series 60 v 3.0
+;Supports Series 60 v 3.0.
 [0x101F7961], 0, 0, 0, {"Series60ProductID"}
-;Supports Series 60 v 5.0
+;Supports Series 60 v 5.0.
 [0x1028315F], 0, 0, 0, {"Series60ProductID"}
-; Scummvm Documentation
-"..\..\..\..\COPYRIGHT"-"", FT, TC
-"..\..\..\..\COPYING"-"", FT, TC
-"..\..\..\..\COPYING.FREEFONT"   - "", FT, TC
-"..\README"-"", FT, TC
-"..\..\..\..\AUTHORS"-""
+; Scummvm documentation.
+"..\\..\\..\\..\\COPYRIGHT"        - "", FT, TC
+"..\\..\\..\\..\\COPYING.FREEFONT" - "!:\\data\\scummvm\\COPYING.FREEFONT"
+"..\\..\\..\\..\\AUTHORS"          - "", FT, TC
 
-; Scummvm help
-"..\help\ScummVM.hlp"-"!:\\resource\help\ScummVM.hlp"
+; Scummvm help.
+"..\\help\\ScummVM.hlp"-"!:\\resource\\help\\ScummVM.hlp"
 
-; Common datafiles needed for some games
+; Common datafiles needed for some games.
 """
 
-pkg_string_template = "\"%s\" - \"!:\\data\\scummvm\%s\""
+pkg_string_template = "\"%s\" - \"!:\\data\\scummvm\\%s\""
 pkg_string_template_beta = "\"%s\" - \"!:\\data\\scummvm\\beta\\%s\""
 
 
@@ -76,12 +75,10 @@ def make_install_path(x, data_pth, build):
       return pkg_string_template_beta %(os.path.join(data_pth, x),x)
    return pkg_string_template %(os.path.join(data_pth, x),x)
 
-
 def get_gamedata(data_pth, build):
    files = os.listdir(data_pth)
    files = [make_install_path(x, data_pth, build) for x in files if os.path.isfile(os.path.join(data_pth, x))]
    return files
-
 
 def parse_gamedata(build, platform = "S60v3"):
    uids = get_UIDs(build)
@@ -89,9 +86,12 @@ def parse_gamedata(build, platform = "S60v3"):
    if build == 'full':
       comp_name = component_name_test
    t = get_gamedata(data_path, build)
-   t += get_gamedata(data_path, build)
+   t += get_gamedata(theme_path, build)
    pkg = os.path.join(platform, pkg_file)
-   SafeWriteFile(pkg, pkg_template %(comp_name, uids[0], sis_major_version, sis_minor_version, sis_build_number) )
+   p_template = pkg_template %(comp_name, uids[0], sis_major_version, sis_minor_version, sis_build_number)
+   if build == 'full':
+      p_template = p_template.replace("resource\\help\\ScummVM.hlp", "resource\\help\\ScummVM_test.hlp")
+   SafeWriteFile(pkg,  p_template)
    SafeWriteFile(pkg, t, mode = 'a')
 
 

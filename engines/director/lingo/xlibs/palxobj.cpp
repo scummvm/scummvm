@@ -46,7 +46,11 @@
 namespace Director {
 
 // The name is different from the obj filename.
-static const char *xlibName = "FixPalette";
+const char *PalXObj::xlibName = "FixPalette";
+const char *PalXObj::fileNames[] = {
+	"PalXObj",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",				PalXObj::m_new,				 4, 4,	400 },	// D4
@@ -54,15 +58,18 @@ static MethodProto xlibMethods[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-void PalXObj::initialize(int type) {
-	PalXObject::initMethods(xlibMethods);
-	if (type & kXObj) {
-		if (!g_lingo->_globalvars.contains(xlibName)) {
-			PalXObject *xobj = new PalXObject(kXObj);
-			g_lingo->_globalvars[xlibName] = xobj;
-		} else {
-			warning("PalXObject already initialized");
-		}
+void PalXObj::open(int type) {
+	if (type == kXObj) {
+		PalXObject::initMethods(xlibMethods);
+		PalXObject *xobj = new PalXObject(kXObj);
+		g_lingo->_globalvars[xlibName] = xobj;
+	}
+}
+
+void PalXObj::close(int type) {
+	if (type == kXObj) {
+		PalXObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
 	}
 }
 

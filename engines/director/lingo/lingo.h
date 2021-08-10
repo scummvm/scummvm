@@ -26,6 +26,7 @@
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
 #include "common/str-array.h"
+#include "common/rect.h"
 
 #include "director/types.h"
 
@@ -108,6 +109,25 @@ struct Symbol {	/* symbol table entry */
 	~Symbol();
 };
 
+struct PArray {
+	bool _sorted;
+	PropertyArray arr;
+
+	PArray() : _sorted(false) {}
+
+	PArray(int size) : _sorted(false), arr(size) {}
+};
+
+struct FArray {
+	bool _sorted;
+	DatumArray arr;
+
+	FArray() : _sorted(false) {}
+
+	FArray(int size) : _sorted(false), arr(size) {}
+};
+
+
 struct Datum {	/* interpreter stack type */
 	DatumType type;
 
@@ -115,8 +135,8 @@ struct Datum {	/* interpreter stack type */
 		int	i;				/* INT, ARGC, ARGCNORET */
 		double f;			/* FLOAT */
 		Common::String *s;	/* STRING, VARREF, OBJECT */
-		DatumArray *farr;	/* ARRAY, POINT, RECT */
-		PropertyArray *parr; /* PARRAY */
+		FArray *farr;	/* ARRAY, POINT, RECT */
+		PArray *parr; /* PARRAY */
 		AbstractObject *obj; /* OBJECT */
 		ChunkReference *cref; /* CHUNKREF */
 		CastMemberID *cast;	/* CASTREF, FIELDREF */
@@ -132,6 +152,7 @@ struct Datum {	/* interpreter stack type */
 	Datum(const Common::String &val);
 	Datum(AbstractObject *val);
 	Datum(const CastMemberID &val);
+	Datum(const Common::Rect &rect);
 	void reset();
 
 	~Datum() {
@@ -143,6 +164,7 @@ struct Datum {	/* interpreter stack type */
 	int asInt() const;
 	Common::String asString(bool printonly = false) const;
 	CastMemberID asMemberID() const;
+	Common::Point asPoint() const;
 
 	bool isRef() const;
 	bool isVarRef() const;
@@ -187,21 +209,24 @@ typedef Common::HashMap<Common::String, Symbol, Common::IgnoreCase_Hash, Common:
 typedef Common::HashMap<Common::String, Datum, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> DatumHash;
 typedef Common::HashMap<Common::String, Builtin *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> BuiltinHash;
 typedef Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarTypeHash;
+typedef void (*XLibFunc)(int);
+typedef Common::HashMap<Common::String, XLibFunc, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> XLibFuncHash;
+typedef Common::HashMap<Common::String, ObjectType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> OpenXLibsHash;
 
 typedef Common::HashMap<Common::String, TheEntity *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityHash;
 typedef Common::HashMap<Common::String, TheEntityField *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TheEntityFieldHash;
 
 struct CFrame {	/* proc/func call stack frame */
-	Symbol	sp;	/* symbol table entry */
-	int		retpc;	/* where to resume after return */
-	ScriptData *retscript;		/* which script to resume after return */
-	ScriptContext *retctx;		/* which script context to use after return */
-	bool retFreezeContext;		/* whether the context should be frozen after return */
-	DatumHash *localvars;
-	Datum retMe; /* which me obj to use after return */
-	uint stackSizeBefore;
-	bool allowRetVal;			/* whether to allow a return value */
-	Datum defaultRetVal;		/* default return value */
+	Symbol			sp;					/* symbol table entry */
+	int				retPC;				/* where to resume after return */
+	ScriptData		*retScript;			/* which script to resume after return */
+	ScriptContext	*retContext;		/* which script context to use after return */
+	bool			retFreezeContext;	/* whether the context should be frozen after return */
+	DatumHash		*retLocalVars;
+	Datum			retMe;				/* which me obj to use after return */
+	uint			stackSizeBefore;
+	bool			allowRetVal;		/* whether to allow a return value */
+	Datum			defaultRetVal;		/* default return value */
 };
 
 struct LingoEvent {
@@ -260,6 +285,7 @@ public:
 	void initBuiltIns();
 	void initBuiltIns(BuiltinProto protos[]);
 	void cleanupBuiltIns();
+	void cleanupBuiltIns(BuiltinProto protos[]);
 	void initFuncs();
 	void cleanupFuncs();
 	void initBytecode();
@@ -267,7 +293,11 @@ public:
 	void cleanupMethods();
 	void initXLibs();
 	void cleanupXLibs();
+
+	Common::String normalizeXLibName(Common::String name);
 	void openXLib(Common::String name, ObjectType type);
+	void closeXLib(Common::String name);
+	void reloadOpenXLibs();
 
 	void runTests();
 
@@ -284,8 +314,11 @@ public:
 
 public:
 	void execute();
+	void loadStateFromWindow();
+	void saveStateToWindow();
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
-	void popContext();
+	void popContext(bool aborting = false);
+	bool hasFrozenContext();
 	void cleanLocalVars();
 	void varAssign(const Datum &var, const Datum &value);
 	Datum varFetch(const Datum &var, bool silent = false);
@@ -382,7 +415,10 @@ public:
 	SymbolHash _builtinFuncs;
 	SymbolHash _builtinConsts;
 	SymbolHash _methods;
-	SymbolHash _xlibInitializers;
+	XLibFuncHash _xlibOpeners;
+	XLibFuncHash _xlibClosers;
+
+	OpenXLibsHash _openXLibs;
 
 	Common::String _floatPrecisionFormat;
 

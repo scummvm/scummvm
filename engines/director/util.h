@@ -56,7 +56,7 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 
 bool isButtonSprite(SpriteType spriteType);
 
-bool processQuitEvent(bool click = false); // events.cpp
+Common::String castTypeToString(const CastType &type);
 
 class RandomState {
 public:
@@ -92,6 +92,10 @@ Common::CodePage detectFontEncoding(Common::Platform platform, uint16 fontId);
 int charToNum(Common::u32char_type_t ch);
 Common::u32char_type_t numToChar(int num);
 int compareStrings(const Common::String &s1, const Common::String &s2);
+
+Common::String encodePathForDump(const Common::String &path);
+
+Common::String utf8ToPrintable(const Common::String &str);
 
 } // End of namespace Director
 

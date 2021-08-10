@@ -48,27 +48,107 @@ struct FadeParams {
 		startVol(sv), targetVol(tv), totalTicks(tt), startTicks(st), lapsedTicks(0), fadeIn(f) {}
 };
 
+const uint16 kMinSampledMenu = 10;
+const uint16 kMaxSampledMenu = 15;
+const uint16 kNumSampledMenus = kMaxSampledMenu - kMinSampledMenu + 1;
+
+struct ExternalSoundID {
+	uint16 menu;
+	uint16 submenu;
+
+	ExternalSoundID() : menu(0), submenu(0) {}
+	ExternalSoundID(uint16 menuID, uint16 submenuID)
+		: menu(menuID), submenu(submenuID) {}
+
+	bool operator==(const ExternalSoundID &b) {
+		return menu == b.menu && submenu == b.submenu;
+	}
+	bool operator!=(const ExternalSoundID &b) {
+		return !(*this == b);
+	}
+};
+
+enum SoundIDType {
+	kSoundCast,
+	kSoundExternal
+};
+
+struct SoundID {
+	SoundIDType type;
+	union {
+		struct {
+			int member;
+			int castLib;
+		} cast;
+		struct {
+			uint16 menu;
+			uint16 submenu;
+		} external;
+	} u;
+
+	SoundID() {
+		type = kSoundCast;
+		u.cast.member = 0;
+		u.cast.castLib = 0;
+	}
+	SoundID(SoundIDType type_, int a, int b) {
+		type = type_;
+		switch (type) {
+		case kSoundCast:
+			u.cast.member = a;
+			u.cast.castLib = b;
+			break;
+		case kSoundExternal:
+			u.external.menu = a;
+			u.external.submenu = b;
+		}
+	}
+	SoundID(CastMemberID memberID) {
+		type = kSoundCast;
+		u.cast.member = memberID.member;
+		u.cast.castLib = memberID.castLib;
+	}
+
+	bool operator==(const SoundID &b) {
+		if (type != b.type)
+			return false;
+
+		switch (type) {
+		case kSoundCast:
+			return u.cast.member == b.u.cast.member && u.cast.castLib == b.u.cast.castLib;
+		case kSoundExternal:
+			return u.external.menu == b.u.external.menu && u.external.submenu == b.u.external.submenu;
+		}
+
+		return false;
+	}
+	bool operator!=(const SoundID &b) {
+		return !(*this == b);
+	}
+};
+
 struct SoundChannel {
 	Audio::SoundHandle handle;
-	CastMemberID lastPlayingCast;
+	SoundID lastPlayedSound;
+	bool stopOnZero; // Should the sound be stopped when the channel contains cast member 0?
 	byte volume;
 	FadeParams *fade;
 
+	// a non-zero sound ID if the channel is a puppet. i.e. it's controlled by lingo
+	SoundID puppet;
+	bool newPuppet;
+
 	// this indicate whether the sound is playing across the movie. Because the cast name may be the same while the actual sounds are changing.
 	// And we will override the sound when ever the sound is changing. thus we use a flag to indicate whether the movie is changed.
-	bool _movieChanged;
+	bool movieChanged;
 
-	SoundChannel(): handle(), volume(255), fade(nullptr), _movieChanged(false) {}
+	SoundChannel(): handle(), lastPlayedSound(SoundID()), stopOnZero(true), volume(255), fade(nullptr), puppet(SoundID()), newPuppet(false), movieChanged(false) {}
 };
 
 class DirectorSound {
 
-public:
-	// whether the sound is puppet. i.e. it's controlled by lingo
-	bool _puppet;
-
 private:
-	DirectorEngine *_vm;
+	Window *_window;
 	Common::Array<SoundChannel> _channels;
 	Audio::SoundHandle _scriptSound;
 	Audio::Mixer *_mixer;
@@ -81,16 +161,19 @@ private:
 
 	bool _enable;
 
+	Common::Array<AudioDecoder *> _sampleSounds[kNumSampledMenus];
+
 public:
-	DirectorSound(DirectorEngine *vm);
+	DirectorSound(Window *window);
 	~DirectorSound();
 
 	SoundChannel *getChannel(uint8 soundChannel);
 	void playFile(Common::String filename, uint8 soundChannel);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
 	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
-	void playCastMember(CastMemberID memberID, uint8 soundChannel, bool allowRepeat = true);
-	void playExternalSound(AudioDecoder *ad, uint8 soundChannel, uint8 externalSoundID);
+	void playSound(SoundID soundId, uint8 soundChannel, bool forPuppet = false);
+	void playCastMember(CastMemberID memberID, uint8 soundChannel, bool forPuppet = false);
+	void playExternalSound(uint16 menu, uint16 submenu, uint8 soundChannel);
 	void playFPlaySound(const Common::Array<Common::String> &fplayList);
 	void playFPlaySound();
 	void setSouldLevel(int channel, uint8 soundLevel);
@@ -99,8 +182,16 @@ public:
 	void systemBeep();
 	void changingMovie();
 
-	void setLastPlayCast(uint8 soundChannel, CastMemberID castMemberId);
-	bool checkLastPlayCast(uint8 soundChannel, const CastMemberID &castMemberId);
+	void loadSampleSounds(uint type);
+	void unloadSampleSounds();
+
+	void setLastPlayedSound(uint8 soundChannel, SoundID soundId, bool stopOnZero = true);
+	bool isLastPlayedSound(uint8 soundChannel, const SoundID &soundId);
+	bool shouldStopOnZero(uint8 soundChannel);
+
+	bool isChannelPuppet(uint8 soundChannel);
+	void setPuppetSound(SoundID soundId, uint8 soundChannel);
+	void playPuppetSound(uint8 soundChannel);
 
 	bool getSoundEnabled() { return _enable; }
 
@@ -125,7 +216,7 @@ public:
 	AudioDecoder() {};
 	virtual ~AudioDecoder() {};
 public:
-	virtual Audio::AudioStream *getAudioStream(bool looping = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) { return nullptr; }
+	virtual Audio::AudioStream *getAudioStream(bool looping = false, bool forPuppet = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) { return nullptr; }
 };
 
 class SNDDecoder : public AudioDecoder {
@@ -137,7 +228,7 @@ public:
 	void loadExternalSoundStream(Common::SeekableReadStreamEndian &stream);
 	bool processCommands(Common::SeekableReadStreamEndian &stream);
 	bool processBufferCommand(Common::SeekableReadStreamEndian &stream);
-	Audio::AudioStream *getAudioStream(bool looping = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
+	Audio::AudioStream *getAudioStream(bool looping = false, bool forPuppet = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
 	bool hasLoopBounds();
 
 private:
@@ -157,7 +248,7 @@ public:
 
 	void setPath(Common::String &path);
 
-	Audio::AudioStream *getAudioStream(bool looping = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
+	Audio::AudioStream *getAudioStream(bool looping = false, bool forPuppet = false, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) override;
 
 private:
 	Common::String _path;

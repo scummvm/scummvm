@@ -78,6 +78,66 @@ private:
 public:
 	GameState(TwinEEngine *engine);
 
+	/**
+	 * LBA engine chapter
+	 *  0: Inprisoned
+	 *  1: Escape from the citadel
+	 *  2: Zoe got captured
+	 *  3: - looking for a young girl
+	 *  4: - looking for a "friend"
+	 *  5: The legend of Sendell
+	 *  6: The book of Bu
+	 *  7: Pirate LeBorne
+	 *  8: - "good day"
+	 *  9: - "good day"
+	 * 10: - ?? nothing
+	 * 11: - ?? nothing
+	 * 12: - ?? nothing
+	 * 13: - looking for plans
+	 * 14: - still looking for plans
+	 * 15: The final showdown - "good day"
+	 */
+	int16 _gameChapter = 0;
+
+	/** Magic ball type index */
+	int16 _magicBallIdx = 0;
+	/** Magic ball num bounce */
+	int16 _magicBallNumBounce = 0;
+	/** Magic ball auxiliar bounce number */
+	int16 _magicBallAuxBounce = 0; // magicBallParam
+	/** Magic level index */
+	int16 _magicLevelIdx = 0;
+
+	/** Store the number of inventory keys */
+	int16 _inventoryNumKeys = 0;
+	/** Store the number of inventory kashes */
+	int16 _inventoryNumKashes = 0;
+	/** Store the number of inventory clover leafs boxes */
+	int16 _inventoryNumLeafsBox = 0;
+	/** Store the number of inventory clover leafs */
+	int16 _inventoryNumLeafs = 0;
+	/** Store the number of inventory magic points */
+	int16 _inventoryMagicPoints = 0;
+	/** Store the number of gas */
+	int16 _inventoryNumGas = 0;
+
+	/** Its using FunFrock Sabre */
+	bool _usingSabre = false;
+
+	/**
+	 * Inventory used flags
+	 * 0 means never used, 1 means already used and automatic re-use
+	 */
+	uint8 _inventoryFlags[NUM_INVENTORY_ITEMS];
+
+	uint8 _holomapFlags[NUM_LOCATIONS]; // GV14
+
+	char _sceneName[30] {};
+
+	TextId _gameChoices[10];  // inGameMenuData
+	int32 _numChoices = 0;   // numOfOptionsInChoice
+	TextId _choiceAnswer = TextId::kNone; // inGameMenuAnswer
+
 	inline bool inventoryDisabled() const {
 		return hasGameFlag(GAMEFLAG_INVENTORY_DISABLED) != 0;
 	}
@@ -115,49 +175,6 @@ public:
 
 	void setGameFlag(uint8 index, uint8 value);
 
-	/**
-	 * LBA engine chapter
-	 *  0: Inprisoned
-	 *  1: Escape from the citadel
-	 *  2: Zoe got captured
-	 *  3: - looking for a young girl
-	 *  4: - looking for a "friend"
-	 *  5: The legend of Sendell
-	 *  6: The book of Bu
-	 *  7: Pirate LeBorne
-	 *  8: - "good day"
-	 *  9: - "good day"
-	 * 10: - ?? nothing
-	 * 11: - ?? nothing
-	 * 12: - ?? nothing
-	 * 13: - looking for plans
-	 * 14: - still looking for plans
-	 * 15: The final showdown - "good day"
-	 */
-	int16 gameChapter = 0;
-
-	/** Magic ball type index */
-	int16 magicBallIdx = 0;
-	/** Magic ball num bounce */
-	int16 magicBallNumBounce = 0;
-	/** Magic ball auxiliar bounce number */
-	int16 magicBallAuxBounce = 0; // magicBallParam
-	/** Magic level index */
-	int16 magicLevelIdx = 0;
-
-	/** Store the number of inventory keys */
-	int16 inventoryNumKeys = 0;
-	/** Store the number of inventory kashes */
-	int16 inventoryNumKashes = 0;
-	/** Store the number of inventory clover leafs boxes */
-	int16 inventoryNumLeafsBox = 0;
-	/** Store the number of inventory clover leafs */
-	int16 inventoryNumLeafs = 0;
-	/** Store the number of inventory magic points */
-	int16 inventoryMagicPoints = 0;
-	/** Store the number of gas */
-	int16 inventoryNumGas = 0;
-
 	int16 setKeys(int16 value);
 	int16 setGas(int16 value);
 	int16 setLeafs(int16 value);
@@ -172,23 +189,6 @@ public:
 	void addMagicPoints(int16 val);
 	void addLeafs(int16 val);
 	void addLeafBoxes(int16 val);
-
-	/** Its using FunFrock Sabre */
-	bool usingSabre = false;
-
-	/**
-	 * Inventory used flags
-	 * 0 means never used, 1 means already used and automatic re-use
-	 */
-	uint8 inventoryFlags[NUM_INVENTORY_ITEMS];
-
-	uint8 holomapFlags[NUM_LOCATIONS]; // GV14
-
-	char sceneName[30] {};
-
-	TextId gameChoices[10];  // inGameMenuData
-	int32 numChoices = 0;   // numOfOptionsInChoice
-	TextId choiceAnswer = TextId::kNone; // inGameMenuAnswer
 
 	/** Initialize all engine variables */
 	void initEngineVars();

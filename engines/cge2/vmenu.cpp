@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1997 Janusz B. Wisniewski and L.K. Avalon
  */
 
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
 #include "cge2/text.h"
 #include "cge2/vmenu.h"
 #include "cge2/events.h"
@@ -83,7 +85,7 @@ MenuBar::MenuBar(CGE2Engine *vm, uint16 w, byte *c) : Talk(vm) {
 VMenu *VMenu::_addr = nullptr;
 
 VMenu::VMenu(CGE2Engine *vm, Common::Array<Choice *> list, V2D pos, ColorBank col)
-	: Talk(vm, vmGather(list), kTBRect, col), _menu(list), _bar(nullptr), _items(list.size()), _vm(vm) {
+	: Talk(vm, vmGather(list), kTBRect, col), _menu(list), _bar(nullptr), _items(list.size()), _vm(vm), _lastN(2) {
 	delete[] _vmgt; // Lefotver of vmGather.
 
 	_addr = this;
@@ -150,6 +152,12 @@ void VMenu::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 
 		_bar->gotoxyz(V2D(_vm, _pos2D.x, _pos2D.y + kTextVMargin + n * h - kMenuBarVerticalMargin));
 		n = _items - 1 - n;
+
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (_lastN != n) {
+			ttsMan->say(_menu[n]->_text, Common::TextToSpeechManager::INTERRUPT);
+			_lastN = n;
+		}
 
 		if (ok && (mask & kMouseLeftUp)) {
 			_items = 0;

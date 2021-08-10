@@ -530,6 +530,9 @@ void PrinceEngine::checkOptions() {
 			case Common::EN_ANY:
 				optText = optionsTextEN[i];
 				break;
+			case Common::ES_ESP:
+				optText = optionsTextES[i];
+				break;
 			case Common::RU_RUS:
 				if (getFeatures() & GF_RUSPROJEDITION) {
 					optText = optionsTextRU2[i];
@@ -585,6 +588,9 @@ void PrinceEngine::checkInvOptions() {
 				break;
 			case Common::EN_ANY:
 				invText = invOptionsTextEN[i];
+				break;
+			case Common::ES_ESP:
+				invText = invOptionsTextES[i];
 				break;
 			case Common::RU_RUS:
 				if (getFeatures() & GF_RUSPROJEDITION) {

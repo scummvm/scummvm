@@ -66,7 +66,8 @@ LangFilter::~LangFilter() {
 	delete _arc;
 }
 
-bool LangFilter::hasFile(const Common::String &name) const {
+bool LangFilter::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!_arc)
 		return false;
 
@@ -109,11 +110,13 @@ int LangFilter::listMembers(Common::ArchiveMemberList &list) const {
 	return num;
 }
 
-const Common::ArchiveMemberPtr LangFilter::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr LangFilter::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *LangFilter::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *LangFilter::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!_arc)
 		return nullptr;
 

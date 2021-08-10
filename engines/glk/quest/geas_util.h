@@ -88,7 +88,7 @@ private:
 
 //	Common::WriteStream *logfilestr_;
 //	std::streambuf *cerrbuf_;
-	static Nullstreambuf cnull;
+// 	static Nullstreambuf cnull;
 };
 
 } // End of namespace Quest

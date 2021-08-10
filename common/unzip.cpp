@@ -1429,10 +1429,10 @@ public:
 
 	~ZipArchive();
 
-	virtual bool hasFile(const String &name) const;
+	virtual bool hasFile(const Path &path) const;
 	virtual int listMembers(ArchiveMemberList &list) const;
-	virtual const ArchiveMemberPtr getMember(const String &name) const;
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+	virtual const ArchiveMemberPtr getMember(const Path &path) const;
+	virtual SeekableReadStream *createReadStreamForMember(const Path &path) const;
 };
 
 /*
@@ -1461,7 +1461,8 @@ ZipArchive::~ZipArchive() {
 	unzClose(_zipFile);
 }
 
-bool ZipArchive::hasFile(const String &name) const {
+bool ZipArchive::hasFile(const Path &path) const {
+	String name = path.toString();
 	return (unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
 }
 
@@ -1478,14 +1479,16 @@ int ZipArchive::listMembers(ArchiveMemberList &list) const {
 	return members;
 }
 
-const ArchiveMemberPtr ZipArchive::getMember(const String &name) const {
+const ArchiveMemberPtr ZipArchive::getMember(const Path &path) const {
+	String name = path.toString();
 	if (!hasFile(name))
 		return ArchiveMemberPtr();
 
 	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
 }
 
-SeekableReadStream *ZipArchive::createReadStreamForMember(const String &name) const {
+SeekableReadStream *ZipArchive::createReadStreamForMember(const Path &path) const {
+	String name = path.toString();
 	if (unzLocateFile(_zipFile, name.c_str(), 2) != UNZ_OK)
 		return nullptr;
 

@@ -25,8 +25,6 @@
 //
 
 #include "ags/lib/std/limits.h"
-//include <chrono>
-//include <SDL.h>
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character_extras.h"
 #include "ags/shared/ac/character_info.h"
@@ -209,11 +207,13 @@ static void check_mouse_controls() {
 		check_skip_cutscene_mclick(mbut);
 
 		if (_GP(play).fast_forward || _GP(play).IsIgnoringInput()) { /* do nothing if skipping cutscene or input disabled */
-		} else if ((_GP(play).wait_counter > 0) && (_GP(play).key_skip_wait & SKIP_MOUSECLICK) != 0)
-			_GP(play).wait_counter = -1;
-		else if (_G(is_text_overlay) > 0) {
-			if (_GP(play).cant_skip_speech & SKIP_MOUSECLICK)
-				remove_screen_overlay(OVER_TEXTMSG);
+		} else if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_MOUSECLICK) != 0) {
+			_GP(play).SetWaitSkipResult(SKIP_MOUSECLICK, mbut);
+		} else if (_GP(play).text_overlay_on > 0) {
+			if (_GP(play).cant_skip_speech & SKIP_MOUSECLICK) {
+				remove_screen_overlay(_GP(play).text_overlay_on);
+				_GP(play).SetWaitSkipResult(SKIP_MOUSECLICK, mbut);
+			}
 		} else if (!IsInterfaceEnabled());  // blocking cutscene, ignore mouse
 		else if (pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut + 1)) {
 			// plugin took the click
@@ -381,7 +381,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 	}
 
 	if (((agskey == eAGSKeyCodeCtrlV) && (cur_key_mods & Common::KBD_ALT) != 0)
-	        && (_GP(play).wait_counter < 1) && (_G(is_text_overlay) == 0) && (_G(restrict_until) == 0)) {
+	        && (_GP(play).wait_counter < 1) && (_GP(play).text_overlay_on == 0) && (_G(restrict_until) == 0)) {
 		// make sure we can't interrupt a Wait()
 		// and desync the music to cutscene
 		_GP(play).debug_mode++;
@@ -430,22 +430,23 @@ static void check_keyboard_controls() {
 	}
 
 	// skip speech if desired by Speech.SkipStyle
-	if ((_G(is_text_overlay) > 0) && (_GP(play).cant_skip_speech & SKIP_KEYPRESS)) {
+	if ((_GP(play).text_overlay_on > 0) && (_GP(play).cant_skip_speech & SKIP_KEYPRESS)) {
 		// only allow a key to remove the overlay if the icon bar isn't up
 		if (IsGamePaused() == 0) {
 			// check if it requires a specific keypress
 			if ((_GP(play).skip_speech_specific_key > 0) &&
-			        (kgn != _GP(play).skip_speech_specific_key)) {
-			} else
-				remove_screen_overlay(OVER_TEXTMSG);
+				(kgn != _GP(play).skip_speech_specific_key)) {
+			} else {
+				remove_screen_overlay(_GP(play).text_overlay_on);
+				_GP(play).SetWaitSkipResult(SKIP_KEYPRESS, kgn);
+			}
 		}
 
 		return;
 	}
 
-	if ((_GP(play).wait_counter > 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) != 0) {
-		_GP(play).wait_counter = -1;
-		debug_script_log("Keypress code %d ignored - in Wait", kgn);
+	if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) != 0) {
+		_GP(play).SetWaitSkipResult(SKIP_KEYPRESS, kgn);
 		return;
 	}
 
@@ -833,7 +834,7 @@ static int ShouldStayInWaitMode() {
 		const int *wkptr = (const int *)_G(user_disabled_data);
 		if (wkptr[0] < 0) retval = 0;
 	} else if (_G(restrict_until) == UNTIL_NOOVERLAY) {
-		if (_G(is_text_overlay) < 1) retval = 0;
+		if (_GP(play).text_overlay_on == 0) retval = 0;
 	} else if (_G(restrict_until) == UNTIL_INTIS0) {
 		const int *wkptr = (const int *)_G(user_disabled_data);
 		if (wkptr[0] == 0) retval = 0;

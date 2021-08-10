@@ -44,6 +44,8 @@
 
 namespace Saga {
 
+const uint8 Music::MT32_GOODBYE_MSG[] = { 0x47, 0x6F, 0x6F, 0x64, 0x62, 0x79, 0x65, 0x21, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+
 Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _parser(0), _driver(0), _driverPC98(0), _musicContext(0) {
 	_currentVolume = 0;
 	_currentMusicBuffer = NULL;
@@ -58,6 +60,8 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 
 		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | (_musicType == MT_MT32 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
 		_driverType = MidiDriver::getMusicType(dev);
+		if (_driverType == MT_GM && ConfMan.getBool("native_mt32"))
+			_driverType = MT_MT32;
 
 		switch (_driverType) {
 		case MT_ADLIB:
@@ -79,12 +83,16 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 				}
 			} else {
 				_driver = new MidiDriver_ADLIB_Multisource(OPL::Config::kOpl3);
+				_driver->property(MidiDriver::PROP_MILES_VERSION, _vm->getGameId() == GID_ITE ?
+					Audio::MILES_VERSION_2 : Audio::MILES_VERSION_3);
 			}
 			break;
 		case MT_MT32:
 		case MT_GM:
 			if (_vm->getPlatform() == Common::kPlatformDOS) {
 				_driver = Audio::MidiDriver_Miles_MIDI_create(_musicType, "");
+				_driver->property(MidiDriver::PROP_MILES_VERSION, _vm->getGameId() == GID_ITE ?
+					Audio::MILES_VERSION_2 : Audio::MILES_VERSION_3);
 			} else {
 				_driver = new MidiDriver_MT32GM(_musicType);
 			}
@@ -150,7 +158,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer), _par
 	_userVolume = 0;
 	_userMute = false;
 	_targetVolume = 0;
-	_currentVolumePercent = 0;
+	_currentVolumePercent = 100;
 
 	_digitalMusic = false;
 }
@@ -170,6 +178,18 @@ Music::~Music() {
 	if (_driverPC98) {
 		_driverPC98->reset();
 		delete _driverPC98;
+	}
+}
+
+void Music::close() {
+	if (_parser)
+		_parser->stopPlaying();
+
+	if (_vm->getGameId() == GID_ITE && _vm->getPlatform() == Common::kPlatformDOS && _driver) {
+		MidiDriver_MT32GM *mt32Driver = dynamic_cast<MidiDriver_MT32GM *>(_driver);
+		if (mt32Driver)
+			mt32Driver->sysExMT32(MT32_GOODBYE_MSG, MidiDriver_MT32GM::MT32_DISPLAY_NUM_CHARS,
+				MidiDriver_MT32GM::MT32_DISPLAY_MEMORY_ADDRESS, false, false);
 	}
 }
 
@@ -213,7 +233,6 @@ void Music::musicVolumeGauge() {
 
 void Music::setVolume(int volume, int time) {
 	_targetVolume = volume;
-	_currentVolumePercent = 0;
 
 	if (volume == -1) // Set Full volume
 		volume = 255;
@@ -225,6 +244,7 @@ void Music::setVolume(int volume, int time) {
 			_driver->setSourceVolume(0, volume);
 		}
 
+		_currentVolumePercent = 100;
 		_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 
 		int scaledVolume;
@@ -243,17 +263,24 @@ void Music::setVolume(int volume, int time) {
 	}
 
 	if (_driver)
-		_driver->startFade(0, time * 30, volume);
-	// TODO When doing a fade-out, this function is called with time 1000.
-	// Each callback decreases volume by 10%, so it takes 10 * 1000 * 3000 us =
-	// 30 seconds. That doesn't seem right. Also, the game does not wait for
-	// the fade-out to complete, but immediately plays the next track.
-	_vm->getTimerManager()->installTimerProc(&musicVolumeGaugeCallback, time * 3000L, this, "sagaMusicVolume");
+		_driver->startFade(0, time * 3, volume);
+
+	_currentVolumePercent = 0;
+	_vm->getTimerManager()->installTimerProc(&musicVolumeGaugeCallback, time * 300L, this, "sagaMusicVolume");
 }
 
 void Music::resetVolume() {
 	// Abort a fade / gauge if active and set volume to max.
 	setVolume(255);
+}
+
+bool Music::isFading() {
+	bool isFading = false;
+	if (_driver)
+		isFading = _driver->isFading(0);
+	isFading = isFading || (_currentVolumePercent < 100);
+
+	return isFading;
 }
 
 bool Music::isPlaying() {
@@ -445,8 +472,12 @@ void Music::playMidi(uint32 resourceId, MusicFlags flags) {
 
 		_parser->setMidiDriver(_driver);
 		_parser->setTimerRate(_driver->getBaseTempo());
-		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+		if (_vm->getGameId() == GID_IHNM) {
+			// IHNM XMIDI uses sustain and does not reset pitch bend at the
+			// start of a new track.
+			_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+			_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
+		}
 
 		// Handle music looping
 		_parser->property(MidiParser::mpAutoLoop, flags & MUSIC_LOOP);

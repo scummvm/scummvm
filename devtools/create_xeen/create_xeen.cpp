@@ -23,12 +23,6 @@
  // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-// HACK to allow building with the SDL backend on MinGW
-// see bug #3412 "TOOLS: MinGW tools building broken"
-#ifdef main
-#undef main
-#endif // main
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,7 +33,7 @@
 #include "constants.h"
 #include "map.h"
 
-#define VERSION_NUMBER 4
+#define VERSION_NUMBER 5
 
 void NORETURN_PRE error(const char *s, ...) {
 	va_list ap;

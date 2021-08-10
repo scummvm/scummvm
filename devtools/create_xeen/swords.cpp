@@ -23,12 +23,6 @@
  // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-// HACK to allow building with the SDL backend on MinGW
-// see bug #3412 "TOOLS: MinGW tools building broken"
-#ifdef main
-#undef main
-#endif // main
-
 #include "file.h"
 #include "swords.h"
 
@@ -37,7 +31,7 @@
 void writeSwordsData(CCArchive &cc, const char *swordsDatName) {
 	Common::File f;
 	Common::MemFile monsters;
-	const size_t size = MONSTERS_COUNT * 60;
+	const int size = MONSTERS_COUNT * 60;
 	const int32 offset = 0x44200;
 	byte buffer[size];
 
@@ -48,7 +42,7 @@ void writeSwordsData(CCArchive &cc, const char *swordsDatName) {
 		error("Failed to seek to 0x%x for '%s'", offset, swordsDatName);
 
 	if (f.read(buffer, size) != size)
-		error("Failed to read %zu bytes from '%s'", size, swordsDatName);
+		error("Failed to read %d bytes from '%s'", size, swordsDatName);
 
 	if (strcmp((const char *)buffer + 0x33, "Slime"))
 		error("Invalid '%s'", swordsDatName);

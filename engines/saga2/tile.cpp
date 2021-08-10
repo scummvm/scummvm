@@ -771,11 +771,15 @@ void saveActiveItemStates(Common::OutSaveFile *outS) {
 		if (stateArray[i] != nullptr) {
 			WorldMapData *mapData = &mapList[i];
 			ActiveItemList *activeItemList = mapData->activeItemList;
+			uint8 *bufferedStateArray;
 			int16 activeItemCount = mapData->activeCount;
 			int32 arraySize = tileRes->size(tagStateID + i);
 
 			//  Save the size of the state array
 			out->writeSint16LE(arraySize);
+
+			bufferedStateArray = new uint8[arraySize];
+			memcpy(bufferedStateArray, stateArray[i], arraySize);
 
 			debugC(4, kDebugSaveload, "... arraySize = %d", arraySize);
 
@@ -788,7 +792,7 @@ void saveActiveItemStates(Common::OutSaveFile *outS) {
 
 				//  Get a pointer to the current active item's state
 				//  data in the archive buffer
-				statePtr = &stateArray[i][activeItem->_data.instance.stateIndex];
+				statePtr = &bufferedStateArray[activeItem->_data.instance.stateIndex];
 
 				//  Set the high bit of the state value based upon the
 				//  active item's locked state
@@ -799,7 +803,9 @@ void saveActiveItemStates(Common::OutSaveFile *outS) {
 			}
 
 			//  Copy the state data to the archive buffer
-			out->write(stateArray[i], arraySize);
+			out->write(bufferedStateArray, arraySize);
+
+			delete[] bufferedStateArray;
 		} else
 			out->writeSint16LE(0);
 	}
@@ -2188,6 +2194,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		if ((stream = loadResourceToStream(tileRes, platformID + mapNum, "platform"))) {
 			if (stream->skip(plIndex * sizeof(Platform))) {
 				pce->pl.load(stream);
+				delete stream;
 				return &pce->pl;
 			}
 		}
@@ -2304,7 +2311,8 @@ void WorldMapData::buildInstanceHash(void) {
 			           + ai->_data.instance.v + (ai->_data.instance.groupID << 2))
 			          % ARRAYSIZE(instHash);
 
-			itemHash.setVal(hashVal, ai);
+			ai->_nextHash = instHash[hashVal];
+			instHash[hashVal] = ai;
 		}
 	}
 }
@@ -2319,8 +2327,13 @@ ActiveItem *WorldMapData::findHashedInstance(
 	int16           hashVal = (((tp.u + tp.z) << 4) + tp.v + (group << 2))
 	                          % ARRAYSIZE(instHash);
 
-	if (itemHash.contains(hashVal))
-		return itemHash.getVal(hashVal);
+	for (ActiveItem *ai = instHash[hashVal]; ai; ai = ai->_nextHash) {
+		if (ai->_data.instance.u == tp.u &&
+		    ai->_data.instance.v == tp.v &&
+		    ai->_data.instance.h == tp.z &&
+		    ai->_data.instance.groupID == group)
+			return ai;
+	}
 
 	return nullptr;
 }

@@ -107,7 +107,8 @@ void InstallShieldV3::close() {
 	_map.clear();
 }
 
-bool InstallShieldV3::hasFile(const Common::String &name) const {
+bool InstallShieldV3::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return _map.contains(name);
 }
 
@@ -118,11 +119,13 @@ int InstallShieldV3::listMembers(Common::ArchiveMemberList &list) const {
 	return _map.size();
 }
 
-const Common::ArchiveMemberPtr InstallShieldV3::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr InstallShieldV3::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *InstallShieldV3::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *InstallShieldV3::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!_stream || !_map.contains(name))
 		return nullptr;
 

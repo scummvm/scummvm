@@ -80,10 +80,10 @@ extern const RoomAction veng0ActionList[], veng1ActionList[], veng2ActionList[],
 extern const RoomAction veng4ActionList[], veng5ActionList[], veng6ActionList[], veng7ActionList[];
 extern const RoomAction veng8ActionList[];
 extern const RoomTextOffsets veng0TextOffsets[], veng1TextOffsets[], veng2TextOffsets[];//, veng3TextOffsets[];
-//extern const RoomTextOffsets veng4TextOffsets[], veng5TextOffsets[], veng6TextOffsets[], veng7TextOffsets[];
+extern const RoomTextOffsets veng4TextOffsets[];//, veng5TextOffsets[], veng6TextOffsets[], veng7TextOffsets[];
 //extern const RoomTextOffsets veng8TextOffsets[];
 extern const RoomText veng0Texts[], veng1Texts[], veng2Texts[];//, veng3Texts[];
-//extern const RoomText veng4Texts[], veng5Texts[], veng6Texts[], veng7Texts[];
+extern const RoomText veng4Texts[];//, veng5Texts[], veng6Texts[], veng7Texts[];
 //extern const RoomText veng8Texts[];
 extern const RoomTextOffsets vengTextOffsets[];
 

@@ -708,14 +708,10 @@ ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
 	if (ovri < 0)
 		quit("!SayBackground internal error: no overlay");
 
-	// Convert the overlay ID to an Overlay object
-	ScriptOverlay *scOver = new ScriptOverlay();
-	scOver->overlayId = ovltype;
+	ScriptOverlay *scOver = create_scriptobj_for_overlay(_G(screenover)[ovri]);
 	scOver->borderHeight = 0;
 	scOver->borderWidth = 0;
 	scOver->isBackgroundSpeech = 1;
-	int handl = ccRegisterManagedObject(scOver, scOver);
-	_G(screenover)[ovri].associatedOverlayHandle = handl;
 
 	return scOver;
 }
@@ -1388,10 +1384,12 @@ void Character_SetScaling(CharacterInfo *chaa, int zoomlevel) {
 		debug_script_warn("Character.Scaling: cannot set property unless ManualScaling is enabled");
 		return;
 	}
-	if ((zoomlevel < 5) || (zoomlevel > 200))
-		quit("!Character.Scaling: scaling level must be between 5 and 200%");
+	int zoom_fixed = Math::Clamp(zoomlevel, 1, (int)(INT16_MAX)); // CharacterExtras.zoom is int16
+	if (zoomlevel != zoom_fixed)
+		debug_script_warn("Character.Scaling: scaling level must be between 1 and %d%%, asked for: %d",
+			(int)(INT16_MAX), zoomlevel);
 
-	_G(charextra)[chaa->index_id].zoom = zoomlevel;
+	_G(charextra)[chaa->index_id].zoom = zoom_fixed;
 }
 
 int Character_GetSolid(CharacterInfo *chaa) {
@@ -1807,6 +1805,11 @@ int doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *che
 		return 1;
 	}
 	return 0;
+}
+
+bool is_char_walking_ndirect(CharacterInfo *chi) {
+	return ((chi->walking > 0) && (chi->walking < TURNING_AROUND)) &&
+		(_G(mls)[chi->walking].direct == 0);
 }
 
 int find_nearest_walkable_area_within(int *xx, int *yy, int range, int step) {
@@ -2253,7 +2256,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	if ((speakingChar->view < 0) || (speakingChar->view >= _GP(game).numviews))
 		quit("!DisplaySpeech: character has invalid view");
 
-	if (_G(is_text_overlay) > 0) {
+	if (_GP(play).text_overlay_on > 0) {
 		debug_script_warn("DisplaySpeech: speech was already displayed (nested DisplaySpeech, perhaps room script and global script conflict?)");
 		return;
 	}

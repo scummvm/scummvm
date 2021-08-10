@@ -287,8 +287,13 @@ void GuiManager::redraw() {
 	// Tanoku: Do not apply shading more than once when opening many dialogs
 	// on top of each other. Screen ends up being too dark and it's a
 	// performance hog.
-	if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 3)
+	if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 2)
 		shading = ThemeEngine::kShadingNone;
+
+	// Reset any custom RTL paddings set by stacked dialogs when we go back to the top
+	if (useRTL() && _dialogStack.size() == 1) {
+		setDialogPaddings(0, 0);
+	}
 
 	switch (_redrawStatus) {
 		case kRedrawCloseDialog:
@@ -754,8 +759,6 @@ void GuiManager::initTextToSpeech() {
 		return;
 #ifdef USE_TRANSLATION
 	Common::String currentLanguage = TransMan.getCurrentLanguage();
-	if (currentLanguage == "C")
-		currentLanguage = "en";
 	ttsMan->setLanguage(currentLanguage);
 #endif
 	int volume = (ConfMan.getInt("speech_volume", "scummvm") * 100) / 256;

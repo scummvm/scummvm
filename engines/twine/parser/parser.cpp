@@ -27,21 +27,21 @@
 
 namespace TwinE {
 
-bool Parser::loadFromBuffer(const uint8 *buf, uint32 size) {
+bool Parser::loadFromBuffer(const uint8 *buf, uint32 size, bool lba1) {
 	if (size == 0) {
 		return false;
 	}
 	Common::MemoryReadStream stream(buf, size);
-	return loadFromStream(stream);
+	return loadFromStream(stream, lba1);
 }
 
-bool Parser::loadFromHQR(const char *name, int index) {
+bool Parser::loadFromHQR(const char *name, int index, bool lba1) {
 	Common::SeekableReadStream *stream = HQR::makeReadStream(name, index);
 	if (stream == nullptr) {
 		warning("Failed to load %s with index %i", name, index);
 		return false;
 	}
-	if (!loadFromStream(*stream)) {
+	if (!loadFromStream(*stream, lba1)) {
 		delete stream;
 		return false;
 	}

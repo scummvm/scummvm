@@ -169,7 +169,7 @@ void Lingo::func_mci(const Common::String &name) {
 			uint32 from = strtol(params[1].c_str(), 0, 10);
 			uint32 to = strtol(params[2].c_str(), 0, 10);
 
-			_vm->getSoundManager()->playMCI(*_audioAliases[params[0]], from, to);
+			_vm->getCurrentWindow()->getSoundManager()->playMCI(*_audioAliases[params[0]], from, to);
 		}
 		break;
 	default:
@@ -197,9 +197,8 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 
 	// If there isn't already frozen Lingo (e.g. from a previous func_goto we haven't yet unfrozen),
 	// freeze this script context. We'll return to it after entering the next frame.
-	if (!stage->_hasFrozenLingo) {
+	if (!g_lingo->hasFrozenContext()) {
 		g_lingo->_freezeContext = true;
-		stage->_hasFrozenLingo = true;
 	}
 
 	if (movie.type != VOID) {
@@ -297,7 +296,7 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	}
 
 	if (movie.type != VOID) {
-		ref.movie = unixToMacPath(_vm->getCurrentMovie()->_movieArchive->getPathName());
+		ref.movie = _vm->getCurrentMovie()->_movieArchive->getPathName();
 	}
 	ref.frameI = _vm->getCurrentMovie()->getScore()->getCurrentFrame();
 
@@ -311,22 +310,20 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 }
 
 void Lingo::func_cursor(CastMemberID cursorId, CastMemberID maskId) {
-	Cursor cursor;
-	cursor.readFromCast(cursorId, maskId);
-	// TODO: Figure out why there are artifacts here
-	_vm->_wm->replaceCursor(cursor._cursorType, ((Graphics::Cursor *)&cursor));
+	Score *score = _vm->getCurrentMovie()->getScore();
+	score->_defaultCursor.readFromCast(cursorId, maskId);
+	score->_cursorDirty = true;
 }
 
 void Lingo::func_cursor(int cursorId) {
-	Cursor cursor;
-	cursor.readFromResource(cursorId);
-	// TODO: Figure out why there are artifacts here
-	_vm->_wm->replaceCursor(cursor._cursorType, ((Graphics::Cursor *)&cursor));
+	Score *score = _vm->getCurrentMovie()->getScore();
+	score->_defaultCursor.readFromResource(cursorId);
+	score->_cursorDirty = true;
 }
 
 void Lingo::func_beep(int repeats) {
 	for (int r = 1; r <= repeats; r++) {
-		_vm->getSoundManager()->systemBeep();
+		_vm->getCurrentWindow()->getSoundManager()->systemBeep();
 		if (r < repeats)
 			g_system->delayMillis(400);
 	}

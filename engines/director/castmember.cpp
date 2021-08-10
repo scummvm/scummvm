@@ -181,6 +181,10 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 		return nullptr;
 	}
 
+	// skip creating widget when the bbox is not available, maybe we should create it using initialRect
+	if (!bbox.width() || !bbox.height())
+		return nullptr;
+
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	// scale for drawing a different size sprite
@@ -354,7 +358,7 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	_video = new Video::QuickTimeDecoder();
 
 	debugC(2, kDebugLoading | kDebugImages, "Loading video %s", path.c_str());
-	bool result = _video->loadFile(path);
+	bool result = _video->loadFile(Common::Path(path, g_director->_dirSeparator));
 
 	if (result && g_director->_pixelformat.bytesPerPixel == 1) {
 		// Director supports playing back RGB and paletted video in 256 colour mode.
@@ -384,7 +388,7 @@ void DigitalVideoCastMember::startVideo(Channel *channel) {
 	_channel = channel;
 
 	if (!_video || !_video->isVideoLoaded()) {
-		warning("DigitalVideoCastMember::startVideo: No video decoder");
+		warning("DigitalVideoCastMember::startVideo: No video %s", !_video ? "decoder" : "loaded");
 		return;
 	}
 

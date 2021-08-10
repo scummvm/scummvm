@@ -129,8 +129,8 @@ void BodyData::loadLines(Common::SeekableReadStream &stream) {
 	_lines.reserve(numLines);
 	for (uint16 i = 0; i < numLines; ++i) {
 		BodyLine line;
-		line.color = stream.readByte();
 		line.unk1 = stream.readByte();
+		line.color = stream.readByte();
 		line.unk2 = stream.readUint16LE();
 		line.vertex1 = stream.readUint16LE() / 6;
 		line.vertex2 = stream.readUint16LE() / 6;
@@ -153,22 +153,53 @@ void BodyData::loadSpheres(Common::SeekableReadStream &stream) {
 	}
 }
 
-bool BodyData::loadFromStream(Common::SeekableReadStream &stream) {
-	bodyFlag.value = stream.readUint16LE();
-	bbox.mins.x = stream.readSint16LE();
-	bbox.maxs.x = stream.readSint16LE();
-	bbox.mins.y = stream.readSint16LE();
-	bbox.maxs.y = stream.readSint16LE();
-	bbox.mins.z = stream.readSint16LE();
-	bbox.maxs.z = stream.readSint16LE();
+bool BodyData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
+	if (lba1) {
+		bodyFlag.value = stream.readUint16LE();
+		bbox.mins.x = stream.readSint16LE();
+		bbox.maxs.x = stream.readSint16LE();
+		bbox.mins.y = stream.readSint16LE();
+		bbox.maxs.y = stream.readSint16LE();
+		bbox.mins.z = stream.readSint16LE();
+		bbox.maxs.z = stream.readSint16LE();
 
-	stream.seek(0x1A);
-	loadVertices(stream);
-	loadBones(stream);
-	loadShades(stream);
-	loadPolygons(stream);
-	loadLines(stream);
-	loadSpheres(stream);
+		stream.seek(0x1A);
+		loadVertices(stream);
+		loadBones(stream);
+		loadShades(stream);
+		loadPolygons(stream);
+		loadLines(stream);
+		loadSpheres(stream);
+	} else {
+		bodyFlag.value = stream.readUint32LE();
+		stream.skip(4);
+		bbox.mins.x = stream.readSint32LE();
+		bbox.maxs.x = stream.readSint32LE();
+		bbox.mins.y = stream.readSint32LE();
+		bbox.maxs.y = stream.readSint32LE();
+		bbox.mins.z = stream.readSint32LE();
+		bbox.maxs.z = stream.readSint32LE();
+		stream.seek(0x20);
+#if 0
+		const uint32 bonesSize = stream.readUint32LE();
+		const uint32 bonesOffset = stream.readUint32LE();
+		const uint32 verticesSize = stream.readUint32LE();
+		const uint32 verticesOffset = stream.readUint32LE();
+		const uint32 normalsSize = stream.readUint32LE();
+		const uint32 normalsOffset = stream.readUint32LE();
+		const uint32 unk1Size = stream.readUint32LE();
+		const uint32 unk1Offset = stream.readUint32LE();
+		const uint32 polygonsSize = stream.readUint32LE();
+		const uint32 polygonsOffset = stream.readUint32LE();
+		const uint32 linesSize = stream.readUint32LE();
+		const uint32 linesOffset = stream.readUint32LE();
+		const uint32 spheresSize = stream.readUint32LE();
+		const uint32 spheresOffset = stream.readUint32LE();
+		const uint32 uvGroupsSize = stream.readUint32LE();
+		const uint32 uvGroupsOffset = stream.readUint32LE();
+#endif
+	}
+
 	return !stream.err();
 }
 

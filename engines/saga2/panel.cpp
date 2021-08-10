@@ -1003,8 +1003,8 @@ void gToolBase::leavePanel(void) {
 }
 
 void gToolBase::handleKeyStroke(Common::Event &event) {
-	gWindow         *w = activeWindow;
-	gPanel          *ctl;
+	gWindow *w = activeWindow;
+	gPanel  *ctl;
 
 	uint16 key = event.kbd.ascii; // FIXME
 	uint16 qualifier = 0;
@@ -1021,7 +1021,7 @@ void gToolBase::handleKeyStroke(Common::Event &event) {
 	msg.pickAbsPos  = pickPos;
 	msg.pointerEnter = 0;
 	msg.pointerLeave = 0;
-	msg.key = ((key & 0xFF) != 0) ? key & 0xff : (key >> 8) + 0x80;
+	msg.key = key;
 	msg.qualifier = qualifier;
 	msg.timeStamp = g_system->getMillis();
 
@@ -1035,7 +1035,7 @@ void gToolBase::handleKeyStroke(Common::Event &event) {
 	//  the correct accelerator key
 
 	if (w) {
-		uint8   k = ((key & 0xFF) != 0) ? key & 0xff : (key >> 8) + 0x80;
+		uint16 k = key;
 		//uint8 k = key & 0xff;
 
 		if (k != 0) {
@@ -1053,12 +1053,11 @@ void gToolBase::handleKeyStroke(Common::Event &event) {
 
 		//  Try sending the message to the window
 
-		if (w->keyStroke(msg)) return;
+		if (w->keyStroke(msg))
+			return;
 
 		// else send the message to the app.
 
-		if (key & 0xff)
-			key &= 0xff;
 		w->notify(gEventKeyDown, (qualifier << 16) | key);
 	}
 }

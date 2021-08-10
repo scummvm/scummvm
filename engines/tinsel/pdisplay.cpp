@@ -35,7 +35,7 @@
 #include "tinsel/object.h"
 #include "tinsel/pcode.h"
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 #include "tinsel/sched.h"
 #include "tinsel/strres.h"
 #include "tinsel/text.h"

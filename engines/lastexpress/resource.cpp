@@ -144,7 +144,8 @@ Common::SeekableReadStream *ResourceManager::getFileStream(const Common::String 
 //////////////////////////////////////////////////////////////////////////
 // Archive functions
 //////////////////////////////////////////////////////////////////////////
-bool ResourceManager::hasFile(const Common::String &name) const {
+bool ResourceManager::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (Common::Array<HPFArchive *>::const_iterator it = _archives.begin(); it != _archives.end(); ++it) {
 		if ((*it)->hasFile(name))
 			return true;
@@ -167,14 +168,16 @@ int ResourceManager::listMembers(Common::ArchiveMemberList &list) const {
 	return count;
 }
 
-const Common::ArchiveMemberPtr ResourceManager::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr ResourceManager::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *ResourceManager::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *ResourceManager::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	for (Common::Array<HPFArchive *>::const_iterator it = _archives.begin(); it != _archives.end(); ++it) {
 
 		Common::SeekableReadStream *stream = (*it)->createReadStreamForMember(name);

@@ -871,7 +871,6 @@ const SciWorkaroundEntry kGraphFillBoxForeground_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kGraphFillBoxAny_workarounds[] = {
-	{ GID_ECOQUEST2,     100,   333,  0,        "showEcorder", "changeState",                NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // necessary workaround for our ecorder script patch, because there isn't enough space to patch the function
 	{ GID_SQ4,            -1,   818,  0,     "iconTextSwitch", "show",                       NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // CD: game menu "text/speech" display - parameter 5 is missing, but the right color number is on the stack
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
@@ -946,7 +945,6 @@ const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kGraphUpdateBox_workarounds[] = {
-	{ GID_ECOQUEST2,     100,   333,  0,        "showEcorder", "changeState",                NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // necessary workaround for our ecorder script patch, because there isn't enough space to patch the function
 	{ GID_PQ3,           202,   202,  0,            "MapEdit", "addPt",                      NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters - bug #5099
 	{ GID_PQ3,           202,   202,  0,            "MapEdit", "movePt",                     NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters - bug #5099
 	{ GID_PQ3,           202,   202,  0,            "MapEdit", "dispose",                    NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters
@@ -996,7 +994,10 @@ const SciWorkaroundEntry kNewWindow_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kPalVarySetVary_workarounds[] = {
-	{ GID_KQ7,          4600,  4600,  0,      "sRosDogDeath2", "changeState",               NULL,     0,     0, { WORKAROUND_FAKE, 0 } }, // when dying by letting the dog find you under the house. Trac#9763
+	{ GID_KQ7,          4600,  4600,  0,      "sRosDogDeath",  "changeState",               NULL,     0,     0, { WORKAROUND_IGNORE, 0 } }, // when dying under Malicia's house, gets called with no parameters (bug #9763)
+	{ GID_KQ7,          4600,  4600,  0,      "sRosDogDeath2", "changeState",               NULL,     0,     0, { WORKAROUND_IGNORE, 0 } }, // when dying under Malicia's house, gets called with no parameters (bug #9763)
+	{ GID_KQ7,          4600,  4600,  0,      "sValDogDeath",  "changeState",               NULL,     0,     0, { WORKAROUND_IGNORE, 0 } }, // when dying under Malicia's house, gets called with no parameters (bug #9763)
+	{ GID_KQ7,          4600,  4600,  0,      "sZapVal",       "changeState",               NULL,     0,     0, { WORKAROUND_IGNORE, 0 } }, // when dying under Malicia's house, gets called with no parameters (bug #9763)
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

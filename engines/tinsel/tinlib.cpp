@@ -53,7 +53,7 @@
 #include "tinsel/pid.h"
 #include "tinsel/play.h"
 #include "tinsel/polygons.h"
-#include "tinsel/rince.h"
+#include "tinsel/movers.h"
 #include "tinsel/savescn.h"
 #include "tinsel/sched.h"
 #include "tinsel/scn.h"
@@ -153,7 +153,7 @@ enum MASTER_LIB_CODES {
 	TRYPLAYSAMPLE, UNDIMMUSIC, UNHOOKSCENE, UNTAGACTOR, VIBRATE, WAITFRAME, WAITKEY,
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
 	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D, DECINVMAIN,
-	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, VOICEOVER, HIGHEST_LIBCODE
+	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, VOICEOVER, SETVIEW, HIGHEST_LIBCODE
 };
 
 static const MASTER_LIB_CODES DW1DEMO_CODES[] = {
@@ -904,6 +904,26 @@ static int CursorPos(int xory) {
 
 	_vm->_cursor->GetCursorXY(&x, &y, true);
 	return (xory == CURSORXPOS) ? x : y;
+}
+
+/**
+ * Declare 3d model for an actor.
+ */
+void Dec3D(int ano, SCNHANDLE hModelName, SCNHANDLE hTextureName) {
+	MOVER* pMover = GetMover(ano);
+	assert(pMover != nullptr);
+
+	pMover->type = MOVER_3D;
+	pMover->hModelName = hModelName;
+	pMover->hTextureName = hTextureName;
+
+	// if (_hModelNameLoaded == 0) {
+	// 	_hModelNameLoaded = hModelName;
+	// 	const char* modelName = (const char *)_vm->_handle->LockMem(hModelName);
+	// 	const char* textureName = (const char *)_vm->_handle->LockMem(hTextureName);
+	// 	LoadModels(modelName, textureName);
+	// }
+	//assert(_hModelNameLoaded == hModelName);
 }
 
 /**
@@ -3391,18 +3411,24 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK))
 				_vm->_actor->GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
 
-			if (!TinselV0)
+			if (!TinselV0 && !TinselV3) {
 				SetTextPal(_vm->_actor->GetActorRGB(_ctx->actor));
-			if (TinselV2)
+			}
+			if (TinselV2) {
 				LoadSubString(hText, _ctx->sub, _vm->_font->TextBufferAddr(), TBUFSZ);
-			else {
+			} else {
 				LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
 
 				_ctx->y -= _ctx->Toffset;
 			}
 
+			int color = 0;
+			if (TinselV3) {
+				color = _vm->_actor->GetActorRGB(_ctx->actor);
+			}
+
 			_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
-					_vm->_font->TextBufferAddr(), 0, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
+					_vm->_font->TextBufferAddr(), color, _ctx->x - _ctx->Loffset, _ctx->y - _ctx->Toffset,
 					_vm->_font->GetTalkFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // talk() string produced NULL text;
 
@@ -4407,12 +4433,22 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3]);
 		break;
+	case 114:
+		mapping = NoirMapping{"POINTACTOR", POINTACTOR, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
+		break;
 	case 121:
 		mapping = NoirMapping{"POSTTAG", POSTTAG, 2};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X)", mapping.name, pp[0], pp[1]);
 		break;
 	case 124:
+		mapping = NoirMapping{"PRINTCURSOR", PRINTCURSOR, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d)", mapping.name, pp[0]);
+		break;
+	case 126:
 		mapping = NoirMapping{"PRINTTAG", PRINTTAG, 1};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d)", mapping.name, pp[0]);
@@ -4421,6 +4457,14 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		mapping = NoirMapping{"RANDOM", RANDOM, 3};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d, %d, %d)", mapping.name, pp[0], pp[1], pp[2]);
+		break;
+	case 135:
+	case 221:
+	case 222:
+	case 223:
+		mapping = NoirMapping{"SAY", SAY, 2};
+		pp -= mapping.numArgs - 2;
+		debug(7, "%s_%2Xh(%d, %d)", mapping.name, libCode, pp[0], pp[1]);
 		break;
 	case 151:
 		mapping = NoirMapping{"SETSYSTEMREEL", SETSYSTEMREEL, 2};
@@ -4434,6 +4478,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		break;
 	case 153:
 		mapping = NoirMapping{"SETSYSTEMVAR", SETSYSTEMVAR, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
+		break;
+	case 154:
+		mapping = NoirMapping{"SETVIEW", SETVIEW, 2};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d, 0x%08X)", mapping.name, pp[0], pp[1]);
 		break;
@@ -4508,7 +4557,8 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
-	case 225: // STUBBED
+	case 111: // no hold frame
+	case 225: // hold frame
 		mapping = NoirMapping{"PLAYMOVIE", PLAYMOVIE, 1};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
@@ -4840,7 +4890,8 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DEC3D:
 		// Noir only
-		warning("TODO: Implement DEC3D");
+		pp -= 2;
+		Dec3D(pp[0], pp[1], pp[2]);
 		return -3;
 
 	case DECCONVW:
@@ -5403,7 +5454,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		}
 
 	case PRINTCURSOR:
-		// DW2 only
+		// DW2 / Noir only
 		PrintTag(pic->hPoly, pp[0], pic->idActor, true);
 		return -1;
 
@@ -5414,7 +5465,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case PRINTTAG:
 		// Common to DW1 / DW2 / Noir
-		PrintTag(pic->hPoly, pp[0], TinselV2 ? pic->idActor : 0,  TinselV3 ? true : false);
+		PrintTag(pic->hPoly, pp[0], TinselV2 ? pic->idActor : 0, false);
 		return -1;
 
 	case QUITGAME:
@@ -5635,6 +5686,12 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		pp -= 3;			// 4 parameters
 		SetTimer(pp[0], pp[1], pp[2], pp[3]);
 		return -4;
+
+	case SETVIEW:
+		// Noir only
+		pp -= 1;
+		warning("TODO: Implement SETVIEW(0x%08X, %i)", pp[0], pp[1]);
+		return -2;
 
 	case SHELL:
 		// DW2 only

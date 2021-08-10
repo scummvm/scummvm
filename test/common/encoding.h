@@ -259,16 +259,16 @@ public:
 		unsigned char iso_8859_2[] = {0xA9, 0xE1, 0x6C, 0x65, 0xE8, 0x65, 0x6B, 0};
 		unsigned char utf8_2[] = {0xC5, 0xA0, 0xC3, 0xA1, 0x6C, 0x65, 0xC4, 0x8D, 0x65, 0x6B, 0};
 
-		Common::String result = Common::U32String((const char *) cp850, 5, Common::kDos850).encode(Common::kUtf8);
-		TS_ASSERT_EQUALS(memcmp(result.c_str(), utf8_1, 9), 0);
+		Common::String result = Common::U32String((const char *) cp850, sizeof(cp850)-1, Common::kDos850).encode(Common::kUtf8);
+		TS_ASSERT_EQUALS(memcmp(result.c_str(), utf8_1, sizeof(utf8_1)), 0);
 
-		result = Common::U32String((const char *) utf8_1, 8, Common::kUtf8).encode(Common::kDos850);
-		TS_ASSERT_EQUALS(memcmp(result.c_str(), cp850, 6), 0);
+		result = Common::U32String((const char *) utf8_1, sizeof(utf8_1)-1, Common::kUtf8).encode(Common::kDos850);
+		TS_ASSERT_EQUALS(memcmp(result.c_str(), cp850, sizeof(cp850)), 0);
 
-		result = Common::U32String((const char *) iso_8859_2, 7, Common::kISO8859_2).encode(Common::kUtf8);
-		TS_ASSERT_EQUALS(memcmp(result.c_str(), utf8_2, 11), 0);
+		result = Common::U32String((const char *) iso_8859_2, sizeof(iso_8859_2)-1, Common::kISO8859_2).encode(Common::kUtf8);
+		TS_ASSERT_EQUALS(memcmp(result.c_str(), utf8_2, sizeof(utf8_2)), 0);
 
-		result = Common::U32String((const char *) utf8_2, 11, Common::kUtf8).encode(Common::kISO8859_2);
-		TS_ASSERT_EQUALS(memcmp(result.c_str(), iso_8859_2, 8), 0);
+		result = Common::U32String((const char *) utf8_2, sizeof(utf8_2)-1, Common::kUtf8).encode(Common::kISO8859_2);
+		TS_ASSERT_EQUALS(memcmp(result.c_str(), iso_8859_2, sizeof(iso_8859_2)), 0);
 	}
 };

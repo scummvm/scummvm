@@ -116,7 +116,8 @@ bool UltimaDataArchive::load(const Common::String &subfolder,
 
 /*-------------------------------------------------------------------*/
 
-bool UltimaDataArchive::hasFile(const Common::String &name) const {
+bool UltimaDataArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!name.hasPrefixIgnoreCase(_publicFolder))
 		return false;
 
@@ -124,10 +125,10 @@ bool UltimaDataArchive::hasFile(const Common::String &name) const {
 	return _zip->hasFile(realFilename);
 }
 
-int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) const {
-	Common::String patt = pattern;
-	if (pattern.hasPrefixIgnoreCase(_publicFolder))
-		patt = innerToPublic(pattern);
+int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, const Common::Path &pattern) const {
+	Common::String patt = pattern.toString();
+	if (patt.hasPrefixIgnoreCase(_publicFolder))
+		patt = innerToPublic(patt);
 
 	// Get any matching files
 	Common::ArchiveMemberList innerList;
@@ -159,14 +160,16 @@ int UltimaDataArchive::listMembers(Common::ArchiveMemberList &list) const {
 	return result;
 }
 
-const Common::ArchiveMemberPtr UltimaDataArchive::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr UltimaDataArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *UltimaDataArchive::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *UltimaDataArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (hasFile(name)) {
 		Common::String filename = innerToPublic(name);
 		return _zip->createReadStreamForMember(filename);
@@ -179,14 +182,16 @@ Common::SeekableReadStream *UltimaDataArchive::createReadStreamForMember(const C
 
 #ifndef RELEASE_BUILD
 
-const Common::ArchiveMemberPtr UltimaDataArchiveProxy::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr UltimaDataArchiveProxy::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *UltimaDataArchiveProxy::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *UltimaDataArchiveProxy::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (hasFile(name))
 		return getNode(name).createReadStream();
 

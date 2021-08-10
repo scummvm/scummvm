@@ -118,12 +118,12 @@ void File_ReadRawLine(sc_File *fil, char *buffer) {
 	int i = 0;
 	while (i < _G(MAXSTRLEN) - 1) {
 		buffer[i] = in->ReadInt8();
-		if (buffer[i] == 13) {
+		if (buffer[i] == '\r') {
 			// CR -- skip LF and abort
 			in->ReadInt8();
 			break;
 		}
-		if (buffer[i] == 10)  // LF only -- abort
+		if (buffer[i] == '\n')  // LF only -- abort
 			break;
 		if (in->EOS())  // EOF -- abort
 			break;
@@ -148,9 +148,11 @@ const char *File_ReadStringBack(sc_File *fil) {
 		return CreateNewScriptString("");
 	}
 
-	int lle = in->ReadInt32();
-	if ((lle >= 20000) || (lle < 1))
-		quit("!File.ReadStringBack: file was not written by WriteString");
+	size_t lle = (uint32_t)in->ReadInt32();
+	if (lle == 0) {
+		debug_script_warn("File.ReadStringBack: file was not written by WriteString");
+		return CreateNewScriptString("");
+	}
 
 	char *retVal = (char *)malloc(lle);
 	in->Read(retVal, lle);

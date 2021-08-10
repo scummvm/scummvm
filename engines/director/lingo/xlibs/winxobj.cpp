@@ -38,7 +38,11 @@
 
 namespace Director {
 
-static const char *xlibName = "RearWindow";
+const char *RearWindowXObj::xlibName = "RearWindow";
+const char *RearWindowXObj::fileNames[] = {
+	"winXObj",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "new",				RearWindowXObj::m_new,				1,	1,	400 },	// D4
@@ -47,15 +51,18 @@ static MethodProto xlibMethods[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-void RearWindowXObj::initialize(int type) {
-	RearWindowXObject::initMethods(xlibMethods);
-	if (type & kXObj) {
-		if (!g_lingo->_globalvars.contains(xlibName)) {
-			RearWindowXObject *xobj = new RearWindowXObject(kXObj);
-			g_lingo->_globalvars[xlibName] = xobj;
-		} else {
-			warning("RearWindowXObject already initialized");
-		}
+void RearWindowXObj::open(int type) {
+	if (type == kXObj) {
+		RearWindowXObject::initMethods(xlibMethods);
+		RearWindowXObject *xobj = new RearWindowXObject(kXObj);
+		g_lingo->_globalvars[xlibName] = xobj;
+	}
+}
+
+void RearWindowXObj::close(int type) {
+	if (type == kXObj) {
+		RearWindowXObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
 	}
 }
 

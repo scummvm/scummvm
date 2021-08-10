@@ -677,7 +677,7 @@ AIEntTypeInfo aiEntList[] = {
 	{ END_AI_TYPES,			nullptr,					nullptr,					nullptr,					nullptr }
 };
 
-struct {
+static struct {
 	FuncPtr function;
 	const char *funcName;
 } aiFuncList[] = {
@@ -898,7 +898,7 @@ struct {
 	{nullptr, nullptr}
 };
 
-struct {
+static struct {
 	EntFuncPtr function;
 	const char *funcName;
 } aiEntFuncList[] = {

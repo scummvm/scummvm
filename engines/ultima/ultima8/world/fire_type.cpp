@@ -262,7 +262,7 @@ void FireType::applySplashDamageAround(const Point3 &pt, int damage, int rangedi
 			Point3 pt2;
 			splashitem->getLocation(pt2);
 			int splashrange = pt.maxDistXYZ(pt2);
-			splashrange = (splashrange / 16) / 3;
+			splashrange = (splashrange / 32) / 3;
 			if (splashrange)
 				splashitemdamage /= splashrange;
 		}

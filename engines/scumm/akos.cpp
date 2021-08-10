@@ -543,12 +543,12 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 	const byte *mask, *src;
 	byte *dst;
 	byte len, maskbit;
-	int y;
+	int lastColumnX, y;
 	uint16 color, height, pcolor;
 	const byte *scaleytab;
 	bool masked;
-	bool skip_column = false;
 
+	lastColumnX = -1;
 	y = v1.y;
 	src = _srcptr;
 	dst = v1.destptr;
@@ -579,31 +579,50 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 					}
 				} else {
 					masked = (y < v1.boundsRect.top || y >= v1.boundsRect.bottom) || (v1.x < 0 || v1.x >= v1.boundsRect.right) || (*mask & maskbit);
+					bool skipColumn = false;
 
-					if (color && !masked && !skip_column) {
+					if (color && !masked) {
 						pcolor = _palette[color];
 						if (_shadow_mode == 1) {
-							if (pcolor == 13)
+							if (pcolor == 13) {
+								// In shadow mode 1 skipColumn works more or less the same way as in shadow
+								// mode 3. It is only ever checked and applied if pcolor is 13.
+								skipColumn = (lastColumnX == v1.x);
 								pcolor = _shadow_table[*dst];
+							}
 						} else if (_shadow_mode == 2) {
 							error("codec1_spec2"); // TODO
 						} else if (_shadow_mode == 3) {
 							if (_vm->_game.features & GF_16BIT_COLOR) {
+								// I add the column skip here, too, although I don't know whether it always
+								// applies. But this is the only way to prevent recursive shading of pixels.
+								// This might need more fine tuning...
+								skipColumn = (lastColumnX == v1.x);
 								uint16 srcColor = (pcolor >> 1) & 0x7DEF;
 								uint16 dstColor = (READ_UINT16(dst) >> 1) & 0x7DEF;
 								pcolor = srcColor + dstColor;
 							} else if (_vm->_game.heversion >= 90) {
+								// I add the column skip here, too, although I don't know whether it always
+								// applies. But this is the only way to prevent recursive shading of pixels.
+								// This might need more fine tuning...
+								skipColumn = (lastColumnX == v1.x);
 								pcolor = (pcolor << 8) + *dst;
 								pcolor = xmap[pcolor];
-							} else if (pcolor < 8) {
+							} else if (pcolor < 8 ) {
+								// This mode is used in COMI. The column skip only takes place when the shading
+								// is actually applied (for pcolor < 8). The skip avoids shading of pixels that
+								// already have been shaded.
+								skipColumn = (lastColumnX == v1.x);
 								pcolor = (pcolor << 8) + *dst;
 								pcolor = _shadow_table[pcolor];
 							}
 						}
-						if (_vm->_bytesPerPixel == 2) {
-							WRITE_UINT16(dst, pcolor);
-						} else {
-							*dst = pcolor;
+						if (!skipColumn) {
+							if (_vm->_bytesPerPixel == 2) {
+								WRITE_UINT16(dst, pcolor);
+							} else {
+								*dst = pcolor;
+							}
 						}
 					}
 				}
@@ -618,6 +637,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 				y = v1.y;
 
 				scaleytab = &v1.scaletable[v1.scaleYindex];
+				lastColumnX = v1.x;
 
 				if (_scaleX == 255 || v1.scaletable[v1.scaleXindex] < _scaleX) {
 					v1.x += v1.scaleXstep;
@@ -625,9 +645,8 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 						return;
 					maskbit = revBitMask(v1.x & 7);
 					v1.destptr += v1.scaleXstep * _vm->_bytesPerPixel;
-					skip_column = false;
-				} else
-					skip_column = true;
+				}
+
 				v1.scaleXindex += v1.scaleXstep;
 				dst = v1.destptr;
 				mask = _vm->getMaskBuffer(v1.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), v1.y, _zbuf);

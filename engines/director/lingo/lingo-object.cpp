@@ -35,12 +35,17 @@
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
 
+#include "director/lingo/xlibs/cdromxobj.h"
 #include "director/lingo/xlibs/fileio.h"
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/fplayxobj.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
+#include "director/lingo/xlibs/orthoplayxobj.h"
 #include "director/lingo/xlibs/palxobj.h"
+#include "director/lingo/xlibs/popupmenuxobj.h"
+#include "director/lingo/xlibs/serialportxobj.h"
 #include "director/lingo/xlibs/soundjam.h"
+#include "director/lingo/xlibs/videodiscxobj.h"
 #include "director/lingo/xlibs/winxobj.h"
 
 namespace Director {
@@ -106,64 +111,100 @@ void Lingo::cleanupMethods() {
 }
 
 static struct XLibProto {
-	const char *name;
-	void (*initializer)(int);
+	const char **names;
+	XLibFunc opener;
+	XLibFunc closer;
 	int type;
 	int version;
 } xlibs[] = {
-	{ "FileIO",					FileIO::initialize,					kXObj | kXtraObj,		200 },	// D2
-	{ "FlushXObj",				FlushXObj::initialize,				kXObj,					400 },	// D4
-	{ "FPlayXObj",				FPlayXObj::initialize,				kXObj,					200 },	// D2
-	{ "PalXObj",				PalXObj:: initialize,				kXObj,					400 }, 	// D4
-	{ "LabelDrv",				LabelDrvXObj:: initialize,			kXObj,					400 }, 	// D4
-	{ "SoundJam",				SoundJam::initialize,				kXObj,					400 },	// D4
-	{ "winXObj",				RearWindowXObj::initialize,			kXObj,					400 },	// D4
-	{ 0, 0, 0, 0 }
+	{ CDROMXObj::fileNames,			CDROMXObj::open,		CDROMXObj::close,			kXObj,					200 },	// D2
+	{ FileIO::fileNames,			FileIO::open,			FileIO::close,				kXObj | kXtraObj,		200 },	// D2
+	{ FlushXObj::fileNames,			FlushXObj::open,		FlushXObj::close,			kXObj,					400 },	// D4
+	{ FPlayXObj::fileNames,			FPlayXObj::open,		FPlayXObj::close,			kXObj,					200 },	// D2
+	{ LabelDrvXObj::fileNames,		LabelDrvXObj::open,		LabelDrvXObj::close,		kXObj,					400 }, 	// D4
+	{ OrthoPlayXObj::fileNames,		OrthoPlayXObj::open,	OrthoPlayXObj::close,		kXObj,					400 }, 	// D4
+	{ PalXObj::fileNames,			PalXObj::open,			PalXObj::close,				kXObj,					400 }, 	// D4
+	{ PopUpMenuXObj::fileNames,		PopUpMenuXObj::open,	PopUpMenuXObj::close,		kXObj,					200 }, 	// D2
+	{ SerialPortXObj::fileNames,	SerialPortXObj::open,	SerialPortXObj::close,		kXObj,					200 },	// D2
+	{ SoundJam::fileNames,			SoundJam::open,			SoundJam::close,			kXObj,					400 },	// D4
+	{ VideodiscXObj::fileNames,		VideodiscXObj::open,	VideodiscXObj::close,		kXObj,					200 }, 	// D2
+	{ RearWindowXObj::fileNames,	RearWindowXObj::open,	RearWindowXObj::close,		kXObj,					400 },	// D4
+	{ 0, 0, 0, 0, 0 }
 
 };
 
 void Lingo::initXLibs() {
-	for (XLibProto *lib = xlibs; lib->name; lib++) {
+	for (XLibProto *lib = xlibs; lib->names; lib++) {
 		if (lib->version > _vm->getVersion())
 			continue;
 
-		Symbol sym;
-		sym.name = new Common::String(lib->name);
-		sym.type = HBLTIN;
-		sym.nargs = 0;
-		sym.maxArgs = 0;
-		sym.targetType = lib->type;
-		sym.u.bltin = lib->initializer;
-		Common::String xlibName = lib->name;
-		xlibName.toLowercase();
-		_xlibInitializers[xlibName] = sym;
+		for (uint i = 0; lib->names[i]; i++) {
+			_xlibOpeners[lib->names[i]] = lib->opener;
+			_xlibClosers[lib->names[i]] = lib->closer;
+		}
 	}
 }
 
 void Lingo::cleanupXLibs() {
-	_xlibInitializers.clear();
+	_xlibOpeners.clear();
+	_xlibClosers.clear();
 }
 
-void Lingo::openXLib(Common::String name, ObjectType type) {
-
+Common::String Lingo::normalizeXLibName(Common::String name) {
 	Common::Platform platform = _vm->getPlatform();
 	if (platform == Common::kPlatformMacintosh) {
 		int pos = name.findLastOf(':');
 		name = name.substr(pos + 1, name.size());
+		if (name.hasSuffixIgnoreCase(".xlib"))
+			name = name.substr(0, name.size() - 5);
 	} else if (platform == Common::kPlatformWindows) {
 		if (name.hasSuffixIgnoreCase(".dll"))
 			name = name.substr(0, name.size() - 4);
 	}
 
-	// normalize xlib name
-	name.toLowercase();
 	name.trim();
 
-	if (_xlibInitializers.contains(name)) {
-		Symbol sym = _xlibInitializers[name];
-		(*sym.u.bltin)(type);
+	return name;
+}
+
+void Lingo::openXLib(Common::String name, ObjectType type) {
+	name = normalizeXLibName(name);
+
+	if (_openXLibs.contains(name))
+		return;
+
+	_openXLibs[name] = type;
+
+	if (_xlibOpeners.contains(name)) {
+		(*_xlibOpeners[name])(type);
 	} else {
-		warning("Unimplemented xlib: '%s'", name.c_str());
+		warning("Lingo::openXLib: Unimplemented xlib: '%s'", name.c_str());
+	}
+}
+
+void Lingo::closeXLib(Common::String name) {
+	name = normalizeXLibName(name);
+
+	if (!_openXLibs.contains(name)) {
+		warning("Lingo::closeXLib: xlib %s is not open", name.c_str());
+		return;
+	}
+
+	ObjectType type = _openXLibs[name];
+	_openXLibs.erase(name);
+
+	if (_xlibClosers.contains(name)) {
+		(*_xlibClosers[name])(type);
+	} else {
+		warning("Lingo::closeXLib: Unimplemented xlib: '%s'", name.c_str());
+	}
+}
+
+void Lingo::reloadOpenXLibs() {
+	OpenXLibsHash openXLibsCopy = _openXLibs;
+	for (OpenXLibsHash::iterator it = openXLibsCopy.begin(); it != openXLibsCopy.end(); ++it) {
+		closeXLib(it->_key);
+		openXLib(it->_key, it->_value);
 	}
 }
 
@@ -480,27 +521,27 @@ void LM::m_close(int nargs) {
 
 void LM::m_forget(int nargs) {
 	Window *me = static_cast<Window *>(g_lingo->_currentMe.u.obj);
-	DatumArray *windowList = g_lingo->_windowList.u.farr;
+	FArray *windowList = g_lingo->_windowList.u.farr;
 
 	uint i;
-	for (i = 0; i < windowList->size(); i++) {
-		if ((*windowList)[i].type != OBJECT || (*windowList)[i].u.obj->getObjType() != kWindowObj)
+	for (i = 0; i < windowList->arr.size(); i++) {
+		if (windowList->arr[i].type != OBJECT || windowList->arr[i].u.obj->getObjType() != kWindowObj)
 			continue;
 
-		Window *window = static_cast<Window *>((*windowList)[i].u.obj);
+		Window *window = static_cast<Window *>(windowList->arr[i].u.obj);
 		if (window == me)
 			break;
 	}
 
-	if (i < windowList->size())
-		windowList->remove_at(i);
+	if (i < windowList->arr.size())
+		windowList->arr.remove_at(i);
 
 	// remove me from global vars
 	for (DatumHash::iterator it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); ++it) {
 		if (it->_value.type != OBJECT || it->_value.u.obj->getObjType() != kWindowObj)
 			continue;
 
-		Window *window = static_cast<Window *>((*windowList)[i].u.obj);
+		Window *window = static_cast<Window *>(windowList->arr[i].u.obj);
 		if (window == me)
 			g_lingo->_globalvars[it->_key] = 0;
 	}
@@ -583,7 +624,8 @@ Datum CastMember::getField(int field) {
 		d = (int)getBackColor();
 		break;
 	case kTheCastType:
-		d = _type;
+		d.type = SYMBOL;
+		d.u.s = new Common::String(castTypeToString(_type));
 		break;
 	case kTheFileName:
 		if (castInfo)
@@ -609,7 +651,8 @@ Datum CastMember::getField(int field) {
 		d = _castId;
 		break;
 	case kTheRect:
-		warning("STUB: CastMember::getField(): Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		// not sure get the initial rect would be fine to castmember
+		d = Datum(_cast->getCastMember(_castId)->_initialRect);
 		break;
 	case kThePurgePriority:
 		d = _purgePriority;

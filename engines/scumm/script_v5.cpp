@@ -444,7 +444,25 @@ void ScummEngine_v5::o5_actorOps() {
 			getVarOrDirectByte(PARAM_1);
 			break;
 		case 1:			// SO_COSTUME
-			a->setActorCostume(getVarOrDirectByte(PARAM_1));
+			i = getVarOrDirectByte(PARAM_1);
+
+			// WORKAROUND: In the VGA floppy version of Monkey
+			// Island 1, there are two different costumes for the
+			// captain Smirk close-up: 0 for when the game is run
+			// from floppies, and 76 for when the game is run from
+			// hard disk, I believe.
+			//
+			// Costume 0 doesn't have any cigar smoke, perhaps to
+			// cut down on disk access.
+			//
+			// But in the VGA CD version, only costume 0 is used
+			// and the close-up is missing the cigar smoke.
+
+			if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12 && i == 0) {
+				i = 76;
+			}
+
+			a->setActorCostume(i);
 			break;
 		case 2:			// SO_STEP_DIST
 			i = getVarOrDirectByte(PARAM_1);
@@ -486,6 +504,22 @@ void ScummEngine_v5::o5_actorOps() {
 			i = getVarOrDirectByte(PARAM_1);
 			j = getVarOrDirectByte(PARAM_2);
 			assertRange(0, i, 31, "o5_actorOps: palette slot");
+
+			// WORKAROUND: The smoke animation is the same as
+			// what's used for the voodoo lady's cauldron. But
+			// for some reason, the colors changed between the
+			// VGA floppy and CD versions. So when it tries to
+			// remap the colors, it uses the wrong indexes. The
+			// CD animation uses colors 1-3, where the floppy
+			// version uses 2, 3, and 9.
+
+			if (_game.id == GID_MONKEY && _currentRoom == 76) {
+				if (i == 3)
+					i = 1;
+				else if (i == 9)
+					i = 3;
+			}
+
 			a->setPalette(i, j);
 			break;
 		case 12:		// SO_TALK_COLOR
@@ -599,6 +633,35 @@ void ScummEngine_v5::o5_add() {
 		default:
 			break;
 		}
+	}
+
+	// WORKAROUND: The clock tower is controlled by two variables: 163 and
+	// 247 in the floppy VGA version, 164 and 248 in the CD version. I
+	// don't know about the EGA version, but this fix only concerns the
+	// CD version.
+	//
+	// Whenever you enter the room, the first variable is cleared. It is
+	// then set if you examine the clock tower. The second variable
+	// determines which description you see, e.g. "Ten o'clock.", "Hmm.
+	// Still ten o'clock.", etc.
+	//
+	// If the first variable was set, the second is incremented when you
+	// leave the room. That means that every time you examine the clock
+	// tower, you get a new description (there are three of them, with a
+	// random variation on the last one) but only if you've been away from
+	// the room in between.
+	//
+	// But in the CD version, someone has attempted to "fix" this behavior
+	// by always incrementing the second variable when the clock tower is
+	// examined. So you don't have to leave the room in between, and if
+	// you examine the clock tower once and then leave, the second variable
+	// is incremented twice so you'll never see the second description.
+	//
+	// We restore the old behavior by adding 0, not 1, to the second
+	// variable when examining the clock tower.
+
+	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 210 && _currentRoom == 35 && _resultVarNumber == 248 && a == 1) {
+		a = 0;
 	}
 
 	setResult(readVar(_resultVarNumber) + a);
@@ -1452,12 +1515,32 @@ void ScummEngine_v5::o5_pseudoRoom() {
 }
 
 void ScummEngine_v5::o5_putActor() {
-	int x, y;
-	Actor *a;
+	int act, x, y;
 
-	a = derefActor(getVarOrDirectByte(PARAM_1), "o5_putActor");
+	act = getVarOrDirectByte(PARAM_1);
 	x = getVarOrDirectWord(PARAM_2);
 	y = getVarOrDirectWord(PARAM_3);
+
+	// WORKAROUND: When enabling the cigar smoke in the captain Smirk
+	// close-up, it turns out that the coordinates were changed in the CD
+	// version's script for no apparent reason. (Were they taken from the
+	// EGA version?)
+	//
+	// The coordinates below are taken from the VGA floppy version. The
+	// "Ultimate Talkie" version also corrects the positions, but uses
+	// other coordinates. The difference is never more than a single pixel,
+	// so there's not much reason to correct those.
+
+	if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12) {
+		if (x == 176 && y == 80) {
+			x = 174;
+			y = 86;
+		} else if (x == 176 && y == 78) {
+			x = 172;
+		}
+	}
+
+	Actor *a = derefActor(act, "o5_putActor");
 	a->putActor(x, y);
 }
 
@@ -1713,6 +1796,16 @@ void ScummEngine_v5::o5_roomOps() {
 			c = getVarOrDirectWord(PARAM_3);
 			_opcode = fetchScriptByte();
 			d = getVarOrDirectByte(PARAM_1);
+
+			// WORKAROUND: The CD version of Monkey Island 1 will
+			// set a couple of default colors, presumably for the
+			// GUI to use. But in the close-up of captain Smirk,
+			// we want the original color 3 for the cigar smoke. It
+			// should be ok since there is no GUI in this scene.
+
+			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3)
+				break;
+
 			setPalColor(d, a, b, c);	/* index, r, g, b */
 		}
 		break;
@@ -2402,7 +2495,7 @@ void ScummEngine_v5::o5_verbOps() {
 			//
 			// I don't know if it has to be limited to this
 			// particular script, but that's what I'll do for now.
-			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && verb == 101 && vm.slot[_currentScript].number == 12 && vm.slot[_currentScript].where == WIO_GLOBAL) {
+			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && verb == 101 && vm.slot[_currentScript].number == 12) {
 				inventoryScriptIndy3Mac();
 			} else
 				vs->curmode = 1;
@@ -2713,11 +2806,11 @@ void ScummEngine_v5::decodeParseString() {
 		case 15:{	// SO_TEXTSTRING
 				const int len = resStrLen(_scriptPointer);
 
-				if (_game.id == GID_LOOM && strcmp((const char *) _scriptPointer, "I am Choas.") == 0) {
+				if (_game.id == GID_LOOM && vm.slot[_currentScript].number == 95 && strcmp((const char *)_scriptPointer, "I am Choas.") == 0) {
 					// WORKAROUND: This happens when Chaos introduces
 					// herself to bishop Mandible. Of all the places to put
 					// a typo...
-					printString(textSlot, (const byte *) "I am Chaos.");
+					printString(textSlot, (const byte *)"I am Chaos.");
 				} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 &&
 						len == 24 && 0==memcmp(_scriptPointer+16, "pregod", 6)) {
 					// WORKAROUND for bug #2961.
@@ -2739,6 +2832,8 @@ void ScummEngine_v5::decodeParseString() {
 					strcpy(tmpBuf + diff, "5000");
 					strcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1);
 					printString(textSlot, (byte *)tmpBuf);
+				} if (_game.id == GID_MONKEY && _roomResource == 25 && vm.slot[_currentScript].number == 205) {
+					printPatchedMI1CannibalString(textSlot, _scriptPointer);
 				} else {
 					printString(textSlot, _scriptPointer);
 				}
@@ -2770,6 +2865,19 @@ void ScummEngine_v5::decodeParseString() {
 	}
 
 	_string[textSlot].saveDefault();
+}
+
+void ScummEngine_v5::printPatchedMI1CannibalString(int textSlot, const byte *ptr) {
+	const char *msg = (const char *)ptr;
+
+	if (strncmp((const char *)ptr, "/LH.ENG/", 8) == 0) {
+		msg =
+"Oooh, that's nice.\xFF\x03"
+"Simple.  Just like one of mine.\xFF\x03"
+"And little.  Like mine.";
+	}
+
+	printString(textSlot, (const byte *)msg);
 }
 
 } // End of namespace Scumm

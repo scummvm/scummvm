@@ -108,17 +108,15 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 
 bool AdlEngine::pollEvent(Common::Event &event) const {
 	if (g_system->getEventManager()->pollEvent(event)) {
-		if (event.type != Common::EVENT_KEYDOWN)
-			return false;
-
-		if (event.kbd.flags & Common::KBD_CTRL) {
-			if (event.kbd.keycode == Common::KEYCODE_q) {
+		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+			if (event.customType == kADLActionQuit) {
 				quitGame();
-				return false;
 			}
+			return false;
 		}
 
-		return true;
+		if (event.type == Common::EVENT_KEYDOWN)
+			return true;
 	}
 
 	return false;
@@ -145,6 +143,24 @@ Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) con
 Common::String AdlEngine::readStringAt(Common::SeekableReadStream &stream, uint offset, byte until) const {
 	stream.seek(offset);
 	return readString(stream, until);
+}
+
+void AdlEngine::extractExeStrings(Common::ReadStream &stream, uint16 printAddr, Common::StringArray &strings) const {
+	uint32 window = 0;
+
+	for (;;) {
+		window <<= 8;
+		window |= stream.readByte();
+
+		if (stream.eos())
+			return;
+
+		if (stream.err())
+			error("Failed to extract strings from game executable");
+
+		if ((window & 0xffffff) == (0x200000U | printAddr))
+			strings.push_back(readString(stream));
+	}
 }
 
 void AdlEngine::printMessage(uint idx) {

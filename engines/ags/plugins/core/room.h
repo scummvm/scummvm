@@ -48,6 +48,7 @@ public:
 	void GetRightEdge(ScriptMethodParams &params);
 	void GetTopEdge(ScriptMethodParams &params);
 	void GetWidth(ScriptMethodParams &params);
+	void RoomExists(ScriptMethodParams &params);
 };
 
 } // namespace Core

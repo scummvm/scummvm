@@ -166,14 +166,14 @@ bool GraphicEngine::getVsync() const {
 bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 	Common::Rect rect(_width - 1, _height - 1);
 
-	int ca = (color >> 24) & 0xff;
+	int ca = (color >> BS_ASHIFT) & 0xff;
 
 	if (ca == 0)
 		return true;
 
-	int cr = (color >> 16) & 0xff;
-	int cg = (color >> 8) & 0xff;
-	int cb = (color >> 0) & 0xff;
+	int cr = (color >> BS_RSHIFT) & 0xff;
+	int cg = (color >> BS_GSHIFT) & 0xff;
+	int cb = (color >> BS_BSHIFT) & 0xff;
 
 	if (fillRectPtr) {
 		rect = *fillRectPtr;
@@ -181,7 +181,7 @@ bool GraphicEngine::fill(const Common::Rect *fillRectPtr, uint color) {
 
 	if (rect.width() > 0 && rect.height() > 0) {
 		if (ca == 0xff) {
-			_backSurface.fillRect(rect, BS_ARGB(cr, cg, cb, ca));
+			_backSurface.fillRect(rect, _backSurface.format.ARGBToColor(ca, cr, cg, cb));
 		} else {
 			byte *outo = (byte *)_backSurface.getBasePtr(rect.left, rect.top);
 			byte *out;
@@ -373,10 +373,10 @@ bool GraphicEngine::saveThumbnailScreenshot(const Common::String &filename) {
 
 void GraphicEngine::ARGBColorToLuaColor(lua_State *L, uint color) {
 	lua_Number components[4] = {
-		(lua_Number)((color >> 16) & 0xff), // Red
-		(lua_Number)((color >>  8) & 0xff), // Green
-		(lua_Number)( color        & 0xff), // Blue
-		(lua_Number)( color >> 24),         // Alpha
+		(lua_Number)((color >> BS_RSHIFT) & 0xff), // Red
+		(lua_Number)((color >> BS_GSHIFT) & 0xff), // Green
+		(lua_Number)((color >> BS_BSHIFT) & 0xff), // Blue
+		(lua_Number)( color >> BS_ASHIFT),         // Alpha
 	};
 
 	lua_newtable(L);
@@ -436,7 +436,7 @@ uint GraphicEngine::luaColorToARGBColor(lua_State *L, int stackIndex) {
 	assert(__startStackDepth == lua_gettop(L));
 #endif
 
-	return (alpha << 24) | (red << 16) | (green << 8) | blue;
+	return BS_ARGB(alpha, red, green, blue);
 }
 
 bool GraphicEngine::persist(OutputPersistenceBlock &writer) {

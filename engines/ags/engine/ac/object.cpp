@@ -40,6 +40,7 @@
 #include "ags/engine/main/game_run.h"
 #include "ags/engine/ac/route_finder.h"
 #include "ags/engine/gfx/graphics_driver.h"
+#include "ags/shared/ac/view.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/gfx/gfx_def.h"
 #include "ags/engine/script/runtime_script_value.h"
@@ -87,6 +88,16 @@ void Object_RemoveTint(ScriptObject *objj) {
 }
 
 void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
+	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v360) { // Previous version of SetView had negative loop and frame mean "use latest values"
+		auto &obj = _G(objs)[objj->id];
+		if (loop < 0) loop = obj.loop;
+		if (frame < 0) frame = obj.frame;
+		const int vidx = view - 1;
+		if (vidx < 0 || vidx >= _GP(game).numviews) quit("!Object_SetView: invalid view number used");
+		loop = CLIP(loop, 0, (int)_G(views)[vidx].numLoops - 1);
+		frame = CLIP(frame, 0, (int)_G(views)[vidx].loops[loop].numFrames - 1);
+	}
+
 	SetObjectFrame(objj->id, view, loop, frame);
 }
 
@@ -310,16 +321,19 @@ int Object_GetClickable(ScriptObject *objj) {
 	return 1;
 }
 
+void Object_SetManualScaling(ScriptObject *objj, bool on) {
+	if (on) _G(objs)[objj->id].flags &= ~OBJF_USEROOMSCALING;
+	else _G(objs)[objj->id].flags |= OBJF_USEROOMSCALING;
+	// clear the cache
+	_G(objcache)[objj->id].ywas = -9999;
+}
+
 void Object_SetIgnoreScaling(ScriptObject *objj, int newval) {
 	if (!is_valid_object(objj->id))
 		quit("!Object.IgnoreScaling: Invalid object specified");
-
-	_G(objs)[objj->id].flags &= ~OBJF_USEROOMSCALING;
-	if (!newval)
-		_G(objs)[objj->id].flags |= OBJF_USEROOMSCALING;
-
-	// clear the cache
-	_G(objcache)[objj->id].ywas = -9999;
+	if (newval)
+		_G(objs)[objj->id].zoom = 100; // compatibility, for before manual scaling existed
+	Object_SetManualScaling(objj, newval != 0);
 }
 
 int Object_GetIgnoreScaling(ScriptObject *objj) {
@@ -329,6 +343,22 @@ int Object_GetIgnoreScaling(ScriptObject *objj) {
 	if (_G(objs)[objj->id].flags & OBJF_USEROOMSCALING)
 		return 0;
 	return 1;
+}
+
+int Object_GetScaling(ScriptObject *objj) {
+	return _G(objs)[objj->id].zoom;
+}
+
+void Object_SetScaling(ScriptObject *objj, int zoomlevel) {
+	if ((_G(objs)[objj->id].flags & OBJF_USEROOMSCALING) != 0) {
+		debug_script_warn("Object.Scaling: cannot set property unless ManualScaling is enabled");
+		return;
+	}
+	int zoom_fixed = Math::Clamp(zoomlevel, 1, (int)(INT16_MAX)); // RoomObject.zoom is int16
+	if (zoomlevel != zoom_fixed)
+		debug_script_warn("Object.Scaling: scaling level must be between 1 and %d%%, asked for: %d",
+		(int)(INT16_MAX), zoomlevel);
+	_G(objs)[objj->id].zoom = zoom_fixed;
 }
 
 void Object_SetSolid(ScriptObject *objj, int solid) {
@@ -747,6 +777,10 @@ RuntimeScriptValue Sc_Object_GetLoop(void *self, const RuntimeScriptValue *param
 	API_OBJCALL_INT(ScriptObject, Object_GetLoop);
 }
 
+RuntimeScriptValue Sc_Object_SetManualScaling(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PBOOL(ScriptObject, Object_SetManualScaling);
+}
+
 // int (ScriptObject *objj)
 RuntimeScriptValue Sc_Object_GetMoving(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptObject, Object_GetMoving);
@@ -755,6 +789,14 @@ RuntimeScriptValue Sc_Object_GetMoving(void *self, const RuntimeScriptValue *par
 // const char* (ScriptObject *objj)
 RuntimeScriptValue Sc_Object_GetName_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_CONST_OBJCALL_OBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetName_New);
+}
+
+RuntimeScriptValue Sc_Object_GetScaling(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_INT(ScriptObject, Object_GetScaling);
+}
+
+RuntimeScriptValue Sc_Object_SetScaling(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT(ScriptObject, Object_SetScaling);
 }
 
 // int (ScriptObject *objj)
@@ -858,8 +900,12 @@ void RegisterObjectAPI() {
 	ccAddExternalObjectFunction("Object::get_IgnoreWalkbehinds", Sc_Object_GetIgnoreWalkbehinds);
 	ccAddExternalObjectFunction("Object::set_IgnoreWalkbehinds", Sc_Object_SetIgnoreWalkbehinds);
 	ccAddExternalObjectFunction("Object::get_Loop", Sc_Object_GetLoop);
+	ccAddExternalObjectFunction("Object::get_ManualScaling", Sc_Object_GetIgnoreScaling);
+	ccAddExternalObjectFunction("Object::set_ManualScaling", Sc_Object_SetManualScaling);
 	ccAddExternalObjectFunction("Object::get_Moving", Sc_Object_GetMoving);
 	ccAddExternalObjectFunction("Object::get_Name", Sc_Object_GetName_New);
+	ccAddExternalObjectFunction("Object::get_Scaling", Sc_Object_GetScaling);
+	ccAddExternalObjectFunction("Object::set_Scaling", Sc_Object_SetScaling);
 	ccAddExternalObjectFunction("Object::get_Solid", Sc_Object_GetSolid);
 	ccAddExternalObjectFunction("Object::set_Solid", Sc_Object_SetSolid);
 	ccAddExternalObjectFunction("Object::get_Transparency", Sc_Object_GetTransparency);

@@ -1100,11 +1100,13 @@ Actor::Actor(void) {
 	recPointsPerUpdate      = BASE_REC_RATE;
 	currentRecoveryPoints   = 0;
 	leader              = nullptr;
+	_leaderID           = Nothing;
 	followers           = nullptr;
 	_followersID = NoBand;
 	for (int i = 0; i < ARMOR_COUNT; i++)
 		armorObjects[i] = Nothing;
 	currentTarget       = nullptr;
+	_currentTargetID    = Nothing;
 	for (int i = 0; i < actorScriptVars; i++)
 		scriptVar[i] = 0;
 }
@@ -1169,11 +1171,13 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	recPointsPerUpdate      = BASE_REC_RATE;
 	currentRecoveryPoints   = 0;
 	leader              = NULL;
+	_leaderID           = Nothing;
 	followers           = NULL;
 	_followersID = NoBand;
 	for (i = 0; i < ARMOR_COUNT; i++)
 		armorObjects[i] = Nothing;
 	currentTarget       = NULL;
+	_currentTargetID    = Nothing;
 	for (i = 0; i < actorScriptVars; i++)
 		scriptVar[i] = 0;
 
@@ -1181,8 +1185,6 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 }
 
 Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
-	debugC(3, kDebugSaveload, "Loading actor %d", thisID());
-
 	//  Fixup the prototype pointer to point to an actor prototype
 	prototype   =   prototype != nullptr
 	                ? (ProtoObj *)g_vm->_actorProtos[getProtoNum()]
@@ -1228,26 +1230,17 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	recPointsPerUpdate = in->readSint16LE();
 	currentRecoveryPoints = in->readUint16LE();
 
-	int leaderID = in->readUint16LE();
-
-	leader = leaderID != Nothing
-	         ? (Actor *)GameObject::objectAddress(leaderID)
-	         :   nullptr;
+	_leaderID = in->readUint16LE();
+	leader = nullptr;
 
 	_followersID = in->readSint16LE();
-
-	followers = _followersID != NoBand
-	            ?   getBandAddress(_followersID)
-	            :   nullptr;
+	followers = nullptr;
 
 	for (int i = 0; i < ARRAYSIZE(armorObjects); ++i)
 		armorObjects[i] = in->readUint16LE();
 
-	int currentTargetID = in->readUint16LE();
-
-	currentTarget = currentTargetID != Nothing
-	                ?   GameObject::objectAddress(currentTargetID)
-	                :   nullptr;
+	_currentTargetID = in->readUint16LE();
+	currentTarget = nullptr;
 
 	for (int i = 0; i < ARRAYSIZE(scriptVar); ++i)
 		scriptVar[i] = in->readSint16LE();
@@ -1293,10 +1286,10 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	debugC(4, kDebugSaveload, "... effectiveImmunity = %d", effectiveImmunity);
 	debugC(4, kDebugSaveload, "... recPointsPerUpdate = %d", recPointsPerUpdate);
 	debugC(4, kDebugSaveload, "... currentRecoveryPoints = %d", currentRecoveryPoints);
-	debugC(4, kDebugSaveload, "... leaderID = %d", leaderID);
+	debugC(4, kDebugSaveload, "... leaderID = %d", _leaderID);
 	debugC(4, kDebugSaveload, "... followersID = %d", _followersID);
 //	debugC(4, kDebugSaveload, "... armorObjects = %d", armorObjects);
-	debugC(4, kDebugSaveload, "... currentTargetID = %d", currentTargetID);
+	debugC(4, kDebugSaveload, "... currentTargetID = %d", _currentTargetID);
 //	debugC(4, kDebugSaveload, "... scriptVar = %d", scriptVar);
 }
 
@@ -2637,7 +2630,7 @@ void Actor::updateState(void) {
 				disband();
 
 			if (curTask == NULL) {
-				if ((curTask = new TaskStack(this)) != NULL) {
+				if ((curTask = newTaskStack(this)) != NULL) {
 					Task    *task = new GoAwayFromActorTask(
 					                    curTask,
 					                    ActorPropertyTarget(
@@ -2659,7 +2652,7 @@ void Actor::updateState(void) {
 		case actorGoalAttackEnemy:
 
 			if (curTask == NULL) {
-				if ((curTask = new TaskStack(this)) != NULL) {
+				if ((curTask = newTaskStack(this)) != NULL) {
 					uint8   disp =  leader != NULL
 					                ?   leader->disposition
 					                :   disposition;
@@ -2697,7 +2690,7 @@ void Actor::updateState(void) {
 			assert(followers == NULL);
 
 			if (curTask == NULL) {
-				if ((curTask = new TaskStack(this)) != NULL) {
+				if ((curTask = newTaskStack(this)) != NULL) {
 					Task    *task = new BandAndAvoidEnemiesTask(curTask);
 
 					if (task != NULL)
@@ -3104,7 +3097,7 @@ TaskStack *Actor::createFollowerTask(Actor *bandMember) {
 
 	TaskStack   *ts = NULL;
 
-	if ((ts = new TaskStack(bandMember)) != NULL) {
+	if ((ts = newTaskStack(bandMember)) != NULL) {
 		Task    *task = new BandTask(ts);
 
 		if (task != NULL)
@@ -3545,12 +3538,30 @@ void loadActors(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "... kActorCount = %d", kActorCount);
 
 	for (int i = 0; i < kActorCount; i++) {
+		debugC(3, kDebugSaveload, "Loading actor %d", i + ActorBaseID);
+
 		//  Initilize actors with archive data
 		Actor *a = new Actor(in);
 
 		a->_index = i + ActorBaseID;
 
 		g_vm->_actorList.push_back(a);
+	}
+
+	for (int i = 0; i < kActorCount; ++i) {
+		Actor *a = g_vm->_actorList[i];
+
+		a->leader = a->_leaderID != Nothing
+					? (Actor *)GameObject::objectAddress(a->_leaderID)
+					:   nullptr;
+
+		a->followers = a->_followersID != NoBand
+					?   getBandAddress(a->_followersID)
+					:   nullptr;
+
+		a->currentTarget = a->_currentTargetID != Nothing
+						?   GameObject::objectAddress(a->_currentTargetID)
+						:   nullptr;
 	}
 }
 

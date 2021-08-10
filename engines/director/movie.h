@@ -158,8 +158,15 @@ public:
 	int _selEnd;
 
 	int _checkBoxType;
+	int _checkBoxAccess;
 
 	uint16 _currentHiliteChannelId;
+
+	uint _lastTimeOut;
+	uint _timeOutLength;
+	bool _timeOutKeyDown;
+	bool _timeOutMouse;
+	bool _timeOutPlay;
 
 private:
 	Window *_window;

@@ -50,9 +50,6 @@ public:
 	int getHeight() const override {
 		return _image.h;
 	}
-	GraphicEngine::COLOR_FORMATS getColorFormat() const override {
-		return GraphicEngine::CF_ARGB32;
-	}
 
 	bool blit(int posX = 0, int posY = 0,
 	                  int flipping = Graphics::FLIP_NONE,

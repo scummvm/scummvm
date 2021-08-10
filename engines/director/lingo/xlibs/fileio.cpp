@@ -32,7 +32,11 @@
 
 namespace Director {
 
-static const char *xlibName = "FileIO";
+const char *FileIO::xlibName = "FileIO";
+const char *FileIO::fileNames[] = {
+	"FileIO",
+	0
+};
 
 static MethodProto xlibMethods[] = {
 	{ "delete",					FileIO::m_delete,			 0, 0,	200 },	// D2
@@ -50,17 +54,21 @@ static MethodProto xlibMethods[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-void FileIO::initialize(int type) {
-	FileObject::initMethods(xlibMethods);
-	if (type & kXObj) {
-		if (!g_lingo->_globalvars.contains(xlibName)) {
-			FileObject *xobj = new FileObject(kXObj);
-			g_lingo->_globalvars[xlibName] = xobj;
-		} else {
-			warning("FileIO XObject already initialized");
-		}
+void FileIO::open(int type) {
+	if (type == kXObj) {
+		FileObject::initMethods(xlibMethods);
+		FileObject *xobj = new FileObject(kXObj);
+		g_lingo->_globalvars[xlibName] = xobj;
+	} else if (type == kXtraObj) {
+		// TODO - Implement Xtra
 	}
-	if (type & kXtraObj) {
+}
+
+void FileIO::close(int type) {
+	if (type == kXObj) {
+		FileObject::cleanupMethods();
+		g_lingo->_globalvars[xlibName] = Datum();
+	} else if (type == kXtraObj) {
 		// TODO - Implement Xtra
 	}
 }

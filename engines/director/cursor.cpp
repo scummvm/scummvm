@@ -40,7 +40,23 @@ Cursor::Cursor() {
 	_usePalette = false;
 }
 
+CursorRef Cursor::getRef() {
+	CursorRef res;
+	res._cursorType = _cursorType;
+	res._cursorResId = _cursorResId;
+	res._cursorCastId = _cursorCastId;
+	res._cursorMaskId = _cursorMaskId;
+	return res;
+}
+
 bool Cursor::operator==(const Cursor &c) {
+	return _cursorType == c._cursorType &&
+		_cursorResId == c._cursorResId &&
+		_cursorCastId == c._cursorCastId &&
+		_cursorMaskId == c._cursorMaskId;
+}
+
+bool Cursor::operator==(const CursorRef &c) {
 	return _cursorType == c._cursorType &&
 		_cursorResId == c._cursorResId &&
 		_cursorCastId == c._cursorCastId &&
@@ -162,6 +178,27 @@ void Cursor::resetCursor(Graphics::MacCursorType type, bool shouldClear, int res
 
 	_hotspotX = 0;
 	_hotspotY = 0;
+}
+
+CursorRef::CursorRef() {
+	_cursorType = Graphics::kMacCursorArrow;
+	_cursorResId = 0;
+	_cursorCastId = CastMemberID(0, 0);
+	_cursorMaskId = CastMemberID(0, 0);
+}
+
+bool CursorRef::operator==(const Cursor &c) {
+	return _cursorType == c._cursorType &&
+		_cursorResId == c._cursorResId &&
+		_cursorCastId == c._cursorCastId &&
+		_cursorMaskId == c._cursorMaskId;
+}
+
+bool CursorRef::operator==(const CursorRef &c) {
+	return _cursorType == c._cursorType &&
+		_cursorResId == c._cursorResId &&
+		_cursorCastId == c._cursorCastId &&
+		_cursorMaskId == c._cursorMaskId;
 }
 
 } // End of namespace Director

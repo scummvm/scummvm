@@ -275,7 +275,7 @@ MacFontRun MacText::getFgColor() {
 }
 
 // we are doing this because we may need to dealing with the plain byte. See ctor of mactext which contains String str instead of U32String str
-// thus, if we are passing the str, meaning we are using plainByteMode. And when we calculating the string width. we need to convert it to it's orignal state first;
+// thus, if we are passing the str, meaning we are using plainByteMode. And when we calculate the string width. we need to convert it to it's original state first;
 int MacText::getStringWidth(MacFontRun &format, const Common::U32String &str) {
 	if (format.plainByteMode())
 		return format.getFont()->getStringWidth(Common::convertFromU32String(str, format.getEncoding()));
@@ -740,7 +740,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 			D(9, "curWidth %d word_width %d", cur_width, word_width);
 			// if cur_width == 0 but there`s chunks, meaning there must be empty string here
 			// if cur_width == 0, then you don`t have to add a newline for it
-			if (cur_width + word_width > _maxWidth && cur_width != 0) {
+			if (cur_width + word_width >= _maxWidth && cur_width != 0) {
 				++curLine;
 				_textLines.insert_at(curLine, MacTextLine());
 			}
@@ -778,7 +778,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 						} else {
 							char_width = word[i].getFont()->getCharWidth(c);
 						}
-						if (char_width + tmp_width + cur_width > _maxWidth) {
+						if (char_width + tmp_width + cur_width >= _maxWidth) {
 							++curLine;
 							_textLines.insert_at(curLine, MacTextLine());
 							_textLines[curLine].chunks.push_back(word[i]);
@@ -884,7 +884,6 @@ void MacText::render() {
 }
 
 void MacText::render(int from, int to, int shadow) {
-
 	int w = MIN(_maxWidth, _textMaxWidth);
 	ManagedSurface *surface = shadow ? _shadowSurface : _surface;
 
@@ -915,10 +914,10 @@ void MacText::render(int from, int to, int shadow) {
 
 			if (_textLines[i].chunks[j].plainByteMode()) {
 				Common::String str = _textLines[i].chunks[j].getEncodedText();
-				_textLines[i].chunks[j].getFont()->drawString(surface, str, xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor);
+				_textLines[i].chunks[j].getFont()->drawString(surface, str, xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
 				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(str);
 			} else {
-				_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor);
+				_textLines[i].chunks[j].getFont()->drawString(surface, convertBiDiU32String(_textLines[i].chunks[j].text), xOffset, _textLines[i].y + yOffset, w, shadow ? _wm->_colorBlack : _textLines[i].chunks[j].fgcolor, Graphics::kTextAlignLeft, 0, true);
 				xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
 			}
 		}
@@ -1300,13 +1299,20 @@ bool MacText::draw(bool forceRedraw) {
 		_composeSurface->clear(_bgcolor);
 
 	// TODO: Clear surface fully when background colour changes.
-	_contentIsDirty = false;
 	_cursorDirty = false;
 
 	Common::Point offset(calculateOffset());
 
-	if (!_cursorState)
-		_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
+	// if we are drawing the selection text or we are selecting, then we don't draw the cursor
+	if (!((_inTextSelection || _selectedText.endY != -1) && _active)) {
+		if (!_cursorState)
+			_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
+		else
+			_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
+	}
+
+	if (!(_contentIsDirty || forceRedraw))
+		return true;
 
 	draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, offset.x, offset.y);
 
@@ -1320,12 +1326,10 @@ bool MacText::draw(bool forceRedraw) {
 		_composeSurface->frameRect(borderRect, 0);
 	}
 
-	// if we are drawing the selection text or we are selecting, then we don't draw the cursor
-	if (_cursorState && !((_inTextSelection || _selectedText.endY != -1) && _active))
-		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + offset.x, _cursorY + offset.y));
-
 	if (_selectedText.endY != -1)
 		drawSelection(offset.x, offset.y);
+
+	_contentIsDirty = false;
 
 	return true;
 }
@@ -1419,6 +1423,10 @@ void MacText::drawSelection(int xoff, int yoff) {
 
 	end = MIN((int)maxSelectionHeight, end);
 
+	// if we are selecting all text, then we invert the whole area
+	if ((uint)s.endRow == _textLines.size() - 1)
+		end = maxSelectionHeight;
+
 	int numLines = 0;
 	int x1 = 0, x2 = maxSelectionWidth;
 	int row = s.startRow;
@@ -1449,8 +1457,9 @@ void MacText::drawSelection(int xoff, int yoff) {
 		}
 	}
 
+	end = MIN(end, maxSelectionHeight - yoff);
 	for (int y = start; y < end; y++) {
-		if (!numLines) {
+		if (!numLines && (uint)row < _textLines.size()) {
 			x1 = 0;
 			x2 = maxSelectionWidth;
 
@@ -1827,6 +1836,11 @@ bool MacText::processEvent(Common::Event &event) {
 }
 
 void MacText::scroll(int delta) {
+	// disable the scroll for auto expand text
+	// should be amend to check the text type. e.g. auto expand type, fixed type, scroll type.
+	if (!_fixedDims)
+		return;
+
 	int oldScrollPos = _scrollPos;
 
 	_scrollPos += delta * kConScrollStep;
@@ -1874,6 +1888,106 @@ void MacText::updateTextSelection(int x, int y) {
 	_contentIsDirty = true;
 }
 
+int MacText::getMouseChar(int x, int y) {
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
+	y += _scrollPos;
+
+	int dx, dy, row, col;
+	getRowCol(x, y, &dx, &dy, &row, &col);
+
+	int index = 0;
+	for (int r = 0; r < row; r++)
+		index += getLineCharWidth(r);
+	index += col;
+
+	return index + 1;
+}
+
+int MacText::getMouseWord(int x, int y) {
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
+	y += _scrollPos;
+
+	int dx, dy, row, col;
+	getRowCol(x, y, &dx, &dy, &row, &col);
+
+	int index = 0;
+	for (int i = 0; i < row; i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			if (_textLines[i].chunks[j].text.empty())
+				continue;
+			index++;
+		}
+	}
+
+	int cur = 0;
+	for (uint j = 0; j < _textLines[row].chunks.size(); j++) {
+		if (_textLines[row].chunks[j].text.empty())
+			continue;
+		cur += _textLines[row].chunks[j].text.size();
+		if (cur <= col)
+			index++;
+		else
+			break;
+	}
+
+	return index + 1;
+}
+
+int MacText::getMouseItem(int x, int y) {
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
+	y += _scrollPos;
+
+	int dx, dy, row, col;
+	getRowCol(x, y, &dx, &dy, &row, &col);
+
+	int index = 0;
+	for (int i = 0; i < row; i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			if (_textLines[i].chunks[j].text.empty())
+				continue;
+			if (_textLines[i].chunks[j].getEncodedText().contains(','))
+				index++;
+		}
+	}
+
+	int cur = 0;
+	for (uint i = 0; i < _textLines[row].chunks.size(); i++) {
+		if (_textLines[row].chunks[i].text.empty())
+			continue;
+
+		for (uint j = 0; j < _textLines[row].chunks[i].text.size(); j++) {
+			cur++;
+			if (cur > col)
+				break;
+			if (_textLines[row].chunks[i].text[j] == ',')
+				index++;
+		}
+
+		if (cur > col)
+			break;
+	}
+
+	return index + 1;
+}
+
+int MacText::getMouseLine(int x, int y) {
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
+	y += _scrollPos;
+
+	int dx, dy, row, col;
+	getRowCol(x, y, &dx, &dy, &row, &col);
+
+	return row + 1;
+}
+
 int MacText::getAlignOffset(int row) {
 	int alignOffset = 0;
 	if (_textAlignment == kTextAlignRight)
@@ -1893,7 +2007,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	y = CLIP(y, 0, _textMaxHeight);
 
 	nrow = _textLines.size();
-	// use [lb, ub) bsearch here, final anser would we lb
+	// use [lb, ub) bsearch here, final answer would be lb
 	int lb = 0, ub = nrow;
 	while (ub - lb > 1) {
 		int mid = (ub + lb) / 2;

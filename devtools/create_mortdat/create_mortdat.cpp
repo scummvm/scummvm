@@ -27,12 +27,6 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-// HACK to allow building with the SDL backend on MinGW
-// see bug #3412 "TOOLS: MinGW tools building broken"
-#ifdef main
-#undef main
-#endif // main
-
 #include "common/endian.h"
 #include "create_mortdat.h"
 #include "enginetext.h"

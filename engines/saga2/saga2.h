@@ -146,7 +146,6 @@ public:
 	Common::List<PathRequest *> _pathQueue;
 	Common::List<SensorList *> _sensorListList;
 	Common::List<Sensor *> _sensorList;
-	Common::List<MotionTask *>::iterator _nextMT;
 	Common::List<CMassWeightIndicator *> _indList;
 	Common::List<int> _platformLRU;
 	BandList *_bandList;

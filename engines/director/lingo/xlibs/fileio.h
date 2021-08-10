@@ -68,8 +68,13 @@ public:
 };
 
 namespace FileIO {
+	extern const char *xlibName;
+	extern const char *fileNames[];
+
+	void open(int type);
+	void close(int type);
+
 	bool charInMatchString(char ch, const Common::String &matchString);
-	void initialize(int type);
 	void saveFileError();
 	void m_delete(int nargs);
 	void m_dispose(int nargs);

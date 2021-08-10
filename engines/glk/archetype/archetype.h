@@ -51,6 +51,12 @@ private:
 	winid_t _mainWindow;
 	String _lastOutputText;
 public:
+	// heapsort.cpp
+	XArrayType H;
+
+	// id_table.cpp
+	XArrayType h_index;
+
 	// keywords.cpp
 	XArrayType Literals, Vocabulary;
 	XArrayType Type_ID_List, Object_ID_List, Attribute_ID_List;

@@ -209,8 +209,8 @@ void unescape_script_string(const char *cstr, std::vector<char> &out) {
 
 // Break up the text into lines
 size_t split_lines(const char *todis, SplitLines &lines, int wii, int fonnt, size_t max_lines) {
-	// NOTE: following hack accomodates for the legacy math mistake in split_lines.
-	// It's hard to tell how cruicial it is for the game looks, so research may be needed.
+	// NOTE: following hack accommodates for the legacy math mistake in split_lines.
+	// It's hard to tell how crucial it is for the game looks, so research may be needed.
 	// TODO: IMHO this should rely not on game format, but script API level, because it
 	// defines necessary adjustments to game scripts. If you want to fix this, find a way to
 	// pass this flag here all the way from game.options[OPT_BASESCRIPTAPI] (or game format).

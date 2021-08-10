@@ -48,7 +48,8 @@ SoundSubfolder::SoundSubfolder(const Common::FSNode &folder) : _folder(folder) {
 	}
 }
 
-bool SoundSubfolder::hasFile(const Common::String &name) const {
+bool SoundSubfolder::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return _filenames.contains(name);
 }
 
@@ -62,14 +63,16 @@ int SoundSubfolder::listMembers(Common::ArchiveMemberList &list) const {
 	return total;
 }
 
-const Common::ArchiveMemberPtr SoundSubfolder::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr SoundSubfolder::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *SoundSubfolder::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *SoundSubfolder::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	Common::File *f = new Common::File();
 	if (_filenames.contains(name) && f->open(_folder.getChild(_filenames[name])))
 		return f;
@@ -112,7 +115,8 @@ SoundZip::~SoundZip() {
 	delete _zip;
 }
 
-bool SoundZip::hasFile(const Common::String &name) const {
+bool SoundZip::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
 	return _filenames.contains(name);
 }
 
@@ -127,7 +131,8 @@ int SoundZip::listMembers(Common::ArchiveMemberList &list) const {
 	return total;
 }
 
-const Common::ArchiveMemberPtr SoundZip::getMember(const Common::String &name) const {
+const Common::ArchiveMemberPtr SoundZip::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!hasFile(name))
 		return Common::ArchiveMemberPtr();
 
@@ -135,7 +140,8 @@ const Common::ArchiveMemberPtr SoundZip::getMember(const Common::String &name) c
 
 }
 
-Common::SeekableReadStream *SoundZip::createReadStreamForMember(const Common::String &name) const {
+Common::SeekableReadStream *SoundZip::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
 	if (!_filenames.contains(name))
 		return nullptr;
 

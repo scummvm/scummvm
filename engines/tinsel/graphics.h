@@ -25,6 +25,7 @@
 #define TINSEL_GRAPHICS_H
 
 #include "tinsel/dw.h"
+#include "tinsel/text.h"
 
 #include "common/rect.h"
 #include "common/system.h"

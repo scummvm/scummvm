@@ -260,6 +260,9 @@ void OSystem_PSP::clearOverlay() {
 
 void OSystem_PSP::grabOverlay(Graphics::Surface &surface) {
 	DEBUG_ENTER_FUNC();
+	assert(surface.w >= _overlay.getWidth());
+	assert(surface.h >= _overlay.getHeight());
+	assert(surface.format.bytesPerPixel == 2);
 	_overlay.copyToArray(surface.getPixels(), surface.pitch);
 }
 

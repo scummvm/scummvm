@@ -286,6 +286,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_scrollRequest = _scrollDeltaAdjust = 0;
 	_scrollDestOffset = _scrollTimer = 0;
 	_refreshNeedCatchUp = false;
+	_enableSmoothScrolling = (_game.platform == Common::kPlatformFMTowns);
 	memset(_refreshDuration, 0, sizeof(_refreshDuration));
 	_refreshArrayPos = 0;
 #ifdef USE_RGB_COLOR
@@ -593,6 +594,14 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_screenWidth = 320;
 		_screenHeight = 200;
 	}
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_game.platform == Common::kPlatformFMTowns) {
+		ConfMan.registerDefault("smooth_scroll", true);
+		if (ConfMan.hasKey("smooth_scroll"))
+			_enableSmoothScrolling = ConfMan.getBool("smooth_scroll");
+	}
+#endif
 
 	_bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
 	uint8 sizeMult = _bytesPerPixel;
@@ -1503,7 +1512,10 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (_game.features & GF_AUDIOTRACKS && !Common::File::exists("CDDA.SOU")) {
-		checkCD();
+		if (!existExtractedCDAudioFiles()
+		    && !isDataAndCDAudioReadFromSameCD()) {
+			warnMissingExtractedCDAudio();
+		}
 		_system->getAudioCDManager()->open();
 	}
 
@@ -2159,7 +2171,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
 		_musicEngine = new Player_V4A(this, _mixer);
 	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_LOOM) {
-		_musicEngine = new Player_V3M(this, _mixer);
+		_musicEngine = new Player_V3M(this, _mixer, ConfMan.getBool("mac_v3_low_quality_music"));
 		((Player_V3M *)_musicEngine)->init(macInstrumentFile);
 	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_MONKEY) {
 		_musicEngine = new Player_V5M(this, _mixer);
@@ -2976,7 +2988,7 @@ bool ScummEngine::startManiac() {
 				// While strictly speaking it's too broad, this matchString
 				// ignores the presence or absence of trailing path separators
 				// in either currentPath or path.
-				if (path.matchString("*maniac*", true, false)) {
+				if (path.matchString("*maniac*", true, NULL)) {
 					maniacTarget = iter->_key;
 					break;
 				}

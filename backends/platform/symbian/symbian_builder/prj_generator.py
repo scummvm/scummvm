@@ -195,7 +195,12 @@ gnumakefile ..\\help\\build_help.mk
 def data_dump(macros):
    with open(macros) as ff:
       f = ff.readlines()
-   n = [x.strip() for x in f if x.startswith(('STATICLIBRARY', 'MACRO'))]
+   n = []
+   for x in f:
+      if x.startswith("// MACRO"):
+         x = x.strip("// ")
+      if x.startswith(('STATICLIBRARY', 'MACRO')):
+         n.append(x.strip())
    n.sort()
    return n
 
@@ -213,25 +218,32 @@ def check_cashed(path):
       engines_cached = os.path.join(path, "engines.mmh")
       engines = os.path.join(mmps, "engines.mmh")
 
-      engines_diff = data_diff(engines_cached, engines)
-      macros_diff = data_diff(macros_cached, macros)
-      if not macros_diff:
+      try:
+         macros_diff = data_diff(macros_cached, macros)
+         engines_diff = data_diff(engines_cached, engines)
+      except IOError:
          return
 
-      print "new macro found: %s" %macros_diff
-      SafeWriteFile(build_log, "new macro found: ", 'a')
-      SafeWriteFile(build_log, list(macros_diff), 'a')
-      SafeWriteFile(build_log, '\n', 'a')
+      if macros_diff:
+         os.chmod(macros_cached, stat.S_IWRITE)
+         print "new macro(s) found: %s" %macros_diff
+         AppendToFile(macros_cached, list(macros_diff))
+         AppendToFile(build_log, "new macro found: ")
+         AppendToFile(build_log, list(macros_diff))
 
-      os.chmod(macros_cached, stat.S_IWRITE)
-      os.chmod(engines_cached, stat.S_IWRITE)
-      SafeWriteFile(macros_cached, list(macros_diff), 'a')
-      SafeWriteFile(engines_cached, list(engines_diff), 'a')
+      if engines_diff:
+         os.chmod(engines_cached, stat.S_IWRITE)
+         print "new engine(s) found: %s" %engines_diff
+         AppendToFile(engines_cached, list(engines_diff))
+         AppendToFile(build_log, "new macro found: ")
+         AppendToFile(build_log, list(engines_diff))
+
       os.chmod(macros_cached, stat.S_IREAD)
       os.chmod(engines_cached, stat.S_IREAD)
+      AppendToFile(build_log, '\n')
 
 
-def create_mmps(build, path = ''):
+def create_mmps(build, path):
    uids = get_UIDs(build)
    bld_inf = os.path.join(path, "bld.inf")
    SafeWriteFile(bld_inf, bld_inf_template)
@@ -253,7 +265,7 @@ def create_mmps(build, path = ''):
       data = mmp_template %(idx, UID3, idx, idx, idx, idx2, idx2)
       mmp_name = "ScummVM%s.mmp" %idx2
       SafeWriteFile(os.path.join(path, mmp_name), data)
-      SafeWriteFile(bld_inf, mmp_name + "\n", mode = 'a')
+      AppendToFile(bld_inf, mmp_name + "\n")
    check_cashed(path)
 
 if __name__ == "__main__":

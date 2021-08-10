@@ -337,6 +337,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 1 (CoCo3 360k) [AGI 2.072]
 	GAME_PS("kq1", "updated", "94087178c78933a4af3cd24d1c8dd7b2", 315, 0x2440, GID_KQ1, Common::kPlatformCoCo3),
 
+	// King's Quest 1 (Russian)
+	GAME_LPS("kq1", "", "973f5830ed5e1c919354dfbcd5036c53", 315, Common::RU_RUS, 0x2440, GID_KQ1, Common::kPlatformDOS),
+
 	// King's Quest 2 (IIgs) 2.0A 6/16/88 (CE)
 	GAME_PO("kq2", "2.0A 1988-06-16 (CE)", "5203c8b95250a2ecfee93ddb99414753", 0x2917, GID_KQ2, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 

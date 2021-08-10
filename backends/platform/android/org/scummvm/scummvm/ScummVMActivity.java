@@ -117,6 +117,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private EditableSurfaceView _main_surface = null;
 	private ImageView _toggleKeyboardBtnIcon = null;
 	private ImageView _openMenuBtnIcon = null;
+	private ImageView _revokeSafPermissionsBtnIcon = null;
 
 	public View _screenKeyboard = null;
 	static boolean keyboardWithoutTextInputShown = false;
@@ -417,19 +418,19 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 								// TODO - "Swipe" behavior does not seem to work currently. Should we support it?
 								public void swipeLeft() {
-									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeLeft");
+//									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeLeft");
 								}
 
 								public void swipeRight() {
-									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeRight" );
+//									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeRight" );
 								}
 
 								public void swipeDown() {
-									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeDown" );
+//									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeDown" );
 								}
 
 								public void swipeUp() {
-									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeUp ");
+//									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeUp ");
 								}
 								public void onKey(int key, int[] keysAround) {
 //									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onKey key: " + key );
@@ -571,7 +572,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	};
 
-
 	public final View.OnClickListener menuBtnOnClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -583,6 +583,17 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 	};
 
+	public final View.OnClickListener revokeSafPermissionsBtnOnClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					clearStorageAccessFrameworkTreeUri();
+					_scummvm.displayMessageOnOSD(getString(R.string.saf_revoke_done));
+				}
+			});
+		}
+	};
 
 	private class MyScummVM extends ScummVM {
 
@@ -689,6 +700,15 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
+		protected void showSAFRevokePermsControl(final boolean enable) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					showSAFRevokePermissionsBtnIcon(enable);
+				}
+			});
+		}
+
+		@Override
 		protected String[] getSysArchives() {
 			Log.d(ScummVM.LOG_TAG, "Adding to Search Archive: " + _actualScummVMDataDir.getPath());
 			if (_externalPathAvailableForReadAccess) {
@@ -789,6 +809,36 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //				Log.d(ScummVM.LOG_TAG, "(post SAF access) We can read from folder:" + dirPath);
 //
 //			}
+
+			return retRes[0];
+		}
+
+
+		// This is a simplified version of createDirectoryWithSAF
+		// TODO Maybe we could merge isDirectoryWritableWithSAF() with createDirectoryWithSAF() using an extra argument parameter
+		@Override
+		protected boolean isDirectoryWritableWithSAF(String dirPath) {
+			final boolean[] retRes = {false};
+
+			Log.d(ScummVM.LOG_TAG, "Check if folder writable: " + dirPath);
+			File folderToCheck = new File (dirPath);
+			if (folderToCheck.canWrite()) {
+				Log.d(ScummVM.LOG_TAG, "This path has write permission!" + dirPath);
+			} else {
+				Log.d(ScummVM.LOG_TAG, "Trying to get write access with SAF");
+				if (getStorageAccessFrameworkTreeUri() == null) {
+					requestStorageAccessFramework(dirPath);
+				} else {
+					Log.d(ScummVM.LOG_TAG, "Already requested Storage Access (Storage Access Framework) in the past (share prefs saved)!");
+				}
+			}
+
+			if (canWriteFile(folderToCheck, true)) {
+				Log.d(ScummVM.LOG_TAG, "(post SAF request) Writing is possible for this directory node");
+				retRes[0] = true;
+			} else {
+				Log.d(ScummVM.LOG_TAG, "(post SAF request) Error - writing is still not possible for this directory node");
+			}
 
 			return retRes[0];
 		}
@@ -912,6 +962,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		buttonLayout.addView(_openMenuBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 		buttonLayout.bringChildToFront(_openMenuBtnIcon);
 
+		_revokeSafPermissionsBtnIcon = new ImageView(this);
+		_revokeSafPermissionsBtnIcon.setImageResource(R.drawable.ic_lock_icon);
+		buttonLayout.addView(_revokeSafPermissionsBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+		buttonLayout.bringChildToFront(_revokeSafPermissionsBtnIcon);
+
 		_main_surface.setFocusable(true);
 		_main_surface.setFocusableInTouchMode(true);
 		_main_surface.requestFocus();
@@ -1001,6 +1056,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			//findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
 			_toggleKeyboardBtnIcon.setOnClickListener(keyboardBtnOnClickListener);
 			_openMenuBtnIcon.setOnClickListener(menuBtnOnClickListener);
+			_revokeSafPermissionsBtnIcon.setOnClickListener(revokeSafPermissionsBtnOnClickListener);
 
 			// Keyboard visibility listener - mainly to hide system UI if keyboard is shown and we return from Suspend to the Activity
 			setKeyboardVisibilityListener(this);
@@ -1102,6 +1158,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			hideScreenKeyboard();
 		}
 		showToggleKeyboardBtnIcon(false);
+		showSAFRevokePermissionsBtnIcon(false);
 	}
 
 
@@ -1265,6 +1322,19 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				_openMenuBtnIcon.setVisibility(View.VISIBLE);
 			} else {
 				_openMenuBtnIcon.setVisibility(View.GONE);
+			}
+		}
+	}
+
+	// Show or hide the semi-transparent overlay button
+	// for revoking SAF permissions
+	// This is independent of the toggle keyboard icon and menu icon (which appear together currently in showToggleKeyboardBtnIcon())
+	private void showSAFRevokePermissionsBtnIcon(boolean show) {
+		if (_revokeSafPermissionsBtnIcon != null ) {
+			if (show) {
+				_revokeSafPermissionsBtnIcon.setVisibility(View.VISIBLE);
+			} else {
+				_revokeSafPermissionsBtnIcon.setVisibility(View.GONE);
 			}
 		}
 	}
@@ -2158,6 +2228,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		_scummvm.displayMessageOnOSD(getString(R.string.saf_request_prompt) + dirPathSample);
 
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+			// Directory picker
 			Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 			intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
 			                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -2185,6 +2256,26 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			}
 		}
 		return null;
+	}
+
+	// A method to revoke SAF granted stored permissions
+	// TODO We need a button or setting to trigger this on user's demand
+	public void clearStorageAccessFrameworkTreeUri() {
+		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+			return;
+		}
+
+		Uri treeUri;
+		if ((treeUri = getStorageAccessFrameworkTreeUri()) == null) {
+			return;
+		}
+
+		// revoke SAF permission AND clear the pertinent SharedPreferences key
+		getContentResolver().releasePersistableUriPermission(treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPref.edit();
+		editor.remove(getString(R.string.preference_saf_tree_key));
+		editor.apply();
 	}
 
 	public File getStorageRootFolder(final File file) {
@@ -2298,14 +2389,20 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		} catch (Exception ignored) {
 			originalDirectory = true;
 		}
+
 		Uri treeUri;
 		if ((treeUri = getStorageAccessFrameworkTreeUri()) == null) {
 			return null;
 		}
+
 		DocumentFile dof = DocumentFile.fromTreeUri(getApplicationContext(), treeUri);
 		if (originalDirectory) {
 			return dof;
 		}
+
+		// Important note: We cannot assume that anything sent here is a relative path on top of the *ONLY* SAF "root" path
+		//                 since the the user could select another SD Card (from multiple inserted or replaces the current one and inserts another)
+		// TODO Can we translate our path string "/storage/XXXX-XXXXX/folder/doc.ext' a content URI? or a document URI?
 		String[] parts = relPath.split("\\/");
 		for (int i = 0; i < parts.length; i++) {
 			DocumentFile nextDof = dof.findFile(parts[i]);

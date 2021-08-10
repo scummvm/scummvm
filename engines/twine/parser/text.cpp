@@ -38,7 +38,7 @@ void TextData::initCustomTexts(TextBankId textBankId) {
 	}
 }
 
-bool TextData::loadFromHQR(const char *name, TextBankId textBankId, int language, int entryCount) {
+bool TextData::loadFromHQR(const char *name, TextBankId textBankId, int language, bool lba1, int entryCount) {
 	const int langIdx = (int)textBankId * 2 + (entryCount * language);
 	Common::SeekableReadStream *indexStream = HQR::makeReadStream(name, langIdx + 0);
 	Common::SeekableReadStream *offsetStream = HQR::makeReadStream(name, langIdx + 1);
@@ -52,7 +52,7 @@ bool TextData::loadFromHQR(const char *name, TextBankId textBankId, int language
 	_texts[(int)textBankId].clear();
 	initCustomTexts(textBankId);
 
-	const int numIdxEntries = indexStream->size() / 2;
+	const int numIdxEntries = (int)indexStream->size() / 2;
 	_texts[(int)textBankId].reserve(numIdxEntries + _texts[(int)textBankId].size());
 
 	for (int entry = 0; entry < numIdxEntries; ++entry) {

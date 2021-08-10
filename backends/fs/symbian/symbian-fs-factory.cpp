@@ -37,4 +37,5 @@ AbstractFSNode *SymbianFilesystemFactory::makeCurrentDirectoryFileNode() const {
 AbstractFSNode *SymbianFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	return new SymbianFilesystemNode(path);
 }
+
 #endif

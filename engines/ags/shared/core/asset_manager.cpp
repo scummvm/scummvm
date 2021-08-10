@@ -42,9 +42,9 @@ AssetLocation::AssetLocation()
 inline static bool IsAssetLibDir(const AssetLibInfo *lib) {
 	return lib->BaseFileName.IsEmpty();
 }
-inline static bool IsAssetLibFile(const AssetLibInfo *lib) {
-	return !lib->BaseFileName.IsEmpty();
-}
+// inline static bool IsAssetLibFile(const AssetLibInfo *lib) {
+// 	return !lib->BaseFileName.IsEmpty();
+// }
 
 bool AssetManager::LibsByPriority::operator()(const AssetLibInfo *lib1, const AssetLibInfo *lib2) const {
 	const bool lib1dir = IsAssetLibDir(lib1);
@@ -265,9 +265,10 @@ Stream *AssetManager::OpenAsset(const String &asset_name, soff_t *asset_size, Fi
 Stream *AssetManager::OpenAsset(const String &asset_name, const String &filter, soff_t *asset_size, FileOpenMode open_mode, FileWorkMode work_mode) const {
 	AssetLocation loc;
 	if (GetAsset(asset_name, filter, false, &loc, open_mode, work_mode)) {
-		Stream *s = File::OpenFile(loc.FileName, open_mode, work_mode);
+		Stream *s = work_mode == kFile_Read ?
+			File::OpenFile(loc.FileName, loc.Offset, loc.Offset + loc.Size) :
+			File::OpenFile(loc.FileName, open_mode, work_mode);
 		if (s) {
-			s->Seek(loc.Offset, kSeekBegin);
 			if (asset_size)
 				*asset_size = loc.Size;
 		}

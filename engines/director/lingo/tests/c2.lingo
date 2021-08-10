@@ -1,10 +1,10 @@
 -- This file is binary. Watch for 0xC2 symbol at the line ends
 
-    if the text of cast A16 <> the text of cast A17 then Â
-    set the text of cast A16 = the text of cast A17
+    if the text of cast 1 <> the text of cast 2 then Â
+    set the text of cast 1 = the text of cast 2
 
-if the text of cast A16 <> the text of cast A17 then Â
-set the text of cast A16 = the text of cast A17
+if the text of cast 1 <> the text of cast 2 then Â
+set the text of cast 1 = the text of cast 2
 
 set the selStart to Â
 	0
@@ -16,8 +16,8 @@ set the selStart to Â
 the continuationÂ
 of previous line
 
-   if the castNum of sprite 1 > the number of cast "StarLast" then set the castNum of sprite 1 to the number of Â
-        cast "StarFirst"
+   if the castNum of sprite 1 > the number of cast 2 then set the castNum of sprite 1 to the number of Â
+        cast 1
 
 put "HelloÂ
 World!"

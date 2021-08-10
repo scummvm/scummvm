@@ -26,6 +26,7 @@
 #include "common/macresman.h"
 #include "common/md5.h"
 #include "common/config-manager.h"
+#include "common/punycode.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -42,7 +43,8 @@ class FileMapArchive : public Common::Archive {
 public:
 	FileMapArchive(const AdvancedMetaEngineDetection::FileMap &fileMap) : _fileMap(fileMap) {}
 
-	bool hasFile(const Common::String &name) const override {
+	bool hasFile(const Common::Path &path) const override {
+		Common::String name = path.toString();
 		return _fileMap.contains(name);
 	}
 
@@ -56,7 +58,8 @@ public:
 		return files;
 	}
 
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override {
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override {
+		Common::String name = path.toString();
 		AdvancedMetaEngineDetection::FileMap::const_iterator it = _fileMap.find(name);
 		if (it == _fileMap.end()) {
 			return Common::ArchiveMemberPtr();
@@ -65,7 +68,8 @@ public:
 		return Common::ArchiveMemberPtr(new Common::FSNode(it->_value));
 	}
 
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override {
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override {
+		Common::String name = path.toString();
 		Common::FSNode fsNode = _fileMap.getValOrDefault(name);
 		return fsNode.createReadStream();
 	}
@@ -572,7 +576,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		g = (const ADGameDescription *)descPtr;
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			Common::String fname = fileDesc->fileName;
+			Common::String fname = Common::punycode_decodefilename(fileDesc->fileName);
 
 			if (filesProps.contains(fname))
 				continue;
@@ -613,7 +617,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 
 		// Try to match all files for this game
 		for (fileDesc = game.desc->filesDescriptions; fileDesc->fileName; fileDesc++) {
-			Common::String tstr = fileDesc->fileName;
+			Common::String tstr = Common::punycode_decodefilename(fileDesc->fileName);
 
 			if (!filesProps.contains(tstr) || filesProps[tstr].size == -1) {
 				allFilesPresent = false;

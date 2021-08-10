@@ -26,7 +26,7 @@
 
 namespace TwinE {
 
-bool SpriteBoundingBoxData::loadFromStream(Common::SeekableReadStream &stream) {
+bool SpriteBoundingBoxData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
 	const int32 size = stream.size();
 	const int32 amount = size / 16;
 	for (int32 i = 0; i < amount; ++i) {
@@ -46,43 +46,66 @@ bool SpriteBoundingBoxData::loadFromStream(Common::SeekableReadStream &stream) {
 	return !stream.err();
 }
 
-bool SpriteData::loadFromStream(Common::SeekableReadStream &stream) {
-	stream.skip(8);
+bool SpriteData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
+	if (_bricks) {
+		// brick sprites don't have the offsets
+		return loadSprite(stream, 0);
+	}
+	const uint32 offset1 = stream.readUint32LE();
+	const uint32 offset2 = stream.readUint32LE();
+	const uint32 offsetData = stream.pos();
+	if (!loadSprite(stream, offset1)) {
+		return false;
+	}
+	// for most sprites the second offset is just the end of the stream - but
+	// some sprites (like shadow in lba1) have a second sprite following the
+	// first one.
+	if (offset2 + offsetData >= stream.size()) {
+		return true;
+	}
+	return loadSprite(stream, offset2);
+}
+
+bool SpriteData::loadSprite(Common::SeekableReadStream &stream, uint32 offset) {
+	stream.seek(offset);
 	int width = stream.readByte();
 	int height = stream.readByte();
-	_offsetX = stream.readByte();
-	_offsetY = stream.readByte();
+	_offsetX[_sprites] = stream.readByte();
+	_offsetY[_sprites] = stream.readByte();
 	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	_surface.create(width, height, format);
-	const uint8 *last = (const uint8 *)_surface.getBasePtr(width, height - 1);
-	const int maxY = _offsetY + height;
-	for (int y = _offsetY; y < maxY; ++y) {
+	_surfaces[_sprites].create(width, height, format);
+	const uint8 *last = (const uint8 *)_surfaces[_sprites].getBasePtr(width, height - 1);
+	for (int y = 0; y < height; ++y) {
 		const uint8 numRuns = stream.readByte();
-		int x = _offsetX;
+		int x = 0;
 		for (uint8 run = 0; run < numRuns; ++run) {
 			const uint8 runSpec = stream.readByte();
 			const uint8 runLength = bits(runSpec, 0, 6) + 1;
 			const uint8 type = bits(runSpec, 6, 2);
-			if (type == 2) {
-				uint8 *start = (uint8 *)_surface.getBasePtr(x, y);
-				uint8 *end = (uint8 *)_surface.getBasePtr(x + runLength, y);
-				if (end > last) {
-					return false;
-				}
-				Common::fill(start, end, stream.readByte());
-			} else if (type == 1 || type == 3) {
-				uint8 *start = (uint8 *)_surface.getBasePtr(x, y);
+			if (type == 1) {
+				uint8 *start = (uint8 *)_surfaces[_sprites].getBasePtr(x, y);
 				for (uint8 i = 0; i < runLength; ++i) {
 					if (start > last) {
 						return false;
 					}
 					*start++ = stream.readByte();
 				}
+			} else if (type != 0) {
+				uint8 *start = (uint8 *)_surfaces[_sprites].getBasePtr(x, y);
+				uint8 *end = (uint8 *)_surfaces[_sprites].getBasePtr(x + runLength, y);
+				if (end > last) {
+					return false;
+				}
+				Common::fill(start, end, stream.readByte());
 			}
 			x += runLength;
 		}
 	}
-	return !stream.err();
+	if (stream.err()) {
+		return false;
+	}
+	++_sprites;
+	return true;
 }
 
 } // namespace TwinE

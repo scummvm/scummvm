@@ -60,6 +60,8 @@ ConversionError StringToInt(const String &s, int &val, int def_val);
 
 // A simple unescape string implementation, unescapes '\\x' into '\x'.
 String          Unescape(const String &s);
+// Converts a classic wildcard search pattern into C++11 compatible regex pattern
+String          WildcardToRegex(const String &wildcard);
 
 // Serialize and unserialize unterminated string prefixed with 32-bit length;
 // length is presented as 32-bit integer integer

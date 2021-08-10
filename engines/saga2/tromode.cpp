@@ -74,10 +74,8 @@ static void TroModeSetup(void);
 static void TroModeCleanup(void);
 
 static bool abortFlag = false;
-#ifndef NO_LOAD_AFTER_WIN
 //DO_OUTRO_IN_CLEANUP
 static int whichOutro = -1;
-#endif
 
 // ------------------------------------------------------------------------
 // Play intro video
@@ -104,19 +102,8 @@ void setOutroMode(void) {
 extern GameWorld            *currentWorld;          // pointer to the current world
 
 void setWintroMode(int16 whichOne) {
-#ifdef NO_LOAD_AFTER_WIN
-	if (!abortFlag) {
-		freeAllTileBanks();
-		currentWorld = NULL;
-		TroModeSetup();
-		doWintro(whichOne);
-		TroModeCleanup();
-	}
-	endGame();
-#else
 	whichOutro = whichOne;
 	allPlayerActorsDead = true;
-#endif
 }
 
 // ------------------------------------------------------------------------
@@ -127,6 +114,7 @@ void fadeUp();
 void dumpGBASE(char *msg);
 
 void setLostroMode(void) {
+	abortFlag = false;
 	allPlayerActorsDead = false;
 	if (GameMode::newmodeFlag)
 		GameMode::update();

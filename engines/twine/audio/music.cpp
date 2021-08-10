@@ -80,7 +80,7 @@ TwinEMidiPlayer::TwinEMidiPlayer(TwinEEngine* engine) : _engine(engine) {
 
 void TwinEMidiPlayer::play(byte *buf, int size) {
 	if (_parser == nullptr) {
-		if (_engine->cfgfile.MidiType == MIDIFILE_DOS) {
+		if (_engine->_cfgfile.MidiType == MIDIFILE_DOS) {
 			_parser = MidiParser::createParser_XMIDI();
 		} else {
 			_parser = MidiParser::createParser_SMF();
@@ -124,7 +124,7 @@ void Music::musicFadeOut() {
 }
 
 bool Music::playTrackMusicCd(int32 track) {
-	if (!_engine->cfgfile.UseCD) {
+	if (!_engine->_cfgfile.UseCD) {
 		return false;
 	}
 	AudioCDManager *cdrom = g_system->getAudioCDManager();
@@ -137,7 +137,7 @@ void Music::stopTrackMusicCd() {
 }
 
 bool Music::playTrackMusic(int32 track) {
-	if (!_engine->cfgfile.Sound) {
+	if (!_engine->_cfgfile.Sound) {
 		return false;
 	}
 
@@ -161,7 +161,7 @@ bool Music::playTrackMusic(int32 track) {
 }
 
 void Music::stopTrackMusic() {
-	if (!_engine->cfgfile.Sound) {
+	if (!_engine->_cfgfile.Sound) {
 		return;
 	}
 
@@ -170,7 +170,7 @@ void Music::stopTrackMusic() {
 }
 
 bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
-	if (!_engine->cfgfile.Sound || _engine->cfgfile.MidiType == MIDIFILE_NONE) {
+	if (!_engine->_cfgfile.Sound || _engine->_cfgfile.MidiType == MIDIFILE_NONE) {
 		return false;
 	}
 
@@ -182,7 +182,7 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	currentMusic = midiIdx;
 
 	const char *filename;
-	if (_engine->cfgfile.MidiType == MIDIFILE_DOS) {
+	if (_engine->_cfgfile.MidiType == MIDIFILE_DOS) {
 		filename = Resources::HQR_MIDI_MI_DOS_FILE;
 	} else {
 		filename = Resources::HQR_MIDI_MI_WIN_FILE;
@@ -224,8 +224,8 @@ void Music::stopMidiMusic() {
 
 bool Music::initCdrom() {
 	AudioCDManager* cdrom = g_system->getAudioCDManager();
-	_engine->cfgfile.UseCD = cdrom->open();
-	return _engine->cfgfile.UseCD;
+	_engine->_cfgfile.UseCD = cdrom->open();
+	return _engine->_cfgfile.UseCD;
 }
 
 void Music::stopMusic() {

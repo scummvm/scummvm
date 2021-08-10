@@ -29,9 +29,11 @@ int   GetScalingAt(int x, int y);
 void  SetAreaScaling(int area, int min, int max);
 void  RemoveWalkableArea(int areanum);
 void  RestoreWalkableArea(int areanum);
-// Gets walkable area at the given room coordinates
+// Gets walkable area at the given room coordinates;
+// if area is disabled or non-existing, returns 0 (no area)
 int   GetWalkableAreaAtRoom(int x, int y);
 // Gets walkable area at the given screen coordinates
+// if area is disabled or non-existing, returns 0 (no area)
 int   GetWalkableAreaAtScreen(int x, int y);
 
 } // namespace AGS3

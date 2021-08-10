@@ -37,14 +37,14 @@ const int32 BOTTOM = 8; // 1000
 
 int32 Interface::checkClipping(int32 x, int32 y) const {
 	int32 code = INSIDE;
-	if (x < textWindow.left) {
+	if (x < _clip.left) {
 		code |= LEFT;
-	} else if (x > textWindow.right) {
+	} else if (x > _clip.right) {
 		code |= RIGHT;
 	}
-	if (y < textWindow.top) {
+	if (y < _clip.top) {
 		code |= TOP;
-	} else if (y > textWindow.bottom) {
+	} else if (y > _clip.bottom) {
 		code |= BOTTOM;
 	}
 	return code;
@@ -73,17 +73,17 @@ bool Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		int32 x = 0;
 		int32 y = 0;
 		if (outcodeOut & TOP) { // point is above the clip rectangle
-			x = startWidth + (int)((endWidth - startWidth) * (float)(textWindow.top - startHeight) / (float)(endHeight - startHeight));
-			y = textWindow.top;
+			x = startWidth + (int)((endWidth - startWidth) * (float)(_clip.top - startHeight) / (float)(endHeight - startHeight));
+			y = _clip.top;
 		} else if (outcodeOut & BOTTOM) { // point is below the clip rectangle
-			x = startWidth + (int)((endWidth - startWidth) * (float)(textWindow.bottom - startHeight) / (float)(endHeight - startHeight));
-			y = textWindow.bottom;
+			x = startWidth + (int)((endWidth - startWidth) * (float)(_clip.bottom - startHeight) / (float)(endHeight - startHeight));
+			y = _clip.bottom;
 		} else if (outcodeOut & RIGHT) { // point is to the right of clip rectangle
-			y = startHeight + (int)((endHeight - startHeight) * (float)(textWindow.right - startWidth) / (float)(endWidth - startWidth));
-			x = textWindow.right;
+			y = startHeight + (int)((endHeight - startHeight) * (float)(_clip.right - startWidth) / (float)(endWidth - startWidth));
+			x = _clip.right;
 		} else if (outcodeOut & LEFT) { // point is to the left of clip rectangle
-			y = startHeight + (int)((endHeight - startHeight) * (float)(textWindow.left - startWidth) / (float)(endWidth - startWidth));
-			x = textWindow.left;
+			y = startHeight + (int)((endHeight - startHeight) * (float)(_clip.left - startWidth) / (float)(endWidth - startWidth));
+			x = _clip.left;
 		}
 
 		// Clip the point
@@ -106,8 +106,8 @@ bool Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		endHeight = -endHeight;
 	}
 
-	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(startWidth, startHeight);
-	_engine->frontVideoBuffer.addDirtyRect(Common::Rect(startWidth, startHeight, startWidth + endWidth, startHeight + endHeight));
+	uint8 *out = (uint8*)_engine->_frontVideoBuffer.getBasePtr(startWidth, startHeight);
+	_engine->_frontVideoBuffer.addDirtyRect(Common::Rect(startWidth, startHeight, startWidth + endWidth, startHeight + endHeight));
 
 	if (endWidth < endHeight) { // significant slope
 		SWAP(endWidth, endHeight);
@@ -156,7 +156,7 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 		return;
 	}
 
-	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, r.top);
+	uint8 *pos = (uint8*)_engine->_frontVideoBuffer.getBasePtr(0, r.top);
 
 	for (int32 y = r.top; y <= r.bottom; ++y) {
 		for (int32 x = r.left; x <= r.right; ++x) {
@@ -168,35 +168,37 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 				pos[x] = color + color2;
 			}
 		}
-		pos += _engine->frontVideoBuffer.pitch;
+		pos += _engine->_frontVideoBuffer.pitch;
 	}
-	_engine->frontVideoBuffer.addDirtyRect(r);
+	_engine->_frontVideoBuffer.addDirtyRect(r);
 }
 
 void Interface::drawFilledRect(const Common::Rect &rect, uint8 colorIndex) {
 	if (!rect.isValidRect()) {
 		return;
 	}
-	_engine->frontVideoBuffer.fillRect(Common::Rect(rect.left, rect.top, rect.right + 1, rect.bottom + 1), colorIndex);
+	_engine->_frontVideoBuffer.fillRect(Common::Rect(rect.left, rect.top, rect.right + 1, rect.bottom + 1), colorIndex);
 }
 
-void Interface::setClip(const Common::Rect &rect) {
-	textWindow.left = MAX((int32)0, (int32)rect.left);
-	textWindow.top = MAX((int32)0, (int32)rect.top);
-	textWindow.right = MIN((int32)(_engine->width() - 1), (int32)rect.right);
-	textWindow.bottom = MIN((int32)(_engine->height() - 1), (int32)rect.bottom);
+bool Interface::setClip(const Common::Rect &rect) {
+	if (!_clip.isValidRect()) {
+		return false;
+	}
+	_clip = rect;
+	_clip.clip(_engine->rect());
+	return true;
 }
 
 void Interface::saveClip() {
-	textWindowSave = textWindow;
+	_savedClip = _clip;
 }
 
 void Interface::loadClip() {
-	textWindow = textWindowSave;
+	_clip = _savedClip;
 }
 
 void Interface::resetClip() {
-	textWindow = _engine->rect();
+	_clip = _engine->rect();
 }
 
 } // namespace TwinE

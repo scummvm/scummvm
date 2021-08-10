@@ -45,9 +45,9 @@ Bitmap *ScriptDrawingSurface::GetBitmapSurface() {
 		return _G(dynamicallyCreatedSurfaces)[dynamicSurfaceNumber];
 	else if (linkedBitmapOnly != nullptr)
 		return linkedBitmapOnly;
-	else
-		quit("!DrawingSurface: attempted to use surface after Release was called");
-
+	else if (roomMaskType > kRoomAreaNone)
+		return _GP(thisroom).GetMask(roomMaskType);
+	quit("!DrawingSurface: attempted to use surface after Release was called");
 	return nullptr;
 }
 
@@ -77,7 +77,12 @@ const char *ScriptDrawingSurface::GetType() {
 
 int ScriptDrawingSurface::Serialize(const char *address, char *buffer, int bufsize) {
 	StartSerialize(buffer);
-	SerializeInt(roomBackgroundNumber);
+	// pack mask type in the last byte of a negative integer
+	// note: (-1) is reserved for "unused", for backward compatibility
+	if (roomMaskType > 0)
+		SerializeInt(0xFFFFFF00 | roomMaskType);
+	else
+		SerializeInt(roomBackgroundNumber);
 	SerializeInt(dynamicSpriteNumber);
 	SerializeInt(dynamicSurfaceNumber);
 	SerializeInt(currentColour);
@@ -91,7 +96,12 @@ int ScriptDrawingSurface::Serialize(const char *address, char *buffer, int bufsi
 
 void ScriptDrawingSurface::Unserialize(int index, const char *serializedData, int dataSize) {
 	StartUnserialize(serializedData, dataSize);
-	roomBackgroundNumber = UnserializeInt();
+	int room_ds = UnserializeInt();
+	if (room_ds >= 0)
+		roomBackgroundNumber = room_ds;
+	// negative value may contain a mask type
+	else if ((room_ds & 0xFF) != 0xFF)
+		roomMaskType = (RoomAreaMask)(room_ds & 0xFF);
 	dynamicSpriteNumber = UnserializeInt();
 	dynamicSurfaceNumber = UnserializeInt();
 	currentColour = UnserializeInt();
@@ -105,6 +115,7 @@ void ScriptDrawingSurface::Unserialize(int index, const char *serializedData, in
 
 ScriptDrawingSurface::ScriptDrawingSurface() {
 	roomBackgroundNumber = -1;
+	roomMaskType = kRoomAreaNone;
 	dynamicSpriteNumber = -1;
 	dynamicSurfaceNumber = -1;
 	isLinkedBitmapOnly = false;

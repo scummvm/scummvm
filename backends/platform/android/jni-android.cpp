@@ -84,6 +84,7 @@ jmethodID JNI::_MID_isConnectionLimited = 0;
 jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_showKeyboardControl = 0;
+jmethodID JNI::_MID_showSAFRevokePermsControl = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
@@ -91,6 +92,7 @@ jmethodID JNI::_MID_deinitSurface = 0;
 jmethodID JNI::_MID_createDirectoryWithSAF = 0;
 jmethodID JNI::_MID_createFileWithSAF = 0;
 jmethodID JNI::_MID_closeFileWithSAF = 0;
+jmethodID JNI::_MID_isDirectoryWritableWithSAF = 0;
 
 jmethodID JNI::_MID_EGL10_eglSwapBuffers = 0;
 
@@ -384,6 +386,21 @@ void JNI::showKeyboardControl(bool enable) {
 	}
 }
 
+void JNI::showSAFRevokePermsControl(bool enable) {
+#ifndef BACKEND_ANDROID3D
+	JNIEnv *env = JNI::getEnv();
+
+	env->CallVoidMethod(_jobj, _MID_showSAFRevokePermsControl, enable);
+
+	if (env->ExceptionCheck()) {
+		LOGE("Error trying to show the revoke SAF permissions button");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+#endif
+}
+
 // The following adds assets folder to search set.
 // However searching and retrieving from "assets" on Android this is slow
 // so we also make sure to add the "path" directory, with a higher priority
@@ -558,9 +575,13 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(, deinitSurface, "()V");
+#ifndef BACKEND_ANDROID3D
+	FIND_METHOD(, showSAFRevokePermsControl, "(Z)V");
 	FIND_METHOD(, createDirectoryWithSAF, "(Ljava/lang/String;)Z");
 	FIND_METHOD(, createFileWithSAF, "(Ljava/lang/String;)Ljava/lang/String;");
 	FIND_METHOD(, closeFileWithSAF, "(Ljava/lang/String;)V");
+	FIND_METHOD(, isDirectoryWritableWithSAF, "(Ljava/lang/String;)Z");
+#endif
 
 	_jobj_egl = env->NewGlobalRef(egl);
 	_jobj_egl_display = env->NewGlobalRef(egl_display);
@@ -780,6 +801,7 @@ Common::Array<Common::String> JNI::getAllStorageLocations() {
 }
 
 bool JNI::createDirectoryWithSAF(const Common::String &dirPath) {
+#ifndef BACKEND_ANDROID3D
 	JNIEnv *env = JNI::getEnv();
 	jstring javaDirPath = env->NewStringUTF(dirPath.c_str());
 
@@ -794,10 +816,13 @@ bool JNI::createDirectoryWithSAF(const Common::String &dirPath) {
 	}
 
 	return created;
-
+#else
+	return false;
+#endif
 }
 
 Common::U32String JNI::createFileWithSAF(const Common::String &filePath) {
+#ifndef BACKEND_ANDROID3D
 	JNIEnv *env = JNI::getEnv();
 	jstring javaFilePath = env->NewStringUTF(filePath.c_str());
 
@@ -814,14 +839,16 @@ Common::U32String JNI::createFileWithSAF(const Common::String &filePath) {
 
 	Common::U32String hackyFilenameStr = convertFromJString(env, hackyFilenameJSTR);
 
-	//LOGD("JNI - _MID_createFileWithSAF returned %s", hackyFilenameStr.c_str());
 	env->DeleteLocalRef(hackyFilenameJSTR);
 
 	return hackyFilenameStr;
-
+#else
+	return Common::U32String();
+#endif
 }
 
 void JNI::closeFileWithSAF(const Common::String &hackyFilename) {
+#ifndef BACKEND_ANDROID3D
 	JNIEnv *env = JNI::getEnv();
 	jstring javaHackyFilename = env->NewStringUTF(hackyFilename.c_str());
 
@@ -833,7 +860,29 @@ void JNI::closeFileWithSAF(const Common::String &hackyFilename) {
 		env->ExceptionDescribe();
 		env->ExceptionClear();
 	}
+#endif
+}
 
+bool JNI::isDirectoryWritableWithSAF(const Common::String &dirPath) {
+#ifndef BACKEND_ANDROID3D
+	JNIEnv *env = JNI::getEnv();
+	jstring javaDirPath = env->NewStringUTF(dirPath.c_str());
+
+	bool isWritable = env->CallBooleanMethod(_jobj, _MID_isDirectoryWritableWithSAF, javaDirPath);
+
+	if (env->ExceptionCheck()) {
+		LOGE("JNI - Failed to check if directory is writable SAF enhanced method");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+		isWritable = false;
+	}
+
+	return isWritable;
+#else
+	return false;
+#endif
 }
 
 #endif
+

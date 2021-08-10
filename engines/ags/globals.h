@@ -1144,7 +1144,7 @@ public:
 	 */
 
 	ScreenOverlay *_screenover;
-	int _is_complete_overlay = 0, _is_text_overlay = 0;
+	int _is_complete_overlay = 0;
 	int _numscreenover = 0;
 
 	/**@}*/

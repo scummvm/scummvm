@@ -37,7 +37,7 @@ namespace Sword25 {
 
 Bitmap::Bitmap(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle) :
 	RenderObject(parentPtr, type, handle),
-	_modulationColor(0xffffffff),
+	_modulationColor(BS_ARGBMASK),
 	_scaleFactorX(1.0f),
 	_scaleFactorY(1.0f),
 	_flipH(false),
@@ -64,7 +64,7 @@ void Bitmap::setAlpha(int alpha) {
 		return;
 	}
 
-	uint newModulationColor = (_modulationColor & 0x00ffffff) | alpha << 24;
+	uint newModulationColor = (_modulationColor & BS_RGBMASK) | alpha << BS_ASHIFT;
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();
@@ -77,7 +77,7 @@ void Bitmap::setModulationColor(uint modulationColor) {
 		return;
 	}
 
-	uint newModulationColor = (modulationColor & 0x00ffffff) | (_modulationColor & 0xff000000);
+	uint newModulationColor = (modulationColor & BS_RGBMASK) | (_modulationColor & BS_AMASK);
 	if (newModulationColor != _modulationColor) {
 		_modulationColor = newModulationColor;
 		forceRefresh();

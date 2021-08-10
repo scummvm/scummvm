@@ -31,6 +31,7 @@
 namespace AGS3 {
 
 ScriptDrawingSurface *Room_GetDrawingSurfaceForBackground(int backgroundNumber);
+ScriptDrawingSurface *Room_GetDrawingSurfaceForMask(RoomAreaMask mask);
 int Room_GetObjectCount();
 int Room_GetWidth();
 int Room_GetHeight();
@@ -43,6 +44,7 @@ int Room_GetMusicOnLoad();
 const char *Room_GetTextProperty(const char *property);
 int Room_GetProperty(const char *property);
 const char *Room_GetMessages(int index);
+bool Room_Exists(int room);
 RuntimeScriptValue Sc_Room_GetProperty(const RuntimeScriptValue *params, int32_t param_count);
 
 //=============================================================================

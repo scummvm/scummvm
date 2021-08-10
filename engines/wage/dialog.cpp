@@ -150,7 +150,7 @@ int Dialog::run() {
 	Common::Rect r(_bbox);
 
 	_tempSurface.copyRectToSurface(_gui->_screen.getBasePtr(_bbox.left, _bbox.top), _gui->_screen.pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
-	_gui->_wm->pushArrowCursor();
+	_gui->_wm->pushCursor(kMacCursorArrow, nullptr);
 
 	while (!shouldQuit) {
 		Common::Event event;

@@ -678,7 +678,7 @@ Common::String Cast::getVideoPath(int castId) {
 		Common::String filename = _castsInfo[castId]->fileName;
 		Common::String directory = _castsInfo[castId]->directory;
 
-		res = directory + "\\" + filename;
+		res = directory + g_director->_dirSeparator + filename;
 	} else {
 		warning("STUB: Cast::getVideoPath(%d): unsupported non-zero MooV block", castId);
 	}
@@ -1088,17 +1088,28 @@ void Cast::loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id) {
 
 void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {
 	Common::DumpFile out;
-	Common::String buf = dumpScriptName(_macName.c_str(), type, id, "txt");
+	Common::String buf = dumpScriptName(encodePathForDump(_macName).c_str(), type, id, "txt");
 
 	if (!out.open(buf, true)) {
 		warning("Cast::dumpScript(): Can not open dump file %s", buf.c_str());
 		return;
 	}
 
-	out.write(script, strlen(script));
+	uint len = strlen(script);
+	char *scriptCopy = (char *)malloc(len + 1);
+	Common::strlcpy(scriptCopy, script, len + 1);
+
+	for (uint i = 0; i < len; i++)
+		if (scriptCopy[i] == '\r' && scriptCopy[i + 1] != '\n') // It is safe to check [i + 1], as '\0' != '\n'
+			scriptCopy[i] = '\n';
+
+	out.write(scriptCopy, len);
 
 	out.flush();
 	out.close();
+
+	free(scriptCopy);
+
 }
 
 void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
@@ -1110,7 +1121,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	debugCN(4, kDebugLoading, "Cast::loadCastInfo(): castId: %s str(%d): '", numToCastNum(id), castInfo.strings.size());
 
 	for (uint i = 0; i < castInfo.strings.size(); i++) {
-		debugCN(4, kDebugLoading, "%s'", Common::toPrintable(castInfo.strings[i].readString()).c_str());
+		debugCN(4, kDebugLoading, "%s'", utf8ToPrintable(castInfo.strings[i].readString()).c_str());
 		if (i != castInfo.strings.size() - 1)
 			debugCN(4, kDebugLoading, ", '");
 	}

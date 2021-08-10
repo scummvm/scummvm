@@ -60,10 +60,10 @@ private:
 	HolomapSort _holomapSort[512];
 
 	struct HolomapProjectedPos {
-		int16 x = 0;
-		int16 y = 0;
-		int16 unk1 = 0;
-		int16 unk2 = 0;
+		int16 x1 = 0;
+		int16 y1 = 0;
+		int16 x2 = 0;
+		int16 y2 = 0;
 	};
 	HolomapProjectedPos _projectedSurfacePositions[561];
 	int _projectedSurfaceIndex = 0;
@@ -79,12 +79,15 @@ private:
 
 	void renderLocations(int xRot, int yRot, int zRot, bool lower);
 
-	void renderHolomapModel(const BodyData &bodyData, int32 x, int32 y, int32 zPos);
-
+	/**
+	 * Renders a holomap path with single path points appearing slowly one after another
+	 */
+	void renderHolomapPointModel(const IVec3 &angle, int32 x, int32 y);
 	void prepareHolomapSurface();
 	void prepareHolomapProjectedPositions();
 	void prepareHolomapPolygons();
 	void renderHolomapSurfacePolygons();
+	void renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData);
 
 public:
 	Holomap(TwinEEngine *engine);

@@ -33,7 +33,11 @@ public:
 
 namespace RearWindowXObj {
 
-void initialize(int type);
+extern const char *xlibName;
+extern const char *fileNames[];
+
+void open(int type);
+void close(int type);
 
 void m_new(int nargs);
 void m_getMemoryNeeded(int nargs);

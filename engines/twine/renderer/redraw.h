@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "twine/resources/resources.h"
 
 namespace TwinE {
 
@@ -89,12 +90,22 @@ private:
 	Common::Rect _nextRedrawList[300];
 
 	int16 _overlayRotation = 0;
+
+	/** Save last actor that bubble dialog icon */
+	int32 _bubbleActor = -1;
+	int32 _bubbleSpriteIndex = SPRITEHQR_DIAG_BUBBLE_LEFT;
+
+	IVec3 _projPosScreen;
+
 	/**
 	 * Add a certain region to the current redraw list array
 	 * @param redrawArea redraw the region
 	 */
 	void addRedrawCurrentArea(const Common::Rect &redrawArea);
-	/** Move next regions to the current redraw list */
+	/**
+	 * Move next regions to the current redraw list,
+	 * setup the redraw areas for next display
+	 */
 	void moveNextAreas();
 	void updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2);
 
@@ -103,30 +114,26 @@ private:
 	void processDrawListActorSprites(const DrawListStruct& drawCmd, bool bgRedraw);
 	void processDrawListExtras(const DrawListStruct& drawCmd);
 
-	int32 fillActorDrawingList(bool bgRedraw);
-	int32 fillExtraDrawingList(int32 drawListPos);
-	void processDrawList(int32 drawListPos, bool bgRedraw);
+	int32 fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw);
+	int32 fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos);
+	void processDrawList(DrawListStruct *drawList, int32 drawListPos, bool bgRedraw);
 	void renderOverlays();
 
 public:
 	Redraw(TwinEEngine *engine) : _engine(engine) {}
 
-	/** Auxiliar object render position on screen */
-	Common::Rect renderRect { 0, 0, 0, 0 };
-
-	bool inSceneryView = false;
+	bool _inSceneryView = false;
 
 	/** Request background redraw */
-	bool reqBgRedraw = false;
+	bool _reqBgRedraw = false;
 
 	/** Current number of redraw regions in the screen */
-	int32 currNumOfRedrawBox = 0; // fullRedrawVar8
+	int32 _currNumOfRedrawBox = 0; // fullRedrawVar8
 	/** Number of redraw regions in the screen */
-	int32 numOfRedrawBox = 0;
+	int32 _numOfRedrawBox = 0;
 
-	/** Save last actor that bubble dialog icon */
-	int32 bubbleActor = -1;
-	int32 bubbleSpriteIndex = 0;
+	int _sceneryViewX = 0;
+	int _sceneryViewY = 0;
 
 	OverlayListStruct overlayList[OVERLAY_MAX_ENTRIES];
 
@@ -165,18 +172,12 @@ public:
 	 * @param list drawing list variable which contains information of the drawing objects
 	 * @param listSize number of drawing objects in the list
 	 */
-	void sortDrawingList(DrawListStruct *list, int32 listSize);
-
-	int _sceneryViewX = 0;
-	int _sceneryViewY = 0;
+	void sortDrawingList(DrawListStruct *list, int32 listSize) const;
 
 	/**
 	 * Zooms the area around the scenery view focus positions
 	 */
 	void zoomScreenScale();
-
-	/** Draw list array to grab the necessary */
-	DrawListStruct drawList[150];
 };
 
 } // namespace TwinE

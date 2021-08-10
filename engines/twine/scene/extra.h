@@ -92,11 +92,11 @@ private:
 	void processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int32 z);
 	int32 findExtraKey() const;
 	int32 addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx);
-	void drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size);
+	void drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size, Common::Rect &renderRect);
 
 public:
 	Extra(TwinEEngine *engine);
-	ExtraListStruct extraList[EXTRA_MAX_ENTRIES];
+	ExtraListStruct _extraList[EXTRA_MAX_ENTRIES];
 
 	int32 addExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActor, int32 maxSpeed, int32 strengthOfHit);
 
@@ -108,16 +108,25 @@ public:
 	 */
 	int32 addExtraExplode(int32 x, int32 y, int32 z);
 
+	inline int32 addExtraExplode(const IVec3 &pos) {
+		return addExtraExplode(pos.x, pos.y, pos.z);
+	}
+
 	/** Reset all used extras */
 	void resetExtras();
 
 	int32 addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type);
 	int32 addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 type, int32 bonusAmount);
+
+	inline int32 addExtraBonus(const IVec3 &pos, int32 xAngle, int32 yAngle, int32 type, int32 bonusAmount) {
+		return addExtraBonus(pos.x, pos.y, pos.z, xAngle, yAngle, type, bonusAmount);
+	}
+
 	int32 addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle, int32 strengthOfHit);
 	int32 addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActorIdx, int32 finalAngle, int32 strengthOfHit);
 	void addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle);
 
-	void drawExtraSpecial(int32 extraIdx, int32 x, int32 y);
+	void drawExtraSpecial(int32 extraIdx, int32 x, int32 y, Common::Rect &renderRect);
 
 	int getBonusSprite(BonusParameter bonusParameter) const;
 

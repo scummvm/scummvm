@@ -28,6 +28,7 @@ namespace Ultima {
 namespace Shared {
 
 #define ERROR error("Could not open file - %s", name.c_str())
+#define PATH_ERROR error("Could not open file - %s", name.toString().c_str())
 
 File::File(const Common::String &name) : Common::File(), _filesize(-1) {
 	close();
@@ -36,19 +37,19 @@ File::File(const Common::String &name) : Common::File(), _filesize(-1) {
 		ERROR;
 }
 
-bool File::open(const Common::String &name) {
+bool File::open(const Common::Path &name) {
 	close();
 
 	if (!Common::File::open(name))
-		ERROR;
+		PATH_ERROR;
 	return true;
 }
 
-bool File::open(const Common::String &name, Common::Archive &archive) {
+bool File::open(const Common::Path &name, Common::Archive &archive) {
 	close();
 
 	if (!Common::File::open(name, archive))
-		ERROR;
+		PATH_ERROR;
 	return true;
 }
 

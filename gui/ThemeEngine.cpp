@@ -527,7 +527,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 #ifdef USE_TRANSLATION
 		Common::String cl = TransMan.getCurrentLanguage();
 #else
-		Common::String cl("C");
+		Common::String cl("en");
 #endif
 		if (!cl.matchString(language, true))
 			return true;	// Skip
@@ -562,7 +562,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 			if (!_texts[textId]->_fontPtr) {
 				error("Couldn't load font '%s'/'%s'", file.c_str(), scalableFile.c_str());
 #ifdef USE_TRANSLATION
-				TransMan.setLanguage("C");
+				TransMan.setLanguage("en");
 				Common::TextToSpeechManager *ttsMan;
 				if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr)
 					ttsMan->setLanguage("en");
@@ -578,7 +578,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 			// However, still returns false here, probably to avoid ugly / garbage glyphs side-effects
 			// FIXME If we return false anyway why would we attempt the fall-back in the first place?
 #ifdef USE_TRANSLATION
-			TransMan.setLanguage("C");
+			TransMan.setLanguage("en");
 			Common::TextToSpeechManager *ttsMan;
 			if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr)
 				ttsMan->setLanguage("en");

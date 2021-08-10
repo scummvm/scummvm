@@ -170,7 +170,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_perFrameHook = Datum();
 
 	_windowList.type = ARRAY;
-	_windowList.u.farr = new DatumArray;
+	_windowList.u.farr = new FArray;
 
 	_compiler = new LingoCompiler;
 
@@ -204,6 +204,7 @@ void Lingo::reloadBuiltIns() {
 	initTheEntities();
 	initMethods();
 	initXLibs();
+	reloadOpenXLibs();
 }
 
 LingoArchive::~LingoArchive() {
@@ -234,21 +235,24 @@ Common::String LingoArchive::getName(uint16 id) {
 }
 
 Symbol Lingo::getHandler(const Common::String &name) {
+	Symbol sym;
 	if (!_eventHandlerTypeIds.contains(name)) {
 		// local functions
 		if (_currentScriptContext && _currentScriptContext->_functionHandlers.contains(name))
 			return _currentScriptContext->_functionHandlers[name];
 
-		Symbol sym = g_director->getCurrentMovie()->getHandler(name);
+		sym = g_director->getCurrentMovie()->getHandler(name);
 		if (sym.type != VOIDSYM)
 			return sym;
 	}
-	return Symbol();
+	sym.type = VOIDSYM;
+	sym.name = new Common::String(name);
+	return sym;
 }
 
 void LingoArchive::addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName) {
 	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d in '%s%s'\n"
-			"***********\n%s\n\n***********", scriptType2str(type), type, id, g_director->getCurrentPath().c_str(), cast->getMacName().c_str(), code.encode().c_str());
+			"***********\n%s\n\n***********", scriptType2str(type), type, id, utf8ToPrintable(g_director->getCurrentPath()).c_str(), utf8ToPrintable(cast->getMacName()).c_str(), code.encode().c_str());
 
 	if (getScriptContext(type, id)) {
 		// We can't undefine context data because it could be used in e.g. symbols.
@@ -291,7 +295,7 @@ void Lingo::printCallStack(uint pc) {
 		CFrame *frame = callstack[i];
 		uint framePc = pc;
 		if (i < (int)callstack.size() - 1)
-			framePc = callstack[i + 1]->retpc;
+			framePc = callstack[i + 1]->retPC;
 
 		if (frame->sp.type != VOIDSYM) {
 			debugC(2, kDebugLingoExec, "#%d %s:%d", i + 1,
@@ -437,10 +441,10 @@ void Lingo::execute() {
 		}
 	}
 
-	if (_abort) {
+	if (_abort || _vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
 		// Clean up call stack
 		while (_vm->getCurrentWindow()->_callstack.size()) {
-			popContext();
+			popContext(true);
 		}
 	}
 	_abort = false;
@@ -631,6 +635,15 @@ Datum::Datum(const CastMemberID &val) {
 	type = CASTREF;
 	refCount = new int;
 	*refCount = 1;
+}
+
+Datum::Datum(const Common::Rect &rect) {
+	type = RECT;
+	u.farr = new FArray;
+	u.farr->arr.push_back(Datum(rect.left));
+	u.farr->arr.push_back(Datum(rect.top));
+	u.farr->arr.push_back(Datum(rect.right));
+	u.farr->arr.push_back(Datum(rect.bottom));
 }
 
 void Datum::reset() {
@@ -841,16 +854,13 @@ Common::String Datum::asString(bool printonly) const {
 			s += Common::String::format("chunk: %s %d to %d of %s (%s)", chunkType.c_str(), u.cref->startChunk, u.cref->endChunk, src.c_str(), chunk.c_str());
 		}
 		break;
-	case POINT:
-		s = "point:";
-		// fallthrough
 	case ARRAY:
 		s += "[";
 
-		for (uint i = 0; i < u.farr->size(); i++) {
+		for (uint i = 0; i < u.farr->arr.size(); i++) {
 			if (i > 0)
 				s += ", ";
-			Datum d = u.farr->operator[](i);
+			Datum d = u.farr->arr[i];
 			s += d.asString(printonly);
 		}
 
@@ -858,17 +868,37 @@ Common::String Datum::asString(bool printonly) const {
 		break;
 	case PARRAY:
 		s = "[";
-		if (u.parr->size() == 0)
+		if (u.parr->arr.size() == 0)
 			s += ":";
-		for (uint i = 0; i < u.parr->size(); i++) {
+		for (uint i = 0; i < u.parr->arr.size(); i++) {
 			if (i > 0)
 				s += ", ";
-			Datum p = u.parr->operator[](i).p;
-			Datum v = u.parr->operator[](i).v;
+			Datum p = u.parr->arr[i].p;
+			Datum v = u.parr->arr[i].v;
 			s += Common::String::format("%s:%s", p.asString(printonly).c_str(), v.asString(printonly).c_str());
 		}
 
 		s += "]";
+		break;
+	case POINT:
+		s = "point(";
+		for (uint i = 0; i < u.farr->arr.size(); i++) {
+			if (i > 0)
+				s += ", ";
+			s += Common::String::format("%d", u.farr->arr[i].asInt());
+		}
+		s += ")";
+
+		break;
+	case RECT:
+		s = "rect(";
+		for (uint i = 0; i < u.farr->arr.size(); i++) {
+			if (i > 0)
+				s += ", ";
+			s += Common::String::format("%d", u.farr->arr[i].asInt());
+		}
+
+		s += ")";
 		break;
 	default:
 		warning("Incorrect operation asString() for type: %s", type2str());
@@ -882,6 +912,15 @@ CastMemberID Datum::asMemberID() const {
 		return *u.cast;
 
 	return g_lingo->resolveCastMember(*this, 0);
+}
+
+Common::Point Datum::asPoint() const {
+	if (type != POINT) {
+		warning("Incorrect operation asPoint() for type: %s", type2str());
+		return Common::Point(0, 0);
+	}
+
+	return Common::Point(u.farr->arr[0].asInt(), u.farr->arr[1].asInt());
 }
 
 bool Datum::isRef() const {
