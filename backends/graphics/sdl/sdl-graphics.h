@@ -206,16 +206,16 @@ protected:
 	/**
 	 * Returns the scaling mode based on the display DPI
 	 */
-	void getDpiScalingFactor(uint *scale) const {
+	void getDpiScalingFactor(float *scale) const {
 		float dpi, defaultDpi, ratio;
 
 		getDisplayDpiFromSdl(&dpi, &defaultDpi);
 		debug(4, "dpi: %g default: %g", dpi, defaultDpi);
 		ratio = dpi / defaultDpi;
 		if (ratio >= 1.5f) {
-			*scale = 2;
+			*scale = 2.f;
 		} else {
-			*scale = 1;
+			*scale = 1.f;
 		}
 	}
 
