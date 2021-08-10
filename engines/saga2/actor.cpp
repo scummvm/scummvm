@@ -1231,13 +1231,16 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	currentRecoveryPoints = in->readUint16LE();
 
 	_leaderID = in->readUint16LE();
+	leader = nullptr;
 
 	_followersID = in->readSint16LE();
+	followers = nullptr;
 
 	for (int i = 0; i < ARRAYSIZE(armorObjects); ++i)
 		armorObjects[i] = in->readUint16LE();
 
 	_currentTargetID = in->readUint16LE();
+	currentTarget = nullptr;
 
 	for (int i = 0; i < ARRAYSIZE(scriptVar); ++i)
 		scriptVar[i] = in->readSint16LE();
