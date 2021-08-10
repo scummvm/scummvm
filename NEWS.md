@@ -144,6 +144,12 @@ For a more comprehensive changelog of the latest experimental code, see:
      numbers, e.g. for Edna's phone number. (Why are they selling a cracked
      version anyway?!)
    - Added support for Low quality music in Macintosh version of Loom.
+   - Improved Digital iMUSE accuracy for Full Throttle and The Curse of Monkey Island. These improvements also fix
+     several audio related bugs for both games.
+   - Fixed a very old regression in the walk code for Full Throttle which softlocked the game.
+   - Improved the accuracy of the walk code for The Dig and The Curse of Monkey Island. 
+   - Fixed a bug in The Curse of Monkey Island which prevented, during the cannon minigame in Part 1, the destruction
+     of one of the three destroyable turrets in the fort. 
 
  Tinsel:
    - Enabled the Return to Launcher feature.
