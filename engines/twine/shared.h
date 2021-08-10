@@ -64,13 +64,13 @@
 // Hit, reject
 #define GAMEFLAG_VIDEO_BAFFE5 215
 // Twinsun explosion (on top of the well)
-#define GAMEFLAG_VIDEO_EXPLOD 216
+#define GAMEFLAG_VIDEO_EXPLODE 216
 // Clear water lake
 #define GAMEFLAG_VIDEO_GLASS2 217
 // Twinsen in Well of Sendell
 #define GAMEFLAG_VIDEO_SENDEL 218
 // Twinsun explosion
-#define GAMEFLAG_VIDEO_EXPLOD2 219
+#define GAMEFLAG_VIDEO_EXPLODE2 219
 
 namespace TwinE {
 
