@@ -100,9 +100,6 @@ SaveStateDescriptor DragonsMetaEngine::querySaveMetaInfos(const char *target, in
 		delete in;
 		if (error == Dragons::kRSHENoError) {
 			SaveStateDescriptor desc(slot, header.description);
-			// Slot 0 is used for the "Continue" save
-			desc.setDeletableFlag(slot != 0);
-			desc.setWriteProtectedFlag(slot == 0);
 			desc.setThumbnail(header.thumbnail);
 			desc.setSaveDate(header.saveDate & 0xFFFF, (header.saveDate >> 16) & 0xFF, (header.saveDate >> 24) & 0xFF);
 			desc.setSaveTime((header.saveTime >> 16) & 0xFF, (header.saveTime >> 8) & 0xFF);
