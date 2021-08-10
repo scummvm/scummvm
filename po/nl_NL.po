@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-09 21:42+0000\n"
-"PO-Revision-Date: 2021-08-10 18:25+0000\n"
+"PO-Revision-Date: 2021-08-10 20:03+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -7440,7 +7440,7 @@ msgstr "Volledige titel van het spel"
 
 #: engines/twine/metaengine.cpp:144
 msgid "Use the USA version"
-msgstr ""
+msgstr "Gebruik de VS versie"
 
 #: engines/twine/metaengine.cpp:145
 msgid "Enable the USA specific version flags"
@@ -7459,39 +7459,39 @@ msgstr "Volledige titel van het spel"
 
 #: engines/twine/metaengine.cpp:215
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Debug Volgende Kamer"
 
 #: engines/twine/metaengine.cpp:220
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Debug Vorige Kamer"
 
 #: engines/twine/metaengine.cpp:225
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "Debug Toepassen Plafond Raster"
 
 #: engines/twine/metaengine.cpp:230
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "Debug Verhoog Plafond Raster Index"
 
 #: engines/twine/metaengine.cpp:235
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "Debug Verlaag Plafond Raster Index"
 
 #: engines/twine/metaengine.cpp:240
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "Debug Raster Camera Omhoog"
 
 #: engines/twine/metaengine.cpp:245
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "Debug Raster Camera Omlaag"
 
 #: engines/twine/metaengine.cpp:250
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "Debug Raster Camera Links"
 
 #: engines/twine/metaengine.cpp:256
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "Debug Raster Camera Rechts"
 
 #: engines/twine/metaengine.cpp:261
 #, fuzzy
@@ -7709,6 +7709,8 @@ msgstr ""
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
+"Camera volgt de bewegingen van de speler in plaats van springen naar "
+"voorgedefenieerde posities."
 
 #: engines/ultima/ultima8/meta_engine.cpp:203
 msgid "Ultima VIII"
