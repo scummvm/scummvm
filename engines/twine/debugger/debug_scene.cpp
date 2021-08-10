@@ -42,9 +42,7 @@ void DebugScene::drawClip(const Common::Rect &rect) {
 }
 
 void DebugScene::projectBoundingBoxPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjected) {
-	_engine->_renderer->projectPositionOnScreen(*pPoint3d);
-
-	*pPoint3dProjected = _engine->_renderer->_projPos;
+	*pPoint3dProjected = _engine->_renderer->projectPositionOnScreen(*pPoint3d);
 }
 
 bool DebugScene::checkZoneType(ZoneType type) const {

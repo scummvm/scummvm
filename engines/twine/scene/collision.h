@@ -95,7 +95,7 @@ public:
 	int32 checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx);
 
 	/** Check extra collision with bricks */
-	bool checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, int32 oldX, int32 oldY, int32 oldZ);
+	bool checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, const IVec3 &oldPos);
 
 	/**
 	 * Check extra collision with another extra

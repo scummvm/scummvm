@@ -682,8 +682,6 @@ void Grid::redrawGrid() {
 	_camera.y = _newCamera.y * BRICK_HEIGHT;
 	_camera.z = _newCamera.z * BRICK_SIZE;
 
-	_engine->_renderer->projectPositionOnScreen(-_camera.x, -_camera.y, -_camera.z);
-
 	memset(_brickInfoBuffer, 0, _brickInfoBufferSize);
 
 	if (!_engine->_scene->_enableGridTileRendering) {

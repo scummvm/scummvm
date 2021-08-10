@@ -227,11 +227,11 @@ public:
 
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom);
 
-	inline int32 projectPositionOnScreen(const IVec3& pos) {
+	inline IVec3 &projectPositionOnScreen(const IVec3& pos) {
 		return projectPositionOnScreen(pos.x, pos.y, pos.z);
 	}
 
-	int32 projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
+	IVec3 &projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
 
 	inline void projectXYPositionOnScreen(const IVec3& pos) {
 		projectXYPositionOnScreen(pos.x, pos.y, pos.z);

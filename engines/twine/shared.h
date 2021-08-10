@@ -120,6 +120,10 @@ inline constexpr IVec3 operator-(const IVec3 &lhs, const IVec3 &rhs) {
 	return IVec3{lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z};
 }
 
+inline constexpr IVec3 operator-(const IVec3 &v) {
+	return IVec3{-v.x, -v.y, -v.z};
+}
+
 /**
  * @brief Axis aligned bounding box
  */

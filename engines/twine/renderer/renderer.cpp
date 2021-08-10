@@ -86,12 +86,12 @@ void Renderer::projectXYPositionOnScreen(int32 x, int32 y, int32 z) {
 	_projPos.y = 0;
 }
 
-int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
+IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	if (_isUsingOrthoProjection) {
 		_projPos.x = ((cX - cZ) * 24) / BRICK_SIZE + _orthoProjPos.x;
 		_projPos.y = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + _orthoProjPos.y;
 		_projPos.z = cZ - cY - cX;
-		return 1;
+		return _projPos;
 	}
 
 	cX -= _baseRotPos.x;
@@ -102,7 +102,7 @@ int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 		_projPos.x = 0;
 		_projPos.y = 0;
 		_projPos.z = 0;
-		return 0;
+		return _projPos;
 	}
 
 	int32 posZ = cZ + _cameraDepthOffset;
@@ -113,7 +113,7 @@ int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	_projPos.x = (cX * _cameraScaleY) / posZ + _orthoProjPos.x;
 	_projPos.y = (-cY * _cameraScaleZ) / posZ + _orthoProjPos.y;
 	_projPos.z = posZ;
-	return -1;
+	return _projPos;
 }
 
 void Renderer::setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleY, int32 scaleZ) {

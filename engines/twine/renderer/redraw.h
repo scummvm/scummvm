@@ -56,13 +56,17 @@ struct OverlayListStruct {
 };
 
 struct DrawListStruct {
+	// DrawActorSprites, DrawShadows, DrawExtras
 	int16 posValue = 0; // sorting value
 	uint32 type = 0;
 	uint16 actorIdx = 0;
+
+	// DrawShadows
 	uint16 x = 0;
 	uint16 y = 0;
 	uint16 z = 0;
 	uint16 offset = 0;
+
 	uint16 field_C = 0;
 	uint16 field_E = 0;
 	uint16 field_10 = 0;

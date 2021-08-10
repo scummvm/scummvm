@@ -662,8 +662,8 @@ void Extra::processExtras() {
 				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->pos(), OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
-					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_camera);
-					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
+					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_camera);
+					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, projPos.x, projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KEY, 10, 30, 0, OverlayPosType::koNormal, 2);
@@ -695,8 +695,8 @@ void Extra::processExtras() {
 				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->_sceneHero->pos(), OWN_ACTOR_SCENE_INDEX);
 
 				if (extraKey->info1 > 1) {
-					_engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_camera);
-					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, _engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
+					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extraKey->pos - _engine->_grid->_camera);
+					_engine->_redraw->addOverlay(OverlayType::koNumber, extraKey->info1, projPos.x, projPos.y, COLOR_BLACK, OverlayPosType::koNormal, 2);
 				}
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KEY, 10, 30, 0, OverlayPosType::koNormal, 2);
@@ -748,7 +748,7 @@ void Extra::processExtras() {
 		if (extra->type & ExtraType::UNK3) {
 			bool process = false;
 
-			if (_engine->_collision->checkExtraCollisionWithBricks(currentExtraX, currentExtraY, currentExtraZ, extra->pos.x, extra->pos.y, extra->pos.z)) {
+			if (_engine->_collision->checkExtraCollisionWithBricks(currentExtraX, currentExtraY, currentExtraZ, extra->pos)) {
 				// if not touch the ground
 				if (!(extra->type & ExtraType::WAIT_NO_COL)) {
 					process = true;
@@ -815,7 +815,7 @@ void Extra::processExtras() {
 		if (extra->type & ExtraType::STOP_COL) {
 			bool process = false;
 
-			if (_engine->_collision->checkExtraCollisionWithBricks(currentExtraX, currentExtraY, currentExtraZ, extra->pos.x, extra->pos.y, extra->pos.z)) {
+			if (_engine->_collision->checkExtraCollisionWithBricks(currentExtraX, currentExtraY, currentExtraZ, extra->pos)) {
 				// if not touch the ground
 				if (!(extra->type & ExtraType::WAIT_NO_COL)) {
 					process = true;
@@ -840,10 +840,11 @@ void Extra::processExtras() {
 			if (_engine->_collision->checkExtraCollisionWithActors(extra, -1) == 0) {
 				_engine->_sound->playSample(Samples::ItemFound, 1, extra->pos);
 
+				const IVec3 &projPos = _engine->_renderer->_projPos;
 				if (extra->info1 > 1 && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 					_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_camera);
 					const int16 fontColor = COLOR_158;
-					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, _engine->_renderer->_projPos.x, _engine->_renderer->_projPos.y, fontColor, OverlayPosType::koNormal, 2);
+					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, projPos.x, projPos.y, fontColor, OverlayPosType::koNormal, 2);
 				}
 
 				_engine->_redraw->addOverlay(OverlayType::koSprite, extra->info0, 10, 30, 0, OverlayPosType::koNormal, 2);

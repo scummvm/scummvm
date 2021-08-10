@@ -331,13 +331,13 @@ void GameState::processFoundItem(InventoryItems item) {
 
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 
-	_engine->_renderer->projectPositionOnScreen(bodyX, bodyY, bodyZ);
-	_engine->_renderer->_projPos.y -= 150;
+	IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(bodyX, bodyY, bodyZ);
+	projPos.y -= 150;
 
-	const int32 boxTopLeftX = _engine->_renderer->_projPos.x - 65;
-	const int32 boxTopLeftY = _engine->_renderer->_projPos.y - 65;
-	const int32 boxBottomRightX = _engine->_renderer->_projPos.x + 65;
-	const int32 boxBottomRightY = _engine->_renderer->_projPos.y + 65;
+	const int32 boxTopLeftX = projPos.x - 65;
+	const int32 boxTopLeftY = projPos.y - 65;
+	const int32 boxBottomRightX = projPos.x + 65;
+	const int32 boxBottomRightY = projPos.y + 65;
 	const Common::Rect boxRect(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
 	_engine->_sound->playSample(Samples::BigItemFound);
 

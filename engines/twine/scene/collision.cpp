@@ -467,20 +467,20 @@ int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 act
 	return -1;
 }
 
-bool Collision::checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, int32 oldX, int32 oldY, int32 oldZ) {
-	if (_engine->_grid->getBrickShape(oldX, oldY, oldZ) != ShapeType::kNone) {
+bool Collision::checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, const IVec3 &oldPos) {
+	if (_engine->_grid->getBrickShape(oldPos) != ShapeType::kNone) {
 		return true;
 	}
 
-	const int32 averageX = ABS(x + oldX) / 2;
-	const int32 averageY = ABS(y + oldY) / 2;
-	const int32 averageZ = ABS(z + oldZ) / 2;
+	const int32 averageX = ABS(x + oldPos.x) / 2;
+	const int32 averageY = ABS(y + oldPos.y) / 2;
+	const int32 averageZ = ABS(z + oldPos.z) / 2;
 
 	if (_engine->_grid->getBrickShape(averageX, averageY, averageZ) != ShapeType::kNone) {
 		return true;
 	}
 
-	if (_engine->_grid->getBrickShape(ABS(oldX + averageX) / 2, ABS(oldY + averageY) / 2, ABS(oldZ + averageZ) / 2) != ShapeType::kNone) {
+	if (_engine->_grid->getBrickShape(ABS(oldPos.x + averageX) / 2, ABS(oldPos.y + averageY) / 2, ABS(oldPos.z + averageZ) / 2) != ShapeType::kNone) {
 		return true;
 	}
 
