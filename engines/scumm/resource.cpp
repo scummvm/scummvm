@@ -1840,6 +1840,16 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		lang[0] = 'E';
 		lang[1] = 'N';
 		lang[2] = 'G';
+
+		// The Macintosh resource is 4 bytes shorter, which affects
+		// the script offset as well. Otherwise, both Mac versions
+		// that I have are identical to the DOS CD version in this
+		// particular case.
+
+		if (_game.platform == Common::kPlatformMacintosh) {
+			expectedSize -= 4;
+			scriptOffset -= 4;
+		}
 		break;
 	case Common::IT_ITA:
 		expectedSize = 83211;
