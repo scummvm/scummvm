@@ -126,6 +126,7 @@ bool ScummEngine::canSaveGameStateCurrently() {
 	if (_game.heversion >= 62)
 		return false;
 
+#ifdef ENABLE_SCUMM_7_8
 	// COMI always disables saving/loading (to tell the truth:
 	// the main menu) via its scripts, thus we need to make an
 	// exception here. This the same forced overwriting of the
@@ -133,6 +134,7 @@ bool ScummEngine::canSaveGameStateCurrently() {
 	// Also, disable saving when a SAN video is playing.
 	if (_game.id == GID_CMI)
 		return !((ScummEngine_v7 *)this)->isSmushActive();
+#endif
 
 	// SCUMM v4+ doesn't allow saving in room 0 or if
 	// VAR(VAR_MAINMENU_KEY) to set to zero.
