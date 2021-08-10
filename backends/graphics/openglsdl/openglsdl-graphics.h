@@ -93,7 +93,6 @@ private:
 	bool _gotResize;
 
 	bool _wantsFullScreen;
-	bool _windowIsMaximized;
 	uint _ignoreResizeEvents;
 
 	struct VideoMode {
