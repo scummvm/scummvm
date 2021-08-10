@@ -33,7 +33,7 @@ bool EntityData::loadBody(Common::SeekableReadStream &stream) {
 	body.bodyIndex = stream.readUint16LE();
 	body.actorBoundingBox.hasBoundingBox = stream.readByte();
 	if (body.actorBoundingBox.hasBoundingBox) {
-		if (stream.readByte() == ActionType::ACTION_ZV) {
+		if ((ActionType)stream.readByte() == ActionType::ACTION_ZV) {
 			body.actorBoundingBox.bbox.mins.x = stream.readSint16LE();
 			body.actorBoundingBox.bbox.mins.y = stream.readSint16LE();
 			body.actorBoundingBox.bbox.mins.z = stream.readSint16LE();
@@ -56,7 +56,7 @@ bool EntityData::loadAnim(Common::SeekableReadStream &stream) {
 	const uint8 numActions = stream.readByte();
 	for (uint8 i = 0U; i < numActions; ++i) {
 		EntityAnim::Action action;
-		action.type = stream.readByte();
+		action.type = (ActionType)stream.readByte();
 		switch (action.type) {
 		case ActionType::ACTION_HITTING:
 			action.animFrame = stream.readByte();

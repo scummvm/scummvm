@@ -133,7 +133,7 @@ struct ActorBoundingBox {
 	bool hasBoundingBox = false;
 };
 
-enum ActionType {
+enum class ActionType : uint8 {
 	ACTION_NOP = 0,
 	ACTION_BODY = 1,
 	ACTION_BODP = 2,
