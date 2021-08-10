@@ -461,9 +461,9 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 	_engine->_interface->setClip(renderRect);
 
 	if (_engine->_interface->_clip.isValidRect()) {
-		const int32 tmpX = (drawCmd.x + BRICK_HEIGHT) / BRICK_SIZE;
-		const int32 tmpY = drawCmd.y / BRICK_HEIGHT;
-		const int32 tmpZ = (drawCmd.z + BRICK_HEIGHT) / BRICK_SIZE;
+		const int32 tmpX = (extra->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
+		const int32 tmpY = extra->pos.y / BRICK_HEIGHT;
+		const int32 tmpZ = (extra->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 		_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
 		addRedrawArea(_engine->_interface->_clip);
@@ -670,7 +670,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		blitBackgroundAreas();
 	}
 
-	static DrawListStruct drawList[150];
+	DrawListStruct drawList[150];
 	int32 drawListPos = fillActorDrawingList(drawList, bgRedraw);
 	drawListPos = fillExtraDrawingList(drawList, drawListPos);
 	sortDrawingList(drawList, drawListPos);
