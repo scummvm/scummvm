@@ -60,11 +60,12 @@ typedef Common::Array<Hotspots *> HotspotsStack;
 
 class MVideo {
   public:
-    MVideo(Common::String, Common::Point, bool, bool);
+    MVideo(Common::String, Common::Point, bool, bool, bool);
     Common::String path;
 	Common::Point position;
 	bool scaled;
 	bool transparent;
+	bool loop;
 	Video::SmackerDecoder *videoDecoder;
 	const Graphics::Surface *currentFrame;
 	uint32 finishBeforeEnd;
@@ -124,6 +125,13 @@ class Play : public Action {
 	Common::String path;
 	Common::Point origin;
 	Common::String condition;
+	Common::String flag;
+};
+
+class Ambient : public Action {
+  public:
+	Common::String path;
+	Common::Point origin;
 	Common::String flag;
 };
 

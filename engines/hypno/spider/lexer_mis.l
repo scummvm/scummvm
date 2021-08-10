@@ -41,6 +41,7 @@
 %%
 \;[A-Za-z_0-9 \t\*]*	    /* return COMMENT; */
 MENU				    	return MENUTOK;
+AMBI						return AMBITOK;
 BACK                    	return BACKTOK;
 CUTS                    	return CUTSTOK;
 GLOB						return GLOBTOK;
@@ -54,6 +55,18 @@ OVER                        return OVERTOK;
 SMEN                        return SMENTOK;
 ESCP                        return ESCPTOK;
 PLAY						return PLAYTOK;
+TALK						return TALKTOK;
+INACTIVE					return INACTOK;
+4DBOX						return FDTOK;
+BOXX						return BOXXTOK;
+\|G[A-Za-z_0-9\\\.]+		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PG;
+\|P[A-Za-z_0-9\\\.]+		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PP;
+\|I[A-Za-z_0-9\\\.]+		HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PI;
+\|H[0-9]+					HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PH;
+\|A[0-9]+					HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PA;
+\|D[0-9]+					HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PD;
+\|F[0-9]+					HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return PF;
+\|E							return PE;
 NO_RETURN                   return NRTOK;
 GS_[A-Z_0-9]+           	HYPNO_MIS_lval.s = scumm_strdup(HYPNO_MIS_text); return GSSWITCH;
 \/BBOX\=					return BBOXTOK;

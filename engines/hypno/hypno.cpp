@@ -48,11 +48,12 @@ namespace Hypno {
 Hotspots *g_parsedHots;
 ArcadeShooting g_parsedArc;
 
-MVideo::MVideo(Common::String _path, Common::Point _position, bool _transparent, bool _scaled) {
+MVideo::MVideo(Common::String _path, Common::Point _position, bool _transparent, bool _scaled, bool _loop) {
 	path = _path;
 	position = _position;
 	scaled = _scaled;
 	transparent = _transparent;
+	loop = _loop;
 	videoDecoder = nullptr;
 	currentFrame = nullptr;
 	finishBeforeEnd = 0;
@@ -109,6 +110,7 @@ void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
 }
 
 void HypnoEngine::parseScene(Common::String filename) {
+	debug("Parsing %s", filename.c_str());
     filename = convertPath(filename);
 	Common::File *test = new Common::File();
 	assert(isDemo());
@@ -209,8 +211,6 @@ void HypnoEngine::parseArcadeShooting(Common::String name, Common::String data) 
 }
 
 void HypnoEngine::loadAssets() {
-
-	
 	LibData files; 
 	loadLib("c_misc/missions.lib", files);
 	uint32 i = 0;
@@ -253,22 +253,22 @@ void HypnoEngine::loadAssets() {
 
 	// Read assets from mis files
 	parseScene("mis/demo.mis");
-	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine1.smk", Common::Point(0, 0), false, true));
-	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine2.smk", Common::Point(0, 0), false, true));
+	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine1.smk", Common::Point(0, 0), false, true, false));
+	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine2.smk", Common::Point(0, 0), false, true, false));
 	_levels["mis/demo.mis"].scene.hots[1].setting = "c_misc/missions.lib/c1.mi_";
 	_levels["mis/demo.mis"].scene.hots[2].setting = "mis/alley.mis";
+
+	_levels["mis/demo.mis"].scene.hots[4].setting = "mis/shoctalk.mis";
 	_levels["mis/demo.mis"].scene.hots[5].setting = "mis/order.mis";
 	_levels["mis/demo.mis"].scene.sound = "demo/sound.lib/menu_mus.raw";
-
 
 	parseScene("mis/order.mis");
 	_levels["mis/order.mis"].scene.hots[1].setting = "mis/quit.mis";
 	parseScene("mis/alley.mis");
-	_levels["mis/alley.mis"].intros.push_back(MVideo("demo/aleyc01s.smk", Common::Point(0, 0), false, true));
+	_levels["mis/alley.mis"].intros.push_back(MVideo("demo/aleyc01s.smk", Common::Point(0, 0), false, true, false));
 	_levels["mis/alley.mis"].scene.sound = "demo/sound.lib/alleymus.raw";
 
-	//loadMis("mis/shoctalk.mis");
-
+	parseScene("mis/shoctalk.mis");
 }
 
 Common::Error HypnoEngine::run() {
@@ -345,7 +345,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 	Common::Point mousePos;
 	Common::List<uint32> videosToRemove;
 
-	MVideo background = MVideo(arc.background, Common::Point(0, 0), false, false);	
+	MVideo background = MVideo(arc.background, Common::Point(0, 0), false, false, false);	
 	Graphics::Surface *sp = decodeFrame(arc.player, 2);
 
 	changeCursor("mouse/cursor1.smk", 0);
@@ -400,7 +400,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 				_shootInfos.pop_front();
 				for (Shoots::iterator it = arc.shoots.begin(); it != arc.shoots.end(); ++it) {
 					if (it->name == si.name) {
-						_nextParallelVideoToPlay.push_back(MVideo(it->animation, it->position , true, false));
+						_nextParallelVideoToPlay.push_back(MVideo(it->animation, it->position , true, false, false));
 						_nextParallelVideoToPlay[0].finishBeforeEnd = 24;
 					}
 				}
@@ -512,10 +512,15 @@ void HypnoEngine::runScene(Scene scene, Videos intros) {
 
 			if (it->videoDecoder) {
 				if (it->videoDecoder->endOfVideo()) {
-				it->videoDecoder->close();
-				delete it->videoDecoder;
-				it->videoDecoder = nullptr;
-				videosToRemove.push_back(i);
+					if (it->loop) {
+						it->videoDecoder->rewind();
+						it->videoDecoder->start();
+					} else {
+						it->videoDecoder->close();
+						delete it->videoDecoder;
+						it->videoDecoder = nullptr;
+						videosToRemove.push_back(i);
+					}
 
 				} else if (it->videoDecoder->needsUpdate()) {
 					updateScreen(*it);
@@ -561,7 +566,7 @@ void HypnoEngine::runScene(Scene scene, Videos intros) {
 			drawScreen();
 		}
 
-		if (_music.empty()) {
+		if (_music.empty() && !scene.sound.empty()) {
 			_music = scene.sound;
 			playSound(_music, 0);
 		}
@@ -590,6 +595,9 @@ void HypnoEngine::runMenu(Hotspots hs) {
 			runBackground(h, (Background*) action);
 		else if (typeid(*action) == typeid(Overlay))
 			runOverlay(h, (Overlay*) action);
+		else if (typeid(*action) == typeid(Ambient))
+			runAmbient(h, (Ambient*) action);
+
 		//else if (typeid(*action) == typeid(Mice))
 		//	runMice(h, (Mice*) action);
 	}
@@ -623,7 +631,7 @@ void HypnoEngine::runEscape(const Hotspot h, Escape *a) {
 void HypnoEngine::runCutscene(const Hotspot h, Cutscene *a) {
 	stopSound();
 	_music = "";
-	_nextSequentialVideoToPlay.push_back(MVideo(a->path, Common::Point(0, 0), false, true));
+	_nextSequentialVideoToPlay.push_back(MVideo(a->path, Common::Point(0, 0), false, true, false));
 }
 
 void HypnoEngine::runGlobal(const Hotspot h, Global *a) {
@@ -640,10 +648,19 @@ void HypnoEngine::runPlay(const Hotspot h, Play *a) {
 		return;
 	Common::Point origin = a->origin;
 
-	if (a->flag == "BITMAP")
+	if (a->flag == "/BITMAP")
 			loadImage(a->path, origin.x, origin.y, false);
 	else {
-		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false));
+		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false, false));
+	}
+}
+
+void HypnoEngine::runAmbient(const Hotspot h, Ambient *a) {
+	Common::Point origin = a->origin;
+	if (a->flag == "/BITMAP")
+			loadImage(a->path, origin.x, origin.y, false);
+	else {
+		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false, a->flag == "/LOOP"));
 	}
 }
 
@@ -651,10 +668,10 @@ void HypnoEngine::runWalN(const Hotspot h, WalN *a) {
 	if (a->condition.size() > 0 && !_levelState[a->condition])
 		return;
 	Common::Point origin = a->origin;
-	if (a->flag == "BITMAP")
+	if (a->flag == "/BITMAP")
 			loadImage(a->path, origin.x, origin.y, false);
 	else { 
-		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false));
+		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false, false));
 	}
 }
 

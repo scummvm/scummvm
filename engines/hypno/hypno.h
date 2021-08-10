@@ -147,6 +147,7 @@ public:
 	void runQuit(const Hotspot h, Quit *a);
 	void runCutscene(const Hotspot h, Cutscene *a);
 	void runPlay(const Hotspot h, Play *a);
+	void runAmbient(const Hotspot h, Ambient *a);
 	void runWalN(const Hotspot h, WalN *a);
 	void runGlobal(const Hotspot h, Global *a);
 
