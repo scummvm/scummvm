@@ -1891,8 +1891,14 @@ void LB::b_label(int nargs) {
 }
 
 void LB::b_marker(int nargs) {
+	// marker functions as label when the input is a string
 	Datum d = g_lingo->pop();
-	int marker = g_lingo->func_marker(d.asInt());
+	int marker;
+	if (d.type == STRING) {
+		marker = g_lingo->func_label(d);
+	} else {
+		marker = g_lingo->func_marker(d.asInt());
+	}
 	g_lingo->push(marker);
 }
 
