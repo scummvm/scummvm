@@ -191,12 +191,12 @@ void VmHooks::vm_hook_before_exec(Sci::EngineState *s) {
 		_lastPc = s->xs->addr.pc;
 		HookEntry entry = _hooksMap[key];
 		if (hook_exec_match(s, entry)) {
-			debugC(kDebugLevelPatcher, "vm_hook: patching script: %d, PC: %04x:%04x, obj: %s, selector: %s, extern: %d, opcode: %s", scriptNumber, PRINT_REG(s->xs->addr.pc), entry.objName, entry.selector.c_str(), entry.exportId, entry.opcodeName);
+			debugC(kDebugLevelPatcher, "vm_hook: patching script: %d, PC: %04x:%04x, obj: %s, selector: %s, extern: %d, opcode: %s", scriptNumber, PRINT_REG(s->xs->addr.pc), entry.objName, entry.selector, entry.exportId, entry.opcodeName);
 			Common::Array<byte> buffer(entry.patch, entry.patchSize);
 
 			_hookScriptData = buffer;
 		} else {
-			debugC(kDebugLevelPatcher, "vm_hook: failed to match! script: %d, PC: %04x:%04x, obj: %s, selector: %s, extern: %d, opcode: %s", scriptNumber, PRINT_REG(s->xs->addr.pc), entry.objName, entry.selector.c_str(), entry.exportId, entry.opcodeName);
+			debugC(kDebugLevelPatcher, "vm_hook: failed to match! script: %d, PC: %04x:%04x, obj: %s, selector: %s, extern: %d, opcode: %s", scriptNumber, PRINT_REG(s->xs->addr.pc), entry.objName, entry.selector, entry.exportId, entry.opcodeName);
 		}
 	}
 }

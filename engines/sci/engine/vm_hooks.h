@@ -49,7 +49,7 @@ struct HookHashKey {
 struct HookEntry {
 	/** These are used to make sure that the PC is indeed the requested place */
 	const char *objName;
-	Common::String selector;
+	const char *selector;
 	int exportId;
 	const char *opcodeName;
 
