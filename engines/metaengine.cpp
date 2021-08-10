@@ -372,15 +372,6 @@ GUI::OptionsContainerWidget *MetaEngineDetection::buildEngineOptionsWidgetStatic
 	return new GUI::ExtraGuiOptionsWidget(boss, name, target, engineOptions);
 }
 
-GUI::OptionsContainerWidget *MetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
-	const ExtraGuiOptions engineOptions = getExtraGuiOptions(target);
-	if (engineOptions.empty()) {
-		return nullptr;
-	}
-
-	return new GUI::ExtraGuiOptionsWidget(boss, name, target, engineOptions);
-}
-
 void MetaEngine::removeSaveState(const char *target, int slot) const {
 	if (!hasFeature(kSavesUseExtendedFormat))
 		return;
