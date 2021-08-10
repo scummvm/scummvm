@@ -1841,6 +1841,17 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		lang[1] = 'N';
 		lang[2] = 'G';
 		break;
+	case Common::IT_ITA:
+		expectedSize = 83211;
+		scriptOffset = 73998;
+		scriptLength = 602;
+		expectedMd5 = "39eb6116d67f2318f31d6fa98df2e931";
+		patchOffset = 161;
+		patchLength = 20;
+		lang[0] = 'I';
+		lang[1] = 'T';
+		lang[2] = 'A';
+		break;
 	default:
 		return false;
 	}
