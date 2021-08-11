@@ -206,24 +206,23 @@ protected:
 	/**
 	 * Returns the scaling mode based on the display DPI
 	 */
-	void getDpiScalingFactor(float *scale) const {
+	float getDpiScalingFactor() const {
 #ifdef MACOSX
+		float scale;
 		if (getMacWindowScaling(scale)) {
-			debug(4, "NSWindow HiDPI scaling: %f", *scale);
-			return;
+			debug(4, "NSWindow HiDPI scaling: %f", scale);
+			return scale;
 		}
 #endif
 
-		float dpi, defaultDpi, ratio;
-
+		float dpi, defaultDpi;
 		getDisplayDpiFromSdl(&dpi, &defaultDpi);
 		debug(4, "dpi: %g default: %g", dpi, defaultDpi);
-		ratio = dpi / defaultDpi;
-		if (ratio >= 1.5f) {
-			*scale = 2.f;
-		} else {
-			*scale = 1.f;
-		}
+		float ratio = dpi / defaultDpi;
+		if (ratio >= 1.5f)
+			return 2.f;
+		else
+			return 1.f;
 	}
 
 	virtual void setSystemMousePosition(const int x, const int y) override;
@@ -254,7 +253,7 @@ private:
 	void toggleFullScreen();
 
 #ifdef MACOSX
-	bool getMacWindowScaling(float *) const;
+	bool getMacWindowScaling(float &) const;
 #endif
 };
 

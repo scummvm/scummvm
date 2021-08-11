@@ -27,7 +27,7 @@
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include <AppKit/NSWindow.h>
 
-bool SdlGraphicsManager::getMacWindowScaling(float *scale) const {
+bool SdlGraphicsManager::getMacWindowScaling(float &scale) const {
 #if SDL_VERSION_ATLEAST(2, 0, 0) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 	SDL_SysWMinfo wmInfo;
 	SDL_VERSION(&wmInfo.version); /* initialize info structure with SDL version info */
@@ -37,7 +37,7 @@ bool SdlGraphicsManager::getMacWindowScaling(float *scale) const {
 	NSWindow *nswindow = wmInfo.info.cocoa.window;
 	if (!nswindow)
 		return false;
-	*scale = [nswindow backingScaleFactor];
+	scale = [nswindow backingScaleFactor];
 	return true;
 #else
 	return false;
