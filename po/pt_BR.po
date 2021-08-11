@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-11 10:07+0000\n"
-"PO-Revision-Date: 2021-08-10 18:25+0000\n"
+"PO-Revision-Date: 2021-08-12 04:25+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -7668,10 +7668,8 @@ msgstr "Substitui fontes do jogo por fontes renderizadas"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/ultima8/meta_engine.cpp:192
-#, fuzzy
-#| msgid "Camera moves with silencer"
 msgid "Camera moves with Silencer"
-msgstr "Câmera acompanha jogador"
+msgstr "Câmera acompanha Jogador"
 
 #: engines/ultima/ultima8/meta_engine.cpp:193
 msgid ""
