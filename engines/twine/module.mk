@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	menu/menuoptions.o \
 	\
 	parser/anim.o \
+	parser/blocklibrary.o \
 	parser/body.o \
 	parser/brick.o \
 	parser/entity.o \
