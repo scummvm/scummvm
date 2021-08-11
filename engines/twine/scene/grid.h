@@ -260,10 +260,11 @@ public:
 
 	/**
 	 * Get block library
-	 * @param index block library index
+	 * @param blockIdx block library index
 	 * @return pointer to the current block index
 	 */
-	const uint8 *getBlockLibrary(int32 index) const;
+	const uint8 *getBlockLibrary(int32 blockIdx) const;
+	const uint8* getBlockPointer(int32 blockIdx, int32 tmpBrickIdx) const;
 
 	/** Create grid map from current grid to block library buffer */
 	void createGridMap();

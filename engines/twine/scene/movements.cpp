@@ -44,10 +44,11 @@ void Movements::getShadowPosition(const IVec3 &pos) {
 	_processActor.z = pos.z;
 
 	ShapeType shadowCollisionType;
-	if (*ptr) {
-		const uint8 *blockPtr = _engine->_grid->getBlockLibrary(*ptr - 1) + 3 + *(ptr + 1) * 4;
-		const ShapeType brickShape = (ShapeType) * ((const uint8 *)(blockPtr));
-		shadowCollisionType = brickShape;
+	const int32 blockIdx = *ptr;
+	if (blockIdx) {
+		const int32 brickIdx = *(ptr + 1);
+		const uint8 *blockPtr = _engine->_grid->getBlockPointer(blockIdx, brickIdx);
+		shadowCollisionType = (ShapeType)*blockPtr;
 	} else {
 		shadowCollisionType = ShapeType::kNone;
 	}

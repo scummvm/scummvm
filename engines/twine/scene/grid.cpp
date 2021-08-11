@@ -285,7 +285,7 @@ void Grid::getSpriteSize(int32 offset, int32 *width, int32 *height, const uint8 
 void Grid::loadGridBricks() {
 	uint32 firstBrick = 60000;
 	uint32 lastBrick = 0;
-	uint32 currentBllEntryIdx = 0;
+	uint32 currentBllEntryIdx = 1;
 
 	memset(_brickSizeTable, 0, sizeof(_brickSizeTable));
 	memset(_brickUsageTable, 0, sizeof(_brickUsageTable));
@@ -299,8 +299,7 @@ void Grid::loadGridBricks() {
 		const uint8 currentBitMask = 1 << (7 - (i & 7));
 
 		if (currentBitByte & currentBitMask) {
-			uint32 currentBllOffset = READ_LE_UINT32(_currentBlockLibrary + currentBllEntryIdx);
-			const uint8 *currentBllPtr = _currentBlockLibrary + currentBllOffset;
+			const uint8 *currentBllPtr = getBlockLibrary(currentBllEntryIdx);
 
 			const uint32 bllSizeX = *currentBllPtr++;
 			const uint32 bllSizeY = *currentBllPtr++;
@@ -329,7 +328,7 @@ void Grid::loadGridBricks() {
 				}
 			}
 		}
-		currentBllEntryIdx += 4;
+		++currentBllEntryIdx;
 	}
 
 	for (uint32 i = firstBrick; i <= lastBrick; i++) {
@@ -614,9 +613,17 @@ const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
 	return ptr;
 }
 
-const uint8 *Grid::getBlockLibrary(int32 index) const {
-	const int32 offset = READ_LE_UINT32(_currentBlockLibrary + 4 * index);
-	return (const uint8 *)(_currentBlockLibrary + offset);
+const uint8* Grid::getBlockPointer(int32 blockIdx, int32 brickIdx) const {
+	const uint8 *blockPtr = getBlockLibrary(blockIdx);
+	blockPtr += 3; // x, y, z bytes
+	blockPtr = blockPtr + brickIdx * 4; // each brick index is shape(byte), type(byte), idx(short)
+	return blockPtr;
+}
+
+const uint8 *Grid::getBlockLibrary(int32 blockIdx) const {
+	const uint8 *gridPtr = _currentBlockLibrary;
+	const int32 offset = READ_LE_UINT32(gridPtr + 4 * blockIdx - 4);
+	return (const uint8 *)(gridPtr + offset);
 }
 
 void Grid::getBrickPos(int32 x, int32 y, int32 z) {
@@ -625,8 +632,7 @@ void Grid::getBrickPos(int32 x, int32 y, int32 z) {
 }
 
 void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y, int32 z) {
-	const uint8 *blockPtr = getBlockLibrary(blockIdx) + 3 + brickBlockIdx * 4;
-
+	const uint8 *blockPtr = getBlockPointer(blockIdx, brickBlockIdx);
 	const uint8 brickShape = *((const uint8 *)(blockPtr + 0));
 	const uint8 brickSound = *((const uint8 *)(blockPtr + 1));
 	const uint16 brickIdx = READ_LE_UINT16(blockPtr + 2);
@@ -691,7 +697,7 @@ void Grid::redrawGrid() {
 			for (int32 y = 0; y < GRID_SIZE_Y; y++) {
 				const uint8 blockIdx = (*map)[z][x][y].blockIdx;
 				if (blockIdx) {
-					drawColumnGrid(blockIdx - 1, (*map)[z][x][y].brickBlockIdx, x, y, z);
+					drawColumnGrid(blockIdx, (*map)[z][x][y].brickBlockIdx, x, y, z);
 				}
 			}
 		}
@@ -721,14 +727,8 @@ ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
 	uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
-		const uint8 *blockPtr = _currentBlockLibrary;
-
-		blockPtr += READ_LE_UINT32(blockPtr + blockIdx * 4 - 4);
-		blockPtr += 3;
-
 		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
-		blockPtr = blockPtr + tmpBrickIdx * 4;
-
+		const uint8 *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
 		return (ShapeType)*blockPtr;
 	}
 	return (ShapeType) * (blockBufferPtr + 1);
@@ -764,14 +764,8 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
-		const uint8 *blockPtr = _currentBlockLibrary;
-
-		blockPtr += READ_LE_UINT32(blockPtr + blockIdx * 4 - 4);
-		blockPtr += 3;
-
 		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
-		blockPtr = blockPtr + tmpBrickIdx * 4;
-
+		const uint8 *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
 		const ShapeType brickShape = (ShapeType)*blockPtr;
 
 		const int32 newY = (y2 + (BRICK_HEIGHT - 1)) / BRICK_HEIGHT;
@@ -836,16 +830,9 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 	uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
-		const uint8 *blockPtr = _currentBlockLibrary;
-
-		blockPtr += READ_LE_UINT32(blockPtr + blockIdx * 4 - 4);
-		blockPtr += 3;
-
 		uint8 tmpBrickIdx = *(blockBufferPtr + 1);
-		blockPtr = blockPtr + tmpBrickIdx * 4;
-		blockPtr++;
-
-		return READ_LE_INT16(blockPtr);
+		const uint8 *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
+		return READ_LE_INT16(blockPtr + 1);
 	}
 
 	return 0xF0;
