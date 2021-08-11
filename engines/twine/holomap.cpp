@@ -432,26 +432,26 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 		if ((_engine->_gameState->_holomapFlags[locationIdx] & HOLOMAP_CAN_FOCUS) || locationIdx == _engine->_scene->_currentSceneIdx) {
 			const Location &loc = _locations[locationIdx];
 			_engine->_renderer->setBaseRotation(loc.angle.x, loc.angle.y, 0);
-			_engine->_renderer->getBaseRotationPosition(0, 0, loc.angle.z + 1000);
-			int32 xpos1 = _engine->_renderer->_destPos.x;
-			int32 ypos1 = _engine->_renderer->_destPos.y;
-			int32 zpos1 = _engine->_renderer->_destPos.z;
-			_engine->_renderer->getBaseRotationPosition(0, 0, 1500);
-			int32 xpos2 = _engine->_renderer->_destPos.x;
-			int32 ypos2 = _engine->_renderer->_destPos.y;
-			int32 zpos2 = _engine->_renderer->_destPos.z;
+			const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(0, 0, loc.angle.z + 1000);
+			int32 xpos1 = destPos.x;
+			int32 ypos1 = destPos.y;
+			int32 zpos1 = destPos.z;
+			const IVec3 &destPos2 = _engine->_renderer->getBaseRotationPosition(0, 0, 1500);
+			int32 xpos2 = destPos2.x;
+			int32 ypos2 = destPos2.y;
+			int32 zpos2 = destPos2.z;
 			_engine->_renderer->setBaseRotation(xRot, yRot, zRot, true);
 			int32 zpos1_copy = zpos1;
 			_engine->_renderer->setBaseRotationPos(0, 0, 9500);
-			_engine->_renderer->getBaseRotationPosition(xpos1, ypos1, zpos1);
-			int32 zpos1_copy2 = _engine->_renderer->_destPos.z;
-			_engine->_renderer->getBaseRotationPosition(xpos2, ypos2, zpos2);
+			const IVec3 &destPos3 = _engine->_renderer->getBaseRotationPosition(xpos1, ypos1, zpos1);
+			int32 zpos1_copy2 = destPos3.z;
+			const IVec3 &destPos4 = _engine->_renderer->getBaseRotationPosition(xpos2, ypos2, zpos2);
 			if (lower) {
-				if (zpos1_copy2 > _engine->_renderer->_destPos.z) {
+				if (zpos1_copy2 > destPos4.z) {
 					continue;
 				}
 			} else {
-				if (_engine->_renderer->_destPos.z > zpos1_copy2) {
+				if (destPos4.z > zpos1_copy2) {
 					continue;
 				}
 			}
@@ -482,8 +482,8 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			bodyData = &_engine->_resources->_holomapTwinsenArrowPtr;
 		}
 		if (bodyData != nullptr) {
-			int32 angleX = _locations[drawList.actorIdx].angle.x;
-			int32 angleY = _locations[drawList.actorIdx].angle.y;
+			const int32 angleX = _locations[drawList.actorIdx].angle.x;
+			const int32 angleY = _locations[drawList.actorIdx].angle.y;
 			Common::Rect dummy;
 			_engine->_renderer->renderIsoModel(drawList.x, drawList.y, drawList.z, angleX, angleY, ANGLE_0, *bodyData, dummy);
 		}
