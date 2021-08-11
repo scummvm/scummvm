@@ -45,6 +45,12 @@ U8MusicProcess::U8MusicProcess(MidiPlayer *player) : _midiPlayer(player),
 	_theMusicProcess = this;
 	_type = 1; // persistent
 	setRunPaused();
+
+	// Now get the transition midi
+	MusicFlex *musicflex = GameData::get_instance()->getMusic();
+	int xmidi_index = _midiPlayer->isFMSynth() ? 260 : 258;
+	MusicFlex::XMidiData *xmidi = musicflex->getXMidi(xmidi_index);
+	_midiPlayer->loadTransitionData(xmidi->_data, xmidi->_size);
 }
 
 U8MusicProcess::~U8MusicProcess() {
@@ -163,28 +169,18 @@ void U8MusicProcess::playMusic_internal(int track) {
 
 		// Get transition info
 		int trans = info->_transitions[track][measure];
-		bool speed_hack = false;
+		bool overlay = false;
 
 		if (trans < 0) {
 			trans = (-trans) - 1;
-			speed_hack = true;
+			overlay = true;
 		} else {
-			_midiPlayer->stop();
 			trans = trans - 1;
 		}
 
-		// Now get the transition midi
-		int xmidi_index = _midiPlayer->isFMSynth() ? 260 : 258;
-		MusicFlex::XMidiData *xmidi = musicflex->getXMidi(xmidi_index);
+		warning("Doing a MIDI transition! trans: %d overlay: %d", trans, overlay);
 
-		warning("Doing a MIDI transition! trans: %d xmidi: %d speedhack: %d", trans, xmidi_index, speed_hack);
-
-		if (xmidi && xmidi->_data) {
-			_midiPlayer->load(xmidi->_data, xmidi->_size, 1, speed_hack);
-			_midiPlayer->play(trans, -1);
-		} else {
-			_midiPlayer->stop();
-		}
+		_midiPlayer->playTransition(trans, overlay);
 
 		_trackState._wanted = track;
 		_state = PLAYBACK_TRANSITION;
@@ -228,7 +224,7 @@ void U8MusicProcess::run() {
 			if (_midiPlayer) {
 				// if there's a track queued, only play this one once
 				bool repeat = (_trackState._queued == 0);
-				_midiPlayer->load(xmidi->_data, xmidi->_size, 0, false);
+				_midiPlayer->load(xmidi->_data, xmidi->_size, 0);
 				_midiPlayer->setLooping(repeat);
 				if (_songBranches[_trackState._wanted] >= 0 && !_midiPlayer->hasBranchIndex(_songBranches[_trackState._wanted])) {
 					if (_songBranches[_trackState._wanted] == 0) {
