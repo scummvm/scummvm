@@ -188,7 +188,8 @@ static const ExtraGuiOption U8_OPTIONS[] = {
 
 static const ExtraGuiOption CRUSADER_OPTIONS[] = {
 	{
-		_s("Camera moves with silencer"),
+		// I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
+		_s("Camera moves with Silencer"),
 		_s("Camera tracks the player movement rather than snapping to defined positions."),
 		"camera_on_player",
 		true
