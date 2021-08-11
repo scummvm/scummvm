@@ -182,23 +182,23 @@ void Holomap::prepareHolomapPolygons() {
 		int rotation = 0;
 		for (int32 stepWidth = 0; stepWidth < ANGLE_11_25; ++stepWidth) {
 			IVec3* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
-			_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
+			const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
 			if (angle != ANGLE_90) {
-				_holomapSort[holomapSortArrayIdx].z = _engine->_renderer->_destPos.z;
+				_holomapSort[holomapSortArrayIdx].z = destPos.z;
 				_holomapSort[holomapSortArrayIdx].projectedPosIdx = _projectedSurfaceIndex;
 				++holomapSortArrayIdx;
 			}
-			_engine->_renderer->projectXYPositionOnScreen(_engine->_renderer->_destPos);
-			_projectedSurfacePositions[_projectedSurfaceIndex].x1 = _engine->_renderer->_projPos.x;
-			_projectedSurfacePositions[_projectedSurfaceIndex].y1 = _engine->_renderer->_projPos.y;
+			const IVec3 &projPos = _engine->_renderer->projectXYPositionOnScreen(destPos);
+			_projectedSurfacePositions[_projectedSurfaceIndex].x1 = projPos.x;
+			_projectedSurfacePositions[_projectedSurfaceIndex].y1 = projPos.y;
 			rotation += ANGLE_11_25;
 			++_projectedSurfaceIndex;
 		}
 		IVec3* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
-		_engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
-		_engine->_renderer->projectXYPositionOnScreen(_engine->_renderer->_destPos);
-		_projectedSurfacePositions[_projectedSurfaceIndex].x1 = _engine->_renderer->_projPos.x;
-		_projectedSurfacePositions[_projectedSurfaceIndex].y1 = _engine->_renderer->_projPos.y;
+		const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
+		const IVec3 &projPos = _engine->_renderer->projectXYPositionOnScreen(destPos);
+		_projectedSurfacePositions[_projectedSurfaceIndex].x1 = projPos.x;
+		_projectedSurfacePositions[_projectedSurfaceIndex].y1 = projPos.y;
 		rotation += ANGLE_11_25;
 		++_projectedSurfaceIndex;
 	}
@@ -272,12 +272,13 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 
 void Holomap::renderHolomapPointModel(const IVec3 &angle, int32 x, int32 y) {
 	_engine->_renderer->setBaseRotation(x, y, 0);
-	_engine->_renderer->getBaseRotationPosition(0, 0, 1000);
-	const IVec3 destPos = _engine->_renderer->_destPos;
+	// we need a copy here
+	const IVec3 destPos = _engine->_renderer->getBaseRotationPosition(0, 0, 1000);
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
 	_engine->_renderer->setBaseRotation(angle);
 	_engine->_renderer->updateCameraAnglePositions(5300);
 	// why is this needed? _engine->_renderer->_baseTransPos = _engine->_renderer->_destPos;
+	// TODO: shouldn't the new destpos be used for the model rendering
 	_engine->_renderer->getBaseRotationPosition(destPos);
 	_engine->_interface->resetClip();
 	Common::Rect dummy;

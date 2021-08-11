@@ -209,9 +209,7 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 
 	_baseRotPos.z += param6;
 
-	updateCameraAnglePositions();
-
-	_baseTransPos = _destPos;
+	_baseTransPos = updateCameraAnglePositions();
 }
 
 const IVec3 &Renderer::updateCameraAnglePositions(int zShift) {
@@ -1450,9 +1448,7 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 		renderPos.y = y;
 		renderPos.z = z;
 	} else {
-		getBaseRotationPosition(x, y, z);
-
-		renderPos = _destPos - _baseRotPos;
+		renderPos = getBaseRotationPosition(x, y, z) - _baseRotPos;
 	}
 
 	if (!bodyData.isAnimated()) {
