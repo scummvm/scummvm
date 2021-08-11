@@ -331,7 +331,11 @@ void Lingo::popContext(bool aborting) {
 		}
 	} else if (_stack.size() == fp->stackSizeBefore) {
 		if (fp->allowRetVal) {
-			warning("handler %s did not return value", fp->sp.name->c_str());
+			// Don't warn about missing return value if there's an explicit, non-VOID default,
+			// e.g. for factories' mNew method.
+			if (fp->defaultRetVal.type == VOID) {
+				warning("handler %s did not return value", fp->sp.name->c_str());
+			}
 			g_lingo->push(fp->defaultRetVal);
 		}
 	} else if (_stack.size() > fp->stackSizeBefore) {
