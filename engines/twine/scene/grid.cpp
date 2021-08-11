@@ -455,8 +455,6 @@ bool Grid::initGrid(int32 index) {
 
 	createGridMask();
 
-	_numberOfBll = READ_LE_INT32(_currentBlockLibrary) >> 2;
-
 	createGridMap();
 
 	return true;

@@ -157,8 +157,6 @@ private:
 	uint8 *_currentGrid = nullptr;
 	/** Current block library pointer */
 	uint8 *_currentBlockLibrary = nullptr;
-	/** Number of block libraries */
-	int32 _numberOfBll = 0;
 
 	/** Brick data buffer */
 	BrickEntry *_bricksDataBuffer = nullptr;
