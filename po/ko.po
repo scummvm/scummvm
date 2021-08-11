@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-09 21:42+0000\n"
+"POT-Creation-Date: 2021-08-11 10:07+0000\n"
 "PO-Revision-Date: 2021-08-04 12:37+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4886,13 +4886,13 @@ msgstr "주시자의 눈 지원이 컴파일 되지 않음"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:473
 #: engines/ultima/ultima4/meta_engine.cpp:225
-#: engines/ultima/ultima8/meta_engine.cpp:210
+#: engines/ultima/ultima8/meta_engine.cpp:211
 msgid "Interact via Left Click"
 msgstr "왼쪽 클릭으로 상호 작용"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:474
 #: engines/ultima/ultima4/meta_engine.cpp:231
-#: engines/ultima/ultima8/meta_engine.cpp:216
+#: engines/ultima/ultima8/meta_engine.cpp:217
 msgid "Interact via Right Click"
 msgstr "오른쪽 클릭으로 상호 작용"
 
@@ -7526,28 +7526,29 @@ msgstr "대체 폰트 사용"
 msgid "Replaces game fonts with rendered fonts"
 msgstr "게임 폰트를 렌더링된 폰트로 교체"
 
-#: engines/ultima/ultima8/meta_engine.cpp:191
-msgid "Camera moves with silencer"
+#. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
+#: engines/ultima/ultima8/meta_engine.cpp:192
+msgid "Camera moves with Silencer"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:192
+#: engines/ultima/ultima8/meta_engine.cpp:193
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:203
+#: engines/ultima/ultima8/meta_engine.cpp:204
 msgid "Ultima VIII"
 msgstr "울티마 VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:203
+#: engines/ultima/ultima8/meta_engine.cpp:204
 msgid "Crusader"
 msgstr "크루세이더"
 
-#: engines/ultima/ultima8/meta_engine.cpp:250
+#: engines/ultima/ultima8/meta_engine.cpp:251
 msgid "Ultima VIII Cheats"
 msgstr "울티마 VIII 치트"
 
-#: engines/ultima/ultima8/meta_engine.cpp:267
+#: engines/ultima/ultima8/meta_engine.cpp:268
 msgid "Ultima VIII Debug"
 msgstr "울티마 VIII 디버그"
 

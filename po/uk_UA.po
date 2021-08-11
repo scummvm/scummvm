@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-09 21:42+0000\n"
+"POT-Creation-Date: 2021-08-11 10:07+0000\n"
 "PO-Revision-Date: 2021-08-10 04:32+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4939,13 +4939,13 @@ msgstr "Підтримку для Eye of Beholder не скомпільован�
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:473
 #: engines/ultima/ultima4/meta_engine.cpp:225
-#: engines/ultima/ultima8/meta_engine.cpp:210
+#: engines/ultima/ultima8/meta_engine.cpp:211
 msgid "Interact via Left Click"
 msgstr "Взаємодія через лівий клік"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:474
 #: engines/ultima/ultima4/meta_engine.cpp:231
-#: engines/ultima/ultima8/meta_engine.cpp:216
+#: engines/ultima/ultima8/meta_engine.cpp:217
 msgid "Interact via Right Click"
 msgstr "Взаємодія через правий клік"
 
@@ -7618,28 +7618,29 @@ msgstr "Ввімкнути заміну шрифтів"
 msgid "Replaces game fonts with rendered fonts"
 msgstr "Замінює шрифти гри на шрифти поліпшеної якості"
 
-#: engines/ultima/ultima8/meta_engine.cpp:191
-msgid "Camera moves with silencer"
+#. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
+#: engines/ultima/ultima8/meta_engine.cpp:192
+msgid "Camera moves with Silencer"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:192
+#: engines/ultima/ultima8/meta_engine.cpp:193
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:203
+#: engines/ultima/ultima8/meta_engine.cpp:204
 msgid "Ultima VIII"
 msgstr "Ultima VIII"
 
-#: engines/ultima/ultima8/meta_engine.cpp:203
+#: engines/ultima/ultima8/meta_engine.cpp:204
 msgid "Crusader"
 msgstr "Crusader"
 
-#: engines/ultima/ultima8/meta_engine.cpp:250
+#: engines/ultima/ultima8/meta_engine.cpp:251
 msgid "Ultima VIII Cheats"
 msgstr "Ultima VIII Чіти"
 
-#: engines/ultima/ultima8/meta_engine.cpp:267
+#: engines/ultima/ultima8/meta_engine.cpp:268
 msgid "Ultima VIII Debug"
 msgstr "Ultima VIII Відладка"
 
