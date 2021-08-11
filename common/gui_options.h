@@ -84,6 +84,7 @@
 #define GUIO_GAMEOPTIONS14   "\x3d"
 #define GUIO_GAMEOPTIONS15   "\x3e"
 #define GUIO_GAMEOPTIONS16   "\x3f"
+#define GUIO_GAMEOPTIONS17   "\x3g"
 
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)
