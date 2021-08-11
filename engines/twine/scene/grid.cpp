@@ -704,12 +704,12 @@ ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
 		return ShapeType::kNone;
 	}
 
-	uint8 *blockBufferPtr = _blockBuffer;
+	const uint8 *blockBufferPtr = _blockBuffer;
 	blockBufferPtr += collision.x * GRID_SIZE_Y * 2;
 	blockBufferPtr += collision.y * 2;
 	blockBufferPtr += (collision.z * GRID_SIZE_X * 2) * GRID_SIZE_Y;
 
-	uint8 blockIdx = *blockBufferPtr;
+	const uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
 		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
