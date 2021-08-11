@@ -490,6 +490,10 @@ void Score::update() {
 }
 
 void Score::renderFrame(uint16 frameId, RenderMode mode) {
+	// Force cursor update if a new movie's started.
+	if (_window->_newMovieStarted)
+		renderCursor(_movie->getWindow()->getMousePos(), true);
+
 	if (!renderTransition(frameId))
 		renderSprites(frameId, mode);
 
@@ -504,9 +508,8 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	playSoundChannel(frameId);
 	playQueuedSound(); // this is currently only used in FPlayXObj
 
-	if (_cursorDirty || _window->_newMovieStarted) {
-		// Force cursor update if a new movie's started.
-		renderCursor(_movie->getWindow()->getMousePos(), _window->_newMovieStarted);
+	if (_cursorDirty) {
+		renderCursor(_movie->getWindow()->getMousePos());
 		_cursorDirty = false;
 	}
 }
