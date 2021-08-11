@@ -753,6 +753,10 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 		if (_textType == kTextTypeAdjustToFit) {
 			dims.right = MIN<int>(dims.right, dims.left + _initialRect.width());
 			dims.bottom = MIN<int>(dims.bottom, dims.top + _initialRect.height());
+		} else if (_textType == kTextTypeFixed){
+			// use initialRect to create widget for fixed style text, this maybe related to version.
+			dims.right = MAX<int>(dims.right, dims.left + _initialRect.width());
+			dims.bottom = MAX<int>(dims.bottom, dims.top + _initialRect.height());
 		}
 		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed);
 		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
