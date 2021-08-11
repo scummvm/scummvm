@@ -812,7 +812,15 @@ Common::String Datum::asString(bool printonly) const {
 		}
 		break;
 	case VOID:
-		s = "#void";
+		if (!printonly) {
+			s = "";
+		} else {
+			if (g_director->getVersion() < 400) {
+				s = "<NoValue>";
+			} else {
+				s = "<Void>";
+			}
+		}
 		break;
 	case VARREF:
 		s = Common::String::format("var: #%s", u.s->c_str());
