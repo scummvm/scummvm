@@ -126,7 +126,7 @@ void DreamWebEngine::lookAtPlace() {
 	findNextColon(&string);
 
 	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
-		_ttsMan->say((const char*)string);
+		_ttsMan->say((const char *)string);
 
 	uint16 y = (_foreignRelease) ? 84 + 4 : 84;
 	printDirect(&string, 63, &y, 191, 191 & 1);

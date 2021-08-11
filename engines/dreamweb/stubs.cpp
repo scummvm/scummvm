@@ -969,8 +969,8 @@ void DreamWebEngine::useTimedText() {
 		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech")) {
 			_ttsMan->say(theText);
 		}
+		_lastText = theText;
 	}
-	_lastText = theText;
 
 	_needToDumpTimed = 1;
 }
@@ -1184,14 +1184,11 @@ void DreamWebEngine::commandOnly(uint8 command) {
 	delTextLine();
 	const uint8 *string = (const uint8 *)_commandText.getString(command);
 
-	Common::String string2(_commandText.getString(command));
-	const char *str1 = "";
-
 	printDirect(string, _textAddressX, _textAddressY, _textLen, (bool)(_textLen & 1));
 
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects") && str1 != string2) {
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects") && *string != 0)
 		_ttsMan->say((const char *)string);
-	}
+
 	_newTextLine = 1;
 }
 
@@ -1969,11 +1966,12 @@ void DreamWebEngine::doLook() {
 	uint8 index = _roomNum & 31;
 	const uint8 *string = (const uint8 *)_roomDesc.getString(index);
 
-	const char *placeName = (const char *)string;
-	auto colon_pos = strchr(placeName, ':');
-	const char *desRoom = colon_pos + 1;
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
+		const char *placeName = (const char *)string;
+		auto colon_pos = strchr(placeName, ':');
+		const char *desRoom = colon_pos + 1;
 		_ttsMan->say(desRoom);
+	}
 
 	findNextColon(&string);
 	uint16 x;
@@ -2372,10 +2370,11 @@ void DreamWebEngine::obsThatDoThings() {
 }
 
 void DreamWebEngine::textToSpeech(const char *text) {
-	auto colon_pos = strchr(text, ':');
-	Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
+		auto colon_pos = strchr(text, ':');
+		Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
 		_ttsMan->say(result);
+	}
 }
 
 void DreamWebEngine::describeOb() {

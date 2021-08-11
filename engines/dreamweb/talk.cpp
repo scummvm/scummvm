@@ -94,12 +94,12 @@ void DreamWebEngine::startTalk() {
 
 	_charShift = 91+91;
 
-	const char *text = (const char *)str;
-	auto colon_pos = strchr(text, ':');
-	const char *goodText = colon_pos + 1;
-
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech"))
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech")) {
+		const char *text = (const char *)str;
+		auto colon_pos = strchr(text, ':');
+		const char *goodText = colon_pos + 1;
 		_ttsMan->say(goodText);
+	}
 
 	if (getLanguage() == Common::RU_RUS)
 		useCharsetIcons1();

@@ -161,8 +161,6 @@ private:
 	Common::RandomSource			_rnd;
 	Common::String _datafilePrefix;
 	Common::String _speechDirName;
-	Common::String _lastText;
-	Common::TextToSpeechManager *_ttsMan;
 
 	uint _speed;
 	bool _turbo;
@@ -431,6 +429,9 @@ public:
 	uint8 _linePointer;
 	uint8 _lineDirection;
 	uint8 _lineLength;
+
+	Common::String _lastText;
+	Common::TextToSpeechManager *_ttsMan;
 
 	// from backdrop.cpp
 	void doBlocks();

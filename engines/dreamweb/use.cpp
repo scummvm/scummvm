@@ -186,11 +186,12 @@ void DreamWebEngine::showFirstUse() {
 	findNextColon(&obText);
 	useText(obText);
 
-	const char *text = (const char *)obText;
-	auto colon_pos = strchr(text, ':');
-	Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
+		const char *text = (const char *)obText;
+		auto colon_pos = strchr(text, ':');
+		Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
 		_ttsMan->say(result);
+	}
 
 	hangOnP(400);
 }
