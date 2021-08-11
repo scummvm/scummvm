@@ -198,8 +198,6 @@ bool Movie::processEvent(Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 		pos = _window->getMousePos();
 
-		_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
-
 		if (_currentHiliteChannelId && sc->_channels[_currentHiliteChannelId]) {
 			g_director->getCurrentWindow()->setDirty(true);
 			g_director->getCurrentWindow()->addDirtyRect(sc->_channels[_currentHiliteChannelId]->getBbox());
