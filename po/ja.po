@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-11 10:07+0000\n"
-"PO-Revision-Date: 2021-08-10 04:32+0000\n"
+"PO-Revision-Date: 2021-08-11 17:45+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -7528,8 +7528,6 @@ msgstr "ゲームフォントをレンダリングフォントで置き換える
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/ultima8/meta_engine.cpp:192
-#, fuzzy
-#| msgid "Camera moves with silencer"
 msgid "Camera moves with Silencer"
 msgstr "カメラをSilencerに追随させる"
 
