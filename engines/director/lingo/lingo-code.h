@@ -81,6 +81,7 @@ void c_globalrefpush();
 void c_localrefpush();
 void c_proprefpush();
 void c_varpush();
+void c_globalinit();
 void c_globalpush();
 void c_localpush();
 void c_proppush();

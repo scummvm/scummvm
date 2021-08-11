@@ -91,6 +91,7 @@ static struct FuncDescr {
 	{ LC::c_field,			"c_field",			"" },
 	{ LC::c_fieldref,		"c_fieldref",		"" },
 	{ LC::c_floatpush,		"c_floatpush",		"f" },
+	{ LC::c_globalinit,		"c_globalinit",		"s" },
 	{ LC::c_globalpush,		"c_globalpush",		"s" },
 	{ LC::c_globalrefpush,	"c_globalrefpush",	"s" },
 	{ LC::c_ge,				"c_ge",				"" },
@@ -487,6 +488,13 @@ void LC::c_proparraypush() {
 	}
 
 	g_lingo->push(d);
+}
+
+void LC::c_globalinit() {
+	Common::String name(g_lingo->readString());
+	if (!g_lingo->_globalvars.contains(name) || g_lingo->_globalvars[name].type == VOID) {
+		g_lingo->_globalvars[name] = Datum(0);
+	}
 }
 
 void LC::c_varrefpush() {

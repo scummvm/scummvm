@@ -771,6 +771,13 @@ bool LingoCompiler::visitGlobalNode(GlobalNode *node) {
 	for (uint i = 0; i < node->names->size(); i++) {
 		registerMethodVar(*(*node->names)[i], kVarGlobal);
 	}
+	// Before Director 4, a global statement initializes the var to 0.
+	if (g_director->getVersion() < 400) {
+		for (uint i = 0; i < node->names->size(); i++) {
+			code1(LC::c_globalinit);
+			codeString((*node->names)[i]->c_str());
+		}
+	}
 	return true;
 }
 
