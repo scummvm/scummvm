@@ -47,8 +47,8 @@ void Movements::getShadowPosition(const IVec3 &pos) {
 	const int32 blockIdx = *ptr;
 	if (blockIdx) {
 		const int32 brickIdx = *(ptr + 1);
-		const uint8 *blockPtr = _engine->_grid->getBlockPointer(blockIdx, brickIdx);
-		shadowCollisionType = (ShapeType)*blockPtr;
+		const BlockDataEntry *blockPtr = _engine->_grid->getBlockPointer(blockIdx, brickIdx);
+		shadowCollisionType = (ShapeType)blockPtr->brickShape;
 	} else {
 		shadowCollisionType = ShapeType::kNone;
 	}

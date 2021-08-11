@@ -26,6 +26,7 @@
 #include "common/textconsole.h"
 #include "twine/debugger/debug_grid.h"
 #include "twine/menu/interface.h"
+#include "twine/parser/blocklibrary.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
@@ -53,7 +54,6 @@ Grid::~Grid() {
 		free(_brickTable[i]);
 	}
 	free(_currentGrid);
-	free(_currentBlockLibrary);
 	free(_brickInfoBuffer);
 	free(_bricksDataBuffer);
 }
@@ -299,33 +299,22 @@ void Grid::loadGridBricks() {
 		const uint8 currentBitMask = 1 << (7 - (i & 7));
 
 		if (currentBitByte & currentBitMask) {
-			const uint8 *currentBllPtr = getBlockLibrary(currentBllEntryIdx);
-
-			const uint32 bllSizeX = *currentBllPtr++;
-			const uint32 bllSizeY = *currentBllPtr++;
-			const uint32 bllSizeZ = *currentBllPtr++;
-
-			const uint32 bllSize = bllSizeX * bllSizeY * bllSizeZ;
-
-			for (uint32 j = 0; j < bllSize; j++) {
-				/* const uint8 type = * */currentBllPtr++;
-				/* const uint8 shape = * */currentBllPtr++;
-				uint32 brickIdx = READ_LE_INT16(currentBllPtr);
-				currentBllPtr += 2;
-
-				if (brickIdx) {
-					brickIdx--;
-
-					if (brickIdx <= firstBrick) {
-						firstBrick = brickIdx;
-					}
-
-					if (brickIdx > lastBrick) {
-						lastBrick = brickIdx;
-					}
-
-					_brickUsageTable[brickIdx] = 1;
+			const BlockData *currentBllPtr = getBlockLibrary(currentBllEntryIdx);
+			for (const BlockDataEntry &entry : currentBllPtr->entries) {
+				uint16 brickIdx = entry.brickIdx;
+				if (!brickIdx) {
+					continue;
 				}
+				brickIdx--;
+				if (brickIdx <= firstBrick) {
+					firstBrick = brickIdx;
+				}
+
+				if (brickIdx > lastBrick) {
+					lastBrick = brickIdx;
+				}
+
+				_brickUsageTable[brickIdx] = 1;
 			}
 		}
 		++currentBllEntryIdx;
@@ -445,7 +434,7 @@ bool Grid::initGrid(int32 index) {
 	}
 
 	// load layouts from file
-	if (HQR::getAllocEntry(&_currentBlockLibrary, Resources::HQR_LBA_BLL_FILE, index) == 0) {
+	if (!_currentBlockLibrary.loadFromHQR(Resources::HQR_LBA_BLL_FILE, index, _engine->isLBA1())) {
 		warning("Failed to load block library index: %i", index);
 		return false;
 	}
@@ -613,17 +602,13 @@ const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
 	return ptr;
 }
 
-const uint8* Grid::getBlockPointer(int32 blockIdx, int32 brickIdx) const {
-	const uint8 *blockPtr = getBlockLibrary(blockIdx);
-	blockPtr += 3; // x, y, z bytes
-	blockPtr = blockPtr + brickIdx * 4; // each brick index is shape(byte), type(byte), idx(short)
-	return blockPtr;
+const BlockDataEntry* Grid::getBlockPointer(int32 blockIdx, int32 brickIdx) const {
+	const BlockData *blockPtr = getBlockLibrary(blockIdx);
+	return &blockPtr->entries[brickIdx];
 }
 
-const uint8 *Grid::getBlockLibrary(int32 blockIdx) const {
-	const uint8 *gridPtr = _currentBlockLibrary;
-	const int32 offset = READ_LE_UINT32(gridPtr + 4 * blockIdx - 4);
-	return (const uint8 *)(gridPtr + offset);
+const BlockData *Grid::getBlockLibrary(int32 blockIdx) const {
+	return _currentBlockLibrary.getLayout(blockIdx - 1);
 }
 
 void Grid::getBrickPos(int32 x, int32 y, int32 z) {
@@ -632,10 +617,10 @@ void Grid::getBrickPos(int32 x, int32 y, int32 z) {
 }
 
 void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y, int32 z) {
-	const uint8 *blockPtr = getBlockPointer(blockIdx, brickBlockIdx);
-	const uint8 brickShape = *((const uint8 *)(blockPtr + 0));
-	const uint8 brickSound = *((const uint8 *)(blockPtr + 1));
-	const uint16 brickIdx = READ_LE_UINT16(blockPtr + 2);
+	const BlockDataEntry *blockPtr = getBlockPointer(blockIdx, brickBlockIdx);
+	const uint8 brickShape = blockPtr->brickShape;
+	const uint8 brickSound = blockPtr->brickType;
+	const uint16 brickIdx = blockPtr->brickIdx;
 	if (!brickIdx) {
 		return;
 	}
@@ -728,8 +713,8 @@ ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
 
 	if (blockIdx) {
 		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
-		const uint8 *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
-		return (ShapeType)*blockPtr;
+		const BlockDataEntry *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
+		return (ShapeType)blockPtr->brickShape;
 	}
 	return (ShapeType) * (blockBufferPtr + 1);
 }
@@ -765,8 +750,8 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 
 	if (blockIdx) {
 		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
-		const uint8 *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
-		const ShapeType brickShape = (ShapeType)*blockPtr;
+		const BlockDataEntry *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
+		const ShapeType brickShape = (ShapeType)blockPtr->brickShape;
 
 		const int32 newY = (y2 + (BRICK_HEIGHT - 1)) / BRICK_HEIGHT;
 		int32 currY = collision.y;
@@ -831,8 +816,8 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 
 	if (blockIdx) {
 		uint8 tmpBrickIdx = *(blockBufferPtr + 1);
-		const uint8 *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
-		return READ_LE_INT16(blockPtr + 1);
+		const BlockDataEntry *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
+		return blockPtr->brickType;
 	}
 
 	return 0xF0;

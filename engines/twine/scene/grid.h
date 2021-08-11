@@ -24,6 +24,7 @@
 #define TWINE_SCENE_GRID_H
 
 #include "common/scummsys.h"
+#include "twine/parser/blocklibrary.h"
 #include "twine/parser/sprite.h"
 #include "twine/shared.h"
 #include "twine/twine.h"
@@ -155,8 +156,8 @@ private:
 	/** Current grid pointer */
 	int32 _currentGridSize = 0;
 	uint8 *_currentGrid = nullptr;
-	/** Current block library pointer */
-	uint8 *_currentBlockLibrary = nullptr;
+	/** Current block library */
+	BlockLibraryData _currentBlockLibrary;
 
 	/** Brick data buffer */
 	BrickEntry *_bricksDataBuffer = nullptr;
@@ -263,8 +264,8 @@ public:
 	 * @param blockIdx block library index
 	 * @return pointer to the current block index
 	 */
-	const uint8 *getBlockLibrary(int32 blockIdx) const;
-	const uint8* getBlockPointer(int32 blockIdx, int32 tmpBrickIdx) const;
+	const BlockData *getBlockLibrary(int32 blockIdx) const;
+	const BlockDataEntry* getBlockPointer(int32 blockIdx, int32 tmpBrickIdx) const;
 
 	/** Create grid map from current grid to block library buffer */
 	void createGridMap();
