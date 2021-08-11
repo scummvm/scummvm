@@ -571,6 +571,7 @@ static const uint16 sciNarratorLockupPatch[] = {
 	PATCH_END
 };
 
+#ifdef ENABLE_SCI32
 // Same signature/patch as above but for SCI32 games with debug line instructions.
 //  Some games use both because different versions were compiled differently.
 static const uint16 sciNarratorLockupLineSignature[] = {
@@ -592,6 +593,7 @@ static const uint16 sciNarratorLockupLinePatch[] = {
 	0x31, 0xfb,                         // bnt fb [ set ticks to 0 if ticks == -1 ]
 	PATCH_END
 };
+#endif
 
 // ECO1 CD and SQ4 CD share an early Narrator:say variant
 static const uint16 ecoquest1Sq4CdNarratorLockupSignature[] = {
