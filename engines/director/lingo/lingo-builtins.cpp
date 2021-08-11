@@ -2288,7 +2288,6 @@ void LB::b_updateStage(int nargs) {
 		score->renderVideo();
 
 	movie->getWindow()->render();
-	g_director->draw();
 
 	// play any puppet sounds that have been queued
 	score->playSoundChannel(score->getCurrentFrame());
@@ -2297,6 +2296,8 @@ void LB::b_updateStage(int nargs) {
 		score->renderCursor(movie->getWindow()->getMousePos());
 		score->_cursorDirty = false;
 	}
+
+	g_director->draw();
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly)) {
 		score->_framesRan++;
