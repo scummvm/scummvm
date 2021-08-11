@@ -138,16 +138,16 @@ private:
 	bool renderAnimatedModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos, Common::Rect &modelRect);
 	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
 	bool renderModelElements(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData, Common::Rect &modelRect);
-	void getCameraAnglePositions(int32 x, int32 y, int32 z);
-	inline void getCameraAnglePositions(const IVec3 &vec) {
-		getCameraAnglePositions(vec.x, vec.y, vec.z);
+	const IVec3 &getCameraAnglePositions(int32 x, int32 y, int32 z);
+	inline const IVec3 &getCameraAnglePositions(const IVec3 &vec) {
+		return getCameraAnglePositions(vec.x, vec.y, vec.z);
 	}
 	void applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix, const IVec3 &angleVec);
 	void applyPointsRotation(const Common::Array<BodyVertex>& vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix);
 	void processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex>& vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData);
 	void applyPointsTranslation(const Common::Array<BodyVertex>& vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec);
 	void processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex>& vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData);
-	void translateGroup(int32 x, int32 y, int32 z);
+	const IVec3 &translateGroup(int32 x, int32 y, int32 z);
 
 	IVec3 _baseTransPos;
 	IVec3 _orthoProjPos;
@@ -219,10 +219,10 @@ public:
 	IVec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
-	void getBaseRotationPosition(int32 x, int32 y, int32 z);
+	const IVec3 &getBaseRotationPosition(int32 x, int32 y, int32 z);
 
-	inline void getBaseRotationPosition(const IVec3& vec) {
-		getBaseRotationPosition(vec.x, vec.y, vec.z);
+	inline const IVec3 &getBaseRotationPosition(const IVec3& vec) {
+		return getBaseRotationPosition(vec.x, vec.y, vec.z);
 	}
 
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom);
@@ -233,13 +233,13 @@ public:
 
 	IVec3 &projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
 
-	inline void projectXYPositionOnScreen(const IVec3& pos) {
-		projectXYPositionOnScreen(pos.x, pos.y, pos.z);
+	inline const IVec3 &projectXYPositionOnScreen(const IVec3& pos) {
+		return projectXYPositionOnScreen(pos.x, pos.y, pos.z);
 	}
-	void projectXYPositionOnScreen(int32 x,int32 y,int32 z);
+	const IVec3 &projectXYPositionOnScreen(int32 x,int32 y,int32 z);
 	void setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scaleY, int32 scaleZ);
 	void setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6);
-	void updateCameraAnglePositions(int zShift = 0);
+	const IVec3 &updateCameraAnglePositions(int zShift = 0);
 	void setBaseTranslation(int32 x, int32 y, int32 z);
 	void setBaseRotation(int32 x, int32 y, int32 z, bool transpose = false);
 
