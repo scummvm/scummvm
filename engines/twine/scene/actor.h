@@ -241,7 +241,7 @@ public:
 	int32 _animPosition = 0;
 	AnimType _animType = AnimType::kAnimationTypeLoop;
 	int32 _spriteActorRotation = 0;
-	int32 _brickSound = 0;
+	uint8 _brickSound = 0U;
 
 	BoundingBox _boudingBox;
 	ActorMoveStruct _move;

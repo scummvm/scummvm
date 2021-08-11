@@ -903,11 +903,11 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		if (actor->_staticFlags.bCanDrown) {
-			int32 brickSound = _grid->getBrickSoundType(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
+			const uint8 brickSound = _grid->getBrickSoundType(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
 			actor->_brickSound = brickSound;
 
-			if ((brickSound & 0xF0) == 0xF0) {
-				if ((brickSound & 0x0F) == 1) {
+			if ((brickSound & 0xF0U) == 0xF0U) {
+				if ((brickSound & 0x0FU) == 1) {
 					if (IS_HERO(a)) {
 						if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
 							if (!_actor->_cropBottomScreen) {

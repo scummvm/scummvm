@@ -788,7 +788,7 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	return ShapeType::kNone;
 }
 
-int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
+uint8 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
 	if (collision.x < 0 || collision.x >= GRID_SIZE_X) {
@@ -816,7 +816,7 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
 		return blockPtr->brickType;
 	}
 
-	return 0xF0;
+	return 0xF0U;
 }
 
 void Grid::centerOnActor(const ActorStruct* actor) {
