@@ -262,22 +262,22 @@ T CRC<T>::finalize(T remainder) {
 
 class CRC_CCITT : public CRC<uint16> {
 public:
-	CRC_CCITT() : CRC(0x1021, 0xFFFF, 0x0000, false) {}
+	CRC_CCITT() : CRC<uint16>(0x1021, 0xFFFF, 0x0000, false) {}
 };
 
 class CRC_BINHEX : public CRC<uint16> {
 public:
-	CRC_BINHEX() : CRC(0x1021, 0x0000, 0x0000, false) {}
+	CRC_BINHEX() : CRC<uint16>(0x1021, 0x0000, 0x0000, false) {}
 };
 
 class CRC16 : public CRC<uint16> {
 public:
-	CRC16() : CRC(0x8005, 0x0000, 0x0000, true) {}
+	CRC16() : CRC<uint16>(0x8005, 0x0000, 0x0000, true) {}
 };
 
 class CRC32 : public CRC<uint32> {
 public:
-	CRC32() : CRC(0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, true) {}
+	CRC32() : CRC<uint32>(0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, true) {}
 };
 
 } // End of namespace Common
