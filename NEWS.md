@@ -196,7 +196,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  macOS port:
    - Add support for Dark Mode.
-   - Provide new binaries for Apple Silicon (M1) systems.
 
  MorphOS port:
    - Added native system file browser feature.
