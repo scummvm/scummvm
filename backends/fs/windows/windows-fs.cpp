@@ -42,7 +42,7 @@ bool WindowsFilesystemNode::isReadable() const {
 bool WindowsFilesystemNode::isWritable() const {
 	// Check whether the file exists and it can be written.
 	DWORD fileAttribs = GetFileAttributes(charToTchar(_path.c_str()));
-	return (fileAttribs != INVALID_FILE_ATTRIBUTES) & !(fileAttribs & FILE_ATTRIBUTE_READONLY);
+	return ((fileAttribs != INVALID_FILE_ATTRIBUTES) && (!(fileAttribs & FILE_ATTRIBUTE_READONLY)));
 }
 
 void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data) {
