@@ -28,31 +28,21 @@
 #include "backends/fs/windows/windows-fs.h"
 #include "backends/fs/stdiostream.h"
 
-// F_OK, R_OK and W_OK are not defined under MSVC, so we define them here
-// For more information on the modes used by MSVC, check:
-// http://msdn2.microsoft.com/en-us/library/1w06ktdy(VS.80).aspx
-#ifndef F_OK
-#define F_OK 0
-#endif
-
-#ifndef R_OK
-#define R_OK 4
-#endif
-
-#ifndef W_OK
-#define W_OK 2
-#endif
-
 bool WindowsFilesystemNode::exists() const {
-	return _taccess(charToTchar(_path.c_str()), F_OK) == 0;
+	// Check whether the file actually exists
+	return (GetFileAttributes(charToTchar(_path.c_str())) != INVALID_FILE_ATTRIBUTES);
 }
 
 bool WindowsFilesystemNode::isReadable() const {
-	return _taccess(charToTchar(_path.c_str()), R_OK) == 0;
+	// Since all files are always readable and it is not possible to give
+	// write-only permission, this is equivalent to ::exists().
+	return (GetFileAttributes(charToTchar(_path.c_str())) != INVALID_FILE_ATTRIBUTES);
 }
 
 bool WindowsFilesystemNode::isWritable() const {
-	return _taccess(charToTchar(_path.c_str()), W_OK) == 0;
+	// Check whether the file exists and it can be written.
+	DWORD fileAttribs = GetFileAttributes(charToTchar(_path.c_str()));
+	return (fileAttribs != INVALID_FILE_ATTRIBUTES) & !(fileAttribs & FILE_ATTRIBUTE_READONLY);
 }
 
 void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data) {
