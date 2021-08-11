@@ -218,6 +218,10 @@ void Lingo::func_goto(Datum &frame, Datum &movie) {
 			stage->_nextMovie.frameI = frame.asInt();
 		}
 
+		// Set cursor to watch.
+		score->_defaultCursor.readFromResource(4);
+		score->renderCursor(stage->getMousePos());
+
 		return;
 	}
 

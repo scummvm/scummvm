@@ -580,7 +580,7 @@ void Score::renderCursor(Common::Point pos, bool forceUpdate) {
 		return;
 	}
 
-	if (!_channels.empty()) {
+	if (!_channels.empty() && _playState != kPlayStopped) {
 		uint spriteId = 0;
 
 		for (int i = _channels.size() - 1; i >= 0; i--)
