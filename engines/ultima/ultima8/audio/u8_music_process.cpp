@@ -203,11 +203,9 @@ void U8MusicProcess::run() {
 		break;
 
 	case PLAYBACK_TRANSITION:
-		if (!_midiPlayer) {
+		if (!_midiPlayer || !_midiPlayer->isPlaying()) {
+			// Transition has finished. Play the next track.
 			_state = PLAYBACK_PLAY_WANTED;
-		} else {
-			_state = PLAYBACK_PLAY_WANTED;
-			_midiPlayer->stop();
 		}
 		break;
 

@@ -227,9 +227,9 @@ void MusicFlex::loadSongInfo() {
 
 			// Overlayed
 			if (*str == '!')
-				num = -1 - atoi(str + 1);
+				num = 0 - atoi(str + 1);
 			else
-				num = atoi(str + 1);
+				num = atoi(str);
 
 			_info[fi]->_transitions[ti][m] = num;
 		}
