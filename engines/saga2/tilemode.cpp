@@ -1044,8 +1044,6 @@ static APPFUNC(cmdClickTileMap) {
 #endif
 		if (g_vm->_teleportOnClick) {
 			if (g_vm->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
-				TilePoint pt = walkToPos;
-
 				for (ObjectID pid = ActorBaseID; pid < ActorBaseID + kPlayerActors; ++pid) {
 					Actor *p = (Actor *)GameObject::objectAddress(pid);
 					p->setLocation(walkToPos);
