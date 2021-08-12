@@ -363,8 +363,8 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	} else {
 		// Set the basic window size based on the desktop resolution
 		// since we have no values stored, e.g. on first launch.
-		requestedWidth  = desktopRes.width()  * 0.3f;
-		requestedHeight = desktopRes.height() * 0.4f;
+		requestedWidth  = desktopRes.width()  * ((float)1 / (float)4) * 1.2f;
+		requestedHeight = desktopRes.height() * ((float)1 / (float)3) * 1.2f;
 
 		// Apply scaler
 		requestedWidth  *= _graphicsScale;
@@ -380,8 +380,8 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		// Set the basic window size based on the desktop resolution
 		// since we cannot reliably determine the current window state
 		// on SDL1.
-		requestedWidth  = desktopRes.width()  * 0.3f;
-		requestedHeight = desktopRes.height() * 0.4f;
+		requestedWidth  = desktopRes.width()  * ((float)1 / (float)4) * 1.2f;
+		requestedHeight = desktopRes.height() * ((float)1 / (float)3) * 1.2f;
 
 		// Apply scaler
 		requestedWidth  *= _graphicsScale;
@@ -391,7 +391,7 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	// Determine current aspect ratio
 	uint maxAllowedWidth   = desktopRes.width();
 	uint maxAllowedHeight  = desktopRes.height();
-	float ratio = (float)requestedWidth / requestedHeight;
+	float ratio = (float)requestedWidth / (float)requestedHeight;
 
 	// Check if we request a larger window than physically possible,
 	// e.g. by starting with additional launcher parameters forcing
