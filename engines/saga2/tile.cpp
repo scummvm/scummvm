@@ -2742,10 +2742,10 @@ void buildRipTables(void) {
 		//  If rip table has a valid metatile, remove that meta tile's
 		//  reference to its rip table
 		if (ripTableList[j].metaID != NoMetaTile) {
-			MetaTile    *rip_mt =   MetaTile::metaTileAddress(
-			                        ripTableList[j].metaID);
+			MetaTileID ripID = ripTableList[j].metaID;
+			MetaTile *ripMt =   MetaTile::metaTileAddress(ripID);
 
-			RipTableID  &rt = rip_mt->ripTableID(currentMapNum);
+			RipTableID &rt = ripMt->ripTableID(ripID.map);
 
 			//  Assign -1 to the meta tile's rip table ID
 			if (RipTable::ripTableAddress(rt) == &ripTableList[j])
