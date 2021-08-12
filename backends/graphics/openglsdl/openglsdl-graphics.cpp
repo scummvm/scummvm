@@ -348,6 +348,9 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	// Fetch current desktop resolution and determining max. width and height
 	Common::Rect desktopRes = _window->getDesktopResolution();
 
+	// Determine current desktop aspect ratio
+	float ratio = (float)desktopRes.width() / (float)desktopRes.height();
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool _isMaximized = (SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_MAXIMIZED);
 	if (_isMaximized && ConfMan.hasKey("window_maximized_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("window_maximized_height", Common::ConfigManager::kApplicationDomain)) {
@@ -364,8 +367,8 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	} else {
 		// Set the basic window size based on the desktop resolution
 		// since we have no values stored, e.g. on first launch.
-		requestedWidth  = desktopRes.width()  * (1.0f / 4.0f) * 1.2f;
-		requestedHeight = desktopRes.height() * (1.0f / 3.0f) * 1.2f;
+		requestedWidth  = desktopRes.width()  * (1.0f / 3.0f) * 1.5f / ratio;
+		requestedHeight = desktopRes.height() * (1.0f / 4.0f) * 1.5f;
 
 		// Apply scaler
 		requestedWidth  *= _graphicsScale;
@@ -381,18 +384,17 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		// Set the basic window size based on the desktop resolution
 		// since we cannot reliably determine the current window state
 		// on SDL1.
-		requestedWidth  = desktopRes.width()  * (1.0f / 4.0f) * 1.2f;
-		requestedHeight = desktopRes.height() * (1.0f / 3.0f) * 1.2f;
+		requestedWidth  = desktopRes.width()  * (1.0f / 3.0f) * 1.5f / ratio;
+		requestedHeight = desktopRes.height() * (1.0f / 4.0f) * 1.5f;
 
 		// Apply scaler
 		requestedWidth  *= _graphicsScale;
 		requestedHeight *= _graphicsScale;
 #endif
 
-	// Determine current aspect ratio
+	// Set allowed dimensions
 	uint maxAllowedWidth   = desktopRes.width();
 	uint maxAllowedHeight  = desktopRes.height();
-	float ratio = (float)requestedWidth / (float)requestedHeight;
 
 	// Check if we request a larger window than physically possible,
 	// e.g. by starting with additional launcher parameters forcing
