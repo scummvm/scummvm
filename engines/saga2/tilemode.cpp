@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/events.h"
+
 #include "saga2/saga2.h"
 #include "saga2/tilemode.h"
 #include "saga2/tile.h"
@@ -1041,7 +1043,16 @@ static APPFUNC(cmdClickTileMap) {
 		selectedObject = pickedObject;
 #endif
 		if (g_vm->_teleportOnClick) {
-			getCenterActor()->setLocation(walkToPos);
+			if (g_vm->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
+				TilePoint pt = walkToPos;
+
+				for (ObjectID pid = ActorBaseID; pid < ActorBaseID + kPlayerActors; ++pid) {
+					Actor *p = (Actor *)GameObject::objectAddress(pid);
+					p->setLocation(walkToPos);
+				}
+			} else {
+				getCenterActor()->setLocation(walkToPos);
+			}
 		} else if (isActor(pickedObject)) {
 			PlayerActorID       playerID;
 
