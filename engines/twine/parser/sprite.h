@@ -74,10 +74,8 @@ protected:
 	bool _bricks = false;
 
 	bool loadSprite(Common::SeekableReadStream &stream, uint32 offset);
-	void clear();
+	void reset() override;
 public:
-	~SpriteData();
-
 	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 
 	inline const Graphics::ManagedSurface &surface(int index = 0) const {

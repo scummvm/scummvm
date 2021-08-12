@@ -100,6 +100,9 @@ private:
 
 	BoneFrame _boneStates[560];
 
+protected:
+	void reset() override;
+
 public:
 	union BodyFlags {
 		struct BitMask {

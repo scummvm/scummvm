@@ -25,7 +25,12 @@
 
 namespace TwinE {
 
+void BlockLibraryData::reset() {
+	_layouts.clear();
+}
+
 bool BlockLibraryData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
+	reset();
 	const uint32 numLayouts = stream.readUint32LE() / 4;
 	_layouts.resize(numLayouts);
 	stream.seek(0);

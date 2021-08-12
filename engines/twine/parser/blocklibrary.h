@@ -48,7 +48,8 @@ class BlockLibraryData : public Parser {
 private:
 	Common::Array<BlockData> _layouts;
 	bool parseLayout(BlockData &blockData, Common::SeekableReadStream &stream, bool lba1);
-
+protected:
+	void reset() override;
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 	const BlockData *getLayout(int index) const;

@@ -73,7 +73,8 @@ struct Trajectory {
 class TrajectoryData : public Parser {
 private:
 	Common::Array<Trajectory> _trajectories;
-
+protected:
+	void reset() override;
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 

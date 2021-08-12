@@ -75,6 +75,9 @@ private:
 	bool loadBody(Common::SeekableReadStream &stream);
 	bool loadAnim(Common::SeekableReadStream &stream);
 
+protected:
+	void reset() override;
+
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream, bool lba1) override;
 

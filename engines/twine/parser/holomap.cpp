@@ -26,8 +26,12 @@
 
 namespace TwinE {
 
-bool TrajectoryData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
+void TrajectoryData::reset() {
 	_trajectories.clear();
+}
+
+bool TrajectoryData::loadFromStream(Common::SeekableReadStream &stream, bool lba1) {
+	reset();
 	_trajectories.reserve(100); // this is the lba1 amount of trajectories
 	while (stream.pos() < stream.size()) {
 		Trajectory data;
