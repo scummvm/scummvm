@@ -90,6 +90,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("play_music", WRAP_METHOD(Console, cmdPlayMusic));
 
 	registerCmd("play_voice", WRAP_METHOD(Console, cmdPlayVoice));
+
+	registerCmd("invis", WRAP_METHOD(Console, cmdInvisibility));
 }
 
 Console::~Console() {
@@ -432,6 +434,23 @@ bool Console::cmdPlayVoice(int argc, const char **argv) {
 	else {
 		int32 soundID = READ_BE_INT32(argv[1]);
 		playVoice(soundID);
+	}
+
+	return true;
+}
+
+bool Console::cmdInvisibility(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <1/0>\n", argv[0]);
+	else {
+		bool inv = atoi(argv[1]);
+		for (ObjectID id = ActorBaseID; id < ActorBaseID + kPlayerActors; ++id) {
+			Actor *p = (Actor *)GameObject::objectAddress(id);
+			if (inv)
+				p->setEffect(actorInvisible, true);
+			else
+				p->setEffect(actorInvisible, false);
+		}
 	}
 
 	return true;
