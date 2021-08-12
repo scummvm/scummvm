@@ -177,7 +177,7 @@ def collect_forks(args: argparse.Namespace) -> None:
                 try:
                     finderInfo = xattr.xattr(os.path.join(dirpath, filename))['com.apple.FinderInfo'][0:8]
                 except (IOError, OSError) as e:
-                    onError(e)
+                    print(f"Error in xattr calling: {e}")
                     return
 
                 (file.type, file.creator) = unpack("4s4s", finderInfo)
