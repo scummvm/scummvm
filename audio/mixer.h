@@ -266,6 +266,11 @@ public:
 	virtual Timestamp getElapsedTime(SoundHandle handle) = 0;
 
 	/**
+	 * Replace the channel's stream with a version that loops indefinitely.
+	 */
+	virtual void loopChannel(SoundHandle handle) = 0;
+
+	/**
 	 * Check whether any channel of the given sound type is active.
 	 *
 	 * For example, this can be used to check whether any SFX sound

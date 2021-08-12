@@ -127,6 +127,11 @@ public:
 	Timestamp getElapsedTime();
 
 	/**
+	 * Replaces the channel's stream with a version that loops indefinitely.
+	 */
+	void loop();
+
+	/**
 	 * Queries the channel's sound type.
 	 */
 	Mixer::SoundType getType() const { return _type; }
@@ -397,6 +402,16 @@ Timestamp MixerImpl::getElapsedTime(SoundHandle handle) {
 	return _channels[index]->getElapsedTime();
 }
 
+void MixerImpl::loopChannel(SoundHandle handle) {
+	Common::StackLock lock(_mutex);
+
+	const int index = handle._val % NUM_CHANNELS;
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
+		return;
+
+	_channels[index]->loop();
+}
+
 void MixerImpl::pauseAll(bool paused) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++) {
@@ -602,6 +617,18 @@ Timestamp Channel::getElapsedTime() {
 	// isn't invoked at the regular intervals that I first imagined.
 
 	return ts;
+}
+
+void Channel::loop() {
+	assert(_stream);
+
+	Audio::RewindableAudioStream *rewindableStream = dynamic_cast<RewindableAudioStream *>(_stream.get());
+	if (rewindableStream) {
+		DisposeAfterUse::Flag dispose = _stream.getDispose();
+		_stream.disownPtr();
+		Audio::LoopingAudioStream *loopingStream = new Audio::LoopingAudioStream(rewindableStream, 0, dispose, false);
+		_stream.reset(loopingStream, DisposeAfterUse::YES);
+	}
 }
 
 int Channel::mix(int16 *data, uint len) {

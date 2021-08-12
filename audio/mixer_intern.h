@@ -121,6 +121,8 @@ public:
 	virtual uint32 getSoundElapsedTime(SoundHandle handle);
 	virtual Timestamp getElapsedTime(SoundHandle handle);
 
+	virtual void loopChannel(SoundHandle handle);
+
 	virtual bool hasActiveChannelOfType(SoundType type);
 
 	virtual void setVolumeForSoundType(SoundType type, int volume);
