@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-11 10:07+0000\n"
-"PO-Revision-Date: 2021-08-09 20:25+0000\n"
+"PO-Revision-Date: 2021-08-12 20:11+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -6031,14 +6031,12 @@ msgstr ""
 "migliorandone la resa estetica"
 
 #: engines/sci/detection.cpp:323
-#, fuzzy
-#| msgid "Enable frame skipping"
 msgid "Enable bearded musicians"
-msgstr "Attiva frame skipping"
+msgstr "Abilita musicisti barbuti"
 
 #: engines/sci/detection.cpp:324
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "Abilita elementi grafici che sono stati disattivati per ragioni legali"
 
 #: engines/sci/detection.cpp:354
 msgid "MIDI mode:"
@@ -7712,12 +7710,14 @@ msgstr "Usa font renderizzati in sostituzione dei font normali"
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/ultima8/meta_engine.cpp:192
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "Centra inquadratura su Silencer"
 
 #: engines/ultima/ultima8/meta_engine.cpp:193
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
+"La visuale segue il movimento del giocatore anzichè spostarsi a posizioni "
+"predefinite."
 
 #: engines/ultima/ultima8/meta_engine.cpp:204
 msgid "Ultima VIII"
