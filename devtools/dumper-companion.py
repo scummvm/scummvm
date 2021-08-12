@@ -6,26 +6,24 @@
 # This file contains tests. They can be run with:
 #  $ pytest dumper-companion.py
 #
-# Code is formatted with blacks
+# Code is formatted with black
 
 import argparse
 import io
 import os
 import sys
-import re
-if sys.platform == "darwin":
-    try:
-        import xattr
-    except ImportError:
-        print("xattr is required for the 'mac' mode to work\n")
-        pass
-
 from binascii import crc_hqx
 from pathlib import Path
 from struct import pack, unpack
 from typing import Any, List, Tuple
 
 import machfs
+
+if sys.platform == "darwin":
+    try:
+        import xattr
+    except ImportError:
+        print("xattr is required for the 'mac' mode to work\n")
 
 
 def file_to_macbin(f: machfs.File, name: str, encoding: str) -> bytes:
@@ -94,6 +92,7 @@ def encode_string(args: argparse.Namespace) -> None:
     if args.stdin:
         var = input()
     print(punyencode(var))
+    return 0
 
 
 def generate_punyencoded_path(
@@ -129,6 +128,7 @@ def extract_volume(args: argparse.Namespace) -> None:
             if obj.rsrc:
                 file = file_to_macbin(obj, hpath[-1], encoding=encoding)
             upath.write_bytes(file)
+    return 0
 
 
 def has_resource_fork(dirpath: str, filename: str) -> bool:
@@ -159,12 +159,18 @@ def collect_forks(args: argparse.Namespace) -> None:
                 count_resources += 1
                 resource_filename = filename + "/..namedfork/rsrc"
                 to_filename = filename
+
+                filepath = os.path.join(dirpath, filename)
+                resourcepath = os.path.join(dirpath, resource_filename)
+
                 if punify:
                     tmp = punyencode(to_filename)
                     if tmp != to_filename:
                         print(f"Renamed {to_filename} to {tmp}")
                         count_renames += 1
                     to_filename = tmp
+
+                to_filepath = os.path.join(dirpath, filename)
 
                 file = machfs.File()
 
@@ -175,26 +181,29 @@ def collect_forks(args: argparse.Namespace) -> None:
 
                 # Get info on creator and type
                 try:
-                    finderInfo = xattr.xattr(os.path.join(dirpath, filename))['com.apple.FinderInfo'][0:8]
+                    finderInfo = xattr.xattr(filepath)["com.apple.FinderInfo"][0:8]
                 except (IOError, OSError) as e:
-                    print(f"Error in xattr calling: {e}")
-                    return
+                    print(f"Error getting type and creator for: {filename}")
+                    return 1
 
-                (file.type, file.creator) = unpack("4s4s", finderInfo)
+                file.type, file.creator = unpack("4s4s", finderInfo)
 
-                with open(os.path.join(dirpath, resource_filename), "rb") as rsrc:
+                with open(resourcepath, "rb") as rsrc:
                     file.rsrc = rsrc.read()
-                with open(os.path.join(dirpath, filename), "rb") as data:
+                with open(filepath, "rb") as data:
                     file.data = data.read()
-                with open(os.path.join(dirpath, to_filename), "wb") as to_file:
+                with open(to_filepath, "wb") as to_file:
                     to_file.write(
                         file_to_macbin(file, to_filename, encoding="mac_roman")
                     )
 
                     if to_filename != filename:
-                        os.remove(filename) # Remove the original file
+                        os.remove(filepath)  # Remove the original file
 
-                    os.utime(os.path.join(dirpath, to_filename), (info.st_mtime, info.st_mtime))
+                    os.utime(
+                        to_filepath,
+                        (info.st_mtime, info.st_mtime),
+                    )
             elif punify:
                 punified_filename = punyencode(filename)
                 if punified_filename != filename:
@@ -206,6 +215,7 @@ def collect_forks(args: argparse.Namespace) -> None:
                     )
 
     print(f"Macbinary {count_resources}, Renamed {count_renames} files")
+    return 0
 
 
 def generate_parser() -> argparse.ArgumentParser:
@@ -266,7 +276,7 @@ def generate_parser() -> argparse.ArgumentParser:
 if __name__ == "__main__":
     parser = generate_parser()
     args = parser.parse_args()
-    args.func(args)
+    exit(args.func(args))
 
 ### Test functions
 
