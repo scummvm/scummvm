@@ -30,7 +30,7 @@
  * top-level directory listing all registered devoptab devices but
  * that otherwise implement the POSIX APIs.
  */
-class DevoptabFilesystemFactory : public DrivesPOSIXFilesystemFactory {
+class DevoptabFilesystemFactory final : public DrivesPOSIXFilesystemFactory {
 public:
 	DevoptabFilesystemFactory();
 };

@@ -28,7 +28,7 @@
 #include "common/stream.h"
 #include "common/str.h"
 
-class SymbianStdioStream : public Common::SeekableReadStream, public Common::SeekableWriteStream, public Common::NonCopyable {
+class SymbianStdioStream final : public Common::SeekableReadStream, public Common::SeekableWriteStream, public Common::NonCopyable {
 protected:
 	/** File handle to the actual file. */
 	void *_handle;
@@ -41,19 +41,19 @@ public:
 	static SymbianStdioStream *makeFromPath(const Common::String &path, bool writeMode);
 
 	SymbianStdioStream(void *handle);
-	virtual ~SymbianStdioStream();
+	virtual ~SymbianStdioStream() override;
 
-	bool err() const;
-	void clearErr();
-	bool eos() const;
+	bool err() const override;
+	void clearErr() override;
+	bool eos() const override;
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize);
-	virtual bool flush();
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) override;
+	virtual bool flush() override;
 
-	virtual int64 pos() const;
-	virtual int64 size() const;
-	bool seek(int64 offs, int whence = SEEK_SET);
-	uint32 read(void *dataPtr, uint32 dataSize);
+	virtual int64 pos() const override;
+	virtual int64 size() const override;
+	bool seek(int64 offs, int whence = SEEK_SET) override;
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
 #endif

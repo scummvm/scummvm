@@ -31,11 +31,11 @@
  *
  * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class PSPFilesystemFactory : public FilesystemFactory, public Common::Singleton<PSPFilesystemFactory> {
+class PSPFilesystemFactory final : public FilesystemFactory, public Common::Singleton<PSPFilesystemFactory> {
 public:
-	virtual AbstractFSNode *makeRootFileNode() const;
-	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
-	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
+	virtual AbstractFSNode *makeRootFileNode() const override;
+	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const override;
+	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 
 protected:
 	PSPFilesystemFactory() {}

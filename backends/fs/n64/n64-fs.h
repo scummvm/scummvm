@@ -30,7 +30,7 @@
  *
  * Parts of this class are documented in the base interface class, AbstractFSNode.
  */
-class N64FilesystemNode : public AbstractFSNode {
+class N64FilesystemNode final : public AbstractFSNode {
 protected:
 	Common::String _displayName;
 	Common::String _path;
@@ -51,29 +51,29 @@ public:
 	 */
 	N64FilesystemNode(const Common::String &p, bool verify = true);
 
-	virtual bool exists() const;
-	virtual Common::String getDisplayName() const {
+	virtual bool exists() const override;
+	virtual Common::String getDisplayName() const override {
 		return _displayName;
 	}
-	virtual Common::String getName() const {
+	virtual Common::String getName() const override {
 		return _displayName;
 	}
-	virtual Common::String getPath() const {
+	virtual Common::String getPath() const override {
 		return _path;
 	}
-	virtual bool isDirectory() const {
+	virtual bool isDirectory() const override {
 		return _isDirectory;
 	}
-	virtual bool isReadable() const;
-	virtual bool isWritable() const;
+	virtual bool isReadable() const override;
+	virtual bool isWritable() const override;
 
-	virtual AbstractFSNode *getChild(const Common::String &n) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
-	virtual AbstractFSNode *getParent() const;
+	virtual AbstractFSNode *getChild(const Common::String &n) const override;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
+	virtual AbstractFSNode *getParent() const override;
 
-	virtual Common::SeekableReadStream *createReadStream();
-	virtual Common::SeekableWriteStream *createWriteStream();
-	virtual bool createDirectory();
+	virtual Common::SeekableReadStream *createReadStream() override;
+	virtual Common::SeekableWriteStream *createWriteStream() override;
+	virtual bool createDirectory() override;
 };
 
 #endif

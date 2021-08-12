@@ -28,7 +28,7 @@
 #include "common/stream.h"
 #include "common/str.h"
 
-class RomfsStream : public Common::SeekableReadStream, public Common::SeekableWriteStream, public Common::NonCopyable {
+class RomfsStream final : public Common::SeekableReadStream, public Common::SeekableWriteStream, public Common::NonCopyable {
 protected:
 	/** File handle to the actual file. */
 	void *_handle;
@@ -41,19 +41,19 @@ public:
 	static RomfsStream *makeFromPath(const Common::String &path, bool writeMode);
 
 	RomfsStream(void *handle);
-	virtual ~RomfsStream();
+	virtual ~RomfsStream() override;
 
-	virtual bool err() const;
-	virtual void clearErr();
-	virtual bool eos() const;
+	virtual bool err() const override;
+	virtual void clearErr() override;
+	virtual bool eos() const override;
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize);
-	virtual bool flush();
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) override;
+	virtual bool flush() override;
 
-	virtual int64 pos() const;
-	virtual int64 size() const;
-	virtual bool seek(int64 offs, int whence = SEEK_SET);
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	virtual int64 pos() const override;
+	virtual int64 size() const override;
+	virtual bool seek(int64 offs, int whence = SEEK_SET) override;
+	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
 #endif

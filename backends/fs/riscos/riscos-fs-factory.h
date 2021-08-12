@@ -30,11 +30,11 @@
  *
  * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class RISCOSFilesystemFactory : public FilesystemFactory {
+class RISCOSFilesystemFactory final : public FilesystemFactory {
 protected:
-	virtual AbstractFSNode *makeRootFileNode() const;
-	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
-	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
+	virtual AbstractFSNode *makeRootFileNode() const override;
+	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const override;
+	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 };
 
 #endif /*RISCOS_FILESYSTEM_FACTORY_H*/
