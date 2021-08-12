@@ -476,6 +476,14 @@ public:
 	}
 
 	/**
+	 * Clears the pointer without destroying the old object.
+	 */
+	void disownPtr() {
+		_pointer = nullptr;
+		_dispose = DisposeAfterUse::NO;
+	}
+
+	/**
 	 * Returns the plain pointer value.
 	 *
 	 * @return the pointer the DisposablePtr manages
