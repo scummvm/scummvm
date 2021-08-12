@@ -1968,8 +1968,7 @@ void DreamWebEngine::doLook() {
 
 	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
 		const char *placeName = (const char *)string;
-		auto colon_pos = strchr(placeName, ':');
-		const char *desRoom = colon_pos + 1;
+		const char *desRoom = strchr(placeName, ':') + 1;
 		_ttsMan->say(desRoom);
 	}
 
@@ -2371,7 +2370,7 @@ void DreamWebEngine::obsThatDoThings() {
 
 void DreamWebEngine::textToSpeech(const char *text) {
 	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
-		auto colon_pos = strchr(text, ':');
+		const char *colon_pos = strchr(text, ':');
 		Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
 		_ttsMan->say(result);
 	}

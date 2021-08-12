@@ -96,8 +96,7 @@ void DreamWebEngine::startTalk() {
 
 	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech")) {
 		const char *text = (const char *)str;
-		auto colon_pos = strchr(text, ':');
-		const char *goodText = colon_pos + 1;
+		const char *goodText = strchr(text, ':') + 1;
 		_ttsMan->say(goodText);
 	}
 

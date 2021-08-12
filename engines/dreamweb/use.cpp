@@ -188,7 +188,7 @@ void DreamWebEngine::showFirstUse() {
 
 	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
 		const char *text = (const char *)obText;
-		auto colon_pos = strchr(text, ':');
+		const char *colon_pos = strchr(text, ':');
 		Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
 		_ttsMan->say(result);
 	}
@@ -202,6 +202,14 @@ void DreamWebEngine::showSecondUse() {
 	findNextColon(&obText);
 	findNextColon(&obText);
 	useText(obText);
+
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
+		const char *text = (const char *)obText;
+		const char *colon_pos = strchr(text, ':');
+		Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
+		_ttsMan->say(result);
+	}
+
 	hangOnP(400);
 }
 
