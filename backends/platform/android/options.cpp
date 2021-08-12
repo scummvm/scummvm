@@ -71,7 +71,7 @@ AndroidOptionsWidget::AndroidOptionsWidget(GuiObject *boss, const Common::String
 		OptionsContainerWidget(boss, name, "AndroidOptionsDialog", false, domain), _enabled(true) {
 	_onscreenCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.OnScreenControl", _("Show On-screen control"));
 	_touchpadCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.TouchpadMode", _("Touchpad mouse mode"));
-	if (domain.equalsIgnoreCase("scummvm")) {
+	if (domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain)) {
 		// Only show this checkbox in Options (via Options... in the launcher), and not at game domain level (via Edit Game...)
 		// I18N: Show a button to revoke Storage Access Framework permissions for Android
 		_onscreenSAFRevokeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "AndroidOptionsDialog.SAFRevokePermsControl", _("Show SAF revoke permissions overlay button"));
@@ -87,7 +87,7 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 	            .addPadding(0, 0, 0, 0)
 	            .addWidget("OnScreenControl", "Checkbox")
 	            .addWidget("TouchpadMode", "Checkbox");
-	if (_domain.equalsIgnoreCase("scummvm")) {
+	if (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain)) {
 		layouts.addWidget("SAFRevokePermsControl", "Checkbox");
 	}
 	layouts.closeLayout()
@@ -97,7 +97,7 @@ void AndroidOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 void AndroidOptionsWidget::load() {
 	_onscreenCheckbox->setState(ConfMan.getBool("onscreen_control", _domain));
 	_touchpadCheckbox->setState(ConfMan.getBool("touchpad_mouse_mode", _domain));
-	if (_domain.equalsIgnoreCase("scummvm")) {
+	if (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain)) {
 		_onscreenSAFRevokeCheckbox->setState(ConfMan.getBool("onscreen_saf_revoke_btn", _domain));
 	}
 }
@@ -106,13 +106,13 @@ bool AndroidOptionsWidget::save() {
 	if (_enabled) {
 		ConfMan.setBool("onscreen_control", _onscreenCheckbox->getState(), _domain);
 		ConfMan.setBool("touchpad_mouse_mode", _touchpadCheckbox->getState(), _domain);
-		if (_domain.equalsIgnoreCase("scummvm")) {
+		if (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain)) {
 			ConfMan.setBool("onscreen_saf_revoke_btn", _onscreenSAFRevokeCheckbox->getState(), _domain);
 		}
 	} else {
 		ConfMan.removeKey("onscreen_control", _domain);
 		ConfMan.removeKey("touchpad_mouse_mode", _domain);
-		if (_domain.equalsIgnoreCase("scummvm")) {
+		if (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain)) {
 			ConfMan.removeKey("onscreen_saf_revoke_btn", _domain);
 		}
 	}
@@ -123,7 +123,7 @@ bool AndroidOptionsWidget::save() {
 bool AndroidOptionsWidget::hasKeys() {
 	return ConfMan.hasKey("onscreen_control", _domain) ||
 	       ConfMan.hasKey("touchpad_mouse_mode", _domain) ||
-	       (_domain.equalsIgnoreCase("scummvm") && ConfMan.hasKey("onscreen_saf_revoke_btn", _domain));
+	       (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("onscreen_saf_revoke_btn", _domain));
 }
 
 void AndroidOptionsWidget::setEnabled(bool e) {
@@ -131,7 +131,7 @@ void AndroidOptionsWidget::setEnabled(bool e) {
 
 	_onscreenCheckbox->setEnabled(e);
 	_touchpadCheckbox->setEnabled(e);
-	if (_domain.equalsIgnoreCase("scummvm")) {
+	if (_domain.equalsIgnoreCase(Common::ConfigManager::kApplicationDomain)) {
 		_onscreenSAFRevokeCheckbox->setEnabled(e);
 	}
 }

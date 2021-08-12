@@ -106,6 +106,13 @@ void BrowserDialog::open() {
 
 	if (ConfMan.hasKey("browser_lastpath"))
 		_node = Common::FSNode(ConfMan.get("browser_lastpath"));
+#if defined(ANDROID_PLAIN_PORT)
+	else { // !ConfMan.hasKey("browser_lastpath"))
+		// Currently, the "default" path in Android port will present a list of shortcuts, (most of) which should be usable.
+		// The "/" will list these shortcuts (see POSIXFilesystemNode::getChildren())
+		_node = Common::FSNode("/");
+	}
+#endif // defined(ANDROID_PLAIN_PORT)
 	if (!_node.isDirectory())
 		_node = Common::FSNode(".");
 
