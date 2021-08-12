@@ -58,6 +58,7 @@ enum GroupingMethod {
 	kGroupByFirstLetter,
 	kGroupByEngine,
 	kGroupBySeries,
+	kGroupByCompany,
 	kGroupByLanguage,
 	kGroupByPlatform
 };

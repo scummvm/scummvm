@@ -67,6 +67,18 @@ struct MetadataSeries {
 	MetadataSeries(const String i, const String n) : id(i), name(n) {}
 };
 
+struct MetadataCompany {
+	typedef Common::String String;
+
+	String id;
+	String name;
+	String alt_name;
+
+	MetadataCompany() : id(nullptr), name(nullptr), alt_name(nullptr) {}
+	MetadataCompany(const String i, const String n, const String altn)
+	: id(i), name(n), alt_name(altn) {}
+};
+
 class MetadataParser : public Common::XMLParser {
 public:
 	MetadataParser();
@@ -76,6 +88,7 @@ public:
 	Common::HashMap<Common::String, MetadataGame, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _gameInfo;
 	Common::HashMap<Common::String, MetadataEngine, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _engineInfo;
 	Common::HashMap<Common::String, MetadataSeries, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _seriesInfo;
+	Common::HashMap<Common::String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _companyInfo;
 
 protected:
 
@@ -105,12 +118,20 @@ protected:
 
 		KEY_END() // series end
 
+		XML_KEY(company)
+			XML_PROP(id, true)
+			XML_PROP(name, true)
+			XML_PROP(alt_name, true)
+
+		KEY_END() // company end
+
 	} PARSER_END()
 
 	/** Render info callbacks */
 	bool parserCallback_game(ParserNode *node);
 	bool parserCallback_engine(ParserNode *node);
 	bool parserCallback_series(ParserNode *node);
+	bool parserCallback_company(ParserNode *node);
 
 	bool closedKeyCallback(ParserNode *node) override;
 

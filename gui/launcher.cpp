@@ -871,6 +871,7 @@ void LauncherSimple::build() {
 	_grpChooserPopup->appendEntry(_("First letter"), kGroupByFirstLetter);
 	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
 	_grpChooserPopup->appendEntry(_("Series"), kGroupBySeries);
+	_grpChooserPopup->appendEntry(_("Publisher"), kGroupByCompany);
 	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
 	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
 	_grpChooserPopup->setSelected(_groupBy);
@@ -1065,6 +1066,26 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 		metadataNames[""] = "Unknown Engine";
 		Common::HashMap<String, MetadataEngine, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._engineInfo.begin();
 		for (; i != _metadataParser._engineInfo.end(); ++i) {
+			if (i->_value.alt_name.empty()) {
+				metadataNames[i->_key] = i->_value.name;
+			} else {
+				metadataNames[i->_key] = Common::String::format("%s (%s)", i->_value.name.c_str(), i->_value.alt_name.c_str());
+			}
+		}
+		_list->setMetadataNames(metadataNames);
+		_list->groupByAttribute();
+		break;
+	}
+	case kGroupByCompany: {
+		for (uint i = 0; i < metadata.size(); ++i) {
+			U32String gameid = metadata[i]->getVal(String("gameid"));
+			attrs.push_back(_metadataParser._gameInfo[gameid].company_id);
+		}
+		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		_list->setAttributeValues(attrs);
+		metadataNames[""] = "Unknown Publisher";
+		Common::HashMap<String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._companyInfo.begin();
+		for (; i != _metadataParser._companyInfo.end(); ++i) {
 			if (i->_value.alt_name.empty()) {
 				metadataNames[i->_key] = i->_value.name;
 			} else {
@@ -1274,6 +1295,26 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 		_grid->groupEntries();
 		break;
 	}
+	case kGroupByCompany: {
+		for (uint i = 0; i < metadata.size(); ++i) {
+			U32String gameid = metadata[i]->getVal(String("gameid"));
+			attrs.push_back(_metadataParser._gameInfo[gameid].company_id);
+		}
+		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		_grid->setAttributeValues(attrs);
+		metadataNames[""] = "Unknown Publisher";
+		Common::HashMap<String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._companyInfo.begin();
+		for (; i != _metadataParser._companyInfo.end(); ++i) {
+			if (i->_value.alt_name.empty()) {
+				metadataNames[i->_key] = i->_value.name;
+			} else {
+				metadataNames[i->_key] = Common::String::format("%s (%s)", i->_value.name.c_str(), i->_value.alt_name.c_str());
+			}
+		}
+		_grid->setMetadataNames(metadataNames);
+		_grid->groupEntries();
+		break;
+	}
 	case kGroupByLanguage: {
 		for (uint i = 0; i < metadata.size(); ++i) {
 			U32String language = metadata[i]->contains(String("language")) ?
@@ -1450,6 +1491,7 @@ void LauncherGrid::build() {
 	_grpChooserPopup->appendEntry(_("First letter"), kGroupByFirstLetter);
 	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
 	_grpChooserPopup->appendEntry(_("Series"), kGroupBySeries);
+	_grpChooserPopup->appendEntry(_("Publisher"), kGroupByCompany);
 	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
 	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
 	_grpChooserPopup->setSelected(_groupBy);
