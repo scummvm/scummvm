@@ -297,6 +297,10 @@ Common::Rect Channel::getBbox(bool unstretched) {
 }
 
 void Channel::setCast(CastMemberID memberID) {
+	// release previous widget
+	if (_sprite->_cast)
+		_sprite->_cast->releaseWidget();
+
 	_sprite->setCast(memberID);
 	_width = _sprite->_width;
 	_height = _sprite->_height;
