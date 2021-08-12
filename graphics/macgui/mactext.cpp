@@ -2043,20 +2043,23 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 	if (chunk == _textLines[nrow].chunks.size())
 		chunk--;
 
-	Common::U32String str = _textLines[nrow].chunks[chunk].text;
+	// prevent out bounding error, because sometimes chunk.size() is 0, thus we don't have correct chunk number.
+	if (chunk < _textLines[nrow].chunks.size()) {
+		Common::U32String str = _textLines[nrow].chunks[chunk].text;
 
-	ncol = mcol;
-	nsx = pwidth;
+		ncol = mcol;
+		nsx = pwidth;
 
-	for (int i = str.size(); i >= 0; i--) {
-		int strw = getStringWidth(_textLines[nrow].chunks[chunk], str);
-		if (strw + pwidth + alignOffset <= x) {
-			ncol = pmcol + i;
-			nsx = strw + pwidth;
-			break;
+		for (int i = str.size(); i >= 0; i--) {
+			int strw = getStringWidth(_textLines[nrow].chunks[chunk], str);
+			if (strw + pwidth + alignOffset <= x) {
+				ncol = pmcol + i;
+				nsx = strw + pwidth;
+				break;
+			}
+
+			str.deleteLastChar();
 		}
-
-		str.deleteLastChar();
 	}
 
 	if (sx)
