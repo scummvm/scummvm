@@ -326,8 +326,8 @@ bool CAutoMap::pointerHit(gPanelMessage &msg) {
 
 		if (g_vm->_teleportOnMap) {
 			TilePoint centerPt = TilePoint(((259 - pos.y) << (kTileUVShift + kPlatShift - 2)) + ((pos.x - 265) << (kTileUVShift + kPlatShift - 3)),
-										((259 - pos.y) << (kTileUVShift + kPlatShift - 2)) - ((pos.x - 265) << (kTileUVShift + kPlatShift - 3)),
-										0);
+			                               ((259 - pos.y) << (kTileUVShift + kPlatShift - 2)) - ((pos.x - 265) << (kTileUVShift + kPlatShift - 3)),
+			                               0);
 
 			TilePoint pt = centerPt + (baseCoords << (kTileUVShift + kPlatShift));
 
