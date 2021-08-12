@@ -323,6 +323,25 @@ bool CAutoMap::pointerHit(gPanelMessage &msg) {
 
 	if (Rect16(0, 0, extent.width, extent.height).ptInside(pos)) {
 		// mouse hit inside autoMap
+
+		if (g_vm->_teleportOnMap) {
+			TilePoint centerPt = TilePoint(((259 - pos.y) << (kTileUVShift + kPlatShift - 2)) + ((pos.x - 265) << (kTileUVShift + kPlatShift - 3)),
+										((259 - pos.y) << (kTileUVShift + kPlatShift - 2)) - ((pos.x - 265) << (kTileUVShift + kPlatShift - 3)),
+										0);
+
+			TilePoint pt = centerPt + (baseCoords << (kTileUVShift + kPlatShift));
+
+			Actor *a = getCenterActor();
+
+			int du = pt.u - a->getLocation().u;
+			int dv = pt.v - a->getLocation().v;
+
+			for (ObjectID pid = ActorBaseID; pid < ActorBaseID + kPlayerActors; ++pid) {
+				Actor *p = (Actor *)GameObject::objectAddress(pid);
+				TilePoint curLoc = p->getLocation();
+				p->setLocation(TilePoint(curLoc.u + du, curLoc.v + dv, 8));
+			}
+		}
 	} else {
 		// mouse hit outside autoMap area, close it
 		gWindow         *win;

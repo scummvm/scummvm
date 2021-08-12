@@ -178,6 +178,7 @@ public:
 	bool _showNight;
 	bool _speechText;
 	bool _teleportOnClick;
+	bool _teleportOnMap;
 
 	bool _showPosition;
 	bool _showStats;

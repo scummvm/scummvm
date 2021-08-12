@@ -61,6 +61,8 @@ private:
 
 	bool cmdTeleportOnClick(int argc, const char **argv);
 
+	bool cmdTeleportOnMap(int argc, const char **argv);
+
 	bool cmdTeleport(int argc, const char **argv);
 
 	bool cmdTeleportToNPC(int argc, const char **argv);
