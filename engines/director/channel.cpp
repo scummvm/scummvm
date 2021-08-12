@@ -556,6 +556,10 @@ bool Channel::updateWidget() {
 	return false;
 }
 
+bool Channel::isTrail() {
+	return _sprite->_trails;
+}
+
 void Channel::addRegistrationOffset(Common::Point &pos, bool subtract) {
 	if (!_sprite->_cast)
 		return;

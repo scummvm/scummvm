@@ -39,7 +39,6 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/util.h"
-#include "director/sound.h"
 
 namespace Director {
 
@@ -139,9 +138,19 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 
 	for (Common::List<Common::Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); i++) {
 		const Common::Rect &r = *i;
-		blitTo->fillRect(r, _stageColor);
-
 		_dirtyChannels = _currentMovie->getScore()->getSpriteIntersections(r);
+
+		bool shouldClear = true;
+		for (Common::List<Channel *>::iterator j = _dirtyChannels.begin(); j != _dirtyChannels.end(); j++) {
+			if ((*j)->_visible && r == (*j)->getBbox() && (*j)->isTrail()) {
+				shouldClear = false;
+				break;
+			}
+		}
+
+		if (shouldClear)
+			blitTo->fillRect(r, _stageColor);
+
 		for (int pass = 0; pass < 2; pass++) {
 			for (Common::List<Channel *>::iterator j = _dirtyChannels.begin(); j != _dirtyChannels.end(); j++) {
 				if ((*j)->isActiveVideo() && (*j)->isVideoDirectToStage()) {

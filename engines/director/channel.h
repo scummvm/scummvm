@@ -66,6 +66,8 @@ public:
 	bool updateWidget();
 	void updateTextCast();
 
+	bool isTrail();
+
 	void updateGlobalAttr();
 
 	void addDelta(Common::Point pos);
