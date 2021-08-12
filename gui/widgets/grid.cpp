@@ -198,23 +198,8 @@ void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		_grid->toggleGroup(_activeEntry->entryID);
 	} else if (_isHighlighted && isVisible()) {
 		_grid->_selectedEntry = _activeEntry;
-		sendCommand(kItemClicked, 0);
-		// Since user expected to click on "entry" and not the "widget", we
-		// must open the tray where the user expects it to be, which might
-		// not be at the new widget location.
-		// TODO: Make a scrollToSelection() function which does this
-		if (_y > (_grid->getHeight() - _h - _grid->_trayHeight)) {
-			int offsetY = _y - (_grid->getHeight() - _h - _grid->_trayHeight);
-			sendCommand(kSetPositionCmd, _grid->getScrollPos() + offsetY);
-			_grid->scrollBarRecalc();
-			_grid->markAsDirty();
-			_grid->draw();
-		}
+		sendCommand(kItemClicked, _activeEntry->entryID);
 	}
-}
-
-void GridItemWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	_grid->openTrayAtSelected();
 }
 
 #pragma mark -
@@ -624,6 +609,32 @@ void GridWidget::move(int x, int y) {
 	}
 }
 
+// Scroll to entry id. Optional parameter to decide if the entry should be forced to be on the top, or merely
+// scrolled into view.
+void GridWidget::scrollToEntry(int id, bool forceToTop) {
+	int newScrollPos = _scrollPos;
+	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
+		if ((!_sortedEntryList[i].isHeader) && (_sortedEntryList[i].entryID == id)) {
+			if (forceToTop) {
+				newScrollPos = _sortedEntryList[i].rect.top + _scrollWindowPaddingY + _gridYSpacing;
+			} else {
+				if (_sortedEntryList[i].rect.top < _scrollPos) {
+					// Item is above the visible view
+					newScrollPos = _sortedEntryList[i].rect.top - _scrollWindowPaddingY - _gridYSpacing;
+				} else if (_sortedEntryList[i].rect.top > _scrollPos + _scrollWindowHeight - _gridItemHeight - _trayHeight) {
+					// Item is below the visible view
+					newScrollPos = _sortedEntryList[i].rect.top - _scrollWindowHeight + _gridItemHeight + _trayHeight;
+				} else {
+					// Item already in view, do nothing
+					newScrollPos = _scrollPos;
+				}
+			}
+			break;
+		}
+	}
+	handleCommand(this, kSetPositionCmd, newScrollPos);
+}
+
 void GridWidget::updateGrid() {
 	for (Common::Array<GridItemWidget *>::iterator i = _gridItems.begin(); i != _gridItems.end(); ++i) {
 		(*i)->update();
@@ -682,11 +693,18 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 			}
 
 			assignEntriesToItems();
+			scrollBarRecalc();
 			markAsDirty();
 
 			((GUI::Dialog *)_boss)->setFocusWidget(this);
 		}
 		break;
+	case kItemClicked:
+		scrollToEntry(data, false);
+		// Redraw the grid, before we open the tray dialog
+		draw();
+		openTrayAtSelected();
+		// Fallthrough is intentional
 	default:
 		sendCommand(cmd, 0);
 		break;

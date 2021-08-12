@@ -193,6 +193,7 @@ public:
 	void calcEntrySizes();
 	void updateGrid();
 	void move(int x, int y);
+	void scrollToEntry(int id, bool forceToTop);
 	void assignEntriesToItems();
 
 	int getScrollPos() const { return _scrollPos; }
@@ -233,7 +234,6 @@ public:
 	void handleMouseEntered(int button) override;
 	void handleMouseLeft(int button) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
-	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseMoved(int x, int y, int button) override;
 };
 
