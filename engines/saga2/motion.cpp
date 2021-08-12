@@ -3541,7 +3541,7 @@ void MotionTask::castSpellAction(void) {
 			if (spellObj) {
 				if (flags & TAGTarg) {
 					assert(targetTAG->_data.itemType == activeTypeInstance);
-					spellObj->implementAction(spellObj->getSpellID(), a->thisID(), targetTAG->thisID());
+					spellObj->implementAction(spellObj->getSpellID(), a->thisID(), targetTAG);
 				} else if (flags & LocTarg) {
 					spellObj->implementAction(spellObj->getSpellID(), a->thisID(), targetLoc);
 				} else if (targetObj) {
