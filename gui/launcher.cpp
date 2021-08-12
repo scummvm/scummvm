@@ -1202,7 +1202,7 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 	case kGroupByEngine:
 		for (uint i = 0; i < metadata.size(); ++i) {
 			U32String engineid = metadata[i]->contains(String("engineid")) ?
-								metadata[i]->getVal(String("engineid")) : String("Unknown Engine");
+								metadata[i]->getVal(String("engineid")) : String("");
 			attrs.push_back(engineid);
 		}
 		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
@@ -1235,20 +1235,30 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 	case kGroupByLanguage:
 		for (uint i = 0; i < metadata.size(); ++i) {
 			U32String language = metadata[i]->contains(String("language")) ?
-								metadata[i]->getVal(String("language")) : String("Language not set");
+								metadata[i]->getVal(String("language")) : String("");
 			attrs.push_back(language);
 		}
 		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		metadataNames[""] = "Language not detected";
+		for (const Common::LanguageDescription *l = Common::g_languages; l->code; ++l) {
+			metadataNames[l->code] = l->description;
+		}
+		_grid->setMetadataNames(metadataNames);
 		_grid->setAttributeValues(attrs);
 		_grid->groupEntries();
 		break;
 	case kGroupByPlatform:
 		for (uint i = 0; i < metadata.size(); ++i) {
 			U32String platform = metadata[i]->contains(String("Platform")) ?
-								metadata[i]->getVal(String("Platform")) : String("Platform not set");
+								metadata[i]->getVal(String("Platform")) : String("");
 			attrs.push_back(platform);
 		}
 		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
+		metadataNames[""] = "Platform not detected";
+		for (const Common::PlatformDescription *p = Common::g_platforms; p->code; ++p) {
+			metadataNames[p->code] = p->description;
+		}
+		_grid->setMetadataNames(metadataNames);
 		_grid->setAttributeValues(attrs);
 		_grid->groupEntries();
 		break;
