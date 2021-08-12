@@ -796,7 +796,7 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 		if (looping && forPuppet) {
 			// If this is for a puppet, return an automatically looping stream.
 			// Otherwise, the sound will be looped by the score
-				return new Audio::LoopingAudioStream(stream, 0);
+			return new Audio::LoopingAudioStream(stream, 0);
 		}
 		return stream;
 	}
