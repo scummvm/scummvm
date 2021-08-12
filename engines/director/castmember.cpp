@@ -769,8 +769,6 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 			if (activeWidget == nullptr || !activeWidget->isEditable())
 				g_director->_wm->setActiveWidget(widget);
 		}
-		// just a link to the widget which we created. we may use it later
-		_widget = widget;
 		break;
 
 	case kCastButton:
