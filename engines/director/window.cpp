@@ -457,6 +457,8 @@ bool Window::step() {
 
 	// prepare next movie
 	if (!_nextMovie.movie.empty()) {
+		_soundManager->changingMovie();
+
 		_newMovieStarted = true;
 
 		_currentPath = getPath(_nextMovie.movie, _currentPath);
@@ -504,7 +506,6 @@ bool Window::step() {
 		} else {
 			delete sharedCast;
 		}
-		_soundManager->changingMovie();
 
 		_nextMovie.movie.clear();
 	}
