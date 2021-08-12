@@ -1040,7 +1040,9 @@ static APPFUNC(cmdClickTileMap) {
 #if CHEATMOVE
 		selectedObject = pickedObject;
 #endif
-		if (isActor(pickedObject)) {
+		if (g_vm->_teleportOnClick) {
+			getCenterActor()->setLocation(walkToPos);
+		} else if (isActor(pickedObject)) {
 			PlayerActorID       playerID;
 
 			if (actorIDToPlayerID(pickedObject, playerID))
@@ -1223,9 +1225,7 @@ static APPFUNC(cmdClickTileMap) {
 			//  We're not pointing at an object and the mouse cursor
 			//  does not have an object
 			else {
-				if (g_vm->_teleportOnClick) {
-					getCenterActor()->setLocation(walkToPos);
-				} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo
+				if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo
 				        &&  g_vm->_mouseInfo->getDoable()) {
 					if (pickedTAI == NULL) {
 						navigateDirect(walkToPos, false);
