@@ -396,7 +396,13 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 
 Common::Error DreamWebEngine::run() {
 	if (_ttsMan != nullptr) {
-		_ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
+		Common::String languageString = Common::getLanguageCode(getLanguage());
+		_ttsMan->setLanguage(languageString);
+		if (languageString != "en") {
+			_textEncoding = Common::kDos850;
+		} else {
+			_textEncoding = Common::kUtf8;
+		}
 	}
 
 	syncSoundSettings();

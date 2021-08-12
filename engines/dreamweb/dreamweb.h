@@ -432,6 +432,7 @@ public:
 
 	Common::String _lastText;
 	Common::TextToSpeechManager *_ttsMan;
+	Common::CodePage _textEncoding;
 
 	// from backdrop.cpp
 	void doBlocks();
