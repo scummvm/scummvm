@@ -911,6 +911,7 @@ void Score::loadLabels(Common::SeekableReadStreamEndian &stream) {
 		for (uint32 j = stringPos; j < nextStringPos; j++) {
 			label += stream.readByte();
 		}
+		label = _movie->getCast()->decodeString(label).encode(Common::kUtf8);
 
 		_labels->insert(new Label(label, frame));
 		stream.seek(streamPos);
@@ -923,7 +924,7 @@ void Score::loadLabels(Common::SeekableReadStreamEndian &stream) {
 
 	debugC(2, kDebugLoading, "****** Loading labels");
 	for (j = _labels->begin(); j != _labels->end(); ++j) {
-		debugC(2, kDebugLoading, "Frame %d, Label '%s'", (*j)->number, Common::toPrintable((*j)->name).c_str());
+		debugC(2, kDebugLoading, "Frame %d, Label '%s'", (*j)->number, utf8ToPrintable((*j)->name).c_str());
 	}
 }
 
