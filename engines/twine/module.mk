@@ -16,7 +16,6 @@ MODULE_OBJS := \
 	parser/anim.o \
 	parser/blocklibrary.o \
 	parser/body.o \
-	parser/brick.o \
 	parser/entity.o \
 	parser/holomap.o \
 	parser/parser.o \
