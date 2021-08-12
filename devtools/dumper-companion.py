@@ -13,9 +13,16 @@ import io
 import os
 import sys
 import re
+if sys.platform == "darwin":
+    try:
+        import xattr
+    except ImportError:
+        print("xattr is required for the 'mac' mode to work\n")
+        pass
+
 from binascii import crc_hqx
 from pathlib import Path
-from struct import pack
+from struct import pack, unpack
 from typing import Any, List, Tuple
 
 import machfs
@@ -167,13 +174,13 @@ def collect_forks(args: argparse.Namespace) -> None:
                 file.mddate = 2082844800 + int(info.st_mtime)
 
                 # Get info on creator and type
-                tmp = os.popen("GetFileInfo \"" + os.path.join(dirpath, filename) + "\"").read()
+                try:
+                    finderInfo = xattr.xattr(os.path.join(dirpath, filename))['com.apple.FinderInfo'][0:8]
+                except (IOError, OSError) as e:
+                    onError(e)
+                    return
 
-                groups = re.search(r"type: \"(.*)\"\ncreator: \"(.*)\"", tmp)
-
-                # We may have here "\0\0\0\0"
-                file.type = groups.group(1).encode().decode('unicode-escape').encode()
-                file.creator = groups.group(2).encode().decode('unicode-escape').encode()
+                (file.type, file.creator) = unpack("4s4s", finderInfo)
 
                 with open(os.path.join(dirpath, resource_filename), "rb") as rsrc:
                     file.rsrc = rsrc.read()
