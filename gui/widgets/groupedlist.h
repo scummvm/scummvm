@@ -39,6 +39,7 @@ protected:
 	U32String									_groupHeaderSuffix;
 	U32StringArray								_groupHeaders;
 	U32StringArray								_attributeValues;
+	Common::StringMap							_metadataNames;
 	Common::HashMap<int, Common::Array<int> >	_itemsInGroup;
 
 public:
@@ -47,6 +48,7 @@ public:
 
 	void setList(const U32StringArray &list, const ColorList *colors = nullptr);
 	void setAttributeValues(const U32StringArray &attrValues);
+	void setMetadataNames(const Common::StringMap &metadata);
 	const U32StringArray &getList() const { return _dataList; }
 
 	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);

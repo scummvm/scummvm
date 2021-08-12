@@ -1043,6 +1043,7 @@ void LauncherSimple::updateListing() {
 
 void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domain *> &metadata) {
 	U32StringArray attrs;
+	Common::StringMap metadataNames;
 	switch (_groupBy) {
 	case kGroupByFirstLetter:
 		for (uint i = 0; i < metadata.size(); ++i) {
@@ -1055,44 +1056,71 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 	case kGroupByEngine:
 		for (uint i = 0; i < metadata.size(); ++i) {
 			U32String engineid = metadata[i]->contains(String("engineid")) ?
-								metadata[i]->getVal(String("engineid")) : String("Unknown Engine");
+								metadata[i]->getVal(String("engineid")) : String("");
 			attrs.push_back(engineid);
 		}
-		_list->setGroupHeaderFormat(U32String(""), U32String(" Games"));
+		_list->setGroupHeaderFormat(U32String(""), U32String(""));
 		_list->setAttributeValues(attrs);
+		metadataNames[""] = "Unknown Engine";
+		for (auto i = _metadataParser._engineInfo.begin(); i != _metadataParser._engineInfo.end(); ++i) {
+			if (i->_value.alt_name.empty()) {
+				metadataNames[i->_key] = i->_value.name;
+			} else {
+				metadataNames[i->_key] = Common::String::format("%s (%s)", i->_value.name.c_str(), i->_value.alt_name.c_str());
+			}
+		}
+		_list->setMetadataNames(metadataNames);
 		_list->groupByAttribute();
 		break;
 	case kGroupBySeries:
 		for (uint i = 0; i < metadata.size(); ++i) {
-			U32String gameid = metadata[i]->getVal("gameid");
+			U32String gameid = metadata[i]->getVal(String("gameid"));
 			attrs.push_back(_metadataParser._gameInfo[gameid].series_id);
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String(""));
 		_list->setAttributeValues(attrs);
+		metadataNames[""] = "No Series";
+		for (auto i = _metadataParser._seriesInfo.begin(); i != _metadataParser._seriesInfo.end(); ++i) {
+			metadataNames[i->_key] = i->_value.name;
+		}
+		_list->setMetadataNames(metadataNames);
 		_list->groupByAttribute();
 		break;
 	case kGroupByLanguage:
 		for (uint i = 0; i < metadata.size(); ++i) {
 			U32String language = metadata[i]->contains(String("language")) ?
-								metadata[i]->getVal(String("language")) : String("Language not set");
+								metadata[i]->getVal(String("language")) : String("");
 			attrs.push_back(language);
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		metadataNames[""] = "Language not detected";
+		for (const Common::LanguageDescription *l = Common::g_languages; l->code; ++l) {
+			metadataNames[l->code] = l->description;
+		}
+		_list->setMetadataNames(metadataNames);
 		_list->setAttributeValues(attrs);
 		_list->groupByAttribute();
 		break;
 	case kGroupByPlatform:
 		for (uint i = 0; i < metadata.size(); ++i) {
 			U32String platform = metadata[i]->contains(String("Platform")) ?
-								metadata[i]->getVal(String("Platform")) : String("Platform not set");
+								metadata[i]->getVal(String("Platform")) : String("");
 			attrs.push_back(platform);
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String(""));
+		metadataNames[""] = "Platform not detected";
+		for (const Common::PlatformDescription *p = Common::g_platforms; p->code; ++p) {
+			metadataNames[p->code] = p->description;
+		}
+		_list->setMetadataNames(metadataNames);
 		_list->setAttributeValues(attrs);
 		_list->groupByAttribute();
 		break;
 	case kGroupByNone:	// Fall-through intentional
 	default:
+		for (uint i = 0; i < metadata.size(); ++i) {
+			attrs.push_back(String("All"));
+		}
 		_list->setGroupHeaderFormat(U32String(""), U32String(""));
 		_list->setAttributeValues(attrs);
 		_list->groupByAttribute();

@@ -77,6 +77,10 @@ void GroupedListWidget::setAttributeValues(const U32StringArray &attrValues) {
 		assert(_attributeValues.size() == _dataList.size());
 }
 
+void GroupedListWidget::setMetadataNames(const Common::StringMap &metadata) {
+	_metadataNames = metadata;
+}
+
 void GroupedListWidget::append(const String &s, ThemeEngine::FontColor color) {
 	if (_dataList.size() == _listColors.size()) {
 		// If the color list has the size of the data list, we append the color.
@@ -145,7 +149,12 @@ void GroupedListWidget::sortGroups() {
 
 	for (uint i = 0; i != _groupHeaders.size(); ++i) {
 		U32String header = _groupHeaders[i];
-		U32String displayedHeader = header;
+		U32String displayedHeader;
+		if (_metadataNames.contains(header)) {
+			displayedHeader = _metadataNames[header];
+		} else {
+			displayedHeader = header;
+		}
 		uint groupID = _groupValueIndex[header];
 
 		_listColors.push_back(_listColors.front());
