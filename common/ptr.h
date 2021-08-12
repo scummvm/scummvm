@@ -490,6 +490,11 @@ public:
 	 */
 	PointerType get() const { return _pointer; }
 
+	/**
+	 * Returns the pointer's dispose flag.
+	 */
+	DisposeAfterUse::Flag getDispose() const { return _dispose; }
+
 private:
 	PointerType           _pointer;
 	DisposeAfterUse::Flag _dispose;
