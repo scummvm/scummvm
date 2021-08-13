@@ -797,7 +797,6 @@ Effectron::Effectron(uint16 newPos, uint16 newDir) {
 	age = 0;
 	pos = (newDir << 16) + newPos;
 	flags = 0;
-	flags = effectronDead;
 	parent = nullptr;
 	partno = 0;
 	totalSteps = stepNo = 0;
