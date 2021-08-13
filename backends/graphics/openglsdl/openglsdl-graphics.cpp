@@ -383,9 +383,6 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		requestedWidth  = MAX<uint>(desktopRes.width() / 2, MIN<uint>(640, desktopRes.width()));
 		requestedHeight = MIN<uint>(requestedWidth * 3 / 4, desktopRes.height());
 
-		// Apply scaler
-		requestedWidth  *= _graphicsScale;
-		requestedHeight *= _graphicsScale;
 #endif
 
 	// Set allowed dimensions
