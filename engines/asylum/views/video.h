@@ -32,10 +32,12 @@
 
 #include "graphics/surface.h"
 
-#include "video/smk_decoder.h"
+#include "video/video_decoder.h"
 
 #include "asylum/eventhandler.h"
 #include "asylum/shared.h"
+
+#include "asylum/system/screen.h"
 
 namespace Asylum {
 
@@ -75,7 +77,7 @@ public:
 private:
 	AsylumEngine *_vm;
 
-	Video::SmackerDecoder *_smkDecoder;
+	Video::VideoDecoder *_decoder;
 	Common::Array<VideoSubtitle> _subtitles;
 
 	int32 _currentMovie;
@@ -83,7 +85,7 @@ private:
 	int32 _subtitleCounter;
 	ResourceId _previousFont;
 	bool _done;
-
+	byte _subtitlePalette[PALETTE_SIZE];
 
 	/**
 	 * Plays the given file.

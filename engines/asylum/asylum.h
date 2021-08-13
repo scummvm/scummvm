@@ -29,6 +29,7 @@
 #include "common/serializer.h"
 #include "common/system.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
 #include "asylum/resources/data.h"
@@ -190,6 +191,8 @@ public:
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);
+
+	bool checkGameVersion(const char *version) { return !strcmp(_gameDescription->extra, version); }
 
 private:
 	const ADGameDescription *_gameDescription;

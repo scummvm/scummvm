@@ -20,6 +20,9 @@
  *
  */
 
+#include "video/smk_decoder.h"
+#include "video/theora_decoder.h"
+
 #include "asylum/views/video.h"
 
 #include "asylum/system/config.h"
@@ -38,11 +41,27 @@ namespace Asylum {
 
 VideoPlayer::VideoPlayer(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine),
 	_currentMovie(0), _subtitleIndex(0), _subtitleCounter(0), _previousFont(kResourceNone), _done(false) {
-	_smkDecoder = new Video::SmackerDecoder();
+
+	memset(_subtitlePalette, 0, sizeof(_subtitlePalette));
+	if (_vm->checkGameVersion("Steam")) {
+#ifdef USE_THEORADEC
+		_decoder = new Video::TheoraDecoder();
+		_decoder->setDefaultHighColorFormat(_vm->_system->getOverlayFormat());
+
+		Common::File paletteFile;
+		paletteFile.open("palette");
+		paletteFile.read(_subtitlePalette, PALETTE_SIZE);
+		paletteFile.close();
+#else
+		error("The Steam version of the game uses Theora videos but ScummVM has been compiled without Theora support");
+#endif
+	} else {
+		_decoder = new Video::SmackerDecoder();
+	}
 }
 
 VideoPlayer::~VideoPlayer() {
-	delete _smkDecoder;
+	delete _decoder;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,6 +103,13 @@ bool VideoPlayer::handleEvent(const AsylumEvent &evt) {
 
 				char *text = getText()->get(_subtitles[_subtitleIndex].resourceId);
 				getText()->draw(0, 99, kTextCenter, Common::Point(10, y), 20, 620, text);
+
+				if (_vm->checkGameVersion("Steam")) {
+					Graphics::Surface *st = getScreen()->getSurface()->convertTo(_vm->_system->getOverlayFormat(), _subtitlePalette);
+					_vm->_system->copyRectToOverlay((const byte *)st->getBasePtr(0, 400), st->pitch, 0, 400, 640, 80);
+					st->free();
+					delete st;
+				}
 			}
 
 			--_subtitleCounter;
@@ -119,7 +145,13 @@ void VideoPlayer::play(uint32 videoNumber, EventHandler *handler) {
 
 	// Play movie
 	_vm->switchEventHandler(this);
-	play(Common::String::format("mov%03d.smk", videoNumber), Config.showMovieSubtitles);
+
+	Common::String filename;
+	if (_vm->checkGameVersion("Steam"))
+		filename = videoNumber == 0 ? "mov000_2_smk.ogv" : Common::String::format("mov%03d_smk.ogv", videoNumber);
+	else
+		filename = Common::String::format("mov%03d.smk", videoNumber);
+	play(filename, Config.showMovieSubtitles);
 
 	// Cleanup and switch to previous event handler
 	getCursor()->show();
@@ -128,11 +160,11 @@ void VideoPlayer::play(uint32 videoNumber, EventHandler *handler) {
 }
 
 void VideoPlayer::play(Common::String filename, bool showSubtitles) {
-	if (!_smkDecoder->loadFile(filename))
+	if (!_decoder->loadFile(filename))
 		error("[Video::playVideo] Invalid video index (%d)", _currentMovie);
 
-	int16 x = (int16)Common::Rational(g_system->getWidth()  - _smkDecoder->getWidth(),  2).toInt();
-	int16 y = (int16)Common::Rational(g_system->getHeight() - _smkDecoder->getHeight(), 2).toInt();
+	int16 x = (int16)Common::Rational(g_system->getWidth()  - _decoder->getWidth(),  2).toInt();
+	int16 y = (int16)Common::Rational(g_system->getHeight() - _decoder->getHeight(), 2).toInt();
 
 	getScreen()->clear();
 
@@ -149,24 +181,31 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 	int32 frameEnd = 0;
 	int32 currentSubtitle = 0;
 
-	_smkDecoder->start();
+	_decoder->start();
+	if (_vm->checkGameVersion("Steam")) {
+		_vm->_system->showOverlay();
+		_vm->_system->clearOverlay();
+	}
 
-	while (!_done && !Engine::shouldQuit() && !_smkDecoder->endOfVideo()) {
+	while (!_done && !Engine::shouldQuit() && !_decoder->endOfVideo()) {
 		_vm->handleEvents();
 
-		if (_smkDecoder->needsUpdate()) {
-			const Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
+		if (_decoder->needsUpdate()) {
+			const Graphics::Surface *frame = _decoder->decodeNextFrame();
 
 			if (!frame)
 				continue;
 
-			if (_smkDecoder->hasDirtyPalette())
-				setupPalette();
-
-			getScreen()->copyToBackBuffer((const byte *)frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+			if (_vm->checkGameVersion("Steam")) {
+				_vm->_system->copyRectToOverlay((const byte *)frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+			} else {
+				if (_decoder->hasDirtyPalette())
+					setupPalette();
+				getScreen()->copyToBackBuffer((const byte *)frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+			}
 
 			if (showSubtitles) {
-				int32 currentFrame = _smkDecoder->getCurFrame() + 1;
+				int32 currentFrame = _decoder->getCurFrame() + 1;
 				debugC(kDebugLevelVideo, "[Video] {%s} Playing Frame %d", filename.c_str(), currentFrame);
 				// Check for next frame
 				if (currentFrame > frameEnd) {
@@ -191,12 +230,15 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 		g_system->delayMillis(10);
 	}
 
-	_smkDecoder->close();
+	if (_vm->checkGameVersion("Steam"))
+		_vm->_system->hideOverlay();
+
+	_decoder->close();
 	_subtitles.clear();
 }
 
 void VideoPlayer::setupPalette() {
-	getScreen()->setMainPalette(_smkDecoder->getPalette());
+	getScreen()->setMainPalette(_decoder->getPalette());
 	getScreen()->setupPalette(NULL, 0, 0);
 }
 
