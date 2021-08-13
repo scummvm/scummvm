@@ -85,7 +85,10 @@ Common::String AGOSEngine_Simon2::genSaveName(int slot) const {
 }
 
 Common::String AGOSEngine_Simon1::genSaveName(int slot) const {
-	return Common::String::format("simon1.%.3d", slot);
+	if (_gameDescription->desc.flags & ADGF_DEMO)
+		return Common::String::format("simon1-demo.%.3d", slot);
+	else
+		return Common::String::format("simon1.%.3d", slot);
 }
 
 Common::String AGOSEngine_Waxworks::genSaveName(int slot) const {
