@@ -149,20 +149,11 @@ void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, ui
 	case 4:
 		switch (toBpp) {
 		case 1:
-			// maybe this parts should also calculated by wm->findBestColor
-			if (red == 255 && blue == 255 && green == 255) {
-				*((byte*)surfacePointer) = 255;
-			} else if (red == 0 && blue == 0 && green == 0) {
-				*((byte*)surfacePointer) = 0;
-			} else {
-				for (byte p = 0; p < _paletteColorCount; p++) {
-					if (_palette[p * 3 + 0] == red &&
-						_palette[p * 3 + 1] == green &&
-						_palette[p * 3 + 2] == blue) {
-						*((byte*)surfacePointer) = p;
-					}
-				}
-			}
+			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
+			break;
+
+		case 4:
+			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
 			break;
 
 		default:
@@ -175,6 +166,10 @@ void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, ui
 		switch (toBpp) {
 		case 1:
 			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
+			break;
+
+		case 4:
+			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
 			break;
 
 		default:
