@@ -950,10 +950,14 @@ void MidiDriver_ADLIB_Multisource::initOpl() {
 		writeRegister(OPL_REGISTER_TEST | OPL_REGISTER_SET_2_OFFSET, _oplType == OPL::Config::kOpl3 ? 0 : 0x20, true);
 	}
 
-	// Stop and mask the timers and reset the interrupt.
+	// Clear, stop and mask the timers and reset the interrupt.
+	writeRegister(OPL_REGISTER_TIMER1, 0, true);
+	writeRegister(OPL_REGISTER_TIMER2, 0, true);
 	writeRegister(OPL_REGISTER_TIMERCONTROL, 0x60, true);
 	writeRegister(OPL_REGISTER_TIMERCONTROL, 0x80, true);
 	if (_oplType == OPL::Config::kDualOpl2) {
+		writeRegister(OPL_REGISTER_TIMER1 | OPL_REGISTER_SET_2_OFFSET, 0, true);
+		writeRegister(OPL_REGISTER_TIMER2 | OPL_REGISTER_SET_2_OFFSET, 0, true);
 		writeRegister(OPL_REGISTER_TIMERCONTROL | OPL_REGISTER_SET_2_OFFSET, 0x60, true);
 		writeRegister(OPL_REGISTER_TIMERCONTROL | OPL_REGISTER_SET_2_OFFSET, 0x80, true);
 	}
