@@ -153,6 +153,7 @@ public:
 	void stopVideo(Channel *channel);
 
 	uint getMovieCurrentTime();
+	uint getDuration();
 	uint getMovieTotalTime();
 	void seekMovie(int stamp);
 	void setStopTime(int stamp);

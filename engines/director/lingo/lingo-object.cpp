@@ -769,7 +769,10 @@ Datum DigitalVideoCastMember::getField(int field) {
 		d = _directToStage;
 		break;
 	case kTheDuration:
-		d = _duration;
+		// sometimes, we will get duration before we start video.
+		// _duration is initialized in startVideo, thus we will not get the correct number.
+		d.type = INT;
+		d.u.i = getDuration();
 		break;
 	case kTheFrameRate:
 		d = _frameRate;

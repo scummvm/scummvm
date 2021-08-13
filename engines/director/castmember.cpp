@@ -474,6 +474,17 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	return widget;
 }
 
+uint DigitalVideoCastMember::getDuration() {
+	if (!_video || !_video->isVideoLoaded()) {
+		Common::String path = getCast()->getVideoPath(_castId);
+		if (!path.empty())
+			loadVideo(pathMakeRelative(path));
+
+		_duration = getMovieTotalTime();
+	}
+	return _duration;
+}
+
 uint DigitalVideoCastMember::getMovieCurrentTime() {
 	if (!_video)
 		return 0;
