@@ -58,6 +58,8 @@ public:
 	void setSelected(int item);
 	int getSelected() const { return (_selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 
+	void setFilter(const U32String &filter, bool redraw = true);
+
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;

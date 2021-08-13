@@ -431,4 +431,70 @@ void GroupedListWidget::scrollToCurrent() {
 	_scrollBar->recalc();
 }
 
+void GroupedListWidget::setFilter(const U32String &filter, bool redraw) {
+	// FIXME: This method does not deal correctly with edit mode!
+	// Until we fix that, let's make sure it isn't called while editing takes place
+	assert(!_editMode);
+
+	U32String filt = filter;
+	filt.toLowercase();
+
+	if (_filter == filt) // Filter was not changed
+		return;
+
+	_filter = filt;
+
+	if (_filter.empty()) {
+		// No filter -> display everything
+		sortGroups();
+	} else {
+		// Restrict the list to everything which contains all words in _filter
+		// as substrings, ignoring case.
+
+		Common::U32StringTokenizer tok(_filter);
+		U32String tmp;
+		int n = 0;
+
+		_list.clear();
+		_listIndex.clear();
+
+		for (U32StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
+			tmp = *i;
+			tmp.toLowercase();
+			bool matches = true;
+			tok.reset();
+			while (!tok.empty()) {
+				if (!tmp.contains(tok.nextToken())) {
+					matches = false;
+					break;
+				}
+			}
+
+			if (matches) {
+				_list.push_back(*i);
+				_listIndex.push_back(n);
+			}
+		}
+	}
+
+	_currentPos = 0;
+	_selectedItem = -1;
+
+	if (redraw) {
+		scrollBarRecalc();
+		// Redraw the whole dialog. This is annoying, as this might be rather
+		// expensive when really only the list widget and its scroll bar area
+		// to be redrawn. However, since the scrollbar might change its
+		// visibility status, and the list its width, we cannot just redraw
+		// the two.
+		// TODO: A more efficient (and elegant?) way to handle this would be to
+		// introduce a kind of "BoxWidget" or "GroupWidget" which defines a
+		// rectangular region and subwidgets can be placed within it.
+		// Such a widget could also (optionally) draw a border (or even different
+		// kinds of borders) around the objects it groups; and also a 'title'
+		// (I am borrowing these "ideas" from the NSBox class in Cocoa :).
+		g_gui.scheduleTopDialogRedraw();
+	}
+}
+
 } // End of namespace GUI
