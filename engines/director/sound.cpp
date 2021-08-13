@@ -647,7 +647,7 @@ bool SNDDecoder::processCommands(Common::SeekableReadStreamEndian &stream) {
 	uint16 cmdCount = stream.readUint16();
 	for (uint16 i = 0; i < cmdCount; i++) {
 		uint16 cmd = stream.readUint16();
-		if (cmd == 0x8051) {
+		if (cmd == 0x8050 || cmd == 0x8051) {
 			if (!processBufferCommand(stream))
 				return false;
 		} else {
