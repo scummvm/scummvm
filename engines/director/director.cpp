@@ -100,7 +100,18 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	}
 
 	_colorDepth = 8;	// 256-color
-	_machineType = 9;	// Macintosh IIci
+	switch (getPlatform()) {
+	case Common::kPlatformMacintoshII:
+		_machineType = 4;
+		break;
+	case Common::kPlatformWindows:
+		_machineType = 256;
+		break;
+	case Common::kPlatformMacintosh:
+	default:
+		_machineType = 9;	// Macintosh IIci
+	}
+
 	_playbackPaused = false;
 	_skipFrameAdvance = false;
 	_centerStage = true;
