@@ -443,14 +443,14 @@ void GfxPalette::drewPicture(GuiResourceId pictureId) {
 	}
 }
 
-uint16 GfxPalette::matchColor(byte matchRed, byte matchGreen, byte matchBlue) {
+uint16 GfxPalette::matchColor(byte matchRed, byte matchGreen, byte matchBlue, bool force16BitColorMatch) {
 	int16 colorNr;
 	int16 differenceRed, differenceGreen, differenceBlue;
 	int16 differenceTotal = 0;
 	int16 bestDifference = 0x7FFF;
 	uint16 bestColorNr = 255;
 
-	if (_use16bitColorMatch) {
+	if (_use16bitColorMatch || force16BitColorMatch) {
 		// used by SCI0 to SCI1, also by the first few SCI1.1 games
 		for (colorNr = 0; colorNr < 256; colorNr++) {
 			if ((!_sysPalette.colors[colorNr].used))
@@ -560,8 +560,8 @@ void GfxPalette::kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 int
 	}
 }
 
-int16 GfxPalette::kernelFindColor(uint16 r, uint16 g, uint16 b) {
-	return matchColor(r, g, b) & SCI_PALETTE_MATCH_COLORMASK;
+int16 GfxPalette::kernelFindColor(uint16 r, uint16 g, uint16 b, bool force16BitColorMatch) {
+	return matchColor(r, g, b, force16BitColorMatch) & SCI_PALETTE_MATCH_COLORMASK;
 }
 
 // Returns true, if palette got changed

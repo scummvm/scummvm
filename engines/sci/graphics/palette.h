@@ -55,7 +55,7 @@ public:
 	void set(Palette *sciPal, bool force, bool forceRealMerge = false, bool includeFirstColor = true);
 	bool insert(Palette *newPalette, Palette *destPalette, bool includeFirstColor = false);
 	bool merge(Palette *pFrom, bool force, bool forceRealMerge);
-	uint16 matchColor(byte r, byte g, byte b);
+	uint16 matchColor(byte r, byte g, byte b, bool force16BitColorMatch = false);
 	void getSys(Palette *pal);
 	uint16 getTotalColorCount() const { return _totalScreenColors; }
 
@@ -70,7 +70,7 @@ public:
 	void kernelSetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	void kernelUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	void kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette);
-	int16 kernelFindColor(uint16 r, uint16 g, uint16 b);
+	int16 kernelFindColor(uint16 r, uint16 g, uint16 b, bool force16BitColorMatch = false);
 	bool kernelAnimate(byte fromColor, byte toColor, int speed);
 	void kernelAnimateSet();
 	reg_t kernelSave();

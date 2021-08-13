@@ -321,10 +321,10 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	int poly_colors[4] = { 0, 0, 0, 0 };
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
-		poly_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0);		// green
-		poly_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255);		// blue
-		poly_colors[2] = g_sci->_gfxPalette16->kernelFindColor(255, 0, 0);		// red
-		poly_colors[3] = g_sci->_gfxPalette16->kernelFindColor(255, 255, 0);	// yellow
+		poly_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0, true);   // green
+		poly_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255, true);   // blue
+		poly_colors[2] = g_sci->_gfxPalette16->kernelFindColor(255, 0, 0, true);   // red
+		poly_colors[3] = g_sci->_gfxPalette16->kernelFindColor(255, 255, 0, true); // yellow
 #ifdef ENABLE_SCI32
 	} else {
 		poly_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0);			// green
@@ -360,8 +360,8 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 	int point_colors[2] = { 0, 0 };
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
-		point_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0);	// green
-		point_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255);	// blue
+		point_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0, true); // green
+		point_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255, true); // blue
 #ifdef ENABLE_SCI32
 	} else {
 		point_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0);		// green
