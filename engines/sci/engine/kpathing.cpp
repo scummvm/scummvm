@@ -401,7 +401,7 @@ static void draw_polygon(EngineState *s, reg_t polygon, int width, int height) {
 #endif
 
 	int size = readSelectorValue(segMan, polygon, SELECTOR(size));
-	int type = readSelectorValue(segMan, polygon, SELECTOR(type));
+	int type = readSelectorValue(segMan, polygon, SELECTOR(type)) & ~0x10; // ignore kMergePoly flag
 	Common::Point first, prev;
 	int i;
 
