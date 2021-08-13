@@ -1051,8 +1051,6 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 			attrs.push_back(metadata[i]->getVal("description").substr(0, 1));
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String("..."));
-		_list->setAttributeValues(attrs);
-		_list->groupByAttribute();
 		break;
 	}
 	case kGroupByEngine: {
@@ -1062,7 +1060,6 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 			attrs.push_back(engineid);
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String(""));
-		_list->setAttributeValues(attrs);
 		metadataNames[""] = "Unknown Engine";
 		Common::HashMap<String, MetadataEngine, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._engineInfo.begin();
 		for (; i != _metadataParser._engineInfo.end(); ++i) {
@@ -1072,8 +1069,6 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 				metadataNames[i->_key] = Common::String::format("%s (%s)", i->_value.name.c_str(), i->_value.alt_name.c_str());
 			}
 		}
-		_list->setMetadataNames(metadataNames);
-		_list->groupByAttribute();
 		break;
 	}
 	case kGroupByCompany: {
@@ -1082,7 +1077,6 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 			attrs.push_back(_metadataParser._gameInfo[gameid].company_id);
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String(""));
-		_list->setAttributeValues(attrs);
 		metadataNames[""] = "Unknown Publisher";
 		Common::HashMap<String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._companyInfo.begin();
 		for (; i != _metadataParser._companyInfo.end(); ++i) {
@@ -1092,8 +1086,6 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 				metadataNames[i->_key] = Common::String::format("%s (%s)", i->_value.name.c_str(), i->_value.alt_name.c_str());
 			}
 		}
-		_list->setMetadataNames(metadataNames);
-		_list->groupByAttribute();
 		break;
 	}
 	case kGroupBySeries: {
@@ -1102,14 +1094,11 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 			attrs.push_back(_metadataParser._gameInfo[gameid].series_id);
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String(""));
-		_list->setAttributeValues(attrs);
 		metadataNames[""] = "No Series";
 		Common::HashMap<String, MetadataSeries, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._seriesInfo.begin();
 		for (; i != _metadataParser._seriesInfo.end(); ++i) {
 			metadataNames[i->_key] = i->_value.name;
 		}
-		_list->setMetadataNames(metadataNames);
-		_list->groupByAttribute();
 		break;
 	}
 	case kGroupByLanguage: {
@@ -1124,9 +1113,6 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 		for (; l->code; ++l) {
 			metadataNames[l->code] = l->description;
 		}
-		_list->setMetadataNames(metadataNames);
-		_list->setAttributeValues(attrs);
-		_list->groupByAttribute();
 		break;
 	}
 	case kGroupByPlatform: {
@@ -1141,9 +1127,6 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 		for (; p->code; ++p) {
 			metadataNames[p->code] = p->description;
 		}
-		_list->setMetadataNames(metadataNames);
-		_list->setAttributeValues(attrs);
-		_list->groupByAttribute();
 		break;
 	}
 	case kGroupByNone:	// Fall-through intentional
@@ -1152,10 +1135,11 @@ void LauncherSimple::groupEntries(const Array<const Common::ConfigManager::Domai
 			attrs.push_back(String("All"));
 		}
 		_list->setGroupHeaderFormat(U32String(""), U32String(""));
-		_list->setAttributeValues(attrs);
-		_list->groupByAttribute();
 		break;
 	}
+	_list->setMetadataNames(metadataNames);
+	_list->setAttributeValues(attrs);
+	_list->groupByAttribute();
 }
 
 void LauncherSimple::handleKeyDown(Common::KeyState state) {
@@ -1254,8 +1238,6 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 			attrs.push_back(metadata[i]->getVal("description").substr(0, 1));
 		}
 		_grid->setGroupHeaderFormat(U32String(""), U32String("..."));
-		_grid->setAttributeValues(attrs);
-		_grid->groupEntries();
 		break;
 	}
 	case kGroupByEngine: {
@@ -1265,7 +1247,6 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 			attrs.push_back(engineid);
 		}
 		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
-		_grid->setAttributeValues(attrs);
 		metadataNames[""] = "Unknown Engine";
 		Common::HashMap<String, MetadataEngine, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._engineInfo.begin();
 		for (; i != _metadataParser._engineInfo.end(); ++i) {
@@ -1275,8 +1256,6 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 				metadataNames[i->_key] = Common::String::format("%s (%s)", i->_value.name.c_str(), i->_value.alt_name.c_str());
 			}
 		}
-		_grid->setMetadataNames(metadataNames);
-		_grid->groupEntries();
 		break;
 	}
 	case kGroupBySeries: {
@@ -1285,14 +1264,11 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 			attrs.push_back(_metadataParser._gameInfo[gameid].series_id);
 		}
 		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
-		_grid->setAttributeValues(attrs);
 		metadataNames[""] = "No Series";
 		Common::HashMap<String, MetadataSeries, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._seriesInfo.begin();
 		for (; i != _metadataParser._seriesInfo.end(); ++i) {
 			metadataNames[i->_key] = i->_value.name;
 		}
-		_grid->setMetadataNames(metadataNames);
-		_grid->groupEntries();
 		break;
 	}
 	case kGroupByCompany: {
@@ -1301,7 +1277,6 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 			attrs.push_back(_metadataParser._gameInfo[gameid].company_id);
 		}
 		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
-		_grid->setAttributeValues(attrs);
 		metadataNames[""] = "Unknown Publisher";
 		Common::HashMap<String, MetadataCompany, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator i = _metadataParser._companyInfo.begin();
 		for (; i != _metadataParser._companyInfo.end(); ++i) {
@@ -1311,8 +1286,6 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 				metadataNames[i->_key] = Common::String::format("%s (%s)", i->_value.name.c_str(), i->_value.alt_name.c_str());
 			}
 		}
-		_grid->setMetadataNames(metadataNames);
-		_grid->groupEntries();
 		break;
 	}
 	case kGroupByLanguage: {
@@ -1327,9 +1300,6 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 		for (; l->code; ++l) {
 			metadataNames[l->code] = l->description;
 		}
-		_grid->setMetadataNames(metadataNames);
-		_grid->setAttributeValues(attrs);
-		_grid->groupEntries();
 		break;
 	}
 	case kGroupByPlatform: {
@@ -1344,9 +1314,6 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 		for (; p->code; ++p) {
 			metadataNames[p->code] = p->description;
 		}
-		_grid->setMetadataNames(metadataNames);
-		_grid->setAttributeValues(attrs);
-		_grid->groupEntries();
 		break;
 	}
 	case kGroupByNone:	// Fall-through intentional
@@ -1355,10 +1322,11 @@ void LauncherGrid::groupEntries(const Array<const Common::ConfigManager::Domain 
 			attrs.push_back(String("All"));
 		}
 		_grid->setGroupHeaderFormat(U32String(""), U32String(""));
-		_grid->setAttributeValues(attrs);
-		_grid->groupEntries();
 		break;
 	}
+	_grid->setMetadataNames(metadataNames);
+	_grid->setAttributeValues(attrs);
+	_grid->groupEntries();
 }
 
 void LauncherGrid::handleKeyDown(Common::KeyState state) {
