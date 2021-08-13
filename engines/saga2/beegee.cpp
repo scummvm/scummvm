@@ -357,7 +357,7 @@ void audioEnvironmentCheck(void) {
 
 	uint32 delta = gameTime - lastGameTime;
 	lastGameTime = gameTime;
-	if (currentTheme) {
+	if (currentTheme > 0 && currentTheme <= kAudioTerrainLIMIT) {
 		elapsedGameTime += delta;
 		if (elapsedGameTime > checkGameTime) {
 			int i;
@@ -384,7 +384,8 @@ void audioEnvironmentCheck(void) {
 			}
 
 		}
-	}
+	} else if (currentTheme)
+		warning("currentTheme out of range: %d", currentTheme);
 
 }
 
