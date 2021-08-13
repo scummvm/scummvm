@@ -648,7 +648,10 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			windowWidth /= scale;
 			windowHeight /= scale;
 	#endif
-			_graphicsScale = MAX<int>(windowWidth / _lastRequestedWidth, windowHeight / _lastRequestedHeight);
+			if (direction > 0)
+				_graphicsScale = MAX<int>(windowWidth / _lastRequestedWidth, windowHeight / _lastRequestedHeight);
+			else
+				_graphicsScale = 1 + MIN<int>((windowWidth - 1) / _lastRequestedWidth, (windowHeight - 1) / _lastRequestedHeight);
 			_graphicsScale = MAX<int>(_graphicsScale + direction, 1);
 
 			// Since we overwrite a user resize here we reset its
@@ -657,6 +660,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			_gotResize = false;
 
 			// Try to setup the mode.
+			unlockWindowSize();
 			if (!setupMode(_lastRequestedWidth * _graphicsScale, _lastRequestedHeight * _graphicsScale)) {
 				warning("OpenGLSdlGraphicsManager::notifyEvent: Window resize failed ('%s')", SDL_GetError());
 				g_system->quit();
