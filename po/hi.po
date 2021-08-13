@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-11 10:07+0000\n"
+"POT-Creation-Date: 2021-08-13 20:41+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -594,23 +594,23 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
 
-#: gui/gui-manager.cpp:150
+#: gui/gui-manager.cpp:129
 msgid "GUI"
 msgstr ""
 
-#: gui/gui-manager.cpp:154 engines/mohawk/myst.cpp:574
+#: gui/gui-manager.cpp:133 engines/mohawk/myst.cpp:574
 #: engines/mohawk/riven.cpp:838
 msgid "Interact"
 msgstr ""
 
-#: gui/gui-manager.cpp:159 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:138 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:314 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "बंद करें"
 
-#: gui/gui-manager.cpp:165 engines/metaengine.cpp:108
+#: gui/gui-manager.cpp:144 engines/metaengine.cpp:108
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:448
 #: engines/grim/grim.cpp:525 engines/twine/metaengine.cpp:430
@@ -621,7 +621,7 @@ msgstr "बंद करें"
 msgid "Up"
 msgstr "ऊपर"
 
-#: gui/gui-manager.cpp:170 engines/metaengine.cpp:113
+#: gui/gui-manager.cpp:149 engines/metaengine.cpp:113
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:453
 #: engines/grim/grim.cpp:530 engines/twine/metaengine.cpp:437
@@ -632,7 +632,7 @@ msgstr "ऊपर"
 msgid "Down"
 msgstr "नीचे"
 
-#: gui/gui-manager.cpp:175 engines/metaengine.cpp:118
+#: gui/gui-manager.cpp:154 engines/metaengine.cpp:118
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:458 engines/grim/grim.cpp:535
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
@@ -644,7 +644,7 @@ msgstr "नीचे"
 msgid "Left"
 msgstr "बाएँ"
 
-#: gui/gui-manager.cpp:180 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:159 engines/metaengine.cpp:123
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:463 engines/grim/grim.cpp:540
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
@@ -656,7 +656,7 @@ msgstr "बाएँ"
 msgid "Right"
 msgstr "दाएँ"
 
-#: gui/gui-manager.cpp:185 engines/pegasus/pegasus.cpp:2807
+#: gui/gui-manager.cpp:164 engines/pegasus/pegasus.cpp:2807
 #: engines/wintermute/keymapper_tables.h:306
 #: engines/wintermute/keymapper_tables.h:347
 #: engines/wintermute/keymapper_tables.h:382
@@ -903,9 +903,9 @@ msgstr "हर 15 मिनट में"
 msgid "Every 30 mins"
 msgstr "हर 30 मिनट में"
 
-#. I18N: Automatic GUI scaling
+#. I18N: Very large GUI scale
 #: gui/options.cpp:138
-msgid "Auto"
+msgid "Very large"
 msgstr ""
 
 #. I18N: Large GUI scale
@@ -2305,7 +2305,7 @@ msgid ""
 msgstr ""
 
 #: engines/engine.cpp:576 engines/metaengine.cpp:345 engines/savestate.cpp:81
-#: backends/platform/ios7/ios7_osys_main.cpp:253 engines/sky/metaengine.cpp:176
+#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-11 10:07+0000\n"
+"POT-Creation-Date: 2021-08-13 20:41+0000\n"
 "PO-Revision-Date: 2021-08-10 04:32+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -599,23 +599,23 @@ msgstr ""
 "Ви дійсно хочете скинути всі налаштування FluidSynth до їх значень за "
 "замовченням?"
 
-#: gui/gui-manager.cpp:150
+#: gui/gui-manager.cpp:129
 msgid "GUI"
 msgstr "GUI"
 
-#: gui/gui-manager.cpp:154 engines/mohawk/myst.cpp:574
+#: gui/gui-manager.cpp:133 engines/mohawk/myst.cpp:574
 #: engines/mohawk/riven.cpp:838
 msgid "Interact"
 msgstr "Взаємодія"
 
-#: gui/gui-manager.cpp:159 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:138 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:314 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Закрити"
 
-#: gui/gui-manager.cpp:165 engines/metaengine.cpp:108
+#: gui/gui-manager.cpp:144 engines/metaengine.cpp:108
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:448
 #: engines/grim/grim.cpp:525 engines/twine/metaengine.cpp:430
@@ -626,7 +626,7 @@ msgstr "Закрити"
 msgid "Up"
 msgstr "Догори"
 
-#: gui/gui-manager.cpp:170 engines/metaengine.cpp:113
+#: gui/gui-manager.cpp:149 engines/metaengine.cpp:113
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:453
 #: engines/grim/grim.cpp:530 engines/twine/metaengine.cpp:437
@@ -637,7 +637,7 @@ msgstr "Догори"
 msgid "Down"
 msgstr "Донизу"
 
-#: gui/gui-manager.cpp:175 engines/metaengine.cpp:118
+#: gui/gui-manager.cpp:154 engines/metaengine.cpp:118
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:458 engines/grim/grim.cpp:535
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
@@ -649,7 +649,7 @@ msgstr "Донизу"
 msgid "Left"
 msgstr "Наліво"
 
-#: gui/gui-manager.cpp:180 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:159 engines/metaengine.cpp:123
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:463 engines/grim/grim.cpp:540
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
@@ -661,7 +661,7 @@ msgstr "Наліво"
 msgid "Right"
 msgstr "Направо"
 
-#: gui/gui-manager.cpp:185 engines/pegasus/pegasus.cpp:2807
+#: gui/gui-manager.cpp:164 engines/pegasus/pegasus.cpp:2807
 #: engines/wintermute/keymapper_tables.h:306
 #: engines/wintermute/keymapper_tables.h:347
 #: engines/wintermute/keymapper_tables.h:382
@@ -902,10 +902,10 @@ msgstr "Кожні 15 хв"
 msgid "Every 30 mins"
 msgstr "Кожні 30 хв"
 
-#. I18N: Automatic GUI scaling
+#. I18N: Very large GUI scale
 #: gui/options.cpp:138
-msgid "Auto"
-msgstr "Автоматично"
+msgid "Very large"
+msgstr ""
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:140
@@ -2365,7 +2365,7 @@ msgstr ""
 "Детальніше див. у документації (CD-аудіо)."
 
 #: engines/engine.cpp:576 engines/metaengine.cpp:345 engines/savestate.cpp:81
-#: backends/platform/ios7/ios7_osys_main.cpp:253 engines/sky/metaengine.cpp:176
+#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Автозбереження"
@@ -8388,6 +8388,9 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#~ msgid "Auto"
+#~ msgstr "Автоматично"
 
 #~ msgid "~F~uzzy Logic in SpaceShip Active"
 #~ msgstr "Нечітка логіка у SpaceShip Active"

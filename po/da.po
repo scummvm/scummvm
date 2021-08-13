@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-11 10:07+0000\n"
+"POT-Creation-Date: 2021-08-13 20:41+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -602,24 +602,24 @@ msgstr ""
 "Vil du virkelig nulstille alle FluidSynth-indstillinger til deres standard "
 "værdier?"
 
-#: gui/gui-manager.cpp:150
+#: gui/gui-manager.cpp:129
 msgid "GUI"
 msgstr ""
 
-#: gui/gui-manager.cpp:154 engines/mohawk/myst.cpp:574
+#: gui/gui-manager.cpp:133 engines/mohawk/myst.cpp:574
 #: engines/mohawk/riven.cpp:838
 #, fuzzy
 msgid "Interact"
 msgstr "Interpolation:"
 
-#: gui/gui-manager.cpp:159 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:138 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:314 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Luk"
 
-#: gui/gui-manager.cpp:165 engines/metaengine.cpp:108
+#: gui/gui-manager.cpp:144 engines/metaengine.cpp:108
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:448
 #: engines/grim/grim.cpp:525 engines/twine/metaengine.cpp:430
@@ -630,7 +630,7 @@ msgstr "Luk"
 msgid "Up"
 msgstr "Op"
 
-#: gui/gui-manager.cpp:170 engines/metaengine.cpp:113
+#: gui/gui-manager.cpp:149 engines/metaengine.cpp:113
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:453
 #: engines/grim/grim.cpp:530 engines/twine/metaengine.cpp:437
@@ -641,7 +641,7 @@ msgstr "Op"
 msgid "Down"
 msgstr "Ned"
 
-#: gui/gui-manager.cpp:175 engines/metaengine.cpp:118
+#: gui/gui-manager.cpp:154 engines/metaengine.cpp:118
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:458 engines/grim/grim.cpp:535
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
@@ -653,7 +653,7 @@ msgstr "Ned"
 msgid "Left"
 msgstr "Venstre"
 
-#: gui/gui-manager.cpp:180 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:159 engines/metaengine.cpp:123
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:463 engines/grim/grim.cpp:540
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
@@ -665,7 +665,7 @@ msgstr "Venstre"
 msgid "Right"
 msgstr "Højre"
 
-#: gui/gui-manager.cpp:185 engines/pegasus/pegasus.cpp:2807
+#: gui/gui-manager.cpp:164 engines/pegasus/pegasus.cpp:2807
 #: engines/wintermute/keymapper_tables.h:306
 #: engines/wintermute/keymapper_tables.h:347
 #: engines/wintermute/keymapper_tables.h:382
@@ -907,11 +907,10 @@ msgstr "Hvert 15. minut"
 msgid "Every 30 mins"
 msgstr "Hvert 30. minut"
 
-#. I18N: Automatic GUI scaling
+#. I18N: Very large GUI scale
 #: gui/options.cpp:138
-#, fuzzy
-msgid "Auto"
-msgstr "Autogem:"
+msgid "Very large"
+msgstr ""
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:140
@@ -2365,7 +2364,7 @@ msgstr ""
 "Se README fil for detaljer."
 
 #: engines/engine.cpp:576 engines/metaengine.cpp:345 engines/savestate.cpp:81
-#: backends/platform/ios7/ios7_osys_main.cpp:253 engines/sky/metaengine.cpp:176
+#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 #, fuzzy
 msgid "Autosave"
@@ -8582,6 +8581,10 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Auto"
+#~ msgstr "Autogem:"
 
 #, fuzzy
 #~ msgid "SAGA2 support not compiled in"
