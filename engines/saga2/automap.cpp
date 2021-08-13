@@ -258,7 +258,7 @@ bool CAutoMap::activate(gEventType why) {
 bool CAutoMap::keyStroke(gPanelMessage &msg) {
 	gEvent ev;
 	switch (msg.key) {
-		case Common::ASCII_ESCAPE:
+	case Common::ASCII_ESCAPE:
 		cmdAutoMapEsc(ev);
 		return true;
 	case Common::KEYCODE_HOME:

@@ -162,13 +162,13 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 	origText = new char[textSize + 1];
 
 	// and fill it
-	Common::strlcpy(origText, buffer, textSize);
+	Common::strlcpy(origText, buffer, textSize + 1);
 
 	// make a working buffer
 	text = new char[textSize + 1];
 
 	// and fill it
-	Common::strlcpy(text, origText, textSize);
+	Common::strlcpy(text, origText, textSize + 1);
 
 	textFont        = font;
 	textHeight      = (textFont ? textFont->height : 0);
@@ -465,7 +465,7 @@ bool CDocument::checkForImage(char      *string,
 
 void CDocument::makePages(void) {
 	// copy the original text back to the working buffer
-	Common::strlcpy(text, origText, textSize);
+	Common::strlcpy(text, origText, textSize + 1);
 
 
 	char    *str            = text;
