@@ -322,15 +322,8 @@ void GroupedListWidget::reflowLayout() {
 }
 
 void GroupedListWidget::toggleGroup(int groupID) {
-	// Shrink group if it is expanded
-	if (_groupExpanded[groupID]) {
-		_groupExpanded[groupID] = false;
-		sortGroups();
-	} else {
-	// Expand group if it is shrunk
-		_groupExpanded[groupID] = true;
-		sortGroups();
-	}
+	_groupExpanded[groupID] = !_groupExpanded[groupID];
+	sortGroups();
 }
 
 void GroupedListWidget::drawWidget() {
