@@ -1403,6 +1403,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("lzone", "",   "L-ZONE", 		"f5277c53bacd27936158dd3867e587e2", 392484, 300),
 	MACGAME1("lzone", "v2", "L-ZONE", 		"276bee761e48a6fd709df77d5c2f60dd", 395344, 300),
+	GENGAME1_("lzone", "",	"L-ZONE",		"9f0bb7ec7720e4f680ee3aa3d22c1c9d", 384968, Common::EN_ANY, Common::kPlatformMacintoshII,ADGF_MACRESFORK, 300),
 	WINGAME2("lzone", "",   "L_ZONE.EXE",	"65d06b5fef155a2473434571aff5bc29", 370009,
 						    "SYNER_01.MMM", "56b6f1c68e85a96bcdd01028bdec2d35", 460594, 300),
 

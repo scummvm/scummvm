@@ -152,7 +152,7 @@ void Lingo::cleanupXLibs() {
 
 Common::String Lingo::normalizeXLibName(Common::String name) {
 	Common::Platform platform = _vm->getPlatform();
-	if (platform == Common::kPlatformMacintosh) {
+	if (platform == Common::kPlatformMacintosh || platform == Common::kPlatformMacintoshII) {
 		int pos = name.findLastOf(':');
 		name = name.substr(pos + 1, name.size());
 		if (name.hasSuffixIgnoreCase(".xlib"))

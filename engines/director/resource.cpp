@@ -38,7 +38,7 @@
 namespace Director {
 
 Archive *DirectorEngine::createArchive() {
-	if (getPlatform() == Common::kPlatformMacintosh) {
+	if (getPlatform() != Common::kPlatformWindows) {
 		if (getVersion() < 400)
 			return new MacArchive();
 		else
@@ -412,7 +412,7 @@ void Window::loadMac(const Common::String movie) {
 }
 
 void Window::loadStartMovieXLibs() {
-	if (strcmp(g_director->getGameId(), "warlock") == 0 && g_director->getPlatform() == Common::kPlatformMacintosh) {
+	if (strcmp(g_director->getGameId(), "warlock") == 0 && g_director->getPlatform() != Common::kPlatformWindows) {
 		g_lingo->openXLib("FPlayXObj", kXObj);
 	}
 	g_lingo->openXLib("SerialPort", kXObj);
