@@ -670,7 +670,38 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 		return true;
 	}
 
-	if (editing) {
+	if (key == Common::ASCII_RETURN) { // return key
+		if (editing) {
+			commitEdit();
+			if (!(flags & textBoxStayActive))
+				deactivate();                       // deactivate the text box
+		}
+
+		if (onEnter != NULL) {
+			gEvent ev;
+			ev.eventType = gEventKeyDown ;
+			ev.value = 1;
+			ev.panel = parent;
+			(*onEnter)(ev);
+		}
+
+		return true;
+	} else if (key == Common::ASCII_ESCAPE) {               // escape key
+		revertEdit();
+		deactivate();                       // deactivate the text box
+		if (onEscape != NULL) {
+			gEvent ev;
+			ev.eventType = gEventKeyDown ;
+			ev.value = 1;
+			ev.value = 1;
+			ev.panel = this; //parent;
+			(*onEscape)(ev);
+		}
+
+		if (flags & textBoxNoFilter)
+			return false;
+		return true;
+	} else if (editing) {
 		switch (key) {
 		case Common::KEYCODE_LEFT:
 			if (anchorPos > 0)
@@ -763,37 +794,6 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 
 			break;
 		}
-	} else if (key == Common::ASCII_RETURN) { // return key
-		if (editing) {
-			commitEdit();
-			if (!(flags & textBoxStayActive))
-				deactivate();                       // deactivate the text box
-		}
-
-		if (onEnter != NULL) {
-			gEvent ev;
-			ev.eventType = gEventKeyDown ;
-			ev.value = 1;
-			ev.panel = parent;
-			(*onEnter)(ev);
-		}
-
-		return true;
-	} else if (key == Common::ASCII_ESCAPE) {               // escape key
-		revertEdit();
-		deactivate();                       // deactivate the text box
-		if (onEscape != NULL) {
-			gEvent ev;
-			ev.eventType = gEventKeyDown ;
-			ev.value = 1;
-			ev.value = 1;
-			ev.panel = this; //parent;
-			(*onEscape)(ev);
-		}
-
-		if (flags & textBoxNoFilter)
-			return false;
-		return true;
 	}
 
 	if (editing) {
