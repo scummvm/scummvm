@@ -3378,6 +3378,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("garage", "", "Garage.exe", "0e43a5130e1964231fa25472108ca522", 1516264,
 							 "open.swf",   "d01cf5e6eb157859466f846ccb30a081", 178668, Common::JA_JPN, 650),
 
+
+	//Miel Monteur - Miel Bouwt Auto's! (demo)
+	WINDEMO1_l("garygadget1", "Demo", "miel.exe", "518a98696fe1122e08410b0f157f21bf", 1512519, Common::NL_NLD, 602),
+
 	// Windows version on same disc is D8
 	MACGAME2_l("garygadget2", "", "Game",		 "1d9149b9745e35ef93ed4cdf08ec3af7", 1030361,
 								  "StartCD.dxr", "07c672f1c05c4c12ac6abbb371a0ee1f", 24053, Common::NL_NLD, 600),
@@ -3534,7 +3538,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("sakuratoasobo", "", "Let\'s Play with Sakura", "8d83064402198a909b0abcebc6b46d2b", 118198, Common::JA_JPN, 602),
 	WINGAME1_l("sakuratoasobo", "", "Let\'s Play with Sakura.exe", "45871c12eb944f09f50ee742113a1e2d", 1982850, Common::JA_JPN, 650),
 
-	WINGAME1_l("samson", "", "start.exe", "a593079aecf5bd938ce75264cac24b2d", 1919963, Common::NL_NLD, 600),
+	WINGAME2_l("samson", "", "start.exe", "a593079aecf5bd938ce75264cac24b2d", 1919963,
+								"START.DXR", "ad34b9d4987fc84c238f0e88b174fbc9", 229050, Common::NL_NLD, 600),
 
 	MACGAME1("shrlucky", "", "Arcade", "dab7a517b0877454d1e16c40c9b5a9be", 1029193, 600),
 	WINGAME1("shrlucky", "", "ARCWIN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 7304861, 600),
@@ -3654,7 +3659,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("fg25ans", "", "FG25Ans.exe", "88d4c24f6d4b78a73ce5b07693eddbc8", 2412706, Common::FR_FRA, 702),
 
 	//Miel Monteur - Miel Bouwt Auto's!
-	WINGAME1_l("garygadget1", "", "Start.exe", "c1a2e8b7e41fa204009324a9c7db1030", 2933829, Common::NL_NLD, 700),
+	WINGAME2_l("garygadget1", "", "Start.exe", "c1a2e8b7e41fa204009324a9c7db1030", 2933829,
+			"Monteur.cnt", "7038be89eb5c49b51927bf76d8fd0b8a", 2490, Common::NL_NLD, 700),
 
 	MACGAME1_l("ironmask", "", "THE IRON MASK", "0944b962ebb00f4b5d5149d220f8449b", 112786, Common::IT_ITA, 702),
 	WINGAME1_l("ironmask", "", "TIM.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2916546, Common::IT_ITA, 702),
@@ -3844,7 +3850,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("eureka", "", "Promo.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 17971868, 800),
 
-	WINGAME1_l("fcdk", "", "Start.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 511933, Common::NL_NLD, 800),
+	WINGAME2_l("fcdk", "", "Start.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 511933,
+			"b.ico", "5c27a13bb1f5219f5fbaa10f6a7fe931", 14278, Common::NL_NLD, 800),
 
 	MACGAME1_l("forestiajr", "", "Forestia Aufstand im Zoo", "75e71e2abbe6cf6e79a62be76cc05d06", 157104, Common::DE_DEU, 850),
 	WINGAME1_l("forestiajr", "", "Forestia Aufstand im Zoo.exe", "14a1ca568d9188926eb70827f42ac856", 2166796, Common::DE_DEU, 851),
