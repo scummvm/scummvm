@@ -386,8 +386,8 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 #endif
 
 	// Set allowed dimensions
-	uint maxAllowedWidth   = desktopRes.width();
-	uint maxAllowedHeight  = desktopRes.height();
+	uint maxAllowedWidth   = desktopRes.width()  * 0.9f;
+	uint maxAllowedHeight  = desktopRes.height() * 0.9f;
 
 	// Check if we request a larger window than physically possible,
 	// e.g. by starting with additional launcher parameters forcing
