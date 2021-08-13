@@ -88,7 +88,7 @@ void GroupedListWidget::append(const String &s, ThemeEngine::FontColor color) {
 	if (_dataList.size() == _listColors.size()) {
 		// If the color list has the size of the data list, we append the color.
 		_listColors.push_back(color);
-	} else if (!_listColors.size() && color != ThemeEngine::kFontColorNormal) {
+	} else if (_listColors.empty() && color != ThemeEngine::kFontColorNormal) {
 		// If it's the first entry to use a non default color, we will fill
 		// up all other entries of the color list with the default color and
 		// add the requested color for the new entry.
