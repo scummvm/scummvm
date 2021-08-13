@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/keyboard.h"
+
 #include "saga2/saga2.h"
 #include "saga2/automap.h"
 #include "saga2/blitters.h"
@@ -253,24 +255,22 @@ bool CAutoMap::activate(gEventType why) {
 	return false;
 }
 
-#define SpecialKey(k) ((k>>8)+0x80)
-
 bool CAutoMap::keyStroke(gPanelMessage &msg) {
 	gEvent ev;
 	switch (msg.key) {
-	case 0x1B:
+		case Common::ASCII_ESCAPE:
 		cmdAutoMapEsc(ev);
 		return true;
-	case SpecialKey(homeKey):
+	case Common::KEYCODE_HOME:
 		cmdAutoMapHome(ev);
 		return true;
-	case SpecialKey(endKey):
+	case Common::KEYCODE_END:
 		cmdAutoMapEnd(ev);
 		return true;
-	case SpecialKey(pageUpKey):
+	case Common::KEYCODE_PAGEUP:
 		cmdAutoMapPgUp(ev);
 		return true;
-	case SpecialKey(pageDownKey):
+	case Common::KEYCODE_PAGEDOWN:
 		cmdAutoMapPgDn(ev);
 		return true;
 	default:
@@ -282,11 +282,11 @@ bool CAutoMap::keyStroke(gPanelMessage &msg) {
 
 gPanel *CAutoMap::keyTest(int16 key) {
 	switch (key) {
-	case 0x1B:
-	case SpecialKey(homeKey):
-	case SpecialKey(endKey):
-	case SpecialKey(pageUpKey):
-	case SpecialKey(pageDownKey):
+	case Common::ASCII_ESCAPE:
+	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_END:
+	case Common::KEYCODE_PAGEUP:
+	case Common::KEYCODE_PAGEDOWN:
 		return this;
 	default:
 		return NULL;

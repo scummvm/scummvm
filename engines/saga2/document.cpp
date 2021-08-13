@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/keyboard.h"
+
 #include "saga2/saga2.h"
 #include "saga2/document.h"
 #include "saga2/script.h"
@@ -235,25 +237,22 @@ bool CDocument::activate(gEventType why) {
 	return false;
 }
 
-#define SpecialKey(k) ((k>>8)+0x80)
-
-
 bool CDocument::keyStroke(gPanelMessage &msg) {
 	gEvent ev;
 	switch (msg.key) {
-	case 0x1B:
+	case Common::ASCII_ESCAPE:
 		cmdDocumentEsc(ev);
 		return true;
-	case SpecialKey(leftArrowKey):
+	case Common::KEYCODE_LEFT:
 		cmdDocumentLt(ev);
 		return true;
-	case SpecialKey(rightArrowKey):
+	case Common::KEYCODE_RIGHT:
 		cmdDocumentRt(ev);
 		return true;
-	case SpecialKey(upArrowKey):
+	case Common::KEYCODE_UP:
 		cmdDocumentUp(ev);
 		return true;
-	case SpecialKey(downArrowKey):
+	case Common::KEYCODE_DOWN:
 		cmdDocumentDn(ev);
 		return true;
 	default:
@@ -265,11 +264,11 @@ bool CDocument::keyStroke(gPanelMessage &msg) {
 
 gPanel *CDocument::keyTest(int16 key) {
 	switch (key) {
-	case 0x1B:
-	case SpecialKey(leftArrowKey):
-	case SpecialKey(rightArrowKey):
-	case SpecialKey(upArrowKey):
-	case SpecialKey(downArrowKey):
+	case Common::ASCII_ESCAPE:
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_DOWN:
 		return this;
 	default:
 		return NULL;

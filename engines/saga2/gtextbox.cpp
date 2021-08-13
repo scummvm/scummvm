@@ -48,8 +48,6 @@ extern gFont        *mainFont;
 //-----------------------------------------------------------------------
 // init
 
-#define SpecialKey(k) ((k>>8)+0x80)
-
 /****** gtextbox.cpp/gTextBox [class] ******************************
 *
 *   NAME
