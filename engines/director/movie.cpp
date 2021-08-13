@@ -380,13 +380,12 @@ ScriptContext *Movie::getScriptContext(ScriptType type, CastMemberID id) {
 }
 
 Symbol Movie::getHandler(const Common::String &name) {
-	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
-		if (_cast->_lingoArchive->functionHandlers.contains(name))
-			return _cast->_lingoArchive->functionHandlers[name];
+	if (_cast->_lingoArchive->functionHandlers.contains(name))
+		return _cast->_lingoArchive->functionHandlers[name];
 
-		if (_sharedCast && _sharedCast->_lingoArchive->functionHandlers.contains(name))
-			return _sharedCast->_lingoArchive->functionHandlers[name];
-	}
+	if (_sharedCast && _sharedCast->_lingoArchive->functionHandlers.contains(name))
+		return _sharedCast->_lingoArchive->functionHandlers[name];
+
 	return Symbol();
 }
 

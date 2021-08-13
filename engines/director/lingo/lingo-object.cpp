@@ -271,9 +271,8 @@ Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Commo
 		debugC(1, kDebugCompile, "<end define code>");
 	}
 
-	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
-		_functionHandlers[name] = sym;
-	} else {
+	_functionHandlers[name] = sym;
+	if (g_lingo->_eventHandlerTypeIds.contains(name)) {
 		_eventHandlers[g_lingo->_eventHandlerTypeIds[name]] = sym;
 	}
 
