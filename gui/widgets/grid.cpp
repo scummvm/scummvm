@@ -178,15 +178,8 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 }
 
 void GridWidget::toggleGroup(int groupID) {
-	// Shrink group if it is expanded
-	if (_groupExpanded[groupID]) {
-		_groupExpanded[groupID] = false;
-		sortGroups();
-	} else {
-	// Expand group if it is shrunk
-		_groupExpanded[groupID] = true;
-		sortGroups();
-	}
+	_groupExpanded[groupID] = !_groupExpanded[groupID];
+	sortGroups();
 	markGridAsInvalid();
 	// TODO: Replace reflowLayout with only the necessary sequence of steps
 	reflowLayout();
