@@ -97,9 +97,9 @@ public:
 
 	// Using in digital movie sprites
 	double _movieRate;
-	uint16 _movieTime;
-	uint16 _startTime;
-	uint16 _stopTime;
+	int _movieTime;
+	int _startTime;
+	int _stopTime;
 
 private:
 	Graphics::ManagedSurface *getSurface();
