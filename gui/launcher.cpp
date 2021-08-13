@@ -159,7 +159,7 @@ LauncherDialog::LauncherDialog(const Common::String &dialogName)
 
 	GUI::GuiManager::instance()._launched = true;
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
-	addChooserButtons();
+	addLayoutChooserButtons();
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
 	Common::FSDirectory *mdDir = new Common::FSDirectory(Common::String("./metadata/"));
 	Common::ArchiveMemberList mdFiles;
@@ -726,7 +726,7 @@ void LauncherDialog::reflowLayout() {
 	_searchClearButton = addClearButton(this, _title + ".SearchClearButton", kSearchClearCmd);
 #endif
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
-	addChooserButtons();
+	addLayoutChooserButtons();
 #endif
 
 	_w = g_system->getOverlayWidth();
@@ -736,7 +736,7 @@ void LauncherDialog::reflowLayout() {
 }
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
-void LauncherDialog::addChooserButtons() {
+void LauncherDialog::addLayoutChooserButtons() {
 	if (_listButton) {
 		removeWidget(_listButton);
 		delete _listButton;
