@@ -766,6 +766,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 	case Common::EVENT_MOUSEMOVE:
 		_curMouseState.pos.x = event.mouse.x;
 		_curMouseState.pos.y = event.mouse.y;
+		g_vm->_pointer->move(Point16(_curMouseState.pos.x, _curMouseState.pos.y));
 		break;
 	default:
 		break;
