@@ -418,6 +418,7 @@ int ccInstance::Run(int32_t curpc) {
 	ScriptOperation codeOp;
 
 	FunctionCallStack func_callstack;
+	int pcPrior = 0;
 
 	while (1) {
 		if (_G(abort_engine))
@@ -516,6 +517,11 @@ int ccInstance::Run(int32_t curpc) {
 		if (write_debug_dump) {
 			DumpInstruction(codeOp);
 		}
+
+		if (curpc == 546 && pc >= 3400 && pc <= 3447) {
+			warning("X\n");
+		}
+		pcPrior = pc;
 
 		switch (codeOp.Instruction.Code) {
 		case SCMD_LINENUM:

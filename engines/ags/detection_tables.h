@@ -450,6 +450,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bttf3", "Back to the Future Part III - Timeline Of Monkey Island" },
 	{ "bttf4", "Back to the Future Part IV - The Multitasking Crystal" },
 	{ "bttf5", "Back to the Future Part V - Multidimensional Space-Timelines" },
+	{ "bttfwat", "I'll Be Back to the Future With A Terminator" },
 	{ "bubsythebobcatinripvanbubsystarringbubsy", "Bubsy The Bobcat In Rip Van Bubsy Starring Bubsy" },
 	{ "buccaneer", "Buccaneer" },
 	{ "bullettrain", "Bullet Train" },
@@ -2419,6 +2420,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("bttf3", "tfg - bttf iii - timeline of mi.exe", "7ddb9e776648faed5a51170d087074e9", 157518001),
 	GAME_ENTRY("bttf4", "tfg - bttf iv - the multitasking crystal.exe", "7ddb9e776648faed5a51170d087074e9", 176964994),
 	GAME_ENTRY("bttf5", "tfg - bttf v - m -space-timelines -.exe", "7971a7c02d414dc8cb33b6ec36080b91", 213022300),
+	GAME_ENTRY("bttfwat", "TFG-IBBTTFWAT.exe", "7971a7c02d414dc8cb33b6ec36080b91", 285643776),
 	GAME_ENTRY("bubsythebobcatinripvanbubsystarringbubsy", "rip van bubsy.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 52424482),
 	GAME_ENTRY("buccaneer", "buccaneer.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 1576850),
 	GAME_ENTRY("bullettrain", "bullet train.exe", "f120690b506dd63cd7d1112ea6af2f77", 17383747),
@@ -3455,6 +3457,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("tfg-goonies", "TFG - THE GOONIES.exe", "7971a7c02d414dc8cb33b6ec36080b91", 62524979),
 	GAME_ENTRY("tfg-mi", "tfg-g&mi.exe", "7971a7c02d414dc8cb33b6ec36080b91", 251715672),
 	GAME_ENTRY("tfg-pixel", "THE PIXEL HAS YOU DISK 1.exe", "7971a7c02d414dc8cb33b6ec36080b91", 289291855),
+	GAME_ENTRY("tfg-pixel", "THE PIXEL HAS YOU DISK 1.exe", "0691254142a4dbeaf47a6efd7a4cb6f0", 376910335), // 1.1
 	GAME_ENTRY("tfg-zak2", "TFG - ZAK2.exe", "7971a7c02d414dc8cb33b6ec36080b91", 155632013),
 	GAME_ENTRY("tftoz1", "Cyborg Seppuku.exe", "78dd4ca028ee0156b6a093d6d780aa65", 16776249),
 	GAME_ENTRY("tftoz1", "Cyborg Seppuku.ags", "68dc2bc08a1c5979304f16c145a7fbb5", 14291497),
