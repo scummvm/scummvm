@@ -66,6 +66,8 @@ bool DirectorEngine::processEvents(bool captureClick) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 			_stage->getCurrentMovie()->getScore()->_playState = kPlayStopped;
+			if (captureClick)
+				return true;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			if (captureClick)
