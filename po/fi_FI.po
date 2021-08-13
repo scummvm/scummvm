@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-13 20:41+0000\n"
-"PO-Revision-Date: 2021-08-11 17:45+0000\n"
+"PO-Revision-Date: 2021-08-13 21:15+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -903,7 +903,7 @@ msgstr "30 minuutin välein"
 #. I18N: Very large GUI scale
 #: gui/options.cpp:138
 msgid "Very large"
-msgstr ""
+msgstr "Todella suuri"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:140
