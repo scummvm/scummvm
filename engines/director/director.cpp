@@ -173,7 +173,7 @@ Common::Error DirectorEngine::run() {
 	_wm->setScreen(_surface);
 	_wm->addWindowInitialized(_stage);
 	_wm->setActiveWindow(_stage->getId());
-	setPalette(-1);
+	setPalette((getPlatform() == Common::kPlatformWindows) ? kClutSystemWin : kClutSystemMac);
 
 	_currentWindow = _stage;
 
