@@ -547,8 +547,10 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		// this doesn't include changes in dimension or position!
 		bool widgetRedrawn = channel->updateWidget();
 
-		if (channel->isActiveVideo())
+		if (channel->isActiveVideo()) {
+			channel->updateVideoTime();
 			_movie->_videoPlayback = true;
+		}
 
 		if (channel->isDirty(nextSprite) || widgetRedrawn || mode == kRenderForceUpdate) {
 			if (!currentSprite->_trails)

@@ -281,6 +281,10 @@ bool Channel::isActiveVideo() {
 	return true;
 }
 
+void Channel::updateVideoTime() {
+	_movieTime = ((DigitalVideoCastMember *)_sprite->_cast)->getMovieCurrentTime();
+}
+
 bool Channel::isVideoDirectToStage() {
 	if (!_sprite->_cast || _sprite->_cast->_type != kCastDigitalVideo)
 		return false;

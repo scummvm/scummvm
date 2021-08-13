@@ -79,6 +79,8 @@ public:
 	int getMouseItem(int x, int y);
 	int getMouseLine(int x, int y);
 
+	void updateVideoTime();
+
 public:
 	Sprite *_sprite;
 	Cursor _cursor;
