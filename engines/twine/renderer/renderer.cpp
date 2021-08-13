@@ -66,7 +66,7 @@ void Renderer::init(int32 w, int32 h) {
 }
 
 const IVec3 &Renderer::projectXYPositionOnScreen(int32 x, int32 y, int32 z) {
-	if (_isUsingOrthoProjection == 1) {
+	if (_isUsingOrthoProjection) {
 		_projPos.x = ((x - z) * 24) / BRICK_SIZE + _orthoProjPos.x;
 		_projPos.y = y;
 		return _projPos;
@@ -148,7 +148,7 @@ void Renderer::baseMatrixTranspose() {
 	SWAP(_baseMatrix.row2.z, _baseMatrix.row3.y);
 }
 
-void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
+const IVec3 &Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 	const double Xradians = (double)((ANGLE_90 - x) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	const double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	const double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
@@ -177,6 +177,7 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 	getBaseRotationPosition(_baseTransPos.x, _baseTransPos.y, _baseTransPos.z);
 
 	_baseRotPos = _destPos;
+	return _baseRotPos;
 }
 
 const IVec3 &Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {

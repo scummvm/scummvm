@@ -241,10 +241,10 @@ public:
 	void setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6);
 	const IVec3 &updateCameraAnglePositions(int zShift = 0);
 	void setBaseTranslation(int32 x, int32 y, int32 z);
-	void setBaseRotation(int32 x, int32 y, int32 z, bool transpose = false);
+	const IVec3 &setBaseRotation(int32 x, int32 y, int32 z, bool transpose = false);
 
-	inline void setBaseRotation(const IVec3 &rot, bool transpose = false) {
-		setBaseRotation(rot.x, rot.y, rot.z, transpose);
+	inline const IVec3 &setBaseRotation(const IVec3 &rot, bool transpose = false) {
+		return setBaseRotation(rot.x, rot.y, rot.z, transpose);
 	}
 
 	void setOrthoProjection(int32 x, int32 y, int32 z);
