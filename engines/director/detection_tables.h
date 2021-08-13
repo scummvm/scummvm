@@ -817,6 +817,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "blockbuster2",		"Blockbuster Guide to Movies & Videos, 2nd Edition" },
 	{ "bobteam",			"Bob the Builder: Teamwork" },
 	{ "bookshelf94",		"Microsoft Bookshelf 1994" },
+	{ "c64pack",			"Activision's Commodore 64 15-Pack for Windows" },
 	{ "cfdemo",   			"The ClueFinders Demo" },
 	{ "cinemania94",		"Microsoft Cinemania 94" },
 	{ "cinemania95",		"Microsoft Cinemania 95" },
