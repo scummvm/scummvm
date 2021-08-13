@@ -367,12 +367,8 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	} else {
 		// Set the basic window size based on the desktop resolution
 		// since we have no values stored, e.g. on first launch.
-		requestedWidth  = desktopRes.width()  * (1.0f / 3.0f) * 1.5f / ratio;
-		requestedHeight = desktopRes.height() * (1.0f / 4.0f) * 1.5f;
-
-		// Apply scaler
-		requestedWidth  *= _graphicsScale;
-		requestedHeight *= _graphicsScale;
+		requestedWidth  = MAX<uint>(desktopRes.width() / 2, MIN<uint>(640, desktopRes.width()));
+		requestedHeight = MIN<uint>(requestedWidth * 3 / 4, desktopRes.height());
 
 		// Save current window dimensions
 		ConfMan.setInt("last_window_width", requestedWidth, Common::ConfigManager::kApplicationDomain);
@@ -384,8 +380,8 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		// Set the basic window size based on the desktop resolution
 		// since we cannot reliably determine the current window state
 		// on SDL1.
-		requestedWidth  = desktopRes.width()  * (1.0f / 3.0f) * 1.5f / ratio;
-		requestedHeight = desktopRes.height() * (1.0f / 4.0f) * 1.5f;
+		requestedWidth  = MAX<uint>(desktopRes.width() / 2, MIN<uint>(640, desktopRes.width()));
+		requestedHeight = MIN<uint>(requestedWidth * 3 / 4, desktopRes.height());
 
 		// Apply scaler
 		requestedWidth  *= _graphicsScale;
