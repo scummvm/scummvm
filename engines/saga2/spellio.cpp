@@ -300,7 +300,6 @@ StorageSpellInstance::StorageSpellInstance() : implementAge(0), effect(0), dProt
 void StorageSpellInstance::read(Common::InSaveFile *in) {
 	implementAge = in->readSint32LE();
 	effect = in->readUint16LE();
-	warning("StorageSpellInstance::read: Check SpellID size");
 	dProto = (SpellID)in->readByte();
 	caster = in->readUint16LE();
 	target.read(in);
@@ -315,7 +314,6 @@ void StorageSpellInstance::read(Common::InSaveFile *in) {
 void StorageSpellInstance::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeSint32LE(implementAge);
 	out->writeUint16LE(effect);
-	warning("StorageSpellInstance::write: Check SpellID size");
 	out->writeByte(dProto);
 	out->writeUint16LE(caster);
 	target.write(out);
