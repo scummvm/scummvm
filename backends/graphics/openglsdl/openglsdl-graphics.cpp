@@ -358,7 +358,7 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		requestedHeight = ConfMan.getInt("window_maximized_height", Common::ConfigManager::kApplicationDomain);
 
 	} else if (!_isMaximized && ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
-		// Restore previously stored window dimensions.
+		// Load previously stored window dimensions.
 		requestedWidth  = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
 		requestedHeight = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
 
@@ -382,6 +382,14 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		requestedHeight = requestedWidth * 3 / 4;
 
 #endif
+
+	// In order to prevent any unnecessary downscaling (e.g. when launching
+	// a game in 800x600 while having a smaller screen size stored in the configuration file),
+	// we override the window dimensions with the "real" resolution request made by the engine.
+	if ((requestedWidth < _lastRequestedWidth  * _graphicsScale || requestedHeight < _lastRequestedHeight * _graphicsScale) && ConfMan.getActiveDomain()) {
+		requestedWidth  = _lastRequestedWidth  * _graphicsScale;
+		requestedHeight = _lastRequestedHeight * _graphicsScale;
+	}
 
 	// Set allowed dimensions
 	uint maxAllowedWidth   = desktopRes.width();
