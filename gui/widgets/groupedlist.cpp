@@ -73,6 +73,9 @@ void GroupedListWidget::setList(const U32StringArray &list, const ColorList *col
 
 void GroupedListWidget::setAttributeValues(const U32StringArray &attrValues) {
 	_attributeValues = attrValues;
+	// Make sure we always have the attribute values for all the entries of the _dataList.
+	// This is not foolproof, but can prevent accidentally passing attributes for the wrong
+	// list of entries, such as after adding / removing games.
 	if (!attrValues.empty())
 		assert(_attributeValues.size() == _dataList.size());
 }
