@@ -339,6 +339,7 @@ void GroupedListWidget::drawWidget() {
 		const int y = _y + _topPadding + kLineHeight * i;
 		const int fontHeight = g_gui.getFontHeight();
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
+		ThemeEngine::FontStyle bold = ThemeEngine::kFontStyleNormal;
 
 		// Draw the selected item inverted, on a highlighted background.
 		if (_selectedItem == pos)
@@ -350,6 +351,7 @@ void GroupedListWidget::drawWidget() {
 
 		if (isGroupHeader(_listIndex[pos])) {
 			int groupID = indexToGroupID(_listIndex[pos]);
+			bold = ThemeEngine::kFontStyleBold;
 			r.left += fontHeight + _leftPadding;
 			g_gui.theme()->drawFoldIndicator(Common::Rect(_x + _hlLeftPadding + _leftPadding, y, _x + fontHeight + _leftPadding, y + fontHeight), _groupExpanded[groupID]);
 			pad = 0;
@@ -391,12 +393,8 @@ void GroupedListWidget::drawWidget() {
 		} else {
 			buffer = _list[pos];
 		}
-		if (isGroupHeader(_listIndex[pos]))
-			g_gui.theme()->drawText(r1, buffer, _state,
-								_drawAlign, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
-		else
-			g_gui.theme()->drawText(r1, buffer, _state,
-								_drawAlign, inverted, pad, true, ThemeEngine::kFontStyleNormal, color);
+		g_gui.theme()->drawText(r1, buffer, _state,
+								_drawAlign, inverted, pad, true, bold, color);
 
 		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {
