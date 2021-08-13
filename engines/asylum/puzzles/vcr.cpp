@@ -326,8 +326,11 @@ void PuzzleVCR::updateScreen(const AsylumEvent &) {
 		getScreen()->draw(getWorld()->graphicResourceIds[0]);
 		getScreen()->drawGraphicsInQueue();
 
-		for (int16 barSize = 0; barSize < 84; barSize += 4)
+		getScreen()->clearDefaultColor();
+		for (int16 barSize = 0; barSize < 84; barSize += 4) {
 			getScreen()->drawWideScreenBars(barSize);
+			_vm->_system->updateScreen();
+		}
 
 		// Palette fade
 		getScreen()->paletteFade(0, 25, 10);

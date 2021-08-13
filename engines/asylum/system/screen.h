@@ -86,6 +86,7 @@ public:
 
 	// Misc
 	void clear();
+	void clearDefaultColor() { memset(_mainPalette, 0, 3); setupPalette(NULL, 0, 0); }
 	void drawWideScreenBars(int16 barSize) const;
 	void fillRect(int16 x, int16 y, int16 x2, int16 y2, uint32 color);
 	void copyBackBufferToScreen();
