@@ -1057,10 +1057,10 @@ void MacText::recalcDims() {
 		// We must calculate width first, because it enforces
 		// the computation. Calling Height() will return cached value!
 		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i, true));
-		y += getLineHeight(i) + _interLinear;
+		y += MAX(getLineHeight(i), _interLinear);
 	}
 
-	_textMaxHeight = y - _interLinear;
+	_textMaxHeight = y;
 
 	if (!_fixedDims) {
 		int newBottom = _dims.top + _textMaxHeight + (2 * _border) + _gutter + _shadow;
