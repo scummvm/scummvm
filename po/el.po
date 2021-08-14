@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-14 02:26+0000\n"
-"PO-Revision-Date: 2021-07-01 15:36+0000\n"
+"PO-Revision-Date: 2021-08-14 12:26+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -920,7 +920,7 @@ msgstr "Κάθε 30 λεπτά"
 #. I18N: Very large GUI scale
 #: gui/options.cpp:138
 msgid "Very large"
-msgstr ""
+msgstr "Πολύ μεγάλο"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:140
@@ -1389,7 +1389,7 @@ msgstr "Διαδρομή Ρυθμίσεων: "
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2236 gui/options.cpp:2773
 msgid "Last browser path: "
-msgstr ""
+msgstr "Πρόσφατη διαδρομή πλοηγητή: "
 
 #: gui/options.cpp:2241
 msgid "Theme:"
@@ -2160,7 +2160,7 @@ msgstr "PC-9801 (16 Χρώματα)"
 #. I18N: Macintosh black-and-white
 #: common/rendermode.cpp:48
 msgid "Macintosh b/w"
-msgstr ""
+msgstr "Macintosh (ασπρόμαυρο)"
 
 #: common/rendermode.cpp:75
 msgctxt "lowres"
@@ -2382,13 +2382,6 @@ msgid "Error"
 msgstr "Σφάλμα"
 
 #: engines/engine.cpp:519
-#, fuzzy
-#| msgid ""
-#| "You appear to be playing this game directly\n"
-#| "from the CD. This is known to cause problems,\n"
-#| "and it is therefore recommended that you copy\n"
-#| "the data files to your hard disk instead.\n"
-#| "See the Documentation (CD audio) for details."
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2400,16 +2393,9 @@ msgstr ""
 "από το CD. Αυτό ενδέχεται να παρουσιάσει προβλήματα,\n"
 "και συνεπώς συνιστάται αντ'αυτού να αντιγράψετε \n"
 "τα αρχεία δεδομένων στο σκληρό σας δίσκο.\n"
-"Δείτε την Τεκμηρίωση του ScummVM (CD audio) για λεπτομέρειες."
+"Δείτε την τεκμηρίωση του ScummVM (CD audio) για λεπτομέρειες."
 
 #: engines/engine.cpp:543
-#, fuzzy
-#| msgid ""
-#| "This game has audio tracks in its disk. These\n"
-#| "tracks need to be ripped from the disk using\n"
-#| "an appropriate CD audio extracting tool in\n"
-#| "order to listen to the game's music.\n"
-#| "See the Documentation (CD audio) for details."
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -2417,11 +2403,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"Αυτό το παιχνίδι έχει κομμάτια ήχου στο δίσκο του. Αυτά τα\n"
-"κομμάτια πρέπει να αντιγραφούν από το δίσκο με τη χρήση\n"
+"Αυτό το παιχνίδι έχει κομμάτια ήχου στο CD του. Αυτά τα\n"
+"κομμάτια πρέπει να αντιγραφούν από το CD με τη χρήση\n"
 "ενός κατάλληλου εργαλείου εξαγωγής ήχου CD ώστε\n"
 "να ακούσετε τη μουσική του παιχνιδιού.\n"
-"Δείτε την Τεκμηρίωση του ScummVM (CD audio) για λεπτομέρειες."
+"Δείτε την τεκμηρίωση του ScummVM (CD audio) για λεπτομέρειες."
 
 #: engines/engine.cpp:576 engines/metaengine.cpp:345 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
@@ -3486,7 +3472,7 @@ msgstr "Η Λειτουργία Μεγέθυνσης Απενεργοποιήθ�
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:77
 msgid "Show SAF revoke permissions overlay button"
-msgstr ""
+msgstr "Εμφάνιση κουμπιού για ανάκληση αδειών SAF"
 
 #: backends/platform/ds/ds-graphics.cpp:219
 msgid "Unscaled"
@@ -4199,12 +4185,8 @@ msgid "Enable Text to Speech"
 msgstr "Χρήση Κειμένου σε Ομιλία"
 
 #: engines/cge/detection.cpp:120
-#, fuzzy
-#| msgid "Use TTS to read the descriptions (if TTS is available)"
 msgid "Use TTS to read text in the game (if TTS is available)"
-msgstr ""
-"Χρήση λειτουργίας Αφήγησης Κειμένου (TTS) για την ανάγνωση περιγραφών (αν "
-"είναι διαθέσιμη)"
+msgstr "Χρήση TTS για την ανάγνωση κειμένου στο παιχνίδι (αν είναι διαθέσιμο)"
 
 #: engines/cine/detection.cpp:61
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -5376,21 +5358,25 @@ msgstr ""
 #.
 #: engines/mohawk/dialogs.cpp:135
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
-msgstr ""
+msgstr "Βελτιώση προσβασιμότητας στο γρίφο της Εποχής Selenitic"
 
 #: engines/mohawk/dialogs.cpp:136
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
 msgstr ""
+"Ευρύτερο περιθώριο σφάλματος στην επίλυση των γρίφων ήχου της Εποχής "
+"Selenitic."
 
 #: engines/mohawk/dialogs.cpp:139
 msgid "Simulate loading times of old CD drives"
-msgstr ""
+msgstr "Εξομοίωση του χρόνου φόρτωσης παλιών οδηγών CD"
 
 #: engines/mohawk/dialogs.cpp:140
 msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
 msgstr ""
+"Εξομοίωση του χρόνου φόρτωσης των παλιών οδηγών CD-ROM με την εισαγωγή "
+"πρόσθετης τυχαίας καθυστέρησης κατά τη μετάβαση μεταξύ σκηνών."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:147
@@ -6104,14 +6090,12 @@ msgstr ""
 "απεικόνιση"
 
 #: engines/sci/detection.cpp:323
-#, fuzzy
-#| msgid "Enable frame skipping"
 msgid "Enable bearded musicians"
-msgstr "Ενεργοποίηση παράλειψης καρέ"
+msgstr "Ενεργοποίηση γενειοφόρων μουσικών"
 
 #: engines/sci/detection.cpp:324
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "Ενεργοποίηση γραφικών που είχαν απενεργοποιηθεί για νομικούς λόγους"
 
 #: engines/sci/detection.cpp:354
 msgid "MIDI mode:"
@@ -6379,26 +6363,24 @@ msgstr ""
 "αναλογίας διαστάσεων'"
 
 #: engines/scumm/detection.cpp:197
-#, fuzzy
-#| msgid "Play selected music record"
 msgid "Play simplified music"
-msgstr "Αναπαραγωγή επιλεγμένου κομματιού"
+msgstr "Αναπαραγωγή απλοποιημένης μουσικής"
 
 #: engines/scumm/detection.cpp:198
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
 msgstr ""
+"Αυτή η μουσική φαίνεται πως προοριζόταν για Macs χαμηλών δυνατοτήτων, και "
+"χρησιμοποιεί μόνο ένα κανάλι ήχου."
 
 #: engines/scumm/detection.cpp:204
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth scrolling"
-msgstr "Ενεργοποίηση ομαλής κύλισης κατά το περπάτημα"
+msgstr "Ενεργοποίηση ομαλής κύλισης"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(αντί της κανονικής κύλισης σε βήματα των 8-πίξελ)"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -7803,12 +7785,14 @@ msgstr "Αντικαθιστά γραμματοσειρές του παιχνι�
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/ultima8/meta_engine.cpp:192
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "Η κάμερα ακολουθεί τον Silencer"
 
 #: engines/ultima/ultima8/meta_engine.cpp:193
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
+"Η κάμερα ακολουθεί την κίνηση του παίκτη αντί να καρφώνεται σε "
+"προκαθορισμένες θέσεις."
 
 #: engines/ultima/ultima8/meta_engine.cpp:204
 msgid "Ultima VIII"
@@ -7820,11 +7804,11 @@ msgstr "Σταυροφόρος"
 
 #: engines/ultima/ultima8/meta_engine.cpp:251
 msgid "Ultima VIII Cheats"
-msgstr "Ultima VIII Κόλπα"
+msgstr "Κόλπα για Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:268
 msgid "Ultima VIII Debug"
-msgstr "Ultima VIII Αποσφαλμάτωση"
+msgstr "Αποσφαλμάτωση για Ultima VIII"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:297
 msgid "[corrupt]"
