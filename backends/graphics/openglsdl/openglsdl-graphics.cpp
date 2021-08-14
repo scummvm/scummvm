@@ -660,7 +660,9 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			_gotResize = false;
 
 			// Try to setup the mode.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 			unlockWindowSize();
+#endif
 			if (!setupMode(_lastRequestedWidth * _graphicsScale, _lastRequestedHeight * _graphicsScale)) {
 				warning("OpenGLSdlGraphicsManager::notifyEvent: Window resize failed ('%s')", SDL_GetError());
 				g_system->quit();
