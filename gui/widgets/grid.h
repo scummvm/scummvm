@@ -74,8 +74,6 @@ struct GridItemInfo {
 		,const String &t, Common::Language l, Common::Platform p)
 		: entryID(id), gameid(gid), engineid(eid), title(t), language(l), platform(p), isHeader(false) {
 		thumbPath = String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
-		// TEST: Remove assignment from here
-		attribute = title.firstChar();
 	}
 
 	GridItemInfo(const String &groupHeader, int groupID) : title(groupHeader), isHeader(true), entryID(groupID) {
