@@ -660,10 +660,18 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		_initialRect = Movie::readRect(stream);
 		_maxHeight = stream.readUint16();
 		_textShadow = static_cast<SizeType>(stream.readByte());
-		_textFlags = stream.readByte();
+		_textFlags = stream.readByte(); // 1: editable, 2: auto tab 4: don't wrap
+		_editable = _textFlags & 0x1;
 
 		_textHeight = stream.readUint16();
 		_textSlant = 0;
+		debugC(2, kDebugLoading, "TextCastMember(): flags1: %d, border: %d gutter: %d shadow: %d textType: %d align: %04x",
+				_flags1, _borderSize, _gutterSize, _boxShadow, _textType, _textAlign);
+		debugC(2, kDebugLoading, "TextCastMember(): background rgb: 0x%04x 0x%04x 0x%04x, shadow: %d flags: %d textHeight: %d",
+				_bgpalinfo1, _bgpalinfo2, _bgpalinfo3, _textShadow, _textFlags, _textHeight);
+		if (debugChannelSet(2, kDebugLoading)) {
+			_initialRect.debugPrint(2, "TextCastMember(): rect:");
+		}
 	} else {
 		_fontId = 1;
 
