@@ -23,23 +23,18 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "SDL_syswm.h"
-#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/platform/sdl/macosx/macosx-window.h"
 #include <AppKit/NSWindow.h>
 
-bool SdlGraphicsManager::getMacWindowScaling(float &scale) const {
+float SdlWindow_MacOSX::getDpiScalingFactor() const {
 #if SDL_VERSION_ATLEAST(2, 0, 0) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 	SDL_SysWMinfo wmInfo;
-	SDL_VERSION(&wmInfo.version); /* initialize info structure with SDL version info */
-	if (!SDL_GetWindowWMInfo(_window->getSDLWindow(), &wmInfo))
-		return false;
-
-	NSWindow *nswindow = wmInfo.info.cocoa.window;
-	if (!nswindow)
-		return false;
-	scale = [nswindow backingScaleFactor];
-	return true;
-#else
-	return false;
+	if (getSDLWMInformation(&wmInfo)) {
+		NSWindow *nswindow = wmInfo.info.cocoa.window;
+		if (nswindow)
+			return [nswindow backingScaleFactor];
+	}
 #endif
+
+	return SdlWindow::getDpiScalingFactor();
 }

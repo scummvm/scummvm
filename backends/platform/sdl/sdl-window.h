@@ -87,6 +87,13 @@ public:
 	 */
 	Common::Rect getDesktopResolution();
 
+	void getDisplayDpi(float *dpi, float *defaultDpi) const;
+
+	/**
+	 * Returns the scaling mode based on the display DPI
+	 */
+	virtual float getDpiScalingFactor() const;
+
 	bool mouseIsGrabbed() const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_window) {

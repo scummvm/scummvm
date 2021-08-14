@@ -241,6 +241,40 @@ Common::Rect SdlWindow::getDesktopResolution() {
 	return _desktopRes;
 }
 
+void SdlWindow::getDisplayDpi(float *dpi, float *defaultDpi) const {
+	const float systemDpi =
+#ifdef __APPLE__
+	72.0f;
+#elif defined(_WIN32)
+	96.0f;
+#else
+	90.0f; // ScummVM default
+#endif
+	if (defaultDpi)
+		*defaultDpi = systemDpi;
+
+	if (dpi) {
+#if SDL_VERSION_ATLEAST(2, 0, 4)
+		if (SDL_GetDisplayDPI(getDisplayIndex(), NULL, dpi, NULL) != 0) {
+			*dpi = systemDpi;
+		}
+#else
+		*dpi = systemDpi;
+#endif
+	}
+}
+
+float SdlWindow::getDpiScalingFactor() const {
+	float dpi, defaultDpi;
+	getDisplayDpi(&dpi, &defaultDpi);
+	debug(4, "dpi: %g default: %g", dpi, defaultDpi);
+	float ratio = dpi / defaultDpi;
+	if (ratio >= 1.5f)
+		return 2.f;
+	else
+		return 1.f;
+}
+
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 SDL_Surface *copySDLSurface(SDL_Surface *src) {
