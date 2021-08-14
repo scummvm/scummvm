@@ -348,9 +348,6 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	// Fetch current desktop resolution and determining max. width and height
 	Common::Rect desktopRes = _window->getDesktopResolution();
 
-	// Determine current desktop aspect ratio
-	float ratio = (float)desktopRes.width() / (float)desktopRes.height();
-
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool _isMaximized = (SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_MAXIMIZED);
 	if (_isMaximized && ConfMan.hasKey("window_maximized_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("window_maximized_height", Common::ConfigManager::kApplicationDomain)) {
@@ -396,6 +393,7 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	// Set allowed dimensions
 	uint maxAllowedWidth   = desktopRes.width();
 	uint maxAllowedHeight  = desktopRes.height();
+	float ratio = (float)requestedWidth / (float)requestedHeight;
 
 	// Check if we request a larger window than physically possible,
 	// e.g. by starting with additional launcher parameters forcing
