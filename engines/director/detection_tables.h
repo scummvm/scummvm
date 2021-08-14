@@ -4008,7 +4008,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("ratinho", "", "ratinho.exe", "c163f36141579ee374f7b4b2bddee95a", 2119876, Common::PT_BRA, 850),
 
 	//Speeltijd met spookjes
-	WINGAME1_l("recfantome", "", "Speel.exe", "2942c9272bb0f41e53f5d103af16195c", 3443389, Common::NL_NLD, 800),
+	WINGAME2_l("recfantome", "", "Speel.exe", "2942c9272bb0f41e53f5d103af16195c", 3443389,
+			"fantome.ico", "d357185c51154ed60bb05aea3689dc60", 2238, Common::NL_NLD, 800),
 
 	// Playable demo for Meteor Madness and Tremor Trouble
 	MACGAME1("rh", "", "RHDemo", "08c9ea94f6469e71ae0c71987bbf6323", 155737, 850),
