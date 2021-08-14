@@ -400,6 +400,14 @@ void OSystem_Android::initBackend() {
 		ConfMan.set("browser_lastpath", "/");
 	}
 
+	if (!ConfMan.hasKey("gui_scale")) {
+		// Until a proper scale detection is done (especially post PR https://github.com/scummvm/scummvm/pull/3264/commits/8646dfca329b6fbfdba65e0dc0802feb1382dab2),
+		// set scale by default to largest, if not set, and then let the user set it manually from the launcher -> Options -> Misc tab
+		// Otherwise the screen may default to very tiny and indiscernible text and be barely usable.
+		// TODO We need a proper scale detection for Android, see: (float) AndroidGraphicsManager::getHiDPIScreenFactor() in android/graphics.cpp
+		ConfMan.setInt("gui_scale", 0); // "Very large" (see gui/options.cpp)
+	}
+
 	// BUG: "transient" ConfMan settings get nuked by the options
 	// screen. Passing the savepath in this way makes it stick
 	// (via ConfMan.registerDefault() which is called from DefaultSaveFileManager constructor (backends/saves/default/default-saves.cpp))
@@ -476,8 +484,6 @@ bool OSystem_Android::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureVirtualKeyboard:
 		return _virtkeybd_on;
-	case OSystem::kFeatureHiDPI:
-		return true;
 	default:
 		return ModularGraphicsBackend::getFeatureState(f);
 	}
