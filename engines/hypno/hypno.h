@@ -150,6 +150,7 @@ public:
 	void runAmbient(const Hotspot h, Ambient *a);
 	void runWalN(const Hotspot h, WalN *a);
 	void runGlobal(const Hotspot h, Global *a);
+	void runTalk(const Hotspot h, Talk *a);
 
 	// Screen
 	void changeScreenMode(Common::String mode);
@@ -182,6 +183,13 @@ public:
 	void stopSound();
 	bool isSoundActive();
 	bool _noStopSounds;
+
+	// Conversation
+	Actions _conversation;
+	bool _refreshConversation;
+	void showConversation();
+	bool rightClickedConversation(Common::Point mousePos);
+	bool leftClickedConversation(Common::Point mousePos);
 
 	// Timers
 	bool installTimer(uint32, Common::String *);

@@ -45,7 +45,7 @@ class Action {
 	virtual ~Action() {}; // needed to make Action polymorphic
 };
 
-typedef Common::List<Action*> Actions;
+typedef Common::Array<Action*> Actions;
 
 class Hotspot;
 typedef Common::Array<Hotspot> Hotspots;
@@ -147,6 +147,25 @@ class Global : public Action {
   public:
 	Common::String variable;
 	Common::String command;
+};
+
+class TalkCommand {
+  public:
+	Common::String command;
+	Common::String path;
+	uint32 num;
+	Common::Point position;
+};
+
+typedef Common::Array<TalkCommand> TalkCommands;
+
+class Talk : public Action {
+  public:
+	TalkCommands commands;
+	bool active;
+	Common::String background;
+	Common::Point position;
+	Common::Rect rect;
 };
 
 class Shoot {

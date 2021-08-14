@@ -44,7 +44,6 @@
 
 namespace Hypno {
 
-
 Hotspots *g_parsedHots;
 ArcadeShooting g_parsedArc;
 
@@ -443,6 +442,8 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 }
 
 void HypnoEngine::runScene(Scene scene, Videos intros) {
+	_refreshConversation = false;
+	_conversation.clear();
 	Common::Event event;
 	Common::Point mousePos;
 	Common::List<uint32> videosToRemove;
@@ -478,9 +479,22 @@ void HypnoEngine::runScene(Scene scene, Videos intros) {
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				break;
 
+			case Common::EVENT_RBUTTONDOWN:
+				if (stack.empty())
+					break;
+				if (!_conversation.empty()){
+					rightClickedConversation(mousePos);
+					break;
+				}
+			break;
+
 			case Common::EVENT_LBUTTONDOWN:
 				if (stack.empty())
 					break;
+				if (!_conversation.empty()){
+					leftClickedConversation(mousePos);
+					break;
+				}
 				if (!_nextHotsToAdd || !_nextHotsToRemove)
 				 	clickedHotspot(mousePos);
 				break;
@@ -490,6 +504,9 @@ void HypnoEngine::runScene(Scene scene, Videos intros) {
 				//changeCursor("default");
 				// The following functions will return true
 				// if the cursor is changed
+				if (!_conversation.empty())
+					break;
+
 				if (hoverHotspot(mousePos)) {
 				} else
 					changeCursor("mouse/cursor1.smk", 0);
@@ -498,6 +515,13 @@ void HypnoEngine::runScene(Scene scene, Videos intros) {
 			default:
 				break;
 			}
+		}
+
+		if (_refreshConversation && !_conversation.empty() && _nextSequentialVideoToPlay.empty()) {
+			showConversation();
+			drawScreen();
+			_refreshConversation = false;
+			_videosPlaying.clear();
 		}
 
 		// Movies
@@ -538,7 +562,9 @@ void HypnoEngine::runScene(Scene scene, Videos intros) {
 
 			// Nothing else to play
 			if (_videosPlaying.size() == 0 && _nextSequentialVideoToPlay.size() == 0){
-				if (!stack.empty()) { 
+				if (!_conversation.empty())
+					_refreshConversation = true;
+				else if (!stack.empty()) { 
 					runMenu(*stack.back());
 					drawScreen();
 				}
@@ -604,7 +630,7 @@ void HypnoEngine::runMenu(Hotspots hs) {
 
 	//if (h.stype == "SINGLE_RUN")
 	//	loadImage("int_main/mainbutt.smk", 0, 0);
-	if (h.stype == "AUTO_BUTTONS")
+	if (h.stype == "AUTO_BUTTONS" && _conversation.empty())
 		loadImage("int_main/resume.smk", 0, 0, true);
 }
 
@@ -679,6 +705,12 @@ void HypnoEngine::runQuit(const Hotspot h, Quit *a) {
     quitGame();
 }
 
+void HypnoEngine::runTalk(const Hotspot h, Talk *a) {
+	debug("adding TALK line!");
+	_conversation.push_back(a);
+	_refreshConversation = true;
+}
+
 // Shoots
 
 bool HypnoEngine::clickedShoot(Common::Point mousePos) {
@@ -691,9 +723,6 @@ bool HypnoEngine::clickedShoot(Common::Point mousePos) {
 	for (; it != _videosPlaying.end(); ++it) {
 		x = mousePos.x - it->position.x;
 		y = mousePos.y - it->position.y;
-		//debug("%d %d %d %d", x, y, it->videoDecoder->getWidth(), it->videoDecoder->getHeight());
-		//assert(it->currentFrame->w == it->videoDecoder->getWidth());
-		//assert(it->currentFrame->h == it->videoDecoder->getHeight());
 		if (it->videoDecoder && x >= 0 && y >= 0 && x < it->videoDecoder->getWidth() && y < it->videoDecoder->getHeight()) {
 			uint32 c = it->currentFrame->getPixel(x, y);
 			debug("inside %x", c); 
@@ -745,14 +774,19 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			Action *action = *itt;
 			if (typeid(*action) == typeid(Escape))
 				runEscape(selected, (Escape*) action);
-			if (typeid(*action) == typeid(Cutscene))
+			else if (typeid(*action) == typeid(Cutscene))
 				runCutscene(selected, (Cutscene*) action);
-			if (typeid(*action) == typeid(Play))
+			else if (typeid(*action) == typeid(Play))
 				runPlay(selected, (Play*) action);
-			if (typeid(*action) == typeid(WalN))
+			else if (typeid(*action) == typeid(WalN))
 				runWalN(selected, (WalN*) action);
-			if (typeid(*action) == typeid(Global))
+			else if (typeid(*action) == typeid(Global))
 				runGlobal(selected, (Global*) action);
+			else if (typeid(*action) == typeid(Talk))
+				runTalk(selected, (Talk*) action);
+			else if (typeid(*action) == typeid(Palette))
+				debug("runPalette unimplemented");
+
 		}
 
 	}
