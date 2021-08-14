@@ -63,6 +63,10 @@
 		<def var = 'GridSupported' value = '1'/>
 		<def var = 'GridItemThumbnail.Width' value = '128' scalable = 'no'/>
 		<def var = 'GridItemThumbnail.Height' value = '128' scalable = 'no'/>
+		<def var = 'Grid.FlagIcon.Width' value = '30' scalable = 'no'/>
+		<def var = 'Grid.FlagIcon.Height' value = '15' scalable = 'no'/>
+		<def var = 'Grid.PlatformIcon.Width' value = '24' scalable = 'no'/>
+		<def var = 'Grid.PlatformIcon.Height' value = '24' scalable = 'no'/>
 		<def var = 'Grid.XSpacing' value = '20' scalable = 'no'/>
 		<def var = 'Grid.YSpacing' value = '10' scalable = 'no'/>
 		<def var = 'Grid.ShowTitles' value = '0' scalable = 'no'/>

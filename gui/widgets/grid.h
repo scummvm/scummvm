@@ -44,7 +44,7 @@ class GridItemWidget;
 class GridWidget;
 
 const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h);
-Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name);
+Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int renderWidth, int renderHeight);
 
 enum {
 	kPlayButtonCmd = 'PLAY',
@@ -138,6 +138,10 @@ protected:
 	int				_innerWidth;
 	int				_thumbnailHeight;
 	int				_thumbnailWidth;
+	int				_flagIconHeight;
+	int				_flagIconWidth;
+	int				_platformIconHeight;
+	int				_platformIconWidth;
 	int				_minGridXSpacing;
 	int				_minGridYSpacing;
 	int				_rows;
