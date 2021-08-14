@@ -388,7 +388,7 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	// In order to prevent any unnecessary downscaling (e.g. when launching
 	// a game in 800x600 while having a smaller screen size stored in the configuration file),
 	// we override the window dimensions with the "real" resolution request made by the engine.
-	if ((requestedWidth < _lastRequestedWidth || requestedHeight < _lastRequestedHeight) && ConfMan.getActiveDomain()) {
+	if ((requestedWidth < _lastRequestedWidth  * _graphicsScale || requestedHeight < _lastRequestedHeight * _graphicsScale) && ConfMan.getActiveDomain()) {
 		requestedWidth  = _lastRequestedWidth  * _graphicsScale;
 		requestedHeight = _lastRequestedHeight * _graphicsScale;
 	}
