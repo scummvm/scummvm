@@ -40,6 +40,7 @@ extern int yylineno;
 
 Common::Array<uint32> smenu_idx;
 Hypno::HotspotsStack stack;
+Hypno::Talk *talk_action = nullptr;
 
 void HYPNO_MIS_xerror(const char *str) {
 	error("ERROR: %s", str);
@@ -211,7 +212,12 @@ line:    MENUTOK NAME mflag  {
 		    Hotspot *hot = &cur->back();
 			hot->actions.push_back(a);
 	  }
-	  |  TALKTOK talk { debug("TALK"); }
+	  |  TALKTOK alloctalk talk { 
+		  Hotspots *cur = stack.back();
+		  Hotspot *hot = &cur->back();
+		  hot->actions.push_back(talk_action);
+		  talk_action = nullptr;
+		  debug("TALK"); }
 	  |  ENDTOK RETTOK { 
 		  debug("explicit END");
 		  g_parsedHots = stack.back(); 
@@ -220,17 +226,58 @@ line:    MENUTOK NAME mflag  {
 		  }   		               
 	  ;
 
-talk:   INACTOK talk { debug("inactive"); }
+alloctalk: { assert(talk_action == nullptr);
+	        talk_action = new Talk();
+		    talk_action->active = true; }
+
+talk:   INACTOK talk {
+	      talk_action->active = false; 
+	      debug("inactive"); }
       | FDTOK talk { debug("inactive"); }
-	  | BACKTOK FILENAME NUM NUM gsswitch flag { debug("BACK in TALK"); }
+	  | BACKTOK FILENAME NUM NUM gsswitch flag { 
+		  talk_action->background = $2;
+		  talk_action->position = Common::Point($3, $4);
+		  debug("BACK in TALK"); }
 	  | BOXXTOK NUM NUM { debug("BOXX %d %d", $2, $3); }
-      | PG talk { debug("%s", $1); }
+      | PG talk { 
+		  TalkCommand talk_cmd;
+		  talk_cmd.command = "G";
+		  talk_cmd.path = $1+2;
+		  talk_action->commands.push_back(talk_cmd); 
+	      debug("%s", $1); }
       | PH talk { debug("%s", $1); }
-      | PF talk { debug("%s", $1); }
-      | PA talk { debug("%s", $1); } 
-      | PD talk { debug("%s", $1); }
-      | PP NUM NUM talk { debug("%s %d %d", $1, $2, $3); }
-      | PI NUM NUM talk { debug("%s %d %d", $1, $2, $3); }
+      | PF talk { 
+		  TalkCommand talk_cmd;
+		  talk_cmd.command = "F";
+		  talk_cmd.num = atoi($1+2)-1;
+		  talk_action->commands.push_back(talk_cmd); 
+		  debug("%s", $1); }
+      | PA talk { 
+		  TalkCommand talk_cmd;
+		  talk_cmd.command = "A";
+		  talk_cmd.num = atoi($1+2)-1;
+		  talk_action->commands.push_back(talk_cmd); 
+		  debug("|A%d", talk_cmd.num); } 
+      | PD talk { 
+		  TalkCommand talk_cmd;
+		  talk_cmd.command = "D";
+		  talk_cmd.num = atoi($1+2)-1;
+		  talk_action->commands.push_back(talk_cmd); 
+		  debug("%s", $1); }
+      | PP NUM NUM talk { 
+		  TalkCommand talk_cmd;
+		  talk_cmd.command = "P";
+		  talk_cmd.path = $1+2;
+		  talk_cmd.position = Common::Point($2, $3);
+		  talk_action->commands.push_back(talk_cmd);
+		  debug("%s %d %d", $1, $2, $3); }
+      | PI NUM NUM talk { 
+		  TalkCommand talk_cmd;
+		  talk_cmd.command = "I";
+		  talk_cmd.path = $1+2;
+		  talk_cmd.position = Common::Point($2, $3);
+		  talk_action->commands.push_back(talk_cmd);		  
+		  debug("%s %d %d", $1, $2, $3); }
 	  | PE { debug("|E"); }
       | /*nothing*/ { debug("nothing in talk"); }
 	  ;
