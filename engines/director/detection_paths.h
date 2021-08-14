@@ -58,6 +58,7 @@ const char *directoryGlobs[] = {
 	"demos",						// Headbone samplers
 	"blender",						// Blender CD-ROM magazines
 	"bilder",
+	"ELK1"							// Blinky Bill Kindergarten
 	"endsoung",
 	"gerhelp",
 	"gervideo",

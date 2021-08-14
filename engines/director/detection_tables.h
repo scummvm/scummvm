@@ -62,6 +62,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "betterd",			"The Better Dead Ratification" },
 	{ "beyondthewall",		"Beyond the Wall of Stars" },
 	{ "blinkybill1",		"Blinky Bill's Ghost Cave" },
+	{ "blinkyps",			"Blinky Bill: Play and Learn - Preschool" },
+	{ "blinkyk1",			"Blinky Bill: Play and Learn - Kindergarten" },
 	{ "blinkyy1",			"Blinky Bill: Play and Learn - Year 1" },
 	{ "bobcastle",			"Bob the Builder: Bob's Castle Adventure" },
 	{ "bodypark",			"Body Park" },
@@ -294,6 +296,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "teamxtreme2",		"Operation: Eco-Nightmare" },
 	{ "the7colors",			"The Seven Colors: Legend of PSY・S City" }, // English fan translation
 	{ "tkkg2",				"A Case for TKKG 2: Deadly Chocolate" },
+	{ "tkkg3",				"A Case for TKKG 3: The Mystery of the Mayan Treasure" },
 	{ "tkkg4",				"A Case for TKKG 4: The Secret of Dragon Claw Manor" },
 	{ "tkkg6",				"A Case for TKKG 6: The Forged Fifties" },
 	{ "tkkg9",				"A Case for TKKG 9: Voodoo Magic" },
@@ -479,8 +482,8 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Dutch titles
 	{ "beestenboel",		"Beestenboel Zoölogic" },
-	{ "biomania",			"Bio-Mania" },//Tentatively, until I figure out the original title and country
 	{ "boeboekshaboe",		"Boeboeks: Hop hop haboe!" },
+	{ "boeboekstocht",		"Boeboeks: de toch naar opa Kakadoris" },
 	{ "fcdk",				"F.C. De Kampioenen: Op Zoek Naar Neroke" },
 	{ "griezelbus1",		"De Griezelbus 1" },
 	{ "lannoo",				"Lannoo Nieuwe Media Demo" },
@@ -526,6 +529,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "ironmask",			"The Iron Mask" },
 	{ "lunes",				"I Lunes e la sfera di Lasifer" },					// Lunes & the sphere of Lasifer
 	{ "magicanti",			"I Magicanti e i 3 elementi" },						// The Magicanti & the 3 elements
+	{ "robidoc",			"Robi & Doc: L'isola della Scienza" },
 
 	// Japanese games
 	{ "4sight",				"four-sight" },
@@ -1872,7 +1876,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("blinkybill1", "", "BLINKY.EXE", "0d374b4a559e505c0db63cabc2219380", 712501, 404),
 	//Blinky Bill 1 en het verhaal van de Griezel-Grot
-	WINGAME1_l("blinkybill1", "", "start.exe", "be1e65196a1d1c810d84c0084a5c1033", 717299, Common::NL_NLD, 404),
+	WINGAME2_l("blinkybill1", "", "start.exe", "be1e65196a1d1c810d84c0084a5c1033", 717299,
+			"blinky.exe", "2606f9d3133d53c21894b6a2b9ae37e5", 188408, Common::NL_NLD, 404),
 	//A Caverna do Fantasma de Blinky Bill
 	WINGAME1_l("blinkybill1", "", "BLINKY95.EXE", "3ee51e3c9f0f7f069580ef5361fd4e3d", 717025, Common::PT_BRA, 404),
 
@@ -3286,7 +3291,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("bigmax", "nº20", "BIG32.EXE", "518a98696fe1122e08410b0f157f21bf", 7313980, Common::PT_BRA, 602),
 
-	WINGAME1_l("biomania", "", "start.exe", "518a98696fe1122e08410b0f157f21bf", 1518949, Common::NL_NLD, 600),
+	//Edison: Bio-Mania
+	WINGAME2_l("robidoc", "", "start.exe", "518a98696fe1122e08410b0f157f21bf", 1518949,
+			"Bio.exe", "55180c6a904d1b35c6ae60cab1f84949", 188408, Common::NL_NLD, 600),
 
 	MACGAME1("casperact", "", "Casper Activity Center", "904cb6465321d8e1d12d2a5a29612050", 1029165, 600),
 	WINGAME1("casperact", "", "CASPER32.EXE", "a593079aecf5bd938ce75264cac24b2d", 1819279, 600),
@@ -3539,7 +3546,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("sakuratoasobo", "", "Let\'s Play with Sakura.exe", "45871c12eb944f09f50ee742113a1e2d", 1982850, Common::JA_JPN, 650),
 
 	WINGAME2_l("samson", "", "start.exe", "a593079aecf5bd938ce75264cac24b2d", 1919963,
-								"START.DXR", "ad34b9d4987fc84c238f0e88b174fbc9", 229050, Common::NL_NLD, 600),
+								"GOSCHOT.DXR", "045e8b0091317831da84596f807779cd", 161404, Common::NL_NLD, 600),
 
 	MACGAME1("shrlucky", "", "Arcade", "dab7a517b0877454d1e16c40c9b5a9be", 1029193, 600),
 	WINGAME1("shrlucky", "", "ARCWIN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 7304861, 600),
@@ -3565,8 +3572,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
 
+	//Dutch numbering is different from German originals
 	//Een zaak voor TKKG 2: dodelijke chocolade (bilingual NL/EN)
 	WINGAME1_l("tkkg2", "", "Tkkg2_95.exe", "518a98696fe1122e08410b0f157f21bf", 1705034, Common::NL_NLD, 602),
+	//Een zaak voor TKKG 1: De schat van de Maya's (bilingual NL/EN) (Demo)
+	WINDEMO2_l("tkkg3", "Demo", "start.exe", "e7bccfe54354d08a9d2d0e181f66406b", 1289732,
+			"DEMO_00.dxr", "1ea80b7d22a6db7ce669a988812f0d64", 2488656, Common::NL_NLD, 602),
 	//Een zaak voor TKKG 5: het raadsel van villa Drakenklauw (bilingual NL/EN)
 	WINGAME1_l("tkkg4", "", "tkkg4_95.exe", "518a98696fe1122e08410b0f157f21bf", 1513570, Common::NL_NLD, 602),
 	MACGAME1("tkkg6", "", "TKKG-Start", "dd58f1859ddab9bf15867a510cf7bfe4", 1034014, 650),
@@ -3627,6 +3638,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Bonus content on retail CD releases. No text or dialogue is used.
 	WINGAME1("billetrille1ss", "", "screensaverDT1.exe", "18e31b6357c42300bb6947a6af7b8a69", 3261985, 702),
+
+	//Blinky Bill Peuter
+	WINGAME1_l("blinkyps", "", "PS.exe", "7c18c9a6af2694156bf09ed195c1ab09", 173560, Common::NL_NLD, 702),
+
+	WINGAME2("blinkyk1", "", "K1.exe", "7c18c9a6af2694156bf09ed195c1ab09", 173598,
+			"K1.exe", "7c18c9a6af2694156bf09ed195c1ab09", 173598, 702),
+	//Blinky Bill Kleuter
+	WINGAME2_l("blinkyk1", "", "K1.exe", "7c18c9a6af2694156bf09ed195c1ab09", 173598,
+			"home.dxr", "dd7f95732848801b0d5a7e784db68962", 2381576, Common::NL_NLD, 702),
 
 	//Blinky Bill Lezertje
 	WINGAME1_l("blinkyy1", "", "Y1.exe", "7c18c9a6af2694156bf09ed195c1ab09", 173554, Common::NL_NLD, 702),
@@ -3828,7 +3848,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("barbrapunzel", "", "Rapunzel.exe", "c163f36141579ee374f7b4b2bddee95a", 2116696, 850),
 	WINDEMO2("barbrapunzel", "Trailer", "Trailer.exe", "c163f36141579ee374f7b4b2bddee95a", 2303378,
 										"Trailer.mov", "c23add499f206fb3f8e088cf315c2783", 17393683, 850),
+
 	WINGAME1_l("boeboekshaboe", "", "Arcade.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 2389026, Common::NL_NLD, 800),
+	WINDEMO1_l("boeboekstocht", "Demo", "Boeboeks.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 58054, Common::NL_NLD, 800),
 
 	MACGAME1_l("bibifilm", "", "Filmstudio", "3ba983d2dd8c94d882c0de01ab920c43", 1249397, Common::DE_DEU, 850),
 	WINGAME1_l("bibifilm", "", "Filmstudio_start.exe", "c163f36141579ee374f7b4b2bddee95a", 148898, Common::DE_DEU, 850),
