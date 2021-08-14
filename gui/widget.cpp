@@ -559,7 +559,7 @@ const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, in
 	else
 		nw = gfx->w * yRatio;
 
-	if ((nw == w && nh == h) || (nw == gfx->w && nh == gfx->h))
+	if (nw == gfx->w && nh == gfx->h)
 		return gfx;
 
 	w = nw;
