@@ -398,10 +398,16 @@ Common::Error DreamWebEngine::run() {
 	if (_ttsMan != nullptr) {
 		Common::String languageString = Common::getLanguageCode(getLanguage());
 		_ttsMan->setLanguage(languageString);
-		if (languageString != "en") {
+		switch (getLanguage()) {
+		case Common::RU_RUS:
+			_textEncoding = Common::kDos866;
+			break;
+		case Common::CZ_CZE:
+			_textEncoding = Common::kWindows1250;
+			break;
+		default:
 			_textEncoding = Common::kDos850;
-		} else {
-			_textEncoding = Common::kUtf8;
+			break;
 		}
 	}
 
