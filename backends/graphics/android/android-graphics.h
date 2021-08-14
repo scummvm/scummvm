@@ -20,26 +20,65 @@
  *
  */
 
-#ifndef ANDROID_GRAPHICS_H
-#define ANDROID_GRAPHICS_H
+#ifndef BACKENDS_GRAPHICS_ANDROID_ANDROID_GRAPHICS_H
+#define BACKENDS_GRAPHICS_ANDROID_ANDROID_GRAPHICS_H
 
 #include "common/scummsys.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
 
-class AndroidGraphicsManager : public OpenGL::OpenGLGraphicsManager {
+class AndroidCommonGraphics {
+public:
+	virtual ~AndroidCommonGraphics() {}
+
+	virtual void initSurface() = 0;
+	virtual void deinitSurface() = 0;
+
+	virtual Common::Point getMousePosition() = 0;
+	virtual bool notifyMousePosition(Common::Point &mouse) = 0;
+
+	/**
+	 * A (subset) of the graphic manager's state. This is used when switching
+	 * between different Android graphic managers at runtime.
+	 */
+	struct State {
+		int screenWidth, screenHeight;
+		bool aspectRatio;
+		bool fullscreen;
+		bool cursorPalette;
+
+#ifdef USE_RGB_COLOR
+		Graphics::PixelFormat pixelFormat;
+#endif
+	};
+
+	/**
+	 * Gets the current state of the graphics manager.
+	 */
+	virtual State getState() const = 0;
+
+	/**
+	 * Sets up a basic state of the graphics manager.
+	 */
+	virtual bool setState(const State &state) = 0;
+};
+
+class AndroidGraphicsManager : public OpenGL::OpenGLGraphicsManager, public AndroidCommonGraphics {
 public:
 	AndroidGraphicsManager();
 	virtual ~AndroidGraphicsManager();
 
-	void initSurface();
-	void deinitSurface();
+	virtual void initSurface() override;
+	virtual void deinitSurface() override;
+
+	virtual AndroidCommonGraphics::State getState() const override;
+	virtual bool setState(const AndroidCommonGraphics::State &state) override;
 
 	void updateScreen() override;
 
 	void displayMessageOnOSD(const Common::U32String &msg) override;
 
-	bool notifyMousePosition(Common::Point &mouse);
-	Common::Point getMousePosition() { return Common::Point(_cursorX, _cursorY); }
+	virtual bool notifyMousePosition(Common::Point &mouse) override;
+	virtual Common::Point getMousePosition() override { return Common::Point(_cursorX, _cursorY); }
 
 	float getHiDPIScreenFactor() const override;
 

@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	jni-android.o \
 	asset-archive.o \
 	android.o \
-	graphics.o \
 	events.o \
 	options.o \
 	snprintf.o

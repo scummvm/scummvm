@@ -37,8 +37,8 @@
 // for the Android port
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include "backends/graphics/android/android-graphics.h"
 #include "backends/platform/android/android.h"
-#include "backends/platform/android/graphics.h"
 #include "backends/platform/android/jni-android.h"
 
 //
@@ -141,4 +141,33 @@ bool AndroidGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	mouse = convertWindowToVirtual(mouse.x, mouse.y);
 
 	return true;
+}
+
+AndroidCommonGraphics::State AndroidGraphicsManager::getState() const {
+	State state;
+
+	state.screenWidth   = getWidth();
+	state.screenHeight  = getHeight();
+	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
+	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
+	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
+#ifdef USE_RGB_COLOR
+	state.pixelFormat   = getScreenFormat();
+#endif
+	return state;
+}
+
+bool AndroidGraphicsManager::setState(const AndroidCommonGraphics::State &state) {
+	beginGFXTransaction();
+
+#ifdef USE_RGB_COLOR
+		initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
+#else
+		initSize(state.screenWidth, state.screenHeight, nullptr);
+#endif
+		setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
+		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
+		setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
+
+	return endGFXTransaction() == OSystem::kTransactionSuccess;
 }

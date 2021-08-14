@@ -54,6 +54,7 @@
 #include "common/mutex.h"
 #include "common/events.h"
 #include "common/config-manager.h"
+#include "graphics/cursorman.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/events/default/default-events.h"
@@ -65,9 +66,10 @@
 #include "backends/keymapper/keymapper-defaults.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "backends/graphics/android/android-graphics.h"
+#include "backends/graphics3d/android/android-graphics3d.h"
 #include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/android.h"
-#include "backends/platform/android/graphics.h"
 
 const char *android_log_tag = "ScummVM";
 
@@ -87,6 +89,37 @@ extern "C" {
 								 expr, file, line, func);
 	}
 }
+
+#ifdef ANDROID_DEBUG_GL
+static const char *getGlErrStr(GLenum error) {
+	switch (error) {
+	case GL_INVALID_ENUM:
+		return "GL_INVALID_ENUM";
+	case GL_INVALID_VALUE:
+		return "GL_INVALID_VALUE";
+	case GL_INVALID_OPERATION:
+		return "GL_INVALID_OPERATION";
+	case GL_STACK_OVERFLOW:
+		return "GL_STACK_OVERFLOW";
+	case GL_STACK_UNDERFLOW:
+		return "GL_STACK_UNDERFLOW";
+	case GL_OUT_OF_MEMORY:
+		return "GL_OUT_OF_MEMORY";
+	}
+
+	static char buf[40];
+	snprintf(buf, sizeof(buf), "(Unknown GL error code 0x%x)", error);
+
+	return buf;
+}
+
+void checkGlError(const char *expr, const char *file, int line) {
+	GLenum error = glGetError();
+
+	if (error != GL_NO_ERROR)
+		LOGE("GL ERROR: %s on %s (%s:%d)", getGlErrStr(error), expr, file, line);
+}
+#endif
 
 OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_audio_sample_rate(audio_sample_rate),
@@ -655,6 +688,72 @@ Common::String OSystem_Android::getSystemProperty(const char *name) const {
 	int len = __system_property_get(name, value);
 
 	return Common::String(value, len);
+}
+
+bool OSystem_Android::setGraphicsMode(int mode, uint flags) {
+	bool render3d = flags & OSystem::kGfxModeRender3d;
+
+	// Very hacky way to set up the old graphics manager state, in case we
+	// switch from SDL->OpenGL or OpenGL->SDL.
+	//
+	// This is a probably temporary workaround to fix bugs like #5799
+	// "SDL/OpenGL: Crash when switching renderer backend".
+	//
+	// It's also used to restore state from 3D to 2D GFX manager
+	AndroidCommonGraphics *androidGraphicsManager = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager);
+	AndroidCommonGraphics::State gfxManagerState = androidGraphicsManager->getState();
+	bool supports3D = _graphicsManager->hasFeature(kFeatureOpenGLForGame);
+
+	bool switchedManager = false;
+
+	// If the new mode and the current mode are not from the same graphics
+	// manager, delete and create the new mode graphics manager
+	if (render3d && !supports3D) {
+		debug(1, "switching to 3D graphics");
+		delete _graphicsManager;
+		AndroidGraphics3dManager *manager = new AndroidGraphics3dManager();
+		_graphicsManager = manager;
+		androidGraphicsManager = manager;
+		switchedManager = true;
+	} else if (!render3d && supports3D) {
+		debug(1, "switching to 2D graphics");
+		delete _graphicsManager;
+		AndroidGraphicsManager *manager = new AndroidGraphicsManager();
+		_graphicsManager = manager;
+		androidGraphicsManager = manager;
+		switchedManager = true;
+	}
+
+	if (switchedManager) {
+		// Setup the graphics mode and size first
+		// This is needed so that we can check the supported pixel formats when
+		// restoring the state.
+		_graphicsManager->beginGFXTransaction();
+		if (!_graphicsManager->setGraphicsMode(mode, flags))
+			return false;
+		_graphicsManager->initSize(gfxManagerState.screenWidth, gfxManagerState.screenHeight);
+		_graphicsManager->endGFXTransaction();
+
+		// This failing will probably have bad consequences...
+		if (!androidGraphicsManager->setState(gfxManagerState)) {
+			return false;
+		}
+
+		// Next setup the cursor again
+		CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
+		CursorMan.popCursor();
+
+		// Next setup cursor palette if needed
+		if (_graphicsManager->getFeatureState(kFeatureCursorPalette)) {
+			CursorMan.pushCursorPalette(0, 0, 0);
+			CursorMan.popCursorPalette();
+		}
+
+		_graphicsManager->beginGFXTransaction();
+		return true;
+	} else {
+		return _graphicsManager->setGraphicsMode(mode, flags);
+	}
 }
 
 #endif

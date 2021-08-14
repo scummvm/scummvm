@@ -57,6 +57,39 @@ extern const char *android_log_tag;
 #define ENTER(fmt, args...) do {  } while (false)
 #endif
 
+#ifdef ANDROID_DEBUG_GL
+extern void checkGlError(const char *expr, const char *file, int line);
+
+#ifdef ANDROID_DEBUG_GL_CALLS
+#define GLCALLLOG(x, before) \
+	do { \
+		if (before) \
+			LOGD("calling '%s' (%s:%d)", x, __FILE__, __LINE__); \
+		else \
+			LOGD("returned from '%s' (%s:%d)", x, __FILE__, __LINE__); \
+	} while (false)
+#else
+#define GLCALLLOG(x, before) do {  } while (false)
+#endif
+
+#define GLCALL(x) \
+	do { \
+		GLCALLLOG(#x, true); \
+		(x); \
+		GLCALLLOG(#x, false); \
+		checkGlError(#x, __FILE__, __LINE__); \
+	} while (false)
+
+#define GLTHREADCHECK \
+	do { \
+		assert(pthread_self() == _main_thread); \
+	} while (false)
+
+#else
+#define GLCALL(x) do { (x); } while (false)
+#define GLTHREADCHECK do {  } while (false)
+#endif
+
 class OSystem_Android : public ModularGraphicsBackend, Common::EventSource {
 private:
 	// passed from the dark side
@@ -94,6 +127,8 @@ public:
 
 public:
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
+	void pushEvent(const Common::Event &event);
+	void pushKeyPressEvent(Common::Event &event);
 
 private:
 	Common::Queue<Common::Event> _event_queue;
@@ -113,9 +148,6 @@ private:
 	int _firstPointerId;
 	int _secondPointerId;
 	int _thirdPointerId;
-
-
-	void pushEvent(const Common::Event &event);
 
 public:
 	bool pollEvent(Common::Event &event) override;
@@ -145,6 +177,10 @@ public:
 	bool setTextInClipboard(const Common::U32String &text) override;
 	bool isConnectionLimited() override;
 	Common::String getSystemLanguage() const override;
+
+	bool setGraphicsMode(int mode, uint flags) override;
+
+	void updateEventScale(uint32 w, uint32 h);
 };
 
 #endif
