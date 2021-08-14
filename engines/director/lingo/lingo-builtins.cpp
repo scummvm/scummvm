@@ -1970,8 +1970,15 @@ void LB::b_puppetPalette(int nargs) {
 		g_director->getCurrentMovie()->getScore()->_puppetPalette = true;
 	} else {
 		// Setting puppetPalette to 0 disables it (Lingo Dictionary, 226)
-		g_director->setPalette(g_director->getCurrentMovie()->getScore()->_lastPalette);
+		Score *sc = g_director->getCurrentMovie()->getScore();
 		g_director->getCurrentMovie()->getScore()->_puppetPalette = false;
+
+		// FIXME: set system palette decided by platform, should be fixed after windows palette is working.
+		// try to set mac system palette if lastPalette is 0.
+		if (sc->_lastPalette == 0)
+			g_director->setPalette(-1);
+		else
+			g_director->setPalette(sc->resolvePaletteId(sc->_lastPalette));
 	}
 
 	// TODO: Implement advanced features that use these.
