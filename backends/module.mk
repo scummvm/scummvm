@@ -149,11 +149,6 @@ MODULE_OBJS += \
 	plugins/sdl/sdl-provider.o \
 	timer/sdl/sdl-timer.o
 
-ifdef MACOSX
-MODULE_OBJS += \
-	graphics/sdl/sdl-graphics-osx.o
-endif
-
 # SDL 2 removed audio CD support
 ifndef USE_SDL2
 MODULE_OBJS += \

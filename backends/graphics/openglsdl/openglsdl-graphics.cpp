@@ -250,7 +250,7 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 }
 
 float OpenGLSdlGraphicsManager::getHiDPIScreenFactor() const {
-	return getDpiScalingFactor();
+	return _window->getDpiScalingFactor();
 }
 
 void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
@@ -290,7 +290,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 	// event is processed after recreating the window at the new resolution.
 	int currentWidth, currentHeight;
 	getWindowSizeFromSdl(&currentWidth, &currentHeight);
-	float scale = getDpiScalingFactor();
+	float scale = _window->getDpiScalingFactor();
 	debug(3, "req: %d x %d  cur: %d x %d, scale: %f", width, height, currentWidth, currentHeight, scale);
 
 	handleResize(currentWidth, currentHeight);
@@ -644,7 +644,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			getWindowSizeFromSdl(&windowWidth, &windowHeight);
 			// FIXME HACK. I don't like this at all, but macOS requires window size in LoDPI
 	#ifdef __APPLE__
-			float scale = getDpiScalingFactor();
+			float scale = _window->getDpiScalingFactor();
 			windowWidth /= scale;
 			windowHeight /= scale;
 	#endif

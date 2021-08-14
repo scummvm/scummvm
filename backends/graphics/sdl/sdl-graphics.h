@@ -180,51 +180,6 @@ protected:
 #endif
 	}
 
-	void getDisplayDpiFromSdl(float *dpi, float *defaultDpi) const {
-		const float systemDpi =
-#ifdef __APPLE__
-		72.0f;
-#elif defined(_WIN32)
-		96.0f;
-#else
-		90.0f; // ScummVM default
-#endif
-		if (defaultDpi)
-			*defaultDpi = systemDpi;
-
-		if (dpi) {
-#if SDL_VERSION_ATLEAST(2, 0, 4)
-			if (SDL_GetDisplayDPI(_window->getDisplayIndex(), NULL, dpi, NULL) != 0) {
-				*dpi = systemDpi;
-			}
-#else
-			*dpi = systemDpi;
-#endif
-		}
-	}
-
-	/**
-	 * Returns the scaling mode based on the display DPI
-	 */
-	float getDpiScalingFactor() const {
-#ifdef MACOSX
-		float scale;
-		if (getMacWindowScaling(scale)) {
-			debug(4, "NSWindow HiDPI scaling: %f", scale);
-			return scale;
-		}
-#endif
-
-		float dpi, defaultDpi;
-		getDisplayDpiFromSdl(&dpi, &defaultDpi);
-		debug(4, "dpi: %g default: %g", dpi, defaultDpi);
-		float ratio = dpi / defaultDpi;
-		if (ratio >= 1.5f)
-			return 2.f;
-		else
-			return 1.f;
-	}
-
 	virtual void setSystemMousePosition(const int x, const int y) override;
 
 	virtual void handleResizeImpl(const int width, const int height) override;
@@ -251,10 +206,6 @@ protected:
 
 private:
 	void toggleFullScreen();
-
-#ifdef MACOSX
-	bool getMacWindowScaling(float &) const;
-#endif
 };
 
 #endif
