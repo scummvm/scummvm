@@ -159,7 +159,7 @@ void Speech::read(Common::InSaveFile *in) {
 
 	//  Restore the sample ID's
 	for (int i = 0; i < sampleCount; i++) {
-		sampleID[i] = in->readUint32LE();
+		sampleID[i] = in->readUint32BE();
 		debugC(4, kDebugSaveload, "...... sampleID[%d] = %d", i, sampleID[i]);
 	}
 
@@ -225,7 +225,7 @@ void Speech::write(Common::MemoryWriteStreamDynamic *out) {
 	debugC(4, kDebugSaveload, "...... speechFlags = %d", speechFlags);
 
 	for (int i = 0; i < sampleCount; i++) {
-		out->writeUint32LE(sampleID[i]);
+		out->writeUint32BE(sampleID[i]);
 		debugC(4, kDebugSaveload, "...... sampleID[%d] = %d", i, sampleID[i]);
 	}
 
