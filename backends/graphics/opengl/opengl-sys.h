@@ -60,6 +60,10 @@
 
 #ifdef __ANDROID__
 	#include <GLES/gl.h>
+	#include <GLES2/gl2.h>
+	// These types are ScummVM specific
+	typedef GLuint GLprogram;
+	typedef GLuint GLshader;
 	#define USE_BUILTIN_OPENGL
 #else
 	#include "backends/graphics/opengl/opengl-defs.h"

@@ -65,8 +65,7 @@ void AndroidGraphicsManager::initSurface() {
 	JNI::initSurface();
 
 	// Notify the OpenGL code about our context.
-	// FIXME: Support OpenGL ES 2 contexts
-	setContextType(OpenGL::kContextGLES);
+	setContextType(OpenGL::kContextGLES2);
 
 	// We default to RGB565 and RGBA5551 which is closest to the actual output
 	// mode we setup.
