@@ -86,7 +86,7 @@ GUI_status GUI_YesNoDialog::KeyDown(const Common::KeyState &key) {
 		break;
 	}
 
-	return (GUI_status)no_callback_object->callback(YESNODIALOG_CB_NO, nullptr);
+	return (GUI_status)no_callback_object->callback(YESNODIALOG_CB_NO, nullptr, this);
 }
 
 GUI_status GUI_YesNoDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
