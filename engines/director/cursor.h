@@ -43,6 +43,7 @@ class Cursor : public Graphics::MacCursor {
 
 	void readFromCast(CastMemberID cursorId, CastMemberID maskId);
 	void readFromResource(int resourceId);
+	void readBuiltinType(int resourceId);
 
 	bool isEmpty() { return _cursorResId == 0 && _cursorCastId.member == 0; }
 	bool operator==(const Cursor &c);

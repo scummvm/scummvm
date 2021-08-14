@@ -120,7 +120,7 @@ void Cursor::readFromCast(CastMemberID cursorId, CastMemberID maskId) {
 	_hotspotY = bc->_regY - bc->_initialRect.top;
 }
 
-void Cursor::readFromResource(int resourceId) {
+void Cursor::readBuiltinType(int resourceId) {
 	if (resourceId == _cursorResId)
 		return;
 
@@ -145,8 +145,27 @@ void Cursor::readFromResource(int resourceId) {
 		resetCursor(Graphics::kMacCursorOff, true, resourceId);
 		break;
 	default:
-		_usePalette = true;
-		_keyColor = 0xff;
+		warning("Cursor::readBuiltinType failed to read cursor %d", resourceId);
+		break;
+	}
+}
+
+void Cursor::readFromResource(int resourceId) {
+	if (resourceId == _cursorResId)
+		return;
+
+	switch(resourceId) {
+	case -1:
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 200:
+		readBuiltinType(resourceId);
+		break;
+	default:
+		bool readSuccessful = false;
 
 		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
 			Common::SeekableReadStreamEndian *cursorStream;
@@ -156,10 +175,18 @@ void Cursor::readFromResource(int resourceId) {
 				cursorStream = ((MacArchive *)it->_value)->getResource(MKTAG('C', 'R', 'S', 'R'), resourceId);
 
 			if (cursorStream && readFromStream(*((Common::SeekableReadStream *)cursorStream), false, 0)) {
+				_usePalette = true;
+				_keyColor = 0xff;
+				readSuccessful = true;
+
 				resetCursor(Graphics::kMacCursorCustom, false, resourceId);
 				break;
 			}
 		}
+
+		// fallback method. try to use builtin cursor by regarding resourceId as a single byte.
+		if (!readSuccessful)
+			readBuiltinType(resourceId & 0x7f);
 	}
 }
 
