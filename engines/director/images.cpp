@@ -144,44 +144,18 @@ void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
 }
 
 void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, uint toBpp, int red, int green, int blue) {
-	// Initial implementation of 32-bit images to palettised sprites.
-	switch (fromBpp) {
-	case 4:
-		switch (toBpp) {
-		case 1:
-			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
-			break;
-
-		case 4:
-			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
-			break;
-
-		default:
-			warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented",
-				fromBpp, toBpp);
-		}
+	switch (toBpp) {
+	case 1:
+		*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
 		break;
 
-	case 2:
-		switch (toBpp) {
-		case 1:
-			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
-			break;
-
-		case 4:
-			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
-			break;
-
-		default:
-			warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented",
-					fromBpp, toBpp);
-		}
+	case 4:
+		*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
 		break;
 
 	default:
-		warning("BITDDecoder::convertPixelIntoSurface(): could not convert from %d to %d",
+		warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented",
 			fromBpp, toBpp);
-		break;
 	}
 }
 
