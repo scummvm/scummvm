@@ -103,6 +103,11 @@ protected:
 #endif
 	StaticTextWidget	*_searchDesc;
 	ButtonWidget	*_searchClearButton;
+	ButtonWidget	*_addButton;
+	Widget			*_removeButton;
+	Widget			*_startButton;
+	ButtonWidget	*_loadButton;
+	Widget			*_editButton;
 	StringArray		_domains;
 	BrowserDialog	*_browser;
 	SaveLoadChooser	*_loadDialog;
@@ -209,11 +214,6 @@ protected:
 	void build() override;
 private:
 	GroupedListWidget 		*_list;
-	ButtonWidget	*_addButton;
-	Widget			*_startButton;
-	ButtonWidget	*_loadButton;
-	Widget			*_editButton;
-	Widget			*_removeButton;
 };
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
@@ -235,11 +235,6 @@ protected:
 	void build() override;
 private:
 	GridWidget		*_grid;
-	ButtonWidget	*_addButton;
-	Widget			*_startButton;
-	ButtonWidget	*_loadButton;
-	Widget			*_editButton;
-	Widget			*_removeButton;
 };
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
 

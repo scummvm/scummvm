@@ -184,42 +184,66 @@ LauncherDialog::~LauncherDialog() {
 void LauncherDialog::build() {
 #ifndef DISABLE_FANCY_THEMES
 	_logo = nullptr;
+	_grpChooserDesc = new StaticTextWidget(this, String(_title + ".laGroupPopupDesc"), U32String("Group by: "));
+	_grpChooserPopup = new PopUpWidget(this, String(_title + ".laGroupPopup"), U32String("Select a criteria to group the entries"), kSetGroupMethodCmd);
+	_grpChooserPopup->appendEntry(_("None"), kGroupByNone);
+	_grpChooserPopup->appendEntry(_("First letter"), kGroupByFirstLetter);
+	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
+	_grpChooserPopup->appendEntry(_("Series"), kGroupBySeries);
+	_grpChooserPopup->appendEntry(_("Publisher"), kGroupByCompany);
+	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
+	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
-		_logo = new GraphicsWidget(this, "Launcher.Logo");
+		_logo = new GraphicsWidget(this, _title + ".Logo");
 		_logo->useThemeTransparency(true);
 		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
 
-		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMVersionDate));
+		new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMVersionDate));
 	} else
-		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion));
+		new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMFullVersion));
 #else
 	// Show ScummVM version
-	new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion));
+	new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMFullVersion));
 #endif
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
-		new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
-	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
-	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
+		new ButtonWidget(this, _title + ".QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
+	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
+	new ButtonWidget(this, _title + ".OptionsButton", _("~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
+
+	// Above the lowest button rows: two more buttons (directly below the list box)
+	if (g_system->getOverlayWidth() > 320) {
+		DropdownButtonWidget *addButton =
+			new DropdownButtonWidget(this, _title + ".AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd);
+		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
+		_addButton = addButton;
+
+		_removeButton =
+			new ButtonWidget(this, _title + ".RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+	} else {
+		DropdownButtonWidget *addButton =
+			new DropdownButtonWidget(this, _title + ".AddGameButton", _c("~A~dd Game...", "lowres"), _("Add games to the list"), kAddGameCmd);
+		addButton->appendEntry(_c("Mass Add...", "lowres"), kMassAddGameCmd);
+		_addButton = addButton;
+		
+		_removeButton =
+		new ButtonWidget(this, _title + ".RemoveGameButton", _c("~R~emove Game", "lowres"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+	}
 
 	// Search box
+	_searchDesc = nullptr;
 #ifndef DISABLE_FANCY_THEMES
 	_searchPic = nullptr;
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		_searchPic = new GraphicsWidget(this, "Launcher.SearchPic", _("Search in game list"));
+		_searchPic = new GraphicsWidget(this, _title + ".SearchPic", _("Search in game list"));
 		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
 	} else
 #endif
-		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
+		_searchDesc = new StaticTextWidget(this, _title + ".SearchDesc", _("Search:"));
 
-	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, Common::U32String(), kSearchCmd);
-	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
+	_searchWidget = new EditTextWidget(this, _title + ".Search", _search, Common::U32String(), kSearchCmd);
+	_searchClearButton = addClearButton(this, _title + ".SearchClearButton", kSearchClearCmd);
 
-	// Restore last selection
-	String last(ConfMan.get("lastselectedgame", ConfigManager::kApplicationDomain));
-	selectTarget(last);
 
-	// En-/disable the buttons depending on the list selection
-	updateButtons();
 
 	// Create file browser dialog
 	_browser = new BrowserDialog(_("Select directory with game data"), true);
@@ -841,9 +865,7 @@ int LauncherChooser::runModal() {
 
 LauncherSimple::LauncherSimple(const U32String &title)
 	: LauncherDialog(title),
-	_list(nullptr), _addButton(nullptr), _startButton(nullptr),
-	_loadButton(nullptr), _editButton(nullptr), _removeButton(nullptr) {
-
+	_list(nullptr) {
 	build();
 }
 
@@ -863,34 +885,8 @@ void LauncherSimple::selectTarget(const String &target) {
 const int LauncherSimple::getSelected() { return _list->getSelected(); }
 
 void LauncherSimple::build() {
-#ifndef DISABLE_FANCY_THEMES
-	_logo = nullptr;
-	_grpChooserDesc = new StaticTextWidget(this, String("Launcher.laGroupPopupDesc"), U32String("Group by: "));
-	_grpChooserPopup = new PopUpWidget(this, String("Launcher.laGroupPopup"), U32String("Select a criteria to group the entries"), kSetGroupMethodCmd);
-	_grpChooserPopup->appendEntry(_("None"), kGroupByNone);
-	_grpChooserPopup->appendEntry(_("First letter"), kGroupByFirstLetter);
-	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
-	_grpChooserPopup->appendEntry(_("Series"), kGroupBySeries);
-	_grpChooserPopup->appendEntry(_("Publisher"), kGroupByCompany);
-	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
-	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
-	_grpChooserPopup->setSelected(_groupBy);
-	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
-		_logo = new GraphicsWidget(this, "Launcher.Logo");
-		_logo->useThemeTransparency(true);
-		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
+	LauncherDialog::build();
 
-		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMVersionDate));
-	} else
-		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion));
-#else
-	// Show ScummVM version
-	new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion));
-#endif
-	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
-		new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
-	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
-	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
 	_startButton =
 		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), _("Start selected game"), kStartCmd);
 
@@ -901,42 +897,14 @@ void LauncherSimple::build() {
 #endif
 	_loadButton = loadButton;
 
-	// Above the lowest button rows: two more buttons (directly below the list box)
+	// Add edit button
 	if (g_system->getOverlayWidth() > 320) {
-		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd);
-		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
-		_addButton = addButton;
-
 		_editButton =
 			new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), _("Change game options"), kEditGameCmd);
-		_removeButton =
-			new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	} else {
-		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, "Launcher.AddGameButton", _c("~A~dd Game...", "lowres"), _("Add games to the list"), kAddGameCmd);
-		addButton->appendEntry(_c("Mass Add...", "lowres"), kMassAddGameCmd);
-		_addButton = addButton;
-
 		_editButton =
-		new ButtonWidget(this, "Launcher.EditGameButton", _c("~E~dit Game...", "lowres"), _("Change game options"), kEditGameCmd);
-		_removeButton =
-		new ButtonWidget(this, "Launcher.RemoveGameButton", _c("~R~emove Game", "lowres"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
+			new ButtonWidget(this, "Launcher.EditGameButton", _c("~E~dit Game...", "lowres"), _("Change game options"), kEditGameCmd);
 	}
-
-	// Search box
-	_searchDesc = nullptr;
-#ifndef DISABLE_FANCY_THEMES
-	_searchPic = nullptr;
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		_searchPic = new GraphicsWidget(this, "Launcher.SearchPic", _("Search in game list"));
-		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
-	} else
-#endif
-		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
-
-	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, Common::U32String(), kSearchCmd);
-	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
 	// Add list with game titles
 	_list = new GroupedListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
@@ -954,12 +922,6 @@ void LauncherSimple::build() {
 
 	// En-/disable the buttons depending on the list selection
 	updateButtons();
-
-	// Create file browser dialog
-	_browser = new BrowserDialog(_("Select directory with game data"), true);
-
-	// Create Load dialog
-	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"), false);
 }
 
 void LauncherSimple::updateListing() {
@@ -1224,8 +1186,7 @@ void LauncherSimple::updateButtons() {
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 LauncherGrid::LauncherGrid(const U32String &title)
 	: LauncherDialog(title),
-	_grid(nullptr), _addButton(nullptr), _startButton(nullptr),
-	_loadButton(nullptr), _editButton(nullptr), _removeButton(nullptr) {
+	_grid(nullptr) {
 	build();
 }
 
@@ -1450,68 +1411,7 @@ void LauncherGrid::selectTarget(const String &target) {}
 const int LauncherGrid::getSelected() { return _grid->getSelected(); }
 
 void LauncherGrid::build() {
-	_grid = nullptr;
-#ifndef DISABLE_FANCY_THEMES
-	_logo = nullptr;
-	_grpChooserDesc = new StaticTextWidget(this, String("LauncherGrid.laGroupPopupDesc"), U32String("Group by: "));
-	_grpChooserPopup = new PopUpWidget(this, String("LauncherGrid.laGroupPopup"), U32String("Select a criteria to group the entries"), kSetGroupMethodCmd);
-	_grpChooserPopup->appendEntry(_("None"), kGroupByNone);
-	_grpChooserPopup->appendEntry(_("First letter"), kGroupByFirstLetter);
-	_grpChooserPopup->appendEntry(_("Engine"), kGroupByEngine);
-	_grpChooserPopup->appendEntry(_("Series"), kGroupBySeries);
-	_grpChooserPopup->appendEntry(_("Publisher"), kGroupByCompany);
-	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
-	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
-	_grpChooserPopup->setSelected(_groupBy);
-	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
-		_logo = new GraphicsWidget(this, "LauncherGrid.Logo");
-		_logo->useThemeTransparency(true);
-		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
-
-		new StaticTextWidget(this, "LauncherGrid.Version", Common::U32String(gScummVMVersionDate));
-	} else
-		new StaticTextWidget(this, "LauncherGrid.Version", Common::U32String(gScummVMFullVersion));
-#else
-	// Show ScummVM version
-	new StaticTextWidget(this, "LauncherGrid.Version", Common::U32String(gScummVMFullVersion));
-#endif
-	if (!g_system->hasFeature(OSystem::kFeatureNoQuit))
-		new ButtonWidget(this, "LauncherGrid.QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
-	new ButtonWidget(this, "LauncherGrid.AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
-	new ButtonWidget(this, "LauncherGrid.OptionsButton", _("~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
-
-	// Above the lowest button rows: two more buttons (directly below the list box)
-	if (g_system->getOverlayWidth() > 320) {
-		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, "LauncherGrid.AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd);
-		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
-		_addButton = addButton;
-
-		_removeButton =
-			new ButtonWidget(this, "LauncherGrid.RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
-	} else {
-		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, "LauncherGrid.AddGameButton", _c("~A~dd Game...", "lowres"), _("Add games to the list"), kAddGameCmd);
-		addButton->appendEntry(_c("Mass Add...", "lowres"), kMassAddGameCmd);
-		_addButton = addButton;
-
-		_removeButton =
-		new ButtonWidget(this, "LauncherGrid.RemoveGameButton", _c("~R~emove Game", "lowres"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
-	}
-
-	// Search box
-	_searchDesc = nullptr;
-#ifndef DISABLE_FANCY_THEMES
-	_searchPic = nullptr;
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		_searchPic = new GraphicsWidget(this, "LauncherGrid.SearchPic", _("Search in game list"));
-		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
-	} else
-#endif
-		_searchDesc = new StaticTextWidget(this, "LauncherGrid.SearchDesc", _("Search:"));
-
-	_searchWidget = new EditTextWidget(this, "LauncherGrid.Search", _search, Common::U32String(), kSearchCmd);
-	_searchClearButton = addClearButton(this, "LauncherGrid.SearchClearButton", kSearchClearCmd);
+	LauncherDialog::build();
 
 	// Add list with game titles
 	_grid = new GridWidget(this, "LauncherGrid.IconArea");
@@ -1524,12 +1424,6 @@ void LauncherGrid::build() {
 
 	// En-/disable the buttons depending on the list selection
 	updateButtons();
-
-	// Create file browser dialog
-	_browser = new BrowserDialog(_("Select directory with game data"), true);
-
-	// Create Load dialog
-	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"), false);
 }
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
