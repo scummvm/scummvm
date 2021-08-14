@@ -34,6 +34,7 @@
 #include "saga2/mission.h"
 #include "saga2/hresmgr.h"
 #include "saga2/saveload.h"
+#include "saga2/actor.h"
 
 namespace Saga2 {
 
@@ -244,6 +245,15 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		IMMED_WORD(offset);
 		debugC(3, kDebugScripts, "byteAddress: far[%s:%d] = %d", seg2str(seg).c_str(), offset, *segmentAddress(seg, offset));
 		*pcPtr = pc;
+
+		// FIXME: WORKAROUND: Fixes Captain Navis (5299, 17715, 80) in Maldavith not allowing passage to the Tamnath Ruins through sail even if Muybridge is alive.
+		if (seg == 130 && offset == 2862) {
+			warning("WORKAROUND: byteAddress: far");
+			Actor *boss = (Actor *)GameObject::objectAddress(32880);
+			if (boss->isDead())
+				return segmentAddress(130, 0);
+		}
+
 		return segmentAddress(seg, offset);
 
 	case addr_array:
