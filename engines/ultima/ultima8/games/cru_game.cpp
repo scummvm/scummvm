@@ -46,7 +46,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-CruGame::CruGame() : Game() {
+CruGame::CruGame() : Game(), _skipIntroMovie(false) {
 }
 
 CruGame::~CruGame() {
@@ -137,6 +137,8 @@ bool CruGame::startGame() {
 }
 
 bool CruGame::startInitialUsecode(int saveSlot) {
+	if (saveSlot >= 0 && ConfMan.getBool("skip_intro"))
+		_skipIntroMovie = true;
 	Process* proc = new StartCrusaderProcess(saveSlot);
 	Kernel::get_instance()->addProcess(proc);
 	return true;
@@ -154,11 +156,15 @@ static ProcId playMovie(const char *movieID, bool fade, bool noScale) {
 }
 
 ProcId CruGame::playIntroMovie(bool fade) {
+	if (_skipIntroMovie)
+		return 0;
 	const char *name = (GAME_IS_REMORSE ? "T01" : "origin");
 	return playMovie(name, fade, true);
 }
 
 ProcId CruGame::playIntroMovie2(bool fade) {
+	if (_skipIntroMovie)
+		return 0;
 	const char *name = (GAME_IS_REMORSE ? "T02" : "ANIM01");
 	return playMovie(name, fade, false);
 }

@@ -26,6 +26,8 @@
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/kernel/mouse.h"
+#include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 
@@ -54,6 +56,10 @@ static const int RIGHT_FRAME_IDX_OFFSET = 16;
 
 void DifficultyGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
+
+	Mouse *mouse = Mouse::get_instance();
+	mouse->pushMouseCursor();
+	mouse->setMouseCursor(Mouse::MOUSE_HAND);
 
 	_dims.top = 0;
 	_dims.left = 0;
@@ -121,6 +127,8 @@ void DifficultyGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 void DifficultyGump::Close(bool no_del) {
+	Mouse *mouse = Mouse::get_instance();
+	mouse->popMouseCursor();
 	ModalGump::Close(no_del);
 }
 
@@ -150,7 +158,8 @@ bool DifficultyGump::OnKeyDown(int key, int mod) {
 	if (ModalGump::OnKeyDown(key, mod)) return true;
 
 	if (key == Common::KEYCODE_ESCAPE) {
-		Close();
+		// Don't allow closing, we have to choose a difficulty.
+		return true;
 	} else if (key >= Common::KEYCODE_1 && key <= Common::KEYCODE_4) {
 		selectEntry(key - Common::KEYCODE_1 + 1);
 	} else if (key == Common::KEYCODE_UP) {
@@ -171,9 +180,9 @@ bool DifficultyGump::OnKeyDown(int key, int mod) {
 }
 
 void DifficultyGump::selectEntry(int num) {
-	debug(6, "select entry %d", num);
-	Ultima8Engine::get_instance()->newGame(-1, num);
-	// note; this is now deleted (the kernel will kill it)
+	debug(6, "selected difficulty %d", num);
+	World::get_instance()->setGameDifficulty(num);
+	Close();
 }
 
 } // End of namespace Ultima8

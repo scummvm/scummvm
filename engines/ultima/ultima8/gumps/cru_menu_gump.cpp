@@ -202,9 +202,11 @@ void CruMenuGump::ChildNotify(Gump *child, uint32 message) {
 void CruMenuGump::selectEntry(int entry) {
 	switch (entry) {
 	case 1: { // New Game
-		DifficultyGump *gump = new DifficultyGump();
-		gump->InitGump(0);
-		gump->setRelativePosition(CENTER);
+		Ultima8Engine::get_instance()->newGame(-1);
+		// When starting a new game from the menu, we skip intro movies.
+		CruGame *game = dynamic_cast<CruGame *>(Game::get_instance());
+		assert(game);
+		game->setSkipIntroMovie();
 		break;
 	}
 	case 2:

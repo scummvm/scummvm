@@ -36,16 +36,16 @@ public:
 	enum CruInitStage {
 		PlayFirstMovie,
 		PlaySecondMovie,
-		ShowMenu
+		ShowDifficultyMenu,
+		StartGame
 	};
 
 protected:
 	CruInitStage _initStage;
-	bool _skipStart;
 	int _saveSlot;
 
 public:
-	StartCrusaderProcess(int saveSlot = -1);
+	StartCrusaderProcess(int saveSlot);
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
