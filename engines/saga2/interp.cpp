@@ -246,7 +246,7 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		debugC(3, kDebugScripts, "byteAddress: far[%s:%d] = %d", seg2str(seg).c_str(), offset, *segmentAddress(seg, offset));
 		*pcPtr = pc;
 
-		// FIXME: WORKAROUND: Fixes Captain Navis (5299, 17715, 80) in Maldavith not allowing passage to the Tamnath Ruins through sail even if Muybridge is alive.
+		// FIXME: WORKAROUND: Fixes Captain Navis (5299, 17715, 80) in Maldavith not allowing passage to the Tamnath Ruins through sail even if Muybridge is dead.
 		if (seg == 130 && offset == 2862) {
 			warning("WORKAROUND: byteAddress: far");
 			Actor *boss = (Actor *)GameObject::objectAddress(32880);
