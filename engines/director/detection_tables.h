@@ -1877,7 +1877,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("blinkybill1", "", "BLINKY.EXE", "0d374b4a559e505c0db63cabc2219380", 712501, 404),
 	//Blinky Bill 1 en het verhaal van de Griezel-Grot
 	WINGAME2_l("blinkybill1", "", "start.exe", "be1e65196a1d1c810d84c0084a5c1033", 717299,
-			"blinky.exe", "2606f9d3133d53c21894b6a2b9ae37e5", 188408, Common::NL_NLD, 404),
+			"ghost0.dxr", "5d79d1d50d7abc7bc7b6d72b3b4b831d", 112048, Common::NL_NLD, 404),
 	//A Caverna do Fantasma de Blinky Bill
 	WINGAME1_l("blinkybill1", "", "BLINKY95.EXE", "3ee51e3c9f0f7f069580ef5361fd4e3d", 717025, Common::PT_BRA, 404),
 
@@ -3643,7 +3643,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("blinkyps", "", "PS.exe", "7c18c9a6af2694156bf09ed195c1ab09", 173560, Common::NL_NLD, 702),
 
 	WINGAME2("blinkyk1", "", "K1.exe", "7c18c9a6af2694156bf09ed195c1ab09", 173598,
-			"K1.exe", "7c18c9a6af2694156bf09ed195c1ab09", 173598, 702),
+			"home.dxr", "a5bf0926474b9d6100d5eb0a02c59e7c", 2414060, 702),
 	//Blinky Bill Kleuter
 	WINGAME2_l("blinkyk1", "", "K1.exe", "7c18c9a6af2694156bf09ed195c1ab09", 173598,
 			"home.dxr", "dd7f95732848801b0d5a7e784db68962", 2381576, Common::NL_NLD, 702),
@@ -3873,7 +3873,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("eureka", "", "Promo.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 17971868, 800),
 
 	WINGAME2_l("fcdk", "", "Start.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 511933,
-			"b.ico", "5c27a13bb1f5219f5fbaa10f6a7fe931", 14278, Common::NL_NLD, 800),
+			"boma.dir", "484a5f57cde0ce4f035be6be933ede34", 10561442, Common::NL_NLD, 800),
 
 	MACGAME1_l("forestiajr", "", "Forestia Aufstand im Zoo", "75e71e2abbe6cf6e79a62be76cc05d06", 157104, Common::DE_DEU, 850),
 	WINGAME1_l("forestiajr", "", "Forestia Aufstand im Zoo.exe", "14a1ca568d9188926eb70827f42ac856", 2166796, Common::DE_DEU, 851),
