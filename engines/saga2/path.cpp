@@ -1463,7 +1463,7 @@ void PathRequest::initialize(void) {
 	        baseCoords.v
 	        + (searchCenter << kTileUVShift) * 2,
 	        0));
-	GameObject              *obj;
+	GameObject *obj = nullptr;
 
 	for (iter.first(&obj);
 	        obj != nullptr;
@@ -2497,7 +2497,7 @@ TilePoint selectNearbySite(
 	        baseCoords.v
 	        + (searchCenter << kTileUVShift) * 2,
 	        0));
-	GameObject              *obj;
+	GameObject *obj = nullptr;
 
 	for (iter.first(&obj);
 	        obj != nullptr;

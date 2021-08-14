@@ -3379,6 +3379,10 @@ ObjectID SectorRegionObjectIterator::first(GameObject **obj) {
 
 	sectorCoords = minSector;
 	currentSector = searchWorld->getSector(sectorCoords.u, sectorCoords.v);
+
+	if (currentSector == nullptr)
+		return Nothing;
+
 	while (currentSector->childID == Nothing) {
 		if (++sectorCoords.v >= maxSector.v) {
 			sectorCoords.v = minSector.v;
@@ -3625,12 +3629,18 @@ ObjectID RegionalObjectIterator::first(GameObject **obj) {
 	ObjectID        currentObjectID;
 
 	currentObjectID = SectorRegionObjectIterator::first(&currentObject);
+
+	if (currentObjectID == Nothing)
+		return Nothing;
+
 	while (currentObjectID != Nothing
 	        &&  !inRegion(currentObject->getLocation())) {
 		currentObjectID = SectorRegionObjectIterator::next(&currentObject);
 	}
 
-	if (obj != nullptr) *obj = currentObject;
+	if (obj != nullptr)
+		*obj = currentObject;
+
 	return currentObjectID;
 }
 
