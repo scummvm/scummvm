@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-14 13:33+0000\n"
+"POT-Creation-Date: 2021-08-14 18:12+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -268,7 +268,7 @@ msgid "Engine"
 msgstr "מנוע"
 
 #: gui/editgamedialog.cpp:207 gui/options.cpp:1781 gui/options.cpp:1938
-#: backends/graphics/sdl/sdl-graphics.cpp:408
+#: backends/graphics/sdl/sdl-graphics.cpp:417
 msgid "Graphics"
 msgstr "תצוגה"
 
@@ -1026,7 +1026,7 @@ msgstr "מצב מתיחה:"
 msgid "Scaler:"
 msgstr ""
 
-#: gui/options.cpp:1439 backends/graphics/sdl/sdl-graphics.cpp:399
+#: gui/options.cpp:1439 backends/graphics/sdl/sdl-graphics.cpp:408
 msgid "Fullscreen mode"
 msgstr "מצב מסך מלא"
 
@@ -2799,20 +2799,20 @@ msgstr ""
 msgid "Active graphics filter:"
 msgstr "פילטר גרפי פעיל:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:401
+#: backends/graphics/sdl/sdl-graphics.cpp:410
 msgid "Windowed mode"
 msgstr "מצב חלון"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:412 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:421 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "מיתוג מסך מלא"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:419 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:428 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:961
 msgid "Toggle mouse capture"
 msgstr "החלף לכידת עכבר"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:424
+#: backends/graphics/sdl/sdl-graphics.cpp:433
 #: engines/wintermute/keymapper_tables.h:647
 #: engines/wintermute/keymapper_tables.h:696
 #: engines/wintermute/keymapper_tables.h:1099
@@ -2825,36 +2825,36 @@ msgstr "החלף לכידת עכבר"
 msgid "Save screenshot"
 msgstr "שמור צילום מסך"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:430
+#: backends/graphics/sdl/sdl-graphics.cpp:439
 msgid "Toggle aspect ratio correction"
 msgstr "החלף בין מצבי יחס גובה-רוחב"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:437
+#: backends/graphics/sdl/sdl-graphics.cpp:446
 msgid "Toggle linear filtered scaling"
 msgstr "השתמש בסינון לינארי בעת קנה המידה של גרפיקה"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:444
+#: backends/graphics/sdl/sdl-graphics.cpp:453
 #, fuzzy
 msgid "Cycle through stretch modes"
 msgstr "לא ניתן היה לעבור למצב מתיחה '%s'."
 
-#: backends/graphics/sdl/sdl-graphics.cpp:450
+#: backends/graphics/sdl/sdl-graphics.cpp:459
 #, fuzzy
 msgid "Increase the scale factor"
 msgstr "הגדל / הקטן את גורם הסולם"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:456
+#: backends/graphics/sdl/sdl-graphics.cpp:465
 #, fuzzy
 msgid "Decrease the scale factor"
 msgstr "הגדל / הקטן את גורם הסולם"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:462
+#: backends/graphics/sdl/sdl-graphics.cpp:471
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to the next scaler"
 msgstr "עבור אל המשחק"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:467
+#: backends/graphics/sdl/sdl-graphics.cpp:476
 msgid "Switch to the previous scaler"
 msgstr ""
 
