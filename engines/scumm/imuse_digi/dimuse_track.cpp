@@ -179,12 +179,12 @@ int IMuseDigital::startSound(int soundId, const char *soundName, int soundType, 
 				Actor *a = _vm->derefActor(_vm->_actorToPrintStrFor, "IMuseDigital::startSound");
 				freq = (freq * a->_talkFrequency) / 256;
 
-				if (a->_talkPan >= 0 && a->_talkPan <= 127)
+				if (a->_talkPan <= 127)
 					track->pan = a->_talkPan;
 				else
 					track->pan = 64;
 
-				if (a->_talkVolume >= 0 && a->_talkVolume <= 127)
+				if (a->_talkVolume <= 127)
 					track->vol = a->_talkVolume * 1000;
 				else
 					track->vol = 127 * 1000;
