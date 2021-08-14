@@ -269,10 +269,7 @@ float SdlWindow::getDpiScalingFactor() const {
 	getDisplayDpi(&dpi, &defaultDpi);
 	debug(4, "dpi: %g default: %g", dpi, defaultDpi);
 	float ratio = dpi / defaultDpi;
-	if (ratio >= 1.5f)
-		return 2.f;
-	else
-		return 1.f;
+	return ratio;
 }
 
 
