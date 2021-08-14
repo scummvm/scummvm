@@ -103,7 +103,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_IMPROVED, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_TTS, GAMEOPTION_IMPROVED, GUIO_NOMIDI)
 	},
 	{
 		"msn2",
@@ -112,7 +112,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_IMPROVED, GUIO_NOMIDI)
+		GUIO3(GAMEOPTION_TTS, GAMEOPTION_IMPROVED, GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER
 };

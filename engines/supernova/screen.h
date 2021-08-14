@@ -183,6 +183,8 @@ public:
 	void update();
 	void changeCursor(ResourceManager::CursorId);
 
+	Common::TextToSpeechManager *_ttsMan;
+
 private:
 	void renderImageSection(const MSNImage *image, int section, bool invert);
 
