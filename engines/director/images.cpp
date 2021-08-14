@@ -144,19 +144,31 @@ void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
 }
 
 void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, uint toBpp, int red, int green, int blue) {
-	switch (toBpp) {
-	case 1:
-		*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
-		break;
+	if (_version < kFileVer400) {
+		switch (toBpp) {
+		case 1:
+			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
+			return;
 
-	case 4:
-		*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
-		break;
+		case 4:
+			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
+			return;
 
-	default:
-		warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented",
-			fromBpp, toBpp);
+		}
+	} else {
+		// it looks like the blue channel and green channel are reversed in D4
+		switch (toBpp) {
+		case 1:
+			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
+			return;
+
+		case 4:
+			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
+			return;
+
+		}
 	}
+	warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented", fromBpp, toBpp);
 }
 
 bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
