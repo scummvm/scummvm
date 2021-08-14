@@ -1168,6 +1168,8 @@ public:
 	//  Place a thread back into the inactive list
 	void deleteThread(Thread *p);
 
+	void newThread(Thread *p, ThreadID id);
+
 	void newThread(Thread *p);
 
 	//  Return the specified thread's ID
@@ -1207,7 +1209,7 @@ void ThreadList::read(Common::InSaveFile *in) {
 		id = in->readSint16LE();
 		debugC(4, kDebugSaveload, "...... id = %d", id);
 
-		new Thread(in);
+		new Thread(in, id);
 	}
 }
 
@@ -1263,6 +1265,13 @@ void ThreadList::deleteThread(Thread *p) {
 			_list[i] = nullptr;
 		}
 	}
+}
+
+void ThreadList::newThread(Thread *p, ThreadID id) {
+	if (_list[id])
+		error("Thread %d already exists", id);
+
+	_list[id] = p;
 }
 
 void ThreadList::newThread(Thread *p) {
@@ -1362,6 +1371,10 @@ void deleteThread(Thread *thread) {
 	threadList.deleteThread(thread);
 }
 
+void newThread(Thread *p, ThreadID id) {
+	threadList.newThread(p, id);
+}
+
 void newThread(Thread *thread) {
 	threadList.newThread(thread);
 }
@@ -1413,7 +1426,7 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 	newThread(this);
 }
 
-Thread::Thread(Common::SeekableReadStream *stream) {
+Thread::Thread(Common::SeekableReadStream *stream, ThreadID id) {
 	int16   stackOffset;
 
 	programCounter.segment = stream->readUint16LE();
@@ -1441,7 +1454,7 @@ Thread::Thread(Common::SeekableReadStream *stream) {
 
 	stream->read(stackPtr, stackOffset);
 
-	newThread(this);
+	newThread(this, id);
 }
 
 //-----------------------------------------------------------------------
