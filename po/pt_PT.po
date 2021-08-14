@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-14 02:26+0000\n"
+"POT-Creation-Date: 2021-08-14 11:58+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -617,8 +617,8 @@ msgstr "Fechar"
 #: gui/gui-manager.cpp:144 engines/metaengine.cpp:108
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:448
-#: engines/grim/grim.cpp:525 engines/twine/metaengine.cpp:430
-#: engines/twine/metaengine.cpp:497 engines/wintermute/keymapper_tables.h:1263
+#: engines/grim/grim.cpp:525 engines/twine/metaengine.cpp:313
+#: engines/twine/metaengine.cpp:380 engines/wintermute/keymapper_tables.h:1263
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1844
 #: engines/wintermute/keymapper_tables.h:2078
@@ -628,8 +628,8 @@ msgstr "Cima"
 #: gui/gui-manager.cpp:149 engines/metaengine.cpp:113
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:453
-#: engines/grim/grim.cpp:530 engines/twine/metaengine.cpp:437
-#: engines/twine/metaengine.cpp:505 engines/wintermute/keymapper_tables.h:1269
+#: engines/grim/grim.cpp:530 engines/twine/metaengine.cpp:320
+#: engines/twine/metaengine.cpp:388 engines/wintermute/keymapper_tables.h:1269
 #: engines/wintermute/keymapper_tables.h:1380
 #: engines/wintermute/keymapper_tables.h:1850
 #: engines/wintermute/keymapper_tables.h:2084
@@ -639,7 +639,7 @@ msgstr "Baixo"
 #: gui/gui-manager.cpp:154 engines/metaengine.cpp:118
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:458 engines/grim/grim.cpp:535
-#: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
+#: engines/twine/metaengine.cpp:335 engines/twine/metaengine.cpp:403
 #: engines/wintermute/keymapper_tables.h:321
 #: engines/wintermute/keymapper_tables.h:1275
 #: engines/wintermute/keymapper_tables.h:1832
@@ -651,7 +651,7 @@ msgstr "Esquerda"
 #: gui/gui-manager.cpp:159 engines/metaengine.cpp:123
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:463 engines/grim/grim.cpp:540
-#: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
+#: engines/twine/metaengine.cpp:327 engines/twine/metaengine.cpp:396
 #: engines/wintermute/keymapper_tables.h:327
 #: engines/wintermute/keymapper_tables.h:1281
 #: engines/wintermute/keymapper_tables.h:1838
@@ -2471,7 +2471,7 @@ msgstr "Clique direito"
 
 #: engines/metaengine.cpp:76 engines/hdb/metaengine.cpp:238
 #: engines/mohawk/myst.cpp:597 engines/mohawk/riven.cpp:861
-#: engines/sky/metaengine.cpp:113 engines/twine/metaengine.cpp:210
+#: engines/sky/metaengine.cpp:113 engines/twine/metaengine.cpp:93
 #: engines/wintermute/keymapper_tables.h:1532
 msgid "Pause"
 msgstr "Pausa"
@@ -2782,7 +2782,7 @@ msgstr "'Modo Toque' do ecrã táctil - Sobre (Cliques DPad)"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:242
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:67
-#: engines/twine/metaengine.cpp:329
+#: engines/twine/metaengine.cpp:212
 msgid "Center"
 msgstr "Centrado"
 
@@ -3774,9 +3774,8 @@ msgstr ""
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:51
 #: engines/neverhood/detection.cpp:124 engines/sci/detection.cpp:236
 #: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
-#: engines/trecision/detection.cpp:208 engines/ultima/detection.cpp:55
-#: engines/ultima/ultima8/meta_engine.cpp:169
-#: engines/zvision/detection_tables.h:50
+#: engines/trecision/detection.cpp:208 engines/ultima/detection.cpp:56
+#: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Usar ecrãs originais de Salvar/Carregar"
 
@@ -3784,9 +3783,8 @@ msgstr "Usar ecrãs originais de Salvar/Carregar"
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:52
 #: engines/neverhood/detection.cpp:125 engines/sci/detection.cpp:237
 #: engines/sherlock/detection.cpp:60 engines/toltecs/detection.cpp:214
-#: engines/trecision/detection.cpp:209 engines/ultima/detection.cpp:56
-#: engines/ultima/ultima8/meta_engine.cpp:170
-#: engines/zvision/detection_tables.h:51
+#: engines/trecision/detection.cpp:209 engines/ultima/detection.cpp:57
+#: engines/ultima/detection.cpp:108 engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Usar ecrãs originais de Salvar/Carregar ao invés dos do ScummVM"
 
@@ -4197,7 +4195,7 @@ msgstr ""
 #: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:146
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-#: engines/twine/metaengine.cpp:387 engines/zvision/metaengine.cpp:164
+#: engines/twine/metaengine.cpp:270 engines/zvision/metaengine.cpp:164
 #, fuzzy
 msgid "Inventory"
 msgstr "Mostrar inventário"
@@ -4901,18 +4899,18 @@ msgstr "Recursos compilados em:"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:473
 #: engines/ultima/ultima4/meta_engine.cpp:225
-#: engines/ultima/ultima8/meta_engine.cpp:211
+#: engines/ultima/ultima8/meta_engine.cpp:138
 msgid "Interact via Left Click"
 msgstr "Interagir via Clique Esquerdo"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:474
 #: engines/ultima/ultima4/meta_engine.cpp:231
-#: engines/ultima/ultima8/meta_engine.cpp:217
+#: engines/ultima/ultima8/meta_engine.cpp:144
 msgid "Interact via Right Click"
 msgstr "Interagir via Clique Direito"
 
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:481
-#: engines/twine/metaengine.cpp:349
+#: engines/twine/metaengine.cpp:232
 msgid "Move Forward"
 msgstr "Avançar"
 
@@ -4929,13 +4927,13 @@ msgid "Move Right"
 msgstr "Mover à direita"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:485
-#: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:370
+#: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:253
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Girar à esquerda"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:486
-#: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:363
+#: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:246
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Girar à direita"
@@ -5111,12 +5109,12 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Este puzzle não está disponível na demonstração do jogo"
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:114
-#: engines/sherlock/detection.cpp:120 engines/twine/metaengine.cpp:159
+#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:624
 msgid "TTS Narrator"
 msgstr ""
 
 #: engines/lure/detection.cpp:46 engines/mads/detection.cpp:115
-#: engines/sherlock/detection.cpp:121 engines/twine/metaengine.cpp:160
+#: engines/sherlock/detection.cpp:121 engines/twine/detection.cpp:625
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
@@ -7014,12 +7012,12 @@ msgid ""
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/detection.cpp:379 engines/ultima/ultima8/meta_engine.cpp:181
+#: engines/stark/detection.cpp:379 engines/ultima/detection.cpp:119
 #, fuzzy
 msgid "Enable font anti-aliasing"
 msgstr "Activar censura de conteúdo"
 
-#: engines/stark/detection.cpp:380 engines/ultima/ultima8/meta_engine.cpp:182
+#: engines/stark/detection.cpp:380 engines/ultima/detection.cpp:120
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
@@ -7215,247 +7213,247 @@ msgstr "Falha a carregar o ficheiro!"
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:73
+#: engines/twine/detection.cpp:538
 msgid "Enable wall collisions"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:74
+#: engines/twine/detection.cpp:539
 msgid "Enable the original wall collision damage"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:80
+#: engines/twine/detection.cpp:545
 #, fuzzy
 msgid "Enable cross fade"
 msgstr "Ativa batotas"
 
-#: engines/twine/metaengine.cpp:81
+#: engines/twine/detection.cpp:546
 msgid "Enable cross fading of images and scenes"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:88
+#: engines/twine/detection.cpp:553
 #, fuzzy
 msgid "Disable save menu"
 msgstr "Falha a guardar o jogo"
 
-#: engines/twine/metaengine.cpp:89
+#: engines/twine/detection.cpp:554
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 
-#: engines/twine/metaengine.cpp:95
+#: engines/twine/detection.cpp:560
 #, fuzzy
 msgid "Enable debug mode"
 msgstr "Ativa vozes com hélio"
 
-#: engines/twine/metaengine.cpp:96
+#: engines/twine/detection.cpp:561
 #, fuzzy
 msgid "Enable the debug mode"
 msgstr "Ativa vozes com hélio"
 
-#: engines/twine/metaengine.cpp:102
+#: engines/twine/detection.cpp:567
 #, fuzzy
 msgid "Enable audio CD"
 msgstr "Ativa risos como se houvesse um público"
 
-#: engines/twine/metaengine.cpp:103
+#: engines/twine/detection.cpp:568
 msgid "Enable the original audio cd track"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:109
+#: engines/twine/detection.cpp:574
 #, fuzzy
 msgid "Enable sound"
 msgstr "Ativar armazenamento"
 
-#: engines/twine/metaengine.cpp:110
+#: engines/twine/detection.cpp:575
 #, fuzzy
 msgid "Enable the sound for the game"
 msgstr "Título completo do jogo"
 
-#: engines/twine/metaengine.cpp:116
+#: engines/twine/detection.cpp:581
 #, fuzzy
 msgid "Enable voices"
 msgstr "Ativar Venus"
 
-#: engines/twine/metaengine.cpp:117
+#: engines/twine/detection.cpp:582
 #, fuzzy
 msgid "Enable the voices for the game"
 msgstr "Ativa o sistema de ajuda Venus"
 
-#: engines/twine/metaengine.cpp:123
+#: engines/twine/detection.cpp:588
 #, fuzzy
 msgid "Enable text"
 msgstr "Ativar armazenamento"
 
-#: engines/twine/metaengine.cpp:124
+#: engines/twine/detection.cpp:589
 #, fuzzy
 msgid "Enable the text for the game"
 msgstr "Título completo do jogo"
 
-#: engines/twine/metaengine.cpp:130
+#: engines/twine/detection.cpp:595
 #, fuzzy
 msgid "Enable movies"
 msgstr "Ativar Venus"
 
-#: engines/twine/metaengine.cpp:131
+#: engines/twine/detection.cpp:596
 #, fuzzy
 msgid "Enable the cutscenes for the game"
 msgstr "Ativa o sistema de ajuda Venus"
 
-#: engines/twine/metaengine.cpp:137
+#: engines/twine/detection.cpp:602
 #, fuzzy
 msgid "Enable mouse"
 msgstr "Ativar Venus"
 
-#: engines/twine/metaengine.cpp:138
+#: engines/twine/detection.cpp:603
 #, fuzzy
 msgid "Enable the mouse for the UI"
 msgstr "Título completo do jogo"
 
-#: engines/twine/metaengine.cpp:144
+#: engines/twine/detection.cpp:609
 msgid "Use the USA version"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:145
+#: engines/twine/detection.cpp:610
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:151 engines/ultima/ultima8/meta_engine.cpp:147
+#: engines/twine/detection.cpp:616 engines/ultima/detection.cpp:85
 #, fuzzy
 #| msgid "Enable high resolution graphics"
 msgid "Enable high resolution"
 msgstr "Activar gráficos em alta resolução"
 
-#: engines/twine/metaengine.cpp:152 engines/ultima/ultima8/meta_engine.cpp:148
+#: engines/twine/detection.cpp:617 engines/ultima/detection.cpp:86
 #, fuzzy
 msgid "Enable a higher resolution for the game"
 msgstr "Título completo do jogo"
 
-#: engines/twine/metaengine.cpp:215
+#: engines/twine/metaengine.cpp:98
 msgid "Debug Next Room"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:220
+#: engines/twine/metaengine.cpp:103
 msgid "Debug Previous Room"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:225
+#: engines/twine/metaengine.cpp:108
 msgid "Debug Apply Celling Grid"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:230
+#: engines/twine/metaengine.cpp:113
 msgid "Debug Increase Celling Grid Index"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:235
+#: engines/twine/metaengine.cpp:118
 msgid "Debug Decrease Celling Grid Index"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:240
+#: engines/twine/metaengine.cpp:123
 msgid "Debug Grid Camera Up"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:245
+#: engines/twine/metaengine.cpp:128
 msgid "Debug Grid Camera Down"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:250
+#: engines/twine/metaengine.cpp:133
 msgid "Debug Grid Camera Left"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:256
+#: engines/twine/metaengine.cpp:139
 msgid "Debug Grid Camera Right"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:261
+#: engines/twine/metaengine.cpp:144
 #, fuzzy
 msgid "Debug Menu"
 msgstr "Saída do depurador"
 
-#: engines/twine/metaengine.cpp:266
+#: engines/twine/metaengine.cpp:149
 #, fuzzy
 msgid "Debug Menu Execute"
 msgstr "Saída do depurador"
 
-#: engines/twine/metaengine.cpp:271 engines/twine/metaengine.cpp:291
+#: engines/twine/metaengine.cpp:154 engines/twine/metaengine.cpp:174
 msgid "Normal Behaviour"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:276 engines/twine/metaengine.cpp:296
+#: engines/twine/metaengine.cpp:159 engines/twine/metaengine.cpp:179
 msgid "Athletic Behaviour"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:281 engines/twine/metaengine.cpp:301
+#: engines/twine/metaengine.cpp:164 engines/twine/metaengine.cpp:184
 msgid "Aggressive Behaviour"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:286 engines/twine/metaengine.cpp:306
+#: engines/twine/metaengine.cpp:169 engines/twine/metaengine.cpp:189
 msgid "Discreet Behaviour"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:311
+#: engines/twine/metaengine.cpp:194
 #, fuzzy
 msgid "Behaviour Action"
 msgstr "Ação"
 
-#: engines/twine/metaengine.cpp:317
+#: engines/twine/metaengine.cpp:200
 msgid "Change Behaviour"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:324
+#: engines/twine/metaengine.cpp:207
 #, fuzzy
 msgid "Options Menu"
 msgstr "Menu de Opções da DS"
 
-#: engines/twine/metaengine.cpp:336
+#: engines/twine/metaengine.cpp:219
 msgid "Use Selected Object"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:342
+#: engines/twine/metaengine.cpp:225
 msgid "Throw Magic Ball"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:356
+#: engines/twine/metaengine.cpp:239
 #, fuzzy
 msgid "Move Backward"
 msgstr "Retroceder"
 
-#: engines/twine/metaengine.cpp:377
+#: engines/twine/metaengine.cpp:260
 msgid "Use Protopack"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:382
+#: engines/twine/metaengine.cpp:265
 msgid "Open Holomap"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:395
+#: engines/twine/metaengine.cpp:278
 #, fuzzy
 msgid "Special Action"
 msgstr "Ação"
 
-#: engines/twine/metaengine.cpp:401 engines/wintermute/keymapper_tables.h:61
+#: engines/twine/metaengine.cpp:284 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
 msgstr "Cancelar"
 
-#: engines/twine/metaengine.cpp:414
+#: engines/twine/metaengine.cpp:297
 msgid "Accept"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:422 engines/twine/metaengine.cpp:474
-#: engines/twine/metaengine.cpp:490
+#: engines/twine/metaengine.cpp:305 engines/twine/metaengine.cpp:357
+#: engines/twine/metaengine.cpp:373
 msgid "Abort"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:460
+#: engines/twine/metaengine.cpp:343
 #, fuzzy
 msgid "Next Page"
 msgstr "Página seguinte"
 
-#: engines/twine/metaengine.cpp:527
+#: engines/twine/metaengine.cpp:410
 #, fuzzy
 msgid "Previous location"
 msgstr "Ação seguinte"
 
-#: engines/twine/metaengine.cpp:532
+#: engines/twine/metaengine.cpp:415
 #, fuzzy
 #| msgid "Next action"
 msgid "Next location"
@@ -7485,6 +7483,70 @@ msgstr ""
 msgctxt "Options menu"
 msgid "Wall collision off"
 msgstr "Deslizar para baixo"
+
+#: engines/ultima/detection.cpp:67
+msgid "Enable frame skipping"
+msgstr ""
+
+#: engines/ultima/detection.cpp:68
+msgid "Allow the game to skip animation frames when running too slow."
+msgstr ""
+
+#: engines/ultima/detection.cpp:73
+#, fuzzy
+msgid "Enable frame limiting"
+msgstr "Activar censura de conteúdo"
+
+#: engines/ultima/detection.cpp:74
+msgid "Limits the speed of the game to prevent running too fast."
+msgstr ""
+
+#: engines/ultima/detection.cpp:79
+#, fuzzy
+#| msgid "Enable cheat mode"
+msgid "Enable cheats"
+msgstr "Ativa batotas"
+
+#: engines/ultima/detection.cpp:80
+msgid "Allow cheats by commands and a menu when player is clicked."
+msgstr ""
+
+#: engines/ultima/detection.cpp:95
+msgid "Play foot step sounds"
+msgstr ""
+
+#: engines/ultima/detection.cpp:96
+msgid "Plays sound when the player moves."
+msgstr ""
+
+#: engines/ultima/detection.cpp:101
+#, fuzzy
+msgid "Enable jump to mouse position"
+msgstr "Título completo do jogo"
+
+#: engines/ultima/detection.cpp:102
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+
+#: engines/ultima/detection.cpp:113
+#, fuzzy
+msgid "Enable font replacement"
+msgstr "Activar censura de conteúdo"
+
+#: engines/ultima/detection.cpp:114
+msgid "Replaces game fonts with rendered fonts"
+msgstr ""
+
+#. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
+#: engines/ultima/detection.cpp:130
+msgid "Camera moves with Silencer"
+msgstr ""
+
+#: engines/ultima/detection.cpp:131
+msgid ""
+"Camera tracks the player movement rather than snapping to defined positions."
+msgstr ""
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
@@ -7518,83 +7580,19 @@ msgstr ""
 msgid "Transfer Character"
 msgstr "Transferir Personagem"
 
-#: engines/ultima/ultima8/meta_engine.cpp:129
-msgid "Enable frame skipping"
-msgstr ""
-
-#: engines/ultima/ultima8/meta_engine.cpp:130
-msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
-
-#: engines/ultima/ultima8/meta_engine.cpp:135
-#, fuzzy
-msgid "Enable frame limiting"
-msgstr "Activar censura de conteúdo"
-
-#: engines/ultima/ultima8/meta_engine.cpp:136
-msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
-
-#: engines/ultima/ultima8/meta_engine.cpp:141
-#, fuzzy
-#| msgid "Enable cheat mode"
-msgid "Enable cheats"
-msgstr "Ativa batotas"
-
-#: engines/ultima/ultima8/meta_engine.cpp:142
-msgid "Allow cheats by commands and a menu when player is clicked."
-msgstr ""
-
-#: engines/ultima/ultima8/meta_engine.cpp:157
-msgid "Play foot step sounds"
-msgstr ""
-
-#: engines/ultima/ultima8/meta_engine.cpp:158
-msgid "Plays sound when the player moves."
-msgstr ""
-
-#: engines/ultima/ultima8/meta_engine.cpp:163
-#, fuzzy
-msgid "Enable jump to mouse position"
-msgstr "Título completo do jogo"
-
-#: engines/ultima/ultima8/meta_engine.cpp:164
-msgid ""
-"Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
-
-#: engines/ultima/ultima8/meta_engine.cpp:175
-#, fuzzy
-msgid "Enable font replacement"
-msgstr "Activar censura de conteúdo"
-
-#: engines/ultima/ultima8/meta_engine.cpp:176
-msgid "Replaces game fonts with rendered fonts"
-msgstr ""
-
-#. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/ultima8/meta_engine.cpp:192
-msgid "Camera moves with Silencer"
-msgstr ""
-
-#: engines/ultima/ultima8/meta_engine.cpp:193
-msgid ""
-"Camera tracks the player movement rather than snapping to defined positions."
-msgstr ""
-
-#: engines/ultima/ultima8/meta_engine.cpp:204
+#: engines/ultima/ultima8/meta_engine.cpp:131
 msgid "Ultima VIII"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:204
+#: engines/ultima/ultima8/meta_engine.cpp:131
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:251
+#: engines/ultima/ultima8/meta_engine.cpp:178
 msgid "Ultima VIII Cheats"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:268
+#: engines/ultima/ultima8/meta_engine.cpp:195
 msgid "Ultima VIII Debug"
 msgstr ""
 
