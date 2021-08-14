@@ -24,6 +24,7 @@
 #include "common/file.h"
 #include "common/language.h"
 #include "common/platform.h"
+#include "common/tokenizer.h"
 
 #include "gui/gui-manager.h"
 #include "gui/widgets/grid.h"
@@ -180,7 +181,6 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 void GridWidget::toggleGroup(int groupID) {
 	_groupExpanded[groupID] = !_groupExpanded[groupID];
 	sortGroups();
-	markGridAsInvalid();
 	// TODO: Replace reflowLayout with only the necessary sequence of steps
 	reflowLayout();
 }
@@ -466,6 +466,7 @@ void GridWidget::sortGroups() {
 	calcEntrySizes();
 	calcInnerHeight();
 	scrollBarRecalc();
+	markGridAsInvalid();
 	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list
 	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog,
 	// but not doing so the background of scrollbar isn't cleared.
@@ -850,6 +851,56 @@ void GridWidget::scrollBarRecalc() {
 	_scrollBar->checkBounds(_scrollBar->_currentPos);
 	_scrollPos = _scrollBar->_currentPos;
 	_scrollBar->recalc();
+}
+
+void GridWidget::setFilter(const U32String &filter) {
+	U32String filt = filter;
+	filt.toLowercase();
+
+	if (_filter == filt) // Filter was not changed
+		return;
+
+	_filter = filt;
+
+	if (_filter.empty()) {
+		// No filter -> display everything
+		sortGroups();
+	} else {
+		// Restrict the list to everything which contains all words in _filter
+		// as substrings, ignoring case.
+
+		Common::U32StringTokenizer tok(_filter);
+		U32String tmp;
+		int n = 0;
+
+		_sortedEntryList.clear();
+
+		for (GridItemInfo *i = _dataEntryList.begin(); i != _dataEntryList.end(); ++i, ++n) {
+			tmp = i->title;
+			tmp.toLowercase();
+			bool matches = true;
+			tok.reset();
+			while (!tok.empty()) {
+				if (!tmp.contains(tok.nextToken())) {
+					matches = false;
+					break;
+				}
+			}
+
+			if (matches) {
+				_sortedEntryList.push_back(*i);
+			}
+		}
+	}
+
+	_scrollPos = 0;
+	_selectedEntry = nullptr;
+
+	markGridAsInvalid();
+	reflowLayout();
+
+	scrollBarRecalc();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 } // End of namespace GUI
