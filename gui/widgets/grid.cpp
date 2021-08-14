@@ -284,7 +284,9 @@ void GridItemTray::handleMouseMoved(int x, int y, int button) {
 
 #pragma mark -
 
-Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
+// Load an image file by String name, provide additional render dimensions for SVG images.
+// TODO: Add BMP support, and add scaling of non-vector images.
+Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int renderWidth = 0, int renderHeight = 0) {
 	Graphics::ManagedSurface *surf = nullptr;
 	const String path = String::format("%s/%s", ConfMan.get("iconspath").c_str(), name.c_str());
 	if (name.hasSuffix(".png")) {
@@ -317,8 +319,8 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name) {
 		if (stream) {
 			Graphics::SVGBitmap *image = nullptr;
 			image = new Graphics::SVGBitmap(stream);
-			surf = new Graphics::ManagedSurface(60, 30, *image->getPixelFormat());
-			image->render(*surf, 60, 30);
+			surf = new Graphics::ManagedSurface(renderWidth, renderHeight, *image->getPixelFormat());
+			image->render(*surf, renderWidth, renderHeight);
 			delete image;
 		}
 	}
@@ -333,6 +335,10 @@ GridWidget::GridWidget(GuiObject *boss, const String &name)
 
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
+	_flagIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height");
+	_flagIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width");
+	_platformIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height");
+	_platformIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width");
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
 
@@ -559,12 +565,9 @@ void GridWidget::loadFlagIcons() {
 	const Common::LanguageDescription *l = Common::g_languages;
 	for (; l->code; ++l) {
 		String path = String::format("flags/%s.svg", l->code);
-		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
+		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path, _flagIconWidth, _flagIconHeight);
 		if (gfx) {
-			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _thumbnailWidth, 32);
-			_languageIcons[l->id] = scGfx;
-			gfx->free();
-			delete gfx;
+			_languageIcons[l->id] = gfx;
 		} else {
 			_languageIcons[l->id] = nullptr;
 		}
@@ -577,7 +580,7 @@ void GridWidget::loadPlatformIcons() {
 		String path = String::format("platforms/%s.png", l->code);
 		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
 		if (gfx) {
-			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _thumbnailWidth, 32);
+			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _platformIconWidth, _platformIconHeight);
 			_platformIcons[l->id] = scGfx;
 			gfx->free();
 			delete gfx;
@@ -787,7 +790,10 @@ void GridWidget::reflowLayout() {
 		reloadThumbnails();
 		loadFlagIcons();
 	}
-
+	_flagIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height");
+	_flagIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width");
+	_platformIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height");
+	_platformIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width");
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
 	_scrollWindowPaddingX = _minGridXSpacing;
