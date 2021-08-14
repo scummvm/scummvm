@@ -632,7 +632,8 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 			pad2 = stream.readUint16();
 			_initialRect = Movie::readRect(stream);
 			pad3 = stream.readUint16();
-			pad4 = stream.readUint16();
+			_textFlags = stream.readUint16(); // 1: editable, 2: auto tab, 4: don't wrap
+			_editable = _textFlags & 0x1;
 			totalTextHeight = stream.readUint16();
 		}
 
