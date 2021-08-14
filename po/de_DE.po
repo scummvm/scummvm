@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-14 13:33+0000\n"
-"PO-Revision-Date: 2021-08-13 21:14+0000\n"
+"PO-Revision-Date: 2021-08-14 15:42+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6305,16 +6305,16 @@ msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
 msgstr ""
+"Diese Musik-Titel waren vermutlich ursprünglich für schwächere Macs "
+"vorgesehen und verwenden nur einen Audio-Kanal."
 
 #: engines/scumm/detection.cpp:204
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth scrolling"
-msgstr "Aktiviert gleichmäßiges Scrollen beim Gehen"
+msgstr "Aktiviere sanften Bildlauf"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr ""
+msgstr "(anstelle des üblichen Bildlaufs in Schritten zu 8 Pixeln)"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -7683,12 +7683,14 @@ msgstr "Ersetzt die Spiel-Schriftarten durch generierte Schriftarten"
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/detection.cpp:130
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "Kamera bewegt sich mit Silencer"
 
 #: engines/ultima/detection.cpp:131
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
+"Die Kamera verfolgt die Bewegungen des Spielers, anstatt bestimmte "
+"Positionen zu fixieren."
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
