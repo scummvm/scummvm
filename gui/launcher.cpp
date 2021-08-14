@@ -193,6 +193,8 @@ void LauncherDialog::build() {
 	_grpChooserPopup->appendEntry(_("Publisher"), kGroupByCompany);
 	_grpChooserPopup->appendEntry(_("Language"), kGroupByLanguage);
 	_grpChooserPopup->appendEntry(_("Platform"), kGroupByPlatform);
+	// TODO: Save the last grouping method in config
+	_grpChooserPopup->setSelected(kGroupByNone);
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, _title + ".Logo");
 		_logo->useThemeTransparency(true);
