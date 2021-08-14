@@ -58,7 +58,7 @@ const char *directoryGlobs[] = {
 	"demos",						// Headbone samplers
 	"blender",						// Blender CD-ROM magazines
 	"bilder",
-	"ELK1"							// Blinky Bill Kindergarten
+	"elk1",							// Blinky Bill Kindergarten
 	"endsoung",
 	"gerhelp",
 	"gervideo",
@@ -90,6 +90,7 @@ const char *directoryGlobs[] = {
 	"p2media",
 	"p3media",
 	"annat",						// Pettson & Findus
+	"bb",							// Blinky Bill
 	"fctdata",
 	"fct",					   		// Felix the Cat
 	"dayfiles",
