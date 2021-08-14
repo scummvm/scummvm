@@ -166,6 +166,8 @@ public:
 
 	GridItemInfo	*_selectedEntry;
 
+	U32String		_filter;
+
 	GridWidget(GuiObject *boss, const String &name);
 	~GridWidget();
 
@@ -212,6 +214,8 @@ public:
 	void openTray(int x, int y, int entryID);
 	void openTrayAtSelected();
 	void scrollBarRecalc();
+
+	void setFilter(const U32String &filter);
 };
 
 /* GridItemWidget */

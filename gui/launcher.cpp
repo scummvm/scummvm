@@ -1319,6 +1319,15 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 	case kItemClicked:
 		updateButtons();
 		break;
+	case kSearchCmd:
+		// Update the active search filter.
+		_grid->setFilter(_searchWidget->getEditString());
+		break;
+	case kSearchClearCmd:
+		// Reset the active search filter, thus showing all games again
+		_searchWidget->setEditString(Common::U32String());
+		_grid->setFilter(Common::U32String());
+		break;
 	case kSetGroupMethodCmd:
 		// Change the grouping criteria
 		if (data) {
