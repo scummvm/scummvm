@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-14 11:58+0000\n"
+"POT-Creation-Date: 2021-08-14 13:33+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -3942,11 +3942,11 @@ msgstr "Recupera la partida:"
 msgid "Restore"
 msgstr "Restaura"
 
-#: engines/agos/saveload.cpp:137
+#: engines/agos/saveload.cpp:140
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2705
+#: engines/agos/saveload.cpp:162 engines/scumm/scumm.cpp:2705
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3957,7 +3957,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2695
+#: engines/agos/saveload.cpp:197 engines/scumm/scumm.cpp:2695
 #, fuzzy, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3968,7 +3968,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2718
+#: engines/agos/saveload.cpp:205 engines/scumm/scumm.cpp:2718
 #, fuzzy, c-format
 msgid ""
 "Successfully saved game in file:\n"
