@@ -580,8 +580,9 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 		}
 	}
 
-	// This is a hack from the original COMI CJK interpreter. Its purpuse is avoiding
-	// ugly combinations of CJK and standard NUT font characters (see bug #11947).
+	// This is a hack from the original COMI CJK interpreter. Its purpose is to avoid
+	// ugly combinations of two byte characters (rendered with the respective special
+	// font) and standard one byte (NUT font) characters (see bug #11947).
 	if (isCJKComi && !(fontId == 0 && color == 1)) {
 		fontId = 1;
 		color = 255;
