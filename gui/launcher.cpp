@@ -1141,16 +1141,15 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_searchWidget->setEditString(Common::U32String());
 		_list->setFilter(Common::U32String());
 		break;
-	case kSetGroupMethodCmd:
+	case kSetGroupMethodCmd: {
 		// Change the grouping criteria
-		if (data) {
-			GroupingMethod newGroupBy = (GroupingMethod)data;
-			if (_groupBy != newGroupBy) {
-				_groupBy = newGroupBy;
-				updateListing();
-			}
+		GroupingMethod newGroupBy = (GroupingMethod)data;
+		if (_groupBy != newGroupBy) {
+			_groupBy = newGroupBy;
+			updateListing();
 		}
 		break;
+	}
 	default:
 		LauncherDialog::handleCommand(sender, cmd, data);
 	}
@@ -1330,16 +1329,15 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		_searchWidget->setEditString(Common::U32String());
 		_grid->setFilter(Common::U32String());
 		break;
-	case kSetGroupMethodCmd:
+	case kSetGroupMethodCmd: {
 		// Change the grouping criteria
-		if (data) {
-			GroupingMethod newGroupBy = (GroupingMethod)data;
-			if (_groupBy != newGroupBy) {
-				_groupBy = newGroupBy;
-				updateListing();
-			}
+		GroupingMethod newGroupBy = (GroupingMethod)data;
+		if (_groupBy != newGroupBy) {
+			_groupBy = newGroupBy;
+			updateListing();
 		}
 		break;
+	}
 	default:
 		LauncherDialog::handleCommand(sender, cmd, data);
 	}
