@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-14 13:33+0000\n"
-"PO-Revision-Date: 2021-08-14 15:42+0000\n"
+"PO-Revision-Date: 2021-08-14 16:49+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6030,14 +6030,13 @@ msgstr ""
 "verbessern"
 
 #: engines/sci/detection.cpp:323
-#, fuzzy
-#| msgid "Enable frame skipping"
 msgid "Enable bearded musicians"
-msgstr "Frameskipping aktivieren"
+msgstr "Bärtige Musikanten aktivieren"
 
 #: engines/sci/detection.cpp:324
 msgid "Enable graphics that were disabled for legal reasons"
 msgstr ""
+"Aktiviere einige Grafiken, welche aus rechtlichen Gründen deaktiviert wurden"
 
 #: engines/sci/detection.cpp:354
 msgid "MIDI mode:"
@@ -6295,10 +6294,8 @@ msgstr ""
 "Seitenverhältniskorrektur erlaubt"
 
 #: engines/scumm/detection.cpp:197
-#, fuzzy
-#| msgid "Play selected music record"
 msgid "Play simplified music"
-msgstr "Ausgewählte Musikaufzeichnung abspielen"
+msgstr "Vereinfachte Musik abspielen"
 
 #: engines/scumm/detection.cpp:198
 msgid ""
