@@ -79,16 +79,10 @@ GL_FUNC_DEF(void, glEnable, (GLenum cap));
 GL_FUNC_DEF(void, glDisable, (GLenum cap));
 GL_FUNC_DEF(GLboolean, glIsEnabled, (GLenum cap));
 GL_FUNC_DEF(void, glClear, (GLbitfield mask));
-GL_FUNC_DEF(void, glColor4f, (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha));
 GL_FUNC_DEF(void, glViewport, (GLint x, GLint y, GLsizei width, GLsizei height));
-GL_FUNC_DEF(void, glMatrixMode, (GLenum mode));
-GL_FUNC_DEF(void, glLoadIdentity, ());
-GL_FUNC_DEF(void, glLoadMatrixf, (const GLfloat *m));
-GL_FUNC_DEF(void, glShadeModel, (GLenum mode));
 GL_FUNC_DEF(void, glHint, (GLenum target, GLenum mode));
 GL_FUNC_DEF(void, glClearColor, (GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha));
 GL_FUNC_DEF(void, glBlendFunc, (GLenum sfactor, GLenum dfactor));
-GL_FUNC_DEF(void, glEnableClientState, (GLenum array));
 GL_FUNC_DEF(void, glPixelStorei, (GLenum pname, GLint param));
 GL_FUNC_DEF(void, glScissor, (GLint x, GLint y, GLsizei width, GLsizei height));
 GL_FUNC_DEF(void, glReadPixels, (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels));
@@ -98,12 +92,21 @@ GL_FUNC_DEF(void, glGenTextures, (GLsizei n, GLuint *textures));
 GL_FUNC_DEF(void, glBindTexture, (GLenum target, GLuint texture));
 GL_FUNC_DEF(void, glTexParameteri, (GLenum target, GLenum pname, GLint param));
 GL_FUNC_DEF(void, glTexImage2D, (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels));
-GL_FUNC_DEF(void, glTexCoordPointer, (GLint size, GLenum type, GLsizei stride, const GLvoid *pointer));
-GL_FUNC_DEF(void, glVertexPointer, (GLint size, GLenum type, GLsizei stride, const GLvoid *pointer));
 GL_FUNC_DEF(void, glDrawArrays, (GLenum mode, GLint first, GLsizei count));
 GL_FUNC_DEF(void, glTexSubImage2D, (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels));
 GL_FUNC_DEF(const GLubyte *, glGetString, (GLenum name));
 GL_FUNC_DEF(GLenum, glGetError, ());
+
+#if !USE_FORCED_GLES2
+GL_FUNC_DEF(void, glColor4f, (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha));
+GL_FUNC_DEF(void, glMatrixMode, (GLenum mode));
+GL_FUNC_DEF(void, glLoadIdentity, ());
+GL_FUNC_DEF(void, glLoadMatrixf, (const GLfloat *m));
+GL_FUNC_DEF(void, glShadeModel, (GLenum mode));
+GL_FUNC_DEF(void, glEnableClientState, (GLenum array));
+GL_FUNC_DEF(void, glTexCoordPointer, (GLint size, GLenum type, GLsizei stride, const GLvoid *pointer));
+GL_FUNC_DEF(void, glVertexPointer, (GLint size, GLenum type, GLsizei stride, const GLvoid *pointer));
+#endif
 
 #if !USE_FORCED_GLES
 GL_FUNC_2_DEF(void, glEnableVertexAttribArray, glEnableVertexAttribArrayARB, (GLuint index));

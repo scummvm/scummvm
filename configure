@@ -5352,8 +5352,9 @@ esac
 if test "$_opengl_mode" = auto ; then
 	case $_backend in
 		android)
-			# Android always runs in GLES mode
-			_opengl_mode=gles
+			# We require API level 16 while GLES2 APIs have been added in level 8 so we are safe for compilation
+			_opengl_mode=gles2
+			_opengl_game_es2=yes
 			;;
 		sdl)
 			case $_sdlversion in
@@ -5478,7 +5479,8 @@ echocheck "OpenGL for game"
 
 if test "$_opengl_game" = auto ; then
 	_opengl_game=no
-	if (test "$_backend" = "sdl" && test "$_opengl" = yes) || test "$_backend" = "android3d" || test "$_backend" = "switch"; then
+	if (test "$_backend" = "sdl" && test "$_opengl" = yes) || test "$_backend" = "android" || test "$_backend" = "android3d" \
+		|| test "$_backend" = "switch"; then
 		# Try different header filenames
 		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
 		# 2) OpenGL/gl.h     This is used on Mac OS X
@@ -6153,7 +6155,7 @@ case $_host_os in
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -lGLESv1_CM"
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -lGLESv2"
 		;;
 	ds)
 		# Moved -Wl,--gc-sections here to avoid it interfering with the library checks
