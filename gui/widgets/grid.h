@@ -150,16 +150,17 @@ protected:
 	String			_iconDir;
 	bool			_isGridInvalid;
 
-public:
 	int				_scrollWindowPaddingX;
 	int				_scrollWindowPaddingY;
-	int				_gridItemHeight;
-	int				_gridItemWidth;
 	int				_gridHeaderHeight;
 	int				_gridHeaderWidth;
+	int				_trayHeight;
+
+public:
+	int				_gridItemHeight;
+	int				_gridItemWidth;
 	int				_gridXSpacing;
 	int				_gridYSpacing;
-	int				_trayHeight;
 
 	bool			_isTitlesVisible;
 
