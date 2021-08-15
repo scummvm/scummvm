@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-15 10:30+0000\n"
+"POT-Creation-Date: 2021-08-15 12:59+0000\n"
 "PO-Revision-Date: 2021-05-17 17:34+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -2802,32 +2802,32 @@ msgstr "Rozciągnij do okna"
 msgid "Fit to window (4:3)"
 msgstr "Dopasuj do okna (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:675
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:686
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Rozdzielczość: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:698
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:709
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2412
 msgid "Enabled aspect ratio correction"
 msgstr "Włączono korekcję formatu obrazu"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:700
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:711
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2418
 msgid "Disabled aspect ratio correction"
 msgstr "Wyłączono korekcję formatu obrazu"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:721
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2434
 msgid "Filtering enabled"
 msgstr "Filtrowanie włączone"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:723
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2436
 msgid "Filtering disabled"
 msgstr "Filtrowanie wyłączone"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:752
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:763
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2463
 msgid "Stretch mode"
 msgstr "Tryb skalowania"
