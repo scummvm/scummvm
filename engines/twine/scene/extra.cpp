@@ -344,7 +344,6 @@ void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int3
 	int32 ballStrength = 0;
 	int32 extraIdx = -1;
 
-	// TODO: check against MagicballStrengthType
 	switch (_engine->_gameState->_magicLevelIdx) {
 	case 0:
 	case 1:
