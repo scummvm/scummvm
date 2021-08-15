@@ -38,12 +38,20 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added HiDPI support to the ScummVM GUI.
    - Added command line option --window-size for specifying ScummVM window size,
      applicable only to the OpenGL renderer.
+   - Fixed switching to the default graphics mode. This was sometimes not applied
+     until restarting ScummVM or starting a game.
 
  AGI:
    - Added support for Russian versions. Input now works.
 
  AGOS:
    - Added support for the Japanese PC-98 version of Elvira 1.
+
+ CGE:
+   - Added option to use Text To Speech for Soltys.
+
+ CGE:
+   - Added option to use Text To Speech for Sfinx.
 
  Dreamweb:
    - Rendering fixes for Russian fan translation.
@@ -60,6 +68,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Griffon:
    - Fixed Return to Launcher from The Griffon Legend.
+   - Added option to use Text To Speech in The Griffon Legend
 
  Grim:
    - Added support for Brazillian Portuguese Grim Fandango.
@@ -147,7 +156,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved Digital iMUSE accuracy for Full Throttle and The Curse of Monkey Island. These improvements also fix
      several audio related bugs for both games.
    - Fixed a very old regression in the walk code for Full Throttle which softlocked the game.
-   - Improved the accuracy of the walk code for The Dig and The Curse of Monkey Island. 
+   - Improved the accuracy of the walk code for The Dig and The Curse of Monkey Island.
    - Fixed a bug in The Curse of Monkey Island which prevented, during the cannon minigame in Part 1, the destruction
      of one of the three destroyable turrets in the fort.
    - Added animated cigar smoke to the close-up of captain Smirk in the CD
@@ -196,6 +205,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  macOS port:
    - Add support for Dark Mode.
+   - Use OpenGL renderer by default, providing better support for HiDPI displays.
 
  MorphOS port:
    - Added native system file browser feature.
