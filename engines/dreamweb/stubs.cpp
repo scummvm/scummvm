@@ -967,7 +967,7 @@ void DreamWebEngine::useTimedText() {
 	const char *theText = (const char *)string;
 	if (_lastText != theText) {
 		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech")) {
-			_ttsMan->say(theText, Common::TextToSpeechManager::DROP, _textEncoding);
+			_ttsMan->say(theText, _textEncoding);
 		}
 		_lastText = theText;
 	}
@@ -1187,7 +1187,7 @@ void DreamWebEngine::commandOnly(uint8 command) {
 	printDirect(string, _textAddressX, _textAddressY, _textLen, (bool)(_textLen & 1));
 
 	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects") && *string != 0)
-		_ttsMan->say((const char *)string, Common::TextToSpeechManager::DROP, _textEncoding);
+		_ttsMan->say((const char *)string, _textEncoding);
 
 	_newTextLine = 1;
 }
@@ -1301,7 +1301,7 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 		printDirect(commandLine, x, _textAddressY, textLen, (bool)(textLen & 1));
 		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
 			theText += (const char *)commandLine;
-			_ttsMan->say(theText, Common::TextToSpeechManager::DROP, _textEncoding);
+			_ttsMan->say(theText, _textEncoding);
 		}
 
 	} else {
@@ -1969,7 +1969,7 @@ void DreamWebEngine::doLook() {
 	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
 		const char *placeName = (const char *)string;
 		const char *desRoom = strchr(placeName, ':') + 1;
-		_ttsMan->say(desRoom, Common::TextToSpeechManager::DROP, _textEncoding);
+		_ttsMan->say(desRoom, _textEncoding);
 	}
 
 	findNextColon(&string);
@@ -2372,7 +2372,7 @@ void DreamWebEngine::textToSpeech(const char *text) {
 	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
 		const char *colon_pos = strchr(text, ':');
 		Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
-		_ttsMan->say(result, Common::TextToSpeechManager::DROP, _textEncoding);
+		_ttsMan->say(result, _textEncoding);
 	}
 }
 

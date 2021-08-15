@@ -190,7 +190,7 @@ void DreamWebEngine::showFirstUse() {
 		const char *text = (const char *)obText;
 		const char *colon_pos = strchr(text, ':');
 		Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
-		_ttsMan->say(result, Common::TextToSpeechManager::DROP, _textEncoding);
+		_ttsMan->say(result, _textEncoding);
 	}
 
 	hangOnP(400);
@@ -207,7 +207,7 @@ void DreamWebEngine::showSecondUse() {
 		const char *text = (const char *)obText;
 		const char *colon_pos = strchr(text, ':');
 		Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
-		_ttsMan->say(result, Common::TextToSpeechManager::DROP, _textEncoding);
+		_ttsMan->say(result, _textEncoding);
 	}
 
 	hangOnP(400);

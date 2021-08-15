@@ -97,7 +97,7 @@ void DreamWebEngine::startTalk() {
 	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_speech")) {
 		const char *text = (const char *)str;
 		const char *goodText = strchr(text, ':') + 1;
-		_ttsMan->say(goodText, Common::TextToSpeechManager::DROP, _textEncoding);
+		_ttsMan->say(goodText, _textEncoding);
 	}
 
 	if (getLanguage() == Common::RU_RUS)
