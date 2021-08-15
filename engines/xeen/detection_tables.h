@@ -40,6 +40,22 @@ static const XeenGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// World of Xeen (Monster Spawn Mod v1.0), Bugreport #12714
+		{
+			"worldofxeen",
+			"Monster Spawn Mod v1.0",
+			AD_ENTRY2s("xeen.cc", "37767811a52fb54a8f2be3b45acc91a9", 13536623,
+					   "dark.cc", "a4dcb0731ad3818fdd908f17230ee773", 11222393),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+		},
+		GType_WorldOfXeen,
+		0
+	},
+
+	{
 		// World of Xeen (Bestseller Games Magazine #6 + #8 German)
 		{
 			"worldofxeen",
