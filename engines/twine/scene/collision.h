@@ -34,6 +34,7 @@ class Collision {
 private:
 	TwinEEngine *_engine;
 
+	void handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *actor, ActorStruct *actorTest);
 public:
 	Collision(TwinEEngine *engine);
 	/** Actor collision coordinate */
