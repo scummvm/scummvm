@@ -1296,12 +1296,12 @@ static int32 lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x47
  */
 static int32 lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 pingouinActor = ctx.stream.readByte();
-	engine->_scene->_mecaPinguinIdx = pingouinActor;
-	ActorStruct *mecaPinguin = engine->_scene->getActor(pingouinActor);
-	mecaPinguin->_dynamicFlags.bIsDead = 1;
-	mecaPinguin->_entity = -1;
-	mecaPinguin->_zone = -1;
+	const int32 penguinActor = ctx.stream.readByte();
+	engine->_scene->_mecaPenguinIdx = penguinActor;
+	ActorStruct *penguin = engine->_scene->getActor(penguinActor);
+	penguin->_dynamicFlags.bIsDead = 1;
+	penguin->_entity = -1;
+	penguin->_zone = -1;
 	return 0;
 }
 

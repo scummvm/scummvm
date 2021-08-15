@@ -528,7 +528,7 @@ enum InventoryItems {
 	kMrMiesPass = 11,
 	kiProtoPack = 12,
 	kSnowboard = 13,
-	kiPinguin = 14,
+	kiPenguin = 14,
 	kGasItem = 15,
 	kPirateFlag = 16,
 	kMagicFlute = 17,

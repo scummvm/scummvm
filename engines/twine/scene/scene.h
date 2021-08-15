@@ -191,15 +191,15 @@ public:
 	int32 _sceneNumActors = 0;
 	ActorStruct *_sceneHero = nullptr;
 
-	/** Meca pinguin actor index */
-	int16 _mecaPinguinIdx = 0; // currentPingouin
+	/** Meca penguin actor index */
+	int16 _mecaPenguinIdx = 0;
 
 	/** Current followed actor in scene */
 	int16 _currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
 	/** Current actor in zone - climbing a ladder */
 	bool _currentActorInZone = false;
 	/** Current actor manipulated in scripts */
-	int16 _currentScriptValue = 0; // manipActorResult
+	int16 _currentScriptValue = 0;
 
 	int16 _talkingActor = 0;
 
@@ -209,7 +209,7 @@ public:
 
 	bool _enableGridTileRendering = true;
 
-	uint8 _sceneFlags[NUM_SCENES_FLAGS]{0}; // cubeFlags
+	uint8 _sceneFlags[NUM_SCENES_FLAGS]{0};
 
 	int32 _sceneNumZones = 0;
 	ZoneStruct _sceneZones[NUM_MAX_ZONES];

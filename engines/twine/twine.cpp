@@ -644,26 +644,26 @@ void TwinEEngine::processInventoryAction() {
 			_actor->setBehaviour(HeroBehaviourType::kProtoPack);
 		}
 		break;
-	case kiPinguin: {
-		ActorStruct *pinguin = _scene->getActor(_scene->_mecaPinguinIdx);
+	case kiPenguin: {
+		ActorStruct *penguin = _scene->getActor(_scene->_mecaPenguinIdx);
 
-		const IVec3 &destPos = _movements->rotateActor(0, 800, pinguin->_angle);
+		const IVec3 &destPos = _movements->rotateActor(0, 800, penguin->_angle);
 
-		pinguin->_pos = _scene->_sceneHero->_pos;
-		pinguin->_pos.x += destPos.x;
-		pinguin->_pos.z += destPos.z;
+		penguin->_pos = _scene->_sceneHero->_pos;
+		penguin->_pos.x += destPos.x;
+		penguin->_pos.z += destPos.z;
 
-		pinguin->_angle = _scene->_sceneHero->_angle;
+		penguin->_angle = _scene->_sceneHero->_angle;
 
-		if (!_collision->checkCollisionWithActors(_scene->_mecaPinguinIdx)) {
-			pinguin->setLife(kActorMaxLife);
-			pinguin->_body = BodyType::btNone;
-			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPinguinIdx);
-			pinguin->_dynamicFlags.bIsDead = 0;
-			pinguin->setBrickShape(ShapeType::kNone);
-			_movements->moveActor(pinguin->_angle, pinguin->_angle, pinguin->_speed, &pinguin->_move);
-			_gameState->removeItem(InventoryItems::kiPinguin);
-			pinguin->_delayInMillis = _lbaTime + 1500;
+		if (!_collision->checkCollisionWithActors(_scene->_mecaPenguinIdx)) {
+			penguin->setLife(kActorMaxLife);
+			penguin->_body = BodyType::btNone;
+			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPenguinIdx);
+			penguin->_dynamicFlags.bIsDead = 0;
+			penguin->setBrickShape(ShapeType::kNone);
+			_movements->moveActor(penguin->_angle, penguin->_angle, penguin->_speed, &penguin->_move);
+			_gameState->removeItem(InventoryItems::kiPenguin);
+			penguin->_delayInMillis = _lbaTime + 1500;
 		}
 		break;
 	}
@@ -869,7 +869,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			} else {
 				_sound->playSample(Samples::Explode, 1, actor->pos(), a);
 
-				if (a == _scene->_mecaPinguinIdx) {
+				if (a == _scene->_mecaPenguinIdx) {
 					_extra->addExtraExplode(actor->pos());
 				}
 			}
