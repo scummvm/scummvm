@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-15 14:18+0000\n"
-"PO-Revision-Date: 2021-08-15 18:23+0000\n"
+"PO-Revision-Date: 2021-08-15 18:46+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -183,7 +183,7 @@ msgid ""
 "Do you really want to download files into that directory?"
 msgstr ""
 "지정된 디렉토리에 \"%s\" 파일이 이미 존재합니다.\n"
-"정말로 해당 디렉토리에 파일을 다운로드 받으시겠습니까?"
+"정말로 해당 디렉토리에 파일을 다운로드하시겠습니까?"
 
 #: gui/downloaddialog.cpp:215
 #, c-format
@@ -822,7 +822,7 @@ msgstr "ScummVM은 선택한 디렉토리에서 아무 게임도 찾지 못했�
 
 #: gui/launcher.cpp:598
 msgid "Unknown variant"
-msgstr "알려지지 않은 변종"
+msgstr "알려지지 않은 버전"
 
 #: gui/launcher.cpp:604
 msgid "Pick the game:"
@@ -5215,7 +5215,7 @@ msgstr "오래된 CD 드라이브의 로딩 시간을 재현"
 msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
-msgstr "씬 전환시 무작위 지연을 추가해 오래된 CD 드라이브의 로딩 시간을 재현합니다."
+msgstr "씬 전환 시 무작위 지연을 추가해 오래된 CD 드라이브의 로딩 시간을 재현합니다."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:147
@@ -5815,7 +5815,7 @@ msgstr "고해상도 그래픽/컨텐츠를 사용합니다"
 
 #: engines/sci/detection.cpp:194
 msgid "Enable black-lined video"
-msgstr "비디오에 검은선 표시"
+msgstr "비디오에 검은 선 표시"
 
 #: engines/sci/detection.cpp:195
 msgid "Draw black lines over videos to increase their apparent sharpness"
@@ -6543,31 +6543,31 @@ msgstr "지팡이로 높은 C를 연주"
 
 #: engines/scumm/help.cpp:192 engines/scumm/help.cpp:214
 msgid "puSh"
-msgstr "밀기 (S)"
+msgstr "밀기"
 
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:215
 msgid "pull (Yank)"
-msgstr "당기기 (Y)"
+msgstr "당기기"
 
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:212
 #: engines/scumm/help.cpp:248 engines/wintermute/keymapper_tables.h:129
 #: engines/wintermute/keymapper_tables.h:1482
 msgid "Talk to"
-msgstr "대화하기 (T)"
+msgstr "대화하기"
 
 #: engines/scumm/help.cpp:199 engines/scumm/help.cpp:211
 #: engines/wintermute/keymapper_tables.h:123
 #: engines/wintermute/keymapper_tables.h:1458
 msgid "Look at"
-msgstr "보기 (L)"
+msgstr "보기"
 
 #: engines/scumm/help.cpp:200
 msgid "turn oN"
-msgstr "켜기 (N)"
+msgstr "켜기"
 
 #: engines/scumm/help.cpp:201
 msgid "turn oFf"
-msgstr "끄기 (F)"
+msgstr "끄기"
 
 #: engines/scumm/help.cpp:217
 msgid "KeyUp"
