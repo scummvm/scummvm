@@ -46,6 +46,7 @@ MODULE_OBJS := \
 	holomap.o \
 	input.o \
 	metaengine.o \
+	shared.o \
 	text.o \
 	twine.o
 

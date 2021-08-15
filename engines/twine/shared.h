@@ -125,6 +125,28 @@ inline constexpr IVec3 operator-(const IVec3 &v) {
 }
 
 /**
+ * Get distance value in 2D
+ * @param x1 Actor 1 X coordinate
+ * @param z1 Actor 1 Z coordinate
+ * @param x2 Actor 2 X coordinate
+ * @param z2 Actor 2 Z coordinate
+ */
+int32 getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2);
+int32 getDistance2D(const IVec3 &v1, const IVec3 &v2);
+
+/**
+ * Get distance value in 3D
+ * @param x1 Actor 1 X coordinate
+ * @param y1 Actor 1 Y coordinate
+ * @param z1 Actor 1 Z coordinate
+ * @param x2 Actor 2 X coordinate
+ * @param y2 Actor 2 Y coordinate
+ * @param z2 Actor 2 Z coordinate
+ */
+int32 getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2, int32 z2);
+int32 getDistance3D(const IVec3 &v1, const IVec3 &v2);
+
+/**
  * @brief Axis aligned bounding box
  */
 struct BoundingBox {

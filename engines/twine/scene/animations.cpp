@@ -346,7 +346,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			break;
 		case ActionType::ACTION_THROW_3D_ALPHA:
 			if (action.animFrame == actor->_animPosition) {
-				const int32 distance = _engine->_movements->getDistance2D(actor->pos(), _engine->_scene->_sceneHero->pos());
+				const int32 distance = getDistance2D(actor->pos(), _engine->_scene->_sceneHero->pos());
 				const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->_pos.y, 0, _engine->_scene->_sceneHero->_pos.y, distance);
 
 				const IVec3 &destPos = _engine->_movements->rotateActor(action.distanceX, action.distanceZ, actor->_angle);
@@ -454,7 +454,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTy
 	return true;
 }
 
-void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
+void Animations::processActorAnimations(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	_currentlyProcessedActorIdx = actorIdx;
@@ -499,7 +499,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 				if (actor->_dynamicFlags.bIsSpriteMoving) {
 					if (actor->_doorStatus) { // open door
-						if (_engine->_movements->getDistance2D(processActor.x, processActor.z, actor->_lastPos.x, actor->_lastPos.z) >= actor->_doorStatus) {
+						if (getDistance2D(processActor.x, processActor.z, actor->_lastPos.x, actor->_lastPos.z) >= actor->_doorStatus) {
 							if (actor->_angle == ANGLE_0) {
 								processActor.z = actor->_lastPos.z + actor->_doorStatus;
 							} else if (actor->_angle == ANGLE_90) {
