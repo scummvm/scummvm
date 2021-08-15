@@ -1310,7 +1310,7 @@ static int32 lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x48
  */
 static int32 lSET_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
-	static int32 location = ctx.stream.readByte();
+	const int32 location = ctx.stream.readByte();
 	engine->_holomap->setHolomapPosition(location);
 	return 0;
 }
@@ -1320,7 +1320,7 @@ static int32 lSET_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x49
  */
 static int32 lCLR_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
-	static int32 location = ctx.stream.readByte();
+	const int32 location = ctx.stream.readByte();
 	engine->_holomap->clearHolomapPosition(location);
 	return 0;
 }
