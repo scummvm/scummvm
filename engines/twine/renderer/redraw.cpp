@@ -600,7 +600,7 @@ void Redraw::renderOverlays() {
 			}
 			case OverlayType::koInventoryItem: {
 				const int32 item = overlay->info0;
-				const Common::Rect rect(10, 10, 69, 69);
+				const Common::Rect rect(10, 10, 79, 79);
 
 				_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 				_engine->_interface->setClip(rect);
