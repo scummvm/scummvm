@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-15 14:18+0000\n"
-"PO-Revision-Date: 2021-08-15 09:25+0000\n"
+"PO-Revision-Date: 2021-08-16 09:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -7338,7 +7338,7 @@ msgstr "グリッドカメラを右へ"
 
 #: engines/twine/metaengine.cpp:144
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "アクターを画面中央に配置"
 
 #: engines/twine/metaengine.cpp:149
 msgid "Debug Menu"
