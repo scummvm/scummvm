@@ -45,6 +45,10 @@ public:
 	virtual void initBackend();
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
+#ifdef USE_OPENGL
+	virtual GraphicsManagerType getDefaultGraphicsManager() const;
+#endif
+
 	//Screenshots
 	virtual Common::String getScreenshotsPath();
 

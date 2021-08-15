@@ -113,6 +113,12 @@ void OSystem_MacOSX::initBackend() {
 	OSystem_POSIX::initBackend();
 }
 
+#ifdef USE_OPENGL
+OSystem_SDL::GraphicsManagerType OSystem_MacOSX::getDefaultGraphicsManager() const {
+	return GraphicsManagerOpenGL;
+}
+#endif
+
 void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	// Invoke parent implementation of this method
 	OSystem_POSIX::addSysArchivesToSearchSet(s, priority);
