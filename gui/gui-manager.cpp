@@ -117,6 +117,18 @@ void GuiManager::computeScaleFactor() {
 	_baseHeight = (int16)((float)h / _scaleFactor);
 	_baseWidth = (int16)((float)w / _scaleFactor);
 
+	// Never go below 320x200. Our GUI layout is not designed to go below that.
+	if (_baseHeight < 200) {
+		_baseHeight = 200;
+		_scaleFactor = (float)h / (float)_baseHeight;
+		_baseWidth = (int16)((float)w / _scaleFactor);
+	}
+	if (_baseWidth < 320) {
+		_baseWidth = 320;
+		_scaleFactor = (float)w / (float)_baseWidth;
+		_baseHeight = (int16)((float)h / _scaleFactor);
+	}
+
 	if (_theme)
 		_theme->setBaseResolution(_baseWidth, _baseHeight, _scaleFactor);
 
