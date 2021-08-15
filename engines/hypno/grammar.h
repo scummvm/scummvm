@@ -66,9 +66,8 @@ class MVideo {
 	bool scaled;
 	bool transparent;
 	bool loop;
-	Video::SmackerDecoder *videoDecoder;
-	const Graphics::Surface *currentFrame;
-	uint32 finishBeforeEnd;
+	Video::SmackerDecoder *decoder = nullptr;
+	const Graphics::Surface *currentFrame = nullptr;
 };
 
 typedef Common::Array<MVideo> Videos;
@@ -173,6 +172,8 @@ class Shoot {
     Common::String name;
 	Common::String animation;
 	Common::Point position;
+	MVideo *video = nullptr;
+	uint32 explosionFrame;
 };
 
 typedef Common::Array<Shoot> Shoots;

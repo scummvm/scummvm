@@ -53,9 +53,6 @@ MVideo::MVideo(Common::String _path, Common::Point _position, bool _transparent,
 	scaled = _scaled;
 	transparent = _transparent;
 	loop = _loop;
-	videoDecoder = nullptr;
-	currentFrame = nullptr;
-	finishBeforeEnd = 0;
 }
 
 const static char* levelVariables[] = {
@@ -351,7 +348,7 @@ void HypnoEngine::runScene(Scene scene, Videos intros) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
-						if (it->videoDecoder)
+						if (it->decoder)
 							skipVideo(*it);
 					}
 					_videosPlaying.clear();
@@ -423,19 +420,19 @@ void HypnoEngine::runScene(Scene scene, Videos intros) {
 		videosToRemove.clear();
 		for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
 
-			if (it->videoDecoder) {
-				if (it->videoDecoder->endOfVideo()) {
+			if (it->decoder) {
+				if (it->decoder->endOfVideo()) {
 					if (it->loop) {
-						it->videoDecoder->rewind();
-						it->videoDecoder->start();
+						it->decoder->rewind();
+						it->decoder->start();
 					} else {
-						it->videoDecoder->close();
-						delete it->videoDecoder;
-						it->videoDecoder = nullptr;
+						it->decoder->close();
+						delete it->decoder;
+						it->decoder = nullptr;
 						videosToRemove.push_back(i);
 					}
 
-				} else if (it->videoDecoder->needsUpdate()) {
+				} else if (it->decoder->needsUpdate()) {
 					updateScreen(*it);
 				}
 			}
@@ -769,15 +766,15 @@ void HypnoEngine::changeScreenMode(Common::String mode) {
 }
 
 void HypnoEngine::updateScreen(MVideo &video) {
-	const Graphics::Surface *frame = video.videoDecoder->decodeNextFrame();
+	const Graphics::Surface *frame = video.decoder->decodeNextFrame();
 	video.currentFrame = frame;
 	Graphics::Surface *sframe, *cframe;
 
 	if (video.scaled) {
 		sframe = frame->scale(_screenW, _screenH);
-		cframe = sframe->convertTo(_pixelFormat, video.videoDecoder->getPalette());
+		cframe = sframe->convertTo(_pixelFormat, video.decoder->getPalette());
 	} else
-		cframe = frame->convertTo(_pixelFormat, video.videoDecoder->getPalette());
+		cframe = frame->convertTo(_pixelFormat, video.decoder->getPalette());
 	
 	if (video.transparent)
 		_compositeSurface->transBlitFrom(*cframe, video.position, _transparentColor);
@@ -812,18 +809,18 @@ void HypnoEngine::playVideo(MVideo &video) {
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());
 
-	assert(video.videoDecoder == nullptr);
-	video.videoDecoder = new Video::SmackerDecoder();
+	assert(video.decoder == nullptr);
+	video.decoder = new Video::SmackerDecoder();
 
-	if (!video.videoDecoder->loadStream(file))
+	if (!video.decoder->loadStream(file))
 		error("unable to load video %s", path.c_str());
-	video.videoDecoder->start();
+	video.decoder->start();
 }
 
 void HypnoEngine::skipVideo(MVideo &video) {
-	video.videoDecoder->close();
-	delete video.videoDecoder;
-	video.videoDecoder = nullptr;	
+	video.decoder->close();
+	delete video.decoder;
+	video.decoder = nullptr;
 	//_currentMovie = "";
 }
 

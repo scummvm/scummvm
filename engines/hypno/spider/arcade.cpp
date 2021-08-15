@@ -21,6 +21,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 	Common::Event event;
 	Common::Point mousePos;
 	Common::List<uint32> videosToRemove;
+	Shoots shootsInScreen;
 
 	MVideo background = MVideo(arc.background, Common::Point(0, 0), false, false, false);	
 	Graphics::Surface *sp = decodeFrame(arc.player, 2);
@@ -53,62 +54,60 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 			}
 		}
 
-		// Movies
-		for (Videos::iterator it = _nextParallelVideoToPlay.begin(); it != _nextParallelVideoToPlay.end(); ++it) {
-			playVideo(*it);
-			_videosPlaying.push_back(*it);
-		}
-
-		if (_nextParallelVideoToPlay.size() > 0)
-			_nextParallelVideoToPlay.clear();
-
-		if (background.videoDecoder->endOfVideo()) {
+		if (background.decoder->endOfVideo()) {
 			skipVideo(background);
 			_nextSetting = "mis/demo.mis";
 			return;
 		}
 
-
-		if (background.videoDecoder->needsUpdate())
-			updateScreen(background);
-
 		if (_shootInfos.size() > 0) {
 			ShootInfo si = _shootInfos.front();
-			if (si.timestamp <= background.videoDecoder->getCurFrame()) {
+			if (si.timestamp <= background.decoder->getCurFrame()) {
 				_shootInfos.pop_front();
 				for (Shoots::iterator it = arc.shoots.begin(); it != arc.shoots.end(); ++it) {
 					if (it->name == si.name) {
-						_nextParallelVideoToPlay.push_back(MVideo(it->animation, it->position , true, false, false));
-						_nextParallelVideoToPlay[0].finishBeforeEnd = 24;
+						Shoot s = *it;
+						s.video = new MVideo(it->animation, it->position , true, false, false);
+						playVideo(*s.video);
+						s.explosionFrame = s.video->decoder->getFrameCount() - 24;
+						shootsInScreen.push_back(s);
 					}
 				}
 			}
 		}
 
+		if (background.decoder->needsUpdate())
+			updateScreen(background);
+
 		//drawImage(*sp, 60, 129, true);
 		uint32 i = 0;
 		videosToRemove.clear();
 
-		for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
-			if (it->videoDecoder) {
-				if (it->videoDecoder-> getCurFrame() > 0 && it->videoDecoder-> getCurFrame() >= it->videoDecoder->getFrameCount() - it->finishBeforeEnd) {
-				delete it->videoDecoder;
-				it->videoDecoder = nullptr;
-				videosToRemove.push_back(i);
+		for (Shoots::iterator it = shootsInScreen.begin(); it != shootsInScreen.end(); ++it) {
+			if (it->video->decoder) {
+				int frame = it->video->decoder->getCurFrame(); 
+				if (frame > 0 && frame >= it->explosionFrame) {
+					skipVideo(*it->video);
+				}
 
-				} else if (it->videoDecoder->needsUpdate()) {
-					updateScreen(*it);
+				//if (it->videoDecoder-> getCurFrame() > 0 && it->videoDecoder-> getCurFrame() >= it->videoDecoder->getFrameCount() - it->finishBeforeEnd) {
+				//delete it->videoDecoder;
+				//it->videoDecoder = nullptr;
+				//videosToRemove.push_back(i);
+
+				else if (it->video->decoder->needsUpdate()) {
+					updateScreen(*it->video);
 				}
 			}
 			i++;
 		}
 
-		if (videosToRemove.size() > 0) {
-			for(Common::List<uint32>::iterator it = videosToRemove.begin(); it != videosToRemove.end(); ++it) {
-				debug("removing %d from %d size", *it, _videosPlaying.size()); 
-				_videosPlaying.remove_at(*it);
-			}
-		}
+		//if (videosToRemove.size() > 0) {
+		//	for(Common::List<uint32>::iterator it = videosToRemove.begin(); it != videosToRemove.end(); ++it) {
+		//		debug("removing %d from %d size", *it, _videosPlaying.size()); 
+		//		_videosPlaying.remove_at(*it);
+		//	}
+		//}
 
 		if (_music.empty()) {
 			_music = "c_misc/sound.lib/" + arc.sounds.front();
@@ -126,7 +125,7 @@ bool HypnoEngine::clickedShoot(Common::Point mousePos) {
 	int y;
 	int i = 0;
 	//it++;
-	for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
+	/*for (Videos::iterator it = _videosPlaying.begin(); it != _videosPlaying.end(); ++it) {
 		x = mousePos.x - it->position.x;
 		y = mousePos.y - it->position.y;
 		if (it->videoDecoder && x >= 0 && y >= 0 && x < it->videoDecoder->getWidth() && y < it->videoDecoder->getHeight()) {
@@ -141,7 +140,7 @@ bool HypnoEngine::clickedShoot(Common::Point mousePos) {
 			}
 		}
 		i++;
-	}
+	}*/
 	return found;
 }
 
