@@ -1215,7 +1215,7 @@ static int32 lPLAY_FLA(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x41
  */
 static int32 lPLAY_MIDI(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 midiIdx = ctx.stream.readByte();
+	const int32 midiIdx = ctx.stream.readByte();
 	engine->_music->playMidiMusic(midiIdx); // TODO: improve this
 	return 0;
 }
@@ -1234,7 +1234,7 @@ static int32 lINC_CLOVER_BOX(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x43
  */
 static int32 lSET_USED_INVENTORY(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 item = ctx.stream.readByte();
+	const int32 item = ctx.stream.readByte();
 	if (item < InventoryItems::kKeypad) { // TODO: this looks wrong - why only up to keypad?
 		engine->_gameState->_inventoryFlags[item] = 1;
 	}
@@ -1246,7 +1246,7 @@ static int32 lSET_USED_INVENTORY(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x44
  */
 static int32 lADD_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
+	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 	engine->_gameState->_gameChoices[engine->_gameState->_numChoices++] = choiceIdx;
 	return 0;
 }
@@ -1256,7 +1256,7 @@ static int32 lADD_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x45
  */
 static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
+	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 
 	ScopedEngineFreeze scopedFreeze(engine);
 	if (engine->_text->_showDialogueBubble) {
@@ -1275,7 +1275,7 @@ static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x46
  */
 static int32 lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	TextId textIdx = (TextId)ctx.stream.readSint16LE();
+	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
 	ScopedEngineFreeze scopedFreeze(engine);
 	engine->_text->textClipFull();
