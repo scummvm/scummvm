@@ -362,7 +362,7 @@ void GameManager::processInput() {
 		onInventoryArrowDown
 	} mouseLocation;
 
-	_ttsMan = g_system->getTextToSpeechManager();
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 
 	if (_mouseField >= 0 && _mouseField < 256)
 		mouseLocation = onObject;
@@ -529,19 +529,22 @@ void GameManager::processInput() {
 			case onInventoryArrowDown:
 				// Fallthrough
 				_guiInventoryArrow[_mouseField - 768].setHighlight(true);
-				_ttsMan->say(_guiInventoryArrow[_mouseField - 768].getText(), Common::TextToSpeechManager::INTERRUPT_NO_REPEAT, Common::kDos850);
 				break;
 			case onInventory:
 				_guiInventory[_mouseField - 512].setHighlight(true);
 				_currentInputObject = _inventory.get(_mouseField - 512 + _inventoryScroll);
-				_ttsMan->say(_guiInventory[_mouseField - 512].getText(), Common::TextToSpeechManager::INTERRUPT_NO_REPEAT, Common::kDos850);
+				if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+					ttsMan->say(_vm->getGameString(_currentInputObject->_name), Common::kDos850);
 				break;
 			case onCmdButton:
 				_guiCommandButton[_mouseField - 256].setHighlight(true);
-				_ttsMan->say(_guiCommandButton[_mouseField - 256].getText(), Common::TextToSpeechManager::INTERRUPT_NO_REPEAT, Common::kDos850);
+				if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+					ttsMan->say(_guiCommandButton[_mouseField - 256].getText(), Common::kDos850);
 				break;
 			case onObject:
 				_currentInputObject = _currentRoom->getObject(_mouseField);
+				if (!isNullObject(_currentInputObject))
+					ttsMan->say(_vm->getGameString(_currentInputObject->_name), Common::kDos850);
 				break;
 			case onNone:
 			default:
@@ -562,8 +565,7 @@ bool GameManager::isNullObject(Object *obj) {
 void GameManager::sentence(int number, bool brightness) {
 	if (number < 0)
 		return;
-
-	_ttsMan = g_system->getTextToSpeechManager();
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	Common::String string;
 
 	_vm->renderBox(0, 141 + _rowsStart[number] * 10, 320, _rows[number] * 10 - 1, brightness ? kColorWhite44 : kColorWhite25);
@@ -578,8 +580,8 @@ void GameManager::sentence(int number, bool brightness) {
 			string += _vm->getGameString(_texts[r]);
 		}
 	}
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled") && brightness)
-		_ttsMan->say(string, Common::TextToSpeechManager::QUEUE_NO_REPEAT, Common::kDos850);
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && brightness)
+		ttsMan->say(string, Common::TextToSpeechManager::QUEUE_NO_REPEAT, Common::kDos850);
 }
 
 void GameManager::say(int textId) {

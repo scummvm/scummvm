@@ -101,7 +101,6 @@ private:
 
 class GameManager {
 public:
-	Common::TextToSpeechManager *_ttsMan;
 
 	GameManager(SupernovaEngine *vm, Sound *sound);
 	virtual ~GameManager();

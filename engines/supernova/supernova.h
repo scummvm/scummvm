@@ -137,8 +137,6 @@ public:
 	void renderBox(const GuiElement &guiElement);
 	void setColor63(byte value);
 	void stopSound();
-	// Common::Language getLanguage() const;
-	Common::TextToSpeechManager *_ttsMan;
 };
 
 }

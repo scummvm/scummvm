@@ -102,7 +102,6 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 
 	_improved = ConfMan.getBool("improved");
 
-	_ttsMan = g_system->getTextToSpeechManager();
 }
 
 SupernovaEngine::~SupernovaEngine() {
@@ -114,8 +113,9 @@ SupernovaEngine::~SupernovaEngine() {
 }
 
 Common::Error SupernovaEngine::run() {
-	// if (_ttsMan != nullptr)
-	// 	_ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr)
+		ttsMan->setLanguage(ConfMan.get("language"));
 
 	init();
 
@@ -836,9 +836,5 @@ void SupernovaEngine::errorTempSave(bool saving) {
 void SupernovaEngine::stopSound() {
 	_sound->stop();
 }
-
-// Common::Language SupernovaEngine::getLanguage() const {
-//  	return _gameDescription->language;
-// }
 
 }

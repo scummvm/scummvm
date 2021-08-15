@@ -532,9 +532,9 @@ void Screen::renderMessage(const char *text, MessagePosition position, int posit
 	int y = 0;
 	byte textColor = 0;
 
-	_ttsMan = g_system->getTextToSpeechManager();
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
-		_ttsMan->say(text,  Common::TextToSpeechManager::QUEUE_NO_REPEAT, Common::kDos850);
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+		ttsMan->say(text,  Common::TextToSpeechManager::QUEUE_NO_REPEAT, Common::kDos850);
 
 	while (*p != '\0') {
 		row[numRows] = p;
