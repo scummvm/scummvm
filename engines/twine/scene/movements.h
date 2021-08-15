@@ -183,7 +183,7 @@ public:
 	 * @param z Actor current Z coordinate
 	 * @param angle Actor angle to rotate
 	 */
-	const IVec3 &rotateActor(int32 x, int32 z, int32 angle);
+	IVec3 rotateActor(int32 x, int32 z, int32 angle);
 
 	/**
 	 * Move actor around the scene

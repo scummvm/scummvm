@@ -117,10 +117,6 @@ static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->_currentScriptValue = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	// TODO: is this needed? Most likely not as the scene track positions are passed as parameters
-	// everywhere and the _destPos var is not used in this function.
-	engine->_renderer->_destPos = sp;
-
 	const int32 newAngle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos.x, ctx.actor->_pos.z, sp.x, sp.z);
 
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
@@ -189,10 +185,6 @@ static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->_currentScriptValue = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	// TODO: is this needed? Most likely not as the scene track positions are passed as parameters
-	// everywhere and the _destPos var is not used in this function.
-	engine->_renderer->_destPos = sp;
-
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
 		ctx.actor->_speed = 0;
 	}
@@ -247,10 +239,6 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->_currentScriptValue = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	// TODO: is this needed? Most likely not as the scene track positions are passed as parameters
-	// everywhere and the _destPos var is not used in this function.
-	engine->_renderer->_destPos = sp;
-
 	const int32 newAngle = ANGLE_180 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos.x, ctx.actor->_pos.z, sp.x, sp.z);
 
 	if (ctx.actor->_staticFlags.bIsSpriteActor) {
@@ -320,10 +308,6 @@ static int32 mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->_currentScriptValue = trackId;
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[engine->_scene->_currentScriptValue];
-	// TODO: is this needed? Most likely not as the scene track positions are passed as parameters
-	// everywhere and the _destPos var is not used in this function.
-	engine->_renderer->_destPos = sp;
-
 	ctx.actor->_angle = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos.x, ctx.actor->_pos.z, sp.x, sp.z);
 	ctx.actor->_spriteActorRotation = engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->_pos.y, 0, sp.y, engine->_movements->_targetActorDistance);
 

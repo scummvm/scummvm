@@ -1114,14 +1114,8 @@ static int32 lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x3A
  */
 static int32 lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 trackIdx = ctx.stream.readByte();
-
-	const IVec3 &sp = engine->_scene->_sceneTracks[trackIdx];
-	// TODO: is this needed? Most likely not as the scene track positions are passed as parameters
-	// everywhere and the _destPos var is not used in this function.
-	engine->_renderer->_destPos = sp;
-	ctx.actor->_pos = sp;
-
+	const int32 trackIdx = ctx.stream.readByte();
+	ctx.actor->_pos = engine->_scene->_sceneTracks[trackIdx];
 	return 0;
 }
 

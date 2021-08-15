@@ -213,7 +213,6 @@ public:
 	void init(int32 w, int32 h);
 
 	IVec3 _projPos;
-	IVec3 _destPos;
 
 	void setBaseRotationPos(int32 x, int32 y, int32 z);
 	IVec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
