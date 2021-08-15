@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-15 14:18+0000\n"
-"PO-Revision-Date: 2021-08-04 12:37+0000\n"
+"PO-Revision-Date: 2021-08-15 18:23+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -898,7 +898,7 @@ msgstr "30분마다"
 #. I18N: Very large GUI scale
 #: gui/options.cpp:138
 msgid "Very large"
-msgstr ""
+msgstr "아주 크게"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:140
@@ -3376,7 +3376,7 @@ msgstr "돋보기 모드 끔"
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:77
 msgid "Show SAF revoke permissions overlay button"
-msgstr ""
+msgstr "SAF 권한 승인 취소 오버레이 버튼을 표시"
 
 #: backends/platform/ds/ds-graphics.cpp:219
 msgid "Unscaled"
@@ -5201,11 +5201,11 @@ msgstr "원본 게임 엔진에서는 Myst 근접 통과 영상이 재생되지 
 #.
 #: engines/mohawk/dialogs.cpp:135
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
-msgstr ""
+msgstr "Selenitic Age 퍼즐의 접근성을 개선(~a~)"
 
 #: engines/mohawk/dialogs.cpp:136
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
-msgstr ""
+msgstr "Selenitic Age 오디오 퍼즐의 답변에 더 많은 오차를 허용합니다."
 
 #: engines/mohawk/dialogs.cpp:139
 msgid "Simulate loading times of old CD drives"
@@ -5215,7 +5215,7 @@ msgstr "오래된 CD 드라이브의 로딩 시간을 재현"
 msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
-msgstr ""
+msgstr "씬 전환시 무작위 지연을 추가해 오래된 CD 드라이브의 로딩 시간을 재현합니다."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:147
@@ -5904,14 +5904,12 @@ msgid "Use custom per-resource palettes to improve visuals"
 msgstr "비주얼 향상을 위해 리소스별 커스텀 팔레트 사용"
 
 #: engines/sci/detection.cpp:323
-#, fuzzy
-#| msgid "Enable frame skipping"
 msgid "Enable bearded musicians"
-msgstr "프레임 스킵 활성화"
+msgstr "턱수염이 난 음악가를 활성화"
 
 #: engines/sci/detection.cpp:324
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "법적인 문제로 비활성화되었던 그래픽을 활성화"
 
 #: engines/sci/detection.cpp:354
 msgid "MIDI mode:"
@@ -7339,7 +7337,7 @@ msgstr "디버그 그리드 카메라를 오른쪽으로 이동"
 
 #: engines/twine/metaengine.cpp:144
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "액터를 화면 중앙에 배치"
 
 #: engines/twine/metaengine.cpp:149
 msgid "Debug Menu"
@@ -7499,12 +7497,12 @@ msgstr "게임 폰트를 렌더링된 폰트로 교체"
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/detection.cpp:130
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "Silencer를 따라 카메라 이동"
 
 #: engines/ultima/detection.cpp:131
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
-msgstr ""
+msgstr "카메라가 미리 지정된 위치에 고정되지 않고 플레이어를 따라 이동합니다."
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
