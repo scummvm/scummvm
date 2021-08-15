@@ -258,6 +258,7 @@ public:
 	char _dirSeparator;
 
 	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+	Common::HashMap<uint, Graphics::Cursor *> _winCursor;
 
 protected:
 	Common::Error run() override;

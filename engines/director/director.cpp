@@ -129,6 +129,9 @@ DirectorEngine::~DirectorEngine() {
 		delete it->_value;
 	}
 
+	for (Common::HashMap<uint, Graphics::Cursor *>::iterator it = _winCursor.begin(); it != _winCursor.end(); it++)
+		delete it->_value;
+
 	clearPalettes();
 }
 
