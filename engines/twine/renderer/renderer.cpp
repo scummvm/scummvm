@@ -174,9 +174,8 @@ const IVec3 &Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose
 	if (transpose) {
 		baseMatrixTranspose();
 	}
-	getBaseRotationPosition(_baseTransPos.x, _baseTransPos.y, _baseTransPos.z);
+	_baseRotPos = getBaseRotationPosition(_baseTransPos.x, _baseTransPos.y, _baseTransPos.z);
 
-	_baseRotPos = _destPos;
 	return _baseRotPos;
 }
 
@@ -318,12 +317,12 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 	}
 }
 
-void Renderer::applyPointsRotation(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix) {
+void Renderer::applyPointsRotation(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix, const IVec3 &destPos) {
 	for (int32 i = 0; i < numPoints; ++i) {
 		const BodyVertex &vertex = vertices[i + firstPoint];
-		destPoints->x = ((rotationMatrix->row1.x * vertex.x + rotationMatrix->row1.y * vertex.y + rotationMatrix->row1.z * vertex.z) / SCENE_SIZE_HALF) + _destPos.x;
-		destPoints->y = ((rotationMatrix->row2.x * vertex.x + rotationMatrix->row2.y * vertex.y + rotationMatrix->row2.z * vertex.z) / SCENE_SIZE_HALF) + _destPos.y;
-		destPoints->z = ((rotationMatrix->row3.x * vertex.x + rotationMatrix->row3.y * vertex.y + rotationMatrix->row3.z * vertex.z) / SCENE_SIZE_HALF) + _destPos.z;
+		destPoints->x = ((rotationMatrix->row1.x * vertex.x + rotationMatrix->row1.y * vertex.y + rotationMatrix->row1.z * vertex.z) / SCENE_SIZE_HALF) + destPos.x;
+		destPoints->y = ((rotationMatrix->row2.x * vertex.x + rotationMatrix->row2.y * vertex.y + rotationMatrix->row2.z * vertex.z) / SCENE_SIZE_HALF) + destPos.y;
+		destPoints->z = ((rotationMatrix->row3.x * vertex.x + rotationMatrix->row3.y * vertex.y + rotationMatrix->row3.z * vertex.z) / SCENE_SIZE_HALF) + destPos.z;
 
 		destPoints++;
 	}
@@ -335,20 +334,17 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Arr
 	const IVec3 renderAngle(rotX, rotY, rotZ);
 
 	const IMatrix3x3 *currentMatrix;
+	IVec3 destPos;
 	// if its the first point
 	if (bone.isRoot()) {
 		currentMatrix = &_baseMatrix;
-
-		_destPos.x = 0;
-		_destPos.y = 0;
-		_destPos.z = 0;
 	} else {
 		const int32 pointIdx = bone.vertex;
 		const int32 matrixIndex = bone.parent;
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(_matricesTable));
 		currentMatrix = &_matricesTable[matrixIndex];
 
-		_destPos = modelData->computedPoints[pointIdx];
+		destPos = modelData->computedPoints[pointIdx];
 	}
 
 	applyRotation(targetMatrix, currentMatrix, renderAngle);
@@ -357,19 +353,19 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Arr
 		warning("RENDER WARNING: No points in this model!");
 	}
 
-	applyPointsRotation(vertices, firstPoint, numOfPoints, &modelData->computedPoints[firstPoint], targetMatrix);
+	applyPointsRotation(vertices, firstPoint, numOfPoints, &modelData->computedPoints[firstPoint], targetMatrix, destPos);
 }
 
-void Renderer::applyPointsTranslation(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec) {
+void Renderer::applyPointsTranslation(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec, const IVec3 &destPos) {
 	for (int32 i = 0; i < numPoints; ++i) {
 		const BodyVertex &vertex = vertices[i + firstPoint];
 		const int32 tmpX = vertex.x + angleVec.z;
 		const int32 tmpY = vertex.y + angleVec.y;
 		const int32 tmpZ = vertex.z + angleVec.x;
 
-		destPoints->x = ((translationMatrix->row1.x * tmpX + translationMatrix->row1.y * tmpY + translationMatrix->row1.z * tmpZ) / SCENE_SIZE_HALF) + _destPos.x;
-		destPoints->y = ((translationMatrix->row2.x * tmpX + translationMatrix->row2.y * tmpY + translationMatrix->row2.z * tmpZ) / SCENE_SIZE_HALF) + _destPos.y;
-		destPoints->z = ((translationMatrix->row3.x * tmpX + translationMatrix->row3.y * tmpY + translationMatrix->row3.z * tmpZ) / SCENE_SIZE_HALF) + _destPos.z;
+		destPoints->x = ((translationMatrix->row1.x * tmpX + translationMatrix->row1.y * tmpY + translationMatrix->row1.z * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
+		destPoints->y = ((translationMatrix->row2.x * tmpX + translationMatrix->row2.y * tmpY + translationMatrix->row2.z * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
+		destPoints->z = ((translationMatrix->row3.x * tmpX + translationMatrix->row3.y * tmpY + translationMatrix->row3.z * tmpZ) / SCENE_SIZE_HALF) + destPos.z;
 
 		destPoints++;
 	}
@@ -381,22 +377,20 @@ void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::
 	renderAngle.y = rotY;
 	renderAngle.z = rotZ;
 
-	if (bone.isRoot()) { // base point
-		_destPos.x = 0;
-		_destPos.y = 0;
-		_destPos.z = 0;
+	IVec3 destPos;
 
+	if (bone.isRoot()) { // base point
 		*targetMatrix = _baseMatrix;
 	} else { // dependent
 		const int32 pointsIdx = bone.vertex;
-		_destPos = modelData->computedPoints[pointsIdx];
+		destPos = modelData->computedPoints[pointsIdx];
 
 		const int32 matrixIndex = bone.parent;
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(_matricesTable));
 		*targetMatrix = _matricesTable[matrixIndex];
 	}
 
-	applyPointsTranslation(vertices, bone.firstVertex, bone.numVertices, &modelData->computedPoints[bone.firstVertex], targetMatrix, renderAngle);
+	applyPointsTranslation(vertices, bone.firstVertex, bone.numVertices, &modelData->computedPoints[bone.firstVertex], targetMatrix, renderAngle, destPos);
 }
 
 void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
@@ -407,9 +401,7 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 
 	const IVec3 renderAngle(angleX, angleY, angleZ);
 	applyRotation(&_shadeMatrix, &_baseMatrix, renderAngle);
-	translateGroup(0, 0, 59);
-
-	_lightPos = _destPos;
+	_lightPos = translateGroup(0, 0, 59);
 }
 
 static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {

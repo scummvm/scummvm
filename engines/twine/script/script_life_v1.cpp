@@ -1117,6 +1117,8 @@ static int32 lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 trackIdx = ctx.stream.readByte();
 
 	const IVec3 &sp = engine->_scene->_sceneTracks[trackIdx];
+	// TODO: is this needed? Most likely not as the scene track positions are passed as parameters
+	// everywhere and the _destPos var is not used in this function.
 	engine->_renderer->_destPos = sp;
 	ctx.actor->_pos = sp;
 

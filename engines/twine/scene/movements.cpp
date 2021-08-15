@@ -141,10 +141,11 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 	return ClampAngle(finalAngle);
 }
 
-void Movements::rotateActor(int32 x, int32 z, int32 angle) {
+const IVec3 &Movements::rotateActor(int32 x, int32 z, int32 angle) {
 	const double radians = AngleToRadians(angle);
 	_engine->_renderer->_destPos.x = (int32)(x * cos(radians) + z * sin(radians));
 	_engine->_renderer->_destPos.z = (int32)(-x * sin(radians) + z * cos(radians));
+	return _engine->_renderer->_destPos;
 }
 
 int32 Movements::getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) const {

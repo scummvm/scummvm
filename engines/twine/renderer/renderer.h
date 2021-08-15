@@ -143,9 +143,9 @@ private:
 		return getCameraAnglePositions(vec.x, vec.y, vec.z);
 	}
 	void applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix, const IVec3 &angleVec);
-	void applyPointsRotation(const Common::Array<BodyVertex>& vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix);
+	void applyPointsRotation(const Common::Array<BodyVertex>& vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix, const IVec3 &destPos);
 	void processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex>& vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData);
-	void applyPointsTranslation(const Common::Array<BodyVertex>& vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec);
+	void applyPointsTranslation(const Common::Array<BodyVertex>& vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec, const IVec3 &destPos);
 	void processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex>& vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData);
 	const IVec3 &translateGroup(int32 x, int32 y, int32 z);
 

@@ -733,12 +733,12 @@ void Scene::processActorZones(int32 actorIdx) {
 				break;
 			case ZoneType::kLadder:
 				if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_anim == AnimationTypes::kForward || actor->_anim == AnimationTypes::kTopLadder || actor->_anim == AnimationTypes::kClimbLadder)) {
-					_engine->_movements->rotateActor(actor->_boudingBox.mins.x, actor->_boudingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
-					_engine->_renderer->_destPos.x += _engine->_movements->_processActor.x;
-					_engine->_renderer->_destPos.z += _engine->_movements->_processActor.z;
+					IVec3 destPos = _engine->_movements->rotateActor(actor->_boudingBox.mins.x, actor->_boudingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
+					destPos.x += _engine->_movements->_processActor.x;
+					destPos.z += _engine->_movements->_processActor.z;
 
-					if (_engine->_renderer->_destPos.x >= 0 && _engine->_renderer->_destPos.z >= 0 && _engine->_renderer->_destPos.x <= 0x7E00 && _engine->_renderer->_destPos.z <= 0x7E00) {
-						if (_engine->_grid->getBrickShape(_engine->_renderer->_destPos.x, actor->_pos.y + ANGLE_90, _engine->_renderer->_destPos.z) != ShapeType::kNone) {
+					if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= 0x7E00 && destPos.z <= 0x7E00) {
+						if (_engine->_grid->getBrickShape(destPos.x, actor->_pos.y + ANGLE_90, destPos.z) != ShapeType::kNone) {
 							_currentActorInZone = true;
 							if (actor->_pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationType_2, AnimationTypes::kStanding, actorIdx); // reached end of ladder

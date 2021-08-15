@@ -183,7 +183,7 @@ public:
 	 * @param z Actor current Z coordinate
 	 * @param angle Actor angle to rotate
 	 */
-	void rotateActor(int32 x, int32 z, int32 angle);
+	const IVec3 &rotateActor(int32 x, int32 z, int32 angle);
 
 	/**
 	 * Get distance value in 2D

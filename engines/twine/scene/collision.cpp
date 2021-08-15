@@ -321,15 +321,15 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 	}
 
 	if (actor->_dynamicFlags.bIsHitting) {
-		_engine->_movements->rotateActor(0, 200, actor->_angle);
+		const IVec3 &destPos = _engine->_movements->rotateActor(0, 200, actor->_angle);
 
-		mins.x = _engine->_renderer->_destPos.x + processActor.x + actor->_boudingBox.mins.x;
+		mins.x = destPos.x + processActor.x + actor->_boudingBox.mins.x;
 		mins.y = processActor.y + actor->_boudingBox.mins.y;
-		mins.z = _engine->_renderer->_destPos.z + processActor.z + actor->_boudingBox.mins.z;
+		mins.z = destPos.z + processActor.z + actor->_boudingBox.mins.z;
 
-		maxs.x = _engine->_renderer->_destPos.x + processActor.x + actor->_boudingBox.maxs.x;
+		maxs.x = destPos.x + processActor.x + actor->_boudingBox.maxs.x;
 		maxs.y = processActor.y + actor->_boudingBox.maxs.y;
-		maxs.z = _engine->_renderer->_destPos.z + processActor.z + actor->_boudingBox.maxs.z;
+		maxs.z = destPos.z + processActor.z + actor->_boudingBox.maxs.z;
 
 		for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 			const ActorStruct *actorTest = _engine->_scene->getActor(a);
