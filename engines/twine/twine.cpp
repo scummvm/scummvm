@@ -910,17 +910,16 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			if ((brickSound & 0xF0U) == 0xF0U) {
 				if ((brickSound & 0x0FU) == 1) {
 					if (IS_HERO(a)) {
+						// we are dying if we aren't using the protopack to fly over water
 						if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
 							if (!_actor->_cropBottomScreen) {
 								_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationType_4, AnimationTypes::kStanding, 0);
-								_renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
-								_actor->_cropBottomScreen = _renderer->_projPos.y;
 							}
-							_renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
+							const IVec3 &projPos = _renderer->projectPositionOnScreen(actor->pos() - _grid->_camera);
 							actor->_controlMode = ControlMode::kNoMove;
 							actor->setLife(-1);
-							_actor->_cropBottomScreen = _renderer->_projPos.y;
-							actor->_staticFlags.bCanDrown |= 0x10; // TODO: doesn't make sense
+							_actor->_cropBottomScreen = projPos.y;
+							actor->_staticFlags.bDoesntCastShadow = 1;
 						}
 					} else {
 						_sound->playSample(Samples::Explode, 1, actor->pos(), a);
