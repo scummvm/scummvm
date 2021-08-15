@@ -40,6 +40,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Kommandozeilen-Parameter --window-size hinzugefügt, mit dem die Größe des ScummVM-Fensters festgelegt werden kann.
      Diese Option kann nur bei der Nutzung des OpenGL-Renderers verwendet werden.
 
+ AGI:
+   - Unterstützung für einige russische Versionen hinzugefügt. Die Eingabe funktioniert nun.
+
  AGOS:
    - Unterstützung für die japanische PC-98-Version von Elvira 1 hinzugefügt.
 
@@ -97,7 +100,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die französische Version von LSL1VGA hinzugefügt.
    - Unterstützung für die hebräische Version von QFG1VGA hinzugefügt.
    - Unterstützung für die hebräische Version von GK1 hinzugefügt.
-   - UNterstützung für die russische Version von Longbow hinzugefpgt.
+   - Unterstützung für die russische Version von Longbow hinzugefpgt.
    - Unterstützung für die russische Version von LSL6 hinzugefügt.
    - Unterstützung für eine alternative russische Version von LSL7 hinzugefügt.
    - Unterstützung für eine alternative polnische Version von LSL7, welche mit
@@ -151,6 +154,19 @@ Programmcodes finden Sie auf Englisch unter:
      z.B. für Ednas Telefon-Nummer, mehr akzeptieren. (Warum wird hier überhaupt eine
      gecrackte Versionen verkauft?!)
    - Unterstützung für Musik in niedriger Qualität der Macintosh-Version von Loom hinzugefügt.
+   - Genauigkeit von Digital iMUSE in Full Throttle und The Curse of Monkey Island verbessert.
+     Diese Verbesserungen beheben auch einige Audiofehler in beiden Spielen.
+   - Sehr alter Fehler in Full Throttle behoben, der dafür sorgt, dass das Spiel nicht beendet werden kann.
+   - Genauigkeit in der Wegfindung von The Dig und The Curse of Monkey Island verbessert.
+   - Fehler in The Curse of Monkey Island behoben, der dafür sorgt, dass während des Kanonen-Minispiels in Teil 1
+     einer der drei Türme nicht zerstört werden kann.
+   - Animierter Zigarrenrauch zu der Nahaufnahme von Captain Smirk in der CD-Version von
+     Monkey Island 1 hinzugefügt. Er war in früheren Versionen vorhanden.
+   - Einige in der englischen und italienischen CD-Version von Monkey Island 1 fehlende
+     Dialog-Zeilen von Lemonhead wurden wiederhergestellt.
+   - Der Uhren-Turm in Monkey Island 1 verhält sich nun in der CD-Version identisch zu
+     früheren Versionen. So musst Du etwa - nachdem Du ihn einmal untersucht hast -
+     den Raum verlassen und später wieder betreten, um die veränderte Beschreibung zu sehen.
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
@@ -183,6 +199,12 @@ Programmcodes finden Sie auf Englisch unter:
  AmigaOS-Portierung:
    - Unterstützung für native Dateisystem-Dialoge hinzugefügt.
    - Der nuked OPL Adlib-Treiber ist wieder aktiviert.
+
+ Big-Endian-Portierung:
+   - Abstürze oder Darstellungsfehler in Blazing Dragons, Duckman und Full Pipe behoben.
+
+ macOS-Portierung:
+   - Unterstützung für den Dunkelmodus hinzugefügt.
 
  MorphOS-Portierung:
    - Unterstützung für native Dateisystem-Dialoge hinzugefügt.
