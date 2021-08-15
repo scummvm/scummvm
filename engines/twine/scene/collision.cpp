@@ -313,7 +313,7 @@ void Collision::checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 da
 	processActor.y += y;
 	processActor.z += z;
 
-	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= 0x7E00 && processActor.z <= 0x7E00) {
+	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= 0x7E00 && processActor.z <= 0x7E00) { // SCENE_SIZE_MAX
 		const BoundingBox &bbox = _engine->_actor->_processActorPtr->_boudingBox;
 		reajustActorPosition(brickShape);
 		brickShape = _engine->_grid->getBrickShapeFull(processActor, bbox.maxs.y);
@@ -346,7 +346,7 @@ void Collision::checkActorCollisionWithBricks(int32 x, int32 y, int32 z, int32 d
 	processActor.y += y;
 	processActor.z += z;
 
-	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= 0x7E00 && processActor.z <= 0x7E00) {
+	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= 0x7E00 && processActor.z <= 0x7E00) { // SCENE_SIZE_MAX
 		reajustActorPosition(brickShape);
 		brickShape = _engine->_grid->getBrickShape(processActor);
 
@@ -455,7 +455,6 @@ int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extr
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		const ExtraListStruct *extraTest = &_engine->_extra->_extraList[i];
 		if (i != extraIdx && extraTest->info0 != -1) {
-			// TODO: shouldn't this be extraTest->info0 as index?
 			const BoundingBox *testbbox = _engine->_resources->_spriteBoundingBox.bbox(++index);
 			const IVec3 minsTest = testbbox->mins + extraTest->pos;
 			const IVec3 maxsTest = testbbox->maxs + extraTest->pos;
