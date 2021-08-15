@@ -184,6 +184,13 @@ void Cursor::readFromResource(int resourceId) {
 			}
 		}
 
+		// TODO: figure out where to read custom cursor in windows platform
+		// currently, let's just set arrow for default one.
+		if (g_director->getPlatform() == Common::kPlatformWindows) {
+			resetCursor(Graphics::kMacCursorArrow, true, resourceId);
+			break;
+		}
+
 		// for win platform, try the cursor from exe
 		if (!readSuccessful && g_director->getPlatform() == Common::kPlatformWindows) {
 			// i'm not sure, in jman we have cursor id 2, 3, 4. and custom cursor id 128 129 130
