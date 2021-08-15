@@ -20,7 +20,7 @@
  *
  */
 
-#include <climits>
+#include <limits.h>
 
 #include "common/random.h"
 #include "common/system.h"
