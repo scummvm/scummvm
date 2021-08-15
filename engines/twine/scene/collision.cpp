@@ -212,7 +212,7 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, cons
 				actorTest->_lastPos.x = -64;
 			}
 			if ((newAngle >= ANGLE_315 || newAngle < ANGLE_45) && (actor->_angle > ANGLE_315 || actor->_angle < ANGLE_45)) {
-				actorTest->_lastPos.x = 192;
+				actorTest->_lastPos.z = 192;
 			}
 		} else {
 			actorTest->_lastPos.x = processActor.x - actor->_collisionPos.x;
