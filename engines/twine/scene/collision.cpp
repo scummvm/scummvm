@@ -192,9 +192,9 @@ void Collision::reajustActorPosition(ShapeType brickShape) {
 	}
 }
 
-void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *actor, ActorStruct *actorTest) {
+void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, const ActorStruct *actor, ActorStruct *actorTest) {
 	IVec3 &processActor = _engine->_movements->_processActor;
-	IVec3 &previousActor = _engine->_movements->_previousActor;
+	const IVec3 &previousActor = _engine->_movements->_previousActor;
 
 	const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(processActor, actorTest->pos());
 
@@ -234,10 +234,8 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, Acto
 		if (newAngle >= ANGLE_315 || (newAngle < ANGLE_315 && newAngle < ANGLE_45)) {
 			processActor.z = minsTest.z - actor->_boudingBox.maxs.z;
 		}
-	} else {
-		if (!actor->_dynamicFlags.bIsFalling) {
-			processActor = previousActor;
-		}
+	} else if (!actor->_dynamicFlags.bIsFalling) {
+		processActor = previousActor;
 	}
 }
 
