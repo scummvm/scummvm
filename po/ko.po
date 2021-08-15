@@ -5215,7 +5215,8 @@ msgstr "오래된 CD 드라이브의 로딩 시간을 재현"
 msgid ""
 "Simulate loading times of old CD-ROM drives by adding a random delay during "
 "scene transitions."
-msgstr "씬 전환 시 무작위 지연을 추가해 오래된 CD 드라이브의 로딩 시간을 재현합니다."
+msgstr ""
+"씬 전환 시 무작위 지연을 추가해 오래된 CD 드라이브의 로딩 시간을 재현합니다."
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:147
