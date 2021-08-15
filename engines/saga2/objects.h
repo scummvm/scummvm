@@ -831,7 +831,13 @@ extern GameWorld    *currentWorld;
 //	Return the number of the map of the world on which this object resides.
 
 inline int16 GameObject::getMapNum(void) {
-	return world()->mapNum;
+	if (world())
+		return world()->mapNum;
+	else if (_data.siblingID) {
+		GameObject *sibling = GameObject::objectAddress(_data.siblingID);
+		return sibling->getMapNum();
+	} else
+		return currentWorld->mapNum;
 }
 
 /* ======================================================================= *
