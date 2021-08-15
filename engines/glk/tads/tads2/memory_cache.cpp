@@ -806,7 +806,6 @@ static void mcmsplt(mcmcx1def *ctx, mcmon n, ushort siz)
 static uchar *mcmhalo(mcmcx1def *ctx)
 {
 	uchar  *chunk;
-	int     err;
 #define  size (MCMCHUNK + sizeof(mcmhdef) + 2*osrndsz(sizeof(mcmon)))
 
 	MCMGLBCTX(ctx);
@@ -815,7 +814,7 @@ static uchar *mcmhalo(mcmcx1def *ctx)
 
 	ERRBEGIN(ctx->mcmcxerr)
 		chunk = mchalo(ctx->mcmcxerr, size, "mcmhalo");
-	ERRCATCH(ctx->mcmcxerr, err)
+	ERRCATCH_ERRCODE_UNUSED(ctx->mcmcxerr)
 		ctx->mcmcxmax = 0;      /* remember we can't allocate anything more */
 		return((uchar *)0);                             /* return no memory */
 	ERREND(ctx->mcmcxerr)
@@ -827,7 +826,6 @@ static uchar *mcmhalo(mcmcx1def *ctx)
 	ctx->mcmcxhpch = (mcmhdef *)chunk;
 /*@@@@*/
 	*(mcmon *)(chunk + osrndsz(sizeof(mcmhdef) + MCMCHUNK)) = MCMONINV;
-	VARUSED(err);
 
 	return(chunk + sizeof(mcmhdef));
 

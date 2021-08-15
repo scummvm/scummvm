@@ -1904,13 +1904,14 @@ resume_from_error:
 			case OPCBP:
 			{
 				uchar *ptr = mcmobjptr(ctx->runcxmem, (mcmon)target);
-				uchar  instr;
 
 				/* set up the debugger frame record for this line */
 				dbgframe(ctx->runcxdbg, osrp2(p + 1), p - ptr);
 
+#ifndef DBG_OFF
 				/* remember the instruction */
-				instr = *(p - 1);
+				uchar instr = *(p - 1);
+#endif
 
 				/* remember the offset of the line record */
 				ctx->runcxlofs = ofs = (p + 2 - ptr);
@@ -1918,8 +1919,10 @@ resume_from_error:
 				/* skip to the next instruction */
 				p += *p;
 
+#ifndef DBG_OFF
 				/* let the debugger take over, if it wants to */
 				dbgssi(ctx->runcxdbg, ofs, instr, 0, &p);
+#endif
 				break;
 			}
 
