@@ -131,7 +131,7 @@ void Extra::resetExtras() {
 	}
 }
 
-void Extra::throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle) { // InitFly
+void Extra::throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle) {
 	extra->type |= ExtraType::FLY;
 
 	extra->lastPos = extra->pos;
@@ -149,7 +149,7 @@ void Extra::throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32
 	extra->spawnTime = _engine->_lbaTime;
 }
 
-int32 Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { // InitSpecial
+int32 Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) {
 	const int16 flag = EXTRA_SPECIAL_MASK + (int16)type;
 
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
@@ -167,7 +167,6 @@ int32 Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) {
 			extra->pos.y = y;
 			extra->pos.z = z;
 
-			// same as InitFly
 			throwExtra(extra, _engine->getRandomNumber(ANGLE_90) + ANGLE_45, _engine->getRandomNumber(ANGLE_360), 50, 20);
 
 			extra->strengthOfHit = 0;
@@ -223,7 +222,7 @@ int Extra::getBonusSprite(BonusParameter bonusParameter) const {
 	return bonusSprite;
 }
 
-int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 type, int32 bonusAmount) { // ExtraBonus
+int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 type, int32 bonusAmount) {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &_extraList[i];
 		if (extra->info0 != -1) {
@@ -240,7 +239,6 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle
 		extra->pos.y = y;
 		extra->pos.z = z;
 
-		// same as InitFly
 		throwExtra(extra, xAngle, yAngle, 40, ToAngle(15));
 
 		extra->strengthOfHit = 0;
@@ -252,7 +250,7 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle
 	return -1;
 }
 
-int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle, int32 strengthOfHit) { // ThrowExtra
+int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle, int32 strengthOfHit) {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &_extraList[i];
 		if (extra->info0 != -1) {
@@ -264,7 +262,6 @@ int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spri
 		extra->pos.y = y;
 		extra->pos.z = z;
 
-		// same as InitFly
 		throwExtra(extra, xAngle, yAngle, xRotPoint, extraAngle);
 
 		extra->strengthOfHit = strengthOfHit;
@@ -278,7 +275,7 @@ int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spri
 	return -1;
 }
 
-int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActorIdx, int32 finalAngle, int32 strengthOfHit) { // ExtraSearch
+int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActorIdx, int32 finalAngle, int32 strengthOfHit) {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &_extraList[i];
 		if (extra->info0 != -1) {
@@ -406,7 +403,7 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 
 	++shapeDataIndex;
 
-	renderRect.left = 0x7D00;
+	renderRect.left = 0x7D00; // SCENE_SIZE_MAX
 	renderRect.right = -0x7D00;
 	renderRect.top = 0x7D00;
 	renderRect.bottom = -0x7D00;
@@ -650,7 +647,6 @@ void Extra::processExtras() {
 		}
 		// process magic ball extra aiming for key
 		if (extra->type & ExtraType::MAGIC_BALL_KEY) {
-			// int32 actorIdxAttacked = extra->lifeTime;
 			ExtraListStruct *extraKey = &_extraList[extra->payload.extraIdx];
 			const int32 extraIdx = extra->payload.extraIdx;
 
@@ -768,7 +764,7 @@ void Extra::processExtras() {
 				if (i == _engine->_gameState->_magicBallIdx) {
 					_engine->_sound->playSample(Samples::Hit, 1, extra->pos);
 
-					// cant bounce with not magic points
+					// can't bounce with not magic points
 					if (_engine->_gameState->_magicBallNumBounce <= 0) {
 						int32 spriteIdx = SPRITEHQR_MAGICBALL_YELLOW_TRANS;
 
