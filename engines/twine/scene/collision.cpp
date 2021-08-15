@@ -251,7 +251,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 		ActorStruct *actorTest = _engine->_scene->getActor(a);
 
-		// aviod current processed actor
+		// avoid current processed actor
 		if (a != actorIdx && actorTest->_entity != -1 && !actor->_staticFlags.bComputeLowCollision && actorTest->_standOn != actorIdx) {
 			const IVec3 &minsTest = actorTest->pos() + actorTest->_boudingBox.mins;
 			const IVec3 &maxsTest = actorTest->pos() + actorTest->_boudingBox.maxs;
@@ -278,19 +278,18 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 
 	if (actor->_dynamicFlags.bIsHitting) {
 		const IVec3 &destPos = _engine->_movements->rotateActor(0, 200, actor->_angle);
+		mins = processActor + actor->_boudingBox.mins;
+		mins.x += destPos.x;
+		mins.z += destPos.z;
 
-		mins.x = destPos.x + processActor.x + actor->_boudingBox.mins.x;
-		mins.y = processActor.y + actor->_boudingBox.mins.y;
-		mins.z = destPos.z + processActor.z + actor->_boudingBox.mins.z;
-
-		maxs.x = destPos.x + processActor.x + actor->_boudingBox.maxs.x;
-		maxs.y = processActor.y + actor->_boudingBox.maxs.y;
-		maxs.z = destPos.z + processActor.z + actor->_boudingBox.maxs.z;
+		maxs = processActor + actor->_boudingBox.maxs;
+		maxs.x += destPos.x;
+		maxs.z += destPos.z;
 
 		for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 			const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
-			// aviod current processed actor
+			// avoid current processed actor
 			if (a != actorIdx && actorTest->_entity != -1 && !actorTest->_staticFlags.bIsHidden && actorTest->_standOn != actorIdx) {
 				const IVec3 minsTest = actorTest->pos() + actorTest->_boudingBox.mins;
 				const IVec3 maxsTest = actorTest->pos() + actorTest->_boudingBox.maxs;
