@@ -1885,8 +1885,8 @@ GameObject *BowProto::getProjectile(ObjectID weapon, ObjectID enactor) {
 	assert(isObject(weapon));
 	assert(isActor(enactor));
 
-	GameObject          *obj,
-	                    *arrow = NULL;
+	GameObject          *obj = nullptr,
+	                    *arrow = nullptr;
 	Actor               *a = (Actor *)GameObject::objectAddress(enactor);
 	TilePoint           bestSlot(maxint16, maxint16, 0);
 	ContainerIterator   iter(a);

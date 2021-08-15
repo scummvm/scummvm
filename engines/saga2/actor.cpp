@@ -3434,8 +3434,8 @@ void resumeActorStates(void) {
 //-------------------------------------------------------------------
 
 void setCombatBehavior(bool enabled) {
-	PlayerActor                     *player;
-	LivingPlayerActorIterator       iter;
+	PlayerActor *player = nullptr;
+	LivingPlayerActorIterator iter;
 
 	combatBehaviorEnabled = enabled;
 

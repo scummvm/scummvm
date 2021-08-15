@@ -786,7 +786,7 @@ int32 GameObject::getSprOffset(int16 num) {
 
 //  Remove an object from a stack of objects
 bool GameObject::unstack(void) {
-	GameObject  *item,
+	GameObject  *item = nullptr,
 	            *base = nullptr,
 	             *zero = nullptr;
 	int16       count = 0;
@@ -1467,7 +1467,7 @@ void GameObject::deactivate(void) {
 //  Determine if an object is contained in this object
 bool GameObject::isContaining(GameObject *item) {
 	ContainerIterator   iter(this);
-	GameObject          *containedObj;
+	GameObject          *containedObj = nullptr;
 
 	while (iter.next(&containedObj) != Nothing) {
 		if (containedObj == item) return true;
@@ -1563,7 +1563,7 @@ const char *GameObject::nameText(uint16 index) {
 
 TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 	ObjectID        objID;
-	GameObject      *item;
+	GameObject      *item = nullptr;
 	TilePoint       newLoc, temp;
 	uint16          numRows = prototype->getMaxRows(),
 	                numCols = prototype->getMaxCols();
@@ -1654,7 +1654,7 @@ bool GameObject::getAvailableSlot(
 		TilePoint       firstEmptySlot;
 
 		if (canMerge) {
-			GameObject          *inventoryObj;
+			GameObject          *inventoryObj = nullptr;
 			ContainerIterator   iter(this);
 
 			//  Iterate through the objects in this container

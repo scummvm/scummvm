@@ -307,8 +307,8 @@ bool ContainerView::isVisible(GameObject *item) {
 
 //  total the mass, bulk, and number of all objects in container.
 void ContainerView::totalObjects(void) {
-	ObjectID        objID;
-	GameObject      *item;
+	ObjectID objID;
+	GameObject *item = nullptr;
 
 	totalMass   = 0;
 	totalBulk   = 0;

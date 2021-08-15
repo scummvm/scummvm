@@ -2857,7 +2857,7 @@ void MotionTask::upLadderAction(void) {
 		TileRegion          actorTileReg;
 		TileInfo            *ti;
 		TilePoint           tileLoc;
-		StandingTileInfo    sti;
+		StandingTileInfo    sti = {nullptr, nullptr, {0, 0, 0}, 0};
 
 		loc.z += 6;
 
@@ -2983,7 +2983,7 @@ void MotionTask::downLadderAction(void) {
 		TileRegion          actorTileReg;
 		TileInfo            *ti;
 		TilePoint           tileLoc;
-		StandingTileInfo    sti;
+		StandingTileInfo    sti = {nullptr, nullptr, {0, 0, 0}, 0};
 
 		loc.z -= 6;
 
@@ -4696,7 +4696,7 @@ bool checkLadder(Actor *a, const TilePoint &loc) {
 	int16               mapNum = a->getMapNum();
 	TileInfo            *ti;
 	TilePoint           tileLoc;
-	StandingTileInfo    sti;
+	StandingTileInfo    sti = {nullptr, nullptr, {0, 0, 0}, 0};
 
 	actorTileReg.min.u = (loc.u - crossSection) >> kTileUVShift;
 	actorTileReg.min.v = (loc.v - crossSection) >> kTileUVShift;

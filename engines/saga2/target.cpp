@@ -769,7 +769,7 @@ bool ObjectTarget::isObjectTarget(void) const {
 TilePoint ObjectTarget::where(GameWorld *world, const TilePoint &tp) const {
 	int16                   dist,
 	                        bestDist = maxint16;
-	GameObject     *objPtr;
+	GameObject     *objPtr = nullptr;
 	TilePoint               objCoords,
 	                        bestOCoords = Nowhere;
 	CircularObjectIterator  iter(world, tp, maxObjDist);

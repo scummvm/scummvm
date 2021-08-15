@@ -188,7 +188,7 @@ void addEnchantment(Actor *a, uint16 enchantmentID) {
 //	Function to eval the enchantments on an actor
 
 void evalActorEnchantments(Actor *a) {
-	GameObject          *obj;
+	GameObject          *obj = nullptr;
 	ObjectID            id;
 	PlayerActorID       playerID;
 	EnchantmentIterator iter(a);

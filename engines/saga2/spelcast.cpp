@@ -1026,7 +1026,7 @@ int16 tileNopeHeight(
 GameObject *objectNollision(Effectron *obj, const TilePoint &loc) {
 //    ProtoObj        *proto = obj->proto();
 	TileRegion      volume;
-	GameObject      *obstacle;
+	GameObject      *obstacle = nullptr;
 
 	volume.min.u = loc.u - obj->brdCall();
 	volume.min.v = loc.v - obj->brdCall();

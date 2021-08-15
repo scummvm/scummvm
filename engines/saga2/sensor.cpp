@@ -482,7 +482,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	    getObject()->world(),
 	    getObject()->getLocation(),
 	    getRange() != 0 ? getRange() : kTileUVSize * kPlatformWidth * 8);
-	GameObject              *objToTest;
+	GameObject              *objToTest = nullptr;
 	iter.first(&objToTest);
 
 	for (iter.first(&objToTest);

@@ -533,7 +533,7 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 	    world,
 	    instanceRegion.min,
 	    instanceRegion.max);
-	GameObject      *testObject;
+	GameObject *testObject = nullptr;
 
 	for (iter.first(&testObject);
 	        testObject != nullptr;
@@ -621,7 +621,7 @@ bool ActiveItem::release(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 	    world,
 	    instanceRegion.min,
 	    instanceRegion.max);
-	GameObject      *testObject;
+	GameObject *testObject = nullptr;
 
 	for (iter.first(&testObject);
 	        testObject != nullptr;

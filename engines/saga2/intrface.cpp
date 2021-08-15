@@ -2719,7 +2719,7 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 	EnchantmentIterator iter(a);
 	ContainerIterator   cIter(a);
 
-	GameObject          *obj;
+	GameObject *obj = nullptr;
 
 	memset(newIconFlags, 0, sizeof newIconFlags);
 

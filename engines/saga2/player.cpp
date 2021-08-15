@@ -657,7 +657,7 @@ void autoAdjustAggression(void) {
 			Actor           *actor = g_vm->_playerList[i]->getActor();
 
 			if (actor->getStats()->vitality >= kMinAutoAggressionVitality) {
-				GameObject      *obj;
+				GameObject      *obj = nullptr;
 				ActiveRegion    *activeReg = getActiveRegion(i);
 				TileRegion      region = activeReg->getRegion();
 				GameWorld       *world = activeReg->getWorld();

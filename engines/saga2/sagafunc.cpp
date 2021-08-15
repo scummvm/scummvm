@@ -1022,7 +1022,7 @@ int16 deepCopy(GameObject *src, ObjectID parentID, TilePoint tp) {
 	OBJLOG(DeepCopy);
 	Location    l;
 	int16       newID, childID;
-	GameObject  *childObj;
+	GameObject  *childObj = nullptr;
 
 	l.u = tp.u;
 	l.v = tp.v;
@@ -2145,7 +2145,7 @@ int16 scriptActorCountPayment(int16 *args) {
 
 	ProtoObj    *currencyProto = g_vm->_objectProtos[args[0]];
 	int32       paymentFound = 0;
-	GameObject  *obj;
+	GameObject  *obj = nullptr;
 	ObjectID    id;
 	bool        mergeable =
 	    currencyProto->flags & ResourceObjectPrototype::objPropMergeable;

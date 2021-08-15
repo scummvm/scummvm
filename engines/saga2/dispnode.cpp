@@ -227,10 +227,10 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 	if (currentWorld == NULL) return;
 
 	DispRegionObjectIterator    iter(currentWorld, viewCenter, loadDist);
-	GameObject                  *obj;
-	ObjectID                    id;
-	int16                       dist;
-	Actor                       *centerActor = getCenterActor();
+	GameObject *obj = nullptr;
+	ObjectID id;
+	int16 dist = 0;
+	Actor *centerActor = getCenterActor();
 
 	if (fromScratch)
 		//  Reset the list...

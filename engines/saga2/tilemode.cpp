@@ -360,7 +360,7 @@ uint16 timeSinceLastAggressiveAct(void) {
 
 bool areThereActiveEnemies(void) {
 	ActiveRegionObjectIterator  iter;
-	GameObject                  *obj;
+	GameObject                  *obj = nullptr;
 
 	for (iter.first(&obj); obj != NULL; iter.next(&obj)) {
 		if (isActor(obj)
