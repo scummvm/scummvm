@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-15 08:52+0000\n"
+"POT-Creation-Date: 2021-08-15 10:30+0000\n"
 "PO-Revision-Date: 2021-08-15 09:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -611,8 +611,8 @@ msgstr "閉じる"
 #: gui/gui-manager.cpp:156 engines/metaengine.cpp:108
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:448
-#: engines/grim/grim.cpp:525 engines/twine/metaengine.cpp:313
-#: engines/twine/metaengine.cpp:380 engines/wintermute/keymapper_tables.h:1263
+#: engines/grim/grim.cpp:525 engines/twine/metaengine.cpp:318
+#: engines/twine/metaengine.cpp:385 engines/wintermute/keymapper_tables.h:1263
 #: engines/wintermute/keymapper_tables.h:1373
 #: engines/wintermute/keymapper_tables.h:1844
 #: engines/wintermute/keymapper_tables.h:2078
@@ -622,8 +622,8 @@ msgstr "上"
 #: gui/gui-manager.cpp:161 engines/metaengine.cpp:113
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:453
-#: engines/grim/grim.cpp:530 engines/twine/metaengine.cpp:320
-#: engines/twine/metaengine.cpp:388 engines/wintermute/keymapper_tables.h:1269
+#: engines/grim/grim.cpp:530 engines/twine/metaengine.cpp:325
+#: engines/twine/metaengine.cpp:393 engines/wintermute/keymapper_tables.h:1269
 #: engines/wintermute/keymapper_tables.h:1380
 #: engines/wintermute/keymapper_tables.h:1850
 #: engines/wintermute/keymapper_tables.h:2084
@@ -633,7 +633,7 @@ msgstr "下"
 #: gui/gui-manager.cpp:166 engines/metaengine.cpp:118
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:458 engines/grim/grim.cpp:535
-#: engines/twine/metaengine.cpp:335 engines/twine/metaengine.cpp:403
+#: engines/twine/metaengine.cpp:340 engines/twine/metaengine.cpp:408
 #: engines/wintermute/keymapper_tables.h:321
 #: engines/wintermute/keymapper_tables.h:1275
 #: engines/wintermute/keymapper_tables.h:1832
@@ -645,7 +645,7 @@ msgstr "左"
 #: gui/gui-manager.cpp:171 engines/metaengine.cpp:123
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:463 engines/grim/grim.cpp:540
-#: engines/twine/metaengine.cpp:327 engines/twine/metaengine.cpp:396
+#: engines/twine/metaengine.cpp:332 engines/twine/metaengine.cpp:401
 #: engines/wintermute/keymapper_tables.h:327
 #: engines/wintermute/keymapper_tables.h:1281
 #: engines/wintermute/keymapper_tables.h:1838
@@ -2739,7 +2739,7 @@ msgstr "タッチパネル(タップモード) - ホバー(十字キー)"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:242
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:67
-#: engines/twine/metaengine.cpp:212
+#: engines/twine/metaengine.cpp:217
 msgid "Center"
 msgstr "中央"
 
@@ -4156,7 +4156,7 @@ msgstr "コマンドを変更"
 #: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:146
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-#: engines/twine/metaengine.cpp:270 engines/zvision/metaengine.cpp:164
+#: engines/twine/metaengine.cpp:275 engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "インベントリー"
 
@@ -4895,7 +4895,7 @@ msgid "Interact via Right Click"
 msgstr "右クリックでインタラクト"
 
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:481
-#: engines/twine/metaengine.cpp:232
+#: engines/twine/metaengine.cpp:237
 msgid "Move Forward"
 msgstr "前に進む"
 
@@ -4912,13 +4912,13 @@ msgid "Move Right"
 msgstr "右に行く"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:485
-#: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:253
+#: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:258
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "左に曲がる"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:486
-#: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:246
+#: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:251
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "右に曲がる"
@@ -7337,87 +7337,91 @@ msgid "Debug Grid Camera Right"
 msgstr "グリッドカメラを右へ"
 
 #: engines/twine/metaengine.cpp:144
+msgid "Place actor at center of screen"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:149
 msgid "Debug Menu"
 msgstr "デバッグメニュー"
 
-#: engines/twine/metaengine.cpp:149
+#: engines/twine/metaengine.cpp:154
 msgid "Debug Menu Execute"
 msgstr "デバッグメニューを実行"
 
-#: engines/twine/metaengine.cpp:154 engines/twine/metaengine.cpp:174
+#: engines/twine/metaengine.cpp:159 engines/twine/metaengine.cpp:179
 msgid "Normal Behaviour"
 msgstr "通常の行動"
 
-#: engines/twine/metaengine.cpp:159 engines/twine/metaengine.cpp:179
+#: engines/twine/metaengine.cpp:164 engines/twine/metaengine.cpp:184
 msgid "Athletic Behaviour"
 msgstr "競技用の行動"
 
-#: engines/twine/metaengine.cpp:164 engines/twine/metaengine.cpp:184
+#: engines/twine/metaengine.cpp:169 engines/twine/metaengine.cpp:189
 msgid "Aggressive Behaviour"
 msgstr "攻撃的な行動"
 
-#: engines/twine/metaengine.cpp:169 engines/twine/metaengine.cpp:189
+#: engines/twine/metaengine.cpp:174 engines/twine/metaengine.cpp:194
 msgid "Discreet Behaviour"
 msgstr "慎重な行動"
 
-#: engines/twine/metaengine.cpp:194
+#: engines/twine/metaengine.cpp:199
 msgid "Behaviour Action"
 msgstr "行動を実行"
 
-#: engines/twine/metaengine.cpp:200
+#: engines/twine/metaengine.cpp:205
 msgid "Change Behaviour"
 msgstr "行動を変更"
 
-#: engines/twine/metaengine.cpp:207
+#: engines/twine/metaengine.cpp:212
 msgid "Options Menu"
 msgstr "設定"
 
-#: engines/twine/metaengine.cpp:219
+#: engines/twine/metaengine.cpp:224
 msgid "Use Selected Object"
 msgstr "選択したオブジェクトを使用"
 
-#: engines/twine/metaengine.cpp:225
+#: engines/twine/metaengine.cpp:230
 msgid "Throw Magic Ball"
 msgstr "マジックボールを投げる"
 
-#: engines/twine/metaengine.cpp:239
+#: engines/twine/metaengine.cpp:244
 msgid "Move Backward"
 msgstr "後方へ移動"
 
-#: engines/twine/metaengine.cpp:260
+#: engines/twine/metaengine.cpp:265
 msgid "Use Protopack"
 msgstr "プロトパックを使用"
 
-#: engines/twine/metaengine.cpp:265
+#: engines/twine/metaengine.cpp:270
 msgid "Open Holomap"
 msgstr "ホログラムマップを開く"
 
-#: engines/twine/metaengine.cpp:278
+#: engines/twine/metaengine.cpp:283
 msgid "Special Action"
 msgstr "スペシャルアクション"
 
-#: engines/twine/metaengine.cpp:284 engines/wintermute/keymapper_tables.h:61
+#: engines/twine/metaengine.cpp:289 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
 msgstr "脱出"
 
-#: engines/twine/metaengine.cpp:297
+#: engines/twine/metaengine.cpp:302
 msgid "Accept"
 msgstr "受け入れる"
 
-#: engines/twine/metaengine.cpp:305 engines/twine/metaengine.cpp:357
-#: engines/twine/metaengine.cpp:373
+#: engines/twine/metaengine.cpp:310 engines/twine/metaengine.cpp:362
+#: engines/twine/metaengine.cpp:378
 msgid "Abort"
 msgstr "停止"
 
-#: engines/twine/metaengine.cpp:343
+#: engines/twine/metaengine.cpp:348
 msgid "Next Page"
 msgstr "次のページ"
 
-#: engines/twine/metaengine.cpp:410
+#: engines/twine/metaengine.cpp:415
 msgid "Previous location"
 msgstr "前の地点"
 
-#: engines/twine/metaengine.cpp:415
+#: engines/twine/metaengine.cpp:420
 msgid "Next location"
 msgstr "次の地点"
 
