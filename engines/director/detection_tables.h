@@ -891,6 +891,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "musiccentral96",		"Microsoft Music Central 96" },
 	{ "musicpublisher",		"Graphic Notes Music Publisher" },
 	{ "netmarket",			"CUC netMarket Demo" },
+	{ "orly",				"Orly's Draw-A-Story" },
 	{ "pagemaker",			"Aldus PageMaker" },
 	{ "pitfall",			"Pitfall: The Mayan Adventure" },
 	{ "princeint",			"Prince Interactive" },
@@ -909,6 +910,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "worldatlas", 		"World Reference Atlas" },
 	{ "ultrobot", 			"Isaac Asimov\'s The Ultimate Robot" },
 	{ "znemesis",			"Zork Nemesis: The Forbidden Lands" },
+	{ "zoombini",			"Logical Journey of the Zoombinis" },
 
 	// Screen Savers
 	{ "barbssbubbles",		"Barbie Screen Styler: Bubbles" },
@@ -2831,6 +2833,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Full game is supported in ZVision engine
 	WINDEMO1("znemesis", "Demo", "ZORKDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
 
+	WINDEMO1("zoombini", "Demo", "_ZOOMDAT.EXE", "d573b80bb932f50cbe69395b158e9f47", 696927, 404),
+	WINDEMO1("zoombini", "Demo", "ZOOMBINI.EXE", "e68b82276dc4f89a292c7d60d97983fe", 4632551, 404),
+
 //////////////////////////////////////////////////
 //
 // Macromedia Director v5
@@ -3073,6 +3078,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("nine", "", "nine_95.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1555823, 501),
 
 	WINGAME1("noir", "", "NOIR.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1020879, 500),
+
+	WINDEMO1("orly", "Demo", "_ORLYDEM.EXE", "2e62abdad839e42068afdcd0644d7dcf", 917641, 500),
 
 	MACDEMO1_l("osaka2", "Demo", "OSAKA2",	   "2e75b0d7a218c71d5dd00a27eb755f00", 719012, Common::JA_JPN, 501),
 	WINDEMO1_l("osaka2", "Demo", "OSAKA2.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1410110, Common::JA_JPN, 501),
