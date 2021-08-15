@@ -52,7 +52,7 @@ Programmcodes finden Sie auf Englisch unter:
  CGE:
    - Unterstützung für Sprachausgabe in Soltys hinzugefügt.
 
- CGE:
+ CGE2:
    - Unterstützung für Sprachausgabe in Sfinx hinzugefügt.
 
  Dreamweb:
