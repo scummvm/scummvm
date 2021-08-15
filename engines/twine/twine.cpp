@@ -647,15 +647,13 @@ void TwinEEngine::processInventoryAction() {
 	case kiPinguin: {
 		ActorStruct *pinguin = _scene->getActor(_scene->_mecaPinguinIdx);
 
-		// TODO: is this meant to happen before the rotateActor() call - the _destPos might be
-		// set to some random position. Also the _destPos that is set by the rotateActor call
-		// is not used anywhere in this switch/case - as far as I can see.
-		pinguin->_pos.x = _renderer->_destPos.x + _scene->_sceneHero->_pos.x;
-		pinguin->_pos.y = _scene->_sceneHero->_pos.y;
-		pinguin->_pos.z = _renderer->_destPos.z + _scene->_sceneHero->_pos.z;
-		pinguin->_angle = _scene->_sceneHero->_angle;
+		const IVec3 &destPos = _movements->rotateActor(0, 800, pinguin->_angle);
 
-		_movements->rotateActor(0, 800, pinguin->_angle);
+		pinguin->_pos = _scene->_sceneHero->_pos;
+		pinguin->_pos.x += destPos.x;
+		pinguin->_pos.z += destPos.z;
+
+		pinguin->_angle = _scene->_sceneHero->_angle;
 
 		if (!_collision->checkCollisionWithActors(_scene->_mecaPinguinIdx)) {
 			pinguin->setLife(kActorMaxLife);
