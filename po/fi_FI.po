@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-15 14:18+0000\n"
-"PO-Revision-Date: 2021-08-13 21:15+0000\n"
+"PO-Revision-Date: 2021-08-16 09:25+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -7420,7 +7420,7 @@ msgstr "Debug grid kamera oikealle"
 
 #: engines/twine/metaengine.cpp:144
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Keskitä hahmo ruudulla"
 
 #: engines/twine/metaengine.cpp:149
 msgid "Debug Menu"
