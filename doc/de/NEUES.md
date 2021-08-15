@@ -39,12 +39,21 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für hochauflösende Bildschirme (HiDPI) hinzugefügt.
    - Kommandozeilen-Parameter --window-size hinzugefügt, mit dem die Größe des ScummVM-Fensters festgelegt werden kann.
      Diese Option kann nur bei der Nutzung des OpenGL-Renderers verwendet werden.
+   - Fehler beim Wechseln zu dem Standard-Grafikmodus korrigiert. In einigen
+     Fällen wurde die Änderung erst nach einem Neustart von ScummVM
+     oder beim Start eines Spiels übernommen.
 
  AGI:
    - Unterstützung für einige russische Versionen hinzugefügt. Die Eingabe funktioniert nun.
 
  AGOS:
    - Unterstützung für die japanische PC-98-Version von Elvira 1 hinzugefügt.
+
+ CGE:
+   - Unterstützung für Sprachausgabe in Soltys hinzugefügt.
+
+ CGE:
+   - Unterstützung für Sprachausgabe in Sfinx hinzugefügt.
 
  Dreamweb:
    - Darstellungsfehler in der russischen Fan-Übersetzung behoben.
@@ -61,6 +70,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Griffon:
    - Fehler korrigiert, der die Rückkehr zur Spiele-Liste/zum Launcher in The Griffon Legend verhindert hat.
+   - Unterstützung für Sprachausgabe in The Griffon Legend hinzugefügt.
 
  Grim:
    - Unterstützung für die Version in brasilianischem Portugiesisch von Grim Fandango hinzugefügt.
@@ -211,9 +221,12 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die Cloud-Anbindung hinzugefügt.
    - Der nuked OPL Adlib-Treiber ist wieder aktiviert.
    - Unterstützung für den CAMD MIDI-Treiber hinzugefügt.
+   - Standardmäßig wird nun der OpenGL-Renderer verwendet,
+     der eine deutlich verbesserte Unterstützung für HiDPI-Displays bietet.
 
  Windows-Portierung:
-   - Standardmäßig wird nun der OpenGL-Renderer verwendet, der eine deutlich verbesserte Unterstützung für HiDPI-Displays bietet.
+   - Standardmäßig wird nun der OpenGL-Renderer verwendet,
+     der eine deutlich verbesserte Unterstützung für HiDPI-Displays bietet.
 
 
 #### 2.2.0 "Interactive Fantasy" (27.09.2020)
