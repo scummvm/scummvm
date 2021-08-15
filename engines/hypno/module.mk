@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	spider/lexer_arc.o \
 	spider/grammar_arc.o \
 	spider/talk.o \
+	spider/arcade.o \
 	hypno.o
 
 MODULE_DIRS += \

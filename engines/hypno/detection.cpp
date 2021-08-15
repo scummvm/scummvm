@@ -35,6 +35,7 @@ static const DebugChannelDef debugFlagList[] = {
 namespace Hypno {
 static const PlainGameDescriptor hypnoGames[] = {
 	{ "sinister-six", "Marvel Comics Spider-Man: The Sinister Six" },
+	{ "wetlands", "Wetlands" },
 	{ 0, 0 }
 };
 
@@ -45,18 +46,27 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY2s("COMBAT.EXE", "15a6b1b3819ef002438df340509b5373", 643471,
   				   "SPIDER.EXE", "15a6b1b3819ef002438df340509b5373", 603587),
 		Common::EN_USA,
-		Common::kPlatformWindows,
+		Common::kPlatformDOS,
 		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"sinister-six", // US release
-		"",
+		"Not yet implemented",
 		AD_ENTRY2s("COMBAT.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 255115,
   				   "SPIDER.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 248056),
 		Common::EN_USA,
-		Common::kPlatformWindows,
-		ADGF_TESTING,
+		Common::kPlatformDOS,
+		ADGF_UNSUPPORTED | ADGF_TESTING,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"wetlands", // Wetlands Demo Disc (November 1995)
+		"Not yet implemented",
+		AD_ENTRY1s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 642231),
+		Common::EN_USA,
+		Common::kPlatformDOS,
+		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER
@@ -66,6 +76,7 @@ static const ADGameDescription gameDescriptions[] = {
 static const char *const directoryGlobs[] = {
 	"sixdemo",
 	"factory",
+	"wetlands",
 	0
 };
 
