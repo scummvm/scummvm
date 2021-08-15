@@ -598,7 +598,11 @@ void Score::renderCursor(Common::Point pos, bool forceUpdate) {
 			if (!forceUpdate && _currentCursor == _channels[spriteId]->_cursor)
 				return;
 
-			_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, &_channels[spriteId]->_cursor);
+			// try to use the cursor read from exe file.
+			if (g_director->getPlatform() == Common::kPlatformWindows && _channels[spriteId]->_cursor._cursorType == Graphics::kMacCursorCustom)
+				_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, g_director->_winCursor[_channels[spriteId]->_cursor._cursorResId]);
+			else
+				_vm->_wm->replaceCursor(_channels[spriteId]->_cursor._cursorType, &_channels[spriteId]->_cursor);
 			_currentCursor = _channels[spriteId]->_cursor.getRef();
 			return;
 		}

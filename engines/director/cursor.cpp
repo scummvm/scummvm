@@ -184,6 +184,16 @@ void Cursor::readFromResource(int resourceId) {
 			}
 		}
 
+		// for win platform, try the cursor from exe
+		if (!readSuccessful && g_director->getPlatform() == Common::kPlatformWindows) {
+			// i'm not sure, in jman we have cursor id 2, 3, 4. and custom cursor id 128 129 130
+			int id = (resourceId & 0x7f) + 2;
+			if (g_director->_winCursor.contains(id)) {
+				resetCursor(Graphics::kMacCursorCustom, false, id);
+				readSuccessful = true;
+			}
+		}
+
 		// fallback method. try to use builtin cursor by regarding resourceId as a single byte.
 		if (!readSuccessful)
 			readBuiltinType(resourceId & 0x7f);
