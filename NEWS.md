@@ -50,7 +50,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  CGE:
    - Added option to use Text To Speech for Soltys.
 
- CGE:
+ CGE2:
    - Added option to use Text To Speech for Sfinx.
 
  Dreamweb:
