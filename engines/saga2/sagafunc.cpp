@@ -2941,7 +2941,8 @@ int16 scriptPlayFX(int16 *args) {
 
 int16 scriptObject2Actor(int16 *args) {
 	MONOLOG(Object2Actor);
-	return isActor(args[0]) ? args[0] : Nothing;
+	//return isActor(args[0]) ? args[0] : Nothing;
+	return args[0];
 }
 
 //-----------------------------------------------------------------------
