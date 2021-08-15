@@ -65,7 +65,7 @@ void Renderer::init(int32 w, int32 h) {
 	_holomap_polytab_1_3_ptr = _holomap_polytab_1_3;
 }
 
-const IVec3 &Renderer::projectXYPositionOnScreen(int32 x, int32 y, int32 z) {
+IVec3 Renderer::projectXYPositionOnScreen(int32 x, int32 y, int32 z) {
 	if (_isUsingOrthoProjection) {
 		_projPos.x = ((x - z) * 24) / BRICK_SIZE + _orthoProjPos.x;
 		_projPos.y = y;
@@ -148,7 +148,7 @@ void Renderer::baseMatrixTranspose() {
 	SWAP(_baseMatrix.row2.z, _baseMatrix.row3.y);
 }
 
-const IVec3 &Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
+IVec3 Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 	const double Xradians = (double)((ANGLE_90 - x) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	const double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	const double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
@@ -179,25 +179,24 @@ const IVec3 &Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose
 	return _baseRotPos;
 }
 
-const IVec3 &Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
-	_destPos.x = (_baseMatrix.row1.x * x + _baseMatrix.row1.y * y + _baseMatrix.row1.z * z) / SCENE_SIZE_HALF;
-	_destPos.y = (_baseMatrix.row2.x * x + _baseMatrix.row2.y * y + _baseMatrix.row2.z * z) / SCENE_SIZE_HALF;
-	_destPos.z = (_baseMatrix.row3.x * x + _baseMatrix.row3.y * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
-	return _destPos;
+IVec3 Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
+	const int32 vx = (_baseMatrix.row1.x * x + _baseMatrix.row1.y * y + _baseMatrix.row1.z * z) / SCENE_SIZE_HALF;
+	const int32 vy = (_baseMatrix.row2.x * x + _baseMatrix.row2.y * y + _baseMatrix.row2.z * z) / SCENE_SIZE_HALF;
+	const int32 vz = (_baseMatrix.row3.x * x + _baseMatrix.row3.y * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
+	return IVec3(vx, vy, vz);
 }
 
-const IVec3 &Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
-	_destPos.x = (_baseMatrix.row1.x * x + _baseMatrix.row2.x * y + _baseMatrix.row3.x * z) / SCENE_SIZE_HALF;
-	_destPos.y = (_baseMatrix.row1.y * x + _baseMatrix.row2.y * y + _baseMatrix.row3.y * z) / SCENE_SIZE_HALF;
-	_destPos.z = (_baseMatrix.row1.z * x + _baseMatrix.row2.z * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
-	return _destPos;
+IVec3 Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
+	const int32 vx = (_baseMatrix.row1.x * x + _baseMatrix.row2.x * y + _baseMatrix.row3.x * z) / SCENE_SIZE_HALF;
+	const int32 vy = (_baseMatrix.row1.y * x + _baseMatrix.row2.y * y + _baseMatrix.row3.y * z) / SCENE_SIZE_HALF;
+	const int32 vz = (_baseMatrix.row1.z * x + _baseMatrix.row2.z * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
+	return IVec3(vx, vy, vz);
 }
 
-const IVec3 &Renderer::translateGroup(int32 x, int32 y, int32 z) {
-	_destPos.x = (_shadeMatrix.row1.x * x + _shadeMatrix.row1.y * y + _shadeMatrix.row1.z * z) / SCENE_SIZE_HALF;
-	_destPos.y = (_shadeMatrix.row2.x * x + _shadeMatrix.row2.y * y + _shadeMatrix.row2.z * z) / SCENE_SIZE_HALF;
-	_destPos.z = _destPos.y;
-	return _destPos;
+IVec3 Renderer::translateGroup(int32 x, int32 y, int32 z) {
+	const int32 vx = (_shadeMatrix.row1.x * x + _shadeMatrix.row1.y * y + _shadeMatrix.row1.z * z) / SCENE_SIZE_HALF;
+	const int32 vy = (_shadeMatrix.row2.x * x + _shadeMatrix.row2.y * y + _shadeMatrix.row2.z * z) / SCENE_SIZE_HALF;
+	return IVec3(vx, vy, vy);
 }
 
 void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
@@ -212,7 +211,7 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 	_baseTransPos = updateCameraAnglePositions();
 }
 
-const IVec3 &Renderer::updateCameraAnglePositions(int zShift) {
+IVec3 Renderer::updateCameraAnglePositions(int zShift) {
 	return getCameraAnglePositions(_baseRotPos.x, _baseRotPos.y, _baseRotPos.z + zShift);
 }
 
