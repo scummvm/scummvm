@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-15 14:18+0000\n"
-"PO-Revision-Date: 2021-08-13 21:14+0000\n"
+"PO-Revision-Date: 2021-08-15 15:58+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7495,7 +7495,7 @@ msgstr "Depuración: mover cámara de cuadrícula a la dcha."
 
 #: engines/twine/metaengine.cpp:144
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Posicionar actor en el centro de la pantalla"
 
 #: engines/twine/metaengine.cpp:149
 msgid "Debug Menu"
