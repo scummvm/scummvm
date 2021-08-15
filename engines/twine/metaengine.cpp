@@ -141,6 +141,11 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("c");
 		gameKeyMap->addAction(act);
 
+		act = new Action("DEBUGPLACEACTORATCENTEROFSCREEN", _("Place actor at center of screen"));
+		act->setCustomEngineActionEvent(TwinEActionType::DebugPlaceActorAtCenterOfScreen);
+		act->addDefaultInputMapping("v");
+		gameKeyMap->addAction(act);
+
 		act = new Action("DEBUGMENU", _("Debug Menu"));
 		act->setCustomEngineActionEvent(TwinEActionType::DebugMenu);
 		act->addDefaultInputMapping("MOUSE_RIGHT");
