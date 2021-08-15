@@ -475,7 +475,7 @@ static int32 lOFFSET(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x04
  */
 static int32 lNEVERIF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 valueSize = processLifeConditions(engine, ctx);
+	const int32 valueSize = processLifeConditions(engine, ctx);
 	processLifeOperators(engine, ctx, valueSize);
 	ctx.stream.seek(ctx.stream.readSint16LE()); // condition offset
 	return 0;
@@ -511,7 +511,7 @@ static int32 lRETURN(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x0C
  */
 static int32 lIF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 valueSize = processLifeConditions(engine, ctx);
+	const int32 valueSize = processLifeConditions(engine, ctx);
 	if (!processLifeOperators(engine, ctx, valueSize)) {
 		ctx.stream.seek(ctx.stream.readSint16LE()); // condition offset
 	} else {
@@ -526,7 +526,7 @@ static int32 lIF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x0D
  */
 static int32 lSWIF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 valueSize = processLifeConditions(engine, ctx);
+	const int32 valueSize = processLifeConditions(engine, ctx);
 	if (!processLifeOperators(engine, ctx, valueSize)) {
 		ctx.stream.seek(ctx.stream.readSint16LE()); // condition offset
 	} else {
@@ -542,7 +542,7 @@ static int32 lSWIF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x0E
  */
 static int32 lONEIF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 valueSize = processLifeConditions(engine, ctx);
+	const int32 valueSize = processLifeConditions(engine, ctx);
 	if (!processLifeOperators(engine, ctx, valueSize)) {
 		ctx.stream.seek(ctx.stream.readSint16LE()); // condition offset
 	} else {
@@ -567,7 +567,7 @@ static int32 lELSE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x11
  */
 static int32 lBODY(TwinEEngine *engine, LifeScriptContext &ctx) {
-	BodyType bodyIdx = (BodyType)ctx.stream.readByte();
+	const BodyType bodyIdx = (BodyType)ctx.stream.readByte();
 	engine->_actor->initModelActor(bodyIdx, ctx.actorIdx);
 	return 0;
 }
@@ -577,8 +577,8 @@ static int32 lBODY(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x12
  */
 static int32 lBODY_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 otherActorIdx = ctx.stream.readByte();
-	BodyType otherBodyIdx = (BodyType)ctx.stream.readByte();
+	const int32 otherActorIdx = ctx.stream.readByte();
+	const BodyType otherBodyIdx = (BodyType)ctx.stream.readByte();
 	engine->_actor->initModelActor(otherBodyIdx, otherActorIdx);
 	return 0;
 }
@@ -588,7 +588,7 @@ static int32 lBODY_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x13
  */
 static int32 lANIM(TwinEEngine *engine, LifeScriptContext &ctx) {
-	AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
+	const AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
 	engine->_animations->initAnim(animIdx, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, ctx.actorIdx);
 	return 0;
 }
@@ -598,8 +598,8 @@ static int32 lANIM(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x14
  */
 static int32 lANIM_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 otherActorIdx = ctx.stream.readByte();
-	AnimationTypes otherAnimIdx = (AnimationTypes)ctx.stream.readByte();
+	const int32 otherActorIdx = ctx.stream.readByte();
+	const AnimationTypes otherAnimIdx = (AnimationTypes)ctx.stream.readByte();
 	engine->_animations->initAnim(otherAnimIdx, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, otherActorIdx);
 	return 0;
 }
@@ -618,7 +618,7 @@ static int32 lSET_LIFE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x16
  */
 static int32 lSET_LIFE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 otherActorIdx = ctx.stream.readByte();
+	const int32 otherActorIdx = ctx.stream.readByte();
 	engine->_scene->getActor(otherActorIdx)->_positionInLifeScript = ctx.stream.readSint16LE(); // offset
 	return 0;
 }
@@ -637,7 +637,7 @@ static int32 lSET_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x18
  */
 static int32 lSET_TRACK_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 otherActorIdx = ctx.stream.readByte();
+	const int32 otherActorIdx = ctx.stream.readByte();
 	engine->_scene->getActor(otherActorIdx)->_positionInMoveScript = ctx.stream.readSint16LE(); // offset
 	return 0;
 }
@@ -844,9 +844,9 @@ static int32 lUSE_ONE_LITTLE_KEY(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x28
  */
 static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int16 oldNumKashes = engine->_gameState->_inventoryNumKashes;
+	const int16 oldNumKashes = engine->_gameState->_inventoryNumKashes;
 	bool hideRange = false;
-	int16 kashes = ctx.stream.readSint16LE();
+	const int16 kashes = ctx.stream.readSint16LE();
 
 	engine->_gameState->addKashes(-kashes);
 
@@ -945,7 +945,7 @@ static int32 lFOUND_OBJECT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x2F
  */
 static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 distance = ctx.stream.readSint16LE();
+	const int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->_angle = ANGLE_270;
 	ctx.actor->_pos.x = ctx.actor->_lastPos.x - distance;
@@ -960,7 +960,7 @@ static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x30
  */
 static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 distance = ctx.stream.readSint16LE();
+	const int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->_angle = ANGLE_90;
 	ctx.actor->_pos.x = ctx.actor->_lastPos.x + distance;
@@ -975,7 +975,7 @@ static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x31
  */
 static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 distance = ctx.stream.readSint16LE();
+	const int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->_angle = ANGLE_180;
 	ctx.actor->_pos.z = ctx.actor->_lastPos.z - distance;
@@ -990,7 +990,7 @@ static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x32
  */
 static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 distance = ctx.stream.readSint16LE();
+	const int32 distance = ctx.stream.readSint16LE();
 
 	ctx.actor->_angle = ANGLE_0;
 	ctx.actor->_pos.z = ctx.actor->_lastPos.z + distance;
@@ -1005,7 +1005,7 @@ static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x33
  */
 static int32 lGIVE_BONUS(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 flag = ctx.stream.readByte();
+	const int32 flag = ctx.stream.readByte();
 
 	if (ctx.actor->_bonusParameter.cloverleaf || ctx.actor->_bonusParameter.kashes || ctx.actor->_bonusParameter.key || ctx.actor->_bonusParameter.lifepoints || ctx.actor->_bonusParameter.magicpoints) {
 		engine->_actor->processActorExtraBonus(ctx.actorIdx);
@@ -1023,7 +1023,7 @@ static int32 lGIVE_BONUS(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x34
  */
 static int32 lCHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 sceneIdx = ctx.stream.readByte();
+	const int32 sceneIdx = ctx.stream.readByte();
 	engine->_scene->_needChangeScene = sceneIdx;
 	engine->_scene->_heroPositionType = ScenePositionType::kScene;
 	return 0;
@@ -1034,7 +1034,7 @@ static int32 lCHANGE_CUBE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x35
  */
 static int32 lOBJ_COL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 collision = ctx.stream.readByte();
+	const int32 collision = ctx.stream.readByte();
 	if (collision != 0) {
 		ctx.actor->_staticFlags.bComputeCollisionWithObj = 1;
 	} else {
@@ -1048,7 +1048,7 @@ static int32 lOBJ_COL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x36
  */
 static int32 lBRICK_COL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 collision = ctx.stream.readByte();
+	const int32 collision = ctx.stream.readByte();
 
 	ctx.actor->_staticFlags.bComputeCollisionWithBricks = 0;
 	ctx.actor->_staticFlags.bComputeLowCollision = 0;
@@ -1067,7 +1067,7 @@ static int32 lBRICK_COL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x37
  */
 static int32 lOR_IF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 valueSize = processLifeConditions(engine, ctx);
+	const int32 valueSize = processLifeConditions(engine, ctx);
 	if (processLifeOperators(engine, ctx, valueSize)) {
 		ctx.stream.seek(ctx.stream.readSint16LE()); // condition offset
 	} else {
@@ -1091,7 +1091,7 @@ static int32 lINVISIBLE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x39
  */
 static int32 lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int zoomScreen = ctx.stream.readByte();
+	const int zoomScreen = ctx.stream.readByte();
 
 	if (zoomScreen && !engine->_redraw->_inSceneryView && engine->_cfgfile.SceZoom) {
 		engine->_screens->fadeToBlack(engine->_screens->_mainPaletteRGBA);
@@ -1143,8 +1143,8 @@ static int32 lSUB_MAGIC_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x3D
  */
 static int32 lSET_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 otherActorIdx = ctx.stream.readByte();
-	static int32 lifeValue = ctx.stream.readByte();
+	const int32 otherActorIdx = ctx.stream.readByte();
+	const int32 lifeValue = ctx.stream.readByte();
 
 	engine->_scene->getActor(otherActorIdx)->setLife(lifeValue);
 
@@ -1156,8 +1156,8 @@ static int32 lSET_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x3E
  */
 static int32 lSUB_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 otherActorIdx = ctx.stream.readByte();
-	static int32 lifeValue = ctx.stream.readByte();
+	const int32 otherActorIdx = ctx.stream.readByte();
+	const int32 lifeValue = ctx.stream.readByte();
 
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 	otherActor->addLife(-lifeValue);
@@ -1173,8 +1173,8 @@ static int32 lSUB_LIFE_POINT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x3F
  */
 static int32 lHIT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 otherActorIdx = ctx.stream.readByte();
-	int32 strengthOfHit = ctx.stream.readByte();
+	const int32 otherActorIdx = ctx.stream.readByte();
+	const int32 strengthOfHit = ctx.stream.readByte();
 	engine->_actor->hitActor(ctx.actorIdx, otherActorIdx, strengthOfHit, engine->_scene->getActor(otherActorIdx)->_angle);
 	return 0;
 }
@@ -1352,7 +1352,7 @@ static int32 lSET_GRM(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4D
  */
 static int32 lSAY_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	TextId textEntry = (TextId)ctx.stream.readSint16LE();
+	const TextId textEntry = (TextId)ctx.stream.readSint16LE();
 
 	engine->_redraw->addOverlay(OverlayType::koText, (int16)textEntry, 0, 0, ctx.actorIdx, OverlayPosType::koFollowActor, 2);
 
@@ -1367,8 +1367,8 @@ static int32 lSAY_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4E
  */
 static int32 lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 otherActorIdx = ctx.stream.readByte();
-	TextId textEntry = (TextId)ctx.stream.readSint16LE();
+	const int32 otherActorIdx = ctx.stream.readByte();
+	const TextId textEntry = (TextId)ctx.stream.readSint16LE();
 
 	engine->_redraw->addOverlay(OverlayType::koText, (int16)textEntry, 0, 0, otherActorIdx, OverlayPosType::koFollowActor, 2);
 
@@ -1393,7 +1393,7 @@ static int32 lFULL_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x50
  */
 static int32 lBETA(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 newAngle = ctx.stream.readSint16LE();
+	const int32 newAngle = ctx.stream.readSint16LE();
 	ctx.actor->_angle = ToAngle(newAngle);
 	engine->_movements->clearRealAngle(ctx.actor);
 	return 0;
