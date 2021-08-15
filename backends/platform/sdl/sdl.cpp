@@ -249,9 +249,17 @@ void OSystem_SDL::initBackend() {
 		// subclass does not want any switching of graphics managers anyway.
 		setupGraphicsModes();
 
-		if (!ConfMan.get("gfx_mode").empty()) {
+		Common::String gfxMode(ConfMan.get("gfx_mode"));
+		// "normal" and "default" are a special case for the default graphics mode.
+		// See OSystem::setGraphicsMode(const char *name) implementation.
+		if (gfxMode.empty() || !gfxMode.compareToIgnoreCase("normal") || !gfxMode.compareToIgnoreCase("default")) {
+			// If the default GraphicsManager is OpenGL, create the OpenGL graphics manager
+			if (getDefaultGraphicsManager() == GraphicsManagerOpenGL) {
+				_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
+				_graphicsMode = _defaultGLMode;
+			}
+		} else {
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
-			Common::String gfxMode(ConfMan.get("gfx_mode"));
 			for (uint i = _firstGLMode; i < _graphicsModeIds.size(); ++i) {
 				if (!scumm_stricmp(_graphicsModes[i].name, gfxMode.c_str())) {
 					_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource, _window);
@@ -732,8 +740,8 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 	if (_graphicsModes.empty()) {
 		return _graphicsManager->getDefaultGraphicsMode();
 	} else {
-		// Return the default graphics mode from the current graphics manager
-		if (_graphicsMode < _firstGLMode)
+		// Return the default graphics mode
+		if (getDefaultGraphicsManager() == GraphicsManagerSDL)
 			return _defaultSDLMode;
 		else
 			return _defaultGLMode;
