@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-15 14:18+0000\n"
-"PO-Revision-Date: 2021-08-14 16:49+0000\n"
+"PO-Revision-Date: 2021-08-15 15:50+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -7518,7 +7518,7 @@ msgstr "Debug: Kamera nach rechts"
 
 #: engines/twine/metaengine.cpp:144
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Platziere den Charakter in der Bildschirm-Mitte"
 
 #: engines/twine/metaengine.cpp:149
 msgid "Debug Menu"
