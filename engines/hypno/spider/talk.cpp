@@ -89,4 +89,4 @@ bool HypnoEngine::rightClickedConversation(Common::Point mousePos) {
 	}
 }
 
-}
+} // End of namespace Hypno
