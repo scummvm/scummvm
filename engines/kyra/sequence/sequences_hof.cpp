@@ -249,6 +249,8 @@ private:
 	uint32 _countDownRemainder;
 	uint32 _countDownLastUpdate;
 
+	const int _tickLength;
+
 	enum SeqPlayerTargetInfo {
 		kHoF = 0,
 		kHoFDemo,
@@ -336,7 +338,7 @@ private:
 
 SeqPlayer_HOF *SeqPlayer_HOF::_instance = 0;
 
-SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *system, bool startupSaveLoadable) : _vm(vm), _screen(screen), _system(system), _startupSaveLoadable(startupSaveLoadable) {
+SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *system, bool startupSaveLoadable) : _vm(vm), _screen(screen), _system(system), _startupSaveLoadable(startupSaveLoadable), _tickLength(1000000/60) {
 	// We use a static pointer for pauseEngine functionality. Since we don't
 	// ever need more than one SeqPlayer_HOF object at the same time we keep
 	// this simple and just add an assert to detect typos, regressions, etc.
@@ -874,7 +876,7 @@ void SeqPlayer_HOF::doTransition(int type) {
 void SeqPlayer_HOF::nestedFrameAnimTransition(int srcPage, int dstPage, int delaytime, int steps, int x, int y, int w, int h, int openClose, int directionFlags) {
 	if (openClose) {
 		for (int i = 1; i < steps; i++) {
-			uint32 endtime = _system->getMillis() + delaytime * _vm->tickLength();
+			uint32 endtime = _system->getMillis() + delaytime * _tickLength / 1000;
 
 			int w2 = (((w * 256) / steps) * i) / 256;
 			int h2 = (((h * 256) / steps) * i) / 256;
@@ -899,7 +901,7 @@ void SeqPlayer_HOF::nestedFrameAnimTransition(int srcPage, int dstPage, int dela
 	} else {
 		_screen->copyPage(12, dstPage);
 		for (int i = steps; i; i--) {
-			uint32 endtime = _system->getMillis() + delaytime * _vm->tickLength();
+			uint32 endtime = _system->getMillis() + delaytime * _tickLength / 1000;
 
 			int w2 = (((w * 256) / steps) * i) / 256;
 			int h2 = (((h * 256) / steps) * i) / 256;
@@ -927,7 +929,7 @@ void SeqPlayer_HOF::nestedFrameFadeTransition(const char *cmpFile) {
 	_screen->copyPage(12, 4);
 
 	for (int i = 0; i < 3; i++) {
-		uint32 endtime = _system->getMillis() + 4 * _vm->tickLength();
+		uint32 endtime = _system->getMillis() + 4 * _tickLength / 1000;
 		assert(_screenHoF);
 		_screenHoF->cmpFadeFrameStep(4, 320, 200, 0, 0, 2, 320, 200, 0, 0, 320, 200, 6);
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
@@ -1008,7 +1010,7 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 					break;
 
 			if (fadePal1 && fadePal2) {
-				if (!_screen->timedPaletteFadeStep(fadePal1->getData(), fadePal2->getData(), _system->getMillis() - startTime, fadeRate * _vm->tickLength()) && !wsaObj)
+				if (!_screen->timedPaletteFadeStep(fadePal1->getData(), fadePal2->getData(), _system->getMillis() - startTime, fadeRate * _tickLength / 1000) && !wsaObj)
 					break;
 			}
 
@@ -1044,7 +1046,7 @@ void SeqPlayer_HOF::playDialogueAnimation(uint16 strID, uint16 soundID, int text
 		if (slot >= 0)
 			_textSlots[slot].textcolor = textColor;
 	}
-	_specialAnimTimeOutTotal = _system->getMillis() + dur * _vm->tickLength();
+	_specialAnimTimeOutTotal = _system->getMillis() + dur * _tickLength / 1000;
 	int curframe = animStartFrame;
 
 	if (soundID && _vm->speechEnabled()) {
@@ -1063,7 +1065,7 @@ void SeqPlayer_HOF::playDialogueAnimation(uint16 strID, uint16 soundID, int text
 		if (ABS(animLastFrame) < curframe)
 			curframe = animStartFrame;
 
-		_specialAnimFrameTimeOut = _system->getMillis() + _animDuration * _vm->tickLength();
+		_specialAnimFrameTimeOut = _system->getMillis() + _animDuration * _tickLength / 1000;
 		setCountDown(_animDuration);
 
 		if (wsaObj)
@@ -1242,9 +1244,9 @@ bool SeqPlayer_HOF::updateNestedAnimation(int animSlot) {
 	}
 
 	if (_animSlots[animSlot].flags & 0x10) {
-		currentFrame = (curTick - _animSlots[animSlot].nextFrame) / (_animSlots[animSlot].frameDelay * _vm->tickLength());
+		currentFrame = (curTick - _animSlots[animSlot].nextFrame) / (_animSlots[animSlot].frameDelay * _tickLength / 1000);
 	} else {
-		int diff = (curTick - _animSlots[animSlot].nextFrame) / (_animSlots[animSlot].frameDelay * _vm->tickLength());
+		int diff = (curTick - _animSlots[animSlot].nextFrame) / (_animSlots[animSlot].frameDelay * _tickLength / 1000);
 		if (diff > 0) {
 			currentFrame++;
 			if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
@@ -1356,7 +1358,7 @@ int SeqPlayer_HOF::displaySubTitle(uint16 strIndex, uint16 posX, uint16 posY, in
 		_textSlots[i].strIndex = strIndex;
 		_textSlots[i].x = posX;
 		_textSlots[i].y = posY;
-		_textSlots[i].duration = duration * _vm->tickLength();
+		_textSlots[i].duration = duration * _tickLength / 1000;
 		_textSlots[i].width = width;
 		_textSlots[i].startTime = _system->getMillis();
 		_textSlots[i].textcolor = -1;
@@ -1437,7 +1439,7 @@ char *SeqPlayer_HOF::preprocessString(const char *srcStr, int width) {
 }
 
 void SeqPlayer_HOF::waitForSubTitlesTimeout() {
-	uint32 timeOut = _system->getMillis() + ticksTillSubTitlesTimeout() * _vm->tickLength();
+	uint32 timeOut = _system->getMillis() + ticksTillSubTitlesTimeout() * _tickLength / 1000;
 
 	if (_vm->textEnabled()) {
 		delayUntil(timeOut);
@@ -1546,7 +1548,7 @@ void SeqPlayer_HOF::displayHoFTalkieScrollText(uint8 *data, const ScreenDim *d, 
 	int cnt = 0;
 
 	while (loop) {
-		uint32 loopEnd = _system->getMillis() + speed * _vm->tickLength();
+		uint32 loopEnd = _system->getMillis() + speed * _tickLength / 1000;
 
 		while (cnt < 35 && *ptr) {
 			uint16 cH;
@@ -1726,7 +1728,7 @@ void SeqPlayer_HOF::updateDemoAdText(int bottom, int top) {
 }
 
 void SeqPlayer_HOF::delayTicks(uint32 ticks) {
-	uint32 len = ticks * _vm->tickLength();
+	uint32 len = ticks * _tickLength / 1000;
 	while (len && !_vm->shouldQuit() && !checkAbortPlayback()) {
 		uint32 step = (len >= 10) ? 10 : len;
 		_system->delayMillis(step);
@@ -1743,7 +1745,7 @@ void SeqPlayer_HOF::delayUntil(uint32 dest) {
 }
 
 void SeqPlayer_HOF::setCountDown(uint32 ticks) {
-	_countDownRemainder = ticks * _vm->tickLength();
+	_countDownRemainder = ticks * _tickLength / 1000;
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
 		_countDownRemainder = _countDownRemainder * 2 / 3;
 	_countDownLastUpdate = _system->getMillis() & ~(_vm->tickLength() - 1);
@@ -1815,7 +1817,7 @@ int SeqPlayer_HOF::cbHOF_overview(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_updateAnimations = true;
 		fadeOutMusic();
 		_vm->sound()->playTrack(4);
-		frameEnd = _system->getMillis() + 60 * _vm->tickLength();
+		frameEnd = _system->getMillis() + 60 * _tickLength / 1000;
 
 		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xFF;
 		memset(_textColorMap, _textColor[1], 16);
@@ -2250,7 +2252,7 @@ int SeqPlayer_HOF::cbHOF_funters(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_textColor[0] = _textColorMap[1] = 0xFF;
 		_screen->setTextColorMap(_textColorMap);
 
-		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
+		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 		printFadingText(81, 240, 70, _textColorMap, 252);
 		printFadingText(82, 240, 90, _textColorMap, _textColor[0]);
 		_screen->copyPage(2, 12);
@@ -2324,7 +2326,7 @@ int SeqPlayer_HOF::cbHOF_ferb(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	switch (frm) {
 	case -2:
 		doTransition(9);
-		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
+		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 		printFadingText(34, 240, _vm->gameFlags().isTalkie ? 60 : 40, _textColorMap, 252);
 		printFadingText(35, 240, _vm->gameFlags().isTalkie ? 70 : 50, _textColorMap, _textColor[0]);
 		printFadingText(36, 240, _vm->gameFlags().isTalkie ? 90 : 70, _textColorMap, 252);
@@ -2406,7 +2408,7 @@ int SeqPlayer_HOF::cbHOF_fish(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	switch (frm) {
 	case -2:
 		doTransition(9);
-		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
+		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 
 		printFadingText(40, 240, _vm->gameFlags().isTalkie ? 55 : 40, _textColorMap, 252);
 		printFadingText(41, 240, _vm->gameFlags().isTalkie ? 65 : 50, _textColorMap, _textColor[0]);
@@ -2488,7 +2490,7 @@ int SeqPlayer_HOF::cbHOF_fheep(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		doTransition(9);
-		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
+		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 		printFadingText(49, 240, 20, _textColorMap, 252);
 		printFadingText(50, 240, 30, _textColorMap, _textColor[0]);
 		printFadingText(51, 240, 40, _textColorMap, _textColor[0]);
@@ -2568,7 +2570,7 @@ int SeqPlayer_HOF::cbHOF_farmer(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		doTransition(9);
-		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
+		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 		printFadingText(45, 240, 40, _textColorMap, 252);
 		printFadingText(46, 240, 50, _textColorMap, _textColor[0]);
 		printFadingText(47, 240, 60, _textColorMap, _textColor[0]);
@@ -2638,7 +2640,7 @@ int SeqPlayer_HOF::cbHOF_fuards(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	switch (frm) {
 	case -2:
 		doTransition(9);
-		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
+		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 		printFadingText(70, 240, 20, _textColorMap, 252);
 		printFadingText(71, 240, 30, _textColorMap, _textColor[0]);
 		printFadingText(72, 240, 40, _textColorMap, _textColor[0]);
@@ -2733,7 +2735,7 @@ int SeqPlayer_HOF::cbHOF_firates(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		doTransition(9);
-		frameEnd = _system->getMillis() + 480 * _vm->tickLength();
+		frameEnd = _system->getMillis() + 480 * _tickLength / 1000;
 		printFadingText(76, 240, 40, _textColorMap, 252);
 		printFadingText(77, 240, 50, _textColorMap, 252);
 		printFadingText(78, 240, 60, _textColorMap, _textColor[0]);
@@ -3066,7 +3068,7 @@ int SeqPlayer_HOF::cbHOFDEMO_dinob(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 }
 
 int SeqPlayer_HOF::cbHOFDEMO_fisher(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	if (((_system->getMillis() - _fisherAnimCurTime) / (5 * _vm->tickLength())) > 0) {
+	if (((_system->getMillis() - _fisherAnimCurTime) / (5 * _tickLength / 1000)) > 0) {
 		_fisherAnimCurTime = _system->getMillis();
 		if (!_callbackCurrentFrame) {
 			startNestedAnimation(0, kNestedSequenceHoFDemoBail);
