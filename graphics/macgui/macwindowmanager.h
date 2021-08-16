@@ -307,6 +307,8 @@ public:
 	uint findBestColor(uint32 color);
 	void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
 
+	uint inverter(uint src);
+
 	const byte *getPalette() { return _palette; }
 	uint getPaletteSize() { return _paletteSize; }
 

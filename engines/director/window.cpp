@@ -102,17 +102,10 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 
 			// if this will cause efficiency problem, then we shall cache the inverted color in wm
 			for (int j = 0; j < srcRect.width(); j++, src++)
-				if (!mask || (msk && !(*msk++))) {
-					byte r, g, b;
-					g_director->_wm->decomposeColor(*src, r, g, b);
-					r = ~r;
-					g = ~g;
-					b = ~b;
-					*src = g_director->_wm->findBestColor(r, g, b);
-				}
+				if (!mask || (msk && !(*msk++)))
+					*src = _wm->inverter(*src);
 		}
 	} else {
-		uint32 alpha = _wm->_pixelformat.ARGBToColor(255, 0, 0, 0);
 
 		for (int i = 0; i < srcRect.height(); i++) {
 			uint32 *src = (uint32 *)_composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
@@ -120,7 +113,7 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
 				if (!mask || (msk && !(*msk++)))
-					*src = ~(*src & ~alpha) | alpha;
+					*src = _wm->inverter(*src);
 		}
 	}
 }

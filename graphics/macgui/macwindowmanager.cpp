@@ -1354,6 +1354,20 @@ void MacWindowManager::decomposeColor(uint32 color, byte &r, byte &g, byte &b) {
 	}
 }
 
+uint MacWindowManager::inverter(uint src) {
+	if (_pixelformat.bytesPerPixel == 1) {
+		byte r, g, b;
+		decomposeColor(src, r, g, b);
+		r = ~r;
+		g = ~g;
+		b = ~b;
+		return findBestColor(r, g, b);
+	} else {
+		uint32 alpha = _pixelformat.ARGBToColor(255, 0, 0, 0);
+		return ~(src & ~alpha) | alpha;
+	}
+}
+
 PauseToken MacWindowManager::pauseEngine() {
 	return _engineP->pauseEngine();
 }
