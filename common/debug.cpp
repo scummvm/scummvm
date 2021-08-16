@@ -32,6 +32,11 @@
 int gDebugLevel = -1;
 bool gDebugChannelsOnly = false;
 
+const DebugChannelDef gDebugChannels[] = {
+	{ kDebugLevelEventRec,   "eventrec",  "Event recorder debug level" },
+	{ kDebugGlobalDetection, "detection", "debug messages for advancedDetector" },
+	DEBUG_CHANNEL_END
+};
 namespace Common {
 
 DECLARE_SINGLETON(DebugManager);
