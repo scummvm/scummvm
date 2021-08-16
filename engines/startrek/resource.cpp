@@ -112,8 +112,11 @@ ResourceIndex Resource::getIndexEntry(Common::SeekableReadStream *indexFile) {
 	currentFile += '.';
 
 	// Read extension
-	for (byte i = 0; i < 3; i++)
-		currentFile += indexFile->readByte();
+	for (byte i = 0; i < 3; i++) {
+		byte b = indexFile->readByte();
+		if (b)
+			currentFile += b;
+	}
 
 	index.fileName = currentFile;
 
@@ -275,7 +278,8 @@ Common::String Resource::getLoadedText(int textIndex) {
 	while (!txtFile->eos()) {
 		do {
 			cur = txtFile->readByte();
-			str += cur;
+			if (cur)
+				str += cur;
 		} while (cur != '\0');
 
 		if (curIndex == textIndex) {
