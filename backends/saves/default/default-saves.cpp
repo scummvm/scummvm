@@ -222,6 +222,20 @@ bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 	}
 }
 
+bool DefaultSaveFileManager::exists(const Common::String &filename) {
+	// Assure the savefile name cache is up-to-date.
+	assureCached(getSavePath());
+	if (getError().getCode() != Common::kNoError)
+		return false;
+
+	for (Common::StringArray::const_iterator i = _lockedFiles.begin(), end = _lockedFiles.end(); i != end; ++i) {
+		if (filename == *i)
+			return true;
+	}
+
+	return _saveFileCache.contains(filename);
+}
+
 Common::String DefaultSaveFileManager::getSavePath() const {
 
 	Common::String dir;

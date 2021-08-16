@@ -145,6 +145,10 @@ public:
 	}
 
 	Common::StringArray listSavefiles(const Common::String &pattern) override;
+
+	bool exists(const Common::String &filename) override {
+		return InPAKSave().readSaveGame(filename.c_str());
+	}
 };
 
 

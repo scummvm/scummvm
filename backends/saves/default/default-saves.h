@@ -44,6 +44,7 @@ public:
 	Common::InSaveFile *openForLoading(const Common::String &filename) override;
 	Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true) override;
 	bool removeSavefile(const Common::String &filename) override;
+	bool exists(const Common::String &filename) override;
 
 #ifdef USE_LIBCURL
 
