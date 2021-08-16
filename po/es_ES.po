@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-16 12:18+0000\n"
+"POT-Creation-Date: 2021-08-16 12:19+0000\n"
 "PO-Revision-Date: 2021-08-15 15:58+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -274,7 +274,7 @@ msgid "Engine"
 msgstr "Motor"
 
 #: gui/editgamedialog.cpp:207 gui/options.cpp:1781 gui/options.cpp:1938
-#: backends/graphics/sdl/sdl-graphics.cpp:417
+#: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Graphics"
 msgstr "Gráficos"
 
@@ -1039,7 +1039,7 @@ msgstr "Modo de ajuste:"
 msgid "Scaler:"
 msgstr "Escalado:"
 
-#: gui/options.cpp:1439 backends/graphics/sdl/sdl-graphics.cpp:408
+#: gui/options.cpp:1439 backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Fullscreen mode"
 msgstr "Pantalla completa"
 
@@ -2858,20 +2858,32 @@ msgstr "«SDL Surface»"
 msgid "Active graphics filter:"
 msgstr "Filtro de gráficos activo:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:410
+#: backends/graphics/sdl/sdl-graphics.cpp:368
+#, fuzzy, c-format
+#| msgid "Save screenshot"
+msgid "Saved screenshot '%s'"
+msgstr "Guardar captura de pantalla"
+
+#: backends/graphics/sdl/sdl-graphics.cpp:377
+#, fuzzy
+#| msgid "Save screenshot"
+msgid "Could not save screenshot"
+msgstr "Guardar captura de pantalla"
+
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Windowed mode"
 msgstr "Modo ventana"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:421 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Activar/Desactivar pantalla completa"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:428 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:961
 msgid "Toggle mouse capture"
 msgstr "Activar/Desactivar captura de ratón"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:433
+#: backends/graphics/sdl/sdl-graphics.cpp:441
 #: engines/wintermute/keymapper_tables.h:647
 #: engines/wintermute/keymapper_tables.h:696
 #: engines/wintermute/keymapper_tables.h:1099
@@ -2884,31 +2896,31 @@ msgstr "Activar/Desactivar captura de ratón"
 msgid "Save screenshot"
 msgstr "Guardar captura de pantalla"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:439
+#: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Toggle aspect ratio correction"
 msgstr "Corregir relación de aspecto"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:446
+#: backends/graphics/sdl/sdl-graphics.cpp:454
 msgid "Toggle linear filtered scaling"
 msgstr "Escalado con filtro lineal"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:453
+#: backends/graphics/sdl/sdl-graphics.cpp:461
 msgid "Cycle through stretch modes"
 msgstr "Cambiar modo de ajuste"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:459
+#: backends/graphics/sdl/sdl-graphics.cpp:467
 msgid "Increase the scale factor"
 msgstr "Aumentar factor de escalado"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:465
+#: backends/graphics/sdl/sdl-graphics.cpp:473
 msgid "Decrease the scale factor"
 msgstr "Disminuir factor de escalado"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:471
+#: backends/graphics/sdl/sdl-graphics.cpp:479
 msgid "Switch to the next scaler"
 msgstr "Cambiar al siguiente filtro de escalado"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:476
+#: backends/graphics/sdl/sdl-graphics.cpp:484
 msgid "Switch to the previous scaler"
 msgstr "Cambiar al filtro de escalado anterior"
 

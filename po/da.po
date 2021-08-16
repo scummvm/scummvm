@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-16 12:18+0000\n"
+"POT-Creation-Date: 2021-08-16 12:19+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -273,7 +273,7 @@ msgid "Engine"
 msgstr "Motor"
 
 #: gui/editgamedialog.cpp:207 gui/options.cpp:1781 gui/options.cpp:1938
-#: backends/graphics/sdl/sdl-graphics.cpp:417
+#: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Graphics"
 msgstr "Grafik"
 
@@ -1042,7 +1042,7 @@ msgstr "Stræktilstand:"
 msgid "Scaler:"
 msgstr ""
 
-#: gui/options.cpp:1439 backends/graphics/sdl/sdl-graphics.cpp:408
+#: gui/options.cpp:1439 backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Fullscreen mode"
 msgstr "Fuldskærmstilstand"
 
@@ -2849,20 +2849,30 @@ msgstr ""
 msgid "Active graphics filter:"
 msgstr "Aktive grafik filtre:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:410
+#: backends/graphics/sdl/sdl-graphics.cpp:368
+#, fuzzy, c-format
+msgid "Saved screenshot '%s'"
+msgstr "Jævn bevægelse til"
+
+#: backends/graphics/sdl/sdl-graphics.cpp:377
+#, fuzzy
+msgid "Could not save screenshot"
+msgstr "Jævn bevægelse til"
+
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Windowed mode"
 msgstr "Vinduestilstand"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:421 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Fuldskærm til/fra"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:428 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:961
 msgid "Toggle mouse capture"
 msgstr "Museindfangning til/fra"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:433
+#: backends/graphics/sdl/sdl-graphics.cpp:441
 #: engines/wintermute/keymapper_tables.h:647
 #: engines/wintermute/keymapper_tables.h:696
 #: engines/wintermute/keymapper_tables.h:1099
@@ -2876,38 +2886,38 @@ msgstr "Museindfangning til/fra"
 msgid "Save screenshot"
 msgstr "Jævn bevægelse til"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:439
+#: backends/graphics/sdl/sdl-graphics.cpp:447
 #, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Rettelse af højde-/breddeforhold til/fra"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:446
+#: backends/graphics/sdl/sdl-graphics.cpp:454
 #, fuzzy
 msgid "Toggle linear filtered scaling"
 msgstr "Brug lineær filtrering når grafik skaleres"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:453
+#: backends/graphics/sdl/sdl-graphics.cpp:461
 #, fuzzy
 msgid "Cycle through stretch modes"
 msgstr "Kunne ikke skifte til stræktilstanden '%s'."
 
-#: backends/graphics/sdl/sdl-graphics.cpp:459
+#: backends/graphics/sdl/sdl-graphics.cpp:467
 #, fuzzy
 msgid "Increase the scale factor"
 msgstr "Hæv/sænk skaleringsfaktor"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:465
+#: backends/graphics/sdl/sdl-graphics.cpp:473
 #, fuzzy
 msgid "Decrease the scale factor"
 msgstr "Hæv/sænk skaleringsfaktor"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:471
+#: backends/graphics/sdl/sdl-graphics.cpp:479
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to the next scaler"
 msgstr "Skift til Spil"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:476
+#: backends/graphics/sdl/sdl-graphics.cpp:484
 msgid "Switch to the previous scaler"
 msgstr ""
 
