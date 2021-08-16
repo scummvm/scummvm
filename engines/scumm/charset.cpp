@@ -474,7 +474,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text, uint strLenMax) {
 					// which would result in a different width result.
 					// This has never been observed in the game though, and
 					// as such, we don't handle it.
-					text += 4; 
+					text += 4;
 					break;
 				case 'c':
 					text += 5;
@@ -1889,7 +1889,7 @@ void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int 
 
 			_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 2, y + 2, 0);
 			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y + 2, shadowColor);
-		}			
+		}
 	}
 
 	_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);

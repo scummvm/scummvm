@@ -1421,7 +1421,7 @@ void ScummEngine_v6::o6_getAnimateVariable() {
 	// We fix that by forcing Pete to play the return animation
 	// regardless if the ball's foul or not.
 	if ((_game.id == GID_BASEBALL2001 || _game.id == GID_BASEBALL2003) && \
-	 		_currentRoom == ((_game.id == GID_BASEBALL2001) ? 4 : 3) && \
+			_currentRoom == ((_game.id == GID_BASEBALL2001) ? 4 : 3) && \
 			vm.slot[_currentScript].number == 2105 && \
 			a->_costume == ((_game.id == GID_BASEBALL2001) ? 107 : 99) && \
 			// Room variable 5 to ensure this workaround executes only once at
