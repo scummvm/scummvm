@@ -947,6 +947,8 @@ IMPLEMENT_OPCODE(ChangeScene)
 	getSound()->stopAll();
 	getSound()->stopMusic();
 
+	_vm->unlockAchievement(Common::String::format("ASYLUM_LEVEL_%d", getWorld()->chapter));
+
 	// Switch the scene
 	_vm->switchScene((ResourcePackId)(cmd->param1 + 4));
 
@@ -1328,6 +1330,9 @@ IMPLEMENT_OPCODE(PlaySpeech)
 		return;
 
 	if (cmd->param4 != 2) {
+		if (cmd->param1 == 153 && getWorld()->chapter == kChapter2)
+			_vm->unlockAchievement("ASYLUM_FIND_CHILDREN");
+
 		cmd->param5 = (int32)getSpeech()->playPlayer((ResourceId)cmd->param1);
 
 		if (cmd->param2) {
@@ -1893,6 +1898,10 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x62
 IMPLEMENT_OPCODE(ShowMenu)
+	if (!_vm->isGameFlagSet(kGameFlag3931)) {
+		_vm->unlockAchievement("ASYLUM_LEVEL_13");
+		_vm->setGameFlag(kGameFlag3931);
+	}
 	_vm->menu()->show();
 END_OPCODE
 

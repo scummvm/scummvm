@@ -162,6 +162,7 @@ public:
 	void toggleGameFlag(GameFlag flag);
 	bool isGameFlagSet(GameFlag flag) const;
 	bool isGameFlagNotSet(GameFlag flag) const;
+	bool areGameFlagsSet(uint from, uint to) const;
 	void resetFlags();
 
 	// Misc
@@ -169,6 +170,10 @@ public:
 	uint getRandomBit()      { return _rnd->getRandomBit(); }
 
 	bool rectContains(const int16 (*rectPtr)[4], const Common::Point &p) const;
+
+	// Steam achievements
+	void unlockAchievement(const Common::String &id);
+	void checkAchievements();
 
 	/**
 	 * Switch message handler.
