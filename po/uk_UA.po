@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-16 12:18+0000\n"
-"PO-Revision-Date: 2021-08-10 04:32+0000\n"
+"PO-Revision-Date: 2021-08-16 12:31+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -905,7 +905,7 @@ msgstr "Кожні 30 хв"
 #. I18N: Very large GUI scale
 #: gui/options.cpp:138
 msgid "Very large"
-msgstr ""
+msgstr "Дуже великий"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:140
@@ -7429,7 +7429,7 @@ msgstr "Відладка: Камеру сітки вправо"
 
 #: engines/twine/metaengine.cpp:144
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Поставити гравця в центр екрану"
 
 #: engines/twine/metaengine.cpp:149
 msgid "Debug Menu"
@@ -7590,12 +7590,12 @@ msgstr "Замінює шрифти гри на шрифти поліпшено�
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/detection.cpp:130
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "Камера переміщується разом з Сайленсером"
 
 #: engines/ultima/detection.cpp:131
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
-msgstr ""
+msgstr "Камера йде за переміщенням гравця, а не стрибає по заданим позиціям."
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
