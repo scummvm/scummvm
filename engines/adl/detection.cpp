@@ -158,7 +158,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformApple2,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
@@ -174,7 +174,7 @@ static const AdlGameDescription gameFileDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformApple2,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
@@ -246,7 +246,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			AD_ENTRY1s("mysthous", "7bd1918ffc28e551e5b3baf610982bd3", 116480),
 			Common::FR_FRA,
 			Common::kPlatformApple2,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			MH_OPTIONS
 		},
 		GAME_TYPE_HIRES1,
