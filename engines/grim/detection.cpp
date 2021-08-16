@@ -461,6 +461,71 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_MONKEY4
 	},
 	{
+		// Escape from Monkey Island English Steam/GOG
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("artAll.m4b", "8c7db9dab564854f2c4bab0571104780", 18515664),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_GRIME
+		},
+		GType_MONKEY4
+	},
+	{
+		// Escape from Monkey Island German Steam/GOG
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("artAll.m4b", "7c1da307c5c3eb1ba65b7c1a2e6b5bce", 18512568),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_GRIME
+		},
+		GType_MONKEY4
+	},
+	{
+		// Escape from Monkey Island French Steam/GOG
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("artAll.m4b", "e0fbba846efca842553bb1a726a25dcf", 18514420),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_GRIME
+		},
+		GType_MONKEY4
+	},
+	{
+		// Escape from Monkey Island Italian Steam/GOG
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("artAll.m4b", "b9838ab13a672a42b1fbc8893b94ca26", 18513451),
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_GRIME
+		},
+		GType_MONKEY4
+	},
+	{
+		// Escape from Monkey Island Spanish Steam/GOG
+		{
+			"monkey4",
+			"",
+			AD_ENTRY1s("artAll.m4b", "f2ec4854639cd25792dd3e88fb08a1e6", 18514404),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_GRIME
+		},
+		GType_MONKEY4
+	},
+	{
 		// Escape from Monkey Island German (Mac)
 		{
 			"monkey4",
