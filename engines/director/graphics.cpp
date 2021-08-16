@@ -229,7 +229,7 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		*dst = p->applyColor ? (src & p->foreColor) | (*dst & ~src) : (*dst & ~src);
 		break;
 	case kInkTypeReverse:
-		*dst ^= ~(src);
+		*dst = g_director->_wm->inverter(src);
 		break;
 	case kInkTypeNotReverse:
 		*dst ^= src;
