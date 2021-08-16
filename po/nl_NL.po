@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-16 12:19+0000\n"
-"PO-Revision-Date: 2021-08-16 14:36+0000\n"
+"PO-Revision-Date: 2021-08-16 15:04+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -2188,6 +2188,9 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Naast spraakmakende titels zoals de Monkey Island series, Broken Sword, "
+"Myst, Blade Runner en talloze andere spellen zal je enkele vage adventures "
+"vinden en echte verborgen pareltjes ontdekken."
 
 #: engines/advancedDetector.cpp:231
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -5246,6 +5249,9 @@ msgid ""
 "takes you directly there, skipping intermediate screens. You can only 'Zip' "
 "to a precise area you've already been."
 msgstr ""
+"Wanneer geactiveerd, klikken op een object of gebied met de bliksemschicht "
+"muisaanwijzer brengt u direct ernaar toe, zonder tussenliggende schermen. U "
+"kunt alleen 'zippen' naar een lokatie waar u al bent geweest."
 
 #: engines/mohawk/dialogs.cpp:118
 msgid "~T~ransitions Enabled"
@@ -5276,7 +5282,7 @@ msgstr "De Myst fly by film werd niet door de originele engine afgespeeld."
 #.
 #: engines/mohawk/dialogs.cpp:135
 msgid "Improve Selenitic Age puzzle ~a~ccessibility"
-msgstr ""
+msgstr "Verbeter Selenitic Age puzzel toegangkelijkheid"
 
 #: engines/mohawk/dialogs.cpp:136
 msgid "Allow solving Selenitic Age audio puzzles with more error margin."
@@ -5644,6 +5650,8 @@ msgid ""
 "Enable the Second Chance feature, which automatically saves at specific "
 "scenes. Enabling this disables timed autosaves."
 msgstr ""
+"Gebruik de Tweede Kans mogelijkheid welke automatisch opslaat bij specifieke "
+"scenes. Dit aanzeten schakelt periodiek automatisch opslaan uit."
 
 #: engines/nancy/dialogs.cpp:48
 msgid "Speech Options"
@@ -5839,10 +5847,8 @@ msgid "Display/Hide Pause Menu"
 msgstr "Toon/Verberg Pauze-Menu"
 
 #: engines/pegasus/pegasus.cpp:2798
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle Chatty AI"
-msgstr "Snelle modus aan-/uitzetten"
+msgstr "Schakel Chatty AI aan/uit"
 
 #: engines/pegasus/pegasus.cpp:2813
 msgid "Save Game"
@@ -5995,11 +6001,11 @@ msgstr "Gebruik RGB rendering om schermovergangen te verbeteren"
 
 #: engines/sci/detection.cpp:312
 msgid "Use per-resource modified palettes"
-msgstr ""
+msgstr "Gebruikt per bron gemodificieerde kleurenpaletten"
 
 #: engines/sci/detection.cpp:313
 msgid "Use custom per-resource palettes to improve visuals"
-msgstr ""
+msgstr "Gebruik per object aangepaste kleurenpaletten om beeld te verbeteren"
 
 #: engines/sci/detection.cpp:323
 msgid "Enable bearded musicians"
@@ -6267,6 +6273,8 @@ msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
 msgstr ""
+"Deze muziek was waarschijnlijk bedoeld voor de wat mindere Macs, en gebruikt "
+"slechts 1 kanaal."
 
 #: engines/scumm/detection.cpp:204
 msgid "Enable smooth scrolling"
@@ -7491,18 +7499,16 @@ msgid "Discreet Behaviour"
 msgstr "Discreet Gedrag"
 
 #: engines/twine/metaengine.cpp:199
-#, fuzzy
 msgid "Behaviour Action"
-msgstr "Vorige actie"
+msgstr "Gedrag Actie"
 
 #: engines/twine/metaengine.cpp:205
 msgid "Change Behaviour"
 msgstr "Verander Gedrag"
 
 #: engines/twine/metaengine.cpp:212
-#, fuzzy
 msgid "Options Menu"
-msgstr "DS Opties menu"
+msgstr "Opties Menu"
 
 #: engines/twine/metaengine.cpp:224
 msgid "Use Selected Object"
@@ -7513,9 +7519,8 @@ msgid "Throw Magic Ball"
 msgstr "Gooi Magische Bal"
 
 #: engines/twine/metaengine.cpp:244
-#, fuzzy
 msgid "Move Backward"
-msgstr "Beweeg achteruit"
+msgstr "Beweeg Achteruit"
 
 #: engines/twine/metaengine.cpp:265
 msgid "Use Protopack"
@@ -7526,9 +7531,8 @@ msgid "Open Holomap"
 msgstr "Open Holomap"
 
 #: engines/twine/metaengine.cpp:283
-#, fuzzy
 msgid "Special Action"
-msgstr "Actie"
+msgstr "Speciale Actie"
 
 #: engines/twine/metaengine.cpp:289 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
@@ -7544,35 +7548,26 @@ msgid "Abort"
 msgstr "Afbreken"
 
 #: engines/twine/metaengine.cpp:348
-#, fuzzy
 msgid "Next Page"
-msgstr "Volgende pagina"
+msgstr "Volgende Pagina"
 
 #: engines/twine/metaengine.cpp:415
-#, fuzzy
-#| msgid "Previous action"
 msgid "Previous location"
-msgstr "Vorige actie"
+msgstr "Vorige lokatie"
 
 #: engines/twine/metaengine.cpp:420
-#, fuzzy
-#| msgid "Next action"
 msgid "Next location"
-msgstr "Volgende actie"
+msgstr "Volgende lokatie"
 
 #: engines/twine/parser/text.cpp:34
-#, fuzzy
-#| msgid "Enable high resolution graphics"
 msgctxt "Options menu"
 msgid "High resolution on"
-msgstr "Gebruik hoge resolutie beelden"
+msgstr "Hoge resolutie aan"
 
 #: engines/twine/parser/text.cpp:35
-#, fuzzy
-#| msgid "Enable high resolution graphics"
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr "Gebruik hoge resolutie beelden"
+msgstr "Hoge resolutie uit"
 
 #: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
@@ -7580,11 +7575,9 @@ msgid "Wall collision on"
 msgstr "Muur botsen aan"
 
 #: engines/twine/parser/text.cpp:37
-#, fuzzy
-#| msgid "Snap scroll off"
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr "Snap scroll uit"
+msgstr "Muur botsen uit"
 
 #: engines/ultima/detection.cpp:67
 msgid "Enable frame skipping"
@@ -7595,10 +7588,8 @@ msgid "Allow the game to skip animation frames when running too slow."
 msgstr "Laat het spel frames overslaan wanneer het te langzaam draait."
 
 #: engines/ultima/detection.cpp:73
-#, fuzzy
-#| msgid "Enable font anti-aliasing"
 msgid "Enable frame limiting"
-msgstr "Schakel font anti-aliasing in"
+msgstr "Gebruik frame limietering"
 
 #: engines/ultima/detection.cpp:74
 msgid "Limits the speed of the game to prevent running too fast."
@@ -7606,10 +7597,8 @@ msgstr ""
 "Beperkt de snelheid van het spel om te voorkomen dat het te snel draait."
 
 #: engines/ultima/detection.cpp:79
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Enable cheats"
-msgstr "Valsspeel modus aangezet"
+msgstr "Zet valsspelen aan"
 
 #: engines/ultima/detection.cpp:80
 msgid "Allow cheats by commands and a menu when player is clicked."
@@ -7624,9 +7613,8 @@ msgid "Plays sound when the player moves."
 msgstr "Speelt geluid wanneer de speler zich verplaatst."
 
 #: engines/ultima/detection.cpp:101
-#, fuzzy
 msgid "Enable jump to mouse position"
-msgstr "Volledige titel van het spel"
+msgstr "Zet springen naar muis positie aan"
 
 #: engines/ultima/detection.cpp:102
 msgid ""
@@ -7756,16 +7744,12 @@ msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr "Dit spel vereist de HeroCraft subengine die niet meegecompileerd is."
 
 #: engines/wintermute/wintermute.cpp:182
-#, fuzzy
-#| msgid ""
-#| "This game requires 3D capabilities that are out ScummVM scope. As such, "
-#| "it is likely to be unplayable totally or partially."
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
-"Dit spel vereist 3D ondersteuning wat niet in scope is van ScummVM. Het is "
-"aannemelijk dat het daardoor geheel of gedeeltelijk niet speelbaar is."
+"Dit spel vereist 3D ondersteuning wat niet in ScummVM is meegcompileerd. Het "
+"is aannemelijk dat het daardoor geheel of gedeeltelijk niet speelbaar is."
 
 #: engines/wintermute/keymapper_tables.h:150
 #: engines/wintermute/keymapper_tables.h:732
@@ -7891,10 +7875,8 @@ msgstr "Telefoon omlaag knop"
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
 #: engines/wintermute/keymapper_tables.h:361
-#, fuzzy
-#| msgid "Alternative intro"
 msgid "Alternative action"
-msgstr "Alternatieve intro"
+msgstr "Alternatieve actie"
 
 #: engines/wintermute/keymapper_tables.h:432
 #: engines/wintermute/keymapper_tables.h:565
@@ -8215,25 +8197,19 @@ msgid "Cancel input"
 msgstr "Annuleer invoer"
 
 #: engines/wintermute/keymapper_tables.h:1318
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle subtitles"
-msgstr "Dempen aan-/uitzetten"
+msgstr "Ondertitels aan-/uitzetten"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1388
-#, fuzzy
-#| msgid "Shift"
 msgid "Shift key"
-msgstr "Shift"
+msgstr "Shift toets"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
 #: engines/wintermute/keymapper_tables.h:1490
-#, fuzzy
-#| msgid "Previous action"
 msgid "Chapayev's action"
-msgstr "Vorige actie"
+msgstr "Chapayevs actie"
 
 #: engines/wintermute/keymapper_tables.h:1538
 #: engines/wintermute/keymapper_tables.h:1791
@@ -8259,17 +8235,13 @@ msgstr "Dialoog antwoord 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1569
-#, fuzzy
-#| msgid "Spin slower"
 msgid "Spin wheel slower"
-msgstr "Langzamer draaien"
+msgstr "Laat wiel langzamer draaien"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1577
-#, fuzzy
-#| msgid "Spin faster"
 msgid "Spin wheel faster"
-msgstr "Sneller draaien"
+msgstr "Laat wiel sneller draaien"
 
 #: engines/wintermute/keymapper_tables.h:1655
 msgid "Zoom out"
@@ -8291,10 +8263,8 @@ msgstr "Bezier venster"
 
 #. I18N: Use droid to perform an action
 #: engines/wintermute/keymapper_tables.h:1825
-#, fuzzy
-#| msgid "Droid action"
 msgid "Droid's action"
-msgstr "Droid actie"
+msgstr "Droids actie"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
 #: engines/wintermute/keymapper_tables.h:1933
