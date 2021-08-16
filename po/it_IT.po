@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-16 12:19+0000\n"
-"PO-Revision-Date: 2021-08-13 21:46+0000\n"
+"PO-Revision-Date: 2021-08-16 14:52+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -2852,16 +2852,13 @@ msgid "Active graphics filter:"
 msgstr "Filtro grafico attivo:"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:368
-#, fuzzy, c-format
-#| msgid "Save screenshot"
+#, c-format
 msgid "Saved screenshot '%s'"
-msgstr "Salva screenshot"
+msgstr "Salvato screenshot '%s'"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:377
-#, fuzzy
-#| msgid "Save screenshot"
 msgid "Could not save screenshot"
-msgstr "Salva screenshot"
+msgstr "Non è stato possibile salvare lo screenshot"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Windowed mode"
@@ -7525,7 +7522,7 @@ msgstr "Debug: Camera Griglia Destra"
 
 #: engines/twine/metaengine.cpp:144
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Debug: Posiziona personaggio al centro dello schermo"
 
 #: engines/twine/metaengine.cpp:149
 msgid "Debug Menu"
