@@ -289,30 +289,15 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }
 
-Plugin *PluginManager::getEngineFromMetaEngine(const Plugin *plugin) {
+const Plugin *PluginManager::getEngineFromMetaEngine(const Plugin *plugin) {
 	assert(plugin->getType() == PLUGIN_TYPE_ENGINE_DETECTION);
 
-	Plugin *enginePlugin = nullptr;
-	bool found = false;
+	const Plugin *enginePlugin = nullptr;
 
-	// Use the engineID from MetaEngine for comparasion.
+	// Use the engineID from MetaEngine for comparison.
 	Common::String metaEnginePluginName = plugin->getEngineId();
-	PluginMan.loadFirstPlugin();
-	do {
-		PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE);
-		// Iterate over all engine plugins.
-		for (PluginList::const_iterator itr = pl.begin(); itr != pl.end(); itr++) {
-			// The getName() provides a name which is similiar to getEngineId.
-			// Because engines are engines themselves, this function is simply named getName.
-			Common::String enginePluginName((*itr)->getName());
 
-			if (metaEnginePluginName.equalsIgnoreCase(enginePluginName)) {
-				enginePlugin = (*itr);
-				found = true;
-				break;
-			}
-		}
-	} while (!found && PluginMan.loadNextPlugin());
+	enginePlugin = PluginMan.findEnginePlugin(metaEnginePluginName);
 
 	if (enginePlugin) {
 		debug(9, "MetaEngine: %s \t matched to \t Engine: %s", plugin->getName(), enginePlugin->getFileName());
@@ -323,10 +308,10 @@ Plugin *PluginManager::getEngineFromMetaEngine(const Plugin *plugin) {
 	return nullptr;
 }
 
-Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
+const Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 	assert(plugin->getType() == PLUGIN_TYPE_ENGINE);
 
-	Plugin *metaEngine = nullptr;
+	const Plugin *metaEngine = nullptr;
 
 	PluginList pl = PluginMan.getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
 
@@ -810,7 +795,7 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 	return domain;
 }
 
-const Plugin *EngineManager::findLoadedPlugin(const Common::String &engineId) const {
+const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
 	const PluginList &plugins = getPlugins();
 
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
@@ -820,7 +805,17 @@ const Plugin *EngineManager::findLoadedPlugin(const Common::String &engineId) co
 	return 0;
 }
 
-const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
+const Plugin *PluginManager::findLoadedPlugin(const Common::String &engineId) {
+	const PluginList &plugins = getPlugins(PLUGIN_TYPE_ENGINE);
+
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
+		if (engineId == (*iter)->get<MetaEngine>().getName())
+			return *iter;
+
+	return 0;
+}
+
+const Plugin *PluginManager::findEnginePlugin(const Common::String &engineId) {
 	// First look for the game using the plugins in memory. This is critical
 	// for calls coming from inside games
 	const Plugin *plugin = findLoadedPlugin(engineId);
@@ -829,7 +824,7 @@ const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
 
 	// Now look for the plugin using the engine ID. This is much faster than scanning plugin
 	// by plugin
-	if (PluginMan.loadPluginFromEngineId(engineId))  {
+	if (loadPluginFromEngineId(engineId))  {
 		plugin = findLoadedPlugin(engineId);
 		if (plugin)
 			return plugin;
