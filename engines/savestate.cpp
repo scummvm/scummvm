@@ -44,8 +44,7 @@ SaveStateDescriptor::SaveStateDescriptor(int slot, const Common::String &d)
 	initSaveType();
 }
 
-void SaveStateDescriptor::initSaveType()
-{
+void SaveStateDescriptor::initSaveType() {
 	// Do not allow auto-save slot to be deleted or overwritten.
 	const bool autosave =
 			g_engine && ConfMan.getInt("autosave_period") && _slot == g_engine->getAutosaveSlot();
@@ -88,6 +87,11 @@ bool SaveStateDescriptor::isAutosave() const {
 	if (_saveType != kSaveTypeUndetermined) {
 		return _saveType == kSaveTypeAutosave;
 	} else {
-		return _description == _("Autosave");
+		return hasAutosaveName();
 	}
+}
+
+bool SaveStateDescriptor::hasAutosaveName() const
+{
+	return _description.contains(_("Autosave"));
 }
