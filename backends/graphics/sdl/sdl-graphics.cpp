@@ -363,11 +363,19 @@ void SdlGraphicsManager::saveScreenshot() {
 			debug("Saved screenshot '%s' in current directory", filename.c_str());
 		else
 			debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
+
+#ifdef USE_OSD
+		displayMessageOnOSD(Common::U32String::format(_("Saved screenshot '%s'"), filename.c_str()));
+#endif
 	} else {
 		if (screenshotsPath.empty())
 			warning("Could not save screenshot in current directory");
 		else
 			warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
+
+#ifdef USE_OSD
+		displayMessageOnOSD(_("Could not save screenshot"));
+#endif
 	}
 }
 
