@@ -270,7 +270,7 @@ void playMusic(uint32 s) {
 	debugC(1, kDebugSound, "playMusic(%s)", tag2strP(s));
 
 	if (hResCheckResID(musicRes, s)) {
-		audio->playMusic(s, 0);
+		audio->playMusic(s, 1);
 	} else
 		audio->stopMusic();
 }
