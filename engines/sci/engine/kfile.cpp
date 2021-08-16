@@ -773,6 +773,7 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, handle);
 
 	if (f && f->_in) {
+		offset = MIN<int16>(offset, f->_in->size());
 		const bool success = f->_in->seek(offset, whence);
 		if (getSciVersion() >= SCI_VERSION_2) {
 			if (success) {
