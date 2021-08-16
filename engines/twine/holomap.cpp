@@ -277,9 +277,6 @@ void Holomap::renderHolomapPointModel(const IVec3 &angle, int32 x, int32 y) {
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
 	_engine->_renderer->setBaseRotation(angle);
 	_engine->_renderer->updateCameraAnglePositions(5300);
-	// why is this needed? _engine->_renderer->_baseTransPos = _engine->_renderer->_destPos;
-	// TODO: shouldn't the new destpos be used for the model rendering
-	_engine->_renderer->getBaseRotationPosition(destPos);
 	_engine->_interface->resetClip();
 	Common::Rect dummy;
 	_engine->_renderer->renderIsoModel(destPos, x, y, ANGLE_0, _engine->_resources->_holomapPointModelPtr, dummy);
