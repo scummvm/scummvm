@@ -203,7 +203,7 @@ private:
 	/**
 	 * Autosave interval.
 	 */
-	const int _autosaveInterval;
+	int _autosaveInterval;
 
 	/**
 	 * The last time an autosave was done.
@@ -217,6 +217,11 @@ private:
 	 * the menu loop, to avoid bugs like #4420).
 	 */
 	int _saveSlotToLoad;
+
+	/**
+	 * Used for preventing recursion during autosave.
+	 */
+	bool _autoSaving;
 
 	/**
 	 * Optional debugger for the engine.
@@ -525,6 +530,13 @@ private:
 	 * @see Engine::PauseToken
 	 */
 	friend class PauseToken;
+
+	/**
+	 * Warns before overwriting autosave.
+	 *
+	 * @return true if it is safe to save, false to avoid saving.
+	 */
+	bool warnBeforeOverwritingAutosave();
 
 public:
 

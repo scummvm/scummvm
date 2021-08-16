@@ -214,6 +214,11 @@ public:
 	 * Returns true whether the save is an autosave
 	 */
 	bool isAutosave() const;
+
+	/**
+	 * Returns true if the save has an autosave name
+	 */
+	bool hasAutosaveName() const;
 private:
 	/**
 	 * The saveslot id, as it would be passed to the "-x" command line switch.

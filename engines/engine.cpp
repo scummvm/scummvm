@@ -149,6 +149,7 @@ Engine::Engine(OSystem *syst)
 		_pauseLevel(0),
 		_pauseStartTime(0),
 		_saveSlotToLoad(-1),
+		_autoSaving(false),
 		_engineStartTime(_system->getMillis()),
 		_mainMenuDialog(NULL),
 		_debugger(NULL),
@@ -541,34 +542,68 @@ void Engine::handleAutoSave() {
 	}
 }
 
-void Engine::saveAutosaveIfEnabled() {
-	// Reset the last autosave time first.
-	// Doing it here rather than after saving the game prevents recursive calls if saving the game
-	// causes the engine to poll events (as is the case with the AGS engine for example).
-	_lastAutosaveTime = _system->getMillis();
-
-	if (_autosaveInterval != 0) {
-		bool saveFlag = canSaveAutosaveCurrently();
-
-		if (saveFlag) {
-			// First check for an existing savegame in the slot, and if present, if it's an autosave
-			SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(
-				_targetName.c_str(), getAutosaveSlot());
-			saveFlag = desc.getSaveSlot() == -1 || desc.isAutosave();
+bool Engine::warnBeforeOverwritingAutosave() {
+	SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(
+		_targetName.c_str(), getAutosaveSlot());
+	if (desc.getSaveSlot() == -1)
+		return true;
+	if (desc.hasAutosaveName())
+		return true;
+	Common::U32StringArray altButtons;
+	altButtons.push_back(_("Overwrite"));
+	altButtons.push_back(_("Cancel autosave"));
+	const Common::U32String message = Common::U32String::format(
+				_("WARNING: The autosave slot has a saved game named %s. "
+				  "You can either move the existing save to a new slot, "
+				  "Overwrite the existing save, "
+				  "or cancel autosave (will not prompt again until restart)"), desc.getDescription().c_str());
+	GUI::MessageDialog warn(message, _("Move"), altButtons);
+	switch (runDialog(warn)) {
+	case GUI::kMessageOK:
+		if (!getMetaEngine()->copySaveFileToFreeSlot(_targetName.c_str(), getAutosaveSlot())) {
+			GUI::MessageDialog error(_("ERROR: Could not copy the savegame to a new slot"));
+			error.runModal();
+			return false;
 		}
-
-		if (saveFlag && saveGameState(getAutosaveSlot(), Common::convertFromU32String(_("Autosave")), true).getCode() != Common::kNoError) {
-			// Couldn't autosave at the designated time
-			g_system->displayMessageOnOSD(_("Error occurred making autosave"));
-			saveFlag = false;
-		}
-
-		if (!saveFlag) {
-			// Set the next autosave interval to be in 5 minutes, rather than whatever
-			// full autosave interval the user has selected
-			_lastAutosaveTime += (5 * 60 * 1000) - _autosaveInterval;
-		}
+		return true;
+	case GUI::kMessageAlt: // Overwrite
+		return true;
+	case GUI::kMessageAlt + 1: // Cancel autosave
+		_autosaveInterval = 0;
+		return false;
+	default: // Hitting Escape returns -1. On this case, don't save but do prompt again later.
+		return false;
 	}
+}
+
+void Engine::saveAutosaveIfEnabled() {
+	// Prevents recursive calls if saving the game causes the engine to poll events
+	// (as is the case with the AGS engine for example, or when showing a prompt).
+	if (_autoSaving || _autosaveInterval == 0)
+		return;
+	_autoSaving = true;
+
+	bool saveFlag = canSaveAutosaveCurrently();
+	const Common::String autoSaveName = Common::convertFromU32String(_("Autosave"));
+
+	// First check for an existing savegame in the slot, and if present, if it's an autosave
+	if (saveFlag)
+		saveFlag = warnBeforeOverwritingAutosave();
+
+	if (saveFlag && saveGameState(getAutosaveSlot(), autoSaveName, true).getCode() != Common::kNoError) {
+		// Couldn't autosave at the designated time
+		g_system->displayMessageOnOSD(_("Error occurred making autosave"));
+		saveFlag = false;
+	}
+
+	if (saveFlag) {
+		_lastAutosaveTime = _system->getMillis();
+	} else {
+		// Set the next autosave interval to be in 5 minutes, rather than whatever
+		// full autosave interval the user has selected
+		_lastAutosaveTime += (5 * 60 * 1000) - _autosaveInterval;
+	}
+	_autoSaving = false;
 }
 
 void Engine::errorString(const char *buf1, char *buf2, int size) {
