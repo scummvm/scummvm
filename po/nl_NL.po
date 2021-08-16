@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-16 12:19+0000\n"
-"PO-Revision-Date: 2021-08-16 13:44+0000\n"
+"PO-Revision-Date: 2021-08-16 14:36+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -5592,14 +5592,12 @@ msgid "Go to map screen"
 msgstr "Naar kaart scherm"
 
 #: engines/nancy/input.cpp:251
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Open general cheat menu"
-msgstr "Valsspeel modus aangezet"
+msgstr "Open algemene valsspeel menu"
 
 #: engines/nancy/input.cpp:256
 msgid "Open event flags cheat menu"
-msgstr ""
+msgstr "Open event flags valsspeel menu"
 
 #: engines/nancy/dialogs.cpp:41
 msgid "Player Speech"
@@ -5624,22 +5622,22 @@ msgstr ""
 "instellingen."
 
 #: engines/nancy/dialogs.cpp:43
-#, fuzzy
-#| msgid "Use original save/load screens"
 msgid "Use original menus"
-msgstr "Gebruik originele opslaan/laad schermen"
+msgstr "Gebruik originele menus"
 
 #: engines/nancy/dialogs.cpp:43
 msgid ""
 "Use the original engine's main, save/load, and setup menus. ScummVM's Global "
 "Main Menu can still be accessed through its keymap."
 msgstr ""
+"Gebruik de engine zijn originele hoofd, bewaar/laad en instellingen menus. "
+"De hoofdmenu van ScummVM kan nog steeds opgeroepen worden door middel van "
+"zijn keymap."
 
 #. I18N: Second Chance is the name of the original engine's autosave system
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
 msgid "Enable Second Chance"
-msgstr "Valsspeel modus aangezet"
+msgstr "Gebruik Tweede Kans"
 
 #: engines/nancy/dialogs.cpp:46
 msgid ""
@@ -5648,16 +5646,12 @@ msgid ""
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:48
-#, fuzzy
-#| msgid "Speech Only"
 msgid "Speech Options"
-msgstr "Alleen Spraak"
+msgstr "Spraak Opties"
 
 #: engines/nancy/dialogs.cpp:49
-#, fuzzy
-#| msgid "Options"
 msgid "Engine Options"
-msgstr "Opties"
+msgstr "Engine Opties"
 
 #: engines/nancy/dialogs.cpp:104
 msgid "General"
@@ -5668,10 +5662,8 @@ msgid "Scene Data"
 msgstr "Scene Data"
 
 #: engines/nancy/dialogs.cpp:107
-#, fuzzy
-#| msgid "Start the debugger"
 msgid "Restart the Scene"
-msgstr "Start de debugger"
+msgstr "Herstart de Scene"
 
 #: engines/nancy/dialogs.cpp:109
 msgid "Scene Number"
@@ -5699,10 +5691,8 @@ msgid "Hard"
 msgstr "Moeilijk"
 
 #: engines/nancy/dialogs.cpp:125
-#, fuzzy
-#| msgid "Player 1: Left"
 msgid "Player Data"
-msgstr "Speler 1: Links"
+msgstr "Speler Data"
 
 #: engines/nancy/dialogs.cpp:126
 msgid "Player Time:"
@@ -5717,10 +5707,8 @@ msgid "Hours"
 msgstr "Uren"
 
 #: engines/nancy/dialogs.cpp:132 engines/nancy/dialogs.cpp:142
-#, fuzzy
-#| msgid "Minus"
 msgid "Minutes"
-msgstr "Min"
+msgstr "Minuten"
 
 #: engines/nancy/dialogs.cpp:134
 msgid "Player Difficulty Level"
@@ -5735,16 +5723,12 @@ msgid "Timer On"
 msgstr "Timer Aan"
 
 #: engines/nancy/dialogs.cpp:144
-#, fuzzy
-#| msgid "Second kid"
 msgid "Seconds"
-msgstr "Tweede kind"
+msgstr "Seconden"
 
 #: engines/nancy/dialogs.cpp:213
-#, fuzzy
-#| msgid "Invalid path!"
 msgid "Invalid Scene ID!"
-msgstr "Ongeldige pad!"
+msgstr "Ongeldige Scene ID!"
 
 #: engines/neverhood/detection.cpp:131
 msgid "Skip the Hall of Records storyboard scenes"
@@ -5891,9 +5875,8 @@ msgstr ""
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:609
-#, fuzzy
 msgid "Windows Trial version is not supported"
-msgstr "Spel-ID niet ondersteund"
+msgstr "Windows Probeerversie wordt niet ondersteund"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
@@ -6019,10 +6002,8 @@ msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
 
 #: engines/sci/detection.cpp:323
-#, fuzzy
-#| msgid "Enable font anti-aliasing"
 msgid "Enable bearded musicians"
-msgstr "Schakel font anti-aliasing in"
+msgstr "Schakel bebaarde muziekanten in"
 
 #: engines/sci/detection.cpp:324
 msgid "Enable graphics that were disabled for legal reasons"
@@ -6274,12 +6255,12 @@ msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"Knip de extra 40 pixels onder het scherm af om het zo standaard 200 pixels "
+"hoog te maken. Hierdoorwordt 'aspect ratio correctie' mogelijk"
 
 #: engines/scumm/detection.cpp:197
-#, fuzzy
-#| msgid "Play selected music record"
 msgid "Play simplified music"
-msgstr "Speel geselecteerde muziekstuk"
+msgstr "Speel versimpelde muziek"
 
 #: engines/scumm/detection.cpp:198
 msgid ""
@@ -6288,10 +6269,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/detection.cpp:204
-#, fuzzy
-#| msgid "Enable smooth scrolling when walking"
 msgid "Enable smooth scrolling"
-msgstr "Schakelt vloeiend scrollen in als er gelopen word"
+msgstr "Zet vloeiend scrollen aan"
 
 #: engines/scumm/detection.cpp:205
 msgid "(instead of the normal 8-pixels steps scrolling)"
@@ -6967,6 +6946,10 @@ msgid ""
 "Aspect ratio correction can be acheived by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"U heeft 'aspect ratio correctie' aangezet. Echter FM-TOWS gebruikelijke "
+"resolutie is 320x240, wat aspect ratio correctie niet toestaat.\n"
+"Aspect ratio correctie kan gerealiseerd worden door de resolutie bij te "
+"knippen naar 320x200, onder de \"egine' bladwijzer."
 
 #: engines/scumm/scumm.cpp:1350
 msgid ""
@@ -7307,9 +7290,8 @@ msgstr ""
 "deze versie van ScummVM. Decomprimeer a.u.b. het bestand"
 
 #: engines/tinsel/detection_tables.h:482
-#, fuzzy
 msgid "Saturn CD version is not yet supported"
-msgstr "Spel-ID niet ondersteund"
+msgstr "Saturn CD versie wordt nog niet ondersteund"
 
 #: engines/tony/tony.cpp:249
 #, c-format
@@ -7351,95 +7333,82 @@ msgstr "Zet muur botsingen aan"
 
 #: engines/twine/detection.cpp:539
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "Gebruik de originel muur bots beschadiging"
 
 #: engines/twine/detection.cpp:545
-#, fuzzy
 msgid "Enable cross fade"
-msgstr "Valsspeel modus aangezet"
+msgstr "Gebruik cross fade"
 
 #: engines/twine/detection.cpp:546
 msgid "Enable cross fading of images and scenes"
 msgstr "Zet crossfaden van beelden of scenes aan"
 
 #: engines/twine/detection.cpp:553
-#, fuzzy
 msgid "Disable save menu"
-msgstr "Opslaan van spel mislukt"
+msgstr "Bewaar menu uitschakelen"
 
 #: engines/twine/detection.cpp:554
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
+"Het origineel had alleen automatisch opslaan. Dit maakt het mogelijk om op "
+"te slaan wanneer u maar wilt."
 
 #: engines/twine/detection.cpp:560
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Helium-modus aangezet"
+msgstr "Zet debug modus aan"
 
 #: engines/twine/detection.cpp:561
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Helium-modus aangezet"
+msgstr "Gebruik de debug modus"
 
 #: engines/twine/detection.cpp:567
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "Publiek inschakelen"
+msgstr "Zet audio CD aan"
 
 #: engines/twine/detection.cpp:568
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Gebruik de originele audio CD spoor"
 
 #: engines/twine/detection.cpp:574
-#, fuzzy
 msgid "Enable sound"
-msgstr "Opslag inschakelen"
+msgstr "Geluid aanzetten"
 
 #: engines/twine/detection.cpp:575
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "Volledige titel van het spel"
+msgstr "Zet geluid aan voor het spel"
 
 #: engines/twine/detection.cpp:581
-#, fuzzy
 msgid "Enable voices"
-msgstr "Gebruik Venus"
+msgstr "Zet spraak aan"
 
 #: engines/twine/detection.cpp:582
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "Gebruik het Venus help systeem"
+msgstr "Zet stemmen aan in het spel"
 
 #: engines/twine/detection.cpp:588
-#, fuzzy
 msgid "Enable text"
-msgstr "Opslag inschakelen"
+msgstr "Zet tekst aan"
 
 #: engines/twine/detection.cpp:589
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "Volledige titel van het spel"
+msgstr "Zet tekst aan voor het spel"
 
 #: engines/twine/detection.cpp:595
-#, fuzzy
 msgid "Enable movies"
-msgstr "Gebruik Venus"
+msgstr "Zet films aan"
 
 #: engines/twine/detection.cpp:596
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "Gebruik het Venus help systeem"
+msgstr "Laat cutscenes zien in het spel"
 
 #: engines/twine/detection.cpp:602
-#, fuzzy
 msgid "Enable mouse"
-msgstr "Gebruik Venus"
+msgstr "Gebruik muis"
 
 #: engines/twine/detection.cpp:603
-#, fuzzy
 msgid "Enable the mouse for the UI"
-msgstr "Volledige titel van het spel"
+msgstr "Gebruik de muis voor de UI"
 
 #: engines/twine/detection.cpp:609
 msgid "Use the USA version"
@@ -7447,18 +7416,15 @@ msgstr "Gebruik de VS versie"
 
 #: engines/twine/detection.cpp:610
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "Gebruik the USA versie specifieke vlaggen"
 
 #: engines/twine/detection.cpp:616 engines/ultima/detection.cpp:85
-#, fuzzy
-#| msgid "Enable high resolution graphics"
 msgid "Enable high resolution"
-msgstr "Gebruik hoge resolutie beelden"
+msgstr "Gebruik hoge resolutie"
 
 #: engines/twine/detection.cpp:617 engines/ultima/detection.cpp:86
-#, fuzzy
 msgid "Enable a higher resolution for the game"
-msgstr "Volledige titel van het spel"
+msgstr "Gebruik een hogere resolutie voor het spel"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Debug Next Room"
@@ -7498,33 +7464,31 @@ msgstr "Debug Raster Camera Rechts"
 
 #: engines/twine/metaengine.cpp:144
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Plaats personage midden in het scherm"
 
 #: engines/twine/metaengine.cpp:149
-#, fuzzy
 msgid "Debug Menu"
-msgstr "Debug print"
+msgstr "Debug Menu"
 
 #: engines/twine/metaengine.cpp:154
-#, fuzzy
 msgid "Debug Menu Execute"
-msgstr "Debug print"
+msgstr "Debug Menu Uitvoeren"
 
 #: engines/twine/metaengine.cpp:159 engines/twine/metaengine.cpp:179
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Normaal Gedrag"
 
 #: engines/twine/metaengine.cpp:164 engines/twine/metaengine.cpp:184
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Atletisch Gedrag"
 
 #: engines/twine/metaengine.cpp:169 engines/twine/metaengine.cpp:189
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "Agressief Gedrag"
 
 #: engines/twine/metaengine.cpp:174 engines/twine/metaengine.cpp:194
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "Discreet Gedrag"
 
 #: engines/twine/metaengine.cpp:199
 #, fuzzy
@@ -7533,7 +7497,7 @@ msgstr "Vorige actie"
 
 #: engines/twine/metaengine.cpp:205
 msgid "Change Behaviour"
-msgstr ""
+msgstr "Verander Gedrag"
 
 #: engines/twine/metaengine.cpp:212
 #, fuzzy
@@ -7542,11 +7506,11 @@ msgstr "DS Opties menu"
 
 #: engines/twine/metaengine.cpp:224
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Gebruik Geselecteerde Object"
 
 #: engines/twine/metaengine.cpp:230
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Gooi Magische Bal"
 
 #: engines/twine/metaengine.cpp:244
 #, fuzzy
@@ -7555,11 +7519,11 @@ msgstr "Beweeg achteruit"
 
 #: engines/twine/metaengine.cpp:265
 msgid "Use Protopack"
-msgstr ""
+msgstr "Gebruik Protopack"
 
 #: engines/twine/metaengine.cpp:270
 msgid "Open Holomap"
-msgstr ""
+msgstr "Open Holomap"
 
 #: engines/twine/metaengine.cpp:283
 #, fuzzy
@@ -7572,12 +7536,12 @@ msgstr "Escape"
 
 #: engines/twine/metaengine.cpp:302
 msgid "Accept"
-msgstr ""
+msgstr "Accepteer"
 
 #: engines/twine/metaengine.cpp:310 engines/twine/metaengine.cpp:362
 #: engines/twine/metaengine.cpp:378
 msgid "Abort"
-msgstr ""
+msgstr "Afbreken"
 
 #: engines/twine/metaengine.cpp:348
 #, fuzzy
@@ -7613,7 +7577,7 @@ msgstr "Gebruik hoge resolutie beelden"
 #: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr ""
+msgstr "Muur botsen aan"
 
 #: engines/twine/parser/text.cpp:37
 #, fuzzy
@@ -7624,11 +7588,11 @@ msgstr "Snap scroll uit"
 
 #: engines/ultima/detection.cpp:67
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "Frame overslaan toestaan"
 
 #: engines/ultima/detection.cpp:68
 msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
+msgstr "Laat het spel frames overslaan wanneer het te langzaam draait."
 
 #: engines/ultima/detection.cpp:73
 #, fuzzy
@@ -7639,6 +7603,7 @@ msgstr "Schakel font anti-aliasing in"
 #: engines/ultima/detection.cpp:74
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
+"Beperkt de snelheid van het spel om te voorkomen dat het te snel draait."
 
 #: engines/ultima/detection.cpp:79
 #, fuzzy
@@ -7648,15 +7613,15 @@ msgstr "Valsspeel modus aangezet"
 
 #: engines/ultima/detection.cpp:80
 msgid "Allow cheats by commands and a menu when player is clicked."
-msgstr ""
+msgstr "Sta cheat commandos toe, en een menu wanneer op de speler is geklikt."
 
 #: engines/ultima/detection.cpp:95
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "Speel voetstap geluiden"
 
 #: engines/ultima/detection.cpp:96
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "Speelt geluid wanneer de speler zich verplaatst."
 
 #: engines/ultima/detection.cpp:101
 #, fuzzy
@@ -7667,6 +7632,8 @@ msgstr "Volledige titel van het spel"
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
+"Springen zonder te verplaatsen richt de muis aanwijzer in plaats van alleen "
+"de richting."
 
 #: engines/ultima/detection.cpp:113
 msgid "Enable font replacement"
@@ -7674,12 +7641,12 @@ msgstr "Lettertypes vervangen"
 
 #: engines/ultima/detection.cpp:114
 msgid "Replaces game fonts with rendered fonts"
-msgstr ""
+msgstr "Vervangt spel lettertypes met gerenderde lettertypes"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/detection.cpp:130
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "Camera beweegt met Silencer mee"
 
 #: engines/ultima/detection.cpp:131
 msgid ""
