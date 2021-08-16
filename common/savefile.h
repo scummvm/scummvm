@@ -268,6 +268,15 @@ public:
 	 * for saving or loading because they are being synced by CloudManager.
 	 */
 	virtual void updateSavefilesList(StringArray &lockedFiles) = 0;
+
+	/**
+	 * Checks if the savefile exists.
+	 *
+	 * @param name Name of the save file.
+	 *
+	 * @return true if the file exists. false otherwise.
+	 */
+	virtual bool exists(const String &name) = 0;
 };
 
 /** @} */
