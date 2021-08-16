@@ -455,22 +455,18 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) {
 	return spacing;
 }
 
-int CharsetRenderer::getStringWidth(int arg, const byte *text) {
+int CharsetRenderer::getStringWidth(int arg, const byte *text, uint strLenMax) {
 	if (_vm->_game.id == GID_CMI) {
-		int numBytesMax = 100000; // Also hardcoded in the exe
+		// SCUMM7 games actually use the same implemention (minus the strLenMax parameter). If
+		// any text placement bugs in one of these games come up it might be worth to look at
+		// that. Or simply for the fact that we could get rid of SmushFont::getStringWidth()...
+		if (!strLenMax)
+			return 0;
+
 		int maxWidth = 0;
 		int width = 0;
 
-		while (*text && numBytesMax) {
-			// Some localizations may override colors
-			// See credits in Chinese COMI
-			if (_vm->_language == Common::ZH_TWN &&
-				text[0] == '^') {
-				if (text[1] == 'c') {
-					text += 4;
-				}
-			}
-
+		while (*text && strLenMax) {
 			while (text[0] == '^') {
 				switch (text[1]) {
 				case 'f':
@@ -491,7 +487,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 			if (is2ByteCharacter(_vm->_language, *text)) {
 				width += _vm->_2byteWidth + (_vm->_language != Common::JA_JPN ? 1 : 0);
 				++text;
-				--numBytesMax;
+				--strLenMax;
 			} else if (*text == '\n') {
 				maxWidth = MAX<int>(width, maxWidth);
 				width = 0;
@@ -500,7 +496,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 			}
 
 			++text;
-			--numBytesMax;
+			--strLenMax;
 		}
 
 		return MAX<int>(width, maxWidth);
@@ -532,7 +528,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 					break;
 			}
 		} else {
-			if (chr == '@' && !(_vm->_game.id == GID_CMI && _vm->_language == Common::ZH_TWN))
+			if (chr == '@')
 				continue;
 			if (chr == 255 || (_vm->_game.version <= 6 && chr == 254)) {
 				chr = text[pos++];
