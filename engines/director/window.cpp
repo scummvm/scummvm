@@ -101,8 +101,14 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 			const byte *msk = mask ? (const byte *)mask->getBasePtr(xoff, yoff + i) : nullptr;
 
 			for (int j = 0; j < srcRect.width(); j++, src++)
-				if (!mask || (msk && !(*msk++)))
-					*src = ~(*src);
+				if (!mask || (msk && !(*msk++))) {
+					byte r, g, b;
+					g_director->_wm->decomposeColor(*src, r, g, b);
+					r = 255 - r;
+					g = 255 - g;
+					b = 255 - b;
+					*src = g_director->_wm->findBestColor(r, g, b);
+				}
 		}
 	} else {
 		uint32 alpha = _wm->_pixelformat.ARGBToColor(255, 0, 0, 0);
