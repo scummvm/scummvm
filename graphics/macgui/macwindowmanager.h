@@ -432,7 +432,8 @@ private:
 	PauseToken *_screenCopyPauseToken;
 
 	Common::Array<ZoomBox *> _zoomBoxes;
-	Common::HashMap<uint32, uint> _colorHash;
+	Common::HashMap<uint, uint> _colorHash;
+	Common::HashMap<uint, uint> _invertColorHash;
 
 	Common::Archive *_dataBundle;
 

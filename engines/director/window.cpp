@@ -100,7 +100,6 @@ void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
 			byte *src = (byte *)_composeSurface->getBasePtr(srcRect.left, srcRect.top + i);
 			const byte *msk = mask ? (const byte *)mask->getBasePtr(xoff, yoff + i) : nullptr;
 
-			// if this will cause efficiency problem, then we shall cache the inverted color in wm
 			for (int j = 0; j < srcRect.width(); j++, src++)
 				if (!mask || (msk && !(*msk++)))
 					*src = _wm->inverter(*src);
