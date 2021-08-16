@@ -533,7 +533,7 @@ void GameManager::processInput() {
 			case onInventory:
 				_guiInventory[_mouseField - 512].setHighlight(true);
 				_currentInputObject = _inventory.get(_mouseField - 512 + _inventoryScroll);
-				if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+				if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !isNullObject(_currentInputObject))
 					ttsMan->say(_vm->getGameString(_currentInputObject->_name), Common::kDos850);
 				break;
 			case onCmdButton:
@@ -543,7 +543,7 @@ void GameManager::processInput() {
 				break;
 			case onObject:
 				_currentInputObject = _currentRoom->getObject(_mouseField);
-				if (!isNullObject(_currentInputObject))
+				if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !isNullObject(_currentInputObject))
 					ttsMan->say(_vm->getGameString(_currentInputObject->_name), Common::kDos850);
 				break;
 			case onNone:
