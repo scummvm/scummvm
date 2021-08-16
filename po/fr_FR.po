@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-16 17:20+0000\n"
-"PO-Revision-Date: 2021-08-16 09:25+0000\n"
+"PO-Revision-Date: 2021-08-16 17:52+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -2865,16 +2865,13 @@ msgid "Active graphics filter:"
 msgstr "Mode graphique actif :"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:368
-#, fuzzy, c-format
-#| msgid "Save screenshot"
+#, c-format
 msgid "Saved screenshot '%s'"
-msgstr "Sauver capture d'écran"
+msgstr "Capture d'écran '%s' sauvegardée"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:377
-#, fuzzy
-#| msgid "Save screenshot"
 msgid "Could not save screenshot"
-msgstr "Sauver capture d'écran"
+msgstr "Capture d'écran impossible"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Windowed mode"
