@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-16 12:19+0000\n"
-"PO-Revision-Date: 2021-08-10 20:03+0000\n"
+"PO-Revision-Date: 2021-08-16 13:44+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -908,7 +908,7 @@ msgstr "Elke 30 minuten"
 #. I18N: Very large GUI scale
 #: gui/options.cpp:138
 msgid "Very large"
-msgstr ""
+msgstr "Heel groot"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:140
@@ -2843,16 +2843,13 @@ msgid "Active graphics filter:"
 msgstr "Actieve grafische filter:"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:368
-#, fuzzy, c-format
-#| msgid "Save screenshot"
+#, c-format
 msgid "Saved screenshot '%s'"
-msgstr "Bewaar schermafdruk"
+msgstr "Schermafdruk '%s' bewaard"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:377
-#, fuzzy
-#| msgid "Save screenshot"
 msgid "Could not save screenshot"
-msgstr "Bewaar schermafdruk"
+msgstr "Schermafdruk opslaan mislukt"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Windowed mode"
@@ -5587,16 +5584,12 @@ msgid "Go to setup menu"
 msgstr "Ga naar instellingen menu"
 
 #: engines/nancy/input.cpp:240
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Show credits"
-msgstr "Tool spel credits"
+msgstr "Tool credits"
 
 #: engines/nancy/input.cpp:245
-#, fuzzy
-#| msgid "Swap screens"
 msgid "Go to map screen"
-msgstr "Wissel schermen"
+msgstr "Naar kaart scherm"
 
 #: engines/nancy/input.cpp:251
 #, fuzzy
