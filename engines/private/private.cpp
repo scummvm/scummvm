@@ -314,6 +314,8 @@ Common::Error PrivateEngine::run() {
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
 			}
+
+			g_system->delayMillis(10); // Yield to the system
 			continue;
 		}
 
