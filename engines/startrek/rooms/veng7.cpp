@@ -20,7 +20,6 @@
  *
  */
 
-#if 0
 #include "startrek/room.h"
 
 #define OBJECT_CABLE 8
@@ -76,15 +75,54 @@ extern const RoomAction veng7ActionList[] = {
 };
 
 enum veng7TextIds {
-	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_KIJE,
+	TX_BRIDU146, TX_DEM3_019, TX_MUD4_018, TX_VEN0N016, TX_VEN0_016,
+	TX_VEN1_004, TX_VEN2U093, TX_VEN2_028, TX_VEN2_066,
+	TX_VEN2_098, TX_VEN4N010, TX_VEN4_016, TX_VEN6N007, TX_VEN7N001,
+	TX_VEN7N002, TX_VEN7N003, TX_VEN7N004, TX_VEN7N005, TX_VEN7N006,
+	TX_VEN7N007, TX_VEN7N008, TX_VEN7N009, TX_VEN7_001, TX_VEN7_003,
+	TX_VEN7_005, TX_VEN7_006, TX_VEN7_007, TX_VENA_F32, TX_VENA_F34,
+	TX_VENA_F40
 };
 
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets veng7TextOffsets[] = {
-	//{ TX_SPEAKER_KIRK, 2597, 0 },
-	//{ TX_SPEAKER_MCCOY, 2622, 0 },
-	//{ TX_SPEAKER_SPOCK, 2632, 0 },
-	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{ TX_SPEAKER_KIRK, 4142, 0 },
+	{ TX_SPEAKER_MCCOY, 4153, 0 },
+	{ TX_SPEAKER_SPOCK, 4163, 0 },
+	{ TX_SPEAKER_KIJE, 4173, 0 },
+	{ TX_BRIDU146, 3179, 0 },
+	{ TX_DEM3_019, 3663, 0 },
+	{ TX_MUD4_018, 3110, 0 },
+	{ TX_MUD4_018, 3243, 0 },
+	{ TX_VEN0N016, 708, 0 },
+	{ TX_VEN0_016, 3959, 0 },
+	//{ TX_VEN0_016, 3900, 0 },	// Skip duplicate text
+	{ TX_VEN1_004, 1460, 0 },
+	{ TX_VEN2U093, 3311, 0 },
+	{ TX_VEN2_028, 3418, 0 },
+	{ TX_VEN2_066, 3496, 0 },
+	{ TX_VEN2_098, 2306, 0 },
+	{ TX_VEN4N010, 2960, 0 },
+	{ TX_VEN4_016, 3714, 0 },
+	{ TX_VEN6N007, 3025, 0 },
+	{ TX_VEN7N001, 525, 0 },
+	{ TX_VEN7N002, 1071, 0 },
+	{ TX_VEN7N003, 928, 0 },
+	{ TX_VEN7N004, 1023, 0 },
+	{ TX_VEN7N005, 976, 0 },
+	{ TX_VEN7N006, 1117, 0 },
+	{ TX_VEN7N007, 767, 0 },
+	{ TX_VEN7N008, 841, 0 },
+	{ TX_VEN7N009, 2161, 0 },
+	{ TX_VEN7_001, 1195, 0 },
+	{ TX_VEN7_003, 1902, 0 },
+	{ TX_VEN7_005, 1320, 0 },
+	{ TX_VEN7_006, 1706, 0 },
+	{ TX_VEN7_007, 1576, 0 },
+	{ TX_VENA_F32, 2536, 0 },
+	{ TX_VENA_F34, 2806, 0 },
+	{ TX_VENA_F40, 2401, 0 },
 	{          -1, 0,    0 }
 };
 
@@ -129,7 +167,8 @@ void Room::veng7LookAtCollapsedSection() {
 void Room::veng7LookAtDeadGuy() {
 	// ENHANCEMENT: Original played TX_VEN0N016. This is reused and boring, and there is
 	// a more interesting unused audio file, so use that instead.
-	showDescription(TX_VEN7N000);
+	//showDescription(TX_VEN7N000);
+	showDescription(TX_VEN0N016);
 }
 
 void Room::veng7LookAtDoor() {
@@ -207,4 +246,3 @@ void Room::veng7PickedUpCable() {
 }
 
 }
-#endif

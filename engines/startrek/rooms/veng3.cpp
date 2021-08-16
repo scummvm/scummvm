@@ -20,7 +20,6 @@
  *
  */
 
-#if 0
 #include "startrek/room.h"
 
 #define OBJECT_DOOR 8
@@ -105,15 +104,75 @@ extern const RoomAction veng3ActionList[] = {
 };
 
 enum veng3TextIds {
-	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_EVERTS,
+	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_KIJE,
+	TX_BRIDU146, TX_DEM3_019, TX_MUD4_018, TX_VEN0_010, TX_VEN0_016,
+	TX_VEN2U093, TX_VEN2_028, TX_VEN2_066, TX_VEN2_098,
+	TX_VEN3N000, TX_VEN3N001, TX_VEN3N002, TX_VEN3N003, TX_VEN3N004,
+	TX_VEN3N005, TX_VEN3N006, TX_VEN3N007, TX_VEN3N009,
+	TX_VEN3N010, TX_VEN3N011, TX_VEN3N012, TX_VEN3N013, TX_VEN3N014,
+	TX_VEN3_001, TX_VEN3_002, TX_VEN3_003, TX_VEN3_004, TX_VEN3_005,
+	TX_VEN3_006, TX_VEN3_007, TX_VEN3_008, TX_VEN3_009, TX_VEN3_010,
+	TX_VEN3_011, TX_VEN3_012, TX_VEN3_013, TX_VEN3_014, TX_VEN3_015,
+	TX_VEN3_016, TX_VEN3_017, TX_VEN3_018, TX_VEN4N010, TX_VEN4_016,
+	TX_VEN6N007, TX_VENA_F32, TX_VENA_F34, TX_VENA_F40
 };
 
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets veng3TextOffsets[] = {
-	//{ TX_SPEAKER_KIRK, 2597, 0 },
-	//{ TX_SPEAKER_MCCOY, 2622, 0 },
-	//{ TX_SPEAKER_SPOCK, 2632, 0 },
-	//{ TX_SPEAKER_EVERTS, 2642, 0 },
+	{ TX_SPEAKER_KIRK, 6893, 0 },
+	{ TX_SPEAKER_MCCOY, 6904, 0 },
+	{ TX_SPEAKER_SPOCK, 6914, 0 },
+	{ TX_SPEAKER_KIJE, 6924, 0 },
+	{ TX_BRIDU146, 5935, 0 },
+	{ TX_DEM3_019, 6419, 0 },
+	{ TX_MUD4_018, 5866, 0 },
+	{ TX_MUD4_018, 5999, 0 },
+	{ TX_VEN0_010, 496, 0 },
+	{ TX_VEN0_016, 6715, 0 },
+	//{ TX_VEN0_016, 6656, 0 },	// Skip duplicate text
+	{ TX_VEN2U093, 6067, 0 },
+	{ TX_VEN2_028, 6174, 0 },
+	{ TX_VEN2_066, 6252, 0 },
+	{ TX_VEN2_098, 5062, 0 },
+	{ TX_VEN3N000, 2263, 0 },
+	{ TX_VEN3N001, 1954, 0 },
+	{ TX_VEN3N002, 2040, 0 },
+	{ TX_VEN3N003, 2347, 0 },
+	{ TX_VEN3N004, 2157, 0 },
+	{ TX_VEN3N005, 1842, 0 },
+	{ TX_VEN3N006, 706, 0 },
+	{ TX_VEN3N007, 1272, 0 },
+	//{ TX_VEN3N007, 1020, 0 },	// Skip duplicate text
+	{ TX_VEN3N009, 1120, 0 },
+	{ TX_VEN3N010, 4721, 0 },
+	{ TX_VEN3N011, 1686, 0 },
+	{ TX_VEN3N012, 1362, 0 },
+	{ TX_VEN3N013, 1755, 0 },
+	{ TX_VEN3N014, 4926, 0 },
+	{ TX_VEN3_001, 4194, 0 },
+	{ TX_VEN3_002, 2482, 0 },
+	{ TX_VEN3_003, 4493, 0 },
+	{ TX_VEN3_004, 3569, 0 },
+	{ TX_VEN3_005, 4656, 0 },
+	{ TX_VEN3_006, 1589, 0 },
+	{ TX_VEN3_007, 3993, 0 },
+	{ TX_VEN3_008, 3134, 0 },
+	{ TX_VEN3_009, 3853, 0 },
+	{ TX_VEN3_010, 4071, 0 },
+	{ TX_VEN3_011, 3257, 0 },
+	{ TX_VEN3_012, 4434, 0 },
+	{ TX_VEN3_013, 1443, 0 },
+	{ TX_VEN3_014, 2826, 0 },
+	{ TX_VEN3_015, 3012, 0 },
+	{ TX_VEN3_016, 3482, 0 },
+	{ TX_VEN3_017, 3342, 0 },
+	{ TX_VEN3_018, 4582, 0 },
+	{ TX_VEN4N010, 5716, 0 },
+	{ TX_VEN4_016, 6470, 0 },
+	{ TX_VEN6N007, 5781, 0 },
+	{ TX_VENA_F32, 5292, 0 },
+	{ TX_VENA_F34, 5562, 0 },
+	{ TX_VENA_F40, 5157, 0 },
 	{          -1, 0,    0 }
 };
 
@@ -150,12 +209,12 @@ void Room::veng3Tick15() {
 }
 
 void Room::veng3TouchedTurbolift2() {
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	showRepublicMap(3, 1);
 }
 
 void Room::veng3TouchedTurbolift1() {
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	showRepublicMap(3, 0);
 }
 
@@ -163,13 +222,13 @@ void Room::veng3WalkToDoor() {
 	if (_awayMission->veng.clearedDebris)
 		walkCrewmanC(OBJECT_KIRK, 0xa6, 0x6e, &Room::veng3ReachedTurbolift2);
 	else
-		showText(TX_VEN3N006);
+		showDescription(TX_VEN3N006);
 }
 
 void Room::veng3ReachedTurbolift2() {
 	_awayMission->disableInput = true;
 	loadActorAnimC(OBJECT_DOOR, "s7r3db", 0xa6, 0x60, &Room::veng3Turbolift2Opened);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 void Room::veng3Turbolift2Opened() {
@@ -183,7 +242,7 @@ void Room::veng3WalkToSickbayDoor() {
 void Room::veng3ReachedSickbayDoor() {
 	_awayMission->disableInput = true;
 	loadActorAnimC(OBJECT_SICKBAY_DOOR, "s7r3da", 0x5b, 0x80, &Room::veng3SickbayDoorOpened);
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 }
 
 void Room::veng3SickbayDoorOpened() {
@@ -191,18 +250,18 @@ void Room::veng3SickbayDoorOpened() {
 }
 
 void Room::veng3LookAtSupportBeam() {
-	showText(TX_VEN3N007);
+	showDescription(TX_VEN3N007);
 }
 
 void Room::veng3LookAtDebris() {
 	if (!_awayMission->veng.clearedDebris)
-		showText(TX_VEN3N009);
+		showDescription(TX_VEN3N009);
 	else
-		showText(TX_VEN3N007); // UNUSED (debris is gone)
+		showDescription(TX_VEN3N007); // UNUSED (debris is gone)
 }
 
 void Room::veng3LookAtTurbolift2Door() {
-	showText(TX_VEN3N012);
+	showDescription(TX_VEN3N012);
 
 	if (!_awayMission->veng.lookedAtTurbolift2Door) {
 		_awayMission->veng.lookedAtTurbolift2Door = true;
@@ -214,35 +273,35 @@ void Room::veng3LookAtTurbolift2Door() {
 }
 
 void Room::veng3LookAtSickbayDoor() {
-	showText(TX_VEN3N011);
+	showDescription(TX_VEN3N011);
 }
 
 void Room::veng3LookAtCable() {
-	showText(TX_VEN3N013);
+	showDescription(TX_VEN3N013);
 }
 
 void Room::veng3LookAtDeadGuy() {
-	showText(TX_VEN3N005);
+	showDescription(TX_VEN3N005);
 }
 
 void Room::veng3LookAtKirk() {
-	showText(TX_VEN3N001);
+	showDescription(TX_VEN3N001);
 }
 
 void Room::veng3LookAtMccoy() {
-	showText(TX_VEN3N002);
+	showDescription(TX_VEN3N002);
 }
 
 void Room::veng3LookAtSpock() {
-	showText(TX_VEN3N004);
+	showDescription(TX_VEN3N004);
 }
 
 void Room::veng3LookAtRedshirt() {
-	showText(TX_VEN3N000);
+	showDescription(TX_VEN3N000);
 }
 
 void Room::veng3LookAnywhere() {
-	showText(TX_VEN3N003);
+	showDescription(TX_VEN3N003);
 }
 
 void Room::veng3UseStunPhaserOnDebris() {
@@ -354,7 +413,7 @@ void Room::veng3TalkToRedshirt() {
 }
 
 void Room::veng3GetDebris() {
-	showText(TX_VEN3N010);
+	showDescription(TX_VEN3N010);
 }
 
 void Room::veng3GetCable() {
@@ -370,11 +429,9 @@ void Room::veng3ReachedCable() {
 void Room::veng3PickedUpCable() {
 	_awayMission->disableInput = false;
 	loadActorStandAnim(OBJECT_CABLE);
-	showText(TX_VEN3N014);
+	showDescription(TX_VEN3N014);
 	giveItem(OBJECT_ICABLE2);
 	_awayMission->veng.tookCableFromSickbayHallway = true;
 }
 
 }
-
-#endif
