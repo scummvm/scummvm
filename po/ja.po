@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-16 12:19+0000\n"
-"PO-Revision-Date: 2021-08-16 09:25+0000\n"
+"PO-Revision-Date: 2021-08-16 13:45+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -2806,16 +2806,13 @@ msgid "Active graphics filter:"
 msgstr "適用中の映像フィルター："
 
 #: backends/graphics/sdl/sdl-graphics.cpp:368
-#, fuzzy, c-format
-#| msgid "Save screenshot"
+#, c-format
 msgid "Saved screenshot '%s'"
-msgstr "スクショを保存する"
+msgstr "スクリーンショット'%s'を保存しました"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:377
-#, fuzzy
-#| msgid "Save screenshot"
 msgid "Could not save screenshot"
-msgstr "スクショを保存する"
+msgstr "スクリーンショットを保存できませんでした"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Windowed mode"
