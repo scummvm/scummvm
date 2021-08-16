@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-15 14:18+0000\n"
-"PO-Revision-Date: 2021-08-12 04:25+0000\n"
+"PO-Revision-Date: 2021-08-16 09:25+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -908,7 +908,7 @@ msgstr "A cada 30 minutos"
 #. I18N: Very large GUI scale
 #: gui/options.cpp:138
 msgid "Very large"
-msgstr ""
+msgstr "Muito grande"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:140
@@ -7475,7 +7475,7 @@ msgstr "Câmera da Grade de Depuração para Direita"
 
 #: engines/twine/metaengine.cpp:144
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Posicionar ator no centro da tela"
 
 #: engines/twine/metaengine.cpp:149
 msgid "Debug Menu"
