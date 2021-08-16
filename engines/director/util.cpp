@@ -36,10 +36,10 @@
 
 namespace Director {
 
-static struct KeyCodeMapping {
+static struct MacKeyCodeMapping {
 	Common::KeyCode scummvm;
 	int mac;
-} keyCodeMappings[] = {
+} MackeyCodeMappings[] = {
 	{ Common::KEYCODE_ESCAPE,		53 },
 	{ Common::KEYCODE_F1,			122 },
 	{ Common::KEYCODE_F2,			120 },
@@ -164,9 +164,124 @@ static struct KeyCodeMapping {
 	{ Common::KEYCODE_INVALID,		0 }
 };
 
+static struct WinKeyCodeMapping {
+	Common::KeyCode scummvm;
+	int win;
+} WinkeyCodeMappings[] = {
+	{ Common::KEYCODE_BACKSPACE,	0x08 },
+	{ Common::KEYCODE_TAB,			0x09 },
+	{ Common::KEYCODE_CAPSLOCK,		0x14 },
+
+	{ Common::KEYCODE_SPACE,		0x20 },
+	{ Common::KEYCODE_MENU,			0x12 },
+	{ Common::KEYCODE_CANCEL, 		0x03 },
+	{ Common::KEYCODE_RETURN,		0x0D },
+	{ Common::KEYCODE_PAUSE,		0x13 },
+	{ Common::KEYCODE_CAPSLOCK,		0x14 },
+	{ Common::KEYCODE_PRINT,		0x2A },
+
+	{ Common::KEYCODE_0,			0x30 },
+	{ Common::KEYCODE_1,			0x31 },
+	{ Common::KEYCODE_2,			0x32 },
+	{ Common::KEYCODE_3,			0x33 },
+	{ Common::KEYCODE_4,			0x34 },
+	{ Common::KEYCODE_5,			0x35 },
+	{ Common::KEYCODE_6,			0x36 },
+	{ Common::KEYCODE_7,			0x37 },
+	{ Common::KEYCODE_8,			0x38 },
+	{ Common::KEYCODE_9,			0x39 },
+
+	{ Common::KEYCODE_a,			0x41 },
+	{ Common::KEYCODE_b,			0x42 },
+	{ Common::KEYCODE_c,			0x43 },
+	{ Common::KEYCODE_d,			0x44 },
+	{ Common::KEYCODE_e,			0x45 },
+	{ Common::KEYCODE_f,			0x46 },
+	{ Common::KEYCODE_g,			0x47 },
+	{ Common::KEYCODE_h,			0x48 },
+	{ Common::KEYCODE_i,			0x49 },
+	{ Common::KEYCODE_j,			0x4A },
+	{ Common::KEYCODE_k,			0x4B },
+	{ Common::KEYCODE_l,			0x4C },
+	{ Common::KEYCODE_m,			0x4D },
+	{ Common::KEYCODE_n,			0x4E },
+	{ Common::KEYCODE_o,			0x4F },
+	{ Common::KEYCODE_p,			0x50 },
+	{ Common::KEYCODE_q,			0x51 },
+	{ Common::KEYCODE_r,			0x52 },
+	{ Common::KEYCODE_s,			0x53 },
+	{ Common::KEYCODE_t,			0x54 },
+	{ Common::KEYCODE_u,			0x55 },
+	{ Common::KEYCODE_v,			0x56 },
+	{ Common::KEYCODE_w,			0x57 },
+	{ Common::KEYCODE_x,			0x58 },
+	{ Common::KEYCODE_y,			0x59 },
+	{ Common::KEYCODE_z,			0x5A },
+
+	{ Common::KEYCODE_KP0,			0x60 },
+	{ Common::KEYCODE_KP1,			0x61 },
+	{ Common::KEYCODE_KP2,			0x62 },
+	{ Common::KEYCODE_KP3,			0x63 },
+	{ Common::KEYCODE_KP4,			0x64 },
+	{ Common::KEYCODE_KP5,			0x65 },
+	{ Common::KEYCODE_KP6,			0x66 },
+	{ Common::KEYCODE_KP7,			0x67 },
+	{ Common::KEYCODE_KP8,			0x68 },
+	{ Common::KEYCODE_KP9,			0x69 },
+
+	{ Common::KEYCODE_KP_PLUS,		0x6B },
+	{ Common::KEYCODE_KP_MULTIPLY,	0x6A },
+	{ Common::KEYCODE_KP_DIVIDE,	0x6F },
+	{ Common::KEYCODE_KP_MINUS,		0x6D },
+
+	{ Common::KEYCODE_F1,			0x70 },
+	{ Common::KEYCODE_F2,			0x71 },
+	{ Common::KEYCODE_F3,			0x72 },
+	{ Common::KEYCODE_F4,			0x73 },
+	{ Common::KEYCODE_F5,			0x74 },
+	{ Common::KEYCODE_F6,			0x75 },
+	{ Common::KEYCODE_F7,			0x76 },
+	{ Common::KEYCODE_F8,			0x77 },
+	{ Common::KEYCODE_F9,			0x78 },
+	{ Common::KEYCODE_F10,			0x79 },
+	{ Common::KEYCODE_F11,			0x7A },
+	{ Common::KEYCODE_F12,			0x7B },
+	{ Common::KEYCODE_F13,			0x7C },
+	{ Common::KEYCODE_F14,			0x7D },
+	{ Common::KEYCODE_F15,			0x7E },
+	{ Common::KEYCODE_F16,			0x7F },
+	{ Common::KEYCODE_F17,			0x80 },
+	{ Common::KEYCODE_F18,			0x81 },
+
+	{ Common::KEYCODE_LEFT,			0x25 },
+	{ Common::KEYCODE_RIGHT,		0x27 },
+	{ Common::KEYCODE_DOWN,			0x28 },
+	{ Common::KEYCODE_UP,			0x26 },
+
+	{ Common::KEYCODE_NUMLOCK,		0x90 },
+	{ Common::KEYCODE_SCROLLOCK,	0x91 },
+	{ Common::KEYCODE_SLEEP,		0x5F },
+	{ Common::KEYCODE_INSERT,		0x2D },
+	{ Common::KEYCODE_HELP,			0x2F },
+	{ Common::KEYCODE_SELECT, 		0x29 },
+	{ Common::KEYCODE_HOME,			0x24 },
+	{ Common::KEYCODE_PRINT,		0x2A },
+	{ Common::KEYCODE_ESCAPE, 		0x18 },
+	{ Common::KEYCODE_PAGEUP,		0x21 },
+	{ Common::KEYCODE_DELETE,		0x2E },
+	{ Common::KEYCODE_END,			0x23 },
+	{ Common::KEYCODE_PAGEDOWN,		0x22 },
+
+	{ Common::KEYCODE_INVALID,		0 }
+};
+
 void DirectorEngine::loadKeyCodes() {
-	for (KeyCodeMapping *k = keyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++) {
-		_macKeyCodes[k->scummvm] = k->mac;
+	if (g_director->getPlatform() == Common::kPlatformWindows) {
+		for (WinKeyCodeMapping *k = WinkeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
+			_KeyCodes[k->scummvm] = k->win;
+	} else {
+		for (MacKeyCodeMapping *k = MackeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
+			_KeyCodes[k->scummvm] = k->mac;
 	}
 }
 

@@ -225,7 +225,7 @@ bool Movie::processEvent(Common::Event &event) {
 		return true;
 
 	case Common::EVENT_KEYDOWN:
-		_keyCode = _vm->_macKeyCodes.contains(event.kbd.keycode) ? _vm->_macKeyCodes[event.kbd.keycode] : 0;
+		_keyCode = _vm->_KeyCodes.contains(event.kbd.keycode) ? _vm->_KeyCodes[event.kbd.keycode] : 0;
 		_key = (unsigned char)(event.kbd.ascii & 0xff);
 		_keyFlags = event.kbd.flags;
 
