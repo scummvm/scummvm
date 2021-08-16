@@ -315,7 +315,7 @@ Common::Error PrivateEngine::run() {
 				drawScreen();
 			}
 
-			g_system->delayMillis(10); // Yield to the system
+			g_system->delayMillis(5); // Yield to the system
 			continue;
 		}
 
