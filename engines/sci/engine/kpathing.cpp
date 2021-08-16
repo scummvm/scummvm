@@ -1005,7 +1005,25 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 					// We need to break in this case, otherwise we'll end in an infinite
 					// loop.
 					warning("AvoidPath: start point is contained in multiple polygons");
-					break;
+
+					// WORKAROUND: LB2 room 530 has two barred access polygons obstacles with
+					// the second completely contained in the first. To walk down the stairs,
+					// the script places ego within the inner polygon to walk along a path
+					// that's also contained by both polygons. Our algorithm fixes up the
+					// start point against the first polygon that contains it, and so the
+					// staircase polygon is ignored. Instead ego's start position is set just
+					// outside the first (outer) polygon. The destination is then unreachable
+					// and so the script proceeds without ego ever walking down the stairs.
+					// The workaround is to ignore the fixup against the first polygon.
+					bool ignoreEarlierPolygon = g_sci->getGameId() == GID_LAURABOW2 &&
+												g_sci->getEngineState()->currentRoomNumber() == 530 &&
+												(*it)->vertices.size() == 14;
+					if (ignoreEarlierPolygon) {
+						delete s->_prependPoint;
+						s->_prependPoint = NULL;
+					} else {
+						break;
+					}
 				}
 
 				if (s->findNearPoint(start, (*it), new_start) != PF_OK) {
