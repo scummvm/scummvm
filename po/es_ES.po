@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-16 19:34+0000\n"
+"POT-Creation-Date: 2021-08-16 19:58+0000\n"
 "PO-Revision-Date: 2021-08-16 14:59+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -7692,12 +7692,12 @@ msgstr "No se pudo localizar el archivo de datos del motor «%s»"
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr "Datos del motor obsoletos. Se esperaba %d.%d, pero se encontró %d.%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:382
+#: engines/ultima/nuvie/nuvie.cpp:388
 #, c-format
 msgid "loading quick save %d"
 msgstr "cargando guardado rápido n.º %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:387
+#: engines/ultima/nuvie/nuvie.cpp:393
 #, c-format
 msgid "saving quick save %d"
 msgstr "creando guardado rápido n.º %d"

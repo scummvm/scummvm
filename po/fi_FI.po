@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-16 19:34+0000\n"
+"POT-Creation-Date: 2021-08-16 19:58+0000\n"
 "PO-Revision-Date: 2021-08-16 13:44+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -7613,12 +7613,12 @@ msgstr ""
 "Pelimoottorin datatiedostosta löytyi väärä versio. Odotettu versio %d.%d, "
 "löytynyt versio %d.%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:382
+#: engines/ultima/nuvie/nuvie.cpp:388
 #, c-format
 msgid "loading quick save %d"
 msgstr "Ladataan pikapelitallennusta %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:387
+#: engines/ultima/nuvie/nuvie.cpp:393
 #, c-format
 msgid "saving quick save %d"
 msgstr "tallennetaan pikatallennusta %d"

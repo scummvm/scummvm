@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-16 19:34+0000\n"
+"POT-Creation-Date: 2021-08-16 19:58+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -7735,12 +7735,12 @@ msgstr ""
 "Ukorrekt version af motorens datafil fundet. Forventet %d.%d, men fandt %d."
 "%d."
 
-#: engines/ultima/nuvie/nuvie.cpp:382
+#: engines/ultima/nuvie/nuvie.cpp:388
 #, fuzzy, c-format
 msgid "loading quick save %d"
 msgstr "Kunne ikke hurtig-gemme på plads #%d"
 
-#: engines/ultima/nuvie/nuvie.cpp:387
+#: engines/ultima/nuvie/nuvie.cpp:393
 #, fuzzy, c-format
 msgid "saving quick save %d"
 msgstr "Kunne ikke hurtig-gemme på plads #%d"

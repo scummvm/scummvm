@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-16 19:34+0000\n"
+"POT-Creation-Date: 2021-08-16 19:58+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -7745,12 +7745,12 @@ msgstr ""
 "Atopouse unha versión incorrecta do ficheiro de datos do motor. Ficheiro "
 "esperado: %d.%d. Ficheiro atopado: %d.%d."
 
-#: engines/ultima/nuvie/nuvie.cpp:382
+#: engines/ultima/nuvie/nuvie.cpp:388
 #, fuzzy, c-format
 msgid "loading quick save %d"
 msgstr "Erro ao gardar rápido no espazo %d"
 
-#: engines/ultima/nuvie/nuvie.cpp:387
+#: engines/ultima/nuvie/nuvie.cpp:393
 #, fuzzy, c-format
 msgid "saving quick save %d"
 msgstr "Erro ao gardar rápido no espazo %d"
