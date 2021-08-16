@@ -81,6 +81,7 @@
 #include "resources/hof_dos_cd_italian.h"
 #include "resources/hof_dos_cd_russian.h"
 #include "resources/hof_dos_cd_spanish.h"
+#include "resources/hof_dos_cd_hebrew.h"
 
 #include "resources/hof_fmtowns.h"
 #include "resources/hof_fmtowns_english.h"
@@ -981,6 +982,8 @@ static const ResourceProvider resourceProviders[] = {
 	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, DE_DEU, &k2SeqplayTlkFilesDOSCDGermanProvider },
 	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kTalkieVersion, IT_ITA, &k2SeqplayStringsDOSCDItalianProvider },
 	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, IT_ITA, &k2SeqplayTlkFilesDOSCDItalianProvider },
+	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kTalkieVersion, HE_ISR, &k2SeqplayStringsDOSCDHebrewProvider },
+	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, HE_ISR, &k2SeqplayTlkFilesDOSCDHebrewProvider },
 	/*{ k2SeqplayStrings, kKyra2, kPlatformDOS, kTalkieVersion, RU_RUS, &k2SeqplayStringsDOSCDRussianProvider },
 	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, RU_RUS, &k2SeqplayTlkFilesDOSCDRussianProvider },*/
 
