@@ -139,7 +139,6 @@ enum mudd4TextIds {
 	TX_MUD4N011, TX_MUD4N012, TX_MUD4N013, TX_MUD4_003, TX_STATICU1
 };
 
-// TODO: Finish offsets
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets mudd4TextOffsets[] = {
 	{ TX_SPEAKER_KIRK, 4048, 0 },

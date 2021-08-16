@@ -27,18 +27,33 @@ namespace StarTrek {
 enum vengTextIds {
 	TX_COMMON_IDS_OFFSET_START = 5000, // needed to distinguish common IDs
 	TX_SPEAKER_KIRK, TX_SPEAKER_MCCOY, TX_SPEAKER_SPOCK, TX_SPEAKER_ELASI_CAPTAIN, TX_SPEAKER_UHURA,
-	TX_VEN0_016, TX_VEN2_098, TX_VEN2_028, TX_VEN2_066, TX_VENA_F32,
-	TX_VENA_F34, TX_VENA_F40, TX_VEN4N007, TX_VEN4N010, TX_VEN2U093,
-	TX_VEN4_016, TX_MUD4_018, TX_DEM3_019, TX_BRIDU146, TX_G_014
+	TX_VEN2_098, TX_VEN2_028, TX_VEN2_066, TX_VENA_F32, TX_VENA_F34,
+	TX_VENA_F40, TX_VEN6N007, TX_VEN4N010, TX_VEN2U093, TX_MUD4_018,
+	TX_BRIDU146, /*TX_DEM3_019, TX_VEN4_016, TX_G_014,*/ TX_VEN0_016
 };
 
-// TODO: Finish offsets
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets vengTextOffsets[] = {
-	//{ TX_SPEAKER_KIRK, 2597, 0 },
-	//{ TX_SPEAKER_MCCOY, 2622, 0 },
-	//{ TX_SPEAKER_SPOCK, 2632, 0 },
-	//{ TX_SPEAKER_ELASI_CAPTAIN, 2642, 0 },
+	{ TX_SPEAKER_KIRK, 6590, 0 },
+	{ TX_SPEAKER_MCCOY, 6601, 0 },
+	{ TX_SPEAKER_SPOCK, 6611, 0 },
+	{ TX_SPEAKER_UHURA, 6672, 0 },
+	{ TX_SPEAKER_ELASI_CAPTAIN, 6682, 0 },
+	{ TX_VEN2_098, 5016, 0 },
+	{ TX_VEN2_028, 6128, 0 },
+	{ TX_VEN2_066, 6206, 0 },
+	{ TX_VENA_F32, 5246, 0 },
+	{ TX_VENA_F34, 5516, 0 },
+	{ TX_VENA_F40, 5111, 0 },
+	{ TX_VEN6N007, 5735, 0 },
+	{ TX_VEN4N010, 5670, 0 },
+	{ TX_VEN2U093, 6021, 0 },
+	{ TX_MUD4_018, 5820, 0 },
+	{ TX_BRIDU146, 5889, 0 },
+	//{ TX_DEM3_019, 0, 0 },	// Examining dead guy 1
+	//{ TX_VEN4_016, 0, 0 },	// Examining dead guy 2
+	//{ TX_G_014, 0, 0 },	// Examining dead guy 3
+	{ TX_VEN0_016, 8838, 0 },	// Examining dead guy 4
 	{          -1, 0,    0 }
 };
 
@@ -104,7 +119,7 @@ void Room::vengaUsePhaserAnywhere() {
 
 void Room::vengaLookAtHypo() {
 	if (_awayMission->veng.oilInHypo)
-		showDescription(TX_VEN4N007);
+		showDescription(TX_VEN6N007);
 	else
 		showDescription(TX_VEN4N010);
 }
@@ -123,6 +138,10 @@ void Room::vengaUseCommunicator() {
 }
 
 void Room::vengaUseMccoyOnDeadGuy() {
+	showText(TX_SPEAKER_MCCOY, TX_VEN0_016);
+
+	// TODO: Implement the random description again?
+#if 0
 	int val = getRandomWordInRange(0, 5);
 
 	switch (val) {
@@ -150,6 +169,7 @@ void Room::vengaUseMccoyOnDeadGuy() {
 	default:
 		break;
 	}
+#endif
 }
 
 }
