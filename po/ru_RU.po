@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-16 12:18+0000\n"
-"PO-Revision-Date: 2021-08-08 19:10+0000\n"
+"PO-Revision-Date: 2021-08-16 12:31+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -904,7 +904,7 @@ msgstr "Каждые 30 минут"
 #. I18N: Very large GUI scale
 #: gui/options.cpp:138
 msgid "Very large"
-msgstr ""
+msgstr "Очень большой"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:140
@@ -5984,14 +5984,12 @@ msgstr ""
 "внешнего вида"
 
 #: engines/sci/detection.cpp:323
-#, fuzzy
-#| msgid "Enable frame skipping"
 msgid "Enable bearded musicians"
-msgstr "Включить пропуск кадров"
+msgstr "Включить бородатых музыкантов"
 
 #: engines/sci/detection.cpp:324
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "Включает графику, которая была заблокирована по юридическим причинам"
 
 #: engines/sci/detection.cpp:354
 msgid "MIDI mode:"
@@ -7439,7 +7437,7 @@ msgstr "Отладка: Камеру сетки вправо"
 
 #: engines/twine/metaengine.cpp:144
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Переместить актёра в центр экрана"
 
 #: engines/twine/metaengine.cpp:149
 msgid "Debug Menu"
@@ -7601,12 +7599,14 @@ msgstr "Заменяет шрифты игры на шрифты лучшего 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/detection.cpp:130
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "Камера перемещается вместе с Сайленсером"
 
 #: engines/ultima/detection.cpp:131
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
+"Камера отслеживает перемещения игрока, а не прыгает по фиксированным "
+"позициям."
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
