@@ -1229,7 +1229,8 @@ static int32 lINC_CLOVER_BOX(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_USED_INVENTORY(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 item = ctx.stream.readByte();
-	if (item < InventoryItems::kKeypad) { // TODO: this looks wrong - why only up to keypad?
+	// Only up to keypad. lbawin and dotemu are doing this, too
+	if (item < InventoryItems::kKeypad) {
 		engine->_gameState->_inventoryFlags[item] = 1;
 	}
 	return 0;
