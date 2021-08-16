@@ -278,7 +278,8 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				// Bridge computer, where the player can ask about various topics.
 				// ENHANCEMENT: Normally, this is only available when in the bridge.
 				// We also show it in missions.
-				handleBridgeComputer();
+				if (!(getFeatures() & GF_DEMO))
+					handleBridgeComputer();
 				break;
 
 			case Common::KEYCODE_p:
