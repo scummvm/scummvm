@@ -456,6 +456,56 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) {
 }
 
 int CharsetRenderer::getStringWidth(int arg, const byte *text) {
+	if (_vm->_game.id == GID_CMI) {
+		int numBytesMax = 100000; // Also hardcoded in the exe
+		int maxWidth = 0;
+		int width = 0;
+
+		while (*text && numBytesMax) {
+			// Some localizations may override colors
+			// See credits in Chinese COMI
+			if (_vm->_language == Common::ZH_TWN &&
+				text[0] == '^') {
+				if (text[1] == 'c') {
+					text += 4;
+				}
+			}
+
+			while (text[0] == '^') {
+				switch (text[1]) {
+				case 'f':
+					// We should change the font on the fly at this point
+					// which would result in a different width result.
+					// This has never been observed in the game though, and
+					// as such, we don't handle it.
+					text += 4; 
+					break;
+				case 'c':
+					text += 5;
+					break;
+				default:
+					error("CharsetRenderer::getStringWidth(): Invalid escape code in text string");
+				}
+			}
+
+			if (is2ByteCharacter(_vm->_language, *text)) {
+				width += _vm->_2byteWidth + (_vm->_language != Common::JA_JPN ? 1 : 0);
+				++text;
+				--numBytesMax;
+			} else if (*text == '\n') {
+				maxWidth = MAX<int>(width, maxWidth);
+				width = 0;
+			} else if (*text != '\r' && *text != _vm->_newLineCharacter) {
+				width += getCharWidth(*text);
+			}
+
+			++text;
+			--numBytesMax;
+		}
+
+		return MAX<int>(width, maxWidth);
+	}
+
 	int pos = 0;
 	int width = 1;
 	int chr;
@@ -506,16 +556,6 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 					pos += 2;
 					setCurID(set);
 					continue;
-				}
-			}
-
-			// Some localizations may override colors
-			// See credits in Chinese COMI
-			if (_vm->_game.id == GID_CMI && _vm->_language == Common::ZH_TWN &&
-			    chr == '^' && pos == 1) {
-				if (text[pos] == 'c') {
-					pos += 4;
-					chr = text[pos++];
 				}
 			}
 		}
