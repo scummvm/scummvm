@@ -188,7 +188,7 @@ void Holomap::prepareHolomapPolygons() {
 				_holomapSort[holomapSortArrayIdx].projectedPosIdx = _projectedSurfaceIndex;
 				++holomapSortArrayIdx;
 			}
-			const IVec3 &projPos = _engine->_renderer->projectHolomapPositionOnScreen(destPos);
+			const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(destPos);
 			_projectedSurfacePositions[_projectedSurfaceIndex].x1 = projPos.x;
 			_projectedSurfacePositions[_projectedSurfaceIndex].y1 = projPos.y;
 			rotation += ANGLE_11_25;
@@ -196,7 +196,7 @@ void Holomap::prepareHolomapPolygons() {
 		}
 		IVec3* vec = &_holomapSurface[holomapSurfaceArrayIdx++];
 		const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(vec->x, vec->y, vec->z);
-		const IVec3 &projPos = _engine->_renderer->projectHolomapPositionOnScreen(destPos);
+		const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(destPos);
 		_projectedSurfacePositions[_projectedSurfaceIndex].x1 = projPos.x;
 		_projectedSurfacePositions[_projectedSurfaceIndex].y1 = projPos.y;
 		rotation += ANGLE_11_25;
