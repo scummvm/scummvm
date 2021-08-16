@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-16 17:20+0000\n"
+"POT-Creation-Date: 2021-08-16 19:34+0000\n"
 "PO-Revision-Date: 2021-04-12 23:51+0000\n"
 "Last-Translator: Henrik Andersson <henke@henke37.cjb.net>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -2028,11 +2028,11 @@ msgstr "Fortsätt"
 msgid "Clear value"
 msgstr "Töm sökfältet"
 
-#: base/main.cpp:628
+#: base/main.cpp:638
 msgid "Error running game:"
 msgstr "Fel under körning av spel:"
 
-#: base/main.cpp:675
+#: base/main.cpp:685
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunde inte hitta en motor kapabel till att köra det valda spelet"
 
