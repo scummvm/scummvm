@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-15 14:18+0000\n"
+"POT-Creation-Date: 2021-08-16 12:18+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -4009,34 +4009,34 @@ msgstr "S vyhlazenými hranami"
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 
-#: engines/asylum/metaengine.cpp:68
+#: engines/asylum/metaengine.cpp:70
 #, fuzzy
 msgid "Show version"
 msgstr "Zobrazit řádek objektů"
 
-#: engines/asylum/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:951
+#: engines/asylum/metaengine.cpp:75 engines/wintermute/keymapper_tables.h:951
 #, fuzzy
 msgid "Quick load"
 msgstr "Režim kliknutí"
 
-#: engines/asylum/metaengine.cpp:78 engines/wintermute/keymapper_tables.h:931
+#: engines/asylum/metaengine.cpp:80 engines/wintermute/keymapper_tables.h:931
 #, fuzzy
 msgid "Quick save"
 msgstr "Režim kliknutí"
 
-#: engines/asylum/metaengine.cpp:83
+#: engines/asylum/metaengine.cpp:85
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to Sarah"
 msgstr "Přepnout do hry"
 
-#: engines/asylum/metaengine.cpp:88
+#: engines/asylum/metaengine.cpp:90
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to Grimwall"
 msgstr "Přepnout do hry"
 
-#: engines/asylum/metaengine.cpp:93
+#: engines/asylum/metaengine.cpp:95
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to Olmec"

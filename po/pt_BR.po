@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-15 14:18+0000\n"
+"POT-Creation-Date: 2021-08-16 12:18+0000\n"
 "PO-Revision-Date: 2021-08-16 09:25+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -3963,27 +3963,27 @@ msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "Utiliza suavização para desenhar texto mesmo que o jogo não precise disso"
 
-#: engines/asylum/metaengine.cpp:68
+#: engines/asylum/metaengine.cpp:70
 msgid "Show version"
 msgstr "Exibir versão"
 
-#: engines/asylum/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:951
+#: engines/asylum/metaengine.cpp:75 engines/wintermute/keymapper_tables.h:951
 msgid "Quick load"
 msgstr "Carregamento rápido"
 
-#: engines/asylum/metaengine.cpp:78 engines/wintermute/keymapper_tables.h:931
+#: engines/asylum/metaengine.cpp:80 engines/wintermute/keymapper_tables.h:931
 msgid "Quick save"
 msgstr "Salvamento rápido"
 
-#: engines/asylum/metaengine.cpp:83
+#: engines/asylum/metaengine.cpp:85
 msgid "Switch to Sarah"
 msgstr "Alternar para Sarah"
 
-#: engines/asylum/metaengine.cpp:88
+#: engines/asylum/metaengine.cpp:90
 msgid "Switch to Grimwall"
 msgstr "Alternar para Grimwall"
 
-#: engines/asylum/metaengine.cpp:93
+#: engines/asylum/metaengine.cpp:95
 msgid "Switch to Olmec"
 msgstr "Alternar para Olmec"
 

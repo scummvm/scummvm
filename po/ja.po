@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-15 14:18+0000\n"
+"POT-Creation-Date: 2021-08-16 12:18+0000\n"
 "PO-Revision-Date: 2021-08-16 09:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -3917,27 +3917,27 @@ msgstr "テキストを強制的にアンチエイリアス"
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr "ゲームが要求していない場合でも、テキストにアンチエイリアシングを使用"
 
-#: engines/asylum/metaengine.cpp:68
+#: engines/asylum/metaengine.cpp:70
 msgid "Show version"
 msgstr "バージョンを表示"
 
-#: engines/asylum/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:951
+#: engines/asylum/metaengine.cpp:75 engines/wintermute/keymapper_tables.h:951
 msgid "Quick load"
 msgstr "クイックロード"
 
-#: engines/asylum/metaengine.cpp:78 engines/wintermute/keymapper_tables.h:931
+#: engines/asylum/metaengine.cpp:80 engines/wintermute/keymapper_tables.h:931
 msgid "Quick save"
 msgstr "クイックセーブ"
 
-#: engines/asylum/metaengine.cpp:83
+#: engines/asylum/metaengine.cpp:85
 msgid "Switch to Sarah"
 msgstr "Sarahへ切り替え"
 
-#: engines/asylum/metaengine.cpp:88
+#: engines/asylum/metaengine.cpp:90
 msgid "Switch to Grimwall"
 msgstr "Grimwallへ切り替え"
 
-#: engines/asylum/metaengine.cpp:93
+#: engines/asylum/metaengine.cpp:95
 msgid "Switch to Olmec"
 msgstr "Olmecへ切り替え"
 
