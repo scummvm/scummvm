@@ -179,6 +179,62 @@ void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byt
 
 		clipHeight = clipHeight + clipHeight / 2;
 		y = MIN<int>(y, 470 - clipHeight);
+
+		// HACK: Wrap the text when it's too long.
+		// The original does this by drawing word by word and adjusting x and y for each step of the pipeline.
+		// This, instead, is a mixture of code from SmushFont::drawStringWrap() and CHARSET_1(), which is just 
+		// enough to split the full line into more smaller lines, which are treated as different blastText in 
+		// the queue. Anyway this shouldn't generate more than 2 lines total but it's generalized just in case.
+		_charset->addLinebreaks(0, (byte *) bt.text, 0, _screenWidth - 20);
+		int16 substrPos[200];
+		memset(substrPos, 0, sizeof(substrPos));
+		int16 substrLen[200];
+		memset(substrLen, 0, sizeof(substrLen));
+
+		int len = (int) strlen((char *) bt.text);
+		int curPos = -1;
+		int numLines = 1;
+
+		// Save splitting information (position of the substring and its length)
+		while (curPos <= len) {
+			if (bt.text[curPos] == '\r') {
+				substrPos[numLines] = curPos + 1;
+				substrLen[numLines - 1] -= 1;
+				numLines++;
+			} else {
+				substrLen[numLines - 1] += 1;
+			}
+			curPos++;
+		}
+
+		// If we have found more than one line, then we split the lines and
+		// draw them from top to bottom
+		if (numLines > 1) {
+			int lastLineY = 0;
+			for (int i = 1; i < numLines; i++) {
+				BlastText &bt_secondary = _blastTextQueue[_blastTextQueuePos++];
+				strncpy((char*)bt_secondary.text, (char*)(bt.text + substrPos[i]), substrLen[i]);
+				bt_secondary.xpos = x;
+				bt_secondary.ypos = lastLineY = y + (numLines - i) * _charset->getStringHeight((char*)bt_secondary.text);
+				bt_secondary.color = color;
+				bt_secondary.charset = charset;
+				bt_secondary.center = center;
+			}
+
+			// Truncate the first substring accordingly
+			bt.text[substrLen[0]] = '\0';
+
+			// Now correct the vertical placement for the last line, and compensate bottom-up
+			int diffY = lastLineY - MIN<int>(lastLineY, 470 - clipHeight);
+
+			for (int i = 1; i < numLines; i++) {
+				BlastText &bt_compensation = _blastTextQueue[_blastTextQueuePos - i];
+				bt_compensation.ypos -= diffY;
+			}
+
+			// Also adjust the first line
+			y -= diffY;
+		}
 	}
 
 	bt.xpos = x;
