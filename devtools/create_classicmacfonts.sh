@@ -25,7 +25,7 @@ fi
 
 echo_n "Downloading System 7.0.1 image..."
 if test ! -f System_7.0.1.smi.bin; then
-	curl -s http://download.info.apple.com/Apple_Support_Area/Apple_Software_Updates/English-North_American/Macintosh/System/Older_System/System_7.0.x/System_7.0.1.smi.bin -o System_7.0.1.smi.bin
+	curl -s https://download.info.apple.com/Apple_Support_Area/Apple_Software_Updates/English-North_American/Macintosh/System/Older_System/System_7.0.x/System_7.0.1.smi.bin -o System_7.0.1.smi.bin
 fi
 
 if test ! -f System_7.0.1.smi.bin; then
