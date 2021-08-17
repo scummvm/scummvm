@@ -123,6 +123,7 @@ void Holomap::loadHolomapGFX() {
 	prepareHolomapProjectedPositions();
 	prepareHolomapSurface();
 	_holomapPaletteIndex = 0;
+	_engine->setPalette(_engine->_screens->_paletteRGBACustom);
 }
 
 static int sortHolomapSurfaceCoordsByDepth(const void *a1, const void *a2) {
