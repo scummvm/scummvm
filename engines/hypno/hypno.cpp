@@ -178,12 +178,13 @@ bool HypnoEngine::checkLevelCompleted() {
 	return _levelState["GS_LEVELCOMPLETE"];
 }
 
-void HypnoEngine::parseShootList(Common::String name, Common::String data) {
+ShootSequence HypnoEngine::parseShootList(Common::String name, Common::String data) {
 	Common::StringTokenizer tok(data, " S,\t\n");
 
 	Common::String t;
 	Common::String n;
 	ShootInfo si;
+	ShootSequence seq;
 	while(!tok.empty()) {
 		t = tok.nextToken();
 		n = tok.nextToken();
@@ -191,9 +192,10 @@ void HypnoEngine::parseShootList(Common::String name, Common::String data) {
 			break;
 		si.name = n;
 		si.timestamp = atoi(t.c_str());
-		_shootInfos.push_back(si);
+		seq.push_back(si);
 		debug("%d -> %s", si.timestamp, si.name.c_str());
 	}
+	return seq;
 
 }
 
@@ -230,8 +232,9 @@ void HypnoEngine::loadAssets() {
 		}
 	}
 
-	parseArcadeShooting(files[0].name, arc);
-	parseShootList(files[0].name, list);
+	Common::String arclevel = files[0].name; 
+	parseArcadeShooting(arclevel, arc);
+	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
 
 	loadLib("c_misc/fonts.lib", _fontFiles);
 	loadLib("demo/sound.lib", _soundFiles);
