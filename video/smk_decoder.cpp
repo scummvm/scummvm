@@ -428,6 +428,45 @@ bool SmackerDecoder::rewind() {
 	return true;
 }
 
+void SmackerDecoder::forceSeekToFrame(uint frame) {
+	const uint seekFrame = MAX<uint>(frame - 10, 0);
+
+	if (!isVideoLoaded())
+		return;
+
+	if (seekFrame >= getFrameCount())
+		return;
+
+	if (!rewind())
+		return;
+
+	stopAudio();
+	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
+	uint32 startPos = _fileStream->pos();
+	uint32 offset = 0;
+	for (uint32 i = 0; i < seekFrame; i++) {
+		videoTrack->increaseCurFrame();
+		// Frames with palette data contain palette entries which use
+		// the previous palette as their base. Therefore, we need to
+		// parse all palette entries up to the requested frame
+		if (_frameTypes[videoTrack->getCurFrame()] & 1) {
+			_fileStream->seek(startPos + offset, SEEK_SET);
+			videoTrack->unpackPalette(_fileStream);
+		}
+		offset += _frameSizes[i] & ~3;
+	}
+
+	if (!_fileStream->seek(startPos + offset, SEEK_SET))
+		return;
+
+	while (getCurFrame() < (int)frame) {
+		decodeNextFrame();
+	}
+
+	_lastTimeChange = videoTrack->getFrameTime(frame);
+	_startTime = g_system->getMillis() - (_lastTimeChange.msecs() / getRate()).toInt();
+}
+
 void SmackerDecoder::readNextPacket() {
 	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
 

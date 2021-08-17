@@ -68,7 +68,7 @@ public:
 
 	virtual bool loadStream(Common::SeekableReadStream *stream);
 	void close();
-
+	void forceSeekToFrame(uint frame);
 	bool rewind();
 
 	Common::Rational getFrameRate() const;
