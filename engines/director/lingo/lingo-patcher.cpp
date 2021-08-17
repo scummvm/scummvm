@@ -120,6 +120,11 @@ struct ScriptPatch {
 			23, "alert \"Failed Save.\" & return & \"Error message number: \" string ( filer )",
 				"alert \"Failed Save.\" & return & \"Error message number: \" & string ( filer )"},
 
+	// Non-existent menu cast reference
+	{"warlock", nullptr, kPlatformWindows, "STARBIRD:ABOUT", kScoreScript, 4, 0,
+			1, "installmenu A13",
+				""},
+
 
 	// Patching dead loop which was fixed in v2
 	{"lzone", "", kPlatformMacintosh, "DATA:R-A:Ami-00", kScoreScript, 3, 0,
