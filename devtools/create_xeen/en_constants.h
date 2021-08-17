@@ -1941,18 +1941,39 @@ public:
 			   "l\fd";
 	}
 
-	const char **MAE_NAMES() {
+	const char **CLOUDS_MAE_NAMES() {
 		static const char *_maeNames[] = {
 			"",
 		};
 		return _maeNames;
 	}
 
-	const char **MIRROR_LOCATIONS() {
+	const char **CLOUDS_MIRROR_LOCATIONS() {
 		static const char *_mirrLocs[] = {
 			"",
 		};
 		return _mirrLocs;
+	}
+
+	const char **CLOUDS_MAP_NAMES() {
+		static const char *_mapNames[] = {
+			"",
+		};
+		return _mapNames;
+	}
+
+	const char **CLOUDS_MONSTERS() {
+		static const char *_monsters[] = {
+			"",
+		};
+		return _monsters;
+	}
+
+	const char **CLOUDS_SPELLS() {
+		static const char *_spells[] = {
+			"",
+		};
+		return _spells;
 	}
 
 	class EN_KeyConstants : public KeyConstants {

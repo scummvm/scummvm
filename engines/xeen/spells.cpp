@@ -37,8 +37,15 @@ Spells::Spells(XeenEngine *vm) : _vm(vm) {
 
 void Spells::load() {
 	File f1((g_vm->getGameID() == GType_Clouds) ? "spells.cld" : "spells.xen", 1);
-	while (f1.pos() < f1.size())
-		_spellNames.push_back(f1.readString());
+	int i = 0;
+	while (f1.pos() < f1.size()) {
+		if (Common::RU_RUS == g_vm->getLanguage() && GType_Clouds == g_vm->getGameID()) {
+			f1.readString();
+			_spellNames.push_back(Res.CLOUDS_SPELLS[i++]);
+		} else 
+			_spellNames.push_back(f1.readString());
+
+	}
 	f1.close();
 }
 
