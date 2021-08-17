@@ -974,8 +974,10 @@ static const PlainGameDescriptor directorGames[] = {
 
 namespace Director {
 
-#define GENGAME1_(t,e,f,m,s,l,p,fl,v) 				{ { t, e, AD_ENTRY1s(f, m, s), l, p, fl, GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
-#define GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,p,fl,v) 	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), l, p, fl, GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
+#define SUPPORT_STATUS ADGF_UNSTABLE
+
+#define GENGAME1_(t,e,f,m,s,l,p,fl,v) 				{ { t, e, AD_ENTRY1s(f, m, s), l, p, (fl | SUPPORT_STATUS), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
+#define GENGAME2_(t,e,f1,m1,s1,f2,m2,s2,l,p,fl,v) 	{ { t, e, AD_ENTRY2s(f1, m1, s1, f2, m2, s2), l, p, (fl | SUPPORT_STATUS), GUIO1(GUIO_NOASPECT) }, GID_GENERIC, v }
 
 #define MACGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define PIPGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformPippin,ADGF_MACRESFORK,v)
@@ -1103,7 +1105,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("Osmo.BW.HC", "7efaee43e298e3a3d29607300b20147a", 796297),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_CD | ADGF_DEMO,
+			ADGF_CD | ADGF_DEMO | SUPPORT_STATUS,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
@@ -1113,6 +1115,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Projector and movies are compiled into proprietary executable.
 	// On exit, pop-up says "This Presentation was created using MacroMind Director 1.1"
 	MACDEMO1_l("rosettastone", "Demo", "The Rosetta Stone", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 1379715, Common::JA_JPN, 110),
+
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_TESTING
 
 //////////////////////////////////////////////////
 //
@@ -1148,6 +1153,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 // MacroMind / Macromedia Director v3
 //
 //////////////////////////////////////////////////
+
+	MACGAME1("lzone", "",   "L-ZONE", 		"f5277c53bacd27936158dd3867e587e2", 392484, 300),
+	MACGAME1("lzone", "v2", "L-ZONE", 		"276bee761e48a6fd709df77d5c2f60dd", 395344, 300),
+	GENGAME1_("lzone", "",	"L-ZONE",		"9f0bb7ec7720e4f680ee3aa3d22c1c9d", 384968, Common::EN_ANY, Common::kPlatformMacintoshII,ADGF_MACRESFORK, 300),
+	WINGAME2("lzone", "",   "L_ZONE.EXE",	"65d06b5fef155a2473434571aff5bc29", 370009,
+						    "SYNER_01.MMM", "56b6f1c68e85a96bcdd01028bdec2d35", 460594, 300),
+
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_UNSTABLE
 
 	MACDEMO1("aamn", "Demo", "AAMN", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 354645, 301),
 
@@ -1424,12 +1438,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("lvi", "Nº1", "LVI_8Mo", "7f443f2e63fd497a9ad85b10dc880a91", 384462, Common::FR_FRA, 310),
 	WINGAME1_l("lvi", "Nº1", "LVI.EXE", "65d06b5fef155a2473434571aff5bc29", 634203, Common::FR_FRA, 310),
-
-	MACGAME1("lzone", "",   "L-ZONE", 		"f5277c53bacd27936158dd3867e587e2", 392484, 300),
-	MACGAME1("lzone", "v2", "L-ZONE", 		"276bee761e48a6fd709df77d5c2f60dd", 395344, 300),
-	GENGAME1_("lzone", "",	"L-ZONE",		"9f0bb7ec7720e4f680ee3aa3d22c1c9d", 384968, Common::EN_ANY, Common::kPlatformMacintoshII,ADGF_MACRESFORK, 300),
-	WINGAME2("lzone", "",   "L_ZONE.EXE",	"65d06b5fef155a2473434571aff5bc29", 370009,
-						    "SYNER_01.MMM", "56b6f1c68e85a96bcdd01028bdec2d35", 460594, 300),
 
 	MACDEMO1_l("lotus123", "Tour", "Tour of 1-2-3.v3", "1ed38b71d8d0f075483117f7fa559e7c", 367333, Common::JA_JPN, 302),
 
