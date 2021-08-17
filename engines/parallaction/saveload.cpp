@@ -270,7 +270,7 @@ static bool askRenameOldSavefiles() {
 		"The old names are no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
 		"Press OK to convert them now, otherwise you will be asked next time.\n"), _("OK"), _("Cancel"));
 
-	return (dialog0.runModal() != 0);
+	return (dialog0.runModal() == GUI::kMessageOK);
 }
 
 void SaveLoad_ns::renameOldSavefiles() {

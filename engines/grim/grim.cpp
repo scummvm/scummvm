@@ -348,7 +348,7 @@ Common::Error GrimEngine::run() {
 			GType_MONKEY4 == getGameType() ? "Escape From Monkey Island" : "Grim Fandango"
 			 );
 			GUI::MessageDialog msg(confirmString, _("Yes"), _("No"));
-			if (!msg.runModal()) {
+			if (msg.runModal() != GUI::kMessageOK) {
 				return Common::kUserCanceled;
 			}
 		}
