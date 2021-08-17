@@ -44,8 +44,8 @@ enum {
 };
 
 enum OptionSelected {
-	kOptionLeft = 1,
-	kOptionRight = 0
+	kOptionLeft = 0,
+	kOptionRight = 1
 };
 
 enum {

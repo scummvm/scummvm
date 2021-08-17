@@ -1264,7 +1264,7 @@ bool Control::convertSaveGame(uint8 slot, char *desc) {
 		GUI::MessageDialog dialog0(msg, _("Keep the old one"), _("Keep the new one"));
 
 		int choice = dialog0.runModal();
-		if (choice == GUI::kMessageCancel) {
+		if (choice == GUI::kMessageAlt) {
 			// User chose to keep the new game, so delete the old one
 			_saveFileMan->removeSavefile(oldFileName);
 			return true;

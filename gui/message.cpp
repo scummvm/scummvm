@@ -31,8 +31,8 @@
 namespace GUI {
 
 enum {
-	kOkCmd = 'OK  ',
-	kCancelCmd = 'CNCL'
+	kDefaultCmd = 'DFLT',
+	kAltCmd = 'ALTC'
 };
 
 
@@ -92,12 +92,12 @@ void MessageDialog::init(const Common::U32String &message, const Common::U32Stri
 
 	if (!defaultButton.empty()) {
 		// Confirm dialog
-		new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, defaultButton, Common::U32String(), kOkCmd, Common::ASCII_RETURN);
+		new ButtonWidget(this, okButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, defaultButton, Common::U32String(), kDefaultCmd, Common::ASCII_RETURN);
 	}
 
 	if (!altButton.empty()) {
 		// Cancel dialog
-		new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButton, Common::U32String(), kCancelCmd, Common::ASCII_ESCAPE);
+		new ButtonWidget(this, cancelButtonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, altButton, Common::U32String(), kAltCmd, Common::ASCII_ESCAPE);
 	}
 }
 
@@ -115,17 +115,17 @@ MessageDialog::MessageDialog(const Common::String &message, const Common::String
 
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	// FIXME: It's a really bad thing that we use two arbitrary constants
-	if (cmd == kOkCmd) {
+	if (cmd == kDefaultCmd) {
 		setResult(kMessageOK);
 		close();
-	} else if (cmd == kCancelCmd) {
+	} else if (cmd == kAltCmd) {
 		if (_url) {
 			if (g_system->hasFeature(OSystem::kFeatureOpenUrl))
 				g_system->openUrl(_url);
 
 			setResult(kMessageOK);
 		} else {
-			setResult(kMessageCancel);
+			setResult(kMessageAlt);
 		}
 		close();
 	} else {
