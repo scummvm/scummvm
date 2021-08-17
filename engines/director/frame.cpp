@@ -145,15 +145,9 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		_tempo = stream->readByte();
 		_transType = static_cast<TransitionType>(stream->readByte());
 		_sound1 = CastMemberID(stream->readUint16(), 0);
+		_sound2 = CastMemberID(stream->readUint16(), 0);
+		_soundType2 = stream->readByte();
 
-		if (_vm->getPlatform() == Common::kPlatformMacintosh || _vm->getPlatform() == Common::kPlatformMacintoshII) {
-			_sound2 = CastMemberID(stream->readUint16(), 0);
-			_soundType2 = stream->readByte();
-		} else {
-			stream->read(unk, 3);
-			if (unk[0] != 0 || unk[1] != 0 || unk[2] != 0)
-				warning("Frame::readChannels(): unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
-		}
 		_skipFrameFlag = stream->readByte();
 		_blend = stream->readByte();
 
