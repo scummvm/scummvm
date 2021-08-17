@@ -172,7 +172,7 @@ Programmcodes finden Sie auf Englisch unter:
      einer der drei Türme nicht zerstört werden kann.
    - Animierter Zigarrenrauch zu der Nahaufnahme von Captain Smirk in der CD-Version von
      Monkey Island 1 hinzugefügt. Er war in früheren Versionen vorhanden.
-   - Einige in der englischen und italienischen CD-Version von Monkey Island 1 fehlende
+   - Einige in der englischen, italienischen und deutschen CD-Version von Monkey Island 1 fehlende
      Dialog-Zeilen von Lemonhead wurden wiederhergestellt.
    - Der Uhren-Turm in Monkey Island 1 verhält sich nun in der CD-Version identisch zu
      früheren Versionen. So musst Du etwa - nachdem Du ihn einmal untersucht hast -
