@@ -447,6 +447,7 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(0, 0, loc.angle.z + 1000);
 			const IVec3 &destPos2 = _engine->_renderer->getBaseRotationPosition(0, 0, 1500);
 			_engine->_renderer->setBaseRotation(xRot, yRot, zRot, true);
+			// TODO: this call doesn't make much sense. the computed result is not used.
 			_engine->_renderer->setBaseRotationPos(0, 0, distance(zDistanceHolomap));
 			const IVec3 &destPos3 = _engine->_renderer->getBaseRotationPosition(destPos);
 			const IVec3 &destPos4 = _engine->_renderer->getBaseRotationPosition(destPos2);
