@@ -25,6 +25,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Nightlong: Union City Conspiracy hinzugefügt.
    - Unterstützung für The Journeyman Project 2: Buried in Time hinzugefügt.
    - Unterstützung für Crusader: No Remorse hinzugefügt.
+   - Unterstützung für L-ZONE hinzugefügt.
+   - Unterstützung für Spaceship Warlock hinzugefügt.
 
  Neue Portierungen:
    - Die Version für den Nintendo DS wurde zu großen Teilen neu geschrieben.
