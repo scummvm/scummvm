@@ -532,6 +532,33 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text, uint strLenMax) {
 	return width;
 }
 
+int CharsetRenderer::getStringHeight(const char *str, uint numBytesMax) {
+	assert(str);
+	int totalHeight = 0;
+	int lineHeight = 0;
+
+	if (!numBytesMax)
+		return 0;
+
+	while (*str && numBytesMax) {
+		// No treatment of the ^ commands here, since they're handled/removed in handleTextResource().
+		if (*str == '\n') {
+			totalHeight += (lineHeight ? lineHeight : getFontHeight()) + 1;
+			lineHeight = 0;
+		} else if (*str != '\r' && *str != _vm->_newLineCharacter) {
+			lineHeight = MAX<int>(lineHeight, getCharHeight(*str));
+			if (is2ByteCharacter(_vm->_language, *str)) {
+				++str;
+				--numBytesMax;
+			}
+		}
+		++str;
+		--numBytesMax;
+	}
+
+	return totalHeight + (lineHeight ? lineHeight : getFontHeight()) + 1;
+}
+
 void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int lastKoreanLineBreak = -1;
 	int origPos = pos;
