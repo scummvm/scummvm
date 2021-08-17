@@ -840,7 +840,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_DROPLANGUAGE | ADGF_CD,
 			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
-		KYRA2_CD_FLAGS
+		KYRA2_CD_FAN_FLAGS(Common::HE_ISR, Common::EN_ANY)
 	},
 
 	{ // Interactive Demo
