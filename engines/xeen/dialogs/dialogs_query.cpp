@@ -39,8 +39,8 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 	SpriteResource confirmSprites;
 
 	confirmSprites.load("confirm.icn");
-	addButton(Common::Rect(129, 112, 153, 122), Common::KEYCODE_y, &confirmSprites);
-	addButton(Common::Rect(185, 112, 209, 122), Common::KEYCODE_n, &confirmSprites);
+	addButton(Common::Rect(129, 112, 153, 132), Common::KEYCODE_y, &confirmSprites);
+	addButton(Common::Rect(185, 112, 209, 132), Common::KEYCODE_n, &confirmSprites);
 
 	Window &w = windows[mode ? 22 : 21];
 	w.open();

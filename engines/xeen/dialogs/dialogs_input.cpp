@@ -257,9 +257,9 @@ int StringInput::execute(bool type, const Common::String &expected,
 				f2.close();
 			}
 
-			if (Common::RU_RUS == g_vm->getLanguage()) {
+			if (Common::RU_RUS == g_vm->getLanguage() && GType_Clouds == g_vm->getGameID()) {
 				for (uint idx = 0; idx < 59; ++idx) {
-					if (!line.compareToIgnoreCase(Res.MIRROR_LOCATIONS[idx])) {
+					if (!line.compareToIgnoreCase(Res.CLOUDS_MIRROR_LOCATIONS[idx])) {
 						result = idx + 1;
 						sound.playFX(_vm->_files->_ccNum ? 35 : 61);
 						break;
