@@ -1388,8 +1388,18 @@ void SeqPlayer_HOF::updateSubTitles() {
 				if (*srcStr == '\r')
 					srcStr++;
 
+
+				Common::String string(outputStr);
+				Common::String revBuffer;
+				const char *cstr = string.c_str();
+				if (_vm->gameFlags().lang == Common::HE_ISR) {
+					for (int c = string.size() - 1; c >= 0; --c)
+						revBuffer += string[c];
+					cstr = revBuffer.c_str();
+				}
+
 				uint8 textColor = (_textSlots[i].textcolor >= 0) ? _textSlots[i].textcolor : _textColor[0];
-				_screen->printText(outputStr, _textSlots[i].x - (_screen->getTextWidth(outputStr) / 2), yPos, textColor, 0);
+				_screen->printText(cstr, _textSlots[i].x - (_screen->getTextWidth(cstr) / 2), yPos, textColor, 0);
 				yPos += 10;
 			}
 		} else {

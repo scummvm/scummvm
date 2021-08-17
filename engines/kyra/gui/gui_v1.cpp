@@ -599,26 +599,34 @@ void MainMenu::printString(const char *format, int x, int y, int col1, int col2,
 	Common::String string = Common::String::vformat(format, vaList);
 	va_end(vaList);
 
+	Common::String revBuffer;
+	const char *cstr = string.c_str();
+	if (_vm->gameFlags().lang == Common::HE_ISR) {
+		for (int i = string.size() - 1; i >= 0; --i)
+			revBuffer += string[i];
+		cstr = revBuffer.c_str();
+	}
+
 	if (flags & 1)
-		x -= _screen->getTextWidth(string.c_str()) >> 1;
+		x -= _screen->getTextWidth(cstr) >> 1;
 
 	if (flags & 2)
-		x -= _screen->getTextWidth(string.c_str());
+		x -= _screen->getTextWidth(cstr);
 
 	if (_vm->gameFlags().use16ColorMode)
 		flags &= 3;
 
 	if (flags & 4) {
-		_screen->printText(string.c_str(), x - 1, y, _static.altColor, col2);
-		_screen->printText(string.c_str(), x, y + 1, _static.altColor, col2);
+		_screen->printText(cstr, x - 1, y, _static.altColor, col2);
+		_screen->printText(cstr, x, y + 1, _static.altColor, col2);
 	}
 
 	if (flags & 8) {
-		_screen->printText(string.c_str(), x - 1, y, 227, col2);
-		_screen->printText(string.c_str(), x, y + 1, 227, col2);
+		_screen->printText(cstr, x - 1, y, 227, col2);
+		_screen->printText(cstr, x, y + 1, 227, col2);
 	}
 
-	_screen->printText(string.c_str(), x, y, col1, col2);
+	_screen->printText(cstr, x, y, col1, col2);
 }
 
 } // End of namespace Kyra
