@@ -21,6 +21,8 @@
 
 #include "image/image_decoder.h"
 
+#include "graphics/wincursor.h"
+
 #include "director/director.h"
 #include "director/cursor.h"
 #include "director/movie.h"
@@ -194,10 +196,14 @@ void Cursor::readFromResource(int resourceId) {
 		// for win platform, try the cursor from exe
 		if (!readSuccessful && g_director->getPlatform() == Common::kPlatformWindows) {
 			// i'm not sure, in jman we have cursor id 2, 3, 4. and custom cursor id 128 129 130
-			int id = (resourceId & 0x7f) + 2;
-			if (g_director->_winCursor.contains(id)) {
-				resetCursor(Graphics::kMacCursorCustom, false, id);
-				readSuccessful = true;
+			uint id = (resourceId & 0x7f) + 2;
+			for (uint i = 0; i < g_director->_winCursor.size(); i++) {
+				for (uint j = 0; j < g_director->_winCursor[i]->cursors.size(); j++) {
+					if (id == g_director->_winCursor[i]->cursors[j].id.getID()) {
+						resetCursor(Graphics::kMacCursorCustom, false, id);
+						readSuccessful = true;
+					}
+				}
 			}
 		}
 

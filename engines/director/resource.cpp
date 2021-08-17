@@ -240,9 +240,7 @@ void Window::loadEXE(const Common::String movie) {
 		Common::Array<Common::WinResourceID> idList = exe->getIDList(Common::kWinGroupCursor);
 		for (uint i = 0; i < idList.size(); i++) {
 			Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(exe, idList[i]);
-			for (uint j = 0; j < group->cursors.size(); j++) {
-				g_director->_winCursor.setVal(group->cursors[j].id.getID(), group->cursors[j].cursor);
-			}
+			g_director->_winCursor.push_back(group);
 		}
 
 		delete exe;
