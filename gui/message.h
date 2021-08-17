@@ -25,6 +25,7 @@
 
 #include "gui/dialog.h"
 #include "common/str.h"
+#include "common/str-array.h"
 
 namespace GUI {
 
@@ -51,13 +52,17 @@ public:
 				  const Common::String &altButton = Common::String(),
 				  Graphics::TextAlign alignment = Graphics::kTextAlignCenter,
 				  const char *url = nullptr);
+	MessageDialog(const Common::U32String &message,
+				  const Common::U32String &defaultButton,
+				  const Common::U32StringArray &altButtons,
+				  Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 private:
 	const char *_url;
 	void init(const Common::U32String &message,
 			  const Common::U32String &defaultButton,
-			  const Common::U32String &altButton,
+			  const Common::U32StringArray &altButtons,
 			  Graphics::TextAlign alignment,
 			  const char *url);
 };
