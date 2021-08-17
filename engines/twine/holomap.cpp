@@ -123,7 +123,6 @@ void Holomap::loadHolomapGFX() {
 	prepareHolomapProjectedPositions();
 	prepareHolomapSurface();
 	_holomapPaletteIndex = 0;
-	_engine->setPalette(_engine->_screens->_paletteRGBACustom);
 }
 
 static int sortHolomapSurfaceCoordsByDepth(const void *a1, const void *a2) {
@@ -320,9 +319,10 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	_engine->exitSceneryView();
 	_engine->_interface->resetClip();
 	_engine->_screens->clearScreen();
-	_engine->setPalette(_engine->_screens->_paletteRGBA);
 
 	loadHolomapGFX();
+	_engine->setPalette(_engine->_screens->_paletteRGBACustom);
+
 	ScopedEngineFreeze timeFreeze(_engine);
 	const int32 cameraPosX = _engine->width() / 2 + 80;
 	const int32 cameraPosY = _engine->height() / 2;
@@ -393,8 +393,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 		if (fadeInPalette) {
 			fadeInPalette = false;
-			// TODO: this does a flip - which puts stuff onto the screen that shouldn't be there
-			//_engine->_screens->fadeToPal(_engine->_screens->paletteRGBA);
+			//_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBACustom);
 		}
 		++_engine->_lbaTime;
 	}
@@ -494,7 +493,7 @@ void Holomap::processHolomap() {
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 	_engine->_screens->clearScreen();
-	_engine->setPalette(_engine->_screens->_paletteRGBA);
+	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBA);
 
 	loadHolomapGFX();
 
@@ -607,8 +606,7 @@ void Holomap::processHolomap() {
 		//_engine->restoreFrontBuffer();
 		if (fadeInPalette) {
 			fadeInPalette = false;
-			// TODO: this does a flip - which puts stuff onto the screen that shouldn't be there
-			//_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBA);
+			_engine->_screens->fadeToPal(_engine->_screens->_paletteRGBACustom);
 		}
 	}
 
