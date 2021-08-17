@@ -1154,12 +1154,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 //////////////////////////////////////////////////
 
-	MACGAME1("lzone", "",   "L-ZONE", 		"f5277c53bacd27936158dd3867e587e2", 392484, 300),
-	MACGAME1("lzone", "v2", "L-ZONE", 		"276bee761e48a6fd709df77d5c2f60dd", 395344, 300),
-	GENGAME1_("lzone", "",	"L-ZONE",		"9f0bb7ec7720e4f680ee3aa3d22c1c9d", 384968, Common::EN_ANY, Common::kPlatformMacintoshII,ADGF_MACRESFORK, 300),
-	WINGAME2("lzone", "",   "L_ZONE.EXE",	"65d06b5fef155a2473434571aff5bc29", 370009,
-						    "SYNER_01.MMM", "56b6f1c68e85a96bcdd01028bdec2d35", 460594, 300),
-
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_UNSTABLE
 
@@ -1441,6 +1435,18 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1_l("lotus123", "Tour", "Tour of 1-2-3.v3", "1ed38b71d8d0f075483117f7fa559e7c", 367333, Common::JA_JPN, 302),
 
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_TESTING
+
+	MACGAME1("lzone", "",   "L-ZONE", 		"f5277c53bacd27936158dd3867e587e2", 392484, 300),
+	MACGAME1("lzone", "v2", "L-ZONE", 		"276bee761e48a6fd709df77d5c2f60dd", 395344, 300),
+	GENGAME1_("lzone", "",	"L-ZONE",		"9f0bb7ec7720e4f680ee3aa3d22c1c9d", 384968, Common::EN_ANY, Common::kPlatformMacintoshII,ADGF_MACRESFORK, 300),
+	WINGAME2("lzone", "",   "L_ZONE.EXE",	"65d06b5fef155a2473434571aff5bc29", 370009,
+						    "SYNER_01.MMM", "56b6f1c68e85a96bcdd01028bdec2d35", 460594, 300),
+
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_UNSTABLE
+
 	// This may be a hybrid of media from Director, HyperCard, and Farallon MediaTracks
 	// Original filenames are MB.DemoMovie/C and MB.DemoMovie/M
 	MACDEMO1_l("macbasic", "Color Demo", "MB.DemoMovie-C", "7ed88097881eaf2ae4b05c9bf7efdc7c", 170579, Common::JA_JPN, 300),
@@ -1559,7 +1565,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("vwIntroOsmo", "910c6e4bf76294802e985e5b55994a73", 11374),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			(ADGF_CD|ADGF_MACRESFORK),
+			(ADGF_CD|ADGF_MACRESFORK|SUPPORT_STATUS),
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
@@ -1717,9 +1723,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("vvs", "", "VVS Theater-ExtraLarge", "f5277c53bacd27936158dd3867e587e2", 912907, Common::JA_JPN, 311),
 	MACDEMO1_l("vvs", "Demo", "VVS Theater", "f5277c53bacd27936158dd3867e587e2", 639768, Common::JA_JPN, 311),
 
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_TESTING
+
 	WINGAME1("warlock", "", "SSWARLCK.EXE", "65d06b5fef155a2473434571aff5bc29", 370867, 300),
 	WINDEMO1("warlock", "Demo", "SSWDEMO.EXE", "65d06b5fef155a2473434571aff5bc29", 370934, 300),
 	MACDEMO1("warlock", "1994 Demo", "Spaceship Launch", "7f443f2e63fd497a9ad85b10dc880a91", 385872, 313),
+
+#undef SUPPORT_STATUS
+#define SUPPORT_STATUS ADGF_UNSTABLE
 
 	WINDEMO1("wep", "Demo", "WEP.EXE", "2b3543a9131a49f665982d26513a84f8", 1796465, 310),
 
@@ -1750,7 +1762,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("Peanuts", "7f443f2e63fd497a9ad85b10dc880a91", 463942),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			(ADGF_CD|ADGF_MACRESFORK),
+			(ADGF_CD|ADGF_MACRESFORK|SUPPORT_STATUS),
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
@@ -2753,7 +2765,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("Maboroshi no tengu-chi", "792a89586ed20c4662b51c2bfd43be80", 1102407),
 			Common::JA_JPN,
 			Common::kPlatformMacintosh,
-			ADGF_CD | ADGF_DEMO,
+			ADGF_CD | ADGF_DEMO | SUPPORT_STATUS,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
@@ -2936,7 +2948,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 					   "DPSHOT.DXR", "08b944be3cccdbbe3646fce08f2780f0", 1357970),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_CD,
+			ADGF_CD | SUPPORT_STATUS,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
@@ -3242,7 +3254,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("BOAT95.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1410860),
 			Common::JA_JPN,
 			Common::kPlatformWindows,
-			ADGF_DEMO | ADGF_CD,
+			ADGF_DEMO | ADGF_CD | SUPPORT_STATUS,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_GENERIC,
