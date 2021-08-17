@@ -432,25 +432,17 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			const Location &loc = _locations[locationIdx];
 			_engine->_renderer->setBaseRotation(loc.angle.x, loc.angle.y, 0);
 			const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(0, 0, loc.angle.z + 1000);
-			int32 xpos1 = destPos.x;
-			int32 ypos1 = destPos.y;
-			int32 zpos1 = destPos.z;
 			const IVec3 &destPos2 = _engine->_renderer->getBaseRotationPosition(0, 0, 1500);
-			int32 xpos2 = destPos2.x;
-			int32 ypos2 = destPos2.y;
-			int32 zpos2 = destPos2.z;
 			_engine->_renderer->setBaseRotation(xRot, yRot, zRot, true);
-			int32 zpos1_copy = zpos1;
 			_engine->_renderer->setBaseRotationPos(0, 0, 9500);
-			const IVec3 &destPos3 = _engine->_renderer->getBaseRotationPosition(xpos1, ypos1, zpos1);
-			int32 zpos1_copy2 = destPos3.z;
-			const IVec3 &destPos4 = _engine->_renderer->getBaseRotationPosition(xpos2, ypos2, zpos2);
+			const IVec3 &destPos3 = _engine->_renderer->getBaseRotationPosition(destPos);
+			const IVec3 &destPos4 = _engine->_renderer->getBaseRotationPosition(destPos2);
 			if (lower) {
-				if (zpos1_copy2 > destPos4.z) {
+				if (destPos3.z > destPos4.z) {
 					continue;
 				}
 			} else {
-				if (destPos4.z > zpos1_copy2) {
+				if (destPos4.z > destPos3.z) {
 					continue;
 				}
 			}
@@ -459,12 +451,12 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 				flags |= 2u; // model type
 			}
 			DrawListStruct &drawList = drawListArray[n];
-			drawList.posValue = zpos1_copy2;
+			drawList.posValue = destPos3.z;
 			drawList.actorIdx = locationIdx;
 			drawList.type = flags;
-			drawList.x = xpos1;
-			drawList.y = ypos1;
-			drawList.z = zpos1_copy;
+			drawList.x = destPos.x;
+			drawList.y = destPos.y;
+			drawList.z = destPos.z;
 			++n;
 		}
 	}
