@@ -394,7 +394,7 @@ bool ASpit::showConfirmationDialog(const Common::U32String &message, const Commo
 
 	GUI::MessageDialog dialog(message, confirmButton, cancelButton);
 
-	return dialog.runModal() != 0;
+	return dialog.runModal() == GUI::kMessageOK;
 }
 
 void ASpit::xadisablemenureturn(const ArgumentArray &args) {
