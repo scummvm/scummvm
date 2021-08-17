@@ -253,6 +253,11 @@ void Dialog::handleKeyDown(Common::KeyState state) {
 	}
 
 	// Hotkey handling
+
+	// Convert keypad Enter to Return key
+	if (state.keycode == Common::KEYCODE_KP_ENTER) {
+		state.ascii = Common::ASCII_RETURN;
+	}
 	if (state.ascii != 0) {
 		Widget *w = _firstWidget;
 		state.ascii = toupper(state.ascii);
