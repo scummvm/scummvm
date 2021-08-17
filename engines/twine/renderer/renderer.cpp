@@ -1001,6 +1001,9 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 }
 
 void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
+	if (radius <= 0) {
+		return;
+	}
 	radius += 1;
 
 	for (int32 currentLine = -radius; currentLine <= radius; currentLine++) {
@@ -1184,7 +1187,12 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 			if (_isUsingOrthoProjection) {
 				radius = (radius * 34) / 512;
 			} else {
-				radius = (sphere->radius * _cameraScaleY) / (_cameraDepthOffset + sphere->z);
+				int32 delta = _cameraDepthOffset + sphere->z;
+				if (delta <= 0) {
+					radius = 0;
+				} else {
+					radius = ((sphere->radius * _cameraScaleY) / delta) & 0xFFFF;
+				}
 			}
 
 			radius += 3;
