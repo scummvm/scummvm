@@ -573,6 +573,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		// 50 - Macintosh Centris 610	D4
 		// 52 - PowerBook 145			D4
 		// 53 - PowerComputing 8100/100	D5
+		// 70 - PowerBook 540C			D6 // "Director 6 Demystified" p.818
 		// 73 - Power Macintosh 6100/60	D5
 		// 76 - Macintosh Quadra 840av	D4
 		// 256 - IBM PC-type machine	D3
