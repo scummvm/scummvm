@@ -24,6 +24,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Nightlong: Union City Conspiracy.
    - Added support for The Journeyman Project 2: Buried in Time.
    - Added support for Crusader: No Remorse.
+   - Added support for L-ZONE.
+   - Added support for Spaceship Warlock.
 
  New ports:
    - The Nintendo DS port got a major rewrite.
