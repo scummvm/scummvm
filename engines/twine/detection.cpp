@@ -657,7 +657,6 @@ const ExtraGuiOptions TwinEMetaEngineDetection::getExtraGuiOptions(const Common:
 	options.push_back(OptHighRes);
 	options.push_back(OptSound);
 	options.push_back(OptUseCD);
-	// TODO: only 7 are shown right onw - see GUI::ExtraGuiOptionsWidget
 	options.push_back(OptMovies);
 	options.push_back(OptUSAVersion);
 	options.push_back(OptVoices);
