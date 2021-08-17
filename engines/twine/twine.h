@@ -53,6 +53,9 @@ namespace TwinE {
 /** Number of colors used in the game */
 #define NUMOFCOLORS 256
 
+#define ORIGINAL_WIDTH 640
+#define ORIGINAL_HEIGHT 480
+
 static const struct TwinELanguage {
 	const char *name;
 	const char *id;

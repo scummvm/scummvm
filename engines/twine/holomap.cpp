@@ -56,7 +56,24 @@ namespace TwinE {
 #define HOLOMAP_RESET		(HOLOMAP_VISITED | HOLOMAP_UNK3 | HOLOMAP_UNK4 | HOLOMAP_UNK5 | HOLOMAP_UNK6 | HOLOMAP_UNK7)
 #define HOLOMAP_ACTIVE		(HOLOMAP_CAN_FOCUS | HOLOMAP_ARROW)
 
+static const float zDistanceHolomap = 9500.0f;
+static const float zDistanceTrajectory = 5300.0f;
+
 Holomap::Holomap(TwinEEngine *engine) : _engine(engine) {}
+
+int32 Holomap::distance(int32 distance) const {
+	const float w = (float)_engine->width() / (float)ORIGINAL_WIDTH;
+	const float h = (float)_engine->height() / (float)ORIGINAL_HEIGHT;
+	const float f = MIN<float>(w, h);
+	return (int32)((float)distance / f);
+}
+
+int32 Holomap::scale(int32 val) const {
+	const float w = (float)_engine->width() / (float)ORIGINAL_WIDTH;
+	const float h = (float)_engine->height() / (float)ORIGINAL_HEIGHT;
+	const float f = MIN<float>(w, h);
+	return (int32)((float)val * f);
+}
 
 bool Holomap::loadLocations() {
 	uint8 *locationsPtr = nullptr;
@@ -272,11 +289,10 @@ void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
 
 void Holomap::renderHolomapPointModel(const IVec3 &angle, int32 x, int32 y) {
 	_engine->_renderer->setBaseRotation(x, y, 0);
-	// we need a copy here
-	const IVec3 destPos = _engine->_renderer->getBaseRotationPosition(0, 0, 1000);
+	const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(0, 0, 1000);
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
 	_engine->_renderer->setBaseRotation(angle);
-	_engine->_renderer->updateCameraAnglePositions(5300);
+	_engine->_renderer->updateCameraAnglePositions(distance(zDistanceTrajectory));
 	_engine->_interface->resetClip();
 	Common::Rect dummy;
 	_engine->_renderer->renderIsoModel(destPos, x, y, ANGLE_0, _engine->_resources->_holomapPointModelPtr, dummy);
@@ -326,9 +342,8 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	ScopedEngineFreeze timeFreeze(_engine);
 	const int32 cameraPosX = _engine->width() / 2 + 80;
 	const int32 cameraPosY = _engine->height() / 2;
-	const int32 extraZRot = 5300;
 	_engine->_renderer->setCameraPosition(cameraPosX, cameraPosY, 128, 1024, 1024);
-	_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, extraZRot);
+	_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, distance(zDistanceTrajectory));
 
 	renderHolomapSurfacePolygons();
 
@@ -368,7 +383,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 		// now render the holomap path
 		_engine->_renderer->setCameraPosition(cameraPosX, cameraPosY, 128, 1024, 1024);
-		_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, extraZRot);
+		_engine->_renderer->setCameraAngle(0, 0, 0, data->pos.x, data->pos.y, data->pos.z, distance(zDistanceTrajectory));
 		_engine->_renderer->setLightVector(data->pos.x, data->pos.y, 0);
 
 		// animate the path from point 1 to point 2 by rendering a point model on each position
@@ -433,7 +448,7 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(0, 0, loc.angle.z + 1000);
 			const IVec3 &destPos2 = _engine->_renderer->getBaseRotationPosition(0, 0, 1500);
 			_engine->_renderer->setBaseRotation(xRot, yRot, zRot, true);
-			_engine->_renderer->setBaseRotationPos(0, 0, 9500);
+			_engine->_renderer->setBaseRotationPos(0, 0, distance(zDistanceHolomap));
 			const IVec3 &destPos3 = _engine->_renderer->getBaseRotationPosition(destPos);
 			const IVec3 &destPos4 = _engine->_renderer->getBaseRotationPosition(destPos2);
 			if (lower) {
@@ -500,7 +515,7 @@ void Holomap::processHolomap() {
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(COLOR_9);
 	const int32 cameraPosX = _engine->width() / 2;
-	const int32 cameraPosY = 190;
+	const int32 cameraPosY = scale(190);
 	_engine->_renderer->setCameraPosition(cameraPosX, cameraPosY, 128, 1024, 1024);
 
 	int32 currentLocation = _engine->_scene->_currentSceneIdx;
@@ -578,13 +593,13 @@ void Holomap::processHolomap() {
 
 		if (redraw) {
 			redraw = false;
-			const Common::Rect &rect = _engine->centerOnScreenX(300, 0, 330);
+			const Common::Rect &rect = _engine->centerOnScreenX(scale(300), 0, scale(330));
 			_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0, true);
 			_engine->_renderer->setLightVector(xRot, yRot, 0);
 			renderLocations(xRot, yRot, 0, false);
 			_engine->_renderer->setBaseRotation(xRot, yRot, 0, true);
-			_engine->_renderer->setBaseRotationPos(0, 0, 9500);
+			_engine->_renderer->setBaseRotationPos(0, 0, distance(zDistanceHolomap));
 			renderHolomapSurfacePolygons();
 			renderLocations(xRot, yRot, 0, true);
 			drawHolomapText(_engine->width() / 2, 25, "HoloMap");

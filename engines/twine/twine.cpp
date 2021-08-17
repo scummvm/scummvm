@@ -72,9 +72,6 @@
 #include "twine/script/script_move_v1.h"
 #include "twine/text.h"
 
-#define ORIGINAL_WIDTH 640
-#define ORIGINAL_HEIGHT 480
-
 namespace TwinE {
 
 ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine *engine) : _engine(engine) {

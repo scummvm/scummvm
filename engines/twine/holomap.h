@@ -67,6 +67,7 @@ private:
 	};
 	HolomapProjectedPos _projectedSurfacePositions[561];
 	int _projectedSurfaceIndex = 0;
+	float _distanceModifier = 1.0f;
 
 	int32 _numLocations = 0;
 	Location _locations[NUM_LOCATIONS];
@@ -88,6 +89,12 @@ private:
 	void prepareHolomapPolygons();
 	void renderHolomapSurfacePolygons();
 	void renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData);
+
+	/**
+	 * Controls the size/zoom of the holomap planet
+	 */
+	int32 distance(int32 distance) const;
+	int32 scale(int32 val) const;
 
 public:
 	Holomap(TwinEEngine *engine);
