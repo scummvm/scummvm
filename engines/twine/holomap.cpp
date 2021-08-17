@@ -292,12 +292,11 @@ void Holomap::renderHolomapPointModel(const IVec3 &angle, int32 x, int32 y) {
 	const IVec3 &destPos = _engine->_renderer->getBaseRotationPosition(0, 0, 1000);
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
 	_engine->_renderer->setBaseRotation(angle);
-	_engine->_renderer->updateCameraAnglePositions(distance(zDistanceTrajectory));
+	_engine->_renderer->setBaseRotationPos(0, 0, distance(zDistanceTrajectory));
 	_engine->_interface->resetClip();
-	Common::Rect dummy;
-	_engine->_renderer->renderIsoModel(destPos, x, y, ANGLE_0, _engine->_resources->_holomapPointModelPtr, dummy);
-	// debug(3, "renderHolomapPointModel(%i, %i): dirty(%i:%i:%i:%i)", x, y, dummy.left, dummy.top, dummy.right, dummy.bottom);
-	// TODO: update the screen _engine->copyBlockPhys(_engine->rect());
+	Common::Rect dirtyRect;
+	_engine->_renderer->renderIsoModel(destPos, x, y, ANGLE_0, _engine->_resources->_holomapPointModelPtr, dirtyRect);
+	_engine->copyBlockPhys(dirtyRect);
 }
 
 void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, AnimTimerDataStruct &animTimerData, BodyData &bodyData, AnimData &animData) {
