@@ -251,6 +251,11 @@ void CreateCharacterDialog::loadButtons() {
 	// Add buttons
 	addButton(Common::Rect(132, 98, 156, 118), Res.KeyConstants.DialogsCreateChar.KEY_ROLL, &_icons);
 	addButton(Common::Rect(132, 128, 156, 148), Res.KeyConstants.DialogsCreateChar.KEY_CREATE, &_icons);
+
+	addButton(Common::Rect(132, 158, 156, 178), Common::KEYCODE_ESCAPE, &_icons);
+	addButton(Common::Rect(86, 98, 110, 118), Common::KEYCODE_UP, &_icons);
+	addButton(Common::Rect(86, 120, 110, 140), Common::KEYCODE_DOWN, &_icons);
+
 	addButton(Common::Rect(168, 19, 192, 39), Res.KeyConstants.DialogsCreateChar.KEY_MGT, nullptr);
 	addButton(Common::Rect(168, 43, 192, 63),   Res.KeyConstants.DialogsCreateChar.KEY_INT, nullptr);
 	addButton(Common::Rect(168, 67, 192, 87),   Res.KeyConstants.DialogsCreateChar.KEY_PER, nullptr);
@@ -259,9 +264,6 @@ void CreateCharacterDialog::loadButtons() {
 	addButton(Common::Rect(168, 139, 192, 159), Res.KeyConstants.DialogsCreateChar.KEY_ACY, nullptr);
 	addButton(Common::Rect(168, 163, 192, 183), Res.KeyConstants.DialogsCreateChar.KEY_LCK, nullptr);
 
-	addButton(Common::Rect(132, 158, 156, 178), Common::KEYCODE_ESCAPE, &_icons);
-	addButton(Common::Rect(86, 98, 110, 118), Common::KEYCODE_UP, &_icons);
-	addButton(Common::Rect(86, 120, 110, 140), Common::KEYCODE_DOWN, &_icons);
 	addButton(Common::Rect(227, 19, 239, 29), 1000, nullptr);
 	addButton(Common::Rect(227, 30, 239, 40), 1001, nullptr);
 	addButton(Common::Rect(227, 41, 239, 51), 1002, nullptr);

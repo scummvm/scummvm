@@ -222,7 +222,16 @@ void Quests::execute() {
 		if (_buttonValue == Common::KEYCODE_ESCAPE)
 			break;
 
-		if (Common::KEYCODE_HOME == _buttonValue) {
+		if (Res.KeyConstants.DialogsQuests.KEY_AUTO_NOTES == _buttonValue) {
+			mode = AUTO_NOTES;
+			topRow = 0;
+		} else if (Res.KeyConstants.DialogsQuests.KEY_QUEST_ITEMS == _buttonValue) {
+			mode = QUEST_ITEMS;
+			topRow = 0;
+		} else if (Res.KeyConstants.DialogsQuests.KEY_CURRENT_QUESTS == _buttonValue) {
+			mode = CURRENT_QUESTS;
+			topRow = 0;
+		} else if (Common::KEYCODE_HOME == _buttonValue) {
 			topRow = 0;
 		} else if (Common::KEYCODE_END == _buttonValue) {
 			topRow = MAX(count - 1, 0);
@@ -238,15 +247,6 @@ void Quests::execute() {
 				   Common::KEYCODE_KP2 == _buttonValue ||
 				   Common::KEYCODE_d == _buttonValue) {
 			topRow = CLIP(topRow + 1, 0, MAX(count - 1, 0));
-		} else if (Res.KeyConstants.DialogsQuests.KEY_AUTO_NOTES == _buttonValue) {
-			mode = AUTO_NOTES;
-			topRow = 0;
-		} else if (Res.KeyConstants.DialogsQuests.KEY_QUEST_ITEMS == _buttonValue) {
-			mode = QUEST_ITEMS;
-			topRow = 0;
-		} else if (Res.KeyConstants.DialogsQuests.KEY_CURRENT_QUESTS == _buttonValue) {
-			mode = CURRENT_QUESTS;
-			topRow = 0;
 		}
 	}
 

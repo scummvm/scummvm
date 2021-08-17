@@ -467,8 +467,11 @@ public:
 	virtual const char  *DARKSIDE_ENDING2() = 0;
 	virtual const char  *PHAROAH_ENDING_TEXT1() = 0;
 	virtual const char  *PHAROAH_ENDING_TEXT2() = 0;
-	virtual const char **MAE_NAMES() = 0;
-	virtual const char **MIRROR_LOCATIONS() = 0;
+	virtual const char **CLOUDS_MAE_NAMES() = 0;
+	virtual const char **CLOUDS_MIRROR_LOCATIONS() = 0;
+	virtual const char **CLOUDS_MAP_NAMES() = 0;
+	virtual const char **CLOUDS_MONSTERS() = 0;
+	virtual const char **CLOUDS_SPELLS() = 0;
 
 	void writeConstants(Common::String num, CCArchive &cc);
 
