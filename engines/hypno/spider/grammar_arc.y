@@ -129,7 +129,10 @@ bline: F0TOK FILENAME {
 		 debug("A0 %d %d", $2, $3); 
 		}
 	 | B0TOK NUM NUM { debug("B0 %d %d", $2, $3); }
-	 | K0TOK NUM NUM { debug("K0 %d %d", $2, $3); }
+	 | K0TOK NUM NUM { 
+		 shoot->explosionFrame = $3;
+		 debug("K0 %d %d", $2, $3);
+		}
 	 | P0TOK NUM NUM {
 		debug("P0 %d %d", $2, $3); 
 	   }

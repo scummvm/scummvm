@@ -174,6 +174,7 @@ class Shoot {
 	Common::Point position;
 	MVideo *video = nullptr;
 	uint32 explosionFrame;
+	bool destroyed = false;
 };
 
 typedef Common::Array<Shoot> Shoots;
@@ -184,7 +185,7 @@ class ShootInfo {
 	uint32 timestamp; 
 };
 
-typedef Common::List<ShootInfo> ShootInfos;
+typedef Common::List<ShootInfo> ShootSequence;
 typedef Common::List<Common::String> Sounds;
 
 class ArcadeShooting {
@@ -192,6 +193,7 @@ class ArcadeShooting {
 	Common::String background;
 	Common::String player;
 	Shoots shoots;
+	ShootSequence shootSequence;
 	Sounds sounds;
     ~ArcadeShooting() { };
 };

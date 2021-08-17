@@ -89,7 +89,6 @@ public:
 	bool checkLevelCompleted();
 	void runLevel(Common::String name);
 	void runScene(Scene scene, Videos intros);
-	ShootInfos _shootInfos;
 	void runArcade(ArcadeShooting arc);
 
 	void restartGame();
@@ -98,13 +97,12 @@ public:
 	void loadAssets();
 	void parseScene(Common::String filename);
 	void parseArcadeShooting(Common::String name, Common::String data);
-	void parseShootList(Common::String name, Common::String data);
+	ShootSequence parseShootList(Common::String name, Common::String data);
 	void loadLib(Common::String filename, LibData &r);
 	Common::HashMap<Common::String, Common::String> _assets;
 
 	// User input
 	void clickedHotspot(Common::Point);
-	void shootSpiderweb(Common::Point);
 	bool clickedShoot(Common::Point);
 	bool hoverHotspot(Common::Point);
 
@@ -184,6 +182,11 @@ public:
 	bool isSoundActive();
 	bool _noStopSounds;
 
+	// Arcade
+	void shootSpiderweb(Common::Point);
+	void drawPlayer(Common::String player, uint32 idx);
+	Shoots _shoots;
+	
 	// Conversation
 	Actions _conversation;
 	bool _refreshConversation;
