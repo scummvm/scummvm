@@ -39,7 +39,11 @@ enum {
 
 // TODO: The default button should be visibly distinct from the alternate button
 
-void MessageDialog::init(const Common::U32String &message, const Common::U32String &defaultButton, const Common::U32String &altButton, Graphics::TextAlign alignment, const char *url) {
+void MessageDialog::init(const Common::U32String &message,
+						 const Common::U32String &defaultButton,
+						 const Common::U32String &altButton,
+						 Graphics::TextAlign alignment,
+						 const char *url) {
 	_url = url;
 
 	const int screenW = g_system->getOverlayWidth();
@@ -101,13 +105,21 @@ void MessageDialog::init(const Common::U32String &message, const Common::U32Stri
 	}
 }
 
-MessageDialog::MessageDialog(const Common::U32String &message, const Common::U32String &defaultButton, const Common::U32String &altButton, Graphics::TextAlign alignment, const char *url)
+MessageDialog::MessageDialog(const Common::U32String &message,
+							 const Common::U32String &defaultButton,
+							 const Common::U32String &altButton,
+							 Graphics::TextAlign alignment,
+							 const char *url)
 	: Dialog(30, 20, 260, 124) {
 
 	init(message, defaultButton, altButton, alignment, url);
 }
 
-MessageDialog::MessageDialog(const Common::String &message, const Common::String &defaultButton, const Common::String &altButton, Graphics::TextAlign alignment, const char *url)
+MessageDialog::MessageDialog(const Common::String &message,
+							 const Common::String &defaultButton,
+							 const Common::String &altButton,
+							 Graphics::TextAlign alignment,
+							 const char *url)
 	: Dialog(30, 20, 260, 124) {
 
 	init(Common::U32String(message), Common::U32String(defaultButton), Common::U32String(altButton), alignment, url);
