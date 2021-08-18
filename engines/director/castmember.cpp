@@ -33,6 +33,7 @@
 #include "director/sound.h"
 #include "director/window.h"
 #include "director/stxt.h"
+#include "director/sprite.h"
 
 namespace Director {
 
@@ -780,11 +781,11 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 		}
 		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), _initialRect.width(), getAlignment(), _lineSpacing, _borderSize, _gutterSize, _boxShadow, _textShadow, _textType == kTextTypeFixed);
 		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
-		((Graphics::MacText *)widget)->setEditable(_editable);
+		((Graphics::MacText *)widget)->setEditable(channel->_sprite->_editable);
 		((Graphics::MacText *)widget)->draw();
 
 		// since we disable the ability of setActive in setEdtiable, then we need to set active widget manually
-		if (_editable) {
+		if (channel->_sprite->_editable) {
 			Graphics::MacWidget *activeWidget = g_director->_wm->getActiveWidget();
 			if (activeWidget == nullptr || !activeWidget->isEditable())
 				g_director->_wm->setActiveWidget(widget);
@@ -869,17 +870,6 @@ void TextCastMember::setTextSize(int textSize) {
 		_fontSize = textSize;
 		_modified = true;
 	}
-}
-
-bool TextCastMember::isEditable() {
-	return _editable;
-}
-
-void TextCastMember::setEditable(bool editable) {
-	_editable = editable;
-	// if we are linking to the widget, then we can modify it directly.
-	if (_widget)
-		((Graphics::MacText *)_widget)->setEditable(editable);
 }
 
 void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {

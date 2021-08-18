@@ -148,13 +148,12 @@ Graphics::Surface *Sprite::getQDMatte() {
 	return _matte ? _matte->getMask() : nullptr;
 }
 
-
-void Sprite::updateCast() {
+void Sprite::updateEditable() {
 	if (!_cast)
 		return;
 
-	if (_cast->isEditable() != _editable && !_puppet)
-		_cast->setEditable(_editable);
+	if (!_puppet)
+		_editable = _editable || _cast->isEditable();
 }
 
 bool Sprite::respondsToMouse() {
