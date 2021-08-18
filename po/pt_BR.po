@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-17 17:44+0000\n"
-"PO-Revision-Date: 2021-08-16 09:25+0000\n"
+"PO-Revision-Date: 2021-08-18 15:25+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -2845,16 +2845,13 @@ msgid "Active graphics filter:"
 msgstr "Filtros gráficos ativos:"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:368
-#, fuzzy, c-format
-#| msgid "Save screenshot"
+#, c-format
 msgid "Saved screenshot '%s'"
-msgstr "Salvar captura de tela"
+msgstr "Captura de tela '%s' foi salva"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:377
-#, fuzzy
-#| msgid "Save screenshot"
 msgid "Could not save screenshot"
-msgstr "Salvar captura de tela"
+msgstr "Não foi possível salvar captura de tela"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Windowed mode"
