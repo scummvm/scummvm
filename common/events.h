@@ -489,6 +489,11 @@ public:
 	 */
 	virtual void purgeMouseEvents() = 0;
 
+	/**
+	 * Purge all unprocessed keyboard events already in the event queue.
+	 */
+	virtual void purgeKeyboardEvents() = 0;
+
 	/** Return the current mouse position. */
 	virtual Point getMousePos() const = 0;
 
