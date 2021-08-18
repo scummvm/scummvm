@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-18 20:34+0000\n"
+"POT-Creation-Date: 2021-08-18 21:39+0000\n"
 "PO-Revision-Date: 2021-08-16 14:59+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -864,7 +864,7 @@ msgstr ""
 "Se han encontrado %d juegos nuevos y se han ignorado %d juegos (ya "
 "añadidos)..."
 
-#: gui/message.cpp:173 gui/message.cpp:177 gui/options.cpp:2402
+#: gui/message.cpp:174 gui/message.cpp:178 gui/options.cpp:2402
 msgid "Open URL"
 msgstr "Abre la dirección URL"
 

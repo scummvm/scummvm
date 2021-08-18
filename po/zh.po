@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-18 20:34+0000\n"
+"POT-Creation-Date: 2021-08-18 21:39+0000\n"
 "PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -857,7 +857,7 @@ msgstr "扫描了 %d 目录..."
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "找到了%d个新游戏，忽略了%d个之前添加的游戏..."
 
-#: gui/message.cpp:173 gui/message.cpp:177 gui/options.cpp:2402
+#: gui/message.cpp:174 gui/message.cpp:178 gui/options.cpp:2402
 msgid "Open URL"
 msgstr "打开链接"
 

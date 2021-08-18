@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-18 20:34+0000\n"
+"POT-Creation-Date: 2021-08-18 21:39+0000\n"
 "PO-Revision-Date: 2021-04-12 23:51+0000\n"
 "Last-Translator: Henrik Andersson <henke@henke37.cjb.net>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -868,7 +868,7 @@ msgstr "Kataloger scannade: %d ..."
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "Upptäckte %d nya spel, ignorerade %d tidigare tillagda spel ..."
 
-#: gui/message.cpp:173 gui/message.cpp:177 gui/options.cpp:2402
+#: gui/message.cpp:174 gui/message.cpp:178 gui/options.cpp:2402
 msgid "Open URL"
 msgstr "Öppna adress"
 
