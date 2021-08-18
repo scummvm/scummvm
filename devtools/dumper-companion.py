@@ -75,9 +75,8 @@ def escape_string(s: str) -> str:
     return new_name
 
 
-def punyencode(orig: str, encoding: str = "mac_roman") -> str:
-    s = orig.encode("mac_roman").decode(encoding)
-    s = escape_string(s)
+def punyencode(orig: str) -> str:
+    s = escape_string(orig)
     encoded = s.encode("punycode").decode("ascii")
     # punyencoding adds an '-' at the end when there are no special chars
     # don't use it for comparing
@@ -231,13 +230,6 @@ def generate_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers()
     parser_iso = subparsers.add_parser("iso", help="Dump hfs isos")
 
-    parser_iso.add_argument(
-        "-e",
-        metavar="ENCODING",
-        type=str,
-        default="mac_roman",
-        help="String encoding (see https://docs.python.org/3/library/codecs.html#standard-encodings)",
-    )
     parser_iso.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
     parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
@@ -302,9 +294,12 @@ def test_encode_stdin(capsys, monkeypatch):
 
 
 def test_decode_name():
-    checks = [["Icon\r", "xn--Icon-ja6e"]]
+    checks = [
+        ["Icon\r", "xn--Icon-ja6e"],
+        ["バッドデイ(Power PC)", "xn--(Power PC)-jx4ilmwb1a7h"],
+    ]
     for input, expected in checks:
-        assert punyencode(input, "mac_roman") == expected
+        assert punyencode(input) == expected
 
 
 def test_escape_string():
