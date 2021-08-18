@@ -1849,6 +1849,9 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		if (_game.platform == Common::kPlatformMacintosh) {
 			expectedSize -= 4;
 			scriptOffset -= 4;
+		} else if (_game.platform == Common::kPlatformFMTowns) {
+			expectedSize = 82817;
+			scriptOffset = 73794;
 		}
 		break;
 	case Common::DE_DEU:
