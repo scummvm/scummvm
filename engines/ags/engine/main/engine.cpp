@@ -25,14 +25,7 @@
 //
 
 #include "ags/shared/core/platform.h"
-
-//include <errno.h>
-#if AGS_PLATFORM_OS_WINDOWS
-//include <process.h>  // _spawnl
-#endif
 #include "ags/lib/allegro.h" // allegro_install and _exit
-
-#include "ags/engine/main/main_header.h"
 #include "ags/engine/ac/asset_helper.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
@@ -49,6 +42,7 @@
 #include "ags/engine/ac/lip_sync.h"
 #include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/path_helper.h"
+#include "ags/engine/ac/route_finder.h"
 #include "ags/engine/ac/sys_events.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/speech.h"
@@ -61,6 +55,7 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/out.h"
+#include "ags/engine/device/mouse_w32.h"
 #include "ags/shared/font/ags_font_renderer.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gfx/image.h"
@@ -79,6 +74,7 @@
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/error.h"
 #include "ags/shared/util/path.h"
+#include "ags/shared/util/string_utils.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
 

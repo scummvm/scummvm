@@ -161,6 +161,8 @@ const int LegacyRoomVolumeFactor = 30;
 
 #define MAX_OPEN_SCRIPT_FILES 10
 
+#define RETURN_CONTINUE 1
+
 } // namespace AGS3
 
 #endif

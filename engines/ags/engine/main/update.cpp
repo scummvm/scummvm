@@ -37,7 +37,6 @@
 #include "ags/engine/ac/sys_events.h"
 #include "ags/engine/ac/room_object.h"
 #include "ags/engine/ac/room_status.h"
-#include "ags/engine/main/main_header.h"
 #include "ags/engine/main/update.h"
 #include "ags/engine/ac/screen_overlay.h"
 #include "ags/engine/ac/view_frame.h"
