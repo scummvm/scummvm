@@ -233,7 +233,7 @@ void loadBands(Common::InSaveFile *in, int32 chunkSize) {
 	// Reconstruct followers for actors
 	for (int i = 0; i < kActorCount; ++i) {
 		BandID id = g_vm->_actorList[i]->_followersID;
-		g_vm->_actorList[i]->followers = id != NoBand
+		g_vm->_actorList[i]->_followers = id != NoBand
 	                             ?   getBandAddress(id)
 	                             :   nullptr;
 	}

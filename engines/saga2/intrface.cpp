@@ -578,36 +578,36 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 
 	buf[0] = '\0';
 
-	if (a->enchantmentFlags & (1 << actorAsleep)) {
+	if (a->_enchantmentFlags & (1 << actorAsleep)) {
 		Common::strlcat(buf, asleepStr, size);
-	} else if (a->enchantmentFlags & (1 << actorParalyzed)) {
+	} else if (a->_enchantmentFlags & (1 << actorParalyzed)) {
 		Common::strlcat(buf, paralysedStr, size);
-	} else if (a->enchantmentFlags & (1 << actorBlind)) {
+	} else if (a->_enchantmentFlags & (1 << actorBlind)) {
 		Common::strlcat(buf, blindStr, size);
-	} else if (a->enchantmentFlags & (1 << actorFear)) {
+	} else if (a->_enchantmentFlags & (1 << actorFear)) {
 		Common::strlcat(buf, afraidStr, size);
 	} else if (pa->isAggressive()) {
 		Common::strlcat(buf, angryStr, size);
 	}
 
-	if (stats.vitality >= a->effectiveStats.vitality * 3) {
+	if (stats.vitality >= a->_effectiveStats.vitality * 3) {
 		if (buf[0] != '\0')	// strlen(buf) > 0
 			Common::strlcat(buf, commaStr, size);
 
 		Common::strlcat(buf, badlyWoundedStr, size);
-	} else if (stats.vitality * 2 > a->effectiveStats.vitality * 3) {
+	} else if (stats.vitality * 2 > a->_effectiveStats.vitality * 3) {
 		if (buf[0] != '\0')	// strlen(buf) > 0
 			Common::strlcat(buf, commaStr, size);
 
 		Common::strlcat(buf, hurtStr, size);
 	}
 
-	if (a->enchantmentFlags & (1 << actorPoisoned)) {
+	if (a->_enchantmentFlags & (1 << actorPoisoned)) {
 		if (buf[0] != '\0')	// strlen(buf) > 0
 			Common::strlcat(buf, commaStr, size);
 
 		Common::strlcat(buf, poisonedStr, size);
-	} else if (a->enchantmentFlags & (1 << actorDiseased)) {
+	} else if (a->_enchantmentFlags & (1 << actorDiseased)) {
 		if (buf[0] != '\0')	// strlen(buf) > 0
 			Common::strlcat(buf, commaStr, size);
 

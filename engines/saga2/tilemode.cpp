@@ -365,7 +365,7 @@ bool areThereActiveEnemies(void) {
 	for (iter.first(&obj); obj != NULL; iter.next(&obj)) {
 		if (isActor(obj)
 		        &&  !((Actor *)obj)->isDead()
-		        && ((Actor *)obj)->disposition == dispositionEnemy)
+		        && ((Actor *)obj)->_disposition == dispositionEnemy)
 			return true;
 	}
 
@@ -401,8 +401,8 @@ void CheckCombatMood(void) {
 	for (iter8.first(&obj); obj != NULL; iter8.next(&obj)) {
 		if (isActor(obj)
 		        &&  !((Actor *)obj)->isDead()
-		        && ((Actor *)obj)->disposition == dispositionEnemy) {
-			if (agress || !(((Actor *)obj)->flags & Actor::afraid)) {
+		        && ((Actor *)obj)->_disposition == dispositionEnemy) {
+			if (agress || !(((Actor *)obj)->_flags & Actor::afraid)) {
 				incrementActiveFaction((Actor *) obj);
 				wasHostile = true;
 			}
@@ -578,7 +578,7 @@ static void evalMouseState(void) {
 		if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo) {
 			if (g_vm->_mouseInfo->getDoable()
 			        &&  !navigationDelayed) {
-				MotionTask  *mt = a->moveTask;
+				MotionTask  *mt = a->_moveTask;
 
 				if (mt == NULL || !mt->isWalk()) {
 					navigateDirect(walkToPos, runFlag);
@@ -1262,8 +1262,8 @@ static APPFUNC(cmdClickTileMap) {
 				if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo) {
 					Actor   *a = getCenterActor();
 
-					if (a->moveTask && a->moveTask->isWalk())
-						a->moveTask->finishWalk();
+					if (a->_moveTask && a->_moveTask->isWalk())
+						a->_moveTask->finishWalk();
 				}
 				navigationDelayed = false;
 			} else {
@@ -1359,7 +1359,7 @@ void navigatePath(TilePoint pick) {
 	if (a) {
 		if (a->isMoving())
 			//  if motion task already exists, change the target
-			a->moveTask->changeTarget(pick);
+			a->_moveTask->changeTarget(pick);
 		else
 			//  else create a new motion task
 			MotionTask::walkTo(*a, pick, false, false);

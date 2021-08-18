@@ -447,7 +447,7 @@ void clearActiveFactions(void) {
 }
 
 void incrementActiveFaction(Actor *a) {
-	activeFactions[a->faction]++;
+	activeFactions[a->_faction]++;
 }
 
 void useActiveFactions(void) {

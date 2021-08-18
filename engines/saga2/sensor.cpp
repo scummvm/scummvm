@@ -157,7 +157,7 @@ void checkSensors(void) {
 			uint32      sFlags = nonActorSenseFlags;
 			if (isActor(senseobj)) {
 				Actor *a = (Actor *)senseobj;
-				sFlags = a->enchantmentFlags;
+				sFlags = a->_enchantmentFlags;
 			}
 
 			if (sensor->check(info, sFlags)) {

@@ -47,7 +47,7 @@ ActorAssignment::ActorAssignment(Actor *a, uint16 until) :
 	debugC(2, kDebugActors, "New assignment for %p (%s) from %d until %d: %p",
 	      (void *)a, a->objName(), startFrame, endFrame, (void *)this);
 	a->_assignment = this;
-	a->flags |= hasAssignment;
+	a->_flags |= hasAssignment;
 }
 
 ActorAssignment::ActorAssignment(Actor *ac, Common::SeekableReadStream *stream) {
@@ -56,7 +56,7 @@ ActorAssignment::ActorAssignment(Actor *ac, Common::SeekableReadStream *stream) 
 
 	_actor = ac;
 	ac->_assignment = this;
-	ac->flags |= hasAssignment;
+	ac->_flags |= hasAssignment;
 }
 
 //----------------------------------------------------------------------
@@ -68,15 +68,15 @@ ActorAssignment::~ActorAssignment(void) {
 	      (void *)a, a->objName(), (void *)this);
 
 	//  Determine if the actor has a task initiated by this assignment
-	if (a->currentGoal == actorGoalFollowAssignment
-	        &&  a->curTask != NULL) {
+	if (a->_currentGoal == actorGoalFollowAssignment
+	        &&  a->_curTask != NULL) {
 		//  If so, abort it
-		a->curTask->abortTask();
-		delete a->curTask;
-		a->curTask = NULL;
+		a->_curTask->abortTask();
+		delete a->_curTask;
+		a->_curTask = NULL;
 	}
 
-	a->flags &= ~hasAssignment;
+	a->_flags &= ~hasAssignment;
 }
 
 //----------------------------------------------------------------------
@@ -145,8 +145,8 @@ void ActorAssignment::handleTaskCompletion(TaskResult) {
 void ActorAssignment::startTask(void) {
 	Actor   *a = getActor();
 
-	if (a->currentGoal == actorGoalFollowAssignment)
-		a->curTask = createTask();
+	if (a->_currentGoal == actorGoalFollowAssignment)
+		a->_curTask = createTask();
 }
 
 //----------------------------------------------------------------------

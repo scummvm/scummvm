@@ -531,7 +531,8 @@ void Speech::dispose(void) {
 		if (!(speechFlags & spNoAnimate) && isActor(objID)) {
 			Actor   *a = (Actor *)GameObject::objectAddress(objID);
 
-			if (a->moveTask) a->moveTask->finishTalking();
+			if (a->_moveTask)
+				a->_moveTask->finishTalking();
 		}
 	} else wakeUpThread(thread, 0);
 
@@ -1004,10 +1005,10 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 		//  color for this particular color scheme; else use a
 		//  default color.
 		if (a == getCenterActor()) sp->penColor = 3 + 9 /* 1 */;
-		else if (a->appearance
-		         &&  a->appearance->schemeList) {
+		else if (a->_appearance
+		         &&  a->_appearance->schemeList) {
 			sp->penColor =
-			    a->appearance->schemeList->_schemes[a->colorScheme]->speechColor + 9;
+			    a->_appearance->schemeList->_schemes[a->_colorScheme]->speechColor + 9;
 		} else sp->penColor = 4 + 9;
 	} else {
 		sp->penColor = 4 + 9;

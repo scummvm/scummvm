@@ -182,7 +182,7 @@ int16 scriptActorMove(int16 *args) {
 	if (thisThread->argCount > 3 && isActor(obj)) {
 		Actor       *a = (Actor *)obj;
 
-		a->currentFacing = args[3];
+		a->_currentFacing = args[3];
 	}
 
 	return 0;
@@ -216,7 +216,7 @@ int16 scriptActorMoveRel(int16 *args) {
 	if (thisThread->argCount > 3 && isActor(obj)) {
 		Actor       *a = (Actor *)obj;
 
-		a->currentFacing = args[3];
+		a->_currentFacing = args[3];
 	}
 
 	return 0;
@@ -258,7 +258,7 @@ int16 scriptActorTransfer(int16 *args) {
 	if (thisThread->argCount > 4 && isActor(obj)) {
 		Actor       *a = (Actor *)obj;
 
-		a->currentFacing = args[4];
+		a->_currentFacing = args[4];
 	}
 
 	return 0;
@@ -331,7 +331,7 @@ int16 scriptActorSetProto(int16 *args) {
 	GameObject      *obj = ((ObjectData *)thisThread->thisObject)->obj;
 	int16           oldProto = obj->getProtoNum();
 
-	if (isActor(obj) && (((Actor *)obj)->flags & Actor::temporary)) {
+	if (isActor(obj) && (((Actor *)obj)->_flags & Actor::temporary)) {
 		decTempActorCount(oldProto);
 		incTempActorCount(args[0]);
 	}
@@ -1123,7 +1123,7 @@ int16 scriptActorGetScratchVar(int16 *args) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		return a->scriptVar[args[0]];
+		return a->_scriptVar[args[0]];
 	}
 
 	return 0;
@@ -1137,9 +1137,9 @@ int16 scriptActorSetScratchVar(int16 *args) {
 	OBJLOG(SetScratchVar);
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
-		int16       oldVal = a->scriptVar[args[0]];
+		int16       oldVal = a->_scriptVar[args[0]];
 
-		a->scriptVar[args[0]] = args[1];
+		a->_scriptVar[args[0]] = args[1];
 
 		return oldVal;
 	}
@@ -1410,7 +1410,7 @@ int16 scriptActorGetSchedule(int16 *args) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		return a->schedule;
+		return a->_schedule;
 	}
 
 	return 0;
@@ -1424,9 +1424,9 @@ int16 scriptActorSetSchedule(int16 *args) {
 	OBJLOG(SetSchedule);
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
-		uint16      oldSchedule = a->schedule;
+		uint16      oldSchedule = a->_schedule;
 
-		a->schedule = (uint16)args[0];
+		a->_schedule = (uint16)args[0];
 
 		if (a->getAssignment() != NULL)
 			delete a->getAssignment();
@@ -1543,9 +1543,9 @@ int16 scriptActorFace(int16 *args) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		oldFacing = a->currentFacing;
+		oldFacing = a->_currentFacing;
 
-		a->currentFacing = args[0] & 7;
+		a->_currentFacing = args[0] & 7;
 	}
 
 	return oldFacing;
@@ -1565,9 +1565,9 @@ int16 scriptActorFaceTowards(int16 *args) {
 
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		oldFacing = a->currentFacing;
+		oldFacing = a->_currentFacing;
 
-		a->currentFacing =
+		a->_currentFacing =
 		    (GameObject::objectAddress(args[0])->getLocation()
 		     -   a->getLocation()).quickDir();
 	}
@@ -1941,7 +1941,7 @@ int16 scriptActorGetLeader(int16 *) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		return a->leader != NULL ? a->leader->thisID() : Nothing;
+		return a->_leader != NULL ? a->_leader->thisID() : Nothing;
 	}
 
 	return 0;
@@ -1956,7 +1956,7 @@ int16 scriptActorNumFollowers(int16 *) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		return a->followers != NULL ? a->followers->size() : 0;
+		return a->_followers != NULL ? a->_followers->size() : 0;
 	}
 
 	return 0;
@@ -1971,10 +1971,10 @@ int16 scriptActorGetFollower(int16 *args) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		assert(a->followers != NULL);
-		assert(args[0] < a->followers->size());
+		assert(a->_followers != NULL);
+		assert(args[0] < a->_followers->size());
 
-		return (*a->followers)[args[0]]->thisID();
+		return (*a->_followers)[args[0]]->thisID();
 	}
 
 	return 0;

@@ -1028,13 +1028,13 @@ void GameObject::updateImage(ObjectID oldParentID) {
 		Actor           *a = (Actor *)oldParent;
 		int             i;
 
-		if (a->leftHandObject == id)
-			a->leftHandObject = Nothing;
-		else if (a->rightHandObject == id)
-			a->rightHandObject = Nothing;
+		if (a->_leftHandObject == id)
+			a->_leftHandObject = Nothing;
+		else if (a->_rightHandObject == id)
+			a->_rightHandObject = Nothing;
 
 		for (i = 0; i < ARMOR_COUNT; i++) {
-			if (a->armorObjects[i] == id) {
+			if (a->_armorObjects[i] == id) {
 				a->wear(Nothing, i);
 				break;
 			}
@@ -1318,11 +1318,11 @@ void GameObject::deleteObject(void) {
 		Actor       *a = (Actor *)objectAddress(_data.parentID);
 		int         i;
 
-		if (a->leftHandObject == id) a->leftHandObject = Nothing;
-		if (a->rightHandObject == id) a->rightHandObject = Nothing;
+		if (a->_leftHandObject == id) a->_leftHandObject = Nothing;
+		if (a->_rightHandObject == id) a->_rightHandObject = Nothing;
 
-		for (i = 0; i < ARRAYSIZE(a->armorObjects); i++)
-			if (a->armorObjects[i] == id)
+		for (i = 0; i < ARRAYSIZE(a->_armorObjects); i++)
+			if (a->_armorObjects[i] == id)
 				a->wear(Nothing, i);
 	}
 
@@ -2126,7 +2126,7 @@ bool GameObject::canSenseProtaganist(SenseInfo &info, int16 range) {
 
 	if (isActor(this)) {
 		Actor *a = (Actor *) this;
-		return sensor.check(info, a->enchantmentFlags);
+		return sensor.check(info, a->_enchantmentFlags);
 	}
 	return sensor.check(info, nonActorSenseFlags);
 }
@@ -2143,7 +2143,7 @@ bool GameObject::canSenseSpecificActor(
 
 	if (isActor(this)) {
 		Actor *ac = (Actor *)this;
-		return sensor.check(info, ac->enchantmentFlags);
+		return sensor.check(info, ac->_enchantmentFlags);
 	}
 	return sensor.check(info, nonActorSenseFlags);
 }
@@ -2160,7 +2160,7 @@ bool GameObject::canSenseSpecificObject(
 
 	if (isActor(this)) {
 		Actor *a = (Actor *) this;
-		return sensor.check(info, a->enchantmentFlags);
+		return sensor.check(info, a->_enchantmentFlags);
 	}
 	return sensor.check(info, nonActorSenseFlags);
 }
@@ -2177,7 +2177,7 @@ bool GameObject::canSenseActorProperty(
 
 	if (isActor(this)) {
 		Actor *a = (Actor *) this;
-		return sensor.check(info, a->enchantmentFlags);
+		return sensor.check(info, a->_enchantmentFlags);
 	}
 	return sensor.check(info, nonActorSenseFlags);
 }
@@ -2194,7 +2194,7 @@ bool GameObject::canSenseObjectProperty(
 
 	if (isActor(this)) {
 		Actor *a = (Actor *) this;
-		return sensor.check(info, a->enchantmentFlags);
+		return sensor.check(info, a->_enchantmentFlags);
 	}
 	return sensor.check(info, nonActorSenseFlags);
 }

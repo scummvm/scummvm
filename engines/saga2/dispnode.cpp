@@ -216,9 +216,9 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 				Actor       *a = (Actor *)obj;
 
 				//  Release the actor appearance if loaded
-				if (a->appearance != NULL) {
-					ReleaseActorAppearance(a->appearance);
-					a->appearance = NULL;
+				if (a->_appearance != NULL) {
+					ReleaseActorAppearance(a->_appearance);
+					a->_appearance = NULL;
 				}
 			}
 		}
@@ -253,9 +253,9 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 				//  If actor is newly entered to the arena
 				//  (appearance == NULL), then load the
 				//  actor's appearance.
-				if (a->appearance == NULL) {
-					a->appearance =
-					    LoadActorAppearance(a->appearanceID, sprStandBank);
+				if (a->_appearance == NULL) {
+					a->_appearance =
+					    LoadActorAppearance(a->_appearanceID, sprStandBank);
 				}
 			}
 
@@ -497,12 +497,12 @@ void DisplayNode::drawObject(void) {
 			    bubbleColorTable,
 			    ARRAYSIZE(bubbleColorTable));
 
-			if (a->kludgeCount < 0 || ++a->kludgeCount >= kBubbleSpriteCount)
-				a->kludgeCount = 0;
+			if (a->_kludgeCount < 0 || ++a->_kludgeCount >= kBubbleSpriteCount)
+				a->_kludgeCount = 0;
 
 			sc = &scList[0];
 			sc->sp = spellSprites->sprite(
-			             kBaseBubbleSpriteIndex + a->kludgeCount);
+			             kBaseBubbleSpriteIndex + a->_kludgeCount);
 			sc->offset.x = scList->offset.y = 0;
 			sc->colorTable = mainColors;
 			sc->flipped = false;
@@ -563,15 +563,15 @@ void DisplayNode::drawObject(void) {
 				}
 			}
 
-			aa = a->appearance;
+			aa = a->_appearance;
 
 			if (aa == nullptr)
 				return;
 
 			//  Fetch the animation series, and determine which
 			//  pose in the series is the current one.
-			anim = aa->animation(a->currentAnimation);
-			pose = aa->pose(anim, a->currentFacing, a->currentPose);
+			anim = aa->animation(a->_currentAnimation);
+			pose = aa->pose(anim, a->_currentFacing, a->_currentPose);
 
 			if (anim == nullptr)
 				return;
@@ -600,7 +600,7 @@ void DisplayNode::drawObject(void) {
 			//  the new frame to finish loaded (handled by
 			//  lockResource())
 			if (aa->isBankLoaded(pose->actorFrameBank)
-			        || !aa->isBankLoaded(a->poseInfo.actorFrameBank)) {
+			        || !aa->isBankLoaded(a->_poseInfo.actorFrameBank)) {
 				ActorPose   pTemp = *pose;
 
 				//  Initiate a load of the sprite bank needed.
@@ -613,13 +613,13 @@ void DisplayNode::drawObject(void) {
 				aa->requestBank(pose->actorFrameBank);
 
 				//  Indicate that animation is OK.
-				a->animationFlags &= ~animateNotLoaded;
+				a->_animationFlags &= ~animateNotLoaded;
 
 				//  Set up which bank and frame to use.
-				a->poseInfo = pTemp;
+				a->_poseInfo = pTemp;
 			} else {
 				//  Indicate that animation isn't loaded
-				a->animationFlags |= animateNotLoaded;
+				a->_animationFlags |= animateNotLoaded;
 
 				//  Initiate a load of the sprite bank needed.
 				/*  if (!RHandleLoading(
@@ -637,7 +637,7 @@ void DisplayNode::drawObject(void) {
 			bodyIndex = 0;
 			rightIndex = leftIndex = -2;
 			partCount = 1;
-			poseFlags = a->poseInfo.flags;
+			poseFlags = a->_poseInfo.flags;
 
 			a->getColorTranslation(mainColors);
 
@@ -645,7 +645,7 @@ void DisplayNode::drawObject(void) {
 			//  carrying in each hand, and what drawing
 			//  order should be used for these objects.
 
-			if (a->leftHandObject != Nothing) {
+			if (a->_leftHandObject != Nothing) {
 				partCount++;
 
 				if (poseFlags & ActorPose::leftObjectInFront) {
@@ -656,7 +656,7 @@ void DisplayNode::drawObject(void) {
 				}
 			}
 
-			if (a->rightHandObject != Nothing) {
+			if (a->_rightHandObject != Nothing) {
 				partCount++;
 
 				if (poseFlags & ActorPose::rightObjectInFront) {
@@ -685,15 +685,15 @@ void DisplayNode::drawObject(void) {
 			//  REM: Locking bug...
 
 			//          ss = (SpriteSet *)RLockHandle( aa->sprites );
-			sprPtr = aa->spriteBanks[a->poseInfo.actorFrameBank];
+			sprPtr = aa->spriteBanks[a->_poseInfo.actorFrameBank];
 			ss = sprPtr;
 			if (ss == nullptr)
 				return;
 
 			//  Fill in the SpriteComponent structure for body
 			sc = &scList[bodyIndex];
-			assert(a->poseInfo.actorFrameIndex < ss->count);
-			sc->sp = ss->sprite(a->poseInfo.actorFrameIndex);
+			assert(a->_poseInfo.actorFrameIndex < ss->count);
+			sc->sp = ss->sprite(a->_poseInfo.actorFrameIndex);
 			sc->offset.x = sc->offset.y = 0;
 			//  Color remapping info
 			sc->colorTable = mainColors;
@@ -709,7 +709,7 @@ void DisplayNode::drawObject(void) {
 			//  If we were carrying something in the left hand,
 			//  then fill in the component structure for it.
 			if (leftIndex >= 0) {
-				GameObject *ob = GameObject::objectAddress(a->leftHandObject);
+				GameObject *ob = GameObject::objectAddress(a->_leftHandObject);
 				ProtoObj *prot = ob->proto();
 
 				ob->getColorTranslation(leftColors);
@@ -717,9 +717,9 @@ void DisplayNode::drawObject(void) {
 				sc = &scList[leftIndex];
 				sc->sp =    prot->getOrientedSprite(
 				                ob,
-				                a->poseInfo.leftObjectIndex);
+				                a->_poseInfo.leftObjectIndex);
 				assert(sc->sp != NULL);
-				sc->offset = a->poseInfo.leftObjectOffset;
+				sc->offset = a->_poseInfo.leftObjectOffset;
 				assert(sc->offset.x < 1000);
 				assert(sc->offset.x > -1000);
 				assert(sc->offset.y < 1000);
@@ -731,7 +731,7 @@ void DisplayNode::drawObject(void) {
 			//  If we were carrying something in the right hand,
 			//  then fill in the component structure for it.
 			if (rightIndex >= 0) {
-				GameObject *ob = GameObject::objectAddress(a->rightHandObject);
+				GameObject *ob = GameObject::objectAddress(a->_rightHandObject);
 				ProtoObj *prot = ob->proto();
 
 				ob->getColorTranslation(rightColors);
@@ -739,13 +739,13 @@ void DisplayNode::drawObject(void) {
 				sc = &scList[rightIndex];
 				sc->sp =    prot->getOrientedSprite(
 				                ob,
-				                a->poseInfo.rightObjectIndex);
+				                a->_poseInfo.rightObjectIndex);
 				assert(sc->sp != NULL);
 				assert(sc->sp->size.x > 0);
 				assert(sc->sp->size.y > 0);
 				assert(sc->sp->size.x < 255);
 				assert(sc->sp->size.y < 255);
-				sc->offset = a->poseInfo.rightObjectOffset;
+				sc->offset = a->_poseInfo.rightObjectOffset;
 				assert(sc->offset.x < 1000);
 				assert(sc->offset.x > -1000);
 				assert(sc->offset.y < 1000);
@@ -848,18 +848,18 @@ ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos) {
 					} else {
 						Actor   *a = (Actor *)obj;
 
-						aa = a->appearance;
+						aa = a->_appearance;
 
 						if (aa == NULL) continue;
 
-						sprPtr = aa->spriteBanks[a->poseInfo.actorFrameBank];
+						sprPtr = aa->spriteBanks[a->_poseInfo.actorFrameBank];
 						ss = sprPtr;
 						if (ss == nullptr)
 							continue;
 
-						spr = ss->sprite(a->poseInfo.actorFrameIndex);
+						spr = ss->sprite(a->_poseInfo.actorFrameIndex);
 						flipped =
-						    (a->poseInfo.flags & ActorPose::actorFlipped) ? 1 : 0;
+						    (a->_poseInfo.flags & ActorPose::actorFlipped) ? 1 : 0;
 					}
 
 					if (GetSpritePixel(spr, flipped, testPoint)) {

@@ -598,47 +598,47 @@ public:
 	//  Resource fields
 
 	//  Social loyalty
-	uint8           faction;                // actor's faction
+	uint8           _faction;                // actor's faction
 
 	//  Appearance attribute
-	uint8           colorScheme;            // indirect color map
+	uint8           _colorScheme;            // indirect color map
 
-	int32           appearanceID;           // appearnce of this actor
+	int32           _appearanceID;           // appearnce of this actor
 
 	//  Personality attributes
-	int8            attitude,               // cooperativeness
-	                mood;                   // happiness
-	uint8           disposition;            // actor disposition
+	int8            _attitude,               // cooperativeness
+	                _mood;                   // happiness
+	uint8           _disposition;            // actor disposition
 	// 0 = friendly, 1 = enemy,
 	// 2 = Julian, 3 = Philip,
 	// 4 = Kevin
 
 	//  Character orientation
-	Direction       currentFacing;          // current facing direction
+	Direction       _currentFacing;          // current facing direction
 
 	//  Tether info
-	int16           tetherLocU;             // tether U coordinate
-	int16           tetherLocV;             // tether V coordinate
-	int16           tetherDist;             // length of tether
+	int16           _tetherLocU;             // tether U coordinate
+	int16           _tetherLocV;             // tether V coordinate
+	int16           _tetherDist;             // length of tether
 
 	//  Held objects
-	ObjectID        leftHandObject,         // object held in left hand.
-	                rightHandObject;        // object held in right hand.
+	ObjectID        _leftHandObject,         // object held in left hand.
+	                _rightHandObject;        // object held in right hand.
 
 	//  Knowledge packets
-	uint16          knowledge[16];
+	uint16          _knowledge[16];
 
 	//  Schedule script ID
-	uint16          schedule;
+	uint16          _schedule;
 
 	//  Run-time fields
 
-	uint8           conversationMemory[4];// last things talked about
+	uint8           _conversationMemory[4];// last things talked about
 
 	//  Sprite animation variables
-	uint8           currentAnimation,       // current action sequence
-	                currentPose,            // current pose in sequence
-	                animationFlags;         // current posing flags
+	uint8           _currentAnimation,       // current action sequence
+	                _currentPose,            // current pose in sequence
+	                _animationFlags;         // current posing flags
 
 	//  Various actor flags
 	enum {
@@ -650,65 +650,65 @@ public:
 		fightStance     = (1 << 5)
 	};
 
-	uint8           flags;
+	uint8           _flags;
 
 	//  Contains sprite index and positioning info for the current
 	//  actor state.
-	ActorPose       poseInfo;               // current animation state
+	ActorPose       _poseInfo;               // current animation state
 
 	//  Pointer to the appearance record (sprite array) for this actor.
-	ActorAppearance *appearance;            // appearance structs
+	ActorAppearance *_appearance;            // appearance structs
 
-	int16           cycleCount;             // misc counter for actions
-	int16           kludgeCount;            // another misc counter
+	int16           _cycleCount;             // misc counter for actions
+	int16           _kludgeCount;            // another misc counter
 
-	uint32          enchantmentFlags;       // flags indicating racial
+	uint32          _enchantmentFlags;       // flags indicating racial
 	// abilities and enchantments
 
 	//  Movement attributes
-	MotionTask      *moveTask;
+	MotionTask      *_moveTask;
 
 	//  Current task
-	TaskStack       *curTask;
+	TaskStack       *_curTask;
 
 	//  Current goal type
-	uint8           currentGoal;
+	uint8           _currentGoal;
 
 	//  Used for deltayed deactivation (and also to word-align struct)
-	uint8           deactivationCounter;
+	uint8           _deactivationCounter;
 
 	//  Assignment
 	ActorAssignment *_assignment;
 	// assignments
 
 	//  Current effective stats
-	ActorAttributes effectiveStats;
+	ActorAttributes _effectiveStats;
 
-	uint8           actionCounter;          //  coordinate moves in combat
+	uint8           _actionCounter;          //  coordinate moves in combat
 
-	uint16          effectiveResistance;    // resistances (see EFFECTS.H)
-	uint16          effectiveImmunity;      // immunities  (see EFFECTS.H)
+	uint16          _effectiveResistance;    // resistances (see EFFECTS.H)
+	uint16          _effectiveImmunity;      // immunities  (see EFFECTS.H)
 
-	int16           recPointsPerUpdate;     // fractional vitality recovery
+	int16           _recPointsPerUpdate;     // fractional vitality recovery
 
-	int16           currentRecoveryPoints;  // fraction left from last recovery
+	int16           _currentRecoveryPoints;  // fraction left from last recovery
 
 	enum vitalityRecovery {
 		recPointsPerVitality        = 10
 	};
 
 
-	Actor           *leader;                // This actor's leader
+	Actor           *_leader;                // This actor's leader
 	ObjectID        _leaderID;
-	Band            *followers;             // This actor's band of followers
+	Band            *_followers;             // This actor's band of followers
 	BandID          _followersID;
 
-	ObjectID        armorObjects[ARMOR_COUNT];    //  armor objects being worn
+	ObjectID        _armorObjects[ARMOR_COUNT];    //  armor objects being worn
 
-	GameObject      *currentTarget;
+	GameObject      *_currentTarget;
 	ObjectID        _currentTargetID;
 
-	int16           scriptVar[actorScriptVars];   //  scratch variables for scripter use
+	int16           _scriptVar[actorScriptVars];   //  scratch variables for scripter use
 
 	//  Member functions
 
@@ -755,12 +755,12 @@ public:
 private:
 	//  Turn incrementally
 	void turn(Direction targetDir) {
-		Direction   relativeDir = (targetDir - currentFacing) & 0x7;
+		Direction   relativeDir = (targetDir - _currentFacing) & 0x7;
 
-		currentFacing =
+		_currentFacing =
 		    (relativeDir < 4
-		     ?   currentFacing + 1
-		     :   currentFacing - 1)
+		     ?   _currentFacing + 1
+		     :   _currentFacing - 1)
 		    &   0x7;
 	}
 public:
@@ -792,7 +792,7 @@ public:
 
 	//  Return a pointer to the actor's current assignment
 	ActorAssignment *getAssignment(void) {
-		return  flags & hasAssignment
+		return  _flags & hasAssignment
 		        ? _assignment
 		        : nullptr;
 	}
@@ -812,7 +812,7 @@ public:
 
 	//  Determine if actor is dead
 	bool isDead(void) {
-		return effectiveStats.vitality <= 0;
+		return _effectiveStats.vitality <= 0;
 	}
 
 	//  Determine if actor is immobile (i.e. can't walk)
@@ -861,19 +861,20 @@ public:
 
 	//  Return the value of this actor's disposition
 	int16 getDisposition(void) {
-		return disposition;
+		return _disposition;
 	}
 
 	//  Give the actor a new disposition
 	int16 setDisposition(int16 newDisp) {
-		int16   oldDisp = disposition;
-		if (newDisp < dispositionPlayer) disposition = newDisp;
+		int16   oldDisp = _disposition;
+		if (newDisp < dispositionPlayer)
+			_disposition = newDisp;
 		return oldDisp;
 	}
 
 	//  Return a pointer to the effective stats
 	ActorAttributes *getStats(void) {
-		return &effectiveStats;
+		return &_effectiveStats;
 	}
 
 	//  Return a pointer to this actor's base stats
@@ -884,24 +885,24 @@ public:
 
 	//  Determine if this actor is interruptable
 	bool isInterruptable(void) {
-		return actionCounter == 0;
+		return _actionCounter == 0;
 	}
 
 	//  Determine if this actor is permanently uninterruptable
 	bool isPermanentlyUninterruptable(void) {
-		return actionCounter == maxuint8;
+		return _actionCounter == maxuint8;
 	}
 
 	//  Set the inturruptability for this actor
 	void setInterruptablity(bool val) {
-		actionCounter = val ? 0 : maxuint8;
+		_actionCounter = val ? 0 : maxuint8;
 	}
 
 	//  Set action time counter for this actor
 	//  REM: the action points will eventually need to be scaled based
 	//  upon enchantments and abilities
 	void setActionPoints(uint8 points) {
-		actionCounter = points;
+		_actionCounter = points;
 	}
 
 	//  Drop the all of the actor's inventory
@@ -974,10 +975,10 @@ public:
 	void disband(void);
 
 	bool inBandingRange(void) {
-		assert(leader != NULL);
+		assert(_leader != NULL);
 
-		return      leader->IDParent() == IDParent()
-		            && (leader->getLocation() - getLocation()).quickHDistance()
+		return      _leader->IDParent() == IDParent()
+		            && (_leader->getLocation() - getLocation()).quickHDistance()
 		            <=  bandingDist;
 	}
 
@@ -1024,45 +1025,45 @@ public:
 	uint16 getBaseRecovery(void);
 
 	bool resists(effectResistTypes r) {
-		return effectiveResistance & (1 << r);
+		return _effectiveResistance & (1 << r);
 	}
 	bool isImmuneTo(effectImmuneTypes r) {
-		return effectiveImmunity & (1 << r);
+		return _effectiveImmunity & (1 << r);
 	}
 	bool hasEffect(effectOthersTypes e) {
-		return (enchantmentFlags & (1 << e)) != 0;
+		return (_enchantmentFlags & (1 << e)) != 0;
 	}
 
 	void setResist(effectResistTypes r, bool on) {
-		effectiveResistance = on ?
-		                      effectiveResistance | (1 << r) :
-		                      effectiveResistance & ~(1 << r);
+		_effectiveResistance = on ?
+		                      _effectiveResistance | (1 << r) :
+		                      _effectiveResistance & ~(1 << r);
 	}
 
 	void setImmune(effectImmuneTypes r, bool on) {
-		effectiveImmunity = on ?
-		                    effectiveImmunity | (1 << r) :
-		                    effectiveImmunity & ~(1 << r);
+		_effectiveImmunity = on ?
+		                    _effectiveImmunity | (1 << r) :
+		                    _effectiveImmunity & ~(1 << r);
 	}
 
 	void setEffect(effectOthersTypes e, bool on) {
-		enchantmentFlags = on ?
-		                   enchantmentFlags | (1 << e) :
-		                   enchantmentFlags & ~(1 << e);
+		_enchantmentFlags = on ?
+		                   _enchantmentFlags | (1 << e) :
+		                   _enchantmentFlags & ~(1 << e);
 	}
 
 	bool makeSavingThrow(void);
 
 	void setFightStance(bool val) {
 		if (val)
-			flags |= fightStance;
+			_flags |= fightStance;
 		else
-			flags &= ~fightStance;
+			_flags &= ~fightStance;
 	}
 };
 
 inline bool isPlayerActor(Actor *a) {
-	return a->disposition >= dispositionPlayer;
+	return a->_disposition >= dispositionPlayer;
 }
 
 inline bool isPlayerActor(ObjectID obj) {
@@ -1071,7 +1072,7 @@ inline bool isPlayerActor(ObjectID obj) {
 }
 
 inline bool isEnemy(Actor *a) {
-	return !a->isDead() && a->disposition == dispositionEnemy;
+	return !a->isDead() && a->_disposition == dispositionEnemy;
 }
 
 inline bool isEnemy(ObjectID obj) {
