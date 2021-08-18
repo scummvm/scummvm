@@ -80,15 +80,17 @@ def thread_func(q, plats):
       print "Target %s done!" %fileName
 
 def build_apps(plats):
-   q = Queue.Queue()
-   t_count = mp.cpu_count() + 2
-   if t_count > q.qsize():
-      t_count = q.qsize()
    fileNames = os.listdir(plats)
    fileNames = [x for x in fileNames if ".mmp" in x]
 
+   q = Queue.Queue()
    for fileName in fileNames:
       q.put(fileName)
+
+   t_count = mp.cpu_count() + 2
+   if t_count > q.qsize():
+      t_count = q.qsize()
+
    print "Queue size: %s" %q.qsize()
    print "Thread count: %s" %t_count
    threads = [threading.Thread(target=thread_func, args=(q, plats)) for i in range(t_count)]

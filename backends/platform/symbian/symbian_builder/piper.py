@@ -81,10 +81,6 @@ def thread_func(q):
       print "Engine %s done!" %fileName
 
 def build_mmp(try_fix = False):
-   q = Queue.Queue()
-   t_count = mp.cpu_count() + 2
-   if t_count > q.qsize():
-      t_count = q.qsize()
    fileNames = os.listdir(mmps)
    fileNames = [x for x in fileNames if ".mmp" in x]
    if try_fix:
@@ -93,8 +89,14 @@ def build_mmp(try_fix = False):
    else:
       SafeWriteFile(os.path.join(mmps, whitelist), fileNames)
 
+   q = Queue.Queue()
    for fileName in fileNames:
       q.put(fileName)
+
+   t_count = mp.cpu_count() + 2
+   if t_count > q.qsize():
+      t_count = q.qsize()
+
    print "Queue size: %s" %q.qsize()
    print "Thread count: %s" %t_count
    threads = [threading.Thread(target=thread_func, args=(q, )) for i in range(t_count)]
