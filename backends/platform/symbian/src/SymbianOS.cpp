@@ -96,7 +96,7 @@ void OSystem_SDL_Symbian::initBackend() {
 #warning "set debuglevel = 20"
 	ConfMan.set("debuglevel", "20");
 	if (!ConfMan.hasKey("debuglevel"))
-		printf("debuglevel not set!\n");
+		warning("debuglevel not set!\n");
 #endif
 	// Ensure that the current set path (might have been altered by the user) exists.
 	Common::String currentPath = ConfMan.get("savepath");
