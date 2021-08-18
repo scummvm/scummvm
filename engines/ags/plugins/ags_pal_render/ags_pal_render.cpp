@@ -1354,7 +1354,7 @@ int DrawReflections(int id, int charobj = 0) {
 		j = 0;
 	}
 
-	delete [] obst;
+	delete[] obst;
 	if (scaled == true)engine->FreeBitmap(charsprite2);
 	engine->ReleaseBitmapSurface(charsprite);
 	//engine->ReleaseBitmapSurface (virtsc);
@@ -1770,7 +1770,7 @@ int64 AGSPalRender::AGS_EngineOnEvent(int event, NumberPtr data) {
 			engine->ReleaseBitmapSurface(virtsc);
 			engine->FreeBitmap(rcolormap);
 			engine->FreeBitmap(ralphamap);
-			delete [] reflectionmap;
+			delete[] reflectionmap;
 		}
 		int i = 0;
 		if (LensOption.draw == 1 && LensOption.level == 0) DrawLens(LensOption.x, LensOption.y);

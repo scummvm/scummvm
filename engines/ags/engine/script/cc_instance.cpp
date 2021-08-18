@@ -1470,16 +1470,16 @@ void ccInstance::Free() {
 	code = nullptr;
 	strings = nullptr;
 
-	delete [] stack;
-	delete [] stackdata;
-	delete [] exports;
+	delete[] stack;
+	delete[] stackdata;
+	delete[] exports;
 	stack = nullptr;
 	stackdata = nullptr;
 	exports = nullptr;
 
 	if ((flags & INSTF_SHAREDATA) == 0) {
-		delete [] resolved_imports;
-		delete [] code_fixups;
+		delete[] resolved_imports;
+		delete[] code_fixups;
 	}
 	resolved_imports = nullptr;
 	code_fixups = nullptr;

@@ -1385,17 +1385,17 @@ void AGSPalRender::Raycast_Render(ScriptMethodParams &params) {
 void AGSPalRender::QuitCleanup(ScriptMethodParams &) {
 	if (!rendering) {
 		for (int i = 0; i < S_WIDTH; ++i) {
-			if (transcolorbuffer[i])delete [] transcolorbuffer[i];
-			if (transalphabuffer[i])delete [] transalphabuffer[i];
-			if (transzbuffer[i])delete [] transzbuffer[i];
-			if (ZBuffer[i]) delete [] ZBuffer[i];
+			if (transcolorbuffer[i])delete[] transcolorbuffer[i];
+			if (transalphabuffer[i])delete[] transalphabuffer[i];
+			if (transzbuffer[i])delete[] transzbuffer[i];
+			if (ZBuffer[i]) delete[] ZBuffer[i];
 		}
-		if (transcolorbuffer) delete [] transcolorbuffer;
-		if (transalphabuffer) delete [] transalphabuffer;
-		if (transzbuffer) delete [] transzbuffer;
-		if (ZBuffer) delete [] ZBuffer;
-		if (transwallblendmode) delete [] transwallblendmode;
-		if (interactionmap) delete [] interactionmap;
+		if (transcolorbuffer) delete[] transcolorbuffer;
+		if (transalphabuffer) delete[] transalphabuffer;
+		if (transzbuffer) delete[] transzbuffer;
+		if (ZBuffer) delete[] ZBuffer;
+		if (transwallblendmode) delete[] transwallblendmode;
+		if (interactionmap) delete[] interactionmap;
 	}
 }
 
