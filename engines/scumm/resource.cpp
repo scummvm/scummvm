@@ -1852,6 +1852,9 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		} else if (_game.platform == Common::kPlatformFMTowns) {
 			expectedSize = 82817;
 			scriptOffset = 73794;
+		} else if (_game.platform == Common::kPlatformSegaCD) {
+			expectedSize = 61844;
+			scriptOffset = 51703;
 		}
 		break;
 	case Common::DE_DEU:
