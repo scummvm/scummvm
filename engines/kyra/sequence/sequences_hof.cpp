@@ -389,7 +389,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	_vm->resource()->loadFileList(files, tempSize);
 
 	_sequenceStrings = _vm->staticres()->loadStrings(k2SeqplayStrings, tempSize);
-	uint8 multiplier = (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98) ? 12 : 8;
+	uint8 multiplier = /*(_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98) ? 12 :*/ 8;
 	for (int i = 0; i < MIN(33, tempSize); i++)
 		_textDuration[i] = (int)strlen(_sequenceStrings[i]) * multiplier;
 
@@ -656,7 +656,7 @@ void SeqPlayer_HOF::playScenes() {
 
 		if (sq.flags & 2) {
 			_screen->loadBitmap(sq.cpsFile, 2, 2, &_screen->getPalette(0));
-			_screen->setScreenPalette(_screen->getPalette(0));
+			//_screen->setScreenPalette(_screen->getPalette(0));
 		} else {
 			_screen->setCurPage(2);
 			_screen->clearPage(2);
@@ -706,7 +706,7 @@ void SeqPlayer_HOF::playScenes() {
 			setCountDown(_animDuration);
 
 			while (!checkAbortPlayback() && !_vm->shouldQuit() && (countDownRunning() || _updateAnimations)) {
-				uint32 endFrame = (_system->getMillis() + _vm->tickLength()) & ~(_vm->tickLength() - 1);
+				uint32 endFrame = _system->getMillis() + _vm->tickLength();
 				updateAllNestedAnimations();
 
 				if (_config->seqProc[_curScene])
@@ -730,7 +730,7 @@ void SeqPlayer_HOF::playScenes() {
 			(this->*_config->seqProc[_curScene])(0, 0, 0, -2);
 
 		uint32 textTimeOut = ticksTillSubTitlesTimeout();
-		setCountDown(sq.timeout < textTimeOut ? textTimeOut : sq.timeout);
+		setCountDown(MAX<uint32>(textTimeOut, sq.timeout));
 
 		while (!checkAbortPlayback() && !_vm->shouldQuit() && (countDownRunning() || _updateAnimations)) {
 			updateAllNestedAnimations();
@@ -807,6 +807,8 @@ bool SeqPlayer_HOF::checkPlaybackStatus() {
 void SeqPlayer_HOF::doTransition(int type) {
 	for (int i = 0; i < 8; i++)
 		closeNestedAnimation(i);
+
+
 
 	switch (type) {
 	case 0:
@@ -1075,7 +1077,7 @@ void SeqPlayer_HOF::playDialogueAnimation(uint16 strID, uint16 soundID, int text
 		updateSubTitles();
 		delayUntil(MIN(_specialAnimFrameTimeOut, _specialAnimTimeOutTotal));
 
-		if (_vm->speechEnabled() && !_vm->textEnabled() && !_vm->snd_voiceIsPlaying())
+		if (_vm->speechEnabled() && !_vm->textEnabled() && !_vm->sound()->voiceIsPlaying())
 			break;
 
 		if (checkAbortPlayback())
@@ -1249,9 +1251,9 @@ bool SeqPlayer_HOF::updateNestedAnimation(int animSlot) {
 		int diff = (curTick - _animSlots[animSlot].nextFrame) / (_animSlots[animSlot].frameDelay * _tickLength / 1000);
 		if (diff > 0) {
 			currentFrame++;
-			if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
+			/*if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
 				_animSlots[animSlot].nextFrame += ((curTick - _animSlots[animSlot].nextFrame) * 2 / 3);
-			else
+			else*/
 				_animSlots[animSlot].nextFrame = curTick;
 		}
 	}
@@ -1444,7 +1446,7 @@ void SeqPlayer_HOF::waitForSubTitlesTimeout() {
 	if (_vm->textEnabled()) {
 		delayUntil(timeOut);
 	} else if (_vm->speechEnabled()) {
-		while (_vm->snd_voiceIsPlaying())
+		while (!(_vm->shouldQuit() || _vm->skipFlag()) && _vm->sound()->voiceIsPlaying())
 			delayTicks(1);
 	}
 
@@ -1746,8 +1748,8 @@ void SeqPlayer_HOF::delayUntil(uint32 dest) {
 
 void SeqPlayer_HOF::setCountDown(uint32 ticks) {
 	_countDownRemainder = ticks * _tickLength / 1000;
-	if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
-		_countDownRemainder = _countDownRemainder * 2 / 3;
+	//if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
+	//	_countDownRemainder = _countDownRemainder * 2 / 3;
 	_countDownLastUpdate = _system->getMillis() & ~(_vm->tickLength() - 1);
 }
 
@@ -1755,7 +1757,7 @@ bool SeqPlayer_HOF::countDownRunning() {
 	uint32 cur = _system->getMillis();
 	uint32 step = cur - _countDownLastUpdate;
 	_countDownLastUpdate = cur;
-	_countDownRemainder = (step <= _countDownRemainder) ? _countDownRemainder - step : 0;
+	_countDownRemainder = (uint32)MAX<int32>(_countDownRemainder - step, 0);
 	return _countDownRemainder;
 }
 
@@ -1767,8 +1769,8 @@ bool SeqPlayer_HOF::countDownRunning() {
 
 int SeqPlayer_HOF::cbHOF_westwood(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	if (frm == -2) {
-		if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
-			delayTicks(300);
+		//if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
+		//	delayTicks(300);
 	} else if (!frm) {
 		_vm->sound()->playTrack(2);
 	}
@@ -1903,7 +1905,7 @@ int SeqPlayer_HOF::cbHOF_library(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	case 0:
 		_updateAnimations = true;
 		_vm->sound()->playTrack(5);
-
+		playSoundAndDisplaySubTitle(4);
 		assert(_screenHoF);
 		_screenHoF->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
 		_textColor[1] = _screen->findLeastDifferentColor(_textColorPresets, _screen->getPalette(0), 1, 255) & 0xFF;
@@ -1915,7 +1917,6 @@ int SeqPlayer_HOF::cbHOF_library(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case 1:
 		startNestedAnimation(0, kNestedSequenceLibrary3);
-		playSoundAndDisplaySubTitle(4);
 		break;
 
 	case 100:
@@ -2137,7 +2138,12 @@ int SeqPlayer_HOF::cbHOF_zanfaun(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		break;
 
 	case 26:
-		waitForSubTitlesTimeout();
+		if (_vm->gameFlags().isTalkie && !_vm->textEnabled()) {
+			while (!(_vm->shouldQuit() || _vm->skipFlag()) && _vm->sound()->voiceIsPlaying());
+				delayTicks(1);
+		} else {
+			waitForSubTitlesTimeout();
+		}
 		break;
 
 	case 46:
@@ -2176,9 +2182,14 @@ int SeqPlayer_HOF::cbHOF_over2(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 int SeqPlayer_HOF::cbHOF_forest(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	if (frm == 11)
 		waitForSubTitlesTimeout();
-	else if (frm == 12)
+	else if (frm == 12) {
+		if (_vm->gameFlags().isTalkie && _vm->gameFlags().lang == Common::DE_DEU) {
+			while (!(_vm->shouldQuit() || _vm->skipFlag()) && _vm->sound()->voiceIsPlaying())
+				delayTicks(1);
+		}
+		delayTicks(25);
 		playSoundAndDisplaySubTitle(2);
-
+	}
 	return frm;
 }
 
