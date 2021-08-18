@@ -150,6 +150,7 @@ void GroupedListWidget::sortGroups() {
 
 	Common::sort(_groupHeaders.begin(), _groupHeaders.end());
 
+	uint curListSize = 0;
 	for (uint i = 0; i != _groupHeaders.size(); ++i) {
 		U32String header = _groupHeaders[i];
 		U32String displayedHeader;
@@ -160,16 +161,18 @@ void GroupedListWidget::sortGroups() {
 		}
 		uint groupID = _groupValueIndex[header];
 
-		_listColors.push_back(_listColors.front());
+		_listColors.insert_at(curListSize, ThemeEngine::kFontColorNormal);
 		_listIndex.push_back(kGroupTag - groupID);
 
 		displayedHeader.toUppercase();
 		_list.push_back(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix);
-
+		++curListSize;
+		
 		if (_groupExpanded[groupID]) {
 			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
 				_list.push_back(Common::U32String("    ") + _dataList[*k]);
 				_listIndex.push_back(*k);
+				++curListSize;
 			}
 		}
 	}
