@@ -3248,7 +3248,7 @@ TaskResult HuntToKillTask::atTargetUpdate(void) {
 	Actor   *a = stack->getActor();
 
 	//  If we're ready to attack, attack
-	if (a->isInterruptable() && g_vm->_rnd->getRandomNumber(6) == 0) {
+	if (a->isInterruptable() && g_vm->_rnd->getRandomNumber(7) == 0) {
 		a->attack(currentTarget);
 		flags |= evalWeapon;
 	}

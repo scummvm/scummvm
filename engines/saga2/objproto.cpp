@@ -1797,7 +1797,7 @@ void BludgeoningWeaponProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 
 		player->skillAdvance(skillIDBludgeon, points);
 
-		if (g_vm->_rnd->getRandomNumber(65534) & 1)
+		if (g_vm->_rnd->getRandomNumber(1))
 			player->skillAdvance(skillIDBrawn, points);
 	}
 }
@@ -1834,7 +1834,7 @@ void SlashingWeaponProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 
 		player->skillAdvance(skillIDSwordcraft, points);
 
-		if (g_vm->_rnd->getRandomNumber(65534) & 1)
+		if (g_vm->_rnd->getRandomNumber(1))
 			player->skillAdvance(skillIDBrawn, points);
 	}
 }
@@ -2161,7 +2161,7 @@ void ArrowProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 
 		player->skillAdvance(skillIDArchery, points);
 
-		if (g_vm->_rnd->getRandomNumber(65534) & 1)
+		if (g_vm->_rnd->getRandomNumber(1))
 			player->skillAdvance(skillIDBrawn, points);
 	}
 }
@@ -2385,7 +2385,7 @@ void ShieldProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 
 		player->skillAdvance(skillIDShieldcraft, points);
 
-		if (g_vm->_rnd->getRandomNumber(65534) & 1)
+		if (g_vm->_rnd->getRandomNumber(1))
 			player->skillAdvance(skillIDBrawn, points);
 	}
 }
@@ -2854,7 +2854,7 @@ void EncounterGeneratorProto::doBackgroundUpdate(GameObject *obj) {
 
 			//  Now, roll to see if we got an encounter!
 
-			if ((g_vm->_rnd->getRandomNumber(65534) & 0x0000ffff) < (uint)prob) {
+			if (g_vm->_rnd->getRandomNumber(0xffff) < (uint)prob) {
 				scriptCallFrame scf;
 
 #if DEBUG

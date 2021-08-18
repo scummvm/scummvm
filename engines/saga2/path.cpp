@@ -2676,7 +2676,7 @@ TilePoint selectNearbySite(
 			spush(TilePoint(qi.u + tDir->u,
 			                qi.v + tDir->v,
 			                testPt.z),
-			      qi.cost + (g_vm->_rnd->getRandomNumber(65534) & 3),
+			      qi.cost + g_vm->_rnd->getRandomNumber(3),
 			      dir);
 		}
 	}

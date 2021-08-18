@@ -593,7 +593,7 @@ bool ActorProto::acceptStrikeAction(
 			if (!a->isDead()) {
 				int16 pmass = a->proto()->mass;
 
-				if (pmass <= 100 || (int16)g_vm->_rnd->getRandomNumber(154) >= pmass - 100) {
+				if (pmass <= 100 || (int16)g_vm->_rnd->getRandomNumber(155) >= pmass - 100) {
 					if (g_vm->_rnd->getRandomNumber(7) == 0)
 						MotionTask::fallDown(*a, *enactorPtr);
 					else
@@ -2775,7 +2775,7 @@ void Actor::handleDamageTaken(uint8 damage) {
 	        &&  !hasEffect(actorRepelUndead)) {
 		if (flags & afraid) {
 			//  Let's give monsters a small chance of regaining their courage
-			if ((uint16)g_vm->_rnd->getRandomNumber(65534) <= 0x3fff)
+			if ((uint16)g_vm->_rnd->getRandomNumber(0xffff) <= 0x3fff)
 				flags &= ~afraid;
 		} else {
 			int16       i,
@@ -2811,7 +2811,7 @@ void Actor::handleDamageTaken(uint8 damage) {
 			moraleBase -= bonus * moraleBase >> 16;
 
 			//  Test this actor's morale
-			if ((uint16)g_vm->_rnd->getRandomNumber(65534) <= moraleBase)
+			if ((uint16)g_vm->_rnd->getRandomNumber(0xffff) <= moraleBase)
 				flags |= afraid;
 		}
 	}
@@ -3081,7 +3081,7 @@ void Actor::removeFollower(Actor *bandMember) {
 
 				moraleBase -= moraleBase * moraleBonus >> 16;
 
-				if ((uint16)g_vm->_rnd->getRandomNumber(65534) <= moraleBase)
+				if ((uint16)g_vm->_rnd->getRandomNumber(0xffff) <= moraleBase)
 					follower->flags |= afraid;
 			}
 		}
@@ -3383,7 +3383,7 @@ bool areActorsInitialized(void) {
 }
 
 int16 GetRandomBetween(int start, int end) {
-	return g_vm->_rnd->getRandomNumberRng(start, end);
+	return g_vm->_rnd->getRandomNumberRng(start, end - 1);
 }
 
 void updateActorStates(void) {
