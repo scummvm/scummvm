@@ -85,7 +85,7 @@ def punyencode(orig: str) -> str:
     return orig
 
 
-def encode_string(args: argparse.Namespace) -> None:
+def encode_string(args: argparse.Namespace) -> int:
     if args.string:
         var = args.string
     if args.stdin:
@@ -101,11 +101,11 @@ def generate_punyencoded_path(
     upath = destination_dir
 
     for el in hpath:
-        upath /= punyencode(el, encoding=encoding)
+        upath /= punyencode(el)
     return upath
 
 
-def extract_volume(args: argparse.Namespace) -> None:
+def extract_volume(args: argparse.Namespace) -> int:
     source_volume: Path = args.src
     destination_dir: Path = args.dir
     encoding: str = args.e
@@ -129,6 +129,9 @@ def extract_volume(args: argparse.Namespace) -> None:
             upath.write_bytes(file)
     return 0
 
+def punyencode_dir(args: argparse.Namespace) -> int:
+    return 0
+
 
 def has_resource_fork(dirpath: str, filename: str) -> bool:
     """
@@ -140,7 +143,7 @@ def has_resource_fork(dirpath: str, filename: str) -> bool:
     return os.path.exists(os.path.join(filepath, "..namedfork/rsrc"))
 
 
-def collect_forks(args: argparse.Namespace) -> None:
+def collect_forks(args: argparse.Namespace) -> int:
     """
     Collect resource forks and move them to a macbinary file
 
@@ -232,9 +235,18 @@ def generate_parser() -> argparse.ArgumentParser:
 
     parser_iso.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
     parser_iso.add_argument(
+            "--punycode", action="store_true", help="encode pathnames into punycode"
+        )
+    parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
     )
     parser_iso.set_defaults(func=extract_volume)
+
+    parser_dir = subparsers.add_parser("dir", help="Punyencode all files and dirs in place")
+
+    parser_dir.add_argument("src", metavar="PATH", type=Path, help="Path")
+    parser_dir.set_defaults(func=punyencode_dir)
+
 
     parser_str = subparsers.add_parser("str", help="Punyencode strings or standard in")
     parser_str.add_argument(
