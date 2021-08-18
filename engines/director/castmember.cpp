@@ -75,7 +75,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_bitsPerPixel = 0;
 
 	if (version < kFileVer400) {
-		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled, 8 - no auto
+		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled
 
 		_bytes = stream.readUint16();
 		_initialRect = Movie::readRect(stream);
