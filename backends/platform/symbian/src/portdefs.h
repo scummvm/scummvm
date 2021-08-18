@@ -27,9 +27,17 @@
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+
+#if (__GNUC__ && __cplusplus)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wparentheses"
+#endif
+#include <stdlib.h>
+#if (__GNUC__ && __cplusplus)
+#pragma GCC diagnostic pop
+#endif
 
 #if (__GNUC__ && __cplusplus)
 #pragma GCC diagnostic push
