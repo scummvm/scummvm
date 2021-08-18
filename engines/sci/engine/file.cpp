@@ -60,9 +60,9 @@ SaveFileRewriteStream::SaveFileRewriteStream(const Common::String &fileName,
 	const bool seekToEnd = (mode == kFileOpenModeOpenOrCreate);
 
 	if (!truncate && inFile) {
-		const uint s = inFile->size();
-		ensureCapacity(s);
-		inFile->read(_data, s);
+		const uint32 size = inFile->size();
+		ensureCapacity(size);
+		_size = inFile->read(_data, size);
 		if (seekToEnd) {
 			seek(0, SEEK_END);
 		}
