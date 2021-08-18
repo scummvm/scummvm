@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-17 17:44+0000\n"
+"POT-Creation-Date: 2021-08-18 20:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -840,7 +840,7 @@ msgstr ""
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr ""
 
-#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2402
+#: gui/message.cpp:173 gui/message.cpp:177 gui/options.cpp:2402
 msgid "Open URL"
 msgstr ""
 
