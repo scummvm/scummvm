@@ -768,6 +768,7 @@ public:
 	int _gameHasBeenRestored = 0;
 	int _oldeip = 0;
 	int _game_update_suspend = 0;
+	bool _new_room_placeonwalkable = false;
 
 	/**@}*/
 
