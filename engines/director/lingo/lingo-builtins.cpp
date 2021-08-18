@@ -1753,7 +1753,7 @@ void LB::b_importFileInto(int nargs) {
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
-	g_director->getCurrentMovie()->registerEvent(kEventMenuCallback, action);
+	g_director->getCurrentMovie()->queueUserEvent(kEventMenuCallback, action);
 }
 
 void LB::b_installMenu(int nargs) {

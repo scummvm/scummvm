@@ -278,7 +278,11 @@ void Score::step() {
 	if (_playState == kPlayStopped)
 		return;
 
-	_lingo->processEvents();
+	if (!_movie->_userEventQueue.empty()) {
+		_lingo->processEvents(_movie->_userEventQueue);
+	} else if (_vm->getVersion() >= 300 && !_window->_newMovieStarted && _playState != kPlayStopped) {
+		_movie->processEvent(kEventIdle);
+	}
 
 	update();
 

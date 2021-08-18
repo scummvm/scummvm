@@ -26,6 +26,7 @@
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
 #include "common/str-array.h"
+#include "common/queue.h"
 #include "common/rect.h"
 
 #include "director/types.h"
@@ -310,7 +311,7 @@ public:
 	ScriptType event2script(LEvent ev);
 	Symbol getHandler(const Common::String &name);
 
-	void processEvents();
+	void processEvents(Common::Queue<LingoEvent> &queue);
 
 public:
 	void execute();

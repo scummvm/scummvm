@@ -187,7 +187,7 @@ bool Movie::processEvent(Common::Event &event) {
 				_lastTimeOut = _lastEventTime;
 
 			debugC(3, kDebugEvents, "event: Button Down @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
-			registerEvent(kEventMouseDown, spriteId);
+			queueUserEvent(kEventMouseDown, spriteId);
 
 			if (sc->_channels[spriteId]->_sprite->_moveable) {
 				_draggingSpritePos = _window->getMousePos();
@@ -217,7 +217,7 @@ bool Movie::processEvent(Common::Event &event) {
 				cast->_hilite = !cast->_hilite;
 		}
 
-		registerEvent(kEventMouseUp, _currentHandlingChannelId);
+		queueUserEvent(kEventMouseUp, _currentHandlingChannelId);
 		sc->renderCursor(pos);
 
 		_currentHiliteChannelId = 0;
@@ -236,7 +236,7 @@ bool Movie::processEvent(Common::Event &event) {
 		if (_timeOutKeyDown)
 			_lastTimeOut = _lastEventTime;
 
-		registerEvent(kEventKeyDown);
+		queueUserEvent(kEventKeyDown);
 		return true;
 
 	case Common::EVENT_KEYUP:
