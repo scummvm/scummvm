@@ -58,13 +58,14 @@ void MessageDialog::init(const Common::U32String &message,
 	// the real size of the dialog
 	Common::Array<Common::U32String> lines;
 	int lineCount;
-	int maxlineWidth = g_gui.getFont().wordWrapText(message, screenW - 2 * 20, lines);
+	const int horizontalMargin = 10;
+	int maxlineWidth = g_gui.getFont().wordWrapText(message, screenW - 2 * horizontalMargin - 20, lines);
 	const int buttonCount = altButtons.size() + 1;
 	const int buttonSpacing = 10;
 	const int buttonsTotalWidth = buttonCount * buttonWidth + (buttonCount - 1) * buttonSpacing;
 
 	// Calculate the desired dialog size (maxing out at 300*180 for now)
-	_w = MAX(maxlineWidth, buttonsTotalWidth + 20);
+	_w = MAX(maxlineWidth, buttonsTotalWidth) + 2 * horizontalMargin;
 
 	lineCount = lines.size();
 
@@ -84,7 +85,7 @@ void MessageDialog::init(const Common::U32String &message,
 
 	// Each line is represented by one static text item.
 	for (int i = 0; i < lineCount; i++) {
-		new StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight, lines[i], alignment);
+		new StaticTextWidget(this, horizontalMargin, 10 + i * kLineHeight, maxlineWidth, kLineHeight, lines[i], alignment);
 	}
 
 	// Assume defaultButton is always given
