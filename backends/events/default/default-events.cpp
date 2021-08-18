@@ -296,6 +296,27 @@ void DefaultEventManager::purgeMouseEvents() {
 	_eventQueue = filteredQueue;
 }
 
+void DefaultEventManager::purgeKeyboardEvents() {
+	_dispatcher.dispatch();
+
+	Common::Queue<Common::Event> filteredQueue;
+	while (!_eventQueue.empty()) {
+		Common::Event event = _eventQueue.pop();
+		switch (event.type) {
+		// Update keyboard state even when purging events to avoid desynchronisation with real keyboard state
+		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYUP:
+			_modifierState = event.kbd.flags;
+			break;
+
+		default:
+			filteredQueue.push(event);
+			break;
+		}
+	}
+	_eventQueue = filteredQueue;
+}
+
 Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	using namespace Common;
 
