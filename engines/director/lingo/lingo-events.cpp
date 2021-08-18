@@ -102,10 +102,6 @@ ScriptType Lingo::event2script(LEvent ev) {
 	return kNoneScript;
 }
 
-int Movie::getEventCount() {
-	return _eventQueue.size();
-}
-
 void Movie::setPrimaryEventHandler(LEvent event, const Common::String &code) {
 	debugC(3, kDebugLingoExec, "setting primary event handler (%s)", _lingo->_eventHandlerTypes[event]);
 	LingoArchive *mainArchive = getMainLingoArch();
