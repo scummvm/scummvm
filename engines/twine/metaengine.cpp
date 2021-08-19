@@ -209,6 +209,11 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_X");
 		gameKeyMap->addAction(act);
 
+		act = new Action("MENU", _("Global Main Menu"));
+		act->addDefaultInputMapping("F5");
+		act->setEvent(EVENT_MAINMENU);
+		gameKeyMap->addAction(act);
+
 		act = new Action("OPTIONSMENU", _("Options Menu"));
 		act->setCustomEngineActionEvent(TwinEActionType::OptionsMenu);
 		act->addDefaultInputMapping("F6");
