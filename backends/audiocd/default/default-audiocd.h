@@ -40,9 +40,6 @@ public:
 
 	virtual bool open();
 	virtual void close();
-	/**
-	 * @note Keep this in sync with Engine::existExtractedCDAudioFiles()
-	 */
 	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
 		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual void stop();
@@ -51,6 +48,10 @@ public:
 	virtual void setBalance(int8 balance);
 	virtual void update();
 	virtual Status getStatus() const; // Subclasses should override for better status results
+	virtual bool existExtractedCDAudioFiles();
+
+private:
+	void fillPotentialTrackNames(Common::Array<Common::String> &trackNames, int track) const;
 
 protected:
 	/**
