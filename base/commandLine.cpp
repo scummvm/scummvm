@@ -175,6 +175,8 @@ static const char HELP_STRING[] =
 	"  --record-file-name=FILE  Specify record file name\n"
 	"  --disable-display        Disable any gfx output. Used for headless events\n"
 	"                           playback by Event Recorder\n"
+	"  --screenshot-period=NUM  When recording, trigger a screenshot every NUM milliseconds\n"
+	"                           (default: 60000)\n"
 #endif
 	"\n"
 #if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
@@ -657,6 +659,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("record-file-name")
+			END_OPTION
+
+			DO_LONG_OPTION_INT("screenshot-period")
 			END_OPTION
 #endif
 
