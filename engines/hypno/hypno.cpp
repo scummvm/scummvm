@@ -179,7 +179,7 @@ bool HypnoEngine::checkLevelCompleted() {
 }
 
 ShootSequence HypnoEngine::parseShootList(Common::String name, Common::String data) {
-	Common::StringTokenizer tok(data, " S,\t\n");
+	Common::StringTokenizer tok(data, " ,\t");
 
 	Common::String t;
 	Common::String n;
@@ -187,9 +187,15 @@ ShootSequence HypnoEngine::parseShootList(Common::String name, Common::String da
 	ShootSequence seq;
 	while(!tok.empty()) {
 		t = tok.nextToken();
+		if (t[0] == '\n')
+			continue;
 		n = tok.nextToken();
+		//debug("t: %s, n: %s", t.c_str(), n.c_str());
 		if (t == "Z")
 			break;
+		
+		Common::replace(n, "\nS", "");
+		Common::replace(n, "\nZ\n", "");
 		si.name = n;
 		si.timestamp = atoi(t.c_str());
 		seq.push_back(si);
@@ -209,67 +215,7 @@ void HypnoEngine::parseArcadeShooting(Common::String name, Common::String data) 
 	g_parsedArc.shoots.clear();
 }
 
-void HypnoEngine::loadAssets() {
-	LibData files; 
-	loadLib("c_misc/missions.lib", files);
-	uint32 i = 0;
-	uint32 j = 0;
-
-	Common::String arc;
-	Common::String list;
-
-	debug("Splitting file: %s",files[0].name.c_str());
-	for (i = 0; i < files[0].data.size(); i++) {
-		arc += files[0].data[i];
-		if (files[0].data[i] == 'X') {
-			i++;
-			for (j = i; j < files[0].data.size(); j++) {
-				if (files[0].data[j] == 'Y')
-					break;
-				list += files[0].data[j];
-			}
-			break; // No need to keep parsing, no more files are used in the demo
-		}
-	}
-
-	Common::String arclevel = files[0].name; 
-	parseArcadeShooting(arclevel, arc);
-	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
-
-	loadLib("c_misc/fonts.lib", _fontFiles);
-	loadLib("demo/sound.lib", _soundFiles);
-	loadLib("c_misc/sound.lib", _soundFiles);
-
-	// quit level
-	Hotspot q;
-	q.type = MakeMenu;
-	Action *a = new Quit();
-	q.actions.push_back(a);
-	Level level;
-	Hotspots quit;
-	quit.push_back(q);
-	level.scene.hots = quit;  
-	_levels["mis/quit.mis"] = level;
-
-	// Read assets from mis files
-	parseScene("mis/demo.mis");
-	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine1.smk", Common::Point(0, 0), false, true, false));
-	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine2.smk", Common::Point(0, 0), false, true, false));
-	_levels["mis/demo.mis"].scene.hots[1].setting = "c_misc/missions.lib/c1.mi_";
-	_levels["mis/demo.mis"].scene.hots[2].setting = "mis/alley.mis";
-
-	_levels["mis/demo.mis"].scene.hots[4].setting = "mis/shoctalk.mis";
-	_levels["mis/demo.mis"].scene.hots[5].setting = "mis/order.mis";
-	_levels["mis/demo.mis"].scene.sound = "demo/sound.lib/menu_mus.raw";
-
-	parseScene("mis/order.mis");
-	_levels["mis/order.mis"].scene.hots[1].setting = "mis/quit.mis";
-	parseScene("mis/alley.mis");
-	_levels["mis/alley.mis"].intros.push_back(MVideo("demo/aleyc01s.smk", Common::Point(0, 0), false, true, false));
-	_levels["mis/alley.mis"].scene.sound = "demo/sound.lib/alleymus.raw";
-
-	parseScene("mis/shoctalk.mis");
-}
+void HypnoEngine::loadAssets() { error("not implemented"); }
 
 Common::Error HypnoEngine::run() {
 	_language = Common::parseLanguage(ConfMan.get("language"));
@@ -299,7 +245,6 @@ Common::Error HypnoEngine::run() {
 		_nextSetting = getGoIntroSetting();
 	}*/
 	loadAssets();
-	_nextSetting = "mis/demo.mis";
 	while (!shouldQuit()) {
 		resetLevelState();
 		_videosPlaying.clear();
@@ -320,17 +265,20 @@ void HypnoEngine::runLevel(Common::String name) {
 	stopSound();
 	_music = "";
 
+	for (Videos::iterator it = _levels[name].intros.begin(); it != _levels[name].intros.end(); ++it)
+		runIntro(*it);
+
 	if (_levels[name].scene.hots.size() == 0) {
 		changeScreenMode("arcade");
 		runArcade(_levels[name].arcade);
 	} else {
 		changeScreenMode("scene");
-		runScene(_levels[name].scene, _levels[name].intros);
+		runScene(_levels[name].scene);
 	}
 
 }
 
-void HypnoEngine::runScene(Scene scene, Videos intros) {
+void HypnoEngine::runScene(Scene scene) {
 	_refreshConversation = false;
 	_conversation.clear();
 	Common::Event event;
@@ -338,8 +286,7 @@ void HypnoEngine::runScene(Scene scene, Videos intros) {
 	Common::List<uint32> videosToRemove;
 	
 	stack.clear();
-	_nextHotsToAdd = &scene.hots;
-	_nextSequentialVideoToPlay = intros;	
+	_nextHotsToAdd = &scene.hots;	
 	changeCursor("mouse/cursor1.smk", 0);
 
 	while (!shouldQuit() && _nextSetting.empty()) {
@@ -494,6 +441,41 @@ void HypnoEngine::runScene(Scene scene, Videos intros) {
 		g_system->delayMillis(10);
 	}
 }
+
+void HypnoEngine::runIntro(MVideo &video) {
+	Common::Event event;
+	stopSound();
+	playVideo(video);
+
+	while (!shouldQuit() && video.decoder) {
+			while (g_system->getEventManager()->pollEvent(event)) {
+			// Events
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					skipVideo(video);
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		if (video.decoder) {
+			if (video.decoder->endOfVideo()) {
+				skipVideo(video);
+			} else if (video.decoder->needsUpdate()) {
+				updateScreen(video);
+				drawScreen();
+			}
+		}
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+}
+
 
 //Actions
 

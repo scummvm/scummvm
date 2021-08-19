@@ -35,9 +35,17 @@ public:
 	//void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
-Common::Error HypnoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	*engine = new Hypno::HypnoEngine(syst, gd);
-	return Common::kNoError;
+Common::Error HypnoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	debug("gameid: %s", desc->gameId);
+    if (Common::String(desc->gameId) == "wetlands") {
+		*engine = (Engine*) new Hypno::WetEngine(syst, desc);
+	} else if (Common::String(desc->gameId) == "sinister-six") {
+		*engine = (Engine*) new Hypno::SpiderEngine(syst, desc);
+	} 
+	else 
+		return Common::kUnsupportedGameidError;
+
+    return Common::kNoError;
 }
 
 namespace Hypno {

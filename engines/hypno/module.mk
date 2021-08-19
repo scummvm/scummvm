@@ -3,12 +3,16 @@ MODULE := engines/hypno
 MODULE_OBJS := \
 	cursors.o \
 	metaengine.o \
+	arcade.o \
+	spider/spider.o \
 	spider/lexer_mis.o \
 	spider/grammar_mis.o \
 	spider/lexer_arc.o \
 	spider/grammar_arc.o \
 	spider/talk.o \
 	spider/arcade.o \
+	wet/wet.o \
+	wet/arcade.o \
 	hypno.o
 
 MODULE_DIRS += \

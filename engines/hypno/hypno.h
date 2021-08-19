@@ -30,7 +30,8 @@
 #include "common/serializer.h"
 #include "engines/engine.h"
 #include "graphics/managed_surface.h"
-
+#include "graphics/font.h"
+#include "graphics/fontman.h"
 
 #include "hypno/grammar.h"
 
@@ -64,7 +65,6 @@ typedef Common::Array<FileData> LibData;
 class HypnoEngine : public Engine {
 private:
 	Common::RandomSource *_rnd;
-	Graphics::PixelFormat _pixelFormat;
 	Image::ImageDecoder *_image;
 	int _screenW, _screenH;
 
@@ -88,13 +88,13 @@ public:
 	void resetLevelState();
 	bool checkLevelCompleted();
 	void runLevel(Common::String name);
-	void runScene(Scene scene, Videos intros);
+	void runScene(Scene scene);
 	void runArcade(ArcadeShooting arc);
 
 	void restartGame();
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
-	void loadAssets();
+	virtual void loadAssets();
 	void parseScene(Common::String filename);
 	void parseArcadeShooting(Common::String name, Common::String data);
 	ShootSequence parseShootList(Common::String name, Common::String data);
@@ -133,10 +133,11 @@ public:
 	void drawImage(Graphics::Surface &image, int x, int y, bool transparent);
 
 	// Cursors
+	void defaultCursor();
 	void changeCursor(const Common::String &, uint32);
 
 	// Actions
-	void runIntro();
+	void runIntro(MVideo &video);
 	void runMenu(Hotspots hs);
     void runBackground(const Hotspot h, Background *a);
 	void runOverlay(const Hotspot h, Overlay *a);
@@ -151,6 +152,7 @@ public:
 	void runTalk(const Hotspot h, Talk *a);
 
 	// Screen
+	Graphics::PixelFormat _pixelFormat;
 	void changeScreenMode(Common::String mode);
 	Graphics::ManagedSurface *_compositeSurface;
 	uint32 _transparentColor;
@@ -183,10 +185,13 @@ public:
 	bool _noStopSounds;
 
 	// Arcade
-	void shootSpiderweb(Common::Point);
-	void drawPlayer(Common::String player, uint32 idx);
+	void drawShoot(Common::Point);
+	virtual void drawPlayer(Common::String player, uint32 idx);
+	virtual void drawHealth(const Graphics::Font &font);
+	int _health;
+	int _maxHealth;
 	Shoots _shoots;
-	
+
 	// Conversation
 	Actions _conversation;
 	bool _refreshConversation;
@@ -197,6 +202,27 @@ public:
 	// Timers
 	bool installTimer(uint32, Common::String *);
 	void removeTimer();
+};
+
+class WetEngine : public HypnoEngine {
+public:
+	WetEngine(OSystem *syst, const ADGameDescription *gd);
+
+	void loadAssets() override;
+	
+	void drawPlayer(Common::String player, uint32 idx) override;
+	void drawHealth(const Graphics::Font &font) override;
+
+};
+
+class SpiderEngine : public HypnoEngine {
+public:
+	SpiderEngine(OSystem *syst, const ADGameDescription *gd);
+
+	void loadAssets() override;
+	
+	void drawPlayer(Common::String player, uint32 idx) override;
+	void drawHealth(const Graphics::Font &font) override;
 };
 
 } // End of namespace Hypno

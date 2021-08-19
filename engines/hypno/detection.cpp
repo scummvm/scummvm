@@ -62,7 +62,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"wetlands", // Wetlands Demo Disc (November 1995)
-		"Not yet implemented",
+		"Demo",
 		AD_ENTRY1s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 642231),
 		Common::EN_USA,
 		Common::kPlatformDOS,
