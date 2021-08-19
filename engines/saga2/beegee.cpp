@@ -67,6 +67,10 @@ enum audioTerrains {
 	kAudioTerrainLIMIT
 };
 
+enum {
+	kCheckGameTime = 1000
+};
+
 struct IntermittentAudioRecord {
 	int noSoundOdds;
 	int soundOdds[4];
@@ -120,8 +124,6 @@ inline int8 musicMapping(int16 musicChoice) {
 
 const static StaticTilePoint AudibilityVector = { 1, 1, 0 };
 
-const int32 checkGameTime = 1000;
-
 /* ===================================================================== *
    Imports
  * ===================================================================== */
@@ -153,7 +155,7 @@ static bool playingExternalLoop = false;
 int activeFactions[maxFactions];
 
 
-static StaticTilePoint themeVectors[MaxThemes] = {
+static StaticTilePoint themeVectors[kMaxThemes] = {
 	{0, 0, 0},
 	{0, 0, 0},
 	{0, 0, 0},
@@ -174,7 +176,7 @@ static StaticTilePoint themeVectors[MaxThemes] = {
 
 
 
-int16 themeCount[MaxThemes];
+int16 themeCount[kMaxThemes];
 
 /* ===================================================================== *
    Prototypes
@@ -184,7 +186,7 @@ int16 themeCount[MaxThemes];
 
 inline metaTileNoise getSound(MetaTilePtr mt) {
 	int hmm = mt->HeavyMetaMusic();
-	return (hmm >= 0 && hmm < MaxThemes) ? hmm : 0;
+	return (hmm >= 0 && hmm < kMaxThemes) ? hmm : 0;
 }
 inline uint32 metaNoiseID(metaTileNoise mtnID) {
 	return mtnID ? MKTAG('T', 'E', 'R', mtnID) : 0;
@@ -359,7 +361,7 @@ void audioEnvironmentCheck(void) {
 	lastGameTime = gameTime;
 	if (currentTheme > 0 && currentTheme <= kAudioTerrainLIMIT) {
 		elapsedGameTime += delta;
-		if (elapsedGameTime > checkGameTime) {
+		if (elapsedGameTime > kCheckGameTime) {
 			int i;
 			elapsedGameTime = 0;
 			const IntermittentAudioRecord &iar = intermittentAudioRecords[currentTheme];
@@ -396,9 +398,6 @@ void audioEnvironmentCheck(void) {
 //-----------------------------------------------------------------------
 // Intermittent sound check
 
-int Deejay::current = 0;
-int Deejay::currentID = 0;
-
 void Deejay::select(void) {
 	int choice = 0;
 #if DEBUG & 0
@@ -406,33 +405,33 @@ void Deejay::select(void) {
 		choice = 0;
 	else
 #endif
-		if (susp)
+		if (_susp)
 			choice = 0;
-		else if (enemy >= 0)
-			choice = enemy + 6;
-		else if (aggr)
+		else if (_enemy >= 0)
+			choice = _enemy + 6;
+		else if (_aggr)
 			choice = 5;
-		else if (ugd)
+		else if (_ugd)
 			choice = 3;
 	//else if ( !day )
 	//  choice=4;
-		else if (current != 4 && (current > 2 || current < 1)) {
+		else if (_current != 4 && (_current > 2 || _current < 1)) {
 			choice = 1 + g_vm->_rnd->getRandomNumber(2);
 			if (choice == 3) choice++;
 		} else
-			choice = current;
+			choice = _current;
 
-	if (currentID != musicMapping(choice)) {
-		currentID = musicMapping(choice);
-		if (currentID)
-			playMusic(musicResID(currentID));
+	if (_currentID != musicMapping(choice)) {
+		_currentID = musicMapping(choice);
+		if (_currentID)
+			playMusic(musicResID(_currentID));
 		else
 			playMusic(0);
 	}
-	current = choice;
+	_current = choice;
 #if DEBUG
 	if (debugAudioThemes) {
-		WriteStatusF(8, "Music: %2.2d => %2.2d    ", current, currentID);
+		WriteStatusF(8, "Music: %2.2d => %2.2d    ", _current, _currentID);
 	}
 #endif
 
@@ -462,7 +461,7 @@ void useActiveFactions(void) {
 	if (highCount)
 		g_vm->_grandMasterFTA->setEnemy(highFaction);
 	else
-		g_vm->_grandMasterFTA->setEnemy(NoEnemy);
+		g_vm->_grandMasterFTA->setEnemy(kNoEnemy);
 }
 
 //-----------------------------------------------------------------------

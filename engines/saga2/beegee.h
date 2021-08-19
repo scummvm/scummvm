@@ -29,45 +29,10 @@
 
 namespace Saga2 {
 
-struct audioEnvironment {
-private:
-	static uint8 musicPlaying;
-	static uint8 loopPlaying;
-	static uint8 soundPlaying;
-	static uint32 lastSoundAt;
-
-public:
-	uint8   musicID;
-	uint8   loopID;
-	uint8   sounds;
-	uint8   sound[4];
-	uint32  maxRandomSoundTime;
-	uint32  minRandomSoundTime;
-
-	audioEnvironment() {
-		musicID = 0;
-		loopID = 0;
-		sounds = 0;
-		sound[0] = 0;
-		sound[1] = 0;
-		sound[2] = 0;
-		sound[3] = 0;
-		minRandomSoundTime = 0;
-		maxRandomSoundTime = 0;
-	}
-
-	void activate(void);
-	void check(uint32 deltaT);
-
-private:
-	void playMusic(uint8 musicID);
-	void playLoop(uint8 loopID);
-	void playIntermittent(int soundNo);
+enum {
+	kNoEnemy = -1,
+	kMaxThemes = 16
 };
-
-const int16 NoEnemy = -1;
-const int16 MaxThemes = 16;
-const uint32 FarAway = 250;
 
 /* ===================================================================== *
    Types
@@ -78,22 +43,24 @@ const uint32 FarAway = 250;
 
 class Deejay {
 private:
-	int     enemy;
-	bool    aggr;
-	bool    day;
-	bool    ugd;
-	bool    susp;
+	int     _enemy;
+	bool    _aggr;
+	bool    _day;
+	bool    _ugd;
+	bool    _susp;
 
-	static int current;
-	static int currentID;
+	int _current;
+	int _currentID;
 
 public:
 	Deejay() {
-		enemy = -1;
-		aggr = false;
-		day = true;
-		susp = false;
-		ugd = false;
+		_enemy = -1;
+		_aggr = false;
+		_day = true;
+		_susp = false;
+		_ugd = false;
+		_current = 0;
+		_currentID = 0;
 	}
 	~Deejay() {}
 
@@ -102,23 +69,23 @@ private:
 
 public:
 	void setEnemy(int16 enemyType = -1) {
-		enemy = enemyType;
+		_enemy = enemyType;
 		select();
 	}
 	void setAggression(bool aggressive) {
-		aggr = aggressive;
+		_aggr = aggressive;
 		select();
 	}
 	void setDaytime(bool daytime) {
-		day = daytime;
+		_day = daytime;
 		select();
 	}
 	void setSuspend(bool suspended) {
-		susp = suspended;
+		_susp = suspended;
 		select();
 	}
 	void setWorld(bool underground) {
-		ugd = underground;
+		_ugd = underground;
 		select();
 	}
 };
