@@ -272,6 +272,17 @@ float SdlWindow::getDpiScalingFactor() const {
 	return ratio;
 }
 
+float SdlWindow::getSdlDpiScalingFactor() const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	int windowWidth, windowHeight;
+	SDL_GetWindowSize(getSDLWindow(), &windowWidth, &windowHeight);
+	int realWidth, realHeight;
+	SDL_GL_GetDrawableSize(getSDLWindow(), &realWidth, &realHeight);
+	return (float)realWidth / (float)windowWidth;
+#else
+	return 1.f;
+#endif
+}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 SDL_Surface *copySDLSurface(SDL_Surface *src) {
