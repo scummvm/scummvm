@@ -40,6 +40,9 @@ public:
 
 	virtual bool open();
 	virtual void close();
+	/**
+	 * @note Keep this in sync with Engine::existExtractedCDAudioFiles()
+	 */
 	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
 		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual void stop();
