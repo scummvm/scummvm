@@ -197,6 +197,9 @@ bool SdlWindow::warpMouseInWindow(int x, int y) {
 	if (hasMouseFocus()) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_window) {
+			float dpiScale = getSdlDpiScalingFactor();
+			x = (int)(x / dpiScale + 0.5f);
+			y = (int)(y / dpiScale + 0.5f);
 			SDL_WarpMouseInWindow(_window, x, y);
 			return true;
 		}
