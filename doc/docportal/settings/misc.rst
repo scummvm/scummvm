@@ -21,7 +21,12 @@ Theme
 
 	*gui_theme*
 
-GUI Renderer
+GUI scale
+	Scale the ScummVM GUI to be bigger or smaller. Using a larger scale can help to make the text easier to read when using ScummVM on a big screen.
+
+	*gui_scale*
+
+GUI renderer
 	Defines how the ScummVM GUI is rendered; normal or antialiased.
 
 	*gui_renderer*
@@ -34,7 +39,7 @@ Autosave
 	*autosave_period*
 
 
-GUI Language
+GUI language
 	Chooses the language of the ScummVM Launcher.
 
 	*gui_language*
