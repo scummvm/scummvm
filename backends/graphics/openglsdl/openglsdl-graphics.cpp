@@ -290,19 +290,15 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 	// event is processed after recreating the window at the new resolution.
 	int currentWidth, currentHeight;
 	getWindowSizeFromSdl(&currentWidth, &currentHeight);
-	float scale = _window->getDpiScalingFactor();
-	debug(3, "req: %d x %d  cur: %d x %d, scale: %f", width, height, currentWidth, currentHeight, scale);
+	float dpiScale = _window->getSdlDpiScalingFactor();
+	debug(3, "req: %d x %d  cur: %d x %d, scale: %f", width, height, currentWidth, currentHeight, dpiScale);
 
 	handleResize(currentWidth, currentHeight);
 
 	// Remember window size in windowed mode
 	if (!_wantsFullScreen) {
-
-		// FIXME HACK. I don't like this at all, but macOS requires window size in LoDPI
-#ifdef __APPLE__
-		currentWidth = (int)(currentWidth / scale);
-		currentHeight = (int)(currentHeight / scale);
-#endif
+		currentWidth = (int)(currentWidth / dpiScale + 0.5f);
+		currentHeight = (int)(currentHeight / dpiScale + 0.5f);
 
 		// Check if the ScummVM window is maximized and store the current
 		// window dimensions.
@@ -654,12 +650,11 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			// window. Then we apply the direction change.
 			int windowWidth = 0, windowHeight = 0;
 			getWindowSizeFromSdl(&windowWidth, &windowHeight);
-			// FIXME HACK. I don't like this at all, but macOS requires window size in LoDPI
-	#ifdef __APPLE__
-			float scale = _window->getDpiScalingFactor();
-			windowWidth /= scale;
-			windowHeight /= scale;
-	#endif
+
+			float dpiScale = _window->getSdlDpiScalingFactor();
+			windowWidth = (int)(windowWidth / dpiScale + 0.5f);
+			windowHeight = (int)(windowHeight / dpiScale + 0.5f);
+
 			if (direction > 0)
 				_graphicsScale = MAX<int>(windowWidth / _lastRequestedWidth, windowHeight / _lastRequestedHeight);
 			else
