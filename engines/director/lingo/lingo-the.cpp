@@ -1543,6 +1543,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLocH:
 		if (d.asInt() != channel->_currentPoint.x) {
+			// adding the dirtyRect only when the trails is false. Other changes which will add dirtyRect may also apply this patch
+			// this is for fixing the bug in jman-win. Currently, i've only patched the LocH, LocV and castNum since those are the only ones used in jman
 			if (!channel->_sprite->_trails) {
 				g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
 				channel->_dirty = true;
