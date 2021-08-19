@@ -68,10 +68,17 @@ static const CursorTable cursorTable[] = {
 	{ nullptr,      nullptr, nullptr,           0,  0,  0,  0  }
 };
 
+void HypnoEngine::defaultCursor() {
+
+	const CursorTable *entry = cursorTable;
+	CursorMan.replaceCursor(entry->buf, entry->w, entry->h, entry->hotspotX, entry->hotspotY, 0);
+	CursorMan.showMouse(true);
+}
+
+
 void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n) {
 
 	Graphics::Surface *entry = decodeFrame(cursor, n, false);
-	//debug("cursor: %d %d", entry->w, entry->h);
 	CursorMan.replaceCursor(entry->getPixels(), entry->w, entry->h, 0, 0, 0);
 	//CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 	CursorMan.showMouse(true);

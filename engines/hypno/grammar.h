@@ -172,6 +172,7 @@ class Shoot {
     Common::String name;
 	Common::String animation;
 	Common::Point position;
+	int damage;
 	MVideo *video = nullptr;
 	uint32 explosionFrame;
 	bool destroyed = false;
@@ -192,6 +193,7 @@ class ArcadeShooting {
   public:
 	Common::String background;
 	Common::String player;
+	int health;
 	Shoots shoots;
 	ShootSequence shootSequence;
 	Sounds sounds;

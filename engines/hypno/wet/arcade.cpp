@@ -6,14 +6,17 @@
 
 namespace Hypno {
 
-void SpiderEngine::drawPlayer(Common::String player, uint32 idx) {
+void WetEngine::drawPlayer(Common::String player, uint32 idx) {
+	_transparentColor = _pixelFormat.RGBToColor(4, 4, 0);
 	Graphics::Surface *image = decodeFrame(player, idx);
-	drawImage(*image, 60, 129, true);
+	drawImage(*image, 0, 130, true);
+	_transparentColor = _pixelFormat.RGBToColor(0, 0, 0);
 	image->free();
 	delete image;
 }
 
-void SpiderEngine::drawHealth(const Graphics::Font &font) {
+void WetEngine::drawHealth(const Graphics::Font &font) {
+	/*
 	Common::Rect r;
 	uint32 c;
 	int d = (22 * (_maxHealth - _health) / _maxHealth);
@@ -31,7 +34,7 @@ void SpiderEngine::drawHealth(const Graphics::Font &font) {
 	_compositeSurface->frameRect(r, c);
 
 	font.drawString(_compositeSurface, "ENERGY", 248, 180, 38, c);
+	*/
 }
-
 
 } // End of namespace Hypno

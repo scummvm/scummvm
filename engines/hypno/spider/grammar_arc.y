@@ -60,11 +60,11 @@ using namespace Hypno;
 %token<s> NAME FILENAME
 %token<i> NUM
 // header
-%token YBTOK CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
-%token PTOK ATOK VTOK OTOK NTOK RTOK ITOK SNTOK ZTOK
+%token YBTOK YMTOK CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
+%token PTOK FTOK TTOK ATOK VTOK OTOK NTOK RTOK ITOK SNTOK ZTOK
 
 // body
-%token F0TOK A0TOK B0TOK K0TOK P0TOK WTOK
+%token FNTOK NONETOK A0TOK BNTOK K0TOK P0TOK WTOK
 
 // end
 %token XTOK
@@ -74,8 +74,9 @@ using namespace Hypno;
 
 %%
 
-start: YBTOK header body
-       ;
+start:  YBTOK header body
+      | YMTOK header body
+      ;
 
 
 header:  hline RETTOK header
@@ -84,11 +85,15 @@ header:  hline RETTOK header
 	   ; 
 
 hline:  CTOK NUM  { debug("C %d", $2); }
+      | FTOK NUM { debug("F %d", $2); }
       | DTOK NUM  { debug("D %d", $2); }
       | PTOK NUM NUM { debug("P %d %d", $2, $3); }
       | ATOK NUM NUM { debug("A %d %d", $2, $3); }
       | VTOK NUM NUM { debug("V %d %d", $2, $3); }
       | OTOK NUM NUM { debug("O %d %d", $2, $3); }
+	  | TTOK FILENAME NUM { 
+		  debug("T %s %d", $2, $3); 
+		}
 	  | NTOK FILENAME  { 
 		  g_parsedArc.background = $2; 
 		  debug("N %s", $2); 
@@ -99,12 +104,17 @@ hline:  CTOK NUM  { debug("C %d", $2); }
 		  debug("I %s", $2); 
 		}
 	  | QTOK NUM NUM { debug("Q %d %d", $2, $3); }
+	  | BNTOK FILENAME {
+		  debug("BN %s", $2); 
+		}
 	  | SNTOK FILENAME enc {
 		  g_parsedArc.sounds.push_back($2); 
 		  debug("SN %s", $2); 
 		}
 	  | HETOK C02TOK NUM NUM { debug("HE %d %d", $3, $4); }
-	  | HTOK CB3TOK NUM NUM { debug("H %d %d", $3, $4); }
+	  | HTOK CB3TOK NUM NUM { 
+		  g_parsedArc.health = $3;
+		  debug("H %d %d", $3, $4); }
 	  | ZTOK RETTOK { debug("Z"); }
 	  ;
 
@@ -115,10 +125,20 @@ enc: ENCTOK
 body: bline RETTOK body
     | bline RETTOK XTOK
 
-bline: F0TOK FILENAME { 
+bline: FNTOK FILENAME { 
 		shoot = new Shoot();
 		shoot->animation = $2;
-		debug("F0 %s", $2); 
+		debug("FN %s", $2); 
+	 	}
+	 | FNTOK NONETOK { 
+		shoot = new Shoot();
+		shoot->animation = "NONE";
+		debug("FN NONE"); 
+	 	}
+	 | FTOK FILENAME { 
+		shoot = new Shoot();
+		shoot->animation = $2;
+		debug("FN %s", $2); 
 	 	}
      | ITOK  NAME  { 
 		 shoot->name = $2;
@@ -128,7 +148,8 @@ bline: F0TOK FILENAME {
 		 shoot->position = Common::Point($2, $3);
 		 debug("A0 %d %d", $2, $3); 
 		}
-	 | B0TOK NUM NUM { debug("B0 %d %d", $2, $3); }
+	 | RTOK NUM NUM  { debug("R %d %d", $2, $3); }
+	 | BNTOK NUM NUM { debug("BN %d %d", $2, $3); }
 	 | K0TOK NUM NUM { 
 		 shoot->explosionFrame = $3;
 		 debug("K0 %d %d", $2, $3);
@@ -142,8 +163,12 @@ bline: F0TOK FILENAME {
 	 | CTOK NUM  { debug("C %d", $2); } 
 	 | HTOK NUM  { debug("H %d", $2); }
 	 | WTOK NUM  { debug("W %d", $2); }
-	 | DTOK NUM  { debug("D %d", $2); }
+	 | DTOK NUM  { 
+		 shoot->damage = $2;
+		 debug("D %d", $2); 
+		}
 	 | SNTOK FILENAME enc { debug("SN %s", $2); }
+	 | NTOK { debug("N"); }
 	 | ZTOK {
 		g_parsedArc.shoots.push_back(*shoot); 
 		//delete shoot; 

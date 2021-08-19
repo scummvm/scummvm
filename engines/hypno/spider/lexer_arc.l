@@ -39,6 +39,7 @@
 %}
 
 %%
+NONE						return NONETOK;
 C				    		return CTOK;
 D                           return DTOK;
 HE                          return HETOK;
@@ -54,13 +55,16 @@ Q							return QTOK;
 Z							return ZTOK;
 W							return WTOK;
 X 							return XTOK;
-F0							return F0TOK;
+T							return TTOK;
+F[0-9]						return FNTOK;
+F							return FTOK;
 S[0-9]						return SNTOK;
 A0							return A0TOK;
-B0							return B0TOK;
+B[0-9]						return BNTOK;
 K0							return K0TOK;
 P0							return P0TOK;
 YB							return YBTOK;
+YM							return YMTOK;
 22[k|K]						return ENCTOK;
 [A-Za-z_][A-Za-z_0-9]*  	HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return NAME;
 [A-Za-z][A-Za-z_0-9\\\.]*  	HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
