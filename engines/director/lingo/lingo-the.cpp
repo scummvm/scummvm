@@ -1454,7 +1454,10 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			}
 
 			if (castId != sprite->_castId) {
-				g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
+				if (!sprite->_trails) {
+					g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+					channel->_dirty = true;
+				}
 				channel->setCast(castId);
 				channel->_dirty = true;
 			}
@@ -1540,16 +1543,20 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLocH:
 		if (d.asInt() != channel->_currentPoint.x) {
-			g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+			if (!channel->_sprite->_trails) {
+				g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+				channel->_dirty = true;
+			}
 			channel->_currentPoint.x = d.asInt();
-			channel->_dirty = true;
 		}
 		break;
 	case kTheLocV:
 		if (d.asInt() != channel->_currentPoint.y) {
-			g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+			if (!channel->_sprite->_trails) {
+				g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+				channel->_dirty = true;
+			}
 			channel->_currentPoint.y = d.asInt();
-			channel->_dirty = true;
 		}
 		break;
 	case kTheMoveableSprite:

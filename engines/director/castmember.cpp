@@ -828,16 +828,7 @@ void TextCastMember::setText(const Common::U32String &text) {
 	Common::U32String formatting = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo3);
 	_ptext = text;
 	_ftext = formatting + text;
-
-	// if we have the link to widget, then we modify it directly.
-	// thus we can reach the immediate changing effect
-	if (_widget) {
-		((Graphics::MacText *)_widget)->setText(_ftext);
-		((Graphics::MacText *)_widget)->draw();
-		g_director->getCurrentWindow()->addDirtyRect(_widget->_dims);
-	} else {
-		_modified = true;
-	}
+	_modified = true;
 }
 
 // D4 dictionary book said this is line spacing
