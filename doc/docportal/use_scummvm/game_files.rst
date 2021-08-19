@@ -47,7 +47,7 @@ CD audio
 In most cases, ScummVM can use CD audio directly from the game CD. If you don't always want to insert the game CD to use the CD audio, you can extract the audio tracks from the CD and save them locally:
 
 1. Extract the CD audio tracks in WAV or AIFF format.
-2. Convert the tracks to either MP3, FLAC or OGG file formats.
+2. Convert the tracks to either MP3, FLAC, M4A or OGG file formats.
 3. Place the converted audio files in the same folder that contains the other game datafiles.
 4. You can name them in several ways:
 
