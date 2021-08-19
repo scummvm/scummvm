@@ -255,17 +255,17 @@ void cleanupBands(void) {
    Band member functions
  * ===================================================================== */
 
-Band::Band() : leader(nullptr), memberCount(0) {
+Band::Band() : _leader(nullptr), _memberCount(0) {
 	g_vm->_bandList->addBand(this);
 
-	for (int i = 0; i < maxBandMembers; i++)
-		members[i] = nullptr;
+	for (int i = 0; i < kMaxBandMembers; i++)
+		_members[i] = nullptr;
 }
-Band::Band(Actor *l) : leader(l), memberCount(0) {
+Band::Band(Actor *l) : _leader(l), _memberCount(0) {
 	g_vm->_bandList->addBand(this);
 
-	for (int i = 0; i < maxBandMembers; i++)
-		members[i] = nullptr;
+	for (int i = 0; i < kMaxBandMembers; i++)
+		_members[i] = nullptr;
 }
 
 Band::Band(Common::InSaveFile *in) {
@@ -273,24 +273,24 @@ Band::Band(Common::InSaveFile *in) {
 
 	//  Restore the leader pointer
 	assert(isActor(leaderID));
-	leader = (Actor *)GameObject::objectAddress(leaderID);
+	_leader = (Actor *)GameObject::objectAddress(leaderID);
 
 	debugC(4, kDebugSaveload, "... leaderID = %d", leaderID);
 
 	//  Restore the member count
-	memberCount = in->readSint16LE();
-	assert(memberCount < ARRAYSIZE(members));
+	_memberCount = in->readSint16LE();
+	assert(_memberCount < ARRAYSIZE(_members));
 
-	debugC(4, kDebugSaveload, "... memberCount = %d", memberCount);
+	debugC(4, kDebugSaveload, "... _memberCount = %d", _memberCount);
 
-	for (int i = 0; i < maxBandMembers; i++)
-		members[i] = nullptr;
+	for (int i = 0; i < kMaxBandMembers; i++)
+		_members[i] = nullptr;
 
 	//  Restore the member pointers
-	for (int i = 0; i < memberCount; i++) {
+	for (int i = 0; i < _memberCount; i++) {
 		ObjectID id = in->readUint16LE();
 		assert(isActor(id));
-		members[i] = (Actor *)GameObject::objectAddress(id);
+		_members[i] = (Actor *)GameObject::objectAddress(id);
 
 		debugC(4, kDebugSaveload , "... id = %d", id);
 	}
@@ -302,25 +302,25 @@ Band::Band(Common::InSaveFile *in) {
 
 int32 Band::archiveSize(void) {
 	return      sizeof(ObjectID)                     //  leader ID
-	            +   sizeof(memberCount)
-	            +   sizeof(ObjectID) * memberCount;      //  members' ID's
+	            +   sizeof(_memberCount)
+	            +   sizeof(ObjectID) * _memberCount;      //  members' ID's
 }
 
 void Band::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Store the leader's ID
-	out->writeUint16LE(leader->thisID());
+	out->writeUint16LE(_leader->thisID());
 
-	debugC(4, kDebugSaveload, "... leader->thisID() = %d", leader->thisID());
+	debugC(4, kDebugSaveload, "... _leader->thisID() = %d", _leader->thisID());
 
 	//  Store the member count
-	out->writeSint16LE(memberCount);
+	out->writeSint16LE(_memberCount);
 
-	debugC(4, kDebugSaveload, "... memberCount = %d", memberCount);
+	debugC(4, kDebugSaveload, "... _memberCount = %d", _memberCount);
 
 	//  Store the members' ID's
-	for (int i = 0; i < memberCount; i++) {
-		out->writeUint16LE(members[i]->thisID());
-		debugC(4, kDebugSaveload, "... members[%d]->thisID() = %d", i, members[i]->thisID());
+	for (int i = 0; i < _memberCount; i++) {
+		out->writeUint16LE(_members[i]->thisID());
+		debugC(4, kDebugSaveload, "... _members[%d]->thisID() = %d", i, _members[i]->thisID());
 	}
 }
 
