@@ -1215,6 +1215,23 @@ void ScummEngine_v5::o5_getRandomNr() {
 void ScummEngine_v5::o5_isScriptRunning() {
 	getResultPos();
 	setResult(isScriptRunning(getVarOrDirectByte(PARAM_1)));
+
+    // WORKAROUND bug #346 (also occurs in original): Object stopped with active cutscene
+    // In script 204 room 25 (Cannibal Village) a crash can occur when you are
+    // expected to give something to the cannibals, but instead look at certain
+    // items like the compass or kidnap note. Those inventory items contain little
+    // cutscenes and are abrubtly stopped by the endcutscene in script 204 at 0x0060.
+    // This patch changes the the result of isScriptRunning(164) to also wait for
+    // any inventory scripts that are in a cutscene state, preventing the crash.
+	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 204 && _currentRoom == 25) {
+		ScriptSlot *ss = vm.slot;
+		for (int i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
+			if (ss->status != ssDead && ss->where == WIO_INVENTORY && ss->cutsceneOverride) {
+				setResult(1);
+				return;
+			}
+		}
+	}
 }
 
 void ScummEngine_v5::o5_getVerbEntrypoint() {
