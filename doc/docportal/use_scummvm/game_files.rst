@@ -49,6 +49,12 @@ In most cases, ScummVM can use CD audio directly from the game CD. If you don't 
 1. Extract the CD audio tracks in WAV or AIFF format.
 2. Convert the tracks to either MP3, FLAC or OGG file formats.
 3. Place the converted audio files in the same folder that contains the other game datafiles.
+4. You can name them in several ways:
+
+   1. track01.ogg - track12.ogg
+   2. track1.ogg - track12.ogg
+   3. track_01.ogg - track_12.ogg
+   4. track_1.ogg - track_12.ogg
 
 .. tip::
 
