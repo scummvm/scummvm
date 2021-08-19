@@ -64,12 +64,14 @@ public:
 		return TwinE::achievementDescriptionList;
 	}
 
-	void getSavegameThumbnail(Graphics::Surface &thumb) override;
+	//void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
+#if 0
 void TwinEMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	thumb.copyFrom(((TwinEEngine*)g_engine)->_workVideoBuffer);
 }
+#endif
 
 //
 // unused:
