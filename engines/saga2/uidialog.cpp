@@ -1342,7 +1342,7 @@ void CPlacardWindow::drawClipped(
     gPort         &port,
     const Point16 &offset,
     const Rect16  &r) {
-	if (!extent.overlap(r)) return;
+	if (!_extent.overlap(r)) return;
 
 	// do background drawing first...
 	ModalWindow::drawClipped(port, offset, r);
@@ -1353,13 +1353,13 @@ void CPlacardWindow::drawClipped(
 
 	SAVE_GPORT_STATE(port);
 
-	origin.x = extent.x - offset.x;
-	origin.y = extent.y - offset.y;
+	origin.x = _extent.x - offset.x;
+	origin.y = _extent.y - offset.y;
 
 	rect.x = origin.x;
 	rect.y = origin.y;
-	rect.width  = extent.width;
-	rect.height = extent.height;
+	rect.width  = _extent.width;
+	rect.height = _extent.height;
 
 	for (i = 0; i < titleCount; i++) {
 		Point16 textPos     = origin + titlePos[i];
@@ -1435,7 +1435,7 @@ void CPlacardPanel::drawClipped(
     gPort         &port,
     const Point16 &offset,
     const Rect16  &r) {
-	if (!extent.overlap(r)) return;
+	if (!_extent.overlap(r)) return;
 
 	// do background drawing first...
 	int16   i;
@@ -1444,13 +1444,13 @@ void CPlacardPanel::drawClipped(
 
 	SAVE_GPORT_STATE(port);
 
-	origin.x = extent.x - offset.x;
-	origin.y = extent.y - offset.y;
+	origin.x = _extent.x - offset.x;
+	origin.y = _extent.y - offset.y;
 
 	rect.x = origin.x;
 	rect.y = origin.y;
-	rect.width  = extent.width;
-	rect.height = extent.height;
+	rect.width  = _extent.width;
+	rect.height = _extent.height;
 
 	for (i = 0; i < titleCount; i++) {
 		Point16 textPos     = origin + titlePos[i];

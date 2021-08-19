@@ -122,7 +122,7 @@ void CVideoBox::drawClipped(
 
 void CVideoBox::draw(void) {         // redraw the window
 	// draw the decoration stuff
-	drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
+	drawClipped(g_vm->_mainPort, Point16(0, 0), _extent);
 }
 
 

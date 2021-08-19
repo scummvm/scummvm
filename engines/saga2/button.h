@@ -96,21 +96,16 @@ class GameObject;
 class GfxCompImage : public gControl {
 private:
 
-	enum {
-		textSize    = 128
-	};
-
 	// number of image pointer allocated
-	uint16      numPtrAlloc;
-	bool        internalAlloc;
+	uint16      _numPtrAlloc;
+	bool        _internalAlloc;
 
 protected:
-	void        **compImages;       // double pointer(s) the compressed image(s)
-	uint16      currentImage;       // current image index
-	uint16      max, min;           // min max of the index
-	textPallete textPal;            // contains info about coloring for multi-depth text rendering
-	gFont       *textFont;          // pointer to font for this button
-//	char     imageText[textSize];  // text to render on button
+	void        **_compImages;       // double pointer(s) the compressed image(s)
+	uint16      _currentImage;       // current image index
+	uint16      _max, _min;           // min max of the index
+	textPallete _textPal;            // contains info about coloring for multi-depth text rendering
+	gFont       *_textFont;          // pointer to font for this button
 
 protected:
 	virtual void    *getCurrentCompImage(void);      // get the current image
@@ -153,16 +148,16 @@ public:
 	void    enable(bool);
 	void    invalidate(Rect16 *unused = nullptr);                    // invalidates the drawing
 	int16   getCurrent(void)       {
-		return currentImage;
+		return _currentImage;
 	}
 	int16   getMin(void)           {
-		return min;
+		return _min;
 	}
 	int16   getMax(void)           {
-		return max;
+		return _max;
 	}
 	void    setCurrent(uint16 val) {
-		currentImage = clamp(min, val, max);
+		_currentImage = clamp(_min, val, _max);
 	}
 	void    setExtent(const Rect16 &rect);
 	void    select(uint16 val);
@@ -180,10 +175,10 @@ class GfxSpriteImage : public GfxCompImage {
 private:
 
 	//  Color set to draw the object.
-	ColorTable  objColors;
+	ColorTable  _objColors;
 
 protected:
-	Sprite      *sprPtr;
+	Sprite      *_sprPtr;
 
 public:
 	// this one takes a sprite pointer
@@ -202,12 +197,12 @@ public:
 
 class GfxCompButton : public GfxCompImage {
 protected:
-	void        *forImage;  // pointer to forground compress image data
-	void        *resImage;  // pointer to resessed compressed image data
-	void        *dimImage;  // pointer to dimmed commpressed image data
-	Rect16      extent;         // area that image covers
-	bool        dimmed;         // duh dim bit
-	bool        internalAlloc;  // set if memory allocated in class
+	void        *_forImage;  // pointer to forground compress image data
+	void        *_resImage;  // pointer to resessed compressed image data
+	void        *_dimImage;  // pointer to dimmed commpressed image data
+	Rect16      _extent;         // area that image covers
+	bool        _dimmed;         // duh dim bit
+	bool        _internalAlloc;  // set if memory allocated in class
 
 public:
 
@@ -261,10 +256,10 @@ public:
 	void    draw(void);                          // redraw the panel.
 	void    dim(bool);
 	void    setForImage(void *image) {
-		if (image) forImage = image;
+		if (image) _forImage = image;
 	}
 	void    setResImage(void *image) {
-		if (image) resImage = image;
+		if (image) _resImage = image;
 	}
 
 private:
@@ -302,14 +297,14 @@ public:
 
 class GfxMultCompButton : public GfxCompButton {
 private:
-	bool    response;   // tells whether to display an image when hit.
+	bool    _response;   // tells whether to display an image when hit.
 
 protected:
-	void    **images;
-	Rect16  extent;
-	int16   current;
-	int16   min;
-	int16   max;
+	void    **_images;
+	Rect16  _extent;
+	int16   _current;
+	int16   _min;
+	int16   _max;
 
 
 public:
@@ -326,22 +321,23 @@ public:
 	~GfxMultCompButton(void);
 
 	int16   getCurrent(void)       {
-		return current;
+		return _current;
 	}
 	int16   getMin(void)           {
-		return min;
+		return _min;
 	}
 	int16   getMax(void)           {
-		return max;
+		return _max;
 	}
 	void    setCurrent(int16 val)  {
-		current = clamp(min, val, max);
+		_current = clamp(_min, val, _max);
 	}
 	void    setImages(void **newImages) {
-		if (images && newImages) images = newImages;
+		if (_images && newImages)
+			_images = newImages;
 	}
 	void setResponse(bool resp) {
-		response = resp;
+		_response = resp;
 	}
 
 protected:
@@ -357,11 +353,11 @@ protected:
 
 class GfxSlider : public GfxMultCompButton {
 protected:
-	Rect16  imageRect;
-	int16   slValMin;
-	int16   slValMax;
-	int16   slCurrent;
-	int16   imagePosX;
+	Rect16  _imageRect;
+	int16   _slValMin;
+	int16   _slValMax;
+	int16   _slCurrent;
+	int16   _imagePosX;
 
 public:
 	GfxSlider(gPanelList &, const Rect16 &, const Rect16 &, int16, int16,
@@ -382,10 +378,10 @@ private:
 
 public:
 	void    setSliderCurrent(int16 val) {
-		slCurrent = val;
+		_slCurrent = val;
 	}
 	int16   getSliderCurrent(void) {
-		return slCurrent;
+		return _slCurrent;
 	}
 	int16   getSliderLenVal(void);
 	virtual void    *getCurrentCompImage(void);

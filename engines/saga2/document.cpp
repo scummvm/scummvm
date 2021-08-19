@@ -279,14 +279,14 @@ gPanel *CDocument::keyTest(int16 key) {
 void CDocument::pointerMove(gPanelMessage &msg) {
 	Point16 pos     = msg.pickPos;
 
-	if (msg.inPanel && Rect16(0, 0, extent.width, extent.height).ptInside(pos)) {
+	if (msg.inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
 		if (app.orientation == pageOrientVertical) {
 			// find out which end of the book we're on
-			if (pos.y < extent.height / 2)   setMouseImage(kMousePgUpImage,   -7, -7);
+			if (pos.y < _extent.height / 2)   setMouseImage(kMousePgUpImage,   -7, -7);
 			else                            setMouseImage(kMousePgDownImage, -7, -7);
 		} else {
 			// find out which side of the book we're on
-			if (pos.x < extent.width / 2)    setMouseImage(kMousePgLeftImage,  -7, -7);
+			if (pos.x < _extent.width / 2)    setMouseImage(kMousePgLeftImage,  -7, -7);
 			else                            setMouseImage(kMousePgRightImage, -7, -7);
 		}
 	} else if (msg.pointerLeave) {
@@ -305,15 +305,15 @@ void CDocument::pointerDrag(gPanelMessage &) {
 bool CDocument::pointerHit(gPanelMessage &msg) {
 	Point16 pos     = msg.pickPos;
 
-	if (msg.inPanel && Rect16(0, 0, extent.width, extent.height).ptInside(pos)) {
+	if (msg.inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
 		gEvent ev;
 		if (app.orientation == pageOrientVertical) {
 			// find out which end of the book we're on
-			if (pos.y < extent.height / 2)   cmdDocumentUp(ev); //gotoPage( currentPage - app.numPages );
+			if (pos.y < _extent.height / 2)   cmdDocumentUp(ev); //gotoPage( currentPage - app.numPages );
 			else                            cmdDocumentDn(ev); //gotoPage( currentPage + app.numPages );
 		} else {
 			// find out which side of the book we're on
-			if (pos.x < extent.width / 2)    cmdDocumentLt(ev); //gotoPage( currentPage - app.numPages );
+			if (pos.x < _extent.width / 2)    cmdDocumentLt(ev); //gotoPage( currentPage - app.numPages );
 			else                            cmdDocumentRt(ev); //gotoPage( currentPage + app.numPages );
 		}
 	} else {
@@ -557,7 +557,7 @@ void CDocument::renderText(void) {
 
 	assert(textFont);
 
-	Rect16  bltRect(0, 0, extent.width, extent.height);
+	Rect16  bltRect(0, 0, _extent.width, _extent.height);
 
 	if (NewTempPort(tPort, bltRect.width, bltRect.height)) {
 		// clear out the text buffer
@@ -572,8 +572,8 @@ void CDocument::renderText(void) {
 
 		// draw a new copy of the background to the temp port
 		drawClipped(tPort,
-		            Point16(extent.x, extent.y),
-		            Rect16(0, 0, extent.width, extent.height));
+		            Point16(_extent.x, _extent.y),
+		            Rect16(0, 0, _extent.width, _extent.height));
 
 		tPort.setFont(textFont);         // setup the string pointer
 		for (pageIndex = 0; pageIndex < currentPage; pageIndex++) {
@@ -656,7 +656,7 @@ void CDocument::drawClipped(
 
 void CDocument::draw(void) {         // redraw the window
 	// draw the book image
-	drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
+	drawClipped(g_vm->_mainPort, Point16(0, 0), _extent);
 
 	// draw the text onto the book
 	renderText();

@@ -379,8 +379,8 @@ void ContainerView::drawClipped(
 	                y;
 
 	//  Coordinates for slot 0,0.
-	int16           originX = extent.x - offset.x + iconOrigin.x,
-	                originY = extent.y - offset.y + iconOrigin.y;
+	int16           originX = _extent.x - offset.x + iconOrigin.x,
+	                originY = _extent.y - offset.y + iconOrigin.y;
 
 	ObjectID        objID;
 	GameObject      *item;
@@ -392,7 +392,7 @@ void ContainerView::drawClipped(
 	ColorTable      objColors;
 
 	//  If there's no overlap between extent and clip, then return.
-	if (!extent.overlap(r)) return;
+	if (!_extent.overlap(r)) return;
 
 	//  Iterate through each item within the container.
 	while ((objID = iter.next(&item)) != Nothing) {
@@ -679,7 +679,7 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 
 	// total the mass and bulk of all the objects in this container
 	totalObjects();
-	window.update(extent);
+	window.update(_extent);
 
 	return activate(gEventMouseDown);
 }
@@ -1019,8 +1019,8 @@ void ReadyContainerView::drawClipped(
 	                y;
 
 	//  Coordinates for slot 0,0.
-	int16           originX = extent.x - offset.x + iconOrigin.x,
-	                originY = extent.y - offset.y + iconOrigin.y;
+	int16           originX = _extent.x - offset.x + iconOrigin.x,
+	                originY = _extent.y - offset.y + iconOrigin.y;
 
 	//  Row an column number of the inventory slot.
 	int16           col,
@@ -1036,14 +1036,14 @@ void ReadyContainerView::drawClipped(
 	ColorTable      objColors;
 
 	//  If there's no overlap between extent and clip, then return.
-	if (!extent.overlap(r)) return;
+	if (!_extent.overlap(r)) return;
 
 	//  Draw the boxes for visible rows and cols.
 
 	if (backImages) {
 		int16   i;
-		Point16 drawOrg(extent.x - offset.x + backOriginX,
-		                extent.y - offset.y + backOriginY);
+		Point16 drawOrg(_extent.x - offset.x + backOriginX,
+		                _extent.y - offset.y + backOriginY);
 
 		for (y = drawOrg.y, row = 0;
 		        row < visibleRows;
@@ -1298,7 +1298,7 @@ void TangibleContainerWindow::drawClipped(
     gPort &port,
     const Point16 &offset,
     const Rect16 &clip) {
-	if (!extent.overlap(clip)) return;
+	if (!_extent.overlap(clip)) return;
 
 	// draw the decorations
 	ScrollableContainerWindow::drawClipped(port, offset, clip);

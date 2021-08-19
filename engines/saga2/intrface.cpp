@@ -452,7 +452,7 @@ void CPlaqText::enable(bool abled) {
 }
 
 void CPlaqText::invalidate(Rect16 *) {
-	window.update(extent);
+	window.update(_extent);
 }
 
 void CPlaqText::draw(void) {
@@ -468,9 +468,9 @@ void CPlaqText::draw(void) {
 	port.setMode(drawModeMatte);
 	port.setFont(buttonFont);
 
-	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 	drawClipped(port, Point16(0, 0), Rect16(0, 0, rect.width, rect.height));
-	g_vm->_pointer->show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, _extent);              // show mouse pointer
 
 	// reset the old font
 	port.setFont(oldFont);
@@ -479,9 +479,9 @@ void CPlaqText::draw(void) {
 void CPlaqText::drawClipped(gPort &port,
                             const Point16 &offset,
                             const Rect16 &r) {
-	if (extent.overlap(r)) {
+	if (_extent.overlap(r)) {
 		if (*lineBuf) {
-			textRect = extent;
+			textRect = _extent;
 			textRect.x -= offset.x;
 			textRect.y -= offset.y;
 
@@ -673,7 +673,7 @@ void CStatusLine::experationCheck(void) {
 	        && (waitAlarm.check()
 	            || (queueTail != queueHead && minWaitAlarm.check()))) {
 		enable(false);
-		window.update(extent);
+		window.update(_extent);
 
 		lineDisplayed = false;
 	}
@@ -698,7 +698,7 @@ void CStatusLine::experationCheck(void) {
 		queueTail = bump(queueTail);
 
 		// draw the new textline
-		window.update(extent);
+		window.update(_extent);
 
 		lineDisplayed = true;
 	}
@@ -706,7 +706,7 @@ void CStatusLine::experationCheck(void) {
 
 void CStatusLine::clear(void) {
 	enable(false);
-	window.update(extent);
+	window.update(_extent);
 	lineDisplayed = false;
 
 	queueHead = queueTail = 0;
@@ -968,9 +968,9 @@ void CManaIndicator::draw(void) {
 	// setup the port
 	port.setMode(drawModeMatte);
 
-	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 	drawClipped(port, Point16(0, 0), Rect16(0, 0, xSize, ySize));
-	g_vm->_pointer->show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, _extent);              // show mouse pointer
 
 
 }
@@ -986,16 +986,16 @@ void CManaIndicator::drawClipped(gPort &port,
 	calcDraw = update(g_vm->_playerList[getCenterActorPlayerID()]);
 
 	if (!calcDraw) {
-		if (!extent.overlap(clipRect)) return;
+		if (!_extent.overlap(clipRect)) return;
 
 		// draw the saved image to the port
 		port.setMode(drawModeMatte);
 		port.bltPixels(savedMap, 0, 0,
-		               extent.x - offset.x, extent.y - offset.y,
+		               _extent.x - offset.x, _extent.y - offset.y,
 		               xSize, ySize);
 
 		// draw the frame
-		drawCompressedImage(port, Point16(extent.x - offset.x, extent.y - offset.y), backImage);
+		drawCompressedImage(port, Point16(_extent.x - offset.x, _extent.y - offset.y), backImage);
 
 		// and finish
 		return;
@@ -1109,11 +1109,11 @@ void CManaIndicator::drawClipped(gPort &port,
 	//  Blit the pixelmap to the main screen
 	port.setMode(drawModeMatte);
 	port.bltPixels(*tempPort.map, 0, 0,
-	               extent.x - offset.x, extent.y - offset.y,
+	               _extent.x - offset.x, _extent.y - offset.y,
 	               xSize, ySize);
 
 	// now blit the frame on top of it all.
-	drawCompressedImage(port, Point16(extent.x - offset.x, extent.y - offset.y), backImage);
+	drawCompressedImage(port, Point16(_extent.x - offset.x, _extent.y - offset.y), backImage);
 
 	// dispose of temporary pixelmap
 	DisposeTempPort(tempPort);
@@ -2619,7 +2619,7 @@ void gArmorIndicator::setValue(PlayerActorID brotherID) {
 void gArmorIndicator::drawClipped(gPort &port,
                                   const Point16 &offset,
                                   const Rect16 &r) {
-	if (!extent.overlap(r))    return;
+	if (!_extent.overlap(r))    return;
 
 	SAVE_GPORT_STATE(port);
 
@@ -2629,12 +2629,12 @@ void gArmorIndicator::drawClipped(gPort &port,
 	// make sure the image is valid
 	if (dispImage) {
 		// will part of this be drawn on screen?
-		if (extent.overlap(r)) {
+		if (_extent.overlap(r)) {
 			char buf[8];
 
 			// offset the image?
-			Point16 pos(extent.x - offset.x,
-			            extent.y - offset.y
+			Point16 pos(_extent.x - offset.x,
+			            _extent.y - offset.y
 			           );
 			// draw the compressed image
 			if (isGhosted()) {
@@ -2655,24 +2655,24 @@ void gArmorIndicator::drawClipped(gPort &port,
 				sprintf(buf, "%d/%d", attr.damageAbsorbtion, attr.damageDivider);
 			else sprintf(buf, "%d", attr.damageAbsorbtion);
 
-			port.drawTextInBox(buf, -1, Rect16(pos.x, pos.y, extent.width, extent.height),
+			port.drawTextInBox(buf, -1, Rect16(pos.x, pos.y, _extent.width, _extent.height),
 			                   textPosRight | textPosHigh, Point16(0,  2));
 
 			if (attr.damageAbsorbtion == 0 && attr.defenseBonus == 0)
 				sprintf(buf, "-");
 			else sprintf(buf, "%d", attr.defenseBonus);
-			port.drawTextInBox(buf, -1, Rect16(pos.x, pos.y, extent.width, extent.height),
+			port.drawTextInBox(buf, -1, Rect16(pos.x, pos.y, _extent.width, _extent.height),
 			                   textPosRight | textPosLow, Point16(0,  2));
 		}
 	}
 }
 
 void gEnchantmentDisplay::drawClipped(gPort &port, const    Point16 &offset, const Rect16 &r) {
-	Point16     pos(extent.x + extent.width - 10, extent.y + 1);
+	Point16     pos(_extent.x + _extent.width - 10, _extent.y + 1);
 
 	pos += offset;
 
-	if (!extent.overlap(r)) return;
+	if (!_extent.overlap(r)) return;
 
 	for (int i = 0; i < iconCount; i++) {
 		if (iconFlags[i]) {
@@ -2688,7 +2688,7 @@ void gEnchantmentDisplay::pointerMove(gPanelMessage &msg) {
 	if (msg.pointerLeave) {
 		g_vm->_mouseInfo->setText(nullptr);
 	} else {
-		int16       x = extent.width - 10;
+		int16       x = _extent.width - 10;
 
 		setMousePoll(true);
 		setValue(getCenterActorPlayerID());

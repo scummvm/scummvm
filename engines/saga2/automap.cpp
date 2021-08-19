@@ -298,7 +298,7 @@ gPanel *AutoMap::keyTest(int16 key) {
 void AutoMap::pointerMove(gPanelMessage &msg) {
 	Point16 pos     = msg.pickAbsPos;
 
-	if (Rect16(extent.x, extent.y, extent.width, extent.height).ptInside(pos)) {
+	if (Rect16(_extent.x, _extent.y, _extent.width, _extent.height).ptInside(pos)) {
 		// mouse hit inside autoMap
 		TileRegion      viewRegion;
 		//  Calculate the actual region we are going to draw as the intersection of
@@ -321,7 +321,7 @@ void AutoMap::pointerMove(gPanelMessage &msg) {
 bool AutoMap::pointerHit(gPanelMessage &msg) {
 	Point16 pos     = msg.pickAbsPos;
 
-	if (Rect16(0, 0, extent.width, extent.height).ptInside(pos)) {
+	if (Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
 		// mouse hit inside autoMap
 
 		if (g_vm->_teleportOnMap) {
@@ -390,7 +390,7 @@ void AutoMap::drawClipped(
     const Point16 &offset,
     const Rect16  &clipRect) {
 	// return if no change
-	if (!extent.overlap(clipRect)) return;
+	if (!_extent.overlap(clipRect)) return;
 
 	// clear out the buffer
 	memset(_tPort.map->data, 0, _sumMapArea.width * _sumMapArea.height);
@@ -408,8 +408,8 @@ void AutoMap::drawClipped(
 		//  rendering
 
 		if (dec->extent.overlap(clipRect)) {
-			Point16 pos(dec->extent.x - extent.x - offset.x,
-			            dec->extent.y - extent.y - offset.y);
+			Point16 pos(dec->extent.x - _extent.x - offset.x,
+			            dec->extent.y - _extent.y - offset.y);
 
 			drawCompressedImage(_tPort, pos, dec->image);
 		}
@@ -425,7 +425,7 @@ void AutoMap::drawClipped(
 	port.setMode(drawModeMatte);
 	port.bltPixels(*_tPort.map,
 	               0, 0,
-	               extent.x, extent.y,
+	               _extent.x, _extent.y,
 	               _sumMapArea.width, _sumMapArea.height);
 
 	// show the cursor again
@@ -437,7 +437,7 @@ void AutoMap::drawClipped(
 
 void AutoMap::draw(void) {          // redraw the window
 	// draw the entire panel
-	drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
+	drawClipped(g_vm->_mainPort, Point16(0, 0), _extent);
 }
 
 // ------------------------------------------------------------------------
