@@ -313,7 +313,7 @@ void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, Ani
 	}
 	const Common::Rect rect(0, _engine->height() - 280, 200, _engine->height() - 1);
 	_engine->_renderer->setCameraPosition(rect.width() / 2, _engine->height() - 80, 128, 900, 900);
-	_engine->_renderer->setCameraAngle(0, 0, 0, 60, 128, 0, 30000);
+	_engine->_renderer->setCameraAngle(0, 0, 0, 60, 128, 0, distance(30000));
 	_engine->_renderer->setLightVector(-60, 128, 0);
 	// background of the vehicle
 	_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
