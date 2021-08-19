@@ -80,6 +80,7 @@ Programmcodes finden Sie auf Englisch unter:
  Kyra:
    - Unterstützung für die japanische Sega-CD-Version von Eye of the Beholder hinzugefügt.
    - Unterstützung für die hebräische Fan-Übersetzung von Legend of Kyrandia hinzugefügt.
+   - Unterstützung für die hebräische Fan-Übersetzung von Legend of Kyrandia 2 hinzugefügt.
    - Unterstützung für die Version in vereinfachtem Chinesisch für Legend of Kyrandia 3 hinzugefügt.
    - Unterstützung für die spielbare Demo-Version von Lands of Lore hinzugefügt.
 
@@ -174,8 +175,9 @@ Programmcodes finden Sie auf Englisch unter:
      einer der drei Türme nicht zerstört werden kann.
    - Animierter Zigarrenrauch zu der Nahaufnahme von Captain Smirk in der CD-Version von
      Monkey Island 1 hinzugefügt. Er war in früheren Versionen vorhanden.
-   - Einige in der englischen, italienischen und deutschen CD-Version von Monkey Island 1 fehlende
-     Dialog-Zeilen von Lemonhead wurden wiederhergestellt.
+   - Einige in der englischen, italienischen und deutschen CD- sowie der englischen FM-Towns
+     und Sega-CD-Version von Monkey Island 1 fehlende Dialog-Zeilen von Lemonhead
+     wurden wiederhergestellt.
    - Der Uhren-Turm in Monkey Island 1 verhält sich nun in der CD-Version identisch zu
      früheren Versionen. So musst Du etwa - nachdem Du ihn einmal untersucht hast -
      den Raum verlassen und später wieder betreten, um die veränderte Beschreibung zu sehen.
