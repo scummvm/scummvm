@@ -47,6 +47,7 @@
 #include "common/translation.h"
 #include "common/singleton.h"
 
+#include "backends/audiocd/audiocd.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "base/version.h"
@@ -465,38 +466,9 @@ void GUIErrorMessageFormat(Common::U32String fmt, ...) {
  *
  * @return			true if audio files of the expected naming scheme are found, as long as ScummVM
  *					is also built with support to the respective audio format (eg. ogg, flac, mad/mp3)
- * @note			Make sure to keep this in sync with DefaultAudioCDManager::play()
  */
 bool Engine::existExtractedCDAudioFiles() {
-	const char *extensions[] = {
-#ifdef USE_VORBIS
-		"ogg",
-#endif
-#ifdef USE_FLAC
-		"fla", "flac",
-#endif
-#ifdef USE_MAD
-		"mp3",
-#endif
-		nullptr
-	};
-
-	const char *trackName[] = {
-		"track1",
-		"track01",
-		"track_1",
-		"track_01"
-	};
-
-	for (int i = 0; i < ARRAYSIZE(trackName); ++i) {
-		for (const char **ext = extensions; *ext; ++ext) {
-			const Common::String &filename = Common::String::format("%s.%s", trackName[i], *ext);
-			if (Common::File::exists(filename)) {
-				return true;
-			}
-		}
-	}
-	return false;
+	return g_system->getAudioCDManager()->existExtractedCDAudioFiles();
 }
 
 /**
