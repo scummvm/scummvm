@@ -732,7 +732,7 @@ int16 openScroll(uint16 textScript) {
 	CDocument       *win = NULL;
 
 	// close button
-	gCompButton     *closeScroll;
+	GfxCompButton     *closeScroll;
 	void            **closeBtnImage;
 	uint16          buttonResID     = 0;
 	hResContext     *decRes;
@@ -747,7 +747,7 @@ int16 openScroll(uint16 textScript) {
 	win = new CDocument(scrollAppearance, bookText, &Script10Font, 0, NULL);
 
 	// make the quit button
-	closeScroll = new gCompButton(*win, scrollAppearance.closeRect, closeBtnImage, numBtnImages, 0, cmdDocumentQuit);
+	closeScroll = new GfxCompButton(*win, scrollAppearance.closeRect, closeBtnImage, numBtnImages, 0, cmdDocumentQuit);
 
 	closeScroll->accelKey = 0x1B;
 
@@ -790,7 +790,7 @@ int16 openBook(uint16 textScript) {
 	// point to book
 	CDocument       *win = NULL;
 
-	gCompButton *closeBook;
+	GfxCompButton *closeBook;
 	hResContext *decRes;
 
 	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
@@ -799,7 +799,7 @@ int16 openBook(uint16 textScript) {
 	win = new CDocument(bookAppearance, bookText, &Script10Font, 0, NULL);
 
 	// make the quit button
-	closeBook = new gCompButton(*win, bookAppearance.closeRect, cmdDocumentQuit);
+	closeBook = new GfxCompButton(*win, bookAppearance.closeRect, cmdDocumentQuit);
 	closeBook->accelKey = 0x1B;
 
 	// attach the structure to the book, open the book
@@ -836,7 +836,7 @@ int16 openParchment(uint16 textScript) {
 	// point to book
 	CDocument       *win = NULL;
 
-	gCompButton *closeParchment;
+	GfxCompButton *closeParchment;
 	hResContext *decRes;
 
 	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
@@ -844,7 +844,7 @@ int16 openParchment(uint16 textScript) {
 	// create the window
 	win = new CDocument(parchAppearance, bookText, &Script10Font, 0, NULL);
 	// make the quit button
-	closeParchment = new gCompButton(*win, parchAppearance.closeRect, cmdDocumentQuit);
+	closeParchment = new GfxCompButton(*win, parchAppearance.closeRect, cmdDocumentQuit);
 	closeParchment->accelKey = 0x1B;
 
 	// attach the structure to the book, open the book

@@ -1162,7 +1162,7 @@ ContainerWindow::ContainerWindow(ContainerNode &nd,
 	view = NULL;
 
 	// create the close button for this window
-	closeCompButton = new gCompButton(
+	closeCompButton = new GfxCompButton(
 	                      *this,
 	                      app.closeRect,              // rect for button
 	                      containerRes,               // resource context
@@ -1189,7 +1189,7 @@ ScrollableContainerWindow::ScrollableContainerWindow(
 	view = new ContainerView(*this, app.viewRect, nd, app);
 
 	// make the button conected to this window
-	scrollCompButton = new gCompButton(
+	scrollCompButton = new GfxCompButton(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
 	                       containerRes,                   // resource context
@@ -1274,7 +1274,7 @@ void TangibleContainerWindow::setContainerSprite(void) {
 	sprPos.x = objRect.x - (spr->size.x >> 1);  //objRect.x + ( spr->size.x >> 1 );
 	sprPos.y = objRect.y - (spr->size.y >> 1);
 
-	containerSpriteImg = new gSpriteImage(
+	containerSpriteImg = new GfxSpriteImage(
 	                         *this,
 	                         Rect16(sprPos.x,
 	                                sprPos.y,
@@ -1312,7 +1312,7 @@ IntangibleContainerWindow::IntangibleContainerWindow(
     ContainerNode &nd, ContainerAppearanceDef &app)
 	: ScrollableContainerWindow(nd, app, "MentalWindow") {
 	// make the button conected to this window
-	mindSelectorCompButton = new gMultCompButton(
+	mindSelectorCompButton = new GfxMultCompButton(
 	                             *this,
 	                             Rect16(49, 15 - 13, 52, 67),
 	                             containerRes,
@@ -1342,7 +1342,7 @@ EnchantmentContainerWindow::EnchantmentContainerWindow(
 	view = new EnchantmentContainerView(*this, nd, app);
 
 	// make the button conected to this window
-	scrollCompButton = new gCompButton(
+	scrollCompButton = new GfxCompButton(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
 	                       containerRes,                   // resource context
@@ -1955,7 +1955,7 @@ APPFUNC(cmdMindContainerFunc) {
 			g_vm->_mouseInfo->setText(textBuffer);
 		}
 
-		if (ev.value == gCompImage::leave) {
+		if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(NULL);
 		}
 	}
@@ -1977,9 +1977,9 @@ APPFUNC(cmdCloseButtonFunc) {
 			g_vm->_mouseInfo->setText(NULL);
 		}
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			g_vm->_mouseInfo->setText(CLOSE_MOUSE);
-		} else if (ev.value == gCompImage::leave) {
+		} else if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(NULL);
 		}
 	}
@@ -1997,9 +1997,9 @@ APPFUNC(cmdScrollFunc) {
 			cw->scrollDown();
 		ev.window->update(cw->getView().getExtent());
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			g_vm->_mouseInfo->setText(SCROLL_MOUSE);
-		} else if (ev.value == gCompImage::leave) {
+		} else if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(NULL);
 		}
 	}

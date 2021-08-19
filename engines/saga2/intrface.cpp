@@ -58,9 +58,9 @@ extern uint8                fixedColors[16];
    Classes
  * ===================================================================== */
 
-//	Private subclass of gCompImage for armor display
+//	Private subclass of GfxCompImage for armor display
 
-class gArmorIndicator : public gCompImage {
+class gArmorIndicator : public GfxCompImage {
 public:
 	ArmorAttributes  attr;
 	void drawClipped(gPort &,
@@ -70,7 +70,7 @@ public:
 	void setValue(PlayerActorID pID);
 
 	gArmorIndicator(gPanelList &list, const Rect16 &box, void *img, uint16 ident, AppFunc *cmd = nullptr)
-		: gCompImage(list, box, img, ident, cmd) {
+		: GfxCompImage(list, box, img, ident, cmd) {
 		attr.damageAbsorbtion = 0;
 		attr.damageDivider = 1;
 		attr.defenseBonus = 0;
@@ -288,38 +288,38 @@ static const StaticRect botBox[numButtons] = {
 
 
 // options button
-gCompButton         *optBtn;
+GfxCompButton         *optBtn;
 gEnchantmentDisplay *enchDisp;
 
 // brother buttons
-gOwnerSelCompButton *julBtn;
-gOwnerSelCompButton *phiBtn;
-gOwnerSelCompButton *kevBtn;
-gCompImage          *broBtnFrame;
+GfxOwnerSelCompButton *julBtn;
+GfxOwnerSelCompButton *phiBtn;
+GfxOwnerSelCompButton *kevBtn;
+GfxCompImage          *broBtnFrame;
 
 
 // trio controls
-gMultCompButton     *portBtns[kNumViews];
-gOwnerSelCompButton *aggressBtns[kNumViews];
-//gCompButton           *jumpBtns[kNumViews];
-gOwnerSelCompButton *centerBtns[kNumViews];
-gOwnerSelCompButton *bandingBtns[kNumViews];
-gCompImage          *namePlates[kNumViews];
-gCompImage          *namePlateFrames[kNumViews];
+GfxMultCompButton     *portBtns[kNumViews];
+GfxOwnerSelCompButton *aggressBtns[kNumViews];
+//GfxCompButton           *jumpBtns[kNumViews];
+GfxOwnerSelCompButton *centerBtns[kNumViews];
+GfxOwnerSelCompButton *bandingBtns[kNumViews];
+GfxCompImage          *namePlates[kNumViews];
+GfxCompImage          *namePlateFrames[kNumViews];
 gArmorIndicator     *armorInd[kNumViews];
 
 // individual
-gMultCompButton     *indivPortBtn;
-gOwnerSelCompButton *indivAggressBtn;
-//gCompButton           *indivJumpBtn;
-gOwnerSelCompButton *indivCenterBtn;
-gOwnerSelCompButton *indivBandingBtn;
-gCompImage          *indivNamePlate;
-gCompImage          *indivNamePlateFrame;
+GfxMultCompButton     *indivPortBtn;
+GfxOwnerSelCompButton *indivAggressBtn;
+//GfxCompButton           *indivJumpBtn;
+GfxOwnerSelCompButton *indivCenterBtn;
+GfxOwnerSelCompButton *indivBandingBtn;
+GfxCompImage          *indivNamePlate;
+GfxCompImage          *indivNamePlateFrame;
 gArmorIndicator     *indivArmorInd;
 
 // mental button/indicators
-gCompButton         *menConBtn;
+GfxCompButton         *menConBtn;
 
 
 // [brother panels] compressed image non-allocated pointer arrays
@@ -495,8 +495,8 @@ void CPlaqText::drawClipped(gPort &port,
     Portrait control class
  * ===================================================================== */
 
-CPortrait::CPortrait(gMultCompButton **portraits,
-                     gMultCompButton *indivPort,
+CPortrait::CPortrait(GfxMultCompButton **portraits,
+                     GfxMultCompButton *indivPort,
                      const uint16 numPorts,
                      uint16 numBrothers) {     // numBrothers = post 1
 	// do some checking
@@ -749,7 +749,7 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 
 	// attach controls to the indivControls panel
 	// these butttons will get deactivated along with the panel
-	pieMass = new gCompImage(*panel,
+	pieMass = new GfxCompImage(*panel,
 	                                       Rect16(massPiePos.x, massPiePos.y, pieXSize, pieYSize),
 	                                       pieIndImag,
 	                                       numPieIndImages,
@@ -757,7 +757,7 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 	                                       type,
 	                                       cmdMassInd);
 
-	pieBulk = new gCompImage(*panel,
+	pieBulk = new GfxCompImage(*panel,
 	                                       Rect16(bulkPiePos.x, bulkPiePos.y, pieXSize, pieYSize),
 	                                       pieIndImag,
 	                                       numPieIndImages,
@@ -766,7 +766,7 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 	                                       cmdBulkInd);
 
 	// mass/bulk back image
-	new gCompImage(*panel,
+	new GfxCompImage(*panel,
 	                             Rect16(backImagePos.x, backImagePos.y, backImageXSize, backImageYSize),
 	                             massBulkImag,
 	                             uiIndiv,
@@ -858,7 +858,7 @@ static uint8 manaColorMap[CManaIndicator::numManaTypes][CManaIndicator::numManaC
 };
 
 
-CManaIndicator::CManaIndicator(gPanelList &list) : gCompImage(list,
+CManaIndicator::CManaIndicator(gPanelList &list) : GfxCompImage(list,
 	        Rect16(x, y, xSize, ySize),
 	        nullptr,
 	        0,
@@ -1263,7 +1263,7 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	// health controls for the trio view
 	// deallocated with panel
 	for (i = 0; i < numControls; i++) {
-		starBtns[i] = new gCompImage(*trioControls,
+		starBtns[i] = new GfxCompImage(*trioControls,
 		                           Rect16(starXPos,
 		                                  starYPos + starYOffset * i,
 		                                  starXSize,
@@ -1276,7 +1276,7 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 
 
 		// image control for the star border/frame trio mode
-		new gCompImage(*trioControls,
+		new GfxCompImage(*trioControls,
 		                             Rect16(frameXPos,
 		                                    frameYPos + starYOffset * i,
 		                                    frameXSize,
@@ -1289,7 +1289,7 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	}
 	// health control for individual mode
 	// deallocated with panel
-	indivStarBtn = new gCompImage(*indivControls,
+	indivStarBtn = new GfxCompImage(*indivControls,
 	                          Rect16(starXPos,
 	                                 starYPos,
 	                                 starXSize,
@@ -1301,7 +1301,7 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	                          cmd);
 
 	// image control for the star border/frame indiv mode
-	new gCompImage(*indivControls,
+	new GfxCompImage(*indivControls,
 	                             Rect16(frameXPos,
 	                                    frameYPos,
 	                                    frameXSize,
@@ -1328,7 +1328,7 @@ CHealthIndicator::~CHealthIndicator(void) {
 
 //  Recalculate and update the health star for a particular brother
 
-void CHealthIndicator::updateStar(gCompImage *starCtl, int32 bro, int32 baseVitality, int32 curVitality) {
+void CHealthIndicator::updateStar(GfxCompImage *starCtl, int32 bro, int32 baseVitality, int32 curVitality) {
 	assert(baseVitality >= 0);
 
 	int16 maxStar, imageIndex;
@@ -1607,20 +1607,20 @@ void SetupUserControls(void) {
 
 	// setup stand alone controls
 
-	optBtn = new gCompButton(*playControls, optBtnRect, optBtnImag, numBtnImages, 0, cmdOptions);
+	optBtn = new GfxCompButton(*playControls, optBtnRect, optBtnImag, numBtnImages, 0, cmdOptions);
 
 	enchDisp = new gEnchantmentDisplay(*playControls, 0);
 
 	// setup the trio user cntl buttons
 	for (n = 0; n < kNumViews; n++) {
 		// portrait button
-		portBtns[n]        = new gMultCompButton(*trioControls, views[n][index++],
+		portBtns[n]        = new GfxMultCompButton(*trioControls, views[n][index++],
 		                                  portImag[n], numPortImages, 0, false, brotherIDs[n], cmdPortrait);
 
 		portBtns[n]->setMousePoll(true);
 
 		// aggressive button
-		aggressBtns[n]     = new gOwnerSelCompButton(*trioControls, views[n][index++],
+		aggressBtns[n]     = new GfxOwnerSelCompButton(*trioControls, views[n][index++],
 		                                  aggressImag, numBtnImages, brotherIDs[n], cmdAggressive);
 
 		// name plates that go under the portraits
@@ -1628,19 +1628,19 @@ void SetupUserControls(void) {
 		                                  armorImag, brotherIDs[n], cmdArmor);
 
 		// center on brother
-		centerBtns[n]      = new gOwnerSelCompButton(*trioControls, views[n][index++],
+		centerBtns[n]      = new GfxOwnerSelCompButton(*trioControls, views[n][index++],
 		                                  centerImag, numBtnImages, brotherIDs[n], cmdCenter);
 
 		// banding
-		bandingBtns[n] = new gOwnerSelCompButton(*trioControls, views[n][index++],
+		bandingBtns[n] = new GfxOwnerSelCompButton(*trioControls, views[n][index++],
 		                              bandingImag, numBtnImages, brotherIDs[n], cmdBand);
 
 		// name plates that go under the portraits
-		namePlates[n]  = new gCompImage(*trioControls, views[n][index++],
+		namePlates[n]  = new GfxCompImage(*trioControls, views[n][index++],
 		                              namePlateImages[n], 0, nullptr);
 
 		// the frames for the name plates
-		namePlateFrames[n] = new gCompImage(*trioControls, views[n][index++],
+		namePlateFrames[n] = new GfxCompImage(*trioControls, views[n][index++],
 		                                  namePlateFrameImag, 0, nullptr);
 
 		index = 0;
@@ -1649,30 +1649,30 @@ void SetupUserControls(void) {
 	// individual control buttons
 
 	// portrait button
-	indivPortBtn = new gMultCompButton(*indivControls, views[0][index++],
+	indivPortBtn = new GfxMultCompButton(*indivControls, views[0][index++],
 	                          portImag[0], numPortImages, 0, false, uiIndiv, cmdPortrait);
 	indivPortBtn->setMousePoll(true);
 
 	// aggressive button
-	indivAggressBtn  = new gOwnerSelCompButton(*indivControls, views[0][index++],
+	indivAggressBtn  = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
 	                              aggressImag, numBtnImages, uiIndiv, cmdAggressive);
 
 	indivArmorInd    = new gArmorIndicator(*indivControls, views[0][index++],
 	                              armorImag, uiIndiv, cmdArmor);
 	// center on brother
-	indivCenterBtn   = new gOwnerSelCompButton(*indivControls, views[0][index++],
+	indivCenterBtn   = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
 	                              centerImag, numBtnImages, uiIndiv, cmdCenter);
 
 	// banding
-	indivBandingBtn  = new gOwnerSelCompButton(*indivControls, views[0][index++],
+	indivBandingBtn  = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
 	                              bandingImag, numBtnImages, uiIndiv, cmdBand);
 
 	// name plates that go under the portraits
-	indivNamePlate  = new gCompImage(*indivControls, views[0][index++],
+	indivNamePlate  = new GfxCompImage(*indivControls, views[0][index++],
 	                             namePlateImages[0], 0, nullptr);
 
 	// the frames for the name plates
-	indivNamePlateFrame = new gCompImage(*indivControls, views[0][index++],
+	indivNamePlateFrame = new GfxCompImage(*indivControls, views[0][index++],
 	                                 namePlateFrameImag, 0, nullptr);
 
 	// setup the portrait object
@@ -1683,15 +1683,15 @@ void SetupUserControls(void) {
 
 
 	// mental container button
-	menConBtn = new gCompButton(*indivControls, menConBtnRect, menConBtnImag, numBtnImages, uiIndiv, cmdBrain);
+	menConBtn = new GfxCompButton(*indivControls, menConBtnRect, menConBtnImag, numBtnImages, uiIndiv, cmdBrain);
 
 	// brother selection buttons >>> need to replace these with sticky buttons
-	julBtn = new gOwnerSelCompButton(*indivControls, julBtnRect, julBtnImag, numBtnImages, uiJulian, cmdBroChange);
-	phiBtn = new gOwnerSelCompButton(*indivControls, phiBtnRect, phiBtnImag, numBtnImages, uiPhillip, cmdBroChange);
-	kevBtn = new gOwnerSelCompButton(*indivControls, kevBtnRect, kevBtnImag, numBtnImages, uiKevin, cmdBroChange);
+	julBtn = new GfxOwnerSelCompButton(*indivControls, julBtnRect, julBtnImag, numBtnImages, uiJulian, cmdBroChange);
+	phiBtn = new GfxOwnerSelCompButton(*indivControls, phiBtnRect, phiBtnImag, numBtnImages, uiPhillip, cmdBroChange);
+	kevBtn = new GfxOwnerSelCompButton(*indivControls, kevBtnRect, kevBtnImag, numBtnImages, uiKevin, cmdBroChange);
 
 	// frame for brother buttons
-	broBtnFrame = new gCompImage(*indivControls, broBtnRect, broBtnFrameImag, uiIndiv, nullptr);
+	broBtnFrame = new GfxCompImage(*indivControls, broBtnRect, broBtnFrameImag, uiIndiv, nullptr);
 
 	// make the mana indicator
 	ManaIndicator = new CManaIndicator(*indivControls);
@@ -2156,7 +2156,7 @@ APPFUNC(cmdPortrait) {
 
 	case gEventMouseMove:
 
-		if (ev.value == gCompImage::leave) {
+		if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(nullptr);
 			g_vm->_mouseInfo->setDoable(true);
 			break;
@@ -2232,12 +2232,12 @@ APPFUNC(cmdAggressive) {
 //		}
 //		else setAggression( transBroID, !wasAggressive );
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(isAggressive(transBroID)
 			                  ? ON_AGRESS
 			                  : OFF_AGRESS);
-		} else if (ev.value == gCompImage::leave) {
+		} else if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2265,7 +2265,7 @@ APPFUNC( cmdJump )
 APPFUNC(cmdArmor) {
 	if (ev.eventType == gEventMouseMove) {
 
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			gArmorIndicator *gai = (gArmorIndicator *)ev.panel;
 			char    buf[128];
 
@@ -2282,7 +2282,7 @@ APPFUNC(cmdArmor) {
 				// set the text in the cursor
 				g_vm->_mouseInfo->setText(buf);
 			}
-		} else if (ev.value == gCompImage::leave) {
+		} else if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2297,12 +2297,12 @@ APPFUNC(cmdCenter) {
 		else setCenterBrother(transBroID);
 	}
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(getCenterActorPlayerID() == transBroID
 			                  ? ON_CENTER
 			                  : OFF_CENTER);
-		} else if (ev.value == gCompImage::leave) {
+		} else if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2331,12 +2331,12 @@ APPFUNC(cmdBand) {
 //		}
 //		else setBanded( transBroID, !wasBanded );
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(isBanded(transBroID)
 			                  ? ON_BANDED
 			                  : OFF_BANDED);
-		} else if (ev.value == gCompImage::leave) {
+		} else if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2347,8 +2347,8 @@ APPFUNC(cmdOptions) {
 		OptionsDialog();
 		//openOptionsPanel();
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::enter)        g_vm->_mouseInfo->setText(OPTIONS_PANEL);
-		else if (ev.value == gCompImage::leave) g_vm->_mouseInfo->setText(nullptr);
+		if (ev.value == GfxCompImage::enter)        g_vm->_mouseInfo->setText(OPTIONS_PANEL);
+		else if (ev.value == GfxCompImage::leave) g_vm->_mouseInfo->setText(nullptr);
 	}
 }
 
@@ -2367,7 +2367,7 @@ APPFUNC(cmdBroChange) {
 
 		uint16  panID = ev.panel->id;
 
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			// working buffer
 			char buf[bufSize];
 			char state[stateBufSize];
@@ -2388,7 +2388,7 @@ APPFUNC(cmdBroChange) {
 			}
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(buf);
-		} else if (ev.value == gCompImage::leave) {
+		} else if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2398,12 +2398,12 @@ APPFUNC(cmdHealthStar) {
 	uint16 transBroID = translatePanID(ev.panel->id);
 
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::leave) {
+		if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(nullptr);
 			return;
 		}
 
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			ev.panel->setMousePoll(true);
 		}
 
@@ -2423,7 +2423,7 @@ APPFUNC(cmdMassInd) {
 	GameObject      *containerObject = nullptr;
 
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			const   int bufSize     = 40;
 			int     curWeight;
 			uint16  baseWeight;
@@ -2449,7 +2449,7 @@ APPFUNC(cmdMassInd) {
 				g_vm->_mouseInfo->setText(buf);
 			} else
 				g_vm->_mouseInfo->setText(UNK_WEIGHT_HINT);
-		} else if (ev.value == gCompImage::leave) {
+		} else if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2461,7 +2461,7 @@ APPFUNC(cmdBulkInd) {
 
 
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			const   int bufSize     = 40;
 			uint16  baseBulk    = 100;
 			char    buf[bufSize];
@@ -2487,7 +2487,7 @@ APPFUNC(cmdBulkInd) {
 				g_vm->_mouseInfo->setText(buf);
 			} else
 				g_vm->_mouseInfo->setText(UNK_BULK_HINT);
-		} else if (ev.value == gCompImage::leave) {
+		} else if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2495,7 +2495,7 @@ APPFUNC(cmdBulkInd) {
 
 APPFUNC(cmdManaInd) {
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value != gCompImage::leave) {
+		if (ev.value != GfxCompImage::leave) {
 			const   int BUF_SIZE = 64;
 			char    textBuffer[BUF_SIZE];
 			int     manaType = -1;

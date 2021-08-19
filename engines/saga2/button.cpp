@@ -42,7 +42,7 @@ extern void playMemSound(uint32 s); // play click # s
     Compressed image class
  * ======================================================================= */
 
-void gCompImage::init(void) {
+void GfxCompImage::init(void) {
 	compImages      = NULL;
 	max             = 0;
 	min             = 0;
@@ -52,7 +52,7 @@ void gCompImage::init(void) {
 	textFont        = &Onyx10Font;  // default
 }
 
-gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, uint16 ident,
+GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void *image, uint16 ident,
                        AppFunc *cmd) : gControl(list, box, NULL, ident, cmd) {
 	// setup a single image configuration
 
@@ -66,7 +66,7 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, uint16 
 	}
 }
 
-gCompImage::gCompImage(gPanelList &list,
+GfxCompImage::GfxCompImage(gPanelList &list,
                        const Rect16 &box,
                        uint32 contextID,
                        char a, char b, char c,
@@ -86,7 +86,7 @@ gCompImage::gCompImage(gPanelList &list,
 	for (i = 0, rNum = resNum; i < numImages; i++, rNum++) {
 		compImages[i] = LoadResource(resContext,
 		                               MKTAG(a, b, c, rNum),
-		                               " gCompImage ");
+		                               " GfxCompImage ");
 	}
 
 	max             = numImages - 1;
@@ -98,7 +98,7 @@ gCompImage::gCompImage(gPanelList &list,
 	resContext = NULL;
 }
 
-gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, const char *text, textPallete &pal, uint16 ident,
+GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void *image, const char *text, textPallete &pal, uint16 ident,
                        AppFunc *cmd) : gControl(list, box, text, ident, cmd) {
 	// setup a single image configuration
 	init();
@@ -116,7 +116,7 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, const c
 	textPal         = pal;
 }
 
-gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void **images,
+GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void **images,
                        int16 numRes, int16 initial,
                        uint16 ident, AppFunc *cmd) : gControl(list, box, NULL, ident, cmd) {
 	init();
@@ -131,7 +131,7 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void **images,
 	currentImage    = clamp(min, initial, max);
 }
 
-gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void **images,
+GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void **images,
                        int16 numRes, int16 initial, const char *text, textPallete &pal,
                        uint16 ident, AppFunc *cmd) : gControl(list, box, text, ident, cmd) {
 	init();
@@ -149,7 +149,7 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void **images,
 	textPal     = pal;
 }
 
-gCompImage::gCompImage(gPanelList &list, const StaticRect &box, void **images,
+GfxCompImage::GfxCompImage(gPanelList &list, const StaticRect &box, void **images,
                        int16 numRes, int16 initial, const char *text, textPallete &pal,
                        uint16 ident, AppFunc *cmd) : gControl(list, box, text, ident, cmd) {
 	init();
@@ -168,7 +168,7 @@ gCompImage::gCompImage(gPanelList &list, const StaticRect &box, void **images,
 }
 
 
-gCompImage::~gCompImage(void) {
+GfxCompImage::~GfxCompImage(void) {
 	// delete any allocated image pointers
 	// for JEFFL: I took out the winklude #ifdefs becuase I belive
 	// I fixed the problem that was causing the crash under win32
@@ -188,22 +188,22 @@ gCompImage::~gCompImage(void) {
 	}
 }
 
-void gCompImage::pointerMove(gPanelMessage &msg) {
+void GfxCompImage::pointerMove(gPanelMessage &msg) {
 	// call the superclass's pointerMove
 	gControl::pointerMove(msg);
 
 	notify(gEventMouseMove, (msg.pointerEnter ? enter : 0) | (msg.pointerLeave ? leave : 0));
 }
 
-void gCompImage::enable(bool abled) {
+void GfxCompImage::enable(bool abled) {
 	gPanel::enable(abled);
 }
 
-void gCompImage::invalidate(Rect16 *) {
+void GfxCompImage::invalidate(Rect16 *) {
 	window.update(extent);
 }
 
-void gCompImage::draw(void) {
+void GfxCompImage::draw(void) {
 	gPort   &port = window.windowPort;
 	Rect16  rect = window.getExtent();
 
@@ -215,7 +215,7 @@ void gCompImage::draw(void) {
 	g_vm->_pointer->show(port, extent);              // show mouse pointer
 }
 
-void *gCompImage::getCurrentCompImage(void) {
+void *GfxCompImage::getCurrentCompImage(void) {
 	if (compImages) {
 		return compImages[currentImage];  // return the image pointed to by compImage
 	} else {
@@ -224,13 +224,13 @@ void *gCompImage::getCurrentCompImage(void) {
 }
 
 // waring! : the number of images has has to be == to the inital number
-void gCompImage::setImages(void **images) {
+void GfxCompImage::setImages(void **images) {
 	if (images) {
 		compImages = images;
 	}
 }
 
-void gCompImage::setImage(void *image) {
+void GfxCompImage::setImage(void *image) {
 	if (image) {
 		compImages[0] = image;
 		max             = 0;
@@ -238,7 +238,7 @@ void gCompImage::setImage(void *image) {
 	}
 }
 
-void gCompImage::select(uint16 val) {
+void GfxCompImage::select(uint16 val) {
 	setCurrent(val);
 
 	if (getEnabled()) {
@@ -246,19 +246,19 @@ void gCompImage::select(uint16 val) {
 	}
 }
 
-void gCompImage::select(uint16 val, const Rect16 &rect) {
+void GfxCompImage::select(uint16 val, const Rect16 &rect) {
 	select(val);
 	setExtent(rect);
 }
 
-void gCompImage::setExtent(const Rect16 &rect) {
+void GfxCompImage::setExtent(const Rect16 &rect) {
 	// set the new extent
 	extent = rect;
 }
 
 // getCurrentCompImage() is virtual function that should return
 // the current image to be displayed (to be used across all sub-classes)
-void gCompImage::drawClipped(gPort &port,
+void GfxCompImage::drawClipped(gPort &port,
                              const Point16 &offset,
                              const Rect16 &r) {
 	if (!extent.overlap(r))    return;
@@ -293,11 +293,11 @@ void gCompImage::drawClipped(gPort &port,
 }
 
 /* ===================================================================== *
-   gCompImageButton class member functions
+   GfxSpriteImage class member functions
  * ===================================================================== */
 
-gSpriteImage::gSpriteImage(gPanelList &list, const Rect16 &box, GameObject *object, char,
-                           uint16 ident, AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd) {
+GfxSpriteImage::GfxSpriteImage(gPanelList &list, const Rect16 &box, GameObject *object, char,
+                           uint16 ident, AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd) {
 	// get the prototype for the object
 	ProtoObj *proto = object->proto();
 
@@ -310,7 +310,7 @@ gSpriteImage::gSpriteImage(gPanelList &list, const Rect16 &box, GameObject *obje
 
 // getCurrentCompImage() is virtual function that should return
 // the current image to be displayed (to be used across all sub-classes)
-void gSpriteImage::drawClipped(gPort &port,
+void GfxSpriteImage::drawClipped(gPort &port,
                                const Point16 &offset,
                                const Rect16 &r) {
 	if (!extent.overlap(r))    return;
@@ -340,10 +340,10 @@ void gSpriteImage::drawClipped(gPort &port,
 }
 
 /* ===================================================================== *
-   gCompImageButton class member functions
+   GfxCompButton class member functions
  * ===================================================================== */
 
-void gCompButton::loadImages(hResContext *con, hResID res1, hResID res2) {
+void GfxCompButton::loadImages(hResContext *con, hResID res1, hResID res2) {
 	if (con) {
 		forImage = LoadResource(con, res1, "CBtn fore image");
 		resImage = LoadResource(con, res2, "CBtn res image");
@@ -358,7 +358,7 @@ void gCompButton::loadImages(hResContext *con, hResID res1, hResID res2) {
 	dimmed          = false;
 }
 
-void gCompButton::loadImages(hResID contextID, hResID res1, hResID res2) {
+void GfxCompButton::loadImages(hResID contextID, hResID res1, hResID res2) {
 	// init the resource context handle
 	hResContext *con = resFile->newContext(contextID,
 	                                       "container window resource");
@@ -367,33 +367,33 @@ void gCompButton::loadImages(hResID contextID, hResID res1, hResID res2) {
 	resFile->disposeContext(con);               // get rid of this context
 }
 
-gCompButton::gCompButton(gPanelList &list, const Rect16 &box, hResContext *con, hResID resID1, hResID resID2, uint16 ident,
-                         AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd), extent(box) {
+GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, hResContext *con, hResID resID1, hResID resID2, uint16 ident,
+                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd), extent(box) {
 	loadImages(con, resID1, resID2);
 }
 
-gCompButton::gCompButton(gPanelList &list, const Rect16 &box, hResID contextID, hResID resID1, hResID resID2, uint16 ident,
-                         AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd), extent(box) {
+GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, hResID contextID, hResID resID1, hResID resID2, uint16 ident,
+                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd), extent(box) {
 	loadImages(contextID, resID1, resID2);
 }
 
-gCompButton::gCompButton(gPanelList &list, const Rect16 &box, hResContext *con, char a, char b, char c, int16 butNum_1, int16 butNum_2, uint16 ident,
-                         AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd), extent(box) {
+GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, hResContext *con, char a, char b, char c, int16 butNum_1, int16 butNum_2, uint16 ident,
+                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd), extent(box) {
 	loadImages(con, MKTAG(a, b, c, butNum_1), MKTAG(a, b, c, butNum_2));
 }
 
-gCompButton::gCompButton(gPanelList &list, const Rect16 &box, hResID contextID, char a, char b, char c, int16 butNum_1, int16 butNum_2, uint16 ident,
-                         AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd), extent(box) {
+GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, hResID contextID, char a, char b, char c, int16 butNum_1, int16 butNum_2, uint16 ident,
+                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd), extent(box) {
 	loadImages(contextID, MKTAG(a, b, c, butNum_1), MKTAG(a, b, c, butNum_2));
 }
 
-gCompButton::gCompButton(gPanelList &list, const Rect16 &box, hResContext *con, int16 butNum, uint16 ident,
-                         AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd), extent(box) {
+GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, hResContext *con, int16 butNum, uint16 ident,
+                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd), extent(box) {
 	loadImages(con, MKTAG('B', 'T', 'N', butNum), MKTAG('B', 'T', 'N', butNum + 1));
 }
 
-gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, uint16 ident,
-                         AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd) {
+GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, uint16 ident,
+                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd) {
 	if (images[0] && images[1] && numRes == 2) {
 		forImage    = images[0];
 		resImage    = images[1];
@@ -409,8 +409,8 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int
 	extent          = box;
 }
 
-gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, const char *text, textPallete &pal, uint16 ident,
-                         AppFunc *cmd) : gCompImage(list, box, NULL, 0, 0, text, pal, ident, cmd) {
+GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, const char *text, textPallete &pal, uint16 ident,
+                         AppFunc *cmd) : GfxCompImage(list, box, NULL, 0, 0, text, pal, ident, cmd) {
 	if (images[0] && images[1] && numRes == 2) {
 		forImage    = images[0];
 		resImage    = images[1];
@@ -426,8 +426,8 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int
 	extent          = box;
 }
 
-gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, void *newDimImage, bool dimNess, uint16 ident,
-                         AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd) {
+GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, void *newDimImage, bool dimNess, uint16 ident,
+                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd) {
 	if (images[0] && images[1] && numRes == 2) {
 		forImage    = images[0];
 		resImage    = images[1];
@@ -448,8 +448,8 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int
 }
 
 
-gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void *image, uint16 ident,
-                         AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd)
+GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, void *image, uint16 ident,
+                         AppFunc *cmd) : GfxCompImage(list, box, NULL, ident, cmd)
 
 {
 	if (image) {
@@ -467,7 +467,7 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void *image, uint1
 	extent          = box;
 }
 
-gCompButton::gCompButton(gPanelList &list, const StaticRect &box, void **images, int16 numRes, const char *text, textPallete &pal, uint16 ident, AppFunc *cmd) : gCompImage(list, box, NULL, 0, 0, text, pal, ident, cmd) {
+GfxCompButton::GfxCompButton(gPanelList &list, const StaticRect &box, void **images, int16 numRes, const char *text, textPallete &pal, uint16 ident, AppFunc *cmd) : GfxCompImage(list, box, NULL, 0, 0, text, pal, ident, cmd) {
 	if (images[0] && images[1] && numRes == 2) {
 		forImage = images[0];
 		resImage = images[1];
@@ -483,7 +483,7 @@ gCompButton::gCompButton(gPanelList &list, const StaticRect &box, void **images,
 	extent        = box;
 }
 
-gCompButton::gCompButton(gPanelList &list, const Rect16 &box, AppFunc *cmd) : gCompImage(list, box, NULL, 0, cmd) {
+GfxCompButton::GfxCompButton(gPanelList &list, const Rect16 &box, AppFunc *cmd) : GfxCompImage(list, box, NULL, 0, cmd) {
 	forImage    = NULL;
 	resImage    = NULL;
 	dimImage    = NULL;
@@ -493,7 +493,7 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, AppFunc *cmd) : gC
 	extent          = box;
 }
 
-gCompButton::~gCompButton(void) {
+GfxCompButton::~GfxCompButton(void) {
 	if (internalAlloc) {
 		if (forImage) {
 			free(forImage);
@@ -512,7 +512,7 @@ gCompButton::~gCompButton(void) {
 	}
 }
 
-void gCompButton::dim(bool enableFlag) {
+void GfxCompButton::dim(bool enableFlag) {
 	if (enableFlag) {
 		if (!dimmed) dimmed = true;
 	} else {
@@ -523,13 +523,13 @@ void gCompButton::dim(bool enableFlag) {
 }
 
 
-void gCompButton::deactivate(void) {
+void GfxCompButton::deactivate(void) {
 	selected = 0;
 	window.update(extent);
 	gPanel::deactivate();
 }
 
-bool gCompButton::activate(gEventType why) {
+bool GfxCompButton::activate(gEventType why) {
 	selected = 1;
 	window.update(extent);
 
@@ -541,21 +541,21 @@ bool gCompButton::activate(gEventType why) {
 	return false;
 }
 
-void gCompButton::pointerMove(gPanelMessage &msg) {
+void GfxCompButton::pointerMove(gPanelMessage &msg) {
 	if (dimmed) return;
 
 	//notify( gEventMouseMove, (msg.pointerEnter ? enter : 0)|(msg.pointerLeave ? leave : 0));
-	gCompImage::pointerMove(msg);
+	GfxCompImage::pointerMove(msg);
 }
 
-bool gCompButton::pointerHit(gPanelMessage &) {
+bool GfxCompButton::pointerHit(gPanelMessage &) {
 	if (dimmed) return false;
 
 	activate(gEventMouseDown);
 	return true;
 }
 
-void gCompButton::pointerRelease(gPanelMessage &) {
+void GfxCompButton::pointerRelease(gPanelMessage &) {
 	//  We have to test selected first because deactivate clears it.
 
 	if (selected) {
@@ -564,23 +564,23 @@ void gCompButton::pointerRelease(gPanelMessage &) {
 	} else deactivate();
 }
 
-void gCompButton::pointerDrag(gPanelMessage &msg) {
+void GfxCompButton::pointerDrag(gPanelMessage &msg) {
 	if (selected != msg.inPanel) {
 		selected = msg.inPanel;
 		window.update(extent);
 	}
 }
 
-void gCompButton::enable(bool abled) {
+void GfxCompButton::enable(bool abled) {
 	gPanel::enable(abled);
 }
 
-void gCompButton::invalidate(Rect16 *) {
+void GfxCompButton::invalidate(Rect16 *) {
 	window.update(extent);
 }
 
 
-void gCompButton::draw(void) {
+void GfxCompButton::draw(void) {
 	gPort   &port = window.windowPort;
 	Rect16  rect = window.getExtent();
 
@@ -590,7 +590,7 @@ void gCompButton::draw(void) {
 	g_vm->_pointer->show(port, extent);              // show mouse pointer
 }
 
-void *gCompButton::getCurrentCompImage(void) {
+void *GfxCompButton::getCurrentCompImage(void) {
 	if (dimmed) {
 		return dimImage;
 	} else if (selected) {
@@ -601,69 +601,16 @@ void *gCompButton::getCurrentCompImage(void) {
 }
 
 /************************************************************************
-* gToggleCompButton -- like a gCompButton but toggle on and off.        *
-************************************************************************/
-
-gToggleCompButton::gToggleCompButton(gPanelList &list, const Rect16 &box, hResContext *con, char a, char b, char c, int16 butNum_1, int16 butNum_2, uint16 ident,
-                                     AppFunc *cmd) : gCompButton(list, box, con, a, b, c, butNum_1, butNum_2, ident, cmd) {
-
-}
-
-
-gToggleCompButton::gToggleCompButton(gPanelList &list, const Rect16 &box, hResContext *con, int16 butNum, uint16 ident,
-                                     AppFunc *cmd) : gCompButton(list, box, con, butNum, ident, cmd) {
-
-}
-
-gToggleCompButton::gToggleCompButton(gPanelList &list, const Rect16 &box, void **images, int16 butRes, uint16 ident,
-                                     AppFunc *cmd) : gCompButton(list, box, images, butRes, ident, cmd) {
-
-}
-
-gToggleCompButton::gToggleCompButton(gPanelList &list, const Rect16 &box, void **images, int16 butRes, char *text, textPallete &pal, uint16 ident,
-                                     AppFunc *cmd) : gCompButton(list, box, images, butRes, text, pal, ident, cmd) {
-
-}
-
-bool gToggleCompButton::activate(gEventType why) {
-	if (why == gEventKeyDown || why == gEventMouseDown) {
-//		playSound( MKTAG('C','B','T',3) );
-
-		selected = !selected;
-		window.update(extent);
-		gPanel::deactivate();
-		notify(gEventNewValue, selected);    // notify App of successful hit
-		playMemSound(1);
-	}
-	return false;
-}
-
-bool gToggleCompButton::pointerHit(gPanelMessage &) {
-	return activate(gEventMouseDown);
-}
-
-void gToggleCompButton::select(uint16 val) {
-	selected = val;
-
-	setCurrent(val);
-
-	if (getEnabled()) {
-		window.update(extent);
-	}
-}
-
-
-/************************************************************************
-* gOwnerSelCompButton -- like a gCompButton but does not chage the      *
+* GfxOwnerSelCompButton -- like a GfxCompButton but does not chage the      *
 * selector bit                                                          *
 ************************************************************************/
 
-gOwnerSelCompButton::gOwnerSelCompButton(gPanelList &list, const Rect16 &box, void **images, int16 butRes, uint16 ident,
-        AppFunc *cmd) : gCompButton(list, box, images, butRes, ident, cmd) {
+GfxOwnerSelCompButton::GfxOwnerSelCompButton(gPanelList &list, const Rect16 &box, void **images, int16 butRes, uint16 ident,
+        AppFunc *cmd) : GfxCompButton(list, box, images, butRes, ident, cmd) {
 
 }
 
-bool gOwnerSelCompButton::activate(gEventType why) {
+bool GfxOwnerSelCompButton::activate(gEventType why) {
 	if (why == gEventKeyDown || why == gEventMouseDown) {
 //		selected = !selected;
 //		window.update( extent );
@@ -674,11 +621,11 @@ bool gOwnerSelCompButton::activate(gEventType why) {
 	return false;
 }
 
-bool gOwnerSelCompButton::pointerHit(gPanelMessage &) {
+bool GfxOwnerSelCompButton::pointerHit(gPanelMessage &) {
 	return activate(gEventMouseDown);
 }
 
-void gOwnerSelCompButton::select(uint16 val) {
+void GfxOwnerSelCompButton::select(uint16 val) {
 	selected = val;
 
 	setCurrent(val);
@@ -689,11 +636,11 @@ void gOwnerSelCompButton::select(uint16 val) {
 }
 
 /************************************************************************
-* gMultCompButton -- like gCompButton but does any number of images     *
+* GfxMultCompButton -- like GfxCompButton but does any number of images     *
 ************************************************************************/
 
-gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, hResContext *con, char a, char b, char c, int16 resStart, int16 numRes, int16 initial, uint16 ident,
-                                 AppFunc *cmd) : gCompButton(list, box, (hResContext *)NULL, 0, ident, cmd) {
+GfxMultCompButton::GfxMultCompButton(gPanelList &list, const Rect16 &box, hResContext *con, char a, char b, char c, int16 resStart, int16 numRes, int16 initial, uint16 ident,
+                                 AppFunc *cmd) : GfxCompButton(list, box, (hResContext *)NULL, 0, ident, cmd) {
 	int16   i, k;
 
 
@@ -712,8 +659,8 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, hResContex
 	extent  = box;
 }
 
-gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, void **newImages, int16 numRes, int16 initial, uint16 ident,
-                                 AppFunc *cmd) : gCompButton(list, box, (hResContext *)NULL, 0, ident, cmd) {
+GfxMultCompButton::GfxMultCompButton(gPanelList &list, const Rect16 &box, void **newImages, int16 numRes, int16 initial, uint16 ident,
+                                 AppFunc *cmd) : GfxCompButton(list, box, (hResContext *)NULL, 0, ident, cmd) {
 	if (!newImages) {
 		images  = NULL;
 		max     = 0;
@@ -734,9 +681,9 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, void **new
 	extent  = box;
 }
 
-gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, void **newImages,
+GfxMultCompButton::GfxMultCompButton(gPanelList &list, const Rect16 &box, void **newImages,
                                  int16 numRes, int16 initial, bool hitResponse, uint16 ident,
-                                 AppFunc *cmd) : gCompButton(list, box, (hResContext *)NULL, 0, ident, cmd) {
+                                 AppFunc *cmd) : GfxCompButton(list, box, (hResContext *)NULL, 0, ident, cmd) {
 	if (!newImages) {
 		images  = NULL;
 		max     = 0;
@@ -757,7 +704,7 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, void **new
 	extent  = box;
 }
 
-gMultCompButton::~gMultCompButton(void) {
+GfxMultCompButton::~GfxMultCompButton(void) {
 	int16   i;
 
 	if (images && internalAlloc) {
@@ -772,7 +719,7 @@ gMultCompButton::~gMultCompButton(void) {
 	}
 }
 
-bool gMultCompButton::activate(gEventType why) {
+bool GfxMultCompButton::activate(gEventType why) {
 	if (why == gEventKeyDown || why == gEventMouseDown) {
 		if (response) {
 			if (++current > max) {
@@ -789,22 +736,22 @@ bool gMultCompButton::activate(gEventType why) {
 	return false;
 }
 
-bool gMultCompButton::pointerHit(gPanelMessage &) {
+bool GfxMultCompButton::pointerHit(gPanelMessage &) {
 	return activate(gEventMouseDown);
 }
 
-void *gMultCompButton::getCurrentCompImage(void) {
+void *GfxMultCompButton::getCurrentCompImage(void) {
 	return images[current];
 }
 
 /* ===================================================================== *
-   gSlider class
+   GfxSlider class
  * ===================================================================== */
 
-gSlider::gSlider(gPanelList &list, const Rect16 &box, const Rect16 &imageBox,
+GfxSlider::GfxSlider(gPanelList &list, const Rect16 &box, const Rect16 &imageBox,
                  int16 sliderStart, int16 sliderEnd, void **newImages, int16 resStart,
                  int16 initial, uint16 ident,
-                 AppFunc *cmd) : gMultCompButton(list, box, newImages, resStart, initial, ident, cmd) {
+                 AppFunc *cmd) : GfxMultCompButton(list, box, newImages, resStart, initial, ident, cmd) {
 	int16   calcX;
 
 	imageRect   = imageBox;
@@ -821,7 +768,7 @@ gSlider::gSlider(gPanelList &list, const Rect16 &box, const Rect16 &imageBox,
 	                  extent.width - imageRect.x);
 }
 
-void *gSlider::getCurrentCompImage(void) {
+void *GfxSlider::getCurrentCompImage(void) {
 	int16   val;
 	int32   index;
 
@@ -838,7 +785,7 @@ void *gSlider::getCurrentCompImage(void) {
 	return images[index];
 }
 
-int16 gSlider::getSliderLenVal(void) {
+int16 GfxSlider::getSliderLenVal(void) {
 	int16   val = 0;
 
 	if (slValMin < 0 && slValMax < 0) {
@@ -854,7 +801,7 @@ int16 gSlider::getSliderLenVal(void) {
 	return val;
 }
 
-void gSlider::draw(void) {
+void GfxSlider::draw(void) {
 	gPort   &port   = window.windowPort;
 	Point16 offset  = Point16(0, 0);
 
@@ -871,7 +818,7 @@ inline int16 quantizedVolume(uint16 trueVolume) {
 	return quantized;
 }
 
-void gSlider::drawClipped(gPort &port,
+void GfxSlider::drawClipped(gPort &port,
                           const Point16 &offset,
                           const Rect16 &r) {
 	void *dispImage = getCurrentCompImage();
@@ -886,7 +833,7 @@ void gSlider::drawClipped(gPort &port,
 	}
 }
 
-bool gSlider::activate(gEventType why) {
+bool GfxSlider::activate(gEventType why) {
 	if (why == gEventKeyDown || why == gEventMouseDown) {
 		selected = 1;
 		window.update(extent);
@@ -896,13 +843,13 @@ bool gSlider::activate(gEventType why) {
 	return false;
 }
 
-void gSlider::deactivate(void) {
+void GfxSlider::deactivate(void) {
 	selected = 0;
 	window.update(extent);
 	gPanel::deactivate();
 }
 
-bool gSlider::pointerHit(gPanelMessage &msg) {
+bool GfxSlider::pointerHit(gPanelMessage &msg) {
 	// update the image index
 	updateSliderIndexes(msg.pickPos);
 
@@ -913,7 +860,7 @@ bool gSlider::pointerHit(gPanelMessage &msg) {
 	return true;
 }
 
-void gSlider::pointerMove(gPanelMessage &msg) {
+void GfxSlider::pointerMove(gPanelMessage &msg) {
 	if (selected) {
 		// update the image index
 		updateSliderIndexes(msg.pickPos);
@@ -925,7 +872,7 @@ void gSlider::pointerMove(gPanelMessage &msg) {
 	}
 }
 
-void gSlider::pointerRelease(gPanelMessage &) {
+void GfxSlider::pointerRelease(gPanelMessage &) {
 	//  We have to test selected first because deactivate clears it.
 	if (selected) {
 		deactivate();                       // give back input focus
@@ -933,7 +880,7 @@ void gSlider::pointerRelease(gPanelMessage &) {
 	} else deactivate();
 }
 
-void gSlider::pointerDrag(gPanelMessage &msg) {
+void GfxSlider::pointerDrag(gPanelMessage &msg) {
 	// update the image index
 	updateSliderIndexes(msg.pickPos);
 
@@ -942,7 +889,7 @@ void gSlider::pointerDrag(gPanelMessage &msg) {
 	window.update(extent);
 }
 
-void gSlider::updateSliderIndexes(Point16 &pos) {
+void GfxSlider::updateSliderIndexes(Point16 &pos) {
 	pos.x = quantizedVolume(pos.x);
 	// get x position units
 	int32   unit    = (extent.width * 100) / clamp(1, pos.x, extent.width);

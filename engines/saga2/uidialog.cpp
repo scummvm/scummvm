@@ -534,7 +534,7 @@ static StaticWindow messageDecorations[kNumMessagePanels] = {
 
 
 // pointer to the auto aggression button
-gOwnerSelCompButton *autoAggressBtn,
+GfxOwnerSelCompButton *autoAggressBtn,
                     *autoWeaponBtn,
                     *nightBtn,
                     *speechTextBtn;
@@ -696,17 +696,17 @@ int16 FileDialog(int16 fileProcess) {
 	win = new ModalWindow(saveLoadWindowRect, 0, nullptr);
 
 	// make the quit button
-	new gCompButton(*win, *saveLoadButtonRects[0], pushBtnIm, numBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit);
+	new GfxCompButton(*win, *saveLoadButtonRects[0], pushBtnIm, numBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit);
 	//t->accelKey=0x1B;
 
 	// make the Save/Load button
-	new gCompButton(*win, *saveLoadButtonRects[1], pushBtnIm, numBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]);
+	new GfxCompButton(*win, *saveLoadButtonRects[1], pushBtnIm, numBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]);
 	//t->accelKey=0x0D;
 	// make the up arrow
-	new gCompButton(*win, *saveLoadButtonRects[2], arrowUpIm, numBtnImages, 0, cmdSaveDialogUp);
+	new GfxCompButton(*win, *saveLoadButtonRects[2], arrowUpIm, numBtnImages, 0, cmdSaveDialogUp);
 	//t->accelKey=33+0x80;
 	// make the down arrow
-	new gCompButton(*win, *saveLoadButtonRects[3], arrowDnIm, numBtnImages, 0, cmdSaveDialogDown);
+	new GfxCompButton(*win, *saveLoadButtonRects[3], arrowDnIm, numBtnImages, 0, cmdSaveDialogDown);
 	//t->accelKey=34+0x80;
 	// attach the title
 	new CPlaqText(*win, *saveLoadTextRects[0], textStrings[stringIndex][0], &Plate18Font, 0, pal, 0, nullptr);
@@ -842,60 +842,60 @@ int16 OptionsDialog(bool disableSaveResume) {
 
 	// create the window
 	win = new ModalWindow(optionsWindowRect, 0, nullptr);
-	gCompButton *t;
+	GfxCompButton *t;
 
 	// buttons
 	if (!disableSaveResume) {
-		t = new gCompButton(*win, *optionsButtonRects[0],
+		t = new GfxCompButton(*win, *optionsButtonRects[0],
 		                               dialogPushImag, numBtnImages, btnStrings[0], pal, 0, cmdDialogQuit);
 		t->accelKey = 0x1B;
 
-		t = new gCompButton(*win, *optionsButtonRects[1],
+		t = new GfxCompButton(*win, *optionsButtonRects[1],
 		                               dialogPushImag, numBtnImages, btnStrings[1], pal, 0, cmdOptionsSaveGame);    // make the quit button
 		t->accelKey = 'S';
 	} else {
-		t = new gCompButton(*win, *optionsButtonRects[1],
+		t = new GfxCompButton(*win, *optionsButtonRects[1],
 		                               dialogPushImag, numBtnImages, OPTN_DIALOG_BUTTON6, pal, 0, cmdOptionsNewGame);
 		t->accelKey = 'N';
 	}
 
-	t = new gCompButton(*win, *optionsButtonRects[2],
+	t = new GfxCompButton(*win, *optionsButtonRects[2],
 	                               dialogPushImag, numBtnImages, btnStrings[2], pal, 0, cmdOptionsLoadGame);    // make the quit button
 	t->accelKey = 'L';
 
-	t = new gCompButton(*win, *optionsButtonRects[3],
+	t = new GfxCompButton(*win, *optionsButtonRects[3],
 	                               dialogPushImag, numBtnImages, btnStrings[3], pal, 0, cmdQuitGame);
 	t->accelKey = 'Q';
 
-	t = new gCompButton(*win, *optionsButtonRects[4],
+	t = new GfxCompButton(*win, *optionsButtonRects[4],
 	                               dialogPushImag, numBtnImages, btnStrings[4], pal, 0, cmdCredits);
 	t->accelKey = 'C';
 
-	autoAggressBtn = new gOwnerSelCompButton(*win, *optionsButtonRects[5],
+	autoAggressBtn = new GfxOwnerSelCompButton(*win, *optionsButtonRects[5],
 	        checkImag, numBtnImages, 0, cmdAutoAggression);
 	autoAggressBtn->select(isAutoAggressionSet());
 
-	autoWeaponBtn = new gOwnerSelCompButton(*win, *optionsButtonRects[6],
+	autoWeaponBtn = new GfxOwnerSelCompButton(*win, *optionsButtonRects[6],
 	        checkImag, numBtnImages, 0, cmdAutoWeapon);
 	autoWeaponBtn->select(isAutoWeaponSet());
 
-	speechTextBtn = new gOwnerSelCompButton(*win, *optionsButtonRects[7],
+	speechTextBtn = new GfxOwnerSelCompButton(*win, *optionsButtonRects[7],
 	        checkImag, numBtnImages, 0, cmdSpeechText);
 	speechTextBtn->select(g_vm->_speechText);
 
-	nightBtn = new gOwnerSelCompButton(*win, *optionsButtonRects[8],
+	nightBtn = new GfxOwnerSelCompButton(*win, *optionsButtonRects[8],
 	        checkImag, numBtnImages, 0, cmdNight);
 	nightBtn->select(g_vm->_showNight);
 
-	new gSlider(*win, optTopSliderRect, optTopFaceRect, 0,
+	new GfxSlider(*win, optTopSliderRect, optTopFaceRect, 0,
 	                       Audio::Mixer::kMaxMixerVolume, slideFaceImag, numSlideFace, ConfMan.getInt("sfx_volume"),
 	                       0, cmdSetSoundVolume);
 
-	new gSlider(*win, optMidSliderRect, optMidFaceRect, 0,
+	new GfxSlider(*win, optMidSliderRect, optMidFaceRect, 0,
 	                       Audio::Mixer::kMaxMixerVolume, slideFaceImag, numSlideFace, ConfMan.getInt("speech_volume"),
 	                       0, cmdSetSpeechVolume);
 
-	new gSlider(*win, optBotSliderRect, optBotFaceRect, 0,
+	new GfxSlider(*win, optBotSliderRect, optBotFaceRect, 0,
 	                       Audio::Mixer::kMaxMixerVolume, slideFaceImag, numSlideFace, ConfMan.getInt("music_volume"),
 	                       0, cmdSetMIDIVolume);
 
@@ -1077,25 +1077,25 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	udrInfo.result  = -1;
 	udrInfo.running = true;
 
-	gCompButton *t;
+	GfxCompButton *t;
 
 	// button one
 	if (numBtns >= 1) {
-		t = new gCompButton(*udWin, messageButtonRects[0],
+		t = new GfxCompButton(*udWin, messageButtonRects[0],
 		                               udDialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit);
 		t->accel = k1;
 	}
 
 	// button two
 	if (numBtns >= 2) {
-		t = new gCompButton(*udWin, messageButtonRects[1],
+		t = new GfxCompButton(*udWin, messageButtonRects[1],
 		                               udDialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit);
 		t->accel = k2;
 	}
 
 	// button three
 	if (numBtns >= 3) {
-		t = new gCompButton(*udWin, messageButtonRects[2],
+		t = new GfxCompButton(*udWin, messageButtonRects[2],
 		                               udDialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit);
 		t->accel = k3;
 	}
@@ -1192,25 +1192,25 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	// create the window
 	win = new ModalWindow(messageWindowRect, 0, nullptr);
 
-	gCompButton *t;
+	GfxCompButton *t;
 
 	// button one
 	if (numBtns >= 1) {
-		t = new gCompButton(*win, *messageButtonRects[0],
+		t = new GfxCompButton(*win, *messageButtonRects[0],
 		                               dialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit);
 		t->accelKey = k1;
 	}
 
 	// button two
 	if (numBtns >= 2) {
-		t = new gCompButton(*win, *messageButtonRects[1],
+		t = new GfxCompButton(*win, *messageButtonRects[1],
 		                               dialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit);
 		t->accelKey = k2;
 	}
 
 	// button three
 	if (numBtns >= 3) {
-		t = new gCompButton(*win, *messageButtonRects[2],
+		t = new GfxCompButton(*win, *messageButtonRects[2],
 		                               dialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit);
 		t->accelKey = k3;
 	}

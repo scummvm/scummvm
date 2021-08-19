@@ -50,9 +50,9 @@ struct ContainerAppearanceDef;
 class CMassWeightIndicator;
 class ProtoObj;
 
-class gCompButton;
-class gCompImage;
-class gMultCompButton;
+class GfxCompButton;
+class GfxCompImage;
+class GfxMultCompButton;
 struct TilePoint;
 
 /* ===================================================================== *
@@ -273,7 +273,7 @@ public:
 
 class ContainerWindow : public FloatingWindow {
 protected:
-	gCompButton     *closeCompButton;       //  the close button object
+	GfxCompButton     *closeCompButton;       //  the close button object
 	ContainerView   *view;          //  the container view object
 
 public:
@@ -294,7 +294,7 @@ public:
 //  Base class for all container windows with scroll control
 class ScrollableContainerWindow : public ContainerWindow {
 protected:
-	gCompButton     *scrollCompButton;
+	GfxCompButton     *scrollCompButton;
 
 public:
 	ScrollableContainerWindow(ContainerNode &nd,
@@ -314,7 +314,7 @@ public:
 //  A container window for tangible containers
 class TangibleContainerWindow : public ScrollableContainerWindow {
 private:
-	gCompImage      *containerSpriteImg;
+	GfxCompImage      *containerSpriteImg;
 	CMassWeightIndicator *massWeightIndicator;
 
 	Rect16          objRect;
@@ -339,7 +339,7 @@ class IntangibleContainerWindow : public ScrollableContainerWindow {
 protected:
 	friend  void setMindContainer(int index, IntangibleContainerWindow &cw);
 private:
-	gMultCompButton *mindSelectorCompButton;
+	GfxMultCompButton *mindSelectorCompButton;
 
 public:
 
@@ -348,7 +348,7 @@ public:
 
 class EnchantmentContainerWindow : public ContainerWindow {
 protected:
-	gCompButton     *scrollCompButton;
+	GfxCompButton     *scrollCompButton;
 
 public:
 	EnchantmentContainerWindow(ContainerNode &nd,

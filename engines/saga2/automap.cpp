@@ -569,9 +569,9 @@ int16 openAutoMap() {
 
 	pAutoMap = new AutoMap(autoMapRect, (uint8 *)_summaryData, 0, NULL);
 
-	new gCompButton(*pAutoMap, closeAutoMapBtnRect, closeBtnImage, numBtnImages, 0, cmdAutoMapQuit);
+	new GfxCompButton(*pAutoMap, closeAutoMapBtnRect, closeBtnImage, numBtnImages, 0, cmdAutoMapQuit);
 
-	new gCompButton(*pAutoMap, scrollBtnRect, scrollBtnImage, numBtnImages, 0, cmdAutoMapScroll);
+	new GfxCompButton(*pAutoMap, scrollBtnRect, scrollBtnImage, numBtnImages, 0, cmdAutoMapScroll);
 
 	pAutoMap->setDecorations(autoMapDecorations,
 	                         ARRAYSIZE(autoMapDecorations),
