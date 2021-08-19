@@ -40,7 +40,7 @@
 
 namespace Saga2 {
 
-audioInterface *audio;
+AudioInterface *audio;
 
 static const StaticPoint32 VeryFarAway = {32767, 32766};
 
@@ -59,7 +59,7 @@ extern hResource *voiceResFile;          // script resources
 extern int32 clickSizes[];
 extern uint8 *clickData[];
 
-soundSegment currentLoop;
+uint32 currentLoop;
 
 hResContext *voiceRes, *musicRes, *soundRes, *loopRes, *longRes;
 
@@ -88,7 +88,7 @@ bool hResCheckResID(hResContext *hrc, uint32 s[]);
 //-----------------------------------------------------------------------
 //	our distance based volume attenuator
 
-static byte volumeFromDist(sampleLocation loc, byte maxVol) {
+static byte volumeFromDist(Point32 loc, byte maxVol) {
 	TilePoint tp(loc.x, loc.y, 0);
 	uint32 dist = tp.quickHDistance();
 	if (dist < fullVolumeDist) {
@@ -422,8 +422,8 @@ void playLoopAt(uint32 s, Point32 loc) {
 		audio->stopLoop();
 }
 
-void addAuxTheme(Location loc, soundSegment lid);
-void killAuxTheme(soundSegment lid);
+void addAuxTheme(Location loc, uint32 lid);
+void killAuxTheme(uint32 lid);
 void killAllAuxThemes(void);
 
 void playLoopAt(uint32 s, Location playAt) {
@@ -545,7 +545,7 @@ void PlayMusic(char IDstr[]) {
 ////////////////////////////////////////////////////////////////
 
 bool initAudio() {
-	audio = new audioInterface();
+	audio = new AudioInterface();
 	return true;
 }
 
@@ -553,28 +553,28 @@ void cleanupAudio() {
 	delete audio;
 }
 
-audioInterface::audioInterface() {
+AudioInterface::AudioInterface() {
 	_music = nullptr;
 	_mixer = g_system->getMixer();
 }
 
-audioInterface::~audioInterface() {
+AudioInterface::~AudioInterface() {
 	delete _music;
 }
 
-void audioInterface::initAudioInterface(hResContext *musicContext) {
+void AudioInterface::initAudioInterface(hResContext *musicContext) {
 	_music = new Music(musicContext);
 }
 
-bool audioInterface::playFlag(void) {
-	debugC(5, kDebugSound, "audioInterface::playFlag()");
+bool AudioInterface::playFlag(void) {
+	debugC(5, kDebugSound, "AudioInterface::playFlag()");
 	if (_speechQueue.size() == 0 && !_mixer->isSoundHandleActive(_speechSoundHandle))
 		_currentSpeech.seg = 0;
 
 	return _speechQueue.size() > 0 || _sfxQueue.size() > 0;
 }
 
-void audioInterface::playMe(void) {
+void AudioInterface::playMe(void) {
 	if (_speechQueue.size() > 0 && !_mixer->isSoundHandleActive(_speechSoundHandle)) {
 		SoundInstance si = _speechQueue.front();
 		_speechQueue.pop_front();
@@ -601,7 +601,7 @@ void audioInterface::playMe(void) {
 	}
 }
 
-void audioInterface::playMusic(soundSegment s, int16 loopFactor, sampleLocation where) {
+void AudioInterface::playMusic(uint32 s, int16 loopFactor, Point32 where) {
 	_music->play(s, loopFactor ? MUSIC_LOOP : MUSIC_NORMAL);
 
 	_currentMusic.seg = s;
@@ -609,11 +609,11 @@ void audioInterface::playMusic(soundSegment s, int16 loopFactor, sampleLocation 
 	_currentMusic.loc = where;
 }
 
-void audioInterface::stopMusic(void) {
+void AudioInterface::stopMusic(void) {
 	_music->stop();
 }
 
-void audioInterface::queueSound(soundSegment s, int16 loopFactor, sampleLocation where) {
+void AudioInterface::queueSound(uint32 s, int16 loopFactor, Point32 where) {
 	SoundInstance si;
 
 	si.seg = s;
@@ -623,7 +623,7 @@ void audioInterface::queueSound(soundSegment s, int16 loopFactor, sampleLocation
 	_sfxQueue.push(si);
 }
 
-void audioInterface::playLoop(soundSegment s, int16 loopFactor, sampleLocation where) {
+void AudioInterface::playLoop(uint32 s, int16 loopFactor, Point32 where) {
 	_currentLoop.seg = s;
 	_currentLoop.loop = loopFactor;
 	_currentLoop.loc = where;
@@ -636,11 +636,11 @@ void audioInterface::playLoop(soundSegment s, int16 loopFactor, sampleLocation w
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &audio->_loopSoundHandle, laud, -1, vol);
 }
 
-void audioInterface::stopLoop(void) {
+void AudioInterface::stopLoop(void) {
 	_mixer->stopHandle(_loopSoundHandle);
 }
 
-void audioInterface::setLoopPosition(sampleLocation newLoc) {
+void AudioInterface::setLoopPosition(Point32 newLoc) {
 	if (_currentLoop.loc == newLoc)
 		return;
 
@@ -650,7 +650,7 @@ void audioInterface::setLoopPosition(sampleLocation newLoc) {
 	_mixer->setChannelVolume(_loopSoundHandle, vol);
 }
 
-void audioInterface::queueVoice(soundSegment s, sampleLocation where) {
+void AudioInterface::queueVoice(uint32 s, Point32 where) {
 	SoundInstance si;
 
 	si.seg = s;
@@ -660,10 +660,10 @@ void audioInterface::queueVoice(soundSegment s, sampleLocation where) {
 	_speechQueue.push_back(si);
 }
 
-void audioInterface::queueVoice(soundSegment s[], sampleLocation where) {
+void AudioInterface::queueVoice(uint32 s[], Point32 where) {
 	SoundInstance si;
 
-	soundSegment *p = s;
+	uint32 *p = s;
 	while (*p) {
 		si.seg = *p;
 		si.loop = false;
@@ -674,15 +674,15 @@ void audioInterface::queueVoice(soundSegment s[], sampleLocation where) {
 	}
 }
 
-void audioInterface::stopVoice(void) {
+void AudioInterface::stopVoice(void) {
 	_mixer->stopHandle(_speechSoundHandle);
 }
 
-bool audioInterface::talking(void) {
+bool AudioInterface::talking(void) {
 	return _mixer->isSoundHandleActive(_speechSoundHandle);
 }
 
-bool audioInterface::saying(soundSegment s) {
+bool AudioInterface::saying(uint32 s) {
 	if (_currentSpeech.seg == s)
 		return true;
 
@@ -693,7 +693,7 @@ bool audioInterface::saying(soundSegment s) {
 	return false;
 }
 
-byte audioInterface::getVolume(VolumeTarget src) {
+byte AudioInterface::getVolume(VolumeTarget src) {
 	switch (src) {
 	case kVolMusic:
 		return ConfMan.getInt("music_volume");
@@ -708,11 +708,11 @@ byte audioInterface::getVolume(VolumeTarget src) {
 	return 0;
 }
 
-void audioInterface::suspend(void) {
+void AudioInterface::suspend(void) {
 	_mixer->pauseAll(true);
 }
 
-void audioInterface::resume(void) {
+void AudioInterface::resume(void) {
 	_mixer->pauseAll(false);
 }
 

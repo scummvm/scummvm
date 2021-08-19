@@ -227,8 +227,6 @@ typedef int16 SensorID;
 typedef int16   BandID;
 const BandID    NoBand = -1;
 
-typedef uint32 soundSegment;
-
 typedef uint8 gPen;               // a pen index number
 
 typedef uint16 weaponID;

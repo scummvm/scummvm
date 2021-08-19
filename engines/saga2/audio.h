@@ -34,8 +34,6 @@ namespace Saga2 {
 class Music;
 class hResContext;
 
-typedef Point32 sampleLocation;
-
 #define Here Point32(0,0)
 
 enum VolumeTarget {
@@ -45,12 +43,12 @@ enum VolumeTarget {
 };
 
 struct SoundInstance {
-	soundSegment seg;
+	uint32 seg;
 	bool loop;
-	sampleLocation loc;
+	Point32 loc;
 };
 
-class audioInterface {
+class AudioInterface {
 private:
 	SoundInstance _currentSpeech;
 	SoundInstance _currentLoop;
@@ -71,8 +69,8 @@ public:
 
 public:
 	// ctor, dtor, initialization
-	audioInterface();
-	~audioInterface();
+	AudioInterface();
+	~AudioInterface();
 
 	// init, cleanup
 	void initAudioInterface(hResContext *musicContext);
@@ -82,26 +80,26 @@ public:
 	void playMe(void);
 
 	// music calls
-	void playMusic(soundSegment s, int16 loopFactor = 1, sampleLocation where = Here);
+	void playMusic(uint32 s, int16 loopFactor = 1, Point32 where = Here);
 	void stopMusic(void);
 
 	// sound calls
-	void queueSound(soundSegment s, int16 loopFactor = 1, sampleLocation where = Here);
+	void queueSound(uint32 s, int16 loopFactor = 1, Point32 where = Here);
 
 	// loop calls
-	void playLoop(soundSegment s, int16 loopFactor = 0, sampleLocation where = Here);
+	void playLoop(uint32 s, int16 loopFactor = 0, Point32 where = Here);
 	void stopLoop(void);
-	void setLoopPosition(sampleLocation newLoc);
-	soundSegment currentLoop(void) {
+	void setLoopPosition(Point32 newLoc);
+	uint32 currentLoop(void) {
 		return _currentLoop.seg;
 	}
 
 	// voice calls
-	void queueVoice(soundSegment s, sampleLocation where = Here);
-	void queueVoice(soundSegment s[], sampleLocation where = Here);
+	void queueVoice(uint32 s, Point32 where = Here);
+	void queueVoice(uint32 s[], Point32 where = Here);
 	void stopVoice(void);
 	bool talking(void);
-	bool saying(soundSegment s);
+	bool saying(uint32 s);
 
 	byte getVolume(VolumeTarget src);
 	void suspend(void);

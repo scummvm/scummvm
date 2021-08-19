@@ -33,7 +33,6 @@
 #include "saga2/gtextbox.h"
 #include "saga2/saveload.h"
 #include "saga2/script.h"
-#include "saga2/audio.h"
 
 #include "saga2/uidialog.h"
 #include "saga2/document.h"
@@ -81,7 +80,6 @@ APPFUNCV(cmdSaveVolumeSettings);
    External declarations
  * ===================================================================== */
 extern BackWindow       *mainWindow;
-extern audioInterface   *audio;
 extern bool fullInitialized;
 
 /* ===================================================================== *

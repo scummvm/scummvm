@@ -38,7 +38,7 @@ namespace Saga2 {
 struct auxAudioTheme {
 	bool active;
 	StaticLocation l;
-	soundSegment loopID;
+	uint32 loopID;
 };
 
 static const StaticTilePoint NullTile = {(int16)minint16, (int16)minint16, (int16)minint16};
@@ -48,8 +48,8 @@ static auxAudioTheme aats[AUXTHEMES] = {
 	{false, {NullTile, 0}, 0}
 };
 
-void addAuxTheme(Location loc, soundSegment lid);
-void killAuxTheme(soundSegment lid);
+void addAuxTheme(Location loc, uint32 lid);
+void killAuxTheme(uint32 lid);
 void killAllAuxThemes(void);
 
 
@@ -207,7 +207,7 @@ void initAudioEnvirons(void) {
    Looped sound engine
  * ===================================================================== */
 
-void addAuxTheme(Location loc, soundSegment lid) {
+void addAuxTheme(Location loc, uint32 lid) {
 	for (int i = 0; i < AUXTHEMES; i++) {
 		if (!aats[i].active) {
 			aats[i].l.set(loc, loc.context);
@@ -218,7 +218,7 @@ void addAuxTheme(Location loc, soundSegment lid) {
 	}
 }
 
-void killAuxTheme(soundSegment lid) {
+void killAuxTheme(uint32 lid) {
 	for (int i = 0; i < AUXTHEMES; i++) {
 		if (aats[i].active &&   aats[i].loopID == lid) {
 			aats[i].active = false;
@@ -257,7 +257,7 @@ void setAreaSound(const TilePoint &) {
 			TilePoint baseCoords = centerActorCoords() >> kTileUVShift;
 			TilePoint       mtPos;
 			metaTileNoise   loopID = 0;
-			soundSegment ss = 0;
+			uint32 ss = 0;
 			Point32 themePos;
 			for (int r = 1; r < 5 && loopID == 0 ; r++) {
 				TileRegion  regn;
