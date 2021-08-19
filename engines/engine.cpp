@@ -465,30 +465,42 @@ void GUIErrorMessageFormat(Common::U32String fmt, ...) {
  *
  * @return			true if audio files of the expected naming scheme are found, as long as ScummVM
  *					is also built with support to the respective audio format (eg. ogg, flac, mad/mp3)
+ * @note			Make sure to keep this in sync with DefaultAudioCDManager::play()
  */
 bool Engine::existExtractedCDAudioFiles() {
+	const char *extensions[] = {
 #ifdef USE_VORBIS
-	if (Common::File::exists("track1.ogg") ||
-	    Common::File::exists("track01.ogg"))
-		return true;
+		"ogg",
 #endif
 #ifdef USE_FLAC
-	if (Common::File::exists("track1.fla")  ||
-	    Common::File::exists("track1.flac") ||
-	    Common::File::exists("track01.fla") ||
-	    Common::File::exists("track01.flac"))
-		return true;
+		"fla", "flac",
 #endif
 #ifdef USE_MAD
-	if (Common::File::exists("track1.mp3") ||
-	    Common::File::exists("track01.mp3"))
-		return true;
+		"mp3",
 #endif
+		nullptr
+	};
+
+	const char *trackName[] = {
+		"track1",
+		"track01",
+		"track_1",
+		"track_01"
+	};
+
+	for (int i = 0; i < ARRAYSIZE(trackName); ++i) {
+		for (const char **ext = extensions; *ext; ++ext) {
+			const Common::String &filename = Common::String::format("%s.%s", trackName[i], *ext);
+			if (Common::File::exists(filename)) {
+				return true;
+			}
+		}
+	}
 	return false;
 }
 
 /**
- * Displays a warning on Windows version of ScummVM, if game data 
+ * Displays a warning on Windows version of ScummVM, if game data
  * are read from the same CD drive which should also play game CD audio.
  * @return			true, if this case is applicable and the warning is displayed
  */
@@ -529,7 +541,7 @@ bool Engine::isDataAndCDAudioReadFromSameCD() {
 }
 
 /**
- * Displays a warning, for the case when the game has CD audio but 
+ * Displays a warning, for the case when the game has CD audio but
  * no extracted (ripped) audio files were found.
  *
  * This method only shows the warning. It does not check for the
