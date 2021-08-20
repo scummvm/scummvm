@@ -66,6 +66,9 @@ void saveGame(Common::OutSaveFile *out, Common::String saveName);
 //  Load a previously saved game state
 void loadSavedGameState(int16 saveNo);
 
+// Perform a cleanup and load process with fade-in
+void loadGame(int16 saveNo);
+
 //  Cleanup the game state
 void cleanupGameState(void);
 

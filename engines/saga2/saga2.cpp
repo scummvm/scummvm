@@ -187,9 +187,9 @@ Common::Error Saga2Engine::saveGameState(int slot, const Common::String &desc, b
 	_renderer->saveBackBuffer(kBeforeTakingThumbnail);
 
 	if (_renderer->hasSavedBackBuffer(kBeforeOpeningMenu))
-		_renderer->restoreSavedBackBuffer(kBeforeOpeningMenu);
+		_renderer->popSavedBackBuffer(kBeforeOpeningMenu);
 
-	getMetaEngine()->appendExtendedSaveToStream(out, g_vm->getTotalPlayTime() / 1000, desc, false, pos);
+	getMetaEngine()->appendExtendedSaveToStream(out, g_vm->getTotalPlayTime() / 1000, desc, isAutosave, pos);
 
 	_renderer->popSavedBackBuffer(kBeforeTakingThumbnail);
 	CHUNK_END;
@@ -204,7 +204,7 @@ Common::Error Saga2Engine::saveGameState(int slot, const Common::String &desc, b
 }
 
 Common::Error Saga2Engine::loadGameState(int slot) {
-	loadSavedGameState(slot);
+	loadGame(slot);
 
 	return Common::kNoError;
 }

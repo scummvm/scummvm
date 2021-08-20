@@ -46,6 +46,11 @@
 
 namespace Saga2 {
 
+void updateMainDisplay(void);
+void fadeUp();
+void fadeDown();
+void enablePaletteChanges();
+
 const ChunkID   gameID = MKTAG('F', 'T', 'A', '2');
 
 void SaveFileHeader::read(Common::InSaveFile *in) {
@@ -511,6 +516,23 @@ void loadSavedGameState(int16 saveNo) {
 	delete in;
 
 	resumeTimer();
+}
+
+void loadGame(int16 saveNo) {
+	disableUserControls();
+	cleanupGameState();
+	fadeDown();
+	loadSavedGameState(saveNo);
+	if (GameMode::newmodeFlag)
+		GameMode::update();
+	updateActiveRegions();
+	enableUserControls();
+	updateMainDisplay();
+	drawMainDisplay();
+	enablePaletteChanges();
+	updateAllUserControls();
+	fadeUp();
+	reDrawScreen();
 }
 
 //----------------------------------------------------------------------

@@ -966,6 +966,9 @@ int16 OptionsDialog(bool disableSaveResume) {
 		mainWindow->invalidate(&optionsWindowRect);
 	}
 
+	// Pop back buffer
+	g_vm->_renderer->popSavedBackBuffer(kBeforeOpeningMenu);
+
 	// return the result code
 	return rInfo.result;
 }
