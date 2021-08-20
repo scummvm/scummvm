@@ -281,8 +281,14 @@ bool GameState::saveGame(Common::WriteStream *file) {
 }
 
 void GameState::setGameFlag(uint8 index, uint8 value) {
+	if (_gameStateFlags[index] == value) {
+		return;
+	}
 	debug(2, "Set gameStateFlags[%u]=%u", index, value);
 	_gameStateFlags[index] = value;
+	if (!value) {
+		return;
+	}
 
 	if ((index == GAMEFLAG_VIDEO_BAFFE || index == GAMEFLAG_VIDEO_BAFFE2 || index == GAMEFLAG_VIDEO_BAFFE3 || index == GAMEFLAG_VIDEO_BAFFE5) &&
 		_gameStateFlags[GAMEFLAG_VIDEO_BAFFE] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE2] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE3] != 0 && _gameStateFlags[GAMEFLAG_VIDEO_BAFFE5] != 0) {
