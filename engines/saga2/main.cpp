@@ -266,7 +266,7 @@ void processEventLoop(bool updateScreen) {
 
 	debugC(1, kDebugEventLoop, "EventLoop: starting event loop");
 
-	if (checkExit && verifyUserExit()) {
+	if (g_vm->shouldQuit()) {
 		//g_vm->_gameRunning=false;
 		endGame();
 		return;
