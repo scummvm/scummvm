@@ -147,16 +147,15 @@ void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, ui
 	if (_version < kFileVer400) {
 		switch (toBpp) {
 		case 1:
-			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
+			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
 			return;
 
 		case 4:
-			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
+			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
 			return;
 
 		}
 	} else {
-		// it looks like the blue channel and green channel are reversed in D4
 		switch (toBpp) {
 		case 1:
 			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
