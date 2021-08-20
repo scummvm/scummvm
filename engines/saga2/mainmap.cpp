@@ -45,7 +45,7 @@ bool initializeGame() {
 	return false;
 }
 void shutdownGame() {
-	warning("STUB: shutdownGame");
+	cleanupGame();
 }
 
 bool initSystemTimer() {
