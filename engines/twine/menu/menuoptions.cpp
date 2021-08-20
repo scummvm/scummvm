@@ -95,7 +95,6 @@ void MenuOptions::newGame() {
 }
 
 void MenuOptions::showCredits() {
-	// TODO: the camera settings are wrong - this results in rendering problems with e.g. circles
 	const int32 tmpShadowMode = _engine->_cfgfile.ShadowMode;
 	_engine->_cfgfile.ShadowMode = 0;
 	_engine->_gameState->initEngineVars();
