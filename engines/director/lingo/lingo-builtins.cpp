@@ -2291,10 +2291,7 @@ void LB::b_updateStage(int nargs) {
 
 	Score *score = movie->getScore();
 
-	score->updateWidget();
-	if (movie->_videoPlayback)
-		score->renderVideo();
-
+	score->updateWidgets(movie->_videoPlayback);
 	movie->getWindow()->render();
 
 	// play any puppet sounds that have been queued
