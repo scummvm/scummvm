@@ -3130,7 +3130,7 @@ int16 scriptPlayVoice(int16 *args) {
 
 int16 scriptGetHour(int16 *) {
 	MONOLOG(GetHour);
-	return calender.hour;
+	return calender._hour;
 }
 
 //-----------------------------------------------------------------------
@@ -3138,7 +3138,7 @@ int16 scriptGetHour(int16 *) {
 
 int16 scriptGetFrameInHour(int16 *) {
 	MONOLOG(GetFrameInHour);
-	return calender.frameInHour;
+	return calender._frameInHour;
 }
 
 //-----------------------------------------------------------------------

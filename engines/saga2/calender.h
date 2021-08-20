@@ -52,13 +52,13 @@ public:
 		kDayBias = kFramesAtNoon / 6
 	};
 
-	uint16      years,
-	            weeks,
-	            days,
-	            dayInYear,
-	            dayInWeek,
-	            hour,
-	            frameInHour;
+	uint16      _years,
+	            _weeks,
+	            _days,
+	            _dayInYear,
+	            _dayInWeek,
+	            _hour,
+	            _frameInHour;
 
 	void read(Common::InSaveFile *in);
 	void write(Common::MemoryWriteStreamDynamic *out);
@@ -67,7 +67,7 @@ public:
 	int lightLevel(int maxLevel);
 
 	uint16 frameInDay(void) {
-		return hour * kFramesPerHour + frameInHour;
+		return _hour * kFramesPerHour + _frameInHour;
 	}
 };
 
@@ -76,8 +76,8 @@ public:
  * ===================================================================== */
 
 class FrameAlarm {
-	uint16      baseFrame,
-	            duration;
+	uint16      _baseFrame,
+	            _duration;
 public:
 	void set(uint16 dur);
 	bool check(void);
