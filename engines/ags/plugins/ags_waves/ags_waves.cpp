@@ -152,7 +152,8 @@ int64 AGSWaves::AGS_EngineOnEvent(int event, NumberPtr data) {
 		break;
 
 	case AGSE_ENTERROOM:
-		stopAllSounds();
+		// The original unloads sfx that are not playing and are not on repeat
+		// I don't think we need to do anything here.
 		break;
 
 	default:
