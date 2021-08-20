@@ -309,9 +309,11 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 		if (SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_MAXIMIZED) {
 			ConfMan.setInt("window_maximized_width", currentWidth, Common::ConfigManager::kApplicationDomain);
 			ConfMan.setInt("window_maximized_height", currentHeight, Common::ConfigManager::kApplicationDomain);
+			ConfMan.setBool("window_maximized", true, Common::ConfigManager::kApplicationDomain);
 		} else {
 			ConfMan.setInt("last_window_width", currentWidth, Common::ConfigManager::kApplicationDomain);
 			ConfMan.setInt("last_window_height", currentHeight, Common::ConfigManager::kApplicationDomain);
+			ConfMan.setBool("window_maximized", false, Common::ConfigManager::kApplicationDomain);
 		}
 		ConfMan.flushToDisk();
 	}
@@ -515,6 +517,10 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		height = _desiredFullscreenHeight;
 
 		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+	}
+
+	if (ConfMan.getBool("window_maximized", Common::ConfigManager::kApplicationDomain)) {
+		flags |= SDL_WINDOW_MAXIMIZED;
 	}
 
 	// Request a OpenGL (ES) context we can use.
