@@ -199,7 +199,9 @@ def FilterUltima(src):
 
 
 def FilterGrim(src):
+   src += ["#if !defined(WINS)"]
    src += ["SOURCE   movie/codecs/blocky8ARM.s"]
+   src += ["#endif"]
    return src
 
 
