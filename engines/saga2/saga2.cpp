@@ -126,6 +126,7 @@ Saga2Engine::~Saga2Engine() {
 	delete _properties;
 	delete _aTaskList;
 	delete _grandMasterFTA;
+	delete _containerList;
 }
 
 Common::Error Saga2Engine::run() {

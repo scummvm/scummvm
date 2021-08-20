@@ -1761,7 +1761,6 @@ void cleanupContainers(void) {
 
 	selImage = NULL;
 	containerRes = NULL;
-	delete g_vm->_containerList;
 }
 
 void initContainerNodes(void) {
@@ -1845,6 +1844,9 @@ void loadContainerNodes(Common::InSaveFile *in) {
 }
 
 void cleanupContainerNodes(void) {
+	if (g_vm->_containerList == nullptr)
+		return;
+
 	Common::Array<ContainerNode *> deletionArray;
 
 	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {

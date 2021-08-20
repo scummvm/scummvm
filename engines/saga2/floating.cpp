@@ -238,8 +238,11 @@ void DecoratedWindow::removeDecorations(void) {
 		g_vm->_imageCache->releaseImage(dec->image);
 	}
 
-	if (decorations)
+	if (decorations) {
 		delete[] decorations;
+		decorations = nullptr;
+	}
+
 	numDecorations = 0;
 }
 
