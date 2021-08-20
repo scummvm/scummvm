@@ -50,12 +50,6 @@ typedef Common::Array<Action*> Actions;
 class Hotspot;
 typedef Common::Array<Hotspot> Hotspots;
 
-class Scene {
-  public:
-	Hotspots hots;
-	Common::String sound;
-};
-
 typedef Common::Array<Hotspots *> HotspotsStack;
 
 class MVideo {
@@ -189,21 +183,36 @@ class ShootInfo {
 typedef Common::List<ShootInfo> ShootSequence;
 typedef Common::List<Common::String> Sounds;
 
+class Transition {
+  public:
+	Common::String level;
+	Videos intros;
+};
+
+class Scene {
+  public:
+    Common::String intro;
+    Common::String prefix;
+	Hotspots hots;
+	Common::String sound;
+};
+
 class ArcadeShooting {
   public:
+    Common::String intro;
+	Common::String prefix;
 	Common::String background;
 	Common::String player;
 	int health;
 	Shoots shoots;
 	ShootSequence shootSequence;
 	Sounds sounds;
-    ~ArcadeShooting() { };
 };
 
 class Level {
   public:
+    Transition trans;
 	Scene scene;
-	Videos intros;
 	ArcadeShooting arcade;
 };
 

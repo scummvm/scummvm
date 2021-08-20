@@ -7,7 +7,7 @@ SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEn
 
 void SpiderEngine::loadAssets() {
 	LibData files; 
-	loadLib("c_misc/missions.lib", files);
+	loadLib("sixdemo/c_misc/missions.lib", files);
 	uint32 i = 0;
 	uint32 j = 0;
 
@@ -29,43 +29,47 @@ void SpiderEngine::loadAssets() {
 	}
 
 	Common::String arclevel = files[0].name; 
-	parseArcadeShooting(arclevel, arc);
+	parseArcadeShooting("sixdemo", arclevel, arc);
 	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
 
-	loadLib("c_misc/fonts.lib", _fontFiles);
-	loadLib("c_misc/sound.lib", _soundFiles);
-	loadLib("demo/sound.lib", _soundFiles);
+	loadLib("sixdemo/c_misc/fonts.lib", _fontFiles);
+	loadLib("sixdemo/c_misc/sound.lib", _soundFiles);
+	loadLib("sixdemo/demo/sound.lib", _soundFiles);
+
+	// start level
+	Level start;
+	start.trans.level = "sixdemo/mis/demo.mis";
+	start.trans.intros.push_back(MVideo("sixdemo/demo/dcine1.smk", Common::Point(0, 0), false, true, false));
+	start.trans.intros.push_back(MVideo("sixdemo/demo/dcine2.smk", Common::Point(0, 0), false, true, false));
+	_levels["<start>"] = start;
 
 	// quit level
 	Hotspot q;
 	q.type = MakeMenu;
 	Action *a = new Quit();
 	q.actions.push_back(a);
-	Level level;
-	Hotspots quit;
-	quit.push_back(q);
-	level.scene.hots = quit;  
-	_levels["mis/quit.mis"] = level;
+	Level quit;
+	Hotspots hs;
+	hs.push_back(q);
+	quit.scene.hots = hs;  
+	_levels["<quit>"] = quit;
 
 	// Read assets from mis files
-	parseScene("mis/demo.mis");
-	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine1.smk", Common::Point(0, 0), false, true, false));
-	_levels["mis/demo.mis"].intros.push_back(MVideo("demo/dcine2.smk", Common::Point(0, 0), false, true, false));
-	_levels["mis/demo.mis"].scene.hots[1].setting = "c_misc/missions.lib/c1.mi_";
-	_levels["mis/demo.mis"].scene.hots[2].setting = "mis/alley.mis";
+	parseScene("sixdemo", "mis/demo.mis");
+	_levels["sixdemo/mis/demo.mis"].scene.hots[1].setting = "sixdemo/c_misc/missions.lib/c1.mi_";
+	_levels["sixdemo/mis/demo.mis"].scene.hots[2].setting = "sixdemo/mis/alley.mis";
 
-	_levels["mis/demo.mis"].scene.hots[4].setting = "mis/shoctalk.mis";
-	_levels["mis/demo.mis"].scene.hots[5].setting = "mis/order.mis";
-	_levels["mis/demo.mis"].scene.sound = "demo/sound.lib/menu_mus.raw";
+	_levels["sixdemo/mis/demo.mis"].scene.hots[4].setting = "sixdemo/mis/shoctalk.mis";
+	_levels["sixdemo/mis/demo.mis"].scene.hots[5].setting = "sixdemo/mis/order.mis";
+	_levels["sixdemo/mis/demo.mis"].scene.sound = "sixdemo/demo/sound.lib/menu_mus.raw";
 
-	parseScene("mis/order.mis");
-	_levels["mis/order.mis"].scene.hots[1].setting = "mis/quit.mis";
-	parseScene("mis/alley.mis");
-	_levels["mis/alley.mis"].intros.push_back(MVideo("demo/aleyc01s.smk", Common::Point(0, 0), false, true, false));
-	_levels["mis/alley.mis"].scene.sound = "demo/sound.lib/alleymus.raw";
+	parseScene("sixdemo", "mis/order.mis");
+	_levels["sixdemo/mis/order.mis"].scene.hots[1].setting = "sixdemo/mis/quit.mis";
+	parseScene("sixdemo", "mis/alley.mis");
+	_levels["sixdemo/mis/alley.mis"].scene.intro = "demo/aleyc01s.smk";
+	_levels["sixdemo/mis/alley.mis"].scene.sound = "sixdemo/demo/sound.lib/alleymus.raw";
 
-	parseScene("mis/shoctalk.mis");
-	_nextSetting = "mis/demo.mis";
+	parseScene("sixdemo", "mis/shoctalk.mis");
 }
 
 

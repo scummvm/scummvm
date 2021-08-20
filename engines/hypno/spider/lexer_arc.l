@@ -60,7 +60,7 @@ F[0-9]						return FNTOK;
 F							return FTOK;
 S[0-9]						return SNTOK;
 A0							return A0TOK;
-B[0-9]						return BNTOK;
+B[0-9]						HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return BNTOK;
 K0							return K0TOK;
 P0							return P0TOK;
 YB							return YBTOK;

@@ -95,8 +95,8 @@ public:
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
 	virtual void loadAssets();
-	void parseScene(Common::String filename);
-	void parseArcadeShooting(Common::String name, Common::String data);
+	void parseScene(Common::String prefix, Common::String filename);
+	void parseArcadeShooting(Common::String prefix, Common::String name, Common::String data);
 	ShootSequence parseShootList(Common::String name, Common::String data);
 	void loadLib(Common::String filename, LibData &r);
 	Common::HashMap<Common::String, Common::String> _assets;
@@ -124,6 +124,7 @@ public:
 
 	void syncGameStream(Common::Serializer &s);
 
+	Common::String _prefixDir;
 	Common::String convertPath(const Common::String &);
 	void playVideo(MVideo &video);
 	void skipVideo(MVideo &video);
@@ -133,6 +134,7 @@ public:
 	void drawImage(Graphics::Surface &image, int x, int y, bool transparent);
 
 	// Cursors
+	void disableCursor();
 	void defaultCursor();
 	void changeCursor(const Common::String &, uint32);
 
@@ -164,8 +166,8 @@ public:
 	Common::HashMap<Common::String, Videos> _intros;
 
 	// settings 
-	Common::String _nextSetting;
-	Common::String _currentSetting;
+	Common::String _nextLevel;
+	Common::String _currentLevel;
 
 	// hotspots
 	Hotspots *_nextHotsToAdd;
