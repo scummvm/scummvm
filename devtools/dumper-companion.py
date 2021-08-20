@@ -231,20 +231,27 @@ def extract_volume(args: argparse.Namespace) -> int:
     return 0
 
 
-def punyencode_paths(paths: List[Path]) -> None:
+def punyencode_paths(paths: List[Path], verbose: bool = False) -> int:
     """Rename filepaths to their punyencoded names"""
+    count = 0
     for path in paths:
         new_name = punyencode(path.stem)
         if path.stem != new_name:
-            path.rename(path.parent / new_name)
+            count += 1
+            new_path = path.parent / new_name
+            if verbose:
+                print(f"Renamed {path} to {new_path}")
+            path.rename(new_path)
+    return count
 
 
 def punyencode_arg(args: argparse.Namespace) -> int:
     """wrapper function"""
-    return punyencode_dir(args.dir)
+    punyencode_dir(args.dir)
+    return 0
 
 
-def punyencode_dir(directory: Path) -> int:
+def punyencode_dir(directory: Path, verbose: bool = False) -> int:
     """
     Recursively punyencode all directory and filenames
 
@@ -260,9 +267,9 @@ def punyencode_dir(directory: Path) -> int:
 
     dirs.reverse()  # start renaming with the one at the bottom
 
-    punyencode_paths(files)
-    punyencode_paths(dirs)
-    return 0
+    renamed_files = punyencode_paths(files, verbose=verbose)
+    punyencode_paths(dirs, verbose=verbose)
+    return renamed_files
 
 
 def has_resource_fork(dirpath: str, filename: str) -> bool:
@@ -297,15 +304,6 @@ def collect_forks(args: argparse.Namespace) -> int:
                 filepath = os.path.join(dirpath, filename)
                 resourcepath = os.path.join(dirpath, resource_filename)
 
-                if punify:
-                    tmp = punyencode(to_filename)
-                    if tmp != to_filename:
-                        print(f"Renamed {to_filename} to {tmp}")
-                        count_renames += 1
-                    to_filename = tmp
-
-                to_filepath = os.path.join(dirpath, filename)
-
                 file = machfs.File()
 
                 # Set the file times and convert them to Mac epoch
@@ -326,25 +324,18 @@ def collect_forks(args: argparse.Namespace) -> int:
                     file.rsrc = rsrc.read()
                 with open(filepath, "rb") as data:
                     file.data = data.read()
-                with open(to_filepath, "wb") as to_file:
+                with open(filepath, "wb") as to_file:
                     to_file.write(file_to_macbin(file, to_filename.encode("mac_roman")))
 
                     if to_filename != filename:
                         os.remove(filepath)  # Remove the original file
 
                     os.utime(
-                        to_filepath,
+                        filepath,
                         (info.st_mtime, info.st_mtime),
                     )
-            elif punify:
-                punified_filename = punyencode(filename)
-                if punified_filename != filename:
-                    print(f"Renamed {to_filename} to {punified_filename}")
-                    count_renames += 1
-                    os.rename(
-                        os.path.join(dirpath, tmp),
-                        os.path.join(dirpath, punified_filename),
-                    )
+    if punify:
+        count_renames = punyencode_dir(directory)
 
     print(f"Macbinary {count_resources}, Renamed {count_renames} files")
     return 0
