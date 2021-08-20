@@ -343,6 +343,7 @@ void displayUpdate(void) {
 		updateIndicators();
 
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (delayReDraw)
 			reDrawScreen();
@@ -410,6 +411,7 @@ void SystemEventLoop(void) {
 	}
 
 	g_system->updateScreen();
+	g_system->delayMillis(10);
 }
 
 /********************************************************************/

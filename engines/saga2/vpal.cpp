@@ -229,6 +229,7 @@ bool updatePalette() {
 			assertCurrentPalette();
 
 			g_system->updateScreen();
+			g_system->delayMillis(10);
 		}
 		return true;
 	}
