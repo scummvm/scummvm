@@ -39,8 +39,6 @@ namespace Saga2 {
 
 static bool calenderPaused;
 
-const int dayBias = CalenderTime::framesAtNoon / 6;
-
 /* ===================================================================== *
    Constants
  * ===================================================================== */
@@ -90,20 +88,20 @@ void CalenderTime::write(Common::MemoryWriteStreamDynamic *out) {
 void CalenderTime::update(void) {
 	const char *text = NULL;
 
-	if (++frameInHour >= framesPerHour) {
+	if (++frameInHour >= kFramesPerHour) {
 		frameInHour = 0;
 
-		if (++hour >= hoursPerDay) {
+		if (++hour >= kHoursPerDay) {
 			hour = 0;
 
 			days++;
 
-			if (++dayInWeek >= daysPerWeek) {
+			if (++dayInWeek >= kDaysPerWeek) {
 				dayInWeek = 0;
 				weeks++;
 			}
 
-			if (++dayInYear >= daysPerYear) {
+			if (++dayInYear >= kDaysPerYear) {
 				dayInYear = 0;
 				years++;
 			}
@@ -141,31 +139,31 @@ int CalenderTime::lightLevel(int maxLevel) {
 	            solarLevel;
 
 	//  solarAngle equals starts at 0 at midnight, then linearly
-	//  grows to 'framesAtNoon' at noon, then shrinks
+	//  grows to 'kFramesAtNoon' at noon, then shrinks
 	//  back to 0 at midnight again.
-	solarAngle =    framesAtNoon
-	                -   ABS(frameInDay() - framesAtNoon);
+	solarAngle =    kFramesAtNoon
+	                -   ABS(frameInDay() - kFramesAtNoon);
 
 	//  Just for fun, we'll make the days longer in the summer,
 	//  and shorter the winter. The calculation produces a number
-	//  which equals daysPerYear/4 in summer, and -daysperYear/4
+	//  which equals kDaysPerYear/4 in summer, and -daysperYear/4
 	//  in winter.
-	season = daysPerYear / 4 - ABS(dayInYear - daysPerYear / 2);
+	season = kDaysPerYear / 4 - ABS(dayInYear - kDaysPerYear / 2);
 
 	//  Convert season to an extra hour of daylight in summer,
 	//  and an extra hour of night in winter. (That's an extra
 	//  hour in the morning AND in the evening.
-	season = season * framesPerHour / (daysPerYear / 4);
+	season = season * kFramesPerHour / (kDaysPerYear / 4);
 
-	//  This produces a triangle wave that goes from -framesAtNoon/3
-	//  to framesAtNoon*2/3. Then we clip off the part of the
+	//  This produces a triangle wave that goes from -kFramesAtNoon/3
+	//  to kFramesAtNoon*2/3. Then we clip off the part of the
 	//  curve below zero, and above 1/3, giving 1/3 night,
 	//  1/6 morning, 1/3 day, and 1/6 evening.
-	solarLevel = clamp(g_vm->_showNight ? /* 0 */ (dayBias * 5 / 4) : (framesAtNoon / 3),
-	                   solarAngle * 2 + season - framesAtNoon / 3 + dayBias * 2,
-	                   framesAtNoon / 3);
+	solarLevel = clamp(g_vm->_showNight ? /* 0 */ (kDayBias * 5 / 4) : (kFramesAtNoon / 3),
+	                   solarAngle * 2 + season - kFramesAtNoon / 3 + kDayBias * 2,
+	                   kFramesAtNoon / 3);
 
-	return (solarLevel * maxLevel) / (framesAtNoon / 3);
+	return (solarLevel * maxLevel) / (kFramesAtNoon / 3);
 }
 
 /* ===================================================================== *
@@ -190,12 +188,12 @@ void FrameAlarm::set(uint16 dur) {
 bool FrameAlarm::check(void) {
 	uint16      frameInDay = calender.frameInDay();
 
-	return  baseFrame + duration < CalenderTime::framesPerDay
+	return  baseFrame + duration < CalenderTime::kFramesPerDay
 	        ?   frameInDay >= baseFrame + duration
 	        :       frameInDay < baseFrame
 	        &&  frameInDay >=       baseFrame
 	        +   duration
-	        -   CalenderTime::framesPerDay;
+	        -   CalenderTime::kFramesPerDay;
 }
 
 // time elapsed since alarm set
@@ -203,11 +201,11 @@ bool FrameAlarm::check(void) {
 uint16 FrameAlarm::elapsed(void) {
 	uint16      frameInDay = calender.frameInDay();
 
-	return  baseFrame + duration < CalenderTime::framesPerDay
+	return  baseFrame + duration < CalenderTime::kFramesPerDay
 	        ?   frameInDay - baseFrame
 	        :   frameInDay >= baseFrame
 	        ?   frameInDay - baseFrame
-	        :   frameInDay + CalenderTime::framesPerDay - baseFrame;
+	        :   frameInDay + CalenderTime::kFramesPerDay - baseFrame;
 }
 
 /* ===================================================================== *
@@ -242,11 +240,11 @@ uint32 operator - (const CalenderTime &time1, const CalenderTime &time2) {
 	uint32      time1Frame,
 	            time2Frame;
 
-	time1Frame =    time1.days * CalenderTime::framesPerDay
-	                +   time1.hour * CalenderTime::framesPerHour
+	time1Frame =    time1.days * CalenderTime::kFramesPerDay
+	                +   time1.hour * CalenderTime::kFramesPerHour
 	                +   time1.frameInHour;
-	time2Frame =    time2.days * CalenderTime::framesPerDay
-	                +   time2.hour * CalenderTime::framesPerHour
+	time2Frame =    time2.days * CalenderTime::kFramesPerDay
+	                +   time2.hour * CalenderTime::kFramesPerHour
 	                +   time2.frameInHour;
 
 	return time1Frame - time2Frame;

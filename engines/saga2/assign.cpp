@@ -33,7 +33,7 @@
 
 namespace Saga2 {
 
-const uint16 indefinitely = CalenderTime::framesPerDay;
+const uint16 indefinitely = CalenderTime::kFramesPerDay;
 
 /* ===================================================================== *
    ActorAssignment member functions

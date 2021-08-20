@@ -37,17 +37,19 @@ class CalenderTime {
 public:
 	enum {
 		//  Basic constants
-		daysPerWeek     = 7,
-		daysPerYear     = 365,
-		hoursPerDay     = 24,
-		realMinutesPerDay = 30,
+		kDaysPerWeek     = 7,
+		kDaysPerYear     = 365,
+		kHoursPerDay     = 24,
+		kRealMinutesPerDay = 30,
 
 		//  Number of animation frames per day
-		framesPerDay    = 10 * 60 * realMinutesPerDay,
+		kFramesPerDay    = 10 * 60 * kRealMinutesPerDay,
 
 		//  Derived variables
-		framesPerHour   = (framesPerDay / hoursPerDay),
-		framesAtNoon    = (framesPerDay / 2)
+		kFramesPerHour   = (kFramesPerDay / kHoursPerDay),
+		kFramesAtNoon    = (kFramesPerDay / 2),
+
+		kDayBias = kFramesAtNoon / 6
 	};
 
 	uint16      years,
@@ -65,7 +67,7 @@ public:
 	int lightLevel(int maxLevel);
 
 	uint16 frameInDay(void) {
-		return hour * framesPerHour + frameInHour;
+		return hour * kFramesPerHour + frameInHour;
 	}
 };
 
