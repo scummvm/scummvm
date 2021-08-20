@@ -197,15 +197,28 @@ def FilterUltima(src):
    print "Exclude nuvie and ultima4 engines from detection_tables.h and detection.cpp!"
    return src
 
+
 def FilterGrim(src):
    src += ["SOURCE   movie/codecs/blocky8ARM.s"]
    return src
+
+
+def FilterScumm(src):
+   src += ["#if !defined(WINS)"]
+   src += ["SOURCE   proc3ARM.s"]
+   src += ["SOURCE   gfxARM.s"]
+   src += ["SOURCE   smush/codec47ARM.s"]
+   src += ["#endif"]
+   return src
+
 
 def FilterSrcs(src, engine):
    if "grim" in engine:
       return FilterGrim(src)
    if "ultima" in engine:
       return FilterUltima(src)
+   if "scumm" in engine:
+      return FilterScumm(src)
    # if "" in engine:
       # return Filter(src)
    return src
