@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-20 17:28+0000\n"
+"POT-Creation-Date: 2021-08-20 19:13+0000\n"
 "PO-Revision-Date: 2021-08-16 17:52+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -4698,7 +4698,7 @@ msgstr "Sortie rapide d'une pièce"
 msgid "Examine/Look"
 msgstr "Examiner/Regarder"
 
-#: engines/grim/grim.cpp:1330
+#: engines/grim/grim.cpp:1337
 msgid "Error: the game could not be saved."
 msgstr "Erreur : le jeu n'a pas été sauvegardé."
 

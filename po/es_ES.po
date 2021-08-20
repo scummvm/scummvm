@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-20 17:28+0000\n"
+"POT-Creation-Date: 2021-08-20 19:13+0000\n"
 "PO-Revision-Date: 2021-08-16 14:59+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4695,7 +4695,7 @@ msgstr "Salida rápida de habitación"
 msgid "Examine/Look"
 msgstr "Examinar/Mirar"
 
-#: engines/grim/grim.cpp:1330
+#: engines/grim/grim.cpp:1337
 msgid "Error: the game could not be saved."
 msgstr "Error: no se pudo guardar la partida."
 
