@@ -247,6 +247,7 @@ def MakeMMP(engine):
    staticlib = tt[1]
 
    src = processModule_mk(pth, macrolist)
+   src = ProcessDup(src)
    src = FilterSrcs(src, engine)
 
    mmp = """TARGET scummvm_%s.lib
@@ -264,8 +265,6 @@ SOURCEPATH   ..\..\..\..\engines\%s\n
    mmp = CheckEngine(mmp, engine)
    if mmp is None:
       return
-
-   src = ProcessDup(src)
 
    plugins_table = """
 #if PLUGIN_ENABLED_STATIC(%s)
