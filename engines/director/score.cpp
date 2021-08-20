@@ -630,6 +630,17 @@ void Score::renderVideo() {
 	}
 }
 
+void Score::updateWidget() {
+	for (uint16 i = 0; i < _channels.size(); i++) {
+		Channel *channel = _channels[i];
+		CastMember *cast = channel->_sprite->_cast;
+		if (cast && cast->_type != kCastDigitalVideo && cast->isModified()) {
+			channel->replaceWidget();
+			_window->addDirtyRect(channel->getBbox());
+		}
+	}
+}
+
 void Score::screenShot() {
 	Graphics::Surface rawSurface = _window->getSurface()->rawSurface();
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);

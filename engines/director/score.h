@@ -114,6 +114,7 @@ public:
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderCursor(Common::Point pos, bool forceUpdate = false);
 	void renderVideo();
+	void updateWidget();
 
 	void playSoundChannel(uint16 frameId);
 
