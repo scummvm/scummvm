@@ -737,7 +737,7 @@ void Scene::processActorZones(int32 actorIdx) {
 					destPos.x += _engine->_movements->_processActor.x;
 					destPos.z += _engine->_movements->_processActor.z;
 
-					if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= 0x7E00 && destPos.z <= 0x7E00) {
+					if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= 0x7E00 && destPos.z <= 0x7E00) { // SCENE_SIZE_MAX
 						if (_engine->_grid->getBrickShape(destPos.x, actor->_pos.y + ANGLE_90, destPos.z) != ShapeType::kNone) {
 							_currentActorInZone = true;
 							if (actor->_pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
