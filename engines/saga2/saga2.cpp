@@ -35,6 +35,7 @@
 #include "saga2/saga2.h"
 #include "saga2/fta.h"
 
+#include "saga2/audio.h"
 #include "saga2/band.h"
 #include "saga2/beegee.h"
 #include "saga2/contain.h"
@@ -43,6 +44,7 @@
 #include "saga2/imagcach.h"
 #include "saga2/mouseimg.h"
 #include "saga2/motion.h"
+#include "saga2/music.h"
 #include "saga2/panel.h"
 #include "saga2/spelshow.h"
 
@@ -63,6 +65,8 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 
 	_console = nullptr;
 	_renderer = nullptr;
+	_audio = nullptr;
+
 	_bandList = nullptr;
 	_mouseInfo = nullptr;
 	_smkDecoder = nullptr;
@@ -74,6 +78,8 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_autoWeapon = true;
 	_showNight = true;
 	_speechText = true;
+	_speechVoice = true;
+
 	_showPosition = false;
 	_showStats = false;
 	_teleportOnClick = false;
@@ -154,7 +160,8 @@ bool Saga2Engine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsSubtitleOptions);
 }
 
 Common::Error Saga2Engine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -209,6 +216,23 @@ Common::Error Saga2Engine::loadGameState(int slot) {
 	loadGame(slot);
 
 	return Common::kNoError;
+}
+
+void Saga2Engine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_speechText = true;
+
+	if (ConfMan.hasKey("subtitles"))
+		_speechText = ConfMan.getBool("subtitles");
+
+	_speechVoice = true;
+
+	if (ConfMan.hasKey("speech_mute"))
+		_speechVoice = !ConfMan.getBool("speech_mute");
+
+	if (_audio)
+		_audio->_music->syncSoundSettings();
 }
 
 void Saga2Engine::syncGameStream(Common::Serializer &s) {
@@ -354,11 +378,6 @@ void Saga2Engine::readConfig() {
 
 	if (ConfMan.hasKey("show_night"))
 		_showNight = ConfMan.getBool("show_night");
-
-	_speechText = true;
-
-	if (ConfMan.hasKey("subtitles"))
-		_speechText = ConfMan.getBool("subtitles");
 
 	syncSoundSettings();
 }
