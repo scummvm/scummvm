@@ -2139,7 +2139,7 @@ int SeqPlayer_HOF::cbHOF_zanfaun(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 	case 26:
 		if (_vm->gameFlags().isTalkie && !_vm->textEnabled()) {
-			while (!(_vm->shouldQuit() || _vm->skipFlag()) && _vm->sound()->voiceIsPlaying());
+			while (!(_vm->shouldQuit() || _vm->skipFlag()) && _vm->sound()->voiceIsPlaying())
 				delayTicks(1);
 		} else {
 			waitForSubTitlesTimeout();
