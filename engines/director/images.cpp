@@ -267,13 +267,23 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 					break;
 
 				case 16:
-					convertPixelIntoSurface(_surface->getBasePtr(x, y),
-						(_bitsPerPixel / 8),
-						_surface->format.bytesPerPixel,
-						(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
-						(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
-						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
-						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
+					if (_version < kFileVer400) {
+						convertPixelIntoSurface(_surface->getBasePtr(x, y),
+							(_bitsPerPixel / 8),
+							_surface->format.bytesPerPixel,
+							(pixels[((y * _surface->w) * 2) + x * 2] & 0x7c) << 1,
+							(pixels[((y * _surface->w) * 2) + x * 2] & 0x03) << 6 |
+							(pixels[((y * _surface->w) * 2) + x * 2 + 1] & 0xe0) >> 2,
+							(pixels[((y * _surface->w) * 2) + x * 2 + 1] & 0x1f) << 3);
+					} else {
+						convertPixelIntoSurface(_surface->getBasePtr(x, y),
+							(_bitsPerPixel / 8),
+							_surface->format.bytesPerPixel,
+							(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
+							(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
+							(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
+							(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
+					}
 					x++;
 					break;
 
