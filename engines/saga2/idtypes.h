@@ -250,6 +250,7 @@ typedef uint8       ColorTable[256];
 const int   kNumViews    = 3;
 
 enum {
+	kNullWeapon = 0,
 	kMaxWeapons = 256
 };
 
