@@ -2291,7 +2291,6 @@ void LB::b_updateStage(int nargs) {
 
 	Score *score = movie->getScore();
 
-	score->renderSprites(score->getCurrentFrame());
 	if (movie->_videoPlayback)
 		score->renderVideo();
 
