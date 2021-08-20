@@ -7,7 +7,7 @@ WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(s
 
 void WetEngine::loadAssets() {
 	LibData files; 
-	loadLib("c_misc/missions.lib", files);
+	loadLib("wetlands/c_misc/missions.lib", files);
 	uint32 i = 0;
 	uint32 j = 0;
 
@@ -28,13 +28,20 @@ void WetEngine::loadAssets() {
 		}
 	}
 
-	Common::String arclevel = files[0].name; 
-	parseArcadeShooting(arclevel, arc);
-	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
+	Level start;
+	start.trans.level = "wetlands/c_misc/missions.lib/c31.mi_";
+	start.trans.intros.push_back(MVideo("movie/nw_logo.smk", Common::Point(0, 0), false, true, false));
+	start.trans.intros.push_back(MVideo("movie/hypnotix.smk", Common::Point(0, 0), false, true, false));
+	start.trans.intros.push_back(MVideo("movie/wetlogo.smk", Common::Point(0, 0), false, true, false));
+	_levels["<start>"] = start;
 
-	loadLib("c_misc/fonts.lib", _fontFiles);
-	loadLib("c_misc/sound.lib", _soundFiles);
-	_nextSetting = "c_misc/missions.lib/c31.mi_";
+	Common::String arclevel = files[0].name; 
+	parseArcadeShooting("wetlands", arclevel, arc);
+	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
+	_levels[arclevel].arcade.prefix = "wetlands";
+
+	loadLib("wetlands/c_misc/fonts.lib", _fontFiles);
+	loadLib("wetlands/c_misc/sound.lib", _soundFiles);
 }
 
 } // End of namespace Hypno

@@ -68,6 +68,11 @@ static const CursorTable cursorTable[] = {
 	{ nullptr,      nullptr, nullptr,           0,  0,  0,  0  }
 };
 
+
+void HypnoEngine::disableCursor() {
+	CursorMan.showMouse(false);
+}
+
 void HypnoEngine::defaultCursor() {
 
 	const CursorTable *entry = cursorTable;

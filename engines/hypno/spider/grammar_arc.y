@@ -57,14 +57,14 @@ using namespace Hypno;
 	int i;	 /* integer value */
 }
 
-%token<s> NAME FILENAME
+%token<s> NAME FILENAME BNTOK
 %token<i> NUM
 // header
 %token YBTOK YMTOK CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
 %token PTOK FTOK TTOK ATOK VTOK OTOK NTOK RTOK ITOK SNTOK ZTOK
 
 // body
-%token FNTOK NONETOK A0TOK BNTOK K0TOK P0TOK WTOK
+%token FNTOK NONETOK A0TOK K0TOK P0TOK WTOK
 
 // end
 %token XTOK
@@ -105,6 +105,9 @@ hline:  CTOK NUM  { debug("C %d", $2); }
 		}
 	  | QTOK NUM NUM { debug("Q %d %d", $2, $3); }
 	  | BNTOK FILENAME {
+		  if (Common::String("B0") == $1)
+		  	g_parsedArc.intro = $2;
+		 	
 		  debug("BN %s", $2); 
 		}
 	  | SNTOK FILENAME enc {
@@ -149,7 +152,9 @@ bline: FNTOK FILENAME {
 		 debug("A0 %d %d", $2, $3); 
 		}
 	 | RTOK NUM NUM  { debug("R %d %d", $2, $3); }
-	 | BNTOK NUM NUM { debug("BN %d %d", $2, $3); }
+	 | BNTOK NUM NUM { 
+
+		 debug("BN %d %d", $2, $3); }
 	 | K0TOK NUM NUM { 
 		 shoot->explosionFrame = $3;
 		 debug("K0 %d %d", $2, $3);

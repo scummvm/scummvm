@@ -105,9 +105,11 @@ void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
 }
 
-void HypnoEngine::parseScene(Common::String filename) {
+void HypnoEngine::parseScene(Common::String prefix, Common::String filename) {
 	debug("Parsing %s", filename.c_str());
     filename = convertPath(filename);
+	if (!prefix.empty())
+		filename = prefix + "/" + filename; 
 	Common::File *test = new Common::File();
 	assert(isDemo());
     assert(test->open(filename.c_str()));
@@ -118,6 +120,7 @@ void HypnoEngine::parseScene(Common::String filename) {
 	buf[fileSize] = '\0';
 	parse_mis(buf);
 	Level level;
+	level.scene.prefix = prefix;
 	level.scene.hots = *g_parsedHots; 
 	_levels[filename] = level;
 	debug("Loaded hots size: %d", g_parsedHots->size());
@@ -205,10 +208,11 @@ ShootSequence HypnoEngine::parseShootList(Common::String name, Common::String da
 
 }
 
-void HypnoEngine::parseArcadeShooting(Common::String name, Common::String data) {
+void HypnoEngine::parseArcadeShooting(Common::String prefix, Common::String name, Common::String data) {
 	parse_arc(data.c_str());
 	Level level;
 	level.arcade = g_parsedArc;  
+	level.arcade.prefix = prefix;
 	_levels[name] = level;
 	g_parsedArc.background.clear();
 	g_parsedArc.player.clear();
@@ -245,16 +249,17 @@ Common::Error HypnoEngine::run() {
 		_nextSetting = getGoIntroSetting();
 	}*/
 	loadAssets();
+	_nextLevel = "<start>";
 	while (!shouldQuit()) {
+		_prefixDir = "";
 		resetLevelState();
 		_videosPlaying.clear();
-		if (!_nextSetting.empty()) {
-			debug("Executing setting %s", _nextSetting.c_str());
-			_currentSetting = _nextSetting;
-			_nextSetting = "";
-			runLevel(_currentSetting);
+		if (!_nextLevel.empty()) {
+			debug("Executing level %s", _nextLevel.c_str());
+			_currentLevel = _nextLevel;
+			_nextLevel = "";
+			runLevel(_currentLevel);
 		}
-		_levels["mis/demo.mis"].intros.clear();
 			
 	}
 	return Common::kNoError;
@@ -265,14 +270,28 @@ void HypnoEngine::runLevel(Common::String name) {
 	stopSound();
 	_music = "";
 
-	for (Videos::iterator it = _levels[name].intros.begin(); it != _levels[name].intros.end(); ++it)
-		runIntro(*it);
+	disableCursor();
 
-	if (_levels[name].scene.hots.size() == 0) {
+	if (!_levels[name].trans.level.empty()) {
+		_nextLevel = _levels[name].trans.level;
+		for (Videos::iterator it = _levels[name].trans.intros.begin(); it != _levels[name].trans.intros.end(); ++it)
+			runIntro(*it);
+
+	} else if (!_levels[name].arcade.background.empty()) {
+		_prefixDir = _levels[name].arcade.prefix;
+		if (!_levels[name].arcade.intro.empty()) {
+			MVideo v(_levels[name].arcade.intro, Common::Point(0,0), false, true, false);
+			runIntro(v);
+		}
 		changeScreenMode("arcade");
 		runArcade(_levels[name].arcade);
 	} else {
-		changeScreenMode("scene");
+		_prefixDir = _levels[name].scene.prefix;
+		if (!_levels[name].scene.intro.empty()) {
+			MVideo v(_levels[name].scene.intro , Common::Point(0,0), false, true, false);
+			runIntro(v);
+		}
+		changeScreenMode("scene"); 
 		runScene(_levels[name].scene);
 	}
 
@@ -289,7 +308,7 @@ void HypnoEngine::runScene(Scene scene) {
 	_nextHotsToAdd = &scene.hots;	
 	changeCursor("mouse/cursor1.smk", 0);
 
-	while (!shouldQuit() && _nextSetting.empty()) {
+	while (!shouldQuit() && _nextLevel.empty()) {
 		
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -435,7 +454,7 @@ void HypnoEngine::runScene(Scene scene) {
 
 
 		if (checkLevelCompleted())
-			_nextSetting = "mis/demo.mis";
+			_nextLevel = "mis/demo.mis";
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
@@ -614,7 +633,7 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 		}
 
 		if (!selected.setting.empty())
-			_nextSetting = selected.setting;
+			_nextLevel = selected.setting;
 
 		debug("hotspot clicked actions size: %d", selected.actions.size());
 		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
@@ -691,6 +710,8 @@ void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transpar
 Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, bool convert) {
 	Common::File *file = new Common::File();
 	Common::String path = convertPath(name);
+	if (!_prefixDir.empty())
+		path = _prefixDir + "/" + path;
 
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());
@@ -790,6 +811,8 @@ void HypnoEngine::playVideo(MVideo &video) {
 	debug("video.path: %s", video.path.c_str());
 	Common::File *file = new Common::File();
 	Common::String path = convertPath(video.path);
+	if (!_prefixDir.empty())
+		path = _prefixDir + "/" + path;
 
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());

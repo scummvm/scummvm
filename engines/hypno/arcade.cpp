@@ -64,7 +64,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 
 		if (background.decoder->endOfVideo() || _health < 0) {
 			skipVideo(background);
-			_nextSetting = "mis/demo.mis";
+			_nextLevel = "mis/demo.mis";
 			return;
 		}
 
