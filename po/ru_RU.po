@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-18 21:39+0000\n"
+"POT-Creation-Date: 2021-08-19 23:25+0000\n"
 "PO-Revision-Date: 2021-08-16 13:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -273,7 +273,7 @@ msgid "Engine"
 msgstr "Движок"
 
 #: gui/editgamedialog.cpp:207 gui/options.cpp:1781 gui/options.cpp:1938
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Graphics"
 msgstr "Графика"
 
@@ -1036,7 +1036,7 @@ msgstr "Режим растягивания:"
 msgid "Scaler:"
 msgstr "Увеличение:"
 
-#: gui/options.cpp:1439 backends/graphics/sdl/sdl-graphics.cpp:416
+#: gui/options.cpp:1439 backends/graphics/sdl/sdl-graphics.cpp:409
 msgid "Fullscreen mode"
 msgstr "Полноэкранный режим"
 
@@ -2841,29 +2841,29 @@ msgstr "Поверхность SDL"
 msgid "Active graphics filter:"
 msgstr "Активный графический фильтр:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:368
+#: backends/graphics/sdl/sdl-graphics.cpp:361
 #, c-format
 msgid "Saved screenshot '%s'"
 msgstr "Сохранён скриншот '%s'"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:377
+#: backends/graphics/sdl/sdl-graphics.cpp:370
 msgid "Could not save screenshot"
 msgstr "Не удалось сохранить скриншот"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:411
 msgid "Windowed mode"
 msgstr "Оконный режим"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:422 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Переключение на весь экран"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:961
 msgid "Toggle mouse capture"
 msgstr "Переключение перехвата мыши"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:434
 #: engines/wintermute/keymapper_tables.h:647
 #: engines/wintermute/keymapper_tables.h:696
 #: engines/wintermute/keymapper_tables.h:1099
@@ -2876,31 +2876,31 @@ msgstr "Переключение перехвата мыши"
 msgid "Save screenshot"
 msgstr "Сохранить скриншот"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:440
 msgid "Toggle aspect ratio correction"
 msgstr "Переключение коррекции соотношения сторон"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Toggle linear filtered scaling"
 msgstr "Использовать линейное сглаживание при масштабировании"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:461
+#: backends/graphics/sdl/sdl-graphics.cpp:454
 msgid "Cycle through stretch modes"
 msgstr "Переключение режима растягивания"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:467
+#: backends/graphics/sdl/sdl-graphics.cpp:460
 msgid "Increase the scale factor"
 msgstr "Увеличить масштаб"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:473
+#: backends/graphics/sdl/sdl-graphics.cpp:466
 msgid "Decrease the scale factor"
 msgstr "Уменьшить масштаб"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:479
+#: backends/graphics/sdl/sdl-graphics.cpp:472
 msgid "Switch to the next scaler"
 msgstr "Переключить на предыдущий фильтр масштабирования"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:484
+#: backends/graphics/sdl/sdl-graphics.cpp:477
 msgid "Switch to the previous scaler"
 msgstr "Переключить на следующий фильтр масштабирования"
 

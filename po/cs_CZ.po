@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-18 21:39+0000\n"
+"POT-Creation-Date: 2021-08-19 23:25+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -274,7 +274,7 @@ msgid "Engine"
 msgstr "Jádro"
 
 #: gui/editgamedialog.cpp:207 gui/options.cpp:1781 gui/options.cpp:1938
-#: backends/graphics/sdl/sdl-graphics.cpp:425
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Graphics"
 msgstr "Obraz"
 
@@ -1038,7 +1038,7 @@ msgstr "Režim protažení:"
 msgid "Scaler:"
 msgstr ""
 
-#: gui/options.cpp:1439 backends/graphics/sdl/sdl-graphics.cpp:416
+#: gui/options.cpp:1439 backends/graphics/sdl/sdl-graphics.cpp:409
 msgid "Fullscreen mode"
 msgstr "Režim celé obrazovky"
 
@@ -2836,32 +2836,32 @@ msgstr ""
 msgid "Active graphics filter:"
 msgstr "Aktivní grafický filtr:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:368
+#: backends/graphics/sdl/sdl-graphics.cpp:361
 #, fuzzy, c-format
 #| msgid "Save screenshot"
 msgid "Saved screenshot '%s'"
 msgstr "Uložit snímek obrazovky"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:377
+#: backends/graphics/sdl/sdl-graphics.cpp:370
 #, fuzzy
 #| msgid "Save screenshot"
 msgid "Could not save screenshot"
 msgstr "Uložit snímek obrazovky"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:411
 msgid "Windowed mode"
 msgstr "Režim do okna"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:422 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Přepnout celou obrazovku"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:961
 msgid "Toggle mouse capture"
 msgstr "Povolit zachycování myši"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:434
 #: engines/wintermute/keymapper_tables.h:647
 #: engines/wintermute/keymapper_tables.h:696
 #: engines/wintermute/keymapper_tables.h:1099
@@ -2874,32 +2874,32 @@ msgstr "Povolit zachycování myši"
 msgid "Save screenshot"
 msgstr "Uložit snímek obrazovky"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:447
+#: backends/graphics/sdl/sdl-graphics.cpp:440
 msgid "Toggle aspect ratio correction"
 msgstr "Přepnout korekci poměru stran"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:454
+#: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Toggle linear filtered scaling"
 msgstr "Použít lineární škálování"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:461
+#: backends/graphics/sdl/sdl-graphics.cpp:454
 msgid "Cycle through stretch modes"
 msgstr "Přepínat mezi režimy roztažení"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:467
+#: backends/graphics/sdl/sdl-graphics.cpp:460
 msgid "Increase the scale factor"
 msgstr "Zvětšit faktor změny velikosti"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:473
+#: backends/graphics/sdl/sdl-graphics.cpp:466
 msgid "Decrease the scale factor"
 msgstr "Zmenšit faktor změny velikosti"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:479
+#: backends/graphics/sdl/sdl-graphics.cpp:472
 #, fuzzy
 msgid "Switch to the next scaler"
 msgstr "Přepnout na škálování 2xSai"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:484
+#: backends/graphics/sdl/sdl-graphics.cpp:477
 #, fuzzy
 #| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
