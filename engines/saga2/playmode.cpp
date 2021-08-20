@@ -130,13 +130,11 @@ static StaticPixelMap objPointerMap = {{0, 0}, nullptr};          // bitmap for 
 
 hResContext         *imageRes;              // image resource handle
 
-extern bool gameRunning;
-
 //-----------------------------------------------------------------------
 //	Initialize the Play mode
 
 bool checkTileAreaPort(void) {
-	if (gameRunning && g_vm->_tileDrawMap.data == nullptr) {
+	if (g_vm->_gameRunning && g_vm->_tileDrawMap.data == nullptr) {
 		//  Allocate back buffer for tile rendering
 		g_vm->_tileDrawMap.size.x = (kTileRectWidth + kTileWidth - 1) & ~kTileDXMask;
 		g_vm->_tileDrawMap.size.y = (kTileRectHeight + kTileWidth - 1) & ~kTileDXMask;
@@ -147,7 +145,7 @@ bool checkTileAreaPort(void) {
 }
 
 void clearTileAreaPort(void) {
-	if (gameRunning && g_vm->_tileDrawMap.data != nullptr) {
+	if (g_vm->_gameRunning && g_vm->_tileDrawMap.data != nullptr) {
 		_FillRect(g_vm->_tileDrawMap.data, g_vm->_tileDrawMap.size.x, g_vm->_tileDrawMap.size.x, g_vm->_tileDrawMap.size.y, 0);
 	}
 

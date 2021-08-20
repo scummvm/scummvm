@@ -217,8 +217,6 @@ extern int16            extendedThreadLevel;
    Misc Globals
  * ===================================================================== */
 
-extern bool         gameRunning;            // true while game running
-
 extern volatile int32 gameTime;             // current timer
 
 //  Resource files

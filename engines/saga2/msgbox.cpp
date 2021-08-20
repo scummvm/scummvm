@@ -54,7 +54,6 @@ static gFont    *mbButtonFont = &ThinFix8Font;
    Imports
  * ===================================================================== */
 
-extern bool             gameRunning;        // true while game running
 extern BackWindow       *mainWindow;
 
 /* ===================================================================== *

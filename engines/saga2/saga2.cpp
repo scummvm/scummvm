@@ -69,6 +69,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_videoX = _videoY = 0;
 	_loadedWeapons = 0;
 
+	_gameRunning = true;
 	_autoAggression = true;
 	_autoWeapon = true;
 	_showNight = true;

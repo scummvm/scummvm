@@ -51,7 +51,6 @@ namespace Saga2 {
 #define VIDEO_X 0
 #define VIDEO_Y 0
 
-extern bool gameRunning;
 extern bool allPlayerActorsDead;
 
 int16 OptionsDialog(bool disableSaveResume = false);

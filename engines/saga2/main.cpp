@@ -76,7 +76,6 @@ uint32 cliMemory        = 0;
 BackWindow              *mainWindow;            // main window...
 
 //  Global game state
-bool                    gameRunning = true;     // true while game running
 bool                    allPlayerActorsDead = false;
 //bool                  graphicsInit = false;   // true if graphics init OK
 bool                    checkExit = false;      // true while game running
@@ -202,7 +201,7 @@ static void mainLoop(bool &cleanExit_, int argc, char *argv[]) {
 		displayUpdate();
 	checkRestartGame(exeFile);
 	fullInitialized = true;
-	EventLoop(gameRunning, false);
+	EventLoop(g_vm->_gameRunning, false);
 }
 
 /********************************************************************/
@@ -254,7 +253,7 @@ void processEventLoop(bool updateScreen = true);
 
 void EventLoop(bool &running, bool) {
 	//  Our typical main loop
-	while (running && gameRunning)
+	while (running && g_vm->_gameRunning)
 		processEventLoop(displayEnabled());
 }
 
@@ -268,7 +267,7 @@ void processEventLoop(bool updateScreen) {
 	debugC(1, kDebugEventLoop, "EventLoop: starting event loop");
 
 	if (checkExit && verifyUserExit()) {
-		//gameRunning=false;
+		//g_vm->_gameRunning=false;
 		endGame();
 		return;
 	}
@@ -386,7 +385,7 @@ void SystemEventLoop(void) {
 #ifdef DO_OUTRO_IN_CLEANUP
 	    whichOutro == -1 &&
 #endif
-	    !gameRunning)
+	    !g_vm->_gameRunning)
 		TroModeExternEvent();
 
 	Common::Event event;
@@ -711,7 +710,7 @@ void loadGlobals(Common::InSaveFile *in) {
 // pops up a window to see if the user really wants to exit
 
 bool verifyUserExit(void) {
-	if (!gameRunning)
+	if (!g_vm->_gameRunning)
 		return true;
 	if (FTAMessageBox("Are you sure you want to exit", ERROR_YE_BUTTON, ERROR_NO_BUTTON) != 0)
 		return true;

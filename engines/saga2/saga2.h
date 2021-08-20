@@ -173,6 +173,7 @@ public:
 	gPort _backPort;
 	gPixelMap _tileDrawMap;
 
+	bool _gameRunning;
 	bool _autoAggression;
 	bool _autoWeapon;
 	bool _showNight;

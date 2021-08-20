@@ -34,7 +34,6 @@
 
 namespace Saga2 {
 
-extern bool             gameRunning;
 extern bool             delayReDraw;
 extern BackWindow       *mainWindow;            // main window...
 
@@ -76,7 +75,7 @@ static void switchOff(void);
 void endGame(void) {
 	blackOut();
 	displayDisable(GameEnded);
-	gameRunning = false;
+	g_vm->_gameRunning = false;
 }
 
 

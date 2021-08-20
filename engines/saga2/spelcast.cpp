@@ -36,7 +36,6 @@ namespace Saga2 {
 
 extern WorldMapData                     *mapList;
 extern SpellStuff                       *spellBook;
-extern bool                             gameRunning;  // kludge
 extern PlatformHandle   platformList;       // platform resource hunk
 
 /* ===================================================================== *
@@ -634,7 +633,7 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, TilePoint &newTarget, Spell
 
 
 SpellInstance::~SpellInstance() {
-	if (age < implementAge && gameRunning)
+	if (age < implementAge && g_vm->_gameRunning)
 		spellBook[spell].implement(caster, target);
 	for (int32 i = 0; i < eList.count; i++) {
 		if (eList.displayList[i].efx)
