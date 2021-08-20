@@ -288,6 +288,8 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 					break;
 
 				case 32:
+					// if we have the issue in D3 32bpp images, then the way to fix it should be the same as 16bpp images.
+					// check the code above, there is different behaviour between in D4 and D3. Currently we are only using D4.
 					convertPixelIntoSurface(_surface->getBasePtr(x, y),
 						(_bitsPerPixel / 8),
 						_surface->format.bytesPerPixel,
