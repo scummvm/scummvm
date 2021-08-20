@@ -255,7 +255,8 @@ bool Sprite::checkSpriteType() {
 	// if it doesn't match, then we treat it as transparent
 	// this happens in warlock-mac data/stambul/c up
 	if (_spriteType == kBitmapSprite && _cast->_type != kCastBitmap) {
-		warning("Sprite::checkSpriteType: Didn't render sprite due to the sprite type mismatch with cast type");
+		if (debugChannelSet(2, kDebugImages))
+			warning("Sprite::checkSpriteType: Didn't render sprite due to the sprite type mismatch with cast type");
 		return false;
 	}
 	return true;
@@ -315,7 +316,7 @@ void Sprite::setCast(CastMemberID memberID) {
 		}
 
 	} else {
-		if (_castId.member != 0)
+		if (_castId.member != 0 && debugChannelSet(kDebugImages, 2))
 			warning("Sprite::setCast(): %s is null", memberID.asString().c_str());
 	}
 }
