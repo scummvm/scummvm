@@ -174,7 +174,7 @@ void SpellDisplayPrototypeList::cleanup(void) {
 				delete spells[i];
 				spells[i] = nullptr;
 			}
-		delete spells;
+		delete[] spells;
 		spells = nullptr;
 		maxCount = 0;
 	}

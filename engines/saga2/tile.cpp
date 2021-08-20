@@ -1503,9 +1503,6 @@ void cleanupMaps(void) {
 	//  Dump all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
 		if (tileBanks[i] != nullptr) {
-			if (tileBanks[i]->_tileArray != nullptr)
-				delete[] tileBanks[i]->_tileArray;
-
 			delete tileBanks[i];
 			tileBanks[i] = nullptr;
 		}
