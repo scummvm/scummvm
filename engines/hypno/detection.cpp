@@ -63,10 +63,21 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"wetlands", // Wetlands Demo Disc (November 1995)
 		"Demo",
-		AD_ENTRY1s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 642231),
+		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 642231,
+  				   "wetdemo.exe", "15a6b1b3819ef002438df340509b5373", 458319),
 		Common::EN_USA,
 		Common::kPlatformDOS,
 		ADGF_TESTING | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"wetlands", // Wetlands (US)
+		"",
+		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 647447,
+  				   "install.exe", "15a6b1b3819ef002438df340509b5373", 477839),
+		Common::EN_USA,
+		Common::kPlatformDOS,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER
@@ -77,13 +88,14 @@ static const char *const directoryGlobs[] = {
 	"sixdemo",
 	"factory",
 	"wetlands",
+	"movie",
 	0
 };
 
 class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	HypnoMetaEngineDetection() : AdvancedMetaEngineDetection(Hypno::gameDescriptions, sizeof(ADGameDescription), Hypno::hypnoGames) {
-		_maxScanDepth = 2;
+		_maxScanDepth = 10;
 		_directoryGlobs = directoryGlobs;
 	}
 
