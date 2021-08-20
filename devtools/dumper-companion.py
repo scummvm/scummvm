@@ -54,11 +54,13 @@ def file_to_macbin(f: machfs.File, name: str, encoding: str) -> bytes:
     macbin += pack(">H2x", crc_hqx(macbin, 0))
     if f.data:
         macbin += f.data
-        macbin += b"\x00" * (128 - len(f.data) % 128)
+        if len(f.data) % 128:
+            macbin += b"\x00" * (128 - len(f.data) % 128)
 
     if f.rsrc:
         macbin += f.rsrc
-        macbin += b"\x00" * (128 - len(f.rsrc) % 128)
+        if len(f.rsrc) % 128:
+            macbin += b"\x00" * (128 - len(f.rsrc) % 128)
 
     return macbin
 
