@@ -168,10 +168,6 @@ Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, co
 
 void restoreProgramDir(void);                // chdir() to program directory
 
-//  Memory allocation
-
-void  *mustAlloc(uint32 size, const char desc[]);                // alloc 'size' bytes or fail
-
 // Returns Random Number
 
 int16 GetRandomBetween(int start, int end);

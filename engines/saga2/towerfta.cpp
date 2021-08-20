@@ -55,7 +55,6 @@ TowerLayer tower[fullyInitialized] = {
 	{ delayedErrInitialized,     &initDelayedErrors,    &termDelayedErrors },
 	{ activeErrInitialized,      &initActiveErrors,     &termActiveErrors },
 	{ configTestInitialized,     &initSystemConfig,     &termTowerBase },
-	{ memoryInitialized,         &initMemPool,          &termMemPool },
 	{ introInitialized,          &initPlayIntro,        &termPlayOutro },
 	{ timerInitialized,          &initSystemTimer,      &termSystemTimer },
 	{ audioInitialized,          &initAudio,            &termAudio},
@@ -93,8 +92,6 @@ TowerLayer tower[fullyInitialized] = {
 bool initGUIMessagers(void);
 void cleanupMessagers(void);
 void cleanupGUIMessagers(void);
-bool initMemPool(void);
-void cleanupMemPool(void);
 bool openResources(void);
 void closeResources(void);
 void initServers(void);
@@ -123,15 +120,6 @@ INITIALIZER(initSystemConfig) {
 }
 
 // uses null cleanup
-
-// ------------------------------------------------------------------------
-
-extern INITIALIZER(initMemPool);
-
-TERMINATOR(termMemPool) {
-	cleanupMemPool();                       // deallocate memory buffers
-}
-
 
 // ------------------------------------------------------------------------
 

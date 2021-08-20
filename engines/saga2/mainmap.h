@@ -35,9 +35,6 @@ void main_saga2();
 //extern char *commandLineHelp;
 void parseCommandLine(int argc, char *argv[]);
 
-// memory access
-uint32 pickHeapSize(uint32 minHeap);
-
 // initialization & cleanup
 void initCleanup(void);
 

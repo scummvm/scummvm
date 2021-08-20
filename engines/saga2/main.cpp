@@ -75,9 +75,6 @@ uint32 cliMemory        = 0;
 //  Display variables
 BackWindow              *mainWindow;            // main window...
 
-//  Memory allocation heap
-long                    memorySize = 8000000L;
-
 //  Global game state
 bool                    gameRunning = true;     // true while game running
 bool                    allPlayerActorsDead = false;
@@ -109,10 +106,6 @@ static bool             cleanExit = true;
 bool                    gameInitialized = false;        // true when game initialized
 bool                    fullInitialized = false;
 bool                    delayReDraw = false;
-
-// main heap
-static uint8            *heapMemory;
-
 
 /* ===================================================================== *
    Debug
@@ -851,52 +844,6 @@ APPFUNC(cmdWindowFunc) {
 	default:
 		break;
 	}
-}
-
-/********************************************************************/
-/*                                                                  */
-/* MEMORY MANAGEMENT CODE                                           */
-/*                                                                  */
-/********************************************************************/
-
-/* ===================================================================== *
-   Functions to initialize the memory manager.
- * ===================================================================== */
-
-//-----------------------------------------------------------------------
-//	Initialize memory manager
-
-bool initMemPool(void) {
-	uint32 take = pickHeapSize(memorySize);
-	memorySize = take;
-	if (NULL == (heapMemory = (uint8 *)malloc(take)))
-		return false;
-	//initMemHandler();
-	return true;
-}
-
-//-----------------------------------------------------------------------
-//	De-initialize memory manager
-
-void cleanupMemPool(void) {
-	//clearMemHandler();
-	if (heapMemory) {
-		free(heapMemory);
-		heapMemory = nullptr;
-	}
-}
-
-//-----------------------------------------------------------------------
-//	Allocates memory, or throws exception if allocation fails.
-
-void *mustAlloc(uint32 size, const char desc[]) {
-	void            *ptr;
-
-	ptr = malloc(size);
-	//  REM: Before we give up completely, try unloading some things...
-	if (ptr == NULL)
-		error("Local heap allocation size %d bytes failed.", size);
-	return ptr;
 }
 
 } // end of namespace Saga2
