@@ -166,6 +166,8 @@ private:
 	 */
 	Audio::AudioStream *loadOGG(const Common::FSNode &fsNode);
 
+	void playStream(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, Audio::AudioStream *stream, int repeat);
+
 	void stopAllSounds();
 	void GlitchFix();
 	void ApplyFilter(int SetFrequency);

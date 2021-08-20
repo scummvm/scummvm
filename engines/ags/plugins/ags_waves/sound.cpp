@@ -49,18 +49,7 @@ void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 	if (sound != nullptr) {
 		effect._volume = 255;
 
-		if (repeat != 0) {
-			Audio::SeekableAudioStream *sas =
-				dynamic_cast<Audio::SeekableAudioStream *>(sound);
-			assert(sas);
-
-			// -1 for infinite, >0 number of successive repeats
-			Audio::LoopingAudioStream *las =
-				new Audio::LoopingAudioStream(sas, repeat + 1);
-			_mixer->playStream(Audio::Mixer::kSFXSoundType, &effect._soundHandle, las);
-		} else {
-			_mixer->playStream(Audio::Mixer::kSFXSoundType, &effect._soundHandle, sound);
-		}
+		playStream(Audio::Mixer::kSFXSoundType, &effect._soundHandle, sound, repeat);
 
 		if (OGG_Filter && effect._filter && effect._volume > 1) {
 			warning("TODO: Mix_RegisterEffect(grabChan, LPEffect, NULL, NULL);");
@@ -194,6 +183,24 @@ Audio::AudioStream *AGSWaves::loadOGG(const Common::FSNode &fsNode) {
 	return nullptr;
 }
 
+void AGSWaves::playStream(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, Audio::AudioStream *stream, int repeat) {
+	if (!handle || !stream)
+		return;
+
+	if (repeat != 0) {
+		Audio::SeekableAudioStream *sas =
+			dynamic_cast<Audio::SeekableAudioStream *>(stream);
+		assert(sas);
+
+		// -1 for infinite, >0 number of successive repeats
+		Audio::LoopingAudioStream *las =
+			new Audio::LoopingAudioStream(sas, repeat + 1);
+		_mixer->playStream(type, handle, las);
+	} else {
+		_mixer->playStream(type, handle, stream);
+	}
+}
+
 void AGSWaves::StopSFX(int sfxNum) {
 	SoundEffect &effect = SFX[sfxNum];
 	_mixer->stopHandle(effect._soundHandle);
@@ -251,8 +258,8 @@ void AGSWaves::MusicPlay(int MusicToPlay, int repeat, int fadeinMS, int fadeoutM
 		if (!MFXStream.Switch) {
 			MFXStream.Channel = 0;
 
-			_mixer->playStream(Audio::Mixer::kMusicSoundType,
-				&MFXStream._soundHandle, musicStream);
+			playStream(Audio::Mixer::kMusicSoundType,
+				&MFXStream._soundHandle, musicStream, repeat);
 
 			MFXStream.ID = MusicToPlay;
 			MFXStream.FadeTime = (fadeinMS / 1000) * 40;
@@ -265,8 +272,8 @@ void AGSWaves::MusicPlay(int MusicToPlay, int repeat, int fadeinMS, int fadeoutM
 			MFXStream.HaltedOne = false;
 			MFXStream.Channel = 1;
 
-			_mixer->playStream(Audio::Mixer::kMusicSoundType,
-				&MFXStream._soundHandle, musicStream);
+			playStream(Audio::Mixer::kMusicSoundType,
+				&MFXStream._soundHandle, musicStream, repeat);
 
 			MFXStream.ID = MusicToPlay;
 			MFXStream.FadeTime = (fadeoutMS / 1000) * 40;
