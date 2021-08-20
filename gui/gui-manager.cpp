@@ -118,6 +118,9 @@ void GuiManager::computeScaleFactor() {
 	_baseWidth = (int16)((float)w / _scaleFactor);
 
 	// Never go below 320x200. Our GUI layout is not designed to go below that.
+	// On the DS, this causes issues at 256x192 due to the use of non-scalable
+	// BDF fonts.
+#ifndef __DS__
 	if (_baseHeight < 200) {
 		_baseHeight = 200;
 		_scaleFactor = (float)h / (float)_baseHeight;
@@ -128,6 +131,7 @@ void GuiManager::computeScaleFactor() {
 		_scaleFactor = (float)w / (float)_baseWidth;
 		_baseHeight = (int16)((float)h / _scaleFactor);
 	}
+#endif
 
 	if (_theme)
 		_theme->setBaseResolution(_baseWidth, _baseHeight, _scaleFactor);
