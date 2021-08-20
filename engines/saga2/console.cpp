@@ -35,9 +35,6 @@
 
 namespace Saga2 {
 
-#define MAX_MAP_FEATURES 128
-
-extern pCMapFeature mapFeatures[];
 extern GameObject *objectList;
 extern WorldMapData *mapList;
 extern int16 currentMapNum;
@@ -353,9 +350,15 @@ bool Console::cmdGotoPlace(int argc, const char **argv) {
 	if (argc != 2)
 		debugPrintf("Usage: %s <place id>\n", argv[0]);
 	else {
-		int placeID = atoi(argv[1]);
-		int u = mapFeatures[placeID]->getU();
-		int v = mapFeatures[placeID]->getV();
+		uint placeID = atoi(argv[1]);
+
+		if (placeID > g_vm->_mapFeatures.size()) {
+			debugPrintf("Invalid place id > %d", g_vm->_mapFeatures.size());
+			return true;
+		}
+
+		int u = g_vm->_mapFeatures[placeID]->getU();
+		int v = g_vm->_mapFeatures[placeID]->getV();
 
 		Actor *a = getCenterActor();
 
@@ -376,9 +379,9 @@ bool Console::cmdListPlaces(int argc, const char **argv) {
 	if (argc != 1)
 		debugPrintf("Usage: %s\n", argv[0]);
 	else {
-		for (int i = 0; i < MAX_MAP_FEATURES; ++i) {
-			if (mapFeatures[i])
-				debugPrintf("%d: %s\n", i, mapFeatures[i]->getText());
+		for (uint i = 0; i < g_vm->_mapFeatures.size(); ++i) {
+			if (g_vm->_mapFeatures[i])
+				debugPrintf("%d: %s\n", i, g_vm->_mapFeatures[i]->getText());
 		}
 	}
 

@@ -77,6 +77,7 @@ class TaskList;
 class Deejay;
 class frameSmoother;
 class frameCounter;
+class CMapFeature;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -140,6 +141,7 @@ public:
 	Common::Array<PlayerActor *> _playerList;
 	Common::Array<ProtoObj *> _objectProtos;
 	Common::Array<ActorProto *> _actorProtos;
+	Common::Array<CMapFeature *> _mapFeatures;
 	Common::List<TimerList *> _timerLists;
 	Common::List<Timer *> _timers;
 	Common::List<ActorAppearance *> _appearanceLRU;
