@@ -2700,9 +2700,9 @@ void cleanupPrototypes(void) {
 	for (uint i = 0; i < nameListCount; ++i) {
 		if (g_vm->_nameList[i])
 			delete[] g_vm->_nameList[i];
-
-		g_vm->_nameList.clear();
 	}
+
+	g_vm->_nameList.clear();
 
 	for (uint i = 0; i < g_vm->_actorProtos.size(); ++i) {
 		if (g_vm->_actorProtos[i])
