@@ -124,9 +124,6 @@ void initTimer(void);
 void saveTimer(Common::OutSaveFile *out);
 void loadTimer(Common::InSaveFile *in);
 
-//  Cleanup the timer -- nothing to do
-inline void cleanupTimer(void) {}
-
 void pauseTimer(void);               // pause game clock
 void resumeTimer(void);                  // resume game clock
 
