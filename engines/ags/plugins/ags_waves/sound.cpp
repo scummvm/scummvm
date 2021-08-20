@@ -37,6 +37,8 @@ void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 	PARAMS2(int, sfxNum, int, repeat);
 
 	SoundEffect &effect = SFX[sfxNum];
+	if (_mixer->isSoundHandleActive(effect._soundHandle))
+		return;
 	_mixer->stopHandle(effect._soundHandle);
 
 	Common::FSNode fsNode = ::AGS::g_vm->getGameFolder().getChild(
