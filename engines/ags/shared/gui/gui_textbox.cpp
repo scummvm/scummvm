@@ -78,16 +78,16 @@ void GUITextBox::OnKeyPress(const KeyInput &ki) {
 	// other key, continue
 	if ((keycode >= 128) && (!font_supports_extended_characters(Font)))
 		return;
+	// return/enter
+	if (keycode == eAGSKeyCodeReturn) {
+		IsActivated = true;
+		return;
+	}
 
 	NotifyParentChanged();
 	// backspace, remove character
 	if (keycode == eAGSKeyCodeBackspace) {
 		Backspace(Text);
-		return;
-	}
-	// return/enter
-	if (keycode == eAGSKeyCodeReturn) {
-		IsActivated = true;
 		return;
 	}
 

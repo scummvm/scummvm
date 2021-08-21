@@ -234,17 +234,25 @@ void GUIListBox::SetItemText(int index, const String &text) {
 
 bool GUIListBox::OnMouseDown() {
 	if (IsInRightMargin(MousePos.X)) {
+		int top_item = TopItem;
 		if (MousePos.Y < Height / 2 && TopItem > 0)
-			TopItem--;
+			top_item = TopItem - 1;
 		if (MousePos.Y >= Height / 2 && ItemCount > TopItem + VisibleItemCount)
-			TopItem++;
+			top_item = TopItem + 1;
+		if (TopItem != top_item) {
+			TopItem = top_item;
+			NotifyParentChanged();
+		}
 		return false;
 	}
 
 	int sel = GetItemAt(MousePos.X, MousePos.Y);
 	if (sel < 0)
 		return false;
-	SelectedItem = sel;
+	if (sel != SelectedItem) {
+		SelectedItem = sel;
+		NotifyParentChanged();
+	}
 	IsActivated = true;
 	return false;
 }

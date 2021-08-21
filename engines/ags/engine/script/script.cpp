@@ -42,7 +42,6 @@
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/room.h"
 #include "ags/engine/ac/room_object.h"
-#include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/script/cc_options.h"
 #include "ags/engine/debugging/debugger.h"
@@ -442,12 +441,6 @@ int RunTextScript2IParam(ccInstance *sci, const char *tsname, const RuntimeScrip
 
 		if (eventWasClaimed || _G(abort_engine))
 			return toret;
-	}
-
-	// response to a button click, better update guis
-	if (ags_strnicmp(tsname, "interface_click", 15) == 0) {
-		// interface_click(int interface, int button)
-		_GP(guis)[iparam.IValue].MarkChanged();
 	}
 
 	return RunScriptFunctionIfExists(sci, tsname, 2, params);
