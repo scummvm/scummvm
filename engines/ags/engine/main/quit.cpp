@@ -152,9 +152,8 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 }
 
 void quit_message_on_exit(const String &qmsg, String &alertis, QuitReason qreason) {
-	// successful exit displays no messages (because Windoze closes the dos-box
-	// if it is empty).
-	if ((qreason & kQuitKind_NormalExit) == 0 && !_G(handledErrorInEditor)) {
+	// successful exit or user abort displays no messages
+	if ((qreason & (kQuitKind_NormalExit | kQuit_UserAbort)) == 0 && !_G(handledErrorInEditor)) {
 		// Display the message (at this point the window still exists)
 		sprintf(_G(pexbuf), "%s\n", qmsg.GetCStr());
 		alertis.Append(_G(pexbuf));
