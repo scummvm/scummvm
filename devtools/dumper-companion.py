@@ -267,9 +267,9 @@ def punyencode_dir(directory: Path, verbose: bool = False) -> int:
 
     dirs.reverse()  # start renaming with the one at the bottom
 
-    renamed_files = punyencode_paths(files, verbose=verbose)
-    punyencode_paths(dirs, verbose=verbose)
-    return renamed_files
+    count = punyencode_paths(files, verbose=verbose)
+    count += punyencode_paths(dirs, verbose=verbose)
+    return count
 
 
 def has_resource_fork(dirpath: str, filename: str) -> bool:
@@ -335,7 +335,7 @@ def collect_forks(args: argparse.Namespace) -> int:
                         (info.st_mtime, info.st_mtime),
                     )
     if punify:
-        count_renames = punyencode_dir(directory)
+        count_renames = punyencode_dir(directory, verbose=True)
 
     print(f"Macbinary {count_resources}, Renamed {count_renames} files")
     return 0
