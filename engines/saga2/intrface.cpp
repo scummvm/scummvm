@@ -240,14 +240,6 @@ APPFUNC(cmdBulkInd);
 APPFUNC(cmdManaInd);
 
 /* ===================================================================== *
-   Globals
- * ===================================================================== */
-static bool indivControlsFlag = false;
-
-bool userControlsSetup = false;
-
-
-/* ===================================================================== *
    User control metrics
  * ===================================================================== */
 
@@ -1350,7 +1342,7 @@ void CHealthIndicator::updateStar(GfxCompImage *starCtl, int32 bro, int32 baseVi
 }
 
 void CHealthIndicator::update(void) {
-	if (indivControlsFlag) {
+	if (g_vm->_indivControlsFlag) {
 		// get the stats for the selected brother
 		int16 baseVitality  = g_vm->_playerList[translatePanID(uiIndiv)]->getBaseStats().vitality;
 		int16 currVitality  = g_vm->_playerList[translatePanID(uiIndiv)]->getEffStats()->vitality;
@@ -1705,21 +1697,21 @@ void SetupUserControls(void) {
 
 	//The controls need to be enabled but undrawn at startup
 	//if ( displayEnabled() )
-	//  userControlsSetup = true;
+	//  g_vm->_userControlsSetup = true;
 	updateAllUserControls();
 }
 
 void enableUserControls(void) {
-	userControlsSetup = true;
+	g_vm->_userControlsSetup = true;
 }
 
 void disableUserControls(void) {
-	userControlsSetup = false;
+	g_vm->_userControlsSetup = false;
 }
 
 // defines the cleanup for ALL user interface controls
 void CleanupUserControls(void) {
-	userControlsSetup = false;
+	g_vm->_userControlsSetup = false;
 	CleanupButtonImages();
 }
 
@@ -1850,7 +1842,7 @@ uint16 getBulkRatio(GameObject *obj, uint16 &maxRatio, bool bReturnMaxRatio = tr
 
 void updateReadyContainers(void) {
 	// if in individual mode
-	if (indivControlsFlag) {
+	if (g_vm->_indivControlsFlag) {
 		indivCviewTop->invalidate();
 		indivCviewBot->invalidate();
 	} else if (TrioCviews[getCenterActorPlayerID()]) {
@@ -1864,7 +1856,7 @@ void setEnchantmentDisplay(void) {
 
 // sets the individual brother control state buttons
 void setIndivBtns(uint16 brotherID) {    // top = 0, mid = 1, bot = 2
-	indivControlsFlag = true;
+	g_vm->_indivControlsFlag = true;
 
 	// set the indiv bro
 	indivBrother = brotherID;
@@ -1904,7 +1896,7 @@ void setIndivBtns(uint16 brotherID) {    // top = 0, mid = 1, bot = 2
 
 // sets the trio brothers control state buttons
 void setTrioBtns(void) {
-	indivControlsFlag = false;
+	g_vm->_indivControlsFlag = false;
 
 	// reset any value that might have changed in idividual mode
 	centerBtns[indivBrother]->select(indivCenterBtn->isSelected());
@@ -1934,7 +1926,7 @@ void setControlPanelsToTrioMode(void) {
 }
 
 void toggleIndivMode(void) {
-	if (indivControlsFlag) setControlPanelsToTrioMode();
+	if (g_vm->_indivControlsFlag) setControlPanelsToTrioMode();
 	else setControlPanelsToIndividualMode(getCenterActorPlayerID());
 }
 
@@ -1956,7 +1948,7 @@ uint16 translatePanID(uint16 panID) {
 }
 
 void updateBrotherPortrait(uint16 brotherID, int16 pType) {
-	if (userControlsSetup) {
+	if (g_vm->_userControlsSetup) {
 		Portrait->set(brotherID, (PortraitType)pType);
 
 		if (brotherID == indivBrother)
@@ -1965,7 +1957,7 @@ void updateBrotherPortrait(uint16 brotherID, int16 pType) {
 }
 
 void updateBrotherAggressionButton(uint16 brotherID, bool aggressive) {
-	if (userControlsSetup) {
+	if (g_vm->_userControlsSetup) {
 		aggressBtns[brotherID]->select(aggressive);
 		aggressBtns[brotherID]->ghost(isBrotherDead(brotherID));
 
@@ -1980,7 +1972,7 @@ void updateBrotherAggressionButton(uint16 brotherID, bool aggressive) {
 }
 
 void updateBrotherBandingButton(uint16 brotherID, bool banded) {
-	if (userControlsSetup) {
+	if (g_vm->_userControlsSetup) {
 		bandingBtns[brotherID]->select(banded);
 		bandingBtns[brotherID]->ghost(isBrotherDead(brotherID));
 
@@ -1992,7 +1984,7 @@ void updateBrotherBandingButton(uint16 brotherID, bool banded) {
 }
 
 void updateBrotherRadioButtons(uint16 brotherID) {
-	if (userControlsSetup) {
+	if (g_vm->_userControlsSetup) {
 		bool    jul = (uiJulian == brotherID);
 		bool    phi = (uiPhillip == brotherID);
 		bool    kev = (uiKevin == brotherID);
@@ -2020,13 +2012,13 @@ void updateBrotherRadioButtons(uint16 brotherID) {
 			indivCenterBtn->ghost(isBrotherDead(brotherID));
 		}
 
-		if (indivControlsFlag)
+		if (g_vm->_indivControlsFlag)
 			setControlPanelsToIndividualMode(brotherID);
 	}
 }
 
 void updateBrotherArmor(uint16 brotherID) {
-	if (userControlsSetup) {
+	if (g_vm->_userControlsSetup) {
 		armorInd[brotherID]->setValue(brotherID);
 		armorInd[brotherID]->ghost(isBrotherDead(brotherID));
 
@@ -2039,11 +2031,11 @@ void updateBrotherArmor(uint16 brotherID) {
 
 void updateAllUserControls(void) {
 	if (displayEnabled()) {
-		if (userControlsSetup) {
+		if (g_vm->_userControlsSetup) {
 			uint16      centerBrotherID = getCenterActorPlayerID(),
 			            brotherID;
 
-			if (indivControlsFlag)
+			if (g_vm->_indivControlsFlag)
 				setControlPanelsToIndividualMode(indivBrother);
 			else
 				setControlPanelsToTrioMode();
@@ -2073,7 +2065,7 @@ void updateAllUserControls(void) {
 }
 
 void updateBrotherControls(PlayerActorID brotherID) {
-	if (userControlsSetup) {
+	if (g_vm->_userControlsSetup) {
 		bool    dead = isBrotherDead(brotherID);
 
 		updateBrotherRadioButtons(getCenterActorPlayerID());
@@ -2567,11 +2559,11 @@ APPFUNC(cmdManaInd) {
 }
 
 bool isIndivMode(void) {
-	return indivControlsFlag;
+	return g_vm->_indivControlsFlag;
 }
 
 void initUIState(void) {
-	indivControlsFlag = false;
+	g_vm->_indivControlsFlag = false;
 	indivBrother = 0;
 
 	//updateAllUserControls();
@@ -2583,21 +2575,21 @@ void saveUIState(Common::OutSaveFile *outS) {
 	outS->write("UIST", 4);
 
 	CHUNK_BEGIN;
-	out->writeUint16LE(indivControlsFlag);
+	out->writeUint16LE(g_vm->_indivControlsFlag);
 	out->writeUint16LE(indivBrother);
 	CHUNK_END;
 
-	debugC(3, kDebugSaveload, "... indivControlsFlag = %d", indivControlsFlag);
+	debugC(3, kDebugSaveload, "..._indivControlsFlag = %d", g_vm->_indivControlsFlag);
 	debugC(3, kDebugSaveload, "... indivBrother = %d", indivBrother);
 }
 
 void loadUIState(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading UIState");
 
-	indivControlsFlag = in->readUint16LE();
+	g_vm->_indivControlsFlag = in->readUint16LE();
 	indivBrother = in->readUint16LE();
 
-	debugC(3, kDebugSaveload, "... indivControlsFlag = %d", indivControlsFlag);
+	debugC(3, kDebugSaveload, "... _indivControlsFlag = %d", g_vm->_indivControlsFlag);
 	debugC(3, kDebugSaveload, "... indivBrother = %d", indivBrother);
 
 	updateAllUserControls();

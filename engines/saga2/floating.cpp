@@ -609,8 +609,6 @@ void FloatingWindow::close(void) {
 
 bool checkTileAreaPort(void);
 
-extern bool userControlsSetup;
-
 void updateWindowSection(const Rect16 &r) {
 	gPixelMap       tempMap;
 	gPort           tempPort;
@@ -679,7 +677,7 @@ void updateWindowSection(const Rect16 &r) {
 
 	//  For each window, both background and float, that overlaps
 	//  the clip, draw the window's imagery
-	if (userControlsSetup) {
+	if (g_vm->_userControlsSetup) {
 		for (Common::List<gWindow *>::iterator it = g_vm->_toolBase->bottomWindowIterator(); it != g_vm->_toolBase->topWindowIterator(); --it)
 			(*it)->drawClipped(tempPort, offset, clip);
 	}

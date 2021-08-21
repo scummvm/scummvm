@@ -190,6 +190,11 @@ public:
 	bool _showPosition;
 	bool _showStats;
 
+	bool _indivControlsFlag;
+	bool _userControlsSetup;
+	int _fadeDepth;
+
+
 private:
 	Video::SmackerDecoder *_smkDecoder;
 	int _videoX, _videoY;

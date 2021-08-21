@@ -105,7 +105,6 @@ void SystemEventLoop(void);
 //-----------------------------------------------------------------------
 //	Fade to black
 
-static int fadeDepth = 1;
 void clearTileAreaPort(void);
 void reDrawScreen(void) ;
 void updateMainDisplay(void);
@@ -119,7 +118,7 @@ void disableUserControls(void);
 void enableUserControls(void);
 
 void fadeDown(void) {
-	if (fadeDepth++ == 0) {
+	if (g_vm->_fadeDepth++ == 0) {
 		beginFade(darkPalette, 20);
 		while (updatePalette());
 		clearTileAreaPort();
@@ -132,7 +131,7 @@ void fadeDown(void) {
 //	Fade to many colors
 
 void fadeUp(void) {
-	if (--fadeDepth == 0) {
+	if (--g_vm->_fadeDepth == 0) {
 		enableUserControls();
 		updateMainDisplay();
 		drawMainDisplay();

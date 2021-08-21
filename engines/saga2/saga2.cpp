@@ -85,6 +85,10 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_teleportOnClick = false;
 	_teleportOnMap = false;
 
+	_indivControlsFlag = false;
+	_userControlsSetup = false;
+	_fadeDepth = 1;
+
 	SearchMan.addSubDirectoryMatching(gameDataDir, "res");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "dos/drivers"); // For Miles Sound files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "drivers");
