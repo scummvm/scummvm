@@ -163,6 +163,14 @@ def file_to_macbin(f: machfs.File, name: ByteString) -> bytes:
 
 
 def escape_string(s: str) -> str:
+    """
+    Escape strings
+
+    Escape the following:
+    - escape char: \x81
+    - unallowed filename chars: https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#naming-conventions
+    - control chars < 0x20
+    """
     new_name = ""
     for char in s:
         if char == "\x81":
@@ -172,6 +180,14 @@ def escape_string(s: str) -> str:
         else:
             new_name += char
     return new_name
+
+
+def needs_punyencoding(orig: str) -> bool:
+    """
+    Filenames need punyencoding when it contains a char that should be
+    escaped.
+    """
+    return orig != escape_string(orig)
 
 
 def punyencode(orig: str) -> str:
@@ -219,8 +235,9 @@ def extract_volume(args: argparse.Namespace) -> int:
         for el in hpath:
             if japanese:
                 el = decode_macjapanese(el.encode("mac_roman"))
-            if punify:
+            if punify or needs_punyencoding(el):
                 el = punyencode(el)
+
             upath /= el
 
         if isinstance(obj, machfs.Folder):
@@ -452,6 +469,12 @@ def test_decode_name():
     ]
     for input, expected in checks:
         assert punyencode(input) == expected
+
+
+def test_needs_punyencoding():
+    checks = [["Icon\r", True], ["ascii", False], ["バッドデイ(Power PC)", False]]
+    for input, expected in checks:
+        assert needs_punyencoding(input) == expected
 
 
 def test_escape_string():
