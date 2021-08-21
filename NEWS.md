@@ -43,6 +43,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed switching to the default graphics mode. This was sometimes not applied
      until restarting ScummVM or starting a game.
 
+ ADL:
+   - Added support for Mystery House French translation.
+   - Added support for several game variants.
+
  AGI:
    - Added support for Russian versions. Input now works.
 
