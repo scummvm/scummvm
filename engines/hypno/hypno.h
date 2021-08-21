@@ -188,7 +188,7 @@ public:
 
 	// Arcade
 	void drawShoot(Common::Point);
-	virtual void drawPlayer(Common::String player, uint32 idx);
+	virtual void drawPlayer(Common::String player, MVideo &background);
 	virtual void drawHealth(const Graphics::Font &font);
 	int _health;
 	int _maxHealth;
@@ -212,7 +212,7 @@ public:
 
 	void loadAssets() override;
 	
-	void drawPlayer(Common::String player, uint32 idx) override;
+	void drawPlayer(Common::String player, MVideo &background) override;
 	void drawHealth(const Graphics::Font &font) override;
 
 };
@@ -223,7 +223,7 @@ public:
 
 	void loadAssets() override;
 	
-	void drawPlayer(Common::String player, uint32 idx) override;
+	void drawPlayer(Common::String player, MVideo &background) override;
 	void drawHealth(const Graphics::Font &font) override;
 };
 

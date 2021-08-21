@@ -35,6 +35,9 @@
 
 namespace Hypno {
 
+typedef Common::String Filename;
+typedef Common::List<Filename> Filenames;
+
 enum HotspotType {
     MakeMenu,
  	MakeHotspot
@@ -48,14 +51,14 @@ class Action {
 typedef Common::Array<Action*> Actions;
 
 class Hotspot;
-typedef Common::Array<Hotspot> Hotspots;
 
+typedef Common::Array<Hotspot> Hotspots;
 typedef Common::Array<Hotspots *> HotspotsStack;
 
 class MVideo {
   public:
-    MVideo(Common::String, Common::Point, bool, bool, bool);
-    Common::String path;
+    MVideo(Filename, Common::Point, bool, bool, bool);
+    Filename path;
 	Common::Point position;
 	bool scaled;
 	bool transparent;
@@ -79,25 +82,25 @@ class Hotspot {
 
 class Mice : public Action {
   public:
-	Common::String path;
+	Filename path;
 	uint32 index;
 };
 
 class Palette : public Action {
   public:
-	Common::String path;
+	Filename path;
 };
 
 class Background : public Action {
   public:
-	Common::String path;
+	Filename path;
 	Common::Point origin;
 	Common::String condition;
 };
 
 class Overlay : public Action {
   public:
-	Common::String path;
+	Filename path;
 	Common::Point origin;
 	Common::String flag;
 };
@@ -110,12 +113,12 @@ class Quit : public Action {
 
 class Cutscene : public Action {
   public:
-	Common::String path;
+	Filename path;
 };
 
 class Play : public Action {
   public:
-	Common::String path;
+	Filename path;
 	Common::Point origin;
 	Common::String condition;
 	Common::String flag;
@@ -123,14 +126,14 @@ class Play : public Action {
 
 class Ambient : public Action {
   public:
-	Common::String path;
+	Filename path;
 	Common::Point origin;
 	Common::String flag;
 };
 
 class WalN : public Action {
   public:
-	Common::String path;
+	Filename path;
 	Common::Point origin;
 	Common::String condition;
 	Common::String flag;
@@ -145,7 +148,7 @@ class Global : public Action {
 class TalkCommand {
   public:
 	Common::String command;
-	Common::String path;
+	Filename path;
 	uint32 num;
 	Common::Point position;
 };
@@ -156,7 +159,7 @@ class Talk : public Action {
   public:
 	TalkCommands commands;
 	bool active;
-	Common::String background;
+	Filename background;
 	Common::Point position;
 	Common::Rect rect;
 };
@@ -186,23 +189,27 @@ typedef Common::List<Common::String> Sounds;
 class Transition {
   public:
 	Common::String level;
-	Videos intros;
+	Filenames intros;
 };
 
 class Scene {
   public:
-    Common::String intro;
+    Filename intro;
     Common::String prefix;
 	Hotspots hots;
-	Common::String sound;
+	Filename sound;
 };
 
 class ArcadeShooting {
   public:
-    Common::String intro;
-	Common::String prefix;
-	Common::String background;
-	Common::String player;
+	Common::String levelIfWin;
+	Common::String levelIfLose;
+	Filenames defeatVideos;
+	Filenames winVideos;
+    Filename intro;
+	Filename prefix;
+	Filename background;
+	Filename player;
 	int health;
 	Shoots shoots;
 	ShootSequence shootSequence;
@@ -214,9 +221,10 @@ class Level {
     Transition trans;
 	Scene scene;
 	ArcadeShooting arcade;
+
 };
 
-typedef Common::HashMap<Common::String, Level> Levels;
+typedef Common::HashMap<Filename, Level> Levels;
 extern Hotspots *g_parsedHots;
 extern ArcadeShooting g_parsedArc;
 

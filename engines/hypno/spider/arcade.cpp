@@ -6,7 +6,9 @@
 
 namespace Hypno {
 
-void SpiderEngine::drawPlayer(Common::String player, uint32 idx) {
+void SpiderEngine::drawPlayer(Common::String player, MVideo &background) {
+	Common::Point mousePos = g_system->getEventManager()->getMousePos();
+	uint32 idx = mousePos.x / 50;
 	Graphics::Surface *image = decodeFrame(player, idx);
 	drawImage(*image, 60, 129, true);
 	image->free();

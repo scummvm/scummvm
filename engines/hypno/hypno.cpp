@@ -94,6 +94,18 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
+
+
+	// Add quit level
+	Hotspot q;
+	q.type = MakeMenu;
+	Action *a = new Quit();
+	q.actions.push_back(a);
+	Level quit;
+	Hotspots hs;
+	hs.push_back(q);
+	quit.scene.hots = hs;  
+	_levels["<quit>"] = quit;
 }
 
 HypnoEngine::~HypnoEngine() {
@@ -274,8 +286,11 @@ void HypnoEngine::runLevel(Common::String name) {
 
 	if (!_levels[name].trans.level.empty()) {
 		_nextLevel = _levels[name].trans.level;
-		for (Videos::iterator it = _levels[name].trans.intros.begin(); it != _levels[name].trans.intros.end(); ++it)
-			runIntro(*it);
+		for (Filenames::iterator it = _levels[name].trans.intros.begin(); it != _levels[name].trans.intros.end(); ++it) {
+			MVideo v(*it, Common::Point(0, 0), false, true, false);
+			runIntro(v);
+		}
+			
 
 	} else if (!_levels[name].arcade.background.empty()) {
 		_prefixDir = _levels[name].arcade.prefix;
