@@ -1029,7 +1029,7 @@ void Interpreter::O_GETMOBTEXT() {
 	// different phrases separated by '\0' characters, followed by an ID.
 	// The examination text ends for a mob if the ID is 0xFF.
 	// Strings are properly extracted by the interpreter in that format.
-	memcpy((char *)_stringBuf, _vm->_mobList[mob]._examText.c_str(), 1023);
+	memcpy((char *)_stringBuf, _vm->_mobList[mob]._examText.c_str(), MIN<int>(_vm->_mobList[mob]._examText.size(), 1023));
 	_string = _stringBuf;
 }
 
