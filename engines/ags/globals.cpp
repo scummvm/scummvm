@@ -87,6 +87,7 @@
 #include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/media/audio/ambient_sound.h"
 #include "ags/engine/media/audio/audio_defines.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/script/cc_instance.h"
 #include "ags/engine/script/executing_script.h"
 #include "ags/engine/script/non_blocking_script_function.h"
@@ -358,6 +359,9 @@ Globals::Globals() {
 
 Globals::~Globals() {
 	g_globals = nullptr;
+
+	// ags_platform_driver.cpp globals
+	delete _platform;
 
 	// ags_plugin.cpp globals
 	delete _glVirtualScreenWrap;

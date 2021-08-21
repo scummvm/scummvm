@@ -37,6 +37,8 @@ namespace AGS3 {
 using AGS::Shared::String;
 
 struct ScummVMPlatformDriver : AGSPlatformDriver {
+	virtual ~ScummVMPlatformDriver() {}
+
 	int  CDPlayerCommand(int cmdd, int datt) override;
 	void DisplayAlert(const char *, ...) override;
 	const char *GetAllUsersDataDirectory() override;
