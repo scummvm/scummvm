@@ -79,6 +79,7 @@ class frameSmoother;
 class frameCounter;
 class CMapFeature;
 class AudioInterface;
+class PaletteManager;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -136,6 +137,7 @@ public:
 	Console *_console;
 	Renderer *_renderer;
 	AudioInterface *_audio;
+	PaletteManager *_pal;
 
 	WeaponStuff _weaponRack[kMaxWeapons];
 	weaponID _loadedWeapons;

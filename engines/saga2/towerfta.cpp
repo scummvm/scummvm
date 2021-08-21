@@ -40,6 +40,7 @@
 #include "saga2/saveload.h"
 #include "saga2/display.h"
 #include "saga2/tile.h"
+#include "saga2/vpal.h"
 
 namespace Saga2 {
 
@@ -236,7 +237,7 @@ TERMINATOR(termResourceHandles) {
 // ------------------------------------------------------------------------
 
 INITIALIZER(initPalettes) {
-	loadPalettes();
+	g_vm->_pal->loadPalettes();
 	return true;
 }
 

@@ -47,6 +47,7 @@
 #include "saga2/music.h"
 #include "saga2/panel.h"
 #include "saga2/spelshow.h"
+#include "saga2/vpal.h"
 
 namespace Saga2 {
 
@@ -66,6 +67,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_console = nullptr;
 	_renderer = nullptr;
 	_audio = nullptr;
+	_pal = nullptr;
 
 	_bandList = nullptr;
 	_mouseInfo = nullptr;
@@ -125,6 +127,7 @@ Saga2Engine::~Saga2Engine() {
 	// Dispose your resources here
 	delete _rnd;
 	delete _renderer;
+	delete _pal;
 
 	delete _imageCache;
 	delete _mTaskList;
@@ -150,6 +153,8 @@ Common::Error Saga2Engine::run() {
 	setDebugger(_console);
 
 	_renderer = new Renderer();
+
+	_pal = new PaletteManager;
 
 	readConfig();
 

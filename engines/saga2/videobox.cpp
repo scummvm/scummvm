@@ -26,6 +26,7 @@
 
 #include "saga2/saga2.h"
 #include "saga2/videobox.h"
+#include "saga2/vpal.h"
 
 namespace Saga2 {
 
@@ -168,14 +169,12 @@ int16 CVideoBox::openVidBox(char *fileName) {
 	return rInfo.result;
 }
 
-void quickSavePalette(void);
-void quickRestorePalette(void);
 // this opens a video box for business
 int16 openVidBox(char *fileName) {
 	// get the area of the vid box
 	Rect16 area = CVideoBox::getAreaRect();
 
-	quickSavePalette();
+	g_vm->_pal->quickSavePalette();
 	// create a video box
 	CVideoBox videoBox(area, 0, NULL);
 
@@ -185,7 +184,7 @@ int16 openVidBox(char *fileName) {
 	// get rid of the box when done
 	videoBox.~CVideoBox();
 
-	quickRestorePalette();
+	g_vm->_pal->quickRestorePalette();
 	// replace the damaged area
 	mainWindow->invalidate(&area);
 

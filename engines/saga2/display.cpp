@@ -31,6 +31,7 @@
 #include "saga2/intrface.h"
 #include "saga2/loadmsg.h"
 #include "saga2/grabinfo.h"
+#include "saga2/vpal.h"
 
 namespace Saga2 {
 
@@ -57,12 +58,8 @@ static bool paletteSuspendFlag = false;
  * ===================================================================== */
 
 void reDrawScreen(void);
-void quickSavePalette(void);
-void quickRestorePalette(void);
 void localCursorOn(void);
 void localCursorOff(void);
-void setPaletteToBlack(void);
-void lightsOut(void);
 void loadingScreen(void);
 void resetInputDevices(void);
 APPFUNC(cmdWindowFunc);                      // main window event handler
@@ -241,7 +238,7 @@ void reDrawScreen(void) {
 		delayReDraw = false;
 		if (paletteMayHaveChanged) {
 			paletteMayHaveChanged = false;
-			assertCurrentPalette();
+			g_vm->_pal->assertCurrentPalette();
 			paletteMayHaveChanged = false;
 		}
 	} else
@@ -258,7 +255,7 @@ void blackOut(void) {
 	g_vm->_mainPort.drawMode = drawModeReplace;
 	g_vm->_mainPort.setColor(0);            //  fill screen with color
 	g_vm->_mainPort.fillRect(Rect16(0, 0, 640, 480));
-	lightsOut();
+	g_vm->_pal->lightsOut();
 }
 
 

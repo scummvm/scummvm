@@ -140,7 +140,6 @@ bool setupGame(void);
 
 void mainEnable(void);
 void mainDisable(void);
-void lightsOut(void);
 void updateMainDisplay(void);
 
 void cleanupGame(void);                  // auto-cleanup function
