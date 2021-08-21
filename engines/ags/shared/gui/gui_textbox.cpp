@@ -49,7 +49,6 @@ bool GUITextBox::IsBorderShown() const {
 }
 
 void GUITextBox::Draw(Bitmap *ds) {
-	check_font(&Font);
 	color_t text_color = ds->GetCompatibleColor(TextColor);
 	color_t draw_color = ds->GetCompatibleColor(TextColor);
 	if (IsBorderShown()) {

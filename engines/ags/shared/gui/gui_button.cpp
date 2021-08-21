@@ -93,7 +93,6 @@ bool GUIButton::IsClippingImage() const {
 void GUIButton::Draw(Bitmap *ds) {
 	bool draw_disabled = !IsGUIEnabled(this);
 
-	check_font(&Font);
 	// if it's "Unchanged when disabled" or "GUI Off", don't grey out
 	if (_G(gui_disabled_style) == GUIDIS_UNCHANGED ||
 	        _G(gui_disabled_style) == GUIDIS_GUIOFF) {

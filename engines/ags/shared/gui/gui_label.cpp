@@ -50,8 +50,6 @@ GUILabelMacro GUILabel::GetTextMacros() const {
 }
 
 void GUILabel::Draw(Shared::Bitmap *ds) {
-	check_font(&Font);
-
 	// TODO: need to find a way to cache text prior to drawing;
 	// but that will require to update all gui controls when translation is changed in game
 	PrepareTextToDraw();
