@@ -45,6 +45,10 @@ Programmcodes finden Sie auf Englisch unter:
      Fällen wurde die Änderung erst nach einem Neustart von ScummVM
      oder beim Start eines Spiels übernommen.
 
+ ADL:
+   - Unterstützung für die französische Übersetzung  von Mystery House hinzugefügt.
+   - Unterstützung für einige weitere Spiel-Varianten hinzugefügt.
+
  AGI:
    - Unterstützung für einige russische Versionen hinzugefügt. Die Eingabe funktioniert nun.
 
