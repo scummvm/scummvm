@@ -140,14 +140,21 @@ ScummVM Team
        Paul Gilbert
        Vincent Hamm                   - (retired)
 
+    Cryo:
+       Arnaud Boutonne
+       Filippos Karapetis
+       Retro-Junk;
+       Eugene Sandulenko
+
     Cryomni3D:
        Philippe Valembois
 
     Director:
        Eugene Sandulenko
+       Crane Yang                     - GSoC Student
        Dmitry Iskrich
-       Dylan Servilla
-       Nathanael Gentry
+       Dylan Servilla                 - GSoC Student
+       Nathanael Gentry               - GSoC Student
        Roland van Laar
        Scott Percival
        Steven Hoefel
@@ -300,6 +307,10 @@ ScummVM Team
     Myst 3:
        Bastien Bouclet
 
+    Nancy:
+       Kaloyan Chehlarski
+       Walter van Niftrik
+
     Neverhood:
        Benjamin Haisch
        Filippos Karapetis
@@ -345,6 +356,10 @@ ScummVM Team
        Andrew Kurushin
        Eugene Sandulenko
 
+    SAGA2:
+       Yuri Guimaraes                 - GSoC Student
+       Eugene Sandulenko
+
     SCI:
        Chris Benshoof
        Greg Frieger
@@ -386,10 +401,19 @@ ScummVM Team
        Oliver Kiehl                   - (retired)
        Joost Peters
 
+    SLUDGE:
+       Eugene Sandulenko
+       Simei Yin                      - GSoC Student
+
     Stark:
        Bastien Bouclet
        Einar Johan T. Somaaen
        Liu Zhaosong
+
+    Star Trek:
+       Matthew Hoops                  - (retired)
+       Filippos Karapetis
+       Matthew Stewart                - GSoC Student
 
     Supernova:
        Joseph-Eugene Winzer
@@ -628,6 +652,7 @@ ScummVM Team
        Chris Page                     - Return to launcher, savestate
                                         improvements, leak fixes, ... (GSoC
                                         2008 task) (retired)
+       Coen Rampen                    - Sound improvements
        Robin Watts                    - ARM assembly routines for nice
                                         speedups on several ports;
                                         improvements to the sound mixer
