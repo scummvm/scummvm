@@ -6,8 +6,7 @@
 # This file contains tests. They can be run with:
 #  $ pytest dumper-companion.py
 #
-# Code is formatted with `black -l 2000`
-# The rediculous line length is to keep the decoding table sane
+# Code is formatted with `black `
 
 import argparse
 import io
@@ -28,6 +27,7 @@ if sys.platform == "darwin":
 
 from typing import ByteString
 
+# fmt: off
 decode_map = {
     "81": ["　", "、", "。", "，", "．", "・", "：", "；", "？", "！", "゛", "゜", "´", "｀", "¨", "＾", "￣", "＿", "ヽ", "ヾ", "ゝ", "ゞ", "〃", "仝", "々", "〆", "〇", "ー", "—", "‐", "／", "＼", "〜", "‖", "｜", "…", "‥", "‘", "’", "“", "”", "（", "）", "〔", "〕", "［", "］", "｛", "｝", "〈", "〉", "《", "》", "「", "」", "『", "』", "【", "】", "＋", "−", "±", "×", None, "÷", "＝", "≠", "＜", "＞", "≦", "≧", "∞", "∴", "♂", "♀", "°", "′", "″", "℃", "￥", "＄", "¢", "£", "％", "＃", "＆", "＊", "＠", "§", "☆", "★", "○", "●", "◎", "◇", "◆", "□", "■", "△", "▲", "▽", "▼", "※", "〒", "→", "←", "↑", "↓", "〓", None, None, None, None, None, None, None, None, None, None, None, "∈", "∋", "⊆", "⊇", "⊂", "⊃", "∪", "∩", None, None, None, None, None, None, None, None, "∧", "∨", "¬", "⇒", "⇔", "∀", "∃", None, None, None, None, None, None, None, None, None, None, None, "∠", "⊥", "⌒", "∂", "∇", "≡", "≒", "≪", "≫", "√", "∽", "∝", "∵", "∫", "∬", None, None, None, None, None, None, None, "Å", "‰", "♯", "♭", "♪", "†", "‡", "¶", None, None, None, None, "◯"],
     "82": [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, "０", "１", "２", "３", "４", "５", "６", "７", "８", "９", None, None, None, None, None, None, None, "Ａ", "Ｂ", "Ｃ", "Ｄ", "Ｅ", "Ｆ", "Ｇ", "Ｈ", "Ｉ", "Ｊ", "Ｋ", "Ｌ", "Ｍ", "Ｎ", "Ｏ", "Ｐ", "Ｑ", "Ｒ", "Ｓ", "Ｔ", "Ｕ", "Ｖ", "Ｗ", "Ｘ", "Ｙ", "Ｚ", None, None, None, None, None, None, None, "ａ", "ｂ", "ｃ", "ｄ", "ｅ", "ｆ", "ｇ", "ｈ", "ｉ", "ｊ", "ｋ", "ｌ", "ｍ", "ｎ", "ｏ", "ｐ", "ｑ", "ｒ", "ｓ", "ｔ", "ｕ", "ｖ", "ｗ", "ｘ", "ｙ", "ｚ", None, None, None, None, "ぁ", "あ", "ぃ", "い", "ぅ", "う", "ぇ", "え", "ぉ", "お", "か", "が", "き", "ぎ", "く", "ぐ", "け", "げ", "こ", "ご", "さ", "ざ", "し", "じ", "す", "ず", "せ", "ぜ", "そ", "ぞ", "た", "だ", "ち", "ぢ", "っ", "つ", "づ", "て", "で", "と", "ど", "な", "に", "ぬ", "ね", "の", "は", "ば", "ぱ", "ひ", "び", "ぴ", "ふ", "ぶ", "ぷ", "へ", "べ", "ぺ", "ほ", "ぼ", "ぽ", "ま", "み", "む", "め", "も", "ゃ", "や", "ゅ", "ゆ", "ょ", "よ", "ら", "り", "る", "れ", "ろ", "ゎ", "わ", "ゐ", "ゑ", "を", "ん"],
@@ -75,6 +75,7 @@ decode_map = {
     "ec": [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, "ぁ", None, "ぃ", None, "ぅ", None, "ぇ", None, "ぉ", None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, "っ", None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, "ゃ", None, "ゅ", None, "ょ", None, None, None, None, None, None, "ゎ"],
     "ed": ["ァ", None, "ィ", None, "ゥ", None, "ェ", None, "ォ", None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, "ッ", None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, "ャ", None, "ュ", None, "ョ", None, None, None, None, None, None, "ヮ", None, None, None, None, None, None, "ヵ", "ヶ"],
 }
+# fmt: on
 
 
 def decode_macjapanese(text: ByteString) -> str:
@@ -100,7 +101,9 @@ def decode_macjapanese(text: ByteString) -> str:
             hi_key = hex(hi)[2:]
             lo_key = lo - 0x40
             if decode_map.get(hi_key) is None or decode_map[hi_key][lo_key] is None:
-                raise Exception(f"No mapping for Mac Japanese sequence 0x{hi_key}{hex(lo)[2:]}")
+                raise Exception(
+                    f"No mapping for Mac Japanese sequence 0x{hi_key}{hex(lo)[2:]}"
+                )
             assert_tmp = decode_map[hi_key][lo_key]
             assert assert_tmp  # mypy assert
             res += assert_tmp
@@ -355,17 +358,27 @@ def generate_parser() -> argparse.ArgumentParser:
     parser_iso = subparsers.add_parser("iso", help="Dump hfs isos")
 
     parser_iso.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
-    parser_iso.add_argument("--punycode", action="store_true", help="encode pathnames into punycode")
-    parser_iso.add_argument("--japanese", action="store_true", help="read mac_japanese hfs+")
-    parser_iso.add_argument("dir", metavar="OUTPUT", type=Path, help="Destination folder")
+    parser_iso.add_argument(
+        "--punycode", action="store_true", help="encode pathnames into punycode"
+    )
+    parser_iso.add_argument(
+        "--japanese", action="store_true", help="read mac_japanese hfs+"
+    )
+    parser_iso.add_argument(
+        "dir", metavar="OUTPUT", type=Path, help="Destination folder"
+    )
     parser_iso.set_defaults(func=extract_volume)
 
-    parser_dir = subparsers.add_parser("dir", help="Punyencode all files and dirs in place")
+    parser_dir = subparsers.add_parser(
+        "dir", help="Punyencode all files and dirs in place"
+    )
     parser_dir.add_argument("directory", metavar="directory ", type=Path, help="Path")
     parser_dir.set_defaults(func=punyencode_dir)
 
     parser_str = subparsers.add_parser("str", help="Punyencode strings or standard in")
-    parser_str.add_argument("--stdin", action="store_true", help="Convert stdin to punycode")
+    parser_str.add_argument(
+        "--stdin", action="store_true", help="Convert stdin to punycode"
+    )
     parser_str.add_argument(
         "string",
         metavar="STRING",
@@ -380,8 +393,14 @@ def generate_parser() -> argparse.ArgumentParser:
             "mac",
             help="MacOS only: Operate in MacBinary encoding mode. Recursively encode all resource forks in the current directory",
         )
-        parser_macbinary.add_argument("--punycode", action="store_true", help="encode pathnames into punycode")
-        parser_macbinary.add_argument("dir", metavar="directory", type=Path, help="input directory")
+        parser_macbinary.add_argument(
+            "--punycode",
+            action="store_true",
+            help="encode pathnames into punycode",
+        )
+        parser_macbinary.add_argument(
+            "dir", metavar="directory", type=Path, help="input directory"
+        )
         parser_macbinary.set_defaults(func=collect_forks)
 
     return parser
@@ -403,7 +422,12 @@ def call_test_parser(input_args: List[str]) -> Any:
 
 
 def test_decode_mac_japanese():
-    checks = [[b"QuickTime\xfe \x89\xb9\x90F\x91\xce\x89\x9e\x95\\", "QuickTime™ 音色対応表"]]
+    checks = [
+        [
+            b"QuickTime\xfe \x89\xb9\x90F\x91\xce\x89\x9e\x95\\",
+            "QuickTime™ 音色対応表",
+        ]
+    ]
     for input, expected in checks:
         assert decode_macjapanese(input) == expected
 
