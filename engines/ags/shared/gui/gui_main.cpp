@@ -657,6 +657,25 @@ void MarkAllGUIForUpdate() {
 	}
 }
 
+void MarkForFontUpdate(int font) {
+	for (auto &btn : _GP(guibuts)) {
+		if (btn.Font == font)
+			btn.NotifyParentChanged();
+	}
+	for (auto &lbl : _GP(guilabels)) {
+		if (lbl.Font == font)
+			lbl.NotifyParentChanged();
+	}
+	for (auto &list : _GP(guilist)) {
+		if (list.Font == font)
+			list.NotifyParentChanged();
+	}
+	for (auto &tb : _GP(guitext)) {
+		if (tb.Font == font)
+			tb.NotifyParentChanged();
+	}
+}
+
 void MarkSpecialLabelsForUpdate(GUILabelMacro macro) {
 	for (auto &lbl : _GP(guilabels)) {
 		if ((lbl.GetTextMacros() & macro) != 0) {
