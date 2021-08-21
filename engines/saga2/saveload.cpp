@@ -115,7 +115,6 @@ void initGameState(void) {
 	pauseTimer();
 
 	initGlobals();
-	initTimer();
 	initCalender();
 	initWorlds();
 	initActors();
@@ -133,7 +132,6 @@ void initGameState(void) {
 	initTileTasks();
 	initSpeechTasks();
 	initActiveRegions();
-	initTimers();
 	initSensors();
 	initTempActorCount();
 	initMissions();
@@ -566,7 +564,6 @@ void cleanupGameState(void) {
 	cleanupObjects();
 	cleanupActors();
 	cleanupWorlds();
-	cleanupTimer();
 	cleanupGlobals();
 }
 

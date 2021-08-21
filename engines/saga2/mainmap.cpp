@@ -28,6 +28,7 @@
 #include "saga2/saga2.h"
 #include "saga2/fta.h"
 #include "saga2/mainmap.h"
+#include "saga2/timers.h"
 
 namespace Saga2 {
 
@@ -49,11 +50,12 @@ void shutdownGame() {
 }
 
 bool initSystemTimer() {
-	warning("STUB: initSystemTimer()");
+	initTimer();
 	return true;
 }
+
 void cleanupSystemTimer() {
-	warning("STUB: cleanupSystemTimer()");
+	cleanupTimer();
 }
 
 void cleanupSystemTasks() {
