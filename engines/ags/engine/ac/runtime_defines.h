@@ -141,10 +141,6 @@ const int LegacyRoomVolumeFactor = 30;
 
 #define MAX_PLUGIN_OBJECT_READERS 50
 
-#ifndef MAX_PATH
-#define MAX_PATH 260
-#endif
-
 #define TRANS_ALPHA_CHANNEL 20000
 #define TRANS_OPAQUE        20001
 #define TRANS_RUN_PLUGIN    20002
