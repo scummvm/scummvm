@@ -86,6 +86,8 @@ public:
 private:
 	int32_t               ListBoxFlags;
 
+	// Updates dynamic metrics such as row height and others
+	void UpdateMetrics();
 	// A temporary solution for special drawing in the Editor
 	void DrawItemsFix();
 	void DrawItemsUnfix();
