@@ -1025,7 +1025,11 @@ void Interpreter::O_GETMOBTEXT() {
 	int32 mob = readScriptFlagValue();
 	debugInterpreter("O_GETMOBTEXT mob %d", mob);
 	_currentString = _vm->_locationNr * 100 + mob + 60001;
-	strncpy((char *)_stringBuf, _vm->_mobList[mob]._examText.c_str(), 1023);
+	// Use memcpy() instead of strncpy() because the examination text can contain
+	// different phrases separated by '\0' characters, followed by an ID.
+	// The examination text ends for a mob if the ID is 0xFF.
+	// Strings are properly extracted by the interpreter in that format.
+	memcpy((char *)_stringBuf, _vm->_mobList[mob]._examText.c_str(), 1023);
 	_string = _stringBuf;
 }
 
