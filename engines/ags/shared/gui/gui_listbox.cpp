@@ -270,6 +270,8 @@ void GUIListBox::OnResized() {
 void GUIListBox::UpdateMetrics() {
 	RowHeight = getfontheight(Font) + get_fixed_pixel_size(2);
 	VisibleItemCount = Height / RowHeight;
+	if (ItemCount <= VisibleItemCount)
+		TopItem = 0; // reset scroll if all items are visible
 }
 
 // TODO: replace string serialization with StrUtil::ReadString and WriteString
