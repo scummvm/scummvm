@@ -1025,7 +1025,7 @@ void Interpreter::O_GETMOBTEXT() {
 	int32 mob = readScriptFlagValue();
 	debugInterpreter("O_GETMOBTEXT mob %d", mob);
 	_currentString = _vm->_locationNr * 100 + mob + 60001;
-	strncpy((char *)_stringBuf, _vm->_mobList[mob]._examText.c_str(), 1023);
+	memcpy((char *)_stringBuf, _vm->_mobList[mob]._examText.c_str(), 1023);
 	_string = _stringBuf;
 }
 
