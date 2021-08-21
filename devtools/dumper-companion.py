@@ -164,7 +164,7 @@ def escape_string(s: str) -> str:
     for char in s:
         if char == "\x81":
             new_name += "\x81\x79"
-        if char in '/":*[]+|\\?%<>,;=' or ord(char) < 0x20:
+        elif char in '/":*[]+|\\?%<>,;=' or ord(char) < 0x20:
             new_name += "\x81" + chr(0x80 + ord(char))
         else:
             new_name += char
@@ -431,6 +431,6 @@ def test_decode_name():
 
 
 def test_escape_string():
-    checks = [["\r", "\x81\x8d"], ["\x81", "\x81\x79\x81"]]
+    checks = [["\r", "\x81\x8d"], ["\x81", "\x81\x79"]]
     for input, expected in checks:
         assert escape_string(input) == expected
