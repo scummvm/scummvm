@@ -11,6 +11,13 @@ void SpiderEngine::loadAssets() {
 	uint32 i = 0;
 	uint32 j = 0;
 
+	// start level
+	Level start;
+	start.trans.level = "sixdemo/mis/demo.mis";
+	start.trans.intros.push_back("sixdemo/demo/dcine1.smk");
+	start.trans.intros.push_back("sixdemo/demo/dcine2.smk");
+	_levels["<start>"] = start;
+
 	Common::String arc;
 	Common::String list;
 
@@ -35,24 +42,6 @@ void SpiderEngine::loadAssets() {
 	loadLib("sixdemo/c_misc/fonts.lib", _fontFiles);
 	loadLib("sixdemo/c_misc/sound.lib", _soundFiles);
 	loadLib("sixdemo/demo/sound.lib", _soundFiles);
-
-	// start level
-	Level start;
-	start.trans.level = "sixdemo/mis/demo.mis";
-	start.trans.intros.push_back(MVideo("sixdemo/demo/dcine1.smk", Common::Point(0, 0), false, true, false));
-	start.trans.intros.push_back(MVideo("sixdemo/demo/dcine2.smk", Common::Point(0, 0), false, true, false));
-	_levels["<start>"] = start;
-
-	// quit level
-	Hotspot q;
-	q.type = MakeMenu;
-	Action *a = new Quit();
-	q.actions.push_back(a);
-	Level quit;
-	Hotspots hs;
-	hs.push_back(q);
-	quit.scene.hots = hs;  
-	_levels["<quit>"] = quit;
 
 	// Read assets from mis files
 	parseScene("sixdemo", "mis/demo.mis");

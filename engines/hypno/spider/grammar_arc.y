@@ -60,8 +60,8 @@ using namespace Hypno;
 %token<s> NAME FILENAME BNTOK
 %token<i> NUM
 // header
-%token YBTOK YMTOK CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
-%token PTOK FTOK TTOK ATOK VTOK OTOK NTOK RTOK ITOK SNTOK ZTOK
+%token YXTOK CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
+%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK O1TOK NTOK RTOK ITOK SNTOK ZTOK
 
 // body
 %token FNTOK NONETOK A0TOK K0TOK P0TOK WTOK
@@ -74,8 +74,7 @@ using namespace Hypno;
 
 %%
 
-start:  YBTOK header body
-      | YMTOK header body
+start:  YXTOK header body
       ;
 
 
@@ -91,8 +90,15 @@ hline:  CTOK NUM  { debug("C %d", $2); }
       | ATOK NUM NUM { debug("A %d %d", $2, $3); }
       | VTOK NUM NUM { debug("V %d %d", $2, $3); }
       | OTOK NUM NUM { debug("O %d %d", $2, $3); }
+	  | O1TOK NUM NUM { debug("O1 %d %d", $2, $3); }
+	  | TPTOK FILENAME NUM FILENAME { 
+		  debug("Tp %s %d %s", $2, $3, $4); 
+		}
 	  | TTOK FILENAME NUM { 
 		  debug("T %s %d", $2, $3); 
+		}
+	  | TTOK NONETOK NUM { 
+		  debug("T NONE %d", $3); 
 		}
 	  | NTOK FILENAME  { 
 		  g_parsedArc.background = $2; 
@@ -144,6 +150,10 @@ bline: FNTOK FILENAME {
 		debug("FN %s", $2); 
 	 	}
      | ITOK  NAME  { 
+		 shoot->name = $2;
+		 debug("I %s", $2); 
+	   }
+     | ITOK  BNTOK  {  // Workaround for NAME == B1
 		 shoot->name = $2;
 		 debug("I %s", $2); 
 	   }

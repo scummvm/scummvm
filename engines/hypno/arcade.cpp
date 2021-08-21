@@ -6,7 +6,7 @@
 
 namespace Hypno {
 
-void HypnoEngine::drawPlayer(Common::String player, uint32 idx) { error("not implemented"); }
+void HypnoEngine::drawPlayer(Common::String player, MVideo &background) { error("not implemented"); }
 void HypnoEngine::drawHealth(const Graphics::Font &font) { error("not implemented"); }
 
 void HypnoEngine::drawShoot(Common::Point target) {
@@ -62,9 +62,15 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 			}
 		}
 
-		if (background.decoder->endOfVideo() || _health < 0) {
+		if (_health <= 0 ) {
 			skipVideo(background);
-			_nextLevel = "mis/demo.mis";
+			_nextLevel = arc.levelIfLose;
+			return;
+		}
+
+		if (background.decoder->endOfVideo()) {
+			skipVideo(background);
+			_nextLevel = arc.levelIfWin;
 			return;
 		}
 
@@ -73,7 +79,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 			if (si.timestamp <= background.decoder->getCurFrame()) {
 				shootSequence.pop_front();
 				for (Shoots::iterator it = arc.shoots.begin(); it != arc.shoots.end(); ++it) {
-					if (it->name == si.name) {
+					if (it->name == si.name && it->name != "NONE") {
 						Shoot s = *it;
 						s.video = new MVideo(it->animation, it->position , true, false, false);
 						playVideo(*s.video);
@@ -115,7 +121,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 			playSound(_music, 0);
 		}
 
-		drawPlayer(arc.player, playerIdx);
+		drawPlayer(arc.player, background);
 		drawHealth(font);
 
 		drawScreen();
