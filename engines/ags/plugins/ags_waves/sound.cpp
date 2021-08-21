@@ -37,8 +37,14 @@ void AGSWaves::SFX_Play(ScriptMethodParams &params) {
 	PARAMS2(int, sfxNum, int, repeat);
 
 	SoundEffect &effect = SFX[sfxNum];
-	if (_mixer->isSoundHandleActive(effect._soundHandle))
+	if (_mixer->isSoundHandleActive(effect._soundHandle)) {
+		if (effect._allow == 1) {
+			// In this case we should start the sound on a new channel, not stopping
+			// the one currently playing.
+			warning("TODO: play overlapping sound with SFX_Play");
+		}
 		return;
+	}
 	_mixer->stopHandle(effect._soundHandle);
 
 	Common::FSNode fsNode = ::AGS::g_vm->getGameFolder().getChild(
@@ -156,7 +162,8 @@ void AGSWaves::Audio_Remove_Filter(ScriptMethodParams &params) {
 }
 
 void AGSWaves::SFX_AllowOverlap(ScriptMethodParams &params) {
-	//PARAMS2(int, SFX, int, allow);
+	PARAMS2(int, sfxNum, int, allow);
+	SFX[sfxNum]._allow = allow;
 }
 
 void AGSWaves::SFX_Filter(ScriptMethodParams &params) {
