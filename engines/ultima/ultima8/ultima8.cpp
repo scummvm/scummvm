@@ -982,7 +982,7 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 
 bool Ultima8Engine::saveGame(int slot, const Std::string &desc) {
 	// Check for gumps that prevent saving
-	if ( _desktopGump->FindGump(&HasPreventSaveFlag, true)) {
+	if (_desktopGump->FindGump(&HasPreventSaveFlag, true)) {
 		pout << "Can't save: open gump preventing save." << Std::endl;
 		return false;
 	}
