@@ -586,9 +586,6 @@ private:
 	/** Find a game across all loaded plugins. */
 	QualifiedGameList findGameInLoadedPlugins(const Common::String &gameId) const;
 
-	/** Find a loaded plugin with the given engine ID. */
-	const Plugin *findLoadedPlugin(const Common::String &engineId) const;
-
 	/** Use heuristics to complete a target lacking an engine ID. */
 	void upgradeTargetForEngineId(const Common::String &target) const;
 };
