@@ -102,8 +102,19 @@ Common::FSNode getFSNode(const char *path) {
 }
 
 int  ags_file_exists(const char *path) {
-	Common::FSNode node = getFSNode(path);
-	return node.exists() && !node.isDirectory() ? 1 : 0;
+	Common::String sPath(path);
+
+	if (sPath.hasPrefix(AGS::Shared::SAVE_FOLDER_PREFIX)) {
+		sPath = path + strlen(AGS::Shared::SAVE_FOLDER_PREFIX);
+		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(sPath);
+		bool result = saveFile != nullptr;
+		delete saveFile;
+
+		return result ? 1 : 0;
+	} else {
+		Common::FSNode node = getFSNode(path);
+		return node.exists() && !node.isDirectory() ? 1 : 0;
+	}
 }
 
 int ags_directory_exists(const char *path) {
