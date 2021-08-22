@@ -38,12 +38,6 @@ namespace Saga2 {
 extern  int16               currentMapNum;          // which map is in use
 
 /* ===================================================================== *
-   Globals
- * ===================================================================== */
-
-static gPalette     newPalette;
-
-/* ===================================================================== *
    Prototypes
  * ===================================================================== */
 
@@ -71,30 +65,28 @@ void dayNightUpdate(void) {
 
 	audioEnvironmentSetDaytime(isDayTime());
 
-
-	static uint32   prevLightLevel = 0;
-	uint32          lightLevel = calender.lightLevel(MAX_LIGHT);
+	uint32 lightLevel = calender.lightLevel(MAX_LIGHT);
 
 	//  Code to avoid unneccessary fades.
-	if (lightLevel != prevLightLevel) {
-		prevLightLevel = lightLevel;
+	if (lightLevel != g_vm->_pal->_prevLightLevel) {
+		g_vm->_pal->_prevLightLevel = lightLevel;
 
 		g_vm->_pal->createPalette(
-		    &newPalette,
+		    &g_vm->_pal->_newPalette,
 		    g_vm->_pal->_midnightPalette,
 		    g_vm->_pal->_noonPalette,
 		    lightLevel,
 		    MAX_LIGHT);
 
 		if (currentMapNum == 0)
-			g_vm->_pal->beginFade(&newPalette, 100);
+			g_vm->_pal->beginFade(&g_vm->_pal->_newPalette, 100);
 	}
 
 	if (!g_vm->_pal->updatePalette()) {
 		gPalettePtr     neededPalette;
 		gPalette        currentPalette;
 
-		neededPalette = currentMapNum == 0 ? &newPalette : g_vm->_pal->_noonPalette;
+		neededPalette = currentMapNum == 0 ? &g_vm->_pal->_newPalette : g_vm->_pal->_noonPalette;
 		g_vm->_pal->getCurrentPalette(&currentPalette);
 		if (memcmp(&currentPalette, neededPalette, sizeof(gPalette)) != 0)
 			g_vm->_pal->setCurrentPalette(neededPalette);
@@ -137,7 +129,7 @@ void fadeUp(void) {
 		drawMainDisplay();
 		reDrawScreen();
 		enablePaletteChanges();
-		g_vm->_pal->beginFade(currentMapNum != 0 ? g_vm->_pal->_noonPalette : &newPalette, 20);
+		g_vm->_pal->beginFade(currentMapNum != 0 ? g_vm->_pal->_noonPalette : &g_vm->_pal->_newPalette, 20);
 		while (g_vm->_pal->updatePalette()) ;
 	}
 }

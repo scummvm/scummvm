@@ -71,9 +71,12 @@ private:
 
 
 public:
+	gPalette _newPalette;
 	gPalettePtr _midnightPalette,
 			    _noonPalette,
 			    _darkPalette;
+
+	uint32 _prevLightLevel;
 
 	PaletteManager();
 	//~PaletteManager() {}

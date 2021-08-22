@@ -55,7 +55,9 @@ PaletteManager::PaletteManager() {
 	_midnightPalette = nullptr;
 	_noonPalette = nullptr;
 	_darkPalette = nullptr;
+	_prevLightLevel = 0;
 
+	memset(_newPalette.entry, 0, sizeof(_newPalette.entry));
 	memset(_currentPalette.entry, 0, sizeof(_currentPalette.entry));
 	memset(_oldPalette.entry, 0, sizeof(_oldPalette.entry));
 	memset(_destPalette.entry, 0, sizeof(_destPalette.entry));
@@ -231,11 +233,11 @@ void PaletteManager::createPalette(
     gPalettePtr srcP,
     gPalettePtr dstP,
     int32       elapsedTime,
-    int32       _totalTime_) {
-	assert(_totalTime_ != 0);
+    int32       totalTime) {
+	assert(totalTime != 0);
 
 	int             i;
-	uint32          fadeProgress = (elapsedTime << 8) / _totalTime_;
+	uint32          fadeProgress = (elapsedTime << 8) / totalTime;
 
 	for (i = 0; i < (long)ARRAYSIZE(newP->entry); i++) {
 		gPaletteEntry   *srcPal = &srcP->entry[i];
