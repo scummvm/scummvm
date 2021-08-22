@@ -104,11 +104,12 @@ public:
 	}
 
 	const char *getName() const override {
-		return "Spiderman and the Sinister Six";
+		return "Hypno";
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Copyright (C) Brooklyn Multimedia";
+		return "Marvel Comics Spider-Man: The Sinister Six (C) Brooklyn Multimedia\n" \
+		       "Wetlands (C) Hypnotix, Inc.";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
