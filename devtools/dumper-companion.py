@@ -167,14 +167,14 @@ def escape_string(s: str) -> str:
 
     Escape the following:
     - escape char: \x81
-    - unallowed filename chars: https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#naming-conventions
+    - unallowed filename chars: https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
     - control chars < 0x20
     """
     new_name = ""
     for char in s:
         if char == "\x81":
             new_name += "\x81\x79"
-        elif char in '/":*[]+|\\?%<>,;=' or ord(char) < 0x20:
+        elif char in '/":*|\\?%<>,;=' or ord(char) < 0x20:
             new_name += "\x81" + chr(0x80 + ord(char))
         else:
             new_name += char
@@ -183,18 +183,31 @@ def escape_string(s: str) -> str:
 
 def needs_punyencoding(orig: str) -> bool:
     """
-    Filenames need punyencoding when it contains a char that should be
-    escaped.
+    A filename needs to be punyencoded when it:
+
+    - contains a char that should be escaped or
+    - ends with a dot or a space.
     """
-    return orig != escape_string(orig)
+    if orig != escape_string(orig):
+        return True
+    if orig[-1] in " .":
+        return True
+    return False
 
 
 def punyencode(orig: str) -> str:
+    """
+    Punyencode strings
+
+    - escape special characters and
+    - ensure filenames can't end in a space or dot
+    """
     s = escape_string(orig)
     encoded = s.encode("punycode").decode("ascii")
     # punyencoding adds an '-' at the end when there are no special chars
     # don't use it for comparing
-    if orig != encoded[:-1]:
+    compare = encoded[:-1]
+    if orig != compare or compare[-1] in " .":
         return "xn--" + encoded
     return orig
 
@@ -464,6 +477,8 @@ def test_encode_stdin(capsys, monkeypatch):
 def test_decode_name():
     checks = [
         ["Icon\r", "xn--Icon-ja6e"],
+        ["ends with dot .", "xn--ends with dot .-"],
+        ["ends with space ", "xn--ends with space -"],
         ["バッドデイ(Power PC)", "xn--(Power PC)-jx4ilmwb1a7h"],
     ]
     for input, expected in checks:
@@ -471,7 +486,13 @@ def test_decode_name():
 
 
 def test_needs_punyencoding():
-    checks = [["Icon\r", True], ["ascii", False], ["バッドデイ(Power PC)", False]]
+    checks = [
+        ["Icon\r", True],
+        ["ascii", False],
+        ["バッドデイ(Power PC)", False],
+        ["ends_with_dot .", True],
+        ["ends_with_space ", True],
+    ]
     for input, expected in checks:
         assert needs_punyencoding(input) == expected
 
