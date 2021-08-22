@@ -248,7 +248,7 @@ void Weather::InitializeParticles() {
 void Weather::SetDriftRange(int min_value, int max_value) {
 #ifdef DEBUG
 	char buffer[200];
-	sprintf(buffer, "%d %s %d %d\n", (int)mIsSnow, "SetDriftRange", min_value, max_value);
+	sprintf(buffer, "%d %s %d %d\n", (int)_mIsSnow, "SetDriftRange", min_value, max_value);
 	_engine->PrintDebugConsole(buffer);
 #endif
 
@@ -269,7 +269,7 @@ void Weather::SetDriftRange(int min_value, int max_value) {
 void Weather::SetDriftSpeed(int min_value, int max_value) {
 #ifdef DEBUG
 	char buffer[200];
-	sprintf(buffer, "%d %s %d %d\n", (int)mIsSnow, "SetDriftSpeed", min_value, max_value);
+	sprintf(buffer, "%d %s %d %d\n", (int)_mIsSnow, "SetDriftSpeed", min_value, max_value);
 	_engine->PrintDebugConsole(buffer);
 #endif
 
@@ -290,7 +290,7 @@ void Weather::SetDriftSpeed(int min_value, int max_value) {
 void Weather::ChangeAmount(int amount) {
 #ifdef DEBUG
 	char buffer[200];
-	sprintf(buffer, "%d %s %d\n", (int)mIsSnow, "ChangeAmount", amount);
+	sprintf(buffer, "%d %s %d\n", (int)_mIsSnow, "ChangeAmount", amount);
 	_engine->PrintDebugConsole(buffer);
 #endif
 
@@ -302,7 +302,7 @@ void Weather::ChangeAmount(int amount) {
 void Weather::SetView(int kind_id, int event, int view, int loop) {
 #ifdef DEBUG
 	char buffer[200];
-	sprintf(buffer, "%d %s %d %d %d %d\n", (int)mIsSnow, "SetView", kind_id, event, view, loop);
+	sprintf(buffer, "%d %s %d %d %d %d\n", (int)_mIsSnow, "SetView", kind_id, event, view, loop);
 	_engine->PrintDebugConsole(buffer);
 #endif
 
@@ -319,7 +319,7 @@ void Weather::SetView(int kind_id, int event, int view, int loop) {
 void Weather::SetDefaultView(int view, int loop) {
 #ifdef DEBUG
 	char buffer[200];
-	sprintf(buffer, "%d %s %d %d\n", (int)mIsSnow, "SetDefaultView", view, loop);
+	sprintf(buffer, "%d %s %d %d\n", (int)_mIsSnow, "SetDefaultView", view, loop);
 	_engine->PrintDebugConsole(buffer);
 #endif
 
@@ -341,7 +341,7 @@ void Weather::SetDefaultView(int view, int loop) {
 void Weather::SetTransparency(int min_value, int max_value) {
 #ifdef DEBUG
 	char buffer[200];
-	sprintf(buffer, "%d %s %d %d\n", (int)mIsSnow, "SetTransparency", min_value, max_value);
+	sprintf(buffer, "%d %s %d %d\n", (int)_mIsSnow, "SetTransparency", min_value, max_value);
 	_engine->PrintDebugConsole(buffer);
 #endif
 
@@ -366,7 +366,7 @@ void Weather::SetTransparency(int min_value, int max_value) {
 void Weather::SetWindSpeed(int value) {
 #ifdef DEBUG
 	char buffer[200];
-	sprintf(buffer, "%d %s %d\n", (int)mIsSnow, "SetWindSpeed", value);
+	sprintf(buffer, "%d %s %d\n", (int)_mIsSnow, "SetWindSpeed", value);
 	_engine->PrintDebugConsole(buffer);
 #endif
 
@@ -378,7 +378,7 @@ void Weather::SetWindSpeed(int value) {
 void Weather::SetBaseline(int top, int bottom) {
 #ifdef DEBUG
 	char buffer[200];
-	sprintf(buffer, "%d %s %d %d\n", (int)mIsSnow, "SetBaseline", top, bottom);
+	sprintf(buffer, "%d %s %d %d\n", (int)_mIsSnow, "SetBaseline", top, bottom);
 	_engine->PrintDebugConsole(buffer);
 #endif
 
@@ -401,7 +401,7 @@ void Weather::SetBaseline(int top, int bottom) {
 void Weather::SetAmount(int amount) {
 #ifdef DEBUG
 	char buffer[200];
-	sprintf(buffer, "%d %s %d\n", (int)mIsSnow, "SetAmount", amount);
+	sprintf(buffer, "%d %s %d\n", (int)_mIsSnow, "SetAmount", amount);
 	_engine->PrintDebugConsole(buffer);
 #endif
 
@@ -415,7 +415,7 @@ void Weather::SetAmount(int amount) {
 void Weather::SetFallSpeed(int min_value, int max_value) {
 #ifdef DEBUG
 	char buffer[200];
-	sprintf(buffer, "%d %s %d %d\n", (int)mIsSnow, "SetFallSpeed", min_value, max_value);
+	sprintf(buffer, "%d %s %d %d\n", (int)_mIsSnow, "SetFallSpeed", min_value, max_value);
 	_engine->PrintDebugConsole(buffer);
 #endif
 
