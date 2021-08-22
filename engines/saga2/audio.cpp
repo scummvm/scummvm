@@ -138,6 +138,34 @@ void startAudio(void) {
 	clickData[2] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
 }
 
+void cleanupAudio() {
+	if (g_vm->_audio) {
+		delete g_vm->_audio;
+		g_vm->_audio = nullptr;
+
+		free(clickData[1]);
+		clickData[1] = nullptr;
+
+		free(clickData[2]);
+		clickData[2] = nullptr;
+
+		delete musicRes;
+		musicRes = nullptr;
+
+		delete soundRes;
+		soundRes = nullptr;
+
+		delete longRes;
+		longRes = nullptr;
+
+		delete loopRes;
+		loopRes = nullptr;
+
+		delete voiceRes;
+		voiceRes = nullptr;
+	}
+}
+
 //-----------------------------------------------------------------------
 // audio event loop
 
@@ -545,10 +573,6 @@ void PlayMusic(char IDstr[]) {
 bool initAudio() {
 	g_vm->_audio = new AudioInterface();
 	return true;
-}
-
-void cleanupAudio() {
-	delete g_vm->_audio;
 }
 
 AudioInterface::AudioInterface() {
