@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-21 01:05+0000\n"
+"POT-Creation-Date: 2021-08-22 21:07+0000\n"
 "PO-Revision-Date: 2021-08-21 11:25+0000\n"
 "Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -55,7 +55,7 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Remonter"
 
-#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:384
+#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:387
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
 #: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:92 gui/options.cpp:2092
 #: gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
@@ -91,7 +91,7 @@ msgstr "Choisir"
 msgid "Select directory where to download game data"
 msgstr "Sélectionner le répertoire de téléchargement des données du jeu"
 
-#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:583 gui/launcher.cpp:206
+#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:586 gui/launcher.cpp:206
 msgid "Select directory with game data"
 msgstr "Sélectionner le répertoire contenant les données du jeu"
 
@@ -159,7 +159,7 @@ msgstr ""
 "Impossible de créer un répertoire de téléchargement - un fichier portant le "
 "même nom existe déjà."
 
-#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:385
+#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:388
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:514 gui/launcher.cpp:518
 #: gui/massadd.cpp:89 gui/options.cpp:2094 gui/saveload-dialog.cpp:1169
 #: engines/engine.cpp:523 engines/engine.cpp:547
@@ -197,7 +197,7 @@ msgstr "Téléchargé %s %S / %s %S"
 msgid "Download speed: %s %S"
 msgstr "Vitesse de téléchargement : %s %S"
 
-#: gui/editgamedialog.cpp:142 engines/dialogs.cpp:275
+#: gui/editgamedialog.cpp:142 engines/dialogs.cpp:276
 msgid "Game"
 msgstr "Jeu"
 
@@ -273,169 +273,169 @@ msgstr "Système :"
 msgid "Engine"
 msgstr "Moteur"
 
-#: gui/editgamedialog.cpp:207 gui/options.cpp:1781 gui/options.cpp:1938
+#: gui/editgamedialog.cpp:210 gui/options.cpp:1781 gui/options.cpp:1938
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Graphics"
 msgstr "Graphismes"
 
-#: gui/editgamedialog.cpp:207 gui/options.cpp:1781 gui/options.cpp:1938
+#: gui/editgamedialog.cpp:210 gui/options.cpp:1781 gui/options.cpp:1938
 msgid "GFX"
 msgstr "GFX"
 
-#: gui/editgamedialog.cpp:213
+#: gui/editgamedialog.cpp:216
 msgid "Override global graphic settings"
 msgstr "Utiliser des réglages graphiques spécifiques à ce jeu"
 
-#: gui/editgamedialog.cpp:215
+#: gui/editgamedialog.cpp:218
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Réglages graphiques spécifiques"
 
-#: gui/editgamedialog.cpp:225 gui/options.cpp:1949
+#: gui/editgamedialog.cpp:228 gui/options.cpp:1949
 msgid "Shader"
 msgstr "Shader"
 
-#: gui/editgamedialog.cpp:228
+#: gui/editgamedialog.cpp:231
 msgid "Override global shader settings"
 msgstr "Utiliser des shaders spécifiques à ce jeu"
 
-#: gui/editgamedialog.cpp:230
+#: gui/editgamedialog.cpp:233
 msgctxt "lowres"
 msgid "Override global shader settings"
 msgstr "Shaders spécifiques"
 
-#: gui/editgamedialog.cpp:244 gui/options.cpp:1983 engines/dialogs.cpp:316
+#: gui/editgamedialog.cpp:247 gui/options.cpp:1983 engines/dialogs.cpp:319
 msgid "Keymaps"
 msgstr "Config. Touches"
 
-#: gui/editgamedialog.cpp:251 gui/options.cpp:1990 engines/dialogs.cpp:323
+#: gui/editgamedialog.cpp:254 gui/options.cpp:1990 engines/dialogs.cpp:326
 msgid "Backend"
 msgstr "Back-end"
 
-#: gui/editgamedialog.cpp:254
+#: gui/editgamedialog.cpp:257
 msgid "Override global backend settings"
 msgstr "Utiliser des réglages back-end spécifiques à ce jeu"
 
-#: gui/editgamedialog.cpp:256
+#: gui/editgamedialog.cpp:259
 msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "Utiliser des réglages back-end spécifiques à ce jeu"
 
-#: gui/editgamedialog.cpp:270 gui/options.cpp:2004 engines/dialogs.cpp:291
+#: gui/editgamedialog.cpp:273 gui/options.cpp:2004 engines/dialogs.cpp:294
 msgid "Audio"
 msgstr "Audio"
 
-#: gui/editgamedialog.cpp:273
+#: gui/editgamedialog.cpp:276
 msgid "Override global audio settings"
 msgstr "Utiliser des réglages audio spécifiques à ce jeu"
 
-#: gui/editgamedialog.cpp:275
+#: gui/editgamedialog.cpp:278
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Réglages audio spécifiques"
 
-#: gui/editgamedialog.cpp:284 gui/options.cpp:2009
+#: gui/editgamedialog.cpp:287 gui/options.cpp:2009
 msgid "Volume"
 msgstr "Volume"
 
-#: gui/editgamedialog.cpp:286 gui/options.cpp:2011
+#: gui/editgamedialog.cpp:289 gui/options.cpp:2011
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Volume"
 
-#: gui/editgamedialog.cpp:289
+#: gui/editgamedialog.cpp:292
 msgid "Override global volume settings"
 msgstr "Utiliser des réglages de volume spécifiques à ce jeu"
 
-#: gui/editgamedialog.cpp:291
+#: gui/editgamedialog.cpp:294
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Réglages de volume spécifiques"
 
-#: gui/editgamedialog.cpp:302 gui/options.cpp:2019
+#: gui/editgamedialog.cpp:305 gui/options.cpp:2019
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/editgamedialog.cpp:305
+#: gui/editgamedialog.cpp:308
 msgid "Override global MIDI settings"
 msgstr "Utiliser des réglages MIDI spécifiques à ce jeu"
 
-#: gui/editgamedialog.cpp:307
+#: gui/editgamedialog.cpp:310
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Réglages MIDI spécifiques"
 
-#: gui/editgamedialog.cpp:317 gui/options.cpp:2025
+#: gui/editgamedialog.cpp:320 gui/options.cpp:2025
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/editgamedialog.cpp:320
+#: gui/editgamedialog.cpp:323
 msgid "Override global MT-32 settings"
 msgstr "Utiliser des réglages MT-32 spécifiques à ce jeu"
 
-#: gui/editgamedialog.cpp:322
+#: gui/editgamedialog.cpp:325
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Réglages MT-32 spécifiques"
 
-#: gui/editgamedialog.cpp:331 gui/options.cpp:2032
+#: gui/editgamedialog.cpp:334 gui/options.cpp:2032
 msgid "Paths"
 msgstr "Chemins"
 
-#: gui/editgamedialog.cpp:333 gui/options.cpp:2034
+#: gui/editgamedialog.cpp:336 gui/options.cpp:2034
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Chemins"
 
-#: gui/editgamedialog.cpp:340
+#: gui/editgamedialog.cpp:343
 msgid "Game Path:"
 msgstr "Chemin du jeu :"
 
-#: gui/editgamedialog.cpp:342
+#: gui/editgamedialog.cpp:345
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Chemin du jeu :"
 
-#: gui/editgamedialog.cpp:347 gui/options.cpp:2208
+#: gui/editgamedialog.cpp:350 gui/options.cpp:2208
 msgid "Extra Path:"
 msgstr "Extra :"
 
-#: gui/editgamedialog.cpp:347 gui/editgamedialog.cpp:349
-#: gui/editgamedialog.cpp:350
+#: gui/editgamedialog.cpp:350 gui/editgamedialog.cpp:352
+#: gui/editgamedialog.cpp:353
 msgid "Specifies path to additional data used by the game"
 msgstr ""
 "Définit un chemin vers des données supplémentaires utilisées par le jeu"
 
-#: gui/editgamedialog.cpp:349 gui/options.cpp:2210
+#: gui/editgamedialog.cpp:352 gui/options.cpp:2210
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Extra :"
 
-#: gui/editgamedialog.cpp:356 gui/options.cpp:2192
+#: gui/editgamedialog.cpp:359 gui/options.cpp:2192
 msgid "Save Path:"
 msgstr "Sauvegardes :"
 
-#: gui/editgamedialog.cpp:356 gui/editgamedialog.cpp:358
-#: gui/editgamedialog.cpp:359 gui/options.cpp:2192 gui/options.cpp:2194
+#: gui/editgamedialog.cpp:359 gui/editgamedialog.cpp:361
+#: gui/editgamedialog.cpp:362 gui/options.cpp:2192 gui/options.cpp:2194
 #: gui/options.cpp:2195
 msgid "Specifies where your saved games are put"
 msgstr "Définit l'emplacement où les fichiers de sauvegarde sont créés"
 
-#: gui/editgamedialog.cpp:358 gui/options.cpp:2194
+#: gui/editgamedialog.cpp:361 gui/options.cpp:2194
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Sauvegardes :"
 
-#: gui/editgamedialog.cpp:370 engines/dialogs.cpp:338
+#: gui/editgamedialog.cpp:373 engines/dialogs.cpp:341
 msgid "Achievements"
 msgstr "Trophées"
 
-#: gui/editgamedialog.cpp:374 engines/dialogs.cpp:342
+#: gui/editgamedialog.cpp:377 engines/dialogs.cpp:345
 msgid "Statistics"
 msgstr "Statistiques"
 
-#: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
-#: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2115
+#: gui/editgamedialog.cpp:401 gui/editgamedialog.cpp:507
+#: gui/editgamedialog.cpp:573 gui/editgamedialog.cpp:640 gui/options.cpp:2115
 #: gui/options.cpp:2121 gui/options.cpp:2129 gui/options.cpp:2160
 #: gui/options.cpp:2203 gui/options.cpp:2211 gui/options.cpp:2220
 #: gui/options.cpp:2491 gui/options.cpp:2497 gui/options.cpp:2504
@@ -445,31 +445,31 @@ msgctxt "path"
 msgid "None"
 msgstr "Aucun"
 
-#: gui/editgamedialog.cpp:403 gui/editgamedialog.cpp:510
-#: gui/editgamedialog.cpp:641 gui/options.cpp:2109 gui/options.cpp:2485
+#: gui/editgamedialog.cpp:406 gui/editgamedialog.cpp:513
+#: gui/editgamedialog.cpp:644 gui/options.cpp:2109 gui/options.cpp:2485
 #: gui/options.cpp:2763 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Défaut"
 
-#: gui/editgamedialog.cpp:563 gui/options.cpp:2784
+#: gui/editgamedialog.cpp:566 gui/options.cpp:2784
 msgid "Select SoundFont"
 msgstr "Choisir une banque de sons"
 
-#: gui/editgamedialog.cpp:602
+#: gui/editgamedialog.cpp:605
 msgid "Select additional game directory"
 msgstr "Sélectionner un répertoire supplémentaire"
 
-#: gui/editgamedialog.cpp:615 gui/options.cpp:2692
+#: gui/editgamedialog.cpp:618 gui/options.cpp:2692
 msgid "Select directory for saved games"
 msgstr "Sélectionner le répertoire pour les sauvegardes"
 
-#: gui/editgamedialog.cpp:622 gui/options.cpp:2699
+#: gui/editgamedialog.cpp:625 gui/options.cpp:2699
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "Le répertoire sélectionné est verrouillé en écriture. Sélectionnez un autre "
 "répertoire."
 
-#: gui/editgamedialog.cpp:627
+#: gui/editgamedialog.cpp:630
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -478,7 +478,7 @@ msgstr ""
 "les répertoires par défaut. Si vous souhaitez synchroniser vos sauvegardes, "
 "utilisez le répertoire par défaut."
 
-#: gui/editgamedialog.cpp:653
+#: gui/editgamedialog.cpp:656
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Cet ID est déjà utilisé par un autre jeu. Choisissez-en un autre svp."
 
@@ -2312,11 +2312,11 @@ msgstr ""
 "Échec de la sauvegarde (%s) ! Lisez le fichier README pour les informations "
 "de base et les instructions pour obtenir de l'aide supplémentaire."
 
-#: engines/dialogs.cpp:353
+#: engines/dialogs.cpp:356
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:354
+#: engines/dialogs.cpp:357
 msgid "~C~ancel"
 msgstr "~A~nnuler"
 
