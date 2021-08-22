@@ -586,11 +586,16 @@ begin_credits("Credits");
 			# if one wants different sorting (e.g. based on the full engine name, not
 			# just the abbreviation used for the directory name), then somewhat more
 			# sophistication is needed
-			my $file;
-			my @files = `ls engines/*/credits.pl | sort`;
-			foreach $file (@files) {
-				my $credits_pl = readfile($file);
-				eval $credits_pl;
+			my $dir;
+			my @dirs = `ls -d engines/*/ | sort`;
+			foreach $dir (@dirs) {
+				my $file = "${dir}/credits.pl";
+				$file =~ s/\R//g;
+
+				if (-e $file) {
+					my $credits_pl = readfile($file);
+					eval $credits_pl;
+				}
 			}
 		end_section();
 
