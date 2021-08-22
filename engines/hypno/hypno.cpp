@@ -95,7 +95,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
 
-
+	_defaultCursor = "";
 	// Add quit level
 	Hotspot q;
 	q.type = MakeMenu;
@@ -282,7 +282,7 @@ void HypnoEngine::runLevel(Common::String name) {
 	stopSound();
 	_music = "";
 
-	disableCursor();
+	//disableCursor();
 
 	if (!_levels[name].trans.level.empty()) {
 		_nextLevel = _levels[name].trans.level;
@@ -320,8 +320,9 @@ void HypnoEngine::runScene(Scene scene) {
 	Common::List<uint32> videosToRemove;
 	
 	stack.clear();
-	_nextHotsToAdd = &scene.hots;	
-	changeCursor("mouse/cursor1.smk", 0);
+	_nextHotsToAdd = &scene.hots;
+	defaultCursor();
+	//changeCursor("mouse/cursor1.smk", 0);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 		
@@ -379,7 +380,7 @@ void HypnoEngine::runScene(Scene scene) {
 
 				if (hoverHotspot(mousePos)) {
 				} else
-					changeCursor("mouse/cursor1.smk", 0);
+					; //changeCursor("mouse/cursor1.smk", 0);
 				break;
 
 			default:
@@ -521,13 +522,13 @@ void HypnoEngine::runMenu(Hotspots hs) {
 	for (Actions::const_iterator itt = h.actions.begin(); itt != h.actions.end(); ++itt) {
 		Action *action = *itt;
 		if (typeid(*action) == typeid(Quit))
-			runQuit(h, (Quit*) action);
+			runQuit((Quit*) action);
 		else if (typeid(*action) == typeid(Background))
-			runBackground(h, (Background*) action);
+			runBackground((Background*) action);
 		else if (typeid(*action) == typeid(Overlay))
-			runOverlay(h, (Overlay*) action);
+			runOverlay((Overlay*) action);
 		else if (typeid(*action) == typeid(Ambient))
-			runAmbient(h, (Ambient*) action);
+			runAmbient((Ambient*) action);
 
 		//else if (typeid(*action) == typeid(Mice))
 		//	runMice(h, (Mice*) action);
@@ -539,33 +540,33 @@ void HypnoEngine::runMenu(Hotspots hs) {
 		loadImage("int_main/resume.smk", 0, 0, true);
 }
 
-void HypnoEngine::runBackground(const Hotspot h, Background *a) {
+void HypnoEngine::runBackground(Background *a) {
 	if (a->condition.size() > 0 && !_levelState[a->condition])
 		return;
 	Common::Point origin = a->origin;
 	loadImage(a->path, origin.x, origin.y, false);
 }
 
-void HypnoEngine::runOverlay(const Hotspot h, Overlay *a) {
+void HypnoEngine::runOverlay(Overlay *a) {
 	Common::Point origin = a->origin;
 	loadImage(a->path, origin.x, origin.y, false);
 }
 
-void HypnoEngine::runMice(const Hotspot h, Mice *a) {
+void HypnoEngine::runMice(Mice *a) {
     changeCursor(a->path, a->index);
 }
 
-void HypnoEngine::runEscape(const Hotspot h, Escape *a) {
+void HypnoEngine::runEscape(Escape *a) {
     _nextHotsToRemove = stack.back();
 }
 
-void HypnoEngine::runCutscene(const Hotspot h, Cutscene *a) {
+void HypnoEngine::runCutscene(Cutscene *a) {
 	stopSound();
 	_music = "";
 	_nextSequentialVideoToPlay.push_back(MVideo(a->path, Common::Point(0, 0), false, true, false));
 }
 
-void HypnoEngine::runGlobal(const Hotspot h, Global *a) {
+void HypnoEngine::runGlobal(Global *a) {
     if (a->command == "TURNON")
 		_levelState[a->variable] = 1;
 	else if (a->command == "TURNOFF")
@@ -574,7 +575,7 @@ void HypnoEngine::runGlobal(const Hotspot h, Global *a) {
 		error("Invalid command %s", a->command.c_str());
 }
 
-void HypnoEngine::runPlay(const Hotspot h, Play *a) {
+void HypnoEngine::runPlay(Play *a) {
 	if (a->condition.size() > 0 && !_levelState[a->condition])
 		return;
 	Common::Point origin = a->origin;
@@ -586,16 +587,16 @@ void HypnoEngine::runPlay(const Hotspot h, Play *a) {
 	}
 }
 
-void HypnoEngine::runAmbient(const Hotspot h, Ambient *a) {
+void HypnoEngine::runAmbient(Ambient *a) {
 	Common::Point origin = a->origin;
 	if (a->flag == "/BITMAP")
 			loadImage(a->path, origin.x, origin.y, false);
 	else {
-		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false, a->flag == "/LOOP"));
+		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, a->fullscreen, a->flag == "/LOOP"));
 	}
 }
 
-void HypnoEngine::runWalN(const Hotspot h, WalN *a) {
+void HypnoEngine::runWalN(WalN *a) {
 	if (a->condition.size() > 0 && !_levelState[a->condition])
 		return;
 	Common::Point origin = a->origin;
@@ -606,11 +607,15 @@ void HypnoEngine::runWalN(const Hotspot h, WalN *a) {
 	}
 }
 
-void HypnoEngine::runQuit(const Hotspot h, Quit *a) {
-    quitGame();
+void HypnoEngine::runQuit(Quit *a) {
+	quitGame();
 }
 
-void HypnoEngine::runTalk(const Hotspot h, Talk *a) {
+void HypnoEngine::runChangeLevel(ChangeLevel *a) {
+	_nextLevel = a->level;
+}
+
+void HypnoEngine::runTalk(Talk *a) {
 	debug("adding TALK line!");
 	_conversation.push_back(a);
 	_refreshConversation = true;
@@ -647,27 +652,30 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			_nextHotsToAdd = selected.smenu;
 		}
 
-		if (!selected.setting.empty())
-			_nextLevel = selected.setting;
+		//if (!selected.setting.empty())
+		//	_nextLevel = selected.setting;
 
 		debug("hotspot clicked actions size: %d", selected.actions.size());
 		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
 			Action *action = *itt;
+			if (typeid(*action) == typeid(ChangeLevel))
+				runChangeLevel((ChangeLevel*) action);
 			if (typeid(*action) == typeid(Escape))
-				runEscape(selected, (Escape*) action);
+				runEscape((Escape*) action);
 			else if (typeid(*action) == typeid(Cutscene))
-				runCutscene(selected, (Cutscene*) action);
+				runCutscene((Cutscene*) action);
 			else if (typeid(*action) == typeid(Play))
-				runPlay(selected, (Play*) action);
+				runPlay((Play*) action);
 			else if (typeid(*action) == typeid(WalN))
-				runWalN(selected, (WalN*) action);
+				runWalN((WalN*) action);
 			else if (typeid(*action) == typeid(Global))
-				runGlobal(selected, (Global*) action);
+				runGlobal((Global*) action);
 			else if (typeid(*action) == typeid(Talk))
-				runTalk(selected, (Talk*) action);
+				runTalk((Talk*) action);
+			else if (typeid(*action) == typeid(Quit))
+				runQuit((Quit*) action);
 			else if (typeid(*action) == typeid(Palette))
 				debug("runPalette unimplemented");
-
 		}
 
 	}
@@ -703,7 +711,7 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
 			Action *action = *itt;
 			if (typeid(*action) == typeid(Mice))
-				runMice(selected, (Mice*) action);
+				runMice((Mice*) action);
 		}
 		return true;
 	}

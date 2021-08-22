@@ -129,6 +129,7 @@ class Ambient : public Action {
 	Filename path;
 	Common::Point origin;
 	Common::String flag;
+	bool fullscreen;
 };
 
 class WalN : public Action {
@@ -162,6 +163,11 @@ class Talk : public Action {
 	Filename background;
 	Common::Point position;
 	Common::Rect rect;
+};
+
+class ChangeLevel : public Action {
+  public:
+	Filename level;
 };
 
 class Shoot {

@@ -17,11 +17,44 @@ void WetEngine::loadAssets() {
 	Common::String arclevel;
 
 	Level start;
-	start.trans.level = files[0].name;
-	start.trans.intros.push_back("movie/nw_logo.smk");
-	start.trans.intros.push_back("movie/hypnotix.smk");
-	start.trans.intros.push_back("movie/wetlogo.smk");
+	Hotspot h;
+	Hotspots hs;
+
+	h.type = MakeMenu;
+	Ambient *a = new Ambient();
+	a->path = "movie/selector.smk";
+	a->fullscreen = true;
+	a->flag = "/LOOP";
+	a->origin = Common::Point(0, 0); 
+	h.actions.push_back(a);
+
+	hs.push_back(h);
+
+	h.type = MakeHotspot;
+	h.rect = Common::Rect(0, 424, 233, 462);
+	h.actions.clear();
+	ChangeLevel *cl = new ChangeLevel();
+	cl->level = "<intro>";
+	h.actions.push_back(cl);
+
+	hs.push_back(h);
+
+	h.rect = Common::Rect(504, 424, 637, 480);
+	Quit *q = new Quit();
+	h.actions.clear();
+	h.actions.push_back(q);
+
+	hs.push_back(h);
+
+	start.scene.hots = hs;  
 	_levels["<start>"] = start;
+
+	Level intro;
+	intro.trans.level = files[0].name;
+	intro.trans.intros.push_back("movie/nw_logo.smk");
+	intro.trans.intros.push_back("movie/hypnotix.smk");
+	intro.trans.intros.push_back("movie/wetlogo.smk");
+	_levels["<intro>"] = intro;
 
 	for (k = 0; k < files.size(); k++) {
 		arc.clear();
