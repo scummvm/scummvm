@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-21 01:05+0000\n"
-"PO-Revision-Date: 2021-08-22 02:25+0000\n"
+"PO-Revision-Date: 2021-08-22 05:01+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1642,7 +1642,7 @@ msgstr "/root/ Pad:"
 
 #: gui/options.cpp:2423 gui/options.cpp:2425 gui/options.cpp:2426
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Selecteer welke map als /root/ word getoond in de Bestanden Manager"
+msgstr "Selecteer welke map als /root/ wordt getoond in de Bestanden Manager"
 
 #: gui/options.cpp:2425
 msgid "/root/ Path:"
@@ -2162,11 +2162,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
-"ScummVM is een programma wat het mogelijk maakt om een grote verscheidenheid "
-"aan klasieke grafische point-and-click adventure spellen en rollenspellen te "
-"spelen, mits je de benodigde data bestanden al hebt. The unieke hiervan is: "
-"ScummVM vervangt de executables die bij het spel geleverd worden, waardoor "
-"je ze kan spelen op systemen waar ze niet voor waren gemaakt!"
+"ScummVM is een programma die het mogelijk maakt om een grote verscheidenheid "
+"aan klassieke grafische point-and-click adventure spellen en rollenspellen "
+"te spelen, mits je de benodigde data bestanden al hebt. Het unieke hiervan "
+"is: ScummVM vervangt de executables die bij het spel geleverd worden, "
+"waardoor je ze kan spelen op systemen waar ze niet voor waren gemaakt!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
@@ -2417,7 +2417,7 @@ msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr ""
-"Dit spel wordt niet ondersteunt om de volgende reden:\n"
+"Dit spel wordt niet ondersteund om de volgende reden:\n"
 "\n"
 
 #: engines/engine.cpp:819
@@ -3941,7 +3941,7 @@ msgstr "Cutscene bestand '%s' niet gevonden!"
 
 #: engines/agos/metaengine.cpp:104
 msgid "AGOS 2 support is not compiled in"
-msgstr "AGOS 2 ondersteuning is niet meegecompileerd"
+msgstr "Ondersteuning voor AGOS 2 is niet meegecompileerd"
 
 #: engines/agos/midi.cpp:158 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -4247,7 +4247,7 @@ msgid ""
 "time you start the game.\n"
 msgstr ""
 "ScummVM heeft geconstateerd dat u oude opgeslagen spellen voor Drascula "
-"heeft die geconverteerd zouden moeten worden.\n"
+"heeft, die geconverteerd zouden moeten worden.\n"
 "Het oude formaat wordt niet meer ondersteund, dus u zult uw opgeslagen "
 "spellen niet meer kunnen laden als u ze niet converteerd.\n"
 "\n"
@@ -4724,7 +4724,7 @@ msgstr ""
 
 #: engines/grim/metaengine.cpp:63
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "Escape from Monkey Island ondersteuning is niet meegecompileerd"
+msgstr "Ondersteuning voor Escape from Monkey Island is niet meegecompileerd"
 
 #: engines/grim/resource.cpp:100
 msgid ""
@@ -4782,7 +4782,7 @@ msgstr "Speel films sneller af"
 
 #: engines/groovie/metaengine.cpp:52
 msgid "GroovieV2 support is not compiled in"
-msgstr "GroovieV2 ondersteuning is niet mee gecompileerd"
+msgstr "Ondersteuning voor GroovieV2 is niet meegecompileerd"
 
 #: engines/groovie/script.cpp:484
 msgid "Failed to save game"
@@ -4941,7 +4941,7 @@ msgstr ""
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
-msgstr "Lands of Lore ondersteuning is niet mee gecompileerd"
+msgstr "Ondersteuning voor Lands of Lore is niet meegecompileerd"
 
 #: engines/kyra/metaengine.cpp:127
 msgid ""
@@ -4953,7 +4953,7 @@ msgstr ""
 
 #: engines/kyra/metaengine.cpp:133
 msgid "Eye of Beholder support is not compiled in"
-msgstr "Eye of the Beholder ondersteuning is niet mee gecompileerd"
+msgstr "Ondersteuning voor Eye of the Beholder is niet meegecompileerd"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:473
 #: engines/ultima/ultima4/meta_engine.cpp:225
@@ -5340,19 +5340,19 @@ msgstr "Beste"
 
 #: engines/mohawk/metaengine.cpp:271
 msgid "Myst ME support not compiled in"
-msgstr "Myst ME ondersteuning niet mee gecompileerd"
+msgstr "Ondersteuning voor Myst ME is niet meegecompileerd"
 
 #: engines/mohawk/metaengine.cpp:276
 msgid "Myst support not compiled in"
-msgstr "Myst ondersteuning niet mee gecompileerd"
+msgstr "Ondersteuning voor Myst is niet meegecompileerd"
 
 #: engines/mohawk/metaengine.cpp:283
 msgid "Riven support not compiled in"
-msgstr "Riven ondersteuning niet mee gecompileerd"
+msgstr "Ondersteuning voor Riven is niet meegecompileerd"
 
 #: engines/mohawk/metaengine.cpp:297
 msgid "CSTime support not compiled in"
-msgstr "CSTime ondersteuning niet mee gecompileerd"
+msgstr "Ondersteuning voor CSTime is niet meegecompileerd"
 
 #: engines/mohawk/mohawk.cpp:52
 msgid "The game is paused. Press any key to continue."
@@ -5791,7 +5791,7 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
 "ScummVM heeft geconstateerd dat u oude opgeslagen spellen voor Nippon Safes "
-"heeft die van naam veranderd zouden moeten worden.\n"
+"heeft die hernoemd zouden moeten worden.\n"
 "De oude namen worden niet meer ondersteund, dus u zult uw opgeslagen spellen "
 "niet meer kunnen laden als u ze niet converteerd.\n"
 "\n"
@@ -5886,7 +5886,7 @@ msgstr "Windows Probeerversie wordt niet ondersteund"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
-msgstr "I Have No Mouth ondersteuning niet mee gecompileerd"
+msgstr "Ondersteuning voor I Have No Mouth is niet meegecompileerd"
 
 #: engines/saga/saga.cpp:229
 msgid "Error loading game resources."
@@ -6092,7 +6092,7 @@ msgstr ""
 
 #: engines/sci/metaengine.cpp:293
 msgid "SCI32 support not compiled in"
-msgstr "SCI32 ondersteuning is niet meegecompileerd"
+msgstr "Ondersteuning voor SCI32 is niet meegecompileerd"
 
 #: engines/sci/resource/resource.cpp:864
 msgid ""
@@ -6941,11 +6941,11 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:422
 msgid "HE v71+ support is not compiled in"
-msgstr "HE v71+ ondersteuning is niet meegecompileerd"
+msgstr "Ondersteuning voor HE v71+ is niet meegecompileerd"
 
 #: engines/scumm/metaengine.cpp:446
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "SCUMM v7-8 ondersteuning is niet meegecompileerd"
+msgstr "Ondersteuning voor SCUMM v7-8 is niet meegecompileerd"
 
 #: engines/scumm/scumm.cpp:541
 msgid ""
@@ -6954,10 +6954,10 @@ msgid ""
 "Aspect ratio correction can be acheived by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
-"U heeft 'aspect ratio correctie' aangezet. Echter FM-TOWS gebruikelijke "
+"U heeft 'aspect ratio correctie' aangezet. Echter FM-TOWS's gebruikelijke "
 "resolutie is 320x240, wat aspect ratio correctie niet toestaat.\n"
 "Aspect ratio correctie kan gerealiseerd worden door de resolutie bij te "
-"knippen naar 320x200, onder de \"egine' bladwijzer."
+"knippen naar 320x200, onder de 'egine' bladwijzer."
 
 #: engines/scumm/scumm.cpp:1350
 msgid ""
@@ -7333,7 +7333,7 @@ msgstr "Kan de '%s' data file niet vinden."
 
 #: engines/twine/detection.cpp:218
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr "Dit spel vereist Giflib die niet meegecompileerd is in ScummVM"
+msgstr "Dit spel vereist Giflib, welke niet is meegecompileerd in ScummVM"
 
 #: engines/twine/detection.cpp:538
 msgid "Enable wall collisions"
@@ -7721,15 +7721,15 @@ msgstr "Pas bilineair filteren toe op individuele sprites"
 
 #: engines/wintermute/metaengine.cpp:65
 msgid "FoxTail support is not compiled in"
-msgstr "FoxTail ondersteuning is niet meegecompileerd"
+msgstr "Ondersteuning voor FoxTail is niet meegecompileerd"
 
 #: engines/wintermute/metaengine.cpp:71
 msgid "Hero Craft support is not compiled in"
-msgstr "Hero Craft ondersteuning is niet meegecompileerd"
+msgstr "Ondersteuning voor Hero Craft is niet meegecompileerd"
 
 #: engines/wintermute/metaengine.cpp:77
 msgid "Wintermute3D support is not compiled in"
-msgstr "Wintermute3D ondersteuning is niet meegecompileerd"
+msgstr "Ondersteuning voor Wintermute3D is niet meegecompileerd"
 
 #: engines/wintermute/wintermute.cpp:149
 msgid "This game requires PNG, JPEG and Vorbis support."
@@ -7737,11 +7737,11 @@ msgstr "Dit spel vereist PNG, JPEG en Vorbis ondersteuning."
 
 #: engines/wintermute/wintermute.cpp:160
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr "Dit spel vereist de FoxTail subengine die niet meegecompileerd is."
+msgstr "Dit spel vereist de FoxTail subengine, welke niet is meegecompileerd."
 
 #: engines/wintermute/wintermute.cpp:171
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr "Dit spel vereist de HeroCraft subengine die niet meegecompileerd is."
+msgstr "Dit spel vereist de HeroCraft subengine, welke niet is meegecompileerd."
 
 #: engines/wintermute/wintermute.cpp:182
 msgid ""
