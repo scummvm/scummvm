@@ -25,7 +25,6 @@ if sys.platform == "darwin":
     except ImportError:
         print("xattr is required for the 'mac' mode to work\n")
 
-from typing import ByteString
 
 # fmt: off
 decode_map = {
