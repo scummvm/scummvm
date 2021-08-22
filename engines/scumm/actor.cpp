@@ -587,7 +587,11 @@ int Actor::actorWalkStep() {
 	int distY = ABS(_walkdata.next.y - _walkdata.cur.y);
 
 	if (ABS(_pos.x - _walkdata.cur.x) >= distX && ABS(_pos.y - _walkdata.cur.y) >= distY) {
-		_moving &= ~MF_IN_LEG;
+		// I have checked that only the v7/8 games have this different (non-)handling of the moving flag. Our code was
+		// correct for the lower versions. For COMI this fixes one part of the issues that caused ticket #4424 (wrong
+		// movement data being reported by ScummEngine_v8::o8_wait()).
+		if (_vm->_game.version < 7)
+			_moving &= ~MF_IN_LEG;
 		return 0;
 	}
 
@@ -910,7 +914,10 @@ void Actor::walkActor() {
 			if (_facing != new_dir)
 				setDirection(new_dir);
 			else
-				_moving = 0;
+				// I have checked that only the v7/8 games have this different handling of the moving flag. Our code was
+				// correct for the lower versions. For COMI this fixes one part of the issues that caused ticket #4424
+				// (wrong movement data being reported by ScummEngine_v8::o8_wait()).
+				_moving = (_vm->_game.version >= 7) ? (_moving & ~MF_TURN) : 0;
 			return;
 		}
 
