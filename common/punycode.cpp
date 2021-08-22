@@ -132,7 +132,7 @@ static size_t decode_digit(uint32 v) {
 String punycode_encode(U32String src) {
 	size_t srclen = src.size();
 	size_t h = 0, si;
-	String dst;
+	String dst = "xn--";
 
 	for (si = 0; si < srclen; si++) {
 		if (src[si] < 128) {
@@ -143,12 +143,14 @@ String punycode_encode(U32String src) {
 
 	size_t b = h;
 
-	/* Write out delimiter if any basic code points were processed. */
-	if (h != srclen) {
-		dst = String::format("xn--%s-", dst.c_str());
-	} else {
+	// If every character is ASCII, return the original string.
+	if (h == srclen)
 		return src;
-	}
+
+	// If we have any ASCII characters, add '-' to separate them from
+	// the non-ASCII character insertions.
+	if (h > 0)
+		dst += "-";
 
 	size_t n = INITIAL_N;
 	size_t bias = INITIAL_BIAS;
@@ -222,8 +224,9 @@ U32String punycode_decode(const String src1) {
 
 	size_t di = src.findLastOf('-');
 
+	// If we have no '-', the entire string is non-ASCII character insertions.
 	if (di == String::npos)
-		return src;
+		di = 0;
 
 	U32String dst;
 
