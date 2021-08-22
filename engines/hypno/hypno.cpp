@@ -263,6 +263,7 @@ Common::Error HypnoEngine::run() {
 	loadAssets();
 	_nextLevel = "<start>";
 	while (!shouldQuit()) {
+		_defaultCursor = "";
 		_prefixDir = "";
 		resetLevelState();
 		_videosPlaying.clear();
@@ -282,7 +283,7 @@ void HypnoEngine::runLevel(Common::String name) {
 	stopSound();
 	_music = "";
 
-	//disableCursor();
+	disableCursor();
 
 	if (!_levels[name].trans.level.empty()) {
 		_nextLevel = _levels[name].trans.level;
@@ -300,6 +301,12 @@ void HypnoEngine::runLevel(Common::String name) {
 		}
 		changeScreenMode("arcade");
 		runArcade(_levels[name].arcade);
+	} else if (!_levels[name].puzzle.name.empty()) {
+		if (!_levels[name].arcade.intro.empty()) {
+			MVideo v(_levels[name].arcade.intro, Common::Point(0,0), false, true, false);
+			runIntro(v);
+		}
+		runPuzzle(_levels[name].puzzle);
 	} else {
 		_prefixDir = _levels[name].scene.prefix;
 		if (!_levels[name].scene.intro.empty()) {
@@ -322,7 +329,6 @@ void HypnoEngine::runScene(Scene scene) {
 	stack.clear();
 	_nextHotsToAdd = &scene.hots;
 	defaultCursor();
-	//changeCursor("mouse/cursor1.smk", 0);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 		
@@ -380,7 +386,7 @@ void HypnoEngine::runScene(Scene scene) {
 
 				if (hoverHotspot(mousePos)) {
 				} else
-					; //changeCursor("mouse/cursor1.smk", 0);
+					defaultCursor();
 				break;
 
 			default:
@@ -511,6 +517,7 @@ void HypnoEngine::runIntro(MVideo &video) {
 	}
 }
 
+void HypnoEngine::runPuzzle(Puzzle puzzle) { error("Not implemented"); } 
 
 //Actions
 
@@ -652,9 +659,6 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			_nextHotsToAdd = selected.smenu;
 		}
 
-		//if (!selected.setting.empty())
-		//	_nextLevel = selected.setting;
-
 		debug("hotspot clicked actions size: %d", selected.actions.size());
 		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
 			Action *action = *itt;
@@ -748,7 +752,7 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 
 	const Graphics::Surface *frame = vd.decodeNextFrame();
 	Graphics::Surface *rframe;
-
+	//debug("decoding: %s %d %d", name.c_str(), frame->h, frame->w);
 	if (convert) {
 		rframe = frame->convertTo(_pixelFormat, vd.getPalette());
 	} else {
@@ -797,6 +801,9 @@ void HypnoEngine::changeScreenMode(Common::String mode) {
 void HypnoEngine::updateScreen(MVideo &video) {
 	const Graphics::Surface *frame = video.decoder->decodeNextFrame();
 	video.currentFrame = frame;
+	if (frame->h == 0 || frame->w == 0 || video.decoder->getPalette() == nullptr)
+		return;
+
 	Graphics::Surface *sframe, *cframe;
 
 	if (video.scaled) {
@@ -862,7 +869,6 @@ void HypnoEngine::playSound(Common::String name, uint32 loops) {
 	debug("playing %s", name.c_str());
 	ByteArray *raw;
 	Audio::LoopingAudioStream *stream;
-	Common::MemorySeekableReadWriteStream *mstream;
 
 	for (LibData::iterator it = _soundFiles.begin(); it != _soundFiles.end(); ++it) {
 			if (it->name == name) {
@@ -872,7 +878,6 @@ void HypnoEngine::playSound(Common::String name, uint32 loops) {
 				break;
 			}
 	}
-
 
 }
 

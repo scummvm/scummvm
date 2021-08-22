@@ -203,6 +203,9 @@ public:
 	bool rightClickedConversation(Common::Point mousePos);
 	bool leftClickedConversation(Common::Point mousePos);
 
+	// Hardcoded puzzles
+	virtual void runPuzzle(Puzzle puzzle);
+
 	// Timers
 	bool installTimer(uint32, Common::String *);
 	void removeTimer();
@@ -227,6 +230,10 @@ public:
 	
 	void drawPlayer(Common::String player, MVideo &background) override;
 	void drawHealth(const Graphics::Font &font) override;
+	void runPuzzle(Puzzle puzzle) override;
+
+private:
+	void runMatrix(Puzzle puzzle);
 };
 
 } // End of namespace Hypno

@@ -28,10 +28,8 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 	_shoots.clear();
 
 	MVideo background = MVideo(arc.background, Common::Point(0, 0), false, false, false);
-	uint32 playerIdx = 0;
 
 	defaultCursor();
-	//changeCursor("mouse/cursor1.smk", 0);
 	playVideo(background);
 
 	while (!shouldQuit()) {
@@ -54,7 +52,6 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
-				playerIdx = mousePos.x / 50;
 				break;
 
 			default:
