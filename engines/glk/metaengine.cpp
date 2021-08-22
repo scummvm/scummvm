@@ -35,8 +35,12 @@
 #include "glk/alan3/alan3.h"
 #include "glk/archetype/archetype.h"
 #include "glk/archetype/detection.h"
+#include "glk/comprehend/comprehend.h"
+#include "glk/comprehend/detection.h"
 #include "glk/zcode/detection.h"
 #include "glk/zcode/zcode.h"
+#include "glk/glulx/detection.h"
+#include "glk/glulx/glulx.h"
 #include "glk/hugo/detection.h"
 #include "glk/hugo/hugo.h"
 #include "glk/jacl/detection.h"
@@ -51,10 +55,6 @@
 #include "glk/scott/scott.h"
 
 #ifndef RELEASE_BUILD
-#include "glk/comprehend/comprehend.h"
-#include "glk/comprehend/detection.h"
-#include "glk/glulx/detection.h"
-#include "glk/glulx/glulx.h"
 #include "glk/tads/detection.h"
 #include "glk/tads/tads2/tads2.h"
 #include "glk/tads/tads3/tads3.h"
@@ -204,6 +204,8 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	else if ((create<Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Alan3::Alan3MetaEngine, Glk::Alan3::Alan3>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Archetype::ArchetypeMetaEngine, Glk::Archetype::Archetype>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Comprehend::ComprehendMetaEngine, Glk::Comprehend::Comprehend>(syst, gameDesc, *engine))) {}
+	else if ((create<Glk::Glulx::GlulxMetaEngine, Glk::Glulx::Glulx>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Hugo::HugoMetaEngine, Glk::Hugo::Hugo>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::JACL::JACLMetaEngine, Glk::JACL::JACL>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::Level9::Level9MetaEngine, Glk::Level9::Level9>(syst, gameDesc, *engine))) {}
@@ -212,8 +214,6 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	else if ((create<Glk::Scott::ScottMetaEngine, Glk::Scott::Scott>(syst, gameDesc, *engine))) {}
 	else if ((create<Glk::ZCode::ZCodeMetaEngine, Glk::ZCode::ZCode>(syst, gameDesc, *engine))) {}
 #ifndef RELEASE_BUILD
-	else if ((create<Glk::Comprehend::ComprehendMetaEngine, Glk::Comprehend::Comprehend>(syst, gameDesc, *engine))) {}
-	else if ((create<Glk::Glulx::GlulxMetaEngine, Glk::Glulx::Glulx>(syst, gameDesc, *engine))) {}
 	else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()))._description) {
 		if (!isGameAllowed(td._supportLevel))
 			return Common::kUserCanceled;
