@@ -60,7 +60,6 @@ String punycode_encode(const String src);
 String punycode_decode(const String src);
 
 String punycode_encodefilename(const String src1);
-String punycode_encodepath(const String src);
 
 /**
  * Convert Punycode filename to Binary using special 0x81 escape character. Returns the decoded string
@@ -68,12 +67,12 @@ String punycode_encodepath(const String src);
 String punycode_decodefilename(const String src1);
 
 /**
- * Convert path with '/' as separators from Punycode
+ * Convert path from Punycode
  */
 Path punycode_decodepath(const Path &src);
 
 /**
- * Convert path to Punycode with '/' as separators
+ * Convert path to Punycode
  */
 Path punycode_encodepath(const Path &src);
 

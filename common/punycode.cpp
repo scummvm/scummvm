@@ -317,19 +317,6 @@ String punycode_encodefilename(const String src) {
 	return punycode_encode(dst);
 }
 
-String punycode_encodepath(const String src) {
-	StringTokenizer tok(src, "/");
-	String res;
-
-	while (!tok.empty()) {
-		res += punycode_encodefilename(tok.nextToken());
-		if (!tok.empty())
-			res += '/';
-	}
-
-	return res;
-}
-
 String punycode_decodefilename(const String src1) {
 	String dst;
 	String src = punycode_decode(src1);
