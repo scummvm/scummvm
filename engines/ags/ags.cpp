@@ -203,12 +203,19 @@ bool AGSEngine::getPixelFormat(int depth, Graphics::PixelFormat &format) const {
 		return true;
 	}
 
+	// Prefer format with the requested color depth
 	for (Common::List<Graphics::PixelFormat>::iterator it =
 			supportedFormatsList.begin(); it != supportedFormatsList.end(); ++it) {
 		if (it->bpp() == depth) {
 			format = *it;
 			return true;
 		}
+	}
+
+	// Allow using 16 bit <-> 32 bit conversions by using the preferred graphics mode
+	if (!supportedFormatsList.empty()) {
+		format = supportedFormatsList.front();
+		return true;
 	}
 
 	return false;
