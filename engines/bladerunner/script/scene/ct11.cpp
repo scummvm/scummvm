@@ -69,12 +69,14 @@ void SceneScriptCT11::SceneLoaded() {
 
 		if (_vm->_cutContent
 		    && !Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
-		    && (Game_Flag_Query(kFlagDektoraIsReplicant)
-		        || !Game_Flag_Query(kFlagGordoIsReplicant))
+		    && (!Game_Flag_Query(kFlagDektoraIsReplicant)
+		        && !Game_Flag_Query(kFlagGordoIsReplicant))
 		) {
 			// The car is only bought by Reps from CrazyLegs
 			// if Dektora is a Replicant
-			// or if Dektora  is human and Gordo is also human
+			// or if Dektora  is human and Gordo is also human (so Clovis bought it from Crazylegs)
+			// We place the note only for the second case here.
+			// For the first case, a CrazyLegs advertisement (plus note) is placed in Dektora's room (nr07, kClueCrazysInvolvement)
 			Item_Add_To_World(kItemNote, kModelAnimationGrigoriansNote, kSetCT11, 641.21f, 26.0f, 472.0f, 304, 12, 12, false, true, false, true);
 			Scene_2D_Region_Add(2, 505, 321, 519, 332);
 		}

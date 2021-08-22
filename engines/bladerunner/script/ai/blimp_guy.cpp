@@ -35,9 +35,10 @@ namespace BladeRunner {
 //  - RC03
 // and one cutscene:
 //  - TB_FLY
-// In the in-game scene his speech is played as ambient sound using Ambient_Sounds_Add_Speech_Sound()
-// It is thus not subtitled as of yet.
-// TODO: maybe if we support dual subtitles being displayed on-screen
+// In the in-game scenes (not cutscenes) this speech is played as ambient sound
+// using Ambient_Sounds_Add_Speech_Sound() and is thus not subtitles as of yet.
+// TODO: maybe we could support dual subtitles being displayed on-screen for cases when Ambient Speech Sound
+// would overlap over character speech.
 // The Blimp Guy's speech in the TB_FLY VQA cutscene is subtitled.
 //
 // The FRA and ESP versions do not use the Blimp's horn sound at all during any of the announcements

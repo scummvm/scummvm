@@ -400,6 +400,7 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1180, 3, 6, 7); // ADVERTISEMENT
 	}
 #else
+	// Restored feature - Original: it is impossible to obtain this clue
 	if (Actor_Clue_Query(kActorMcCoy, kClueCrazysInvolvement)
 	 && Global_Variable_Query(kVariableChapter) == 3
 	) {
@@ -426,6 +427,9 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 	) {
 		// kClueDektorasDressingRoom is acquired from EarlyQ at his office (nr04)
 		// McCoy should only ask about this if CrazyLegs already told him at least about the sexy blonde (kClueCrazylegsInterview1)
+		// TODO Maybe McCoy can show the kClueWomanInAnimoidRow
+		//      - if he has the kClueChinaBar (where she is with Clovis) too?
+		//      - or if he met Dektora already.
 		DM_Add_To_List_Never_Repeat_Once_Selected(1200, 5, 5, 3); // WOMAN'S PHOTO
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -434,15 +438,24 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1210, 4, 6, 2); // LUCY'S PHOTO
 	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansResources) // cut feature? there is no way how to obtain this clue
-	 || (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? there is no way how to obtain this clue either
+#if BLADERUNNER_ORIGINAL_BUGS
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansResources) // it is impossible to obtain this clue
+	 || (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // it is impossible to obtain this clue either
 	  && Global_Variable_Query(kVariableChapter) == 3
 	 )
 	) {
-		// TODO recheck the condition here. The chapter check should probably be done in both cases
+		DM_Add_To_List_Never_Repeat_Once_Selected(1220, -1, 2, 8); // GRIGORIAN
+	}
+#else
+	if (Global_Variable_Query(kVariableChapter) == 3
+	    && (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansResources) // Restored feature - Original: it is impossible to obtain this clue
+	        || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) // Restored feature - Original: it is impossible to obtain this clue either
+	) {
+		// The chapter check is done for both cases:
 		//      either McCoy has kClueGrigoriansResources or kClueGrigoriansNote
 		DM_Add_To_List_Never_Repeat_Once_Selected(1220, -1, 2, 8); // GRIGORIAN
 	}
+#endif
 	if (Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1)
 	 || Actor_Clue_Query(kActorMcCoy, kClueCarRegistration3)
 	) {
@@ -473,6 +486,9 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 			Item_Pickup_Spin_Effect_From_Actor(kModelAnimationTyrellSalesPamphlet, kActorMcCoy, 0, 0);
 		}
 		Actor_Says(kActorCrazylegs, 510, kAnimationModeTalk);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorCrazylegs, 520, kAnimationModeTalk);
+		}
 		Actor_Says(kActorMcCoy, 1920, 23);
 		if (_vm->_cutContent) {
 			// McCoy shows the note he found inside the sales pamphlet (from Dektora's Vanity drawer) to CrazyLegs
@@ -531,11 +547,22 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 		break;
 
 	case 1220: // GRIGORIAN
+		// This dialogue does not mention Grigorian's note explicitly
+		// but it does mention Grigorian talking about friends with resources.
+		// So it needs that clue as a prerequisite
+		// for that specific part of the dialogue (McCoy's cues only)
 		Actor_Says(kActorMcCoy, 1910, kAnimationModeTalk);
 		Actor_Says(kActorCrazylegs, 780, 12);
 		Actor_Says(kActorMcCoy, 2045, 17);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 2050, kAnimationModeTalk);
 		Actor_Says(kActorCrazylegs, 790, 14);
+#else
+		if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansResources)) {
+			Actor_Says(kActorMcCoy, 2050, kAnimationModeTalk);
+			Actor_Says(kActorCrazylegs, 790, 14);
+		}
+#endif
 		Actor_Says(kActorMcCoy, 2055, 19);
 		Actor_Says(kActorMcCoy, 2060, -1);
 		Actor_Says(kActorCrazylegs, 800, 15);
@@ -584,7 +611,7 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 	}
 }
 
-void SceneScriptHF05::dialogueWithCrazylegs2() { // cut feature? it is impossible to trigger this dialog
+void SceneScriptHF05::dialogueWithCrazylegs2() { // Restored feature - Original: it is impossible to obtain this clue
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(1250, -1, -1, 10); // ARREST
 	DM_Add_To_List_Never_Repeat_Once_Selected(1260, 10,  5, -1); // WARNING
