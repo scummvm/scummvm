@@ -134,6 +134,7 @@ public:
 	void drawImage(Graphics::Surface &image, int x, int y, bool transparent);
 
 	// Cursors
+	Common::String _defaultCursor;
 	void disableCursor();
 	void defaultCursor();
 	void changeCursor(const Common::String &, uint32);
@@ -141,17 +142,18 @@ public:
 	// Actions
 	void runIntro(MVideo &video);
 	void runMenu(Hotspots hs);
-    void runBackground(const Hotspot h, Background *a);
-	void runOverlay(const Hotspot h, Overlay *a);
-	void runMice(const Hotspot h, Mice *a);
-	void runEscape(const Hotspot h, Escape *a);
-	void runQuit(const Hotspot h, Quit *a);
-	void runCutscene(const Hotspot h, Cutscene *a);
-	void runPlay(const Hotspot h, Play *a);
-	void runAmbient(const Hotspot h, Ambient *a);
-	void runWalN(const Hotspot h, WalN *a);
-	void runGlobal(const Hotspot h, Global *a);
-	void runTalk(const Hotspot h, Talk *a);
+    void runBackground(Background *a);
+	void runOverlay(Overlay *a);
+	void runMice(Mice *a);
+	void runEscape(Escape *a);
+	void runQuit(Quit *a);
+	void runCutscene(Cutscene *a);
+	void runPlay(Play *a);
+	void runAmbient(Ambient *a);
+	void runWalN(WalN *a);
+	void runGlobal(Global *a);
+	void runTalk(Talk *a);
+	void runChangeLevel(ChangeLevel *a);
 
 	// Screen
 	Graphics::PixelFormat _pixelFormat;
@@ -165,7 +167,7 @@ public:
 	// intros
 	Common::HashMap<Common::String, Videos> _intros;
 
-	// settings 
+	// levels 
 	Common::String _nextLevel;
 	Common::String _currentLevel;
 

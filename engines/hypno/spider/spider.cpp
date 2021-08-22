@@ -45,15 +45,28 @@ void SpiderEngine::loadAssets() {
 
 	// Read assets from mis files
 	parseScene("sixdemo", "mis/demo.mis");
-	_levels["sixdemo/mis/demo.mis"].scene.hots[1].setting = "sixdemo/c_misc/missions.lib/c1.mi_";
-	_levels["sixdemo/mis/demo.mis"].scene.hots[2].setting = "sixdemo/mis/alley.mis";
+	ChangeLevel *cl = new ChangeLevel();
+	cl->level = "sixdemo/c_misc/missions.lib/c1.mi_";
+	_levels["sixdemo/mis/demo.mis"].scene.hots[1].actions.push_back(cl);
 
-	_levels["sixdemo/mis/demo.mis"].scene.hots[4].setting = "sixdemo/mis/shoctalk.mis";
-	_levels["sixdemo/mis/demo.mis"].scene.hots[5].setting = "sixdemo/mis/order.mis";
+	cl = new ChangeLevel();
+	cl->level = "sixdemo/mis/alley.mis";
+	_levels["sixdemo/mis/demo.mis"].scene.hots[2].actions.push_back(cl);
+
+	cl = new ChangeLevel();
+	cl->level = "sixdemo/mis/shoctalk.mis";
+	_levels["sixdemo/mis/demo.mis"].scene.hots[4].actions.push_back(cl);
+	
+	cl = new ChangeLevel();
+	cl->level = "sixdemo/mis/order.mis";
+	_levels["sixdemo/mis/demo.mis"].scene.hots[5].actions.push_back(cl);
 	_levels["sixdemo/mis/demo.mis"].scene.sound = "sixdemo/demo/sound.lib/menu_mus.raw";
 
 	parseScene("sixdemo", "mis/order.mis");
-	_levels["sixdemo/mis/order.mis"].scene.hots[1].setting = "sixdemo/mis/quit.mis";
+	cl = new ChangeLevel();
+	cl->level = "<quit>";
+	_levels["sixdemo/mis/order.mis"].scene.hots[1].actions.push_back(cl);
+
 	parseScene("sixdemo", "mis/alley.mis");
 	_levels["sixdemo/mis/alley.mis"].scene.intro = "demo/aleyc01s.smk";
 	_levels["sixdemo/mis/alley.mis"].scene.sound = "sixdemo/demo/sound.lib/alleymus.raw";
