@@ -8,7 +8,6 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Grim Fandango hinzugefügt.
    - Unterstützung für The Longest Journey hinzugefügt.
    - Unterstützung für Myst 3: Exile hinzugefügt.
-   - Unterstützung für Hades' Challenge hinzugefügt.
    - Unterstützung für Little Big Adventure hinzugefügt.
    - Unterstützung für Red Comrades 1: Save the Galaxy hinzugefügt.
    - Unterstützung für Red Comrades 2: For the Great Justice hinzugefügt.
