@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-21 01:05+0000\n"
-"PO-Revision-Date: 2021-03-21 08:24+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2021-08-22 12:25+0000\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
 "Language: da\n"
@@ -4163,10 +4163,8 @@ msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Spillet er sat på pause. Tryk på en tast for at fortsætte."
 
 #: engines/buried/buried.cpp:530
-#, fuzzy
-#| msgid "   Are you sure you want to quit ?   "
 msgid "Are you sure you want to quit?"
-msgstr "   Er du sikker på, at du vil afslutte?   "
+msgstr "Er du sikker på, at du vil afslutte?"
 
 #: engines/buried/saveload.cpp:108
 msgid "Invalid save file name"
@@ -7176,9 +7174,8 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
 #: engines/stark/stark.cpp:284
-#, fuzzy
 msgid "You are missing recommended data files:"
-msgstr "Du mangler følgende krævede Riven-datafiler:\n"
+msgstr "Du mangler følgende krævede Riven-datafiler:"
 
 #: engines/stark/stark.cpp:298
 msgid ""
