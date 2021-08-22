@@ -7741,7 +7741,8 @@ msgstr "Dit spel vereist de FoxTail subengine, welke niet is meegecompileerd."
 
 #: engines/wintermute/wintermute.cpp:171
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr "Dit spel vereist de HeroCraft subengine, welke niet is meegecompileerd."
+msgstr ""
+"Dit spel vereist de HeroCraft subengine, welke niet is meegecompileerd."
 
 #: engines/wintermute/wintermute.cpp:182
 msgid ""
