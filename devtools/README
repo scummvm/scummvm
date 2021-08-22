@@ -149,6 +149,18 @@ dist-scummvm.sh
     account.
 
 
+docker.sh
+---------
+    This shell script is used to simplify building with the Docker images
+    used by the buildbot. It can invoked like this:
+
+      ./devtools/docker.sh toolchain/mxe
+
+    This will fetch the MXE toolchain from the Docker Hub if it hasn't
+    already and launch a shell that can be used to build ScummVM for
+    Windows.
+
+
 dumper_companion.py
 ___________________
     Tool for dumping HFS/HFS+ volumes and game files with non-ASCII
