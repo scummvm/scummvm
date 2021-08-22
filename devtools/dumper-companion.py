@@ -279,7 +279,7 @@ def punyencode_paths(paths: List[Path], verbose: bool = False) -> int:
 
 def punyencode_arg(args: argparse.Namespace) -> int:
     """wrapper function"""
-    punyencode_dir(args.dir)
+    punyencode_dir(args.directory, verbose=True)
     return 0
 
 
@@ -289,8 +289,8 @@ def punyencode_dir(directory: Path, verbose: bool = False) -> int:
 
     Renames the leaves, i.e. files, first and the works it way up the tree by renaming the
     """
-    files: List[Path]
-    dirs: List[Path]
+    files: List[Path] = []
+    dirs: List[Path] = []
     for item in directory.glob("**"):
         if item.is_file():
             files.append(item)
@@ -402,7 +402,7 @@ def generate_parser() -> argparse.ArgumentParser:
         "dir", help="Punyencode all files and dirs in place"
     )
     parser_dir.add_argument("directory", metavar="directory ", type=Path, help="Path")
-    parser_dir.set_defaults(func=punyencode_dir)
+    parser_dir.set_defaults(func=punyencode_arg)
 
     parser_str = subparsers.add_parser("str", help="Punyencode strings or standard in")
     parser_str.add_argument(
