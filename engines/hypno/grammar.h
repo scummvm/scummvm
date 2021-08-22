@@ -198,12 +198,22 @@ class Transition {
 	Filenames intros;
 };
 
+class Puzzle {
+  public:
+	Common::String name;
+	Filenames intros;
+	Common::String levelIfWin;
+	Common::String levelIfLose;
+};
+
 class Scene {
   public:
     Filename intro;
     Common::String prefix;
 	Hotspots hots;
 	Filename sound;
+	Common::String levelIfWin;
+	Common::String levelIfLose;
 };
 
 class ArcadeShooting {
@@ -227,7 +237,7 @@ class Level {
     Transition trans;
 	Scene scene;
 	ArcadeShooting arcade;
-
+	Puzzle puzzle;
 };
 
 typedef Common::HashMap<Filename, Level> Levels;
