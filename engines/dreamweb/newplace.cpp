@@ -161,11 +161,7 @@ void DreamWebEngine::locationPic() {
 	const uint8 *string = (const uint8 *)_travelText.getString(_destPos);
 	printDirect(string, 50, 20, 241, 241 & 1);
 
-	const char *placeName = (const char *)string;
-	const char *colon_pos = strchr(placeName, ':');
-	Common::String result(placeName, colon_pos ? colon_pos - placeName : strlen(placeName));
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects"))
-		_ttsMan->say(result, _textEncoding);
+	speakObject((const char *)string);
 }
 
 void DreamWebEngine::showArrows() {

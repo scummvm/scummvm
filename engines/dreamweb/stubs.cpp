@@ -2368,7 +2368,7 @@ void DreamWebEngine::obsThatDoThings() {
 	}
 }
 
-void DreamWebEngine::textToSpeech(const char *text) {
+void DreamWebEngine::speakObject(const char *text) {
 	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled_objects")) {
 		const char *colon_pos = strchr(text, ':');
 		Common::String result(text, colon_pos ? colon_pos - text : strlen(text));
@@ -2387,7 +2387,7 @@ void DreamWebEngine::describeOb() {
 		useCharsetIcons1();
 
 	printDirect(&obText, 33, &y, 241, 241 & 1);
-	textToSpeech((const char *)obText);
+	speakObject((const char *)obText);
 
 	if (getLanguage() == Common::RU_RUS)
 		resetCharset();
