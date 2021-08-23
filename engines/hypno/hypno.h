@@ -23,15 +23,15 @@
 #ifndef HYPNO_H
 #define HYPNO_H
 
+#include "common/array.h"
 #include "common/installshieldv3_archive.h"
 #include "common/random.h"
-#include "common/str-array.h"
-#include "common/array.h"
 #include "common/serializer.h"
+#include "common/str-array.h"
 #include "engines/engine.h"
-#include "graphics/managed_surface.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/managed_surface.h"
 
 #include "hypno/grammar.h"
 
@@ -115,7 +115,7 @@ public:
 	bool canLoadGameStateCurrently() override {
 		return true;
 	}
-	bool canSaveAutosaveCurrently() override  {
+	bool canSaveAutosaveCurrently() override {
 		return false;
 	}
 	bool canSaveGameStateCurrently() override {
@@ -142,7 +142,7 @@ public:
 	// Actions
 	void runIntro(MVideo &video);
 	void runMenu(Hotspots hs);
-    void runBackground(Background *a);
+	void runBackground(Background *a);
 	void runOverlay(Overlay *a);
 	void runMice(Mice *a);
 	void runEscape(Escape *a);
@@ -167,7 +167,7 @@ public:
 	// intros
 	Common::HashMap<Common::String, Videos> _intros;
 
-	// levels 
+	// levels
 	Common::String _nextLevel;
 	Common::String _currentLevel;
 
@@ -216,10 +216,9 @@ public:
 	WetEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
-	
+
 	void drawPlayer(Common::String player, MVideo &background) override;
 	void drawHealth(const Graphics::Font &font) override;
-
 };
 
 class SpiderEngine : public HypnoEngine {
@@ -227,7 +226,7 @@ public:
 	SpiderEngine(OSystem *syst, const ADGameDescription *gd);
 
 	void loadAssets() override;
-	
+
 	void drawPlayer(Common::String player, MVideo &background) override;
 	void drawHealth(const Graphics::Font &font) override;
 	void runPuzzle(Puzzle puzzle) override;

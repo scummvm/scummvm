@@ -29,18 +29,17 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/timer.h"
 #include "common/tokenizer.h"
-#include "common/memstream.h"
 #include "engines/util.h"
 #include "image/bmp.h"
 
-
-#include "hypno/hypno.h"
 #include "hypno/grammar.h"
+#include "hypno/hypno.h"
 
 namespace Hypno {
 
@@ -55,7 +54,7 @@ MVideo::MVideo(Common::String _path, Common::Point _position, bool _transparent,
 	loop = _loop;
 }
 
-const static char* levelVariables[] = {
+const static char *levelVariables[] = {
 	"GS_NONE",
 	"GS_SCTEXT",
 	"GS_AMBIENT",
@@ -82,15 +81,14 @@ const static char* levelVariables[] = {
 	"GS_COMBATJSON",
 	"GS_COMBATLEVEL",
 	"GS_PUZZLELEVEL",
-	NULL
-};
+	NULL};
 
 extern int parse_mis(const char *);
 extern int parse_arc(const char *);
 
 HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr),
-	  _compositeSurface(nullptr), _transparentColor(0), 
+	  _compositeSurface(nullptr), _transparentColor(0),
 	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("hypno");
@@ -104,7 +102,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	Level quit;
 	Hotspots hs;
 	hs.push_back(q);
-	quit.scene.hots = hs;  
+	quit.scene.hots = hs;
 	_levels["<quit>"] = quit;
 }
 
@@ -119,12 +117,12 @@ void HypnoEngine::initializePath(const Common::FSNode &gamePath) {
 
 void HypnoEngine::parseScene(Common::String prefix, Common::String filename) {
 	debug("Parsing %s", filename.c_str());
-    filename = convertPath(filename);
+	filename = convertPath(filename);
 	if (!prefix.empty())
-		filename = prefix + "/" + filename; 
+		filename = prefix + "/" + filename;
 	Common::File *test = new Common::File();
 	assert(isDemo());
-    assert(test->open(filename.c_str()));
+	assert(test->open(filename.c_str()));
 
 	const uint32 fileSize = test->size();
 	char *buf = (char *)malloc(fileSize + 1);
@@ -133,7 +131,7 @@ void HypnoEngine::parseScene(Common::String prefix, Common::String filename) {
 	parse_mis(buf);
 	Level level;
 	level.scene.prefix = prefix;
-	level.scene.hots = *g_parsedHots; 
+	level.scene.hots = *g_parsedHots;
 	_levels[filename] = level;
 	debug("Loaded hots size: %d", g_parsedHots->size());
 }
@@ -141,7 +139,7 @@ void HypnoEngine::parseScene(Common::String prefix, Common::String filename) {
 void HypnoEngine::loadLib(Common::String filename, LibData &r) {
 	debug("Loading %s", filename.c_str());
 	Common::File libfile;
-    assert(libfile.open(filename));
+	assert(libfile.open(filename));
 	uint32 i = 0;
 	Common::String entry = "<>";
 	FileData f;
@@ -200,7 +198,7 @@ ShootSequence HypnoEngine::parseShootList(Common::String name, Common::String da
 	Common::String n;
 	ShootInfo si;
 	ShootSequence seq;
-	while(!tok.empty()) {
+	while (!tok.empty()) {
 		t = tok.nextToken();
 		if (t[0] == '\n')
 			continue;
@@ -208,7 +206,7 @@ ShootSequence HypnoEngine::parseShootList(Common::String name, Common::String da
 		//debug("t: %s, n: %s", t.c_str(), n.c_str());
 		if (t == "Z")
 			break;
-		
+
 		Common::replace(n, "\nS", "");
 		Common::replace(n, "\nZ\n", "");
 		si.name = n;
@@ -217,13 +215,12 @@ ShootSequence HypnoEngine::parseShootList(Common::String name, Common::String da
 		debug("%d -> %s", si.timestamp, si.name.c_str());
 	}
 	return seq;
-
 }
 
 void HypnoEngine::parseArcadeShooting(Common::String prefix, Common::String name, Common::String data) {
 	parse_arc(data.c_str());
 	Level level;
-	level.arcade = g_parsedArc;  
+	level.arcade = g_parsedArc;
 	level.arcade.prefix = prefix;
 	_levels[name] = level;
 	g_parsedArc.background.clear();
@@ -240,7 +237,7 @@ Common::Error HypnoEngine::run() {
 	Graphics::ModeList modes;
 	modes.push_back(Graphics::Mode(640, 480));
 	modes.push_back(Graphics::Mode(320, 200));
-    initGraphicsModes(modes);
+	initGraphicsModes(modes);
 
 	// Initialize graphics
 	initGraphics(_screenW, _screenH, nullptr);
@@ -273,7 +270,6 @@ Common::Error HypnoEngine::run() {
 			_nextLevel = "";
 			runLevel(_currentLevel);
 		}
-			
 	}
 	return Common::kNoError;
 }
@@ -291,32 +287,30 @@ void HypnoEngine::runLevel(Common::String name) {
 			MVideo v(*it, Common::Point(0, 0), false, true, false);
 			runIntro(v);
 		}
-			
 
 	} else if (!_levels[name].arcade.background.empty()) {
 		_prefixDir = _levels[name].arcade.prefix;
 		if (!_levels[name].arcade.intro.empty()) {
-			MVideo v(_levels[name].arcade.intro, Common::Point(0,0), false, true, false);
+			MVideo v(_levels[name].arcade.intro, Common::Point(0, 0), false, true, false);
 			runIntro(v);
 		}
 		changeScreenMode("arcade");
 		runArcade(_levels[name].arcade);
 	} else if (!_levels[name].puzzle.name.empty()) {
 		if (!_levels[name].arcade.intro.empty()) {
-			MVideo v(_levels[name].arcade.intro, Common::Point(0,0), false, true, false);
+			MVideo v(_levels[name].arcade.intro, Common::Point(0, 0), false, true, false);
 			runIntro(v);
 		}
 		runPuzzle(_levels[name].puzzle);
 	} else {
 		_prefixDir = _levels[name].scene.prefix;
 		if (!_levels[name].scene.intro.empty()) {
-			MVideo v(_levels[name].scene.intro , Common::Point(0,0), false, true, false);
+			MVideo v(_levels[name].scene.intro, Common::Point(0, 0), false, true, false);
 			runIntro(v);
 		}
-		changeScreenMode("scene"); 
+		changeScreenMode("scene");
 		runScene(_levels[name].scene);
 	}
-
 }
 
 void HypnoEngine::runScene(Scene scene) {
@@ -325,13 +319,13 @@ void HypnoEngine::runScene(Scene scene) {
 	Common::Event event;
 	Common::Point mousePos;
 	Common::List<uint32> videosToRemove;
-	
+
 	stack.clear();
 	_nextHotsToAdd = &scene.hots;
 	defaultCursor();
 
 	while (!shouldQuit() && _nextLevel.empty()) {
-		
+
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
 			// Events
@@ -344,7 +338,7 @@ void HypnoEngine::runScene(Scene scene) {
 					}
 					_videosPlaying.clear();
 
-					if (!stack.empty()) { 
+					if (!stack.empty()) {
 						runMenu(*stack.back());
 						drawScreen();
 					}
@@ -359,21 +353,21 @@ void HypnoEngine::runScene(Scene scene) {
 			case Common::EVENT_RBUTTONDOWN:
 				if (stack.empty())
 					break;
-				if (!_conversation.empty()){
+				if (!_conversation.empty()) {
 					rightClickedConversation(mousePos);
 					break;
 				}
-			break;
+				break;
 
 			case Common::EVENT_LBUTTONDOWN:
 				if (stack.empty())
 					break;
-				if (!_conversation.empty()){
+				if (!_conversation.empty()) {
 					leftClickedConversation(mousePos);
 					break;
 				}
 				if (!_nextHotsToAdd || !_nextHotsToRemove)
-				 	clickedHotspot(mousePos);
+					clickedHotspot(mousePos);
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
@@ -428,31 +422,29 @@ void HypnoEngine::runScene(Scene scene) {
 				}
 			}
 			i++;
-
 		}
 		if (videosToRemove.size() > 0) {
 
-			for(Common::List<uint32>::iterator it = videosToRemove.begin(); it != videosToRemove.end(); ++it) {
-				debug("removing %d from %d size", *it, _videosPlaying.size()); 
+			for (Common::List<uint32>::iterator it = videosToRemove.begin(); it != videosToRemove.end(); ++it) {
+				debug("removing %d from %d size", *it, _videosPlaying.size());
 				_videosPlaying.remove_at(*it);
 			}
 
 			// Nothing else to play
-			if (_videosPlaying.size() == 0 && _nextSequentialVideoToPlay.size() == 0){
+			if (_videosPlaying.size() == 0 && _nextSequentialVideoToPlay.size() == 0) {
 				if (!_conversation.empty())
 					_refreshConversation = true;
-				else if (!stack.empty()) { 
+				else if (!stack.empty()) {
 					runMenu(*stack.back());
 					drawScreen();
 				}
 			}
-
 		}
 
 		if (_videosPlaying.size() > 0 || _nextSequentialVideoToPlay.size() > 0) {
 			drawScreen();
 			continue;
-		} 
+		}
 
 		if (_nextHotsToRemove) {
 			debug("Removing a hotspot list!");
@@ -474,7 +466,6 @@ void HypnoEngine::runScene(Scene scene) {
 			playSound(_music, 0);
 		}
 
-
 		if (checkLevelCompleted())
 			_nextLevel = "mis/demo.mis";
 
@@ -489,7 +480,7 @@ void HypnoEngine::runIntro(MVideo &video) {
 	playVideo(video);
 
 	while (!shouldQuit() && video.decoder) {
-			while (g_system->getEventManager()->pollEvent(event)) {
+		while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
@@ -517,7 +508,7 @@ void HypnoEngine::runIntro(MVideo &video) {
 	}
 }
 
-void HypnoEngine::runPuzzle(Puzzle puzzle) { error("Not implemented"); } 
+void HypnoEngine::runPuzzle(Puzzle puzzle) { error("Not implemented"); }
 
 //Actions
 
@@ -529,13 +520,13 @@ void HypnoEngine::runMenu(Hotspots hs) {
 	for (Actions::const_iterator itt = h.actions.begin(); itt != h.actions.end(); ++itt) {
 		Action *action = *itt;
 		if (typeid(*action) == typeid(Quit))
-			runQuit((Quit*) action);
+			runQuit((Quit *)action);
 		else if (typeid(*action) == typeid(Background))
-			runBackground((Background*) action);
+			runBackground((Background *)action);
 		else if (typeid(*action) == typeid(Overlay))
-			runOverlay((Overlay*) action);
+			runOverlay((Overlay *)action);
 		else if (typeid(*action) == typeid(Ambient))
-			runAmbient((Ambient*) action);
+			runAmbient((Ambient *)action);
 
 		//else if (typeid(*action) == typeid(Mice))
 		//	runMice(h, (Mice*) action);
@@ -560,11 +551,11 @@ void HypnoEngine::runOverlay(Overlay *a) {
 }
 
 void HypnoEngine::runMice(Mice *a) {
-    changeCursor(a->path, a->index);
+	changeCursor(a->path, a->index);
 }
 
 void HypnoEngine::runEscape(Escape *a) {
-    _nextHotsToRemove = stack.back();
+	_nextHotsToRemove = stack.back();
 }
 
 void HypnoEngine::runCutscene(Cutscene *a) {
@@ -574,7 +565,7 @@ void HypnoEngine::runCutscene(Cutscene *a) {
 }
 
 void HypnoEngine::runGlobal(Global *a) {
-    if (a->command == "TURNON")
+	if (a->command == "TURNON")
 		_levelState[a->variable] = 1;
 	else if (a->command == "TURNOFF")
 		_levelState[a->variable] = 0;
@@ -588,7 +579,7 @@ void HypnoEngine::runPlay(Play *a) {
 	Common::Point origin = a->origin;
 
 	if (a->flag == "/BITMAP")
-			loadImage(a->path, origin.x, origin.y, false);
+		loadImage(a->path, origin.x, origin.y, false);
 	else {
 		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false, false));
 	}
@@ -597,7 +588,7 @@ void HypnoEngine::runPlay(Play *a) {
 void HypnoEngine::runAmbient(Ambient *a) {
 	Common::Point origin = a->origin;
 	if (a->flag == "/BITMAP")
-			loadImage(a->path, origin.x, origin.y, false);
+		loadImage(a->path, origin.x, origin.y, false);
 	else {
 		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, a->fullscreen, a->flag == "/LOOP"));
 	}
@@ -608,8 +599,8 @@ void HypnoEngine::runWalN(WalN *a) {
 		return;
 	Common::Point origin = a->origin;
 	if (a->flag == "/BITMAP")
-			loadImage(a->path, origin.x, origin.y, false);
-	else { 
+		loadImage(a->path, origin.x, origin.y, false);
+	else {
 		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false, false));
 	}
 }
@@ -663,25 +654,24 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
 			Action *action = *itt;
 			if (typeid(*action) == typeid(ChangeLevel))
-				runChangeLevel((ChangeLevel*) action);
+				runChangeLevel((ChangeLevel *)action);
 			if (typeid(*action) == typeid(Escape))
-				runEscape((Escape*) action);
+				runEscape((Escape *)action);
 			else if (typeid(*action) == typeid(Cutscene))
-				runCutscene((Cutscene*) action);
+				runCutscene((Cutscene *)action);
 			else if (typeid(*action) == typeid(Play))
-				runPlay((Play*) action);
+				runPlay((Play *)action);
 			else if (typeid(*action) == typeid(WalN))
-				runWalN((WalN*) action);
+				runWalN((WalN *)action);
 			else if (typeid(*action) == typeid(Global))
-				runGlobal((Global*) action);
+				runGlobal((Global *)action);
 			else if (typeid(*action) == typeid(Talk))
-				runTalk((Talk*) action);
+				runTalk((Talk *)action);
 			else if (typeid(*action) == typeid(Quit))
-				runQuit((Quit*) action);
+				runQuit((Quit *)action);
 			else if (typeid(*action) == typeid(Palette))
 				debug("runPalette unimplemented");
 		}
-
 	}
 }
 
@@ -715,7 +705,7 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 		for (Actions::const_iterator itt = selected.actions.begin(); itt != selected.actions.end(); ++itt) {
 			Action *action = *itt;
 			if (typeid(*action) == typeid(Mice))
-				runMice((Mice*) action);
+				runMice((Mice *)action);
 		}
 		return true;
 	}
@@ -724,13 +714,13 @@ bool HypnoEngine::hoverHotspot(Common::Point mousePos) {
 
 void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool transparent) {
 	Graphics::Surface *surf = decodeFrame(name, 0);
-	drawImage(*surf, x , y, transparent);
+	drawImage(*surf, x, y, transparent);
 }
 
 void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transparent) {
 	if (transparent)
 		_compositeSurface->transBlitFrom(surf, Common::Point(x, y), _transparentColor);
-	else 
+	else
 		_compositeSurface->blitFrom(surf, Common::Point(x, y));
 }
 
@@ -747,7 +737,7 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 	if (!vd.loadStream(file))
 		error("unable to load video %s", path.c_str());
 
-    for(int f = 0; f < n; f++) 
+	for (int f = 0; f < n; f++)
 		vd.decodeNextFrame();
 
 	const Graphics::Surface *frame = vd.decodeNextFrame();
@@ -811,23 +801,20 @@ void HypnoEngine::updateScreen(MVideo &video) {
 		cframe = sframe->convertTo(_pixelFormat, video.decoder->getPalette());
 	} else
 		cframe = frame->convertTo(_pixelFormat, video.decoder->getPalette());
-	
+
 	if (video.transparent)
 		_compositeSurface->transBlitFrom(*cframe, video.position, _transparentColor);
 	else
 		_compositeSurface->blitFrom(*cframe, video.position);
 
-
-	if (video.scaled) { 
+	if (video.scaled) {
 		sframe->free();
 		delete sframe;
 	}
 
 	cframe->free();
 	delete cframe;
-
 }
-
 
 void HypnoEngine::drawScreen() {
 	g_system->copyRectToScreen(_compositeSurface->getPixels(), _compositeSurface->pitch, 0, 0, _screenW, _screenH);
@@ -871,14 +858,13 @@ void HypnoEngine::playSound(Common::String name, uint32 loops) {
 	Audio::LoopingAudioStream *stream;
 
 	for (LibData::iterator it = _soundFiles.begin(); it != _soundFiles.end(); ++it) {
-			if (it->name == name) {
-				raw = new ByteArray(it->data);
-				stream = new Audio::LoopingAudioStream(Audio::makeRawStream(raw->data(), raw->size(), 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
-				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
-				break;
-			}
+		if (it->name == name) {
+			raw = new ByteArray(it->data);
+			stream = new Audio::LoopingAudioStream(Audio::makeRawStream(raw->data(), raw->size(), 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
+			break;
+		}
 	}
-
 }
 
 void HypnoEngine::stopSound() {

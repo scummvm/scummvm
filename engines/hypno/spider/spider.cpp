@@ -1,5 +1,5 @@
-#include "hypno/hypno.h"
 #include "hypno/grammar.h"
+#include "hypno/hypno.h"
 
 #include "common/events.h"
 
@@ -8,7 +8,7 @@ namespace Hypno {
 SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {}
 
 void SpiderEngine::loadAssets() {
-	LibData files; 
+	LibData files;
 	loadLib("sixdemo/c_misc/missions.lib", files);
 	uint32 i = 0;
 	uint32 j = 0;
@@ -23,7 +23,7 @@ void SpiderEngine::loadAssets() {
 	Common::String arc;
 	Common::String list;
 
-	debug("Splitting file: %s",files[0].name.c_str());
+	debug("Splitting file: %s", files[0].name.c_str());
 	for (i = 0; i < files[0].data.size(); i++) {
 		arc += files[0].data[i];
 		if (files[0].data[i] == 'X') {
@@ -37,7 +37,7 @@ void SpiderEngine::loadAssets() {
 		}
 	}
 
-	Common::String arclevel = files[0].name; 
+	Common::String arclevel = files[0].name;
 	parseArcadeShooting("sixdemo", arclevel, arc);
 	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
 
@@ -57,12 +57,12 @@ void SpiderEngine::loadAssets() {
 
 	cl = new ChangeLevel();
 	cl->level = "sixdemo/puz_matr";
-	_levels["sixdemo/mis/demo.mis"].scene.hots[3].actions.push_back(cl);	
+	_levels["sixdemo/mis/demo.mis"].scene.hots[3].actions.push_back(cl);
 
 	cl = new ChangeLevel();
 	cl->level = "sixdemo/mis/shoctalk.mis";
 	_levels["sixdemo/mis/demo.mis"].scene.hots[4].actions.push_back(cl);
-	
+
 	cl = new ChangeLevel();
 	cl->level = "sixdemo/mis/order.mis";
 	_levels["sixdemo/mis/demo.mis"].scene.hots[5].actions.push_back(cl);
@@ -84,14 +84,13 @@ void SpiderEngine::loadAssets() {
 	matrix.puzzle.intros.push_back("spiderman/demo/aleyc01s.smk");
 	matrix.puzzle.levelIfWin = "sixdemo/mis/demo.mis";
 	matrix.puzzle.levelIfLose = "sixdemo/mis/demo.mis";
-	_levels["sixdemo/puz_matr"] = matrix; 
-
+	_levels["sixdemo/puz_matr"] = matrix;
 }
 
 void SpiderEngine::runPuzzle(Puzzle puzzle) {
 	if (puzzle.name == "sixdemo/puz_matr")
 		runMatrix(puzzle);
-	else 
+	else
 		error("invalid puzzle");
 }
 
@@ -101,16 +100,16 @@ void SpiderEngine::runMatrix(Puzzle puzzle) {
 
 	defaultCursor();
 	bool data[10][10] = {};
-	bool solution[10][10] = { 
-		{0, 0, 0, 1, 1, 1, 1, 0, 0, 0},  
-		{0, 0, 1, 1, 1, 1, 1, 1, 0, 0},  
-		{0, 1, 1, 1, 1, 1, 1, 1, 1, 0},  
-		{0, 1, 1, 0, 0, 0, 0, 1, 1, 0},  
-		{0, 1, 1, 1, 1, 1, 1, 1, 1, 0},  
-		{0, 0, 1, 1, 1, 1, 1, 1, 0, 0},  
-		{0, 0, 1, 1, 0, 0, 1, 1, 0, 0},  
-		{0, 0, 1, 1, 0, 0, 1, 1, 0, 0},  
-		{0, 0, 0, 1, 0, 0, 1, 0, 0, 0}, 
+	bool solution[10][10] = {
+		{0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
+		{0, 0, 1, 1, 1, 1, 1, 1, 0, 0},
+		{0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+		{0, 1, 1, 0, 0, 0, 0, 1, 1, 0},
+		{0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+		{0, 0, 1, 1, 1, 1, 1, 1, 0, 0},
+		{0, 0, 1, 1, 0, 0, 1, 1, 0, 0},
+		{0, 0, 1, 1, 0, 0, 1, 1, 0, 0},
+		{0, 0, 0, 1, 0, 0, 1, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	};
 	Common::Rect matrix(175, 96, 461, 385);
@@ -124,7 +123,7 @@ void SpiderEngine::runMatrix(Puzzle puzzle) {
 	MVideo v("sixdemo/puz_matr/matintro.smk", Common::Point(0, 0), false, false, false);
 	playVideo(v);
 	while (!shouldQuit()) {
-		
+
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
 			// Events
@@ -139,7 +138,7 @@ void SpiderEngine::runMatrix(Puzzle puzzle) {
 				if (matrix.contains(mousePos)) {
 					x = (mousePos.x - 175) / 29;
 					y = (mousePos.y - 96) / 29;
-					cell.moveTo(175 + 29*x + 1, 96 + 29*y + 1);
+					cell.moveTo(175 + 29 * x + 1, 96 + 29 * y + 1);
 					_compositeSurface->fillRect(cell, data[x][y] ? deactiveColor : activeColor);
 					data[x][y] = !data[x][y];
 				}
@@ -161,17 +160,16 @@ void SpiderEngine::runMatrix(Puzzle puzzle) {
 			if (!found)
 				break;
 		}
-				
+
 		if (found) {
 			playSound("sixdemo/demo/sound.lib/matrix_2.raw", 1);
 			_nextLevel = puzzle.levelIfWin;
 			return;
-		} 
+		}
 
 		if (v.decoder->needsUpdate()) {
 			updateScreen(v);
 		}
-
 
 		drawScreen();
 		g_system->delayMillis(10);

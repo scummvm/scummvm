@@ -37,15 +37,14 @@ public:
 
 Common::Error HypnoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	debug("gameid: %s", desc->gameId);
-    if (Common::String(desc->gameId) == "wetlands") {
-		*engine = (Engine*) new Hypno::WetEngine(syst, desc);
+	if (Common::String(desc->gameId) == "wetlands") {
+		*engine = (Engine *)new Hypno::WetEngine(syst, desc);
 	} else if (Common::String(desc->gameId) == "sinister-six") {
-		*engine = (Engine*) new Hypno::SpiderEngine(syst, desc);
-	} 
-	else 
+		*engine = (Engine *)new Hypno::SpiderEngine(syst, desc);
+	} else
 		return Common::kUnsupportedGameidError;
 
-    return Common::kNoError;
+	return Common::kNoError;
 }
 
 namespace Hypno {

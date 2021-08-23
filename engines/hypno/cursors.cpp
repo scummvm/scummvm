@@ -28,29 +28,28 @@
 namespace Hypno {
 
 static const byte MOUSECURSOR_SCI[] = {
-	1,1,0,0,0,0,0,0,0,0,0,
-	1,2,1,0,0,0,0,0,0,0,0,
-	1,2,2,1,0,0,0,0,0,0,0,
-	1,2,2,2,1,0,0,0,0,0,0,
-	1,2,2,2,2,1,0,0,0,0,0,
-	1,2,2,2,2,2,1,0,0,0,0,
-	1,2,2,2,2,2,2,1,0,0,0,
-	1,2,2,2,2,2,2,2,1,0,0,
-	1,2,2,2,2,2,2,2,2,1,0,
-	1,2,2,2,2,2,2,2,2,2,1,
-	1,2,2,2,2,2,1,0,0,0,0,
-	1,2,1,0,1,2,2,1,0,0,0,
-	1,1,0,0,1,2,2,1,0,0,0,
-	0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,0,1,2,2,1,0
-};
+	1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
+	1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+	1, 2, 1, 0, 1, 2, 2, 1, 0, 0, 0,
+	1, 1, 0, 0, 1, 2, 2, 1, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+	0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0};
 
 static const byte cursorPalette[] = {
-	0x00, 0x00, 0x00,  // Black / Transparent
-	0x01, 0x01, 0x01,  // Gray
-	0xff, 0xff, 0xff,  // White
-	0xff, 0x00, 0x00   // Red
+	0x00, 0x00, 0x00, // Black / Transparent
+	0x01, 0x01, 0x01, // Gray
+	0xff, 0xff, 0xff, // White
+	0xff, 0x00, 0x00  // Red
 };
 
 struct CursorTable {
@@ -64,10 +63,8 @@ struct CursorTable {
 };
 
 static const CursorTable cursorTable[] = {
-	{ "default",    "", MOUSECURSOR_SCI,        11, 16, 0,  0  },
-	{ nullptr,      nullptr, nullptr,           0,  0,  0,  0  }
-};
-
+	{"default", "", MOUSECURSOR_SCI, 11, 16, 0, 0},
+	{nullptr, nullptr, nullptr, 0, 0, 0, 0}};
 
 void HypnoEngine::disableCursor() {
 	CursorMan.showMouse(false);
@@ -84,7 +81,6 @@ void HypnoEngine::defaultCursor() {
 		CursorMan.showMouse(true);
 	}
 }
-
 
 void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n) {
 	Graphics::Surface *entry = decodeFrame(cursor, n, false);
