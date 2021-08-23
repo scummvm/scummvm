@@ -35,7 +35,8 @@ enum TwineFeatureFlags {
 	TF_VERSION_USA = (1 << 1),
 	TF_VERSION_CUSTOM = (1 << 2),
 	TF_USE_GIF = (1 << 3),
-	TF_DOTEMU_ENHANCED = (1 << 4)
+	TF_DOTEMU_ENHANCED = (1 << 4),
+	TF_MOD = (1 << 5)
 };
 
 } // End of namespace TwinE

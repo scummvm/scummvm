@@ -248,6 +248,7 @@ public:
 
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; }
 	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; }
+	bool isMod() const { return (_gameFlags & TwinE::TF_MOD) != 0; }
 	bool isDemo() const { return (_gameFlags & ADGF_DEMO) != 0; };
 	const char *getGameId() const;
 
