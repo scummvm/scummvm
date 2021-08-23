@@ -429,11 +429,11 @@ int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
 		} else {
 			i %= NUM_LOCATIONS;
 		}
-		if (_engine->_gameState->_holomapFlags[i] & HOLOMAP_ACTIVE) {
+		if (i == _engine->_scene->_currentSceneIdx || (_engine->_gameState->_holomapFlags[i] & HOLOMAP_ACTIVE) != 0u) {
 			return i;
 		}
 	}
-	return _engine->_scene->_currentSceneIdx;
+	return -1;
 }
 
 void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
