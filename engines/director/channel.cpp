@@ -198,8 +198,10 @@ bool Channel::isActiveText() {
 }
 
 bool Channel::isMouseIn(const Common::Point &pos) {
-	Common::Rect bbox = getBbox();
+	if (!_visible)
+		return false;
 
+	Common::Rect bbox = getBbox();
 	if (!bbox.contains(pos))
 		return false;
 
