@@ -301,7 +301,7 @@ def punyencode_paths(paths: List[Path], verbose: bool = False) -> int:
     """Rename filepaths to their punyencoded names"""
     count = 0
     for path in paths:
-        new_name = punyencode(path.stem)
+        new_name = punyencode(path.name)
         if path.stem != new_name:
             count += 1
             new_path = path.parent / new_name
