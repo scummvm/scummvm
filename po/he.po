@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-23 15:44+0000\n"
+"POT-Creation-Date: 2021-08-23 20:46+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -1984,11 +1984,11 @@ msgstr "להמשיך"
 msgid "Clear value"
 msgstr "ערך ברור"
 
-#: base/main.cpp:638
+#: base/main.cpp:642
 msgid "Error running game:"
 msgstr "שגיאה בהפעלת המשחק:"
 
-#: base/main.cpp:685
+#: base/main.cpp:689
 msgid "Could not find any engine capable of running the selected game"
 msgstr "לא יכול היה למצוא שום מנוע שמסוגל להריץ את המשחק שנבחר"
 
@@ -2680,7 +2680,7 @@ msgid ""
 msgstr "אתה בטוח שברצונך לפרוש? כל ההתקדמות שלא נשמרה תאבד."
 
 #: backends/events/default/default-events.cpp:209
-#: backends/events/default/default-events.cpp:326
+#: backends/events/default/default-events.cpp:347
 #: engines/adl/metaengine.cpp:262 engines/hdb/metaengine.cpp:255
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:181
@@ -2689,24 +2689,24 @@ msgstr "אתה בטוח שברצונך לפרוש? כל ההתקדמות שלא 
 msgid "Quit"
 msgstr "צא"
 
-#: backends/events/default/default-events.cpp:303
+#: backends/events/default/default-events.cpp:324
 msgid "Global"
 msgstr "גלובלי"
 
-#: backends/events/default/default-events.cpp:306
+#: backends/events/default/default-events.cpp:327
 #: engines/twine/metaengine.cpp:217
 msgid "Global Main Menu"
 msgstr "תפריט ראשי כללי"
 
-#: backends/events/default/default-events.cpp:313
+#: backends/events/default/default-events.cpp:334
 msgid "Display keyboard"
 msgstr "הצגת מקלדת"
 
-#: backends/events/default/default-events.cpp:320
+#: backends/events/default/default-events.cpp:341
 msgid "Toggle mute"
 msgstr "הפעל או בטל השתקה"
 
-#: backends/events/default/default-events.cpp:348
+#: backends/events/default/default-events.cpp:369
 msgid "Open Debugger"
 msgstr "פתח את מאתר הבאגים"
 

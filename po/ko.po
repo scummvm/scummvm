@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-23 15:44+0000\n"
+"POT-Creation-Date: 2021-08-23 20:46+0000\n"
 "PO-Revision-Date: 2021-08-15 18:46+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -1988,11 +1988,11 @@ msgstr "진행"
 msgid "Clear value"
 msgstr "값 제거"
 
-#: base/main.cpp:638
+#: base/main.cpp:642
 msgid "Error running game:"
 msgstr "게임 실행 에러:"
 
-#: base/main.cpp:685
+#: base/main.cpp:689
 msgid "Could not find any engine capable of running the selected game"
 msgstr "선택된 게임을 실행할 수 있는 엔진을 찾지 못 했습니다"
 
@@ -2688,7 +2688,7 @@ msgstr ""
 "저장되지 않은 진행사항은 사라지게 됩니다."
 
 #: backends/events/default/default-events.cpp:209
-#: backends/events/default/default-events.cpp:326
+#: backends/events/default/default-events.cpp:347
 #: engines/adl/metaengine.cpp:262 engines/hdb/metaengine.cpp:255
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:181
@@ -2697,24 +2697,24 @@ msgstr ""
 msgid "Quit"
 msgstr "종료"
 
-#: backends/events/default/default-events.cpp:303
+#: backends/events/default/default-events.cpp:324
 msgid "Global"
 msgstr "전역"
 
-#: backends/events/default/default-events.cpp:306
+#: backends/events/default/default-events.cpp:327
 #: engines/twine/metaengine.cpp:217
 msgid "Global Main Menu"
 msgstr "전역 메인 메뉴"
 
-#: backends/events/default/default-events.cpp:313
+#: backends/events/default/default-events.cpp:334
 msgid "Display keyboard"
 msgstr "키보드 표시"
 
-#: backends/events/default/default-events.cpp:320
+#: backends/events/default/default-events.cpp:341
 msgid "Toggle mute"
 msgstr "음소거 전환"
 
-#: backends/events/default/default-events.cpp:348
+#: backends/events/default/default-events.cpp:369
 msgid "Open Debugger"
 msgstr "디버거 열기"
 

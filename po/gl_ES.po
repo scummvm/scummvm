@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-23 15:44+0000\n"
+"POT-Creation-Date: 2021-08-23 20:46+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -2045,11 +2045,11 @@ msgstr "Continuar"
 msgid "Clear value"
 msgstr "Limpar valor"
 
-#: base/main.cpp:638
+#: base/main.cpp:642
 msgid "Error running game:"
 msgstr "Erro de execución do xogo:"
 
-#: base/main.cpp:685
+#: base/main.cpp:689
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Non se puido atopar un motor para executar o xogo seleccionado"
 
@@ -2759,7 +2759,7 @@ msgid ""
 msgstr "   Seguro que queres saír?   "
 
 #: backends/events/default/default-events.cpp:209
-#: backends/events/default/default-events.cpp:326
+#: backends/events/default/default-events.cpp:347
 #: engines/adl/metaengine.cpp:262 engines/hdb/metaengine.cpp:255
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:181
@@ -2768,27 +2768,27 @@ msgstr "   Seguro que queres saír?   "
 msgid "Quit"
 msgstr "Saír"
 
-#: backends/events/default/default-events.cpp:303
+#: backends/events/default/default-events.cpp:324
 #, fuzzy
 msgid "Global"
 msgstr " (Global)"
 
-#: backends/events/default/default-events.cpp:306
+#: backends/events/default/default-events.cpp:327
 #: engines/twine/metaengine.cpp:217
 #, fuzzy
 msgid "Global Main Menu"
 msgstr "Menú global"
 
-#: backends/events/default/default-events.cpp:313
+#: backends/events/default/default-events.cpp:334
 msgid "Display keyboard"
 msgstr "Mostrar teclado"
 
-#: backends/events/default/default-events.cpp:320
+#: backends/events/default/default-events.cpp:341
 #, fuzzy
 msgid "Toggle mute"
 msgstr "Activar/desactivar captura de rato"
 
-#: backends/events/default/default-events.cpp:348
+#: backends/events/default/default-events.cpp:369
 #, fuzzy
 msgid "Open Debugger"
 msgstr "Depurador"

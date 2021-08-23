@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-23 15:44+0000\n"
+"POT-Creation-Date: 2021-08-23 20:46+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -2040,11 +2040,11 @@ msgstr ""
 msgid "Clear value"
 msgstr "Balioa kendu"
 
-#: base/main.cpp:638
+#: base/main.cpp:642
 msgid "Error running game:"
 msgstr "Jokoa exekutatzean errorea:"
 
-#: base/main.cpp:685
+#: base/main.cpp:689
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Ezin izan da aukeraturiko jokoa exekutatzeko gai den motorerik aurkitu"
 
@@ -2748,7 +2748,7 @@ msgid ""
 msgstr "   Ziur irten nahi duzula?   "
 
 #: backends/events/default/default-events.cpp:209
-#: backends/events/default/default-events.cpp:326
+#: backends/events/default/default-events.cpp:347
 #: engines/adl/metaengine.cpp:262 engines/hdb/metaengine.cpp:255
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:181
@@ -2757,26 +2757,26 @@ msgstr "   Ziur irten nahi duzula?   "
 msgid "Quit"
 msgstr "Irten"
 
-#: backends/events/default/default-events.cpp:303
+#: backends/events/default/default-events.cpp:324
 #, fuzzy
 msgid "Global"
 msgstr " (Orokorra)"
 
-#: backends/events/default/default-events.cpp:306
+#: backends/events/default/default-events.cpp:327
 #: engines/twine/metaengine.cpp:217
 #, fuzzy
 msgid "Global Main Menu"
 msgstr "Menu orokorra"
 
-#: backends/events/default/default-events.cpp:313
+#: backends/events/default/default-events.cpp:334
 msgid "Display keyboard"
 msgstr "Erakutsi teklatua"
 
-#: backends/events/default/default-events.cpp:320
+#: backends/events/default/default-events.cpp:341
 msgid "Toggle mute"
 msgstr "Mututu/Ez-mututu"
 
-#: backends/events/default/default-events.cpp:348
+#: backends/events/default/default-events.cpp:369
 msgid "Open Debugger"
 msgstr "Araztailea ireki"
 
