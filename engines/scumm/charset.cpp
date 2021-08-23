@@ -541,7 +541,23 @@ int CharsetRenderer::getStringHeight(const char *str, uint numBytesMax) {
 		return 0;
 
 	while (*str && numBytesMax) {
-		// No treatment of the ^ commands here, since they're handled/removed in handleTextResource().
+		while (str[0] == '^') {
+			switch (str[1]) {
+			case 'f':
+				// We should change the font on the fly at this point
+				// which would result in a different width result.
+				// This has never been observed in the game though, and
+				// as such, we don't handle it.
+				str += 4;
+				break;
+			case 'c':
+				str += 5;
+				break;
+			default:
+				error("CharsetRenderer::getStringHeight(): Invalid escape code in text string");
+			}
+		}
+
 		if (*str == '\n') {
 			totalHeight += (lineHeight ? lineHeight : getFontHeight()) + 1;
 			lineHeight = 0;

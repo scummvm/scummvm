@@ -158,7 +158,7 @@ protected:
 	void useBompCursor(const byte *im, int w, int h);
 	void grabCursor(int x, int y, int w, int h);
 
-	void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrapped = false);
+	virtual void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrapped = false);
 	void drawBlastTexts();
 	void removeBlastTexts();
 
