@@ -423,18 +423,17 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
 	const int32 idx = currentLocation;
-	int32 i = currentLocation + dir;
-	if (i < 0) {
-		i = NUM_LOCATIONS - 1;
-	} else {
-		i %= NUM_LOCATIONS;
-	}
-	for (; i != idx; i = (i + dir) % NUM_LOCATIONS) {
+	for (int32 i = currentLocation + dir; i != idx; i += dir) {
+		if (i < 0) {
+			i = NUM_LOCATIONS - 1;
+		} else {
+			i %= NUM_LOCATIONS;
+		}
 		if (_engine->_gameState->_holomapFlags[i] & HOLOMAP_ACTIVE) {
 			return i;
 		}
 	}
-	return -1;
+	return _engine->_scene->_currentSceneIdx;
 }
 
 void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
@@ -538,7 +537,7 @@ void Holomap::processHolomap() {
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapPrev)) {
 			const int32 nextLocation = getNextHolomapLocation(currentLocation, -1);
-			if (nextLocation != -1) {
+			if (nextLocation != -1 && currentLocation != nextLocation) {
 				currentLocation = nextLocation;
 				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 				time = _engine->_lbaTime;
@@ -546,7 +545,7 @@ void Holomap::processHolomap() {
 			}
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
 			const int32 nextLocation = getNextHolomapLocation(currentLocation, 1);
-			if (nextLocation != -1) {
+			if (nextLocation != -1 && currentLocation != nextLocation) {
 				currentLocation = nextLocation;
 				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 				time = _engine->_lbaTime;
