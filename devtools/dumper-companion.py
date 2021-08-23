@@ -326,7 +326,7 @@ def punyencode_dir(directory: Path, verbose: bool = False) -> int:
     files: List[Path] = []
     dirs: List[Path] = []
     path_glob = directory.glob("**/*")
-    next(path_glob) # Don't punyencode the root directory
+    next(path_glob)  # Don't punyencode the root directory
     for item in path_glob:
         if item.is_file():
             files.append(item)
