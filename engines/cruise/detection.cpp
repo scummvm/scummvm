@@ -150,6 +150,17 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+	{ // AtariST French edition. Bugreport #12824
+		{
+			"cruise",
+			0,
+			AD_ENTRY1s("D1", "485ff850b7035316621f632e33f56468", 537311),
+			Common::FR_FRA,
+			Common::kPlatformAtariST,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
 	{
 		{
 			"cruise",
