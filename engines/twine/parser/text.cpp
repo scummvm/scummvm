@@ -31,10 +31,10 @@ namespace TwinE {
 
 void TextData::initCustomTexts(TextBankId textBankId) {
 	if (textBankId == TextBankId::Options_and_menus) {
-		add(textBankId, TextEntry{_sc("High resolution on", "Options menu"), -1, TextId::kCustomHighResOptionOn});
-		add(textBankId, TextEntry{_sc("High resolution off", "Options menu"), -1, TextId::kCustomHighResOptionOff});
-		add(textBankId, TextEntry{_sc("Wall collision on", "Options menu"), -1, TextId::kCustomWallCollisionOn});
-		add(textBankId, TextEntry{_sc("Wall collision off", "Options menu"), -1, TextId::kCustomWallCollisionOff});
+		add(textBankId, TextEntry{_c("High resolution on", "Options menu"), -1, TextId::kCustomHighResOptionOn});
+		add(textBankId, TextEntry{_c("High resolution off", "Options menu"), -1, TextId::kCustomHighResOptionOff});
+		add(textBankId, TextEntry{_c("Wall collision on", "Options menu"), -1, TextId::kCustomWallCollisionOn});
+		add(textBankId, TextEntry{_c("Wall collision off", "Options menu"), -1, TextId::kCustomWallCollisionOff});
 	}
 }
 
