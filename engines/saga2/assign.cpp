@@ -33,7 +33,7 @@
 
 namespace Saga2 {
 
-const uint16 indefinitely = CalenderTime::kFramesPerDay;
+const uint16 kIndefiniteTime = CalenderTime::kFramesPerDay;
 
 /* ===================================================================== *
    ActorAssignment member functions
@@ -304,13 +304,13 @@ Task *PatrolRouteAssignment::getTask(TaskStack *ts) {
  * ===================================================================== */
 
 HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, const TilePoint &tp, uint16 r) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	initialize(LocationTarget(tp), r);
 }
 
 //  Construct with no time limit and an abstract target
 HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, const Target &targ, uint16 r) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	initialize(targ, r);
 }
 
@@ -396,7 +396,7 @@ HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(
 	Actor               *a,
 	uint16              r,
 	bool                trackFlag) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	assert(isActor(a) && a != getActor());
 	initialize(SpecificActorTarget(a), r, trackFlag);
 }
@@ -407,7 +407,7 @@ HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(
 	const ActorTarget   &at,
 	uint16              r,
 	bool                trackFlag) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	initialize(at, r, trackFlag);
 }
 
@@ -505,7 +505,7 @@ Task *HuntToBeNearActorAssignment::getTask(TaskStack *ts) {
 
 //  Construct with no time limit and specific actor
 HuntToKillAssignment::HuntToKillAssignment(Actor *a, bool trackFlag) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	assert(isActor(a) && a != getActor());
 	initialize(SpecificActorTarget(a), trackFlag, true);
 }
@@ -515,7 +515,7 @@ HuntToKillAssignment::HuntToKillAssignment(
 	Actor *a,
 	const ActorTarget   &at,
 	bool                trackFlag) :
-	ActorAssignment(a, indefinitely) {
+	ActorAssignment(a, kIndefiniteTime) {
 	initialize(at, trackFlag, false);
 }
 
