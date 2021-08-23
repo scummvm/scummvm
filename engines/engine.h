@@ -638,21 +638,6 @@ public:
 	virtual int getAutosaveSlot() const {
 		return 0;
 	}
-
-	/**
-	 * Check whether it is time to autosave based on the
-	 * provided @p lastSaveTime.
-	 *
-	 * This function is now deprecated as autosaves are handled directly by
-	 * the Engine class and derived classes do not need to worry about it other than
-	 * to implement canSaveAutosaveCurrently() and getAutosaveSlot()
-	 * if the default implementations are not sufficient.
-	 */
-	bool shouldPerformAutoSave(int lastSaveTime) {
-		// TODO: Remove deprecated method once all engines are refactored
-		// to no longer do autosaves directly themselves
-		return false;
-	}
 };
 
 
