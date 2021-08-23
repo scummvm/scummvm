@@ -84,7 +84,8 @@ OSystem_3DS::OSystem_3DS():
 	_screenChangeId(0),
 	_magnifyMode(MODE_MAGOFF),
 	exiting(false),
-	sleeping(false)
+	sleeping(false),
+	_logger(0)
 {
 	chdir("sdmc:/");
 
@@ -116,6 +117,9 @@ OSystem_3DS::~OSystem_3DS() {
 	destroyAudio();
 	destroy3DSGraphics();
 
+	delete _logger;
+	_logger = 0;
+
 	delete _timerManager;
 	_timerManager = 0;
 }
@@ -125,6 +129,15 @@ void OSystem_3DS::quit() {
 }
 
 void OSystem_3DS::initBackend() {
+	if (!_logger)
+		_logger = new Backends::Log::Log(this);
+
+	if (_logger) {
+		Common::WriteStream *logFile = createLogFile();
+		if (logFile)
+			_logger->open(logFile);
+	}
+
 	loadConfig();
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
@@ -155,6 +168,10 @@ void OSystem_3DS::updateConfig() {
 
 Common::String OSystem_3DS::getDefaultConfigFileName() {
 	return "sdmc:/3ds/scummvm/scummvm.ini";
+}
+
+Common::String OSystem_3DS::getDefaultLogFileName() {
+	return "sdmc:/3ds/scummvm/scummvm.log";
 }
 
 void OSystem_3DS::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -222,6 +239,30 @@ void OSystem_3DS::fatalError() {
 
 void OSystem_3DS::logMessage(LogMessageType::Type type, const char *message) {
 	printf("%s", message);
+
+	// Then log into file (via the logger)
+	if (_logger)
+		_logger->print(message);
+}
+
+Common::WriteStream *OSystem_3DS::createLogFile() {
+	// Start out by resetting _logFilePath, so that in case
+	// of a failure, we know that no log file is open.
+	_logFilePath.clear();
+
+	Common::String logFile;
+	if (ConfMan.hasKey("logfile"))
+		logFile = ConfMan.get("logfile");
+	else
+		logFile = getDefaultLogFileName();
+	if (logFile.empty())
+		return nullptr;
+
+	Common::FSNode file(logFile);
+	Common::WriteStream *stream = file.createWriteStream();
+	if (stream)
+		_logFilePath = logFile;
+	return stream;
 }
 
 } // namespace N3DS
