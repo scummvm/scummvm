@@ -246,7 +246,7 @@ typedef uint8       ColorTable[256];
 #define maxint32 0x7fffffff
 
 enum {
-	kActorListID = MKTAG('A', 'C', 'T', 'O');
+	kActorListID = MKTAG('A', 'C', 'T', 'O')
 };
 
 // number of containers

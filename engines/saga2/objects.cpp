@@ -346,7 +346,7 @@ bool isActor(GameObject *obj) {
 	if (obj->_index >= kActorCount + ActorBaseID || obj->_index < ActorBaseID)
 		return false;
 
-	return (g_vm->_actorList[obj->_index - ActorBaseID] == obj);
+	return (g_vm->_act->_actorList[obj->_index - ActorBaseID] == obj);
 }
 
 bool isWorld(GameObject *obj) {
@@ -380,7 +380,7 @@ GameObject *GameObject::objectAddress(ObjectID id) {
 	if (id - ActorBaseID >= kActorCount)
 		error("Invalid object ID: %d!", id);
 
-	return (int)g_vm->_actorList.size() > id - ActorBaseID ? g_vm->_actorList[id - ActorBaseID] : nullptr;
+	return (int)g_vm->_act->_actorList.size() > id - ActorBaseID ? g_vm->_act->_actorList[id - ActorBaseID] : nullptr;
 }
 
 ProtoObj *GameObject::protoAddress(ObjectID id) {
@@ -399,11 +399,11 @@ int32 GameObject::nameIndexToID(uint16 ind) {
 	}
 
 	for (int i = 0; i < kActorCount; ++i) {
-		if (g_vm->_actorList[i]->_data.nameIndex == ind)
-			return g_vm->_actorList[i]->thisID();
+		if (g_vm->_act->_actorList[i]->_data.nameIndex == ind)
+			return g_vm->_act->_actorList[i]->thisID();
 
-		if (g_vm->_actorList[i]->prototype && g_vm->_actorList[i]->prototype->nameIndex == ind)
-			return g_vm->_actorList[i]->thisID();
+		if (g_vm->_act->_actorList[i]->prototype && g_vm->_act->_actorList[i]->prototype->nameIndex == ind)
+			return g_vm->_act->_actorList[i]->thisID();
 	}
 
 	for (int i = 0; i < worldCount; ++i) {
@@ -429,10 +429,10 @@ Common::Array<ObjectID> GameObject::nameToID(Common::String name) {
 	}
 
 	for (int i = 0; i < kActorCount; ++i) {
-		Common::String objName = g_vm->_actorList[i]->objName();
+		Common::String objName = g_vm->_act->_actorList[i]->objName();
 		objName.toLowercase();
 		if (objName.contains(name))
-			array.push_back(g_vm->_actorList[i]->thisID());
+			array.push_back(g_vm->_act->_actorList[i]->thisID());
 	}
 
 	for (int i = 0; i < worldCount; ++i) {
@@ -3028,7 +3028,7 @@ void initObjects(void) {
 	//  Make a pass over the actor list appending each actor to their
 	//  parent's child list
 	for (i = 0; i < kActorCount; i++) {
-		Actor       *a = g_vm->_actorList[i];
+		Actor       *a = g_vm->_act->_actorList[i];
 
 		if (a->_data.parentID == Nothing) {
 			a->append(ActorLimbo);
@@ -4603,7 +4603,7 @@ void doBackgroundSimulation(void) {
 	while (actorUpdateCount--) {
 		Actor           *a;
 
-		a = g_vm->_actorList[actorIndex++];
+		a = g_vm->_act->_actorList[actorIndex++];
 
 		//  Wrap the counter around to the beginning if needed
 		if (actorIndex >= kActorCount) actorIndex = 0;

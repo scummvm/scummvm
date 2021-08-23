@@ -1138,6 +1138,8 @@ public:
 		kEvalRateMask = kEvalRate - 1
 	};
 
+	Common::Array<Actor *> _actorList;
+
 	int32 _updatesViaScript;
 	int32 _baseActorIndex;
 	int16 _factionTable[maxFactions][factionNumColumns];

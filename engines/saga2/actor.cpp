@@ -1426,7 +1426,7 @@ Actor *Actor::newActor(
 
 		//  Search actor list for first scavangable actor
 		for (i = kPlayerActors; i < kActorCount; i++) {
-			a = g_vm->_actorList[i];
+			a = g_vm->_act->_actorList[i];
 
 			if ((a->_flags & temporary)
 			        &&  !a->isActivated()
@@ -3362,7 +3362,7 @@ bool Actor::makeSavingThrow(void) {
 //	Determine if the actors are currently initialized
 
 bool areActorsInitialized(void) {
-	return g_vm->_actorList.size() > 0;
+	return g_vm->_act->_actorList.size() > 0;
 }
 
 int16 GetRandomBetween(int start, int end) {
@@ -3376,7 +3376,7 @@ void updateActorStates(void) {
 
 	actorIndex = g_vm->_act->_baseActorIndex = (g_vm->_act->_baseActorIndex + 1) & ActorManager::kEvalRateMask;
 	while (actorIndex < kActorCount) {
-		Actor   *a = g_vm->_actorList[actorIndex];
+		Actor   *a = g_vm->_act->_actorList[actorIndex];
 
 		if (isWorld(a->IDParent()))
 			a->evaluateNeeds();
@@ -3386,7 +3386,7 @@ void updateActorStates(void) {
 
 	g_vm->_act->_updatesViaScript = 0;
 	for (actorIndex = 0; actorIndex < kActorCount; actorIndex++) {
-		Actor   *a = g_vm->_actorList[actorIndex];
+		Actor   *a = g_vm->_act->_actorList[actorIndex];
 
 		if (isWorld(a->IDParent()) && a->isActivated())
 			a->updateState();
@@ -3472,7 +3472,7 @@ void initActors(void) {
 
 		a->_index = i + ActorBaseID;
 
-		g_vm->_actorList.push_back(a);
+		g_vm->_act->_actorList.push_back(a);
 	}
 
 	//  Place all of the extra actors in actor limbo
@@ -3481,12 +3481,12 @@ void initActors(void) {
 
 		a->_index = i + ActorBaseID;
 
-		g_vm->_actorList.push_back(a);
+		g_vm->_act->_actorList.push_back(a);
 	}
 
-	g_vm->_actorList[0]->_disposition = dispositionPlayer + 0;
-	g_vm->_actorList[1]->_disposition = dispositionPlayer + 1;
-	g_vm->_actorList[2]->_disposition = dispositionPlayer + 2;
+	g_vm->_act->_actorList[0]->_disposition = dispositionPlayer + 0;
+	g_vm->_act->_actorList[1]->_disposition = dispositionPlayer + 1;
+	g_vm->_act->_actorList[2]->_disposition = dispositionPlayer + 2;
 }
 
 void saveActors(Common::OutSaveFile *outS) {
@@ -3499,7 +3499,7 @@ void saveActors(Common::OutSaveFile *outS) {
 	debugC(3, kDebugSaveload, "... kActorCount = %d", kActorCount);
 
 	for (int i = 0; i < kActorCount; ++i)
-		g_vm->_actorList[i]->write(out);
+		g_vm->_act->_actorList[i]->write(out);
 	CHUNK_END;
 }
 
@@ -3519,11 +3519,11 @@ void loadActors(Common::InSaveFile *in) {
 
 		a->_index = i + ActorBaseID;
 
-		g_vm->_actorList.push_back(a);
+		g_vm->_act->_actorList.push_back(a);
 	}
 
 	for (int i = 0; i < kActorCount; ++i) {
-		Actor *a = g_vm->_actorList[i];
+		Actor *a = g_vm->_act->_actorList[i];
 
 		a->_leader = a->_leaderID != Nothing
 					? (Actor *)GameObject::objectAddress(a->_leaderID)
@@ -3543,11 +3543,11 @@ void loadActors(Common::InSaveFile *in) {
 //	Cleanup the actor list
 
 void cleanupActors(void) {
-	if (g_vm->_actorList.size() > 0) {
+	if (g_vm->_act->_actorList.size() > 0) {
 		for (int i = 0; i < kActorCount; i++)
-			delete g_vm->_actorList[i];
+			delete g_vm->_act->_actorList[i];
 
-		g_vm->_actorList.clear();
+		g_vm->_act->_actorList.clear();
 	}
 }
 
