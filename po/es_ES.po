@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-23 11:34+0000\n"
-"PO-Revision-Date: 2021-08-20 20:54+0000\n"
+"PO-Revision-Date: 2021-08-23 14:04+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1942,7 +1942,7 @@ msgstr "Nombre: "
 #: gui/saveload-dialog.cpp:1188
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr "Introduce una descripción para la ranura %d:"
+msgstr "Introduce una descripción para el espacio %d:"
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -2379,13 +2379,11 @@ msgstr ""
 
 #: engines/engine.cpp:553
 msgid "Overwrite"
-msgstr ""
+msgstr "Sobrescribir"
 
 #: engines/engine.cpp:554
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Cancel autosave"
-msgstr "Autoguardado sin nombre"
+msgstr "Cancelar autoguardado"
 
 #: engines/engine.cpp:556
 #, c-format
@@ -2394,16 +2392,17 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"AVISO: El espacio de autoguardado contiene una partida llamada %s. Puedes "
+"cambiar la partida existente a otro espacio, sobrescribirla o cancelar el "
+"autoguardado (no se volverá a preguntar hasta que reinicies)."
 
 #: engines/engine.cpp:560
-#, fuzzy
-#| msgid "Move up"
 msgid "Move"
-msgstr "Mover hacia arriba"
+msgstr "Moverse"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "ERROR: No se ha podido copiar la partida guardada a un espacio nuevo."
 
 #: engines/engine.cpp:587 engines/metaengine.cpp:367 engines/savestate.cpp:96
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
@@ -2426,7 +2425,7 @@ msgstr ""
 
 #: engines/engine.cpp:688
 msgid "WARNING: "
-msgstr "ATENCIÓN: "
+msgstr "AVISO: "
 
 #: engines/engine.cpp:688
 msgid " Shall we still run the game?"
@@ -4054,8 +4053,8 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
-"ATENCIÓN: Esta partida se ha guardado en el modo Contenidos restaurados, "
-"pero estás jugando en el modo Contenidos originales. Se ajustará el modo a "
+"AVISO: Esta partida se ha guardado en el modo Contenidos restaurados, pero "
+"estás jugando en el modo Contenidos originales. Se ajustará el modo a "
 "Contenidos restaurados durante esta sesión y hasta que salgas del juego."
 
 #: engines/bladerunner/bladerunner.cpp:2303
@@ -4064,7 +4063,7 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
-"ATENCIÓN: Esta partida se ha guardado en el modo Contenidos originales, pero "
+"AVISO: Esta partida se ha guardado en el modo Contenidos originales, pero "
 "estás jugando en el modo Contenidos restaurados. Se ajustará el modo a "
 "Contenidos originales durante esta sesión y hasta que salgas del juego."
 
@@ -5147,7 +5146,7 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
-"Ya hay una partida guardada en la ranura %d. ¿Quieres sobrescribirla?\n"
+"Ya hay una partida guardada en el espacio %d. ¿Quieres sobrescribirla?\n"
 "\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:662
@@ -5815,7 +5814,7 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"No se puede guardar en la ranura %i\n"
+"No se puede guardar en el espacio %i\n"
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
@@ -7370,12 +7369,12 @@ msgstr "Variación de fuente no presente en el archivo de datos del motor «%s»
 #: engines/toon/toon.cpp:225
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "Partida guardada en la ranura %d "
+msgstr "Partida guardada en el espacio %d "
 
 #: engines/toon/toon.cpp:229
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr "No se pudo guardar rápidamente en la ranura %d"
+msgstr "No se pudo guardar rápidamente en el espacio %d"
 
 #: engines/toon/toon.cpp:242
 #, c-format
