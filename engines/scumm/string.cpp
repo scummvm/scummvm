@@ -207,10 +207,10 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 		int lastLineY = 0;
 		for (int i = 0; i < numLines; i++) {
 			BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
-			Common::strlcpy((char*)bt.text, (char*)(textBuf + substrPos[i]), substrLen[i]);
+			Common::strlcpy((char *)bt.text, (char *)(textBuf + substrPos[i]), substrLen[i]);
 			bt.text[substrLen[0]] = '\0'; // Truncate the substring accordingly
 			bt.xpos = x;
-			bt.ypos = lastLineY = y + (_charset->getStringHeight((char*)textBuf) * i);
+			bt.ypos = lastLineY = y + (_charset->getStringHeight((char *)textBuf) * i);
 			bt.color = color;
 			bt.charset = charset;
 			bt.center = center;
@@ -242,7 +242,7 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 	} else {
 		BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
 
-		Common::strlcpy((char*)bt.text, (char*)textBuf, sizeof(textBuf));
+		Common::strlcpy((char *)bt.text, (char *)textBuf, sizeof(textBuf));
 		bt.xpos = x;
 		bt.ypos = y;
 		bt.color = color;
@@ -1074,7 +1074,7 @@ void ScummEngine_v7::CHARSET_1() {
 			if (subtitlePos.y < _screenHeight - 10) {
 				addSubtitleToQueue(subtitleBuffer + substring[i].pos, subtitlePos, _charsetColor, _charset->getCurID());
 			}
-			subtitlePos.y += _charset->getFontHeight();
+			subtitlePos.y += _charset->getStringHeight((char *)subtitleBuffer);
 		}
 	} else {
 		int code = 0;
@@ -1093,7 +1093,7 @@ void ScummEngine_v7::CHARSET_1() {
 				}
 				if (subtitlePos.y < _screenHeight - 10) {
 					addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
-					subtitlePos.y += _charset->getFontHeight();
+					subtitlePos.y += _charset->getStringHeight((char *)subtitleBuffer);
 				}
 				subtitleLine = subtitleBuffer;
 			} else {
