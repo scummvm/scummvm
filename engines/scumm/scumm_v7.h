@@ -125,6 +125,7 @@ protected:
 
 	int getObjectIdFromOBIM(const byte *obim) override;
 
+	virtual void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrapped = false) override;
 	void actorTalk(const byte *msg) override;
 	void translateText(const byte *text, byte *trans_buff) override;
 	void loadLanguageBundle() override;
