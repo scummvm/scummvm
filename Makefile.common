@@ -131,7 +131,7 @@ $(EXECUTABLE).dwp: $(EXECUTABLE)
 endif
 
 distclean: clean clean-devtools
-	$(RM) config.h config.mk config.log configure.stamp engines/engines.mk engines/plugins_table.h
+	$(RM) config.h config.mk config.log configure.stamp engines/engines.mk engines/detection_table.h engines/plugins_table.h
 
 clean: clean-toplevel
 clean-toplevel:
