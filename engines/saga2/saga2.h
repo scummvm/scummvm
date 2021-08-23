@@ -195,6 +195,7 @@ public:
 	bool _indivControlsFlag;
 	bool _userControlsSetup;
 	int _fadeDepth;
+	int _currentMapNum;
 
 
 private:

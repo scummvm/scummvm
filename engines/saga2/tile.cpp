@@ -197,7 +197,6 @@ StaticTilePoint viewCenter = {0, 0, 0};             // coordinates of view on ma
 
 //  These two variables define which sectors overlap the view rect.
 
-int16               currentMapNum;          // which map is in use
 int16               lastMapNum;
 
 int32               lastUpdateTime;         // time of last display update
@@ -1513,9 +1512,9 @@ void cleanupMaps(void) {
 //	Set a new current map
 
 void setCurrentMap(int mapNum) {
-	currentMapNum = mapNum;
-	if (lastMapNum != currentMapNum) {
-		lastMapNum = currentMapNum;
+	g_vm->_currentMapNum = mapNum;
+	if (lastMapNum != g_vm->_currentMapNum) {
+		lastMapNum = g_vm->_currentMapNum;
 		freeAllTileBanks();
 		audioEnvironmentSetWorld(mapNum);
 	}
@@ -1681,7 +1680,7 @@ void initPlatformCache(void) {
  * ===================================================================== */
 
 TilePoint XYToUV(const Point32 &pt) {
-	int32       mapHeight = mapList[currentMapNum].mapHeight;
+	int32       mapHeight = mapList[g_vm->_currentMapNum].mapHeight;
 	TilePoint   coords;
 
 	//  coordinates of the view in U,V
@@ -1698,7 +1697,7 @@ TilePoint XYToUV(const Point32 &pt) {
  * ===================================================================== */
 
 void TileToScreenCoords(const TilePoint &tp, Point16 &p) {
-	int32       mapHeight = mapList[currentMapNum].mapHeight;
+	int32       mapHeight = mapList[g_vm->_currentMapNum].mapHeight;
 
 	//  screen coords of the point
 	p.x = (((int32)tp.u - (int32)tp.v) << 1) - tileScroll.x + mapHeight;
@@ -1706,7 +1705,7 @@ void TileToScreenCoords(const TilePoint &tp, Point16 &p) {
 }
 
 void TileToScreenCoords(const TilePoint &tp, StaticPoint16 &p) {
-	int32       mapHeight = mapList[currentMapNum].mapHeight;
+	int32       mapHeight = mapList[g_vm->_currentMapNum].mapHeight;
 
 	//  screen coords of the point
 	p.x = (((int32)tp.u - (int32)tp.v) << 1) - tileScroll.x + mapHeight;
@@ -2495,7 +2494,7 @@ TileInfo *TileIterator::next(TilePoint *loc, StandingTileInfo *stiResult) {
  * ============================================================================ */
 
 inline void drawMetaRow(gPixelMap &drawMap, TilePoint coords, Point16 pos) {
-	WorldMapData    *curMap = &mapList[currentMapNum];
+	WorldMapData    *curMap = &mapList[g_vm->_currentMapNum];
 
 	int16           uOrg = coords.u * kPlatformWidth,
 	                vOrg = coords.v * kPlatformWidth;
@@ -2565,7 +2564,7 @@ inline void drawMetaRow(gPixelMap &drawMap, TilePoint coords, Point16 pos) {
 		for (int i = 0; i < layerLimit; i++) {
 			Platform    *p;
 
-			p = metaPtr->fetchPlatform(currentMapNum, i);
+			p = metaPtr->fetchPlatform(g_vm->_currentMapNum, i);
 
 			if (!p)
 				continue;
@@ -2606,8 +2605,8 @@ void buildRipTable(
 	int32   *initPtr = (int32 *)ripTable->zTable;
 
 	//  Initialize table
-	mt->ripTableID(currentMapNum) = ripTable->thisID();
-	ripTable->metaID = mt->thisID(currentMapNum);
+	mt->ripTableID(g_vm->_currentMapNum) = ripTable->thisID();
+	ripTable->metaID = mt->thisID(g_vm->_currentMapNum);
 	ripTable->ripID = ripID;
 
 	for (uint i = 0;
@@ -2625,12 +2624,12 @@ void buildRipTable(
 	for (uint i = 0; i < maxPlatforms; i++) {
 		Platform    *p;
 
-		if ((p = mt->fetchPlatform(currentMapNum, i)) == nullptr) continue;
+		if ((p = mt->fetchPlatform(g_vm->_currentMapNum, i)) == nullptr) continue;
 
 		if (p->roofRipID() != ripID) continue;
 
 		for (; i < maxPlatforms && tilesToGo > 0; i++) {
-			if ((p = mt->fetchPlatform(currentMapNum, i)) == nullptr)
+			if ((p = mt->fetchPlatform(g_vm->_currentMapNum, i)) == nullptr)
 				continue;
 
 			uint16      platHeight = p->height << 3;
@@ -2683,7 +2682,7 @@ void buildRipTables(void) {
 	ripTableReg.max.v =
 	    (actorCoords.v + regionRadius + kTileUVMask) >> kTileUVShift;
 
-	MetaTileIterator    mIter(currentMapNum, ripTableReg);
+	MetaTileIterator    mIter(g_vm->_currentMapNum, ripTableReg);
 
 	//  Build meta tile pointer array
 	mt = mIter.first();
@@ -2703,7 +2702,7 @@ void buildRipTables(void) {
 	for (int i = 0; i < mtTableSize; i++) {
 		mt = mtTable[i];
 
-		RipTable    *mtRipTable = mt->ripTable(currentMapNum);
+		RipTable    *mtRipTable = mt->ripTable(g_vm->_currentMapNum);
 
 		//  If meta tile aready has a valid object ripping table, simply
 		//  recycle it
@@ -2779,9 +2778,9 @@ void drawMetaTiles(gPixelMap &drawMap) {
 	//  coordinates of the view window on the map in X,Y (in 16 pixel units)
 
 	viewPos.x = (tileScroll.x >> kTileDXShift)
-	            - (kPlatformWidth * mapList[currentMapNum].mapSize),
+	            - (kPlatformWidth * mapList[g_vm->_currentMapNum].mapSize),
 	viewPos.y = (kPlatformWidth
-	             *   mapList[currentMapNum].mapSize
+	             *   mapList[g_vm->_currentMapNum].mapSize
 	             *   kTileDX)
 	             -   tileScroll.y;
 
@@ -3020,7 +3019,7 @@ void maskPlatform(
 					int16       trFlags;
 
 					ti =    p.fetchTile(
-					            currentMapNum,
+					            g_vm->_currentMapNum,
 					            pCoords,
 					            origin,
 					            &imageData,
@@ -3072,7 +3071,7 @@ void maskMetaRow(
     TilePoint       relLoc,
     Point16         pos,
     uint16          roofID) {
-	WorldMapData    *curMap = &mapList[currentMapNum];
+	WorldMapData    *curMap = &mapList[g_vm->_currentMapNum];
 
 	int16           uOrg = coords.u * kPlatformWidth,
 	                vOrg = coords.v * kPlatformWidth;
@@ -3146,7 +3145,7 @@ void maskMetaRow(
 		for (int i = 0; i < layerLimit; i++) {
 			Platform    *p;
 
-			if ((p = metaPtr->fetchPlatform(currentMapNum, i)) == nullptr)
+			if ((p = metaPtr->fetchPlatform(g_vm->_currentMapNum, i)) == nullptr)
 				continue;
 
 			if (p->roofRipID() == roofID && roofID > 0) break;
@@ -3191,9 +3190,9 @@ void drawTileMask(
 	//  coordinates of the view window on the map in X,Y (in 16 pixel units)
 
 	viewPos.x = (aPos.x >> kTileDXShift)
-	            - (kPlatformWidth * mapList[currentMapNum].mapSize),
+	            - (kPlatformWidth * mapList[g_vm->_currentMapNum].mapSize),
 	            viewPos.y = (kPlatformWidth
-	                         *   mapList[currentMapNum].mapSize << kTileDXShift)
+	                         *   mapList[g_vm->_currentMapNum].mapSize << kTileDXShift)
 	                        -   aPos.y;
 
 	//  coordinates of the view window upper left corner in U,V
@@ -3777,7 +3776,7 @@ bool pointOnHiddenSurface(
     SurfaceType     surfaceType) {
 	assert(surfaceType == surfaceVertU || surfaceType == surfaceVertV);
 
-	WorldMapData    *curMap = &mapList[currentMapNum];
+	WorldMapData    *curMap = &mapList[g_vm->_currentMapNum];
 
 	TilePoint       testCoords,
 	                mCoords,
@@ -3829,14 +3828,14 @@ bool pointOnHiddenSurface(
 		int16       h,
 		            trFlags;
 
-		if ((p = mt->fetchPlatform(currentMapNum, i)) == nullptr)
+		if ((p = mt->fetchPlatform(g_vm->_currentMapNum, i)) == nullptr)
 			continue;
 
 		if (!(p->flags & plVisible) || platformRipped(p)) continue;
 
 		//  Fetch the tile at this location
 		adjTile =   p->fetchTile(
-		                currentMapNum,
+		                g_vm->_currentMapNum,
 		                tCoords,
 		                origin,
 		                h,
@@ -3870,7 +3869,7 @@ StaticTilePoint pickTile(Point32 pos,
                    const TilePoint &protagPos,
                    StaticTilePoint *floorResult,
                    ActiveItemPtr *pickTAI) {
-	WorldMapData    *curMap = &mapList[currentMapNum];
+	WorldMapData    *curMap = &mapList[g_vm->_currentMapNum];
 	StaticTilePoint result = {0, 0, 0};
 
 	TilePoint       pickCoords,
@@ -3963,7 +3962,7 @@ StaticTilePoint pickTile(Point32 pos,
 				Platform            *p;
 				StandingTileInfo    sti;
 
-				if ((p = mt->fetchPlatform(currentMapNum, i)) == nullptr)
+				if ((p = mt->fetchPlatform(g_vm->_currentMapNum, i)) == nullptr)
 					continue;
 
 				if (platformRipped(p)) break;
@@ -3972,7 +3971,7 @@ StaticTilePoint pickTile(Point32 pos,
 				//  Fetch the tile at this location
 
 				ti =    p->fetchTAGInstance(
-				            currentMapNum,
+				            g_vm->_currentMapNum,
 				            tCoords,
 				            origin,
 				            &imageData,
@@ -4318,7 +4317,7 @@ void updateMainDisplay(void) {
 		setCurrentMap(currentWorld->mapNum);
 	}
 
-	WorldMapData    *curMap = &mapList[currentMapNum];
+	WorldMapData    *curMap = &mapList[g_vm->_currentMapNum];
 
 	StaticPoint32   scrollCenter,
 	                scrollDelta;
@@ -4473,7 +4472,7 @@ const int           mappingRadius = 2;
 void markMetaAsVisited(const TilePoint &pt) {
 	//  If (they have cartography)
 	{
-		WorldMapData    *curMap = &mapList[currentMapNum];
+		WorldMapData    *curMap = &mapList[g_vm->_currentMapNum];
 		uint16          *mapData = curMap->map->mapData;
 
 		TilePoint       metaCoords = pt >> (kTileUVShift + kPlatShift);

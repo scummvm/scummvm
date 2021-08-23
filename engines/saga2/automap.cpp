@@ -553,15 +553,13 @@ int16 openAutoMap() {
 	uint16          closeButtonResID        = 0;
 	uint16          scrollButtonResID       = 2;
 
-	extern int16    currentMapNum;
-
-	updateMapFeatures(currentMapNum);
+	updateMapFeatures(g_vm->_currentMapNum);
 
 	// init the resource context handle
 	decRes = resFile->newContext(MKTAG('A', 'M', 'A', 'P'), "Automap Resources");
 
 	// debug
-	_summaryData = LoadResource(decRes, MKTAG('S', 'U', 'M', currentMapNum), "summary data");
+	_summaryData = LoadResource(decRes, MKTAG('S', 'U', 'M', g_vm->_currentMapNum), "summary data");
 
 	// get the graphics associated with the buttons
 	closeBtnImage = loadButtonRes(decRes, closeButtonResID, numBtnImages);

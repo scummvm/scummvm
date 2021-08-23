@@ -35,8 +35,6 @@
 
 namespace Saga2 {
 
-extern  int16               currentMapNum;          // which map is in use
-
 /* ===================================================================== *
    Prototypes
  * ===================================================================== */
@@ -78,7 +76,7 @@ void dayNightUpdate(void) {
 		    lightLevel,
 		    MAX_LIGHT);
 
-		if (currentMapNum == 0)
+		if (g_vm->_currentMapNum == 0)
 			g_vm->_pal->beginFade(&g_vm->_pal->_newPalette, 100);
 	}
 
@@ -86,7 +84,7 @@ void dayNightUpdate(void) {
 		gPalettePtr     neededPalette;
 		gPalette        currentPalette;
 
-		neededPalette = currentMapNum == 0 ? &g_vm->_pal->_newPalette : g_vm->_pal->_noonPalette;
+		neededPalette = g_vm->_currentMapNum == 0 ? &g_vm->_pal->_newPalette : g_vm->_pal->_noonPalette;
 		g_vm->_pal->getCurrentPalette(&currentPalette);
 		if (memcmp(&currentPalette, neededPalette, sizeof(gPalette)) != 0)
 			g_vm->_pal->setCurrentPalette(neededPalette);
@@ -129,7 +127,7 @@ void fadeUp(void) {
 		drawMainDisplay();
 		reDrawScreen();
 		enablePaletteChanges();
-		g_vm->_pal->beginFade(currentMapNum != 0 ? g_vm->_pal->_noonPalette : &g_vm->_pal->_newPalette, 20);
+		g_vm->_pal->beginFade(g_vm->_currentMapNum != 0 ? g_vm->_pal->_noonPalette : &g_vm->_pal->_newPalette, 20);
 		while (g_vm->_pal->updatePalette()) ;
 	}
 }

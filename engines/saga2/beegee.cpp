@@ -130,7 +130,6 @@ const static StaticTilePoint AudibilityVector = { 1, 1, 0 };
 
 extern volatile int32           gameTime;
 
-extern int16                currentMapNum;          // which map is in use
 extern uint16               rippedRoofID;
 
 extern GameObject *getViewCenterObject(void);
@@ -266,7 +265,7 @@ void setAreaSound(const TilePoint &) {
 				TilePoint AudVec = TilePoint(AudibilityVector);
 				regn.max = baseCoords + ((AudVec * r) << kPlatShift) ; ///kTileUVSize;
 				regn.min = baseCoords - ((AudVec * r) << kPlatShift); ///kTileUVSize;
-				MetaTileIterator    mIter(currentMapNum, regn);
+				MetaTileIterator    mIter(g_vm->_currentMapNum, regn);
 				int i = 0;
 				int j = 0;
 

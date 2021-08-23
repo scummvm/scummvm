@@ -37,7 +37,6 @@ namespace Saga2 {
 
 extern GameObject *objectList;
 extern WorldMapData *mapList;
-extern int16 currentMapNum;
 
 Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -394,8 +393,6 @@ bool Console::cmdDumpMap(int argc, const char **argv) {
 	else {
 		gPixelMap drawMap;
 		drawMap.size = _vm->_tileDrawMap.size * atoi(argv[1]);
-		//drawMap.size.x = mapList[currentMapNum].mapHeight;
-		//drawMap.size.y = mapList[currentMapNum].mapHeight;
 		drawMap.data = new uint8[drawMap.bytes()]();
 		drawMetaTiles(drawMap);
 

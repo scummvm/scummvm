@@ -90,6 +90,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_indivControlsFlag = false;
 	_userControlsSetup = false;
 	_fadeDepth = 1;
+	_currentMapNum = 0;
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "res");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "dos/drivers"); // For Miles Sound files

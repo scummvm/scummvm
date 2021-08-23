@@ -43,7 +43,6 @@ bool                            centerActorIndicatorEnabled;
    Imports
  * ===================================================================== */
 
-extern int16        currentMapNum;
 extern WorldMapData *mapList;
 
 extern StaticPoint16 fineScroll;
@@ -382,8 +381,8 @@ void DisplayNode::drawObject(void) {
 	mCoords.z = 0;
 
 	//  Do not display objects that are on a ripped roof
-	if ((mt = mapList[currentMapNum].lookupMeta(mCoords)) != NULL) {
-		if ((rt = mt->ripTable(currentMapNum)) != NULL) {
+	if ((mt = mapList[g_vm->_currentMapNum].lookupMeta(mCoords)) != NULL) {
+		if ((rt = mt->ripTable(g_vm->_currentMapNum)) != NULL) {
 			if (objCoords.z >= rt->zTable[tCoords.u][tCoords.v]) {
 				//  Disable hit-test on the object's box
 				hitBox.width = -1;
