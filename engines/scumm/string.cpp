@@ -149,6 +149,18 @@ void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byt
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
 	assert(_blastTextQueuePos <= ARRAYSIZE(_blastTextQueue));
 
+	convertMessageToString(text, bt.text, sizeof(bt.text));
+	bt.xpos = x;
+	bt.ypos = y;
+	bt.color = color;
+	bt.charset = charset;
+	bt.center = center;
+}
+
+#ifdef ENABLE_SCUMM_7_8
+void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrapped) {
+	assert(_blastTextQueuePos + 1 <= ARRAYSIZE(_blastTextQueue));
+
 	if (_useCJKMode) {
 		// The Dig expressly checks for x == 160 && y == 189 && charset == 3. Usually, if the game wants to print CJK text at the bottom
 		// of the screen it will use y = 183. So maybe this is a hack to fix some script texts that weren forgotten in the CJK converting
@@ -160,44 +172,28 @@ void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byt
 			y += 2;
 	}
 
-	convertMessageToString(text, bt.text, sizeof(bt.text));
+	byte textBuf[512];
+	convertMessageToString(text, textBuf, sizeof(textBuf));
 
-	// HACK: This corrects the vertical placement of the object descriptions in COMI. The original text renderer does this in the same way
-	// we do in smush_font.cpp, lines 338 - 344: The dimensions of the whole block of text get measured first and then the necessary changes
-	// will be made before printing. Unfortunately, the way our ScummEngine_v7::CHARSET_1() is implemented we can't properly adjust
-	// the y postion there: If we have already printed several lines of text and then realize that we're getting out of bounds then it is too
-	// late, we can't move up the text we've already printed. The same applies to horizontal fixes: if we have already printed several lines
-	// and then encounter a line that is out of bounds we can't move the whole block to the left or right any more (as we should).
-	// Possible TODO: moving the measuring logic contained in SmushFont::drawStringWrap() to ScummEngine_v6 to make it available here, too.
 	if (_game.id == GID_CMI && wrapped) {
-		int of = _charset->getCurID();
-		_charset->setCurID(charset);
-		// Note that this won't detect (and measure correctly) 1-byte characters contained
-		// in 2-byte strings. For now, I trust that it won't happen with the object strings.
-		int clipHeight = _charset->getCharHeight(*bt.text) + 1;
-		_charset->setCurID(of);
-
-		clipHeight = clipHeight + clipHeight / 2;
-		y = MIN<int>(y, 470 - clipHeight);
-
 		// HACK: Wrap the text when it's too long.
 		// The original does this by drawing word by word and adjusting x and y for each step of the pipeline.
 		// This, instead, is a mixture of code from SmushFont::drawStringWrap() and CHARSET_1(), which is just 
 		// enough to split the full line into more smaller lines, which are treated as different blastText in 
 		// the queue. Anyway this shouldn't generate more than 2 lines total but it's generalized just in case.
-		_charset->addLinebreaks(0, (byte *) bt.text, 0, _screenWidth - 20);
+		_charset->addLinebreaks(0, textBuf, 0, _screenWidth - 20);
 		int16 substrPos[200];
 		memset(substrPos, 0, sizeof(substrPos));
 		int16 substrLen[200];
 		memset(substrLen, 0, sizeof(substrLen));
 
-		int len = (int) strlen((char *) bt.text);
+		int len = (int)Common::strnlen((char *)textBuf, sizeof(textBuf));
 		int curPos = -1;
 		int numLines = 1;
 
 		// Save splitting information (position of the substring and its length)
 		while (curPos <= len) {
-			if (bt.text[curPos] == '\r') {
+			if (textBuf[curPos] == '\r') {
 				substrPos[numLines] = curPos + 1;
 				substrLen[numLines - 1] -= 1;
 				numLines++;
@@ -207,42 +203,54 @@ void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byt
 			curPos++;
 		}
 
-		// If we have found more than one line, then we split the lines and
-		// draw them from top to bottom
-		if (numLines > 1) {
-			int lastLineY = 0;
-			for (int i = 1; i < numLines; i++) {
-				BlastText &bt_secondary = _blastTextQueue[_blastTextQueuePos++];
-				strncpy((char*)bt_secondary.text, (char*)(bt.text + substrPos[i]), substrLen[i]);
-				bt_secondary.xpos = x;
-				bt_secondary.ypos = lastLineY = y + (numLines - i) * _charset->getStringHeight((char*)bt_secondary.text);
-				bt_secondary.color = color;
-				bt_secondary.charset = charset;
-				bt_secondary.center = center;
-			}
-
-			// Truncate the first substring accordingly
-			bt.text[substrLen[0]] = '\0';
-
-			// Now correct the vertical placement for the last line, and compensate bottom-up
-			int diffY = lastLineY - MIN<int>(lastLineY, 470 - clipHeight);
-
-			for (int i = 1; i < numLines; i++) {
-				BlastText &bt_compensation = _blastTextQueue[_blastTextQueuePos - i];
-				bt_compensation.ypos -= diffY;
-			}
-
-			// Also adjust the first line
-			y -= diffY;
+		// Split the lines and draw them from top to bottom
+		int lastLineY = 0;
+		for (int i = 0; i < numLines; i++) {
+			BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
+			Common::strlcpy((char*)bt.text, (char*)(textBuf + substrPos[i]), substrLen[i]);
+			bt.text[substrLen[0]] = '\0'; // Truncate the substring accordingly
+			bt.xpos = x;
+			bt.ypos = lastLineY = y + (_charset->getStringHeight((char*)textBuf) * i);
+			bt.color = color;
+			bt.charset = charset;
+			bt.center = center;
 		}
-	}
 
-	bt.xpos = x;
-	bt.ypos = y;
-	bt.color = color;
-	bt.charset = charset;
-	bt.center = center;
+		// HACK: This corrects the vertical placement of the object descriptions in COMI. The original text renderer does this in the same way
+		// we do in smush_font.cpp, lines 338 - 344: The dimensions of the whole block of text get measured first and then the necessary changes
+		// will be made before printing. Unfortunately, the way our ScummEngine_v7::CHARSET_1() is implemented we can't properly adjust
+		// the y postion there: If we have already printed several lines of text and then realize that we're getting out of bounds then it is too
+		// late, we can't move up the text we've already printed. The same applies to horizontal fixes: if we have already printed several lines
+		// and then encounter a line that is out of bounds we can't move the whole block to the left or right any more (as we should).
+		// Possible TODO: moving the measuring logic contained in SmushFont::drawStringWrap() to ScummEngine_v6 to make it available here, too.
+
+		int of = _charset->getCurID();
+		_charset->setCurID(charset);
+		// Note that this won't detect (and measure correctly) 1-byte characters contained
+		// in 2-byte strings. For now, I trust that it won't happen with the object strings.
+		int clipHeight = _charset->getCharHeight(*textBuf) + 1;
+		_charset->setCurID(of);
+		clipHeight = clipHeight + clipHeight / 2;
+
+		// Correct for the vertical placement for the last line, and compensate bottom-up
+		int diffY = lastLineY - MIN<int>(lastLineY, 470 - clipHeight);
+		
+		for (int i = 0; i < numLines; i++) {
+			BlastText &bt = _blastTextQueue[_blastTextQueuePos - 1 - i];
+			bt.ypos -= diffY;
+		}
+	} else {
+		BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
+
+		Common::strlcpy((char*)bt.text, (char*)textBuf, sizeof(textBuf));
+		bt.xpos = x;
+		bt.ypos = y;
+		bt.color = color;
+		bt.charset = charset;
+		bt.center = center;
+	}
 }
+#endif
 
 void ScummEngine_v6::drawBlastTexts() {
 	byte *buf;
