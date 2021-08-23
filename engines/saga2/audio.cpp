@@ -54,13 +54,7 @@ const uint32        baseMusicID     = MKTAG('M', 'I', 'L', 'O'),
 extern hResource *soundResFile;          // script resources
 extern hResource *voiceResFile;          // script resources
 
-extern int32 clickSizes[];
-extern uint8 *clickData[];
-
-uint32 currentLoop;
-
 hResContext *voiceRes, *musicRes, *soundRes, *loopRes, *longRes;
-
 
 bool haveKillerSoundCard(void);
 void writeConfig(void);
@@ -130,24 +124,18 @@ void startAudio(void) {
 	g_vm->_audio->initAudioInterface(musicRes);
 
 	// kludgy in memory click sounds
-	clickSizes[0] = 0;
-	clickSizes[1] = soundRes->size(MKTAG('C', 'L', 'K', 1));
-	clickSizes[2] = soundRes->size(MKTAG('C', 'L', 'K', 2));
-	clickData[0] = NULL;
-	clickData[1] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 1), "Click 1");
-	clickData[2] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
+	g_vm->_audio->_clickSizes[0] = 0;
+	g_vm->_audio->_clickSizes[1] = soundRes->size(MKTAG('C', 'L', 'K', 1));
+	g_vm->_audio->_clickSizes[2] = soundRes->size(MKTAG('C', 'L', 'K', 2));
+	g_vm->_audio->_clickData[0] = NULL;
+	g_vm->_audio->_clickData[1] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 1), "Click 1");
+	g_vm->_audio->_clickData[2] = (uint8 *)LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
 }
 
 void cleanupAudio() {
 	if (g_vm->_audio) {
 		delete g_vm->_audio;
 		g_vm->_audio = nullptr;
-
-		free(clickData[1]);
-		clickData[1] = nullptr;
-
-		free(clickData[2]);
-		clickData[2] = nullptr;
 
 		delete musicRes;
 		musicRes = nullptr;
@@ -307,7 +295,7 @@ void playMusic(uint32 s) {
 void playMemSound(uint32 s) {
 	debugC(1, kDebugSound, "playMemSound(%s)", tag2strP(s));
 
-	Audio::AudioStream *aud = Audio::makeRawStream(clickData[s], clickSizes[s], 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
+	Audio::AudioStream *aud = Audio::makeRawStream(g_vm->_audio->_clickData[s], g_vm->_audio->_clickSizes[s], 22050, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
 
 	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &g_vm->_audio->_clickSoundHandle, aud);
 }
@@ -374,8 +362,7 @@ bool sayVoice(uint32 s[]) {
 // main loop playback
 
 void _playLoop(uint32 s) {
-	currentLoop = s;
-	if (currentLoop == g_vm->_audio->currentLoop())
+	if (s == g_vm->_audio->currentLoop())
 		return;
 
 	g_vm->_audio->stopLoop();
@@ -578,10 +565,15 @@ bool initAudio() {
 AudioInterface::AudioInterface() {
 	_music = nullptr;
 	_mixer = g_system->getMixer();
+
+	memset(_clickSizes, 0, sizeof(_clickSizes));
+	memset(_clickData, 0, sizeof(_clickData));
 }
 
 AudioInterface::~AudioInterface() {
 	delete _music;
+	free(_clickData[1]);
+	free(_clickData[2]);
 }
 
 void AudioInterface::initAudioInterface(hResContext *musicContext) {

@@ -402,18 +402,6 @@ CHealthIndicator        *HealthIndicator     = nullptr;
 CManaIndicator          *ManaIndicator       = nullptr;
 
 /* ===================================================================== *
-   Clicks
- * ===================================================================== */
-
-const int clickSounds = 3;
-
-uint32 maxClicks = clickSounds;
-int32 clickSizes[clickSounds];
-uint8 *clickData[clickSounds];
-
-void playMemSound(uint32 s); // play click # s
-
-/* ===================================================================== *
    Plaq writing class
  * ===================================================================== */
 

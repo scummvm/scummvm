@@ -50,6 +50,10 @@ struct SoundInstance {
 
 class AudioInterface {
 private:
+	enum {
+		kClickSounds = 3
+	};
+
 	SoundInstance _currentSpeech;
 	SoundInstance _currentLoop;
 	SoundInstance _currentMusic;
@@ -66,6 +70,9 @@ public:
 
 	Audio::Mixer *_mixer;
 	Music *_music;
+
+	int32 _clickSizes[kClickSounds];
+	uint8 *_clickData[kClickSounds];
 
 public:
 	// ctor, dtor, initialization
