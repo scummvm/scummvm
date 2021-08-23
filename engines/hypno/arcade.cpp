@@ -1,5 +1,5 @@
-#include "hypno/hypno.h"
 #include "hypno/grammar.h"
+#include "hypno/hypno.h"
 
 #include "common/events.h"
 #include "graphics/cursorman.h"
@@ -11,9 +11,9 @@ void HypnoEngine::drawHealth(const Graphics::Font &font) { error("not implemente
 
 void HypnoEngine::drawShoot(Common::Point target) {
 	uint32 c = _pixelFormat.RGBToColor(255, 255, 255);
-	_compositeSurface->drawLine(80, 155, target.x, target.y+1, c);
-	_compositeSurface->drawLine(80, 155, target.x, target.y  , c);
-	_compositeSurface->drawLine(80, 155, target.x, target.y-1, c);
+	_compositeSurface->drawLine(80, 155, target.x, target.y + 1, c);
+	_compositeSurface->drawLine(80, 155, target.x, target.y, c);
+	_compositeSurface->drawLine(80, 155, target.x, target.y - 1, c);
 }
 
 void HypnoEngine::runArcade(ArcadeShooting arc) {
@@ -36,7 +36,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 
 		if (background.decoder->needsUpdate())
 			updateScreen(background);
-		
+
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
 			// Events
@@ -59,7 +59,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 			}
 		}
 
-		if (_health <= 0 ) {
+		if (_health <= 0) {
 			skipVideo(background);
 			_nextLevel = arc.levelIfLose;
 			return;
@@ -78,7 +78,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 				for (Shoots::iterator it = arc.shoots.begin(); it != arc.shoots.end(); ++it) {
 					if (it->name == si.name && it->name != "NONE") {
 						Shoot s = *it;
-						s.video = new MVideo(it->animation, it->position , true, false, false);
+						s.video = new MVideo(it->animation, it->position, true, false, false);
 						playVideo(*s.video);
 						_shoots.push_back(s);
 					}
@@ -91,24 +91,23 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 
 		for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 			if (it->video->decoder) {
-				int frame = it->video->decoder->getCurFrame(); 
-				if (frame > 0 && frame >= it->explosionFrame-3 && !it->destroyed) {
+				int frame = it->video->decoder->getCurFrame();
+				if (frame > 0 && frame >= it->explosionFrame - 3 && !it->destroyed) {
 					_health = _health - it->damage;
 					debug("healt: %d", _health);
 					skipVideo(*it->video);
-				} else if (it->video->decoder->endOfVideo()){
+				} else if (it->video->decoder->endOfVideo()) {
 					skipVideo(*it->video);
-					shootsToRemove.push_back(i);	
+					shootsToRemove.push_back(i);
 				} else if (it->video->decoder->needsUpdate()) {
 					updateScreen(*it->video);
 				}
-				
 			}
 			i++;
 		}
 		if (shootsToRemove.size() > 0) {
-			for(Common::List<uint32>::iterator it = shootsToRemove.begin(); it != shootsToRemove.end(); ++it) {
-				//debug("removing %d from %d size", *it, _shoots.size()); 
+			for (Common::List<uint32>::iterator it = shootsToRemove.begin(); it != shootsToRemove.end(); ++it) {
+				//debug("removing %d from %d size", *it, _shoots.size());
 				_shoots.remove_at(*it);
 			}
 		}
@@ -138,15 +137,15 @@ bool HypnoEngine::clickedShoot(Common::Point mousePos) {
 		x = mousePos.x - it->position.x;
 		y = mousePos.y - it->position.y;
 		w = it->video->decoder->getWidth();
-		h = it->video->decoder->getHeight(); 
+		h = it->video->decoder->getHeight();
 
 		if (it->video->decoder && x >= 0 && y >= 0 && x < w && y < h) {
 			uint32 c = it->video->currentFrame->getPixel(x, y);
-			//debug("inside %x", c); 
+			//debug("inside %x", c);
 			if (c > 0) {
 				it->destroyed = true;
-				it->video->position = Common::Point(mousePos.x - w/2, mousePos.y - h/2);
-				it->video->decoder->forceSeekToFrame(it->explosionFrame+2);
+				it->video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
+				it->video->decoder->forceSeekToFrame(it->explosionFrame + 2);
 			}
 		}
 	}

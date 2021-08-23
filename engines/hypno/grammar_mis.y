@@ -21,8 +21,8 @@
  */
 
 %require "3.0"
-%defines "engines/hypno/spider/tokens_mis.h"
-%output "engines/hypno/spider/grammar_mis.cpp"
+%defines "engines/hypno/tokens_mis.h"
+%output "engines/hypno/grammar_mis.cpp"
 %define api.prefix {HYPNO_MIS_}
 
 %{

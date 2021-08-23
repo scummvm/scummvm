@@ -1,5 +1,5 @@
-#include "hypno/hypno.h"
 #include "hypno/grammar.h"
+#include "hypno/hypno.h"
 
 #include "common/events.h"
 #include "graphics/cursorman.h"
@@ -23,7 +23,7 @@ void SpiderEngine::drawHealth(const Graphics::Font &font) {
 	r = Common::Rect(256, 152 + d, 272, 174);
 	if (d >= 11)
 		c = _pixelFormat.RGBToColor(255, 0, 0);
-	else 
+	else
 		c = _pixelFormat.RGBToColor(32, 208, 32);
 
 	_compositeSurface->fillRect(r, c);
@@ -34,6 +34,5 @@ void SpiderEngine::drawHealth(const Graphics::Font &font) {
 
 	font.drawString(_compositeSurface, "ENERGY", 248, 180, 38, c);
 }
-
 
 } // End of namespace Hypno

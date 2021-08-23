@@ -21,8 +21,8 @@
  */
 
 %require "3.0"
-%defines "engines/hypno/spider/tokens_arc.h"
-%output "engines/hypno/spider/grammar_arc.cpp"
+%defines "engines/hypno/tokens_arc.h"
+%output "engines/hypno/grammar_arc.cpp"
 %define api.prefix {HYPNO_ARC_}
 
 %{

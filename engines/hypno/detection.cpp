@@ -29,59 +29,48 @@ static const DebugChannelDef debugFlagList[] = {
 	{Hypno::kHypnoDebugFunction, "functions", "Function execution debug channel"},
 	{Hypno::kHypnoDebugCode, "code", "Code execution debug channel"},
 	{Hypno::kHypnoDebugScript, "script", "Script execution debug channel"},
-	DEBUG_CHANNEL_END
-};
+	DEBUG_CHANNEL_END};
 
 namespace Hypno {
 static const PlainGameDescriptor hypnoGames[] = {
-	{ "sinister-six", "Marvel Comics Spider-Man: The Sinister Six" },
-	{ "wetlands", "Wetlands" },
-	{ 0, 0 }
-};
+	{"sinister-six", "Marvel Comics Spider-Man: The Sinister Six"},
+	{"wetlands", "Wetlands"},
+	{0, 0}};
 
 static const ADGameDescription gameDescriptions[] = {
-	{
-		"sinister-six", // Demo from the US release
-		"Demo",
-		AD_ENTRY2s("COMBAT.EXE", "15a6b1b3819ef002438df340509b5373", 643471,
-  				   "SPIDER.EXE", "15a6b1b3819ef002438df340509b5373", 603587),
-		Common::EN_USA,
-		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
-		GUIO1(GUIO_NOMIDI)
-	},
-	{
-		"sinister-six", // US release
-		"Not yet implemented",
-		AD_ENTRY2s("COMBAT.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 255115,
-  				   "SPIDER.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 248056),
-		Common::EN_USA,
-		Common::kPlatformDOS,
-		ADGF_UNSUPPORTED | ADGF_TESTING,
-		GUIO1(GUIO_NOMIDI)
-	},
-	{
-		"wetlands", // Wetlands Demo Disc (November 1995)
-		"Demo",
-		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 642231,
-  				   "wetdemo.exe", "15a6b1b3819ef002438df340509b5373", 458319),
-		Common::EN_USA,
-		Common::kPlatformDOS,
-		ADGF_TESTING | ADGF_DEMO,
-		GUIO1(GUIO_NOMIDI)
-	},
-	{
-		"wetlands", // Wetlands (US)
-		"",
-		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 647447,
-  				   "install.exe", "15a6b1b3819ef002438df340509b5373", 477839),
-		Common::EN_USA,
-		Common::kPlatformDOS,
-		ADGF_TESTING,
-		GUIO1(GUIO_NOMIDI)
-	},
-	AD_TABLE_END_MARKER
-};
+	{"sinister-six", // Demo from the US release
+	 "Demo",
+	 AD_ENTRY2s("COMBAT.EXE", "15a6b1b3819ef002438df340509b5373", 643471,
+				"SPIDER.EXE", "15a6b1b3819ef002438df340509b5373", 603587),
+	 Common::EN_USA,
+	 Common::kPlatformDOS,
+	 ADGF_TESTING | ADGF_DEMO,
+	 GUIO1(GUIO_NOMIDI)},
+	{"sinister-six", // US release
+	 "Not yet implemented",
+	 AD_ENTRY2s("COMBAT.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 255115,
+				"SPIDER.EXE", "bac1d734f2606dbdd0816dfa7a5cf518", 248056),
+	 Common::EN_USA,
+	 Common::kPlatformDOS,
+	 ADGF_UNSUPPORTED | ADGF_TESTING,
+	 GUIO1(GUIO_NOMIDI)},
+	{"wetlands", // Wetlands Demo Disc (November 1995)
+	 "Demo",
+	 AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 642231,
+				"wetdemo.exe", "15a6b1b3819ef002438df340509b5373", 458319),
+	 Common::EN_USA,
+	 Common::kPlatformDOS,
+	 ADGF_TESTING | ADGF_DEMO,
+	 GUIO1(GUIO_NOMIDI)},
+	{"wetlands", // Wetlands (US)
+	 "",
+	 AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 647447,
+				"install.exe", "15a6b1b3819ef002438df340509b5373", 477839),
+	 Common::EN_USA,
+	 Common::kPlatformDOS,
+	 ADGF_TESTING,
+	 GUIO1(GUIO_NOMIDI)},
+	AD_TABLE_END_MARKER};
 } // End of namespace Hypno
 
 static const char *const directoryGlobs[] = {
@@ -89,8 +78,7 @@ static const char *const directoryGlobs[] = {
 	"factory",
 	"wetlands",
 	"movie",
-	0
-};
+	0};
 
 class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
@@ -108,8 +96,8 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Marvel Comics Spider-Man: The Sinister Six (C) Brooklyn Multimedia\n" \
-		       "Wetlands (C) Hypnotix, Inc.";
+		return "Marvel Comics Spider-Man: The Sinister Six (C) Brooklyn Multimedia\n"
+			   "Wetlands (C) Hypnotix, Inc.";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {

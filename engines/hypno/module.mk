@@ -4,11 +4,11 @@ MODULE_OBJS := \
 	cursors.o \
 	metaengine.o \
 	arcade.o \
+	lexer_mis.o \
+	grammar_mis.o \
+	lexer_arc.o \
+	grammar_arc.o \
 	spider/spider.o \
-	spider/lexer_mis.o \
-	spider/grammar_mis.o \
-	spider/lexer_arc.o \
-	spider/grammar_arc.o \
 	spider/talk.o \
 	spider/arcade.o \
 	wet/wet.o \
@@ -21,8 +21,10 @@ MODULE_DIRS += \
 # HACK: Skip this when including the file for detection objects.
 ifeq "$(USE_RULES)" "1"
 hypno-grammar:
-	flex engines/hypno/lexer.l
-	bison engines/hypno/grammar.y
+	flex engines/hypno/lexer_arc.l
+	bison engines/hypno/grammar_arc.y
+	flex engines/hypno/lexer_mis.l
+	bison engines/hypno/grammar_mis.y
 endif
 
 # This module can be built as a plugin

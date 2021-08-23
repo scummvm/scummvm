@@ -22,10 +22,11 @@
 
 %option noyywrap
 %option noinput
+%option nounput
 %option yylineno
 %option never-interactive
 
-%option outfile="engines/hypno/spider/lexer_arc.cpp"
+%option outfile="engines/hypno/lexer_arc.cpp"
 %option prefix="HYPNO_ARC_"
 
 %{
