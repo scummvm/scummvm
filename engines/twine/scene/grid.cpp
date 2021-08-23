@@ -351,7 +351,7 @@ void Grid::createGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 
 				outstream.writeUint16LE(stream.readUint16LE());
 			}
 		} else {
-			const int32 gridIdx = stream.readUint16LE();
+			const uint16 gridIdx = stream.readUint16LE();
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(gridIdx);
 			}
@@ -380,7 +380,7 @@ void Grid::createCellingGridColumn(const uint8 *gridEntry, uint32 gridEntrySize,
 				outstream.writeUint16LE(stream.readUint16LE());
 			}
 		} else {
-			const int32 gridIdx = stream.readUint16LE();
+			const uint16 gridIdx = stream.readUint16LE();
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(gridIdx);
 			}

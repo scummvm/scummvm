@@ -374,7 +374,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	_flaHeaderData.xsize = _file.readUint16LE();
 	_flaHeaderData.ysize = _file.readUint16LE();
 
-	_samplesInFla = _file.readUint16LE();
+	_samplesInFla = (int16)_file.readUint16LE();
 	const uint16 unk2 = _file.readUint16LE();
 	debug(2, "Unknown uint16 in fla file: %i", unk2);
 
