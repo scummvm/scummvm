@@ -1130,6 +1130,31 @@ void loadFactionTallies(Common::InSaveFile *in);
 //  Cleanup the faction tally table
 inline void cleanupFactionTallies(void) { /* Nothing to do */ }
 
+class ActorManager {
+public:
+
+	enum {
+		kEvalRate = 8,
+		kEvalRateMask = kEvalRate - 1
+	};
+
+	int32 _updatesViaScript;
+	int32 _baseActorIndex;
+	int16 _factionTable[maxFactions][factionNumColumns];
+	bool _actorStatesPaused;
+	bool _combatBehaviorEnabled;
+
+	ActorManager() {
+		_updatesViaScript = 0;
+		_baseActorIndex = kEvalRateMask;
+
+		memset(_factionTable, 0, sizeof(_factionTable));
+
+		_actorStatesPaused = false;
+		_combatBehaviorEnabled = false;
+	}
+};
+
 } // end of namespace Saga2
 
 #endif

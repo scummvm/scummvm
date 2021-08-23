@@ -623,9 +623,7 @@ extern bool         brotherBandingEnabled,
        centerActorIndicatorEnabled,
        interruptableMotionsPaused,
        objectStatesPaused,
-       actorStatesPaused,
        actorTasksPaused,
-       combatBehaviorEnabled,
        backgroundSimulationPaused;
 
 //-----------------------------------------------------------------------
@@ -638,9 +636,9 @@ void initGlobals(void) {
 	centerActorIndicatorEnabled = false;
 	interruptableMotionsPaused = false;
 	objectStatesPaused = false;
-	actorStatesPaused = false;
+	g_vm->_act->_actorStatesPaused = false;
 	actorTasksPaused = false;
-	combatBehaviorEnabled = false;
+	g_vm->_act->_combatBehaviorEnabled = false;
 	backgroundSimulationPaused = false;
 }
 
@@ -655,9 +653,9 @@ void saveGlobals(Common::OutSaveFile *outS) {
 	out->writeUint16LE(centerActorIndicatorEnabled);
 	out->writeUint16LE(interruptableMotionsPaused);
 	out->writeUint16LE(objectStatesPaused);
-	out->writeUint16LE(actorStatesPaused);
+	out->writeUint16LE(g_vm->_act->_actorStatesPaused);
 	out->writeUint16LE(actorTasksPaused);
-	out->writeUint16LE(combatBehaviorEnabled);
+	out->writeUint16LE(g_vm->_act->_combatBehaviorEnabled);
 	out->writeUint16LE(backgroundSimulationPaused);
 	CHUNK_END;
 
@@ -667,9 +665,9 @@ void saveGlobals(Common::OutSaveFile *outS) {
 	debugC(3, kDebugSaveload, "... centerActorIndicatorEnabled = %d", centerActorIndicatorEnabled);
 	debugC(3, kDebugSaveload, "... interruptableMotionsPaused = %d", interruptableMotionsPaused);
 	debugC(3, kDebugSaveload, "... objectStatesPaused = %d", objectStatesPaused);
-	debugC(3, kDebugSaveload, "... actorStatesPaused = %d", actorStatesPaused);
+	debugC(3, kDebugSaveload, "... g_vm->_act->_actorStatesPaused = %d", g_vm->_act->_actorStatesPaused);
 	debugC(3, kDebugSaveload, "... actorTasksPaused = %d", actorTasksPaused);
-	debugC(3, kDebugSaveload, "... combatBehaviorEnabled = %d", combatBehaviorEnabled);
+	debugC(3, kDebugSaveload, "... g_vm->_act->_combatBehaviorEnabled = %d", g_vm->_act->_combatBehaviorEnabled);
 	debugC(3, kDebugSaveload, "... backgroundSimulationPaused = %d", backgroundSimulationPaused);
 }
 
@@ -682,9 +680,9 @@ void loadGlobals(Common::InSaveFile *in) {
 	centerActorIndicatorEnabled = in->readUint16LE();
 	interruptableMotionsPaused = in->readUint16LE();
 	objectStatesPaused = in->readUint16LE();
-	actorStatesPaused = in->readUint16LE();
+	g_vm->_act->_actorStatesPaused = in->readUint16LE();
 	actorTasksPaused = in->readUint16LE();
-	combatBehaviorEnabled = in->readUint16LE();
+	g_vm->_act->_combatBehaviorEnabled = in->readUint16LE();
 	backgroundSimulationPaused = in->readUint16LE();
 
 	debugC(3, kDebugSaveload, "... objectIndex = %d", objectIndex);
@@ -693,9 +691,9 @@ void loadGlobals(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "... centerActorIndicatorEnabled = %d", centerActorIndicatorEnabled);
 	debugC(3, kDebugSaveload, "... interruptableMotionsPaused = %d", interruptableMotionsPaused);
 	debugC(3, kDebugSaveload, "... objectStatesPaused = %d", objectStatesPaused);
-	debugC(3, kDebugSaveload, "... actorStatesPaused = %d", actorStatesPaused);
+	debugC(3, kDebugSaveload, "... g_vm->_act->_actorStatesPaused = %d", g_vm->_act->_actorStatesPaused);
 	debugC(3, kDebugSaveload, "... actorTasksPaused = %d", actorTasksPaused);
-	debugC(3, kDebugSaveload, "... combatBehaviorEnabled = %d", combatBehaviorEnabled);
+	debugC(3, kDebugSaveload, "... g_vm->_act->_combatBehaviorEnabled = %d", g_vm->_act->_combatBehaviorEnabled);
 	debugC(3, kDebugSaveload, "... backgroundSimulationPaused = %d", backgroundSimulationPaused);
 }
 

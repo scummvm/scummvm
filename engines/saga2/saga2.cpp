@@ -35,6 +35,7 @@
 #include "saga2/saga2.h"
 #include "saga2/fta.h"
 
+#include "saga2/actor.h"
 #include "saga2/audio.h"
 #include "saga2/band.h"
 #include "saga2/beegee.h"
@@ -68,6 +69,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_renderer = nullptr;
 	_audio = nullptr;
 	_pal = nullptr;
+	_act = nullptr;
 
 	_bandList = nullptr;
 	_mouseInfo = nullptr;
@@ -129,6 +131,7 @@ Saga2Engine::~Saga2Engine() {
 	delete _rnd;
 	delete _renderer;
 	delete _pal;
+	delete _act;
 
 	delete _imageCache;
 	delete _mTaskList;
@@ -156,6 +159,7 @@ Common::Error Saga2Engine::run() {
 	_renderer = new Renderer();
 
 	_pal = new PaletteManager;
+	_act = new ActorManager;
 
 	readConfig();
 

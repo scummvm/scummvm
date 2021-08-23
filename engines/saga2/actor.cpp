@@ -49,15 +49,6 @@
 namespace Saga2 {
 
 /* ===================================================================== *
-   Constants
- * ===================================================================== */
-
-// this is currently set to an arbitrary value for testing purposes.
-const uint16 defaultReach = 24;
-
-const uint32 actorListID = MKTAG('A', 'C', 'T', 'O');
-
-/* ===================================================================== *
    Externals
  * ===================================================================== */
 
@@ -74,18 +65,6 @@ extern ObjectSoundFXs   *objectSoundFXTable;    // the global object sound effec
 #if DEBUG
 extern bool     massAndBulkCount;
 #endif
-
-/* ===================================================================== *
-   Globals -- might as well stick it here as anywhere.
- * ===================================================================== */
-
-int16 factionTable[maxFactions][factionNumColumns];
-
-//  Indicates wether actor states should be paused
-bool actorStatesPaused;
-
-//  Indicates wether player actors should have combat behavior
-bool combatBehaviorEnabled;
 
 /* ===================================================================== *
    ActorProto member functions
@@ -1789,7 +1768,7 @@ uint16 Actor::getBaseRecovery(void) {
 //  Determine if specified point is within actor's reach
 
 bool Actor::inReach(const TilePoint &tp) {
-	return inRange(tp, defaultReach);
+	return inRange(tp, kDefaultReach);
 }
 
 //-----------------------------------------------------------------------
@@ -1798,7 +1777,7 @@ bool Actor::inReach(const TilePoint &tp) {
 bool Actor::inUseRange(const TilePoint &tp, GameObject *obj) {
 	uint16  range = obj->proto()->maximumRange;
 
-	return inRange(tp, MAX(range, defaultReach));
+	return inRange(tp, MAX(range, (uint16)kDefaultReach));
 }
 
 //-----------------------------------------------------------------------
@@ -1934,7 +1913,7 @@ bool Actor::inAttackRange(const TilePoint &tp) {
 	GameObject  *weapon = offensiveObject();
 	uint16      range = weapon != NULL ? weapon->proto()->maximumRange : 0;
 
-	return inRange(tp, MAX(range, defaultReach));
+	return inRange(tp, MAX(range, (uint16)kDefaultReach));
 }
 
 //-----------------------------------------------------------------------
@@ -2432,7 +2411,7 @@ void Actor::evaluateNeeds(void) {
 	        &&  isActivated()
 	        &&  !(_flags & lobotomized)) {
 		if (_disposition >= dispositionPlayer) {
-			if (combatBehaviorEnabled) {
+			if (g_vm->_act->_combatBehaviorEnabled) {
 				SenseInfo       info;
 
 				if (canSenseActorProperty(
@@ -2514,11 +2493,6 @@ void Actor::evaluateNeeds(void) {
 	}
 }
 
-//-----------------------------------------------------------------------
-//	Update the state of this actor.
-
-static int32 updatesViaScript = 0;
-
 void Actor::updateState(void) {
 	//  The actor should not be set permanently uninterruptable when
 	//  the actor does not have a motion task
@@ -2581,7 +2555,7 @@ void Actor::updateState(void) {
 			//  Iterate until there is no assignment, or the current
 			//  assignment is valid
 			while (assign != NULL && !assign->isValid()) {
-				updatesViaScript++;
+				g_vm->_act->_updatesViaScript++;
 				scriptCallFrame scf;
 				ObjectID        dObj = thisID();
 
@@ -2608,7 +2582,7 @@ void Actor::updateState(void) {
 			//  If there is no assignment at this point, call the
 			//  schedule to setup a new assignment.
 			if (assign == NULL && _schedule != 0) {
-				updatesViaScript++;
+				g_vm->_act->_updatesViaScript++;
 				assert(_curTask == NULL);
 
 				scriptCallFrame scf;
@@ -2852,7 +2826,7 @@ void Actor::handleSuccessfulKill(Actor *target) {
 	PlayerActorID       playerID;
 
 	if (this != target && actorToPlayerID(this, playerID)) {
-		static const char vowels[] = "AEIOU";
+		const char vowels[] = "AEIOU";
 
 		PlayerActor     *player = getPlayerActorAddress(playerID);
 		int16           ratio;
@@ -2887,7 +2861,7 @@ bool Actor::canBlockWith(GameObject *defenseObj, Direction relativeDir) {
 	//  Assuming that the actor may increment or decrement their facing
 	//  to block, these masks represent the possible relative facings
 	//  based upon the current relative facing
-	static uint8    dirMaskArray[8] = {
+	const uint8 dirMaskArray[8] = {
 		0x83,       //  10000011
 		0x07,       //  00000111
 		0x0E,       //  00001110
@@ -3396,48 +3370,39 @@ int16 GetRandomBetween(int start, int end) {
 }
 
 void updateActorStates(void) {
-	if (actorStatesPaused) return;
+	if (g_vm->_act->_actorStatesPaused) return;
 
-	static const int32  evalRate = 8;
-	static const int32  evalRateMask = evalRate - 1;
-	static int32        baseActorIndex = evalRateMask;
+	int32 actorIndex;
 
-	int32               actorIndex;
-
-	actorIndex = baseActorIndex = (baseActorIndex + 1) & evalRateMask;
+	actorIndex = g_vm->_act->_baseActorIndex = (g_vm->_act->_baseActorIndex + 1) & ActorManager::kEvalRateMask;
 	while (actorIndex < kActorCount) {
 		Actor   *a = g_vm->_actorList[actorIndex];
 
 		if (isWorld(a->IDParent()))
 			a->evaluateNeeds();
 
-		actorIndex += evalRate;
+		actorIndex += ActorManager::kEvalRate;
 	}
 
-	updatesViaScript = 0;
+	g_vm->_act->_updatesViaScript = 0;
 	for (actorIndex = 0; actorIndex < kActorCount; actorIndex++) {
 		Actor   *a = g_vm->_actorList[actorIndex];
 
 		if (isWorld(a->IDParent()) && a->isActivated())
 			a->updateState();
 	}
-
-
-	//WriteStatusF((useLine%10)+10,"%d actor updates by script",updatesViaScript);
-	//WriteStatusF(((useLine+1)%10)+10,"                          ");
-	//useLine++;
 }
 
 //-------------------------------------------------------------------
 
 void pauseActorStates(void) {
-	actorStatesPaused = true;
+	g_vm->_act->_actorStatesPaused = true;
 }
 
 //-------------------------------------------------------------------
 
 void resumeActorStates(void) {
-	actorStatesPaused = false;
+	g_vm->_act->_actorStatesPaused = false;
 }
 
 //-------------------------------------------------------------------
@@ -3446,7 +3411,7 @@ void setCombatBehavior(bool enabled) {
 	PlayerActor *player = nullptr;
 	LivingPlayerActorIterator iter;
 
-	combatBehaviorEnabled = enabled;
+	g_vm->_act->_combatBehaviorEnabled = enabled;
 
 	for (player = iter.first(); player != NULL; player = iter.next())
 		player->getActor()->evaluateNeeds();
@@ -3484,13 +3449,13 @@ void initActors(void) {
 	Common::SeekableReadStream *stream;
 	const int resourceActorSize = 91; // size of the packed struct
 
-	resourceActorCount = listRes->size(actorListID)
+	resourceActorCount = listRes->size(kActorListID)
 	                     / resourceActorSize;
 
 	if (resourceActorCount < 1)
 		error("Unable to load Actors");
 
-	if ((stream = loadResourceToStream(listRes, actorListID, "res actor list")) == nullptr)
+	if ((stream = loadResourceToStream(listRes, kActorListID, "res actor list")) == nullptr)
 		error("Unable to load Actors");
 
 	//  Read the resource actors
@@ -3601,23 +3566,23 @@ int16 AddFactionTally(int faction, enum factionTallyTypes act, int amt) {
 	/*
 	        //  If faction attitude counts get to big then down-scale all of them
 	        //  in proportion.
-	    if ( factionTable[faction][act] + amt > maxint16 )
+	    if ( g_vm->_act->_factionTable[faction][act] + amt > maxint16 )
 	    {
 	        for (int i = 0; i < factionNumColumns; i++)
-	            factionTable[faction][i] >>= 1;
+	            g_vm->_act->_factionTable[faction][i] >>= 1;
 	    }
 
 	        //  Otherwise, if it doesn;t underflow, then add it in.
-	    if ( factionTable[faction][act] + amt > minint16 )
+	    if ( g_vm->_act->_factionTable[faction][act] + amt > minint16 )
 	    {
-	        factionTable[faction][act] += amt;
+	        g_vm->_act->_factionTable[faction][act] += amt;
 	    }
 	*/
-	factionTable[faction][act] = clamp(minint16,
-	                                       factionTable[faction][act] + amt,
+	g_vm->_act->_factionTable[faction][act] = clamp(minint16,
+	                                       g_vm->_act->_factionTable[faction][act] + amt,
 	                                       maxint16);
 
-	return factionTable[faction][act];
+	return g_vm->_act->_factionTable[faction][act];
 }
 
 //  Get the attitude a particular faction has for a char.
@@ -3630,14 +3595,14 @@ int16 GetFactionTally(int faction, enum factionTallyTypes act) {
 	assert(act < factionNumColumns);
 #endif
 
-	return factionTable[faction][act];
+	return g_vm->_act->_factionTable[faction][act];
 }
 
 //-------------------------------------------------------------------
 //	Initialize the faction tally table
 
 void initFactionTallies(void) {
-	memset(&factionTable, 0, sizeof(factionTable));
+	memset(&g_vm->_act->_factionTable, 0, sizeof(g_vm->_act->_factionTable));
 }
 
 void saveFactionTallies(Common::OutSaveFile *outS) {
@@ -3647,7 +3612,7 @@ void saveFactionTallies(Common::OutSaveFile *outS) {
 	CHUNK_BEGIN;
 	for (int i = 0; i < maxFactions; ++i) {
 		for (int j = 0; j < factionNumColumns; ++j)
-			out->writeSint16LE(factionTable[i][j]);
+			out->writeSint16LE(g_vm->_act->_factionTable[i][j]);
 	}
 	CHUNK_END;
 }
@@ -3657,7 +3622,7 @@ void loadFactionTallies(Common::InSaveFile *in) {
 
 	for (int i = 0; i < maxFactions; ++i) {
 		for (int j = 0; j < factionNumColumns; ++j)
-			factionTable[i][j] = in->readSint16LE();
+			g_vm->_act->_factionTable[i][j] = in->readSint16LE();
 	}
 }
 

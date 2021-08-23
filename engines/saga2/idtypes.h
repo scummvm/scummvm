@@ -245,6 +245,9 @@ typedef uint8       ColorTable[256];
 #define maxuint16 0xffff
 #define maxint32 0x7fffffff
 
+enum {
+	kActorListID = MKTAG('A', 'C', 'T', 'O');
+};
 
 // number of containers
 const int   kNumViews    = 3;
@@ -459,6 +462,10 @@ enum {
 
 enum {
 	kObjectVolumeArraySize = 128
+};
+
+enum {
+	kDefaultReach = 24
 };
 
 } // end of namespace Saga2

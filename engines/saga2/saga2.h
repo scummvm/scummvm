@@ -80,6 +80,7 @@ class frameCounter;
 class CMapFeature;
 class AudioInterface;
 class PaletteManager;
+class ActorManager;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -138,6 +139,7 @@ public:
 	Renderer *_renderer;
 	AudioInterface *_audio;
 	PaletteManager *_pal;
+	ActorManager *_act;
 
 	WeaponStuff _weaponRack[kMaxWeapons];
 	weaponID _loadedWeapons;
