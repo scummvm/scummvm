@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-23 11:34+0000\n"
+"POT-Creation-Date: 2021-08-23 15:44+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -5191,12 +5191,12 @@ msgstr ""
 "המשחק."
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:114
-#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:624
+#: engines/sherlock/detection.cpp:120 engines/twine/detection.cpp:648
 msgid "TTS Narrator"
 msgstr ""
 
 #: engines/lure/detection.cpp:46 engines/mads/detection.cpp:115
-#: engines/sherlock/detection.cpp:121 engines/twine/detection.cpp:625
+#: engines/sherlock/detection.cpp:121 engines/twine/detection.cpp:649
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
@@ -7296,117 +7296,117 @@ msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr "משחק זה דורש תמיכה בתווי תלת ממד, שהוא מחוץ לתחום של ScummVM."
 
-#: engines/twine/detection.cpp:538
+#: engines/twine/detection.cpp:562
 msgid "Enable wall collisions"
 msgstr ""
 
-#: engines/twine/detection.cpp:539
+#: engines/twine/detection.cpp:563
 msgid "Enable the original wall collision damage"
 msgstr ""
 
-#: engines/twine/detection.cpp:545
+#: engines/twine/detection.cpp:569
 #, fuzzy
 msgid "Enable cross fade"
 msgstr "אפשר מצב רמאות"
 
-#: engines/twine/detection.cpp:546
+#: engines/twine/detection.cpp:570
 msgid "Enable cross fading of images and scenes"
 msgstr ""
 
-#: engines/twine/detection.cpp:553
+#: engines/twine/detection.cpp:577
 #, fuzzy
 msgid "Disable save menu"
 msgstr "שמירת המשחק נכשלה"
 
-#: engines/twine/detection.cpp:554
+#: engines/twine/detection.cpp:578
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 
-#: engines/twine/detection.cpp:560
+#: engines/twine/detection.cpp:584
 #, fuzzy
 msgid "Enable debug mode"
 msgstr "אפשר מצב הליום"
 
-#: engines/twine/detection.cpp:561
+#: engines/twine/detection.cpp:585
 #, fuzzy
 msgid "Enable the debug mode"
 msgstr "אפשר מצב הליום"
 
-#: engines/twine/detection.cpp:567
+#: engines/twine/detection.cpp:591
 #, fuzzy
 msgid "Enable audio CD"
 msgstr "אפשר קהל אולפן"
 
-#: engines/twine/detection.cpp:568
+#: engines/twine/detection.cpp:592
 msgid "Enable the original audio cd track"
 msgstr ""
 
-#: engines/twine/detection.cpp:574
+#: engines/twine/detection.cpp:598
 #, fuzzy
 msgid "Enable sound"
 msgstr "אפשר אחסון"
 
-#: engines/twine/detection.cpp:575
+#: engines/twine/detection.cpp:599
 #, fuzzy
 msgid "Enable the sound for the game"
 msgstr "כותרת מלאה של המשחק"
 
-#: engines/twine/detection.cpp:581
+#: engines/twine/detection.cpp:605
 #, fuzzy
 msgid "Enable voices"
 msgstr "הפעל את ונוס"
 
-#: engines/twine/detection.cpp:582
+#: engines/twine/detection.cpp:606
 #, fuzzy
 msgid "Enable the voices for the game"
 msgstr "הפעל את מערכת העזרה של ונוס"
 
-#: engines/twine/detection.cpp:588
+#: engines/twine/detection.cpp:612
 #, fuzzy
 msgid "Enable text"
 msgstr "אפשר אחסון"
 
-#: engines/twine/detection.cpp:589
+#: engines/twine/detection.cpp:613
 #, fuzzy
 msgid "Enable the text for the game"
 msgstr "כותרת מלאה של המשחק"
 
-#: engines/twine/detection.cpp:595
+#: engines/twine/detection.cpp:619
 #, fuzzy
 msgid "Enable movies"
 msgstr "הפעל את ונוס"
 
-#: engines/twine/detection.cpp:596
+#: engines/twine/detection.cpp:620
 #, fuzzy
 msgid "Enable the cutscenes for the game"
 msgstr "הפעל את מערכת העזרה של ונוס"
 
-#: engines/twine/detection.cpp:602
+#: engines/twine/detection.cpp:626
 #, fuzzy
 msgid "Enable mouse"
 msgstr "הפעל את ונוס"
 
-#: engines/twine/detection.cpp:603
+#: engines/twine/detection.cpp:627
 #, fuzzy
 msgid "Enable the mouse for the UI"
 msgstr "כותרת מלאה של המשחק"
 
-#: engines/twine/detection.cpp:609
+#: engines/twine/detection.cpp:633
 msgid "Use the USA version"
 msgstr ""
 
-#: engines/twine/detection.cpp:610
+#: engines/twine/detection.cpp:634
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/detection.cpp:616 engines/ultima/detection.cpp:85
+#: engines/twine/detection.cpp:640 engines/ultima/detection.cpp:85
 #, fuzzy
 #| msgid "Enable high resolution graphics"
 msgid "Enable high resolution"
 msgstr "אפשר גרפיקה ברזולוציה גבוהה"
 
-#: engines/twine/detection.cpp:617 engines/ultima/detection.cpp:86
+#: engines/twine/detection.cpp:641 engines/ultima/detection.cpp:86
 #, fuzzy
 msgid "Enable a higher resolution for the game"
 msgstr "כותרת מלאה של המשחק"
