@@ -269,13 +269,12 @@ Common::Error TwinEEngine::run() {
 			}
 		}
 	}
-	while (!shouldQuit()) {
+	bool quitGame = false;
+	while (!quitGame && !shouldQuit()) {
 		readKeys();
 		switch (_state) {
 		case EngineState::QuitGame: {
-			Common::Event event;
-			event.type = Common::EVENT_QUIT;
-			_system->getEventManager()->pushEvent(event);
+			quitGame = true;
 			break;
 		}
 		case EngineState::LoadedGame:
