@@ -260,6 +260,7 @@ def extract_volume(args: argparse.Namespace) -> int:
             if obj.rsrc:
                 file = file_to_macbin(obj, hpath[-1].encode("mac_roman"))
             upath.write_bytes(file)
+            os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
     return 0
 
 
