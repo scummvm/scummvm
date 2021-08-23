@@ -160,6 +160,9 @@ bool Sprite::respondsToMouse() {
 	if (_moveable)
 		return true;
 
+	if (_cast && _cast->_type == kCastButton)
+		return true;
+
 	ScriptContext *spriteScript = _movie->getScriptContext(kScoreScript, _scriptId);
 	if (spriteScript && (spriteScript->_eventHandlers.contains(kEventGeneric)
 					  || spriteScript->_eventHandlers.contains(kEventMouseDown)
@@ -175,6 +178,9 @@ bool Sprite::respondsToMouse() {
 }
 
 bool Sprite::isActive() {
+	if (_cast && _cast->_type == kCastButton)
+		return true;
+
 	return _movie->getScriptContext(kScoreScript, _scriptId) != nullptr
 			|| _movie->getScriptContext(kCastScript, _castId) != nullptr;
 }
