@@ -176,6 +176,9 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 	convertMessageToString(text, textBuf, sizeof(textBuf));
 
 	if (_game.id == GID_CMI && wrapped) {
+		int of = _charset->getCurID();
+		_charset->setCurID(charset);
+
 		// HACK: Wrap the text when it's too long.
 		// The original does this by drawing word by word and adjusting x and y for each step of the pipeline.
 		// This, instead, is a mixture of code from SmushFont::drawStringWrap() and CHARSET_1(), which is just 
@@ -207,8 +210,8 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 		int lastLineY = 0;
 		for (int i = 0; i < numLines; i++) {
 			BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
-			Common::strlcpy((char *)bt.text, (char *)(textBuf + substrPos[i]), substrLen[i]);
-			bt.text[substrLen[0]] = '\0'; // Truncate the substring accordingly
+			Common::strlcpy((char *)bt.text, (char *)(textBuf + substrPos[i]), substrLen[i] + 1);
+			bt.text[substrLen[0] + 1] = '\0'; // Truncate the substring accordingly
 			bt.xpos = x;
 			bt.ypos = lastLineY = y + (_charset->getStringHeight((char *)textBuf) * i);
 			bt.color = color;
@@ -224,8 +227,6 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 		// and then encounter a line that is out of bounds we can't move the whole block to the left or right any more (as we should).
 		// Possible TODO: moving the measuring logic contained in SmushFont::drawStringWrap() to ScummEngine_v6 to make it available here, too.
 
-		int of = _charset->getCurID();
-		_charset->setCurID(charset);
 		// Note that this won't detect (and measure correctly) 1-byte characters contained
 		// in 2-byte strings. For now, I trust that it won't happen with the object strings.
 		int clipHeight = _charset->getCharHeight(*textBuf) + 1;
