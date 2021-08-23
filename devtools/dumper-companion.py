@@ -439,7 +439,9 @@ def generate_parser() -> argparse.ArgumentParser:
     parser_dir.add_argument("directory", metavar="directory ", type=Path, help="Path")
     parser_dir.set_defaults(func=punyencode_arg)
 
-    parser_str = subparsers.add_parser("str", help="Convert strings or standard in to or from punycode")
+    parser_str = subparsers.add_parser(
+        "str", help="Convert strings or standard in to or from punycode"
+    )
     parser_str.add_argument(
         "--stdin", action="store_true", help="Convert stdin to punycode"
     )
@@ -506,6 +508,7 @@ def test_encode_string(capsys):
         call_test_parser(["str", output])
         captured = capsys.readouterr()
         assert captured.out == input + "\n"
+
 
 def test_encode_stdin(capsys, monkeypatch):
     monkeypatch.setattr("sys.stdin", io.StringIO("Icon\r"))
