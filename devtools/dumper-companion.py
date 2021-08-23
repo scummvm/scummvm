@@ -181,6 +181,26 @@ def escape_string(s: str) -> str:
     return new_name
 
 
+def unescape_string(s: str) -> str:
+    """unescape strings"""
+
+    orig_name = ""
+    s_iter = iter(s)
+    hi = next(s_iter, None)
+    while hi is not None:
+        if hi == "\x81":
+            low = next(s_iter, None)
+            assert low is not None, "Error decoding string"
+            if low == "\x79":
+                orig_name += "\x81"
+            else:
+                orig_name += chr(ord(low) - 0x80)
+        else:
+            orig_name += hi
+        hi = next(s_iter, None)
+    return orig_name
+
+
 def needs_punyencoding(orig: str) -> bool:
     """
     A filename needs to be punyencoded when it:
@@ -206,10 +226,20 @@ def punyencode(orig: str) -> str:
     encoded = s.encode("punycode").decode("ascii")
     # punyencoding adds an '-' at the end when there are no special chars
     # don't use it for comparing
-    compare = encoded[:-1]
+    compare = encoded
+    if encoded.endswith("-"):
+        compare = encoded[:-1]
     if orig != compare or compare[-1] in " .":
         return "xn--" + encoded
     return orig
+
+
+def decode_string(orig: str) -> str:
+    """
+    Decode punyencoded strings
+    """
+    st = orig[4:].encode("ascii").decode("punycode")
+    return unescape_string(st)
 
 
 def encode_string(args: argparse.Namespace) -> int:
@@ -217,7 +247,10 @@ def encode_string(args: argparse.Namespace) -> int:
         var = args.string
     if args.stdin:
         var = input()
-    print(punyencode(var))
+    if var.startswith("xn--"):
+        print(decode_string(var))
+    else:
+        print(punyencode(var))
     return 0
 
 
@@ -407,7 +440,7 @@ def generate_parser() -> argparse.ArgumentParser:
     parser_dir.add_argument("directory", metavar="directory ", type=Path, help="Path")
     parser_dir.set_defaults(func=punyencode_arg)
 
-    parser_str = subparsers.add_parser("str", help="Punyencode strings or standard in")
+    parser_str = subparsers.add_parser("str", help="Convert strings or standard in to or from punycode")
     parser_str.add_argument(
         "--stdin", action="store_true", help="Convert stdin to punycode"
     )
@@ -415,7 +448,7 @@ def generate_parser() -> argparse.ArgumentParser:
         "string",
         metavar="STRING",
         type=str,
-        help="Convert string to punycode",
+        help="Convert string to or from punycode",
         nargs="?",
     )
     parser_str.set_defaults(func=encode_string)
@@ -465,10 +498,15 @@ def test_decode_mac_japanese():
 
 
 def test_encode_string(capsys):
-    call_test_parser(["str", "Icon\r"])
-    captured = capsys.readouterr()
-    assert captured.out == "xn--Icon-ja6e\n"
+    checks = [["Icon\r", "xn--Icon-ja6e"]]
+    for input, output in checks:
+        call_test_parser(["str", input])
+        captured = capsys.readouterr()
+        assert captured.out == output + "\n"
 
+        call_test_parser(["str", output])
+        captured = capsys.readouterr()
+        assert captured.out == input + "\n"
 
 def test_encode_stdin(capsys, monkeypatch):
     monkeypatch.setattr("sys.stdin", io.StringIO("Icon\r"))
@@ -484,8 +522,9 @@ def test_decode_name():
         ["ends with space ", "xn--ends with space -"],
         ["バッドデイ(Power PC)", "xn--(Power PC)-jx4ilmwb1a7h"],
     ]
-    for input, expected in checks:
-        assert punyencode(input) == expected
+    for input, output in checks:
+        assert punyencode(input) == output
+        assert decode_string(output) == input
 
 
 def test_needs_punyencoding():
@@ -502,5 +541,6 @@ def test_needs_punyencoding():
 
 def test_escape_string():
     checks = [["\r", "\x81\x8d"], ["\x81", "\x81\x79"]]
-    for input, expected in checks:
-        assert escape_string(input) == expected
+    for input, output in checks:
+        assert escape_string(input) == output
+        assert unescape_string(output) == input
