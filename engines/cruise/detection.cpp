@@ -139,6 +139,17 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+	{ // Amiga Spanish edition.
+		{
+			"cruise",
+			0,
+			AD_ENTRY1s("D1", "b600d0892a2605b9ead63e1c86a8a0a3", 700576),
+			Common::ES_ESP,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
 	{ // AtariST English KixxXL edition.
 		{
 			"cruise",

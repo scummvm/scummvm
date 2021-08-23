@@ -162,6 +162,9 @@ bool CruiseEngine::loadLanguageStrings() {
 		case Common::IT_ITA:
 			p = italianLanguageStrings;
 			break;
+		case Common::ES_ESP:
+			p = spanishLanguageStrings;
+			break;
 		default:
 			return false;
 		}
