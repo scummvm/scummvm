@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-23 23:37+0000\n"
-"PO-Revision-Date: 2021-08-22 05:48+0000\n"
+"PO-Revision-Date: 2021-08-24 09:31+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1688,13 +1688,11 @@ msgstr "Geen"
 
 #: gui/options.cpp:2524
 msgid "Ignore"
-msgstr ""
+msgstr "Negeren"
 
 #: gui/options.cpp:2525
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable autosave"
-msgstr "Bewaar menu uitschakelen"
+msgstr "Automatisch opslaan uitschakelen"
 
 #: gui/options.cpp:2526
 msgid ""
@@ -1704,24 +1702,29 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"Waarschuwing: Automatisch opslaan is ingeschakeld. Een aantal van uw spellen "
+"hebben al opgeslagen spellen in het slot voor automatisch opslaan. U kunt de "
+"bestaande opgeslagen spellen verplaatsen naar nieuwe sloten, automatisch "
+"opslaan uitschakelen, of dit negeren (u krijgt een melding wanneer een spel "
+"overschreven gaat worden door een automatische opgeslagen spel)\n"
+"Lijst van spellen:\n"
 
 #: gui/options.cpp:2535
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid ""
 "\n"
 "And more..."
-msgstr "Spel ~T~oevoegen..."
+msgstr ""
+"\n"
+"En meer..."
 
 #: gui/options.cpp:2536 engines/engine.cpp:560
-#, fuzzy
-#| msgid "Move up"
 msgid "Move"
-msgstr "Beweeg omhoog"
+msgstr "Beweeg"
 
 #: gui/options.cpp:2549
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr ""
+"FOUT: De onderstaande opgeslagen spellen konden niet verplaatst worden:\n"
 
 #: gui/options.cpp:2635
 msgid "Failed to change cloud storage!"
@@ -2404,13 +2407,11 @@ msgstr ""
 
 #: engines/engine.cpp:553
 msgid "Overwrite"
-msgstr ""
+msgstr "Overschrijven"
 
 #: engines/engine.cpp:554
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Cancel autosave"
-msgstr "Naamloos auto-opgeslagen spel"
+msgstr "Automatisch opslaan annuleren"
 
 #: engines/engine.cpp:556
 #, c-format
@@ -2419,10 +2420,14 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"WAARSCHUWING: Het automatisch opslaan slot heeft een opgeslagen spel genaamd "
+"%s. U kunt of dit spel verplaatsen naar een nieuw slot, het bestaande "
+"opgeslagen spel overschrijven, of automatisch opslaan annuleren (pas na een "
+"restart zult u weer meldingen krijgen)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "FOUT: Kon het opgeslagen spel niet kopiëren naar een nieuw slot"
 
 #: engines/engine.cpp:587 engines/metaengine.cpp:367 engines/savestate.cpp:96
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
