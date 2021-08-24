@@ -33,7 +33,7 @@
 #include "scumm/sound.h"
 
 #include "scumm/imuse/imuse.h"
-#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
 
 #include "scumm/smush/smush_player.h"
 #include "scumm/smush/smush_font.h"
@@ -1218,7 +1218,7 @@ void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {
 }
 
 bool Insane::smlayer_isSoundRunning(int32 sound) {
-	return _vm->_imuseDigital->getSoundStatus(readArray(sound)) != 0;
+	return _vm->_imuseDigital->isSoundRunning(readArray(sound)) != 0;
 }
 
 bool Insane::smlayer_startSfx(int32 sound) {
@@ -1238,11 +1238,11 @@ bool Insane::smlayer_startVoice(int32 sound) {
 }
 
 void Insane::smlayer_soundSetPan(int32 soundId, int32 pan) {
-	_vm->_imuseDigital->setPan(soundId, pan);
+	_vm->_imuseDigital->setPan(readArray(soundId), pan);
 }
 
 void Insane::smlayer_soundSetPriority(int32 soundId, int32 priority) {
-	_vm->_imuseDigital->setPriority(soundId, priority);
+	_vm->_imuseDigital->setPriority(readArray(soundId), priority);
 }
 
 void Insane::smlayer_drawSomething(byte *renderBitmap, int32 codecparam,

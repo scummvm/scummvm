@@ -93,36 +93,6 @@ public:
 	}
 };
 
-class ImuseChannel : public SmushChannel {
-private:
-	int32 _srbufferSize;
-
-	int32 _bitsize;			///< the bitsize of the original data
-	int32 _rate;				///< the sampling rate of the original data
-	int32 _channels;			///< the number of channels of the original data
-
-protected:
-	void decode();
-	bool handleMap(byte *data);
-	bool handleSubTags(int32 &offset) override;
-
-public:
-	ImuseChannel(int32 track);
-	bool isTerminated() const override;
-	bool setParameters(int32 nbframes, int32 size, int32 track_flags, int32 unk1, int32) override;
-	bool checkParameters(int32 index, int32 nbframes, int32 size, int32 track_flags, int32 unk1) override;
-	bool appendData(Common::SeekableReadStream &b, int32 size) override;
-	byte *getSoundData() override;
-	int32 getRate() override { return _rate; }
-	bool getParameters(bool &stereo, bool &is_16bit, int32 &vol, int32 &pan) override {
-		stereo = (_channels == 2);
-		is_16bit = (_bitsize > 8);
-		vol = _volume;
-		pan = _pan;
-		return true;
-	}
-};
-
 } // End of namespace Scumm
 
 #endif

@@ -31,8 +31,7 @@
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
-#include "scumm/imuse/imuse.h"
-#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -737,12 +736,14 @@ uint32 ScummEngine_v70he::getResourceRoomOffset(ResType type, ResId idx) {
 }
 
 int ScummEngine::getResourceSize(ResType type, ResId idx) {
+	Common::StackLock lock(_resourceAccessMutex);
 	byte *ptr = getResourceAddress(type, idx);
 	assert(ptr);
 	return _res->_types[type][idx]._size;
 }
 
 byte *ScummEngine::getResourceAddress(ResType type, ResId idx) {
+	Common::StackLock lock(_resourceAccessMutex);
 	byte *ptr;
 
 	if (_game.heversion >= 80 && type == rtString)
@@ -1488,6 +1489,7 @@ const byte *ResourceIterator::findNext(uint32 tag) {
 }
 
 const byte *ScummEngine::findResource(uint32 tag, const byte *searchin) {
+	Common::StackLock lock(_resourceAccessMutex);
 	uint32 curpos, totalsize, size;
 
 	debugC(DEBUG_RESOURCE, "findResource(%s, %p)", tag2str(tag), (const void *)searchin);

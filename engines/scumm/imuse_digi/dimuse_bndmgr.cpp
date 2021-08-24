@@ -132,7 +132,7 @@ int BundleDirCache::matchFile(const char *filename) {
 			_budleDirCache[freeSlot].indexTable[i].index = i;
 		}
 		qsort(_budleDirCache[freeSlot].indexTable, _budleDirCache[freeSlot].numFiles,
-				sizeof(IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
+				sizeof(IndexNode), (int (*)(const void *, const void *))scumm_stricmp);
 		return freeSlot;
 	} else {
 		return fileId;
@@ -145,6 +145,7 @@ BundleMgr::BundleMgr(BundleDirCache *cache) {
 	_compTable = nullptr;
 	_numFiles = 0;
 	_numCompItems = 0;
+	_lastBlockDecompressedSize = 0;
 	_curSampleId = -1;
 	_fileBundleId = -1;
 	_file = new ScummFile();
@@ -160,7 +161,7 @@ Common::SeekableReadStream *BundleMgr::getFile(const char *filename, int32 &offs
 	BundleDirCache::IndexNode target;
 	strcpy(target.filename, filename);
 	BundleDirCache::IndexNode *found = (BundleDirCache::IndexNode *)bsearch(&target, _indexTable, _numFiles,
-			sizeof(BundleDirCache::IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
+			sizeof(BundleDirCache::IndexNode), (int (*)(const void *, const void *))scumm_stricmp);
 	if (found) {
 		_file->seek(_bundleTable[found->index].offset, SEEK_SET);
 		offset = _bundleTable[found->index].offset;
@@ -171,7 +172,7 @@ Common::SeekableReadStream *BundleMgr::getFile(const char *filename, int32 &offs
 	return nullptr;
 }
 
-bool BundleMgr::open(const char *filename, bool &compressed, bool errorFlag) {
+bool BundleMgr::open(const char *filename, bool &isCompressed, bool errorFlag) {
 	if (_file->isOpen())
 		return true;
 
@@ -186,7 +187,7 @@ bool BundleMgr::open(const char *filename, bool &compressed, bool errorFlag) {
 
 	int slot = _cache->matchFile(filename);
 	assert(slot != -1);
-	compressed = _cache->isSndDataExtComp(slot);
+	isCompressed = _cache->isSndDataExtComp(slot);
 	_numFiles = _cache->getNumFiles(slot);
 	assert(_numFiles);
 	_bundleTable = _cache->getTable(slot);
@@ -195,6 +196,8 @@ bool BundleMgr::open(const char *filename, bool &compressed, bool errorFlag) {
 	_compTableLoaded = false;
 	_isUncompressed = false;
 	_outputSize = 0;
+	_lastBlockDecompressedSize = 0;
+	_curDecompressedFilePos = 0;
 	_lastBlock = -1;
 
 	return true;
@@ -206,6 +209,8 @@ void BundleMgr::close() {
 		_bundleTable = nullptr;
 		_numFiles = 0;
 		_numCompItems = 0;
+		_lastBlockDecompressedSize = 0;
+		_curDecompressedFilePos = 0;
 		_compTableLoaded = false;
 		_isUncompressed = false;
 		_lastBlock = -1;
@@ -229,8 +234,8 @@ bool BundleMgr::loadCompTable(int32 index) {
 
 	_numCompItems = _file->readUint32BE();
 	assert(_numCompItems > 0);
-	_file->seek(8, SEEK_CUR);
-
+	_file->seek(4, SEEK_CUR);
+	_lastBlockDecompressedSize = _file->readUint32BE();
 	if (tag != MKTAG('C','O','M','P')) {
 		debug("BundleMgr::loadCompTable() Compressed sound %d (%s:%d) invalid (%s)", index, _file->getName(), _bundleTable[index].offset, tag2str(tag));
 		return false;
@@ -254,122 +259,165 @@ bool BundleMgr::loadCompTable(int32 index) {
 	return true;
 }
 
-int32 BundleMgr::decompressSampleByCurIndex(int32 offset, int32 size, byte **compFinal, int headerSize, bool headerOutside) {
-	bool ignored = false;
-	return decompressSampleByIndex(_curSampleId, offset, size, compFinal, headerSize, headerOutside, ignored);
-}
-
-int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **compFinal, int headerSize, bool headerOutside,
-					 bool &uncompressedBundle) {
-	int32 i, finalSize, outputSize;
-	int skip, firstBlock, lastBlock;
-
-	assert(0 <= index && index < _numFiles);
-
-	if (_file->isOpen() == false) {
-		error("BundleMgr::decompressSampleByIndex() File is not open");
-		return 0;
-	}
-
-	if (_curSampleId == -1)
-		_curSampleId = index;
-
-	assert(_curSampleId == index);
-
-	if (!_compTableLoaded) {
-		_compTableLoaded = loadCompTable(index);
-		if (!_compTableLoaded)
-			return 0;
-	}
-
-	uncompressedBundle = _isUncompressed;
-
-	if (_isUncompressed) {
-		_file->seek(_bundleTable[index].offset + offset + headerSize, SEEK_SET);
-		*compFinal = (byte *)malloc(size);
-		assert(*compFinal);
-		_file->read(*compFinal, size);
-		return size;
-	}
-
-	firstBlock = (offset + headerSize) / 0x2000;
-	lastBlock = (offset + headerSize + size - 1) / 0x2000;
-
-	// Clip last_block by the total number of blocks (= "comp items")
-	if ((lastBlock >= _numCompItems) && (_numCompItems > 0))
-		lastBlock = _numCompItems - 1;
-
-	int32 blocksFinalSize = 0x2000 * (1 + lastBlock - firstBlock);
-	*compFinal = (byte *)malloc(blocksFinalSize);
-	assert(*compFinal);
-	finalSize = 0;
-
-	skip = (offset + headerSize) % 0x2000;
-
-	for (i = firstBlock; i <= lastBlock; i++) {
-		if (_lastBlock != i) {
-			// CMI hack: one more zero byte at the end of input buffer
-			_compInputBuff[_compTable[i].size] = 0;
-			_file->seek(_bundleTable[index].offset + _compTable[i].offset, SEEK_SET);
-			_file->read(_compInputBuff, _compTable[i].size);
-			_outputSize = BundleCodecs::decompressCodec(_compTable[i].codec, _compInputBuff, _compOutputBuff, _compTable[i].size);
-			if (_outputSize > 0x2000) {
-				error("_outputSize: %d", _outputSize);
-			}
-			_lastBlock = i;
-		}
-
-		outputSize = _outputSize;
-
-		if (headerOutside) {
-			outputSize -= skip;
+int32 BundleMgr::seekFile(int32 offset, int mode) {
+	// We don't actually seek the file, but instead try to find that the specified offset exists
+	// within the decompressed blocks, and save that offset in _curDecompressedFilePos
+	int result = 0;
+	switch (mode) {
+	case SEEK_END:
+		if (_isUncompressed) {
+			result = offset + _bundleTable[_curSampleId].size;
 		} else {
-			if ((headerSize != 0) && (skip >= headerSize))
-				outputSize -= skip;
+			result = offset + ((_numCompItems - 1) * DIMUSE_BUN_CHUNK_SIZE) + _lastBlockDecompressedSize;
 		}
-
-		if ((outputSize + skip) > 0x2000) // workaround
-			outputSize -= (outputSize + skip) - 0x2000;
-
-		if (outputSize > size)
-			outputSize = size;
-
-		assert(finalSize + outputSize <= blocksFinalSize);
-
-		memcpy(*compFinal + finalSize, _compOutputBuff + skip, outputSize);
-		finalSize += outputSize;
-
-		size -= outputSize;
-		assert(size >= 0);
-		if (size == 0)
-			break;
-
-		skip = 0;
+		_curDecompressedFilePos = result;
+		break;
+	case SEEK_SET:
+	default:
+		if (_isUncompressed) {
+			result = offset;
+			_curDecompressedFilePos = result;
+		} else {
+			int destBlock = offset / DIMUSE_BUN_CHUNK_SIZE + (offset % DIMUSE_BUN_CHUNK_SIZE != 0);
+			if (destBlock <= _numCompItems) {
+				result = offset;
+				_curDecompressedFilePos = result;
+			}
+		}
+		break;
 	}
-
-	return finalSize;
+	return result;
 }
 
-int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 size, byte **comp_final, bool header_outside,
-					bool &uncompressedBundle) {
+int32 BundleMgr::readFile(const char *name, int32 size, byte **comp_final, bool header_outside) {
 	int32 final_size = 0;
 
 	if (!_file->isOpen()) {
-		error("BundleMgr::decompressSampleByName() File is not open");
+		error("BundleMgr::readFile() File is not open");
 		return 0;
 	}
 
+	// Find the sound in the bundle
 	BundleDirCache::IndexNode target;
-	strcpy(target.filename, name);
+	strncpy(target.filename, name, sizeof(target.filename));
+	target.filename[sizeof(target.filename) - 1] = '\0';
 	BundleDirCache::IndexNode *found = (BundleDirCache::IndexNode *)bsearch(&target, _indexTable, _numFiles,
-			sizeof(BundleDirCache::IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
+		sizeof(BundleDirCache::IndexNode), (int(*)(const void *, const void *))scumm_stricmp);
+
 	if (found) {
-		final_size = decompressSampleByIndex(found->index, offset, size, comp_final, 0, header_outside, uncompressedBundle);
-		return final_size;
+		int32 i, finalSize, outputSize;
+		int skip, firstBlock, lastBlock;
+		int headerSize = 0;
+
+		assert(0 <= found->index && found->index < _numFiles);
+
+		if (_file->isOpen() == false) {
+			error("BundleMgr::readFile() File is not open");
+			return 0;
+		}
+
+		if (_curSampleId == -1)
+			_curSampleId = found->index;
+
+		assert(_curSampleId == found->index);
+
+		if (!_compTableLoaded) {
+			_compTableLoaded = loadCompTable(found->index);
+			if (!_compTableLoaded)
+				return 0;
+		}
+
+		if (_isUncompressed) {
+			_file->seek(_bundleTable[found->index].offset + _curDecompressedFilePos + headerSize, SEEK_SET);
+			*comp_final = (byte *)malloc(size);
+			assert(*comp_final);
+			_file->read(*comp_final, size);
+			_curDecompressedFilePos += size;
+			return size;
+		}
+
+		firstBlock = (_curDecompressedFilePos + headerSize) / DIMUSE_BUN_CHUNK_SIZE;
+		lastBlock = (_curDecompressedFilePos + headerSize + size - 1) / DIMUSE_BUN_CHUNK_SIZE;
+
+		// Clip last_block by the total number of blocks (= "comp items")
+		if ((lastBlock >= _numCompItems) && (_numCompItems > 0))
+			lastBlock = _numCompItems - 1;
+
+		int32 blocksFinalSize = DIMUSE_BUN_CHUNK_SIZE * (1 + lastBlock - firstBlock);
+		*comp_final = (byte *)malloc(blocksFinalSize);
+		assert(*comp_final);
+		finalSize = 0;
+
+		skip = (_curDecompressedFilePos + headerSize) % DIMUSE_BUN_CHUNK_SIZE; // Excess length after the last block
+
+		for (i = firstBlock; i <= lastBlock; i++) {
+			if (_lastBlock != i) {
+				// CMI hack: one more zero byte at the end of input buffer
+				_compInputBuff[_compTable[i].size] = 0;
+				_file->seek(_bundleTable[found->index].offset + _compTable[i].offset, SEEK_SET);
+				_file->read(_compInputBuff, _compTable[i].size);
+				_outputSize = BundleCodecs::decompressCodec(_compTable[i].codec, _compInputBuff, _compOutputBuff, _compTable[i].size);
+
+				if (_outputSize > DIMUSE_BUN_CHUNK_SIZE) {
+					error("_outputSize: %d", _outputSize);
+				}
+				_lastBlock = i;
+			}
+
+			outputSize = _outputSize;
+
+			if (header_outside) {
+				outputSize -= skip;
+			} else {
+				if ((headerSize != 0) && (skip >= headerSize))
+					outputSize -= skip;
+			}
+
+			if ((outputSize + skip) > DIMUSE_BUN_CHUNK_SIZE) // workaround
+				outputSize -= (outputSize + skip) - DIMUSE_BUN_CHUNK_SIZE;
+
+			if (outputSize > size)
+				outputSize = size;
+
+			assert(finalSize + outputSize <= blocksFinalSize);
+
+			memcpy(*comp_final + finalSize, _compOutputBuff + skip, outputSize);
+			finalSize += outputSize;
+
+			size -= outputSize;
+			assert(size >= 0);
+			if (size == 0)
+				break;
+
+			skip = 0;
+		}
+		_curDecompressedFilePos += finalSize;
+
+		return finalSize;
 	}
 
-	debug(2, "BundleMgr::decompressSampleByName() Failed finding sound %s", name);
+	debug(2, "BundleMgr::readFile() Failed finding sound %s", name);
 	return final_size;
+}
+
+bool BundleMgr::isExtCompBun(byte gameId) {
+	bool isExtComp = false;
+	if (gameId == GID_CMI) {
+		bool isExtComp1 = false, isExtComp2 = false, isExtComp3 = false, isExtComp4 = false;
+		this->open("voxdisk1.bun", isExtComp1); this->close();
+		this->open("voxdisk2.bun", isExtComp2); this->close();
+		this->open("musdisk1.bun", isExtComp3); this->close();
+		this->open("musdisk2.bun", isExtComp4); this->close();
+
+		isExtComp = isExtComp1 | isExtComp2 | isExtComp3 | isExtComp4;
+	} else {
+		bool isExtComp1 = false, isExtComp2 = false;
+		this->open("digvoice.bun", isExtComp1); this->close();
+		this->open("digmusic.bun", isExtComp2); this->close();
+		isExtComp = isExtComp1 | isExtComp2;
+	}
+
+	return isExtComp;
 }
 
 } // End of namespace Scumm

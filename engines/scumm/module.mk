@@ -88,14 +88,24 @@ ifdef ENABLE_SCUMM_7_8
 MODULE_OBJS += \
 	nut_renderer.o \
 	script_v8.o \
-	imuse_digi/dimuse.o \
 	imuse_digi/dimuse_bndmgr.o \
 	imuse_digi/dimuse_codecs.o \
-	imuse_digi/dimuse_music.o \
 	imuse_digi/dimuse_sndmgr.o \
-	imuse_digi/dimuse_script.o \
-	imuse_digi/dimuse_track.o \
 	imuse_digi/dimuse_tables.o \
+	imuse_digi/dimuse_engine.o \
+	imuse_digi/dimuse_cmds.o \
+	imuse_digi/dimuse_dispatch.o \
+	imuse_digi/dimuse_fades.o \
+	imuse_digi/dimuse_files.o \
+	imuse_digi/dimuse_groups.o \
+	imuse_digi/dimuse_internalmixer.o \
+	imuse_digi/dimuse_scripts.o \
+	imuse_digi/dimuse_streamer.o \
+	imuse_digi/dimuse_tracks.o \
+	imuse_digi/dimuse_triggers.o \
+	imuse_digi/dimuse_utils.o \
+	imuse_digi/dimuse_wave.o \
+	imuse_digi/dimuse_waveout.o \
 	insane/insane.o \
 	insane/insane_ben.o \
 	insane/insane_enemy.o \
@@ -106,7 +116,6 @@ MODULE_OBJS += \
 	smush/codec20.o \
 	smush/codec37.o \
 	smush/codec47.o \
-	smush/imuse_channel.o \
 	smush/smush_player.o \
 	smush/saud_channel.o \
 	smush/smush_mixer.o \

@@ -20,22 +20,35 @@
  *
  */
 
-#ifndef SCUMM_IMUSE_DIGI_CODECS_H
-#define SCUMM_IMUSE_DIGI_CODECS_H
+#if !defined(SCUMM_IMUSE_DIGI_FADES_H) && defined(ENABLE_SCUMM_7_8)
+#define SCUMM_IMUSE_DIGI_FADES_H
 
 #include "common/scummsys.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
 namespace Scumm {
 
-namespace BundleCodecs {
+class IMuseDigiFadesHandler {
 
-int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inputSize);
+private:
+	IMuseDigital *_engine;
+	IMuseDigiFade _fades[DIMUSE_MAX_FADES];
+	int _fadesOn;
 
-void initializeImcTables();
-void releaseImcTables();
+	void clearAllFades();
+public:
+	IMuseDigiFadesHandler(IMuseDigital *engine);
+	~IMuseDigiFadesHandler();
 
-} // End of namespace BundleCodecs
+	int init();
+	void deinit();
+	void saveLoad(Common::Serializer &ser);
+	int fadeParam(int soundId, int opcode, int destinationValue, int fadeLength);
+	void clearFadeStatus(int soundId, int opcode);
+	void loop();
+
+};
 
 } // End of namespace Scumm
-
 #endif

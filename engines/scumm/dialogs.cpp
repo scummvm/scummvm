@@ -38,7 +38,6 @@
 #include "scumm/sound.h"
 #include "scumm/scumm.h"
 #include "scumm/imuse/imuse.h"
-#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/verbs.h"
 
 #ifndef DISABLE_HELP

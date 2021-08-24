@@ -32,7 +32,7 @@
 #include "graphics/palette.h"
 
 #include "scumm/file.h"
-#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/scumm.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
@@ -216,8 +216,9 @@ void SmushPlayer::timerCallback() {
 	parseNextFrame();
 }
 
-SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
+SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital) {
 	_vm = scumm;
+	_imuseDigital = imuseDigital;
 	_nbframes = 0;
 	_codec37 = 0;
 	_codec47 = 0;
@@ -251,6 +252,8 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm) {
 	_pauseStartTime = 0;
 	_pauseTime = 0;
 
+	for (int i = 0; i < 4; i++)
+		_iactTable[i] = 0;
 
 	_IACTchannel = new Audio::SoundHandle();
 	_compressedFileSoundHandle = new Audio::SoundHandle();
@@ -388,10 +391,10 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 	int code = b.readUint16LE();
 	int flags = b.readUint16LE();
 	int unknown = b.readSint16LE();
-	int track_flags = b.readUint16LE();
+	int userId = b.readUint16LE();
 
 	if ((code != 8) && (flags != 46)) {
-		_vm->_insane->procIACT(_dst, 0, 0, 0, b, 0, 0, code, flags, unknown, track_flags);
+		_vm->_insane->procIACT(_dst, 0, 0, 0, b, 0, 0, code, flags, unknown, userId);
 		return;
 	}
 
@@ -400,42 +403,13 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 	}
 
 	assert(flags == 46 && unknown == 0);
-	int track_id = b.readUint16LE();
+	/*int track_id =*/ b.readUint16LE();
 	int index = b.readUint16LE();
 	int nbframes = b.readUint16LE();
-	int32 size = b.readUint32LE();
+	/*int32 size =*/ b.readUint32LE();
 	int32 bsize = subSize - 18;
 
-	if (_vm->_game.id != GID_CMI) {
-		int32 track = track_id;
-		if (track_flags == 1) {
-			track = track_id + 100;
-		} else if (track_flags == 2) {
-			track = track_id + 200;
-		} else if (track_flags == 3) {
-			track = track_id + 300;
-		} else if ((track_flags >= 100) && (track_flags <= 163)) {
-			track = track_id + 400;
-		} else if ((track_flags >= 200) && (track_flags <= 263)) {
-			track = track_id + 500;
-		} else if ((track_flags >= 300) && (track_flags <= 363)) {
-			track = track_id + 600;
-		} else {
-			error("SmushPlayer::handleIACT(): bad track_flags: %d", track_flags);
-		}
-		debugC(DEBUG_SMUSH, "SmushPlayer::handleIACT(): %d, %d, %d", track, index, track_flags);
-
-		SmushChannel *c = _smixer->findChannel(track);
-		if (c == 0) {
-			c = new ImuseChannel(track);
-			_smixer->addChannel(c);
-		}
-		if (index == 0)
-			c->setParameters(nbframes, size, track_flags, unknown, 0);
-		else
-			c->checkParameters(index, nbframes, size, track_flags, unknown);
-		c->appendData(b, bsize);
-	} else {
+	if (_vm->_game.id == GID_CMI) {
 		// TODO: Move this code into another SmushChannel subclass?
 		byte *src = (byte *)malloc(bsize);
 		b.read(src, bsize);
@@ -505,6 +479,99 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 		}
 
 		free(src);
+	} else if ((_vm->_game.id == GID_DIG) && !(_vm->_game.features & GF_DEMO)) {
+		int bufId, volume, paused, curSoundId;
+
+		byte *dataBuffer = (byte *)malloc(bsize);
+		b.read(dataBuffer, bsize);
+
+		switch (userId) {
+		case 1:
+			bufId = 1;
+			volume = 127;
+			break;
+		case 2:
+			bufId = 2;
+			volume = 127;
+			break;
+		case 3:
+			bufId = 3;
+			volume = 127;
+			break;
+		default:
+			if (userId >= 100 && userId <= 163) {
+				bufId = DIMUSE_BUFFER_SPEECH;
+				volume = 2 * userId - 200;
+			} else if (userId >= 200 && userId <= 263) {
+				bufId = DIMUSE_BUFFER_MUSIC;
+				volume = 2 * userId - 400;
+			} else if (userId >= 300 && userId <= 363) {
+				bufId = DIMUSE_BUFFER_SFX;
+				volume = 2 * userId - 600;
+			} else {
+				free(dataBuffer);
+				error("SmushPlayer::handleIACT(): ERROR: got invalid userID (%d)", userId);
+			}
+			break;
+		}
+
+		paused = nbframes - index == 1;
+
+		// Apparently this is expected to happen (e.g.: Brink's death video)
+		if (index && _iactTable[bufId] - index != -1) {
+			free(dataBuffer);
+			debugC(DEBUG_SMUSH, "SmushPlayer::handleIACT(): WARNING: got out of order block");
+			return;
+		}
+
+		_iactTable[bufId] = index;
+
+		if (index) {
+			if (_imuseDigital->diMUSEGetParam(bufId + DIMUSE_SMUSH_SOUNDID, 0x100)) {
+				_imuseDigital->diMUSEFeedStream(bufId + DIMUSE_SMUSH_SOUNDID, dataBuffer, subSize - 18, paused);
+				free(dataBuffer);
+				return;
+			}
+			free(dataBuffer);
+			error("SmushPlayer::handleIACT(): ERROR: got unexpected non-zero IACT block, bufID %d", bufId);
+		} else {
+			if (READ_BE_UINT32(dataBuffer) != MKTAG('i', 'M', 'U', 'S')) {
+				free(dataBuffer);
+				error("SmushPlayer::handleIACT(): ERROR: got non-IMUS IACT block");
+			}
+
+			curSoundId = 0;
+			do {
+				curSoundId = _imuseDigital->diMUSEGetNextSound(curSoundId);
+				if (!curSoundId)
+					break;
+			} while (_imuseDigital->diMUSEGetParam(curSoundId, 0x1800) != 1 || _imuseDigital->diMUSEGetParam(curSoundId, 0x1900) != bufId);
+
+			if (!curSoundId) {
+				// There isn't any previous sound running: start a new stream
+				if (_imuseDigital->diMUSEStartStream(bufId + DIMUSE_SMUSH_SOUNDID, 126, bufId)) {
+					free(dataBuffer);
+					error("SmushPlayer::handleIACT(): ERROR: couldn't start stream");
+				}
+			} else {
+				// There's an old sound running: switch the stream from the old one to the new one
+				_imuseDigital->diMUSESwitchStream(curSoundId, bufId + DIMUSE_SMUSH_SOUNDID, bufId == 2 ? 1000 : 150, 0, 0);
+			}
+
+			_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, 0x600, volume);
+
+			if (bufId == DIMUSE_BUFFER_SPEECH) {
+				_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, 0x400, DIMUSE_GROUP_SPEECH);
+			} else if (bufId == DIMUSE_BUFFER_MUSIC) {
+				_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, 0x400, DIMUSE_GROUP_MUSIC);
+			} else {
+				_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, 0x400, DIMUSE_GROUP_SFX);
+			}
+
+			_imuseDigital->diMUSEFeedStream(bufId + DIMUSE_SMUSH_SOUNDID, dataBuffer, subSize - 18, paused);
+			free(dataBuffer);
+			return;
+		}
 	}
 }
 

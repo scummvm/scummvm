@@ -29,8 +29,7 @@
 #include "scumm/actor.h"
 #include "scumm/cdda.h"
 #include "scumm/file.h"
-#include "scumm/imuse/imuse.h"
-#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/players/player_towns.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -465,6 +464,26 @@ void Sound::processSfxQueues() {
 					_mouthSyncMode = 1;
 				}
 			}
+#if defined(ENABLE_SCUMM_7_8)
+			if (_vm->_imuseDigital && !_vm->_imuseDigital->isFTSoundEngine()) {
+				int volume = a->_talkVolume;
+				int frequency = a->_talkFrequency;
+				int pan = a->_talkPan;
+				if (_vm->_imuseDigital->isSoundRunning(kTalkSoundID)) {
+					if (_vm->VAR(_vm->VAR_VOICE_MODE) == 2)
+						volume = 0;
+					if (_vm->_imuseDigital->getCurSpeechVolume() != volume) {
+						_vm->_imuseDigital->setVolume(kTalkSoundID, volume);
+					}
+					if (_vm->_imuseDigital->getCurSpeechFrequency() != frequency) {
+						_vm->_imuseDigital->setFrequency(kTalkSoundID, frequency);
+					}
+					if (_vm->_imuseDigital->getCurSpeechPan() != pan) {
+						_vm->_imuseDigital->setPan(kTalkSoundID, pan);
+					}
+				}
+			}
+#endif
 		}
 
 		if ((!ConfMan.getBool("subtitles") && finished) || (finished && _vm->_talkDelay == 0)) {
@@ -492,13 +511,12 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 
 	bool _sampleIsPCMS16BE44100 = false;
 
-	if (_vm->_game.id == GID_CMI) {
+	if (_vm->_game.id == GID_CMI || (_vm->_game.id == GID_DIG && !(_vm->_game.features & GF_DEMO))) {
+		// COMI (full & demo), DIG (full)
 		_sfxMode |= mode;
 		return;
-	} else if (_vm->_game.id == GID_DIG) {
+	} else if (_vm->_game.id == GID_DIG && (_vm->_game.features & GF_DEMO)) {
 		_sfxMode |= mode;
-		if (!(_vm->_game.features & GF_DEMO))
-			return;
 
 		char filename[30];
 		char roomname[10];
@@ -543,6 +561,66 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			warning("startTalkSound: dig demo: voc file not found");
 			return;
 		}
+
+		file->seek(0, SEEK_END);
+		int fileSize = file->pos();
+#if defined(ENABLE_SCUMM_7_8)
+		_vm->_imuseDigital->startVoice(filename, file.release(), 0, fileSize);
+#endif
+		return;
+	} else if (_vm->_game.id == GID_FT) {
+		int totalOffset, soundSize, fileSize, headerTag;
+
+		if (_vm->_voiceMode != 2) {
+			file.reset(new ScummFile());
+			if (!file)
+				error("startTalkSound: Out of memory");
+
+			if (!_vm->openFile(*file, _sfxFilename)) {
+				warning("startTalkSound: could not open sfx file %s", _sfxFilename.c_str());
+				return;
+			}
+
+			file->setEnc(_sfxFileEncByte);
+			file->seek(offset, SEEK_SET);
+
+			if (b > 8) {
+				num = (b - 8) >> 1;
+			}
+
+			if (num >= 50)
+				num = 48;
+
+			assert(num + 1 < (int)ARRAYSIZE(_mouthSyncTimes));
+			for (i = 0; i < num; i++)
+				_mouthSyncTimes[i] = file->readUint16BE();
+
+			_mouthSyncTimes[i] = 0xFFFF;
+			_sfxMode |= mode;
+			_curSoundPos = 0;
+			_mouthSyncMode = true;
+
+			totalOffset = offset + b;
+			file->seek(totalOffset, SEEK_SET);
+			headerTag = file->readUint32BE();
+			soundSize = file->readUint32BE() - 8;
+			fileSize = soundSize;
+			if (headerTag == MKTAG('C','r','e','a')) {
+				file->seek(totalOffset + 27, SEEK_SET);
+				fileSize = 31;
+				fileSize += file->readUint32LE() >> 8;
+#if defined(ENABLE_SCUMM_7_8)
+				_vm->_imuseDigital->startVoice(_sfxFilename.c_str(), file.release(), totalOffset, fileSize);
+#endif
+			} else if (headerTag == MKTAG('V','T','L','K')) {
+#if defined(ENABLE_SCUMM_7_8)
+				_vm->_imuseDigital->startVoice(_sfxFilename.c_str(), file.release(), totalOffset + 8, soundSize);
+#endif
+			} else {
+				file.release()->close();
+			}
+		}
+		return;
 	} else {
 		// This has been verified for INDY4, DOTT and SAM
 		if (_vm->_voiceMode == 2 && _vm->_game.version <= 6)
@@ -674,12 +752,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			return;
 		}
 
-		if (_vm->_imuseDigital) {
-#ifdef ENABLE_SCUMM_7_8
-			//_vm->_imuseDigital->stopSound(kTalkSoundID);
-			_vm->_imuseDigital->startVoice(kTalkSoundID, input);
-#endif
-		} else {
+		if (!_vm->_imuseDigital) {
 			if (mode == 1) {
 				_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, input, id);
 			} else {
@@ -723,8 +796,9 @@ bool Sound::isMouthSyncOff(uint pos) {
 
 int Sound::isSoundRunning(int sound) const {
 #ifdef ENABLE_SCUMM_7_8
-	if (_vm->_imuseDigital)
-		return (_vm->_imuseDigital->getSoundStatus(sound) != 0);
+	if (_vm->_imuseDigital) {
+		return (_vm->_imuseDigital->isSoundRunning(sound) != 0);
+	}
 #endif
 
 	if (sound == _currentCDSound)
@@ -760,7 +834,7 @@ bool Sound::isSoundInUse(int sound) const {
 
 #ifdef ENABLE_SCUMM_7_8
 	if (_vm->_imuseDigital)
-		return (_vm->_imuseDigital->getSoundStatus(sound) != 0);
+		return (_vm->_imuseDigital->isSoundRunning(sound) != 0);
 #endif
 
 	if (sound == _currentCDSound)
@@ -858,8 +932,9 @@ void Sound::soundKludge(int *list, int num) {
 
 #ifdef ENABLE_SCUMM_7_8
 	if (_vm->_imuseDigital) {
-		_vm->_imuseDigital->parseScriptCmds(list[0], list[1], list[2], list[3], list[4],
-												list[5], list[6], list[7]);
+		_vm->_imuseDigital->parseScriptCmds(list[0],  list[1],  list[2],  list[3],  list[4],
+									  list[5],  list[6],  list[7],  list[8],  list[9],
+									  list[10], list[11], list[12], list[13], list[14], list[15]);
 		return;
 	}
 #endif
@@ -922,6 +997,20 @@ void Sound::pauseSounds(bool pause) {
 		else
 			startCDTimer();
 	}
+}
+
+bool Sound::isSfxFileCompressed() {
+	return !(_soundMode == kVOCMode);
+}
+
+ScummFile *Sound::restoreDiMUSESpeechFile(const char *fileName) {
+	Common::ScopedPtr<ScummFile> file;
+	file.reset(new ScummFile());
+	if (!_vm->openFile(*file, fileName)) {
+		return NULL;
+	}
+
+	return file.release();
 }
 
 void Sound::setupSfxFile() {

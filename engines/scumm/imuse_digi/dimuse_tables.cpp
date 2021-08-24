@@ -20,8 +20,6 @@
  *
  */
 
-
-//#include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_tables.h"
 
 namespace Scumm {
@@ -853,7 +851,7 @@ const imuseFtSeqTable _ftSeqMusicTable[] = {
 	{"",         0,  0  },
 
 	{"funeral",  2,  127},
-	{"",         2,  127},
+	{"",         0,  0  },
 	{"moshop",   3,  64 },
 	{"",         0,  0  },
 

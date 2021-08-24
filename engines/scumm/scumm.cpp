@@ -42,7 +42,7 @@
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
 #include "scumm/imuse/imuse.h"
-#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/players/player_towns.h"
@@ -1628,12 +1628,32 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 	else
 		_smushFrameRate = (_game.id == GID_FT) ? 10 : 12;
 
-	int dimuseTempo = CLIP(ConfMan.getInt("dimuse_tempo"), 10, 100);
-	ConfMan.setInt("dimuse_tempo", dimuseTempo);
-	ConfMan.flushToDisk();
-	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer, dimuseTempo);
-
 	ScummEngine::setupScumm(macResourceFile);
+
+	// Check if we are dealing with old resource files compressed with the ScummVM tools
+	bool filesAreCompressed = false;
+
+	// COMI demo is excluded from the count since it appears it can't be compressed
+	// DIG demo uses raw VOC files for speech instead of a MONSTER.SOU file
+	if ((_game.id == GID_CMI || _game.id == GID_DIG) && !(_game.features & GF_DEMO)) {
+		BundleMgr *bnd = new BundleMgr(new BundleDirCache());
+		filesAreCompressed |= bnd->isExtCompBun(_game.id);
+		delete bnd;
+	} else if (_game.id == GID_FT) {
+		filesAreCompressed |= _sound->isSfxFileCompressed();
+	}
+
+	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer);
+
+	if (filesAreCompressed) {
+		GUI::MessageDialog dialog(_(
+			"Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
+			"compression is not supported anymore for this game, audio will be disabled.\n"
+			"Please reinstall the game with the correct resource files."),
+		_("OK"));
+		dialog.runModal();
+		_imuseDigital->disableEngine();
+	}
 
 	// Create FT INSANE object
 	if (_game.id == GID_FT)
@@ -1643,7 +1663,7 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 
 	_smixer = new SmushMixer(_mixer);
 
-	_splayer = new SmushPlayer(this);
+	_splayer = new SmushPlayer(this, _imuseDigital);
 }
 #endif
 
@@ -2842,10 +2862,13 @@ void ScummEngine_v7::scummLoop_handleSound() {
 	ScummEngine_v6::scummLoop_handleSound();
 	if (_imuseDigital) {
 		_imuseDigital->flushTracks();
-		// In CoMI and the Dig the full (non-demo) version invoke IMuseDigital::refreshScripts
-		if ((_game.id == GID_DIG || _game.id == GID_CMI) && !(_game.features & GF_DEMO))
+		// In CoMI and the Dig the full (non-demo) version invoke refreshScripts()
+		if (!(_game.id == GID_FT) && !(_game.id == GID_DIG && _game.features & GF_DEMO))
 			_imuseDigital->refreshScripts();
+		else
+			_imuseDigital->diMUSEProcessStreams();
 	}
+
 	if (_smixer) {
 		_smixer->flush();
 	}
