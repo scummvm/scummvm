@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-23 23:37+0000\n"
-"PO-Revision-Date: 2021-08-22 02:25+0000\n"
+"PO-Revision-Date: 2021-08-24 09:31+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -1690,13 +1690,11 @@ msgstr "Nenhum"
 
 #: gui/options.cpp:2524
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorar"
 
 #: gui/options.cpp:2525
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable autosave"
-msgstr "Desabilitar menu de salvar"
+msgstr "Desabilitar autosave"
 
 #: gui/options.cpp:2526
 msgid ""
@@ -1706,24 +1704,28 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"AVISO: O salvamento automático foi habilitado. Alguns de seus jogos possuem "
+"jogos salvos existentes no slot de salvamento automático. Você pode mover os "
+"salvamentos existentes para novos slots, desativar o salvamento automático "
+"ou ignorar (você será avisado quando o salvamento automático estiver prestes "
+"a substituir um salvamento).\n"
+"Lista de jogos:\n"
 
 #: gui/options.cpp:2535
-#, fuzzy
-#| msgid "Add Game..."
 msgid ""
 "\n"
 "And more..."
-msgstr "Adicionar Jogo..."
+msgstr ""
+"\n"
+"E mais..."
 
 #: gui/options.cpp:2536 engines/engine.cpp:560
-#, fuzzy
-#| msgid "Move up"
 msgid "Move"
-msgstr "Mover para cima"
+msgstr "Mover"
 
 #: gui/options.cpp:2549
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "ERRO: Falha ao mover os seguintes jogos salvos:\n"
 
 #: gui/options.cpp:2635
 msgid "Failed to change cloud storage!"
@@ -2403,13 +2405,11 @@ msgstr ""
 
 #: engines/engine.cpp:553
 msgid "Overwrite"
-msgstr ""
+msgstr "Sobrescrever"
 
 #: engines/engine.cpp:554
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Cancel autosave"
-msgstr "Salvamento automático sem título"
+msgstr "Cancelar autosave"
 
 #: engines/engine.cpp:556
 #, c-format
@@ -2418,10 +2418,14 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"AVISO: O slot de salvamento automático tem um jogo salvo chamado %s. Você "
+"pode mover o jogo salvo existente para um novo slot, sobrescrever jogo salvo "
+"existente ou cancelar o salvamento automático (não solicitará novamente até "
+"reiniciar)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "ERRO: Não foi possível copiar o jogo salvo para um novo slot"
 
 #: engines/engine.cpp:587 engines/metaengine.cpp:367 engines/savestate.cpp:96
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
