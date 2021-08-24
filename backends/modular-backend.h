@@ -27,7 +27,6 @@
 
 class GraphicsManager;
 class MixerManager;
-class MutexManager;
 
 /**
  * Base classes for modular backends.
@@ -38,6 +37,7 @@ class MutexManager;
  * A backend derivated from these classes, will need to implement
  * these functions on its own:
  *   OSystem::pollEvent()
+ *   OSystem::createMutex()
  *   OSystem::getMillis()
  *   OSystem::delayMillis()
  *   OSystem::getTimeAndDate()
@@ -161,30 +161,6 @@ protected:
 	//@{
 
 	MixerManager *_mixerManager;
-
-	//@}
-};
-
-class ModularMutexBackend : virtual public BaseBackend {
-public:
-	ModularMutexBackend();
-	virtual ~ModularMutexBackend();
-
-	/** @name Mutex handling */
-	//@{
-
-	virtual MutexRef createMutex() override final;
-	virtual void lockMutex(MutexRef mutex) override final;
-	virtual void unlockMutex(MutexRef mutex) override final;
-	virtual void deleteMutex(MutexRef mutex) override final;
-
-	//@}
-
-protected:
-	/** @name Managers variables */
-	//@{
-
-	MutexManager *_mutexManager;
 
 	//@}
 };

@@ -49,6 +49,7 @@ typedef void (*sighandler_t)(int);
 
 #if defined(USE_NULL_DRIVER)
 #include "backends/modular-backend.h"
+#include "backends/mutex/null/null-mutex.h"
 #include "base/main.h"
 
 #ifndef NULL_DRIVER_USE_FOR_TEST
@@ -56,7 +57,6 @@ typedef void (*sighandler_t)(int);
 #include "backends/timer/default/default-timer.h"
 #include "backends/events/default/default-events.h"
 #include "backends/mixer/null/null-mixer.h"
-#include "backends/mutex/null/null-mutex.h"
 #include "backends/graphics/null/null-graphics.h"
 #include "gui/debugger.h"
 #endif
@@ -76,7 +76,7 @@ typedef void (*sighandler_t)(int);
 	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
 
-class OSystem_NULL : public ModularMutexBackend, public ModularMixerBackend, public ModularGraphicsBackend, Common::EventSource {
+class OSystem_NULL : public ModularMixerBackend, public ModularGraphicsBackend, Common::EventSource {
 public:
 	OSystem_NULL();
 	virtual ~OSystem_NULL();
@@ -85,6 +85,7 @@ public:
 
 	virtual bool pollEvent(Common::Event &event);
 
+	virtual Common::MutexInternal *createMutex();
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const;
@@ -145,7 +146,6 @@ void OSystem_NULL::initBackend() {
 	last_handler = signal(SIGINT, intHandler);
 #endif
 
-	_mutexManager = new NullMutexManager();
 	_timerManager = new DefaultTimerManager();
 	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager();
@@ -183,6 +183,10 @@ bool OSystem_NULL::pollEvent(Common::Event &event) {
 #endif
 
 	return false;
+}
+
+Common::MutexInternal *OSystem_NULL::createMutex() {
+	return new NullMutexInternal();
 }
 
 uint32 OSystem_NULL::getMillis(bool skipRecord) {

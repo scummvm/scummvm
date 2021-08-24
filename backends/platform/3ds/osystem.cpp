@@ -28,6 +28,7 @@
 #include "osystem.h"
 
 #include "backends/platform/3ds/config.h"
+#include "backends/mutex/3ds/3ds-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/events/default/default-events.h"
@@ -198,19 +199,8 @@ void OSystem_3DS::getTimeAndDate(TimeDate& td, bool skipRecord) const {
 	td.tm_wday = t.tm_wday;
 }
 
-OSystem::MutexRef OSystem_3DS::createMutex() {
-	RecursiveLock *mutex = new RecursiveLock();
-	RecursiveLock_Init(mutex);
-	return (OSystem::MutexRef) mutex;
-}
-void OSystem_3DS::lockMutex(MutexRef mutex) {
-	RecursiveLock_Lock((RecursiveLock*)mutex);
-}
-void OSystem_3DS::unlockMutex(MutexRef mutex) {
-	RecursiveLock_Unlock((RecursiveLock*)mutex);
-}
-void OSystem_3DS::deleteMutex(MutexRef mutex) {
-	delete (RecursiveLock*)mutex;
+Common::MutexInternal *OSystem_3DS::createMutex() {
+	return create3DSMutexInternal();
 }
 
 Common::String OSystem_3DS::getSystemLanguage() const {

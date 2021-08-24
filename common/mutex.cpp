@@ -32,22 +32,22 @@ Mutex::Mutex() {
 }
 
 Mutex::~Mutex() {
-	g_system->deleteMutex(_mutex);
+	delete _mutex;
 }
 
-void Mutex::lock() {
-	g_system->lockMutex(_mutex);
+bool Mutex::lock() {
+	return _mutex->lock();
 }
 
-void Mutex::unlock() {
-	g_system->unlockMutex(_mutex);
+bool Mutex::unlock() {
+	return _mutex->unlock();
 }
 
 
 #pragma mark -
 
 
-StackLock::StackLock(OSystem::MutexRef mutex, const char *mutexName)
+StackLock::StackLock(MutexInternal *mutex, const char *mutexName)
 	: _mutex(mutex), _mutexName(mutexName) {
 	lock();
 }
@@ -61,18 +61,18 @@ StackLock::~StackLock() {
 	unlock();
 }
 
-void StackLock::lock() {
+bool StackLock::lock() {
 	if (_mutexName != nullptr)
 		debug(6, "Locking mutex %s", _mutexName);
 
-	g_system->lockMutex(_mutex);
+	return _mutex->lock();
 }
 
-void StackLock::unlock() {
+bool StackLock::unlock() {
 	if (_mutexName != nullptr)
 		debug(6, "Unlocking mutex %s", _mutexName);
 
-	g_system->unlockMutex(_mutex);
+	return _mutex->unlock();
 }
 
 } // End of namespace Common

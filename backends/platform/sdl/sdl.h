@@ -40,7 +40,7 @@ class DiscordPresence;
 /**
  * Base OSystem class for all SDL ports.
  */
-class OSystem_SDL : public ModularMutexBackend, public ModularMixerBackend, public ModularGraphicsBackend {
+class OSystem_SDL : public ModularMixerBackend, public ModularGraphicsBackend {
 public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
@@ -83,6 +83,7 @@ public:
 
 	virtual void setWindowCaption(const Common::U32String &caption) override;
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
+	virtual Common::MutexInternal *createMutex() override;
 	virtual uint32 getMillis(bool skipRecord = false) override;
 	virtual void delayMillis(uint msecs) override;
 	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const override;

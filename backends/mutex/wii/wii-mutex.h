@@ -20,24 +20,11 @@
  *
  */
 
-#ifndef BACKENDS_MUTEX_ABSTRACT_H
-#define BACKENDS_MUTEX_ABSTRACT_H
+#ifndef BACKENDS_MUTEX_WII_H
+#define BACKENDS_MUTEX_WII_H
 
-#include "common/system.h"
-#include "common/noncopyable.h"
+#include "common/mutex.h"
 
-/**
- * Abstract class for mutex manager. Subclasses
- * implement the real functionality.
- */
-class MutexManager : Common::NonCopyable {
-public:
-	virtual ~MutexManager() {}
-
-	virtual OSystem::MutexRef createMutex() = 0;
-	virtual void lockMutex(OSystem::MutexRef mutex) = 0;
-	virtual void unlockMutex(OSystem::MutexRef mutex) = 0;
-	virtual void deleteMutex(OSystem::MutexRef mutex) = 0;
-};
+Common::MutexInternal *createWiiMutexInternal();
 
 #endif

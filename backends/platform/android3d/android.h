@@ -102,7 +102,7 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLTHREADCHECK do {  } while (false)
 #endif
 
-class OSystem_Android : public ModularMutexBackend, public ModularGraphicsBackend, Common::EventSource {
+class OSystem_Android : public ModularGraphicsBackend, Common::EventSource {
 private:
 	// passed from the dark side
 	int _audio_sample_rate;
@@ -172,6 +172,7 @@ public:
 
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
+	virtual Common::MutexInternal *createMutex();
 
 	virtual void quit();
 

@@ -20,68 +20,71 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
 
-#if defined(__ANDROID__) || defined(IPHONE)
+#if defined(__WII__)
 
-#include "backends/mutex/pthread/pthread-mutex.h"
+#include "backends/mutex/wii/wii-mutex.h"
 
-#include <pthread.h>
+#include <ogc/mutex.h>
 
 /**
- * pthreads mutex implementation
+ * Wii mutex implementation
  */
-class PthreadMutexInternal final : public Common::MutexInternal {
+class WiiMutexInternal final : public Common::MutexInternal {
 public:
-	PthreadMutexInternal();
-	virtual ~PthreadMutexInternal() override;
+	WiiMutexInternal();
+	virtual ~WiiMutexInternal() override;
 
 	virtual bool lock() override;
 	virtual bool unlock() override;
 
 private:
-	pthread_mutex_t _mutex;
+	mutex_t _mutex;
 };
 
 
-PthreadMutexInternal::PthreadMutexInternal() {
-	pthread_mutexattr_t attr;
+WiiMutexInternal::WiiMutexInternal() {
+	s32 res = LWP_MutexInit(&_mutex, true);
 
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-
-	if (pthread_mutex_init(&_mutex, &attr) != 0) {
-		warning("pthread_mutex_init() failed");
+	if (res) {
+		printf("ERROR creating mutex\n");
 	}
 }
 
-PthreadMutexInternal::~PthreadMutexInternal() {
-	if (pthread_mutex_destroy(&_mutex) != 0)
-		warning("pthread_mutex_destroy() failed");
+WiiMutexInternal::~WiiMutexInternal() {
+	s32 res = LWP_MutexDestroy(_mutex);
+
+	if (res)
+		printf("ERROR destroying mutex (%d)\n", res);
 }
 
-bool PthreadMutexInternal::lock() {
-	if (pthread_mutex_lock(&_mutex) != 0) {
-		warning("pthread_mutex_lock() failed");
+bool WiiMutexInternal::lock() {
+	s32 res = LWP_MutexLock(_mutex);
+
+	if (res) {
+		printf("ERROR locking mutex (%d)\n", res);
 		return false;
 	} else {
 		return true;
 	}
 }
 
-bool PthreadMutexInternal::unlock() {
-	if (pthread_mutex_unlock(&_mutex) != 0) {
-		warning("pthread_mutex_unlock() failed");
+bool WiiMutexInternal::unlock() {
+	s32 res = LWP_MutexUnlock(_mutex);
+
+	if (res) {
+		printf("ERROR unlocking mutex (%d)\n", res);
 		return false;
 	} else {
 		return true;
 	}
 }
 
-Common::MutexInternal *createPthreadMutexInternal() {
-	return new PthreadMutexInternal();
+Common::MutexInternal *createWiiMutexInternal() {
+	return new WiiMutexInternal();
 }
 
 #endif

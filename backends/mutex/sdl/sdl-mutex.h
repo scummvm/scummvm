@@ -23,18 +23,8 @@
 #ifndef BACKENDS_MUTEX_SDL_H
 #define BACKENDS_MUTEX_SDL_H
 
-#include "backends/mutex/mutex.h"
+#include "common/mutex.h"
 
-/**
- * SDL mutex manager
- */
-class SdlMutexManager : public MutexManager {
-public:
-	virtual OSystem::MutexRef createMutex();
-	virtual void lockMutex(OSystem::MutexRef mutex);
-	virtual void unlockMutex(OSystem::MutexRef mutex);
-	virtual void deleteMutex(OSystem::MutexRef mutex);
-};
-
+Common::MutexInternal *createSdlMutexInternal();
 
 #endif

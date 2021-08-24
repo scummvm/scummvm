@@ -51,7 +51,7 @@ struct AQCallbackStruct {
 	AudioStreamBasicDescription dataFormat;
 };
 
-class OSystem_IPHONE : public EventsBaseBackend, public ModularMutexBackend, public PaletteManager {
+class OSystem_IPHONE : public EventsBaseBackend, public PaletteManager {
 protected:
 	static AQCallbackStruct s_AudioQueue;
 	static SoundProc s_soundCallback;
@@ -165,6 +165,7 @@ public:
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
+	virtual Common::MutexInternal *createMutex();
 
 	static void mixCallback(void *sys, byte *samples, int len);
 	virtual void setupMixer(void);

@@ -133,8 +133,6 @@ OSystem_SDL::~OSystem_SDL() {
 #endif
 
 	_timerManager = 0;
-	delete _mutexManager;
-	_mutexManager = 0;
 
 	delete _logger;
 	_logger = 0;
@@ -162,11 +160,6 @@ void OSystem_SDL::init() {
 
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
-
-	// Creates the early needed managers, if they don't exist yet
-	// (we check for this to allow subclasses to provide their own).
-	if (_mutexManager == 0)
-		_mutexManager = new SdlMutexManager();
 
 	if (_window == 0)
 		_window = new SdlWindow();
@@ -649,6 +642,10 @@ bool OSystem_SDL::openUrl(const Common::String &url) {
 	return true;
 }
 #endif
+
+Common::MutexInternal *OSystem_SDL::createMutex() {
+	return createSdlMutexInternal();
+}
 
 uint32 OSystem_SDL::getMillis(bool skipRecord) {
 	uint32 millis = SDL_GetTicks();

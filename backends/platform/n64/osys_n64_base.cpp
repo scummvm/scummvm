@@ -30,6 +30,7 @@
 #include "pakfs_save_manager.h"
 #include "framfs_save_manager.h"
 #include "backends/fs/n64/n64-fs-factory.h"
+#include "backends/mutex/null/null-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "graphics/conversion.h"
@@ -812,20 +813,8 @@ void OSystem_N64::delayMillis(uint msecs) {
 }
 
 // As we don't have multi-threading, no need for mutexes
-OSystem::MutexRef OSystem_N64::createMutex(void) {
-	return NULL;
-}
-
-void OSystem_N64::lockMutex(MutexRef mutex) {
-	return;
-}
-
-void OSystem_N64::unlockMutex(MutexRef mutex) {
-	return;
-}
-
-void OSystem_N64::deleteMutex(MutexRef mutex) {
-	return;
+Common::MutexInternal *OSystem_N64::createMutex(void) {
+	return new NullMutexInternal();
 }
 
 void OSystem_N64::quit() {

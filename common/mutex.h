@@ -38,17 +38,25 @@ namespace Common {
 
 class Mutex;
 
+class MutexInternal {
+public:
+	virtual ~MutexInternal() {}
+
+	virtual bool lock() = 0;
+	virtual bool unlock() = 0;
+};
+
 /**
  * Auxillary class to (un)lock a mutex on the stack.
  */
 class StackLock {
-	OSystem::MutexRef _mutex;
+	MutexInternal *_mutex;
 	const char *_mutexName;
 
-	void lock();
-	void unlock();
+	bool lock();
+	bool unlock();
 public:
-	explicit StackLock(OSystem::MutexRef mutex, const char *mutexName = nullptr);
+	explicit StackLock(MutexInternal *mutex, const char *mutexName = nullptr);
 	explicit StackLock(const Mutex &mutex, const char *mutexName = nullptr);
 	~StackLock();
 };
@@ -60,14 +68,14 @@ public:
 class Mutex {
 	friend class StackLock;
 
-	OSystem::MutexRef _mutex;
+	MutexInternal *_mutex;
 
 public:
 	Mutex();
 	~Mutex();
 
-	void lock();
-	void unlock();
+	bool lock();
+	bool unlock();
 };
 
 /** @} */

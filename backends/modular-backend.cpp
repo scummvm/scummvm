@@ -25,7 +25,6 @@
 #include "backends/audiocd/audiocd.h"
 #include "backends/graphics/graphics.h"
 #include "backends/mixer/mixer.h"
-#include "backends/mutex/mutex.h"
 #include "gui/EventRecorder.h"
 
 #include "common/timer.h"
@@ -316,37 +315,3 @@ Audio::Mixer *ModularMixerBackend::getMixer() {
 	return getMixerManager()->getMixer();
 }
 
-
-ModularMutexBackend::ModularMutexBackend()
-	:
-	_mutexManager(0) {
-
-}
-
-ModularMutexBackend::~ModularMutexBackend() {
-	// _timerManager needs to be deleted before _mutexManager to avoid a crash.
-	delete _timerManager;
-	_timerManager = 0;
-	delete _mutexManager;
-	_mutexManager = 0;
-}
-
-OSystem::MutexRef ModularMutexBackend::createMutex() {
-	assert(_mutexManager);
-	return _mutexManager->createMutex();
-}
-
-void ModularMutexBackend::lockMutex(MutexRef mutex) {
-	assert(_mutexManager);
-	_mutexManager->lockMutex(mutex);
-}
-
-void ModularMutexBackend::unlockMutex(MutexRef mutex) {
-	assert(_mutexManager);
-	_mutexManager->unlockMutex(mutex);
-}
-
-void ModularMutexBackend::deleteMutex(MutexRef mutex) {
-	assert(_mutexManager);
-	_mutexManager->deleteMutex(mutex);
-}

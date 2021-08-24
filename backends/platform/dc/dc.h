@@ -163,10 +163,7 @@ public:
   virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12); }
 
   // Mutex handling
-  MutexRef createMutex();
-  void lockMutex(MutexRef mutex);
-  void unlockMutex(MutexRef mutex);
-  void deleteMutex(MutexRef mutex);
+  Common::MutexInternal *createMutex();
 
   // Set a window caption or any other comparable status display to the
   // given value.

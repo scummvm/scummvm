@@ -131,8 +131,6 @@ int OSystem_iOS7::timerHandler(int t) {
 }
 
 void OSystem_iOS7::initBackend() {
-	_mutexManager = new PthreadMutexManager();
-
 #ifdef IPHONE_SANDBOXED
 	_savefileManager = new SandboxedSaveFileManager(_chrootBasePath, "/Savegames");
 #else
@@ -307,6 +305,10 @@ void OSystem_iOS7::setTimerCallback(TimerProc callback, int interval) {
 		_timerCallback = callback;
 	} else
 		_timerCallback = NULL;
+}
+
+Common::MutexInternal *OSystem_iOS7::createMutex() {
+	return createPthreadMutexInternal();
 }
 
 void OSystem_iOS7::quit() {

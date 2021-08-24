@@ -126,10 +126,7 @@ public:
 	void delayMillis(uint msecs);
 
 	// Mutex
-	MutexRef createMutex(void);
-	void lockMutex(MutexRef mutex);
-	void unlockMutex(MutexRef mutex);
-	void deleteMutex(MutexRef mutex);
+	Common::MutexInternal *createMutex(void);
 
 	// Sound
 	static void mixCallback(void *sys, byte *samples, int len);

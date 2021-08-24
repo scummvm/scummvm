@@ -38,7 +38,7 @@ enum {
 	GFX_SWSCALE = 2
 };
 
-class OSystem_DS : public ModularMutexBackend, public ModularMixerBackend, public PaletteManager {
+class OSystem_DS : public ModularMixerBackend, public PaletteManager {
 protected:
 	DS::Background _framebuffer, _overlay;
 #ifdef DISABLE_TEXT_CONSOLE
@@ -130,6 +130,7 @@ public:
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const;
 	void doTimerCallback(int interval = 10);
+	virtual Common::MutexInternal *createMutex();
 
 	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }
 	virtual Common::HardwareInputSet *getHardwareInputSet();

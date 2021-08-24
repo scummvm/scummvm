@@ -358,20 +358,8 @@ void OSystem_PSP::delayMillis(uint msecs) {
 	PspThread::delayMillis(msecs);
 }
 
-OSystem::MutexRef OSystem_PSP::createMutex(void) {
-	return (MutexRef) new PspMutex(true);	// start with a full mutex
-}
-
-void OSystem_PSP::lockMutex(MutexRef mutex) {
-	((PspMutex *)mutex)->lock();
-}
-
-void OSystem_PSP::unlockMutex(MutexRef mutex) {
-	((PspMutex *)mutex)->unlock();
-}
-
-void OSystem_PSP::deleteMutex(MutexRef mutex) {
-	delete (PspMutex *)mutex;
+Common::MutexInternal *OSystem_PSP::createMutex(void) {
+	return new PspMutex(true);	// start with a full mutex
 }
 
 void OSystem_PSP::mixCallback(void *sys, byte *samples, int len) {
