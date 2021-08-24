@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-23 23:37+0000\n"
+"POT-Creation-Date: 2021-08-24 20:49+0000\n"
 "PO-Revision-Date: 2021-08-24 09:31+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -4035,6 +4035,21 @@ msgstr "Forçar texto suave"
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "Utiliza suavização para desenhar texto mesmo que o jogo não precise disso"
+
+#: engines/ags/ags.cpp:128
+#, fuzzy
+#| msgid ""
+#| "This game requires the HeroCraft subengine, which is not compiled in."
+msgid ""
+"The selected game uses a pre-2.5 version of the AGS engine, which is not "
+"supported."
+msgstr "Este jogo requer a subengine HeroCraft, que não está compilada."
+
+#: engines/ags/ags.cpp:136
+msgid ""
+"The selected game has a data file greater than 2Gb, which isn't supported by "
+"your version of ScummVM yet."
+msgstr ""
 
 #: engines/asylum/metaengine.cpp:70
 msgid "Show version"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-23 23:37+0000\n"
+"POT-Creation-Date: 2021-08-24 20:49+0000\n"
 "PO-Revision-Date: 2021-08-24 22:10+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -2427,8 +2427,8 @@ msgid ""
 msgstr ""
 "ATTENZIONE: La posizione dedicata al salvataggio automatico è già occupata "
 "da un salvataggio denominato %s. Puoi spostare tale salvataggio in una "
-"posizione libera, sovrascriverlo, o disabilitare il salvataggio automatico ("
-"verrà chiesto nuovamente al prossimo avvio del gioco)"
+"posizione libera, sovrascriverlo, o disabilitare il salvataggio automatico "
+"(verrà chiesto nuovamente al prossimo avvio del gioco)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
@@ -4061,6 +4061,23 @@ msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "Applica l'antialiasing ai testi, anche se il gioco non lo richiede "
 "esplicitamente"
+
+#: engines/ags/ags.cpp:128
+#, fuzzy
+#| msgid ""
+#| "This game requires the HeroCraft subengine, which is not compiled in."
+msgid ""
+"The selected game uses a pre-2.5 version of the AGS engine, which is not "
+"supported."
+msgstr ""
+"Questo gioco richiede il sotto-motore HeroCraft, che non è stato incluso "
+"durante la compilazione."
+
+#: engines/ags/ags.cpp:136
+msgid ""
+"The selected game has a data file greater than 2Gb, which isn't supported by "
+"your version of ScummVM yet."
+msgstr ""
 
 #: engines/asylum/metaengine.cpp:70
 msgid "Show version"

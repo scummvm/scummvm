@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-23 23:37+0000\n"
+"POT-Creation-Date: 2021-08-24 20:49+0000\n"
 "PO-Revision-Date: 2021-08-24 00:25+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4030,6 +4030,21 @@ msgstr "Примусово шрифти зі згладжуванням"
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "Використовувати шрифти зі згладжуванням, навіть коли гра цього не запитувала"
+
+#: engines/ags/ags.cpp:128
+#, fuzzy
+#| msgid ""
+#| "This game requires the HeroCraft subengine, which is not compiled in."
+msgid ""
+"The selected game uses a pre-2.5 version of the AGS engine, which is not "
+"supported."
+msgstr "Ця гра потрубує движка HeroCraft, який відсутній у збірці."
+
+#: engines/ags/ags.cpp:136
+msgid ""
+"The selected game has a data file greater than 2Gb, which isn't supported by "
+"your version of ScummVM yet."
+msgstr ""
 
 #: engines/asylum/metaengine.cpp:70
 msgid "Show version"
