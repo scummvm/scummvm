@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-23 23:37+0000\n"
-"PO-Revision-Date: 2021-08-21 11:25+0000\n"
+"PO-Revision-Date: 2021-08-24 09:31+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1673,13 +1673,11 @@ msgstr "Semmi"
 
 #: gui/options.cpp:2524
 msgid "Ignore"
-msgstr ""
+msgstr "Mellőz"
 
 #: gui/options.cpp:2525
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable autosave"
-msgstr "Mentés menü letiltás"
+msgstr "Automentés letiltás"
 
 #: gui/options.cpp:2526
 msgid ""
@@ -1689,24 +1687,28 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"FIGYELEM: Az automatikus mentés engedélyezve volt. Néhány játék rendelkezik "
+"meglévő mentésekkel az automatikus mentési helyen. A meglévő mentéseket "
+"áthelyezheti új helyekre, letilthatja az automatikus mentést, vagy figyelmen "
+"kívül hagyhatja (a rendszer megkérdezi, amikor az automatikus mentés "
+"felülírja a mentést).\n"
+"A játékok listája:\n"
 
 #: gui/options.cpp:2535
-#, fuzzy
-#| msgid "Add Game..."
 msgid ""
 "\n"
 "And more..."
-msgstr "Játék hozzáadás"
+msgstr ""
+"\n"
+"És több..."
 
 #: gui/options.cpp:2536 engines/engine.cpp:560
-#, fuzzy
-#| msgid "Move up"
 msgid "Move"
-msgstr "Mozgás fel"
+msgstr "Mozgás"
 
 #: gui/options.cpp:2549
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "HIBA: Nem sikerült áthelyezni a következő mentett játékokat:\n"
 
 #: gui/options.cpp:2635
 msgid "Failed to change cloud storage!"
@@ -2381,13 +2383,11 @@ msgstr ""
 
 #: engines/engine.cpp:553
 msgid "Overwrite"
-msgstr ""
+msgstr "Felülírás"
 
 #: engines/engine.cpp:554
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Cancel autosave"
-msgstr "Névtelen autómentés"
+msgstr "Autómentés megszakítás"
 
 #: engines/engine.cpp:556
 #, c-format
@@ -2396,10 +2396,13 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"FIGYELEM: Az automatikus mentési helyen van egy mentett játék, %s. A meglévő "
+"mentést áthelyezheti új helyre, felülírhatja a meglévőt, vagy megszakíthatja "
+"az automatikus mentést (nem kéri újra, amíg újra nem indul)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "HIBA: A játékmentés nem másolható új helyre"
 
 #: engines/engine.cpp:587 engines/metaengine.cpp:367 engines/savestate.cpp:96
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
