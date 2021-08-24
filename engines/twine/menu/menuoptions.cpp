@@ -417,8 +417,7 @@ bool MenuOptions::saveGameMenu() {
 	_engine->restoreFrontBuffer();
 	const int slot = chooseSave(TextId::kCreateSaveGame, true);
 	if (slot >= 0) {
-		// TODO: enter description
-		Common::Error state = _engine->saveGameState(slot, "description", false);
+		Common::Error state = _engine->saveGameState(slot, _engine->_gameState->_sceneName, false);
 		if (state.getCode() != Common::kNoError) {
 			error("Failed to save slot %i", slot);
 			return false;
