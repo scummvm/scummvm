@@ -330,6 +330,17 @@ void SaveLoadChooserDialog::listSaves() {
 #endif
 }
 
+void SaveLoadChooserDialog::activate(int slot, const Common::U32String &description) {
+	if (!_saveList.empty() && slot < int(_saveList.size())) {
+		const SaveStateDescriptor &desc = _saveList[slot];
+		if (_saveMode) {
+			_resultString = description.empty() ? desc.getDescription() : description;
+		}
+		setResult(desc.getSaveSlot());
+	}
+	close();
+}
+
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 void SaveLoadChooserDialog::addChooserButtons() {
 	if (_listButton) {
@@ -441,22 +452,14 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 		if (selItem >= 0 && _chooseButton->isEnabled()) {
 			if (_list->isEditable() || !_list->getSelectedString().empty()) {
 				_list->endEditMode();
-				if (!_saveList.empty()) {
-					setResult(_saveList[selItem].getSaveSlot());
-					_resultString = _list->getSelectedString();
-				}
-				close();
+				activate(selItem, _list->getSelectedString());
 			}
 		}
 		break;
 	case kChooseCmd:
 		_list->endEditMode();
 		if (selItem >= 0) {
-			if (!_saveList.empty()) {
-				setResult(_saveList[selItem].getSaveSlot());
-				_resultString = _list->getSelectedString();
-			}
-			close();
+			activate(selItem, _list->getSelectedString());
 		}
 		break;
 	case kListSelectionChangedCmd:
@@ -793,15 +796,9 @@ const Common::U32String &SaveLoadChooserGrid::getResultString() const {
 }
 
 void SaveLoadChooserGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	if (cmd <= _entriesPerPage && cmd + _curPage * _entriesPerPage <= _saveList.size()) {
-		const SaveStateDescriptor &desc = _saveList[cmd - 1 + _curPage * _entriesPerPage];
-
-		if (_saveMode) {
-			_resultString = desc.getDescription();
-		}
-
-		setResult(desc.getSaveSlot());
-		close();
+	const int slot = cmd + _curPage * _entriesPerPage - 1;
+	if (cmd <= _entriesPerPage) {
+		activate(slot, Common::U32String());
 	}
 
 	switch (cmd) {
