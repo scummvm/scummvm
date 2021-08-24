@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-23 23:37+0000\n"
-"PO-Revision-Date: 2021-08-20 22:54+0000\n"
+"PO-Revision-Date: 2021-08-24 00:32+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -1691,13 +1691,11 @@ msgstr "Нет"
 
 #: gui/options.cpp:2524
 msgid "Ignore"
-msgstr ""
+msgstr "Игнорировать"
 
 #: gui/options.cpp:2525
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable autosave"
-msgstr "Запретить меню сохранения"
+msgstr "Запретить автосохранение"
 
 #: gui/options.cpp:2526
 msgid ""
@@ -1707,24 +1705,27 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"ПРЕДУПРЕЖДЕНИЕ: Автосохранение включено. Некоторые ваши игры уже имеют "
+"сохранения в слоте для автосохранения. Вы можете переместить существующие "
+"сохранения в новые слоты, выключить автосохранение или игорировать (вы "
+"будете уведомлены, если созранение может быть перетёрто).\n"
+"Список игр:\n"
 
 #: gui/options.cpp:2535
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid ""
 "\n"
 "And more..."
-msgstr "~Д~обавить игру..."
+msgstr ""
+"\n"
+"Далее..."
 
 #: gui/options.cpp:2536 engines/engine.cpp:560
-#, fuzzy
-#| msgid "Move up"
 msgid "Move"
-msgstr "Идти вверх"
+msgstr "Переместить"
 
 #: gui/options.cpp:2549
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "ОШИБКА: Не удалось переместить следующие сохранения:\n"
 
 #: gui/options.cpp:2635
 msgid "Failed to change cloud storage!"
@@ -2402,13 +2403,11 @@ msgstr ""
 
 #: engines/engine.cpp:553
 msgid "Overwrite"
-msgstr ""
+msgstr "Перетереть"
 
 #: engines/engine.cpp:554
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Cancel autosave"
-msgstr "Автосохранение без имени"
+msgstr "Отменить автосохранение"
 
 #: engines/engine.cpp:556
 #, c-format
@@ -2417,10 +2416,13 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"ПРЕДУПРЕЖДЕНИЕ: В слоте для автосохранений находится сохранение %s. Вы "
+"можете либо перенести существующее сохранение в новый слот, Перетереть "
+"существующее сохранение или отменить автосохранения (до перезапуска ScummVM)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "ОШИБКА: Не удалось перенести сохранение в новый слот"
 
 #: engines/engine.cpp:587 engines/metaengine.cpp:367 engines/savestate.cpp:96
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
