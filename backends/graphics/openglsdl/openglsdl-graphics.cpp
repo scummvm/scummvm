@@ -552,7 +552,16 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	// WORKAROUND: Prevent (nearly) offscreen positioning of the ScummVM window by forcefully
 	// trigger a re-positioning event to center the window.
 	if (!_wantsFullScreen && !(SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_MAXIMIZED)) {
-		SDL_SetWindowPosition(_window->getSDLWindow(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
+		// Read the current window position
+		int _xWindowPos;
+		SDL_GetWindowPosition(_window->getSDLWindow(), &_xWindowPos, NULL);
+
+		// Relocate the window to the center of the screen in case we try to draw
+		// outside the window area. In this case, _xWindowPos always returns 0.
+		if (_xWindowPos == 0) {
+			SDL_SetWindowPosition(_window->getSDLWindow(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+		}
 	}
 #endif
 	return true;
