@@ -121,7 +121,7 @@ Common::Error AGSEngine::run() {
 	}
 
 	if (isUnsupportedPre25()) {
-		GUIError("The selected game is a completely unsupported pre-2.5 version");
+		GUIError("The selected game uses a pre-2.5 version of the AGS engine, which is not supported.");
 		return Common::kNoError;
 	}
 
