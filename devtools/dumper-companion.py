@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 #
+# Dumper for HFS/HFS+ images and files with non-ASCII
+# file names.
+#
+# See https://wiki.scummvm.org/index.php?title=HOWTO-Dump_Macintosh_Media for
+# the full documentation
+#
 # prerequisites: pip3 install machfs
 #
 # Development information:
