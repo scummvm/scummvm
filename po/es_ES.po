@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-23 23:37+0000\n"
-"PO-Revision-Date: 2021-08-23 14:04+0000\n"
+"PO-Revision-Date: 2021-08-24 09:31+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1702,20 +1702,13 @@ msgstr "Ninguno"
 
 #: gui/options.cpp:2524
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorar"
 
 #: gui/options.cpp:2525
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable autosave"
-msgstr "Desactivar menú de guardado"
+msgstr "Desactivar autoguardados"
 
 #: gui/options.cpp:2526
-#, fuzzy
-#| msgid ""
-#| "WARNING: The autosave slot has a saved game named %s. You can either move "
-#| "the existing save to a new slot, Overwrite the existing save, or cancel "
-#| "autosave (will not prompt again until restart)"
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -1723,17 +1716,19 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
-"AVISO: El espacio de autoguardado contiene una partida llamada %s. Puedes "
-"cambiar la partida existente a otro espacio, sobrescribirla o cancelar el "
-"autoguardado (no se volverá a preguntar hasta que reinicies)."
+"AVISO: Se ha activado la función de autoguardado. Algunos de tus juegos ya "
+"tienen partidas guardadas en el espacio de autoguardado. Puedes pasarlas a "
+"otros espacios, desactivar la función de autoguardado o ignorar esta ventana "
+"(se te preguntará cuando el autoguardado vaya a sobrescribir otra partida).\n"
+"Lista de juegos afectados:\n"
 
 #: gui/options.cpp:2535
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid ""
 "\n"
 "And more..."
-msgstr "~A~ñadir juego..."
+msgstr ""
+"\n"
+"Y más..."
 
 #: gui/options.cpp:2536 engines/engine.cpp:560
 msgid "Move"
@@ -1741,7 +1736,7 @@ msgstr "Moverse"
 
 #: gui/options.cpp:2549
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "ERROR: No se han podido mover las siguientes partidas guardadas:\n"
 
 #: gui/options.cpp:2635
 msgid "Failed to change cloud storage!"
