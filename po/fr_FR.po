@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-23 23:37+0000\n"
-"PO-Revision-Date: 2021-08-21 11:25+0000\n"
-"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
+"PO-Revision-Date: 2021-08-24 20:51+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -1704,13 +1704,11 @@ msgstr "Aucune"
 
 #: gui/options.cpp:2524
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorer"
 
 #: gui/options.cpp:2525
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable autosave"
-msgstr "Désactiver le menu sauvegarde"
+msgstr "Désactiver sauv. auto."
 
 #: gui/options.cpp:2526
 msgid ""
@@ -1720,24 +1718,29 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"ATTENTION : La sauvergarde automatique était activée. Certaines de vos "
+"parties sont sauvegardée à l'emplacement de la sauvegarde automatique. Vous "
+"pouvez soit déplacer la sauvegarde existante vers un nouvel emplacement, "
+"soit désactiver la sauvegarde automatique, ou soit tout ignorer (la question "
+"sera une nouvelle fois posée si la sauvegarde auto. risque d'écraser une "
+"sauvegarde).\n"
+"Liste des parties :\n"
 
 #: gui/options.cpp:2535
-#, fuzzy
-#| msgid "Add Game..."
 msgid ""
 "\n"
 "And more..."
-msgstr "Ajouter..."
+msgstr ""
+"\n"
+"Voir plus..."
 
 #: gui/options.cpp:2536 engines/engine.cpp:560
-#, fuzzy
-#| msgid "Move up"
 msgid "Move"
-msgstr "Déplacement haut"
+msgstr "Déplacer"
 
 #: gui/options.cpp:2549
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "ERREUR : Impossible de déplacer les sauvegardes suivantes :\n"
 
 #: gui/options.cpp:2635
 msgid "Failed to change cloud storage!"
@@ -2422,13 +2425,11 @@ msgstr ""
 
 #: engines/engine.cpp:553
 msgid "Overwrite"
-msgstr ""
+msgstr "Ecraser"
 
 #: engines/engine.cpp:554
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Cancel autosave"
-msgstr "Sauvegarde auto sans nom"
+msgstr "Annuler sauv. auto."
 
 #: engines/engine.cpp:556
 #, c-format
@@ -2437,10 +2438,15 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"ATTENTION : Il existe une sauvegarde nommée %s à l'emplacement de la "
+"sauvergarde automatique. Vous pouvez soit déplacer la sauvegarde existant "
+"vers un nouvel emplacement, Ecraser la sauvegarde existante, ou annuler la "
+"sauvegarde automatique (ne sera plus redemandé avant un redémarrage)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr ""
+"ERREUR : Impossible de copier la sauvegarde auto. vers un nouvel emplacement"
 
 #: engines/engine.cpp:587 engines/metaengine.cpp:367 engines/savestate.cpp:96
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
@@ -4094,9 +4100,10 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
-"ATTENTION : Ce jeu a été sauvegardé en mode Contenu Montage Restauré, mais "
-"vous jouez en mode Contenu Original. Le mode sera réglé sur Contenu Montage "
-"Restauré pour cette session jusqu'à ce que vous quittiez complètement le jeu."
+"ATTENTION : Cette partie a été sauvegardée en mode Contenu Montage Restauré, "
+"mais vous jouez en mode Contenu Original. Le mode sera réglé sur Contenu "
+"Montage Restauré pour cette session jusqu'à ce que vous quittiez "
+"complètement le jeu."
 
 #: engines/bladerunner/bladerunner.cpp:2303
 msgid ""
@@ -4104,9 +4111,10 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
-"ATTENTION : Ce jeu a été sauvegardé en mode Contenu Original, mais vous "
-"jouez en mode Contenu Montage Restauré. Le mode sera ajusté au mode Contenu "
-"Original pour cette session jusqu'à ce que vous quittiez complètement le jeu."
+"ATTENTION : Cette partie a été sauvegardée en mode Contenu Original, mais "
+"vous jouez en mode Contenu Montage Restauré. Le mode sera ajusté au mode "
+"Contenu Original pour cette session jusqu'à ce que vous quittiez "
+"complètement le jeu."
 
 #: engines/bladerunner/bladerunner.cpp:2305
 msgid "Continue"
