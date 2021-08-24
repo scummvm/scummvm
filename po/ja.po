@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-23 23:37+0000\n"
-"PO-Revision-Date: 2021-08-21 11:25+0000\n"
+"PO-Revision-Date: 2021-08-24 00:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1665,13 +1665,11 @@ msgstr "なし"
 
 #: gui/options.cpp:2524
 msgid "Ignore"
-msgstr ""
+msgstr "無視"
 
 #: gui/options.cpp:2525
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable autosave"
-msgstr "セーブメニューを無効にする"
+msgstr "オートセーブを無効化"
 
 #: gui/options.cpp:2526
 msgid ""
@@ -1681,24 +1679,25 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"警告：オートセーブが有効化されました。対応するゲームでは、オートセーブスロットにセーブされます。新しいスロットへ移動するか、オートセーブを無効化するか、こ"
+"の警告を無視できます(上書き前に確認されます)。\n"
+"対象のゲーム：\n"
 
 #: gui/options.cpp:2535
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid ""
 "\n"
 "And more..."
-msgstr "ゲームを追加(~A~)..."
+msgstr ""
+"\n"
+"続きを表示..."
 
 #: gui/options.cpp:2536 engines/engine.cpp:560
-#, fuzzy
-#| msgid "Move up"
 msgid "Move"
-msgstr "上"
+msgstr "移動"
 
 #: gui/options.cpp:2549
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "エラー：セーブデータの移動に失敗しました:\n"
 
 #: gui/options.cpp:2635
 msgid "Failed to change cloud storage!"
@@ -2368,13 +2367,11 @@ msgstr ""
 
 #: engines/engine.cpp:553
 msgid "Overwrite"
-msgstr ""
+msgstr "上書き"
 
 #: engines/engine.cpp:554
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Cancel autosave"
-msgstr "無名のオートセーブ"
+msgstr "オートセーブをキャンセル"
 
 #: engines/engine.cpp:556
 #, c-format
@@ -2383,10 +2380,12 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"警告：オートセーブスロットに%sのデータがセーブされています。新しいスロットへ移動するか、このオートセーブを上書きするか、あるいはオートセーブをキャンセル"
+"できます(この選択はリスタートするまで適用されます)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "エラー：セーブデータを新規スロットへコピーできませんでした"
 
 #: engines/engine.cpp:587 engines/metaengine.cpp:367 engines/savestate.cpp:96
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
