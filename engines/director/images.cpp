@@ -144,30 +144,19 @@ void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
 }
 
 void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, uint toBpp, int red, int green, int blue) {
-	if (_version < kFileVer400) {
-		switch (toBpp) {
-		case 1:
-			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
-			return;
+	switch (toBpp) {
+	case 1:
+		*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
+		break;
 
-		case 4:
-			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
-			return;
+	case 4:
+		*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
+		break;
 
-		}
-	} else {
-		switch (toBpp) {
-		case 1:
-			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
-			return;
-
-		case 4:
-			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
-			return;
-
-		}
+	default:
+		warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented", fromBpp, toBpp);
+		break;
 	}
-	warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented", fromBpp, toBpp);
 }
 
 bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
