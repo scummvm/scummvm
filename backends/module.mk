@@ -224,6 +224,11 @@ endif
 
 endif
 
+ifeq ($(BACKEND),3ds)
+MODULE_OBJS += \
+	mutex/3ds/3ds-mutex.o
+endif
+
 ifeq ($(BACKEND),android)
 MODULE_OBJS += \
 	mutex/pthread/pthread-mutex.o
@@ -371,6 +376,7 @@ ifeq ($(BACKEND),wii)
 MODULE_OBJS += \
 	fs/wii/wii-fs.o \
 	fs/wii/wii-fs-factory.o \
+	mutex/wii/wii-mutex.o \
 	plugins/wii/wii-provider.o
 endif
 

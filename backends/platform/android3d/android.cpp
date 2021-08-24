@@ -362,7 +362,6 @@ void OSystem_Android::initBackend() {
 	// TODO remove the debug message eventually
 	LOGD("Setting DefaultSaveFileManager path to: %s", ConfMan.get("savepath").c_str());
 
-	_mutexManager = new PthreadMutexManager();
 	_timerManager = new DefaultTimerManager();
 
 	_event_queue_lock = new Common::Mutex();
@@ -474,6 +473,10 @@ uint32 OSystem_Android::getMillis(bool skipRecord) {
 
 void OSystem_Android::delayMillis(uint msecs) {
 	usleep(msecs * 1000);
+}
+
+Common::MutexInternal *OSystem_Android::createMutex() {
+	return createPthreadMutexInternal();
 }
 
 void OSystem_Android::quit() {

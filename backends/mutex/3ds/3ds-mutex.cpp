@@ -20,11 +20,35 @@
  *
  */
 
-#ifndef BACKENDS_MUTEX_PTHREAD_H
-#define BACKENDS_MUTEX_PTHREAD_H
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
-#include "common/mutex.h"
+#include "common/scummsys.h"
 
-Common::MutexInternal *createPthreadMutexInternal();
+#if defined(__3DS__)
+
+#include "backends/mutex/3ds/3ds-mutex.h"
+
+#include <3ds.h>
+
+/**
+ * 3DS mutex manager
+ */
+class _3DSMutexInternal final : public Common::MutexInternal {
+public:
+	_3DSMutexInternal() { RecursiveLock_Init(&_mutex); }
+	virtual ~_3DSMutexInternal() override {}
+
+	virtual bool lock() override { RecursiveLock_Lock(&_mutex); return true; }
+	virtual bool unlock() override { RecursiveLock_Unlock(&_mutex); return true; }
+
+private:
+	RecursiveLock _mutex;
+};
+
+Common::MutexInternal *create3DSMutexInternal() {
+	return new _3DSMutexInternal();
+}
 
 #endif

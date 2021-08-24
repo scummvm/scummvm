@@ -24,7 +24,7 @@
 #define PSP_THREAD_H
 
 #include <pspthreadman.h>
-#include "common/scummsys.h"
+#include "common/mutex.h"
 
 // class to inherit for creating threads
 class PspThreadable {
@@ -60,7 +60,7 @@ public:
 	int getValue();
 };
 
-class PspMutex {
+class PspMutex : public Common::MutexInternal {
 private:
 	PspSemaphore _semaphore;
 	int _recursiveCount;

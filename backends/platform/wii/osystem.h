@@ -197,10 +197,7 @@ public:
 	virtual uint32 getMillis(bool skipRecord = false) override;
 	virtual void delayMillis(uint msecs) override;
 
-	virtual MutexRef createMutex() override;
-	virtual void lockMutex(MutexRef mutex) override;
-	virtual void unlockMutex(MutexRef mutex) override;
-	virtual void deleteMutex(MutexRef mutex) override;
+	virtual Common::MutexInternal *createMutex() override;
 
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
 

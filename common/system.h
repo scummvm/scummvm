@@ -47,6 +47,7 @@ class OptionsContainerWidget;
 
 namespace Common {
 class EventManager;
+class MutexInternal;
 struct Rect;
 class SaveFileManager;
 class SearchSet;
@@ -1436,44 +1437,12 @@ public:
 	 * use dummy implementations for these methods.
 	 */
 
-	typedef struct OpaqueMutex *MutexRef;
-
 	/**
 	 * Create a new mutex.
 	 *
 	 * @return The newly created mutex, or 0 if an error occurred.
 	 */
-	virtual MutexRef createMutex() = 0;
-
-	/**
-	 * Lock the given mutex.
-	 *
-	 * @note ScummVM code assumes that the mutex implementation supports
-	 * recursive locking. That is, a thread can lock a mutex twice without
-	 * deadlocking. In case of a multilock, the mutex must be unlocked
-	 * as many times as it was locked befored it really becomes unlocked.
-	 *
-	 * @param mutex	The mutex to lock.
-	 */
-	virtual void lockMutex(MutexRef mutex) = 0;
-
-	/**
-	 * Unlock the given mutex.
-	 *
-	 * @param mutex	The mutex to unlock.
-	 */
-	virtual void unlockMutex(MutexRef mutex) = 0;
-
-	/**
-	 * Delete the given mutex.
-	 *
-	 * Make sure the mutex is unlocked before you delete it.
-	 * If you delete a locked mutex, the behavior is undefined.
-	 * In particular, your program may crash.
-	 *
-	 * @param mutex	The mutex to delete.
-	 */
-	virtual void deleteMutex(MutexRef mutex) = 0;
+	virtual Common::MutexInternal *createMutex() = 0;
 
 	/** @} */
 

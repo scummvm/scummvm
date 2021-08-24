@@ -30,6 +30,7 @@
 #include "dcutils.h"
 #include "icon.h"
 #include "DCLauncherDialog.h"
+#include "backends/mutex/null/null-mutex.h"
 #include <common/config-manager.h>
 #include <common/memstream.h>
 #include <common/endian.h>
@@ -153,23 +154,10 @@ void OSystem_Dreamcast::quit() {
 }
 
 /* Mutex handling */
-OSystem::MutexRef OSystem_Dreamcast::createMutex()
+Common::MutexInternal *OSystem_Dreamcast::createMutex()
 {
-  return NULL;
+  return new NullMutexInternal();
 }
-
-void OSystem_Dreamcast::lockMutex(MutexRef mutex)
-{
-}
-
-void OSystem_Dreamcast::unlockMutex(MutexRef mutex)
-{
-}
-
-void OSystem_Dreamcast::deleteMutex(MutexRef mutex)
-{
-}
-
 
 /* Features */
 bool OSystem_Dreamcast::hasFeature(Feature f)

@@ -23,17 +23,17 @@
 #ifndef BACKENDS_MUTEX_NULL_H
 #define BACKENDS_MUTEX_NULL_H
 
-#include "backends/mutex/mutex.h"
+#include "common/mutex.h"
 
 /**
  * Null mutex manager
  */
-class NullMutexManager : public MutexManager {
+class NullMutexInternal final : public Common::MutexInternal {
 public:
-	virtual OSystem::MutexRef createMutex() { return OSystem::MutexRef(); }
-	virtual void lockMutex(OSystem::MutexRef mutex) {}
-	virtual void unlockMutex(OSystem::MutexRef mutex) {}
-	virtual void deleteMutex(OSystem::MutexRef mutex) {}
+	NullMutexInternal() {}
+	virtual ~NullMutexInternal() {}
+	virtual bool lock() { return true; }
+	virtual bool unlock() { return true; }
 };
 
 #endif

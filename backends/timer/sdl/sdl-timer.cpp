@@ -29,11 +29,7 @@
 
 #include "common/textconsole.h"
 
-OSystem::MutexRef timerMutex;
-
 static Uint32 timer_handler(Uint32 interval, void *param) {
-	Common::StackLock lock(timerMutex);
-
 	((DefaultTimerManager *)param)->handler();
 	return interval;
 }
@@ -49,8 +45,6 @@ SdlTimerManager::SdlTimerManager() {
 }
 
 SdlTimerManager::~SdlTimerManager() {
-	Common::StackLock lock(timerMutex);
-
 	// Removes the timer callback
 	SDL_RemoveTimer(_timerID);
 

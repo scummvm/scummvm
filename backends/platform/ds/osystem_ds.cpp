@@ -56,7 +56,6 @@ OSystem_DS::OSystem_DS()
 
 	nitroFSInit(NULL);
 	_fsFactory = new DevoptabFilesystemFactory();
-	_mutexManager = new NullMutexManager();
 }
 
 OSystem_DS::~OSystem_DS() {
@@ -127,6 +126,10 @@ void OSystem_DS::getTimeAndDate(TimeDate &td, bool skipRecord) const {
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
 	td.tm_wday = t.tm_wday;
+}
+
+Common::MutexInternal *OSystem_DS::createMutex() {
+	return new NullMutexInternal();
 }
 
 void OSystem_DS::quit() {

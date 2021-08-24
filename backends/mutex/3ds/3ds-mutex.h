@@ -20,11 +20,11 @@
  *
  */
 
-#ifndef BACKENDS_MUTEX_PTHREAD_H
-#define BACKENDS_MUTEX_PTHREAD_H
+#ifndef BACKENDS_MUTEX_3DS_H
+#define BACKENDS_MUTEX_3DS_H
 
 #include "common/mutex.h"
 
-Common::MutexInternal *createPthreadMutexInternal();
+Common::MutexInternal *create3DSMutexInternal();
 
 #endif

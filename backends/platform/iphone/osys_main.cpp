@@ -84,8 +84,6 @@ int OSystem_IPHONE::timerHandler(int t) {
 }
 
 void OSystem_IPHONE::initBackend() {
-	_mutexManager = new PthreadMutexManager();
-
 #ifdef IPHONE_SANDBOXED
 	_savefileManager = new DefaultSaveFileManager(iPhone_getDocumentsDir());
 #else
@@ -193,6 +191,10 @@ void OSystem_IPHONE::setTimerCallback(TimerProc callback, int interval) {
 		_timerCallback = callback;
 	} else
 		_timerCallback = NULL;
+}
+
+Common::MutexInternal *OSystem_IPHONE::createMutex() {
+	return createPthreadMutexInternal();
 }
 
 void OSystem_IPHONE::quit() {

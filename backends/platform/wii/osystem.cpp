@@ -25,12 +25,12 @@
 #include <unistd.h>
 
 #include <ogc/conf.h>
-#include <ogc/mutex.h>
 #include <ogc/lwp_watchdog.h>
 
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "backends/fs/wii/wii-fs-factory.h"
+#include "backends/mutex/wii/wii-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
@@ -221,40 +221,8 @@ void OSystem_Wii::delayMillis(uint msecs) {
 	usleep(msecs * 1000);
 }
 
-OSystem::MutexRef OSystem_Wii::createMutex() {
-	mutex_t *mutex = (mutex_t *) malloc(sizeof(mutex_t));
-	s32 res = LWP_MutexInit(mutex, true);
-
-	if (res) {
-		printf("ERROR creating mutex\n");
-		free(mutex);
-		return NULL;
-	}
-
-	return (MutexRef) mutex;
-}
-
-void OSystem_Wii::lockMutex(MutexRef mutex) {
-	s32 res = LWP_MutexLock(*(mutex_t *)mutex);
-
-	if (res)
-		printf("ERROR locking mutex %p (%d)\n", mutex, res);
-}
-
-void OSystem_Wii::unlockMutex(MutexRef mutex) {
-	s32 res = LWP_MutexUnlock(*(mutex_t *)mutex);
-
-	if (res)
-		printf("ERROR unlocking mutex %p (%d)\n", mutex, res);
-}
-
-void OSystem_Wii::deleteMutex(MutexRef mutex) {
-	s32 res = LWP_MutexDestroy(*(mutex_t *)mutex);
-
-	if (res)
-		printf("ERROR destroying mutex %p (%d)\n", mutex, res);
-
-	free(mutex);
+Common::MutexInternal *OSystem_Wii::createMutex() {
+	return createWiiMutexInternal();
 }
 
 Audio::Mixer *OSystem_Wii::getMixer() {

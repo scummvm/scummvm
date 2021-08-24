@@ -25,7 +25,6 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
-#include "backends/mutex/mutex.h"
 #include "backends/base-backend.h"
 #include "graphics/palette.h"
 #include "base/main.h"
@@ -118,10 +117,7 @@ public:
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &td, bool skipRecord = false) const;
 
-	virtual MutexRef createMutex();
-	virtual void lockMutex(MutexRef mutex);
-	virtual void unlockMutex(MutexRef mutex);
-	virtual void deleteMutex(MutexRef mutex);
+	virtual Common::MutexInternal *createMutex();
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
