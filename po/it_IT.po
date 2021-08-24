@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-23 23:37+0000\n"
-"PO-Revision-Date: 2021-08-21 20:14+0000\n"
+"PO-Revision-Date: 2021-08-24 22:10+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -1695,13 +1695,11 @@ msgstr "Nessuno"
 
 #: gui/options.cpp:2524
 msgid "Ignore"
-msgstr ""
+msgstr "Ignora"
 
 #: gui/options.cpp:2525
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable autosave"
-msgstr "Disabilita menù di salvataggio"
+msgstr "Disabilita salv. auto"
 
 #: gui/options.cpp:2526
 msgid ""
@@ -1711,24 +1709,29 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"ATTENZIONE: I salvataggi automatici sono stati abilitati, ma sono già "
+"presenti dei salvataggi nelle posizioni predisposte per i salvataggi "
+"automatici. Puoi spostare tali file in una posizione libera, disabilitare "
+"completamente i salvataggi automatici, o ignorare questo avviso (verrai "
+"avvisato qualora un salvataggio automatico tentasse di sovrascrivere un "
+"salvataggio preesistente).\n"
+"Elenco dei giochi interessati:\n"
 
 #: gui/options.cpp:2535
-#, fuzzy
-#| msgid "Add Game..."
 msgid ""
 "\n"
 "And more..."
-msgstr "Aggiungi gioco..."
+msgstr ""
+"\n"
+"E altri ancora..."
 
 #: gui/options.cpp:2536 engines/engine.cpp:560
-#, fuzzy
-#| msgid "Move up"
 msgid "Move"
-msgstr "Movimento verso l'alto"
+msgstr "Sposta"
 
 #: gui/options.cpp:2549
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "ERRORE: Non è stato possibile spostare i seguenti salvataggi:\n"
 
 #: gui/options.cpp:2635
 msgid "Failed to change cloud storage!"
@@ -2401,21 +2404,19 @@ msgid ""
 "See the documentation (CD audio) for details."
 msgstr ""
 "Questo gioco ha tracce audio sul CD. Tali\n"
-"tracce devono essere estratte dal disco con\n"
-"un software appropriato per poter sentire\n"
-"la musica del gioco.\n"
+"tracce devono essere estratte dal disco\n"
+"usando un software apposito per poter\n"
+"ascoltare la musica del gioco.\n"
 "Consulta la documentazione (CD audio)\n"
 "per informazioni aggiuntive."
 
 #: engines/engine.cpp:553
 msgid "Overwrite"
-msgstr ""
+msgstr "Sovrascrivi"
 
 #: engines/engine.cpp:554
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Cancel autosave"
-msgstr "Autosalvataggio senza nome"
+msgstr "Annulla salv. auto"
 
 #: engines/engine.cpp:556
 #, c-format
@@ -2424,10 +2425,15 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"ATTENZIONE: La posizione dedicata al salvataggio automatico è già occupata "
+"da un salvataggio denominato %s. Puoi spostare tale salvataggio in una "
+"posizione libera, sovrascriverlo, o disabilitare il salvataggio automatico ("
+"verrà chiesto nuovamente al prossimo avvio del gioco)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr ""
+"ERRORE: Non è stato possibile copiare il salvataggio in una nuova posizione"
 
 #: engines/engine.cpp:587 engines/metaengine.cpp:367 engines/savestate.cpp:96
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
@@ -3481,7 +3487,9 @@ msgstr ""
 
 #: backends/platform/3ds/osystem-events.cpp:414
 msgid "In-game resolution too small to magnify."
-msgstr "La risoluzione del gioco è troppo piccola per essere ingrandita."
+msgstr ""
+"La risoluzione del gioco è troppo\n"
+"bassa per essere ingrandita."
 
 #: backends/platform/3ds/osystem-events.cpp:420
 msgid "Magnify Mode On. Switching to Hover Mode..."
