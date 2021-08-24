@@ -264,7 +264,7 @@ protected:
 	bool _drawMirrored;
 
 public:
-	static Common::ScopedPtr<CelScaler> _scaler;
+	static CelScaler *_scaler;
 
 	/**
 	 * The basic identifying information for this cel. This information
@@ -464,7 +464,7 @@ protected:
 	 * A cache of cel objects used to avoid reinitialisation overhead for cels
 	 * with the same CelInfo32.
 	 */
-	static Common::ScopedPtr<CelCache> _cache;
+	static CelCache *_cache;
 
 	/**
 	 * Searches the cel cache for a CelObj matching the provided CelInfo32. If
