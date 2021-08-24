@@ -38,6 +38,7 @@
 
 #include "graphics/scaler.h"
 #include "common/savefile.h"
+#include "engines/engine.h"
 
 namespace GUI {
 
@@ -334,6 +335,17 @@ void SaveLoadChooserDialog::activate(int slot, const Common::U32String &descript
 	if (!_saveList.empty() && slot < int(_saveList.size())) {
 		const SaveStateDescriptor &desc = _saveList[slot];
 		if (_saveMode) {
+			if (g_engine) {
+				const int currentPlayTime = g_engine->getTotalPlayTime();
+				const int savedPlayTime = desc.getPlayTimeMSecs();
+				if (currentPlayTime > 0 && savedPlayTime > 0 && currentPlayTime < savedPlayTime) {
+					GUI::MessageDialog warn(
+								_("WARNING: Existing save has longer gameplay duration than the "
+								  "current state. Are you sure you want to overwrite it?"), _("Yes"), _("No"));
+					if (warn.runModal() != GUI::kMessageOK)
+						return;
+				}
+			}
 			_resultString = description.empty() ? desc.getDescription() : description;
 		}
 		setResult(desc.getSaveSlot());
@@ -579,6 +591,8 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 	if (selItem >= 0 && _metaInfoSupport) {
 		SaveStateDescriptor desc = (_saveList[selItem].getLocked() ? _saveList[selItem] : _metaEngine->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot()));
+		if (!_saveList[selItem].getLocked())
+			_saveList[selItem] = desc;
 
 		isDeletable = desc.getDeletableFlag() && _delSupport;
 		isWriteProtected = desc.getWriteProtectedFlag() ||
@@ -1096,6 +1110,8 @@ void SaveLoadChooserGrid::updateSaves() {
 		const uint saveSlot = _saveList[i].getSaveSlot();
 
 		SaveStateDescriptor desc =  (_saveList[i].getLocked() ? _saveList[i] : _metaEngine->querySaveMetaInfos(_target.c_str(), saveSlot));
+		if (!_saveList[i].getLocked())
+			_saveList[i] = desc;
 		SlotButton &curButton = _buttons[curNum];
 		curButton.setVisible(true);
 		const Graphics::Surface *thumbnail = desc.getThumbnail();
