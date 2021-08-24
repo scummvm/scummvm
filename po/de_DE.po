@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-23 23:37+0000\n"
-"PO-Revision-Date: 2021-08-23 17:17+0000\n"
+"PO-Revision-Date: 2021-08-24 11:18+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1692,20 +1692,13 @@ msgstr "Nichts"
 
 #: gui/options.cpp:2524
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorieren"
 
 #: gui/options.cpp:2525
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable autosave"
-msgstr "Speichermenü deaktivieren"
+msgstr "Autosave deaktivieren"
 
 #: gui/options.cpp:2526
-#, fuzzy
-#| msgid ""
-#| "WARNING: The autosave slot has a saved game named %s. You can either move "
-#| "the existing save to a new slot, Overwrite the existing save, or cancel "
-#| "autosave (will not prompt again until restart)"
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -1713,18 +1706,21 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
-"WARNUNG: Im Autosave-Slot befindet sich ein Spielstand namens %s. Du kannst "
-"den Spielstand entweder in einen neuen Slot verschieben, den bestehenden "
-"Spielstand überschreiben oder das automatische Speichern abbrechen (die "
-"Rückfrage wird dann bis zu einem Neustart nicht mehr erscheinen)"
+"WARNUNG: Das automatische Speichern über die Autosave-Funktion wurde "
+"aktiviert. Einige deiner Spiele haben bereits Spielstände im Autosave-Slot "
+"abgelegt. Du kannst den Spielstand entweder in einen neuen Slot verschieben, "
+"den bestehenden Spielstand überschreiben oder das automatische Speichern "
+"abbrechen (die Rückfrage wird dann bis zu einem Neustart nicht mehr "
+"erscheinen).\n"
+"Betroffene Spiele:\n"
 
 #: gui/options.cpp:2535
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid ""
 "\n"
 "And more..."
-msgstr "Spiel ~h~inzufügen..."
+msgstr ""
+"\n"
+"Und weitere..."
 
 #: gui/options.cpp:2536 engines/engine.cpp:560
 msgid "Move"
@@ -1733,6 +1729,8 @@ msgstr "Verschieben"
 #: gui/options.cpp:2549
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr ""
+"FEHLER: Beim Verschieben der folgenden Spielstände ist ein Fehler "
+"aufgetreten:\n"
 
 #: gui/options.cpp:2635
 msgid "Failed to change cloud storage!"
