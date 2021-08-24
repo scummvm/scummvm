@@ -488,15 +488,15 @@ static const byte torinPassageRussianPic61101[] = {
 #pragma mark Patch table
 
 static const GameResourcePatch resourcePatches[] = {
-	{ GID_LSL1,           Common::RU_RUS,   ResourceId(kResourceTypeSound,   205), lsl1RussianSound205,        false },
-	{ GID_LSL2,           Common::PL_POL,   ResourceId(kResourceTypeFont,      1), lsl2Lsl3PolishFont,         false },
-	{ GID_LSL2,           Common::PL_POL,   ResourceId(kResourceTypeFont,      7), lsl2Lsl3PolishFont,         false },
-	{ GID_LSL3,           Common::PL_POL,   ResourceId(kResourceTypeFont,      1), lsl2Lsl3PolishFont,         false },
-	{ GID_LSL3,           Common::PL_POL,   ResourceId(kResourceTypeFont,      9), lsl2Lsl3PolishFont,         false },
-	{ GID_PHANTASMAGORIA, Common::UNK_LANG, ResourceId(kResourceTypeView,  64001), phant1View64001Palette,     false },
-	{ GID_PQ4,            Common::EN_ANY,   ResourceId(kResourceTypeView,  10988), pq4EnhancedAudioToggleView, true  },
-	{ GID_QFG1VGA,        Common::UNK_LANG, ResourceId(kResourceTypePalette, 904), qfg1vgaPalette904,          false },
-	{ GID_TORIN,          Common::RU_RUS,   ResourceId(kResourceTypePic,   61101), torinPassageRussianPic61101,false }
+	{ GID_LSL1,           Common::RU_RUS,   kResourceTypeSound,     205, lsl1RussianSound205,        false },
+	{ GID_LSL2,           Common::PL_POL,   kResourceTypeFont,        1, lsl2Lsl3PolishFont,         false },
+	{ GID_LSL2,           Common::PL_POL,   kResourceTypeFont,        7, lsl2Lsl3PolishFont,         false },
+	{ GID_LSL3,           Common::PL_POL,   kResourceTypeFont,        1, lsl2Lsl3PolishFont,         false },
+	{ GID_LSL3,           Common::PL_POL,   kResourceTypeFont,        9, lsl2Lsl3PolishFont,         false },
+	{ GID_PHANTASMAGORIA, Common::UNK_LANG, kResourceTypeView,    64001, phant1View64001Palette,     false },
+	{ GID_PQ4,            Common::EN_ANY,   kResourceTypeView,    10988, pq4EnhancedAudioToggleView, true  },
+	{ GID_QFG1VGA,        Common::UNK_LANG, kResourceTypePalette,   904, qfg1vgaPalette904,          false },
+	{ GID_TORIN,          Common::RU_RUS,   kResourceTypePic,     61101, torinPassageRussianPic61101,false }
 };
 
 #pragma mark -
@@ -516,7 +516,7 @@ ResourcePatcher::ResourcePatcher(const SciGameId gameId, const Common::Language 
 bool ResourcePatcher::applyPatch(Resource &resource) const {
 	PatchList::const_iterator it;
 	for (it = _patches.begin(); it != _patches.end(); ++it) {
-		if (it->resourceId == resource._id) {
+		if (it->resourceType == resource.getType() && it->resourceNumber == resource.getNumber()) {
 			debugC(kDebugLevelPatcher, "Applying resource patch to %s", resource._id.toString().c_str());
 			patchResource(resource, *it);
 			return true;
@@ -529,19 +529,20 @@ bool ResourcePatcher::applyPatch(Resource &resource) const {
 void ResourcePatcher::scanSource(ResourceManager *resMan) {
 	PatchList::const_iterator it;
 	for (it = _patches.begin(); it != _patches.end(); ++it) {
-		if (it->isNewResource && !resMan->testResource(it->resourceId)) {
+		ResourceId resourceId(it->resourceType, it->resourceNumber);
+		if (it->isNewResource && !resMan->testResource(resourceId)) {
 			// Unlike other resources, ResourcePatcher does not have any files
 			// to open to retrieve its resources, so the resource has to get
 			// created and added manually instead of going through
 			// `ResourceManager::addResource` or else the file validation will
 			// blow up.
-			Resource *res = new Resource(resMan, it->resourceId);
+			Resource *res = new Resource(resMan, resourceId);
 			res->_status = kResStatusNoMalloc;
 			res->_source = this;
 			res->_headerSize = 0;
 			res->_fileOffset = 0;
 			res->_size = 0;
-			resMan->_resMap.setVal(it->resourceId, res);
+			resMan->_resMap.setVal(resourceId, res);
 		}
 	}
 }
@@ -563,7 +564,8 @@ void ResourcePatcher::patchResource(Resource &resource, const GameResourcePatch 
 
 	const PatchSizes size = calculatePatchSizes(patch.patchData);
 	if (size.expected > resource.size()) {
-		warning("Unable to apply patch %s: patch expects at least %u bytes but resource is only %u bytes", patch.resourceId.toString().c_str(), size.expected, resource.size());
+		ResourceId resourceId(patch.resourceType, patch.resourceNumber);
+		warning("Unable to apply patch %s: patch expects at least %u bytes but resource is only %u bytes", resourceId.toString().c_str(), size.expected, resource.size());
 		return;
 	}
 
