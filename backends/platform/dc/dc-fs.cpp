@@ -46,6 +46,7 @@ public:
 
 	virtual bool exists() const override { return true; }
 	virtual Common::String getName() const override { return lastPathComponent(_path, '/'); }
+	virtual Common::U32String getDisplayName() const override { return getName(); }
 	virtual Common::String getPath() const override { return _path; }
 	virtual bool isDirectory() const override { return false; }
 	virtual bool isReadable() const override { return true; }
