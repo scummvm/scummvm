@@ -414,6 +414,9 @@ bool MenuOptions::deleteSaveMenu() {
 }
 
 bool MenuOptions::saveGameMenu() {
+	if (!_engine->_scene->isGameRunning()) {
+		return false;
+	}
 	_engine->restoreFrontBuffer();
 	const int slot = chooseSave(TextId::kCreateSaveGame, true);
 	if (slot >= 0) {
