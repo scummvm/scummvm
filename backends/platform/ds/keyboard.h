@@ -20,33 +20,37 @@
  *
  */
 
-#ifndef BACKEND_EVENTS_DS_H
-#define BACKEND_EVENTS_DS_H
+#ifndef DS_KEYBOARD_H
+#define DS_KEYBOARD_H
 
 #include "common/events.h"
 
-/**
- * The Nintendo DS event source.
- */
-class DSEventSource : public Common::EventSource {
-public:
-	DSEventSource() : _firstPoll(true), _handleTouch(true) {}
+namespace DS {
 
-	/**
-	 * Gets and processes events.
-	 */
+class Keyboard : public Common::EventSource, public Common::EventObserver {
+public:
+	Keyboard(Common::EventDispatcher *eventDispatcher);
+	~Keyboard();
+
+	void init(int layer, int mapBase, int tileBase, bool mainDisplay);
+
+	void show();
+	void hide();
+	inline bool isVisible() const { return _visible; }
+
+	// Implementation of the EventSource interface
 	virtual bool pollEvent(Common::Event &event);
 
-	virtual void handleTouch(bool enabled) { _handleTouch = enabled; }
+	virtual bool notifyEvent(const Common::Event &event) override;
 
 protected:
-	Common::Queue<Common::Event> _eventQueue;
-	Common::Point _lastTouch;
-	bool _firstPoll;
-	bool _handleTouch;
+	Common::EventDispatcher *_eventDispatcher;
+	int _lastKey;
+	bool _visible;
 
-	void addEventsToQueue();
-	void addJoyButtonEvent(u32 keysPressed, u32 keysReleased, u32 ndsKey, uint8 svmButton);
+	bool mapKey(int key, Common::KeyState &ks);
 };
 
-#endif
+} // End of namespace DS
+
+#endif // #ifndef DS_KEYBOARD_H

@@ -28,6 +28,7 @@
 #include "backends/events/ds/ds-events.h"
 #include "backends/mixer/mixer.h"
 #include "backends/platform/ds/background.h"
+#include "backends/platform/ds/keyboard.h"
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 
@@ -60,6 +61,7 @@ protected:
 	bool _cursorVisible;
 
 	DSEventSource *_eventSource;
+	DS::Keyboard *_keyboard;
 
 	void initGraphics();
 
@@ -144,6 +146,8 @@ public:
 	virtual void unlockScreen();
 
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
+
+	void setSwapLCDs(bool swap);
 
 	void refreshCursor(u16 *dst, const Graphics::Surface &src, const uint16 *palette);
 
