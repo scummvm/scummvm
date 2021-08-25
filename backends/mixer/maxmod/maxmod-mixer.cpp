@@ -44,7 +44,6 @@ MaxModMixerManager::MaxModMixerManager(int freq, int bufSize)
 MaxModMixerManager::~MaxModMixerManager() {
 	_mixer->setReady(false);
 	mmStreamClose();
-	delete _mixer;
 }
 
 mm_word on_stream_request( mm_word length, mm_addr dest, mm_stream_formats format ) {
