@@ -27,10 +27,13 @@
 #ifndef SAGA2_BEEGEE_H
 #define SAGA2_BEEGEE_H
 
+#include "saga2/objproto.h"
+
 namespace Saga2 {
 
 enum {
 	kNoEnemy = -1,
+	kAuxThemes = 2,
 	kMaxThemes = 16
 };
 
@@ -40,6 +43,18 @@ enum {
 
 //-----------------------------------------------------------------------
 // Music selection brain
+
+struct AuxAudioTheme {
+	bool active;
+	Location l;
+	uint32 loopID;
+
+	AuxAudioTheme() {
+		 active = false;
+		 loopID = 0;
+		 l = Nowhere;
+	}
+};
 
 class Deejay {
 private:
@@ -51,8 +66,23 @@ private:
 
 	int _current;
 	int _currentID;
-
 public:
+
+	uint32 _currentTheme;
+	uint32 _auxTheme;
+	Point32 _themeAt;
+
+	int32 _lastGameTime;
+	int32 _elapsedGameTime;
+
+	int32 _pct;
+
+	bool _playingExternalLoop;
+
+	int _activeFactions[kMaxFactions];
+
+	AuxAudioTheme _aats[kAuxThemes];
+
 	Deejay() {
 		_enemy = -1;
 		_aggr = false;
@@ -61,6 +91,14 @@ public:
 		_ugd = false;
 		_current = 0;
 		_currentID = 0;
+
+		_currentTheme = 0;
+		_auxTheme = 0;
+		_lastGameTime = 0;
+		_elapsedGameTime = 0;
+		_pct = 0;
+		_playingExternalLoop = false;
+		memset(_activeFactions, 0, sizeof(_activeFactions));
 	}
 	~Deejay() {}
 

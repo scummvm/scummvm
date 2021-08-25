@@ -3557,8 +3557,8 @@ void cleanupActors(void) {
 
 int16 AddFactionTally(int faction, enum factionTallyTypes act, int amt) {
 #if DEBUG
-	if (faction >= maxFactions)
-		error("Scripter: Tell Talin to increase maxFactions!\n");
+	if (faction >= kMaxFactions)
+		error("Scripter: Tell Talin to increase kMaxFactions!\n");
 	assert(faction >= 0);
 	assert(act >= 0);
 	assert(act < factionNumColumns);
@@ -3588,8 +3588,8 @@ int16 AddFactionTally(int faction, enum factionTallyTypes act, int amt) {
 //  Get the attitude a particular faction has for a char.
 int16 GetFactionTally(int faction, enum factionTallyTypes act) {
 #if DEBUG
-	if (faction >= maxFactions)
-		error("Scripter: Tell Talin to increase maxFactions!\n");
+	if (faction >= kMaxFactions)
+		error("Scripter: Tell Talin to increase kMaxFactions!\n");
 	assert(faction >= 0);
 	assert(act >= 0);
 	assert(act < factionNumColumns);
@@ -3610,7 +3610,7 @@ void saveFactionTallies(Common::OutSaveFile *outS) {
 
 	outS->write("FACT", 4);
 	CHUNK_BEGIN;
-	for (int i = 0; i < maxFactions; ++i) {
+	for (int i = 0; i < kMaxFactions; ++i) {
 		for (int j = 0; j < factionNumColumns; ++j)
 			out->writeSint16LE(g_vm->_act->_factionTable[i][j]);
 	}
@@ -3620,7 +3620,7 @@ void saveFactionTallies(Common::OutSaveFile *outS) {
 void loadFactionTallies(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading Faction Tallies");
 
-	for (int i = 0; i < maxFactions; ++i) {
+	for (int i = 0; i < kMaxFactions; ++i) {
 		for (int j = 0; j < factionNumColumns; ++j)
 			g_vm->_act->_factionTable[i][j] = in->readSint16LE();
 	}

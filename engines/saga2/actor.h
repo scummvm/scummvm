@@ -1097,9 +1097,6 @@ void addEnchantment(Actor *a, uint16 enchantmentID);
    Actor factions table
  * ============================================================================ */
 
-//  Let's assume 64 factions maximum for now
-const int           maxFactions = 64;
-
 enum factionTallyTypes {
 	factionNumKills = 0,            // # of times faction member killed by PC
 	factionNumThefts,               // # of times PC steals from faction member
@@ -1142,7 +1139,7 @@ public:
 
 	int32 _updatesViaScript;
 	int32 _baseActorIndex;
-	int16 _factionTable[maxFactions][factionNumColumns];
+	int16 _factionTable[kMaxFactions][factionNumColumns];
 	bool _actorStatesPaused;
 	bool _combatBehaviorEnabled;
 

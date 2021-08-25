@@ -468,6 +468,11 @@ enum {
 	kDefaultReach = 24
 };
 
+// Actor Constants
+enum {
+	kMaxFactions = 64
+};
+
 } // end of namespace Saga2
 
 #endif
