@@ -1615,15 +1615,7 @@ void LB::b_clearGlobals(int nargs) {
 
 void LB::b_cursor(int nargs) {
 	Datum d = g_lingo->pop();
-
-	if (d.type == ARRAY) {
-		Datum sprite = d.u.farr->arr[0];
-		Datum mask = d.u.farr->arr[1];
-
-		g_lingo->func_cursor(sprite.asMemberID(), mask.asMemberID());
-	} else {
-		g_lingo->func_cursor(d.asInt());
-	}
+	g_lingo->func_cursor(d);
 }
 
 void LB::b_put(int nargs) {

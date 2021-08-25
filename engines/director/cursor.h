@@ -26,6 +26,8 @@
 
 #include "graphics/macgui/macwindowmanager.h"
 
+#include "engines/director/lingo/lingo.h"
+
 namespace Graphics {
 class ManagedSurface;
 class MacCursor;
@@ -41,11 +43,11 @@ class Cursor : public Graphics::MacCursor {
 
 	CursorRef getRef();
 
-	void readFromCast(CastMemberID cursorId, CastMemberID maskId);
-	void readFromResource(int resourceId);
-	void readBuiltinType(int resourceId);
+	void readFromCast(Datum casts);
+	void readFromResource(Datum resourceId);
+	void readBuiltinType(Datum resourceId);
 
-	bool isEmpty() { return _cursorResId == 0 && _cursorCastId.member == 0; }
+	bool isEmpty() {return Datum(0).equalTo(_cursorResId);}
 	bool operator==(const Cursor &c);
 	bool operator==(const CursorRef &c);
 
@@ -54,13 +56,10 @@ class Cursor : public Graphics::MacCursor {
 
  public:
 	Graphics::MacCursorType _cursorType;
-	int _cursorResId;
-
-	CastMemberID _cursorCastId;
-	CastMemberID _cursorMaskId;
+	Datum _cursorResId;
 
 private:
-	void resetCursor(Graphics::MacCursorType type, bool shouldClear = false, int resId = 0, CastMemberID castId = CastMemberID(0, 0), CastMemberID maskId = CastMemberID(0, 0));
+	void resetCursor(Graphics::MacCursorType type, bool shouldClear = false, Datum resId = Datum(0));
 
 private:
 	bool _usePalette;
@@ -75,9 +74,7 @@ struct CursorRef {
 	bool operator==(const CursorRef &c);
 
 	Graphics::MacCursorType _cursorType;
-	int _cursorResId;
-	CastMemberID _cursorCastId;
-	CastMemberID _cursorMaskId;
+	Datum _cursorResId;
 };
 
 } // End of namespace Director
