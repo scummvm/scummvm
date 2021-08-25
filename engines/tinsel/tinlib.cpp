@@ -6418,7 +6418,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case SETVIEW:
 		// Noir only
 		pp -= 1;
-		warning("TODO: Implement SETVIEW(0x%08X, %i)", pp[0], pp[1]);
+		SetView(pp[0], pp[1]);
 		return -2;
 
 	case SHELL:
