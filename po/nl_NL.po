@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-25 02:56+0000\n"
-"PO-Revision-Date: 2021-08-24 09:31+0000\n"
+"PO-Revision-Date: 2021-08-25 10:40+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1910,6 +1910,8 @@ msgid ""
 "WARNING: Existing save has longer gameplay duration than the current state. "
 "Are you sure you want to overwrite it?"
 msgstr ""
+"WAARSCHUWING: Bestaande opgeslagen spel heeft een langere speeltijd dan het "
+"spel van dit moment. Weet u zeker dat u het wilt overschrijven?"
 
 #: gui/saveload-dialog.cpp:368
 msgid "List view"
@@ -4045,20 +4047,20 @@ msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr "Antialias tekst zelfs als het spel er niet om vraagt"
 
 #: engines/ags/ags.cpp:128
-#, fuzzy
-#| msgid ""
-#| "This game requires the HeroCraft subengine, which is not compiled in."
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
 msgstr ""
-"Dit spel vereist de HeroCraft subengine, welke niet is meegecompileerd."
+"Het geselecteerde spel gebruikt een pre-2.5 versie van de AGS engine, welke "
+"niet wordt ondersteund."
 
 #: engines/ags/ags.cpp:136
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
 msgstr ""
+"Het geselecteerde spel heeft een data bestand groter dan 2Gb, wat niet wordt "
+"ondersteund door deze versie van ScummVM."
 
 #: engines/asylum/metaengine.cpp:70
 msgid "Show version"
