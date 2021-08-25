@@ -186,6 +186,8 @@ void ModularGraphicsBackend::fillScreen(uint32 col) {
 
 void ModularGraphicsBackend::updateScreen() {
 #ifdef ENABLE_EVENTRECORDER
+	g_system->getMillis();		// force event recorder to update the tick count
+	g_eventRec.processScreenUpdate();
 	g_eventRec.preDrawOverlayGui();
 #endif
 

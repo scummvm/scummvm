@@ -39,7 +39,8 @@ namespace Common {
 enum RecorderEventType {
 	kRecorderEventTypeNormal = 0,
 	kRecorderEventTypeTimer = 1,
-	kRecorderEventTypeTimeDate = 2
+	kRecorderEventTypeTimeDate = 2,
+	kRecorderEventTypeScreenUpdate = 3,
 };
 
 struct RecorderEvent : Event {
@@ -157,6 +158,9 @@ public:
 	PlaybackFileHeader &getHeader() {return _header;}
 	void updateHeader();
 	void addSaveFile(const String &fileName, InSaveFile *saveStream);
+
+	uint32 getVersion() {return _version;}
+	bool hasTrackScreenUpdate() {return _trackScreenUpdate;}
 private:
 	Array<byte> _tmpBuffer;
 	WriteStream *_recordFile;
@@ -172,6 +176,8 @@ private:
 	uint32 _eventsSize;
 	PlaybackFileHeader _header;
 	PlaybackFileState _playbackParseState;
+	bool _trackScreenUpdate;
+	uint32 _version;
 
 	void skipHeader();
 	bool parseHeader();

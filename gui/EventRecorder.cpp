@@ -126,6 +126,13 @@ void EventRecorder::deinit() {
 	DebugMan.disableDebugChannel("EventRec");
 }
 
+void EventRecorder::updateFakeTimer(uint32 millis) {
+	uint32 millisDelay = millis - _lastMillis;
+	_lastMillis = millis;
+	_fakeTimer += millisDelay;
+	_controlPanel->setReplayedTime(_fakeTimer);
+}
+
 void EventRecorder::processTimeAndDate(TimeDate &td, bool skipRecord) {
 	if (!_initialized) {
 		return;
@@ -174,19 +181,14 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 	if (_recordMode == kRecorderPlaybackPause) {
 		millis = _fakeTimer;
 	}
-	uint32 millisDelay;
 	Common::RecorderEvent timerEvent;
 	switch (_recordMode) {
 	case kRecorderRecord:
 		updateSubsystems();
-		millisDelay = millis - _lastMillis;
-		_lastMillis = millis;
-		_fakeTimer += millisDelay;
-		_controlPanel->setReplayedTime(_fakeTimer);
+		updateFakeTimer(millis);
 		timerEvent.recordedtype = Common::kRecorderEventTypeTimer;
 		timerEvent.time = _fakeTimer;
-		_playbackFile->writeEvent(timerEvent);
-		takeScreenshot();
+		_recordFile->writeEvent(timerEvent);
 		_timerManager->handler();
 		break;
 	case kRecorderPlayback:
@@ -222,6 +224,51 @@ bool EventRecorder::processDelayMillis() {
 	return _fastPlayback;
 }
 
+void EventRecorder::processScreenUpdate() {
+	if (!_initialized) {
+		return;
+	}
+
+	Common::RecorderEvent screenUpdateEvent;
+	switch (_recordMode) {
+	case kRecorderRecord:
+		updateSubsystems();
+		screenUpdateEvent.recordedtype = Common::kRecorderEventTypeScreenUpdate;
+		screenUpdateEvent.time = _fakeTimer;
+		_recordFile->writeEvent(screenUpdateEvent);
+		takeScreenshot();
+		_timerManager->handler();
+		break;
+	case kRecorderPlayback:
+		if (_playbackFile->hasTrackScreenUpdate()) {
+			// if the file has screen update support, but the next event
+			// isn't a screen update, fast forward until we find one.
+			if (_nextEvent.recordedtype != Common::kRecorderEventTypeScreenUpdate) {
+				int numSkipped = 0;
+				while (true) {
+					_nextEvent = _playbackFile->getNextEvent();
+					numSkipped += 1;
+					if (_nextEvent.recordedtype == Common::kRecorderEventTypeScreenUpdate) {
+						warning("Skipped %d events to get to the next screen update at %d", numSkipped, _nextEvent.time);
+						break;
+					}
+				}
+			}
+			_processingMillis = true;
+			_fakeTimer = _nextEvent.time;
+			debug(3, "screenUpdate event: %u", _fakeTimer);
+			updateSubsystems();
+			_nextEvent = _playbackFile->getNextEvent();
+			_timerManager->handler();
+			_controlPanel->setReplayedTime(_fakeTimer);
+			_processingMillis = false;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 void EventRecorder::checkForKeyCode(const Common::Event &event) {
 	if ((event.type == Common::EVENT_KEYDOWN) && (event.kbd.flags & Common::KBD_CTRL) && (event.kbd.keycode == Common::KEYCODE_p) && (!event.kbdRepeat)) {
 		togglePause();
@@ -234,6 +281,7 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 
 	if (_nextEvent.recordedtype == Common::kRecorderEventTypeTimer
 	 || _nextEvent.recordedtype == Common::kRecorderEventTypeTimeDate
+	 || _nextEvent.recordedtype == Common::kRecorderEventTypeScreenUpdate
 	 || _nextEvent.type == Common::EVENT_INVALID) {
 		return false;
 	}
