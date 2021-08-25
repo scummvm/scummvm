@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-24 20:49+0000\n"
-"PO-Revision-Date: 2021-08-24 00:25+0000\n"
+"PO-Revision-Date: 2021-08-25 00:03+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -4032,19 +4032,18 @@ msgstr ""
 "Використовувати шрифти зі згладжуванням, навіть коли гра цього не запитувала"
 
 #: engines/ags/ags.cpp:128
-#, fuzzy
-#| msgid ""
-#| "This game requires the HeroCraft subengine, which is not compiled in."
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
-msgstr "Ця гра потрубує движка HeroCraft, який відсутній у збірці."
+msgstr "Ця гра потребує AGS-движок версії раніше 2.5, яка не підтримується."
 
 #: engines/ags/ags.cpp:136
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
 msgstr ""
+"Вибрана гра має файл даних завбільшки 2Гб і ще не підтримується цією версією "
+"ScummVM."
 
 #: engines/asylum/metaengine.cpp:70
 msgid "Show version"
@@ -7784,7 +7783,7 @@ msgstr "Ця гра потребує движка FoxTail, який відсут
 
 #: engines/wintermute/wintermute.cpp:171
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr "Ця гра потрубує движка HeroCraft, який відсутній у збірці."
+msgstr "Ця гра потребує движка HeroCraft, який відсутній у збірці."
 
 #: engines/wintermute/wintermute.cpp:182
 msgid ""
