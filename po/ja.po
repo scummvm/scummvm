@@ -1883,7 +1883,9 @@ msgstr "バックグラウンドで実行する"
 msgid ""
 "WARNING: Existing save has longer gameplay duration than the current state. "
 "Are you sure you want to overwrite it?"
-msgstr "警告：現在の状態よりプレイ時間が長いセーブデータです。上書きしてよろしいですか?"
+msgstr ""
+"警告：現在の状態よりプレイ時間が長いセーブデータです。上書きしてよろしいです"
+"か?"
 
 #: gui/saveload-dialog.cpp:368
 msgid "List view"
