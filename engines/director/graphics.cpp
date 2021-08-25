@@ -313,8 +313,7 @@ void DirectorPlotData::setApplyColor() {
 	}
 
 	if (backColor != colorWhite) {
-		if (ink != kInkTypeTransparent &&
-				ink != kInkTypeNotTrans)
+		if (ink != kInkTypeTransparent && ink != kInkTypeNotTrans && ink != kInkTypeBackgndTrans)
 			applyColor = true;
 	}
 }
