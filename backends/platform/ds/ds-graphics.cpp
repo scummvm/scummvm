@@ -458,7 +458,7 @@ void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, i
 		return;
 
 	Graphics::PixelFormat actualFormat = format ? *format : _pfCLUT8;
-	if (_cursor.w != w || _cursor.h != h || _cursor.format != actualFormat)
+	if (_cursor.w != (int16)w || _cursor.h != (int16)h || _cursor.format != actualFormat)
 		_cursor.create(w, h, actualFormat);
 	_cursor.copyRectToSurface(buf, w * actualFormat.bytesPerPixel, 0, 0, w, h);
 	_cursorHotX = hotspotX;
