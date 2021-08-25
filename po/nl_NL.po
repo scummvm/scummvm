@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-25 02:56+0000\n"
-"PO-Revision-Date: 2021-08-25 10:40+0000\n"
+"PO-Revision-Date: 2021-08-25 13:40+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1923,7 +1923,7 @@ msgstr "Rasterbeeld"
 
 #: gui/saveload-dialog.cpp:414 gui/saveload-dialog.cpp:588
 msgid "No date saved"
-msgstr "Gaan datum opgeslagen"
+msgstr "Geen datum opgeslagen"
 
 #: gui/saveload-dialog.cpp:415 gui/saveload-dialog.cpp:589
 msgid "No time saved"
@@ -2471,10 +2471,10 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
 msgstr ""
-"WAARSCHUWING: Het spel dat u wilt gaan spelen is nog niet volledig "
-"ondersteund door ScummVM. Om die reden is het waarschijnlijk dat het spel "
-"instabiel is, en opgeslagen spellen zullen mogelijk niet werken in "
-"toekomstige versies van ScummVM."
+"WAARSCHUWING: Het spel dat u wilt gaan spelen wordt nog niet volledig "
+"ondersteund door ScummVM. Het spel is waarschijnlijk instabiel, en "
+"opgeslagen spellen zullen mogelijk niet werken in toekomstige versies van "
+"ScummVM."
 
 #: engines/engine.cpp:692 engines/wintermute/wintermute.cpp:183
 msgid "Start anyway"
