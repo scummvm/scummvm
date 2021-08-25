@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-24 23:31+0000\n"
-"PO-Revision-Date: 2021-08-24 20:51+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2021-08-25 01:26+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -4063,21 +4063,20 @@ msgstr ""
 "demande pas"
 
 #: engines/ags/ags.cpp:128
-#, fuzzy
-#| msgid ""
-#| "This game requires the HeroCraft subengine, which is not compiled in."
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
 msgstr ""
-"Ce jeu nécessite le sous-moteur HeroCraft qui n'est pas inclus dans la "
-"compilation."
+"Le jeu sélectionné utilise une version de AGS antérieur à la version 2.5 et "
+"n'est pas supporté."
 
 #: engines/ags/ags.cpp:136
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
 msgstr ""
+"Le jeu sélectionné a un fichier de donnée de plus de 2Gb, ce qui n'est pas "
+"encore supporté par votre version de ScummVM."
 
 #: engines/asylum/metaengine.cpp:70
 msgid "Show version"
