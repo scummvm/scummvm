@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-25 02:56+0000\n"
-"PO-Revision-Date: 2021-08-14 12:26+0000\n"
+"PO-Revision-Date: 2021-08-25 15:59+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -1722,13 +1722,11 @@ msgstr "Κανένα"
 
 #: gui/options.cpp:2524
 msgid "Ignore"
-msgstr ""
+msgstr "Αγνόηση"
 
 #: gui/options.cpp:2525
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable autosave"
-msgstr "Απενεργοποίηση μενού αποθήκευσης"
+msgstr "Χωρίς αυτόματη αποθήκευση"
 
 #: gui/options.cpp:2526
 msgid ""
@@ -1738,24 +1736,29 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"ΠΡΟΣΟΧΗ: Η αυτόματη αποθήκευση ενεργοποιήθηκε. Μερικά από τα παιχνίδια σας "
+"έχουν ήδη αποθηκευμένα παιχνίδια στη θυρίδα της αυτόματης αποθήκευσης. "
+"Μπορείτε είτε να μετακινήσετε τα υπάρχοντα αποθηκευμένα παιχνίδια σε νέες "
+"θυρίδες, να απενεργοποιήσετε την αυτόματη αποθήκευση, ή να αγνοήσετε αυτή "
+"την ειδοποίηση (θα ερωτηθείτε όταν η αυτόματη αποθήκευση επιχειρήσει να "
+"αντικαταστήσει κάποιο υπάρχον αποθηκευμένο παιχνίδι).\n"
+"Λίστα παιχνιδιών:\n"
 
 #: gui/options.cpp:2535
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid ""
 "\n"
 "And more..."
-msgstr "~Π~ροσθήκη Παιχνιδιού..."
+msgstr ""
+"\n"
+"Και άλλα..."
 
 #: gui/options.cpp:2536 engines/engine.cpp:560
-#, fuzzy
-#| msgid "Move up"
 msgid "Move"
-msgstr "Κίνηση πάνω"
+msgstr "Μετακίνηση"
 
 #: gui/options.cpp:2549
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "ΣΦΑΛΜΑ: Αποτυχία μετακίνησης των παρακάτω αποθηκεμένων παιχνιδιών:\n"
 
 #: gui/options.cpp:2635
 msgid "Failed to change cloud storage!"
@@ -1945,6 +1948,9 @@ msgid ""
 "WARNING: Existing save has longer gameplay duration than the current state. "
 "Are you sure you want to overwrite it?"
 msgstr ""
+"ΠΡΟΣΟΧΗ: Το υπάρχον αποθηκευμένο παιχνίδι αντιστοιχεί σε μεγαλύτερη διάρκεια "
+"παιχνιδιού από ό,τι η τρέχουσα κατάσταση. Θέλετε σίγουρα να το "
+"αντικαταστήσετε;"
 
 #: gui/saveload-dialog.cpp:368
 msgid "List view"
@@ -2454,13 +2460,11 @@ msgstr ""
 
 #: engines/engine.cpp:553
 msgid "Overwrite"
-msgstr ""
+msgstr "Αντικατάσταση"
 
 #: engines/engine.cpp:554
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Cancel autosave"
-msgstr "Ανώνυμη αυτόματη αποθήκευση"
+msgstr "Ακύρωση αυτόματης αποθήκευσης"
 
 #: engines/engine.cpp:556
 #, c-format
@@ -2469,10 +2473,14 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"ΠΡΟΣΟΧΗ: Η θυρίδα αυτόματης αποθήκευσης έχει ήδη ένα αποθηκευμένο παιχνίδι "
+"με το όνομα %s. Μπορείτε είτε να μετακινήσετε το υπάρχον αποθηκευμένο "
+"παιχνίδι σε νέα θυρίδα, να το αντικαταστήσετε, ή να ακυρώσετε την αυτόματη "
+"αποθήκευση (δεν θα ερωτηθείτε ξανά μέχρι την επανεκκίνηση του παιχνιδιού)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "ΣΦΑΛΜΑ: Αδυναμία αντιγραφής του αποθηκευμένου παιχνιδιού σε νέα θυρίδα"
 
 #: engines/engine.cpp:587 engines/metaengine.cpp:367 engines/savestate.cpp:96
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
@@ -2960,16 +2968,13 @@ msgid "Active graphics filter:"
 msgstr "Ενεργό φίλτρο γραφικών:"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:361
-#, fuzzy, c-format
-#| msgid "Save screenshot"
+#, c-format
 msgid "Saved screenshot '%s'"
-msgstr "Αποθήκευση στιγμιότυπου"
+msgstr "Έγινε αποθήκευση στιγμιότυπου '%s'"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:370
-#, fuzzy
-#| msgid "Save screenshot"
 msgid "Could not save screenshot"
-msgstr "Αποθήκευση στιγμιότυπου"
+msgstr "Αδυναμία αποθήκευσης στιγμιότυπου"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:411
 msgid "Windowed mode"
@@ -4099,21 +4104,20 @@ msgstr ""
 "απαιτεί"
 
 #: engines/ags/ags.cpp:128
-#, fuzzy
-#| msgid ""
-#| "This game requires the HeroCraft subengine, which is not compiled in."
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
 msgstr ""
-"Το παιχνίδι αυτό απαιτεί την επιμέρους μηχανή HeroCraft, η οποία δεν έχει "
-"γίνει compiled."
+"Το επιλεγμένο παιχνίδι χρησιμοποιεί μια παλιότερη από την 2.5 έκδοση της AGS "
+"μηχανής, η οποία δεν υποστηρίζεται."
 
 #: engines/ags/ags.cpp:136
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
 msgstr ""
+"Το επιλεγμένο παιχνίδι έχει ένα αρχείο δεδομένων μεγαλύτερο από 2GB, που δεν "
+"υποστηρίζεται ακόμα από την έκδοση του ScummVM που εκτελείται."
 
 #: engines/asylum/metaengine.cpp:70
 msgid "Show version"
@@ -4881,12 +4885,6 @@ msgstr ""
 "εκτελέσιμο"
 
 #: engines/grim/resource.cpp:100
-#, fuzzy
-#| msgid ""
-#| "The original patch of Grim Fandango\n"
-#| "is missing. Please download it from\n"
-#| "https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
-#| "and put it in the game data files directory"
 msgid ""
 "The original patch of Grim Fandango\n"
 "is missing. Please download it from\n"
@@ -4895,17 +4893,10 @@ msgid ""
 msgstr ""
 "Το επίσημο patch για το Grim Fandango\n"
 "λείπει. Παρακαλούμε να το κατεβάσετε από εδώ:\n"
-"https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
 "και να το βάλετε στο φάκελο με τα αρχεία του παιχνιδιού"
 
 #: engines/grim/resource.cpp:105
-#, fuzzy
-#| msgid ""
-#| "The original patch of Escape from Monkey Island is missing. \n"
-#| "Please download it from https://scummvm.org/frs/extras/patches/\n"
-#| "and put it in the game data files directory.\n"
-#| "Pay attention to download the correct version according to the game's "
-#| "language"
 msgid ""
 "The original patch of Escape from Monkey Island is missing. \n"
 "Please download it from https://downloads.scummvm.org/frs/extras/patches/\n"
@@ -4914,8 +4905,8 @@ msgid ""
 "language"
 msgstr ""
 "Το επίσημο patch για το Escape from Monkey Island λείπει. \n"
-"Παρακαλούμε να το κατεβάσετε από εδώ: https://scummvm.org/frs/extras/"
-"patches/\n"
+"Παρακαλούμε να το κατεβάσετε από εδώ: https://downloads.scummvm.org/frs/"
+"extras/patches/\n"
 "και να το βάλετε στο φάκελο με τα αρχεία του παιχνιδιού.\n"
 "Προσέξτε να κατεβάσετε τη σωστή έκδοση σύμφωνα με τη γλώσσα του παιχνιδιού"
 
@@ -5269,8 +5260,8 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
-"Ένα αποθηκευμένο αρχείο παιχνιδιού βρέθηκε στην επιλεγμένη θυρίδα %d. "
-"Αντικατάσταση;\n"
+"Ένα αποθηκευμένο αρχείο παιχνιδιού βρέθηκε στην επιλεγμένη θυρίδα %d. Να "
+"γίνει αντικατάσταση;\n"
 "\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:662
@@ -5949,7 +5940,7 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"Δεν ήταν δυνατή η αποθήκευση παιχνιδιού στη θυρίδα %i\n"
+"Αδυναμία αποθήκευσης παιχνιδιού στη θυρίδα %i\n"
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
@@ -7530,12 +7521,12 @@ msgstr ""
 #: engines/toon/toon.cpp:225
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "Αποθήκευση παιχνιδιού στη θυρίδα #%d "
+msgstr "Έγινε αποθήκευση παιχνιδιού στη θυρίδα #%d "
 
 #: engines/toon/toon.cpp:229
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr "Δεν ήταν δυνατή η γρήγορη αποθήκευση στη θυρίδα #%d"
+msgstr "Αδυναμία γρήγορης αποθήκευσης στη θυρίδα #%d"
 
 #: engines/toon/toon.cpp:242
 #, c-format
@@ -7694,7 +7685,7 @@ msgstr "Αποσφαλμάτωση: Κάμερα Πλέγματος Δεξιά"
 
 #: engines/twine/metaengine.cpp:149
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "Τοποθέτηση του Χαρακτήρα στο κέντρο της οθόνης"
 
 #: engines/twine/metaengine.cpp:154
 msgid "Debug Menu"
