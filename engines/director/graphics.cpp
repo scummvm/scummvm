@@ -289,24 +289,6 @@ Graphics::MacDrawPixPtr DirectorEngine::getInkDrawPixel() {
 void DirectorPlotData::setApplyColor() {
 	applyColor = false;
 
-	if (foreColor == colorBlack && backColor == colorWhite)
-		applyColor = false;
-
-	switch (ink) {
-	case kInkTypeReverse:
-	case kInkTypeNotReverse:
-	case kInkTypeAddPin:
-	case kInkTypeAdd:
- 	case kInkTypeSubPin:
-	case kInkTypeLight:
-	case kInkTypeSub:
-	case kInkTypeDark:
-	case kInkTypeBackgndTrans:
-		applyColor = false;
-	default:
-		break;
-	}
-
 	if (foreColor != colorBlack) {
 		if (ink != kInkTypeGhost && ink != kInkTypeNotGhost)
 			applyColor = true;
