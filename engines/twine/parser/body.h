@@ -81,7 +81,7 @@ public:
 	int16 offsetToData = 0;
 
 	inline bool isAnimated() const {
-		return bodyFlag.mask.animated;
+		return (bodyFlag.value & 2) != 0;
 	}
 
 	inline uint getNumBones() const {
