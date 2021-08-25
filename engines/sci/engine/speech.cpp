@@ -21,18 +21,59 @@
  */
 
 #include "sci/sci.h"
-#include "common/debug-channels.h"
-
-#include "sci/engine/tts.h"
-
-#include "gui/message.h"
+#include "sci/engine/speech.h"
+#include "common/system.h"
+#include "common/text-to-speech.h"
+#include "common/config-manager.h"
 
 
 namespace Sci {
 
-void tts() {
-	debug("hi");
-	return;
+void ttsSetLang() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr)
+		ttsMan->setLanguage(ConfMan.get("language"));
+}
+
+Common::String textKeeper[10];
+
+void ttsPickQ(const char *text) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (textKeeper[0] != text && !(text == textKeeper[1] && textKeeper[0] == "")) {
+		if (ttsMan != nullptr && g_sci->getGameId() == GID_LAURABOW2 && g_sci->isDemo() == false)
+			ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
+
+			for (int i = 5; i < 10; ++i)
+				textKeeper[i] = textKeeper[i - 5];
+
+			textKeeper[0] = text;
+
+			for (int i = 1; i < 5; ++i)
+				textKeeper[i] = textKeeper[i + 4];
+	}
+}
+
+void ttsButton(const char *text) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && (g_sci->getGameId() == GID_CASTLEBRAIN || g_sci->getGameId() == GID_LAURABOW2))
+		ttsMan->say(text, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+}
+
+void ttsBox(const char *text) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && (g_sci->getGameId() == GID_LAURABOW2 || g_sci->getGameId() == GID_CASTLEBRAIN))
+		ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
+}
+
+const char *thelastText;
+
+void ttsDisplay(const char *text) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (text != thelastText && ttsMan != nullptr) {
+		if ((g_sci->getGameId() == GID_LAURABOW2 || g_sci->getGameId() == GID_CASTLEBRAIN) && g_sci->isDemo() == true)
+			ttsMan->say(text, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+		thelastText = text;
+	}
 }
 
 } // End of namespace Sci

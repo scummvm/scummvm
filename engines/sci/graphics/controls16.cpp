@@ -24,8 +24,6 @@
 #include "common/stack.h"
 #include "common/system.h"
 #include "common/unicode-bidi.h"
-#include "common/text-to-speech.h"
-#include "common/config-manager.h"
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
@@ -33,6 +31,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/speech.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
@@ -47,7 +46,6 @@ GfxControls16::GfxControls16(SegManager *segMan, GfxPorts *ports, GfxPaint16 *pa
 	: _segMan(segMan), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen) {
 	_texteditBlinkTime = 0;
 	_texteditCursorVisible = false;
-	_ttsMan = g_system->getTextToSpeechManager();
 }
 
 GfxControls16::~GfxControls16() {
@@ -315,8 +313,7 @@ int GfxControls16::getPicNotValid() {
 }
 
 void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, uint16 languageSplitter, int16 fontId, int16 style, bool hilite) {
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled") && (g_sci->getGameId() == GID_CASTLEBRAIN || g_sci->getGameId() == GID_LAURABOW2))
-		_ttsMan->say(text, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	ttsButton(text);
 
 	int16 sci0EarlyPen = 0, sci0EarlyBack = 0;
 	if (!hilite) {
@@ -356,8 +353,7 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 }
 
 void GfxControls16::kernelDrawText(Common::Rect rect, reg_t obj, const char *text, uint16 languageSplitter, int16 fontId, TextAlignment alignment, int16 style, bool hilite) {
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled") && (g_sci->getGameId() == GID_LAURABOW2 || g_sci->getGameId() == GID_CASTLEBRAIN))
-		_ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
+	ttsBox(text);
 
 	if (!hilite) {
 		rect.grow(1);

@@ -334,7 +334,6 @@ private:
 	Common::RandomSource _rng;
 	Common::MacResManager _macExecutable;
 	bool _forceHiresGraphics; // user-option for GK1, KQ6, PQ4
-	Common::TextToSpeechManager *_ttsMan;
 };
 
 

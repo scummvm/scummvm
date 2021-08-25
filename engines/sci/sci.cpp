@@ -44,6 +44,7 @@
 #include "sci/engine/script_patches.h"
 #include "sci/engine/selector.h"	// for SELECTOR
 #include "sci/engine/scriptdebug.h"
+#include "sci/engine/speech.h"
 
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
@@ -198,8 +199,6 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	default:
 		break;
 	}
-
-	_ttsMan = g_system->getTextToSpeechManager();
 }
 
 SciEngine::~SciEngine() {
@@ -257,9 +256,8 @@ SciEngine::~SciEngine() {
 extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true);
 
 Common::Error SciEngine::run() {
-	if (_ttsMan != nullptr)
-		_ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
-	
+	ttsSetLang();
+
 	_resMan = new ResourceManager();
 	_resMan->addAppropriateSources();
 	_resMan->init();

@@ -80,7 +80,6 @@ private:
 	Common::Rect _texteditCursorRect;
 	bool _texteditCursorVisible;
 	uint32 _texteditBlinkTime;
-	Common::TextToSpeechManager *_ttsMan;
 };
 
 } // End of namespace Sci

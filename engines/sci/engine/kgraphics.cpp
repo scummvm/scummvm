@@ -22,8 +22,6 @@
 
 #include "common/system.h"
 #include "common/translation.h"
-#include "common/text-to-speech.h"
-#include "common/config-manager.h"
 
 #include "engines/util.h"
 #include "graphics/cursorman.h"
@@ -40,6 +38,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/speech.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
@@ -1212,22 +1211,6 @@ reg_t kShakeScreen(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-Common::String textKeeper[10];
-
-void textToSpeech(const char *text) {
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr && g_sci->getGameId() == GID_LAURABOW2 && g_sci->isDemo() == false)
-		ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
-
-		for (int i = 5; i < 10; ++i)
-			textKeeper[i] = textKeeper[i - 5];
-
-		textKeeper[0] = text;
-
-		for (int i = 1; i < 5; ++i)
-			textKeeper[i] = textKeeper[i + 4];
-}
-
 reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	reg_t textp = argv[0];
 	int index = (argc > 1) ? argv[1].toUint16() : 0;
@@ -1245,8 +1228,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	uint16 languageSplitter = 0;
 	Common::String splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter);
 
-	if (textKeeper[0] != text && !(text == textKeeper[1] && textKeeper[0] == ""))
-		textToSpeech(text.c_str());
+	ttsPickQ(text.c_str());
 
 	return g_sci->_gfxPaint16->kernelDisplay(splitText.c_str(), languageSplitter, argc, argv);
 }
