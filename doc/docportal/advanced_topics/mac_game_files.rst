@@ -11,7 +11,7 @@ HFS and HFS+ File system
 
 The Macintosh uses a different file system to other operating systems (HFS for older media, and HFS+ for more recent ones). On a Windows or Linux system you need additional software to view and copy the files from HFS and HFS+ floppy disks and CDs.
 
-HFS, Hierarchical File System, or Mac OS Standard, was used on Macintosh hard disk, floppy disks, and CDs until the late 90s. It was replaced by HFS+, or Mac OS Extended, with the release of Mac OS 8.1 in 1998. Modern macOS computer can still access HFS+ media, but support for reading HFS media was dropped in macOS 10.15 (Catalina).
+HFS, Hierarchical File System, or Mac OS Standard, was used on Macintosh hard disk, floppy disks, and CDs until the late 90s. It was superseded by HFS+, or Mac OS Extended, with the release of Mac OS 8.1 in 1998. But most game CDs released before the mid-2000 still use HFS. Modern macOS computer can still access HFS+ media, but support for reading HFS media was dropped in macOS 10.15 (Catalina).
 
 Other systems, such as Linux and Windows, require an additional software to read HFS and HFS+ media.
 
@@ -51,7 +51,11 @@ For more information:
 Macintosh File Dumper
 =====================
 
-ScummVM supplies two versions of dumper-companion: a disk/iso image only one that runs in the browser and a more full fledged one in python. Those dumper can extract files from a HFS or HFS+ medium, encode files to MacBinary and rename files with Punycode if needed.
+ScummVM supplies two versions of dumper-companion: a disk/iso image only one that runs in the browser and a more full fledged one in python. Those dumper can extract files from a HFS medium, encode files to MacBinary and rename files with Punycode if needed.
+
+.. note::
+
+    The dumper companions only suports HFS disks (except for the python dumper companion in MAC mode which also supports HFS+, but requires having a Macintosh). Most, if not all, Macintosh games supported by ScummVM were released on a HFS medium. But if you do have a HFS+ CD then you can check the :ref:`macfileaccessother` section.
 
 Create ISO image
 -----------------
@@ -60,7 +64,7 @@ The first step is to create an ISO image of your floppy or CD medium.
 
 .. note::
 
-    This step is not needed on macOS for HFS+ media (and HFS media on a macOS 10.14 Mojave system or older) when using the Python dumper.
+    This step is not needed on macOS for HFS+ media (and HFS media on a macOS 10.14 Mojave system or older) when using the Python dumper in MAC mode.
 
 .. tabbed:: Windows
 
@@ -170,7 +174,7 @@ Browser based dumper companion
 
  `<https://servilla.org/dumper-companion/>`_
 
-The browser based dumper companion has support for reading HFS and HFS+ as isos and disk images such as floppies. It generates a zip file that can be extracted and imported in ScummVM.
+The browser based dumper companion has support for reading HFS as isos and disk images such as floppies. It generates a zip file that can be extracted and imported in ScummVM.
 
 It's options are:
  * Language: Choose Japanese when dumping Japanese disks
@@ -237,7 +241,7 @@ The dumper-companion has help text:
 ISO mode
 +++++++++
 
-This mode will dump a HFS or HFS+ iso to the OUTPUT directory. This directory can then be added to scummvm.
+This mode will dump a HFS iso to the OUTPUT directory. This directory can then be added to scummvm.
 
 .. code-block::
 
@@ -271,6 +275,8 @@ Options:
 .. note::
 
     On macOS ScummVM directly access data and resource forks. But converting to MacBinary can be useful if you plan to transfer those files to a different system.
+
+.. _macfileaccessother:
 
 Other methods
 ==============

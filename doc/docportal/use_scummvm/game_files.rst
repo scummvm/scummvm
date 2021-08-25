@@ -74,7 +74,7 @@ There are three main aspects of Macintosh floppy or CD media that can make it di
 * Macintosh HFS and HFS+ media have a concept called forks. For those familiar with NTFS, it's the same principle as NTFS streams. A file can consist of two forks, a data fork and a resource fork. Both are important for games to work correctly. Systems other than macOS do not support resource forks, and a regular file copy from a HFS or HFS+ media on such a system will only copy the data fork. To properly preserve the resource fork during the copy, those files need to be converted to a MacBinary file.
 * File names on a Macintosh medium may contain characters not supported on other systems, and thus files may need to be renamed.
 
-ScummVM supplies a dumper-companion that can extract data files from the iso image of a HFS or HFS+ medium an dump it as a zip file. Files with a resource forks are automatically converted to MacBinary files. And files are renamed if needed.
+ScummVM supplies a dumper-companion that can extract data files from the iso image of a HFS medium and dump it as a zip file. Files with a resource forks are automatically converted to MacBinary files. And files are renamed if needed.
 
 1. Upload your iso here: `<https://servilla.org/dumper-companion/>`_
 2. Click the dump button
