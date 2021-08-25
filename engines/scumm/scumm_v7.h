@@ -31,6 +31,7 @@ namespace Scumm {
 class Insane;
 class SmushMixer;
 class SmushPlayer;
+class TextRenderer_v7;
 
 class ScummEngine_v7 : public ScummEngine_v6 {
 	friend class SmushPlayer;
@@ -64,6 +65,7 @@ public:
 	};
 
 protected:
+	TextRenderer_v7 *_textV7;
 	int _verbLineSpacing;
 	bool _existLanguageFile;
 	char *_languageBuffer;
@@ -125,7 +127,9 @@ protected:
 
 	int getObjectIdFromOBIM(const byte *obim) override;
 
+	void createTextRenderer(GlyphRenderer_v7 *gr) override;
 	void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrapped = false);
+	void drawBlastTexts() override;
 	void actorTalk(const byte *msg) override;
 	void translateText(const byte *text, byte *trans_buff) override;
 	void loadLanguageBundle() override;
@@ -134,7 +138,6 @@ protected:
 	void drawVerb(int verb, int mode) override;
 
 	void pauseEngineIntern(bool pause) override;
-
 
 	void o6_kernelSetFunctions() override;
 };

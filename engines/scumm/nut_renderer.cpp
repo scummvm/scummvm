@@ -353,6 +353,137 @@ void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
 	}
 }
 
+int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr, bool hardcodedColors, bool smushColorMode) {
+	int width = MIN((int)_chars[chr].width, clipRect.right - x);
+	int height = MIN((int)_chars[chr].height, clipRect.bottom - y);
+	int minX = x < clipRect.left ? clipRect.left - x : 0;
+	int minY = y < clipRect.top ? clipRect.top - y : 0;
+	const byte *src = unpackChar(chr);
+	byte *dst = buffer + pitch * y + x;
+
+	if (width <= 0 || height <= 0)
+		return 0;
+
+	if (minY) {
+		src += minY * _chars[chr].width;
+		dst += minY * pitch;
+	}
+
+	char color = (col != -1) ? col : 1;
+
+	if (_vm->_game.version == 7) {
+		if (hardcodedColors) {
+			for (int j = minY; j < height; j++) {
+				for (int i = minX; i < width; i++) {
+					int8 value = *src++;
+					if (value != _chars[chr].transparency)
+						dst[i] = value;
+				}
+				dst += pitch;
+			}
+		} else {
+			for (int j = minY; j < height; j++) {
+				for (int i = minX; i < width; i++) {
+					int8 value = *src++;
+					if (value == 1)
+						dst[i] = color;
+					else if (value != _chars[chr].transparency)
+						dst[i] = 0;
+				}
+				dst += pitch;
+			}
+		}
+	} else {
+		if (smushColorMode) {
+			for (int j = minY; j < height; j++) {
+				for (int i = minX; i < width; i++) {
+					int8 value = *src++;
+					if (value == -color)
+						dst[i] = 0xFF;
+					else if (value == -31)
+						dst[i] = 0;
+					else if (value != _chars[chr].transparency)
+						dst[i] = value;
+				}
+				dst += pitch;
+			}
+		} else {
+			for (int j = minY; j < height; j++) {
+				for (int i = minX; i < width; i++) {
+					int8 value = *src++;
+					if (value != _chars[chr].transparency)
+						dst[i] = (value == 1) ? color : value;
+				}
+				dst += pitch;
+			}
+		}		
+	}
+	return width;
+}
+
+int NutRenderer::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {
+	int width = MIN((int)_vm->_2byteWidth, clipRect.right - x);
+	int height = MIN((int)_vm->_2byteHeight, clipRect.bottom - y);
+	int minX = x < clipRect.left ? clipRect.left - x : 0;
+	int minY = y < clipRect.top ? clipRect.top - y : 0;
+
+	if (width <= 0 || height <= 0)
+		return 0;
+
+	const byte *src = _vm->get2byteCharPtr(chr);
+	byte bits = 0;
+
+	if (width <= 0 || height <= 0)
+		return 0;
+
+	if (minY) {
+		src += minY * _vm->_2byteWidth;
+		buffer += minY * pitch;
+	}
+
+	enum ShadowMode {
+		kNone,
+		kNormalShadowMode,
+		kCJKv7ShadowMode,
+		kCJKv8ShadowMode
+	};
+
+	ShadowMode shadowMode = _vm->_useCJKMode ? (_vm->_game.version == 8 ? kCJKv8ShadowMode : kCJKv7ShadowMode) : kNone;
+
+	int shadowOffsetXTable[4] = { -1, 0, 1, 0 };
+	int shadowOffsetYTable[4] = { 0, 1, 0, 0 };
+	int shadowOffsetColorTable[4] = { 0, 0, 0, col };
+
+	const byte *origSrc = src;
+	for (int shadowIdx = (shadowMode == kCJKv8ShadowMode) ? 0 : (shadowMode == kCJKv7ShadowMode ? 2 : 3); shadowIdx < 4; shadowIdx++) {
+		int offX = MAX<int>(x + shadowOffsetXTable[shadowIdx], clipRect.left);
+		int offY = MAX<int>(y + shadowOffsetYTable[shadowIdx], clipRect.top);
+		byte drawColor = shadowOffsetColorTable[shadowIdx];
+
+		src = origSrc;
+		byte *dst = buffer + pitch * offY + offX;
+
+		for (int j = minY; j < height; j++) {
+			for (int i = minX; i < width; i++) {
+				if (offX + i < 0)
+					continue;
+				if ((i % 8) == 0)
+					bits = *src++;
+				if (bits & revBitMask(i % 8)) {
+					if (shadowMode == kNormalShadowMode) {
+						dst[i + 1] = 0;
+						dst[pitch + i] = 0;
+						dst[pitch + i + 1] = 0;
+					}
+					dst[i] = drawColor;
+				}
+			}
+			dst += pitch;
+		}
+	}
+	return width + 1;
+}
+/*
 void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color) {
 	// FIXME: This gets passed a const destination Surface. Intuitively this
 	// should never get written to. But sadly it does... For now we simply
@@ -431,6 +562,6 @@ void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byt
 			dst += s.pitch;
 		}
 	}
-}
+}*/
 
 } // End of namespace Scumm

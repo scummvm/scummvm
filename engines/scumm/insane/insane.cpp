@@ -1293,7 +1293,6 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 	}
 
 	assert(sf != NULL);
-	sf->setColor(color);
 
 	// flags:
 	// bit 0 - center                  0x01
@@ -1303,10 +1302,10 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 	// bit 4 - fill background         0x10
 	if ((flags & 4) || _vm->_language == Common::HE_ISR) {
 		Common::Rect clipRect(0, 0, _player->_width, _player->_height);
-		sf->drawStringWrap(str, renderBitmap, clipRect, pos_x, pos_y, flags & 1);
+		sf->drawStringWrap(str, renderBitmap, clipRect, pos_x, pos_y, color, flags & 1);
 	} else {
 		Common::Rect clipRect(10, 0, 310, _player->_height);
-		sf->drawString(str, renderBitmap, clipRect, pos_x, pos_y, flags & 1);
+		sf->drawString(str, renderBitmap, clipRect, pos_x, pos_y, color, flags & 1);
 	}
 
 

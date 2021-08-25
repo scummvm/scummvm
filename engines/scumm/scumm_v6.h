@@ -87,11 +87,13 @@ protected:
 	struct BlastText : TextObject {
 		Common::Rect rect;
 		bool center;
+		bool wrap;
 
 		void clear() {
 			this->TextObject::clear();
 			rect = Common::Rect();
 			center = false;
+			wrap = false;
 		}
 	};
 
@@ -158,7 +160,7 @@ protected:
 	void useBompCursor(const byte *im, int w, int h);
 	void grabCursor(int x, int y, int w, int h);
 
-	void drawBlastTexts();
+	virtual void drawBlastTexts();
 	void removeBlastTexts();
 
 	void enqueueObject(int objectNumber, int objectX, int objectY, int objectWidth,
