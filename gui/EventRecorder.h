@@ -83,6 +83,7 @@ public:
 	uint32 getRandomSeed(const Common::String &name);
 	void processTimeAndDate(TimeDate &td, bool skipRecord);
 	void processMillis(uint32 &millis, bool skipRecord);
+	void processScreenUpdate();
 	void processGameDescription(const ADGameDescription *desc);
 	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
 
@@ -228,6 +229,7 @@ private:
 	void saveScreenShot();
 	void checkRecordedMD5();
 	void deleteTemporarySave();
+	void updateFakeTimer(uint32 millis);
 	volatile RecordMode _recordMode;
 	Common::String _recordFileName;
 	bool _fastPlayback;

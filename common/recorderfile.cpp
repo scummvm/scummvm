@@ -30,7 +30,7 @@
 #include "graphics/surface.h"
 #include "graphics/scaler.h"
 
-#define RECORD_VERSION 1
+#define RECORD_VERSION 2
 
 namespace Common {
 
@@ -47,6 +47,8 @@ PlaybackFile::PlaybackFile()
 	_headerDumped = false;
 	_recordCount = 0;
 	_eventsSize = 0;
+	_trackScreenUpdate = true;
+	_version = RECORD_VERSION;
 	memset(_tmpBuffer.data(), 1, kRecordBuffSize);
 
 	_playbackParseState = kFileStateCheckFormat;
@@ -130,11 +132,19 @@ bool PlaybackFile::parseHeader() {
 }
 
 bool PlaybackFile::checkPlaybackFileVersion() {
-	uint32 version;
-	version = _readStream->readUint32LE();
-	if (version != RECORD_VERSION) {
-		warning("Incorrect playback file version. Expected version %d, but got %d.", RECORD_VERSION, version);
+	_version = _readStream->readUint32LE();
+	switch (_version) {
+	case 2:
+		break;
+	case 1:
+		_trackScreenUpdate = false;
+		break;
+	default:
+		warning("Unknown playback file version %d. Maximum supported version is %d.", _version, RECORD_VERSION);
 		return false;
+	}
+	if (_version != RECORD_VERSION) {
+		warning("This playback file uses version %d, and may not be accurate. You can re-record the file in version %d format using --record-mode=update", _version, RECORD_VERSION);
 	}
 	return true;
 }
@@ -382,6 +392,9 @@ void PlaybackFile::readEvent(RecorderEvent& event) {
 		event.timeDate.tm_year = _tmpPlaybackFile.readSint32LE();
 		event.timeDate.tm_wday = _tmpPlaybackFile.readSint32LE();
 		break;
+	case kRecorderEventTypeScreenUpdate:
+		event.time = _tmpPlaybackFile.readUint32LE();
+		break;
 	default:
 		// fallthrough intended
 	case kRecorderEventTypeNormal:
@@ -566,6 +579,9 @@ void PlaybackFile::writeEvent(const RecorderEvent &event) {
 		_tmpRecordFile.writeSint32LE(event.timeDate.tm_mon);
 		_tmpRecordFile.writeSint32LE(event.timeDate.tm_year);
 		_tmpRecordFile.writeSint32LE(event.timeDate.tm_wday);
+		break;
+	case kRecorderEventTypeScreenUpdate:
+		_tmpRecordFile.writeUint32LE(event.time);
 		break;
 	default:
 		// fallthrough intended
