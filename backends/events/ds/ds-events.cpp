@@ -69,25 +69,27 @@ void DSEventSource::addEventsToQueue() {
 	uint32 held = keysHeld(), keysPressed = keysDown(), keysReleased = keysUp();
 
 	// Touch screen events
-	if (held & KEY_TOUCH) {
-		touchPosition touchPos;
-		touchRead(&touchPos);
-		event.mouse = dynamic_cast<OSystem_DS *>(g_system)->transformPoint(touchPos.px, touchPos.py);
+	if (_handleTouch) {
+		if (held & KEY_TOUCH) {
+			touchPosition touchPos;
+			touchRead(&touchPos);
+			event.mouse = dynamic_cast<OSystem_DS *>(g_system)->transformPoint(touchPos.px, touchPos.py);
 
-		if (event.mouse.x != _lastTouch.x || event.mouse.y != _lastTouch.y) {
-			event.type = Common::EVENT_MOUSEMOVE;
+			if (event.mouse.x != _lastTouch.x || event.mouse.y != _lastTouch.y) {
+				event.type = Common::EVENT_MOUSEMOVE;
+				_eventQueue.push(event);
+			}
+			if (keysPressed & KEY_TOUCH) {
+				event.type = Common::EVENT_LBUTTONDOWN;
+				_eventQueue.push(event);
+			}
+
+			_lastTouch = event.mouse;
+		} else if (keysReleased & KEY_TOUCH) {
+			event.mouse = _lastTouch;
+			event.type = Common::EVENT_LBUTTONUP;
 			_eventQueue.push(event);
 		}
-		if (keysPressed & KEY_TOUCH) {
-			event.type = Common::EVENT_LBUTTONDOWN;
-			_eventQueue.push(event);
-		}
-
-		_lastTouch = event.mouse;
-	} else if (keysReleased & KEY_TOUCH) {
-		event.mouse = _lastTouch;
-		event.type = Common::EVENT_LBUTTONUP;
-		_eventQueue.push(event);
 	}
 
 	// Button events
