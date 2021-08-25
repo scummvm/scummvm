@@ -71,8 +71,6 @@ void timerTickHandler() {
 }
 
 void OSystem_DS::initBackend() {
-	initGraphics();
-
 	defaultExceptionHandler();
 
 	ConfMan.setInt("autosave_period", 0);
@@ -87,6 +85,8 @@ void OSystem_DS::initBackend() {
 
 	_mixerManager = new MaxModMixerManager(11025, 32768);
 	_mixerManager->init();
+
+	initGraphics();
 
 	BaseBackend::initBackend();
 }
