@@ -1922,8 +1922,8 @@ msgid ""
 "WARNING: Existing save has longer gameplay duration than the current state. "
 "Are you sure you want to overwrite it?"
 msgstr ""
-"AVISO: La partida anterior tiene una duración más larga que la actual. ¿"
-"Seguro que quieres sobrescribirla?"
+"AVISO: La partida anterior tiene una duración más larga que la actual. "
+"¿Seguro que quieres sobrescribirla?"
 
 #: gui/saveload-dialog.cpp:368
 msgid "List view"
