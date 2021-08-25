@@ -71,6 +71,7 @@
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
+#include "scumm/string_v7.h"
 #include "scumm/imuse/sysex.h"
 #include "scumm/he/localizer.h"
 #include "scumm/he/sprite_he.h"
@@ -1074,6 +1075,8 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	_languageIndex = NULL;
 	clearSubtitleQueue();
 
+	_textV7 = NULL;
+
 	_game.features |= GF_NEW_COSTUMES;
 }
 
@@ -1088,6 +1091,7 @@ ScummEngine_v7::~ScummEngine_v7() {
 	}
 
 	delete _insane;
+	delete _textV7;
 
 	free(_languageBuffer);
 	free(_languageIndex);
@@ -1715,8 +1719,14 @@ void ScummEngine::setupCharsetRenderer(const Common::String &macFontFile) {
 		else
 			_charset = new CharsetRendererV3(this);
 #ifdef ENABLE_SCUMM_7_8
+	} else if (_game.version == 7) {
+		CharsetRendererV7 *c7 = new CharsetRendererV7(this);
+		_charset = c7;
+		createTextRenderer(c7);
 	} else if (_game.version == 8) {
-		_charset = new CharsetRendererNut(this);
+		CharsetRendererNut *c8 = new CharsetRendererNut(this);
+		_charset = c8;
+		createTextRenderer(c8);
 #endif
 	} else {
 #ifdef USE_RGB_COLOR

@@ -627,6 +627,7 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 			string2[0] = 0;
 	}
 
+	const char *str2 = str;
 	while (str[0] == '^') {
 		switch (str[1]) {
 		case 'f':
@@ -645,7 +646,7 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 			error("invalid escape code in text string");
 		}
 	}
-
+	str = str2;
 	// This is a hack from the original COMI CJK interpreter. Its purpose is to avoid
 	// ugly combinations of two byte characters (rendered with the respective special
 	// font) and standard one byte (NUT font) characters (see bug #11947).
@@ -655,6 +656,13 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	}
 
 	SmushFont *sf = getFont(fontId);
+	assert(sf != NULL);
+
+
+	// The HACK that used to be here to prevent bug #2220 is no longer necessary and
+	// has been removed. The font renderer can handle all ^codes it encounters (font
+	// changes on the fly will be ignored for Smush texts, since our code design does
+	// not permit it and the feature isn't used anyway).
 
 	// HACK. This is to prevent bug #2220. In updated Win95 dig
 	// there is such line:
@@ -672,9 +680,9 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// We just strip that off and assume that neither font
 	// nor font color was altered. Proper fix would be to feed
 	// drawString() with each line sequentally
-	char *string3 = NULL, *sptr2;
+/*	char *string3 = NULL, *sptr2;
 	const char *sptr;
-
+	
 	if (strchr(str, '^')) {
 		string3 = (char *)malloc(strlen(str) + 1);
 
@@ -691,17 +699,14 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 					error("invalid escape code in text string");
 				}
 			} else {
-				if (SmushFont::is2ByteCharacter(_vm->_language, *sptr))
+				if (TextRenderer_v7::is2ByteCharacter(_vm->_language, *sptr))
 					*sptr2++ = *sptr++;
 				*sptr2++ = *sptr++;
 			}
 		}
 		*sptr2++ = *sptr++; // copy zero character
 		str = string3;
-	}
-
-	assert(sf != NULL);
-	sf->setColor(color);
+	}*/
 
 	if (_vm->_game.id == GID_CMI && string2[0] != 0) {
 		str = string2;
@@ -729,16 +734,16 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 			height = _height - 20;
 		}
 		Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
-		sf->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, flags & 1);
+		sf->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, color, flags & 1);
 	} else {
 		// Similiar to the wrapped text, COMI will pass on rect coords here, which will later be lost. Unlike with the wrapped text, it will
 		// finally use the full screen dimenstions. SCUMM7 renders directly from here (see comment above), but also with the full screen.
 		Common::Rect clipRect(0, 0, _width, _height);
-		sf->drawString(str, _dst, clipRect, pos_x, pos_y, flags & 1);
+		sf->drawString(str, _dst, clipRect, pos_x, pos_y, color, flags & 1);
 	}
 
 	free(string);
-	free(string3);
+	//free(string3);
 }
 
 const char *SmushPlayer::getString(int id) {
@@ -1039,23 +1044,13 @@ SmushFont *SmushPlayer::getFont(int font) {
 
 			assert(font >= 0 && font < ARRAYSIZE(ft_fonts));
 
-			_sf[font] = new SmushFont(_vm, ft_fonts[font], true, false);
+			_sf[font] = new SmushFont(_vm, ft_fonts[font], true);
 		}
-	} else if (_vm->_game.id == GID_DIG) {
-		if (!(_vm->_game.features & GF_DEMO)) {
-			assert(font >= 0 && font < 4);
-
-			sprintf(file_font, "font%d.nut", font);
-			_sf[font] = new SmushFont(_vm, file_font, font != 0, false);
-		}
-	} else if (_vm->_game.id == GID_CMI) {
-		int numFonts = (_vm->_game.features & GF_DEMO) ? 4 : 5;
-		assert(font >= 0 && font < numFonts);
-
-		sprintf(file_font, "font%d.nut", font);
-		_sf[font] = new SmushFont(_vm, file_font, false, true);
 	} else {
-		error("SmushPlayer::getFont() Unknown font setup for game");
+		int numFonts = (_vm->_game.id == GID_CMI && !(_vm->_game.features & GF_DEMO)) ? 5 : 4;
+		assert(font >= 0 && font < numFonts);
+		sprintf(file_font, "font%d.nut", font);
+		_sf[font] = new SmushFont(_vm, file_font, _vm->_game.id == GID_DIG && font != 0);
 	}
 
 	assert(_sf[font]);

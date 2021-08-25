@@ -46,6 +46,7 @@ protected:
 	byte *_paletteMap;
 	byte _bpp;
 	byte _palette[16];
+
 	struct {
 		uint16 width;
 		uint16 height;
@@ -65,11 +66,13 @@ public:
 	int getNumChars() const { return _numChars; }
 
 	void drawFrame(byte *dst, int c, int x, int y);
-	void drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color);
-	void draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color);
+	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr);
+	int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr, bool hardcodedColors = false, bool smushColorMode = false);
 
 	int getCharWidth(byte c) const;
 	int getCharHeight(byte c) const;
+
+	int getFontHeight() const { return _fontHeight; }
 };
 
 } // End of namespace Scumm

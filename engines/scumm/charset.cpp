@@ -433,7 +433,7 @@ void CharsetRendererV3::setCurID(int32 id) {
 	}
 }
 
-int CharsetRendererCommon::getFontHeight() {
+int CharsetRendererCommon::getFontHeight() const {
 	if (_vm->_useCJKMode)
 		return MAX(_vm->_2byteHeight + 1, _fontHeight);
 	else
@@ -441,7 +441,7 @@ int CharsetRendererCommon::getFontHeight() {
 }
 
 // do spacing for variable width old-style font
-int CharsetRendererClassic::getCharWidth(uint16 chr) {
+int CharsetRendererClassic::getCharWidth(uint16 chr) const {
 	int spacing = 0;
 
 	if (_vm->_useCJKMode && chr >= 0x80)
@@ -454,7 +454,7 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) {
 	return spacing;
 }
 
-int CharsetRenderer::getStringWidth(int arg, const byte *text, uint strLenMax) {
+int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
 	int width = 1;
 	int chr;
@@ -530,49 +530,6 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text, uint strLenMax) {
 	setCurID(oldID);
 
 	return width;
-}
-
-int CharsetRenderer::getStringHeight(const char *str, uint numBytesMax) {
-	assert(str);
-	int totalHeight = 0;
-	int lineHeight = 0;
-
-	if (!numBytesMax)
-		return 0;
-
-	while (*str && numBytesMax) {
-		while (str[0] == '^') {
-			switch (str[1]) {
-			case 'f':
-				// We should change the font on the fly at this point
-				// which would result in a different width result.
-				// This has never been observed in the game though, and
-				// as such, we don't handle it.
-				str += 4;
-				break;
-			case 'c':
-				str += 5;
-				break;
-			default:
-				error("CharsetRenderer::getStringHeight(): Invalid escape code in text string");
-			}
-		}
-
-		if (*str == '\n') {
-			totalHeight += (lineHeight ? lineHeight : getFontHeight()) + 1;
-			lineHeight = 0;
-		} else if (*str != '\r' && *str != _vm->_newLineCharacter) {
-			lineHeight = MAX<int>(lineHeight, getCharHeight(*str));
-			if (is2ByteCharacter(_vm->_language, *str)) {
-				++str;
-				--numBytesMax;
-			}
-		}
-		++str;
-		--numBytesMax;
-	}
-
-	return totalHeight + (lineHeight ? lineHeight : getFontHeight()) + 1;
 }
 
 void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
@@ -715,7 +672,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	setCurID(oldID);
 }
 
-int CharsetRendererV3::getCharWidth(uint16 chr) {
+int CharsetRendererV3::getCharWidth(uint16 chr) const {
 	int spacing = 0;
 
 	if (_vm->_useCJKMode && (chr & 0x80))
@@ -1317,7 +1274,7 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 CharsetRendererTownsV3::CharsetRendererTownsV3(ScummEngine *vm) : CharsetRendererV3(vm), _sjisCurChar(0) {
 }
 
-int CharsetRendererTownsV3::getCharWidth(uint16 chr) {
+int CharsetRendererTownsV3::getCharWidth(uint16 chr) const {
 	if (_vm->isScummvmKorTarget()) {
 		return CharsetRendererV3::getCharWidth(chr);
 	}
@@ -1337,7 +1294,7 @@ int CharsetRendererTownsV3::getCharWidth(uint16 chr) {
 	return spacing;
 }
 
-int CharsetRendererTownsV3::getFontHeight() {
+int CharsetRendererTownsV3::getFontHeight() const {
 	if (_vm->isScummvmKorTarget()) {
 		return CharsetRendererV3::getFontHeight();
 	}
@@ -1699,7 +1656,7 @@ int CharsetRendererMac::getDrawWidthIntern(uint16 chr) {
 //       graphics resolution. But for font 1 in Indiana Jones and the Last
 //       crusade we want the actual dimensions for drawing the text boxes.
 
-int CharsetRendererMac::getFontHeight() {
+int CharsetRendererMac::getFontHeight() const {
 	int height = _macFonts[_curId].getFontHeight();
 
         // If we ever need the height for font 1 in Last Crusade (we don't at
@@ -1710,7 +1667,7 @@ int CharsetRendererMac::getFontHeight() {
 	return height;
 }
 
-int CharsetRendererMac::getCharWidth(uint16 chr) {
+int CharsetRendererMac::getCharWidth(uint16 chr) const {
 	int width = getDrawWidthIntern(chr);
 
 	// For font 1 in Last Crusade, we want the real width. It is used for
@@ -2008,8 +1965,25 @@ void CharsetRendererMac::setColor(byte color) {
 }
 
 #ifdef ENABLE_SCUMM_7_8
-CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)
-	 : CharsetRenderer(vm) {
+int CharsetRendererV7::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {
+	if (!prepareDraw(chr))
+		return 0;
+
+	VirtScreen &vs = _vm->_virtscr[kMainVirtScreen];
+	drawBits1(vs, x + vs.xstart, y, _charPtr, MAX<int>(clipRect.top, y), _width - 1, _height);
+	return _width;
+}
+
+int CharsetRendererV7::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) {
+	if (!prepareDraw(chr))
+		return 0;
+
+	VirtScreen &vs = _vm->_virtscr[kMainVirtScreen];
+	drawBitsN(vs, buffer + y * vs.pitch + x, _charPtr, _vm->_bytesPerPixel, y, _origWidth, _origHeight);
+	return _width;
+}
+
+CharsetRendererNut::CharsetRendererNut(ScummEngine *vm) : CharsetRenderer(vm) {
 	_current = 0;
 
 	for (int i = 0; i < 5; i++) {
@@ -2039,20 +2013,26 @@ void CharsetRendererNut::setCurID(int32 id) {
 	assert(_current);
 }
 
-int CharsetRendererNut::getCharHeight(byte chr) {
-	assert(_current);
-	return _current->getCharHeight(chr);
+int CharsetRendererNut::setFont(int id) {
+	int old = _curId;
+	if (id >= 0)
+		setCurID(id);
+	return old;
 }
 
-int CharsetRendererNut::getCharWidth(uint16 chr) {
+int CharsetRendererNut::getCharHeight(uint16 chr) const {
+	assert(_current);
+	return _current->getCharHeight(chr & 0xFF);
+}
+
+int CharsetRendererNut::getCharWidth(uint16 chr) const {
 	assert(_current);
 	return _current->getCharWidth(chr);
 }
 
-int CharsetRendererNut::getFontHeight() {
-	// FIXME / TODO: how to implement this properly???
+int CharsetRendererNut::getFontHeight() const {
 	assert(_current);
-	return _current->getCharHeight('|');
+	return _current->getFontHeight();
 }
 
 int CharsetRendererNut::getStringWidth(int arg, const byte *text, uint strLenMax) {
@@ -2102,7 +2082,7 @@ int CharsetRendererNut::getStringWidth(int arg, const byte *text, uint strLenMax
 }
 
 void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
-	Common::Rect shadow;
+	/*Common::Rect shadow;
 
 	assert(_current);
 	if (chr == '@')
@@ -2148,10 +2128,11 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 		drawTop -= _vm->_screenTop;
 	}
 
+	Common::Rect clipRect(s.w, s.h);
 	if (chr >= 256 && _vm->_useCJKMode)
-		_current->draw2byte(s, chr, _left, drawTop, _color);
+		_current->draw2byte((uint8*)s.getBasePtr(0, 0), clipRect, _left, drawTop, s.pitch, _color, chr);
 	else
-		_current->drawChar(s, (byte)chr, _left, drawTop, _color);
+		_current->drawChar((uint8*)s.getBasePtr(0, 0), clipRect, _left, drawTop, s.pitch, _color, (byte)chr);
 	_vm->markRectAsDirty(kMainVirtScreen, shadow);
 
 	if (_str.left > _left)
@@ -2167,7 +2148,17 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 		_str.right = shadow.right;
 
 	if (_str.bottom < shadow.bottom)
-		_str.bottom = shadow.bottom;
+		_str.bottom = shadow.bottom;*/
+}
+
+int CharsetRendererNut::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {
+	assert(_current);
+	return _current->draw2byte(buffer, clipRect, x, y, pitch, col, chr);
+}
+
+int CharsetRendererNut::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) {
+	assert(_current);
+	return _current->drawChar(buffer, clipRect, x, y, pitch, col, chr);
 }
 #endif
 
@@ -2254,7 +2245,7 @@ CharsetRendererTownsClassic::CharsetRendererTownsClassic(ScummEngine *vm) : Char
 	assert(vm->_game.platform == Common::kPlatformFMTowns);
 }
 
-int CharsetRendererTownsClassic::getCharWidth(uint16 chr) {
+int CharsetRendererTownsClassic::getCharWidth(uint16 chr) const {
 	int spacing = 0;
 
 	if (_vm->_useCJKMode) {
@@ -2286,7 +2277,7 @@ int CharsetRendererTownsClassic::getCharWidth(uint16 chr) {
 	return spacing;
 }
 
-int CharsetRendererTownsClassic::getFontHeight() {
+int CharsetRendererTownsClassic::getFontHeight() const {
 	static const uint8 sjisFontHeightM1[] = { 0, 8, 9, 8, 9, 8, 9, 0, 0, 0 };
 	static const uint8 sjisFontHeightM2[] = { 0, 8, 9, 9, 9, 8, 9, 9, 9, 8 };
 	static const uint8 sjisFontHeightI4[] = { 0, 8, 9, 9, 9, 8, 8, 8, 8, 8 };
@@ -2408,7 +2399,7 @@ void CharsetRendererTownsClassic::setupShadowMode() {
 	_vm->_cjkFont->toggleFlippedMode((_vm->_game.id == GID_MONKEY || _vm->_game.id == GID_MONKEY2) && _curId == 3);
 }
 
-bool CharsetRendererTownsClassic::useFontRomCharacter(uint16 chr) {
+bool CharsetRendererTownsClassic::useFontRomCharacter(uint16 chr) const {
 	if (!_vm->_useCJKMode)
 		return false;
 

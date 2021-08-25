@@ -94,6 +94,7 @@ class ScummEngine;
 class ScummDebugger;
 class Sound;
 class Localizer;
+class GlyphRenderer_v7;
 
 struct Box;
 struct BoxCoords;
@@ -1217,6 +1218,8 @@ private:
 	Common::HashMap<byte, TranslationRoom> _roomIndex;
 
 	const byte *searchTranslatedLine(const byte *text, const TranslationRange &range, bool useIndex);
+
+	virtual void createTextRenderer(GlyphRenderer_v7 *gr) {}
 
 public:
 

@@ -87,6 +87,7 @@ endif
 ifdef ENABLE_SCUMM_7_8
 MODULE_OBJS += \
 	nut_renderer.o \
+	string_v7.o \
 	script_v8.o \
 	imuse_digi/dimuse_bndmgr.o \
 	imuse_digi/dimuse_codecs.o \
@@ -118,8 +119,7 @@ MODULE_OBJS += \
 	smush/codec47.o \
 	smush/smush_player.o \
 	smush/saud_channel.o \
-	smush/smush_mixer.o \
-	smush/smush_font.o
+	smush/smush_mixer.o
 
 ifdef USE_ARM_SMUSH_ASM
 MODULE_OBJS += \
