@@ -136,6 +136,10 @@ static const char *const selectorNameTable[] = {
 	"nMsgType",     // Space Quest 4
 	"doVerb",       // Space Quest 4
 	"setRegions",   // Space Quest 4
+	"cursor",       // Space Quest 5
+	"showSelf",     // Space Quest 5
+	"claimed",      // Space Quest 5, QFG4
+	"setCursor",    // Space Quest 5, QFG4
 	"setSpeed",     // Space Quest 5, QFG4
 	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
@@ -187,14 +191,12 @@ static const char *const selectorNameTable[] = {
 	"getSubscriberObj", // RAMA
 	"advanceCurIcon", // QFG4
 	"amount",       // QFG4
-	"claimed",      // QFG4
 	"cue",          // QFG4
 	"getCursor",    // QFG4
 	"heading",      // QFG4
 	"moveSpeed",    // QFG4
 	"register",     // QFG4
 	"sayMessage",   // QFG4
-	"setCursor",    // QFG4
 	"setLooper",    // QFG4
 	"useStamina",   // QFG4
 	"value",        // QFG4
@@ -261,6 +263,10 @@ enum ScriptPatcherSelectors {
 	SELECTOR_nMsgType,
 	SELECTOR_doVerb,
 	SELECTOR_setRegions,
+	SELECTOR_cursor,
+	SELECTOR_showSelf,
+	SELECTOR_claimed,
+	SELECTOR_setCursor,
 	SELECTOR_setSpeed,
 	SELECTOR_loop,
 	SELECTOR_setLoop,
@@ -313,14 +319,12 @@ enum ScriptPatcherSelectors {
 	SELECTOR_getSubscriberObj,
 	SELECTOR_advanceCurIcon,
 	SELECTOR_amount,
-	SELECTOR_claimed,
 	SELECTOR_cue,
 	SELECTOR_getCursor,
 	SELECTOR_heading,
 	SELECTOR_moveSpeed,
 	SELECTOR_register,
 	SELECTOR_sayMessage,
-	SELECTOR_setCursor,
 	SELECTOR_setLooper,
 	SELECTOR_useStamina,
 	SELECTOR_value,
@@ -20539,8 +20543,64 @@ static const uint16 sq5PatchGenetixBridgeHandsOn[] = {
 	PATCH_END
 };
 
+// The Tab key opens the inventory window but it ignores the user's selection
+//  and always restores the cursor to its previous state. This leaves the cursor
+//  out of sync with the current icon and the verbs that clicking generates.
+//  The F5 and F7 hotkey handlers for saving and restoring contain this same
+//  cursor code, which they do need, but it should not have been applied to the
+//  the Tab handler.
+//
+// We fix this by patching the Tab handler to set the cursor to current icon's
+//  cursor after the inventory window has been closed. The current icon is set
+//  by the window and that's what determines which verb a click generates.
+//
+// Applies to: All versions
+// Responsible method: SQ5:handleEvent
+// Fixes bug: #11619
+static const uint16 sq5SignatureTabInventoryCursorFix[] = {
+	0x39, SIG_SELECTOR8(showSelf),    // pushi showSelf
+	0x78,                             // push1
+	0x89, 0x00,                       // lsg 00
+	0x81, 0x09,                       // lag 09
+	0x4a, 0x06,                       // send 06 [ sq5Inv showSelf: ego ]
+	0x38, SIG_SELECTOR16(setCursor),  // pushi setCursor
+	0x7a,                             // push2
+	0x8d, 0x00,                       // lst 00
+	0x78,                             // push1 [ unnecessary parameter ]
+	0x81, 0x01,                       // lag 01
+	0x4a, 0x08,                       // send 08 [ SQ5 setCursor temp0 1 ]
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(claimed),     // pushi claimed
+	0x78,                             // push1
+	0x78,                             // push1
+	0x87, 0x01,                       // lap 01
+	0x4a, 0x06,                       // send 06 [ uEvt claimed: 1 ]
+	0x32,                             // jmp [ end of switch ]
+	SIG_ADDTOOFFSET(+0x25),
+	0x39, SIG_SELECTOR8(claimed),     // pushi claimed
+	SIG_END
+};
+
+static const uint16 sq5PatchTabInventoryCursorFix[] = {
+	PATCH_ADDTOOFFSET(+9),            // [ sq5Inv showSelf: ego ]
+	0x38, PATCH_SELECTOR16(curIcon),  // pushi curIcon
+	0x76,                             // push0
+	0x81, 0x45,                       // lag 45
+	0x4a, 0x04,                       // send 04 [ sq5IconBar curIcon? ]
+	0x39, PATCH_SELECTOR8(cursor),    // pushi cursor
+	0x76,                             // push0
+	0x4a, 0x04,                       // send 04 [ (sq5IconBar curIcon?) cursor? ]
+	0x38, PATCH_SELECTOR16(setCursor),// pushi setCursor
+	0x78,                             // push1
+	0x36,                             // push    [ current icon's cursor ]
+	0x54, 0x06,                       // self 06 [ self setCursor: cursor ]
+	0x33, 0x23,                       // jmp 23  [ uEvt claimed: 1, end of switch ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
+	{  true,     0, "tab inventory cursor fix",                    1, sq5SignatureTabInventoryCursorFix,    sq5PatchTabInventoryCursorFix },
 	{  true,   200, "captain chair lockup fix",                    1, sq5SignatureCaptainChairFix,          sq5PatchCaptainChairFix },
 	{  true,   226, "toolbox fix",                                 1, sq5SignatureToolboxFix,               sq5PatchToolboxFix },
 	{  true,   243, "transporter room speed fix",                  3, sq5SignatureTransporterRoomSpeedFix,  sq5PatchTransporterRoomSpeedFix },
