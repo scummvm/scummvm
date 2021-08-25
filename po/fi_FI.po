@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-25 02:56+0000\n"
-"PO-Revision-Date: 2021-08-16 13:44+0000\n"
+"PO-Revision-Date: 2021-08-25 15:27+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1685,13 +1685,11 @@ msgstr "Ei mikään"
 
 #: gui/options.cpp:2524
 msgid "Ignore"
-msgstr ""
+msgstr "Jätä huomiotta"
 
 #: gui/options.cpp:2525
-#, fuzzy
-#| msgid "Disable save menu"
 msgid "Disable autosave"
-msgstr "Tallennusvalikko pois päältä"
+msgstr "Automaattinen tallennus pois päältä"
 
 #: gui/options.cpp:2526
 msgid ""
@@ -1701,24 +1699,27 @@ msgid ""
 "overwrite a save).\n"
 "List of games:\n"
 msgstr ""
+"VAROITUS: Automaattitallennus on päällä. Joillain peleistäsi saattaa jo olla "
+"tallennus automaattitallennuspaikassa. Voit joko siirtää olemassaolevat "
+"tallennukset uuteen tallennuspaikkaan, tai jättää tämän huomiotta (sinulta "
+"kysytään kun automaattitallennus meinaa ylikirjoittaa tallennuksen).\n"
+"Lista peleistä:\n"
 
 #: gui/options.cpp:2535
-#, fuzzy
-#| msgid "~A~dd Game..."
 msgid ""
 "\n"
 "And more..."
-msgstr "~L~isää peli..."
+msgstr ""
+"\n"
+"Ja lisää..."
 
 #: gui/options.cpp:2536 engines/engine.cpp:560
-#, fuzzy
-#| msgid "Move up"
 msgid "Move"
-msgstr "Liiku ylöspäin"
+msgstr "Siirrä"
 
 #: gui/options.cpp:2549
 msgid "ERROR: Failed to move the following saved games:\n"
-msgstr ""
+msgstr "VIRHE: Seuraavien tallennusten siirtämien epäonnistui:\n"
 
 #: gui/options.cpp:2635
 msgid "Failed to change cloud storage!"
@@ -1904,6 +1905,8 @@ msgid ""
 "WARNING: Existing save has longer gameplay duration than the current state. "
 "Are you sure you want to overwrite it?"
 msgstr ""
+"VAROITUS: Olemassaolevassa tallennuksessa on pidempi peliaika kuin "
+"tämänhetkisessä pelin tilassa. Haluatko varmasti ylikirjoitta sen?"
 
 #: gui/saveload-dialog.cpp:368
 msgid "List view"
@@ -2396,13 +2399,11 @@ msgstr ""
 
 #: engines/engine.cpp:553
 msgid "Overwrite"
-msgstr ""
+msgstr "Ylikirjoita"
 
 #: engines/engine.cpp:554
-#, fuzzy
-#| msgid "Unnamed autosave"
 msgid "Cancel autosave"
-msgstr "Nimetön automaattinen tallennus"
+msgstr "Peruuta automaattitallennus"
 
 #: engines/engine.cpp:556
 #, c-format
@@ -2411,10 +2412,14 @@ msgid ""
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
+"VAROITUS: Automaattitallennuspaikassa on tallennus nimellä %s. Voit joko "
+"siirtää olemassaolevan tallennuksen uuteen paikkaan, ylikirjoittaa sen, tai "
+"perua automaattitallennuksen (jolloin sitä ei tehdä uudestaan ennen "
+"uudelleenkäynnistystä)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
-msgstr ""
+msgstr "VIRHE: Tallennuksen kopiointi uuteen paikkaan epäonnistui"
 
 #: engines/engine.cpp:587 engines/metaengine.cpp:367 engines/savestate.cpp:96
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
@@ -4019,21 +4024,20 @@ msgstr ""
 "Käytä antialiasointia tekstin piirtämisessä vaikka peli ei sitä pyytäisi"
 
 #: engines/ags/ags.cpp:128
-#, fuzzy
-#| msgid ""
-#| "This game requires the HeroCraft subengine, which is not compiled in."
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
 msgstr ""
-"Tämä peli vaatii toimiakseen HeroCraft-pelimoottorin, jota ei ole käännetty "
-"tähän ScummVM:ään."
+"Valittu peli käyttää versiota 2.5 aiempaa AGS-pelimoottoria, joka ei ole "
+"tuettu."
 
 #: engines/ags/ags.cpp:136
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
 msgstr ""
+"Valitun pelin datatiedosto on kooltaan yli 2Gb, joka ei ole vielä tuettu "
+"tässä ScummVM:n versiossa."
 
 #: engines/asylum/metaengine.cpp:70
 msgid "Show version"
@@ -4785,12 +4789,6 @@ msgid "Escape from Monkey Island support is not compiled in"
 msgstr "Escape from Monkey Island-tukea ei ole käännetty mukaan"
 
 #: engines/grim/resource.cpp:100
-#, fuzzy
-#| msgid ""
-#| "The original patch of Grim Fandango\n"
-#| "is missing. Please download it from\n"
-#| "https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
-#| "and put it in the game data files directory"
 msgid ""
 "The original patch of Grim Fandango\n"
 "is missing. Please download it from\n"
@@ -4799,17 +4797,10 @@ msgid ""
 msgstr ""
 "Grim Fandango:n alkuperäistä päivitystä\n"
 "ei löydy. Ole hyvä ja lataa se osoitteesta\n"
-"https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
 "ja laita se pelisi pelidatahakemistoon"
 
 #: engines/grim/resource.cpp:105
-#, fuzzy
-#| msgid ""
-#| "The original patch of Escape from Monkey Island is missing. \n"
-#| "Please download it from https://scummvm.org/frs/extras/patches/\n"
-#| "and put it in the game data files directory.\n"
-#| "Pay attention to download the correct version according to the game's "
-#| "language"
 msgid ""
 "The original patch of Escape from Monkey Island is missing. \n"
 "Please download it from https://downloads.scummvm.org/frs/extras/patches/\n"
@@ -4817,8 +4808,8 @@ msgid ""
 "Pay attention to download the correct version according to the game's "
 "language"
 msgstr ""
-"Escape from Monkey Island:in alkuperäistä päivitystä\n"
-"ei löydy. Ole hyvä ja lataa se osoitteesta https://scummvm.org/frs/extras/"
+"Escape from Monkey Island:in alkuperäistä päivitystä ei löydy.\n"
+"Ole hyvä ja lataa se osoitteesta https://downloads.scummvm.org/frs/extras/"
 "patches/\n"
 "ja laita se pelisi pelidatahakemistoon.\n"
 "Lataathan pelisi kielelle sopivan version"
