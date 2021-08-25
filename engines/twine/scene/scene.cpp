@@ -28,6 +28,7 @@
 #include "twine/audio/sound.h"
 #include "twine/debugger/debug_grid.h"
 #include "twine/debugger/debug_scene.h"
+#include "twine/holomap.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"

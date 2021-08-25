@@ -50,9 +50,6 @@ namespace TwinE {
 /** Default frames per second */
 #define DEFAULT_FRAMES_PER_SECOND 20
 
-/** Number of colors used in the game */
-#define NUMOFCOLORS 256
-
 #define ORIGINAL_WIDTH 640
 #define ORIGINAL_HEIGHT 480
 

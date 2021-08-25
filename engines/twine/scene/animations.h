@@ -24,11 +24,12 @@
 #define TWINE_SCENE_ANIMATIONS_H
 
 #include "common/scummsys.h"
-#include "twine/scene/actor.h"
-#include "twine/scene/scene.h"
+#include "twine/parser/anim.h"
 
 namespace TwinE {
 
+struct AnimTimerDataStruct;
+class BodyData;
 class TwinEEngine;
 
 class Animations {

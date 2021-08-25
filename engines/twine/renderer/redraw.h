@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
-#include "twine/resources/resources.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
@@ -97,7 +97,7 @@ private:
 
 	/** Save last actor that bubble dialog icon */
 	int32 _bubbleActor = -1;
-	int32 _bubbleSpriteIndex = SPRITEHQR_DIAG_BUBBLE_LEFT;
+	int32 _bubbleSpriteIndex;
 
 	IVec3 _projPosScreen;
 
@@ -124,7 +124,7 @@ private:
 	void renderOverlays();
 
 public:
-	Redraw(TwinEEngine *engine) : _engine(engine) {}
+	Redraw(TwinEEngine *engine);
 
 	bool _inSceneryView = false;
 

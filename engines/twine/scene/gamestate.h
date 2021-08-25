@@ -25,10 +25,7 @@
 
 #include "common/savefile.h"
 #include "common/scummsys.h"
-#include "common/util.h"
-#include "twine/holomap.h"
 #include "twine/menu/menu.h"
-#include "twine/scene/actor.h"
 
 namespace TwinE {
 
@@ -163,15 +160,9 @@ public:
 		setGameFlag(item, 0);
 	}
 
-	void clearGameFlags() {
-		debug(2, "Clear all gameStateFlags");
-		Common::fill(&_gameStateFlags[0], &_gameStateFlags[NUM_GAME_FLAGS], 0);
-	}
+	void clearGameFlags();
 
-	inline uint8 hasGameFlag(uint8 index) const {
-		debug(6, "Query gameStateFlags[%u]=%u", index, _gameStateFlags[index]);
-		return _gameStateFlags[index];
-	}
+	uint8 hasGameFlag(uint8 index) const;
 
 	void setGameFlag(uint8 index, uint8 value);
 

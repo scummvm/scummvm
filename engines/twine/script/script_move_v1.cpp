@@ -24,7 +24,6 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "twine/scene/actor.h"
 #include "twine/scene/animations.h"
 #include "twine/audio/sound.h"
 #include "twine/flamovies.h"

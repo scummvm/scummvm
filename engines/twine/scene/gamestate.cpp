@@ -619,4 +619,14 @@ void GameState::addLeafBoxes(int16 val) {
 	setLeafBoxes(_inventoryNumLeafsBox + val);
 }
 
+void GameState::clearGameFlags() {
+	debug(2, "Clear all gameStateFlags");
+	Common::fill(&_gameStateFlags[0], &_gameStateFlags[NUM_GAME_FLAGS], 0);
+}
+
+uint8 GameState::hasGameFlag(uint8 index) const {
+	debug(6, "Query gameStateFlags[%u]=%u", index, _gameStateFlags[index]);
+	return _gameStateFlags[index];
+}
+
 } // namespace TwinE

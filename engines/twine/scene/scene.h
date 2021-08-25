@@ -100,9 +100,6 @@ struct ZoneStruct {
 	} infoData;
 };
 
-#define OWN_ACTOR_SCENE_INDEX 0
-#define IS_HERO(x) (x) == OWN_ACTOR_SCENE_INDEX
-
 class TwinEEngine;
 
 /**

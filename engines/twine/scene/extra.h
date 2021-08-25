@@ -24,6 +24,7 @@
 #define TWINE_SCENE_EXTRA_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 #include "twine/scene/actor.h"
 
 namespace TwinE {

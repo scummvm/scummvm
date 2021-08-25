@@ -40,6 +40,7 @@
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/extra.h"
 #include "twine/scene/scene.h"
 #include "twine/shared.h"
 #include "twine/text.h"

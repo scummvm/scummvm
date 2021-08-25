@@ -637,4 +637,9 @@ void Holomap::processHolomap() {
 	_engine->_text->initSceneTextBank();
 }
 
+const char *Holomap::getLocationName(int index) const {
+	assert(index >= 0 && index <= ARRAYSIZE(_locations));
+	return _locations[index].name;
+}
+
 } // namespace TwinE
