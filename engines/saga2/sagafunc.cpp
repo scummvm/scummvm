@@ -1874,7 +1874,7 @@ int16 scriptActorAssignAttend(int16 *args) {
 		if (a->getAssignment() != NULL) delete a->getAssignment();
 
 		if (new AttendAssignment(a,
-		            (calender.frameInDay()
+		            (g_vm->_calender->frameInDay()
 		             + (uint16)args[0])
 		            %   CalenderTime::kFramesPerDay,
 		            GameObject::objectAddress(args[1]))
@@ -3130,7 +3130,7 @@ int16 scriptPlayVoice(int16 *args) {
 
 int16 scriptGetHour(int16 *) {
 	MONOLOG(GetHour);
-	return calender._hour;
+	return g_vm->_calender->_hour;
 }
 
 //-----------------------------------------------------------------------
@@ -3138,7 +3138,7 @@ int16 scriptGetHour(int16 *) {
 
 int16 scriptGetFrameInHour(int16 *) {
 	MONOLOG(GetFrameInHour);
-	return calender._frameInHour;
+	return g_vm->_calender->_frameInHour;
 }
 
 //-----------------------------------------------------------------------

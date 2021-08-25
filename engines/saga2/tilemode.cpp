@@ -208,11 +208,6 @@ extern hResContext          *imageRes;              // image resource handle
 
 //  Combat related data
 static bool         aggressiveActFlag = false;  //  Indicates wether or not
-//  there has been an
-//  aggressive act
-static CalenderTime timeOfLastAggressiveAct;    //  Used to determine the
-//  mode state
-
 static bool         inCombat,
        combatPaused;
 
@@ -343,7 +338,7 @@ void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID) {
 			handlePlayerActorAttacked(playerID);
 
 		aggressiveActFlag = true;
-		timeOfLastAggressiveAct = calender;
+		*g_vm->_tmm->_timeOfLastAggressiveAct = *g_vm->_calender;
 	}
 }
 
@@ -352,7 +347,7 @@ void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID) {
 //	involving a player actor
 
 uint16 timeSinceLastAggressiveAct(void) {
-	return aggressiveActFlag ? calender - timeOfLastAggressiveAct : maxuint16;
+	return aggressiveActFlag ? *g_vm->_calender - *g_vm->_tmm->_timeOfLastAggressiveAct : maxuint16;
 }
 
 //-----------------------------------------------------------------------
@@ -623,7 +618,7 @@ void saveTileModeState(Common::OutSaveFile *outS) {
 	debugC(3, kDebugSaveload, "... combatPaused = %d", combatPaused);
 
 	if (aggressiveActFlag)
-		timeOfLastAggressiveAct.write(out);
+		g_vm->_tmm->_timeOfLastAggressiveAct->write(out);
 	CHUNK_END;
 }
 
@@ -640,7 +635,7 @@ void loadTileModeState(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "... combatPaused = %d", combatPaused);
 
 	if (aggressiveActFlag)
-		timeOfLastAggressiveAct.read(in);
+		g_vm->_tmm->_timeOfLastAggressiveAct->read(in);
 
 	tileLockFlag = false;
 }
@@ -1472,6 +1467,14 @@ void gStickyDragControl::pointerRelease(gPanelMessage &msg) {
 void noStickyMap(void) {
 	((gPanel *)tileMapControl)->deactivate();
 	mousePressed = false;
+}
+
+TileModeManager::TileModeManager() {
+	_timeOfLastAggressiveAct = new CalenderTime;
+}
+
+TileModeManager::~TileModeManager() {
+	delete _timeOfLastAggressiveAct;
 }
 
 } // end of namespace Saga2

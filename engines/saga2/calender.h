@@ -49,7 +49,9 @@ public:
 		kFramesPerHour   = (kFramesPerDay / kHoursPerDay),
 		kFramesAtNoon    = (kFramesPerDay / 2),
 
-		kDayBias = kFramesAtNoon / 6
+		kDayBias = kFramesAtNoon / 6,
+
+		kGameStartHour = 5
 	};
 
 	uint16      _years,
@@ -59,6 +61,13 @@ public:
 	            _dayInWeek,
 	            _hour,
 	            _frameInHour;
+
+	bool _calenderPaused;
+
+	CalenderTime() {
+		_years = _weeks = _days = _dayInYear = _dayInWeek = _hour = _frameInHour = 0;
+		_calenderPaused = false;
+	}
 
 	void read(Common::InSaveFile *in);
 	void write(Common::MemoryWriteStreamDynamic *out);
@@ -103,12 +112,6 @@ void saveCalender(Common::OutSaveFile *outS);
 void loadCalender(Common::InSaveFile *in);
 
 bool isDayTime(void);
-
-/* ===================================================================== *
-   Global calender
- * ===================================================================== */
-
-extern CalenderTime calender;
 
 const int MAX_LIGHT = 12;       // maximum light level
 

@@ -63,7 +63,7 @@ void dayNightUpdate(void) {
 
 	audioEnvironmentSetDaytime(isDayTime());
 
-	uint32 lightLevel = calender.lightLevel(MAX_LIGHT);
+	uint32 lightLevel = g_vm->_calender->lightLevel(MAX_LIGHT);
 
 	//  Code to avoid unneccessary fades.
 	if (lightLevel != g_vm->_pal->_prevLightLevel) {

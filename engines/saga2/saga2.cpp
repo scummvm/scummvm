@@ -39,6 +39,7 @@
 #include "saga2/audio.h"
 #include "saga2/band.h"
 #include "saga2/beegee.h"
+#include "saga2/calender.h"
 #include "saga2/contain.h"
 #include "saga2/dispnode.h"
 #include "saga2/gdraw.h"
@@ -48,6 +49,7 @@
 #include "saga2/music.h"
 #include "saga2/panel.h"
 #include "saga2/spelshow.h"
+#include "saga2/tilemode.h"
 #include "saga2/vpal.h"
 
 namespace Saga2 {
@@ -70,6 +72,8 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_audio = nullptr;
 	_pal = nullptr;
 	_act = nullptr;
+	_calender = nullptr;
+	_tmm = nullptr;
 
 	_bandList = nullptr;
 	_mouseInfo = nullptr;
@@ -132,6 +136,8 @@ Saga2Engine::~Saga2Engine() {
 	delete _renderer;
 	delete _pal;
 	delete _act;
+	delete _calender;
+	delete _tmm;
 
 	delete _imageCache;
 	delete _mTaskList;
@@ -160,6 +166,8 @@ Common::Error Saga2Engine::run() {
 
 	_pal = new PaletteManager;
 	_act = new ActorManager;
+	_calender = new CalenderTime;
+	_tmm = new TileModeManager;
 
 	readConfig();
 

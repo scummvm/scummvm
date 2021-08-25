@@ -41,7 +41,7 @@ const uint16 kIndefiniteTime = CalenderTime::kFramesPerDay;
 
 //  Constructor
 ActorAssignment::ActorAssignment(Actor *a, uint16 until) :
-	_startFrame(calender.frameInDay()),
+	_startFrame(g_vm->_calender->frameInDay()),
 	_endFrame(until) {
 	_actor = a;
 	debugC(2, kDebugActors, "New assignment for %p (%s) from %d until %d: %p",
@@ -96,7 +96,7 @@ void ActorAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Determine if the time limit for this assignment has been exceeded
 
 bool ActorAssignment::isValid(void) {
-	uint16  frame = calender.frameInDay();
+	uint16  frame = g_vm->_calender->frameInDay();
 
 	return      frame < _endFrame
 	            || (_startFrame >= _endFrame && frame >= _startFrame);

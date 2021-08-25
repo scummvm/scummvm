@@ -81,6 +81,8 @@ class CMapFeature;
 class AudioInterface;
 class PaletteManager;
 class ActorManager;
+class CalenderTime;
+class TileModeManager;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -140,6 +142,8 @@ public:
 	AudioInterface *_audio;
 	PaletteManager *_pal;
 	ActorManager *_act;
+	CalenderTime *_calender;
+	TileModeManager *_tmm;
 
 	WeaponStuff _weaponRack[kMaxWeapons];
 	weaponID _loadedWeapons;

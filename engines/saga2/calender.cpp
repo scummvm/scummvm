@@ -34,18 +34,6 @@
 namespace Saga2 {
 
 /* ===================================================================== *
-   Globals
- * ===================================================================== */
-
-static bool calenderPaused;
-
-/* ===================================================================== *
-   Constants
- * ===================================================================== */
-
-const uint16 GAME_START_HOUR = 5;
-
-/* ===================================================================== *
    FrameAlarm member functions
  * ===================================================================== */
 
@@ -181,12 +169,12 @@ void FrameAlarm::read(Common::InSaveFile *in) {
 }
 
 void FrameAlarm::set(uint16 dur) {
-	_baseFrame = calender.frameInDay();
+	_baseFrame = g_vm->_calender->frameInDay();
 	_duration = dur;
 }
 
 bool FrameAlarm::check(void) {
-	uint16      frameInDay = calender.frameInDay();
+	uint16      frameInDay = g_vm->_calender->frameInDay();
 
 	return  _baseFrame + _duration < CalenderTime::kFramesPerDay
 	        ?   frameInDay >= _baseFrame + _duration
@@ -199,7 +187,7 @@ bool FrameAlarm::check(void) {
 // time elapsed since alarm set
 
 uint16 FrameAlarm::elapsed(void) {
-	uint16      frameInDay = calender.frameInDay();
+	uint16      frameInDay = g_vm->_calender->frameInDay();
 
 	return  _baseFrame + _duration < CalenderTime::kFramesPerDay
 	        ?   frameInDay - _baseFrame
@@ -216,21 +204,21 @@ uint16 FrameAlarm::elapsed(void) {
 //	Pause the global calender
 
 void pauseCalender(void) {
-	calenderPaused = true;
+	g_vm->_calender->_calenderPaused = true;
 }
 
 //-----------------------------------------------------------------------
 //	Restart the paused global calender
 
 void resumeCalender(void) {
-	calenderPaused = false;
+	g_vm->_calender->_calenderPaused = false;
 }
 
 //-----------------------------------------------------------------------
 //	Update the global calender
 
 void updateCalender(void) {
-	if (!calenderPaused) calender.update();
+	if (!g_vm->_calender->_calenderPaused) g_vm->_calender->update();
 }
 
 //-----------------------------------------------------------------------
@@ -254,14 +242,14 @@ uint32 operator - (const CalenderTime &time1, const CalenderTime &time2) {
 //	Initialize the game calender
 
 void initCalender(void) {
-	calenderPaused          = false;
-	calender._years          = 0;
-	calender._weeks          = 0;
-	calender._days           = 0;
-	calender._dayInYear      = 0;
-	calender._dayInWeek      = 0;
-	calender._hour           = GAME_START_HOUR;
-	calender._frameInHour    = 0;
+	g_vm->_calender->_calenderPaused          = false;
+	g_vm->_calender->_years          = 0;
+	g_vm->_calender->_weeks          = 0;
+	g_vm->_calender->_days           = 0;
+	g_vm->_calender->_dayInYear      = 0;
+	g_vm->_calender->_dayInWeek      = 0;
+	g_vm->_calender->_hour           = CalenderTime::kGameStartHour;
+	g_vm->_calender->_frameInHour    = 0;
 }
 
 void saveCalender(Common::OutSaveFile *outS) {
@@ -269,26 +257,24 @@ void saveCalender(Common::OutSaveFile *outS) {
 
 	outS->write("CALE", 4);
 	CHUNK_BEGIN;
-	out->writeUint16LE(calenderPaused);
-	debugC(3, kDebugSaveload, "... calenderPaused = %d", calenderPaused);
-	calender.write(out);
+	out->writeUint16LE(g_vm->_calender->_calenderPaused);
+	debugC(3, kDebugSaveload, "... _calenderPaused = %d", g_vm->_calender->_calenderPaused);
+	g_vm->_calender->write(out);
 	CHUNK_END;
 }
 
 void loadCalender(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading calender");
 
-	calenderPaused = in->readUint16LE();
+	g_vm->_calender->_calenderPaused = in->readUint16LE();
 
-	debugC(3, kDebugSaveload, "... calenderPaused = %d", calenderPaused);
+	debugC(3, kDebugSaveload, "... _calenderPaused = %d", g_vm->_calender->_calenderPaused);
 
-	calender.read(in);
+	g_vm->_calender->read(in);
 }
 
-CalenderTime    calender;
-
 bool isDayTime(void) {
-	return calender.lightLevel(MAX_LIGHT) >= (MAX_LIGHT / 2);
+	return g_vm->_calender->lightLevel(MAX_LIGHT) >= (MAX_LIGHT / 2);
 }
 
 }
