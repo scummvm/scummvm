@@ -29,6 +29,10 @@
 #include "common/serializer.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/token.h"
+#include "tinsel/spriter.h"
+#include "tinsel/sysvar.h"
+
+#include "tinsel/background.h"
 
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -185,6 +189,10 @@ public:
 	int32 playfield;	// Noir field
 	int32 sceneId;		// Noir field
 
+	int32 vx[4]; // Noir field, only for scale polygon
+	int32 vy[4]; // Noir field, only for scale polygon
+	int32 vz[4]; // Noir field, only for scale polygon
+
 protected:
 	int32 nodecount;		///<The number of nodes in this polygon
 	int32 pnodelistx, pnodelisty;	///<offset in chunk to this array if present
@@ -192,10 +200,6 @@ protected:
 
 	const int32 *nlistx;
 	const int32 *nlisty;
-
-	int32 vx[4]; // Noir field, only for scale polygon
-	int32 vy[4]; // Noir field, only for scale polygon
-	int32 vz[4]; // Noir field, only for scale polygon
 
 public:
 	SCNHANDLE hScript;	///< handle of code segment for polygon events
@@ -2426,6 +2430,51 @@ void DisableExit(int exitno) {
 			break;
 		}
 	}
+}
+
+#if 0
+void drawpolys() {
+	int Loffset, Toffset;
+
+	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+	for (int i = 0; i < noofPolys; ++i) {
+		POLYGON* p = Polys[i];
+		if (volatileStuff[i].bDead) continue;
+		if (p->polyType != PATH) continue;
+		int xoff = volatileStuff[i].xoff - Loffset;
+		int yoff = volatileStuff[i].yoff - Toffset;
+		// if (p->polyType == TAG) {
+
+		uint color = 0xFFFF;
+		_vm->screen().drawLine(xoff + p->cx[0], yoff + p->cy[0], xoff + p->cx[1], yoff + p->cy[1], 0xFFFF);
+		_vm->screen().drawLine(xoff + p->cx[2], yoff + p->cy[2], xoff + p->cx[1], yoff + p->cy[1], 0xFFFF);
+		_vm->screen().drawLine(xoff + p->cx[2], yoff + p->cy[2], xoff + p->cx[3], yoff + p->cy[3], 0xFFFF);
+		_vm->screen().drawLine(xoff + p->cx[0], yoff + p->cy[0], xoff + p->cx[3], yoff + p->cy[3], 0xFFFF);
+	}
+}
+#endif
+
+void UpdateGroundPlane() {
+	int i;
+	for (i = 0; i < noofPolys; ++i) {
+		if (Polys[i]->polyType == SCALE && Polys[i]->polyID == SysVar(SV_SPRITER_SCENE_ID)) {
+			break;
+		}
+	}
+	if (i >= noofPolys) return;
+	//assert(i < noofPolys);// No scale polygon
+
+	POLYGON* pp = Polys[i];
+	Poly ptp(_vm->_handle->LockMem(pHandle), pp->pIndex);
+
+	Vertex2c v[4];
+
+	float scale = SysVar(SV_SPRITER_SCALE);
+	TransformXYZ(ptp.vx[0] * scale, -ptp.vy[0] * scale, -ptp.vz[0] * scale, v[0]);
+	TransformXYZ(ptp.vx[1] * scale, -ptp.vy[1] * scale, -ptp.vz[1] * scale, v[1]);
+	TransformXYZ(ptp.vx[2] * scale, -ptp.vy[2] * scale, -ptp.vz[2] * scale, v[2]);
+	TransformXYZ(ptp.vx[3] * scale, -ptp.vy[3] * scale, -ptp.vz[3] * scale, v[3]);
+	//...
 }
 
 } // End of namespace Tinsel
