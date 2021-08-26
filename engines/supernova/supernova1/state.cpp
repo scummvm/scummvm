@@ -405,7 +405,7 @@ void GameManager1::corridorOnEntrance() {
 }
 
 void GameManager1::telomat(int nr) {
-	static Common::String name[8] = {
+	static const char *const name[8] = {
 		"DR. ALAB HANSI",
 		"ALAB HANSI",
 		"SAVAL LUN",
@@ -416,7 +416,7 @@ void GameManager1::telomat(int nr) {
 		"x"
 	};
 
-	static Common::String name2[4] = {
+	static const char *const name2[4] = {
 		"Alab Hansi",
 		"Saval Lun",
 		"Ugnul Tschabb",
@@ -506,7 +506,7 @@ void GameManager1::telomat(int nr) {
 			_vm->removeMessage();
 			if (_state._nameSeen[nr]) {
 				Common::String string = _vm->getGameString(kStringTelomat2);
-				_vm->setGameString(kStringPlaceholder1, Common::String::format(string.c_str(), name2[nr].c_str()));
+				_vm->setGameString(kStringPlaceholder1, Common::String::format(string.c_str(), name2[nr]));
 				dial1[1] = kStringPlaceholder1;
 				_currentRoom->addSentence(1, 1);
 			} else
