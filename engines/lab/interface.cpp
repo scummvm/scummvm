@@ -191,9 +191,7 @@ void Interface::mayShowCrumbIndicator() {
 		return;
 
 	if (_vm->_droppingCrumbs && _vm->isMainDisplay()) {
-		static byte *imgData = new byte[CRUMBSWIDTH * CRUMBSHEIGHT];
-		memcpy(imgData, dropCrumbsImageData, CRUMBSWIDTH * CRUMBSHEIGHT);
-		static Image dropCrumbsImage(CRUMBSWIDTH, CRUMBSHEIGHT, imgData, _vm);
+		Image dropCrumbsImage(CRUMBSWIDTH, CRUMBSHEIGHT, dropCrumbsImageData, _vm, false);
 
 		dropCrumbsImage.drawMaskImage(612, 4);
 	}
@@ -231,9 +229,7 @@ void Interface::mayShowCrumbIndicatorOff() {
 		return;
 
 	if (_vm->isMainDisplay()) {
-		static byte *imgData = new byte[CRUMBSWIDTH * CRUMBSHEIGHT];
-		memcpy(imgData, dropCrumbsOffImageData, CRUMBSWIDTH * CRUMBSHEIGHT);
-		static Image dropCrumbsOffImage(CRUMBSWIDTH, CRUMBSHEIGHT, imgData, _vm);
+		Image dropCrumbsOffImage(CRUMBSWIDTH, CRUMBSHEIGHT, dropCrumbsOffImageData, _vm, false);
 
 		dropCrumbsOffImage.drawMaskImage(612, 4);
 	}
