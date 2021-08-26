@@ -68,8 +68,16 @@ void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 	if (y > destination->cb)  // optimisation
 		return;
 
+	int srcFontNum = get_outline_font(fontNumber);
+	ALFONT_FONT *srcFont = nullptr;
+	if (srcFontNum != FONT_OUTLINE_NONE) {
+		srcFont = _fontData[srcFontNum].AlFont;
+		assert(srcFont);
+	}
+
 	// Y - 1 because it seems to get drawn down a bit
-	alfont_textout(destination, _fontData[fontNumber].AlFont, text, x, y - 1, colour);
+	alfont_textout(destination, _fontData[fontNumber].AlFont,
+		srcFont, text, x, y - 1, colour);
 }
 
 bool TTFFontRenderer::LoadFromDisk(int fontNumber, int fontSize) {
