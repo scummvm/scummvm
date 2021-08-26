@@ -296,7 +296,7 @@ void LauncherDialog::updateListing() {
 
 		if (description.empty()) {
 			String gameid;
-			if (!iter->_value.tryGetVal("gameid", gameid));
+			if (!iter->_value.tryGetVal("gameid", gameid))
 				gameid = iter->_key;
 
 			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
