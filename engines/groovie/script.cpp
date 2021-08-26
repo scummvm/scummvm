@@ -2116,7 +2116,7 @@ Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
 	&Script::o_copyrecttobg,
 	&Script::o_restorestkpnt, // 0x38
 	&Script::o_obscureswap,
-	&Script::o2_printstring,
+	&Script::o_printstring,
 	&Script::o_hotspot_slot,
 	&Script::o_checkvalidsaves, // 0x3C
 	&Script::o_resetvars,
