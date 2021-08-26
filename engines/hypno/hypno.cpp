@@ -718,8 +718,9 @@ void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool trans
 }
 
 void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transparent) {
-	if (transparent)
-		_compositeSurface->transBlitFrom(surf, Common::Point(x, y), _transparentColor);
+	if (transparent) {
+		_compositeSurface->transBlitFrom(surf, Common::Point(x, y), surf.getPixel(0, 0));
+	}
 	else
 		_compositeSurface->blitFrom(surf, Common::Point(x, y));
 }
@@ -736,6 +737,8 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 	Video::SmackerDecoder vd;
 	if (!vd.loadStream(file))
 		error("unable to load video %s", path.c_str());
+
+	//debug("decoding %s with %d frames", path.c_str(), vd.getFrameCount());
 
 	for (int f = 0; f < n; f++)
 		vd.decodeNextFrame();
@@ -853,7 +856,10 @@ void HypnoEngine::skipVideo(MVideo &video) {
 
 void HypnoEngine::playSound(Common::String name, uint32 loops) {
 
-	debug("playing %s", name.c_str());
+	name = convertPath(name);
+	if (!_prefixDir.empty())
+		name = _prefixDir + "/" + name;
+	debug("trying to play %s", name.c_str());
 	ByteArray *raw;
 	Audio::LoopingAudioStream *stream;
 

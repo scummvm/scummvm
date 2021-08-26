@@ -35,7 +35,7 @@
 
 #include "hypno/hypno.h"
 #include "hypno/grammar.h"
-#include "hypno/spider/tokens_mis.h"
+#include "hypno/tokens_mis.h"
 
 %}
 
