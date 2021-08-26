@@ -155,7 +155,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::DE_DEU, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
-	kGroovieT11H, 1
+		kGroovieT11H, 1
 	},
 
 	// The 11th Hour Macintosh English
@@ -166,7 +166,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
-		kGroovieV2, 1
+		kGroovieT11H, 1
 	},
 
 	// The 11th Hour Macintosh English

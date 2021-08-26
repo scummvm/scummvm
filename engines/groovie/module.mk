@@ -19,7 +19,7 @@ MODULE_OBJS := \
 ifdef ENABLE_GROOVIE2
 MODULE_OBJS += \
 	roq.o \
-	tlcgame.o
+	tlcgame.o \
 	t11hgame.o
 endif
 

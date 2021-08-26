@@ -77,10 +77,6 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 		_opcodes = _opcodesT7G;
 	} else {
 		_opcodes = _opcodesV2;
-		break;
-	default:
-		_opcodes = nullptr;
-		break;
 	}
 
 	// Prepare the variables
