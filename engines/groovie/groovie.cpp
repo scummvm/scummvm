@@ -366,6 +366,10 @@ Common::Platform GroovieEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
+EngineVersion GroovieEngine::getEngineVersion() const {
+	return _gameDescription->version;
+}
+
 bool GroovieEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsReturnToLauncher) ||
