@@ -57,8 +57,8 @@ bool Cursor::operator==(const CursorRef &c) {
 }
 
 void Cursor::readFromCast(Datum cursorCasts) {
-	if (cursorCasts.type != ARRAY && cursorCasts.u.farr->arr.size() != 2 ) {
-		warning("Cursor::readFromCast: Needs array");
+	if (cursorCasts.type != ARRAY || cursorCasts.u.farr->arr.size() != 2 ) {
+		warning("Cursor::readFromCast: Needs array of 2");
 		return;
 	}
 	if (_cursorResId.equalTo(cursorCasts))
