@@ -66,7 +66,6 @@ class HypnoEngine : public Engine {
 private:
 	Common::RandomSource *_rnd;
 	Image::ImageDecoder *_image;
-	int _screenW, _screenH;
 
 public:
 	HypnoEngine(OSystem *syst, const ADGameDescription *gd);
@@ -156,6 +155,7 @@ public:
 	void runChangeLevel(ChangeLevel *a);
 
 	// Screen
+	int _screenW, _screenH;
 	Graphics::PixelFormat _pixelFormat;
 	void changeScreenMode(Common::String mode);
 	Graphics::ManagedSurface *_compositeSurface;
@@ -194,6 +194,7 @@ public:
 	virtual void drawHealth(const Graphics::Font &font);
 	int _health;
 	int _maxHealth;
+	Filename _shootSound;
 	Shoots _shoots;
 
 	// Conversation

@@ -36,7 +36,6 @@ void SpiderEngine::loadAssets() {
 			break; // No need to keep parsing, no more files are used in the demo
 		}
 	}
-
 	Common::String arclevel = files[0].name;
 	parseArcadeShooting("sixdemo", arclevel, arc);
 	_levels[arclevel].arcade.shootSequence = parseShootList(arclevel, list);
@@ -66,7 +65,7 @@ void SpiderEngine::loadAssets() {
 	cl = new ChangeLevel();
 	cl->level = "sixdemo/mis/order.mis";
 	_levels["sixdemo/mis/demo.mis"].scene.hots[5].actions.push_back(cl);
-	_levels["sixdemo/mis/demo.mis"].scene.sound = "sixdemo/demo/sound.lib/menu_mus.raw";
+	_levels["sixdemo/mis/demo.mis"].scene.sound = "demo/sound.lib/menu_mus.raw";
 
 	parseScene("sixdemo", "mis/order.mis");
 	cl = new ChangeLevel();
@@ -75,7 +74,7 @@ void SpiderEngine::loadAssets() {
 
 	parseScene("sixdemo", "mis/alley.mis");
 	_levels["sixdemo/mis/alley.mis"].scene.intro = "demo/aleyc01s.smk";
-	_levels["sixdemo/mis/alley.mis"].scene.sound = "sixdemo/demo/sound.lib/alleymus.raw";
+	_levels["sixdemo/mis/alley.mis"].scene.sound = "demo/sound.lib/alleymus.raw";
 
 	parseScene("sixdemo", "mis/shoctalk.mis");
 

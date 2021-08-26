@@ -14,6 +14,7 @@ void HypnoEngine::drawShoot(Common::Point target) {
 	_compositeSurface->drawLine(80, 155, target.x, target.y + 1, c);
 	_compositeSurface->drawLine(80, 155, target.x, target.y, c);
 	_compositeSurface->drawLine(80, 155, target.x, target.y - 1, c);
+	playSound("c_misc/sound.lib/" + _shootSound, 1);
 }
 
 void HypnoEngine::runArcade(ArcadeShooting arc) {
@@ -23,6 +24,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 	Common::Point mousePos;
 	Common::List<uint32> shootsToRemove;
 	ShootSequence shootSequence = arc.shootSequence;
+	_shootSound = arc.shootSound;
 	_health = arc.health;
 	_maxHealth = _health;
 	_shoots.clear();
@@ -76,11 +78,12 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 			if (si.timestamp <= background.decoder->getCurFrame()) {
 				shootSequence.pop_front();
 				for (Shoots::iterator it = arc.shoots.begin(); it != arc.shoots.end(); ++it) {
-					if (it->name == si.name && it->name != "NONE") {
+					if (it->name == si.name && it->animation != "NONE") {
 						Shoot s = *it;
 						s.video = new MVideo(it->animation, it->position, true, false, false);
 						playVideo(*s.video);
 						_shoots.push_back(s);
+						playSound("c_misc/sound.lib/" + s.startSound, 1);
 					}
 				}
 			}
@@ -94,7 +97,6 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 				int frame = it->video->decoder->getCurFrame();
 				if (frame > 0 && frame >= it->explosionFrame - 3 && !it->destroyed) {
 					_health = _health - it->damage;
-					debug("healt: %d", _health);
 					skipVideo(*it->video);
 				} else if (it->video->decoder->endOfVideo()) {
 					skipVideo(*it->video);
@@ -113,7 +115,7 @@ void HypnoEngine::runArcade(ArcadeShooting arc) {
 		}
 
 		if (_music.empty()) {
-			_music = "c_misc/sound.lib/" + arc.sounds.front();
+			_music = "c_misc/sound.lib/" + arc.music;
 			playSound(_music, 0);
 		}
 
@@ -143,6 +145,7 @@ bool HypnoEngine::clickedShoot(Common::Point mousePos) {
 			uint32 c = it->video->currentFrame->getPixel(x, y);
 			//debug("inside %x", c);
 			if (c > 0) {
+				playSound("c_misc/sound.lib/" + it->endSound, 1);
 				it->destroyed = true;
 				it->video->position = Common::Point(mousePos.x - w / 2, mousePos.y - h / 2);
 				it->video->decoder->forceSeekToFrame(it->explosionFrame + 2);

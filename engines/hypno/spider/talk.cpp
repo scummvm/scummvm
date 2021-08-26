@@ -1,14 +1,14 @@
-#include "hypno/hypno.h"
 #include "hypno/grammar.h"
+#include "hypno/hypno.h"
 
 namespace Hypno {
 
-void HypnoEngine::showConversation() {	
+void HypnoEngine::showConversation() {
 	uint32 x = 18;
 	uint32 y = 20;
 	Graphics::Surface *speaker = decodeFrame("dialog/speaker3.smk", 0);
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
-		Talk *a = (Talk*) *itt;
+		Talk *a = (Talk *)*itt;
 		if (a->active) {
 			uint32 frame;
 			Common::String path;
@@ -18,9 +18,8 @@ void HypnoEngine::showConversation() {
 				} else if (it->command == "G") {
 					path = it->path;
 				}
-
 			}
-			if (!path.empty()) { 
+			if (!path.empty()) {
 				frame = frame;
 				debug("decoding %s frame %d", path.c_str(), frame);
 				Graphics::Surface *surf = decodeFrame("dialog/" + path, frame);
@@ -34,36 +33,34 @@ void HypnoEngine::showConversation() {
 			}
 		}
 	}
-
 }
 
 bool HypnoEngine::leftClickedConversation(Common::Point mousePos) {
 	Talk *t;
-	bool activeFound = false; 
+	bool activeFound = false;
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
-		Talk *a = (Talk*) *itt;
+		Talk *a = (Talk *)*itt;
 		if (a->active && a->rect.contains(mousePos)) {
 			activeFound = true;
 			a->active = false;
 			for (TalkCommands::const_iterator it = a->commands.begin(); it != a->commands.end(); ++it) {
 				if (it->command == "A") {
 					debug("Adding %d", it->num);
-					t = (Talk*) _conversation[it->num];
+					t = (Talk *)_conversation[it->num];
 					t->active = true;
-					_refreshConversation = true; 
+					_refreshConversation = true;
 				} else if (it->command == "D") {
 					debug("Disabling %d", it->num);
-					t = (Talk*) _conversation[it->num];
+					t = (Talk *)_conversation[it->num];
 					t->active = false;
-					_refreshConversation = true; 
+					_refreshConversation = true;
 				} else if (it->command == "P") {
 					debug("Playing %s", it->path.c_str());
 					_nextSequentialVideoToPlay.push_back(MVideo(it->path, it->position, false, false, false));
 				}
-
 			}
 		}
-		if (!a->background.empty()){
+		if (!a->background.empty()) {
 			loadImage(a->background, a->position.x, a->position.y, false);
 		}
 	}
@@ -76,7 +73,7 @@ bool HypnoEngine::leftClickedConversation(Common::Point mousePos) {
 
 bool HypnoEngine::rightClickedConversation(Common::Point mousePos) {
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
-		Talk *a = (Talk*) *itt;
+		Talk *a = (Talk *)*itt;
 		if (a->active && a->rect.contains(mousePos)) {
 			for (TalkCommands::const_iterator it = a->commands.begin(); it != a->commands.end(); ++it) {
 				if (it->command == "I") {

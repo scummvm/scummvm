@@ -8,7 +8,11 @@ namespace Hypno {
 
 void SpiderEngine::drawPlayer(Common::String player, MVideo &background) {
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
-	uint32 idx = mousePos.x / 50;
+	uint32 idx;
+	if (mousePos.y / (_screenH / 2) == 0)
+		idx = mousePos.x / (_screenW / 3);
+	else
+		idx = 5 - mousePos.x / (_screenW / 3);
 	Graphics::Surface *image = decodeFrame(player, idx);
 	drawImage(*image, 60, 129, true);
 	image->free();

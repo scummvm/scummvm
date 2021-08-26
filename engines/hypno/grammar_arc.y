@@ -57,11 +57,11 @@ using namespace Hypno;
 	int i;	 /* integer value */
 }
 
-%token<s> NAME FILENAME BNTOK
+%token<s> NAME FILENAME BNTOK SNTOK
 %token<i> NUM
 // header
 %token YXTOK CTOK DTOK HTOK HETOK RETTOK QTOK ENCTOK
-%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK O1TOK NTOK RTOK ITOK SNTOK ZTOK
+%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK O1TOK NTOK RTOK ITOK ZTOK
 
 // body
 %token FNTOK NONETOK A0TOK K0TOK P0TOK WTOK
@@ -74,13 +74,13 @@ using namespace Hypno;
 
 %%
 
-start:  YXTOK header body
+start: YXTOK header body
       ;
 
 
 header:  hline RETTOK header
        | hline
-	   | RETTOK header          
+	   | RETTOK header      
 	   ; 
 
 hline:  CTOK NUM  { debug("C %d", $2); }
@@ -117,7 +117,11 @@ hline:  CTOK NUM  { debug("C %d", $2); }
 		  debug("BN %s", $2); 
 		}
 	  | SNTOK FILENAME enc {
-		  g_parsedArc.sounds.push_back($2); 
+		  if (Common::String("S0") == $1)
+		  	g_parsedArc.music = $2;
+		  else if (Common::String("S1") == $1)
+		  	g_parsedArc.shootSound = $2;
+		   
 		  debug("SN %s", $2); 
 		}
 	  | HETOK C02TOK NUM NUM { debug("HE %d %d", $3, $4); }
@@ -182,7 +186,13 @@ bline: FNTOK FILENAME {
 		 shoot->damage = $2;
 		 debug("D %d", $2); 
 		}
-	 | SNTOK FILENAME enc { debug("SN %s", $2); }
+	 | SNTOK FILENAME enc { 
+		  if (Common::String("S1") == $1)
+		  	shoot->endSound = $2;
+		  else if (Common::String("S2") == $1)
+		  	shoot->startSound = $2;
+		 
+		 debug("SN %s", $2); }
 	 | NTOK { debug("N"); }
 	 | ZTOK {
 		g_parsedArc.shoots.push_back(*shoot); 

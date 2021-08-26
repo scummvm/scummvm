@@ -173,7 +173,9 @@ class ChangeLevel : public Action {
 class Shoot {
   public:
     Common::String name;
-	Common::String animation;
+	Filename animation;
+	Filename startSound;
+	Filename endSound;
 	Common::Point position;
 	int damage;
 	MVideo *video = nullptr;
@@ -186,11 +188,11 @@ typedef Common::Array<Shoot> Shoots;
 class ShootInfo {
   public:
     Common::String name;
-	uint32 timestamp; 
+	uint32 timestamp;
 };
 
 typedef Common::List<ShootInfo> ShootSequence;
-typedef Common::List<Common::String> Sounds;
+typedef Common::Array<Common::String> Sounds;
 
 class Transition {
   public:
@@ -229,7 +231,9 @@ class ArcadeShooting {
 	int health;
 	Shoots shoots;
 	ShootSequence shootSequence;
-	Sounds sounds;
+	Filename shootSound;
+	Filename hitSound;
+	Filename music;
 };
 
 class Level {
