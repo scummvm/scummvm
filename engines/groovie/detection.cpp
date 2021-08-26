@@ -140,7 +140,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// The 11th Hour DOS English
 	{
 		{
-			"11h", "",
+			"11h", "CD-ROM",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
@@ -196,7 +196,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 	// The 11th Hour Windows English (Available on Steam)
 	{
 		{
-			"11h", "Installed",
+			"11h", "Digital",
 			{
 				{ "disk.1", 0, "4c1d0549f544f052fba2b7a9aebd1077", 220},
 				{ 0, 0, 0, 0 }
