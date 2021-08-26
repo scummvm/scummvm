@@ -172,6 +172,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "063bb8ce4157c778cf30d1c912c006f1", 335631},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
+		
+	// Castle of Dr. Brain - German DOS Floppy 1.000 (also includes English language)
+	// SCI interpreter version 1.000.068
+	{"castlebrain", "", {
+		{"resource.map", 0, "a69c03fa6845e7d859a9d5bff9090aad", 2679},
+		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 368428},
+		{"resource.001", 0, "6c3d1bb26ad532c94046bc9ac49b5ff4", 887474},
+		{"resource.002", 0, "2a30815661f457dcb49b19f9cce96af0", 1250595},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
 	// Castle of Dr. Brain - Spanish DOS (also includes english language)
 	// SCI interpreter version 1.000.510
