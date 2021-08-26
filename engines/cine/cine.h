@@ -184,6 +184,7 @@ public:
 	 */
 	ScriptVars _globalVars;
 	RawScriptArray _scriptTable; ///< Table of script bytecode
+	FWScriptInfo *_scriptInfo;
 
 	Common::Array<int16> _zoneData;
 	Common::Array<uint16> _zoneQuery; ///< Only exists in Operation Stealth

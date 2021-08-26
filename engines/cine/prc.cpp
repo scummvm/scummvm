@@ -85,7 +85,7 @@ bool loadPrc(const char *pPrcName) {
 		uint16 size = g_cine->_scriptTable[i]->_size;
 		// TODO: delete the test?
 		if (size) {
-			g_cine->_scriptTable[i]->setData(*scriptInfo, scriptPtr);
+			g_cine->_scriptTable[i]->setData(*g_cine->_scriptInfo, scriptPtr);
 			scriptPtr += size;
 		}
 	}

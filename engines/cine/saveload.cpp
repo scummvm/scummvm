@@ -210,11 +210,11 @@ void loadScriptFromSave(Common::SeekableReadStream &fHandle, bool isGlobal) {
 	// original code loaded everything into globalScripts, this should be
 	// the correct behavior
 	if (isGlobal) {
-		ScriptPtr tmp(scriptInfo->create(*g_cine->_scriptTable[idx], idx, labels, localVars, compare, pos));
+		ScriptPtr tmp(g_cine->_scriptInfo->create(*g_cine->_scriptTable[idx], idx, labels, localVars, compare, pos));
 		assert(tmp);
 		g_cine->_globalScripts.push_back(tmp);
 	} else {
-		ScriptPtr tmp(scriptInfo->create(*g_cine->_relTable[idx], idx, labels, localVars, compare, pos));
+		ScriptPtr tmp(g_cine->_scriptInfo->create(*g_cine->_relTable[idx], idx, labels, localVars, compare, pos));
 		assert(tmp);
 		g_cine->_objectScripts.push_back(tmp);
 	}
