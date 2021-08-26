@@ -171,11 +171,6 @@ void T11hGame::opGallery() {
 		}
 	}
 
-
-
-
-
-
 	int selectedPart;
 		
 	do {
@@ -184,6 +179,10 @@ void T11hGame::opGallery() {
 
 	setScriptVar(0x2F, selectedPart / 10);
 	setScriptVar(0x30, selectedPart % 10);
+}
+
+byte T11hGame::opGallerySub(int one, byte* field) {
+	return 0;
 }
 
 // This function is mainly for debugging purpose
