@@ -1278,8 +1278,8 @@ bool IllusionsEngine_Duckman::loadSavegameFromScript(int16 slotNum, uint32 calli
 		return false; // TODO need to handle reset from new game (without exising savegame).
 	}
 
-	const char *fileName = getSavegameFilename(_savegameSlotNum);
-	bool success = loadgame(fileName);
+	Common::String fileName = getSavegameFilename(_targetName, _savegameSlotNum);
+	bool success = loadgame(fileName.c_str());
 	if (success)
 		activateSavegame(callingThreadId);
 	_gameState->deleteReadStream();
@@ -1287,8 +1287,8 @@ bool IllusionsEngine_Duckman::loadSavegameFromScript(int16 slotNum, uint32 calli
 }
 
 bool IllusionsEngine_Duckman::saveSavegameFromScript(int16 slotNum, uint32 callingThreadId) {
-	const char *fileName = getSavegameFilename(_savegameSlotNum);
-	return savegame(fileName, _savegameDescription.c_str());
+	Common::String fileName = getSavegameFilename(_targetName, _savegameSlotNum);
+	return savegame(fileName.c_str(), _savegameDescription.c_str());
 }
 
 void IllusionsEngine_Duckman::activateSavegame(uint32 callingThreadId) {
