@@ -31,7 +31,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/engine/speech.h"
+#include "sci/engine/tts.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"

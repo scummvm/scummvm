@@ -25,7 +25,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/workarounds.h"
-#include "sci/engine/speech.h"
+#include "sci/engine/tts.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/ports.h"

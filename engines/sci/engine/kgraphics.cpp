@@ -38,7 +38,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/speech.h"
+#include "sci/engine/tts.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
@@ -1228,7 +1228,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	uint16 languageSplitter = 0;
 	Common::String splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter);
 
-	ttsPickQ(text.c_str());
+	ttsPickLB2NotebookTopic(text.c_str());
 
 	return g_sci->_gfxPaint16->kernelDisplay(splitText.c_str(), languageSplitter, argc, argv);
 }

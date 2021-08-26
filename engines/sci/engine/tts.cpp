@@ -21,7 +21,7 @@
  */
 
 #include "sci/sci.h"
-#include "sci/engine/speech.h"
+#include "sci/engine/tts.h"
 #include "common/system.h"
 #include "common/text-to-speech.h"
 #include "common/config-manager.h"
@@ -37,10 +37,10 @@ void ttsSetLang() {
 
 Common::String textKeeper[10];
 
-void ttsPickQ(const char *text) {
+void ttsPickLB2NotebookTopic(const char *text) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (textKeeper[0] != text && !(text == textKeeper[1] && textKeeper[0] == "")) {
-		if (ttsMan != nullptr && g_sci->getGameId() == GID_LAURABOW2 && g_sci->isDemo() == false)
+		if (ttsMan != nullptr && g_sci->getGameId() == GID_LAURABOW2 && !g_sci->isDemo())
 			ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
 
 			for (int i = 5; i < 10; ++i)
@@ -75,5 +75,4 @@ void ttsDisplay(const char *text) {
 		thelastText = text;
 	}
 }
-
 } // End of namespace Sci

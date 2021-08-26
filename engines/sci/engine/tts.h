@@ -25,9 +25,8 @@
 namespace Sci {
 
 void ttsSetLang();
-void ttsPickQ(const char *text);
+void ttsPickLB2NotebookTopic(const char *text);
 void ttsButton(const char *text);
 void ttsBox(const char *text);
 void ttsDisplay(const char *text);
-
 } // End of namespace Sci

@@ -44,7 +44,7 @@
 #include "sci/engine/script_patches.h"
 #include "sci/engine/selector.h"	// for SELECTOR
 #include "sci/engine/scriptdebug.h"
-#include "sci/engine/speech.h"
+#include "sci/engine/tts.h"
 
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
