@@ -38,7 +38,7 @@ bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {
 	_file = file;
 	_flags = flags;
 	_overrideSpeed = false;
-	if (_audioStream) {
+	if ( _vm->getEngineVersion() != kGroovieT7G && _audioStream ) {
 		g_system->getMixer()->stopAll();
 	}
 	_audioStream = NULL;

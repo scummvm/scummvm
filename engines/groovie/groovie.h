@@ -96,6 +96,7 @@ public:
 	~GroovieEngine() override;
 
 	Common::Platform getPlatform() const;
+	EngineVersion getEngineVersion() const;
 
 protected:
 
