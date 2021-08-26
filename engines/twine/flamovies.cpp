@@ -21,6 +21,7 @@
  */
 
 #include "twine/flamovies.h"
+#include "common/endian.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
@@ -162,8 +163,8 @@ void FlaMovies::scaleFla2x() {
 void FlaMovies::processFrame() {
 	FLASampleStruct sample;
 
-	_file.read(&_frameData.videoSize, 2);
-	_file.read(&_frameData.frameVar0, 4);
+	_frameData.videoSize = _file.readSint16LE();
+	_frameData.frameVar0 = _file.readSint32LE();
 	if (_frameData.frameVar0 > _engine->_imageBuffer.w * _engine->_imageBuffer.h) {
 		warning("Skipping video frame - it would exceed the screen buffer: %i", _frameData.frameVar0);
 		return;
@@ -366,7 +367,8 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 		return;
 	}
 
-	_file.read(&_flaHeaderData.version, 6);
+	const uint32 version = _file.readUint32LE();
+	_file.skip(2);
 	_flaHeaderData.numOfFrames = _file.readUint32LE();
 	_flaHeaderData.speed = _file.readByte();
 	_flaHeaderData.var1 = _file.readByte();
@@ -380,7 +382,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 
 	_file.skip(4 * _samplesInFla);
 
-	if (!strcmp((const char *)_flaHeaderData.version, "V1.3")) {
+	if (version != MKTAG('V', '1', '.', '3')) {
 		int32 currentFrame = 0;
 
 		debug("Play fla: %s", flaName);
