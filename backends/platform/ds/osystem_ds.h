@@ -44,6 +44,7 @@ protected:
 #ifdef DISABLE_TEXT_CONSOLE
 	DS::Background _subScreen;
 #endif
+	bool _subScreenActive;
 	Graphics::Surface _cursor;
 	int _graphicsMode, _stretchMode;
 	bool _paletteDirty, _cursorDirty;
