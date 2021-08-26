@@ -716,12 +716,20 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 
 	if ((int)w != _videoMode.screenWidth || (int)h != _videoMode.screenHeight) {
 		const bool useDefault = defaultGraphicsModeConfig();
+		int scaleFactor = ConfMan.getInt("scale_factor");
+		int mode = _videoMode.scalerIndex;
 		if (useDefault && w > 320) {
-			// Only the normal scaler has a 1x mode
-			setScaler(ScalerMan.findScalerPluginIndex("normal"), 1);
-		} else {
-			setScaler(_videoMode.scalerIndex, ConfMan.getInt("scale_factor"));
+			// The default scaler is assumed to be for low
+			// resolution games. For high resolution games, pick
+			// the largest scale factor that gives at most the
+			// same window width.
+			scaleFactor = MAX<uint>(1, (scaleFactor * 320) / w);
+
+			// Only the normal scaler has a 1x mode.
+			if (scaleFactor == 1)
+				mode = ScalerMan.findScalerPluginIndex("normal");
 		}
+		setScaler(mode, scaleFactor);
 	}
 
 	_videoMode.screenWidth = w;
