@@ -29,7 +29,7 @@
 namespace TwinE {
 
 class ActorStruct;
-class ExtraListStruct;
+struct ExtraListStruct;
 class TwinEEngine;
 
 class Collision {

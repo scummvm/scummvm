@@ -34,7 +34,7 @@ class ManagedSurface;
 
 namespace TwinE {
 
-struct ActorStruct;
+class ActorStruct;
 
 /** Block fragment entry */
 struct BlockEntry {
