@@ -130,7 +130,7 @@ def decode_macjapanese(text: ByteString) -> str:
 
 def file_to_macbin(f: machfs.File, name: ByteString) -> bytes:
     oldFlags = f.flags >> 8
-    newFlags = f.flags & 8
+    newFlags = f.flags & 15
     macbin = pack(
         ">xB63s4s4sBxHHHBxIIIIHB14xIHBB",
         len(name),
