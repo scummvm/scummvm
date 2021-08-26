@@ -206,20 +206,16 @@ void FWScript::setupTable() {
 	FWScript::_numOpcodes = ARRAYSIZE(opcodeTable);
 }
 
-FWScriptInfo *scriptInfo; ///< Script factory
-
 /**
  * @todo replace with script subsystem
  */
-void setupOpcodes() {
-	static FWScriptInfo fw;
-	static OSScriptInfo os;
+FWScriptInfo *setupOpcodes() {
 	if (g_cine->getGameType() == Cine::GType_FW) {
 		FWScript::setupTable();
-		scriptInfo = &fw;
+		return new FWScriptInfo();
 	} else {
 		OSScript::setupTable();
-		scriptInfo = &os;
+		return new OSScriptInfo();
 	}
 }
 
@@ -2015,7 +2011,7 @@ int FWScript::o1_unloadMask5() {
 //-----------------------------------------------------------------------
 
 void addScriptToGlobalScripts(uint16 idx) {
-	ScriptPtr tmp(scriptInfo->create(*g_cine->_scriptTable[idx], idx));
+	ScriptPtr tmp(g_cine->_scriptInfo->create(*g_cine->_scriptTable[idx], idx));
 	assert(tmp);
 	g_cine->_globalScripts.push_back(tmp);
 }

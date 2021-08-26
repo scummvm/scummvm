@@ -177,7 +177,7 @@ uint safeControlAccessMinMs() {
 }
 
 void runObjectScript(int16 entryIdx) {
-	ScriptPtr tmp(scriptInfo->create(*g_cine->_relTable[entryIdx], entryIdx));
+	ScriptPtr tmp(g_cine->_scriptInfo->create(*g_cine->_relTable[entryIdx], entryIdx));
 	assert(tmp);
 	g_cine->_objectScripts.push_back(tmp);
 }

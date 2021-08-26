@@ -367,9 +367,7 @@ typedef Common::Array<RawObjectScriptPtr> RawObjectScriptArray;
 
 #define NUM_MAX_SCRIPT 50
 
-extern FWScriptInfo *scriptInfo;
-
-void setupOpcodes();
+FWScriptInfo *setupOpcodes();
 
 void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx);
 void dumpScript(char *dumpName);
