@@ -85,6 +85,7 @@ public:
 	void processMillis(uint32 &millis, bool skipRecord);
 	void processScreenUpdate();
 	void processGameDescription(const ADGameDescription *desc);
+	bool processAutosave();
 	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
 
 	/** Hooks for intercepting into GUI processing, so required events could be shoot
