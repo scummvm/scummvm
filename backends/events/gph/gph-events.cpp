@@ -379,12 +379,7 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	case BUTTON_R:
 		event.type = Common::EVENT_KEYDOWN;
 		if (_buttonStateL == true) {
-#ifdef ENABLE_VKEYBD
 			event.type = Common::EVENT_VIRTUAL_KEYBOARD;
-#else
-			event.kbd.keycode = Common::KEYCODE_0;
-			event.kbd.ascii = mapKey(SDLK_0, ev.key.keysym.mod, 0);
-#endif
 		} else {
 			event.kbd.keycode = Common::KEYCODE_RETURN;
 			event.kbd.ascii = mapKey(SDLK_RETURN, ev.key.keysym.mod, 0);
@@ -529,13 +524,8 @@ bool GPHEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	case BUTTON_R:
 		event.type = Common::EVENT_KEYUP;
 		if (_buttonStateL == true) {
-#ifdef ENABLE_VKEYBD
 			event.kbd.keycode = Common::KEYCODE_F7;
 			event.kbd.ascii = mapKey(SDLK_F7, ev.key.keysym.mod, 0);
-#else
-			event.kbd.keycode = Common::KEYCODE_0;
-			event.kbd.ascii = mapKey(SDLK_0, ev.key.keysym.mod, 0);
-#endif
 		} else {
 			event.kbd.keycode = Common::KEYCODE_RETURN;
 			event.kbd.ascii = mapKey(SDLK_RETURN, ev.key.keysym.mod, 0);
