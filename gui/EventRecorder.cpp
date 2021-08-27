@@ -224,6 +224,10 @@ bool EventRecorder::processDelayMillis() {
 	return _fastPlayback;
 }
 
+bool EventRecorder::processAutosave() {
+	return _recordMode == kPassthrough;
+}
+
 void EventRecorder::processScreenUpdate() {
 	if (!_initialized) {
 		return;

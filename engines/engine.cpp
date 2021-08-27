@@ -55,6 +55,7 @@
 #include "gui/gui-manager.h"
 #include "gui/debugger.h"
 #include "gui/dialog.h"
+#include "gui/EventRecorder.h"
 #include "gui/message.h"
 #include "gui/saveload.h"
 
@@ -534,6 +535,10 @@ void Engine::warnMissingExtractedCDAudio() {
 }
 
 void Engine::handleAutoSave() {
+#ifdef ENABLE_EVENTRECORDER
+	if (!g_eventRec.processAutosave())
+		return;
+#endif
 	const int diff = _system->getMillis() - _lastAutosaveTime;
 
 	if (_autosaveInterval != 0 && diff > (_autosaveInterval * 1000)) {
