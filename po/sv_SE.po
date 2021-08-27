@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-26 17:32+0000\n"
+"POT-Creation-Date: 2021-08-27 22:31+0000\n"
 "PO-Revision-Date: 2021-04-12 23:51+0000\n"
 "Last-Translator: Henrik Andersson <henke@henke37.cjb.net>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -62,8 +62,8 @@ msgstr "Uppåt"
 #: gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:63 gui/saveload-dialog.cpp:419
-#: gui/saveload-dialog.cpp:484 gui/saveload-dialog.cpp:788
-#: gui/saveload-dialog.cpp:1181 gui/themebrowser.cpp:55
+#: gui/saveload-dialog.cpp:490 gui/saveload-dialog.cpp:792
+#: gui/saveload-dialog.cpp:1185 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:692
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
@@ -162,7 +162,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:388
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:513 gui/launcher.cpp:517
-#: gui/massadd.cpp:89 gui/options.cpp:2095 gui/saveload-dialog.cpp:1182
+#: gui/massadd.cpp:89 gui/options.cpp:2095 gui/saveload-dialog.cpp:1186
 #: engines/engine.cpp:508 engines/engine.cpp:532
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
@@ -1863,7 +1863,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "Inspelare eller återuppspelning"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
-#: gui/saveload-dialog.cpp:423 gui/saveload-dialog.cpp:484
+#: gui/saveload-dialog.cpp:423 gui/saveload-dialog.cpp:490
 msgid "Delete"
 msgstr "Radera"
 
@@ -1923,59 +1923,59 @@ msgstr "Visa som lista"
 msgid "Grid view"
 msgstr "Visa som rutnät"
 
-#: gui/saveload-dialog.cpp:414 gui/saveload-dialog.cpp:588
+#: gui/saveload-dialog.cpp:414 gui/saveload-dialog.cpp:594
 msgid "No date saved"
 msgstr "Inget datum sparat"
 
-#: gui/saveload-dialog.cpp:415 gui/saveload-dialog.cpp:589
+#: gui/saveload-dialog.cpp:415 gui/saveload-dialog.cpp:595
 msgid "No time saved"
 msgstr "Ingen tid sparad"
 
-#: gui/saveload-dialog.cpp:416 gui/saveload-dialog.cpp:590
+#: gui/saveload-dialog.cpp:416 gui/saveload-dialog.cpp:596
 msgid "No playtime saved"
 msgstr "Ingen speltid sparad"
 
-#: gui/saveload-dialog.cpp:483
+#: gui/saveload-dialog.cpp:489
 msgid "Do you really want to delete this saved game?"
 msgstr "Vill du verkligen radera den här spardatan?"
 
-#: gui/saveload-dialog.cpp:615 gui/saveload-dialog.cpp:1132
+#: gui/saveload-dialog.cpp:619 gui/saveload-dialog.cpp:1136
 msgid "Date: "
 msgstr "Datum: "
 
-#: gui/saveload-dialog.cpp:619 gui/saveload-dialog.cpp:1138
+#: gui/saveload-dialog.cpp:623 gui/saveload-dialog.cpp:1142
 msgid "Time: "
 msgstr "Tid: "
 
-#: gui/saveload-dialog.cpp:625 gui/saveload-dialog.cpp:1146
+#: gui/saveload-dialog.cpp:629 gui/saveload-dialog.cpp:1150
 msgid "Playtime: "
 msgstr "Speltid: "
 
-#: gui/saveload-dialog.cpp:638 gui/saveload-dialog.cpp:726
+#: gui/saveload-dialog.cpp:642 gui/saveload-dialog.cpp:730
 msgid "Untitled saved game"
 msgstr "Namnlös sparfil"
 
-#: gui/saveload-dialog.cpp:789
+#: gui/saveload-dialog.cpp:793
 msgid "Next"
 msgstr "Nästa"
 
-#: gui/saveload-dialog.cpp:792
+#: gui/saveload-dialog.cpp:796
 msgid "Prev"
 msgstr "Bakåt"
 
-#: gui/saveload-dialog.cpp:993
+#: gui/saveload-dialog.cpp:997
 msgid "New Save"
 msgstr "Ny sparning"
 
-#: gui/saveload-dialog.cpp:993
+#: gui/saveload-dialog.cpp:997
 msgid "Create a new saved game"
 msgstr "Skapa ett nytt sparat spel"
 
-#: gui/saveload-dialog.cpp:1125
+#: gui/saveload-dialog.cpp:1129
 msgid "Name: "
 msgstr "Namn: "
 
-#: gui/saveload-dialog.cpp:1201
+#: gui/saveload-dialog.cpp:1205
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Ange en beskrivning för position %d:"
