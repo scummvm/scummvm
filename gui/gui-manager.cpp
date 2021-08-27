@@ -368,7 +368,7 @@ void GuiManager::runLoop() {
 
 #ifdef ENABLE_EVENTRECORDER
 	// Suspend recording while GUI is shown
-	g_eventRec.suspendRecording();
+	g_eventRec.acquireRecording();
 #endif
 
 	if (!_stateIsSaved) {
@@ -505,7 +505,7 @@ void GuiManager::runLoop() {
 
 #ifdef ENABLE_EVENTRECORDER
 	// Resume recording once GUI is shown
-	g_eventRec.resumeRecording();
+	g_eventRec.releaseRecording();
 #endif
 }
 
@@ -621,6 +621,13 @@ bool GuiManager::checkScreenChange() {
 }
 
 void GuiManager::screenChange() {
+#ifdef ENABLE_EVENTRECORDER
+	// Suspend recording while GUI is redrawn.
+	// We need this in addition to the lock in runLoop, as EVENT_SCREEN_CHANGED can
+	// be fired by in-game GUI components (such as the event recorder itself)
+	g_eventRec.acquireRecording();
+#endif
+
 	_lastScreenChangeID = _system->getScreenChangeID();
 
 	computeScaleFactor();
@@ -638,6 +645,11 @@ void GuiManager::screenChange() {
 	_redrawStatus = kRedrawFull;
 	redraw();
 	_system->updateScreen();
+
+#ifdef ENABLE_EVENTRECORDER
+	// Resume recording once GUI has redrawn
+	g_eventRec.releaseRecording();
+#endif
 }
 
 void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDialog) {
