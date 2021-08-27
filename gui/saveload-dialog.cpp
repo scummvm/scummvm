@@ -811,7 +811,7 @@ const Common::U32String &SaveLoadChooserGrid::getResultString() const {
 
 void SaveLoadChooserGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	const int slot = cmd + _curPage * _entriesPerPage - 1;
-	if (cmd <= _entriesPerPage) {
+	if (cmd <= _entriesPerPage && slot < _saveList.size()) {
 		activate(slot, Common::U32String());
 	}
 
