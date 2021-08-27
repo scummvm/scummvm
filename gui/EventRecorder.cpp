@@ -87,6 +87,7 @@ EventRecorder::EventRecorder() {
 
 	_fakeTimer = 0;
 	_savedState = false;
+	_acquireCount = 0;
 	_needcontinueGame = false;
 	_temporarySlot = 0;
 	_realSaveManager = nullptr;
@@ -552,6 +553,9 @@ bool EventRecorder::notifyEvent(const Common::Event &ev) {
 	evt.mouse.y = evt.mouse.y * (g_system->getOverlayHeight() / g_system->getHeight());
 	switch (_recordMode) {
 	case kRecorderPlayback:
+		// pass through screen updates to avoid loss of sync!
+		if (evt.type == Common::EVENT_SCREEN_CHANGED)
+			g_gui.processEvent(evt, _controlPanel);
 		return false;
 	case kRecorderRecord:
 		g_gui.processEvent(evt, _controlPanel);

@@ -153,13 +153,19 @@ public:
 	void deleteRecord(const Common::String& fileName);
 	bool checkForContinueGame();
 
-	void suspendRecording() {
-		_savedState = _initialized;
-		_initialized = false;
+	void acquireRecording() {
+		if (_acquireCount == 0) {
+			_savedState = _initialized;
+			_initialized = false;
+		}
+		_acquireCount += 1;
 	}
 
-	void resumeRecording() {
-		_initialized = _savedState;
+	void releaseRecording() {
+		assert(_acquireCount > 0);
+		_acquireCount -= 1;
+		if (_acquireCount == 0)
+			_initialized = _savedState;
 	}
 
 	Common::StringArray listSaveFiles(const Common::String &pattern);
@@ -183,6 +189,7 @@ private:
 	volatile uint32 _fakeTimer;
 	TimeDate _lastTimeDate;
 	bool _savedState;
+	int _acquireCount;
 	bool _needcontinueGame;
 	int _temporarySlot;
 	Common::String _author;
