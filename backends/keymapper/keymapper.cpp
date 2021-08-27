@@ -384,7 +384,6 @@ HardwareInput Keymapper::findHardwareInput(const Event &event) {
 void Keymapper::hardcodedEventMapping(Event ev) {
 	// TODO: Either add support for long presses to the keymapper
 	// or move this elsewhere as an event observer + source
-#ifdef ENABLE_VKEYBD
 	// Trigger virtual keyboard on long press of more than 1 second
 	// of middle mouse button.
 	const uint32 vkeybdTime = 1000;
@@ -404,7 +403,6 @@ void Keymapper::hardcodedEventMapping(Event ev) {
 			_delayedEventSource->scheduleEvent(vkeybdEvent, 100);
 		}
 	}
-#endif
 }
 
 void Keymapper::resetInputState() {

@@ -155,8 +155,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		else if (_shouldReturnToLauncher)
 			event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 		break;
-#ifdef ENABLE_VKEYBD
+
 	case Common::EVENT_VIRTUAL_KEYBOARD:
+#ifdef ENABLE_VKEYBD
 		if (!_vk)
 			break;
 
@@ -169,8 +170,17 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_vk->show();
 			forwardEvent = false;
 		}
-		break;
+#else
+		// TODO: Support switching between virtual keyboards at runtime
+		if (g_system->hasFeature(OSystem::kFeatureVirtualKeyboard)) {
+			if (g_system->getFeatureState(OSystem::kFeatureVirtualKeyboard))
+				g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+			else
+				g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+		}
 #endif
+		break;
+
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 		if (ConfMan.getBool("confirm_exit")) {
 			if (_confirmExitDialogActive) {
@@ -330,13 +340,11 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	act->setEvent(EVENT_MAINMENU);
 	globalKeymap->addAction(act);
 
-#ifdef ENABLE_VKEYBD
 	act = new Action("VIRT", _("Display keyboard"));
 	act->addDefaultInputMapping("C+F7");
 	act->addDefaultInputMapping("JOY_BACK");
 	act->setEvent(EVENT_VIRTUAL_KEYBOARD);
 	globalKeymap->addAction(act);
-#endif
 
 	act = new Action("MUTE", _("Toggle mute"));
 	act->addDefaultInputMapping("C+u");

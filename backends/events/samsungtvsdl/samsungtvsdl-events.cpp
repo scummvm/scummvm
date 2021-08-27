@@ -38,10 +38,8 @@ bool SamsungTVSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				event.kbd.ascii = Common::ASCII_F5;
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F2 && ev.key.keysym.scancode == 21) {
-#ifdef ENABLE_VKEYBD
 				event.type = Common::EVENT_VIRTUAL_KEYBOARD;
 				return true;
-#endif
 			}
 			break;
 		}
