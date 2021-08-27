@@ -464,14 +464,20 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 		if (selItem >= 0 && _chooseButton->isEnabled()) {
 			if (_list->isEditable() || !_list->getSelectedString().empty()) {
 				_list->endEditMode();
-				activate(selItem, _list->getSelectedString());
+				Common::U32String description;
+				if (!_saveList.empty())
+					description = _list->getSelectedString();
+				activate(selItem, description);
 			}
 		}
 		break;
 	case kChooseCmd:
 		_list->endEditMode();
 		if (selItem >= 0) {
-			activate(selItem, _list->getSelectedString());
+			Common::U32String description;
+			if (!_saveList.empty())
+				description = _list->getSelectedString();
+			activate(selItem, description);
 		}
 		break;
 	case kListSelectionChangedCmd:
