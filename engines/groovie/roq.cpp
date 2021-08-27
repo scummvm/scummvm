@@ -333,12 +333,12 @@ bool ROQPlayer::playFrameInternal() {
 		waitFrame();
 
 	if (_dirty) {
-		// Update the screen
+		// TODO: Update the screen
 		void *src = (_alpha && 0) ? _bg->getPixels() : _screen->getPixels();
 		_syst->copyRectToScreen(src, _screen->pitch, 0, (_syst->getHeight() - _screen->h) / 2, _screen->w, _screen->h);
 		_syst->updateScreen();
 
-		// For overlay videos, set the background buffer when the video ends
+		// TODO: For overlay videos, set the background buffer when the video ends
 		if (_alpha && (!_flagTwo || _file->eos())) {
 			//_bg->copyFrom(*_fg);
 		}
@@ -496,7 +496,7 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 	else if (_screen->h == 480 && height != 480)
 		_vm->_graphicsMan->switchToFullScreen(false);
 
-	// Clear the buffers with black
+	// TODO: Clear the buffers with black
 	if (!_alpha && 0) {
 		_currBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
 		_prevBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
