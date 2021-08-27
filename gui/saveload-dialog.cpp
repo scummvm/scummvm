@@ -597,8 +597,6 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 	if (selItem >= 0 && _metaInfoSupport) {
 		SaveStateDescriptor desc = (_saveList[selItem].getLocked() ? _saveList[selItem] : _metaEngine->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot()));
-		if (!_saveList[selItem].getLocked())
-			_saveList[selItem] = desc;
 
 		isDeletable = desc.getDeletableFlag() && _delSupport;
 		isWriteProtected = desc.getWriteProtectedFlag() ||
