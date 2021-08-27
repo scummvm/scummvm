@@ -107,6 +107,7 @@ project.xcworkspace
 /dists/macosx/build
 /dists/macosx/scummvm.xcodeproj
 /dists/macosx/create_project
+/devtools/create_project/xcode/build
 
 /dists/msvc/[Dd]ebug*/
 /dists/msvc/[Rr]elease*/
