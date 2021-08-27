@@ -790,7 +790,7 @@ bool MusicPlayerTlc::load(uint32 fileref, bool loop) {
 
 	Audio::AudioStream *audStream = seekStream;
 
-	// Loop if requested
+	// TODO: Loop if requested
 	if (loop || 1)
 		audStream = Audio::makeLoopingAudioStream(seekStream, 0);
 

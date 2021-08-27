@@ -345,10 +345,10 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 
 			// Decode pixel
 			if (alpha) {
-				*ptr = alpha;
-				*(ptr + 1) = r;
-				*(ptr + 2) = g;
-				*(ptr + 3) = b;
+				ptr[0] = alpha;
+				ptr[1] = r;
+				ptr[2] = g;
+				ptr[3] = b;
 			}
 			ptr += 4;
 		}
@@ -359,7 +359,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 	ptr = tmp;
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
-			*(uint32 *)dest = _format.ARGBToColor(*ptr, *(ptr + 1), *(ptr + 2), *(ptr + 3));
+			*(uint32 *)dest = _format.ARGBToColor(ptr[0], ptr[1], ptr[2], ptr[3]);
 			dest += 4;
 			ptr += 4;
 		}

@@ -43,11 +43,11 @@ public:
 	void setVariables(byte *scriptVariables);
 
 	void opGallery();
-	byte opGallerySub(int one, byte *field);
 
 private:
 	Common::RandomSource _random;
 
+	byte opGallerySub(int one, byte *field);
 	void inline setScriptVar(uint16 var, byte value);
 	void inline setScriptVar16(uint16 var, uint16 value);
 	uint16 inline getScriptVar16(uint16 var);

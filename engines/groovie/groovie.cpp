@@ -170,30 +170,29 @@ Common::Error GroovieEngine::run() {
 
 	switch (_gameDescription->version) {
 	case kGroovieT7G:
+		// Detect ScummVM Music Enhancement Project presence (T7G only)
+		if (Common::File::exists("gu16.ogg")) {
+			// Load player for external files
+			_musicPlayer = new MusicPlayerIOS(this);
+			break;
+		}
 	case kGroovieT11H:
 	case kGroovieCDY:
 	case kGroovieUHP:
-		// Detect ScummVM Music Enhancement Project presence (T7G only)
-		if (Common::File::exists("gu16.ogg") && _gameDescription->version == kGroovieT7G) {
-			// Load player for external files
+		// Create the music player
+		switch (getPlatform()) {
+		case Common::kPlatformMacintosh:
+			if (_gameDescription->version == kGroovieT7G)
+				_musicPlayer = new MusicPlayerMac_t7g(this);
+			else
+				_musicPlayer = new MusicPlayerMac_v2(this);
+			break;
+		case Common::kPlatformIOS:
 			_musicPlayer = new MusicPlayerIOS(this);
-		}
-		else {
-			// Create the music player
-			switch (getPlatform()) {
-			case Common::kPlatformMacintosh:
-				if (_gameDescription->version == kGroovieT7G)
-					_musicPlayer = new MusicPlayerMac_t7g(this);
-				else
-					_musicPlayer = new MusicPlayerMac_v2(this);
-				break;
-			case Common::kPlatformIOS:
-				_musicPlayer = new MusicPlayerIOS(this);
-				break;
-			default:
-				_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
-				break;
-			}
+			break;
+		default:
+			_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
+			break;
 		}
 		break;
 
@@ -201,7 +200,6 @@ Common::Error GroovieEngine::run() {
 		_musicPlayer = new MusicPlayerTlc(this);
 		break;
 	}
-
 
 	// Load volume levels
 	syncSoundSettings();

@@ -1870,7 +1870,7 @@ void Script::o2_midicontrol() {
 		break;
 
 	case 3:
-		// Set Volume? Or is it some kind of fade in / out
+		// TODO: Set Volume? Or is it some kind of fade in / out
 		debugC(1, kDebugScript, "Groovie::Script: MIDI %d: Set volume/time:  %d", arg1, arg2);
 		//_vm->_musicPlayer->setUserVolume(arg2);
 		break;
