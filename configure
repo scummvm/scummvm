@@ -562,7 +562,7 @@ get_system_exe_extension() {
 		_exeext=".exe"
 		;;
 	emscripten)
-		_exeext=".html"	
+		_exeext=".html"
 		;;
 	*)
 		_exeext=""
@@ -1994,26 +1994,6 @@ EOF
 	fi
 }
 
-# Check for an executable in PATH. Takes the name of the EXE and sets
-# two variables with whether the exe exists and the path.
-# For example "test_exe_in_path curl" will set _curlpath and _curl
-test_exe_in_path() {
-	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
-
-	for path_dir in $PATH; do
-		if test -x "$path_dir/$1$NATIVEEXEEXT" ; then
-			eval "_${1}path"="$path_dir/$1$NATIVEEXEEXT"
-			break
-		fi
-	done
-	IFS="$ac_save_ifs"
-	if ! test "_${1}path" ; then
-		eval "_${1}=no"
-	else
-    eval "_${1}=yes"
-  fi
-}
-
 # Prepare a list of candidates for the C++ compiler
 if test -n "$CXX" && test_compiler "$CXX"; then
 	# Use the compiler specified in CXX
@@ -2952,11 +2932,11 @@ EOF
 		FREETYPE2_CFLAGS="-I$_freetypepath/include"
 		_freetype_found="true"
 		if test "$_debug_build" = no; then
-			_optimization_level=-O3 -g4 
+			_optimization_level=-O3 -g4
 		else
 			_optimization_level=-O2
 		fi
-	;;	
+	;;
 	freebsd* | openbsd*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
@@ -4001,7 +3981,7 @@ case $_host_os in
 		_posix=yes	# FIXME: Really???
 		;;
 	emscripten)
-		_posix=yes	
+		_posix=yes
 		;;
 	*)
 		# given this is a shell script, we might assume some type of posix.
@@ -5686,7 +5666,7 @@ define_in_config_if_yes $_nasm 'USE_NASM'
 if test "$_pandoc" = yes ; then
 	echocheck "pandoc"
 
-	test_exe_in_path pandoc
+	command -v pandoc >/dev/null 2>&1 && _pandoc=yes || _pandoc=no
 
 	echo $_pandoc
 fi
@@ -5699,7 +5679,7 @@ define_in_config_if_yes $_pandoc 'USE_PANDOC'
 if test "$_curl" = yes ; then
 	echocheck "curl"
 
-	test_exe_in_path curl
+	command -v curl >/dev/null 2>&1 && _curl=yes || _curl=no
 
 	echo $_curl
 fi
@@ -6273,8 +6253,8 @@ EXEPRE := $HOSTEXEPRE
 EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
-PANDOC := $_pandocpath
-CURL := $_curlpath
+PANDOC := pandoc
+CURL := curl
 PANDOCFORMAT := $_pandocformat
 PANDOCEXT := $_pandocext
 MANUALVERSION := $_manualversion
