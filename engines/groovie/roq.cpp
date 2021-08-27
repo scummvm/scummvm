@@ -339,7 +339,7 @@ bool ROQPlayer::playFrameInternal() {
 		_syst->updateScreen();
 
 		// For overlay videos, set the background buffer when the video ends
-		if (_alpha && (!_flagTwo || (_flagTwo && _file->eos()))) {
+		if (_alpha && (!_flagTwo || _file->eos())) {
 			//_bg->copyFrom(*_fg);
 		}
 

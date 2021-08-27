@@ -938,7 +938,7 @@ void Script::o_random() {
 	if (_version == kGroovieT7G) {
 		setVariable(varnum, _random.getRandomNumber(maxnum));
 	} else {
-		setVariable(varnum, _random.getRandomNumber(maxnum-1));
+		setVariable(varnum, _random.getRandomNumber(maxnum - 1));
 	}
 }
 
@@ -1471,7 +1471,7 @@ void Script::o_printstring() {
 	uint8 counter = 0;
 
 	debugC(1, kDebugScript, "Groovie::Script: PRINTSTRING");
-	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: PRINTSTRING", _currentInstruction-1);
+	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: PRINTSTRING", _currentInstruction - 1);
 
 	memset(stringstorage, 0, 15);
 	do {

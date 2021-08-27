@@ -214,7 +214,7 @@ Common::Error GroovieEngine::run() {
 			filename = "demo.grv";
 		else if (getPlatform() == Common::kPlatformMacintosh)
 			filename = "script.grv"; // Stored inside the executable's resource fork
-	} else if (_gameDescription->version != kGroovieT7G) {
+	} else {
 		// Open the disk index
 		Common::File disk;
 		if (!disk.open(filename)) {
