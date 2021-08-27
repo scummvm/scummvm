@@ -121,7 +121,7 @@ void TlcGame::regionsInit() {
 	// Read header for each question entry
 	_regionHeader = new TlcRegionsHeader[_numRegionHeaders];
 	for (int i = 0; i < _numRegionHeaders; i++) {
-		regionsfile->read(&_regionHeader[i].name, sizeof(TlcRegionsHeader::name));
+		regionsfile->read(_regionHeader[i].name, sizeof(TlcRegionsHeader::name));
 		regionsfile->seek(25 - sizeof(TlcRegionsHeader::name), SEEK_CUR);
 		_regionHeader[i].numAnswers = regionsfile->readUint32LE();
 		_regionHeader[i].offset = regionsfile->readUint32LE();
@@ -774,13 +774,10 @@ void TlcGame::tatInitRegs() {
 
 
 void TlcGame::tatLoadDBHeaders() {
-	Common::SeekableReadStream *tataidbfile = 0;
-	int iEpisode, iBin;
-
 	// Load tat headers if not already done
 	if (_tatHeaders == NULL) {
 		// Open tataidb.rle
-		tataidbfile = SearchMan.createReadStreamForMember("SYSTEM/TATAIDB.RLE");
+		Common::SeekableReadStream *tataidbfile = SearchMan.createReadStreamForMember("SYSTEM/TATAIDB.RLE");
 		if (!tataidbfile) {
 			error("TLC:TatLoadDB: Could not open 'SYSTEM/TATAIDB.RLE'");
 		}
@@ -788,10 +785,10 @@ void TlcGame::tatLoadDBHeaders() {
 		_tatEpisodes = tataidbfile->readUint32LE();
 		_tatHeaders = new TlcTatHeader[_tatEpisodes];
 
-		for (iEpisode = 0; iEpisode < _tatEpisodes; iEpisode++) {
+		for (int iEpisode = 0; iEpisode < _tatEpisodes; iEpisode++) {
 			_tatHeaders[iEpisode].questionsNum = tataidbfile->readUint32LE();
 			_tatHeaders[iEpisode].questionsOffset = tataidbfile->readUint32LE();
-			for (iBin = 0; iBin < 16; iBin++) {
+			for (int iBin = 0; iBin < 16; iBin++) {
 				_tatHeaders[iEpisode].binDividends[iBin] = tataidbfile->readByte();
 			}
 		}

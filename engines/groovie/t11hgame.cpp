@@ -116,7 +116,7 @@ void T11hGame::opGallery() {
 	byte field1[21];
 	byte field2[21];
 	byte var_18[21];
-	int var_1c, eax, edx, ecx, esi;
+	int var_1c, eax, edx, ecx;
 
 	// Copy RegMem to Field1
 	for (int i = 0; i < 21; i++) {
@@ -146,7 +146,7 @@ void T11hGame::opGallery() {
 	}
 
 	if (var_1c == 0) {
-		esi = 0;
+		int esi = 0;
 		for (eax = 0; eax < 21; eax++) {
 			if (var_18[eax] > esi) {
 				esi = var_18[eax];
