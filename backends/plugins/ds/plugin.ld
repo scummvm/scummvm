@@ -79,6 +79,7 @@ SECTIONS
     /* .gnu.warning sections are handled specially by elf32.em.  */
     *(.gnu.warning)
     *(.glue_7t) *(.glue_7) *(.vfp11_veneer) *(.v4_bx)
+    *(.ARM.extab*)
   } =0
   .fini           :
   {
@@ -89,10 +90,6 @@ SECTIONS
   PROVIDE (etext = .);
   .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
   .rodata1        : { *(.rodata1) }
-  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) }
-   __exidx_start = .;
-  .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) }
-   __exidx_end = .;
   .eh_frame_hdr : { *(.eh_frame_hdr) }
   .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) }
   .gcc_except_table   : ONLY_IF_RO { *(.gcc_except_table .gcc_except_table.*) }
@@ -213,5 +210,5 @@ SECTIONS
   }
   .ARM.attributes 0 : { KEEP (*(.ARM.attributes)) KEEP (*(.gnu.attributes)) }
   .note.gnu.arm.ident 0 : { KEEP (*(.note.gnu.arm.ident)) }
-  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) }
+  /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) *(.ARM.exidx*) }
 }
