@@ -1116,23 +1116,23 @@ void Script::o_strcmpnejmp_var() {			// 0x21
 	}
 }
 
-void Script::o_copybgtofg() {			// 0x22
-	if (_version == kGroovieT7G) {
-		debugC(1, kDebugScript, "Groovie::Script: COPY_BG_TO_FG");
-		debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: COPY_BG_TO_FG", _currentInstruction - 1);
-		memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * _vm->_graphicsMan->_foreground.h * _vm->_graphicsMan->_foreground.format.bytesPerPixel);
-	} else {
-		debugC(1, kDebugScript, "Groovie::Script: COPY_SCREEN_TO_BG");
-		debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: COPY_SCREEN_TO_BG", _currentInstruction - 1);
+void Script::o_copybgtofg() { // 0x22
+	debugC(1, kDebugScript, "Groovie::Script: COPY_BG_TO_FG");
+	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: COPY_BG_TO_FG", _currentInstruction - 1);
+	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * _vm->_graphicsMan->_foreground.h * _vm->_graphicsMan->_foreground.format.bytesPerPixel);
+}
 
-		Graphics::Surface *screen = _vm->_system->lockScreen();
-		if (_vm->_graphicsMan->isFullScreen()) {
-			_vm->_graphicsMan->_foreground.copyFrom(screen->getSubArea(Common::Rect(0, 0, 640, 480)));
-		} else {
-			_vm->_graphicsMan->_foreground.copyFrom(screen->getSubArea(Common::Rect(0, 80, 640, 400)));
-		}
-		_vm->_system->unlockScreen();
+void Script::o2_copybgtofg() { // 0x22
+	debugC(1, kDebugScript, "Groovie::Script: COPY_SCREEN_TO_BG");
+	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: COPY_SCREEN_TO_BG", _currentInstruction - 1);
+
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	if (_vm->_graphicsMan->isFullScreen()) {
+		_vm->_graphicsMan->_foreground.copyFrom(screen->getSubArea(Common::Rect(0, 0, 640, 480)));
+	} else {
+		_vm->_graphicsMan->_foreground.copyFrom(screen->getSubArea(Common::Rect(0, 80, 640, 400)));
 	}
+	_vm->_system->unlockScreen();
 }
 
 void Script::o_strcmpeqjmp() {			// 0x23
@@ -1188,8 +1188,10 @@ void Script::o_videofromstring1() {
 		debugC(2, kDebugVideo, "\nGroovie::Script: @0x%04X: Playing video %d ('%s') via 0x26 (VideoFromString1)", instStart-1, fileref, vidName.c_str());
 	}
 
-	// Clear bit 1
-	_bitflags &= ~(1 << 1);
+	if (_version != kGroovieT7G) {
+		// Clear bit 1
+		_bitflags &= ~(1 << 1);
+	}
 
 	// Play the video
 	if (!playvideofromref(fileref)) {
@@ -2189,7 +2191,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_inc,
 	&Script::o_dec, // 0x20
 	&Script::o_strcmpnejmp_var,
-	&Script::o_copybgtofg,
+	&Script::o2_copybgtofg,
 	&Script::o_strcmpeqjmp,
 	&Script::o_mov, // 0x24
 	&Script::o_add,

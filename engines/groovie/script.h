@@ -236,6 +236,7 @@ private:
 	void o_stub56();
 	void o_stub59();
 
+	void o2_copybgtofg();
 	void o2_printstring();
 	void o2_playsong();
 	void o2_midicontrol();
