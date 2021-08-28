@@ -234,7 +234,6 @@ public:
 };
 
 bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize) {
-	textTargetBuf[0] = '\0';
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	char buffer[256];
 	_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
@@ -337,6 +336,7 @@ bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize)
 
 bool MenuOptions::newGameMenu() {
 	_engine->restoreFrontBuffer();
+	_saveGameName[0] = '\0';
 	if (!enterText(TextId::kEnterYourName, _saveGameName, sizeof(_saveGameName))) {
 		return false;
 	}
@@ -420,7 +420,16 @@ bool MenuOptions::saveGameMenu() {
 	_engine->restoreFrontBuffer();
 	const int slot = chooseSave(TextId::kCreateSaveGame, true);
 	if (slot >= 0) {
-		Common::Error state = _engine->saveGameState(slot, _engine->_gameState->_sceneName, false);
+		char buf[30];
+		strncpy(buf, _engine->_gameState->_sceneName, sizeof(buf));
+		buf[sizeof(buf) - 1] = '\0';
+		_engine->restoreFrontBuffer();
+		enterText(TextId::kEnterYourNewName, buf, sizeof(buf));
+		// may not be empty
+		if (buf[0] == '\0') {
+			strncpy(buf, _engine->_gameState->_sceneName, sizeof(buf));
+		}
+		Common::Error state = _engine->saveGameState(slot, buf, false);
 		if (state.getCode() != Common::kNoError) {
 			error("Failed to save slot %i", slot);
 			return false;
