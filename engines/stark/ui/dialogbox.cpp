@@ -228,8 +228,6 @@ Graphics::Surface *DialogBox::loadBackground() {
 	// GOG version of The Longest Journey is 1.0.0.142 "RC1" (Special Build: "Paper Sun")
 	// Steam's game.exe does not contain a valid resource for the background bitmap id 147
 	// so we skip trying to retrieve it based on build number.
-	// Important Note: For this fix to have any effect the game may have to be re-added to ScummVM 
-	//      so that it can be detected as the Steam version and set the flag.
 	if (_vm->getGameFlags() & GF_MISSING_EXE_RESOURCES) {
 		warning("Steam version does not contain the modal dialog background bitmap in 'game.exe'. Using fallback color for dialog background...");
 		return nullptr;
