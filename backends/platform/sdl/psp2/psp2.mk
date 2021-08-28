@@ -3,7 +3,7 @@ PSP2_EXE_STRIPPED := scummvm_stripped$(EXEEXT)
 $(PSP2_EXE_STRIPPED): $(EXECUTABLE)
 	$(STRIP) --strip-debug $< -o $@
 
-psp2vpk: $(PSP2_EXE_STRIPPED) $(DIST_FILES_DOCS)
+psp2vpk: $(PSP2_EXE_STRIPPED)
 	rm -rf psp2pkg
 	rm -f $(EXECUTABLE).vpk
 	mkdir -p psp2pkg/sce_sys/livearea/contents

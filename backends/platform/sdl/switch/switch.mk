@@ -1,4 +1,4 @@
-scummvm.nro: $(EXECUTABLE) $(DIST_FILES_DOCS)
+scummvm.nro: $(EXECUTABLE)
 	mkdir -p ./switch_release/scummvm/data
 	mkdir -p ./switch_release/scummvm/doc
 	nacptool --create "ScummVM" "Cpasjuste" "$(VERSION)" ./switch_release/scummvm.nacp

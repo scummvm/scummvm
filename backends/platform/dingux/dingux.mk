@@ -12,7 +12,7 @@ dingux-distclean:
 	rm -rf $(bundle_name)
 	rm $(DINGUX_EXE_STRIPPED)
 
-dingux-dist: all $(DIST_FILES_DOCS)
+dingux-dist: all
 	$(MKDIR) $(bundle_name)
 	$(MKDIR) $(bundle_name)/saves
 	$(STRIP) $(EXECUTABLE) -o $(bundle_name)/scummvm.elf
@@ -37,7 +37,7 @@ endif
 	$(CP) $(srcdir)/backends/platform/dingux/scummvm.png $(bundle_name)/
 
 # Special target for generationg GCW-Zero OPK bundle
-$(gcw0_bundle): all $(DIST_FILES_DOCS)
+$(gcw0_bundle): all
 	$(MKDIR) $(gcw0_bundle)
 	$(CP) $(DIST_FILES_DOCS) $(gcw0_bundle)/
 	$(MKDIR) $(gcw0_bundle)/themes
