@@ -824,6 +824,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"HARRY.EXE"
 	},
 
+	// English / Spanish demo
+	// from einstein95, bug #12849
+	{
+		{
+			"harryhh",
+			"Demo English/Spanish",
+			AD_ENTRY1s("HARRY.512", "a0c97d80ab8957f61be1a41fdd74386e", 709),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"HARRY.EXE"
+	},
+
 	// part of "Super Living Books" compilation
 	// from rgemini, bug #5726
 	{
