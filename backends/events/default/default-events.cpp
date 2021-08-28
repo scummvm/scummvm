@@ -340,11 +340,16 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	act->setEvent(EVENT_MAINMENU);
 	globalKeymap->addAction(act);
 
-	act = new Action("VIRT", _("Display keyboard"));
-	act->addDefaultInputMapping("C+F7");
-	act->addDefaultInputMapping("JOY_BACK");
-	act->setEvent(EVENT_VIRTUAL_KEYBOARD);
-	globalKeymap->addAction(act);
+#ifndef ENABLE_VKEYBD
+	if (g_system->hasFeature(OSystem::kFeatureVirtualKeyboard))
+#endif
+	{
+		act = new Action("VIRT", _("Display keyboard"));
+		act->addDefaultInputMapping("C+F7");
+		act->addDefaultInputMapping("JOY_BACK");
+		act->setEvent(EVENT_VIRTUAL_KEYBOARD);
+		globalKeymap->addAction(act);
+	}
 
 	act = new Action("MUTE", _("Toggle mute"));
 	act->addDefaultInputMapping("C+u");
