@@ -172,7 +172,7 @@ The first step is to create an ISO image of your floppy or CD medium.
 Browser based dumper companion
 -------------------------------
 
- `<https://servilla.org/dumper-companion/>`_
+ `<https://www.scummvm.org/dumper-companion>`_
 
 The browser based dumper companion has support for reading HFS as isos and disk images such as floppies. It generates a zip file that can be extracted and imported in ScummVM.
 
