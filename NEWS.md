@@ -41,6 +41,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      applicable only to the OpenGL renderer.
    - Fixed switching to the default graphics mode. This was sometimes not applied
      until restarting ScummVM or starting a game.
+   - ScummVM GUI has been fully translated into Korean and Japanese.
 
  ADL:
    - Added support for Mystery House French translation.
