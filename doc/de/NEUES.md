@@ -43,6 +43,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Fehler beim Wechseln zu dem Standard-Grafikmodus korrigiert. In einigen
      Fällen wurde die Änderung erst nach einem Neustart von ScummVM
      oder beim Start eines Spiels übernommen.
+   - Die ScummVM-Benutzeroberfläche ist jetzt vollst#ndig auf koreanisch und japanisch verfügbar.
 
  ADL:
    - Unterstützung für die französische Übersetzung  von Mystery House hinzugefügt.
