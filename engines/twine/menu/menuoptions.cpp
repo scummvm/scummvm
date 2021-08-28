@@ -357,17 +357,21 @@ int MenuOptions::chooseSave(TextId textIdx, bool showEmptySlots) {
 	saveFiles.addButton(TextId::kReturnMenu);
 
 	const int maxButtons = _engine->getMetaEngine()->getMaximumSaveSlot() + 1;
-	for (const SaveStateDescriptor &savegame : savegames) {
-		saveFiles.addButton(savegame.getDescription().encode().c_str(), savegame.getSaveSlot());
-		if (saveFiles.getButtonCount() >= maxButtons) {
-			break;
-		}
-	}
-
-	if (showEmptySlots) {
-		while (saveFiles.getButtonCount() < maxButtons) {
-			// the first button is the back button - to subtract that one again to get the real slot index
-			saveFiles.addButton("EMPTY", saveFiles.getButtonCount() - 1);
+	uint savesIndex = 0;
+	for (int i = 1; i < maxButtons; ++i) {
+		if (savesIndex < savegames.size()) {
+			const SaveStateDescriptor &savegame = savegames[savesIndex];
+			if (savegame.getSaveSlot() == i - 1) {
+				// manually creating a savegame should not overwrite the autosave slot
+				if (textIdx != TextId::kCreateSaveGame || i > 1) {
+					saveFiles.addButton(savegame.getDescription().encode().c_str(), i);
+				}
+				++savesIndex;
+			} else if (showEmptySlots) {
+				saveFiles.addButton("EMPTY", i);
+			}
+		} else if (showEmptySlots) {
+			saveFiles.addButton("EMPTY", i);
 		}
 	}
 
@@ -378,8 +382,8 @@ int MenuOptions::chooseSave(TextId textIdx, bool showEmptySlots) {
 		case (int32)TextId::kReturnMenu:
 			return -1;
 		default:
-			const int16 slot = saveFiles.getButtonState(id);
-			debug("Selected slot %d for saving", slot);
+			const int16 slot = saveFiles.getButtonState(id) - 1;
+			debug("Selected savegame slot %d", slot);
 			return slot;
 		}
 	}
