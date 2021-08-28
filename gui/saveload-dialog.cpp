@@ -597,6 +597,8 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 	if (selItem >= 0 && _metaInfoSupport) {
 		SaveStateDescriptor desc = (_saveList[selItem].getLocked() ? _saveList[selItem] : _metaEngine->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot()));
+		if (!_saveList[selItem].getLocked() && desc.getSaveSlot() >= 0 && !desc.getDescription().empty())
+			_saveList[selItem] = desc;
 
 		isDeletable = desc.getDeletableFlag() && _delSupport;
 		isWriteProtected = desc.getWriteProtectedFlag() ||
@@ -1114,7 +1116,7 @@ void SaveLoadChooserGrid::updateSaves() {
 		const uint saveSlot = _saveList[i].getSaveSlot();
 
 		SaveStateDescriptor desc =  (_saveList[i].getLocked() ? _saveList[i] : _metaEngine->querySaveMetaInfos(_target.c_str(), saveSlot));
-		if (!_saveList[i].getLocked())
+		if (!_saveList[i].getLocked() && desc.getSaveSlot() >= 0 && !desc.getDescription().empty())
 			_saveList[i] = desc;
 		SlotButton &curButton = _buttons[curNum];
 		curButton.setVisible(true);
