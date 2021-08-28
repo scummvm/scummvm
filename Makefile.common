@@ -132,10 +132,12 @@ $(EXECUTABLE).dwp: $(EXECUTABLE)
 endif
 
 # Grab the ScummVM Manual from Read the Docs
-manual:
 ifdef USE_CURL
-	$(QUIET_CURL)$(CURL) -s https://docs.scummvm.org/_/downloads/en/$(MANUALVERSION)/pdf/ --output "ScummVM Manual ($(MANUALVERSION)).pdf"
-DIST_FILES_MANUAL := "ScummVM Manual ($(MANUALVERSION)).pdf"
+DIST_FILES_MANUAL := ScummVM\ Manual\ $(MANUALVERSION).pdf
+manual:
+	$(QUIET_CURL)$(CURL) -s https://docs.scummvm.org/_/downloads/en/$(MANUALVERSION)/pdf/ --output $(DIST_FILES_MANUAL)
+else
+manual:
 endif
 
 distclean: clean clean-devtools
