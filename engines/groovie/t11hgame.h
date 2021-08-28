@@ -42,6 +42,7 @@ public:
 	*/
 	void setVariables(byte *scriptVariables);
 
+	void opMouseTrap();
 	void opGallery();
 
 private:

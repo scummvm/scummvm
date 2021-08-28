@@ -73,6 +73,31 @@ void T11hGame::setVariables(byte *scriptVariables) {
 
 
 /*
+* Mouse Trap puzzle in the Lab.
+*
+* Stauf's Goal is space 1, counting up as you go north east towards the north corner which is space 5 and the moveable space to the left of that is space 4
+* South east from Stauf's goal is the next line starting with space 6, counting up as you go north east where the moveable space to the right of the north corner is space 10
+* Next line is 11 (unmovable) to 15 (unmoveable), this line contains the center space which is space 13
+* Next line is 16 (moveable) to 20 (moveable)
+* Next line is 21 (unmovable) to 25 (unmovable), with 25 being the player's goal door
+*
+* Space -2 is the next piece, outside of the box
+*/
+void T11hGame::opMouseTrap() {
+	// TODO: properly implement mouse trap game
+	// variable 24 is the mouse?
+	//_scriptVariables[24] = 2;
+
+	// value of 0 is V, 1 is <, 2 is ^, 3 is >
+	// variable 23 is the outside piece
+	_scriptVariables[23] = 1;
+	// variable slot is the space number + 25, the left corner (Stauf's goal) is space 1, above that is space 2, the center is 13, and the right corner (goal) is space 25
+	for(int i=27; i<=49; i++)
+		_scriptVariables[i] = 3;
+}
+
+
+/*
 * Puzzle in the Gallery.
 * The aim is to select the last part of the image. When selecting a part all surrounding parts are also selected
 * +--------------------+--------------------------------+--------+
