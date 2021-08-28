@@ -46,7 +46,7 @@ class MemoryWriteStreamDynamic;
 
 namespace Saga2 {
 
-class ContainerList;
+class ContainerManager;
 class Timer;
 class TimerList;
 class BandList;
@@ -144,6 +144,7 @@ public:
 	ActorManager *_act;
 	CalenderTime *_calender;
 	TileModeManager *_tmm;
+	ContainerManager *_cnm;
 
 	WeaponStuff _weaponRack[kMaxWeapons];
 	weaponID _loadedWeapons;
@@ -166,7 +167,6 @@ public:
 	GrabInfo *_mouseInfo;
 	EffectDisplayPrototypeList *_edpList;
 	SpellDisplayPrototypeList *_sdpList;
-	ContainerList *_containerList;
 	DisplayNodeList *_mainDisplayList;
 	SpellDisplayList *_activeSpells;
 	gMousePointer *_pointer;

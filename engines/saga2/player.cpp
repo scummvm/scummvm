@@ -564,7 +564,7 @@ void setCenterActor(PlayerActorID newCenter) {
 	viewCenterObject = g_vm->_playerList[centerActor]->getActorID();
 
 	indivReadyNode->changeOwner(newCenter);
-	g_vm->_containerList->setPlayerNum(newCenter);
+	g_vm->_cnm->setPlayerNum(newCenter);
 	setEnchantmentDisplay();
 
 	if (a->_curTask != NULL) {

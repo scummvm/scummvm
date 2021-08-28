@@ -1359,7 +1359,7 @@ EnchantmentContainerWindow::EnchantmentContainerWindow(
    ContainerNode functions
  * ===================================================================== */
 
-ContainerNode::ContainerNode(ContainerList &cl, ObjectID id, int typ) {
+ContainerNode::ContainerNode(ContainerManager &cl, ObjectID id, int typ) {
 	GameObject      *obj = GameObject::objectAddress(id);
 	PlayerActorID   ownerID;
 
@@ -1426,7 +1426,7 @@ ContainerNode::~ContainerNode() {
 	hide();
 
 	//  Remove from container list
-	g_vm->_containerList->remove(this);
+	g_vm->_cnm->remove(this);
 }
 
 void ContainerNode::read(Common::InSaveFile *in) {
@@ -1540,7 +1540,7 @@ void ContainerNode::update(void) {
 }
 
 //  Find a container node, given a specific object
-ContainerNode *ContainerList::find(ObjectID id) {
+ContainerNode *ContainerManager::find(ObjectID id) {
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it)
 		if ((*it)->object == id)
 			return *it;
@@ -1548,7 +1548,7 @@ ContainerNode *ContainerList::find(ObjectID id) {
 	return NULL;
 }
 
-ContainerNode *ContainerList::find(ObjectID id, int16 type) {
+ContainerNode *ContainerManager::find(ObjectID id, int16 type) {
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it)
 		if ((*it)->object == id && (*it)->type == type)
 			return *it;
@@ -1589,10 +1589,10 @@ void ContainerNode::changeOwner(int16 newOwner) {
 }
 
 /* ===================================================================== *
-   ContainerList functions
+   ContainerManager functions
  * ===================================================================== */
 
-void ContainerList::setPlayerNum(PlayerActorID playerNum) {
+void ContainerManager::setPlayerNum(PlayerActorID playerNum) {
 	//  Close all containers which are not on the ground and not owned
 	//  by the current protagonist.
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it) {
@@ -1611,7 +1611,7 @@ void ContainerList::setPlayerNum(PlayerActorID playerNum) {
 	}
 }
 
-void ContainerList::doDeferredActions(void) {
+void ContainerManager::doDeferredActions(void) {
 	Common::List<ContainerNode *>::iterator nextIt;
 	Actor           *a = getCenterActor();
 	TilePoint       tp = a->getLocation();
@@ -1654,7 +1654,7 @@ void ContainerList::doDeferredActions(void) {
 	}
 }
 
-void ContainerList::setUpdate(ObjectID id) {
+void ContainerManager::setUpdate(ObjectID id) {
 	//  Close all containers which are not on the ground and not owned
 	//  by the current protagonist.
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it) {
@@ -1684,8 +1684,8 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 
 		if (((Actor *)obj)->isDead()) {
 			//  Open dead container for dead actor
-			if (!(cn = g_vm->_containerList->find(owner, ContainerNode::deadType)))
-				cn = new ContainerNode(*g_vm->_containerList, id, ContainerNode::deadType);
+			if (!(cn = g_vm->_cnm->find(owner, ContainerNode::deadType)))
+				cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::deadType);
 		} else if (owner != ContainerNode::nobody) {
 			return OpenMindContainer(owner, open, /*mType*/ openMindType);
 		}
@@ -1696,8 +1696,8 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 		if (actorIDToPlayerID(obj->possessor(), owner) == false)
 			owner = ContainerNode::nobody;
 
-		if (!(cn = g_vm->_containerList->find(id, ContainerNode::physicalType)))
-			cn = new ContainerNode(*g_vm->_containerList, id, ContainerNode::physicalType);
+		if (!(cn = g_vm->_cnm->find(id, ContainerNode::physicalType)))
+			cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::physicalType);
 	}
 
 	//  If node was successfull created, and we wanted it open, and the owner
@@ -1712,7 +1712,7 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 }
 
 ContainerNode *CreateReadyContainerNode(PlayerActorID player) {
-	return new ContainerNode(*g_vm->_containerList,
+	return new ContainerNode(*g_vm->_cnm,
 	                            getPlayerActorAddress(player)->getActorID(),
 	                            ContainerNode::readyType);
 }
@@ -1721,8 +1721,8 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
 	ContainerNode   *cn;
 	ObjectID        id = getPlayerActorAddress(player)->getActorID();
 
-	if (!(cn = g_vm->_containerList->find(id, ContainerNode::mentalType))) {
-		cn = new ContainerNode(*g_vm->_containerList, id, ContainerNode::mentalType);
+	if (!(cn = g_vm->_cnm->find(id, ContainerNode::mentalType))) {
+		cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::mentalType);
 		cn->mindType = type;
 
 		//  If node was successfull created, and we wanted it open, and the owner
@@ -1770,7 +1770,7 @@ void initContainerNodes(void) {
 	ContainerNode   *node;
 	bool            onlyReady = true;
 
-	for (node = g_vm->_containerList->first(); node != NULL; node = node->next()) {
+	for (node = g_vm->_cnm->first(); node != NULL; node = node->next()) {
 		if (node->getType() != ContainerNode::readyType) {
 			onlyReady = false;
 			break;
@@ -1788,10 +1788,10 @@ void saveContainerNodes(Common::OutSaveFile *outS) {
 	int16 numNodes = 0;
 
 	//  Make sure there are no pending container view actions
-	g_vm->_containerList->doDeferredActions();
+	g_vm->_cnm->doDeferredActions();
 
 	//  Count the number of nodes to save
-	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
+	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
 		if (n->getType() != ContainerNode::readyType)
@@ -1806,7 +1806,7 @@ void saveContainerNodes(Common::OutSaveFile *outS) {
 	debugC(3, kDebugSaveload, "... numNodes = %d", numNodes);
 
 	//  Store the nodes
-	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
+	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
 		if (n->getType() != ContainerNode::readyType) {
@@ -1837,19 +1837,19 @@ void loadContainerNodes(Common::InSaveFile *in) {
 		node->read(in);
 
 		//  Add it back to the container list
-		g_vm->_containerList->add(node);
+		g_vm->_cnm->add(node);
 	}
 
 	assert(tempList.empty());
 }
 
 void cleanupContainerNodes(void) {
-	if (g_vm->_containerList == nullptr)
+	if (g_vm->_cnm == nullptr)
 		return;
 
 	Common::Array<ContainerNode *> deletionArray;
 
-	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
+	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
 		if (n->getType() != ContainerNode::readyType)
@@ -1861,7 +1861,7 @@ void cleanupContainerNodes(void) {
 }
 
 void updateContainerWindows(void) {
-	g_vm->_containerList->doDeferredActions();
+	g_vm->_cnm->doDeferredActions();
 }
 
 void setMindContainer(int index, IntangibleContainerWindow &cw) {

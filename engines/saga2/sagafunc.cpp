@@ -248,7 +248,7 @@ int16 scriptActorTransfer(int16 *args) {
 			obj->move(Location(targetSlot, targetID));
 			if ((cSet & (ProtoObj::isIntangible | ProtoObj::isContainer))
 			        == (ProtoObj::isIntangible | ProtoObj::isContainer))
-				g_vm->_containerList->setUpdate(targetID);
+				g_vm->_cnm->setUpdate(targetID);
 		}
 	} else {
 		obj->move(Location(args[1], args[2], args[3], args[0]));
@@ -984,7 +984,7 @@ int16 scriptGameObjectSetMass(int16 *args) {
 	if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
 		obj->setExtra(args[0]);
 		if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
-			g_vm->_containerList->setUpdate(obj->IDParent());
+			g_vm->_cnm->setUpdate(obj->IDParent());
 		}
 		return true;
 	} else return false;
@@ -2099,13 +2099,13 @@ int16 scriptActorDeductPayment(int16 *args) {
 
 				if (massCount > paymentAmount) {
 					obj->setExtra(massCount - paymentAmount);
-					g_vm->_containerList->setUpdate(obj->IDParent());
+					g_vm->_cnm->setUpdate(obj->IDParent());
 					break;
 				} else {
 					if (delObj) {
 						ObjectID    dParent = delObj->IDParent();
 						delObj->deleteObject();
-						g_vm->_containerList->setUpdate(dParent);
+						g_vm->_cnm->setUpdate(dParent);
 					}
 					paymentAmount -= massCount;
 					delObj = obj;
@@ -2118,7 +2118,7 @@ int16 scriptActorDeductPayment(int16 *args) {
 				if (delObj) {
 					ObjectID    dParent = delObj->IDParent();
 					delObj->deleteObject();
-					g_vm->_containerList->setUpdate(dParent);
+					g_vm->_cnm->setUpdate(dParent);
 				}
 				delObj = obj;
 			}
@@ -2128,7 +2128,7 @@ int16 scriptActorDeductPayment(int16 *args) {
 	if (delObj) {
 		ObjectID    dParent = delObj->IDParent();
 		delObj->deleteObject();
-		g_vm->_containerList->setUpdate(dParent);
+		g_vm->_cnm->setUpdate(dParent);
 	}
 
 	//  Payment succeeded!
@@ -2992,7 +2992,7 @@ int16 scriptDeleteObject(int16 *args) {
 	assert(obj);
 	oldParentID = obj->IDParent();
 	obj->deleteObjectRecursive();
-	g_vm->_containerList->setUpdate(oldParentID);
+	g_vm->_cnm->setUpdate(oldParentID);
 
 	return 0;
 }

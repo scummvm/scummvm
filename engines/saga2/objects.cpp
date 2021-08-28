@@ -1020,7 +1020,7 @@ void GameObject::updateImage(ObjectID oldParentID) {
 	        &&  isPlayerActor((Actor *)oldParent))
 	        || (isObject(oldParentID)
 	            &&  oldParent->isOpen())) {
-		g_vm->_containerList->setUpdate(oldParentID);
+		g_vm->_cnm->setUpdate(oldParentID);
 	}
 
 	if (_data.parentID != oldParentID && isActor(oldParentID)) {
@@ -1069,7 +1069,7 @@ void GameObject::updateImage(ObjectID oldParentID) {
 		        &&  isPlayerActor((Actor *)parent))
 		        || (isObject(_data.parentID) && parent->isOpen())
 		   ) {
-			g_vm->_containerList->setUpdate(_data.parentID);
+			g_vm->_cnm->setUpdate(_data.parentID);
 		}
 	}
 }
@@ -1310,7 +1310,7 @@ void GameObject::deleteObject(void) {
 	removeAllSensors();
 
 	//  Delete any container nodes for this object
-	while ((cn = g_vm->_containerList->find(dObj)) != nullptr)
+	while ((cn = g_vm->_cnm->find(dObj)) != nullptr)
 		delete cn;
 
 	if (isActor(_data.parentID)) {
@@ -2240,7 +2240,7 @@ void GameObject::setProtoNum(int32 nProto) {
 
 		//  If this object is in a container, then redraw the container window
 		if (!isWorld(oldParentID))
-			g_vm->_containerList->setUpdate(oldParentID);
+			g_vm->_cnm->setUpdate(oldParentID);
 	}
 }
 
@@ -2311,7 +2311,7 @@ void GameObject::mergeWith(GameObject *dropObj, GameObject *target, int16 count)
 		dropObj->deleteObject();
 	}
 
-	g_vm->_containerList->setUpdate(target->IDParent());
+	g_vm->_cnm->setUpdate(target->IDParent());
 }
 
 
@@ -2340,7 +2340,7 @@ bool GameObject::stack(ObjectID enactor, ObjectID objToStackID) {
 		if (!objToStack->isMoving()) {
 			//  Increase the stack count
 			_data.location.z++;
-			g_vm->_containerList->setUpdate(IDParent());
+			g_vm->_cnm->setUpdate(IDParent());
 		}
 
 		return true;

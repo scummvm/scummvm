@@ -74,6 +74,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	_act = nullptr;
 	_calender = nullptr;
 	_tmm = nullptr;
+	_cnm = nullptr;
 
 	_bandList = nullptr;
 	_mouseInfo = nullptr;
@@ -118,7 +119,6 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 
 	_edpList = nullptr;
 	_sdpList = nullptr;
-	_containerList = nullptr;
 	_tileImageBanks = nullptr;
 	_stackList = nullptr;
 	_taskList = nullptr;
@@ -138,6 +138,7 @@ Saga2Engine::~Saga2Engine() {
 	delete _act;
 	delete _calender;
 	delete _tmm;
+	delete _cnm;
 
 	delete _imageCache;
 	delete _mTaskList;
@@ -150,14 +151,11 @@ Saga2Engine::~Saga2Engine() {
 	delete _properties;
 	delete _aTaskList;
 	delete _grandMasterFTA;
-	delete _containerList;
 }
 
 Common::Error Saga2Engine::run() {
 	// Initialize graphics using following:
 	initGraphics(640, 480);
-
-	_containerList = new ContainerList;
 
 	_console = new Console(this);
 	setDebugger(_console);
@@ -168,6 +166,7 @@ Common::Error Saga2Engine::run() {
 	_act = new ActorManager;
 	_calender = new CalenderTime;
 	_tmm = new TileModeManager;
+	_cnm = new ContainerManager;
 
 	readConfig();
 

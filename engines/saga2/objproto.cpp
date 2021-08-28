@@ -1258,14 +1258,14 @@ bool PhysicalContainerProto::openAction(ObjectID dObj, ObjectID) {
 	cn = CreateContainerNode(dObj, false);
 	cn->markForShow();                                      //  Deferred open
 	dObjPtr->_data.objectFlags |= objectOpen;         //  Set open bit;
-	g_vm->_containerList->setUpdate(dObjPtr->IDParent());
+	g_vm->_cnm->setUpdate(dObjPtr->IDParent());
 
 	return true;
 }
 
 bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
-	ContainerNode   *cn = g_vm->_containerList->find(dObj, ContainerNode::physicalType);
+	ContainerNode   *cn = g_vm->_cnm->find(dObj, ContainerNode::physicalType);
 
 	assert(dObjPtr->isOpen());
 	assert(cn);
@@ -1275,7 +1275,7 @@ bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 
 	//  Clear open bit
 	dObjPtr->_data.objectFlags &= ~objectOpen;
-	g_vm->_containerList->setUpdate(dObjPtr->IDParent());
+	g_vm->_cnm->setUpdate(dObjPtr->IDParent());
 
 	return true;
 }
@@ -2237,7 +2237,7 @@ bool ArmorProto::useAction(ObjectID dObj, ObjectID enactor) {
 	else
 		a->wear(dObj, slot);
 
-	g_vm->_containerList->setUpdate(obj->IDParent());
+	g_vm->_cnm->setUpdate(obj->IDParent());
 
 	return true;
 }
@@ -2927,7 +2927,7 @@ bool IntangibleContainerProto::openAction(ObjectID dObj, ObjectID enactor) {
 }
 
 bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
-	ContainerNode *cn = g_vm->_containerList->find(dObj, ContainerNode::mentalType);
+	ContainerNode *cn = g_vm->_cnm->find(dObj, ContainerNode::mentalType);
 
 	assert(cn);
 

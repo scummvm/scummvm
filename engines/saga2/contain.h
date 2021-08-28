@@ -44,7 +44,7 @@ class EnchantContainerView;
 //				FloatingWindow
 class ContainerWindow;
 class ContainerNode;
-class ContainerList;
+class ContainerManager;
 struct ContainerAppearanceDef;
 
 class CMassWeightIndicator;
@@ -389,7 +389,7 @@ struct ContainerAppearanceDef {
 
 class ContainerNode {
 
-	friend class    ContainerList;
+	friend class    ContainerManager;
 	friend class    ContainerView;
 	friend class    ContainerWindow;
 
@@ -443,7 +443,7 @@ public:
 		action = 0;
 		mindType = 0;
 	}
-	ContainerNode(ContainerList &cl, ObjectID id, int type);
+	ContainerNode(ContainerManager &cl, ObjectID id, int type);
 	~ContainerNode();
 
 	static int32 archiveSize(void) {
@@ -504,7 +504,7 @@ public:
 
 //  A list of container nodes
 
-class ContainerList {
+class ContainerManager {
 public:
 	Common::List<ContainerNode *> _list;
 

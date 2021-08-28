@@ -3477,7 +3477,7 @@ void MotionTask::fireBowAction(void) {
 					actorLoc.z += a->proto()->height * 7 / 8;
 
 					if ((projID =   proj->extractMerged(Location(actorLoc, a->IDParent()), 1)) !=  Nothing) {
-						g_vm->_containerList->setUpdate(a->thisID());
+						g_vm->_cnm->setUpdate(a->thisID());
 						proj = GameObject::objectAddress(projID);
 						shootObject(*proj, *a, *targetObj, 16);
 					}
