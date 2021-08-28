@@ -1230,6 +1230,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Macintosh version. Bugreport #12828
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1s("BookOutline", "f4c162ca66197eedc3b676372bca3929", 2038),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
 	// From the Mac CD "La Tartaruga e la Lepre" (The Turtle and the Hare) [Italian, English]
 	{
 		{
