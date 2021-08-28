@@ -14,6 +14,7 @@ For the SDL Surface graphics mode, the scaler is applied first, then the aspect 
 Render modes are only applicable to some older games that were designed to be played on multiple systems, and lets us choose which system's graphics to replicate.
 
 .. _graphics:
+
 Graphics modes
 ---------------------------
 
@@ -172,6 +173,7 @@ The game may be stretch horizontally or vertically to fill the window. This mode
 To switch between stretch modes, press :kbd:`Ctrl+Alt+s`.
 
 .. _filter:
+
 Render mode
 -------------
 
