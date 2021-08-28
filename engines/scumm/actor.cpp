@@ -2884,6 +2884,14 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 			a->runActorTalkScript(a->_talkStartFrame);
 		}
 		_charsetColor = a->_talkColor;
+
+		// This is what the original COMI CJK interpreter does here.
+		if (_game.id == GID_CMI && _useCJKMode) {
+			if (a->_number == 1 && _currentRoom == 15)
+				_charsetColor = 28;
+			else if (a->_talkColor == 22)
+				_charsetColor = 5;
+		}
 	}
 
 	_charsetBufPos = 0;
