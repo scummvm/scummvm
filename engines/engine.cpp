@@ -553,7 +553,7 @@ bool Engine::warnBeforeOverwritingAutosave() {
 	altButtons.push_back(_("Overwrite"));
 	altButtons.push_back(_("Cancel autosave"));
 	const Common::U32String message = Common::U32String::format(
-				_("WARNING: The autosave slot has a saved game named %s. "
+				_("WARNING: The autosave slot has a saved game named %S. "
 				  "You can either move the existing save to a new slot, "
 				  "Overwrite the existing save, "
 				  "or cancel autosave (will not prompt again until restart)"), desc.getDescription().c_str());
