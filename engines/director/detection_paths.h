@@ -135,6 +135,10 @@ const char *directoryGlobs[] = {
 	"anim",							// 1 vs 100 (Mindscape)
 	"Lingo Expo",					// D4 sample movies
 	"main",							// Meet MediaBand
+	"abc",							// Alphabet Train
+	"123",							// Ktar Alarkam
+	"vlaams",
+	"ned",							// I Spy School Days (Dutch)
 	0
 };
 
