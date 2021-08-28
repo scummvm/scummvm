@@ -2026,10 +2026,11 @@ void Script::o2_gamespecial() {
 
 		case 5:
 			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Mouse Trap in the lab (al.grv)", arg);
+			_t11hGame->opMouseTrap();
 			break;
 
 		case 6:
-			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Mouse Trap in the lab (al.grv)", arg);
+			debugC(1, kDebugScript, "Groovie::Script Op42 (0x%02X): T11H Pente (pt.grv)", arg);
 			break;
 
 
