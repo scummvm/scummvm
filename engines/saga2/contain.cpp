@@ -120,25 +120,25 @@ static ContainerAppearanceDef physicalContainerAppearance = {
 	0
 };
 
-static StaticWindow brassDecorations[] = {
+static const StaticWindow brassDecorations[] = {
 	{{0,  0, 268,  86},   nullptr, 3},
 	{{13, 86, 242, 109},  nullptr, 4},
 	{{13, 195, 242, 121}, nullptr, 5}
 };
 
-static StaticWindow clothDecorations[] = {
+static const StaticWindow clothDecorations[] = {
 	{{0,  0, 268,  86},   nullptr, 6},
 	{{13, 86, 242, 109},  nullptr, 7},
 	{{13, 195, 242, 121}, nullptr, 8}
 };
 
-static StaticWindow steelDecorations[] = {
+static const StaticWindow steelDecorations[] = {
 	{{0,  0, 268,  86},   nullptr, 9},
 	{{13, 86, 242, 109},  nullptr, 10},
 	{{13, 195, 242, 121}, nullptr, 11}
 };
 
-static StaticWindow woodDecorations[] = {
+static const StaticWindow woodDecorations[] = {
 	{{0,  0, 268,  86},   nullptr, 12},
 	{{13, 86, 242, 109},  nullptr, 13},
 	{{13, 195, 242, 121}, nullptr, 14}
@@ -163,14 +163,14 @@ static ContainerAppearanceDef deathContainerAppearance = {
 };
 
 // physal dialog window decorations
-static StaticWindow deathDecorations[] = {
+static const StaticWindow deathDecorations[] = {
 	{{0,  0, 206,  250}, nullptr, 15}
 };
 
 //-----------------------------------------------------------------------
 //	ReadyContainer appearance
 
-static ContainerAppearanceDef readyContainerAppearance = {
+static const ContainerAppearanceDef readyContainerAppearance = {
 	{0, 0, 0, 0},
 	{476, 105, 0, 0},
 	{0, 0, 0, 0},
@@ -188,7 +188,7 @@ static ContainerAppearanceDef readyContainerAppearance = {
 //-----------------------------------------------------------------------
 //	Mental Container appearance
 
-static ContainerAppearanceDef mentalContainerAppearance = {
+static const ContainerAppearanceDef mentalContainerAppearance = {
 	{478, 168 - 54, 158, 215},
 	{2, 86 - 18 - 4, 158 - 2, 215 - 66},
 	{2, 19, 44, 44},
@@ -203,13 +203,13 @@ static ContainerAppearanceDef mentalContainerAppearance = {
 	20
 };
 
-static StaticWindow mentalDecorations[] = {
+static const StaticWindow mentalDecorations[] = {
 	{{0,  0, 158,  215}, nullptr, 0}      //  Bottom decoration panel
 };
 //-----------------------------------------------------------------------
 //	Enchantment container appearance
 
-static ContainerAppearanceDef enchantmentContainerAppearance = {
+static const ContainerAppearanceDef enchantmentContainerAppearance = {
 	{262, 92, 116, 202},
 	{2, 87, 116 - 2, 202 - 87},
 	{7, 50, 44, 43},
@@ -244,7 +244,7 @@ ContainerView::ContainerView(
     gPanelList      &list,
     const Rect16    &rect,
     ContainerNode   &nd,
-    ContainerAppearanceDef &app,
+    const ContainerAppearanceDef &app,
     AppFunc         *cmd)
 	: gControl(list, rect, NULL, 0, cmd),
 	  iconOrigin(app.iconOrigin),
@@ -952,7 +952,7 @@ void ContainerView::setDelayedCursorText(GameObject *obj) {
 EnchantmentContainerView::EnchantmentContainerView(
     gPanelList      &list,
     ContainerNode   &nd,
-    ContainerAppearanceDef &app,
+    const ContainerAppearanceDef &app,
     AppFunc         *cmd)
 	: ContainerView(list, app.viewRect, nd, app, cmd) {
 }
@@ -1155,7 +1155,7 @@ void ReadyContainerView::drawClipped(
 //  ContainerWindow class
 
 ContainerWindow::ContainerWindow(ContainerNode &nd,
-                                 ContainerAppearanceDef &app,
+                                 const ContainerAppearanceDef &app,
                                  const char saveas[])
 	: FloatingWindow(nd.position, 0, saveas, cmdWindowFunc) {
 	//  Initialize view to NULL.
@@ -1184,7 +1184,7 @@ ContainerView &ContainerWindow::getView(void) {
  * ===================================================================== */
 
 ScrollableContainerWindow::ScrollableContainerWindow(
-    ContainerNode &nd, ContainerAppearanceDef &app, const char saveas[])
+    ContainerNode &nd, const ContainerAppearanceDef &app, const char saveas[])
 	: ContainerWindow(nd, app, saveas) {
 	view = new ContainerView(*this, app.viewRect, nd, app);
 
@@ -1207,7 +1207,7 @@ ScrollableContainerWindow::ScrollableContainerWindow(
  * ===================================================================== */
 
 TangibleContainerWindow::TangibleContainerWindow(
-    ContainerNode &nd, ContainerAppearanceDef &app)
+    ContainerNode &nd, const ContainerAppearanceDef &app)
 	: ScrollableContainerWindow(nd, app, "ObjectWindow") {
 #if DEBUG
 	assert(view->containerObject);
@@ -1227,7 +1227,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 		               containerRes, 'F', 'R', 'M');
 		massWeightIndicator = NULL;
 	} else {
-		static StaticWindow *winDecs[] =  {
+		const StaticWindow *winDecs[] =  {
 			brassDecorations,
 		    clothDecorations,
 		    steelDecorations,
@@ -1309,7 +1309,7 @@ void TangibleContainerWindow::drawClipped(
  * ===================================================================== */
 
 IntangibleContainerWindow::IntangibleContainerWindow(
-    ContainerNode &nd, ContainerAppearanceDef &app)
+    ContainerNode &nd, const ContainerAppearanceDef &app)
 	: ScrollableContainerWindow(nd, app, "MentalWindow") {
 	// make the button conected to this window
 	mindSelectorCompButton = new GfxMultCompButton(
@@ -1337,7 +1337,7 @@ IntangibleContainerWindow::IntangibleContainerWindow(
  * ===================================================================== */
 
 EnchantmentContainerWindow::EnchantmentContainerWindow(
-    ContainerNode &nd, ContainerAppearanceDef &app)
+    ContainerNode &nd, const ContainerAppearanceDef &app)
 	: ContainerWindow(nd, app, "EnchantmentWindow") {
 	view = new EnchantmentContainerView(*this, nd, app);
 
@@ -1865,11 +1865,12 @@ void updateContainerWindows(void) {
 }
 
 void setMindContainer(int index, IntangibleContainerWindow &cw) {
-	static int classTable[] = { protoClassIdeaContainer,
-	                            protoClassSkillContainer,
-	                            protoClassMemoryContainer,
-	                            protoClassPsychContainer    // Not used anymore
-	                          };
+	const int classTable[] = {
+		protoClassIdeaContainer,
+		protoClassSkillContainer,
+		protoClassMemoryContainer,
+		protoClassPsychContainer    // Not used anymore
+	};
 
 	ObjectID        ownerID = cw.getView().node.getObject();
 	GameObject      *object = GameObject::objectAddress(ownerID);
@@ -1899,10 +1900,10 @@ APPFUNC(cmdMindContainerFunc) {
 		ContainerNode   &nd = cw->getView().node;
 		int             newMindType = nd.mindType;
 
-		static Rect16   idea(0, 0, 22, 67),       // idea button click area
-		       skill(22, 0, 11, 67),    // skill area
-		       memory(33, 0,  9, 67),   // memory area
-		       psych(42, 0, 10, 67);    // psych(ic?) area
+		const Rect16 idea(0, 0, 22, 67),      // idea button click area
+		             skill(22, 0, 11, 67),    // skill area
+		             memory(33, 0,  9, 67),   // memory area
+		             psych(42, 0, 10, 67);    // psych(ic?) area
 
 		if (idea.ptInside(ev.mouse))    newMindType = 0; //protoClassIdeaContainer;
 		if (skill.ptInside(ev.mouse))   newMindType = 1; //protoClassSkillContainer;
@@ -1917,9 +1918,9 @@ APPFUNC(cmdMindContainerFunc) {
 	} else if (ev.eventType == gEventMouseMove) {
 		//if (ev.value == gCompImage::enter)
 		{
-			static Rect16   idea(0, 0, 22, 67),       // idea button click area
-			       skill(22, 0, 11, 67),    // skill area
-			       memory(33, 0,  9, 67);   // memory area
+			const Rect16 idea(0, 0, 22, 67),      // idea button click area
+			             skill(22, 0, 11, 67),    // skill area
+			             memory(33, 0,  9, 67);   // memory area
 
 
 			const int BUF_SIZE = 64;
@@ -1989,8 +1990,8 @@ APPFUNC(cmdCloseButtonFunc) {
 
 APPFUNC(cmdScrollFunc) {
 	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
-		ScrollableContainerWindow       *cw;
-		static Rect16                   upArea(0, 0, 44, 22);
+		ScrollableContainerWindow *cw;
+		const Rect16 upArea(0, 0, 44, 22);
 
 		cw = (ScrollableContainerWindow *)ev.window;
 		if (upArea.ptInside(ev.mouse))

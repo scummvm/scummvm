@@ -140,7 +140,7 @@ public:
 	    gPanelList &,
 	    const Rect16 &,
 	    ContainerNode &nd,
-	    ContainerAppearanceDef &app,
+	    const ContainerAppearanceDef &app,
 	    AppFunc *cmd = NULL);
 
 	//  Destructor
@@ -260,7 +260,7 @@ class  EnchantmentContainerView : public ContainerView {
 public:
 	EnchantmentContainerView(gPanelList &list,
 	                         ContainerNode &nd,
-	                         ContainerAppearanceDef &app,
+	                         const ContainerAppearanceDef &app,
 	                         AppFunc *cmd = NULL);
 
 	virtual void pointerMove(gPanelMessage &msg);
@@ -278,7 +278,7 @@ protected:
 
 public:
 	ContainerWindow(ContainerNode &nd,
-	                ContainerAppearanceDef &app,
+	                const ContainerAppearanceDef &app,
 	                const char saveas[]);
 
 	virtual ~ContainerWindow(void);
@@ -298,7 +298,7 @@ protected:
 
 public:
 	ScrollableContainerWindow(ContainerNode &nd,
-	                          ContainerAppearanceDef &app,
+	                          const ContainerAppearanceDef &app,
 	                          const char saveas[]);
 
 	void scrollUp(void) {
@@ -326,7 +326,7 @@ private:
 public:
 
 	TangibleContainerWindow(ContainerNode &nd,
-	                        ContainerAppearanceDef &app);
+	                        const ContainerAppearanceDef &app);
 	~TangibleContainerWindow(void);
 
 	void drawClipped(gPort &port, const Point16 &offset, const Rect16 &clip);
@@ -343,7 +343,7 @@ private:
 
 public:
 
-	IntangibleContainerWindow(ContainerNode &nd, ContainerAppearanceDef &app);
+	IntangibleContainerWindow(ContainerNode &nd, const ContainerAppearanceDef &app);
 };
 
 class EnchantmentContainerWindow : public ContainerWindow {
@@ -352,7 +352,7 @@ protected:
 
 public:
 	EnchantmentContainerWindow(ContainerNode &nd,
-	                           ContainerAppearanceDef &app);
+	                           const ContainerAppearanceDef &app);
 };
 
 /* ===================================================================== *

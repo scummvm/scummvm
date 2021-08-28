@@ -170,7 +170,7 @@ void DecoratedWindow::setDecorations(
 }
 
 void DecoratedWindow::setDecorations(
-    StaticWindow *dec,
+    const StaticWindow *dec,
     int16           count,
     hResContext     *con) {
 	int16           i;
@@ -186,16 +186,15 @@ void DecoratedWindow::setDecorations(
 
 	for (i = 0; i < numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
-		dec->image = g_vm->_imageCache->requestImage(con,
-		                                     MKTAG('B', 'R', 'D', dec->imageNumber));
 		decorations[i].extent = dec->extent;
-		decorations[i].image = dec->image;
+		decorations[i].image = g_vm->_imageCache->requestImage(con,
+		                                     MKTAG('B', 'R', 'D', dec->imageNumber));
 		decorations[i].imageNumber = dec->imageNumber;
 	}
 }
 
 void DecoratedWindow::setDecorations(
-    StaticWindow *dec,
+    const StaticWindow *dec,
     int16           count,
     hResContext     *con,
     hResID          id_) {
@@ -212,15 +211,14 @@ void DecoratedWindow::setDecorations(
 
 	for (i = 0; i < numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
-		dec->image = g_vm->_imageCache->requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
 		decorations[i].extent = dec->extent;
-		decorations[i].image = dec->image;
+		decorations[i].image = g_vm->_imageCache->requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
 		decorations[i].imageNumber = dec->imageNumber;
 	}
 }
 
 void DecoratedWindow::setDecorations(
-    StaticWindow *dec,
+    const StaticWindow *dec,
     int16           count,
     hResContext     *con,
     char a, char b, char c) {
