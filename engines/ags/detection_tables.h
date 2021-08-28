@@ -2530,7 +2530,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("dawnswonderedatagesend", "myGame.exe", "75f4c7f66b1be60af5b2d65f617b91a7", 243406385),
 	GAME_ENTRY("dayofthefish", "Rivet.exe", "06a03fe35791b0578068ab1873455463", 2265379),
 	GAME_ENTRY("ddddd", "DDDDD.exe", "f3f788c1e3a7b0b40e24e453fa1b9440", 21718220),
-	GAME_ENTRY("deaddimension", "Dead Dimension.exe", "a62c0cd6a3d7547e04c856b25bf74f60", 425596857),
+	GAME_ENTRY_LANG("deaddimension", "Dead Dimension.exe", "a62c0cd6a3d7547e04c856b25bf74f60", 425596857, Common::ES_ESP),
 	GAME_ENTRY("deadhand", "Dead Hand.exe", "87ddba03ee2498d0df16f3e6fa1c630a", 31344599),
 	GAME_ENTRY("deadmeat", "Cold Meat.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 41382750),
 	GAME_ENTRY("deadofwinter", "DoW.exe", "615e806856b7730afadf1fea9a756b70", 7055437),
