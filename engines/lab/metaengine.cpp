@@ -131,11 +131,6 @@ SaveStateDescriptor LabMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		if (successfulRead) {
 			SaveStateDescriptor desc(slot, header._descr.getDescription());
-			// Do not allow save slot 0 (used for auto-saving) to be deleted or
-			// overwritten.
-			//desc.setDeletableFlag(slot != 0);
-			//desc.setWriteProtectedFlag(slot == 0);
-
 			return header._descr;
 		}
 	}

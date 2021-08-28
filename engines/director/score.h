@@ -113,7 +113,7 @@ public:
 	void renderFrame(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderSprites(uint16 frameId, RenderMode mode = kRenderModeNormal);
 	void renderCursor(Common::Point pos, bool forceUpdate = false);
-	void renderVideo();
+	void updateWidgets(bool hasVideoPlayback);
 
 	void playSoundChannel(uint16 frameId);
 

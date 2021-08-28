@@ -154,14 +154,20 @@ void Window::probeMacBinary(MacArchive *archive) {
 				error("No strings in Projector file");
 
 			Common::String sname = name->readPascalString();
+			Common::String moviePath = pathMakeRelative(sname);
+			if (testPath(moviePath)) {
+				_nextMovie.movie = moviePath;
+				warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
 
-			_nextMovie.movie = pathMakeRelative(sname);
-			warning("Replaced score name with: %s (from %s)", _nextMovie.movie.c_str(), sname.c_str());
+				delete _currentMovie;
+				_currentMovie = nullptr;
 
-			delete _currentMovie;
-			_currentMovie = nullptr;
-
+			} else {
+				warning("Couldn't find score with name: %s", sname.c_str());
+			}
 			delete name;
+
+
 		}
 	}
 

@@ -87,7 +87,7 @@ void DecoratedWindow::drawClipped(
 	int16           i;
 
 	if (displayEnabled())
-		if (extent.overlap(clipRect)) {
+		if (_extent.overlap(clipRect)) {
 			//  For each "decorative panel" within the frame of the window
 
 			for (dec = decorations, i = 0; i < numDecorations; i++, dec++) {
@@ -170,7 +170,7 @@ void DecoratedWindow::setDecorations(
 }
 
 void DecoratedWindow::setDecorations(
-    StaticWindow *dec,
+    const StaticWindow *dec,
     int16           count,
     hResContext     *con) {
 	int16           i;
@@ -186,16 +186,15 @@ void DecoratedWindow::setDecorations(
 
 	for (i = 0; i < numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
-		dec->image = g_vm->_imageCache->requestImage(con,
-		                                     MKTAG('B', 'R', 'D', dec->imageNumber));
 		decorations[i].extent = dec->extent;
-		decorations[i].image = dec->image;
+		decorations[i].image = g_vm->_imageCache->requestImage(con,
+		                                     MKTAG('B', 'R', 'D', dec->imageNumber));
 		decorations[i].imageNumber = dec->imageNumber;
 	}
 }
 
 void DecoratedWindow::setDecorations(
-    StaticWindow *dec,
+    const StaticWindow *dec,
     int16           count,
     hResContext     *con,
     hResID          id_) {
@@ -212,15 +211,14 @@ void DecoratedWindow::setDecorations(
 
 	for (i = 0; i < numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
-		dec->image = g_vm->_imageCache->requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
 		decorations[i].extent = dec->extent;
-		decorations[i].image = dec->image;
+		decorations[i].image = g_vm->_imageCache->requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
 		decorations[i].imageNumber = dec->imageNumber;
 	}
 }
 
 void DecoratedWindow::setDecorations(
-    StaticWindow *dec,
+    const StaticWindow *dec,
     int16           count,
     hResContext     *con,
     char a, char b, char c) {
@@ -238,8 +236,11 @@ void DecoratedWindow::removeDecorations(void) {
 		g_vm->_imageCache->releaseImage(dec->image);
 	}
 
-	if (decorations)
+	if (decorations) {
 		delete[] decorations;
+		decorations = nullptr;
+	}
+
 	numDecorations = 0;
 }
 
@@ -248,7 +249,7 @@ void DecoratedWindow::removeDecorations(void) {
 void DecoratedWindow::draw(void) {               // redraw the window
 	g_vm->_pointer->hide();
 	if (displayEnabled())
-		drawClipped(g_vm->_mainPort, Point16(0, 0), extent);
+		drawClipped(g_vm->_mainPort, Point16(0, 0), _extent);
 	g_vm->_pointer->show();
 }
 
@@ -263,8 +264,8 @@ bool DecoratedWindow::isBackdrop(void) {
 void DecoratedWindow::update(const Rect16 &updateRect) {
 	Rect16          r = updateRect;
 
-	r.x += extent.x;
-	r.y += extent.y;
+	r.x += _extent.x;
+	r.y += _extent.y;
 
 	updateWindowSection(r);
 }
@@ -272,8 +273,8 @@ void DecoratedWindow::update(const Rect16 &updateRect) {
 void DecoratedWindow::update(const StaticRect &updateRect) {
 	Rect16          r = updateRect;
 
-	r.x += extent.x;
-	r.y += extent.y;
+	r.x += _extent.x;
+	r.y += _extent.y;
 
 	updateWindowSection(r);
 }
@@ -413,10 +414,10 @@ void gButton::draw(void) {
 	gPort           &port = window.windowPort;
 	Rect16          rect = window.getExtent();
 
-	g_vm->_pointer->hide(port, extent);              // hide mouse pointer
+	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 	if (displayEnabled())
 		drawClipped(port, Point16(0, 0), Rect16(0, 0, rect.width, rect.height));
-	g_vm->_pointer->show(port, extent);              // show mouse pointer
+	g_vm->_pointer->show(port, _extent);              // show mouse pointer
 }
 
 
@@ -428,12 +429,12 @@ void gImageButton::drawClipped(gPort &port, const Point16 &offset, const Rect16 
 	gPixelMap   *currentImage = selected ? selImage : deselImage;
 
 	if (displayEnabled())
-		if (extent.overlap(r))
+		if (_extent.overlap(r))
 			port.bltPixels(*currentImage,
 			               0,
 			               0,
-			               extent.x - offset.x,
-			               extent.y - offset.y,
+			               _extent.x - offset.x,
+			               _extent.y - offset.y,
 			               currentImage->size.x,
 			               currentImage->size.y);
 }
@@ -485,25 +486,25 @@ void LabeledButton::drawClipped(
     const Point16 &offset,
     const Rect16 &r) {
 	if (!displayEnabled())  return;
-	if (!extent.overlap(r)) return;
+	if (!_extent.overlap(r)) return;
 
 	Point16 origin,
 	        textOrigin;
 	gFont   *textFont = mainFont;
 
-	origin.x = extent.x - offset.x;
-	origin.y = extent.y - offset.y;
+	origin.x = _extent.x - offset.x;
+	origin.y = _extent.y - offset.y;
 
 	SAVE_GPORT_STATE(port);
 
 	port.setColor(14);
-	port.fillRect(origin.x, origin.y, extent.width, extent.height);
+	port.fillRect(origin.x, origin.y, _extent.width, _extent.height);
 
 	gImageButton::drawClipped(port, offset, r);
 
-	textOrigin.x = origin.x + ((extent.width -
+	textOrigin.x = origin.x + ((_extent.width -
 	                            TextWidth(textFont, title, -1, textStyleUnderBar)) >> 1);
-	textOrigin.y = origin.y + ((extent.height - textFont->height) >> 1);
+	textOrigin.y = origin.y + ((_extent.height - textFont->height) >> 1);
 
 	port.setColor(2);
 	port.moveTo(textOrigin);
@@ -536,12 +537,12 @@ void FloatingWindow::drawClipped(
     gPort         &port,
     const Point16 &offset,
     const Rect16  &r) {
-	Rect16              rect = extent;
+	Rect16              rect = _extent;
 	WindowDecoration    *dec;
 	int16               i;
 
 	if (displayEnabled())
-		if (extent.overlap(r)) {
+		if (_extent.overlap(r)) {
 			// do'nt do the temp stuff if there are decorations present
 			if (numDecorations == 0) {
 				rect.x -= offset.x;
@@ -556,8 +557,8 @@ void FloatingWindow::drawClipped(
 
 			//  For each "decorative panel" within the frame of the window
 			for (dec = decorations, i = 0; i < numDecorations; i++, dec++) {
-				Point16 pos(dec->extent.x /* - decOffset.x */ - offset.x + extent.x,
-				            dec->extent.y /* - decOffset.y */ - offset.y + extent.y);
+				Point16 pos(dec->extent.x /* - decOffset.x */ - offset.x + _extent.x,
+				            dec->extent.y /* - decOffset.y */ - offset.y + _extent.y);
 
 				drawCompressedImage(port, pos, dec->image);
 			}
@@ -575,8 +576,8 @@ void FloatingWindow::setExtent(const Rect16 &r) {
 #endif
 
 	// now reset the extent
-	extent.height = r.height;
-	extent.width  = r.width;
+	_extent.height = r.height;
+	_extent.width  = r.width;
 	setPos(Point16(r.x, r.y));
 }
 
@@ -594,7 +595,7 @@ bool FloatingWindow::open(void) {
 //  Close this window and redraw the screen under it.
 void FloatingWindow::close(void) {
 	gWindow::close();
-	updateWindowSection(extent);
+	updateWindowSection(_extent);
 }
 
 
@@ -605,8 +606,6 @@ void FloatingWindow::close(void) {
 //  overlap that area.
 
 bool checkTileAreaPort(void);
-
-extern bool userControlsSetup;
 
 void updateWindowSection(const Rect16 &r) {
 	gPixelMap       tempMap;
@@ -676,7 +675,7 @@ void updateWindowSection(const Rect16 &r) {
 
 	//  For each window, both background and float, that overlaps
 	//  the clip, draw the window's imagery
-	if (userControlsSetup) {
+	if (g_vm->_userControlsSetup) {
 		for (Common::List<gWindow *>::iterator it = g_vm->_toolBase->bottomWindowIterator(); it != g_vm->_toolBase->topWindowIterator(); --it)
 			(*it)->drawClipped(tempPort, offset, clip);
 	}

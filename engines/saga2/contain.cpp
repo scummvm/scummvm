@@ -120,25 +120,25 @@ static ContainerAppearanceDef physicalContainerAppearance = {
 	0
 };
 
-static StaticWindow brassDecorations[] = {
+static const StaticWindow brassDecorations[] = {
 	{{0,  0, 268,  86},   nullptr, 3},
 	{{13, 86, 242, 109},  nullptr, 4},
 	{{13, 195, 242, 121}, nullptr, 5}
 };
 
-static StaticWindow clothDecorations[] = {
+static const StaticWindow clothDecorations[] = {
 	{{0,  0, 268,  86},   nullptr, 6},
 	{{13, 86, 242, 109},  nullptr, 7},
 	{{13, 195, 242, 121}, nullptr, 8}
 };
 
-static StaticWindow steelDecorations[] = {
+static const StaticWindow steelDecorations[] = {
 	{{0,  0, 268,  86},   nullptr, 9},
 	{{13, 86, 242, 109},  nullptr, 10},
 	{{13, 195, 242, 121}, nullptr, 11}
 };
 
-static StaticWindow woodDecorations[] = {
+static const StaticWindow woodDecorations[] = {
 	{{0,  0, 268,  86},   nullptr, 12},
 	{{13, 86, 242, 109},  nullptr, 13},
 	{{13, 195, 242, 121}, nullptr, 14}
@@ -163,14 +163,14 @@ static ContainerAppearanceDef deathContainerAppearance = {
 };
 
 // physal dialog window decorations
-static StaticWindow deathDecorations[] = {
+static const StaticWindow deathDecorations[] = {
 	{{0,  0, 206,  250}, nullptr, 15}
 };
 
 //-----------------------------------------------------------------------
 //	ReadyContainer appearance
 
-static ContainerAppearanceDef readyContainerAppearance = {
+static const ContainerAppearanceDef readyContainerAppearance = {
 	{0, 0, 0, 0},
 	{476, 105, 0, 0},
 	{0, 0, 0, 0},
@@ -188,7 +188,7 @@ static ContainerAppearanceDef readyContainerAppearance = {
 //-----------------------------------------------------------------------
 //	Mental Container appearance
 
-static ContainerAppearanceDef mentalContainerAppearance = {
+static const ContainerAppearanceDef mentalContainerAppearance = {
 	{478, 168 - 54, 158, 215},
 	{2, 86 - 18 - 4, 158 - 2, 215 - 66},
 	{2, 19, 44, 44},
@@ -203,13 +203,13 @@ static ContainerAppearanceDef mentalContainerAppearance = {
 	20
 };
 
-static StaticWindow mentalDecorations[] = {
+static const StaticWindow mentalDecorations[] = {
 	{{0,  0, 158,  215}, nullptr, 0}      //  Bottom decoration panel
 };
 //-----------------------------------------------------------------------
 //	Enchantment container appearance
 
-static ContainerAppearanceDef enchantmentContainerAppearance = {
+static const ContainerAppearanceDef enchantmentContainerAppearance = {
 	{262, 92, 116, 202},
 	{2, 87, 116 - 2, 202 - 87},
 	{7, 50, 44, 43},
@@ -244,7 +244,7 @@ ContainerView::ContainerView(
     gPanelList      &list,
     const Rect16    &rect,
     ContainerNode   &nd,
-    ContainerAppearanceDef &app,
+    const ContainerAppearanceDef &app,
     AppFunc         *cmd)
 	: gControl(list, rect, NULL, 0, cmd),
 	  iconOrigin(app.iconOrigin),
@@ -379,8 +379,8 @@ void ContainerView::drawClipped(
 	                y;
 
 	//  Coordinates for slot 0,0.
-	int16           originX = extent.x - offset.x + iconOrigin.x,
-	                originY = extent.y - offset.y + iconOrigin.y;
+	int16           originX = _extent.x - offset.x + iconOrigin.x,
+	                originY = _extent.y - offset.y + iconOrigin.y;
 
 	ObjectID        objID;
 	GameObject      *item;
@@ -392,7 +392,7 @@ void ContainerView::drawClipped(
 	ColorTable      objColors;
 
 	//  If there's no overlap between extent and clip, then return.
-	if (!extent.overlap(r)) return;
+	if (!_extent.overlap(r)) return;
 
 	//  Iterate through each item within the container.
 	while ((objID = iter.next(&item)) != Nothing) {
@@ -679,7 +679,7 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 
 	// total the mass and bulk of all the objects in this container
 	totalObjects();
-	window.update(extent);
+	window.update(_extent);
 
 	return activate(gEventMouseDown);
 }
@@ -952,7 +952,7 @@ void ContainerView::setDelayedCursorText(GameObject *obj) {
 EnchantmentContainerView::EnchantmentContainerView(
     gPanelList      &list,
     ContainerNode   &nd,
-    ContainerAppearanceDef &app,
+    const ContainerAppearanceDef &app,
     AppFunc         *cmd)
 	: ContainerView(list, app.viewRect, nd, app, cmd) {
 }
@@ -1019,8 +1019,8 @@ void ReadyContainerView::drawClipped(
 	                y;
 
 	//  Coordinates for slot 0,0.
-	int16           originX = extent.x - offset.x + iconOrigin.x,
-	                originY = extent.y - offset.y + iconOrigin.y;
+	int16           originX = _extent.x - offset.x + iconOrigin.x,
+	                originY = _extent.y - offset.y + iconOrigin.y;
 
 	//  Row an column number of the inventory slot.
 	int16           col,
@@ -1036,14 +1036,14 @@ void ReadyContainerView::drawClipped(
 	ColorTable      objColors;
 
 	//  If there's no overlap between extent and clip, then return.
-	if (!extent.overlap(r)) return;
+	if (!_extent.overlap(r)) return;
 
 	//  Draw the boxes for visible rows and cols.
 
 	if (backImages) {
 		int16   i;
-		Point16 drawOrg(extent.x - offset.x + backOriginX,
-		                extent.y - offset.y + backOriginY);
+		Point16 drawOrg(_extent.x - offset.x + backOriginX,
+		                _extent.y - offset.y + backOriginY);
 
 		for (y = drawOrg.y, row = 0;
 		        row < visibleRows;
@@ -1155,14 +1155,14 @@ void ReadyContainerView::drawClipped(
 //  ContainerWindow class
 
 ContainerWindow::ContainerWindow(ContainerNode &nd,
-                                 ContainerAppearanceDef &app,
+                                 const ContainerAppearanceDef &app,
                                  const char saveas[])
 	: FloatingWindow(nd.position, 0, saveas, cmdWindowFunc) {
 	//  Initialize view to NULL.
 	view = NULL;
 
 	// create the close button for this window
-	closeCompButton = new gCompButton(
+	closeCompButton = new GfxCompButton(
 	                      *this,
 	                      app.closeRect,              // rect for button
 	                      containerRes,               // resource context
@@ -1184,12 +1184,12 @@ ContainerView &ContainerWindow::getView(void) {
  * ===================================================================== */
 
 ScrollableContainerWindow::ScrollableContainerWindow(
-    ContainerNode &nd, ContainerAppearanceDef &app, const char saveas[])
+    ContainerNode &nd, const ContainerAppearanceDef &app, const char saveas[])
 	: ContainerWindow(nd, app, saveas) {
 	view = new ContainerView(*this, app.viewRect, nd, app);
 
 	// make the button conected to this window
-	scrollCompButton = new gCompButton(
+	scrollCompButton = new GfxCompButton(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
 	                       containerRes,                   // resource context
@@ -1207,7 +1207,7 @@ ScrollableContainerWindow::ScrollableContainerWindow(
  * ===================================================================== */
 
 TangibleContainerWindow::TangibleContainerWindow(
-    ContainerNode &nd, ContainerAppearanceDef &app)
+    ContainerNode &nd, const ContainerAppearanceDef &app)
 	: ScrollableContainerWindow(nd, app, "ObjectWindow") {
 #if DEBUG
 	assert(view->containerObject);
@@ -1227,7 +1227,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 		               containerRes, 'F', 'R', 'M');
 		massWeightIndicator = NULL;
 	} else {
-		static StaticWindow *winDecs[] =  {
+		const StaticWindow *winDecs[] =  {
 			brassDecorations,
 		    clothDecorations,
 		    steelDecorations,
@@ -1274,7 +1274,7 @@ void TangibleContainerWindow::setContainerSprite(void) {
 	sprPos.x = objRect.x - (spr->size.x >> 1);  //objRect.x + ( spr->size.x >> 1 );
 	sprPos.y = objRect.y - (spr->size.y >> 1);
 
-	containerSpriteImg = new gSpriteImage(
+	containerSpriteImg = new GfxSpriteImage(
 	                         *this,
 	                         Rect16(sprPos.x,
 	                                sprPos.y,
@@ -1298,7 +1298,7 @@ void TangibleContainerWindow::drawClipped(
     gPort &port,
     const Point16 &offset,
     const Rect16 &clip) {
-	if (!extent.overlap(clip)) return;
+	if (!_extent.overlap(clip)) return;
 
 	// draw the decorations
 	ScrollableContainerWindow::drawClipped(port, offset, clip);
@@ -1309,10 +1309,10 @@ void TangibleContainerWindow::drawClipped(
  * ===================================================================== */
 
 IntangibleContainerWindow::IntangibleContainerWindow(
-    ContainerNode &nd, ContainerAppearanceDef &app)
+    ContainerNode &nd, const ContainerAppearanceDef &app)
 	: ScrollableContainerWindow(nd, app, "MentalWindow") {
 	// make the button conected to this window
-	mindSelectorCompButton = new gMultCompButton(
+	mindSelectorCompButton = new GfxMultCompButton(
 	                             *this,
 	                             Rect16(49, 15 - 13, 52, 67),
 	                             containerRes,
@@ -1337,12 +1337,12 @@ IntangibleContainerWindow::IntangibleContainerWindow(
  * ===================================================================== */
 
 EnchantmentContainerWindow::EnchantmentContainerWindow(
-    ContainerNode &nd, ContainerAppearanceDef &app)
+    ContainerNode &nd, const ContainerAppearanceDef &app)
 	: ContainerWindow(nd, app, "EnchantmentWindow") {
 	view = new EnchantmentContainerView(*this, nd, app);
 
 	// make the button conected to this window
-	scrollCompButton = new gCompButton(
+	scrollCompButton = new GfxCompButton(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
 	                       containerRes,                   // resource context
@@ -1359,7 +1359,7 @@ EnchantmentContainerWindow::EnchantmentContainerWindow(
    ContainerNode functions
  * ===================================================================== */
 
-ContainerNode::ContainerNode(ContainerList &cl, ObjectID id, int typ) {
+ContainerNode::ContainerNode(ContainerManager &cl, ObjectID id, int typ) {
 	GameObject      *obj = GameObject::objectAddress(id);
 	PlayerActorID   ownerID;
 
@@ -1426,7 +1426,7 @@ ContainerNode::~ContainerNode() {
 	hide();
 
 	//  Remove from container list
-	g_vm->_containerList->remove(this);
+	g_vm->_cnm->remove(this);
 }
 
 void ContainerNode::read(Common::InSaveFile *in) {
@@ -1540,7 +1540,7 @@ void ContainerNode::update(void) {
 }
 
 //  Find a container node, given a specific object
-ContainerNode *ContainerList::find(ObjectID id) {
+ContainerNode *ContainerManager::find(ObjectID id) {
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it)
 		if ((*it)->object == id)
 			return *it;
@@ -1548,7 +1548,7 @@ ContainerNode *ContainerList::find(ObjectID id) {
 	return NULL;
 }
 
-ContainerNode *ContainerList::find(ObjectID id, int16 type) {
+ContainerNode *ContainerManager::find(ObjectID id, int16 type) {
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it)
 		if ((*it)->object == id && (*it)->type == type)
 			return *it;
@@ -1589,10 +1589,10 @@ void ContainerNode::changeOwner(int16 newOwner) {
 }
 
 /* ===================================================================== *
-   ContainerList functions
+   ContainerManager functions
  * ===================================================================== */
 
-void ContainerList::setPlayerNum(PlayerActorID playerNum) {
+void ContainerManager::setPlayerNum(PlayerActorID playerNum) {
 	//  Close all containers which are not on the ground and not owned
 	//  by the current protagonist.
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it) {
@@ -1611,7 +1611,7 @@ void ContainerList::setPlayerNum(PlayerActorID playerNum) {
 	}
 }
 
-void ContainerList::doDeferredActions(void) {
+void ContainerManager::doDeferredActions(void) {
 	Common::List<ContainerNode *>::iterator nextIt;
 	Actor           *a = getCenterActor();
 	TilePoint       tp = a->getLocation();
@@ -1654,7 +1654,7 @@ void ContainerList::doDeferredActions(void) {
 	}
 }
 
-void ContainerList::setUpdate(ObjectID id) {
+void ContainerManager::setUpdate(ObjectID id) {
 	//  Close all containers which are not on the ground and not owned
 	//  by the current protagonist.
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it) {
@@ -1684,8 +1684,8 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 
 		if (((Actor *)obj)->isDead()) {
 			//  Open dead container for dead actor
-			if (!(cn = g_vm->_containerList->find(owner, ContainerNode::deadType)))
-				cn = new ContainerNode(*g_vm->_containerList, id, ContainerNode::deadType);
+			if (!(cn = g_vm->_cnm->find(owner, ContainerNode::deadType)))
+				cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::deadType);
 		} else if (owner != ContainerNode::nobody) {
 			return OpenMindContainer(owner, open, /*mType*/ openMindType);
 		}
@@ -1696,8 +1696,8 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 		if (actorIDToPlayerID(obj->possessor(), owner) == false)
 			owner = ContainerNode::nobody;
 
-		if (!(cn = g_vm->_containerList->find(id, ContainerNode::physicalType)))
-			cn = new ContainerNode(*g_vm->_containerList, id, ContainerNode::physicalType);
+		if (!(cn = g_vm->_cnm->find(id, ContainerNode::physicalType)))
+			cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::physicalType);
 	}
 
 	//  If node was successfull created, and we wanted it open, and the owner
@@ -1712,7 +1712,7 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 }
 
 ContainerNode *CreateReadyContainerNode(PlayerActorID player) {
-	return new ContainerNode(*g_vm->_containerList,
+	return new ContainerNode(*g_vm->_cnm,
 	                            getPlayerActorAddress(player)->getActorID(),
 	                            ContainerNode::readyType);
 }
@@ -1721,8 +1721,8 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
 	ContainerNode   *cn;
 	ObjectID        id = getPlayerActorAddress(player)->getActorID();
 
-	if (!(cn = g_vm->_containerList->find(id, ContainerNode::mentalType))) {
-		cn = new ContainerNode(*g_vm->_containerList, id, ContainerNode::mentalType);
+	if (!(cn = g_vm->_cnm->find(id, ContainerNode::mentalType))) {
+		cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::mentalType);
 		cn->mindType = type;
 
 		//  If node was successfull created, and we wanted it open, and the owner
@@ -1761,7 +1761,6 @@ void cleanupContainers(void) {
 
 	selImage = NULL;
 	containerRes = NULL;
-	delete g_vm->_containerList;
 }
 
 void initContainerNodes(void) {
@@ -1771,7 +1770,7 @@ void initContainerNodes(void) {
 	ContainerNode   *node;
 	bool            onlyReady = true;
 
-	for (node = g_vm->_containerList->first(); node != NULL; node = node->next()) {
+	for (node = g_vm->_cnm->first(); node != NULL; node = node->next()) {
 		if (node->getType() != ContainerNode::readyType) {
 			onlyReady = false;
 			break;
@@ -1789,10 +1788,10 @@ void saveContainerNodes(Common::OutSaveFile *outS) {
 	int16 numNodes = 0;
 
 	//  Make sure there are no pending container view actions
-	g_vm->_containerList->doDeferredActions();
+	g_vm->_cnm->doDeferredActions();
 
 	//  Count the number of nodes to save
-	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
+	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
 		if (n->getType() != ContainerNode::readyType)
@@ -1807,7 +1806,7 @@ void saveContainerNodes(Common::OutSaveFile *outS) {
 	debugC(3, kDebugSaveload, "... numNodes = %d", numNodes);
 
 	//  Store the nodes
-	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
+	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
 		if (n->getType() != ContainerNode::readyType) {
@@ -1838,16 +1837,19 @@ void loadContainerNodes(Common::InSaveFile *in) {
 		node->read(in);
 
 		//  Add it back to the container list
-		g_vm->_containerList->add(node);
+		g_vm->_cnm->add(node);
 	}
 
 	assert(tempList.empty());
 }
 
 void cleanupContainerNodes(void) {
+	if (g_vm->_cnm == nullptr)
+		return;
+
 	Common::Array<ContainerNode *> deletionArray;
 
-	for (Common::List<ContainerNode *>::iterator it = g_vm->_containerList->_list.begin(); it != g_vm->_containerList->_list.end(); ++it) {
+	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
 		if (n->getType() != ContainerNode::readyType)
@@ -1859,15 +1861,16 @@ void cleanupContainerNodes(void) {
 }
 
 void updateContainerWindows(void) {
-	g_vm->_containerList->doDeferredActions();
+	g_vm->_cnm->doDeferredActions();
 }
 
 void setMindContainer(int index, IntangibleContainerWindow &cw) {
-	static int classTable[] = { protoClassIdeaContainer,
-	                            protoClassSkillContainer,
-	                            protoClassMemoryContainer,
-	                            protoClassPsychContainer    // Not used anymore
-	                          };
+	const int classTable[] = {
+		protoClassIdeaContainer,
+		protoClassSkillContainer,
+		protoClassMemoryContainer,
+		protoClassPsychContainer    // Not used anymore
+	};
 
 	ObjectID        ownerID = cw.getView().node.getObject();
 	GameObject      *object = GameObject::objectAddress(ownerID);
@@ -1897,10 +1900,10 @@ APPFUNC(cmdMindContainerFunc) {
 		ContainerNode   &nd = cw->getView().node;
 		int             newMindType = nd.mindType;
 
-		static Rect16   idea(0, 0, 22, 67),       // idea button click area
-		       skill(22, 0, 11, 67),    // skill area
-		       memory(33, 0,  9, 67),   // memory area
-		       psych(42, 0, 10, 67);    // psych(ic?) area
+		const Rect16 idea(0, 0, 22, 67),      // idea button click area
+		             skill(22, 0, 11, 67),    // skill area
+		             memory(33, 0,  9, 67),   // memory area
+		             psych(42, 0, 10, 67);    // psych(ic?) area
 
 		if (idea.ptInside(ev.mouse))    newMindType = 0; //protoClassIdeaContainer;
 		if (skill.ptInside(ev.mouse))   newMindType = 1; //protoClassSkillContainer;
@@ -1915,9 +1918,9 @@ APPFUNC(cmdMindContainerFunc) {
 	} else if (ev.eventType == gEventMouseMove) {
 		//if (ev.value == gCompImage::enter)
 		{
-			static Rect16   idea(0, 0, 22, 67),       // idea button click area
-			       skill(22, 0, 11, 67),    // skill area
-			       memory(33, 0,  9, 67);   // memory area
+			const Rect16 idea(0, 0, 22, 67),      // idea button click area
+			             skill(22, 0, 11, 67),    // skill area
+			             memory(33, 0,  9, 67);   // memory area
 
 
 			const int BUF_SIZE = 64;
@@ -1955,7 +1958,7 @@ APPFUNC(cmdMindContainerFunc) {
 			g_vm->_mouseInfo->setText(textBuffer);
 		}
 
-		if (ev.value == gCompImage::leave) {
+		if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(NULL);
 		}
 	}
@@ -1977,9 +1980,9 @@ APPFUNC(cmdCloseButtonFunc) {
 			g_vm->_mouseInfo->setText(NULL);
 		}
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			g_vm->_mouseInfo->setText(CLOSE_MOUSE);
-		} else if (ev.value == gCompImage::leave) {
+		} else if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(NULL);
 		}
 	}
@@ -1987,8 +1990,8 @@ APPFUNC(cmdCloseButtonFunc) {
 
 APPFUNC(cmdScrollFunc) {
 	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
-		ScrollableContainerWindow       *cw;
-		static Rect16                   upArea(0, 0, 44, 22);
+		ScrollableContainerWindow *cw;
+		const Rect16 upArea(0, 0, 44, 22);
 
 		cw = (ScrollableContainerWindow *)ev.window;
 		if (upArea.ptInside(ev.mouse))
@@ -1997,9 +2000,9 @@ APPFUNC(cmdScrollFunc) {
 			cw->scrollDown();
 		ev.window->update(cw->getView().getExtent());
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::enter) {
+		if (ev.value == GfxCompImage::enter) {
 			g_vm->_mouseInfo->setText(SCROLL_MOUSE);
-		} else if (ev.value == gCompImage::leave) {
+		} else if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(NULL);
 		}
 	}

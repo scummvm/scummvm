@@ -340,7 +340,7 @@ enum Clues {
 	kClueGrigoriansResponse1               = 234, // UNUSED
 	kClueGrigoriansResponse2               = 235, // UNUSED
 	kClueCrazysInvolvement                 = 236, // Restored content - Object -- Original - (Intangible) - UNOBTAINED - Not checked in KIA - Has weight for Crazylegs
-	kClueGrigoriansResources               = 237, // (Intangible) - UNOBTAINED - Not checked in KIA - Checked for Crazylegs dialogue
+	kClueGrigoriansResources               = 237, // Restored content -- Original -(Intangible) - UNOBTAINED - Not checked in KIA - Checked for Crazylegs dialogue
 	kClueMcCoyPulledAGun                   = 238, // UNUSED - TODO: Was this for Crazylegs being offended?
 	kClueMcCoyIsStupid                     = 239, // (Intangible) - Obtained by Leary - Not checked in KIA - Checked in Steele, Clovis, Leary AI - added to many actors DBs
 	kClueMcCoyIsAnnoying                   = 240, // (Intangible) - UNOBTAINED - Not checked in KIA - Checked in Steele, Clovis, Leary AI - added to many actors DBs
@@ -1178,7 +1178,8 @@ enum Variables {
 	kVariableUG18CountUpForNextTrainAction =  4, // Re-purposed. Original: not used
 	kVariableUG18StateOfTrains             =  5, // Re-purposed. Original: not used
 	kVariableUG18StateOfGuzzaCorpse        =  6, // Re-purposed. Original: not used
-	// variables 7 - 8 are not used
+	kVariableRC02Act1RunciterBanter        =  7, // Re-purposed. Original: not used
+	// variable 8 is not used
 	kVariablePoliceMazeScore               =  9,
 	kVariablePoliceMazePS10TargetCounter   = 10,
 	kVariablePoliceMazePS11TargetCounter   = 11,

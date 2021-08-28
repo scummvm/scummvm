@@ -98,7 +98,6 @@ void GUIListBox::Draw(Shared::Bitmap *ds) {
 	const int height = Height - 1;
 	const int pixel_size = get_fixed_pixel_size(1);
 
-	check_font(&Font);
 	color_t text_color = ds->GetCompatibleColor(TextColor);
 	color_t draw_color = ds->GetCompatibleColor(TextColor);
 	if (IsBorderShown()) {
@@ -109,8 +108,9 @@ void GUIListBox::Draw(Shared::Bitmap *ds) {
 
 	int right_hand_edge = (X + width) - pixel_size - 1;
 
-	// use SetFont to update the RowHeight and VisibleItemCount
-	SetFont(Font);
+	// update the RowHeight and VisibleItemCount
+	// FIXME: find a way to update this whenever relevant things change in the engine
+	UpdateMetrics();
 
 	// draw the scroll bar in if necessary
 	if (ItemCount > VisibleItemCount && IsBorderShown() && AreArrowsShown()) {
@@ -135,6 +135,7 @@ void GUIListBox::Draw(Shared::Bitmap *ds) {
 		right_hand_edge -= get_fixed_pixel_size(7);
 	}
 
+	// FIXME: cut this out, and let editor add real items for display
 	DrawItemsFix();
 
 	for (int item = 0; item < VisibleItemCount; ++item) {
@@ -220,8 +221,7 @@ void GUIListBox::SetSvgIndex(bool on) {
 
 void GUIListBox::SetFont(int font) {
 	Font = font;
-	RowHeight = getfontheight(Font) + get_fixed_pixel_size(2);
-	VisibleItemCount = Height / RowHeight;
+	UpdateMetrics();
 	NotifyParentChanged();
 }
 
@@ -234,17 +234,25 @@ void GUIListBox::SetItemText(int index, const String &text) {
 
 bool GUIListBox::OnMouseDown() {
 	if (IsInRightMargin(MousePos.X)) {
+		int top_item = TopItem;
 		if (MousePos.Y < Height / 2 && TopItem > 0)
-			TopItem--;
+			top_item = TopItem - 1;
 		if (MousePos.Y >= Height / 2 && ItemCount > TopItem + VisibleItemCount)
-			TopItem++;
+			top_item = TopItem + 1;
+		if (TopItem != top_item) {
+			TopItem = top_item;
+			NotifyParentChanged();
+		}
 		return false;
 	}
 
 	int sel = GetItemAt(MousePos.X, MousePos.Y);
 	if (sel < 0)
 		return false;
-	SelectedItem = sel;
+	if (sel != SelectedItem) {
+		SelectedItem = sel;
+		NotifyParentChanged();
+	}
 	IsActivated = true;
 	return false;
 }
@@ -255,12 +263,15 @@ void GUIListBox::OnMouseMove(int x_, int y_) {
 }
 
 void GUIListBox::OnResized() {
-	if (RowHeight == 0) {
-		check_font(&Font);
-		SetFont(Font);
-	}
-	if (RowHeight > 0)
-		VisibleItemCount = Height / RowHeight;
+	UpdateMetrics();
+	NotifyParentChanged();
+}
+
+void GUIListBox::UpdateMetrics() {
+	RowHeight = getfontheight(Font) + get_fixed_pixel_size(2);
+	VisibleItemCount = Height / RowHeight;
+	if (ItemCount <= VisibleItemCount)
+		TopItem = 0; // reset scroll if all items are visible
 }
 
 // TODO: replace string serialization with StrUtil::ReadString and WriteString

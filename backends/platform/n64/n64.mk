@@ -12,7 +12,7 @@ n64-distclean:
 	rm -rf $(bundle_name)
 	rm $(N64_EXE_STRIPPED)
 
-n64-dist: all
+n64-dist: all $(DIST_FILES_DOCS)
 	$(MKDIR) $(bundle_name)
 	$(MKDIR) $(bundle_name)/romfs
 ifdef DIST_FILES_ENGINEDATA

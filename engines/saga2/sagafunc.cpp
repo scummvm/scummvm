@@ -182,7 +182,7 @@ int16 scriptActorMove(int16 *args) {
 	if (thisThread->argCount > 3 && isActor(obj)) {
 		Actor       *a = (Actor *)obj;
 
-		a->currentFacing = args[3];
+		a->_currentFacing = args[3];
 	}
 
 	return 0;
@@ -216,7 +216,7 @@ int16 scriptActorMoveRel(int16 *args) {
 	if (thisThread->argCount > 3 && isActor(obj)) {
 		Actor       *a = (Actor *)obj;
 
-		a->currentFacing = args[3];
+		a->_currentFacing = args[3];
 	}
 
 	return 0;
@@ -248,7 +248,7 @@ int16 scriptActorTransfer(int16 *args) {
 			obj->move(Location(targetSlot, targetID));
 			if ((cSet & (ProtoObj::isIntangible | ProtoObj::isContainer))
 			        == (ProtoObj::isIntangible | ProtoObj::isContainer))
-				g_vm->_containerList->setUpdate(targetID);
+				g_vm->_cnm->setUpdate(targetID);
 		}
 	} else {
 		obj->move(Location(args[1], args[2], args[3], args[0]));
@@ -258,7 +258,7 @@ int16 scriptActorTransfer(int16 *args) {
 	if (thisThread->argCount > 4 && isActor(obj)) {
 		Actor       *a = (Actor *)obj;
 
-		a->currentFacing = args[4];
+		a->_currentFacing = args[4];
 	}
 
 	return 0;
@@ -331,7 +331,7 @@ int16 scriptActorSetProto(int16 *args) {
 	GameObject      *obj = ((ObjectData *)thisThread->thisObject)->obj;
 	int16           oldProto = obj->getProtoNum();
 
-	if (isActor(obj) && (((Actor *)obj)->flags & Actor::temporary)) {
+	if (isActor(obj) && (((Actor *)obj)->_flags & Actor::temporary)) {
 		decTempActorCount(oldProto);
 		incTempActorCount(args[0]);
 	}
@@ -984,7 +984,7 @@ int16 scriptGameObjectSetMass(int16 *args) {
 	if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
 		obj->setExtra(args[0]);
 		if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
-			g_vm->_containerList->setUpdate(obj->IDParent());
+			g_vm->_cnm->setUpdate(obj->IDParent());
 		}
 		return true;
 	} else return false;
@@ -1123,7 +1123,7 @@ int16 scriptActorGetScratchVar(int16 *args) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		return a->scriptVar[args[0]];
+		return a->_scriptVar[args[0]];
 	}
 
 	return 0;
@@ -1137,9 +1137,9 @@ int16 scriptActorSetScratchVar(int16 *args) {
 	OBJLOG(SetScratchVar);
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
-		int16       oldVal = a->scriptVar[args[0]];
+		int16       oldVal = a->_scriptVar[args[0]];
 
-		a->scriptVar[args[0]] = args[1];
+		a->_scriptVar[args[0]] = args[1];
 
 		return oldVal;
 	}
@@ -1410,7 +1410,7 @@ int16 scriptActorGetSchedule(int16 *args) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		return a->schedule;
+		return a->_schedule;
 	}
 
 	return 0;
@@ -1424,9 +1424,9 @@ int16 scriptActorSetSchedule(int16 *args) {
 	OBJLOG(SetSchedule);
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
-		uint16      oldSchedule = a->schedule;
+		uint16      oldSchedule = a->_schedule;
 
-		a->schedule = (uint16)args[0];
+		a->_schedule = (uint16)args[0];
 
 		if (a->getAssignment() != NULL)
 			delete a->getAssignment();
@@ -1543,9 +1543,9 @@ int16 scriptActorFace(int16 *args) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		oldFacing = a->currentFacing;
+		oldFacing = a->_currentFacing;
 
-		a->currentFacing = args[0] & 7;
+		a->_currentFacing = args[0] & 7;
 	}
 
 	return oldFacing;
@@ -1565,9 +1565,9 @@ int16 scriptActorFaceTowards(int16 *args) {
 
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		oldFacing = a->currentFacing;
+		oldFacing = a->_currentFacing;
 
-		a->currentFacing =
+		a->_currentFacing =
 		    (GameObject::objectAddress(args[0])->getLocation()
 		     -   a->getLocation()).quickDir();
 	}
@@ -1676,7 +1676,7 @@ int16 scriptActorAssignPatrolRoute(int16 *args) {
 
 		if (new PatrolRouteAssignment(a,
 		            (uint16)args[0]
-		            *   CalenderTime::framesPerHour,
+		            *   CalenderTime::kFramesPerHour,
 		            args[1],
 		            (uint8)args[2],
 		            thisThread->argCount >= 4
@@ -1708,7 +1708,7 @@ int16 scriptActorAssignPartialPatrolRoute(int16 *args) {
 
 		if (new PatrolRouteAssignment(a,
 		            (uint16)args[0]
-		            *   CalenderTime::framesPerHour,
+		            *   CalenderTime::kFramesPerHour,
 		            args[1],
 		            (uint8)args[2],
 		            args[3],
@@ -1852,7 +1852,7 @@ int16 scriptActorAssignTetheredWander(int16 *args) {
 
 		if (new TetheredWanderAssignment(a,
 		            (uint16)args[0]
-		            *   CalenderTime::framesPerHour,
+		            *   CalenderTime::kFramesPerHour,
 		            tetherReg)
 		        !=  NULL)
 			return true;
@@ -1874,9 +1874,9 @@ int16 scriptActorAssignAttend(int16 *args) {
 		if (a->getAssignment() != NULL) delete a->getAssignment();
 
 		if (new AttendAssignment(a,
-		            (calender.frameInDay()
+		            (g_vm->_calender->frameInDay()
 		             + (uint16)args[0])
-		            %   CalenderTime::framesPerDay,
+		            %   CalenderTime::kFramesPerDay,
 		            GameObject::objectAddress(args[1]))
 		        !=  NULL)
 			return true;
@@ -1941,7 +1941,7 @@ int16 scriptActorGetLeader(int16 *) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		return a->leader != NULL ? a->leader->thisID() : Nothing;
+		return a->_leader != NULL ? a->_leader->thisID() : Nothing;
 	}
 
 	return 0;
@@ -1956,7 +1956,7 @@ int16 scriptActorNumFollowers(int16 *) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		return a->followers != NULL ? a->followers->size() : 0;
+		return a->_followers != NULL ? a->_followers->size() : 0;
 	}
 
 	return 0;
@@ -1971,10 +1971,10 @@ int16 scriptActorGetFollower(int16 *args) {
 	if (isActor(((ObjectData *)thisThread->thisObject)->obj)) {
 		Actor       *a = (Actor *)((ObjectData *)thisThread->thisObject)->obj;
 
-		assert(a->followers != NULL);
-		assert(args[0] < a->followers->size());
+		assert(a->_followers != NULL);
+		assert(args[0] < a->_followers->size());
 
-		return (*a->followers)[args[0]]->thisID();
+		return (*a->_followers)[args[0]]->thisID();
 	}
 
 	return 0;
@@ -2099,13 +2099,13 @@ int16 scriptActorDeductPayment(int16 *args) {
 
 				if (massCount > paymentAmount) {
 					obj->setExtra(massCount - paymentAmount);
-					g_vm->_containerList->setUpdate(obj->IDParent());
+					g_vm->_cnm->setUpdate(obj->IDParent());
 					break;
 				} else {
 					if (delObj) {
 						ObjectID    dParent = delObj->IDParent();
 						delObj->deleteObject();
-						g_vm->_containerList->setUpdate(dParent);
+						g_vm->_cnm->setUpdate(dParent);
 					}
 					paymentAmount -= massCount;
 					delObj = obj;
@@ -2118,7 +2118,7 @@ int16 scriptActorDeductPayment(int16 *args) {
 				if (delObj) {
 					ObjectID    dParent = delObj->IDParent();
 					delObj->deleteObject();
-					g_vm->_containerList->setUpdate(dParent);
+					g_vm->_cnm->setUpdate(dParent);
 				}
 				delObj = obj;
 			}
@@ -2128,7 +2128,7 @@ int16 scriptActorDeductPayment(int16 *args) {
 	if (delObj) {
 		ObjectID    dParent = delObj->IDParent();
 		delObj->deleteObject();
-		g_vm->_containerList->setUpdate(dParent);
+		g_vm->_cnm->setUpdate(dParent);
 	}
 
 	//  Payment succeeded!
@@ -2992,7 +2992,7 @@ int16 scriptDeleteObject(int16 *args) {
 	assert(obj);
 	oldParentID = obj->IDParent();
 	obj->deleteObjectRecursive();
-	g_vm->_containerList->setUpdate(oldParentID);
+	g_vm->_cnm->setUpdate(oldParentID);
 
 	return 0;
 }
@@ -3130,7 +3130,7 @@ int16 scriptPlayVoice(int16 *args) {
 
 int16 scriptGetHour(int16 *) {
 	MONOLOG(GetHour);
-	return calender.hour;
+	return g_vm->_calender->_hour;
 }
 
 //-----------------------------------------------------------------------
@@ -3138,7 +3138,7 @@ int16 scriptGetHour(int16 *) {
 
 int16 scriptGetFrameInHour(int16 *) {
 	MONOLOG(GetFrameInHour);
-	return calender.frameInHour;
+	return g_vm->_calender->_frameInHour;
 }
 
 //-----------------------------------------------------------------------

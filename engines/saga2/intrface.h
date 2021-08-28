@@ -269,14 +269,14 @@ private:
 	PortraitType    currentState[kNumViews + 1];
 	uint16          numButtons;
 	uint16          _numViews;
-	gMultCompButton **buttons;
-	gMultCompButton *indivButton;
+	GfxMultCompButton **buttons;
+	GfxMultCompButton *indivButton;
 
 	void setPortrait(uint16);
 
 public:
 	// button array, number of buttons per view, num views
-	CPortrait(gMultCompButton *[], gMultCompButton *, const uint16, uint16);
+	CPortrait(GfxMultCompButton *[], GfxMultCompButton *, const uint16, uint16);
 
 	void ORset(uint16, PortraitType type);
 	void set(uint16 brotherID, PortraitType type);
@@ -332,8 +332,8 @@ private:
 	void **pieIndImag;
 
 	// image control buttons
-	gCompImage          *pieMass;
-	gCompImage          *pieBulk;
+	GfxCompImage          *pieMass;
+	GfxCompImage          *pieBulk;
 
 
 public:
@@ -363,7 +363,7 @@ public:
 };
 
 
-class CManaIndicator : public gCompImage {
+class CManaIndicator : public GfxCompImage {
 public:
 
 	// sizes of the mana star images
@@ -584,8 +584,8 @@ private:
 	hResContext *healthRes;
 
 	// buttons
-	gCompImage          *starBtns[numControls];
-	gCompImage          *indivStarBtn;
+	GfxCompImage          *starBtns[numControls];
+	GfxCompImage          *indivStarBtn;
 
 	// array of pointer to the star imagery
 	void **starImag;
@@ -593,7 +593,7 @@ private:
 	// health star frame imagery
 	void *starFrameImag;
 
-	void updateStar(gCompImage *starCtl, int32 bro, int32 baseVitality, int32 curVitality);
+	void updateStar(GfxCompImage *starCtl, int32 bro, int32 baseVitality, int32 curVitality);
 
 public:
 	uint16  starIDs[3];

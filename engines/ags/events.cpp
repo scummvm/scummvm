@@ -315,9 +315,6 @@ AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &eve
 	if (event.type != Common::EVENT_KEYDOWN)
 		return AGS3::eAGSKeyCodeNone;
 
-	if (event.kbd.ascii >= 32 && event.kbd.ascii <= 127)
-		return static_cast<AGS3::eAGSKeyCode>(event.kbd.ascii);
-
 	const Common::KeyCode sym = event.kbd.keycode;
 	const uint16 mod = event.kbd.flags;
 
@@ -328,6 +325,9 @@ AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &eve
 		else if ((mod & Common::KBD_ALT) != 0) // align letters to code 301
 			return static_cast<AGS3::eAGSKeyCode>(AGS_EXT_KEY_SHIFT + (sym - Common::KEYCODE_a) + 1);
 	}
+
+	if (event.kbd.ascii >= 32 && event.kbd.ascii <= 127)
+		return static_cast<AGS3::eAGSKeyCode>(event.kbd.ascii);
 
 	// Remaining codes may match or not, but we use a big table anyway.
 	// TODO: this is code by [sonneveld],

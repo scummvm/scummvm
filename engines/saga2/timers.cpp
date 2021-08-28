@@ -76,6 +76,10 @@ void loadTimer(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "... time = %d", gameTime);
 }
 
+void cleanupTimer() {
+	g_vm->getTimerManager()->removeTimerProc(&timerCallback);
+}
+
 /* ====================================================================== *
    Alarms
  * ====================================================================== */

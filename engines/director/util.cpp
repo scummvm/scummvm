@@ -433,12 +433,12 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 	if (recursive) // first level
 		initialPath = convertPath(initialPath);
 
-	debug(2, "pathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
+	debug(9, "pathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
 
 	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, g_director->_dirSeparator);
 	Common::String convPath = initialPath;
 
-	debug(2, "pathMakeRelative(): s2 %s", convPath.c_str());
+	debug(9, "pathMakeRelative(): s2 %s", convPath.c_str());
 
 	// Strip the leading whitespace from the path
 	initialPath.trim();
@@ -453,12 +453,12 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		int pos = convPath.find(g_director->_dirSeparator);
 		convPath = Common::String(&convPath.c_str()[pos + 1]);
 
-		debug(2, "pathMakeRelative(): s3 try %s", convPath.c_str());
+		debug(9, "pathMakeRelative(): s3 try %s", convPath.c_str());
 
 		if (!testPath(convPath, directory))
 			continue;
 
-		debug(2, "pathMakeRelative(): s3 converted %s -> %s", path.c_str(), convPath.c_str());
+		debug(9, "pathMakeRelative(): s3 converted %s -> %s", path.c_str(), convPath.c_str());
 
 		opened = true;
 
@@ -469,7 +469,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		// Try stripping all of the characters not allowed in FAT
 		convPath = stripMacPath(initialPath.c_str());
 
-		debug(2, "pathMakeRelative(): s4 %s", convPath.c_str());
+		debug(9, "pathMakeRelative(): s4 %s", convPath.c_str());
 
 		if (testPath(initialPath, directory))
 			return initialPath;
@@ -479,12 +479,12 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			int pos = convPath.find(g_director->_dirSeparator);
 			convPath = Common::String(&convPath.c_str()[pos + 1]);
 
-			debug(2, "pathMakeRelative(): s5 try %s", convPath.c_str());
+			debug(9, "pathMakeRelative(): s5 try %s", convPath.c_str());
 
 			if (!testPath(convPath, directory))
 				continue;
 
-			debug(2, "pathMakeRelative(): s5 converted %s -> %s", path.c_str(), convPath.c_str());
+			debug(9, "pathMakeRelative(): s5 converted %s -> %s", path.c_str(), convPath.c_str());
 
 			opened = true;
 
@@ -524,7 +524,7 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 				Common::String ext = component.substr(component.size() - 4);
 				Common::String newpath = convPath + convertMacFilename(nameWithoutExt.c_str()) + ext;
 
-				debug(2, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
+				debug(9, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
 				Common::String res = pathMakeRelative(newpath, false, false);
 
 				if (testPath(res))
@@ -567,7 +567,7 @@ Common::String testExtensions(Common::String component, Common::String initialPa
 	for (int i = 0; exts[i]; ++i) {
 		Common::String newpath = convPath + convertMacFilename(component.c_str()) + exts[i];
 
-		debug(2, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
+		debug(9, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
 		Common::String res = pathMakeRelative(newpath, false, false);
 
 		if (testPath(res))

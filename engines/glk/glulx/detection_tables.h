@@ -839,6 +839,8 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 
 	// Italian games
 	DT_ENTRYL1("beyondglulx", Common::IT_ITA, "100115", "a0cd0a410cc99aa7ff661129b8ec5de8", 1331582),
+	DT_ENTRYL1("beyondglulx", Common::IT_ITA, "210810", "a89d1095e7fc7c6ca72ffd8c3a6bcc67", 1332118),
+	DT_ENTRYL1("beyondglulx", Common::IT_ITA, "210810", "09912bc978bb88459fa1bb8405f5962a", 353192), // zblorb
 	DT_ENTRYL1("pietradellaluna", Common::IT_ITA, "110106", "8834e0273fc730b8f6dcd38bbba2894d", 1060656),
 	DT_ENTRYL1("mancasolo", Common::IT_ITA, "398874", "de6d58b378dee41d273f7bb3c5da4220", 978440),
 	DT_ENTRYL1("schizo", Common::IT_ITA, "180907", "3531f6066802f53f9b095b5221fac4d2", 6198900),

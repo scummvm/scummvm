@@ -25,7 +25,6 @@
 #include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/shared/ac/sprite_cache.h"
-#include "ags/engine/ac/runtime_defines.h" //MAX_PATH
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/globals.h"

@@ -203,7 +203,7 @@ private:
 	/**
 	 * Autosave interval.
 	 */
-	const int _autosaveInterval;
+	int _autosaveInterval;
 
 	/**
 	 * The last time an autosave was done.
@@ -217,6 +217,11 @@ private:
 	 * the menu loop, to avoid bugs like #4420).
 	 */
 	int _saveSlotToLoad;
+
+	/**
+	 * Used for preventing recursion during autosave.
+	 */
+	bool _autoSaving;
 
 	/**
 	 * Optional debugger for the engine.
@@ -526,6 +531,13 @@ private:
 	 */
 	friend class PauseToken;
 
+	/**
+	 * Warns before overwriting autosave.
+	 *
+	 * @return true if it is safe to save, false to avoid saving.
+	 */
+	bool warnBeforeOverwritingAutosave();
+
 public:
 
 	/**
@@ -625,21 +637,6 @@ public:
 	 */
 	virtual int getAutosaveSlot() const {
 		return 0;
-	}
-
-	/**
-	 * Check whether it is time to autosave based on the
-	 * provided @p lastSaveTime.
-	 *
-	 * This function is now deprecated as autosaves are handled directly by
-	 * the Engine class and derived classes do not need to worry about it other than
-	 * to implement canSaveAutosaveCurrently() and getAutosaveSlot()
-	 * if the default implementations are not sufficient.
-	 */
-	bool shouldPerformAutoSave(int lastSaveTime) {
-		// TODO: Remove deprecated method once all engines are refactored
-		// to no longer do autosaves directly themselves
-		return false;
 	}
 };
 

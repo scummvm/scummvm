@@ -42,9 +42,11 @@ MaxModMixerManager::MaxModMixerManager(int freq, int bufSize)
 }
 
 MaxModMixerManager::~MaxModMixerManager() {
-	_mixer->setReady(false);
+	// HACK: This is called during the OSystem destructor, but Audio::MixerImpl calls
+	// mutex functions from OSystem during its destructor, which causes a crash.
+	// _mixer->setReady(false);
+	_mixer = 0;
 	mmStreamClose();
-	delete _mixer;
 }
 
 mm_word on_stream_request( mm_word length, mm_addr dest, mm_stream_formats format ) {

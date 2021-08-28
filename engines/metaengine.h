@@ -232,6 +232,15 @@ protected:
 	 * dialog so that it won't appear in the thumbnail.
 	 */
 	virtual void getSavegameThumbnail(Graphics::Surface &thumb);
+
+	/**
+	 * Finds the first empty save slot that can be used for this target
+	 * @param target Name of a config manager target.
+	 *
+	 * @return The first empty save slot, or -1 if all are occupied.
+	 */
+	int findEmptySaveSlot(const char *target);
+
 public:
 	virtual ~MetaEngine() {}
 
@@ -521,6 +530,15 @@ public:
 	void appendExtendedSaveToStream(Common::WriteStream *saveFile, uint32 playtime, Common::String desc, bool isAutosave, uint32 offset = 0);
 
 	/**
+	 * Copies an existing save file to the first empty slot which is not autosave
+	 * @param target Name of a config manager target.
+	 * @param slot   Slot number of the save state.
+	 *
+	 * @return true if an empty slot was found and the save state was copied. false otherwise.
+	 */
+	bool copySaveFileToFreeSlot(const char *target, int slot);
+
+	/**
 	 * Parse the extended savegame header to retrieve the SaveStateDescriptor information.
 	 */
 	static void parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc);
@@ -585,9 +603,6 @@ public:
 private:
 	/** Find a game across all loaded plugins. */
 	QualifiedGameList findGameInLoadedPlugins(const Common::String &gameId) const;
-
-	/** Find a loaded plugin with the given engine ID. */
-	const Plugin *findLoadedPlugin(const Common::String &engineId) const;
 
 	/** Use heuristics to complete a target lacking an engine ID. */
 	void upgradeTargetForEngineId(const Common::String &target) const;

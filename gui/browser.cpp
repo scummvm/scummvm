@@ -212,9 +212,9 @@ void BrowserDialog::updateListing() {
 	ListWidget::ColorList colors;
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 		if (i->isDirectory())
-			list.push_back(i->getDisplayName() + "/");
+			list.push_back(i->getName() + "/");
 		else
-			list.push_back(i->getDisplayName());
+			list.push_back(i->getName());
 
 		if (_isDirBrowser) {
 			if (i->isDirectory())

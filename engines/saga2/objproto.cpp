@@ -1258,14 +1258,14 @@ bool PhysicalContainerProto::openAction(ObjectID dObj, ObjectID) {
 	cn = CreateContainerNode(dObj, false);
 	cn->markForShow();                                      //  Deferred open
 	dObjPtr->_data.objectFlags |= objectOpen;         //  Set open bit;
-	g_vm->_containerList->setUpdate(dObjPtr->IDParent());
+	g_vm->_cnm->setUpdate(dObjPtr->IDParent());
 
 	return true;
 }
 
 bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
-	ContainerNode   *cn = g_vm->_containerList->find(dObj, ContainerNode::physicalType);
+	ContainerNode   *cn = g_vm->_cnm->find(dObj, ContainerNode::physicalType);
 
 	assert(dObjPtr->isOpen());
 	assert(cn);
@@ -1275,7 +1275,7 @@ bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 
 	//  Clear open bit
 	dObjPtr->_data.objectFlags &= ~objectOpen;
-	g_vm->_containerList->setUpdate(dObjPtr->IDParent());
+	g_vm->_cnm->setUpdate(dObjPtr->IDParent());
 
 	return true;
 }
@@ -1521,8 +1521,8 @@ bool WeaponProto::isObjectBeingUsed(GameObject *obj) {
 	if (wielder != Nothing) {
 		Actor *a = (Actor *)GameObject::objectAddress(wielder);
 
-		if (a->rightHandObject == obj->thisID()
-		        ||  a->leftHandObject == obj->thisID())
+		if (a->_rightHandObject == obj->thisID()
+		        ||  a->_leftHandObject == obj->thisID())
 			return true;
 	}
 	return false;
@@ -1542,13 +1542,13 @@ bool MeleeWeaponProto::useAction(ObjectID dObj, ObjectID enactor) {
 
 	if (enactor != dObjPtr->IDParent()) return false;
 
-	if (dObj == a->rightHandObject)
+	if (dObj == a->_rightHandObject)
 		a->holdInRightHand(Nothing);
 	else {
 		GameObject      *leftHandObjectPtr;
 
-		leftHandObjectPtr = a->leftHandObject != Nothing
-		                    ?   GameObject::objectAddress(a->leftHandObject)
+		leftHandObjectPtr = a->_leftHandObject != Nothing
+		                    ?   GameObject::objectAddress(a->_leftHandObject)
 		                    :   NULL;
 
 		if (dObjPtr->proto()->isTwoHanded(enactor)
@@ -1710,7 +1710,7 @@ uint8 MeleeWeaponProto::weaponRating(
 
 	//  If the wielder is on screen yet does not have the attack frames
 	//  for this weapon then this weapon is useless
-	if (wielder->appearance != NULL
+	if (wielder->_appearance != NULL
 	        &&  !wielder->isActionAvailable(fightStanceAction(wielderID)))
 		return 0;
 
@@ -1748,19 +1748,19 @@ bool MeleeWeaponProto::useSlotAvailable(GameObject *obj, Actor *a) {
 	assert(isObject(obj) && obj->proto() == this);
 	assert(isActor(a));
 
-	if (a->rightHandObject == Nothing) {
-		if (a->leftHandObject != Nothing) {
-			assert(isObject(a->leftHandObject));
+	if (a->_rightHandObject == Nothing) {
+		if (a->_leftHandObject != Nothing) {
+			assert(isObject(a->_leftHandObject));
 
 			GameObject      *leftHandObjectPtr;
 
-			leftHandObjectPtr = GameObject::objectAddress(a->leftHandObject);
+			leftHandObjectPtr = GameObject::objectAddress(a->_leftHandObject);
 			return      !isTwoHanded(a->thisID())
 			            &&  !leftHandObjectPtr->proto()->isTwoHanded(a->thisID());
 		}
 		return true;
 	}
-	assert(isObject(a->rightHandObject));
+	assert(isObject(a->_rightHandObject));
 
 	return false;
 }
@@ -1854,7 +1854,7 @@ bool BowProto::useAction(ObjectID dObj, ObjectID enactor) {
 
 	//  If this object is in the enactor's left hand remove it else
 	//  place it into his left hand
-	if (a->leftHandObject == dObj)
+	if (a->_leftHandObject == dObj)
 		a->holdInLeftHand(Nothing);
 	else {
 		a->holdInRightHand(Nothing);
@@ -1916,7 +1916,7 @@ bool BowProto::useSlotAvailable(GameObject *obj, Actor *a) {
 	assert(isObject(obj) && obj->proto() == this);
 	assert(isActor(a));
 
-	return a->leftHandObject == Nothing && a->rightHandObject == Nothing;
+	return a->_leftHandObject == Nothing && a->_rightHandObject == Nothing;
 }
 
 //-----------------------------------------------------------------------
@@ -1935,7 +1935,7 @@ uint8 BowProto::weaponRating(
 
 	//  If the wielder is on screen yet does not have the attack frames
 	//  for this weapon then this weapon is useless
-	if (wielder->appearance != NULL
+	if (wielder->_appearance != NULL
 	        &&  !wielder->isActionAvailable(fightStanceAction(wielderID)))
 		return 0;
 
@@ -1972,7 +1972,7 @@ bool WeaponWandProto::useAction(ObjectID dObj, ObjectID enactor) {
 
 	//  If this object is in the enactor's left hand remove it else
 	//  place it into his left hand
-	if (a->leftHandObject == dObj)
+	if (a->_leftHandObject == dObj)
 		a->holdInLeftHand(Nothing);
 	else {
 		a->holdInRightHand(Nothing);
@@ -2006,7 +2006,7 @@ bool WeaponWandProto::useSlotAvailable(GameObject *obj, Actor *a) {
 	assert(isObject(obj) && obj->proto() == this);
 	assert(isActor(a));
 
-	return a->leftHandObject == Nothing && a->rightHandObject == Nothing;
+	return a->_leftHandObject == Nothing && a->_rightHandObject == Nothing;
 }
 
 //-----------------------------------------------------------------------
@@ -2024,7 +2024,7 @@ uint8 WeaponWandProto::weaponRating(
 
 	//  If the wielder is on screen yet does not have the attack frames
 	//  for this weapon then this weapon is useless
-	if (wielder->appearance != NULL
+	if (wielder->_appearance != NULL
 	        &&  !wielder->isActionAvailable(fightStanceAction(wielderID)))
 		return 0;
 
@@ -2199,7 +2199,7 @@ bool ArmorProto::isObjectBeingUsed(GameObject *obj) {
 		ObjectID    id = obj->thisID();
 
 		for (int i = 0; i < ARMOR_COUNT; i++) {
-			if (a->armorObjects[i] == id) return true;
+			if (a->_armorObjects[i] == id) return true;
 		}
 	}
 	return false;
@@ -2213,7 +2213,7 @@ bool ArmorProto::useSlotAvailable(GameObject *obj, Actor *a) {
 	assert(isObject(obj) || obj->proto() == this);
 	assert(isActor(a));
 
-	return a->armorObjects[whereWearable] == Nothing;
+	return a->_armorObjects[whereWearable] == Nothing;
 }
 
 //-----------------------------------------------------------------------
@@ -2232,12 +2232,12 @@ bool ArmorProto::useAction(ObjectID dObj, ObjectID enactor) {
 
 	int16       slot = whereWearable;
 
-	if (a->armorObjects[slot] == dObj)
+	if (a->_armorObjects[slot] == dObj)
 		a->wear(Nothing, slot);
 	else
 		a->wear(dObj, slot);
 
-	g_vm->_containerList->setUpdate(obj->IDParent());
+	g_vm->_cnm->setUpdate(obj->IDParent());
 
 	return true;
 }
@@ -2260,16 +2260,16 @@ bool ShieldProto::useAction(ObjectID dObj, ObjectID enactor) {
 
 	if (enactor != dObjPtr->IDParent()) return false;
 
-	if (a->rightHandObject != Nothing) {
-		assert(isObject(a->rightHandObject));
+	if (a->_rightHandObject != Nothing) {
+		assert(isObject(a->_rightHandObject));
 		GameObject  *rightHandObjectPtr =
-		    GameObject::objectAddress(a->rightHandObject);
+		    GameObject::objectAddress(a->_rightHandObject);
 
 		if (rightHandObjectPtr->proto()->isTwoHanded(enactor))
 			return false;
 	}
 
-	a->holdInLeftHand(dObj != a->leftHandObject ? dObj : Nothing);
+	a->holdInLeftHand(dObj != a->_leftHandObject ? dObj : Nothing);
 
 	return true;
 }
@@ -2326,8 +2326,8 @@ bool ShieldProto::isObjectBeingUsed(GameObject *obj) {
 	if (wielder != Nothing) {
 		Actor *a = (Actor *)GameObject::objectAddress(wielder);
 
-		if (a->rightHandObject == obj->thisID()
-		        ||  a->leftHandObject == obj->thisID())
+		if (a->_rightHandObject == obj->thisID()
+		        ||  a->_leftHandObject == obj->thisID())
 			return true;
 	}
 	return false;
@@ -2341,13 +2341,13 @@ bool ShieldProto::useSlotAvailable(GameObject *obj, Actor *a) {
 	assert(isObject(obj) || obj->proto() == this);
 	assert(isActor(a));
 
-	if (a->leftHandObject == Nothing) {
-		if (a->rightHandObject != Nothing) {
-			assert(isObject(a->rightHandObject));
+	if (a->_leftHandObject == Nothing) {
+		if (a->_rightHandObject != Nothing) {
+			assert(isObject(a->_rightHandObject));
 
 			GameObject      *rightHandObjectPtr;
 
-			rightHandObjectPtr = GameObject::objectAddress(a->rightHandObject);
+			rightHandObjectPtr = GameObject::objectAddress(a->_rightHandObject);
 			return !rightHandObjectPtr->proto()->isTwoHanded(a->thisID());
 		}
 
@@ -2927,7 +2927,7 @@ bool IntangibleContainerProto::openAction(ObjectID dObj, ObjectID enactor) {
 }
 
 bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
-	ContainerNode *cn = g_vm->_containerList->find(dObj, ContainerNode::mentalType);
+	ContainerNode *cn = g_vm->_cnm->find(dObj, ContainerNode::mentalType);
 
 	assert(cn);
 

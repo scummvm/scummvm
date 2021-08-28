@@ -48,6 +48,7 @@ void checkTimers(void);
 void initTimers(void);
 void saveTimers(Common::OutSaveFile *outS);
 void loadTimers(Common::InSaveFile *in);
+void cleanupTimer();
 //  Cleanup the active Timers
 void cleanupTimers(void);
 

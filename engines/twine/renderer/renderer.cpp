@@ -971,10 +971,13 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices,
 		renderPolygonsFlat(vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_COPPER:
-		renderPolygonsCopper(vtop, vsize, polygon.colorIndex);
-		break;
+		// TODO: activate again after POLYGONTYPE_BOPPER is fixed
+		//renderPolygonsCopper(vtop, vsize, polygon.colorIndex);
+		//break;
 	case POLYGONTYPE_BOPPER:
-		renderPolygonsBopper(vtop, vsize, polygon.colorIndex);
+		renderPolygonsCopper(vtop, vsize, polygon.colorIndex);
+		// TODO: fix this render method:
+		// renderPolygonsBopper(vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_TELE:
 		renderPolygonsTele(vtop, vsize, polygon.colorIndex);

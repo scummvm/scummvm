@@ -98,7 +98,7 @@ void ModalWindow::close(void) {
 	gWindow::close();
 
 	GameMode::SetStack(prevModeStackPtr, prevModeStackCtr);
-	updateWindowSection(extent);
+	updateWindowSection(_extent);
 }
 
 

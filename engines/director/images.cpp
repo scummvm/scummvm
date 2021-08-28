@@ -144,31 +144,19 @@ void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
 }
 
 void BITDDecoder::convertPixelIntoSurface(void* surfacePointer, uint fromBpp, uint toBpp, int red, int green, int blue) {
-	if (_version < kFileVer400) {
-		switch (toBpp) {
-		case 1:
-			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
-			return;
+	switch (toBpp) {
+	case 1:
+		*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
+		break;
 
-		case 4:
-			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, blue, green);
-			return;
+	case 4:
+		*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
+		break;
 
-		}
-	} else {
-		// it looks like the blue channel and green channel are reversed in D4
-		switch (toBpp) {
-		case 1:
-			*((byte*)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
-			return;
-
-		case 4:
-			*((uint32 *)surfacePointer) = g_director->_wm->findBestColor(red, green, blue);
-			return;
-
-		}
+	default:
+		warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented", fromBpp, toBpp);
+		break;
 	}
-	warning("BITDDecoder::convertPixelIntoSurface(): conversion from %d to %d not implemented", fromBpp, toBpp);
 }
 
 bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
@@ -268,17 +256,29 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 					break;
 
 				case 16:
-					convertPixelIntoSurface(_surface->getBasePtr(x, y),
-						(_bitsPerPixel / 8),
-						_surface->format.bytesPerPixel,
-						(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
-						(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
-						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
-						(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
+					if (_version < kFileVer400) {
+						convertPixelIntoSurface(_surface->getBasePtr(x, y),
+							(_bitsPerPixel / 8),
+							_surface->format.bytesPerPixel,
+							(pixels[((y * _surface->w) * 2) + x * 2] & 0x7c) << 1,
+							(pixels[((y * _surface->w) * 2) + x * 2] & 0x03) << 6 |
+							(pixels[((y * _surface->w) * 2) + x * 2 + 1] & 0xe0) >> 2,
+							(pixels[((y * _surface->w) * 2) + x * 2 + 1] & 0x1f) << 3);
+					} else {
+						convertPixelIntoSurface(_surface->getBasePtr(x, y),
+							(_bitsPerPixel / 8),
+							_surface->format.bytesPerPixel,
+							(pixels[((y * _surface->w) * 2) + x] & 0x7c) << 1,
+							(pixels[((y * _surface->w) * 2) + x] & 0x03) << 6 |
+							(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0xe0) >> 2,
+							(pixels[((y * _surface->w) * 2) + (_surface->w) + x] & 0x1f) << 3);
+					}
 					x++;
 					break;
 
 				case 32:
+					// if we have the issue in D3 32bpp images, then the way to fix it should be the same as 16bpp images.
+					// check the code above, there is different behaviour between in D4 and D3. Currently we are only using D4.
 					convertPixelIntoSurface(_surface->getBasePtr(x, y),
 						(_bitsPerPixel / 8),
 						_surface->format.bytesPerPixel,

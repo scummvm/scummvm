@@ -95,7 +95,6 @@ void MenuOptions::newGame() {
 }
 
 void MenuOptions::showCredits() {
-	// TODO: the camera settings are wrong - this results in rendering problems with e.g. circles
 	const int32 tmpShadowMode = _engine->_cfgfile.ShadowMode;
 	_engine->_cfgfile.ShadowMode = 0;
 	_engine->_gameState->initEngineVars();
@@ -415,11 +414,13 @@ bool MenuOptions::deleteSaveMenu() {
 }
 
 bool MenuOptions::saveGameMenu() {
+	if (!_engine->_scene->isGameRunning()) {
+		return false;
+	}
 	_engine->restoreFrontBuffer();
 	const int slot = chooseSave(TextId::kCreateSaveGame, true);
 	if (slot >= 0) {
-		// TODO: enter description
-		Common::Error state = _engine->saveGameState(slot, "description", false);
+		Common::Error state = _engine->saveGameState(slot, _engine->_gameState->_sceneName, false);
 		if (state.getCode() != Common::kNoError) {
 			error("Failed to save slot %i", slot);
 			return false;

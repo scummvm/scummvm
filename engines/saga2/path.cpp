@@ -1389,7 +1389,7 @@ static void push(
 PathRequest::PathRequest(Actor *a, int16 howSmart) {
 	actor       = a;
 	smartness   = howSmart;
-	mTask       = actor->moveTask;
+	mTask       = actor->_moveTask;
 	flags       = mTask->flags & MotionTask::requestRun ? run : 0;
 
 	if (path == nullptr)
@@ -1994,7 +1994,7 @@ PathResult PathRequest::findPath(void) {
 			            +   dir
 			            - (qi.direction != dirInvalid
 			               ?   qi.direction
-			               :   actor->currentFacing)];
+			               :   actor->_currentFacing)];
 
 #if VISUAL1
 			TPLine(centerPt, testPt);

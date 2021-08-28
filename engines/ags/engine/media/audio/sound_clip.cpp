@@ -62,7 +62,7 @@ void SoundClipWaveBase::poll() {
 
 int SoundClipWaveBase::play() {
 	_mixer->playStream(_soundType, &_soundHandle, _stream,
-	                   -1, 255, 0, DisposeAfterUse::NO);
+	                   -1, _vol, 0, DisposeAfterUse::NO);
 	return 1;
 }
 
@@ -127,6 +127,7 @@ int SoundClipWaveBase::get_length_ms() {
 }
 
 void SoundClipWaveBase::set_volume(int volume) {
+	_vol = volume;
 	_mixer->setChannelVolume(_soundHandle, volume);
 }
 

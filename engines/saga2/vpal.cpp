@@ -48,41 +48,31 @@ extern hResContext      *tileRes;           // tile resource handle
 extern volatile int32   gameTime;
 
 /* ===================================================================== *
-   Exports
- * ===================================================================== */
-
-void lightsOut(void);
-
-gPalettePtr             midnightPalette,
-                        noonPalette = nullptr,
-                        darkPalette;
-
-/* ===================================================================== *
-   Globals
- * ===================================================================== */
-
-static gPalette         currentPalette;     //  Currently loaded palette
-
-//  Fade up/down data
-static gPalette         oldPalette,         //  Palette at start of fade
-       destPalette,        //  Destination palette of fade
-       quickPalette;
-static int32            startTime,          //  Time index of start of fade
-       totalTime;          //  Total fade duration
-
-//  palette state
-
-/* ===================================================================== *
    Functions
  * ===================================================================== */
 
-void assertCurrentPalette(void) {
+PaletteManager::PaletteManager() {
+	_midnightPalette = nullptr;
+	_noonPalette = nullptr;
+	_darkPalette = nullptr;
+	_prevLightLevel = 0;
+
+	memset(_newPalette.entry, 0, sizeof(_newPalette.entry));
+	memset(_currentPalette.entry, 0, sizeof(_currentPalette.entry));
+	memset(_oldPalette.entry, 0, sizeof(_oldPalette.entry));
+	memset(_destPalette.entry, 0, sizeof(_destPalette.entry));
+	memset(_quickPalette.entry, 0, sizeof(_quickPalette.entry));
+
+	_startTime = _totalTime = 0;
+}
+
+void PaletteManager::assertCurrentPalette(void) {
 	if (paletteChangesEnabled()) {
 		byte palette[256 * 3];
 		for (int i = 0; i < 256; i++) {
-			palette[i * 3 + 0] = ((byte *)&currentPalette)[i * 3 + 0] << 2;
-			palette[i * 3 + 1] = ((byte *)&currentPalette)[i * 3 + 1] << 2;
-			palette[i * 3 + 2] = ((byte *)&currentPalette)[i * 3 + 2] << 2;
+			palette[i * 3 + 0] = ((byte *)&_currentPalette)[i * 3 + 0] << 2;
+			palette[i * 3 + 1] = ((byte *)&_currentPalette)[i * 3 + 1] << 2;
+			palette[i * 3 + 2] = ((byte *)&_currentPalette)[i * 3 + 2] << 2;
 		}
 		g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	}
@@ -112,22 +102,22 @@ static inline int16 bscale(int16 s) {
 	else return (63 + s) / 2;
 }
 
-void loadPalettes(void) {
+void PaletteManager::loadPalettes(void) {
 	int     i;
 
 	//  Create a black palette for fades
-	darkPalette = new gPalette;
-	memset(darkPalette, 0, sizeof(gPalette));
+	g_vm->_pal->_darkPalette = new gPalette;
+	memset(g_vm->_pal->_darkPalette, 0, sizeof(gPalette));
 
 
 	//  Load standard palette
-	noonPalette = (gPalettePtr)LoadResource(tileRes, paletteID, "noon palette");
+	g_vm->_pal->_noonPalette = (gPalettePtr)LoadResource(tileRes, paletteID, "noon palette");
 
 	//  Create a midnight palette for night time effect
-	midnightPalette = new gPalette;
+	g_vm->_pal->_midnightPalette = new gPalette;
 
-	gPalette    *dayPal = noonPalette;
-	gPalette    *nightPal = midnightPalette;
+	gPalette    *dayPal = g_vm->_pal->_noonPalette;
+	gPalette    *nightPal = g_vm->_pal->_midnightPalette;
 
 	// these colors darkened
 	for (i = 10; i < 240; i++) {
@@ -163,72 +153,73 @@ void loadPalettes(void) {
 //----------------------------------------------------------------------
 //	Dump global palette resources
 
-void cleanupPalettes(void) {
-	if (noonPalette) {
-		free(noonPalette);
-		noonPalette = nullptr;
+void PaletteManager::cleanupPalettes(void) {
+	if (g_vm->_pal->_noonPalette) {
+		free(g_vm->_pal->_noonPalette);
+		g_vm->_pal->_noonPalette = nullptr;
 	}
 
-	if (darkPalette) {
-		delete darkPalette;
-		darkPalette = nullptr;
+	if (g_vm->_pal->_darkPalette) {
+		delete g_vm->_pal->_darkPalette;
+		g_vm->_pal->_darkPalette = nullptr;
 	}
 
-	if (midnightPalette) {
-		delete midnightPalette;
-		midnightPalette = nullptr;
+	if (g_vm->_pal->_midnightPalette) {
+		delete g_vm->_pal->_midnightPalette;
+		g_vm->_pal->_midnightPalette = nullptr;
 	}
 }
 
 //----------------------------------------------------------------------
 //	Begin fade up/down
 
-void beginFade(gPalettePtr newPalette, int32 fadeDuration) {
-	startTime = gameTime;
-	totalTime = fadeDuration;
+void PaletteManager::beginFade(gPalettePtr newPalette, int32 fadeDuration) {
+	_startTime = gameTime;
+	_totalTime = fadeDuration;
 
 	//  Save the current palette for interpolation
-	memcpy(&oldPalette, &currentPalette, sizeof(gPalette));
+	memcpy(&_oldPalette, &_currentPalette, sizeof(gPalette));
 
 	//  Copy the destination palette
-	memcpy(&destPalette, newPalette, sizeof(gPalette));
+	memcpy(&_destPalette, newPalette, sizeof(gPalette));
 }
 
 //----------------------------------------------------------------------
 //	Update state of palette fade up/down
 
-bool updatePalette() {
+bool PaletteManager::updatePalette() {
 	int32           elapsedTime;
 
-	elapsedTime = gameTime - startTime;
-	if (totalTime == 0)
+	elapsedTime = gameTime - _startTime;
+	if (_totalTime == 0)
 		return false;
 
-	if (elapsedTime >= totalTime) {
+	if (elapsedTime >= _totalTime) {
 		//  Fade is completed
-		totalTime = 0;
-		memcpy(&currentPalette, &destPalette, sizeof(gPalette));
+		_totalTime = 0;
+		memcpy(&_currentPalette, &_destPalette, sizeof(gPalette));
 		assertCurrentPalette();
 		return false;
 	} else {
 		gPalette        tempPalette;
 
-		debugC(2, kDebugPalettes, "Fade: %d/%d", elapsedTime, totalTime);
+		debugC(2, kDebugPalettes, "Fade: %d/%d", elapsedTime, _totalTime);
 
 		createPalette(
 		    &tempPalette,
-		    &oldPalette,
-		    &destPalette,
+		    &_oldPalette,
+		    &_destPalette,
 		    elapsedTime,
-		    totalTime);
+		    _totalTime);
 
-		if (memcmp(&tempPalette, &currentPalette, sizeof(gPalette)) != 0) {
-			debugC(2, kDebugPalettes, "Fade:*%d/%d", elapsedTime, totalTime);
+		if (memcmp(&tempPalette, &_currentPalette, sizeof(gPalette)) != 0) {
+			debugC(2, kDebugPalettes, "Fade:*%d/%d", elapsedTime, _totalTime);
 
-			memcpy(&currentPalette, &tempPalette, sizeof(gPalette));
+			memcpy(&_currentPalette, &tempPalette, sizeof(gPalette));
 			assertCurrentPalette();
 
 			g_system->updateScreen();
+			g_system->delayMillis(10);
 		}
 		return true;
 	}
@@ -237,16 +228,16 @@ bool updatePalette() {
 //----------------------------------------------------------------------
 //	Linearly interpolate between two specified palettes
 
-void createPalette(
+void PaletteManager::createPalette(
     gPalettePtr newP,
     gPalettePtr srcP,
     gPalettePtr dstP,
     int32       elapsedTime,
-    int32       totalTime_) {
-	assert(totalTime_ != 0);
+    int32       totalTime) {
+	assert(totalTime != 0);
 
 	int             i;
-	uint32          fadeProgress = (elapsedTime << 8) / totalTime_;
+	uint32          fadeProgress = (elapsedTime << 8) / totalTime;
 
 	for (i = 0; i < (long)ARRAYSIZE(newP->entry); i++) {
 		gPaletteEntry   *srcPal = &srcP->entry[i];
@@ -263,98 +254,90 @@ void createPalette(
 //----------------------------------------------------------------------
 //	Set the current palette
 
-void setCurrentPalette(gPalettePtr newPal) {
-	memcpy(&currentPalette, newPal, sizeof(gPalette));
+void PaletteManager::setCurrentPalette(gPalettePtr newPal) {
+	memcpy(&_currentPalette, newPal, sizeof(gPalette));
 	assertCurrentPalette();
 }
 
 //----------------------------------------------------------------------
 //	Return the current palette
 
-void getCurrentPalette(gPalettePtr pal) {
-	memcpy(pal, &currentPalette, sizeof(gPalette));
+void PaletteManager::getCurrentPalette(gPalettePtr pal) {
+	memcpy(pal, &_currentPalette, sizeof(gPalette));
 }
-
-//----------------------------------------------------------------------
-
-void setPaletteToBlack(void) {
-	setCurrentPalette(darkPalette);
-}
-
 
 //----------------------------------------------------------------------
 //	Initialize the state of the current palette and fade up/down.
 
-void initPaletteState(void) {
+void PaletteManager::initPaletteState(void) {
 	//setCurrentPalette( *noonPalette );
-	totalTime = startTime = 0;
+	_totalTime = _startTime = 0;
 }
 
 //----------------------------------------------------------------------
 // routines to suspend & restore a palette state (during videos)
 
-void lightsOut(void) {
-	memset(&currentPalette, 0, sizeof(currentPalette));
+void PaletteManager::lightsOut(void) {
+	memset(&_currentPalette, 0, sizeof(_currentPalette));
 	assertCurrentPalette();
 }
-
-void lightsOn(void) {
-	setCurrentPalette(noonPalette);
-	totalTime = startTime = 0;
-	assertCurrentPalette();
-}
-
-void usePalette(void *p, size_t s) {
-	memcpy(&currentPalette, p, s);
-	assertCurrentPalette();
-}
-
 
 //----------------------------------------------------------------------
 // routines to suspend & restore a palette state (during videos)
 
-void quickSavePalette(void) {
-	memcpy(&quickPalette, &currentPalette, sizeof(gPalette));
+void PaletteManager::quickSavePalette(void) {
+	memcpy(&_quickPalette, &_currentPalette, sizeof(gPalette));
 }
 
-void quickRestorePalette(void) {
-	memcpy(&currentPalette, &quickPalette, sizeof(gPalette));
+void PaletteManager::quickRestorePalette(void) {
+	memcpy(&_currentPalette, &_quickPalette, sizeof(gPalette));
 	assertCurrentPalette();
 }
 
-
-void savePaletteState(Common::OutSaveFile *outS) {
+void PaletteManager::savePaletteState(Common::OutSaveFile *outS) {
 	debugC(2, kDebugSaveload, "Saving Palette States");
 
 	outS->write("PALE", 4);
 
 	CHUNK_BEGIN;
-	currentPalette.write(out);
-	oldPalette.write(out);
-	destPalette.write(out);
-	out->writeSint32LE(startTime);
-	out->writeSint32LE(totalTime);
+	_currentPalette.write(out);
+	_oldPalette.write(out);
+	_destPalette.write(out);
+	out->writeSint32LE(_startTime);
+	out->writeSint32LE(_totalTime);
 	CHUNK_END;
 
-	debugC(3, kDebugSaveload, "... startTime = %d", startTime);
-	debugC(3, kDebugSaveload, "... totalTime = %d", totalTime);
+	debugC(3, kDebugSaveload, "... _startTime = %d", _startTime);
+	debugC(3, kDebugSaveload, "... _totalTime = %d", _totalTime);
 }
 
-void loadPaletteState(Common::InSaveFile *in) {
+void PaletteManager::loadPaletteState(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading Palette States");
 
 	gPalette tempPalette;
 
 	tempPalette.read(in);
-	oldPalette.read(in);
-	destPalette.read(in);
-	startTime = in->readSint32LE();
-	totalTime = in->readSint32LE();
+	_oldPalette.read(in);
+	_destPalette.read(in);
+	_startTime = in->readSint32LE();
+	_totalTime = in->readSint32LE();
 
-	debugC(3, kDebugSaveload, "... startTime = %d", startTime);
-	debugC(3, kDebugSaveload, "... totalTime = %d", totalTime);
+	debugC(3, kDebugSaveload, "... _startTime = %d", _startTime);
+	debugC(3, kDebugSaveload, "... _totalTime = %d", _totalTime);
 
 	setCurrentPalette(&tempPalette);
+}
+
+void initPaletteState(void) {
+	g_vm->_pal->initPaletteState();
+}
+
+void savePaletteState(Common::OutSaveFile *outS) {
+	g_vm->_pal->savePaletteState(outS);
+}
+
+void loadPaletteState(Common::InSaveFile *in) {
+	g_vm->_pal->loadPaletteState(in);
 }
 
 } // end of namespace Saga2

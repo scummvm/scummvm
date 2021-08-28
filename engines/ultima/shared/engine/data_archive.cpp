@@ -50,7 +50,7 @@ public:
 		assert(name.hasPrefixIgnoreCase(_innerfolder));
 		return _publicFolder + Common::String(name.c_str() + _innerfolder.size());
 	}
-	Common::String getDisplayName() const override {
+	Common::U32String getDisplayName() const override {
 		return _member->getDisplayName();
 	}
 };

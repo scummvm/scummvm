@@ -5,7 +5,7 @@
 #
 # POSIX specific
 #
-install-data:
+install-data: $(DIST_FILES_DOCS)
 	$(INSTALL) -d "$(DESTDIR)$(mandir)/man6/"
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.6" "$(DESTDIR)$(mandir)/man6/scummvm.6"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/pixmaps/"
@@ -56,7 +56,7 @@ endif
 
 # Special generic target for simple archive distribution
 
-dist-generic: $(EXECUTABLE)
+dist-generic: $(EXECUTABLE) $(DIST_FILES_DOCS)
 	mkdir -p ./dist-generic/scummvm/data
 	mkdir -p ./dist-generic/scummvm/doc
 	cp $(EXECUTABLE) ./dist-generic/scummvm
@@ -114,7 +114,7 @@ endif
 
 bundle_name = ScummVM.app
 
-bundle-pack:
+bundle-pack: $(DIST_FILES_DOCS)
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
@@ -174,7 +174,7 @@ else
 bundle: scummvm-static bundle-pack
 endif
 
-iphonebundle: iphone
+iphonebundle: iphone $(DIST_FILES_DOCS)
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
 	sed -i'' -e 's/$$(PRODUCT_BUNDLE_IDENTIFIER)/org.scummvm.scummvm/' $(bundle_name)/Info.plist
@@ -198,7 +198,7 @@ endif
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
 	codesign -s - --deep --force $(bundle_name)
 
-ios7bundle: iphone
+ios7bundle: iphone $(DIST_FILES_DOCS)
 	mkdir -p $(bundle_name)
 	awk 'BEGIN {s=0}\
 		/<key>CFBundleIcons<\/key>/ {\
@@ -481,7 +481,7 @@ iphone: $(DETECT_OBJS) $(OBJS)
 
 # Special target to create a snapshot disk image for Mac OS X
 # TODO: Replace AUTHORS by Credits.rtf
-osxsnap: bundle
+osxsnap: bundle $(DIST_FILES_DOCS)
 	mkdir ScummVM-snapshot
 	cp $(DIST_FILES_DOCS) ./ScummVM-snapshot/
 	mv ./ScummVM-snapshot/COPYING ./ScummVM-snapshot/License\ \(GPL\)

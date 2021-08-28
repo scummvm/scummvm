@@ -63,6 +63,51 @@ struct GameSettings {
 
 ToltecsEngine::ToltecsEngine(OSystem *syst, const ToltecsGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_rnd = new Common::RandomSource("toltecs");
+
+	_sceneResIndex = 0;
+	_sceneWidth = _sceneHeight = 0;
+
+	_counter01 = _counter02 = 0;
+	_movieSceneFlag = false;
+	_flag01 = 0;
+
+	_cameraX = _cameraY = _newCameraX = _newCameraY = 0;
+	_cameraHeight = 0;
+	_guiHeight = 26;
+
+	_doSpeech = true;
+	_doText = true;
+
+	_walkSpeedY = 5;
+	_walkSpeedX = 1;
+
+	_mouseX = 0;
+	_mouseY = 0;
+	_mouseDblClickTicks = 60;
+	_mouseWaitForRelease = false;
+	_mouseButton = 0;
+	_mouseDisabled = 0;
+	_leftButtonDown = false;
+	_rightButtonDown = false;
+
+	_arc = nullptr;
+	_res = nullptr;
+	_screen = nullptr;
+	_script = nullptr;
+	_anim = nullptr;
+	_palette = nullptr;
+	_segmap = nullptr;
+	_moviePlayer = nullptr;
+	_music = nullptr;
+	_menuSystem = nullptr;
+
+	_sound = nullptr;
+
+	_cfgText = ConfMan.getBool("subtitles");
+	_cfgVoices = !ConfMan.getBool("speech_mute");
+
+	_saveLoadRequested = 0;
+	_isSaveAllowed = true;
 }
 
 ToltecsEngine::~ToltecsEngine() {

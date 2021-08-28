@@ -358,8 +358,7 @@ public:
 	void func_gotoprevious();
 	void func_play(Datum &frame, Datum &movie);
 	void func_playdone();
-	void func_cursor(CastMemberID cursorId, CastMemberID maskId);
-	void func_cursor(int cursorId);
+	void func_cursor(Datum cursorDatum);
 	int func_marker(int m);
 	uint16 func_label(Datum &label);
 

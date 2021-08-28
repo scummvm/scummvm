@@ -263,16 +263,6 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		SaveStateDescriptor descriptor(slotNr, description);
 
-		// Do not allow save slot 0 (used for auto-saving) to be deleted or
-		// overwritten.
-		if (slotNr == 0) {
-			descriptor.setWriteProtectedFlag(true);
-			descriptor.setDeletableFlag(false);
-		} else {
-			descriptor.setWriteProtectedFlag(false);
-			descriptor.setDeletableFlag(true);
-		}
-
 		char saveVersion = in->readByte();
 		if (saveVersion >= 4) {
 			Graphics::Surface *thumbnail;
@@ -313,6 +303,7 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 		SaveStateDescriptor emptySave;
 		// Do not allow save slot 0 (used for auto-saving) to be overwritten.
 		if (slotNr == 0) {
+			emptySave.setAutosave(true);
 			emptySave.setWriteProtectedFlag(true);
 		} else {
 			emptySave.setWriteProtectedFlag(false);

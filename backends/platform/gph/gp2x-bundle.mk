@@ -4,7 +4,7 @@ bundle_name = release/scummvm-gp2x
 f=$(shell which $(STRIP))
 libloc = $(shell dirname $(f))
 
-gp2x-bundle: $(EXECUTABLE)
+gp2x-bundle: $(EXECUTABLE) $(DIST_FILES_DOCS)
 	$(MKDIR) "$(bundle_name)"
 	$(MKDIR) "$(bundle_name)/saves"
 	$(MKDIR) "$(bundle_name)/engine-data"
@@ -42,7 +42,7 @@ endif
 	tar -C $(bundle_name) -cvjf $(bundle_name).tar.bz2 .
 	rm -R ./$(bundle_name)
 
-gp2x-bundle-debug: $(EXECUTABLE)
+gp2x-bundle-debug: $(EXECUTABLE) $(DIST_FILES_DOCS)
 	$(MKDIR) "$(bundle_name)"
 	$(MKDIR) "$(bundle_name)/saves"
 	$(MKDIR) "$(bundle_name)/engine-data"

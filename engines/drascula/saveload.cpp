@@ -49,7 +49,7 @@ void DrasculaEngine::checkForOldSaveGames() {
 	      "Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"), _("OK"), _("Cancel"));
 
 	int choice = dialog0.runModal();
-	if (choice == GUI::kMessageCancel)
+	if (choice != GUI::kMessageOK)
 		return;
 
 	// Convert every save slot we find in the index file to the new format
@@ -105,7 +105,7 @@ SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTi
 	uint32 sig = s->readUint32BE();
 	byte version = s->readByte();
 
-	SaveStateDescriptor desc(-1, "");	// init to an invalid save slot
+	SaveStateDescriptor desc;	// init to an invalid save slot
 
 	if (sig != MAGIC_HEADER || version > SAVEGAME_VERSION)
 		return desc;

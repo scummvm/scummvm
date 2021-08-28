@@ -104,6 +104,12 @@ public:
 	 * @return a Status struct with playback data.
 	 */
 	virtual Status getStatus() const = 0;
+
+	/**
+	 * Checks whether the extracted audio cd tracks exists as files in
+	 * the search paths.
+	 */
+	virtual bool existExtractedCDAudioFiles() = 0;
 };
 
 #endif

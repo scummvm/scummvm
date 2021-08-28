@@ -335,7 +335,7 @@ void Score::update() {
 
 		if (keepWaiting) {
 			if (_movie->_videoPlayback) {
-				renderVideo();
+				updateWidgets(true);
 				_window->render();
 			}
 			return;
@@ -619,11 +619,11 @@ void Score::renderCursor(Common::Point pos, bool forceUpdate) {
 	_currentCursor = _defaultCursor.getRef();
 }
 
-void Score::renderVideo() {
+void Score::updateWidgets(bool hasVideoPlayback) {
 	for (uint16 i = 0; i < _channels.size(); i++) {
 		Channel *channel = _channels[i];
 		CastMember *cast = channel->_sprite->_cast;
-		if (cast && cast->_type == kCastDigitalVideo && cast->isModified()) {
+		if (cast && (cast->_type != kCastDigitalVideo || hasVideoPlayback) && cast->isModified()) {
 			channel->replaceWidget();
 			_window->addDirtyRect(channel->getBbox());
 		}

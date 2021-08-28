@@ -160,6 +160,9 @@ bool Sprite::respondsToMouse() {
 	if (_moveable)
 		return true;
 
+	if (_cast && _cast->_type == kCastButton)
+		return true;
+
 	ScriptContext *spriteScript = _movie->getScriptContext(kScoreScript, _scriptId);
 	if (spriteScript && (spriteScript->_eventHandlers.contains(kEventGeneric)
 					  || spriteScript->_eventHandlers.contains(kEventMouseDown)
@@ -175,6 +178,9 @@ bool Sprite::respondsToMouse() {
 }
 
 bool Sprite::isActive() {
+	if (_cast && _cast->_type == kCastButton)
+		return true;
+
 	return _movie->getScriptContext(kScoreScript, _scriptId) != nullptr
 			|| _movie->getScriptContext(kCastScript, _castId) != nullptr;
 }
@@ -255,7 +261,8 @@ bool Sprite::checkSpriteType() {
 	// if it doesn't match, then we treat it as transparent
 	// this happens in warlock-mac data/stambul/c up
 	if (_spriteType == kBitmapSprite && _cast->_type != kCastBitmap) {
-		warning("Sprite::checkSpriteType: Didn't render sprite due to the sprite type mismatch with cast type");
+		if (debugChannelSet(2, kDebugImages))
+			warning("Sprite::checkSpriteType: Didn't render sprite due to the sprite type mismatch with cast type");
 		return false;
 	}
 	return true;
@@ -315,7 +322,7 @@ void Sprite::setCast(CastMemberID memberID) {
 		}
 
 	} else {
-		if (_castId.member != 0)
+		if (_castId.member != 0 && debugChannelSet(kDebugImages, 2))
 			warning("Sprite::setCast(): %s is null", memberID.asString().c_str());
 	}
 }

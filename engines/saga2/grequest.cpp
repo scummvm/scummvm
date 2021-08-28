@@ -172,7 +172,7 @@ void ModalDialogWindow::drawClipped(
     gPort         &port,
     const Point16 &offset,
     const Rect16  &r) {
-	if (!extent.overlap(r)) return;
+	if (!_extent.overlap(r)) return;
 
 	int16   i;
 	Point16 origin;
@@ -181,13 +181,13 @@ void ModalDialogWindow::drawClipped(
 
 	SAVE_GPORT_STATE(port);
 
-	origin.x = extent.x - offset.x;
-	origin.y = extent.y - offset.y;
+	origin.x = _extent.x - offset.x;
+	origin.y = _extent.y - offset.y;
 
 	rect.x = origin.x;
 	rect.y = origin.y;
-	rect.width  = extent.width;
-	rect.height = extent.height;
+	rect.width  = _extent.width;
+	rect.height = _extent.height;
 
 	port.setColor(4);
 	port.frameRect(rect, 2);

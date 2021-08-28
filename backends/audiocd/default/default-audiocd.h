@@ -48,6 +48,10 @@ public:
 	virtual void setBalance(int8 balance);
 	virtual void update();
 	virtual Status getStatus() const; // Subclasses should override for better status results
+	virtual bool existExtractedCDAudioFiles();
+
+private:
+	void fillPotentialTrackNames(Common::Array<Common::String> &trackNames, int track) const;
 
 protected:
 	/**

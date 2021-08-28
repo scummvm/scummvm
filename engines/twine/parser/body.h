@@ -27,60 +27,11 @@
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "twine/parser/anim.h"
+#include "twine/parser/bodytypes.h"
 #include "twine/parser/parser.h"
 #include "twine/shared.h"
 
 namespace TwinE {
-
-struct BodyVertex {
-	int16 x;
-	int16 y;
-	int16 z;
-	uint16 bone;
-};
-
-struct BodyBone {
-	uint16 parent;
-	uint16 vertex;
-	int16 firstVertex;
-	int16 numVertices;
-	int32 numOfShades;
-	BoneFrame initalBoneState;
-
-	inline bool isRoot() const {
-		return parent == 0xffff;
-	}
-};
-
-struct BodyShade {
-	int16 col1;
-	int16 col2;
-	int16 col3;
-	uint16 unk4;
-};
-
-struct BodyPolygon {
-	Common::Array<uint16> indices;
-	Common::Array<uint16> intensities;
-	int8 renderType = 0;
-	int16 color = 0;
-};
-
-struct BodyLine {
-	uint8 color;
-	uint8 unk1;
-	uint16 unk2;
-	uint16 vertex1;
-	uint16 vertex2;
-};
-
-struct BodySphere {
-	uint8 unk1;
-	uint8 color;
-	uint16 unk2;
-	uint16 radius;
-	uint16 vertex;
-};
 
 class BodyData : public Parser {
 private:
@@ -130,7 +81,7 @@ public:
 	int16 offsetToData = 0;
 
 	inline bool isAnimated() const {
-		return bodyFlag.mask.animated;
+		return (bodyFlag.value & 2) != 0;
 	}
 
 	inline uint getNumBones() const {

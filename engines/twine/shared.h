@@ -26,6 +26,12 @@
 #include "common/scummsys.h"
 
 #define NUM_GAME_FLAGS 255
+
+/** Number of colors used in the game */
+#define NUMOFCOLORS 256
+
+#define NUM_LOCATIONS 150
+
 #define NUM_INVENTORY_ITEMS 28
 /**
  * This gameflag indicates that the inventory items are taken from Twinson because he went to jail
@@ -71,6 +77,9 @@
 #define GAMEFLAG_VIDEO_SENDEL 218
 // Twinsun explosion
 #define GAMEFLAG_VIDEO_EXPLODE2 219
+
+#define OWN_ACTOR_SCENE_INDEX 0
+#define IS_HERO(x) (x) == OWN_ACTOR_SCENE_INDEX
 
 namespace TwinE {
 
@@ -249,6 +258,19 @@ enum class AnimationTypes {
 	kCarStopping = 306,
 	kCarFrozen = 307,
 	kAnimInvalid = 255
+};
+
+enum class AnimType {
+	kAnimationTypeLoop = 0,
+	kAnimationType_1 = 1,
+	// play animation and let animExtra follow as next animation
+	// if there is already a next animation set - replace the value
+	kAnimationType_2 = 2,
+	// replace animation and let the current animation follow
+	kAnimationType_3 = 3,
+	// play animation and let animExtra follow as next animation
+	// but don't take the current state in account
+	kAnimationType_4 = 4
 };
 
 /** Hero behaviour
@@ -606,6 +628,32 @@ template<typename T>
 inline constexpr T bits(T value, uint8 offset, uint8 bits) {
 	return (((1 << bits) - 1) & (value >> offset));
 }
+
+#define COLOR_BLACK 0
+#define COLOR_BRIGHT_BLUE 4
+#define COLOR_9 9
+#define COLOR_14 14
+// color 1 = yellow
+// color 2 - 15 = white
+// color 16 - 19 = brown
+// color 20 - 24 = orange to yellow
+// color 25 orange
+// color 26 - 30 = bright gray or white
+#define COlOR_31 31 // green dark
+#define COlOR_47 47 // green bright
+#define COLOR_48 48 // brown dark
+#define COLOR_63 63 // brown bright
+#define COLOR_64 64 // blue dark
+#define COLOR_68 68 // blue
+#define COLOR_73 73 // blue
+#define COLOR_75 75
+#define COLOR_79 79 // blue bright
+#define COLOR_80 80
+#define COLOR_91 91
+#define COLOR_BRIGHT_BLUE2 69
+#define COLOR_WHITE 15
+#define COLOR_GOLD 155
+#define COLOR_158 158
 
 }
 

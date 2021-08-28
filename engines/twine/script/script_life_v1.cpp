@@ -40,6 +40,7 @@
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/extra.h"
 #include "twine/scene/scene.h"
 #include "twine/shared.h"
 #include "twine/text.h"
@@ -1865,7 +1866,7 @@ void ScriptLife::processLifeScript(int32 actorIdx) {
 		if (scriptOpcode < ARRAYSIZE(function_map)) {
 			end = function_map[scriptOpcode].function(_engine, ctx);
 		} else {
-			error("Actor %d with wrong offset/opcode - Offset: %d (opcode: %i)", actorIdx, (int)ctx.stream.pos() - 1, scriptOpcode);
+			error("Actor %d with wrong offset/opcode - Offset: %d/%d (opcode: %i)", actorIdx, (int)ctx.stream.pos() - 1, (int)ctx.stream.size(), scriptOpcode);
 		}
 
 		if (end < 0) {

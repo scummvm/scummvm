@@ -227,8 +227,6 @@ typedef int16 SensorID;
 typedef int16   BandID;
 const BandID    NoBand = -1;
 
-typedef uint32 soundSegment;
-
 typedef uint8 gPen;               // a pen index number
 
 typedef uint16 weaponID;
@@ -247,11 +245,15 @@ typedef uint8       ColorTable[256];
 #define maxuint16 0xffff
 #define maxint32 0x7fffffff
 
+enum {
+	kActorListID = MKTAG('A', 'C', 'T', 'O')
+};
 
 // number of containers
 const int   kNumViews    = 3;
 
 enum {
+	kNullWeapon = 0,
 	kMaxWeapons = 256
 };
 
@@ -460,6 +462,15 @@ enum {
 
 enum {
 	kObjectVolumeArraySize = 128
+};
+
+enum {
+	kDefaultReach = 24
+};
+
+// Actor Constants
+enum {
+	kMaxFactions = 64
 };
 
 } // end of namespace Saga2

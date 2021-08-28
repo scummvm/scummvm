@@ -36,7 +36,7 @@ public:
 	virtual ~ChRootFilesystemNode() override;
 
 	virtual bool exists() const override;
-	virtual Common::String getDisplayName() const override;
+	virtual Common::U32String getDisplayName() const override;
 	virtual Common::String getName() const override;
 	virtual Common::String getPath() const override;
 	virtual bool isDirectory() const override;

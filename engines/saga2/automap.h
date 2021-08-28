@@ -31,39 +31,39 @@
 
 namespace Saga2 {
 
-class CAutoMap : public ModalWindow {
+class AutoMap : public ModalWindow {
 private:
 
 	enum summaryMapEnum {
-		tileSumWidth        = 8,
-		tileSumHeight       = 8,
-		sumMapAreaWidth     = 544,  // the sumMap number could be more efficient
-		sumMapAreaHeight    = 324,
+		kTileSumWidth        = 8,
+		kTileSumHeight       = 8,
+		kSumMapAreaWidth     = 544,  // the sumMap number could be more efficient
+		kSumMapAreaHeight    = 324,
 
-		summaryDiameter     = 62,
-		summaryRadius       = summaryDiameter / 2
+		kSummaryDiameter     = 62,
+		kSummaryRadius       = kSummaryDiameter / 2
 	};
 
 public:
-	TilePoint   trackPos,
-	            centerCoords,
-	            baseCoords;
-	TileRegion  localAreaRegion;
+	TilePoint   _trackPos,
+	            _centerCoords,
+	            _baseCoords;
+	TileRegion  _localAreaRegion;
 private:
 
 	// used as a temporary blit surface
-	gPort   tPort;
+	gPort   _tPort;
 
 	// tile summary data
-	uint8   *summaryData;
-	Rect16  sumMapArea;
+	uint8   *_summaryData;
+	Rect16  _sumMapArea;
 
 public:
-	CAutoMap(const Rect16 box,
+	AutoMap(const Rect16 box,
 	         uint8 *summary,
 	         uint16 ident,
 	         AppFunc *cmd);
-	~CAutoMap();
+	~AutoMap();
 
 	void drawClipped(gPort &port,
 	                 const Point16 &offset,

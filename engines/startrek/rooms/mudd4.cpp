@@ -660,10 +660,10 @@ void Room::mudd4UseMccoyOnConsole() {
 void Room::mudd4UseRedshirtOnConsole() {
 	// Floppy version shows two different pieces of text here, but in the CD version,
 	// there's no difference
-	if (!_awayMission->mudd.translatedAlienLanguage)
-		showText(TX_SPEAKER_BUCHERT, TX_MUD4_075);
-	else
-		showText(TX_SPEAKER_BUCHERT, TX_MUD4_075);
+	//if (!_awayMission->mudd.translatedAlienLanguage)
+	//showText(TX_SPEAKER_BUCHERT, TX_MUD4_075);
+	//else
+	showText(TX_SPEAKER_BUCHERT, TX_MUD4_075);
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_REDSHIRT] = DIR_N;
 	walkCrewman(OBJECT_REDSHIRT, 0x2a, 0xbb);

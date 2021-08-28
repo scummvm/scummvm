@@ -64,6 +64,10 @@
 #include "ags/tests/test_all.h"
 #endif
 
+// Include translation.h last as some AGS classes have member such as _sc, which clash with
+// macro defined in translation.h.
+#include "common/translation.h"
+
 namespace AGS {
 
 AGSEngine *g_vm;
@@ -121,7 +125,7 @@ Common::Error AGSEngine::run() {
 	}
 
 	if (isUnsupportedPre25()) {
-		GUIError("The selected game is a completely unsupported pre-2.5 version");
+		GUIErrorMessage(_("The selected game uses a pre-2.5 version of the AGS engine, which is not supported."));
 		return Common::kNoError;
 	}
 
@@ -129,8 +133,8 @@ Common::Error AGSEngine::run() {
 		// If the game file was opened and the engine started, but the
 		// size is -1, then it must be a game like Strangeland where
 		// the data file is > 2Gb
-		GUIError("The selected game has a data file greater than 2Gb, " \
-			"which isn't supported by your version of ScummVM yet");
+		GUIErrorMessage(_("The selected game has a data file greater than 2Gb, "
+			"which isn't supported by your version of ScummVM yet."));
 		return Common::kNoError;
 	}
 
@@ -203,12 +207,19 @@ bool AGSEngine::getPixelFormat(int depth, Graphics::PixelFormat &format) const {
 		return true;
 	}
 
+	// Prefer format with the requested color depth
 	for (Common::List<Graphics::PixelFormat>::iterator it =
 			supportedFormatsList.begin(); it != supportedFormatsList.end(); ++it) {
 		if (it->bpp() == depth) {
 			format = *it;
 			return true;
 		}
+	}
+
+	// Allow using 16 bit <-> 32 bit conversions by using the preferred graphics mode
+	if (!supportedFormatsList.empty()) {
+		format = supportedFormatsList.front();
+		return true;
 	}
 
 	return false;

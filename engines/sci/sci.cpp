@@ -515,7 +515,7 @@ void SciEngine::suggestDownloadGK2SubTitlesPatch() {
 		"- copy the content of GK2Subtitles\\SUBPATCH to the PATCHES subdirectory\n"
 		"- replace files with similar names\n"
 		"- restart the game\n"), altButton, false);
-	if (!result) {
+	if (result) {
 		char url[] = "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip";
 		g_system->openUrl(url);
 	}

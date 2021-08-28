@@ -26,10 +26,11 @@
 #include "common/endian.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
-#include "twine/parser/body.h"
+#include "twine/parser/bodytypes.h"
 #include "twine/twine.h"
 
 #define POLYGONTYPE_FLAT 0
+// horizontal color adjustment with changing pattern over the polygon
 #define POLYGONTYPE_COPPER 1
 #define POLYGONTYPE_BOPPER 2
 #define POLYGONTYPE_MARBLE 3
@@ -42,6 +43,7 @@
 
 namespace TwinE {
 
+class BodyData;
 class TwinEEngine;
 
 struct Vertex {

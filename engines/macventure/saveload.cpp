@@ -52,7 +52,7 @@ SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool s
 	uint32 sig = s->readUint32BE();
 	byte version = s->readByte();
 
-	SaveStateDescriptor desc(-1, "");	// init to an invalid save slot
+	SaveStateDescriptor desc;	// init to an invalid save slot
 
 	if (sig != MACVENTURE_SAVE_HEADER || version > MACVENTURE_SAVE_VERSION)
 		return desc;

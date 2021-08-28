@@ -23,6 +23,7 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
 
@@ -55,6 +56,44 @@ void DefaultAudioCDManager::close() {
 	stop();
 }
 
+void DefaultAudioCDManager::fillPotentialTrackNames(Common::Array<Common::String> &trackNames, int track) const {
+	trackNames.reserve(4);
+	trackNames.push_back(Common::String::format("track%d", track));
+	trackNames.push_back(Common::String::format("track%02d", track));
+	trackNames.push_back(Common::String::format("track_%d", track));
+	trackNames.push_back(Common::String::format("track_%02d", track));
+}
+
+bool DefaultAudioCDManager::existExtractedCDAudioFiles() {
+	// keep this in sync with STREAM_FILEFORMATS
+	const char *extensions[] = {
+#ifdef USE_VORBIS
+		"ogg",
+#endif
+#ifdef USE_FLAC
+		"fla", "flac",
+#endif
+#ifdef USE_MAD
+		"mp3",
+#endif
+		"m4a",
+		nullptr
+	};
+
+	Common::Array<Common::String> trackNames;
+	fillPotentialTrackNames(trackNames, 1);
+
+	for (Common::Array<Common::String>::iterator i = trackNames.begin(); i != trackNames.end(); ++i) {
+		for (const char **ext = extensions; *ext; ++ext) {
+			const Common::String &filename = Common::String::format("%s.%s", i->c_str(), *ext);
+			if (Common::File::exists(filename)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
 		Audio::Mixer::SoundType soundType) {
 	stop();
@@ -68,15 +107,13 @@ bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int du
 		// Try to load the track from a compressed data file, and if found, use
 		// that. If not found, attempt to start regular Audio CD playback of
 		// the requested track.
-		Common::String trackName[4];
-		trackName[0] = Common::String::format("track%d", track);
-		trackName[1] = Common::String::format("track%02d", track);
-		trackName[2] = Common::String::format("track_%d", track);
-		trackName[3] = Common::String::format("track_%02d", track);
+		Common::Array<Common::String> trackNames;
+		fillPotentialTrackNames(trackNames, track);
 		Audio::SeekableAudioStream *stream = 0;
 
-		for (int i = 0; !stream && i < ARRAYSIZE(trackName); ++i)
-			stream = Audio::SeekableAudioStream::openStreamFile(trackName[i]);
+		for (Common::Array<Common::String>::iterator i = trackNames.begin(); !stream && i != trackNames.end(); ++i) {
+			stream = Audio::SeekableAudioStream::openStreamFile(*i);
+		}
 
 		if (stream != 0) {
 			Audio::Timestamp start = Audio::Timestamp(0, startFrame, 75);

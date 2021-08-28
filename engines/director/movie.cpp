@@ -63,7 +63,7 @@ Movie::Movie(Window *window) {
 
 	_currentDraggedChannel = nullptr;
 	_currentHiliteChannelId = 0;
-	_currentHandlingChannelId = 0;
+	_mouseDownWasInButton = false;
 
 	_version = 0;
 	_platform = Common::kPlatformMacintosh;

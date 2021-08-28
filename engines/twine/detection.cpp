@@ -479,6 +479,30 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// https://forum.magicball.net/showthread.php?p=386653#post386653
+	// LBA:LID Demo v1.0
+	{
+		"lba",
+		"LBA: Lupin Island Destiny",
+		AD_ENTRY1s("TEXT.HQR", "859339686e87f5c9f71253c25610a9fd", 240238),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_DEMO | TwinE::TF_MOD,
+		GUIO1(GUIO_NONE)
+	},
+
+	// https://forum.magicball.net/showthread.php?t=16549
+	// LBA:Prequel Demo v1.0
+	{
+		"lba",
+		"LBA: Prequel",
+		AD_ENTRY1s("TEXT.HQR", "79352a6f59ff2d8984573bfa421ef346", 259722),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | ADGF_DEMO | TwinE::TF_MOD,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Little Big Adventure 2
 
 	// Little Big Adventure 2 - Original European Version (EN, FR, DE, IT, ES)

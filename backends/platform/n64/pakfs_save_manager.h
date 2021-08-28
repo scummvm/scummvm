@@ -104,13 +104,13 @@ public:
 
 class PAKSaveManager : public Common::SaveFileManager {
 public:
-	virtual void updateSavefilesList(Common::StringArray &lockedFiles) {
+	void updateSavefilesList(Common::StringArray &lockedFiles) override {
 		// this method is used to lock saves while cloud syncing
 		// as there is no network on N64, this method wouldn't be used
 		// thus it's not implemtented
 	}
 
-	virtual Common::InSaveFile *openRawFile(const Common::String &filename) {
+	Common::InSaveFile *openRawFile(const Common::String &filename) override {
 		InPAKSave *s = new InPAKSave();
 		if (s->readSaveGame(filename.c_str())) {
 			return s;
@@ -120,7 +120,7 @@ public:
 		}
 	}
 
-	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true) {
+	Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true) override {
 		OutPAKSave *s = new OutPAKSave(filename.c_str());
 		if (!s->err()) {
 			return new Common::OutSaveFile(compress ? Common::wrapCompressedWriteStream(s) : s);
@@ -130,7 +130,7 @@ public:
 		}
 	}
 
-	virtual Common::InSaveFile *openForLoading(const Common::String &filename) {
+	Common::InSaveFile *openForLoading(const Common::String &filename) override {
 		InPAKSave *s = new InPAKSave();
 		if (s->readSaveGame(filename.c_str())) {
 			return Common::wrapCompressedReadStream(s);
@@ -140,11 +140,15 @@ public:
 		}
 	}
 
-	virtual bool removeSavefile(const Common::String &filename) {
+	bool removeSavefile(const Common::String &filename) override {
 		return ::pakfs_deleteSaveGame(filename.c_str());
 	}
 
-	virtual Common::StringArray listSavefiles(const Common::String &pattern);
+	Common::StringArray listSavefiles(const Common::String &pattern) override;
+
+	bool exists(const Common::String &filename) override {
+		return InPAKSave().readSaveGame(filename.c_str());
+	}
 };
 
 

@@ -24,22 +24,19 @@
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/stream.h"
-#include "common/system.h"
-#include "common/textconsole.h"
 #include "common/util.h"
 #include "twine/audio/sound.h"
 #include "twine/parser/anim.h"
 #include "twine/parser/entity.h"
 #include "twine/renderer/renderer.h"
 #include "twine/resources/resources.h"
-#include "twine/scene/actor.h"
 #include "twine/scene/collision.h"
+#include "twine/scene/extra.h"
 #include "twine/scene/gamestate.h"
 #include "twine/scene/grid.h"
 #include "twine/scene/movements.h"
 #include "twine/scene/scene.h"
 #include "twine/shared.h"
-#include "twine/twine.h"
 
 namespace TwinE {
 

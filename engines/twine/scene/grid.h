@@ -27,13 +27,14 @@
 #include "twine/parser/blocklibrary.h"
 #include "twine/parser/sprite.h"
 #include "twine/shared.h"
-#include "twine/twine.h"
 
 namespace Graphics {
 class ManagedSurface;
 }
 
 namespace TwinE {
+
+class ActorStruct;
 
 /** Block fragment entry */
 struct BlockEntry {

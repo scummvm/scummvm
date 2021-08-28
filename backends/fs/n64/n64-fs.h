@@ -52,7 +52,7 @@ public:
 	N64FilesystemNode(const Common::String &p, bool verify = true);
 
 	virtual bool exists() const override;
-	virtual Common::String getDisplayName() const override {
+	virtual Common::U32String getDisplayName() const override {
 		return _displayName;
 	}
 	virtual Common::String getName() const override {

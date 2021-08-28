@@ -824,6 +824,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"HARRY.EXE"
 	},
 
+	// English / Spanish demo
+	// from einstein95, bug #12849
+	{
+		{
+			"harryhh",
+			"Demo English/Spanish",
+			AD_ENTRY1s("HARRY.512", "a0c97d80ab8957f61be1a41fdd74386e", 709),
+			Common::UNK_LANG,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"HARRY.EXE"
+	},
+
 	// part of "Super Living Books" compilation
 	// from rgemini, bug #5726
 	{
@@ -1213,6 +1230,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Macintosh version. Bugreport #12828
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1s("BookOutline", "f4c162ca66197eedc3b676372bca3929", 2038),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
 	// From the Mac CD "La Tartaruga e la Lepre" (The Turtle and the Hare) [Italian, English]
 	{
 		{
@@ -1430,6 +1463,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
+	// English/Spanish demo. From einstein95, bugreport #12829
+	{
+		{
+			"arthur",
+			"Demo English/Spanish",
+			AD_ENTRY1s("Bookoutline", "3e6335865b4041be934d2e0c8ee75af2", 645),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO | GF_LB_10,
+		"Arthur's Teacher Trouble"
+	},
+
 	// Just Grandma and Me 2.0
 	// From pacifist
 	{
@@ -1556,6 +1605,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_GRB,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
+	// From einstein95 in bug#12830
+	// English/Japanese/Spanish demo
+	{
+		{
+			"grandma",
+			"Demo v1.12 English/Japanese/Spanish",
+			AD_ENTRY1s("BookOutline", "577c2c6be1b76c38d83446e303664708", 804),
+			Common::UNK_LANG,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_LIVINGBOOKSV2,

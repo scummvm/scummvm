@@ -55,7 +55,7 @@ public:
 	RISCOSFilesystemNode(const Common::String &path);
 
 	virtual bool exists() const override;
-	virtual Common::String getDisplayName() const override { return _displayName; }
+	virtual Common::U32String getDisplayName() const override { return _displayName; }
 	virtual Common::String getName() const override { return _displayName; }
 	virtual Common::String getPath() const override { return _path; }
 	virtual bool isDirectory() const override { return _isDirectory; }

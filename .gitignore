@@ -58,6 +58,7 @@ lib*.a
 /doc/de/NEUES
 /doc/de/NEUES.html
 /doc/docportal/_build
+/ScummVM Manual*.pdf
 
 /build*
 /staging
@@ -107,6 +108,7 @@ project.xcworkspace
 /dists/macosx/build
 /dists/macosx/scummvm.xcodeproj
 /dists/macosx/create_project
+/devtools/create_project/xcode/build
 
 /dists/msvc/[Dd]ebug*/
 /dists/msvc/[Rr]elease*/
@@ -279,3 +281,8 @@ android_project
 
 #Ignore snapcraft build artifacts
 .snap
+
+#Ignore emscripten build artifacts
+dists/emscripten/libs/
+dists/emscripten/games/
+dists/emscripten/emsdk-*

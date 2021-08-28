@@ -31,6 +31,7 @@
 #include "saga2/player.h"
 #include "saga2/display.h"
 #include "saga2/panel.h"
+#include "saga2/vpal.h"
 
 namespace Saga2 {
 
@@ -51,7 +52,6 @@ namespace Saga2 {
 #define VIDEO_X 0
 #define VIDEO_Y 0
 
-extern bool gameRunning;
 extern bool allPlayerActorsDead;
 
 int16 OptionsDialog(bool disableSaveResume = false);
@@ -59,8 +59,6 @@ void SystemEventLoop(void);
 void freeAllTileBanks(void);
 void resetInputDevices(void);
 void blackOut(void);
-void quickSavePalette(void);
-void quickRestorePalette(void);
 void cursorFullHide(bool onOff);
 
 static void doIntro(void);
@@ -147,7 +145,7 @@ void TroModeExternEvent(void) {
 static void TroModeSetup(void) {
 	suspendAudio();
 	g_vm->_pointer->hide();
-	quickSavePalette();
+	g_vm->_pal->quickSavePalette();
 	blackOut();
 	displayDisable(PlayingVideo);
 	pushVidState();
@@ -163,7 +161,7 @@ static void TroModeCleanup(void) {
 	popVidState();
 	displayEnable(PlayingVideo);
 	blackOut();
-	quickRestorePalette();
+	g_vm->_pal->quickRestorePalette();
 	resumeAudio();
 	g_vm->_pointer->show();
 //	g_vm->_pointer->manditoryShow();                     //  hide mouse pointer

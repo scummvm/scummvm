@@ -303,10 +303,7 @@ SaveStateDescriptor SavegameManager::querySaveMetaInfos(const Common::String &fi
 			// Original savegame perhaps?
 			delete f;
 
-			SaveStateDescriptor desc(slot, Common::String::format("Savegame - %03d", slot));
-			desc.setDeletableFlag(slot != 0);
-			desc.setWriteProtectedFlag(slot == 0);
-			return desc;
+			return SaveStateDescriptor(slot, Common::String::format("Savegame - %03d", slot));
 		} else {
 			// Get the savegame header information
 			SavegameHeader header;

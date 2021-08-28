@@ -325,4 +325,9 @@ const char *italianLanguageStrings[13] = {
 	"Salva", "Carica", "Ricomincia", "Esci"
 };
 
+const char *spanishLanguageStrings[13] = {
+	"Pausa", NULL, NULL, NULL, NULL, "Inventario", "Hablar de...", "Menu del jugador", NULL,
+	"Salvar", "Cargar", "Recomenzar", "Salir"
+};
+
 } // End of namespace Cruise

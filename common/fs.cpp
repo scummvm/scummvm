@@ -54,7 +54,7 @@ bool FSNode::operator<(const FSNode& node) const {
 
 	// If both nodes are of the same type (two files or two dirs),
 	// then sort by name, ignoring case.
-	return getDisplayName().compareToIgnoreCase(node.getDisplayName()) < 0;
+	return getName().compareToIgnoreCase(node.getName()) < 0;
 }
 
 bool FSNode::exists() const {
@@ -87,7 +87,7 @@ bool FSNode::getChildren(FSList &fslist, ListMode mode, bool hidden) const {
 	return true;
 }
 
-String FSNode::getDisplayName() const {
+U32String FSNode::getDisplayName() const {
 	assert(_realNode);
 	return _realNode->getDisplayName();
 }

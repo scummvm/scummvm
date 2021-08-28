@@ -47,6 +47,7 @@ MenuSystem::MenuSystem(ToltecsEngine *vm) : _vm(vm) {
 	_editingDescriptionID = kItemIdNone;
 	_editingDescriptionItem = nullptr;
 	_needRedraw = false;
+	_returnToGame = false;
 }
 
 MenuSystem::~MenuSystem() {
@@ -79,6 +80,11 @@ int MenuSystem::run(MenuID menuId) {
 	shadeRect(60, 39, 520, 247, 225, 229);
 
 	memcpy(_background->getPixels(), _vm->_screen->_frontScreen, 640 * 400);
+
+	if (menuId == kMenuIdMain)
+		_returnToGame = false;
+	else
+		_returnToGame = true;
 
 	while (_running) {
 		update();
@@ -268,10 +274,15 @@ void MenuSystem::initMenu(MenuID menuID) {
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
-			if (slot >= 0)
+			if (slot >= 0) {
 				_vm->requestLoadgame(slot);
-
-			_running = false;
+				_running = false;
+			} else {
+				if (_returnToGame)
+					_running = false;
+				else
+					_newMenuID = kMenuIdMain;
+			}
 		}
 		break;
 	case kMenuIdSave:
@@ -297,10 +308,15 @@ void MenuSystem::initMenu(MenuID menuID) {
 				desc = dialog->createDefaultSaveDescription(slot);
 			}
 
-			if (slot >= 0)
+			if (slot >= 0) {
 				_vm->requestSavegame(slot, desc);
-
-			_running = false;
+				_running = false;
+			} else {
+				if (_returnToGame)
+					_running = false;
+				else
+					_newMenuID = kMenuIdMain;
+			}
 		}
 		break;
 	case kMenuIdVolumes:

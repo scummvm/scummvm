@@ -30,6 +30,9 @@ namespace AGS3 {
 
 typedef int64 file_off_t;
 
+// Size of the buffer enough to accomodate a UTF-8 path
+const size_t MAX_PATH_SZ = 1024;
+
 extern Common::FSNode getFSNode(const char *path);
 
 extern int  ags_fseek(Common::Stream *stream, file_off_t offset, int whence);

@@ -334,6 +334,21 @@ CruisE
    * - Vincent Hamm
      - (retired)
 
+Cryo
+^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Arnaud Boutonné
+     -
+   * - Filippos Karapetis
+     -
+   * - Retro-Junk;
+     -
+   * - Eugene Sandulenko
+     -
+
 Cryomni3D
 ^^^^^^^^^
 
@@ -351,12 +366,14 @@ Director
 
    * - Eugene Sandulenko
      -
+   * - Crane Yang
+     - GSoC Student
    * - Dmitry Iskrich
      -
    * - Dylan Servilla
-     -
+     - GSoC Student
    * - Nathanael Gentry
-     -
+     - GSoC Student
    * - Roland van Laar
      -
    * - Scott Percival
@@ -750,6 +767,17 @@ Myst 3
    * - Bastien Bouclet
      -
 
+Nancy
+^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Kaloyan Chehlarski
+     -
+   * - Walter van Niftrik
+     -
+
 Neverhood
 ^^^^^^^^^
 
@@ -871,6 +899,17 @@ SAGA
    * - Eugene Sandulenko
      -
 
+SAGA2
+^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Yuri Guimaraes
+     - GSoC Student
+   * - Eugene Sandulenko
+     -
+
 SCI
 ^^^
 
@@ -966,6 +1005,17 @@ Sky
    * - Joost Peters
      -
 
+SLUDGE
+^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Eugene Sandulenko
+     -
+   * - Simei Yin
+     - GSoC Student
+
 Stark
 ^^^^^
 
@@ -978,6 +1028,19 @@ Stark
      -
    * - Liu Zhaosong
      -
+
+Star Trek
+^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Matthew Hoops
+     - (retired)
+   * - Filippos Karapetis
+     -
+   * - Matthew Stewart
+     - GSoC Student
 
 Supernova
 ^^^^^^^^^
@@ -1574,6 +1637,8 @@ Miscellaneous
      - Restoring original Drascula tracks, and writing convert_dxa.bat
    * - Chris Page
      - Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task) (retired)
+   * - Coen Rampen
+     - Sound improvements
    * - Robin Watts
      - ARM assembly routines for nice speedups on several ports; improvements to the sound mixer
 

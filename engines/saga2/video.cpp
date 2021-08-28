@@ -77,6 +77,7 @@ bool Saga2Engine::checkVideo(void) {
 				g_system->getPaletteManager()->setPalette(_smkDecoder->getPalette(), 0, 256);
 
 			g_system->updateScreen();
+			g_system->delayMillis(10);
 		}
 	}
 

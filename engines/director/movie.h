@@ -183,7 +183,7 @@ private:
 	Common::String _script;
 	Common::String _directory;
 
-	uint16 _currentHandlingChannelId;
+	bool _mouseDownWasInButton;
 	Channel *_currentDraggedChannel;
 	Common::Point _draggingSpritePos;
 };

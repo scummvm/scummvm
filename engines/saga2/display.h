@@ -95,7 +95,6 @@ void resumeAudio(void);
 // ------------------------------------------------------------------------
 // The display may be disabled for several reasons these track them
 void blackOut(void);
-void assertCurrentPalette(void);
 
 } // end of namespace Saga2
 

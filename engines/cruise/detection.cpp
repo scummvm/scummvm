@@ -139,12 +139,34 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+	{ // Amiga Spanish edition.
+		{
+			"cruise",
+			0,
+			AD_ENTRY1s("D1", "b600d0892a2605b9ead63e1c86a8a0a3", 700576),
+			Common::ES_ESP,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
 	{ // AtariST English KixxXL edition.
 		{
 			"cruise",
 			0,
 			AD_ENTRY1("D1", "be78614d5fa34bdb68bb03a2a6130280"),
 			Common::EN_ANY,
+			Common::kPlatformAtariST,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+	{ // AtariST French edition. Bugreport #12824
+		{
+			"cruise",
+			0,
+			AD_ENTRY1s("D1", "485ff850b7035316621f632e33f56468", 537311),
+			Common::FR_FRA,
 			Common::kPlatformAtariST,
 			ADGF_NO_FLAGS,
 			GUIO0()

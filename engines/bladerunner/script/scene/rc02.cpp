@@ -239,6 +239,11 @@ void SceneScriptRC02::dialogueWithRunciter() {
 
 	switch (answer) {
 	case 0: // MOTIVES
+		if (_vm->_cutContent
+		    && Player_Query_Agenda() != kPlayerAgendaSurly
+		    && Player_Query_Agenda() != kPlayerAgendaErratic) {
+			Actor_Says(kActorMcCoy, 4575, kAnimationModeTalk);
+		}
 		Actor_Says(kActorMcCoy, 4580, 13);
 		Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
 		Actor_Says(kActorRunciter, 110, 18);
@@ -266,6 +271,12 @@ void SceneScriptRC02::dialogueWithRunciter() {
 		Actor_Says(kActorRunciter, 290, 13);
 		Actor_Says(kActorMcCoy, 4650, 18);
 		Actor_Says(kActorRunciter, 320, 13);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorMcCoy, 4655, 13);
+			Actor_Says(kActorRunciter, 330, 13);
+			Actor_Says(kActorMcCoy, 4660, 13);
+			Actor_Says(kActorRunciter, 340, 13);
+		}
 		Actor_Says(kActorMcCoy, 4665, 13);
 		Actor_Face_Object(kActorRunciter, "CURTAIN", true);
 		Actor_Says(kActorRunciter, 350, 13);
@@ -307,7 +318,32 @@ void SceneScriptRC02::dialogueWithRunciter() {
 		break;
 
 	case 30: // DONE
-		Actor_Says(kActorMcCoy, 4595, 14);
+		if (_vm->_cutContent && Global_Variable_Query(kVariableRC02Act1RunciterBanter) < 4) {
+			Actor_Says(kActorMcCoy, 4685, 14);
+			switch (Global_Variable_Query(kVariableRC02Act1RunciterBanter)) {
+			case 0:
+				Actor_Says(kActorRunciter, 90, 16);
+				Global_Variable_Set(kVariableRC02Act1RunciterBanter, 1);
+				break;
+
+			case 1:
+				Actor_Says(kActorRunciter, 300, 12);
+				Actor_Says(kActorRunciter, 310, 14);
+				Global_Variable_Set(kVariableRC02Act1RunciterBanter, 2);
+				break;
+
+			case 2:
+				Actor_Says(kActorRunciter, 1610, 12);
+				Global_Variable_Set(kVariableRC02Act1RunciterBanter, 3);
+				break;
+
+			default:
+				Actor_Says(kActorRunciter, 100, 12);
+				Global_Variable_Set(kVariableRC02Act1RunciterBanter, 4);
+			}
+		} else {
+			Actor_Says(kActorMcCoy, 4595, 14);
+		}
 		break;
 	}
 }
@@ -345,7 +381,11 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 4690, 11);
 				Actor_Says(kActorMcCoy, 4695, 13);
 				Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
-				Actor_Says(kActorRunciter, 1610, 14);
+				if (_vm->_cutContent) {
+					Actor_Says(kActorRunciter, 1670, 14);
+				} else {
+					Actor_Says(kActorRunciter, 1610, 14);
+				}
 				if (Actor_Clue_Query(kActorMcCoy, kClueEnvelope)) {
 					Actor_Says(kActorMcCoy, 4700, 12);
 					Actor_Says(kActorMcCoy, 4705, 13);
@@ -400,6 +440,10 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 				return true;
 			}
 
+			if (_vm->_cutContent
+			   && Player_Query_Agenda() == kPlayerAgendaSurly) {
+				Actor_Says(kActorMcCoy, 4600, kAnimationModeTalk);
+			}
 			Actor_Says(kActorMcCoy, 4610, 19);
 			Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
 			Actor_Says(kActorRunciter, 150, 15);

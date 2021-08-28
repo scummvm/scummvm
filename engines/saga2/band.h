@@ -31,7 +31,6 @@ namespace Saga2 {
 
 class Actor;
 class Band;
-const int       maxBandMembers = 32;
 
 /* ===================================================================== *
    Function prototypes
@@ -115,10 +114,14 @@ public:
  * ===================================================================== */
 
 class Band {
-	Actor       *leader;
+	enum {
+		kMaxBandMembers = 32
+	};
 
-	int16       memberCount;
-	Actor       *members[maxBandMembers];
+	Actor       *_leader;
+
+	int16       _memberCount;
+	Actor       *_members[kMaxBandMembers];
 
 public:
 
@@ -136,12 +139,12 @@ public:
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	Actor *getLeader(void) {
-		return leader;
+		return _leader;
 	}
 
 	bool add(Actor *newMember) {
-		if (memberCount < ARRAYSIZE(members)) {
-			members[memberCount++] = newMember;
+		if (_memberCount < ARRAYSIZE(_members)) {
+			_members[_memberCount++] = newMember;
 			return true;
 		} else
 			return false;
@@ -150,12 +153,12 @@ public:
 	void remove(Actor *member) {
 		int     i;
 
-		for (i = 0; i < memberCount; i++) {
-			if (members[i] == member) {
-				memberCount--;
+		for (i = 0; i < _memberCount; i++) {
+			if (_members[i] == member) {
+				_memberCount--;
 
-				for (; i < memberCount; i++)
-					members[i] = members[i + 1];
+				for (; i < _memberCount; i++)
+					_members[i] = _members[i + 1];
 
 				break;
 			}
@@ -163,21 +166,21 @@ public:
 	}
 
 	void remove(int index) {
-		assert(index < memberCount);
+		assert(index < _memberCount);
 
 		int     i;
 
-		memberCount--;
+		_memberCount--;
 
-		for (i = index; i < memberCount; i++)
-			members[i] = members[i + 1];
+		for (i = index; i < _memberCount; i++)
+			_members[i] = _members[i + 1];
 	}
 
 	int size(void) {
-		return memberCount;
+		return _memberCount;
 	}
 	Actor *const &operator [](int index) {
-		return members[index];
+		return _members[index];
 	}
 };
 

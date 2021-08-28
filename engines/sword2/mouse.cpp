@@ -824,7 +824,7 @@ void Mouse::normalMouse() {
 	_vm->_logic->writeVar(MOUSE_X, x + screenInfo->scroll_offset_x);
 	_vm->_logic->writeVar(MOUSE_Y, y + screenInfo->scroll_offset_y);
 
-	if (_mouseTouching == _vm->_logic->readVar(EXIT_CLICK_ID) && (me->buttons & RD_LEFTBUTTONDOWN)) {
+	if (_mouseTouching == _vm->_logic->readVar(EXIT_CLICK_ID) && (me->buttons & RD_LEFTBUTTONDOWN) && _oldButton == _buttonClick) {
 		// It's the exit double click situation. Let the existing
 		// interaction continue and start fading down. Switch the human
 		// off too

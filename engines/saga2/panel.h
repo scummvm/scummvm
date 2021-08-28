@@ -128,7 +128,7 @@ class gPanel {
 	AppFunc         *command;               // application function
 protected:
 	gWindow         &window;                // window this belongs to
-	Rect16          extent;                 // rectangular bounds of the control
+	Rect16          _extent;                 // rectangular bounds of the control
 	const char      *title;                 // title of the panel
 	byte             enabled,            // allows disabling the panel
 	                selected,           // some panels have a selected state
@@ -196,7 +196,7 @@ public:
 	}
 	void makeActive(void);
 	Rect16 getExtent(void) {
-		return extent;
+		return _extent;
 	}
 	bool isSelected(void) {
 		return selected != 0;
@@ -367,7 +367,7 @@ private:
 public:
 	void setExtent(const Rect16 &);          // set window position and size
 	Rect16 getExtent(void) {
-		return extent;    // set window position and size
+		return _extent;    // set window position and size
 	}
 protected:
 	void setPos(Point16 pos);                // set window position
@@ -515,8 +515,8 @@ private:
 		if (panel == &panel->window)
 			msg_.pickPos = pickPos;
 		else {
-			msg.pickPos.x = (int16)(pickPos.x - panel->extent.x);
-			msg.pickPos.y = (int16)(pickPos.y - panel->extent.y);
+			msg.pickPos.x = (int16)(pickPos.x - panel->_extent.x);
+			msg.pickPos.y = (int16)(pickPos.y - panel->_extent.y);
 		}
 	}
 
@@ -524,8 +524,8 @@ private:
 		setMsgQ(msg_, panel);
 		msg.inPanel = (msg_.pickPos.x >= 0
 		               && msg_.pickPos.y >= 0
-		               && msg_.pickPos.x < panel->extent.width
-		               && msg_.pickPos.y < panel->extent.height);
+		               && msg_.pickPos.x < panel->_extent.width
+		               && msg_.pickPos.y < panel->_extent.height);
 		//          panel->extent.ptInside( pickPos );
 	}
 

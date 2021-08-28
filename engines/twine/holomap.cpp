@@ -313,7 +313,7 @@ void Holomap::renderHolomapVehicle(uint &frameNumber, ActorMoveStruct &move, Ani
 	}
 	const Common::Rect rect(0, _engine->height() - 280, 200, _engine->height() - 1);
 	_engine->_renderer->setCameraPosition(rect.width() / 2, _engine->height() - 80, 128, 900, 900);
-	_engine->_renderer->setCameraAngle(0, 0, 0, 60, 128, 0, 30000);
+	_engine->_renderer->setCameraAngle(0, 0, 0, 60, 128, 0, distance(30000));
 	_engine->_renderer->setLightVector(-60, 128, 0);
 	// background of the vehicle
 	_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
@@ -423,14 +423,13 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 int32 Holomap::getNextHolomapLocation(int32 currentLocation, int32 dir) const {
 	const int32 idx = currentLocation;
-	int32 i = currentLocation + dir;
-	if (i < 0) {
-		i = NUM_LOCATIONS - 1;
-	} else {
-		i %= NUM_LOCATIONS;
-	}
-	for (; i != idx; i = (i + dir) % NUM_LOCATIONS) {
-		if (_engine->_gameState->_holomapFlags[i] & HOLOMAP_ACTIVE) {
+	for (int32 i = currentLocation + dir; i != idx; i += dir) {
+		if (i < 0) {
+			i = NUM_LOCATIONS - 1;
+		} else {
+			i %= NUM_LOCATIONS;
+		}
+		if (i == _engine->_scene->_currentSceneIdx || (_engine->_gameState->_holomapFlags[i] & HOLOMAP_ACTIVE) != 0u) {
 			return i;
 		}
 	}
@@ -450,14 +449,14 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 			_engine->_renderer->setBaseRotationPos(0, 0, distance(zDistanceHolomap));
 			const IVec3 &destPos3 = _engine->_renderer->getBaseRotationPosition(destPos);
 			const IVec3 &destPos4 = _engine->_renderer->getBaseRotationPosition(destPos2);
+			bool visible;
 			if (lower) {
-				if (destPos3.z > destPos4.z) {
-					continue;
-				}
+				visible = destPos4.z <= destPos3.z;
 			} else {
-				if (destPos4.z > destPos3.z) {
-					continue;
-				}
+				visible = destPos3.z <= destPos4.z;
+			}
+			if (!visible) {
+				continue;
 			}
 			uint8 flags = _engine->_gameState->_holomapFlags[locationIdx] & HOLOMAP_ARROW;
 			if (locationIdx == _engine->_scene->_currentSceneIdx) {
@@ -501,6 +500,7 @@ void Holomap::processHolomap() {
 	const int32 betaLightTmp = _engine->_scene->_betaLight;
 
 	_engine->exitSceneryView();
+	_engine->_gameState->initEngineProjections();
 
 	_engine->_screens->fadeToBlack(_engine->_screens->_paletteRGBA);
 	_engine->_sound->stopSamples();
@@ -537,7 +537,7 @@ void Holomap::processHolomap() {
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapPrev)) {
 			const int32 nextLocation = getNextHolomapLocation(currentLocation, -1);
-			if (nextLocation != -1) {
+			if (nextLocation != -1 && currentLocation != nextLocation) {
 				currentLocation = nextLocation;
 				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 				time = _engine->_lbaTime;
@@ -545,7 +545,7 @@ void Holomap::processHolomap() {
 			}
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapNext)) {
 			const int32 nextLocation = getNextHolomapLocation(currentLocation, 1);
-			if (nextLocation != -1) {
+			if (nextLocation != -1 && currentLocation != nextLocation) {
 				currentLocation = nextLocation;
 				_engine->_text->drawHolomapLocation(_locations[currentLocation].textIndex);
 				time = _engine->_lbaTime;
@@ -635,6 +635,11 @@ void Holomap::processHolomap() {
 
 	_engine->_input->enableKeyMap(mainKeyMapId);
 	_engine->_text->initSceneTextBank();
+}
+
+const char *Holomap::getLocationName(int index) const {
+	assert(index >= 0 && index <= ARRAYSIZE(_locations));
+	return _locations[index].name;
 }
 
 } // namespace TwinE

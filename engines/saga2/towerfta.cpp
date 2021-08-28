@@ -40,6 +40,7 @@
 #include "saga2/saveload.h"
 #include "saga2/display.h"
 #include "saga2/tile.h"
+#include "saga2/vpal.h"
 
 namespace Saga2 {
 
@@ -55,7 +56,6 @@ TowerLayer tower[fullyInitialized] = {
 	{ delayedErrInitialized,     &initDelayedErrors,    &termDelayedErrors },
 	{ activeErrInitialized,      &initActiveErrors,     &termActiveErrors },
 	{ configTestInitialized,     &initSystemConfig,     &termTowerBase },
-	{ memoryInitialized,         &initMemPool,          &termMemPool },
 	{ introInitialized,          &initPlayIntro,        &termPlayOutro },
 	{ timerInitialized,          &initSystemTimer,      &termSystemTimer },
 	{ audioInitialized,          &initAudio,            &termAudio},
@@ -93,8 +93,6 @@ TowerLayer tower[fullyInitialized] = {
 bool initGUIMessagers(void);
 void cleanupMessagers(void);
 void cleanupGUIMessagers(void);
-bool initMemPool(void);
-void cleanupMemPool(void);
 bool openResources(void);
 void closeResources(void);
 void initServers(void);
@@ -123,15 +121,6 @@ INITIALIZER(initSystemConfig) {
 }
 
 // uses null cleanup
-
-// ------------------------------------------------------------------------
-
-extern INITIALIZER(initMemPool);
-
-TERMINATOR(termMemPool) {
-	cleanupMemPool();                       // deallocate memory buffers
-}
-
 
 // ------------------------------------------------------------------------
 
@@ -248,7 +237,7 @@ TERMINATOR(termResourceHandles) {
 // ------------------------------------------------------------------------
 
 INITIALIZER(initPalettes) {
-	loadPalettes();
+	g_vm->_pal->loadPalettes();
 	return true;
 }
 

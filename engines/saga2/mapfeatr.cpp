@@ -35,29 +35,20 @@ namespace Saga2 {
    Constants
  * ===================================================================== */
 
-#define MAX_MAP_FEATURES 128
-
 #define STARGATE_COLOR  (164+9)
 #define VILLAGE_COLOR   (66+9)
 #define CAVE_COLOR      (10+9)
 
 /* ===================================================================== *
-   Locals
- * ===================================================================== */
-
-int32 mapFeatureCount = 0;
-pCMapFeature mapFeatures[MAX_MAP_FEATURES];
-
-/* ===================================================================== *
    Prototypes and inlines
  * ===================================================================== */
 
-#define MAP_VILLAGE(u,v,n)  mapFeatures[mapFeatureCount++]=\
-        new CStaticMapFeature(TilePoint(u,v,0),0,n,VILLAGE_COLOR);
-#define MAP_CAVE(u,v,n)  mapFeatures[mapFeatureCount++]=\
-        new CStaticMapFeature(TilePoint(u,v,0),0,n,CAVE_COLOR);
-#define MAP_STARGATE(u,v,n) mapFeatures[mapFeatureCount++]=\
-        new CStaticMapFeature(TilePoint(u,v,0),0,n,STARGATE_COLOR);
+#define MAP_VILLAGE(u,v,n)  g_vm->_mapFeatures.push_back(\
+        new CStaticMapFeature(TilePoint(u,v,0),0,n,VILLAGE_COLOR))
+#define MAP_CAVE(u,v,n)  g_vm->_mapFeatures.push_back(\
+        new CStaticMapFeature(TilePoint(u,v,0),0,n,CAVE_COLOR))
+#define MAP_STARGATE(u,v,n) g_vm->_mapFeatures.push_back(\
+        new CStaticMapFeature(TilePoint(u,v,0),0,n,STARGATE_COLOR))
 
 /* ===================================================================== *
    Map feature list maintainence
@@ -67,10 +58,6 @@ pCMapFeature mapFeatures[MAX_MAP_FEATURES];
 // init
 
 void initMapFeatures(void) {
-	for (int i = 0; i < MAX_MAP_FEATURES; i++) {
-		mapFeatures[i] = NULL;
-	}
-
 	//MAP_VILLAGE(13000,12535,"DummyVillage");
 	//MAP_STARGATE(1,2,"DummyGate");
 
@@ -248,12 +235,12 @@ void updateMapFeatures(int16 cWorld) {
 
 	uint16          *mapData = wMap->map->mapData;
 
-	for (int i = 0; i < mapFeatureCount; i++) {
-		if (mapFeatures[i]->getWorld() == cWorld) {
+	for (uint i = 0; i < g_vm->_mapFeatures.size(); i++) {
+		if (g_vm->_mapFeatures[i]->getWorld() == cWorld) {
 			uint16   *mapRow;
-			mapRow = &mapData[(mapFeatures[i]->getU() >> (kTileUVShift + kPlatShift)) * wMap->mapSize];
-			uint16   mtile = mapRow[(mapFeatures[i]->getV() >> (kTileUVShift + kPlatShift))];
-			mapFeatures[i]->expose(mtile & metaTileVisited);
+			mapRow = &mapData[(g_vm->_mapFeatures[i]->getU() >> (kTileUVShift + kPlatShift)) * wMap->mapSize];
+			uint16   mtile = mapRow[(g_vm->_mapFeatures[i]->getV() >> (kTileUVShift + kPlatShift))];
+			g_vm->_mapFeatures[i]->expose(mtile & metaTileVisited);
 		}
 	}
 }
@@ -265,8 +252,8 @@ void drawMapFeatures(TileRegion viewRegion,
                      int16 inWorld,
                      TilePoint baseCoords,
                      gPort &tPort) {
-	for (int i = 0; i < mapFeatureCount; i++) {
-		mapFeatures[i]->draw(viewRegion, inWorld, baseCoords, tPort);
+	for (uint i = 0; i < g_vm->_mapFeatures.size(); i++) {
+		g_vm->_mapFeatures[i]->draw(viewRegion, inWorld, baseCoords, tPort);
 	}
 
 }
@@ -282,9 +269,9 @@ char *getMapFeaturesText(TileRegion viewRegion,
                          Point16 mouseCoords) {
 	TilePoint m2 = TilePoint(mouseCoords.x, mouseCoords.y, 0);
 
-	for (int i = 0; i < mapFeatureCount; i++) {
-		if (mapFeatures[i]->hitCheck(viewRegion, inWorld, baseCoords, m2))
-			return mapFeatures[i]->getText();
+	for (uint i = 0; i < g_vm->_mapFeatures.size(); i++) {
+		if (g_vm->_mapFeatures[i]->hitCheck(viewRegion, inWorld, baseCoords, m2))
+			return g_vm->_mapFeatures[i]->getText();
 	}
 	return noMFText;
 
@@ -294,11 +281,12 @@ char *getMapFeaturesText(TileRegion viewRegion,
 // cleanup
 
 void termMapFeatures(void) {
-	for (int i = 0; i < MAX_MAP_FEATURES; i++) {
-		if (mapFeatures[i])
-			delete mapFeatures[i];
-		mapFeatures[i] = nullptr;
+	for (uint i = 0; i < g_vm->_mapFeatures.size(); i++) {
+		if (g_vm->_mapFeatures[i])
+			delete g_vm->_mapFeatures[i];
 	}
+
+	g_vm->_mapFeatures.clear();
 }
 
 

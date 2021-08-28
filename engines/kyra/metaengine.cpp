@@ -212,6 +212,8 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 			// The same goes for the 'Autosave', which is slot 999. Slot 0 will also
 			// be protected in Kyra 1-3, since it's the 'restart game' save.
 			desc.setWriteProtectedFlag((slot == 0 && !nonKyraGame) || slot >= 990);
+			if (slot == 0 && !nonKyraGame)
+				desc.setAutosave(true);
 			desc.setThumbnail(header.thumbnail);
 
 			return desc;
@@ -224,6 +226,8 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 	// The same goes for the 'Autosave', which is slot 999. Slot 0 will also
 	// be protected in Kyra 1-3, since it's the 'restart game' save.
 	desc.setWriteProtectedFlag((slot == 0 && !nonKyraGame) || slot >= 990);
+	if (slot == 0 && !nonKyraGame)
+		desc.setAutosave(true);
 
 	return desc;
 }

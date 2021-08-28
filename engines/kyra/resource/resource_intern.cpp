@@ -318,21 +318,21 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
 		if (startoffset < stream.pos() || startoffset > filesize || startoffset < 0) {
-			warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
+			warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
 			return 0;
 		}
 
 		file = readString(stream);
 
 		if (stream.eos()) {
-			warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
+			warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
 			return 0;
 		}
 
 		// Quit now if we encounter an empty string
 		if (file.empty()) {
 			if (firstFile) {
-				warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
+				warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
 				return 0;
 			} else {
 				break;
@@ -343,7 +343,7 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 		endoffset = switchEndian ? stream.readUint32BE() : stream.readUint32LE();
 
 		if (endoffset < 0 && stream.pos() != firstOffset) {
-			warning("PAK file '%s' is corrupted", memberFile->getDisplayName().c_str());
+			warning("PAK file '%s' is corrupted", memberFile->getName().c_str());
 			return 0;
 		}
 

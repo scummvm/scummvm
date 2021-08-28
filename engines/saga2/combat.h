@@ -31,31 +31,6 @@ namespace Saga2 {
 
 class Location;
 
-enum weaponHitType {
-	hitMiss     = 0,
-	hitShield,
-	hitTarget
-};
-
-//-----------------------------------------------------------------------
-
-#define nullWeapon 0
-
-enum combatSound {
-	arrowFlesh  = 1,
-	arrowWood,
-	bluntBreak,
-	bluntFlesh,
-	bluntMetal,
-	swordBreak,
-	swordFlesh,
-	swordMetal,
-	whoosh1,
-	whoosh2,
-	whoosh3
-};
-
-
 void makeCombatSound(uint8 cs, Location l);
 
 void makeGruntSound(uint8 cs, Location l);

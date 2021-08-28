@@ -307,6 +307,7 @@ void SegmentMap::findPath(int16 *pointsArray, int16 destX, int16 destY, int16 so
 				if (currentRectIndex != -1 && currentRectIndex == destRectIndex)
 					break;
 				_deadEndPathRects[_deadEndPathRectsCount++] = _closedPathRects[--_closedPathRectsCount];
+				assert(_pathNodesCount >= 2);
 				_pathNodesCount -= 2;
 				currentRectIndex = _closedPathRects[--_closedPathRectsCount];
 			}

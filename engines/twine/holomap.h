@@ -23,15 +23,17 @@
 #ifndef TWINE_HOLOMAP_H
 #define TWINE_HOLOMAP_H
 
-#include "twine/renderer/renderer.h"
+#include "twine/shared.h"
 #include "common/scummsys.h"
-#include "twine/twine.h"
 
 namespace TwinE {
 
-#define NUM_LOCATIONS 150
-
 class TwinEEngine;
+class BodyData;
+class AnimData;
+struct ActorMoveStruct;
+struct Vertex;
+struct AnimTimerDataStruct;
 
 /**
  * The Holomap shows the hero position. The arrows (@c RESSHQR_HOLOARROWMDL) represent important places in your quest - they automatically disappear once that part of
@@ -123,11 +125,6 @@ public:
 	/** Main holomap process loop */
 	void processHolomap();
 };
-
-inline const char *Holomap::getLocationName(int index) const {
-	assert(index >= 0 && index <= ARRAYSIZE(_locations));
-	return _locations[index].name;
-}
 
 } // namespace TwinE
 

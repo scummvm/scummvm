@@ -223,6 +223,21 @@ Graphics::Surface *DialogBox::loadBackground() {
 		return nullptr;
 	}
 
+	// As of Aug 2021:
+	// Steam version of The Longest Journey is 1.0.0.161 "Enno's two-CD Version"
+	// GOG version of The Longest Journey is 1.0.0.142 "RC1" (Special Build: "Paper Sun")
+	// Steam's game.exe does not contain a valid resource for the background bitmap id 147
+	// so we skip trying to retrieve it based on build number.
+	Common::WinResources::VersionInfo *versionInfo = executable.getVersionResource(1);
+	if (versionInfo
+	    && versionInfo->fileVersion[0] == 1
+	    && versionInfo->fileVersion[1] == 0
+	    && versionInfo->fileVersion[2] == 0
+	    && versionInfo->fileVersion[3] == 161) {
+		warning("Steam version does not contain the modal dialog background bitmap in 'game.exe'. Using fallback color for dialog background...");
+		return nullptr;
+	}
+
 	Common::SeekableReadStream *stream = executable.getResource(Common::kWinBitmap, 147);
 	if (!stream) {
 		warning("Unable to find the modal dialog background bitmap in 'game.exe'");

@@ -1035,9 +1035,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	},
 
 	// Original filename is "•Main Menu" for all
-	MACGAME1("theapartment", "D2", "xn--Main Menu-a88aqz", "fc56c179cb8c6d4938e61ee61fd0032c", 48325, 200),
-	MACGAME1("theapartment", "D3", "xn--Main Menu-a88aqz", "9e838fe1a6af7992d656ca325e38dee5", 47911, 300),
-	MACGAME1("theapartment", "D4", "xn--Main Menu-a88aqz", "ff86181f03fe6eb060f65a985ca0580d", 160612, 400),
+	MACGAME1("theapartment", "D2", "xn--Main Menu-zd0e", "fc56c179cb8c6d4938e61ee61fd0032c", 48325, 200),
+	MACGAME1("theapartment", "D3", "xn--Main Menu-zd0e", "9e838fe1a6af7992d656ca325e38dee5", 47911, 300),
+	MACGAME1("theapartment", "D4", "xn--Main Menu-zd0e", "ff86181f03fe6eb060f65a985ca0580d", 160612, 400),
 
 //////////////////////////////////////////////////
 //
@@ -1143,8 +1143,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("tri3dtrial", "", "Tri-3D-Trial", "cfa68a1bc49251497ebde18e5fc9c217", 271223, Common::JA_JPN, 200),
 
-	MACGAME1("warlock", "v1.0", "Spaceship Warlock", "cfa68a1bc49251497ebde18e5fc9c217", 271093, 200),
-	MACGAME1("warlock", "v1.1.1", "Spaceship Warlock", "cfa68a1bc49251497ebde18e5fc9c217", 271107, 200),
+	// Original file name is Spaceship Warlock™
+	MACGAME1("warlock", "v1.0", "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 271093, 200),
+	MACGAME1("warlock", "v1.1.1", "xn--Spaceship Warlock-306j", "cfa68a1bc49251497ebde18e5fc9c217", 271107, 200),
 	MACDEMO1("warlock", "v1.0 Demo", "Spaceship Warlock Demo", "cfa68a1bc49251497ebde18e5fc9c217", 271099, 200),
 	MACDEMO1("warlock", "v1.1.1 Demo", "SS Warlock Movie Trailer", "cfa68a1bc49251497ebde18e5fc9c217", 273377, 200),
 
@@ -1741,6 +1742,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("wrath", "", "Wrath of the Gods", "2ce360c9ea2da80a2c6d1040b0ad92dd", 413986, 300),
 	WINGAME2("wrath", "", 	  "000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
 						  	  "SHARDCST.MMM", "22af72fba773cc5313d99c91b2e5aea9", 3432948, 300),
+	WINGAME2("wrath", "", 	  "000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
+							  "SHARDCST.MMM", "35b0a9fa9cc4ed5088d665848c5258dc", 3432878, 300),
 	WINDEMO2("wrath", "Demo", "000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
 							  "SHARDCST.MMM", "85d166abe18730d96e9d4137c66255a1", 3553330, 300),
 
@@ -2412,9 +2415,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Full game is not Director
 	WINDEMO1("mechwarrior2", "Demo", "MW2DEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
 
-	MACGAME2("mediaband", "v1.0", "xn--Meet MediaBand-eca49b68a", "17efee018a660458fae80de4364021ac", 483774,
+	// Original file name is Meet MediaBand™
+	MACGAME2("mediaband", "v1.0", "xn--Meet MediaBand-yk6h", "17efee018a660458fae80de4364021ac", 483774,
 								  "title", "88e717a623bc2690d84a1246e512eaff", 2646636, 404),
-	MACGAME2("mediaband", "v1.1", "xn--Meet MediaBand-eca49b68a", "17efee018a660458fae80de4364021ac", 483774,
+	MACGAME2("mediaband", "v1.1", "xn--Meet MediaBand-yk6h", "17efee018a660458fae80de4364021ac", 483774,
 								  "title", "14a64b7999d909a23df7842cec65458c", 2752392, 404),
 	WINGAME1("mediaband", "v1.1", "MEDIABND.EXE", "0cfb9b4762e33ab56d656a0eb146a048", 717921, 404),
 

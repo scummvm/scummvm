@@ -152,7 +152,7 @@ void cleanupMagic(void) {
 	for (int i = 0; i < maxSpells; i++) {
 		spellBook[i].killEffects();
 	}
-	delete spellBook;
+	delete[] spellBook;
 
 	g_vm->_sdpList->cleanup();
 	g_vm->_edpList->cleanup();

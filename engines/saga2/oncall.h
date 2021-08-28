@@ -27,17 +27,13 @@
 #ifndef SAGA2_ONCALL_H
 #define SAGA2_ONCALL_H
 
-#include "saga2/bitarray.h"
-
 namespace Saga2 {
-
-#define isValidPtr(p) ((p!=NULL)&&(p!=(void *)0xCDCDCDCD))
 
 class HandleArray {
 private:
 	Common::Array<byte*> _handles;
 	uint32 _tileID;
-	byte*(*_loader)(hResID, bool);
+	byte *(*_loader)(hResID, bool);
 public:
 	HandleArray(uint16 size, byte*(*loadfunction)(hResID, bool), uint32 newID) {
 		for (int i = 0; i < size; ++i)

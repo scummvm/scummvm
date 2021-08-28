@@ -197,6 +197,9 @@ bool SdlWindow::warpMouseInWindow(int x, int y) {
 	if (hasMouseFocus()) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_window) {
+			float dpiScale = getSdlDpiScalingFactor();
+			x = (int)(x / dpiScale + 0.5f);
+			y = (int)(y / dpiScale + 0.5f);
 			SDL_WarpMouseInWindow(_window, x, y);
 			return true;
 		}
@@ -269,12 +272,20 @@ float SdlWindow::getDpiScalingFactor() const {
 	getDisplayDpi(&dpi, &defaultDpi);
 	debug(4, "dpi: %g default: %g", dpi, defaultDpi);
 	float ratio = dpi / defaultDpi;
-	if (ratio >= 1.5f)
-		return 2.f;
-	else
-		return 1.f;
+	return ratio;
 }
 
+float SdlWindow::getSdlDpiScalingFactor() const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	int windowWidth, windowHeight;
+	SDL_GetWindowSize(getSDLWindow(), &windowWidth, &windowHeight);
+	int realWidth, realHeight;
+	SDL_GL_GetDrawableSize(getSDLWindow(), &realWidth, &realHeight);
+	return (float)realWidth / (float)windowWidth;
+#else
+	return 1.f;
+#endif
+}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 SDL_Surface *copySDLSurface(SDL_Surface *src) {

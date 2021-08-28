@@ -303,6 +303,10 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// Inform backend that the engine is about to be run
 	system.engineInit();
 
+	// Purge queued input events that may remain from the GUI (such as key-up)
+	system.getEventManager()->purgeKeyboardEvents();
+	system.getEventManager()->purgeMouseEvents();
+
 	// Run the engine
 	Common::Error result = engine->run();
 

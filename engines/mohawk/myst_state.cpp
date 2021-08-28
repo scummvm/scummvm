@@ -269,8 +269,7 @@ bool MystGameState::saveMetadata(int slot, const Graphics::Surface *thumbnail) {
 }
 
 SaveStateDescriptor MystGameState::querySaveMetaInfos(int slot) {
-	SaveStateDescriptor desc;
-	desc.setWriteProtectedFlag(slot == kAutoSaveSlot);
+	SaveStateDescriptor desc(slot, Common::U32String());
 
 	// Open the save file
 	Common::String filename = buildSaveFilename(slot);
@@ -281,8 +280,6 @@ SaveStateDescriptor MystGameState::querySaveMetaInfos(int slot) {
 	delete saveFile;
 
 	// There is a save in the slot
-	desc.setSaveSlot(slot);
-
 	// Open the metadata file
 	filename = buildMetadataFilename(slot);
 	Common::InSaveFile *metadataFile = g_system->getSavefileManager()->openForLoading(filename);

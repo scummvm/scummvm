@@ -24,10 +24,12 @@
 #define TWINE_SCENE_COLLISION_H
 
 #include "common/scummsys.h"
-#include "twine/scene/extra.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
+class ActorStruct;
+struct ExtraListStruct;
 class TwinEEngine;
 
 class Collision {

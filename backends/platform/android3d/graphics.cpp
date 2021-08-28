@@ -335,8 +335,6 @@ void AndroidGraphicsManager::clearOverlay() {
 }
 
 void AndroidGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
-	ENTER("%p, %d", buf, pitch);
-
 	GLTHREADCHECK;
 
 	const Graphics::Surface *overlaySurface = _overlay_texture->surface_const();
@@ -348,7 +346,7 @@ void AndroidGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
 
 	const byte *src = (const byte *)overlaySurface->getPixels();
 	byte *dst = (byte *)surface.getPixels();
-	Graphics::copyBlit(dst, src, surface.pitch, overlaySurface->pitch, w, h, sizeof(uint16));
+	Graphics::copyBlit(dst, src, surface.pitch, overlaySurface->pitch, surface.w, surface.h, sizeof(uint16));
 }
 
 void AndroidGraphicsManager::copyRectToOverlay(const void *buf, int pitch,

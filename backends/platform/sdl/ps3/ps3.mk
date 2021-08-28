@@ -1,4 +1,4 @@
-ps3pkg: $(EXECUTABLE)
+ps3pkg: $(EXECUTABLE) $(DIST_FILES_DOCS)
 	$(STRIP) $(EXECUTABLE)
 	sprxlinker $(EXECUTABLE)
 	mkdir -p ps3pkg/USRDIR/data/

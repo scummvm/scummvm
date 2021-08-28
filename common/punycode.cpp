@@ -57,7 +57,7 @@ namespace Common {
 #define DAMP 700
 #define INITIAL_N 128
 #define INITIAL_BIAS 72
-#define SMAX 0x7fff
+#define SMAX 0x10ffff // maximum Unicode code point
 
 #define SPECIAL_SYMBOLS "/\":*[]+|\\?%<>,;="
 
@@ -129,37 +129,39 @@ static size_t decode_digit(uint32 v) {
 	return SMAX;
 }
 
-String punycode_encode(String src) {
-	int srclen = src.size();
-	int h = 0, si;
-	String dst;
+String punycode_encode(U32String src) {
+	size_t srclen = src.size();
+	size_t h = 0, si;
+	String dst = "xn--";
 
 	for (si = 0; si < srclen; si++) {
-		if ((byte)src[si] < 128) {
+		if (src[si] < 128) {
 			dst += src[si];
 			h++;
 		}
 	}
 
-	int b = h;
+	size_t b = h;
 
-	/* Write out delimiter if any basic code points were processed. */
-	if (h != srclen) {
-		dst = String::format("xn--%s-", dst.c_str());
-	} else {
+	// If every character is ASCII, return the original string.
+	if (h == srclen)
 		return src;
-	}
 
-	int n = INITIAL_N;
-	int bias = INITIAL_BIAS;
-	int delta = 0;
-	int m;
+	// If we have any ASCII characters, add '-' to separate them from
+	// the non-ASCII character insertions.
+	if (h > 0)
+		dst += "-";
+
+	size_t n = INITIAL_N;
+	size_t bias = INITIAL_BIAS;
+	size_t delta = 0;
+	size_t m;
 
 	for (; h < srclen; n++, delta++) {
 		/* Find next smallest non-basic code point. */
 		for (m = SMAX, si = 0; si < srclen; si++) {
-			if ((byte)src[si] >= n && (byte)src[si] < m) {
-				m = (byte)src[si];
+			if (src[si] >= n && src[si] < m) {
+				m = src[si];
 			}
 		}
 
@@ -173,13 +175,13 @@ String punycode_encode(String src) {
 		n = m;
 
 		for (si = 0; si < srclen; si++) {
-			if ((byte)src[si] < n) {
+			if (src[si] < n) {
 				if (++delta == 0) {
 					/* OVERFLOW */
 					warning("punycode_encode: overflow2");
 					return src;
 				}
-			} else if ((byte)src[si] == n) {
+			} else if (src[si] == n) {
 				dst += encode_var_int(bias, delta);
 				bias = adapt_bias(delta, h + 1, h == b);
 				delta = 0;
@@ -206,7 +208,7 @@ bool punycode_needEncode(const String src) {
 	return false;
 }
 
-String punycode_decode(const String src1) {
+U32String punycode_decode(const String src1) {
 	if (!src1.hasPrefix("xn--"))
 		return src1;
 
@@ -222,10 +224,11 @@ String punycode_decode(const String src1) {
 
 	size_t di = src.findLastOf('-');
 
+	// If we have no '-', the entire string is non-ASCII character insertions.
 	if (di == String::npos)
-		return src;
+		di = 0;
 
-	String dst;
+	U32String dst;
 
 	for (size_t i = 0; i < di; i++) {
 		dst += src[i];
@@ -288,9 +291,9 @@ String punycode_decode(const String src1) {
 		n += i / (di + 1);
 		i %= (di + 1);
 
-		String dst1(dst.c_str(), i);
-		dst1 += (char )n;
-		dst1 += String(&dst.c_str()[i]);
+		U32String dst1(dst.c_str(), i);
+		dst1 += (u32char_type_t)n;
+		dst1 += U32String(&dst.c_str()[i]);
 		dst = dst1;
 		i++;
 	}
@@ -298,17 +301,17 @@ String punycode_decode(const String src1) {
 	return dst;
 }
 
-String punycode_encodefilename(const String src) {
-	String dst;
+String punycode_encodefilename(const U32String src) {
+	U32String dst;
 
 	for (uint i = 0; i < src.size(); i++) {
-		if ((byte)src[i] == 0x81) {	// In case we have our escape character present
-			dst += '\x81';
-			dst += '\x79';
+		if (src[i] == 0x81) {	// In case we have our escape character present
+			dst += 0x81;
+			dst += 0x79;
 		// Encode special symbols and non-printables
-		} else if (strchr(SPECIAL_SYMBOLS, src[i]) || (byte)src[i] < 0x20) {
-			dst += '\x81';
-			dst += (byte)src[i] + '\x80';
+		} else if ((src[i] < 0x80 && strchr(SPECIAL_SYMBOLS, (byte)src[i])) || src[i] < 0x20) {
+			dst += 0x81;
+			dst += src[i] + 0x80;
 		} else {
 			dst += src[i];
 		}
@@ -317,22 +320,9 @@ String punycode_encodefilename(const String src) {
 	return punycode_encode(dst);
 }
 
-String punycode_encodepath(const String src) {
-	StringTokenizer tok(src, "/");
-	String res;
-
-	while (!tok.empty()) {
-		res += punycode_encodefilename(tok.nextToken());
-		if (!tok.empty())
-			res += '/';
-	}
-
-	return res;
-}
-
-String punycode_decodefilename(const String src1) {
-	String dst;
-	String src = punycode_decode(src1);
+U32String punycode_decodefilename(const String src1) {
+	U32String dst;
+	U32String src = punycode_decode(src1);
 
 	// Check if the string did not change which could be
 	// also on decoding failure
@@ -340,12 +330,12 @@ String punycode_decodefilename(const String src1) {
 		return src;
 
 	for (uint i = 0; i < src.size(); i++) {
-		if ((byte)src[i] == 0x81 && i + 1 < src.size()) {
+		if (src[i] == 0x81 && i + 1 < src.size()) {
 			i++;
 			if (src[i] == 0x79)
-				dst += '\x81';
+				dst += 0x81;
 			else
-				dst += (byte)src[i] - '\x80';
+				dst += src[i] - 0x80;
 		} else {
 			dst += src[i];
 		}

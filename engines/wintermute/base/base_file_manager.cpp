@@ -204,7 +204,7 @@ bool BaseFileManager::registerPackages() {
 	for (Common::FSList::const_iterator it = _packagePaths.begin(); it != _packagePaths.end(); ++it) {
 		debugC(kWintermuteDebugFileAccess, "Should register folder: %s %s", it->getPath().c_str(), it->getName().c_str());
 		if (!it->getChildren(files, Common::FSNode::kListFilesOnly)) {
-			warning("getChildren() failed for path: %s", it->getDisplayName().c_str());
+			warning("getChildren() failed for path: %s", it->getName().c_str());
 		}
 		for (Common::FSList::const_iterator fileIt = files.begin(); fileIt != files.end(); ++fileIt) {
 			// To prevent any case sensitivity issues we make the filename

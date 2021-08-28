@@ -128,7 +128,7 @@ void cleanupWeapons(void) {
 WeaponStuff &getWeapon(weaponID i) {
 	if (i < g_vm->_loadedWeapons)
 		return g_vm->_weaponRack[i];
-	return g_vm->_weaponRack[nullWeapon];
+	return g_vm->_weaponRack[kNullWeapon];
 }
 
 GameObject *getShieldItem(GameObject *defender) {
@@ -173,7 +173,7 @@ void WeaponStrikeEffect::implement(Actor *enactor, GameObject *target, GameObjec
 
 WeaponStuff::WeaponStuff() {
 	_effects = NULL;
-	_master = nullWeapon;
+	_master = kNullWeapon;
 }
 
 WeaponStuff::~WeaponStuff() {
@@ -183,7 +183,7 @@ WeaponStuff::~WeaponStuff() {
 		_effects = _effects->_next;
 		delete curEffect;
 	}
-	_master = nullWeapon;
+	_master = kNullWeapon;
 }
 
 void WeaponStuff::killEffects(void) {

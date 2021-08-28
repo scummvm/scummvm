@@ -8,7 +8,6 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Grim Fandango hinzugefügt.
    - Unterstützung für The Longest Journey hinzugefügt.
    - Unterstützung für Myst 3: Exile hinzugefügt.
-   - Unterstützung für Hades' Challenge hinzugefügt.
    - Unterstützung für Little Big Adventure hinzugefügt.
    - Unterstützung für Red Comrades 1: Save the Galaxy hinzugefügt.
    - Unterstützung für Red Comrades 2: For the Great Justice hinzugefügt.
@@ -45,6 +44,10 @@ Programmcodes finden Sie auf Englisch unter:
      Fällen wurde die Änderung erst nach einem Neustart von ScummVM
      oder beim Start eines Spiels übernommen.
 
+ ADL:
+   - Unterstützung für die französische Übersetzung  von Mystery House hinzugefügt.
+   - Unterstützung für einige weitere Spiel-Varianten hinzugefügt.
+
  AGI:
    - Unterstützung für einige russische Versionen hinzugefügt. Die Eingabe funktioniert nun.
 
@@ -80,6 +83,7 @@ Programmcodes finden Sie auf Englisch unter:
  Kyra:
    - Unterstützung für die japanische Sega-CD-Version von Eye of the Beholder hinzugefügt.
    - Unterstützung für die hebräische Fan-Übersetzung von Legend of Kyrandia hinzugefügt.
+   - Unterstützung für die hebräische Fan-Übersetzung von Legend of Kyrandia 2 hinzugefügt.
    - Unterstützung für die Version in vereinfachtem Chinesisch für Legend of Kyrandia 3 hinzugefügt.
    - Unterstützung für die spielbare Demo-Version von Lands of Lore hinzugefügt.
 
@@ -174,7 +178,8 @@ Programmcodes finden Sie auf Englisch unter:
      einer der drei Türme nicht zerstört werden kann.
    - Animierter Zigarrenrauch zu der Nahaufnahme von Captain Smirk in der CD-Version von
      Monkey Island 1 hinzugefügt. Er war in früheren Versionen vorhanden.
-   - Einige in der englischen, italienischen und deutschen CD-Version von Monkey Island 1 fehlende
+   - Einige in der englischen, italienischen und deutschen CD- sowie der englischen
+     Macintosh-, FM-Towns- und Sega-CD-Version von Monkey Island 1 fehlende
      Dialog-Zeilen von Lemonhead wurden wiederhergestellt.
    - Der Uhren-Turm in Monkey Island 1 verhält sich nun in der CD-Version identisch zu
      früheren Versionen. So musst Du etwa - nachdem Du ihn einmal untersucht hast -

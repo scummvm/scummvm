@@ -28,10 +28,12 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
+#include "graphics/managed_surface.h"
 #include "graphics/scaler.h"
 #include "twine/achievements_tables.h"
 #include "twine/detection.h"
 #include "twine/input.h"
+#include "twine/renderer/screens.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -60,7 +62,7 @@ public:
 
 	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 
-	const Common::AchievementDescriptionList* getAchievementDescriptionList() const override {
+	const Common::AchievementDescriptionList *getAchievementDescriptionList() const override {
 		return TwinE::achievementDescriptionList;
 	}
 
@@ -68,7 +70,10 @@ public:
 };
 
 void TwinEMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
-	thumb.copyFrom(((TwinEEngine*)g_engine)->_workVideoBuffer);
+	TwinEEngine *engine = (TwinEEngine *)g_engine;
+	const Graphics::ManagedSurface &managedSurface = engine->_workVideoBuffer;
+	const Graphics::Surface &screenSurface = managedSurface.rawSurface();
+	::createThumbnail(&thumb, (const uint8 *)screenSurface.getPixels(), screenSurface.w, screenSurface.h, engine->_screens->_palette);
 }
 
 //
@@ -207,6 +212,11 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("LCTRL");
 		act->addDefaultInputMapping("RCTRL");
 		act->addDefaultInputMapping("JOY_X");
+		gameKeyMap->addAction(act);
+
+		act = new Action("MENU", _("Global Main Menu"));
+		act->addDefaultInputMapping("F5");
+		act->setEvent(EVENT_MAINMENU);
 		gameKeyMap->addAction(act);
 
 		act = new Action("OPTIONSMENU", _("Options Menu"));

@@ -209,6 +209,15 @@ void MetaEngine::appendExtendedSaveToStream(Common::WriteStream *saveFile, uint3
 	saveFile->writeUint32LE(headerPos);	// Store where the header starts
 }
 
+bool MetaEngine::copySaveFileToFreeSlot(const char *target, int slot)
+{
+	const int emptySlot = findEmptySaveSlot(target);
+	if (emptySlot == -1)
+		return false;
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	return saveFileMan->copySavefile(getSavegameFile(slot, target), getSavegameFile(emptySlot, target));
+}
+
 void MetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	::createThumbnailFromScreen(&thumb);
 }
@@ -295,6 +304,23 @@ WARN_UNUSED_RESULT bool MetaEngine::readSavegameHeader(Common::InSaveFile *in, E
 // MetaEngine default implementations
 //////////////////////////////////////////////
 
+int MetaEngine::findEmptySaveSlot(const char *target) {
+	if (!hasFeature(kSavesUseExtendedFormat))
+		return -1;
+
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	const int maxSaveSlot = getMaximumSaveSlot();
+	const int autosaveSlot = getAutosaveSlot();
+	for (int slot = 0; slot <= maxSaveSlot; ++slot) {
+		if (slot == autosaveSlot)
+			continue;
+		const Common::String filename = getSavegameFile(slot, target);
+		if (!saveFileMan->exists(filename))
+			return slot;
+	}
+	return -1;
+}
+
 SaveStateList MetaEngine::listSaves(const char *target) const {
 	if (!hasFeature(kSavesUseExtendedFormat))
 		return SaveStateList();
@@ -331,21 +357,14 @@ SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
 
 	// Check to see if an autosave is present
 	for (SaveStateList::iterator it = saveList.begin(); it != saveList.end(); ++it) {
-		int slot = it->getSaveSlot();
-		if (slot == autosaveSlot) {
-			// It has an autosave
-			it->setWriteProtectedFlag(true);
+		// It has an autosave
+		if (it->isAutosave())
 			return saveList;
-		}
 	}
 
-	// No autosave yet. We want to add a dummy one in so that it can be marked as'
+	// No autosave yet. We want to add a dummy one in so that it can be marked as
 	// write protected, and thus be prevented from being saved in
-	SaveStateDescriptor desc;
-	desc.setDescription(_("Autosave"));
-	desc.setSaveSlot(autosaveSlot);
-	desc.setWriteProtectedFlag(true);
-
+	SaveStateDescriptor desc(autosaveSlot, _("Autosave"));
 	saveList.push_back(desc);
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 
@@ -393,16 +412,9 @@ SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot)
 		}
 
 		// Create the return descriptor
-		SaveStateDescriptor desc;
-
+		SaveStateDescriptor desc(slot, Common::U32String());
 		parseSavegameHeader(&header, &desc);
-
-		desc.setSaveSlot(slot);
 		desc.setThumbnail(header.thumbnail);
-		desc.setAutosave(header.isAutosave);
-		if (slot == getAutosaveSlot())
-			desc.setWriteProtectedFlag(true);
-
 		return desc;
 	}
 

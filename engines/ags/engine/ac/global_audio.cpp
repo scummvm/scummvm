@@ -538,21 +538,20 @@ static bool play_voice_clip_on_channel(const String &voice_name) {
 		speechmp3 = my_load_mp3(get_voice_over_assetpath(asset_name), _GP(play).speech_volume);
 	}
 
-	if (speechmp3 != nullptr) {
-		if (!speechmp3->play()) {
-			// not assigned to a channel, so clean up manually.
-			speechmp3->destroy();
-			delete speechmp3;
-			speechmp3 = nullptr;
-		}
-	}
-
 	if (speechmp3 == nullptr) {
 		debug_script_warn("Speech load failure: '%s'", voice_name.GetCStr());
 		return false;
 	}
 
 	set_clip_to_channel(SCHAN_SPEECH, speechmp3);
+
+	if (!speechmp3->play()) {
+		// Could not play, so clean up manually.
+		speechmp3->destroy();
+		delete speechmp3;
+		speechmp3 = nullptr;
+	}
+
 	return true;
 }
 

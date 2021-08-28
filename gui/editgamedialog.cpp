@@ -192,7 +192,10 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 		const MetaEngineDetection &metaEngineDetection = metaEnginePlugin->get<MetaEngineDetection>();
 		metaEngineDetection.registerDefaultSettings(_domain);
-		_engineOptions = metaEngineDetection.buildEngineOptionsWidgetStatic(tab, "GameOptions_Engine.Container", _domain);
+		if (enginePlugin)
+			_engineOptions = enginePlugin->get<MetaEngine>().buildEngineOptionsWidgetDynamic(tab, "GameOptions_Engine.Container", _domain);
+		if (!_engineOptions)
+			_engineOptions = metaEngineDetection.buildEngineOptionsWidgetStatic(tab, "GameOptions_Engine.Container", _domain);
 
 		if (_engineOptions) {
 			_engineOptions->setParentDialog(this);

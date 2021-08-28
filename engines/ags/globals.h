@@ -24,6 +24,7 @@
 #define AGS_GLOBALS_H
 
 #include "ags/shared/ac/game_version.h"
+#include "ags/shared/util/stdio_compat.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_types.h"
 #include "ags/shared/util/version.h"
@@ -1334,7 +1335,7 @@ public:
 	StringMap *_transtree = nullptr;
 	String _trans_name, _trans_filename;
 	long _lang_offs_start = 0;
-	char _transFileName[MAX_PATH] = { 0 };
+	char _transFileName[MAX_PATH_SZ] = { 0 };
 	std::vector<uint16> _wcsbuf; // widechar buffer
 	std::vector<char> _mbbuf;  // utf8 buffer
 

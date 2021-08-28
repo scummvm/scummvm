@@ -313,7 +313,7 @@ void GUIMain::Poll() {
 					_controls[MouseOverCtrl]->OnMouseMove(_G(mousex), _G(mousey));
 				}
 			}
-			MarkChanged(); // TODO: only do if anything really changed
+			//MarkChanged(); // TODO: only do if anything really changed
 		} else if (MouseOverCtrl >= 0)
 			_controls[MouseOverCtrl]->OnMouseMove(_G(mousex), _G(mousey));
 	}
@@ -460,7 +460,7 @@ void GUIMain::OnMouseButtonDown() {
 	if (_controls[MouseOverCtrl]->OnMouseDown())
 		MouseOverCtrl = MOVER_MOUSEDOWNLOCKED;
 	_controls[MouseDownCtrl]->OnMouseMove(_G(mousex) - X, _G(mousey) - Y);
-	MarkChanged(); // TODO: only do if anything really changed
+	//MarkChanged(); // TODO: only do if anything really changed
 }
 
 void GUIMain::OnMouseButtonUp() {
@@ -476,7 +476,7 @@ void GUIMain::OnMouseButtonUp() {
 
 	_controls[MouseDownCtrl]->OnMouseUp();
 	MouseDownCtrl = -1;
-	MarkChanged(); // TODO: only do if anything really changed
+	//MarkChanged(); // TODO: only do if anything really changed
 }
 
 void GUIMain::ReadFromFile(Stream *in, GuiVersion gui_version) {
@@ -654,6 +654,25 @@ void DrawTextAlignedHor(Bitmap *ds, const char *text, int font, color_t text_col
 void MarkAllGUIForUpdate() {
 	for (auto &gui : _GP(guis)) {
 		gui.MarkChanged();
+	}
+}
+
+void MarkForFontUpdate(int font) {
+	for (auto &btn : _GP(guibuts)) {
+		if (btn.Font == font)
+			btn.NotifyParentChanged();
+	}
+	for (auto &lbl : _GP(guilabels)) {
+		if (lbl.Font == font)
+			lbl.NotifyParentChanged();
+	}
+	for (auto &list : _GP(guilist)) {
+		if (list.Font == font)
+			list.NotifyParentChanged();
+	}
+	for (auto &tb : _GP(guitext)) {
+		if (tb.Font == font)
+			tb.NotifyParentChanged();
 	}
 }
 

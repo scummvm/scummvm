@@ -346,7 +346,7 @@ bool isActor(GameObject *obj) {
 	if (obj->_index >= kActorCount + ActorBaseID || obj->_index < ActorBaseID)
 		return false;
 
-	return (g_vm->_actorList[obj->_index - ActorBaseID] == obj);
+	return (g_vm->_act->_actorList[obj->_index - ActorBaseID] == obj);
 }
 
 bool isWorld(GameObject *obj) {
@@ -380,7 +380,7 @@ GameObject *GameObject::objectAddress(ObjectID id) {
 	if (id - ActorBaseID >= kActorCount)
 		error("Invalid object ID: %d!", id);
 
-	return (int)g_vm->_actorList.size() > id - ActorBaseID ? g_vm->_actorList[id - ActorBaseID] : nullptr;
+	return (int)g_vm->_act->_actorList.size() > id - ActorBaseID ? g_vm->_act->_actorList[id - ActorBaseID] : nullptr;
 }
 
 ProtoObj *GameObject::protoAddress(ObjectID id) {
@@ -399,11 +399,11 @@ int32 GameObject::nameIndexToID(uint16 ind) {
 	}
 
 	for (int i = 0; i < kActorCount; ++i) {
-		if (g_vm->_actorList[i]->_data.nameIndex == ind)
-			return g_vm->_actorList[i]->thisID();
+		if (g_vm->_act->_actorList[i]->_data.nameIndex == ind)
+			return g_vm->_act->_actorList[i]->thisID();
 
-		if (g_vm->_actorList[i]->prototype && g_vm->_actorList[i]->prototype->nameIndex == ind)
-			return g_vm->_actorList[i]->thisID();
+		if (g_vm->_act->_actorList[i]->prototype && g_vm->_act->_actorList[i]->prototype->nameIndex == ind)
+			return g_vm->_act->_actorList[i]->thisID();
 	}
 
 	for (int i = 0; i < worldCount; ++i) {
@@ -429,10 +429,10 @@ Common::Array<ObjectID> GameObject::nameToID(Common::String name) {
 	}
 
 	for (int i = 0; i < kActorCount; ++i) {
-		Common::String objName = g_vm->_actorList[i]->objName();
+		Common::String objName = g_vm->_act->_actorList[i]->objName();
 		objName.toLowercase();
 		if (objName.contains(name))
-			array.push_back(g_vm->_actorList[i]->thisID());
+			array.push_back(g_vm->_act->_actorList[i]->thisID());
 	}
 
 	for (int i = 0; i < worldCount; ++i) {
@@ -1020,7 +1020,7 @@ void GameObject::updateImage(ObjectID oldParentID) {
 	        &&  isPlayerActor((Actor *)oldParent))
 	        || (isObject(oldParentID)
 	            &&  oldParent->isOpen())) {
-		g_vm->_containerList->setUpdate(oldParentID);
+		g_vm->_cnm->setUpdate(oldParentID);
 	}
 
 	if (_data.parentID != oldParentID && isActor(oldParentID)) {
@@ -1028,13 +1028,13 @@ void GameObject::updateImage(ObjectID oldParentID) {
 		Actor           *a = (Actor *)oldParent;
 		int             i;
 
-		if (a->leftHandObject == id)
-			a->leftHandObject = Nothing;
-		else if (a->rightHandObject == id)
-			a->rightHandObject = Nothing;
+		if (a->_leftHandObject == id)
+			a->_leftHandObject = Nothing;
+		else if (a->_rightHandObject == id)
+			a->_rightHandObject = Nothing;
 
 		for (i = 0; i < ARMOR_COUNT; i++) {
-			if (a->armorObjects[i] == id) {
+			if (a->_armorObjects[i] == id) {
 				a->wear(Nothing, i);
 				break;
 			}
@@ -1069,7 +1069,7 @@ void GameObject::updateImage(ObjectID oldParentID) {
 		        &&  isPlayerActor((Actor *)parent))
 		        || (isObject(_data.parentID) && parent->isOpen())
 		   ) {
-			g_vm->_containerList->setUpdate(_data.parentID);
+			g_vm->_cnm->setUpdate(_data.parentID);
 		}
 	}
 }
@@ -1310,7 +1310,7 @@ void GameObject::deleteObject(void) {
 	removeAllSensors();
 
 	//  Delete any container nodes for this object
-	while ((cn = g_vm->_containerList->find(dObj)) != nullptr)
+	while ((cn = g_vm->_cnm->find(dObj)) != nullptr)
 		delete cn;
 
 	if (isActor(_data.parentID)) {
@@ -1318,11 +1318,11 @@ void GameObject::deleteObject(void) {
 		Actor       *a = (Actor *)objectAddress(_data.parentID);
 		int         i;
 
-		if (a->leftHandObject == id) a->leftHandObject = Nothing;
-		if (a->rightHandObject == id) a->rightHandObject = Nothing;
+		if (a->_leftHandObject == id) a->_leftHandObject = Nothing;
+		if (a->_rightHandObject == id) a->_rightHandObject = Nothing;
 
-		for (i = 0; i < ARRAYSIZE(a->armorObjects); i++)
-			if (a->armorObjects[i] == id)
+		for (i = 0; i < ARRAYSIZE(a->_armorObjects); i++)
+			if (a->_armorObjects[i] == id)
 				a->wear(Nothing, i);
 	}
 
@@ -2126,7 +2126,7 @@ bool GameObject::canSenseProtaganist(SenseInfo &info, int16 range) {
 
 	if (isActor(this)) {
 		Actor *a = (Actor *) this;
-		return sensor.check(info, a->enchantmentFlags);
+		return sensor.check(info, a->_enchantmentFlags);
 	}
 	return sensor.check(info, nonActorSenseFlags);
 }
@@ -2143,7 +2143,7 @@ bool GameObject::canSenseSpecificActor(
 
 	if (isActor(this)) {
 		Actor *ac = (Actor *)this;
-		return sensor.check(info, ac->enchantmentFlags);
+		return sensor.check(info, ac->_enchantmentFlags);
 	}
 	return sensor.check(info, nonActorSenseFlags);
 }
@@ -2160,7 +2160,7 @@ bool GameObject::canSenseSpecificObject(
 
 	if (isActor(this)) {
 		Actor *a = (Actor *) this;
-		return sensor.check(info, a->enchantmentFlags);
+		return sensor.check(info, a->_enchantmentFlags);
 	}
 	return sensor.check(info, nonActorSenseFlags);
 }
@@ -2177,7 +2177,7 @@ bool GameObject::canSenseActorProperty(
 
 	if (isActor(this)) {
 		Actor *a = (Actor *) this;
-		return sensor.check(info, a->enchantmentFlags);
+		return sensor.check(info, a->_enchantmentFlags);
 	}
 	return sensor.check(info, nonActorSenseFlags);
 }
@@ -2194,7 +2194,7 @@ bool GameObject::canSenseObjectProperty(
 
 	if (isActor(this)) {
 		Actor *a = (Actor *) this;
-		return sensor.check(info, a->enchantmentFlags);
+		return sensor.check(info, a->_enchantmentFlags);
 	}
 	return sensor.check(info, nonActorSenseFlags);
 }
@@ -2240,7 +2240,7 @@ void GameObject::setProtoNum(int32 nProto) {
 
 		//  If this object is in a container, then redraw the container window
 		if (!isWorld(oldParentID))
-			g_vm->_containerList->setUpdate(oldParentID);
+			g_vm->_cnm->setUpdate(oldParentID);
 	}
 }
 
@@ -2311,7 +2311,7 @@ void GameObject::mergeWith(GameObject *dropObj, GameObject *target, int16 count)
 		dropObj->deleteObject();
 	}
 
-	g_vm->_containerList->setUpdate(target->IDParent());
+	g_vm->_cnm->setUpdate(target->IDParent());
 }
 
 
@@ -2340,7 +2340,7 @@ bool GameObject::stack(ObjectID enactor, ObjectID objToStackID) {
 		if (!objToStack->isMoving()) {
 			//  Increase the stack count
 			_data.location.z++;
-			g_vm->_containerList->setUpdate(IDParent());
+			g_vm->_cnm->setUpdate(IDParent());
 		}
 
 		return true;
@@ -2700,9 +2700,9 @@ void cleanupPrototypes(void) {
 	for (uint i = 0; i < nameListCount; ++i) {
 		if (g_vm->_nameList[i])
 			delete[] g_vm->_nameList[i];
-
-		g_vm->_nameList.clear();
 	}
+
+	g_vm->_nameList.clear();
 
 	for (uint i = 0; i < g_vm->_actorProtos.size(); ++i) {
 		if (g_vm->_actorProtos[i])
@@ -3028,7 +3028,7 @@ void initObjects(void) {
 	//  Make a pass over the actor list appending each actor to their
 	//  parent's child list
 	for (i = 0; i < kActorCount; i++) {
-		Actor       *a = g_vm->_actorList[i];
+		Actor       *a = g_vm->_act->_actorList[i];
 
 		if (a->_data.parentID == Nothing) {
 			a->append(ActorLimbo);
@@ -4375,7 +4375,7 @@ APPFUNC(cmdBrain) {
 			}
 		}
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == gCompImage::leave) {
+		if (ev.value == GfxCompImage::leave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		} else { //if (ev.value == gCompImage::enter)
 			// set the text in the cursor
@@ -4603,7 +4603,7 @@ void doBackgroundSimulation(void) {
 	while (actorUpdateCount--) {
 		Actor           *a;
 
-		a = g_vm->_actorList[actorIndex++];
+		a = g_vm->_act->_actorList[actorIndex++];
 
 		//  Wrap the counter around to the beginning if needed
 		if (actorIndex >= kActorCount) actorIndex = 0;

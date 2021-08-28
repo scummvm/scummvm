@@ -7,7 +7,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Grim Fandango.
    - Added support for The Longest Journey.
    - Added support for Myst 3: Exile.
-   - Added support for Hades' Challenge.
    - Added support for Little Big Adventure.
    - Added support for Red Comrades 1: Save the Galaxy.
    - Added support for Red Comrades 2: For the Great Justice.
@@ -42,6 +41,11 @@ For a more comprehensive changelog of the latest experimental code, see:
      applicable only to the OpenGL renderer.
    - Fixed switching to the default graphics mode. This was sometimes not applied
      until restarting ScummVM or starting a game.
+   - ScummVM GUI has been fully translated into Korean and Japanese.
+
+ ADL:
+   - Added support for Mystery House French translation.
+   - Added support for several game variants.
 
  AGI:
    - Added support for Russian versions. Input now works.
@@ -165,7 +169,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added animated cigar smoke to the close-up of captain Smirk in the CD
      version of Monkey Island 1. It was present in earlier versions.
    - Restored some missing Lemonhead lines in the English, Italian and German CD
-     versions of Monkey Island 1.
+     versions as well as the English Macintosh, FM-Towns and Sega CD versions
+     of Monkey Island 1.
    - Made the clock tower in Monkey Island 1 behave the same in the CD version
      as in earlier versions, i.e. after examining it you have to leave the
      room and come back again for its description to change.

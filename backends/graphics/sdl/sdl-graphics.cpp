@@ -230,14 +230,7 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	// Currently on macOS we need to scale the events for HiDPI screen, but on
 	// Windows we do not. We can find out if we need to do it by querying the
 	// SDL window size vs the SDL drawable size.
-	float dpiScale = 1.f;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	int windowWidth, windowHeight;
-	SDL_GetWindowSize(_window->getSDLWindow(), &windowWidth, &windowHeight);
-	int realWidth, realHeight;
-	SDL_GL_GetDrawableSize(_window->getSDLWindow(), &realWidth, &realHeight);
-	dpiScale = (float)realWidth / (float)windowWidth;
-#endif
+	float dpiScale = _window->getSdlDpiScalingFactor();
 	mouse.x = (int)(mouse.x * dpiScale + 0.5f);
 	mouse.y = (int)(mouse.y * dpiScale + 0.5f);
 	bool valid = true;

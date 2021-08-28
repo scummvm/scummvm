@@ -24,11 +24,13 @@
 #define TWINE_SCENE_MOVEMENTS_H
 
 #include "common/scummsys.h"
-#include "twine/scene/actor.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
 class TwinEEngine;
+class ActorStruct;
+struct ActorMoveStruct;
 
 class Movements {
 private:

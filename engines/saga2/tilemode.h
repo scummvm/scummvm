@@ -56,6 +56,14 @@ void TileModeCleanup(void);                      // free tile resources
 
 void noStickyMap(void);
 
+class TileModeManager {
+public:
+	CalenderTime *_timeOfLastAggressiveAct;    //  Used to determine the
+
+	TileModeManager();
+	~TileModeManager();
+};
+
 } // end of namespace Saga2
 
 #endif

@@ -116,6 +116,7 @@ QUIET_PLUGIN  = @echo '   ' PLUGIN ' ' $@;
 QUIET_LINK    = @echo '   ' LINK '   ' $@;
 QUIET_DWP     = @echo '   ' DWP '    ' $@;
 QUIET_WINDRES = @echo '   ' WINDRES '' $@;
+QUIET_CURL    = @echo '   ' CURL '   ' $@;
 QUIET         = @
 endif
 endif
@@ -130,8 +131,20 @@ $(EXECUTABLE).dwp: $(EXECUTABLE)
 	$(QUIET_DWP)$(DWP) -e $(EXECUTABLE)
 endif
 
+# Grab the ScummVM Manual from Read the Docs
+ifdef USE_CURL
+DIST_FILES_MANUAL := ScummVM\ Manual\ $(MANUALVERSION).pdf
+manual:
+	$(QUIET_CURL)$(CURL) -s "https://docs.scummvm.org/_/downloads/en/$(MANUALVERSION)/pdf/" --output $(DIST_FILES_MANUAL)
+# If manual doesn't exist yet and ends up in a requisite, download it
+$(DIST_FILES_MANUAL):
+	$(QUIET)$(MAKE) manual
+else
+manual:
+endif
+
 distclean: clean clean-devtools
-	$(RM) config.h config.mk config.log configure.stamp engines/engines.mk engines/plugins_table.h
+	$(RM) config.h config.mk config.log configure.stamp engines/engines.mk engines/detection_table.h engines/plugins_table.h "ScummVM Manual"*.pdf
 
 clean: clean-toplevel
 clean-toplevel:
@@ -293,6 +306,10 @@ DISTVERSION = git$(VER_REV)
 endif
 else
 DISTVERSION = $(VERSION)
+# Set the manual version to the release tag, unless a manual value was provided
+ifeq ($(MANUALVERSION),latest)
+MANUALVERSION = v$(VERSION)
+endif
 endif
 
 DISTNAME := scummvm-$(DISTVERSION)
@@ -342,6 +359,9 @@ dist-src: \
 DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYING.OFL COPYING.ISC COPYING.LUA COPYING.MIT COPYING.TINYGL COPYRIGHT NEWS.md README.md CONTRIBUTING.md)
 ifdef USE_PANDOC
 DIST_FILES_DOCS+=README$(PANDOCEXT) NEWS$(PANDOCEXT) CONTRIBUTING$(PANDOCEXT)
+endif
+ifdef DIST_FILES_MANUAL
+DIST_FILES_DOCS+=$(DIST_FILES_MANUAL)
 endif
 
 DIST_FILES_DOCS_languages=cz da de es fr it no-nb se
@@ -480,4 +500,4 @@ DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/wintermute/base/gfx/opengl/shad
 endif
 endif
 
-.PHONY: all clean distclean plugins dist-src clean-toplevel
+.PHONY: all clean distclean plugins dist-src clean-toplevel manual

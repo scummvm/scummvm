@@ -164,6 +164,10 @@ void Bitmap::SetClip(const Rect &rc) {
 	set_clip_rect(_alBitmap, rc.Left, rc.Top, rc.Right, rc.Bottom);
 }
 
+void Bitmap::ResetClip() {
+	set_clip_rect(_alBitmap, 0, 0, _alBitmap->w - 1, _alBitmap->h - 1);
+}
+
 Rect Bitmap::GetClip() const {
 	Rect temp;
 	get_clip_rect(_alBitmap, &temp.Left, &temp.Top, &temp.Right, &temp.Bottom);
