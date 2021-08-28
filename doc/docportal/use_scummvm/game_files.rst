@@ -76,7 +76,7 @@ There are three main aspects of Macintosh floppy or CD media that can make it di
 
 ScummVM supplies a dumper-companion that can extract data files from the iso image of a HFS medium and dump it as a zip file. Files with a resource forks are automatically converted to MacBinary files. And files are renamed if needed.
 
-1. Upload your iso here: `<https://servilla.org/dumper-companion/>`_
+1. Upload your iso here: `<https://www.scummvm.org/dumper-companion>`_
 2. Click the dump button
 3. Download the zip file
 4. Extract the zip file
