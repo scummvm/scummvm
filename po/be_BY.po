@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-28 19:01+0000\n"
+"POT-Creation-Date: 2021-08-28 19:15+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -686,7 +686,7 @@ msgstr "???"
 msgid "~Q~uit"
 msgstr "~В~ыхад"
 
-#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:215
+#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "Quit ScummVM"
 msgstr "Завяршыць ScummVM"
 
@@ -694,7 +694,7 @@ msgstr "Завяршыць ScummVM"
 msgid "A~b~out..."
 msgstr "Пра п~р~аграму..."
 
-#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:209
+#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:224
 msgid "About ScummVM"
 msgstr "Пра праграму ScummVM"
 
@@ -3548,64 +3548,64 @@ msgstr "Рэжым тачпада выключаны."
 msgid "Click Mode"
 msgstr "Рэжым пстрычкі"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:211
+#: backends/platform/sdl/macosx/appmenu_osx.mm:226
 msgid "Hide ScummVM"
 msgstr "Схаваць ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:212
+#: backends/platform/sdl/macosx/appmenu_osx.mm:227
 msgid "Hide Others"
 msgstr "Схаваць астатнія"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:213
+#: backends/platform/sdl/macosx/appmenu_osx.mm:228
 msgid "Show All"
 msgstr "Паказаць усё"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:218
+#: backends/platform/sdl/macosx/appmenu_osx.mm:233
 msgid "Window"
 msgstr "Акно"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:220
+#: backends/platform/sdl/macosx/appmenu_osx.mm:235
 msgid "Minimize"
 msgstr "Згарнуць"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: backends/platform/sdl/macosx/appmenu_osx.mm:238
 #: engines/zvision/metaengine.cpp:158
 msgid "Help"
 msgstr "Дапамога"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:228
+#: backends/platform/sdl/macosx/appmenu_osx.mm:243
 msgid "User Manual"
 msgstr "Дапаможнік карыстача"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:230
+#: backends/platform/sdl/macosx/appmenu_osx.mm:245
 msgid "General Information"
 msgstr "Агульная інфармацыя"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:231
+#: backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "What's New in ScummVM"
 msgstr "Што новага ў ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:233
+#: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Credits"
 msgstr "Аўтары"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:234
+#: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "GPL License"
 msgstr "Ліцэнзія GPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:235
+#: backends/platform/sdl/macosx/appmenu_osx.mm:250
 msgid "LGPL License"
 msgstr "Ліцэнзія LGPL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:236
+#: backends/platform/sdl/macosx/appmenu_osx.mm:251
 msgid "Freefont License"
 msgstr "Ліцэнзія Freefont"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:237
+#: backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "OFL License"
 msgstr "Ліцэнзія OFL"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:238
+#: backends/platform/sdl/macosx/appmenu_osx.mm:253
 msgid "BSD License"
 msgstr "Ліцэнзія BSD"
 

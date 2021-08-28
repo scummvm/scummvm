@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-28 19:01+0000\n"
+"POT-Creation-Date: 2021-08-28 19:15+0000\n"
 "PO-Revision-Date: 2021-08-25 10:40+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -680,7 +680,7 @@ msgstr "???"
 msgid "~Q~uit"
 msgstr "終了(~Q~)"
 
-#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:215
+#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "Quit ScummVM"
 msgstr "ScummVMを終了(~Q~)"
 
@@ -688,7 +688,7 @@ msgstr "ScummVMを終了(~Q~)"
 msgid "A~b~out..."
 msgstr "ScummVMについて(~b~)..."
 
-#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:209
+#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:224
 msgid "About ScummVM"
 msgstr "ScummVMについて"
 
@@ -3503,64 +3503,64 @@ msgstr "タッチパッド操作が無効になりました。"
 msgid "Click Mode"
 msgstr "クリックモード"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:211
+#: backends/platform/sdl/macosx/appmenu_osx.mm:226
 msgid "Hide ScummVM"
 msgstr "ScummVMを隠す"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:212
+#: backends/platform/sdl/macosx/appmenu_osx.mm:227
 msgid "Hide Others"
 msgstr "他を隠す"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:213
+#: backends/platform/sdl/macosx/appmenu_osx.mm:228
 msgid "Show All"
 msgstr "すべて表示"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:218
+#: backends/platform/sdl/macosx/appmenu_osx.mm:233
 msgid "Window"
 msgstr "ウインドウ"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:220
+#: backends/platform/sdl/macosx/appmenu_osx.mm:235
 msgid "Minimize"
 msgstr "最小化"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: backends/platform/sdl/macosx/appmenu_osx.mm:238
 #: engines/zvision/metaengine.cpp:158
 msgid "Help"
 msgstr "ヘルプ"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:228
+#: backends/platform/sdl/macosx/appmenu_osx.mm:243
 msgid "User Manual"
 msgstr "ユーザーマニュアル"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:230
+#: backends/platform/sdl/macosx/appmenu_osx.mm:245
 msgid "General Information"
 msgstr "総合案内"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:231
+#: backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "What's New in ScummVM"
 msgstr "ScummVMの新情報"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:233
+#: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Credits"
 msgstr "クレジット"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:234
+#: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "GPL License"
 msgstr "GPLライセンス"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:235
+#: backends/platform/sdl/macosx/appmenu_osx.mm:250
 msgid "LGPL License"
 msgstr "LGPLライセンス"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:236
+#: backends/platform/sdl/macosx/appmenu_osx.mm:251
 msgid "Freefont License"
 msgstr "Freefontライセンス"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:237
+#: backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "OFL License"
 msgstr "OFLライセンス"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:238
+#: backends/platform/sdl/macosx/appmenu_osx.mm:253
 msgid "BSD License"
 msgstr "BSDライセンス"
 
