@@ -37,7 +37,13 @@ RandomSource::RandomSource(const String &name) {
 #ifdef ENABLE_EVENTRECORDER
 	setSeed(g_eventRec.getRandomSeed(name));
 #else
-	setSeed(g_system->getMillis());
+	TimeDate time;
+	g_system->getTimeAndDate(time);
+	uint32 newSeed = time.tm_sec + time.tm_min * 60 + time.tm_hour * 3600;
+	newSeed += time.tm_mday * 86400 + time.tm_mon * 86400 * 31;
+	newSeed += time.tm_year * 86400 * 366;
+	newSeed = newSeed * 1000 + g_system->getMillis();
+	setSeed(newSeed);
 #endif
 }
 
