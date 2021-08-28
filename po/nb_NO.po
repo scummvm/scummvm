@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-08-28 19:01+0000\n"
+"POT-Creation-Date: 2021-08-28 19:15+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -692,7 +692,7 @@ msgstr ""
 msgid "~Q~uit"
 msgstr "~A~vslutt"
 
-#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:215
+#: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "Quit ScummVM"
 msgstr "Avslutt ScummVM"
 
@@ -700,7 +700,7 @@ msgstr "Avslutt ScummVM"
 msgid "A~b~out..."
 msgstr "~O~m..."
 
-#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:209
+#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:224
 msgid "About ScummVM"
 msgstr "Om ScummVM"
 
@@ -3632,65 +3632,65 @@ msgstr "Touchpad-modus deaktivert."
 msgid "Click Mode"
 msgstr "Klikkmodus"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:211
+#: backends/platform/sdl/macosx/appmenu_osx.mm:226
 msgid "Hide ScummVM"
 msgstr "Skjul ScummVM"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:212
+#: backends/platform/sdl/macosx/appmenu_osx.mm:227
 msgid "Hide Others"
 msgstr "Skjul andre"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:213
+#: backends/platform/sdl/macosx/appmenu_osx.mm:228
 msgid "Show All"
 msgstr "Vis alle"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:218
+#: backends/platform/sdl/macosx/appmenu_osx.mm:233
 msgid "Window"
 msgstr "Vindu"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:220
+#: backends/platform/sdl/macosx/appmenu_osx.mm:235
 msgid "Minimize"
 msgstr "Minimer"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: backends/platform/sdl/macosx/appmenu_osx.mm:238
 #: engines/zvision/metaengine.cpp:158
 msgid "Help"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:228
+#: backends/platform/sdl/macosx/appmenu_osx.mm:243
 #, fuzzy
 msgid "User Manual"
 msgstr "Brukeren avbrøt"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:230
+#: backends/platform/sdl/macosx/appmenu_osx.mm:245
 msgid "General Information"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:231
+#: backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "What's New in ScummVM"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:233
+#: backends/platform/sdl/macosx/appmenu_osx.mm:248
 msgid "Credits"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:234
+#: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "GPL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:235
+#: backends/platform/sdl/macosx/appmenu_osx.mm:250
 msgid "LGPL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:236
+#: backends/platform/sdl/macosx/appmenu_osx.mm:251
 msgid "Freefont License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:237
+#: backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "OFL License"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:238
+#: backends/platform/sdl/macosx/appmenu_osx.mm:253
 msgid "BSD License"
 msgstr ""
 
