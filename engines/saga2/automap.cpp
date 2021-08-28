@@ -193,41 +193,41 @@ AutoMap::~AutoMap() {
 // read map data
 
 void AutoMap::locateRegion(void) {
-	hResContext     *areaRes;       // tile resource handle
-	uint16          *trRes;
-	int16           regionCount;
-	struct TileRect {
-		int16       uMin, vMin, uMax, vMax;
-	} *tr;
-	WorldMapData    *wMap = &mapList[currentWorld->mapNum];
-	int             i;
+	Common::SeekableReadStream *stream;
+	hResContext *areaRes;       // tile resource handle
+	int16 regionCount;
+	WorldMapData *wMap = &mapList[currentWorld->mapNum];
 
 	areaRes = auxResFile->newContext(MKTAG('A', 'M', 'A', 'P'), "AreaList");
 	assert(areaRes != NULL);
 
-	trRes = (uint16 *)LoadResource(areaRes, MKTAG('Z', 'O', 'N', currentWorld->mapNum), "AreaList");
-	assert(trRes != NULL);
-	regionCount = *trRes;
+	stream = loadResourceToStream(areaRes, MKTAG('Z', 'O', 'N', currentWorld->mapNum), "AreaList");
+	regionCount = stream->readUint16LE();
 
 	_centerCoords = _trackPos >> (kTileUVShift + kPlatShift);
 
 	_localAreaRegion.min.u = _localAreaRegion.min.v = 0;
 	_localAreaRegion.max.u = _localAreaRegion.max.v = wMap->mapSize;
 
-	for (i = 0, tr = (TileRect *)(trRes + 1); i < regionCount; i++, tr++) {
-		if (_centerCoords.u >= tr->uMin
-		        &&  _centerCoords.u <= tr->uMax
-		        &&  _centerCoords.v >= tr->vMin
-		        &&  _centerCoords.v <= tr->vMax) {
-			_localAreaRegion.min.u = tr->uMin;
-			_localAreaRegion.max.u = tr->uMax;
-			_localAreaRegion.min.v = tr->vMin;
-			_localAreaRegion.max.v = tr->vMax;
+	for (int i = 0; i < regionCount; i++) {
+		int uMin, vMin, uMax, vMax;
+		uMin = stream->readSint16LE();
+		vMin = stream->readSint16LE();
+		uMax = stream->readSint16LE();
+		vMax = stream->readSint16LE();
+		if (_centerCoords.u >= uMin
+		        &&  _centerCoords.u <= uMax
+		        &&  _centerCoords.v >= vMin
+		        &&  _centerCoords.v <= vMax) {
+			_localAreaRegion.min.u = uMin;
+			_localAreaRegion.max.u = uMax;
+			_localAreaRegion.min.v = vMin;
+			_localAreaRegion.max.v = vMax;
 			break;
 		}
 	}
 
-	free(trRes);
+	delete stream;
 
 	auxResFile->disposeContext(areaRes);
 
