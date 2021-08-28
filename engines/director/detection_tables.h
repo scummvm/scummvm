@@ -37,6 +37,7 @@ static const PlainGameDescriptor directorGames[] = {
 	// Commercially released games
 	{ "10plus2",			"10+2" },
 	{ "1stcdtoddler",		"My First CD-ROM: Toddler School" },
+	{ "3bessones",			"Les Tres Bessones: Jugar i Aprendre" }, // Catalan title, English selectable in game
 	{ "abductthis",			"Abduct This!" },
 	{ "afiles",				"The A-Files" },
 	{ "agapito",			"Agapito's Crazy Adventure" },
@@ -164,6 +165,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "infinitycity",   	"Infinity City" },
 	{ "ironhelix",			"Iron Helix" },
 	{ "isis",				"Isis" },
+	{ "ispyschool",			"I Spy School Days" },
 	{ "jewels",				"Jewels of the Oracle" },
 	{ "jman",				"The Journeyman Project" },
 	{ "jman2",				"The Journeyman Project 2: Buried in Time" },
@@ -247,6 +249,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "peterrabbit",		"The Adventures of Peter Rabbit and Benjamin Bunny" },
 	{ "physicus",			"Physicus: Save the World with Science!" },
 	{ "phonicsquest",		"Disney Phonics Quest" },
+	{ "pingu1",				"Pingu: A Barrel of Fun!" },
 	{ "planetarizona",		"Escape from Planet Arizona" },
 	{ "playroom",			"The Playroom" },
 	{ "poohac",				"Winnie the Pooh Activity Center" },
@@ -295,6 +298,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "teamxtreme1",		"Operation: Weather Disaster" },
 	{ "teamxtreme2",		"Operation: Eco-Nightmare" },
 	{ "the7colors",			"The Seven Colors: Legend of PSY・S City" }, // English fan translation
+	{ "timmysafari",		"Timmy's Safari Adventure" },
 	{ "tkkg2",				"A Case for TKKG 2: Deadly Chocolate" },
 	{ "tkkg3",				"A Case for TKKG 3: The Mystery of the Mayan Treasure" },
 	{ "tkkg4",				"A Case for TKKG 4: The Secret of Dragon Claw Manor" },
@@ -446,6 +450,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "dreidel",			"DreidelLand: An Electronic Hanukah Treat" },
 	{ "emigre",				"Emigre Signs of Type: Big Cheese" },
 	{ "kfk",				"Kung Fu Kim" },
+	{ "limit0",				"Limit 0" },
 	{ "makeamug",			"Make-A-Mug" },
 	{ "mathtest",			"Math Test" },
 	{ "nomis",				"Nomis" },
@@ -474,6 +479,22 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "songbird",			"Solitudes: Songbird Symphony" },
 	{ "stressrelief2",		"Solitudes: Natural Stress Relief II" },
 	{ "tonetrakker",		"Tone Trakker" },
+
+	// Arabic titles
+	{ "abctrain",			"Alphabet Train" },
+	{ "alhisab",			"هيا نتعلم الحساب والمفاهيم" },		   // Let's learn arithmetic (al-hisab) and concepts
+	{ "anasheed",			"إسطوانة قطار القصص والأناشيد" },	   // Train of Stories & Songs
+	{ "futsoft",			"برامج تعليمية من شركة فيوتشر سوفت" }, // Future Soft educational demos
+	{ "hamamalachkal",		"تعلم مع همام الأشكال" },			   // Learn Shapes with Hamam
+	{ "hamamalalwan",		"تعلم مع همام الألوان" },			   // Learn Colors with Hamam
+	{ "hamamalhuruf",		"تعلم مع همام الحروف" },			   // Learn Letters with Hamam
+	{ "ktaralarkam",		"قطاد الأرقام" },					   // Numbers Train
+	{ "mesoftware",			"شركة الشرق الأوسط للبرمجيات" },	   // Middle East Software Company
+	{ "sakhr",				"مجلة برامج صخر" },					   // Sakhr Software Catalogue
+
+	// Catalan titles
+	{ "3iadins",			"TV3 i a dins!" },
+	{ "limit0inici",		"Límit 0 Inici" },
 
 	// Danish titles
 	{ "bamse1",				"Bamses allerskoreste spille-rom" },
@@ -2011,7 +2032,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("dcanyon", "", "DCANYON.EXE",		   "f5033a9fd54d41d348fa97bd13f8f088", 1050728,
 							  "00intro.Dir",		   "f6ca66b328f7fbcdd2e911273d74677c", 3777126, Common::IT_ITA, 404),
 	WINGAME2_l("dcanyon", "", "DCANYON.EXE",		   "85e7939a0c3041660defb80e0d530230", 744381,
-							  "00INTRO.DIR",		   "3621850ac727f9cf116c41143482c16c", 4044830, Common::JA_JPN, 404),
+							  "00INTRO.DIR",		   "3621850ac727f9cf116c41143482c16c", 4044830, Common::ZH_CNA, 404),
 	WINGAME1("dcanyoncd", "", "DINO_CD.EXE",		   "5fe054ed623541a92c04f1572ecb6c5d", 3160272, 404),
 
 	// Mac executable is Derrat Sorcerum™ v1.0.3
@@ -2615,6 +2636,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is ラインの黄金CD
 	MACDEMO1_l("rheingold", "Demo", "Das Rheingold CD", "b7e69c37b7355022d400c14aa97c5d54", 484351, Common::JA_JPN, 404),
 
+	// Found on Sakhr Arabic Grammar v1.1
+	// Product catalogue for Sakhr Software Co., Heliopolis, Egypt
+	WINGAME1_l("sakhr", "", "MMDEMO.EXE", "0e5436b4daa9e787abb2692bb5ca5454", 740524, Common::AR_ARB, 404),
+
 	MACGAME1_l("sakin2", "", "STARTCD", "67f572196550aedb1f9523d782022be0", 484351, Common::JA_JPN, 404),
 	WINGAME1_l("sakin2", "", "STARTCD.EXE", "0c8a44b04aa6e8f1483b05f6b567fa3c", 749233, Common::JA_JPN, 404),
 
@@ -3126,6 +3151,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("picasso", "Demo", "PICASS32.EXE", "3460ad87d2ba57104e2810a77b53c220", 1413437, 500),
 
+	// Later releases are D6
+	// Multi3 disc from Zeta Multimedia (Barcelona) contains Brazil/Catalan/Spanish
+	WINGAME2_l("pingu1", "",	"PINGU.EXE",	"2e62abdad839e42068afdcd0644d7dcf", 917473,
+								"PINTITLE.DXR", "e56af5ddd0750b8ec04cb4ea3d707066", 489234, Common::CA_ESP, 500),
+
 	WINGAME1("princetonsat98", "", "sat98_32.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1446775, 501),
 
 	// "Making of Pyst" parody video is from X-Fools
@@ -3302,11 +3332,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("1stcdtoddler", "", "_dkilbbt.exe", "d62438566e44826960fc16c5c23dbe43", 2012554, 650),
 
+	WINGAME1_l("3iadins", "", "TVC.EXE", "d62438566e44826960fc16c5c23dbe43", 1777420, Common::CA_ESP, 650),
+
 	// Created by NOVA Online for PBS / WGBH Boston
 	// Companion app for NOVA episode "Special Effects: Titanic and Beyond"
 	// Original PBS Airdate: November 3, 1998
 	// https://www.pbs.org/wgbh/nova/specialfx2/
 	SHKGAME1("50ftchicken", "", "chicken.dcr", "55fa0c9afa4ee4102b50258544fc28d4", 442575, 600),
+
+	// Published by Future Soft of Nasr City, Cairo
+	WINGAME1_l("abctrain", "", "abc.exe", "a593079aecf5bd938ce75264cac24b2d", 2091687, Common::AR_ARB, 600),
 
 	// Mini-game from X-Fools can also be launched separately
 	WINGAME1("abductthis", "", "ABDUCT32.EXE", "a593079aecf5bd938ce75264cac24b2d", 3644633, 600),
@@ -3419,6 +3454,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("fusion", "", "Start FUSION Mac", "3849d7cd0cdbe4f46333879cbed56492", 1029165, 600),
 	WINGAME1("fusion", "", "FUSION.exe", "518a98696fe1122e08410b0f157f21bf", 1513751, 602),
 
+	// Contains previews for educational and religious products for children and adults
+	// Miscellaneous section contains an art package and an encyclopedia on pregnancy and birth
+	WINGAME1_l("futsoft", "", "fs_demo.exe", "a593079aecf5bd938ce75264cac24b2d", 2091687, Common::AR_ARB, 600),
+
 	MACGAME1_l("garage", "", "Garage",	   "e5ed4533b25be47b708bb1245550cb2c", 118818, Common::JA_JPN, 650),
 	WINGAME2("garage", "",	 "Garage.exe", "0e43a5130e1964231fa25472108ca522", 1516264,
 							 "open.swf",   "9c6eb1fb21dfcd3ddff4c153c88a53b7", 96640, 650),
@@ -3441,6 +3480,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("griezelbus1", "", "BUS95.EXE", "518a98696fe1122e08410b0f157f21bf", 1748606, Common::NL_NLD, 602),
 
 	WINGAME1("hamletmurder", "", "PMHamlet.exe", "a593079aecf5bd938ce75264cac24b2d", 1873557, 600),
+
+	// Based on the original I Spy CD-ROM, now with dozens of new challenges
+	// Flemish Edition (c) 2000, Standaard Uitgeverij, Antwerp
+	// Dutch Edition (c) 2000, Halloween Educational Software, Amsterdam
+	// Mac installer creates an invisible projector file
+	MACGAME2_l("ispyschool", "", "Speel ik zie, ik zie",   "904cb6465321d8e1d12d2a5a29612050", 1029165,
+								 "ISPYMAIN.DXR",		   "d46cbab557f938b88660e77c4fe64b5a", 7136056, Common::NL_BEL, 600),
+	MACGAME2_l("ispyschool", "", "Speel ik zie, ik zie",   "904cb6465321d8e1d12d2a5a29612050", 1029165,
+								 "ISPYMAIN.DXR",		   "e152e96487decca8ddc8ab16de55366e", 7156892, Common::NL_NLD, 600),
+	WINGAME1_l("ispyschool", "", "Ikzie32.exe",			   "a593079aecf5bd938ce75264cac24b2d", 1989859, Common::NL_BEL, 600),
+	WINGAME1_l("ispyschool", "", "Ikzie32.exe",			   "a593079aecf5bd938ce75264cac24b2d", 1989785, Common::NL_NLD, 600),
 
 	WINGAME1("js123", "", "JSNUMS.EXE", "f78f95afb7457fd465be3691a3932b15", 1532801, 602),
 
@@ -3469,6 +3519,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2_l("kontyngent99", "", "START.EXE", "d62438566e44826960fc16c5c23dbe43", 1513041,
 								   "MAIN.DXR",	"98b4f7339e1f8f6628035e6317f78912", 21043440, Common::PL_POL, 650),
+
+	// Published by Future Soft of Nasr City, Cairo
+	WINGAME1_l("ktaralarkam", "", "123.exe", "a593079aecf5bd938ce75264cac24b2d", 2748951, Common::AR_ARB, 600),
 
 	WINGAME1_l("kultapossu", "", "POSSU_95.EXE", "518a98696fe1122e08410b0f157f21bf", 1531081, Common::FI_FIN, 602),
 
@@ -3870,6 +3923,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("alfons", "", "Alfons", "08c9ea94f6469e71ae0c71987bbf6323", 199733, Common::SE_SWE, 851),
 	WINGAME1_l("alfons", "", "Alfons.exe", "02913e7deeab4ece4ae44ad521082d4e", 2166668, Common::SE_SWE, 851),
 
+	// Developed by Almajarra المجرة
+	WINGAME2_l("alhisab", "", "Start.exe",	  "c163f36141579ee374f7b4b2bddee95a", 2117096,
+							  "Preintro.dxr", "5fb6543cc57d53fac26d975922c18e48", 11170, Common::AR_ARB, 850),
+
+	// Published by Future Soft of Nasr City, Cairo
+	WINGAME1_l("anasheed", "", "Anasheed.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 3595486, Common::AR_ARB, 800),
+
 	MACGAME2("avrilletgo", "ECD", "Projector",	   "4ea5fc09f79eee6dded94dc40f303779", 194863,
 								  "movie.dxr",	   "6d0c0712fdd32cf1de489b4c152b2460", 50908119, 800),
 	WINGAME2("avrilletgo", "ECD", "Projector.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 56830,
@@ -3957,6 +4017,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("girlspack", "", "Projector.exe",   "e24d4bab978b1a5c2326d2c56cf4d781", 2251176,
 								"picture.cxt",	   "e69c284d644c4f446b2ec4d876f94f17", 568440, Common::DE_DEU, 800),
 
+	// Early Education Series from Ariss Computer Inc. of Beirut
+	WINGAME1_l("hamamalachkal", "", "SHAPE.EXE",  "c163f36141579ee374f7b4b2bddee95a", 3784670, Common::AR_ARB, 850),
+	WINGAME1_l("hamamalalwan", "",  "COLOR.EXE",  "c163f36141579ee374f7b4b2bddee95a", 3786748, Common::AR_ARB, 850),
+	WINGAME1_l("hamamalhuruf", "",	"LETTER.EXE", "c163f36141579ee374f7b4b2bddee95a", 3797680, Common::AR_ARB, 850),
+
 	// Mac OS X executable is D9
 	MACGAME1("heuther", "Classic OS", "HuetherOS9", "789536da81694518f494945bb161ace9", 178551, 851),
 
@@ -3983,6 +4048,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("lewisclarkss", "", "Lewis and Clark Screen Saver", "b1bf6ceb4afd79814f93ee1d866f9a29", 243455, 850),
 	WINGAME1("lewisclarkss", "", "Lewis and Clark Screen Saver.exe", "c163f36141579ee374f7b4b2bddee95a", 29172512, 850),
+
+	// Plays school instructional videos, loads PDF documents, installs D10 game
+	WINGAME1_l("limit0inici", "", "limit0_inici.exe", "0c81c84ca4966313ad27d47daba44537", 723194, Common::CA_ESP, 851),
 
 	WINGAME1_l("lunes", "", "Lunes.exe", "9482a4a5f6ae02470ce1863808120f6e", 2258509, Common::IT_ITA, 851),
 
@@ -4183,6 +4251,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("stalker", "Press Kit", "Stalker.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 55314588, 900),
 
+	// Most likely this is ES_MEX. Find more examples to justify a new language code.
+	WINGAME1_l("timmysafari", "", "safari.exe", "c612aa43e7ef55aa4fd2e1085fb1ef7a", 2891613, Common::ES_ESP, 900),
+
 //////////////////////////////////////////////////
 //
 // Macromedia Director MX 2004 (v10)
@@ -4265,6 +4336,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 									 "LevelData.utd",		"5b504423963c8c6a09713f8ba96e100f", 976888, 1000),
 	WINGAME2("jsworld2t", "",	   	 "TeacherPanel.exe",	"bcf64185ce848b7b70858d62945f48a8", 3142911,
 									 "TeacherHub.dcr",		"95a9c2e05fac3181cafc22da932dae2a", 270371, 1000),
+
+	// Original filename is Límit 0.exe
+	// Requires installation from D8 app limit0inici
+	// Selection of Spanish, Catalan, English at start
+	WINGAME1("limit0", "", "Limit 0.exe", "827e5af88f4c096652a1523dc28c9bf4", 4664824, 1000),
+
+	// Found on Bonjour تعليم الفرنسية
+	// Software catalogue for Middle East Software Company of Giza, Egypt
+	WINGAME1_l("mesoftware", "", "MES.exe", "bcf64185ce848b7b70858d62945f48a8", 3560318, Common::AR_ARB, 1010),
 
 	MACGAME1("miamath", "OS X", "MiaOSX", "666bfa2ee1ae12443ce06f5dd142502b", 53741, 1000),
 	WINGAME1("miamath", "", "MiaMath.exe", "0c25e89b5084b272f0eab7827b6e411a", 2671820, 1000),
