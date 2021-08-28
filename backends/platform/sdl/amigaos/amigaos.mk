@@ -8,7 +8,7 @@
 # missing theme files and a missing valid translation.dat.
 # Switching to AmigaOS' own "makedir" until there is a fix or other solution.
 #
-amigaosdist: $(EXECUTABLE) $(PLUGINS)
+amigaosdist: $(EXECUTABLE) $(PLUGINS) $(DIST_FILES_DOCS)
 	makedir all $(AMIGAOSPATH)
 	cp ${srcdir}/dists/amigaos/scummvm_drawer.info $(patsubst %/,%,$(AMIGAOSPATH)).info
 	cp ${srcdir}/dists/amigaos/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info

@@ -5,7 +5,7 @@ bundle_name = release/scummvm-op
 f=$(shell which $(STRIP))
 libloc = $(shell dirname $(f))
 
-op-bundle: $(EXECUTABLE)
+op-bundle: $(EXECUTABLE) $(DIST_FILES_DOCS)
 	$(MKDIR) "$(bundle_name)"
 	$(MKDIR) "$(bundle_name)/scummvm"
 	$(MKDIR) "$(bundle_name)/scummvm/bin"
@@ -49,7 +49,7 @@ endif
 	tar -C $(bundle_name) -cvjf $(bundle_name).tar.bz2 .
 	rm -R ./$(bundle_name)
 
-op-pnd: $(EXECUTABLE)
+op-pnd: $(EXECUTABLE) $(DIST_FILES_DOCS)
 	$(MKDIR) "$(bundle_name)"
 	$(MKDIR) "$(bundle_name)/scummvm"
 	$(MKDIR) "$(bundle_name)/scummvm/bin"
