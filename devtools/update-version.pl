@@ -48,7 +48,7 @@ my @subs_files = qw(
 	dists/gph/README-GPH
 	dists/gph/scummvm.ini
 	dists/riscos/!Boot,feb
-	dists/amiga/RM2AG.rexx
+	dists/amigaos/md2ag.rexx
 	backends/platform/psp/README.PSP
 	);
 
