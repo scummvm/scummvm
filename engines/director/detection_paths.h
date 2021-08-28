@@ -166,6 +166,7 @@ const char *directoryGlobs[] = {
 	"ceremony",
 	"copytohd",						// Ceremony of Innocence
 	"settings",						// Saguaro & the City
+	"xn--t8jo8k",					// Perfect Blue screen savers
 	"maccurio",
 	"wincurio",						// Curio City
 	"a.d.a.m. the inside story 1.1", // ADAM

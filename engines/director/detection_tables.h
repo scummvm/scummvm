@@ -782,12 +782,20 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mominoki",			"もみの木の下で ～ The Day of St.Claus" },			// Under the Fir Tree
 	{ "moritaka",			"森高千里 CD-ROM 渡良瀬橋" },
 	{ "oceansbelow",		"Oceans Below" },
+	{ "pbdisplay",	        "PerfectBLUE DISPLAY" },
+	{ "pbflash",	        "PerfectBLUE FLASH" },
+	{ "pbmima",	            "PerfectBLUE MIMA" },
+	{ "pbosakana",	        "PerfectBLUE OSAKANA" },
+	{ "pbtoilet1",	        "PerfectBLUE TOILET1" },
+	{ "pbtoilet2",	        "PerfectBLUE TOILET2" },
 	{ "perfectblue",        "Perfect Blue そらいろ★ナイト" },
 	{ "sakurascr",			"さくらのSCRセレクタ" },							// Sakura's SCR Selector
 	{ "satodesign",			"The Art of Computer Designing: A Black and White Approach" },
 	{ "satohomosexual",		"Homosexual" },
 	{ "sculpt4d",			"Sculpt 4D" },
 	{ "spawncollection",	"Spawn Figure Collection for Windows 95" },
+	{ "ssheidi1",			"Heidi スクリーンセーバー 1" },
+	{ "ssheidi2",			"Heidi スクリーンセーバー 2" },
 	{ "sskero",				"ケロ Screen Saver" },
 	{ "sssakura",			"さくら Screen Saver" },
 	{ "ssyamazaki",			"山崎君 Screen Saver" },							// Yamazaki-kun
@@ -1092,12 +1100,22 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "barbssshoes",		"Barbie Screen Styler: Shoes" },
 	{ "billetrille1ss",		"Bille & Trille 1 Screen Saver" },
 	{ "cinemac",			"CineMac Screen Saver Factory" },
+	{ "globiss",			"Globi's Bildschirmschoner" },
 	{ "lewisclarkss",		"Lewis and Clark Screen Saver" },
 	{ "photos4us",			"Photos4us" },
+	{ "pingufight",			"Pingu Snowball Fight" },
+	{ "pingufish",			"Pingu Fish Chase" },
+	{ "pinguss",			"Pingu Screen Savers" },
+	{ "pingustorm",			"Pingu Snow Storm" },
+	{ "pingustunt",			"Stunt Pingu" },
+	{ "pingutime",			"Time for Pingu" },
+	{ "ss007",				"The James Bond Screensaver" },
 	{ "ss102dalmations",	"102 Dalmations Screen Saver" },
 	{ "sscocacola",			"Coca-Cola Screen Saver" },
 	{ "ssdietcoke",			"Diet Coke Screen Saver" },
 	{ "ssgbi",				"German Bold Italic Screen Saver" },
+	{ "sshercules",			"Hercules: The Legendary Journeys Screen Saver" },
+	{ "sshighlander",       "Highlander: The Screen Saver" },
 	{ "ssholidaymickey",	"Holiday Mickey Screen Saver" },
 	{ "ssleepipes",			"The Lee Pipes Desktop Animated Feature" },
 	{ "sslivepicture",		"Live Picture Screen Saver" },
@@ -3705,6 +3723,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("parliament", "", "GUIDE.EXE", "2e62abdad839e42068afdcd0644d7dcf", 918871, 500),
 
+    // Screen savers from Perfect Blue (requires installation)
+    MACGAME1("pbdisplay", "",   "Display",      "687fa112eefc7ff11ed97ab0dce67401", 806915, 501),
+    MACGAME1("pbflash", "",     "Flash",        "687fa112eefc7ff11ed97ab0dce67401", 806913, 501),
+    MACGAME1("pbmima", "",      "MIMA",         "687fa112eefc7ff11ed97ab0dce67401", 806912, 501),
+    MACGAME1("pbosakana", "",   "OSAKANA",      "687fa112eefc7ff11ed97ab0dce67401", 806915, 501),
+    MACGAME1_l("pbtoilet1", "", "Toilet1",      "687fa112eefc7ff11ed97ab0dce67401", 806915, Common::JA_JPN, 501),
+    MACGAME1_l("pbtoilet2", "", "Toilet2",      "687fa112eefc7ff11ed97ab0dce67401", 806915, Common::JA_JPN, 501),
+    WINGAME1("pbdisplay", "",   "INSTALL1.exe", "2535f11350bc1f2b7ca2dcc6c0cdddfd", 2339226, 501),
+    WINGAME1("pbflash", "",     "INSTALL2.exe", "2535f11350bc1f2b7ca2dcc6c0cdddfd", 2181972, 501),
+    WINGAME1("pbmima", "",      "INSTALL6.exe", "2535f11350bc1f2b7ca2dcc6c0cdddfd", 1517124, 501),
+    WINGAME1("pbosakana", "",   "INSTALL3.exe", "2535f11350bc1f2b7ca2dcc6c0cdddfd", 1665350, 501),
+    WINGAME1_l("pbtoilet1", "", "INSTALL4.exe", "2535f11350bc1f2b7ca2dcc6c0cdddfd", 2878548, Common::JA_JPN, 501),
+    WINGAME1_l("pbtoilet2", "", "INSTALL5.exe", "2535f11350bc1f2b7ca2dcc6c0cdddfd", 2836264, Common::JA_JPN, 501),
+
 	// Also calls external files such as pdf, html, midi
 	WINGAME2("pcwuk", "Disc no.4", "FILE.EXE",	   "842014a812b454620f64b860fd7211f0", 968431,
 								   "INTPCW12.DXR", "85c81b0cf75a2576568026c7b55d5f17", 254794, 501),
@@ -3735,6 +3767,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"PINTITLE.DXR", "3c4192601421a1eee08bb6b8f0c33b84", 481270, Common::PT_BRA, 500),
 	WINGAME2_l("pingu1", "",	"PINGU.EXE",	"2e62abdad839e42068afdcd0644d7dcf", 917473,
 								"Pintitle.dxr", "7244d4a9cca1ef8d665b11639233a7d6", 524602, Common::SE_SWE, 500),
+
+	// Included with Pingu 1. Contains no text nor speech.
+	// Mac version uses a different projector for each screen saver
+	WINGAME1("pinguss", "GSP",	"PINGU_SS.EXE", "2e62abdad839e42068afdcd0644d7dcf", 918527, 500),
+	WINGAME1("pinguss", "Zeta", "Pingu_ss.exe", "2e62abdad839e42068afdcd0644d7dcf", 918549, 500),
+	MACGAME1("pingufish",  "Screen Saver", " PINGU - Fish Chase",	  "35dbf55e70f69e00ca016e3663379970", 799260, 500),
+	MACGAME1("pingufight", "Screen Saver", " PINGU - Snowball Fight", "35dbf55e70f69e00ca016e3663379970", 799260, 500),
+	MACGAME1("pingustorm", "Screen Saver", " PINGU - Snow Storm",	  "35dbf55e70f69e00ca016e3663379970", 799260, 500),
+	MACGAME1("pingustunt", "Screen Saver", " PINGU - Stunt Pingu",	  "35dbf55e70f69e00ca016e3663379970", 799260, 500),
+	MACGAME1("pingutime",  "Screen Saver", " PINGU - Time for Pingu", "35dbf55e70f69e00ca016e3663379970", 799282, 500),
 
     // Found on Sierra On-Line's MasterCook Cooking Light v4.0 (1996)
     // There are no Mac demos on this disc
@@ -3825,6 +3867,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("spellingbee", "", "SPELLING",	   "231d3041df162be4a0ddd36a74eb03b6", 719261, 501),
 	WINGAME2("spellingbee", "", "WIN95.EXE",   "1a7acbba10a7246ba58c1d53fc7203f5", 1411387,
 								"136MAIN.DXR", "b46fe5ee3a0903bb763121059cee2c06", 679554, 501),
+
+    // Windows provides 640x480 and 800x600 movies; Mac provides 640x480 and 832x624 movies
+    // Created by Unis Multimedia, Hollywood, California (1996) using CinéMac 1.2.2c
+    // The low- and hi-res movies have the same filenames, so there can be only one installed at a time
+    MACGAME1("sshighlander", "v1.10e", "Highlander Screen Saver", "6b91ac61174d6a07bea6a8820a1fe172", 802522, 500),
+    WINGAME1("sshighlander", "", "Highlander Screen Saver.exe", "3460ad87d2ba57104e2810a77b53c220", 1976229, 500),
 
 	// Screen savers found on Let's Play with "Sakura" activity CD
 	// Windows versions on same disc are D6
@@ -4132,6 +4180,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("globiabc", "", "Globi's ABC Power PC", "0bc838e9350c4749e2d10523d620a2ad", 117356, Common::DE_DEU, 650),
 	WINGAME1_l("globiabc", "", "GLOBI32.EXE", "d62438566e44826960fc16c5c23dbe43", 1711195, Common::DE_DEU, 650),
 
+	// Windows screen saver is in BILDNT directory
+	MACGAME1_l("globiss", "", "Globi's Bildschirmschoner", "512aa445bccb66babe48419237422745", 1150767, Common::DE_DEU, 650),
+	WINGAME1_l("globiss", "", "GLOBISAZ.EXE", "6e893e1d588f51d9d6202410a38a73a6", 9857917, Common::DE_DEU, 650),
+
 	// Published by A-Star Interactive (Singapore)
 	WINGAME1("grammarplaytime2", "", "H_32.exe", "a593079aecf5bd938ce75264cac24b2d", 2234889, 600),
 
@@ -4325,6 +4377,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("shrlucky", "", "Arcade", "dab7a517b0877454d1e16c40c9b5a9be", 1029193, 600),
 	WINGAME1("shrlucky", "", "ARCWIN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 7304861, 600),
+
+	WINGAME1("ss007", "", "007.exe", "d62438566e44826960fc16c5c23dbe43", 4971852, 650),
 
 	MACGAME1("ssgbi", "", "GBI Screen Saver", "9c9907925c1bf80a71ae27f423925725", 1130762, 601),
 
@@ -4616,6 +4670,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("solmahjong", "2001 version", "Mahjong",	  "0944b962ebb00f4b5d5149d220f8449b", 112758, 702),
 	WINGAME1("solmahjong", "1999 version", "Mahjong.exe", "7a4164849d026c0f2aa8ea4c7d5447ba", 2757472, 702),
 	WINGAME1("solmahjong", "2001 version", "Mahjong.exe", "7a4164849d026c0f2aa8ea4c7d5447ba", 2832712, 702),
+
+    WINGAME1("ssheidi1", "", "_heidi01.exe", "91823501d9b3f9b9ced814101312fd11", 5985066, 701),
+    WINGAME1("ssheidi2", "", "_heidi02.exe", "91823501d9b3f9b9ced814101312fd11", 7783641, 701),
+
+	// Produced by Davis-Panzer Merchandising; developed by Unis Multimedia, Hollywood, California (1999)
+	MACGAME1("sshercules", "", "Hercules Screen Saver", "fa52f0136cde568a46249ce74f01a324", 259047, 700),
+	WINGAME1("sshercules", "", "Herc Screen Saver.exe", "7c18c9a6af2694156bf09ed195c1ab09", 47066937, 702),
 
 	// http://web.archive.org/web/20080412010505/http://www.beachware.com/download/
 	MACGAME1("ssmorphclock", "", "MorphClock", "fa52f0136cde568a46249ce74f01a324", 189234, 700),
