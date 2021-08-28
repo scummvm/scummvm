@@ -5,7 +5,7 @@ bundle_name = release/scummvm-caanoo
 f=$(shell which $(STRIP))
 libloc = $(shell dirname $(f))
 
-caanoo-bundle: $(EXECUTABLE) $(DIST_FILES_DOCS)
+caanoo-bundle: $(EXECUTABLE)
 	$(MKDIR) "$(bundle_name)"
 	$(MKDIR) "$(bundle_name)/scummvm"
 	$(MKDIR) "$(bundle_name)/scummvm/saves"
@@ -43,7 +43,7 @@ endif
 	tar -C $(bundle_name) -cvjf $(bundle_name).tar.bz2 .
 	rm -R ./$(bundle_name)
 
-caanoo-bundle-debug: $(EXECUTABLE) $(DIST_FILES_DOCS)
+caanoo-bundle-debug: $(EXECUTABLE)
 	$(MKDIR) "$(bundle_name)"
 	$(MKDIR) "$(bundle_name)/scummvm"
 	$(MKDIR) "$(bundle_name)/scummvm/saves"

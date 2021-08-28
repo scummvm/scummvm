@@ -9,7 +9,7 @@ APP_NAME=!ScummVM
 DIST_FILES_DOCS_plaintext := $(filter-out $(DIST_FILES_MANUAL),$(DIST_FILES_DOCS))
 
 # Special target to create an RISC OS snapshot installation
-riscosdist: all $(DIST_FILES_DOCS)
+riscosdist: all
 	mkdir -p $(APP_NAME)
 	elf2aif $(EXECUTABLE) $(APP_NAME)/scummvm,ff8
 	cp ${srcdir}/dists/riscos/!Boot,feb $(APP_NAME)/!Boot,feb
