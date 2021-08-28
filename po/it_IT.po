@@ -2435,8 +2435,8 @@ msgid ""
 msgstr ""
 "ATTENZIONE: La posizione dedicata al salvataggio automatico è già occupata "
 "da un salvataggio denominato %S. Puoi spostare tale salvataggio in una "
-"posizione libera, sovrascriverlo, o disabilitare il salvataggio automatico ("
-"verrà chiesto nuovamente al prossimo avvio del gioco)"
+"posizione libera, sovrascriverlo, o disabilitare il salvataggio automatico "
+"(verrà chiesto nuovamente al prossimo avvio del gioco)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
