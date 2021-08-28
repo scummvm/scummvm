@@ -46,11 +46,11 @@ static const uint buttonHorizontalMargin = 25;
 static const uint buttonVerticalMargin   = 5;
 static const Color textColor = Color(0xFF, 0xFF, 0xFF);
 
-DialogBox::DialogBox(Gfx::Driver *gfx, Cursor *cursor) :
+DialogBox::DialogBox(StarkEngine *vm, Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
 		_foregroundTexture(nullptr),
 		_confirmCallback(nullptr) {
-
+	_vm = vm;
 	_surfaceRenderer = gfx->createSurfaceRenderer();
 
 	Graphics::Surface *background = loadBackground();
@@ -228,12 +228,9 @@ Graphics::Surface *DialogBox::loadBackground() {
 	// GOG version of The Longest Journey is 1.0.0.142 "RC1" (Special Build: "Paper Sun")
 	// Steam's game.exe does not contain a valid resource for the background bitmap id 147
 	// so we skip trying to retrieve it based on build number.
-	Common::WinResources::VersionInfo *versionInfo = executable.getVersionResource(1);
-	if (versionInfo
-	    && versionInfo->fileVersion[0] == 1
-	    && versionInfo->fileVersion[1] == 0
-	    && versionInfo->fileVersion[2] == 0
-	    && versionInfo->fileVersion[3] == 161) {
+	// Important Note: For this fix to have any effect the game may have to be re-added to ScummVM 
+	//      so that it can be detected as the Steam version and set the flag.
+	if (_vm->getGameFlags() & GF_MISSING_EXE_RESOURCES) {
 		warning("Steam version does not contain the modal dialog background bitmap in 'game.exe'. Using fallback color for dialog background...");
 		return nullptr;
 	}

@@ -26,6 +26,7 @@
 #include "engines/engine.h"
 #include "common/events.h"
 #include "common/str-array.h"
+#include "stark/detection.h"
 
 struct ADGameDescription;
 
@@ -69,6 +70,8 @@ public:
 
 	/** Extract the save slot number from the provided save file name */
 	static int getSaveNameSlot(const char *target, const Common::String &saveName);
+
+	uint32 getGameFlags() const;
 
 protected:
 	// Engine APIs

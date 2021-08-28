@@ -23,6 +23,7 @@
 #ifndef STARK_SERVICES_USER_INTERFACE_H
 #define STARK_SERVICES_USER_INTERFACE_H
 
+#include "engines/stark/stark.h"
 #include "engines/stark/ui/screen.h"
 
 #include "engines/stark/services/gamemessage.h"
@@ -73,7 +74,7 @@ enum {
  */
 class UserInterface {
 public:
-	explicit UserInterface(Gfx::Driver *gfx);
+	explicit UserInterface(StarkEngine *vm, Gfx::Driver *gfx);
 	virtual ~UserInterface();
 
 	void init();
@@ -200,6 +201,7 @@ private:
 
 	void cycleInventory(bool forward);
 
+	StarkEngine *_vm;
 	GameScreen *_gameScreen;
 	FMVScreen *_fmvScreen;
 	DiaryIndexScreen *_diaryIndexScreen;
