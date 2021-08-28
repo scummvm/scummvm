@@ -2520,44 +2520,46 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 			}
 		}
 	}
-	Common::U32StringArray altButtons;
-	altButtons.push_back(_("Ignore"));
-	altButtons.push_back(_("Disable autosave"));
-	Common::U32String message = _("WARNING: Autosave was enabled. Some of your games have existing "
+	if (!saveList.empty()) {
+		Common::U32StringArray altButtons;
+		altButtons.push_back(_("Ignore"));
+		altButtons.push_back(_("Disable autosave"));
+		Common::U32String message = _("WARNING: Autosave was enabled. Some of your games have existing "
 				  "saved games on the autosave slot. You can either move the "
 				  "existing saves to new slots, disable autosave, or ignore (you "
 				  "will be prompted when autosave is about to overwrite a save).\n"
 				  "List of games:\n");
-	for (ExistingSaveList::const_iterator it = saveList.begin(), end = saveList.end(); it != end; ++it)
-		message += Common::U32String(it->target) + Common::U32String(": ") + it->desc.getDescription() + "\n";
-	message.deleteLastChar();
-	if (hasMore)
-		message += _("\nAnd more...");
-	GUI::MessageDialog warn(message, _("Move"), altButtons);
-	switch (warn.runModal()) {
-	case GUI::kMessageOK: {
-		ExistingSaveList failedSaves;
-		for (ExistingSaveList::const_iterator it = saveList.begin(), end = saveList.end(); it != end; ++it) {
-			if (it->metaEngine->copySaveFileToFreeSlot(it->target.c_str(), it->desc.getSaveSlot())) {
-				g_system->getSavefileManager()->removeSavefile(
+		for (ExistingSaveList::const_iterator it = saveList.begin(), end = saveList.end(); it != end; ++it)
+			message += Common::U32String(it->target) + Common::U32String(": ") + it->desc.getDescription() + "\n";
+		message.deleteLastChar();
+		if (hasMore)
+			message += _("\nAnd more...");
+		GUI::MessageDialog warn(message, _("Move"), altButtons);
+		switch (warn.runModal()) {
+		case GUI::kMessageOK: {
+			ExistingSaveList failedSaves;
+			for (ExistingSaveList::const_iterator it = saveList.begin(), end = saveList.end(); it != end; ++it) {
+				if (it->metaEngine->copySaveFileToFreeSlot(it->target.c_str(), it->desc.getSaveSlot())) {
+					g_system->getSavefileManager()->removeSavefile(
 							it->metaEngine->getSavegameFile(it->desc.getSaveSlot(), it->target.c_str()));
-			} else {
-				failedSaves.push_back(*it);
+				} else {
+					failedSaves.push_back(*it);
+				}
 			}
+			if (!failedSaves.empty()) {
+				Common::U32String failMessage = _("ERROR: Failed to move the following saved games:\n");
+				for (ExistingSaveList::const_iterator it = failedSaves.begin(), end = failedSaves.end(); it != end; ++it)
+					failMessage += Common::U32String(it->target) + Common::U32String(": ") + it->desc.getDescription() + "\n";
+				failMessage.deleteLastChar();
+				GUI::MessageDialog(failMessage).runModal();
+			}
+			break;
 		}
-		if (!failedSaves.empty()) {
-			Common::U32String failMessage = _("ERROR: Failed to move the following saved games:\n");
-			for (ExistingSaveList::const_iterator it = failedSaves.begin(), end = failedSaves.end(); it != end; ++it)
-				failMessage += Common::U32String(it->target) + Common::U32String(": ") + it->desc.getDescription() + "\n";
-			failMessage.deleteLastChar();
-			GUI::MessageDialog(failMessage).runModal();
+		case GUI::kMessageAlt:
+			break;
+		case GUI::kMessageAlt + 1:
+			return false;
 		}
-		break;
-	}
-	case GUI::kMessageAlt:
-		break;
-	case GUI::kMessageAlt + 1:
-		return false;
 	}
 	return true;
 }
