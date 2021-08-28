@@ -33,7 +33,7 @@
 namespace Scumm {
 
 TextRenderer_v7::TextRenderer_v7(ScummEngine *vm, GlyphRenderer_v7 *gr)
-	: _gameId(vm->_game.id), _lang(vm->_language), _2byteCharWidth(vm->_2byteWidth), _screenWidth(vm->_screenWidth), _useCJKMode(vm->_useCJKMode), _lineBreakMarker(vm->_newLineCharacter), _gr(gr) {
+	: _gameId(vm->_game.id), _lang(vm->_language), _2byteCharWidth(vm->_2byteWidth), _screenWidth(vm->_screenWidth), _useCJKMode(vm->_useCJKMode), _spacing(vm->_language != Common::JA_JPN ? 1 : 0), _lineBreakMarker(vm->_newLineCharacter), _gr(gr) {
 }
 
 int TextRenderer_v7::getStringWidth(const char *str, uint numBytesMax) {
@@ -47,22 +47,25 @@ int TextRenderer_v7::getStringWidth(const char *str, uint numBytesMax) {
 	int font = _gr->setFont(-1);
 
 	while (*str && numBytesMax) {
-		while (str[0] == '^') {
-			switch (str[1]) {
-			case 'f':
+		if (*str == '^') {
+			if (str[1] == 'f') {
 				_gr->setFont(str[3] - '0');
 				str += 4;
-				break;
-			case 'c':
+				numBytesMax -= 4;
+				continue;
+			} else if (str[1] == 'c') {
 				str += 5;
-				break;
-			default:
-				error("CharsetRenderer::getStringWidth(): Invalid escape code in text string");
+				numBytesMax -= 5;
+				continue;
+			} else if (str[1] == 'l') {
+				str += 2;
+				numBytesMax -= 2;
+				continue;
 			}
 		}
 
 		if (is2ByteCharacter(_lang, *str)) {
-			width += _2byteCharWidth + (_lang != Common::JA_JPN ? 1 : 0);
+			width += _2byteCharWidth + _spacing;
 			++str;
 			--numBytesMax;
 		} else if (*str == '\n') {
@@ -91,17 +94,20 @@ int TextRenderer_v7::getStringHeight(const char *str, uint numBytesMax) {
 	int font = _gr->setFont(-1);
 
 	while (*str && numBytesMax) {
-		while (str[0] == '^') {
-			switch (str[1]) {
-			case 'f':
+		if (*str == '^') {
+			if (str[1] == 'f') {
 				_gr->setFont(str[3] - '0');
 				str += 4;
-				break;
-			case 'c':
+				numBytesMax -= 4;
+				continue;
+			} else if (str[1] == 'c') {
 				str += 5;
-				break;
-			default:
-				error("CharsetRenderer::getStringWidth(): Invalid escape code in text string");
+				numBytesMax -= 5;
+				continue;
+			} else if (str[1] == 'l') {
+				str += 2;
+				numBytesMax -= 2;
+				continue;
 			}
 		}
 
@@ -131,18 +137,21 @@ void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buf
 		}
 	} else {
 		for (int i = 0; str[i] != 0 && numBytesMax; ++i) {
-			while (str[i] == '^') {
-				switch (str[i + 1]) {
-				case 'f':
+			if (str[i] == '^') {
+				if (str[i + 1] == 'f') {
 					_gr->setFont(str[i + 3] - '0');
+					i += 3;
+					numBytesMax -= 4;
+					continue;
+				} else if (str[i + 1] == 'c') {
+					col = str[i + 4] - '0' + 10 *(str[i + 3] - '0');
 					i += 4;
-					break;
-				case 'c':
-					col = str[4] - '0' + 10 *(str[3] - '0');
-					i += 5;
-					break;
-				default:
-					error("CharsetRenderer::getStringWidth(): Invalid escape code in text string");
+					numBytesMax -= 5;
+					continue;
+				} else if (str[i + 1] == 'l') {
+					i++;
+					numBytesMax -= 2;
+					continue;
 				}
 			}
 
@@ -197,7 +206,7 @@ void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &cl
 
 	_gr->setFont(font);
 
-	clipRect.left = center ? x - maxWidth : x;
+	clipRect.left = center ? x - maxWidth / 2: x;
 	clipRect.right = MIN<int>(clipRect.right, clipRect.left + maxWidth);
 	clipRect.top = y2;
 	clipRect.bottom = y;
@@ -334,7 +343,7 @@ void ScummEngine_v7::createTextRenderer(GlyphRenderer_v7 *gr) {
 	_textV7 = new TextRenderer_v7(this, gr);
 }
 
-void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrapped) {
+void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrap) {
 	assert(_blastTextQueuePos + 1 <= ARRAYSIZE(_blastTextQueue));
 
 	if (_useCJKMode) {
@@ -347,7 +356,9 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos];
 	convertMessageToString(text, bt.text, sizeof(bt.text));
-	if (!*bt.text)
+
+	// The original DIG interpreter expressly checks for " " strings here. And the game also sends these quite frequently...
+	if (!bt.text[0] || (bt.text[0] == (byte)' ' && !bt.text[1]))
 		return;
 
 	_blastTextQueuePos++;
@@ -356,13 +367,11 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 	bt.color = color;
 	bt.charset = charset;
 	bt.center = center;
-	bt.wrap = wrapped;
+	bt.wrap = wrap;
 }
 
 void ScummEngine_v7::drawBlastTexts() {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
-	Common::Rect _defaultTextClipRect = Common::Rect(vs->w, vs->h);
-	Common::Rect _wrappedTextClipRect = _game.id == GID_CMI ? Common::Rect(10, 10, 630, 470) : _defaultTextClipRect;
 
 	for (int i = 0; i < _blastTextQueuePos; i++) {
 		BlastText &bt = _blastTextQueue[i];
@@ -371,10 +380,10 @@ void ScummEngine_v7::drawBlastTexts() {
 
 		if (bt.wrap) {
 			bt.rect = _wrappedTextClipRect;
-			_textV7->drawStringWrap((const char*)bt.text, (byte*)vs->getPixels(0, 0), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.center);
+			_textV7->drawStringWrap((const char*)bt.text, (byte*)vs->getBasePtr(0, 0), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.center);
 		} else {
 			bt.rect = _defaultTextClipRect;
-			_textV7->drawString((const char*)bt.text, (byte*)vs->getPixels(0, 0), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.center);
+			_textV7->drawString((const char*)bt.text, (byte*)vs->getBasePtr(0, 0), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.center);
 		}
 
 		markRectAsDirty(vs->number, bt.rect);
@@ -400,11 +409,11 @@ void ScummEngine_v7::processSubtitleQueue() {
 		if (!st->actorSpeechMsg && (!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0))
 			// no subtitles and there's a speech variant of the message, don't display the text
 			continue;
-		enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, false);
+		enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, st->center, st->wrap);
 	}
 }
 
-void ScummEngine_v7::addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset) {
+void ScummEngine_v7::addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset, bool center, bool wrap) {
 	if (text[0] && strcmp((const char *)text, " ") != 0) {
 		assert(_subtitleQueuePos < ARRAYSIZE(_subtitleQueue));
 		SubtitleText *st = &_subtitleQueue[_subtitleQueuePos];
@@ -420,6 +429,8 @@ void ScummEngine_v7::addSubtitleToQueue(const byte *text, const Common::Point &p
 		st->color = color;
 		st->charset = charset;
 		st->actorSpeechMsg = _haveActorSpeechMsg;
+		st->center = center;
+		st->wrap = wrap;
 		++_subtitleQueuePos;
 	}
 }
@@ -435,10 +446,6 @@ void ScummEngine_v7::CHARSET_1() {
 		return;
 	}
 
-	byte subtitleBuffer[2048];
-	byte *subtitleLine = subtitleBuffer;
-	Common::Point subtitlePos;
-
 	processSubtitleQueue();
 
 	if (!_haveMsg)
@@ -452,21 +459,20 @@ void ScummEngine_v7::CHARSET_1() {
 	if (a && _string[0].overhead) {
 		int s;
 
-		_string[0].xpos = a->getPos().x - _virtscr[kMainVirtScreen].xstart;
+		_string[0].xpos = a->getPos().x + _screenWidth / 2 - camera._cur.x;
 		s = a->_scalex * a->_talkPosX / 255;
 		_string[0].xpos += (a->_talkPosX - s) / 2 + s;
 
-		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop;
+		int yyy1 = a->getPos().y;
+		int yyy2 = a->getElevation();
+
+		_string[0].ypos = a->getPos().y - a->getElevation() + _screenHeight / 2 - camera._cur.y;
 		s = a->_scaley * a->_talkPosY / 255;
 		_string[0].ypos += (a->_talkPosY - s) / 2 + s;
 	}
 
 	_charset->setColor(_charsetColor);
-
-	if (a && a->_charset)
-		_charset->setCurID(a->_charset);
-	else
-		_charset->setCurID(_string[0].charset);
+	_charset->setCurID(_string[0].charset);
 
 	if (_talkDelay)
 		return;
@@ -482,110 +488,19 @@ void ScummEngine_v7::CHARSET_1() {
 		a->runActorTalkScript(a->_talkStartFrame);
 	}
 
-	if (!_keepText) {
+	if (!_keepText)
 		clearSubtitleQueue();
-		_nextLeft = _string[0].xpos;
-		_nextTop = _string[0].ypos + _screenTop;
-	}
-
-	_charset->_disableOffsX = _charset->_firstChar = !_keepText;
 
 	_talkDelay = VAR(VAR_DEFAULT_TALK_DELAY);
-	for (int i = _charsetBufPos; _charsetBuffer[i]; ++i) {
+	int newPos = _charsetBufPos;
+	while (_charsetBuffer[newPos++])
 		_talkDelay += VAR(VAR_CHARINC);
-	}
 
-	if (_string[0].wrapping) {
-		_charset->addLinebreaks(0, _charsetBuffer, _charsetBufPos, _screenWidth - 20);
+	Common::Point subtitlePos(_string[0].xpos, _string[0].ypos);
+	addSubtitleToQueue(_charsetBuffer + _charsetBufPos, subtitlePos, _charsetColor, _charset->getCurID(), _string[0].center, _string[0].wrapping);
+	_charsetBufPos = newPos;
 
-		struct { int pos, w; } substring[10];
-		int count = 0;
-		int maxLineWidth = 0;
-		int lastPos = 0;
-		int code = 0;
-		while (handleNextCharsetCode(a, &code)) {
-			if (code == 13 || code == 0) {
-				*subtitleLine++ = '\0';
-				assert(count < 10);
-				substring[count].w = _charset->getStringWidth(0, subtitleBuffer + lastPos);
-				if (maxLineWidth < substring[count].w) {
-					maxLineWidth = substring[count].w;
-				}
-				substring[count].pos = lastPos;
-				++count;
-				lastPos = subtitleLine - subtitleBuffer;
-			} else {
-				*subtitleLine++ = code;
-				*subtitleLine = '\0';
-			}
-			if (code == 0) {
-				break;
-			}
-		}
-
-		int h = count * _charset->getFontHeight();
-		h += _charset->getFontHeight() / 2;
-		subtitlePos.y = _string[0].ypos;
-		if (subtitlePos.y + h > _screenHeight - 10) {
-			subtitlePos.y = _screenHeight - 10 - h;
-		}
-		if (subtitlePos.y < 10) {
-			subtitlePos.y = 10;
-		}
-
-		for (int i = 0; i < count; ++i) {
-			subtitlePos.x = _string[0].xpos;
-			if (_string[0].center) {
-				if (subtitlePos.x + maxLineWidth / 2 > _screenWidth - 10) {
-					subtitlePos.x = _screenWidth - 10 - maxLineWidth / 2;
-				}
-				if (subtitlePos.x - maxLineWidth / 2 < 10) {
-					subtitlePos.x = 10 + maxLineWidth / 2;
-				}
-				subtitlePos.x -= substring[i].w / 2;
-			} else {
-				if (subtitlePos.x + maxLineWidth > _screenWidth - 10) {
-					subtitlePos.x = _screenWidth - 10 - maxLineWidth;
-				}
-				if (subtitlePos.x - maxLineWidth < 10) {
-					subtitlePos.x = 10;
-				}
-			}
-			if (subtitlePos.y < _screenHeight - 10) {
-				addSubtitleToQueue(subtitleBuffer + substring[i].pos, subtitlePos, _charsetColor, _charset->getCurID());
-			}
-			subtitlePos.y += _charset->getFontHeight();
-		}
-	} else {
-		int code = 0;
-		subtitlePos.y = _string[0].ypos;
-		if (subtitlePos.y < 10) {
-			subtitlePos.y = 10;
-		}
-		while (handleNextCharsetCode(a, &code)) {
-			if (code == 13 || code == 0) {
-				subtitlePos.x = _string[0].xpos;
-				if (_string[0].center) {
-					subtitlePos.x -= _charset->getStringWidth(0, subtitleBuffer) / 2;
-				}
-				if (subtitlePos.x < 10) {
-					subtitlePos.x = 10;
-				}
-				if (subtitlePos.y < _screenHeight - 10) {
-					addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
-					subtitlePos.y += _charset->getFontHeight();
-				}
-				subtitleLine = subtitleBuffer;
-			} else {
-				*subtitleLine++ = code;
-			}
-			*subtitleLine = '\0';
-			if (code == 0) {
-				break;
-			}
-		}
-	}
-	_haveMsg = (_game.version == 8) ? 2 : 1;
+	_haveMsg = VAR(VAR_HAVE_MSG) = (_game.version == 8 && _string[0].no_talk_anim) ? 2 : 1;
 	_keepText = false;
 	_string[0] = saveStr;
 }

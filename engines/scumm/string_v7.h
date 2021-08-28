@@ -61,6 +61,7 @@ private:
 	const Common::Language _lang;
 	const byte _gameId;
 	const bool _useCJKMode;
+	const int _spacing;
 	const byte _2byteCharWidth;
 	const byte _lineBreakMarker;
 	const uint16 _screenWidth;

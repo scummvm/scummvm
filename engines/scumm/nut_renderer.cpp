@@ -33,14 +33,28 @@ NutRenderer::NutRenderer(ScummEngine *vm, const char *filename) :
 	_maxCharSize(0),
 	_fontHeight(0),
 	_charBuffer(0),
-	_decodedData(0) {
-	memset(_chars, 0, sizeof(_chars));
-	loadFont(filename);
+	_decodedData(0),
+	_2byteColorTable(0),
+	_2byteShadowXOffsetTable(0),
+	_2byteShadowYOffsetTable(0),
+	_2byteMainColor(0),
+	_spacing(vm->_useCJKMode && vm->_language != Common::JA_JPN ? 1 : 0),
+	_2byteSteps(vm->_game.version == 8 ? 4 : 2) {
+		static const int8 cjkShadowOffsetsX[4] = { -1, 0, 1, 0 };
+		static const int8 cjkShadowOffsetsY[4] = { 0, 1, 0, 0 };
+		_2byteShadowXOffsetTable = &cjkShadowOffsetsX[ARRAYSIZE(cjkShadowOffsetsX) - _2byteSteps];
+		_2byteShadowYOffsetTable = &cjkShadowOffsetsY[ARRAYSIZE(cjkShadowOffsetsY) - _2byteSteps];
+		_2byteColorTable = new uint8[_2byteSteps];
+		memset(_2byteColorTable, 0, _2byteSteps);
+		_2byteMainColor = &_2byteColorTable[_2byteSteps - 1];
+		memset(_chars, 0, sizeof(_chars));
+		loadFont(filename);
 }
 
 NutRenderer::~NutRenderer() {
 	delete[] _charBuffer;
 	delete[] _decodedData;
+	delete[] _2byteColorTable;
 }
 
 void smush_decode_codec1(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
@@ -260,7 +274,7 @@ void NutRenderer::loadFont(const char *filename) {
 
 int NutRenderer::getCharWidth(byte c) const {
 	if (c >= 0x80 && _vm->_useCJKMode)
-		return _vm->_2byteWidth / 2;
+		return _vm->_2byteWidth + _spacing;
 
 	if (c >= _numChars)
 		error("invalid character in NutRenderer::getCharWidth : %d (%d)", c, _numChars);
@@ -369,6 +383,9 @@ int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, in
 		dst += minY * pitch;
 	}
 
+	if (minX)
+		dst += minX;
+
 	char color = (col != -1) ? col : 1;
 
 	if (_vm->_game.version == 7) {
@@ -426,39 +443,33 @@ int NutRenderer::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, i
 	int height = MIN((int)_vm->_2byteHeight, clipRect.bottom - y);
 	int minX = x < clipRect.left ? clipRect.left - x : 0;
 	int minY = y < clipRect.top ? clipRect.top - y : 0;
+	*_2byteMainColor = col;
 
 	if (width <= 0 || height <= 0)
 		return 0;
 
 	const byte *src = _vm->get2byteCharPtr(chr);
-	byte bits = 0;
 
 	if (width <= 0 || height <= 0)
 		return 0;
 
 	if (minY) {
-		src += minY * _vm->_2byteWidth;
-		buffer += minY * pitch;
+		src += ((minY * _vm->_2byteWidth) >> 3);
+		buffer += (minY * pitch);
 	}
 
-	enum ShadowMode {
-		kNone,
-		kNormalShadowMode,
-		kCJKv7ShadowMode,
-		kCJKv8ShadowMode
-	};
+	if (minX) {
+		src += (minX >> 3);
+		buffer += minX;
+	}
 
-	ShadowMode shadowMode = _vm->_useCJKMode ? (_vm->_game.version == 8 ? kCJKv8ShadowMode : kCJKv7ShadowMode) : kNone;
-
-	int shadowOffsetXTable[4] = { -1, 0, 1, 0 };
-	int shadowOffsetYTable[4] = { 0, 1, 0, 0 };
-	int shadowOffsetColorTable[4] = { 0, 0, 0, col };
-
+	byte bits = *src;
 	const byte *origSrc = src;
-	for (int shadowIdx = (shadowMode == kCJKv8ShadowMode) ? 0 : (shadowMode == kCJKv7ShadowMode ? 2 : 3); shadowIdx < 4; shadowIdx++) {
-		int offX = MAX<int>(x + shadowOffsetXTable[shadowIdx], clipRect.left);
-		int offY = MAX<int>(y + shadowOffsetYTable[shadowIdx], clipRect.top);
-		byte drawColor = shadowOffsetColorTable[shadowIdx];
+
+	for (int step = 0; step < _2byteSteps; ++step) {
+		int offX = MAX<int>(x + _2byteShadowXOffsetTable[step], clipRect.left);
+		int offY = MAX<int>(y + _2byteShadowYOffsetTable[step], clipRect.top);
+		byte drawColor = _2byteColorTable[step];
 
 		src = origSrc;
 		byte *dst = buffer + pitch * offY + offX;
@@ -469,99 +480,14 @@ int NutRenderer::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, i
 					continue;
 				if ((i % 8) == 0)
 					bits = *src++;
-				if (bits & revBitMask(i % 8)) {
-					if (shadowMode == kNormalShadowMode) {
-						dst[i + 1] = 0;
-						dst[pitch + i] = 0;
-						dst[pitch + i + 1] = 0;
-					}
+				if (bits & revBitMask(i % 8))
 					dst[i] = drawColor;
-				}
 			}
 			dst += pitch;
 		}
 	}
-	return width + 1;
+
+	return width + _spacing;
 }
-/*
-void NutRenderer::drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color) {
-	// FIXME: This gets passed a const destination Surface. Intuitively this
-	// should never get written to. But sadly it does... For now we simply
-	// cast the const qualifier away.
-	byte *dst = (byte *)const_cast<void *>(s.getBasePtr(x, y));
-	const int width = MIN((int)_chars[c].width, s.w - x);
-	const int height = MIN((int)_chars[c].height, s.h - y);
-	const byte *src = unpackChar(c);
-	int srcPitch = _chars[c].width;
-
-	const int minX = x < 0 ? -x : 0;
-	const int minY = y < 0 ? -y : 0;
-
-	if (height <= 0 || width <= 0) {
-		return;
-	}
-
-	if (minY) {
-		src += minY * srcPitch;
-		dst += minY * s.pitch;
-	}
-
-	for (int ty = minY; ty < height; ty++) {
-		for (int tx = minX; tx < width; tx++) {
-			if (src[tx] != _chars[c].transparency) {
-				if (src[tx] == 1) {
-					dst[tx] = color;
-				} else {
-					dst[tx] = src[tx];
-				}
-			}
-		}
-		src += srcPitch;
-		dst += s.pitch;
-	}
-}
-
-void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color) {
-	const int width = _vm->_2byteWidth;
-	const int height = MIN(_vm->_2byteHeight, s.h - y);
-	const byte *src = _vm->get2byteCharPtr(c);
-	byte bits = 0;
-
-	if (height <= 0 || width <= 0) {
-		return;
-	}
-
-	int shadowOffsetXTable[4] = {-1, 0, 1, 0};
-	int shadowOffsetYTable[4] = {0, 1, 0, 0};
-	int shadowOffsetColorTable[4] = {0, 0, 0, color};
-	int shadowIdx = (_vm->_useCJKMode && _vm->_game.id == GID_CMI) ? 0 : 3;
-
-	const byte *origSrc = src;
-
-	for (; shadowIdx < 4; shadowIdx++) {
-		int offX = x + shadowOffsetXTable[shadowIdx];
-		int offY = y + shadowOffsetYTable[shadowIdx];
-		byte drawColor = shadowOffsetColorTable[shadowIdx];
-
-		// FIXME: This gets passed a const destination Surface. Intuitively this
-		// should never get written to. But sadly it does... For now we simply
-		// cast the const qualifier away.
-		byte *dst = (byte *)const_cast<void *>(s.getBasePtr(offX, offY));
-		src = origSrc;
-
-		for (int ty = 0; ty < height; ty++) {
-			for (int tx = 0; tx < width; tx++) {
-				if ((tx & 7) == 0)
-					bits = *src++;
-				if (offX + tx < 0 || offX + tx >= s.w || offY + ty < 0)
-					continue;
-				if (bits & revBitMask(tx % 8)) {
-					dst[tx] = drawColor;
-				}
-			}
-			dst += s.pitch;
-		}
-	}
-}*/
 
 } // End of namespace Scumm

@@ -1076,6 +1076,8 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	clearSubtitleQueue();
 
 	_textV7 = NULL;
+	_defaultTextClipRect = Common::Rect(_screenWidth, _screenHeight);
+	_wrappedTextClipRect = Common::Rect(10, 10, _screenWidth - 10, _screenHeight - 10);
 
 	_game.features |= GF_NEW_COSTUMES;
 }
@@ -2979,7 +2981,6 @@ void ScummEngine::restart() {
 	// a save state right after startup ... to this end we could introduce a SaveFile
 	// subclass which is implemented using a memory buffer (i.e. no actual file is
 	// created). Then to restart we just have to load that pseudo save state.
-
 
 	int i;
 

@@ -41,11 +41,18 @@ protected:
 	int _numChars;
 	int _maxCharSize;
 	int _fontHeight;
+	int _spacing;
 	byte *_charBuffer;
 	byte *_decodedData;
 	byte *_paletteMap;
 	byte _bpp;
 	byte _palette[16];
+
+	const int8 *_2byteShadowXOffsetTable;
+	const int8 *_2byteShadowYOffsetTable;
+	uint8 *_2byteColorTable;
+	uint8 *_2byteMainColor;
+	const int _2byteSteps;
 
 	struct {
 		uint16 width;

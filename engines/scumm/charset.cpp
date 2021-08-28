@@ -1965,21 +1965,39 @@ void CharsetRendererMac::setColor(byte color) {
 }
 
 #ifdef ENABLE_SCUMM_7_8
-int CharsetRendererV7::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {
-	if (!prepareDraw(chr))
+int CharsetRendererV7::draw2byte(byte*, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {
+	if (_vm->isScummvmKorTarget()) {
+		enableShadow(true);
+		_charPtr = _vm->get2byteCharPtr(chr);
+		_origWidth = _width = _vm->_2byteWidth;
+		_origHeight = _height = _vm->_2byteHeight;
+		_offsX = _offsY = 0;
+	} else if (!prepareDraw(chr)) {
 		return 0;
+	}
 
+	_color = col;
 	VirtScreen &vs = _vm->_virtscr[kMainVirtScreen];
-	drawBits1(vs, x + vs.xstart, y, _charPtr, MAX<int>(clipRect.top, y), _width - 1, _height);
-	return _width;
+	drawBits1(vs, x + vs.xstart, y, _charPtr, MAX<int>(clipRect.top, y), _origWidth, _origHeight);
+
+	return _origWidth + _spacing;
 }
 
 int CharsetRendererV7::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, byte chr) {
 	if (!prepareDraw(chr))
 		return 0;
 
+	if (_vm->isScummvmKorTarget()) {
+		_origWidth = _width;
+		_origHeight = _height;
+	}
+
+	_width = getCharWidth(chr);
+
+	_vm->_charsetColorMap[1] = col;
 	VirtScreen &vs = _vm->_virtscr[kMainVirtScreen];
-	drawBitsN(vs, buffer + y * vs.pitch + x, _charPtr, _vm->_bytesPerPixel, y, _origWidth, _origHeight);
+	drawBitsN(vs, buffer + (y + _offsY) * vs.pitch + vs.xstart + x, _charPtr, *_fontPtr, y, _origWidth, _origHeight);
+
 	return _width;
 }
 
@@ -2027,128 +2045,12 @@ int CharsetRendererNut::getCharHeight(uint16 chr) const {
 
 int CharsetRendererNut::getCharWidth(uint16 chr) const {
 	assert(_current);
-	return _current->getCharWidth(chr);
+	return _current->getCharWidth(chr & 0xFF);
 }
 
 int CharsetRendererNut::getFontHeight() const {
 	assert(_current);
 	return _current->getFontHeight();
-}
-
-int CharsetRendererNut::getStringWidth(int arg, const byte *text, uint strLenMax) {
-	// SCUMM7 games actually use the same implemention (minus the strLenMax parameter). If
-	// any text placement bugs in one of these games come up it might be worth to look at
-	// that. Or simply for the fact that we could get rid of SmushFont::getStringWidth()...
-	if (!strLenMax)
-		return 0;
-
-	int maxWidth = 0;
-	int width = 0;
-
-	while (*text && strLenMax) {
-		while (text[0] == '^') {
-			switch (text[1]) {
-			case 'f':
-				// We should change the font on the fly at this point
-				// which would result in a different width result.
-				// This has never been observed in the game though, and
-				// as such, we don't handle it.
-				text += 4;
-				break;
-			case 'c':
-				text += 5;
-				break;
-			default:
-				error("CharsetRenderer::getStringWidth(): Invalid escape code in text string");
-			}
-		}
-
-		if (is2ByteCharacter(_vm->_language, *text)) {
-			width += _vm->_2byteWidth + (_vm->_language != Common::JA_JPN ? 1 : 0);
-			++text;
-			--strLenMax;
-		} else if (*text == '\n') {
-			maxWidth = MAX<int>(width, maxWidth);
-			width = 0;
-		} else if (*text != '\r' && *text != _vm->_newLineCharacter) {
-			width += getCharWidth(*text);
-		}
-
-		++text;
-		--strLenMax;
-	}
-
-	return MAX<int>(width, maxWidth);
-}
-
-void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
-	/*Common::Rect shadow;
-
-	assert(_current);
-	if (chr == '@')
-		return;
-
-	shadow.left = _left;
-	shadow.top = _top;
-
-	if (_firstChar) {
-		_str.left = (shadow.left >= 0) ? shadow.left : 0;
-		_str.top = (shadow.top >= 0) ? shadow.top : 0;
-		_str.right = _str.left;
-		_str.bottom = _str.top;
-		_firstChar = false;
-	}
-
-	int width = _current->getCharWidth(chr);
-	int height = _current->getCharHeight(chr);
-
-	bool is2byte = chr >= 256 && _vm->_useCJKMode;
-	if (is2byte) {
-		width = _vm->_2byteWidth;
-		if (_vm->_game.id == GID_CMI)
-			height++; // One extra pixel for the shadow
-	}
-
-	shadow.right = _left + width;
-	shadow.bottom = _top + height;
-
-	Graphics::Surface s;
-	if (!ignoreCharsetMask) {
-		_hasMask = true;
-		_textScreenID = kMainVirtScreen;
-	}
-
-	int drawTop = _top;
-	if (ignoreCharsetMask) {
-		VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
-		s = *vs;
-		s.setPixels(vs->getPixels(0, 0));
-	} else {
-		s = _vm->_textSurface;
-		drawTop -= _vm->_screenTop;
-	}
-
-	Common::Rect clipRect(s.w, s.h);
-	if (chr >= 256 && _vm->_useCJKMode)
-		_current->draw2byte((uint8*)s.getBasePtr(0, 0), clipRect, _left, drawTop, s.pitch, _color, chr);
-	else
-		_current->drawChar((uint8*)s.getBasePtr(0, 0), clipRect, _left, drawTop, s.pitch, _color, (byte)chr);
-	_vm->markRectAsDirty(kMainVirtScreen, shadow);
-
-	if (_str.left > _left)
-		_str.left = _left;
-
-	// Original keeps glyph width and character dimensions separately
-	if ((_vm->_language == Common::ZH_TWN || _vm->_language == Common::KO_KOR) && is2byte)
-		width++;
-
-	_left += width;
-
-	if (_str.right < shadow.right)
-		_str.right = shadow.right;
-
-	if (_str.bottom < shadow.bottom)
-		_str.bottom = shadow.bottom;*/
 }
 
 int CharsetRendererNut::draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) {
