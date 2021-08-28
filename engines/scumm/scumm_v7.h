@@ -66,6 +66,9 @@ public:
 
 protected:
 	TextRenderer_v7 *_textV7;
+	Common::Rect _defaultTextClipRect;
+	Common::Rect _wrappedTextClipRect;
+
 	int _verbLineSpacing;
 	bool _existLanguageFile;
 	char *_languageBuffer;
@@ -80,10 +83,18 @@ protected:
 		byte charset;
 		byte text[256];
 		bool actorSpeechMsg;
+		bool center;
+		bool wrap;
 	};
 #else
 	struct SubtitleText : TextObject {
+		void clear() {
+			TextObject::clear();
+			actorSpeechMsg = center = wrap = false;
+		}
 		bool actorSpeechMsg;
+		bool center;
+		bool wrap;
 	};
 #endif
 
@@ -94,7 +105,7 @@ protected:
 
 public:
 	void processSubtitleQueue();
-	void addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset);
+	void addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset, bool center, bool wrap);
 	void clearSubtitleQueue();
 	void CHARSET_1() override;
 	bool isSmushActive() { return _smushActive; }
@@ -128,7 +139,7 @@ protected:
 	int getObjectIdFromOBIM(const byte *obim) override;
 
 	void createTextRenderer(GlyphRenderer_v7 *gr) override;
-	void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrapped = false);
+	void enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center, bool wrap = false);
 	void drawBlastTexts() override;
 	void actorTalk(const byte *msg) override;
 	void translateText(const byte *text, byte *trans_buff) override;

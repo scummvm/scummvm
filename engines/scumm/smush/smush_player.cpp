@@ -627,26 +627,24 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 			string2[0] = 0;
 	}
 
-	const char *str2 = str;
 	while (str[0] == '^') {
 		switch (str[1]) {
 		case 'f':
-		{
 			fontId = str[3] - '0';
 			str += 4;
-		}
-		break;
+			break;
 		case 'c':
-		{
 			color = str[4] - '0' + 10 *(str[3] - '0');
 			str += 5;
-		}
 		break;
 		default:
 			error("invalid escape code in text string");
 		}
 	}
-	str = str2;
+
+	if (_vm->_game.id == GID_CMI && string2[0] != 0)
+		str = string2;
+
 	// This is a hack from the original COMI CJK interpreter. Its purpose is to avoid
 	// ugly combinations of two byte characters (rendered with the respective special
 	// font) and standard one byte (NUT font) characters (see bug #11947).
@@ -658,59 +656,10 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	SmushFont *sf = getFont(fontId);
 	assert(sf != NULL);
 
-
-	// The HACK that used to be here to prevent bug #2220 is no longer necessary and
+	// The hack that used to be here to prevent bug #2220 is no longer necessary and
 	// has been removed. The font renderer can handle all ^codes it encounters (font
 	// changes on the fly will be ignored for Smush texts, since our code design does
 	// not permit it and the feature isn't used anyway).
-
-	// HACK. This is to prevent bug #2220. In updated Win95 dig
-	// there is such line:
-	//
-	// ^f01^c001LEAD TESTER
-	// Chris Purvis
-	// ^f01
-	// ^f01^c001WINDOWS COMPATIBILITY
-	// Chip Hinnenberg
-	// ^f01^c001WINDOWS TESTING
-	// Jim Davison
-	// Lynn Selk
-	//
-	// i.e. formatting exists not in the first line only
-	// We just strip that off and assume that neither font
-	// nor font color was altered. Proper fix would be to feed
-	// drawString() with each line sequentally
-/*	char *string3 = NULL, *sptr2;
-	const char *sptr;
-	
-	if (strchr(str, '^')) {
-		string3 = (char *)malloc(strlen(str) + 1);
-
-		for (sptr = str, sptr2 = string3; *sptr;) {
-			if (*sptr == '^') {
-				switch (sptr[1]) {
-				case 'f':
-					sptr += 4;
-					break;
-				case 'c':
-					sptr += 5;
-					break;
-				default:
-					error("invalid escape code in text string");
-				}
-			} else {
-				if (TextRenderer_v7::is2ByteCharacter(_vm->_language, *sptr))
-					*sptr2++ = *sptr++;
-				*sptr2++ = *sptr++;
-			}
-		}
-		*sptr2++ = *sptr++; // copy zero character
-		str = string3;
-	}*/
-
-	if (_vm->_game.id == GID_CMI && string2[0] != 0) {
-		str = string2;
-	}
 
 	// flags:
 	// bit 0 - center                  0x01
@@ -743,7 +692,6 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	}
 
 	free(string);
-	//free(string3);
 }
 
 const char *SmushPlayer::getString(int id) {

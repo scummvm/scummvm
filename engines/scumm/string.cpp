@@ -677,12 +677,12 @@ void ScummEngine::CHARSET_1() {
 		}
 
 		if (c == 13) {
-#ifdef ENABLE_SCUMM_7_8
+/*#ifdef ENABLE_SCUMM_7_8
 			if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
 				((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
 				subtitleLine = subtitleBuffer;
 			}
-#endif
+#endif*/
 			if (!newLine())
 				break;
 			continue;
@@ -762,12 +762,12 @@ void ScummEngine::CHARSET_1() {
 	if (_game.platform == Common::kPlatformFMTowns && (c == 0 || c == 2 || c == 3))
 		memcpy(&_curStringRect, &_charset->_str, sizeof(Common::Rect));
 #endif
-
+/*
 #ifdef ENABLE_SCUMM_7_8
 	if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
 		((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
 	}
-#endif
+#endif*/
 }
 
 void ScummEngine::drawString(int a, const byte *msg) {
