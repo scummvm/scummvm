@@ -23,7 +23,7 @@ wiidebug:
 	$(DEVKITPPC)/bin/powerpc-eabi-gdb -n $(EXECUTABLE) -x $(srcdir)/backends/platform/wii/gdb.txt
 
 # target to create a Wii snapshot
-wiidist: all
+wiidist: all $(DIST_FILES_DOCS)
 	$(MKDIR) wiidist/scummvm
 ifeq ($(GAMECUBE),1)
 	$(DEVKITPPC)/bin/elf2dol $(EXECUTABLE) wiidist/scummvm/scummvm.dol
