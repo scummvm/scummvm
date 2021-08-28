@@ -432,6 +432,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "xfua",				"The X-Files Unrestricted Access" },
 
 	// Shareware and freeware
+	{ "50ftchicken",        "Attack of the 50-foot Chicken" },
 	{ "antsafire",			"Ants Afire!" },
 	{ "arad",				"Animaniacs River Adventure" },
 	{ "belcher",			"The Belcher" },
@@ -983,12 +984,14 @@ namespace Director {
 #define PIPGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformPippin,ADGF_MACRESFORK,v)
 #define WINGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define FMTGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
+#define SHKGAME1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformShockwave,ADGF_NO_FLAGS,v)
 #define MACDEMO1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO1(t,e,f,m,s,v) 	GENGAME1_(t,e,f,m,s,Common::EN_ANY,Common::kPlatformWindows,ADGF_DEMO,v)
 #define MACGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformMacintosh,ADGF_MACRESFORK,v)
 #define PIPGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformPippin,ADGF_MACRESFORK,v)
 #define WINGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_NO_FLAGS,v)
 #define FMTGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformFMTowns,ADGF_NO_FLAGS,v)
+#define SHKGAME1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformShockwave,ADGF_NO_FLAGS,v)
 #define MACDEMO1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformMacintosh,(ADGF_MACRESFORK|ADGF_DEMO),v)
 #define WINDEMO1_l(t,e,f,m,s,l,v) GENGAME1_(t,e,f,m,s,l,Common::kPlatformWindows,ADGF_DEMO,v)
 
@@ -3298,6 +3301,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 							"START.Dir",   "b9f7a692dce72c30e54325c4a957e582", 9290, 600),
 
 	WINGAME1("1stcdtoddler", "", "_dkilbbt.exe", "d62438566e44826960fc16c5c23dbe43", 2012554, 650),
+
+	// Created by NOVA Online for PBS / WGBH Boston
+	// Companion app for NOVA episode "Special Effects: Titanic and Beyond"
+	// Original PBS Airdate: November 3, 1998
+	// https://www.pbs.org/wgbh/nova/specialfx2/
+	SHKGAME1("50ftchicken", "", "chicken.dcr", "55fa0c9afa4ee4102b50258544fc28d4", 442575, 600),
 
 	// Mini-game from X-Fools can also be launched separately
 	WINGAME1("abductthis", "", "ABDUCT32.EXE", "a593079aecf5bd938ce75264cac24b2d", 3644633, 600),

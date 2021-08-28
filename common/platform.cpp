@@ -61,7 +61,8 @@ const PlatformDescription g_platforms[] = {
 	{ "megadrive", "genesis", "md", "Mega Drive/Genesis", kPlatformMegaDrive },
 	{ "saturn", "saturn", "saturn", "Sega Saturn", kPlatformSaturn },
 	{ "pippin", "pippin", "pippin", "Pippin", kPlatformPippin },
-	{ "macintosh2", "macintosh2", "macintosh2", "Macintosh II", kPlatformMacintoshII },
+	{ "macintosh2", "macintosh2", "mac2", "Macintosh II", kPlatformMacintoshII },
+	{ "shockwave", "shockwave", "shock", "Shockwave", kPlatformShockwave },
 
 	{ nullptr, nullptr, nullptr, "Default", kPlatformUnknown }
 };
