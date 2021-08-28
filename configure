@@ -227,7 +227,7 @@ _windows_unicode=yes
 # Default commands
 _ranlib=ranlib
 _strip=strip
-_ar="ar cru"
+_ar="ar cr"
 _as="as"
 _dwp=dwp
 _windres=windres
@@ -1757,7 +1757,7 @@ else
 	# if _host_alias was set, default to the standard GNU tools
 	_ranlib=$_host_alias-ranlib
 	_strip=$_host_alias-strip
-	_ar="$_host_alias-ar cru"
+	_ar="$_host_alias-ar cr"
 	_as="$_host_alias-as"
 	_dwp=$_host_alias-dwp
 	_windres=$_host_alias-windres
@@ -2033,7 +2033,7 @@ if test -n "$STRIP"; then
 fi
 
 if test -n "$AR"; then
-	_ar="$AR cru"
+	_ar="$AR cr"
 fi
 
 if test -n "$AS"; then
@@ -3277,7 +3277,7 @@ if test -n "$_host"; then
 			_backend="sdl"
 			HOSTEXEPRE=
 			HOSTEXEEXT=.html
-			_ar="emar cru"
+			_ar="emar cr"
 			_ranlib="emranlib"
 			_opengl_mode=gles2
 			_opengl_game_es2=yes
@@ -3559,7 +3559,7 @@ if test -n "$_host"; then
 			_timidity=no
 			_port_mk="backends/platform/sdl/psp2/psp2.mk"
 			#the -gcc- variants allow link time optimization
-			_ar="$_host_alias-gcc-ar cru"
+			_ar="$_host_alias-gcc-ar cr"
 			_ranlib=$_host_alias-gcc-ranlib
 			;;
 		psp)
