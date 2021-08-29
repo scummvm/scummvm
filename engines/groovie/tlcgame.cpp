@@ -868,7 +868,7 @@ void TlcGame::tatResultQuest() {
 		if (questIdx >= _tatQuestCount) {
 			error("TLC:ResultQuest: Could not find question '%s' in TATAIDB. Count: %d", questName, _tatQuestCount);
 		}
-	} while (strcmpi(questName, _tatQuestions[questIdx].name) != 0);
+	} while (scumm_stricmp(questName, _tatQuestions[questIdx].name) != 0);
 
 	// Get selected answer. Range: 0..7
 	selectedAns = _scriptVariables[0x46];
