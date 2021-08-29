@@ -1,5 +1,4 @@
 ON ERROR PROCerror
-SYS "XOS_ReadVarVal","StrongHelp$Dir",-1,-1 TO ,,stronghelp%
 file$=""
 readme$=""
 
@@ -9,7 +8,7 @@ REPEAT
    WHILE readme$<>""
       IF territory%=current_territory% OR territory%=-1 THEN
          SYS "OS_File",20,"<ScummVM$Dir>.docs."+prefix$+readme$ TO type%,,,,,,ftype%
-         IF type%<>0 AND NOT (stronghelp%=0 AND ftype%=&3D6) THEN
+         IF type%<>0 AND FNsupported(ftype%)<>0 THEN
             file$="<ScummVM$Dir>.docs."+prefix$+readme$
          ENDIF
       ENDIF
@@ -26,6 +25,11 @@ DEF PROCerror
    ON ERROR OFF
    ERROR ERR, REPORT$+" at line "+STR$(ERL)
 ENDPROC
+
+DEF FNsupported(ftype%)
+   LOCAL r2%
+   SYS "XOS_ReadVarVal","Alias$@RunType_"+STR$~(ftype%),-1,-1 TO ,,r2%
+=r2%
 
 REM Reference: https://www.riscosopen.org/wiki/documentation/show/Territory%20Numbers
 DATA 4,   "it.",    "GuidaRapida",                                         ""
