@@ -176,6 +176,7 @@ Common::Error GroovieEngine::run() {
 			_musicPlayer = new MusicPlayerIOS(this);
 			break;
 		}
+		// else, fall through
 	case kGroovieT11H:
 	case kGroovieCDY:
 	case kGroovieUHP:
