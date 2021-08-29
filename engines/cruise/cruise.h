@@ -103,6 +103,7 @@ public:
 	void initAllData();
 
 	Common::RandomSource _rnd;
+	bool _isEndGame;
 
 	struct MemInfo {
 		int32  lineNum;
