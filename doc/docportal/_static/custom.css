@@ -1,115 +1,152 @@
 /* word wrapping */
 
-.std, .std-ref, .head {
-   word-wrap: break-word
+.std,
+.std-ref,
+.head {
+	word-wrap: break-word;
 }
 
 p {
-   word-wrap: break-word;
+	word-wrap: break-word;
+	white-space: normal;
 }
 
 /* changes table to block element when screen size is small*/
-@media screen and (min-width:770px) and (max-width:900px), screen and (min-width:200px) and (max-width:600px){
-   table, thead, tbody, th, td, tr{
-      display:block
-   }
 
-   thead tr {
-      position:absolute;
-      top: -9999px;
-      left: -9999px;
-   }
-   td {
-      border: none;
-      position: relative;
-      padding-left: 40% !important;
-   }
-   td:before{
-      position: absolute;
-      top: 6px;
-      left: 6px;
-      width: 35%;
-      padding-right: 10px;
-      white-space: nowrap;
-   }
+@media screen and (min-width: 770px) and (max-width: 900px),
+	screen and (min-width: 200px) and (max-width: 600px) {
+	table,
+	thead,
+	tbody,
+	th,
+	td,
+	tr {
+		display: block;
+	}
 
+	thead tr {
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+	table.config td, table.command td, table.touch td, table.controls td {
+		border: none;
+		position: relative;
+		padding-left: 40% !important;
+	
+	}
+	td:before {
+		position: absolute;
+		top: 6px;
+		left: 6px;
+		width: 35%;
+		padding-right: 10px;
+		white-space: nowrap;
+	}
+
+	table.config td:nth-of-type(1):before {
+		content: "Key";
+	}
+	table.config td:nth-of-type(2):before {
+		content: "Type";
+	}
+	table.config td:nth-of-type(3):before {
+		content: "Default";
+	}
+	table.config td:nth-of-type(4):before {
+		content: "Description/ Options";
+		white-space: normal;
+	}
+  
+
+	table.command td:nth-of-type(1):before {
+		content: "Option";
+	}
+	table.command td:nth-of-type(2):before {
+		content: "Short";
+	}
+	table.command td:nth-of-type(3):before {
+		content: "Description";
+	}
+
+	table.controls td:nth-of-type(1):before {
+		content: "Control";
+	}
+	table.controls td:nth-of-type(2):before {
+		content: "Action";
+	}
+
+	table.touch td:nth-of-type(1):before {
+		content: "Touch";
+	}
+	table.touch td:nth-of-type(2):before {
+		content: "Action";
+	}
+   /* Hides empty table cells*/
    td:empty {
-      min-height: 2rem;
+      display: none;
    }
+   /* Makes Description/Options field in config file table min height of 3rem*/
 
-   .config td:nth-of-type(1):before { content: "Key";}
-   .config td:nth-of-type(2):before { content: "Type";}
-   .config td:nth-of-type(3):before { content: "Default";}
-   .config td:nth-of-type(4):before { content: "Description/Options";}
-
-   .command td:nth-of-type(1):before { content: "Option"}
-   .command td:nth-of-type(2):before { content: "Short"}
-   .command td:nth-of-type(3):before { content: "Description"}
-
-   .controls td:nth-of-type(1):before { content: "Control"}
-   .controls td:nth-of-type(2):before { content: "Action"}
-
-   .touch td:nth-of-type(1):before { content: "Touch"}
-   .touch td:nth-of-type(2):before { content: "Action"}
-
+   table.config td:nth-of-type(4) {
+      min-height: 3rem;
+   }
+ 
 }
 
 
-/* override table width */
+/* Overrides table width */
 @media (min-width: 385px) {
-    .wy-table-responsive table td {
-       white-space: normal !important;
+	.wy-table-responsive table td {
+		white-space: normal !important;
+	}
 
-    }
-
-    .wy-table-responsive {
-       overflow: visible !important;
-
-    }
-    .wy-table-responsive table {
-
-      table-layout: fixed !important;
-      width: 100% !important;
-
-    }
-   }
+	.wy-table-responsive {
+		overflow: visible !important;
+	}
+	.wy-table-responsive table {
+		table-layout: fixed !important;
+		width: 100% !important;
+	}
+}
 
 /* Change theme colors*/
 
-.wy-side-nav-search, .wy-nav-top  {
-      background-color: #cc6600 !important;
-   }
+.wy-side-nav-search,
+.wy-nav-top {
+	background-color: #cc6600 !important;
+}
 
-.caption-text, .icon-home {
-   color: #cc6600;
+.caption-text,
+.icon-home {
+	color: #cc6600;
 }
 
 /* Change H4 header size*/
 
 h4 {
-   font-size: 100% !important;
+	font-size: 100% !important;
 }
 
 /* Change inline code formatting*/
 
 .rst-content code.literal {
-   padding: 5px !important;
-   white-space: normal;
-   color: #000000;
+	padding: 5px !important;
+	white-space: normal;
+	color: #000000;
 }
 
 /* Change color of tabs*/
 
-.tabbed-set>input:checked+label {
-   border-color: #cc6600 !important;
-   color: #cc6600 !important;
+.tabbed-set > input:checked + label {
+	border-color: #cc6600 !important;
+	color: #cc6600 !important;
 }
 
-.tabbed-set>label {
-   color: #fd962e !important;
+.tabbed-set > label {
+	color: #fd962e !important;
 }
 
 .tabbed-content {
-   box-shadow: 0 -.0625rem #ffd3a8,0 .0625rem #ffd3a8 !important;
-
+	box-shadow: 0 -0.0625rem #ffd3a8, 0 0.0625rem #ffd3a8 !important;
 }
