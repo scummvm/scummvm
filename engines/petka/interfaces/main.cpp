@@ -292,7 +292,7 @@ void InterfaceMain::update(uint time) {
 			xOff -= 8;
 			xOff = MAX<int>(xOff, reqOffset);
 		}
-		sys->_xOffset = CLIP(xOff, 0, sys->_sceneWidth - 640);
+		sys->_xOffset = CLIP(xOff, sys->_sceneWidth - 640, 0);
 		g_vm->videoSystem()->makeAllDirty();
 	}
 	Interface::update(time);

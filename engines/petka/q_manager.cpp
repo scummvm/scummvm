@@ -94,7 +94,7 @@ Graphics::Surface *QManager::getSurface(uint32 id, uint16 w, uint16 h) {
 		return res.type == QResource::kSurface ? res.surface : nullptr;
 	}
 
-	QResource &res = _resourceMap.getVal(id);
+	QResource &res = _resourceMap.getOrCreateVal(id);
 	res.type = QResource::kSurface;
 	res.surface = new Graphics::Surface;
 	res.surface->create(w, h, _vm._system->getScreenFormat());
@@ -120,7 +120,7 @@ Graphics::Surface *QManager::getSurface(uint32 id) {
 
 	Graphics::Surface *s = loadBitmapSurface(*stream);
 	if (s) {
-		QResource &res = _resourceMap.getVal(id);
+		QResource &res = _resourceMap.getOrCreateVal(id);
 		res.type = QResource::kSurface;
 		res.surface = s;
 		return res.surface;
@@ -148,7 +148,7 @@ FlicDecoder *QManager::getFlic(uint32 id) {
 	FlicDecoder *flc = new FlicDecoder;
 	flc->load(stream, _vm.openFile(name, false));
 
-	QResource &res = _resourceMap.getVal(id);
+	QResource &res = _resourceMap.getOrCreateVal(id);
 	res.type = QResource::kFlic;
 	res.flcDecoder = flc;
 
