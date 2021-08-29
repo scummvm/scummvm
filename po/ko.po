@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-08-28 20:51+0000\n"
-"PO-Revision-Date: 2021-08-25 10:40+0000\n"
+"PO-Revision-Date: 2021-08-29 19:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -2380,19 +2380,14 @@ msgid "Cancel autosave"
 msgstr "자동 저장 취소"
 
 #: engines/engine.cpp:556
-#, fuzzy, c-format
-#| msgid ""
-#| "WARNING: The autosave slot has a saved game named %s. You can either move "
-#| "the existing save to a new slot, Overwrite the existing save, or cancel "
-#| "autosave (will not prompt again until restart)"
+#, c-format
 msgid ""
 "WARNING: The autosave slot has a saved game named %S. You can either move "
 "the existing save to a new slot, Overwrite the existing save, or cancel "
 "autosave (will not prompt again until restart)"
 msgstr ""
-"경고: 이 자동 저장 슬롯에는 '%s' 자동 저장 데이터가 존재합니다. 기존 저장 데"
-"이터를 새로운 슬롯으로 이동하거나 덮어씌우거나 자동 저장을 취소할 수 있습니"
-"다. (재시작 전까지 다시 알리지 않음)"
+"경고: 이 자동 저장 슬롯에는 '%S' 자동 저장 데이터가 존재합니다. 기존 저장 데이터를 새로운 슬롯으로 이동하거나 덮어씌우거나 자동 "
+"저장을 취소할 수 있습니다. (재시작 전까지 다시 알리지 않음)"
 
 #: engines/engine.cpp:564
 msgid "ERROR: Could not copy the savegame to a new slot"
