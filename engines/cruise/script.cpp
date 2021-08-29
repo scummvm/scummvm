@@ -597,6 +597,15 @@ int executeScripts(scriptInstanceStruct *ptr) {
 			currentScriptPtr->scriptOffset = 923;
 		}
 #endif
+		// FIXME: Delay for starting end credits is too long.
+		// Fix it for now, but game rates really need looking into
+		if (currentScriptPtr->overlayNumber == 71 &&
+				currentScriptPtr->scriptOffset == 1884 &&
+				positionInStack == 1) {
+			popVar();
+			pushVar(50);
+		}
+
 		opcodeType = getByteFromScript();
 
 		debugC(5, kCruiseDebugScript, "Script %s/%d ip=%d opcode=%d",
