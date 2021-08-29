@@ -23,6 +23,7 @@
 #ifndef STARK_UI_DIALOG_BOX_H
 #define STARK_UI_DIALOG_BOX_H
 
+#include "engines/stark/stark.h"
 #include "engines/stark/ui/window.h"
 
 #include "common/keyboard.h"
@@ -47,7 +48,7 @@ class VisualText;
  */
 class DialogBox : public Window {
 public:
-	DialogBox(Gfx::Driver *gfx, Cursor *cursor);
+	DialogBox(StarkEngine *vm, Gfx::Driver *gfx, Cursor *cursor);
 	~DialogBox() override;
 
 	/** Make the dialog visible with the specified message */
@@ -68,12 +69,14 @@ protected:
 	void onClick(const Common::Point &pos) override;
 
 private:
-	static Graphics::Surface *loadBackground();
+	Graphics::Surface *loadBackground();
 	static void drawBevel(Graphics::Surface *surface, const Common::Rect &rect);
 	static Common::Rect centerRect(const Common::Rect &container, const Common::Rect &size);
 
 	void freeForeground();
 	void recomputeLayout();
+
+	StarkEngine *_vm;
 
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_backgroundTexture;

@@ -80,6 +80,12 @@ struct ADGameFileDescription {
 #define AD_ENTRY2s(f1, x1, s1, f2, x2, s2) {{f1, 0, x1, s1}, {f2, 0, x2, s2}, AD_LISTEND}
 
 /**
+ * A shortcut to produce a list of ADGameFileDescription records with only three
+ * records that contain just a filename with an MD5, plus a file size.
+ */
+#define AD_ENTRY3s(f1, x1, s1, f2, x2, s2, f3, x3, s3) {{f1, 0, x1, s1}, {f2, 0, x2, s2}, {f3, 0, x3, s3}, AD_LISTEND}
+
+/**
  * Flags used in the game description.
  */
 enum ADGameFlags {
